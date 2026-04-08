@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Services artisans au Maroc | Fixeo</title>
+  <meta name="description" content="Trouvez un artisan vérifié Fixeo par service et par ville au Maroc avec avis clients et Trust Score.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/variables.css">
+<link rel="stylesheet" href="css/main.css">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/v3_ultra_stable.css">
+<link rel="stylesheet" href="css/ui_fixes.css">
+<link rel="stylesheet" href="css/fixeo_v5_fixes.css">
+<link rel="stylesheet" href="css/header-unified.css">
+<link rel="stylesheet" href="css/fixeo-header-global.css">
+<link rel="stylesheet" href="css/auth-global.css">
+<link rel="stylesheet" href="css/homepage-v13.css">
+<link rel="stylesheet" href="css/artisan-cards-v13.css">
+<link rel="stylesheet" href="css/marketplace-premium-patch.css">
+<link rel="stylesheet" href="css/homepage-conversion-optimizer.css">
+<link rel="stylesheet" href="css/seo-pages-fixeo-ui.css">
+<style>
+    .notif-badge:empty{display:none!important}
+    .notif-panel,.notification-panel{z-index:600!important}
+    .seo-service-page{min-height:100vh;background:linear-gradient(135deg,#0D0D1A 0%,#1a1a2e 50%,#16213e 100%)}
+    .seo-shell{padding-top:calc(var(--header-h,84px) + 18px);padding-bottom:48px}
+    .seo-stack{display:grid;gap:16px}
+    .seo-panel,.seo-hero,.seo-empty,.seo-state{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);border-radius:24px;backdrop-filter:blur(16px);box-shadow:0 12px 40px rgba(0,0,0,.18)}
+    .seo-hero{padding:18px;color:#fff;display:grid;gap:16px}
+    .seo-breadcrumbs{display:flex;gap:8px;flex-wrap:wrap;font-size:.82rem;color:rgba(255,255,255,.62)}
+    .seo-breadcrumbs a{color:#a5b4fc;text-decoration:none}
+    .seo-kicker{display:inline-flex;align-items:center;gap:8px;width:max-content;padding:6px 12px;border-radius:999px;background:rgba(124,58,237,.18);border:1px solid rgba(167,139,250,.35);color:#c4b5fd;font-size:.76rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+    .seo-hero h1{margin:0;font-size:1.9rem;line-height:1.1;color:#fff}
+    .seo-lead{margin:0;color:rgba(255,255,255,.78);line-height:1.65;font-size:.98rem}
+    .seo-subtitle{margin:0;color:#dbeafe;font-size:.92rem}
+    .seo-hero-stats{display:grid;grid-template-columns:1fr;gap:10px}
+    .seo-stat{padding:14px;border-radius:18px;background:rgba(13,18,40,.45);border:1px solid rgba(255,255,255,.08)}
+    .seo-stat strong{display:block;color:#fff;font-size:1.18rem}
+    .seo-stat span{display:block;color:rgba(255,255,255,.64);font-size:.84rem;margin-top:4px}
+    .seo-actions{display:flex;flex-wrap:wrap;gap:10px}
+    .seo-btn-link{display:inline-flex;align-items:center;justify-content:center;padding:12px 16px;border-radius:14px;text-decoration:none;font-weight:700}
+    .seo-btn-link.primary{background:linear-gradient(135deg,#E1306C,#833AB4);color:#fff}
+    .seo-btn-link.secondary{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:#fff}
+    .seo-panel{padding:18px;color:#fff}
+    .seo-panel h2{margin:4px 0 0;font-size:1.15rem}
+    .seo-section-heading{font-size:.78rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#a5b4fc}
+    .seo-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+    .seo-toolbar-copy{color:rgba(255,255,255,.68);font-size:.9rem}
+    .seo-note{display:none;padding:12px 14px;border-radius:16px;background:rgba(250,204,21,.12);border:1px solid rgba(250,204,21,.28);color:#fde68a;font-size:.88rem}
+    .seo-note.is-visible{display:block}
+    .seo-links-grid{display:grid;grid-template-columns:1fr;gap:10px;margin-top:14px}
+    .seo-link-card{display:block;padding:14px;border-radius:18px;background:rgba(13,18,40,.45);border:1px solid rgba(255,255,255,.08);text-decoration:none;color:#fff}
+    .seo-link-card span{display:block;font-size:.76rem;letter-spacing:.06em;text-transform:uppercase;color:#94a3b8;font-weight:800;margin-bottom:6px}
+    .seo-link-card strong{display:block;font-size:1rem}
+    .seo-link-card p{margin:6px 0 0;color:rgba(255,255,255,.62);font-size:.85rem;line-height:1.5}
+    .seo-empty,.seo-state{padding:22px;color:#fff;text-align:center}
+    .seo-empty h2,.seo-state h2{margin:0 0 8px;font-size:1.25rem}
+    .seo-empty p,.seo-state p{margin:0;color:rgba(255,255,255,.7);line-height:1.6}
+    .seo-empty-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:16px}
+    #loading-artisans{display:flex;align-items:center;justify-content:center;min-height:140px;color:rgba(255,255,255,.72)}
+    #no-artisan{display:none}
+    @media (min-width:768px){
+      .seo-hero{padding:24px}
+      .seo-hero-grid{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(280px,.7fr);gap:18px;align-items:start}
+      .seo-hero-stats{grid-template-columns:repeat(3,minmax(0,1fr))}
+      .seo-links-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+    }
+  </style>
+  <script>
+    window.__FIXEO_SERVICE_SEO_PAGE__ = true;
+  </script>
+</head>
+<body data-theme="dark" class="seo-service-page seo-dynamic-page">
+<a href="#main-content" class="skip-link">Aller au contenu</a>
+
+<nav class="navbar" role="navigation" aria-label="Navigation principale">
+  <a href="index.html" class="navbar-brand logo-wrap" aria-label="Fixeo — Accueil">
+    <div class="logo-icon">🔧</div>
+    <span class="logo-text">Fixeo</span>
+  </a>
+
+  <nav class="navbar-nav" aria-label="Menu principal">
+    <a href="index.html" class="nav-link" data-i18n="nav_home">Accueil</a>
+    <a href="index.html#services" class="nav-link" data-i18n="nav_services">Services</a>
+    <a href="index.html#artisans-section" class="nav-link" data-i18n="nav_artisans">Artisans</a>
+    <a href="index.html#feed-section" class="nav-link" data-i18n="nav_feed">Réalisations</a>
+    <a href="pricing.html" class="nav-link">Tarifs</a>
+    <a href="dashboard-client.html" class="nav-link" data-role="dashboard" data-auth="logged-in">📊 Dashboard</a>
+    <a href="admin.html" class="nav-link" data-role="admin" data-auth="admin">🛡 Admin</a>
+  </nav>
+
+  <div class="nav-actions">
+    <select id="lang-select" class="lang-selector" aria-label="Choisir la langue">
+      <option value="fr">🇫🇷 FR</option>
+      <option value="ar">🇲🇦 AR</option>
+      <option value="en">🇬🇧 EN</option>
+    </select>
+    <button class="notif-btn" aria-label="Notifications" title="Notifications" onclick="window.notifSystem?.togglePanel()">
+      🔔<span class="notif-badge" aria-live="polite"></span>
+    </button>
+    <a href="auth.html" id="login-btn" class="btn-nav btn-nav-outline" data-auth="guest">Connexion</a>
+    <a href="auth.html#signup" id="register-btn" class="btn-nav btn-nav-primary" data-auth="guest">Inscription</a>
+  </div>
+
+  <button class="hamburger" type="button" aria-label="Menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<div class="mobile-nav" aria-hidden="true">
+  <div class="mobile-nav-inner">
+    <a href="index.html" class="nav-link">🏠 Accueil</a>
+    <a href="index.html#services" class="nav-link">🔧 Services</a>
+    <a href="index.html#artisans-section" class="nav-link">👷 Artisans</a>
+    <a href="pricing.html" class="nav-link">💳 Tarifs</a>
+    <a href="dashboard-client.html" class="nav-link" data-role="dashboard" data-auth="logged-in">📊 Dashboard</a>
+    <a href="admin.html" class="nav-link" data-role="admin" data-auth="admin">🛡 Admin</a>
+    <a href="auth.html" class="nav-link" data-auth="guest">🔐 Connexion</a>
+  </div>
+</div>
+
+<main id="main-content" class="seo-shell">
+  <div class="container seo-stack">
+    <section class="seo-hero" aria-labelledby="seo-title">
+      <div class="seo-breadcrumbs">
+        <a href="index.html">Accueil</a>
+        <span>›</span>
+        <a href="index.html#services">Services</a>
+        <span>›</span>
+        <span id="seo-breadcrumb-current">Artisans au Maroc</span>
+      </div>
+
+      <div class="seo-hero-grid">
+        <div class="seo-copy">
+          <span class="seo-kicker" id="seo-kicker">SEO local • Maroc</span>
+          <h1 id="seo-title">Artisans au Maroc</h1>
+          <p class="seo-lead" id="seo-description">Trouvez un artisan vérifié Fixeo par service et par ville avec avis clients, Trust Score et disponibilité.</p>
+          <p class="seo-subtitle" id="seo-subtitle">Artisans vérifiés Fixeo disponibles dans votre ville</p>
+          <div class="seo-actions">
+            <a class="seo-btn-link primary" href="index.html#services">Trouver un artisan</a>
+            <a class="seo-btn-link secondary" href="service-seo.html">Fallback service-seo.html</a>
+          </div>
+        </div>
+
+        <div class="seo-hero-stats">
+          <article class="seo-stat">
+            <strong id="seo-stat-service">Service national</strong>
+            <span>Mapping SEO → catégorie interne Fixeo</span>
+          </article>
+          <article class="seo-stat">
+            <strong id="seo-stat-city">Toutes les villes</strong>
+            <span>Ville ciblée ou version nationale stable</span>
+          </article>
+          <article class="seo-stat">
+            <strong id="seo-stat-count">0 artisans</strong>
+            <span>Tri intelligent Fixeo conservé</span>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="seo-panel" aria-live="polite">
+      <div class="seo-section-heading">Validation</div>
+      <h2>État de la page locale</h2>
+      <div id="seo-validation-note" class="seo-note"></div>
+      <p class="seo-toolbar-copy" id="seo-page-copy">Page SEO dynamique compatible avec le routing actuel et le fallback stable.</p>
+    </section>
+
+    <section id="artisans-section" class="seo-panel" aria-labelledby="seo-results-title">
+      <div class="seo-toolbar">
+        <div>
+          <div class="seo-section-heading">Marketplace locale</div>
+          <h2 id="seo-results-title">Artisans disponibles</h2>
+        </div>
+        <div class="seo-toolbar-copy"><span id="results-count">0 artisan trouvé</span></div>
+      </div>
+      <div id="loading-artisans">Chargement des artisans…</div>
+      <div id="artisans-container" class="artisans-grid results-list seo-artisans-grid" aria-live="polite"></div>
+      <div id="no-artisan" class="seo-empty"></div>
+    </section>
+
+    <section class="seo-panel" aria-labelledby="seo-other-cities-title">
+      <div class="seo-section-heading">Autres villes</div>
+      <h2 id="seo-other-cities-title">Explorer ce service ailleurs au Maroc</h2>
+      <div id="seo-city-links" class="seo-links-grid"></div>
+    </section>
+
+    <section class="seo-panel" aria-labelledby="seo-similar-services-title">
+      <div class="seo-section-heading">Services similaires</div>
+      <h2 id="seo-similar-services-title">Pages locales recommandées</h2>
+      <div id="seo-service-links" class="seo-links-grid"></div>
+    </section>
+  </div>
+</main>
+
+<div class="modal-backdrop"></div>
+<div class="modal" id="artisan-modal" aria-hidden="true"></div>
+<script src="js/fixeo-session-mobile.js"></script>
+<script src="js/fixeo-header-global.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/notifications.js"></script>
+<script src="js/artisan-onboarding-store.js"></script>
+<script src="js/fixeo-artisan-seo-data.js"></script>
+<script src="js/fixeo-public-profile-links.js"></script>
+<script src="js/main.js"></script>
+<script src="js/payment.js"></script>
+<script src="js/reservation.js"></script>
+<script src="js/header-unified.js"></script>
+<script src="js/auth-global.js"></script>
+<script src="js/fixeo-auth-guard.js"></script>
+<script src="js/slot-lock.js"></script>
+<script src="js/cod-payment.js"></script>
+<script src="js/fixeo-service-seo-page.js"></script>
+</body>
+</html>

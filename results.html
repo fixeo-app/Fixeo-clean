@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Fixeo — Artisans disponibles</title>
+  <meta name="description" content="Résultats urgents Fixeo : artisans disponibles selon votre besoin et votre ville." />
+  <link rel="stylesheet" href="css/variables.css" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/homepage-conversion-optimizer.css" />
+  <link rel="stylesheet" href="css/marketplace-premium-patch.css" />
+  <link rel="stylesheet" href="css/seo-landing.css" />
+  <link rel="stylesheet" href="css/artisan-onboarding.css" />
+  <link rel="stylesheet" href="css/fixeo-header-global.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <a class="brand" href="index.html">
+        <span class="brand-badge">🔧</span>
+        <span>Fixeo</span>
+      </a>
+      <nav class="top-nav" aria-label="Navigation principale">
+        <a href="index.html">Accueil</a>
+        <a href="index.html#services">Services</a>
+        <a href="index.html#artisans-section">Artisans</a>
+      </nav>
+      <a class="header-cta" href="index.html#services">Nouvelle demande</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container">
+        <div class="breadcrumbs">
+          <a href="index.html">Accueil</a>
+          <span>›</span>
+          <span>Résultats urgents</span>
+        </div>
+
+        <div class="hero-copy">
+          <span class="kicker">⚡ Demande urgente</span>
+          <h1 id="results-main-title">Artisans disponibles</h1>
+          <p id="results-main-meta">Recherche en cours...</p>
+          <div class="stat-grid">
+            <div class="stat">
+              <strong>Ville</strong>
+              <span id="urgent-city">—</span>
+            </div>
+            <div class="stat">
+              <strong>Votre besoin</strong>
+              <span id="urgent-query">—</span>
+            </div>
+            <div class="stat">
+              <strong>Priorité</strong>
+              <span>Disponibles maintenant · Réponse rapide</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="artisans-section" aria-labelledby="results-main-title">
+      <div class="container results-page-shell">
+        <select id="filter-category" style="display:none" aria-hidden="true"></select>
+        <select id="filter-city" style="display:none" aria-hidden="true"></select>
+        <input type="text" id="search-input" style="display:none" aria-hidden="true" />
+        <select id="filter-availability" style="display:none" aria-hidden="true"></select>
+        <select id="filter-sort" style="display:none" aria-hidden="true"></select>
+
+        <div class="results-header premium-results-header">
+          <div class="results-header-copy">
+            <span class="results-header-kicker">ARTISANS VÉRIFIÉS</span>
+            <h2>Résultats pour votre urgence</h2>
+            <p id="results-context-line">Sélection optimisée selon votre ville et votre besoin.</p>
+          </div>
+          <a class="edit-search-btn" id="edit-results-search-btn" href="index.html#services">Modifier la demande</a>
+        </div>
+
+        <div class="results-layout">
+          <aside class="results-filters" aria-labelledby="results-filters-title">
+            <div class="results-filters-head">
+              <h3 id="results-filters-title">Filtres</h3>
+              <button class="results-reset-btn" id="results-reset-btn" type="button">Réinitialiser</button>
+            </div>
+
+            <div class="results-filter-group">
+              <label for="results-filter-city">Ville</label>
+              <select id="results-filter-city">
+                <option value="">Toutes les villes</option>
+              </select>
+            </div>
+
+            <div class="results-filter-group">
+              <label for="results-filter-availability">Disponibilité</label>
+              <select id="results-filter-availability">
+                <option value="">Toutes</option>
+                <option value="available">Disponible maintenant</option>
+                <option value="busy">Prend des réservations</option>
+              </select>
+            </div>
+
+            <div class="results-filter-group">
+              <label for="results-sort-select">Tri</label>
+              <select id="results-sort-select">
+                <option value="response">Les plus rapides</option>
+                <option value="rating">Les mieux notés</option>
+                <option value="price_asc">Les moins chers</option>
+              </select>
+            </div>
+          </aside>
+
+          <div class="results-main-column">
+            <div class="results-toolbar">
+              <div class="results-toolbar-left">
+                <span id="results-count">0 résultat</span>
+                <span class="results-toolbar-badge" id="other-artisans-count-badge">👷 0 profils</span>
+              </div>
+            </div>
+
+            <div id="other-artisans-banner" class="other-artisans-banner results-trust-strip">
+              <div class="other-artisans-banner-inner">
+                <span class="separator-icon">⚡</span>
+                <div class="separator-text-block">
+                  <span class="separator-title">Priorité aux artisans disponibles maintenant</span>
+                  <span class="separator-subtitle">Classement par disponibilité, rapidité de réponse et note globale</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="artisans-grid results-list" id="artisans-container" aria-live="polite" aria-label="Liste des artisans disponibles"></div>
+            <div id="loading-artisans" aria-live="polite">Chargement des artisans...</div>
+            <div id="no-artisan" style="display:none;" aria-live="polite">
+              <p>Aucun artisan disponible pour cette urgence pour le moment.</p>
+              <p><a id="empty-edit-link" href="index.html#services">Modifier ma demande</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="modal-backdrop"></div>
+  <div class="modal" id="artisan-modal" aria-hidden="true"></div>
+
+    <script src="js/fixeo-session-mobile.js"></script>
+<script src="js/fixeo-header-global.js"></script>
+<script src="js/artisan-onboarding-store.js" defer></script>
+  <script src="js/fixeo-public-profile-links.js" defer></script>
+  <script src="js/main.js" defer></script>
+  <script src="js/urgent-results.js" defer></script>
+<script src="js/fixeo-artisan-request-notifications.js"></script>
+</body>
+</html>

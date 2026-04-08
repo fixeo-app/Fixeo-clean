@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Fixeo — Paiement Annulé</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="css/variables.css"/>
+<link rel="stylesheet" href="css/main.css"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  min-height:100vh;
+  background:var(--bg,#0D0D1A);
+  color:var(--text,#fff);
+  font-family:'Cairo',system-ui,sans-serif;
+  display:flex;align-items:center;justify-content:center;
+  overflow-x:hidden;
+}
+.bg-animated{
+  position:fixed;inset:0;z-index:0;
+  background:radial-gradient(ellipse 70% 60% at 50% 30%,rgba(255,71,87,.08) 0%,transparent 60%);
+  pointer-events:none;
+}
+.cancel-wrapper{
+  position:relative;z-index:1;
+  max-width:500px;width:100%;
+  margin:40px 16px;padding:48px 40px;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:24px;backdrop-filter:blur(20px);
+  text-align:center;
+  box-shadow:0 32px 80px rgba(0,0,0,.5);
+}
+.cancel-icon{font-size:72px;display:block;margin-bottom:24px;}
+.cancel-title{font-size:1.7rem;font-weight:800;color:rgba(255,255,255,.9);margin-bottom:12px;}
+.cancel-msg{font-size:.95rem;color:rgba(255,255,255,.6);line-height:1.6;margin-bottom:32px;}
+.cancel-note{
+  background:rgba(255,71,87,.08);border:1px solid rgba(255,71,87,.25);
+  border-radius:12px;padding:16px 20px;margin-bottom:28px;
+  font-size:.85rem;color:rgba(255,255,255,.7);line-height:1.5;
+}
+.btn-retry{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  width:100%;padding:15px 24px;
+  background:linear-gradient(135deg,#E1306C,#833AB4);
+  color:#fff;font-weight:700;font-size:.95rem;
+  border:none;border-radius:14px;text-decoration:none;
+  cursor:pointer;transition:all .25s ease;margin-bottom:12px;
+}
+.btn-retry:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(225,48,108,.4);}
+.btn-home{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;padding:13px;
+  background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.15);
+  color:rgba(255,255,255,.7);font-weight:600;font-size:.9rem;
+  border-radius:14px;text-decoration:none;transition:all .2s;
+}
+.btn-home:hover{background:rgba(255,255,255,.12);color:#fff;}
+</style>
+</head>
+<body>
+<div class="bg-animated" aria-hidden="true"></div>
+
+<div class="cancel-wrapper">
+  <span class="cancel-icon">⚠️</span>
+  <h1 class="cancel-title">Paiement annulé</h1>
+  <p class="cancel-msg">
+    Vous avez annulé le processus de paiement PayPal.<br>
+    Aucun montant n'a été débité.
+  </p>
+
+  <div class="cancel-note">
+    💡 <strong>Conseil :</strong> Si vous avez rencontré un problème lors du paiement, 
+    vous pouvez réessayer en retournant sur la page de réservation.<br><br>
+    Compte PayPal sandbox test :<br>
+    <strong>Email :</strong> sb-t9zf250014346@personal.example.com<br>
+    <strong>Mot de passe :</strong> disponible dans votre dashboard PayPal Sandbox
+  </div>
+
+  <a href="index.html" class="btn-retry" id="btn-retry">
+    🔄 Retenter le paiement
+  </a>
+  <a href="index.html" class="btn-home">
+    🏠 Retour à l'accueil
+  </a>
+</div>
+
+<script>
+// Log l'annulation pour debug
+console.warn('[Fixeo PayPal] ⚠️ Paiement annulé par l\'utilisateur — page payment-cancel.html');
+// Nettoyer tout ordre en cours dans sessionStorage
+try{
+  const pending = sessionStorage.getItem('fixeo_pending_order');
+  if(pending){
+    console.log('[Fixeo PayPal] Nettoyage ordre pending:', pending);
+    sessionStorage.removeItem('fixeo_pending_order');
+  }
+}catch(e){}
+</script>
+</body>
+</html>

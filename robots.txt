@@ -1,0 +1,13 @@
+User-agent: *
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /dashboard-client
+Disallow: /dashboard-artisan
+Disallow: /auth
+Disallow: /payment-success
+Disallow: /payment-cancel
+Disallow: /confirmation
+Disallow: /demandes
+Disallow: /api/
+
+Sitemap: https://fixeo.ma/sitemap.xml

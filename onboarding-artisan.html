@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Fixeo — Activez votre profil artisan en quelques secondes." />
+  <title>Fixeo — Je suis artisan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/variables.css" />
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/artisan-onboarding.css" />
+  <link rel="stylesheet" href="css/fixeo-header-global.css" />
+</head>
+<body class="artisan-onboarding-page">
+  <main class="artisan-onboarding-shell">
+    <a class="artisan-onboarding-back" href="index.html#home">← Retour à Fixeo</a>
+
+    <section class="artisan-onboarding-card" aria-labelledby="artisan-onboarding-title">
+      <span class="artisan-onboarding-kicker">Je suis artisan</span>
+      <h1 id="artisan-onboarding-title">Activez votre profil artisan</h1>
+      <p>Un formulaire simple, mobile-first, pour apparaître immédiatement dans le marketplace Fixeo.</p>
+
+      <form id="artisan-onboarding-form" class="artisan-onboarding-form" novalidate>
+        <div class="artisan-onboarding-grid">
+          <div class="artisan-onboarding-field" data-field="name">
+            <label for="artisan-name">Nom complet</label>
+            <input id="artisan-name" name="name" type="text" placeholder="Ex. Karim Benali" autocomplete="name" />
+            <div class="artisan-onboarding-error" aria-live="polite"></div>
+          </div>
+
+          <div class="artisan-onboarding-field" data-field="category">
+            <label for="artisan-category">Métier</label>
+            <select id="artisan-category" name="category">
+              <option value="">Choisir un métier</option>
+            </select>
+            <div class="artisan-onboarding-error" aria-live="polite"></div>
+          </div>
+
+          <div class="artisan-onboarding-field" data-field="city">
+            <label for="artisan-city">Ville</label>
+            <select id="artisan-city" name="city">
+              <option value="">Choisir une ville</option>
+            </select>
+            <div class="artisan-onboarding-error" aria-live="polite"></div>
+          </div>
+
+          <div class="artisan-onboarding-field" data-field="phone">
+            <label for="artisan-phone">Téléphone</label>
+            <input id="artisan-phone" name="phone" type="tel" inputmode="tel" placeholder="06 12 34 56 78" autocomplete="tel" />
+            <div class="artisan-onboarding-error" aria-live="polite"></div>
+          </div>
+
+          <div class="artisan-onboarding-field" data-field="description">
+            <label for="artisan-description">Description courte <span class="artisan-onboarding-hint">(optionnel)</span></label>
+            <textarea id="artisan-description" name="description" maxlength="180" placeholder="Spécialités, zone d’intervention, expérience…"></textarea>
+            <div class="artisan-onboarding-error" aria-live="polite"></div>
+          </div>
+        </div>
+
+        <button id="artisan-submit-btn" class="artisan-onboarding-submit" type="submit">Activer mon profil</button>
+        <div class="artisan-onboarding-hint">Badge ajouté automatiquement : nouveau · en ligne · profil en vérification.</div>
+      </form>
+
+      <div id="artisan-onboarding-toast" class="artisan-onboarding-toast" hidden></div>
+
+      <div id="artisan-onboarding-success" class="artisan-onboarding-success" hidden>
+        <div id="artisan-onboarding-success-summary"></div>
+        <div class="artisan-onboarding-actions">
+          <a class="is-primary" href="index.html#artisans-section">Voir mon profil dans le marketplace</a>
+          <a class="is-secondary" href="results.html">Tester la recherche Fixeo</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+    <script src="js/fixeo-session-mobile.js"></script>
+<script src="js/fixeo-header-global.js"></script>
+<script src="js/artisan-onboarding-store.js"></script>
+  <script src="js/artisan-onboarding.js"></script>
+<script src="js/fixeo-artisan-request-notifications.js"></script>
+</body>
+</html>

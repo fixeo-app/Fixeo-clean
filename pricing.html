@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Fixeo — Tarifs &amp; Abonnements</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="css/variables.css"/>
+<link rel="stylesheet" href="css/main.css"/>
+<link rel="stylesheet" href="css/style.css"/>
+<link rel="stylesheet" href="css/v3_ultra_stable.css"/>
+<link rel="stylesheet" href="css/ui_fixes.css"/>
+<link rel="stylesheet" href="css/fixeo_v5_fixes.css"/>
+<link rel="stylesheet" href="css/pricing.css"/>
+<link rel="stylesheet" href="css/payment.css"/>
+<link rel="stylesheet" href="css/reservation.css">
+<link rel="stylesheet" href="css/header-unified.css"/>
+<link rel="stylesheet" href="css/fixeo-header-global.css"/>
+<link rel="stylesheet" href="css/auth-global.css"/>
+  <link rel="stylesheet" href="css/slot-lock.css">
+</head>
+<body>
+<div class="bg-animated"></div>
+<div class="modal-backdrop" id="main-backdrop"></div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     FIXEO V10 — HEADER UNIFIÉ (centralisé)
+     Règles de visibilité :
+       data-auth="guest"      → visible si NON connecté (défaut)
+       data-auth="logged-in"  → visible si connecté  (body.is-logged-in)
+       data-auth="admin"      → visible si admin      (body.is-admin)
+     JS : js/header-unified.js gère tout automatiquement.
+════════════════════════════════════════════════════════════════════ -->
+<a href="#main-content" class="skip-link">Aller au contenu</a>
+
+<nav class="navbar" role="navigation" aria-label="Navigation principale">
+
+  <!-- ── Logo ── -->
+  <a href="index.html" class="navbar-brand logo-wrap" aria-label="Fixeo — Accueil">
+    <div class="logo-icon">🔧</div>
+    <span class="logo-text">Fixeo</span>
+  </a>
+
+  <!-- ── Menu principal desktop ── -->
+  <nav class="navbar-nav" aria-label="Menu principal">
+    <a href="index.html"             class="nav-link" data-i18n="nav_home">Accueil</a>
+
+    <!-- Services avec dropdown -->
+    <div class="nav-has-dropdown">
+      <a href="index.html#services" class="nav-link" data-i18n="nav_services">
+        Services <span class="nav-arrow">▾</span>
+      </a>
+      <div class="nav-dropdown" role="menu" aria-label="Sous-menu Services">
+        <a href="index.html#services"        class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🔧</span>Tous les services</a>
+        <a href="index.html#services?cat=plomberie"   class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🚿</span>Plomberie</a>
+        <a href="index.html#services?cat=electricite" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">⚡</span>Électricité</a>
+        <a href="index.html#services?cat=peinture"    class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🎨</span>Peinture</a>
+        <a href="index.html#services?cat=nettoyage"   class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🧹</span>Nettoyage</a>
+        <a href="index.html#services?cat=jardinage"   class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🌿</span>Jardinage</a>
+        <a href="index.html#services?cat=demenagement" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🚛</span>Déménagement</a>
+      </div>
+    </div>
+
+    <!-- Artisans avec dropdown -->
+    <div class="nav-has-dropdown">
+      <a href="index.html#artisans-section" class="nav-link" data-i18n="nav_artisans">
+        Artisans <span class="nav-arrow">▾</span>
+      </a>
+      <div class="nav-dropdown" role="menu" aria-label="Sous-menu Artisans">
+        <a href="index.html#artisans-section" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">👷</span>Tous les artisans</a>
+        <a href="artisan.html"                class="nav-dropdown-item" role="menuitem"><span class="dd-icon">⭐</span>Profil artisan</a>
+        <div class="nav-dropdown-divider"></div>
+        <a href="index.html#artisans-section?filter=available" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🟢</span>Disponibles maintenant</a>
+        <a href="index.html#artisans-section?filter=top" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🏆</span>Top notés</a>
+      </div>
+    </div>
+
+    <a href="index.html#feed-section" class="nav-link" data-i18n="nav_feed">Réalisations</a>
+    <a href="pricing.html"            class="nav-link">Tarifs</a>
+
+    <!-- Dashboard — visible uniquement si connecté -->
+    <a href="dashboard-client.html"
+       class="nav-link"
+       data-role="dashboard"
+       data-auth="logged-in"
+       data-i18n="nav_dashboard">📊 Dashboard</a>
+
+    <!-- Admin — visible uniquement si admin -->
+    <a href="admin.html"
+       class="nav-link"
+       data-role="admin"
+       data-auth="admin">🛡 Admin</a>
+  </nav>
+
+  <!-- ── Actions à droite ── -->
+  <div class="nav-actions">
+
+    <!-- Recherche rapide -->
+    <button class="btn-quick-search"
+            onclick="window.QuickSearchModal && QuickSearchModal.open()"
+            aria-label="Recherche rapide (touche /)"
+            title="Recherche rapide [ / ]">
+      <span class="bqs-icon">🔍</span>
+      <span class="bqs-text">Recherche rapide</span>
+    </button>
+
+    <!-- Sélecteur de langue -->
+    <select id="lang-select" class="lang-selector" aria-label="Choisir la langue">
+      <option value="fr">🇫🇷 FR</option>
+      <option value="ar">🇲🇦 AR</option>
+      <option value="en">🇬🇧 EN</option>
+    </select>
+
+    <!-- Notifications -->
+    <button class="notif-btn"
+            aria-label="Notifications"
+            title="Notifications"
+            onclick="window.notifSystem?.togglePanel()">
+      🔔<span class="notif-badge" aria-live="polite"></span>
+    </button>
+
+    <!-- Invité : Connexion / Inscription -->
+    <a href="auth.html" id="login-btn" class="btn-nav btn-nav-outline" data-auth="guest" data-i18n="nav_login">Connexion</a>
+    <a href="auth.html#signup" id="register-btn" class="btn-nav btn-nav-primary" data-auth="guest" data-i18n="nav_signup">Inscription</a>
+
+    <!-- Connecté : chip utilisateur avec dropdown -->
+    <div class="nav-has-dropdown" data-auth="logged-in" style="display:none">
+      <div class="nav-user-chip" tabindex="0" aria-haspopup="true" aria-label="Mon compte">
+        <div class="nav-user-avatar" id="global-avatar">U</div>
+        <span class="nav-user-name" id="global-username">Mon Compte</span>
+        <span class="nav-arrow" style="font-size:0.6rem;opacity:0.6">▾</span>
+      </div>
+      <div class="nav-dropdown" role="menu" aria-label="Menu utilisateur" style="min-width:200px;right:0;left:auto;transform:translateX(0) translateY(-8px)">
+        <!-- Compte connecté affichage -->
+        <div id="user-info" style="padding:10px 14px 8px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:4px"></div>
+        <a href="dashboard-client.html" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">📊</span>Mon Dashboard</a>
+        <a href="dashboard-artisan.html" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">👷</span>Espace Artisan</a>
+        <div class="nav-dropdown-divider"></div>
+        <a href="#" id="logout-btn" class="nav-dropdown-item" role="menuitem" onclick="window.fixeoLogout && fixeoLogout(); return false;"><span class="dd-icon">🚪</span>Déconnexion</a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── Hamburger mobile ── -->
+  <button class="hamburger" aria-label="Ouvrir le menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     MOBILE NAV DRAWER
+════════════════════════════════════════════════════════════════════ -->
+<div class="mobile-nav" role="navigation" aria-label="Menu mobile">
+
+  <a href="index.html"              class="nav-link" data-i18n="nav_home">🏠 Accueil</a>
+  <a href="index.html#services"     class="nav-link" data-i18n="nav_services">🔧 Services</a>
+  <a href="index.html#artisans-section" class="nav-link" data-i18n="nav_artisans">👷 Artisans</a>
+  <a href="index.html#feed-section" class="nav-link" data-i18n="nav_feed">🖼 Réalisations</a>
+  <a href="pricing.html"            class="nav-link">💎 Tarifs</a>
+
+  <!-- Dashboard mobile — connectés uniquement -->
+  <a href="dashboard-client.html"
+     class="nav-link"
+     data-role="dashboard"
+     data-auth="logged-in">📊 Dashboard</a>
+
+  <!-- Admin mobile — admins uniquement -->
+  <a href="admin.html"
+     class="nav-link"
+     data-role="admin"
+     data-auth="admin">🛡 Admin</a>
+
+  <div class="mobile-nav-divider"></div>
+
+  <!-- Recherche rapide mobile -->
+  <button class="btn-quick-search"
+          onclick="window.QuickSearchModal && QuickSearchModal.open()"
+          aria-label="Recherche rapide">
+    <span class="bqs-icon">🔍</span>
+    <span class="bqs-text">Recherche rapide</span>
+  </button>
+
+  <!-- Auth buttons mobile -->
+  <div class="mobile-nav-auth" data-auth="guest">
+    <a href="auth.html"        class="btn-nav btn-nav-outline" data-i18n="nav_login">Connexion</a>
+    <a href="auth.html#signup" class="btn-nav btn-nav-primary" data-i18n="nav_signup">Inscription</a>
+  </div>
+
+  <!-- Déconnexion mobile (connectés) -->
+  <a href="#" class="nav-link" data-auth="logged-in"
+     onclick="window.fixeoLogout && fixeoLogout(); return false;">🚪 Déconnexion</a>
+
+</div>
+
+<div class="nav-actions">
+    <select id="lang-select" class="lang-selector">
+      <option value="fr">🇫🇷 FR</option>
+      <option value="ar">🇲🇦 AR</option>
+      <option value="en">🇬🇧 EN</option>
+    </select>
+    <button class="notif-btn" onclick="window.notifSystem?.togglePanel()">🔔<span class="notif-badge"></span></button>
+    <a href="auth.html" class="btn-nav btn-nav-outline">Connexion</a>
+    <a href="auth.html#signup" class="btn-nav btn-nav-primary">Inscription</a>
+  </div>
+  <button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
+<!-- HERO PRICING -->
+<section class="pricing-hero">
+  <div class="pricing-hero-inner">
+    <span class="section-tag">ABONNEMENTS ARTISANS</span>
+    <h1>Choisissez votre <span class="text-gradient">Plan</span></h1>
+    <p>Développez votre activité avec Fixeo. Commencez gratuitement, montez en puissance quand vous êtes prêt.</p>
+    <div class="billing-toggle">
+      <span id="toggle-monthly" class="billing-label active" onclick="setBilling('monthly')">Mensuel</span>
+      <div class="toggle-switch-wrap" onclick="toggleBilling()">
+        <div class="toggle-pill" id="toggle-pill"></div>
+      </div>
+      <span id="toggle-annual" class="billing-label" onclick="setBilling('annual')">Annuel <span class="save-badge">-20%</span></span>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING CARDS -->
+<section class="section" style="padding-top:0">
+  <div class="container">
+    <div class="pricing-grid">
+
+      <!-- FREE -->
+      <div class="pricing-card" data-plan="free">
+        <div class="plan-header">
+          <div class="plan-icon">🆓</div>
+          <h3 class="plan-name">Free</h3>
+          <div class="plan-price">
+            <span class="price-amount">0</span>
+            <span class="price-currency">MAD</span>
+            <span class="price-period">/mois</span>
+          </div>
+          <p class="plan-desc">Idéal pour démarrer et tester la plateforme.</p>
+        </div>
+        <ul class="plan-features">
+          <li class="feat-ok"><span class="feat-icon">✅</span> Profil public de base</li>
+          <li class="feat-ok"><span class="feat-icon">✅</span> 3 demandes/mois</li>
+          <li class="feat-ok"><span class="feat-icon">✅</span> 1 photo de portfolio</li>
+          <li class="feat-ok"><span class="feat-icon">✅</span> Avis clients visibles</li>
+          <li class="feat-ok"><span class="feat-icon">✅</span> Accès app mobile</li>
+          <li class="feat-no"><span class="feat-icon">❌</span> Badge vérifié</li>
+          <li class="feat-no"><span class="feat-icon">❌</span> Mise en avant dans les résultats</li>
+          <li class="feat-no"><span class="feat-icon">❌</span> Statistiques avancées</li>
+          <li class="feat-no"><span class="feat-icon">❌</span> Support prioritaire</li>
+          <li class="feat-no"><span class="feat-icon">❌</span> Portfolio illimité</li>
+        </ul>
+        <button class="btn btn-secondary btn-lg w-100 plan-btn" onclick="selectPlan('free')">Commencer gratuitement</button>
+      </div>
+
+      <!-- PRO -->
+      <div class="pricing-card popular" data-plan="pro">
+        <div class="popular-badge">⭐ LE PLUS POPULAIRE</div>
+        <div class="plan-header">
+          <div class="plan-icon">🚀</div>
+          <h3 class="plan-name">Pro</h3>
+          <div class="plan-price">
+            <span class="price-amount" data-monthly="99" data-annual="79">99</span>
+            <span class="price-currency">MAD</span>
+            <span class="price-period">/mois</span>
+          </div>
+          <p class="plan-desc">Pour les artisans actifs qui veulent se démarquer.</p>
+        </div>
+        <ul class="plan-features">
+          <li class="feat-ok"><span class="feat-icon">✅</span> Tout du plan Free</li>
+          <li class="feat-ok"><span class="feat-icon">✅</span> Demandes illimitées</li>
+          <li class="feat-ok"><span class="feat-icon">✅</span> <strong>Badge "Pro Vérifié" 🏅</strong></li>
+          <li class="feat-ok"><span class="feat-icon">✅</span> 10 photos de portfolio</li>
+          <li class="feat-ok"><span class="feat-icon">✅</span> Mise en avant dans les résultats</li>
+          <li class="feat-ok"><span class="feat-icon">✅</span> Statistiques avancées</li>
+          <li class="feat-ok"><span class="feat-icon">✅</span> Réponse automatique aux demandes</li>
+          <li class="feat-ok"><span class="feat-icon">✅</span> Support prioritaire (24h)</li>
+          <li class="feat-ok"><span class="feat-icon">✅</span> Accès aux missions urgentes</li>
+          <li class="feat-no"><span class="feat-icon">❌</span> Profil Premium en tête de liste</li>
+        </ul>
+        <button class="btn btn-primary btn-lg w-100 plan-btn" onclick="selectPlan('pro')">
+          <span>🚀 Passer au Pro</span>
+        </button>
+      </div>
+
+      <!-- PREMIUM -->
+      <div class="pricing-card premium-card" data-plan="premium">
+        <div class="premium-glow"></div>
+        <div class="plan-header">
+          <div class="plan-icon">👑</div>
+          <h3 class="plan-name">Premium</h3>
+          <div class="plan-price">
+            <span class="price-amount" data-monthly="199" data-annual="159">199</span>
+            <span class="price-currency">MAD</span>
+            <span class="price-period">/mois</span>
+          </div>
+          <p class="plan-desc">Pour les pros qui veulent dominer leur marché local.</p>
+        </div>
+        <ul class="plan-features">
+          <li class="feat-ok"><span class="feat-icon">✅</span> Tout du plan Pro</li>
+          <li class="feat-ok"><span class="feat-icon">✅</span> <strong>Badge "Premium Elite" 👑</strong></li>
+          <li class="feat-ok"><span class="feat-icon">✅</span> Photos & vidéos illimitées</li>
+          <li class="feat-ok"><span class="feat-icon">✅</span> <strong>1ère position dans les résultats</strong></li>
+          <li class="feat-ok"><span class="feat-icon">✅</span> Profil boosté × 5 visibilité</li>
+          <li class="feat-ok"><span class="feat-icon">✅</span> Tableau de bord IA avancé</li>
+          <li class="feat-ok"><span class="feat-icon">✅</span> Devis automatiques IA</li>
+          <li class="feat-ok"><span class="feat-icon">✅</span> Support VIP (2h max)</li>
+          <li class="feat-ok"><span class="feat-icon">✅</span> Rapport mensuel de performance</li>
+          <li class="feat-ok"><span class="feat-icon">✅</span> Accès beta aux nouvelles fonctionnalités</li>
+        </ul>
+        <button class="btn btn-premium btn-lg w-100 plan-btn" onclick="selectPlan('premium')">
+          <span>👑 Passer au Premium</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- COMPARISON TABLE -->
+    <div class="comparison-wrap">
+      <h2 style="text-align:center;margin-bottom:8px">Comparaison <span class="text-gradient">détaillée</span></h2>
+      <p style="text-align:center;color:var(--text-muted);margin-bottom:32px;font-size:.9rem">Toutes les fonctionnalités en un coup d'œil</p>
+      <div class="comparison-table-wrap">
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th>Fonctionnalité</th>
+              <th><span class="th-badge free">Free</span></th>
+              <th><span class="th-badge pro">Pro 🏅</span></th>
+              <th><span class="th-badge premium">Premium 👑</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="feat-name">Profil public</td><td>Basique</td><td>Enrichi</td><td>Premium boosté</td></tr>
+            <tr><td class="feat-name">Demandes/mois</td><td>3</td><td>Illimitées</td><td>Illimitées</td></tr>
+            <tr><td class="feat-name">Photos portfolio</td><td>1</td><td>10</td><td>Illimitées</td></tr>
+            <tr><td class="feat-name">Vidéos portfolio</td><td>❌</td><td>❌</td><td>✅</td></tr>
+            <tr><td class="feat-name">Badge vérifié</td><td>❌</td><td>🏅 Pro</td><td>👑 Premium</td></tr>
+            <tr><td class="feat-name">Position dans résultats</td><td>Standard</td><td>En avant</td><td>1ère position</td></tr>
+            <tr><td class="feat-name">Statistiques</td><td>Basiques</td><td>Avancées</td><td>IA + rapports</td></tr>
+            <tr><td class="feat-name">Support</td><td>Email 72h</td><td>Prioritaire 24h</td><td>VIP 2h</td></tr>
+            <tr><td class="feat-name">Missions urgentes</td><td>❌</td><td>✅</td><td>✅ prioritaire</td></tr>
+            <tr><td class="feat-name">Devis automatiques</td><td>❌</td><td>❌</td><td>✅ IA</td></tr>
+            <tr><td class="feat-name">Rapport mensuel</td><td>❌</td><td>❌</td><td>✅</td></tr>
+            <tr><td class="feat-name">Accès beta</td><td>❌</td><td>❌</td><td>✅</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- FAQ -->
+    <div class="faq-section">
+      <h2 style="text-align:center;margin-bottom:32px">Questions <span class="text-gradient">fréquentes</span></h2>
+      <div class="faq-grid">
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">
+            <span>Puis-je changer de plan à tout moment ?</span>
+            <span class="faq-arrow">▼</span>
+          </div>
+          <div class="faq-a">Oui, vous pouvez upgrader ou downgrader votre plan à tout moment. Le changement prend effet immédiatement, avec un ajustement au prorata.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">
+            <span>Quels moyens de paiement acceptez-vous ?</span>
+            <span class="faq-arrow">▼</span>
+          </div>
+          <div class="faq-a">Nous acceptons Stripe (cartes internationales), PayPal, et CMI (cartes bancaires marocaines Visa/Mastercard). Tous les paiements sont sécurisés et chiffrés.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">
+            <span>Y a-t-il un engagement minimum ?</span>
+            <span class="faq-arrow">▼</span>
+          </div>
+          <div class="faq-a">Non, les plans sont sans engagement. Vous pouvez annuler à tout moment depuis votre dashboard. L'annulation prend effet à la fin de la période de facturation.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">
+            <span>Le plan Free est-il vraiment gratuit ?</span>
+            <span class="faq-arrow">▼</span>
+          </div>
+          <div class="faq-a">Oui, le plan Free est 100% gratuit et sans carte bancaire requise. Il est conçu pour vous permettre de découvrir la plateforme avant de vous engager.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">
+            <span>Comment fonctionne la facturation annuelle ?</span>
+            <span class="faq-arrow">▼</span>
+          </div>
+          <div class="faq-a">La facturation annuelle vous permet d'économiser 20% sur le prix mensuel. Vous êtes facturé une fois par an et recevez une facture PDF par email.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">
+            <span>Puis-je obtenir un remboursement ?</span>
+            <span class="faq-arrow">▼</span>
+          </div>
+          <div class="faq-a">Nous proposons une garantie de remboursement de 14 jours sans questions posées pour les nouveaux abonnements Pro et Premium.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- PAYMENT MODAL -->
+<div class="modal" id="payment-modal" role="dialog" aria-modal="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-header">
+      <h3 id="payment-modal-title">💳 Paiement sécurisé</h3>
+      <button class="modal-close" onclick="closePaymentModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <!-- Plan summary -->
+      <div class="payment-plan-summary" id="payment-plan-summary"></div>
+
+      <!-- Payment method tabs -->
+      <div class="payment-methods">
+        <div class="payment-tabs">
+          <button class="pay-tab active" onclick="switchPayMethod('stripe', this)">
+            <span>💳</span> Carte bancaire
+          </button>
+          <button class="pay-tab" onclick="switchPayMethod('cmi', this)">
+            <span>🇲🇦</span> CMI (Maroc)
+          </button>
+        </div>
+
+        <!-- STRIPE FORM -->
+        <div id="pay-stripe" class="pay-form active">
+          <div class="secure-badge">🔒 Paiement sécurisé via Stripe • SSL 256-bit</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Nom sur la carte</label>
+              <input type="text" id="stripe-name" placeholder="Mohamed Alami" autocomplete="cc-name"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Numéro de carte</label>
+            <div class="card-input-wrap">
+              <input type="text" id="stripe-card" placeholder="1234 5678 9012 3456" maxlength="19" autocomplete="cc-number" oninput="formatCardNumber(this)"/>
+              <div class="card-type-icons">
+                <span id="card-brand-icon">💳</span>
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Date d'expiration</label>
+              <input type="text" id="stripe-expiry" placeholder="MM/AA" maxlength="5" oninput="formatExpiry(this)" autocomplete="cc-exp"/>
+            </div>
+            <div class="form-group">
+              <label>CVV</label>
+              <input type="text" id="stripe-cvv" placeholder="123" maxlength="4" autocomplete="cc-csc"/>
+            </div>
+          </div>
+          <button class="btn btn-primary btn-lg w-100" onclick="processPayment('stripe')" id="stripe-pay-btn">
+            🔒 Payer maintenant
+          </button>
+        </div>
+
+        <!-- CMI FORM -->
+        <div id="pay-cmi" class="pay-form" style="display:none">
+          <div class="secure-badge">🔒 Paiement sécurisé via CMI (Centre Monétique Interbancaire)</div>
+          <div class="cmi-info">
+            <div class="cmi-badges">
+              <span class="cmi-badge">VISA</span>
+              <span class="cmi-badge">Mastercard</span>
+              <span class="cmi-badge">CIH</span>
+              <span class="cmi-badge">Attijariwafa</span>
+              <span class="cmi-badge">BMCE</span>
+            </div>
+            <p>Paiement par carte bancaire marocaine via le réseau CMI sécurisé.</p>
+          </div>
+          <div class="form-group">
+            <label>Numéro de carte CMI</label>
+            <input type="text" id="cmi-card" placeholder="1234 5678 9012 3456" maxlength="19" oninput="formatCardNumber(this)"/>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Date d'expiration</label>
+              <input type="text" id="cmi-expiry" placeholder="MM/AA" maxlength="5" oninput="formatExpiry(this)"/>
+            </div>
+            <div class="form-group">
+              <label>Code de sécurité</label>
+              <input type="text" id="cmi-cvv" placeholder="123" maxlength="4"/>
+            </div>
+          </div>
+          <button class="btn btn-primary btn-lg w-100" onclick="processPayment('cmi')">
+            🔒 Payer via CMI
+          </button>
+        </div>
+      </div>
+
+      <!-- Error / Success messages -->
+      <div id="payment-msg" class="payment-message" style="display:none"></div>
+    </div>
+  </div>
+</div>
+
+<!-- SUCCESS MODAL -->
+<div class="modal" id="success-modal" role="dialog" aria-modal="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-body" style="text-align:center;padding:40px 32px">
+      <div class="success-animation">✅</div>
+      <h2 style="margin:16px 0 8px">Paiement confirmé !</h2>
+      <p style="color:var(--text-muted);margin-bottom:8px" id="success-plan-msg"></p>
+      <p style="font-size:.82rem;color:var(--text-muted)">Une confirmation a été envoyée à votre email.</p>
+      <div class="success-confetti" id="success-confetti"></div>
+      <a href="dashboard-artisan.html" class="btn btn-primary btn-lg" style="margin-top:24px">
+        🚀 Accéder au Dashboard
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-content">
+      <div class="footer-brand">
+        <div class="logo-wrap" style="margin-bottom:12px">
+          <div class="logo-icon">🔧</div>
+          <span class="logo-text">Fixeo</span>
+        </div>
+        <p style="color:var(--text-muted);font-size:.85rem">La marketplace des artisans au Maroc.</p>
+      </div>
+      <div class="footer-links">
+        <a href="index.html">Accueil</a>
+        <a href="pricing.html">Tarifs</a>
+        <a href="dashboard-artisan.html">Dashboard Artisan</a>
+        <a href="auth.html">Connexion</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 Fixeo — Tous droits réservés</p>
+    </div>
+  </div>
+</footer>
+
+<script src="js/fixeo-session-mobile.js"></script>
+<script src="js/fixeo-header-global.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/notifications.js"></script>
+<script src="js/reservation.js"></script>
+  <script src="js/slot-lock.js"></script>
+<script src="js/payment.js"></script>
+<script src="js/pricing.js"></script>
+<script src="js/fixeo_v5_fixes.js"></script>
+<script src="js/header-unified.js"></script>
+<script src="js/auth-global.js"></script>
+<script src="js/fixeo-artisan-request-notifications.js"></script>
+</body>
+</html>

@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Fixeo — Paiement Confirmé ✅</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="css/variables.css"/>
+<link rel="stylesheet" href="css/main.css"/>
+<style>
+/* ══════════════════════════════════════════════════
+   PAYMENT SUCCESS PAGE — FIXEO V14
+══════════════════════════════════════════════════ */
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  min-height:100vh;
+  background:var(--bg,#0D0D1A);
+  color:var(--text,#fff);
+  font-family:'Cairo',system-ui,sans-serif;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow-x:hidden;
+}
+.bg-animated{
+  position:fixed;inset:0;z-index:0;
+  background:radial-gradient(ellipse 80% 60% at 20% 20%,rgba(225,48,108,.12) 0%,transparent 60%),
+             radial-gradient(ellipse 60% 50% at 80% 80%,rgba(131,58,180,.10) 0%,transparent 60%);
+  pointer-events:none;
+}
+.success-wrapper{
+  position:relative;z-index:1;
+  max-width:560px;width:100%;
+  margin:40px 16px;
+  padding:48px 40px;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:24px;
+  backdrop-filter:blur(20px);
+  text-align:center;
+  box-shadow:0 32px 80px rgba(0,0,0,.5);
+}
+.success-icon{
+  font-size:80px;
+  display:block;
+  margin-bottom:24px;
+  animation:popIn .5s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes popIn{
+  from{transform:scale(0) rotate(-15deg);opacity:0}
+  to{transform:scale(1) rotate(0);opacity:1}
+}
+.success-title{
+  font-size:2rem;font-weight:800;
+  background:linear-gradient(135deg,#20C997,#00D2FF);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  margin-bottom:12px;
+}
+.success-msg{
+  font-size:1rem;color:rgba(255,255,255,.7);
+  line-height:1.6;margin-bottom:28px;
+}
+.success-card{
+  background:rgba(32,201,151,.08);
+  border:1px solid rgba(32,201,151,.25);
+  border-radius:16px;
+  padding:20px 24px;
+  margin-bottom:28px;
+  text-align:left;
+}
+.success-card-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:8px 0;
+  border-bottom:1px solid rgba(255,255,255,.06);
+  font-size:.9rem;
+}
+.success-card-row:last-child{border-bottom:none}
+.success-card-row .label{color:rgba(255,255,255,.55)}
+.success-card-row .value{color:#fff;font-weight:600}
+.success-card-row .value.green{color:#20C997}
+.txn-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:8px;padding:8px 14px;
+  font-size:.78rem;font-family:monospace;
+  color:rgba(255,255,255,.7);
+  margin-bottom:28px;word-break:break-all;
+}
+.btn-dashboard{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  width:100%;padding:16px 24px;
+  background:linear-gradient(135deg,#E1306C,#833AB4);
+  color:#fff;font-weight:700;font-size:1rem;
+  border:none;border-radius:14px;
+  text-decoration:none;cursor:pointer;
+  transition:all .25s ease;
+  margin-bottom:12px;
+}
+.btn-dashboard:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 30px rgba(225,48,108,.4);
+}
+.btn-home{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;padding:13px 24px;
+  background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.15);
+  color:rgba(255,255,255,.75);font-weight:600;font-size:.9rem;
+  border-radius:14px;text-decoration:none;
+  transition:all .2s ease;
+}
+.btn-home:hover{background:rgba(255,255,255,.12);color:#fff}
+.confetti-container{
+  position:absolute;inset:0;border-radius:24px;overflow:hidden;pointer-events:none;
+}
+@keyframes confettiFall{
+  0%{transform:translateY(0) rotate(0deg);opacity:1}
+  80%{opacity:.8}
+  100%{transform:translateY(320px) rotate(720deg);opacity:0}
+}
+.pp-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(0,112,186,.15);
+  border:1px solid rgba(0,112,186,.3);
+  border-radius:8px;padding:6px 12px;
+  font-size:.78rem;color:#009cde;
+  margin-bottom:20px;
+}
+</style>
+</head>
+<body>
+<div class="bg-animated" aria-hidden="true"></div>
+
+<div class="success-wrapper" id="success-wrapper">
+  <div class="confetti-container" id="confetti-container"></div>
+
+  <span class="success-icon" id="success-icon">✅</span>
+  <h1 class="success-title" id="success-title">Paiement confirmé !</h1>
+  <p class="success-msg" id="success-msg">
+    Votre paiement PayPal Sandbox a été validé avec succès.<br>
+    Votre réservation est maintenant confirmée et le créneau est verrouillé.
+  </p>
+
+  <div class="pp-badge">
+    🅿️ PayPal Sandbox · Paiement sécurisé · SSL 256-bit
+  </div>
+
+  <div class="success-card" id="success-card">
+    <div class="success-card-row">
+      <span class="label">Statut</span>
+      <span class="value green" id="card-status">✅ COMPLETED</span>
+    </div>
+    <div class="success-card-row">
+      <span class="label">Référence</span>
+      <span class="value" id="card-ref">—</span>
+    </div>
+    <div class="success-card-row">
+      <span class="label">Transaction ID</span>
+      <span class="value" id="card-txn">—</span>
+    </div>
+    <div class="success-card-row">
+      <span class="label">Montant</span>
+      <span class="value green" id="card-amount">—</span>
+    </div>
+    <div class="success-card-row" id="card-artisan-row" style="display:none">
+      <span class="label">Artisan</span>
+      <span class="value" id="card-artisan">—</span>
+    </div>
+    <div class="success-card-row" id="card-service-row" style="display:none">
+      <span class="label">Service</span>
+      <span class="value" id="card-service">—</span>
+    </div>
+    <div class="success-card-row" id="card-date-row" style="display:none">
+      <span class="label">Date</span>
+      <span class="value" id="card-date">—</span>
+    </div>
+  </div>
+
+  <a href="dashboard-client.html" class="btn-dashboard" id="btn-dashboard">
+    📊 Voir mon tableau de bord
+  </a>
+  <a href="index.html" class="btn-home">
+    🏠 Retour à l'accueil
+  </a>
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  /* ── Lire les données du paiement dans localStorage ── */
+  function getLastPayment(){
+    try{
+      const history = JSON.parse(localStorage.getItem('fixeo_payment_history')||'[]');
+      return history[0] || null;
+    }catch(e){return null;}
+  }
+
+  function getURLParam(name){
+    return new URLSearchParams(window.location.search).get(name);
+  }
+
+  /* ── Mettre à jour la card ── */
+  function updateCard(pay){
+    if(!pay) return;
+
+    const ref = pay.bookingRef || pay.id || '—';
+    const txn = pay.id || pay.txnId || '—';
+    const amount = pay.amount ? pay.amount + ' MAD' : '—';
+    const artisan = pay.artisan || '';
+    const service = pay.service || '';
+    const date    = pay.date   || '';
+
+    document.getElementById('card-ref').textContent    = ref;
+    document.getElementById('card-txn').textContent    = txn.length > 20 ? txn.substring(0,20)+'…' : txn;
+    document.getElementById('card-amount').textContent = amount;
+
+    if(artisan){
+      document.getElementById('card-artisan').textContent = artisan;
+      document.getElementById('card-artisan-row').style.display='flex';
+    }
+    if(service){
+      document.getElementById('card-service').textContent = service;
+      document.getElementById('card-service-row').style.display='flex';
+    }
+    if(date){
+      document.getElementById('card-date').textContent = date;
+      document.getElementById('card-date-row').style.display='flex';
+    }
+  }
+
+  /* ── Confetti ── */
+  function launchConfetti(){
+    const c = document.getElementById('confetti-container');
+    if(!c) return;
+    const colors=['#E1306C','#833AB4','#405DE6','#20C997','#FCA337','#FD1D1D','#FCAF45'];
+    const shapes=['50%','0%','2px'];
+    for(let i=0;i<55;i++){
+      const p=document.createElement('div');
+      const size=5+Math.random()*10;
+      p.style.cssText=`
+        position:absolute;
+        width:${size}px;height:${size}px;
+        background:${colors[Math.floor(Math.random()*colors.length)]};
+        border-radius:${shapes[Math.floor(Math.random()*shapes.length)]};
+        left:${Math.random()*100}%;top:-10px;
+        animation:confettiFall ${1.5+Math.random()*2.5}s ${Math.random()*0.8}s ease-in forwards;
+      `;
+      c.appendChild(p);
+    }
+  }
+
+  /* ── Mettre à jour le slot lock si data disponible ── */
+  function ensureSlotLock(pay){
+    if(!pay) return;
+    if(window.FixeoSlotLock && typeof window.FixeoSlotLock.onReservationCreated==='function'){
+      window.FixeoSlotLock.onReservationCreated({
+        artisanId  : pay.artisanId,
+        artisanName: pay.artisan,
+        service    : pay.service,
+        date       : pay.date,
+        timeSlot   : pay.timeSlot,
+        paid       : true
+      });
+    }
+  }
+
+  /* ── Auto-redirect vers dashboard après 8s ── */
+  function startRedirectTimer(){
+    let remaining = 8;
+    const btn = document.getElementById('btn-dashboard');
+    if(!btn) return;
+    const baseText = '📊 Voir mon tableau de bord';
+    const timer = setInterval(function(){
+      remaining--;
+      if(remaining <= 0){
+        clearInterval(timer);
+        window.location.href = 'dashboard-client.html';
+      } else {
+        btn.textContent = `📊 Tableau de bord (${remaining}s)`;
+      }
+    },1000);
+    btn.textContent = `📊 Tableau de bord (${remaining}s)`;
+    btn.addEventListener('click', function(){clearInterval(timer);});
+  }
+
+  /* ── Init ── */
+  document.addEventListener('DOMContentLoaded', function(){
+    const pay = getLastPayment();
+    updateCard(pay);
+    ensureSlotLock(pay);
+    launchConfetti();
+    startRedirectTimer();
+
+    // Log pour debug
+    console.log('[Fixeo PayPal] ✅ Page succès chargée');
+    if(pay) console.log('[Fixeo PayPal] Dernier paiement:', JSON.stringify(pay));
+  });
+})();
+</script>
+</body>
+</html>
