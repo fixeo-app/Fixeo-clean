@@ -1,0 +1,596 @@
+(function (window, document) {
+  'use strict';
+
+  function ready(fn) {
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fn);
+    else fn();
+  }
+
+  function notify(type, title, message) {
+    try {
+      if (window.notifications && typeof window.notifications[type] === 'function') {
+        window.notifications[type](title, message || '');
+        return;
+      }
+    } catch (error) {}
+    if (type === 'error') alert(title + (message ? '\n\n' + message : ''));
+  }
+
+  function escapeHtml(value) {
+    return String(value == null ? '' : value).replace(/[&<>"']/g, function (char) {
+      return {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+      }[char];
+    });
+  }
+
+  function formatDate(value) {
+    if (!value) return '—';
+    try {
+      return new Date(value).toLocaleString('fr-FR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    } catch (error) {
+      return String(value);
+    }
+  }
+
+  function formatMoney(value) {
+    return Number(value || 0).toLocaleString('fr-FR', {
+      style: 'currency',
+      currency: 'MAD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2
+    });
+  }
+
+  function currentPage() {
+    return window.location.pathname.split('/').pop() || 'index.html';
+  }
+
+  function ensureSupabase() {
+    if (!window.FixeoSupabase) {
+      throw new Error('Le module Supabase Fixeo est introuvable.');
+    }
+    return window.FixeoSupabase;
+  }
+
+  function closeModalIfAny() {
+    if (typeof window.closeModal === 'function') window.closeModal();
+    var overlay = document.getElementById('modal-overlay');
+    if (overlay) overlay.classList.remove('open');
+  }
+
+  function redirectAfterRole(role) {
+    if (role === 'artisan') {
+      window.location.href = 'dashboard-artisan.html';
+      return;
+    }
+    if (role === 'admin') {
+      window.location.href = 'admin.html';
+      return;
+    }
+    window.location.href = 'dashboard-client.html';
+  }
+
+  async function overrideAuthPage() {
+    if (currentPage() !== 'auth.html') return;
+
+    var FixeoSupabase = ensureSupabase();
+    await FixeoSupabase.init();
+
+    window.handleLogin = async function (event) {
+      event.preventDefault();
+      var errEl = document.getElementById('login-error');
+      var btn = document.getElementById('login-btn');
+      var emailEl = document.getElementById('login-email');
+      var passEl = document.getElementById('login-password');
+
+      if (errEl) errEl.style.display = 'none';
+      if (!emailEl || !passEl) return;
+      if (!emailEl.value.trim()) {
+        if (errEl) {
+          errEl.textContent = '❌ Veuillez entrer votre email.';
+          errEl.style.display = 'block';
+        }
+        emailEl.focus();
+        return;
+      }
+      if (!passEl.value) {
+        if (errEl) {
+          errEl.textContent = '❌ Veuillez entrer votre mot de passe.';
+          errEl.style.display = 'block';
+        }
+        passEl.focus();
+        return;
+      }
+
+      var initial = btn ? btn.innerHTML : '';
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner" style="width:20px;height:20px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:8px"></span> Connexion…';
+      }
+
+      try {
+        var result = await FixeoSupabase.login(emailEl.value.trim().toLowerCase(), passEl.value);
+        var role = (result && result.profile && result.profile.role) || (result && result.user && result.user.user_metadata && result.user.user_metadata.role) || 'client';
+        notify('success', 'Connexion réussie', 'Bienvenue sur votre espace Fixeo.');
+        setTimeout(function () { redirectAfterRole(role); }, 900);
+      } catch (error) {
+        if (errEl) {
+          errEl.textContent = '❌ ' + FixeoSupabase.getReadableError(error);
+          errEl.style.display = 'block';
+        }
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = initial || '<span>Se connecter</span>';
+        }
+      }
+    };
+
+    window.handleSignup = async function (event) {
+      event.preventDefault();
+      var nameEl = document.getElementById('signup-name');
+      var emailEl = document.getElementById('signup-email');
+      var passEl = document.getElementById('signup-password');
+      var termsEl = document.getElementById('terms');
+      var errEl = document.getElementById('signup-error');
+      var btn = document.getElementById('signup-btn');
+
+      if (errEl) errEl.style.display = 'none';
+      if (!nameEl || !emailEl || !passEl || !termsEl) return;
+
+      if (!nameEl.value.trim()) {
+        if (errEl) {
+          errEl.textContent = '❌ Veuillez entrer votre nom complet.';
+          errEl.style.display = 'block';
+        }
+        nameEl.focus();
+        return;
+      }
+      if (!emailEl.value.trim() || !emailEl.checkValidity()) {
+        if (errEl) {
+          errEl.textContent = '❌ Adresse email invalide.';
+          errEl.style.display = 'block';
+        }
+        emailEl.focus();
+        return;
+      }
+      if (passEl.value.length < 8) {
+        if (errEl) {
+          errEl.textContent = '❌ Le mot de passe doit contenir au moins 8 caractères.';
+          errEl.style.display = 'block';
+        }
+        passEl.focus();
+        return;
+      }
+      if (!termsEl.checked) {
+        if (errEl) {
+          errEl.textContent = '❌ Vous devez accepter les conditions d’utilisation.';
+          errEl.style.display = 'block';
+        }
+        return;
+      }
+
+      var role = window._selectedType === 'artisan' ? 'artisan' : 'client';
+      var initial = btn ? btn.innerHTML : '';
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner" style="width:20px;height:20px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:8px"></span> Création…';
+      }
+
+      try {
+        var result = await FixeoSupabase.signUp({
+          email: emailEl.value.trim().toLowerCase(),
+          password: passEl.value,
+          full_name: nameEl.value.trim(),
+          role: role,
+          city: '',
+          phone: ''
+        });
+
+        if (result.needsEmailConfirmation) {
+          notify('success', 'Compte créé', 'Votre compte est créé. Vérifiez votre email pour confirmer l’inscription, puis connectez-vous.');
+          if (window.switchTab) window.switchTab('login');
+          return;
+        }
+
+        notify('success', 'Compte créé', 'Votre espace Fixeo est prêt.');
+        setTimeout(function () { redirectAfterRole(role); }, 900);
+      } catch (error) {
+        if (errEl) {
+          errEl.textContent = '❌ ' + FixeoSupabase.getReadableError(error);
+          errEl.style.display = 'block';
+        }
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = initial || '<span>Créer mon compte</span>';
+        }
+      }
+    };
+
+    window.socialLogin = function (provider) {
+      notify('info', 'Connexion sociale non activée', 'Le bouton ' + provider + ' reste visuel pour le MVP. Activez ce provider dans Supabase si vous voulez le rendre fonctionnel.');
+    };
+  }
+
+  function clientRequestModalHtml() {
+    return '' +
+      '<form id="fixeo-service-request-form">' +
+        '<div class="form-group">' +
+          '<label class="form-label">Type de service</label>' +
+          '<select class="form-control" name="service_category" required>' +
+            '<option value="Plomberie">Plomberie</option>' +
+            '<option value="Électricité">Électricité</option>' +
+            '<option value="Peinture">Peinture</option>' +
+            '<option value="Carrelage">Carrelage</option>' +
+            '<option value="Nettoyage">Nettoyage</option>' +
+            '<option value="Jardinage">Jardinage</option>' +
+            '<option value="Autre">Autre</option>' +
+          '</select>' +
+        '</div>' +
+        '<div class="form-group">' +
+          '<label class="form-label">Ville</label>' +
+          '<input class="form-control" name="city" type="text" placeholder="Casablanca" required>' +
+        '</div>' +
+        '<div class="form-group">' +
+          '<label class="form-label">Description</label>' +
+          '<textarea class="form-control" name="description" rows="4" placeholder="Décrivez votre besoin…" required></textarea>' +
+        '</div>' +
+        '<button class="btn btn-primary w-100" type="submit">Envoyer la demande</button>' +
+      '</form>';
+  }
+
+  async function renderClientDashboard() {
+    if (currentPage() !== 'dashboard-client.html') return;
+
+    var FixeoSupabase = ensureSupabase();
+    await FixeoSupabase.init();
+
+    window.openNewRequestModal = function () {
+      var modalTitle = document.getElementById('modal-title');
+      var modalBody = document.getElementById('modal-body');
+      var overlay = document.getElementById('modal-overlay');
+      if (!modalTitle || !modalBody || !overlay) return;
+      modalTitle.textContent = '+ Nouvelle demande';
+      modalBody.innerHTML = clientRequestModalHtml();
+      overlay.classList.add('open');
+
+      var form = document.getElementById('fixeo-service-request-form');
+      if (!form) return;
+      form.addEventListener('submit', async function (event) {
+        event.preventDefault();
+        var formData = new FormData(form);
+        try {
+          await FixeoSupabase.submitServiceRequest({
+            service_category: String(formData.get('service_category') || '').trim(),
+            city: String(formData.get('city') || '').trim(),
+            description: String(formData.get('description') || '').trim()
+          });
+          closeModalIfAny();
+          notify('success', 'Demande envoyée', 'Votre demande a été enregistrée dans Supabase.');
+          await renderClientDashboard();
+        } catch (error) {
+          notify('error', 'Erreur', FixeoSupabase.getReadableError(error));
+        }
+      }, { once: true });
+    };
+
+    var statsEl = document.getElementById('client-stats-grid');
+    var requestsEl = document.getElementById('client-requests-list');
+    var repliesEl = document.getElementById('client-replies-list');
+    var heroName = document.getElementById('client-hero-name');
+    var bookingsFull = document.getElementById('client-bookings-full');
+
+    try {
+      var auth = await FixeoSupabase.requireAuth('client');
+      var requests = await FixeoSupabase.listClientRequests();
+      var quotes = await FixeoSupabase.listQuotesForRequestIds(requests.map(function (item) { return item.id; }));
+      var missions = await FixeoSupabase.listClientMissions();
+
+      if (heroName) heroName.textContent = escapeHtml((auth.profile && auth.profile.full_name ? auth.profile.full_name : '').split(' ')[0] || 'Client');
+
+      var stats = [
+        { value: requests.length, label: 'Demandes créées' },
+        { value: quotes.length, label: 'Devis reçus' },
+        { value: quotes.filter(function (quote) { return quote.status === 'accepted'; }).length, label: 'Devis acceptés' },
+        { value: missions.length, label: 'Missions créées' }
+      ];
+
+      if (statsEl) {
+        statsEl.innerHTML = stats.map(function (stat) {
+          return '<div class="client-stat-card"><span class="stat-number">' + escapeHtml(stat.value) + '</span><span class="stat-label">' + escapeHtml(stat.label) + '</span></div>';
+        }).join('');
+      }
+
+      if (requestsEl) {
+        requestsEl.innerHTML = requests.length ? requests.map(function (requestRow) {
+          var state = FixeoSupabase.computeRequestState(requestRow, quotes, missions);
+          return '' +
+            '<div class="request-card">' +
+              '<div class="request-top">' +
+                '<div>' +
+                  '<h3>' + escapeHtml(requestRow.service_category || 'Service') + '</h3>' +
+                  '<p>' + escapeHtml(formatDate(requestRow.created_at)) + '</p>' +
+                '</div>' +
+                '<span class="request-status ' + escapeHtml(state.className) + '">' + escapeHtml(state.label) + '</span>' +
+              '</div>' +
+              '<div class="request-meta">' +
+                '<span>📍 ' + escapeHtml(requestRow.city || '—') + '</span>' +
+                '<span>💬 ' + escapeHtml(state.quotes.length) + ' devis</span>' +
+              '</div>' +
+              '<p style="margin:0 0 14px;opacity:.78">' + escapeHtml(requestRow.description || '—') + '</p>' +
+              '<div class="request-actions">' +
+                '<button class="btn btn-secondary" type="button" onclick="window.openNewRequestModal && openNewRequestModal()">Nouvelle demande</button>' +
+              '</div>' +
+            '</div>';
+        }).join('') : '<div class="request-card"><p style="margin:0">Aucune demande Supabase pour le moment.</p></div>';
+      }
+
+      if (repliesEl) {
+        repliesEl.innerHTML = quotes.length ? quotes.map(function (quote) {
+          var relatedRequest = requests.find(function (item) { return item.id === quote.request_id; }) || null;
+          return '' +
+            '<div class="reply-card">' +
+              '<div class="reply-top">' +
+                '<div class="reply-avatar" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#E1306C,#833AB4);color:#fff;font-weight:800">🔧</div>' +
+                '<div class="reply-info">' +
+                  '<h3>Artisan #' + escapeHtml(String(quote.artisan_profile_id || '').slice(0, 8)) + '</h3>' +
+                  '<p>' + escapeHtml((relatedRequest && relatedRequest.service_category) || 'Service') + ' • ' + escapeHtml((relatedRequest && relatedRequest.city) || 'Maroc') + '</p>' +
+                  '<div class="reply-meta">' +
+                    '<span>Statut : ' + escapeHtml(quote.status || 'pending') + '</span>' +
+                    '<span>' + escapeHtml(formatDate(quote.created_at)) + '</span>' +
+                  '</div>' +
+                '</div>' +
+                '<div class="reply-price"><strong>' + escapeHtml(formatMoney(quote.proposed_price)) + '</strong><span>Devis</span></div>' +
+              '</div>' +
+              '<p style="margin:14px 0 0;opacity:.78">' + escapeHtml(quote.message || '—') + '</p>' +
+              '<div class="reply-actions">' +
+                (quote.status === 'accepted'
+                  ? '<button class="btn btn-secondary" type="button" disabled>Devis accepté</button>'
+                  : '<button class="btn btn-primary" type="button" data-accept-quote="' + escapeHtml(quote.id) + '">Accepter ce devis</button>') +
+              '</div>' +
+            '</div>';
+        }).join('') : '<div class="reply-card"><p style="margin:0">Aucun devis reçu pour le moment.</p></div>';
+      }
+
+      if (bookingsFull) {
+        if (missions.length && typeof window.renderBookingsTable === 'function') {
+          var rows = missions.map(function (mission) {
+            var relatedRequest = requests.find(function (item) { return item.id === mission.request_id; }) || null;
+            return {
+              id: mission.id,
+              artisan: 'Artisan #' + String(mission.artisan_profile_id || '').slice(0, 8),
+              service: relatedRequest ? relatedRequest.service_category : 'Mission',
+              status: mission.status === 'cancelled' ? 'cancelled' : 'confirmed',
+              method: 'Supabase',
+              price: Number(mission.agreed_price || 0),
+              date: formatDate(mission.created_at)
+            };
+          });
+          window.renderBookingsTable(bookingsFull, rows);
+        } else {
+          bookingsFull.innerHTML = '<div class="dashboard-panel" style="padding:20px">Aucune mission créée dans Supabase pour le moment.</div>';
+        }
+      }
+
+      repliesEl && repliesEl.querySelectorAll('[data-accept-quote]').forEach(function (button) {
+        button.addEventListener('click', async function () {
+          var quoteId = button.getAttribute('data-accept-quote');
+          button.disabled = true;
+          try {
+            var result = await FixeoSupabase.acceptQuote(quoteId);
+            if (result.commission_ok) {
+              notify('success', 'Devis accepté', 'Mission créée avec commission 15% validée automatiquement.');
+            } else {
+              notify('success', 'Devis accepté', 'Mission créée. Vérifiez la commission générée dans Supabase.');
+            }
+            await renderClientDashboard();
+          } catch (error) {
+            button.disabled = false;
+            notify('error', 'Impossible d’accepter le devis', FixeoSupabase.getReadableError(error));
+          }
+        });
+      });
+    } catch (error) {
+      if (requestsEl) requestsEl.innerHTML = '<div class="request-card"><p style="margin:0">' + escapeHtml(FixeoSupabase.getReadableError(error)) + '</p></div>';
+      if (repliesEl) repliesEl.innerHTML = '';
+      if (bookingsFull) bookingsFull.innerHTML = '';
+    }
+  }
+
+  function artisanQuoteModalHtml(requestId) {
+    return '' +
+      '<form id="fixeo-quote-response-form" data-request-id="' + escapeHtml(requestId) + '">' +
+        '<div class="form-group">' +
+          '<label class="form-label">Montant du devis (MAD)</label>' +
+          '<input class="form-control" type="number" name="proposed_price" min="1" step="0.01" placeholder="250" required>' +
+        '</div>' +
+        '<div class="form-group">' +
+          '<label class="form-label">Message</label>' +
+          '<textarea class="form-control" name="message" rows="4" placeholder="Expliquez votre proposition…" required></textarea>' +
+        '</div>' +
+        '<button class="btn btn-primary w-100" type="submit">Envoyer le devis</button>' +
+      '</form>';
+  }
+
+  async function renderArtisanDashboard() {
+    if (currentPage() !== 'dashboard-artisan.html') return;
+
+    var FixeoSupabase = ensureSupabase();
+    await FixeoSupabase.init();
+
+    window.acceptRequest = function () {};
+    window.rejectRequest = function () {};
+    window.openQuoteReplyModal = function (requestId) {
+      var modalTitle = document.getElementById('modal-title');
+      var modalBody = document.getElementById('modal-body');
+      var overlay = document.getElementById('modal-overlay');
+      if (!modalTitle || !modalBody || !overlay) return;
+      modalTitle.textContent = 'Envoyer un devis';
+      modalBody.innerHTML = artisanQuoteModalHtml(requestId);
+      overlay.classList.add('open');
+
+      var form = document.getElementById('fixeo-quote-response-form');
+      if (!form) return;
+      form.addEventListener('submit', async function (event) {
+        event.preventDefault();
+        var formData = new FormData(form);
+        try {
+          await FixeoSupabase.submitQuote({
+            request_id: requestId,
+            proposed_price: Number(formData.get('proposed_price') || 0),
+            message: String(formData.get('message') || '').trim()
+          });
+          closeModalIfAny();
+          notify('success', 'Devis envoyé', 'Le devis a bien été enregistré dans Supabase.');
+          await renderArtisanDashboard();
+        } catch (error) {
+          notify('error', 'Erreur', FixeoSupabase.getReadableError(error));
+        }
+      }, { once: true });
+    };
+
+    var priorityList = document.getElementById('priority-requests-list');
+    var requestsGrid = document.getElementById('requests-grid');
+    var missionsList = document.getElementById('artisan-cod-missions');
+    var overviewPanel = document.getElementById('artisan-cod-overview-panel');
+    var earningsPanel = document.getElementById('artisan-cod-earnings');
+    var countEl = document.getElementById('new-requests-count');
+    var missionCountEl = document.getElementById('stat-missions-count');
+
+    try {
+      var auth = await FixeoSupabase.requireAuth('artisan');
+      var openRequests = await FixeoSupabase.listOpenRequests();
+      var allQuotes = await FixeoSupabase.listQuotesForRequestIds(openRequests.map(function (item) { return item.id; }));
+      var artisanQuotes = allQuotes.filter(function (quote) { return quote.artisan_profile_id === auth.profile.id; });
+      var missions = await FixeoSupabase.listArtisanMissions();
+
+      var requestHtml = openRequests.length ? openRequests.map(function (requestRow) {
+        var alreadyQuoted = artisanQuotes.find(function (quote) { return quote.request_id === requestRow.id; });
+        return '' +
+          '<div class="request-card business-priority">' +
+            '<div class="request-header">' +
+              '<h3>' + escapeHtml(requestRow.service_category || 'Service') + ' • ' + escapeHtml(requestRow.city || 'Maroc') + '</h3>' +
+              '<span class="request-time">' + escapeHtml(formatDate(requestRow.created_at)) + '</span>' +
+            '</div>' +
+            '<p class="request-desc">' + escapeHtml(requestRow.description || '—') + '</p>' +
+            '<div class="request-client">👤 Client #' + escapeHtml(String(requestRow.client_profile_id || '').slice(0, 8)) + '</div>' +
+            '<div class="request-meta">' +
+              '<span>' + (alreadyQuoted ? '✅ Devis déjà envoyé' : '⚡ Nouvelle demande') + '</span>' +
+            '</div>' +
+            '<div class="request-actions">' +
+              '<button class="btn btn-primary" type="button" onclick="window.openQuoteReplyModal && openQuoteReplyModal(\'' + escapeHtml(requestRow.id) + '\')">' + (alreadyQuoted ? 'Mettre à jour le devis' : 'Répondre maintenant') + '</button>' +
+            '</div>' +
+          '</div>';
+      }).join('') : '<div class="fixeo-empty">Aucune demande disponible dans Supabase.</div>';
+
+      if (priorityList) priorityList.innerHTML = requestHtml;
+      if (requestsGrid) requestsGrid.innerHTML = requestHtml;
+      if (countEl) countEl.textContent = String(openRequests.length) + ' nouvelles demandes';
+      if (missionCountEl) missionCountEl.textContent = String(missions.length);
+
+      if (overviewPanel) {
+        var totalCommissions = missions.reduce(function (sum, mission) { return sum + Number(mission.commission_amount || 0); }, 0);
+        overviewPanel.innerHTML = '' +
+          '<section class="fixeo-cod-shell" style="margin-bottom:22px">' +
+            '<div class="fixeo-cod-kpis">' +
+              '<div class="fixeo-cod-kpi"><strong>' + escapeHtml(openRequests.length) + '</strong><span>Demandes ouvertes</span></div>' +
+              '<div class="fixeo-cod-kpi"><strong>' + escapeHtml(artisanQuotes.length) + '</strong><span>Devis envoyés</span></div>' +
+              '<div class="fixeo-cod-kpi"><strong>' + escapeHtml(missions.length) + '</strong><span>Missions créées</span></div>' +
+              '<div class="fixeo-cod-kpi"><strong>' + escapeHtml(formatMoney(totalCommissions)) + '</strong><span>Commissions calculées</span></div>' +
+            '</div>' +
+          '</section>';
+      }
+
+      if (missionsList) {
+        missionsList.innerHTML = missions.length ? missions.map(function (mission) {
+          return '' +
+            '<article class="fixeo-mission-card">' +
+              '<div class="fixeo-mission-card__top">' +
+                '<div>' +
+                  '<h3 class="fixeo-mission-card__title">Mission #' + escapeHtml(String(mission.id || '').slice(0, 8)) + '</h3>' +
+                  '<div class="fixeo-mission-card__meta">' +
+                    '<span>Demande #' + escapeHtml(String(mission.request_id || '').slice(0, 8)) + '</span>' +
+                    '<span>' + escapeHtml(formatDate(mission.created_at)) + '</span>' +
+                  '</div>' +
+                '</div>' +
+                '<span class="fixeo-status-badge" style="color:#20c997;background:rgba(32,201,151,.12);border-color:rgba(32,201,151,.25)">' + escapeHtml(mission.status || 'validated') + '</span>' +
+              '</div>' +
+              '<div class="payment-info">Prix convenu : <strong>' + escapeHtml(formatMoney(mission.agreed_price)) + '</strong></div>' +
+              '<div class="commission-info">Commission Fixeo (15%) : ' + escapeHtml(formatMoney(mission.commission_amount)) + '</div>' +
+            '</article>';
+        }).join('') : '<div class="fixeo-empty">Aucune mission pour le moment.</div>';
+      }
+
+      if (earningsPanel) {
+        earningsPanel.innerHTML = '' +
+          '<section class="fixeo-cod-shell">' +
+            '<div class="fixeo-section-title"><h3>Historique Supabase</h3></div>' +
+            '<section class="mission-history">' +
+              (missions.length ? missions.map(function (mission) {
+                return '<div class="mission-row"><span>Mission #' + escapeHtml(String(mission.id).slice(0, 8)) + '</span><span>' + escapeHtml(formatMoney(mission.agreed_price)) + '</span><span class="commission">-' + escapeHtml(formatMoney(mission.commission_amount)) + '</span></div>';
+              }).join('') : '<div class="fixeo-empty">Aucune ligne de mission pour le moment.</div>') +
+            '</section>' +
+          '</section>';
+      }
+    } catch (error) {
+      if (priorityList) priorityList.innerHTML = '<div class="fixeo-empty">' + escapeHtml(FixeoSupabase.getReadableError(error)) + '</div>';
+      if (requestsGrid) requestsGrid.innerHTML = '';
+    }
+  }
+
+  async function overrideArtisanProfileRequestForm() {
+    if (currentPage() !== 'artisan.html') return;
+
+    var FixeoSupabase = ensureSupabase();
+    await FixeoSupabase.init();
+
+    window.submitQuoteForm = async function (event) {
+      event.preventDefault();
+      var form = event.currentTarget;
+      var formData = new FormData(form);
+      try {
+        await FixeoSupabase.submitServiceRequest({
+          service_category: String(formData.get('service') || '').trim(),
+          city: String(formData.get('city') || '').trim(),
+          description: String(formData.get('description') || '').trim() + '\n\nContact: ' + String(formData.get('phone') || '').trim() + (formData.get('date') ? '\nDate souhaitée: ' + String(formData.get('date')) : '')
+        });
+        notify('success', 'Demande envoyée', 'Votre demande a bien été créée dans Supabase.');
+        if (typeof window.showQuoteSuccess === 'function') {
+          window.showQuoteSuccess();
+        } else {
+          window.location.href = 'dashboard-client.html';
+        }
+      } catch (error) {
+        notify('error', 'Erreur', FixeoSupabase.getReadableError(error));
+      }
+    };
+  }
+
+  ready(function () {
+    var FixeoSupabase = window.FixeoSupabase;
+    if (!FixeoSupabase) return;
+
+    FixeoSupabase.init().catch(function () {});
+    overrideAuthPage().catch(function () {});
+    renderClientDashboard().catch(function () {});
+    renderArtisanDashboard().catch(function () {});
+    overrideArtisanProfileRequestForm().catch(function () {});
+
+    window.addEventListener('fixeo:data:changed', function () {
+      renderClientDashboard().catch(function () {});
+      renderArtisanDashboard().catch(function () {});
+    });
+  });
+})(window, document);
