@@ -1,0 +1,482 @@
+/* ============================================================
+   FIXEO V4 — ADMIN DASHBOARD CSS
+   ============================================================ */
+
+/* ── ADMIN GATE ────────────────────────────────────────────── */
+.admin-gate {
+  position: fixed; inset: 0; z-index: 9999;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--bg-dark);
+}
+.admin-gate-box {
+  background: var(--surface); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: var(--radius-xl); padding: 40px 36px;
+  width: 90%; max-width: 380px; text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+.admin-gate-box h2 { margin-bottom: 6px; font-size: 1.3rem; }
+.admin-gate-box .form-group {
+  margin-bottom: 14px; text-align: left;
+}
+.admin-gate-box input {
+  width: 100%; padding: 11px 14px; box-sizing: border-box;
+  background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15);
+  border-radius: var(--radius-md); color: #fff; font-size: .9rem;
+}
+.admin-gate-box input:focus {
+  outline: none; border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(225,48,108,0.15);
+}
+
+/* ── ADMIN NAV BADGE ───────────────────────────────────────── */
+.admin-nav-badge {
+  background: var(--grad-primary); color: #fff;
+  font-size: .6rem; font-weight: 800; padding: 2px 7px;
+  border-radius: 20px; letter-spacing: .06em; margin-left: 6px;
+  vertical-align: middle;
+}
+
+/* ── SIDEBAR COUNTS ────────────────────────────────────────── */
+.sidebar-count {
+  margin-left: auto; font-size: .65rem; font-weight: 700;
+  padding: 2px 8px; border-radius: 20px;
+  background: rgba(255,255,255,0.1); color: rgba(255,255,255,.7);
+  flex-shrink: 0;
+}
+.sidebar-count.pending {
+  background: rgba(225,48,108,0.2); color: var(--primary);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.6} }
+
+/* ── ADMIN KPI GRID ────────────────────────────────────────── */
+.admin-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px; margin-bottom: 24px;
+}
+.admin-kpi {
+  border-radius: var(--radius-lg);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.admin-kpi:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px rgba(0,0,0,0.35);
+}
+
+/* ── ADMIN TABLE ───────────────────────────────────────────── */
+.admin-table-wrap {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--radius-xl); overflow: hidden;
+  overflow-x: auto;
+}
+.admin-table {
+  width: 100%; border-collapse: collapse; min-width: 720px;
+}
+.admin-table thead tr {
+  background: rgba(255,255,255,0.05);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.admin-table th {
+  padding: 13px 16px; text-align: left;
+  font-size: .78rem; font-weight: 700;
+  color: rgba(255,255,255,.6); white-space: nowrap;
+}
+.admin-table td {
+  padding: 12px 16px; font-size: .84rem;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  color: rgba(255,255,255,.85); vertical-align: middle;
+}
+.admin-table tbody tr:last-child td { border-bottom: none; }
+.admin-table tbody tr:hover td { background: rgba(255,255,255,0.03); }
+
+/* User cell */
+.admin-user-cell { display: flex; align-items: center; gap: 10px; }
+.admin-avatar {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: var(--grad-primary);
+  display: flex; align-items: center; justify-content: center;
+  font-size: .8rem; font-weight: 700; flex-shrink: 0;
+}
+.admin-user-name { font-weight: 600; font-size: .85rem; }
+.admin-user-sub { font-size: .72rem; color: var(--text-muted); }
+
+/* Status badges */
+.status-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: .7rem; font-weight: 700; padding: 3px 10px;
+  border-radius: 20px; white-space: nowrap;
+}
+.status-active  { background: rgba(32,201,151,.15); color: var(--success); border: 1px solid rgba(32,201,151,.3); }
+.status-pending { background: rgba(252,175,69,.15); color: var(--warning); border: 1px solid rgba(252,175,69,.3); }
+.status-suspended{ background: rgba(225,48,108,.15); color: var(--primary); border: 1px solid rgba(225,48,108,.3); }
+.status-success { background: rgba(32,201,151,.15); color: var(--success); }
+.status-failed  { background: rgba(225,48,108,.15); color: var(--primary); }
+.status-refunded{ background: rgba(255,255,255,.1); color: rgba(255,255,255,.6); }
+
+/* Plan badges */
+.plan-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: .7rem; font-weight: 700; padding: 3px 10px;
+  border-radius: 20px;
+}
+.plan-free    { background: rgba(255,255,255,0.08); color: rgba(255,255,255,.7); }
+.plan-pro     { background: rgba(225,48,108,.15); color: var(--primary); border: 1px solid rgba(225,48,108,.25); }
+.plan-premium { background: rgba(252,175,69,.15); color: var(--warning); border: 1px solid rgba(252,175,69,.25); }
+
+/* Action buttons in table */
+.tbl-btn {
+  background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
+  color: rgba(255,255,255,.75); padding: 5px 10px; border-radius: 8px;
+  cursor: pointer; font-size: .75rem; font-weight: 600;
+  transition: all .2s; white-space: nowrap;
+}
+.tbl-btn:hover { background: rgba(255,255,255,0.13); color: #fff; }
+.tbl-btn.danger:hover { background: rgba(225,48,108,.15); color: var(--primary); border-color: rgba(225,48,108,.3); }
+.tbl-btn.success:hover { background: rgba(32,201,151,.15); color: var(--success); border-color: rgba(32,201,151,.3); }
+
+/* ── ACTIVITY LIST ─────────────────────────────────────────── */
+.admin-activity-list { display: flex; flex-direction: column; gap: 0; }
+.admin-activity-item {
+  display: flex; align-items: center; gap: 14px;
+  padding: 12px 4px; border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.admin-activity-item:last-child { border-bottom: none; }
+.activity-icon {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: rgba(255,255,255,0.07); display: flex;
+  align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0;
+}
+.activity-text { flex: 1; }
+.activity-title { font-size: .84rem; font-weight: 600; }
+.activity-time { font-size: .72rem; color: var(--text-muted); margin-top: 1px; }
+
+/* ── ALERTS ────────────────────────────────────────────────── */
+.admin-alert {
+  display: flex; align-items: center; gap: 14px;
+  padding: 13px 16px; border-radius: var(--radius-md);
+  background: rgba(252,175,69,.08); border: 1px solid rgba(252,175,69,.2);
+  margin-bottom: 10px;
+}
+.admin-alert .alert-icon { font-size: 1.2rem; }
+.admin-alert .alert-text { flex: 1; font-size: .85rem; font-weight: 600; }
+.admin-alert .alert-action { font-size: .78rem; cursor: pointer; color: var(--warning); text-decoration: underline; }
+
+/* ── REGISTRATION CARDS ────────────────────────────────────── */
+.reg-card {
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: var(--radius-lg); padding: 20px 24px; margin-bottom: 16px;
+}
+.reg-card-header { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; flex-wrap: wrap; }
+.reg-card-info h4 { font-size: 1rem; font-weight: 700; margin-bottom: 3px; }
+.reg-card-info p { font-size: .82rem; color: var(--text-muted); }
+.reg-actions { margin-left: auto; display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* ── REVIEW MODERATION ─────────────────────────────────────── */
+.review-mod-card {
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: var(--radius-lg); padding: 20px 24px; margin-bottom: 14px;
+}
+.review-mod-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
+.review-stars { color: #FFD700; font-size: .9rem; }
+.review-content { font-size: .86rem; color: rgba(255,255,255,.8); line-height: 1.5; margin-bottom: 12px; }
+.review-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* ── SETTINGS TOGGLES ──────────────────────────────────────── */
+.settings-toggles { display: flex; flex-direction: column; gap: 16px; }
+.settings-toggle-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px; background: rgba(255,255,255,0.03);
+  border-radius: var(--radius-md); border: 1px solid rgba(255,255,255,0.07);
+}
+
+/* ── MODAL EXTRAS ──────────────────────────────────────────── */
+.modal { display: none; position: fixed; inset: 0; z-index: 1000; align-items: center; justify-content: center; }
+.modal.open { display: flex; }
+.modal-dialog {
+  background: var(--surface); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: var(--radius-xl); width: 90%; max-width: 520px;
+  max-height: 90vh; overflow-y: auto; position: relative; z-index: 1001;
+  animation: modalIn .3s ease;
+}
+.modal-dialog.modal-lg { max-width: 640px; }
+.modal-dialog.modal-sm { max-width: 420px; }
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(.92) translateY(20px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+.modal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 24px; border-bottom: 1px solid rgba(255,255,255,.08);
+}
+.modal-header h3 { font-size: 1.05rem; font-weight: 700; }
+.modal-close {
+  background: none; border: none; color: var(--text-muted);
+  cursor: pointer; font-size: 1.1rem; padding: 4px 8px;
+  border-radius: 6px; transition: all .2s;
+}
+.modal-close:hover { background: rgba(255,255,255,.08); color: #fff; }
+.modal-body { padding: 24px; }
+.modal-footer {
+  padding: 16px 24px; border-top: 1px solid rgba(255,255,255,.08);
+  display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap;
+}
+
+/* btn-danger */
+.btn-danger { background: linear-gradient(135deg,#E1306C,#C13584) !important; color: #fff !important; }
+.btn-success { background: linear-gradient(135deg,#20C997,#1a9e78) !important; color: #fff !important; }
+
+/* Artisan detail body */
+.artisan-detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.artisan-detail-row { padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,.06); }
+.artisan-detail-row:last-child { border-bottom: none; }
+.artisan-detail-label { font-size: .75rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; margin-bottom: 3px; }
+.artisan-detail-value { font-size: .9rem; font-weight: 600; }
+
+/* Alert component */
+.alert { padding: 10px 14px; border-radius: var(--radius-md); font-size: .85rem; font-weight: 600; }
+.alert-error { background: rgba(225,48,108,.1); border: 1px solid rgba(225,48,108,.3); color: var(--primary); }
+.alert-success { background: rgba(32,201,151,.1); border: 1px solid rgba(32,201,151,.3); color: var(--success); }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .admin-kpi-grid { grid-template-columns: repeat(2, 1fr); }
+  .artisan-detail-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+  .admin-kpi-grid { grid-template-columns: 1fr; }
+}
+
+/* ================================================================
+   FIXEO V10 — RÉSERVATIONS MODULE CSS
+   Additionnel · N'affecte aucun style existant
+   ================================================================ */
+
+/* ── RÉSERVATION STATUS BADGES ─────────────────────────────────── */
+.res-status-pending    { background: rgba(252,175,69,.15);  color: var(--warning); border: 1px solid rgba(252,175,69,.3); }
+.res-status-confirmed  { background: rgba(91,140,255,.15);  color: #5B8CFF;        border: 1px solid rgba(91,140,255,.3); }
+.res-status-inprogress { background: rgba(225,48,108,.15);  color: var(--primary); border: 1px solid rgba(225,48,108,.3); }
+.res-status-completed  { background: rgba(32,201,151,.15);  color: var(--success); border: 1px solid rgba(32,201,151,.3); }
+.res-status-cancelled  { background: rgba(255,255,255,.07); color: rgba(255,255,255,.45); border: 1px solid rgba(255,255,255,.12); }
+
+/* ── PAIEMENT STATUS BADGES ────────────────────────────────────── */
+.res-pay-paid        { background: rgba(32,201,151,.15);  color: var(--success); border: 1px solid rgba(32,201,151,.3); }
+.res-pay-pending_pay { background: rgba(252,175,69,.15);  color: var(--warning); border: 1px solid rgba(252,175,69,.3); }
+.res-pay-refunded    { background: rgba(255,255,255,.07); color: rgba(255,255,255,.5); border: 1px solid rgba(255,255,255,.12); }
+
+/* ── EXPRESS BADGE ─────────────────────────────────────────────── */
+.res-express-badge {
+  display: inline-flex; align-items: center;
+  background: rgba(252,175,69,.2); color: var(--warning);
+  border: 1px solid rgba(252,175,69,.35);
+  font-size: .65rem; font-weight: 700; padding: 2px 7px;
+  border-radius: 20px; margin-left: 5px; white-space: nowrap;
+}
+
+/* ── RÉS KPI GRID ──────────────────────────────────────────────── */
+.res-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 14px; margin-bottom: 20px;
+}
+
+/* ── RÉSERVATION DETAIL MODAL ──────────────────────────────────── */
+.res-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+.res-detail-block {
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+}
+.res-detail-block-full {
+  grid-column: 1 / -1;
+}
+.res-detail-section-title {
+  font-size: .82rem; font-weight: 700;
+  color: var(--text-muted); text-transform: uppercase;
+  letter-spacing: .06em; margin-bottom: 12px;
+}
+
+/* ── PERSON CARD (in detail modal) ────────────────────────────── */
+.res-person-card {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 12px 14px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: var(--radius-md);
+}
+
+/* ── PAYMENT BREAKDOWN TABLE ───────────────────────────────────── */
+.res-payment-breakdown { display: flex; flex-direction: column; gap: 0; }
+.res-pay-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 14px;
+  background: rgba(255,255,255,.025);
+  border-bottom: 1px solid rgba(255,255,255,.05);
+}
+.res-pay-row:last-child { border-bottom: none; }
+.res-pay-label { font-size: .84rem; color: rgba(255,255,255,.75); }
+.res-pay-value { font-size: .9rem; font-weight: 700; }
+.res-pay-divider {
+  height: 2px;
+  background: rgba(255,255,255,.06);
+  margin: 4px 0;
+}
+
+/* ── STATUS UPDATE OPTIONS ─────────────────────────────────────── */
+.res-status-options {
+  display: flex; flex-direction: column; gap: 10px;
+}
+.res-status-option {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 14px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all .2s;
+}
+.res-status-option:hover {
+  background: rgba(255,255,255,.08);
+  border-color: rgba(255,255,255,.15);
+}
+.res-status-option input[type="radio"] {
+  accent-color: var(--primary);
+  width: 16px; height: 16px; flex-shrink: 0;
+}
+.res-status-option input[type="radio"]:checked ~ span {
+  transform: scale(1.04);
+}
+
+/* ── RESPONSIVE RÉSERVATIONS ───────────────────────────────────── */
+@media (max-width: 900px) {
+  .res-detail-grid { grid-template-columns: 1fr; }
+  .res-detail-block-full { grid-column: 1; }
+  .res-kpi-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 480px) {
+  .res-kpi-grid { grid-template-columns: 1fr 1fr; }
+}
+
+/* ── COMMISSION COLUMNS — Fixeo V10 ──────────────────────────── */
+/* Visual highlight for the two new commission/earnings columns */
+#reservations-admin-table thead th:nth-child(9),
+#reservations-admin-table thead th:nth-child(10) {
+  font-size: .78rem;
+  letter-spacing: .02em;
+}
+#reservations-admin-table tbody td:nth-child(9) {
+  background: rgba(252,175,69,.06);
+}
+#reservations-admin-table tbody td:nth-child(10) {
+  background: rgba(32,201,151,.06);
+}
+/* Commission KPI sub-label */
+#res-kpi-revenue + .kpi-label::before {
+  content: '💰 ';
+}
+
+/* ============================================================
+   FIXEO V20 — ARTISANS ADMIN MODULE STYLES
+   ============================================================ */
+
+/* ── Formulaire panel artisan ─────────────────────────────── */
+#artisan-form-panel {
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Textarea dans le formulaire admin */
+#af-description {
+  transition: border-color .2s;
+}
+#af-description:focus {
+  outline: none;
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 3px rgba(225,48,108,.1);
+}
+
+/* ── Bouton toggle formulaire ─────────────────────────────── */
+#artisan-form-toggle-btn {
+  transition: all .2s;
+}
+
+/* ── Badge certifié dans la table ─────────────────────────── */
+.badge-certified {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: .62rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #ffd700, #ff8c00);
+  color: #000;
+  padding: 2px 7px;
+  border-radius: 20px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+/* ── Ligne en surbrillance après ajout ────────────────────── */
+@keyframes rowHighlight {
+  0%   { background: rgba(225,48,108,.2); }
+  100% { background: transparent; }
+}
+.row-highlight {
+  animation: rowHighlight 2s ease-out forwards;
+}
+
+/* ── KPIs artisans ────────────────────────────────────────── */
+.art-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+/* ── Statut badge inactif ─────────────────────────────────── */
+.status-badge-inactive {
+  background: rgba(255,100,100,.15);
+  color: #ff6464;
+  border: 1px solid rgba(255,100,100,.3);
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: .75rem;
+  font-weight: 600;
+}
+
+/* ── Responsive form grid ─────────────────────────────────── */
+@media (max-width: 640px) {
+  #artisan-form-panel form > div:first-child {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ── Avatar artisan dans la table ─────────────────────────── */
+#artisans-admin-tbody .admin-user-cell img {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255,255,255,.15);
+  flex-shrink: 0;
+}
+
+/* ── Bouton succès (tbl-btn) ──────────────────────────────── */
+.tbl-btn.success {
+  background: rgba(32,201,151,.15);
+  color: #20C997;
+  border-color: rgba(32,201,151,.3);
+}
+.tbl-btn.success:hover {
+  background: rgba(32,201,151,.3);
+}
+

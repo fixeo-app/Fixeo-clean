@@ -1,0 +1,105 @@
+/* ================================================================
+   FIXEO v7 — SMART SEARCH BAR — MAP PREVIEW STYLES
+   (Leaflet override + responsive map panel)
+   ================================================================ */
+
+/* Map preview panel below search */
+#ssb-map-preview {
+  width: 100%;
+  height: 320px;
+  border-radius: 16px;
+  overflow: hidden;
+  margin-top: 10px;
+  box-shadow: 0 6px 30px rgba(0,0,0,0.28);
+  display: none;
+  position: relative;
+  background: #1a1a2e;
+}
+
+#ssb-map-preview.visible {
+  display: block;
+  animation: ssbFadeIn 0.35s ease;
+}
+
+#ssb-map-canvas {
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.ssb-map-overlay-info {
+  position: absolute;
+  top: 10px;
+  left: 52px;
+  background: rgba(255,255,255,0.96);
+  border-radius: 10px;
+  padding: 6px 14px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+  pointer-events: none;
+  backdrop-filter: blur(4px);
+  z-index: 999;
+  font-family: 'Cairo', sans-serif;
+}
+
+.ssb-map-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 1000;
+  background: rgba(255,255,255,0.95);
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.ssb-map-close:hover {
+  background: #E1306C;
+  color: #fff;
+}
+
+/* Leaflet popup override inside map preview */
+#ssb-map-canvas .leaflet-popup-content-wrapper {
+  border-radius: 12px !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2) !important;
+  font-family: 'Cairo', sans-serif !important;
+}
+
+#ssb-map-canvas .leaflet-popup-content {
+  margin: 10px 14px !important;
+}
+
+/* Map result count badge */
+.ssb-map-badge {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #E1306C, #833AB4);
+  color: #fff;
+  border-radius: 20px;
+  padding: 6px 18px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  pointer-events: none;
+  z-index: 999;
+  box-shadow: 0 4px 16px rgba(225,48,108,0.4);
+  white-space: nowrap;
+  font-family: 'Cairo', sans-serif;
+}
+
+@media (max-width: 640px) {
+  #ssb-map-preview { height: 230px; border-radius: 12px; }
+  .ssb-map-overlay-info { font-size: 0.70rem; padding: 4px 10px; }
+}

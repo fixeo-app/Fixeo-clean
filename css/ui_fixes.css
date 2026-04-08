@@ -1,0 +1,588 @@
+/* ============================================================
+   FIXEO V3 — UI FIXES (ui_fixes.css)
+   Task: Hero alignment · Services spacing · Featured cards
+   ============================================================ */
+
+/* ═══════════════════════════════════════════════════════════
+   FIX 1 — HERO SECTION: Perfect centering + Yasmine right float
+   ═══════════════════════════════════════════════════════════ */
+
+/* Force the hero section to be a true flex center */
+.hero {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  position: relative !important;
+}
+
+/* Hero content block: perfectly centered */
+.hero-content {
+  max-width: 760px !important;
+  width: 100% !important;
+  margin: 0 auto !important;
+  text-align: center !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  position: relative !important;
+  z-index: 3 !important;
+}
+
+/* h1 headline: guaranteed center */
+.hero-content h1 {
+  text-align: center !important;
+  width: 100% !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+/* Hero subtitle: centered */
+.hero-subtitle {
+  text-align: center !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+/* Search bar wrap: centered */
+.search-bar-wrap {
+  width: 100% !important;
+  max-width: 740px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  text-align: center !important;
+}
+
+/* Hero actions: centered */
+.hero-actions {
+  justify-content: center !important;
+  width: 100% !important;
+}
+
+/* Hero stats: centered */
+.hero-stats {
+  justify-content: center !important;
+  width: 100% !important;
+}
+
+/* ── Float cards repositioning ──────────────────────────── */
+
+/* float-1: keep left (Karim — disponible) */
+.float-1 {
+  top: 28% !important;
+  left: 4% !important;
+  right: auto !important;
+}
+
+/* float-2: keep right top (badge) */
+.float-2 {
+  top: 28% !important;
+  right: 4% !important;
+  left: auto !important;
+}
+
+/* float-3: MOVED to right side — Yasmine review */
+.float-3 {
+  bottom: 26% !important;
+  right: 4% !important;
+  left: auto !important;
+  animation-delay: 2s !important;
+  min-width: 180px !important;
+}
+
+/* Ensure floats never overlap the centered hero-content */
+.hero-float {
+  z-index: 2 !important;
+  pointer-events: none !important;
+  max-width: 190px !important;
+}
+
+/* Hide floats on mobile to avoid overlap */
+@media (max-width: 768px) {
+  .hero-float {
+    display: none !important;
+  }
+}
+
+/* Tablet: reduce float to avoid content overlap */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .float-1 { left: 1% !important; }
+  .float-2 { right: 1% !important; }
+  .float-3 { right: 1% !important; }
+  .hero-float { max-width: 160px !important; }
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   FIX 2 — SERVICES SECTION: Spacing + clean chip grid
+   ═══════════════════════════════════════════════════════════ */
+
+/* Services section: overall padding */
+#services {
+  padding-top: 52px !important;
+  padding-bottom: 44px !important;
+}
+
+/* Section header: slightly more breathing room */
+#services .section-header {
+  margin-bottom: 28px !important;
+}
+
+/* Filter bar: keep compact */
+.services-filter-bar {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  flex-wrap: wrap !important;
+  background: rgba(255,255,255,0.04) !important;
+  border: 1px solid rgba(255,255,255,0.1) !important;
+  border-radius: 14px !important;
+  padding: 12px 18px !important;
+  margin-bottom: 0 !important;
+  margin-top: 0 !important;
+  border-top: none !important;
+  padding-top: 12px !important;
+}
+
+/* Add vertical gap BETWEEN filter bar and chip grid */
+.services-filter-bar + .category-chips,
+#services .services-filter-bar ~ .category-chips {
+  margin-top: 24px !important;
+}
+
+/* Force spacing via sibling if filter bar is followed by chips */
+.services-filter-bar {
+  margin-bottom: 24px !important;
+}
+
+/* Category chips: clean responsive grid */
+.category-chips {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 12px !important;
+  justify-content: center !important;
+  align-items: center !important;
+  padding: 4px 0 !important;
+}
+
+/* Individual chips: clean sizing */
+.chip {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 7px !important;
+  padding: 10px 20px !important;
+  border-radius: 999px !important;
+  font-size: 0.87rem !important;
+  font-weight: 500 !important;
+  white-space: nowrap !important;
+  transition: all 0.2s ease !important;
+  cursor: pointer !important;
+}
+
+.chip:hover {
+  transform: translateY(-2px) !important;
+}
+
+/* Mobile chips: reduce padding slightly */
+@media (max-width: 600px) {
+  .category-chips {
+    gap: 8px !important;
+  }
+  .chip {
+    padding: 8px 14px !important;
+    font-size: 0.82rem !important;
+  }
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   FIX 3 — FEATURED ARTISAN CARDS: Trust indicators
+   ═══════════════════════════════════════════════════════════ */
+
+/* Trust indicator wrapper inside featured card */
+.featured-trust-row {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+  margin-bottom: 8px !important;
+  margin-top: 2px !important;
+}
+
+/* Score de confiance line */
+.featured-trust-score {
+  display: flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  font-size: 0.76rem !important;
+  font-weight: 600 !important;
+  color: #FFD700 !important;
+  background: rgba(255, 215, 0, 0.08) !important;
+  border: 1px solid rgba(255, 215, 0, 0.2) !important;
+  border-radius: 6px !important;
+  padding: 3px 8px !important;
+  width: fit-content !important;
+}
+
+/* Temps de réponse line */
+.featured-response-time {
+  display: flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  font-size: 0.74rem !important;
+  font-weight: 500 !important;
+  color: rgba(32, 201, 151, 0.9) !important;
+  background: rgba(32, 201, 151, 0.08) !important;
+  border: 1px solid rgba(32, 201, 151, 0.2) !important;
+  border-radius: 6px !important;
+  padding: 3px 8px !important;
+  width: fit-content !important;
+}
+
+/* Ensure featured card body has enough vertical space */
+.featured-card-body {
+  padding: 0 14px 16px !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* Name stays prominent */
+.featured-name {
+  font-weight: 700 !important;
+  font-size: 0.93rem !important;
+  color: #fff !important;
+  margin-bottom: 3px !important;
+}
+
+/* Category row */
+.featured-category {
+  font-size: 0.71rem !important;
+  color: rgba(255,255,255,0.5) !important;
+  margin-bottom: 6px !important;
+}
+
+/* Rating row: push below trust indicators */
+.featured-rating {
+  margin-bottom: 10px !important;
+}
+
+/* Footer stays at bottom */
+.featured-footer {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 8px !important;
+  margin-top: auto !important;
+}
+
+/* Buttons inside card */
+.featured-footer .btn-featured-reserve,
+.featured-footer .btn-featured-express {
+  flex: 1 !important;
+  text-align: center !important;
+  padding: 5px 8px !important;
+  font-size: 0.72rem !important;
+  font-weight: 700 !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+  border: none !important;
+  transition: opacity 0.2s !important;
+  white-space: nowrap !important;
+}
+
+.featured-footer .btn-featured-reserve {
+  background: linear-gradient(135deg, #E1306C, #833AB4) !important;
+  color: #fff !important;
+}
+
+.featured-footer .btn-featured-express {
+  background: rgba(255,255,255,0.08) !important;
+  border: 1px solid rgba(255,255,255,0.2) !important;
+  color: rgba(255,255,255,0.85) !important;
+}
+
+.featured-footer .btn-featured-reserve:hover,
+.featured-footer .btn-featured-express:hover {
+  opacity: 0.85 !important;
+}
+
+/* Keep old contact button still styled if present */
+.btn-featured-contact {
+  background: linear-gradient(135deg, #E1306C, #833AB4) !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 8px !important;
+  padding: 5px 12px !important;
+  font-size: 0.74rem !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  transition: opacity .2s !important;
+  white-space: nowrap !important;
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   FIX 4 — QUALITY CONTROL: Alignment, spacing, responsiveness
+   ═══════════════════════════════════════════════════════════ */
+
+/* Prevent any section from overflowing horizontally */
+.hero,
+#services,
+#artisans-section,
+#feed-section {
+  overflow-x: hidden !important;
+}
+
+/* Ensure container never bleeds */
+.container {
+  max-width: 1200px !important;
+  margin: 0 auto !important;
+  padding: 0 24px !important;
+  box-sizing: border-box !important;
+}
+
+/* Section divider spacing consistency */
+.section-divider {
+  height: 1px !important;
+  background: rgba(255,255,255,0.06) !important;
+  margin: 0 !important;
+}
+
+/* Results header spacing */
+.results-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin-bottom: 18px !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+}
+
+/* Featured artisans section header spacing */
+.featured-artisans-header {
+  margin-bottom: 20px !important;
+}
+
+/* Featured grid responsive */
+.featured-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)) !important;
+  gap: 16px !important;
+}
+
+@media (max-width: 900px) {
+  .featured-grid {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)) !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .featured-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+}
+
+@media (max-width: 380px) {
+  .featured-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Artisans main grid responsive */
+.artisans-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)) !important;
+  gap: 20px !important;
+}
+
+@media (max-width: 600px) {
+  .artisans-grid {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+  }
+}
+
+/* Search filters bar responsiveness */
+.search-filters {
+  flex-wrap: wrap !important;
+  gap: 10px !important;
+}
+
+@media (max-width: 768px) {
+  .search-filters {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+  .search-filters .filter-input,
+  .search-filters .form-control,
+  .search-filters button {
+    width: 100% !important;
+  }
+}
+
+/* Prevent step cards from overlapping on mobile */
+.steps-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)) !important;
+  gap: 20px !important;
+}
+
+@media (max-width: 600px) {
+  .steps-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 12px !important;
+  }
+}
+
+@media (max-width: 380px) {
+  .steps-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Map wrapper spacing */
+#map-wrapper {
+  margin-bottom: 32px !important;
+}
+
+/* Featured artisans section top margin */
+#featured-artisans-section {
+  margin-top: 36px !important;
+  padding-top: 28px !important;
+  border-top: 1px solid rgba(255,255,255,0.07) !important;
+}
+
+/* ── Navbar overlap prevention ─────────────────────────── */
+.hero {
+  padding-top: calc(var(--navbar-height, 70px) + 48px) !important;
+  padding-bottom: 80px !important;
+}
+
+/* General z-index safety */
+.hero-content { z-index: 4 !important; }
+.hero-overlay  { z-index: 1 !important; }
+.hero-float    { z-index: 2 !important; }
+.hero-bubble,
+.hero-blob     { z-index: 0 !important; }
+
+/* ═══════════════════════════════════════════════════════════
+   BUG FIX PATCH — v4 Production Fixes
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── BUG 1: Hero position override (hero_centered.css handles this) ── */
+/* Override old ui_fixes padding-top that conflicts with hero_centered.css */
+.hero {
+  padding-top: calc(var(--navbar-height, 70px) + 36px) !important;
+  padding-bottom: 60px !important;
+  justify-content: flex-start !important;
+}
+
+/* ── BUG 2: Artisan cards uniform height & alignment ── */
+/* All artisan cards same height, flex column so footer stays at bottom */
+.artisans-grid {
+  align-items: stretch !important;
+}
+.artisan-card {
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100% !important;
+}
+.artisan-card-body {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 !important;
+  padding: 0 16px 16px !important;
+}
+.artisan-footer {
+  margin-top: auto !important;
+  padding-top: 10px !important;
+}
+/* Ensure badge and text areas don't collapse */
+.artisan-badges {
+  min-height: 28px !important;
+}
+.artisan-trust {
+  margin-bottom: 10px !important;
+}
+
+/* ── BUG 2: Featured grid — enforce identical card heights ── */
+.featured-grid {
+  align-items: stretch !important;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)) !important;
+}
+.featured-card {
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100% !important;
+}
+.featured-card-body {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 !important;
+}
+.featured-footer {
+  margin-top: auto !important;
+}
+
+/* ── BUG 5: Service mini cards — clickable cursor ── */
+.service-mini-card {
+  cursor: pointer !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease !important;
+}
+.service-mini-card:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: 0 8px 24px rgba(225,48,108,0.2) !important;
+  border-color: rgba(225,48,108,0.4) !important;
+}
+
+/* ── BUG 6: Comparator bar — ensure visible state works ── */
+.comparator-bar {
+  transform: translateY(100%) !important;
+  transition: transform 0.3s ease !important;
+}
+.comparator-bar.visible {
+  transform: translateY(0) !important;
+}
+/* Compare button — highlight when 2+ selected */
+.comparator-btn {
+  min-width: 130px !important;
+  font-weight: 700 !important;
+}
+.comparator-btn.ready {
+  animation: pulseBorder 1.5s infinite !important;
+}
+@keyframes pulseBorder {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(225,48,108,0.4); }
+  50%       { box-shadow: 0 0 0 6px rgba(225,48,108,0); }
+}
+
+/* ── BUG 4: Pricing modal — proper overlay backdrop ── */
+.modal-backdrop-overlay {
+  position: fixed !important;
+  inset: 0 !important;
+  background: rgba(0,0,0,0.65) !important;
+  backdrop-filter: blur(4px) !important;
+  z-index: 999 !important;
+}
+/* Pricing modal centering */
+#payment-modal,
+#success-modal {
+  z-index: 1000 !important;
+}
+
+/* ── General hover improvements ── */
+.btn:not(:disabled):hover {
+  filter: brightness(1.08) !important;
+}
+.plan-btn {
+  margin-top: auto !important;
+  cursor: pointer !important;
+}
+.pricing-card {
+  cursor: default !important;
+}
+
+/* ── Comparison modal wide layout ── */
+#artisan-modal[data-mode="compare"] {
+  max-width: 860px !important;
+}

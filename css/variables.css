@@ -1,0 +1,100 @@
+/* ============================================================
+   FIXEO V3 STABLE CLEAN — CSS VARIABLES & DESIGN TOKENS
+   Instagram-inspired palette · Glassmorphism · Premium UI
+   ============================================================ */
+:root {
+  /* — Instagram-inspired Brand Colors — */
+  --ig-gradient: linear-gradient(45deg,#405DE6,#5851DB,#833AB4,#C13584,#E1306C,#FD1D1D,#F56040,#F77737,#FCAF45,#FFDC80);
+  --ig-gradient-short: linear-gradient(135deg,#405DE6,#833AB4,#E1306C,#F77737,#FCAF45);
+
+  --primary: #E1306C;
+  --primary-dark: #C13584;
+  --secondary: #833AB4;
+  --accent: #F77737;
+  --accent2: #FCAF45;
+  --accent-blue: #405DE6;
+  --accent-pink: #C13584;
+  --accent-orange: #F77737;
+  --accent-red: #E1306C;
+  --gold: #FFD700;
+  --success: #20c997;
+  --danger: #ff4757;
+  --warning: #ffa502;
+  --info: #3742fa;
+
+  /* — Dark Theme Base — */
+  --bg-dark: #0D0D1A;
+  --bg-card: rgba(255,255,255,0.05);
+  --bg-card-hover: rgba(255,255,255,0.09);
+  --glass-border: rgba(255,255,255,0.12);
+  --glass-border-strong: rgba(255,255,255,0.2);
+  --text-primary: #FFFFFF;
+  --text-secondary: rgba(255,255,255,0.70);
+  --text-muted: rgba(255,255,255,0.45);
+
+  /* — Gradients — */
+  --grad-primary: linear-gradient(135deg,#E1306C 0%,#833AB4 50%,#C13584 100%);
+  --grad-warm: linear-gradient(135deg,#FCAF45 0%,#F77737 50%,#E1306C 100%);
+  --grad-cool: linear-gradient(135deg,#405DE6 0%,#5851DB 30%,#833AB4 60%,#C13584 80%,#E1306C 100%);
+  --grad-dark: linear-gradient(135deg,#0D0D1A 0%,#1a1a2e 50%,#16213e 100%);
+  --grad-glass: linear-gradient(135deg,rgba(255,255,255,0.10) 0%,rgba(255,255,255,0.04) 100%);
+  --grad-gold: linear-gradient(135deg,#FFD700 0%,#FFA500 100%);
+  --grad-success: linear-gradient(135deg,#20c997 0%,#0dcaf0 100%);
+
+  /* — Glassmorphism — */
+  --glass-bg: rgba(255,255,255,0.06);
+  --glass-bg-strong: rgba(255,255,255,0.12);
+  --glass-blur: blur(20px);
+  --card-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  --neon-glow: 0 0 20px rgba(64,93,230,0.5),0 0 40px rgba(193,53,132,0.25);
+  --shadow-glow: 0 0 20px rgba(225,48,108,0.4);
+  --shadow-glow-gold: 0 0 20px rgba(255,215,0,0.4);
+
+  /* — Typography — */
+  --font-main: 'Cairo','Tajawal','Inter',system-ui,sans-serif;
+  --font-arabic: 'Cairo','Tajawal',sans-serif;
+
+  /* — Spacing — */
+  --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem;
+  --space-4: 1rem;    --space-5: 1.25rem; --space-6: 1.5rem;
+  --space-8: 2rem;    --space-10: 2.5rem; --space-12: 3rem;
+  --space-16: 4rem;   --space-20: 5rem;
+
+  /* — Border Radius — */
+  --radius-sm: 8px; --radius-md: 16px; --radius-lg: 24px;
+  --radius-xl: 32px; --radius-full: 9999px;
+
+  /* — Transitions — */
+  --transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+  --transition-fast: all 0.15s ease;
+  --transition-bounce: all 0.4s cubic-bezier(0.34,1.56,0.64,1);
+
+  /* — Z-index layers — */
+  --z-dropdown: 100; --z-sticky: 200; --z-fixed: 300;
+  --z-modal-backdrop: 400; --z-modal: 500;
+  --z-toast: 600; --z-tooltip: 700;
+
+  /* — Layout — */
+  --navbar-height: 70px;
+  --sidebar-width: 260px;
+  --sidebar-w: 260px;
+  --header-h: 70px;
+}
+
+/* Dark Mode */
+[data-theme="dark"] {
+  --bg-body: #0d0d0d;
+  --bg-card: rgba(255,255,255,0.05);
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255,255,255,0.7);
+  --border-color: rgba(255,255,255,0.1);
+}
+
+/* Light Mode */
+[data-theme="light"] {
+  --bg-body: #f5f5f5;
+  --bg-card: rgba(255,255,255,0.9);
+  --text-primary: #0d0d0d;
+  --text-secondary: rgba(0,0,0,0.6);
+  --border-color: rgba(0,0,0,0.1);
+}

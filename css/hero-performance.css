@@ -1,0 +1,23 @@
+/* HERO performance: below-the-fold rendering is deferred without touching branding */
+#recommended-artisan-section,
+#services,
+#secondary-search-section,
+#top-artisans,
+#artisans-section,
+.how-it-works-section,
+#feed-section,
+.testimonial-section,
+.final-cta-section {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 900px;
+}
+
+#recommended-artisan-section {
+  contain-intrinsic-size: 1px 260px;
+}
+
+#top-artisans,
+#artisans-section,
+#feed-section {
+  contain-intrinsic-size: 1px 1200px;
+}

@@ -1,0 +1,290 @@
+/* ================================================================
+   FIXEO V17 — AUTH GLOBAL CSS (css/auth-global.css)
+   Styles pour le user-box dans #auth-container
+   + Renforcement des règles data-auth
+   ================================================================ */
+
+/* ── USER BOX (dans #auth-container) ────────────────────────── */
+.fixeo-user-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.fixeo-avatar {
+  width: 36px;
+  height: 36px;
+  background: var(--grad-primary, linear-gradient(135deg, #E1306C, #833AB4));
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.fixeo-user-info {
+  display: flex;
+  flex-direction: column;
+  font-size: 12px;
+  line-height: 1.3;
+}
+
+.fixeo-user-name {
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.82rem;
+}
+
+.fixeo-user-role {
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.72rem;
+}
+
+.fixeo-logout-btn {
+  background: rgba(225, 48, 108, 0.12);
+  border: 1px solid rgba(225, 48, 108, 0.30);
+  color: rgba(255, 255, 255, 0.80);
+  padding: 6px 14px;
+  border-radius: 9999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.22s ease;
+  white-space: nowrap;
+}
+
+.fixeo-logout-btn:hover {
+  background: rgba(225, 48, 108, 0.25);
+  border-color: rgba(225, 48, 108, 0.55);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+/* ── RENFORCEMENT RÈGLES data-auth ───────────────────────────── */
+/*
+   Ces règles garantissent que la visibilité est correcte
+   même si header-unified.css n'est pas encore chargé.
+*/
+[data-auth="logged-in"] { display: none !important; }
+[data-auth="admin"]     { display: none !important; }
+
+body.is-logged-in [data-auth="logged-in"] { display: flex   !important; }
+body.is-logged-in [data-auth="guest"]     { display: none   !important; }
+body.is-admin     [data-auth="admin"]     { display: flex   !important; }
+
+/* Liens et boutons */
+body.is-logged-in a[data-auth="logged-in"],
+body.is-logged-in button[data-auth="logged-in"] {
+  display: inline-flex !important;
+}
+body.is-admin a[data-auth="admin"],
+body.is-admin button[data-auth="admin"] {
+  display: inline-flex !important;
+}
+
+/* Mobile */
+body.is-logged-in .mobile-nav a[data-auth="logged-in"] { display: flex !important; }
+body.is-admin     .mobile-nav a[data-auth="admin"]      { display: flex !important; }
+
+/* Divs (nav-has-dropdown) */
+body.is-logged-in div[data-auth="logged-in"] { display: flex !important; }
+
+/* ================================================================
+   FIXEO V18 — GLOBAL AUTH HEADER IDs (brief v18)
+   Styles pour : #header-avatar, #header-username,
+                 #logout-btn, #login-btn, #register-btn
+   + sidebar-mini-profile dynamique
+   ================================================================ */
+
+/* ── AVATAR HEADER ───────────────────────────────────────────────── */
+#header-avatar {
+  width: 35px;
+  height: 35px;
+  background: var(--grad-primary, linear-gradient(135deg, #E1306C, #833AB4));
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+  overflow: hidden;
+  cursor: pointer;
+  transition: box-shadow 0.22s ease, transform 0.18s ease;
+}
+
+#header-avatar:hover {
+  box-shadow: 0 0 0 3px rgba(225, 48, 108, 0.35);
+  transform: scale(1.06);
+}
+
+#header-avatar img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* ── NOM UTILISATEUR HEADER ──────────────────────────────────────── */
+#header-username {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.88);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px;
+}
+
+/* ── BOUTON DÉCONNEXION ──────────────────────────────────────────── */
+#logout-btn {
+  transition: background 0.22s ease, color 0.22s ease;
+}
+
+/* ── BOUTONS CONNEXION/INSCRIPTION ───────────────────────────────── */
+/* La visibilité est gérée par JS + data-auth, mais on ajoute
+   une sécurité CSS pour les pages qui n'ont pas encore le body class */
+body.is-logged-in #login-btn,
+body.is-logged-in #register-btn {
+  display: none !important;
+}
+
+body:not(.is-logged-in) #logout-btn {
+  display: none !important;
+}
+
+/* ── SIDEBAR MINI-PROFILE DYNAMIQUE ─────────────────────────────── */
+#sidebar-avatar {
+  transition: box-shadow 0.22s ease;
+}
+
+#sidebar-avatar:hover {
+  box-shadow: 0 0 0 3px rgba(225, 48, 108, 0.30);
+}
+
+#sidebar-username {
+  font-weight: 700;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+#sidebar-role {
+  font-size: 0.72rem;
+  color: var(--accent2, rgba(255, 255, 255, 0.55));
+}
+
+/* ── .dashboard-header (si utilisé en remplacement du brief) ────── */
+.dashboard-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+}
+
+.dashboard-header .avatar {
+  width: 35px;
+  height: 35px;
+  background: #0070ba;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 16px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+/* ================================================================
+   FIXEO V18 — GLOBAL AUTH HEADER (brief v18)
+   Styles pour #global-avatar, #global-username, #global-role
+   + .header-global + .avatar (compatibilité brief)
+   ================================================================ */
+
+/* ── AVATAR GLOBAL (id="global-avatar") ─────────────────────────── */
+#global-avatar {
+  width: 35px;
+  height: 35px;
+  background: var(--grad-primary, linear-gradient(135deg, #E1306C, #833AB4));
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+  overflow: hidden;
+  cursor: pointer;
+  transition: box-shadow 0.22s ease, transform 0.18s ease;
+}
+
+#global-avatar:hover {
+  box-shadow: 0 0 0 3px rgba(225, 48, 108, 0.35);
+  transform: scale(1.06);
+}
+
+#global-avatar img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* ── NOM GLOBAL (id="global-username") ───────────────────────────── */
+#global-username {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.88);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+/* ── RÔLE GLOBAL (id="global-role") ─────────────────────────────── */
+#global-role {
+  font-size: 0.70rem;
+  color: rgba(255, 255, 255, 0.50);
+  display: block;
+}
+
+/* ── CLASSE .avatar (brief v18) ─────────────────────────────────── */
+.avatar {
+  width: 35px;
+  height: 35px;
+  background: #0070ba;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 16px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+/* ── CLASSE .header-global (brief v18) ──────────────────────────── */
+.header-global {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ── CSS body classes pour global-username / global-avatar ──────── */
+body.is-logged-in #global-username {
+  display: inline-block !important;
+}
+
+body:not(.is-logged-in) #global-role {
+  display: none !important;
+}

@@ -1,0 +1,588 @@
+/* ================================================================
+   FIXEO V10 — HEADER UNIFIED (header-unified.css)
+   Centralisation complète · Hover effects · Dropdowns · Sticky
+   Dashboard/Admin conditionnels · Responsive hamburger
+   Chargé EN DERNIER dans tous les <head>
+   ================================================================ */
+
+/* ── 1. NAVBAR CONTAINER ─────────────────────────────────────── */
+.navbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: var(--z-fixed, 300);
+  height: var(--navbar-height, 70px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  gap: 16px;
+  background: rgba(13, 13, 26, 0.88);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+  transition: background 0.35s ease, box-shadow 0.35s ease;
+  will-change: background;
+}
+
+/* Scrolled state — opaque + stronger shadow */
+.navbar.scrolled {
+  background: rgba(13, 13, 26, 0.97) !important;
+  box-shadow: 0 4px 28px rgba(0, 0, 0, 0.5);
+}
+
+/* Hero visible = slight transparency boost */
+.navbar.hero-visible:not(.scrolled) {
+  background: rgba(13, 13, 26, 0.78);
+}
+
+/* ── 2. LOGO ─────────────────────────────────────────────────── */
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  flex-shrink: 0;
+  transition: opacity 0.2s ease;
+}
+.navbar-brand:hover { opacity: 0.85; }
+.navbar-brand .logo-icon {
+  width: 38px; height: 38px;
+  font-size: 1.1rem;
+  background: var(--grad-primary, linear-gradient(135deg,#E1306C,#833AB4));
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.navbar-brand .logo-text {
+  font-size: 1.4rem;
+  font-weight: 800;
+  background: var(--ig-gradient-short, linear-gradient(135deg,#405DE6,#833AB4,#E1306C,#F77737,#FCAF45));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── 3. DESKTOP NAV LINKS ────────────────────────────────────── */
+.navbar-nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+  justify-content: center;
+}
+
+/* Base nav-link */
+.navbar-nav .nav-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 15px;
+  border-radius: var(--radius-full, 9999px);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.70);
+  text-decoration: none;
+  transition: color 0.22s ease, background 0.22s ease, transform 0.22s ease, box-shadow 0.22s ease;
+  white-space: nowrap;
+}
+
+/* Underline slide-in indicator */
+.navbar-nav .nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 4px; left: 50%;
+  width: 0; height: 2px;
+  background: var(--grad-primary, linear-gradient(135deg,#E1306C,#833AB4));
+  border-radius: 2px;
+  transform: translateX(-50%);
+  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Hover effect */
+.navbar-nav .nav-link:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.10);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.25);
+}
+.navbar-nav .nav-link:hover::after {
+  width: 60%;
+}
+
+/* Active state */
+.navbar-nav .nav-link.active {
+  color: #fff;
+  background: rgba(225, 48, 108, 0.14);
+}
+.navbar-nav .nav-link.active::after {
+  width: 60%;
+}
+
+/* Dashboard link — subtle teal accent */
+.navbar-nav .nav-link[data-role="dashboard"]:hover,
+.navbar-nav .nav-link[data-role="dashboard"].active {
+  color: var(--success, #20c997);
+  background: rgba(32, 201, 151, 0.10);
+}
+.navbar-nav .nav-link[data-role="dashboard"]::after {
+  background: linear-gradient(135deg, #20c997, #0dcaf0);
+}
+
+/* Admin link — gold accent */
+.navbar-nav .nav-link[data-role="admin"] {
+  color: rgba(252, 175, 69, 0.85);
+}
+.navbar-nav .nav-link[data-role="admin"]:hover {
+  color: var(--gold, #FFD700);
+  background: rgba(252, 175, 69, 0.12);
+}
+.navbar-nav .nav-link[data-role="admin"]::after {
+  background: linear-gradient(135deg, #FCAF45, #FFD700);
+}
+
+/* ── 4. DROPDOWN MENUS ───────────────────────────────────────── */
+.nav-has-dropdown {
+  position: relative;
+}
+
+/* Arrow indicator on parent link */
+.nav-has-dropdown > .nav-link .nav-arrow {
+  display: inline-block;
+  font-size: 0.6rem;
+  margin-left: 2px;
+  transition: transform 0.25s ease;
+  opacity: 0.7;
+}
+.nav-has-dropdown:hover > .nav-link .nav-arrow,
+.nav-has-dropdown.open > .nav-link .nav-arrow {
+  transform: rotate(180deg);
+  opacity: 1;
+}
+
+/* Dropdown panel */
+.nav-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%) translateY(-8px);
+  min-width: 200px;
+  background: rgba(13, 13, 26, 0.96);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 16px;
+  padding: 8px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.55);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.22s ease, transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+  z-index: calc(var(--z-fixed, 300) + 10);
+}
+
+/* Open state (hover or JS .open) */
+.nav-has-dropdown:hover > .nav-dropdown,
+.nav-has-dropdown.open > .nav-dropdown {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Dropdown items */
+.nav-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 0.845rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.70);
+  text-decoration: none;
+  transition: color 0.18s ease, background 0.18s ease, transform 0.18s ease;
+  cursor: pointer;
+}
+.nav-dropdown-item:hover {
+  color: #fff;
+  background: rgba(225, 48, 108, 0.14);
+  transform: translateX(3px);
+}
+.nav-dropdown-item .dd-icon {
+  font-size: 1rem;
+  flex-shrink: 0;
+  width: 22px;
+  text-align: center;
+}
+.nav-dropdown-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.07);
+  margin: 6px 8px;
+}
+
+/* ── 5. NAV ACTIONS (right side) ─────────────────────────────── */
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+/* Quick Search Button */
+.btn-quick-search {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 16px;
+  border-radius: var(--radius-full, 9999px);
+  background: rgba(225, 48, 108, 0.12);
+  border: 1px solid rgba(225, 48, 108, 0.28);
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.845rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.22s ease;
+  white-space: nowrap;
+}
+.btn-quick-search:hover {
+  background: rgba(225, 48, 108, 0.22);
+  border-color: rgba(225, 48, 108, 0.5);
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(225, 48, 108, 0.28);
+}
+.btn-quick-search .bqs-icon { font-size: 0.95rem; }
+
+/* Language selector */
+.lang-selector {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: var(--radius-full, 9999px);
+  font-size: 0.8rem;
+  cursor: pointer;
+  outline: none;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+.lang-selector:hover {
+  background: rgba(255, 255, 255, 0.13);
+  border-color: rgba(255, 255, 255, 0.22);
+}
+.lang-selector option { background: #1a1a2e; color: #fff; }
+
+/* Notification button */
+.notif-btn {
+  position: relative;
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; color: #fff;
+  cursor: pointer;
+  transition: background 0.22s ease, transform 0.22s ease, box-shadow 0.22s ease;
+}
+.notif-btn:hover {
+  background: rgba(225, 48, 108, 0.18);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(225, 48, 108, 0.22);
+}
+.notif-badge {
+  position: absolute; top: -2px; right: -2px;
+  min-width: 18px; height: 18px;
+  background: var(--accent-red, #E1306C);
+  border-radius: var(--radius-full, 9999px);
+  font-size: 0.65rem; font-weight: 800; color: #fff;
+  display: none;
+  align-items: center; justify-content: center;
+  padding: 0 4px;
+  border: 2px solid var(--bg-dark, #0D0D1A);
+}
+.notif-badge.has-notif {
+  display: flex;
+}
+
+/* CTA buttons */
+.btn-nav {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 18px;
+  border-radius: var(--radius-full, 9999px);
+  font-size: 0.845rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.22s ease;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.btn-nav-outline {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: rgba(255, 255, 255, 0.80);
+}
+.btn-nav-outline:hover {
+  background: rgba(255, 255, 255, 0.10);
+  border-color: rgba(255, 255, 255, 0.40);
+  color: #fff;
+  transform: translateY(-1px);
+}
+.btn-nav-primary {
+  background: var(--grad-primary, linear-gradient(135deg,#E1306C,#833AB4));
+  border: 1px solid transparent;
+  color: #fff;
+}
+.btn-nav-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 18px rgba(225, 48, 108, 0.42);
+  filter: brightness(1.08);
+}
+
+/* User avatar chip (logged-in state) */
+.nav-user-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px 5px 5px;
+  border-radius: var(--radius-full, 9999px);
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  cursor: pointer;
+  transition: background 0.22s ease;
+}
+.nav-user-chip:hover { background: rgba(255, 255, 255, 0.12); }
+.nav-user-avatar {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--grad-primary);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.75rem; font-weight: 700; color: #fff;
+  flex-shrink: 0;
+}
+.nav-user-name {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── 6. HAMBURGER BUTTON ─────────────────────────────────────── */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.22s ease;
+  flex-shrink: 0;
+}
+.hamburger:hover { background: rgba(255, 255, 255, 0.12); }
+.hamburger span {
+  display: block;
+  width: 22px; height: 2px;
+  background: #fff;
+  border-radius: 2px;
+  transition: transform 0.28s ease, opacity 0.28s ease;
+  transform-origin: center;
+}
+.hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+.hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+/* ── 7. MOBILE NAV DRAWER ────────────────────────────────────── */
+.mobile-nav {
+  display: none;
+  position: fixed;
+  top: var(--navbar-height, 70px);
+  left: 0;
+  right: 0;
+  z-index: calc(var(--z-fixed, 300) + 30);
+  background: rgba(13, 13, 26, 0.985);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+  padding: 14px 16px 20px;
+  flex-direction: column;
+  gap: 4px;
+  transform: translateY(-10px);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.24s ease, transform 0.24s cubic-bezier(0.22, 1, 0.36, 1), visibility 0.24s ease;
+  max-height: calc(100vh - var(--navbar-height, 70px));
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.mobile-nav.open {
+  display: flex;
+  transform: translateY(0);
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.mobile-nav-backdrop {
+  display: none;
+  position: fixed;
+  inset: var(--navbar-height, 70px) 0 0 0;
+  z-index: calc(var(--z-fixed, 300) + 20);
+  background: rgba(5, 8, 18, 0.38);
+  border: 0;
+  padding: 0;
+  margin: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.24s ease;
+}
+
+.mobile-nav-backdrop.open {
+  display: block;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Mobile nav links */
+.mobile-nav .nav-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.75);
+  text-decoration: none;
+  transition: color 0.18s ease, background 0.18s ease;
+}
+.mobile-nav .nav-link:hover,
+.mobile-nav .nav-link.active {
+  color: #fff;
+  background: rgba(225, 48, 108, 0.13);
+}
+.mobile-nav .nav-link[data-role="dashboard"] { color: rgba(32, 201, 151, 0.85); }
+.mobile-nav .nav-link[data-role="admin"] { color: rgba(252, 175, 69, 0.85); }
+
+/* Mobile section divider */
+.mobile-nav-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.08);
+  margin: 8px 4px;
+}
+
+/* Mobile quick-search */
+.mobile-nav .btn-quick-search {
+  width: 100%;
+  justify-content: center;
+  margin: 6px 0;
+}
+
+/* Mobile auth buttons */
+.mobile-nav-auth {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+.mobile-nav-auth .btn-nav {
+  flex: 1;
+  justify-content: center;
+}
+
+/* ── 8. VISIBILITY RULES — Dashboard / Admin ─────────────────── */
+/* Hidden by default — JS reveals based on auth state */
+[data-auth="logged-in"],
+[data-auth="admin"] {
+  display: none !important;
+}
+/* When body carries correct state class */
+body.is-logged-in [data-auth="logged-in"] {
+  display: flex !important;
+}
+body.is-logged-in [data-auth="guest"] {
+  display: none !important;
+}
+body.is-admin [data-auth="admin"] {
+  display: flex !important;
+}
+/* For inline-block elements (links) */
+body.is-logged-in a[data-auth="logged-in"],
+body.is-logged-in button[data-auth="logged-in"] {
+  display: inline-flex !important;
+}
+body.is-admin a[data-auth="admin"],
+body.is-admin button[data-auth="admin"] {
+  display: inline-flex !important;
+}
+/* Mobile variants */
+body.is-logged-in .mobile-nav a[data-auth="logged-in"] { display: flex !important; }
+body.is-admin .mobile-nav a[data-auth="admin"] { display: flex !important; }
+
+/* ── 9. STICKY TRANSPARENT TRANSITION ───────────────────────── */
+/* When hero section is in view, header appears lighter */
+@media (min-width: 769px) {
+  .navbar:not(.scrolled) .navbar-nav .nav-link {
+    color: rgba(255, 255, 255, 0.75);
+  }
+}
+
+/* ── 10. RESPONSIVE BREAKPOINTS ──────────────────────────────── */
+
+/* Tablet: hide some text */
+@media (max-width: 1100px) {
+  .btn-quick-search .bqs-text { display: none; }
+  .btn-quick-search { padding: 8px 12px; }
+  .btn-quick-search .bqs-icon { font-size: 1.05rem; }
+  .navbar-nav { gap: 2px; }
+  .navbar-nav .nav-link { padding: 8px 11px; }
+}
+
+/* Mobile: switch to hamburger */
+@media (max-width: 768px) {
+  .navbar-nav { display: none !important; }
+  .hamburger { display: flex !important; }
+  .btn-quick-search .bqs-text { display: none; }
+  .btn-quick-search { padding: 8px 11px; }
+  .btn-nav-outline { display: none; }
+  .lang-selector { display: none; }
+  .mobile-nav { display: flex; }
+}
+
+body.mobile-menu-open {
+  overflow: hidden;
+}
+
+/* Very small screens */
+@media (max-width: 400px) {
+  .navbar { padding: 0 14px; }
+  .navbar-brand .logo-text { display: none; }
+}
+
+/* ── 11. SKIP-LINK ACCESSIBILITY ─────────────────────────────── */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 16px;
+  padding: 8px 16px;
+  background: var(--primary, #E1306C);
+  color: #fff;
+  border-radius: 0 0 8px 8px;
+  font-weight: 700;
+  text-decoration: none;
+  z-index: 9999;
+  transition: top 0.2s ease;
+}
+.skip-link:focus { top: 0; }
+
+/* ── 12. FOCUS-VISIBLE RING ──────────────────────────────────── */
+.navbar-nav .nav-link:focus-visible,
+.btn-quick-search:focus-visible,
+.notif-btn:focus-visible,
+.hamburger:focus-visible {
+  outline: 2px solid var(--primary, #E1306C);
+  outline-offset: 2px;
+}

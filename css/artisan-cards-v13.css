@@ -1,0 +1,157 @@
+/* ====================================================================
+   FIXEO V13 — ARTISAN CARDS — Uniform, Clean, Modern
+   ==================================================================== */
+
+/* ─── Card avatar placeholder ─── */
+.artisan-avatar-placeholder {
+  width: 58px !important;
+  height: 58px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-weight: 800 !important;
+  font-size: 1.15rem !important;
+  color: #fff !important;
+  flex-shrink: 0 !important;
+  background: linear-gradient(135deg, #E1306C, #833AB4) !important;
+  margin: 0 auto 10px !important;
+}
+
+/* ─── Card body ─── */
+.artisan-card-body,
+.ssb2-artisan-body {
+  padding: 16px 14px 8px !important;
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+}
+
+/* ─── Status badge ─── */
+.artisan-availability {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  font-size: 0.7rem !important;
+  font-weight: 600 !important;
+  padding: 3px 10px !important;
+  border-radius: 9999px !important;
+}
+.artisan-availability.available {
+  background: rgba(32,201,151,0.12) !important;
+  color: #20c997 !important;
+  border: 1px solid rgba(32,201,151,0.25) !important;
+}
+.artisan-availability.busy {
+  background: rgba(255,165,0,0.10) !important;
+  color: #ffa502 !important;
+  border: 1px solid rgba(255,165,0,0.22) !important;
+}
+
+/* ─── Artisan name ─── */
+.artisan-name {
+  font-size: 0.92rem !important;
+  font-weight: 700 !important;
+  color: rgba(255,255,255,0.90) !important;
+  margin: 0 !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+/* ─── Category label ─── */
+.artisan-category {
+  font-size: 0.74rem !important;
+  color: rgba(255,255,255,0.48) !important;
+  text-align: center !important;
+  margin: 0 !important;
+}
+
+/* ─── Rating row ─── */
+.artisan-rating {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 5px !important;
+  font-size: 0.82rem !important;
+}
+.artisan-rating .stars { color: #FFD700 !important; letter-spacing: 1px !important; font-size: 0.78rem !important; }
+.artisan-rating .score { font-weight: 700 !important; color: rgba(255,255,255,0.82) !important; }
+.artisan-rating .reviews { color: rgba(255,255,255,0.38) !important; font-size: 0.7rem !important; }
+
+/* ─── Price ─── */
+.artisan-price {
+  text-align: center !important;
+  font-size: 0.78rem !important;
+  color: rgba(255,255,255,0.42) !important;
+}
+.artisan-price strong {
+  color: rgba(255,255,255,0.80) !important;
+  font-weight: 700 !important;
+}
+
+/* ─── Trust score badge ─── */
+.trust-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  font-size: 0.68rem !important;
+  font-weight: 700 !important;
+  padding: 2px 8px !important;
+  border-radius: 6px !important;
+  margin: 0 auto !important;
+}
+.trust-badge.high   { background: rgba(32,201,151,0.12) !important; color: #20c997 !important; }
+.trust-badge.medium { background: rgba(255,165,0,0.10) !important;  color: #ffa502 !important; }
+.trust-badge.low    { background: rgba(255,71,87,0.10) !important;  color: #ff4757 !important; }
+
+/* ─── Slot lock indicator ─── */
+.slot-locked-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  font-size: 0.68rem !important;
+  font-weight: 600 !important;
+  color: #ff6b6b !important;
+  background: rgba(255,107,107,0.10) !important;
+  border: 1px solid rgba(255,107,107,0.22) !important;
+  border-radius: 6px !important;
+  padding: 2px 8px !important;
+  margin: 0 auto !important;
+}
+
+/* ─── Card header (top-right badges) ─── */
+.artisan-card-header,
+.ssb2-card-header {
+  position: relative !important;
+  padding: 12px 12px 0 !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: flex-start !important;
+}
+
+/* ─── Compare checkbox ─── */
+.compare-check {
+  position: absolute !important;
+  top: 10px !important;
+  left: 10px !important;
+  width: 22px !important;
+  height: 22px !important;
+  border-radius: 6px !important;
+  background: rgba(255,255,255,0.08) !important;
+  border: 1px solid rgba(255,255,255,0.18) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  font-size: 0.7rem !important;
+  transition: all 0.2s !important;
+  z-index: 5 !important;
+}
+.compare-check.selected {
+  background: linear-gradient(135deg,#E1306C,#833AB4) !important;
+  border-color: transparent !important;
+  color: #fff !important;
+}

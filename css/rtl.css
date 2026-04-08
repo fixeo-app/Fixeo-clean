@@ -1,0 +1,122 @@
+/* ============================================================
+   FIXEO V3 — RTL & ARABIC SPECIFIC STYLES
+   ============================================================ */
+[dir="rtl"] {
+  text-align: right;
+}
+[dir="rtl"] body {
+  font-family: 'Tajawal', 'Cairo', sans-serif;
+  letter-spacing: 0;
+}
+[dir="rtl"] .navbar {
+  flex-direction: row-reverse;
+}
+[dir="rtl"] .navbar-brand {
+  flex-direction: row-reverse;
+}
+[dir="rtl"] .navbar-nav {
+  flex-direction: row-reverse;
+}
+[dir="rtl"] .nav-actions {
+  flex-direction: row-reverse;
+}
+[dir="rtl"] .hero-actions {
+  flex-direction: row-reverse;
+}
+[dir="rtl"] .hero-stats {
+  flex-direction: row-reverse;
+}
+[dir="rtl"] .card-header {
+  flex-direction: row-reverse;
+}
+[dir="rtl"] .artisan-footer {
+  flex-direction: row-reverse;
+}
+[dir="rtl"] .artisan-badges {
+  flex-direction: row-reverse;
+}
+[dir="rtl"] .filters-bar {
+  flex-direction: row-reverse;
+}
+[dir="rtl"] .feed-card-footer {
+  flex-direction: row-reverse;
+}
+[dir="rtl"] .kpi-trend {
+  flex-direction: row-reverse;
+}
+[dir="rtl"] .leaderboard-item {
+  flex-direction: row-reverse;
+}
+[dir="rtl"] .leaderboard-item:hover {
+  transform: translateX(-4px);
+}
+[dir="rtl"] .sidebar-link {
+  flex-direction: row-reverse;
+}
+[dir="rtl"] .sidebar-link.active {
+  border-left: none;
+  border-right: 3px solid var(--primary);
+}
+[dir="rtl"] .sidebar-badge {
+  margin-left: 0;
+  margin-right: auto;
+}
+[dir="rtl"] .social-links {
+  flex-direction: row-reverse;
+}
+[dir="rtl"] .chat-widget {
+  left: auto;
+  right: var(--space-6);
+}
+[dir="rtl"] .back-to-top {
+  right: auto;
+  left: calc(var(--space-6) + 70px);
+}
+[dir="rtl"] .toast-container {
+  right: auto;
+  left: var(--space-6);
+}
+[dir="rtl"] .toast {
+  flex-direction: row-reverse;
+}
+[dir="rtl"] .toast::before {
+  left: auto;
+  right: 0;
+}
+[dir="rtl"] .mission-item {
+  flex-direction: row-reverse;
+}
+[dir="rtl"] .artisan-rating {
+  flex-direction: row-reverse;
+}
+[dir="rtl"] .notif-item {
+  flex-direction: row-reverse;
+}
+[dir="rtl"] .trust-label {
+  flex-direction: row-reverse;
+}
+[dir="rtl"] .step-card {
+  text-align: center;
+}
+[dir="rtl"] .before-label { left: auto; right: var(--space-3); }
+[dir="rtl"] .after-label { right: auto; left: var(--space-3); }
+[dir="rtl"] .footer-grid {
+  direction: rtl;
+}
+[dir="rtl"] .hero-badge {
+  flex-direction: row-reverse;
+}
+[dir="rtl"] .progress-label {
+  flex-direction: row-reverse;
+}
+[dir="rtl"] .comparator-bar {
+  flex-direction: row-reverse;
+}
+[dir="rtl"] .search-bar {
+  flex-direction: row-reverse;
+}
+/* AR specific font sizes */
+[dir="rtl"] h1 { font-size: clamp(1.6rem, 4.5vw, 3.2rem); }
+[dir="rtl"] .hero-badge { font-size: 0.9rem; }
+[dir="rtl"] .chip { font-size: 0.95rem; }
+[dir="rtl"] .nav-link { font-size: 0.95rem; }

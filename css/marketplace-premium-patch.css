@@ -1,0 +1,2568 @@
+/* ================================================================
+   FIXEO — Marketplace Premium Patch
+   Objectif: harmonisation search + cards + boutons sans casser l’existant
+   ================================================================ */
+
+:root {
+  --fixeo-market-gradient: linear-gradient(135deg, #E1306C 0%, #833AB4 60%, #405DE6 100%);
+  --fixeo-market-radius: 8px;
+  --fixeo-market-shadow: 0 10px 24px rgba(225, 48, 108, 0.24);
+  --fixeo-market-glass: rgba(255, 255, 255, 0.06);
+  --fixeo-market-border: rgba(255, 255, 255, 0.12);
+}
+
+/* ── Hero artisan vedette ───────────────────────────────────── */
+.rec-avatar {
+  width: 70px !important;
+  height: 70px !important;
+  border-radius: 50% !important;
+  margin-bottom: 10px !important;
+  object-fit: cover !important;
+}
+
+.primary-btn,
+.btn-featured-reserve,
+.btn-other-reserve,
+.btn-other-see-more,
+.ssb2-btn-more,
+#feed-see-more-btn,
+.view-more-btn {
+  background: var(--fixeo-market-gradient) !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: var(--fixeo-market-radius) !important;
+  box-shadow: var(--fixeo-market-shadow) !important;
+}
+
+.primary-btn:hover,
+.btn-featured-reserve:hover,
+.btn-other-reserve:hover,
+.btn-other-see-more:hover,
+.ssb2-btn-more:hover,
+#feed-see-more-btn:hover,
+.view-more-btn:hover {
+  transform: translateY(-2px) !important;
+  filter: brightness(1.04) !important;
+}
+
+.recommended-box .rec-cta {
+  border-radius: var(--fixeo-market-radius) !important;
+  padding: 10px 18px !important;
+}
+
+/* ── Search experience premium ──────────────────────────────── */
+.ssb-smart-filters {
+  display: none !important;
+}
+
+.fixeo-hero-marketplace {
+  margin-top: 40px;
+  margin-bottom: 50px;
+  padding: 0 4px;
+}
+
+.fixeo-hero-filters,
+#artisans-section .quick-filters {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+  margin-bottom: 10px !important;
+}
+
+.fixeo-filter-btn,
+#artisans-section .qf-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  padding: 7px 12px !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(255,255,255,0.10) !important;
+  background: rgba(255,255,255,0.04) !important;
+  color: rgba(255,255,255,0.62) !important;
+  font-size: 0.76rem !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.22s ease !important;
+  font-family: inherit !important;
+  white-space: nowrap !important;
+  opacity: 0.82 !important;
+}
+
+.fixeo-filter-btn:hover,
+#artisans-section .qf-btn:hover,
+.fixeo-filter-btn.active,
+#artisans-section .qf-btn.active {
+  background: rgba(255,255,255,0.08) !important;
+  border-color: rgba(225,48,108,0.24) !important;
+  color: rgba(255,255,255,0.92) !important;
+  box-shadow: 0 6px 18px rgba(225,48,108,0.16) !important;
+  transform: translateY(-1px) !important;
+  opacity: 1 !important;
+}
+
+.search-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.search-info span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.035);
+  border: 1px solid rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.64);
+  font-size: 0.72rem;
+  font-weight: 600;
+  opacity: 0.84;
+}
+
+/* ── Cards harmonisées ──────────────────────────────────────── */
+.artisan-card {
+  background: rgba(255,255,255,0.055) !important;
+  backdrop-filter: blur(18px) !important;
+  -webkit-backdrop-filter: blur(18px) !important;
+  border: 1px solid rgba(255,255,255,0.10) !important;
+  border-left: 1px solid rgba(255,255,255,0.10) !important;
+  border-radius: 16px !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  box-shadow: 0 14px 36px rgba(0,0,0,0.20) !important;
+}
+
+.artisan-card:hover {
+  border-color: rgba(225,48,108,0.28) !important;
+  border-left-color: rgba(225,48,108,0.28) !important;
+  box-shadow: 0 18px 42px rgba(0,0,0,0.30), 0 0 0 1px rgba(225,48,108,0.12) !important;
+}
+
+.artisan-card.premium-unified-card .artisan-card-cover {
+  display: none !important;
+}
+
+.artisan-card.premium-unified-card .artisan-card-image {
+  display: block !important;
+  width: calc(100% - 36px) !important;
+  height: 160px !important;
+  margin: 18px auto 0 !important;
+  object-fit: cover !important;
+  border-radius: 10px !important;
+  background: rgba(255,255,255,0.05) !important;
+}
+
+.artisan-card .artisan-card-body {
+  padding: 18px !important;
+}
+
+.artisan-card .artisan-card-top {
+  align-items: center !important;
+  gap: 12px !important;
+  margin-bottom: 12px !important;
+}
+
+.artisan-card .artisan-avatar-image {
+  width: 56px !important;
+  height: 56px !important;
+  border-radius: 50% !important;
+  object-fit: cover !important;
+  border: 2px solid rgba(255,255,255,0.14) !important;
+  background: rgba(255,255,255,0.06) !important;
+}
+
+.artisan-card .artisan-name {
+  font-size: 0.96rem !important;
+  color: #fff !important;
+}
+
+.artisan-card .artisan-service,
+.artisan-card .artisan-card-meta {
+  color: rgba(255,255,255,0.58) !important;
+}
+
+.artisan-card .artisan-badges {
+  min-height: 28px !important;
+  margin-bottom: 10px !important;
+}
+
+.artisan-card .card-buttons {
+  display: flex !important;
+  gap: 8px !important;
+  flex-wrap: wrap !important;
+  margin-top: auto !important;
+}
+
+.artisan-card .btn-other-reserve,
+.artisan-card .btn-other-profile {
+  flex: 1 1 0 !important;
+  min-height: 42px !important;
+  padding: 10px 12px !important;
+  border-radius: 8px !important;
+  font-weight: 700 !important;
+}
+
+.artisan-card .btn-other-profile {
+  background: rgba(255,255,255,0.07) !important;
+  color: rgba(255,255,255,0.88) !important;
+  border: 1px solid rgba(255,255,255,0.10) !important;
+}
+
+/* ── Voir plus / CTA cohérents ─────────────────────────────── */
+#other-see-more-wrap,
+.ssb2-vedette-more-wrap,
+#feed-see-more-wrap {
+  display: flex !important;
+  justify-content: center !important;
+  margin-top: 28px !important;
+}
+
+.btn-other-see-more,
+.ssb2-btn-more,
+#feed-see-more-btn {
+  padding: 12px 24px !important;
+  min-height: 46px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.01em !important;
+}
+
+/* ── Bandeau et respiration premium ─────────────────────────── */
+.other-artisans-banner {
+  background: linear-gradient(135deg, rgba(225,48,108,0.08), rgba(131,58,180,0.06)) !important;
+  border: 1px solid rgba(225,48,108,0.18) !important;
+  box-shadow: 0 12px 28px rgba(0,0,0,0.14) !important;
+}
+
+@media (max-width: 768px) {
+  .fixeo-hero-filters,
+  #artisans-section .quick-filters,
+  .search-info {
+    gap: 8px !important;
+  }
+
+  .fixeo-filter-btn,
+  #artisans-section .qf-btn {
+    padding: 9px 12px !important;
+    font-size: 0.8rem !important;
+  }
+
+  .artisan-card.premium-unified-card .artisan-card-image {
+    width: calc(100% - 28px) !important;
+    margin-top: 14px !important;
+  }
+
+  .artisan-card .artisan-card-body {
+    padding: 16px !important;
+  }
+}
+
+
+/* ==============================================================
+   FIXEO v22.1 — Hero quick search inline
+   Réutilise exactement la recherche rapide dans le hero
+============================================================== */
+.hero .search-box {
+  margin-top: 20px;
+}
+
+#recommended-artisan {
+  margin-top: 25px;
+}
+
+#hero-quick-search.qsm-inline-host {
+  width: 100%;
+  max-width: 1180px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#hero-quick-search.qsm-inline-host .qsm-dialog {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  border-radius: 24px;
+}
+
+#hero-quick-search.qsm-inline-host .qsm-header-close {
+  display: none !important;
+}
+
+#hero-quick-search.qsm-inline-host .qsm-footer-see-all {
+  display: inline-flex;
+}
+
+/* ==============================================================
+   FIXEO v22.2 — Hero compact spacing (safe frontend-only)
+   Objectif: afficher titre + recherche + artisan recommandé sans scroll
+============================================================== */
+.hero {
+  padding-top: 15px !important;
+  padding-bottom: 15px !important;
+  min-height: auto !important;
+  max-height: 100vh !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+}
+
+.hero-content {
+  gap: 0 !important;
+}
+
+.hero-content > * {
+  margin-bottom: 8px !important;
+}
+
+.hero-content > *:last-child {
+  margin-bottom: 0 !important;
+}
+
+.hero h1 {
+  font-size: 38px !important;
+  line-height: 1.2 !important;
+  margin-bottom: 10px !important;
+}
+
+.hero p,
+.hero .hero-subtitle {
+  font-size: 14px !important;
+  margin-bottom: 10px !important;
+}
+
+.hero-badge {
+  margin-bottom: 8px !important;
+}
+
+.hero-trust-indicators {
+  margin-bottom: 8px !important;
+  gap: 10px !important;
+}
+
+.hero .search-box,
+#hero-quick-search {
+  margin-top: 10px !important;
+  margin-bottom: 0 !important;
+  padding: 15px !important;
+}
+
+.quick-filters,
+.fixeo-hero-filters {
+  margin-top: 0 !important;
+  gap: 8px !important;
+}
+
+.quick-filters button,
+.fixeo-filter-btn,
+#hero-quick-search .qf-btn {
+  padding: 6px 10px !important;
+  font-size: 11px !important;
+}
+
+.search-info {
+  margin-top: 8px !important;
+  font-size: 11px !important;
+  gap: 8px !important;
+}
+
+.search-info span {
+  font-size: 11px !important;
+  padding: 6px 10px !important;
+}
+
+#recommended-artisan {
+  margin-top: 10px !important;
+}
+
+.hero-stats {
+  margin-top: 8px !important;
+  padding: 14px 20px !important;
+  gap: 18px !important;
+}
+
+@media (max-width: 768px) {
+  .hero {
+    padding-top: 12px !important;
+    padding-bottom: 12px !important;
+  }
+
+  .hero h1 {
+    font-size: 30px !important;
+    line-height: 1.18 !important;
+  }
+
+  .hero p,
+  .hero .hero-subtitle {
+    font-size: 13px !important;
+  }
+
+  .hero .search-box,
+  #hero-quick-search {
+    padding: 12px !important;
+  }
+
+  .quick-filters,
+  .fixeo-hero-filters,
+  .search-info {
+    gap: 6px !important;
+  }
+
+  .quick-filters button,
+  .fixeo-filter-btn,
+  #hero-quick-search .qf-btn,
+  .search-info span {
+    font-size: 11px !important;
+    padding: 5px 8px !important;
+  }
+
+  #recommended-artisan {
+    margin-top: 8px !important;
+  }
+}
+
+/* ==============================================================
+   FIXEO v22.3 — Premium vedette cards upgrade
+   Objectif: cards artisans vedettes plus premium sans casser la logique
+============================================================== */
+#ssb2-vedette-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 18px !important;
+}
+
+#ssb2-vedette-grid .premium-vedette-card {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  min-height: 100% !important;
+  padding: 15px !important;
+  border-radius: 15px !important;
+  background: linear-gradient(180deg, rgba(20,22,42,0.92), rgba(27,19,45,0.90)) !important;
+  border: 1px solid rgba(255,255,255,0.10) !important;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.22) !important;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease !important;
+}
+
+#ssb2-vedette-grid .premium-vedette-card:hover {
+  transform: translateY(-6px) !important;
+  box-shadow: 0 12px 25px rgba(0,0,0,0.25) !important;
+  border-color: rgba(255,122,24,0.40) !important;
+}
+
+#ssb2-vedette-grid .premium-vedette-card .card-header,
+#ssb2-vedette-grid .premium-vedette-card .artisan-top {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  margin-bottom: 12px !important;
+  padding-bottom: 10px !important;
+  border-bottom: 1px solid rgba(255,255,255,0.06) !important;
+  min-width: 0 !important;
+}
+
+#ssb2-vedette-grid .premium-vedette-card .avatar,
+#ssb2-vedette-grid .premium-vedette-card .artisan-avatar {
+  width: 56px !important;
+  height: 56px !important;
+  border-radius: 50% !important;
+  object-fit: cover !important;
+  border: 2px solid rgba(255,255,255,0.2) !important;
+  flex-shrink: 0 !important;
+  background: rgba(255,255,255,0.06) !important;
+}
+
+#ssb2-vedette-grid .premium-vedette-card .artisan-identity {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  min-width: 0 !important;
+  flex: 1 1 auto !important;
+}
+
+#ssb2-vedette-grid .premium-vedette-card .artisan-name,
+#ssb2-vedette-grid .premium-vedette-card .card-header h3 {
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  margin: 0 !important;
+  line-height: 1.2 !important;
+  color: #fff !important;
+  display: block !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+#ssb2-vedette-grid .premium-vedette-card .artisan-tagline {
+  font-size: 13px !important;
+  color: #b8b8b8 !important;
+  margin: 4px 0 0 0 !important;
+  line-height: 1.3 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+#ssb2-vedette-grid .premium-vedette-card .status,
+#ssb2-vedette-grid .premium-vedette-card .artisan-status {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin-left: auto !important;
+  padding: 6px 10px !important;
+  border-radius: 999px !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  white-space: nowrap !important;
+  background: rgba(32,201,151,0.14) !important;
+  border: 1px solid rgba(32,201,151,0.26) !important;
+  color: #dfffee !important;
+  flex-shrink: 0 !important;
+}
+
+#ssb2-vedette-grid .premium-vedette-card .status.busy,
+#ssb2-vedette-grid .premium-vedette-card .artisan-status.busy {
+  background: rgba(255,167,38,0.12) !important;
+  border-color: rgba(255,167,38,0.30) !important;
+  color: #ffe7c2 !important;
+}
+
+#ssb2-vedette-grid .premium-vedette-card .premium-card-content {
+  display: flex !important;
+  flex-direction: column !important;
+  min-width: 0 !important;
+}
+
+#ssb2-vedette-grid .premium-vedette-card h3,
+#ssb2-vedette-grid .premium-vedette-card .service,
+#ssb2-vedette-grid .premium-vedette-card .rating,
+#ssb2-vedette-grid .premium-vedette-card .proof,
+#ssb2-vedette-grid .premium-vedette-card .meta {
+  margin: 5px 0 !important;
+}
+
+#ssb2-vedette-grid .premium-vedette-card .premium-card-content > :first-child {
+  margin-top: 0 !important;
+}
+
+#ssb2-vedette-grid .premium-vedette-card .service,
+#ssb2-vedette-grid .premium-vedette-card .meta {
+  color: rgba(255,255,255,0.72) !important;
+  font-size: 0.9rem !important;
+  line-height: 1.45 !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+}
+
+#ssb2-vedette-grid .premium-vedette-card .rating {
+  font-size: 0.92rem !important;
+  font-weight: 800 !important;
+  color: #ffe082 !important;
+}
+
+#ssb2-vedette-grid .premium-vedette-card .proof {
+  font-size: 0.84rem !important;
+  font-weight: 700 !important;
+  color: #ffb86b !important;
+}
+
+#ssb2-vedette-grid .premium-vedette-card .badges,
+#ssb2-vedette-grid .premium-vedette-card .ssb2-card-badges {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 6px !important;
+  margin: 8px 0 !important;
+}
+
+#ssb2-vedette-grid .premium-vedette-card .badge,
+#ssb2-vedette-grid .premium-vedette-card .ssb2-badge {
+  font-size: 12px !important;
+  padding: 5px 8px !important;
+  border-radius: 8px !important;
+  margin-right: 5px !important;
+  font-weight: 700 !important;
+}
+
+#ssb2-vedette-grid .premium-vedette-card .card-buttons,
+#ssb2-vedette-grid .premium-vedette-card .ssb2-card-actions {
+  display: flex !important;
+  flex-direction: row !important;
+  gap: 10px !important;
+  margin-top: 12px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+#ssb2-vedette-grid .premium-vedette-card .card-buttons button,
+#ssb2-vedette-grid .premium-vedette-card .ssb2-card-actions button {
+  flex: 1 !important;
+}
+
+#ssb2-vedette-grid .premium-vedette-card .primary-btn,
+#ssb2-vedette-grid .premium-vedette-card .ssb2-btn-reserve {
+  background: linear-gradient(45deg, #ff4d8d, #7b61ff) !important;
+  color: white !important;
+  border: none !important;
+  box-shadow: 0 4px 12px rgba(255, 77, 141, 0.3) !important;
+  transition: all 0.2s ease !important;
+}
+
+#ssb2-vedette-grid .premium-vedette-card .primary-btn:hover,
+#ssb2-vedette-grid .premium-vedette-card .ssb2-btn-reserve:hover {
+  transform: scale(1.03) !important;
+  box-shadow: 0 6px 18px rgba(123, 97, 255, 0.4) !important;
+}
+
+#ssb2-vedette-grid .premium-vedette-card .ssb2-btn-profile {
+  border-radius: 8px !important;
+}
+
+@media (max-width: 1100px) {
+  #ssb2-vedette-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 760px) {
+  #ssb2-vedette-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  #ssb2-vedette-grid .premium-vedette-card {
+    padding: 14px !important;
+  }
+
+  #ssb2-vedette-grid .premium-vedette-card .card-header,
+  #ssb2-vedette-grid .premium-vedette-card .artisan-top {
+    gap: 10px !important;
+  }
+
+  #ssb2-vedette-grid .premium-vedette-card .avatar,
+  #ssb2-vedette-grid .premium-vedette-card .artisan-avatar {
+    width: 52px !important;
+    height: 52px !important;
+  }
+
+  #ssb2-vedette-grid .premium-vedette-card .artisan-name,
+  #ssb2-vedette-grid .premium-vedette-card .card-header h3 {
+    font-size: 16px !important;
+  }
+
+  #ssb2-vedette-grid .premium-vedette-card .status,
+  #ssb2-vedette-grid .premium-vedette-card .artisan-status {
+    font-size: 11px !important;
+    padding: 5px 9px !important;
+  }
+
+  #ssb2-vedette-grid .premium-vedette-card .card-buttons,
+  #ssb2-vedette-grid .premium-vedette-card .ssb2-card-actions {
+    gap: 8px !important;
+  }
+}
+
+@media (max-width: 520px) {
+  #ssb2-vedette-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  #ssb2-vedette-grid .premium-vedette-card .card-header,
+  #ssb2-vedette-grid .premium-vedette-card .artisan-top {
+    flex-wrap: wrap !important;
+    align-items: flex-start !important;
+  }
+
+  #ssb2-vedette-grid .premium-vedette-card .status,
+  #ssb2-vedette-grid .premium-vedette-card .artisan-status {
+    margin-left: 68px !important;
+  }
+}
+
+/* ================================================================
+   FIXEO v22.3 — Harmonisation de “Découvrir plus d'artisans”
+   Reprend la structure premium validée sur “Artisans Vedettes”
+   ================================================================ */
+#artisans-section .artisans-grid,
+#artisans-section .artisan-list {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 20px !important;
+}
+
+#artisans-section .artisan-card {
+  padding: 16px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  transition: all 0.2s ease !important;
+}
+
+#artisans-section .artisan-card:hover {
+  transform: translateY(-5px) !important;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.25) !important;
+}
+
+#artisans-section .artisan-card .artisan-card-body {
+  padding: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  height: 100% !important;
+  gap: 0 !important;
+}
+
+#artisans-section .artisan-card .artisan-top,
+#artisans-section .artisan-card .artisan-card-top {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  margin-bottom: 12px !important;
+  padding-bottom: 10px !important;
+  border-bottom: 1px solid rgba(255,255,255,0.06) !important;
+}
+
+#artisans-section .artisan-card .artisan-avatar,
+#artisans-section .artisan-card .artisan-avatar-image {
+  width: 56px !important;
+  height: 56px !important;
+  border-radius: 50% !important;
+  object-fit: cover !important;
+  flex-shrink: 0 !important;
+  margin: 0 !important;
+}
+
+#artisans-section .artisan-card .artisan-identity,
+#artisans-section .artisan-card .artisan-card-heading {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  min-width: 0 !important;
+  gap: 0 !important;
+}
+
+#artisans-section .artisan-card .artisan-name {
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  margin: 0 !important;
+  line-height: 1.2 !important;
+  text-align: left !important;
+}
+
+#artisans-section .artisan-card .artisan-tagline {
+  font-size: 13px !important;
+  color: #b8b8b8 !important;
+  margin: 4px 0 0 0 !important;
+  line-height: 1.3 !important;
+}
+
+#artisans-section .artisan-card .artisan-status {
+  margin-left: auto !important;
+  font-size: 12px !important;
+  white-space: nowrap !important;
+  font-weight: 600 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+}
+
+#artisans-section .artisan-card .artisan-status.available {
+  color: #6ee7a8 !important;
+}
+
+#artisans-section .artisan-card .artisan-status.busy {
+  color: #ffd166 !important;
+}
+
+#artisans-section .artisan-card .artisan-job,
+#artisans-section .artisan-card .artisan-service {
+  font-size: 14px !important;
+  opacity: 0.75 !important;
+  margin: 6px 0 !important;
+  color: rgba(255,255,255,0.75) !important;
+}
+
+#artisans-section .artisan-card .artisan-rating {
+  display: block !important;
+  font-weight: 600 !important;
+  margin: 6px 0 !important;
+  color: #ffe082 !important;
+}
+
+#artisans-section .artisan-card .artisan-badges,
+#artisans-section .artisan-card .badges {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 6px !important;
+  margin: 8px 0 !important;
+  min-height: 0 !important;
+}
+
+#artisans-section .artisan-card .badge {
+  font-size: 12px !important;
+  padding: 5px 8px !important;
+  border-radius: 8px !important;
+  font-weight: 700 !important;
+  background: rgba(255,255,255,0.07) !important;
+  border: 1px solid rgba(255,255,255,0.10) !important;
+  color: rgba(255,255,255,0.88) !important;
+}
+
+#artisans-section .artisan-card .artisan-meta,
+#artisans-section .artisan-card .artisan-card-meta {
+  margin: 6px 0 !important;
+  opacity: 0.85 !important;
+  color: rgba(255,255,255,0.82) !important;
+  font-size: 0.88rem !important;
+}
+
+#artisans-section .artisan-card p {
+  margin-bottom: 6px !important;
+}
+
+#artisans-section .artisan-card .card-buttons {
+  display: flex !important;
+  gap: 10px !important;
+  margin-top: 12px !important;
+  width: 100% !important;
+}
+
+#artisans-section .artisan-card .card-buttons button {
+  flex: 1 !important;
+  min-height: 42px !important;
+  border-radius: 8px !important;
+  font-weight: 700 !important;
+}
+
+#artisans-section .artisan-card .primary-btn,
+#artisans-section .artisan-card .btn-other-reserve {
+  background: linear-gradient(45deg, #ff4d8d, #7b61ff) !important;
+  color: white !important;
+  border: none !important;
+  box-shadow: 0 4px 12px rgba(255, 77, 141, 0.3) !important;
+  transition: all 0.2s ease !important;
+}
+
+#artisans-section .artisan-card .primary-btn:hover,
+#artisans-section .artisan-card .btn-other-reserve:hover {
+  transform: scale(1.03) !important;
+  box-shadow: 0 6px 18px rgba(123, 97, 255, 0.4) !important;
+}
+
+#artisans-section .artisan-card .secondary-btn,
+#artisans-section .artisan-card .btn-other-profile {
+  background: rgba(255,255,255,0.07) !important;
+  color: rgba(255,255,255,0.88) !important;
+  border: 1px solid rgba(255,255,255,0.10) !important;
+}
+
+#artisans-section #other-see-more-wrap {
+  display: flex !important;
+  justify-content: center !important;
+  margin-top: 28px !important;
+}
+
+#artisans-section #other-see-more-wrap .btn-other-see-more {
+  padding: 12px 24px !important;
+  min-height: 46px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.01em !important;
+}
+
+@media (max-width: 1024px) {
+  #artisans-section .artisans-grid,
+  #artisans-section .artisan-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 640px) {
+  #artisans-section .artisans-grid,
+  #artisans-section .artisan-list {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 520px) {
+  #artisans-section .artisan-card .artisan-top,
+  #artisans-section .artisan-card .artisan-card-top {
+    flex-wrap: wrap !important;
+    align-items: flex-start !important;
+  }
+
+  #artisans-section .artisan-card .artisan-status {
+    margin-left: 68px !important;
+  }
+}
+
+/* ═════════════════════════════════════════════════════════════
+   TRUST SECTION — Pourquoi choisir Fixeo
+═════════════════════════════════════════════════════════════ */
+.fixeo-trust-section {
+  position: relative !important;
+  background:
+    radial-gradient(circle at top left, rgba(32,201,151,0.08), transparent 35%),
+    linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)) !important;
+}
+
+.fixeo-trust-header {
+  margin-bottom: 34px !important;
+}
+
+.fixeo-trust-kicker {
+  margin: 0 0 12px !important;
+  font-size: 0.98rem !important;
+  font-weight: 700 !important;
+  color: rgba(255,255,255,0.92) !important;
+}
+
+.fixeo-trust-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 20px !important;
+}
+
+.fixeo-trust-card {
+  text-align: center !important;
+  padding: 28px 22px !important;
+  border-radius: 18px !important;
+  background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.03)) !important;
+  border: 1px solid rgba(255,255,255,0.08) !important;
+  box-shadow: 0 18px 45px rgba(0,0,0,0.22) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  transition: transform 0.25s ease, border-color 0.25s ease, background 0.25s ease !important;
+}
+
+.fixeo-trust-card:hover {
+  transform: translateY(-4px) !important;
+  border-color: rgba(32,201,151,0.28) !important;
+  background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.04)) !important;
+}
+
+.fixeo-trust-icon {
+  width: 58px !important;
+  height: 58px !important;
+  margin: 0 auto 16px !important;
+  border-radius: 16px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 1.6rem !important;
+  background: rgba(255,255,255,0.06) !important;
+  border: 1px solid rgba(255,255,255,0.08) !important;
+}
+
+.fixeo-trust-card h4 {
+  margin: 0 0 10px !important;
+  font-size: 1.08rem !important;
+  font-weight: 800 !important;
+  color: #fff !important;
+}
+
+.fixeo-trust-card p {
+  margin: 0 !important;
+  font-size: 0.94rem !important;
+  line-height: 1.7 !important;
+  color: rgba(255,255,255,0.68) !important;
+}
+
+@media (max-width: 1024px) {
+  .fixeo-trust-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .fixeo-trust-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  .fixeo-trust-card {
+    padding: 22px 18px !important;
+  }
+
+  .fixeo-trust-kicker {
+    font-size: 0.92rem !important;
+  }
+}
+
+
+/* ==============================================================
+   FIXEO v22.5 — Hero optimisation impact max
+============================================================== */
+.hero-section,
+.hero.hero-section,
+section#home.hero.hero-section {
+  position: relative !important;
+  padding-top: 100px !important;
+  padding-bottom: 120px !important;
+  background: linear-gradient(
+    180deg,
+    #0f172a 0%,
+    #111827 40%,
+    #1a1f35 70%,
+    #1f2937 100%
+  ) !important;
+}
+
+.hero.hero-section::before {
+  display: none !important;
+}
+
+.hero.hero-section .hero-overlay {
+  background: transparent !important;
+}
+
+.hero-badge,
+.hero-status-badge,
+.floating-notifications,
+.countdown,
+.fake-timer,
+.hero-float,
+.hero .hero-float,
+.hero .float-1,
+.hero .float-2,
+.hero .float-3 {
+  display: none !important;
+}
+
+.hero-content {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 35px !important;
+  text-align: center !important;
+  max-width: 900px !important;
+  margin: auto !important;
+}
+
+.hero-content > * {
+  margin-bottom: 0 !important;
+}
+
+.hero-title {
+  font-size: 64px !important;
+  font-weight: 900 !important;
+  text-align: center !important;
+  line-height: 1.1 !important;
+  max-width: 800px !important;
+  margin: 0 auto !important;
+  color: #ffffff !important;
+  animation: fadeUp 0.8s ease !important;
+}
+
+.hero-title span {
+  background: linear-gradient(90deg, #ff4d8d, #7b61ff, #00d4ff) !important;
+  background-size: 200% 200% !important;
+  animation: gradientMove 4s ease infinite !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+}
+
+.hero-subtitle {
+  opacity: 0.78 !important;
+  font-size: 16px !important;
+  line-height: 1.6 !important;
+  max-width: 640px !important;
+  margin: 0 !important;
+}
+
+.search-box,
+.hero .search-box,
+#hero-quick-search {
+  margin-top: 20px !important;
+  width: 100% !important;
+  max-width: 700px !important;
+}
+
+.floating-proof {
+  position: absolute;
+  right: 10%;
+  top: 45%;
+  opacity: 0.6;
+  font-size: 14px;
+  background: rgba(255,255,255,0.05);
+  padding: 8px 12px;
+  border-radius: 8px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+  z-index: 2;
+  pointer-events: none;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@media (max-width: 1024px) {
+  .floating-proof {
+    right: 5%;
+    top: 42%;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-section,
+  .hero.hero-section,
+  section#home.hero.hero-section {
+    padding-top: 84px !important;
+    padding-bottom: 96px !important;
+  }
+
+  .hero-title {
+    font-size: 42px !important;
+    max-width: 100% !important;
+  }
+
+  .hero-content {
+    gap: 24px !important;
+    max-width: 100% !important;
+  }
+
+  .hero-subtitle {
+    font-size: 15px !important;
+  }
+
+  .floating-proof {
+    position: static;
+    opacity: 0.85;
+    margin-top: -6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-title {
+    font-size: 36px !important;
+  }
+}
+
+/* ==============================================================
+   FIXEO v22.6 — Hero optimisation sobre et équilibrée
+   Ajustements demandés sans toucher aux autres sections
+============================================================== */
+.hero-section,
+.hero.hero-section,
+section#home.hero.hero-section {
+  padding-top: 70px !important;
+  padding-bottom: 70px !important;
+}
+
+.hero-content {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 20px !important;
+  max-width: 760px !important;
+  margin: auto !important;
+  text-align: center !important;
+}
+
+.hero-title {
+  font-size: 60px !important;
+  font-weight: 900 !important;
+  line-height: 1.08 !important;
+  max-width: 760px !important;
+  margin: 0 auto !important;
+  text-align: center !important;
+  animation: none !important;
+}
+
+.hero-title span {
+  animation: none !important;
+}
+
+.hero-subtitle {
+  margin-top: 6px !important;
+  margin-bottom: 0 !important;
+}
+
+.search-box,
+.hero .search-box,
+#hero-quick-search {
+  margin-top: 10px !important;
+  margin-bottom: 12px !important;
+  width: 100% !important;
+  max-width: 700px !important;
+}
+
+.recommended-artisan,
+#recommended-artisan {
+  margin-top: 18px !important;
+  margin-bottom: 28px !important;
+  animation: none !important;
+}
+
+.hero-bottom-space {
+  height: 25px;
+}
+
+.hero-bubble,
+.hero-blob,
+.floating-proof {
+  display: none !important;
+}
+
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 40px !important;
+  }
+}
+
+/* ==============================================================
+   FIXEO v22.7 — HERO FINAL CLEAN (VERSION IMPACT)
+   Ajustements ciblés sur le hero uniquement, sans changer la structure
+============================================================== */
+.hero-section,
+.hero.hero-section,
+section#home.hero.hero-section {
+  padding-top: 70px !important;
+  padding-bottom: 70px !important;
+}
+
+.hero-content {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 20px !important;
+  max-width: 760px !important;
+  margin: auto !important;
+  text-align: center !important;
+}
+
+.hero-title {
+  font-size: 68px !important;
+  font-weight: 900 !important;
+  line-height: 1.05 !important;
+  letter-spacing: -0.5px !important;
+  max-width: 780px !important;
+  margin: 0 auto !important;
+  text-align: center !important;
+  animation: none !important;
+}
+
+.hero-title span {
+  animation: none !important;
+}
+
+.hero-subtitle {
+  margin-top: 6px !important;
+  margin-bottom: 0 !important;
+}
+
+.search-box,
+.hero .search-box,
+#hero-quick-search {
+  margin-top: 10px !important;
+  margin-bottom: 12px !important;
+  width: 100% !important;
+  max-width: 700px !important;
+}
+
+.recommended-artisan,
+#recommended-artisan {
+  margin-top: 18px !important;
+  margin-bottom: 28px !important;
+  animation: none !important;
+}
+
+.hero-bottom-space {
+  height: 25px !important;
+}
+
+.hero-bubble,
+.hero-blob,
+.floating-proof {
+  display: none !important;
+  animation: none !important;
+}
+
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 42px !important;
+  }
+}
+
+/* ==============================================================
+   FIXEO v22.8 — HERO HIERARCHIE VISUELLE
+   Titre dominant, search box décollée, sans changer structure/couleurs
+============================================================== */
+.hero-section,
+.hero.hero-section,
+section#home.hero.hero-section {
+  padding-top: 140px !important;
+  padding-bottom: 80px !important;
+}
+
+.hero-title {
+  font-size: 72px !important;
+  font-weight: 900 !important;
+  line-height: 1.05 !important;
+  letter-spacing: -1px !important;
+  max-width: 900px !important;
+  margin: 0 auto 20px auto !important;
+  text-align: center !important;
+}
+
+.search-box,
+.hero .search-box,
+#hero-quick-search {
+  margin-top: 35px !important;
+  margin-bottom: 16px !important;
+  max-width: 700px !important;
+}
+
+.hero-subtitle {
+  margin-top: 14px !important;
+  margin-bottom: 6px !important;
+  font-size: 16px !important;
+  opacity: 0.85 !important;
+}
+
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 42px !important;
+    line-height: 1.08 !important;
+  }
+}
+
+/* ==============================================================
+   FIXEO v23.0 — HERO FINAL OBLIGATOIRE
+   Ciblage direct du H1 + anti-conflit + espacement header + responsive
+============================================================== */
+.hero-section {
+    padding-top: 160px !important;
+    padding-bottom: 80px !important;
+}
+
+.hero-section h1.hero-title {
+    font-size: 80px !important;
+    font-weight: 900 !important;
+    line-height: 1.05 !important;
+    letter-spacing: -1px !important;
+    text-align: center !important;
+    max-width: 1000px !important;
+    margin: 40px auto 20px auto !important;
+    background: linear-gradient(90deg, #ff4ecd, #9b5cff) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    text-shadow: 0 0 25px rgba(255, 100, 200, 0.35) !important;
+}
+
+@media (max-width: 1024px) {
+  .hero-section h1.hero-title {
+    font-size: 56px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-section h1.hero-title {
+    font-size: 42px !important;
+  }
+}
+
+.hero-subtitle {
+    margin-top: 14px !important;
+    margin-bottom: 6px !important;
+    font-size: 16px !important;
+    opacity: 0.85 !important;
+}
+
+.search-box {
+    margin-top: 35px !important;
+    margin-bottom: 16px !important;
+    max-width: 700px !important;
+}
+
+.recommended-artisan {
+    margin-top: 18px !important;
+    margin-bottom: 40px !important;
+}
+
+.hero-bottom-space {
+    height: 40px !important;
+}
+
+/* ==============================================================
+   FIXEO v23.3 — HERO RÉÉQUILIBRÉ
+   Annule la compression excessive sans toucher au H1 / couleurs / structure
+============================================================== */
+.hero-subtitle {
+  display: none !important;
+}
+
+.hero-content {
+  gap: 18px !important;
+}
+
+.search-box,
+.hero .search-box,
+#hero-quick-search {
+  margin-top: 22px !important;
+  margin-bottom: 18px !important;
+  max-width: 700px !important;
+}
+
+.recommended-artisan,
+#recommended-artisan {
+  margin-top: 20px !important;
+  margin-bottom: 32px !important;
+  display: block !important;
+}
+
+.hero-section,
+.hero.hero-section,
+section#home.hero.hero-section {
+  padding-top: 130px !important;
+  padding-bottom: 90px !important;
+}
+
+.hero-proof {
+  margin-top: 6px !important;
+  margin-bottom: 0 !important;
+  font-size: 14px !important;
+  opacity: 0.9 !important;
+  color: rgba(255,255,255,0.82) !important;
+  text-align: center !important;
+  line-height: 1.4 !important;
+}
+
+.hero-bottom-space {
+  height: 50px !important;
+}
+
+/* ================================================================
+   FIXEO — Services section premium rebalance
+   Lisibilité, hiérarchie visuelle et conversion sans changer le style global
+   ================================================================ */
+#services.services-section {
+  padding-top: 90px !important;
+  padding-bottom: 90px !important;
+}
+
+#services .services-title {
+  font-size: 42px !important;
+  font-weight: 800 !important;
+  text-align: center !important;
+  margin-bottom: 10px !important;
+}
+
+#services .services-subtitle {
+  text-align: center !important;
+  opacity: 0.75 !important;
+  font-size: 15px !important;
+  margin-bottom: 25px !important;
+}
+
+#services .services-filter {
+  margin-bottom: 25px !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  flex-wrap: wrap !important;
+  gap: 10px !important;
+}
+
+#services .services-filter-bar {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+#services .category-chips,
+#services .services-grid {
+  margin-top: 25px !important;
+  gap: 22px !important;
+}
+
+#services .service-chip {
+  padding: 12px 18px !important;
+  border-radius: 999px !important;
+  background: rgba(255,255,255,0.05) !important;
+  border: 1px solid rgba(255,255,255,0.08) !important;
+  font-size: 14px !important;
+  transition: all 0.25s ease !important;
+  cursor: pointer !important;
+}
+
+#services .service-chip:hover {
+  transform: translateY(-2px) !important;
+  background: rgba(255,255,255,0.10) !important;
+  box-shadow: 0 8px 20px rgba(255, 100, 200, 0.15) !important;
+}
+
+#services .service-chip.active {
+  background: linear-gradient(90deg, #ff4ecd, #9b5cff) !important;
+  border-color: transparent !important;
+  color: white !important;
+}
+
+#service-artisans-section {
+  margin-top: 25px !important;
+}
+
+#service-artisans-section .service-artisans-container {
+  display: block !important;
+}
+
+#service-artisans-section .service-artisans-heading {
+  text-align: center !important;
+  margin-bottom: 20px !important;
+}
+
+#service-artisans-section .service-artisans-title {
+  justify-content: center !important;
+  margin-bottom: 8px !important;
+}
+
+#service-artisans-section .service-artisans-subtitle {
+  margin: 0 !important;
+  font-size: 14px !important;
+  color: rgba(255,255,255,0.68) !important;
+}
+
+#service-artisans-section .service-mini-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)) !important;
+  gap: 22px !important;
+  margin-top: 25px !important;
+}
+
+#service-artisans-section .service-preview-card,
+#service-artisans-section .service-mini-card {
+  padding: 16px 18px !important;
+  border-radius: 14px !important;
+  background: rgba(255,255,255,0.04) !important;
+  border: 1px solid rgba(255,255,255,0.08) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+  transition: all 0.25s ease !important;
+  min-height: 100% !important;
+  animation: fadeUp 0.4s ease !important;
+}
+
+#service-artisans-section .service-preview-card:hover,
+#service-artisans-section .service-mini-card:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2) !important;
+  border-color: rgba(255,255,255,0.14) !important;
+}
+
+#service-artisans-section .artisan-header,
+#service-artisans-section .smc-top {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  margin-bottom: 0 !important;
+}
+
+#service-artisans-section .artisan-info,
+#service-artisans-section .smc-identity {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2px !important;
+  min-width: 0 !important;
+}
+
+#service-artisans-section .artisan-name,
+#service-artisans-section .smc-name {
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  margin: 0 !important;
+}
+
+#service-artisans-section .artisan-location,
+#service-artisans-section .smc-city {
+  font-size: 12px !important;
+  opacity: 0.7 !important;
+}
+
+#service-artisans-section .artisan-meta-row,
+#service-artisans-section .smc-footer-row {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  gap: 12px !important;
+  margin-top: 6px !important;
+}
+
+#service-artisans-section .artisan-rating,
+#service-artisans-section .smc-rating {
+  font-size: 13px !important;
+  color: rgba(255,255,255,0.82) !important;
+  margin: 0 !important;
+}
+
+#service-artisans-section .artisan-price,
+#service-artisans-section .smc-price {
+  font-weight: 700 !important;
+  color: #ffd166 !important;
+  font-size: 14px !important;
+  margin-left: auto !important;
+  white-space: nowrap !important;
+}
+
+#service-artisans-section .artisan-badge,
+#service-artisans-section .smc-badge {
+  display: inline-block !important;
+  align-self: flex-start !important;
+  padding: 4px 8px !important;
+  font-size: 11px !important;
+  border-radius: 8px !important;
+  background: rgba(0,255,150,0.1) !important;
+  color: #00ff95 !important;
+  margin-top: 6px !important;
+}
+
+#service-artisans-section .services-cta {
+  display: flex !important;
+  justify-content: center !important;
+  margin-top: 35px !important;
+}
+
+#service-artisans-section .services-cta .btn-primary,
+#service-artisans-section .services-cta-btn {
+  padding: 14px 26px !important;
+  border-radius: 14px !important;
+  background: linear-gradient(90deg, #ff4ecd, #9b5cff) !important;
+  border: none !important;
+  color: white !important;
+  font-weight: 600 !important;
+  font-size: 15px !important;
+  cursor: pointer !important;
+  transition: all 0.25s ease !important;
+  box-shadow: none !important;
+}
+
+#service-artisans-section .services-cta .btn-primary:hover,
+#service-artisans-section .services-cta-btn:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 10px 25px rgba(255, 100, 200, 0.3) !important;
+}
+
+#service-artisans-section .services-empty-state {
+  margin-top: 25px !important;
+  padding: 18px !important;
+  border-radius: 16px !important;
+  background: rgba(255,255,255,0.04) !important;
+  border: 1px solid rgba(255,255,255,0.08) !important;
+  color: rgba(255,255,255,0.78) !important;
+  text-align: center !important;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 720px) {
+  #services .services-title {
+    font-size: 32px !important;
+  }
+
+  #service-artisans-section .artisan-meta-row,
+  #service-artisans-section .smc-footer-row {
+    align-items: flex-start !important;
+    flex-direction: column !important;
+  }
+
+  #service-artisans-section .artisan-price,
+  #service-artisans-section .smc-price {
+    margin-left: 0 !important;
+  }
+}
+
+
+/* ================================================================
+   FIXEO v23 — Results page conversion layout
+   ================================================================ */
+#artisans-section .results-page-shell {
+  position: relative !important;
+}
+
+#artisans-section .premium-results-header {
+  display: flex !important;
+  align-items: flex-end !important;
+  justify-content: space-between !important;
+  gap: 20px !important;
+  margin-bottom: 24px !important;
+}
+
+#artisans-section .results-header-copy {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+}
+
+#artisans-section .results-header-kicker {
+  display: inline-flex !important;
+  width: fit-content !important;
+  padding: 7px 12px !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(255,255,255,0.1) !important;
+  background: rgba(255,255,255,0.05) !important;
+  color: rgba(255,255,255,0.72) !important;
+  font-size: 0.74rem !important;
+  letter-spacing: 0.08em !important;
+  font-weight: 700 !important;
+}
+
+#artisans-section .premium-results-header h1 {
+  margin: 0 !important;
+  font-size: 32px !important;
+  line-height: 1.05 !important;
+  font-weight: 800 !important;
+  color: #fff !important;
+}
+
+#artisans-section .premium-results-header p {
+  margin: 0 !important;
+  opacity: 0.75 !important;
+  color: rgba(255,255,255,0.72) !important;
+}
+
+#artisans-section .edit-search-btn {
+  padding: 10px 16px !important;
+  border-radius: 12px !important;
+  background: rgba(255,255,255,0.06) !important;
+  border: 1px solid rgba(255,255,255,0.08) !important;
+  color: white !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  transition: transform 0.22s ease, background 0.22s ease, border-color 0.22s ease !important;
+  white-space: nowrap !important;
+}
+
+#artisans-section .edit-search-btn:hover {
+  transform: translateY(-1px) !important;
+  background: rgba(255,255,255,0.1) !important;
+  border-color: rgba(255,255,255,0.16) !important;
+}
+
+#artisans-section .results-layout {
+  display: grid !important;
+  grid-template-columns: 280px minmax(0, 1fr) !important;
+  gap: 24px !important;
+  align-items: start !important;
+}
+
+#artisans-section .results-main-column {
+  min-width: 0 !important;
+}
+
+#artisans-section .results-filters {
+  background: rgba(255,255,255,0.04) !important;
+  border: 1px solid rgba(255,255,255,0.08) !important;
+  border-radius: 16px !important;
+  padding: 18px !important;
+  position: sticky !important;
+  top: 90px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 14px !important;
+  box-shadow: 0 18px 40px rgba(0,0,0,0.16) !important;
+}
+
+#artisans-section .results-filters-head {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+}
+
+#artisans-section .results-filters h3 {
+  margin: 0 !important;
+  font-size: 1rem !important;
+  color: #fff !important;
+}
+
+#artisans-section .results-reset-btn {
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  color: rgba(255,255,255,0.66) !important;
+  font-size: 0.82rem !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+}
+
+#artisans-section .results-filter-group {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+}
+
+#artisans-section .results-filter-group label,
+#artisans-section .results-filter-check span {
+  color: rgba(255,255,255,0.82) !important;
+  font-size: 0.85rem !important;
+  font-weight: 600 !important;
+}
+
+#artisans-section .results-filter-group select,
+#artisans-section .results-toolbar select {
+  width: 100% !important;
+  min-height: 46px !important;
+  padding: 0 14px !important;
+  border-radius: 12px !important;
+  border: 1px solid rgba(255,255,255,0.08) !important;
+  background: rgba(255,255,255,0.05) !important;
+  color: #fff !important;
+  outline: none !important;
+  font-family: inherit !important;
+}
+
+#artisans-section .results-filter-group select option,
+#artisans-section .results-toolbar select option {
+  color: #111 !important;
+}
+
+#artisans-section .results-filter-check {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  padding: 12px 14px !important;
+  border-radius: 14px !important;
+  background: rgba(255,255,255,0.05) !important;
+  border: 1px solid rgba(255,255,255,0.08) !important;
+  cursor: pointer !important;
+}
+
+#artisans-section .results-filter-check input {
+  width: 18px !important;
+  height: 18px !important;
+  accent-color: #ff4ecd !important;
+}
+
+#artisans-section .results-toolbar {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  gap: 14px !important;
+  margin-bottom: 18px !important;
+  flex-wrap: wrap !important;
+}
+
+#artisans-section .results-toolbar-left {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  flex-wrap: wrap !important;
+}
+
+#artisans-section #results-count {
+  color: #fff !important;
+  font-size: 0.98rem !important;
+  font-weight: 700 !important;
+}
+
+#artisans-section .results-toolbar-badge,
+#artisans-section .separator-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  padding: 6px 12px !important;
+  border-radius: 999px !important;
+  background: rgba(255,255,255,0.06) !important;
+  border: 1px solid rgba(255,255,255,0.08) !important;
+  color: rgba(255,255,255,0.76) !important;
+  font-size: 0.78rem !important;
+  font-weight: 700 !important;
+}
+
+#artisans-section .results-trust-strip {
+  margin: 0 0 18px !important;
+}
+
+#artisans-section .results-list,
+#artisans-section #artisans-container.artisans-grid {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 18px !important;
+}
+
+#artisans-section .result-card,
+#artisans-section .artisan-card.result-card {
+  background: rgba(255,255,255,0.04) !important;
+  border: 1px solid rgba(255,255,255,0.08) !important;
+  border-radius: 18px !important;
+  padding: 18px !important;
+  margin-bottom: 0 !important;
+  transition: all 0.25s ease !important;
+  box-shadow: 0 12px 28px rgba(0,0,0,0.14) !important;
+}
+
+#artisans-section .result-card:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 12px 28px rgba(0,0,0,0.18) !important;
+  border-color: rgba(225,48,108,0.28) !important;
+}
+
+#artisans-section .result-card .result-top {
+  display: grid !important;
+  grid-template-columns: 64px minmax(0, 1fr) auto !important;
+  gap: 14px !important;
+  align-items: start !important;
+}
+
+#artisans-section .result-card .artisan-avatar {
+  width: 64px !important;
+  height: 64px !important;
+  border-radius: 50% !important;
+  object-fit: cover !important;
+  border: 1px solid rgba(255,255,255,0.12) !important;
+}
+
+#artisans-section .result-card .artisan-main {
+  min-width: 0 !important;
+}
+
+#artisans-section .result-card .artisan-main h3,
+#artisans-section .result-card .artisan-name {
+  font-size: 18px !important;
+  margin: 0 0 4px !important;
+  color: #fff !important;
+}
+
+#artisans-section .result-card .artisan-main p,
+#artisans-section .result-card .artisan-service {
+  margin: 0 0 8px !important;
+  opacity: 0.75 !important;
+  color: rgba(255,255,255,0.72) !important;
+}
+
+#artisans-section .result-card .artisan-badges {
+  display: flex !important;
+  gap: 8px !important;
+  flex-wrap: wrap !important;
+  min-height: auto !important;
+  margin-bottom: 0 !important;
+}
+
+#artisans-section .result-card .badge {
+  padding: 5px 10px !important;
+  border-radius: 999px !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  margin-bottom: 0 !important;
+}
+
+#artisans-section .result-card .badge.verified {
+  background: rgba(0,255,150,0.12) !important;
+  color: #4ade80 !important;
+  border: 1px solid rgba(74,222,128,0.18) !important;
+}
+
+#artisans-section .result-card .badge.available {
+  background: rgba(255,255,255,0.08) !important;
+  color: white !important;
+  border: 1px solid rgba(255,255,255,0.1) !important;
+}
+
+#artisans-section .result-card .artisan-price-block {
+  text-align: right !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+}
+
+#artisans-section .result-card .artisan-price-block strong {
+  display: block !important;
+  color: #ffd166 !important;
+  font-size: 16px !important;
+}
+
+#artisans-section .result-card .artisan-price-block span {
+  opacity: 0.75 !important;
+  font-size: 12px !important;
+  color: rgba(255,255,255,0.72) !important;
+}
+
+#artisans-section .result-card .artisan-rating-row {
+  margin-top: 12px !important;
+  display: flex !important;
+  gap: 10px !important;
+  align-items: center !important;
+  font-size: 14px !important;
+  color: rgba(255,255,255,0.88) !important;
+}
+
+#artisans-section .result-card .artisan-skills {
+  margin-top: 12px !important;
+  display: flex !important;
+  gap: 8px !important;
+  flex-wrap: wrap !important;
+}
+
+#artisans-section .result-card .artisan-skills span {
+  background: rgba(255,255,255,0.06) !important;
+  padding: 6px 10px !important;
+  border-radius: 999px !important;
+  font-size: 12px !important;
+  color: rgba(255,255,255,0.84) !important;
+}
+
+#artisans-section .result-card .result-actions {
+  margin-top: 16px !important;
+  display: flex !important;
+  gap: 12px !important;
+  flex-wrap: wrap !important;
+}
+
+#artisans-section .result-card .result-actions button,
+#artisans-section .result-card .card-buttons button {
+  flex: 0 0 auto !important;
+  min-width: 148px !important;
+  min-height: 46px !important;
+  padding: 12px 18px !important;
+  border-radius: 12px !important;
+  font-weight: 700 !important;
+}
+
+#artisans-section .result-card .btn-primary,
+#artisans-section .result-card .btn-other-profile {
+  background: linear-gradient(90deg, #ff4ecd, #9b5cff) !important;
+  border: none !important;
+  color: white !important;
+  box-shadow: 0 14px 30px rgba(255,100,200,0.20) !important;
+}
+
+#artisans-section .result-card .btn-secondary,
+#artisans-section .result-card .btn-other-reserve {
+  background: rgba(255,255,255,0.05) !important;
+  border: 1px solid rgba(255,255,255,0.08) !important;
+  color: white !important;
+}
+
+#artisans-section .mobile-sticky-cta {
+  display: none !important;
+}
+
+@media (max-width: 1024px) {
+  #artisans-section .results-layout {
+    grid-template-columns: 1fr !important;
+  }
+
+  #artisans-section .results-filters {
+    position: static !important;
+  }
+}
+
+@media (max-width: 768px) {
+  #artisans-section .premium-results-header {
+    align-items: stretch !important;
+    flex-direction: column !important;
+  }
+
+  #artisans-section .premium-results-header h1 {
+    font-size: 28px !important;
+  }
+
+  #artisans-section .results-main-column,
+  #artisans-section .results-list,
+  #artisans-section #artisans-container.artisans-grid {
+    width: 100% !important;
+    max-width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 14px !important;
+    overflow-x: hidden !important;
+  }
+
+  #artisans-section .result-card,
+  #artisans-section .artisan-card.result-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 14px !important;
+    border-radius: 14px !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+  }
+
+  #artisans-section .result-card:active,
+  #artisans-section .artisan-card.result-card:active {
+    transform: scale(1.02) !important;
+  }
+
+  #artisans-section .result-card .result-top {
+    grid-template-columns: 56px minmax(0, 1fr) !important;
+    gap: 12px !important;
+    align-items: center !important;
+  }
+
+  #artisans-section .result-card .artisan-avatar,
+  #artisans-section .result-card .artisan-avatar-image {
+    width: 56px !important;
+    height: 56px !important;
+  }
+
+  #artisans-section .result-card .artisan-main {
+    min-width: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 6px !important;
+  }
+
+  #artisans-section .result-card .artisan-main h3,
+  #artisans-section .result-card .artisan-name {
+    font-size: 17px !important;
+    font-weight: 700 !important;
+    line-height: 1.2 !important;
+  }
+
+  #artisans-section .result-card .artisan-service,
+  #artisans-section .result-card .artisan-main p {
+    margin: 0 !important;
+    line-height: 1.3 !important;
+  }
+
+  #artisans-section .result-card .artisan-badges,
+  #artisans-section .result-card .badges {
+    gap: 6px !important;
+  }
+
+  #artisans-section .result-card .badge.available,
+  #artisans-section .artisan-card .artisan-status.available {
+    background: rgba(74, 222, 128, 0.12) !important;
+    color: #4ade80 !important;
+    border: 1px solid rgba(74, 222, 128, 0.22) !important;
+  }
+
+  #artisans-section .artisan-card .artisan-status.busy,
+  #artisans-section .result-card .badge.busy {
+    background: rgba(255,255,255,0.06) !important;
+    color: rgba(255,255,255,0.68) !important;
+    border: 1px solid rgba(255,255,255,0.10) !important;
+  }
+
+  #artisans-section .result-card .artisan-price-block {
+    grid-column: 1 / -1 !important;
+    text-align: left !important;
+    padding-top: 4px !important;
+    gap: 2px !important;
+  }
+
+  #artisans-section .result-card .artisan-price-block strong {
+    font-size: 17px !important;
+    line-height: 1.2 !important;
+  }
+
+  #artisans-section .result-card .artisan-rating-row,
+  #artisans-section .result-card .artisan-skills,
+  #artisans-section .result-card .result-actions {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex-wrap: wrap !important;
+  }
+
+  #artisans-section .result-card .result-actions button,
+  #artisans-section .result-card .card-buttons button {
+    flex: 1 1 100% !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  #artisans-section .mobile-sticky-cta {
+    display: block !important;
+    position: fixed !important;
+    bottom: 18px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    z-index: 999 !important;
+    padding: 14px 24px !important;
+    border-radius: 999px !important;
+    background: linear-gradient(90deg, #ff4ecd, #9b5cff) !important;
+    color: white !important;
+    border: none !important;
+    font-weight: 800 !important;
+    box-shadow: 0 14px 30px rgba(255,100,200,0.28) !important;
+  }
+}
+
+/* ==============================================================
+   FIXEO v22.9 — Mobile artisan cards readability pass (CSS only)
+   Objectif: hiérarchie 6 lignes, lisibilité rapide, aucun impact desktop
+============================================================== */
+@media (max-width: 768px) {
+  #artisans-section .results-main-column,
+  #artisans-section .results-list,
+  #artisans-section #artisans-container.artisans-grid {
+    width: 100% !important;
+    max-width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 16px !important;
+    padding: 0 8px !important;
+    box-sizing: border-box !important;
+    overflow-x: clip !important;
+  }
+
+  #artisans-section .result-card,
+  #artisans-section .artisan-card.result-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    display: grid !important;
+    grid-template-columns: 52px minmax(0, 1fr) auto !important;
+    grid-template-areas:
+      "avatar main main"
+      "price price price"
+      "rating rating response"
+      "skills skills skills"
+      "actions actions actions" !important;
+    row-gap: 12px !important;
+    column-gap: 12px !important;
+    padding: 14px !important;
+    border-radius: 14px !important;
+    background: rgba(255,255,255,0.055) !important;
+    border: 1px solid rgba(255,255,255,0.10) !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease !important;
+  }
+
+  #artisans-section .result-card:active,
+  #artisans-section .artisan-card.result-card:active {
+    transform: scale(1.02) !important;
+  }
+
+  #artisans-section .result-card .result-top,
+  #artisans-section .result-card .artisan-price-block {
+    display: contents !important;
+  }
+
+  #artisans-section .result-card .artisan-avatar,
+  #artisans-section .result-card .artisan-avatar-image {
+    grid-area: avatar !important;
+    width: 52px !important;
+    height: 52px !important;
+    min-width: 52px !important;
+    border-radius: 50% !important;
+    align-self: start !important;
+    justify-self: start !important;
+  }
+
+  #artisans-section .result-card .artisan-main {
+    grid-area: main !important;
+    min-width: 0 !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    grid-template-areas:
+      "name badges"
+      "service service" !important;
+    align-items: center !important;
+    column-gap: 8px !important;
+    row-gap: 6px !important;
+  }
+
+  #artisans-section .result-card .artisan-main h3,
+  #artisans-section .result-card .artisan-name {
+    grid-area: name !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    font-size: 17px !important;
+    line-height: 1.2 !important;
+    font-weight: 700 !important;
+    color: #fff !important;
+  }
+
+  #artisans-section .result-card .artisan-service,
+  #artisans-section .result-card .artisan-main p {
+    grid-area: service !important;
+    margin: 0 !important;
+    font-size: 0.84rem !important;
+    line-height: 1.35 !important;
+    color: rgba(255,255,255,0.70) !important;
+    opacity: 1 !important;
+  }
+
+  #artisans-section .result-card .artisan-badges,
+  #artisans-section .result-card .badges {
+    grid-area: badges !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    gap: 6px !important;
+    flex-wrap: wrap !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+  }
+
+  #artisans-section .result-card .badge {
+    margin: 0 !important;
+    padding: 4px 8px !important;
+    border-radius: 999px !important;
+    font-size: 0.68rem !important;
+    line-height: 1.1 !important;
+    white-space: nowrap !important;
+  }
+
+  #artisans-section .result-card .badge.available {
+    order: 1 !important;
+    background: rgba(74,222,128,0.14) !important;
+    border: 1px solid rgba(74,222,128,0.26) !important;
+    color: #4ade80 !important;
+    font-weight: 700 !important;
+  }
+
+  #artisans-section .result-card .badge.verified {
+    order: 2 !important;
+    background: rgba(255,255,255,0.04) !important;
+    border: 1px solid rgba(255,255,255,0.08) !important;
+    color: rgba(255,255,255,0.62) !important;
+    font-weight: 600 !important;
+  }
+
+  #artisans-section .result-card .artisan-price-block strong {
+    grid-area: price !important;
+    display: block !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 6px 0 2px !important;
+    font-size: 19px !important;
+    line-height: 1.1 !important;
+    font-weight: 800 !important;
+    color: #ffd166 !important;
+    text-align: left !important;
+  }
+
+  #artisans-section .result-card .artisan-price-block span {
+    grid-area: response !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    align-self: center !important;
+    justify-self: end !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 0.76rem !important;
+    line-height: 1.25 !important;
+    color: rgba(255,255,255,0.74) !important;
+    white-space: nowrap !important;
+  }
+
+  #artisans-section .result-card .artisan-rating-row,
+  #artisans-section .result-card .artisan-rating {
+    grid-area: rating !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    gap: 8px 12px !important;
+    font-size: 0.82rem !important;
+    color: rgba(255,255,255,0.86) !important;
+  }
+
+  #artisans-section .result-card .artisan-rating-row span {
+    white-space: nowrap !important;
+  }
+
+  #artisans-section .result-card .artisan-skills {
+    grid-area: skills !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+    overflow: hidden !important;
+  }
+
+  #artisans-section .result-card .artisan-skills span {
+    max-width: 100% !important;
+    padding: 5px 8px !important;
+    font-size: 0.72rem !important;
+    line-height: 1.2 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  #artisans-section .result-card .artisan-skills span:nth-child(n+4) {
+    display: none !important;
+  }
+
+  #artisans-section .result-card .result-actions,
+  #artisans-section .result-card .card-buttons {
+    grid-area: actions !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin: 2px 0 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+
+  #artisans-section .result-card .result-actions button,
+  #artisans-section .result-card .card-buttons button {
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 48px !important;
+    margin: 0 !important;
+    padding: 12px 16px !important;
+    border-radius: 12px !important;
+    justify-content: center !important;
+  }
+
+  #artisans-section .result-card .btn-other-profile,
+  #artisans-section .result-card .btn-primary {
+    order: 1 !important;
+    background: linear-gradient(90deg, #ff4ecd, #9b5cff) !important;
+    border: none !important;
+    color: transparent !important;
+    font-size: 0 !important;
+    font-weight: 800 !important;
+    box-shadow: 0 14px 30px rgba(255,100,200,0.22) !important;
+  }
+
+  #artisans-section .result-card .btn-other-profile::after,
+  #artisans-section .result-card .btn-primary::after {
+    content: "Choisir cet artisan";
+    font-size: 0.96rem;
+    line-height: 1;
+    color: #fff;
+  }
+
+  #artisans-section .result-card .btn-other-reserve,
+  #artisans-section .result-card .btn-secondary {
+    order: 2 !important;
+    background: rgba(255,255,255,0.05) !important;
+    border: 1px solid rgba(255,255,255,0.12) !important;
+    box-shadow: none !important;
+    color: rgba(255,255,255,0.94) !important;
+    font-size: 0.92rem !important;
+    font-weight: 700 !important;
+  }
+
+  #artisans-section .result-card *,
+  #artisans-section .results-list *,
+  #artisans-section #artisans-container.artisans-grid * {
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+  }
+}
+
+/* ==============================================================
+   FIXEO v23.1 — Mobile CTA overlap fix artisans -> global CTA
+   Objectif: flow stable, lisible et orienté conversion sans impact desktop
+============================================================== */
+@media (max-width: 768px) {
+  #artisans-section .container {
+    overflow-x: hidden !important;
+  }
+
+  #artisans-section .results-main-column {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 16px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    position: relative !important;
+  }
+
+  #artisans-section #artisans-container.artisans-grid,
+  #artisans-section .results-list {
+    order: 1 !important;
+    margin-bottom: 0 !important;
+  }
+
+  #artisans-section #other-see-more-wrap {
+    order: 2 !important;
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 0 8px !important;
+    padding: 0 !important;
+    transform: none !important;
+    z-index: auto !important;
+    clear: both !important;
+    box-sizing: border-box !important;
+  }
+
+  #artisans-section #other-see-more-wrap .btn-other-see-more {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 44px !important;
+    padding: 12px 16px !important;
+    margin: 0 !important;
+    opacity: 0.9 !important;
+    transform: none !important;
+    box-shadow: 0 10px 22px rgba(225, 48, 108, 0.14) !important;
+    box-sizing: border-box !important;
+  }
+
+  #artisans-section #other-see-more-wrap .btn-other-see-more:hover,
+  #artisans-section #other-see-more-wrap .btn-other-see-more:active {
+    transform: none !important;
+    filter: none !important;
+  }
+
+  #artisans-section #no-artisan {
+    order: 2 !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+  }
+
+  #artisans-section .mobile-sticky-cta,
+  #mobile-sticky-cta {
+    order: 3 !important;
+    display: block !important;
+    position: static !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 24px 0 0 !important;
+    padding: 15px 16px !important;
+    transform: none !important;
+    z-index: auto !important;
+    box-sizing: border-box !important;
+  }
+
+  #artisans-section .mobile-sticky-cta:hover,
+  #artisans-section .mobile-sticky-cta:active,
+  #mobile-sticky-cta:hover,
+  #mobile-sticky-cta:active {
+    transform: none !important;
+  }
+}

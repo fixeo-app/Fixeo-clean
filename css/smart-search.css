@@ -1,0 +1,804 @@
+/* ================================================================
+   FIXEO v7 — SMART SEARCH BAR
+   Ultra-intelligent · Visually attractive · Fully responsive
+   Author: Fixeo Dev Team
+   ================================================================ */
+
+/* ── 0. Reset & Tokens ─────────────────────────────────────── */
+.ssb-wrap *,
+.ssb-wrap *::before,
+.ssb-wrap *::after {
+  box-sizing: border-box;
+}
+
+/* ── 1. Container ──────────────────────────────────────────── */
+.ssb-wrap {
+  position: relative;
+  width: 100%;
+  max-width: 860px;
+  margin: 0 auto 50px;
+  z-index: 500;
+}
+
+/* ── 2. Main Search Card ───────────────────────────────────── */
+.ssb-card {
+  display: flex;
+  align-items: stretch;
+  min-height: 72px;
+  background: rgba(255, 255, 255, 0.97);
+  border-radius: 20px;
+  box-shadow:
+    0 10px 42px rgba(0, 0, 0, 0.28),
+    0 2px 10px rgba(225, 48, 108, 0.14);
+  overflow: visible;
+  border: 2px solid transparent;
+  transition: box-shadow 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
+  position: relative;
+}
+
+.ssb-card:focus-within {
+  border-color: rgba(225, 48, 108, 0.55);
+  box-shadow:
+    0 0 0 5px rgba(225, 48, 108, 0.13),
+    0 12px 50px rgba(0, 0, 0, 0.32);
+  transform: translateY(-1px);
+}
+
+/* ── 3. Segment Base ───────────────────────────────────────── */
+.ssb-segment {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 20px;
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  background: transparent;
+  border: none;
+}
+
+.ssb-segment:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 20%;
+  height: 60%;
+  width: 1px;
+  background: rgba(0, 0, 0, 0.10);
+}
+
+.ssb-segment:hover {
+  background: rgba(225, 48, 108, 0.04);
+  border-radius: 4px;
+}
+
+.ssb-segment-icon {
+  font-size: 1.15rem;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.ssb-segment-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  padding: 12px 0;
+}
+
+.ssb-segment-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: #888;
+  margin-bottom: 2px;
+  white-space: nowrap;
+}
+
+.ssb-segment-input,
+.ssb-segment-select {
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: 'Cairo', 'Tajawal', sans-serif;
+  font-size: 0.96rem;
+  font-weight: 600;
+  color: #1a1a2e;
+  padding: 0;
+  width: 100%;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.ssb-segment-input::placeholder {
+  color: #aaa;
+  font-weight: 400;
+}
+
+.ssb-segment-select option {
+  background: #1a1a2e;
+  color: #fff;
+  font-weight: 500;
+}
+
+/* NLP / Free-text segment – wider */
+.ssb-segment-nlp {
+  flex: 1.85;
+}
+
+.ssb-segment-nlp .ssb-segment-input {
+  cursor: text;
+}
+
+/* ── 4. Smart Filters Row ──────────────────────────────────── */
+.ssb-smart-filters {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px 8px 18px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 0 0 18px 18px;
+  flex-wrap: wrap;
+  margin-top: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+.ssb-filter-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.55);
+  white-space: nowrap;
+  margin-right: 2px;
+}
+
+.ssb-filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.20);
+  background: rgba(255, 255, 255, 0.07);
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.22s ease;
+  user-select: none;
+  white-space: nowrap;
+  font-family: 'Cairo', sans-serif;
+}
+
+.ssb-filter-chip:hover {
+  background: rgba(225, 48, 108, 0.18);
+  border-color: rgba(225, 48, 108, 0.4);
+  color: #fff;
+}
+
+.ssb-filter-chip.active {
+  background: linear-gradient(135deg, #E1306C, #833AB4);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 2px 10px rgba(225, 48, 108, 0.35);
+}
+
+.ssb-filter-chip .chip-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.7;
+}
+
+.ssb-filter-chip.active .chip-dot {
+  background: #fff;
+  opacity: 1;
+  animation: pulse 2s infinite;
+}
+
+/* ── 5. CTA Button ─────────────────────────────────────────── */
+.ssb-btn-search {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px 30px;
+  background: linear-gradient(135deg, #E1306C 0%, #833AB4 60%, #405DE6 100%);
+  color: #fff;
+  border: none;
+  border-radius: 0 18px 18px 0;
+  font-family: 'Cairo', 'Tajawal', sans-serif;
+  font-size: 0.96rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+  min-width: 196px;
+  letter-spacing: 0.3px;
+  box-shadow: 0 12px 28px rgba(225, 48, 108, 0.34), inset 0 1px 0 rgba(255,255,255,0.18);
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+  filter: saturate(1.08) contrast(1.05);
+}
+
+.ssb-btn-search::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.ssb-btn-search:hover::before { opacity: 1; }
+
+.ssb-btn-search:hover {
+  transform: scale(1.03);
+  box-shadow: 0 14px 32px rgba(225, 48, 108, 0.42), 0 0 22px rgba(131, 58, 180, 0.18);
+}
+
+.ssb-btn-search:active {
+  transform: scale(0.98);
+}
+
+.ssb-btn-search svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ── 6. Dropdown Container ─────────────────────────────────── */
+.ssb-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  right: 0;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.22),
+    0 4px 16px rgba(0, 0, 0, 0.10);
+  z-index: 9999;
+  overflow: hidden;
+  display: none;
+  animation: ssbDropIn 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+  max-height: 580px;
+  overflow-y: auto;
+}
+
+.ssb-dropdown.visible {
+  display: block;
+}
+
+@keyframes ssbDropIn {
+  from { opacity: 0; transform: translateY(-8px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Scrollbar inside dropdown */
+.ssb-dropdown::-webkit-scrollbar { width: 5px; }
+.ssb-dropdown::-webkit-scrollbar-track { background: #f5f5f5; }
+.ssb-dropdown::-webkit-scrollbar-thumb { background: #ddd; border-radius: 3px; }
+
+/* ── 7. Dropdown Sections ──────────────────────────────────── */
+.ssb-dd-section {
+  padding: 10px 0 6px;
+}
+
+.ssb-dd-section:not(:last-child) {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.ssb-dd-section-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 16px 8px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.9px;
+  color: #aaa;
+}
+
+/* ── 8. Suggestion Item ────────────────────────────────────── */
+.ssb-suggestion {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 16px;
+  cursor: pointer;
+  transition: background 0.16s ease;
+  font-family: 'Cairo', sans-serif;
+}
+
+.ssb-suggestion:hover,
+.ssb-suggestion.focused {
+  background: rgba(225, 48, 108, 0.06);
+}
+
+.ssb-sug-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #f5f5f5, #eee);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.ssb-sug-icon.service  { background: linear-gradient(135deg, rgba(225,48,108,0.10), rgba(131,58,180,0.10)); }
+.ssb-sug-icon.city     { background: linear-gradient(135deg, rgba(64,93,230,0.10), rgba(32,201,151,0.10)); }
+.ssb-sug-icon.history  { background: rgba(0,0,0,0.05); }
+
+.ssb-sug-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.ssb-sug-label {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #1a1a2e;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ssb-sug-label em {
+  color: #E1306C;
+  font-style: normal;
+  font-weight: 800;
+}
+
+.ssb-sug-meta {
+  font-size: 0.72rem;
+  color: #999;
+  margin-top: 1px;
+}
+
+.ssb-sug-badge {
+  font-size: 0.65rem;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-weight: 700;
+  background: rgba(225, 48, 108, 0.10);
+  color: #E1306C;
+  white-space: nowrap;
+}
+
+/* ── 9. Artisan Mini-Profile Card ──────────────────────────── */
+.ssb-artisan-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background 0.16s ease;
+  text-decoration: none;
+  color: inherit;
+}
+
+.ssb-artisan-card:hover,
+.ssb-artisan-card.focused {
+  background: rgba(225, 48, 108, 0.05);
+}
+
+.ssb-art-avatar {
+  position: relative;
+  width: 46px;
+  height: 46px;
+  flex-shrink: 0;
+}
+
+.ssb-art-avatar img,
+.ssb-art-avatar .ssb-avatar-initials {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.ssb-avatar-initials {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #E1306C, #833AB4);
+  color: #fff;
+  font-weight: 800;
+  font-size: 0.9rem;
+  font-family: 'Cairo', sans-serif;
+}
+
+.ssb-art-avail-dot {
+  position: absolute;
+  bottom: 1px;
+  right: 1px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  background: #ccc;
+}
+
+.ssb-art-avail-dot.available  { background: #20c997; }
+.ssb-art-avail-dot.busy       { background: #ffa502; }
+.ssb-art-avail-dot.offline    { background: #6c757d; }
+
+.ssb-art-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.ssb-art-name {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ssb-art-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 3px;
+}
+
+.ssb-art-cat {
+  font-size: 0.70rem;
+  color: #777;
+}
+
+.ssb-art-rating {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #F77737;
+}
+
+.ssb-art-price {
+  font-size: 0.72rem;
+  color: #555;
+  font-weight: 600;
+}
+
+.ssb-art-badges {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.ssb-art-badge {
+  font-size: 0.62rem;
+  padding: 2px 7px;
+  border-radius: 20px;
+  font-weight: 700;
+  background: rgba(32, 201, 151, 0.12);
+  color: #20c997;
+  white-space: nowrap;
+}
+
+.ssb-art-badge.fast  { background: rgba(247,119,55,0.12); color: #F77737; }
+.ssb-art-badge.booked { background: rgba(64,93,230,0.12); color: #405DE6; }
+
+.ssb-art-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex-shrink: 0;
+}
+
+.ssb-art-btn {
+  padding: 5px 12px;
+  border-radius: 8px;
+  border: none;
+  font-family: 'Cairo', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  white-space: nowrap;
+}
+
+.ssb-art-btn-reserve {
+  background: linear-gradient(135deg, #E1306C, #833AB4);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(225, 48, 108, 0.3);
+}
+
+.ssb-art-btn-reserve:hover {
+  transform: scale(1.04);
+  box-shadow: 0 4px 14px rgba(225, 48, 108, 0.45);
+}
+
+.ssb-art-btn-profile {
+  background: #f5f5f5;
+  color: #555;
+  border: 1px solid #e8e8e8;
+}
+
+.ssb-art-btn-profile:hover {
+  background: #eee;
+  color: #1a1a2e;
+}
+
+/* ── 10. Map Preview Strip ─────────────────────────────────── */
+#ssb-map-preview {
+  width: 100%;
+  height: 320px;
+  border-radius: 16px;
+  overflow: hidden;
+  margin-top: 12px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.22);
+  display: none;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+#ssb-map-preview.visible {
+  display: block;
+  animation: ssbFadeIn 0.3s ease;
+}
+
+#ssb-map-canvas {
+  width: 100%;
+  height: 100%;
+}
+
+.ssb-map-overlay-info {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(255,255,255,0.95);
+  border-radius: 10px;
+  padding: 6px 14px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+  pointer-events: none;
+  backdrop-filter: blur(4px);
+}
+
+/* ── 11. Empty / Loading States ────────────────────────────── */
+.ssb-dd-empty {
+  padding: 24px 20px;
+  text-align: center;
+}
+
+.ssb-dd-empty-icon {
+  font-size: 2rem;
+  margin-bottom: 8px;
+}
+
+.ssb-dd-empty-text {
+  font-size: 0.84rem;
+  color: #999;
+  font-family: 'Cairo', sans-serif;
+}
+
+.ssb-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 18px 20px;
+  font-size: 0.82rem;
+  color: #aaa;
+  font-family: 'Cairo', sans-serif;
+}
+
+.ssb-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #ddd;
+  border-top-color: #E1306C;
+  border-radius: 50%;
+  animation: ssb-spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes ssb-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── 12. Footer: See all results ───────────────────────────── */
+.ssb-dd-footer {
+  padding: 10px 16px;
+  border-top: 1px solid #f0f0f0;
+  text-align: center;
+}
+
+.ssb-dd-footer-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 24px;
+  background: linear-gradient(135deg, #E1306C, #833AB4);
+  color: #fff;
+  border-radius: 10px;
+  font-size: 0.80rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  font-family: 'Cairo', sans-serif;
+  width: 100%;
+  justify-content: center;
+}
+
+.ssb-dd-footer-btn:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 16px rgba(225, 48, 108, 0.35);
+}
+
+/* ── 13. Clear button inside input ────────────────────────── */
+.ssb-clear-btn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #eee;
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  cursor: pointer;
+  color: #777;
+  transition: all 0.15s;
+  z-index: 2;
+  line-height: 1;
+}
+
+.ssb-clear-btn:hover { background: #ddd; color: #333; }
+.ssb-clear-btn.visible { display: flex; }
+
+/* ── 14. Divider (vertical) ────────────────────────────────── */
+.ssb-divider {
+  width: 1px;
+  align-self: stretch;
+  background: rgba(0,0,0,0.10);
+  margin: 8px 0;
+  flex-shrink: 0;
+}
+
+/* ── 15. Animations ─────────────────────────────────────────── */
+@keyframes ssbFadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0%,100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.6; transform: scale(0.85); }
+}
+
+/* ── 16. Responsive — Tablet ───────────────────────────────── */
+@media (max-width: 900px) {
+  .ssb-card {
+    border-radius: 16px;
+  }
+  .ssb-btn-search {
+    border-radius: 0 14px 14px 0;
+    padding: 16px 22px;
+    min-width: 156px;
+    font-size: 0.9rem;
+  }
+}
+
+/* ── 17. Responsive — Mobile ───────────────────────────────── */
+@media (max-width: 640px) {
+  .ssb-wrap {
+    margin: 0 0 24px;
+    width: 100%;
+    max-width: 100%;
+    z-index: 500;
+    overflow-x: clip;
+  }
+
+  .ssb-card {
+    flex-direction: column;
+    gap: 14px;
+    background: transparent;
+    box-shadow: none;
+    border: none;
+    border-radius: 0;
+    overflow: visible;
+    width: 100%;
+    max-width: 100%;
+    min-height: 0;
+  }
+
+  .ssb-segment {
+    width: 100%;
+    max-width: 100%;
+    min-height: 64px;
+    padding: 0 16px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.97);
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.22), 0 2px 8px rgba(225, 48, 108, 0.12);
+  }
+
+  .ssb-segment:not(:last-child)::after {
+    display: none;
+  }
+
+  .ssb-divider { display: none; }
+
+  .ssb-btn-search {
+    border-radius: 16px;
+    padding: 16px 20px;
+    width: 100%;
+    min-width: 0;
+    min-height: 60px;
+    font-size: 1rem;
+  }
+
+  .ssb-dropdown {
+    border-radius: 12px;
+    left: 0;
+    right: 0;
+    max-width: 100%;
+  }
+
+  .ssb-smart-filters {
+    padding: 8px 12px;
+    gap: 6px;
+  }
+
+  .ssb-filter-chip {
+    padding: 4px 10px;
+    font-size: 0.68rem;
+  }
+
+  .ssb-art-actions {
+    flex-direction: row;
+  }
+
+  .ssb-art-btn {
+    padding: 5px 9px;
+    font-size: 0.67rem;
+  }
+
+  #ssb-map-preview {
+    height: 240px;
+  }
+}
+
+/* ── 18. Dark mode support ─────────────────────────────────── */
+@media (prefers-color-scheme: dark) {
+  .ssb-card {
+    background: rgba(30, 30, 48, 0.98);
+  }
+  .ssb-segment-label { color: rgba(255,255,255,0.45); }
+  .ssb-segment-input,
+  .ssb-segment-select { color: #fff; }
+  .ssb-segment-input::placeholder { color: rgba(255,255,255,0.35); }
+  .ssb-segment:not(:last-child)::after { background: rgba(255,255,255,0.10); }
+  .ssb-divider { background: rgba(255,255,255,0.08); }
+}
+
+/* ── 19. Override old search bar (hide it) ──────────────────── */
+.search-bar-unified.search-bar-simplified {
+  display: none !important;
+}
+
+/* Keep search-bar-wrap for ssb-wrap positioning */
+.search-bar-wrap {
+  position: relative;
+  z-index: 500;
+  max-width: 860px !important;
+}

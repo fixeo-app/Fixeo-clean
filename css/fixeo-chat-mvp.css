@@ -1,0 +1,68 @@
+#fixeo-chat-launcher{position:fixed;right:18px;bottom:18px;z-index:1400;display:inline-flex;align-items:center;gap:10px;padding:14px 18px;border:none;border-radius:999px;background:linear-gradient(90deg,#ff4ecd,#9b5cff);color:#fff;font-weight:800;box-shadow:0 18px 40px rgba(155,92,255,.35);cursor:pointer}
+#fixeo-chat-launcher .badge{min-width:22px;height:22px;border-radius:999px;background:#fff;color:#7b2fff;padding:0 7px;display:none;align-items:center;justify-content:center;font-size:12px;font-weight:900}
+#fixeo-chat-launcher .badge.has-unread{display:inline-flex}
+#fixeo-chat-root{position:fixed;inset:0;z-index:1450;display:none}
+#fixeo-chat-root.open{display:block}
+#fixeo-chat-root *{box-sizing:border-box}
+.fixeo-chat-backdrop{position:absolute;inset:0;background:rgba(6,8,18,.7);backdrop-filter:blur(8px)}
+.fixeo-chat-shell{position:absolute;right:18px;bottom:88px;width:min(1080px,calc(100vw - 24px));height:min(760px,calc(100vh - 108px));display:grid;grid-template-columns:320px minmax(0,1fr);border-radius:24px;overflow:hidden;border:1px solid rgba(255,255,255,.1);background:linear-gradient(180deg,rgba(15,16,29,.98),rgba(11,12,23,.98));box-shadow:0 30px 80px rgba(0,0,0,.55)}
+.fixeo-chat-sidebar{display:flex;flex-direction:column;border-right:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.02)}
+.fixeo-chat-sidebar-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px;border-bottom:1px solid rgba(255,255,255,.08)}
+.fixeo-chat-sidebar-head h3{margin:0;font-size:1rem;color:#fff}
+.fixeo-chat-sidebar-head p{margin:4px 0 0;font-size:.76rem;color:rgba(255,255,255,.62)}
+.fixeo-chat-close,.fixeo-chat-mobile-back,.fixeo-chat-mini-btn{width:36px;height:36px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:#fff;cursor:pointer}
+.fixeo-chat-mobile-back{display:none}
+.fixeo-chat-conversation-list{padding:12px;overflow:auto;display:flex;flex-direction:column;gap:10px}
+.fixeo-chat-conversation{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;padding:14px;border-radius:18px;border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.03);cursor:pointer;transition:all .18s ease;color:#fff}
+.fixeo-chat-conversation:hover{transform:translateY(-1px);background:rgba(255,255,255,.05)}
+.fixeo-chat-conversation.active{border-color:rgba(255,78,205,.32);background:rgba(255,78,205,.12)}
+.fixeo-chat-avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;background:linear-gradient(135deg,#ff4ecd,#9b5cff)}
+.fixeo-chat-conv-name{font-size:.92rem;font-weight:800;line-height:1.25;display:flex;align-items:center;gap:8px;color:#fff}
+.fixeo-chat-online-dot{display:inline-flex;width:8px;height:8px;border-radius:50%;background:#23d18b;box-shadow:0 0 0 6px rgba(35,209,139,.12)}
+.fixeo-chat-conv-sub,.fixeo-chat-conv-last{font-size:.75rem;color:rgba(255,255,255,.6);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fixeo-chat-unread{min-width:22px;height:22px;padding:0 7px;border-radius:999px;background:#ff4ecd;color:#fff;font-size:11px;font-weight:900;display:inline-flex;align-items:center;justify-content:center}
+.fixeo-chat-time{font-size:.7rem;color:rgba(255,255,255,.45);white-space:nowrap}
+.fixeo-chat-main{display:flex;flex-direction:column;min-width:0}
+.fixeo-chat-main-head{display:flex;align-items:center;gap:12px;padding:18px;border-bottom:1px solid rgba(255,255,255,.08)}
+.fixeo-chat-main-meta{min-width:0;flex:1}
+.fixeo-chat-main-meta h3{margin:0;font-size:1rem;color:#fff;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.fixeo-chat-main-meta p{margin:5px 0 0;font-size:.78rem;color:rgba(255,255,255,.62);display:flex;gap:10px;flex-wrap:wrap}
+.fixeo-chat-state{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;font-size:.72rem;font-weight:800;border:1px solid rgba(35,209,139,.22);background:rgba(35,209,139,.12);color:#6ef0b9}
+.fixeo-chat-body{flex:1;min-height:0;overflow:auto;padding:18px;display:flex;flex-direction:column;gap:12px;background:linear-gradient(180deg,rgba(255,255,255,.01),rgba(255,255,255,.02))}
+.fixeo-chat-empty{height:100%;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;color:rgba(255,255,255,.65)}
+.fixeo-chat-day{align-self:center;padding:7px 12px;border-radius:999px;background:rgba(255,255,255,.05);font-size:.72rem;color:rgba(255,255,255,.56)}
+.fixeo-chat-row{display:flex;flex-direction:column;max-width:78%}
+.fixeo-chat-row.own{align-self:flex-end;align-items:flex-end}
+.fixeo-chat-row.other{align-self:flex-start;align-items:flex-start}
+.fixeo-chat-row.system{align-self:center;max-width:90%;align-items:center}
+.fixeo-chat-bubble{padding:12px 14px;border-radius:18px;background:rgba(255,255,255,.08);color:#fff;line-height:1.45;word-break:break-word;box-shadow:0 10px 28px rgba(0,0,0,.12)}
+.fixeo-chat-row.own .fixeo-chat-bubble{background:linear-gradient(90deg,#ff4ecd,#9b5cff)}
+.fixeo-chat-row.system .fixeo-chat-bubble{background:rgba(35,209,139,.12);border:1px solid rgba(35,209,139,.2);color:#baf7dc}
+.fixeo-chat-meta{padding:5px 4px 0;font-size:.7rem;color:rgba(255,255,255,.48);display:flex;align-items:center;gap:8px}
+.fixeo-chat-price-chip{margin-top:8px;display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:999px;background:rgba(255,255,255,.12);font-size:.74rem;font-weight:800}
+.fixeo-chat-accept-btn{margin-top:10px;display:inline-flex;align-items:center;justify-content:center;border:none;border-radius:12px;padding:10px 12px;background:#23d18b;color:#06130d;font-weight:900;cursor:pointer}
+.fixeo-chat-composer{padding:14px 16px 16px;border-top:1px solid rgba(255,255,255,.08);background:rgba(14,15,26,.96)}
+.fixeo-chat-quick{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.fixeo-chat-quick button,.fixeo-chat-mini-btn{border:none;border-radius:999px;padding:10px 13px;background:rgba(255,255,255,.07);color:#fff;font-size:.78rem;font-weight:700;cursor:pointer}
+.fixeo-chat-quick button:hover,.fixeo-chat-mini-btn:hover{background:rgba(255,255,255,.11)}
+.fixeo-chat-input-row{display:flex;align-items:flex-end;gap:10px}
+.fixeo-chat-textarea{flex:1;min-height:52px;max-height:140px;resize:none;border-radius:16px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.06);padding:14px 16px;color:#fff;font:inherit;outline:none}
+.fixeo-chat-send{border:none;border-radius:16px;padding:0 18px;min-width:116px;height:52px;background:linear-gradient(90deg,#ff4ecd,#9b5cff);color:#fff;font-weight:900;cursor:pointer;box-shadow:0 18px 40px rgba(155,92,255,.24)}
+.fixeo-chat-helper{margin-top:8px;display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:.72rem;color:rgba(255,255,255,.52)}
+.fixeo-chat-price-box{display:none;align-items:center;gap:10px;margin-top:12px;padding:12px;border-radius:16px;border:1px dashed rgba(255,255,255,.14);background:rgba(255,255,255,.03)}
+.fixeo-chat-price-box.show{display:flex}
+.fixeo-chat-price-box input{width:120px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:#fff;padding:10px 12px}
+.fixeo-chat-price-box button{border:none;border-radius:12px;padding:10px 12px;background:#23d18b;color:#03110a;font-weight:900;cursor:pointer}
+.fixeo-chat-hero-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.chat-widget,.chat-panel,.chat-toggle{display:none!important}
+@media (max-width: 960px){
+  .fixeo-chat-shell{grid-template-columns:280px minmax(0,1fr)}
+}
+@media (max-width: 768px){
+  #fixeo-chat-launcher{right:14px;left:14px;bottom:14px;justify-content:center}
+  .fixeo-chat-shell{left:0;right:0;top:0;bottom:0;width:100vw;height:100vh;border-radius:0;grid-template-columns:1fr}
+  .fixeo-chat-sidebar{display:flex}
+  .fixeo-chat-shell.mobile-main .fixeo-chat-sidebar{display:none}
+  .fixeo-chat-mobile-back{display:inline-flex}
+  .fixeo-chat-row{max-width:92%}
+}

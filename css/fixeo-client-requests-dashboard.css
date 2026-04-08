@@ -1,0 +1,121 @@
+/* FIXEO — CLIENT REQUESTS DASHBOARD V1 */
+.fixeo-client-requests-panel {
+  margin-top: 18px;
+}
+
+.fixeo-client-requests-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.fixeo-client-request-card {
+  position: relative;
+  padding: 18px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
+  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: 0 20px 46px rgba(0,0,0,0.14);
+  overflow: hidden;
+}
+
+.fixeo-client-request-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(135deg, rgba(225,48,108,0.08), rgba(64,93,230,0));
+}
+
+.fixeo-client-request-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.fixeo-client-request-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.fixeo-client-request-head h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.fixeo-client-request-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.fixeo-client-request-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+  font-size: .72rem;
+  font-weight: 700;
+}
+
+.fixeo-client-request-pill.is-new {
+  background: rgba(225,48,108,0.14);
+  border-color: rgba(225,48,108,0.34);
+  color: #ffc3d8;
+}
+
+.fixeo-client-request-desc {
+  margin: 12px 0 0;
+  color: rgba(255,255,255,0.78);
+  font-size: .88rem;
+  line-height: 1.55;
+}
+
+.fixeo-client-request-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+
+.fixeo-client-request-budget,
+.fixeo-client-request-date {
+  color: rgba(255,255,255,0.62);
+  font-size: .78rem;
+}
+
+.fixeo-client-request-empty {
+  padding: 20px;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.05);
+  border: 1px dashed rgba(255,255,255,0.14);
+  color: rgba(255,255,255,0.7);
+  font-size: .9rem;
+  text-align: center;
+}
+
+@media (max-width: 600px) {
+  .fixeo-client-request-card {
+    padding: 16px;
+    border-radius: 18px;
+  }
+
+  .fixeo-client-request-head,
+  .fixeo-client-request-footer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .fixeo-client-request-footer .btn {
+    width: 100%;
+  }
+}

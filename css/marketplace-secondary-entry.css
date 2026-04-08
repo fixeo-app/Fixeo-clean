@@ -1,0 +1,75 @@
+/* Entrée secondaire marketplace — discrète, claire, non concurrente du CTA principal */
+.marketplace-secondary-entry {
+  width: min(100%, 940px);
+  margin: 18px auto 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-secondary-marketplace {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 10px 18px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.065);
+  color: rgba(255,255,255,0.94);
+  opacity: 0.92;
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  box-shadow: 0 10px 26px rgba(0,0,0,0.12);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.btn-secondary-marketplace:hover,
+.btn-secondary-marketplace:focus-visible {
+  opacity: 1;
+  background: rgba(255,255,255,0.085);
+  border-color: rgba(255,255,255,0.24);
+  box-shadow: 0 14px 30px rgba(0,0,0,0.16), 0 0 18px rgba(255,255,255,0.06), 0 0 0 1px rgba(255,255,255,0.05) inset;
+  transform: translateY(-1px);
+}
+
+.btn-secondary-marketplace:focus-visible {
+  outline: none;
+}
+
+.marketplace-secondary-copy {
+  margin: 0;
+  text-align: center;
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: rgba(255,255,255,0.68);
+}
+
+@media (max-width: 640px) {
+  .marketplace-secondary-entry {
+    width: 100%;
+    margin: 14px auto 24px;
+    align-items: stretch;
+    gap: 7px;
+  }
+
+  .btn-secondary-marketplace {
+    width: 100%;
+    min-height: 50px;
+    padding: 12px 16px;
+  }
+
+  .marketplace-secondary-copy {
+    width: 100%;
+    padding: 0 4px;
+    text-align: center;
+  }
+}

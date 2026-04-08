@@ -1,0 +1,240 @@
+/* ================================================================
+   FIXEO V5 — HERO ULTIMATE FIX
+   hero_ultimate_fix.css — CHARGÉ EN DERNIER, PRIORITÉ ABSOLUE
+   Auteur : Fix session 2026-03
+   
+   PROBLÈME DIAGNOSTIQUÉ :
+   ─ v3_ultra_stable.css force justify-content:center (centrage vertical)
+   ─ Les floats float-2/float-3 se superposent à la zone titre (top:160px)
+   ─ Sur petit écran (768–1366px) le titre est partiellement caché
+   
+   CORRECTIONS :
+   1. Hero → justify-content:flex-start → contenu collé en haut
+   2. Hero content → margin-top:0, z-index:5 → visible au premier plan
+   3. Floats → repositionnés dans la zone BASSE du hero (hors titre)
+   4. Padding-top réduit à navbar+20px pour rapprocher le titre du header
+   ================================================================ */
+
+
+/* ──────────────────────────────────────────────────────────────
+   1. SECTION HERO — Alignement haut garanti
+   ────────────────────────────────────────────────────────────── */
+.hero {
+  display:            flex          !important;
+  flex-direction:     column        !important;
+  align-items:        center        !important;
+  /* ★ Clé de voûte : flex-start pousse le contenu vers le haut */
+  justify-content:    flex-start    !important;
+  text-align:         center        !important;
+  position:           relative      !important;
+  overflow:           hidden        !important;
+  min-height:         100vh         !important;
+  /* Padding réduit : navbar + 20px seulement → titre plus près du header */
+  padding-top:        calc(var(--navbar-height, 70px) + 20px) !important;
+  padding-bottom:     60px          !important;
+  padding-left:       24px          !important;
+  padding-right:      24px          !important;
+  box-sizing:         border-box    !important;
+}
+
+
+/* ──────────────────────────────────────────────────────────────
+   2. HERO CONTENT — Au premier plan, collé en haut
+   ────────────────────────────────────────────────────────────── */
+.hero-content {
+  display:            flex          !important;
+  flex-direction:     column        !important;
+  align-items:        center        !important;
+  width:              100%          !important;
+  max-width:          780px         !important;
+  margin-left:        auto          !important;
+  margin-right:       auto          !important;
+  /* CRITIQUE : pas de margin-top, pas de padding-top qui ferait descendre */
+  margin-top:         0             !important;
+  padding-top:        0             !important;
+  padding-bottom:     0             !important;
+  padding-left:       16px          !important;
+  padding-right:      16px          !important;
+  box-sizing:         border-box    !important;
+  text-align:         center        !important;
+  position:           relative      !important;
+  /* z-index 5 : devant les floats (z:2) et l'overlay (z:1) */
+  z-index:            5             !important;
+}
+
+
+/* ──────────────────────────────────────────────────────────────
+   3. HEADLINE H1 — Centré, pas de marge haute parasite
+   ────────────────────────────────────────────────────────────── */
+.hero-content h1 {
+  text-align:         center        !important;
+  width:              100%          !important;
+  margin-left:        auto          !important;
+  margin-right:       auto          !important;
+  margin-top:         0             !important;
+  margin-bottom:      16px          !important;
+  line-height:        1.15          !important;
+}
+
+
+/* ──────────────────────────────────────────────────────────────
+   4. HERO BADGE (pastille verte)
+   ────────────────────────────────────────────────────────────── */
+.hero-badge {
+  display:            inline-flex   !important;
+  align-items:        center        !important;
+  margin-left:        auto          !important;
+  margin-right:       auto          !important;
+  margin-top:         0             !important;
+  margin-bottom:      14px          !important;
+}
+
+
+/* ──────────────────────────────────────────────────────────────
+   5. HERO SUBTITLE
+   ────────────────────────────────────────────────────────────── */
+.hero-subtitle {
+  text-align:         center        !important;
+  margin-left:        auto          !important;
+  margin-right:       auto          !important;
+  margin-bottom:      22px          !important;
+  max-width:          600px         !important;
+}
+
+
+/* ──────────────────────────────────────────────────────────────
+   6. FLOATING CARDS — Repositionnées dans la zone BASSE du hero
+      Principe : on utilise bottom:% au lieu de top:px
+      → Les floats sont toujours dans le hero, mais sous les stats
+      → Aucune interférence avec le titre/sous-titre/barre de recherche
+   ────────────────────────────────────────────────────────────── */
+
+/* Propriétés communes à tous les floats */
+.hero-float {
+  position:           absolute      !important;
+  z-index:            2             !important;
+  pointer-events:     none          !important;
+  max-width:          200px         !important;
+}
+
+/* float-1 : Karim B. → gauche, bas */
+.float-1 {
+  top:                auto          !important;
+  bottom:             28%           !important;
+  left:               36px          !important;
+  right:              auto          !important;
+  animation-delay:    0s            !important;
+}
+
+/* float-2 : Badge débloqué → droite, milieu-bas */
+.float-2 {
+  top:                auto          !important;
+  bottom:             36%           !important;
+  right:              36px          !important;
+  left:               auto          !important;
+  animation-delay:    1.5s          !important;
+}
+
+/* float-3 : ★ Yasmine → droite, encore plus bas */
+.float-3 {
+  position:           absolute      !important;
+  top:                auto          !important;
+  bottom:             18%           !important;
+  right:              36px          !important;
+  left:               auto          !important;
+  animation-delay:    2s            !important;
+  min-width:          190px         !important;
+}
+
+
+/* ──────────────────────────────────────────────────────────────
+   7. BULLES ET BLOBS — Derrière tout le reste
+   ────────────────────────────────────────────────────────────── */
+.hero-bubble,
+.hero-blob {
+  position:           absolute      !important;
+  z-index:            0             !important;
+  pointer-events:     none          !important;
+}
+
+.hero-overlay {
+  z-index:            1             !important;
+}
+
+
+/* ──────────────────────────────────────────────────────────────
+   8. SEARCH BAR & ACTIONS & STATS
+   ────────────────────────────────────────────────────────────── */
+.search-bar-wrap {
+  width:              100%          !important;
+  max-width:          820px         !important;
+  margin-left:        auto          !important;
+  margin-right:       auto          !important;
+  margin-bottom:      22px          !important;
+  text-align:         center        !important;
+}
+
+.hero-actions {
+  display:            flex          !important;
+  align-items:        center        !important;
+  justify-content:    center        !important;
+  flex-wrap:          wrap          !important;
+  gap:                14px          !important;
+  width:              100%          !important;
+  margin-bottom:      28px          !important;
+}
+
+.hero-stats {
+  display:            flex          !important;
+  align-items:        center        !important;
+  justify-content:    center        !important;
+  flex-wrap:          wrap          !important;
+  gap:                28px          !important;
+  width:              100%          !important;
+}
+
+
+/* ──────────────────────────────────────────────────────────────
+   9. TABLETTE (769–1024px)
+   ────────────────────────────────────────────────────────────── */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .float-1 { left:  16px !important; bottom: 26% !important; }
+  .float-2 { right: 16px !important; bottom: 34% !important; }
+  .float-3 { right: 16px !important; bottom: 16% !important; top: auto !important; }
+  .hero-float { max-width: 170px !important; }
+}
+
+
+/* ──────────────────────────────────────────────────────────────
+   10. MOBILE (≤768px) — Floats cachés, hero compact
+   ────────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .hero-float {
+    display:      none  !important;
+  }
+  .hero {
+    padding-top:    calc(var(--navbar-height, 70px) + 14px) !important;
+    padding-left:   14px !important;
+    padding-right:  14px !important;
+    padding-bottom: 44px !important;
+  }
+  .hero-content {
+    max-width: 100%  !important;
+    padding:   0 6px !important;
+  }
+  .hero-stats { gap: 16px !important; }
+  .hero-stat .value { font-size: 1.5rem !important; }
+}
+
+
+/* ──────────────────────────────────────────────────────────────
+   11. TRÈS PETIT ÉCRAN (≤480px)
+   ────────────────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .search-bar-wrap    { max-width: 100% !important; }
+  .search-bar-unified { max-width: 100% !important; }
+  .hero-actions .btn-lg {
+    padding:   11px 18px !important;
+    font-size: 0.88rem   !important;
+  }
+}

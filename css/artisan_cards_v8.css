@@ -1,0 +1,706 @@
+/* ============================================================
+   FIXEO V8 — ARTISAN CARDS UNIFORMIZATION
+   ✔ Force 5 cards per row (featured & other artisans)
+   ✔ Uniform card height, spacing, typography
+   ✔ Visual separator "Découvrir Plus d'Artisans"
+   ✔ Other-artisans "See More" button
+   ✔ Smooth reveal animations
+   ✔ Full responsiveness
+   ============================================================ */
+
+/* ═══════════════════════════════════════════════════════════
+   1 — GLOBAL GRID: Force exactly 5 columns on large screens
+   ═══════════════════════════════════════════════════════════ */
+
+/* Featured Artisans: 5 per row */
+#featured-artisans-grid.featured-grid,
+.featured-grid {
+  display: grid !important;
+  grid-template-columns: repeat(5, 1fr) !important;
+  gap: 16px !important;
+  align-items: stretch !important;
+}
+
+/* Other Artisans: 5 per row */
+#artisans-container.artisans-grid,
+.artisans-grid {
+  display: grid !important;
+  grid-template-columns: repeat(5, 1fr) !important;
+  gap: 16px !important;
+  align-items: stretch !important;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   2 — UNIFORM CARD BASE: Same cover + avatar + dimensions
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Featured Card ───────────────────────────────────────── */
+.featured-card {
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 310px !important;
+  background: rgba(255,255,255,0.05) !important;
+  backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(255,255,255,0.10) !important;
+  border-radius: 16px !important;
+  overflow: hidden !important;
+  cursor: pointer !important;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease !important;
+}
+
+.featured-card:hover {
+  transform: translateY(-6px) !important;
+  border-color: rgba(255,255,255,0.22) !important;
+  box-shadow: 0 0 18px rgba(225,48,108,0.25), 0 12px 32px rgba(0,0,0,0.35) !important;
+}
+
+.featured-card-cover {
+  height: 88px !important;
+  position: relative !important;
+  overflow: hidden !important;
+  flex-shrink: 0 !important;
+}
+
+.featured-card-body {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 !important;
+  padding: 0 13px 14px !important;
+}
+
+.featured-avatar-wrap {
+  position: relative !important;
+  width: 52px !important;
+  height: 52px !important;
+  margin-top: -26px !important;
+  margin-bottom: 8px !important;
+  flex-shrink: 0 !important;
+}
+
+.featured-avatar {
+  width: 52px !important;
+  height: 52px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-weight: 700 !important;
+  font-size: 1rem !important;
+  color: #fff !important;
+  border: 3px solid #1a1a2e !important;
+  flex-shrink: 0 !important;
+}
+
+.featured-avail-dot {
+  position: absolute !important;
+  bottom: 2px !important;
+  right: 2px !important;
+  width: 12px !important;
+  height: 12px !important;
+  border-radius: 50% !important;
+  border: 2px solid #1a1a2e !important;
+}
+
+.featured-name {
+  font-weight: 700 !important;
+  font-size: 0.88rem !important;
+  color: #fff !important;
+  margin-bottom: 2px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.featured-category {
+  font-size: 0.70rem !important;
+  color: rgba(255,255,255,0.5) !important;
+  margin-bottom: 5px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.featured-trust-row {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 3px !important;
+  margin-bottom: 6px !important;
+}
+
+.featured-trust-score {
+  font-size: 0.70rem !important;
+  font-weight: 600 !important;
+  color: #FFD700 !important;
+  background: rgba(255,215,0,0.08) !important;
+  border: 1px solid rgba(255,215,0,0.2) !important;
+  border-radius: 5px !important;
+  padding: 2px 6px !important;
+  width: fit-content !important;
+}
+
+.featured-response-time {
+  font-size: 0.68rem !important;
+  font-weight: 500 !important;
+  color: rgba(32,201,151,0.9) !important;
+  background: rgba(32,201,151,0.08) !important;
+  border: 1px solid rgba(32,201,151,0.2) !important;
+  border-radius: 5px !important;
+  padding: 2px 6px !important;
+  width: fit-content !important;
+}
+
+.featured-rating {
+  font-size: 0.78rem !important;
+  margin-bottom: 8px !important;
+  color: rgba(255,255,255,0.85) !important;
+}
+
+.featured-footer {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 6px !important;
+  margin-top: auto !important;
+  flex-wrap: nowrap !important;
+}
+
+.featured-price {
+  font-size: 0.80rem !important;
+  font-weight: 700 !important;
+  color: #fff !important;
+  white-space: nowrap !important;
+}
+
+.featured-price span {
+  font-weight: 400 !important;
+  color: rgba(255,255,255,0.5) !important;
+  font-size: 0.70rem !important;
+}
+
+.btn-featured-reserve,
+.btn-featured-express {
+  flex: 1 !important;
+  text-align: center !important;
+  padding: 5px 6px !important;
+  font-size: 0.69rem !important;
+  font-weight: 700 !important;
+  border-radius: 7px !important;
+  cursor: pointer !important;
+  border: none !important;
+  transition: opacity 0.2s ease, transform 0.15s ease !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.btn-featured-reserve {
+  background: linear-gradient(135deg, #E1306C, #833AB4) !important;
+  color: #fff !important;
+}
+
+.btn-featured-express {
+  background: rgba(255,255,255,0.08) !important;
+  border: 1px solid rgba(255,255,255,0.2) !important;
+  color: rgba(255,255,255,0.85) !important;
+}
+
+.btn-featured-reserve:hover,
+.btn-featured-express:hover {
+  opacity: 0.85 !important;
+  transform: translateY(-1px) !important;
+}
+
+/* ── Other Artisan Card ──────────────────────────────────── */
+.artisan-card {
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 310px !important;
+  background: rgba(255,255,255,0.05) !important;
+  backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(255,255,255,0.10) !important;
+  /* Subtle left accent to differentiate from featured */
+  border-left: 3px solid rgba(64,93,230,0.5) !important;
+  border-radius: 16px !important;
+  overflow: hidden !important;
+  cursor: pointer !important;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease !important;
+}
+
+.artisan-card:hover {
+  transform: translateY(-6px) !important;
+  border-color: rgba(64,93,230,0.7) !important;
+  border-left-color: rgba(64,93,230,0.85) !important;
+  box-shadow: 0 0 18px rgba(64,93,230,0.25), 0 12px 32px rgba(0,0,0,0.35) !important;
+}
+
+.artisan-card-cover {
+  height: 88px !important;
+  position: relative !important;
+  overflow: hidden !important;
+  flex-shrink: 0 !important;
+}
+
+.artisan-card-body {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 !important;
+  padding: 0 13px 14px !important;
+}
+
+.artisan-avatar-wrap {
+  position: relative !important;
+  width: 52px !important;
+  height: 52px !important;
+  margin-top: -26px !important;
+  margin-bottom: 8px !important;
+}
+
+.artisan-avatar-placeholder {
+  width: 52px !important;
+  height: 52px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-weight: 700 !important;
+  font-size: 1rem !important;
+  color: #fff !important;
+  border: 3px solid #1a1a2e !important;
+  flex-shrink: 0 !important;
+}
+
+.artisan-name {
+  font-weight: 700 !important;
+  font-size: 0.88rem !important;
+  margin-bottom: 2px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.artisan-category {
+  font-size: 0.70rem !important;
+  color: rgba(255,255,255,0.5) !important;
+  margin-bottom: 6px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.artisan-rating {
+  display: flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  margin-bottom: 8px !important;
+  font-size: 0.82rem !important;
+  flex-wrap: nowrap !important;
+}
+
+.artisan-trust {
+  margin-bottom: 8px !important;
+}
+
+.artisan-badges {
+  min-height: 24px !important;
+  margin-bottom: 6px !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 4px !important;
+}
+
+.artisan-footer {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 6px !important;
+  margin-top: auto !important;
+  padding-top: 8px !important;
+  flex-wrap: nowrap !important;
+}
+
+/* Other artisan buttons: Réserver (primary) + Comparer (secondary) */
+.artisan-footer .btn-other-reserve,
+.artisan-footer .btn-other-compare {
+  flex: 1 !important;
+  text-align: center !important;
+  padding: 5px 6px !important;
+  font-size: 0.69rem !important;
+  font-weight: 700 !important;
+  border-radius: 7px !important;
+  cursor: pointer !important;
+  border: none !important;
+  transition: opacity 0.2s ease, transform 0.15s ease !important;
+  white-space: nowrap !important;
+}
+
+.artisan-footer .btn-other-reserve {
+  background: linear-gradient(135deg, #405DE6, #833AB4) !important;
+  color: #fff !important;
+}
+
+.artisan-footer .btn-other-compare {
+  background: rgba(255,255,255,0.08) !important;
+  border: 1px solid rgba(255,255,255,0.2) !important;
+  color: rgba(255,255,255,0.85) !important;
+}
+
+.artisan-footer .btn-other-reserve:hover,
+.artisan-footer .btn-other-compare:hover {
+  opacity: 0.85 !important;
+  transform: translateY(-1px) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   3 — SECTION SEPARATOR: "Découvrir Plus d'Artisans"
+   ═══════════════════════════════════════════════════════════ */
+
+.other-artisans-banner {
+  margin: 40px 0 28px !important;
+  padding: 0 !important;
+}
+
+.other-artisans-banner-inner {
+  display: flex !important;
+  align-items: center !important;
+  gap: 18px !important;
+  background: linear-gradient(135deg, rgba(64,93,230,0.10), rgba(131,58,180,0.10)) !important;
+  border: 1px solid rgba(64,93,230,0.25) !important;
+  border-radius: 14px !important;
+  padding: 18px 28px !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.other-artisans-banner-inner::before {
+  content: '' !important;
+  position: absolute !important;
+  left: 0 !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  width: 4px !important;
+  background: linear-gradient(180deg, #405DE6, #833AB4) !important;
+  border-radius: 4px 0 0 4px !important;
+}
+
+.separator-icon {
+  font-size: 1.6rem !important;
+  flex-shrink: 0 !important;
+  filter: drop-shadow(0 0 8px rgba(64,93,230,0.5)) !important;
+}
+
+.separator-text-block {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2px !important;
+  flex: 1 !important;
+}
+
+.separator-title {
+  font-size: 1.10rem !important;
+  font-weight: 800 !important;
+  color: #fff !important;
+  letter-spacing: 0.3px !important;
+  line-height: 1.2 !important;
+}
+
+.separator-subtitle {
+  font-size: 0.78rem !important;
+  color: rgba(255,255,255,0.55) !important;
+  font-weight: 400 !important;
+}
+
+.separator-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  background: rgba(64,93,230,0.20) !important;
+  border: 1px solid rgba(64,93,230,0.35) !important;
+  border-radius: 999px !important;
+  padding: 5px 14px !important;
+  font-size: 0.76rem !important;
+  font-weight: 700 !important;
+  color: rgba(180,200,255,0.95) !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   4 — "SEE MORE" BUTTONS: Featured + Other Artisans
+   ═══════════════════════════════════════════════════════════ */
+
+/* Featured See More Wrapper */
+#featured-see-more-wrap {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  margin-top: 22px !important;
+  transition: opacity 0.3s ease, transform 0.3s ease !important;
+}
+
+/* Other Artisans See More Wrapper */
+#other-see-more-wrap {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  margin-top: 22px !important;
+  transition: opacity 0.3s ease, transform 0.3s ease !important;
+}
+
+/* Common "See More" button style */
+.btn-featured-see-more,
+.btn-other-see-more {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 12px 28px !important;
+  border-radius: 999px !important;
+  font-size: 0.88rem !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  border: none !important;
+  transition: all 0.25s ease !important;
+  letter-spacing: 0.3px !important;
+}
+
+.btn-featured-see-more {
+  background: linear-gradient(135deg, #E1306C, #833AB4) !important;
+  color: #fff !important;
+  box-shadow: 0 4px 18px rgba(225,48,108,0.30) !important;
+}
+
+.btn-featured-see-more:hover {
+  opacity: 0.88 !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 24px rgba(225,48,108,0.40) !important;
+}
+
+.btn-other-see-more {
+  background: linear-gradient(135deg, #405DE6, #833AB4) !important;
+  color: #fff !important;
+  box-shadow: 0 4px 18px rgba(64,93,230,0.30) !important;
+}
+
+.btn-other-see-more:hover {
+  opacity: 0.88 !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 24px rgba(64,93,230,0.40) !important;
+}
+
+.featured-see-more-count,
+.other-see-more-count {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: rgba(255,255,255,0.20) !important;
+  border-radius: 999px !important;
+  padding: 1px 8px !important;
+  font-size: 0.78rem !important;
+  font-weight: 800 !important;
+}
+
+.see-more-arrow {
+  font-size: 1rem !important;
+  transition: transform 0.2s ease !important;
+}
+
+.btn-featured-see-more:hover .see-more-arrow,
+.btn-other-see-more:hover .see-more-arrow {
+  transform: translateX(3px) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   5 — REVEAL ANIMATION: smooth slide-in for new cards
+   ═══════════════════════════════════════════════════════════ */
+
+@keyframes cardReveal {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.featured-card--reveal {
+  animation: cardReveal 0.40s ease forwards !important;
+}
+
+.other-card--reveal {
+  animation: cardReveal 0.40s ease forwards !important;
+}
+
+/* Hidden state */
+.featured-card--hidden {
+  display: none !important;
+}
+
+.other-card--hidden {
+  display: none !important;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   6 — FEATURED SECTION HEADER
+   ═══════════════════════════════════════════════════════════ */
+
+#featured-artisans-section {
+  margin-top: 32px !important;
+  padding-top: 24px !important;
+  border-top: 1px solid rgba(255,255,255,0.07) !important;
+}
+
+.featured-artisans-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin-bottom: 18px !important;
+  flex-wrap: wrap !important;
+  gap: 10px !important;
+}
+
+.featured-artisans-title {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+
+.featured-artisans-title h3 {
+  font-size: 1.05rem !important;
+  font-weight: 800 !important;
+  color: #fff !important;
+  margin: 0 !important;
+}
+
+.featured-badge-tag {
+  font-size: 0.70rem !important;
+  font-weight: 700 !important;
+  background: linear-gradient(135deg, #E1306C, #833AB4) !important;
+  color: #fff !important;
+  padding: 2px 10px !important;
+  border-radius: 999px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   7 — RESPONSIVE BREAKPOINTS
+   ═══════════════════════════════════════════════════════════ */
+
+/* Large desktop: 5 columns (default, already defined above) */
+
+/* Tablet landscape: 4 columns */
+@media (max-width: 1100px) {
+  #featured-artisans-grid.featured-grid,
+  .featured-grid,
+  #artisans-container.artisans-grid,
+  .artisans-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 14px !important;
+  }
+}
+
+/* Tablet portrait: 3 columns */
+@media (max-width: 860px) {
+  #featured-artisans-grid.featured-grid,
+  .featured-grid,
+  #artisans-container.artisans-grid,
+  .artisans-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 12px !important;
+  }
+  .other-artisans-banner-inner {
+    padding: 14px 18px !important;
+  }
+  .separator-title {
+    font-size: 0.95rem !important;
+  }
+}
+
+/* Mobile: 2 columns */
+@media (max-width: 600px) {
+  #featured-artisans-grid.featured-grid,
+  .featured-grid,
+  #artisans-container.artisans-grid,
+  .artisans-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+  .other-artisans-banner-inner {
+    flex-wrap: wrap !important;
+    gap: 12px !important;
+  }
+  .separator-badge {
+    display: none !important;
+  }
+  .btn-featured-see-more,
+  .btn-other-see-more {
+    padding: 10px 22px !important;
+    font-size: 0.82rem !important;
+  }
+  .featured-card,
+  .artisan-card {
+    min-height: 280px !important;
+  }
+}
+
+/* Very small: 1 column */
+@media (max-width: 380px) {
+  #featured-artisans-grid.featured-grid,
+  .featured-grid,
+  #artisans-container.artisans-grid,
+  .artisans-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .featured-card,
+  .artisan-card {
+    min-height: 260px !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   8 — HOVER MICRO-INTERACTIONS on badges and price
+   ═══════════════════════════════════════════════════════════ */
+
+.artisan-price {
+  font-size: 0.80rem !important;
+  font-weight: 700 !important;
+  color: #fff !important;
+  white-space: nowrap !important;
+}
+
+/* Force response time font size consistent */
+.artisan-card-body > div[style*="font-size:.75rem"] {
+  font-size: 0.72rem !important;
+  color: rgba(255,255,255,0.5) !important;
+  margin-bottom: 8px !important;
+}
+
+/* Badge pills compact */
+.badge-pill {
+  font-size: 0.67rem !important;
+  padding: 2px 6px !important;
+  border-radius: 6px !important;
+  font-weight: 600 !important;
+}
+
+/* Trust bar compact */
+.trust-bar {
+  height: 4px !important;
+  border-radius: 2px !important;
+  background: rgba(255,255,255,0.08) !important;
+}
+
+.trust-fill {
+  height: 4px !important;
+  border-radius: 2px !important;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   9 — PRICE DISPLAY in artisan footer
+   ═══════════════════════════════════════════════════════════ */
+.artisan-footer .artisan-price {
+  font-size: 0.78rem !important;
+  font-weight: 700 !important;
+  line-height: 1.3 !important;
+}
