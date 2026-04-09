@@ -1,0 +1,1455 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fixeo — Espace Client</title>
+  <script src="/api/env.js"></script>
+  <script src="js/fixeo-auth-guard.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/style.css">
+<style>
+/* ── GLOBAL PAGE FIXES ───────────────────────────────────── */
+::-webkit-scrollbar{width:12px!important;height:12px!important}
+::-webkit-scrollbar-track{background:rgba(255,255,255,0.04)!important;border-radius:6px!important}
+::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#E1306C,#833AB4)!important;border-radius:6px!important;border:2px solid rgba(255,255,255,0.05)!important;min-height:40px!important}
+::-webkit-scrollbar-thumb:hover{background:linear-gradient(180deg,#C13584,#405DE6)!important}
+*{scrollbar-width:thick;scrollbar-color:#E1306C rgba(255,255,255,0.04)}
+/* Form controls always readable */
+select,input,textarea{color:#fff!important;background:rgba(255,255,255,0.08)!important;border:1px solid rgba(255,255,255,0.15)!important;border-radius:var(--radius-md)!important}
+select option{background:#1a1a2e!important;color:#fff!important;padding:8px!important}
+select:focus,input:focus,textarea:focus{outline:none!important;border-color:var(--primary)!important;box-shadow:0 0 0 3px rgba(225,48,108,0.2)!important}
+/* Buttons harmony */
+.btn{display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:8px!important}
+.btn-primary{background:var(--grad-primary)!important;color:#fff!important}
+.btn-secondary{background:rgba(255,255,255,0.09)!important;border:1px solid rgba(255,255,255,0.2)!important;color:#fff!important}
+/* Notification badge */
+.notif-badge:empty{display:none!important}
+/* Dropdown z-index */
+.notif-panel,.notification-panel{z-index:600!important}
+/* Dashboard cards layout */
+.kpi-card{transition:transform 0.2s ease,box-shadow 0.2s ease}
+.kpi-card:hover{transform:translateY(-2px)!important}
+/* Search filters */
+.search-filters{display:flex!important;gap:10px!important;flex-wrap:wrap!important;align-items:center!important}
+.filter-input,.form-control{padding:10px 14px!important;min-width:120px!important}
+/* Section headings */
+.section-tag{display:inline-block!important;margin-bottom:8px!important}
+/* Responsive mobile */
+@media(max-width:768px){
+  .search-filters{flex-direction:column!important}
+  .filter-input,.form-control{width:100%!important;min-width:unset!important}
+}
+</style>
+
+<style>
+/* Dashboard client V3 complete fixes */
+select,input,textarea{color:#fff!important;background:rgba(255,255,255,0.08)!important;}
+select option{background:#1a1a2e!important;color:#fff!important;}
+.notif-panel{z-index:900!important}
+.notif-item-title,.notif-item-body{white-space:normal!important;word-break:break-word!important;}
+.toast-title{white-space:normal!important;word-break:break-word!important;}
+/* KPI cards hover */
+.kpi-card:hover{transform:translateY(-3px)!important;box-shadow:0 12px 40px rgba(225,48,108,0.2)!important;}
+/* Scrollbar */
+::-webkit-scrollbar{width:8px!important}
+::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#E1306C,#833AB4)!important;border-radius:4px!important}
+</style>
+<link rel="stylesheet" href="css/fixeo_v5_fixes.css">
+<link rel="stylesheet" href="css/payment.css">
+  <link rel="stylesheet" href="css/reservation.css">
+<link rel="stylesheet" href="css/header-unified.css"/>
+<link rel="stylesheet" href="css/fixeo-header-global.css"/>
+<link rel="stylesheet" href="css/auth-global.css"/>
+<link rel="stylesheet" href="css/fixeo-cod-commission.css"/>
+  <link rel="stylesheet" href="css/slot-lock.css">
+
+<style>
+/* ── FIXEO CLIENT DASHBOARD OPTIMIZED OVERVIEW ───────────── */
+.client-dashboard-hero {
+  margin-bottom: 28px;
+}
+
+.client-dashboard-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding: 28px;
+  border-radius: 24px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background:
+    radial-gradient(circle at top right, rgba(225,48,108,0.16), transparent 34%),
+    linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.03));
+  box-shadow: 0 20px 60px rgba(0,0,0,0.22);
+}
+
+.client-dashboard-top h1 {
+  font-size: 30px;
+  font-weight: 800;
+  margin: 0 0 8px;
+}
+
+.client-dashboard-top p {
+  margin: 0;
+  opacity: 0.75;
+  max-width: 720px;
+}
+
+.client-hero-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.client-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.client-stat-card,
+.dashboard-panel {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.16);
+}
+
+.client-stat-card {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stat-number {
+  font-size: 28px;
+  font-weight: 800;
+}
+
+.stat-label {
+  font-size: 14px;
+  opacity: 0.75;
+}
+
+.client-dashboard-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(280px, 0.95fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.client-dashboard-main,
+.client-dashboard-side {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.client-requests-section,
+.client-replies-section,
+.client-favorites-section,
+.client-next-actions-section {
+  margin-bottom: 0;
+  padding: 20px;
+}
+
+.client-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+  text-align: left;
+}
+
+.client-section-header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.client-section-header p {
+  margin: 6px 0 0;
+  font-size: 13px;
+  opacity: 0.72;
+}
+
+.request-card,
+.reply-card,
+.favorite-item,
+.client-action-item {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 18px;
+}
+
+.request-card {
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.request-card:last-child,
+.reply-card:last-child,
+.favorite-item:last-child,
+.client-action-item:last-child {
+  margin-bottom: 0;
+}
+
+.request-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: start;
+  margin-bottom: 10px;
+}
+
+.request-top h3 {
+  margin: 0 0 4px;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.request-top p {
+  margin: 0;
+  opacity: 0.75;
+  font-size: 14px;
+}
+
+.request-meta {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-size: 13px;
+  opacity: 0.8;
+  margin-bottom: 14px;
+}
+
+.request-actions,
+.reply-actions,
+.client-action-buttons {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.request-status {
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.status-open {
+  background: rgba(255, 193, 7, 0.12);
+  color: #ffd166;
+}
+
+.status-confirmed {
+  background: rgba(0, 255, 150, 0.12);
+  color: #4ade80;
+}
+
+.status-closed {
+  background: rgba(255,255,255,0.08);
+  color: #ddd;
+}
+
+.reply-card {
+  padding: 18px;
+  margin-bottom: 16px;
+}
+
+.reply-top {
+  display: grid;
+  grid-template-columns: 60px 1fr auto;
+  gap: 14px;
+  align-items: start;
+}
+
+.reply-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 16px;
+  object-fit: cover;
+}
+
+.reply-info h3 {
+  margin: 0 0 4px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.reply-info p {
+  margin: 0 0 6px;
+  opacity: 0.75;
+}
+
+.reply-meta {
+  display: flex;
+  gap: 10px;
+  font-size: 13px;
+  flex-wrap: wrap;
+}
+
+.reply-price {
+  text-align: right;
+}
+
+.reply-price strong {
+  display: block;
+  color: #ffd166;
+  font-size: 16px;
+}
+
+.reply-price span {
+  font-size: 12px;
+  opacity: 0.75;
+}
+
+.reply-actions {
+  margin-top: 14px;
+}
+
+.favorite-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.favorite-item {
+  padding: 14px 16px;
+}
+
+.favorite-item strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 15px;
+}
+
+.favorite-item span {
+  font-size: 13px;
+  opacity: 0.72;
+}
+
+.client-action-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.client-action-item {
+  padding: 16px;
+}
+
+.client-action-item strong {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 15px;
+}
+
+.client-action-item p {
+  margin: 0 0 12px;
+  font-size: 13px;
+  opacity: 0.72;
+  line-height: 1.55;
+}
+
+.client-action-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 12px;
+}
+
+.client-subtle-note {
+  font-size: 12px;
+  opacity: 0.68;
+  margin-top: 12px;
+}
+
+.client-dashboard-overview .btn-primary,
+.client-dashboard-overview .btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 1180px) {
+  .client-dashboard-shell {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 1024px) {
+  .client-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .client-dashboard-top,
+  .request-top,
+  .reply-top {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .client-dashboard-top {
+    padding: 22px;
+  }
+
+  .client-hero-actions {
+    width: 100%;
+    justify-content: stretch;
+  }
+
+  .client-hero-actions .btn {
+    width: 100%;
+  }
+
+  .reply-price {
+    text-align: left;
+  }
+}
+
+@media (max-width: 640px) {
+  .client-stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+
+  <link rel="stylesheet" href="css/fixeo-chat-mvp.css">
+</head>
+<body data-theme="dark" data-dash-type="client">
+
+<!-- ═══════════════════════════════════════════════════════════════
+     FIXEO V10 — HEADER UNIFIÉ (centralisé)
+     Règles de visibilité :
+       data-auth="guest"      → visible si NON connecté (défaut)
+       data-auth="logged-in"  → visible si connecté  (body.is-logged-in)
+       data-auth="admin"      → visible si admin      (body.is-admin)
+     JS : js/header-unified.js gère tout automatiquement.
+════════════════════════════════════════════════════════════════════ -->
+<a href="#main-content" class="skip-link">Aller au contenu</a>
+
+<nav class="navbar" role="navigation" aria-label="Navigation principale">
+
+  <!-- ── Logo ── -->
+  <a href="index.html" class="navbar-brand logo-wrap" aria-label="Fixeo — Accueil">
+    <div class="logo-icon">🔧</div>
+    <span class="logo-text">Fixeo</span>
+  </a>
+
+  <!-- ── Menu principal desktop ── -->
+  <nav class="navbar-nav" aria-label="Menu principal">
+    <a href="index.html"             class="nav-link" data-i18n="nav_home">Accueil</a>
+
+    <!-- Services avec dropdown -->
+    <div class="nav-has-dropdown">
+      <a href="index.html#services" class="nav-link" data-i18n="nav_services">
+        Services <span class="nav-arrow">▾</span>
+      </a>
+      <div class="nav-dropdown" role="menu" aria-label="Sous-menu Services">
+        <a href="index.html#services"        class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🔧</span>Tous les services</a>
+        <a href="index.html#services?cat=plomberie"   class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🚿</span>Plomberie</a>
+        <a href="index.html#services?cat=electricite" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">⚡</span>Électricité</a>
+        <a href="index.html#services?cat=peinture"    class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🎨</span>Peinture</a>
+        <a href="index.html#services?cat=nettoyage"   class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🧹</span>Nettoyage</a>
+        <a href="index.html#services?cat=jardinage"   class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🌿</span>Jardinage</a>
+        <a href="index.html#services?cat=demenagement" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🚛</span>Déménagement</a>
+      </div>
+    </div>
+
+    <!-- Artisans avec dropdown -->
+    <div class="nav-has-dropdown">
+      <a href="index.html#artisans-section" class="nav-link" data-i18n="nav_artisans">
+        Artisans <span class="nav-arrow">▾</span>
+      </a>
+      <div class="nav-dropdown" role="menu" aria-label="Sous-menu Artisans">
+        <a href="index.html#artisans-section" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">👷</span>Tous les artisans</a>
+        <a href="artisan.html"                class="nav-dropdown-item" role="menuitem"><span class="dd-icon">⭐</span>Profil artisan</a>
+        <div class="nav-dropdown-divider"></div>
+        <a href="index.html#artisans-section?filter=available" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🟢</span>Disponibles maintenant</a>
+        <a href="index.html#artisans-section?filter=top" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🏆</span>Top notés</a>
+      </div>
+    </div>
+
+    <a href="index.html#feed-section" class="nav-link" data-i18n="nav_feed">Réalisations</a>
+    <a href="pricing.html"            class="nav-link">Tarifs</a>
+
+    <!-- Dashboard — visible uniquement si connecté -->
+    <a href="dashboard-client.html"
+       class="nav-link"
+       data-role="dashboard"
+       data-auth="logged-in"
+       data-i18n="nav_dashboard">📊 Dashboard</a>
+
+    <!-- Admin — visible uniquement si admin -->
+    <a href="admin.html"
+       class="nav-link"
+       data-role="admin"
+       data-auth="admin">🛡 Admin</a>
+  </nav>
+
+  <!-- ── Actions à droite ── -->
+  <div class="nav-actions">
+
+    <!-- Recherche rapide -->
+    <button class="btn-quick-search"
+            onclick="window.QuickSearchModal && QuickSearchModal.open()"
+            aria-label="Recherche rapide (touche /)"
+            title="Recherche rapide [ / ]">
+      <span class="bqs-icon">🔍</span>
+      <span class="bqs-text">Recherche rapide</span>
+    </button>
+
+    <!-- Sélecteur de langue -->
+    <select id="lang-select" class="lang-selector" aria-label="Choisir la langue">
+      <option value="fr">🇫🇷 FR</option>
+      <option value="ar">🇲🇦 AR</option>
+      <option value="en">🇬🇧 EN</option>
+    </select>
+
+    <!-- Notifications -->
+    <button class="notif-btn"
+            aria-label="Notifications"
+            title="Notifications"
+            onclick="window.notifSystem?.togglePanel()">
+      🔔<span class="notif-badge" aria-live="polite"></span>
+    </button>
+
+    <!-- Invité : Connexion / Inscription -->
+    <a href="auth.html" id="login-btn" class="btn-nav btn-nav-outline" data-auth="guest" data-i18n="nav_login">Connexion</a>
+    <a href="auth.html#signup" id="register-btn" class="btn-nav btn-nav-primary" data-auth="guest" data-i18n="nav_signup">Inscription</a>
+
+    <!-- Connecté : chip utilisateur avec dropdown -->
+    <div class="nav-has-dropdown" data-auth="logged-in" style="display:none">
+      <div class="nav-user-chip" tabindex="0" aria-haspopup="true" aria-label="Mon compte">
+        <div class="nav-user-avatar" id="global-avatar">U</div>
+        <span class="nav-user-name" id="global-username">Bonjour, Invité</span>
+        <span class="nav-arrow" style="font-size:0.6rem;opacity:0.6">▾</span>
+      </div>
+      <div class="nav-dropdown" role="menu" aria-label="Menu utilisateur" style="min-width:200px;right:0;left:auto;transform:translateX(0) translateY(-8px)">
+        <!-- Compte connecté affichage -->
+        <div id="user-info" style="padding:10px 14px 8px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:4px"></div>
+        <a href="dashboard-client.html" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">📊</span>Mon Dashboard</a>
+        <a href="dashboard-artisan.html" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">👷</span>Espace Artisan</a>
+        <div class="nav-dropdown-divider"></div>
+        <a href="#" id="logout-btn" class="nav-dropdown-item" role="menuitem" onclick="window.fixeoLogout && fixeoLogout(); return false;"><span class="dd-icon">🚪</span>Déconnexion</a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── Hamburger mobile ── -->
+  <button class="hamburger" aria-label="Ouvrir le menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     MOBILE NAV DRAWER
+════════════════════════════════════════════════════════════════════ -->
+<div class="mobile-nav" role="navigation" aria-label="Menu mobile">
+
+  <a href="index.html"              class="nav-link" data-i18n="nav_home">🏠 Accueil</a>
+  <a href="index.html#services"     class="nav-link" data-i18n="nav_services">🔧 Services</a>
+  <a href="index.html#artisans-section" class="nav-link" data-i18n="nav_artisans">👷 Artisans</a>
+  <a href="index.html#feed-section" class="nav-link" data-i18n="nav_feed">🖼 Réalisations</a>
+  <a href="pricing.html"            class="nav-link">💎 Tarifs</a>
+
+  <!-- Dashboard mobile — connectés uniquement -->
+  <a href="dashboard-client.html"
+     class="nav-link"
+     data-role="dashboard"
+     data-auth="logged-in">📊 Dashboard</a>
+
+  <!-- Admin mobile — admins uniquement -->
+  <a href="admin.html"
+     class="nav-link"
+     data-role="admin"
+     data-auth="admin">🛡 Admin</a>
+
+  <div class="mobile-nav-divider"></div>
+
+  <!-- Recherche rapide mobile -->
+  <button class="btn-quick-search"
+          onclick="window.QuickSearchModal && QuickSearchModal.open()"
+          aria-label="Recherche rapide">
+    <span class="bqs-icon">🔍</span>
+    <span class="bqs-text">Recherche rapide</span>
+  </button>
+
+  <!-- Auth buttons mobile -->
+  <div class="mobile-nav-auth" data-auth="guest">
+    <a href="auth.html"        class="btn-nav btn-nav-outline" data-i18n="nav_login">Connexion</a>
+    <a href="auth.html#signup" class="btn-nav btn-nav-primary" data-i18n="nav_signup">Inscription</a>
+  </div>
+
+  <!-- Déconnexion mobile (connectés) -->
+  <a href="#" class="nav-link" data-auth="logged-in"
+     onclick="window.fixeoLogout && fixeoLogout(); return false;">🚪 Déconnexion</a>
+
+</div>
+
+<div class="dashboard-layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-mini-profile">
+      <div id="sidebar-avatar" class="avatar-ring" style="width:44px;height:44px;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;background:var(--grad-primary,linear-gradient(135deg,#E1306C,#833AB4));font-size:1.1rem;font-weight:700;color:#fff;flex-shrink:0;">C</div>
+      <div style="min-width:0">
+        <div id="sidebar-username" style="font-weight:700;font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Chargement...</div>
+        <div id="sidebar-role" style="font-size:.72rem;color:var(--accent2)">👤 Client ⭐</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Principal</div>
+      <a class="sidebar-link active" href="#overview" onclick="showSection('overview')">
+        <span class="icon">📊</span><span>Vue d'ensemble</span>
+      </a>
+      <a class="sidebar-link" href="#bookings" onclick="showSection('bookings')">
+        <span class="icon">📅</span><span>Mes réservations</span>
+      </a>
+      <a class="sidebar-link" href="#messages" onclick="showSection('messages')">
+        <span class="icon">💬</span><span>Messages</span>
+        <span style="margin-left:auto;font-size:.7rem;padding:2px 8px;background:var(--accent-red);border-radius:20px;color:#fff;flex-shrink:0">2</span>
+      </a>
+      <a class="sidebar-link" href="#reviews" onclick="showSection('reviews')">
+        <span class="icon">⭐</span><span>Mes avis</span>
+      </a>
+      <div class="sidebar-section-label">Découvrir</div>
+      <a class="sidebar-link" href="index.html#artisans-section">
+        <span class="icon">🔍</span><span>Trouver un artisan</span>
+      </a>
+      <a class="sidebar-link" href="index.html#feed-section">
+        <span class="icon">📸</span><span>Réalisations</span>
+      </a>
+      <div class="sidebar-section-label">Compte</div>
+      <a class="sidebar-link" href="#settings" onclick="showSection('settings')">
+        <span class="icon">⚙️</span><span>Paramètres</span>
+      </a>
+      <a class="sidebar-link" href="auth.html">
+        <span class="icon">🚪</span><span>Déconnexion</span>
+      </a>
+    </nav>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="dashboard-content" id="main-content">
+
+    <div id="section-overview" class="client-dashboard-overview">
+      <div id="client-cod-overview"></div>
+      <section class="client-dashboard-hero">
+        <div class="client-dashboard-top">
+          <div>
+            <div class="section-tag">Dashboard client</div>
+            <h1>Bonjour <span id="client-hero-name">Youness</span> 👋</h1>
+            <p>Suivez vos demandes, consultez les réponses et trouvez rapidement le bon artisan.</p>
+          </div>
+
+          <div class="client-hero-actions">
+            <button class="btn btn-primary" onclick="openNewRequestModal()">Nouvelle demande</button>
+            <button class="btn btn-secondary" onclick="expressRequest()">Besoin urgent</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="client-stats-grid" id="client-stats-grid"></section>
+
+      <div class="client-dashboard-shell">
+        <div class="client-dashboard-main">
+          <section class="client-requests-section dashboard-panel">
+            <div class="client-section-header">
+              <div>
+                <h2>Mes demandes</h2>
+                <p>Vos demandes sont suivies et prêtes à être comparées en un coup d’œil.</p>
+              </div>
+              <button class="btn btn-secondary" onclick="showSection('bookings')">Voir tout</button>
+            </div>
+
+            <div id="client-requests-list"></div>
+          </section>
+
+          <section class="client-replies-section dashboard-panel">
+            <div class="client-section-header">
+              <div>
+                <h2>Réponses reçues</h2>
+                <p>Les artisans les plus pertinents remontent immédiatement avec prix et délai.</p>
+              </div>
+              <button class="btn btn-secondary" onclick="showSection('messages')">Voir tout</button>
+            </div>
+
+            <div id="client-replies-list"></div>
+          </section>
+        </div>
+
+        <aside class="client-dashboard-side">
+          <section class="client-next-actions-section dashboard-panel">
+            <div class="client-section-header">
+              <div>
+                <h2>À faire maintenant</h2>
+                <p>L’action la plus utile est toujours visible sans surcharger l’interface.</p>
+              </div>
+            </div>
+
+            <div class="client-action-list" id="client-action-list"></div>
+            <div class="client-subtle-note">Fixeo vous aide à décider vite, sans multiplier les étapes inutiles.</div>
+          </section>
+
+          <section class="client-favorites-section dashboard-panel">
+            <div class="client-section-header">
+              <div>
+                <h2>Mes artisans favoris</h2>
+              </div>
+            </div>
+
+            <div class="favorite-list" id="client-favorites-list"></div>
+          </section>
+        </aside>
+      </div>
+    </div>
+
+
+    <!-- ── BOOKINGS ───────────────────────────────────────── -->
+    <div id="section-bookings" style="display:none">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px">
+        <h2 style="font-size:1.3rem">📅 Mes réservations</h2>
+        <button class="btn btn-primary" onclick="openNewRequestModal()">+ Nouvelle demande</button>
+      </div>
+      <!-- Progress tracker -->
+      <div class="chart-card" style="margin-bottom:20px;padding:20px">
+        <h4 style="margin-bottom:16px;font-size:.95rem">Suivi de votre dernière mission</h4>
+        <div class="booking-progress">
+          <div class="progress-step done"><div class="step-circle">✓</div><div class="step-label">Demande</div></div>
+          <div class="progress-step done"><div class="step-circle">✓</div><div class="step-label">Confirmée</div></div>
+          <div class="progress-step active"><div class="step-circle">3</div><div class="step-label">En cours</div></div>
+          <div class="progress-step"><div class="step-circle">4</div><div class="step-label">Terminée</div></div>
+          <div class="progress-step"><div class="step-circle">5</div><div class="step-label">Évaluation</div></div>
+        </div>
+      </div>
+      <div id="client-cod-bookings"></div>
+      <div class="chart-card" style="padding:0;overflow:hidden">
+        <div id="client-bookings-full"></div>
+      </div>
+    </div>
+
+    <!-- ── MESSAGES ───────────────────────────────────────── -->
+    <div id="section-messages" style="display:none">
+      <h2 style="font-size:1.3rem;margin-bottom:20px">💬 Messages & réponses artisans</h2>
+      <div id="client-cod-messages" style="margin-bottom:18px"></div>
+      <div style="display:grid;grid-template-columns:280px 1fr;gap:14px;height:500px;min-height:0">
+        <!-- Contacts list -->
+        <div class="chart-card" style="padding:0;overflow:hidden;display:flex;flex-direction:column">
+          <div style="padding:12px;border-bottom:1px solid var(--glass-border);flex-shrink:0">
+            <input type="text" class="chat-input" placeholder="🔍 Rechercher…" style="width:100%">
+          </div>
+          <div style="overflow-y:auto;flex:1" id="contacts-list"></div>
+        </div>
+        <!-- Chat window -->
+        <div class="chart-card" style="padding:0;display:flex;flex-direction:column;overflow:hidden">
+          <div class="chat-header" style="flex-shrink:0">
+            <img src="https://i.pravatar.cc/36?img=1" style="width:36px;height:36px;border-radius:50%;object-fit:cover;flex-shrink:0" alt="Youssef">
+            <div style="min-width:0">
+              <div style="font-weight:700;font-size:.9rem">Youssef El Mansouri</div>
+              <div style="font-size:.72rem;color:var(--success)">● En ligne</div>
+            </div>
+          </div>
+          <div class="chat-messages" id="dash-messages" style="flex:1;padding:14px;overflow-y:auto">
+            <div class="msg received">Bonjour ! Je suis disponible lundi pour le devis. 😊</div>
+            <div class="msg sent">Parfait, je confirme pour lundi 10h.</div>
+            <div class="msg received">Très bien ! À lundi alors. Je préparerai tout le matériel nécessaire.</div>
+          </div>
+          <div class="chat-input-row" style="flex-shrink:0">
+            <input type="text" id="dash-chat-input" class="chat-input" placeholder="Écrire un message…">
+            <button class="btn btn-primary btn-sm" onclick="sendDashMessage()">→</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── REVIEWS ────────────────────────────────────────── -->
+    <div id="section-reviews" style="display:none">
+      <h2 style="font-size:1.3rem;margin-bottom:20px">⭐ Mes avis donnés</h2>
+      <div class="reviews-list" id="reviews-list"></div>
+    </div>
+
+    <!-- ── SETTINGS ───────────────────────────────────────── -->
+    <div id="section-settings" style="display:none">
+      <h2 style="font-size:1.3rem;margin-bottom:20px">⚙️ Paramètres</h2>
+      <div class="chart-card" style="padding:24px;max-width:520px">
+        <h4 style="margin-bottom:20px">Profil</h4>
+        <div class="form-group">
+          <label class="form-label">Nom complet</label>
+          <input type="text" class="form-control" value="Sarah Alami">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-control" value="sarah.alami@example.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Téléphone</label>
+          <input type="tel" class="form-control" value="+212 661 234 567">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Ville</label>
+          <select class="form-control"><option selected>Casablanca</option><option>Rabat</option><option>Marrakech</option></select>
+        </div>
+        <div class="hr"></div>
+        <h4 style="margin-bottom:20px">Notifications</h4>
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <span style="font-size:.9rem">Notifications email</span>
+            <label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <span style="font-size:.9rem">WhatsApp</span>
+            <label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <span style="font-size:.9rem">Push notifications</span>
+            <label class="toggle-switch"><input type="checkbox"><span class="toggle-slider"></span></label>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <button class="btn btn-primary w-100"
+          onclick="notifications.success('✅ Paramètres sauvegardés','Vos modifications ont bien été enregistrées.')">
+          Enregistrer les modifications
+        </button>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Modal overlay -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal" style="position:static;transform:none;opacity:1;display:block">
+    <div class="modal-header">
+      <h3 id="modal-title">Nouvelle demande</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<!-- Chat widget -->
+<div class="chat-widget">
+  <div class="chat-panel" id="chat-panel">
+    <div class="chat-panel-header">
+      <div style="width:36px;height:36px;border-radius:50%;background:var(--grad-primary);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0">🔧</div>
+      <div style="min-width:0">
+        <div style="font-weight:700;font-size:.9rem">Support Fixeo</div>
+        <div style="font-size:.72rem;color:var(--success)">● En ligne</div>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="toggleChat()" style="margin-left:auto;flex-shrink:0">✕</button>
+    </div>
+    <div class="chat-messages" id="chat-messages">
+      <div class="msg received">Bonjour Sarah ! Comment puis-je vous aider ? 😊</div>
+    </div>
+    <div class="chat-input-row">
+      <input type="text" id="chat-input-field" class="chat-input" placeholder="Écrire un message…">
+      <button class="btn btn-primary btn-sm" onclick="sendMessage()">→</button>
+    </div>
+  </div>
+  <button class="chat-toggle" onclick="toggleChat()">💬</button>
+</div>
+
+<script src="js/fixeo-session-mobile.js"></script>
+<script src="js/fixeo-header-global.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/notifications.js"></script>
+<script src="js/gamification.js"></script>
+<script src="js/dashboard.js"></script>
+<script src="js/reservation.js"></script>
+  <script src="js/slot-lock.js"></script>
+<script src="js/cod-payment.js"></script>
+<script src="js/payment.js"></script>
+<script src="js/fixeo_v5_fixes.js"></script>
+<script src="js/fixeo-mission-system.js"></script>
+<script src="js/fixeo-client-cod.js"></script>
+<script src="js/fixeo-public-profile-links.js"></script>
+<script src="js/main.js"></script>
+<script>
+// ── Section navigation ────────────────────────────────────
+function showSection(name) {
+  ['overview','bookings','messages','reviews','settings'].forEach(s => {
+    const el = document.getElementById('section-'+s);
+    if (el) el.style.display = s === name ? 'block' : 'none';
+  });
+  document.querySelectorAll('.sidebar-link').forEach(l => {
+    l.classList.toggle('active', l.getAttribute('href') === '#'+name);
+  });
+}
+
+// ── Mobile sidebar ────────────────────────────────────────
+document.getElementById('hamburger')?.addEventListener('click', () => {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('hamburger').classList.toggle('open');
+});
+
+// ── Chat helpers ──────────────────────────────────────────
+function toggleChat()  { document.getElementById('chat-panel').classList.toggle('open'); }
+function sendMessage() {
+  const i = document.getElementById('chat-input-field');
+  const m = document.getElementById('chat-messages');
+  if (!i||!m||!i.value.trim()) return;
+  m.innerHTML += `<div class="msg sent">${i.value}</div>`;
+  m.scrollTop = m.scrollHeight; i.value = '';
+  setTimeout(() => {
+    m.innerHTML += `<div class="msg received">Merci pour votre message ! Notre équipe vous répond sous peu. 👷</div>`;
+    m.scrollTop = m.scrollHeight;
+  }, 1200);
+}
+function sendDashMessage() {
+  const i = document.getElementById('dash-chat-input');
+  const m = document.getElementById('dash-messages');
+  if (!i||!m||!i.value.trim()) return;
+  m.innerHTML += `<div class="msg sent">${i.value}</div>`;
+  m.scrollTop = m.scrollHeight; i.value = '';
+  setTimeout(() => {
+    m.innerHTML += `<div class="msg received">Reçu ! Je serai là à l'heure convenue. 👍</div>`;
+    m.scrollTop = m.scrollHeight;
+  }, 1000);
+}
+
+// ── Close modal ───────────────────────────────────────────
+function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); }
+
+// ── New request modal ─────────────────────────────────────
+function openNewRequestModal() {
+  document.getElementById('modal-title').textContent = '+ Nouvelle demande';
+  document.getElementById('modal-body').innerHTML = `
+    <div class="form-group">
+      <label class="form-label">Type de service</label>
+      <select class="form-control">
+        <option>Plomberie</option><option>Électricité</option><option>Peinture</option>
+        <option>Carrelage</option><option>Nettoyage</option><option>Jardinage</option><option>Autre</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Description</label>
+      <textarea class="form-control" rows="3" placeholder="Décrivez votre besoin…"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Date souhaitée</label>
+      <input type="date" class="form-control">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Adresse</label>
+      <input type="text" class="form-control" placeholder="Rue, Quartier, Ville">
+    </div>
+    <button class="btn btn-primary w-100"
+      onclick="closeModal();notifications.success('Demande envoyée !','Vous recevrez des devis sous 24h.')">
+      Envoyer la demande
+    </button>`;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+// ── Express modal ─────────────────────────────────────────
+function expressRequest() {
+  document.getElementById('modal-title').textContent = '🚀 Demande Express';
+  document.getElementById('modal-body').innerHTML = `
+    <p style="margin-bottom:16px;color:var(--text-muted)">Un artisan disponible interviendra dans l'heure.</p>
+    <div class="form-group">
+      <label class="form-label">Service</label>
+      <select class="form-control">
+        <option>Plomberie</option><option>Électricité</option><option>Peinture</option><option>Autre</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Problème</label>
+      <textarea class="form-control" rows="3" placeholder="Décrivez le problème urgent…"></textarea>
+    </div>
+    <button class="btn btn-express w-100"
+      onclick="closeModal();notifications.success('🚀 Demande envoyée !','Un artisan vous contactera dans 15 min.')">
+      Envoyer maintenant
+    </button>`;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+// ── Spending chart tab ────────────────────────────────────
+function switchSpendingChart(period, tab) {
+  document.querySelectorAll('.chart-tab').forEach(t => t.classList.remove('active'));
+  tab.classList.add('active');
+  if (!window.dashboard) return;
+  const months6 = ['Jan','Fév','Mar','Avr','Mai','Jun'];
+  const months12 = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
+  if (period === '6m') {
+    window.dashboard.drawLineChart('chart-spending', months6, [320,480,610,290,720,540], '#E1306C');
+  } else {
+    window.dashboard.drawLineChart('chart-spending', months12, window.dashboard.clientData.monthlySpending, '#E1306C');
+  }
+}
+
+// ── Render contacts list ──────────────────────────────────
+function renderContacts() {
+  const contacts = [
+    { name:'Youssef El Mansouri', img:'1', msg:'À lundi alors !', time:'14h', unread:1 },
+    { name:'Karim Benali',        img:'2', msg:'Devis envoyé.', time:'Hier', unread:0 },
+    { name:'Aicha Moussaoui',     img:'3', msg:'Merci pour le travail.', time:'Lun', unread:0 },
+  ];
+  const el = document.getElementById('contacts-list');
+  if (!el) return;
+  el.innerHTML = contacts.map((c,i) => `
+    <div style="display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;
+      border-bottom:1px solid rgba(255,255,255,.04);transition:background .2s;
+      ${i===0?'background:rgba(255,255,255,.06)':''}"
+      onmouseenter="this.style.background='rgba(255,255,255,.05)'"
+      onmouseleave="this.style.background='${i===0?'rgba(255,255,255,.06)':'none'}'">
+      <img src="https://i.pravatar.cc/36?img=${c.img}" style="width:38px;height:38px;border-radius:50%;object-fit:cover;flex-shrink:0" alt="${c.name}">
+      <div style="flex:1;min-width:0">
+        <div style="font-size:.85rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.name}</div>
+        <div style="font-size:.73rem;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.msg}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0">
+        <div style="font-size:.68rem;color:var(--text-muted)">${c.time}</div>
+        ${c.unread ? `<span style="width:18px;height:18px;background:var(--accent-red);border-radius:50%;font-size:.65rem;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center">${c.unread}</span>` : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── Render reviews ────────────────────────────────────────
+function renderReviews() {
+  const reviews = [
+    { name:'Youssef El Mansouri', specialty:'Plombier',  rating:5, comment:'Excellent travail, très professionnel et ponctuel. Je recommande vivement !', date:'10/06/2025', img:1 },
+    { name:'Karim Benali',        specialty:'Peintre',   rating:5, comment:'Très beau travail de peinture, résultat impeccable. Délai respecté.', date:'20/05/2025', img:2 },
+    { name:'Aicha Moussaoui',     specialty:'Carreleur', rating:4, comment:'Bon travail dans l\'ensemble, quelques petits retards mais résultat satisfaisant.', date:'15/04/2025', img:3 },
+  ];
+  const el = document.getElementById('reviews-list');
+  if (!el) return;
+  el.innerHTML = reviews.map(r => `
+    <div class="review-card">
+      <div class="review-header">
+        <img src="https://i.pravatar.cc/40?img=${r.img}" class="review-avatar" alt="${r.name}">
+        <div style="flex:1;min-width:0">
+          <div class="review-name">${r.name}</div>
+          <div class="review-date">${r.specialty} · ${r.date}</div>
+        </div>
+        <div class="stars" style="flex-shrink:0">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</div>
+      </div>
+      <p style="font-size:.85rem;margin:0;line-height:1.6">${r.comment}</p>
+    </div>
+  `).join('');
+}
+
+// ── Render bookings table ─────────────────────────────────
+function renderBookingsTable(container, bookings) {
+  const statusConf = {
+    active:    { label:'Actif',      color:'#E1306C', bg:'rgba(225,48,108,.12)' },
+    pending:   { label:'En attente', color:'#ffa502', bg:'rgba(255,165,2,.12)'  },
+    completed: { label:'Terminé',    color:'#20c997', bg:'rgba(32,201,151,.12)' },
+    confirmed: { label:'Confirmé',   color:'#20c997', bg:'rgba(32,201,151,.12)' },
+    paid:      { label:'Payé ✅',    color:'#20c997', bg:'rgba(32,201,151,.15)' },
+    cancelled: { label:'Annulé',     color:'#ff4757', bg:'rgba(255,71,87,.12)'  },
+  };
+  container.innerHTML = `
+    <table class="jobs-table" style="width:100%">
+      <thead><tr>
+        <th>Réf.</th><th>Artisan</th><th>Service</th><th>Statut</th><th>Paiement</th><th>Montant</th><th>Date</th>
+      </tr></thead>
+      <tbody>
+        ${bookings.map(j => {
+          const s = statusConf[j.payStatus] || statusConf[j.status] || statusConf.pending;
+          const payBadge = '';
+          const refText = j.bookingRef || j.id || '—';
+          return `<tr>
+            <td style="color:var(--text-muted);font-family:monospace;font-size:.8rem">${refText}${payBadge}</td>
+            <td>${j.artisan || j.artisanName || '—'}</td>
+            <td>${j.service || '—'}</td>
+            <td><span style="background:${s.bg};color:${s.color};padding:3px 10px;border-radius:999px;font-size:.74rem;font-weight:700;border:1px solid ${s.color}33">${s.label}</span></td>
+            <td style="font-size:.8rem;color:rgba(255,255,255,.6)">${j.method || j.paymentMethod || '—'}</td>
+            <td style="font-weight:700;color:var(--accent2)">${j.price ? j.price + ' MAD' : (j.amount || '—')}</td>
+            <td style="color:var(--text-muted)">${j.date || j.createdAt || '—'}</td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>`;
+}
+
+// ── Recommended artisans ──────────────────────────────────
+function renderRecommended() {
+  const rec = document.getElementById('recommended-artisans');
+  if (!rec || typeof ARTISANS === 'undefined') return;
+  const top = ARTISANS.filter(a => a.rating >= 4.8).slice(0, 3);
+  rec.innerHTML = top.map(a => `
+    <div class="artisan-card" onclick="window.location='index.html#artisans-section'">
+      <div class="artisan-card-cover" style="background:linear-gradient(135deg,${getCategoryColor(a.category)})">
+        <div class="availability-dot ${a.availability}"></div>
+      </div>
+      <div class="artisan-card-body">
+        <div class="artisan-avatar-wrap">
+          <div class="artisan-avatar-placeholder">${a.initials}</div>
+        </div>
+        <div class="artisan-name">${a.name}</div>
+        <div class="artisan-category">${getCategoryLabel(a.category,'fr')} · ${a.city}</div>
+        <div class="artisan-rating">
+          <div class="stars">${'★'.repeat(Math.floor(a.rating))}</div>
+          <span style="font-weight:700">${a.rating}</span>
+        </div>
+        <div class="artisan-footer">
+          <div class="artisan-price">${a.priceFrom} MAD<span>/${a.priceUnit}</span></div>
+          <button class="btn btn-sm btn-primary" onclick="event.stopPropagation();if(window.FixeoReservation){FixeoReservation.open(a)}else{window.location='index.html#artisans-section'}">📅 Réserver</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+
+// ── Client overview optimized ─────────────────────────────
+const FIXEO_CLIENT_OVERVIEW = {
+  requests: [
+    {
+      title: 'Plomberie • Casablanca',
+      submittedAt: 'Demande envoyée le 24 mars',
+      statusClass: 'status-open',
+      statusLabel: 'En attente',
+      replies: 3,
+      avgResponse: '18 min'
+    },
+    {
+      title: 'Électricité • Rabat',
+      submittedAt: 'Demande envoyée le 23 mars',
+      statusClass: 'status-confirmed',
+      statusLabel: 'Rendez-vous confirmé',
+      replies: 2,
+      avgResponse: '26 min'
+    },
+    {
+      title: 'Peinture • Casablanca',
+      submittedAt: 'Demande envoyée le 21 mars',
+      statusClass: 'status-closed',
+      statusLabel: 'Clôturée',
+      replies: 0,
+      avgResponse: '—'
+    }
+  ],
+  replies: [
+    {
+      name: 'Karim Benali',
+      specialty: 'Plombier • Casablanca',
+      rating: '4.9',
+      verified: 'Vérifié',
+      price: '180 MAD',
+      responseTime: 'Réponse en 15 min',
+      avatar: 'https://i.pravatar.cc/120?img=12'
+    },
+    {
+      name: 'Ahmed Tazi',
+      specialty: 'Électricien • Rabat',
+      rating: '4.8',
+      verified: 'Vérifié',
+      price: '250 MAD',
+      responseTime: 'Réponse en 22 min',
+      avatar: 'https://i.pravatar.cc/120?img=15'
+    }
+  ],
+  favorites: [
+    { name: 'Karim Benali', subtitle: 'Plomberie • Réactif et très bien noté' },
+    { name: 'Ahmed Tazi', subtitle: 'Électricité • Disponible cette semaine' }
+  ],
+  actions: [
+    {
+      title: 'Comparer les réponses pour la demande plomberie',
+      description: '3 devis sont déjà disponibles. Vous pouvez ouvrir les réponses et choisir l’artisan le plus rassurant.',
+      pill: 'Priorité du jour',
+      primaryLabel: 'Voir les réponses',
+      primaryAction: "showSection('messages')",
+      secondaryLabel: 'Modifier la demande',
+      secondaryAction: 'openNewRequestModal()'
+    },
+    {
+      title: 'Confirmer votre rendez-vous électricité',
+      description: 'Un créneau est prévu demain à 10h. Confirmez-le maintenant pour verrouiller l’intervention.',
+      pill: 'Rendez-vous à venir',
+      primaryLabel: 'Confirmer',
+      primaryAction: "notifications.success('Rendez-vous confirmé', 'Votre intervention a bien été validée.')",
+      secondaryLabel: 'Contacter l’artisan',
+      secondaryAction: "showSection('messages')"
+    }
+  ]
+};
+
+function fixeoEscapeHtml(value) {
+  return String(value ?? '').replace(/[&<>"']/g, char => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  }[char]));
+}
+
+function getFixeoClientName() {
+  try {
+    const storedName = localStorage.getItem('fixeo_user_name');
+    if (storedName && storedName.trim()) return storedName.trim().split(' ')[0];
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      const parsed = JSON.parse(storedUser);
+      if (parsed?.name) return String(parsed.name).trim().split(' ')[0];
+    }
+    const storedEmail = localStorage.getItem('fixeo_user');
+    if (storedEmail && storedEmail.includes('@')) return storedEmail.split('@')[0];
+  } catch (error) {}
+  return 'Youness';
+}
+
+function renderClientDashboardOverview() {
+  const heroName = document.getElementById('client-hero-name');
+  if (heroName) heroName.textContent = getFixeoClientName();
+
+  const statsEl = document.getElementById('client-stats-grid');
+  const requestsEl = document.getElementById('client-requests-list');
+  const repliesEl = document.getElementById('client-replies-list');
+  const favoritesEl = document.getElementById('client-favorites-list');
+  const actionsEl = document.getElementById('client-action-list');
+  if (!statsEl || !requestsEl || !repliesEl || !favoritesEl || !actionsEl) return;
+
+  const totalReplies = FIXEO_CLIENT_OVERVIEW.requests.reduce((sum, item) => sum + Number(item.replies || 0), 0);
+  const upcomingAppointments = FIXEO_CLIENT_OVERVIEW.requests.filter(item => item.statusClass === 'status-confirmed').length;
+
+  const stats = [
+    { value: FIXEO_CLIENT_OVERVIEW.requests.filter(item => item.statusClass !== 'status-closed').length, label: 'Demandes actives' },
+    { value: totalReplies, label: 'Réponses reçues' },
+    { value: FIXEO_CLIENT_OVERVIEW.favorites.length, label: 'Artisans favoris' },
+    { value: upcomingAppointments, label: 'Rendez-vous à venir' }
+  ];
+
+  statsEl.innerHTML = stats.map(stat => `
+    <div class="client-stat-card">
+      <span class="stat-number">${fixeoEscapeHtml(stat.value)}</span>
+      <span class="stat-label">${fixeoEscapeHtml(stat.label)}</span>
+    </div>
+  `).join('');
+
+  requestsEl.innerHTML = FIXEO_CLIENT_OVERVIEW.requests.map(request => `
+    <div class="request-card">
+      <div class="request-top">
+        <div>
+          <h3>${fixeoEscapeHtml(request.title)}</h3>
+          <p>${fixeoEscapeHtml(request.submittedAt)}</p>
+        </div>
+
+        <span class="request-status ${fixeoEscapeHtml(request.statusClass)}">${fixeoEscapeHtml(request.statusLabel)}</span>
+      </div>
+
+      <div class="request-meta">
+        <span>${fixeoEscapeHtml(request.replies)} réponses reçues</span>
+        <span>Réponse moyenne : ${fixeoEscapeHtml(request.avgResponse)}</span>
+      </div>
+
+      <div class="request-actions">
+        <button class="btn btn-primary" onclick="showSection('messages')">Voir réponses</button>
+        <button class="btn btn-secondary" onclick="openNewRequestModal()">Modifier</button>
+      </div>
+    </div>
+  `).join('');
+
+  repliesEl.innerHTML = FIXEO_CLIENT_OVERVIEW.replies.map(reply => `
+    <div class="reply-card">
+      <div class="reply-top">
+        <img class="reply-avatar" src="${fixeoEscapeHtml(reply.avatar)}" alt="${fixeoEscapeHtml(reply.name)}">
+        <div class="reply-info">
+          <h3>${fixeoEscapeHtml(reply.name)}</h3>
+          <p>${fixeoEscapeHtml(reply.specialty)}</p>
+          <div class="reply-meta">
+            <span>⭐ ${fixeoEscapeHtml(reply.rating)}</span>
+            <span>✔ ${fixeoEscapeHtml(reply.verified)}</span>
+          </div>
+        </div>
+        <div class="reply-price">
+          <strong>${fixeoEscapeHtml(reply.price)}</strong>
+          <span>${fixeoEscapeHtml(reply.responseTime)}</span>
+        </div>
+      </div>
+
+      <div class="reply-actions">
+        <button class="btn btn-primary btn-other-profile" type="button" data-public-profile="true" data-artisan-name="${fixeoEscapeHtml(reply.name)}" data-artisan-category="${fixeoEscapeHtml(reply.specialty)}" data-artisan-city="${fixeoEscapeHtml(reply.city || '')}">Voir profil</button>
+        <button class="btn btn-secondary" onclick="showSection('messages')">Contacter</button>
+      </div>
+    </div>
+  `).join('');
+
+  favoritesEl.innerHTML = FIXEO_CLIENT_OVERVIEW.favorites.map(item => `
+    <div class="favorite-item">
+      <strong>${fixeoEscapeHtml(item.name)}</strong>
+      <span>${fixeoEscapeHtml(item.subtitle)}</span>
+    </div>
+  `).join('');
+
+  actionsEl.innerHTML = FIXEO_CLIENT_OVERVIEW.actions.map(action => `
+    <div class="client-action-item">
+      <span class="client-action-pill">${fixeoEscapeHtml(action.pill)}</span>
+      <strong>${fixeoEscapeHtml(action.title)}</strong>
+      <p>${fixeoEscapeHtml(action.description)}</p>
+      <div class="client-action-buttons">
+        <button class="btn btn-primary" onclick="${action.primaryAction}">${fixeoEscapeHtml(action.primaryLabel)}</button>
+        <button class="btn btn-secondary" onclick="${action.secondaryAction}">${fixeoEscapeHtml(action.secondaryLabel)}</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+
+// ── Init ──────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  if (window.dashboard) window.dashboard.init('client');
+
+  const preview = document.getElementById('client-bookings-preview');
+  const full    = document.getElementById('client-bookings-full');
+
+  /* Charger les réservations/missions COD depuis localStorage + données démo */
+  function loadAllBookings() {
+    const DEFAULT_BOOKINGS = [
+      { id:'REQ-001', service:'Plomberie',   artisan:'Karim B.',  status:'active',    amount:'350 MAD', date:'14/06', method:'—' },
+      { id:'REQ-002', service:'Peinture',    artisan:'Sara D.',   status:'pending',   amount:'800 MAD', date:'12/06', method:'—' },
+      { id:'REQ-003', service:'Électricité', artisan:'Omar T.',   status:'completed', amount:'220 MAD', date:'08/06', method:'Paiement cash' },
+    ];
+    let paypalBookings = [];
+    try {
+      const stored = JSON.parse(localStorage.getItem('fixeo_reservations') || '[]');
+      paypalBookings = stored.filter(r => r.payStatus === 'paid' || r.status === 'confirmed');
+    } catch(e) {}
+    return [...paypalBookings, ...DEFAULT_BOOKINGS];
+  }
+
+  const ALL_BOOKINGS = loadAllBookings();
+  if (preview) renderBookingsTable(preview, ALL_BOOKINGS.slice(0,3));
+  if (full)    renderBookingsTable(full, ALL_BOOKINGS);
+
+  /* Mise à jour temps-réel après évolution des missions COD */
+  window.addEventListener('fixeo:payment:success', function() {
+    const updated = loadAllBookings();
+    if (preview) renderBookingsTable(preview, updated.slice(0,3));
+    if (full)    renderBookingsTable(full, updated);
+  });
+  window.addEventListener('fixeo:paypal:paid', function() {
+    const updated = loadAllBookings();
+    if (preview) renderBookingsTable(preview, updated.slice(0,3));
+    if (full)    renderBookingsTable(full, updated);
+  });
+
+  renderContacts();
+  renderReviews();
+  renderRecommended();
+  renderClientDashboardOverview();
+  setTimeout(renderClientDashboardOverview, 250);
+
+  /* Notification de bienvenue ou suivi COD */
+  const hasPaidOrder = sessionStorage.getItem('fixeo_pp_captured');
+  setTimeout(() => {
+    if (hasPaidOrder) {
+      notifications.success('Bienvenue !', 'Suivez vos missions COD et confirmez la fin de mission ici.');
+    } else {
+      notifications.success('Bienvenue !', 'Votre espace client est prêt.');
+    }
+  }, 600);
+});
+</script>
+
+<script>
+// ── DASHBOARD HAMBURGER & SIDEBAR FIX ────────────────────
+(function() {
+  document.addEventListener('DOMContentLoaded', function() {
+    const hamburger = document.getElementById('hamburger') || document.querySelector('.hamburger');
+    const sidebar = document.getElementById('sidebar') || document.querySelector('.sidebar');
+    const overlay = document.querySelector('.sidebar-overlay');
+    
+    if (hamburger && sidebar) {
+      hamburger.addEventListener('click', function() {
+        sidebar.classList.toggle('open');
+        hamburger.classList.toggle('open');
+        hamburger.setAttribute('aria-expanded', sidebar.classList.contains('open'));
+        // Create overlay if not exists
+        if (!document.querySelector('.sidebar-mobile-overlay')) {
+          const ov = document.createElement('div');
+          ov.className = 'sidebar-mobile-overlay';
+          ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:250;display:none;backdrop-filter:blur(4px)';
+          ov.addEventListener('click', function() {
+            sidebar.classList.remove('open');
+            hamburger.classList.remove('open');
+            ov.style.display = 'none';
+          });
+          document.body.appendChild(ov);
+        }
+        const mobOv = document.querySelector('.sidebar-mobile-overlay');
+        if (mobOv) mobOv.style.display = sidebar.classList.contains('open') ? 'block' : 'none';
+      });
+    }
+    
+    // Active nav link highlight
+    const currentPage = window.location.hash || '#overview';
+    document.querySelectorAll('.sidebar-link[href]').forEach(link => {
+      if (link.getAttribute('href') === currentPage) {
+        link.classList.add('active');
+      }
+    });
+    
+    // Section switching
+    window.showSection = function(name) {
+      document.querySelectorAll('[id^="section-"]').forEach(s => {
+        s.style.display = 'none';
+      });
+      const target = document.getElementById('section-' + name);
+      if (target) { target.style.display = 'block'; }
+      // Update active link
+      document.querySelectorAll('.sidebar-link').forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === '#' + name || link.getAttribute('onclick')?.includes("'"+name+"'")) {
+          link.classList.add('active');
+        }
+      });
+      // Close mobile sidebar
+      if (window.innerWidth <= 768) {
+        sidebar?.classList.remove('open');
+        const mobOv = document.querySelector('.sidebar-mobile-overlay');
+        if (mobOv) mobOv.style.display = 'none';
+      }
+    };
+    
+    // Show default overview section
+    const sections = document.querySelectorAll('[id^="section-"]');
+    if (sections.length > 0) {
+      let shown = false;
+      sections.forEach((s, i) => { 
+        if (i === 0 && !shown) { s.style.display = 'block'; shown = true; }
+        else if (i > 0) { s.style.display = 'none'; }
+      });
+    }
+    
+    // Notification button
+    document.querySelector('.notif-btn')?.addEventListener('click', function() {
+      window.notifSystem?.togglePanel();
+    });
+  });
+})();
+</script>
+
+<!-- ══ AUTH GLOBAL + HEADER-UNIFIED (manquait dans dashboards) ══ -->
+<script src="js/fixeo-supabase-core.js"></script>
+<script src="js/header-unified.js"></script>
+<script src="js/auth-global.js"></script>
+<script src="js/fixeo-mvp-supabase.js"></script>
+
+<script src="js/fixeo-chat-mvp.js"></script>
+<script src="js/fixeo-artisan-request-notifications.js"></script>
+</body>
+</html>
