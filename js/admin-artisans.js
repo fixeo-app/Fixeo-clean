@@ -463,15 +463,15 @@ if (typeof openModal === 'function') openModal('edit-artisan-modal');
 }
 
 if (dialogEl) {
-    dialogEl.style.position = 'relative';
-    dialogEl.style.left = 'auto';
-    dialogEl.style.right = 'auto';
-    dialogEl.style.top = 'auto';
-    dialogEl.style.bottom = 'auto';
-    dialogEl.style.margin = '0';
-    dialogEl.style.transform = 'none';
-    dialogEl.style.width = 'min(720px, calc(100vw - 48px))';
-    dialogEl.style.maxWidth = '720px';
+    dialogEl.style.position = '';
+    dialogEl.style.left = '';
+    dialogEl.style.right = '';
+    dialogEl.style.top = '';
+    dialogEl.style.bottom = '';
+    dialogEl.style.margin = '';
+    dialogEl.style.transform = '';
+    dialogEl.style.width = '';
+    dialogEl.style.maxWidth = '';
 }
 }
 
