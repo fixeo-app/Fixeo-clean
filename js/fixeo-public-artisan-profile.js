@@ -16,15 +16,16 @@
       return fallback;
  
   }
-  function loadRegistry() {
+ function loadRegistry() {
   var local = safeJSONParse(localStorage.getItem(REGISTRY_KEY), []);
-  
-  if (local && local.length) {
-    return local;
-  }
+  if (local && local.length) return local;
 
   if (window.FIXEO_ARTISANS_REGISTRY && window.FIXEO_ARTISANS_REGISTRY.length) {
     return window.FIXEO_ARTISANS_REGISTRY;
+  }
+
+  if (window.FIXEO_ARTISANS && window.FIXEO_ARTISANS.length) {
+    return window.FIXEO_ARTISANS;
   }
 
   return [];
