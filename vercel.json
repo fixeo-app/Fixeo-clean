@@ -8,14 +8,10 @@
     { "src": "image/**", "use": "@vercel/static" },
     { "src": "uploads/**", "use": "@vercel/static" }
   ],
-  "routes": [
+  "rewrites": [
     {
-      "src": "^/artisan/(.*)",
-      "dest": "/profil-artisan.html"
-    },
-    {
-      "src": "^(.*)$",
-      "dest": "/$1"
+      "source": "/artisan/:slug",
+      "destination": "/profil-artisan.html"
     }
   ]
 }
