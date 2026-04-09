@@ -1738,19 +1738,26 @@ function _stopAdminOrdersPolling() {
   }
 }
 
-/* ── Hook initAdmin : COD init + polling API ─────────────── */
-const _origInitAdmin = typeof initAdmin === 'function' ? initAdmin : function(){};
-function initAdmin() {
-  _origInitAdmin();
-  /* Appeler les KPIs COD + démarrer le polling API */
+/* — Hook initAdmin : COD init + polling API — */
+var __fixeoCodInitDone = false;
+
+function _afterAdminInitCOD() {
+  if (__fixeoCodInitDone) return;
+  __fixeoCodInitDone = true;
+
   setTimeout(function() {
     _mergeLocalStorageReservations();
     _updateCODKPIs();
     _updateCODSidebarBadge();
-    _startAdminOrdersPolling(); /* ← polling auto toutes les 10 secondes */
+    _startAdminOrdersPolling();
   }, 150);
 }
 
+document.addEventListener('DOMContentLoaded', function() {
+  setTimeout(function() {
+    _afterAdminInitCOD();
+  }, 300);
+});
 
 /* ================================================================
    FIXEO V16 — MISSION STATUS MANAGEMENT
