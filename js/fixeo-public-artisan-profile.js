@@ -235,30 +235,22 @@
     };
   }
 
-  function findPublicIdBySlug(slug) {
-    var normalizedSlug = slugify(slug);
-    if (!normalizedSlug) return '';
+ function findPublicIdBySlug(slug) {
+  var normalizedSlug = slugify(slug);
+  if (!normalizedSlug) return '';
 
-    if (window.FixeoPublicProfileLinks && typeof window.FixeoPublicProfileLinks.findPublicIdBySlug === 'function') {
-      var externalId = String(window.FixeoPublicProfileLinks.findPublicIdBySlug(normalizedSlug) || '').trim();
-      if (externalId) return externalId;
-    }
+  var registry = loadRegistry();
 
-    var slugMap = loadSlugMap();
-    if (slugMap[normalizedSlug]) return slugMap[normalizedSlug];
+  var match = registry.find(function(entry) {
+    return slugify(entry.slug || entry.name || '') === normalizedSlug;
+  });
 
-    var registryEntry = loadRegistry().map(normalizeRegistryEntry).find(function (entry) {
-      return slugify(entry.slug) === normalizedSlug;
-    });
-
-    if (registryEntry && registryEntry.public_id) {
-      slugMap[normalizedSlug] = registryEntry.public_id;
-      persistSlugMap(slugMap);
-      return registryEntry.public_id;
-    }
-
-    return '';
+  if (match) {
+    return match.id || match.public_id || match.slug || normalizedSlug;
   }
+
+  return normalizedSlug;
+}
 
   function setHeadMeta(name, content) {
     if (!document || !document.head || !name) return;
