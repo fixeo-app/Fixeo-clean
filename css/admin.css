@@ -488,6 +488,9 @@
   padding: 24px !important;
   box-sizing: border-box !important;
   z-index: 99999 !important;
+   
+  background: rgba(0,0,0,0.55) !important;
+  backdrop-filter: blur(3px);
 }
 
 #edit-artisan-modal .modal-body{
