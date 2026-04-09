@@ -1,6 +1,5 @@
 {
   "version": 2,
-  "name": "fixeo",
   "builds": [
     { "src": "api/server.js", "use": "@vercel/node" },
     { "src": "*.html", "use": "@vercel/static" },
@@ -13,6 +12,10 @@
     {
       "src": "^/artisan/(.*)",
       "dest": "/profil-artisan.html"
+    },
+    {
+      "src": "^(.*)$",
+      "dest": "/$1"
     }
   ]
 }
