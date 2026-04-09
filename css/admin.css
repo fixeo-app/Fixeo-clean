@@ -490,10 +490,6 @@
   z-index: 99999 !important;
 }
 
-#edit-artisan-modal.open{
-  display: flex !important;
-}
-
 #edit-artisan-modal .modal-body{
   width: 100% !important;
   max-height: 70vh !important;
