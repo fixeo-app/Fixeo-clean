@@ -70,19 +70,17 @@
     return normalized;
   }
 
-  function persistSlugMap(slugMap) {
-    localStorage.setItem(SLUG_MAP_KEY, JSON.stringify(slugMap && typeof slugMap === 'object' ? slugMap : {}));
+  function extractSlugFromPathname(pathname) {
+  if (!pathname) return '';
+
+  var match = pathname.match(/\/artisan\/([^\/\?]+)/i);
+  if (match && match[1]) {
+    return slugify(match[1].trim());
   }
 
-  function extractSlugFromPathname(pathname) {
-    var match = String(pathname || '').match(/^\/artisan\/([^/?#]+)/i);
-    if (!match) return '';
-    try {
-      return slugify(decodeURIComponent(match[1] || ''));
-    } catch (error) {
-      return slugify(match[1] || '');
-    }
-  }
+  var parts = pathname.split('/').filter(Boolean);
+  return parts.length ? slugify(parts[parts.length - 1].trim()) : '';
+}
 
   function normalizeStatus(value) {
     var normalized = normalizeText(value || '');
