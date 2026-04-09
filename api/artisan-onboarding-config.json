@@ -1,0 +1,231 @@
+{
+  "categories": [
+    {
+      "value": "plomberie",
+      "label": "Plomberie",
+      "emoji": "🚿"
+    },
+    {
+      "value": "electricite",
+      "label": "Électricité",
+      "emoji": "⚡"
+    },
+    {
+      "value": "peinture",
+      "label": "Peinture",
+      "emoji": "🎨"
+    },
+    {
+      "value": "demenagement",
+      "label": "Déménagement",
+      "emoji": "📦"
+    },
+    {
+      "value": "jardinage",
+      "label": "Jardinage",
+      "emoji": "🌿"
+    },
+    {
+      "value": "nettoyage",
+      "label": "Nettoyage",
+      "emoji": "🧹"
+    },
+    {
+      "value": "bricolage",
+      "label": "Bricolage",
+      "emoji": "🔨"
+    },
+    {
+      "value": "climatisation",
+      "label": "Climatisation",
+      "emoji": "❄️"
+    },
+    {
+      "value": "menuiserie",
+      "label": "Menuiserie",
+      "emoji": "🪚"
+    },
+    {
+      "value": "maconnerie",
+      "label": "Maçonnerie",
+      "emoji": "🧱"
+    },
+    {
+      "value": "serrurerie",
+      "label": "Serrurerie",
+      "emoji": "🔐"
+    }
+  ],
+  "cities": [
+    "Casablanca",
+    "Rabat",
+    "Marrakech",
+    "Fès",
+    "Agadir",
+    "Tanger",
+    "Meknès",
+    "Oujda",
+    "Kénitra",
+    "Tétouan",
+    "Safi",
+    "El Jadida"
+  ],
+  "defaults": {
+    "rating": 4.8,
+    "reviewCount": 0,
+    "trustScore": 78,
+    "priceUnit": "h",
+    "availability": "available",
+    "availabilityLabel": "Immédiate",
+    "responseTime": 9,
+    "xp": 0,
+    "level": 1,
+    "status": "active",
+    "onlineStatus": "en ligne"
+  },
+  "categoryMeta": {
+    "plomberie": {
+      "priceFrom": 150,
+      "portfolio": [
+        "🔧",
+        "🚿",
+        "💧"
+      ],
+      "skills": [
+        "Fuite",
+        "Installation",
+        "Dépannage"
+      ]
+    },
+    "electricite": {
+      "priceFrom": 170,
+      "portfolio": [
+        "⚡",
+        "💡",
+        "🔌"
+      ],
+      "skills": [
+        "Installation",
+        "Panne",
+        "Mise aux normes"
+      ]
+    },
+    "peinture": {
+      "priceFrom": 120,
+      "portfolio": [
+        "🎨",
+        "🖌️",
+        "✨"
+      ],
+      "skills": [
+        "Peinture",
+        "Finition",
+        "Décoration"
+      ]
+    },
+    "demenagement": {
+      "priceFrom": 220,
+      "portfolio": [
+        "📦",
+        "🚛",
+        "🏠"
+      ],
+      "skills": [
+        "Transport",
+        "Emballage",
+        "Montage"
+      ]
+    },
+    "jardinage": {
+      "priceFrom": 110,
+      "portfolio": [
+        "🌿",
+        "🌳",
+        "🌺"
+      ],
+      "skills": [
+        "Taille",
+        "Entretien",
+        "Arrosage"
+      ]
+    },
+    "nettoyage": {
+      "priceFrom": 90,
+      "portfolio": [
+        "🧹",
+        "🧽",
+        "✨"
+      ],
+      "skills": [
+        "Entretien",
+        "Nettoyage",
+        "Désinfection"
+      ]
+    },
+    "bricolage": {
+      "priceFrom": 130,
+      "portfolio": [
+        "🔨",
+        "🪛",
+        "🔩"
+      ],
+      "skills": [
+        "Montage",
+        "Réparation",
+        "Fixations"
+      ]
+    },
+    "climatisation": {
+      "priceFrom": 180,
+      "portfolio": [
+        "❄️",
+        "🌡️",
+        "💨"
+      ],
+      "skills": [
+        "Installation",
+        "Entretien",
+        "Dépannage"
+      ]
+    },
+    "menuiserie": {
+      "priceFrom": 160,
+      "portfolio": [
+        "🪚",
+        "🚪",
+        "🪑"
+      ],
+      "skills": [
+        "Bois",
+        "Meubles",
+        "Sur mesure"
+      ]
+    },
+    "maconnerie": {
+      "priceFrom": 190,
+      "portfolio": [
+        "🧱",
+        "🏗️",
+        "🔨"
+      ],
+      "skills": [
+        "Construction",
+        "Rénovation",
+        "Carrelage"
+      ]
+    },
+    "serrurerie": {
+      "priceFrom": 160,
+      "portfolio": [
+        "🔐",
+        "🚪",
+        "🛠️"
+      ],
+      "skills": [
+        "Ouverture",
+        "Serrures",
+        "Sécurité"
+      ]
+    }
+  }
+}

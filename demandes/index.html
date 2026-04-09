@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Demandes client — Fixeo</title>
+  <meta name="description" content="Gestion simple et semi-automatique des demandes clients Fixeo." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/variables.css" />
+  <link rel="stylesheet" href="../css/main.css" />
+  <link rel="stylesheet" href="../css/homepage-v13.css" />
+  <link rel="stylesheet" href="../css/demandes.css" />
+</head>
+<body class="demandes-page">
+  <main class="demandes-shell">
+    <div class="demandes-topbar">
+      <a class="demandes-back-link" href="../index.html">← Retour à l’accueil</a>
+      <a class="demandes-header-link" href="../index.html#home">Publier une nouvelle demande</a>
+    </div>
+
+    <section class="demandes-hero">
+      <div class="demandes-panel demandes-panel--hero">
+        <span class="demandes-kicker">Demandes Fixeo</span>
+        <h1 class="demandes-title">Gestion semi-automatique des demandes clients</h1>
+        <p class="demandes-subtitle">Visualisez rapidement les demandes envoyées depuis le formulaire, copiez-les, transférez-les aux artisans en un clic et gardez une base locale prête pour une automatisation future.</p>
+        <p class="demandes-note">Les données affichées sur cette page sont stockées localement dans le navigateur de cet appareil.</p>
+      </div>
+
+      <aside class="demandes-panel demandes-stats" aria-label="Résumé des demandes">
+        <div class="demandes-stat-card">
+          <span class="demandes-stat-label">Demandes stockées</span>
+          <strong class="demandes-stat-value" id="demandes-total">0</strong>
+        </div>
+        <div class="demandes-stat-card">
+          <span class="demandes-stat-label">Urgentes</span>
+          <strong class="demandes-stat-value" id="demandes-urgent">0</strong>
+        </div>
+      </aside>
+    </section>
+
+    <section aria-labelledby="demandes-list-title">
+      <div class="demandes-toolbar">
+        <div>
+          <h2 id="demandes-list-title" style="margin:0;font-size:1.2rem">Liste des demandes</h2>
+          <p class="demandes-toolbar-copy">Tri automatique : les demandes les plus récentes apparaissent en premier.</p>
+        </div>
+      </div>
+
+      <div id="demandes-empty" class="demandes-panel demandes-empty" hidden>
+        <h3>Aucune demande enregistrée pour le moment</h3>
+        <p>Publiez une première demande depuis la page d’accueil pour commencer à constituer votre base locale.</p>
+      </div>
+
+      <div id="demandes-list" class="demandes-list"></div>
+    </section>
+  </main>
+
+  <div id="demandes-toast" class="demandes-toast" aria-live="polite" aria-atomic="true"></div>
+
+  <script src="../js/demandes.js"></script>
+</body>
+</html>
