@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr" dir="ltr" data-theme="dark">
+  
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -19,6 +20,68 @@
 <link rel="stylesheet" href="css/auth-global.css"/>
 <link rel="stylesheet" href="css/fixeo-cod-commission.css"/>
   <link rel="stylesheet" href="css/slot-lock.css">
+<style>
+  /* FIX FINAL MODAL EDIT ARTISAN */
+  #edit-artisan-modal{
+    display:none;
+    position:fixed !important;
+    inset:0 !important;
+    width:100vw !important;
+    height:100vh !important;
+    padding:24px !important;
+    align-items:center !important;
+    justify-content:center !important;
+    background:rgba(0,0,0,.72) !important;
+    backdrop-filter:blur(4px) !important;
+    z-index:99999 !important;
+    overflow:auto !important;
+    box-sizing:border-box !important;
+  }
+
+  #edit-artisan-modal.open{
+    display:flex !important;
+  }
+
+  #edit-artisan-modal .modal-dialog{
+    position:relative !important;
+    width:min(720px, 100%) !important;
+    max-width:720px !important;
+    margin:auto !important;
+    transform:none !important;
+    left:auto !important;
+    right:auto !important;
+    top:auto !important;
+    bottom:auto !important;
+    background:var(--surface, #16181d) !important;
+    border:1px solid rgba(255,255,255,.10) !important;
+    border-radius:18px !important;
+    box-shadow:0 20px 60px rgba(0,0,0,.45) !important;
+    overflow:hidden !important;
+    z-index:100000 !important;
+  }
+
+  #edit-artisan-modal .modal-header,
+  #edit-artisan-modal .modal-body,
+  #edit-artisan-modal .modal-footer{
+    position:relative !important;
+    z-index:2 !important;
+  }
+
+  #edit-artisan-modal .modal-body{
+    max-height:70vh !important;
+    overflow:auto !important;
+  }
+
+  #edit-artisan-modal .modal-footer{
+    display:flex !important;
+    gap:10px !important;
+    justify-content:flex-end !important;
+    flex-wrap:wrap !important;
+    padding:16px 24px !important;
+    border-top:1px solid rgba(255,255,255,.08) !important;
+    background:rgba(255,255,255,.02) !important;
+  }
+</style>  
 </head>
 <body data-theme="dark" data-dash-type="admin">
 <div class="bg-animated"></div>
