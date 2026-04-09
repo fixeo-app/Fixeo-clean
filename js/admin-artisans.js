@@ -449,16 +449,17 @@ function openEditArtisanModal(id) {
   if (title) title.textContent = `✏️ Modifier — ${a.name}`;
 var modalEl = document.getElementById('edit-artisan-modal');
 var dialogEl = modalEl ? modalEl.querySelector('.modal-dialog') : null;
-
-if (modalEl) {
-  modalEl.classList.add('open');
-  modalEl.style.position = 'fixed';
-  modalEl.style.inset = '0';
-  modalEl.style.display = 'flex';
-  modalEl.style.alignItems = 'center';
-  modalEl.style.justifyContent = 'center';
-  modalEl.style.padding = '24px';
-  modalEl.style.boxSizing = 'border-box';
+   
+if (typeof openModal === 'function') openModal('edit-artisan-modal');
+   if (modalEl) {
+    modalEl.classList.add('open');
+    modalEl.style.position = 'fixed';
+    modalEl.style.inset = '0';
+    modalEl.style.display = 'flex';
+    modalEl.style.alignItems = 'center';
+    modalEl.style.justifyContent = 'center';
+    modalEl.style.padding = '24px';
+    modalEl.style.boxSizing = 'border-box';
 }
 
 if (dialogEl) {
@@ -472,9 +473,8 @@ if (dialogEl) {
     dialogEl.style.width = 'min(720px, calc(100vw - 48px))';
     dialogEl.style.maxWidth = '720px';
 }
+}
 
-if (typeof openModal === 'function') openModal('edit-artisan-modal');
-   }
 /* ══════════════════════════════════════════════════════════════
    EDIT ARTISAN — Soumettre le formulaire de modification
 ══════════════════════════════════════════════════════════════ */
