@@ -450,7 +450,6 @@ function openEditArtisanModal(id) {
 var modalEl = document.getElementById('edit-artisan-modal');
 var dialogEl = modalEl ? modalEl.querySelector('.modal-dialog') : null;
    
-if (typeof openModal === 'function') openModal('edit-artisan-modal');
    if (modalEl) {
     modalEl.classList.add('open');
     modalEl.style.position = 'fixed';
