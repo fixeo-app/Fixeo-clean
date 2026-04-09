@@ -307,8 +307,17 @@
     var slug = extractSlugFromPathname(window.location.pathname || '');
     if (!slug) return { artisanId: '', slug: '', source: 'none' };
 
-    return { artisanId: String(findPublicIdBySlug(slug) || '').trim(), slug: slug, source: 'slug' };
-  }
+  var id = String(findPublicIdBySlug(slug) || '').trim();
+
+if (!id) {
+  id = slug;
+}
+
+return {
+  artisanId: id,
+  slug: slug,
+  source: 'slug'
+};
 
   function matchesArtisan(raw, artisanId) {
     if (!raw || typeof raw !== 'object') return false;
