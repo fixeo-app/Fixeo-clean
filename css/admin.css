@@ -482,7 +482,7 @@
 #edit-artisan-modal{
   position: fixed !important;
   inset: 0 !important;
-  display: none;
+  display: none; !important;
   align-items: center !important;
   justify-content: center !important;
   padding: 24px !important;
@@ -490,28 +490,8 @@
   z-index: 99999 !important;
 }
 
-#edit-artisan-modal{
-  position: fixed !important;
-  inset: 0 !important;
-  display: none !important;
-  align-items: center !important;
-  justify-content: center !important;
-}
-
 #edit-artisan-modal.open{
   display: flex !important;
-}
-
-#edit-artisan-modal .modal-dialog{
-  position: relative !important;
-  left: 50% !important;
-  transform: translateX(-50%) !important;
-  right: auto !important;
-  top: auto !important;
-  bottom: auto !important;
-  margin: 0 auto !important;
-  width: min(720px, calc(100vw - 48px)) !important;
-  max-width: 720px !important;
 }
 
 #edit-artisan-modal .modal-body{
@@ -527,17 +507,6 @@
   flex-wrap: wrap !important;
 }
 
-#edit-artisan-modal{
-  position: fixed !important;
-  inset: 0 !important;
-  display: none !important;
-  align-items: center !important;
-  justify-content: center !important;
-  padding: 24px !important;
-  box-sizing: border-box !important;
-  z-index: 999999 !important;
-}
-
 #edit-artisan-modal.open{
   display: flex !important;
 }
@@ -548,7 +517,7 @@
   right: auto !important;
   top: auto !important;
   bottom: auto !important;
-  margin: 0 !important;
+  margin: auto !important;
   transform: none !important;
   width: min(720px, calc(100vw - 48px)) !important;
   max-width: 720px !important;
@@ -558,8 +527,3 @@
   width: 100% !important;
 }
 
-#edit-artisan-modal{
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-}
