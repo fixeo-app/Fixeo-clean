@@ -14,8 +14,21 @@
       return parsed == null ? fallback : parsed;
     } catch (error) {
       return fallback;
-    }
+ 
   }
+  function loadRegistry() {
+  var local = safeJSONParse(localStorage.getItem(REGISTRY_KEY), []);
+  
+  if (local && local.length) {
+    return local;
+  }
+
+  if (window.FIXEO_ARTISANS_REGISTRY && window.FIXEO_ARTISANS_REGISTRY.length) {
+    return window.FIXEO_ARTISANS_REGISTRY;
+  }
+
+  return [];
+}
 
   function escapeHtml(value) {
     return String(value == null ? '' : value).replace(/[&<>"']/g, function (char) {
