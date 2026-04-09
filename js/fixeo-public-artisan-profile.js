@@ -236,18 +236,31 @@
     };
   }
 
- function findPublicIdBySlug(slug) {
+function findPublicIdBySlug(slug) {
   var normalizedSlug = slugify(slug);
   if (!normalizedSlug) return '';
 
   var registry = loadRegistry();
 
   var match = registry.find(function(entry) {
-    return slugify(entry.slug || entry.name || '') === normalizedSlug;
+    return slugify(
+      entry.slug ||
+      entry.name ||
+      entry.title ||
+      entry.business_name ||
+      ''
+    ) === normalizedSlug;
   });
 
   if (match) {
-    return match.id || match.public_id || match.slug || normalizedSlug;
+    return (
+      match.public_id ||
+      match.publicId ||
+      match.id ||
+      match._id ||
+      match.slug ||
+      normalizedSlug
+    );
   }
 
   return normalizedSlug;
