@@ -462,7 +462,6 @@ if (modalEl) {
 }
 
 if (dialogEl) {
-    dialogEl.removeAttribute('style');
     dialogEl.style.position = 'relative';
     dialogEl.style.left = '50%';
     dialogEl.style.right = 'auto';
