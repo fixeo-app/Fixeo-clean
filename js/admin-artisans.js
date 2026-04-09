@@ -474,6 +474,7 @@ if (dialogEl) {
 }
 
 if (typeof openModal === 'function') openModal('edit-artisan-modal');
+   }
 /* ══════════════════════════════════════════════════════════════
    EDIT ARTISAN — Soumettre le formulaire de modification
 ══════════════════════════════════════════════════════════════ */
