@@ -447,7 +447,30 @@ function openEditArtisanModal(id) {
   /* Titre modal */
   const title = document.getElementById('edit-artisan-modal-title');
   if (title) title.textContent = `✏️ Modifier — ${a.name}`;
+var modalEl = document.getElementById('edit-artisan-modal');
+var dialogEl = modalEl ? modalEl.querySelector('.modal-dialog') : null;
 
+if (modalEl) {
+  modalEl.style.position = 'fixed';
+  modalEl.style.inset = '0';
+  modalEl.style.display = 'flex';
+  modalEl.style.alignItems = 'center';
+  modalEl.style.justifyContent = 'center';
+  modalEl.style.padding = '24px';
+  modalEl.style.boxSizing = 'border-box';
+}
+
+if (dialogEl) {
+  dialogEl.style.position = 'relative';
+  dialogEl.style.left = '50%';
+  dialogEl.style.right = 'auto';
+  dialogEl.style.top = 'auto';
+  dialogEl.style.bottom = 'auto';
+  dialogEl.style.margin = '0';
+  dialogEl.style.transform = 'translateX(-50%)';
+  dialogEl.style.width = 'min(720px, calc(100vw - 48px))';
+  dialogEl.style.maxWidth = '720px';
+}
   if (typeof openModal === 'function') openModal('edit-artisan-modal');
 }
 
