@@ -451,6 +451,7 @@ var modalEl = document.getElementById('edit-artisan-modal');
 var dialogEl = modalEl ? modalEl.querySelector('.modal-dialog') : null;
 
 if (modalEl) {
+  modalEl.classList.add('open');
   modalEl.style.position = 'fixed';
   modalEl.style.inset = '0';
   modalEl.style.display = 'flex';
@@ -461,19 +462,19 @@ if (modalEl) {
 }
 
 if (dialogEl) {
-  dialogEl.style.position = 'relative';
-  dialogEl.style.left = '50%';
-  dialogEl.style.right = 'auto';
-  dialogEl.style.top = 'auto';
-  dialogEl.style.bottom = 'auto';
-  dialogEl.style.margin = '0';
-  dialogEl.style.transform = 'translateX(-50%)';
-  dialogEl.style.width = 'min(720px, calc(100vw - 48px))';
-  dialogEl.style.maxWidth = '720px';
-}
-  if (typeof openModal === 'function') openModal('edit-artisan-modal');
+    dialogEl.removeAttribute('style');
+    dialogEl.style.position = 'relative';
+    dialogEl.style.left = '50%';
+    dialogEl.style.right = 'auto';
+    dialogEl.style.top = 'auto';
+    dialogEl.style.bottom = 'auto';
+    dialogEl.style.margin = '0 auto';
+    dialogEl.style.transform = 'translateX(-50%)';
+    dialogEl.style.width = 'min(720px, calc(100vw - 48px))';
+    dialogEl.style.maxWidth = '720px';
 }
 
+if (typeof openModal === 'function') openModal('edit-artisan-modal');
 /* ══════════════════════════════════════════════════════════════
    EDIT ARTISAN — Soumettre le formulaire de modification
 ══════════════════════════════════════════════════════════════ */
