@@ -20,16 +20,22 @@
 <link rel="stylesheet" href="css/fixeo-cod-commission.css"/>
   <link rel="stylesheet" href="css/slot-lock.css">
   <style>
- #edit-artisan-modal {
+    
+#edit-artisan-modal {
   position: fixed !important;
   inset: 0 !important;
   z-index: 999999 !important;
 
-  display: flex !important;
+  display: none !important;
+
   align-items: center !important;
   justify-content: center !important;
 
   background: rgba(0,0,0,.55) !important;
+}
+
+#edit-artisan-modal.open {
+  display: flex !important;
 }
 
 #edit-artisan-modal .modal-dialog {
