@@ -452,42 +452,41 @@ var dialogEl = modalEl ? modalEl.querySelector('.modal-dialog') : null;
 var contentEl = modalEl ? modalEl.querySelector('.modal-content') : null;
 
 if (modalEl) {
-  modalEl.classList.add('open');
-  modalEl.style.cssText = `
-    display: flex;
-    position: fixed;
-    inset: 0;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
-    background: rgba(0,0,0,0.72);
-    backdrop-filter: blur(4px);
-    z-index: 999999;
-    overflow: auto;
-    box-sizing: border-box;
-  `;
+modalEl.style.cssText = `
+display: flex;
+position: fixed;
+inset: 0;
+align-items: center;
+justify-content: center;
+padding: 24px;
+background: rgba(0,0,0,0.72);
+backdrop-filter: blur(4px);
+z-index: 999999;
+overflow: auto;
+box-sizing: border-box;
+`;
 }
 
 if (dialogEl) {
-  dialogEl.style.cssText = `
-    position: relative;
-    width: min(720px, calc(100vw - 48px));
-    max-width: 720px;
-    margin: auto;
-    left: auto;
-    right: auto;
-    top: auto;
-    bottom: auto;
-    transform: none;
-  `;
+ dialogEl.style.cssText = `
+position: relative;
+width: min(720px, calc(100vw - 48px));
+max-width: 720px;
+margin: auto;
+left: auto;
+right: auto;
+top: auto;
+bottom: auto;
+transform: none;
+`;
 }
 
 if (contentEl) {
-  contentEl.style.cssText = `
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-  `;
+ contentEl.style.cssText = `
+width: 100%;
+display: flex;
+flex-direction: column;
+`;
 }
 
 /* ══════════════════════════════════════════════════════════════
