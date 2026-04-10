@@ -21,42 +21,41 @@
   <link rel="stylesheet" href="css/slot-lock.css">
   <style>
     #edit-artisan-modal {
+      display: none;
       position: fixed !important;
       inset: 0 !important;
-      display: none !important;
+      width: 100vw !important;
+      height: 100vh !important;
       align-items: center !important;
       justify-content: center !important;
-      padding: 16px !important;
-      background: rgba(0, 0, 0, 0.68) !important;
+      padding: 24px !important;
+      background: rgba(0,0,0,.72) !important;
       backdrop-filter: blur(4px) !important;
-      -webkit-backdrop-filter: blur(4px) !important;
-      z-index: 9100 !important;
+      z-index: 999999 !important;
+      overflow: auto !important;
+      box-sizing: border-box !important;
     }
 
     #edit-artisan-modal.open {
       display: flex !important;
     }
 
-    #edit-artisan-modal > .modal-dialog {
-      width: min(100%, 720px) !important;
+    #edit-artisan-modal .modal-dialog {
+      position: relative !important;
+      width: min(720px, calc(100vw - 48px)) !important;
       max-width: 720px !important;
-      margin: 0 auto !important;
-      max-height: calc(100vh - 32px) !important;
-      display: flex !important;
-      flex-direction: column !important;
-      overflow: hidden !important;
+      margin: auto !important;
+      left: auto !important;
+      right: auto !important;
+      top: auto !important;
+      bottom: auto !important;
+      transform: none !important;
     }
 
-    #edit-artisan-modal .modal-body {
-      flex: 1 1 auto;
-      min-height: 0;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-    }
-
-    #edit-artisan-modal .modal-header,
-    #edit-artisan-modal .modal-footer {
-      flex-shrink: 0;
+    #edit-artisan-modal .modal-content {
+      width: 100% !important;
+      max-height: 90vh !important;
+      overflow: auto !important;
     }
   </style>
 </head>
@@ -790,8 +789,9 @@
 <!-- ══════════════════════════════════════════════════════════
      MODAL MODIFICATION ARTISAN V21
 ════════════════════════════════════════════════════════════ -->
-<div class="modal" id="edit-artisan-modal" aria-hidden="true">
+<div class="modal" id="edit-artisan-modal">
   <div class="modal-dialog modal-lg">
+    <div class="modal-content">
     <div class="modal-header">
       <h3 id="edit-artisan-modal-title">✏️ Modifier l'artisan</h3>
       <button class="modal-close" onclick="closeModal('edit-artisan-modal')">✕</button>
@@ -894,6 +894,7 @@
     <div class="modal-footer">
       <button class="btn btn-primary" id="edit-artisan-submit-btn" onclick="submitEditArtisanForm(event)">💾 Enregistrer</button>
       <button class="btn btn-secondary" onclick="closeModal('edit-artisan-modal')">Annuler</button>
+    </div>
     </div>
   </div>
 </div>
