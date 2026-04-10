@@ -403,6 +403,20 @@ async function submitArtisanForm(e) {
 /* ══════════════════════════════════════════════════════════════
    EDIT ARTISAN — Ouvrir le modal d'édition
 ══════════════════════════════════════════════════════════════ */
+function _openEditArtisanOverlay() {
+  const modal = document.getElementById('edit-artisan-modal');
+  if (!modal) return;
+
+  const dialog = modal.querySelector('.modal-dialog');
+  const body   = modal.querySelector('.modal-body');
+
+  modal.classList.add('open');
+  modal.setAttribute('aria-hidden', 'false');
+
+  if (dialog) dialog.scrollTop = 0;
+  if (body)   body.scrollTop   = 0;
+}
+
 function openEditArtisanModal(id) {
   const a = _artisansList.find(x => x.id === id);
   if (!a) {
@@ -424,7 +438,7 @@ function openEditArtisanModal(id) {
   if (f('ef-certified'))   f('ef-certified').checked = (a.certified === true || a.certified === 'true' || a.certified === 'yes');
   if (f('ef-description')) f('ef-description').value = a.description || '';
   if (f('ef-rating'))      f('ef-rating').value      = a.rating      || 0;
-  if (f('ef-missions'))    f('ef-missions').value     = a.missions    || 0;
+  if (f('ef-missions'))    f('ef-missions').value    = a.missions    || 0;
 
   /* Aperçu avatar actuel */
   const prevDiv = document.getElementById('ef-avatar-preview');
@@ -447,46 +461,8 @@ function openEditArtisanModal(id) {
   /* Titre modal */
   const title = document.getElementById('edit-artisan-modal-title');
   if (title) title.textContent = `✏️ Modifier — ${a.name}`;
-var modalEl = document.getElementById('edit-artisan-modal');
-var dialogEl = modalEl ? modalEl.querySelector('.modal-dialog') : null;
-var contentEl = modalEl ? modalEl.querySelector('.modal-content') : null;
 
-if (modalEl) {
-modalEl.style.cssText = `
-display: flex;
-position: fixed;
-inset: 0;
-align-items: center;
-justify-content: center;
-padding: 24px;
-background: rgba(0,0,0,0.72);
-backdrop-filter: blur(4px);
-z-index: 999999;
-overflow: auto;
-box-sizing: border-box;
-`;
-}
-
-if (dialogEl) {
- dialogEl.style.cssText = `
-position: relative;
-width: min(720px, calc(100vw - 48px));
-max-width: 720px;
-margin: auto;
-left: auto;
-right: auto;
-top: auto;
-bottom: auto;
-transform: none;
-`;
-}
-
-if (contentEl) {
- contentEl.style.cssText = `
-width: 100%;
-display: flex;
-flex-direction: column;
-`;
+  _openEditArtisanOverlay();
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -706,4 +682,17 @@ function _bindTrustRefresh() {
 function initArtisansAdmin() {
   _bindTrustRefresh();
   loadArtisans();
+
+  const modal = document.getElementById('edit-artisan-modal');
+  if (modal && modal.dataset.overlayBound !== 'true') {
+    modal.dataset.overlayBound = 'true';
+    modal.addEventListener('click', (event) => {
+      if (event.target !== modal) return;
+      if (typeof closeModal === 'function') closeModal('edit-artisan-modal');
+      else {
+        modal.classList.remove('open');
+        modal.setAttribute('aria-hidden', 'true');
+      }
+    });
+  }
 }
