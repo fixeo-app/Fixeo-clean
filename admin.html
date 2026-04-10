@@ -35,34 +35,33 @@
 
 #edit-artisan-modal.open {
   display: grid !important;
+  place-items: center !important;
+}
+#edit-artisan-modal .modal-dialog {
+  position: static !important;
+  width: auto !important;
+  max-width: none !important;
+  margin: 0 !important;
+  transform: none !important;
+  overflow: visible !important;
 }
 
-#edit-artisan-modal .modal-dialog {
-  position: absolute !important;
+#edit-artisan-modal .modal-content {
+  position: fixed !important;
   left: 50% !important;
   top: 50% !important;
   right: auto !important;
   bottom: auto !important;
-
   transform: translate(-50%, -50%) !important;
-  float: none !important;
-  margin: 0 !important;
 
   width: min(720px, calc(100vw - 48px)) !important;
   max-width: 720px !important;
   max-height: calc(100vh - 48px) !important;
-  overflow: hidden !important;
-}
 
-#edit-artisan-modal .modal-content {
-  width: 100% !important;
-  max-height: calc(100vh - 48px) !important;
   overflow: hidden !important;
-
   display: flex !important;
   flex-direction: column !important;
 }
-
 #edit-artisan-modal .modal-header,
 #edit-artisan-modal .modal-footer {
   flex: 0 0 auto !important;
