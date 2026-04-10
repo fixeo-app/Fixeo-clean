@@ -20,29 +20,34 @@
 <link rel="stylesheet" href="css/fixeo-cod-commission.css"/>
   <link rel="stylesheet" href="css/slot-lock.css">
   <style>
-    #edit-artisan-modal {
-      position: fixed !important;
-      inset: 0 !important;
-      z-index: 999999 !important;
-      padding: 24px !important;
-      text-align: center !important;
-    }
+ #edit-artisan-modal {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 999999 !important;
 
-    #edit-artisan-modal::before {
-      content: "";
-      display: inline-block;
-      height: 100%;
-      vertical-align: middle;
-    }
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 
-    #edit-artisan-modal .modal-dialog {
-      display: inline-block !important;
-      vertical-align: middle !important;
-      text-align: left !important;
-      width: min(720px, calc(100vw - 48px)) !important;
-      max-width: 720px !important;
-      margin: 0 auto !important;
-    }
+  background: rgba(0,0,0,.55) !important;
+}
+
+#edit-artisan-modal .modal-dialog {
+  position: relative !important;
+  margin: 0 auto !important;
+  transform: none !important;
+  width: min(720px, calc(100vw - 48px)) !important;
+  max-width: 720px !important;
+}
+
+#edit-artisan-modal .modal-content {
+  width: 100% !important;
+}
+
+#edit-artisan-modal .modal-body {
+  max-height: calc(100vh - 180px) !important;
+  overflow-y: auto !important;
+}
   </style>
 </head>
 <body data-theme="dark" data-dash-type="admin">
