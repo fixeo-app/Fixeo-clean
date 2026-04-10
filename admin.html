@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="fr" dir="ltr" data-theme="dark">
-  
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -20,72 +19,46 @@
 <link rel="stylesheet" href="css/auth-global.css"/>
 <link rel="stylesheet" href="css/fixeo-cod-commission.css"/>
   <link rel="stylesheet" href="css/slot-lock.css">
-<style>
-  /* FIX FINAL MODAL EDIT ARTISAN */
-#edit-artisan-modal{
-  display:none;
-  position:fixed !important;
-  inset:0 !important;
-  width:100vw !important;
-  height:100vh !important;
-  padding:24px !important;
-  align-items:center !important;
-  justify-content:center !important;
-  background:rgba(0,0,0,.72) !important;
-  backdrop-filter:blur(4px) !important;
-  z-index:99999 !important;
-  overflow:auto !important;
-  box-sizing:border-box !important;
-}
+  <style>
+    #edit-artisan-modal {
+      position: fixed !important;
+      inset: 0 !important;
+      display: none !important;
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 16px !important;
+      background: rgba(0, 0, 0, 0.68) !important;
+      backdrop-filter: blur(4px) !important;
+      -webkit-backdrop-filter: blur(4px) !important;
+      z-index: 9100 !important;
+    }
 
-#edit-artisan-modal.open{
-  display:flex !important;
-}
+    #edit-artisan-modal.open {
+      display: flex !important;
+    }
 
-#edit-artisan-modal .modal-dialog{
-  position:relative !important;
-  width:min(720px, calc(100vw - 48px)) !important;
-  max-width:720px !important;
-  margin:auto !important;
-  transform:none !important;
-  left:auto !important;
-  right:auto !important;
-  top:auto !important;
-  bottom:auto !important;
-  background:var(--surface, #16181d) !important;
-  border:1px solid rgba(255,255,255,.10) !important;
-  border-radius:18px !important;
-  box-shadow:0 20px 60px rgba(0,0,0,.45) !important;
-  overflow:hidden !important;
-  z-index:100000 !important;
-}
+    #edit-artisan-modal > .modal-dialog {
+      width: min(100%, 720px) !important;
+      max-width: 720px !important;
+      margin: 0 auto !important;
+      max-height: calc(100vh - 32px) !important;
+      display: flex !important;
+      flex-direction: column !important;
+      overflow: hidden !important;
+    }
 
-#edit-artisan-modal .modal-header,
-#edit-artisan-modal .modal-body,
-#edit-artisan-modal .modal-footer{
-  position:relative !important;
-  z-index:2 !important;
-}
+    #edit-artisan-modal .modal-body {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
 
-#edit-artisan-modal .modal-body{
-  max-height:70vh !important;
-  overflow:auto !important;
-}
-
-#edit-artisan-modal .modal-footer{
-  display:flex !important;
-  gap:10px !important;
-  justify-content:flex-end !important;
-  flex-wrap:wrap !important;
-  padding:16px 24px !important;
-  border-top:1px solid rgba(255,255,255,.08) !important;
-  background:rgba(255,255,255,.02) !important;
-}
-
-#edit-artisan-modal .modal-content{
-  width:100% !important;
-}  
-</style>  
+    #edit-artisan-modal .modal-header,
+    #edit-artisan-modal .modal-footer {
+      flex-shrink: 0;
+    }
+  </style>
 </head>
 <body data-theme="dark" data-dash-type="admin">
 <div class="bg-animated"></div>
@@ -817,16 +790,15 @@
 <!-- ══════════════════════════════════════════════════════════
      MODAL MODIFICATION ARTISAN V21
 ════════════════════════════════════════════════════════════ -->
-<div class="modal" id="edit-artisan-modal">
-  <div class="modal-dialog modal-lg" style="max-width:720px">
-    <div class="modal-content">
-      <div class="modal-header">
+<div class="modal" id="edit-artisan-modal" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-header">
       <h3 id="edit-artisan-modal-title">✏️ Modifier l'artisan</h3>
       <button class="modal-close" onclick="closeModal('edit-artisan-modal')">✕</button>
     </div>
     <div class="modal-body" style="padding:24px">
       <form id="edit-artisan-form" onsubmit="submitEditArtisanForm(event)" enctype="multipart/form-data">
-      
+
         <!-- Avatar actuel + nouveau upload -->
         <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px;padding:14px;background:rgba(255,255,255,.04);border-radius:10px;border:1px solid rgba(255,255,255,.08)">
           <div id="ef-avatar-preview" style="display:flex;align-items:center"></div>
@@ -916,17 +888,14 @@
           <span style="font-size:.85rem">✅ Artisan certifié Fixeo</span>
         </div>
 
-       <div id="edit-artisan-form-error" class="alert alert-error" style="display:none"></div>
-</form>
-</div>
-
-<div class="modal-footer">
-  <button class="btn btn-primary" id="edit-artisan-submit-btn" onclick="submitEditArtisanForm(event)">...</button>
-  <button class="btn btn-secondary" onclick="closeModal('edit-artisan-modal')">Annuler</button>
-</div>
-
-</div>
-</div>
+        <div id="edit-artisan-form-error" class="alert alert-error" style="display:none;margin-bottom:12px"></div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" id="edit-artisan-submit-btn" onclick="submitEditArtisanForm(event)">💾 Enregistrer</button>
+      <button class="btn btn-secondary" onclick="closeModal('edit-artisan-modal')">Annuler</button>
+    </div>
+  </div>
 </div>
 
 <!-- MODAL DÉTAIL ARTISAN (existant) -->
