@@ -449,33 +449,45 @@ function openEditArtisanModal(id) {
   if (title) title.textContent = `✏️ Modifier — ${a.name}`;
 var modalEl = document.getElementById('edit-artisan-modal');
 var dialogEl = modalEl ? modalEl.querySelector('.modal-dialog') : null;
-var modalBox = dialogEl || (modalEl ? modalEl.firstElementChild : null);
+var contentEl = modalEl ? modalEl.querySelector('.modal-content') : null;
 
 if (modalEl) {
   modalEl.classList.add('open');
-  modalEl.style.position = 'fixed';
-  modalEl.style.inset = '0';
-  modalEl.style.display = 'flex';
-  modalEl.style.alignItems = 'center';
-  modalEl.style.justifyContent = 'center';
-  modalEl.style.padding = '24px';
-  modalEl.style.boxSizing = 'border-box';
-  modalEl.style.zIndex = '999999';
-  modalEl.style.background = 'rgba(0,0,0,0.55)';
-  modalEl.style.backdropFilter = 'blur(3px)';
+  modalEl.style.cssText = `
+    display: flex;
+    position: fixed;
+    inset: 0;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgba(0,0,0,0.72);
+    backdrop-filter: blur(4px);
+    z-index: 999999;
+    overflow: auto;
+    box-sizing: border-box;
+  `;
 }
 
-if (modalBox) {
-  modalBox.style.position = 'static';
-  modalBox.style.left = 'auto';
-  modalBox.style.right = 'auto';
-  modalBox.style.top = 'auto';
-  modalBox.style.bottom = 'auto';
-  modalBox.style.margin = 'auto';
-  modalBox.style.transform = 'none';
-  modalBox.style.width = 'min(720px, calc(100vw - 48px))';
-  modalBox.style.maxWidth = '720px';
+if (dialogEl) {
+  dialogEl.style.cssText = `
+    position: relative;
+    width: min(720px, calc(100vw - 48px));
+    max-width: 720px;
+    margin: auto;
+    left: auto;
+    right: auto;
+    top: auto;
+    bottom: auto;
+    transform: none;
+  `;
 }
+
+if (contentEl) {
+  contentEl.style.cssText = `
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  `;
 }
 
 /* ══════════════════════════════════════════════════════════════
