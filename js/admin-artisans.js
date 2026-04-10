@@ -449,28 +449,32 @@ function openEditArtisanModal(id) {
   if (title) title.textContent = `✏️ Modifier — ${a.name}`;
 var modalEl = document.getElementById('edit-artisan-modal');
 var dialogEl = modalEl ? modalEl.querySelector('.modal-dialog') : null;
-   
-   if (modalEl) {
-    modalEl.classList.add('open');
-    modalEl.style.position = 'fixed';
-    modalEl.style.inset = '0';
-    modalEl.style.display = 'flex';
-    modalEl.style.alignItems = 'center';
-    modalEl.style.justifyContent = 'center';
-    modalEl.style.padding = '24px';
-    modalEl.style.boxSizing = 'border-box';
+var modalBox = dialogEl || (modalEl ? modalEl.firstElementChild : null);
+
+if (modalEl) {
+  modalEl.classList.add('open');
+  modalEl.style.position = 'fixed';
+  modalEl.style.inset = '0';
+  modalEl.style.display = 'flex';
+  modalEl.style.alignItems = 'center';
+  modalEl.style.justifyContent = 'center';
+  modalEl.style.padding = '24px';
+  modalEl.style.boxSizing = 'border-box';
+  modalEl.style.zIndex = '999999';
+  modalEl.style.background = 'rgba(0,0,0,0.55)';
+  modalEl.style.backdropFilter = 'blur(3px)';
 }
 
-if (dialogEl) {
-    dialogEl.style.position = '';
-    dialogEl.style.left = '';
-    dialogEl.style.right = '';
-    dialogEl.style.top = '';
-    dialogEl.style.bottom = '';
-    dialogEl.style.margin = '';
-    dialogEl.style.transform = '';
-    dialogEl.style.width = '';
-    dialogEl.style.maxWidth = '';
+if (modalBox) {
+  modalBox.style.position = 'static';
+  modalBox.style.left = 'auto';
+  modalBox.style.right = 'auto';
+  modalBox.style.top = 'auto';
+  modalBox.style.bottom = 'auto';
+  modalBox.style.margin = 'auto';
+  modalBox.style.transform = 'none';
+  modalBox.style.width = 'min(720px, calc(100vw - 48px))';
+  modalBox.style.maxWidth = '720px';
 }
 }
 
