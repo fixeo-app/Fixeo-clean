@@ -38,16 +38,17 @@
 }
 
 #edit-artisan-modal .modal-dialog {
-  position: static !important;
-  inset: auto !important;
-  left: auto !important;
+  position: absolute !important;
+  left: 50% !important;
+  top: 50% !important;
   right: auto !important;
-  top: auto !important;
   bottom: auto !important;
-  margin: 0 !important;
-  transform: none !important;
+  inset: auto !important;
+
+  transform: translate(-50%, -50%) !important;
   translate: none !important;
   float: none !important;
+  margin: 0 !important;
 
   width: min(720px, calc(100vw - 48px)) !important;
   max-width: 720px !important;
