@@ -1,8 +1,8 @@
 (function (window, document) {
   'use strict';
 
-  const CURRENT_ARTISAN = 'Karim Benali';
-  const CURRENT_ARTISAN_ID = 'art_demo_1';
+  const CURRENT_ARTISAN = localStorage.getItem('fixeo_user_name') || '';
+  const CURRENT_ARTISAN_ID = localStorage.getItem('fixeo_user') || '';
 
   function ready(fn) {
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fn);
