@@ -401,20 +401,19 @@ async function submitArtisanForm(e) {
 }
 
 /* ══════════════════════════════════════════════════════════════
-   EDIT ARTISAN — Ouvrir le modal d'édition
+   EDIT ARTISAN — Ouvrir / Fermer le modal d'édition
 ══════════════════════════════════════════════════════════════ */
-function _openEditArtisanOverlay() {
+function closeEditArtisanModal() {
   const modal = document.getElementById('edit-artisan-modal');
   if (!modal) return;
 
-  const dialog = modal.querySelector('.modal-dialog');
-  const body   = modal.querySelector('.modal-body');
-
-  modal.classList.add('open');
-  modal.setAttribute('aria-hidden', 'false');
-
-  if (dialog) dialog.scrollTop = 0;
-  if (body)   body.scrollTop   = 0;
+  if (typeof closeModal === 'function') {
+    closeModal('edit-artisan-modal');
+  } else {
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden', 'true');
+    modal.style.display = 'none';
+  }
 }
 
 function openEditArtisanModal(id) {
@@ -462,8 +461,54 @@ function openEditArtisanModal(id) {
   const title = document.getElementById('edit-artisan-modal-title');
   if (title) title.textContent = `✏️ Modifier — ${a.name}`;
 
-  _openEditArtisanOverlay();
+  const modal = document.getElementById('edit-artisan-modal');
+  if (!modal) return;
+
+  const dialog = modal.querySelector('.modal-dialog');
+  const body = modal.querySelector('.modal-body');
+
+  if (modal.dataset.editArtisanBound !== 'true') {
+    modal.dataset.editArtisanBound = 'true';
+
+    modal.addEventListener('click', function (event) {
+      if (event.target === modal) closeEditArtisanModal();
+    });
+
+    modal.querySelectorAll('.modal-close, .modal-footer .btn.btn-secondary').forEach(function (btn) {
+      btn.addEventListener('click', function (event) {
+        event.preventDefault();
+        closeEditArtisanModal();
+      });
+    });
+  }
+
+  modal.style.display = 'flex';
+  modal.style.position = 'fixed';
+  modal.style.inset = '0';
+  modal.style.alignItems = 'center';
+  modal.style.justifyContent = 'center';
+  modal.style.padding = '16px';
+  modal.style.background = 'rgba(0,0,0,.65)';
+  modal.style.overflowY = 'auto';
+  modal.classList.add('open');
+  modal.setAttribute('aria-hidden', 'false');
+
+  if (dialog) {
+    dialog.style.position = 'relative';
+    dialog.style.margin = 'auto';
+    dialog.style.maxHeight = 'calc(100vh - 48px)';
+    dialog.style.overflow = 'hidden';
+    dialog.scrollTop = 0;
+  }
+
+  if (body) {
+    body.style.overflowY = 'auto';
+    body.scrollTop = 0;
+  }
 }
+
+window.openEditArtisanModal = openEditArtisanModal;
+window.closeEditArtisanModal = closeEditArtisanModal;
 
 /* ══════════════════════════════════════════════════════════════
    EDIT ARTISAN — Soumettre le formulaire de modification
@@ -682,17 +727,4 @@ function _bindTrustRefresh() {
 function initArtisansAdmin() {
   _bindTrustRefresh();
   loadArtisans();
-
-  const modal = document.getElementById('edit-artisan-modal');
-  if (modal && modal.dataset.overlayBound !== 'true') {
-    modal.dataset.overlayBound = 'true';
-    modal.addEventListener('click', (event) => {
-      if (event.target !== modal) return;
-      if (typeof closeModal === 'function') closeModal('edit-artisan-modal');
-      else {
-        modal.classList.remove('open');
-        modal.setAttribute('aria-hidden', 'true');
-      }
-    });
-  }
 }
