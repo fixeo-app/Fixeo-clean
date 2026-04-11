@@ -54,7 +54,7 @@ function marketplaceNormalizeCategory(value) {
 
 function marketplaceIsDemoIdentifier(value) {
   const normalized = String(value || '').trim().toLowerCase();
-  return /^art_demo_/i.test(normalized) || /^(?:[1-9]|1[0-2])$/.test(normalized);
+  return /^art_local_/i.test(normalized) || /^art_demo_/i.test(normalized) || /^(?:[1-9]|1[0-2])$/.test(normalized);
 }
 
 function marketplaceBuildInitials(name) {
