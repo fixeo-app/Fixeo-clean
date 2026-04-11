@@ -999,13 +999,13 @@ function switchSpendingChart(period, tab) {
 
 // ── Render contacts list ──────────────────────────────────
 function renderContacts() {
-  const contacts = [
-    { name:'Youssef El Mansouri', img:'1', msg:'À lundi alors !', time:'14h', unread:1 },
-    { name:'Karim Benali',        img:'2', msg:'Devis envoyé.', time:'Hier', unread:0 },
-    { name:'Aicha Moussaoui',     img:'3', msg:'Merci pour le travail.', time:'Lun', unread:0 },
-  ];
+  const contacts = [];
   const el = document.getElementById('contacts-list');
   if (!el) return;
+  if (!contacts.length) {
+    el.innerHTML = '<div style="padding:16px 14px;color:var(--text-muted)">Aucune conversation artisan active pour le moment.</div>';
+    return;
+  }
   el.innerHTML = contacts.map((c,i) => `
     <div style="display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;
       border-bottom:1px solid rgba(255,255,255,.04);transition:background .2s;
@@ -1027,13 +1027,13 @@ function renderContacts() {
 
 // ── Render reviews ────────────────────────────────────────
 function renderReviews() {
-  const reviews = [
-    { name:'Youssef El Mansouri', specialty:'Plombier',  rating:5, comment:'Excellent travail, très professionnel et ponctuel. Je recommande vivement !', date:'10/06/2025', img:1 },
-    { name:'Karim Benali',        specialty:'Peintre',   rating:5, comment:'Très beau travail de peinture, résultat impeccable. Délai respecté.', date:'20/05/2025', img:2 },
-    { name:'Aicha Moussaoui',     specialty:'Carreleur', rating:4, comment:'Bon travail dans l\'ensemble, quelques petits retards mais résultat satisfaisant.', date:'15/04/2025', img:3 },
-  ];
+  const reviews = [];
   const el = document.getElementById('reviews-list');
   if (!el) return;
+  if (!reviews.length) {
+    el.innerHTML = '<div class="review-card" style="color:var(--text-muted)">Aucun avis artisan réel à afficher pour le moment.</div>';
+    return;
+  }
   el.innerHTML = reviews.map(r => `
     <div class="review-card">
       <div class="review-header">
@@ -1141,30 +1141,8 @@ const FIXEO_CLIENT_OVERVIEW = {
       avgResponse: '—'
     }
   ],
-  replies: [
-    {
-      name: 'Karim Benali',
-      specialty: 'Plombier • Casablanca',
-      rating: '4.9',
-      verified: 'Vérifié',
-      price: '180 MAD',
-      responseTime: 'Réponse en 15 min',
-      avatar: 'https://i.pravatar.cc/120?img=12'
-    },
-    {
-      name: 'Ahmed Tazi',
-      specialty: 'Électricien • Rabat',
-      rating: '4.8',
-      verified: 'Vérifié',
-      price: '250 MAD',
-      responseTime: 'Réponse en 22 min',
-      avatar: 'https://i.pravatar.cc/120?img=15'
-    }
-  ],
-  favorites: [
-    { name: 'Karim Benali', subtitle: 'Plomberie • Réactif et très bien noté' },
-    { name: 'Ahmed Tazi', subtitle: 'Électricité • Disponible cette semaine' }
-  ],
+  replies: [],
+  favorites: [],
   actions: [
     {
       title: 'Comparer les réponses pour la demande plomberie',
