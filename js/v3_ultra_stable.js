@@ -23,26 +23,33 @@
       const ns = window.notifSystem;
 
       // Patch push() to dedup
-      const _origPush = ns.push.bind(ns);
-      ns.push = function(notif) {
-        const key = (notif.type || '') + '|' + (notif.title || '') + '|' + (notif.body || notif.message || '');
-        if (_shownToastKeys.has(key)) return; // skip duplicate
-        _shownToastKeys.add(key);
-        setTimeout(() => _shownToastKeys.delete(key), 8000); // allow re-show after 8s
-        return _origPush(notif);
-      };
+      if (typeof ns.push === 'function') {
+        const _origPush = ns.push.bind(ns);
+        ns.push = function(notif) {
+          const key = (notif.type || '') + '|' + (notif.title || '') + '|' + (notif.body || notif.message || '');
+          if (_shownToastKeys.has(key)) return; // skip duplicate
+          _shownToastKeys.add(key);
+          setTimeout(() => _shownToastKeys.delete(key), 8000); // allow re-show after 8s
+          return _origPush(notif);
+        };
+      }
 
-      // Patch toast() to ensure max 5 toasts visible
-      const _origToast = ns.toast.bind(ns);
-      ns.toast = function(opts) {
-        if (ns.container) {
-          const existing = ns.container.querySelectorAll('.toast');
-          if (existing.length >= 5) {
-            existing[0].remove(); // remove oldest
+      // Patch toast()/showToast() to ensure max 5 toasts visible
+      const toastMethod = typeof ns.toast === 'function'
+        ? 'toast'
+        : (typeof ns.showToast === 'function' ? 'showToast' : '');
+      if (toastMethod) {
+        const _origToast = ns[toastMethod].bind(ns);
+        ns[toastMethod] = function(opts) {
+          if (ns.container) {
+            const existing = ns.container.querySelectorAll('.toast');
+            if (existing.length >= 5) {
+              existing[0].remove(); // remove oldest
+            }
           }
-        }
-        return _origToast(opts);
-      };
+          return _origToast(opts);
+        };
+      }
     }
   });
 
@@ -79,56 +86,54 @@
   // FIX 6 — SERVICE ARTISAN CARDS
   // ══════════════════════════════════════════════════════════
 
-  const SERVICE_ARTISANS_DATA = {
-    plomberie: [
-      { initials:'KB', name:'Karim Benali',     city:'Casablanca', rating:'4.9', reviews:127, price:'150 MAD/h', badge:'⚡ Réactif' },
-      { initials:'MA', name:'Mehdi Amrani',      city:'Rabat',      rating:'4.7', reviews:89,  price:'140 MAD/h', badge:'✅ Vérifié' },
-      { initials:'YB', name:'Younes Bakkali',    city:'Marrakech',  rating:'4.8', reviews:63,  price:'120 MAD/h', badge:'🏆 Pro' },
-    ],
-    electricite: [
-      { initials:'OT', name:'Omar Tahiri',       city:'Rabat',      rating:'4.7', reviews:85,  price:'180 MAD/h', badge:'⚡ Expert' },
-      { initials:'SM', name:'Samir Mernissi',    city:'Casablanca', rating:'4.6', reviews:74,  price:'160 MAD/h', badge:'✅ Vérifié' },
-      { initials:'AB', name:'Adil Benbrahim',    city:'Fès',        rating:'4.8', reviews:52,  price:'170 MAD/h', badge:'🏆 Pro' },
-    ],
-    peinture: [
-      { initials:'SD', name:'Sara Doukkali',     city:'Casablanca', rating:'4.8', reviews:98,  price:'120 MAD/h', badge:'🎨 Artiste' },
-      { initials:'RM', name:'Rachid Moussaoui',  city:'Tanger',     rating:'4.6', reviews:61,  price:'110 MAD/h', badge:'✅ Vérifié' },
-      { initials:'LB', name:'Leila Badri',       city:'Rabat',      rating:'4.9', reviews:77,  price:'130 MAD/h', badge:'⭐ Top Noté' },
-    ],
-    climatisation: [
-      { initials:'NR', name:'Nadia Rhouat',      city:'Casablanca', rating:'4.8', reviews:56,  price:'200 MAD/h', badge:'❄️ Certifiée' },
-      { initials:'KZ', name:'Khalid Ziani',      city:'Agadir',     rating:'4.7', reviews:44,  price:'190 MAD/h', badge:'✅ Vérifié' },
-    ],
-    menuiserie: [
-      { initials:'AE', name:'Amine El Fassi',    city:'Fès',        rating:'4.9', reviews:81,  price:'160 MAD/h', badge:'🪚 Maître' },
-      { initials:'HB', name:'Hamza Benchekroun', city:'Casablanca', rating:'4.7', reviews:58,  price:'145 MAD/h', badge:'✅ Vérifié' },
-    ],
-    serrurerie: [
-      { initials:'MT', name:'Mourad Taleb',      city:'Casablanca', rating:'4.8', reviews:72,  price:'130 MAD/h', badge:'🔑 Expert' },
-      { initials:'FH', name:'Farid Hajji',       city:'Rabat',      rating:'4.7', reviews:49,  price:'120 MAD/h', badge:'✅ Vérifié' },
-    ],
-    nettoyage: [
-      { initials:'FZ', name:'Fatima Zahra',      city:'Marrakech',  rating:'4.9', reviews:210, price:'80 MAD/h',  badge:'🌟 Légendaire' },
-      { initials:'HO', name:'Houda Ouali',       city:'Casablanca', rating:'4.8', reviews:94,  price:'90 MAD/h',  badge:'✅ Vérifié' },
-      { initials:'ZA', name:'Zineb Alaoui',      city:'Rabat',      rating:'4.7', reviews:66,  price:'85 MAD/h',  badge:'⭐ Top Noté' },
-    ],
-    demenagement: [
-      { initials:'AL', name:'Aicha Lamine',      city:'Agadir',     rating:'4.6', reviews:63,  price:'200 MAD/j', badge:'🚛 Pro' },
-      { initials:'BB', name:'Badr Bencherki',    city:'Casablanca', rating:'4.7', reviews:58,  price:'220 MAD/j', badge:'✅ Vérifié' },
-    ],
-    jardinage: [
-      { initials:'HM', name:'Hassan Mrani',      city:'Fès',        rating:'4.8', reviews:72,  price:'100 MAD/h', badge:'🌿 Expert' },
-      { initials:'KA', name:'Khalid Arabi',      city:'Marrakech',  rating:'4.7', reviews:54,  price:'90 MAD/h',  badge:'✅ Vérifié' },
-    ],
-    bricolage: [
-      { initials:'YK', name:'Youssef Kadi',      city:'Tanger',     rating:'4.7', reviews:91,  price:'130 MAD/h', badge:'🔨 Polyvalent' },
-      { initials:'NS', name:'Nour Slimani',      city:'Casablanca', rating:'4.6', reviews:47,  price:'120 MAD/h', badge:'✅ Vérifié' },
-    ],
-    maconnerie: [
-      { initials:'IB', name:'Ibrahim Bennis',    city:'Casablanca', rating:'4.8', reviews:88,  price:'170 MAD/h', badge:'🧱 Expert' },
-      { initials:'OR', name:'Omar Rifai',        city:'Rabat',      rating:'4.6', reviews:62,  price:'155 MAD/h', badge:'✅ Vérifié' },
-    ],
-  };
+  function normalizeMarketplacePreviewArtisan(raw) {
+    if (!raw || typeof raw !== 'object') return null;
+    var id = String(raw.id || '').trim();
+    var name = String(raw.name || '').trim();
+    var category = String(raw.category || raw.service || '').trim().toLowerCase();
+    if (!id || !name || !category || raw.status === 'inactive') return null;
+    var rating = Number(raw.rating || 0);
+    var reviews = Number(raw.reviewCount || raw.total_reviews || 0);
+    var unit = String(raw.priceUnit || raw.price_unit || 'h').trim() || 'h';
+    var amount = Number(raw.priceFrom || raw.price_from || 0);
+    return {
+      id: id,
+      initials: String(raw.initials || name.split(/\s+/).filter(Boolean).slice(0, 2).map(function (part) { return part.charAt(0).toUpperCase(); }).join('') || 'FX'),
+      name: name,
+      category: category,
+      city: String(raw.city || 'Maroc').trim() || 'Maroc',
+      rating: (Number.isFinite(rating) ? rating : 0).toFixed(1),
+      reviews: Number.isFinite(reviews) ? reviews : 0,
+      price: Number.isFinite(amount) && amount > 0 ? amount + ' MAD' : 'Prix sur demande',
+      unit: unit,
+      availability: String(raw.availability || (raw.status === 'active' ? 'available' : 'offline')).trim() || 'available',
+      badge: Array.isArray(raw.badges) && raw.badges.includes('verified') ? '✅ Vérifié' : '⭐ Disponible',
+      trustScore: String(raw.trustScore || raw.trust_score || raw.rating || '0'),
+      responseTime: Number(raw.responseTime || 0) > 0 ? 'Répond en ' + Number(raw.responseTime) + ' min' : 'Réponse rapide'
+    };
+  }
+
+  function getMarketplacePreviewArtisans() {
+    var source = Array.isArray(window.ARTISANS) ? window.ARTISANS : [];
+    return source.map(normalizeMarketplacePreviewArtisan).filter(Boolean);
+  }
+
+  function buildServiceArtisansData() {
+    return getMarketplacePreviewArtisans().reduce(function (acc, artisan) {
+      if (!acc[artisan.category]) acc[artisan.category] = [];
+      acc[artisan.category].push({
+        id: artisan.id,
+        initials: artisan.initials,
+        name: artisan.name,
+        city: artisan.city,
+        rating: artisan.rating,
+        reviews: artisan.reviews,
+        price: artisan.price + '/' + artisan.unit,
+        badge: artisan.badge
+      });
+      return acc;
+    }, {});
+  }
 
   const SERVICE_LABELS = {
     plomberie:'Plomberie 🔧', electricite:'Électricité ⚡', peinture:'Peinture 🎨',
@@ -146,21 +151,23 @@
     'linear-gradient(135deg,#fd1d1d,#E1306C)',
   ];
 
-  // ── Artisan ID map: link service mini cards to main ARTISANS data ──
-  const ARTISAN_ID_MAP = {
-    'Karim Benali':1, 'Sara Doukkali':2, 'Omar Tahiri':3,
-    'Fatima Zahra':4, 'Hassan Mrani':5, 'Aicha Lamine':6,
-    'Youssef Kadi':7, 'Nadia Rhouat':8, 'Rachid Ouali':9,
-    'Imane Zahiri':10, 'Samir Benhaddou':11,
-  };
+  // ── Résolution dynamique des IDs artisan ───────────────────────
+  function resolveMarketplaceArtisanId(name, category, city) {
+    var match = getMarketplacePreviewArtisans().find(function (artisan) {
+      return artisan.name === name
+        && (!category || artisan.category === String(category || '').trim().toLowerCase())
+        && (!city || artisan.city === city);
+    });
+    return match ? match.id : null;
+  }
 
   function buildServiceMiniCard(a, idx, categoryLabel) {
     const grad = COVER_GRADIENTS[idx % COVER_GRADIENTS.length];
-    const artisanId = ARTISAN_ID_MAP[a.name] || null;
-    const profileSnapshot = encodeURIComponent(JSON.stringify({ id: artisanId || '', name: a.name, category: categoryLabel, city: a.city }));
+    const artisanId = resolveMarketplaceArtisanId(a.name, categoryLabel, a.city);
+    const serializedArtisanId = artisanId ? JSON.stringify(String(artisanId)) : '';
     const clickHandler = artisanId
-      ? `onclick="if(window.FixeoPublicProfileLinks){window.FixeoPublicProfileLinks.open({id:${artisanId},name:'${a.name}',category:'${categoryLabel}',city:'${a.city}'});}else if(typeof openArtisanModal==='function'){openArtisanModal(${artisanId});}else{window.location.href='artisan.html';}" tabindex="0" role="button" aria-label="Voir le profil de ${a.name}"`
-      : `onclick="if(window.FixeoPublicProfileLinks){window.FixeoPublicProfileLinks.open({name:'${a.name}',category:'${categoryLabel}',city:'${a.city}'});}else{window.location.href='artisan.html';}" tabindex="0" role="button" aria-label="Voir le profil de ${a.name}"`;
+      ? `onclick="if(window.FixeoPublicProfileLinks){window.FixeoPublicProfileLinks.open({id:${serializedArtisanId},name:'${a.name}',category:'${categoryLabel}',city:'${a.city}'});}else if(typeof openArtisanModal==='function'){openArtisanModal(${serializedArtisanId});}else{window.location.href='artisan-profile.html?id=${encodeURIComponent(String(artisanId))}';}" tabindex="0" role="button" aria-label="Voir le profil de ${a.name}"`
+      : `onclick="if(window.FixeoPublicProfileLinks){window.FixeoPublicProfileLinks.open({name:'${a.name}',category:'${categoryLabel}',city:'${a.city}'});}else{window.location.href='artisan-profile.html';}" tabindex="0" role="button" aria-label="Voir le profil de ${a.name}"`;
     return `
       <article class="service-mini-card artisan-card service-preview-card" ${clickHandler}>
         <div class="artisan-header smc-top">
@@ -183,12 +190,13 @@
     const cityFilter = document.getElementById('services-city-filter');
     const selectedCity = (cityFilter?.value || '').trim();
     if (!container) return;
-    if (!category || category === 'all' || !SERVICE_ARTISANS_DATA[category]) {
+    var serviceArtisans = buildServiceArtisansData();
+    if (!category || category === 'all' || !serviceArtisans[category]) {
       container.innerHTML = '';
       return;
     }
     const label = SERVICE_LABELS[category] || category;
-    const sourceArtisans = SERVICE_ARTISANS_DATA[category] || [];
+    const sourceArtisans = serviceArtisans[category] || [];
     const artisans = selectedCity
       ? sourceArtisans.filter(a => (a.city || '').toLowerCase() === selectedCity.toLowerCase())
       : sourceArtisans;
@@ -255,40 +263,18 @@
   //   • Uniform card design for all profiles
   // ══════════════════════════════════════════════════════════
 
-  // ── Full dataset: 20 featured artisans ──────────────────
-  const FEATURED_ARTISANS = [
-    // ── Row 1 ─────────────────────────────────────────────
-    { initials:'KB', name:'Karim Benali',      category:'Plomberie',     city:'Casablanca', rating:'4.9', reviews:127, price:'150 MAD', unit:'h', availability:'available', badge:'⭐ Top Noté',    coverIdx:0, trustScore:'4.9', responseTime:'Répond en 10 min' },
-    { initials:'FZ', name:'Fatima Zahra',      category:'Nettoyage',     city:'Marrakech',  rating:'4.9', reviews:210, price:'80 MAD',  unit:'h', availability:'available', badge:'🌟 Légendaire',  coverIdx:1, trustScore:'4.9', responseTime:'Répond en 5 min'  },
-    { initials:'OT', name:'Omar Tahiri',       category:'Électricité',   city:'Rabat',      rating:'4.7', reviews:85,  price:'180 MAD', unit:'h', availability:'busy',      badge:'⚡ Expert',     coverIdx:2, trustScore:'4.7', responseTime:'Répond en 20 min' },
-    { initials:'SD', name:'Sara Doukkali',     category:'Peinture',      city:'Casablanca', rating:'4.8', reviews:98,  price:'120 MAD', unit:'h', availability:'available', badge:'🎨 Artiste',    coverIdx:3, trustScore:'4.8', responseTime:'Répond en 15 min' },
-    { initials:'NR', name:'Nadia Rhouat',      category:'Climatisation', city:'Casablanca', rating:'4.8', reviews:56,  price:'200 MAD', unit:'h', availability:'available', badge:'❄️ Certifiée',  coverIdx:4, trustScore:'4.8', responseTime:'Répond en 12 min' },
-    // ── Row 2 ─────────────────────────────────────────────
-    { initials:'AE', name:'Amine El Fassi',    category:'Menuiserie',    city:'Fès',        rating:'4.9', reviews:81,  price:'160 MAD', unit:'h', availability:'available', badge:'🪚 Maître',     coverIdx:5, trustScore:'4.9', responseTime:'Répond en 8 min'  },
-    { initials:'RB', name:'Rachid Berrada',    category:'Maçonnerie',    city:'Casablanca', rating:'4.8', reviews:73,  price:'140 MAD', unit:'h', availability:'available', badge:'🧱 Expert',    coverIdx:0, trustScore:'4.8', responseTime:'Répond en 18 min' },
-    { initials:'HA', name:'Houda Amrani',      category:'Jardinage',     city:'Rabat',      rating:'4.7', reviews:62,  price:'90 MAD',  unit:'h', availability:'available', badge:'🌿 Pro',       coverIdx:1, trustScore:'4.7', responseTime:'Répond en 25 min' },
-    { initials:'SQ', name:'Samir Qassemi',     category:'Déménagement',  city:'Tanger',     rating:'4.6', reviews:44,  price:'350 MAD', unit:'j', availability:'busy',      badge:'📦 Rapide',    coverIdx:2, trustScore:'4.6', responseTime:'Répond en 30 min' },
-    { initials:'AM', name:'Abdelilah Mouti',   category:'Serrurerie',    city:'Agadir',     rating:'4.9', reviews:92,  price:'130 MAD', unit:'h', availability:'available', badge:'🔑 Certifié',  coverIdx:3, trustScore:'4.9', responseTime:'Répond en 7 min'  },
-    // ── Row 3 (hidden initially, +5 on first See More) ────
-    { initials:'YK', name:'Youssef Kadi',      category:'Bricolage',     city:'Tanger',     rating:'4.7', reviews:91,  price:'130 MAD', unit:'h', availability:'available', badge:'🔨 Polyvalent', coverIdx:4, trustScore:'4.7', responseTime:'Répond en 14 min' },
-    { initials:'LB', name:'Leila Badri',       category:'Peinture',      city:'Rabat',      rating:'4.9', reviews:77,  price:'130 MAD', unit:'h', availability:'available', badge:'⭐ Top Noté',   coverIdx:5, trustScore:'4.9', responseTime:'Répond en 11 min' },
-    { initials:'HB', name:'Hamza Benchekroun', category:'Menuiserie',    city:'Casablanca', rating:'4.7', reviews:58,  price:'145 MAD', unit:'h', availability:'busy',      badge:'✅ Vérifié',   coverIdx:0, trustScore:'4.7', responseTime:'Répond en 22 min' },
-    { initials:'ZA', name:'Zineb Alaoui',      category:'Nettoyage',     city:'Rabat',      rating:'4.7', reviews:66,  price:'85 MAD',  unit:'h', availability:'available', badge:'⭐ Top Noté',   coverIdx:1, trustScore:'4.7', responseTime:'Répond en 16 min' },
-    { initials:'IB', name:'Ibrahim Bennis',    category:'Maçonnerie',    city:'Casablanca', rating:'4.8', reviews:88,  price:'170 MAD', unit:'h', availability:'available', badge:'🧱 Expert',    coverIdx:2, trustScore:'4.8', responseTime:'Répond en 9 min'  },
-    // ── Row 4 (hidden initially, +5 on second See More) ───
-    { initials:'KZ', name:'Khalid Ziani',      category:'Climatisation', city:'Agadir',     rating:'4.7', reviews:44,  price:'190 MAD', unit:'h', availability:'available', badge:'✅ Vérifié',   coverIdx:3, trustScore:'4.7', responseTime:'Répond en 17 min' },
-    { initials:'MA', name:'Mehdi Amrani',      category:'Plomberie',     city:'Rabat',      rating:'4.7', reviews:89,  price:'140 MAD', unit:'h', availability:'busy',      badge:'✅ Vérifié',   coverIdx:4, trustScore:'4.7', responseTime:'Répond en 21 min' },
-    { initials:'NS', name:'Nour Slimani',      category:'Bricolage',     city:'Casablanca', rating:'4.6', reviews:47,  price:'120 MAD', unit:'h', availability:'available', badge:'✅ Vérifié',   coverIdx:5, trustScore:'4.6', responseTime:'Répond en 28 min' },
-    { initials:'HM', name:'Hassan Mrani',      category:'Jardinage',     city:'Fès',        rating:'4.8', reviews:72,  price:'100 MAD', unit:'h', availability:'available', badge:'🌿 Expert',    coverIdx:0, trustScore:'4.8', responseTime:'Répond en 13 min' },
-    { initials:'MT', name:'Mourad Taleb',      category:'Serrurerie',    city:'Casablanca', rating:'4.8', reviews:72,  price:'130 MAD', unit:'h', availability:'available', badge:'🔑 Expert',    coverIdx:1, trustScore:'4.8', responseTime:'Répond en 19 min' },
-  ];
-
-  // ── ID map: link featured cards to ARTISANS profile data ─
-  const FEATURED_ID_MAP = {
-    'Karim Benali':1, 'Fatima Zahra':4, 'Omar Tahiri':3,
-    'Sara Doukkali':2, 'Nadia Rhouat':8, 'Hassan Mrani':5,
-    'Youssef Kadi':7, 'Aicha Lamine':6,
-  };
+  function getFeaturedArtisans() {
+    return getMarketplacePreviewArtisans()
+      .slice()
+      .sort(function (left, right) {
+        return (Number(right.trustScore || 0) + Number(right.reviews || 0) * 0.05 + Number(right.rating || 0) * 10)
+          - (Number(left.trustScore || 0) + Number(left.reviews || 0) * 0.05 + Number(left.rating || 0) * 10);
+      })
+      .slice(0, 20)
+      .map(function (artisan, idx) {
+        return Object.assign({}, artisan, { coverIdx: idx % COVER_GRADIENTS.length });
+      });
+  }
 
   // ── Pagination state ─────────────────────────────────────
   const FEATURED_INITIAL   = 10; // 2 rows × 5 = 10 visible on load
@@ -301,10 +287,11 @@
     const availClass   = a.availability || 'available';
     const trustScore   = a.trustScore   || a.rating || '4.8';
     const responseTime = a.responseTime || 'Répond en 15 min';
-    const artisanId    = FEATURED_ID_MAP[a.name] || null;
-    const cardClick    = artisanId
-      ? 'onclick="if(window.FixeoPublicProfileLinks){window.FixeoPublicProfileLinks.open({id:' + artisanId + ',name:\'' + a.name + '\',category:\'' + a.category + '\',city:\'' + a.city + '\'});}else if(typeof openArtisanModal===\'function\'){openArtisanModal(' + artisanId + ');}else{window.location.href=\'artisan.html\';}"'
-      : 'onclick="if(window.FixeoPublicProfileLinks){window.FixeoPublicProfileLinks.open({name:\'' + a.name + '\',category:\'' + a.category + '\',city:\'' + a.city + '\'});}else{window.location.href=\'artisan.html\';}"';
+    const artisanId = resolveMarketplaceArtisanId(a.name, a.category, a.city);
+    const safeArtisanId = artisanId ? JSON.stringify(String(artisanId)) : '';
+    const cardClick = artisanId
+      ? 'onclick="if(window.FixeoPublicProfileLinks){window.FixeoPublicProfileLinks.open({id:' + safeArtisanId + ',name:\'' + a.name + '\',category:\'' + a.category + '\',city:\'' + a.city + '\'});}else if(typeof openArtisanModal===\'function\'){openArtisanModal(' + safeArtisanId + ');}else{window.location.href=\'artisan-profile.html?id=' + encodeURIComponent(String(artisanId)) + '\';}"'
+      : 'onclick="if(window.FixeoPublicProfileLinks){window.FixeoPublicProfileLinks.open({name:\'' + a.name + '\',category:\'' + a.category + '\',city:\'' + a.city + '\'});}else{window.location.href=\'artisan-profile.html\';}"';
     return (
       '<div class="featured-card" ' + cardClick + ' style="cursor:pointer" role="button" tabindex="0" aria-label="Voir le profil de ' + a.name + '">' +
         '<div class="featured-card-cover" style="background:' + grad + ';">' +
@@ -342,7 +329,7 @@
     var btn  = document.getElementById('featured-see-more-btn');
     var wrap = document.getElementById('featured-see-more-wrap');
     if (!btn || !wrap) return;
-    var remaining = FEATURED_ARTISANS.length - _featuredShownCount;
+    var remaining = getFeaturedArtisans().length - _featuredShownCount;
     if (remaining <= 0) {
       // All profiles shown — hide button with smooth fade
       wrap.style.opacity  = '0';
@@ -373,7 +360,7 @@
         shown++;
       }
     }
-    _featuredShownCount = Math.min(_featuredShownCount + FEATURED_STEP, FEATURED_ARTISANS.length);
+    _featuredShownCount = Math.min(_featuredShownCount + FEATURED_STEP, getFeaturedArtisans().length);
     updateSeeMoreBtn();
     // Wire newly revealed cards' buttons
     if (window._wireFeaturedButtons && grid) window._wireFeaturedButtons(grid);
@@ -384,11 +371,13 @@
     var grid = document.getElementById('featured-artisans-grid');
     if (!grid) return;
 
+    var featuredArtisans = getFeaturedArtisans();
+
     // Reset pagination state on each render
     _featuredShownCount = FEATURED_INITIAL;
 
     // Build ALL cards, mark those beyond initial limit as hidden
-    grid.innerHTML = FEATURED_ARTISANS.map(function(a, idx) {
+    grid.innerHTML = featuredArtisans.map(function(a, idx) {
       var html = buildFeaturedCard(a);
       if (idx >= FEATURED_INITIAL) {
         // Inject hidden class into the outer div
@@ -404,7 +393,7 @@
       if (existingWrap) existingWrap.parentNode.removeChild(existingWrap);
       var wrap = document.createElement('div');
       wrap.id = 'featured-see-more-wrap';
-      var remaining = FEATURED_ARTISANS.length - FEATURED_INITIAL;
+      var remaining = featuredArtisans.length - FEATURED_INITIAL;
       wrap.innerHTML =
         '<button id="featured-see-more-btn" class="btn-featured-see-more" onclick="typeof featuredSeeMore===\'function\'?featuredSeeMore():(function(){})()">' +
           '👁 Voir plus <span class="featured-see-more-count">+' + Math.min(remaining, FEATURED_STEP) + '</span> artisans ' +
