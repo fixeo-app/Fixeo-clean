@@ -51,15 +51,6 @@ let _artisansList = [];
 /* ── Artisan en cours d'édition ───────────────────────────── */
 let _currentEditId = null;
 let _trustBindingsReady = false;
-let _artisansAdminBindingsReady = false;
-
-function _findArtisanById(id) {
-  const needle = String(id == null ? '' : id).trim();
-  if (!needle) return null;
-  return _artisansList.find(function (artisan) {
-    return String(artisan && artisan.id != null ? artisan.id : '').trim() === needle;
-  }) || null;
-}
 
 function _getTrustedArtisans(list) {
   const source = Array.isArray(list) ? list : _artisansList;
@@ -412,13 +403,27 @@ async function submitArtisanForm(e) {
 /* ══════════════════════════════════════════════════════════════
    EDIT ARTISAN — Ouvrir le modal d'édition
 ══════════════════════════════════════════════════════════════ */
+function _openEditArtisanOverlay() {
+  const modal = document.getElementById('edit-artisan-modal');
+  if (!modal) return;
+
+  const dialog = modal.querySelector('.modal-dialog');
+  const body   = modal.querySelector('.modal-body');
+
+  modal.classList.add('open');
+  modal.setAttribute('aria-hidden', 'false');
+
+  if (dialog) dialog.scrollTop = 0;
+  if (body)   body.scrollTop   = 0;
+}
+
 function openEditArtisanModal(id) {
-  const a = _findArtisanById(id);
+  const a = _artisansList.find(x => x.id === id);
   if (!a) {
     if (typeof showToast === 'function') showToast('❌ Artisan introuvable', 'error');
     return;
   }
-  _currentEditId = String(a.id);
+  _currentEditId = id;
 
   /* Remplir les champs du modal d'édition */
   const f = id => document.getElementById(id);
@@ -433,7 +438,7 @@ function openEditArtisanModal(id) {
   if (f('ef-certified'))   f('ef-certified').checked = (a.certified === true || a.certified === 'true' || a.certified === 'yes');
   if (f('ef-description')) f('ef-description').value = a.description || '';
   if (f('ef-rating'))      f('ef-rating').value      = a.rating      || 0;
-  if (f('ef-missions'))    f('ef-missions').value     = a.missions    || 0;
+  if (f('ef-missions'))    f('ef-missions').value    = a.missions    || 0;
 
   /* Aperçu avatar actuel */
   const prevDiv = document.getElementById('ef-avatar-preview');
@@ -457,7 +462,7 @@ function openEditArtisanModal(id) {
   const title = document.getElementById('edit-artisan-modal-title');
   if (title) title.textContent = `✏️ Modifier — ${a.name}`;
 
-  if (typeof openModal === 'function') openModal('edit-artisan-modal');
+  _openEditArtisanOverlay();
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -674,33 +679,20 @@ function _bindTrustRefresh() {
   });
 }
 
-function _bindArtisansAdminDom() {
-  if (_artisansAdminBindingsReady) return;
-  _artisansAdminBindingsReady = true;
-
-  const editForm = document.getElementById('edit-artisan-form');
-  if (editForm) {
-    editForm.onsubmit = submitEditArtisanForm;
-  }
-
-  const editSubmitBtn = document.getElementById('edit-artisan-submit-btn');
-  if (editSubmitBtn) {
-    editSubmitBtn.onclick = submitEditArtisanForm;
-  }
-}
-
 function initArtisansAdmin() {
   _bindTrustRefresh();
-  _bindArtisansAdminDom();
   loadArtisans();
+
+  const modal = document.getElementById('edit-artisan-modal');
+  if (modal && modal.dataset.overlayBound !== 'true') {
+    modal.dataset.overlayBound = 'true';
+    modal.addEventListener('click', (event) => {
+      if (event.target !== modal) return;
+      if (typeof closeModal === 'function') closeModal('edit-artisan-modal');
+      else {
+        modal.classList.remove('open');
+        modal.setAttribute('aria-hidden', 'true');
+      }
+    });
+  }
 }
-
-window.initArtisansAdmin = initArtisansAdmin;
-window.openEditArtisanModal = openEditArtisanModal;
-window.submitEditArtisanForm = submitEditArtisanForm;
-window.toggleArtisanStatus = toggleArtisanStatus;
-window.deleteArtisanConfirm = deleteArtisanConfirm;
-window.toggleArtisanFormPanel = toggleArtisanFormPanel;
-window.submitArtisanForm = submitArtisanForm;
-
-document.addEventListener('DOMContentLoaded', _bindArtisansAdminDom);
