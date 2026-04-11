@@ -25,6 +25,7 @@
       writeStyle('/css/header-unified.css');
       writeStyle('/css/fixeo-header-global.css');
       writeStyle('/css/auth-global.css');
+      writeStyle('/css/reservation.css');
     })(window, document);
   </script>
   <style>
@@ -178,7 +179,8 @@
       '/js/notifications.js',
       '/js/header-unified.js',
       '/js/auth-global.js',
-      '/js/artisan-onboarding-store.js'
+      '/js/artisan-onboarding-store.js',
+      '/js/reservation.js'
     ].forEach(function (src) {
       document.write('<script src="' + asset(src) + '"><\/script>');
     });
@@ -313,6 +315,108 @@
     ].forEach(function (src) {
       document.write('<script src="' + asset(src) + '"><\/script>');
     });
+  })(window, document);
+</script>
+
+<script>
+  (function (window, document) {
+    var MARKETPLACE_KEY = 'fixeo_admin_artisans_v21';
+    var REGISTRY_KEY = 'fixeo_public_artisans_registry';
+
+    function safeJSONParse(value, fallback) {
+      try {
+        var parsed = JSON.parse(value);
+        return parsed == null ? fallback : parsed;
+      } catch (error) {
+        return fallback;
+      }
+    }
+
+    function hasValue(value) {
+      return value !== undefined && value !== null && String(value).trim() !== '';
+    }
+
+    function pickValue() {
+      for (var i = 0; i < arguments.length; i += 1) {
+        if (hasValue(arguments[i])) return String(arguments[i]).trim();
+      }
+      return '';
+    }
+
+    function readMarketplaceArtisans() {
+      var parsed = safeJSONParse(localStorage.getItem(MARKETPLACE_KEY) || '[]', []);
+      return Array.isArray(parsed) ? parsed : [];
+    }
+
+    function readRegistry() {
+      var parsed = safeJSONParse(localStorage.getItem(REGISTRY_KEY) || '[]', []);
+      return Array.isArray(parsed) ? parsed : [];
+    }
+
+    function currentUrlArtisanId() {
+      try {
+        var params = new URLSearchParams(window.location.search || '');
+        return String(params.get('id') || '').trim();
+      } catch (error) {
+        return '';
+      }
+    }
+
+    function findCurrentArtisan() {
+      var requestedId = currentUrlArtisanId();
+      if (!requestedId) return null;
+
+      var marketplaceMatch = readMarketplaceArtisans().find(function (artisan) {
+        return [
+          pickValue(artisan && artisan.id),
+          pickValue(artisan && artisan.artisan_id),
+          pickValue(artisan && artisan.public_id)
+        ].indexOf(requestedId) !== -1;
+      });
+      if (marketplaceMatch) return marketplaceMatch;
+
+      var registryMatch = readRegistry().find(function (entry) {
+        var sourceIds = Array.isArray(entry && entry.source_ids)
+          ? entry.source_ids.map(function (value) { return String(value || '').trim(); }).filter(Boolean)
+          : [];
+        return [
+          pickValue(entry && entry.id),
+          pickValue(entry && entry.public_id),
+          pickValue(entry && entry.artisan_id)
+        ].indexOf(requestedId) !== -1 || sourceIds.indexOf(requestedId) !== -1;
+      });
+      if (!registryMatch) return null;
+
+      return {
+        id: pickValue(registryMatch.id, requestedId),
+        artisan_id: pickValue(registryMatch.artisan_id, requestedId),
+        public_id: pickValue(registryMatch.public_id, requestedId),
+        name: pickValue(registryMatch.name),
+        category: pickValue(registryMatch.category),
+        service: pickValue(registryMatch.category),
+        city: pickValue(registryMatch.city),
+        avatar: pickValue(registryMatch.avatar),
+        phone: pickValue(registryMatch.phone),
+        email: pickValue(registryMatch.email),
+        availability: pickValue(registryMatch.availability),
+        trustScore: Number(registryMatch.trust_score || 0) || 0,
+        trust_score: Number(registryMatch.trust_score || 0) || 0
+      };
+    }
+
+    document.addEventListener('click', function (event) {
+      var button = event.target && event.target.closest ? event.target.closest('#public-artisan-action') : null;
+      if (!button) return;
+      if (!window.FixeoReservation || typeof window.FixeoReservation.open !== 'function') return;
+
+      event.preventDefault();
+      event.stopPropagation();
+      if (typeof event.stopImmediatePropagation === 'function') event.stopImmediatePropagation();
+
+      var artisan = findCurrentArtisan();
+      if (!artisan) return;
+      window.FixeoReservation.open(artisan, false);
+    }, true);
   })(window, document);
 </script>
 </body>
