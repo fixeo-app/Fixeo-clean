@@ -19,146 +19,6 @@
 <link rel="stylesheet" href="css/auth-global.css"/>
 <link rel="stylesheet" href="css/fixeo-cod-commission.css"/>
   <link rel="stylesheet" href="css/slot-lock.css">
-  <style>
-    .fixeo-edit-artisan-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      z-index: 999999;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-      background: rgba(4, 10, 22, 0.78);
-      backdrop-filter: blur(4px);
-      box-sizing: border-box;
-      pointer-events: none;
-    }
-
-    .fixeo-edit-artisan-overlay.is-open {
-      display: flex;
-      pointer-events: auto;
-    }
-
-    .fixeo-edit-artisan-panel {
-      width: min(720px, 100%);
-      max-width: 720px;
-      max-height: min(90vh, calc(100vh - 48px));
-      display: grid;
-      grid-template-rows: auto minmax(0, 1fr) auto;
-      overflow: hidden;
-      border-radius: 20px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: linear-gradient(180deg, rgba(16,20,38,.98), rgba(10,14,28,.98));
-      box-shadow: 0 28px 72px rgba(0,0,0,.45);
-    }
-
-    .fixeo-edit-artisan-header,
-    .fixeo-edit-artisan-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 18px 24px;
-      background: rgba(255,255,255,.02);
-      flex-shrink: 0;
-    }
-
-    .fixeo-edit-artisan-header {
-      border-bottom: 1px solid rgba(255,255,255,.08);
-    }
-
-    .fixeo-edit-artisan-footer {
-      justify-content: flex-end;
-      border-top: 1px solid rgba(255,255,255,.08);
-      flex-wrap: wrap;
-    }
-
-    .fixeo-edit-artisan-title {
-      margin: 0;
-      font-size: 1.05rem;
-      font-weight: 700;
-    }
-
-    .fixeo-edit-artisan-close {
-      width: 36px;
-      height: 36px;
-      border: none;
-      border-radius: 999px;
-      background: rgba(255,255,255,.08);
-      color: #fff;
-      font-size: 1rem;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      transition: background .2s ease, transform .2s ease;
-    }
-
-    .fixeo-edit-artisan-close:hover {
-      background: rgba(255,255,255,.14);
-      transform: scale(1.03);
-    }
-
-    .fixeo-edit-artisan-body {
-      min-height: 0;
-      overflow: auto;
-      padding: 24px;
-      overscroll-behavior: contain;
-    }
-
-    .fixeo-edit-artisan-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-      margin-bottom: 14px;
-    }
-
-    .fixeo-edit-artisan-avatar-row {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      margin-bottom: 20px;
-      padding: 14px;
-      background: rgba(255,255,255,.04);
-      border-radius: 10px;
-      border: 1px solid rgba(255,255,255,.08);
-    }
-
-    .fixeo-edit-artisan-cert-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 18px;
-    }
-
-    @media (max-width: 640px) {
-      .fixeo-edit-artisan-overlay {
-        padding: 12px;
-      }
-
-      .fixeo-edit-artisan-panel {
-        width: 100%;
-        max-height: calc(100vh - 24px);
-        border-radius: 16px;
-      }
-
-      .fixeo-edit-artisan-header,
-      .fixeo-edit-artisan-body,
-      .fixeo-edit-artisan-footer {
-        padding-left: 16px;
-        padding-right: 16px;
-      }
-
-      .fixeo-edit-artisan-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .fixeo-edit-artisan-avatar-row {
-        align-items: flex-start;
-        flex-direction: column;
-      }
-    }
-  </style>
 </head>
 <body data-theme="dark" data-dash-type="admin">
 <div class="bg-animated"></div>
@@ -533,7 +393,7 @@
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
             <div class="form-group" style="margin:0">
               <label style="font-size:.78rem;color:var(--text-muted);margin-bottom:4px;display:block">Nom complet <span style="color:var(--primary)">*</span></label>
-              <input type="text" id="af-name" class="filter-input" placeholder="Ex : Karim Benali" required style="width:100%"/>
+              <input type="text" id="af-name" class="filter-input" placeholder="Ex : Nom complet" required style="width:100%"/>
             </div>
             <div class="form-group" style="margin:0">
               <label style="font-size:.78rem;color:var(--text-muted);margin-bottom:4px;display:block">Téléphone <span style="color:var(--primary)">*</span></label>
@@ -890,6 +750,114 @@
 <!-- ══════════════════════════════════════════════════════════
      MODAL MODIFICATION ARTISAN V21
 ════════════════════════════════════════════════════════════ -->
+<div class="modal" id="edit-artisan-modal">
+  <div class="modal-dialog modal-lg" style="max-width:720px">
+    <div class="modal-header">
+      <h3 id="edit-artisan-modal-title">✏️ Modifier l'artisan</h3>
+      <button class="modal-close" onclick="closeModal('edit-artisan-modal')">✕</button>
+    </div>
+    <div class="modal-body" style="padding:24px">
+      <form id="edit-artisan-form" onsubmit="submitEditArtisanForm(event)" enctype="multipart/form-data">
+
+        <!-- Avatar actuel + nouveau upload -->
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px;padding:14px;background:rgba(255,255,255,.04);border-radius:10px;border:1px solid rgba(255,255,255,.08)">
+          <div id="ef-avatar-preview" style="display:flex;align-items:center"></div>
+          <div style="flex:1">
+            <label style="font-size:.78rem;color:var(--text-muted);margin-bottom:6px;display:block">📷 Changer l'avatar <span style="color:var(--text-muted);font-size:.7rem">(optionnel — JPG, PNG, WebP)</span></label>
+            <input type="file" id="ef-avatar-file" accept="image/*" style="
+              width:100%;padding:7px 12px;
+              background:rgba(255,255,255,.05);
+              border:1px dashed rgba(255,255,255,.2);
+              border-radius:8px;color:inherit;
+              font-size:.82rem;cursor:pointer"/>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+          <!-- Nom -->
+          <div class="form-group" style="margin:0">
+            <label style="font-size:.78rem;color:var(--text-muted);margin-bottom:4px;display:block">Nom complet <span style="color:var(--primary)">*</span></label>
+            <input type="text" id="ef-name" class="filter-input" placeholder="Nom complet" required style="width:100%"/>
+          </div>
+          <!-- Téléphone -->
+          <div class="form-group" style="margin:0">
+            <label style="font-size:.78rem;color:var(--text-muted);margin-bottom:4px;display:block">Téléphone <span style="color:var(--primary)">*</span></label>
+            <input type="tel" id="ef-phone" class="filter-input" placeholder="+212 6XX XXX XXX" required style="width:100%"/>
+          </div>
+          <!-- Email -->
+          <div class="form-group" style="margin:0">
+            <label style="font-size:.78rem;color:var(--text-muted);margin-bottom:4px;display:block">Email <span style="color:var(--text-muted);font-size:.7rem">(optionnel)</span></label>
+            <input type="email" id="ef-email" class="filter-input" placeholder="email@exemple.ma" style="width:100%"/>
+          </div>
+          <!-- Spécialité -->
+          <div class="form-group" style="margin:0">
+            <label style="font-size:.78rem;color:var(--text-muted);margin-bottom:4px;display:block">Spécialité <span style="color:var(--primary)">*</span></label>
+            <input type="text" id="ef-service" class="filter-input" placeholder="Ex : Plomberie" required style="width:100%"/>
+          </div>
+          <!-- Ville -->
+          <div class="form-group" style="margin:0">
+            <label style="font-size:.78rem;color:var(--text-muted);margin-bottom:4px;display:block">Ville</label>
+            <input type="text" id="ef-city" class="filter-input" placeholder="Ex : Casablanca" style="width:100%"/>
+          </div>
+          <!-- Zones -->
+          <div class="form-group" style="margin:0">
+            <label style="font-size:.78rem;color:var(--text-muted);margin-bottom:4px;display:block">Zones couvertes</label>
+            <input type="text" id="ef-zones" class="filter-input" placeholder="Casablanca, Mohammedia…" style="width:100%"/>
+          </div>
+          <!-- Plan -->
+          <div class="form-group" style="margin:0">
+            <label style="font-size:.78rem;color:var(--text-muted);margin-bottom:4px;display:block">Plan abonnement</label>
+            <select id="ef-subplan" class="filter-input" style="width:100%">
+              <option value="free">🆓 Gratuit</option>
+              <option value="pro">🚀 Pro</option>
+              <option value="premium">👑 Premium</option>
+            </select>
+          </div>
+          <!-- Statut -->
+          <div class="form-group" style="margin:0">
+            <label style="font-size:.78rem;color:var(--text-muted);margin-bottom:4px;display:block">Statut</label>
+            <select id="ef-status" class="filter-input" style="width:100%">
+              <option value="active">🟢 Actif</option>
+              <option value="inactive">🔴 Inactif</option>
+            </select>
+          </div>
+          <!-- Note -->
+          <div class="form-group" style="margin:0">
+            <label style="font-size:.78rem;color:var(--text-muted);margin-bottom:4px;display:block">⭐ Note (0–5)</label>
+            <input type="number" id="ef-rating" class="filter-input" min="0" max="5" step="0.1" placeholder="4.8" style="width:100%"/>
+          </div>
+          <!-- Missions -->
+          <div class="form-group" style="margin:0">
+            <label style="font-size:.78rem;color:var(--text-muted);margin-bottom:4px;display:block">🎯 Missions complétées</label>
+            <input type="number" id="ef-missions" class="filter-input" min="0" step="1" placeholder="0" style="width:100%"/>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="form-group" style="margin-bottom:14px">
+          <label style="font-size:.78rem;color:var(--text-muted);margin-bottom:4px;display:block">Description</label>
+          <textarea id="ef-description" class="filter-input" rows="3" placeholder="Présentation de l'artisan…" style="width:100%;resize:vertical;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:10px;color:inherit;font-family:inherit;font-size:.85rem"></textarea>
+        </div>
+
+        <!-- Certifié -->
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px">
+          <label class="toggle-switch" style="flex-shrink:0">
+            <input type="checkbox" id="ef-certified"/>
+            <span class="toggle-slider"></span>
+          </label>
+          <span style="font-size:.85rem">✅ Artisan certifié Fixeo</span>
+        </div>
+
+        <div id="edit-artisan-form-error" class="alert alert-error" style="display:none;margin-bottom:12px"></div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" id="edit-artisan-submit-btn" onclick="submitEditArtisanForm(event)">💾 Enregistrer</button>
+      <button class="btn btn-secondary" onclick="closeModal('edit-artisan-modal')">Annuler</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL DÉTAIL ARTISAN (existant) -->
 <div class="modal" id="artisan-detail-modal">
   <div class="modal-dialog modal-lg">
@@ -987,113 +955,6 @@
 <!-- ══ AUTH GLOBAL + HEADER-UNIFIED ══ -->
 <script src="js/header-unified.js"></script>
 <script src="js/auth-global.js"></script>
-
-
-<div id="fixeo-edit-artisan-overlay" class="fixeo-edit-artisan-overlay" aria-hidden="true" onclick="if (event.target === this) closeFixeoEditArtisanModal()">
-  <div class="fixeo-edit-artisan-panel" role="dialog" aria-modal="true" aria-labelledby="edit-artisan-modal-title">
-    <div class="fixeo-edit-artisan-header">
-      <h3 id="edit-artisan-modal-title" class="fixeo-edit-artisan-title">✏️ Modifier l'artisan</h3>
-      <button type="button" class="fixeo-edit-artisan-close" aria-label="Fermer" onclick="closeFixeoEditArtisanModal()">✕</button>
-    </div>
-
-    <div class="fixeo-edit-artisan-body" id="fixeo-edit-artisan-body">
-      <form id="edit-artisan-form" onsubmit="submitEditArtisanForm(event)" enctype="multipart/form-data">
-
-        <div class="fixeo-edit-artisan-avatar-row">
-          <div id="ef-avatar-preview" style="display:flex;align-items:center"></div>
-          <div style="flex:1">
-            <label style="font-size:.78rem;color:var(--text-muted);margin-bottom:6px;display:block">📷 Changer l'avatar <span style="color:var(--text-muted);font-size:.7rem">(optionnel — JPG, PNG, WebP)</span></label>
-            <input type="file" id="ef-avatar-file" accept="image/*" style="
-              width:100%;padding:7px 12px;
-              background:rgba(255,255,255,.05);
-              border:1px dashed rgba(255,255,255,.2);
-              border-radius:8px;color:inherit;
-              font-size:.82rem;cursor:pointer"/>
-          </div>
-        </div>
-
-        <div class="fixeo-edit-artisan-grid">
-          <div class="form-group" style="margin:0">
-            <label style="font-size:.78rem;color:var(--text-muted);margin-bottom:4px;display:block">Nom complet <span style="color:var(--primary)">*</span></label>
-            <input type="text" id="ef-name" class="filter-input" placeholder="Nom complet" required style="width:100%"/>
-          </div>
-
-          <div class="form-group" style="margin:0">
-            <label style="font-size:.78rem;color:var(--text-muted);margin-bottom:4px;display:block">Téléphone <span style="color:var(--primary)">*</span></label>
-            <input type="tel" id="ef-phone" class="filter-input" placeholder="+212 6XX XXX XXX" required style="width:100%"/>
-          </div>
-
-          <div class="form-group" style="margin:0">
-            <label style="font-size:.78rem;color:var(--text-muted);margin-bottom:4px;display:block">Email <span style="color:var(--text-muted);font-size:.7rem">(optionnel)</span></label>
-            <input type="email" id="ef-email" class="filter-input" placeholder="email@exemple.ma" style="width:100%"/>
-          </div>
-
-          <div class="form-group" style="margin:0">
-            <label style="font-size:.78rem;color:var(--text-muted);margin-bottom:4px;display:block">Spécialité <span style="color:var(--primary)">*</span></label>
-            <input type="text" id="ef-service" class="filter-input" placeholder="Ex : Plomberie" required style="width:100%"/>
-          </div>
-
-          <div class="form-group" style="margin:0">
-            <label style="font-size:.78rem;color:var(--text-muted);margin-bottom:4px;display:block">Ville</label>
-            <input type="text" id="ef-city" class="filter-input" placeholder="Ex : Casablanca" style="width:100%"/>
-          </div>
-
-          <div class="form-group" style="margin:0">
-            <label style="font-size:.78rem;color:var(--text-muted);margin-bottom:4px;display:block">Zones couvertes</label>
-            <input type="text" id="ef-zones" class="filter-input" placeholder="Casablanca, Mohammedia…" style="width:100%"/>
-          </div>
-
-          <div class="form-group" style="margin:0">
-            <label style="font-size:.78rem;color:var(--text-muted);margin-bottom:4px;display:block">Plan abonnement</label>
-            <select id="ef-subplan" class="filter-input" style="width:100%">
-              <option value="free">🆓 Gratuit</option>
-              <option value="pro">🚀 Pro</option>
-              <option value="premium">👑 Premium</option>
-            </select>
-          </div>
-
-          <div class="form-group" style="margin:0">
-            <label style="font-size:.78rem;color:var(--text-muted);margin-bottom:4px;display:block">Statut</label>
-            <select id="ef-status" class="filter-input" style="width:100%">
-              <option value="active">🟢 Actif</option>
-              <option value="inactive">🔴 Inactif</option>
-            </select>
-          </div>
-
-          <div class="form-group" style="margin:0">
-            <label style="font-size:.78rem;color:var(--text-muted);margin-bottom:4px;display:block">⭐ Note (0–5)</label>
-            <input type="number" id="ef-rating" class="filter-input" min="0" max="5" step="0.1" placeholder="4.8" style="width:100%"/>
-          </div>
-
-          <div class="form-group" style="margin:0">
-            <label style="font-size:.78rem;color:var(--text-muted);margin-bottom:4px;display:block">🎯 Missions complétées</label>
-            <input type="number" id="ef-missions" class="filter-input" min="0" step="1" placeholder="0" style="width:100%"/>
-          </div>
-        </div>
-
-        <div class="form-group" style="margin-bottom:14px">
-          <label style="font-size:.78rem;color:var(--text-muted);margin-bottom:4px;display:block">Description</label>
-          <textarea id="ef-description" class="filter-input" rows="3" placeholder="Présentation de l'artisan…" style="width:100%;resize:vertical;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:10px;color:inherit;font-family:inherit;font-size:.85rem"></textarea>
-        </div>
-
-        <div class="fixeo-edit-artisan-cert-row">
-          <label class="toggle-switch" style="flex-shrink:0">
-            <input type="checkbox" id="ef-certified"/>
-            <span class="toggle-slider"></span>
-          </label>
-          <span style="font-size:.85rem">✅ Artisan certifié Fixeo</span>
-        </div>
-
-        <div id="edit-artisan-form-error" class="alert alert-error" style="display:none;margin-bottom:0"></div>
-      </form>
-    </div>
-
-    <div class="fixeo-edit-artisan-footer">
-      <button type="button" class="btn btn-primary" id="edit-artisan-submit-btn" onclick="submitEditArtisanForm(event)">💾 Enregistrer</button>
-      <button type="button" class="btn btn-secondary" onclick="closeFixeoEditArtisanModal()">Annuler</button>
-    </div>
-  </div>
-</div>
 
 </body>
 </html>
