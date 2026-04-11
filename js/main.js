@@ -594,7 +594,7 @@ function buildOtherArtisanCard(a) {
 
       <div class="result-actions card-buttons">
         <button class="btn-primary btn-other-profile ssb2-btn-profile secondary-btn" onclick="event.stopPropagation();if(window.FixeoPublicProfileLinks){window.FixeoPublicProfileLinks.openBySourceId(${serializedArtisanId}, event);}else if(window.openArtisanModal){openArtisanModal(${serializedArtisanId});}" title="Voir le profil complet">Voir profil</button>
-        <button class="btn-secondary btn-other-reserve ssb2-btn-reserve primary-btn fixeo-reserve-btn" data-artisan-id="${a.id}" onclick="event.stopPropagation();openBookingModal(${serializedArtisanId})" title="Demander un devis à cet artisan">Demander devis</button>
+        <button class="btn-secondary btn-other-reserve ssb2-btn-reserve primary-btn fixeo-reserve-btn" data-artisan-id="${a.id}" onclick="return openHomepageArtisanBooking(${serializedArtisanId}, event)" title="Réserver cet artisan">Réserver cet artisan</button>
       </div>
     </article>`;
 }
@@ -822,6 +822,44 @@ function openArtisanModal(id) {
   `;
   openModal('artisan-modal');
 }
+
+function openHomepageArtisanBooking(artisanId, event) {
+  if (event) {
+    if (typeof event.preventDefault === 'function') event.preventDefault();
+    if (typeof event.stopPropagation === 'function') event.stopPropagation();
+    if (typeof event.stopImmediatePropagation === 'function') event.stopImmediatePropagation();
+  }
+
+  const requestedId = String(artisanId || '').trim();
+  const artisanObj = ARTISANS.find((artisan) => {
+    if (!artisan || typeof artisan !== 'object') return false;
+    const sourceIds = Array.isArray(artisan.source_ids) ? artisan.source_ids.map((value) => String(value || '').trim()) : [];
+    return [String(artisan.id || '').trim(), String(artisan.artisan_id || '').trim(), String(artisan.public_id || '').trim()].includes(requestedId) || sourceIds.includes(requestedId);
+  }) || null;
+
+  if (artisanObj && window.FixeoReservation && typeof window.FixeoReservation.open === 'function') {
+    window.FixeoReservation.open(artisanObj, false);
+    return false;
+  }
+
+  if (artisanObj) {
+    setTimeout(() => {
+      if (window.FixeoReservation && typeof window.FixeoReservation.open === 'function') {
+        window.FixeoReservation.open(artisanObj, false);
+      } else if (window.openBookingModal && window.openBookingModal !== openHomepageArtisanBooking) {
+        window.openBookingModal(artisanObj);
+      }
+    }, 250);
+    return false;
+  }
+
+  if (window.openBookingModal && window.openBookingModal !== openHomepageArtisanBooking) {
+    window.openBookingModal(requestedId);
+  }
+
+  return false;
+}
+window.openHomepageArtisanBooking = openHomepageArtisanBooking;
 
 function openBookingModal(artisanId) {
   /* ── V7: Delegate to centralized FixeoReservation module ── */
