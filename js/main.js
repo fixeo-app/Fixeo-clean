@@ -10,7 +10,7 @@ window.ARTISANS = ARTISANS;
 
 function cleanupMarketplaceLocalArtisans() {
   try {
-    const parsed = marketplaceSafeJSONParse(localStorage.getItem(MARKETPLACE_LOCAL_STORAGE_KEY) || '[]', []);
+    const parsed = marketplaceSafeJSONParse(localStorage.getItem(MARKETPLACE_aLOCAL_STORAGE_KEY) || '[]', []);
     const source = Array.isArray(parsed) ? parsed : [];
     const cleaned = source.filter(function (artisan) {
       const candidateId = marketplacePickFirst(artisan && artisan.id, artisan && artisan.artisan_id, artisan && artisan.public_id);
@@ -93,6 +93,13 @@ function normalizeMarketplaceArtisanRecord(raw) {
     ? raw.skills.filter(Boolean)
     : (service ? [service] : []);
   const badges = Array.isArray(raw.badges) ? raw.badges.filter(Boolean) : (certified ? ['verified'] : []);
+  const verified = raw.verified === true || raw.verified === 'true' || raw.verified === 'yes' || certified || badges.includes('verified');
+  const hasRatingData = marketplaceHasValue(raw.rating) || marketplaceHasValue(raw.average_rating) || marketplaceHasValue(raw.review_rating);
+  const hasPriceData = marketplaceHasValue(raw.priceFrom) || marketplaceHasValue(raw.price_from) || marketplaceHasValue(raw.price);
+  const availableNow = raw.available === true || raw.available === 'true' || availability === 'available';
+  const availabilityText = marketplaceNormalizeText(raw.availability);
+  const availabilityLabelText = marketplaceNormalizeText(raw.availabilityLabel);
+  const availableToday = raw.availableToday === true || raw.available_today === true || availabilityText.includes('today') || availabilityText.includes('aujourd') || availabilityLabelText.includes('today') || availabilityLabelText.includes('aujourd');
 
   return {
     id,
@@ -122,7 +129,12 @@ function normalizeMarketplaceArtisanRecord(raw) {
     responseTime: Number.isFinite(responseTime) ? responseTime : 15,
     status,
     createdAt: marketplacePickFirst(raw.createdAt, raw.created_at),
-    certified
+    certified,
+    verified,
+    hasRatingData,
+    hasPriceData,
+    availableNow,
+    availableToday
   };
 }
 
@@ -216,26 +228,32 @@ class SearchEngine {
     this.compareList = [];
   }
 
-  filter({ query = '', category = '', city = '', availability = '', minRating = 0, sortBy = 'rating' }) {
-    /* Helper: strip accents + lower-case for accent-insensitive comparison */
+  filter({ query = '', category = '', city = '', availability = '', minRating = 0, maxPrice = 0, verifiedOnly = false, sortBy = 'rating' }) {
     const _norm = s => (s || '').toLowerCase()
       .normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
 
+    const ratingFloor = Number(minRating) || 0;
+    const priceCeiling = Number(maxPrice) || 0;
+
     this.filtered = this.artisans.filter(a => a.status === 'active').filter(a => {
       const lang = window.i18n ? window.i18n.lang : 'fr';
-      const q    = _norm(query);
-      /* NLP-aware query: also check if query matches category name via normalised compare */
+      const q = _norm(query);
       const matchQuery = !q ||
         _norm(a.name).includes(q) ||
         _norm(a.category).includes(q) ||
         _norm(a.bio[lang] || a.bio.fr || '').includes(q) ||
         (a.skills || []).some(s => _norm(s).includes(q));
-      const matchCat  = !category || a.category === category;
-      /* Accent-insensitive city matching */
-      const matchCity = !city || _norm(a.city).includes(_norm(city));
-      const matchAvail  = !availability || a.availability === availability;
-      const matchRating = a.rating >= minRating;
-      return matchQuery && matchCat && matchCity && matchAvail && matchRating;
+      const matchCat = !category || a.category === category;
+      const matchCity = !city || !_norm(a.city) || _norm(a.city).includes(_norm(city));
+      const matchAvail = !availability || marketplaceArtisanMatchesAvailability(a, availability);
+      const ratingValue = Number(a.rating);
+      const hasRating = a.hasRatingData === true || (Number.isFinite(ratingValue) && (ratingValue > 0 || Number(a.reviewCount || 0) > 0));
+      const matchRating = !ratingFloor || !hasRating || ratingValue >= ratingFloor;
+      const priceValue = Number(a.priceFrom ?? a.price);
+      const hasPrice = a.hasPriceData === true || (Number.isFinite(priceValue) && priceValue > 0 && a.priceFrom !== undefined);
+      const matchPrice = !priceCeiling || !hasPrice || priceValue <= priceCeiling;
+      const matchVerified = !verifiedOnly || marketplaceIsVerifiedArtisan(a);
+      return matchQuery && matchCat && matchCity && matchAvail && matchRating && matchPrice && matchVerified;
     });
     const sortFns = {
       rating: (a, b) => b.rating - a.rating,
@@ -271,6 +289,488 @@ if (typeof syncOnboardingArtisans === 'function') {
 } else {
   console.warn('[Fixeo Marketplace] syncOnboardingArtisans indisponible — poursuite sans synchronisation onboarding.');
 }
+
+function marketplaceIsVerifiedArtisan(artisan) {
+  if (!artisan || typeof artisan !== 'object') return false;
+  if (artisan.verified === true || artisan.certified === true) return true;
+  const badges = Array.isArray(artisan.badges) ? artisan.badges.map((badge) => marketplaceNormalizeText(badge)) : [];
+  return badges.includes('verified') || Number(artisan.trustScore || artisan.trust_score || 0) >= 85;
+}
+
+function marketplaceArtisanMatchesAvailability(artisan, filterValue) {
+  if (!filterValue || filterValue === 'all') return true;
+  const availability = marketplaceNormalizeText(artisan && artisan.availability);
+  const label = marketplaceNormalizeText(artisan && artisan.availabilityLabel);
+  if (filterValue === 'available_now') {
+    return artisan && (artisan.availableNow === true || availability === 'available' || availability.includes('disponible') || label.includes('immed') || label.includes('maintenant'));
+  }
+  if (filterValue === 'available_today') {
+    return artisan && (artisan.availableToday === true || availability.includes('today') || availability.includes('aujourd') || label.includes('today') || label.includes('aujourd'));
+  }
+  return availability === marketplaceNormalizeText(filterValue);
+}
+
+function marketplaceGetUniqueCities(list) {
+  const source = Array.isArray(list) ? list : [];
+  const seen = new Set();
+  return source
+    .map((artisan) => String((artisan && artisan.city) || '').trim())
+    .filter((city) => {
+      if (!city) return false;
+      const key = marketplaceNormalizeText(city);
+      if (!key || seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
+    .sort((a, b) => a.localeCompare(b, 'fr', { sensitivity: 'base' }));
+}
+
+function marketplaceGetFilterControls() {
+  return {
+    searchInput: document.getElementById('search-input'),
+    catFilter: document.getElementById('filter-category'),
+    cityFilter: document.getElementById('filter-city'),
+    availFilter: document.getElementById('filter-availability'),
+    sortFilter: document.getElementById('filter-sort'),
+    ratingFilter: document.getElementById('filter-rating'),
+    priceFilter: document.getElementById('filter-price'),
+    verifiedFilter: document.getElementById('filter-verified-only'),
+    searchBtn: document.getElementById('search-btn'),
+    servicesCityFilter: document.getElementById('services-city-filter'),
+    resultsCount: document.getElementById('results-count')
+  };
+}
+
+function marketplaceBuildResultsLabel(count) {
+  return `${count} résultat${count !== 1 ? 's' : ''}`;
+}
+
+function marketplaceReadFilterState() {
+  const controls = marketplaceGetFilterControls();
+  return {
+    query: controls.searchInput?.value || '',
+    category: controls.catFilter?.value || '',
+    city: controls.cityFilter?.value || '',
+    availability: controls.availFilter?.value || '',
+    minRating: Number(controls.ratingFilter?.value || 0) || 0,
+    maxPrice: Number(controls.priceFilter?.value || 0) || 0,
+    verifiedOnly: Boolean(controls.verifiedFilter?.checked),
+    sortBy: controls.sortFilter?.value || 'rating'
+  };
+}
+
+function marketplaceHasActiveFilters(state) {
+  const current = state || marketplaceReadFilterState();
+  return Boolean(
+    current.query ||
+    current.category ||
+    current.city ||
+    current.availability ||
+    Number(current.minRating || 0) > 0 ||
+    Number(current.maxPrice || 0) > 0 ||
+    current.verifiedOnly
+  );
+}
+
+function injectMarketplaceFilterStyles() {
+  if (document.getElementById('fixeo-premium-filter-styles')) return;
+  const style = document.createElement('style');
+  style.id = 'fixeo-premium-filter-styles';
+  style.textContent = `
+    .fixeo-filters-premium-panel {
+      background: rgba(20,20,25,0.6);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 16px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+      position: relative;
+      z-index: 30;
+    }
+    .fixeo-filters-premium-shell {
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+    #fixeo-premium-filters-extra {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .85rem;
+      align-items: end;
+      padding: 1rem 1.05rem;
+      margin: 0 0 1rem;
+    }
+    .fixeo-filter-field {
+      display: flex;
+      flex-direction: column;
+      gap: .38rem;
+      min-width: 150px;
+      flex: 1 1 150px;
+    }
+    .fixeo-filter-field--checkbox {
+      min-width: 220px;
+      justify-content: end;
+    }
+    .fixeo-filter-label {
+      font-size: .76rem;
+      font-weight: 700;
+      letter-spacing: .02em;
+      color: rgba(255,255,255,.72);
+      text-transform: uppercase;
+    }
+    #filter-category,
+    #filter-city,
+    #filter-availability,
+    #filter-sort,
+    #filter-rating,
+    #filter-price,
+    .fixeo-premium-input,
+    .fixeo-premium-select {
+      width: 100%;
+      min-height: 48px;
+      padding: .82rem .95rem;
+      background: rgba(20,20,25,0.98) !important;
+      color: #ffffff !important;
+      border: 1px solid rgba(255,255,255,0.08) !important;
+      border-radius: 12px !important;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6) !important;
+      outline: none;
+      transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease, opacity .2s ease;
+      position: relative;
+      z-index: 9999;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+    #filter-category option,
+    #filter-city option,
+    #filter-availability option,
+    #filter-sort option,
+    #filter-rating option,
+    #filter-price option,
+    .fixeo-premium-select option {
+      background: rgba(20,20,25,0.98);
+      color: #ffffff;
+    }
+    #filter-category:hover,
+    #filter-city:hover,
+    #filter-availability:hover,
+    #filter-sort:hover,
+    #filter-rating:hover,
+    #filter-price:hover,
+    .fixeo-premium-input:hover,
+    .fixeo-premium-select:hover {
+      background: rgba(255,255,255,0.05) !important;
+    }
+    #filter-category:focus,
+    #filter-city:focus,
+    #filter-availability:focus,
+    #filter-sort:focus,
+    #filter-rating:focus,
+    #filter-price:focus,
+    .fixeo-premium-input:focus,
+    .fixeo-premium-select:focus {
+      border-color: rgba(255,0,120,0.35) !important;
+      box-shadow: 0 0 0 3px rgba(255,0,120,0.15), 0 10px 30px rgba(0,0,0,0.6) !important;
+      animation: fixeoFilterDropdownIn .2s ease;
+    }
+    .fixeo-filter-checkbox {
+      display: inline-flex;
+      align-items: center;
+      gap: .7rem;
+      min-height: 48px;
+      padding: 0 1rem;
+      background: rgba(20,20,25,0.98);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+      cursor: pointer;
+      user-select: none;
+      font-weight: 600;
+    }
+    .fixeo-filter-checkbox input {
+      accent-color: #ff0078;
+      width: 18px;
+      height: 18px;
+      margin: 0;
+    }
+    .fixeo-filter-reset {
+      min-height: 48px;
+      padding: 0 1rem;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.05);
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      transition: transform .2s ease, background .2s ease;
+    }
+    .fixeo-filter-reset:hover {
+      background: rgba(255,0,120,0.15);
+      transform: translateY(-1px);
+    }
+    .fixeo-filter-results {
+      margin-left: auto;
+      min-height: 48px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 1rem;
+      border-radius: 999px;
+      background: rgba(255,0,120,0.15);
+      color: #fff;
+      font-weight: 800;
+      border: 1px solid rgba(255,255,255,0.08);
+      white-space: nowrap;
+    }
+    .artisan-card[data-filter-hidden='true'] {
+      display: none !important;
+    }
+    @keyframes fixeoFilterDropdownIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @media (max-width: 768px) {
+      #fixeo-premium-filters-extra {
+        gap: .75rem;
+      }
+      .fixeo-filter-field,
+      .fixeo-filter-field--checkbox,
+      .fixeo-filter-results,
+      .fixeo-filter-reset {
+        width: 100%;
+        min-width: 100%;
+      }
+      .fixeo-filter-results {
+        justify-content: flex-start;
+        margin-left: 0;
+      }
+    }
+  `;
+  document.head.appendChild(style);
+}
+
+function marketplaceFindPrimaryFilterShell() {
+  const controls = [
+    document.getElementById('search-input'),
+    document.getElementById('search-btn'),
+    document.getElementById('filter-category'),
+    document.getElementById('filter-city'),
+    document.getElementById('filter-availability'),
+    document.getElementById('filter-sort')
+  ].filter(Boolean);
+  if (!controls.length) return null;
+  let ancestor = controls[0].parentElement;
+  while (ancestor && ancestor !== document.body) {
+    if (controls.every((element) => ancestor.contains(element))) return ancestor;
+    ancestor = ancestor.parentElement;
+  }
+  return controls[0].parentElement || null;
+}
+
+function enhanceMarketplaceExistingFilterFields() {
+  injectMarketplaceFilterStyles();
+  const shell = marketplaceFindPrimaryFilterShell();
+  if (shell) {
+    shell.classList.add('fixeo-filters-premium-panel', 'fixeo-filters-premium-shell');
+  }
+  [
+    document.getElementById('search-input'),
+    document.getElementById('filter-category'),
+    document.getElementById('filter-city'),
+    document.getElementById('filter-availability'),
+    document.getElementById('filter-sort')
+  ].filter(Boolean).forEach((element) => {
+    element.classList.add(element.tagName === 'SELECT' ? 'fixeo-premium-select' : 'fixeo-premium-input');
+  });
+}
+
+function populateMarketplaceCityOptions() {
+  const controls = marketplaceGetFilterControls();
+  const cities = marketplaceGetUniqueCities(ARTISANS);
+  const nextCities = cities.length ? cities : ['Toutes les villes'];
+  [controls.cityFilter, controls.servicesCityFilter].forEach((select) => {
+    if (!select) return;
+    const previous = select.value || '';
+    select.innerHTML = '';
+    const allOption = document.createElement('option');
+    allOption.value = '';
+    allOption.textContent = 'Toutes les villes';
+    select.appendChild(allOption);
+    nextCities.forEach((city) => {
+      if (!city || marketplaceNormalizeText(city) === marketplaceNormalizeText('Toutes les villes')) return;
+      const option = document.createElement('option');
+      option.value = city;
+      option.textContent = city;
+      select.appendChild(option);
+    });
+    const hasPrevious = Array.from(select.options).some((option) => option.value === previous);
+    select.value = hasPrevious ? previous : '';
+  });
+}
+
+function ensureMarketplaceAvailabilityOptions() {
+  const { availFilter } = marketplaceGetFilterControls();
+  if (!availFilter) return;
+  const previous = availFilter.value || '';
+  const options = [
+    { value: '', label: 'Toutes' },
+    { value: 'available_now', label: 'Disponible maintenant' },
+    { value: 'available_today', label: "Disponible aujourd'hui" }
+  ];
+  availFilter.innerHTML = '';
+  options.forEach(({ value, label }) => {
+    const option = document.createElement('option');
+    option.value = value;
+    option.textContent = label;
+    availFilter.appendChild(option);
+  });
+  const hasPrevious = options.some((option) => option.value === previous);
+  availFilter.value = hasPrevious ? previous : '';
+}
+
+function ensureMarketplaceAdvancedFilters() {
+  const container = document.getElementById('artisans-container');
+  if (!container || document.getElementById('fixeo-premium-filters-extra')) return;
+  const panel = document.createElement('div');
+  panel.id = 'fixeo-premium-filters-extra';
+  panel.className = 'fixeo-filters-premium-panel';
+  panel.innerHTML = `
+    <div class="fixeo-filter-field">
+      <span class="fixeo-filter-label">Note minimum</span>
+      <select id="filter-rating" class="fixeo-premium-select" aria-label="Note minimum">
+        <option value="">Toutes les notes</option>
+        <option value="4">4+</option>
+        <option value="3">3+</option>
+        <option value="2">2+</option>
+      </select>
+    </div>
+    <div class="fixeo-filter-field">
+      <span class="fixeo-filter-label">Prix maximum</span>
+      <select id="filter-price" class="fixeo-premium-select" aria-label="Prix maximum">
+        <option value="">Tous les prix</option>
+        <option value="100">&lt;100</option>
+        <option value="200">&lt;200</option>
+        <option value="300">&lt;300</option>
+        <option value="500">&lt;500</option>
+      </select>
+    </div>
+    <div class="fixeo-filter-field fixeo-filter-field--checkbox">
+      <span class="fixeo-filter-label">Qualité</span>
+      <label class="fixeo-filter-checkbox" for="filter-verified-only">
+        <input type="checkbox" id="filter-verified-only" />
+        <span>Artisans vérifiés uniquement</span>
+      </label>
+    </div>
+    <button type="button" id="fixeo-filters-reset" class="fixeo-filter-reset">Réinitialiser</button>
+    <div class="fixeo-filter-results" id="fixeo-filter-results-count">0 résultat</div>
+  `;
+  container.parentNode.insertBefore(panel, container);
+}
+
+function marketplaceSyncResultsCount(count) {
+  const label = marketplaceBuildResultsLabel(count);
+  const controls = marketplaceGetFilterControls();
+  if (controls.resultsCount) controls.resultsCount.textContent = label;
+  const premiumCount = document.getElementById('fixeo-filter-results-count');
+  if (premiumCount) premiumCount.textContent = label;
+}
+
+function marketplaceSyncCardsVisibility(results, state) {
+  const container = document.getElementById('artisans-container');
+  const emptyEl = document.getElementById('no-artisan');
+  if (!container) return;
+  const allowedIds = new Set((Array.isArray(results) ? results : []).map((artisan) => String(artisan && artisan.id)));
+  container.querySelectorAll('.artisan-card[data-id]').forEach((card) => {
+    const visible = allowedIds.has(String(card.getAttribute('data-id') || ''));
+    if (visible) {
+      card.removeAttribute('data-filter-hidden');
+      card.hidden = false;
+      card.style.removeProperty('display');
+    } else {
+      card.setAttribute('data-filter-hidden', 'true');
+      card.hidden = true;
+      card.style.display = 'none';
+    }
+  });
+  if (emptyEl) {
+    emptyEl.style.display = results.length ? 'none' : 'block';
+  }
+  const seeMoreWrap = document.getElementById('other-see-more-wrap');
+  if (seeMoreWrap) {
+    if (marketplaceHasActiveFilters(state)) {
+      seeMoreWrap.style.display = 'none';
+    } else {
+      _updateOtherSeeMoreBtn();
+    }
+  }
+  marketplaceSyncResultsCount(results.length);
+}
+
+function applyMarketplaceFilters(options = {}) {
+  if (!window.searchEngine) return [];
+  const state = marketplaceReadFilterState();
+  const hasActive = marketplaceHasActiveFilters(state);
+  const container = document.getElementById('artisans-container');
+  if (!container) return window.searchEngine.filter(state);
+
+  if (hasActive && !window.__FIXEO_FILTERS_FORCE_ALL__) {
+    window.__FIXEO_FILTERS_FORCE_ALL__ = true;
+    renderArtisans(ARTISANS, { forceAll: true });
+  } else if (!hasActive && window.__FIXEO_FILTERS_FORCE_ALL__) {
+    window.__FIXEO_FILTERS_FORCE_ALL__ = false;
+    renderArtisans(ARTISANS);
+  }
+
+  const results = window.searchEngine.filter(state);
+  marketplaceSyncCardsVisibility(results, state);
+
+  if (options.syncServiceCategory && typeof window.renderServiceArtisans === 'function') {
+    const activeCategory = document.querySelector('.chip.active')?.dataset.category || 'all';
+    window.renderServiceArtisans(activeCategory);
+  }
+
+  return results;
+}
+
+function resetMarketplaceFilters() {
+  const controls = marketplaceGetFilterControls();
+  if (controls.searchInput) controls.searchInput.value = '';
+  if (controls.catFilter) controls.catFilter.value = '';
+  if (controls.cityFilter) controls.cityFilter.value = '';
+  if (controls.availFilter) controls.availFilter.value = '';
+  if (controls.sortFilter) controls.sortFilter.value = 'rating';
+  if (controls.ratingFilter) controls.ratingFilter.value = '';
+  if (controls.priceFilter) controls.priceFilter.value = '';
+  if (controls.verifiedFilter) controls.verifiedFilter.checked = false;
+  if (controls.servicesCityFilter) controls.servicesCityFilter.value = '';
+  const servicesLabel = document.getElementById('services-city-label');
+  const servicesName = document.getElementById('services-city-name');
+  if (servicesLabel) servicesLabel.style.display = 'none';
+  if (servicesName) servicesName.textContent = '';
+  const activeChip = document.querySelector('.chip.active');
+  if (activeChip && activeChip.dataset.category !== 'all') {
+    document.querySelectorAll('.chip').forEach((chip) => chip.classList.remove('active'));
+    document.querySelector('.chip[data-category="all"]')?.classList.add('active');
+  }
+  window.__FIXEO_FILTERS_FORCE_ALL__ = false;
+  renderArtisans(ARTISANS);
+  applyMarketplaceFilters({ syncServiceCategory: true });
+}
+window.resetMarketplaceFilters = resetMarketplaceFilters;
+
+function refreshMarketplaceFromCurrentFilters() {
+  if (document.readyState === 'loading') return;
+  enhanceMarketplaceExistingFilterFields();
+  ensureMarketplaceAdvancedFilters();
+  populateMarketplaceCityOptions();
+  ensureMarketplaceAvailabilityOptions();
+  requestAnimationFrame(() => {
+    applyMarketplaceFilters({ syncServiceCategory: false });
+  });
+}
+window.refreshMarketplaceFromCurrentFilters = refreshMarketplaceFromCurrentFilters;
+
 window.searchEngine = new SearchEngine();
 window.renderArtisans = renderArtisans;  // Exposed for SmartSearch v7
 
@@ -608,6 +1108,11 @@ function buildOtherArtisanCard(a) {
 
 // ── UPDATE OTHER SEE-MORE BUTTON ──────────────────────────────
 function _updateOtherSeeMoreBtn() {
+  if (window.__FIXEO_FILTERS_FORCE_ALL__) {
+    const forcedWrap = document.getElementById('other-see-more-wrap');
+    if (forcedWrap) forcedWrap.style.display = 'none';
+    return;
+  }
   // Sync count badge in separator banner
   const badge = document.getElementById('other-artisans-count-badge');
   if (badge && _otherArtisansList.length > 0) {
@@ -677,6 +1182,7 @@ function renderArtisans(list, options = {}) {
   const loadingEl = document.getElementById('loading-artisans');
   const emptyEl   = document.getElementById('no-artisan');
   const preserveShown = Boolean(options.preserveShown);
+  const forceAll = Boolean(options.forceAll);
   const incomingList = Array.isArray(list) ? list : [];
   const resultsPageManager = window.FixeoResultsPage;
   const preparedList = resultsPageManager && typeof resultsPageManager.prepareList === 'function' && !options.skipResultsPageFilters
@@ -710,7 +1216,11 @@ function renderArtisans(list, options = {}) {
     return;
   }
 
-  const visibleList = smartSortedList.slice(0, _otherShownCount);
+  const visibleList = forceAll ? smartSortedList : smartSortedList.slice(0, _otherShownCount);
+  if (forceAll) {
+    _otherExpanded = true;
+    _otherShownCount = smartSortedList.length;
+  }
   container.innerHTML = visibleList.map(a => buildOtherArtisanCard(a)).join('');
   _updateOtherSeeMoreBtn();
 
@@ -1070,12 +1580,9 @@ function mapFilterByCity(city) {
     leafletMap.invalidateSize();
   }
   const fc = document.getElementById('filter-city');
-  if (fc) fc.value = city;
+  if (fc) fc.value = city || '';
   if (window.searchEngine) {
-    const r = window.searchEngine.filter({ city });
-    renderArtisans(r);
-    const cnt = document.getElementById('results-count');
-    if (cnt) cnt.textContent = r.length+' artisan'+(r.length!==1?'s':'')+' trouvé'+(r.length!==1?'s':'');
+    applyMarketplaceFilters();
   }
 }
 window.mapFilterByCity = mapFilterByCity;
@@ -1113,61 +1620,59 @@ function sendMessage() {
 
 // ── SEARCH INIT ───────────────────────────────────────────────
 function initSearch() {
-  const searchInput = document.getElementById('search-input');
-  const catFilter = document.getElementById('filter-category');
-  const cityFilter = document.getElementById('filter-city');
-  const availFilter = document.getElementById('filter-availability');
-  const sortFilter = document.getElementById('filter-sort');
-  const searchBtn = document.getElementById('search-btn');
+  enhanceMarketplaceExistingFilterFields();
+  ensureMarketplaceAdvancedFilters();
+  populateMarketplaceCityOptions();
+  ensureMarketplaceAvailabilityOptions();
 
-  const doSearch = () => {
-    const results = window.searchEngine.filter({
-      query: searchInput?.value || '',
-      category: catFilter?.value || '',
-      city: cityFilter?.value || '',
-      availability: availFilter?.value || '',
-      sortBy: sortFilter?.value || 'rating',
+  const controls = marketplaceGetFilterControls();
+  const doSearch = () => applyMarketplaceFilters();
+
+  if (!window.__FIXEO_FILTER_EVENTS_BOUND__) {
+    controls.searchBtn?.addEventListener('click', doSearch);
+    controls.searchInput?.addEventListener('input', doSearch);
+    controls.searchInput?.addEventListener('keyup', e => { if (e.key === 'Enter') doSearch(); });
+    [controls.catFilter, controls.cityFilter, controls.availFilter, controls.sortFilter].forEach(el => el?.addEventListener('change', doSearch));
+
+    document.addEventListener('change', (event) => {
+      const target = event.target;
+      if (!target) return;
+      if (target.id === 'filter-rating' || target.id === 'filter-price' || target.id === 'filter-verified-only') {
+        doSearch();
+      }
     });
-    renderArtisans(results);
-    const count = document.getElementById('results-count');
-    if (count) count.textContent = `${results.length} artisan${results.length !== 1 ? 's' : ''} trouvé${results.length !== 1 ? 's' : ''}`;
-  };
 
-  searchBtn?.addEventListener('click', doSearch);
-  searchInput?.addEventListener('keyup', e => { if (e.key === 'Enter') doSearch(); });
-  [catFilter, cityFilter, availFilter, sortFilter].forEach(el => el?.addEventListener('change', doSearch));
-
-  // Hero search bar — legacy selects removed, now handled by SmartSearch v7
-  // SmartSearch.js syncs its own selects with #filter-category and #filter-city automatically.
-
-  // Services section city filter
-  const servicesCityFilter = document.getElementById('services-city-filter');
-  servicesCityFilter?.addEventListener('change', () => {
-    const city = servicesCityFilter.value;
-    const label = document.getElementById('services-city-label');
-    const nameSpan = document.getElementById('services-city-name');
-    const activeCategory = document.querySelector('.chip.active')?.dataset.category || 'all';
-    if (city) {
-      if (label) label.style.display = 'inline-flex';
-      if (nameSpan) nameSpan.textContent = city;
-      if (cityFilter) cityFilter.value = city;
-    } else {
-      if (label) label.style.display = 'none';
-      if (cityFilter) cityFilter.value = '';
-    }
-    const results = window.searchEngine.filter({
-      query: searchInput?.value || '',
-      category: activeCategory === 'all' ? '' : activeCategory,
-      city,
-      availability: availFilter?.value || '',
-      sortBy: sortFilter?.value || 'rating',
+    document.addEventListener('click', (event) => {
+      const resetBtn = event.target && event.target.closest ? event.target.closest('#fixeo-filters-reset') : null;
+      if (resetBtn) {
+        resetBtn.preventDefault();
+        resetMarketplaceFilters();
+      }
     });
-    renderArtisans(results);
-    const count = document.getElementById('results-count');
-    if (count) count.textContent = `${results.length} artisan${results.length !== 1 ? 's' : ''} trouvé${results.length !== 1 ? 's' : ''}`;
-    if (typeof window.renderServiceArtisans === 'function') {
-      window.renderServiceArtisans(activeCategory);
-    }
+
+    controls.servicesCityFilter?.addEventListener('change', () => {
+      const city = controls.servicesCityFilter.value;
+      const label = document.getElementById('services-city-label');
+      const nameSpan = document.getElementById('services-city-name');
+      const activeCategory = document.querySelector('.chip.active')?.dataset.category || 'all';
+      if (city) {
+        if (label) label.style.display = 'inline-flex';
+        if (nameSpan) nameSpan.textContent = city;
+        if (controls.cityFilter) controls.cityFilter.value = city;
+      } else {
+        if (label) label.style.display = 'none';
+        if (nameSpan) nameSpan.textContent = '';
+        if (controls.cityFilter) controls.cityFilter.value = '';
+      }
+      if (controls.catFilter) controls.catFilter.value = activeCategory === 'all' ? '' : activeCategory;
+      applyMarketplaceFilters({ syncServiceCategory: true });
+    });
+
+    window.__FIXEO_FILTER_EVENTS_BOUND__ = true;
+  }
+
+  requestAnimationFrame(() => {
+    applyMarketplaceFilters();
   });
 }
 
@@ -1324,10 +1829,7 @@ function initCategoryChips() {
       const cityFilter = document.getElementById('filter-city');
       if (catFilter) { catFilter.value = cat === 'all' ? '' : cat; }
       if (cityFilter) { cityFilter.value = selectedCity; }
-      const results = window.searchEngine.filter({ category: cat === 'all' ? '' : cat, city: selectedCity });
-      renderArtisans(results);
-      const count = document.getElementById('results-count');
-      if (count) count.textContent = `${results.length} artisan${results.length !== 1 ? 's' : ''} trouvé${results.length !== 1 ? 's' : ''}`;
+      applyMarketplaceFilters({ syncServiceCategory: true });
       if (typeof window.renderServiceArtisans === 'function') {
         window.renderServiceArtisans(cat);
       }
@@ -1424,6 +1926,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initResponsiveArtisanGrid();
   if (!window.__FIXEO_SERVICE_SEO_PAGE__) {
     renderArtisans(ARTISANS);
+    refreshMarketplaceFromCurrentFilters();
   }
   setTimeout(animateCounters, 500);
   setTimeout(initAnimations, 300);
