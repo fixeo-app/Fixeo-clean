@@ -144,26 +144,33 @@
 
       // Dedup: track recently shown toast keys
       var _shown = new Set();
-      var _origPush = ns.push.bind(ns);
-      ns.push = function(notif) {
-        var key = (notif.type || '') + '|' + (notif.title || '') + '|' + (notif.body || notif.message || '');
-        if (_shown.has(key)) return;
-        _shown.add(key);
-        setTimeout(function() { _shown.delete(key); }, 6000);
-        return _origPush(notif);
-      };
+      if (typeof ns.push === 'function') {
+        var _origPush = ns.push.bind(ns);
+        ns.push = function(notif) {
+          var key = (notif.type || '') + '|' + (notif.title || '') + '|' + (notif.body || notif.message || '');
+          if (_shown.has(key)) return;
+          _shown.add(key);
+          setTimeout(function() { _shown.delete(key); }, 6000);
+          return _origPush(notif);
+        };
+      }
 
       // Max 4 toasts at once
-      var _origToast = ns.toast.bind(ns);
-      ns.toast = function(opts) {
-        if (ns.container) {
-          var existing = ns.container.querySelectorAll('.toast');
-          if (existing.length >= 4) {
-            existing[0].remove();
+      var toastMethod = typeof ns.toast === 'function'
+        ? 'toast'
+        : (typeof ns.showToast === 'function' ? 'showToast' : '');
+      if (toastMethod) {
+        var _origToast = ns[toastMethod].bind(ns);
+        ns[toastMethod] = function(opts) {
+          if (ns.container) {
+            var existing = ns.container.querySelectorAll('.toast');
+            if (existing.length >= 4) {
+              existing[0].remove();
+            }
           }
-        }
-        return _origToast(opts);
-      };
+          return _origToast(opts);
+        };
+      }
 
     }, 200);
   });
