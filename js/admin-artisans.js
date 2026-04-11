@@ -401,19 +401,27 @@ async function submitArtisanForm(e) {
 }
 
 /* ══════════════════════════════════════════════════════════════
-   EDIT ARTISAN — Ouvrir / Fermer le modal d'édition
+   EDIT ARTISAN — Ouvrir le modal d'édition
 ══════════════════════════════════════════════════════════════ */
-function closeEditArtisanModal() {
-  const modal = document.getElementById('edit-artisan-modal');
+function _openEditArtisanOverlay() {
+  const modal = document.getElementById('fixeo-edit-artisan-overlay');
   if (!modal) return;
 
-  if (typeof closeModal === 'function') {
-    closeModal('edit-artisan-modal');
-  } else {
-    modal.classList.remove('open');
-    modal.setAttribute('aria-hidden', 'true');
-    modal.style.display = 'none';
-  }
+  const body = document.getElementById('fixeo-edit-artisan-body');
+
+  modal.classList.add('is-open');
+  modal.setAttribute('aria-hidden', 'false');
+
+  if (body) body.scrollTop = 0;
+}
+
+
+function closeFixeoEditArtisanModal() {
+  const modal = document.getElementById('fixeo-edit-artisan-overlay');
+  if (!modal) return;
+
+  modal.classList.remove('is-open');
+  modal.setAttribute('aria-hidden', 'true');
 }
 
 function openEditArtisanModal(id) {
@@ -461,54 +469,8 @@ function openEditArtisanModal(id) {
   const title = document.getElementById('edit-artisan-modal-title');
   if (title) title.textContent = `✏️ Modifier — ${a.name}`;
 
-  const modal = document.getElementById('edit-artisan-modal');
-  if (!modal) return;
-
-  const dialog = modal.querySelector('.modal-dialog');
-  const body = modal.querySelector('.modal-body');
-
-  if (modal.dataset.editArtisanBound !== 'true') {
-    modal.dataset.editArtisanBound = 'true';
-
-    modal.addEventListener('click', function (event) {
-      if (event.target === modal) closeEditArtisanModal();
-    });
-
-    modal.querySelectorAll('.modal-close, .modal-footer .btn.btn-secondary').forEach(function (btn) {
-      btn.addEventListener('click', function (event) {
-        event.preventDefault();
-        closeEditArtisanModal();
-      });
-    });
-  }
-
-  modal.style.display = 'flex';
-  modal.style.position = 'fixed';
-  modal.style.inset = '0';
-  modal.style.alignItems = 'center';
-  modal.style.justifyContent = 'center';
-  modal.style.padding = '16px';
-  modal.style.background = 'rgba(0,0,0,.65)';
-  modal.style.overflowY = 'auto';
-  modal.classList.add('open');
-  modal.setAttribute('aria-hidden', 'false');
-
-  if (dialog) {
-    dialog.style.position = 'relative';
-    dialog.style.margin = 'auto';
-    dialog.style.maxHeight = 'calc(100vh - 48px)';
-    dialog.style.overflow = 'hidden';
-    dialog.scrollTop = 0;
-  }
-
-  if (body) {
-    body.style.overflowY = 'auto';
-    body.scrollTop = 0;
-  }
+  _openEditArtisanOverlay();
 }
-
-window.openEditArtisanModal = openEditArtisanModal;
-window.closeEditArtisanModal = closeEditArtisanModal;
 
 /* ══════════════════════════════════════════════════════════════
    EDIT ARTISAN — Soumettre le formulaire de modification
@@ -586,7 +548,7 @@ async function submitEditArtisanForm(e) {
       _updateArtisansSidebarCount();
       _updateArtisansKPIs(_artisansList);
 
-      if (typeof closeModal === 'function') closeModal('edit-artisan-modal');
+      closeFixeoEditArtisanModal();
       if (typeof showToast === 'function')
         showToast(`✅ Artisan "${name}" mis à jour !`, 'success');
 
@@ -611,7 +573,7 @@ async function submitEditArtisanForm(e) {
     _updateArtisansSidebarCount();
     _updateArtisansKPIs(_artisansList);
 
-    if (typeof closeModal === 'function') closeModal('edit-artisan-modal');
+    closeFixeoEditArtisanModal();
     if (typeof showToast === 'function')
       showToast('⚠️ Mis à jour en local (API hors ligne)', 'warning');
   }
@@ -727,4 +689,26 @@ function _bindTrustRefresh() {
 function initArtisansAdmin() {
   _bindTrustRefresh();
   loadArtisans();
+
+  const modal = document.getElementById('fixeo-edit-artisan-overlay');
+  if (modal && modal.dataset.overlayBound !== 'true') {
+    modal.dataset.overlayBound = 'true';
+    modal.addEventListener('click', (event) => {
+      if (event.target !== modal) return;
+      closeFixeoEditArtisanModal();
+    });
+  }
+
+  if (!window.__fixeoEditArtisanEscBound) {
+    window.__fixeoEditArtisanEscBound = true;
+    document.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape') return;
+      const overlay = document.getElementById('fixeo-edit-artisan-overlay');
+      if (overlay && overlay.classList.contains('is-open')) {
+        closeFixeoEditArtisanModal();
+      }
+    });
+  }
 }
+
+window.closeFixeoEditArtisanModal = closeFixeoEditArtisanModal;
