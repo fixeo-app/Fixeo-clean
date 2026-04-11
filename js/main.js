@@ -567,24 +567,6 @@ function buildOtherArtisanCard(a) {
   const pendingBadge = verificationPending ? `<span class="badge pending">${a.verificationLabel || 'Profil en vérification'}</span>` : '';
   const responseLabel = responseTime > 0 ? `Réponse : ${responseTime} min` : 'Réponse rapide';
   const serializedArtisanId = JSON.stringify(String(a.id));
-  const serializedArtisanForBooking = JSON.stringify({
-    id: a.id,
-    name: a.name,
-    initials: a.initials,
-    category: a.category,
-    city: a.city,
-    rating: a.rating,
-    reviewCount: a.reviewCount,
-    trustScore: a.trustScore,
-    priceFrom: a.priceFrom,
-    priceUnit: a.priceUnit,
-    availability: a.availability,
-    badges: Array.isArray(a.badges) ? a.badges : [],
-    skills: Array.isArray(a.skills) ? a.skills : [],
-    phone: a.phone || '',
-    email: a.email || '',
-    bio: a.bio || { fr: '' }
-  });
 
   return `
     <article class="artisan-card other-card discover-harmonized-card result-card" data-id="${a.id}">
@@ -612,7 +594,7 @@ function buildOtherArtisanCard(a) {
 
       <div class="result-actions card-buttons">
         <button class="btn-primary btn-other-profile ssb2-btn-profile secondary-btn" onclick="event.stopPropagation();if(window.FixeoPublicProfileLinks){window.FixeoPublicProfileLinks.openBySourceId(${serializedArtisanId}, event);}else if(window.openArtisanModal){openArtisanModal(${serializedArtisanId});}" title="Voir le profil complet">Voir profil</button>
-        <button class="btn-secondary btn-other-reserve ssb2-btn-reserve primary-btn fixeo-reserve-btn" data-artisan-id="${a.id}" onclick="event.stopPropagation();openBookingModal(${serializedArtisanForBooking})" title="Réserver cet artisan">Réserver cet artisan</button>
+        <button class="btn-secondary btn-other-reserve ssb2-btn-reserve primary-btn fixeo-reserve-btn" data-artisan-id="${a.id}" onclick="return openHomepageArtisanBooking(${serializedArtisanId}, event)" title="Réserver cet artisan">Réserver cet artisan</button>
       </div>
     </article>`;
 }
@@ -840,6 +822,50 @@ function openArtisanModal(id) {
   `;
   openModal('artisan-modal');
 }
+
+function openHomepageArtisanBooking(artisanId, event) {
+  if (event) {
+    if (typeof event.preventDefault === 'function') event.preventDefault();
+    if (typeof event.stopPropagation === 'function') event.stopPropagation();
+    if (typeof event.stopImmediatePropagation === 'function') event.stopImmediatePropagation();
+  }
+
+  const requestedId = String(artisanId || '').trim();
+  if (!requestedId) return false;
+
+  const artisanObj = ARTISANS.find((artisan) => {
+    if (!artisan || typeof artisan !== 'object') return false;
+    const sourceIds = Array.isArray(artisan.source_ids)
+      ? artisan.source_ids.map((value) => String(value || '').trim()).filter(Boolean)
+      : [];
+    return [
+      String(artisan.id || '').trim(),
+      String(artisan.artisan_id || '').trim(),
+      String(artisan.public_id || '').trim()
+    ].includes(requestedId) || sourceIds.includes(requestedId);
+  }) || null;
+
+  if (!artisanObj) {
+    if (window.openBookingModal && window.openBookingModal !== openHomepageArtisanBooking) {
+      window.openBookingModal(requestedId);
+    }
+    return false;
+  }
+
+  if (window.FixeoReservation && typeof window.FixeoReservation.open === 'function') {
+    window.FixeoReservation.open(artisanObj, false);
+    return false;
+  }
+
+  setTimeout(() => {
+    if (window.FixeoReservation && typeof window.FixeoReservation.open === 'function') {
+      window.FixeoReservation.open(artisanObj, false);
+    }
+  }, 300);
+
+  return false;
+}
+window.openHomepageArtisanBooking = openHomepageArtisanBooking;
 
 function openBookingModal(artisanId) {
   /* ── V7: Delegate to centralized FixeoReservation module ── */
