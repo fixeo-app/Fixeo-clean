@@ -7,6 +7,7 @@
   var REVIEWS_BATCH = 5;
   var DEFAULT_PROFILE_DESCRIPTION = 'Artisan vérifié Fixeo. Voir avis clients, Trust Score, disponibilité et demander intervention.';
   var MARKETPLACE_FALLBACK_URL = '/index.html#artisans-section';
+  var MARKETPLACE_LOCAL_STORAGE_KEY = 'fixeo_admin_artisans_v21';
 
   function safeJSONParse(value, fallback) {
     try {
@@ -14,22 +15,8 @@
       return parsed == null ? fallback : parsed;
     } catch (error) {
       return fallback;
- 
+    }
   }
- function loadRegistry() {
-  var local = safeJSONParse(localStorage.getItem(REGISTRY_KEY), []);
-  if (local && local.length) return local;
-
-  if (window.FIXEO_ARTISANS_REGISTRY && window.FIXEO_ARTISANS_REGISTRY.length) {
-    return window.FIXEO_ARTISANS_REGISTRY;
-  }
-
-  if (window.FIXEO_ARTISANS && window.FIXEO_ARTISANS.length) {
-    return window.FIXEO_ARTISANS;
-  }
-
-  return [];
-}
 
   function escapeHtml(value) {
     return String(value == null ? '' : value).replace(/[&<>"']/g, function (char) {
@@ -72,6 +59,11 @@
       .replace(/^-+|-+$/g, '');
   }
 
+  function isDemoIdentifier(value) {
+    var normalized = String(value || '').trim().toLowerCase();
+    return /^art_demo_/i.test(normalized) || /^(?:[1-9]|1[0-2])$/.test(normalized);
+  }
+
   function loadSlugMap() {
     var parsed = safeJSONParse(localStorage.getItem(SLUG_MAP_KEY) || '{}', {});
     if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return {};
@@ -79,22 +71,24 @@
     Object.keys(parsed).forEach(function (key) {
       var slug = slugify(key);
       var publicId = String(parsed[key] || '').trim();
-      if (slug && publicId) normalized[slug] = publicId;
+      if (slug && publicId && !isDemoIdentifier(publicId)) normalized[slug] = publicId;
     });
     return normalized;
   }
 
-  function extractSlugFromPathname(pathname) {
-  if (!pathname) return '';
-
-  var match = pathname.match(/\/artisan\/([^\/\?]+)/i);
-  if (match && match[1]) {
-    return slugify(match[1].trim());
+  function persistSlugMap(slugMap) {
+    localStorage.setItem(SLUG_MAP_KEY, JSON.stringify(slugMap && typeof slugMap === 'object' ? slugMap : {}));
   }
 
-  var parts = pathname.split('/').filter(Boolean);
-  return parts.length ? slugify(parts[parts.length - 1].trim()) : '';
-}
+  function extractSlugFromPathname(pathname) {
+    var match = String(pathname || '').match(/^\/artisan\/([^/?#]+)/i);
+    if (!match) return '';
+    try {
+      return slugify(decodeURIComponent(match[1] || ''));
+    } catch (error) {
+      return slugify(match[1] || '');
+    }
+  }
 
   function normalizeStatus(value) {
     var normalized = normalizeText(value || '');
@@ -218,7 +212,11 @@
 
   function loadRegistry() {
     var parsed = safeJSONParse(localStorage.getItem(REGISTRY_KEY) || '[]', []);
-    return Array.isArray(parsed) ? parsed : [];
+    parsed = Array.isArray(parsed) ? parsed : [];
+    return parsed.filter(function (entry) {
+      var publicId = pickValue(entry && entry.public_id, entry && entry.id);
+      return !isDemoIdentifier(publicId);
+    });
   }
 
   function normalizeRegistryEntry(entry) {
@@ -229,42 +227,126 @@
       name: pickValue(entry && entry.name),
       category: pickValue(entry && entry.category),
       city: pickValue(entry && entry.city),
+      phone: pickValue(entry && entry.phone),
+      email: pickValue(entry && entry.email),
       avatar: pickValue(entry && entry.avatar),
       availability: pickValue(entry && entry.availability),
       trust_score: pickNumber(entry && entry.trust_score),
+      trust_level: pickValue(entry && entry.trust_level, entry && entry.trustLevel),
       created_at: pickValue(entry && entry.created_at)
     };
   }
 
-function findPublicIdBySlug(slug) {
-  var normalizedSlug = slugify(slug);
-  if (!normalizedSlug) return '';
 
-  var registry = loadRegistry();
-
-  var match = registry.find(function(entry) {
-    return slugify(
-      entry.slug ||
-      entry.name ||
-      entry.title ||
-      entry.business_name ||
-      ''
-    ) === normalizedSlug;
-  });
-
-  if (match) {
-    return (
-      match.public_id ||
-      match.publicId ||
-      match.id ||
-      match._id ||
-      match.slug ||
-      normalizedSlug
-    );
+  function loadMarketplaceArtisans() {
+    var parsed = safeJSONParse(localStorage.getItem(MARKETPLACE_LOCAL_STORAGE_KEY) || '[]', []);
+    return Array.isArray(parsed) ? parsed : [];
   }
 
-  return normalizedSlug;
-}
+  function normalizeArtisanSeed(raw) {
+    if (!raw || typeof raw !== 'object') return null;
+
+    var publicId = pickValue(raw.public_id, raw.assigned_artisan_id, raw.id, raw.artisan_id, raw.profileId, raw.userId);
+    var internalId = pickValue(raw.id, raw.artisan_id, raw.profileId, raw.userId, publicId);
+    if (!publicId && !internalId) return null;
+    if (isDemoIdentifier(publicId || internalId)) return null;
+
+    return {
+      id: internalId,
+      public_id: publicId || internalId,
+      assigned_artisan_id: pickValue(raw.assigned_artisan_id, raw.public_id),
+      source_ids: Array.isArray(raw.source_ids) ? raw.source_ids.map(function (value) { return String(value || '').trim(); }).filter(Boolean) : [],
+      name: pickValue(raw.name, raw.assigned_artisan, raw.artisanName, raw.artisan),
+      category: pickValue(raw.category, raw.specialty, raw.job, raw.service),
+      city: pickValue(raw.city, raw.ville),
+      phone: pickValue(raw.phone, raw.telephone),
+      email: pickValue(raw.email),
+      avatar: pickValue(raw.avatar, raw.photo, raw.image, raw.picture),
+      availability: pickValue(raw.availability, raw.status),
+      trust_score: pickNumber(raw.trust_score, raw.trustScore),
+      trust_level: pickValue(raw.trust_level, raw.trustLevel),
+      created_at: pickValue(raw.created_at, raw.createdAt, raw.joined_at, raw.registered_at)
+    };
+  }
+
+  function collectArtisanSeeds() {
+    var pool = [];
+    if (Array.isArray(window.ARTISANS)) pool = pool.concat(window.ARTISANS);
+    pool = pool.concat(loadMarketplaceArtisans());
+
+    var onboardingEntries = window.FixeoArtisanOnboardingStore && typeof window.FixeoArtisanOnboardingStore.getEntries === 'function'
+      ? window.FixeoArtisanOnboardingStore.getEntries()
+      : [];
+    if (Array.isArray(onboardingEntries)) pool = pool.concat(onboardingEntries);
+
+    pool = pool.concat(loadRegistry());
+
+    var seen = {};
+    return pool.map(normalizeArtisanSeed).filter(function (artisan) {
+      if (!artisan) return false;
+      var canonicalId = pickValue(artisan.public_id, artisan.assigned_artisan_id, artisan.id);
+      if (!canonicalId || seen[canonicalId]) return false;
+      seen[canonicalId] = true;
+      return true;
+    });
+  }
+
+  function artisanMatchesSeedId(artisanLike, artisanId) {
+    if (!artisanLike || typeof artisanLike !== 'object') return false;
+    var normalizedId = String(artisanId || '').trim();
+    if (!normalizedId) return false;
+
+    var candidateIds = [
+      pickValue(artisanLike.public_id),
+      pickValue(artisanLike.assigned_artisan_id),
+      pickValue(artisanLike.id)
+    ].filter(Boolean);
+
+    if (Array.isArray(artisanLike.source_ids)) {
+      artisanLike.source_ids.forEach(function (value) {
+        var nextValue = String(value || '').trim();
+        if (nextValue) candidateIds.push(nextValue);
+      });
+    }
+
+    return candidateIds.indexOf(normalizedId) !== -1;
+  }
+
+  function findArtisanSeedById(artisanId) {
+    var normalizedId = String(artisanId || '').trim();
+    if (!normalizedId || isDemoIdentifier(normalizedId)) return null;
+
+    var seeds = collectArtisanSeeds();
+    for (var i = 0; i < seeds.length; i += 1) {
+      if (artisanMatchesSeedId(seeds[i], normalizedId)) return seeds[i];
+    }
+    return null;
+  }
+
+  function findPublicIdBySlug(slug) {
+    var normalizedSlug = slugify(slug);
+    if (!normalizedSlug) return '';
+
+    if (window.FixeoPublicProfileLinks && typeof window.FixeoPublicProfileLinks.findPublicIdBySlug === 'function') {
+      var externalId = String(window.FixeoPublicProfileLinks.findPublicIdBySlug(normalizedSlug) || '').trim();
+      if (externalId) return externalId;
+    }
+
+    var slugMap = loadSlugMap();
+    if (slugMap[normalizedSlug]) return slugMap[normalizedSlug];
+
+    var registryEntry = loadRegistry().map(normalizeRegistryEntry).find(function (entry) {
+      return slugify(entry.slug) === normalizedSlug;
+    });
+
+    if (registryEntry && registryEntry.public_id) {
+      slugMap[normalizedSlug] = registryEntry.public_id;
+      persistSlugMap(slugMap);
+      return registryEntry.public_id;
+    }
+
+    return '';
+  }
 
   function setHeadMeta(name, content) {
     if (!document || !document.head || !name) return;
@@ -321,22 +403,14 @@ function findPublicIdBySlug(slug) {
   function resolveArtisanIdFromLocation() {
     var params = new URLSearchParams(window.location.search || '');
     var artisanId = String(params.get('id') || '').trim();
-    if (artisanId) return { artisanId: artisanId, slug: '', source: 'id' };
+    if (artisanId && !isDemoIdentifier(artisanId)) return { artisanId: artisanId, slug: '', source: 'id' };
 
     var slug = extractSlugFromPathname(window.location.pathname || '');
     if (!slug) return { artisanId: '', slug: '', source: 'none' };
 
-  var id = String(findPublicIdBySlug(slug) || '').trim();
-
-if (!id) {
-  id = slug;
-}
-
-return {
-  artisanId: id,
-  slug: slug,
-  source: 'slug'
-};
+    artisanId = String(findPublicIdBySlug(slug) || '').trim();
+    return { artisanId: isDemoIdentifier(artisanId) ? '' : artisanId, slug: slug, source: 'slug' };
+  }
 
   function matchesArtisan(raw, artisanId) {
     if (!raw || typeof raw !== 'object') return false;
@@ -711,22 +785,37 @@ return {
 
     try {
       var locationContext = resolveArtisanIdFromLocation();
-      var artisanId = String(locationContext.artisanId || '').trim();
-      if (!artisanId) {
+      var requestedId = String(locationContext.artisanId || '').trim();
+      if (!requestedId) {
         renderNotFound(root);
         return;
       }
 
-      var requests = loadRequests();
-      var profileData = computeProfileData(artisanId, requests);
+      var registryEntries = loadRegistry().map(normalizeRegistryEntry);
+      var registryEntry = registryEntries.find(function (entry) {
+        return entry.public_id === requestedId || entry.source_ids.indexOf(requestedId) !== -1;
+      }) || null;
+      var artisanSeed = findArtisanSeedById(requestedId);
+      var canonicalArtisanId = pickValue(
+        registryEntry && registryEntry.public_id,
+        artisanSeed && artisanSeed.public_id,
+        artisanSeed && artisanSeed.assigned_artisan_id,
+        requestedId
+      );
 
-      if (!profileData) {
-        var registryEntry = loadRegistry().map(normalizeRegistryEntry).find(function (entry) {
-          return entry.public_id === artisanId || entry.source_ids.indexOf(artisanId) !== -1;
-        });
-        if (registryEntry) {
-          profileData = computeProfileDataFromArtisanLike(registryEntry, requests, artisanId);
-        }
+      var requests = loadRequests();
+      var profileData = computeProfileData(canonicalArtisanId, requests);
+
+      if (!profileData && registryEntry) {
+        profileData = computeProfileDataFromArtisanLike(registryEntry, requests, canonicalArtisanId);
+      }
+
+      if (!profileData && artisanSeed) {
+        profileData = computeProfileDataFromArtisanLike(artisanSeed, requests, canonicalArtisanId);
+      }
+
+      if (!profileData && registryEntry && artisanSeed) {
+        profileData = computeProfileDataFromArtisanLike(Object.assign({}, artisanSeed, registryEntry), requests, canonicalArtisanId);
       }
 
       if (!profileData) {
