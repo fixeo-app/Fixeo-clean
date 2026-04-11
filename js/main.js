@@ -548,6 +548,7 @@ function getResultProfessionLabel(cat, lang = 'fr') {
 function buildOtherArtisanCard(a) {
   const lang = window.i18n ? window.i18n.lang : 'fr';
   const service = getCategoryLabel(a.category, lang);
+  const profession = getResultProfessionLabel(a.category, lang);
   const imageSrc = getArtisanAvatarSrc(a);
   const safeBadges = Array.isArray(a.badges) ? a.badges : [];
   const isAvailable = a.availability === 'available';
@@ -559,42 +560,48 @@ function buildOtherArtisanCard(a) {
   const isVerified = safeBadges.includes('verified') || Number(a.trustScore || a.trust_score || smartSortMeta.trust_score || 0) >= 85;
   const verificationPending = safeBadges.includes('pending') || a.verificationStatus === 'pending';
   const isNewArtisan = safeBadges.includes('new') || a.onboardingStatus === 'nouveau';
-  const primaryBadge = isVerified ? '<span class="badge verified">✔ Vérifié</span>' : '';
+  const primaryBadge = isVerified ? '<span class="badge verified" style="box-shadow:0 8px 24px rgba(46, 204, 113, .12)">✔ Vérifié</span>' : '';
   const availableText = a.availabilityLabel || 'Disponible';
-  const secondaryBadge = isAvailable ? `<span class="badge available">🟢 ${availableText}</span>` : '';
+  const secondaryBadge = isAvailable ? `<span class="badge available" style="box-shadow:0 8px 24px rgba(32, 201, 151, .16);font-weight:800">🟢 ${availableText}</span>` : '';
   const newBadge = isNewArtisan ? '<span class="badge new">✨ Nouveau</span>' : '';
-  const topBadge = smartSortMeta.top_artisan ? '<span class="badge" style="background:rgba(124,58,237,.16);color:#a855f7;border:1px solid rgba(167,139,250,.42)">Top artisan</span>' : '';
+  const topBadge = smartSortMeta.top_artisan ? '<span class="badge" style="background:rgba(124,58,237,.16);color:#a855f7;border:1px solid rgba(167,139,250,.42);box-shadow:0 8px 24px rgba(124,58,237,.14)">Top artisan</span>' : '';
   const pendingBadge = verificationPending ? `<span class="badge pending">${a.verificationLabel || 'Profil en vérification'}</span>` : '';
   const responseLabel = responseTime > 0 ? `Réponse : ${responseTime} min` : 'Réponse rapide';
   const serializedArtisanId = JSON.stringify(String(a.id));
 
   return `
-    <article class="artisan-card other-card discover-harmonized-card result-card" data-id="${a.id}">
-      <div class="result-top">
-        <img class="artisan-avatar artisan-avatar-image" src="${imageSrc}" alt="${a.name}" loading="lazy" onerror="this.onerror=null;this.src='default-avatar.jpg';"/>
-        <div class="artisan-main artisan-identity artisan-card-heading">
-          <h3 class="artisan-name">${a.name}</h3>
-          <p class="artisan-service">${service} • ${a.city || 'Maroc'}</p>
-          <div class="artisan-badges badges">${primaryBadge}${topBadge}${newBadge}${secondaryBadge}${pendingBadge}</div>
+    <article class="artisan-card other-card discover-harmonized-card result-card" data-id="${a.id}" style="position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.12);background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.035));box-shadow:0 18px 44px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.05);transition:transform .22s ease, box-shadow .22s ease, border-color .22s ease" onmouseenter="this.style.transform='translateY(-4px)';this.style.boxShadow='0 24px 54px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.07)';this.style.borderColor='rgba(225,48,108,.28)'" onmouseleave="this.style.transform='translateY(0)';this.style.boxShadow='0 18px 44px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.05)';this.style.borderColor='rgba(255,255,255,.12)'">
+      <div class="result-top" style="align-items:flex-start;gap:1rem;margin-bottom:.95rem">
+        <img class="artisan-avatar artisan-avatar-image" src="${imageSrc}" alt="${a.name}" loading="lazy" onerror="this.onerror=null;this.src='default-avatar.jpg';" style="border:2px solid rgba(255,255,255,.14);box-shadow:0 10px 28px rgba(0,0,0,.18)"/>
+        <div class="artisan-main artisan-identity artisan-card-heading" style="min-width:0;flex:1">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:.75rem;flex-wrap:wrap;margin-bottom:.35rem">
+            <div style="min-width:0;flex:1">
+              <h3 class="artisan-name" style="margin:0;font-size:1.18rem;line-height:1.15;font-weight:800;letter-spacing:-.01em">${a.name}</h3>
+              <p class="artisan-service" style="margin:.28rem 0 0;color:rgba(255,255,255,.78);font-size:.92rem"><span style="color:#fff;font-weight:700">${profession}</span> • ${a.city || 'Maroc'}</p>
+            </div>
+            <div class="artisan-price-block" style="margin-left:auto;min-width:132px;padding:.7rem .9rem;border-radius:16px;background:linear-gradient(135deg,rgba(225,48,108,.12),rgba(131,58,180,.16));border:1px solid rgba(255,255,255,.1);text-align:right;box-shadow:0 10px 28px rgba(131,58,180,.12)">
+              <strong style="display:block;font-size:1.08rem;line-height:1.1;color:#ffd166">Dès ${a.priceFrom || 150} MAD</strong>
+              <span style="display:block;margin-top:.22rem;color:rgba(255,255,255,.68);font-size:.78rem;font-weight:700">${responseLabel}</span>
+            </div>
+          </div>
+          <div class="artisan-badges badges" style="gap:.45rem;margin-top:.45rem">${primaryBadge}${topBadge}${newBadge}${secondaryBadge}${pendingBadge}</div>
         </div>
-        <div class="artisan-price-block">
-          <strong>Dès ${a.priceFrom || 150} MAD</strong>
-          <span>${responseLabel}</span>
-        </div>
       </div>
 
-      <div class="artisan-rating-row artisan-rating">
-        <span>⭐ ${rating.toFixed(1)}</span>
-        <span>(${reviews} avis)</span>
+      <div class="artisan-rating-row artisan-rating" style="display:flex;align-items:center;gap:.55rem;flex-wrap:wrap;margin-bottom:.9rem;padding:.8rem .95rem;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07)">
+        <span style="font-weight:800;color:#ffd166">⭐ ${rating.toFixed(1)}</span>
+        <span style="color:rgba(255,255,255,.82);font-weight:700">(${reviews} avis)</span>
+        <span style="margin-left:auto;color:rgba(255,255,255,.62);font-size:.8rem">TrustScore ${Number(a.trustScore || a.trust_score || smartSortMeta.trust_score || 0)}/100</span>
       </div>
 
-      <div class="artisan-skills">
-        ${visibleSkills.map(skill => `<span>${skill}</span>`).join('')}
+      <div class="artisan-skills" style="margin-bottom:1rem;gap:.5rem">
+        <span style="display:inline-flex;align-items:center;padding:.42rem .78rem;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.08);color:#fff;font-size:.8rem;font-weight:700">${service}</span>
+        ${visibleSkills.map(skill => `<span style="display:inline-flex;align-items:center;padding:.42rem .78rem;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.78);font-size:.78rem">${skill}</span>`).join('')}
       </div>
 
-      <div class="result-actions card-buttons">
-        <button class="btn-primary btn-other-profile ssb2-btn-profile secondary-btn" onclick="event.stopPropagation();if(window.FixeoPublicProfileLinks){window.FixeoPublicProfileLinks.openBySourceId(${serializedArtisanId}, event);}else if(window.openArtisanModal){openArtisanModal(${serializedArtisanId});}" title="Voir le profil complet">Voir profil</button>
-        <button class="btn-secondary btn-other-reserve ssb2-btn-reserve primary-btn fixeo-reserve-btn" data-artisan-id="${a.id}" onclick="return openHomepageArtisanBooking(${serializedArtisanId}, event)" title="Réserver cet artisan">Réserver cet artisan</button>
+      <div class="result-actions card-buttons" style="display:flex;align-items:center;justify-content:space-between;gap:.9rem;flex-wrap:wrap;margin-top:auto">
+        <div style="color:rgba(255,255,255,.62);font-size:.8rem;font-weight:700">Profil détaillé, avis et réservation depuis la fiche artisan</div>
+        <button class="btn-primary btn-other-profile ssb2-btn-profile secondary-btn" onclick="event.stopPropagation();if(window.FixeoPublicProfileLinks){window.FixeoPublicProfileLinks.openBySourceId(${serializedArtisanId}, event);}else if(window.openArtisanModal){openArtisanModal(${serializedArtisanId});}" title="Voir le profil complet" style="min-width:170px;font-weight:800;box-shadow:0 12px 30px rgba(225,48,108,.18)">Voir profil</button>
       </div>
     </article>`;
 }
