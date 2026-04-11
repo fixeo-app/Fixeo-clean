@@ -6,14 +6,36 @@
   const LEGACY_COD_KEY = 'fixeo_cod_orders';
   const COMMISSION_RATE = 0.15;
   const CASH_MESSAGE = '💵 Paiement directement à l’artisan après intervention';
-  const ARTISAN_DIRECTORY = [
-    { id: 'art_demo_1', name: 'Karim Benali', service: 'Plomberie', city: 'Casablanca', rating: 4.9 },
-    { id: 'art_demo_2', name: 'Sara Doukkali', service: 'Peinture', city: 'Casablanca', rating: 4.8 },
-    { id: 'art_demo_3', name: 'Omar Tahiri', service: 'Électricité', city: 'Rabat', rating: 4.7 },
-    { id: 'art_demo_4', name: 'Fatima Zahra', service: 'Nettoyage', city: 'Marrakech', rating: 4.9 },
-    { id: 'art_demo_5', name: 'Hassan Mrani', service: 'Jardinage', city: 'Casablanca', rating: 4.6 },
-    { id: 'art_demo_6', name: 'Aicha Lamine', service: 'Déménagement', city: 'Casablanca', rating: 4.7 }
-  ];
+  const ARTISAN_DIRECTORY = [];
+
+  function isDemoIdentifier(value) {
+    const normalized = String(value || '').trim().toLowerCase();
+    return /^art_demo_/i.test(normalized) || /^(?:[1-9]|1[0-2])$/.test(normalized);
+  }
+
+  function getLiveArtisanDirectory() {
+    const marketplace = Array.isArray(window.ARTISANS) ? window.ARTISANS : [];
+    const onboarding = window.FixeoArtisanOnboardingStore && typeof window.FixeoArtisanOnboardingStore.getEntries === 'function'
+      ? window.FixeoArtisanOnboardingStore.getEntries()
+      : [];
+    const pool = marketplace.concat(onboarding).filter(function (artisan) {
+      return artisan && typeof artisan === 'object';
+    });
+    const seen = new Set();
+    return pool.map(function (artisan) {
+      const id = String(artisan.id || artisan.public_id || artisan.artisan_id || '').trim();
+      const name = String(artisan.name || '').trim();
+      if (!id || !name || isDemoIdentifier(id) || seen.has(id)) return null;
+      seen.add(id);
+      return {
+        id: id,
+        name: name,
+        service: String(artisan.service || artisan.category || '').trim(),
+        city: String(artisan.city || 'Maroc').trim() || 'Maroc',
+        rating: Number(artisan.rating || 0) || 0
+      };
+    }).filter(Boolean);
+  }
 
   const STATUS_META = {
     pending: { label: 'Demande envoyée', color: '#ffa502', bg: 'rgba(255,165,2,.12)' },
@@ -141,123 +163,14 @@
     return mission;
   }
 
-  function generateDemoMissions() {
-    return [
-      ensureDerivedMission({
-        id: 'MIS-DEMO-001',
-        client_name: 'Sarah Alami',
-        client_id: 'client_demo_1',
-        service: 'Plomberie',
-        city: 'Casablanca',
-        description: 'Fuite sous évier, besoin rapide cet après-midi.',
-        status: 'pending',
-        created_at: hoursAgo(5),
-        proposals: [
-          { artisan_id: 'art_demo_1', artisan_name: 'Karim Benali', price: 200, rating: 4.9, submitted_at: hoursAgo(4), note: 'Disponible aujourd’hui avant 18h.' },
-          { artisan_id: 'art_demo_3', artisan_name: 'Omar Tahiri', price: 230, rating: 4.7, submitted_at: hoursAgo(3), note: 'Intervention avec déplacement inclus.' },
-          { artisan_id: 'art_demo_4', artisan_name: 'Fatima Zahra', price: 210, rating: 4.8, submitted_at: hoursAgo(2), note: 'Diagnostic + réparation légère.' }
-        ]
-      }),
-      ensureDerivedMission({
-        id: 'MIS-DEMO-002',
-        client_name: 'Sarah Alami',
-        client_id: 'client_demo_1',
-        service: 'Électricité',
-        city: 'Rabat',
-        description: 'Prises salon à remplacer, devis déjà accepté.',
-        status: 'accepted',
-        created_at: hoursAgo(30),
-        accepted_at: hoursAgo(28),
-        artisan_id: 'art_demo_3',
-        artisan_name: 'Omar Tahiri',
-        final_price: 250,
-        price_validated: true,
-        price_validated_at: hoursAgo(28),
-        locked: true,
-        proposals: [
-          { artisan_id: 'art_demo_3', artisan_name: 'Omar Tahiri', price: 250, rating: 4.7, submitted_at: hoursAgo(29), selected: true },
-          { artisan_id: 'art_demo_1', artisan_name: 'Karim Benali', price: 280, rating: 4.9, submitted_at: hoursAgo(29) }
-        ]
-      }),
-      ensureDerivedMission({
-        id: 'MIS-DEMO-003',
-        client_name: 'Sarah Alami',
-        client_id: 'client_demo_1',
-        service: 'Plomberie',
-        city: 'Casablanca',
-        description: 'Remplacement siphon et test étanchéité.',
-        status: 'completed',
-        created_at: hoursAgo(52),
-        accepted_at: hoursAgo(49),
-        in_progress_at: hoursAgo(31),
-        completed_at: hoursAgo(30),
-        artisan_id: 'art_demo_1',
-        artisan_name: 'Karim Benali',
-        final_price: 200,
-        price_validated: true,
-        price_validated_at: hoursAgo(49),
-        locked: true,
-        proposals: [
-          { artisan_id: 'art_demo_1', artisan_name: 'Karim Benali', price: 200, rating: 4.9, submitted_at: hoursAgo(50), selected: true }
-        ]
-      }),
-      ensureDerivedMission({
-        id: 'MIS-DEMO-004',
-        client_name: 'Sarah Alami',
-        client_id: 'client_demo_1',
-        service: 'Plomberie',
-        city: 'Casablanca',
-        description: 'Débouchage urgent cuisine, mission terminée et validée.',
-        status: 'validated',
-        created_at: hoursAgo(120),
-        accepted_at: hoursAgo(110),
-        in_progress_at: hoursAgo(108),
-        completed_at: hoursAgo(106),
-        validated_at: hoursAgo(104),
-        artisan_id: 'art_demo_1',
-        artisan_name: 'Karim Benali',
-        final_price: 200,
-        price_validated: true,
-        price_validated_at: hoursAgo(110),
-        locked: true,
-        commission_rate: COMMISSION_RATE,
-        commission_amount: 30,
-        artisan_net: 170,
-        commission_due: true,
-        commission_paid: false,
-        notifications: [
-          {
-            id: 'NOTIF-001',
-            artisan_id: 'art_demo_1',
-            title: 'Nouvelle mission validée 🎉',
-            body: 'Commission ajoutée : 30 MAD',
-            created_at: hoursAgo(104)
-          }
-        ],
-        proposals: [
-          { artisan_id: 'art_demo_1', artisan_name: 'Karim Benali', price: 200, rating: 4.9, submitted_at: hoursAgo(112), selected: true }
-        ]
-      }),
-      ensureDerivedMission({
-        id: 'MIS-DEMO-005',
-        client_name: 'Sarah Alami',
-        client_id: 'client_demo_1',
-        service: 'Peinture',
-        city: 'Casablanca',
-        description: 'Mur salon, mission annulée après comparaison.',
-        status: 'cancelled',
-        created_at: hoursAgo(18),
-        proposals: [
-          { artisan_id: 'art_demo_2', artisan_name: 'Sara Doukkali', price: 800, rating: 4.8, submitted_at: hoursAgo(17) }
-        ]
-      })
-    ];
+  function generateInitialMissions() {
+    return [];
   }
 
   function readMissions() {
     const parsed = parseJSON(localStorage.getItem(STORAGE_KEY), null);
     if (!Array.isArray(parsed) || !parsed.length) {
-      const seeded = generateDemoMissions();
+      const seeded = generateInitialMissions();
       localStorage.setItem(STORAGE_KEY, JSON.stringify(seeded));
       syncLegacyReservations(seeded);
       return seeded;
@@ -342,11 +255,12 @@
   }
 
   function notifyUser(userId, message, type, options) {
+    if (!userId) return;
     if (!window.notifications || typeof window.notifications.createNotification !== 'function') return;
     window.notifications.createNotification(userId, message, type, options || {});
   }
 
-  function ensureDemoSeed() {
+  function ensureMissionsStore() {
     return readMissions();
   }
 
@@ -360,7 +274,7 @@
       if (existingIndex >= 0) mission.proposals[existingIndex] = normalized;
       else mission.proposals.push(normalized);
       notifyUser(
-        mission.client_id || 'client_demo_1',
+        mission.client_id || localStorage.getItem('fixeo_user') || '',
         `${normalized.artisan_name} a répondu à votre demande ${mission.service}.`,
         'new_reply',
         {
@@ -426,7 +340,7 @@
       mission.completed_at = nowIso();
       mission.reminder_due = false;
       notifyUser(
-        mission.client_id || 'client_demo_1',
+        mission.client_id || localStorage.getItem('fixeo_user') || '',
         `Votre artisan a terminé la mission ${mission.service}. Merci de confirmer si tout est OK.`,
         'mission_completed',
         {
@@ -452,7 +366,7 @@
       mission.commission_due = true;
       pushNotification(mission, 'Nouvelle mission validée 🎉', `Commission ajoutée : ${mission.commission_amount} MAD`);
       notifyUser(
-        mission.artisan_id || 'art_demo_1',
+        mission.artisan_id || localStorage.getItem('fixeo_user') || '',
         `Le client a validé votre mission ${mission.service}. Commission calculée : ${mission.commission_amount} MAD.`,
         'mission_validated',
         {
@@ -529,29 +443,34 @@
   }
 
   function pickAlternativeArtisans(service, excludeId) {
-    const candidates = ARTISAN_DIRECTORY.filter(function (artisan) {
-      return artisan.service === service && artisan.id !== excludeId;
+    const directory = getLiveArtisanDirectory();
+    const normalizedService = String(service || '').trim().toLowerCase();
+    const candidates = directory.filter(function (artisan) {
+      return artisan.id !== excludeId && String(artisan.service || '').trim().toLowerCase() === normalizedService;
     });
     if (candidates.length) return candidates.slice(0, 2);
-    return ARTISAN_DIRECTORY.filter(function (artisan) { return artisan.id !== excludeId; }).slice(0, 2);
+    return directory.filter(function (artisan) { return artisan.id !== excludeId; }).slice(0, 2);
   }
 
   function createMissionFromQuote(payload) {
-    const artisan = ARTISAN_DIRECTORY.find(function (item) { return item.id === payload.artisanId; }) || {
-      id: payload.artisanId || uid('ART'),
-      name: payload.artisanName || 'Artisan',
-      service: payload.service || 'Service',
-      city: payload.city || 'Casablanca',
-      rating: 4.8
-    };
-    const basePrice = Number(payload.suggestedPrice || 200);
-    const alternatives = pickAlternativeArtisans(payload.service, artisan.id);
+    const directory = getLiveArtisanDirectory();
+    const requestedId = String(payload && payload.artisanId || '').trim();
+    const requestedName = String(payload && payload.artisanName || '').trim().toLowerCase();
+    const artisan = directory.find(function (item) {
+      return (requestedId && item.id === requestedId)
+        || (requestedName && String(item.name || '').trim().toLowerCase() === requestedName);
+    });
+    if (!artisan) return null;
+
+    const safePrice = Number(payload.suggestedPrice || 0);
+    const basePrice = Number.isFinite(safePrice) && safePrice > 0 ? Math.round(safePrice) : 200;
+    const alternatives = pickAlternativeArtisans(payload.service || artisan.service, artisan.id);
     const mission = ensureDerivedMission({
       id: uid('MIS'),
-      client_name: localStorage.getItem('fixeo_user_name') || 'Client Fixeo',
-      client_id: localStorage.getItem('fixeo_user') || 'client_local',
-      service: payload.service,
-      city: payload.city,
+      client_name: localStorage.getItem('fixeo_user_name') || 'Client',
+      client_id: localStorage.getItem('fixeo_user') || '',
+      service: payload.service || artisan.service || 'Service',
+      city: payload.city || artisan.city || 'Maroc',
       description: payload.description,
       requested_date: payload.requestedDate || null,
       phone: payload.phone || '',
@@ -560,7 +479,7 @@
       target_artisan_id: artisan.id,
       target_artisan_name: artisan.name,
       proposals: [
-        { artisan_id: artisan.id, artisan_name: artisan.name, price: basePrice, rating: artisan.rating || 4.8, submitted_at: nowIso(), note: 'Proposition prioritaire depuis le profil artisan.' }
+        { artisan_id: artisan.id, artisan_name: artisan.name, price: basePrice, rating: artisan.rating || 0, submitted_at: nowIso(), note: 'Proposition prioritaire depuis le profil artisan.' }
       ].concat(alternatives.map(function (alt, index) {
         return {
           artisan_id: alt.id,
@@ -577,7 +496,7 @@
     writeMissions(missions);
     notifyUser(
       artisan.id,
-      `Nouvelle demande reçue à ${mission.city || 'Casablanca'}.`,
+      `Nouvelle demande reçue à ${mission.city || artisan.city || 'Maroc'}.`,
       'new_request',
       {
         title: 'Nouvelle demande reçue',
@@ -599,7 +518,7 @@
     STATUS_META: STATUS_META,
     formatMad: formatMad,
     escapeHtml: escapeHtml,
-    seed: ensureDemoSeed,
+    seed: ensureMissionsStore,
     list: listMissions,
     get: getMission,
     getMetrics: getMetrics,
@@ -618,5 +537,5 @@
   };
 
   window.FixeoMissionSystem = api;
-  ensureDemoSeed();
+  ensureMissionsStore();
 })(window);
