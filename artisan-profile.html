@@ -185,188 +185,14 @@
   })(window, document);
 </script>
 <script>
-  (function (window, document) {
-    'use strict';
-
-    var MARKETPLACE_ARTISANS = [
-  {
-    id: 1, name: 'Karim Benali', initials: 'KB', avatar: null, category: 'plomberie',
-    city: 'Casablanca', lat: 33.589, lng: -7.633,
-    rating: 4.9, reviewCount: 127, trustScore: 96,
-    priceFrom: 150, priceUnit: 'h',
-    availability: 'available',
-    bio: { fr: 'Plombier certifié avec 12 ans d\'expérience. Spécialisé en rénovation et urgences 24/7.', ar: 'سباك معتمد بخبرة 12 عاماً.', en: '12 years certified plumber, 24/7 emergency.' },
-    badges: ['verified', 'pro', 'responsive'],
-    skills: ['Fuite d\'eau', 'Chauffe-eau', 'Salle de bain', 'Tuyaux'],
-    portfolio: ['🔧','🚿','🪠','💧'],
-    phone: '212600000001', email: 'karim@fixeo.ma',
-    xp: 1850, level: 4, responseTime: 8,
-    status: 'active',
-  },
-  {
-    id: 2, name: 'Sara Doukkali', initials: 'SD', avatar: null, category: 'peinture',
-    city: 'Casablanca', lat: 33.595, lng: -7.619,
-    rating: 4.8, reviewCount: 98, trustScore: 91,
-    priceFrom: 120, priceUnit: 'h',
-    availability: 'available',
-    bio: { fr: 'Peintre décoratrice avec un œil artistique pour les espaces modernes.', ar: 'رسامة ديكور بعين فنية للمساحات العصرية.', en: 'Decorative painter with artistic eye for modern spaces.' },
-    badges: ['verified', 'top_rated', 'friendly'],
-    skills: ['Peinture intérieure', 'Décoration', 'Enduit', 'Ravalement'],
-    portfolio: ['🎨','🖌️','🏠','✨'],
-    phone: '212600000002', email: 'sara@fixeo.ma',
-    xp: 1200, level: 3, responseTime: 12,
-    status: 'active',
-  },
-  {
-    id: 3, name: 'Omar Tahiri', initials: 'OT', avatar: null, category: 'electricite',
-    city: 'Rabat', lat: 34.020, lng: -6.841,
-    rating: 4.7, reviewCount: 85, trustScore: 88,
-    priceFrom: 180, priceUnit: 'h',
-    availability: 'busy',
-    bio: { fr: 'Électricien agréé, installations aux normes NFC 15-100.', ar: 'كهربائي معتمد وفق المعايير الدولية.', en: 'Licensed electrician, NFC 15-100 compliant installations.' },
-    badges: ['verified', 'expert'],
-    skills: ['Tableau électrique', 'Prises', 'Éclairage', 'Domotique'],
-    portfolio: ['⚡','💡','🔌','🏗️'],
-    phone: '212600000003', email: 'omar@fixeo.ma',
-    xp: 2100, level: 5, responseTime: 20,
-    status: 'active',
-  },
-  {
-    id: 4, name: 'Fatima Zahra', initials: 'FZ', avatar: null, category: 'nettoyage',
-    city: 'Marrakech', lat: 31.638, lng: -8.008,
-    rating: 4.9, reviewCount: 210, trustScore: 99,
-    priceFrom: 80, priceUnit: 'h',
-    availability: 'available',
-    bio: { fr: 'Entreprise de nettoyage professionnelle, résidentiel & commercial.', ar: 'شركة تنظيف احترافية للمساكن والأعمال.', en: 'Professional cleaning company, residential & commercial.' },
-    badges: ['verified', 'top_rated', 'legendary'],
-    skills: ['Nettoyage fin de chantier', 'Entretien', 'Désinfection', 'Vitrerie'],
-    portfolio: ['🧹','✨','🧽','🪣'],
-    phone: '212600000004', email: 'fatima@fixeo.ma',
-    xp: 4850, level: 6, responseTime: 5,
-    status: 'active',
-  },
-  {
-    id: 5, name: 'Hassan Mrani', initials: 'HM', avatar: null, category: 'jardinage',
-    city: 'Fès', lat: 34.037, lng: -5.000,
-    rating: 4.8, reviewCount: 72, trustScore: 85,
-    priceFrom: 100, priceUnit: 'h',
-    availability: 'available',
-    bio: { fr: 'Paysagiste et jardinier avec 8 ans d\'expérience en aménagement extérieur.', ar: 'مهندس مناظر طبيعية بخبرة 8 سنوات.', en: 'Landscaper and gardener with 8 years of outdoor experience.' },
-    badges: ['verified', 'pro'],
-    skills: ['Tonte', 'Taille', 'Arrosage automatique', 'Pelouse'],
-    portfolio: ['🌿','🌺','🌳','🏡'],
-    phone: '212600000005', email: 'hassan@fixeo.ma',
-    xp: 980, level: 3, responseTime: 15,
-    status: 'active',
-  },
-  {
-    id: 6, name: 'Aicha Lamine', initials: 'AL', avatar: null, category: 'demenagement',
-    city: 'Agadir', lat: 30.428, lng: -9.598,
-    rating: 4.6, reviewCount: 63, trustScore: 80,
-    priceFrom: 200, priceUnit: 'jour',
-    availability: 'available',
-    bio: { fr: 'Service de déménagement professionnel avec camion et équipe expérimentée.', ar: 'خدمة نقل احترافية مع شاحنة وفريق متمرس.', en: 'Professional moving service with truck and experienced team.' },
-    badges: ['verified', 'responsive'],
-    skills: ['Déménagement', 'Emballage', 'Montage meubles', 'Transport'],
-    portfolio: ['📦','🚛','🏠','🔧'],
-    phone: '212600000006', email: 'aicha@fixeo.ma',
-    xp: 620, level: 2, responseTime: 10,
-    status: 'active',
-  },
-  {
-    id: 7, name: 'Youssef Kadi', initials: 'YK', avatar: null, category: 'bricolage',
-    city: 'Tanger', lat: 35.759, lng: -5.834,
-    rating: 4.7, reviewCount: 91, trustScore: 87,
-    priceFrom: 130, priceUnit: 'h',
-    availability: 'available',
-    bio: { fr: 'Bricoleur polyvalent, petits travaux & montage de meubles.', ar: 'حرفي متعدد المهارات للأعمال الصغيرة.', en: 'Versatile handyman for small jobs & furniture assembly.' },
-    badges: ['verified', 'friendly'],
-    skills: ['Montage meubles', 'Fixations', 'Petits travaux', 'Carrelage'],
-    portfolio: ['🔨','🪛','🪚','🔩'],
-    phone: '212600000007', email: 'youssef@fixeo.ma',
-    xp: 1100, level: 3, responseTime: 18,
-    status: 'active',
-  },
-  {
-    id: 8, name: 'Nadia Rhouat', initials: 'NR', avatar: null, category: 'climatisation',
-    city: 'Casablanca', lat: 33.580, lng: -7.640,
-    rating: 4.8, reviewCount: 54, trustScore: 89,
-    priceFrom: 200, priceUnit: 'h',
-    availability: 'offline',
-    bio: { fr: 'Technicienne en climatisation & chauffage. Installation, entretien et réparation.', ar: 'تقنية في التكييف والتدفئة.', en: 'HVAC technician — installation, maintenance and repair.' },
-    badges: ['verified', 'expert'],
-    skills: ['Climatisation', 'Chauffage', 'Pompe à chaleur', 'VMC'],
-    portfolio: ['❄️','🌡️','🔧','💨'],
-    phone: '212600000008', email: 'nadia@fixeo.ma',
-    xp: 1500, level: 4, responseTime: 25,
-    status: 'active',
-  },
-
-  {
-    id: 9, name: 'Rachid Ouali', initials: 'RO', avatar: null, category: 'menuiserie',
-    city: 'Rabat', lat: 34.025, lng: -6.850,
-    rating: 4.8, reviewCount: 67, trustScore: 88,
-    priceFrom: 160, priceUnit: 'h',
-    availability: 'available',
-    bio: { fr: 'Menuisier ébéniste avec 15 ans d\'expérience. Fabrication sur mesure et rénovation de meubles.', ar: 'نجار خبير بخبرة 15 عاماً في صنع الأثاث.', en: 'Master carpenter with 15 years experience in custom furniture.' },
-    badges: ['verified', 'pro', 'expert'],
-    skills: ['Portes', 'Fenêtres', 'Meubles sur mesure', 'Parquet'],
-    portfolio: ['🪚','🪑','🚪','🛏️'],
-    phone: '212600000009', email: 'rachid@fixeo.ma',
-    xp: 1750, level: 4, responseTime: 14,
-    status: 'active',
-  },
-  {
-    id: 10, name: 'Imane Zahiri', initials: 'IZ', avatar: null, category: 'maconnerie',
-    city: 'Casablanca', lat: 33.592, lng: -7.628,
-    rating: 4.7, reviewCount: 42, trustScore: 83,
-    priceFrom: 200, priceUnit: 'jour',
-    availability: 'available',
-    bio: { fr: 'Maçonne professionnelle, rénovation et construction. Carrelage, enduit et finitions.', ar: 'بنّاءة محترفة في البناء والتجديد والبلاط.', en: 'Professional mason specializing in renovation, tiling and finishes.' },
-    badges: ['verified', 'responsive'],
-    skills: ['Carrelage', 'Enduit', 'Béton', 'Rénovation'],
-    portfolio: ['🧱','🪚','🏗️','🔨'],
-    phone: '212600000010', email: 'imane@fixeo.ma',
-    xp: 890, level: 3, responseTime: 22,
-    status: 'active',
-  },
-  {
-    id: 11, name: 'Samir Benhaddou', initials: 'SB', avatar: null, category: 'climatisation',
-    city: 'Marrakech', lat: 31.645, lng: -8.015,
-    rating: 4.9, reviewCount: 88, trustScore: 93,
-    priceFrom: 180, priceUnit: 'h',
-    availability: 'available',
-    bio: { fr: 'Expert climatisation & énergies renouvelables. Installation, entretien et dépannage.', ar: 'خبير تكييف وطاقات متجددة لجميع أنواع الأجهزة.', en: 'AC & renewable energy expert — installation, maintenance and repair.' },
-    badges: ['verified', 'top_rated', 'pro'],
-    skills: ['Climatisation', 'Pompe à chaleur', 'Panneaux solaires', 'VMC'],
-    portfolio: ['❄️','☀️','🌡️','💨'],
-    phone: '212600000011', email: 'samir@fixeo.ma',
-    xp: 2200, level: 5, responseTime: 10,
-    status: 'active',
-  },
-];
-    var REQUESTS_KEY = 'fixeo_client_requests';
-    var NOT_FOUND_TITLE = 'Artisan introuvable';
-    var ERROR_TITLE = 'Impossible de charger ce profil';
-
-    function getRoot() {
-      return document.getElementById('public-artisan-root');
-    }
+  (function (window) {
+    var MARKETPLACE_KEY = 'fixeo_admin_artisans_v21';
+    var REGISTRY_KEY = 'fixeo_public_artisans_registry';
 
     function safeJSONParse(value, fallback) {
       try {
         var parsed = JSON.parse(value);
         return parsed == null ? fallback : parsed;
-      } catch (error) {
-        return fallback;
-      }
-    }
-
-    function safeLocalStorageGet(key, fallback) {
-      try {
-        if (!window.localStorage) return fallback;
-        var value = window.localStorage.getItem(key);
-        return value == null ? fallback : value;
       } catch (error) {
         return fallback;
       }
@@ -383,366 +209,110 @@
       return '';
     }
 
-    function pickNumber() {
-      for (var i = 0; i < arguments.length; i += 1) {
-        var value = Number(arguments[i]);
-        if (Number.isFinite(value)) return value;
-      }
-      return 0;
+    function uniquePush(list, value) {
+      var nextValue = String(value || '').trim();
+      if (!nextValue) return;
+      if (list.indexOf(nextValue) === -1) list.push(nextValue);
     }
 
-    function normalizeText(value) {
-      return String(value || '')
-        .toLowerCase()
-        .normalize('NFD')
-        .replace(/[̀-ͯ]/g, '')
-        .replace(/[^a-z0-9]+/g, ' ')
-        .trim();
+    function readMarketplaceArtisans() {
+      var parsed = safeJSONParse(localStorage.getItem(MARKETPLACE_KEY) || '[]', []);
+      return Array.isArray(parsed) ? parsed : [];
     }
 
-    function escapeHtml(value) {
-      return String(value == null ? '' : value).replace(/[&<>"']/g, function (char) {
-        return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char];
-      });
+    function readRegistry() {
+      var parsed = safeJSONParse(localStorage.getItem(REGISTRY_KEY) || '[]', []);
+      return Array.isArray(parsed) ? parsed : [];
     }
 
-    function categoryLabel(value) {
-      var labels = {
-        plomberie: 'Plomberie',
-        electricite: 'Électricité',
-        peinture: 'Peinture',
-        nettoyage: 'Nettoyage',
-        jardinage: 'Jardinage',
-        demenagement: 'Déménagement',
-        bricolage: 'Bricolage',
-        climatisation: 'Climatisation',
-        menuiserie: 'Menuiserie',
-        maconnerie: 'Maçonnerie',
-        serrurerie: 'Serrurerie'
-      };
-      var key = normalizeText(value).replace(/\s+/g, '');
-      return labels[key] || pickValue(value, 'Catégorie non précisée');
+    function writeRegistry(entries) {
+      localStorage.setItem(REGISTRY_KEY, JSON.stringify(Array.isArray(entries) ? entries : []));
     }
 
-    function getAvailabilityMeta(value) {
-      var normalized = normalizeText(value);
-      if (normalized === 'available' || normalized === 'disponible' || normalized === 'online' || normalized === 'active' || normalized === 'en ligne') {
-        return { label: 'Disponible', className: 'is-available' };
-      }
-      if (normalized === 'busy' || normalized === 'occupe' || normalized === 'occupee') {
-        return { label: 'Occupé', className: 'is-busy' };
-      }
-      if (normalized === 'offline' || normalized === 'hors ligne') {
-        return { label: 'Hors ligne', className: 'is-offline' };
-      }
-      return { label: 'Disponibilité non précisée', className: 'is-unknown' };
-    }
-
-    function getTrustLevel(score) {
-      var safeScore = Math.max(0, Math.min(100, Math.round(Number(score || 0))));
-      if (safeScore >= 90) return 'Elite';
-      if (safeScore >= 75) return 'Fiable';
-      if (safeScore >= 50) return 'Standard';
-      return 'Nouveau';
-    }
-
-    function getTrustTheme(level) {
-      if (level === 'Elite') return { color: '#7c3aed', bg: 'rgba(124,58,237,.16)', border: 'rgba(167,139,250,.45)' };
-      if (level === 'Fiable') return { color: '#16a34a', bg: 'rgba(22,163,74,.15)', border: 'rgba(74,222,128,.45)' };
-      if (level === 'Standard') return { color: '#2563eb', bg: 'rgba(37,99,235,.15)', border: 'rgba(96,165,250,.45)' };
-      return { color: '#6b7280', bg: 'rgba(107,114,128,.15)', border: 'rgba(156,163,175,.45)' };
-    }
-
-    function getInitials(name) {
-      var parts = String(name || '').trim().split(/\s+/).filter(Boolean);
-      if (!parts.length) return 'FX';
-      return parts.slice(0, 2).map(function (part) { return part.charAt(0).toUpperCase(); }).join('');
-    }
-
-    function formatRating(value) {
-      var number = Number(value || 0);
-      if (!Number.isFinite(number)) number = 0;
-      number = Math.max(0, Math.min(5, Math.round(number * 10) / 10));
-      return number.toFixed(1);
-    }
-
-    function formatStars(value) {
-      var rounded = Math.max(0, Math.min(5, Math.round(Number(value || 0))));
-      return (rounded ? '★'.repeat(rounded) : '') + '☆'.repeat(5 - rounded);
-    }
-
-    function formatPercent(value) {
-      var number = Number(value || 0);
-      if (!Number.isFinite(number)) number = 0;
-      number = Math.max(0, Math.min(1, number));
-      return Math.round(number * 100) + '%';
-    }
-
-    function getBackHref() {
-      var assetPath = window.__fixeoProfileAssetPath || function (path) { return path; };
-      return assetPath('/index.html').replace(/^\//, '') + '#artisans-section';
-    }
-
-    function parseIdFromLocation() {
-      try {
-        var params = new URLSearchParams(window.location.search || '');
-        var raw = String(params.get('id') || '').trim();
-        return raw;
-      } catch (error) {
-        return '';
-      }
-    }
-
-    function cloneMarketplaceSource() {
-      var source = Array.isArray(MARKETPLACE_ARTISANS) ? MARKETPLACE_ARTISANS.slice() : [];
-      return source.map(function (artisan) {
-        return Object.assign({}, artisan, {
-          bio: artisan && artisan.bio && typeof artisan.bio === 'object' ? Object.assign({}, artisan.bio) : artisan.bio,
-          badges: Array.isArray(artisan && artisan.badges) ? artisan.badges.slice() : [],
-          skills: Array.isArray(artisan && artisan.skills) ? artisan.skills.slice() : [],
-          portfolio: Array.isArray(artisan && artisan.portfolio) ? artisan.portfolio.slice() : []
-        });
-      });
-    }
-
-    function getMarketplaceArtisansSync() {
-      var artisans = cloneMarketplaceSource();
-      if (window.FixeoArtisanOnboardingStore && typeof window.FixeoArtisanOnboardingStore.mergeIntoArtisans === 'function') {
-        window.FixeoArtisanOnboardingStore.mergeIntoArtisans(artisans);
-      }
-      return artisans;
-    }
-
-    function normalizeBadgeList(list) {
-      return Array.isArray(list)
-        ? list.filter(Boolean).map(function (item) { return String(item).trim(); }).filter(Boolean)
-        : [];
-    }
-
-    function badgeLabel(value) {
-      var labels = {
-        verified: '✔ Vérifié',
-        pro: 'Pro',
-        responsive: 'Réactif',
-        top_rated: 'Top noté',
-        friendly: 'Sympathique',
-        expert: 'Expert',
-        legendary: 'Excellence',
-        new: 'Nouveau',
-        pending: 'En vérification'
-      };
-      return labels[value] || String(value || 'Badge');
-    }
-
-    function candidateIds(raw) {
-      var nested = raw && raw.artisan && typeof raw.artisan === 'object' ? raw.artisan : {};
-      return [
-        raw && raw.artisan_id,
-        raw && raw.assigned_artisan_id,
-        raw && raw.public_id,
-        nested.id,
-        nested.artisan_id,
-        nested.public_id
-      ].map(function (value) {
-        return String(value || '').trim();
-      }).filter(Boolean);
-    }
-
-    function sameId(left, right) {
-      return hasValue(left) && hasValue(right) && String(left).trim() === String(right).trim();
-    }
-
-    function findArtisanById(artisanId, artisans) {
+    function findMarketplaceArtisanByUrlId(urlId) {
+      var requestedId = String(urlId || '').trim();
+      if (!requestedId) return null;
+      var artisans = readMarketplaceArtisans();
       for (var i = 0; i < artisans.length; i += 1) {
-        var artisan = artisans[i] || {};
-        if (sameId(artisan.id, artisanId) || sameId(artisan.artisan_id, artisanId) || sameId(artisan.public_id, artisanId)) {
-          return artisan;
-        }
+        var artisan = artisans[i];
+        if (!artisan || typeof artisan !== 'object') continue;
+        var candidateIds = [
+          pickValue(artisan.id),
+          pickValue(artisan.artisan_id),
+          pickValue(artisan.public_id)
+        ].filter(Boolean);
+        if (candidateIds.indexOf(requestedId) !== -1) return artisan;
       }
       return null;
     }
 
-    function loadRequests() {
-      return safeJSONParse(safeLocalStorageGet(REQUESTS_KEY, '[]'), []);
-    }
+    function ensureRegistryEntryForMarketplaceArtisan(urlId) {
+      var requestedId = String(urlId || '').trim();
+      if (!requestedId) return;
 
-    function matchesRequest(request, artisan, artisanId) {
-      if (!request || typeof request !== 'object') return false;
-      if (candidateIds(request).indexOf(String(artisanId)) !== -1) return true;
-      var nested = request.artisan && typeof request.artisan === 'object' ? request.artisan : {};
-      var artisanEmail = normalizeText(pickValue(artisan && artisan.email));
-      var artisanPhone = normalizeText(pickValue(artisan && artisan.phone));
-      var artisanName = normalizeText(pickValue(artisan && artisan.name));
-      var artisanCity = normalizeText(pickValue(artisan && artisan.city));
-      if (artisanEmail && artisanEmail === normalizeText(pickValue(nested.email, request.assigned_artisan_email))) return true;
-      if (artisanPhone && artisanPhone === normalizeText(pickValue(nested.phone, request.assigned_artisan_phone))) return true;
-      if (artisanName && artisanName === normalizeText(pickValue(nested.name, request.assigned_artisan)) && artisanCity === normalizeText(pickValue(nested.city, request.city, request.ville))) return true;
-      return false;
-    }
+      var artisan = findMarketplaceArtisanByUrlId(requestedId);
+      if (!artisan) return;
 
-    function buildReviewCard(review) {
-      return '' +
-        '<article class="public-review-card">' +
-          '<div class="public-review-head">' +
-            '<strong>' + escapeHtml(formatStars(review.review_rating) + ' ' + formatRating(review.review_rating) + ' / 5') + '</strong>' +
-            '<span>' + escapeHtml(String(review.review_date || review.date || review.created_at || '').trim() || 'Date non précisée') + '</span>' +
-          '</div>' +
-          '<p>' + escapeHtml(review.review_comment || 'Avis client laissé sans commentaire.') + '</p>' +
-        '</article>';
-    }
+      var registry = readRegistry();
+      var sourceIds = [];
+      uniquePush(sourceIds, pickValue(artisan.id));
+      uniquePush(sourceIds, pickValue(artisan.artisan_id));
+      uniquePush(sourceIds, pickValue(artisan.public_id));
+      uniquePush(sourceIds, requestedId);
 
-    function buildStatCard(label, value, hint) {
-      return '' +
-        '<article class="public-stat-card">' +
-          '<span class="public-stat-label">' + escapeHtml(label) + '</span>' +
-          '<strong class="public-stat-value">' + escapeHtml(value) + '</strong>' +
-          '<small class="public-stat-hint">' + escapeHtml(hint) + '</small>' +
-        '</article>';
-    }
-
-    function renderFallback(root, title, copy) {
-      document.title = title + ' | Fixeo';
-      root.innerHTML = '' +
-        '<section class="public-profile-state">' +
-          '<div class="public-state-icon">🔎</div>' +
-          '<h1>' + escapeHtml(title) + '</h1>' +
-          '<p>' + escapeHtml(copy) + '</p>' +
-          '<a class="btn btn-secondary public-more-btn" href="' + escapeHtml(getBackHref()) + '">Retour aux artisans</a>' +
-        '</section>';
-    }
-
-    function renderProfile(root, artisan, requests) {
-      var reviews = requests.filter(function (item) {
-        var rating = Number(item && item.review_rating || 0);
-        return item && item.review_submitted === true && rating >= 1 && rating <= 5;
-      }).sort(function (left, right) {
-        return new Date(right && (right.review_date || right.date || right.created_at) || 0).getTime() - new Date(left && (left.review_date || left.date || left.created_at) || 0).getTime();
+      var publicId = pickValue(artisan.public_id, artisan.artisan_id, artisan.id, requestedId);
+      var existingIndex = registry.findIndex(function (entry) {
+        var entryPublicId = pickValue(entry && entry.public_id, entry && entry.id);
+        var entrySourceIds = Array.isArray(entry && entry.source_ids)
+          ? entry.source_ids.map(function (value) { return String(value || '').trim(); }).filter(Boolean)
+          : [];
+        if (entryPublicId && (entryPublicId === publicId || entryPublicId === requestedId)) return true;
+        return sourceIds.some(function (value) { return entrySourceIds.indexOf(value) !== -1; });
       });
-      var missionsCompleted = requests.filter(function (item) {
-        var status = normalizeText(item && item.status);
-        return status === 'terminee' || status === 'termine' || status === 'validee' || status === 'valide' || status === 'intervention confirmee';
-      }).length;
-      var missionsValidated = requests.filter(function (item) {
-        var status = normalizeText(item && item.status);
-        return status === 'validee' || status === 'valide';
-      }).length;
-      var missionsConfirmed = requests.filter(function (item) {
-        var confirmation = normalizeText(item && item.client_confirmation);
-        return confirmation === 'confirmee' || confirmation === 'confirmee client';
-      }).length;
-      var commissionsPaid = requests.filter(function (item) {
-        var status = normalizeText(item && item.commission_status);
-        return status === 'payee' || status === 'paye';
-      }).length;
-      var reviewCount = reviews.length || Math.max(0, Math.round(pickNumber(artisan.reviewCount, artisan.review_count, 0)));
-      var rating = reviews.length
-        ? Math.round((reviews.reduce(function (sum, item) { return sum + Number(item.review_rating || 0); }, 0) / reviews.length) * 10) / 10
-        : pickNumber(artisan.rating, 0);
-      var trustScore = Math.max(0, Math.min(100, Math.round(pickNumber(artisan.trustScore, artisan.trust_score, 0))));
-      var trustLevel = getTrustLevel(trustScore);
-      var trustTheme = getTrustTheme(trustLevel);
-      var availability = getAvailabilityMeta(pickValue(artisan.availability, artisan.status, artisan.onlineStatus));
-      var badges = normalizeBadgeList(artisan.badges);
-      var skills = Array.isArray(artisan.skills) && artisan.skills.length ? artisan.skills.slice(0, 6) : [categoryLabel(artisan.category)];
-      var bio = artisan.bio && typeof artisan.bio === 'object'
-        ? pickValue(artisan.bio.fr, artisan.bio.en, artisan.bio.ar)
-        : pickValue(artisan.bio, artisan.description, 'Présentation non disponible pour le moment.');
-      var badgesMarkup = badges.length
-        ? badges.map(function (badge) {
-            return '<span style="display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);font-size:.82rem;font-weight:700;color:#fff">' + escapeHtml(badgeLabel(badge)) + '</span>';
-          }).join('')
-        : '<span style="color:rgba(255,255,255,.68)">Aucun badge public pour le moment</span>';
-      var skillsMarkup = skills.length
-        ? skills.map(function (skill) {
-            return '<span style="display:inline-flex;align-items:center;padding:8px 12px;border-radius:999px;background:rgba(129,140,248,.14);border:1px solid rgba(129,140,248,.24);color:#e0e7ff;font-weight:700;font-size:.82rem">' + escapeHtml(skill) + '</span>';
-          }).join('')
-        : '<span style="color:rgba(255,255,255,.68)">Compétences non précisées</span>';
-      var priceFrom = pickNumber(artisan.priceFrom, artisan.price_from, 0);
-      var priceUnit = pickValue(artisan.priceUnit, artisan.price_unit, 'h');
-      var responseTime = pickNumber(artisan.responseTime, 0);
-      var ratingBlock = reviewCount > 0
-        ? ('⭐ ' + escapeHtml(formatRating(rating)) + ' / 5')
-        : '⭐ Aucun avis pour le moment';
 
-      document.title = artisan.name + ' - ' + categoryLabel(artisan.category) + ' - ' + pickValue(artisan.city, 'Maroc') + ' | Fixeo';
-      root.innerHTML = '' +
-        '<section class="public-profile-hero">' +
-          '<div class="public-avatar-wrap">' +
-            (artisan.avatar
-              ? '<img class="public-avatar" src="' + escapeHtml(artisan.avatar) + '" alt="' + escapeHtml(artisan.name) + '">' 
-              : '<div class="public-avatar public-avatar-fallback" aria-hidden="true">' + escapeHtml(getInitials(artisan.name)) + '</div>') +
-          '</div>' +
-          '<div class="public-hero-main">' +
-            '<span class="public-availability ' + escapeHtml(availability.className) + '">' + escapeHtml(availability.label) + '</span>' +
-            '<h1>' + escapeHtml(artisan.name) + '</h1>' +
-            '<p class="public-hero-meta">' + escapeHtml(categoryLabel(artisan.category) + ' • ' + pickValue(artisan.city, 'Ville non précisée')) + '</p>' +
-            '<p class="public-empty-copy" style="margin:0;color:rgba(255,255,255,.78)">' + escapeHtml(bio || 'Présentation non disponible pour le moment.') + '</p>' +
-            '<div class="public-trust-card">' +
-              '<div class="public-trust-top">' +
-                '<div>' +
-                  '<div class="public-trust-rating">' + ratingBlock + '</div>' +
-                  '<div class="public-trust-sub">' + escapeHtml(String(reviewCount) + ' avis • ' + (priceFrom > 0 ? ('Dès ' + Math.round(priceFrom) + ' MAD / ' + priceUnit) : 'Tarif sur demande') + ' • ' + (responseTime > 0 ? ('Réponse : ' + Math.round(responseTime) + ' min') : 'Réponse rapide')) + '</div>' +
-                '</div>' +
-                '<span class="public-trust-badge" style="color:' + trustTheme.color + ';background:' + trustTheme.bg + ';border-color:' + trustTheme.border + '">' + escapeHtml(trustLevel) + '</span>' +
-              '</div>' +
-              '<div class="public-trust-score">Trust Score : ' + escapeHtml(String(trustScore)) + ' / 100</div>' +
-            '</div>' +
-          '</div>' +
-        '</section>' +
-        '<section class="public-section-grid">' +
-          '<article class="public-panel">' +
-            '<div class="public-section-heading">Badges & compétences</div>' +
-            '<h2>Profil marketplace</h2>' +
-            '<div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:16px">' + badgesMarkup + '</div>' +
-            '<div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:18px">' + skillsMarkup + '</div>' +
-          '</article>' +
-          '<article class="public-panel">' +
-            '<div class="public-section-heading">Statistiques</div>' +
-            '<h2>Indicateurs de confiance</h2>' +
-            '<div class="public-stats-grid">' +
-              buildStatCard('Missions terminées', String(missionsCompleted), 'Historique local confirmé') +
-              buildStatCard('Taux de confirmation', formatPercent(missionsCompleted > 0 ? missionsConfirmed / missionsCompleted : 0), 'Clients ayant confirmé') +
-              buildStatCard('Taux de paiement', formatPercent(missionsValidated > 0 ? commissionsPaid / missionsValidated : 0), 'Commissions réglées') +
-              buildStatCard('Avis visibles', String(reviewCount), 'Source marketplace locale') +
-            '</div>' +
-          '</article>' +
-        '</section>' +
-        '<section class="public-panel">' +
-          '<div class="public-section-heading">Avis clients</div>' +
-          '<h2>Les derniers avis</h2>' +
-          (reviews.length ? reviews.slice(0, 5).map(buildReviewCard).join('') : '<p class="public-empty-copy">Aucun avis local disponible pour le moment</p>') +
-        '</section>';
+      var existing = existingIndex >= 0 && registry[existingIndex] && typeof registry[existingIndex] === 'object'
+        ? registry[existingIndex]
+        : {};
+      var mergedSourceIds = Array.isArray(existing.source_ids)
+        ? existing.source_ids.map(function (value) { return String(value || '').trim(); }).filter(Boolean)
+        : [];
+      sourceIds.forEach(function (value) { uniquePush(mergedSourceIds, value); });
+
+      var entry = {
+        public_id: pickValue(existing.public_id, publicId),
+        slug: pickValue(existing.slug),
+        name: pickValue(existing.name, artisan.name),
+        category: pickValue(existing.category, artisan.category, artisan.service, artisan.specialty, artisan.job),
+        city: pickValue(existing.city, artisan.city, artisan.ville),
+        phone: pickValue(existing.phone, artisan.phone, artisan.telephone),
+        email: pickValue(existing.email, artisan.email),
+        avatar: pickValue(existing.avatar, artisan.avatar, artisan.photo, artisan.image, artisan.picture),
+        availability: pickValue(existing.availability, artisan.availability, artisan.status),
+        trust_score: pickValue(existing.trust_score, artisan.trust_score, artisan.trustScore),
+        created_at: pickValue(existing.created_at, artisan.created_at, artisan.createdAt),
+        source_ids: mergedSourceIds
+      };
+
+      if (existingIndex >= 0) registry[existingIndex] = entry;
+      else registry.unshift(entry);
+      writeRegistry(registry);
     }
 
-    function renderPage() {
-      var root = getRoot();
-      if (!root) return;
-      try {
-        var artisanId = parseIdFromLocation();
-        if (!artisanId) {
-          renderFallback(root, ERROR_TITLE, 'Aucun identifiant artisan valide n’a été trouvé dans l’URL.');
-          return;
-        }
-        var artisans = getMarketplaceArtisansSync();
-        if (!Array.isArray(artisans) || !artisans.length) {
-          renderFallback(root, ERROR_TITLE, 'La source locale des artisans est indisponible.');
-          return;
-        }
-        var artisan = findArtisanById(artisanId, artisans);
-        if (!artisan) {
-          renderFallback(root, NOT_FOUND_TITLE, 'Le profil artisan demandé est introuvable ou indisponible pour le moment.');
-          return;
-        }
-        var requests = loadRequests().filter(function (request) {
-          return matchesRequest(request, artisan, artisanId);
-        });
-        renderProfile(root, artisan, requests);
-      } catch (error) {
-        renderFallback(root, ERROR_TITLE, 'Une erreur a empêché le chargement de ce profil.');
-      }
-    }
-
-    renderPage();
+    try {
+      var params = new URLSearchParams(window.location.search || '');
+      ensureRegistryEntryForMarketplaceArtisan(params.get('id'));
+    } catch (error) {}
+  })(window);
+</script>
+<script>
+  (function (window, document) {
+    var asset = window.__fixeoProfileAssetPath || function (path) { return path; };
+    [
+      '/js/fixeo-public-profile-links.js',
+      '/js/fixeo-public-artisan-profile.js'
+    ].forEach(function (src) {
+      document.write('<script src="' + asset(src) + '"><\/script>');
+    });
   })(window, document);
 </script>
 </body>
