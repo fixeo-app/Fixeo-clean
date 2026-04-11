@@ -4,6 +4,7 @@
   var REQUESTS_KEY = 'fixeo_client_requests';
   var REGISTRY_KEY = 'fixeo_public_artisans_registry';
   var SLUG_MAP_KEY = 'fixeo_artisan_slug_map';
+  var MARKETPLACE_LOCAL_STORAGE_KEY = 'fixeo_admin_artisans_v21';
   var LEGACY_PROFILE_BASE = 'artisan-profile.html?id=';
   var SEO_PROFILE_BASE = '/artisan/';
 
@@ -12,9 +13,7 @@
   }
 
   function buildProfileHref(slug, publicId) {
-    var fallbackHref = LEGACY_PROFILE_BASE + encodeURIComponent(String(publicId || '').trim());
-    if (isLocalFileEnvironment()) return fallbackHref;
-    return slug ? (SEO_PROFILE_BASE + encodeURIComponent(slug)) : fallbackHref;
+    return LEGACY_PROFILE_BASE + encodeURIComponent(String(publicId || '').trim());
   }
 
   function safeJSONParse(value, fallback) {
@@ -64,7 +63,8 @@
     var artisan = artisanLike && typeof artisanLike === 'object' ? artisanLike : { id: artisanLike };
     return {
       id: pickValue(artisan.id, artisan.artisan_id, artisan.userId, artisan.profileId),
-      assigned_artisan_id: pickValue(artisan.assigned_artisan_id),
+      public_id: pickValue(artisan.public_id, artisan.assigned_artisan_id, artisan.id, artisan.artisan_id, artisan.userId, artisan.profileId),
+      assigned_artisan_id: pickValue(artisan.assigned_artisan_id, artisan.public_id),
       name: pickValue(artisan.name, artisan.assigned_artisan, artisan.artisanName, artisan.artisan),
       category: pickValue(artisan.category, artisan.specialty, artisan.job, artisan.service),
       city: pickValue(artisan.city, artisan.ville),
@@ -86,9 +86,18 @@
     return parts.length ? parts.join('-') : '';
   }
 
+  function isDemoIdentifier(value) {
+    var normalized = String(value || '').trim().toLowerCase();
+    return /^art_demo_/i.test(normalized) || /^(?:[1-9]|1[0-2])$/.test(normalized);
+  }
+
   function readRegistry() {
     var parsed = safeJSONParse(localStorage.getItem(REGISTRY_KEY) || '[]', []);
-    return Array.isArray(parsed) ? parsed : [];
+    parsed = Array.isArray(parsed) ? parsed : [];
+    return parsed.filter(function (entry) {
+      var publicId = pickValue(entry && entry.public_id, entry && entry.id);
+      return !isDemoIdentifier(publicId);
+    });
   }
 
   function writeRegistry(entries) {
@@ -120,13 +129,33 @@
     Object.keys(parsed).forEach(function (key) {
       var slug = slugify(key);
       var id = String(parsed[key] || '').trim();
-      if (slug && id) normalized[slug] = id;
+      if (slug && id && !isDemoIdentifier(id)) normalized[slug] = id;
     });
     return normalized;
   }
 
   function writeSlugMap(map) {
     localStorage.setItem(SLUG_MAP_KEY, JSON.stringify(map && typeof map === 'object' ? map : {}));
+  }
+
+  function cleanupStoredMappings() {
+    var registry = safeJSONParse(localStorage.getItem(REGISTRY_KEY) || '[]', []);
+    if (!Array.isArray(registry)) registry = [];
+    var cleanedRegistry = registry.filter(function (entry) {
+      var publicId = pickValue(entry && entry.public_id, entry && entry.id);
+      return !isDemoIdentifier(publicId);
+    });
+    if (cleanedRegistry.length !== registry.length) writeRegistry(cleanedRegistry);
+
+    var slugMap = safeJSONParse(localStorage.getItem(SLUG_MAP_KEY) || '{}', {});
+    if (!slugMap || typeof slugMap !== 'object' || Array.isArray(slugMap)) slugMap = {};
+    var cleanedSlugMap = {};
+    Object.keys(slugMap).forEach(function (key) {
+      var slug = slugify(key);
+      var publicId = String(slugMap[key] || '').trim();
+      if (slug && publicId && !isDemoIdentifier(publicId)) cleanedSlugMap[slug] = publicId;
+    });
+    if (JSON.stringify(cleanedSlugMap) !== JSON.stringify(slugMap)) writeSlugMap(cleanedSlugMap);
   }
 
   function getSlugByPublicId(publicId, slugMap) {
@@ -178,6 +207,7 @@
     var registry = readRegistry().map(normalizeRegistryEntry);
     var sourceIds = [];
     uniquePush(sourceIds, normalized.id);
+    uniquePush(sourceIds, normalized.public_id);
     uniquePush(sourceIds, normalized.assigned_artisan_id);
     uniquePush(sourceIds, publicId);
 
@@ -216,6 +246,7 @@
     baseEntry.created_at = pickValue(baseEntry.created_at, normalized.created_at);
     baseEntry.fingerprint = pickValue(baseEntry.fingerprint, fingerprint);
     uniquePush(baseEntry.source_ids, normalized.id);
+    uniquePush(baseEntry.source_ids, normalized.public_id);
     uniquePush(baseEntry.source_ids, normalized.assigned_artisan_id);
     uniquePush(baseEntry.source_ids, publicId);
 
@@ -231,11 +262,17 @@
     return Array.isArray(parsed) ? parsed : [];
   }
 
+  function readMarketplaceLocalArtisans() {
+    var parsed = safeJSONParse(localStorage.getItem(MARKETPLACE_LOCAL_STORAGE_KEY) || '[]', []);
+    return Array.isArray(parsed) ? parsed : [];
+  }
+
   function requestSnapshot(raw) {
     var nested = raw && raw.artisan && typeof raw.artisan === 'object' ? raw.artisan : {};
+    var requestPublicId = pickValue(raw && raw.assigned_artisan_id, nested.id, raw && raw.artisan_id);
     return {
-      request_public_id: pickValue(raw && raw.assigned_artisan_id, nested.id, raw && raw.artisan_id),
-      request_ids: [pickValue(raw && raw.assigned_artisan_id), pickValue(nested.id), pickValue(raw && raw.artisan_id)].filter(Boolean),
+      request_public_id: isDemoIdentifier(requestPublicId) ? '' : requestPublicId,
+      request_ids: [pickValue(raw && raw.assigned_artisan_id), pickValue(nested.id), pickValue(raw && raw.artisan_id)].filter(Boolean).filter(function (value) { return !isDemoIdentifier(value); }),
       name: pickValue(raw && raw.assigned_artisan, nested.name),
       name_key: normalizeText(pickValue(raw && raw.assigned_artisan, nested.name)),
       category: pickValue(nested.category, nested.specialty, nested.job, raw && raw.category, raw && raw.service),
@@ -254,25 +291,43 @@
   function getArtisanPool() {
     var pool = [];
     if (Array.isArray(window.ARTISANS)) pool = pool.concat(window.ARTISANS);
-    if (Array.isArray(window.FIXEO_SEO_ARTISANS_SEED)) pool = pool.concat(window.FIXEO_SEO_ARTISANS_SEED);
+
+    var localMarketplaceArtisans = readMarketplaceLocalArtisans();
+    if (Array.isArray(localMarketplaceArtisans)) pool = pool.concat(localMarketplaceArtisans);
 
     var onboardingEntries = window.FixeoArtisanOnboardingStore && typeof window.FixeoArtisanOnboardingStore.getEntries === 'function'
       ? window.FixeoArtisanOnboardingStore.getEntries()
       : [];
     if (Array.isArray(onboardingEntries)) pool = pool.concat(onboardingEntries);
 
-    return pool;
+    var seen = {};
+    return pool.filter(function (item) {
+      var itemId = pickValue(item && item.public_id, item && item.assigned_artisan_id, item && item.id, item && item.artisan_id, item && item.profileId, item && item.userId);
+      if (!itemId || isDemoIdentifier(itemId) || seen[itemId]) return false;
+      seen[itemId] = true;
+      return true;
+    });
   }
 
   function findArtisanInPool(sourceId) {
     var normalizedId = String(sourceId || '').trim();
-    if (!normalizedId) return null;
+    if (!normalizedId || isDemoIdentifier(normalizedId)) return null;
 
     var pool = getArtisanPool();
     for (var i = 0; i < pool.length; i += 1) {
       var item = pool[i];
       if (!item || typeof item !== 'object') continue;
-      var itemIds = [pickValue(item.id), pickValue(item.assigned_artisan_id), pickValue(item.userId), pickValue(item.profileId), pickValue(item.artisan_id)];
+      var itemIds = [
+        pickValue(item.public_id),
+        pickValue(item.assigned_artisan_id),
+        pickValue(item.id),
+        pickValue(item.userId),
+        pickValue(item.profileId),
+        pickValue(item.artisan_id)
+      ];
+      if (Array.isArray(item.source_ids)) {
+        item.source_ids.forEach(function (sourceId) { uniquePush(itemIds, sourceId); });
+      }
       if (itemIds.indexOf(normalizedId) !== -1) return item;
     }
 
@@ -321,7 +376,8 @@
     var slugMap = readSlugMap();
     if (slugMap[normalizedSlug]) return slugMap[normalizedSlug];
 
-    hydrateMappingsFromKnownSources();
+    cleanupStoredMappings();
+  hydrateMappingsFromKnownSources();
     slugMap = readSlugMap();
     return slugMap[normalizedSlug] || '';
   }
@@ -329,8 +385,9 @@
   function resolvePublicProfileId(artisanLike) {
     var artisan = normalizeArtisanLike(artisanLike);
     var sourceIds = [];
-    uniquePush(sourceIds, artisan.id);
+    uniquePush(sourceIds, artisan.public_id);
     uniquePush(sourceIds, artisan.assigned_artisan_id);
+    uniquePush(sourceIds, artisan.id);
     var nameKey = normalizeText(artisan.name);
     var cityKey = normalizeText(artisan.city);
     var categoryKey = normalizeText(artisan.category);
@@ -360,21 +417,33 @@
       }
     }
 
+    var poolMatch = null;
+    for (var poolIndex = 0; poolIndex < sourceIds.length; poolIndex += 1) {
+      poolMatch = findArtisanInPool(sourceIds[poolIndex]);
+      if (poolMatch) break;
+    }
+    if (!poolMatch && matchedRequest && matchedRequest.request_public_id) {
+      poolMatch = findArtisanInPool(matchedRequest.request_public_id);
+    }
+
     var resolvedId = pickValue(
-      matchedRequestById ? (matchedRequest && matchedRequest.request_public_id) : '',
-      artisan.id,
-      artisan.assigned_artisan_id,
+      matchedRequest && matchedRequest.request_public_id,
       existing && existing.public_id,
+      artisan.public_id,
+      artisan.assigned_artisan_id,
+      poolMatch && pickValue(poolMatch.public_id, poolMatch.assigned_artisan_id, poolMatch.id, poolMatch.artisan_id),
+      artisan.id,
       !sourceIds.length ? (matchedRequest && matchedRequest.request_public_id) : '',
       buildStablePublicId(artisan)
     );
 
     if (!resolvedId) return null;
 
-    var poolMatch = findArtisanInPool(resolvedId);
+    poolMatch = poolMatch || findArtisanInPool(resolvedId);
     var mergedArtisan = {
-      id: pickValue(artisan.id, matchedRequest && matchedRequest.request_public_id, existing && existing.public_id, poolMatch && poolMatch.id, resolvedId),
-      assigned_artisan_id: pickValue(artisan.assigned_artisan_id, matchedRequest && matchedRequest.request_public_id),
+      id: pickValue(artisan.id, poolMatch && poolMatch.id, resolvedId),
+      public_id: pickValue(artisan.public_id, matchedRequest && matchedRequest.request_public_id, existing && existing.public_id, poolMatch && pickValue(poolMatch.public_id, poolMatch.assigned_artisan_id, poolMatch.id, poolMatch.artisan_id), resolvedId),
+      assigned_artisan_id: pickValue(artisan.assigned_artisan_id, matchedRequest && matchedRequest.request_public_id, poolMatch && pickValue(poolMatch.assigned_artisan_id, poolMatch.public_id)),
       name: pickValue(artisan.name, matchedRequest && matchedRequest.name, existing && existing.name, poolMatch && poolMatch.name),
       category: pickValue(artisan.category, matchedRequest && matchedRequest.category, existing && existing.category, poolMatch && poolMatch.category, poolMatch && poolMatch.service),
       city: pickValue(artisan.city, matchedRequest && matchedRequest.city, existing && existing.city, poolMatch && poolMatch.city),
@@ -543,6 +612,7 @@
     });
   }
 
+  cleanupStoredMappings();
   hydrateMappingsFromKnownSources();
 
   window.FixeoPublicProfileLinks = {
