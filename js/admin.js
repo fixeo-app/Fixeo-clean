@@ -183,20 +183,7 @@ function adminSection(name) {
 
 /* ── DATA STORES ─────────────────────────────────────────────── */
 /* V20: ADMIN_ARTISANS conservé comme fallback legacy (API in admin-artisans.js) */
-const ADMIN_ARTISANS = [
-  { id:1, name:'Karim Benali', initials:'KB', specialty:'Plomberie', city:'Casablanca', plan:'pro', status:'active', rating:4.9, missions:127, joined:'15/01/2024', email:'karim@fixeo.ma' },
-  { id:2, name:'Sara Doukkali', initials:'SD', specialty:'Peinture', city:'Casablanca', plan:'premium', status:'active', rating:4.8, missions:98, joined:'20/02/2024', email:'sara@fixeo.ma' },
-  { id:3, name:'Omar Tahiri', initials:'OT', specialty:'Électricité', city:'Rabat', plan:'pro', status:'active', rating:4.7, missions:85, joined:'10/03/2024', email:'omar@fixeo.ma' },
-  { id:4, name:'Fatima Zahra', initials:'FZ', specialty:'Nettoyage', city:'Marrakech', plan:'premium', status:'active', rating:4.9, missions:210, joined:'05/01/2024', email:'fatima@fixeo.ma' },
-  { id:5, name:'Rachid Moussaoui', initials:'RM', specialty:'Menuiserie', city:'Fès', plan:'free', status:'active', rating:4.6, missions:67, joined:'18/04/2024', email:'rachid@fixeo.ma' },
-  { id:6, name:'Hanane Benkirane', initials:'HB', specialty:'Jardinage', city:'Rabat', plan:'pro', status:'active', rating:4.8, missions:142, joined:'22/02/2024', email:'hanane@fixeo.ma' },
-  { id:7, name:'Youssef Idrissi', initials:'YI', specialty:'Maçonnerie', city:'Casablanca', plan:'free', status:'active', rating:4.5, missions:54, joined:'01/05/2024', email:'youssef@fixeo.ma' },
-  { id:8, name:'Amina Chraibi', initials:'AC', specialty:'Climatisation', city:'Agadir', plan:'pro', status:'active', rating:4.7, missions:89, joined:'14/03/2024', email:'amina@fixeo.ma' },
-  { id:9, name:'Khalid Fassi', initials:'KF', specialty:'Serrurerie', city:'Tanger', plan:'free', status:'suspended', rating:3.8, missions:23, joined:'08/06/2024', email:'khalid@fixeo.ma' },
-  { id:10, name:'Nadia Alaoui', initials:'NA', specialty:'Déménagement', city:'Casablanca', plan:'premium', status:'active', rating:4.9, missions:178, joined:'12/01/2024', email:'nadia@fixeo.ma' },
-  { id:11, name:'Hassan Belhaj', initials:'HB', specialty:'Bricolage', city:'Meknès', plan:'free', status:'active', rating:4.4, missions:38, joined:'20/07/2024', email:'hassan@fixeo.ma' },
-  { id:12, name:'Zineb Ouali', initials:'ZO', specialty:'Peinture', city:'Marrakech', plan:'free', status:'active', rating:4.6, missions:45, joined:'03/06/2024', email:'zineb@fixeo.ma' }
-];
+const ADMIN_ARTISANS = [];
 
 const ADMIN_CLIENTS = [
   { id:1, name:'Mohammed Alami', email:'m.alami@email.ma', city:'Casablanca', missions:12, joined:'15/01/2024', status:'active' },
@@ -209,28 +196,9 @@ const ADMIN_CLIENTS = [
   { id:8, name:'Hafsa Mernissi', email:'h.mernissi@email.ma', city:'Rabat', missions:9, joined:'25/03/2024', status:'suspended' }
 ];
 
-const ADMIN_PAYMENTS = [
-  { ref:'TXN-A8F4B2', artisan:'Sara Doukkali', plan:'Premium', method:'Stripe', amount:199, date:'14/03/2026', status:'success' },
-  { ref:'TXN-C3D9E1', artisan:'Karim Benali', plan:'Pro', method:'PayPal', amount:99, date:'14/03/2026', status:'success' },
-  { ref:'TXN-F7G2H8', artisan:'Omar Tahiri', plan:'Pro', method:'CMI', amount:99, date:'13/03/2026', status:'success' },
-  { ref:'TXN-J1K5L3', artisan:'Fatima Zahra', plan:'Premium', method:'Stripe', amount:199, date:'12/03/2026', status:'success' },
-  { ref:'TXN-M9N4O6', artisan:'Nadia Alaoui', plan:'Premium', method:'Stripe', amount:199, date:'10/03/2026', status:'success' },
-  { ref:'TXN-P2Q7R8', artisan:'Hanane Benkirane', plan:'Pro', method:'PayPal', amount:99, date:'09/03/2026', status:'success' },
-  { ref:'TXN-S5T1U9', artisan:'Amina Chraibi', plan:'Pro', method:'CMI', amount:99, date:'08/03/2026', status:'success' },
-  { ref:'TXN-V3W8X2', artisan:'Khalid Fassi', plan:'Free', method:'—', amount:0, date:'07/03/2026', status:'refunded' },
-  { ref:'TXN-Y6Z4A7', artisan:'Youssef Idrissi', plan:'Pro', method:'Stripe', amount:99, date:'01/03/2026', status:'failed' }
-];
+const ADMIN_PAYMENTS = [];
 
-const ADMIN_SUBSCRIPTIONS = [
-  { artisan:'Karim Benali', plan:'pro', start:'15/01/2024', renewal:'15/04/2026', amount:99, status:'active' },
-  { artisan:'Sara Doukkali', plan:'premium', start:'20/02/2024', renewal:'20/04/2026', amount:199, status:'active' },
-  { artisan:'Omar Tahiri', plan:'pro', start:'10/03/2024', renewal:'10/04/2026', amount:99, status:'active' },
-  { artisan:'Fatima Zahra', plan:'premium', start:'05/01/2024', renewal:'05/04/2026', amount:199, status:'active' },
-  { artisan:'Hanane Benkirane', plan:'pro', start:'22/02/2024', renewal:'22/04/2026', amount:99, status:'active' },
-  { artisan:'Amina Chraibi', plan:'pro', start:'14/03/2024', renewal:'14/04/2026', amount:99, status:'active' },
-  { artisan:'Nadia Alaoui', plan:'premium', start:'12/01/2024', renewal:'12/04/2026', amount:199, status:'active' },
-  { artisan:'Khalid Fassi', plan:'free', start:'08/06/2024', renewal:'—', amount:0, status:'suspended' }
-];
+const ADMIN_SUBSCRIPTIONS = [];
 
 const ADMIN_REGISTRATIONS = [
   { id:1, name:'Mourad Saidi', specialty:'Plâtrerie', city:'Casablanca', email:'mourad@email.ma', phone:'+212 6 12 34 56 78', experience:'8 ans', submitted:'13/03/2026' },
@@ -238,18 +206,9 @@ const ADMIN_REGISTRATIONS = [
   { id:3, name:'Tarik Lahlou', specialty:'Peinture industrielle', city:'Tanger', email:'tarik@email.ma', phone:'+212 6 34 56 78 90', experience:'12 ans', submitted:'10/03/2026' }
 ];
 
-const ADMIN_REVIEWS = [
-  { id:1, artisan:'Karim Benali', client:'Mohammed Alami', rating:5, text:'Excellent travail, rapide et professionnel. Je recommande vivement !', date:'14/03/2026', status:'pending' },
-  { id:2, artisan:'Rachid Moussaoui', client:'Leila Bensouda', rating:2, text:'Travail médiocre, beaucoup de retards et résultat décevant.', date:'13/03/2026', status:'pending' }
-];
+const ADMIN_REVIEWS = [];
 
-const ADMIN_REPORTS = [
-  { id:1, type:'Artisan', target:'Khalid Fassi', reporter:'Ahmed Tahir', reason:'Communication difficile et devis non respecté', date:'14/03/2026', status:'open' },
-  { id:2, type:'Avis', target:'Avis #442', reporter:'Zineb Ouali', reason:'Avis non authentique, semble faux', date:'13/03/2026', status:'open' },
-  { id:3, type:'Client', target:'Soufiane Berrada', reporter:'Hassan Belhaj', reason:'Paiement non effectué après prestation', date:'12/03/2026', status:'open' },
-  { id:4, type:'Artisan', target:'Youssef Idrissi', reporter:'Yasmine Kabbaj', reason:'Non-respect des horaires convenus', date:'11/03/2026', status:'investigating' },
-  { id:5, type:'Avis', target:'Avis #398', reporter:'Omar Tahiri', reason:'Avis diffamatoire sans fondement', date:'10/03/2026', status:'resolved' }
-];
+const ADMIN_REPORTS = [];
 
 let currentArtisanId = null;
 
@@ -335,12 +294,9 @@ function renderActivityList() {
   const list = document.getElementById('admin-activity-list');
   if (!list) return;
   const activities = [
-    { icon:'👷', title:'Nouvel artisan inscrit — Mourad Saidi (Plâtrerie)', time:'Il y a 2h' },
-    { icon:'💳', title:'Paiement Premium reçu — Sara Doukkali (199 MAD)', time:'Il y a 3h' },
-    { icon:'⭐', title:'Nouvel avis en attente de modération', time:'Il y a 5h' },
-    { icon:'🚩', title:'Signalement ouvert — Khalid Fassi', time:'Il y a 6h' },
-    { icon:'✅', title:'Mission complétée — Karim Benali / Mohammed Alami', time:'Il y a 8h' },
-    { icon:'💳', title:'Paiement Pro reçu — Omar Tahiri (99 MAD)', time:'Il y a 12h' }
+    { icon:'👷', title:'Nouvelles données artisan disponibles après synchronisation.', time:'En attente d’activité réelle' },
+    { icon:'💳', title:'Les paiements réels apparaîtront ici automatiquement.', time:'Synchronisation dynamique' },
+    { icon:'⭐', title:'Les avis clients modérés seront listés ici.', time:'Aucune donnée fictive affichée' }
   ];
   list.innerHTML = activities.map(a => `
     <div class="admin-activity-item">
@@ -761,128 +717,7 @@ function _calcCommission(price, method) {
 }
 
 /* ── DATA STORE RÉSERVATIONS ──────────────────────────────────── */
-const ADMIN_RESERVATIONS = [
-  {
-    id:'RES-001', client:'Mohammed Alami', clientId:1,
-    artisan:'Karim Benali', artisanId:1,
-    service:'Fuite d\'eau — réparation', city:'Casablanca',
-    date:'17/03/2026', time:'Matin (8h–12h)',
-    status:'pending', payStatus:'pending_pay',
-    price:300, method:'Stripe', type:'standard', createdAt:'16/03/2026'
-  },
-  {
-    id:'RES-002', client:'Leila Bensouda', clientId:2,
-    artisan:'Sara Doukkali', artisanId:2,
-    service:'Peinture intérieure', city:'Rabat',
-    date:'17/03/2026', time:'Après-midi (14h–18h)',
-    status:'confirmed', payStatus:'paid',
-    price:850, method:'PayPal', type:'standard', createdAt:'15/03/2026'
-  },
-  {
-    id:'RES-003', client:'Ahmed Tahir', clientId:3,
-    artisan:'Omar Tahiri', artisanId:3,
-    service:'Tableau électrique', city:'Marrakech',
-    date:'16/03/2026', time:'Matin (8h–12h)',
-    status:'inprogress', payStatus:'paid',
-    price:450, method:'CMI', type:'standard', createdAt:'14/03/2026'
-  },
-  {
-    id:'RES-004', client:'Yasmine Kabbaj', clientId:4,
-    artisan:'Fatima Zahra', artisanId:4,
-    service:'Nettoyage complet domicile', city:'Casablanca',
-    date:'15/03/2026', time:'Matin (8h–12h)',
-    status:'completed', payStatus:'paid',
-    price:200, method:'Stripe', type:'standard', createdAt:'13/03/2026'
-  },
-  {
-    id:'RES-005', client:'Ibrahim Naciri', clientId:5,
-    artisan:'Rachid Moussaoui', artisanId:5,
-    service:'Portes & Fenêtres', city:'Fès',
-    date:'15/03/2026', time:'Après-midi (14h–18h)',
-    status:'completed', payStatus:'paid',
-    price:1200, method:'Stripe', type:'standard', createdAt:'12/03/2026'
-  },
-  {
-    id:'RES-006', client:'Fatima Tazi', clientId:6,
-    artisan:'Hanane Benkirane', artisanId:6,
-    service:'Taille arbres & haies', city:'Agadir',
-    date:'14/03/2026', time:'Matin (8h–12h)',
-    status:'completed', payStatus:'paid',
-    price:350, method:'PayPal', type:'standard', createdAt:'11/03/2026'
-  },
-  {
-    id:'RES-007', client:'Soufiane Berrada', clientId:7,
-    artisan:'Amina Chraibi', artisanId:8,
-    service:'Installation climatiseur', city:'Tanger',
-    date:'18/03/2026', time:'Soir (18h–20h)',
-    status:'pending', payStatus:'pending_pay',
-    price:600, method:'CMI', type:'standard', createdAt:'17/03/2026'
-  },
-  {
-    id:'RES-008', client:'Hafsa Mernissi', clientId:8,
-    artisan:'Nadia Alaoui', artisanId:10,
-    service:'Déménagement complet', city:'Rabat',
-    date:'20/03/2026', time:'Matin (8h–12h)',
-    status:'confirmed', payStatus:'paid',
-    price:1500, method:'Stripe', type:'standard', createdAt:'16/03/2026'
-  },
-  {
-    id:'RES-009', client:'Mohammed Alami', clientId:1,
-    artisan:'Hassan Belhaj', artisanId:11,
-    service:'Montage meubles IKEA', city:'Casablanca',
-    date:'13/03/2026', time:'Après-midi (14h–18h)',
-    status:'cancelled', payStatus:'refunded',
-    price:250, method:'Stripe', type:'standard', createdAt:'10/03/2026'
-  },
-  {
-    id:'RES-010', client:'Ahmed Tahir', clientId:3,
-    artisan:'Youssef Idrissi', artisanId:7,
-    service:'Carrelage & joints', city:'Marrakech',
-    date:'19/03/2026', time:'Matin (8h–12h)',
-    status:'confirmed', payStatus:'paid',
-    price:700, method:'CMI', type:'standard', createdAt:'17/03/2026'
-  },
-  {
-    id:'RES-EXP-001', client:'Leila Bensouda', clientId:2,
-    artisan:'Karim Benali', artisanId:1,
-    service:'Urgence 24/7', city:'Casablanca',
-    date:'17/03/2026', time:'Dès maintenant',
-    status:'inprogress', payStatus:'paid',
-    price:480, method:'Stripe', type:'express', createdAt:'17/03/2026'
-  },
-  {
-    id:'RES-EXP-002', client:'Yasmine Kabbaj', clientId:4,
-    artisan:'Omar Tahiri', artisanId:3,
-    service:'Urgence électrique', city:'Casablanca',
-    date:'16/03/2026', time:'Dès maintenant',
-    status:'completed', payStatus:'paid',
-    price:360, method:'PayPal', type:'express', createdAt:'16/03/2026'
-  },
-  {
-    id:'RES-013', client:'Ibrahim Naciri', clientId:5,
-    artisan:'Zineb Ouali', artisanId:12,
-    service:'Ravalement de façade', city:'Fès',
-    date:'21/03/2026', time:'Matin (8h–12h)',
-    status:'pending', payStatus:'pending_pay',
-    price:2200, method:'CMI', type:'standard', createdAt:'17/03/2026'
-  },
-  {
-    id:'RES-014', client:'Fatima Tazi', clientId:6,
-    artisan:'Fatima Zahra', artisanId:4,
-    service:'Désinfection', city:'Agadir',
-    date:'22/03/2026', time:'Matin (8h–12h)',
-    status:'pending', payStatus:'pending_pay',
-    price:180, method:'Stripe', type:'standard', createdAt:'17/03/2026'
-  },
-  {
-    id:'RES-015', client:'Soufiane Berrada', clientId:7,
-    artisan:'Hanane Benkirane', artisanId:6,
-    service:'Aménagement paysager', city:'Tanger',
-    date:'10/03/2026', time:'Après-midi (14h–18h)',
-    status:'completed', payStatus:'paid',
-    price:900, method:'PayPal', type:'standard', createdAt:'07/03/2026'
-  }
-];
+const ADMIN_RESERVATIONS = [];
 
 /* Merge reservations from localStorage (created via reservation.js / payment.js / paypal-sandbox.js) */
 function _mergeLocalStorageReservations() {
@@ -1738,26 +1573,19 @@ function _stopAdminOrdersPolling() {
   }
 }
 
-/* — Hook initAdmin : COD init + polling API — */
-var __fixeoCodInitDone = false;
-
-function _afterAdminInitCOD() {
-  if (__fixeoCodInitDone) return;
-  __fixeoCodInitDone = true;
-
+/* ── Hook initAdmin : COD init + polling API ─────────────── */
+const _origInitAdmin = typeof initAdmin === 'function' ? initAdmin : function(){};
+function initAdmin() {
+  _origInitAdmin();
+  /* Appeler les KPIs COD + démarrer le polling API */
   setTimeout(function() {
     _mergeLocalStorageReservations();
     _updateCODKPIs();
     _updateCODSidebarBadge();
-    _startAdminOrdersPolling();
+    _startAdminOrdersPolling(); /* ← polling auto toutes les 10 secondes */
   }, 150);
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-  setTimeout(function() {
-    _afterAdminInitCOD();
-  }, 300);
-});
 
 /* ================================================================
    FIXEO V16 — MISSION STATUS MANAGEMENT
