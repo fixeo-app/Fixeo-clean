@@ -419,5 +419,32 @@
     }, true);
   })(window, document);
 </script>
+<script>
+  (function (document) {
+    function updateBookingButtonLabel() {
+      var button = document.getElementById('public-artisan-action');
+      if (!button) return false;
+      if (button.textContent !== 'Réserver cet artisan') {
+        button.textContent = 'Réserver cet artisan';
+      }
+      return true;
+    }
+
+    if (updateBookingButtonLabel()) return;
+
+    var observer = new MutationObserver(function () {
+      if (updateBookingButtonLabel()) observer.disconnect();
+    });
+
+    if (document.body) {
+      observer.observe(document.body, { childList: true, subtree: true });
+    } else {
+      document.addEventListener('DOMContentLoaded', function () {
+        updateBookingButtonLabel();
+        if (document.body) observer.observe(document.body, { childList: true, subtree: true });
+      }, { once: true });
+    }
+  })(document);
+</script>
 </body>
 </html>
