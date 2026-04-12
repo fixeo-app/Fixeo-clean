@@ -1,7 +1,7 @@
 /**
  * ================================================================
- *  FIXEO v8 — SECONDARY SMART SEARCH ENGINE
- *  Mirrors HERO bar behaviour — identical filters, same search pipe
+ *  FIXEO v8 - SECONDARY SMART SEARCH ENGINE
+ *  Mirrors HERO bar behaviour - identical filters, same search pipe
  *  Key difference: results rendered INLINE below bar (no modal)
  *
  *  Dependencies (must load BEFORE this file):
@@ -20,9 +20,8 @@
 
   function getResponsiveVedetteColumns() {
     const width = window.innerWidth || document.documentElement.clientWidth || 1440;
-    if (width <= 760) return 1;
-    if (width <= 1100) return 2;
-    return 3;
+    if (width <= 720) return 1;
+    return 2; /* 2-col desktop grid */
   }
 
   function getResponsiveVedetteInitialCount() {
@@ -201,56 +200,94 @@
   }
 
   function renderVedetteCard(a) {
-    const avail    = (a.availability || '').toLowerCase();
-    const isAvail  = avail === 'available';
-    const catLbl   = CAT_LABELS[a.category] || (a.category || a.service || 'Service');
-    const rating   = parseFloat(a.rating) || 4.8;
-    const avatar   = a.avatar || a.photo || a.image || 'default-avatar.jpg';
-    const reviews  = parseInt(a.reviewCount || a.reviews || 0, 10) || 0;
-    const missions = parseInt(a.missions || a.completedJobs || a.completedMissions || a.jobsCompleted || 0, 10) || 0;
-    const badgeHtml = [
-      (a.badges || []).includes('verified') ? '<span class="ssb2-badge badge">✅ Vérifié</span>' : '',
-      (a.trustScore || 0) >= 85 ? `<span class="ssb2-badge badge trust">🛡 Premium ${a.trustScore}%</span>` : '',
-      (a.responseTime || 999) <= 15 ? '<span class="ssb2-badge badge fast">⚡ Réponse rapide</span>' : ''
-    ].filter(Boolean).join('');
-    const tagline = isAvail
-      ? 'Disponible aujourd’hui'
-      : (a.responseTime || 999) <= 15
-        ? 'Intervention rapide et fiable'
-        : (a.badges || []).includes('verified')
-          ? 'Artisan vérifié et réactif'
-          : rating >= 4.8
-            ? 'Réactif et bien noté'
-            : 'Artisan fiable et soigné';
+    const avail     = (a.availability || '').toLowerCase();
+    const isAvail   = avail === 'available';
+    const isToday   = avail === 'available_today';
+    const catIcon   = CAT_ICONS[a.category] || '🔧';
+    const catLbl    = CAT_LABELS[a.category] || (a.service || a.category || 'Service');
+    const rating    = parseFloat(a.rating) || 0;
+    const hasRating = rating > 0;
+    const reviews   = parseInt(a.reviewCount || a.reviews || 0, 10);
+    const trust     = parseInt(a.trustScore || 0, 10);
+    const rt        = parseInt(a.responseTime || 999, 10);
+    const price     = parseInt(a.priceFrom || 150, 10);
+    const unit      = a.priceUnit || 'h';
+    const isReal    = !a.claimable && !a._isSeed;
+    const isVerified = a.verified || a.certified || (a.badges || []).includes('verified') || trust >= 85;
+
+    /* Avatar: image or initials fallback */
+    const initials = _initials(a.name);
+    const avatarSrc = a.avatar || a.photo || a.image || '';
+    const avatarHtml = avatarSrc
+      ? `<img class="pvc-avatar-img" src="${avatarSrc}" alt="${a.name}" loading="lazy" onerror="this.onerror=null;this.style.display='none';this.parentNode.querySelector('.pvc-avatar-initials').style.display='flex';" /><span class="pvc-avatar-initials" style="display:none">${initials}</span>`
+      : `<span class="pvc-avatar-initials">${initials}</span>`;
+
+    /* Availability pill */
+    const availPill = isAvail
+      ? `<span class="pvc-avail pvc-avail--on">🟢 Disponible</span>`
+      : isToday
+        ? `<span class="pvc-avail pvc-avail--today">🟡 Auj.</span>`
+        : `<span class="pvc-avail pvc-avail--off">Réservation</span>`;
+
+    /* Badges row — max 2 */
+    const badges = [];
+    if (isVerified)   badges.push(`<span class="pvc-badge pvc-badge--verified">✔ Vérifié</span>`);
+    if (rt <= 30)     badges.push(`<span class="pvc-badge pvc-badge--fast">⚡ Rapide</span>`);
+    if (trust >= 90)  badges.push(`<span class="pvc-badge pvc-badge--premium">🏅 Premium</span>`);
+    const badgesHtml = badges.slice(0, 2).join('');
+
+    /* Rating stars */
+    const starsHtml = hasRating
+      ? `<span class="pvc-stars">${_stars(rating)}</span><span class="pvc-rating-val">${rating.toFixed(1)}</span>${reviews > 0 ? `<span class="pvc-reviews">(${reviews})</span>` : ''}`
+      : `<span class="pvc-rating-empty">Nouveau</span>`;
+
+    /* Trust bar */
+    const trustBar = trust > 0
+      ? `<div class="pvc-trust-bar"><div class="pvc-trust-fill" style="width:${trust}%"></div></div><span class="pvc-trust-label">${trust}%</span>`
+      : '';
+
+    /* Real artisan glow */
+    const realClass = isReal ? ' pvc-card--real' : '';
 
     return `
-<div class="ssb2-card artisan-card premium-vedette-card" data-artisan-id="${a.id}" onclick="window.SecondarySearch.book(${a.id}, false)" role="button" tabindex="0" aria-label="Réserver ${a.name}">
-  <div class="card-header artisan-top">
-    <img class="avatar artisan-avatar" src="${avatar}" alt="${a.name}" onerror="this.onerror=null;this.src='default-avatar.jpg';"/>
-    <div class="artisan-identity">
-      <h3 class="ssb2-card-name artisan-name">${a.name || ''}</h3>
-      <p class="artisan-tagline">${tagline}</p>
+<article class="pvc-card${realClass}" data-artisan-id="${a.id}" tabindex="0" role="button" aria-label="Artisan ${a.name}, ${catLbl}">
+
+  <!-- Top strip: avatar + identity + availability -->
+  <div class="pvc-top">
+    <div class="pvc-avatar">${avatarHtml}</div>
+    <div class="pvc-identity">
+      <h3 class="pvc-name">${a.name || ''}</h3>
+      <p class="pvc-meta"><span class="pvc-cat-icon">${catIcon}</span>${catLbl} · <span class="pvc-city">📍 ${a.city || 'Maroc'}</span></p>
     </div>
-    <span class="status artisan-status ${isAvail ? 'available' : 'busy'}">${isAvail ? '🟢 Disponible' : '🟠 Réservation'}</span>
+    ${availPill}
   </div>
 
-  <div class="premium-card-content">
-    <p class="service ssb2-card-service">${catLbl}</p>
-    <p class="rating ssb2-card-rating">⭐ ${rating.toFixed(1)} (${reviews})</p>
-    ${missions > 0 ? `<p class="proof">🔥 ${missions} missions réalisées</p>` : ''}
-    <div class="badges ssb2-card-badges">${badgeHtml}</div>
-    <p class="meta ssb2-card-meta">📍 ${a.city || 'Maroc'} • ${a.priceFrom || 150} MAD/${a.priceUnit || 'h'}</p>
+  <!-- Badges -->
+  ${badgesHtml ? `<div class="pvc-badges">${badgesHtml}</div>` : ''}
+
+  <!-- Rating + trust -->
+  <div class="pvc-rating-row">
+    <div class="pvc-rating">${starsHtml}</div>
+    ${trust > 0 ? `<div class="pvc-trust">${trustBar}</div>` : ''}
   </div>
 
-  <div class="ssb2-card-actions card-buttons">
-    <button class="ssb2-btn-reserve primary-btn" onclick="window.SecondarySearch.book(${a.id}, false); event.stopPropagation();" aria-label="Réserver ${a.name} maintenant">📅 Réserver</button>
-    <button class="ssb2-btn-profile" onclick="if(window.FixeoPublicProfileLinks){window.FixeoPublicProfileLinks.openBySourceId(${JSON.stringify(String(a.id))}, event);}else if(window.openArtisanModal){window.openArtisanModal(${a.id});}else{window.SecondarySearch.book(${a.id}, false);} event.stopPropagation();" aria-label="Voir le profil de ${a.name}">👁 Voir profil</button>
+  <!-- Price + response time -->
+  <div class="pvc-pricing">
+    <span class="pvc-price">Dès <strong>${price} MAD</strong><span class="pvc-unit">/${unit}</span></span>
+    ${rt < 999 ? `<span class="pvc-rt">⏱ ${rt} min</span>` : ''}
   </div>
-</div>`;
+
+  <!-- CTAs -->
+  <div class="pvc-actions">
+    <button class="pvc-btn-primary" onclick="window.SecondarySearch.book(${JSON.stringify(a.id)}, false); event.stopPropagation();" aria-label="Réserver ${a.name}">📅 Réserver</button>
+    <button class="pvc-btn-secondary ssb2-btn-profile" onclick="if(window.FixeoPublicProfileLinks){window.FixeoPublicProfileLinks.openBySourceId(${JSON.stringify(String(a.id))}, event);}else if(window.openArtisanModal){window.openArtisanModal(${JSON.stringify(a.id)});}else{window.SecondarySearch.book(${JSON.stringify(a.id)}, false);} event.stopPropagation();" aria-label="Voir profil de ${a.name}">Voir profil</button>
+  </div>
+
+</article>`;
   }
 
   /* ════════════════════════════════════════════════════════
-     RESULTS — RENDER INLINE
+     RESULTS - RENDER INLINE
   ════════════════════════════════════════════════════════ */
 
   function renderResults(results) {
@@ -286,7 +323,7 @@
   }
 
   /* ════════════════════════════════════════════════════════
-     VEDETTE — RENDER (reset=true → first load, false → load more)
+     VEDETTE - RENDER (reset=true → first load, false → load more)
   ════════════════════════════════════════════════════════ */
 
   function updateVedetteMoreButton() {
@@ -304,19 +341,31 @@
     moreBtn.innerHTML = `👁 Voir plus <span class="other-see-more-count">+${nextBatch}</span> artisans <span class="see-more-arrow">→</span>`;
   }
 
+  /* ── Priority sort: real artisans first, seeds as fallback ── */
+  function _sortVedetteList(list) {
+    const real  = list.filter(a => !a.claimable && !a._isSeed);
+    const seeds = list.filter(a =>  a.claimable ||  a._isSeed);
+
+    const score = a =>
+      (a.trustScore || 0) * 1.2 +
+      (a.rating || 0) * 8 +
+      (a.availability === 'available' ? 18 : 0) +
+      ((a.reviewCount || 0) > 10 ? 5 : 0) +
+      (a.verified || a.certified ? 10 : 0);
+
+    real.sort((a, b)  => score(b) - score(a));
+    seeds.sort((a, b) => score(b) - score(a));
+
+    /* Vrais artisans en tête, seeds uniquement en fallback */
+    return [...real, ...seeds];
+  }
+
   function renderVedette(reset) {
     const list = _artisans();
     if (!list.length) { setTimeout(() => renderVedette(reset), 400); return; }
 
     if (reset) {
-      /* Sort by trust + rating for premium selection */
-      s.vedetteAll = [...list].sort((a, b) => {
-        const sa = (a.trustScore || 0) * 1.0 + (a.rating || 0) * 6
-                 + (a.availability === 'available' ? 10 : 0);
-        const sb = (b.trustScore || 0) * 1.0 + (b.rating || 0) * 6
-                 + (b.availability === 'available' ? 10 : 0);
-        return sb - sa;
-      });
+      s.vedetteAll = _sortVedetteList(list);
       s.vedetteExpanded = false;
       s.vedetteVisibleCount = Math.min(getResponsiveVedetteInitialCount(), s.vedetteAll.length);
     } else {
@@ -354,7 +403,7 @@
   }
 
   /* ════════════════════════════════════════════════════════
-     SEARCH — EXECUTE
+     SEARCH - EXECUTE
   ════════════════════════════════════════════════════════ */
 
   function doSearch() {
@@ -407,7 +456,7 @@
   }
 
   /* ════════════════════════════════════════════════════════
-     BOOK — delegate to FixeoReservation
+     BOOK - delegate to FixeoReservation
   ════════════════════════════════════════════════════════ */
 
   function book(id, isExpress) {
@@ -426,7 +475,7 @@
   }
 
   /* ════════════════════════════════════════════════════════
-     BUILD HTML — Bar + Dropdowns (deduped, same as HERO)
+     BUILD HTML - Bar + Dropdowns (deduped, same as HERO)
   ════════════════════════════════════════════════════════ */
 
   function buildBarHTML() {
@@ -465,7 +514,7 @@
     cityOptions = cities.map(c => `<option value="${c}">📍 ${c}</option>`).join('');
 
     return `
-<div class="ssb2-bar-wrap" role="search" aria-label="Barre de recherche secondaire — Artisans">
+<div class="ssb2-bar-wrap" role="search" aria-label="Barre de recherche secondaire - Artisans">
 
   <!-- ── Main search card ── -->
   <div class="ssb2-bar-card" id="ssb2-card">
@@ -479,7 +528,7 @@
           type="text"
           id="ssb2-input-nlp"
           class="ssb2-seg-input"
-          placeholder="Ex: Plombier, Fuite d'eau, Peinture…"
+          placeholder="Ex: Plombier, Fuite d'eau, Peinture..."
           autocomplete="off"
           spellcheck="false"
           maxlength="80"
