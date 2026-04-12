@@ -325,6 +325,21 @@ function marketplaceGetUniqueCities(list) {
     .sort((a, b) => a.localeCompare(b, 'fr', { sensitivity: 'base' }));
 }
 
+function marketplaceGetUniqueCategories(list) {
+  const source = Array.isArray(list) ? list : [];
+  const seen = new Set();
+  return source
+    .map((artisan) => String((artisan && artisan.category) || '').trim())
+    .filter((category) => {
+      if (!category) return false;
+      const key = marketplaceNormalizeText(category);
+      if (!key || seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
+    .sort((a, b) => a.localeCompare(b, 'fr', { sensitivity: 'base' }));
+}
+
 function marketplaceGetFilterControls() {
   return {
     searchInput: document.getElementById('search-input'),
@@ -442,6 +457,11 @@ function injectMarketplaceFilterStyles() {
       appearance: none;
       -webkit-appearance: none;
       color-scheme: dark;
+      background-image: linear-gradient(45deg, transparent 50%, rgba(255,255,255,.88) 50%), linear-gradient(135deg, rgba(255,255,255,.88) 50%, transparent 50%);
+      background-position: calc(100% - 18px) calc(50% - 3px), calc(100% - 12px) calc(50% - 3px);
+      background-size: 6px 6px, 6px 6px;
+      background-repeat: no-repeat;
+      padding-right: 2.4rem;
     }
     #filter-category option,
     #filter-city option,
@@ -509,8 +529,8 @@ function injectMarketplaceFilterStyles() {
     #filter-price:focus,
     .fixeo-premium-input:focus,
     .fixeo-premium-select:focus {
-      border-color: rgba(255,0,120,0.35) !important;
-      box-shadow: 0 0 0 3px rgba(255,0,120,0.15), 0 10px 30px rgba(0,0,0,0.6) !important;
+      border: 1px solid rgba(255,0,120,0.35) !important;
+      box-shadow: 0 0 0 1px rgba(255,0,120,0.15), 0 10px 30px rgba(0,0,0,0.6) !important;
       animation: fixeoFilterDropdownIn .2s ease;
     }
     .fixeo-filter-checkbox {
@@ -624,6 +644,28 @@ function enhanceMarketplaceExistingFilterFields() {
   ].filter(Boolean).forEach((element) => {
     element.classList.add(element.tagName === 'SELECT' ? 'fixeo-premium-select' : 'fixeo-premium-input');
   });
+}
+
+function populateMarketplaceCategoryOptions() {
+  const controls = marketplaceGetFilterControls();
+  const select = controls.catFilter;
+  if (!select) return;
+  const previous = select.value || '';
+  const categories = marketplaceGetUniqueCategories(ARTISANS);
+  select.innerHTML = '';
+  const allOption = document.createElement('option');
+  allOption.value = '';
+  allOption.textContent = 'Toutes les catégories';
+  select.appendChild(allOption);
+  categories.forEach((category) => {
+    if (!category) return;
+    const option = document.createElement('option');
+    option.value = category;
+    option.textContent = typeof getCategoryLabel === 'function' ? getCategoryLabel(category, 'fr') : category;
+    select.appendChild(option);
+  });
+  const hasPrevious = Array.from(select.options).some((option) => option.value === previous);
+  select.value = hasPrevious ? previous : '';
 }
 
 function populateMarketplaceCityOptions() {
@@ -804,6 +846,7 @@ function refreshMarketplaceFromCurrentFilters() {
   if (document.readyState === 'loading') return;
   enhanceMarketplaceExistingFilterFields();
   ensureMarketplaceAdvancedFilters();
+  populateMarketplaceCategoryOptions();
   populateMarketplaceCityOptions();
   ensureMarketplaceAvailabilityOptions();
   requestAnimationFrame(() => {
@@ -1663,6 +1706,7 @@ function sendMessage() {
 function initSearch() {
   enhanceMarketplaceExistingFilterFields();
   ensureMarketplaceAdvancedFilters();
+  populateMarketplaceCategoryOptions();
   populateMarketplaceCityOptions();
   ensureMarketplaceAvailabilityOptions();
 
