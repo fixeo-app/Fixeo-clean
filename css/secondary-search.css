@@ -535,116 +535,15 @@
 
 #ssb2-vedette-section,
 .ssb2-vedette-section {
-  margin-top: 48px;
+  margin-top: 40px;
 }
 
-/* Header */
-.ssb2-vedette-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 24px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid rgba(255,255,255,0.07);
-}
-.ssb2-vedette-title {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.ssb2-vedette-title > span:first-child {
-  font-size: 1.4rem;
-}
-.ssb2-vedette-title h3 {
-  font-size: 1.1rem;
-  font-weight: 800;
-  color: #fff;
-  margin: 0;
-}
-.ssb2-vedette-badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 3px 10px;
-  border-radius: 20px;
-  background: linear-gradient(135deg, rgba(225,48,108,0.2), rgba(131,58,180,0.2));
-  border: 1px solid rgba(225,48,108,0.3);
-  color: rgba(255,255,255,0.75);
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.03em;
-}
-
-/* Grid: 5 columns desktop → 3 tablet → 2 mobile */
+/* Grid: 2 colonnes premium desktop, fluides en dessous */
 .ssb2-vedette-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 14px;
-  margin-bottom: 24px;
-}
-
-/* Vedette cards reuse .ssb2-card but are more compact */
-.ssb2-vedette-grid .ssb2-card {
-  grid-template-columns: 1fr;
-  gap: 10px;
-  padding: 16px 14px;
-  align-items: start;
-  cursor: pointer;
-}
-.ssb2-vedette-grid .ssb2-card--featured::after {
-  display: none; /* no best-result label in vedette */
-}
-
-/* In vedette, avatar goes full width centered */
-.ssb2-vedette-grid .ssb2-card-avatar {
-  width: 48px;
-  height: 48px;
-  border-radius: 14px;
-  font-size: 1rem;
-  margin: 0 auto 8px;
-}
-.ssb2-vedette-grid .ssb2-card-info {
-  text-align: center;
-}
-.ssb2-vedette-grid .ssb2-card-top {
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 4px;
-  margin-bottom: 4px;
-}
-.ssb2-vedette-grid .ssb2-card-name {
-  font-size: 0.85rem;
-  display: block;
-  text-align: center;
-}
-.ssb2-vedette-grid .ssb2-badge-available {
-  font-size: 0.6rem;
-  padding: 1px 6px;
-}
-.ssb2-vedette-grid .ssb2-card-meta {
-  font-size: 0.7rem;
-  justify-content: center;
-  gap: 5px;
-}
-.ssb2-vedette-grid .ssb2-card-badges {
-  justify-content: center;
-}
-.ssb2-vedette-grid .ssb2-badge {
-  font-size: 0.62rem;
-  padding: 1px 5px;
-}
-.ssb2-vedette-grid .ssb2-card-actions {
-  flex-direction: row;
-  min-width: 0;
-  width: 100%;
-  gap: 6px;
-  grid-column: 1 / -1;
-}
-.ssb2-vedette-grid .ssb2-btn-reserve,
-.ssb2-vedette-grid .ssb2-btn-express {
-  flex: 1;
-  padding: 7px 6px;
-  font-size: 0.72rem;
-  border-radius: 9px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  margin-bottom: 28px;
 }
 
 /* ── "Voir plus" button ── */
@@ -658,7 +557,7 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 12px 32px;
+  padding: 13px 36px;
   border-radius: 14px;
   background: rgba(255,255,255,0.05);
   border: 1px solid rgba(255,255,255,0.12);
@@ -675,18 +574,332 @@
   border-color: rgba(225,48,108,0.35);
   color: #fff;
   transform: translateY(-2px);
-  box-shadow: 0 6px 24px rgba(0,0,0,0.3);
-}
-.ssb2-btn-more::after {
-  content: '↓';
-  font-size: 1rem;
-  opacity: 0.6;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.3);
 }
 
-/* ── Loading skeleton for vedette ── */
+/* ════════════════════════════════════════════════════════════
+   PREMIUM VEDETTE CARD  (.pvc-card)
+   Design : Uber / Fiverr — 2 colonnes desktop
+   ════════════════════════════════════════════════════════════ */
+
+.pvc-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 22px 22px 18px;
+  border-radius: 20px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.09);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+}
+.pvc-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(225,48,108,0.04) 0%, rgba(131,58,180,0.04) 100%);
+  opacity: 0;
+  transition: opacity 0.25s;
+  pointer-events: none;
+}
+.pvc-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(225,48,108,0.28);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.3), 0 0 0 1px rgba(225,48,108,0.08);
+}
+.pvc-card:hover::before { opacity: 1; }
+
+/* Real artisan gets a subtle premium glow */
+.pvc-card--real {
+  border-color: rgba(255,255,255,0.13);
+  background: rgba(255,255,255,0.055);
+}
+.pvc-card--real::after {
+  content: '✦ Profil réel';
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: rgba(252,175,69,0.9);
+  background: rgba(252,175,69,0.1);
+  border: 1px solid rgba(252,175,69,0.22);
+  border-radius: 6px;
+  padding: 2px 8px;
+  pointer-events: none;
+}
+.pvc-card--real:hover {
+  border-color: rgba(252,175,69,0.3);
+  box-shadow: 0 14px 44px rgba(0,0,0,0.32), 0 0 0 1px rgba(252,175,69,0.1);
+}
+
+/* ── Top strip ── */
+.pvc-top {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* ── Avatar ── */
+.pvc-avatar {
+  width: 58px;
+  height: 58px;
+  border-radius: 16px;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #E1306C 0%, #833AB4 60%, #405DE6 100%);
+  box-shadow: 0 4px 14px rgba(225,48,108,0.25);
+}
+.pvc-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+  display: block;
+}
+.pvc-avatar-initials {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 0.01em;
+  font-family: 'Cairo', sans-serif;
+}
+
+/* ── Identity ── */
+.pvc-identity {
+  flex: 1;
+  min-width: 0;
+}
+.pvc-name {
+  font-size: 1.0rem;
+  font-weight: 800;
+  color: #fff;
+  margin: 0 0 4px;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pvc-meta {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.55);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.pvc-cat-icon { font-size: 0.85rem; }
+.pvc-city { color: rgba(255,255,255,0.45); }
+
+/* ── Availability pill ── */
+.pvc-avail {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.pvc-avail--on {
+  background: rgba(32,201,151,0.14);
+  border: 1px solid rgba(32,201,151,0.3);
+  color: #20c997;
+}
+.pvc-avail--today {
+  background: rgba(252,175,69,0.13);
+  border: 1px solid rgba(252,175,69,0.3);
+  color: #fcb045;
+}
+.pvc-avail--off {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.45);
+}
+
+/* ── Badges ── */
+.pvc-badges {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.pvc-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px 9px;
+  border-radius: 8px;
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+.pvc-badge--verified {
+  background: rgba(32,201,151,0.12);
+  border: 1px solid rgba(32,201,151,0.28);
+  color: #20c997;
+}
+.pvc-badge--fast {
+  background: rgba(252,175,69,0.12);
+  border: 1px solid rgba(252,175,69,0.28);
+  color: #fcb045;
+}
+.pvc-badge--premium {
+  background: rgba(131,58,180,0.18);
+  border: 1px solid rgba(167,139,250,0.3);
+  color: #c084fc;
+}
+
+/* ── Rating row ── */
+.pvc-rating-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.pvc-rating {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex: 1;
+}
+.pvc-stars   { color: #FFD700; font-size: 0.72rem; letter-spacing: -0.5px; }
+.pvc-rating-val { font-weight: 800; font-size: 0.88rem; color: #FFD700; }
+.pvc-reviews { font-size: 0.74rem; color: rgba(255,255,255,0.45); }
+.pvc-rating-empty { font-size: 0.74rem; color: rgba(255,255,255,0.35); font-style: italic; }
+
+.pvc-trust {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.pvc-trust-bar {
+  width: 60px;
+  height: 4px;
+  border-radius: 4px;
+  background: rgba(255,255,255,0.08);
+  overflow: hidden;
+}
+.pvc-trust-fill {
+  height: 100%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #20c997, #405DE6);
+  transition: width 0.5s ease;
+}
+.pvc-trust-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.5);
+  white-space: nowrap;
+}
+
+/* ── Pricing ── */
+.pvc-pricing {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.pvc-price {
+  font-size: 0.84rem;
+  color: rgba(255,255,255,0.7);
+}
+.pvc-price strong {
+  color: #FFD700;
+  font-size: 1.02rem;
+  font-weight: 800;
+}
+.pvc-unit {
+  color: rgba(255,255,255,0.4);
+  font-size: 0.74rem;
+}
+.pvc-rt {
+  font-size: 0.73rem;
+  color: rgba(255,255,255,0.42);
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+  padding: 3px 8px;
+  white-space: nowrap;
+}
+
+/* ── CTAs ── */
+.pvc-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 2px;
+}
+.pvc-btn-primary {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 11px 16px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #E1306C 0%, #833AB4 100%);
+  color: #fff;
+  font-size: 0.84rem;
+  font-weight: 800;
+  border: none;
+  cursor: pointer;
+  font-family: 'Cairo', sans-serif;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 16px rgba(225,48,108,0.3);
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+}
+.pvc-btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(225,48,108,0.45);
+  filter: brightness(1.08);
+}
+.pvc-btn-secondary {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 11px 16px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.8);
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'Cairo', sans-serif;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+.pvc-btn-secondary:hover {
+  background: rgba(255,255,255,0.11);
+  border-color: rgba(255,255,255,0.2);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+/* ── Loading skeleton ── */
 .ssb2-vedette-grid .ssb2-skeleton {
-  height: 200px;
-  border-radius: 18px;
+  height: 220px;
+  border-radius: 20px;
   background: linear-gradient(90deg,
     rgba(255,255,255,0.04) 25%,
     rgba(255,255,255,0.08) 50%,
@@ -705,15 +918,12 @@
    RESPONSIVE
    ═══════════════════════════════════════════════════════════ */
 
+/* ── Responsive ── */
+
 @media (max-width: 1100px) {
   .ssb2-vedette-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
-@media (max-width: 900px) {
-  .ssb2-vedette-grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
   }
 }
 
@@ -759,9 +969,10 @@
     flex: 1;
     padding: 10px 8px;
   }
-  /* Vedette: 2 columns on mobile */
+  /* Vedette: 1 colonne mobile */
   .ssb2-vedette-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
+    gap: 14px;
   }
   .ssb2-filters-row {
     gap: 6px;
@@ -770,14 +981,40 @@
     font-size: 0.72rem;
     padding: 5px 10px;
   }
+
+  /* PVC mobile adjustments */
+  .pvc-card {
+    padding: 18px 16px 15px;
+    gap: 12px;
+  }
+  .pvc-name {
+    font-size: 0.92rem;
+  }
+  .pvc-card--real::after {
+    display: none;
+  }
+  .pvc-actions {
+    gap: 8px;
+  }
+  .pvc-btn-primary,
+  .pvc-btn-secondary {
+    padding: 10px 12px;
+    font-size: 0.78rem;
+  }
 }
 
 @media (max-width: 480px) {
   .ssb2-vedette-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
   }
   .ssb2-card-meta {
     font-size: 0.7rem;
     gap: 5px;
+  }
+  .pvc-trust-bar {
+    width: 44px;
+  }
+  .pvc-rating-row {
+    padding: 8px 12px;
   }
 }
