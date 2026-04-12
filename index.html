@@ -2087,11 +2087,11 @@ section#home.hero.hero-section {
 <section id="top-artisans" class="section section-sm top-artisan-section" aria-labelledby="top-artisans-title">
   <div class="container">
     <div class="section-header">
-      <span class="section-tag">TENDANCE</span>
-      <h2 id="top-artisans-title">🔥 Les meilleurs artisans du moment</h2>
-      <p class="top-artisan-sub">🔥 Les artisans les mieux notés cette semaine</p>
+      <span class="section-tag">SÉLECTION PREMIUM</span>
+      <h2 id="top-artisans-title">⭐ Artisans vérifiés</h2>
+      <p class="top-artisan-sub">Notre sélection de professionnels les mieux notés — disponibles et vérifiés</p>
     </div>
-    <div id="top-list" class="top-artisans-grid" aria-label="Classement des meilleurs artisans"></div>
+    <div id="top-list" class="ssb2-vedette-grid" aria-label="Artisans vérifiés — sélection premium"></div>
   </div>
 </section>
 
@@ -2873,68 +2873,149 @@ function openContentModal(type) {
   }
 
   /* ── 2. SECTION TOP ARTISANS ──────────────────────────────── */
+  /* ── Priority sort: vrais artisans first, seeds as fallback ── */
+  function _sortTopArtisans(list) {
+    var real  = list.filter(function(a) { return !a.claimable && !a._isSeed; });
+    var seeds = list.filter(function(a) { return  a.claimable ||  a._isSeed; });
+    function score(a) {
+      return (a.trustScore || 0) * 1.2 +
+             (a.rating || 0) * 8 +
+             (a.availability === 'available' ? 18 : 0) +
+             ((a.reviewCount || 0) > 10 ? 5 : 0) +
+             (a.verified || a.certified ? 10 : 0);
+    }
+    real.sort(function(a, b)  { return score(b) - score(a); });
+    seeds.sort(function(a, b) { return score(b) - score(a); });
+    return real.concat(seeds);
+  }
+
   function loadTopArtisans() {
     fetch('/api/artisans/top')
-      .then(res => { if (!res.ok) throw new Error('no api'); return res.json(); })
-      .then(data => renderTopArtisans(data))
-      .catch(() => {
-        const list = window.ARTISANS || (typeof ARTISANS !== 'undefined' ? ARTISANS : []);
-        if (!list.length) return;
-        const top = [...list]
-          .sort((a,b) =>
-            ((b.trustScore||0) + (b.rating||0)*10 + (b.reviewCount||0)*0.1) -
-            ((a.trustScore||0) + (a.rating||0)*10 + (a.reviewCount||0)*0.1)
-          )
-          .slice(0, 6);
-        renderTopArtisans(top);
+      .then(function(res) { if (!res.ok) throw new Error('no api'); return res.json(); })
+      .then(function(data) { renderTopArtisans(data); })
+      .catch(function() {
+        var list = window.ARTISANS || (typeof ARTISANS !== 'undefined' ? ARTISANS : []);
+        if (!list.length) {
+          /* Retry once ARTISANS may not be ready yet */
+          setTimeout(function() {
+            var l2 = window.ARTISANS || [];
+            if (l2.length) renderTopArtisans(_sortTopArtisans(l2).slice(0, 6));
+          }, 800);
+          return;
+        }
+        renderTopArtisans(_sortTopArtisans(list).slice(0, 6));
       });
   }
 
   function renderTopArtisans(data) {
-    const grid = document.getElementById('top-list');
-    const limitedData = Array.isArray(data) ? data.slice(0, 6) : [];
-    if (!grid || !limitedData.length) return;
+    var grid = document.getElementById('top-list');
+    var list = Array.isArray(data) ? _sortTopArtisans(data).slice(0, 6) : [];
+    if (!grid || !list.length) return;
 
-    const getAvatar = (artisan) => {
-      const candidate = artisan.avatar || artisan.photo || artisan.image || '';
-      return String(candidate || '').trim() || '/demo-artisan.jpg';
-    };
+    /* Delegate to SecondarySearch.renderVedetteCard if available */
+    var renderCard = (window.SecondarySearch && typeof window.SecondarySearch.renderVedetteCard === 'function')
+      ? window.SecondarySearch.renderVedetteCard.bind(window.SecondarySearch)
+      : null;
 
-    const openProfileAction = (id) => {
-      if (!id) return;
-      if (window.FixeoPublicProfileLinks) window.FixeoPublicProfileLinks.openBySourceId(id);
-      else if (typeof window.openArtisanModal === 'function') window.openArtisanModal(id);
-      else if (typeof window.openBookingModal === 'function') window.openBookingModal(id);
-    };
-
-    window.openTopArtisanProfile = openProfileAction;
-
-    grid.innerHTML = limitedData.map((a, i) => `
-      <div class="top-artisan-card top-artisan-chip v12-fade-in ${i < 3 ? 'top' : ''}"
-           onclick="openBookingModal(${a.id})"
-           title="Réserver ${a.name || ''}">
-        <span class="rank">#${i + 1}</span>
-        <img class="top-chip-avatar" src="${getAvatar(a)}" alt="${a.name || 'Artisan'}" loading="lazy" onerror="this.onerror=null;this.src='/demo-artisan.jpg';"/>
-        <div class="info top-chip-info">
-          <h4 class="top-chip-name"><span class="dot"></span>${a.name || ''}</h4>
-          <p class="top-chip-meta">⭐ ${a.rating || '4.9'} · ${a.city || 'Maroc'}</p>
-        </div>
-        <button class="mini-btn" type="button" onclick="event.stopPropagation();openTopArtisanProfile(${a.id})">Voir</button>
-        <span class="top-chip-rank" aria-label="Rang ${i + 1}">#${i + 1}</span>
-      </div>
-    `).join('');
-
-    document.querySelectorAll('.top-artisan-card img').forEach(img => {
-      if (!img.src || img.src.includes('undefined')) {
-        img.src = '/demo-artisan.jpg';
+    if (renderCard) {
+      grid.innerHTML = list.map(renderCard).join('');
+    } else {
+      /* Inline pvc-card fallback — same markup as secondary-search.js renderVedetteCard */
+      var CAT_ICONS_TOP = {
+        plomberie:'🔧', electricite:'⚡', peinture:'🎨', nettoyage:'🧹',
+        jardinage:'🌿', demenagement:'📦', bricolage:'🔨', climatisation:'❄️',
+        menuiserie:'🪚', maconnerie:'🧱', serrurerie:'🔑', carrelage:'🏠',
+        etancheite:'🛡', vitrerie:'🪟', soudure:'🔥', informatique:'💻'
+      };
+      var CAT_LABELS_TOP = {
+        plomberie:'Plomberie', electricite:'Électricité', peinture:'Peinture',
+        nettoyage:'Nettoyage', jardinage:'Jardinage', demenagement:'Déménagement',
+        bricolage:'Bricolage', climatisation:'Climatisation', menuiserie:'Menuiserie',
+        maconnerie:'Maçonnerie', serrurerie:'Serrurerie', carrelage:'Carrelage',
+        etancheite:'Étanchéité', vitrerie:'Vitrerie', soudure:'Soudure',
+        informatique:'Informatique'
+      };
+      function _starsTop(r) {
+        var f = Math.round(r * 2) / 2;
+        var s = '';
+        for (var i = 1; i <= 5; i++) { s += i <= f ? '★' : (f >= i - 0.5 ? '½' : '☆'); }
+        return s;
       }
-    });
+      function _initialsTop(name) {
+        if (!name) return '??';
+        var p = name.trim().split(/\s+/);
+        return (p[0][0] + (p[1] ? p[1][0] : '')).toUpperCase();
+      }
 
-    setTimeout(() => {
-      grid.querySelectorAll('.top-artisan-chip').forEach((c, i) => {
-        setTimeout(() => c.classList.add('visible'), i * 60);
-      });
-    }, 80);
+      grid.innerHTML = list.map(function(a) {
+        var avail    = (a.availability || '').toLowerCase();
+        var isAvail  = avail === 'available';
+        var isToday  = avail === 'available_today';
+        var catIcon  = CAT_ICONS_TOP[a.category] || '🔧';
+        var catLbl   = CAT_LABELS_TOP[a.category] || (a.service || a.category || 'Service');
+        var rating   = parseFloat(a.rating) || 0;
+        var reviews  = parseInt(a.reviewCount || 0, 10);
+        var trust    = parseInt(a.trustScore || 0, 10);
+        var rt       = parseInt(a.responseTime || 999, 10);
+        var price    = parseInt(a.priceFrom || 150, 10);
+        var unit     = a.priceUnit || 'h';
+        var isReal   = !a.claimable && !a._isSeed;
+        var isVer    = a.verified || a.certified || (a.badges || []).indexOf('verified') >= 0 || trust >= 85;
+
+        var initials  = _initialsTop(a.name);
+        var avatarSrc = a.avatar || a.photo || a.image || '';
+        var avatarHtml = avatarSrc
+          ? '<img class="pvc-avatar-img" src="' + avatarSrc + '" alt="' + (a.name||'') + '" loading="lazy" onerror="this.onerror=null;this.style.display=\'none\';this.parentNode.querySelector(\'.pvc-avatar-initials\').style.display=\'flex\';" /><span class="pvc-avatar-initials" style="display:none">' + initials + '</span>'
+          : '<span class="pvc-avatar-initials">' + initials + '</span>';
+
+        var availPill = isAvail
+          ? '<span class="pvc-avail pvc-avail--on">🟢 Disponible</span>'
+          : isToday
+            ? '<span class="pvc-avail pvc-avail--today">🟡 Auj.</span>'
+            : '<span class="pvc-avail pvc-avail--off">Réservation</span>';
+
+        var badges = [];
+        if (isVer)    badges.push('<span class="pvc-badge pvc-badge--verified">✔ Vérifié</span>');
+        if (rt <= 30) badges.push('<span class="pvc-badge pvc-badge--fast">⚡ Rapide</span>');
+        if (trust >= 90) badges.push('<span class="pvc-badge pvc-badge--premium">🏅 Premium</span>');
+        var badgesHtml = badges.slice(0, 2).join('');
+
+        var starsHtml = rating > 0
+          ? '<span class="pvc-stars">' + _starsTop(rating) + '</span><span class="pvc-rating-val">' + rating.toFixed(1) + '</span>' + (reviews > 0 ? '<span class="pvc-reviews">(' + reviews + ')</span>' : '')
+          : '<span class="pvc-rating-empty">Nouveau</span>';
+
+        var trustBar = trust > 0
+          ? '<div class="pvc-trust-bar"><div class="pvc-trust-fill" style="width:' + trust + '%"></div></div><span class="pvc-trust-label">' + trust + '%</span>'
+          : '';
+
+        var realClass = isReal ? ' pvc-card--real' : '';
+        var id = a.id;
+
+        return '<article class="pvc-card' + realClass + '" data-artisan-id="' + id + '" tabindex="0" role="button" aria-label="Artisan ' + (a.name||'') + '">' +
+          '<div class="pvc-top">' +
+            '<div class="pvc-avatar">' + avatarHtml + '</div>' +
+            '<div class="pvc-identity">' +
+              '<h3 class="pvc-name">' + (a.name||'') + '</h3>' +
+              '<p class="pvc-meta"><span class="pvc-cat-icon">' + catIcon + '</span>' + catLbl + ' · <span class="pvc-city">📍 ' + (a.city||'Maroc') + '</span></p>' +
+            '</div>' +
+            availPill +
+          '</div>' +
+          (badgesHtml ? '<div class="pvc-badges">' + badgesHtml + '</div>' : '') +
+          '<div class="pvc-rating-row">' +
+            '<div class="pvc-rating">' + starsHtml + '</div>' +
+            (trust > 0 ? '<div class="pvc-trust">' + trustBar + '</div>' : '') +
+          '</div>' +
+          '<div class="pvc-pricing">' +
+            '<span class="pvc-price">Dès <strong>' + price + ' MAD</strong><span class="pvc-unit">/' + unit + '</span></span>' +
+            (rt < 999 ? '<span class="pvc-rt">⏱ ' + rt + ' min</span>' : '') +
+          '</div>' +
+          '<div class="pvc-actions">' +
+            '<button class="pvc-btn-primary" onclick="(window.FixeoReservation?window.FixeoReservation.open(' + JSON.stringify(a) + ',false):(window.openBookingModal?window.openBookingModal(' + JSON.stringify(id) + '):void 0));event.stopPropagation();" aria-label="Réserver ' + (a.name||'') + '">📅 Réserver</button>' +
+            '<button class="pvc-btn-secondary" onclick="(window.FixeoPublicProfileLinks?window.FixeoPublicProfileLinks.openBySourceId(' + JSON.stringify(String(id)) + ',event):(window.openArtisanModal?window.openArtisanModal(' + JSON.stringify(id) + '):void 0));event.stopPropagation();" aria-label="Voir profil">Voir profil</button>' +
+          '</div>' +
+        '</article>';
+      }).join('');
+    }
   }
 
   /* ── 3. FILTRES RAPIDES (Boost) ───────────────────────────── */

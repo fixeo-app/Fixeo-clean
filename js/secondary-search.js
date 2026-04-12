@@ -701,6 +701,6 @@
   bootstrap();
 
   /* ── Expose public API ── */
-  window.SecondarySearch = { doSearch, book, renderVedette, syncResponsiveVedette };
+  window.SecondarySearch = { doSearch, book, renderVedette, syncResponsiveVedette, renderVedetteCard };
 
 }(window));
