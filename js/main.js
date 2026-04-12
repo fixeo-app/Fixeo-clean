@@ -10,7 +10,7 @@ window.ARTISANS = ARTISANS;
 
 function cleanupMarketplaceLocalArtisans() {
   try {
-    const parsed = marketplaceSafeJSONParse(localStorage.getItem(MARKETPLACE_aLOCAL_STORAGE_KEY) || '[]', []);
+    const parsed = marketplaceSafeJSONParse(localStorage.getItem(MARKETPLACE_LOCAL_STORAGE_KEY) || '[]', []);
     const source = Array.isArray(parsed) ? parsed : [];
     const cleaned = source.filter(function (artisan) {
       const candidateId = marketplacePickFirst(artisan && artisan.id, artisan && artisan.artisan_id, artisan && artisan.public_id);
@@ -430,6 +430,8 @@ function injectMarketplaceFilterStyles() {
       padding: .82rem .95rem;
       background: rgba(20,20,25,0.98) !important;
       color: #ffffff !important;
+      opacity: 1 !important;
+      -webkit-text-fill-color: #ffffff !important;
       border: 1px solid rgba(255,255,255,0.08) !important;
       border-radius: 12px !important;
       box-shadow: 0 10px 30px rgba(0,0,0,0.6) !important;
@@ -439,6 +441,7 @@ function injectMarketplaceFilterStyles() {
       z-index: 9999;
       appearance: none;
       -webkit-appearance: none;
+      color-scheme: dark;
     }
     #filter-category option,
     #filter-city option,
@@ -447,8 +450,46 @@ function injectMarketplaceFilterStyles() {
     #filter-rating option,
     #filter-price option,
     .fixeo-premium-select option {
-      background: rgba(20,20,25,0.98);
-      color: #ffffff;
+      background: rgba(20,20,25,0.98) !important;
+      color: #ffffff !important;
+      opacity: 1 !important;
+      -webkit-text-fill-color: #ffffff !important;
+      text-shadow: none !important;
+      font-weight: 600;
+    }
+    #filter-category option:hover,
+    #filter-city option:hover,
+    #filter-availability option:hover,
+    #filter-sort option:hover,
+    #filter-rating option:hover,
+    #filter-price option:hover,
+    .fixeo-premium-select option:hover,
+    #filter-category option:focus,
+    #filter-city option:focus,
+    #filter-availability option:focus,
+    #filter-sort option:focus,
+    #filter-rating option:focus,
+    #filter-price option:focus,
+    .fixeo-premium-select option:focus {
+      background: rgba(255,255,255,0.08) !important;
+      color: #ffffff !important;
+    }
+    #filter-category option:checked,
+    #filter-city option:checked,
+    #filter-availability option:checked,
+    #filter-sort option:checked,
+    #filter-rating option:checked,
+    #filter-price option:checked,
+    .fixeo-premium-select option:checked,
+    #filter-category option[selected],
+    #filter-city option[selected],
+    #filter-availability option[selected],
+    #filter-sort option[selected],
+    #filter-rating option[selected],
+    #filter-price option[selected],
+    .fixeo-premium-select option[selected] {
+      background: rgba(255,0,120,0.18) !important;
+      color: #ffffff !important;
     }
     #filter-category:hover,
     #filter-city:hover,
