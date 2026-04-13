@@ -53,6 +53,7 @@
 <link rel="stylesheet" href="css/how-it-works-premium.css?v=50a38b9"/>
 <link rel="stylesheet" href="css/services-premium.css?v=svcv6"/>
   <link rel="stylesheet" href="css/why-fixeo.css?v=svcv5"/>
+  <link rel="stylesheet" href="css/urgent-fab.css?v=fab1"/>
 
 <style>
 /* ══════════════════════════════════════════════════════════
@@ -3330,5 +3331,22 @@ function openContentModal(type) {
 
 <script src="js/fixeo-artisan-request-notifications.js?v=50a38b9"></script>
   <script src="js/why-fixeo.js?v=svcv5"></script>
+
+<!-- ── Mobile-only Urgence FAB ─────────────────────────────────── -->
+<button
+  id="fixeo-urgent-fab"
+  type="button"
+  class="btn-express"
+  data-open-express-request="true"
+  data-request-mode="express"
+  onclick="window.FixeoClientRequest ? FixeoClientRequest.openExpress(this) : (window.FixeoReservation ? FixeoReservation.openExpress() : openModal('express-modal')); return false;"
+  aria-label="Demande urgente"
+  title="Demande urgente">
+  <svg class="ufab-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+  </svg>
+  <span class="ufab-label">Urgence</span>
+</button>
+<!-- ── /Mobile Urgence FAB ──────────────────────────────────────── -->
 </body>
 </html>
