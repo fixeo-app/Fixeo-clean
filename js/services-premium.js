@@ -1,15 +1,17 @@
 /**
- * services-premium.js  v3
+ * services-premium.js  v6 — PORTAL DROPDOWN
  * ─────────────────────────────────────────────────────────────────────────────
- * 1. Custom city picker: hides native <select>, injects .svc-city-wrap
- *    containing .svc-city-pill trigger + .svc-city-dropdown panel
- *    → selection fires change event on original <select> (zero logic change)
- * 2. Desktop: IntersectionObserver stagger fade-in for chips (28ms/chip)
- * 3. Mobile: wrap category-chips in .svc-chips-wrap for ::after fade gradient
- * 4. Mobile: scroll-end detection → .at-end (hides gradient)
- * 5. Mobile: one-shot scroll hint animation on first chip (sessionStorage)
+ * FIXES:
+ * 1. Dropdown appended to document.body (portal pattern) — escapes ALL
+ *    overflow:hidden ancestors. No more section scroll when dropdown opens.
+ * 2. Position:fixed, recalculated from pill.getBoundingClientRect() on open.
+ * 3. Reposition on window scroll/resize (or close).
+ * 4. Works identically on desktop and mobile/touch.
+ * 5. City picker: hides native <select>, custom pill + dropdown.
+ * 6. Desktop: IntersectionObserver stagger fade-in for chips.
+ * 7. Mobile: wrap category-chips in .svc-chips-wrap for fade gradient.
  * ─────────────────────────────────────────────────────────────────────────────
- * ZERO logic changes — no modifications to filtering, routing, or reservation
+ * ZERO logic changes — no modifications to filtering or reservation.
  */
 (function (window, document) {
   'use strict';
@@ -17,7 +19,6 @@
   var MOBILE_BP = 768;
   var _done = false;
 
-  /* Cities list — mirrors <select> options (value + label) */
   var CITIES = [
     { value: '',           label: '📍 Toutes les villes' },
     { value: 'Casablanca', label: 'Casablanca' },
@@ -34,7 +35,6 @@
     { value: 'El Jadida',  label: 'El Jadida' }
   ];
 
-  /* SVG helpers */
   var PIN_SVG =
     '<svg class="svc-city-pin" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">' +
       '<path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' +
@@ -48,15 +48,15 @@
   function _isMobile() { return window.innerWidth <= MOBILE_BP; }
 
   /* ══════════════════════════════════════════════════
-     BUILD CUSTOM CITY PICKER
+     PORTAL DROPDOWN — appended to body, position:fixed
   ══════════════════════════════════════════════════ */
   function _buildCityPicker(citySelect) {
-    if (document.querySelector('.svc-city-wrap')) return; /* already built */
+    if (document.querySelector('.svc-city-wrap')) return;
 
     var currentValue = citySelect.value || '';
     var currentLabel = (CITIES.find(function(c){ return c.value === currentValue; }) || CITIES[0]).label;
 
-    /* Wrapper (provides relative positioning for dropdown) */
+    /* Wrapper inside filter bar (just holds the pill) */
     var wrap = document.createElement('div');
     wrap.className = 'svc-city-wrap';
 
@@ -75,7 +75,7 @@
     pill.appendChild(pillLabel);
     pill.insertAdjacentHTML('beforeend', CHEV_SVG);
 
-    /* Dropdown */
+    /* ── DROPDOWN: appended to document.body (portal pattern) ── */
     var dropdown = document.createElement('div');
     dropdown.className = 'svc-city-dropdown';
     dropdown.setAttribute('role', 'listbox');
@@ -85,88 +85,136 @@
       var opt = document.createElement('div');
       opt.className = 'svc-city-option' + (city.value === currentValue ? ' selected' : '');
       opt.setAttribute('role', 'option');
+      opt.setAttribute('data-value', city.value);
       opt.setAttribute('aria-selected', city.value === currentValue ? 'true' : 'false');
-      opt.dataset.value = city.value;
       opt.textContent = city.label;
       dropdown.appendChild(opt);
     });
 
-    wrap.appendChild(pill);
-    wrap.appendChild(dropdown);
+    /* Append dropdown to BODY — escapes all overflow:hidden ancestors */
+    document.body.appendChild(dropdown);
 
-    /* Insert wrap before the native select in the DOM */
-    citySelect.parentNode.insertBefore(wrap, citySelect);
+    /* ── Open / Close / Position ── */
+    function _getDropdownPos() {
+      var rect = pill.getBoundingClientRect();
+      var viewW = window.innerWidth;
+      var MARGIN = 8;
 
-    /* ── Open / close ── */
+      var left = rect.left;
+      var top  = rect.bottom + 6;
+      var dropW = 192;
+
+      // Prevent right-side clip
+      if (left + dropW > viewW - MARGIN) {
+        left = viewW - dropW - MARGIN;
+      }
+      // Prevent left-side clip
+      if (left < MARGIN) left = MARGIN;
+
+      // Prevent bottom clip — show above if needed
+      var dropMaxH = 280;
+      if (top + dropMaxH > window.innerHeight - MARGIN) {
+        top = rect.top - dropMaxH - 6;
+        if (top < MARGIN) top = MARGIN;
+      }
+
+      return { top: top, left: left };
+    }
+
+    function _reposition() {
+      if (!dropdown.classList.contains('svc-open')) return;
+      var pos = _getDropdownPos();
+      dropdown.style.top  = pos.top  + 'px';
+      dropdown.style.left = pos.left + 'px';
+    }
+
     function _open() {
       pill.classList.add('open');
       pill.setAttribute('aria-expanded', 'true');
-      dropdown.classList.add('visible');
-      // On mobile, position:fixed needs explicit top/left
-      if (window.innerWidth <= 768) {
-        var rect = pill.getBoundingClientRect();
-        dropdown.style.cssText = (
-          'display:block;' +
-          'position:fixed;' +
-          'top:' + (rect.bottom + 8) + 'px;' +
-          'left:' + Math.max(8, rect.left) + 'px;' +
-          'z-index:9999;'
-        );
-      } else {
-        dropdown.style.cssText = '';
-      }
+      dropdown.classList.add('svc-open');
+
+      var pos = _getDropdownPos();
+      dropdown.style.position = 'fixed';
+      dropdown.style.top      = pos.top  + 'px';
+      dropdown.style.left     = pos.left + 'px';
+      dropdown.style.width    = '192px';
+      dropdown.style.zIndex   = '99999';
     }
+
     function _close() {
       pill.classList.remove('open');
       pill.setAttribute('aria-expanded', 'false');
-      dropdown.classList.remove('visible');
-      dropdown.style.cssText = '';
-    }
-    function _toggle() {
-      if (dropdown.classList.contains('visible')) { _close(); } else { _open(); }
+      dropdown.classList.remove('svc-open');
     }
 
-    pill.addEventListener('click', function(e) {
+    function _toggle(e) {
       e.stopPropagation();
-      _toggle();
+      if (dropdown.classList.contains('svc-open')) { _close(); } else { _open(); }
+    }
+
+    /* Events */
+    pill.addEventListener('click',       _toggle);
+    pill.addEventListener('touchend', function(e) {
+      e.preventDefault();
+      _toggle(e);
     });
 
-    /* Click outside → close */
+    /* Select option */
+    dropdown.addEventListener('click', function(e) {
+      var opt = e.target.closest('.svc-city-option');
+      if (!opt) return;
+      var val = opt.getAttribute('data-value');
+
+      /* Update city select */
+      citySelect.value = val;
+      citySelect.dispatchEvent(new Event('change', { bubbles: true }));
+
+      /* Update pill label */
+      var newLabel = (CITIES.find(function(c){ return c.value === val; }) || CITIES[0]).label;
+      pillLabel.textContent = newLabel;
+      pill.classList.toggle('has-value', !!val);
+
+      /* Update selected option */
+      dropdown.querySelectorAll('.svc-city-option').forEach(function(o) {
+        var sel = o.getAttribute('data-value') === val;
+        o.classList.toggle('selected', sel);
+        o.setAttribute('aria-selected', sel ? 'true' : 'false');
+      });
+
+      /* Update label elements if present */
+      var labelEl  = document.getElementById('services-city-label');
+      var nameEl   = document.getElementById('services-city-name');
+      if (labelEl) labelEl.style.display = val ? 'inline' : 'none';
+      if (nameEl)  nameEl.textContent = val || '';
+
+      _close();
+    });
+
+    /* Close on outside click / tap */
     document.addEventListener('click', function(e) {
-      if (!wrap.contains(e.target)) _close();
+      if (!wrap.contains(e.target) && !dropdown.contains(e.target)) _close();
+    });
+    document.addEventListener('touchend', function(e) {
+      if (!wrap.contains(e.target) && !dropdown.contains(e.target)) _close();
     });
 
-    /* Escape → close */
+    /* Close + reposition on scroll/resize */
+    window.addEventListener('scroll', _close, { passive: true });
+    window.addEventListener('resize', function() {
+      _close();
+    }, { passive: true });
+
+    /* Escape key */
     document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape') _close();
     });
 
-    /* ── Select option ── */
-    dropdown.addEventListener('click', function(e) {
-      var opt = e.target.closest('.svc-city-option');
-      if (!opt) return;
-
-      var val = opt.dataset.value;
-
-      /* Update UI */
-      dropdown.querySelectorAll('.svc-city-option').forEach(function(o) {
-        o.classList.toggle('selected', o.dataset.value === val);
-        o.setAttribute('aria-selected', o.dataset.value === val ? 'true' : 'false');
-      });
-
-      var displayLabel = val
-        ? val /* just city name when selected */
-        : '📍 Toutes les villes';
-      pillLabel.textContent = displayLabel;
-      pill.classList.toggle('has-value', !!val);
-
-      /* Sync native <select> + fire change → existing filter logic picks it up */
-      citySelect.value = val;
-      var evt = new Event('change', { bubbles: true });
-      citySelect.dispatchEvent(evt);
-
-      _close();
-    });
+    /* Insert pill wrap into filter bar */
+    wrap.appendChild(pill);
+    var filterBar = citySelect.closest('.services-filter-bar, .services-filter');
+    if (filterBar) {
+      filterBar.insertBefore(wrap, filterBar.firstChild);
+    }
   }
 
   /* ══════════════════════════════════════════════════
@@ -177,58 +225,57 @@
       Array.from(chips).forEach(function(c){ c.classList.add('svc-visible'); });
       return;
     }
-    var chipArr = Array.from(chips);
+    var chipArr  = Array.from(chips);
     var container = section.querySelector('.category-chips');
     if (!container) return;
     var obs = new IntersectionObserver(function(entries) {
       if (!entries.some(function(e){ return e.isIntersecting; })) return;
       obs.disconnect();
       chipArr.forEach(function(chip, i) {
-        setTimeout(function(){ chip.classList.add('svc-visible'); }, i * 28);
+        setTimeout(function(){ chip.classList.add('svc-visible'); }, i * 22);
       });
     }, { threshold: 0.1 });
     obs.observe(container);
   }
 
   /* ══════════════════════════════════════════════════
-     MOBILE: scroll wrap + fade + hint
+     MOBILE: scroll wrap + fade gradient + hint
   ══════════════════════════════════════════════════ */
   function _initMobile(section, chips) {
-    /* All visible immediately */
     Array.from(chips).forEach(function(c){ c.classList.add('svc-visible'); });
 
     var chipsContainer = section.querySelector('.category-chips');
     if (!chipsContainer) return;
 
-    /* Wrap chips in .svc-chips-wrap (for ::after pseudo gradient) */
+    /* Wrap chips in .svc-chips-wrap for ::after gradient */
     var parent = chipsContainer.parentNode;
     if (parent && !parent.classList.contains('svc-chips-wrap')) {
-      var wrap = document.createElement('div');
-      wrap.className = 'svc-chips-wrap';
-      parent.insertBefore(wrap, chipsContainer);
-      wrap.appendChild(chipsContainer);
+      var wrap2 = document.createElement('div');
+      wrap2.className = 'svc-chips-wrap';
+      parent.insertBefore(wrap2, chipsContainer);
+      wrap2.appendChild(chipsContainer);
     }
-    var wrap2 = chipsContainer.parentNode;
+    var wrapEl = chipsContainer.parentNode;
 
     /* Scroll-end detection */
     function _checkEnd() {
       var atEnd = chipsContainer.scrollLeft + chipsContainer.clientWidth
                   >= chipsContainer.scrollWidth - 18;
-      wrap2.classList.toggle('at-end', atEnd);
+      wrapEl.classList.toggle('at-end', atEnd);
     }
     chipsContainer.addEventListener('scroll', _checkEnd, { passive: true });
     setTimeout(_checkEnd, 250);
 
-    /* One-shot hint on first chip */
+    /* One-shot hint */
     var firstChip = chips[0];
-    if (firstChip && !sessionStorage.getItem('svc_hint_v3')) {
-      sessionStorage.setItem('svc_hint_v3', '1');
+    if (firstChip && !sessionStorage.getItem('svc_hint_v6')) {
+      sessionStorage.setItem('svc_hint_v6', '1');
       setTimeout(function() {
         firstChip.classList.add('svc-hint-anim');
         firstChip.addEventListener('animationend', function() {
           firstChip.classList.remove('svc-hint-anim');
         }, { once: true });
-      }, 700);
+      }, 800);
     }
   }
 
@@ -245,15 +292,10 @@
     if (!chips.length) return;
 
     var citySelect = document.getElementById('services-city-filter');
-
     _done = true;
 
-    /* 1. Custom city picker */
-    if (citySelect) {
-      _buildCityPicker(citySelect);
-    }
+    if (citySelect) _buildCityPicker(citySelect);
 
-    /* 2. Desktop stagger / mobile scroll */
     if (_isMobile()) {
       _initMobile(section, chips);
     } else {
@@ -261,7 +303,6 @@
     }
   }
 
-  /* Boot with MutationObserver fallback */
   function boot() {
     _init();
     if (!_done && window.MutationObserver) {

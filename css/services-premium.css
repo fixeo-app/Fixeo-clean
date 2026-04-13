@@ -1,27 +1,34 @@
 /**
- * services-premium.css  v5
+ * services-premium.css  v6
  * ─────────────────────────────────────────────────────────────────────────────
- * Compact chip row, premium dark glass city picker.
- * Bug fixes: dropdown uses .visible class (matches JS), not .open.
- * Override block at end kills homepage-conversion-optimizer big-block rules.
+ * PORTAL DROPDOWN: .svc-city-dropdown is appended to <body> by JS.
+ * Position:fixed is set by JS directly — no overflow issue possible.
+ * CSS only handles appearance, not positioning.
+ *
+ * Chips: slightly larger (32px desktop / 30px mobile) for better readability.
+ * ─────────────────────────────────────────────────────────────────────────────
  */
 
-/* ── Section ────────────────────────────────────────────────────────── */
+/* ══════════════════════════════════════════════════════════
+   SECTION
+   ══════════════════════════════════════════════════════════ */
 #services.services-section {
-  padding-top: 32px !important;
-  padding-bottom: 24px !important;
+  padding-top: 36px !important;
+  padding-bottom: 28px !important;
 }
 #services .section-header h2 {
-  font-size: clamp(1.2rem, 2.4vw, 1.7rem) !important;
+  font-size: clamp(1.25rem, 2.5vw, 1.8rem) !important;
   margin-bottom: 4px !important;
 }
 #services .section-header p {
-  font-size: 0.78rem !important;
-  opacity: 0.65 !important;
-  margin-bottom: 14px !important;
+  font-size: 0.82rem !important;
+  opacity: 0.60 !important;
+  margin-bottom: 16px !important;
 }
 
-/* ── Native select hidden ────────────────────────────────────────────── */
+/* ══════════════════════════════════════════════════════════
+   NATIVE SELECT — hidden
+   ══════════════════════════════════════════════════════════ */
 #services-city-filter {
   opacity: 0 !important;
   pointer-events: none !important;
@@ -29,51 +36,59 @@
   width: 1px !important;
   height: 1px !important;
   overflow: hidden !important;
+  clip: rect(0,0,0,0) !important;
 }
 
-/* ── Filter bar ──────────────────────────────────────────────────────── */
+/* ══════════════════════════════════════════════════════════
+   FILTER BAR — holds city pill (chips are separate below)
+   ══════════════════════════════════════════════════════════ */
 #services .services-filter-bar,
 #services .services-filter {
   display: flex !important;
   align-items: center !important;
   gap: 8px !important;
-  margin-bottom: 12px !important;
+  margin-bottom: 14px !important;
   padding: 0 !important;
   flex-wrap: nowrap !important;
-  position: relative !important;
-  z-index: 20 !important;
 }
-/* Hide old "📍 Ville :" text node */
-#services .services-filter-bar > span:first-child:not(.svc-city-wrap) {
+
+/* Hide legacy "📍 Ville :" plain text node */
+#services .services-filter-bar > span:not(.svc-city-wrap)[style=""],
+#services .services-filter-bar > span:not([class]):not([id]) {
   display: none !important;
 }
 
-/* ── City picker wrapper ─────────────────────────────────────────────── */
+/* ══════════════════════════════════════════════════════════
+   CITY PICKER WRAP — just a flex item, no overflow:hidden
+   ══════════════════════════════════════════════════════════ */
 .svc-city-wrap {
-  position: relative !important;
   flex-shrink: 0 !important;
-  z-index: 100 !important;
+  display: inline-flex !important;
+  align-items: center !important;
 }
 
-/* ── City pill button ────────────────────────────────────────────────── */
+/* ══════════════════════════════════════════════════════════
+   CITY PILL BUTTON
+   ══════════════════════════════════════════════════════════ */
 .svc-city-pill {
   display: inline-flex !important;
   align-items: center !important;
   gap: 5px !important;
-  height: 28px !important;
-  padding: 0 10px 0 8px !important;
+  height: 32px !important;
+  padding: 0 12px 0 10px !important;
   border-radius: 999px !important;
   background: rgba(255,255,255,0.06) !important;
-  border: 1px solid rgba(255,255,255,0.13) !important;
-  color: rgba(255,255,255,0.75) !important;
-  font-size: 0.73rem !important;
+  border: 1px solid rgba(255,255,255,0.12) !important;
+  color: rgba(255,255,255,0.78) !important;
+  font-size: 0.80rem !important;
   font-weight: 500 !important;
   cursor: pointer !important;
   white-space: nowrap !important;
   line-height: 1 !important;
-  transition: background 0.18s ease, border-color 0.18s ease !important;
+  transition: background 0.18s, border-color 0.18s !important;
   -webkit-tap-highlight-color: transparent !important;
   touch-action: manipulation !important;
+  user-select: none !important;
 }
 .svc-city-pill:hover {
   background: rgba(255,255,255,0.10) !important;
@@ -85,107 +100,106 @@
 .svc-city-pill.has-value {
   background: rgba(225,48,108,0.14) !important;
   border-color: rgba(225,48,108,0.40) !important;
-  color: #ff6b9d !important;
+  color: #ff85b0 !important;
 }
 .svc-city-pill.open {
   background: rgba(255,255,255,0.10) !important;
   border-color: rgba(255,255,255,0.24) !important;
 }
-
-/* SVGs */
 .svc-city-pin {
-  width: 9px !important;
-  height: 9px !important;
-  stroke: currentColor !important;
-  fill: none !important;
+  width: 10px !important; height: 10px !important;
+  stroke: currentColor !important; fill: none !important;
   flex-shrink: 0 !important;
 }
 .svc-city-chevron {
-  width: 8px !important;
-  height: 5px !important;
-  stroke: currentColor !important;
-  fill: none !important;
+  width: 8px !important; height: 5px !important;
+  stroke: currentColor !important; fill: none !important;
   flex-shrink: 0 !important;
-  opacity: 0.6 !important;
-  transition: transform 0.20s ease !important;
+  opacity: 0.55 !important;
+  transition: transform 0.18s ease !important;
 }
 .svc-city-pill.open .svc-city-chevron {
   transform: rotate(180deg) !important;
 }
 
-/* ── Dropdown ────────────────────────────────────────────────────────── */
+/* ══════════════════════════════════════════════════════════
+   DROPDOWN — PORTAL (appended to body, position:fixed via JS)
+   CSS only handles appearance.
+   ══════════════════════════════════════════════════════════ */
 .svc-city-dropdown {
-  position: absolute !important;
-  top: calc(100% + 7px) !important;
-  left: 0 !important;
-  min-width: 178px !important;
-  background: rgba(14,14,28,0.97) !important;
-  backdrop-filter: blur(24px) !important;
-  -webkit-backdrop-filter: blur(24px) !important;
-  border: 1px solid rgba(255,255,255,0.10) !important;
-  border-radius: 16px !important;
-  padding: 6px !important;
-  z-index: 9999 !important;
-  display: none !important;
-  box-shadow: 0 16px 48px rgba(0,0,0,0.55), 0 2px 8px rgba(0,0,0,0.30) !important;
-  max-height: 280px !important;
-  overflow-y: auto !important;
-  scrollbar-width: thin !important;
-  scrollbar-color: rgba(255,255,255,0.10) transparent !important;
-  pointer-events: auto !important;
+  /* Position is set by JS */
+  display: none;
+  min-width: 192px;
+  background: rgba(12, 12, 24, 0.98);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 16px;
+  padding: 6px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.65), 0 2px 10px rgba(0,0,0,0.35);
+  max-height: 280px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.10) transparent;
+  /* Anti-flash: prevent paint before position is set */
+  visibility: hidden;
 }
-.svc-city-dropdown::-webkit-scrollbar { width: 3px !important; }
+.svc-city-dropdown::-webkit-scrollbar { width: 3px; }
 .svc-city-dropdown::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.12) !important;
-  border-radius: 99px !important;
+  background: rgba(255,255,255,0.12);
+  border-radius: 99px;
 }
 
-/* OPEN state — JS uses .visible class */
-.svc-city-dropdown.visible,
-.svc-city-dropdown.open {
-  display: block !important;
-  animation: svcDropIn 0.18s cubic-bezier(0.22,1,0.36,1) both !important;
+/* OPEN state — JS adds .svc-open */
+.svc-city-dropdown.svc-open {
+  display: block;
+  visibility: visible;
+  animation: svcDropIn 0.20s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 @keyframes svcDropIn {
-  from { opacity: 0; transform: translateY(-6px) scale(0.97); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
+  from { opacity: 0; transform: translateY(-8px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0)    scale(1); }
 }
 
 /* Option row */
 .svc-city-option {
-  display: flex !important;
-  align-items: center !important;
-  padding: 8px 11px !important;
-  border-radius: 10px !important;
-  font-size: 0.73rem !important;
-  color: rgba(255,255,255,0.80) !important;
-  cursor: pointer !important;
-  transition: background 0.12s !important;
-  white-space: nowrap !important;
-  gap: 8px !important;
-  -webkit-tap-highlight-color: transparent !important;
-  touch-action: manipulation !important;
+  display: flex;
+  align-items: center;
+  padding: 9px 12px;
+  border-radius: 10px;
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.80);
+  cursor: pointer;
+  transition: background 0.12s;
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  user-select: none;
 }
-.svc-city-option:hover {
-  background: rgba(255,255,255,0.07) !important;
-}
+.svc-city-option:hover  { background: rgba(255,255,255,0.08); }
+.svc-city-option:active { background: rgba(255,255,255,0.12); }
 .svc-city-option.selected {
-  background: rgba(225,48,108,0.15) !important;
-  color: #ff6b9d !important;
-  font-weight: 600 !important;
+  background: rgba(225,48,108,0.15);
+  color: #ff85b0;
+  font-weight: 600;
 }
 .svc-city-option.selected::after {
-  content: '✓' !important;
-  margin-left: auto !important;
-  font-size: 0.68rem !important;
-  color: #E1306C !important;
+  content: '✓';
+  margin-left: auto;
+  padding-left: 8px;
+  font-size: 0.70rem;
+  color: #E1306C;
 }
 
-/* ── Chips container — DESKTOP ─────────────────────────────────────── */
+/* ══════════════════════════════════════════════════════════
+   CHIPS CONTAINER — DESKTOP
+   flex-wrap so chips flow into 1-2 rows naturally
+   ══════════════════════════════════════════════════════════ */
 #services.services-section .category-chips {
   display: flex !important;
   flex-wrap: wrap !important;
-  gap: 6px !important;
+  gap: 7px !important;
   padding: 0 !important;
   margin: 0 !important;
   overflow: visible !important;
@@ -193,15 +207,17 @@
   list-style: none !important;
 }
 
-/* ── Individual chips ─────────────────────────────────────────────────*/
+/* ══════════════════════════════════════════════════════════
+   INDIVIDUAL CHIPS — slightly larger for readability
+   ══════════════════════════════════════════════════════════ */
 #services.services-section .service-chip {
   display: inline-flex !important;
   align-items: center !important;
   gap: 5px !important;
-  height: 28px !important;
-  padding: 0 12px !important;
+  height: 32px !important;
+  padding: 0 13px !important;
   border-radius: 999px !important;
-  font-size: 0.73rem !important;
+  font-size: 0.80rem !important;
   font-weight: 500 !important;
   line-height: 1 !important;
   white-space: nowrap !important;
@@ -209,29 +225,30 @@
   flex-shrink: 0 !important;
   border: 1px solid rgba(255,255,255,0.09) !important;
   background: rgba(255,255,255,0.05) !important;
-  color: rgba(255,255,255,0.72) !important;
-  transition: background 0.16s, border-color 0.16s, color 0.16s, transform 0.14s, box-shadow 0.16s !important;
+  color: rgba(255,255,255,0.74) !important;
+  transition: background 0.16s, border-color 0.16s, color 0.16s,
+              transform 0.14s, box-shadow 0.16s !important;
   user-select: none !important;
   -webkit-tap-highlight-color: transparent !important;
   touch-action: manipulation !important;
 }
 #services.services-section .service-chip .chip-icon {
-  font-size: 0.80rem !important;
+  font-size: 0.88rem !important;
   line-height: 1 !important;
 }
 #services.services-section .service-chip:hover {
   background: rgba(255,255,255,0.09) !important;
   border-color: rgba(255,255,255,0.18) !important;
-  color: rgba(255,255,255,0.92) !important;
+  color: rgba(255,255,255,0.94) !important;
   transform: translateY(-1px) !important;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.20) !important;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.22) !important;
 }
 #services.services-section .service-chip.active {
-  background: linear-gradient(135deg, rgba(225,48,108,0.25), rgba(131,58,180,0.22)) !important;
-  border-color: rgba(225,48,108,0.50) !important;
+  background: linear-gradient(135deg, rgba(225,48,108,0.26), rgba(131,58,180,0.22)) !important;
+  border-color: rgba(225,48,108,0.52) !important;
   color: #fff !important;
   font-weight: 600 !important;
-  box-shadow: 0 0 0 1px rgba(225,48,108,0.20), 0 4px 16px rgba(225,48,108,0.18) !important;
+  box-shadow: 0 0 0 1px rgba(225,48,108,0.22), 0 4px 18px rgba(225,48,108,0.20) !important;
 }
 #services.services-section .service-chip:focus-visible {
   outline: 2px solid rgba(225,48,108,0.7) !important;
@@ -242,69 +259,54 @@
 }
 
 /* ══════════════════════════════════════════════════════════
-   MOBILE ≤768px
+   MOBILE  ≤768px
    ══════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
-
   #services.services-section {
-    padding-top: 22px !important;
-    padding-bottom: 16px !important;
+    padding-top: 24px !important;
+    padding-bottom: 18px !important;
   }
   #services .section-header {
     padding: 0 16px !important;
-    margin-bottom: 8px !important;
+    margin-bottom: 10px !important;
   }
-  #services .section-header h2 { font-size: 1.1rem !important; }
-  #services .section-header p  { font-size: 0.72rem !important; }
+  #services .section-header h2 { font-size: 1.15rem !important; }
+  #services .section-header p  { font-size: 0.75rem !important; }
 
   #services .services-filter-bar,
   #services .services-filter {
     padding: 0 16px !important;
-    margin-bottom: 8px !important;
-    overflow: visible !important;
+    margin-bottom: 10px !important;
   }
 
   .svc-city-pill {
-    height: 26px !important;
-    font-size: 0.70rem !important;
-    padding: 0 9px 0 7px !important;
+    height: 30px !important;
+    font-size: 0.75rem !important;
+    padding: 0 10px 0 8px !important;
   }
 
-  /* Ensure dropdown stays visible above chips row on mobile */
-  .svc-city-dropdown {
-    left: 0 !important;
-    right: auto !important;
-    min-width: 160px !important;
-    z-index: 9999 !important;
-    position: fixed !important; /* fixed to escape any overflow:hidden parent */
-    top: auto !important;
-    bottom: auto !important;
-  }
-
-  /* .svc-chips-wrap (JS-injected) */
+  /* Chips wrap: overflow-x hidden to clip (but NOT overflow-y) */
   .svc-chips-wrap {
     position: relative !important;
     width: 100% !important;
-    overflow: hidden !important;
-    display: block !important;
-    /* Do NOT have overflow:hidden on z-axis — use clip instead */
     overflow-x: hidden !important;
     overflow-y: visible !important;
+    display: block !important;
   }
   .svc-chips-wrap::after {
     content: '' !important;
     position: absolute !important;
-    top: 0 !important;
-    right: 0 !important;
-    width: 40px !important;
+    top: 0 !important; right: 0 !important;
+    width: 44px !important;
     height: 100% !important;
-    background: linear-gradient(to right, rgba(13,13,26,0) 0%, rgba(13,13,26,0.88) 100%) !important;
+    background: linear-gradient(to right, rgba(13,13,26,0) 0%, rgba(13,13,26,0.90) 100%) !important;
     pointer-events: none !important;
     z-index: 2 !important;
     transition: opacity 0.20s !important;
   }
   .svc-chips-wrap.at-end::after { opacity: 0 !important; }
 
+  /* Chip row: single line, smooth scroll, no snap */
   #services.services-section .category-chips {
     display: flex !important;
     flex-wrap: nowrap !important;
@@ -314,43 +316,37 @@
     overscroll-behavior-x: contain !important;
     scrollbar-width: none !important;
     scroll-snap-type: none !important;
-    gap: 5px !important;
-    padding: 2px 16px 6px !important;
+    gap: 6px !important;
+    padding: 3px 16px 8px !important;
     margin: 0 !important;
     align-items: center !important;
   }
   #services.services-section .category-chips::-webkit-scrollbar { display: none !important; }
   #services.services-section .category-chips::after {
     content: '' !important;
-    flex: 0 0 30px !important;
-    min-width: 30px !important;
+    flex: 0 0 32px !important;
+    min-width: 32px !important;
     display: block !important;
   }
+
   #services.services-section .service-chip {
     flex-shrink: 0 !important;
-    height: 26px !important;
-    padding: 0 10px !important;
-    font-size: 0.70rem !important;
+    height: 30px !important;
+    padding: 0 11px !important;
+    font-size: 0.76rem !important;
     gap: 4px !important;
     transform: none !important;
     box-shadow: none !important;
   }
-  #services.services-section .service-chip:hover { transform: none !important; }
-  #services.services-section .chip-icon { font-size: 0.73rem !important; }
-}
-
-/* ── Scroll hint ─────────────────────────────────────────────────────── */
-@keyframes svcScrollHint {
-  0%{transform:translateX(0)} 20%{transform:translateX(-7px)}
-  42%{transform:translateX(3px)} 62%{transform:translateX(-3px)}
-  82%{transform:translateX(1px)} 100%{transform:translateX(0)}
-}
-.svc-hint-anim {
-  animation: svcScrollHint 0.7s cubic-bezier(0.22,1,0.36,1) 0.6s both !important;
+  #services.services-section .service-chip:hover  { transform: none !important; box-shadow: none !important; }
+  #services.services-section .service-chip:active {
+    background: rgba(255,255,255,0.12) !important;
+  }
+  #services.services-section .chip-icon { font-size: 0.82rem !important; }
 }
 
 /* ══════════════════════════════════════════════════════════
-   OVERRIDE: neutralise homepage-conversion-optimizer big-block
+   OVERRIDE: kill homepage-conversion-optimizer big-block rules
    ══════════════════════════════════════════════════════════ */
 #services.services-section.homepage-conversion-priority .category-chips,
 #services.services-section .category-chips {
@@ -362,7 +358,7 @@
   width: auto !important;
   max-width: none !important;
   min-height: 0 !important;
-  height: 28px !important;
+  height: 32px !important;
 }
 @media (max-width: 768px) {
   #services.services-section.homepage-conversion-priority .category-chips,
@@ -375,6 +371,16 @@
   #services.services-section .service-chip {
     width: auto !important;
     min-height: 0 !important;
-    height: 26px !important;
+    height: 30px !important;
   }
+}
+
+/* ── Scroll hint ─────────────────────────────────────────────────────── */
+@keyframes svcScrollHint {
+  0%{transform:translateX(0)} 20%{transform:translateX(-8px)}
+  42%{transform:translateX(3px)} 62%{transform:translateX(-3px)}
+  82%{transform:translateX(1px)} 100%{transform:translateX(0)}
+}
+.svc-hint-anim {
+  animation: svcScrollHint 0.75s cubic-bezier(0.22,1,0.36,1) 0.7s both !important;
 }
