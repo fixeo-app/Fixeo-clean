@@ -1847,14 +1847,13 @@ section#home.hero.hero-section {
   }
 </style>
 
-<!-- ★ ANTI-FOUC SHIELD — Loaded last in <head>, beats all external CSS.
-     Hides elements that flash before JS runs or external CSS settles.
-     Each rule has maximum specificity to guarantee no external file overrides it.
-     These are ONLY hidden here; JS (_showResultsChrome, renderArtisans, etc.)
-     restores them with inline style when appropriate.
+<!-- ★ ANTI-FOUC SHIELD v2 — Loaded last in <head>, maximum specificity.
+     Prevents ANY flash of old/intermediate content before JS finishes.
+     JS restores visibility by adding body.fixeo-search-mode or body.fixeo-sections-ready.
 -->
 <style id="fixeo-anti-fouc">
-  /* ── Artisan results chrome: always hidden on homepage, JS shows on search ── */
+  /* ══ 1. Results chrome — always hidden on homepage ══
+     Only shown when user triggers a search (body.fixeo-search-mode added by JS) */
   html body #artisans-section .results-header,
   html body #artisans-section .results-filters,
   html body #artisans-section .results-toolbar,
@@ -1866,7 +1865,7 @@ section#home.hero.hero-section {
     display: none !important;
   }
 
-  /* ── In search mode, JS adds .fixeo-search-mode to body → remove from hiding ── */
+  /* In search mode: restore results chrome */
   html body.fixeo-search-mode #artisans-section .results-header,
   html body.fixeo-search-mode #artisans-section .results-filters,
   html body.fixeo-search-mode #artisans-section .results-toolbar,
@@ -1877,8 +1876,34 @@ section#home.hero.hero-section {
     display: revert !important;
   }
 
-  /* ── Chips: hidden until JS stagger (svc-visible or v12-fade-in.visible) ──
-     Uses opacity so no layout shift (CLS = 0) ── */
+  /* ══ 2. JS-populated sections — invisible until JS fills them ══
+     These sections have hardcoded HEADERS in HTML but empty grids.
+     Showing the header + empty grid = FOUC. Use opacity:0 (no CLS).
+     JS adds body.fixeo-sections-ready to reveal them. */
+  html body #secondary-search-section,
+  html body #top-artisans {
+    opacity: 0 !important;
+    transition: opacity 0.3s ease !important;
+  }
+  html body.fixeo-sections-ready #secondary-search-section,
+  html body.fixeo-sections-ready #top-artisans {
+    opacity: 1 !important;
+  }
+
+  /* ══ 3. Artisans section: invisible until premium grid is injected ══ */
+  html body #artisans-section {
+    opacity: 0 !important;
+    transition: opacity 0.3s ease !important;
+  }
+  html body.fixeo-sections-ready #artisans-section {
+    opacity: 1 !important;
+  }
+  /* In search mode: always show artisans-section */
+  html body.fixeo-search-mode #artisans-section {
+    opacity: 1 !important;
+  }
+
+  /* ══ 4. Chips — hidden until JS stagger reveals them ══ */
   #services .service-chip:not(.svc-visible):not(.v12-fade-in) {
     opacity: 0 !important;
   }
@@ -2214,7 +2239,7 @@ section#home.hero.hero-section {
 <!-- Service artisans (injected by JS) -->
 <div id="service-artisans-section" class="container services-grid" style="padding-bottom:24px"></div>
 
-<section class="section section-sm" aria-labelledby="seo-local-links-title">
+<section class="section section-sm" aria-labelledby="seo-local-links-title" style="display:none" aria-hidden="true">
   <div class="container">
     <div class="section-header">
       <span class="section-tag">SEO LOCAL</span>
@@ -2289,7 +2314,7 @@ section#home.hero.hero-section {
       <div class="results-header-copy">
         <span class="results-header-kicker">ARTISANS VÉRIFIÉS</span>
         <h1 id="results-main-title">Artisans près de chez vous</h1>
-        <p id="results-main-meta">24 artisans disponibles • Réponse moyenne : 18 min</p>
+        <p id="results-main-meta"></p>
       </div>
       <button class="edit-search-btn" id="edit-results-search-btn" type="button" style="display:none">Modifier la recherche</button>
     </div>

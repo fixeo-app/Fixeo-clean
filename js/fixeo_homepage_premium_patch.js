@@ -280,6 +280,10 @@
 
     _buildHeader(list.length);
     _triggerFadeIn(pg);
+
+    /* Signal: sections are ready — reveals #secondary-search-section, #top-artisans,
+       and #artisans-section via anti-fouc CSS (opacity:0 → opacity:1) */
+    document.body.classList.add('fixeo-sections-ready');
   }
 
   /* ── Fade-in animation ── */
@@ -346,6 +350,7 @@
     _searchActive = true;
     _stopObserver();
     document.body.classList.add('fixeo-search-mode');
+    document.body.classList.add('fixeo-sections-ready'); /* keep sections visible */
     _showResultsChrome();
   }
 
@@ -405,6 +410,13 @@
     _enterHomepageMode();
     _patchRender();
     _bindEvents();
+    /* Safety fallback: if sections-ready not triggered within 2.5s
+       (e.g. ARTISANS array loading delayed), reveal sections anyway */
+    setTimeout(function() {
+      if (!document.body.classList.contains('fixeo-sections-ready')) {
+        document.body.classList.add('fixeo-sections-ready');
+      }
+    }, 2500);
     console.log('✅ Fixeo Homepage Premium Patch v3 ready');
   }
 
