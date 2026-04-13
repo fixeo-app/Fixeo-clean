@@ -1,0 +1,270 @@
+/**
+ * why-fixeo.css
+ * "Pourquoi choisir Fixeo" — ultra-premium dark glass trust section
+ * Replaces feed/réalisations section.
+ */
+
+/* ── Section ─────────────────────────────────────────────────────────── */
+#why-fixeo-section {
+  padding-top: 48px;
+  padding-bottom: 56px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle radial glow background */
+#why-fixeo-section::before {
+  content: '';
+  position: absolute;
+  top: -80px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 400px;
+  background: radial-gradient(ellipse at center, rgba(225,48,108,0.07) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+#why-fixeo-section .container {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Header ─────────────────────────────────────────────────────────── */
+.why-fixeo-header {
+  text-align: center;
+  margin-bottom: 40px !important;
+}
+.why-fixeo-header h2 {
+  font-size: clamp(1.6rem, 3.2vw, 2.4rem) !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.02em !important;
+  background: linear-gradient(135deg, #fff 30%, rgba(255,255,255,0.65) 100%);
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  margin-bottom: 10px !important;
+}
+.why-fixeo-header p {
+  font-size: 0.92rem !important;
+  color: rgba(255,255,255,0.52) !important;
+  max-width: 480px !important;
+  margin: 0 auto !important;
+}
+
+/* ── Grid ────────────────────────────────────────────────────────────── */
+.why-fixeo-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 14px;
+  align-items: stretch;
+}
+
+/* ── Card ────────────────────────────────────────────────────────────── */
+.wf-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 24px 20px 22px;
+  border-radius: 20px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: transform 0.22s cubic-bezier(0.22,1,0.36,1),
+              border-color 0.22s ease,
+              background 0.22s ease,
+              box-shadow 0.22s ease;
+  cursor: default;
+  overflow: hidden;
+}
+
+/* Hover state */
+.wf-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.065);
+  box-shadow: 0 20px 48px rgba(0,0,0,0.28), 0 1px 0 rgba(255,255,255,0.06) inset;
+}
+
+/* Subtle glow per card on hover */
+.why-card-1:hover { border-color: rgba(32,201,151,0.28); box-shadow: 0 20px 48px rgba(32,201,151,0.10); }
+.why-card-2:hover { border-color: rgba(100,160,255,0.28); box-shadow: 0 20px 48px rgba(100,160,255,0.10); }
+.why-card-3:hover { border-color: rgba(225,48,108,0.28); box-shadow: 0 20px 48px rgba(225,48,108,0.10); }
+.why-card-4:hover { border-color: rgba(255,193,7,0.28);  box-shadow: 0 20px 48px rgba(255,193,7,0.10); }
+.why-card-5:hover { border-color: rgba(131,58,180,0.28); box-shadow: 0 20px 48px rgba(131,58,180,0.10); }
+
+/* Card top shimmer line */
+.wf-card::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.12) 50%, transparent 100%);
+  border-radius: 20px 20px 0 0;
+}
+
+/* ── Icon wrapper ────────────────────────────────────────────────────── */
+.wf-icon-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.09);
+  transition: background 0.20s, border-color 0.20s;
+}
+.wf-card:hover .wf-icon-wrap {
+  background: rgba(255,255,255,0.10);
+  border-color: rgba(255,255,255,0.16);
+}
+.wf-icon-wrap svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Per-card icon colours */
+.why-card-1 .wf-icon-wrap { background: rgba(32,201,151,0.12); border-color: rgba(32,201,151,0.22); }
+.why-card-1 .wf-icon-wrap svg { stroke: #20c997; }
+
+.why-card-2 .wf-icon-wrap { background: rgba(100,160,255,0.12); border-color: rgba(100,160,255,0.22); }
+.why-card-2 .wf-icon-wrap svg { stroke: #64a0ff; }
+
+.why-card-3 .wf-icon-wrap { background: rgba(225,48,108,0.12); border-color: rgba(225,48,108,0.22); }
+.why-card-3 .wf-icon-wrap svg { stroke: #E1306C; }
+
+.why-card-4 .wf-icon-wrap { background: rgba(255,193,7,0.12); border-color: rgba(255,193,7,0.22); }
+.why-card-4 .wf-icon-wrap svg { stroke: #ffc107; }
+
+.why-card-5 .wf-icon-wrap { background: rgba(131,58,180,0.12); border-color: rgba(131,58,180,0.22); }
+.why-card-5 .wf-icon-wrap svg { stroke: #a855f7; }
+
+/* ── Text ────────────────────────────────────────────────────────────── */
+.wf-card h3 {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 650;
+  color: rgba(255,255,255,0.92);
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}
+.wf-card p {
+  margin: 0;
+  font-size: 0.80rem;
+  color: rgba(255,255,255,0.50);
+  line-height: 1.55;
+}
+
+/* ── Entrance animation ──────────────────────────────────────────────── */
+.wf-card {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.50s ease, transform 0.50s cubic-bezier(0.22,1,0.36,1),
+              border-color 0.22s ease, background 0.22s ease, box-shadow 0.22s ease;
+}
+.wf-card.wf-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ══════════════════════════════════════════════════════════
+   RESPONSIVE
+   ══════════════════════════════════════════════════════════ */
+
+/* 4-col at ~1100px */
+@media (max-width: 1100px) {
+  .why-fixeo-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* 2-col tablet */
+@media (max-width: 768px) {
+  #why-fixeo-section {
+    padding-top: 36px;
+    padding-bottom: 40px;
+  }
+  .why-fixeo-header {
+    margin-bottom: 28px !important;
+  }
+  .why-fixeo-header h2 {
+    font-size: 1.45rem !important;
+  }
+  .why-fixeo-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .wf-card {
+    padding: 20px 16px 18px;
+    gap: 12px;
+    border-radius: 18px;
+  }
+  .wf-icon-wrap {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+  }
+  .wf-icon-wrap svg {
+    width: 18px;
+    height: 18px;
+  }
+  .wf-card h3 { font-size: 0.88rem; }
+  .wf-card p  { font-size: 0.76rem; }
+}
+
+/* Single col mobile */
+@media (max-width: 480px) {
+  .why-fixeo-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .wf-card {
+    flex-direction: row;
+    align-items: flex-start;
+    padding: 16px 14px;
+    gap: 14px;
+    border-radius: 16px;
+  }
+  .wf-icon-wrap {
+    flex-shrink: 0;
+    width: 42px;
+    height: 42px;
+  }
+  .wf-card > div:last-of-type,
+  .wf-card-text {
+    flex: 1;
+  }
+  .wf-card h3 { font-size: 0.86rem; margin-bottom: 3px; }
+  .wf-card p  { font-size: 0.74rem; }
+}
+
+/* ── Contrast boost ─────────────────────────────────────────────────── */
+.wf-card h3 {
+  color: rgba(255,255,255,0.96) !important;
+  font-size: 0.97rem !important;
+}
+.wf-card p {
+  color: rgba(255,255,255,0.60) !important;
+  font-size: 0.82rem !important;
+}
+.wf-card {
+  background: rgba(255,255,255,0.055) !important;
+  border-color: rgba(255,255,255,0.11) !important;
+}
+/* Make entrance animation start from further away for more impact */
+.wf-card:not(.wf-visible) {
+  opacity: 0 !important;
+  transform: translateY(28px) scale(0.97) !important;
+}
+.wf-card.wf-visible {
+  opacity: 1 !important;
+  transform: translateY(0) scale(1) !important;
+  transition: opacity 0.55s ease, transform 0.55s cubic-bezier(0.22,1,0.36,1),
+              border-color 0.22s ease, background 0.22s ease, box-shadow 0.22s ease !important;
+}

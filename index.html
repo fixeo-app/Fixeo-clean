@@ -51,9 +51,8 @@
 <link rel="stylesheet" href="css/hero-premium-upgrade.css?v=50a38b9"/>
 <link rel="stylesheet" href="css/hero-ux-fixes.css?v=50a38b9"/>
 <link rel="stylesheet" href="css/how-it-works-premium.css?v=50a38b9"/>
-<link rel="stylesheet" href="css/services-premium.css?v=svcv4"/>
-<link rel="stylesheet" href="css/feed-premium.css?v=50a38b9"/>
-<link rel="stylesheet" href="css/feed-premium-v2.css?v=50a38b9"/>
+<link rel="stylesheet" href="css/services-premium.css?v=svcv5"/>
+  <link rel="stylesheet" href="css/why-fixeo.css?v=svcv5"/>
 
 <style>
 /* ══════════════════════════════════════════════════════════
@@ -1987,7 +1986,7 @@ section#home.hero.hero-section {
       </div>
     </div>
 
-    <a href="index.html#feed-section" class="nav-link">Réalisations</a>
+    <a href="index.html#why-fixeo-section" class="nav-link">Réalisations</a>
     <a href="pricing.html" class="nav-link">Tarifs</a>
     <a href="dashboard-client.html" class="nav-link" data-role="dashboard" data-auth="logged-in">📊 Dashboard</a>
     <a href="admin.html" class="nav-link" data-role="admin" data-auth="admin">🛡 Admin</a>
@@ -2076,7 +2075,7 @@ section#home.hero.hero-section {
     <a href="index.html" class="nav-link">🏠 Accueil</a>
     <a href="index.html#services" class="nav-link">🔧 Services</a>
     <a href="index.html#artisans-section" class="nav-link">👷 Artisans</a>
-    <a href="index.html#feed-section" class="nav-link">🖼 Réalisations</a>
+    <a href="index.html#why-fixeo-section" class="nav-link">🖼 Réalisations</a>
     <a href="pricing.html" class="nav-link">💎 Tarifs</a>
   </div>
 
@@ -2476,34 +2475,52 @@ section#home.hero.hero-section {
 <!-- ══════════════════════════════════════════════════════════
      6. RÉALISATIONS V13 — 3×3 grid, lazy-load
 ══════════════════════════════════════════════════════════ -->
-<section class="section" id="feed-section" aria-labelledby="feed-title">
-  <!-- Trust bar transition -->
-  <div class="feed-trust-bar" aria-label="Chiffres clés">
-    <div class="feed-trust-bar-inner">
-      <span class="ftb-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>+2 500 interventions cette semaine</span>
-      <span class="ftb-sep" aria-hidden="true">·</span>
-      <span class="ftb-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Artisans vérifiés</span>
-      <span class="ftb-sep" aria-hidden="true">·</span>
-      <span class="ftb-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>Partout au Maroc 🇲🇦</span>
-      <span class="ftb-sep" aria-hidden="true">·</span>
-      <span class="ftb-item ftb-highlight">Avant / Après réels</span>
-    </div>
-  </div>
+<!-- ══════════════════════════════════════════════════════════
+     POURQUOI CHOISIR FIXEO — Trust section
+     ══════════════════════════════════════════════════════════ -->
+<section class="section" id="why-fixeo-section" aria-labelledby="why-fixeo-title">
   <div class="container">
-    <div class="section-header">
-      <span class="section-tag">AVANT / APRÈS RÉELS 🇲🇦</span>
-      <h2 id="feed-title" data-i18n="feed_title">Travaux réalisés par nos artisans vérifiés</h2>
-      <p data-i18n="feed_subtitle">Interventions récentes dans plusieurs villes du Maroc</p>
+    <div class="section-header why-fixeo-header">
+      <span class="section-tag">CONFIANCE</span>
+      <h2 id="why-fixeo-title">Pourquoi choisir Fixeo ?</h2>
+      <p>La plateforme de confiance pour tous vos besoins en artisanat au Maroc</p>
     </div>
-    <!-- Feed grid 3×3 injected by feed.js -->
-    <div class="feed-grid" id="feed-container" role="feed" aria-label="Fil des réalisations"></div>
-    <!-- Voir plus -->
-    <div id="feed-see-more-wrap">
-      <button id="feed-see-more-btn"
-              onclick="window.feedManager?.showMore?.();return false;"
-              aria-label="Voir plus de projets réalisés">
-        📂 Voir plus de projets
-      </button>
+    <div class="why-fixeo-grid" id="why-fixeo-grid">
+      <div class="wf-card why-card-1">
+        <div class="wf-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+        </div>
+        <h3>Artisans vérifiés</h3>
+        <p>Tous les professionnels sont contrôlés, certifiés et évalués par nos équipes</p>
+      </div>
+      <div class="wf-card why-card-2">
+        <div class="wf-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <h3>Réponse rapide</h3>
+        <p>Recevez plusieurs devis d'artisans disponibles en moins de 15 minutes</p>
+      </div>
+      <div class="wf-card why-card-3">
+        <div class="wf-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="3"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+        </div>
+        <h3>Paiement après service</h3>
+        <p>Vous payez uniquement une fois l'intervention terminée et validée</p>
+      </div>
+      <div class="wf-card why-card-4">
+        <div class="wf-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <h3>Avis fiables</h3>
+        <p>Notes basées exclusivement sur de vraies missions réalisées et vérifiées</p>
+      </div>
+      <div class="wf-card why-card-5">
+        <div class="wf-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+        </div>
+        <h3>Partout au Maroc</h3>
+        <p>Artisans locaux disponibles dans 42 villes — Casablanca, Rabat, Marrakech et plus</p>
+      </div>
     </div>
   </div>
 </section>
@@ -2880,7 +2897,6 @@ section#home.hero.hero-section {
 <script src="js/fixeo-header-global.js?v=50a38b9"></script>
 <script src="js/i18n.js?v=50a38b9"></script>
 <script src="js/notifications.js?v=50a38b9"></script>
-<script src="js/feed.js?v=50a38b9"></script>
 <script src="js/artisan-onboarding-store.js?v=50a38b9"></script>
 <script src="js/fixeo-public-profile-links.js?v=50a38b9"></script>
 <script src="js/main.js?v=50a38b9"></script>
@@ -3240,9 +3256,7 @@ function openContentModal(type) {
 <script src="js/homepage-conversion-optimizer.js?v=50a38b9"></script>
 <script src="js/hero-ux-fixes.js?v=50a38b9"></script>
 <script src="js/how-it-works-premium.js?v=50a38b9"></script>
-<script src="js/services-premium.js?v=50a38b9"></script>
-<script src="js/feed-premium.js?v=50a38b9"></script>
-<script src="js/feed-premium-v2.js?v=50a38b9"></script>
+<script src="js/services-premium.js?v=svcv5"></script>
 <script>
 (function () {
   const ROLE_LABELS = {
@@ -3311,5 +3325,6 @@ function openContentModal(type) {
 </script>
 
 <script src="js/fixeo-artisan-request-notifications.js?v=50a38b9"></script>
+  <script src="js/why-fixeo.js?v=svcv5"></script>
 </body>
 </html>

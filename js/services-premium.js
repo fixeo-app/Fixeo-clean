@@ -102,11 +102,25 @@
       pill.classList.add('open');
       pill.setAttribute('aria-expanded', 'true');
       dropdown.classList.add('visible');
+      // On mobile, position:fixed needs explicit top/left
+      if (window.innerWidth <= 768) {
+        var rect = pill.getBoundingClientRect();
+        dropdown.style.cssText = (
+          'display:block;' +
+          'position:fixed;' +
+          'top:' + (rect.bottom + 8) + 'px;' +
+          'left:' + Math.max(8, rect.left) + 'px;' +
+          'z-index:9999;'
+        );
+      } else {
+        dropdown.style.cssText = '';
+      }
     }
     function _close() {
       pill.classList.remove('open');
       pill.setAttribute('aria-expanded', 'false');
       dropdown.classList.remove('visible');
+      dropdown.style.cssText = '';
     }
     function _toggle() {
       if (dropdown.classList.contains('visible')) { _close(); } else { _open(); }
