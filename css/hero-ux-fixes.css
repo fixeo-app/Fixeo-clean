@@ -1,0 +1,259 @@
+/* ================================================================
+   FIXEO — Hero UX Fixes
+   1. PC: city icon + no text truncation
+   2. Mobile: bottom sheet for city picker
+   ================================================================ */
+
+/* ── PC: City segment min-width to prevent text truncation ── */
+/* QSM hero bar (quick-search-modal.js) */
+.qsm-segment-city {
+  min-width: 175px !important;
+  flex-shrink: 0 !important;
+}
+.qsm-segment-city .qsm-seg-body {
+  min-width: 0 !important;
+  overflow: visible !important;
+}
+.qsm-segment-city .qsm-seg-select {
+  min-width: 130px !important;
+  width: 100% !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+/* SSB2 bar (secondary-search.js) — kept as fallback */
+#ssb2-seg-city {
+  min-width: 165px !important;
+  flex-shrink: 0 !important;
+}
+#ssb2-seg-city .ssb2-seg-select {
+  min-width: 120px !important;
+}
+
+/* ── PC: City icon label — SVG injected by JS, hide original emoji ── */
+.qsm-segment-city .qsm-seg-icon,
+#ssb2-seg-city .ssb2-seg-icon {
+  display: none !important; /* replaced by SVG via JS */
+}
+.qsm-city-icon-svg,
+.ssb2-city-icon-svg {
+  flex-shrink: 0;
+  width: 17px;
+  height: 17px;
+  opacity: 0.65;
+  color: rgba(255,255,255,0.75);
+}
+.qsm-segment-city:hover .qsm-city-icon-svg,
+#ssb2-seg-city:hover .ssb2-city-icon-svg {
+  opacity: 1;
+  color: #fff;
+}
+
+/* ── Mobile: hide native select, show custom trigger ── */
+@media (max-width: 768px) {
+  /* QSM bar */
+  #qsm-select-city {
+    display: none !important;
+  }
+  /* SSB2 bar fallback */
+  #ssb2-select-city {
+    display: none !important;
+  }
+
+  /* Custom city trigger button (shared) */
+  .qsm-city-trigger,
+  .ssb2-city-trigger {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: transparent;
+    border: none;
+    color: rgba(255,255,255,0.85);
+    font-size: 0.88rem;
+    font-family: 'Cairo', 'Tajawal', sans-serif;
+    font-weight: 500;
+    padding: 0;
+    cursor: pointer;
+    text-align: left;
+    width: 100%;
+    min-width: 0;
+    line-height: 1.4;
+  }
+  .qsm-city-trigger::after,
+  .ssb2-city-trigger::after {
+    content: '';
+    display: inline-block;
+    width: 10px;
+    height: 6px;
+    margin-left: auto;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='rgba(255,255,255,0.4)' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") center/contain no-repeat;
+    flex-shrink: 0;
+  }
+}
+@media (min-width: 769px) {
+  .qsm-city-trigger,
+  .ssb2-city-trigger { display: none !important; }
+}
+
+/* ════════════════════════════════════════════════════════
+   BOTTOM SHEET — City Picker
+   ════════════════════════════════════════════════════════ */
+
+/* Backdrop */
+.ssb2-city-sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  opacity: 0;
+  transition: opacity 0.28s ease;
+  pointer-events: none;
+}
+.ssb2-city-sheet-backdrop.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Sheet panel */
+.ssb2-city-sheet {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1201;
+  background: #14142a;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  border-radius: 24px 24px 0 0;
+  max-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  transform: translateY(100%);
+  transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: 0 -16px 48px rgba(0,0,0,0.4);
+  will-change: transform;
+}
+.ssb2-city-sheet.is-open {
+  transform: translateY(0);
+}
+
+/* Drag handle */
+.ssb2-city-sheet-handle {
+  width: 40px;
+  height: 4px;
+  border-radius: 4px;
+  background: rgba(255,255,255,0.18);
+  margin: 12px auto 0;
+  flex-shrink: 0;
+}
+
+/* Sheet header */
+.ssb2-city-sheet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px 10px;
+  flex-shrink: 0;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+.ssb2-city-sheet-title {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #fff;
+  font-family: 'Cairo', 'Tajawal', sans-serif;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.ssb2-city-sheet-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+  border: none;
+  cursor: pointer;
+  color: rgba(255,255,255,0.7);
+  font-size: 1rem;
+  line-height: 1;
+  transition: background 0.2s ease;
+}
+.ssb2-city-sheet-close:hover {
+  background: rgba(255,255,255,0.14);
+  color: #fff;
+}
+
+/* Options list */
+.ssb2-city-sheet-list {
+  flex: 1;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 8px 12px 24px;
+  /* Smooth scroll */
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+/* Scrollbar styling */
+.ssb2-city-sheet-list::-webkit-scrollbar {
+  width: 3px;
+}
+.ssb2-city-sheet-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+.ssb2-city-sheet-list::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.15);
+  border-radius: 3px;
+}
+
+/* Individual city option */
+.ssb2-city-sheet-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 16px;
+  border-radius: 14px;
+  cursor: pointer;
+  font-size: 0.92rem;
+  font-family: 'Cairo', 'Tajawal', sans-serif;
+  font-weight: 500;
+  color: rgba(255,255,255,0.82);
+  border: 1px solid transparent;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  margin-bottom: 2px;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+}
+.ssb2-city-sheet-option:hover {
+  background: rgba(255,255,255,0.05);
+  color: #fff;
+}
+.ssb2-city-sheet-option.is-selected {
+  background: rgba(225,48,108,0.12);
+  border-color: rgba(225,48,108,0.28);
+  color: #fff;
+  font-weight: 700;
+}
+.ssb2-city-sheet-option.is-selected::after {
+  content: '✓';
+  margin-left: auto;
+  color: #E1306C;
+  font-weight: 900;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+.ssb2-city-option-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
