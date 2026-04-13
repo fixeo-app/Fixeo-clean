@@ -53,8 +53,8 @@ const FIXEO_TRANSLATIONS = {
     art_verified: "✓ Vérifié",
     art_top: "⭐ Top artisan",
     // Feed
-    feed_title: "Réalisations",
-    feed_subtitle: "Avant & Après de nos artisans",
+    feed_title: "Travaux réalisés par nos artisans vérifiés",
+    feed_subtitle: "Interventions récentes dans plusieurs villes du Maroc",
     feed_before: "AVANT",
     feed_after: "APRÈS",
     feed_like: "J'aime",
