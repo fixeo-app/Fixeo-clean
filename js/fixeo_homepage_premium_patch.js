@@ -410,13 +410,11 @@
     _enterHomepageMode();
     _patchRender();
     _bindEvents();
-    /* Safety fallback: if sections-ready not triggered within 2.5s
-       (e.g. ARTISANS array loading delayed), reveal sections anyway */
+    /* Safety fallback: reveal sections after 1.2s max regardless of grid state.
+       This guarantees how-it-works, feed, testimonials never stay hidden on slow CPUs. */
     setTimeout(function() {
-      if (!document.body.classList.contains('fixeo-sections-ready')) {
-        document.body.classList.add('fixeo-sections-ready');
-      }
-    }, 2500);
+      document.body.classList.add('fixeo-sections-ready');
+    }, 1200);
     console.log('✅ Fixeo Homepage Premium Patch v3 ready');
   }
 

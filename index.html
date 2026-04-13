@@ -1847,13 +1847,19 @@ section#home.hero.hero-section {
   }
 </style>
 
-<!-- ★ ANTI-FOUC SHIELD v2 — Loaded last in <head>, maximum specificity.
-     Prevents ANY flash of old/intermediate content before JS finishes.
-     JS restores visibility by adding body.fixeo-search-mode or body.fixeo-sections-ready.
+<!-- ★ ANTI-FOUC SHIELD v3 — EXHAUSTIVE. Loaded last in <head>.
+     Prevents ALL flashes of old/legacy/unstyled content before JS + CSS settle.
+     Strategy: every visible section starts invisible (opacity:0) at parse-time.
+     body.fixeo-sections-ready (added by JS) reveals them with smooth fade-in.
+     body.fixeo-search-mode bypasses hiding for results chrome.
+     No external CSS dependency — this works before any .css file loads.
 -->
 <style id="fixeo-anti-fouc">
-  /* ══ 1. Results chrome — always hidden on homepage ══
-     Only shown when user triggers a search (body.fixeo-search-mode added by JS) */
+
+  /* ════════════════════════════════════════════════════════
+     A. RESULTS CHROME — always hidden on homepage
+        Only shown when user enters search mode
+  ════════════════════════════════════════════════════════ */
   html body #artisans-section .results-header,
   html body #artisans-section .results-filters,
   html body #artisans-section .results-toolbar,
@@ -1864,8 +1870,6 @@ section#home.hero.hero-section {
   html body #edit-results-search-btn {
     display: none !important;
   }
-
-  /* In search mode: restore results chrome */
   html body.fixeo-search-mode #artisans-section .results-header,
   html body.fixeo-search-mode #artisans-section .results-filters,
   html body.fixeo-search-mode #artisans-section .results-toolbar,
@@ -1876,37 +1880,59 @@ section#home.hero.hero-section {
     display: revert !important;
   }
 
-  /* ══ 2. JS-populated sections — invisible until JS fills them ══
-     These sections have hardcoded HEADERS in HTML but empty grids.
-     Showing the header + empty grid = FOUC. Use opacity:0 (no CLS).
-     JS adds body.fixeo-sections-ready to reveal them. */
-  html body #secondary-search-section,
-  html body #top-artisans {
-    opacity: 0 !important;
-    transition: opacity 0.3s ease !important;
+  /* ════════════════════════════════════════════════════════
+     B. LEGACY MOBILE NAV — hidden at parse-time
+        (backup: main.css may load late on slow networks)
+  ════════════════════════════════════════════════════════ */
+  html body .mobile-nav:not(.open) {
+    display: none !important;
   }
+  html body .mobile-nav-backdrop {
+    display: none !important;
+  }
+
+  /* ════════════════════════════════════════════════════════
+     C. ALL BELOW-FOLD SECTIONS — opacity:0 at parse-time
+        Prevents raw HTML flash before JS enrichment.
+        Revealed by body.fixeo-sections-ready.
+  ════════════════════════════════════════════════════════ */
+
+  /* JS-populated grids (header+empty grid flash) */
+  html body #secondary-search-section,
+  html body #top-artisans,
+  html body #artisans-section,
+  /* Raw HTML sections (no JS enrichment needed, but CSS+JS take time) */
+  html body .how-it-works-section,
+  html body #feed-section,
+  html body .testimonial-section,
+  html body .final-cta-section {
+    opacity: 0 !important;
+    transition: opacity 0.35s ease !important;
+  }
+
+  /* Reveal all when JS signals ready */
   html body.fixeo-sections-ready #secondary-search-section,
-  html body.fixeo-sections-ready #top-artisans {
+  html body.fixeo-sections-ready #top-artisans,
+  html body.fixeo-sections-ready #artisans-section,
+  html body.fixeo-sections-ready .how-it-works-section,
+  html body.fixeo-sections-ready #feed-section,
+  html body.fixeo-sections-ready .testimonial-section,
+  html body.fixeo-sections-ready .final-cta-section {
     opacity: 1 !important;
   }
 
-  /* ══ 3. Artisans section: invisible until premium grid is injected ══ */
-  html body #artisans-section {
-    opacity: 0 !important;
-    transition: opacity 0.3s ease !important;
-  }
-  html body.fixeo-sections-ready #artisans-section {
-    opacity: 1 !important;
-  }
   /* In search mode: always show artisans-section */
   html body.fixeo-search-mode #artisans-section {
     opacity: 1 !important;
   }
 
-  /* ══ 4. Chips — hidden until JS stagger reveals them ══ */
+  /* ════════════════════════════════════════════════════════
+     D. CHIPS — hidden until JS stagger reveals them (no CLS)
+  ════════════════════════════════════════════════════════ */
   #services .service-chip:not(.svc-visible):not(.v12-fade-in) {
     opacity: 0 !important;
   }
+
 </style>
 </head>
 
@@ -2999,7 +3025,8 @@ function openContentModal(type) {
 <script src="js/homepage-v13.js"></script>
 <script src="js/hero-performance.js"></script>
 <!-- ★ Homepage Premium Vedette Patch — 2-col pvc-card, vrais artisans priority -->
-<script src="js/fixeo_homepage_premium_patch.js"></script>
+<script src="js/fixeo-sections-reveal.js"></script>
+  <script src="js/fixeo_homepage_premium_patch.js"></script>
 
 <!-- ★ CONVERSION BOOST v22 — JavaScript Engine -->
 <script>
