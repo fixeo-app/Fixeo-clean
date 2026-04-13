@@ -1,105 +1,225 @@
 /* ══════════════════════════════════════════════════════════════════════
-   FIXEO — Services Section Premium v2
-   - City filter: compact inline pill (desktop right-aligned, mobile compact)
-   - Chips scroll: snap mandatory, fade-out gradient hint, scroll-hint JS class
+   FIXEO — Services Section Premium v3
+   Objectif : chips ultra-compactes + city picker custom premium (zéro look natif)
    ══════════════════════════════════════════════════════════════════════ */
 
 /* ── Section padding ── */
 #services.services-section {
-  padding-top: 48px !important;
-  padding-bottom: 40px !important;
+  padding-top: 40px !important;
+  padding-bottom: 32px !important;
 }
 
 /* ── Section header ── */
 #services.services-section .section-header {
-  margin-bottom: 20px !important;
+  margin-bottom: 16px !important;
 }
 #services.services-section .services-title {
-  font-size: clamp(1.45rem, 2.8vw, 2rem) !important;
+  font-size: clamp(1.3rem, 2.6vw, 1.85rem) !important;
   font-weight: 800 !important;
   letter-spacing: -0.02em !important;
-  margin-bottom: 4px !important;
+  margin-bottom: 3px !important;
 }
 #services.services-section .services-subtitle {
-  font-size: 0.84rem !important;
-  color: rgba(255,255,255,0.42) !important;
-  margin-top: 4px !important;
+  font-size: 0.80rem !important;
+  color: rgba(255,255,255,0.38) !important;
+  margin-top: 3px !important;
   opacity: 1 !important;
 }
 
 /* ══════════════════════════════════════════════════════
-   DESKTOP — City filter compact + chips in one area
+   CITY FILTER BAR — layout wrapper
 ══════════════════════════════════════════════════════ */
-
-/* ── Filter bar: city pill alone, compact, left of chips ── */
 #services.services-section .services-filter-bar {
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   gap: 8px !important;
-  margin-bottom: 14px !important;
+  margin-bottom: 12px !important;
   flex-wrap: wrap !important;
   margin-top: 0 !important;
   padding-top: 0 !important;
 }
 
-/* Hide legacy label span */
-#services.services-section .services-filter-bar > span:not(#services-city-label) {
+/* Hide native select (replaced by custom picker) */
+#services.services-section .city-filter-select {
+  position: absolute !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  width: 1px !important;
+  height: 1px !important;
+  overflow: hidden !important;
+  clip: rect(0,0,0,0) !important;
+}
+
+/* Hide legacy label spans */
+#services.services-section .services-filter-bar > span:not(#services-city-label),
+#services-city-label {
   display: none !important;
 }
 
-/* ── City select: compact Uber pill ── */
-#services.services-section .city-filter-select {
-  appearance: none !important;
-  -webkit-appearance: none !important;
-  height: 30px !important;
-  padding: 0 26px 0 26px !important;
-  background-color: rgba(255,255,255,0.04) !important;
-  background-image:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.38)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z'/%3E%3Ccircle cx='12' cy='10' r='3'/%3E%3C/svg%3E"),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='rgba(255,255,255,0.28)' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") !important;
-  background-repeat: no-repeat, no-repeat !important;
-  background-position: 8px center, right 8px center !important;
-  background-size: 11px 11px, 9px 5px !important;
-  border: 1px solid rgba(255,255,255,0.08) !important;
+/* ══════════════════════════════════════════════════════
+   CUSTOM CITY PICKER — injected by JS
+   .svc-city-pill = trigger button (always visible)
+   .svc-city-dropdown = dropdown list
+══════════════════════════════════════════════════════ */
+.svc-city-pill {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  height: 26px !important;
+  padding: 0 10px 0 8px !important;
+  background: rgba(255,255,255,0.04) !important;
+  border: 1px solid rgba(255,255,255,0.09) !important;
   border-radius: 9999px !important;
-  color: rgba(255,255,255,0.60) !important;
-  font-size: 0.75rem !important;
-  font-weight: 600 !important;
+  color: rgba(255,255,255,0.55) !important;
+  font-size: 0.70rem !important;
+  font-weight: 700 !important;
   font-family: inherit !important;
-  width: auto !important;
-  min-width: 0 !important;
-  max-width: 160px !important;
   cursor: pointer !important;
-  outline: none !important;
-  transition: border-color 0.18s ease, background-color 0.18s ease, color 0.18s ease !important;
+  user-select: none !important;
   white-space: nowrap !important;
+  outline: none !important;
+  flex-shrink: 0 !important;
+  letter-spacing: 0.01em !important;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease !important;
+  position: relative !important;
+}
+.svc-city-pill:hover {
+  background: rgba(255,255,255,0.07) !important;
+  border-color: rgba(255,255,255,0.14) !important;
+  color: rgba(255,255,255,0.80) !important;
+}
+.svc-city-pill.open {
+  border-color: rgba(225,48,108,0.40) !important;
+  background: rgba(225,48,108,0.06) !important;
+  color: rgba(255,255,255,0.85) !important;
+  box-shadow: 0 0 0 2px rgba(225,48,108,0.10) !important;
+}
+.svc-city-pill.has-value {
+  background: rgba(32,201,151,0.07) !important;
+  border-color: rgba(32,201,151,0.28) !important;
+  color: rgba(32,201,151,0.90) !important;
+}
+.svc-city-pill.has-value .svc-city-chevron {
+  stroke: rgba(32,201,151,0.65) !important;
+}
+/* Pin icon inside pill */
+.svc-city-pin {
+  width: 9px !important;
+  height: 9px !important;
+  flex-shrink: 0 !important;
+  stroke: rgba(255,255,255,0.35) !important;
+  fill: none !important;
+}
+.svc-city-pill.open .svc-city-pin,
+.svc-city-pill:hover .svc-city-pin {
+  stroke: rgba(255,255,255,0.65) !important;
+}
+/* Chevron */
+.svc-city-chevron {
+  width: 8px !important;
+  height: 8px !important;
+  flex-shrink: 0 !important;
+  stroke: rgba(255,255,255,0.30) !important;
+  fill: none !important;
+  transition: transform 0.18s ease !important;
+}
+.svc-city-pill.open .svc-city-chevron {
+  transform: rotate(180deg) !important;
+  stroke: rgba(255,255,255,0.65) !important;
+}
+
+/* ── Dropdown panel ── */
+.svc-city-dropdown {
+  position: absolute !important;
+  top: calc(100% + 6px) !important;
+  left: 50% !important;
+  transform: translateX(-50%) translateY(-4px) !important;
+  min-width: 180px !important;
+  max-width: 220px !important;
+  max-height: 260px !important;
+  overflow-y: auto !important;
+  scrollbar-width: thin !important;
+  scrollbar-color: rgba(255,255,255,0.12) transparent !important;
+  background: rgba(16,16,32,0.97) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(255,255,255,0.10) !important;
+  border-radius: 14px !important;
+  padding: 5px !important;
+  z-index: 9999 !important;
+  box-shadow:
+    0 8px 32px rgba(0,0,0,0.45),
+    0 2px 8px rgba(0,0,0,0.30),
+    inset 0 1px 0 rgba(255,255,255,0.05) !important;
+  /* animation */
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transition: opacity 0.16s ease, transform 0.16s cubic-bezier(0.22,1,0.36,1) !important;
+}
+.svc-city-dropdown.visible {
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  transform: translateX(-50%) translateY(0) !important;
+}
+.svc-city-dropdown::-webkit-scrollbar { width: 3px !important; }
+.svc-city-dropdown::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.12) !important;
+  border-radius: 3px !important;
+}
+
+/* Dropdown items */
+.svc-city-option {
+  display: flex !important;
+  align-items: center !important;
+  gap: 7px !important;
+  padding: 7px 10px !important;
+  border-radius: 9px !important;
+  font-size: 0.72rem !important;
+  font-weight: 600 !important;
+  color: rgba(255,255,255,0.60) !important;
+  cursor: pointer !important;
+  user-select: none !important;
+  white-space: nowrap !important;
+  transition: background 0.12s ease, color 0.12s ease !important;
+}
+.svc-city-option:hover {
+  background: rgba(255,255,255,0.07) !important;
+  color: rgba(255,255,255,0.90) !important;
+}
+.svc-city-option.selected {
+  background: rgba(225,48,108,0.10) !important;
+  color: #fff !important;
+}
+.svc-city-option.selected::before {
+  content: '' !important;
+  display: inline-block !important;
+  width: 5px !important;
+  height: 5px !important;
+  border-radius: 50% !important;
+  background: #E1306C !important;
   flex-shrink: 0 !important;
 }
-#services.services-section .city-filter-select:hover {
-  background-color: rgba(255,255,255,0.07) !important;
-  border-color: rgba(255,255,255,0.13) !important;
-  color: rgba(255,255,255,0.85) !important;
-}
-#services.services-section .city-filter-select:focus {
-  border-color: rgba(225,48,108,0.4) !important;
-  box-shadow: 0 0 0 2px rgba(225,48,108,0.08) !important;
-  background-color: rgba(255,255,255,0.06) !important;
-}
-#services.services-section .city-filter-select.has-value {
-  background-color: rgba(32,201,151,0.07) !important;
-  border-color: rgba(32,201,151,0.25) !important;
-  color: rgba(32,201,151,0.9) !important;
+.svc-city-option:not(.selected)::before {
+  content: '' !important;
+  display: inline-block !important;
+  width: 5px !important;
+  height: 5px !important;
+  flex-shrink: 0 !important;
 }
 
-/* City label: always hidden */
-#services-city-label { display: none !important; }
+/* Dropdown position parent */
+.svc-city-wrap {
+  position: relative !important;
+  display: inline-flex !important;
+  align-items: center !important;
+}
 
 /* ══════════════════════════════════════════════════════
-   CHIPS — wrapper with fade-out scroll hint
+   CHIPS — desktop
 ══════════════════════════════════════════════════════ */
 #services.services-section .category-chips {
-  gap: 7px !important;
+  gap: 6px !important;
   max-width: 960px !important;
   justify-content: center !important;
   flex-wrap: wrap !important;
@@ -107,60 +227,61 @@
   position: relative !important;
 }
 
-/* Base chip */
+/* Base chip — ultra-compact */
 #services.services-section .service-chip {
-  height: 34px !important;
-  padding: 0 14px !important;
-  gap: 6px !important;
-  background: rgba(255,255,255,0.035) !important;
+  height: 26px !important;
+  padding: 0 11px !important;
+  gap: 5px !important;
+  background: rgba(255,255,255,0.030) !important;
   border: 1px solid rgba(255,255,255,0.07) !important;
   border-radius: 9999px !important;
-  font-size: 0.80rem !important;
+  font-size: 0.74rem !important;
   font-weight: 600 !important;
-  color: rgba(255,255,255,0.65) !important;
+  color: rgba(255,255,255,0.60) !important;
   cursor: pointer !important;
   user-select: none !important;
   white-space: nowrap !important;
   display: inline-flex !important;
   align-items: center !important;
-  /* Desktop stagger start */
+  letter-spacing: 0.005em !important;
+  /* stagger start */
   opacity: 0;
-  transform: translateY(10px);
+  transform: translateY(8px);
   transition:
-    transform 0.22s cubic-bezier(0.22,1,0.36,1),
-    background 0.18s ease,
-    border-color 0.18s ease,
-    color 0.18s ease,
-    box-shadow 0.18s ease,
-    opacity 0.22s ease !important;
+    transform 0.20s cubic-bezier(0.22,1,0.36,1),
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease,
+    box-shadow 0.15s ease,
+    opacity 0.20s ease !important;
 }
 #services.services-section .service-chip.svc-visible {
   opacity: 1 !important;
   transform: translateY(0) !important;
 }
 #services.services-section .chip-icon {
-  font-size: 0.88rem !important;
+  font-size: 0.80rem !important;
   line-height: 1 !important;
 }
 #services.services-section .service-chip:hover {
-  transform: translateY(-3px) scale(1.03) !important;
-  background: rgba(255,255,255,0.07) !important;
-  border-color: rgba(255,255,255,0.14) !important;
-  color: rgba(255,255,255,0.9) !important;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.18) !important;
+  transform: translateY(-2px) scale(1.02) !important;
+  background: rgba(255,255,255,0.065) !important;
+  border-color: rgba(255,255,255,0.13) !important;
+  color: rgba(255,255,255,0.88) !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
 }
 #services.services-section .service-chip.active {
   background: linear-gradient(135deg, #E1306C 0%, #833AB4 100%) !important;
   border-color: transparent !important;
   color: #fff !important;
-  box-shadow: 0 4px 16px rgba(225,48,108,0.30), 0 0 0 1px rgba(225,48,108,0.18) !important;
-  transform: translateY(-2px) !important;
+  box-shadow: 0 3px 12px rgba(225,48,108,0.28), 0 0 0 1px rgba(225,48,108,0.15) !important;
+  transform: translateY(-1px) !important;
   font-weight: 700 !important;
   opacity: 1 !important;
 }
 #services.services-section .service-chip.active:hover {
-  transform: translateY(-4px) !important;
-  box-shadow: 0 8px 24px rgba(225,48,108,0.38), 0 0 0 1px rgba(225,48,108,0.25) !important;
+  transform: translateY(-3px) !important;
+  box-shadow: 0 6px 18px rgba(225,48,108,0.36), 0 0 0 1px rgba(225,48,108,0.22) !important;
 }
 #services.services-section .service-chip:focus-visible {
   outline: 2px solid #E1306C !important;
@@ -168,82 +289,96 @@
 }
 
 /* ══════════════════════════════════════════════════════
-   MOBILE ≤768px — Full UX overhaul
+   MOBILE ≤768px
 ══════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
   #services.services-section {
-    padding-top: 36px !important;
-    padding-bottom: 28px !important;
+    padding-top: 28px !important;
+    padding-bottom: 20px !important;
   }
   #services.services-section .section-header {
-    margin-bottom: 14px !important;
+    margin-bottom: 12px !important;
+    padding: 0 16px !important;
+  }
+  #services.services-section .services-title {
+    font-size: 1.25rem !important;
+  }
+  #services.services-section .services-subtitle {
+    font-size: 0.74rem !important;
   }
 
-  /* ── City filter bar: compact, own scrollable row ── */
+  /* Filter bar: just enough room for the pill, centered */
   #services.services-section .services-filter-bar {
-    display: flex !important;
-    flex-wrap: nowrap !important;
-    justify-content: flex-start !important;
-    overflow-x: auto !important;
-    scrollbar-width: none !important;
-    -webkit-overflow-scrolling: touch !important;
-    padding: 2px 16px 6px !important;
-    margin: 0 -16px 10px !important;
-    gap: 0 !important;
-  }
-  #services.services-section .services-filter-bar::-webkit-scrollbar {
-    display: none !important;
+    justify-content: center !important;
+    margin-bottom: 10px !important;
+    padding: 0 16px !important;
   }
 
-  /* City select: very compact on mobile */
-  #services.services-section .city-filter-select {
-    height: 28px !important;
-    font-size: 0.72rem !important;
-    padding: 0 22px 0 22px !important;
-    background-position: 7px center, right 7px center !important;
-    background-size: 10px 10px, 8px 5px !important;
-    max-width: 150px !important;
-    flex-shrink: 0 !important;
+  /* City pill on mobile: same compact height */
+  .svc-city-pill {
+    height: 24px !important;
+    font-size: 0.68rem !important;
+    padding: 0 9px 0 7px !important;
   }
 
-  /* ── Chips scroll container ── */
+  /* Dropdown: anchored to left edge on mobile to avoid overflow */
+  .svc-city-dropdown {
+    left: 0 !important;
+    right: auto !important;
+    transform: translateY(-4px) !important;
+    max-width: calc(100vw - 32px) !important;
+  }
+  .svc-city-dropdown.visible {
+    transform: translateY(0) !important;
+  }
+
+  /* ── Chips horizontal scroll ── */
   #services.services-section .category-chips {
     display: flex !important;
     flex-wrap: nowrap !important;
     overflow-x: auto !important;
-    /* snap mandatory = firm Uber-style snap */
     scroll-snap-type: x mandatory !important;
     -webkit-overflow-scrolling: touch !important;
     overscroll-behavior-x: contain !important;
     scrollbar-width: none !important;
-    padding: 4px 16px 12px !important;
-    /* bleed past container so last chip is cut */
+    padding: 3px 16px 10px !important;
+    /* bleed edge — last chip partially cut = scroll hint */
     margin: 0 -16px !important;
     justify-content: flex-start !important;
-    gap: 7px !important;
-    position: relative !important;
+    gap: 6px !important;
   }
   #services.services-section .category-chips::-webkit-scrollbar {
     display: none !important;
   }
+  /* Spacer after last chip (peek-through cut) */
+  #services.services-section .category-chips::after {
+    content: '' !important;
+    flex: 0 0 28px !important;
+    display: block !important;
+  }
 
-  /* Each chip snaps */
+  /* Chip snap + reset transforms on mobile */
   #services.services-section .service-chip {
     flex-shrink: 0 !important;
     scroll-snap-align: start !important;
     scroll-snap-stop: normal !important;
     opacity: 1 !important;
     transform: none !important;
+    /* slightly smaller on mobile */
+    height: 24px !important;
+    padding: 0 10px !important;
+    font-size: 0.71rem !important;
+    gap: 4px !important;
   }
-  #services.services-section .service-chip.active {
-    transform: none !important;
-  }
+  #services.services-section .service-chip.active,
   #services.services-section .service-chip:hover {
     transform: none !important;
   }
+  #services.services-section .chip-icon {
+    font-size: 0.75rem !important;
+  }
 
-  /* ── Scroll hint: fade-out right edge ── */
-  /* Injected wrapper .svc-chips-wrap by JS gets this pseudo */
+  /* ── Fade-out right edge via .svc-chips-wrap ── */
   .svc-chips-wrap {
     position: relative !important;
     display: block !important;
@@ -253,34 +388,32 @@
     position: absolute !important;
     top: 0 !important;
     right: 0 !important;
-    width: 64px !important;
+    width: 56px !important;
     height: 100% !important;
-    /* fade from transparent to page bg — #0D0D1A */
-    background: linear-gradient(to right,
+    background: linear-gradient(
+      to right,
       rgba(13,13,26,0) 0%,
-      rgba(13,13,26,0.7) 60%,
-      rgba(13,13,26,0.95) 100%) !important;
+      rgba(13,13,26,0.68) 55%,
+      rgba(13,13,26,0.96) 100%
+    ) !important;
     pointer-events: none !important;
     z-index: 2 !important;
-    border-radius: 0 !important;
-    transition: opacity 0.3s ease !important;
+    transition: opacity 0.25s ease !important;
   }
-  /* Hide fade when scrolled to end */
   .svc-chips-wrap.at-end::after {
     opacity: 0 !important;
   }
 }
 
-/* ── Scroll hint animation keyframes ── */
+/* ── Scroll hint bounce on first chip ── */
 @keyframes svcScrollHint {
   0%   { transform: translateX(0); }
-  20%  { transform: translateX(-10px); }
-  45%  { transform: translateX(4px); }
-  65%  { transform: translateX(-5px); }
-  80%  { transform: translateX(2px); }
+  22%  { transform: translateX(-8px); }
+  44%  { transform: translateX(3px); }
+  64%  { transform: translateX(-4px); }
+  82%  { transform: translateX(1px); }
   100% { transform: translateX(0); }
 }
-/* Applied by JS on first chip once */
 .svc-hint-anim {
-  animation: svcScrollHint 0.9s cubic-bezier(0.22,1,0.36,1) 0.6s both !important;
+  animation: svcScrollHint 0.85s cubic-bezier(0.22,1,0.36,1) 0.5s both !important;
 }
