@@ -1,0 +1,295 @@
+/* ══════════════════════════════════════════════════════════════════════
+   FIXEO — "Comment ça marche" Premium Refonte
+   Pure visual override — zero structural HTML changes
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── Section wrapper: tighter padding ── */
+.how-it-works-section {
+  padding: 56px 0 64px !important;
+  overflow: hidden !important;
+  position: relative !important;
+}
+
+/* Ambient gradient bleed */
+.how-it-works-section::before {
+  content: '' !important;
+  position: absolute !important;
+  inset: 0 !important;
+  background:
+    radial-gradient(ellipse 60% 40% at 20% 50%, rgba(225,48,108,0.04) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 40% at 80% 50%, rgba(131,58,180,0.04) 0%, transparent 70%) !important;
+  pointer-events: none !important;
+  z-index: 0 !important;
+}
+.how-it-works-section > .container {
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+/* ── Section header: compact ── */
+.how-it-works-section .how-header {
+  text-align: center !important;
+  margin-bottom: 36px !important;
+}
+.how-it-works-section #how-title {
+  font-size: clamp(1.55rem, 3vw, 2.2rem) !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.02em !important;
+  margin-bottom: 6px !important;
+}
+.how-it-works-section .how-subtitle {
+  font-size: 0.88rem !important;
+  color: rgba(255,255,255,0.52) !important;
+  margin-top: 4px !important;
+}
+
+/* ──────────────────────────────────────────────
+   STEPS GRID — Desktop: 4-col row
+   Mobile:      horizontal snap scroll
+────────────────────────────────────────────── */
+.how-it-works-section .steps-container {
+  display: flex !important;
+  flex-direction: row !important;
+  gap: 12px !important;
+  align-items: stretch !important;
+  position: relative !important;
+  /* Remove the pseudo-line from homepage-v13 */
+}
+
+/* Remove old connector line */
+.how-it-works-section .steps-container::before {
+  display: none !important;
+}
+
+/* ── Connector arrows between cards ── */
+.how-it-works-section .steps-container::after {
+  display: none !important;
+}
+
+/* ── Step card ── */
+.how-it-works-section .step-card {
+  flex: 1 !important;
+  min-width: 0 !important;
+  position: relative !important;
+  z-index: 1 !important;
+  border-radius: 20px !important;
+  padding: 24px 20px 22px !important;
+  background: rgba(255,255,255,0.028) !important;
+  border: 1px solid rgba(255,255,255,0.07) !important;
+  text-align: left !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0 !important;
+  cursor: default !important;
+  transition: transform 0.26s cubic-bezier(0.22,1,0.36,1),
+              background 0.22s ease,
+              border-color 0.22s ease,
+              box-shadow 0.26s ease !important;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.12),
+              inset 0 1px 0 rgba(255,255,255,0.04) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  /* animation start state */
+  opacity: 0;
+  transform: translateY(22px);
+}
+
+/* Animated in state */
+.how-it-works-section .step-card.hiw-visible {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
+/* Hover lift */
+.how-it-works-section .step-card:hover {
+  transform: translateY(-5px) !important;
+  background: rgba(255,255,255,0.05) !important;
+  border-color: rgba(255,255,255,0.12) !important;
+  box-shadow: 0 14px 36px rgba(0,0,0,0.22),
+              inset 0 1px 0 rgba(255,255,255,0.07) !important;
+}
+
+/* ── Highlight cards (1 & 3) ── */
+.how-it-works-section .step-highlight {
+  background: rgba(225,48,108,0.06) !important;
+  border: 1px solid rgba(225,48,108,0.18) !important;
+  box-shadow: 0 2px 16px rgba(225,48,108,0.06),
+              inset 0 1px 0 rgba(255,255,255,0.04) !important;
+}
+.how-it-works-section .step-highlight:hover {
+  background: rgba(225,48,108,0.09) !important;
+  border-color: rgba(225,48,108,0.28) !important;
+  box-shadow: 0 14px 36px rgba(225,48,108,0.1),
+              inset 0 1px 0 rgba(255,255,255,0.06) !important;
+}
+
+/* ── Step number badge ── */
+.how-it-works-section .step-number {
+  width: 26px !important;
+  height: 26px !important;
+  min-width: 26px !important;
+  border-radius: 8px !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0 !important;
+  color: rgba(255,255,255,0.9) !important;
+  background: rgba(225,48,108,0.15) !important;
+  border: 1px solid rgba(225,48,108,0.28) !important;
+  box-shadow: none !important;
+  margin: 0 0 14px 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* ── Step icon ── */
+.how-it-works-section .step-icon {
+  font-size: 0 !important;       /* hide emoji text */
+  line-height: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  margin-bottom: 14px !important;
+  width: 42px !important;
+  height: 42px !important;
+  border-radius: 12px !important;
+  background: rgba(255,255,255,0.05) !important;
+  border: 1px solid rgba(255,255,255,0.08) !important;
+  padding: 10px !important;
+  box-sizing: border-box !important;
+}
+/* SVG inside icon slot */
+.how-it-works-section .step-icon svg {
+  width: 100% !important;
+  height: 100% !important;
+  display: block !important;
+  stroke: rgba(255,255,255,0.75) !important;
+  fill: none !important;
+}
+.how-it-works-section .step-highlight .step-icon {
+  background: rgba(225,48,108,0.10) !important;
+  border-color: rgba(225,48,108,0.22) !important;
+}
+.how-it-works-section .step-highlight .step-icon svg {
+  stroke: rgba(225,48,108,0.9) !important;
+}
+
+/* ── Card title ── */
+.how-it-works-section .step-card h3 {
+  font-size: 0.95rem !important;
+  font-weight: 700 !important;
+  margin: 0 0 6px !important;
+  color: rgba(255,255,255,0.95) !important;
+  line-height: 1.3 !important;
+  letter-spacing: -0.01em !important;
+}
+
+/* ── Card description ── */
+.how-it-works-section .step-card p {
+  font-size: 0.8rem !important;
+  line-height: 1.55 !important;
+  color: rgba(255,255,255,0.48) !important;
+  margin: 0 !important;
+  flex: 1 !important;
+}
+
+/* ── Connector arrow (injected between cards by JS) ── */
+.hiw-arrow {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+  width: 22px !important;
+  align-self: center !important;
+  opacity: 0.25 !important;
+}
+.hiw-arrow svg {
+  width: 14px !important;
+  height: 14px !important;
+  stroke: rgba(255,255,255,0.6) !important;
+  fill: none !important;
+  flex-shrink: 0 !important;
+}
+
+/* ══════════════════════════════════════════════
+   MOBILE — Horizontal snap scroll
+═══════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .how-it-works-section {
+    padding: 44px 0 52px !important;
+  }
+
+  .how-it-works-section .steps-container {
+    display: flex !important;
+    flex-direction: row !important;
+    overflow-x: auto !important;
+    overflow-y: visible !important;
+    scroll-snap-type: x mandatory !important;
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior-x: contain !important;
+    gap: 10px !important;
+    padding: 4px 24px 16px !important;
+    margin: 0 -24px !important;      /* bleed past container padding */
+    scrollbar-width: none !important;
+    grid-template-columns: unset !important; /* override grid from homepage-v13 */
+    align-items: stretch !important;
+  }
+  .how-it-works-section .steps-container::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .how-it-works-section .step-card {
+    flex: 0 0 calc(80vw) !important;
+    max-width: 280px !important;
+    min-width: 220px !important;
+    scroll-snap-align: center !important;
+    scroll-snap-stop: always !important;
+    opacity: 1 !important;           /* skip stagger on mobile, always visible */
+    transform: none !important;
+  }
+  .how-it-works-section .step-card:hover {
+    transform: none !important;      /* no hover lift on touch */
+  }
+
+  /* Hide connector arrows on mobile */
+  .hiw-arrow {
+    display: none !important;
+  }
+
+  /* Scroll indicator dots */
+  .hiw-dots {
+    display: flex !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    margin-top: 14px !important;
+  }
+  .hiw-dot {
+    width: 6px !important;
+    height: 6px !important;
+    border-radius: 50% !important;
+    background: rgba(255,255,255,0.2) !important;
+    transition: background 0.2s ease, transform 0.2s ease !important;
+  }
+  .hiw-dot.active {
+    background: #E1306C !important;
+    transform: scale(1.3) !important;
+  }
+}
+@media (min-width: 769px) {
+  .hiw-dots { display: none !important; }
+}
+
+/* ── Tablet: still 4-col but tighter ── */
+@media (max-width: 1100px) and (min-width: 769px) {
+  .how-it-works-section .step-card {
+    padding: 20px 16px 18px !important;
+  }
+}
+
+/* ── Stagger delays (desktop) ── */
+@media (min-width: 769px) {
+  .how-it-works-section .step-card:nth-child(1),
+  .how-it-works-section .step-card:nth-child(2) { transition-delay: 0ms !important; }
+  .how-it-works-section .step-card:nth-child(3),
+  .how-it-works-section .step-card:nth-child(4) { transition-delay: 0ms !important; }
+}
