@@ -384,3 +384,58 @@
 .svc-hint-anim {
   animation: svcScrollHint 0.75s cubic-bezier(0.22,1,0.36,1) 0.7s both !important;
 }
+
+/* ══════════════════════════════════════════════════════════════════════
+   CHIPS LAYOUT FIX v6.1
+   ───────────────────────────────────────────────────────────────────
+   DESKTOP: homepage-v13.css sets max-width:900px !important on
+   .category-chips, causing chips to cluster left in a 1240px container.
+   Fix: force width:100% + max-width:100% so justify-content:center
+   works across the full container width → balanced centered rows.
+
+   MOBILE: touch-action:manipulation on chips + no explicit touch-action
+   on the scroll container = horizontal swipe conflicts with vertical scroll.
+   Fix: touch-action:pan-x on the scroll container → horizontal swipe scrolls
+   chips; vertical swipes pass through to the page (pan-y unblocked).
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* DESKTOP — centered balanced layout
+   Constrain to ~960px so 18 chips split into 2 clean rows of ~9.
+   margin:0 auto centers the box within the 1240px container.
+   justify-content:center centers chips within each row. */
+html body #services.services-section .category-chips {
+  width: auto !important;
+  max-width: 960px !important;
+  min-width: 0 !important;
+  margin: 0 auto !important;
+  justify-content: center !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+  display: flex !important;
+}
+
+/* MOBILE — smooth horizontal scroll, no vertical block */
+@media (max-width: 768px) {
+  html body #services.services-section .category-chips {
+    width: 100% !important;
+    max-width: 100% !important;
+    justify-content: flex-start !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior-x: contain !important;
+    /* pan-x: horizontal swipe scrolls chips;
+       vertical swipes pass through to page (not blocked) */
+    touch-action: pan-x !important;
+    scrollbar-width: none !important;
+  }
+  html body #services.services-section .category-chips::-webkit-scrollbar {
+    display: none !important;
+  }
+  /* Individual chips: manipulation = tap+double-tap, no panning conflict */
+  html body #services.services-section .service-chip {
+    touch-action: manipulation !important;
+    flex-shrink: 0 !important;
+  }
+}
