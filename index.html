@@ -56,6 +56,12 @@
    INLINE CRITICAL CSS V13
 ══════════════════════════════════════════════════════════ */
 
+/* ── FOUC Prevention note ──
+   Step/testimonial cards and service chips start at opacity:0 via homepage-v13.css .v12-fade-in
+   and services-premium.css. JS reveals them via .visible / .svc-visible classes.
+   Full anti-FOUC override CSS is in #fixeo-anti-fouc style block (last in <head>).
+──*/
+
 /* Scrollbar */
 ::-webkit-scrollbar{width:8px;height:8px}
 ::-webkit-scrollbar-track{background:rgba(255,255,255,.03)}
@@ -1840,6 +1846,43 @@ section#home.hero.hero-section {
     pointer-events: none !important;
   }
 </style>
+
+<!-- ★ ANTI-FOUC SHIELD — Loaded last in <head>, beats all external CSS.
+     Hides elements that flash before JS runs or external CSS settles.
+     Each rule has maximum specificity to guarantee no external file overrides it.
+     These are ONLY hidden here; JS (_showResultsChrome, renderArtisans, etc.)
+     restores them with inline style when appropriate.
+-->
+<style id="fixeo-anti-fouc">
+  /* ── Artisan results chrome: always hidden on homepage, JS shows on search ── */
+  html body #artisans-section .results-header,
+  html body #artisans-section .results-filters,
+  html body #artisans-section .results-toolbar,
+  html body #artisans-section .results-trust-strip,
+  html body #artisans-container,
+  html body #loading-artisans,
+  html body #other-see-more-wrap,
+  html body #edit-results-search-btn {
+    display: none !important;
+  }
+
+  /* ── In search mode, JS adds .fixeo-search-mode to body → remove from hiding ── */
+  html body.fixeo-search-mode #artisans-section .results-header,
+  html body.fixeo-search-mode #artisans-section .results-filters,
+  html body.fixeo-search-mode #artisans-section .results-toolbar,
+  html body.fixeo-search-mode #artisans-section .results-trust-strip,
+  html body.fixeo-search-mode #artisans-container,
+  html body.fixeo-search-mode #loading-artisans,
+  html body.fixeo-search-mode #other-see-more-wrap {
+    display: revert !important;
+  }
+
+  /* ── Chips: hidden until JS stagger (svc-visible or v12-fade-in.visible) ──
+     Uses opacity so no layout shift (CLS = 0) ── */
+  #services .service-chip:not(.svc-visible):not(.v12-fade-in) {
+    opacity: 0 !important;
+  }
+</style>
 </head>
 
 <body class="fixeo-homepage-mode">
@@ -2242,17 +2285,17 @@ section#home.hero.hero-section {
     <select id="filter-availability" style="display:none" aria-hidden="true"></select>
     <select id="filter-sort" style="display:none" aria-hidden="true"></select>
 
-    <div class="results-header premium-results-header">
+    <div class="results-header premium-results-header" style="display:none">
       <div class="results-header-copy">
         <span class="results-header-kicker">ARTISANS VÉRIFIÉS</span>
         <h1 id="results-main-title">Artisans près de chez vous</h1>
         <p id="results-main-meta">24 artisans disponibles • Réponse moyenne : 18 min</p>
       </div>
-      <button class="edit-search-btn" id="edit-results-search-btn" type="button">Modifier la recherche</button>
+      <button class="edit-search-btn" id="edit-results-search-btn" type="button" style="display:none">Modifier la recherche</button>
     </div>
 
     <div class="results-layout">
-      <aside class="results-filters" aria-labelledby="results-filters-title">
+      <aside class="results-filters" style="display:none" aria-labelledby="results-filters-title">
         <div class="results-filters-head">
           <h3 id="results-filters-title">Filtres</h3>
           <button class="results-reset-btn" id="results-reset-btn" type="button">Réinitialiser</button>
@@ -2302,7 +2345,7 @@ section#home.hero.hero-section {
       </aside>
 
       <div class="results-main-column">
-        <div class="results-toolbar">
+        <div class="results-toolbar" style="display:none">
           <div class="results-toolbar-left">
             <span id="results-count">24 résultats</span>
             <span class="results-toolbar-badge" id="other-artisans-count-badge">👷 24 profils</span>
@@ -2314,7 +2357,7 @@ section#home.hero.hero-section {
           </select>
         </div>
 
-        <div id="other-artisans-banner" class="other-artisans-banner results-trust-strip">
+        <div id="other-artisans-banner" class="other-artisans-banner results-trust-strip" style="display:none">
           <div class="other-artisans-banner-inner">
             <span class="separator-icon">⚡</span>
             <div class="separator-text-block">
@@ -2327,7 +2370,7 @@ section#home.hero.hero-section {
         <!-- Artisans grid (injected by main.js) — pagination by homepage-v13.js -->
         <div class="artisans-grid results-list" id="artisans-container"
              aria-live="polite" aria-label="Liste des artisans vérifiés"></div>
-        <div id="loading-artisans" aria-live="polite">Chargement des artisans...</div>
+        <div id="loading-artisans" style="display:none" aria-live="polite">Chargement des artisans...</div>
         <div id="no-artisan" style="display:none;" aria-live="polite">
           <p>Aucun artisan disponible pour ces critères pour le moment.</p>
         </div>

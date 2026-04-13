@@ -337,6 +337,7 @@
   /* ── Mode switches ── */
   function _enterHomepageMode() {
     _searchActive = false;
+    document.body.classList.remove('fixeo-search-mode');
     _hideResultsChrome();
     _renderPremiumGrid();
     _startObserver();
@@ -344,6 +345,7 @@
   function _enterSearchMode() {
     _searchActive = true;
     _stopObserver();
+    document.body.classList.add('fixeo-search-mode');
     _showResultsChrome();
   }
 
