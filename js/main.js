@@ -1408,7 +1408,7 @@ function openArtisanModal(id) {
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1rem;font-size:.85rem">
       <div style="background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:.75rem;padding:.75rem;text-align:center">
         <div style="font-size:1.4rem;font-weight:700;color:var(--accent2)">${a.priceFrom} MAD</div>
-        <div style="color:rgba(255,255,255,.5);font-size:.75rem">par ${a.priceUnit}</div>
+        <div style="color:rgba(255,255,255,.5);font-size:.75rem">${a.priceLabel || (a.priceRange ? "Est. " + a.priceRange : "Devis rapide")}</div>
       </div>
       <div style="background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:.75rem;padding:.75rem;text-align:center">
         <div style="font-size:1.4rem;font-weight:700;color:var(--info)">~${a.responseTime} min</div>
@@ -1600,7 +1600,7 @@ function renderMapMarkers(artisanList) {
       .bindPopup(`<div style="min-width:200px;font-family:Cairo,sans-serif;padding:4px">
         <div style="font-weight:700;font-size:.95rem;margin-bottom:4px">${a.name}</div>
         <div style="color:#888;font-size:.78rem;margin-bottom:4px">${getCategoryLabel(a.category)} · 📍 ${a.city}</div>
-        <div style="font-size:.82rem;margin-bottom:4px">⭐ ${a.rating} · 💰 ${a.priceFrom} MAD/${a.priceUnit}</div>
+        <div style="font-size:.82rem;margin-bottom:4px">⭐ ${a.rating} · 💰 ${a.priceLabel || (a.priceFrom + " MAD")}</div>
         <div style="font-size:.78rem;margin-bottom:8px;color:${color};font-weight:600">${availTxt}</div>
         <button onclick="if(leafletMap)leafletMap.closePopup();openBookingModal(${JSON.stringify(String(a.id))})"
           class="fixeo-reserve-btn"

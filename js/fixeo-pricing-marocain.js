@@ -1,0 +1,203 @@
+/**
+ * fixeo-pricing-marocain.js  v1.0
+ * ─────────────────────────────────────────────────────────────────────────────
+ * Replaces hourly pricing (/h, MAD/h, hourlyRate) with Moroccan market
+ * fixed-estimate tariffs.
+ *
+ * Tarifs par service (fourchettes marché Maroc):
+ *   Plomberie:      150-300 MAD (fuite), 250-500 (WC), 150-350 (débouchage)
+ *   Electricité:    100-200 MAD (prise), 120-250 (luminaire), 200-400 (panne)
+ *   Peinture:       800-1500 MAD (chambre), 1200-2500 (salon)
+ *   Climatisation:  500-900 MAD (install), 200-350 (entretien)
+ *   Menuiserie:     400-900 MAD (porte), 150-400 (réparation)
+ *   + autres métiers
+ *
+ * DISPLAY FORMAT:
+ *   "À partir de X MAD"  →  priceType: 'fixed_estimate'
+ *   "Estimation X-Y MAD" →  priceRange
+ *
+ * ZERO UI/CSS changes. Patches data layer only.
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
+(function (window) {
+  'use strict';
+
+  /* ══════════════════════════════════════════════════════════
+     TARIFS MARCHÉ MAROCAIN
+  ══════════════════════════════════════════════════════════ */
+  var SERVICE_PRICING = {
+    plomberie:     { from: 150, to: 350, label: 'À partir de 150 MAD', range: '150–350 MAD' },
+    electricite:   { from: 100, to: 400, label: 'À partir de 100 MAD', range: '100–400 MAD' },
+    peinture:      { from: 800, to: 2500, label: 'À partir de 800 MAD', range: '800–2500 MAD' },
+    climatisation: { from: 200, to: 900, label: 'À partir de 200 MAD', range: '200–900 MAD' },
+    menuiserie:    { from: 150, to: 900, label: 'À partir de 150 MAD', range: '150–900 MAD' },
+    serrurerie:    { from: 150, to: 400, label: 'À partir de 150 MAD', range: '150–400 MAD' },
+    maconnerie:    { from: 200, to: 800, label: 'À partir de 200 MAD', range: '200–800 MAD' },
+    carrelage:     { from: 150, to: 600, label: 'À partir de 150 MAD', range: '150–600 MAD' },
+    nettoyage:     { from: 200, to: 600, label: 'À partir de 200 MAD', range: '200–600 MAD' },
+    jardinage:     { from: 150, to: 500, label: 'À partir de 150 MAD', range: '150–500 MAD' },
+    bricolage:     { from: 100, to: 400, label: 'À partir de 100 MAD', range: '100–400 MAD' },
+    demenagement:  { from: 500, to: 2000, label: 'À partir de 500 MAD', range: '500–2000 MAD' },
+    toiture:       { from: 300, to: 1200, label: 'À partir de 300 MAD', range: '300–1200 MAD' },
+    vitrerie:      { from: 200, to: 700, label: 'À partir de 200 MAD', range: '200–700 MAD' },
+    chauffage:     { from: 200, to: 600, label: 'À partir de 200 MAD', range: '200–600 MAD' },
+    _default:      { from: 150, to: 500, label: 'Devis rapide', range: 'Sur devis' },
+  };
+
+  function _normalizeService(s) {
+    if (!s) return '_default';
+    var n = String(s).toLowerCase()
+      .replace(/[éèêë]/g,'e').replace(/[àâä]/g,'a').replace(/ç/g,'c')
+      .trim();
+    return SERVICE_PRICING[n] ? n : '_default';
+  }
+
+  function getPricing(service) {
+    return SERVICE_PRICING[_normalizeService(service)] || SERVICE_PRICING._default;
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     PATCH ARTISAN RECORD — set fixed estimate pricing
+  ══════════════════════════════════════════════════════════ */
+  function patchArtisanPricing(artisan) {
+    var svc = artisan.service || artisan.category || '';
+    var p = getPricing(svc);
+    artisan.priceFrom  = p.from;
+    artisan.priceTo    = p.to;
+    artisan.priceRange = p.range;
+    artisan.priceLabel = p.label;
+    artisan.priceType  = 'fixed_estimate';
+    artisan.priceUnit  = 'intervention';  // replaces 'h'
+    artisan.hasPriceData = true;
+    return artisan;
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     PATCH window.ARTISANS ARRAY
+  ══════════════════════════════════════════════════════════ */
+  function patchAllArtisans() {
+    if (!window.ARTISANS || !Array.isArray(window.ARTISANS)) return 0;
+    var patched = 0;
+    window.ARTISANS.forEach(function (a) {
+      // Skip if already using fixed estimate
+      if (a.priceType === 'fixed_estimate') return;
+      // Skip real artisans with custom pricing (trust their data)
+      if (!a._isSeed && a.priceFrom > 0 && a.priceUnit !== 'h' && a.priceUnit !== 'heure') return;
+      patchArtisanPricing(a);
+      patched++;
+    });
+    if (window._fixeoDebug && patched > 0) {
+      console.log('[fixeo-pricing] Patched', patched, 'artisans with Moroccan fixed-estimate pricing');
+    }
+    return patched;
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     PATCH i18n art_per_hour
+  ══════════════════════════════════════════════════════════ */
+  function patchI18n() {
+    if (!window.i18n) return;
+    var langs = ['fr', 'ar', 'en'];
+    langs.forEach(function (lang) {
+      if (window.i18n[lang] && window.i18n[lang].art_per_hour !== undefined) {
+        window.i18n[lang].art_per_hour = 'intervention';
+      }
+    });
+    // Also patch i18n.t() result if cached
+    if (window.i18n.current && window.i18n.current.art_per_hour !== undefined) {
+      window.i18n.current.art_per_hour = 'intervention';
+    }
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     DOM PATCH: Replace rendered "/h" and "MAD/h" text nodes
+     in artisan cards AFTER render (non-destructive mutation)
+  ══════════════════════════════════════════════════════════ */
+  function _patchTextNode(node) {
+    if (node.nodeType !== 3) return; // text nodes only
+    var text = node.textContent;
+    // Replace "/h" and "MAD/h" patterns
+    var patched = text
+      .replace(/(\d+)\s*MAD\s*\/\s*h(eure)?\b/gi, '$1 MAD/interv.')
+      .replace(/par\s+h(eure)?\b/gi, 'par intervention')
+      .replace(/\bMAD\/h\b/gi, 'MAD/interv.')
+      .replace(/\b\/h\b/g, '/interv.');
+    if (patched !== text) {
+      node.textContent = patched;
+    }
+  }
+
+  function patchRenderedCards() {
+    var containers = [
+      document.getElementById('artisans-section'),
+      document.getElementById('top-artisans'),
+      document.getElementById('secondary-search-section'),
+    ];
+    containers.forEach(function (container) {
+      if (!container) return;
+      var walker = document.createTreeWalker(container, 4 /* NodeFilter.SHOW_TEXT */);
+      var node;
+      while ((node = walker.nextNode())) {
+        _patchTextNode(node);
+      }
+    });
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     OBSERVE and patch after re-renders
+  ══════════════════════════════════════════════════════════ */
+  var _observer = null;
+  function _watchCards() {
+    if (_observer || !window.MutationObserver) return;
+    var targets = ['artisans-section', 'top-artisans', 'secondary-search-section'];
+    targets.forEach(function (id) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      var obs = new MutationObserver(function (mutations) {
+        var needsPatch = mutations.some(function (m) { return m.addedNodes.length > 0; });
+        if (needsPatch) {
+          setTimeout(patchRenderedCards, 30);
+        }
+      });
+      obs.observe(el, { childList: true, subtree: true });
+    });
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     PUBLIC API
+  ══════════════════════════════════════════════════════════ */
+  window.FixeoPricing = {
+    getPricing:          getPricing,
+    patchArtisan:        patchArtisanPricing,
+    patchAll:            patchAllArtisans,
+    patchRendered:       patchRenderedCards,
+    SERVICE_PRICING:     SERVICE_PRICING,
+  };
+
+  /* ── Boot ── */
+  function _boot() {
+    function _init() {
+      patchI18n();
+      patchAllArtisans();
+      patchRenderedCards();
+      _watchCards();
+
+      // Re-patch after marketplace loads
+      window.addEventListener('fixeo:marketplace-artisans-updated', function () {
+        setTimeout(function () {
+          patchAllArtisans();
+          patchRenderedCards();
+        }, 100);
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', _init);
+    } else {
+      setTimeout(_init, 200);
+    }
+  }
+
+  _boot();
+
+})(window);
