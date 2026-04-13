@@ -1,0 +1,351 @@
+/* ══════════════════════════════════════════════════════════════════════
+   FIXEO — Feed Réalisations v2 — Carousel Premium Maroc
+   Full visual refonte — zero feed.js changes
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ══════════════════════════════════════════════════════
+   SECTION
+══════════════════════════════════════════════════════ */
+#feed-section {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  overflow: hidden !important;
+}
+#feed-section .container {
+  max-width: 100% !important;
+  padding: 0 !important;
+}
+#feed-section .section-header {
+  max-width: 1240px !important;
+  margin: 0 auto 32px !important;
+  padding: 0 24px !important;
+}
+#feed-section #feed-title {
+  font-size: clamp(1.5rem, 3vw, 2.1rem) !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.02em !important;
+  margin-bottom: 6px !important;
+}
+#feed-section .section-header p {
+  font-size: 0.86rem !important;
+  color: rgba(255,255,255,0.44) !important;
+}
+
+/* ══════════════════════════════════════════════════════
+   CAROUSEL WRAPPER — injected by JS as .feed-carousel-wrap
+══════════════════════════════════════════════════════ */
+.feed-carousel-wrap {
+  position: relative !important;
+  width: 100% !important;
+}
+
+/* ── Navigation arrows (desktop) ── */
+.feed-nav-btn {
+  display: none; /* shown by JS on desktop */
+  position: absolute !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  z-index: 10 !important;
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: 50% !important;
+  background: rgba(20,20,42,0.9) !important;
+  border: 1px solid rgba(255,255,255,0.12) !important;
+  color: rgba(255,255,255,0.8) !important;
+  cursor: pointer !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3) !important;
+}
+.feed-nav-btn:hover {
+  background: rgba(225,48,108,0.18) !important;
+  border-color: rgba(225,48,108,0.35) !important;
+  color: #fff !important;
+  transform: translateY(-50%) scale(1.08) !important;
+}
+.feed-nav-btn svg {
+  width: 18px !important;
+  height: 18px !important;
+  flex-shrink: 0 !important;
+}
+.feed-nav-prev { left: 16px !important; }
+.feed-nav-next { right: 16px !important; }
+.feed-nav-btn.is-disabled {
+  opacity: 0.25 !important;
+  pointer-events: none !important;
+}
+@media (min-width: 769px) {
+  .feed-nav-btn { display: flex !important; }
+}
+
+/* ══════════════════════════════════════════════════════
+   FEED CONTAINER — carousel track
+══════════════════════════════════════════════════════ */
+#feed-container.feed-grid {
+  display: flex !important;
+  flex-direction: row !important;
+  overflow-x: auto !important;
+  scroll-snap-type: x mandatory !important;
+  -webkit-overflow-scrolling: touch !important;
+  overscroll-behavior-x: contain !important;
+  scrollbar-width: none !important;
+  gap: 16px !important;
+  padding: 8px 24px 20px !important;
+  grid-template-columns: unset !important;
+  align-items: stretch !important;
+  scroll-behavior: smooth !important;
+}
+#feed-container.feed-grid::-webkit-scrollbar { display: none !important; }
+
+/* ── Card sizing ── */
+#feed-container .feed-card {
+  flex: 0 0 360px !important;
+  width: 360px !important;
+  min-width: 0 !important;
+  scroll-snap-align: start !important;
+  scroll-snap-stop: always !important;
+  /* Premium card style */
+  border-radius: 18px !important;
+  background: rgba(255,255,255,0.03) !important;
+  border: 1px solid rgba(255,255,255,0.07) !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.16),
+              inset 0 1px 0 rgba(255,255,255,0.04) !important;
+  overflow: hidden !important;
+  /* Animation */
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.22,1,0.36,1),
+              box-shadow 0.24s ease, border-color 0.24s ease !important;
+}
+#feed-container .feed-card.fc-visible {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+#feed-container .feed-card:hover {
+  box-shadow: 0 16px 40px rgba(0,0,0,0.28),
+              0 0 0 1px rgba(225,48,108,0.15) !important;
+  border-color: rgba(225,48,108,0.18) !important;
+  transform: translateY(-4px) !important;
+}
+
+/* Mobile: 85vw cards */
+@media (max-width: 768px) {
+  #feed-container.feed-grid {
+    gap: 12px !important;
+    padding: 6px 16px 16px !important;
+  }
+  #feed-container .feed-card {
+    flex: 0 0 85vw !important;
+    width: 85vw !important;
+    max-width: 340px !important;
+  }
+  #feed-container .feed-card:hover {
+    transform: none !important;
+  }
+  /* Show peek of next card */
+  #feed-container.feed-grid::after {
+    content: '' !important;
+    flex: 0 0 8px !important;
+    display: block !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════════
+   CARD HEADER — enriched by JS
+══════════════════════════════════════════════════════ */
+/* Artisan avatar circle */
+.fc-avatar-wrap {
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 50% !important;
+  background: rgba(225,48,108,0.12) !important;
+  border: 1px solid rgba(225,48,108,0.22) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 1.2rem !important;
+  flex-shrink: 0 !important;
+}
+
+/* City + time row injected under header */
+.fc-meta-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  padding: 6px 14px !important;
+  background: rgba(0,0,0,0.18) !important;
+  border-bottom: 1px solid rgba(255,255,255,0.05) !important;
+}
+.fc-city {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  font-size: 0.7rem !important;
+  font-weight: 600 !important;
+  color: rgba(255,255,255,0.52) !important;
+}
+.fc-city svg { stroke: rgba(255,255,255,0.32) !important; flex-shrink: 0 !important; }
+.fc-verified {
+  display: flex !important;
+  align-items: center !important;
+  gap: 3px !important;
+  font-size: 0.65rem !important;
+  font-weight: 700 !important;
+  color: rgba(32,201,151,0.85) !important;
+  background: rgba(32,201,151,0.08) !important;
+  border: 1px solid rgba(32,201,151,0.18) !important;
+  border-radius: 9999px !important;
+  padding: 2px 7px !important;
+}
+.fc-verified svg { stroke: rgba(32,201,151,0.75) !important; }
+.fc-time {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 3px !important;
+  font-size: 0.65rem !important;
+  color: rgba(255,255,255,0.35) !important;
+  margin-left: auto !important;
+}
+.fc-time svg { stroke: rgba(255,255,255,0.28) !important; }
+
+/* ══════════════════════════════════════════════════════
+   PRICE BADGE — injected by JS into .realisation-content
+══════════════════════════════════════════════════════ */
+.fc-price-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  background: linear-gradient(135deg, rgba(32,201,151,0.14), rgba(32,201,151,0.06)) !important;
+  border: 1px solid rgba(32,201,151,0.25) !important;
+  border-radius: 9999px !important;
+  padding: 4px 12px !important;
+  font-size: 0.78rem !important;
+  font-weight: 800 !important;
+  color: rgba(32,201,151,0.95) !important;
+  margin-top: 8px !important;
+  margin-bottom: 6px !important;
+  letter-spacing: -0.01em !important;
+  box-shadow: 0 2px 8px rgba(32,201,151,0.10) !important;
+}
+.fc-price-badge svg {
+  stroke: rgba(32,201,151,0.7) !important;
+  flex-shrink: 0 !important;
+}
+
+/* ── CTA buttons row injected by JS ── */
+.fc-cta-row {
+  display: flex !important;
+  gap: 8px !important;
+  margin-top: 12px !important;
+  flex-wrap: wrap !important;
+}
+/* Primary CTA: Voir transformation */
+.fc-cta-primary {
+  flex: 1 !important;
+  min-width: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 5px !important;
+  background: linear-gradient(135deg, #E1306C 0%, #833AB4 100%) !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 10px !important;
+  padding: 8px 12px !important;
+  font-size: 0.78rem !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  font-family: inherit !important;
+  text-decoration: none !important;
+  box-shadow: 0 4px 14px rgba(225,48,108,0.22) !important;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease !important;
+}
+.fc-cta-primary:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 20px rgba(225,48,108,0.32) !important;
+  filter: brightness(1.06) !important;
+  color: #fff !important;
+}
+/* Secondary CTA: Voir artisan */
+.fc-cta-secondary {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  background: rgba(255,255,255,0.05) !important;
+  border: 1px solid rgba(255,255,255,0.10) !important;
+  color: rgba(255,255,255,0.68) !important;
+  border-radius: 10px !important;
+  padding: 8px 12px !important;
+  font-size: 0.76rem !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  font-family: inherit !important;
+  text-decoration: none !important;
+  white-space: nowrap !important;
+  transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease !important;
+}
+.fc-cta-secondary:hover {
+  background: rgba(255,255,255,0.09) !important;
+  color: #fff !important;
+  border-color: rgba(255,255,255,0.18) !important;
+}
+
+/* ── Hide old btn-view (replaced by fc-cta-row) ── */
+#feed-container .btn-view,
+#feed-container .feed-action-btn-link.btn-view {
+  display: none !important;
+}
+
+/* ══════════════════════════════════════════════════════
+   CAROUSEL DOTS
+══════════════════════════════════════════════════════ */
+.feed-carousel-dots {
+  display: flex !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  padding: 12px 0 24px !important;
+}
+.feed-carousel-dot {
+  width: 6px !important;
+  height: 6px !important;
+  border-radius: 50% !important;
+  background: rgba(255,255,255,0.18) !important;
+  cursor: pointer !important;
+  transition: background 0.2s ease, transform 0.2s ease, width 0.2s ease !important;
+  flex-shrink: 0 !important;
+}
+.feed-carousel-dot.active {
+  background: #E1306C !important;
+  width: 20px !important;
+  border-radius: 3px !important;
+  transform: none !important;
+}
+
+/* ── See more button ── */
+#feed-see-more-wrap {
+  text-align: center !important;
+  padding: 0 0 48px !important;
+  margin-top: 4px !important;
+}
+#feed-see-more-btn {
+  background: rgba(255,255,255,0.05) !important;
+  border: 1px solid rgba(255,255,255,0.10) !important;
+  color: rgba(255,255,255,0.75) !important;
+  padding: 11px 28px !important;
+  border-radius: 9999px !important;
+  font-size: 0.84rem !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  font-family: inherit !important;
+  transition: all 0.24s ease !important;
+}
+#feed-see-more-btn:hover {
+  background: linear-gradient(135deg, #E1306C, #833AB4) !important;
+  border-color: transparent !important;
+  color: #fff !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 10px 24px rgba(225,48,108,0.34) !important;
+}
