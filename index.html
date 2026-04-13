@@ -1707,7 +1707,7 @@ section#home.hero.hero-section {
 }
 
 </style>
-<!-- ★ Homepage premium mode: hide old results chrome before JS runs (no flash) -->
+<!-- ★ Homepage premium mode: hide old results chrome + premium card styles -->
 <style id="fixeo-homepage-mode-css">
   /* Applied via JS body class .fixeo-homepage-mode */
   body.fixeo-homepage-mode #artisans-container,
@@ -1742,6 +1742,90 @@ section#home.hero.hero-section {
       grid-template-columns: 1fr !important;
       gap: 14px !important;
     }
+  }
+
+  /* ── Section header ── */
+  .fhp-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 22px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+  }
+  .fhp-title {
+    font-size: clamp(1.2rem, 2.5vw, 1.55rem);
+    font-weight: 800;
+    color: #fff;
+    margin: 0 0 4px;
+    letter-spacing: -0.01em;
+  }
+  .fhp-subtitle {
+    font-size: 0.88rem;
+    color: rgba(255,255,255,0.5);
+    margin: 0;
+  }
+  .fhp-counter {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    background: rgba(32,201,151,0.1);
+    border: 1px solid rgba(32,201,151,0.25);
+    color: #20c997;
+    font-size: 0.78rem;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .fhp-counter::before { content: '🟢'; font-size: 0.7rem; }
+
+  /* ── Fade-in animation ── */
+  .pvc-card,
+  .fhp-card {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+  }
+  .pvc-card.fhp-visible,
+  .fhp-card.fhp-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── Pointer-events & z-index fix — ensure clicks reach buttons ── */
+  #fixeo-homepage-vedette-grid {
+    position: relative !important;
+    z-index: 1 !important;
+  }
+  #fixeo-homepage-vedette-grid .pvc-card,
+  #fixeo-homepage-vedette-grid .fhp-card {
+    position: relative !important;
+    z-index: 2 !important;
+    pointer-events: auto !important;
+    cursor: pointer !important;
+  }
+  #fixeo-homepage-vedette-grid .pvc-actions,
+  #fixeo-homepage-vedette-grid .ssb2-card-actions {
+    position: relative !important;
+    z-index: 3 !important;
+    pointer-events: auto !important;
+  }
+  #fixeo-homepage-vedette-grid .pvc-btn-primary,
+  #fixeo-homepage-vedette-grid .pvc-btn-secondary,
+  #fixeo-homepage-vedette-grid .ssb2-btn-reserve,
+  #fixeo-homepage-vedette-grid .ssb2-btn-profile {
+    position: relative !important;
+    z-index: 4 !important;
+    pointer-events: auto !important;
+    cursor: pointer !important;
+  }
+  /* Remove any overlay ::before/::after that blocks clicks */
+  #fixeo-homepage-vedette-grid .pvc-card::before,
+  #fixeo-homepage-vedette-grid .fhp-card::before {
+    pointer-events: none !important;
   }
 </style>
 </head>
