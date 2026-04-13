@@ -1,22 +1,19 @@
 /**
- * services-premium.js  v6 — PORTAL DROPDOWN
+ * services-premium.js  v7 — SINGLE SOURCE OF TRUTH
  * ─────────────────────────────────────────────────────────────────────────────
- * FIXES:
- * 1. Dropdown appended to document.body (portal pattern) — escapes ALL
- *    overflow:hidden ancestors. No more section scroll when dropdown opens.
- * 2. Position:fixed, recalculated from pill.getBoundingClientRect() on open.
- * 3. Reposition on window scroll/resize (or close).
- * 4. Works identically on desktop and mobile/touch.
- * 5. City picker: hides native <select>, custom pill + dropdown.
- * 6. Desktop: IntersectionObserver stagger fade-in for chips.
- * 7. Mobile: wrap category-chips in .svc-chips-wrap for fade gradient.
+ * LAYOUT: flex-wrap:wrap + justify-content:center on ALL viewports.
+ * All chips visible without scrolling. No horizontal truncation.
+ * Same order, same count, same chips — desktop and mobile identical.
+ *
+ * CITY PICKER: portal dropdown appended to document.body.
+ * Position:fixed escapes all overflow:hidden ancestors.
+ *
+ * ZERO logic changes — no filtering or reservation modifications.
  * ─────────────────────────────────────────────────────────────────────────────
- * ZERO logic changes — no modifications to filtering or reservation.
  */
 (function (window, document) {
   'use strict';
 
-  var MOBILE_BP = 768;
   var _done = false;
 
   var CITIES = [
@@ -45,8 +42,6 @@
       '<path d="M1 1l4 4 4-4" stroke-width="1.8" stroke-linecap="round" fill="none"/>' +
     '</svg>';
 
-  function _isMobile() { return window.innerWidth <= MOBILE_BP; }
-
   /* ══════════════════════════════════════════════════
      PORTAL DROPDOWN — appended to body, position:fixed
   ══════════════════════════════════════════════════ */
@@ -56,11 +51,9 @@
     var currentValue = citySelect.value || '';
     var currentLabel = (CITIES.find(function(c){ return c.value === currentValue; }) || CITIES[0]).label;
 
-    /* Wrapper inside filter bar (just holds the pill) */
     var wrap = document.createElement('div');
     wrap.className = 'svc-city-wrap';
 
-    /* Pill trigger */
     var pill = document.createElement('button');
     pill.type = 'button';
     pill.className = 'svc-city-pill' + (currentValue ? ' has-value' : '');
@@ -75,7 +68,7 @@
     pill.appendChild(pillLabel);
     pill.insertAdjacentHTML('beforeend', CHEV_SVG);
 
-    /* ── DROPDOWN: appended to document.body (portal pattern) ── */
+    /* Dropdown appended to body — escapes all overflow:hidden ancestors */
     var dropdown = document.createElement('div');
     dropdown.className = 'svc-city-dropdown';
     dropdown.setAttribute('role', 'listbox');
@@ -91,49 +84,30 @@
       dropdown.appendChild(opt);
     });
 
-    /* Append dropdown to BODY — escapes all overflow:hidden ancestors */
     document.body.appendChild(dropdown);
 
-    /* ── Open / Close / Position ── */
-    function _getDropdownPos() {
+    function _getPos() {
       var rect = pill.getBoundingClientRect();
-      var viewW = window.innerWidth;
+      var vw = window.innerWidth;
       var MARGIN = 8;
-
       var left = rect.left;
       var top  = rect.bottom + 6;
       var dropW = 192;
-
-      // Prevent right-side clip
-      if (left + dropW > viewW - MARGIN) {
-        left = viewW - dropW - MARGIN;
-      }
-      // Prevent left-side clip
+      if (left + dropW > vw - MARGIN) left = vw - dropW - MARGIN;
       if (left < MARGIN) left = MARGIN;
-
-      // Prevent bottom clip — show above if needed
       var dropMaxH = 280;
       if (top + dropMaxH > window.innerHeight - MARGIN) {
         top = rect.top - dropMaxH - 6;
         if (top < MARGIN) top = MARGIN;
       }
-
       return { top: top, left: left };
-    }
-
-    function _reposition() {
-      if (!dropdown.classList.contains('svc-open')) return;
-      var pos = _getDropdownPos();
-      dropdown.style.top  = pos.top  + 'px';
-      dropdown.style.left = pos.left + 'px';
     }
 
     function _open() {
       pill.classList.add('open');
       pill.setAttribute('aria-expanded', 'true');
       dropdown.classList.add('svc-open');
-
-      var pos = _getDropdownPos();
+      var pos = _getPos();
       dropdown.style.position = 'fixed';
       dropdown.style.top      = pos.top  + 'px';
       dropdown.style.left     = pos.left + 'px';
@@ -152,131 +126,64 @@
       if (dropdown.classList.contains('svc-open')) { _close(); } else { _open(); }
     }
 
-    /* Events */
-    pill.addEventListener('click',       _toggle);
-    pill.addEventListener('touchend', function(e) {
-      e.preventDefault();
-      _toggle(e);
-    });
+    pill.addEventListener('click', _toggle);
+    pill.addEventListener('touchend', function(e) { e.preventDefault(); _toggle(e); });
 
-    /* Select option */
     dropdown.addEventListener('click', function(e) {
       var opt = e.target.closest('.svc-city-option');
       if (!opt) return;
       var val = opt.getAttribute('data-value');
-
-      /* Update city select */
       citySelect.value = val;
       citySelect.dispatchEvent(new Event('change', { bubbles: true }));
-
-      /* Update pill label */
       var newLabel = (CITIES.find(function(c){ return c.value === val; }) || CITIES[0]).label;
       pillLabel.textContent = newLabel;
       pill.classList.toggle('has-value', !!val);
-
-      /* Update selected option */
       dropdown.querySelectorAll('.svc-city-option').forEach(function(o) {
         var sel = o.getAttribute('data-value') === val;
         o.classList.toggle('selected', sel);
         o.setAttribute('aria-selected', sel ? 'true' : 'false');
       });
-
-      /* Update label elements if present */
-      var labelEl  = document.getElementById('services-city-label');
-      var nameEl   = document.getElementById('services-city-name');
+      var labelEl = document.getElementById('services-city-label');
+      var nameEl  = document.getElementById('services-city-name');
       if (labelEl) labelEl.style.display = val ? 'inline' : 'none';
       if (nameEl)  nameEl.textContent = val || '';
-
       _close();
     });
 
-    /* Close on outside click / tap */
-    document.addEventListener('click', function(e) {
-      if (!wrap.contains(e.target) && !dropdown.contains(e.target)) _close();
-    });
-    document.addEventListener('touchend', function(e) {
-      if (!wrap.contains(e.target) && !dropdown.contains(e.target)) _close();
-    });
-
-    /* Close + reposition on scroll/resize */
+    document.addEventListener('click',    function(e){ if (!wrap.contains(e.target) && !dropdown.contains(e.target)) _close(); });
+    document.addEventListener('touchend', function(e){ if (!wrap.contains(e.target) && !dropdown.contains(e.target)) _close(); });
     window.addEventListener('scroll', _close, { passive: true });
-    window.addEventListener('resize', function() {
-      _close();
-    }, { passive: true });
+    window.addEventListener('resize', _close, { passive: true });
+    document.addEventListener('keydown', function(e){ if (e.key === 'Escape') _close(); });
 
-    /* Escape key */
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') _close();
-    });
-
-    /* Insert pill wrap into filter bar */
     wrap.appendChild(pill);
     var filterBar = citySelect.closest('.services-filter-bar, .services-filter');
-    if (filterBar) {
-      filterBar.insertBefore(wrap, filterBar.firstChild);
-    }
+    if (filterBar) filterBar.insertBefore(wrap, filterBar.firstChild);
   }
 
   /* ══════════════════════════════════════════════════
-     DESKTOP: stagger IO fade-in
+     CHIP STAGGER FADE-IN (desktop + mobile, same logic)
   ══════════════════════════════════════════════════ */
-  function _initDesktop(section, chips) {
+  function _initChipsFadeIn(section) {
+    var chips = Array.from(section.querySelectorAll('.chip[data-category]'));
+    if (!chips.length) return;
+
     if (!window.IntersectionObserver) {
-      Array.from(chips).forEach(function(c){ c.classList.add('svc-visible'); });
+      chips.forEach(function(c){ c.classList.add('svc-visible'); });
       return;
     }
-    var chipArr  = Array.from(chips);
+
     var container = section.querySelector('.category-chips');
-    if (!container) return;
+    if (!container) { chips.forEach(function(c){ c.classList.add('svc-visible'); }); return; }
+
     var obs = new IntersectionObserver(function(entries) {
       if (!entries.some(function(e){ return e.isIntersecting; })) return;
       obs.disconnect();
-      chipArr.forEach(function(chip, i) {
-        setTimeout(function(){ chip.classList.add('svc-visible'); }, i * 22);
+      chips.forEach(function(chip, i) {
+        setTimeout(function(){ chip.classList.add('svc-visible'); }, i * 18);
       });
-    }, { threshold: 0.1 });
+    }, { threshold: 0.05 });
     obs.observe(container);
-  }
-
-  /* ══════════════════════════════════════════════════
-     MOBILE: scroll wrap + fade gradient + hint
-  ══════════════════════════════════════════════════ */
-  function _initMobile(section, chips) {
-    Array.from(chips).forEach(function(c){ c.classList.add('svc-visible'); });
-
-    var chipsContainer = section.querySelector('.category-chips');
-    if (!chipsContainer) return;
-
-    /* Wrap chips in .svc-chips-wrap for ::after gradient */
-    var parent = chipsContainer.parentNode;
-    if (parent && !parent.classList.contains('svc-chips-wrap')) {
-      var wrap2 = document.createElement('div');
-      wrap2.className = 'svc-chips-wrap';
-      parent.insertBefore(wrap2, chipsContainer);
-      wrap2.appendChild(chipsContainer);
-    }
-    var wrapEl = chipsContainer.parentNode;
-
-    /* Scroll-end detection */
-    function _checkEnd() {
-      var atEnd = chipsContainer.scrollLeft + chipsContainer.clientWidth
-                  >= chipsContainer.scrollWidth - 18;
-      wrapEl.classList.toggle('at-end', atEnd);
-    }
-    chipsContainer.addEventListener('scroll', _checkEnd, { passive: true });
-    setTimeout(_checkEnd, 250);
-
-    /* One-shot hint */
-    var firstChip = chips[0];
-    if (firstChip && !sessionStorage.getItem('svc_hint_v6')) {
-      sessionStorage.setItem('svc_hint_v6', '1');
-      setTimeout(function() {
-        firstChip.classList.add('svc-hint-anim');
-        firstChip.addEventListener('animationend', function() {
-          firstChip.classList.remove('svc-hint-anim');
-        }, { once: true });
-      }, 800);
-    }
   }
 
   /* ══════════════════════════════════════════════════
@@ -291,16 +198,12 @@
     var chips = section.querySelectorAll('.chip[data-category]');
     if (!chips.length) return;
 
-    var citySelect = document.getElementById('services-city-filter');
     _done = true;
 
+    var citySelect = document.getElementById('services-city-filter');
     if (citySelect) _buildCityPicker(citySelect);
 
-    if (_isMobile()) {
-      _initMobile(section, chips);
-    } else {
-      _initDesktop(section, chips);
-    }
+    _initChipsFadeIn(section);
   }
 
   function boot() {
