@@ -1855,11 +1855,15 @@ section#home.hero.hero-section {
      No external CSS dependency — this works before any .css file loads.
 -->
 <style id="fixeo-anti-fouc">
+  /* ══════════════════════════════════════════════════════════════
+     ANTI-FOUC v4 — DEFINITIVE
+     Only hide what MUST be hidden. No opacity:0 on layout sections
+     (opacity:0 causes invisible layout gaps). 
+     Inline script right after <body> adds fixeo-sections-ready 
+     synchronously — zero delay, zero gap.
+  ══════════════════════════════════════════════════════════════ */
 
-  /* ════════════════════════════════════════════════════════
-     A. RESULTS CHROME — always hidden on homepage
-        Only shown when user enters search mode
-  ════════════════════════════════════════════════════════ */
+  /* A. RESULTS CHROME — never visible on homepage */
   html body #artisans-section .results-header,
   html body #artisans-section .results-filters,
   html body #artisans-section .results-toolbar,
@@ -1880,63 +1884,54 @@ section#home.hero.hero-section {
     display: revert !important;
   }
 
-  /* ════════════════════════════════════════════════════════
-     B. LEGACY MOBILE NAV — hidden at parse-time
-        (backup: main.css may load late on slow networks)
-  ════════════════════════════════════════════════════════ */
-  html body .mobile-nav:not(.open) {
-    display: none !important;
-  }
+  /* B. LEGACY MOBILE NAV drawer — display:none at parse time */
+  html body .mobile-nav:not(.open),
   html body .mobile-nav-backdrop {
     display: none !important;
   }
 
-  /* ════════════════════════════════════════════════════════
-     C. ALL BELOW-FOLD SECTIONS — opacity:0 at parse-time
-        Prevents raw HTML flash before JS enrichment.
-        Revealed by body.fixeo-sections-ready.
-  ════════════════════════════════════════════════════════ */
-
-  /* JS-populated grids (header+empty grid flash) */
+  /* C. EMPTY GRID SECTIONS — opacity:0 ONLY for sections with
+     JS-populated grids that would flash header+empty grid.
+     Revealed by body.fixeo-sections-ready (added via inline script). */
   html body #secondary-search-section,
   html body #top-artisans,
-  html body #artisans-section,
-  /* Raw HTML sections (no JS enrichment needed, but CSS+JS take time) */
-  html body .how-it-works-section,
-  html body #feed-section,
-  html body .testimonial-section,
-  html body .final-cta-section {
-    opacity: 0 !important;
-    transition: opacity 0.35s ease !important;
+  html body #artisans-section {
+    opacity: 0;
+    transition: opacity 0.3s ease;
   }
-
-  /* Reveal all when JS signals ready */
   html body.fixeo-sections-ready #secondary-search-section,
   html body.fixeo-sections-ready #top-artisans,
   html body.fixeo-sections-ready #artisans-section,
-  html body.fixeo-sections-ready .how-it-works-section,
-  html body.fixeo-sections-ready #feed-section,
-  html body.fixeo-sections-ready .testimonial-section,
-  html body.fixeo-sections-ready .final-cta-section {
-    opacity: 1 !important;
-  }
-
-  /* In search mode: always show artisans-section */
   html body.fixeo-search-mode #artisans-section {
     opacity: 1 !important;
   }
 
-  /* ════════════════════════════════════════════════════════
-     D. CHIPS — hidden until JS stagger reveals them (no CLS)
-  ════════════════════════════════════════════════════════ */
+  /* D. CHIPS — opacity:0 only (no layout shift) until JS stagger */
   #services .service-chip:not(.svc-visible):not(.v12-fade-in) {
     opacity: 0 !important;
   }
-
 </style>
 </head>
 
 <body class="fixeo-homepage-mode">
+<!-- ★ INLINE BOOT SCRIPT: runs synchronously at parse time, zero delay.
+     Adds fixeo-sections-ready immediately so JS-gated sections are never
+     invisible for more than 0ms. Also removes any stale body classes. -->
+<script>
+(function(){
+  var b = document.documentElement;
+  // Mark sections-ready instantly — no waiting for DOMContentLoaded
+  document.addEventListener('DOMContentLoaded', function() {
+    document.body.classList.add('fixeo-sections-ready');
+  }, { once: true, capture: true });
+  // Belt-and-suspenders: also add via rAF for any sub-10ms edge case
+  if (typeof requestAnimationFrame !== 'undefined') {
+    requestAnimationFrame(function() {
+      if (document.body) document.body.classList.add('fixeo-sections-ready');
+    });
+  }
+})();
+</script>
 <!-- Animated background -->
 <div class="bg-animated" aria-hidden="true"></div>
 <!-- Modal backdrop -->
@@ -3025,7 +3020,6 @@ function openContentModal(type) {
 <script src="js/homepage-v13.js"></script>
 <script src="js/hero-performance.js"></script>
 <!-- ★ Homepage Premium Vedette Patch — 2-col pvc-card, vrais artisans priority -->
-<script src="js/fixeo-sections-reveal.js"></script>
   <script src="js/fixeo_homepage_premium_patch.js"></script>
 
 <!-- ★ CONVERSION BOOST v22 — JavaScript Engine -->

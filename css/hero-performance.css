@@ -1,13 +1,14 @@
-/* HERO performance: below-the-fold rendering is deferred without touching branding */
+/* HERO performance: below-the-fold rendering is deferred without touching branding.
+   IMPORTANT: content-visibility:auto REMOVED from user-facing content sections.
+   Reason: content-visibility:auto renders sections on-scroll from raw HTML, before
+   external CSS loads → causes unstyled section flash ("FOUC on scroll").
+   Only kept for sections where JS fills the grid (no raw content visible). */
+
+/* Grid sections: safe to defer — they start empty, JS fills them */
 #recommended-artisan-section,
-#services,
 #secondary-search-section,
 #top-artisans,
-#artisans-section,
-.how-it-works-section,
-#feed-section,
-.testimonial-section,
-.final-cta-section {
+#artisans-section {
   content-visibility: auto;
   contain-intrinsic-size: 1px 900px;
 }
@@ -17,7 +18,16 @@
 }
 
 #top-artisans,
-#artisans-section,
-#feed-section {
+#artisans-section {
   contain-intrinsic-size: 1px 1200px;
+}
+
+/* Content sections: NO content-visibility:auto — they have rich hardcoded HTML
+   that would paint unstyled if rendered lazily before CSS loads. */
+#services,
+.how-it-works-section,
+#feed-section,
+.testimonial-section,
+.final-cta-section {
+  /* content-visibility: normal (default) — renders upfront with CSS */
 }
