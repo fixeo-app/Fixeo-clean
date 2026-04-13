@@ -306,7 +306,7 @@
     if (bd.service)     rows.push(['Service', sanitizeHTML(bd.service)]);
     if (bd.date)        rows.push(['Date', sanitizeHTML(bd.date)]);
     if (bd.timeSlot)    rows.push(['Créneau', sanitizeHTML(bd.timeSlot)]);
-    rows.push(['Tarif horaire', `${serviceTotal} MAD/h`]);
+    rows.push(['Tarif service', `${serviceTotal} MAD (estimation indicative)`]);
     rows.push(['Frais de service (5%)', `${platformFee} MAD`]);
 
     if (bd.isExpress) {

@@ -452,7 +452,7 @@ function ssbRenderArtisanCard(a) {
     <div class="ssb-art-meta">
       <span class="ssb-art-cat">${catLabel}</span>
       <span class="ssb-art-rating">⭐ ${a.rating}</span>
-      <span class="ssb-art-price">💰 ${a.priceFrom} MAD/${a.priceUnit}</span>
+      <span class="ssb-art-price">💰 ${a.priceLabel || ('\u00c0 partir de ' + a.priceFrom + ' MAD')}</span>
     </div>
     <div class="ssb-art-badges">
       <span class="ssb-art-badge" style="background:rgba(0,0,0,0.06);color:${scoreColor}">🛡 ${scorePct}%</span>
@@ -573,7 +573,7 @@ function ssbUpdateMapMarkers(artisanList) {
         <div style="min-width:200px;font-family:Cairo,sans-serif;padding:4px">
           <div style="font-weight:800;font-size:.93rem;margin-bottom:3px">${a.name}</div>
           <div style="color:#888;font-size:.76rem;margin-bottom:4px">${cat ? cat.icon + ' ' + cat.label : a.category} · 📍 ${a.city}</div>
-          <div style="font-size:.80rem;margin-bottom:4px">⭐ ${a.rating} &nbsp;·&nbsp; 💰 ${a.priceFrom} MAD/${a.priceUnit}</div>
+          <div style="font-size:.80rem;margin-bottom:4px">⭐ ${a.rating} &nbsp;·&nbsp; 💰 ${a.priceLabel || ('\u00c0 partir de ' + a.priceFrom + ' MAD')}</div>
           <div style="font-size:.76rem;margin-bottom:8px;color:${color};font-weight:700">
             ${a.availability==='available'?'🟢 Disponible':a.availability==='busy'?'🟡 Occupé':'⚫ Hors ligne'}
             ${a.responseTime<=20?' · ⚡ Rapide':''}
@@ -1281,7 +1281,7 @@ function _ssbCardHTML(a, idx) {
       <span class="qsm-meta-sep">·</span>
       <span>📍 ${a.city || 'Maroc'}</span>
       <span class="qsm-meta-sep">·</span>
-      <span style="font-weight:600;color:rgba(255,255,255,0.7)">💰 ${a.priceFrom || 150} MAD/${a.priceUnit || 'h'}</span>
+      <span style="font-weight:600;color:rgba(255,255,255,0.7)">💰 ${a.priceFrom || 150} ${a.priceLabel || ('\u00c0 partir de ' + (a.priceFrom||150) + ' MAD')}</span>
     </div>
     <div class="qsm-card-badges">
       ${trust >= 80 ? `<span class="qsm-badge trust">🛡 ${trust}%</span>` : ''}

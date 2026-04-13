@@ -94,7 +94,7 @@
     if (!id || !name || !category || raw.status === 'inactive') return null;
     var rating = Number(raw.rating || 0);
     var reviews = Number(raw.reviewCount || raw.total_reviews || 0);
-    var unit = String(raw.priceUnit || raw.price_unit || 'h').trim() || 'h';
+    var unit = String(raw.priceUnit || raw.price_unit || 'intervention').trim() || 'intervention';
     var amount = Number(raw.priceFrom || raw.price_from || 0);
     return {
       id: id,

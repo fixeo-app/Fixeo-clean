@@ -87,7 +87,7 @@ function normalizeMarketplaceArtisanRecord(raw) {
   const reviewCount = Number(raw.reviewCount ?? raw.total_reviews ?? 0);
   const responseTime = Number(raw.responseTime ?? 15);
   const priceFrom = Number(raw.priceFrom ?? raw.price_from ?? 100);
-  const priceUnit = marketplacePickFirst(raw.priceUnit, raw.price_unit, 'h');
+  const priceUnit = marketplacePickFirst(raw.priceUnit, raw.price_unit, 'intervention');
   const certified = raw.certified === true || raw.certified === 'true' || raw.certified === 'yes';
   const skills = Array.isArray(raw.skills) && raw.skills.length
     ? raw.skills.filter(Boolean)

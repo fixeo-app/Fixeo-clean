@@ -108,7 +108,7 @@
         reviewCount: input.reviewCount || 0,
         trustScore: input.trustScore || 90,
         priceFrom: input.priceFrom || input.hourlyRate || 150,
-        priceUnit: input.priceUnit || 'h',
+        priceUnit: input.priceUnit || 'intervention',
         availability: input.availability || 'available',
         badges: input.badges || ['verified'],
         skills: input.skills || [],
@@ -284,7 +284,7 @@
             </div>
             <div class="fixeo-res-artisan-price">
               <div class="fixeo-res-price-val">${a.priceFrom} MAD</div>
-              <div class="fixeo-res-price-unit">/ ${a.priceUnit || 'h'}</div>
+              <div class="fixeo-res-price-unit">${a.priceLabel || ('\u00c0 partir de ' + (a.priceFrom||150) + ' MAD')}</div>
             </div>
           </div>
 
@@ -300,7 +300,7 @@
                 <option value="">-- Choisissez un service --</option>
                 ${services.map(s => `
                   <option value="${sanitize(s)}"${state.selectedService === s ? ' selected' : ''}>
-                    ${sanitize(s)} — ${a.priceFrom} MAD/${a.priceUnit || 'h'}
+                    ${sanitize(s)} — ${a.priceLabel || (a.priceFrom + ' MAD')}
                   </option>`).join('')}
               </select>
             </div>
@@ -332,7 +332,7 @@
             </div>` : ''}
 
             <div class="fixeo-res-price-info">
-              💡 <strong>Tarif estimé :</strong> ${a.priceFrom} MAD/${a.priceUnit || 'h'}
+              💡 <strong>Tarif estimé :</strong> ${a.priceLabel || (a.priceFrom + ' MAD')} (estimation marché)
               + 5% frais de service Fixeo${state.isExpress ? ' + 50 MAD supplément express' : ''}
             </div>
 
@@ -381,7 +381,7 @@
         : ['Créneau',   sanitize(slotLabel)],
       state.description ? ['Description', sanitize(state.description.substring(0, 60) + (state.description.length > 60 ? '…' : ''))] : null,
       ['Adresse',      sanitize(state.address)],
-      ['Tarif service', `${serviceTotal} MAD/${a.priceUnit || 'h'}`],
+      ['Tarif service', `${a.priceLabel || (serviceTotal + ' MAD')} (indicatif)`],
       ['Frais de service (5%)', `${platformFee} MAD`],
     ].filter(Boolean);
 
@@ -534,7 +534,7 @@
               <span>${a.rating}</span>
               <span class="fixeo-res-avail ${availClass} small">● ${a.availability === 'available' ? 'Dispo' : 'Occupé'}</span>
             </div>
-            <div class="fixeo-res-picker-price">${a.priceFrom} MAD/${a.priceUnit}</div>
+            <div class="fixeo-res-picker-price">${a.priceLabel || ('\u00c0 partir de ' + (a.priceFrom||150) + ' MAD')}</div>
           </div>
         </div>`;
     }).join('');

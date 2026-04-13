@@ -151,7 +151,7 @@
       <span class="hsm-card-meta-sep">·</span>
       <span class="hsm-card-city">📍 ${sanitize(a.city || 'Maroc')}</span>
       <span class="hsm-card-meta-sep">·</span>
-      <span class="hsm-card-price">💰 ${a.priceFrom || 150} MAD/${a.priceUnit || 'h'}</span>
+      <span class="hsm-card-price">💰 ${a.priceLabel || ('À partir de ' + (a.priceFrom||150) + ' MAD')}</span>
     </div>
     <div class="hsm-card-badges">
       ${trust >= 80 ? `<span class="hsm-card-badge trust">🛡 ${trust}%</span>` : ''}

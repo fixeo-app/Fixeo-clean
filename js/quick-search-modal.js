@@ -152,7 +152,7 @@
       <span class="qsm-meta-sep">·</span>
       <span>📍 ${a.city || 'Maroc'}</span>
       <span class="qsm-meta-sep">·</span>
-      <span style="font-weight:600;color:rgba(255,255,255,0.7)">💰 ${a.priceFrom || 150} MAD/${a.priceUnit || 'h'}</span>
+      <span style="font-weight:600;color:rgba(255,255,255,0.7)">💰 ${a.priceLabel || ('À partir de ' + (a.priceFrom||150) + ' MAD')}</span>
     </div>
     <div class="qsm-card-badges">
       ${trust >= 80 ? `<span class="qsm-badge trust">🛡 ${trust}%</span>` : ''}

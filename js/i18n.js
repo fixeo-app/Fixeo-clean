@@ -49,7 +49,7 @@ const FIXEO_TRANSLATIONS = {
     art_book: "Réserver",
     art_compare: "+ Comparer",
     art_from: "Dès",
-    art_per_hour: "/h",
+    art_per_hour: "indicatif",
     art_verified: "✓ Vérifié",
     art_top: "⭐ Top artisan",
     // Feed

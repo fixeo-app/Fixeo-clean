@@ -79,10 +79,8 @@
     if (!window.ARTISANS || !Array.isArray(window.ARTISANS)) return 0;
     var patched = 0;
     window.ARTISANS.forEach(function (a) {
-      // Skip if already using fixed estimate
-      if (a.priceType === 'fixed_estimate') return;
-      // Skip real artisans with custom pricing (trust their data)
-      if (!a._isSeed && a.priceFrom > 0 && a.priceUnit !== 'h' && a.priceUnit !== 'heure') return;
+      // Always patch — set fixed_estimate pricing for every artisan
+      // priceFrom is preserved as the "starting from" value for the service range
       patchArtisanPricing(a);
       patched++;
     });

@@ -190,7 +190,7 @@
       <span class="reviews">(${a.reviewCount || 0})</span>
     </div>
     <div class="ssb2-card-badges">${badgeHtml}</div>
-    <div class="ssb2-card-meta">📍 ${a.city || 'Maroc'} · 💰 ${a.priceFrom || 150} MAD/${a.priceUnit || 'h'}</div>
+    <div class="ssb2-card-meta">📍 ${a.city || 'Maroc'} · 💰 ${a.priceFrom || 150} ${a.priceLabel || ('\u00c0 partir de ' + (a.priceFrom||150) + ' MAD')}</div>
   </div>
   <div class="ssb2-card-actions card-buttons">
     <button class="ssb2-btn-reserve" onclick="window.SecondarySearch.book(${a.id}, false); event.stopPropagation();" aria-label="Réserver ${a.name} maintenant">📅 Réserver</button>
@@ -211,7 +211,7 @@
     const trust     = parseInt(a.trustScore || 0, 10);
     const rt        = parseInt(a.responseTime || 999, 10);
     const price     = parseInt(a.priceFrom || 150, 10);
-    const unit      = a.priceUnit || 'h';
+    const unit      = a.priceUnit || 'intervention';
     const isReal    = !a.claimable && !a._isSeed;
     const isVerified = a.verified || a.certified || (a.badges || []).includes('verified') || trust >= 85;
 
