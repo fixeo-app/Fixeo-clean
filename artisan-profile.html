@@ -26,6 +26,7 @@
       writeStyle('/css/fixeo-header-global.css');
       writeStyle('/css/auth-global.css');
       writeStyle('/css/reservation.css');
+      writeStyle('/css/artisan-profile-premium.css');
     })(window, document);
   </script>
   <style>
@@ -311,7 +312,8 @@
     var asset = window.__fixeoProfileAssetPath || function (path) { return path; };
     [
       '/js/fixeo-public-profile-links.js',
-      '/js/fixeo-public-artisan-profile.js'
+      '/js/fixeo-public-artisan-profile.js',
+      '/js/fixeo-profile-premium-ui.js'
     ].forEach(function (src) {
       document.write('<script src="' + asset(src) + '"><\/script>');
     });
