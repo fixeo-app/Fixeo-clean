@@ -1,0 +1,231 @@
+/* ══════════════════════════════════════════════════════════════════════
+   FIXEO — Services Section Premium Refonte
+   Uber/Airbnb level — zero HTML/JS changes
+   Specificity: uses #services.services-section to beat marketplace-premium-patch.css
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── Section: tighter padding ── */
+#services.services-section {
+  padding-top: 48px !important;
+  padding-bottom: 40px !important;
+}
+
+/* ── Section header: compact ── */
+#services.services-section .section-header {
+  margin-bottom: 24px !important;
+}
+#services.services-section .services-title {
+  font-size: clamp(1.45rem, 2.8vw, 2rem) !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.02em !important;
+  margin-bottom: 4px !important;
+}
+#services.services-section .services-subtitle {
+  font-size: 0.84rem !important;
+  color: rgba(255,255,255,0.42) !important;
+  margin-top: 4px !important;
+  opacity: 1 !important;
+}
+
+/* ══════════════════════════════════════════════════════
+   FILTER BAR — city pill + chips unified row
+══════════════════════════════════════════════════════ */
+#services.services-section .services-filter-bar {
+  justify-content: center !important;
+  gap: 8px !important;
+  margin-bottom: 16px !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* Hide legacy "📍 Ville :" text span */
+#services.services-section .services-filter-bar > span:not(#services-city-label) {
+  display: none !important;
+}
+
+/* ── City select: pill premium ── */
+#services.services-section .city-filter-select {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  height: 36px !important;
+  padding: 0 30px 0 30px !important;
+  background-color: rgba(255,255,255,0.04) !important;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.45)' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z'/%3E%3Ccircle cx='12' cy='10' r='3'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='rgba(255,255,255,0.35)' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat, no-repeat !important;
+  background-position: 10px center, right 10px center !important;
+  background-size: 13px 13px, 10px 6px !important;
+  border: 1px solid rgba(255,255,255,0.08) !important;
+  border-radius: 9999px !important;
+  color: rgba(255,255,255,0.72) !important;
+  font-size: 0.81rem !important;
+  font-weight: 600 !important;
+  font-family: inherit !important;
+  min-width: 130px !important;
+  cursor: pointer !important;
+  transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease !important;
+  white-space: nowrap !important;
+  outline: none !important;
+}
+#services.services-section .city-filter-select:hover {
+  background-color: rgba(255,255,255,0.07) !important;
+  border-color: rgba(255,255,255,0.14) !important;
+  color: rgba(255,255,255,0.9) !important;
+}
+#services.services-section .city-filter-select:focus {
+  border-color: rgba(225,48,108,0.45) !important;
+  box-shadow: 0 0 0 3px rgba(225,48,108,0.10) !important;
+  background-color: rgba(255,255,255,0.06) !important;
+}
+/* Active city state: teal accent */
+#services.services-section .city-filter-select.has-value {
+  background-color: rgba(32,201,151,0.08) !important;
+  border-color: rgba(32,201,151,0.28) !important;
+  color: rgba(32,201,151,0.95) !important;
+}
+
+/* City label badge — hide (shown inline in select) */
+#services-city-label {
+  display: none !important;
+}
+
+/* ══════════════════════════════════════════════════════
+   SERVICE CHIPS — premium pills
+══════════════════════════════════════════════════════ */
+#services.services-section .category-chips {
+  gap: 7px !important;
+  max-width: 960px !important;
+  justify-content: center !important;
+  flex-wrap: wrap !important;
+  margin-top: 0 !important;
+}
+
+/* Base chip */
+#services.services-section .service-chip {
+  height: 34px !important;
+  padding: 0 14px !important;
+  gap: 6px !important;
+  background: rgba(255,255,255,0.035) !important;
+  border: 1px solid rgba(255,255,255,0.07) !important;
+  border-radius: 9999px !important;
+  font-size: 0.80rem !important;
+  font-weight: 600 !important;
+  color: rgba(255,255,255,0.65) !important;
+  cursor: pointer !important;
+  user-select: none !important;
+  white-space: nowrap !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  /* Fade-in start state (desktop) */
+  opacity: 0;
+  transform: translateY(10px);
+  transition:
+    transform 0.22s cubic-bezier(0.22,1,0.36,1),
+    background 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease,
+    box-shadow 0.18s ease,
+    opacity 0.22s ease !important;
+}
+
+/* Animated in class (added by JS) */
+#services.services-section .service-chip.svc-visible {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
+#services.services-section .chip-icon {
+  font-size: 0.88rem !important;
+  line-height: 1 !important;
+}
+
+/* Hover */
+#services.services-section .service-chip:hover {
+  transform: translateY(-3px) scale(1.03) !important;
+  background: rgba(255,255,255,0.07) !important;
+  border-color: rgba(255,255,255,0.14) !important;
+  color: rgba(255,255,255,0.9) !important;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.18) !important;
+}
+
+/* Active — Fixeo pink→purple gradient */
+#services.services-section .service-chip.active {
+  background: linear-gradient(135deg, #E1306C 0%, #833AB4 100%) !important;
+  border-color: transparent !important;
+  color: #fff !important;
+  box-shadow: 0 4px 16px rgba(225,48,108,0.30), 0 0 0 1px rgba(225,48,108,0.18) !important;
+  transform: translateY(-2px) !important;
+  font-weight: 700 !important;
+  opacity: 1 !important;
+}
+#services.services-section .service-chip.active:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: 0 8px 24px rgba(225,48,108,0.38), 0 0 0 1px rgba(225,48,108,0.25) !important;
+}
+
+#services.services-section .service-chip:focus-visible {
+  outline: 2px solid #E1306C !important;
+  outline-offset: 2px !important;
+}
+
+/* ══════════════════════════════════════════════════════
+   MOBILE — horizontal snap scroll
+══════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  #services.services-section {
+    padding-top: 36px !important;
+    padding-bottom: 28px !important;
+  }
+  #services.services-section .section-header {
+    margin-bottom: 18px !important;
+  }
+
+  /* Filter bar: horizontal scroll */
+  #services.services-section .services-filter-bar {
+    flex-wrap: nowrap !important;
+    justify-content: flex-start !important;
+    overflow-x: auto !important;
+    scroll-snap-type: x proximity !important;
+    scrollbar-width: none !important;
+    padding: 4px 16px 8px !important;
+    margin: 0 -16px 10px !important;
+    gap: 7px !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+  #services.services-section .services-filter-bar::-webkit-scrollbar { display: none !important; }
+  #services.services-section .city-filter-select {
+    flex-shrink: 0 !important;
+    scroll-snap-align: start !important;
+  }
+
+  /* Chips: horizontal snap scroll */
+  #services.services-section .category-chips {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    scroll-snap-type: x proximity !important;
+    scrollbar-width: none !important;
+    padding: 4px 16px 10px !important;
+    margin: 0 -16px !important;
+    justify-content: flex-start !important;
+    gap: 7px !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+  #services.services-section .category-chips::-webkit-scrollbar { display: none !important; }
+
+  #services.services-section .service-chip {
+    flex-shrink: 0 !important;
+    scroll-snap-align: start !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  #services.services-section .service-chip.active {
+    transform: none !important;
+  }
+  #services.services-section .service-chip:hover {
+    transform: none !important;
+  }
+}
