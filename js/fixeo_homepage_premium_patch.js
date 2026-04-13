@@ -1,13 +1,20 @@
 /**
- * fixeo_homepage_premium_patch.js
+ * fixeo_homepage_premium_patch.js  v2
  * ─────────────────────────────────────────────────────────────────────────────
- * Patches the homepage "#artisans-section" to display a premium 2-column
- * pvc-card grid instead of the old results-layout (left filters + standard cards).
+ * Replaces the old results-layout (left filters + standard artisan cards) in
+ * #artisans-section with a clean premium 2-column pvc-card vedette grid.
  *
- * Strategy:
- *  • In HOMEPAGE MODE (no active search query) → inject premium vedette grid
- *  • In SEARCH MODE (user typed / filtered) → restore original layout silently
- *  • All existing renderArtisans / main.js / search logic untouched
+ * KEY FIXES vs v1:
+ *  - CSS class `fixeo-homepage-mode` applied to <body> immediately so the
+ *    inline <style> block hides everything before JS even runs (no flash).
+ *  - _hideResultsChrome() hides ALL old-layout pieces including:
+ *    results-header, results-filters, results-toolbar, other-artisans-banner,
+ *    #artisans-container, #loading-artisans, #no-artisan, #other-see-more-wrap
+ *  - _showResultsChrome() restores them all cleanly in search mode.
+ *  - MutationObserver on #artisans-container keeps it hidden when main.js
+ *    re-shows it (e.g. after refreshMarketplaceFromCurrentFilters).
+ *  - renderArtisans override: in homepage mode, calls original but immediately
+ *    re-hides the container (state sync without visual bleed-through).
  *
  * Included after: main.js, fixeo_seed_patch.js, secondary-search.js
  * ─────────────────────────────────────────────────────────────────────────────
@@ -16,19 +23,19 @@
   'use strict';
 
   /* ── Config ── */
-  var HOMEPAGE_MAX_CARDS = 6;    /* cards shown in homepage vedette grid */
-  var HOMEPAGE_GRID_ID   = 'fixeo-homepage-vedette-grid';
-  var SECTION_ID         = 'artisans-section';
+  var MAX_CARDS  = 6;
+  var GRID_ID    = 'fixeo-homepage-vedette-grid';
+  var SECTION_ID = 'artisans-section';
 
   /* ── State ── */
-  var _homepageMode = true;       /* true = showing premium grid */
+  var _searchActive = false;
   var _originalRenderArtisans = null;
   var _installed = false;
+  var _containerObserver = null;
 
   /* ══════════════════════════════════════════════════════
-     HELPERS
+     CATEGORY MAPS
   ══════════════════════════════════════════════════════ */
-
   var CAT_ICONS = {
     plomberie:'🔧', electricite:'⚡', peinture:'🎨', nettoyage:'🧹',
     jardinage:'🌿', demenagement:'📦', bricolage:'🔨', climatisation:'❄️',
@@ -44,339 +51,304 @@
     informatique:'Informatique'
   };
 
+  /* ══════════════════════════════════════════════════════
+     HELPERS
+  ══════════════════════════════════════════════════════ */
   function _initials(name) {
     if (!name) return '??';
     var p = String(name).trim().split(/\s+/);
-    return ((p[0] || '?')[0] + ((p[1] || p[0] || '?')[1] || (p[0] || '?')[0])).toUpperCase();
+    return ((p[0]||'?')[0] + ((p[1]||p[0]||'?')[0])).toUpperCase();
   }
-
   function _stars(r) {
     var f = Math.round(parseFloat(r) * 2) / 2;
     var s = '';
-    for (var i = 1; i <= 5; i++) {
-      s += i <= f ? '★' : (f >= i - 0.5 ? '½' : '☆');
-    }
+    for (var i = 1; i <= 5; i++) s += i <= f ? '★' : (f >= i-0.5 ? '½' : '☆');
     return s;
   }
+  function _hide(el) { if (el) el.style.setProperty('display', 'none', 'important'); }
+  function _show(el, d) { if (el) el.style.removeProperty('display'); if (el && d) el.style.display = d; }
+  function _$(id) { return document.getElementById(id); }
+  function _q(sel) { return document.querySelector(sel); }
+  function _qa(sel) { return document.querySelectorAll(sel); }
 
-  /* Priority sort: real artisans first, seeds as fallback */
+  /* Priority sort */
   function _sortList(list) {
-    var real  = list.filter(function(a) { return !a.claimable && !a._isSeed; });
-    var seeds = list.filter(function(a) { return  a.claimable ||  a._isSeed; });
-    function score(a) {
-      return (a.trustScore || 0) * 1.2 +
-             (a.rating || 0) * 8 +
-             (a.availability === 'available' ? 18 : 0) +
-             ((a.reviewCount || 0) > 10 ? 5 : 0) +
-             (a.verified || a.certified ? 10 : 0);
+    var real  = list.filter(function(a){ return !a.claimable && !a._isSeed; });
+    var seeds = list.filter(function(a){ return  a.claimable ||  a._isSeed; });
+    function sc(a) {
+      return (a.trustScore||0)*1.2 + (a.rating||0)*8 +
+             (a.availability==='available'?18:0) +
+             ((a.reviewCount||0)>10?5:0) + (a.verified||a.certified?10:0);
     }
-    real.sort(function(a, b)  { return score(b) - score(a); });
-    seeds.sort(function(a, b) { return score(b) - score(a); });
+    real.sort(function(a,b){return sc(b)-sc(a);});
+    seeds.sort(function(a,b){return sc(b)-sc(a);});
     return real.concat(seeds);
   }
 
-  /* Build one pvc-card (same markup as secondary-search.js renderVedetteCard) */
-  function _buildPvcCard(a) {
-    var avail    = (a.availability || '').toLowerCase();
-    var isAvail  = avail === 'available';
-    var isToday  = avail === 'available_today';
-    var catIcon  = CAT_ICONS[a.category]  || '🔧';
-    var catLbl   = CAT_LABELS[a.category] || (a.service || a.category || 'Service');
-    var rating   = parseFloat(a.rating) || 0;
-    var reviews  = parseInt(a.reviewCount || 0, 10);
-    var trust    = parseInt(a.trustScore  || 0, 10);
-    var rt       = parseInt(a.responseTime || 999, 10);
-    var price    = parseInt(a.priceFrom || 150, 10);
-    var unit     = a.priceUnit || 'h';
-    var isReal   = !a.claimable && !a._isSeed;
-    var isVer    = a.verified || a.certified ||
-                  (a.badges || []).indexOf('verified') >= 0 || trust >= 85;
-
-    var initials  = _initials(a.name);
-    var avatarSrc = a.avatar || a.photo || a.image || '';
-    var avatarHtml = avatarSrc
-      ? '<img class="pvc-avatar-img" src="' + avatarSrc + '" alt="' + (a.name || '') +
-        '" loading="lazy" onerror="this.onerror=null;this.style.display=\'none\';' +
-        'this.parentNode.querySelector(\'.pvc-avatar-initials\').style.display=\'flex\';" />' +
-        '<span class="pvc-avatar-initials" style="display:none">' + initials + '</span>'
-      : '<span class="pvc-avatar-initials">' + initials + '</span>';
-
+  /* Build pvc-card HTML */
+  function _buildCard(a) {
+    var avail   = (a.availability||'').toLowerCase();
+    var isAvail = avail === 'available';
+    var isToday = avail === 'available_today';
+    var catIcon = CAT_ICONS[a.category]  || '🔧';
+    var catLbl  = CAT_LABELS[a.category] || (a.service||a.category||'Service');
+    var rating  = parseFloat(a.rating) || 0;
+    var reviews = parseInt(a.reviewCount||0, 10);
+    var trust   = parseInt(a.trustScore||0, 10);
+    var rt      = parseInt(a.responseTime||999, 10);
+    var price   = parseInt(a.priceFrom||150, 10);
+    var unit    = a.priceUnit || 'h';
+    var isReal  = !a.claimable && !a._isSeed;
+    var isVer   = a.verified || a.certified || (a.badges||[]).indexOf('verified')>=0 || trust>=85;
+    var initials = _initials(a.name);
+    var src     = a.avatar || a.photo || a.image || '';
+    var avatarHtml = src
+      ? '<img class="pvc-avatar-img" src="'+src+'" alt="'+(a.name||'')+'" loading="lazy"'+
+        ' onerror="this.onerror=null;this.style.display=\'none\';this.parentNode.querySelector(\'.pvc-avatar-initials\').style.display=\'flex\';" />'+
+        '<span class="pvc-avatar-initials" style="display:none">'+initials+'</span>'
+      : '<span class="pvc-avatar-initials">'+initials+'</span>';
     var availPill = isAvail
       ? '<span class="pvc-avail pvc-avail--on">🟢 Disponible</span>'
-      : isToday
-        ? '<span class="pvc-avail pvc-avail--today">🟡 Auj.</span>'
-        : '<span class="pvc-avail pvc-avail--off">Réservation</span>';
-
+      : isToday ? '<span class="pvc-avail pvc-avail--today">🟡 Auj.</span>'
+                : '<span class="pvc-avail pvc-avail--off">Réservation</span>';
     var badges = [];
     if (isVer)       badges.push('<span class="pvc-badge pvc-badge--verified">✔ Vérifié</span>');
-    if (rt <= 30)    badges.push('<span class="pvc-badge pvc-badge--fast">⚡ Rapide</span>');
-    if (trust >= 90) badges.push('<span class="pvc-badge pvc-badge--premium">🏅 Premium</span>');
-    var badgesHtml = badges.slice(0, 2).join('');
-
-    var starsHtml = rating > 0
-      ? '<span class="pvc-stars">' + _stars(rating) + '</span>' +
-        '<span class="pvc-rating-val">' + rating.toFixed(1) + '</span>' +
-        (reviews > 0 ? '<span class="pvc-reviews">(' + reviews + ')</span>' : '')
+    if (rt<=30)      badges.push('<span class="pvc-badge pvc-badge--fast">⚡ Rapide</span>');
+    if (trust>=90)   badges.push('<span class="pvc-badge pvc-badge--premium">🏅 Premium</span>');
+    var badgesHtml = badges.slice(0,2).join('');
+    var starsHtml = rating>0
+      ? '<span class="pvc-stars">'+_stars(rating)+'</span>'+
+        '<span class="pvc-rating-val">'+rating.toFixed(1)+'</span>'+
+        (reviews>0?'<span class="pvc-reviews">('+reviews+')</span>':'')
       : '<span class="pvc-rating-empty">Nouveau</span>';
-
-    var trustBar = trust > 0
-      ? '<div class="pvc-trust-bar"><div class="pvc-trust-fill" style="width:' + trust + '%"></div></div>' +
-        '<span class="pvc-trust-label">' + trust + '%</span>'
-      : '';
-
-    var realClass = isReal ? ' pvc-card--real' : '';
-    var id        = a.id;
-    var idJson    = JSON.stringify(id);
-    var sidJson   = JSON.stringify(String(id));
-    var aJson     = JSON.stringify(a);
-
-    return '<article class="pvc-card' + realClass + '" data-artisan-id="' + id + '" tabindex="0" role="button" aria-label="Artisan ' + (a.name || '') + '">' +
-      '<div class="pvc-top">' +
-        '<div class="pvc-avatar">' + avatarHtml + '</div>' +
-        '<div class="pvc-identity">' +
-          '<h3 class="pvc-name">' + (a.name || '') + '</h3>' +
-          '<p class="pvc-meta"><span class="pvc-cat-icon">' + catIcon + '</span>' + catLbl +
-            ' · <span class="pvc-city">📍 ' + (a.city || 'Maroc') + '</span></p>' +
-        '</div>' +
-        availPill +
-      '</div>' +
-      (badgesHtml ? '<div class="pvc-badges">' + badgesHtml + '</div>' : '') +
-      '<div class="pvc-rating-row">' +
-        '<div class="pvc-rating">' + starsHtml + '</div>' +
-        (trust > 0 ? '<div class="pvc-trust">' + trustBar + '</div>' : '') +
-      '</div>' +
-      '<div class="pvc-pricing">' +
-        '<span class="pvc-price">Dès <strong>' + price + ' MAD</strong><span class="pvc-unit">/' + unit + '</span></span>' +
-        (rt < 999 ? '<span class="pvc-rt">⏱ ' + rt + ' min</span>' : '') +
-      '</div>' +
-      '<div class="pvc-actions">' +
-        '<button class="pvc-btn-primary" onclick="(window.FixeoReservation?' +
-          'window.FixeoReservation.open(' + aJson + ',false):' +
-          '(window.openBookingModal?window.openBookingModal(' + idJson + '):void 0));' +
-          'event.stopPropagation();" aria-label="Réserver ' + (a.name || '') + '">📅 Réserver</button>' +
-        '<button class="pvc-btn-secondary" onclick="(window.FixeoPublicProfileLinks?' +
-          'window.FixeoPublicProfileLinks.openBySourceId(' + sidJson + ',event):' +
-          '(window.openArtisanModal?window.openArtisanModal(' + idJson + '):void 0));' +
-          'event.stopPropagation();" aria-label="Voir profil">Voir profil</button>' +
-      '</div>' +
+    var trustBar = trust>0
+      ? '<div class="pvc-trust-bar"><div class="pvc-trust-fill" style="width:'+trust+'%"></div></div>'+
+        '<span class="pvc-trust-label">'+trust+'%</span>' : '';
+    var id    = a.id;
+    var idJ   = JSON.stringify(id);
+    var sidJ  = JSON.stringify(String(id));
+    var aJ    = JSON.stringify(a);
+    return '<article class="pvc-card'+(isReal?' pvc-card--real':'')+'" data-artisan-id="'+id+'" tabindex="0" role="button" aria-label="Artisan '+(a.name||'')+'">'+
+      '<div class="pvc-top">'+
+        '<div class="pvc-avatar">'+avatarHtml+'</div>'+
+        '<div class="pvc-identity">'+
+          '<h3 class="pvc-name">'+(a.name||'')+'</h3>'+
+          '<p class="pvc-meta"><span class="pvc-cat-icon">'+catIcon+'</span>'+catLbl+
+            ' · <span class="pvc-city">📍 '+(a.city||'Maroc')+'</span></p>'+
+        '</div>'+availPill+'</div>'+
+      (badgesHtml?'<div class="pvc-badges">'+badgesHtml+'</div>':'')+
+      '<div class="pvc-rating-row"><div class="pvc-rating">'+starsHtml+'</div>'+
+        (trust>0?'<div class="pvc-trust">'+trustBar+'</div>':'')+
+      '</div>'+
+      '<div class="pvc-pricing">'+
+        '<span class="pvc-price">Dès <strong>'+price+' MAD</strong><span class="pvc-unit">/'+unit+'</span></span>'+
+        (rt<999?'<span class="pvc-rt">⏱ '+rt+' min</span>':'')+
+      '</div>'+
+      '<div class="pvc-actions">'+
+        '<button class="pvc-btn-primary" onclick="(window.FixeoReservation?window.FixeoReservation.open('+aJ+',false):(window.openBookingModal?window.openBookingModal('+idJ+'):void 0));event.stopPropagation();" aria-label="Réserver '+(a.name||'')+'">📅 Réserver</button>'+
+        '<button class="pvc-btn-secondary" onclick="(window.FixeoPublicProfileLinks?window.FixeoPublicProfileLinks.openBySourceId('+sidJ+',event):(window.openArtisanModal?window.openArtisanModal('+idJ+'):void 0));event.stopPropagation();" aria-label="Voir profil">Voir profil</button>'+
+      '</div>'+
     '</article>';
   }
 
   /* ══════════════════════════════════════════════════════
-     DOM HELPERS — show/hide layout pieces
+     HIDE / SHOW OLD LAYOUT CHROME
   ══════════════════════════════════════════════════════ */
 
-  function _setHomepageLayout(on) {
-    /* aside filters */
-    var aside = document.querySelector('#' + SECTION_ID + ' .results-filters');
-    /* toolbar (count + sort) */
-    var toolbar = document.querySelector('#' + SECTION_ID + ' .results-toolbar');
-    /* trust strip banner */
-    var strip = document.getElementById('other-artisans-banner');
-    /* results header copy */
-    var headerCopy = document.querySelector('#' + SECTION_ID + ' .results-header');
-    /* original artisans-container */
-    var originalGrid = document.getElementById('artisans-container');
-    /* section header h2 kicker area */
-    var kicker = document.querySelector('#' + SECTION_ID + ' .results-header-kicker');
-    var titleEl = document.getElementById('results-main-title');
-    var metaEl  = document.getElementById('results-main-meta');
+  /* All IDs / selectors that belong to the old results UI */
+  var OLD_IDS = [
+    'artisans-container',
+    'loading-artisans',
+    'no-artisan',
+    'other-artisans-banner',
+    'other-see-more-wrap',
+    'edit-results-search-btn'
+  ];
+  var OLD_SELECTORS = [
+    '#'+SECTION_ID+' .results-header',
+    '#'+SECTION_ID+' .results-filters',
+    '#'+SECTION_ID+' .results-toolbar',
+    '#'+SECTION_ID+' .results-toolbar-left',
+    '#'+SECTION_ID+' .results-sort',
+    '#'+SECTION_ID+' .results-trust-strip'
+  ];
 
-    if (on) {
-      /* HOMEPAGE MODE: hide results chrome, show premium grid */
-      if (aside)       { aside.style.display = 'none'; }
-      if (toolbar)     { toolbar.style.display = 'none'; }
-      if (strip)       { strip.style.display = 'none'; }
-      if (originalGrid){ originalGrid.style.display = 'none'; }
-      /* Restyle header as a section header */
-      if (headerCopy)  { headerCopy.style.display = 'none'; }
-      if (kicker)      { kicker.textContent = 'SÉLECTION PREMIUM'; }
-      if (titleEl)     { titleEl.textContent = '⭐ Artisans vérifiés'; }
-      if (metaEl)      { metaEl.textContent = 'Professionnels les mieux notés — disponibles et vérifiés'; }
+  function _hideResultsChrome() {
+    OLD_IDS.forEach(function(id){ _hide(_$(id)); });
+    OLD_SELECTORS.forEach(function(sel){ _hide(_q(sel)); });
 
-      /* Make results-layout full width (no aside column) */
-      var layout = document.querySelector('#' + SECTION_ID + ' .results-layout');
-      if (layout) { layout.style.display = 'block'; }
-      var mainCol = document.querySelector('#' + SECTION_ID + ' .results-main-column');
-      if (mainCol) { mainCol.style.width = '100%'; mainCol.style.maxWidth = '100%'; }
+    /* Full-width main column — no aside gap */
+    var layout  = _q('#'+SECTION_ID+' .results-layout');
+    var mainCol = _q('#'+SECTION_ID+' .results-main-column');
+    if (layout)  { layout.style.setProperty('display','block','important'); }
+    if (mainCol) { mainCol.style.setProperty('width','100%','important');
+                   mainCol.style.setProperty('max-width','100%','important'); }
 
-      /* Ensure premium grid exists */
-      var pg = document.getElementById(HOMEPAGE_GRID_ID);
-      if (!pg) {
-        pg = document.createElement('div');
-        pg.id        = HOMEPAGE_GRID_ID;
-        pg.className = 'ssb2-vedette-grid';
-        pg.setAttribute('aria-label', 'Artisans vérifiés — sélection premium');
-        var mainColumn = document.querySelector('#' + SECTION_ID + ' .results-main-column');
-        if (mainColumn) {
-          mainColumn.insertBefore(pg, mainColumn.firstChild);
-        } else {
-          /* Fallback: append into container */
-          var shell = document.querySelector('#' + SECTION_ID + ' .results-page-shell');
-          if (shell) shell.appendChild(pg);
-        }
-      }
-      pg.style.display = 'grid';
+    /* body class for CSS selector overrides */
+    document.body.classList.add('fixeo-homepage-mode');
+  }
 
-    } else {
-      /* SEARCH MODE: restore original layout */
-      if (aside)       { aside.style.display = ''; }
-      if (toolbar)     { toolbar.style.display = ''; }
-      if (strip)       { strip.style.display = ''; }
-      if (originalGrid){ originalGrid.style.display = ''; }
-      if (headerCopy)  { headerCopy.style.display = ''; }
-      var layout2 = document.querySelector('#' + SECTION_ID + ' .results-layout');
-      if (layout2) { layout2.style.display = ''; }
-      var mainCol2 = document.querySelector('#' + SECTION_ID + ' .results-main-column');
-      if (mainCol2) { mainCol2.style.width = ''; mainCol2.style.maxWidth = ''; }
+  function _showResultsChrome() {
+    OLD_IDS.forEach(function(id){ var el=_$(id); if(el) el.style.removeProperty('display'); });
+    OLD_SELECTORS.forEach(function(sel){ var el=_q(sel); if(el) el.style.removeProperty('display'); });
+    var layout  = _q('#'+SECTION_ID+' .results-layout');
+    var mainCol = _q('#'+SECTION_ID+' .results-main-column');
+    if (layout)  { layout.style.removeProperty('display'); }
+    if (mainCol) { mainCol.style.removeProperty('width'); mainCol.style.removeProperty('max-width'); }
+    document.body.classList.remove('fixeo-homepage-mode');
 
-      /* Hide premium grid */
-      var pg2 = document.getElementById(HOMEPAGE_GRID_ID);
-      if (pg2) { pg2.style.display = 'none'; }
-    }
+    /* Hide premium grid */
+    var pg = _$(GRID_ID);
+    if (pg) _hide(pg);
   }
 
   /* ══════════════════════════════════════════════════════
-     RENDER PREMIUM VEDETTE into #fixeo-homepage-vedette-grid
+     MUTATION OBSERVER — keep #artisans-container hidden
+     when main.js/renderArtisans tries to show it
   ══════════════════════════════════════════════════════ */
 
-  function _renderHomepageVedette() {
-    var pg = document.getElementById(HOMEPAGE_GRID_ID);
-    if (!pg) { _setHomepageLayout(true); pg = document.getElementById(HOMEPAGE_GRID_ID); }
-    if (!pg) return;
+  function _startObserver() {
+    if (_containerObserver) return;
+    var target = _$(SECTION_ID);
+    if (!target || !window.MutationObserver) return;
+    _containerObserver = new MutationObserver(function() {
+      if (!_searchActive) {
+        var c = _$('artisans-container');
+        var l = _$('loading-artisans');
+        var sw = _$('other-see-more-wrap');
+        if (c && c.style.display !== 'none')  _hide(c);
+        if (l && l.style.display !== 'none')  _hide(l);
+        if (sw && sw.style.display !== 'none') _hide(sw);
+      }
+    });
+    _containerObserver.observe(target, { childList: true, subtree: true, attributes: true, attributeFilter: ['style'] });
+  }
 
+  function _stopObserver() {
+    if (_containerObserver) { _containerObserver.disconnect(); _containerObserver = null; }
+  }
+
+  /* ══════════════════════════════════════════════════════
+     RENDER PREMIUM GRID
+  ══════════════════════════════════════════════════════ */
+
+  function _getOrCreateGrid() {
+    var pg = _$(GRID_ID);
+    if (pg) return pg;
+    pg = document.createElement('div');
+    pg.id = GRID_ID;
+    pg.className = 'ssb2-vedette-grid';
+    pg.setAttribute('aria-label', 'Artisans vérifiés — sélection premium');
+    /* Prepend into results-main-column so it appears at top */
+    var mainCol = _q('#'+SECTION_ID+' .results-main-column');
+    var shell   = _q('#'+SECTION_ID+' .results-page-shell');
+    var anchor  = mainCol || shell;
+    if (anchor) anchor.insertBefore(pg, anchor.firstChild);
+    return pg;
+  }
+
+  function _renderPremiumGrid() {
     var list = window.ARTISANS || [];
     if (!list.length) {
-      /* ARTISANS not ready yet — retry */
-      setTimeout(_renderHomepageVedette, 500);
+      setTimeout(_renderPremiumGrid, 500);
       return;
     }
-
-    /* Use SecondarySearch.renderVedetteCard if available (same renderer), else fallback */
+    var pg = _getOrCreateGrid();
     var renderCard = (window.SecondarySearch && typeof window.SecondarySearch.renderVedetteCard === 'function')
       ? window.SecondarySearch.renderVedetteCard.bind(window.SecondarySearch)
-      : _buildPvcCard;
-
-    var sorted = _sortList(list).slice(0, HOMEPAGE_MAX_CARDS);
+      : _buildCard;
+    var sorted = _sortList(list).slice(0, MAX_CARDS);
     pg.innerHTML = sorted.map(renderCard).join('');
+    pg.style.removeProperty('display');
   }
 
   /* ══════════════════════════════════════════════════════
-     DETECT ACTIVE SEARCH
+     SWITCH MODES
   ══════════════════════════════════════════════════════ */
 
-  function _isSearchActive() {
-    var q  = document.getElementById('search-input');
-    var c  = document.getElementById('filter-category');
-    var ci = document.getElementById('filter-city');
-    var av = document.getElementById('filter-availability');
-    /* Also check secondary search bar */
-    var qs = document.getElementById('ssb2-input-nlp');
-    var qc = document.getElementById('ssb2-select-cat');
-    var qci= document.getElementById('ssb2-select-city');
-    return (
-      (q  && q.value.trim()  !== '') ||
-      (c  && c.value         !== '') ||
-      (ci && ci.value        !== '') ||
-      (av && av.value        !== '') ||
-      (qs && qs.value.trim() !== '') ||
-      (qc && qc.value        !== '') ||
-      (qci&& qci.value       !== '')
-    );
+  function _enterHomepageMode() {
+    _searchActive = false;
+    _hideResultsChrome();
+    _renderPremiumGrid();
+    _startObserver();
+  }
+
+  function _enterSearchMode() {
+    _searchActive = true;
+    _stopObserver();
+    _showResultsChrome();
   }
 
   /* ══════════════════════════════════════════════════════
-     PATCH renderArtisans
+     PATCH window.renderArtisans
   ══════════════════════════════════════════════════════ */
 
-  function _patchRenderArtisans() {
-    if (typeof window.renderArtisans !== 'function') {
-      setTimeout(_patchRenderArtisans, 200);
-      return;
-    }
+  function _patchRender() {
+    if (typeof window.renderArtisans !== 'function') { setTimeout(_patchRender, 200); return; }
     if (_installed) return;
     _installed = true;
     _originalRenderArtisans = window.renderArtisans;
 
     window.renderArtisans = function(list, options) {
-      if (_isSearchActive()) {
-        /* SEARCH MODE: delegate to original renderer, restore layout */
-        if (_homepageMode) {
-          _homepageMode = false;
-          _setHomepageLayout(false);
-        }
-        return _originalRenderArtisans(list, options);
-      } else {
-        /* HOMEPAGE MODE: show premium vedette grid, suppress original grid update */
-        if (!_homepageMode) {
-          _homepageMode = true;
-          _setHomepageLayout(true);
-          _renderHomepageVedette();
-        }
-        /* Still call original to keep internal state (_otherArtisansList etc.) in sync
-           but keep original grid hidden */
-        _originalRenderArtisans(list, options);
-        /* Keep original grid hidden */
-        var og = document.getElementById('artisans-container');
-        if (og) og.style.display = 'none';
+      /* Always call original to keep internal state in sync */
+      _originalRenderArtisans(list, options);
+      /* If we're in homepage mode, immediately re-hide the old container */
+      if (!_searchActive) {
+        _hide(_$('artisans-container'));
+        _hide(_$('loading-artisans'));
+        _hide(_$('other-see-more-wrap'));
       }
     };
-
-    /* Expose for external callers */
     window.renderArtisans._original  = _originalRenderArtisans;
     window.renderArtisans._isPremium = true;
   }
 
   /* ══════════════════════════════════════════════════════
-     LISTEN to search events to flip modes
+     DETECT SEARCH ACTIVITY
   ══════════════════════════════════════════════════════ */
 
-  function _bindSearchListeners() {
-    /* Secondary search "Trouver" button */
-    var searchBtn = document.getElementById('ssb2-btn-search');
-    if (searchBtn) {
-      searchBtn.addEventListener('click', function() {
-        if (_isSearchActive()) {
-          _homepageMode = false;
-          _setHomepageLayout(false);
-        }
-      });
-    }
+  function _isSearchActive() {
+    var ids = ['search-input','ssb2-input-nlp'];
+    var sels= ['filter-category','filter-city','filter-availability',
+               'ssb2-select-cat','ssb2-select-city'];
+    for (var i=0;i<ids.length;i++){var el=_$(ids[i]);if(el&&el.value.trim())return true;}
+    for (var j=0;j<sels.length;j++){var el2=_$(sels[j]);if(el2&&el2.value)return true;}
+    return false;
+  }
 
-    /* Hero search */
-    var heroBtn = document.getElementById('hero-search-btn');
-    if (heroBtn) {
-      heroBtn.addEventListener('click', function() {
-        _homepageMode = false;
-        _setHomepageLayout(false);
-      });
-    }
+  /* ══════════════════════════════════════════════════════
+     EVENT LISTENERS
+  ══════════════════════════════════════════════════════ */
 
-    /* Quick filter chips */
-    document.querySelectorAll('.filter-chip, .ssb2-qfilter, .qf-btn').forEach(function(chip) {
-      chip.addEventListener('click', function() {
-        _homepageMode = false;
-        _setHomepageLayout(false);
+  function _bindEvents() {
+    /* Any search trigger → enter search mode */
+    function _onSearch() { if (_isSearchActive()) _enterSearchMode(); }
+
+    ['ssb2-btn-search','hero-search-btn','ssb2-btn-search-mobile'].forEach(function(id){
+      var el=_$(id); if(el) el.addEventListener('click',_onSearch);
+    });
+    _qa('.filter-chip, .ssb2-qfilter, .qf-btn').forEach(function(el){
+      el.addEventListener('click', function(){ _enterSearchMode(); });
+    });
+    /* Inputs */
+    ['search-input','ssb2-input-nlp'].forEach(function(id){
+      var el=_$(id);
+      if(el) el.addEventListener('input', function(){
+        if(el.value.trim()) _enterSearchMode();
       });
     });
-
-    /* "Réinitialiser" reset → back to homepage mode */
-    var resetBtn = document.getElementById('results-reset-btn');
+    /* Reset → back to homepage mode */
+    var resetBtn = _$('results-reset-btn');
     if (resetBtn) {
-      resetBtn.addEventListener('click', function() {
-        setTimeout(function() {
-          if (!_isSearchActive()) {
-            _homepageMode = true;
-            _setHomepageLayout(true);
-            _renderHomepageVedette();
-          }
-        }, 100);
+      resetBtn.addEventListener('click', function(){
+        setTimeout(function(){
+          if (!_isSearchActive()) _enterHomepageMode();
+        }, 150);
       });
     }
-
-    /* Re-render when ARTISANS updated by seed patch */
-    window.addEventListener('fixeo:marketplace-artisans-updated', function() {
-      if (_homepageMode) _renderHomepageVedette();
+    /* Seeds patch fires this event when ARTISANS is enriched */
+    window.addEventListener('fixeo:marketplace-artisans-updated', function(){
+      if (!_searchActive) _renderPremiumGrid();
     });
   }
 
@@ -385,25 +357,20 @@
   ══════════════════════════════════════════════════════ */
 
   function init() {
-    /* 1. Set homepage layout immediately */
-    _setHomepageLayout(true);
-
-    /* 2. Render premium grid (retry if ARTISANS not ready) */
-    _renderHomepageVedette();
-
-    /* 3. Patch renderArtisans */
-    _patchRenderArtisans();
-
-    /* 4. Bind search events */
-    _bindSearchListeners();
-
-    console.log('✅ Fixeo Homepage Premium Patch loaded');
+    _enterHomepageMode();
+    _patchRender();
+    _bindEvents();
+    console.log('✅ Fixeo Homepage Premium Patch v2 ready');
   }
 
+  /* Run as early as possible — no artificial delay */
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function() { setTimeout(init, 400); });
+    document.addEventListener('DOMContentLoaded', init);
   } else {
-    setTimeout(init, 400);
+    init();
   }
+
+  /* Also expose a re-render hook */
+  window.FixeoHomepagePremium = { refresh: _renderPremiumGrid, enterSearch: _enterSearchMode, enterHomepage: _enterHomepageMode };
 
 }(window));
