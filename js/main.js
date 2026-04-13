@@ -1163,9 +1163,8 @@ function buildOtherArtisanCard(a) {
               <h3 class="artisan-name" style="margin:0;font-size:1.18rem;line-height:1.15;font-weight:800;letter-spacing:-.01em">${a.name}</h3>
               <p class="artisan-service" style="margin:.28rem 0 0;color:rgba(255,255,255,.78);font-size:.92rem"><span style="color:#fff;font-weight:700">${profession}</span> • ${a.city || 'Maroc'}</p>
             </div>
-            <div class="artisan-price-block" style="margin-left:auto;min-width:132px;padding:.7rem .9rem;border-radius:16px;background:linear-gradient(135deg,rgba(225,48,108,.12),rgba(131,58,180,.16));border:1px solid rgba(255,255,255,.1);text-align:right;box-shadow:0 10px 28px rgba(131,58,180,.12)">
-              <strong style="display:block;font-size:1.08rem;line-height:1.1;color:#ffd166">Dès ${a.priceFrom || 150} MAD</strong>
-              <span style="display:block;margin-top:.22rem;color:rgba(255,255,255,.68);font-size:.78rem;font-weight:700">${responseLabel}</span>
+            <div class="artisan-price-block fixeo-price-badge-wrap" style="margin-left:auto">
+              ${window._fpb ? _fpb(a) : '<span class="fpb-from">\u00c0 partir de '+(a.priceFrom||150)+' MAD</span>'}
             </div>
           </div>
           <div class="artisan-badges badges" style="gap:.45rem;margin-top:.45rem">${primaryBadge}${topBadge}${newBadge}${secondaryBadge}${pendingBadge}</div>
@@ -1407,8 +1406,8 @@ function openArtisanModal(id) {
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1rem;font-size:.85rem">
       <div style="background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:.75rem;padding:.75rem;text-align:center">
-        <div style="font-size:1.4rem;font-weight:700;color:var(--accent2)">${a.priceFrom} MAD</div>
-        <div style="color:rgba(255,255,255,.5);font-size:.75rem">${a.priceLabel || (a.priceRange ? "Est. " + a.priceRange : "Devis rapide")}</div>
+        <div style="font-size:1.05rem;font-weight:700;color:var(--accent2)">${a.priceLabel||'\u00c0 partir de '+(a.priceFrom||150)+' MAD'}</div>
+        <div style="color:rgba(255,255,255,.5);font-size:.72rem;margin-top:2px">${a.priceRange?'Fourchette '+a.priceRange:'Estimation intervention'}</div>
       </div>
       <div style="background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:.75rem;padding:.75rem;text-align:center">
         <div style="font-size:1.4rem;font-weight:700;color:var(--info)">~${a.responseTime} min</div>

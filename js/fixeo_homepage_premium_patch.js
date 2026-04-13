@@ -73,7 +73,7 @@
     var trust   = parseInt(a.trustScore||0,10);
     var rt      = parseInt(a.responseTime||999,10);
     var price   = parseInt(a.priceFrom||150,10);
-    var unit    = a.priceUnit||'h';
+    var unit    = a.priceUnit||'intervention';
     var isReal  = !a.claimable && !a._isSeed;
     var isVer   = a.verified||a.certified||(a.badges||[]).indexOf('verified')>=0||trust>=85;
 
@@ -125,7 +125,7 @@
         (trust>0?'<div class="pvc-trust">'+trustBar+'</div>':'')+
       '</div>'+
       '<div class="pvc-pricing">'+
-        '<span class="pvc-price">Dès <strong>'+price+' MAD</strong><span class="pvc-unit">/'+unit+'</span></span>'+
+        '<span class="pvc-price"><span class="fpb-from">'+(a.priceLabel||('\u00c0 partir de '+price+' MAD'))+'</span><span class="pvc-unit">'+((a.priceRange)?'Fourchette '+a.priceRange:'Prix indicatif march\u00e9')+'</span></span>'+
         (rt<999?'<span class="pvc-rt">⏱ '+rt+' min</span>':'')+
       '</div>'+
       '<div class="pvc-actions">'+

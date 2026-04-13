@@ -164,6 +164,77 @@
   }
 
   /* ══════════════════════════════════════════════════════════
+     _fpb() — price badge HTML helper (used by main.js card render)
+  ══════════════════════════════════════════════════════════ */
+  function _priceBadgeHTML(a) {
+    var from  = a.priceFrom || 150;
+    var lbl   = a.priceLabel || ('\u00c0 partir de ' + from + ' MAD');
+    var sub   = a.priceRange ? ('Fourchette ' + a.priceRange) : 'Estimation intervention';
+    return (
+      '<div class="fixeo-price-badge">' +
+        '<span class="fpb-label">Prix indicatif march\u00e9</span>' +
+        '<span class="fpb-from">' + lbl + '</span>' +
+        '<span class="fpb-sub">' + sub + '</span>' +
+      '</div>'
+    );
+  }
+  window._fpb = _priceBadgeHTML;
+
+  /* ══════════════════════════════════════════════════════════
+     INJECT PRICE BADGE CSS (once, on first load)
+  ══════════════════════════════════════════════════════════ */
+  function _injectCSS() {
+    if (document.getElementById('fixeo-price-badge-css')) return;
+    var style = document.createElement('style');
+    style.id = 'fixeo-price-badge-css';
+    style.textContent = [
+      /* Badge wrapper */
+      '.fixeo-price-badge-wrap { margin-left:auto; flex-shrink:0; }',
+      '.fixeo-price-badge {',
+      '  display:flex; flex-direction:column; align-items:flex-end;',
+      '  gap:2px; padding:8px 12px; border-radius:14px;',
+      '  background:rgba(255,255,255,0.045);',
+      '  border:1px solid rgba(255,255,255,0.08);',
+      '  backdrop-filter:blur(8px);',
+      '  -webkit-backdrop-filter:blur(8px);',
+      '  min-width:128px; text-align:right;',
+      '}',
+      /* Label "Prix indicatif marché" */
+      '.fpb-label {',
+      '  display:block;',
+      '  font-size:0.62rem; font-weight:600; letter-spacing:0.04em;',
+      '  color:rgba(255,255,255,0.35);',
+      '  text-transform:uppercase;',
+      '  margin-bottom:1px;',
+      '}',
+      /* "À partir de 150 MAD" */
+      '.fpb-from {',
+      '  display:block;',
+      '  font-size:0.96rem; font-weight:700; line-height:1.15;',
+      '  color:#ffd166;',
+      '}',
+      '.fpb-from strong { font-weight:800; }',
+      /* "Fourchette 150–350 MAD" */
+      '.fpb-sub {',
+      '  display:block;',
+      '  font-size:0.70rem; font-weight:500;',
+      '  color:rgba(255,255,255,0.50);',
+      '  margin-top:1px;',
+      '}',
+      /* pvc-card (vedette) overrides */
+      '.pvc-card .pvc-price {',
+      '  display:flex; flex-direction:column; align-items:flex-start; gap:1px;',
+      '}',
+      '.pvc-card .pvc-price .fpb-from { font-size:0.90rem; color:#ffd166; }',
+      '.pvc-card .pvc-price .pvc-unit {',
+      '  font-size:0.68rem; color:rgba(255,255,255,0.45);',
+      '  font-weight:500;',
+      '}',
+    ].join('\n');
+    (document.head || document.documentElement).appendChild(style);
+  }
+
+  /* ══════════════════════════════════════════════════════════
      PUBLIC API
   ══════════════════════════════════════════════════════════ */
   window.FixeoPricing = {
@@ -177,6 +248,7 @@
   /* ── Boot ── */
   function _boot() {
     function _init() {
+      _injectCSS();
       patchI18n();
       patchAllArtisans();
       patchRenderedCards();
