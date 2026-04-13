@@ -1,15 +1,23 @@
 /**
- * services-premium.js
+ * services-premium.js  v2
  * ─────────────────────────────────────────────────────────────────────────────
- * 1. Stagger fade-in for service chips (desktop, IntersectionObserver)
- * 2. City select: toggle .has-value class when a city is selected
+ * 1. City select: toggle .has-value class on selection
+ * 2. Desktop: IntersectionObserver stagger fade-in for chips
+ * 3. Mobile: wrap category-chips in .svc-chips-wrap for fade-out gradient
+ * 4. Mobile: scroll-end detection → .at-end to hide gradient
+ * 5. Mobile: one-shot scroll hint animation on first chip
  * ─────────────────────────────────────────────────────────────────────────────
  * ZERO logic changes — purely cosmetic
  */
 (function (window, document) {
   'use strict';
 
+  var MOBILE_BP = 768;
   var _done = false;
+
+  function _isMobile() {
+    return window.innerWidth <= MOBILE_BP;
+  }
 
   function _init() {
     if (_done) return;
@@ -19,45 +27,84 @@
     if (!chips.length) return;
     _done = true;
 
-    /* 1. City select: has-value class */
+    /* 1. City select has-value */
     var citySelect = document.getElementById('services-city-filter');
     if (citySelect) {
-      function _syncCityClass() {
-        if (citySelect.value) {
-          citySelect.classList.add('has-value');
-        } else {
-          citySelect.classList.remove('has-value');
-        }
+      function _syncCity() {
+        citySelect.classList.toggle('has-value', !!citySelect.value);
       }
-      citySelect.addEventListener('change', _syncCityClass);
-      _syncCityClass();
+      citySelect.addEventListener('change', _syncCity);
+      _syncCity();
     }
 
-    /* 2. Chip stagger fade-in (desktop only) */
-    if (window.innerWidth > 768 && window.IntersectionObserver) {
-      var chipArr = Array.from(chips);
-      var observer = new IntersectionObserver(function (entries) {
-        var inView = entries.some(function (e) { return e.isIntersecting; });
-        if (!inView) return;
-        observer.disconnect();
-        chipArr.forEach(function (chip, i) {
-          setTimeout(function () {
-            chip.classList.add('svc-visible');
-          }, i * 28); /* 28ms stagger per chip — 12 chips = ~330ms total */
-        });
-      }, { threshold: 0.1 });
-
-      /* Observe the chips container */
-      var container = section.querySelector('.category-chips');
-      if (container) observer.observe(container);
+    if (_isMobile()) {
+      _initMobile(section, chips);
     } else {
-      /* Mobile: all visible immediately */
-      Array.from(chips).forEach(function (chip) {
-        chip.classList.add('svc-visible');
-      });
+      _initDesktop(section, chips);
     }
   }
 
+  /* ── Desktop: stagger IO fade-in ── */
+  function _initDesktop(section, chips) {
+    if (!window.IntersectionObserver) {
+      Array.from(chips).forEach(function (c) { c.classList.add('svc-visible'); });
+      return;
+    }
+    var chipArr = Array.from(chips);
+    var obs = new IntersectionObserver(function (entries) {
+      if (!entries.some(function (e) { return e.isIntersecting; })) return;
+      obs.disconnect();
+      chipArr.forEach(function (chip, i) {
+        setTimeout(function () { chip.classList.add('svc-visible'); }, i * 28);
+      });
+    }, { threshold: 0.1 });
+    var container = section.querySelector('.category-chips');
+    if (container) obs.observe(container);
+  }
+
+  /* ── Mobile: wrap + fade gradient + scroll hint ── */
+  function _initMobile(section, chips) {
+    /* Always visible immediately on mobile */
+    Array.from(chips).forEach(function (c) { c.classList.add('svc-visible'); });
+
+    var chipsContainer = section.querySelector('.category-chips');
+    if (!chipsContainer) return;
+
+    /* --- Wrap chips in .svc-chips-wrap for ::after pseudo --- */
+    var parent = chipsContainer.parentNode;
+    if (parent && !parent.classList.contains('svc-chips-wrap')) {
+      var wrap = document.createElement('div');
+      wrap.className = 'svc-chips-wrap';
+      parent.insertBefore(wrap, chipsContainer);
+      wrap.appendChild(chipsContainer);
+    }
+
+    var wrap2 = chipsContainer.parentNode; /* may be same wrap */
+
+    /* --- Scroll-end detection: hide gradient when at end --- */
+    function _checkEnd() {
+      var atEnd = chipsContainer.scrollLeft + chipsContainer.clientWidth
+                  >= chipsContainer.scrollWidth - 16;
+      wrap2.classList.toggle('at-end', atEnd);
+    }
+    chipsContainer.addEventListener('scroll', _checkEnd, { passive: true });
+    /* Initial check (may already be at end if few chips) */
+    setTimeout(_checkEnd, 200);
+
+    /* --- One-shot hint animation on first chip --- */
+    var firstChip = chips[0];
+    if (firstChip && !sessionStorage.getItem('svc_hint_shown')) {
+      sessionStorage.setItem('svc_hint_shown', '1');
+      setTimeout(function () {
+        firstChip.classList.add('svc-hint-anim');
+        firstChip.addEventListener('animationend', function () {
+          firstChip.classList.remove('svc-hint-anim');
+        }, { once: true });
+      }, 800);
+    }
+  }
+
+  /* ── Boot ── */
   function boot() {
     _init();
     if (!_done && window.MutationObserver) {

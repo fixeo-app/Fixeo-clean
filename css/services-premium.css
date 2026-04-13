@@ -1,18 +1,18 @@
 /* ══════════════════════════════════════════════════════════════════════
-   FIXEO — Services Section Premium Refonte
-   Uber/Airbnb level — zero HTML/JS changes
-   Specificity: uses #services.services-section to beat marketplace-premium-patch.css
+   FIXEO — Services Section Premium v2
+   - City filter: compact inline pill (desktop right-aligned, mobile compact)
+   - Chips scroll: snap mandatory, fade-out gradient hint, scroll-hint JS class
    ══════════════════════════════════════════════════════════════════════ */
 
-/* ── Section: tighter padding ── */
+/* ── Section padding ── */
 #services.services-section {
   padding-top: 48px !important;
   padding-bottom: 40px !important;
 }
 
-/* ── Section header: compact ── */
+/* ── Section header ── */
 #services.services-section .section-header {
-  margin-bottom: 24px !important;
+  margin-bottom: 20px !important;
 }
 #services.services-section .services-title {
   font-size: clamp(1.45rem, 2.8vw, 2rem) !important;
@@ -28,72 +28,75 @@
 }
 
 /* ══════════════════════════════════════════════════════
-   FILTER BAR — city pill + chips unified row
+   DESKTOP — City filter compact + chips in one area
 ══════════════════════════════════════════════════════ */
+
+/* ── Filter bar: city pill alone, compact, left of chips ── */
 #services.services-section .services-filter-bar {
+  display: flex !important;
+  align-items: center !important;
   justify-content: center !important;
   gap: 8px !important;
-  margin-bottom: 16px !important;
+  margin-bottom: 14px !important;
   flex-wrap: wrap !important;
-  align-items: center !important;
   margin-top: 0 !important;
   padding-top: 0 !important;
 }
 
-/* Hide legacy "📍 Ville :" text span */
+/* Hide legacy label span */
 #services.services-section .services-filter-bar > span:not(#services-city-label) {
   display: none !important;
 }
 
-/* ── City select: pill premium ── */
+/* ── City select: compact Uber pill ── */
 #services.services-section .city-filter-select {
   appearance: none !important;
   -webkit-appearance: none !important;
-  height: 36px !important;
-  padding: 0 30px 0 30px !important;
+  height: 30px !important;
+  padding: 0 26px 0 26px !important;
   background-color: rgba(255,255,255,0.04) !important;
   background-image:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.45)' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z'/%3E%3Ccircle cx='12' cy='10' r='3'/%3E%3C/svg%3E"),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='rgba(255,255,255,0.35)' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") !important;
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.38)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z'/%3E%3Ccircle cx='12' cy='10' r='3'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='rgba(255,255,255,0.28)' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") !important;
   background-repeat: no-repeat, no-repeat !important;
-  background-position: 10px center, right 10px center !important;
-  background-size: 13px 13px, 10px 6px !important;
+  background-position: 8px center, right 8px center !important;
+  background-size: 11px 11px, 9px 5px !important;
   border: 1px solid rgba(255,255,255,0.08) !important;
   border-radius: 9999px !important;
-  color: rgba(255,255,255,0.72) !important;
-  font-size: 0.81rem !important;
+  color: rgba(255,255,255,0.60) !important;
+  font-size: 0.75rem !important;
   font-weight: 600 !important;
   font-family: inherit !important;
-  min-width: 130px !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: 160px !important;
   cursor: pointer !important;
-  transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease !important;
-  white-space: nowrap !important;
   outline: none !important;
+  transition: border-color 0.18s ease, background-color 0.18s ease, color 0.18s ease !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
 }
 #services.services-section .city-filter-select:hover {
   background-color: rgba(255,255,255,0.07) !important;
-  border-color: rgba(255,255,255,0.14) !important;
-  color: rgba(255,255,255,0.9) !important;
+  border-color: rgba(255,255,255,0.13) !important;
+  color: rgba(255,255,255,0.85) !important;
 }
 #services.services-section .city-filter-select:focus {
-  border-color: rgba(225,48,108,0.45) !important;
-  box-shadow: 0 0 0 3px rgba(225,48,108,0.10) !important;
+  border-color: rgba(225,48,108,0.4) !important;
+  box-shadow: 0 0 0 2px rgba(225,48,108,0.08) !important;
   background-color: rgba(255,255,255,0.06) !important;
 }
-/* Active city state: teal accent */
 #services.services-section .city-filter-select.has-value {
-  background-color: rgba(32,201,151,0.08) !important;
-  border-color: rgba(32,201,151,0.28) !important;
-  color: rgba(32,201,151,0.95) !important;
+  background-color: rgba(32,201,151,0.07) !important;
+  border-color: rgba(32,201,151,0.25) !important;
+  color: rgba(32,201,151,0.9) !important;
 }
 
-/* City label badge — hide (shown inline in select) */
-#services-city-label {
-  display: none !important;
-}
+/* City label: always hidden */
+#services-city-label { display: none !important; }
 
 /* ══════════════════════════════════════════════════════
-   SERVICE CHIPS — premium pills
+   CHIPS — wrapper with fade-out scroll hint
 ══════════════════════════════════════════════════════ */
 #services.services-section .category-chips {
   gap: 7px !important;
@@ -101,6 +104,7 @@
   justify-content: center !important;
   flex-wrap: wrap !important;
   margin-top: 0 !important;
+  position: relative !important;
 }
 
 /* Base chip */
@@ -119,7 +123,7 @@
   white-space: nowrap !important;
   display: inline-flex !important;
   align-items: center !important;
-  /* Fade-in start state (desktop) */
+  /* Desktop stagger start */
   opacity: 0;
   transform: translateY(10px);
   transition:
@@ -130,19 +134,14 @@
     box-shadow 0.18s ease,
     opacity 0.22s ease !important;
 }
-
-/* Animated in class (added by JS) */
 #services.services-section .service-chip.svc-visible {
   opacity: 1 !important;
   transform: translateY(0) !important;
 }
-
 #services.services-section .chip-icon {
   font-size: 0.88rem !important;
   line-height: 1 !important;
 }
-
-/* Hover */
 #services.services-section .service-chip:hover {
   transform: translateY(-3px) scale(1.03) !important;
   background: rgba(255,255,255,0.07) !important;
@@ -150,8 +149,6 @@
   color: rgba(255,255,255,0.9) !important;
   box-shadow: 0 6px 18px rgba(0,0,0,0.18) !important;
 }
-
-/* Active — Fixeo pink→purple gradient */
 #services.services-section .service-chip.active {
   background: linear-gradient(135deg, #E1306C 0%, #833AB4 100%) !important;
   border-color: transparent !important;
@@ -165,14 +162,13 @@
   transform: translateY(-4px) !important;
   box-shadow: 0 8px 24px rgba(225,48,108,0.38), 0 0 0 1px rgba(225,48,108,0.25) !important;
 }
-
 #services.services-section .service-chip:focus-visible {
   outline: 2px solid #E1306C !important;
   outline-offset: 2px !important;
 }
 
 /* ══════════════════════════════════════════════════════
-   MOBILE — horizontal snap scroll
+   MOBILE ≤768px — Full UX overhaul
 ══════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
   #services.services-section {
@@ -180,45 +176,62 @@
     padding-bottom: 28px !important;
   }
   #services.services-section .section-header {
-    margin-bottom: 18px !important;
+    margin-bottom: 14px !important;
   }
 
-  /* Filter bar: horizontal scroll */
+  /* ── City filter bar: compact, own scrollable row ── */
   #services.services-section .services-filter-bar {
+    display: flex !important;
     flex-wrap: nowrap !important;
     justify-content: flex-start !important;
     overflow-x: auto !important;
-    scroll-snap-type: x proximity !important;
     scrollbar-width: none !important;
-    padding: 4px 16px 8px !important;
-    margin: 0 -16px 10px !important;
-    gap: 7px !important;
     -webkit-overflow-scrolling: touch !important;
+    padding: 2px 16px 6px !important;
+    margin: 0 -16px 10px !important;
+    gap: 0 !important;
   }
-  #services.services-section .services-filter-bar::-webkit-scrollbar { display: none !important; }
-  #services.services-section .city-filter-select {
-    flex-shrink: 0 !important;
-    scroll-snap-align: start !important;
+  #services.services-section .services-filter-bar::-webkit-scrollbar {
+    display: none !important;
   }
 
-  /* Chips: horizontal snap scroll */
+  /* City select: very compact on mobile */
+  #services.services-section .city-filter-select {
+    height: 28px !important;
+    font-size: 0.72rem !important;
+    padding: 0 22px 0 22px !important;
+    background-position: 7px center, right 7px center !important;
+    background-size: 10px 10px, 8px 5px !important;
+    max-width: 150px !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* ── Chips scroll container ── */
   #services.services-section .category-chips {
     display: flex !important;
     flex-wrap: nowrap !important;
     overflow-x: auto !important;
-    scroll-snap-type: x proximity !important;
+    /* snap mandatory = firm Uber-style snap */
+    scroll-snap-type: x mandatory !important;
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior-x: contain !important;
     scrollbar-width: none !important;
-    padding: 4px 16px 10px !important;
+    padding: 4px 16px 12px !important;
+    /* bleed past container so last chip is cut */
     margin: 0 -16px !important;
     justify-content: flex-start !important;
     gap: 7px !important;
-    -webkit-overflow-scrolling: touch !important;
+    position: relative !important;
   }
-  #services.services-section .category-chips::-webkit-scrollbar { display: none !important; }
+  #services.services-section .category-chips::-webkit-scrollbar {
+    display: none !important;
+  }
 
+  /* Each chip snaps */
   #services.services-section .service-chip {
     flex-shrink: 0 !important;
     scroll-snap-align: start !important;
+    scroll-snap-stop: normal !important;
     opacity: 1 !important;
     transform: none !important;
   }
@@ -228,4 +241,46 @@
   #services.services-section .service-chip:hover {
     transform: none !important;
   }
+
+  /* ── Scroll hint: fade-out right edge ── */
+  /* Injected wrapper .svc-chips-wrap by JS gets this pseudo */
+  .svc-chips-wrap {
+    position: relative !important;
+    display: block !important;
+  }
+  .svc-chips-wrap::after {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    right: 0 !important;
+    width: 64px !important;
+    height: 100% !important;
+    /* fade from transparent to page bg — #0D0D1A */
+    background: linear-gradient(to right,
+      rgba(13,13,26,0) 0%,
+      rgba(13,13,26,0.7) 60%,
+      rgba(13,13,26,0.95) 100%) !important;
+    pointer-events: none !important;
+    z-index: 2 !important;
+    border-radius: 0 !important;
+    transition: opacity 0.3s ease !important;
+  }
+  /* Hide fade when scrolled to end */
+  .svc-chips-wrap.at-end::after {
+    opacity: 0 !important;
+  }
+}
+
+/* ── Scroll hint animation keyframes ── */
+@keyframes svcScrollHint {
+  0%   { transform: translateX(0); }
+  20%  { transform: translateX(-10px); }
+  45%  { transform: translateX(4px); }
+  65%  { transform: translateX(-5px); }
+  80%  { transform: translateX(2px); }
+  100% { transform: translateX(0); }
+}
+/* Applied by JS on first chip once */
+.svc-hint-anim {
+  animation: svcScrollHint 0.9s cubic-bezier(0.22,1,0.36,1) 0.6s both !important;
 }
