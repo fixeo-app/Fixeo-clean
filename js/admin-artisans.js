@@ -88,6 +88,13 @@ async function loadArtisans() {
   } catch (err) {
     console.warn('[Fixeo Artisans] ⚠️ API indisponible — fallback localStorage. Err:', err.message);
     _artisansList = _lsGet() /* FixeoDB via fallback */;
+    // Notify repository of fresh local data
+    if (window.FixeoRepository && !window.FixeoRepository.isSupabaseMode()) {
+      window.FixeoRepository.getAllArtisans().then(function(all) {
+        if (all && all.length > _artisansList.length) _artisansList = all;
+        renderArtisansAdminTable(_artisansList);
+      }).catch(function(){});
+    }
   }
 
   renderArtisansAdminTable(_artisansList);
@@ -391,7 +398,13 @@ async function submitArtisanForm(e) {
       createdAt       : new Date().toISOString(),
       _isLocal        : true,
     };
-    if (window.FixeoDB) {
+    if (window.FixeoRepository) {
+      window.FixeoRepository.createArtisan(newArtisan).then(function(created) {
+        if (created) newArtisan = created;
+        _artisansList.unshift(newArtisan);
+        renderArtisansAdminTable(_artisansList);
+      }).catch(function(){ _artisansList.unshift(newArtisan); renderArtisansAdminTable(_artisansList); });
+    } else if (window.FixeoDB) {
       newArtisan = window.FixeoDB.createArtisan(newArtisan);
       _artisansList = window.FixeoDB.getAllArtisans();
     } else {

@@ -183,6 +183,7 @@ function adminSection(name) {
 
 /* ── DATA STORES ─────────────────────────────────────────────── */
 /* V20: ADMIN_ARTISANS conservé comme fallback legacy (API in admin-artisans.js) */
+// ADMIN_ARTISANS is loaded from FixeoDB on init — see _initAdminBase()
 const ADMIN_ARTISANS = [];
 
 const ADMIN_CLIENTS = [
@@ -220,6 +221,30 @@ function _initAdminBase() {
   renderAdminCharts();
   renderActivityList();
   renderAdminAlerts();
+  // Load artisans from FixeoDB (localStorage mode) or FixeoRepository (Supabase mode)
+  (function() {
+    try {
+      if (window.FixeoRepository) {
+        window.FixeoRepository.getAllArtisans().then(function(artisans) {
+          if (artisans && artisans.length) {
+            ADMIN_ARTISANS.splice(0, ADMIN_ARTISANS.length);
+            artisans.forEach(function(a) { ADMIN_ARTISANS.push(a); });
+            renderArtisansTable(ADMIN_ARTISANS);
+          }
+        }).catch(function(e) {
+          console.warn('[admin] FixeoRepository fallback:', e);
+          var fallback = window.FixeoDB ? window.FixeoDB.getAllArtisans() : (window.ARTISANS || []);
+          ADMIN_ARTISANS.splice(0, ADMIN_ARTISANS.length);
+          fallback.forEach(function(a) { ADMIN_ARTISANS.push(a); });
+          renderArtisansTable(ADMIN_ARTISANS);
+        });
+      } else if (window.FixeoDB) {
+        var local = window.FixeoDB.getAllArtisans();
+        ADMIN_ARTISANS.splice(0, ADMIN_ARTISANS.length);
+        local.forEach(function(a) { ADMIN_ARTISANS.push(a); });
+      }
+    } catch(e) { console.warn('[admin] artisan load error:', e); }
+  })();
   renderArtisansTable(ADMIN_ARTISANS);
   renderClientsTable();
   renderRegistrations();

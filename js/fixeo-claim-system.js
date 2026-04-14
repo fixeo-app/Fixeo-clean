@@ -62,6 +62,10 @@
   }
 
   function patchArtisanInStorage(artisanId, patch) {
+    // Forward to repository for Supabase persistence
+    if (window.FixeoRepository) {
+      window.FixeoRepository.updateArtisan(artisanId, patch).catch(function(){});
+    }
     const stored = safeJSON(localStorage.getItem(ARTISANS_KEY), []);
     let found = false;
     const updated = stored.map(a => {
@@ -151,6 +155,13 @@
       claimed: false,
       verification_status: 'pending'
     });
+
+    // Forward to repository (Supabase if configured)
+    if (window.FixeoRepository) {
+      window.FixeoRepository.createClaimRequest(artisanId, onboardingData).catch(function(e){
+        console.warn('[ClaimSystem] Repository forwarding failed:', e);
+      });
+    }
 
     dispatch('fixeo:claim-submitted', { claimId, artisanId });
     return { ok: true, claimId };

@@ -271,7 +271,12 @@
 
   function collectArtisanSeeds() {
     var pool = [];
-    if (Array.isArray(window.ARTISANS)) pool = pool.concat(window.ARTISANS);
+    // FixeoDB is the canonical source — window.ARTISANS is a proxy of it
+    if (window.FixeoDB) {
+      pool = pool.concat(window.FixeoDB.getAllArtisans());
+    } else if (Array.isArray(window.ARTISANS)) {
+      pool = pool.concat(window.ARTISANS);
+    }
     pool = pool.concat(loadMarketplaceArtisans());
 
     var onboardingEntries = window.FixeoArtisanOnboardingStore && typeof window.FixeoArtisanOnboardingStore.getEntries === 'function'
