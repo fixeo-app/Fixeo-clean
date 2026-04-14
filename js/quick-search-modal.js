@@ -576,6 +576,24 @@
       }
     }
 
+    // Mark body as hero-search-mode AFTER enterSearch() so CSS takes effect last
+    document.body.classList.add('fixeo-hero-search-mode');
+
+    // Enforce hero-search UI suppression via JS (belt+suspenders over CSS)
+    (function _enforceHeroClean() {
+      var toHide = [
+        document.querySelector('#artisans-section .results-header'),
+        document.querySelector('#artisans-section .premium-results-header'),
+        document.querySelector('#artisans-section .results-toolbar'),
+        document.getElementById('fixeo-premium-filters-extra'),
+        document.getElementById('other-artisans-banner'),
+        document.getElementById('edit-results-search-btn'),
+      ];
+      toHide.forEach(function(el) {
+        if (el) el.style.setProperty('display', 'none', 'important');
+      });
+    })();
+
     // Update fhp-counter with filtered result count
     const counter = document.querySelector('.fhp-counter');
     if (counter && results.length > 0) {

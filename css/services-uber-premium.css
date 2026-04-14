@@ -398,3 +398,74 @@ body.fixeo-homepage-mode .results-toolbar,
 body:not(.fixeo-search-mode) .results-toolbar {
   display: none !important;
 }
+
+/* ══════════════════════════════════════════════════════════
+   11. HERO-SEARCH MODE — suppress ALL extra filter UI
+       body.fixeo-hero-search-mode = set by quick-search-modal.js
+       after "Trouver maintenant" CTA fires.
+       Removed in _enterHomepageMode() when user returns to homepage.
+   ══════════════════════════════════════════════════════════ */
+
+/* ── TOP RESULTS CHROME (title + urgent banner) → keep only fhp-section-header ── */
+body.fixeo-hero-search-mode #artisans-section .results-header,
+body.fixeo-hero-search-mode #artisans-section .premium-results-header,
+html body.fixeo-hero-search-mode #artisans-section .results-header.premium-results-header {
+  display: none !important;
+}
+
+/* ── ASIDE SIDEBAR (Filtres panel) ── */
+body.fixeo-hero-search-mode #artisans-section aside.results-filters,
+body.fixeo-hero-search-mode #artisans-section .results-filters {
+  display: none !important;
+}
+
+/* ── EXTRA FILTERS PANEL (Note min / Prix max / Qualité) ── */
+body.fixeo-hero-search-mode #fixeo-premium-filters-extra {
+  display: none !important;
+}
+
+/* ── RESULTS TOOLBAR ── */
+body.fixeo-hero-search-mode #artisans-section .results-toolbar,
+html body.fixeo-hero-search-mode #artisans-section .results-toolbar {
+  display: none !important;
+}
+
+/* ── EDIT SEARCH BUTTON ── */
+body.fixeo-hero-search-mode #edit-results-search-btn {
+  display: none !important;
+}
+
+/* ── OTHER ARTISANS BANNER ── */
+body.fixeo-hero-search-mode #other-artisans-banner,
+html body.fixeo-hero-search-mode #other-artisans-banner.other-artisans-banner {
+  display: none !important;
+}
+
+/* ── fhp-section-header: keep visible but clean ─────────── */
+body.fixeo-hero-search-mode #fixeo-homepage-header.fhp-section-header {
+  display: flex !important;
+  margin-bottom: 20px !important;
+}
+
+/* ── Vedette grid: always full width in hero-search mode ── */
+body.fixeo-hero-search-mode #fixeo-homepage-vedette-grid.ssb2-vedette-grid,
+body.fixeo-hero-search-mode #fixeo-homepage-vedette-grid.fhp-grid {
+  display: grid !important;
+}
+
+/* ── Services section: hide chips/city filter in hero-search mode
+      (user already searched — no need to show chip selector) ── */
+html body.fixeo-hero-search-mode #services.services-section .services-filter-bar,
+html body.fixeo-hero-search-mode #services.services-section .category-chips,
+html body.fixeo-hero-search-mode #services.services-section.homepage-conversion-priority .category-chips,
+html body.fixeo-hero-search-mode #services.services-section .svc-city-wrap,
+html body.fixeo-hero-search-mode #services.services-section .section-header {
+  display: none !important;
+}
+
+/* Collapse services section height gracefully */
+body.fixeo-hero-search-mode #services.services-section {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  min-height: 0 !important;
+}

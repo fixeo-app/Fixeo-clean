@@ -397,6 +397,19 @@
   function _enterHomepageMode() {
     _searchActive = false;
     document.body.classList.remove('fixeo-search-mode');
+    document.body.classList.remove('fixeo-hero-search-mode'); /* clear hero-search suppression */
+    // Restore any hero-mode JS-hidden elements
+    (function _restoreHeroHidden() {
+      var toRestore = [
+        document.querySelector('#artisans-section .results-header'),
+        document.querySelector('#artisans-section .results-toolbar'),
+        document.getElementById('fixeo-premium-filters-extra'),
+        document.getElementById('other-artisans-banner'),
+      ];
+      toRestore.forEach(function(el) {
+        if (el) el.style.removeProperty('display');
+      });
+    })();
     _hideResultsChrome();
     _renderPremiumGrid();
     _startObserver();
