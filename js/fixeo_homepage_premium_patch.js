@@ -233,9 +233,16 @@
   }
 
   /* ── Section header + counter ── */
-  function _buildHeader(total) {
-    var avail = (window.ARTISANS||[]).filter(function(a){ return a.availability==='available'; }).length;
-    var count = avail > 0 ? avail : total;
+  function _buildHeader(total, filteredCount) {
+    var artisans = window.ARTISANS || [];
+    // Count available + available_today (both = actively available)
+    var avail = artisans.filter(function(a){
+      return a.availability === 'available' || a.availability === 'available_today';
+    }).length;
+    // Use filtered count if filters are active
+    var ctx = _getFilterContext ? _getFilterContext() : {};
+    var hasFilters = !!(ctx.city || ctx.service || ctx.query);
+    var count = hasFilters && filteredCount > 0 ? filteredCount : (avail > 0 ? avail : total);
 
     var el = _$(HEADER_ID);
     if (!el) {
@@ -323,7 +330,7 @@
       });
     }
 
-    _buildHeader(list.length);
+    _buildHeader(list.length, sorted.length);
     _triggerFadeIn(pg);
 
     /* Signal: sections are ready — reveals #secondary-search-section, #top-artisans,
@@ -342,7 +349,7 @@
   }
 
   /* ── Hide / Show old layout chrome ── */
-  var OLD_IDS = ['artisans-container','loading-artisans','no-artisan','other-artisans-banner','other-see-more-wrap','edit-results-search-btn'];
+  var OLD_IDS = ['loading-artisans','no-artisan','other-artisans-banner','other-see-more-wrap','edit-results-search-btn']; /* artisans-container always hidden — vedette is the card UI */
   var OLD_SELS = ['#'+SECTION_ID+' .results-header','#'+SECTION_ID+' .results-filters','#'+SECTION_ID+' .results-toolbar','#'+SECTION_ID+' .results-trust-strip'];
 
   function _hideResultsChrome() {
@@ -363,8 +370,12 @@
     if (layout)  layout.style.removeProperty('display');
     if (mainCol) { mainCol.style.removeProperty('width'); mainCol.style.removeProperty('max-width'); }
     document.body.classList.remove('fixeo-homepage-mode');
-    var pg = _$(GRID_ID); if (pg) _hide(pg);
-    var hd = _$(HEADER_ID); if (hd) _hide(hd);
+    /* vedette grid stays visible — it IS the search results UI */
+    var pg = _$(GRID_ID); if (pg) _show(pg);
+    var hd = _$(HEADER_ID); if (hd) _show(hd);
+    /* always keep artisans-container hidden (legacy card grid) */
+    var legacyContainer = document.getElementById('artisans-container');
+    if (legacyContainer) _hide(legacyContainer);
   }
 
   /* ── MutationObserver ── */
@@ -373,11 +384,10 @@
     var target = _$(SECTION_ID);
     if (!target || !window.MutationObserver) return;
     _containerObserver = new MutationObserver(function() {
-      if (!_searchActive) {
-        ['artisans-container','loading-artisans','other-see-more-wrap'].forEach(function(id){
-          var el=_$(id); if(el && getComputedStyle(el).display!=='none') _hide(el);
-        });
-      }
+      // Always keep legacy artisans-container hidden — vedette is the card UI
+      ['artisans-container','loading-artisans','other-see-more-wrap'].forEach(function(id){
+        var el=_$(id); if(el && getComputedStyle(el).display!=='none') _hide(el);
+      });
     });
     _containerObserver.observe(target, {childList:true,subtree:true,attributes:true,attributeFilter:['style']});
   }
@@ -397,6 +407,8 @@
     document.body.classList.add('fixeo-search-mode');
     document.body.classList.add('fixeo-sections-ready'); /* keep sections visible */
     _showResultsChrome();
+    // Refresh vedette with current filter context
+    setTimeout(_renderPremiumGrid, 50);
   }
 
   /* ── Patch renderArtisans ── */

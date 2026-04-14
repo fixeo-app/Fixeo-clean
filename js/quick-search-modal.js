@@ -561,27 +561,33 @@
 
   /* Sync main artisan grid (silent, background) */
   function _syncBackground(results) {
-    // Sync hero city/service into marketplace filter controls
+    // Sync hero inputs into marketplace filter controls
     const catEl  = document.getElementById('filter-category');
     const cityEl = document.getElementById('filter-city');
     if (catEl  && st.cat  !== undefined) catEl.value  = st.cat;
     if (cityEl && st.city !== undefined) cityEl.value = st.city;
 
-    // Enter search mode and render results via main pipeline
-    if (window.FixeoHomepagePremium && typeof window.FixeoHomepagePremium.enterSearch === 'function') {
-      window.FixeoHomepagePremium.enterSearch();
+    // Vedette IS the results UI — enter search mode (internally refreshes vedette)
+    if (window.FixeoHomepagePremium) {
+      if (typeof window.FixeoHomepagePremium.enterSearch === 'function') {
+        window.FixeoHomepagePremium.enterSearch();
+      } else if (typeof window.FixeoHomepagePremium.refresh === 'function') {
+        window.FixeoHomepagePremium.refresh();
+      }
     }
-    if (typeof window.renderArtisans === 'function') {
-      window.renderArtisans(results);
-    } else if (typeof renderArtisans === 'function') {
-      renderArtisans(results);
+
+    // Update fhp-counter with filtered result count
+    const counter = document.querySelector('.fhp-counter');
+    if (counter && results.length > 0) {
+      const n = results.length;
+      counter.textContent = n.toLocaleString('fr-FR') + ' artisan' + (n !== 1 ? 's' : '') + ' trouvé' + (n !== 1 ? 's' : '');
     }
-    // Also refresh vedette grid with filtered data
-    if (window.FixeoHomepagePremium && typeof window.FixeoHomepagePremium.refresh === 'function') {
-      window.FixeoHomepagePremium.refresh();
+
+    // Scroll smoothly to vedette — the modern results UI
+    const vedetteGrid = document.getElementById('fixeo-homepage-vedette-grid');
+    if (vedetteGrid) {
+      setTimeout(() => vedetteGrid.scrollIntoView({behavior:'smooth', block:'start'}), 120);
     }
-    const cnt = document.getElementById('results-count');
-    if (cnt) cnt.textContent = `${results.length} artisan${results.length !== 1 ? 's' : ''} trouvé${results.length !== 1 ? 's' : ''}`;
   }
 
   /* ══════════════════════════════════════════════════════════
