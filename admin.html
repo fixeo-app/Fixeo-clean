@@ -169,35 +169,35 @@
       { display:none !important; width:0 !important; height:0 !important; min-width:0 !important; flex:0 !important; }
     .navbar-brand .logo-text, .logo-wrap .logo-text, .fixeo-gh-brand .logo-text
       { display:none !important; width:0 !important; height:0 !important; }
-    /* Brand container */
+    /* Brand containers — no clipping */
     .navbar-brand, .logo-wrap
       { max-width:220px !important; overflow:visible !important; gap:0 !important; background:transparent !important; }
     .fixeo-gh-brand
       { max-width:180px !important; overflow:visible !important; gap:0 !important; background:transparent !important; }
-    /* Logo image — clean tight crop, simple height */
-    .navbar-brand img.fixeo-logo-img, .logo-wrap img.fixeo-logo-img,
-    img.fixeo-logo-img.fixeo-logo-desktop,
-    .navbar-brand img[src*="logo-fixeo-header"], .logo-wrap img[src*="logo-fixeo-header"] {
-      display:block !important; height:32px !important; width:auto !important;
-      max-width:180px !important; min-width:60px !important;
-      object-fit:contain !important; object-position:left center !important;
-      background:transparent !important; mix-blend-mode:normal !important;
-      filter:none !important; box-shadow:none !important; border:none !important;
-      flex:0 0 auto !important; overflow:visible !important;
+    /* Logo image — clean, no hacks */
+    img.fixeo-logo-img {
+      display:block !important;
+      height:32px !important;
+      width:auto !important;
+      object-fit:contain !important;
+      object-position:left center !important;
+      background:transparent !important;
+      mix-blend-mode:normal !important;
+      filter:none !important;
+      box-shadow:none !important;
+      border:none !important;
+      flex:0 0 auto !important;
+      overflow:visible !important;
     }
     /* Mobile bar logo */
-    .fixeo-gh-brand img.fixeo-logo-img, .fixeo-gh-brand img[src*="logo-fixeo-header"],
+    .fixeo-gh-brand img.fixeo-logo-img,
     .fixeo-gh-mobile-bar img.fixeo-logo-img {
-      display:block !important; height:28px !important; width:auto !important;
-      max-width:160px !important; min-width:50px !important;
-      object-fit:contain !important; object-position:left center !important;
-      background:transparent !important; mix-blend-mode:normal !important;
-      filter:none !important; box-shadow:none !important; border:none !important;
-      flex:0 0 auto !important; overflow:visible !important;
+      height:26px !important;
+      width:auto !important;
     }
     @media (max-width:480px) {
-      .navbar-brand img.fixeo-logo-img, .logo-wrap img.fixeo-logo-img { height:26px !important; }
-      .fixeo-gh-brand img.fixeo-logo-img { height:24px !important; }
+      img.fixeo-logo-img { height:24px !important; }
+      .fixeo-gh-brand img.fixeo-logo-img { height:22px !important; }
     }
   </style>
 </head>
