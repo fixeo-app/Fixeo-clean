@@ -53,7 +53,7 @@ a.navbar-brand,
   box-shadow: none !important;
 }
 
-/* ── 4. DESKTOP HORIZONTAL LOGO (logo-fixeo-header.png = cropped logo-horizontal)
+/* ── 4. DESKTOP HORIZONTAL LOGO (logo.png = cropped logo-horizontal)
         Used in: .navbar-brand img.fixeo-logo-desktop (all 18 HTML pages)
         Used in: .fixeo-gh-brand img.fixeo-logo-gh (fixeo-header-global.js) ── */
 img.fixeo-logo-desktop,
@@ -225,4 +225,27 @@ nav.navbar .notif-btn {
   align-items: center !important;
   overflow: visible !important;
   background: transparent !important;
+}
+
+/* ── logo.png v2 — clean sizing ── */
+.fixeo-logo-img {
+  height: 38px !important;
+  width: auto !important;
+  object-fit: contain !important;
+  background: transparent !important;
+  display: block;
+  max-height: 38px;
+}
+.fixeo-logo-text {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.02em;
+  font-family: inherit;
+}
+@media (max-width: 768px) {
+  .fixeo-logo-img {
+    height: 30px !important;
+    max-height: 30px;
+  }
 }

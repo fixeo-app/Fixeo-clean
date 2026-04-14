@@ -24,6 +24,10 @@
     {
       "src": "uploads/**",
       "use": "@vercel/static"
+    },
+    {
+      "src": "img/**",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
