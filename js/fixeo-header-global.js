@@ -115,11 +115,7 @@
       <div class="fixeo-gh-mobile" data-page="${esc(path)}">
         <div class="fixeo-gh-mobile-bar">
           <a class="fixeo-gh-brand" href="index.html" aria-label="Fixeo — Accueil">
-            <img src="img/logo-square.png" alt="Fixeo" class="fixeo-logo-img fixeo-logo-mobile-icon" width="64" height="64" loading="eager">
-            <span class="fixeo-gh-brand-copy">
-              <span class="fixeo-gh-brand-text">Fixeo</span>
-              <span class="fixeo-gh-brand-sub">Artisans vérifiés</span>
-            </span>
+            <img src="img/logo-fixeo-header.png" alt="Fixeo" class="fixeo-logo-img fixeo-logo-gh" width="256" height="80" loading="eager">
           </a>
           <div class="fixeo-gh-actions">
             <button class="fixeo-gh-icon-btn fixeo-gh-search" type="button" aria-label="Recherche">

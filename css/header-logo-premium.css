@@ -1,39 +1,53 @@
 /* ══════════════════════════════════════════════════════════
-   header-logo-premium.css — Fixeo official logo + header polish
-   v3 — transparent PNG, no mix-blend-mode, no background
+   header-logo-premium.css v4
+   Fixeo official logo — transparent PNG, clean render
+   Root cause fix: hide gh-brand-copy text spans globally
    ══════════════════════════════════════════════════════════ */
 
-/* 1. Hide old emoji logo elements */
+/* ── 1. HIDE OLD EMOJI + FALLBACK TEXT ELEMENTS ── */
 .navbar-brand .logo-icon,
 .navbar-brand .logo-text,
 .logo-wrap .logo-icon,
 .logo-wrap .logo-text,
-.fixeo-gh-brand-icon {
+.fixeo-gh-brand-icon,
+/* CRITICAL: hide the "Fixeo" + "Artisans vérifiés" text spans — always */
+.fixeo-gh-brand-copy,
+.fixeo-gh-brand-text,
+.fixeo-gh-brand-sub {
   display: none !important;
+  visibility: hidden !important;
 }
 
-/* 2. Brand container — flex align */
+/* ── 2. BRAND CONTAINER ── */
 .navbar-brand,
 a.navbar-brand,
-.logo-wrap {
+.logo-wrap,
+.fixeo-gh-brand {
   display: flex !important;
   align-items: center !important;
   gap: 0 !important;
   text-decoration: none !important;
   flex-shrink: 0;
+  padding: 0 !important;
 }
 
-/* 3. Desktop logo — transparent PNG, clean render */
-.fixeo-logo-img.fixeo-logo-desktop,
-img.fixeo-logo-desktop {
+/* ── 3. DESKTOP HORIZONTAL LOGO — logo-fixeo-header.png ── */
+/* Used in: navbar-brand img.fixeo-logo-desktop (all HTML pages)
+            fixeo-gh-brand img.fixeo-logo-gh (mobile JS header) */
+
+img.fixeo-logo-desktop,
+img.fixeo-logo-gh,
+.navbar-brand img.fixeo-logo-img,
+.fixeo-gh-brand img.fixeo-logo-img {
   height: 36px !important;
   width: auto !important;
-  max-width: 180px !important;
+  max-width: 200px !important;
+  min-width: 80px;
   object-fit: contain !important;
   object-position: left center !important;
   display: block !important;
 
-  /* CRITICAL: transparent PNG — no background, no blend mode */
+  /* Transparent PNG — no background, no blend mode */
   background: transparent !important;
   mix-blend-mode: normal !important;
   filter: none !important;
@@ -42,183 +56,92 @@ img.fixeo-logo-desktop {
   /* Crisp rendering */
   image-rendering: -webkit-optimize-contrast;
   image-rendering: crisp-edges;
-  -ms-interpolation-mode: bicubic;
 
   flex-shrink: 0;
 }
 
-/* 4. Mobile logo — square icon */
-.fixeo-logo-mobile-icon,
+/* ── 4. MOBILE COMPACT LOGO (inside fixeo-gh-mobile-bar) ── */
+/* On mobile (≤768px), use a shorter height to save space */
+@media (max-width: 768px) {
+  img.fixeo-logo-desktop,
+  img.fixeo-logo-gh,
+  .fixeo-gh-brand img.fixeo-logo-img {
+    height: 30px !important;
+    max-width: 160px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  img.fixeo-logo-desktop,
+  img.fixeo-logo-gh,
+  .fixeo-gh-brand img.fixeo-logo-img {
+    height: 26px !important;
+    max-width: 130px !important;
+  }
+}
+
+/* ── 5. PREVENT OLD SQUARE ICON FROM SHOWING LARGE ── */
 img.fixeo-logo-mobile-icon {
-  height: 32px !important;
-  width: 32px !important;
-  object-fit: contain !important;
-  display: block !important;
-  background: transparent !important;
-  mix-blend-mode: normal !important;
-  filter: none !important;
-  opacity: 1 !important;
-  border-radius: 8px;
-  flex-shrink: 0;
+  /* Square icon — only show if explicitly used as standalone icon */
+  /* The fixeo-gh-brand now uses the horizontal logo instead */
+  display: none !important;
 }
 
-/* 5. Mobile bar brand alignment */
-.fixeo-gh-brand {
-  display: flex !important;
-  align-items: center !important;
-  gap: 8px !important;
-  text-decoration: none !important;
-}
-
-.fixeo-gh-brand-copy {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-}
-
-/* 6. Fallback text (if img fails) */
-.fixeo-logo-fallback {
-  font-family: 'Cairo', sans-serif;
-  font-size: 1.35rem;
-  font-weight: 800;
-  background: linear-gradient(135deg, #fff 0%, #f0a0c8 60%, #c77dff 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  letter-spacing: -0.5px;
-}
-
-/* ══════════════════════════════════════════════
-   7. PREMIUM HEADER POLISH — Uber/Airbnb level
-   ══════════════════════════════════════════════ */
-
-/* Navbar base */
+/* ── 6. PREMIUM HEADER POLISH ── */
 nav.navbar {
   height: 68px !important;
   min-height: 68px !important;
   padding: 0 24px !important;
   backdrop-filter: blur(24px) !important;
   -webkit-backdrop-filter: blur(24px) !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+  border-bottom: 1px solid rgba(255,255,255,0.06) !important;
   transition: background 0.3s ease, box-shadow 0.3s ease !important;
-  position: fixed !important;
-  top: 0 !important;
-  left: 0 !important;
-  right: 0 !important;
-  z-index: 900 !important;
 }
 
 nav.navbar.scrolled {
-  background: rgba(10, 10, 18, 0.98) !important;
-  box-shadow: 0 4px 32px rgba(0, 0, 0, 0.45) !important;
+  background: rgba(10,10,18,0.98) !important;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.45) !important;
 }
 
 /* Nav links */
 nav.navbar .navbar-nav .nav-link {
   font-size: 0.875rem !important;
   font-weight: 500 !important;
-  letter-spacing: 0.01em !important;
   padding: 6px 10px !important;
   border-radius: 8px !important;
-  transition: background 0.18s, color 0.18s !important;
+  transition: background 0.18s !important;
   white-space: nowrap;
 }
-
 nav.navbar .navbar-nav .nav-link:hover {
-  background: rgba(255, 255, 255, 0.07) !important;
+  background: rgba(255,255,255,0.07) !important;
 }
-
-nav.navbar .navbar-nav .nav-link.active,
-nav.navbar .navbar-nav .nav-link[aria-current="page"] {
+nav.navbar .navbar-nav .nav-link.active {
   font-weight: 600 !important;
-  background: rgba(255, 255, 255, 0.09) !important;
 }
 
 /* Dropdowns */
 nav.navbar .nav-dropdown {
   backdrop-filter: blur(20px) !important;
-  -webkit-backdrop-filter: blur(20px) !important;
-  background: rgba(18, 18, 28, 0.95) !important;
+  background: rgba(18,18,28,0.95) !important;
   border-radius: 16px !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
-  box-shadow: 0 8px 44px rgba(0, 0, 0, 0.5), 0 1px 0 rgba(255,255,255,0.06) inset !important;
+  border: 1px solid rgba(255,255,255,0.10) !important;
+  box-shadow: 0 8px 44px rgba(0,0,0,0.5) !important;
   padding: 8px !important;
   min-width: 220px !important;
   max-height: 480px !important;
   overflow-y: auto !important;
 }
-
 nav.navbar .nav-dropdown-item {
   border-radius: 10px !important;
   padding: 9px 12px !important;
   font-size: 0.875rem !important;
-  transition: background 0.15s !important;
-  white-space: nowrap;
 }
-
 nav.navbar .nav-dropdown-item:hover {
-  background: rgba(255, 255, 255, 0.08) !important;
+  background: rgba(255,255,255,0.08) !important;
 }
 
-/* Urgent / Express button */
+/* CTA buttons */
 nav.navbar .btn-express,
-nav.navbar .btn-urgent,
-nav.navbar [class*="btn-express"] {
-  height: 38px !important;
-  padding: 0 18px !important;
-  border-radius: 99px !important;
-  font-size: 0.85rem !important;
-  font-weight: 600 !important;
-  background: linear-gradient(135deg, #e91e8c 0%, #9c27b0 100%) !important;
-  border: none !important;
-  transition: transform 0.18s, box-shadow 0.18s !important;
-  white-space: nowrap;
-}
-
-nav.navbar .btn-express:hover,
-nav.navbar .btn-urgent:hover {
-  transform: translateY(-1px) !important;
-  box-shadow: 0 4px 20px rgba(233, 30, 140, 0.45) !important;
-}
-
-/* Quick search button */
-nav.navbar .btn-quick-search,
-nav.navbar .btn-search {
-  height: 38px !important;
-  width: 38px !important;
-  border-radius: 99px !important;
-  border: 1px solid rgba(255, 255, 255, 0.15) !important;
-  background: rgba(255, 255, 255, 0.06) !important;
-  transition: border-color 0.18s, background 0.18s !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-}
-
-nav.navbar .btn-quick-search:hover,
-nav.navbar .btn-search:hover {
-  border-color: rgba(255, 255, 255, 0.3) !important;
-  background: rgba(255, 255, 255, 0.1) !important;
-}
-
-/* Auth buttons */
-nav.navbar #login-btn,
-nav.navbar .btn-nav-outline {
-  height: 38px !important;
-  padding: 0 18px !important;
-  border-radius: 99px !important;
-  font-size: 0.85rem !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  background: rgba(255, 255, 255, 0.06) !important;
-  transition: border-color 0.18s, background 0.18s !important;
-}
-
-nav.navbar #login-btn:hover,
-nav.navbar .btn-nav-outline:hover {
-  border-color: rgba(255, 255, 255, 0.35) !important;
-  background: rgba(255, 255, 255, 0.1) !important;
-}
-
 nav.navbar #register-btn,
 nav.navbar .btn-nav-primary {
   height: 38px !important;
@@ -226,62 +149,56 @@ nav.navbar .btn-nav-primary {
   border-radius: 99px !important;
   font-size: 0.85rem !important;
   font-weight: 600 !important;
-  background: linear-gradient(135deg, #e91e8c 0%, #9c27b0 100%) !important;
+  background: linear-gradient(135deg,#e91e8c 0%,#9c27b0 100%) !important;
   border: none !important;
   transition: transform 0.18s, box-shadow 0.18s !important;
 }
-
+nav.navbar .btn-express:hover,
 nav.navbar #register-btn:hover,
 nav.navbar .btn-nav-primary:hover {
   transform: translateY(-1px) !important;
-  box-shadow: 0 4px 16px rgba(233, 30, 140, 0.4) !important;
+  box-shadow: 0 4px 20px rgba(233,30,140,0.45) !important;
 }
 
-/* Notification button */
+nav.navbar #login-btn,
+nav.navbar .btn-nav-outline {
+  height: 38px !important;
+  padding: 0 18px !important;
+  border-radius: 99px !important;
+  font-size: 0.85rem !important;
+  border: 1px solid rgba(255,255,255,0.2) !important;
+  background: rgba(255,255,255,0.06) !important;
+}
+nav.navbar #login-btn:hover,
+nav.navbar .btn-nav-outline:hover {
+  border-color: rgba(255,255,255,0.35) !important;
+  background: rgba(255,255,255,0.1) !important;
+}
+
 nav.navbar .notif-btn {
   height: 38px !important;
   width: 38px !important;
   border-radius: 50% !important;
-  background: rgba(255, 255, 255, 0.06) !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  background: rgba(255,255,255,0.06) !important;
+  border: 1px solid rgba(255,255,255,0.10) !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  cursor: pointer;
 }
 
-/* ══════════════════════════════════════════════
-   8. MOBILE BAR (fixeo-gh)
-   ══════════════════════════════════════════════ */
-
+/* ── 7. MOBILE BAR (fixeo-gh) ── */
 .fixeo-gh-mobile-bar {
   height: 62px !important;
   padding: 0 16px !important;
   backdrop-filter: blur(22px) !important;
-  -webkit-backdrop-filter: blur(22px) !important;
-  background: rgba(10, 10, 18, 0.95) !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07) !important;
+  background: rgba(10,10,18,0.95) !important;
+  border-bottom: 1px solid rgba(255,255,255,0.07) !important;
+  display: flex !important;
+  align-items: center !important;
 }
 
-/* Scrolled state for mobile */
-.fixeo-gh-mobile-bar.scrolled {
-  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.4) !important;
-}
-
-/* ══════════════════════════════════════════════
-   9. RESPONSIVE
-   ══════════════════════════════════════════════ */
-
-@media (max-width: 768px) {
-  nav.navbar .fixeo-logo-img.fixeo-logo-desktop,
-  nav.navbar img.fixeo-logo-desktop {
-    height: 30px !important;
-    max-width: 140px !important;
-  }
-}
-
-@media (max-width: 480px) {
-  nav.navbar {
-    padding: 0 14px !important;
-  }
+.fixeo-gh-brand {
+  flex: 1;
+  display: flex !important;
+  align-items: center !important;
 }
