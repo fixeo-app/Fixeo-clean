@@ -249,7 +249,7 @@
   white-space: nowrap;
   flex-shrink: 0;
   transition: box-shadow 0.24s ease, transform 0.24s ease, filter 0.24s ease;
-  min-width: 310px;
+  min-width: 180px;
   box-shadow: 0 14px 30px rgba(225, 48, 108, 0.30), 0 0 18px rgba(131, 58, 180, 0.16);
   filter: saturate(1.06) contrast(1.04);
 }
@@ -782,7 +782,7 @@
 .qsm-btn-search {
   min-height: 68px;
   padding: 16px 30px;
-  min-width: 310px;
+  min-width: 180px;
   border-radius: 0 16px 16px 0;
   transition: box-shadow 0.24s ease, transform 0.24s ease, filter 0.24s ease;
 }
@@ -992,10 +992,10 @@
   position: relative;
   isolation: isolate;
   align-self: center;
-  min-height: 80px;
-  min-width: 346px;
+  min-height: 56px;
+  min-width: 170px;
   margin: -3px 4px -3px 10px;
-  padding: 21px 38px;
+  padding: 20px 32px;
   border-radius: 18px !important;
   border: 1px solid rgba(255,255,255,0.18);
   font-size: 1.02rem;

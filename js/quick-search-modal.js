@@ -277,12 +277,12 @@
       </div>
 
       <!-- CTA -->
-      <button class="qsm-btn-search" id="qsm-btn-search" aria-label="Recevoir un artisan maintenant">
+      <button class="qsm-btn-search" id="qsm-btn-search" aria-label="Trouver maintenant">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
              stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
         </svg>
-        Recevoir un artisan maintenant
+        Trouver maintenant
       </button>
 
     </div><!-- /.qsm-bar-card -->
@@ -494,7 +494,33 @@
 
     /* Run filter with brief delay for UX */
     setTimeout(() => {
-      const results = _filterArtisans(st.query, st.cat, st.city, st.filters);
+      // ── Unified pipeline: SearchEngine + FixeoMatchingEngine ──
+      let results;
+      if (window.searchEngine) {
+        const seState = {
+          query:       st.query,
+          category:    st.cat,
+          city:        st.city,
+          availability: st.filters.availableNow ? 'available_now' : '',
+          minRating:    st.filters.topScore ? 85 : 0,
+          maxPrice:     0,
+          verifiedOnly: false,
+          sortBy:       'rating',
+        };
+        results = window.searchEngine.filter(seState);
+        // Apply matching sort with full context
+        if (window.FixeoMatchingEngine && results.length > 1) {
+          results = window.FixeoMatchingEngine.sortByMatch(results.slice(), {
+            city:    st.city,
+            service: st.cat,
+            query:   st.query,
+          });
+        }
+        // Fast-response filter (can't express in searchEngine API)
+        if (st.filters.fastResponse) results = results.filter(a => (a.responseTime || 999) <= 30);
+      } else {
+        results = _filterArtisans(st.query, st.cat, st.city, st.filters);
+      }
       st.results = results;
       st.searched = true;
 
@@ -535,8 +561,25 @@
 
   /* Sync main artisan grid (silent, background) */
   function _syncBackground(results) {
-    if (typeof window.renderArtisans === 'function') window.renderArtisans(results);
-    else if (typeof renderArtisans === 'function')   renderArtisans(results);
+    // Sync hero city/service into marketplace filter controls
+    const catEl  = document.getElementById('filter-category');
+    const cityEl = document.getElementById('filter-city');
+    if (catEl  && st.cat  !== undefined) catEl.value  = st.cat;
+    if (cityEl && st.city !== undefined) cityEl.value = st.city;
+
+    // Enter search mode and render results via main pipeline
+    if (window.FixeoHomepagePremium && typeof window.FixeoHomepagePremium.enterSearch === 'function') {
+      window.FixeoHomepagePremium.enterSearch();
+    }
+    if (typeof window.renderArtisans === 'function') {
+      window.renderArtisans(results);
+    } else if (typeof renderArtisans === 'function') {
+      renderArtisans(results);
+    }
+    // Also refresh vedette grid with filtered data
+    if (window.FixeoHomepagePremium && typeof window.FixeoHomepagePremium.refresh === 'function') {
+      window.FixeoHomepagePremium.refresh();
+    }
     const cnt = document.getElementById('results-count');
     if (cnt) cnt.textContent = `${results.length} artisan${results.length !== 1 ? 's' : ''} trouvé${results.length !== 1 ? 's' : ''}`;
   }
