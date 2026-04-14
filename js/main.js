@@ -812,6 +812,11 @@ function applyMarketplaceFilters(options = {}) {
   }
   marketplaceSyncCardsVisibility(results, state);
 
+  // Refresh homepage vedette grid with filtered+sorted results
+  if (typeof window.FixeoHomepagePremium !== 'undefined' && window.FixeoHomepagePremium.refresh) {
+    window.FixeoHomepagePremium.refresh();
+  }
+
   if (options.syncServiceCategory && typeof window.renderServiceArtisans === 'function') {
     const activeCategory = document.querySelector('.chip.active')?.dataset.category || 'all';
     window.renderServiceArtisans(activeCategory);

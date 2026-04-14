@@ -52,12 +52,45 @@
   function _qa(s) { return document.querySelectorAll(s); }
 
   /* ── Sort: real artisans first ── */
-  function _sortList(list) {
-    var real  = list.filter(function(a){ return !a.claimable && !a._isSeed; });
-    var seeds = list.filter(function(a){ return  a.claimable ||  a._isSeed; });
-    function sc(a){ return (a.trustScore||0)*1.2+(a.rating||0)*8+(a.availability==='available'?18:0)+((a.reviewCount||0)>10?5:0)+(a.verified||a.certified?10:0); }
-    real.sort(function(a,b){return sc(b)-sc(a);});
-    seeds.sort(function(a,b){return sc(b)-sc(a);});
+  function _getFilterContext() {
+    var cityEl = document.getElementById('filter-city') || document.getElementById('services-city-filter') || document.getElementById('ssb2-select-city');
+    var catEl  = document.getElementById('filter-category') || document.getElementById('ssb2-select-cat');
+    var qEl    = document.getElementById('search-input') || document.getElementById('ssb2-input-nlp');
+    return {
+      city:    (cityEl && cityEl.value) ? cityEl.value.trim() : '',
+      service: (catEl  && catEl.value)  ? catEl.value.trim()  : '',
+      query:   (qEl    && qEl.value)    ? qEl.value.trim()    : '',
+    };
+  }
+
+  function _qualityScore(a) {
+    // Higher quality = master artisans (IDs 2000+) + high trust + high rating + verified
+    var isMaster = Number(a.id) >= 2000;
+    var masterBonus = isMaster ? 0.15 : 0;
+    var trust = (Number(a.trustScore || a.trust_score || 0)) / 100;
+    var rating = Number(a.rating || 0) / 5;
+    var reviewBonus = Math.min(Number(a.reviewCount || a.total_reviews || 0), 100) / 100 * 0.1;
+    var verified = (a.verified || a.certified) ? 0.05 : 0;
+    return masterBonus + trust * 0.4 + rating * 0.35 + reviewBonus + verified;
+  }
+
+  function _sortList(list, ctx) {
+    var context = ctx || _getFilterContext();
+    // Use FixeoMatchingEngine for scoring, but combine with quality bonus
+    if (window.FixeoMatchingEngine) {
+      var scored = list.map(function(a) {
+        var matchScore = window.FixeoMatchingEngine.scoreArtisan(a, context);
+        var qualScore  = _qualityScore(a);
+        return { a: a, s: matchScore * 0.65 + qualScore * 0.35 };
+      });
+      scored.sort(function(x, y) { return y.s - x.s; });
+      return scored.map(function(x) { return x.a; });
+    }
+    // Fallback
+    var real  = list.filter(function(a){ return Number(a.id) >= 2000; });
+    var seeds = list.filter(function(a){ return Number(a.id) < 2000; });
+    real.sort(function(a,b){return _qualityScore(b)-_qualityScore(a);});
+    seeds.sort(function(a,b){return _qualityScore(b)-_qualityScore(a);});
     return real.concat(seeds);
   }
 
@@ -237,8 +270,20 @@
   }
 
   function _renderPremiumGrid() {
-    var list = window.ARTISANS || [];
-    if (!list.length) { setTimeout(_renderPremiumGrid, 500); return; }
+    var fullList = window.ARTISANS || [];
+    if (!fullList.length) { setTimeout(_renderPremiumGrid, 500); return; }
+
+    // Use SearchEngine filtered results when filters/search are active
+    var ctx = _getFilterContext();
+    var hasFilters = !!(ctx.city || ctx.service || ctx.query);
+    var list;
+    if (hasFilters && window.searchEngine) {
+      var seState = { query: ctx.query, category: ctx.service, city: ctx.city, sortBy: 'rating', availability: '', minRating: 0, maxPrice: 0, verifiedOnly: false };
+      list = window.searchEngine.filter(seState);
+    } else {
+      list = fullList;
+    }
+    if (!list.length && hasFilters) list = fullList; // fallback: no results → show all
 
     var pg = _getOrCreateGrid();
 
@@ -259,7 +304,7 @@
       renderCard = _buildCard;
     }
 
-    var sorted = _sortList(list).slice(0, MAX_CARDS);
+    var sorted = _sortList(list, ctx).slice(0, MAX_CARDS);
     pg.innerHTML = sorted.map(renderCard).join('');
 
     /* Re-bind delegation (innerHTML replaced) */
@@ -384,6 +429,22 @@
   /* ── Bind global events ── */
   function _bindEvents() {
     function _onSearch(){ if(_isSearchActive()) _enterSearchMode(); }
+
+    // Refresh vedette grid when filters change (even in homepage mode)
+    function _onFilterChange() {
+      if (!_searchActive) {
+        // In homepage mode: update vedette grid with filtered artisans
+        _renderPremiumGrid();
+      }
+    }
+    ['filter-city','filter-category','services-city-filter','ssb2-select-city','ssb2-select-cat'].forEach(function(id){
+      var el = document.getElementById(id);
+      if (el) el.addEventListener('change', _onFilterChange);
+    });
+    // Also refresh when marketplace artisans are updated
+    window.addEventListener('fixeo:marketplace-artisans-updated', function(){
+      setTimeout(_renderPremiumGrid, 150);
+    });
     ['ssb2-btn-search','hero-search-btn','ssb2-btn-search-mobile'].forEach(function(id){
       var el=_$(id); if(el) el.addEventListener('click',_onSearch);
     });
@@ -400,9 +461,7 @@
         setTimeout(function(){ if(!_isSearchActive()) _enterHomepageMode(); },150);
       });
     }
-    window.addEventListener('fixeo:marketplace-artisans-updated',function(){
-      if(!_searchActive) _renderPremiumGrid();
-    });
+    /* fixeo:marketplace-artisans-updated handled in _bindEvents above */
   }
 
   /* ── Init ── */
