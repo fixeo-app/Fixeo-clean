@@ -16,7 +16,7 @@
   /* ══════════════════════════════════════════════════════════
    *  ❶  PASTE YOUR CREDENTIALS HERE
    * ══════════════════════════════════════════════════════════ */
-  var SUPABASE_URL  = 'https://ztwtbgoqanqzwiiibtuh.supabase.co';
+  var SUPABASE_URL  = 'https://ztwtbgoqanqzvwiibtuh.supabase.co';
   var SUPABASE_ANON = 'sb_publishable_OGW8g7fM5ct1_ZFUxFIs-g_UzXuQPSk';
   /* ══════════════════════════════════════════════════════════ */
 
