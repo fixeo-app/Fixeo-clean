@@ -16,8 +16,8 @@
   /* ══════════════════════════════════════════════════════════
    *  ❶  PASTE YOUR CREDENTIALS HERE
    * ══════════════════════════════════════════════════════════ */
-  var SUPABASE_URL  = 'FIXEO_SUPABASE_URL';   // ← replace with https://xxxx.supabase.co
-  var SUPABASE_ANON = 'FIXEO_SUPABASE_ANON';  // ← replace with your anon public key
+  var SUPABASE_URL  = 'https://ztwtbgoqanqzwiiibtuh.supabase.co';
+  var SUPABASE_ANON = 'sb_publishable_OGW8g7fM5ct1_ZFUxFIs-g_UzXuQPSk';
   /* ══════════════════════════════════════════════════════════ */
 
   var CONFIGURED = (
