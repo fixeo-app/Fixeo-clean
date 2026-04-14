@@ -115,7 +115,7 @@
       <div class="fixeo-gh-mobile" data-page="${esc(path)}">
         <div class="fixeo-gh-mobile-bar">
           <a class="fixeo-gh-brand" href="index.html" aria-label="Fixeo — Accueil">
-            <img src="img/logo-square.png" alt="Fixeo" class="fixeo-logo-img fixeo-logo-mobile-icon" width="36" height="36" loading="eager">
+            <img src="img/logo-square.png" alt="Fixeo" class="fixeo-logo-img fixeo-logo-mobile-icon" width="64" height="64" loading="eager">
             <span class="fixeo-gh-brand-copy">
               <span class="fixeo-gh-brand-text">Fixeo</span>
               <span class="fixeo-gh-brand-sub">Artisans vérifiés</span>

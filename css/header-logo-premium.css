@@ -1,302 +1,287 @@
-/* ============================================================
-   header-logo-premium.css  v1.0
-   Official Fixeo logo integration + premium header polish.
-   Loaded last → highest cascade priority.
-   Zero JS logic changes. Zero search/matching changes.
-   ============================================================ */
-
 /* ══════════════════════════════════════════════════════════
-   1. DESKTOP LOGO — logo-light.jpg in .navbar-brand
+   header-logo-premium.css — Fixeo official logo + header polish
+   v3 — transparent PNG, no mix-blend-mode, no background
    ══════════════════════════════════════════════════════════ */
 
-/* Hide old emoji icon + text — replaced by <img> */
-html body .navbar-brand .logo-icon {
-  display: none !important;
-}
-html body .navbar-brand .logo-text {
+/* 1. Hide old emoji logo elements */
+.navbar-brand .logo-icon,
+.navbar-brand .logo-text,
+.logo-wrap .logo-icon,
+.logo-wrap .logo-text,
+.fixeo-gh-brand-icon {
   display: none !important;
 }
 
-/* Official logo image — desktop
-   logo-light.jpg = white text + gradient pin on black bg
-   mix-blend-mode:screen knocks out black → transparent effect on dark header */
-html body .navbar-brand .fixeo-logo-img.fixeo-logo-desktop {
-  display: block !important;
-  height: 44px !important;
+/* 2. Brand container — flex align */
+.navbar-brand,
+a.navbar-brand,
+.logo-wrap {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0 !important;
+  text-decoration: none !important;
+  flex-shrink: 0;
+}
+
+/* 3. Desktop logo — transparent PNG, clean render */
+.fixeo-logo-img.fixeo-logo-desktop,
+img.fixeo-logo-desktop {
+  height: 36px !important;
   width: auto !important;
-  max-width: 160px !important;
+  max-width: 180px !important;
   object-fit: contain !important;
   object-position: left center !important;
-  flex-shrink: 0 !important;
-  mix-blend-mode: screen !important;
-  /* Screen mode: black → transparent, white stays white, gradient keeps colors */
-}
-
-/* Fallback: if img fails to load, show nothing (avoid broken image) */
-html body .navbar-brand .fixeo-logo-img.fixeo-logo-desktop[src=""] {
-  display: none !important;
-}
-
-/* Brand link: remove old gradient text, just contain the image */
-html body .navbar-brand.logo-wrap {
-  gap: 0 !important;
-  padding: 0 !important;
-}
-
-/* ══════════════════════════════════════════════════════════
-   2. MOBILE LOGO — logo-square.png in .fixeo-gh-brand
-   ══════════════════════════════════════════════════════════ */
-
-/* Hide old emoji icon container */
-body.fixeo-gh-enabled .fixeo-gh-brand-icon {
-  display: none !important;
-}
-
-/* Official logo square — mobile */
-body.fixeo-gh-enabled .fixeo-logo-mobile-icon,
-.fixeo-logo-img.fixeo-logo-mobile-icon {
   display: block !important;
-  width: 34px !important;
-  height: 34px !important;
+
+  /* CRITICAL: transparent PNG — no background, no blend mode */
+  background: transparent !important;
+  mix-blend-mode: normal !important;
+  filter: none !important;
+  opacity: 1 !important;
+
+  /* Crisp rendering */
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  -ms-interpolation-mode: bicubic;
+
+  flex-shrink: 0;
+}
+
+/* 4. Mobile logo — square icon */
+.fixeo-logo-mobile-icon,
+img.fixeo-logo-mobile-icon {
+  height: 32px !important;
+  width: 32px !important;
   object-fit: contain !important;
-  border-radius: 10px !important;
-  flex-shrink: 0 !important;
-  overflow: hidden !important;
+  display: block !important;
+  background: transparent !important;
+  mix-blend-mode: normal !important;
+  filter: none !important;
+  opacity: 1 !important;
+  border-radius: 8px;
+  flex-shrink: 0;
 }
 
-/* Mobile brand: keep text + icon together */
-body.fixeo-gh-enabled .fixeo-gh-brand {
-  gap: 10px !important;
+/* 5. Mobile bar brand alignment */
+.fixeo-gh-brand {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  text-decoration: none !important;
 }
 
-/* ══════════════════════════════════════════════════════════
-   3. PREMIUM HEADER POLISH — Uber/Airbnb level
-   ══════════════════════════════════════════════════════════ */
+.fixeo-gh-brand-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
 
-/* ── Header base ─────────────────────────────────── */
-html body .navbar,
-html body nav.navbar {
+/* 6. Fallback text (if img fails) */
+.fixeo-logo-fallback {
+  font-family: 'Cairo', sans-serif;
+  font-size: 1.35rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #fff 0%, #f0a0c8 60%, #c77dff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.5px;
+}
+
+/* ══════════════════════════════════════════════
+   7. PREMIUM HEADER POLISH — Uber/Airbnb level
+   ══════════════════════════════════════════════ */
+
+/* Navbar base */
+nav.navbar {
   height: 68px !important;
-  padding: 0 28px !important;
-  background: rgba(10, 10, 18, 0.92) !important;
+  min-height: 68px !important;
+  padding: 0 24px !important;
   backdrop-filter: blur(24px) !important;
   -webkit-backdrop-filter: blur(24px) !important;
-  border-bottom: 1px solid rgba(255,255,255,0.07) !important;
-  box-shadow: 0 1px 0 rgba(255,255,255,0.04), 0 4px 20px rgba(0,0,0,0.20) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+  transition: background 0.3s ease, box-shadow 0.3s ease !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 900 !important;
 }
 
-/* Scrolled state — fully opaque */
-html body .navbar.scrolled {
+nav.navbar.scrolled {
   background: rgba(10, 10, 18, 0.98) !important;
-  box-shadow: 0 2px 32px rgba(0,0,0,0.40), 0 1px 0 rgba(255,255,255,0.05) !important;
+  box-shadow: 0 4px 32px rgba(0, 0, 0, 0.45) !important;
 }
 
-/* Hero transparent state */
-html body .navbar.hero-visible:not(.scrolled) {
-  background: rgba(10, 10, 18, 0.75) !important;
-}
-
-/* ── Nav links ───────────────────────────────────── */
-html body .navbar-nav .nav-link {
+/* Nav links */
+nav.navbar .navbar-nav .nav-link {
   font-size: 0.875rem !important;
   font-weight: 500 !important;
-  color: rgba(255,255,255,0.72) !important;
-  padding: 6px 12px !important;
-  border-radius: 8px !important;
-  transition: color 0.15s ease, background 0.15s ease !important;
   letter-spacing: 0.01em !important;
+  padding: 6px 10px !important;
+  border-radius: 8px !important;
+  transition: background 0.18s, color 0.18s !important;
+  white-space: nowrap;
 }
 
-html body .navbar-nav .nav-link:hover {
-  color: rgba(255,255,255,0.96) !important;
-  background: rgba(255,255,255,0.06) !important;
+nav.navbar .navbar-nav .nav-link:hover {
+  background: rgba(255, 255, 255, 0.07) !important;
 }
 
-html body .navbar-nav .nav-link.active,
-html body .navbar-nav .nav-link[aria-current="page"] {
-  color: #fff !important;
+nav.navbar .navbar-nav .nav-link.active,
+nav.navbar .navbar-nav .nav-link[aria-current="page"] {
   font-weight: 600 !important;
-  background: rgba(255,255,255,0.07) !important;
+  background: rgba(255, 255, 255, 0.09) !important;
 }
 
-/* ── Dropdown polish ─────────────────────────────── */
-html body .navbar-nav .nav-dropdown {
-  background: rgba(16, 16, 28, 0.97) !important;
-  border: 1px solid rgba(255,255,255,0.10) !important;
-  border-radius: 16px !important;
+/* Dropdowns */
+nav.navbar .nav-dropdown {
   backdrop-filter: blur(20px) !important;
   -webkit-backdrop-filter: blur(20px) !important;
-  box-shadow: 0 12px 44px rgba(0,0,0,0.40), 0 0 0 1px rgba(255,255,255,0.05) !important;
+  background: rgba(18, 18, 28, 0.95) !important;
+  border-radius: 16px !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 8px 44px rgba(0, 0, 0, 0.5), 0 1px 0 rgba(255,255,255,0.06) inset !important;
   padding: 8px !important;
-  overflow: hidden !important;
+  min-width: 220px !important;
+  max-height: 480px !important;
+  overflow-y: auto !important;
 }
 
-html body .navbar-nav .nav-dropdown-item {
+nav.navbar .nav-dropdown-item {
   border-radius: 10px !important;
-  font-size: 0.865rem !important;
-  color: rgba(255,255,255,0.74) !important;
-  padding: 10px 14px !important;
-  transition: background 0.14s ease, color 0.14s ease !important;
+  padding: 9px 12px !important;
+  font-size: 0.875rem !important;
+  transition: background 0.15s !important;
+  white-space: nowrap;
 }
 
-html body .navbar-nav .nav-dropdown-item:hover {
-  background: rgba(255,255,255,0.07) !important;
-  color: #fff !important;
+nav.navbar .nav-dropdown-item:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
 }
 
-/* ── Urgent CTA button ───────────────────────────── */
-html body .navbar .btn-express,
-html body .navbar .btn.btn-express {
+/* Urgent / Express button */
+nav.navbar .btn-express,
+nav.navbar .btn-urgent,
+nav.navbar [class*="btn-express"] {
   height: 38px !important;
-  padding: 0 16px !important;
-  border-radius: 999px !important;
-  font-size: 0.82rem !important;
-  font-weight: 700 !important;
-  background: linear-gradient(135deg, #E1306C, #833AB4) !important;
+  padding: 0 18px !important;
+  border-radius: 99px !important;
+  font-size: 0.85rem !important;
+  font-weight: 600 !important;
+  background: linear-gradient(135deg, #e91e8c 0%, #9c27b0 100%) !important;
   border: none !important;
-  color: #fff !important;
-  box-shadow: 0 2px 14px rgba(225,48,108,0.32) !important;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease !important;
-  white-space: nowrap !important;
+  transition: transform 0.18s, box-shadow 0.18s !important;
+  white-space: nowrap;
 }
 
-html body .navbar .btn-express:hover {
+nav.navbar .btn-express:hover,
+nav.navbar .btn-urgent:hover {
   transform: translateY(-1px) !important;
-  box-shadow: 0 6px 20px rgba(225,48,108,0.44) !important;
-  filter: brightness(1.06) !important;
+  box-shadow: 0 4px 20px rgba(233, 30, 140, 0.45) !important;
 }
 
-/* ── Search pill ─────────────────────────────────── */
-html body .navbar .btn-quick-search {
+/* Quick search button */
+nav.navbar .btn-quick-search,
+nav.navbar .btn-search {
   height: 38px !important;
-  padding: 0 16px !important;
-  border-radius: 999px !important;
-  font-size: 0.82rem !important;
-  font-weight: 500 !important;
-  background: rgba(255,255,255,0.07) !important;
-  border: 1px solid rgba(255,255,255,0.12) !important;
-  color: rgba(255,255,255,0.78) !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 7px !important;
-  transition: background 0.15s ease, border-color 0.15s ease !important;
-  white-space: nowrap !important;
-}
-
-html body .navbar .btn-quick-search:hover {
-  background: rgba(255,255,255,0.11) !important;
-  border-color: rgba(255,255,255,0.20) !important;
-  color: #fff !important;
-}
-
-/* ── Auth buttons ────────────────────────────────── */
-html body .navbar #login-btn {
-  height: 38px !important;
-  padding: 0 16px !important;
-  border-radius: 999px !important;
-  font-size: 0.82rem !important;
-  font-weight: 500 !important;
-  color: rgba(255,255,255,0.74) !important;
-  background: transparent !important;
-  border: 1px solid rgba(255,255,255,0.16) !important;
-  transition: background 0.15s ease, color 0.15s ease !important;
-}
-html body .navbar #login-btn:hover {
-  background: rgba(255,255,255,0.07) !important;
-  color: #fff !important;
-}
-
-html body .navbar #register-btn {
-  height: 38px !important;
-  padding: 0 16px !important;
-  border-radius: 999px !important;
-  font-size: 0.82rem !important;
-  font-weight: 700 !important;
-  background: linear-gradient(135deg, rgba(225,48,108,0.90), rgba(131,58,180,0.85)) !important;
-  border: none !important;
-  color: #fff !important;
-  box-shadow: 0 2px 12px rgba(225,48,108,0.25) !important;
-  transition: transform 0.15s ease, box-shadow 0.15s ease !important;
-}
-html body .navbar #register-btn:hover {
-  transform: translateY(-1px) !important;
-  box-shadow: 0 6px 18px rgba(225,48,108,0.38) !important;
-}
-
-/* ── Notif button ────────────────────────────────── */
-html body .navbar .notif-btn {
   width: 38px !important;
-  height: 38px !important;
-  border-radius: 999px !important;
-  background: rgba(255,255,255,0.06) !important;
-  border: 1px solid rgba(255,255,255,0.10) !important;
-  display: inline-flex !important;
+  border-radius: 99px !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  transition: border-color 0.18s, background 0.18s !important;
+  display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  font-size: 1rem !important;
-  transition: background 0.15s ease !important;
-}
-html body .navbar .notif-btn:hover {
-  background: rgba(255,255,255,0.10) !important;
 }
 
-/* ══════════════════════════════════════════════════════════
-   4. MOBILE HEADER POLISH
-   ══════════════════════════════════════════════════════════ */
+nav.navbar .btn-quick-search:hover,
+nav.navbar .btn-search:hover {
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Auth buttons */
+nav.navbar #login-btn,
+nav.navbar .btn-nav-outline {
+  height: 38px !important;
+  padding: 0 18px !important;
+  border-radius: 99px !important;
+  font-size: 0.85rem !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  transition: border-color 0.18s, background 0.18s !important;
+}
+
+nav.navbar #login-btn:hover,
+nav.navbar .btn-nav-outline:hover {
+  border-color: rgba(255, 255, 255, 0.35) !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+nav.navbar #register-btn,
+nav.navbar .btn-nav-primary {
+  height: 38px !important;
+  padding: 0 18px !important;
+  border-radius: 99px !important;
+  font-size: 0.85rem !important;
+  font-weight: 600 !important;
+  background: linear-gradient(135deg, #e91e8c 0%, #9c27b0 100%) !important;
+  border: none !important;
+  transition: transform 0.18s, box-shadow 0.18s !important;
+}
+
+nav.navbar #register-btn:hover,
+nav.navbar .btn-nav-primary:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 16px rgba(233, 30, 140, 0.4) !important;
+}
+
+/* Notification button */
+nav.navbar .notif-btn {
+  height: 38px !important;
+  width: 38px !important;
+  border-radius: 50% !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer;
+}
+
+/* ══════════════════════════════════════════════
+   8. MOBILE BAR (fixeo-gh)
+   ══════════════════════════════════════════════ */
+
+.fixeo-gh-mobile-bar {
+  height: 62px !important;
+  padding: 0 16px !important;
+  backdrop-filter: blur(22px) !important;
+  -webkit-backdrop-filter: blur(22px) !important;
+  background: rgba(10, 10, 18, 0.95) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07) !important;
+}
+
+/* Scrolled state for mobile */
+.fixeo-gh-mobile-bar.scrolled {
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* ══════════════════════════════════════════════
+   9. RESPONSIVE
+   ══════════════════════════════════════════════ */
 
 @media (max-width: 768px) {
-  /* Mobile bar height */
-  body.fixeo-gh-enabled .fixeo-gh-mobile-bar {
-    height: 62px !important;
-    padding: 0 18px !important;
-    background: rgba(10, 10, 18, 0.95) !important;
-    backdrop-filter: blur(22px) !important;
-    -webkit-backdrop-filter: blur(22px) !important;
-    border-bottom: 1px solid rgba(255,255,255,0.08) !important;
-    box-shadow: 0 2px 20px rgba(0,0,0,0.28) !important;
-  }
-
-  /* Mobile brand text */
-  body.fixeo-gh-enabled .fixeo-gh-brand-text {
-    font-size: 1.05rem !important;
-    font-weight: 800 !important;
-    color: #fff !important;
-  }
-
-  body.fixeo-gh-enabled .fixeo-gh-brand-sub {
-    font-size: 0.65rem !important;
-    color: rgba(255,255,255,0.44) !important;
-  }
-
-  /* Mobile icon buttons */
-  body.fixeo-gh-enabled .fixeo-gh-icon-btn {
-    width: 38px !important;
-    height: 38px !important;
-    border-radius: 999px !important;
-    background: rgba(255,255,255,0.06) !important;
-    border: 1px solid rgba(255,255,255,0.09) !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    font-size: 1rem !important;
-  }
-
-  /* Mobile drawer */
-  body.fixeo-gh-enabled .fixeo-gh-drawer {
-    background: rgba(10, 10, 18, 0.99) !important;
-    backdrop-filter: blur(30px) !important;
-    -webkit-backdrop-filter: blur(30px) !important;
-    border-right: 1px solid rgba(255,255,255,0.08) !important;
+  nav.navbar .fixeo-logo-img.fixeo-logo-desktop,
+  nav.navbar img.fixeo-logo-desktop {
+    height: 30px !important;
+    max-width: 140px !important;
   }
 }
 
-/* ══════════════════════════════════════════════════════════
-   5. VERY SMALL SCREENS ≤400px
-   ══════════════════════════════════════════════════════════ */
-
-@media (max-width: 400px) {
-  html body .navbar-brand .fixeo-logo-img.fixeo-logo-desktop {
-    height: 30px !important;
-    max-width: 110px !important;
+@media (max-width: 480px) {
+  nav.navbar {
+    padding: 0 14px !important;
   }
 }
