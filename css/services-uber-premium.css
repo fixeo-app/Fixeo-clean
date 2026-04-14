@@ -469,3 +469,30 @@ body.fixeo-hero-search-mode #services.services-section {
   padding-bottom: 0 !important;
   min-height: 0 !important;
 }
+
+/* ══════════════════════════════════════════════════════════
+   12. EXPLICIT RESTORE — services always visible in homepage mode
+       Belt-and-suspenders: ensure chips never disappear in normal mode
+   ══════════════════════════════════════════════════════════ */
+
+/* In homepage mode (default): always show services chips */
+body.fixeo-homepage-mode #services.services-section .category-chips,
+body:not(.fixeo-hero-search-mode) #services.services-section .category-chips {
+  display: flex !important;
+}
+
+body.fixeo-homepage-mode #services.services-section .services-filter-bar,
+body:not(.fixeo-hero-search-mode) #services.services-section .services-filter-bar {
+  display: flex !important;
+}
+
+body.fixeo-homepage-mode #services.services-section .section-header,
+body:not(.fixeo-hero-search-mode) #services.services-section .section-header {
+  display: block !important;
+}
+
+body.fixeo-homepage-mode #services.services-section,
+body:not(.fixeo-hero-search-mode) #services.services-section {
+  padding-top: var(--section-padding-top, 60px) !important;
+  padding-bottom: var(--section-padding-bottom, 60px) !important;
+}

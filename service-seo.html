@@ -86,9 +86,30 @@
 
   <nav class="navbar-nav" aria-label="Menu principal">
     <a href="index.html" class="nav-link" data-i18n="nav_home">Accueil</a>
-    <a href="index.html#services" class="nav-link" data-i18n="nav_services">Services</a>
+    <div class="nav-has-dropdown">
+      <a href="index.html#services" class="nav-link">
+        Services <span class="nav-arrow">▾</span>
+      </a>
+      <div class="nav-dropdown" role="menu" aria-label="Sous-menu Services">
+        <a href="index.html#services" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🔧</span>Tous les services</a>
+        <a href="index.html#services?cat=plomberie" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🚿</span>Plomberie</a>
+        <a href="index.html#services?cat=electricite" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">⚡</span>Électricité</a>
+        <a href="index.html#services?cat=peinture" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🎨</span>Peinture</a>
+        <a href="index.html#services?cat=climatisation" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">❄️</span>Climatisation</a>
+        <a href="index.html#services?cat=nettoyage" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🧹</span>Nettoyage</a>
+        <a href="index.html#services?cat=menuiserie" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🪚</span>Menuiserie</a>
+        <a href="index.html#services?cat=serrurerie" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🔑</span>Serrurerie</a>
+        <a href="index.html#services?cat=maconnerie" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🧱</span>Maçonnerie</a>
+        <a href="index.html#services?cat=jardinage" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🌿</span>Jardinage</a>
+        <a href="index.html#services?cat=bricolage" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🔩</span>Bricolage</a>
+        <a href="index.html#services?cat=demenagement" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🚛</span>Déménagement</a>
+        <a href="index.html#services?cat=carrelage" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🏁</span>Carrelage</a>
+        <a href="index.html#services?cat=toiture" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🏠</span>Toiture</a>
+        <a href="index.html#services?cat=vitrerie" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🪟</span>Vitrerie</a>
+        <a href="index.html#services?cat=chauffage" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🔥</span>Chauffage</a>
+      </div>
+    </div>
     <a href="index.html#artisans-section" class="nav-link" data-i18n="nav_artisans">Artisans</a>
-    <a href="index.html#feed-section" class="nav-link" data-i18n="nav_feed">Réalisations</a>
     <a href="pricing.html" class="nav-link">Tarifs</a>
     <a href="dashboard-client.html" class="nav-link" data-role="dashboard" data-auth="logged-in">📊 Dashboard</a>
     <a href="admin.html" class="nav-link" data-role="admin" data-auth="admin">🛡 Admin</a>
