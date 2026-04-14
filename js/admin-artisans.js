@@ -39,9 +39,16 @@ const _ART_HEADERS_FORM = {
 const _LS_KEY = 'fixeo_admin_artisans_v21';
 
 function _lsGet() {
+  // FixeoDB est la source unique de vérité
+  if (window.FixeoDB) return window.FixeoDB.getAllArtisans();
   try { return JSON.parse(localStorage.getItem(_LS_KEY) || '[]'); } catch { return []; }
 }
 function _lsSave(arr) {
+  // Persister via FixeoDB + compatibilité legacy
+  if (window.FixeoDB) {
+    window.FixeoDB.saveArtisans(arr);
+    return;
+  }
   try { localStorage.setItem(_LS_KEY, JSON.stringify(arr)); } catch {}
 }
 
@@ -80,7 +87,7 @@ async function loadArtisans() {
     }
   } catch (err) {
     console.warn('[Fixeo Artisans] ⚠️ API indisponible — fallback localStorage. Err:', err.message);
-    _artisansList = _lsGet();
+    _artisansList = _lsGet() /* FixeoDB via fallback */;
   }
 
   renderArtisansAdminTable(_artisansList);
@@ -384,8 +391,13 @@ async function submitArtisanForm(e) {
       createdAt       : new Date().toISOString(),
       _isLocal        : true,
     };
-    _artisansList.unshift(newArtisan);
-    _lsSave(_artisansList);
+    if (window.FixeoDB) {
+      newArtisan = window.FixeoDB.createArtisan(newArtisan);
+      _artisansList = window.FixeoDB.getAllArtisans();
+    } else {
+      _artisansList.unshift(newArtisan);
+      _lsSave(_artisansList);
+    }
 
     document.getElementById('artisan-add-form')?.reset();
     _closeArtisanFormPanel();
