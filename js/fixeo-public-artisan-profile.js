@@ -271,7 +271,7 @@
 
   function collectArtisanSeeds() {
     var pool = [];
-    // FixeoDB is the canonical source — window.ARTISANS is a proxy of it
+    // Primary: FixeoDB (which is synced from Supabase via fixeo-supabase-loader.js)
     if (window.FixeoDB) {
       pool = pool.concat(window.FixeoDB.getAllArtisans());
     } else if (Array.isArray(window.ARTISANS)) {
@@ -785,6 +785,23 @@
   }
 
   function init() {
+    // If FixeoSupabaseLoader available, try async lookup first (Supabase → FixeoDB fallback)
+    var urlId = (new URLSearchParams(window.location.search)).get('id') ||
+                (new URLSearchParams(window.location.search)).get('artisan');
+    if (urlId && window.FixeoSupabaseLoader) {
+      window.FixeoSupabaseLoader.getArtisanForProfile(urlId).then(function(a) {
+        if (a) {
+          // Inject into FixeoDB so the sync pool finds it
+          if (window.FixeoDB && !window.FixeoDB.getArtisanById(a.id)) {
+            window.FixeoDB.createArtisan(a);
+          }
+          // Re-trigger the profile render with fresh data
+          if (typeof renderArtisanProfile === 'function') renderArtisanProfile(a);
+          else if (typeof displayArtisan === 'function') displayArtisan(a);
+        }
+      }).catch(function(){});
+    }
+
     var root = document.getElementById('public-artisan-root');
     if (!root) return;
 
