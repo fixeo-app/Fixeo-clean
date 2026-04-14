@@ -1,0 +1,302 @@
+/* ============================================================
+   header-logo-premium.css  v1.0
+   Official Fixeo logo integration + premium header polish.
+   Loaded last → highest cascade priority.
+   Zero JS logic changes. Zero search/matching changes.
+   ============================================================ */
+
+/* ══════════════════════════════════════════════════════════
+   1. DESKTOP LOGO — logo-light.jpg in .navbar-brand
+   ══════════════════════════════════════════════════════════ */
+
+/* Hide old emoji icon + text — replaced by <img> */
+html body .navbar-brand .logo-icon {
+  display: none !important;
+}
+html body .navbar-brand .logo-text {
+  display: none !important;
+}
+
+/* Official logo image — desktop
+   logo-light.jpg = white text + gradient pin on black bg
+   mix-blend-mode:screen knocks out black → transparent effect on dark header */
+html body .navbar-brand .fixeo-logo-img.fixeo-logo-desktop {
+  display: block !important;
+  height: 44px !important;
+  width: auto !important;
+  max-width: 160px !important;
+  object-fit: contain !important;
+  object-position: left center !important;
+  flex-shrink: 0 !important;
+  mix-blend-mode: screen !important;
+  /* Screen mode: black → transparent, white stays white, gradient keeps colors */
+}
+
+/* Fallback: if img fails to load, show nothing (avoid broken image) */
+html body .navbar-brand .fixeo-logo-img.fixeo-logo-desktop[src=""] {
+  display: none !important;
+}
+
+/* Brand link: remove old gradient text, just contain the image */
+html body .navbar-brand.logo-wrap {
+  gap: 0 !important;
+  padding: 0 !important;
+}
+
+/* ══════════════════════════════════════════════════════════
+   2. MOBILE LOGO — logo-square.png in .fixeo-gh-brand
+   ══════════════════════════════════════════════════════════ */
+
+/* Hide old emoji icon container */
+body.fixeo-gh-enabled .fixeo-gh-brand-icon {
+  display: none !important;
+}
+
+/* Official logo square — mobile */
+body.fixeo-gh-enabled .fixeo-logo-mobile-icon,
+.fixeo-logo-img.fixeo-logo-mobile-icon {
+  display: block !important;
+  width: 34px !important;
+  height: 34px !important;
+  object-fit: contain !important;
+  border-radius: 10px !important;
+  flex-shrink: 0 !important;
+  overflow: hidden !important;
+}
+
+/* Mobile brand: keep text + icon together */
+body.fixeo-gh-enabled .fixeo-gh-brand {
+  gap: 10px !important;
+}
+
+/* ══════════════════════════════════════════════════════════
+   3. PREMIUM HEADER POLISH — Uber/Airbnb level
+   ══════════════════════════════════════════════════════════ */
+
+/* ── Header base ─────────────────────────────────── */
+html body .navbar,
+html body nav.navbar {
+  height: 68px !important;
+  padding: 0 28px !important;
+  background: rgba(10, 10, 18, 0.92) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+  border-bottom: 1px solid rgba(255,255,255,0.07) !important;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.04), 0 4px 20px rgba(0,0,0,0.20) !important;
+}
+
+/* Scrolled state — fully opaque */
+html body .navbar.scrolled {
+  background: rgba(10, 10, 18, 0.98) !important;
+  box-shadow: 0 2px 32px rgba(0,0,0,0.40), 0 1px 0 rgba(255,255,255,0.05) !important;
+}
+
+/* Hero transparent state */
+html body .navbar.hero-visible:not(.scrolled) {
+  background: rgba(10, 10, 18, 0.75) !important;
+}
+
+/* ── Nav links ───────────────────────────────────── */
+html body .navbar-nav .nav-link {
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  color: rgba(255,255,255,0.72) !important;
+  padding: 6px 12px !important;
+  border-radius: 8px !important;
+  transition: color 0.15s ease, background 0.15s ease !important;
+  letter-spacing: 0.01em !important;
+}
+
+html body .navbar-nav .nav-link:hover {
+  color: rgba(255,255,255,0.96) !important;
+  background: rgba(255,255,255,0.06) !important;
+}
+
+html body .navbar-nav .nav-link.active,
+html body .navbar-nav .nav-link[aria-current="page"] {
+  color: #fff !important;
+  font-weight: 600 !important;
+  background: rgba(255,255,255,0.07) !important;
+}
+
+/* ── Dropdown polish ─────────────────────────────── */
+html body .navbar-nav .nav-dropdown {
+  background: rgba(16, 16, 28, 0.97) !important;
+  border: 1px solid rgba(255,255,255,0.10) !important;
+  border-radius: 16px !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  box-shadow: 0 12px 44px rgba(0,0,0,0.40), 0 0 0 1px rgba(255,255,255,0.05) !important;
+  padding: 8px !important;
+  overflow: hidden !important;
+}
+
+html body .navbar-nav .nav-dropdown-item {
+  border-radius: 10px !important;
+  font-size: 0.865rem !important;
+  color: rgba(255,255,255,0.74) !important;
+  padding: 10px 14px !important;
+  transition: background 0.14s ease, color 0.14s ease !important;
+}
+
+html body .navbar-nav .nav-dropdown-item:hover {
+  background: rgba(255,255,255,0.07) !important;
+  color: #fff !important;
+}
+
+/* ── Urgent CTA button ───────────────────────────── */
+html body .navbar .btn-express,
+html body .navbar .btn.btn-express {
+  height: 38px !important;
+  padding: 0 16px !important;
+  border-radius: 999px !important;
+  font-size: 0.82rem !important;
+  font-weight: 700 !important;
+  background: linear-gradient(135deg, #E1306C, #833AB4) !important;
+  border: none !important;
+  color: #fff !important;
+  box-shadow: 0 2px 14px rgba(225,48,108,0.32) !important;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease !important;
+  white-space: nowrap !important;
+}
+
+html body .navbar .btn-express:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 6px 20px rgba(225,48,108,0.44) !important;
+  filter: brightness(1.06) !important;
+}
+
+/* ── Search pill ─────────────────────────────────── */
+html body .navbar .btn-quick-search {
+  height: 38px !important;
+  padding: 0 16px !important;
+  border-radius: 999px !important;
+  font-size: 0.82rem !important;
+  font-weight: 500 !important;
+  background: rgba(255,255,255,0.07) !important;
+  border: 1px solid rgba(255,255,255,0.12) !important;
+  color: rgba(255,255,255,0.78) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 7px !important;
+  transition: background 0.15s ease, border-color 0.15s ease !important;
+  white-space: nowrap !important;
+}
+
+html body .navbar .btn-quick-search:hover {
+  background: rgba(255,255,255,0.11) !important;
+  border-color: rgba(255,255,255,0.20) !important;
+  color: #fff !important;
+}
+
+/* ── Auth buttons ────────────────────────────────── */
+html body .navbar #login-btn {
+  height: 38px !important;
+  padding: 0 16px !important;
+  border-radius: 999px !important;
+  font-size: 0.82rem !important;
+  font-weight: 500 !important;
+  color: rgba(255,255,255,0.74) !important;
+  background: transparent !important;
+  border: 1px solid rgba(255,255,255,0.16) !important;
+  transition: background 0.15s ease, color 0.15s ease !important;
+}
+html body .navbar #login-btn:hover {
+  background: rgba(255,255,255,0.07) !important;
+  color: #fff !important;
+}
+
+html body .navbar #register-btn {
+  height: 38px !important;
+  padding: 0 16px !important;
+  border-radius: 999px !important;
+  font-size: 0.82rem !important;
+  font-weight: 700 !important;
+  background: linear-gradient(135deg, rgba(225,48,108,0.90), rgba(131,58,180,0.85)) !important;
+  border: none !important;
+  color: #fff !important;
+  box-shadow: 0 2px 12px rgba(225,48,108,0.25) !important;
+  transition: transform 0.15s ease, box-shadow 0.15s ease !important;
+}
+html body .navbar #register-btn:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 6px 18px rgba(225,48,108,0.38) !important;
+}
+
+/* ── Notif button ────────────────────────────────── */
+html body .navbar .notif-btn {
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: 999px !important;
+  background: rgba(255,255,255,0.06) !important;
+  border: 1px solid rgba(255,255,255,0.10) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 1rem !important;
+  transition: background 0.15s ease !important;
+}
+html body .navbar .notif-btn:hover {
+  background: rgba(255,255,255,0.10) !important;
+}
+
+/* ══════════════════════════════════════════════════════════
+   4. MOBILE HEADER POLISH
+   ══════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+  /* Mobile bar height */
+  body.fixeo-gh-enabled .fixeo-gh-mobile-bar {
+    height: 62px !important;
+    padding: 0 18px !important;
+    background: rgba(10, 10, 18, 0.95) !important;
+    backdrop-filter: blur(22px) !important;
+    -webkit-backdrop-filter: blur(22px) !important;
+    border-bottom: 1px solid rgba(255,255,255,0.08) !important;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.28) !important;
+  }
+
+  /* Mobile brand text */
+  body.fixeo-gh-enabled .fixeo-gh-brand-text {
+    font-size: 1.05rem !important;
+    font-weight: 800 !important;
+    color: #fff !important;
+  }
+
+  body.fixeo-gh-enabled .fixeo-gh-brand-sub {
+    font-size: 0.65rem !important;
+    color: rgba(255,255,255,0.44) !important;
+  }
+
+  /* Mobile icon buttons */
+  body.fixeo-gh-enabled .fixeo-gh-icon-btn {
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 999px !important;
+    background: rgba(255,255,255,0.06) !important;
+    border: 1px solid rgba(255,255,255,0.09) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 1rem !important;
+  }
+
+  /* Mobile drawer */
+  body.fixeo-gh-enabled .fixeo-gh-drawer {
+    background: rgba(10, 10, 18, 0.99) !important;
+    backdrop-filter: blur(30px) !important;
+    -webkit-backdrop-filter: blur(30px) !important;
+    border-right: 1px solid rgba(255,255,255,0.08) !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+   5. VERY SMALL SCREENS ≤400px
+   ══════════════════════════════════════════════════════════ */
+
+@media (max-width: 400px) {
+  html body .navbar-brand .fixeo-logo-img.fixeo-logo-desktop {
+    height: 30px !important;
+    max-width: 110px !important;
+  }
+}
