@@ -42,6 +42,16 @@
     vitrerie:      { from: 200, to: 700, label: 'À partir de 200 MAD', range: '200–700 MAD' },
     chauffage:     { from: 200, to: 600, label: 'À partir de 200 MAD', range: '200–600 MAD' },
     _default:      { from: 150, to: 500, label: 'Devis rapide', range: 'Sur devis' },
+    // seed-specific normalized categories
+    'plomberieurgence': { from: 150, to: 350, label: '\u00c0 partir de 150 MAD', range: '150\u2013350 MAD' },
+    'electriciteurgence': { from: 100, to: 400, label: '\u00c0 partir de 100 MAD', range: '100\u2013400 MAD' },
+    'securite':    { from: 150, to: 500, label: '\u00c0 partir de 150 MAD', range: '150\u2013500 MAD' },
+    'placo':       { from: 150, to: 600, label: '\u00c0 partir de 150 MAD', range: '150\u2013600 MAD' },
+    'aluminium':   { from: 200, to: 800, label: '\u00c0 partir de 200 MAD', range: '200\u2013800 MAD' },
+    'electromenager': { from: 100, to: 400, label: '\u00c0 partir de 100 MAD', range: '100\u2013400 MAD' },
+    'etancheite':  { from: 250, to: 900, label: '\u00c0 partir de 250 MAD', range: '250\u2013900 MAD' },
+    'piscine':     { from: 300, to: 1200, label: '\u00c0 partir de 300 MAD', range: '300\u20131200 MAD' },
+    'cuisine':     { from: 500, to: 2000, label: '\u00c0 partir de 500 MAD', range: '500\u20132000 MAD' },
   };
 
   function _normalizeService(s) {
@@ -60,7 +70,8 @@
      PATCH ARTISAN RECORD — set fixed estimate pricing
   ══════════════════════════════════════════════════════════ */
   function patchArtisanPricing(artisan) {
-    var svc = artisan.service || artisan.category || '';
+    // Prefer category (normalized chip key) over service (may be capitalized variant)
+    var svc = artisan.category || artisan.service || '';
     var p = getPricing(svc);
     artisan.priceFrom  = p.from;
     artisan.priceTo    = p.to;
@@ -75,12 +86,60 @@
   /* ══════════════════════════════════════════════════════════
      PATCH window.ARTISANS ARRAY
   ══════════════════════════════════════════════════════════ */
+
+  /* ══════════════════════════════════════════════════════════
+     CATEGORY NORMALIZATION — maps seed categories to chip keys
+  ══════════════════════════════════════════════════════════ */
+  var CATEGORY_MAP = {
+    // plomberie
+    'plomberieurgence': 'plomberie',
+    'plombier': 'plomberie',
+    // electricite
+    'electriciteurgence': 'electricite',
+    'electricien': 'electricite',
+    // peinture
+    'peintre': 'peinture',
+    // serrurerie
+    'serrurier': 'serrurerie',
+    // maconnerie
+    'maon': 'maconnerie',
+    'maçon': 'maconnerie',
+    // menuiserie
+    'menuisier': 'menuiserie',
+    // nettoyage
+    // carrelage
+    'carreleur': 'carrelage',
+    // various → bricolage
+    'placo': 'bricolage',
+    'aluminium': 'menuiserie',
+    'electromenager': 'bricolage',
+    // specific
+    'securite': 'electricite',
+    'camera': 'electricite',
+    'piscine': 'bricolage',
+    'etancheite': 'toiture',
+    'cuisine': 'menuiserie',
+  };
+
+  function _normalizeArtisanCategory(a) {
+    if (!a || !a.category) return;
+    var raw = String(a.category).toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .replace(/\s+/g, '').trim();
+    var mapped = CATEGORY_MAP[raw];
+    if (mapped) {
+      a._originalCategory = a.category;
+      a.category = mapped;
+    }
+  }
+
   function patchAllArtisans() {
     if (!window.ARTISANS || !Array.isArray(window.ARTISANS)) return 0;
     var patched = 0;
     window.ARTISANS.forEach(function (a) {
+      // Normalize category to chip keys (plomberieurgence → plomberie, etc.)
+      _normalizeArtisanCategory(a);
       // Always patch — set fixed_estimate pricing for every artisan
-      // priceFrom is preserved as the "starting from" value for the service range
       patchArtisanPricing(a);
       patched++;
     });

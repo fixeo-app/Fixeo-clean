@@ -106,6 +106,8 @@
       reviews: Number.isFinite(reviews) ? reviews : 0,
       price: Number.isFinite(amount) && amount > 0 ? amount + ' MAD' : 'Prix sur demande',
       unit: unit,
+      priceLabel: raw.priceLabel || (Number.isFinite(amount) && amount > 0 ? '\u00c0 partir de ' + amount + ' MAD' : 'Devis rapide'),
+      priceRange: raw.priceRange || '',
       availability: String(raw.availability || (raw.status === 'active' ? 'available' : 'offline')).trim() || 'available',
       badge: Array.isArray(raw.badges) && raw.badges.includes('verified') ? '✅ Vérifié' : '⭐ Disponible',
       trustScore: String(raw.trustScore || raw.trust_score || raw.rating || '0'),
@@ -128,7 +130,9 @@
         city: artisan.city,
         rating: artisan.rating,
         reviews: artisan.reviews,
-        price: artisan.price + '/' + artisan.unit,
+        price: artisan.price,
+        priceLabel: artisan.priceLabel,
+        priceRange: artisan.priceRange,
         badge: artisan.badge
       });
       return acc;
@@ -179,7 +183,7 @@
         </div>
         <div class="artisan-meta-row smc-footer-row">
           <div class="artisan-rating smc-rating">⭐ ${a.rating} <span style="color:rgba(255,255,255,.45);font-size:.7rem">(${a.reviews} avis)</span></div>
-          <div class="artisan-price smc-price">Dès ${a.price}</div>
+          <div class="artisan-price smc-price">${a.priceLabel || ('\u00c0 partir de ' + a.price)}</div>
         </div>
         <div class="artisan-badge smc-badge">${a.badge}</div>
       </article>`;

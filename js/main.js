@@ -243,7 +243,10 @@ class SearchEngine {
         _norm(a.category).includes(q) ||
         _norm(a.bio[lang] || a.bio.fr || '').includes(q) ||
         (a.skills || []).some(s => _norm(s).includes(q));
-      const matchCat = !category || a.category === category;
+      const _normCat = s => (s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,'').trim();
+      const matchCat = !category || _normCat(a.category) === _normCat(category)
+        || (a.service && _normCat(a.service) === _normCat(category))
+        || (a.category && _normCat(a.category).startsWith(_normCat(category)));
       const matchCity = !city || !_norm(a.city) || _norm(a.city).includes(_norm(city));
       const matchAvail = !availability || marketplaceArtisanMatchesAvailability(a, availability);
       const ratingValue = Number(a.rating);
@@ -797,15 +800,16 @@ function applyMarketplaceFilters(options = {}) {
   const container = document.getElementById('artisans-container');
   if (!container) return window.searchEngine.filter(state);
 
-  if (hasActive && !window.__FIXEO_FILTERS_FORCE_ALL__) {
-    window.__FIXEO_FILTERS_FORCE_ALL__ = true;
-    renderArtisans(ARTISANS, { forceAll: true });
-  } else if (!hasActive && window.__FIXEO_FILTERS_FORCE_ALL__) {
-    window.__FIXEO_FILTERS_FORCE_ALL__ = false;
-    renderArtisans(ARTISANS);
-  }
-
   const results = window.searchEngine.filter(state);
+  // Re-render with matching sort if filters are active; otherwise use full set
+  if (hasActive) {
+    var sorted = window.FixeoMatchingEngine
+      ? window.FixeoMatchingEngine.sortByMatch(results.slice(), { city: state.city, service: state.category, isUrgent: false })
+      : results;
+    renderArtisans(sorted, { forceAll: true });
+  } else {
+    renderArtisans(_initialMatchSortedArtisans || ARTISANS);
+  }
   marketplaceSyncCardsVisibility(results, state);
 
   if (options.syncServiceCategory && typeof window.renderServiceArtisans === 'function') {
@@ -837,7 +841,8 @@ function resetMarketplaceFilters() {
     document.querySelector('.chip[data-category="all"]')?.classList.add('active');
   }
   window.__FIXEO_FILTERS_FORCE_ALL__ = false;
-  renderArtisans(ARTISANS);
+  var _resetList = window._initialMatchSortedArtisans || ARTISANS;
+  renderArtisans(_resetList);
   applyMarketplaceFilters({ syncServiceCategory: true });
 }
 window.resetMarketplaceFilters = resetMarketplaceFilters;
@@ -2009,7 +2014,12 @@ document.addEventListener('DOMContentLoaded', () => {
   initBackToTop();
   initResponsiveArtisanGrid();
   if (!window.__FIXEO_SERVICE_SEO_PAGE__) {
-    renderArtisans(ARTISANS);
+    // Sort by quality score for initial display (best artisans first)
+    var _initList = (window.FixeoMatchingEngine && ARTISANS.length > 0)
+      ? window.FixeoMatchingEngine.sortByMatch(ARTISANS.slice(), {})
+      : ARTISANS;
+    window._initialMatchSortedArtisans = _initList;
+    renderArtisans(_initList);
     refreshMarketplaceFromCurrentFilters();
   }
   setTimeout(animateCounters, 500);
