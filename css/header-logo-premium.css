@@ -1,24 +1,25 @@
 /* ══════════════════════════════════════════════════════════
-   header-logo-premium.css v4
-   Fixeo official logo — transparent PNG, clean render
-   Root cause fix: hide gh-brand-copy text spans globally
+   header-logo-premium.css v5
+   Fixeo official branding — transparent PNG, zero fallback text
    ══════════════════════════════════════════════════════════ */
 
-/* ── 1. HIDE OLD EMOJI + FALLBACK TEXT ELEMENTS ── */
+/* ── 1. HIDE ALL FALLBACK / OLD EMOJI ELEMENTS ── */
+.fixeo-gh-brand-copy,
+.fixeo-gh-brand-text,
+.fixeo-gh-brand-sub,
 .navbar-brand .logo-icon,
 .navbar-brand .logo-text,
 .logo-wrap .logo-icon,
 .logo-wrap .logo-text,
-.fixeo-gh-brand-icon,
-/* CRITICAL: hide the "Fixeo" + "Artisans vérifiés" text spans — always */
-.fixeo-gh-brand-copy,
-.fixeo-gh-brand-text,
-.fixeo-gh-brand-sub {
+.fixeo-gh-brand-icon {
   display: none !important;
   visibility: hidden !important;
+  width: 0 !important;
+  height: 0 !important;
+  overflow: hidden !important;
 }
 
-/* ── 2. BRAND CONTAINER ── */
+/* ── 2. BRAND CONTAINER — clean flex, no overflow hidden ── */
 .navbar-brand,
 a.navbar-brand,
 .logo-wrap,
@@ -29,65 +30,89 @@ a.navbar-brand,
   text-decoration: none !important;
   flex-shrink: 0;
   padding: 0 !important;
+  background: transparent !important;
+  overflow: visible !important;
 }
 
-/* ── 3. DESKTOP HORIZONTAL LOGO — logo-fixeo-header.png ── */
-/* Used in: navbar-brand img.fixeo-logo-desktop (all HTML pages)
-            fixeo-gh-brand img.fixeo-logo-gh (mobile JS header) */
-
-img.fixeo-logo-desktop,
-img.fixeo-logo-gh,
-.navbar-brand img.fixeo-logo-img,
-.fixeo-gh-brand img.fixeo-logo-img {
-  height: 36px !important;
-  width: auto !important;
-  max-width: 200px !important;
-  min-width: 80px;
-  object-fit: contain !important;
-  object-position: left center !important;
-  display: block !important;
-
-  /* Transparent PNG — no background, no blend mode */
+/* ── 3. ALL LOGO IMAGES — shared base rules ── */
+.fixeo-logo-img,
+.navbar-brand img,
+.fixeo-gh-brand img,
+.logo-wrap img {
   background: transparent !important;
   mix-blend-mode: normal !important;
   filter: none !important;
   opacity: 1 !important;
-
-  /* Crisp rendering */
-  image-rendering: -webkit-optimize-contrast;
-  image-rendering: crisp-edges;
-
+  object-fit: contain !important;
+  object-position: left center !important;
+  display: block !important;
   flex-shrink: 0;
+  /* Remove any box that might come from inherited rules */
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
 }
 
-/* ── 4. MOBILE COMPACT LOGO (inside fixeo-gh-mobile-bar) ── */
-/* On mobile (≤768px), use a shorter height to save space */
+/* ── 4. DESKTOP HORIZONTAL LOGO (logo-fixeo-header.png = cropped logo-horizontal)
+        Used in: .navbar-brand img.fixeo-logo-desktop (all 18 HTML pages)
+        Used in: .fixeo-gh-brand img.fixeo-logo-gh (fixeo-header-global.js) ── */
+img.fixeo-logo-desktop,
+img.fixeo-logo-gh,
+.navbar-brand img.fixeo-logo-desktop,
+.fixeo-gh-brand img.fixeo-logo-gh {
+  height: 32px !important;
+  width: auto !important;
+  max-width: 190px !important;
+  min-width: 60px;
+}
+
+/* ── 5. MOBILE SQUARE ICON (logo-fixeo-icon.png — standalone icon if needed) ── */
+img.fixeo-logo-mobile-icon {
+  display: none !important; /* Replaced by horizontal logo in fixeo-gh-brand */
+}
+
+/* ── 6. REMOVE WHITE BOX FROM header-unified.css OVERRIDE ── */
+/* header-unified.css sets .navbar-brand .logo-icon { background: gradient }
+   We kill it completely */
+.navbar-brand .logo-icon,
+.logo-wrap .logo-icon {
+  display: none !important;
+  background: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+/* ── 7. RESPONSIVE ── */
+@media (max-width: 1024px) {
+  img.fixeo-logo-desktop,
+  img.fixeo-logo-gh {
+    height: 30px !important;
+    max-width: 170px !important;
+  }
+}
+
 @media (max-width: 768px) {
   img.fixeo-logo-desktop,
   img.fixeo-logo-gh,
-  .fixeo-gh-brand img.fixeo-logo-img {
-    height: 30px !important;
-    max-width: 160px !important;
+  .fixeo-gh-brand img {
+    height: 26px !important;
+    max-width: 140px !important;
   }
 }
 
 @media (max-width: 480px) {
   img.fixeo-logo-desktop,
   img.fixeo-logo-gh,
-  .fixeo-gh-brand img.fixeo-logo-img {
-    height: 26px !important;
-    max-width: 130px !important;
+  .fixeo-gh-brand img {
+    height: 24px !important;
+    max-width: 120px !important;
   }
 }
 
-/* ── 5. PREVENT OLD SQUARE ICON FROM SHOWING LARGE ── */
-img.fixeo-logo-mobile-icon {
-  /* Square icon — only show if explicitly used as standalone icon */
-  /* The fixeo-gh-brand now uses the horizontal logo instead */
-  display: none !important;
-}
+/* ══════════════════════════════════════════════
+   8. PREMIUM HEADER POLISH
+   ══════════════════════════════════════════════ */
 
-/* ── 6. PREMIUM HEADER POLISH ── */
 nav.navbar {
   height: 68px !important;
   min-height: 68px !important;
@@ -103,7 +128,6 @@ nav.navbar.scrolled {
   box-shadow: 0 4px 32px rgba(0,0,0,0.45) !important;
 }
 
-/* Nav links */
 nav.navbar .navbar-nav .nav-link {
   font-size: 0.875rem !important;
   font-weight: 500 !important;
@@ -119,7 +143,6 @@ nav.navbar .navbar-nav .nav-link.active {
   font-weight: 600 !important;
 }
 
-/* Dropdowns */
 nav.navbar .nav-dropdown {
   backdrop-filter: blur(20px) !important;
   background: rgba(18,18,28,0.95) !important;
@@ -140,7 +163,6 @@ nav.navbar .nav-dropdown-item:hover {
   background: rgba(255,255,255,0.08) !important;
 }
 
-/* CTA buttons */
 nav.navbar .btn-express,
 nav.navbar #register-btn,
 nav.navbar .btn-nav-primary {
@@ -186,7 +208,7 @@ nav.navbar .notif-btn {
   justify-content: center !important;
 }
 
-/* ── 7. MOBILE BAR (fixeo-gh) ── */
+/* ── 9. MOBILE BAR (fixeo-gh overlay) ── */
 .fixeo-gh-mobile-bar {
   height: 62px !important;
   padding: 0 16px !important;
@@ -201,4 +223,6 @@ nav.navbar .notif-btn {
   flex: 1;
   display: flex !important;
   align-items: center !important;
+  overflow: visible !important;
+  background: transparent !important;
 }
