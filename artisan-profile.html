@@ -89,36 +89,43 @@
       { display: none !important; width: 0 !important; height: 0 !important; min-width: 0 !important; flex: 0 !important; }
     .navbar-brand .logo-text, .logo-wrap .logo-text, .fixeo-gh-brand .logo-text
       { display: none !important; width: 0 !important; height: 0 !important; }
-    /* Brand container — no clipping */
+    /* Brand container — allow full logo width, no clipping */
     .navbar-brand, .logo-wrap
       { max-width: 220px !important; overflow: visible !important; gap: 0 !important; background: transparent !important; }
     .fixeo-gh-brand
-      { max-width: 60px !important; overflow: visible !important; gap: 0 !important; background: transparent !important; }
-    /* Desktop horizontal logo */
-    .navbar-brand img, .logo-wrap img, img.fixeo-logo-desktop {
-      display: block !important; height: 32px !important; width: auto !important;
-      max-width: 190px !important; min-width: 60px !important;
-      object-fit: contain !important; object-position: left center !important;
-      background: transparent !important; mix-blend-mode: normal !important;
-      filter: none !important; box-shadow: none !important; border: none !important;
-      flex: 0 0 auto !important; overflow: visible !important;
+      { max-width: 130px !important; overflow: visible !important; gap: 0 !important; background: transparent !important; }
+    /* Desktop horizontal logo — logo-horizontal.png shown via object-position crop */
+    .navbar-brand img.fixeo-logo-img, .logo-wrap img.fixeo-logo-img, img.fixeo-logo-img.fixeo-logo-desktop,
+    .navbar-brand img[src*="logo-horizontal"], .logo-wrap img[src*="logo-horizontal"] {
+      display: block !important;
+      height: 32px !important;
+      width: 115px !important;
+      object-fit: none !important;
+      object-position: -38px center !important;
+      background: transparent !important;
+      mix-blend-mode: normal !important;
+      filter: none !important;
+      box-shadow: none !important;
+      border: none !important;
+      flex: 0 0 auto !important;
+      overflow: hidden !important;
     }
-    /* Mobile square logo */
-    .fixeo-gh-brand img, img.fixeo-logo-mobile {
-      display: block !important; height: 40px !important; width: 40px !important;
-      object-fit: contain !important; object-position: center !important;
-      background: transparent !important; mix-blend-mode: normal !important;
-      filter: none !important; box-shadow: none !important; border: none !important;
-      flex: 0 0 auto !important; overflow: visible !important; border-radius: 0 !important;
-    }
-    @media (max-width: 768px) {
-      .navbar-brand img, .logo-wrap img, img.fixeo-logo-desktop { height: 26px !important; max-width: 150px !important; }
-      .navbar-brand, .logo-wrap { max-width: 160px !important; }
-      .fixeo-gh-brand img, img.fixeo-logo-mobile { height: 34px !important; width: 34px !important; }
-    }
-    @media (max-width: 480px) {
-      .navbar-brand img, .logo-wrap img, img.fixeo-logo-desktop { height: 24px !important; max-width: 130px !important; }
-      .fixeo-gh-brand img, img.fixeo-logo-mobile { height: 30px !important; width: 30px !important; }
+    /* Mobile bar logo */
+    .fixeo-gh-brand img.fixeo-logo-img, .fixeo-gh-brand img[src*="logo-horizontal"],
+    img.fixeo-logo-img[src*="logo-horizontal"].fixeo-logo-mobile,
+    .fixeo-gh-mobile-bar img.fixeo-logo-img {
+      display: block !important;
+      height: 28px !important;
+      width: 100px !important;
+      object-fit: none !important;
+      object-position: -33px center !important;
+      background: transparent !important;
+      mix-blend-mode: normal !important;
+      filter: none !important;
+      box-shadow: none !important;
+      border: none !important;
+      flex: 0 0 auto !important;
+      overflow: hidden !important;
     }
   </style>
 </head>
@@ -127,7 +134,7 @@
 
 <nav class="navbar" role="navigation" aria-label="Navigation principale">
   <a href="/index.html" class="navbar-brand logo-wrap" aria-label="Fixeo — Accueil">
-    <img src="/img/logo-fixeo-header.png" alt="Fixeo" class="fixeo-logo-img fixeo-logo-desktop" width="256" height="80" loading="eager">
+    <img src="/img/logo-horizontal.png" alt="Fixeo" class="fixeo-logo-img" width="auto" height="32" loading="eager">
   </a>
 
   <nav class="navbar-nav" aria-label="Menu principal">
