@@ -1,0 +1,565 @@
+/* ============================================================
+   testimonials-cta-premium.css  v1.0
+   Ultra-premium Uber/Airbnb testimonials + final CTA
+   CSS overrides only — zero HTML changes, zero JS logic.
+   Loaded last → wins all cascade conflicts.
+   ============================================================ */
+
+/* ══════════════════════════════════════════════════════════
+   SECTION 1 — TESTIMONIALS  ultra premium
+   ══════════════════════════════════════════════════════════ */
+
+/* ── Section wrapper ─────────────────────────────── */
+html body .testimonial-section {
+  padding: 80px 0 90px !important;
+  background:
+    radial-gradient(ellipse 70% 50% at 20% 50%, rgba(131,58,180,0.10) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 50% at 80% 50%, rgba(225,48,108,0.08) 0%, transparent 70%),
+    linear-gradient(180deg, #0d0d14 0%, #0a0a10 100%) !important;
+  overflow: hidden !important;
+}
+
+/* ── Section header ──────────────────────────────── */
+html body .testimonial-section .section-header {
+  text-align: center !important;
+  margin-bottom: 40px !important;
+}
+
+html body .testimonial-section .section-tag {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  padding: 5px 14px !important;
+  border-radius: 999px !important;
+  font-size: 0.72rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.10em !important;
+  text-transform: uppercase !important;
+  background: rgba(225,48,108,0.12) !important;
+  border: 1px solid rgba(225,48,108,0.30) !important;
+  color: #ff85b0 !important;
+  margin-bottom: 14px !important;
+}
+
+html body .testimonial-section .testimonial-title,
+html body .testimonial-section h2 {
+  font-size: clamp(1.55rem, 3.2vw, 2.2rem) !important;
+  font-weight: 800 !important;
+  color: #fff !important;
+  line-height: 1.22 !important;
+  margin: 0 0 12px !important;
+  letter-spacing: -0.02em !important;
+}
+
+html body .testimonial-section .section-header p {
+  font-size: 1rem !important;
+  color: rgba(255,255,255,0.52) !important;
+  margin: 0 !important;
+  max-width: 520px !important;
+  margin: 0 auto !important;
+}
+
+html body .testimonial-section .social-proof-bar {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  font-size: 0.78rem !important;
+  color: rgba(255,255,255,0.44) !important;
+  margin-bottom: 14px !important;
+  letter-spacing: 0.01em !important;
+}
+
+/* ── Grid → horizontal scroll row ───────────────── */
+html body .testimonial-section .testimonials-grid {
+  display: flex !important;
+  flex-direction: row !important;
+  gap: 20px !important;
+  overflow-x: auto !important;
+  overflow-y: visible !important;
+  scroll-snap-type: x mandatory !important;
+  -webkit-overflow-scrolling: touch !important;
+  scrollbar-width: none !important;
+  padding: 12px 4px 24px !important;
+  /* negative margin to extend past container on mobile */
+  margin: 0 !important;
+  /* Fade edges on desktop */
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0px,
+    #000 40px,
+    #000 calc(100% - 40px),
+    transparent 100%
+  ) !important;
+  mask-image: linear-gradient(
+    to right,
+    transparent 0px,
+    #000 40px,
+    #000 calc(100% - 40px),
+    transparent 100%
+  ) !important;
+}
+
+html body .testimonial-section .testimonials-grid::-webkit-scrollbar {
+  display: none !important;
+}
+
+/* ── Show ALL cards (override display:none on cards 4-6) ── */
+html body .testimonial-section .testimonial-card {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 14px !important;
+  flex: 0 0 320px !important;
+  width: 320px !important;
+  min-width: 320px !important;
+  max-width: 320px !important;
+  padding: 24px !important;
+  border-radius: 20px !important;
+  scroll-snap-align: start !important;
+  cursor: default !important;
+  /* Glass premium */
+  background: rgba(255,255,255,0.045) !important;
+  border: 1px solid rgba(255,255,255,0.09) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  box-shadow:
+    0 4px 28px rgba(0,0,0,0.24),
+    inset 0 1px 0 rgba(255,255,255,0.07) !important;
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+/* Gradient border shimmer on hover */
+html body .testimonial-section .testimonial-card::before {
+  content: '' !important;
+  position: absolute !important;
+  inset: 0 !important;
+  border-radius: 20px !important;
+  padding: 1px !important;
+  background: linear-gradient(135deg, rgba(225,48,108,0), rgba(131,58,180,0.35), rgba(225,48,108,0)) !important;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0) !important;
+  -webkit-mask-composite: xor !important;
+  mask-composite: exclude !important;
+  opacity: 0 !important;
+  transition: opacity 0.3s ease !important;
+  pointer-events: none !important;
+}
+
+html body .testimonial-section .testimonial-card:hover::before {
+  opacity: 1 !important;
+}
+
+html body .testimonial-section .testimonial-card:hover {
+  transform: translateY(-5px) !important;
+  box-shadow:
+    0 16px 48px rgba(0,0,0,0.34),
+    0 0 0 1px rgba(225,48,108,0.14),
+    inset 0 1px 0 rgba(255,255,255,0.10) !important;
+  border-color: rgba(255,255,255,0.14) !important;
+}
+
+/* ── Rating row ──────────────────────────────────── */
+html body .testimonial-section .testimonial-stars {
+  display: flex !important;
+  align-items: center !important;
+  gap: 2px !important;
+  font-size: 1rem !important;
+  color: #ffd166 !important;
+  line-height: 1 !important;
+  margin: 0 !important;
+}
+
+/* ── Quote text ──────────────────────────────────── */
+html body .testimonial-section .testimonial-quote {
+  font-size: 0.90rem !important;
+  line-height: 1.60 !important;
+  color: rgba(255,255,255,0.82) !important;
+  font-style: italic !important;
+  flex: 1 !important;
+  -webkit-line-clamp: unset !important;
+  overflow: visible !important;
+  display: block !important;
+  position: relative !important;
+  padding-left: 14px !important;
+}
+
+html body .testimonial-section .testimonial-quote::before {
+  content: '"' !important;
+  position: absolute !important;
+  left: 0 !important;
+  top: -4px !important;
+  font-size: 2rem !important;
+  line-height: 1 !important;
+  color: rgba(225,48,108,0.55) !important;
+  font-family: Georgia, serif !important;
+  font-style: normal !important;
+}
+
+html body .testimonial-section .testimonial-quote .quote-mark {
+  display: none !important;  /* hide original quote mark — ours is ::before */
+}
+
+/* ── Author row ──────────────────────────────────── */
+html body .testimonial-section .testimonial-author {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  margin-top: auto !important;
+  padding-top: 14px !important;
+  border-top: 1px solid rgba(255,255,255,0.07) !important;
+}
+
+/* ── Trust badge ─────────────────────────────────── */
+html body .testimonial-section .trust-badges {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  font-size: 0.70rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.04em !important;
+  color: #5ce65c !important;
+  background: rgba(92,230,92,0.10) !important;
+  border: 1px solid rgba(92,230,92,0.22) !important;
+  border-radius: 999px !important;
+  padding: 3px 10px !important;
+  width: fit-content !important;
+}
+
+/* ── Footer (star summary) ───────────────────────── */
+html body .testimonial-section .testimonial-footer {
+  display: none !important;
+}
+
+/* ══════════════════════════════════════════════════════════
+   AUTO-SCROLL — gentle, pauses on hover (JS-free CSS animation)
+   Uses scroll-behavior; actual auto-scroll requires JS
+   We add a CSS translate animation on the grid wrapper
+   ══════════════════════════════════════════════════════════ */
+
+/* Desktop only auto-scroll via CSS animation */
+@media (min-width: 769px) {
+  html body .testimonial-section .testimonials-grid {
+    animation: testi-auto-scroll 32s linear infinite !important;
+    -webkit-mask-image: none !important;
+    mask-image: none !important;
+  }
+
+  html body .testimonial-section .testimonials-grid:hover {
+    animation-play-state: paused !important;
+  }
+}
+
+/* Note: CSS-only scroll animation on overflow containers doesn't work natively.
+   We'll use a JS nudge approach via data-autoscroll attribute instead.
+   Disable animation — use JS below. */
+@media (min-width: 769px) {
+  html body .testimonial-section .testimonials-grid {
+    animation: none !important;
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0px,
+      #000 60px,
+      #000 calc(100% - 60px),
+      transparent 100%
+    ) !important;
+    mask-image: linear-gradient(
+      to right,
+      transparent 0px,
+      #000 60px,
+      #000 calc(100% - 60px),
+      transparent 100%
+    ) !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+   MOBILE ≤768px — testimonials
+   ══════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+  html body .testimonial-section {
+    padding: 56px 0 64px !important;
+  }
+  html body .testimonial-section .container {
+    padding: 0 !important;
+  }
+  html body .testimonial-section .section-header {
+    padding: 0 20px !important;
+    margin-bottom: 28px !important;
+  }
+  html body .testimonial-section .testimonials-grid {
+    padding: 8px 20px 20px !important;
+    gap: 14px !important;
+    -webkit-mask-image: none !important;
+    mask-image: none !important;
+  }
+  html body .testimonial-section .testimonial-card {
+    flex: 0 0 280px !important;
+    width: 280px !important;
+    min-width: 280px !important;
+    max-width: 280px !important;
+    padding: 18px !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+   SECTION 2 — FINAL CTA   ultra premium
+   ══════════════════════════════════════════════════════════ */
+
+/* ── Section wrapper ─────────────────────────────── */
+html body .final-cta-section {
+  padding: 100px 0 110px !important;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 50%, rgba(225,48,108,0.14) 0%, transparent 65%),
+    radial-gradient(ellipse 50% 80% at 20% 30%, rgba(131,58,180,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 60% at 80% 70%, rgba(225,48,108,0.08) 0%, transparent 55%),
+    linear-gradient(180deg, #0a0a10 0%, #0d0d18 100%) !important;
+  text-align: center !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+/* Ambient glow ring */
+html body .final-cta-section::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: min(700px, 90vw) !important;
+  height: min(700px, 90vw) !important;
+  border-radius: 50% !important;
+  background: radial-gradient(circle, rgba(225,48,108,0.09) 0%, transparent 70%) !important;
+  pointer-events: none !important;
+  z-index: 0 !important;
+}
+
+html body .final-cta-section > .container {
+  position: relative !important;
+  z-index: 1 !important;
+  max-width: 720px !important;
+  margin: 0 auto !important;
+}
+
+/* ── Inner block ─────────────────────────────────── */
+html body .final-cta-section .final-cta {
+  background: rgba(255,255,255,0.03) !important;
+  border: 1px solid rgba(255,255,255,0.10) !important;
+  border-radius: 28px !important;
+  padding: 56px 48px !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  box-shadow:
+    0 8px 60px rgba(0,0,0,0.35),
+    0 0 0 1px rgba(225,48,108,0.12),
+    inset 0 1px 0 rgba(255,255,255,0.08) !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+/* Inner glow highlight */
+html body .final-cta-section .final-cta::after {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: 60% !important;
+  height: 1px !important;
+  background: linear-gradient(90deg, transparent, rgba(225,48,108,0.6), rgba(131,58,180,0.6), transparent) !important;
+  pointer-events: none !important;
+}
+
+/* ── Urgency pill ────────────────────────────────── */
+html body .final-cta-section .final-cta .urgency {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  padding: 6px 18px !important;
+  border-radius: 999px !important;
+  font-size: 0.74rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+  color: #ff85b0 !important;
+  background: rgba(225,48,108,0.10) !important;
+  border: 1px solid rgba(225,48,108,0.26) !important;
+  margin-bottom: 22px !important;
+}
+
+/* ── Main title ──────────────────────────────────── */
+html body .final-cta-section .final-cta h2,
+html body .final-cta-section #final-cta-title {
+  font-size: clamp(1.65rem, 3.5vw, 2.55rem) !important;
+  font-weight: 800 !important;
+  color: #fff !important;
+  line-height: 1.20 !important;
+  letter-spacing: -0.025em !important;
+  margin: 0 0 16px !important;
+  text-shadow: 0 2px 20px rgba(225,48,108,0.25) !important;
+}
+
+/* Gradient accent on last word */
+html body .final-cta-section .final-cta h2 strong,
+html body .final-cta-section .final-cta h2 em {
+  font-style: normal !important;
+  background: linear-gradient(135deg, #ff6b9e, #c97ff5) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+}
+
+/* ── Subtitle ────────────────────────────────────── */
+html body .final-cta-section .final-cta .subtitle {
+  font-size: 1.05rem !important;
+  color: rgba(255,255,255,0.56) !important;
+  line-height: 1.65 !important;
+  margin: 0 0 36px !important;
+  max-width: 480px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+/* ── CTA buttons row ─────────────────────────────── */
+html body .final-cta-section .final-cta-actions {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 14px !important;
+  flex-wrap: wrap !important;
+  margin-bottom: 24px !important;
+}
+
+/* Primary CTA */
+html body .final-cta-section .final-cta .cta-main {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  height: 56px !important;
+  padding: 0 32px !important;
+  border-radius: 999px !important;
+  border: none !important;
+  cursor: pointer !important;
+  font-size: 1rem !important;
+  font-weight: 700 !important;
+  color: #fff !important;
+  background: linear-gradient(135deg, #E1306C 0%, #833AB4 100%) !important;
+  box-shadow:
+    0 4px 24px rgba(225,48,108,0.40),
+    0 0 0 1px rgba(225,48,108,0.30),
+    inset 0 1px 0 rgba(255,255,255,0.18) !important;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease !important;
+  white-space: nowrap !important;
+  letter-spacing: 0.01em !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+html body .final-cta-section .final-cta .cta-main:hover {
+  transform: translateY(-2px) scale(1.02) !important;
+  box-shadow:
+    0 10px 36px rgba(225,48,108,0.50),
+    0 0 0 1px rgba(225,48,108,0.40),
+    inset 0 1px 0 rgba(255,255,255,0.22) !important;
+  filter: brightness(1.08) !important;
+}
+
+html body .final-cta-section .final-cta .cta-main:active {
+  transform: translateY(0) scale(0.99) !important;
+}
+
+/* Secondary CTA */
+html body .final-cta-section .final-cta .cta-secondary-alt {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 7px !important;
+  height: 56px !important;
+  padding: 0 24px !important;
+  border-radius: 999px !important;
+  cursor: pointer !important;
+  font-size: 0.93rem !important;
+  font-weight: 600 !important;
+  color: rgba(255,255,255,0.84) !important;
+  background: rgba(255,255,255,0.06) !important;
+  border: 1px solid rgba(255,255,255,0.14) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.08) !important;
+  transition: background 0.18s, border-color 0.18s, transform 0.14s !important;
+  white-space: nowrap !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+html body .final-cta-section .final-cta .cta-secondary-alt:hover {
+  background: rgba(255,255,255,0.10) !important;
+  border-color: rgba(255,255,255,0.22) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* ── Microtrust line ─────────────────────────────── */
+html body .final-cta-section .final-cta .final-cta-microtrust {
+  font-size: 0.82rem !important;
+  color: rgba(255,255,255,0.36) !important;
+  margin: 0 0 6px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+}
+
+html body .final-cta-section .final-cta .final-cta-microtrust::before {
+  content: '⚡' !important;
+  font-size: 0.78rem !important;
+}
+
+/* ── Proof line ──────────────────────────────────── */
+html body .final-cta-section .final-cta .cta-proof {
+  font-size: 0.76rem !important;
+  color: rgba(255,255,255,0.28) !important;
+  letter-spacing: 0.04em !important;
+  margin: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 10px !important;
+}
+
+html body .final-cta-section .final-cta .cta-proof::before,
+html body .final-cta-section .final-cta .cta-proof::after {
+  content: '·' !important;
+  color: rgba(255,255,255,0.16) !important;
+}
+
+/* ══════════════════════════════════════════════════════════
+   MOBILE ≤768px — final CTA
+   ══════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+  html body .final-cta-section {
+    padding: 64px 0 72px !important;
+  }
+  html body .final-cta-section .final-cta {
+    padding: 36px 24px 40px !important;
+    border-radius: 20px !important;
+    margin: 0 16px !important;
+  }
+  html body .final-cta-section .final-cta h2,
+  html body .final-cta-section #final-cta-title {
+    font-size: clamp(1.45rem, 5.5vw, 2rem) !important;
+  }
+  html body .final-cta-section .final-cta .subtitle {
+    font-size: 0.94rem !important;
+    margin-bottom: 28px !important;
+  }
+  html body .final-cta-section .final-cta-actions {
+    flex-direction: column !important;
+    gap: 10px !important;
+    align-items: stretch !important;
+  }
+  html body .final-cta-section .final-cta .cta-main,
+  html body .final-cta-section .final-cta .cta-secondary-alt {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+}
