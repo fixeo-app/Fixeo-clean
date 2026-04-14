@@ -306,6 +306,45 @@
     }
   </style>
   <link rel="stylesheet" href="css/header-logo-premium.css?v=hlp5">
+  <!-- ══ LOGO OVERRIDE — image-only, no emoji, no text ══ -->
+  <style id="fixeo-logo-override">
+    /* Kill legacy logo-icon and logo-text */
+    .navbar-brand .logo-icon, .logo-wrap .logo-icon, .fixeo-gh-brand .logo-icon
+      { display: none !important; width: 0 !important; height: 0 !important; min-width: 0 !important; flex: 0 !important; }
+    .navbar-brand .logo-text, .logo-wrap .logo-text, .fixeo-gh-brand .logo-text
+      { display: none !important; width: 0 !important; height: 0 !important; }
+    /* Brand container — no clipping */
+    .navbar-brand, .logo-wrap
+      { max-width: 220px !important; overflow: visible !important; gap: 0 !important; background: transparent !important; }
+    .fixeo-gh-brand
+      { max-width: 60px !important; overflow: visible !important; gap: 0 !important; background: transparent !important; }
+    /* Desktop horizontal logo */
+    .navbar-brand img, .logo-wrap img, img.fixeo-logo-desktop {
+      display: block !important; height: 32px !important; width: auto !important;
+      max-width: 190px !important; min-width: 60px !important;
+      object-fit: contain !important; object-position: left center !important;
+      background: transparent !important; mix-blend-mode: normal !important;
+      filter: none !important; box-shadow: none !important; border: none !important;
+      flex: 0 0 auto !important; overflow: visible !important;
+    }
+    /* Mobile square logo */
+    .fixeo-gh-brand img, img.fixeo-logo-mobile {
+      display: block !important; height: 40px !important; width: 40px !important;
+      object-fit: contain !important; object-position: center !important;
+      background: transparent !important; mix-blend-mode: normal !important;
+      filter: none !important; box-shadow: none !important; border: none !important;
+      flex: 0 0 auto !important; overflow: visible !important; border-radius: 0 !important;
+    }
+    @media (max-width: 768px) {
+      .navbar-brand img, .logo-wrap img, img.fixeo-logo-desktop { height: 26px !important; max-width: 150px !important; }
+      .navbar-brand, .logo-wrap { max-width: 160px !important; }
+      .fixeo-gh-brand img, img.fixeo-logo-mobile { height: 34px !important; width: 34px !important; }
+    }
+    @media (max-width: 480px) {
+      .navbar-brand img, .logo-wrap img, img.fixeo-logo-desktop { height: 24px !important; max-width: 130px !important; }
+      .fixeo-gh-brand img, img.fixeo-logo-mobile { height: 30px !important; width: 30px !important; }
+    }
+  </style>
 </head>
 <body>
 

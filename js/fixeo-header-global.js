@@ -115,7 +115,7 @@
       <div class="fixeo-gh-mobile" data-page="${esc(path)}">
         <div class="fixeo-gh-mobile-bar">
           <a class="fixeo-gh-brand" href="index.html" aria-label="Fixeo — Accueil">
-            <img src="img/logo-fixeo-header.png" alt="Fixeo" class="fixeo-logo-img fixeo-logo-gh" width="256" height="80" loading="eager">
+            <img src="img/logo-square.png" alt="Fixeo" class="fixeo-logo-img fixeo-logo-mobile" width="40" height="40" loading="eager">
           </a>
           <div class="fixeo-gh-actions">
             <button class="fixeo-gh-icon-btn fixeo-gh-search" type="button" aria-label="Recherche">
