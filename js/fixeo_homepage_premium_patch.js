@@ -94,78 +94,174 @@
     return real.concat(seeds);
   }
 
-  /* ── Build pvc-card (no inline onclick — delegation handles clicks) ── */
+  
+  /* ─── Moroccan pricing by service ──────────────────────────── */
+  var MAR_PRICES = {
+    plomberie:    { from: 80,  to: 300,  label: '80–300 MAD' },
+    electricite:  { from: 100, to: 400,  label: '100–400 MAD' },
+    menuiserie:   { from: 150, to: 600,  label: '150–600 MAD' },
+    peinture:     { from: 100, to: 500,  label: '100–500 MAD' },
+    nettoyage:    { from: 60,  to: 250,  label: '60–250 MAD' },
+    climatisation:{ from: 150, to: 600,  label: '150–600 MAD' },
+    maconnerie:   { from: 200, to: 800,  label: '200–800 MAD' },
+    carrelage:    { from: 120, to: 450,  label: '120–450 MAD' },
+    jardinage:    { from: 80,  to: 300,  label: '80–300 MAD' },
+    serrurerie:   { from: 60,  to: 250,  label: '60–250 MAD' },
+    demenagement: { from: 300, to: 1200, label: '300–1 200 MAD' },
+    bricolage:    { from: 80,  to: 350,  label: '80–350 MAD' },
+    etancheite:   { from: 200, to: 700,  label: '200–700 MAD' },
+    vitrerie:     { from: 100, to: 400,  label: '100–400 MAD' },
+    soudure:      { from: 150, to: 500,  label: '150–500 MAD' },
+    informatique: { from: 80,  to: 300,  label: '80–300 MAD' }
+  };
+
+  function _getPricing(a) {
+    var cat  = (a.category || a.service || '').toLowerCase().trim();
+    var info = MAR_PRICES[cat];
+    if (a.price_from || a.priceFrom) {
+      var pf = parseInt(a.price_from || a.priceFrom, 10);
+      if (!isNaN(pf) && pf > 0) return { from: pf, label: 'À partir de ' + pf + ' MAD' };
+    }
+    if (info) return { from: info.from, label: 'À partir de ' + info.from + ' MAD', range: info.label };
+    return { from: 150, label: 'À partir de 150 MAD' };
+  }
+
+  function _responseTimeLabel(rt) {
+    rt = parseInt(rt, 10);
+    if (!rt || rt >= 999) return null;
+    if (rt <= 10) return 'Répond en 10 min';
+    if (rt <= 30) return 'Répond en ' + rt + ' min';
+    if (rt <= 60) return 'Répond en 1h';
+    return 'Répond en ' + Math.round(rt / 60) + 'h';
+  }
+
+  function _missionsLabel(a) {
+    var m = parseInt(a.missionsCompleted || a.missions_count || a.reviewCount || a.reviews || 0, 10);
+    if (m >= 200) return m + '+ missions';
+    if (m >= 50)  return m + ' missions';
+    if (m >= 10)  return m + ' missions';
+    return null;
+  }
+
+  /* ─── Premium card builder v2 ───────────────────────────────── */
   function _buildCard(a, idx) {
-    var avail   = (a.availability||'').toLowerCase();
-    var isAvail = avail==='available';
-    var isToday = avail==='available_today';
-    var catIcon = CAT_ICONS[a.category]||'🔧';
-    var catLbl  = CAT_LABELS[a.category]||(a.service||a.category||'Service');
-    var rating  = parseFloat(a.rating)||0;
-    var reviews = parseInt(a.reviewCount||0,10);
-    var trust   = parseInt(a.trustScore||0,10);
-    var rt      = parseInt(a.responseTime||999,10);
-    var price   = parseInt(a.priceFrom||150,10);
-    var unit    = a.priceUnit||'intervention';
-    var isReal  = !a.claimable && !a._isSeed;
-    var isVer   = a.verified||a.certified||(a.badges||[]).indexOf('verified')>=0||trust>=85;
+    idx = idx || 0;
+    var cat      = (a.category || a.service || '').toLowerCase();
+    var catIcon  = CAT_ICONS[cat] || '🔧';
+    var catLbl   = CAT_LABELS[cat] || (a.service || a.category || 'Service');
+    var rating   = parseFloat(a.rating) || 0;
+    var reviews  = parseInt(a.reviewCount || a.reviews || a.review_count || 0, 10);
+    var trust    = parseInt(a.trustScore || 0, 10);
+    var rt       = parseInt(a.responseTime || 999, 10);
+    var isReal   = !a.claimable && !a._isSeed;
+    var isVer    = !!(a.verified || a.certified || trust >= 85);
+    var isClaimed= !!(a.claimed);
+    var avail    = (a.availability || '').toLowerCase();
+    var isAvail  = avail === 'available' || a.available;
+    var isToday  = avail === 'available_today';
+    var pricing  = _getPricing(a);
+    var rtLabel  = _responseTimeLabel(rt);
+    var misLabel = _missionsLabel(a);
 
-    var initials = _initials(a.name);
-    var src = a.avatar||a.photo||a.image||'';
-    var avatarHtml = src
-      ? '<img class="pvc-avatar-img" src="'+src+'" alt="'+(a.name||'')+'" loading="lazy"'+
-        ' onerror="this.onerror=null;this.style.display=\'none\';this.parentNode.querySelector(\'.pvc-avatar-initials\').style.display=\'flex\';">'+
-        '<span class="pvc-avatar-initials" style="display:none">'+initials+'</span>'
-      : '<span class="pvc-avatar-initials">'+initials+'</span>';
+    /* Avatar */
+    var initials  = _initials(a.name);
+    var avatarSrc = a.avatar || a.photo || a.photo_url || '';
+    var avatarHtml = avatarSrc
+      ? '<img class="pvc-avatar-img" src="' + avatarSrc + '" alt="' + _esc(a.name) + '" loading="lazy"' +
+        ' onerror="this.onerror=null;this.style.display=\'none\';var s=this.parentNode.querySelector(\'.pvc-avatar-initials\');if(s)s.style.display=\'flex\';">' +
+        '<span class="pvc-avatar-initials" style="display:none">' + initials + '</span>'
+      : '<span class="pvc-avatar-initials">' + initials + '</span>';
 
-    var availPill = isAvail
-      ? '<span class="pvc-avail pvc-avail--on">🟢 Disponible</span>'
-      : isToday ? '<span class="pvc-avail pvc-avail--today">🟡 Auj.</span>'
-                : '<span class="pvc-avail pvc-avail--off">Réservation</span>';
+    /* Availability badge */
+    var availHtml = isAvail
+      ? '<span class="pvc-avail-badge pvc-avail-badge--on">🟢 Disponible</span>'
+      : isToday
+        ? '<span class="pvc-avail-badge pvc-avail-badge--today">🟡 Aujourd\'hui</span>'
+        : '<span class="pvc-avail-badge pvc-avail-badge--off">Sur RDV</span>';
 
-    var badges = [];
-    if (isVer)     badges.push('<span class="pvc-badge pvc-badge--verified">✔ Vérifié</span>');
-    if (rt<=30)    badges.push('<span class="pvc-badge pvc-badge--fast">⚡ Rapide</span>');
-    if (trust>=90) badges.push('<span class="pvc-badge pvc-badge--premium">🏅 Premium</span>');
+    /* Rating stars */
+    var starsHtml;
+    if (rating > 0) {
+      var s = '', rv = Math.round(rating * 2) / 2;
+      for (var i = 1; i <= 5; i++) s += i <= rv ? '★' : (rv >= i - 0.5 ? '½' : '☆');
+      starsHtml = '<span class="pvc-stars-v2">' + s + '</span>' +
+                  '<span class="pvc-rating-num">' + rating.toFixed(1) + '</span>' +
+                  (reviews > 0 ? '<span class="pvc-reviews-count">(' + reviews + ' avis)</span>' : '');
+    } else {
+      starsHtml = '<span class="pvc-new-label">✨ Nouveau</span>';
+    }
 
-    var starsHtml = rating>0
-      ? '<span class="pvc-stars">'+_stars(rating)+'</span>'+
-        '<span class="pvc-rating-val">'+rating.toFixed(1)+'</span>'+
-        (reviews>0?'<span class="pvc-reviews">('+reviews+')</span>':'')
-      : '<span class="pvc-rating-empty">Nouveau</span>';
+    /* Stat chips: response time + missions */
+    var chips = '';
+    if (rtLabel) chips += '<span class="pvc-info-chip chip-fast">⚡ ' + rtLabel + '</span>';
+    if (misLabel) chips += '<span class="pvc-info-chip chip-missions">✅ ' + misLabel + '</span>';
+    if (!rtLabel && !misLabel && isAvail) chips += '<span class="pvc-info-chip chip-urgent">🚀 Intervention rapide</span>';
 
-    var trustBar = trust>0
-      ? '<div class="pvc-trust-bar"><div class="pvc-trust-fill" style="width:'+trust+'%"></div></div>'+
-        '<span class="pvc-trust-label">'+trust+'%</span>' : '';
+    /* Trust badges */
+    var badges = '';
+    if (isVer)     badges += '<span class="pvc-badge-v2 pvc-badge-v2--verified">✔ Vérifié Fixeo</span>';
+    if (trust>=90) badges += '<span class="pvc-badge-v2 pvc-badge-v2--premium">🏅 Premium</span>';
+    if (!isVer && isClaimed) badges += '<span class="pvc-badge-v2 pvc-badge-v2--claim">🏷️ Revendiqué</span>';
+    if (!isVer && !isClaimed) badges += '<span class="pvc-badge-v2 pvc-badge-v2--claim">🏷️ Profil à revendiquer</span>';
 
-    /* Store artisan data as JSON on the article for delegation */
-    var dataAttr = ' data-artisan=\''+JSON.stringify(a).replace(/'/g,'&#39;')+'\'';
+    /* Data attribute (for click delegation) */
+    var dataAttr;
+    try {
+      dataAttr = ' data-artisan=\'' + JSON.stringify(a).replace(/'/g, '&#39;') + '\'';
+    } catch(_) { dataAttr = ''; }
 
-    return '<article class="pvc-card fhp-card'+(isReal?' pvc-card--real':'')+
-        '" data-artisan-id="'+a.id+'"'+dataAttr+
-        ' tabindex="0" role="button" aria-label="Artisan '+(a.name||'')+'"'+
-        ' style="--anim-delay:'+idx+';">'+
-      '<div class="pvc-top">'+
-        '<div class="pvc-avatar">'+avatarHtml+'</div>'+
-        '<div class="pvc-identity">'+
-          '<h3 class="pvc-name">'+(a.name||'')+'</h3>'+
-          '<p class="pvc-meta"><span class="pvc-cat-icon">'+catIcon+'</span>'+catLbl+' · <span class="pvc-city">📍 '+(a.city||'Maroc')+'</span></p>'+
-        '</div>'+availPill+
-      '</div>'+
-      (badges.slice(0,2).length?'<div class="pvc-badges">'+badges.slice(0,2).join('')+'</div>':'')+
-      '<div class="pvc-rating-row">'+
-        '<div class="pvc-rating">'+starsHtml+'</div>'+
-        (trust>0?'<div class="pvc-trust">'+trustBar+'</div>':'')+
-      '</div>'+
-      '<div class="pvc-pricing">'+
-        '<span class="pvc-price"><span class="fpb-from">'+(a.priceLabel||('\u00c0 partir de '+price+' MAD'))+'</span><span class="pvc-unit">'+((a.priceRange)?'Fourchette '+a.priceRange:'Prix indicatif march\u00e9')+'</span></span>'+
-        (rt<999?'<span class="pvc-rt">⏱ '+rt+' min</span>':'')+
-      '</div>'+
-      '<div class="pvc-actions">'+
-        '<button class="pvc-btn-primary fhp-btn-reserve" type="button" aria-label="Réserver '+(a.name||'')+'">📅 Réserver</button>'+
-        '<button class="pvc-btn-secondary fhp-btn-profile" type="button" aria-label="Voir profil de '+(a.name||'')+'">Voir profil</button>'+
-      '</div>'+
+    return '<article class="pvc-card fhp-card' + (isReal ? ' pvc-card--real' : '') + '"' +
+      ' data-artisan-id="' + a.id + '"' + dataAttr +
+      ' tabindex="0" role="button"' +
+      ' aria-label="' + _esc(a.name) + ', ' + catLbl + '"' +
+      ' style="--anim-delay:' + idx + '">' +
+
+      /* ── Header ── */
+      '<div class="pvc-card-header">' +
+        '<div class="pvc-avatar' + (isVer ? ' pvc-avatar--verified' : '') + '">' + avatarHtml + '</div>' +
+        '<div class="pvc-identity">' +
+          '<h3 class="pvc-name">' + _esc(a.name || '—') + '</h3>' +
+          '<div class="pvc-meta-row">' +
+            '<span class="pvc-cat-pill">' + catIcon + ' ' + catLbl + '</span>' +
+            '<span class="pvc-city-pill">📍 ' + _esc(a.city || 'Maroc') + '</span>' +
+          '</div>' +
+        '</div>' +
+        availHtml +
+      '</div>' +
+
+      /* ── Badges ── */
+      (badges ? '<div class="pvc-badges-v2">' + badges + '</div>' : '') +
+
+      /* ── Divider ── */
+      '<div class="pvc-divider"></div>' +
+
+      /* ── Stats ── */
+      '<div class="pvc-stats">' +
+        '<div class="pvc-rating-block">' + starsHtml + '</div>' +
+      '</div>' +
+
+      /* ── Info chips ── */
+      (chips ? '<div class="pvc-info-bar">' + chips + '</div>' : '') +
+
+      /* ── Footer: price + CTAs ── */
+      '<div class="pvc-footer">' +
+        '<div class="pvc-price-block">' +
+          '<span class="pvc-price-from">À partir de</span>' +
+          '<span class="pvc-price-amount">' + pricing.from + '<span class="price-currency">MAD</span></span>' +
+        '</div>' +
+        '<div class="pvc-cta-row">' +
+          '<button class="pvc-btn-reserve-v2 fhp-btn-reserve" type="button">📅 Réserver</button>' +
+          '<button class="pvc-btn-profile-v2 fhp-btn-profile" type="button">Profil</button>' +
+        '</div>' +
+      '</div>' +
     '</article>';
+  }
+
+  /* esc helper for v2 */
+  function _esc(s) {
+    return String(s || '').replace(/[&<>"']/g, function(c) {
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
   }
 
   /* ── Actions ── */

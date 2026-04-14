@@ -199,91 +199,132 @@
 </div>`;
   }
 
-  function renderVedetteCard(a) {
-    const avail     = (a.availability || '').toLowerCase();
-    const isAvail   = avail === 'available';
-    const isToday   = avail === 'available_today';
-    const catIcon   = CAT_ICONS[a.category] || '🔧';
-    const catLbl    = CAT_LABELS[a.category] || (a.service || a.category || 'Service');
-    const rating    = parseFloat(a.rating) || 0;
-    const hasRating = rating > 0;
-    const reviews   = parseInt(a.reviewCount || a.reviews || 0, 10);
-    const trust     = parseInt(a.trustScore || 0, 10);
-    const rt        = parseInt(a.responseTime || 999, 10);
-    const price     = parseInt(a.priceFrom || 150, 10);
-    const unit      = a.priceUnit || 'intervention';
-    const isReal    = !a.claimable && !a._isSeed;
-    const isVerified = a.verified || a.certified || (a.badges || []).includes('verified') || trust >= 85;
+  
+  /* ─── Moroccan pricing ──────────────────────────────────────── */
+  const MAR_PRICES = {
+    plomberie:    { from: 80  }, electricite:  { from: 100 }, menuiserie:   { from: 150 },
+    peinture:     { from: 100 }, nettoyage:    { from: 60  }, climatisation:{ from: 150 },
+    maconnerie:   { from: 200 }, carrelage:    { from: 120 }, jardinage:    { from: 80  },
+    serrurerie:   { from: 60  }, demenagement: { from: 300 }, bricolage:    { from: 80  },
+    etancheite:   { from: 200 }, vitrerie:     { from: 100 }, soudure:      { from: 150 },
+    informatique: { from: 80  }
+  };
 
-    /* Avatar: image or initials fallback */
-    const initials = _initials(a.name);
-    const avatarSrc = a.avatar || a.photo || a.image || '';
+  function _getPriceFrom(a) {
+    const pf = parseInt(a.price_from || a.priceFrom || 0, 10);
+    if (pf > 0) return pf;
+    const cat = (a.category || a.service || '').toLowerCase();
+    return (MAR_PRICES[cat] && MAR_PRICES[cat].from) || 150;
+  }
+
+  function _rtLabel(rt) {
+    rt = parseInt(rt, 10);
+    if (!rt || rt >= 999) return null;
+    if (rt <= 10) return 'Répond en 10 min';
+    if (rt <= 30) return 'Répond en ' + rt + ' min';
+    return 'Répond en 1h';
+  }
+
+  function _missLabel(a) {
+    const m = parseInt(a.missionsCompleted || a.missions_count || a.reviewCount || a.reviews || 0, 10);
+    if (m >= 10) return m + (m >= 200 ? '+ missions' : ' missions');
+    return null;
+  }
+
+  function _esc2(s) {
+    return String(s || '').replace(/[&<>"']/g, c =>
+      ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+  }
+
+  /* ─── Premium card v2 ────────────────────────────────────────── */
+  function renderVedetteCard(a, idx) {
+    idx = idx || 0;
+    const cat     = (a.category || a.service || '').toLowerCase();
+    const catIcon = CAT_ICONS[a.category] || CAT_ICONS[cat] || '🔧';
+    const catLbl  = CAT_LABELS[a.category] || CAT_LABELS[cat] || (a.service || 'Service');
+    const rating  = parseFloat(a.rating) || 0;
+    const reviews = parseInt(a.reviewCount || a.reviews || a.review_count || 0, 10);
+    const trust   = parseInt(a.trustScore || 0, 10);
+    const rt      = parseInt(a.responseTime || 999, 10);
+    const isReal  = !a.claimable && !a._isSeed;
+    const isVer   = !!(a.verified || a.certified || trust >= 85);
+    const avail   = (a.availability || '').toLowerCase();
+    const isAvail = avail === 'available' || a.available;
+    const isToday = avail === 'available_today';
+    const priceFrom = _getPriceFrom(a);
+    const rtLbl   = _rtLabel(rt);
+    const misLbl  = _missLabel(a);
+
+    /* Avatar */
+    const initials  = _initials(a.name);
+    const avatarSrc = a.avatar || a.photo || a.photo_url || '';
     const avatarHtml = avatarSrc
-      ? `<img class="pvc-avatar-img" src="${avatarSrc}" alt="${a.name}" loading="lazy" onerror="this.onerror=null;this.style.display='none';this.parentNode.querySelector('.pvc-avatar-initials').style.display='flex';" /><span class="pvc-avatar-initials" style="display:none">${initials}</span>`
+      ? `<img class="pvc-avatar-img" src="${avatarSrc}" alt="${_esc2(a.name)}" loading="lazy" onerror="this.onerror=null;this.style.display='none';var s=this.parentNode.querySelector('.pvc-avatar-initials');if(s)s.style.display='flex';" /><span class="pvc-avatar-initials" style="display:none">${initials}</span>`
       : `<span class="pvc-avatar-initials">${initials}</span>`;
 
-    /* Availability pill */
-    const availPill = isAvail
-      ? `<span class="pvc-avail pvc-avail--on">🟢 Disponible</span>`
+    /* Avail */
+    const availHtml = isAvail
+      ? `<span class="pvc-avail-badge pvc-avail-badge--on">🟢 Disponible</span>`
       : isToday
-        ? `<span class="pvc-avail pvc-avail--today">🟡 Auj.</span>`
-        : `<span class="pvc-avail pvc-avail--off">Réservation</span>`;
+        ? `<span class="pvc-avail-badge pvc-avail-badge--today">🟡 Aujourd'hui</span>`
+        : `<span class="pvc-avail-badge pvc-avail-badge--off">Sur RDV</span>`;
 
-    /* Badges row — max 2 */
-    const badges = [];
-    if (isVerified)   badges.push(`<span class="pvc-badge pvc-badge--verified">✔ Vérifié</span>`);
-    if (rt <= 30)     badges.push(`<span class="pvc-badge pvc-badge--fast">⚡ Rapide</span>`);
-    if (trust >= 90)  badges.push(`<span class="pvc-badge pvc-badge--premium">🏅 Premium</span>`);
-    const badgesHtml = badges.slice(0, 2).join('');
+    /* Stars */
+    let starsHtml;
+    if (rating > 0) {
+      const rv = Math.round(rating * 2) / 2;
+      const s  = [1,2,3,4,5].map(i => i <= rv ? '★' : rv >= i - 0.5 ? '½' : '☆').join('');
+      starsHtml = `<span class="pvc-stars-v2">${s}</span><span class="pvc-rating-num">${rating.toFixed(1)}</span>${reviews > 0 ? `<span class="pvc-reviews-count">(${reviews} avis)</span>` : ''}`;
+    } else {
+      starsHtml = `<span class="pvc-new-label">✨ Nouveau</span>`;
+    }
 
-    /* Rating stars */
-    const starsHtml = hasRating
-      ? `<span class="pvc-stars">${_stars(rating)}</span><span class="pvc-rating-val">${rating.toFixed(1)}</span>${reviews > 0 ? `<span class="pvc-reviews">(${reviews})</span>` : ''}`
-      : `<span class="pvc-rating-empty">Nouveau</span>`;
+    /* Info chips */
+    let chips = '';
+    if (rtLbl)  chips += `<span class="pvc-info-chip chip-fast">⚡ ${rtLbl}</span>`;
+    if (misLbl) chips += `<span class="pvc-info-chip chip-missions">✅ ${misLbl}</span>`;
+    if (!rtLbl && !misLbl && isAvail) chips += `<span class="pvc-info-chip chip-urgent">🚀 Intervention rapide</span>`;
 
-    /* Trust bar */
-    const trustBar = trust > 0
-      ? `<div class="pvc-trust-bar"><div class="pvc-trust-fill" style="width:${trust}%"></div></div><span class="pvc-trust-label">${trust}%</span>`
-      : '';
-
-    /* Real artisan glow */
-    const realClass = isReal ? ' pvc-card--real' : '';
+    /* Badges */
+    let badges = '';
+    if (isVer)                    badges += `<span class="pvc-badge-v2 pvc-badge-v2--verified">✔ Vérifié Fixeo</span>`;
+    if (trust >= 90)              badges += `<span class="pvc-badge-v2 pvc-badge-v2--premium">🏅 Premium</span>`;
+    if (!isVer && a.claimed)      badges += `<span class="pvc-badge-v2 pvc-badge-v2--claim">🏷️ Revendiqué</span>`;
+    if (!isVer && !a.claimed)     badges += `<span class="pvc-badge-v2 pvc-badge-v2--claim">🏷️ Profil à revendiquer</span>`;
 
     return `
-<article class="pvc-card${realClass}" data-artisan-id="${a.id}" tabindex="0" role="button" aria-label="Artisan ${a.name}, ${catLbl}">
-
-  <!-- Top strip: avatar + identity + availability -->
-  <div class="pvc-top">
-    <div class="pvc-avatar">${avatarHtml}</div>
+<article class="pvc-card${isReal ? ' pvc-card--real' : ''}" data-artisan-id="${a.id}" tabindex="0" role="button" aria-label="${_esc2(a.name)}, ${catLbl}" style="--anim-delay:${idx}">
+  <div class="pvc-card-header">
+    <div class="pvc-avatar${isVer ? ' pvc-avatar--verified' : ''}">${avatarHtml}</div>
     <div class="pvc-identity">
-      <h3 class="pvc-name">${a.name || ''}</h3>
-      <p class="pvc-meta"><span class="pvc-cat-icon">${catIcon}</span>${catLbl} · <span class="pvc-city">📍 ${a.city || 'Maroc'}</span></p>
+      <h3 class="pvc-name">${_esc2(a.name || '—')}</h3>
+      <div class="pvc-meta-row">
+        <span class="pvc-cat-pill">${catIcon} ${catLbl}</span>
+        <span class="pvc-city-pill">📍 ${_esc2(a.city || 'Maroc')}</span>
+      </div>
     </div>
-    ${availPill}
+    ${availHtml}
   </div>
-
-  <!-- Badges -->
-  ${badgesHtml ? `<div class="pvc-badges">${badgesHtml}</div>` : ''}
-
-  <!-- Rating + trust -->
-  <div class="pvc-rating-row">
-    <div class="pvc-rating">${starsHtml}</div>
-    ${trust > 0 ? `<div class="pvc-trust">${trustBar}</div>` : ''}
+  ${badges ? `<div class="pvc-badges-v2">${badges}</div>` : ''}
+  <div class="pvc-divider"></div>
+  <div class="pvc-stats">
+    <div class="pvc-rating-block">${starsHtml}</div>
   </div>
-
-  <!-- Price + response time -->
-  <div class="pvc-pricing">
-    <span class="pvc-price">Dès <strong>${price} MAD</strong><span class="pvc-unit">/${unit}</span></span>
-    ${rt < 999 ? `<span class="pvc-rt">⏱ ${rt} min</span>` : ''}
+  ${chips ? `<div class="pvc-info-bar">${chips}</div>` : ''}
+  <div class="pvc-footer">
+    <div class="pvc-price-block">
+      <span class="pvc-price-from">À partir de</span>
+      <span class="pvc-price-amount">${priceFrom}<span class="price-currency">MAD</span></span>
+    </div>
+    <div class="pvc-cta-row">
+      <button class="pvc-btn-reserve-v2" type="button" onclick="window.SecondarySearch&&window.SecondarySearch._handleReserve&&window.SecondarySearch._handleReserve('${a.id}')">📅 Réserver</button>
+      <button class="pvc-btn-profile-v2" type="button" onclick="window.SecondarySearch&&window.SecondarySearch._handleProfile&&window.SecondarySearch._handleProfile('${a.id}')">Profil</button>
+    </div>
   </div>
-
-  <!-- CTAs -->
-  <div class="pvc-actions">
-    <button class="pvc-btn-primary" onclick="window.SecondarySearch.book(${JSON.stringify(a.id)}, false); event.stopPropagation();" aria-label="Réserver ${a.name}">📅 Réserver</button>
-    <button class="pvc-btn-secondary ssb2-btn-profile" onclick="if(window.FixeoPublicProfileLinks){window.FixeoPublicProfileLinks.openBySourceId(${JSON.stringify(String(a.id))}, event);}else if(window.openArtisanModal){window.openArtisanModal(${JSON.stringify(a.id)});}else{window.SecondarySearch.book(${JSON.stringify(a.id)}, false);} event.stopPropagation();" aria-label="Voir profil de ${a.name}">Voir profil</button>
-  </div>
-
 </article>`;
+  }
+
+  
   }
 
   /* ════════════════════════════════════════════════════════

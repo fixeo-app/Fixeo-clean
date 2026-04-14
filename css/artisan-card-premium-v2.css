@@ -1,0 +1,451 @@
+/*
+ * FIXEO — Artisan Card Premium v2
+ * Uber-style marketplace cards, Moroccan market
+ * New file — overrides only, zero structural changes
+ */
+
+/* ─── GRID LAYOUT ────────────────────────────────────────────── */
+#fixeo-homepage-vedette-grid,
+#ssb2-vedette-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  padding: 4px 0 12px;
+}
+
+/* ─── BASE CARD ──────────────────────────────────────────────── */
+.pvc-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(145deg, #161626 0%, #11111f 100%);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 20px;
+  padding: 0;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform .25s cubic-bezier(.34,1.56,.64,1),
+              box-shadow .25s ease,
+              border-color .25s ease;
+  will-change: transform;
+  box-shadow: 0 4px 24px rgba(0,0,0,.3);
+}
+
+.pvc-card:hover {
+  transform: translateY(-6px) scale(1.01);
+  border-color: rgba(225,48,108,.35);
+  box-shadow: 0 12px 48px rgba(225,48,108,.18),
+              0 4px 16px rgba(0,0,0,.4);
+}
+
+/* Real/verified artisan — stronger glow */
+.pvc-card--real:hover {
+  border-color: rgba(64,200,140,.4);
+  box-shadow: 0 12px 48px rgba(32,201,151,.15),
+              0 4px 16px rgba(0,0,0,.4);
+}
+
+/* ─── CARD HEADER BAND ───────────────────────────────────────── */
+.pvc-card-header {
+  position: relative;
+  padding: 18px 18px 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+/* ─── AVATAR ─────────────────────────────────────────────────── */
+.pvc-avatar {
+  flex-shrink: 0;
+  width: 58px;
+  height: 58px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #E1306C, #833AB4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 2px solid rgba(255,255,255,.08);
+  box-shadow: 0 4px 14px rgba(0,0,0,.25);
+}
+.pvc-avatar-img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+}
+.pvc-avatar-initials {
+  font-size: 1.2rem; font-weight: 700; color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  width: 100%; height: 100%;
+  letter-spacing: .5px;
+}
+
+/* Verified ring */
+.pvc-card--real .pvc-avatar,
+.pvc-avatar--verified {
+  border-color: rgba(32,201,151,.5);
+  box-shadow: 0 0 0 3px rgba(32,201,151,.12), 0 4px 14px rgba(0,0,0,.25);
+}
+
+/* ─── IDENTITY ───────────────────────────────────────────────── */
+.pvc-identity {
+  flex: 1;
+  min-width: 0;
+}
+.pvc-name {
+  font-size: .98rem;
+  font-weight: 700;
+  color: #f0f0f0;
+  margin: 0 0 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: .01em;
+}
+.pvc-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.pvc-cat-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: .72rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 20px;
+  background: rgba(225,48,108,.12);
+  color: #E1306C;
+  border: 1px solid rgba(225,48,108,.2);
+  white-space: nowrap;
+}
+.pvc-city-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: .72rem;
+  color: rgba(255,255,255,.55);
+  font-weight: 500;
+}
+
+/* ─── AVAIL BADGE ────────────────────────────────────────────── */
+.pvc-avail-badge {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  font-size: .65rem;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 20px;
+  letter-spacing: .03em;
+  white-space: nowrap;
+}
+.pvc-avail-badge--on {
+  background: rgba(32,201,151,.15);
+  color: #20c997;
+  border: 1px solid rgba(32,201,151,.25);
+}
+.pvc-avail-badge--today {
+  background: rgba(255,165,2,.12);
+  color: #ffa502;
+  border: 1px solid rgba(255,165,2,.22);
+}
+.pvc-avail-badge--off {
+  background: rgba(255,255,255,.06);
+  color: rgba(255,255,255,.4);
+  border: 1px solid rgba(255,255,255,.1);
+}
+
+/* ─── DIVIDER ────────────────────────────────────────────────── */
+.pvc-divider {
+  height: 1px;
+  background: rgba(255,255,255,.06);
+  margin: 14px 18px;
+}
+
+/* ─── STATS ROW ──────────────────────────────────────────────── */
+.pvc-stats {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 18px;
+  gap: 8px;
+}
+
+/* Rating */
+.pvc-rating-block {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.pvc-stars-v2 {
+  font-size: .88rem;
+  color: #f6c90e;
+  letter-spacing: 1px;
+  line-height: 1;
+}
+.pvc-rating-num {
+  font-size: .85rem;
+  font-weight: 700;
+  color: #f0f0f0;
+}
+.pvc-reviews-count {
+  font-size: .72rem;
+  color: rgba(255,255,255,.4);
+}
+.pvc-new-label {
+  font-size: .72rem;
+  color: rgba(255,255,255,.35);
+  font-style: italic;
+}
+
+/* Stat chips */
+.pvc-stat-chips {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.pvc-stat-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: .68rem;
+  color: rgba(255,255,255,.5);
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: 8px;
+  padding: 3px 7px;
+  white-space: nowrap;
+}
+.pvc-stat-chip .chip-icon { font-size: .75rem; }
+
+/* ─── QUICK INFO BAR ─────────────────────────────────────────── */
+.pvc-info-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 18px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+.pvc-info-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: .7rem;
+  color: rgba(255,255,255,.55);
+  padding: 4px 8px;
+  border-radius: 8px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.06);
+}
+.pvc-info-chip.chip-fast {
+  color: #4da3ff;
+  background: rgba(77,163,255,.08);
+  border-color: rgba(77,163,255,.15);
+}
+.pvc-info-chip.chip-missions {
+  color: #20c997;
+  background: rgba(32,201,151,.07);
+  border-color: rgba(32,201,151,.12);
+}
+.pvc-info-chip.chip-urgent {
+  color: #ffa502;
+  background: rgba(255,165,2,.08);
+  border-color: rgba(255,165,2,.15);
+}
+
+/* ─── BADGES ROW ─────────────────────────────────────────────── */
+.pvc-badges-v2 {
+  display: flex;
+  gap: 5px;
+  padding: 8px 18px 0;
+  flex-wrap: wrap;
+}
+.pvc-badge-v2 {
+  font-size: .65rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 20px;
+  letter-spacing: .02em;
+}
+.pvc-badge-v2--verified {
+  background: rgba(32,201,151,.12);
+  color: #20c997;
+  border: 1px solid rgba(32,201,151,.22);
+}
+.pvc-badge-v2--premium {
+  background: rgba(255,165,2,.1);
+  color: #ffa502;
+  border: 1px solid rgba(255,165,2,.2);
+}
+.pvc-badge-v2--claim {
+  background: rgba(131,58,180,.1);
+  color: #b374e8;
+  border: 1px solid rgba(131,58,180,.2);
+}
+
+/* ─── PRICING FOOTER ─────────────────────────────────────────── */
+.pvc-footer {
+  margin-top: auto;
+  padding: 14px 18px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border-top: 1px solid rgba(255,255,255,.06);
+}
+
+.pvc-price-block {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.pvc-price-from {
+  font-size: .62rem;
+  color: rgba(255,255,255,.35);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+.pvc-price-amount {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.1;
+}
+.pvc-price-amount .price-currency {
+  font-size: .7rem;
+  font-weight: 600;
+  color: rgba(255,255,255,.55);
+  margin-left: 2px;
+}
+
+/* ─── CTA BUTTONS ────────────────────────────────────────────── */
+.pvc-cta-row {
+  display: flex;
+  gap: 7px;
+  flex-shrink: 0;
+}
+
+.pvc-btn-reserve-v2 {
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(135deg, #E1306C, #833AB4);
+  color: #fff;
+  font-size: .78rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity .15s, transform .15s;
+  letter-spacing: .01em;
+}
+.pvc-btn-reserve-v2:hover {
+  opacity: .9;
+  transform: scale(1.03);
+}
+
+.pvc-btn-profile-v2 {
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.05);
+  color: rgba(255,255,255,.75);
+  font-size: .78rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color .15s, background .15s;
+}
+.pvc-btn-profile-v2:hover {
+  border-color: rgba(255,255,255,.28);
+  background: rgba(255,255,255,.09);
+  color: #fff;
+}
+
+/* ─── EMPTY STATE ────────────────────────────────────────────── */
+.pvc-empty-state {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48px 24px;
+  text-align: center;
+  color: rgba(255,255,255,.4);
+}
+.pvc-empty-state .es-icon  { font-size: 2.8rem; margin-bottom: 12px; }
+.pvc-empty-state .es-title { font-size: 1rem; font-weight: 600; margin-bottom: 6px; color: rgba(255,255,255,.6); }
+.pvc-empty-state .es-sub   { font-size: .82rem; line-height: 1.5; max-width: 280px; }
+.pvc-empty-state .es-cta   {
+  margin-top: 18px; padding: 10px 24px; border-radius: 12px;
+  background: linear-gradient(135deg,#E1306C,#833AB4); color:#fff;
+  font-size:.85rem; font-weight:600; border:none; cursor:pointer; transition:opacity .15s;
+}
+.pvc-empty-state .es-cta:hover { opacity:.88; }
+
+/* ─── SECTION HEADER ─────────────────────────────────────────── */
+.pvc-section-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.pvc-section-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #f0f0f0;
+  margin: 0;
+}
+.pvc-section-counter {
+  font-size: .8rem;
+  color: rgba(255,255,255,.35);
+  font-weight: 500;
+}
+
+/* ─── MOBILE HORIZONTAL SCROLL ───────────────────────────────── */
+@media (max-width: 640px) {
+  #fixeo-homepage-vedette-grid,
+  #ssb2-vedette-grid {
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    gap: 14px;
+    padding: 4px 16px 16px;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  #fixeo-homepage-vedette-grid::-webkit-scrollbar,
+  #ssb2-vedette-grid::-webkit-scrollbar { display: none; }
+
+  .pvc-card {
+    min-width: 272px;
+    max-width: 272px;
+    scroll-snap-align: start;
+    flex-shrink: 0;
+  }
+
+  /* Scroll hint gradient */
+  #fixeo-homepage-vedette-grid::after,
+  #ssb2-vedette-grid::after {
+    content: '';
+    flex-shrink: 0;
+    width: 32px;
+    display: block;
+  }
+}
+
+/* ─── FADE-IN ANIMATION ──────────────────────────────────────── */
+@keyframes pvc-fadein {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.pvc-card {
+  opacity: 0;
+  animation: pvc-fadein .4s ease forwards;
+  animation-delay: calc(var(--anim-delay, 0) * 80ms);
+}
+.pvc-card.fhp-visible { opacity: 1; }
