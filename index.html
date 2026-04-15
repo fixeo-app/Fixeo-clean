@@ -1773,6 +1773,34 @@ section#home.hero.hero-section {
       gap: 14px !important;
     }
   }
+  /* ── MOBILE: switch to horizontal snap carousel ── */
+  @media (max-width: 640px) {
+    #fixeo-homepage-vedette-grid {
+      display: flex !important;
+      flex-direction: row !important;
+      flex-wrap: nowrap !important;
+      overflow-x: auto !important;
+      overflow-y: visible !important;
+      scroll-snap-type: x mandatory !important;
+      -webkit-overflow-scrolling: touch !important;
+      scrollbar-width: none !important;
+      gap: 14px !important;
+      padding: 8px 16px 24px !important;
+      margin-bottom: 0 !important;
+      width: calc(100% + 0px) !important;
+      /* Remove grid constraint */
+      grid-template-columns: none !important;
+    }
+    #fixeo-homepage-vedette-grid::-webkit-scrollbar { display: none !important; }
+    #fixeo-homepage-vedette-grid .pvc-card,
+    #fixeo-homepage-vedette-grid .fhp-card {
+      min-width: 88vw !important;
+      max-width: 88vw !important;
+      width: 88vw !important;
+      flex-shrink: 0 !important;
+      scroll-snap-align: start !important;
+    }
+  }
 
   /* ── Section header ── */
   .fhp-section-header {
@@ -1965,6 +1993,8 @@ section#home.hero.hero-section {
     }
   </style>
   <link rel="stylesheet" href="css/artisan-card-premium-v2.css?v=1">
+  <link rel="stylesheet" href="css/artisan-card-mobile-v2.css?v=1">
+
 </head>
 
 <body class="fixeo-homepage-mode">

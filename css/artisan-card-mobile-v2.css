@@ -1,0 +1,281 @@
+/*
+ * FIXEO — Artisan Card Mobile Premium v2
+ * Uber / Airbnb level mobile UX
+ * Mobile-ONLY overrides — zero desktop changes
+ * ─────────────────────────────────────────────────────────────────────────────
+ * Breakpoints:
+ *   ≤ 640px  → compact mobile (phone)
+ *   641–900px→ tablet (unchanged, uses desktop grid)
+ *
+ * Architecture:
+ *   1. Grid → horizontal scroll flex (snap-to-card)
+ *   2. Card width → 88vw (large, breathable, full-feel)
+ *   3. Header → rearchitected: NO absolute-positioned badge
+ *      avail badge moved inside a dedicated right column (flex column)
+ *   4. Badges row → column stack (never wraps/overlaps)
+ *   5. Footer → stacked: price on top, full-width CTA row below
+ *   6. Typography → bigger name, cleaner hierarchy
+ */
+
+/* ═══════════════════════════════════════════════════════════════
+   MOBILE  ≤ 640px
+═══════════════════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+
+  /* ─── 1. GRID → HORIZONTAL SNAP CAROUSEL ─────────────────── */
+  #fixeo-homepage-vedette-grid,
+  #ssb2-vedette-grid {
+    display: flex !important;
+    flex-direction: row !important;
+    overflow-x: auto !important;
+    overflow-y: visible !important;
+    gap: 14px !important;
+    /* 16px left edge + card + 16px right edge visible */
+    padding: 8px 16px 24px !important;
+    scroll-snap-type: x mandatory !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    /* Lift cards out of grid constraint */
+    grid-template-columns: none !important;
+    align-items: stretch !important;
+  }
+  #fixeo-homepage-vedette-grid::-webkit-scrollbar,
+  #ssb2-vedette-grid::-webkit-scrollbar { display: none !important; }
+
+  /* Scroll hint: trailing 8px spacer so last card isn't flush */
+  #fixeo-homepage-vedette-grid::after,
+  #ssb2-vedette-grid::after {
+    content: '' !important;
+    flex-shrink: 0 !important;
+    min-width: 8px !important;
+    display: block !important;
+  }
+
+  /* ─── 2. CARD SIZE & SHAPE ────────────────────────────────── */
+  .pvc-card {
+    /* 88vw = comfortably full-width with a peek of next card */
+    min-width: 88vw !important;
+    max-width: 88vw !important;
+    width: 88vw !important;
+    flex-shrink: 0 !important;
+    scroll-snap-align: start !important;
+
+    /* More breathing room */
+    border-radius: 24px !important;
+    box-shadow: 0 8px 32px rgba(0,0,0,.45),
+                0 2px 8px rgba(0,0,0,.3) !important;
+
+    /* Reset animation delay stagger on mobile — instant feel */
+    animation-delay: 0ms !important;
+
+    /* Tap feedback instead of hover lift */
+    transition: transform .15s ease, box-shadow .15s ease !important;
+  }
+  .pvc-card:active {
+    transform: scale(.98) !important;
+    box-shadow: 0 4px 16px rgba(0,0,0,.4) !important;
+  }
+  /* Disable hover lift on mobile (touch doesn't have hover) */
+  .pvc-card:hover {
+    transform: none !important;
+  }
+
+  /* ─── 3. HEADER — NO ABSOLUTE BADGE (overlap fix) ─────────── */
+  .pvc-card-header {
+    padding: 20px 20px 0 !important;
+    gap: 14px !important;
+    align-items: flex-start !important;
+    /* Three columns: avatar | identity | right-col */
+    display: flex !important;
+    flex-direction: row !important;
+  }
+
+  /* Kill the absolute-positioned badge — replaced by in-flow right column */
+  .pvc-avail-badge {
+    position: static !important;
+    top: auto !important;
+    right: auto !important;
+    /* Will be re-styled inside .pvc-header-right */
+    font-size: .68rem !important;
+    padding: 4px 10px !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+    align-self: flex-start !important;
+  }
+
+  /* ─── 4. AVATAR — BIGGER & BOLDER ────────────────────────── */
+  .pvc-avatar {
+    width: 64px !important;
+    height: 64px !important;
+    border-radius: 18px !important;
+    flex-shrink: 0 !important;
+  }
+  .pvc-avatar-initials {
+    font-size: 1.4rem !important;
+  }
+
+  /* ─── 5. IDENTITY — TYPOGRAPHIC UPGRADE ──────────────────── */
+  .pvc-identity {
+    flex: 1 !important;
+    min-width: 0 !important;
+  }
+  .pvc-name {
+    font-size: 1.05rem !important;
+    font-weight: 800 !important;
+    line-height: 1.2 !important;
+    margin-bottom: 6px !important;
+    /* Allow wrap on mobile — never clip name */
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: unset !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+  }
+  .pvc-meta-row {
+    gap: 5px !important;
+    flex-wrap: wrap !important;
+  }
+  .pvc-cat-pill {
+    font-size: .73rem !important;
+    padding: 3px 9px !important;
+  }
+  .pvc-city-pill {
+    font-size: .73rem !important;
+  }
+
+  /* ─── 6. BADGES — COLUMN STACK (NO WRAP/OVERLAP) ─────────── */
+  .pvc-badges-v2 {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 5px !important;
+    padding: 10px 20px 0 !important;
+  }
+  .pvc-badge-v2 {
+    font-size: .68rem !important;
+    padding: 3px 10px !important;
+    /* Never wider than content */
+    display: inline-block !important;
+    width: max-content !important;
+  }
+
+  /* ─── 7. DIVIDER ─────────────────────────────────────────── */
+  .pvc-divider {
+    margin: 14px 20px !important;
+  }
+
+  /* ─── 8. STATS ROW ────────────────────────────────────────── */
+  .pvc-stats {
+    padding: 0 20px !important;
+  }
+  .pvc-stars-v2 {
+    font-size: .95rem !important;
+    letter-spacing: 2px !important;
+  }
+  .pvc-rating-num {
+    font-size: .92rem !important;
+  }
+  .pvc-reviews-count {
+    font-size: .75rem !important;
+  }
+
+  /* ─── 9. INFO CHIPS ─────────────────────────────────────────*/
+  .pvc-info-bar {
+    padding: 0 20px !important;
+    margin-top: 10px !important;
+    gap: 6px !important;
+    flex-wrap: wrap !important;
+  }
+  .pvc-info-chip {
+    font-size: .73rem !important;
+    padding: 5px 10px !important;
+  }
+
+  /* ─── 10. FOOTER — STACKED LAYOUT ────────────────────────── */
+  .pvc-footer {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+    padding: 16px 20px 20px !important;
+  }
+
+  /* Price on its own line, larger */
+  .pvc-price-block {
+    flex-direction: row !important;
+    align-items: baseline !important;
+    gap: 6px !important;
+  }
+  .pvc-price-from {
+    font-size: .65rem !important;
+    letter-spacing: .05em !important;
+  }
+  .pvc-price-amount {
+    font-size: 1.25rem !important;
+    font-weight: 900 !important;
+  }
+  .pvc-price-amount .price-currency {
+    font-size: .78rem !important;
+  }
+
+  /* Buttons: side-by-side, full-width row */
+  .pvc-cta-row {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 10px !important;
+    width: 100% !important;
+  }
+
+  /* Réserver — dominant, takes more space */
+  .pvc-btn-reserve-v2 {
+    flex: 2 !important;
+    padding: 13px 0 !important;
+    border-radius: 14px !important;
+    font-size: .88rem !important;
+    font-weight: 800 !important;
+    letter-spacing: .02em !important;
+    text-align: center !important;
+    /* No transform on tap — handled by card :active */
+    touch-action: manipulation !important;
+  }
+
+  /* Profil — secondary, smaller flex share */
+  .pvc-btn-profile-v2 {
+    flex: 1 !important;
+    padding: 13px 0 !important;
+    border-radius: 14px !important;
+    font-size: .85rem !important;
+    font-weight: 600 !important;
+    text-align: center !important;
+    touch-action: manipulation !important;
+  }
+
+  /* ─── 11. EMPTY STATE ─────────────────────────────────────── */
+  .pvc-empty-state {
+    min-width: 88vw !important;
+    padding: 40px 20px !important;
+  }
+
+} /* end @media 640px */
+
+/* ═══════════════════════════════════════════════════════════════
+   EXTRA SMALL  ≤ 375px  (iPhone SE etc.)
+═══════════════════════════════════════════════════════════════ */
+@media (max-width: 375px) {
+  .pvc-card {
+    min-width: 92vw !important;
+    max-width: 92vw !important;
+    width: 92vw !important;
+  }
+  .pvc-avatar {
+    width: 56px !important;
+    height: 56px !important;
+  }
+  .pvc-name {
+    font-size: .98rem !important;
+  }
+  .pvc-btn-reserve-v2,
+  .pvc-btn-profile-v2 {
+    padding: 12px 0 !important;
+    font-size: .82rem !important;
+  }
+}
