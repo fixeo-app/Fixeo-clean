@@ -35,8 +35,8 @@
       /* Identity */
       id:           row.legacy_id || row.id,
       _supabase_id: row.id,
-      name:         row.full_name || '',
-      full_name:    row.full_name || '',
+      name:         row.name || row.full_name || 'Artisan Fixeo',
+      full_name:    row.name || row.full_name || 'Artisan Fixeo',
 
       /* Service */
       service:      row.service_category || (svc[0] || ''),

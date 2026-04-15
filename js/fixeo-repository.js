@@ -62,6 +62,7 @@
       legacy_id:          String(a.id || ''),
       public_slug:        _makeSlug(a.name, a.city, a.id),
       full_name:          a.name || a.full_name || '',
+      name:               a.name || a.full_name || '',
       city:               a.city || '',
       description:        a.description || a.shortBio || '',
       services:           JSON.stringify(a.services || (a.service ? [a.service] : [])),
@@ -96,8 +97,8 @@
     return {
       id:                  row.legacy_id || row.id,
       _supabase_id:        row.id,
-      name:                row.full_name || '',
-      full_name:           row.full_name || '',
+      name:                row.name || row.full_name || 'Artisan Fixeo',
+      full_name:           row.name || row.full_name || 'Artisan Fixeo',
       city:                row.city || '',
       description:         row.description || '',
       shortBio:            row.description || '',
