@@ -145,7 +145,7 @@ function readMarketplaceLocalArtisans() {
     const parsed = marketplaceSafeJSONParse(localStorage.getItem(MARKETPLACE_LOCAL_STORAGE_KEY) || '[]', []);
     return (Array.isArray(parsed) ? parsed : [])
       .map(normalizeMarketplaceArtisanRecord)
-      .filter((artisan) => artisan && artisan.status === 'active');
+      .filter((artisan) => artisan && artisan.status !== 'inactive'); /* FIX: was ==='active', drops Supabase records without status */
   } catch (error) {
     return [];
   }
@@ -235,14 +235,15 @@ class SearchEngine {
     const ratingFloor = Number(minRating) || 0;
     const priceCeiling = Number(maxPrice) || 0;
 
-    this.filtered = this.artisans.filter(a => a.status === 'active').filter(a => {
+    this.filtered = this.artisans.filter(a => a.status !== 'inactive').filter(a => {
       const lang = window.i18n ? window.i18n.lang : 'fr';
       const q = _norm(query);
       const matchQuery = !q ||
-        _norm(a.name).includes(q) ||
-        _norm(a.category).includes(q) ||
-        _norm(a.bio[lang] || a.bio.fr || '').includes(q) ||
-        (a.skills || []).some(s => _norm(s).includes(q));
+        _norm(a.name || '').includes(q) ||
+        _norm(a.category || a.service || '').includes(q) ||
+        _norm((a.bio && (a.bio[lang] || a.bio.fr)) || a.description || a.shortBio || '').includes(q) ||
+        _norm(a.city || '').includes(q) ||
+        (Array.isArray(a.skills) ? a.skills : []).some(s => _norm(s).includes(q));
       const _normCat = s => (s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,'').trim();
       const matchCat = !category || _normCat(a.category) === _normCat(category)
         || (a.service && _normCat(a.service) === _normCat(category))

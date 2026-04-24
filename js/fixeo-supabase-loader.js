@@ -99,6 +99,32 @@
       _source:     'supabase',
       _isSeed:     false,
 
+      /* ── Fields required by SearchEngine.filter() and main.js ── */
+      /* Without these, filter() crashes or returns 0 results       */
+      status:       'active',          /* SearchEngine filters a.status === 'active'    */
+      bio: {                           /* SearchEngine accesses a.bio[lang] / a.bio.fr  */
+        fr: row.description || '',
+        ar: '',
+        en: row.description || ''
+      },
+      skills:       row.service_category            /* SearchEngine searches a.skills[] */
+                      ? [row.service_category]
+                      : [],
+      badges:       row.verified ? ['verified'] : [], /* reservation.js uses a.badges[] */
+      portfolio:    ['🔧'],            /* reservation.js renders a.portfolio[]           */
+      trustScore:   Math.round(       /* SearchEngine sorts by trustScore               */
+                      (parseFloat(row.rating) || 0) * 15 +
+                      (row.verified ? 20 : 0) +
+                      (row.claimed  ? 10 : 0) +
+                      50
+                    ),
+      responseTime: 15,               /* default 15 min — no column in Supabase yet     */
+      hasRatingData: (parseFloat(row.rating) || 0) > 0,
+      hasPriceData:  !!(row.price_from),
+      availableNow:  row.availability === 'available',
+      availableToday: row.availability === 'available',
+      certified:     !!row.verified,
+
       created_at:  row.created_at,
       updated_at:  row.updated_at
     };
@@ -157,10 +183,13 @@
       window.FixeoDB.saveArtisans(artisans);
     }
 
-    /* 3. Patch SearchEngine instance(s) that are already constructed */
-    if (window._searchEngine && Array.isArray(window._searchEngine.artisans)) {
-      window._searchEngine.artisans.splice(0, window._searchEngine.artisans.length);
-      artisans.forEach(function(a){ window._searchEngine.artisans.push(a); });
+    /* 3. Patch SearchEngine instance — reseed after Supabase data replaces ARTISANS */
+    /* FIX: was window._searchEngine (wrong); correct name is window.searchEngine   */
+    if (window.searchEngine && Array.isArray(window.searchEngine.artisans)) {
+      /* ARTISANS array is already spliced by replaceMarketplaceArtisans above.     */
+      /* Re-point searchEngine.artisans to the live array and rebuild filtered.     */
+      window.searchEngine.artisans = window.ARTISANS || [];
+      window.searchEngine.filtered  = (window.ARTISANS || []).slice();
     }
 
     /* 4. Force re-render of homepage marketplace cards */
@@ -174,13 +203,23 @@
       window.refreshMarketplaceAfterLoad();
     }
 
-    /* 5. Dispatch event so homepage patch + search modules reload */
+    /* 5. Normalize via production search engine (fixes status, bio, etc.) */
+    if (typeof window.fxNormalizeAll === 'function') {
+      window.fxNormalizeAll();
+    }
+
+    /* 6. Dispatch event so homepage patch + search modules reload */
     window.dispatchEvent(new CustomEvent('fixeo:artisans:loaded', {
       detail: { count: artisans.length, source: 'supabase' }
     }));
     window.dispatchEvent(new CustomEvent('fixeo:marketplace-artisans-updated', {
       detail: { count: artisans.length }
     }));
+
+    /* 7. Boot production search pipeline (reseed engine, sync count) */
+    if (typeof window.fxBootSearchPipeline === 'function') {
+      setTimeout(function() { window.fxBootSearchPipeline(); }, 200);
+    }
 
     console.info('[FixeoSupabaseLoader] ✅ ' + artisans.length + ' artisans injectés depuis Supabase');
   }
