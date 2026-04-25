@@ -103,7 +103,7 @@
         ${dashboardMarkup}
         <div class="fixeo-gh-drawer-group">
           <div class="fixeo-gh-drawer-label">Actions</div>
-          <a class="fixeo-gh-drawer-cta is-primary" href="index.html#artisans-section">Publier une demande</a>
+          <button type="button" class="fixeo-gh-drawer-cta is-primary" data-open-request-form="true" data-request-mode="marketplace">Publier une demande</button>
           <a class="fixeo-gh-drawer-cta" href="auth.html">Connexion / compte</a>
         </div>
       </div>
@@ -371,7 +371,24 @@
     });
 
     root.querySelectorAll('.fixeo-gh-drawer-link, .fixeo-gh-drawer-cta').forEach(link => {
-      link.addEventListener('click', function () {
+      link.addEventListener('click', function (e) {
+        /* If this is a request-form trigger, close drawer then open modal */
+        if (link.hasAttribute('data-open-request-form')) {
+          e.preventDefault();
+          e.stopPropagation();
+          closeDrawer(root);
+          setTimeout(function () {
+            if (window.FixeoClientRequest && typeof window.FixeoClientRequest.open === 'function') {
+              window.FixeoClientRequest.open(link);
+            } else if (typeof window.openModal === 'function') {
+              window.openModal('request-modal');
+            } else {
+              var m = document.getElementById('request-modal');
+              if (m) { m.style.display = 'block'; m.classList.add('open', 'active'); document.body.classList.add('modal-open'); }
+            }
+          }, 80);
+          return;
+        }
         closeDrawer(root);
       });
     });
