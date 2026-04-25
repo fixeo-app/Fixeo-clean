@@ -1,12 +1,19 @@
 User-agent: *
+
 Disallow: /admin
 Disallow: /dashboard
 Disallow: /dashboard-client
+Disallow: /dashboard-client.html
 Disallow: /dashboard-artisan
+Disallow: /dashboard-artisan.html
 Disallow: /auth
+Disallow: /auth.html
 Disallow: /payment-success
+Disallow: /payment-success.html
 Disallow: /payment-cancel
+Disallow: /payment-cancel.html
 Disallow: /confirmation
+Disallow: /confirmation.html
 Disallow: /demandes
 Disallow: /api/
 

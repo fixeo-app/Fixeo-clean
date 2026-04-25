@@ -7,10 +7,10 @@
   <script src="js/fixeo-supabase-loader.js?v=sl1"></script>
   <script src="js/fixeo-auth-supabase.js?v=auth2"></script>
 
-  <link rel="icon" type="image/png" href="img/favicon.png" sizes="32x32">
+  <link rel="icon" type="image/png" href="img/favicon.png" sizes="32x32"> 
   <link rel="apple-touch-icon" href="img/favicon.png">
 <!-- FIXEO v50a38b9 — 2026-04-13 -->
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"> 
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <meta charset="UTF-8"/>
@@ -1995,6 +1995,46 @@ section#home.hero.hero-section {
   <link rel="stylesheet" href="css/artisan-card-premium-v2.css?v=1">
   <link rel="stylesheet" href="css/artisan-card-mobile-v2.css?v=1">
 
+
+<style id="fixeo-mobile-request-modal-hotfix">
+  @media (max-width: 768px) {
+    .mobile-nav {
+      z-index: 4000 !important;
+      pointer-events: auto !important;
+      overscroll-behavior: contain !important;
+      -webkit-overflow-scrolling: touch !important;
+    }
+
+    .mobile-nav.open {
+      display: block !important;
+      pointer-events: auto !important;
+    }
+
+    .mobile-nav-backdrop {
+      z-index: 3990 !important;
+    }
+
+    .mobile-nav .mobile-nav-action-link-request {
+      position: relative !important;
+      z-index: 4010 !important;
+      pointer-events: auto !important;
+      touch-action: manipulation !important;
+      -webkit-tap-highlight-color: transparent !important;
+    }
+
+    #request-modal,
+    .modal.request-modal {
+      z-index: 5002 !important;
+    }
+
+    #main-backdrop.open,
+    #main-backdrop.modal-backdrop.open,
+    .modal-backdrop.open {
+      z-index: 5001 !important;
+    }
+  }
+</style>
+
 </head>
 
 <body class="fixeo-homepage-mode">
@@ -2016,6 +2056,63 @@ section#home.hero.hero-section {
   }
 })();
 </script>
+
+<script id="fixeo-mobile-request-modal-fix">
+(function () {
+  'use strict';
+
+  function closeMobileMenu() {
+    document.querySelector('.mobile-nav')?.classList.remove('open');
+    document.querySelector('.mobile-nav-backdrop')?.classList.remove('open');
+    document.querySelector('.hamburger')?.classList.remove('open');
+    document.querySelector('.hamburger')?.setAttribute('aria-expanded', 'false');
+    document.body.classList.remove('mobile-menu-open');
+  }
+
+  function forceOpenRequestModal() {
+    const modal = document.getElementById('request-modal');
+    const backdrop = document.getElementById('main-backdrop') || document.querySelector('.modal-backdrop');
+    if (!modal) return;
+
+    modal.style.display = 'block';
+    modal.removeAttribute('hidden');
+    modal.setAttribute('aria-hidden', 'false');
+    modal.classList.add('open', 'active');
+
+    backdrop?.classList.add('open');
+    backdrop?.removeAttribute('hidden');
+    backdrop?.setAttribute('aria-hidden', 'false');
+
+    document.body.classList.add('modal-open');
+    document.body.style.overflow = 'hidden';
+
+    requestAnimationFrame(() => {
+      modal.querySelector('input, select, textarea, button')?.focus?.();
+    });
+  }
+
+  function handleRequestClick(event) {
+    const trigger = event.target.closest(
+      '.mobile-nav [data-open-request-form="true"], .mobile-nav .mobile-nav-action-link-request'
+    );
+    if (!trigger) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+    if (event.stopImmediatePropagation) event.stopImmediatePropagation();
+
+    closeMobileMenu();
+
+    setTimeout(forceOpenRequestModal, 80);
+
+    return false;
+  }
+
+  document.addEventListener('click', handleRequestClick, true);
+  document.addEventListener('touchend', handleRequestClick, true);
+})();
+</script>
+
 <!-- Animated background -->
 <div class="bg-animated" aria-hidden="true"></div>
 <!-- Modal backdrop -->
@@ -2149,10 +2246,13 @@ section#home.hero.hero-section {
        onclick="window.FixeoClientRequest ? FixeoClientRequest.openExpress(this) : (window.FixeoReservation ? FixeoReservation.openExpress() : openModal('express-modal')); return false;"
        data-open-express-request="true"
        data-request-mode="express">⚡ Demande urgente</a>
-    <a href="#" class="nav-link mobile-nav-action-link mobile-nav-action-link-request"
-       onclick="window.FixeoClientRequest ? FixeoClientRequest.open(this) : openModal('request-modal'); return false;"
-       data-open-request-form="true"
-       data-request-mode="marketplace">📝 Publier une demande</a>
+    <button type="button"
+        id="mobile-nav-request-btn"
+        class="nav-link mobile-nav-action-link mobile-nav-action-link-request"
+        data-open-request-form="true"
+        data-request-mode="marketplace"
+        aria-controls="request-modal"
+        aria-haspopup="dialog">📝 Publier une demande</button>
     <a href="onboarding-artisan.html" class="nav-link mobile-nav-action-link mobile-nav-action-link-artisan">🛠 Je suis artisan</a>
   </div>
 
@@ -3011,46 +3111,98 @@ function submitComment() {
 function openComparatorModal() {
   const list = window.searchEngine?.compareList || [];
   if (list.length < 2) {
-    window.notifSystem?.toast({type:'info',title:'Sélectionnez au moins 2 artisans',message:'Cliquez sur \"+ Comparer\" sur les cartes artisans.',icon:'ℹ️'});
+    window.notifSystem?.toast({
+      type: 'info',
+      title: 'Sélectionnez au moins 2 artisans',
+      message: 'Cliquez sur "+ Comparer" sur les cartes artisans.',
+      icon: 'ℹ️'
+    });
     return;
   }
-  const artisans = list.map(id => ARTISANS?.find(a => a.id === id)).filter(Boolean);
+
+  const artisans = list
+    .map(id => ARTISANS?.find(a => a.id === id))
+    .filter(Boolean);
+
   const modal = document.getElementById('artisan-modal');
-  const getCatLabel = (cat) => ({plomberie:'Plomberie',peinture:'Peinture',electricite:'Électricité',nettoyage:'Nettoyage',jardinage:'Jardinage',demenagement:'Déménagement',bricolage:'Bricolage',climatisation:'Climatisation',menuiserie:'Menuiserie',maconnerie:'Maçonnerie'}[cat] || cat);
-  const rows=[
-    {label:'⭐ Note',     vals:artisans.map(a=>`<strong style="color:#FFD700">${a.rating}/5</strong>`)},
-    {label:'💬 Avis',     vals:artisans.map(a=>`${a.reviewCount} avis`)},
-    {label:'🛡 Confiance',vals:artisans.map(a=>{const c=a.trustScore>=90?'#20c997':a.trustScore>=70?'#ffa502':'#ff4757';return `<strong style="color:${c}">${a.trustScore}/100</strong>`;})},
-    {label:'💰 Tarif',    vals:artisans.map(a=>`<strong>${a.priceFrom} MAD</strong>/${a.priceUnit}`)},
-    {label:'⏱ Réponse',  vals:artisans.map(a=>`~${a.responseTime} min`)},
-    {label:'📍 Ville',    vals:artisans.map(a=>a.city)},
-    {label:'🔧 Spécialité',vals:artisans.map(a=>getCatLabel(a.category))},
-    {label:'✅ Dispo',    vals:artisans.map(a=>`<span style="color:${a.availability==='available'?'#20c997':'#ffa502'}">${a.availability==='available'?'Disponible':'Occupé'}</span>`)},
+
+  const getCatLabel = (cat) => ({
+    plomberie: 'Plomberie',
+    peinture: 'Peinture',
+    electricite: 'Électricité',
+    nettoyage: 'Nettoyage',
+    jardinage: 'Jardinage',
+    demenagement: 'Déménagement',
+    bricolage: 'Bricolage',
+    climatisation: 'Climatisation',
+    menuiserie: 'Menuiserie',
+    maconnerie: 'Maçonnerie'
+  }[cat] || cat);
+
+  const rows = [
+    { label: '⭐ Note', vals: artisans.map(a => `<strong style="color:#FFD700">${a.rating}/5</strong>`) },
+    { label: '💬 Avis', vals: artisans.map(a => `${a.reviewCount} avis`) },
+    {
+      label: '🛡 Confiance',
+      vals: artisans.map(a => {
+        const c = a.trustScore >= 90 ? '#20c997' : a.trustScore >= 70 ? '#ffa502' : '#ff4757';
+        return `<strong style="color:${c}">${a.trustScore}/100</strong>`;
+      })
+    },
+    { label: '💰 Tarif', vals: artisans.map(a => `<strong>${a.priceFrom} MAD</strong>/${a.priceUnit}`) },
+    { label: '⏱ Réponse', vals: artisans.map(a => `~${a.responseTime} min`) },
+    { label: '📍 Ville', vals: artisans.map(a => a.city) },
+    { label: '🔧 Spécialité', vals: artisans.map(a => getCatLabel(a.category)) },
+    {
+      label: '✅ Dispo',
+      vals: artisans.map(a =>
+        `<span style="color:${a.availability === 'available' ? '#20c997' : '#ffa502'}">${
+          a.availability === 'available' ? 'Disponible' : 'Occupé'
+        }</span>`
+      )
+    }
   ];
-  modal.setAttribute('data-mode','compare');
-  modal.innerHTML=`
+
+  modal.setAttribute('data-mode', 'compare');
+  modal.innerHTML = `
     <div class="modal-header" style="margin-bottom:1.25rem">
-      <div style="display:flex;align-items:center;gap:.6rem"><span style="font-size:1.3rem">⚖️</span><h3 style="font-size:1rem;font-weight:700">Comparaison des artisans</h3></div>
+      <div style="display:flex;align-items:center;gap:.6rem">
+        <span style="font-size:1.3rem">⚖️</span>
+        <h3 style="font-size:1rem;font-weight:700">Comparaison des artisans</h3>
+      </div>
       <button class="modal-close" onclick="closeModal('artisan-modal')">✕</button>
     </div>
-    <div style="display:grid;grid-template-columns:140px ${artisans.map(()=>'1fr').join(' ')};gap:10px;margin-bottom:1rem">
+
+    <div style="display:grid;grid-template-columns:140px ${artisans.map(() => '1fr').join(' ')};gap:10px;margin-bottom:1rem">
       <div></div>
-      ${artisans.map(a=>`<div style="text-align:center;padding:.75rem;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px">
-        <div class="artisan-avatar-placeholder" style="width:52px;height:52px;font-size:1.1rem;margin:0 auto .5rem">${a.initials}</div>
-        <div style="font-weight:700;font-size:.85rem">${a.name}</div>
-        <div style="font-size:.7rem;color:rgba(255,255,255,.45)">${getCatLabel(a.category)}</div>
-      </div>`).join('')}
+      ${artisans.map(a => `
+        <div style="text-align:center;padding:.75rem;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px">
+          <div class="artisan-avatar-placeholder" style="width:52px;height:52px;font-size:1.1rem;margin:0 auto .5rem">${a.initials}</div>
+          <div style="font-weight:700;font-size:.85rem">${a.name}</div>
+          <div style="font-size:.7rem;color:rgba(255,255,255,.45)">${getCatLabel(a.category)}</div>
+        </div>
+      `).join('')}
     </div>
+
     <div style="border:1px solid rgba(255,255,255,.08);border-radius:12px;overflow:hidden">
-      ${rows.map((row,idx)=>`<div style="display:grid;grid-template-columns:140px ${artisans.map(()=>'1fr').join(' ')};background:${idx%2===0?'rgba(255,255,255,.03)':'transparent'};border-bottom:1px solid rgba(255,255,255,.06)">
-        <div style="padding:.65rem .75rem;font-size:.78rem;font-weight:600;color:rgba(255,255,255,.52);border-right:1px solid rgba(255,255,255,.06)">${row.label}</div>
-        ${row.vals.map(v=>`<div style="padding:.65rem .75rem;text-align:center;font-size:.82rem">${v}</div>`).join('')}
-      </div>`).join('')}
+      ${rows.map((row, idx) => `
+        <div style="display:grid;grid-template-columns:140px ${artisans.map(() => '1fr').join(' ')};background:${idx % 2 === 0 ? 'rgba(255,255,255,.03)' : 'transparent'};border-bottom:1px solid rgba(255,255,255,.06)">
+          <div style="padding:.65rem .75rem;font-size:.78rem;font-weight:600;color:rgba(255,255,255,.52);border-right:1px solid rgba(255,255,255,.06)">${row.label}</div>
+          ${row.vals.map(v => `<div style="padding:.65rem .75rem;text-align:center;font-size:.82rem">${v}</div>`).join('')}
+        </div>
+      `).join('')}
     </div>
-    <div style="display:grid;grid-template-columns:140px ${artisans.map(()=>'1fr').join(' ')};gap:10px;margin-top:1rem">
+
+    <div style="display:grid;grid-template-columns:140px ${artisans.map(() => '1fr').join(' ')};gap:10px;margin-top:1rem">
       <div style="font-size:.72rem;color:rgba(255,255,255,.35);padding:0 .5rem;display:flex;align-items:center">Actions</div>
-      ${artisans.map(a=>`<button class="btn btn-primary btn-sm fixeo-reserve-btn" style="width:100%;padding:.5rem" onclick="closeModal('artisan-modal');openBookingModal(${a.id})">📅 Réserver</button>`).join('')}
-    </div>`;
+      ${artisans.map(a => `
+        <button class="btn btn-primary btn-sm fixeo-reserve-btn" style="width:100%;padding:.5rem" onclick="closeModal('artisan-modal');openBookingModal('${a.id}')">
+          📅 Réserver
+        </button>
+      `).join('')}
+    </div>
+  `;
+
   openModal('artisan-modal');
 }
 
@@ -3073,8 +3225,10 @@ function toggleMapView(btn) {
 function filterQuick(type, btn) {
   document.querySelectorAll('.results-header .filter-chip').forEach(c => c.classList.remove('active'));
   btn.classList.add('active');
+
   const filterAvail = document.getElementById('filter-availability');
-  const filterSort  = document.getElementById('filter-sort');
+  const filterSort = document.getElementById('filter-sort');
+
   if (type === 'available' && filterAvail) {
     filterAvail.value = 'available';
     filterAvail.dispatchEvent(new Event('change'));
@@ -3095,24 +3249,27 @@ function openBookingModal(artisanId) {
 function openContentModal(type) {
   const modal = document.getElementById('content-modal');
   const title = document.getElementById('content-modal-title');
-  const body  = document.getElementById('content-modal-body');
+  const body = document.getElementById('content-modal-body');
   if (!modal) return;
+
   const map = {
-    about:   ['À propos de Fixeo', '<p>Fixeo est la plateforme de mise en relation entre particuliers et artisans qualifiés au Maroc. Notre mission : simplifier et sécuriser chaque intervention à domicile.</p>'],
-    careers: ['Carrières', '<p>Rejoignez l\'équipe Fixeo ! Nous recrutons des talents passionnés par l\'innovation et le service client.</p>'],
-    press:   ['Presse', '<p>Pour toute demande presse, contactez-nous à presse@fixeo.ma</p>'],
-    blog:    ['Blog Fixeo', '<p>Conseils, astuces et actualités du monde de l\'artisanat au Maroc.</p>'],
-    faq:     ['FAQ', '<p><strong>Comment fonctionne la réservation ?</strong><br>Choisissez votre artisan, sélectionnez un créneau disponible, confirmez et payez en ligne.</p><p><strong>Quels sont les frais ?</strong><br>Une commission de 15% est appliquée sur chaque transaction.</p>'],
+    about: ['À propos de Fixeo', '<p>Fixeo est la plateforme de mise en relation entre particuliers et artisans qualifiés au Maroc. Notre mission : simplifier et sécuriser chaque intervention à domicile.</p>'],
+    careers: ['Carrières', '<p>Rejoignez l\\'équipe Fixeo ! Nous recrutons des talents passionnés par l\\'innovation et le service client.</p>'],
+    press: ['Presse', '<p>Pour toute demande presse, contactez-nous à presse@fixeo.ma</p>'],
+    blog: ['Blog Fixeo', '<p>Conseils, astuces et actualités du monde de l\\'artisanat au Maroc.</p>'],
+    faq: ['FAQ', '<p><strong>Comment fonctionne la réservation ?</strong><br>Choisissez votre artisan, sélectionnez un créneau disponible, confirmez et payez en ligne.</p><p><strong>Quels sont les frais ?</strong><br>Une commission de 15% est appliquée sur chaque transaction.</p>'],
     contact: ['Nous contacter', '<p>Email : support@fixeo.ma<br>Tel : +212 5XX XX XX XX<br>Disponible 7j/7, 8h–20h</p>'],
-    cgu:     ['Conditions Générales d\'Utilisation', '<p>En utilisant Fixeo vous acceptez nos CGU. Pour plus d\'informations, consultez notre document complet.</p>'],
-    privacy: ['Politique de confidentialité', '<p>Vos données personnelles sont protégées et ne sont jamais vendues à des tiers.</p>'],
+    cgu: ['Conditions Générales d\\'Utilisation', '<p>En utilisant Fixeo vous acceptez nos CGU. Pour plus d\\'informations, consultez notre document complet.</p>'],
+    privacy: ['Politique de confidentialité', '<p>Vos données personnelles sont protégées et ne sont jamais vendues à des tiers.</p>']
   };
+
   const data = map[type] || ['Information', '<p>Contenu à venir.</p>'];
   if (title) title.textContent = data[0];
   if (body) body.innerHTML = data[1];
   openModal('content-modal');
 }
 </script>
+
 <script src="js/v3_ultra_stable.js?v=50a38b9"></script>
 <script src="js/pricing.js?v=50a38b9"></script>
 <script src="js/artisan-subscription.js?v=50a38b9"></script>
@@ -3123,19 +3280,15 @@ function openContentModal(type) {
 <script src="js/hero-search-modal.js?v=50a38b9"></script>
 <script src="js/secondary-search.js?v=50a38b9"></script>
 <script src="js/quick-search-modal.js?v=50a38b9"></script>
-<script src="js/header-unified.js?v=50a38b9"></script>
+<script src="js/header-unified.js?v=modalfix3"></script>
 <script src="js/auth-global.js?v=50a38b9"></script>
 <script src="js/fixeo-auth-guard.js?v=50a38b9"></script>
-<!-- ★ SlotLock Engine — always last, no changes -->
 <script src="js/slot-lock.js?v=50a38b9"></script>
 <script src="js/cod-payment.js?v=50a38b9"></script>
-<!-- ★ V13 UX Enhancements -->
 <script src="js/homepage-v13.js?v=50a38b9"></script>
 <script src="js/hero-performance.js?v=50a38b9"></script>
-<!-- ★ Homepage Premium Vedette Patch — 2-col pvc-card, vrais artisans priority -->
-  <script src="js/fixeo_homepage_premium_patch.js?v=50a38b9"></script>
+<script src="js/fixeo_homepage_premium_patch.js?v=50a38b9"></script>
 
-<!-- ★ CONVERSION BOOST v22 — JavaScript Engine -->
 <script>
 /* ================================================================
    FIXEO v22 — CONVERSION BOOST ENGINE
@@ -3144,23 +3297,20 @@ function openContentModal(type) {
    3. Filtres Rapides
    4. bookArtisan() helper
 ================================================================ */
-
 (function() {
   'use strict';
 
-  /* ── 1. ARTISAN RECOMMANDÉ ────────────────────────────────── */
   function loadRecommendedArtisan() {
-    // Gracefully try the API first, fallback to local data
     fetch('/api/artisans/recommended')
       .then(res => { if (!res.ok) throw new Error('no api'); return res.json(); })
       .then(a => showRecommended(a))
       .catch(() => {
-        // Fallback: pick the highest-rated available artisan from local data
         const list = window.ARTISANS || (typeof ARTISANS !== 'undefined' ? ARTISANS : []);
         if (!list.length) return;
         const avail = list.filter(a => a.availability === 'available');
-        const best  = (avail.length ? avail : list).sort((a,b) =>
-          ((b.trustScore||0)*1.2 + (b.rating||0)*5) - ((a.trustScore||0)*1.2 + (a.rating||0)*5)
+        const best = (avail.length ? avail : list).sort((a, b) =>
+          ((b.trustScore || 0) * 1.2 + (b.rating || 0) * 5) -
+          ((a.trustScore || 0) * 1.2 + (a.rating || 0) * 5)
         )[0];
         if (best) showRecommended(best);
       });
@@ -3175,13 +3325,16 @@ function openContentModal(type) {
     const price = document.getElementById('rec-price');
     const cta = document.getElementById('rec-view-profile');
     if (!box) return;
+
     if (name) name.textContent = a.name || '';
+
     if (info) {
       const serviceLabel = a.service || a.category || 'Artisan recommandé';
       const ratingLabel = a.rating || '4.9';
       const cityLabel = a.city || 'Maroc';
       info.textContent = serviceLabel + ' · ⭐ ' + ratingLabel + ' · ' + cityLabel;
     }
+
     if (avatar) {
       avatar.src = a.avatar || a.photo || a.image || '/default-avatar.jpg';
       avatar.onerror = function() {
@@ -3189,16 +3342,19 @@ function openContentModal(type) {
         this.src = '/default-avatar.jpg';
       };
     }
+
     if (price) {
       const rawPrice = a.price || a.priceFrom || '';
       price.innerText = rawPrice ? 'À partir de ' + rawPrice + ' DH' : 'Prix sur demande';
     }
+
     if (cta) {
       cta.setAttribute('data-public-profile', 'true');
       cta.setAttribute('data-artisan-id', a.id || '');
       cta.setAttribute('data-artisan-name', a.name || '');
       cta.setAttribute('data-artisan-category', a.service || a.category || '');
       cta.setAttribute('data-artisan-city', a.city || '');
+
       if (window.FixeoPublicProfileLinks && typeof window.FixeoPublicProfileLinks.bindControl === 'function') {
         window.FixeoPublicProfileLinks.bindControl(cta, a);
       } else {
@@ -3213,13 +3369,13 @@ function openContentModal(type) {
         };
       }
     }
+
     box.style.display = 'flex';
     box.style.opacity = '0';
     box.style.transition = 'opacity 0.4s ease';
     requestAnimationFrame(() => { box.style.opacity = '1'; });
   }
 
-  /* ── 2. SECTION TOP ARTISANS ──────────────────────────────── */
   function loadTopArtisans() {
     fetch('/api/artisans/top')
       .then(res => { if (!res.ok) throw new Error('no api'); return res.json(); })
@@ -3228,9 +3384,9 @@ function openContentModal(type) {
         const list = window.ARTISANS || (typeof ARTISANS !== 'undefined' ? ARTISANS : []);
         if (!list.length) return;
         const top = [...list]
-          .sort((a,b) =>
-            ((b.trustScore||0) + (b.rating||0)*10 + (b.reviewCount||0)*0.1) -
-            ((a.trustScore||0) + (a.rating||0)*10 + (a.reviewCount||0)*0.1)
+          .sort((a, b) =>
+            ((b.trustScore || 0) + (b.rating || 0) * 10 + (b.reviewCount || 0) * 0.1) -
+            ((a.trustScore || 0) + (a.rating || 0) * 10 + (a.reviewCount || 0) * 0.1)
           )
           .slice(0, 6);
         renderTopArtisans(top);
@@ -3258,7 +3414,7 @@ function openContentModal(type) {
 
     grid.innerHTML = limitedData.map((a, i) => `
       <div class="top-artisan-card top-artisan-chip v12-fade-in ${i < 3 ? 'top' : ''}"
-           onclick="openBookingModal(${a.id})"
+           onclick="openBookingModal('${a.id}')"
            title="Réserver ${a.name || ''}">
         <span class="rank">#${i + 1}</span>
         <img class="top-chip-avatar" src="${getAvatar(a)}" alt="${a.name || 'Artisan'}" loading="lazy" onerror="this.onerror=null;this.src='/demo-artisan.jpg';"/>
@@ -3266,7 +3422,7 @@ function openContentModal(type) {
           <h4 class="top-chip-name"><span class="dot"></span>${a.name || ''}</h4>
           <p class="top-chip-meta">⭐ ${a.rating || '4.9'} · ${a.city || 'Maroc'}</p>
         </div>
-        <button class="mini-btn" type="button" onclick="event.stopPropagation();openTopArtisanProfile(${a.id})">Voir</button>
+        <button class="mini-btn" type="button" onclick="event.stopPropagation();openTopArtisanProfile('${a.id}')">Voir</button>
         <span class="top-chip-rank" aria-label="Rang ${i + 1}">#${i + 1}</span>
       </div>
     `).join('');
@@ -3284,54 +3440,52 @@ function openContentModal(type) {
     }, 80);
   }
 
-  /* ── 3. FILTRES RAPIDES (Boost) ───────────────────────────── */
   window.filterQuickBoost = function(type, btn) {
     document.querySelectorAll('.quick-filters .qf-btn').forEach(b => b.classList.remove('active'));
     if (btn) btn.classList.add('active');
 
-    // Also sync existing filterQuick (for the results-header chips)
+    const filterSort = document.getElementById('filter-sort');
+    const filterAvail = document.getElementById('filter-availability');
+
     if (type === 'fast') {
-      const filterSort = document.getElementById('filter-sort');
       if (filterSort) {
         filterSort.value = 'response';
         filterSort.dispatchEvent(new Event('change'));
       } else if (window.searchEngine) {
-        // Fallback: sort by responseTime
-        const avail = document.getElementById('filter-availability');
-        if (avail) { avail.value = ''; avail.dispatchEvent(new Event('change')); }
+        if (filterAvail) {
+          filterAvail.value = '';
+          filterAvail.dispatchEvent(new Event('change'));
+        }
       }
-      // Relay to SecondarySearch if available
+
       if (window.SecondarySearch && window.SecondarySearch.filterFast) {
         window.SecondarySearch.filterFast();
       }
     } else {
-      // Delegate to existing filterQuick
-      const existingBtn = document.querySelector('.results-header .filter-chip[aria-label="' +
-        (type === 'available' ? 'Disponibles maintenant' : type === 'top' ? 'Top notés' : 'Tous les artisans') + '"]');
-      if (existingBtn) {
-        existingBtn.click();
-      } else {
-        filterQuick(type, document.createElement('div'));
-      }
+      const existingBtn = document.querySelector(
+        '.results-header .filter-chip[aria-label="' +
+        (type === 'available' ? 'Disponibles maintenant' : type === 'top' ? 'Top notés' : 'Tous les artisans') +
+        '"]'
+      );
+
+      if (existingBtn) existingBtn.click();
+      else filterQuick(type, document.createElement('div'));
     }
   };
 
-  /* ── 4. bookArtisan() helper ──────────────────────────────── */
   window.bookArtisan = function(id) {
     if (!id) return;
     if (window.FixeoReservation) window.FixeoReservation.openBooking(id);
     else if (window.openBookingModal) window.openBookingModal(id);
   };
 
-  /* ── INIT on DOM ready ───────────────────────────────────── */
   function init() {
-    // HERO conversion advanced: no artisan result displayed in HERO before user action
-    // Top artisans rendered only when idle or near viewport to protect hero CWV
     if (window.FixeoHeroPerf && typeof window.FixeoHeroPerf.scheduleTopArtisans === 'function') {
       window.FixeoHeroPerf.scheduleTopArtisans(loadTopArtisans);
     } else {
       setTimeout(loadTopArtisans, 1200);
     }
+
     console.log('%c⚡ Fixeo Conversion Boost v22 loaded', 'color:#E1306C;font-weight:700;');
   }
 
@@ -3340,9 +3494,9 @@ function openContentModal(type) {
   } else {
     init();
   }
-
 })();
 </script>
+
 <script src="js/marketplace-premium-patch.js?v=50a38b9"></script>
 <script src="js/fixeo-client-requests-store.js?v=50a38b9"></script>
 <script src="js/request-form.js?v=50a38b9"></script>
@@ -3350,6 +3504,7 @@ function openContentModal(type) {
 <script src="js/hero-ux-fixes.js?v=50a38b9"></script>
 <script src="js/how-it-works-premium.js?v=50a38b9"></script>
 <script src="js/services-premium.js?v=svcv7"></script>
+
 <script>
 (function () {
   const ROLE_LABELS = {
@@ -3375,6 +3530,7 @@ function openContentModal(type) {
     if (!box || !avatar || !name || !role) return;
 
     const user = getStoredUser();
+
     if (!user) {
       box.hidden = true;
       box.classList.remove('is-visible');
@@ -3418,9 +3574,8 @@ function openContentModal(type) {
 </script>
 
 <script src="js/fixeo-artisan-request-notifications.js?v=50a38b9"></script>
-  <script src="js/why-fixeo.js?v=svcv5"></script>
+<script src="js/why-fixeo.js?v=svcv5"></script>
 
-<!-- ── Mobile-only Urgence FAB ─────────────────────────────────── -->
 <button
   id="fixeo-urgent-fab"
   type="button"
@@ -3429,14 +3584,114 @@ function openContentModal(type) {
   data-request-mode="express"
   onclick="window.FixeoClientRequest ? FixeoClientRequest.openExpress(this) : (window.FixeoReservation ? FixeoReservation.openExpress() : openModal('express-modal')); return false;"
   aria-label="Demande urgente"
-  title="Demande urgente">
+  title="Demande urgente"
+>
   <svg class="ufab-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
     <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
   </svg>
   <span class="ufab-label">Urgence</span>
 </button>
-<!-- ── /Mobile Urgence FAB ──────────────────────────────────────── -->
-  <script src="js/testimonials-premium.js?v=tp1"></script>
-  <script src="js/fixeo-search-engine-v2.js?v=1"></script>
+
+<script src="js/testimonials-premium.js?v=tp1"></script>
+
+<script>
+window.addEventListener('load', function () {
+  document.body.classList.add('fixeo-sections-ready');
+}, { once: true });
+</script>
+ <div style="margin-top:40px; padding:20px; background:#111; color:#fff; border-radius:12px;">
+
+<h3>Services par ville au Maroc</h3>
+
+<div style="display:flex; flex-wrap:wrap; gap:10px;">
+
+<!-- CASABLANCA -->
+<a href="/plombier-casablanca.html">Plombier Casablanca</a>
+<a href="/electricien-casablanca.html">Électricien Casablanca</a>
+<a href="/serrurier-casablanca.html">Serrurier Casablanca</a>
+
+<!-- RABAT -->
+<a href="/plombier-rabat.html">Plombier Rabat</a>
+<a href="/electricien-rabat.html">Électricien Rabat</a>
+<a href="/serrurier-rabat.html">Serrurier Rabat</a>
+
+<!-- FES -->
+<a href="/plombier-fes.html">Plombier Fès</a>
+<a href="/electricien-fes.html">Électricien Fès</a>
+<a href="/serrurier-fes.html">Serrurier Fès</a>
+
+<!-- MARRAKECH -->
+<a href="/plombier-marrakech.html">Plombier Marrakech</a>
+<a href="/electricien-marrakech.html">Électricien Marrakech</a>
+<a href="/serrurier-marrakech.html">Serrurier Marrakech</a>
+
+<!-- TANGER -->
+<a href="/plombier-tanger.html">Plombier Tanger</a>
+<a href="/electricien-tanger.html">Électricien Tanger</a>
+<a href="/serrurier-tanger.html">Serrurier Tanger</a>
+
+<!-- AGADIR -->
+<a href="/plombier-agadir.html">Plombier Agadir</a>
+<a href="/electricien-agadir.html">Électricien Agadir</a>
+<a href="/serrurier-agadir.html">Serrurier Agadir</a>
+
+<!-- MEKNES -->
+<a href="/plombier-meknes.html">Plombier Meknès</a>
+<a href="/electricien-meknes.html">Électricien Meknès</a>
+<a href="/serrurier-meknes.html">Serrurier Meknès</a>
+
+<!-- OUJDA -->
+<a href="/plombier-oujda.html">Plombier Oujda</a>
+<a href="/electricien-oujda.html">Électricien Oujda</a>
+<a href="/serrurier-oujda.html">Serrurier Oujda</a>
+
+</div>
+</div>
+ 
+  <script>
+(function () {
+  document.addEventListener('click', function (e) {
+
+    const trigger = e.target.closest(
+      '[data-open-request-form], .mobile-nav-action-link-request'
+    );
+
+    if (!trigger) return;
+
+    // 🔥 STOP TOTAL
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+
+    // 🔥 ferme menu mobile
+    const mobileNav = document.querySelector('.mobile-nav');
+    if (mobileNav) mobileNav.classList.remove('open');
+    document.body.classList.remove('mobile-menu-open');
+
+    // 🔥 ouvre modal (chaine safe)
+    requestAnimationFrame(() => {
+
+      if (window.FixeoClientRequest && typeof window.FixeoClientRequest.open === 'function') {
+        window.FixeoClientRequest.open(trigger);
+        return;
+      }
+
+      if (typeof window.openModal === 'function') {
+        window.openModal('request-modal');
+        return;
+      }
+
+      const modal = document.getElementById('request-modal');
+      if (modal) {
+        modal.style.display = 'block';
+        modal.classList.add('open', 'active');
+        document.body.classList.add('modal-open');
+      }
+
+    });
+
+  }, true); // ⚠️ capture mode = PRIORITÉ MAX
+})();
+</script>
 </body>
 </html>
