@@ -1951,14 +1951,14 @@ section#home.hero.hero-section {
     opacity: 0 !important;
   }
 
-  /* E. HEADER FLASH SHIELD — hide old Urgent button in .nav-actions on mobile
-     before fixeo-header-global.js mount() tags it as .fixeo-gh-original-node.
+  /* E. HEADER FLASH SHIELD — hide old Urgent button in .nav-actions at ALL
+     viewports before fixeo-header-global.js mount() tags it .fixeo-gh-original-node.
      body.fixeo-gh-enabled is set at parse time (body class), so this rule
-     applies immediately at first paint. The floating FAB is unaffected. */
-  @media (max-width: 768px) {
-    body.fixeo-gh-enabled .nav-actions > .btn-express {
-      display: none !important;
-    }
+     applies immediately at first paint on desktop AND mobile.
+     Selector is scoped to .nav-actions > .btn-express — does NOT affect
+     the floating FAB (#fixeo-urgent-fab) which is a separate element. */
+  body.fixeo-gh-enabled .nav-actions > .btn-express {
+    display: none !important;
   }
 </style>
   <link rel="stylesheet" href="css/services-uber-premium.css?v=sup4">
