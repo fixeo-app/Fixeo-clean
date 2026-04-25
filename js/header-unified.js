@@ -369,9 +369,95 @@
     });
 
     /* Close on mobile nav link click */
-    $$('.mobile-nav .nav-link').forEach(link => {
-      link.addEventListener('click', () => toggleMenu(true));
+    /* Close on mobile nav link click — FIX MODAL */
+$$('.mobile-nav .nav-link, .mobile-nav [data-open-request-form], .mobile-nav [data-open-express-request]').forEach(link => {
+  link.addEventListener('click', (e) => {
+
+    const isRequestTrigger =
+      link.matches('[data-open-request-form]') ||
+      link.matches('[data-open-express-request]') ||
+      link.classList.contains('mobile-nav-action-link-request') ||
+      link.classList.contains('mobile-nav-action-link-urgent');
+
+    // ✅ IMPORTANT : ne pas casser les modals
+    if (isRequestTrigger) return;
+
+    toggleMenu(true);
+  });
+});
+
+/* =========================
+   FIX BOUTON PUBLIER DEMANDE
+   ========================= */
+const mobileRequestTrigger = document.querySelector('.mobile-nav [data-open-request-form], .mobile-nav .mobile-nav-action-link-request');
+
+if (mobileRequestTrigger) {
+  mobileRequestTrigger.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+
+    toggleMenu(true);
+
+    requestAnimationFrame(() => {
+      if (window.FixeoClientRequest?.open) {
+        window.FixeoClientRequest.open(mobileRequestTrigger);
+        return;
+      }
+
+      if (window.openModal) {
+        window.openModal('request-modal');
+        return;
+      }
+
+      const modal = document.getElementById('request-modal');
+      if (modal) {
+        modal.style.display = 'block';
+        modal.classList.add('open', 'active');
+        document.body.classList.add('modal-open');
+      }
     });
+  }, true);
+}
+
+/* =========================
+   FIX BOUTON URGENT
+   ========================= */
+const mobileUrgentTrigger = document.querySelector('.mobile-nav [data-open-express-request], .mobile-nav .mobile-nav-action-link-urgent');
+
+if (mobileUrgentTrigger) {
+  mobileUrgentTrigger.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+
+    toggleMenu(true);
+
+    requestAnimationFrame(() => {
+      if (window.FixeoClientRequest?.openExpress) {
+        window.FixeoClientRequest.openExpress(mobileUrgentTrigger);
+        return;
+      }
+
+      if (window.FixeoClientRequest?.open) {
+        window.FixeoClientRequest.open(mobileUrgentTrigger);
+        return;
+      }
+
+      if (window.openModal) {
+        window.openModal('request-modal');
+        return;
+      }
+
+      const modal = document.getElementById('request-modal');
+      if (modal) {
+        modal.style.display = 'block';
+        modal.classList.add('open', 'active');
+        document.body.classList.add('modal-open');
+      }
+    });
+  }, true);
+}
 
     /* Close on outside click */
     document.addEventListener('click', (e) => {

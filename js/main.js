@@ -1,6 +1,6 @@
 // ============================================================
 //  FIXEO V3 — MAIN CORE (Artisans · Search · Map · Chat)
-// ============================================================
+// =====================f=======================================
 
 // ── ARTISAN DATA ─────────────────────────────────────────────
 const ARTISANS = [];
@@ -51,7 +51,43 @@ function marketplaceNormalizeCategory(value) {
     .replace(/[\u0300-\u036f]/g, '')
     .replace(/[^a-z0-9]+/g, '');
 }
+function marketplaceResolveCanonicalCategory(raw) {
+  const v = marketplaceNormalizeCategory(raw);
 
+  if (!v) return '';
+
+  // 🔧 Plomberie
+  if (/(plomb|fuite|canalis|wc|evier|chauffe.?eau)/.test(v)) return 'plomberie';
+
+  // ⚡ Électricité
+  if (/(electr|courant|prise|cabl|interrupteur|panne)/.test(v)) return 'electricite';
+
+  // 🎨 Peinture
+  if (/(peint|peinture|mur|facade|vernis)/.test(v)) return 'peinture';
+
+  // 🪵 Menuiserie
+  if (/(menuis|bois|porte|placard|fenetre)/.test(v)) return 'menuiserie';
+
+  // ❄️ Climatisation
+  if (/(clim|climatiseur|froid|split)/.test(v)) return 'climatisation';
+
+  // 🧱 Maçonnerie
+  if (/(macon|beton|mur|construction|fondation)/.test(v)) return 'maconnerie';
+
+  // 🔐 Serrurerie
+  if (/(serrure|cle|porte bloque|verrou)/.test(v)) return 'serrurerie';
+
+  // 🧹 Nettoyage
+  if (/(nettoy|menage|proprete)/.test(v)) return 'nettoyage';
+
+  // 🌿 Jardinage
+  if (/(jardin|plante|pelouse)/.test(v)) return 'jardinage';
+
+  // 🚚 Déménagement
+  if (/(demenag|transport meuble)/.test(v)) return 'demenagement';
+
+  return '';
+}
 function marketplaceIsDemoIdentifier(value) {
   const normalized = String(value || '').trim().toLowerCase();
   return /^art_demo_/i.test(normalized) || /^(?:[1-9]|1[0-2])$/.test(normalized);
@@ -76,8 +112,35 @@ function normalizeMarketplaceArtisanRecord(raw) {
   const name = marketplacePickFirst(raw.name);
   if (!name) return null;
 
-  const service = marketplacePickFirst(raw.category, raw.service, raw.specialty, raw.job);
-  const category = marketplaceNormalizeCategory(service);
+// 🔥 SOURCE PRINCIPALE = DB
+let category = raw.category;
+
+console.log('DEBUG RAW:', raw.category, raw.service, raw.specialty, raw.job);
+
+if (!category || category.trim() === '') {
+  category = marketplacePickFirst(
+    raw.service,
+    raw.specialty,
+    raw.job
+  );
+  console.log('DEBUG SKILLS:', raw.skills);
+
+  if (!category && Array.isArray(raw.skills) && raw.skills.length) {
+    category = raw.skills[0];
+  }
+}   
+// sécurité ultime
+if (!category) {
+  category = 'bricolage';
+}
+
+// normalisation
+category = marketplaceNormalizeCategory(category)
+// Fallback intelligent
+
+  const categoryResolved = marketplaceResolveCanonicalCategory(category) || 'bricolage';
+  console.log('DEBUG RESOLVED:', categoryResolved);
+  let service = categoryResolved;
   const city = marketplacePickFirst(raw.city, raw.ville);
   const description = marketplacePickFirst(raw.description, raw.bio && raw.bio.fr, raw.bio && raw.bio.en, raw.bio && raw.bio.ar, raw.bio);
   const status = marketplacePickFirst(raw.status, 'active').toLowerCase();
@@ -90,8 +153,8 @@ function normalizeMarketplaceArtisanRecord(raw) {
   const priceUnit = marketplacePickFirst(raw.priceUnit, raw.price_unit, 'intervention');
   const certified = raw.certified === true || raw.certified === 'true' || raw.certified === 'yes';
   const skills = Array.isArray(raw.skills) && raw.skills.length
-    ? raw.skills.filter(Boolean)
-    : (service ? [service] : []);
+  ? raw.skills.filter(Boolean)
+  : (category ? [category] : []);
   const badges = Array.isArray(raw.badges) ? raw.badges.filter(Boolean) : (certified ? ['verified'] : []);
   const verified = raw.verified === true || raw.verified === 'true' || raw.verified === 'yes' || certified || badges.includes('verified');
   const hasRatingData = marketplaceHasValue(raw.rating) || marketplaceHasValue(raw.average_rating) || marketplaceHasValue(raw.review_rating);
@@ -106,8 +169,8 @@ function normalizeMarketplaceArtisanRecord(raw) {
     name,
     initials: marketplaceBuildInitials(name),
     avatar: marketplacePickFirst(raw.avatar, raw.photo, raw.image) || null,
-    category: category || 'bricolage',
-    service: service || '',
+    category: categoryResolved || 'bricolage',
+    service: service || 'bricolage', 
     city: city || 'Maroc',
     lat: Number.isFinite(Number(raw.lat)) ? Number(raw.lat) : null,
     lng: Number.isFinite(Number(raw.lng)) ? Number(raw.lng) : null,
@@ -145,7 +208,7 @@ function readMarketplaceLocalArtisans() {
     const parsed = marketplaceSafeJSONParse(localStorage.getItem(MARKETPLACE_LOCAL_STORAGE_KEY) || '[]', []);
     return (Array.isArray(parsed) ? parsed : [])
       .map(normalizeMarketplaceArtisanRecord)
-      .filter((artisan) => artisan && artisan.status !== 'inactive'); /* FIX: was ==='active', drops Supabase records without status */
+      .filter((artisan) => artisan && artisan.status === 'active');
   } catch (error) {
     return [];
   }
@@ -235,15 +298,14 @@ class SearchEngine {
     const ratingFloor = Number(minRating) || 0;
     const priceCeiling = Number(maxPrice) || 0;
 
-    this.filtered = this.artisans.filter(a => a.status !== 'inactive').filter(a => {
+    this.filtered = this.artisans.filter(a => a.status === 'active').filter(a => {
       const lang = window.i18n ? window.i18n.lang : 'fr';
       const q = _norm(query);
       const matchQuery = !q ||
-        _norm(a.name || '').includes(q) ||
-        _norm(a.category || a.service || '').includes(q) ||
-        _norm((a.bio && (a.bio[lang] || a.bio.fr)) || a.description || a.shortBio || '').includes(q) ||
-        _norm(a.city || '').includes(q) ||
-        (Array.isArray(a.skills) ? a.skills : []).some(s => _norm(s).includes(q));
+        _norm(a.name).includes(q) ||
+        _norm(a.category).includes(q) ||
+        _norm(a.bio[lang] || a.bio.fr || '').includes(q) ||
+        (a.skills || []).some(s => _norm(s).includes(q));
       const _normCat = s => (s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,'').trim();
       const matchCat = !category || _normCat(a.category) === _normCat(category)
         || (a.service && _normCat(a.service) === _normCat(category))
@@ -804,9 +866,32 @@ function applyMarketplaceFilters(options = {}) {
   const results = window.searchEngine.filter(state);
   // Re-render with matching sort if filters are active; otherwise use full set
   if (hasActive) {
-    var sorted = window.FixeoMatchingEngine
-      ? window.FixeoMatchingEngine.sortByMatch(results.slice(), { city: state.city, service: state.category, isUrgent: false })
-      : results;
+  var sorted;
+
+try {
+  const matchingContext = {
+    city: state.city || '',
+    service: state.category || '',
+    isUrgent: false
+  };
+
+  if (
+    window.FixeoMatchingEngine &&
+    typeof window.FixeoMatchingEngine.sortByMatch === 'function' &&
+    (matchingContext.city || matchingContext.service)
+  ) {
+    sorted = window.FixeoMatchingEngine.sortByMatch(
+      results.slice(),
+      matchingContext
+    );
+  } else {
+    sorted = results;
+  }
+
+} catch (error) {
+  console.warn('[Fixeo Matching] applyMarketplaceFilters fallback', error);
+  sorted = results;
+}
     renderArtisans(sorted, { forceAll: true });
   } else {
     renderArtisans(_initialMatchSortedArtisans || ARTISANS);
@@ -1195,7 +1280,8 @@ function buildOtherArtisanCard(a) {
 
       <div class="result-actions card-buttons" style="display:flex;align-items:center;justify-content:space-between;gap:.9rem;flex-wrap:wrap;margin-top:auto">
         <div style="color:rgba(255,255,255,.62);font-size:.8rem;font-weight:700">Profil détaillé, avis et réservation depuis la fiche artisan</div>
-        <button class="btn-primary btn-other-profile ssb2-btn-profile secondary-btn" onclick="event.stopPropagation();if(window.FixeoPublicProfileLinks){window.FixeoPublicProfileLinks.openBySourceId(${serializedArtisanId}, event);}else if(window.openArtisanModal){openArtisanModal(${serializedArtisanId});}" title="Voir le profil complet" style="min-width:170px;font-weight:800;box-shadow:0 12px 30px rgba(225,48,108,.18)">Voir profil</button>
+        <button class="btn-primary btn-other-profile ssb2-btn-profile secondary-btn" onclick="event.stopPropagation();if(window.FixeoPublicProfileLinks){window.FixeoPublicProfileLinks.openBySourceId(${serializedArtisanId}, event);}else if(window.openArtisanModal)
+      {openArtisanModal(${serializedArtisanId});}" title="Voir le profil complet" style="min-width:170px;font-weight:800;box-shadow:0 12px 30px rgba(225,48,108,.18)">Voir profil</button>
       </div>
     </article>`;
 }
@@ -1282,7 +1368,28 @@ function renderArtisans(list, options = {}) {
   const preparedList = resultsPageManager && typeof resultsPageManager.prepareList === 'function' && !options.skipResultsPageFilters
     ? resultsPageManager.prepareList(incomingList, Array.isArray(list))
     : incomingList;
-  const smartSortedList = sortMarketplaceArtisansIntelligently(preparedList);
+  let smartSortedList = preparedList;
+
+try {
+  const matchingContext = {
+    city: (document.getElementById('filter-city')?.value || document.getElementById('services-city-filter')?.value || '').trim(),
+    service: (document.getElementById('filter-category')?.value || '').trim(),
+    isUrgent: false
+  };
+
+  if (
+    window.FixeoMatchingEngine &&
+    typeof window.FixeoMatchingEngine.sortByMatch === 'function' &&
+    (matchingContext.city || matchingContext.service)
+  ) {
+    smartSortedList = window.FixeoMatchingEngine.sortByMatch(preparedList.slice(), matchingContext);
+  } else {
+    smartSortedList = sortMarketplaceArtisansIntelligently(preparedList);
+  }
+} catch (error) {
+  console.warn('[Fixeo Matching] Fallback → smart sort', error);
+  smartSortedList = sortMarketplaceArtisansIntelligently(preparedList);
+}
 
   if (!container) return;
 
@@ -2042,7 +2149,7 @@ function submitComment() {
   if (!input || !input.value.trim()) return;
   const list = document.getElementById('comment-list');
   const div = document.createElement('div');
-  div.style.cssText = 'display:flex;gap:.75rem;margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid rgba(255,255,255,0.07)';
+  div.style.cssText = 'display:flex;gap:.75rem;margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid rgba(255,255,255,.07)';
   div.innerHTML = `
     <div style="font-size:1.5rem">😊</div>
     <div style="flex:1">

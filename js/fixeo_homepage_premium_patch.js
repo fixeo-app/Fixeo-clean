@@ -199,10 +199,33 @@
 
     /* Trust badges */
     var badges = '';
-    if (isVer)     badges += '<span class="pvc-badge-v2 pvc-badge-v2--verified">✔ Vérifié Fixeo</span>';
-    if (trust>=90) badges += '<span class="pvc-badge-v2 pvc-badge-v2--premium">🏅 Premium</span>';
-    if (!isVer && isClaimed) badges += '<span class="pvc-badge-v2 pvc-badge-v2--claim">🏷️ Revendiqué</span>';
-    if (!isVer && !isClaimed) badges += '<span class="pvc-badge-v2 pvc-badge-v2--claim">🏷️ Profil à revendiquer</span>';
+
+// 🟢 Profil réel (NOUVEAU)
+if (isReal) {
+  badges += '<span class="pvc-badge-v2 pvc-badge-v2--real">✨ Profil réel</span>';
+}
+
+// ✔ Vérifié
+if (isVer) {
+  badges += '<span class="pvc-badge-v2 pvc-badge-v2--verified">✔ Vérifié Fixeo</span>';
+}
+
+// 🏅 Premium
+if (trust >= 90) {
+  badges += '<span class="pvc-badge-v2 pvc-badge-v2--premium">🏅 Premium</span>';
+}
+
+// 📦 Revendiqué
+if (isVer && isClaimed) {
+  badges += '<span class="pvc-badge-v2 pvc-badge-v2--claim">📦 Revendiqué</span>';
+}
+
+// ⚠️ À revendiquer
+if (!isVer && !isClaimed) {
+  badges += '<span class="pvc-badge-v2 pvc-badge-v2--claim">📦 Profil à revendiquer</span>';
+}
+
+
 
     /* Data attribute (for click delegation) */
     var dataAttr;

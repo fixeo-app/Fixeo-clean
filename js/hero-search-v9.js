@@ -93,17 +93,22 @@
     if (n.length >= 2 && !cat) {
       const mapper = _nlpMapper();
       const hasCat = mapper ? (mapper.detectMulti ? mapper.detectMulti(q) : []).length > 0 : false;
-      if (!hasCat) {
-        list = list.filter(a =>
-          _norm(a.name).includes(n) ||
-          _norm(a.category).includes(n) ||
-          (a.skills || []).some(sk => _norm(sk).includes(n)) ||
-          _norm((a.bio && a.bio.fr) || '').includes(n)
-        );
-      }
+     if (!hasCat) {
+  list = list.filter(a =>
+    _norm(a.name || '').includes(n) ||
+    _norm(a.city || '').includes(n) ||
+    _norm(a.category || '').includes(n) ||
+    _norm(a.description || '').includes(n) ||
+    (a.skills || []).some(sk => _norm(sk || '').includes(n)) ||
+    _norm((a.bio && a.bio.fr) || '').includes(n)
+  );
+}
     }
 
-    if (cat)  list = list.filter(a => a.category === cat);
+   if (cat) {
+  const catKey = _norm(cat);
+  list = list.filter(a => _norm(a.category || '').includes(catKey));
+}
     if (city) {
       const ck = _norm(city);
       list = list.filter(a => _norm(a.city || '') === ck);
