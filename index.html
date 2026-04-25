@@ -1950,6 +1950,16 @@ section#home.hero.hero-section {
   #services .service-chip:not(.svc-visible):not(.v12-fade-in) {
     opacity: 0 !important;
   }
+
+  /* E. HEADER FLASH SHIELD — hide old Urgent button in .nav-actions on mobile
+     before fixeo-header-global.js mount() tags it as .fixeo-gh-original-node.
+     body.fixeo-gh-enabled is set at parse time (body class), so this rule
+     applies immediately at first paint. The floating FAB is unaffected. */
+  @media (max-width: 768px) {
+    body.fixeo-gh-enabled .nav-actions > .btn-express {
+      display: none !important;
+    }
+  }
 </style>
   <link rel="stylesheet" href="css/services-uber-premium.css?v=sup4">
   <link rel="stylesheet" href="css/testimonials-cta-premium.css?v=tcp1">
@@ -2037,7 +2047,7 @@ section#home.hero.hero-section {
 
 </head>
 
-<body class="fixeo-homepage-mode">
+<body class="fixeo-homepage-mode fixeo-gh-enabled">
 <!-- ★ INLINE BOOT SCRIPT: runs synchronously at parse time, zero delay.
      Adds fixeo-sections-ready immediately so JS-gated sections are never
      invisible for more than 0ms. Also removes any stale body classes. -->

@@ -5,6 +5,8 @@
   const isDashboardClient = path === 'dashboard-client.html';
   const isDashboardArtisan = path === 'dashboard-artisan.html';
   const isDashboard = isDashboardClient || isDashboardArtisan;
+  /* Homepage = index.html or root path — used to decide modal vs navigation for CTA */
+  const isHomepage = (path === 'index.html' || path === '');
 
   function esc(value) {
     return String(value || '')
@@ -103,7 +105,10 @@
         ${dashboardMarkup}
         <div class="fixeo-gh-drawer-group">
           <div class="fixeo-gh-drawer-label">Actions</div>
-          <button type="button" class="fixeo-gh-drawer-cta is-primary" data-open-request-form="true" data-request-mode="marketplace">Publier une demande</button>
+          ${isHomepage
+            ? '<button type="button" class="fixeo-gh-drawer-cta is-primary" data-open-request-form="true" data-request-mode="marketplace">Publier une demande</button>'
+            : '<a class="fixeo-gh-drawer-cta is-primary" href="index.html">Publier une demande</a>'
+          }
           <a class="fixeo-gh-drawer-cta" href="auth.html">Connexion / compte</a>
         </div>
       </div>
