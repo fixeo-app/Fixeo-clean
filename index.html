@@ -1960,6 +1960,20 @@ section#home.hero.hero-section {
   html body.fixeo-gh-enabled .nav-actions > .btn-express {
     display: none !important;
   }
+
+  /* F. LEGACY SECTION PRE-HIDE — hides elements that are always removed by
+     homepage-conversion-optimizer.js at DOMContentLoaded, so they never flash.
+     #recommended-artisan-section: always hidden by hideSection() in optimizer.
+     .mobile-social-proof: hidden on desktop by external CSS; scoped to desktop
+     only here so mobile display (<=767px) is unaffected. */
+  html body #recommended-artisan-section {
+    display: none !important;
+  }
+  @media (min-width: 768px) {
+    html body .mobile-social-proof {
+      display: none !important;
+    }
+  }
 </style>
   <link rel="stylesheet" href="css/services-uber-premium.css?v=sup4">
   <link rel="stylesheet" href="css/testimonials-cta-premium.css?v=tcp1">
