@@ -1943,14 +1943,12 @@ section#home.hero.hero-section {
     display: none !important;
   }
   html body #artisans-section,
-  html body #services,
-  html body .trust-section {
+  html body #services {
     opacity: 0;
     transition: opacity 0.3s ease;
   }
   html body.fixeo-sections-ready #artisans-section,
   html body.fixeo-sections-ready #services,
-  html body.fixeo-sections-ready .trust-section,
   html body.fixeo-search-mode #artisans-section {
     opacity: 1 !important;
   }
@@ -1970,18 +1968,16 @@ section#home.hero.hero-section {
     display: none !important;
   }
 
-  /* F. LEGACY SECTION PRE-HIDE — hides elements that are always removed by
-     homepage-conversion-optimizer.js at DOMContentLoaded, so they never flash.
-     #recommended-artisan-section: always hidden by hideSection() in optimizer.
-     .mobile-social-proof: hidden on desktop by external CSS; scoped to desktop
-     only here so mobile display (<=767px) is unaffected. */
+  /* F. LEGACY SECTION PRE-HIDE — permanently hides duplicate/legacy blocks
+     that overlap with current premium sections and must never appear.
+     .trust-section: duplicate of #why-fixeo-section content; stays in DOM
+       as a layout anchor for moveHowItWorksAfterTrust() but renders nothing.
+     .mobile-social-proof: old mobile strip below hero; duplicate of trust bar.
+     #recommended-artisan-section: always hidden by hideSection() in optimizer. */
+  html body .trust-section,
+  html body .mobile-social-proof,
   html body #recommended-artisan-section {
     display: none !important;
-  }
-  @media (min-width: 768px) {
-    html body .mobile-social-proof {
-      display: none !important;
-    }
   }
 </style>
   <link rel="stylesheet" href="css/services-uber-premium.css?v=sup4">
