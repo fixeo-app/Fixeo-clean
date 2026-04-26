@@ -1979,6 +1979,21 @@ section#home.hero.hero-section {
   html body #recommended-artisan-section {
     display: none !important;
   }
+
+  /* G. SERVICES FILTER BAR — hide raw '📍 Ville :' + native select state at parse
+     time; reveal only after services-premium.js inserts .svc-city-wrap (premium pill).
+     Guarded by @supports selector(:has(*)) — graceful degradation on old browsers:
+     if :has() unsupported the rule is skipped and the bar remains visible (no worse
+     than before). No JS change. */
+  @supports selector(:has(*)) {
+    html body #services .services-filter-bar {
+      opacity: 0;
+      transition: opacity 0.15s ease;
+    }
+    html body #services .services-filter-bar:has(.svc-city-wrap) {
+      opacity: 1;
+    }
+  }
 </style>
   <link rel="stylesheet" href="css/services-uber-premium.css?v=sup4">
   <link rel="stylesheet" href="css/testimonials-cta-premium.css?v=tcp1">
