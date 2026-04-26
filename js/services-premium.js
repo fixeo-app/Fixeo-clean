@@ -204,6 +204,10 @@
     if (citySelect) _buildCityPicker(citySelect);
 
     _initChipsFadeIn(section);
+
+    // Signal that the premium services UI is fully rendered.
+    // CSS keeps #services at opacity:0 until this class is present.
+    document.body.classList.add('fixeo-services-ready');
   }
 
   function boot() {

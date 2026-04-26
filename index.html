@@ -1942,14 +1942,23 @@ section#home.hero.hero-section {
   html body #top-artisans {
     display: none !important;
   }
-  html body #artisans-section,
-  html body #services {
+  html body #artisans-section {
     opacity: 0;
     transition: opacity 0.3s ease;
   }
   html body.fixeo-sections-ready #artisans-section,
-  html body.fixeo-sections-ready #services,
   html body.fixeo-search-mode #artisans-section {
+    opacity: 1 !important;
+  }
+
+  /* #services has its own reveal class set by services-premium.js after full
+     render (pill + chips stagger started). Decoupled from fixeo-sections-ready
+     so the section never reveals in the gap between rAF and DOMContentLoaded. */
+  html body #services {
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+  html body.fixeo-services-ready #services {
     opacity: 1 !important;
   }
 
@@ -1980,20 +1989,6 @@ section#home.hero.hero-section {
     display: none !important;
   }
 
-  /* G. SERVICES FILTER BAR — hide raw '📍 Ville :' + native select state at parse
-     time; reveal only after services-premium.js inserts .svc-city-wrap (premium pill).
-     Guarded by @supports selector(:has(*)) — graceful degradation on old browsers:
-     if :has() unsupported the rule is skipped and the bar remains visible (no worse
-     than before). No JS change. */
-  @supports selector(:has(*)) {
-    html body #services .services-filter-bar {
-      opacity: 0;
-      transition: opacity 0.15s ease;
-    }
-    html body #services .services-filter-bar:has(.svc-city-wrap) {
-      opacity: 1;
-    }
-  }
 </style>
   <link rel="stylesheet" href="css/services-uber-premium.css?v=sup4">
   <link rel="stylesheet" href="css/testimonials-cta-premium.css?v=tcp1">
@@ -3547,7 +3542,7 @@ function openContentModal(type) {
 <script src="js/homepage-conversion-optimizer.js?v=50a38b9"></script>
 <script src="js/hero-ux-fixes.js?v=50a38b9"></script>
 <script src="js/how-it-works-premium.js?v=50a38b9"></script>
-<script src="js/services-premium.js?v=svcv7"></script>
+<script src="js/services-premium.js?v=svcv8"></script>
 
 <script>
 (function () {
