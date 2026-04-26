@@ -1934,17 +1934,21 @@ section#home.hero.hero-section {
      #secondary-search-section + #top-artisans: always hidden by
      homepage-conversion-optimizer.js; moved to display:none so rAF
      fixeo-sections-ready reveal never shows them even for 1 frame.
-     #artisans-section: still on opacity path — used for search results
-     and premium grid (#fixeo-homepage-vedette-grid). */
+     #artisans-section + #services: opacity:0 at parse time; revealed
+     via fixeo-sections-ready which fires at rAF (after all render-blocking
+     CSS is applied, so services-premium.css hides the native select
+     before the section becomes visible). */
   html body #secondary-search-section,
   html body #top-artisans {
     display: none !important;
   }
-  html body #artisans-section {
+  html body #artisans-section,
+  html body #services {
     opacity: 0;
     transition: opacity 0.3s ease;
   }
   html body.fixeo-sections-ready #artisans-section,
+  html body.fixeo-sections-ready #services,
   html body.fixeo-search-mode #artisans-section {
     opacity: 1 !important;
   }
