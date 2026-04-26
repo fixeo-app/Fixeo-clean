@@ -1930,17 +1930,20 @@ section#home.hero.hero-section {
     display: none !important;
   }
 
-  /* C. EMPTY GRID SECTIONS — opacity:0 ONLY for sections with
-     JS-populated grids that would flash header+empty grid.
-     Revealed by body.fixeo-sections-ready (added via inline script). */
+  /* C. EMPTY GRID SECTIONS
+     #secondary-search-section + #top-artisans: always hidden by
+     homepage-conversion-optimizer.js; moved to display:none so rAF
+     fixeo-sections-ready reveal never shows them even for 1 frame.
+     #artisans-section: still on opacity path — used for search results
+     and premium grid (#fixeo-homepage-vedette-grid). */
   html body #secondary-search-section,
-  html body #top-artisans,
+  html body #top-artisans {
+    display: none !important;
+  }
   html body #artisans-section {
     opacity: 0;
     transition: opacity 0.3s ease;
   }
-  html body.fixeo-sections-ready #secondary-search-section,
-  html body.fixeo-sections-ready #top-artisans,
   html body.fixeo-sections-ready #artisans-section,
   html body.fixeo-search-mode #artisans-section {
     opacity: 1 !important;
