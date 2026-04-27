@@ -54,6 +54,57 @@
       .fixeo-gh-brand img.fixeo-logo-img { height:22px !important; }
     }
   </style>
+  <style id="fixeo-skeleton">
+    /* Skeleton loading cards for urgent results */
+    @keyframes fixeo-pulse {
+      0%,100% { opacity:.45; }
+      50%      { opacity:.9; }
+    }
+    .fixeo-skel-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding: 4px 0;
+    }
+    .fixeo-skel-card {
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 16px;
+      padding: 18px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      animation: fixeo-pulse 1.4s ease-in-out infinite;
+    }
+    .fixeo-skel-card:nth-child(2) { animation-delay: .2s; }
+    .fixeo-skel-card:nth-child(3) { animation-delay: .4s; }
+    .fixeo-skel-avatar {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.1);
+      flex-shrink: 0;
+    }
+    .fixeo-skel-body { flex: 1; display: flex; flex-direction: column; gap: 10px; }
+    .fixeo-skel-line {
+      height: 12px;
+      border-radius: 6px;
+      background: rgba(255,255,255,.1);
+    }
+    .fixeo-skel-line.w80 { width: 80%; }
+    .fixeo-skel-line.w55 { width: 55%; }
+    .fixeo-skel-line.w35 { width: 35%; }
+    .fixeo-skel-btn {
+      height: 34px; width: 140px;
+      border-radius: 10px;
+      background: rgba(225,48,108,.18);
+      margin-top: 4px;
+    }
+    @media (max-width: 640px) {
+      .fixeo-skel-card { padding: 14px; }
+      .fixeo-skel-avatar { width: 44px; height: 44px; }
+      .fixeo-skel-btn { width: 110px; }
+    }
+  </style>
 </head>
 <body>
   <header class="site-header">
@@ -171,7 +222,37 @@
             </div>
 
             <div class="artisans-grid results-list" id="artisans-container" aria-live="polite" aria-label="Liste des artisans disponibles"></div>
-            <div id="loading-artisans" aria-live="polite">Chargement des artisans...</div>
+            <div id="loading-artisans" aria-live="polite">
+              <div class="fixeo-skel-grid" aria-hidden="true">
+                <div class="fixeo-skel-card">
+                  <div class="fixeo-skel-avatar"></div>
+                  <div class="fixeo-skel-body">
+                    <div class="fixeo-skel-line w80"></div>
+                    <div class="fixeo-skel-line w55"></div>
+                    <div class="fixeo-skel-line w35"></div>
+                    <div class="fixeo-skel-btn"></div>
+                  </div>
+                </div>
+                <div class="fixeo-skel-card">
+                  <div class="fixeo-skel-avatar"></div>
+                  <div class="fixeo-skel-body">
+                    <div class="fixeo-skel-line w80"></div>
+                    <div class="fixeo-skel-line w55"></div>
+                    <div class="fixeo-skel-line w35"></div>
+                    <div class="fixeo-skel-btn"></div>
+                  </div>
+                </div>
+                <div class="fixeo-skel-card">
+                  <div class="fixeo-skel-avatar"></div>
+                  <div class="fixeo-skel-body">
+                    <div class="fixeo-skel-line w80"></div>
+                    <div class="fixeo-skel-line w55"></div>
+                    <div class="fixeo-skel-line w35"></div>
+                    <div class="fixeo-skel-btn"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
             <div id="no-artisan" style="display:none;" aria-live="polite">
               <p>Aucun artisan disponible pour cette urgence pour le moment.</p>
               <p><a id="empty-edit-link" href="index.html#services">Modifier ma demande</a></p>
