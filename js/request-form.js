@@ -1299,7 +1299,7 @@
           submitBtn.textContent = originalLabel;
         }
         redirectToUrgentResults(problem, city);
-      }, 650);
+      }, 80);
     });
   }
 
