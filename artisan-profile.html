@@ -16,31 +16,22 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
   <script>
-    (function (window, document) {
-      var isLocalFile = String(window.location && window.location.protocol || '').toLowerCase() === 'file:';
-      window.__fixeoProfileAssetPath = function (path) {
-        path = String(path || '');
-        return isLocalFile ? path.replace(/^\//, '') : path;
-      };
-      function writeStyle(path) {
-        document.write('<link rel="stylesheet" href="' + window.__fixeoProfileAssetPath(path) + '">');
-      }
-      function writeStyleAsync(path) {
-        var href = window.__fixeoProfileAssetPath(path);
-        document.write('<link rel="stylesheet" href="' + href + '" media="print" onload="this.media=\'all\'"><noscript><link rel="stylesheet" href="' + href + '"></noscript>');
-      }
-      writeStyle('/css/variables.css');
-      writeStyle('/css/main.css');
-      writeStyle('/css/style.css');
-      writeStyle('/css/artisan-profile-conversion.css');
-      writeStyle('/css/fixeo_v5_fixes.css');
-      writeStyle('/css/header-unified.css');
-      writeStyle('/css/fixeo-header-global.css');
-      writeStyle('/css/auth-global.css');
-      writeStyleAsync('/css/reservation.css');
-      writeStyle('/css/artisan-profile-premium.css');
-    })(window, document);
+    /* __fixeoProfileAssetPath: keeps JS Batch 1+2 working on file:// local dev */
+    window.__fixeoProfileAssetPath = (function () {
+      var isLocal = String((window.location && window.location.protocol) || '').toLowerCase() === 'file:';
+      return function (p) { return isLocal ? String(p || '').replace(/^\//, '') : p; };
+    }());
   </script>
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/artisan-profile-conversion.css">
+  <link rel="stylesheet" href="css/fixeo_v5_fixes.css">
+  <link rel="stylesheet" href="css/header-unified.css">
+  <link rel="stylesheet" href="css/fixeo-header-global.css">
+  <link rel="stylesheet" href="css/auth-global.css">
+  <link rel="stylesheet" href="css/reservation.css" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="css/reservation.css"></noscript>
+  <link rel="stylesheet" href="css/artisan-profile-premium.css">
   <style>
     .notif-badge:empty{display:none!important}
     .notif-panel,.notification-panel{z-index:600!important}
