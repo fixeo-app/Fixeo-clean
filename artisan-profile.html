@@ -25,6 +25,10 @@
       function writeStyle(path) {
         document.write('<link rel="stylesheet" href="' + window.__fixeoProfileAssetPath(path) + '">');
       }
+      function writeStyleAsync(path) {
+        var href = window.__fixeoProfileAssetPath(path);
+        document.write('<link rel="stylesheet" href="' + href + '" media="print" onload="this.media=\'all\'"><noscript><link rel="stylesheet" href="' + href + '"></noscript>');
+      }
       writeStyle('/css/variables.css');
       writeStyle('/css/main.css');
       writeStyle('/css/style.css');
@@ -33,7 +37,7 @@
       writeStyle('/css/header-unified.css');
       writeStyle('/css/fixeo-header-global.css');
       writeStyle('/css/auth-global.css');
-      writeStyle('/css/reservation.css');
+      writeStyleAsync('/css/reservation.css');
       writeStyle('/css/artisan-profile-premium.css');
     })(window, document);
   </script>
