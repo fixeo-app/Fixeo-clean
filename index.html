@@ -3310,7 +3310,6 @@ function openContentModal(type) {
 <script src="js/pricing.js?v=50a38b9"></script>
 <script src="js/artisan-subscription.js?v=50a38b9"></script>
 <script src="js/fixeo_v5_fixes.js?v=50a38b9"></script>
-<script src="js/payment.js?v=50a38b9"></script>
 <script src="js/smart-search.js?v=50a38b9"></script>
 <script src="js/reservation.js?v=50a38b9"></script>
 <script src="js/hero-search-modal.js?v=50a38b9"></script>
@@ -3320,7 +3319,6 @@ function openContentModal(type) {
 <script src="js/auth-global.js?v=50a38b9"></script>
 <script src="js/fixeo-auth-guard.js?v=50a38b9"></script>
 <script src="js/slot-lock.js?v=50a38b9"></script>
-<script src="js/cod-payment.js?v=50a38b9"></script>
 <script src="js/homepage-v13.js?v=50a38b9"></script>
 <script src="js/hero-performance.js?v=50a38b9"></script>
 <script src="js/fixeo_homepage_premium_patch.js?v=50a38b9"></script>
@@ -3729,5 +3727,8 @@ window.addEventListener('load', function () {
   }, true); // ⚠️ capture mode = PRIORITÉ MAX
 })();
 </script>
+<!-- Payment engines — loaded last: only needed at payment step inside reservation modal -->
+<script src="js/payment.js?v=50a38b9"></script>
+<script src="js/cod-payment.js?v=50a38b9"></script>
 </body>
 </html>
