@@ -277,8 +277,21 @@
     if (empty) empty.style.display = 'none';
 
     if (typeof window.renderArtisans === 'function') {
-      window.renderArtisans(results, { skipResultsPageFilters: true });
-      enhanceUrgentResultButtons(results, state);
+      // Sort by urgent priority BEFORE passing to renderArtisans so the
+      // global marketplace re-sort (trust_score/missions) does not override.
+      // renderArtisans receives a pre-sorted copy; skipResultsPageFilters
+      // prevents FixeoResultsPage from re-filtering.
+      var urgentSorted = results.slice().sort(function(a, b) {
+        var aAvail = (a.availability || '').toLowerCase() === 'available' ? 0 : 1;
+        var bAvail = (b.availability || '').toLowerCase() === 'available' ? 0 : 1;
+        if (aAvail !== bAvail) return aAvail - bAvail;               // 1. availability
+        var aResp = Number(a.responseTime || 999);
+        var bResp = Number(b.responseTime || 999);
+        if (aResp !== bResp) return aResp - bResp;                   // 2. responseTime
+        return Number(b.rating || 0) - Number(a.rating || 0);        // 3. rating
+      });
+      window.renderArtisans(urgentSorted, { skipResultsPageFilters: true });
+      enhanceUrgentResultButtons(urgentSorted, state);
       return;
     }
 
