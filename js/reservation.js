@@ -317,7 +317,7 @@
               var _fp=window.FixeoPricing&&window.FixeoPricing.getPricing&&window.FixeoPricing.getPricing(a&&a.category);
               if(!_fp||!_fp.range) return '';
               var _rec = Math.round((_fp.from+_fp.to)/2);
-              return '<div style="font-size:.75rem;color:rgba(255,255,255,.4);margin-bottom:4px;padding-left:2px">'
+              return '<div style="font-size:.75rem;color:rgba(255,255,255,.4);margin-bottom:2px;padding-left:2px">'
                 +  'Fourchette march\u00e9\u00a0: <strong style="color:rgba(255,255,255,.62)">'+ _fp.range +'</strong>'
                 + '</div>'
                 + '<div style="font-size:.78rem;color:rgba(255,255,255,.55);margin-bottom:12px;padding-left:2px">'

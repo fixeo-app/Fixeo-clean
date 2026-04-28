@@ -368,12 +368,12 @@
       if (!_fp || !_fp.range) return '';
       var _rec = Math.round((_fp.from + _fp.to) / 2);
       return '<div style="padding:0 1.1rem .7rem;line-height:1.35">'
-        + '<div style="font-size:.78rem;color:rgba(255,255,255,.55)">'
+        + '<div style="font-size:.74rem;color:rgba(255,255,255,.32)">'
+          + 'March\u00e9\u00a0: ' + _fp.range
+        + '</div>'
+        + '<div style="font-size:.78rem;color:rgba(255,255,255,.55);margin-top:1px">'
           + '\ud83d\udca1 Prix recommand\u00e9 Fixeo\u00a0: '
           + '<strong style="color:rgba(255,255,255,.82)">~' + _rec + '\u00a0MAD</strong>'
-        + '</div>'
-        + '<div style="font-size:.74rem;color:rgba(255,255,255,.32);margin-top:1px">'
-          + 'March\u00e9\u00a0: ' + _fp.range
         + '</div>'
       + '</div>';
     })()
