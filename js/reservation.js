@@ -26,6 +26,17 @@
     maconnerie:   ['Carrelage & joints', 'Enduit & plâtre', 'Construction muret', 'Rénovation façade'],
   };
 
+  /* ── Per-service price ranges (plomberie phase 1 — display only)
+     Key = exact service string from SERVICE_MAP.
+     Used in dropdown labels + dynamic hint. Does NOT affect serviceTotal or payment. */
+  const SERVICE_PRICING = {
+    "Fuite d'eau \u2014 r\u00e9paration": { from: 150, to: 300 },
+    'Installation sanitaire':            { from: 250, to: 600 },
+    'Chauffe-eau':                       { from: 400, to: 900 },
+    'Salle de bain compl\u00e8te':       { from: 1500, to: 5000 },
+    'Urgence 24/7':                      { from: 300, to: 600 },
+  };
+
   const TIME_SLOTS = [
     { value: 'matin',      label: '🌅 Matin (8h–12h)',        icon: '🌅' },
     { value: 'apresmidi',  label: '☀️ Après-midi (14h–18h)',  icon: '☀️' },
@@ -334,23 +345,29 @@
               <select class="fixeo-res-select" id="res-service"
                       onchange="FixeoReservation._onServiceChange(this.value)">
                 <option value="">-- Choisissez un service --</option>
-                ${services.map(s => `
-                  <option value="${sanitize(s)}"${state.selectedService === s ? ' selected' : ''}>
-                    ${sanitize(s)} — ${a.priceLabel || (a.priceFrom + ' MAD')}
-                  </option>`).join('')}
+                ${services.map(s => {
+                  const _sp = SERVICE_PRICING[s];
+                  const _lbl = _sp ? (_sp.from + '\u2013' + _sp.to + ' MAD') : (a.priceLabel || (a.priceFrom + ' MAD'));
+                  return `<option value="${sanitize(s)}"${state.selectedService === s ? ' selected' : ''}>${sanitize(s)} \u2014 ${_lbl}</option>`;
+                }).join('')}
               </select>
             </div>
             ${(function(){
+              /* Dynamic per-service hint — updates via _onServiceChange without re-render */
               var _fp = window.FixeoPricing && window.FixeoPricing.getPricing && window.FixeoPricing.getPricing(a && a.category);
               if (!_fp || !_fp.range) return '';
-              var _rec = Math.round((_fp.from + _fp.to) / 2);
-              return '<div style="margin-top:6px;line-height:1.35;padding-left:2px">'
-                + '<div style="font-size:.72rem;color:rgba(255,255,255,.32)">'
-                  + 'March\u00e9\u00a0: ' + _fp.range
+              /* Initial text: use selected service pricing if available, else category range */
+              var _sp  = state.selectedService ? SERVICE_PRICING[state.selectedService] : null;
+              var _marcheTxt = _sp ? (_sp.from + '\u2013' + _sp.to + ' MAD') : ('s\u00e9lectionnez un service');
+              var _recHtml   = _sp
+                ? '\ud83d\udca1 Prix recommand\u00e9 Fixeo\u00a0: <strong style="color:rgba(255,255,255,.75)">~' + Math.round((_sp.from+_sp.to)/2) + '\u00a0MAD</strong>'
+                : '';
+              return '<div data-res-svc-hint style="margin-top:6px;line-height:1.35;padding-left:2px">'
+                + '<div data-res-svc-marche style="font-size:.72rem;color:rgba(255,255,255,.32)">'
+                  + 'March\u00e9\u00a0: ' + _marcheTxt
                 + '</div>'
-                + '<div style="font-size:.75rem;color:rgba(255,255,255,.5)">'
-                  + '\ud83d\udca1 Prix recommand\u00e9 Fixeo\u00a0: '
-                  + '<strong style="color:rgba(255,255,255,.75)">~' + _rec + '\u00a0MAD</strong>'
+                + '<div data-res-svc-rec style="font-size:.75rem;color:rgba(255,255,255,.5);min-height:1.1em">'
+                  + _recHtml
                 + '</div>'
               + '</div>';
             })()}`}
@@ -740,7 +757,23 @@
     render();
   }
 
-  function _onServiceChange(val) { state.selectedService = val; }
+  function _onServiceChange(val) {
+    state.selectedService = val;
+    /* Update per-service price hint — display only, no total/payment change */
+    var _sp = SERVICE_PRICING[val];
+    var marcheEl = document.querySelector('[data-res-svc-marche]');
+    var recEl    = document.querySelector('[data-res-svc-rec]');
+    if (marcheEl) {
+      marcheEl.textContent = _sp
+        ? 'March\u00e9\u00a0: ' + _sp.from + '\u2013' + _sp.to + ' MAD'
+        : 'March\u00e9\u00a0: s\u00e9lectionnez un service';
+    }
+    if (recEl) {
+      recEl.innerHTML = _sp
+        ? '\ud83d\udca1 Prix recommand\u00e9 Fixeo\u00a0: <strong style="color:rgba(255,255,255,.75)">~' + Math.round((_sp.from + _sp.to) / 2) + '\u00a0MAD</strong>'
+        : '';
+    }
+  }
   function _onDateChange(val) {
     state.selectedDate = val;
     /* Re-render slot grid with updated booked slots */
