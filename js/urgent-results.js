@@ -356,10 +356,27 @@
     )
 
     // ── Price row ────────────────────────────────────────────────
-    +'<div style="padding:.55rem 1.1rem .8rem;display:flex;align-items:center;gap:.4rem">'
+    +'<div style="padding:.55rem 1.1rem .4rem;display:flex;align-items:center;gap:.4rem">'
       +'<span style="font-size:.8rem;color:rgba(255,255,255,.48)">À partir de</span>'
       +'<span style="font-size:1.08rem;font-weight:800;color:#fff">'+priceFrom+'<span style="font-size:.75rem;font-weight:600;color:rgba(255,255,255,.55);margin-left:.2rem">MAD</span></span>'
     +'</div>'
+
+    // ── Fixeo pricing hint ────────────────────────────────────────
+    +(function(){
+      var _fp = window.FixeoPricing && window.FixeoPricing.getPricing
+        && window.FixeoPricing.getPricing(artisan.category);
+      if (!_fp || !_fp.range) return '';
+      var _rec = Math.round((_fp.from + _fp.to) / 2);
+      return '<div style="padding:0 1.1rem .7rem;line-height:1.35">'
+        + '<div style="font-size:.78rem;color:rgba(255,255,255,.55)">'
+          + '\ud83d\udca1 Prix recommand\u00e9 Fixeo\u00a0: '
+          + '<strong style="color:rgba(255,255,255,.82)">~' + _rec + '\u00a0MAD</strong>'
+        + '</div>'
+        + '<div style="font-size:.74rem;color:rgba(255,255,255,.32);margin-top:1px">'
+          + 'March\u00e9\u00a0: ' + _fp.range
+        + '</div>'
+      + '</div>';
+    })()
 
     // ── CTA row ──────────────────────────────────────────────────
     +'<div style="display:flex;flex-direction:row;gap:.6rem;padding:.7rem 1.1rem 1rem;flex-wrap:wrap">'
