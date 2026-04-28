@@ -311,7 +311,7 @@
               <div class="fixeo-res-badges">${badgesHtml}</div>
             </div>
             <div class="fixeo-res-artisan-price">
-              <div class="fixeo-res-price-val" style="font-size:1.45rem;font-weight:900;letter-spacing:-.01em">${a.priceFrom} MAD</div>
+              <div class="fixeo-res-price-val" id="res-price-display" style="font-size:1.45rem;font-weight:900;letter-spacing:-.01em">${a.priceFrom} MAD</div>
               <div class="fixeo-res-price-unit">${a.priceLabel || ('\u00c0 partir de ' + (a.priceFrom||150) + ' MAD')}</div>
             </div>
           </div>
@@ -414,7 +414,7 @@
               </div>
             </div>`}
 
-            <div class="fixeo-res-price-info">${state.isUrgent
+            <div class="fixeo-res-price-info" id="res-tarif-estime">${state.isUrgent
               ? `⚡ <strong>Priorité urgente incluse</strong> — vous ne payez qu'après l'intervention`
               : `💡 <strong>Tarif estimé :</strong> ${a.priceLabel || (a.priceFrom + ' MAD')} (estimation marché) + 5% frais de service Fixeo${state.isExpress ? ' + 50 MAD supplément express' : ''}`
             }</div>
@@ -781,6 +781,13 @@
       recEl.innerHTML = _sp
         ? '\ud83d\udca1 Prix recommand\u00e9 Fixeo\u00a0: <strong style="color:rgba(255,255,255,.75)">~' + Math.round((_sp.from + _sp.to) / 2) + '\u00a0MAD</strong>'
         : '';
+    }
+    /* Sync top price display + tarif bar — display only, no state/total change */
+    if (_sp) {
+      var priceEl = document.getElementById('res-price-display');
+      if (priceEl) { priceEl.textContent = _sp.from + ' MAD'; }
+      var tarifEl = document.getElementById('res-tarif-estime');
+      if (tarifEl) { tarifEl.innerHTML = '\ud83d\udca1 <strong>Tarif estim\u00e9\u00a0:</strong> ' + _sp.from + '\u00a0MAD (estimation march\u00e9) + 5\u202f% frais de service Fixeo'; }
     }
   }
   function _onDateChange(val) {
