@@ -287,7 +287,7 @@
           <div class="fixeo-res-step-line"></div>
           <div class="fixeo-res-step">
             <div class="fixeo-res-step-dot">2</div>
-            <div class="fixeo-res-step-label">Paiement</div>
+            <div class="fixeo-res-step-label">R\u00e9capitulatif</div>
           </div>
         </div>
 
@@ -311,7 +311,7 @@
               <div class="fixeo-res-badges">${badgesHtml}</div>
             </div>
             <div class="fixeo-res-artisan-price">
-              <div class="fixeo-res-price-val">${a.priceFrom} MAD</div>
+              <div class="fixeo-res-price-val" style="font-size:1.45rem;font-weight:900;letter-spacing:-.01em">${a.priceFrom} MAD</div>
               <div class="fixeo-res-price-unit">${a.priceLabel || ('\u00c0 partir de ' + (a.priceFrom||150) + ' MAD')}</div>
             </div>
           </div>
@@ -402,10 +402,16 @@
                         style="font-size:.85rem;padding:8px 12px">${sanitize(state.description)}</textarea>
             </div>` : `
             <div class="fixeo-res-field">
-              <label class="fixeo-res-label">📝 Description du problème</label>
-              <textarea class="fixeo-res-textarea" id="res-desc" rows="3"
-                        placeholder="Décrivez votre besoin en détail…"
-                        oninput="FixeoReservation._onDescChange(this.value)">${sanitize(state.description)}</textarea>
+              <div id="res-desc-toggle"
+                   style="font-size:.75rem;color:rgba(255,255,255,.4);cursor:pointer;margin-bottom:4px;user-select:none"
+                   onclick="(function(){var w=document.getElementById('res-desc-wrap');var t=document.getElementById('res-desc-toggle');if(!w)return;var open=w.style.display!=='none';w.style.display=open?'none':'block';t.textContent=open?'+ Ajouter des d\u00e9tails':'- R\u00e9duire';})()">
+                + Ajouter des d\u00e9tails
+              </div>
+              <div id="res-desc-wrap" style="display:${state.description ? 'block' : 'none'}">
+                <textarea class="fixeo-res-textarea" id="res-desc" rows="3"
+                          placeholder="D\u00e9crivez votre besoin en d\u00e9tail\u2026"
+                          oninput="FixeoReservation._onDescChange(this.value)">${sanitize(state.description)}</textarea>
+              </div>
             </div>`}
 
             <div class="fixeo-res-price-info">${state.isUrgent
@@ -418,8 +424,9 @@
             <button class="fixeo-res-btn-primary" id="res-step1-cta"
                     style="${state.isUrgent ? 'background:linear-gradient(135deg,#ff416c,#ff4b2b);box-shadow:0 6px 20px rgba(255,65,108,.35);font-size:1rem;font-weight:800;height:52px;border-radius:14px;letter-spacing:.02em' : ''}"
                     onclick="FixeoReservation._submitStep1()">
-              ${state.isUrgent ? '⚡ Trouver un artisan maintenant' : 'Continuer → Récapitulatif 📋'}
+              ${state.isUrgent ? '⚡ Trouver un artisan maintenant' : 'R\u00e9server \u2014 voir le r\u00e9capitulatif \u2192'}
             </button>
+            ${state.isUrgent ? '' : '<div style="text-align:center;font-size:.68rem;color:rgba(255,255,255,.3);margin-top:6px">\u2713 Aucun paiement maintenant</div>'}
           </div>
         </div>
 
@@ -499,7 +506,7 @@
           <div class="fixeo-res-step-line active"></div>
           <div class="fixeo-res-step active">
             <div class="fixeo-res-step-dot active">2</div>
-            <div class="fixeo-res-step-label">Paiement</div>
+            <div class="fixeo-res-step-label">R\u00e9capitulatif</div>
           </div>
         </div>
 
