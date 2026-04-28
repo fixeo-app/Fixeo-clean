@@ -71,9 +71,21 @@
       gap: 0 !important;
     }
 
-    /* ── 2. FILTERS — nuclear kill (all filter-related classes) ─── */
+    /* ── 2. FILTERS — kill original sidebar + JS-injected premium panel ── */
     html body #artisans-section .results-filters,
     html body #artisans-section .filters {
+      display: none !important;
+      visibility: hidden !important;
+      height: 0 !important;
+      overflow: hidden !important;
+      pointer-events: none !important;
+    }
+    /* main.js ensureMarketplaceAdvancedFilters() injects this panel at runtime
+       directly before #artisans-container — contains NOTE MINIMUM / PRIX MAXIMUM
+       / QUALITÉ / Réinitialiser / "850 résultats" */
+    html body #fixeo-premium-filters-extra,
+    html body .fixeo-filters-premium-panel,
+    html body .fixeo-filters-premium-shell {
       display: none !important;
       visibility: hidden !important;
       height: 0 !important;
