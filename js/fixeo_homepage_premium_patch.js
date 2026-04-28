@@ -272,6 +272,23 @@ if (!isVer && !isClaimed) {
           '<span class="pvc-price-from">À partir de</span>' +
           '<span class="pvc-price-amount">' + pricing.from + '<span class="price-currency">MAD</span></span>' +
         '</div>' +
+        /* ── Fixeo pricing hint ── */
+        (function() {
+          if (!pricing.range) return '';
+          var _cat = (a.category || a.service || '').toLowerCase().trim();
+          var _info = MAR_PRICES[_cat];
+          if (!_info || !_info.to) return '';
+          var _rec = Math.round((_info.from + _info.to) / 2);
+          return '<div style="margin-top:4px;line-height:1.3">' +
+            '<div style="font-size:.75rem;color:rgba(255,255,255,.35)">' +
+              'March\u00e9\u00a0: ' + pricing.range +
+            '</div>' +
+            '<div style="font-size:.78rem;color:rgba(255,255,255,.55)">' +
+              '\ud83d\udca1 Prix recommand\u00e9 Fixeo\u00a0: ' +
+              '<strong style="color:rgba(255,255,255,.85)">~' + _rec + '\u00a0MAD</strong>' +
+            '</div>' +
+          '</div>';
+        })() +
         '<div class="pvc-cta-row">' +
           '<button class="pvc-btn-reserve-v2 fhp-btn-reserve" type="button">📅 Réserver</button>' +
           '<button class="pvc-btn-profile-v2 fhp-btn-profile" type="button">Profil</button>' +
