@@ -155,43 +155,58 @@
     return sortUrgentResults(list, uiFilters.sortBy || 'response');
   }
 
-  function buildFallbackCard(artisan) {
-    const safeRating = Number(artisan.rating || 0).toFixed(1);
-    const reviewCount = Number(artisan.reviewCount || 0);
-    const responseTime = Number(artisan.responseTime || 0);
-    const skills = Array.isArray(artisan.skills) ? artisan.skills.slice(0, 3) : [];
-    const avatar = artisan.avatar || artisan.photo || artisan.image || 'default-avatar.jpg';
-    const verified = Array.isArray(artisan.badges) && artisan.badges.includes('verified');
-    const available = artisan.availability === 'available';
+  // Profession labels for the urgent card subtitle
+  var URGENT_PROFESSION_LABELS = {
+    plomberie: 'Plombier', electricite: 'Électricien', serrurerie: 'Serrurier',
+    climatisation: 'Frigoriste', nettoyage: 'Agent de nettoyage', peinture: 'Peintre',
+    menuiserie: 'Menuisier', bricolage: 'Bricoleur', maconnerie: 'Maçon',
+    jardinage: 'Jardinier', demenagement: 'Déménageur'
+  };
 
-    return `
-      <article class="artisan-card other-card discover-harmonized-card result-card" data-id="${artisan.id}">
-        <div class="result-top">
-          <img class="artisan-avatar artisan-avatar-image" src="${avatar}" alt="${artisan.name}" loading="lazy" onerror="this.onerror=null;this.src='demo-artisan.jpg';" />
-          <div class="artisan-main artisan-identity artisan-card-heading">
-            <h3 class="artisan-name">${artisan.name}</h3>
-            <p class="artisan-service">${artisan.city || 'Maroc'}</p>
-            <div class="artisan-badges badges">
-              ${verified ? '<span class="badge verified">✔ Vérifié</span>' : ''}
-              ${available ? '<span class="badge available">🟢 Disponible</span>' : '<span class="badge">⏱ Réponse rapide</span>'}
-            </div>
-          </div>
-          <div class="artisan-price-block">
-            <strong>Dès ${artisan.priceFrom || 150} MAD</strong>
-            <span>${responseTime ? `Réponse : ${responseTime} min` : 'Réponse rapide'}</span>
-          </div>
-        </div>
-        <div class="artisan-rating-row artisan-rating">
-          <span>⭐ ${safeRating}</span>
-          <span>(${reviewCount} avis)</span>
-        </div>
-        <div class="artisan-skills">${skills.map((skill) => `<span>${skill}</span>`).join('')}</div>
-        <div class="result-actions card-buttons">
-          <button class="btn-primary btn-other-profile ssb2-btn-profile secondary-btn" onclick="event.stopPropagation();if(window.FixeoPublicProfileLinks){window.FixeoPublicProfileLinks.openBySourceId(${JSON.stringify(String(artisan.id))}, event);}else if(window.openArtisanModal){openArtisanModal(${artisan.id});}">Voir profil</button>
-          <button class="btn-secondary btn-other-reserve ssb2-btn-reserve primary-btn fixeo-reserve-btn" data-artisan-id="${artisan.id}" type="button">Demander devis</button>
-        </div>
-      </article>`;
+  // Dedicated urgent card — clean, mobile-safe, no layout conflicts with homepage CSS.
+  // Does NOT use renderArtisans so city/category filtering is guaranteed.
+  function buildUrgentCard(artisan) {
+    var safeRating   = Number(artisan.rating || 0).toFixed(1);
+    var reviewCount  = Number(artisan.reviewCount || 0);
+    var responseTime = Number(artisan.responseTime || 0);
+    var avatar       = artisan.avatar || artisan.photo || artisan.image || 'default-avatar.jpg';
+    var verified     = Array.isArray(artisan.badges) && artisan.badges.includes('verified');
+    var available    = (artisan.availability || '').toLowerCase() === 'available';
+    var profession   = URGENT_PROFESSION_LABELS[artisan.category] || artisan.category || 'Artisan';
+    var city         = artisan.city || 'Maroc';
+    var price        = artisan.priceFrom || 150;
+    var safeId       = JSON.stringify(String(artisan.id));
+
+    return '<article class="artisan-card other-card discover-harmonized-card result-card fixeo-urgent-card" data-id="' + artisan.id + '">'
+      + '<div class="result-top" style="display:flex;align-items:flex-start;gap:.85rem;margin-bottom:.9rem">'
+      +   '<img class="artisan-avatar artisan-avatar-image" src="' + avatar + '" alt="' + artisan.name + '" loading="lazy" onerror="this.onerror=null;this.src=\'demo-artisan.jpg\';" style="width:56px;height:56px;border-radius:50%;object-fit:cover;flex-shrink:0"/>'
+      +   '<div class="artisan-main artisan-identity artisan-card-heading" style="min-width:0;flex:1">'
+      +     '<h3 class="artisan-name" style="margin:0 0 .2rem;font-size:1.05rem;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + artisan.name + '</h3>'
+      +     '<p class="artisan-service" style="margin:0 0 .45rem;font-size:.88rem;color:rgba(255,255,255,.75)">'
+      +       '<strong style="color:#fff">' + profession + '</strong>'
+      +       ' &bull; ' + city
+      +     '</p>'
+      +     '<div class="artisan-badges badges" style="display:flex;flex-wrap:wrap;gap:.35rem">'
+      +       (available ? '<span class="badge available" style="background:rgba(46,204,113,.18);border:1px solid rgba(46,204,113,.4);color:#2ecc71;font-size:.74rem;padding:.2rem .55rem;border-radius:999px">🟢 Disponible</span>' : '<span class="badge" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.7);font-size:.74rem;padding:.2rem .55rem;border-radius:999px">⏱ Réponse rapide</span>')
+      +       (verified ? '<span class="badge verified" style="background:rgba(55,66,250,.18);border:1px solid rgba(55,66,250,.35);color:#6c7bfa;font-size:.74rem;padding:.2rem .55rem;border-radius:999px">✔ Vérifié</span>' : '')
+      +     '</div>'
+      +   '</div>'
+      + '</div>'
+      + '<div class="artisan-rating-row artisan-rating" style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.75rem;padding:.6rem .8rem;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07)">'
+      +   '<span style="font-weight:800;color:#ffd166">⭐ ' + safeRating + '</span>'
+      +   '<span style="color:rgba(255,255,255,.7)">(' + reviewCount + ' avis)</span>'
+      +   '<span style="margin-left:auto;font-size:.8rem;color:rgba(255,255,255,.55)">Dès ' + price + ' MAD</span>'
+      +   (responseTime ? '<span style="font-size:.78rem;color:rgba(255,255,255,.5)">&bull; ' + responseTime + ' min</span>' : '')
+      + '</div>'
+      + '<div class="result-actions card-buttons" style="display:flex;gap:.7rem;flex-wrap:wrap">'
+      +   '<button class="btn-primary btn-other-profile ssb2-btn-profile secondary-btn" style="flex:1;min-width:120px;font-weight:700" onclick="event.stopPropagation();if(window.FixeoPublicProfileLinks){window.FixeoPublicProfileLinks.openBySourceId(' + safeId + ',event);}else if(window.openArtisanModal){openArtisanModal(' + artisan.id + ');}">Voir profil</button>'
+      +   '<button class="btn-secondary btn-other-reserve ssb2-btn-reserve primary-btn fixeo-reserve-btn" data-artisan-id="' + artisan.id + '" type="button" style="flex:1;min-width:120px;font-weight:700">Demander devis</button>'
+      + '</div>'
+      + '</article>';
   }
+
+  // Keep buildFallbackCard as alias for backward compatibility (not called in urgent flow)
+  function buildFallbackCard(artisan) { return buildUrgentCard(artisan); }
 
   function updateSummary(state, results) {
     $('#urgent-city').textContent = state.city || 'Toutes les villes';
@@ -276,26 +291,10 @@
 
     if (empty) empty.style.display = 'none';
 
-    if (typeof window.renderArtisans === 'function') {
-      // Sort by urgent priority BEFORE passing to renderArtisans so the
-      // global marketplace re-sort (trust_score/missions) does not override.
-      // renderArtisans receives a pre-sorted copy; skipResultsPageFilters
-      // prevents FixeoResultsPage from re-filtering.
-      var urgentSorted = results.slice().sort(function(a, b) {
-        var aAvail = (a.availability || '').toLowerCase() === 'available' ? 0 : 1;
-        var bAvail = (b.availability || '').toLowerCase() === 'available' ? 0 : 1;
-        if (aAvail !== bAvail) return aAvail - bAvail;               // 1. availability
-        var aResp = Number(a.responseTime || 999);
-        var bResp = Number(b.responseTime || 999);
-        if (aResp !== bResp) return aResp - bResp;                   // 2. responseTime
-        return Number(b.rating || 0) - Number(a.rating || 0);        // 3. rating
-      });
-      window.renderArtisans(urgentSorted, { skipResultsPageFilters: true });
-      enhanceUrgentResultButtons(urgentSorted, state);
-      return;
-    }
-
-    container.innerHTML = results.map(buildFallbackCard).join('');
+    // Always use the dedicated urgent card renderer — never delegating to
+    // window.renderArtisans which re-sorts by global trust_score/missions and
+    // could clobber the city+category-filtered list with wrong artisans.
+    container.innerHTML = results.map(buildUrgentCard).join('');
     enhanceUrgentResultButtons(results, state);
   }
 
