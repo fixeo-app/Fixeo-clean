@@ -1,4 +1,11 @@
 (function () {
+  // ── PARSE-TIME FLAG — set before any defer script runs ──────────────────────
+  // main.js renderArtisans and applyMarketplaceFilters are shared with the
+  // homepage and run on results.html too (no page guard in main.js).
+  // This flag lets us neutralize window.renderArtisans after urgent init
+  // so main.js rAF callbacks cannot clobber fxu-card output.
+  window.__FIXEO_URGENT_PAGE__ = true;
+
   const $ = (selector, root = document) => root.querySelector(selector);
   const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
 
@@ -547,6 +554,16 @@
     });
 
     apply();
+
+    // ── CLOBBER GUARD ────────────────────────────────────────────────────────
+    // main.js refreshMarketplaceFromCurrentFilters() fires a requestAnimationFrame
+    // callback (applyMarketplaceFilters → renderArtisans) AFTER DOMContentLoaded —
+    // which overwrites fxu-card output back to old .artisan-card markup.
+    // Neutralize window.renderArtisans so any pending rAF from main.js is a no-op.
+    // This ONLY affects the urgent results page (guarded by __FIXEO_URGENT_PAGE__).
+    window.renderArtisans = function urgentPageGuard() {
+      // no-op — urgent results page owns #artisans-container exclusively
+    };
   }
 
   if (document.readyState === 'loading') {
