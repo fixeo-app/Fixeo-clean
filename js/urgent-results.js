@@ -211,114 +211,170 @@
     return (_UC_PRICES[cat]||{from:150}).from;
   }
 
-  // ── pvc-card builder (same markup/classes as fixeo_homepage_premium_patch.js _buildCard) ──
-  // Does NOT call renderArtisans — city+category filtering guaranteed by filterUrgentResults.
+  // ── fxu-card builder — fully inline-styled, zero CSS file dependency ──
+  // Unique class: fxu-card (Fixeo Urgent Card). No .pvc-* or .artisan-card collision.
+  // Does NOT call renderArtisans — filtering guaranteed by filterUrgentResults.
   function buildUrgentCard(artisan, idx) {
     idx = idx || 0;
-    var cat     = (artisan.category||artisan.service||'').toLowerCase();
-    var catIcon = _UC_ICONS[cat]||'🔧';
-    var catLbl  = _UC_LABELS[cat]||(artisan.service||artisan.category||'Service');
-    var rating  = parseFloat(artisan.rating)||0;
-    var reviews = parseInt(artisan.reviewCount||artisan.reviews||0,10);
-    var trust   = parseInt(artisan.trustScore||0,10);
-    var rt      = parseInt(artisan.responseTime||999,10);
-    var isReal  = !artisan.claimable && !artisan._isSeed;
-    var isVer   = !!(artisan.verified||artisan.certified||trust>=85);
-    var avail   = (artisan.availability||'').toLowerCase();
-    var isAvail = avail==='available'||artisan.available;
-    var isToday = avail==='available_today';
+
+    var cat       = (artisan.category||artisan.service||'').toLowerCase();
+    var catIcon   = _UC_ICONS[cat]||'🔧';
+    var catLbl    = _UC_LABELS[cat]||(artisan.service||artisan.category||'Service');
+    var rating    = parseFloat(artisan.rating)||0;
+    var reviews   = parseInt(artisan.reviewCount||artisan.reviews||0,10);
+    var trust     = parseInt(artisan.trustScore||0,10);
+    var rt        = parseInt(artisan.responseTime||999,10);
+    var isVer     = !!(artisan.verified||artisan.certified||trust>=85);
+    var avail     = (artisan.availability||'').toLowerCase();
+    var isAvail   = avail==='available'||artisan.available;
     var priceFrom = _ucPrice(artisan);
-    var rtLabel = _ucRtLabel(rt);
-    var misLabel= _ucMisLabel(artisan);
+    var rtLabel   = _ucRtLabel(rt);
 
-    // Avatar
-    var initials = _ucInitials(artisan.name);
-    var avatarSrc= artisan.avatar||artisan.photo||artisan.photo_url||'';
-    var avatarHtml = avatarSrc
-      ? '<img class="pvc-avatar-img" src="'+avatarSrc+'" alt="'+_ucEsc(artisan.name)+'" loading="lazy"'
-        +' onerror="this.onerror=null;this.style.display=\'none\';var s=this.parentNode.querySelector(\'.pvc-avatar-initials\');if(s)s.style.display=\'flex\';">'
-        +'<span class="pvc-avatar-initials" style="display:none">'+initials+'</span>'
-      : '<span class="pvc-avatar-initials">'+initials+'</span>';
+    // ── Avatar ──────────────────────────────────────────────────
+    var initials  = _ucInitials(artisan.name);
+    var avatarSrc = artisan.avatar||artisan.photo||artisan.photo_url||'';
+    var avatarInner = avatarSrc
+      ? '<img src="'+avatarSrc+'" alt="'+_ucEsc(artisan.name)+'" loading="lazy"'
+          +' style="width:100%;height:100%;object-fit:cover;border-radius:50%"'
+          +' onerror="this.onerror=null;this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\';">'
+          +'<span class="fxu-initials" style="display:none;width:100%;height:100%;align-items:center;justify-content:center;font-weight:800;font-size:1rem;letter-spacing:.02em;color:#fff">'+initials+'</span>'
+      : '<span class="fxu-initials" style="display:flex;width:100%;height:100%;align-items:center;justify-content:center;font-weight:800;font-size:1rem;letter-spacing:.02em;color:#fff">'+initials+'</span>';
 
-    // Availability badge
-    var availHtml = isAvail
-      ? '<span class="pvc-avail-badge pvc-avail-badge--on">🟢 Disponible</span>'
-      : isToday
-        ? '<span class="pvc-avail-badge pvc-avail-badge--today">🟡 Aujourd\'hui</span>'
-        : '<span class="pvc-avail-badge pvc-avail-badge--off">Sur RDV</span>';
+    // ── Availability badge ───────────────────────────────────────
+    var availColor  = isAvail ? 'rgba(46,204,113,.18)' : 'rgba(255,255,255,.07)';
+    var availBorder = isAvail ? 'rgba(46,204,113,.45)'  : 'rgba(255,255,255,.15)';
+    var availText   = isAvail ? '#2ecc71'               : 'rgba(255,255,255,.62)';
+    var availLabel  = isAvail ? '🟢 Disponible'         : '⏱ Sur rendez-vous';
 
-    // Rating stars
-    var starsHtml;
-    if (rating>0) {
-      var s='', rv=Math.round(rating*2)/2;
-      for (var i=1;i<=5;i++) s += i<=rv ? '★' : (rv>=i-0.5 ? '½' : '☆');
-      starsHtml = '<span class="pvc-stars-v2">'+s+'</span>'
-        +'<span class="pvc-rating-num">'+rating.toFixed(1)+'</span>'
-        +(reviews>0 ? '<span class="pvc-reviews-count">('+reviews+' avis)</span>' : '');
-    } else {
-      starsHtml = '<span class="pvc-new-label">✨ Nouveau</span>';
+    // ── Rating stars ─────────────────────────────────────────────
+    var starsStr = '';
+    if (rating > 0) {
+      var rv = Math.round(rating*2)/2;
+      for (var i=1;i<=5;i++) starsStr += i<=rv ? '★' : (rv>=i-0.5 ? '½' : '☆');
     }
 
-    // Info chips
-    var chips='';
-    if (rtLabel)  chips+='<span class="pvc-info-chip chip-fast">⚡ '+rtLabel+'</span>';
-    if (misLabel) chips+='<span class="pvc-info-chip chip-missions">✅ '+misLabel+'</span>';
-    if (!rtLabel&&!misLabel&&isAvail) chips+='<span class="pvc-info-chip chip-urgent">🚀 Intervention rapide</span>';
+    // ── Verified badge ───────────────────────────────────────────
+    var verBadge = isVer
+      ? '<span style="display:inline-flex;align-items:center;gap:.3rem;padding:.22rem .6rem;'
+          +'border-radius:999px;font-size:.74rem;font-weight:700;'
+          +'background:rgba(55,66,250,.18);border:1px solid rgba(55,66,250,.35);color:#7c8ff5">'
+          +'✔ Vérifié Fixeo</span>'
+      : '';
 
-    // Trust badges
-    var badges='';
-    if (isReal) badges+='<span class="pvc-badge-v2 pvc-badge-v2--real">✨ Profil réel</span>';
-    if (isVer)  badges+='<span class="pvc-badge-v2 pvc-badge-v2--verified">✔ Vérifié Fixeo</span>';
-    if (trust>=90) badges+='<span class="pvc-badge-v2 pvc-badge-v2--premium">🏅 Premium</span>';
-    if (!isVer&&!artisan.claimed) badges+='<span class="pvc-badge-v2 pvc-badge-v2--claim">📦 Profil à revendiquer</span>';
+    // ── Response chip ────────────────────────────────────────────
+    var rtChip = rtLabel
+      ? '<span style="display:inline-flex;align-items:center;gap:.3rem;padding:.22rem .6rem;'
+          +'border-radius:999px;font-size:.74rem;font-weight:600;'
+          +'background:rgba(255,209,0,.1);border:1px solid rgba(255,209,0,.2);color:#ffd54f">'
+          +'⚡ '+rtLabel+'</span>'
+      : '';
 
-    // data-artisan (for click delegation)
-    var dataAttr='';
-    try { dataAttr=' data-artisan=\''+JSON.stringify(artisan).replace(/'/g,'&#39;')+'\''; } catch(_){}
-
-    return '<article class="pvc-card fhp-card fixeo-urgent-card'+(isReal?' pvc-card--real':'')+'"'
-      +' data-artisan-id="'+artisan.id+'"'+dataAttr
+    return ''
+    // ── Card wrapper ─────────────────────────────────────────────
+    +'<article class="fxu-card"'
+      +' data-artisan-id="'+artisan.id+'"'
       +' tabindex="0" role="button"'
       +' aria-label="'+_ucEsc(artisan.name)+', '+_ucEsc(catLbl)+'"'
-      +' style="--anim-delay:'+idx+'">'
+      +' style="'
+        +'display:flex;flex-direction:column;gap:0;'
+        +'background:linear-gradient(160deg,rgba(28,28,52,.95) 0%,rgba(18,18,38,.98) 100%);'
+        +'border:1px solid rgba(255,255,255,.1);'
+        +'border-radius:20px;'
+        +'overflow:hidden;'
+        +'cursor:pointer;'
+        +'transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease;'
+        +'box-shadow:0 4px 28px rgba(0,0,0,.35);'
+        +(isVer ? 'border-left:3px solid rgba(55,66,250,.55);' : '')
+      +'"'
+      +' onmouseenter="this.style.transform=\'translateY(-3px)\';this.style.boxShadow=\'0 12px 40px rgba(0,0,0,.45)\';this.style.borderColor=\'rgba(225,48,108,.4)\'"'
+      +' onmouseleave="this.style.transform=\'\';this.style.boxShadow=\'0 4px 28px rgba(0,0,0,.35)\';this.style.borderColor=\''+(isVer?'rgba(55,66,250,.55)':'rgba(255,255,255,.1)')+'\'"'
+    +'>'
 
-      // Header
-      +'<div class="pvc-card-header">'
-        +'<div class="pvc-avatar'+(isVer?' pvc-avatar--verified':'')+'">'+avatarHtml+'</div>'
-        +'<div class="pvc-identity">'
-          +'<h3 class="pvc-name">'+_ucEsc(artisan.name||'—')+'</h3>'
-          +'<div class="pvc-meta-row">'
-            +'<span class="pvc-cat-pill">'+catIcon+' '+_ucEsc(catLbl)+'</span>'
-            +'<span class="pvc-city-pill">📍 '+_ucEsc(artisan.city||'Maroc')+'</span>'
-          +'</div>'
-        +'</div>'
-        +availHtml
+    // ── Header band ──────────────────────────────────────────────
+    +'<div style="display:flex;align-items:flex-start;gap:.9rem;padding:1.1rem 1.1rem .8rem">'
+      // Avatar
+      +'<div style="'
+        +'width:52px;height:52px;border-radius:50%;flex-shrink:0;'
+        +'background:linear-gradient(135deg,#e1306c,#833ab4);'
+        +'overflow:hidden;position:relative;'
+        +(isVer?'box-shadow:0 0 0 2px rgba(55,66,250,.55)':'')+'">'
+        +avatarInner
       +'</div>'
-
-      // Badges
-      +(badges?'<div class="pvc-badges-v2">'+badges+'</div>':'')
-
-      +'<div class="pvc-divider"></div>'
-
-      // Stats
-      +'<div class="pvc-stats">'
-        +'<div class="pvc-rating-block">'+starsHtml+'</div>'
-      +'</div>'
-
-      // Info chips
-      +(chips?'<div class="pvc-info-bar">'+chips+'</div>':'')
-
-      // Footer: price + CTAs
-      +'<div class="pvc-footer">'
-        +'<div class="pvc-price-block">'
-          +'<span class="pvc-price-from">À partir de</span>'
-          +'<span class="pvc-price-amount">'+priceFrom+'<span class="price-currency">MAD</span></span>'
-        +'</div>'
-        +'<div class="pvc-cta-row">'
-          +'<button class="pvc-btn-reserve-v2 fhp-btn-reserve" type="button">📅 Réserver</button>'
-          +'<button class="pvc-btn-profile-v2 fhp-btn-profile" type="button">Profil</button>'
+      // Identity
+      +'<div style="min-width:0;flex:1">'
+        +'<h3 style="margin:0 0 .3rem;font-size:1.05rem;font-weight:800;line-height:1.2;'
+          +'white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#fff">'
+          +_ucEsc(artisan.name||'—')
+        +'</h3>'
+        +'<div style="display:flex;flex-wrap:wrap;gap:.4rem;align-items:center">'
+          +'<span style="display:inline-flex;align-items:center;gap:.25rem;padding:.2rem .55rem;'
+            +'border-radius:999px;font-size:.78rem;font-weight:700;'
+            +'background:rgba(225,48,108,.14);border:1px solid rgba(225,48,108,.28);color:#ffb8cf">'
+            +catIcon+' '+_ucEsc(catLbl)
+          +'</span>'
+          +'<span style="display:inline-flex;align-items:center;gap:.25rem;'
+            +'font-size:.78rem;color:rgba(255,255,255,.58)">'
+            +'📍 '+_ucEsc(artisan.city||'Maroc')
+          +'</span>'
         +'</div>'
       +'</div>'
+      // Availability badge — right-aligned
+      +'<span style="'
+        +'flex-shrink:0;display:inline-flex;align-items:center;'
+        +'padding:.22rem .6rem;border-radius:999px;'
+        +'font-size:.74rem;font-weight:700;white-space:nowrap;'
+        +'background:'+availColor+';border:1px solid '+availBorder+';color:'+availText+'">'
+        +availLabel
+      +'</span>'
+    +'</div>'
+
+    // ── Divider ──────────────────────────────────────────────────
+    +'<div style="height:1px;background:rgba(255,255,255,.07);margin:0 1.1rem"></div>'
+
+    // ── Stats row (rating + badges) ──────────────────────────────
+    +'<div style="display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;padding:.75rem 1.1rem">'
+      +(rating>0
+        ? '<span style="color:#ffd166;font-weight:800;font-size:.95rem;letter-spacing:.02em">'+starsStr+'</span>'
+          +'<span style="color:#ffd166;font-weight:800">'+rating.toFixed(1)+'</span>'
+          +(reviews>0?'<span style="color:rgba(255,255,255,.52);font-size:.82rem">('+reviews+' avis)</span>':'')
+        : '<span style="color:rgba(255,255,255,.5);font-size:.82rem">✨ Nouveau</span>'
+      )
+      +(trust>0?'<span style="margin-left:auto;font-size:.76rem;color:rgba(255,255,255,.38)">Score '+trust+'/100</span>':'')
+    +'</div>'
+
+    // ── Chips row (verified + response) ─────────────────────────
+    +((verBadge||rtChip)
+      ? '<div style="display:flex;flex-wrap:wrap;gap:.45rem;padding:0 1.1rem .75rem">'+verBadge+rtChip+'</div>'
+      : ''
+    )
+
+    // ── Price row ────────────────────────────────────────────────
+    +'<div style="padding:.55rem 1.1rem .8rem;display:flex;align-items:center;gap:.4rem">'
+      +'<span style="font-size:.8rem;color:rgba(255,255,255,.48)">À partir de</span>'
+      +'<span style="font-size:1.08rem;font-weight:800;color:#fff">'+priceFrom+'<span style="font-size:.75rem;font-weight:600;color:rgba(255,255,255,.55);margin-left:.2rem">MAD</span></span>'
+    +'</div>'
+
+    // ── CTA row ──────────────────────────────────────────────────
+    +'<div style="display:flex;gap:.6rem;padding:.7rem 1.1rem 1rem;flex-wrap:wrap">'
+      +'<button class="fxu-btn-reserve" type="button"'
+        +' style="flex:1 1 140px;padding:.7rem 1rem;border:none;border-radius:12px;'
+          +'background:linear-gradient(135deg,#e1306c,#c13584);color:#fff;'
+          +'font-weight:800;font-size:.92rem;cursor:pointer;'
+          +'box-shadow:0 6px 20px rgba(225,48,108,.32);'
+          +'transition:opacity .15s"'
+        +' onmouseenter="this.style.opacity=\'.88\'" onmouseleave="this.style.opacity=\'1\'">'
+        +'📅 Réserver maintenant'
+      +'</button>'
+      +'<button class="fxu-btn-profile" type="button"'
+        +' style="flex:0 0 auto;padding:.7rem 1rem;border-radius:12px;'
+          +'background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);'
+          +'color:rgba(255,255,255,.82);font-weight:700;font-size:.92rem;cursor:pointer;'
+          +'transition:background .15s"'
+        +' onmouseenter="this.style.background=\'rgba(255,255,255,.13)\'" onmouseleave="this.style.background=\'rgba(255,255,255,.07)\'">'
+        +'Voir profil'
+      +'</button>'
+    +'</div>'
+
     +'</article>';
   }
 
@@ -348,10 +404,10 @@
       if (!card) return;
       var id = String(card.dataset.artisanId);
       var artisan = (Array.isArray(results)?results:[]).find(function(a){ return String(a.id)===id; });
-      if (e.target.closest('.fhp-btn-reserve')) {
+      if (e.target.closest('.fxu-btn-reserve')) {
         e.stopPropagation();
         _ucDoReserve(artisan, state);
-      } else if (e.target.closest('.fhp-btn-profile')) {
+      } else if (e.target.closest('.fxu-btn-profile')) {
         e.stopPropagation();
         _ucDoProfile(artisan);
       } else {
