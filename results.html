@@ -22,6 +22,19 @@
   <link rel="stylesheet" href="css/header-logo-premium.css?v=hlp5">
   <!-- reservation.css: async — modal styles, non-blocking -->
   <link rel="stylesheet" href="css/reservation.css" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="css/reservation.css"></noscript>
+  <!-- ══ ANTI-FLASH — hide static header + skeleton before JS takes control ══
+       fixeo-header-global.js adds body.fixeo-gh-enabled synchronously (IIFE, no defer)
+       → header becomes visible only after the premium nav has been injected.
+       #loading-artisans: hidden immediately; urgent-results.js controls its own loading state. -->
+  <style id="fixeo-anti-flash">
+    /* 1. Static header invisible until premium nav is ready */
+    .site-header { visibility: hidden; }
+    body.fixeo-gh-enabled .site-header { visibility: visible; }
+
+    /* 2. Kill skeleton — urgent-results.js manages its own loading state */
+    #loading-artisans { display: none !important; }
+  </style>
+
   <!-- ══ LOGO OVERRIDE — image-only, no emoji, no text ══ -->
   <style id="fixeo-logo-override">
     /* Kill legacy logo-icon and logo-text */
