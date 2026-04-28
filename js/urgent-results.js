@@ -211,10 +211,15 @@
   }
   function _ucPrice(a) {
     var cat = (a.category||a.service||'').toLowerCase().trim();
+    // 1. Prefer FixeoPricing — ensures consistency with displayed market range
+    var _fp = window.FixeoPricing && window.FixeoPricing.getPricing && window.FixeoPricing.getPricing(cat);
+    if (_fp && _fp.from) return _fp.from;
+    // 2. Artisan-specific price (if set and non-default)
     if (a.priceFrom||a.price_from) {
       var pf=parseInt(a.priceFrom||a.price_from,10);
       if (!isNaN(pf)&&pf>0) return pf;
     }
+    // 3. Local table fallback
     return (_UC_PRICES[cat]||{from:150}).from;
   }
 
