@@ -106,7 +106,12 @@
       min-width: 0 !important;
     }
 
-    /* ── 6. TRUST STRIP + BANNER — hidden ───────────────────────── */
+    /* ── 6. JS-INJECTED FILTER PANEL — ID-only, safe ───────────────
+       main.js ensureMarketplaceAdvancedFilters() creates this element at runtime.
+       ID is unique — never shared with any wrapper. Class NOT targeted (c26a625 lesson). */
+    html body #fixeo-premium-filters-extra { display: none !important; }
+
+    /* ── 7. TRUST STRIP + BANNER — hidden ───────────────────────── */
     html body #other-artisans-banner { display: none !important; }
 
     /* ── 7. Legacy .artisan-card safety net ─────────────────────── */
