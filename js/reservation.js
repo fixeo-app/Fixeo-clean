@@ -441,7 +441,9 @@
   ════════════════════════════════════════════════════════ */
   function renderStep2() {
     const a = state.artisan;
-    const serviceTotal = state.isExpress && state.selectedService?.includes('Urgence') ? (a.priceFrom * 1.3 | 0) : a.priceFrom;
+    const _svcP    = !state.isUrgent ? SERVICE_PRICING[state.selectedService] : null;
+    const _svcBase = (_svcP && _svcP.from) ? _svcP.from : a.priceFrom;
+    const serviceTotal = state.isExpress && state.selectedService?.includes('Urgence') ? (_svcBase * 1.3 | 0) : _svcBase;
     const platformFee  = Math.round(serviceTotal * 0.05);
     const expressFee   = state.isExpress ? 50 : 0;
     const urgentFee    = state.isUrgent  ? 50 : 0;
