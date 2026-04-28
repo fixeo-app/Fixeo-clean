@@ -308,11 +308,12 @@
             ${state.isUrgent ? `
             <!-- URGENT MODE: service is hidden (already preselected), shown as chip only -->
             <input type="hidden" id="res-service" value="${sanitize(state.selectedService)}"/>
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;padding:10px 14px;background:rgba(255,65,108,.08);border:1px solid rgba(255,65,108,.25);border-radius:10px">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:${(function(){var _fp=window.FixeoPricingMarocain&&window.FixeoPricingMarocain.getPricing&&window.FixeoPricingMarocain.getPricing(a&&a.category);return (_fp&&_fp.range)?'4px':'10px';})()}px;padding:10px 14px;background:rgba(255,65,108,.08);border:1px solid rgba(255,65,108,.25);border-radius:10px">
               <span style="font-size:1.1rem">${catIcon}</span>
               <span style="font-size:.88rem;color:rgba(255,255,255,.8);font-weight:500">${sanitize(state.selectedService || catLabel)}</span>
               <span style="margin-left:auto;font-size:.75rem;color:rgba(255,255,255,.4)">⚡ Dès que possible</span>
-            </div>` : `
+            </div>
+            ${(function(){var _fp=window.FixeoPricingMarocain&&window.FixeoPricingMarocain.getPricing&&window.FixeoPricingMarocain.getPricing(a&&a.category);return _fp&&_fp.range?'<div style="font-size:.75rem;color:rgba(255,255,255,.4);margin-bottom:10px;padding-left:2px">Fourchette march\u00e9\u00a0: <strong style="color:rgba(255,255,255,.62)">'+ _fp.range +'</strong></div>':'';})()} ` : `
             <div class="fixeo-res-field">
               <label class="fixeo-res-label">🛠️ Service souhaité *</label>
               <select class="fixeo-res-select" id="res-service"
