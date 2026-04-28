@@ -51,6 +51,7 @@
   const state = {
     artisan: null,
     isExpress: false,
+    isUrgent: false,   // set by open() when urgentContext?.urgent === true
     step: 1, // 1=form, 2=confirm
     selectedService: '',
     selectedDate: '',
@@ -175,20 +176,31 @@
     const today    = todayISO();
 
     // Express mode specific content
-    const expressHeader = state.isExpress ? `
-      <div class="fixeo-res-express-banner">
-        <span class="fixeo-res-express-icon">🚀</span>
-        <div>
-          <div class="fixeo-res-express-title">Intervention EXPRESS</div>
-          <div class="fixeo-res-express-sub">Artisan disponible dans moins d'1 heure · +50 MAD</div>
-        </div>
-      </div>` : '';
+    // ── Top banner: express OR urgent OR nothing ────────────────
+    const expressHeader = state.isExpress
+      ? `<div class="fixeo-res-express-banner">
+          <span class="fixeo-res-express-icon">🚀</span>
+          <div>
+            <div class="fixeo-res-express-title">Intervention EXPRESS</div>
+            <div class="fixeo-res-express-sub">Artisan disponible dans moins d'1 heure · +50 MAD</div>
+          </div>
+        </div>`
+      : state.isUrgent
+        ? `<div class="fixeo-res-express-banner" style="background:rgba(255,65,108,.12);border-color:rgba(255,65,108,.3)">
+            <span class="fixeo-res-express-icon">⚡</span>
+            <div>
+              <div class="fixeo-res-express-title" style="color:#ff416c">Intervention urgente</div>
+              <div class="fixeo-res-express-sub">Priorité de disponibilité · Réponse rapide garantie</div>
+            </div>
+          </div>`
+        : '';
 
-    const slotsHtml = state.isExpress ? `
+    // ── Slot / date block: express → now, urgent → dès que possible, normal → picker ──
+    const slotsHtml = (state.isExpress || state.isUrgent) ? `
       <div class="fixeo-res-field">
-        <label class="fixeo-res-label">Disponibilité</label>
+        <label class="fixeo-res-label">${state.isUrgent ? '⏱ Disponibilité' : 'Disponibilité'}</label>
         <div class="fixeo-res-slot-grid">
-          <div class="fixeo-res-slot active" data-slot="maintenant">⚡ Dès maintenant</div>
+          <div class="fixeo-res-slot active" data-slot="maintenant">${state.isUrgent ? '⚡ Dès que possible' : '⚡ Dès maintenant'}</div>
         </div>
       </div>` : `
       <div class="fixeo-res-field">
@@ -243,7 +255,7 @@
           <div class="fixeo-res-header-left">
             <div class="fixeo-res-header-icon">${catIcon}</div>
             <div>
-              <div class="fixeo-res-header-title">${state.isExpress ? '🚀 Réservation Express' : '📅 Réserver un artisan'}</div>
+              <div class="fixeo-res-header-title">${state.isExpress ? '🚀 Réservation Express' : state.isUrgent ? '⚡ Réservation urgente' : '📅 Réserver un artisan'}</div>
               <div class="fixeo-res-header-sub">Étape 1 sur 2 — Détails de la réservation</div>
             </div>
           </div>
@@ -322,7 +334,7 @@
                      oninput="FixeoReservation._onAddressChange(this.value)"/>
             </div>
 
-            ${state.isExpress ? `
+            ${(state.isExpress || state.isUrgent) ? `
             <div class="fixeo-res-field">
               <label class="fixeo-res-label">📞 Votre téléphone *</label>
               <input type="tel" class="fixeo-res-input" id="res-phone"
@@ -576,10 +588,11 @@
   /* ════════════════════════════════════════════════════════
      PUBLIC API: OPEN / CLOSE
   ════════════════════════════════════════════════════════ */
-  function open(artisanInput, isExpress) {
-    // Reset state
+  function open(artisanInput, isExpress, urgentContext) {
+    // Reset state — always a clean slate
     state.step = 1;
     state.isExpress = !!isExpress;
+    state.isUrgent  = false;
     state.selectedService = '';
     state.selectedDate = todayISO();
     state.selectedSlot = 'matin';
@@ -589,6 +602,18 @@
 
     // Resolve artisan
     state.artisan = artisanInput ? normalizeArtisan(artisanInput) : null;
+
+    // ── Urgent mode: prefill from urgentContext ──────────────────
+    // urgentContext = { urgent:true, query, city, category, source }
+    // Only activated when explicitly passed — all existing open(a, false) calls are unaffected.
+    if (urgentContext && urgentContext.urgent === true) {
+      state.isUrgent = true;
+      state.description = urgentContext.query || '';
+      state.selectedSlot = 'maintenant';
+      const cat = (urgentContext.category || state.artisan?.category || '').toLowerCase();
+      const catServices = SERVICE_MAP[cat];
+      if (catServices && catServices.length) state.selectedService = catServices[0];
+    }
 
     ensureBackdrop();
     render();
@@ -702,7 +727,7 @@
       addrEl && addrEl.focus();
       return;
     }
-    if (state.isExpress && (!state.phone || state.phone.trim().length < 8)) {
+    if ((state.isExpress || state.isUrgent) && (!state.phone || state.phone.trim().length < 8)) {
       _showError('⚠️ Veuillez saisir votre numéro de téléphone.');
       phoneEl && phoneEl.focus();
       return;

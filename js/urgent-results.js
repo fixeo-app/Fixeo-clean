@@ -415,7 +415,15 @@
   function _ucDoReserve(artisan, state) {
     if (!artisan) return;
     if (window.FixeoReservation && typeof window.FixeoReservation.open === 'function') {
-      window.FixeoReservation.open(artisan, false);
+      // Pass urgent context so reservation modal prefills query, service, slot
+      var urgentCtx = {
+        urgent: true,
+        query:    (state && state.query)    || '',
+        city:     (state && state.city)     || artisan.city    || '',
+        category: (state && state.category) || artisan.category || '',
+        source: 'urgent-results'
+      };
+      window.FixeoReservation.open(artisan, false, urgentCtx);
     } else if (typeof window.openBookingModal === 'function') {
       window.openBookingModal(artisan.id);
     } else {
