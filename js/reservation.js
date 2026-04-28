@@ -186,16 +186,16 @@
           </div>
         </div>`
       : state.isUrgent
-        ? `<div class="fixeo-res-express-banner" style="background:rgba(255,65,108,.12);border-color:rgba(255,65,108,.3)">
-            <span class="fixeo-res-express-icon">⚡</span>
-            <div>
-              <div class="fixeo-res-express-title" style="color:#ff416c">Intervention urgente</div>
-              <div class="fixeo-res-express-sub">Priorité de disponibilité · Réponse rapide garantie</div>
+        ? `<div class="fixeo-res-express-banner" style="background:linear-gradient(135deg,rgba(255,65,108,.18),rgba(255,75,43,.12));border:1.5px solid rgba(255,65,108,.45);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:14px;margin-bottom:4px">
+            <span style="font-size:1.7rem;line-height:1">⚡</span>
+            <div style="flex:1">
+              <div style="font-weight:800;font-size:.95rem;color:#ff416c;letter-spacing:.01em">Intervention prioritaire</div>
+              <div style="font-size:.8rem;color:rgba(255,255,255,.65);margin-top:3px">Un artisan va vous contacter rapidement · Réponse garantie</div>
             </div>
           </div>`
         : '';
 
-    // ── Slot / date block: express → now, urgent → dès que possible, normal → picker ──
+    // ── Slot / date block: express → now, urgent → dès que possible (no date picker), normal → picker ──
     const slotsHtml = (state.isExpress || state.isUrgent) ? `
       <div class="fixeo-res-field">
         <label class="fixeo-res-label">${state.isUrgent ? '⏱ Disponibilité' : 'Disponibilité'}</label>
@@ -255,8 +255,8 @@
           <div class="fixeo-res-header-left">
             <div class="fixeo-res-header-icon">${catIcon}</div>
             <div>
-              <div class="fixeo-res-header-title">${state.isExpress ? '🚀 Réservation Express' : state.isUrgent ? '⚡ Réservation urgente' : '📅 Réserver un artisan'}</div>
-              <div class="fixeo-res-header-sub">Étape 1 sur 2 — Détails de la réservation</div>
+              <div class="fixeo-res-header-title">${state.isExpress ? '🚀 Réservation Express' : state.isUrgent ? '⚡ Intervention urgente' : '📅 Réserver un artisan'}</div>
+              <div class="fixeo-res-header-sub">${state.isUrgent ? 'Réponse rapide • Artisan disponible maintenant' : 'Étape 1 sur 2 — Détails de la réservation'}</div>
             </div>
           </div>
           <button class="fixeo-res-close" onclick="FixeoReservation.close()" aria-label="Fermer">✕</button>
@@ -305,6 +305,14 @@
           <!-- Form -->
           <div class="fixeo-res-form" id="fixeo-res-form">
 
+            ${state.isUrgent ? `
+            <!-- URGENT MODE: service is hidden (already preselected), shown as chip only -->
+            <input type="hidden" id="res-service" value="${sanitize(state.selectedService)}"/>
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;padding:10px 14px;background:rgba(255,65,108,.08);border:1px solid rgba(255,65,108,.25);border-radius:10px">
+              <span style="font-size:1.1rem">${catIcon}</span>
+              <span style="font-size:.88rem;color:rgba(255,255,255,.8);font-weight:500">${sanitize(state.selectedService || catLabel)}</span>
+              <span style="margin-left:auto;font-size:.75rem;color:rgba(255,255,255,.4)">⚡ Dès que possible</span>
+            </div>` : `
             <div class="fixeo-res-field">
               <label class="fixeo-res-label">🛠️ Service souhaité *</label>
               <select class="fixeo-res-select" id="res-service"
@@ -315,23 +323,17 @@
                     ${sanitize(s)} — ${a.priceLabel || (a.priceFrom + ' MAD')}
                   </option>`).join('')}
               </select>
-            </div>
+            </div>`}
 
-            ${slotsHtml}
-
-            <div class="fixeo-res-field">
-              <label class="fixeo-res-label">📝 Description du problème</label>
-              <textarea class="fixeo-res-textarea" id="res-desc" rows="3"
-                        placeholder="Décrivez votre besoin en détail…"
-                        oninput="FixeoReservation._onDescChange(this.value)">${sanitize(state.description)}</textarea>
-            </div>
+            ${state.isUrgent ? '' : slotsHtml}
 
             <div class="fixeo-res-field">
               <label class="fixeo-res-label">📍 Adresse d'intervention *</label>
               <input type="text" class="fixeo-res-input" id="res-address"
                      placeholder="Ex: 12 Rue Mohammed V, Casablanca"
                      value="${sanitize(state.address)}"
-                     oninput="FixeoReservation._onAddressChange(this.value)"/>
+                     oninput="FixeoReservation._onAddressChange(this.value)"
+                     autocomplete="street-address"/>
             </div>
 
             ${(state.isExpress || state.isUrgent) ? `
@@ -340,18 +342,36 @@
               <input type="tel" class="fixeo-res-input" id="res-phone"
                      placeholder="+212 6XX XXX XXX"
                      value="${sanitize(state.phone)}"
-                     oninput="FixeoReservation._onPhoneChange(this.value)"/>
+                     oninput="FixeoReservation._onPhoneChange(this.value)"
+                     autocomplete="tel"/>
             </div>` : ''}
 
-            <div class="fixeo-res-price-info">
-              💡 <strong>Tarif estimé :</strong> ${a.priceLabel || (a.priceFrom + ' MAD')} (estimation marché)
-              + 5% frais de service Fixeo${state.isExpress ? ' + 50 MAD supplément express' : ''}
-            </div>
+            ${state.isUrgent ? `
+            <div class="fixeo-res-field">
+              <label class="fixeo-res-label" style="color:rgba(255,255,255,.5);font-size:.8rem">📝 Description (optionnelle)</label>
+              <textarea class="fixeo-res-textarea" id="res-desc" rows="2"
+                        placeholder="Précisez si besoin…"
+                        oninput="FixeoReservation._onDescChange(this.value)"
+                        style="font-size:.85rem;padding:8px 12px">${sanitize(state.description)}</textarea>
+            </div>` : `
+            <div class="fixeo-res-field">
+              <label class="fixeo-res-label">📝 Description du problème</label>
+              <textarea class="fixeo-res-textarea" id="res-desc" rows="3"
+                        placeholder="Décrivez votre besoin en détail…"
+                        oninput="FixeoReservation._onDescChange(this.value)">${sanitize(state.description)}</textarea>
+            </div>`}
+
+            <div class="fixeo-res-price-info">${state.isUrgent
+              ? `⚡ <strong>Priorité urgente incluse</strong> — vous ne payez qu'après l'intervention`
+              : `💡 <strong>Tarif estimé :</strong> ${a.priceLabel || (a.priceFrom + ' MAD')} (estimation marché) + 5% frais de service Fixeo${state.isExpress ? ' + 50 MAD supplément express' : ''}`
+            }</div>
 
             <div class="fixeo-res-error" id="res-error" style="display:none"></div>
 
-            <button class="fixeo-res-btn-primary" onclick="FixeoReservation._submitStep1()">
-              Continuer → Récapitulatif 📋
+            <button class="fixeo-res-btn-primary" id="res-step1-cta"
+                    style="${state.isUrgent ? 'background:linear-gradient(135deg,#ff416c,#ff4b2b);box-shadow:0 6px 20px rgba(255,65,108,.35);font-size:1rem;font-weight:800;height:52px;border-radius:14px;letter-spacing:.02em' : ''}"
+                    onclick="FixeoReservation._submitStep1()">
+              ${state.isUrgent ? '⚡ Trouver un artisan maintenant' : 'Continuer → Récapitulatif 📋'}
             </button>
           </div>
         </div>
@@ -377,12 +397,20 @@
     const serviceTotal = state.isExpress && state.selectedService?.includes('Urgence') ? (a.priceFrom * 1.3 | 0) : a.priceFrom;
     const platformFee  = Math.round(serviceTotal * 0.05);
     const expressFee   = state.isExpress ? 50 : 0;
-    const total        = serviceTotal + platformFee + expressFee;
+    const urgentFee    = state.isUrgent  ? 50 : 0;
+    const total        = serviceTotal + platformFee + expressFee + urgentFee;
 
     const catIcon = CATEGORY_ICONS[a?.category] || '🛠️';
     const slotLabel = TIME_SLOTS.find(t => t.value === state.selectedSlot)?.label || state.selectedSlot || 'Dès maintenant';
 
-    const rows = [
+    // Urgent mode: collapsed rows — total only, no fee breakdown
+    const rows = state.isUrgent ? [
+      ['Artisan',       sanitize(a.name)],
+      ['Service',       sanitize(state.selectedService || 'Service')],
+      ['Disponibilité', '⚡ Dès que possible'],
+      ['Adresse',       sanitize(state.address)],
+      state.description ? ['Description', sanitize(state.description.substring(0, 60) + (state.description.length > 60 ? '…' : ''))] : null,
+    ].filter(Boolean) : [
       ['Artisan',      sanitize(a.name)],
       ['Service',      sanitize(state.selectedService || 'Service')],
       state.isExpress
@@ -429,14 +457,23 @@
         <!-- Body -->
         <div class="fixeo-res-body">
 
-          ${state.isExpress ? `
-          <div class="fixeo-res-express-banner">
-            <span class="fixeo-res-express-icon">🚀</span>
-            <div>
-              <div class="fixeo-res-express-title">Intervention EXPRESS confirmée</div>
-              <div class="fixeo-res-express-sub">L'artisan sera chez vous dans moins d'1 heure</div>
-            </div>
-          </div>` : ''}
+          ${state.isExpress
+            ? `<div class="fixeo-res-express-banner">
+                <span class="fixeo-res-express-icon">🚀</span>
+                <div>
+                  <div class="fixeo-res-express-title">Intervention EXPRESS confirmée</div>
+                  <div class="fixeo-res-express-sub">L'artisan sera chez vous dans moins d'1 heure</div>
+                </div>
+               </div>`
+            : state.isUrgent
+              ? `<div class="fixeo-res-express-banner" style="background:linear-gradient(135deg,rgba(255,65,108,.18),rgba(255,75,43,.12));border:1.5px solid rgba(255,65,108,.45);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:14px;margin-bottom:4px">
+                  <span style="font-size:1.7rem;line-height:1">⚡</span>
+                  <div style="flex:1">
+                    <div style="font-weight:800;font-size:.95rem;color:#ff416c">Intervention urgente</div>
+                    <div style="font-size:.8rem;color:rgba(255,255,255,.65);margin-top:3px">Un artisan va vous contacter rapidement</div>
+                  </div>
+                 </div>`
+              : ''}
 
           <!-- Summary Table -->
           <div class="fixeo-res-summary">
@@ -446,9 +483,10 @@
                 <span class="fixeo-res-summary-val">${val}</span>
               </div>`).join('')}
             <div class="fixeo-res-summary-total">
-              <span>Total à payer</span>
+              <span>${state.isUrgent ? 'Total estimé' : 'Total à payer'}</span>
               <span class="fixeo-res-total-amount">${total.toLocaleString('fr-FR')} MAD</span>
             </div>
+            ${state.isUrgent ? `<div style="text-align:center;font-size:.75rem;color:rgba(255,255,255,.45);margin-top:4px;padding:0 4px">Inclut les frais de service Fixeo et priorité urgente</div>` : ''}
           </div>
 
           <!-- Trust badges -->
@@ -508,8 +546,12 @@
             <button class="fixeo-res-btn-secondary" onclick="FixeoReservation._goToStep1()">
               ← Modifier
             </button>
-            <button class="fixeo-res-btn-primary fixeo-res-btn-pay" onclick="FixeoReservation._proceedToPayment(${total})">
-              ✅ Confirmer la commande — ${total.toLocaleString('fr-FR')} MAD
+            <button class="fixeo-res-btn-primary fixeo-res-btn-pay"
+                    style="${state.isUrgent ? 'background:linear-gradient(135deg,#ff416c,#ff4b2b);box-shadow:0 6px 20px rgba(255,65,108,.35);font-size:1rem;font-weight:800;border-radius:14px;letter-spacing:.02em' : ''}"
+                    onclick="${state.isUrgent
+                      ? `FixeoReservation._urgentConfirm(this,${total})`
+                      : `FixeoReservation._proceedToPayment(${total})`}">
+              ${state.isUrgent ? '⚡ Confirmer l\'intervention' : `✅ Confirmer la commande — ${total.toLocaleString('fr-FR')} MAD`}
             </button>
           </div>
         </div>
@@ -629,10 +671,13 @@
     if (modal) {
       modal.classList.add('open');
       document.body.style.overflow = 'hidden';
-      // Focus trap: focus first input
+      // Urgent mode: focus address field immediately — skip service/date fields
+      // Normal/express: focus first interactive element
       requestAnimationFrame(() => {
-        const first = modal.querySelector('select, input, button');
-        if (first) first.focus();
+        const target = (state.isUrgent && !state.address)
+          ? modal.querySelector('#res-address')
+          : modal.querySelector('select, input, button');
+        if (target) { target.focus(); target.scrollIntoView && target.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }
       });
     }
   }
@@ -712,12 +757,14 @@
     if (phoneEl)   state.phone           = phoneEl.value;
 
     // Validation
-    if (!state.selectedService) {
+    // Urgent: service is preselected (hidden input) — skip service validation
+    // Urgent: no date picker rendered — skip date validation
+    if (!state.isUrgent && !state.selectedService) {
       _showError('⚠️ Veuillez choisir un service.');
       serviceEl && serviceEl.focus();
       return;
     }
-    if (!state.isExpress && !state.selectedDate) {
+    if (!state.isUrgent && !state.isExpress && !state.selectedDate) {
       _showError('⚠️ Veuillez sélectionner une date.');
       dateEl && dateEl.focus();
       return;
@@ -751,6 +798,22 @@
   function _goToStep1() {
     state.step = 1;
     render();
+  }
+
+  // ── Urgent: show loading state then hand off to payment ──────────────────
+  function _urgentConfirm(btn, total) {
+    if (!btn) { _proceedToPayment(total); return; }
+    btn.disabled = true;
+    btn.textContent = '🔎 Recherche d\'un artisan disponible…';
+    btn.style.opacity = '0.85';
+    btn.style.cursor = 'not-allowed';
+    setTimeout(function() {
+      if (btn) {
+        btn.textContent = '✅ Artisan en cours de confirmation…';
+        btn.style.background = 'linear-gradient(135deg,#20c997,#0d9e76)';
+      }
+      setTimeout(function() { _proceedToPayment(total); }, 900);
+    }, 1200);
   }
 
   function _proceedToPayment(total) {
@@ -1008,6 +1071,7 @@
     _onSlotClick,
     _submitStep1,
     _goToStep1,
+    _urgentConfirm,
     _proceedToPayment,
   };
 
