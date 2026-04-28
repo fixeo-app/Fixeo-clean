@@ -16,6 +16,8 @@
   <link rel="stylesheet" href="css/artisan-onboarding.css" />
   <link rel="stylesheet" href="css/artisan_cards_v8.css" />
   <link rel="stylesheet" href="css/artisan-cards-v13.css" />
+  <link rel="stylesheet" href="css/artisan-card-premium-v2.css" />
+  <link rel="stylesheet" href="css/artisan-card-mobile-v2.css" />
   <link rel="stylesheet" href="css/fixeo-header-global.css" />
   <link rel="stylesheet" href="css/header-logo-premium.css?v=hlp5">
   <!-- ══ LOGO OVERRIDE — image-only, no emoji, no text ══ -->
@@ -70,6 +72,15 @@
     /* Urgent cards: content-driven height, not fixed 310px from artisan_cards_v8.css */
     #artisans-section .artisan-card.fixeo-urgent-card {
       min-height: 0 !important;
+    }
+    /* pvc-card on results page: normal vertical list, not horizontal scroll
+       (artisan-card-mobile-v2.css applies flex-row scroll inside #ssb2-vedette-grid only,
+       but #artisans-container needs a standard grid) */
+    #artisans-container .pvc-card {
+      min-width: 0 !important;
+      max-width: 100% !important;
+      scroll-snap-align: none !important;
+      flex-shrink: 1 !important;
     }
   </style>
   <style id="fixeo-skeleton">

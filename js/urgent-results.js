@@ -155,58 +155,213 @@
     return sortUrgentResults(list, uiFilters.sortBy || 'response');
   }
 
-  // Profession labels for the urgent card subtitle
-  var URGENT_PROFESSION_LABELS = {
-    plomberie: 'Plombier', electricite: 'Électricien', serrurerie: 'Serrurier',
-    climatisation: 'Frigoriste', nettoyage: 'Agent de nettoyage', peinture: 'Peintre',
-    menuiserie: 'Menuisier', bricolage: 'Bricoleur', maconnerie: 'Maçon',
-    jardinage: 'Jardinier', demenagement: 'Déménageur'
+  // ── Helpers (self-contained, mirrored from fixeo_homepage_premium_patch.js) ──
+  var _UC_ICONS = {
+    plomberie:'🔧', electricite:'⚡', peinture:'🎨', nettoyage:'🧹',
+    jardinage:'🌿', demenagement:'📦', bricolage:'🔨', climatisation:'❄️',
+    menuiserie:'🪚', maconnerie:'🧱', serrurerie:'🔑', carrelage:'🏠',
+    etancheite:'🛡', vitrerie:'🪟', soudure:'🔥', informatique:'💻'
   };
+  var _UC_LABELS = {
+    plomberie:'Plomberie', electricite:'Électricité', peinture:'Peinture',
+    nettoyage:'Nettoyage', jardinage:'Jardinage', demenagement:'Déménagement',
+    bricolage:'Bricolage', climatisation:'Climatisation', menuiserie:'Menuiserie',
+    maconnerie:'Maçonnerie', serrurerie:'Serrurerie', carrelage:'Carrelage',
+    etancheite:'Étanchéité', vitrerie:'Vitrerie', soudure:'Soudure',
+    informatique:'Informatique'
+  };
+  var _UC_PRICES = {
+    plomberie:{from:80}, electricite:{from:100}, menuiserie:{from:150},
+    peinture:{from:100}, nettoyage:{from:60}, climatisation:{from:150},
+    maconnerie:{from:200}, carrelage:{from:120}, jardinage:{from:80},
+    serrurerie:{from:60}, demenagement:{from:300}, bricolage:{from:80},
+    etancheite:{from:200}, vitrerie:{from:100}, soudure:{from:150},
+    informatique:{from:80}
+  };
+  function _ucEsc(s) {
+    return String(s||'').replace(/[&<>"']/g,function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+  function _ucInitials(name) {
+    if (!name) return '??';
+    var p = String(name).trim().split(/\s+/);
+    return ((p[0]||'?')[0]+((p[1]||p[0]||'?')[0])).toUpperCase();
+  }
+  function _ucRtLabel(rt) {
+    rt = parseInt(rt,10);
+    if (!rt||rt>=999) return null;
+    if (rt<=10) return 'Répond en 10 min';
+    if (rt<=30) return 'Répond en '+rt+' min';
+    if (rt<=60) return 'Répond en 1h';
+    return 'Répond en '+Math.round(rt/60)+'h';
+  }
+  function _ucMisLabel(a) {
+    var m = parseInt(a.missionsCompleted||a.missions_count||a.reviewCount||a.reviews||0,10);
+    if (m>=50) return m+' missions';
+    if (m>=10) return m+' missions';
+    return null;
+  }
+  function _ucPrice(a) {
+    var cat = (a.category||a.service||'').toLowerCase().trim();
+    if (a.priceFrom||a.price_from) {
+      var pf=parseInt(a.priceFrom||a.price_from,10);
+      if (!isNaN(pf)&&pf>0) return pf;
+    }
+    return (_UC_PRICES[cat]||{from:150}).from;
+  }
 
-  // Dedicated urgent card — clean, mobile-safe, no layout conflicts with homepage CSS.
-  // Does NOT use renderArtisans so city/category filtering is guaranteed.
-  function buildUrgentCard(artisan) {
-    var safeRating   = Number(artisan.rating || 0).toFixed(1);
-    var reviewCount  = Number(artisan.reviewCount || 0);
-    var responseTime = Number(artisan.responseTime || 0);
-    var avatar       = artisan.avatar || artisan.photo || artisan.image || 'default-avatar.jpg';
-    var verified     = Array.isArray(artisan.badges) && artisan.badges.includes('verified');
-    var available    = (artisan.availability || '').toLowerCase() === 'available';
-    var profession   = URGENT_PROFESSION_LABELS[artisan.category] || artisan.category || 'Artisan';
-    var city         = artisan.city || 'Maroc';
-    var price        = artisan.priceFrom || 150;
-    var safeId       = JSON.stringify(String(artisan.id));
+  // ── pvc-card builder (same markup/classes as fixeo_homepage_premium_patch.js _buildCard) ──
+  // Does NOT call renderArtisans — city+category filtering guaranteed by filterUrgentResults.
+  function buildUrgentCard(artisan, idx) {
+    idx = idx || 0;
+    var cat     = (artisan.category||artisan.service||'').toLowerCase();
+    var catIcon = _UC_ICONS[cat]||'🔧';
+    var catLbl  = _UC_LABELS[cat]||(artisan.service||artisan.category||'Service');
+    var rating  = parseFloat(artisan.rating)||0;
+    var reviews = parseInt(artisan.reviewCount||artisan.reviews||0,10);
+    var trust   = parseInt(artisan.trustScore||0,10);
+    var rt      = parseInt(artisan.responseTime||999,10);
+    var isReal  = !artisan.claimable && !artisan._isSeed;
+    var isVer   = !!(artisan.verified||artisan.certified||trust>=85);
+    var avail   = (artisan.availability||'').toLowerCase();
+    var isAvail = avail==='available'||artisan.available;
+    var isToday = avail==='available_today';
+    var priceFrom = _ucPrice(artisan);
+    var rtLabel = _ucRtLabel(rt);
+    var misLabel= _ucMisLabel(artisan);
 
-    return '<article class="artisan-card other-card discover-harmonized-card result-card fixeo-urgent-card" data-id="' + artisan.id + '">'
-      + '<div class="result-top" style="display:flex;align-items:flex-start;gap:.85rem;margin-bottom:.9rem">'
-      +   '<img class="artisan-avatar artisan-avatar-image" src="' + avatar + '" alt="' + artisan.name + '" loading="lazy" onerror="this.onerror=null;this.src=\'demo-artisan.jpg\';" style="width:56px;height:56px;border-radius:50%;object-fit:cover;flex-shrink:0"/>'
-      +   '<div class="artisan-main artisan-identity artisan-card-heading" style="min-width:0;flex:1">'
-      +     '<h3 class="artisan-name" style="margin:0 0 .2rem;font-size:1.05rem;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + artisan.name + '</h3>'
-      +     '<p class="artisan-service" style="margin:0 0 .45rem;font-size:.88rem;color:rgba(255,255,255,.75)">'
-      +       '<strong style="color:#fff">' + profession + '</strong>'
-      +       ' &bull; ' + city
-      +     '</p>'
-      +     '<div class="artisan-badges badges" style="display:flex;flex-wrap:wrap;gap:.35rem">'
-      +       (available ? '<span class="badge available" style="background:rgba(46,204,113,.18);border:1px solid rgba(46,204,113,.4);color:#2ecc71;font-size:.74rem;padding:.2rem .55rem;border-radius:999px">🟢 Disponible</span>' : '<span class="badge" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.7);font-size:.74rem;padding:.2rem .55rem;border-radius:999px">⏱ Réponse rapide</span>')
-      +       (verified ? '<span class="badge verified" style="background:rgba(55,66,250,.18);border:1px solid rgba(55,66,250,.35);color:#6c7bfa;font-size:.74rem;padding:.2rem .55rem;border-radius:999px">✔ Vérifié</span>' : '')
-      +     '</div>'
-      +   '</div>'
-      + '</div>'
-      + '<div class="artisan-rating-row artisan-rating" style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.75rem;padding:.6rem .8rem;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07)">'
-      +   '<span style="font-weight:800;color:#ffd166">⭐ ' + safeRating + '</span>'
-      +   '<span style="color:rgba(255,255,255,.7)">(' + reviewCount + ' avis)</span>'
-      +   '<span style="margin-left:auto;font-size:.8rem;color:rgba(255,255,255,.55)">Dès ' + price + ' MAD</span>'
-      +   (responseTime ? '<span style="font-size:.78rem;color:rgba(255,255,255,.5)">&bull; ' + responseTime + ' min</span>' : '')
-      + '</div>'
-      + '<div class="result-actions card-buttons" style="display:flex;gap:.7rem;flex-wrap:wrap">'
-      +   '<button class="btn-primary btn-other-profile ssb2-btn-profile secondary-btn" style="flex:1;min-width:120px;font-weight:700" onclick="event.stopPropagation();if(window.FixeoPublicProfileLinks){window.FixeoPublicProfileLinks.openBySourceId(' + safeId + ',event);}else if(window.openArtisanModal){openArtisanModal(' + artisan.id + ');}">Voir profil</button>'
-      +   '<button class="btn-secondary btn-other-reserve ssb2-btn-reserve primary-btn fixeo-reserve-btn" data-artisan-id="' + artisan.id + '" type="button" style="flex:1;min-width:120px;font-weight:700">Demander devis</button>'
-      + '</div>'
-      + '</article>';
+    // Avatar
+    var initials = _ucInitials(artisan.name);
+    var avatarSrc= artisan.avatar||artisan.photo||artisan.photo_url||'';
+    var avatarHtml = avatarSrc
+      ? '<img class="pvc-avatar-img" src="'+avatarSrc+'" alt="'+_ucEsc(artisan.name)+'" loading="lazy"'
+        +' onerror="this.onerror=null;this.style.display=\'none\';var s=this.parentNode.querySelector(\'.pvc-avatar-initials\');if(s)s.style.display=\'flex\';">'
+        +'<span class="pvc-avatar-initials" style="display:none">'+initials+'</span>'
+      : '<span class="pvc-avatar-initials">'+initials+'</span>';
+
+    // Availability badge
+    var availHtml = isAvail
+      ? '<span class="pvc-avail-badge pvc-avail-badge--on">🟢 Disponible</span>'
+      : isToday
+        ? '<span class="pvc-avail-badge pvc-avail-badge--today">🟡 Aujourd\'hui</span>'
+        : '<span class="pvc-avail-badge pvc-avail-badge--off">Sur RDV</span>';
+
+    // Rating stars
+    var starsHtml;
+    if (rating>0) {
+      var s='', rv=Math.round(rating*2)/2;
+      for (var i=1;i<=5;i++) s += i<=rv ? '★' : (rv>=i-0.5 ? '½' : '☆');
+      starsHtml = '<span class="pvc-stars-v2">'+s+'</span>'
+        +'<span class="pvc-rating-num">'+rating.toFixed(1)+'</span>'
+        +(reviews>0 ? '<span class="pvc-reviews-count">('+reviews+' avis)</span>' : '');
+    } else {
+      starsHtml = '<span class="pvc-new-label">✨ Nouveau</span>';
+    }
+
+    // Info chips
+    var chips='';
+    if (rtLabel)  chips+='<span class="pvc-info-chip chip-fast">⚡ '+rtLabel+'</span>';
+    if (misLabel) chips+='<span class="pvc-info-chip chip-missions">✅ '+misLabel+'</span>';
+    if (!rtLabel&&!misLabel&&isAvail) chips+='<span class="pvc-info-chip chip-urgent">🚀 Intervention rapide</span>';
+
+    // Trust badges
+    var badges='';
+    if (isReal) badges+='<span class="pvc-badge-v2 pvc-badge-v2--real">✨ Profil réel</span>';
+    if (isVer)  badges+='<span class="pvc-badge-v2 pvc-badge-v2--verified">✔ Vérifié Fixeo</span>';
+    if (trust>=90) badges+='<span class="pvc-badge-v2 pvc-badge-v2--premium">🏅 Premium</span>';
+    if (!isVer&&!artisan.claimed) badges+='<span class="pvc-badge-v2 pvc-badge-v2--claim">📦 Profil à revendiquer</span>';
+
+    // data-artisan (for click delegation)
+    var dataAttr='';
+    try { dataAttr=' data-artisan=\''+JSON.stringify(artisan).replace(/'/g,'&#39;')+'\''; } catch(_){}
+
+    return '<article class="pvc-card fhp-card fixeo-urgent-card'+(isReal?' pvc-card--real':'')+'"'
+      +' data-artisan-id="'+artisan.id+'"'+dataAttr
+      +' tabindex="0" role="button"'
+      +' aria-label="'+_ucEsc(artisan.name)+', '+_ucEsc(catLbl)+'"'
+      +' style="--anim-delay:'+idx+'">'
+
+      // Header
+      +'<div class="pvc-card-header">'
+        +'<div class="pvc-avatar'+(isVer?' pvc-avatar--verified':'')+'">'+avatarHtml+'</div>'
+        +'<div class="pvc-identity">'
+          +'<h3 class="pvc-name">'+_ucEsc(artisan.name||'—')+'</h3>'
+          +'<div class="pvc-meta-row">'
+            +'<span class="pvc-cat-pill">'+catIcon+' '+_ucEsc(catLbl)+'</span>'
+            +'<span class="pvc-city-pill">📍 '+_ucEsc(artisan.city||'Maroc')+'</span>'
+          +'</div>'
+        +'</div>'
+        +availHtml
+      +'</div>'
+
+      // Badges
+      +(badges?'<div class="pvc-badges-v2">'+badges+'</div>':'')
+
+      +'<div class="pvc-divider"></div>'
+
+      // Stats
+      +'<div class="pvc-stats">'
+        +'<div class="pvc-rating-block">'+starsHtml+'</div>'
+      +'</div>'
+
+      // Info chips
+      +(chips?'<div class="pvc-info-bar">'+chips+'</div>':'')
+
+      // Footer: price + CTAs
+      +'<div class="pvc-footer">'
+        +'<div class="pvc-price-block">'
+          +'<span class="pvc-price-from">À partir de</span>'
+          +'<span class="pvc-price-amount">'+priceFrom+'<span class="price-currency">MAD</span></span>'
+        +'</div>'
+        +'<div class="pvc-cta-row">'
+          +'<button class="pvc-btn-reserve-v2 fhp-btn-reserve" type="button">📅 Réserver</button>'
+          +'<button class="pvc-btn-profile-v2 fhp-btn-profile" type="button">Profil</button>'
+        +'</div>'
+      +'</div>'
+    +'</article>';
+  }
+
+  // CTA handlers — wired via event delegation after render
+  function _ucDoProfile(artisan) {
+    if (!artisan) return;
+    if (window.FixeoPublicProfileLinks && typeof window.FixeoPublicProfileLinks.openBySourceId === 'function') {
+      window.FixeoPublicProfileLinks.openBySourceId(String(artisan.id));
+    } else {
+      window.location.href = 'artisan-profile.html?id=' + encodeURIComponent(String(artisan.id));
+    }
+  }
+  function _ucDoReserve(artisan, state) {
+    if (!artisan) return;
+    if (window.FixeoReservation && typeof window.FixeoReservation.open === 'function') {
+      window.FixeoReservation.open(artisan, false);
+    } else if (typeof window.openBookingModal === 'function') {
+      window.openBookingModal(artisan.id);
+    } else {
+      _ucDoProfile(artisan);
+    }
+  }
+  function _bindUrgentCardClicks(container, results, state) {
+    if (!container) return;
+    container.addEventListener('click', function(e) {
+      var card = e.target.closest('[data-artisan-id]');
+      if (!card) return;
+      var id = String(card.dataset.artisanId);
+      var artisan = (Array.isArray(results)?results:[]).find(function(a){ return String(a.id)===id; });
+      if (e.target.closest('.fhp-btn-reserve')) {
+        e.stopPropagation();
+        _ucDoReserve(artisan, state);
+      } else if (e.target.closest('.fhp-btn-profile')) {
+        e.stopPropagation();
+        _ucDoProfile(artisan);
+      } else {
+        _ucDoReserve(artisan, state);
+      }
+    });
   }
 
   // Keep buildFallbackCard as alias for backward compatibility (not called in urgent flow)
-  function buildFallbackCard(artisan) { return buildUrgentCard(artisan); }
+  function buildFallbackCard(artisan) { return buildUrgentCard(artisan, 0); }
 
   function updateSummary(state, results) {
     $('#urgent-city').textContent = state.city || 'Toutes les villes';
@@ -294,8 +449,9 @@
     // Always use the dedicated urgent card renderer — never delegating to
     // window.renderArtisans which re-sorts by global trust_score/missions and
     // could clobber the city+category-filtered list with wrong artisans.
-    container.innerHTML = results.map(buildUrgentCard).join('');
-    enhanceUrgentResultButtons(results, state);
+    container.innerHTML = results.map(function(a,i){ return buildUrgentCard(a,i); }).join('');
+    _bindUrgentCardClicks(container, results, state);
+    enhanceUrgentResultButtons(results, state); // keep for .fixeo-reserve-btn wiring
   }
 
   function initUrgentResultsPage() {
