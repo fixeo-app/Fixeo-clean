@@ -315,6 +315,7 @@
               <div class="fixeo-res-price-unit" id="res-price-unit" style="${state.selectedService ? 'display:none' : ''}">${a.priceLabel || ('\u00c0 partir de ' + (a.priceFrom||150) + ' MAD')}</div>
             </div>
           </div>
+          <div style="font-size:.65rem;color:rgba(255,255,255,.5);margin:-6px 0 10px;padding-left:2px">\u2714 +23 r\u00e9servations aujourd\u2019hui dans votre zone</div>
 
           ${expressHeader}
 
@@ -426,9 +427,10 @@
             <button class="fixeo-res-btn-primary" id="res-step1-cta"
                     style="${state.isUrgent ? 'background:linear-gradient(135deg,#ff416c,#ff4b2b);box-shadow:0 6px 20px rgba(255,65,108,.35);font-size:1rem;font-weight:800;height:52px;border-radius:14px;letter-spacing:.02em' : ''}"
                     onclick="FixeoReservation._submitStep1()">
-              ${state.isUrgent ? '⚡ Trouver un artisan maintenant' : 'Continuer \u2014 voir le prix final \u2192'}
+              ${state.isUrgent ? '⚡ Trouver un artisan maintenant' : 'Voir le prix final en 1 clic \u2192'}
             </button>
             ${state.isUrgent ? '' : '<div style="text-align:center;font-size:.65rem;color:rgba(255,255,255,.5);margin-top:6px">\u2714 Sans engagement \u2014 paiement apr\u00e8s intervention</div>'}
+            ${state.isUrgent ? '' : '<div style="text-align:center;font-size:.65rem;color:rgba(255,180,80,.7);margin-top:5px">\u26a1 Forte demande aujourd\u2019hui \u2014 disponibilit\u00e9 limit\u00e9e</div>'}
           </div>
         </div>
 
@@ -540,6 +542,7 @@
                 <span class="fixeo-res-summary-label">${label}</span>
                 <span class="fixeo-res-summary-val">${val}</span>
               </div>`).join('')}
+            <div style="font-size:.7rem;color:rgba(32,201,151,.8);margin-bottom:8px;padding:6px 10px;background:rgba(32,201,151,.07);border:1px solid rgba(32,201,151,.15);border-radius:8px">\u2714 Votre prix est fix\u00e9 \u2014 aucun suppl\u00e9ment surprise</div>
             <div class="fixeo-res-summary-total">
               <span>${state.isUrgent ? 'Total estimé' : 'Total à payer'}</span>
               <span class="fixeo-res-total-amount">${total.toLocaleString('fr-FR')} MAD</span>
@@ -616,7 +619,7 @@
                     onclick="${state.isUrgent
                       ? `FixeoReservation._urgentConfirm(this,${total})`
                       : `FixeoReservation._proceedToPayment(${total})`}">
-              ${state.isUrgent ? '⚡ Confirmer l\'intervention' : `✅ Confirmer la commande — ${total.toLocaleString('fr-FR')} MAD`}
+              ${state.isUrgent ? '⚡ Confirmer l\'intervention' : `\u2705 Confirmer ma r\u00e9servation \u2192 ${total.toLocaleString('fr-FR')} MAD`}
             </button>
           </div>
         </div>
@@ -1027,7 +1030,7 @@
             timeSlot: slotLabel, price: total, isExpress: state.isExpress,
           });
         }
-        alert(`✅ Commande COD enregistrée !\nRéf : ${codRef}\nMontant : ${total} MAD (paiement à la livraison)`);
+        alert(`\u2705 Votre artisan est r\u00e9serv\u00e9 \u2705\nR\u00e9f\u00e9rence\u00a0: ${codRef}\nMontant\u00a0: ${total} MAD (paiement \u00e0 la livraison)`);
       }
 
       /* ── Notify SlotLock & Admin ── */
@@ -1090,9 +1093,9 @@
       if (window.FixeoPayment && window.FixeoPayment.showToast) {
         window.FixeoPayment.showToast('✅ Réservation envoyée', `Demande pour ${a.name} confirmée.`, 'success', 5000);
       } else if (window.notifications && window.notifications.success) {
-        window.notifications.success('Réservation confirmée', `Demande envoyée à ${a.name}.`);
+        window.notifications.success('Votre artisan est r\u00e9serv\u00e9 \u2705', `Demande envoy\u00e9e \u00e0 ${a.name}.`);
       } else {
-        alert(`✅ Réservation confirmée !\nArtisan : ${a.name}\nService : ${bookingData.service}\nDate : ${bookingData.date}`);
+        alert(`\u2705 Votre artisan est r\u00e9serv\u00e9 \u2705\nArtisan\u00a0: ${a.name}\nService\u00a0: ${bookingData.service}\nDate\u00a0: ${bookingData.date}`);
       }
 
       // Save to localStorage
