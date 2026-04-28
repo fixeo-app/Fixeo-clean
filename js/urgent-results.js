@@ -366,7 +366,7 @@
       // Primary — dominant, full-width on mobile via flex-basis
       +'<button class="fxu-btn-reserve" type="button"'
         +' style="'
-          +'flex:1 1 100%;'          // full-width on mobile (wraps solo)
+          +'flex:1 1 100%;'
           +'min-width:0;'
           +'height:52px;'
           +'padding:0 1.2rem;'
@@ -374,11 +374,12 @@
           +'background:linear-gradient(135deg,#ff416c,#ff4b2b);'
           +'color:#fff;'
           +'font-weight:600;font-size:1rem;letter-spacing:.01em;'
+          +'text-shadow:none;filter:none;'
           +'cursor:pointer;'
-          +'box-shadow:0 6px 18px rgba(255,65,108,.35);'
+          +'box-shadow:0 4px 12px rgba(255,65,108,.25);'
           +'transition:opacity .15s,box-shadow .15s"'
-        +' onmouseenter="this.style.opacity=\'.88\';this.style.boxShadow=\'0 10px 28px rgba(255,65,108,.45)\'"'
-        +' onmouseleave="this.style.opacity=\'1\';this.style.boxShadow=\'0 6px 18px rgba(255,65,108,.35)\'">'
+        +' onmouseenter="this.style.opacity=\'.88\';this.style.boxShadow=\'0 8px 20px rgba(255,65,108,.38)\'"'
+        +' onmouseleave="this.style.opacity=\'1\';this.style.boxShadow=\'0 4px 12px rgba(255,65,108,.25)\'">'
         +'📅 Réserver maintenant'
       +'</button>'
       // Secondary — smaller, subdued, same row on desktop (shrinks to fit)
