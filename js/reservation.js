@@ -342,15 +342,15 @@
             })()} ` : `
             <div class="fixeo-res-field">
               <label class="fixeo-res-label">🛠️ Service souhaité *</label>
-              <select class="fixeo-res-select" id="res-service"
-                      onchange="FixeoReservation._onServiceChange(this.value)">
-                <option value="">-- Choisissez un service --</option>
+              <input type="hidden" id="res-service" value="${sanitize(state.selectedService)}"/>
+              <div id="res-svc-pills" class="fixeo-res-slot-grid" style="grid-template-columns:1fr 1fr;gap:8px">
                 ${services.map(s => {
-                  const _sp = SERVICE_PRICING[s];
+                  const _sp  = SERVICE_PRICING[s];
                   const _lbl = _sp ? (_sp.from + '\u2013' + _sp.to + ' MAD') : (a.priceLabel || (a.priceFrom + ' MAD'));
-                  return `<option value="${sanitize(s)}"${state.selectedService === s ? ' selected' : ''}>${sanitize(s)} \u2014 ${_lbl}</option>`;
+                  const _act = state.selectedService === s ? ' active' : '';
+                  return `<div class="fixeo-res-slot${_act}" data-svc="${sanitize(s)}" style="text-align:left;padding:10px 12px;line-height:1.3;cursor:pointer"><div style="font-size:.78rem;font-weight:700;color:#fff">${sanitize(s)}</div><div style="font-size:.68rem;color:rgba(255,255,255,.45);margin-top:2px">${_lbl}</div></div>`;
                 }).join('')}
-              </select>
+              </div>
             </div>
             ${(function(){
               /* Dynamic per-service hint — updates via _onServiceChange without re-render */
@@ -676,12 +676,32 @@
   /* ════════════════════════════════════════════════════════
      RENDER DISPATCH
   ════════════════════════════════════════════════════════ */
+  /* Attach delegated click listener for service pills — called after render sets innerHTML */
+  function _initPills() {
+    var grid = document.getElementById('res-svc-pills');
+    if (!grid) return; /* urgent/step2: no pills */
+    grid.addEventListener('click', function(e) {
+      var pill = e.target.closest('[data-svc]');
+      if (!pill) return;
+      var val = pill.getAttribute('data-svc');
+      /* Toggle active state */
+      grid.querySelectorAll('.fixeo-res-slot').forEach(function(p) { p.classList.remove('active'); });
+      pill.classList.add('active');
+      /* Sync hidden input so _submitStep1 reads correct value */
+      var hidden = document.getElementById('res-service');
+      if (hidden) hidden.value = val;
+      /* Trigger all display updates (hint, top price, tarif bar) */
+      _onServiceChange(val);
+    });
+  }
+
   function render() {
     const modal = ensureModal();
     if (!state.artisan) {
       modal.innerHTML = renderArtisanPicker();
     } else if (state.step === 1) {
       modal.innerHTML = renderStep1();
+      _initPills();
     } else {
       modal.innerHTML = renderStep2();
     }
@@ -1156,6 +1176,7 @@
     _goToStep1,
     _urgentConfirm,
     _proceedToPayment,
+    _initPills,
   };
 
 })(window);
