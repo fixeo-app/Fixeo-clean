@@ -59,28 +59,56 @@
     }
   </style>
   <style id="fixeo-results-card-fix">
-    /* Prevent artisan cards from clipping the CTA/button area */
+    /* ── fxu-card grid — vertical list, full width ─────────────── */
+    #artisans-section .results-layout {
+      display: block !important;
+    }
+    #artisans-section .results-filters {
+      display: none !important;
+    }
+    #artisans-section #artisans-container {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 14px !important;
+      grid-template-columns: none !important;
+    }
+    /* Legacy .artisan-card safety net (main.js rAF guard should prevent these,
+       but keep overflow fix in case of edge-case race) */
     #artisans-container .artisan-card {
       overflow: visible !important;
-    }
-    /* Grid: force 1-column on results page — artisan_cards_v8.css repeat(5,1fr) wins
-       by document order at equal specificity; override here to get full-width cards */
-    #artisans-section #artisans-container.artisans-grid {
-      grid-template-columns: 1fr !important;
-      gap: 14px !important;
-    }
-    /* Urgent cards: content-driven height, not fixed 310px from artisan_cards_v8.css */
-    #artisans-section .artisan-card.fixeo-urgent-card {
       min-height: 0 !important;
     }
-    /* pvc-card on results page: normal vertical list, not horizontal scroll
-       (artisan-card-mobile-v2.css applies flex-row scroll inside #ssb2-vedette-grid only,
-       but #artisans-container needs a standard grid) */
-    #artisans-container .pvc-card {
-      min-width: 0 !important;
-      max-width: 100% !important;
-      scroll-snap-align: none !important;
-      flex-shrink: 1 !important;
+    /* ── Hero section — compact, tight above cards ──────────────── */
+    .hero { padding: 28px 0 18px !important; }
+    .hero .breadcrumbs { margin-bottom: 10px !important; }
+    .hero .hero-copy { gap: 6px !important; }
+    .hero h1#results-main-title { font-size: clamp(1.35rem, 4vw, 1.85rem) !important; margin: 0 0 4px !important; }
+    .hero p#results-main-meta  { font-size: .92rem !important; margin: 0 0 10px !important; opacity: .78; }
+    .hero .stat-grid { gap: 8px !important; margin-top: 8px !important; }
+    .hero .stat strong { font-size: .72rem !important; }
+    .hero .stat span   { font-size: .9rem !important; }
+    /* ── Results section — zero top gap ─────────────────────────── */
+    #artisans-section.section { padding-top: 12px !important; }
+    /* ── Hide verbose results header block ───────────────────────── */
+    .results-header.premium-results-header { display: none !important; }
+    /* ── Hide results toolbar (count badge, etc) ─────────────────── */
+    .results-toolbar { display: none !important; }
+    /* ── Compact trust strip ─────────────────────────────────────── */
+    #other-artisans-banner {
+      margin-bottom: 12px !important;
+      padding: 10px 14px !important;
+      border-radius: 12px !important;
+      background: rgba(255,255,255,.04) !important;
+      border: 1px solid rgba(255,255,255,.09) !important;
+    }
+    .separator-title   { font-size: .82rem !important; font-weight: 700 !important; }
+    .separator-subtitle{ font-size: .76rem !important; opacity: .65 !important; }
+    /* ── Mobile ─────────────────────────────────────────────────── */
+    @media (max-width: 640px) {
+      .hero { padding: 18px 0 12px !important; }
+      .hero h1#results-main-title { font-size: 1.2rem !important; }
+      .hero .stat-grid { flex-direction: column !important; gap: 6px !important; }
+      #artisans-section.section { padding-top: 8px !important; }
     }
   </style>
   <style id="fixeo-skeleton">
@@ -161,23 +189,13 @@
         </div>
 
         <div class="hero-copy">
-          <span class="kicker">⚡ Demande urgente</span>
-          <h1 id="results-main-title">Artisans disponibles</h1>
-          <p id="results-main-meta">Recherche en cours...</p>
-          <div class="stat-grid">
-            <div class="stat">
-              <strong>Ville</strong>
-              <span id="urgent-city">—</span>
-            </div>
-            <div class="stat">
-              <strong>Votre besoin</strong>
-              <span id="urgent-query">—</span>
-            </div>
-            <div class="stat">
-              <strong>Priorité</strong>
-              <span>Disponibles maintenant · Réponse rapide</span>
-            </div>
-          </div>
+          <h1 id="results-main-title" style="display:flex;align-items:center;gap:.45rem;flex-wrap:wrap">
+            <span>⚡</span>
+            <span id="urgent-query">Artisans disponibles</span>
+            <span style="font-weight:400;opacity:.6">à</span>
+            <span id="urgent-city" style="color:#e1306c">—</span>
+          </h1>
+          <p id="results-main-meta" style="margin:4px 0 0">Recherche en cours…</p>
         </div>
       </div>
     </section>
