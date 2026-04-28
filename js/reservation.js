@@ -108,7 +108,12 @@
         rating: input.rating || 4.8,
         reviewCount: input.reviewCount || 0,
         trustScore: input.trustScore || 90,
-        priceFrom: input.priceFrom || input.hourlyRate || 150,
+        priceFrom: (function() {
+          var _cat = input.category || input.specialty || 'bricolage';
+          var _fp  = window.FixeoPricing && window.FixeoPricing.getPricing && window.FixeoPricing.getPricing(_cat);
+          if (_fp && _fp.from) return _fp.from;
+          return input.priceFrom || input.hourlyRate || 150;
+        })(),
         priceUnit: input.priceUnit || 'intervention',
         availability: input.availability || 'available',
         badges: input.badges || ['verified'],
