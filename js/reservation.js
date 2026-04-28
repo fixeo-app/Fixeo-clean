@@ -312,7 +312,7 @@
             </div>
             <div class="fixeo-res-artisan-price">
               <div class="fixeo-res-price-val" id="res-price-display" style="font-size:1.45rem;font-weight:900;letter-spacing:-.01em">${a.priceFrom} MAD</div>
-              <div class="fixeo-res-price-unit">${a.priceLabel || ('\u00c0 partir de ' + (a.priceFrom||150) + ' MAD')}</div>
+              <div class="fixeo-res-price-unit" id="res-price-unit" style="${state.selectedService ? 'display:none' : ''}">${a.priceLabel || ('\u00c0 partir de ' + (a.priceFrom||150) + ' MAD')}</div>
             </div>
           </div>
 
@@ -348,11 +348,11 @@
                   const _sp   = SERVICE_PRICING[s];
                   const _lbl  = _sp ? (_sp.from + '\u2013' + _sp.to + ' MAD') : (a.priceLabel || (a.priceFrom + ' MAD'));
                   const _act  = state.selectedService === s ? ' active' : '';
-                  const _badge = idx === 0 ? '<span style="display:inline-block;margin-top:4px;font-size:.6rem;font-weight:700;letter-spacing:.03em;padding:2px 6px;border-radius:6px;background:rgba(255,65,108,.18);color:rgba(255,160,140,.9);border:1px solid rgba(255,65,108,.25)">\u26a1 Rapide</span>' : '';
+                  const _badge = idx === 0 ? '<span style="display:inline-block;margin-top:5px;font-size:.6rem;font-weight:600;letter-spacing:.03em;padding:2px 7px;border-radius:6px;background:rgba(255,80,120,.12);color:rgba(255,160,140,.95);border:1px solid rgba(255,80,120,.35)">\u26a1 Rapide</span>' : '';
                   return `<div class="fixeo-res-slot${_act}" data-svc="${sanitize(s)}" style="text-align:left;padding:12px 13px;line-height:1.35;cursor:pointer;transition:all .2s ease;background:${_act ? '' : 'linear-gradient(135deg,rgba(255,255,255,.04),rgba(255,255,255,.02))'};"><div style="font-size:.8rem;font-weight:700;color:#fff">${sanitize(s)}</div><div style="font-size:.7rem;color:rgba(255,255,255,.55);margin-top:3px;font-weight:500">${_lbl}</div>${_badge}</div>`;
                 }).join('')}
               </div>
-              <div style="margin-top:7px;font-size:.68rem;color:rgba(255,255,255,.35);padding-left:2px">Choisissez le service le plus proche de votre besoin.</div>
+              <div style="margin-top:7px;font-size:.68rem;color:rgba(255,255,255,.35);padding-left:2px">Choisissez un service pour obtenir votre devis instant\u00e9.</div>
             </div>
             ${(function(){
               /* Dynamic per-service hint — updates via _onServiceChange without re-render */
@@ -418,7 +418,7 @@
 
             <div class="fixeo-res-price-info" id="res-tarif-estime">${state.isUrgent
               ? `⚡ <strong>Priorité urgente incluse</strong> — vous ne payez qu'après l'intervention`
-              : `💡 <strong>Tarif estimé :</strong> ${a.priceLabel || (a.priceFrom + ' MAD')} (estimation marché) + 5% frais de service Fixeo${state.isExpress ? ' + 50 MAD supplément express' : ''}`
+              : `\ud83d\udca1 <em style="font-style:normal">Estimation bas\u00e9e sur les prix du march\u00e9.</em><br><span style="font-size:.72rem;color:rgba(255,255,255,.5)">Aucun paiement maintenant \u2014 vous payez apr\u00e8s intervention.</span>`
             }</div>
 
             <div class="fixeo-res-error" id="res-error" style="display:none"></div>
@@ -426,9 +426,9 @@
             <button class="fixeo-res-btn-primary" id="res-step1-cta"
                     style="${state.isUrgent ? 'background:linear-gradient(135deg,#ff416c,#ff4b2b);box-shadow:0 6px 20px rgba(255,65,108,.35);font-size:1rem;font-weight:800;height:52px;border-radius:14px;letter-spacing:.02em' : ''}"
                     onclick="FixeoReservation._submitStep1()">
-              ${state.isUrgent ? '⚡ Trouver un artisan maintenant' : 'R\u00e9server \u2014 voir le r\u00e9capitulatif \u2192'}
+              ${state.isUrgent ? '⚡ Trouver un artisan maintenant' : 'Continuer \u2014 voir le prix final \u2192'}
             </button>
-            ${state.isUrgent ? '' : '<div style="text-align:center;font-size:.68rem;color:rgba(255,255,255,.3);margin-top:6px">\u2713 Aucun paiement maintenant</div>'}
+            ${state.isUrgent ? '' : '<div style="text-align:center;font-size:.65rem;color:rgba(255,255,255,.5);margin-top:6px">\u2714 Sans engagement \u2014 paiement apr\u00e8s intervention</div>'}
           </div>
         </div>
 
@@ -544,6 +544,9 @@
               <span>${state.isUrgent ? 'Total estimé' : 'Total à payer'}</span>
               <span class="fixeo-res-total-amount">${total.toLocaleString('fr-FR')} MAD</span>
             </div>
+            <div style="font-size:.72rem;color:rgba(255,255,255,.38);margin-top:8px;line-height:1.5;padding:0 2px;border-top:1px solid rgba(255,255,255,.06);padding-top:8px">
+              Un agent Fixeo vous contacte pour confirmer votre cr\u00e9neau.<br>Aucune surprise sur le prix.
+            </div>
             ${state.isUrgent ? `<div style="font-size:.75rem;color:rgba(255,255,255,.45);margin-top:6px;line-height:1.4;padding:0 2px">
               • ${serviceTotal} MAD service estimé<br>
               • ${urgentFee} MAD priorité urgente Fixeo<br>
@@ -555,15 +558,15 @@
           <div class="fixeo-res-trust-row">
             <div class="fixeo-res-trust-item">
               <span class="fixeo-res-trust-icon">✅</span>
-              <span>Artisan vérifié</span>
+              <span>Artisan v\u00e9rifi\u00e9</span>
             </div>
             <div class="fixeo-res-trust-item">
               <span class="fixeo-res-trust-icon">🛡️</span>
-              <span>Paiement sécurisé</span>
+              <span>Paiement s\u00e9curis\u00e9</span>
             </div>
             <div class="fixeo-res-trust-item">
               <span class="fixeo-res-trust-icon">🔄</span>
-              <span>Remboursement garanti</span>
+              <span>Support Fixeo disponible</span>
             </div>
           </div>
 
@@ -582,7 +585,7 @@
                   <span style="font-size:1.4rem">💵</span>
                   <div style="flex:1">
                     <div style="font-weight:700;font-size:.9rem;color:#fff">Paiement à la livraison (Cash on Delivery)</div>
-                    <div style="font-size:.75rem;color:rgba(255,255,255,.5);margin-top:2px">Payez en espèces lors de l'intervention · Option principale Maroc</div>
+                    <div style="font-size:.75rem;color:rgba(255,255,255,.5);margin-top:2px">Payez uniquement apr\u00e8s l\u2019intervention, en toute s\u00e9curit\u00e9.</div>
                   </div>
                   <span style="font-size:.67rem;font-weight:700;padding:2px 8px;border-radius:20px;background:rgba(32,201,151,.2);color:#20C997;border:1px solid rgba(32,201,151,.3);white-space:nowrap">⭐ Recommandé</span>
                 </label>
@@ -682,13 +685,28 @@
   function _initPills() {
     var grid = document.getElementById('res-svc-pills');
     if (!grid) return; /* urgent/step2: no pills */
+    /* Hover effect — scale up */
+    grid.addEventListener('mouseover', function(e) {
+      var pill = e.target.closest('[data-svc]');
+      if (pill && !pill.classList.contains('active')) { pill.style.transform = 'scale(1.02)'; }
+    });
+    grid.addEventListener('mouseout', function(e) {
+      var pill = e.target.closest('[data-svc]');
+      if (pill && !pill.classList.contains('active')) { pill.style.transform = ''; }
+    });
     grid.addEventListener('click', function(e) {
       var pill = e.target.closest('[data-svc]');
       if (!pill) return;
       var val = pill.getAttribute('data-svc');
-      /* Toggle active state */
-      grid.querySelectorAll('.fixeo-res-slot').forEach(function(p) { p.classList.remove('active'); });
+      /* Toggle active state + lift effect */
+      grid.querySelectorAll('.fixeo-res-slot').forEach(function(p) {
+        p.classList.remove('active');
+        p.style.transform = '';
+        p.style.boxShadow = '';
+      });
       pill.classList.add('active');
+      pill.style.transform = 'translateY(-2px)';
+      pill.style.boxShadow = '0 10px 25px rgba(225,48,108,.18)';
       /* Sync hidden input so _submitStep1 reads correct value */
       var hidden = document.getElementById('res-service');
       if (hidden) hidden.value = val;
@@ -809,7 +827,9 @@
       var priceEl = document.getElementById('res-price-display');
       if (priceEl) { priceEl.textContent = _sp.from + ' MAD'; }
       var tarifEl = document.getElementById('res-tarif-estime');
-      if (tarifEl) { tarifEl.innerHTML = '\ud83d\udca1 <strong>Tarif estim\u00e9\u00a0:</strong> ' + _sp.from + '\u00a0MAD (estimation march\u00e9) + 5\u202f% frais de service Fixeo'; }
+      if (tarifEl) { tarifEl.innerHTML = '\ud83d\udca1 <em style="font-style:normal">Estimation bas\u00e9e sur les prix du march\u00e9.</em><br><span style="font-size:.72rem;color:rgba(255,255,255,.5)">Aucun paiement maintenant \u2014 vous payez apr\u00e8s intervention.</span>'; }
+      var unitEl = document.getElementById('res-price-unit');
+      if (unitEl) { unitEl.style.display = _sp ? 'none' : ''; }
     }
   }
   function _onDateChange(val) {
