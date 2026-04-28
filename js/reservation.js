@@ -343,14 +343,16 @@
             <div class="fixeo-res-field">
               <label class="fixeo-res-label">🛠️ Service souhaité *</label>
               <input type="hidden" id="res-service" value="${sanitize(state.selectedService)}"/>
-              <div id="res-svc-pills" class="fixeo-res-slot-grid" style="grid-template-columns:1fr 1fr;gap:8px">
-                ${services.map(s => {
-                  const _sp  = SERVICE_PRICING[s];
-                  const _lbl = _sp ? (_sp.from + '\u2013' + _sp.to + ' MAD') : (a.priceLabel || (a.priceFrom + ' MAD'));
-                  const _act = state.selectedService === s ? ' active' : '';
-                  return `<div class="fixeo-res-slot${_act}" data-svc="${sanitize(s)}" style="text-align:left;padding:10px 12px;line-height:1.3;cursor:pointer"><div style="font-size:.78rem;font-weight:700;color:#fff">${sanitize(s)}</div><div style="font-size:.68rem;color:rgba(255,255,255,.45);margin-top:2px">${_lbl}</div></div>`;
+              <div id="res-svc-pills" class="fixeo-res-slot-grid" style="grid-template-columns:1fr 1fr;gap:10px">
+                ${services.map((s, idx) => {
+                  const _sp   = SERVICE_PRICING[s];
+                  const _lbl  = _sp ? (_sp.from + '\u2013' + _sp.to + ' MAD') : (a.priceLabel || (a.priceFrom + ' MAD'));
+                  const _act  = state.selectedService === s ? ' active' : '';
+                  const _badge = idx === 0 ? '<span style="display:inline-block;margin-top:4px;font-size:.6rem;font-weight:700;letter-spacing:.03em;padding:2px 6px;border-radius:6px;background:rgba(255,65,108,.18);color:rgba(255,160,140,.9);border:1px solid rgba(255,65,108,.25)">\u26a1 Rapide</span>' : '';
+                  return `<div class="fixeo-res-slot${_act}" data-svc="${sanitize(s)}" style="text-align:left;padding:12px 13px;line-height:1.35;cursor:pointer;transition:all .2s ease;background:${_act ? '' : 'linear-gradient(135deg,rgba(255,255,255,.04),rgba(255,255,255,.02))'};"><div style="font-size:.8rem;font-weight:700;color:#fff">${sanitize(s)}</div><div style="font-size:.7rem;color:rgba(255,255,255,.55);margin-top:3px;font-weight:500">${_lbl}</div>${_badge}</div>`;
                 }).join('')}
               </div>
+              <div style="margin-top:7px;font-size:.68rem;color:rgba(255,255,255,.35);padding-left:2px">Choisissez le service le plus proche de votre besoin.</div>
             </div>
             ${(function(){
               /* Dynamic per-service hint — updates via _onServiceChange without re-render */
