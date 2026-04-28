@@ -313,7 +313,17 @@
               <span style="font-size:.88rem;color:rgba(255,255,255,.8);font-weight:500">${sanitize(state.selectedService || catLabel)}</span>
               <span style="margin-left:auto;font-size:.75rem;color:rgba(255,255,255,.4)">⚡ Dès que possible</span>
             </div>
-            ${(function(){var _fp=window.FixeoPricingMarocain&&window.FixeoPricingMarocain.getPricing&&window.FixeoPricingMarocain.getPricing(a&&a.category);return _fp&&_fp.range?'<div style="font-size:.75rem;color:rgba(255,255,255,.4);margin-bottom:10px;padding-left:2px">Fourchette march\u00e9\u00a0: <strong style="color:rgba(255,255,255,.62)">'+ _fp.range +'</strong></div>':'';})()} ` : `
+            ${(function(){
+              var _fp=window.FixeoPricingMarocain&&window.FixeoPricingMarocain.getPricing&&window.FixeoPricingMarocain.getPricing(a&&a.category);
+              if(!_fp||!_fp.range) return '';
+              var _rec = Math.round((_fp.from+_fp.to)/2);
+              return '<div style="font-size:.75rem;color:rgba(255,255,255,.4);margin-bottom:4px;padding-left:2px">'
+                +  'Fourchette march\u00e9\u00a0: <strong style="color:rgba(255,255,255,.62)">'+ _fp.range +'</strong>'
+                + '</div>'
+                + '<div style="font-size:.78rem;color:rgba(255,255,255,.55);margin-bottom:12px;padding-left:2px">'
+                +  '\ud83d\udca1 Prix recommand\u00e9 Fixeo\u00a0: <strong style="color:rgba(255,255,255,.78)">~'+ _rec +' MAD</strong>'
+                + '</div>';
+            })()} ` : `
             <div class="fixeo-res-field">
               <label class="fixeo-res-label">🛠️ Service souhaité *</label>
               <select class="fixeo-res-select" id="res-service"
@@ -487,7 +497,11 @@
               <span>${state.isUrgent ? 'Total estimé' : 'Total à payer'}</span>
               <span class="fixeo-res-total-amount">${total.toLocaleString('fr-FR')} MAD</span>
             </div>
-            ${state.isUrgent ? `<div style="text-align:center;font-size:.75rem;color:rgba(255,255,255,.45);margin-top:4px;padding:0 4px">Inclut les frais de service Fixeo et priorité urgente</div>` : ''}
+            ${state.isUrgent ? `<div style="font-size:.75rem;color:rgba(255,255,255,.45);margin-top:6px;line-height:1.4;padding:0 2px">
+              • ${serviceTotal} MAD service estimé<br>
+              • ${urgentFee} MAD priorité urgente Fixeo<br>
+              • ${platformFee} MAD frais de service
+            </div>` : ''}
           </div>
 
           <!-- Trust badges -->
