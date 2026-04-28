@@ -339,7 +339,21 @@
                     ${sanitize(s)} — ${a.priceLabel || (a.priceFrom + ' MAD')}
                   </option>`).join('')}
               </select>
-            </div>`}
+            </div>
+            ${(function(){
+              var _fp = window.FixeoPricing && window.FixeoPricing.getPricing && window.FixeoPricing.getPricing(a && a.category);
+              if (!_fp || !_fp.range) return '';
+              var _rec = Math.round((_fp.from + _fp.to) / 2);
+              return '<div style="margin-top:6px;line-height:1.35;padding-left:2px">'
+                + '<div style="font-size:.72rem;color:rgba(255,255,255,.32)">'
+                  + 'March\u00e9\u00a0: ' + _fp.range
+                + '</div>'
+                + '<div style="font-size:.75rem;color:rgba(255,255,255,.5)">'
+                  + '\ud83d\udca1 Prix recommand\u00e9 Fixeo\u00a0: '
+                  + '<strong style="color:rgba(255,255,255,.75)">~' + _rec + '\u00a0MAD</strong>'
+                + '</div>'
+              + '</div>';
+            })()}`}
 
             ${state.isUrgent ? '' : slotsHtml}
 
