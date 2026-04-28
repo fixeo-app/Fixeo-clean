@@ -61,6 +61,16 @@
     #artisans-container .artisan-card {
       overflow: visible !important;
     }
+    /* Grid: force 1-column on results page — artisan_cards_v8.css repeat(5,1fr) wins
+       by document order at equal specificity; override here to get full-width cards */
+    #artisans-section #artisans-container.artisans-grid {
+      grid-template-columns: 1fr !important;
+      gap: 14px !important;
+    }
+    /* Urgent cards: content-driven height, not fixed 310px from artisan_cards_v8.css */
+    #artisans-section .artisan-card.fixeo-urgent-card {
+      min-height: 0 !important;
+    }
   </style>
   <style id="fixeo-skeleton">
     /* Skeleton loading cards for urgent results */
