@@ -98,12 +98,15 @@
     margin-top: 0 !important;
   }
 
-  /* FOMO: directly below main CTA */
+  /* FOMO: visually attached to main CTA — negative pull closes the gap */
   .hero-content > .hcb-fomo {
     order: 5 !important;
-    margin-top: 8px !important;
-    font-size: 0.72rem !important;
+    margin-top: -2px !important;
+    padding-top: 6px !important;
+    display: flex !important;
+    justify-content: center !important;
     text-align: center !important;
+    font-size: 0.72rem !important;
   }
 
   /* Trust block: compact single line, right after FOMO */
