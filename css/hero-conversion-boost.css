@@ -209,3 +209,59 @@
   }
 
 }
+
+
+/* ================================================================
+   MICRO ANIMATIONS — Mobile only, premium safe mode
+   Targets: main CTA (.qsm-btn-search) + FOMO (.hcb-fomo)
+   Animate: opacity + box-shadow ONLY (no transform, no layout)
+   Updated: 2026-04-29 (fhp-micro-anim)
+   ================================================================ */
+
+/* ── Keyframes (defined globally, activated mobile-only) ──────── */
+@keyframes hcb-cta-pulse {
+  0%   { box-shadow: 0 0 28px rgba(255, 120, 200, 0.28), 0 4px 18px rgba(225, 48, 108, 0.22), 0 0 0 rgba(255, 102, 0, 0.18); }
+  50%  { box-shadow: 0 0 34px rgba(255, 120, 200, 0.36), 0 4px 22px rgba(225, 48, 108, 0.28), 0 0 16px rgba(255, 102, 0, 0.22); }
+  100% { box-shadow: 0 0 28px rgba(255, 120, 200, 0.28), 0 4px 18px rgba(225, 48, 108, 0.22), 0 0 0 rgba(255, 102, 0, 0.18); }
+}
+
+@keyframes hcb-fomo-breathe {
+  0%   { opacity: 0.82; }
+  50%  { opacity: 1; }
+  100% { opacity: 0.82; }
+}
+
+
+/* ── Mobile-only activation ───────────────────────────────────── */
+@media (max-width: 768px) {
+
+  /* CTA: ultra-soft glow pulse — 3.2s, no transform, no scale */
+  .qsm-btn-search {
+    animation: hcb-cta-pulse 3.2s ease-in-out infinite !important;
+  }
+  /* Keep hover/focus override clean — stops pulse, shows full glow */
+  .qsm-btn-search:hover,
+  .qsm-btn-search:focus-visible {
+    animation: none !important;
+    box-shadow: 0 0 38px rgba(255, 120, 200, 0.42),
+                0 6px 22px rgba(225, 48, 108, 0.32) !important;
+  }
+
+  /* FOMO: live breath — 3.6s, opacity only, 0.8s delay */
+  .hero-content > .hcb-fomo {
+    animation: hcb-fomo-breathe 3.6s ease-in-out 0.8s infinite !important;
+  }
+
+}
+
+
+/* ── Respect user motion preference ──────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .qsm-btn-search {
+    animation: none !important;
+  }
+  .hero-content > .hcb-fomo {
+    animation: none !important;
+    opacity: 0.9 !important;
+  }
+}
