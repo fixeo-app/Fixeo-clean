@@ -585,8 +585,8 @@
   const CITY_FALLBACKS = ['Casablanca', 'Rabat', 'Marrakech', 'Fès', 'Tanger', 'Agadir', 'Meknès', 'Oujda'];
   const STEP_COPY = {
     form: {
-      title: '⚡ Urgence — Artisan disponible maintenant',
-      subtitle: 'Réponse rapide selon disponibilité des artisans.'
+      title: '⚡ Intervention urgente — Artisan disponible maintenant',
+      subtitle: 'Un artisan peut vous rappeler en quelques minutes.'
     },
     results: {
       title: '⚡ Artisans disponibles immédiatement',
@@ -731,7 +731,8 @@
             </div>
             <p id="express-request-feedback" class="express-request-feedback" aria-live="polite" hidden></p>
             <button class="btn btn-primary request-submit-btn express-request-submit" type="submit">Trouver un artisan maintenant</button>
-            <p class="express-modal-trust">🟢 Artisans vérifiés &nbsp;·&nbsp; Réponse rapide &nbsp;·&nbsp; Gratuit</p>
+            <p class="express-modal-fomo">🟢 23 artisans disponibles maintenant</p>
+            <p class="express-modal-trust">Artisans vérifiés &nbsp;·&nbsp; Réponse rapide &nbsp;·&nbsp; Gratuit</p>
           </form>
         </div>
 

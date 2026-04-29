@@ -887,3 +887,62 @@
     font-size: 0.67rem;
   }
 }
+
+
+/* ============================================================
+   EXPRESS MODAL — micro UX polish v2
+   Additive only. No existing rules overwritten.
+   2026-04-29 (urgent-modal-polish-v2)
+   ============================================================ */
+
+/* 1. CTA dominance — glow + weight */
+.express-request-form .btn-primary {
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  box-shadow: 0 0 32px rgba(255, 120, 80, 0.45) !important;
+  transition: box-shadow 0.2s ease, transform 0.18s ease !important;
+}
+
+.express-request-form .btn-primary:hover,
+.express-request-form .btn-primary:focus-visible {
+  box-shadow: 0 0 42px rgba(255, 120, 80, 0.55) !important;
+}
+
+.express-request-form .btn-primary:active {
+  box-shadow: 0 0 18px rgba(255, 120, 80, 0.35) !important;
+}
+
+
+/* 2. Chip tactile micro-interaction */
+.express-chip {
+  transform: scale(1);
+  transition: transform 0.12s ease, background 0.15s ease,
+              border-color 0.15s ease, opacity 0.2s ease;
+}
+
+.express-chip:active {
+  transform: scale(0.94) !important;
+}
+
+
+/* 4+5. FOMO line under CTA */
+.express-modal-fomo {
+  text-align: center;
+  font-size: 0.72rem;
+  color: rgba(120, 255, 160, 0.9);
+  margin-top: 6px;
+  margin-bottom: 2px;
+  font-weight: 500;
+}
+
+
+/* 6. Trust block: reduce visual priority */
+.express-modal-trust {
+  opacity: 0.72;
+}
+
+@media (max-width: 640px) {
+  .express-modal-fomo {
+    font-size: 0.68rem;
+  }
+}
