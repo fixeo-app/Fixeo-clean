@@ -98,25 +98,31 @@
     margin-top: 0 !important;
   }
 
-  /* FOMO: directly below main CTA (search CTA is order:10 inside search flex) */
+  /* FOMO: directly below main CTA */
   .hero-content > .hcb-fomo {
     order: 5 !important;
-    margin-top: 6px !important;
+    margin-top: 8px !important;
     font-size: 0.72rem !important;
     text-align: center !important;
   }
 
-  /* Trust block: compact, one line, after FOMO */
+  /* Trust block: compact single line, right after FOMO */
   .hero-content > .hcb-trust-block {
     order: 6 !important;
-    margin-top: 2px !important;
-    opacity: 0.82;
+    margin-top: 6px !important;
+    opacity: 0.85;
     justify-content: center !important;
     gap: 4px 8px !important;
+    font-size: 0.75rem !important;
   }
 
   .hcb-trust-item {
-    font-size: 0.68rem !important;
+    font-size: 0.75rem !important;
+  }
+
+  /* Secondary CTA alias — both class names map to order:7 */
+  .hero-content > .hcb-secondary-cta {
+    order: 7 !important;
   }
 
   /* Secondary CTA: pushed down, visually softer */
