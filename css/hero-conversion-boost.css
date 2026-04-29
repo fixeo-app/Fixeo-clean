@@ -1,97 +1,202 @@
 /* ================================================================
-   hero-conversion-boost.css — Steps 9+10 (visual hierarchy + mobile)
-   CSS ONLY. Zero layout changes. Zero specificity conflicts.
+   hero-conversion-boost.css — Mobile-first conversion polish
+   CSS ONLY. Zero layout changes. Zero JS/event changes.
+   Updated: 2026-04-29 (fhp-mobile-polish)
    ================================================================ */
 
-/* ── Step 9a: Headline weight + tracking ──────────────────────── */
+
+/* ── Global: Headline weight + tracking ─────────────────────── */
 .hero-section .hero-title,
 .hero-section h1.hero-title {
   font-weight: 800;
   letter-spacing: -0.3px;
 }
 
-/* ── Step 9c: CTA glow ────────────────────────────────────────── */
+
+/* ── Global: CTA glow (main search button) ──────────────────── */
 .qsm-btn-search {
-  box-shadow: 0 0 25px rgba(255, 120, 200, 0.25),
-              0 4px 16px rgba(225, 48, 108, 0.2) !important;
+  box-shadow: 0 0 28px rgba(255, 120, 200, 0.28),
+              0 4px 18px rgba(225, 48, 108, 0.22) !important;
+  transition: box-shadow .2s ease, transform .18s ease !important;
 }
 .qsm-btn-search:hover,
 .qsm-btn-search:focus-visible {
-  box-shadow: 0 0 35px rgba(255, 120, 200, 0.38),
-              0 6px 20px rgba(225, 48, 108, 0.3) !important;
+  box-shadow: 0 0 38px rgba(255, 120, 200, 0.42),
+              0 6px 22px rgba(225, 48, 108, 0.32) !important;
+  transform: translateY(-1px) !important;
 }
 
-/* ── Step 5: trust block ──────────────────────────────────────── */
+
+/* ── Global: Trust block (default / desktop) ────────────────── */
 .hcb-trust-block {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px 14px;
-  margin-top: 10px;
-  margin-bottom: 2px;
+  align-items: center;
+  gap: 6px 10px;
+  margin-top: 8px;
 }
 
 .hcb-trust-item {
-  font-size: 0.75rem;
-  opacity: 0.8;
+  font-size: 0.74rem;
+  opacity: 0.82;
   color: rgba(255, 255, 255, 0.85);
   white-space: nowrap;
 }
 
-/* ── Step 6: FOMO line ────────────────────────────────────────── */
+.hcb-trust-sep {
+  font-size: 0.6rem;
+  opacity: 0.4;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+
+/* ── Global: FOMO line ──────────────────────────────────────── */
 .hcb-fomo {
-  font-size: 0.75rem;
-  color: rgba(255, 120, 120, 0.9);
-  margin-top: 6px;
-  margin-bottom: 4px;
-  text-shadow: 0 0 12px rgba(255, 80, 80, 0.18);
+  font-size: 0.74rem;
+  color: rgba(255, 120, 100, 0.92);
+  margin-top: 4px;
+  text-shadow: 0 0 10px rgba(255, 80, 60, 0.15);
 }
 
-/* ── Step 8: micro trust below secondary CTA ─────────────────── */
+
+/* ── Global: micro trust below secondary CTA ────────────────── */
 .hcb-micro-trust {
-  font-size: 0.7rem !important;
-  opacity: 0.6 !important;
+  font-size: 0.68rem !important;
+  opacity: 0.58 !important;
   text-align: center;
-  margin-top: 6px;
+  margin-top: 5px;
+  color: rgba(255, 255, 255, 0.65) !important;
 }
 
-/* ── Step 10: mobile optimization ────────────────────────────── */
+
+/* ================================================================
+   MOBILE — max-width: 768px
+   Full flex-order map for .hero-content (flex-direction: column)
+
+   Existing orders from homepage-conversion-optimizer.css:
+     .hero-title                         → order: 1
+     .hero-subtitle                      → order: 2
+     .marketplace-secondary-entry        → order: 3 ← must move to 8
+     #hero-quick-search / .search-box    → order: 4
+     .qsm-btn-search (inside search)     → order: 10
+
+   Our overrides:
+     #hero-quick-search                  → order: 3 (pull search up)
+     .marketplace-secondary-entry        → order: 8 (push secondary down)
+     .hcb-fomo                           → order: 5 (right after CTA)
+     .hcb-trust-block                    → order: 6
+     .hcb-artisan-block                  → order: 9 (soften, push lower)
+   ================================================================ */
+
 @media (max-width: 768px) {
-  /* Fix flex order — hero-content is flex-direction:column with explicit orders.
-     hcb-trust-block and hcb-fomo defaulted to order:0, appearing above headline.
-     Assign them after search (order:4) and CTA (order:10) */
-  .hero-content > .hcb-trust-block {
-    order: 11 !important;
+
+  /* Pull search box above secondary CTA */
+  .hero-content > #hero-quick-search,
+  .hero-content > #hero-quick-search.qsm-inline-host,
+  .hero-content > .search-box {
+    order: 3 !important;
     margin-top: 0 !important;
   }
-  .hero-content > .hcb-fomo {
-    order: 12 !important;
-    margin-top: 2px !important;
-  }
-}
 
-@media (max-width: 600px) {
-  .hcb-trust-block {
-    gap: 8px 10px;
+  /* FOMO: directly below main CTA (search CTA is order:10 inside search flex) */
+  .hero-content > .hcb-fomo {
+    order: 5 !important;
+    margin-top: 6px !important;
+    font-size: 0.72rem !important;
+    text-align: center !important;
+  }
+
+  /* Trust block: compact, one line, after FOMO */
+  .hero-content > .hcb-trust-block {
+    order: 6 !important;
+    margin-top: 2px !important;
+    opacity: 0.82;
+    justify-content: center !important;
+    gap: 4px 8px !important;
   }
 
   .hcb-trust-item {
-    font-size: 0.68rem;
-  }
-
-  .hcb-fomo {
-    font-size: 0.68rem;
-    margin-top: 4px;
-  }
-
-  .hcb-micro-trust {
     font-size: 0.68rem !important;
   }
 
-  /* Ensure CTA never overflows on small screens */
-  .qsm-btn-search {
-    min-width: 0;
-    width: 100%;
-    white-space: normal;
-    text-align: center;
+  /* Secondary CTA: pushed down, visually softer */
+  .hero-content > .marketplace-secondary-entry {
+    order: 8 !important;
+    margin-top: 10px !important;
+    opacity: 0.88;
+    transform: scale(0.97);
+    transform-origin: center top;
   }
+
+  /* Artisan block: lowest, softest — not competing with client CTA */
+  .hero-content > .hcb-artisan-block,
+  .hero-content > .hero-artisan-entry {
+    order: 9 !important;
+    opacity: 0.75 !important;
+    margin-top: 14px !important;
+  }
+
+  /* Soften secondary CTA button vs main CTA */
+  .marketplace-secondary-entry .btn-secondary-marketplace {
+    background: rgba(255, 255, 255, 0.06) !important;
+    border: 1px solid rgba(255, 255, 255, 0.18) !important;
+    box-shadow: none !important;
+    color: rgba(255, 255, 255, 0.88) !important;
+    font-weight: 600 !important;
+    font-size: 0.9rem !important;
+    min-height: 50px !important;
+    opacity: 1 !important;
+  }
+
+  /* Micro trust below secondary CTA */
+  .hcb-micro-trust {
+    font-size: 0.65rem !important;
+    opacity: 0.55 !important;
+    margin-top: 4px;
+  }
+
+  /* Reduce quick-filter visual weight so CTA dominates */
+  .qsm-service-suggestions,
+  .qsm-quick-filters-row,
+  .qsm-filters-row {
+    opacity: 0.75;
+  }
+
+  /* Ensure CTA button never overflows */
+  .qsm-btn-search {
+    min-width: 0 !important;
+    width: 100% !important;
+    white-space: normal !important;
+    text-align: center !important;
+    font-size: 0.95rem !important;
+    min-height: 54px !important;
+  }
+
+}
+
+
+/* ── Very small screens (375px–) ─────────────────────────────── */
+@media (max-width: 420px) {
+
+  .hcb-trust-item {
+    font-size: 0.62rem !important;
+  }
+
+  .hcb-fomo {
+    font-size: 0.68rem !important;
+  }
+
+  .hcb-micro-trust {
+    font-size: 0.6rem !important;
+  }
+
+  /* Keep trust on one line — hide separators if wrapping */
+  .hcb-trust-sep {
+    display: none;
+  }
+
+  .hcb-trust-block {
+    gap: 3px 6px !important;
+  }
+
 }

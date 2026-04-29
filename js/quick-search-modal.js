@@ -242,7 +242,7 @@
             type="text"
             id="qsm-input-nlp"
             class="qsm-seg-input"
-            placeholder="Ex\u00a0: fuite d\u2019eau, panne \u00e9lectrique, clim en panne\u2026"
+            placeholder="D\u00e9crivez votre probl\u00e8me (fuite, panne, clim\u2026)"
             autocomplete="off"
             spellcheck="false"
             maxlength="80"
@@ -277,12 +277,12 @@
       </div>
 
       <!-- CTA -->
-      <button class="qsm-btn-search" id="qsm-btn-search" aria-label="Recevoir un artisan maintenant">
+      <button class="qsm-btn-search" id="qsm-btn-search" aria-label="Trouver mon artisan maintenant">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
              stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
         </svg>
-        Recevoir un artisan maintenant
+        Trouver mon artisan maintenant
       </button>
 
     </div><!-- /.qsm-bar-card -->

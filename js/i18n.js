@@ -15,11 +15,11 @@ const FIXEO_TRANSLATIONS = {
     nav_profile: "Mon Profil",
     // Hero
     hero_badge: "",
-    hero_title_1: "Un artisan v\u00e9rifi\u00e9, disponible maintenant",
+    hero_title_1: "Un artisan v\u00e9rifi\u00e9 disponible maintenant",
     hero_title_2: "pr\u00e8s de chez vous",
     hero_title_3: "",
     hero_subtitle: "+700 artisans v\u00e9rifi\u00e9s \u2022 Intervention rapide \u2022 Paiement apr\u00e8s service",
-    hero_search_placeholder: "Ex\u00a0: fuite d\u2019eau, panne \u00e9lectrique, clim en panne\u2026",
+    hero_search_placeholder: "D\u00e9crivez votre probl\u00e8me (fuite, panne, clim\u2026)",
     hero_btn_search: "Trouver un artisan",
     hero_btn_express: "⚡ Demande Express",
     hero_stat_artisans: "Artisans vérifiés",
