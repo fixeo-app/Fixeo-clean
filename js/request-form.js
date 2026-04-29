@@ -585,8 +585,8 @@
   const CITY_FALLBACKS = ['Casablanca', 'Rabat', 'Marrakech', 'Fès', 'Tanger', 'Agadir', 'Meknès', 'Oujda'];
   const STEP_COPY = {
     form: {
-      title: 'Intervention urgente',
-      subtitle: 'Décrivez votre besoin, nous trouvons un artisan rapidement.'
+      title: '⚡ Urgence — Artisan disponible maintenant',
+      subtitle: 'Réponse rapide selon disponibilité des artisans.'
     },
     results: {
       title: '⚡ Artisans disponibles immédiatement',
@@ -715,7 +715,15 @@
           <form id="express-request-form" class="request-form express-request-form" novalidate>
             <div class="request-field">
               <label for="express-request-problem">Que se passe-t-il ?</label>
-              <textarea id="express-request-problem" name="problem" rows="3" maxlength="160" placeholder="Ex : fuite d'eau, panne électrique, porte bloquée…" required></textarea>
+              <textarea id="express-request-problem" name="problem" rows="2" maxlength="160" placeholder="Ex : fuite d'eau, panne électrique, porte bloquée…" required></textarea>
+            </div>
+            <div class="express-chips-row" role="group" aria-label="Suggestions rapides">
+              <button type="button" class="express-chip" data-text="Fuite d'eau">🚰 Fuite d'eau</button>
+              <button type="button" class="express-chip" data-text="Panne électrique">⚡ Panne électrique</button>
+              <button type="button" class="express-chip" data-text="Porte bloquée">🚪 Porte bloquée</button>
+              <button type="button" class="express-chip" data-text="Clim en panne">❄️ Clim en panne</button>
+              <button type="button" class="express-chip" data-text="Chauffe-eau / gaz">🔥 Chauffe-eau / gaz</button>
+              <button type="button" class="express-chip" data-text="Réparation urgente">🧰 Réparation urgente</button>
             </div>
             <div class="request-field">
               <label for="express-request-city">Ville</label>
@@ -723,6 +731,7 @@
             </div>
             <p id="express-request-feedback" class="express-request-feedback" aria-live="polite" hidden></p>
             <button class="btn btn-primary request-submit-btn express-request-submit" type="submit">Trouver un artisan maintenant</button>
+            <p class="express-modal-trust">🟢 Artisans vérifiés &nbsp;·&nbsp; Réponse rapide &nbsp;·&nbsp; Gratuit</p>
           </form>
         </div>
 
@@ -1343,11 +1352,38 @@
     });
   }
 
+  function bindChips(modal) {
+    // Chip click → fill textarea (user can edit freely after)
+    modal.addEventListener('click', function(e) {
+      const chip = e.target.closest('.express-chip');
+      if (!chip) return;
+      const textarea = modal.querySelector('#express-request-problem');
+      if (!textarea) return;
+      textarea.value = chip.dataset.text || '';
+      textarea.focus();
+      // Move cursor to end
+      textarea.setSelectionRange(textarea.value.length, textarea.value.length);
+      // Fade chip row to secondary state
+      const row = modal.querySelector('.express-chips-row');
+      if (row) row.classList.add('chips-used');
+    });
+    // Also fade when user types manually
+    const textarea = modal.querySelector('#express-request-problem');
+    if (textarea) {
+      textarea.addEventListener('input', function() {
+        const row = modal.querySelector('.express-chips-row');
+        if (row && this.value.trim()) row.classList.add('chips-used');
+        else if (row && !this.value.trim()) row.classList.remove('chips-used');
+      });
+    }
+  }
+
   function init() {
-    ensureExpressModal();
+    const modal = ensureExpressModal();
     ensureResultsBanner();
     bindExpressForm();
     bindExpressActions();
+    if (modal) bindChips(modal);
 
     window.FixeoClientRequest = Object.assign(window.FixeoClientRequest || {}, {
       openExpress: openExpressModal,

@@ -799,3 +799,91 @@
     pointer-events: auto !important;
   }
 }
+
+
+/* ============================================================
+   EXPRESS MODAL — Suggestion chips + trust line
+   Additive only. No existing selectors modified.
+   2026-04-29 (urgent-modal-ux-v1)
+   ============================================================ */
+
+/* Chip row — below textarea, above city */
+.express-chips-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: -2px;   /* visually attached to textarea */
+}
+
+.express-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 14px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 0.8rem;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s ease, border-color 0.15s ease, opacity 0.2s ease;
+  /* Reset button defaults */
+  appearance: none;
+  -webkit-appearance: none;
+  line-height: 1.3;
+}
+
+.express-chip:hover,
+.express-chip:focus-visible {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(225, 48, 108, 0.45);
+  outline: none;
+}
+
+.express-chip:active {
+  transform: scale(0.97);
+}
+
+/* Fade chips after user interaction (chip click or manual type) */
+.express-chips-row.chips-used .express-chip {
+  opacity: 0.42;
+}
+
+.express-chips-row.chips-used .express-chip:hover,
+.express-chips-row.chips-used .express-chip:focus-visible {
+  opacity: 0.9;
+  background: rgba(255, 255, 255, 0.10);
+}
+
+
+/* Trust line below CTA */
+.express-modal-trust {
+  margin: 6px 0 0;
+  text-align: center;
+  font-size: 0.71rem;
+  color: rgba(255, 255, 255, 0.52);
+  line-height: 1.5;
+}
+
+
+/* Mobile: keep textarea compact so CTA stays in viewport */
+@media (max-width: 640px) {
+  .express-request-form textarea {
+    min-height: 68px !important;
+    rows: 2;
+  }
+
+  .express-chips-row {
+    gap: 6px;
+  }
+
+  .express-chip {
+    padding: 6px 11px;
+    font-size: 0.75rem;
+  }
+
+  .express-modal-trust {
+    font-size: 0.67rem;
+  }
+}
