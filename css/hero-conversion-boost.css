@@ -55,17 +55,32 @@
 }
 
 /* ── Step 10: mobile optimization ────────────────────────────── */
+@media (max-width: 768px) {
+  /* Fix flex order — hero-content is flex-direction:column with explicit orders.
+     hcb-trust-block and hcb-fomo defaulted to order:0, appearing above headline.
+     Assign them after search (order:4) and CTA (order:10) */
+  .hero-content > .hcb-trust-block {
+    order: 11 !important;
+    margin-top: 0 !important;
+  }
+  .hero-content > .hcb-fomo {
+    order: 12 !important;
+    margin-top: 2px !important;
+  }
+}
+
 @media (max-width: 600px) {
   .hcb-trust-block {
     gap: 8px 10px;
   }
 
   .hcb-trust-item {
-    font-size: 0.72rem;
+    font-size: 0.68rem;
   }
 
   .hcb-fomo {
-    font-size: 0.72rem;
+    font-size: 0.68rem;
+    margin-top: 4px;
   }
 
   .hcb-micro-trust {
