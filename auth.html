@@ -3,7 +3,7 @@
 <head>
   <script src="js/supabase-client.js?v=sc2"></script>
   <script src="js/fixeo-repository.js?v=repo2"></script>
-  <script src="js/fixeo-auth-supabase.js?v=auth2"></script>
+  <script src="js/fixeo-auth-supabase.js?v=auth3"></script>
 
   <link rel="icon" type="image/png" href="img/favicon.png" sizes="32x32">
   <link rel="apple-touch-icon" href="img/favicon.png">
@@ -13,470 +13,246 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/variables.css">
-  <link rel="stylesheet" href="css/main.css">
-  <style>
-    .auth-page { padding-top: 90px; position: relative; z-index: 1; }
-    .social-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
-  </style>
-<style>
-/* ── GLOBAL PAGE FIXES ───────────────────────────────────── */
-::-webkit-scrollbar{width:12px!important;height:12px!important}
-::-webkit-scrollbar-track{background:rgba(255,255,255,0.04)!important;border-radius:6px!important}
-::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#E1306C,#833AB4)!important;border-radius:6px!important;border:2px solid rgba(255,255,255,0.05)!important;min-height:40px!important}
-::-webkit-scrollbar-thumb:hover{background:linear-gradient(180deg,#C13584,#405DE6)!important}
-*{scrollbar-width:thick;scrollbar-color:#E1306C rgba(255,255,255,0.04)}
-/* Form controls always readable */
-select,input,textarea{color:#fff!important;background:rgba(255,255,255,0.08)!important;border:1px solid rgba(255,255,255,0.15)!important;border-radius:var(--radius-md)!important}
-select option{background:#1a1a2e!important;color:#fff!important;padding:8px!important}
-select:focus,input:focus,textarea:focus{outline:none!important;border-color:var(--primary)!important;box-shadow:0 0 0 3px rgba(225,48,108,0.2)!important}
-/* Buttons harmony */
-.btn{display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:8px!important}
-.btn-primary{background:var(--grad-primary)!important;color:#fff!important}
-.btn-secondary{background:rgba(255,255,255,0.09)!important;border:1px solid rgba(255,255,255,0.2)!important;color:#fff!important}
-/* Notification badge */
-.notif-badge:empty{display:none!important}
-/* Dropdown z-index */
-.notif-panel,.notification-panel{z-index:600!important}
-/* Dashboard cards layout */
-.kpi-card{transition:transform 0.2s ease,box-shadow 0.2s ease}
-.kpi-card:hover{transform:translateY(-2px)!important}
-/* Search filters */
-.search-filters{display:flex!important;gap:10px!important;flex-wrap:wrap!important;align-items:center!important}
-.filter-input,.form-control{padding:10px 14px!important;min-width:120px!important}
-/* Section headings */
-.section-tag{display:inline-block!important;margin-bottom:8px!important}
-/* Responsive mobile */
-@media(max-width:768px){
-  .search-filters{flex-direction:column!important}
-  .filter-input,.form-control{width:100%!important;min-width:unset!important}
-}
-</style>
-<link rel="stylesheet" href="css/fixeo_v5_fixes.css">
-<link rel="stylesheet" href="css/header-unified.css"/>
-<link rel="stylesheet" href="css/auth-global.css"/>
-  <link rel="stylesheet" href="css/slot-lock.css">
-  <link rel="stylesheet" href="css/header-logo-premium.css?v=hlp5">
-  <!-- ══ LOGO OVERRIDE — image-only, no emoji, no text ══ -->
-  <style id="fixeo-logo-override">
-    /* Kill legacy logo-icon and logo-text */
-    .navbar-brand .logo-icon, .logo-wrap .logo-icon, .fixeo-gh-brand .logo-icon
-      { display:none !important; width:0 !important; height:0 !important; min-width:0 !important; flex:0 !important; }
-    .navbar-brand .logo-text, .logo-wrap .logo-text, .fixeo-gh-brand .logo-text
-      { display:none !important; width:0 !important; height:0 !important; }
-    /* Brand containers — no clipping */
-    .navbar-brand, .logo-wrap
-      { max-width:220px !important; overflow:visible !important; gap:0 !important; background:transparent !important; }
-    .fixeo-gh-brand
-      { max-width:180px !important; overflow:visible !important; gap:0 !important; background:transparent !important; }
-    /* Logo image — clean, no hacks */
-    img.fixeo-logo-img {
-      display:block !important;
-      height:32px !important;
-      width:auto !important;
-      object-fit:contain !important;
-      object-position:left center !important;
-      background:transparent !important;
-      mix-blend-mode:normal !important;
-      filter:none !important;
-      box-shadow:none !important;
-      border:none !important;
-      flex:0 0 auto !important;
-      overflow:visible !important;
-    }
-    /* Mobile bar logo */
-    .fixeo-gh-brand img.fixeo-logo-img,
-    .fixeo-gh-mobile-bar img.fixeo-logo-img {
-      height:26px !important;
-      width:auto !important;
-    }
-    @media (max-width:480px) {
-      img.fixeo-logo-img { height:24px !important; }
-      .fixeo-gh-brand img.fixeo-logo-img { height:22px !important; }
-    }
-  </style>
+  <link rel="stylesheet" href="css/auth-global.css"/>
+  <link rel="stylesheet" href="css/auth-premium.css?v=ap1">
 </head>
-<body data-theme="dark" style="background:linear-gradient(135deg,#0D0D1A 0%,#1a1a2e 50%,#16213e 100%);min-height:100vh;">
+<body data-theme="dark">
 
-<!-- Background -->
-<div style="position:fixed;inset:0;z-index:0;background:
-  radial-gradient(ellipse 80% 80% at 20% 20%,rgba(64,93,230,0.22) 0%,transparent 60%),
-  radial-gradient(ellipse 60% 60% at 80% 80%,rgba(193,53,132,0.22) 0%,transparent 60%)">
-</div>
+<div class="auth-shell">
 
-<!-- Navbar minimal -->
-<!-- ═══════════════════════════════════════════════════════════════
-     FIXEO V10 — HEADER UNIFIÉ (centralisé)
-     Règles de visibilité :
-       data-auth="guest"      → visible si NON connecté (défaut)
-       data-auth="logged-in"  → visible si connecté  (body.is-logged-in)
-       data-auth="admin"      → visible si admin      (body.is-admin)
-     JS : js/header-unified.js gère tout automatiquement.
-════════════════════════════════════════════════════════════════════ -->
-<a href="#main-content" class="skip-link">Aller au contenu</a>
-
-<nav class="navbar" role="navigation" aria-label="Navigation principale">
-
-  <!-- ── Logo ── -->
-  <a href="index.html" class="navbar-brand logo-wrap" aria-label="Fixeo — Accueil">
-    <img src="img/logo.png" alt="Fixeo" class="fixeo-logo-img" height="38" loading="eager" onerror="this.onerror=null;this.alt='Fixeo';this.style.display='none';var t=document.createElement('span');t.className='fixeo-logo-text';t.textContent='Fixeo';this.parentNode.appendChild(t);">
-  </a>
-
-  <!-- ── Menu principal desktop ── -->
-  <nav class="navbar-nav" aria-label="Menu principal">
-    <a href="index.html"             class="nav-link" data-i18n="nav_home">Accueil</a>
-
-    <!-- Services avec dropdown -->
-    <div class="nav-has-dropdown">
-      <a href="index.html#services" class="nav-link" data-i18n="nav_services">
-        Services <span class="nav-arrow">▾</span>
+  <!-- ── Minimal top bar ──────────────────────────────────── -->
+  <header class="auth-topbar">
+    <a href="index.html" class="auth-back-link">Retour</a>
+    <div class="auth-topbar-logo">
+      <a href="index.html" aria-label="Fixeo — Accueil">
+        <img src="img/logo.png" alt="Fixeo" height="32"
+             onerror="this.style.display='none';var t=document.createElement('span');t.style.cssText='font-size:1.1rem;font-weight:800;color:#fff';t.textContent='Fixeo';this.parentNode.appendChild(t)">
       </a>
-      <div class="nav-dropdown" role="menu" aria-label="Sous-menu Services">
-        <a href="index.html#services"        class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🔧</span>Tous les services</a>
-        <a href="index.html#services?cat=plomberie"   class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🚿</span>Plomberie</a>
-        <a href="index.html#services?cat=electricite" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">⚡</span>Électricité</a>
-        <a href="index.html#services?cat=peinture"    class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🎨</span>Peinture</a>
-        <a href="index.html#services?cat=nettoyage"   class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🧹</span>Nettoyage</a>
-        <a href="index.html#services?cat=jardinage"   class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🌿</span>Jardinage</a>
-        <a href="index.html#services?cat=demenagement" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🚛</span>Déménagement</a>
-      </div>
     </div>
+    <div style="width:60px"></div><!-- spacer mirrors back link width -->
+  </header>
 
-    <!-- Artisans avec dropdown -->
-    <div class="nav-has-dropdown">
-      <a href="index.html#artisans-section" class="nav-link" data-i18n="nav_artisans">
-        Artisans <span class="nav-arrow">▾</span>
-      </a>
-      <div class="nav-dropdown" role="menu" aria-label="Sous-menu Artisans">
-        <a href="index.html#artisans-section" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">👷</span>Tous les artisans</a>
-        <a href="artisan.html"                class="nav-dropdown-item" role="menuitem"><span class="dd-icon">⭐</span>Profil artisan</a>
-        <div class="nav-dropdown-divider"></div>
-        <a href="index.html#artisans-section?filter=available" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🟢</span>Disponibles maintenant</a>
-        <a href="index.html#artisans-section?filter=top" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🏆</span>Top notés</a>
+  <!-- ── Card ─────────────────────────────────────────────── -->
+  <main class="auth-center" id="main-content">
+    <div class="auth-box">
+
+      <!-- Heading (swapped by switchTab) -->
+      <h1 class="auth-heading" id="auth-heading">Bon retour 👋</h1>
+      <p class="auth-subheading" id="auth-sub">Connectez-vous à votre espace Fixeo.</p>
+
+      <!-- Tabs -->
+      <div class="ap-tabs" role="tablist">
+        <div class="ap-tab active" id="tab-login"  role="tab" tabindex="0"
+             onclick="switchTab('login')"  onkeydown="if(event.key==='Enter')switchTab('login')">Connexion</div>
+        <div class="ap-tab"        id="tab-signup" role="tab" tabindex="0"
+             onclick="switchTab('signup')" onkeydown="if(event.key==='Enter')switchTab('signup')">Créer un compte</div>
       </div>
+
+      <!-- ══ LOGIN FORM ══════════════════════════════════════ -->
+      <form id="login-form" onsubmit="handleLogin(event)" novalidate autocomplete="on">
+
+        <div class="ap-group">
+          <label class="ap-label" for="login-email">Email</label>
+          <div class="ap-input-wrap">
+            <input type="email" class="ap-input" id="login-email"
+                   placeholder="votre@email.com" autocomplete="email" inputmode="email"/>
+          </div>
+        </div>
+
+        <div class="ap-group">
+          <div class="ap-label-row">
+            <label class="ap-label" for="login-password">Mot de passe</label>
+            <button type="button" class="ap-forgot" id="forgot-password-link"
+                    onclick="handleForgotPassword(event)">Mot de passe oublié ?</button>
+          </div>
+          <div class="ap-input-wrap">
+            <input type="password" class="ap-input has-toggle" id="login-password"
+                   placeholder="••••••••" autocomplete="current-password"/>
+            <button type="button" class="ap-pw-toggle" onclick="togglePassword('login-password')"
+                    aria-label="Afficher/masquer le mot de passe">👁</button>
+          </div>
+        </div>
+
+        <div id="login-error" class="ap-error"></div>
+
+        <button type="submit" class="ap-btn" id="login-btn">
+          <span>Se connecter</span>
+        </button>
+
+        <p class="ap-trust">
+          <span class="ap-trust-icon">🔒</span>
+          Connexion sécurisée • Vos données sont protégées
+        </p>
+
+        <div class="ap-divider">OU</div>
+
+        <!-- Social — disabled until Supabase OAuth configured -->
+        <div class="ap-social-row" aria-hidden="true">
+          <button type="button" class="ap-social-btn" disabled tabindex="-1">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+            Google
+          </button>
+          <button type="button" class="ap-social-btn" disabled tabindex="-1">
+            <svg viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            Facebook
+          </button>
+        </div>
+        <p class="ap-soon">Connexion sociale disponible prochainement</p>
+
+        <p class="ap-switch">
+          Pas de compte ?
+          <button type="button" onclick="switchTab('signup')">S'inscrire</button>
+        </p>
+
+      </form>
+
+      <!-- ══ SIGNUP FORM ═════════════════════════════════════ -->
+      <form id="signup-form" style="display:none" onsubmit="handleSignup(event)" novalidate autocomplete="on">
+
+        <!-- Role cards -->
+        <div class="ap-role-row" role="group" aria-label="Type de compte">
+          <div class="ap-role-card selected" id="card-client"
+               role="radio" aria-checked="true" tabindex="0"
+               onclick="selectType('client')" onkeydown="if(event.key==='Enter')selectType('client')">
+            <div class="ap-role-icon">👤</div>
+            <div class="ap-role-name">Client</div>
+            <div class="ap-role-desc">Je cherche un artisan</div>
+          </div>
+          <div class="ap-role-card" id="card-artisan"
+               role="radio" aria-checked="false" tabindex="0"
+               onclick="selectType('artisan')" onkeydown="if(event.key==='Enter')selectType('artisan')">
+            <div class="ap-role-icon">🔧</div>
+            <div class="ap-role-name">Artisan</div>
+            <div class="ap-role-desc">Je propose mes services</div>
+          </div>
+        </div>
+
+        <!-- Hidden radio inputs (for form semantics — not visible) -->
+        <input type="radio" name="account-type" value="client"  id="type-client"  checked style="display:none">
+        <input type="radio" name="account-type" value="artisan" id="type-artisan"        style="display:none">
+
+        <div class="ap-group">
+          <label class="ap-label" for="signup-name">Nom complet</label>
+          <input type="text" class="ap-input" id="signup-name"
+                 placeholder="Votre nom complet" required autocomplete="name"/>
+        </div>
+
+        <div class="ap-group">
+          <label class="ap-label" for="signup-email">Email</label>
+          <input type="email" class="ap-input" id="signup-email"
+                 placeholder="votre@email.com" required autocomplete="email" inputmode="email"/>
+        </div>
+
+        <div class="ap-group">
+          <label class="ap-label" for="signup-phone">Téléphone <span style="opacity:.4;font-weight:400;text-transform:none">(optionnel)</span></label>
+          <input type="tel" class="ap-input" id="signup-phone"
+                 placeholder="+212 6XX XXX XXX" autocomplete="tel" inputmode="tel"/>
+        </div>
+
+        <div class="ap-group">
+          <label class="ap-label" for="signup-password">Mot de passe</label>
+          <div class="ap-input-wrap">
+            <input type="password" class="ap-input has-toggle" id="signup-password"
+                   placeholder="Minimum 8 caractères" required minlength="8"
+                   autocomplete="new-password"/>
+            <button type="button" class="ap-pw-toggle" onclick="togglePassword('signup-password')"
+                    aria-label="Afficher/masquer le mot de passe">👁</button>
+          </div>
+          <div class="ap-strength" id="pass-strength">
+            <div class="ap-strength-track">
+              <div class="ap-strength-bar" id="pass-strength-bar"></div>
+            </div>
+            <div class="ap-strength-label" id="pass-strength-label"></div>
+          </div>
+        </div>
+
+        <!-- Artisan-specific fields -->
+        <div class="ap-artisan-fields" id="artisan-fields">
+          <div class="ap-group">
+            <label class="ap-label" for="signup-specialty">Spécialité</label>
+            <select class="ap-select" id="signup-specialty">
+              <option value="">Choisir une spécialité</option>
+              <option>Plomberie</option><option>Électricité</option><option>Peinture</option>
+              <option>Carrelage</option><option>Menuiserie</option><option>Climatisation</option>
+              <option>Jardinage</option><option>Nettoyage</option><option>Maçonnerie</option>
+              <option>Bricolage</option><option>Déménagement</option>
+            </select>
+          </div>
+          <div class="ap-group">
+            <label class="ap-label" for="signup-city">Ville</label>
+            <select class="ap-select" id="signup-city">
+              <option value="">Choisir une ville</option>
+              <option>Casablanca</option><option>Rabat</option><option>Marrakech</option>
+              <option>Fès</option><option>Agadir</option><option>Meknès</option>
+              <option>Tanger</option><option>Salé</option><option>Oujda</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="ap-terms">
+          <input type="checkbox" id="terms" required>
+          <label for="terms">
+            J'accepte les <a href="#" onclick="openLegal('cgu');return false">conditions d'utilisation</a>
+            et la <a href="#" onclick="openLegal('privacy');return false">politique de confidentialité</a>
+          </label>
+        </div>
+
+        <div id="signup-error" class="ap-error"></div>
+
+        <button type="submit" class="ap-btn" id="signup-btn">
+          <span>Créer mon compte</span>
+        </button>
+
+        <p class="ap-trust">
+          <span class="ap-trust-icon">🔒</span>
+          Inscription sécurisée • Vos données sont protégées
+        </p>
+
+        <p class="ap-switch">
+          Déjà un compte ?
+          <button type="button" onclick="switchTab('login')">Se connecter</button>
+        </p>
+
+      </form>
+
+    </div><!-- /.auth-box -->
+  </main>
+
+</div><!-- /.auth-shell -->
+
+<!-- Legal modal (preserved exactly) -->
+<div id="legal-modal"
+     onclick="if(event.target===this)this.classList.remove('open')"
+     style="display:flex;align-items:center;justify-content:center;position:fixed;inset:0;z-index:700;
+            background:rgba(0,0,0,.7);backdrop-filter:blur(4px);padding:20px;
+            opacity:0;pointer-events:none;transition:opacity .25s">
+  <div style="background:#14142e;border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:24px;
+              max-width:520px;width:100%;position:relative;max-height:85vh;overflow:hidden;
+              display:flex;flex-direction:column">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-shrink:0">
+      <h3 id="legal-modal-title" style="font-size:1rem;font-weight:700;color:#fff"></h3>
+      <button onclick="document.getElementById('legal-modal').classList.remove('open')"
+              style="background:none;border:none;color:rgba(255,255,255,.6);font-size:1.2rem;cursor:pointer">✕</button>
     </div>
-    <a href="pricing.html"            class="nav-link">Tarifs</a>
-
-    <!-- Dashboard — visible uniquement si connecté -->
-    <a href="dashboard-client.html"
-       class="nav-link"
-       data-role="dashboard"
-       data-auth="logged-in"
-       data-i18n="nav_dashboard">📊 Dashboard</a>
-
-    <!-- Admin — visible uniquement si admin -->
-    <a href="admin.html"
-       class="nav-link"
-       data-role="admin"
-       data-auth="admin">🛡 Admin</a>
-  </nav>
-
-  <!-- ── Actions à droite ── -->
-  <div class="nav-actions">
-
-    <!-- Recherche rapide -->
-    <button class="btn-quick-search"
-            onclick="window.QuickSearchModal && QuickSearchModal.open()"
-            aria-label="Recherche rapide (touche /)"
-            title="Recherche rapide [ / ]">
-      <span class="bqs-icon">🔍</span>
-      <span class="bqs-text">Recherche rapide</span>
-    </button>
-
-    <!-- Sélecteur de langue -->
-    <select id="lang-select" class="lang-selector" aria-label="Choisir la langue">
-      <option value="fr">🇫🇷 FR</option>
-      <option value="ar">🇲🇦 AR</option>
-      <option value="en">🇬🇧 EN</option>
-    </select>
-
-    <!-- Notifications -->
-    <button class="notif-btn"
-            aria-label="Notifications"
-            title="Notifications"
-            onclick="window.notifSystem?.togglePanel()">
-      🔔<span class="notif-badge" aria-live="polite"></span>
-    </button>
-
-    <!-- Invité : Connexion / Inscription -->
-    <a href="auth.html"        class="btn-nav btn-nav-outline" data-auth="guest" data-i18n="nav_login">Connexion</a>
-    <a href="auth.html#signup" class="btn-nav btn-nav-primary" data-auth="guest" data-i18n="nav_signup">Inscription</a>
-
-    <!-- Connecté : chip utilisateur avec dropdown -->
-    <div class="nav-has-dropdown" data-auth="logged-in" style="display:none">
-      <div class="nav-user-chip" tabindex="0" aria-haspopup="true" aria-label="Mon compte">
-        <div class="nav-user-avatar" id="global-avatar">U</div>
-        <span class="nav-user-name" id="global-username">Mon Compte</span>
-        <span class="nav-arrow" style="font-size:0.6rem;opacity:0.6">▾</span>
-      </div>
-      <div class="nav-dropdown" role="menu" aria-label="Menu utilisateur" style="min-width:200px;right:0;left:auto;transform:translateX(0) translateY(-8px)">
-        <!-- Compte connecté affichage -->
-        <div id="user-info" style="padding:10px 14px 8px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:4px"></div>
-        <a href="dashboard-client.html" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">📊</span>Mon Dashboard</a>
-        <a href="dashboard-artisan.html" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">👷</span>Espace Artisan</a>
-        <div class="nav-dropdown-divider"></div>
-        <a href="#" id="logout-btn" class="nav-dropdown-item" role="menuitem" onclick="window.fixeoLogout && fixeoLogout(); return false;"><span class="dd-icon">🚪</span>Déconnexion</a>
-      </div>
-    </div>
-
+    <div id="legal-modal-body" style="overflow-y:auto;flex:1;color:rgba(255,255,255,.75);font-size:.85rem;line-height:1.8"></div>
+    <button onclick="document.getElementById('legal-modal').classList.remove('open')"
+            class="ap-btn" style="margin-top:16px;flex-shrink:0">J'ai compris</button>
   </div>
-
-  <!-- ── Hamburger mobile ── -->
-  <button class="hamburger" aria-label="Ouvrir le menu" aria-expanded="false">
-    <span></span><span></span><span></span>
-  </button>
-</nav>
-
-<!-- ═══════════════════════════════════════════════════════════════
-     MOBILE NAV DRAWER
-════════════════════════════════════════════════════════════════════ -->
-<div class="mobile-nav" role="navigation" aria-label="Menu mobile">
-
-  <a href="index.html"              class="nav-link" data-i18n="nav_home">🏠 Accueil</a>
-  <a href="index.html#services"     class="nav-link" data-i18n="nav_services">🔧 Services</a>
-  <a href="index.html#artisans-section" class="nav-link" data-i18n="nav_artisans">👷 Artisans</a>
-  <a href="pricing.html"            class="nav-link">💎 Tarifs</a>
-
-  <!-- Dashboard mobile — connectés uniquement -->
-  <a href="dashboard-client.html"
-     class="nav-link"
-     data-role="dashboard"
-     data-auth="logged-in">📊 Dashboard</a>
-
-  <!-- Admin mobile — admins uniquement -->
-  <a href="admin.html"
-     class="nav-link"
-     data-role="admin"
-     data-auth="admin">🛡 Admin</a>
-
-  <div class="mobile-nav-divider"></div>
-
-  <!-- Recherche rapide mobile -->
-  <button class="btn-quick-search"
-          onclick="window.QuickSearchModal && QuickSearchModal.open()"
-          aria-label="Recherche rapide">
-    <span class="bqs-icon">🔍</span>
-    <span class="bqs-text">Recherche rapide</span>
-  </button>
-
-  <!-- Auth buttons mobile -->
-  <div class="mobile-nav-auth" data-auth="guest">
-    <a href="auth.html"        class="btn-nav btn-nav-outline" data-i18n="nav_login">Connexion</a>
-    <a href="auth.html#signup" class="btn-nav btn-nav-primary" data-i18n="nav_signup">Inscription</a>
-  </div>
-
-  <!-- Déconnexion mobile (connectés) -->
-  <a href="#" class="nav-link" data-auth="logged-in"
-     onclick="window.fixeoLogout && fixeoLogout(); return false;">🚪 Déconnexion</a>
-
 </div>
-
-<main class="auth-page" id="main-content">
-  <div class="auth-card" style="max-width:460px;margin:0 auto">
-
-    <!-- Logo -->
-    <div class="auth-logo" style="text-align:center;margin-bottom:24px">
-      <div class="logo-wrap" style="justify-content:center">
-        <img src="img/logo.png" alt="Fixeo" style="height:44px;width:auto;object-fit:contain;background:transparent;display:block;margin:0 auto" onerror="this.onerror=null;this.alt='Fixeo';">
-      </div>
-      <p style="margin-top:8px;font-size:0.85rem;color:var(--text-muted)">La plateforme de confiance pour vos travaux</p>
-    </div>
-
-    <!-- Tabs -->
-    <div class="auth-tabs" id="auth-tabs">
-      <div class="auth-tab active" id="tab-login"  onclick="switchTab('login')">Connexion</div>
-      <div class="auth-tab"        id="tab-signup" onclick="switchTab('signup')">Créer un compte</div>
-    </div>
-
-    <!-- Social Auth — disabled until OAuth configured in Supabase Dashboard -->
-    <div class="social-auth" style="opacity:0.45;pointer-events:none" title="Connexion sociale bientôt disponible">
-      <button class="social-btn google" type="button" disabled>
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-        </svg>
-        Continuer avec Google
-      </button>
-      <button class="social-btn facebook" type="button" disabled>
-        <svg viewBox="0 0 24 24" fill="#1877F2" xmlns="http://www.w3.org/2000/svg">
-          <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-        </svg>
-        Continuer avec Facebook
-      </button>
-    </div>
-    <div class="divider"><span>Ou continuer avec email</span></div>
-
-    <!-- ── LOGIN FORM ────────────────────────────────────── -->
-    <form id="login-form" onsubmit="handleLogin(event)" novalidate>
-      <!-- Method toggle: email vs phone -->
-      <!-- Phone login tab disabled — SMS auth not yet configured -->
-      <div class="auth-method-toggle" id="login-method-toggle" style="display:none">
-        <button type="button" class="auth-method-btn active" id="btn-method-email" onclick="setLoginMethod('email')">📧 Email</button>
-        <button type="button" class="auth-method-btn" id="btn-method-phone" onclick="setLoginMethod('phone')" disabled title="Connexion SMS bientôt disponible">📱 Téléphone</button>
-      </div>
-
-      <!-- Email field -->
-      <div class="form-group" id="field-email">
-        <label class="form-label">📧 Email</label>
-        <div class="input-group">
-          <span class="input-icon">@</span>
-          <input type="email" class="form-control" id="login-email"
-                 placeholder="Votre email" autocomplete="email"/>
-        </div>
-      </div>
-      <!-- Phone field (hidden by default) -->
-      <div class="form-group" id="field-phone" style="display:none">
-        <label class="form-label">📱 Numéro de téléphone</label>
-        <div class="input-group">
-          <span class="input-icon">📱</span>
-          <input type="tel" class="form-control" id="login-phone"
-                 placeholder="+212 6XX XXX XXX" autocomplete="tel"/>
-        </div>
-        <div style="font-size:.75rem;color:rgba(255,255,255,.45);margin-top:4px">Un code de vérification sera envoyé par SMS.</div>
-      </div>
-      <div class="form-group">
-        <label class="form-label" style="display:flex;justify-content:space-between;align-items:center">
-          <span>🔒 Mot de passe</span>
-          <a href="#" id="forgot-password-link" onclick="handleForgotPassword(event)" style="font-size:.75rem;color:var(--accent-pink)">Mot de passe oublié ?</a>
-        </label>
-        <div class="input-group">
-          <span class="input-icon">🔑</span>
-          <input type="password" class="form-control" id="login-password"
-                 placeholder="Votre mot de passe" required autocomplete="current-password"
-                 style="padding-left:44px;padding-right:44px"/>
-          <button type="button" onclick="togglePassword('login-password')"
-                  style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1rem">👁</button>
-        </div>
-      </div>
-      <!-- ── SÉLECTEUR DE RÔLE ── -->
-      <div class="form-group" style="margin-bottom:20px">
-        <label class="form-label" style="margin-bottom:8px;display:block">👤 Je me connecte en tant que</label>
-        <select id="userRole" class="form-control" style="cursor:pointer;font-size:.92rem">
-          <option value="client">👤 Client — Je cherche un artisan</option>
-          <option value="artisan">🔧 Artisan — Je propose mes services</option>
-        </select>
-      </div>
-
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px">
-        <input type="checkbox" id="remember-me" style="accent-color:var(--accent-pink);width:16px;height:16px">
-        <label for="remember-me" style="font-size:.85rem;color:var(--text-secondary);cursor:pointer">Se souvenir de moi</label>
-      </div>
-      <div id="login-error" style="display:none;color:var(--danger);font-size:.82rem;margin-bottom:12px;padding:8px 12px;background:rgba(255,71,87,0.1);border:1px solid rgba(255,71,87,0.2);border-radius:8px"></div>
-      <button type="submit" class="btn btn-primary w-100" id="login-btn">
-        <span>Se connecter</span>
-      </button>
-      <p style="text-align:center;margin-top:16px;font-size:.85rem;color:var(--text-muted)">
-        Pas de compte ?
-        <a href="#" onclick="switchTab('signup')" style="color:var(--accent-pink);font-weight:600;margin-left:4px">S'inscrire</a>
-      </p>
-    </form>
-
-    <!-- ── SIGNUP FORM ───────────────────────────────────── -->
-    <form id="signup-form" style="display:none" onsubmit="handleSignup(event)" novalidate>
-      <!-- Account type -->
-      <div style="display:flex;gap:12px;margin-bottom:20px">
-        <label style="flex:1;cursor:pointer">
-          <input type="radio" name="account-type" value="client" checked id="type-client" style="display:none">
-          <div class="type-card glass-card" id="card-client" onclick="selectType('client')"
-               style="padding:14px;text-align:center;border:2px solid var(--accent-pink)">
-            <div style="font-size:1.5rem">👤</div>
-            <div style="font-size:.85rem;font-weight:600;margin-top:4px">Client</div>
-            <div style="font-size:.72rem;color:var(--text-muted);margin-top:2px">Je cherche un artisan</div>
-          </div>
-        </label>
-        <label style="flex:1;cursor:pointer">
-          <input type="radio" name="account-type" value="artisan" id="type-artisan" style="display:none">
-          <div class="type-card glass-card" id="card-artisan" onclick="selectType('artisan')"
-               style="padding:14px;text-align:center;border:2px solid transparent">
-            <div style="font-size:1.5rem">🔧</div>
-            <div style="font-size:.85rem;font-weight:600;margin-top:4px">Artisan</div>
-            <div style="font-size:.72rem;color:var(--text-muted);margin-top:2px">Je propose mes services</div>
-          </div>
-        </label>
-      </div>
-
-      <div class="form-group">
-        <label class="form-label">👤 Nom complet</label>
-        <input type="text" class="form-control" id="signup-name" placeholder="Votre nom complet" required autocomplete="name"/>
-      </div>
-      <div class="form-group">
-        <label class="form-label">📧 Email</label>
-        <input type="email" class="form-control" id="signup-email" placeholder="Votre email" required autocomplete="email"/>
-      </div>
-      <div class="form-group">
-        <label class="form-label">📱 Téléphone</label>
-        <input type="tel" class="form-control" id="signup-phone" placeholder="+212 6XX XXX XXX" autocomplete="tel"/>
-      </div>
-      <div class="form-group">
-        <label class="form-label">🔒 Mot de passe</label>
-        <div class="input-group">
-          <input type="password" class="form-control" id="signup-password"
-                 placeholder="Minimum 8 caractères" required minlength="8"
-                 autocomplete="new-password" style="padding-right:44px"/>
-          <button type="button" onclick="togglePassword('signup-password')"
-                  style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1rem">👁</button>
-        </div>
-        <div class="password-strength" id="pass-strength" style="margin-top:8px;display:none">
-          <div style="height:4px;border-radius:2px;background:rgba(255,255,255,.1)">
-            <div id="pass-strength-bar" style="height:100%;border-radius:2px;transition:width .3s,background .3s;width:0%"></div>
-          </div>
-          <div id="pass-strength-label" style="font-size:.7rem;color:var(--text-muted);margin-top:4px"></div>
-        </div>
-      </div>
-
-      <!-- Artisan-specific fields -->
-      <div id="artisan-fields" style="display:none">
-        <div class="form-group">
-          <label class="form-label">🔧 Spécialité</label>
-          <select class="form-control" id="signup-specialty">
-            <option value="">Choisir une spécialité</option>
-            <option>Plomberie</option><option>Électricité</option><option>Peinture</option>
-            <option>Carrelage</option><option>Menuiserie</option><option>Climatisation</option>
-            <option>Jardinage</option><option>Nettoyage</option><option>Maçonnerie</option>
-            <option>Bricolage</option><option>Déménagement</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">📍 Ville</label>
-          <select class="form-control" id="signup-city">
-            <option value="">Choisir une ville</option>
-            <option>Casablanca</option><option>Rabat</option><option>Marrakech</option>
-            <option>Fès</option><option>Agadir</option><option>Meknès</option>
-            <option>Tanger</option><option>Salé</option><option>Oujda</option>
-          </select>
-        </div>
-      </div>
-
-      <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:20px">
-        <input type="checkbox" id="terms" required
-               style="accent-color:var(--accent-pink);margin-top:3px;width:16px;height:16px;flex-shrink:0">
-        <label for="terms" style="font-size:.8rem;color:var(--text-secondary);cursor:pointer">
-          J'accepte les <a href="#" onclick="openLegal('cgu')" style="color:var(--accent-pink)">conditions d'utilisation</a>
-          et la <a href="#" onclick="openLegal('privacy')" style="color:var(--accent-pink)">politique de confidentialité</a>
-        </label>
-      </div>
-
-      <div id="signup-error" style="display:none;color:var(--danger);font-size:.82rem;margin-bottom:12px;padding:8px 12px;background:rgba(255,71,87,0.1);border:1px solid rgba(255,71,87,0.2);border-radius:8px"></div>
-
-      <button type="submit" class="btn btn-primary w-100" id="signup-btn">
-        <span>Créer mon compte</span>
-      </button>
-      <p style="text-align:center;margin-top:16px;font-size:.85rem;color:var(--text-muted)">
-        Déjà un compte ?
-        <a href="#" onclick="switchTab('login')" style="color:var(--accent-pink);font-weight:600;margin-left:4px">Se connecter</a>
-      </p>
-    </form>
-
-  </div>
-</main>
+<style>#legal-modal.open{opacity:1!important;pointer-events:all!important}</style>
 
 <script src="js/i18n.js"></script>
 <script src="js/notifications.js"></script>
 <script>
-// ── Auth state ────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════
+//  FIXEO AUTH — inline logic (DO NOT MODIFY without care)
+//  All function names, IDs and redirect paths are contracts.
+// ═══════════════════════════════════════════════════════════
+
+// ── State ─────────────────────────────────────────────────
 let _selectedType = 'client';
 
+// ── Tab switching ─────────────────────────────────────────
 function switchTab(tab) {
   const isLogin = tab === 'login';
   document.getElementById('login-form').style.display  = isLogin ? 'block' : 'none';
@@ -485,45 +261,70 @@ function switchTab(tab) {
   document.getElementById('tab-signup').classList.toggle('active', !isLogin);
   document.getElementById('login-error').style.display  = 'none';
   document.getElementById('signup-error').style.display = 'none';
+  document.getElementById('auth-heading').textContent = isLogin ? 'Bon retour 👋' : 'Créer un compte';
+  document.getElementById('auth-sub').textContent     = isLogin
+    ? 'Connectez-vous à votre espace Fixeo.'
+    : 'Rejoignez +700 artisans et clients Fixeo.';
 }
 
+// ── Role card selection (signup) ──────────────────────────
 function selectType(type) {
   _selectedType = type;
-  const cardClient  = document.getElementById('card-client');
-  const cardArtisan = document.getElementById('card-artisan');
-  const artisanFields = document.getElementById('artisan-fields');
+  const cc = document.getElementById('card-client');
+  const ca = document.getElementById('card-artisan');
+  const af = document.getElementById('artisan-fields');
   document.getElementById('type-client').checked  = type === 'client';
   document.getElementById('type-artisan').checked = type === 'artisan';
-  cardClient.style.borderColor  = type === 'client'  ? 'var(--accent-pink)' : 'transparent';
-  cardArtisan.style.borderColor = type === 'artisan' ? 'var(--accent-pink)' : 'transparent';
-  artisanFields.style.display   = type === 'artisan' ? 'block' : 'none';
+  cc.classList.toggle('selected', type === 'client');
+  cc.setAttribute('aria-checked', type === 'client' ? 'true' : 'false');
+  ca.classList.toggle('selected', type === 'artisan');
+  ca.setAttribute('aria-checked', type === 'artisan' ? 'true' : 'false');
+  af.style.display = type === 'artisan' ? 'block' : 'none';
 }
 
 // Handle hash for direct signup navigation
 if (window.location.hash === '#signup') switchTab('signup');
 
-// ── Login method toggle (preserved, phone tab hidden in HTML) ─
-let _loginMethod = 'email';
-function setLoginMethod(method) {
-  _loginMethod = method;
-  const emailField = document.getElementById('field-email');
-  const phoneField = document.getElementById('field-phone');
-  const btnEmail   = document.getElementById('btn-method-email');
-  const btnPhone   = document.getElementById('btn-method-phone');
-  const passGroup  = document.getElementById('login-password')?.closest('.form-group');
-  if (method === 'email') {
-    emailField && (emailField.style.display = 'block');
-    phoneField && (phoneField.style.display = 'none');
-    if (passGroup) passGroup.style.display = 'block';
-    btnEmail && btnEmail.classList.add('active');
-    btnPhone && btnPhone.classList.remove('active');
-    document.getElementById('login-email') && (document.getElementById('login-email').required = true);
-    document.getElementById('login-phone') && (document.getElementById('login-phone').required = false);
-  }
-  // Phone branch intentionally no-op — SMS not implemented
+// ── Password visibility toggle ────────────────────────────
+function togglePassword(id) {
+  const input = document.getElementById(id);
+  if (input) input.type = input.type === 'password' ? 'text' : 'password';
 }
 
-/* ── ADMIN ACCOUNT — SHA-256 emergency bypass (preserved exactly) ─ */
+// ── Password strength (signup) ────────────────────────────
+(function() {
+  const passInput = document.getElementById('signup-password');
+  if (!passInput) return;
+  passInput.addEventListener('input', function() {
+    const val = passInput.value;
+    const wrap  = document.getElementById('pass-strength');
+    const bar   = document.getElementById('pass-strength-bar');
+    const label = document.getElementById('pass-strength-label');
+    if (!wrap || !bar || !label) return;
+    if (!val) { wrap.style.display = 'none'; return; }
+    wrap.style.display = 'block';
+    let score = 0;
+    if (val.length >= 8)           score++;
+    if (/[A-Z]/.test(val))         score++;
+    if (/[0-9]/.test(val))         score++;
+    if (/[^A-Za-z0-9]/.test(val))  score++;
+    const levels = [
+      { pct:'25%', bg:'#ff4757', text:'Faible'    },
+      { pct:'50%', bg:'#ffa502', text:'Moyen'     },
+      { pct:'75%', bg:'#60A5FA', text:'Bon'       },
+      { pct:'100%',bg:'#2ed573', text:'Excellent' },
+    ];
+    const lvl = levels[Math.max(0, score - 1)];
+    bar.style.width      = lvl.pct;
+    bar.style.background = lvl.bg;
+    label.textContent    = lvl.text;
+    label.style.color    = lvl.bg;
+  });
+})();
+
+/* ───────────────────────────────────────────────────────────
+ * ADMIN EMERGENCY BYPASS — SHA-256 (preserved verbatim)
+ * ─────────────────────────────────────────────────────────── */
 const _ADMIN_EMAIL     = 'admin@fixeo.com';
 const _ADMIN_PASS_HASH = 'c6d729bbfb14021b9852303540c1859737373ffbb108f5e5922246f6ac77b3da';
 const _ADMIN_NAME      = 'Admin Fixeo';
@@ -534,7 +335,7 @@ async function _sha256(str) {
   return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2,'0')).join('');
 }
 
-/* ── HELPERS ── */
+/* ── Login helpers ─────────────────────────────────────── */
 function _showLoginError(msg) {
   const el = document.getElementById('login-error');
   if (el) { el.textContent = msg; el.style.display = 'block'; }
@@ -547,14 +348,37 @@ function _setLoginBtnLoading(label) {
   const btn = document.getElementById('login-btn');
   if (!btn) return;
   btn.disabled = true;
-  btn.innerHTML = `<span class="spinner" style="width:20px;height:20px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:8px"></span> ${label}`;
+  btn.innerHTML = '<span class="ap-spinner"></span> ' + label;
 }
 function _resetLoginBtn() {
   const btn = document.getElementById('login-btn');
   if (btn) { btn.disabled = false; btn.innerHTML = '<span>Se connecter</span>'; }
 }
 
-/* ── REAL LOGIN (Supabase + admin fallback) ───────────────── */
+/* ── Auth error translation ─────────────────────────────── */
+function _translateAuthError(msg) {
+  if (!msg) return 'Erreur d\'authentification.';
+  const m = msg.toLowerCase();
+  if (m.includes('invalid login') || m.includes('invalid credentials'))
+    return 'Email ou mot de passe incorrect.';
+  if (m.includes('email not confirmed') || m.includes('email_not_confirmed'))
+    return 'Votre email n\'est pas encore confirmé. Vérifiez votre boîte mail.';
+  if (m.includes('user already registered') || m.includes('already registered'))
+    return 'Cet email est déjà utilisé. Connectez-vous ou réinitialisez votre mot de passe.';
+  if (m.includes('password') && m.includes('short'))
+    return 'Mot de passe trop court (minimum 6 caractères).';
+  if (m.includes('rate limit') || m.includes('too many'))
+    return 'Trop de tentatives. Attendez quelques minutes.';
+  if (m.includes('network') || m.includes('fetch'))
+    return 'Erreur réseau. Vérifiez votre connexion.';
+  return msg;
+}
+
+/* ───────────────────────────────────────────────────────────
+ * HANDLE LOGIN
+ * Admin SHA-256 emergency path → preserved exactly.
+ * All other users → FixeoAuth.signIn() (real Supabase).
+ * ─────────────────────────────────────────────────────────── */
 async function handleLogin(e) {
   e.preventDefault();
   _hideLoginError();
@@ -562,17 +386,16 @@ async function handleLogin(e) {
   const emailEl = document.getElementById('login-email');
   const passEl  = document.getElementById('login-password');
 
-  // Basic validation
   if (!emailEl.value.trim()) { _showLoginError('❌ Veuillez entrer votre email.'); emailEl.focus(); return; }
   if (!emailEl.checkValidity()) { _showLoginError('❌ Adresse email invalide.'); emailEl.focus(); return; }
   if (!passEl.value) { _showLoginError('❌ Veuillez entrer votre mot de passe.'); passEl.focus(); return; }
 
   const email = emailEl.value.trim().toLowerCase();
 
-  /* ── ADMIN EMERGENCY PATH (SHA-256, no Supabase, preserved exactly) ── */
   _setLoginBtnLoading('Vérification…');
   const passHash = await _sha256(passEl.value);
 
+  /* ── ADMIN EMERGENCY PATH ── */
   if (email === _ADMIN_EMAIL && passHash === _ADMIN_PASS_HASH) {
     const user = { id: 'admin-001', email: _ADMIN_EMAIL, role: 'admin', token: 'admin-session-' + Date.now() };
     if (window.FixeoAuthSession && typeof window.FixeoAuthSession.setActiveUser === 'function') {
@@ -593,10 +416,7 @@ async function handleLogin(e) {
   }
 
   /* ── REAL SUPABASE LOGIN ── */
-  if (!window.FixeoAuth) {
-    // FixeoAuth not yet loaded — wait and retry once
-    await new Promise(r => setTimeout(r, 600));
-  }
+  if (!window.FixeoAuth) { await new Promise(r => setTimeout(r, 600)); }
   if (!window.FixeoAuth) {
     _resetLoginBtn();
     _showLoginError('❌ Service d\'authentification indisponible. Réessayez.');
@@ -607,22 +427,23 @@ async function handleLogin(e) {
 
   if (error) {
     _resetLoginBtn();
-    // Translate common Supabase error messages to French
-    const msg = _translateAuthError(error.message || error.msg || '');
-    _showLoginError('❌ ' + msg);
+    _showLoginError('❌ ' + _translateAuthError(error.message || error.msg || ''));
     return;
   }
 
   _hideLoginError();
-  const role = (user && user.role) || 'client';
-  const name = (user && user.full_name) || email.split('@')[0];
+  const role      = (user && user.role) || 'client';
+  const name      = (user && user.full_name) || email.split('@')[0];
   const roleLabel = role === 'artisan' ? 'Artisan' : 'Client';
   console.log('USER LOGIN:', { email, role });
-  notifications.success(`Bienvenue ${name} !`, `✅ Connexion réussie en tant que ${roleLabel}. Redirection…`);
+  notifications.success('Bienvenue ' + name + ' !', '✅ Connexion réussie en tant que ' + roleLabel + '. Redirection…');
   setTimeout(() => { window.FixeoAuth.redirectByRole(role); }, 1200);
 }
 
-/* ── REAL SIGNUP (Supabase) ───────────────────────────────── */
+/* ───────────────────────────────────────────────────────────
+ * HANDLE SIGNUP
+ * Real Supabase via FixeoAuth.signUp().
+ * ─────────────────────────────────────────────────────────── */
 async function handleSignup(e) {
   e.preventDefault();
   const nameEl  = document.getElementById('signup-name');
@@ -634,7 +455,6 @@ async function handleSignup(e) {
 
   errEl.style.display = 'none';
 
-  // Validation (preserved exactly)
   if (!nameEl.value.trim()) {
     errEl.textContent = '❌ Veuillez entrer votre nom complet.';
     errEl.style.display = 'block'; nameEl.focus(); return;
@@ -652,12 +472,12 @@ async function handleSignup(e) {
     errEl.style.display = 'block'; return;
   }
 
-  btn.innerHTML = '<span class="spinner" style="width:20px;height:20px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:8px"></span> Création…';
+  btn.innerHTML = '<span class="ap-spinner"></span> Création…';
   btn.disabled = true;
 
-  const role    = _selectedType === 'artisan' ? 'artisan' : 'client';
-  const city    = (document.getElementById('signup-city')?.value    || '').trim();
-  const phone   = (document.getElementById('signup-phone')?.value   || '').trim();
+  const role  = _selectedType === 'artisan' ? 'artisan' : 'client';
+  const city  = (document.getElementById('signup-city')?.value  || '').trim();
+  const phone = (document.getElementById('signup-phone')?.value || '').trim();
 
   if (!window.FixeoAuth) { await new Promise(r => setTimeout(r, 600)); }
   if (!window.FixeoAuth) {
@@ -679,26 +499,28 @@ async function handleSignup(e) {
   btn.innerHTML = '<span>Créer mon compte</span>';
 
   if (error) {
-    const msg = _translateAuthError(error.message || '');
-    errEl.textContent = '❌ ' + msg;
+    errEl.textContent = '❌ ' + _translateAuthError(error.message || '');
     errEl.style.display = 'block';
     return;
   }
 
   errEl.style.display = 'none';
   console.log('USER LOGIN:', { email: emailEl.value.trim(), role });
-  notifications.success('Compte créé !', `Bienvenue sur Fixeo, ${nameEl.value.split(' ')[0]} ! Vérifiez votre email pour confirmer votre compte.`);
+  notifications.success('Compte créé !', 'Bienvenue sur Fixeo, ' + nameEl.value.split(' ')[0] + ' ! Vérifiez votre email pour confirmer votre compte.');
   setTimeout(() => { window.FixeoAuth.redirectByRole(role); }, 2000);
 }
 
-/* ── FORGOT PASSWORD ─────────────────────────────────────── */
+/* ───────────────────────────────────────────────────────────
+ * HANDLE FORGOT PASSWORD
+ * Reads email from #login-email, calls FixeoAuth.resetPassword().
+ * ─────────────────────────────────────────────────────────── */
 async function handleForgotPassword(e) {
-  e.preventDefault();
+  if (e) e.preventDefault();
   const emailEl = document.getElementById('login-email');
   const email   = (emailEl?.value || '').trim();
 
   if (!email || !emailEl.checkValidity()) {
-    _showLoginError('❌ Entrez d\'abord votre email pour recevoir un lien de réinitialisation.');
+    _showLoginError('❌ Entrez votre email ci-dessus pour recevoir un lien de réinitialisation.');
     emailEl && emailEl.focus();
     return;
   }
@@ -718,130 +540,64 @@ async function handleForgotPassword(e) {
     return;
   }
 
-  notifications.success('Email envoyé !', `Un lien de réinitialisation a été envoyé à ${email}. Vérifiez votre boîte mail.`);
+  // Replace error box with success (reuse same element, green style)
+  const el = document.getElementById('login-error');
+  if (el) {
+    el.style.display = 'block';
+    el.style.color = '#2ed573';
+    el.style.background = 'rgba(46,213,115,0.08)';
+    el.style.borderColor = 'rgba(46,213,115,0.2)';
+    el.textContent = '✅ Email de réinitialisation envoyé à ' + email + '. Vérifiez votre boîte mail.';
+  }
 }
 
-/* ── Social login — disabled (no real OAuth configured yet) ─ */
+/* ── Social login stub (no real OAuth yet) ─────────────── */
 function socialLogin(provider) {
-  // Social buttons are visually disabled (opacity + pointer-events:none in HTML)
-  // This function is kept as a stub for future Phase 3 implementation
-  console.info('[FixeoAuth] Social login not yet configured for provider:', provider);
+  console.info('[FixeoAuth] Social login not yet configured for:', provider);
 }
 
-/* ── Auth error translation helper ──────────────────────── */
-function _translateAuthError(msg) {
-  if (!msg) return 'Erreur d\'authentification.';
-  const m = msg.toLowerCase();
-  if (m.includes('invalid login') || m.includes('invalid credentials'))
-    return 'Email ou mot de passe incorrect.';
-  if (m.includes('email not confirmed') || m.includes('email_not_confirmed'))
-    return 'Votre email n\'est pas encore confirmé. Vérifiez votre boîte mail.';
-  if (m.includes('user already registered') || m.includes('already registered'))
-    return 'Cet email est déjà utilisé. Connectez-vous ou réinitialisez votre mot de passe.';
-  if (m.includes('password') && m.includes('short'))
-    return 'Mot de passe trop court (minimum 6 caractères).';
-  if (m.includes('rate limit') || m.includes('too many'))
-    return 'Trop de tentatives. Attendez quelques minutes.';
-  if (m.includes('network') || m.includes('fetch'))
-    return 'Erreur réseau. Vérifiez votre connexion.';
-  // Return original if no known pattern
-  return msg;
-}
+/* ── Preserved: setLoginMethod stub ────────────────────── */
+function setLoginMethod() {} // phone tab removed — stub preserved for safety
 
-// ── Toggle password visibility ────────────────────────────
-function togglePassword(id) {
-  const input = document.getElementById(id);
-  input.type = input.type === 'password' ? 'text' : 'password';
-}
-
-// ── Password strength indicator ───────────────────────────
-const passInput = document.getElementById('signup-password');
-if (passInput) {
-  passInput.addEventListener('input', () => {
-    const val = passInput.value;
-    const strengthEl = document.getElementById('pass-strength');
-    const bar   = document.getElementById('pass-strength-bar');
-    const label = document.getElementById('pass-strength-label');
-    if (!val) { strengthEl.style.display = 'none'; return; }
-    strengthEl.style.display = 'block';
-    let score = 0;
-    if (val.length >= 8)  score++;
-    if (/[A-Z]/.test(val)) score++;
-    if (/[0-9]/.test(val)) score++;
-    if (/[^A-Za-z0-9]/.test(val)) score++;
-    const levels = [
-      { pct:'25%', bg:'var(--danger)',  text:'Faible'   },
-      { pct:'50%', bg:'var(--warning)', text:'Moyen'    },
-      { pct:'75%', bg:'#60A5FA',        text:'Bon'      },
-      { pct:'100%',bg:'var(--success)', text:'Excellent'},
-    ];
-    const lvl = levels[Math.max(0, score - 1)];
-    bar.style.width      = lvl.pct;
-    bar.style.background = lvl.bg;
-    label.textContent    = lvl.text;
-    label.style.color    = lvl.bg;
-  });
-}
-</script>
-
-<script>
-// ── Legal modal ───────────────────────────────────────────
+/* ── Legal modal ────────────────────────────────────────── */
 function openLegal(type) {
-  const titles = { cgu: "📋 Conditions d'utilisation", privacy: "🔒 Politique de confidentialité" };
-  const contents = {
-    cgu: `<div style="font-size:.85rem;color:rgba(255,255,255,.75);line-height:1.8;max-height:60vh;overflow-y:auto">
-      <p><strong>Dernière mise à jour : 1er janvier 2025</strong></p>
-      <h4 style="color:var(--accent-pink);margin:14px 0 6px">1. Objet</h4>
-      <p>Les présentes CGU régissent l'accès et l'utilisation de la plateforme Fixeo. En créant un compte, vous acceptez intégralement ces conditions.</p>
-      <h4 style="color:var(--accent-pink);margin:14px 0 6px">2. Inscription</h4>
-      <p>Vous vous engagez à fournir des informations exactes. Tout compte frauduleux pourra être suspendu sans préavis.</p>
-      <h4 style="color:var(--accent-pink);margin:14px 0 6px">3. Utilisation</h4>
-      <p>La plateforme est destinée à la mise en relation clients/artisans. Toute utilisation à des fins illégales est prohibée.</p>
-      <h4 style="color:var(--accent-pink);margin:14px 0 6px">4. Responsabilité</h4>
-      <p>Fixeo est un intermédiaire et ne peut être tenu responsable des prestations fournies par les artisans.</p>
-      <h4 style="color:var(--accent-pink);margin:14px 0 6px">5. Droit applicable</h4>
-      <p>Ces CGU sont soumises au droit marocain. Tribunal compétent : Casablanca.</p>
-    </div>`,
-    privacy: `<div style="font-size:.85rem;color:rgba(255,255,255,.75);line-height:1.8;max-height:60vh;overflow-y:auto">
-      <p><strong>Dernière mise à jour : 1er janvier 2025</strong></p>
-      <h4 style="color:var(--accent-pink);margin:14px 0 6px">1. Données collectées</h4>
-      <p>Nom, email, téléphone, localisation (avec consentement), historique de navigation sur Fixeo.</p>
-      <h4 style="color:var(--accent-pink);margin:14px 0 6px">2. Utilisation</h4>
-      <p>Vos données servent à gérer votre compte, faciliter les mises en relation et améliorer nos services.</p>
-      <h4 style="color:var(--accent-pink);margin:14px 0 6px">3. Vos droits</h4>
-      <p>Conformément à la loi 09-08, vous disposez des droits d'accès, rectification, suppression et opposition. Contact : privacy@fixeo.ma</p>
-      <h4 style="color:var(--accent-pink);margin:14px 0 6px">4. Sécurité</h4>
-      <p>Données chiffrées en transit (TLS) et au repos. Accès restreint au personnel habilité.</p>
-    </div>`
+  const titles = {
+    cgu:     "📋 Conditions d'utilisation",
+    privacy: "🔒 Politique de confidentialité"
   };
-  const modal = document.getElementById('legal-modal');
+  const contents = {
+    cgu: '<p><strong>Dernière mise à jour : 1er janvier 2025</strong></p>' +
+         '<h4 style="color:#e1306c;margin:14px 0 6px">1. Objet</h4>' +
+         '<p>Les présentes CGU régissent l\'accès et l\'utilisation de la plateforme Fixeo. En créant un compte, vous acceptez intégralement ces conditions.</p>' +
+         '<h4 style="color:#e1306c;margin:14px 0 6px">2. Inscription</h4>' +
+         '<p>Vous vous engagez à fournir des informations exactes. Tout compte frauduleux pourra être suspendu sans préavis.</p>' +
+         '<h4 style="color:#e1306c;margin:14px 0 6px">3. Utilisation</h4>' +
+         '<p>La plateforme est destinée à la mise en relation clients/artisans. Toute utilisation à des fins illégales est prohibée.</p>' +
+         '<h4 style="color:#e1306c;margin:14px 0 6px">4. Responsabilité</h4>' +
+         '<p>Fixeo est un intermédiaire et ne peut être tenu responsable des prestations fournies par les artisans.</p>' +
+         '<h4 style="color:#e1306c;margin:14px 0 6px">5. Droit applicable</h4>' +
+         '<p>Ces CGU sont soumises au droit marocain. Tribunal compétent : Casablanca.</p>',
+    privacy: '<p><strong>Dernière mise à jour : 1er janvier 2025</strong></p>' +
+             '<h4 style="color:#e1306c;margin:14px 0 6px">1. Données collectées</h4>' +
+             '<p>Nom, email, téléphone, localisation (avec consentement), historique de navigation sur Fixeo.</p>' +
+             '<h4 style="color:#e1306c;margin:14px 0 6px">2. Utilisation</h4>' +
+             '<p>Vos données servent à gérer votre compte, faciliter les mises en relation et améliorer nos services.</p>' +
+             '<h4 style="color:#e1306c;margin:14px 0 6px">3. Vos droits</h4>' +
+             '<p>Conformément à la loi 09-08, vous disposez des droits d\'accès, rectification, suppression et opposition. Contact : privacy@fixeo.ma</p>' +
+             '<h4 style="color:#e1306c;margin:14px 0 6px">4. Sécurité</h4>' +
+             '<p>Données chiffrées en transit (TLS) et au repos. Accès restreint au personnel habilité.</p>'
+  };
   document.getElementById('legal-modal-title').textContent = titles[type] || 'Information légale';
-  document.getElementById('legal-modal-body').innerHTML = contents[type] || '';
-  modal.classList.add('open');
+  document.getElementById('legal-modal-body').innerHTML    = contents[type] || '';
+  document.getElementById('legal-modal').classList.add('open');
 }
 </script>
 
-<!-- Legal modal -->
-<div class="modal-overlay" id="legal-modal" onclick="if(event.target===this)this.classList.remove('open')" style="display:flex;align-items:center;justify-content:center;position:fixed;inset:0;z-index:700;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);padding:20px;opacity:0;pointer-events:none;transition:opacity .25s">
-  <div style="background:#14142e;border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:24px;max-width:520px;width:100%;position:relative;max-height:85vh;overflow:hidden;display:flex;flex-direction:column">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-shrink:0">
-      <h3 id="legal-modal-title" style="font-size:1rem;font-weight:700"></h3>
-      <button onclick="document.getElementById('legal-modal').classList.remove('open')" style="background:none;border:none;color:rgba(255,255,255,.6);font-size:1.2rem;cursor:pointer;line-height:1">✕</button>
-    </div>
-    <div id="legal-modal-body" style="overflow-y:auto;flex:1"></div>
-    <button onclick="document.getElementById('legal-modal').classList.remove('open')" class="btn btn-primary w-100" style="margin-top:16px;flex-shrink:0">J'ai compris</button>
-  </div>
-</div>
-<style>
-#legal-modal.open{opacity:1!important;pointer-events:all!important}
-</style>
 <script src="js/fixeo_v5_fixes.js"></script>
-  <script src="js/slot-lock.js"></script>
+<script src="js/slot-lock.js"></script>
 <script src="js/cod-payment.js"></script>
-<!-- ══ AUTH GLOBAL + HEADER-UNIFIED ══ -->
 <script src="/api/env.js"></script>
 <script src="js/fixeo-supabase-core.js"></script>
-<script src="js/header-unified.js"></script>
 <script src="js/auth-global.js"></script>
 <script src="js/fixeo-mvp-supabase.js"></script>
 

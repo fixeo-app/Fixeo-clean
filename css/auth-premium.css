@@ -1,0 +1,458 @@
+/*
+ * FIXEO — auth-premium.css
+ * Ultra-premium auth page styles — Uber / Stripe level
+ * Scope: auth.html only. Does NOT affect any other page.
+ * 2026-04-29
+ */
+
+/* ── Page shell ─────────────────────────────────────────── */
+html, body { height: 100%; }
+
+.auth-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background:
+    radial-gradient(ellipse 80% 70% at 15% 10%, rgba(64,93,230,0.18) 0%, transparent 65%),
+    radial-gradient(ellipse 55% 55% at 85% 85%, rgba(193,53,132,0.18) 0%, transparent 65%),
+    linear-gradient(160deg, #0b0b18 0%, #12122a 55%, #14142e 100%);
+}
+
+/* ── Minimal header ─────────────────────────────────────── */
+.auth-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  position: relative;
+  z-index: 10;
+  flex-shrink: 0;
+}
+
+.auth-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.45);
+  text-decoration: none;
+  transition: color 0.18s;
+  padding: 6px 0;
+}
+.auth-back-link:hover { color: rgba(255,255,255,0.8); }
+.auth-back-link::before { content: '←'; font-size: 1rem; }
+
+.auth-topbar-logo {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.auth-topbar-logo img {
+  height: 32px;
+  width: auto;
+  display: block;
+  object-fit: contain;
+}
+
+/* ── Card container ─────────────────────────────────────── */
+.auth-center {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 12px 16px 40px;
+  overflow-y: auto;
+}
+
+.auth-box {
+  width: 100%;
+  max-width: 420px;
+  background: rgba(255,255,255,0.035);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 20px;
+  padding: 32px 28px 28px;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 24px 64px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.04);
+}
+
+/* ── Heading ────────────────────────────────────────────── */
+.auth-heading {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #fff;
+  margin: 0 0 4px;
+  line-height: 1.25;
+}
+.auth-subheading {
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.42);
+  margin: 0 0 22px;
+}
+
+/* ── Tabs ───────────────────────────────────────────────── */
+.ap-tabs {
+  display: flex;
+  background: rgba(255,255,255,0.05);
+  border-radius: 10px;
+  padding: 3px;
+  margin-bottom: 22px;
+  gap: 2px;
+}
+.ap-tab {
+  flex: 1;
+  padding: 8px 0;
+  text-align: center;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.45);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s;
+  user-select: none;
+}
+.ap-tab.active {
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+}
+
+/* ── Form groups ────────────────────────────────────────── */
+.ap-group {
+  margin-bottom: 14px;
+}
+.ap-label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.55);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.ap-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+.ap-label-row .ap-label { margin-bottom: 0; }
+.ap-forgot {
+  font-size: 0.76rem;
+  color: rgba(225,48,108,0.85);
+  text-decoration: none;
+  transition: color 0.15s;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+}
+.ap-forgot:hover { color: #e1306c; }
+
+/* ── Inputs ─────────────────────────────────────────────── */
+.ap-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.ap-input {
+  width: 100%;
+  background: rgba(255,255,255,0.06) !important;
+  border: 1px solid rgba(255,255,255,0.1) !important;
+  border-radius: 10px !important;
+  padding: 12px 14px !important;
+  font-size: 0.92rem;
+  color: #fff !important;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.18s, box-shadow 0.18s, background 0.18s;
+  box-sizing: border-box;
+}
+.ap-input:focus {
+  border-color: rgba(225,48,108,0.6) !important;
+  background: rgba(255,255,255,0.09) !important;
+  box-shadow: 0 0 0 3px rgba(225,48,108,0.14) !important;
+}
+.ap-input::placeholder { color: rgba(255,255,255,0.25); }
+.ap-input.has-toggle { padding-right: 44px !important; }
+
+/* Password toggle button */
+.ap-pw-toggle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.35);
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0;
+  transition: color 0.15s;
+  z-index: 2;
+}
+.ap-pw-toggle:hover { color: rgba(255,255,255,0.7); }
+
+/* ── Select ─────────────────────────────────────────────── */
+.ap-select {
+  width: 100%;
+  background: rgba(255,255,255,0.06) !important;
+  border: 1px solid rgba(255,255,255,0.1) !important;
+  border-radius: 10px !important;
+  padding: 12px 14px !important;
+  font-size: 0.88rem;
+  color: #fff !important;
+  font-family: inherit;
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='rgba(255,255,255,0.4)' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 14px center !important;
+  padding-right: 36px !important;
+  transition: border-color 0.18s;
+  box-sizing: border-box;
+}
+.ap-select:focus {
+  border-color: rgba(225,48,108,0.6) !important;
+  box-shadow: 0 0 0 3px rgba(225,48,108,0.14) !important;
+}
+.ap-select option { background: #1a1a2e; color: #fff; }
+
+/* ── Role cards (signup) ────────────────────────────────── */
+.ap-role-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.ap-role-card {
+  flex: 1;
+  padding: 13px 10px;
+  text-align: center;
+  border-radius: 12px;
+  border: 1.5px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.04);
+  cursor: pointer;
+  transition: border-color 0.18s, background 0.18s;
+  user-select: none;
+}
+.ap-role-card.selected {
+  border-color: #e1306c;
+  background: rgba(225,48,108,0.1);
+}
+.ap-role-card:hover:not(.selected) {
+  border-color: rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.07);
+}
+.ap-role-icon { font-size: 1.4rem; margin-bottom: 4px; }
+.ap-role-name { font-size: 0.84rem; font-weight: 700; color: #fff; }
+.ap-role-desc { font-size: 0.68rem; color: rgba(255,255,255,0.38); margin-top: 2px; }
+
+/* ── Password strength ──────────────────────────────────── */
+.ap-strength {
+  margin-top: 7px;
+  display: none;
+}
+.ap-strength-track {
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(255,255,255,0.08);
+  overflow: hidden;
+}
+.ap-strength-bar {
+  height: 100%;
+  border-radius: 2px;
+  width: 0;
+  transition: width 0.3s, background 0.3s;
+}
+.ap-strength-label {
+  font-size: 0.68rem;
+  color: rgba(255,255,255,0.35);
+  margin-top: 3px;
+}
+
+/* ── Terms ──────────────────────────────────────────────── */
+.ap-terms {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin-bottom: 18px;
+}
+.ap-terms input[type="checkbox"] {
+  accent-color: #e1306c;
+  width: 15px;
+  height: 15px;
+  margin-top: 2px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+.ap-terms label {
+  font-size: 0.77rem;
+  color: rgba(255,255,255,0.45);
+  cursor: pointer;
+  line-height: 1.5;
+}
+.ap-terms a { color: rgba(225,48,108,0.85); text-decoration: none; }
+.ap-terms a:hover { color: #e1306c; }
+
+/* ── CTA Button ─────────────────────────────────────────── */
+.ap-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 13px 20px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #e1306c 0%, #833ab4 50%, #405de6 100%);
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: transform 0.18s, box-shadow 0.18s, opacity 0.18s;
+  box-shadow: 0 4px 24px rgba(225,48,108,0.28);
+  letter-spacing: 0.01em;
+}
+.ap-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 32px rgba(225,48,108,0.38);
+}
+.ap-btn:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 12px rgba(225,48,108,0.22);
+}
+.ap-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ── Spinner inside button ──────────────────────────────── */
+.ap-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: ap-spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+@keyframes ap-spin { to { transform: rotate(360deg); } }
+
+/* ── Trust line ─────────────────────────────────────────── */
+.ap-trust {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 11px;
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.35);
+  text-align: center;
+  line-height: 1.4;
+}
+.ap-trust-icon { font-size: 0.78rem; }
+
+/* ── Divider ────────────────────────────────────────────── */
+.ap-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 18px 0;
+  color: rgba(255,255,255,0.2);
+  font-size: 0.75rem;
+}
+.ap-divider::before,
+.ap-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(255,255,255,0.08);
+}
+
+/* ── Social buttons (disabled state) ───────────────────── */
+.ap-social-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 6px;
+  opacity: 0.4;
+  pointer-events: none;
+}
+.ap-social-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 10px 12px;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  background: rgba(255,255,255,0.04);
+  color: rgba(255,255,255,0.6);
+  font-size: 0.8rem;
+  font-family: inherit;
+  cursor: not-allowed;
+}
+.ap-social-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
+.ap-soon {
+  text-align: center;
+  font-size: 0.68rem;
+  color: rgba(255,255,255,0.22);
+  margin-top: 4px;
+}
+
+/* ── Switch link (bottom) ───────────────────────────────── */
+.ap-switch {
+  text-align: center;
+  margin-top: 18px;
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.38);
+}
+.ap-switch a, .ap-switch button {
+  color: #e1306c;
+  font-weight: 700;
+  text-decoration: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+  padding: 0;
+  margin-left: 4px;
+}
+.ap-switch a:hover, .ap-switch button:hover { color: #ff5a8a; }
+
+/* ── Error box ──────────────────────────────────────────── */
+.ap-error {
+  display: none;
+  font-size: 0.8rem;
+  color: #ff6b81;
+  margin-bottom: 12px;
+  padding: 9px 12px;
+  background: rgba(255,71,87,0.1);
+  border: 1px solid rgba(255,71,87,0.18);
+  border-radius: 8px;
+  line-height: 1.45;
+}
+
+/* ── Artisan extra fields (signup) ──────────────────────── */
+.ap-artisan-fields { display: none; }
+
+/* ── Mobile optimisation ────────────────────────────────── */
+@media (max-width: 480px) {
+  .auth-topbar { padding: 12px 16px; }
+  .auth-topbar-logo img { height: 26px; }
+  .auth-center { padding: 8px 12px 32px; align-items: flex-start; }
+  .auth-box { padding: 22px 18px 22px; border-radius: 16px; }
+  .auth-heading { font-size: 1.2rem; }
+  .ap-btn { padding: 12px 16px; font-size: 0.9rem; }
+  .ap-input { padding: 11px 12px !important; font-size: 0.88rem; }
+  .ap-select { padding: 11px 12px !important; font-size: 0.84rem; }
+}
+
+/* ── Utility: full-width ────────────────────────────────── */
+.ap-w100 { width: 100%; }
