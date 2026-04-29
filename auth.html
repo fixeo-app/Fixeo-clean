@@ -287,9 +287,9 @@ select:focus,input:focus,textarea:focus{outline:none!important;border-color:var(
       <div class="auth-tab"        id="tab-signup" onclick="switchTab('signup')">Créer un compte</div>
     </div>
 
-    <!-- Social Auth -->
-    <div class="social-auth">
-      <button class="social-btn google" onclick="socialLogin('google')" type="button">
+    <!-- Social Auth — disabled until OAuth configured in Supabase Dashboard -->
+    <div class="social-auth" style="opacity:0.45;pointer-events:none" title="Connexion sociale bientôt disponible">
+      <button class="social-btn google" type="button" disabled>
         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
           <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
@@ -298,21 +298,22 @@ select:focus,input:focus,textarea:focus{outline:none!important;border-color:var(
         </svg>
         Continuer avec Google
       </button>
-      <button class="social-btn facebook" onclick="socialLogin('facebook')" type="button">
+      <button class="social-btn facebook" type="button" disabled>
         <svg viewBox="0 0 24 24" fill="#1877F2" xmlns="http://www.w3.org/2000/svg">
           <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
         </svg>
         Continuer avec Facebook
       </button>
     </div>
-    <div class="divider"><span>Ou continuer avec</span></div>
+    <div class="divider"><span>Ou continuer avec email</span></div>
 
     <!-- ── LOGIN FORM ────────────────────────────────────── -->
     <form id="login-form" onsubmit="handleLogin(event)" novalidate>
       <!-- Method toggle: email vs phone -->
-      <div class="auth-method-toggle" id="login-method-toggle">
+      <!-- Phone login tab disabled — SMS auth not yet configured -->
+      <div class="auth-method-toggle" id="login-method-toggle" style="display:none">
         <button type="button" class="auth-method-btn active" id="btn-method-email" onclick="setLoginMethod('email')">📧 Email</button>
-        <button type="button" class="auth-method-btn" id="btn-method-phone" onclick="setLoginMethod('phone')">📱 Téléphone</button>
+        <button type="button" class="auth-method-btn" id="btn-method-phone" onclick="setLoginMethod('phone')" disabled title="Connexion SMS bientôt disponible">📱 Téléphone</button>
       </div>
 
       <!-- Email field -->
@@ -337,7 +338,7 @@ select:focus,input:focus,textarea:focus{outline:none!important;border-color:var(
       <div class="form-group">
         <label class="form-label" style="display:flex;justify-content:space-between;align-items:center">
           <span>🔒 Mot de passe</span>
-          <a href="#" style="font-size:.75rem;color:var(--accent-pink)">Mot de passe oublié ?</a>
+          <a href="#" id="forgot-password-link" onclick="handleForgotPassword(event)" style="font-size:.75rem;color:var(--accent-pink)">Mot de passe oublié ?</a>
         </label>
         <div class="input-group">
           <span class="input-icon">🔑</span>
@@ -501,16 +502,15 @@ function selectType(type) {
 // Handle hash for direct signup navigation
 if (window.location.hash === '#signup') switchTab('signup');
 
-// ── Login ─────────────────────────────────────────────────
-// ── Login method toggle ──────────────────────────────────
+// ── Login method toggle (preserved, phone tab hidden in HTML) ─
 let _loginMethod = 'email';
 function setLoginMethod(method) {
   _loginMethod = method;
   const emailField = document.getElementById('field-email');
   const phoneField = document.getElementById('field-phone');
-  const btnEmail = document.getElementById('btn-method-email');
-  const btnPhone = document.getElementById('btn-method-phone');
-  const passGroup = document.getElementById('login-password')?.closest('.form-group');
+  const btnEmail   = document.getElementById('btn-method-email');
+  const btnPhone   = document.getElementById('btn-method-phone');
+  const passGroup  = document.getElementById('login-password')?.closest('.form-group');
   if (method === 'email') {
     emailField && (emailField.style.display = 'block');
     phoneField && (phoneField.style.display = 'none');
@@ -519,18 +519,11 @@ function setLoginMethod(method) {
     btnPhone && btnPhone.classList.remove('active');
     document.getElementById('login-email') && (document.getElementById('login-email').required = true);
     document.getElementById('login-phone') && (document.getElementById('login-phone').required = false);
-  } else {
-    emailField && (emailField.style.display = 'none');
-    phoneField && (phoneField.style.display = 'block');
-    if (passGroup) passGroup.style.display = 'none';
-    btnEmail && btnEmail.classList.remove('active');
-    btnPhone && btnPhone.classList.add('active');
-    document.getElementById('login-email') && (document.getElementById('login-email').required = false);
-    document.getElementById('login-phone') && (document.getElementById('login-phone').required = true);
   }
+  // Phone branch intentionally no-op — SMS not implemented
 }
 
-/* ── ADMIN ACCOUNT — SHA-256 credentials ─────────────────── */
+/* ── ADMIN ACCOUNT — SHA-256 emergency bypass (preserved exactly) ─ */
 const _ADMIN_EMAIL     = 'admin@fixeo.com';
 const _ADMIN_PASS_HASH = 'c6d729bbfb14021b9852303540c1859737373ffbb108f5e5922246f6ac77b3da';
 const _ADMIN_NAME      = 'Admin Fixeo';
@@ -541,54 +534,47 @@ async function _sha256(str) {
   return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2,'0')).join('');
 }
 
+/* ── HELPERS ── */
+function _showLoginError(msg) {
+  const el = document.getElementById('login-error');
+  if (el) { el.textContent = msg; el.style.display = 'block'; }
+}
+function _hideLoginError() {
+  const el = document.getElementById('login-error');
+  if (el) el.style.display = 'none';
+}
+function _setLoginBtnLoading(label) {
+  const btn = document.getElementById('login-btn');
+  if (!btn) return;
+  btn.disabled = true;
+  btn.innerHTML = `<span class="spinner" style="width:20px;height:20px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:8px"></span> ${label}`;
+}
+function _resetLoginBtn() {
+  const btn = document.getElementById('login-btn');
+  if (btn) { btn.disabled = false; btn.innerHTML = '<span>Se connecter</span>'; }
+}
+
+/* ── REAL LOGIN (Supabase + admin fallback) ───────────────── */
 async function handleLogin(e) {
   e.preventDefault();
-  const errEl = document.getElementById('login-error');
-  const btn   = document.getElementById('login-btn');
-  errEl.style.display = 'none';
-
-  if (_loginMethod === 'phone') {
-    const phoneEl = document.getElementById('login-phone');
-    if (!phoneEl.value.trim()) {
-      errEl.textContent = '❌ Veuillez entrer votre numéro de téléphone.';
-      errEl.style.display = 'block'; phoneEl.focus(); return;
-    }
-    btn.innerHTML = '<span class="spinner" style="width:20px;height:20px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:8px"></span> Envoi du code SMS…';
-    btn.disabled = true;
-    setTimeout(() => {
-      notifications.success('Code SMS envoyé !', `Un code de vérification a été envoyé au ${phoneEl.value}`);
-      btn.innerHTML = '<span>Connexion</span>'; btn.disabled = false;
-      setTimeout(() => { window.location.href = 'dashboard-client.html'; }, 2000);
-    }, 1400);
-    return;
-  }
+  _hideLoginError();
 
   const emailEl = document.getElementById('login-email');
   const passEl  = document.getElementById('login-password');
 
-  if (!emailEl.value.trim()) {
-    errEl.textContent = '❌ Veuillez entrer votre email.';
-    errEl.style.display = 'block'; emailEl.focus(); return;
-  }
-  if (!emailEl.checkValidity()) {
-    errEl.textContent = '❌ Adresse email invalide.';
-    errEl.style.display = 'block'; emailEl.focus(); return;
-  }
-  if (!passEl.value) {
-    errEl.textContent = '❌ Veuillez entrer votre mot de passe.';
-    errEl.style.display = 'block'; passEl.focus(); return;
-  }
+  // Basic validation
+  if (!emailEl.value.trim()) { _showLoginError('❌ Veuillez entrer votre email.'); emailEl.focus(); return; }
+  if (!emailEl.checkValidity()) { _showLoginError('❌ Adresse email invalide.'); emailEl.focus(); return; }
+  if (!passEl.value) { _showLoginError('❌ Veuillez entrer votre mot de passe.'); passEl.focus(); return; }
 
-  btn.innerHTML = '<span class="spinner" style="width:20px;height:20px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:8px"></span> Vérification…';
-  btn.disabled = true;
+  const email = emailEl.value.trim().toLowerCase();
 
-  const email    = emailEl.value.trim().toLowerCase();
+  /* ── ADMIN EMERGENCY PATH (SHA-256, no Supabase, preserved exactly) ── */
+  _setLoginBtnLoading('Vérification…');
   const passHash = await _sha256(passEl.value);
 
-  /* ── ADMIN LOGIN ── */
   if (email === _ADMIN_EMAIL && passHash === _ADMIN_PASS_HASH) {
     const user = { id: 'admin-001', email: _ADMIN_EMAIL, role: 'admin', token: 'admin-session-' + Date.now() };
-    /* ── STEP 5 : Frontend Storage ── */
     if (window.FixeoAuthSession && typeof window.FixeoAuthSession.setActiveUser === 'function') {
       window.FixeoAuthSession.setActiveUser({ id: user.id, email: user.email, name: _ADMIN_NAME, role: user.role });
     } else {
@@ -596,76 +582,59 @@ async function handleLogin(e) {
       localStorage.setItem('fixeo_user_name', _ADMIN_NAME);
       localStorage.setItem('fixeo_role',      user.role);
       localStorage.setItem('fixeo_admin',     '1');
-      localStorage.setItem('role',            user.role); /* clé normalisée */
-      localStorage.setItem('user',            JSON.stringify({ id: user.id, name: _ADMIN_NAME, role: user.role })); /* objet normalisé */
+      localStorage.setItem('role',            user.role);
+      localStorage.setItem('user',            JSON.stringify({ id: user.id, name: _ADMIN_NAME, role: user.role }));
       sessionStorage.setItem('fixeo_admin_auth', '1');
     }
-    /* ── STEP 7 : Safe Debug ── */
     console.log('USER LOGIN:', user);
     notifications.success('Bienvenue Admin !', '🛡 Accès administrateur accordé. Redirection…');
-    /* ── STEP 4 : Redirection basée sur le rôle ── */
-    setTimeout(() => {
-      if (user.role === 'admin') {
-        window.location.href = 'admin.html';
-      } else if (user.role === 'artisan') {
-        window.location.href = 'dashboard-artisan.html';
-      } else {
-        window.location.href = 'dashboard-client.html';
-      }
-    }, 1500);
+    setTimeout(() => { window.location.href = 'admin.html'; }, 1500);
     return;
   }
 
-  /* ── STANDARD USER LOGIN ── */
-  /* ── STEP 2 : Rôle choisi explicitement par l'utilisateur dans le select ── */
-  const userRole = (document.getElementById('userRole')?.value) || 'client';
+  /* ── REAL SUPABASE LOGIN ── */
+  if (!window.FixeoAuth) {
+    // FixeoAuth not yet loaded — wait and retry once
+    await new Promise(r => setTimeout(r, 600));
+  }
+  if (!window.FixeoAuth) {
+    _resetLoginBtn();
+    _showLoginError('❌ Service d\'authentification indisponible. Réessayez.');
+    return;
+  }
 
-  setTimeout(() => {
-    const userName = email.split('@')[0];
-    const user = { id: 'usr-' + Date.now(), email: email, name: userName, role: userRole, token: 'token-' + Date.now() };
-    /* ── STEP 5 : Frontend Storage (clés Fixeo + clé normalisée) ── */
-    if (window.FixeoAuthSession && typeof window.FixeoAuthSession.setActiveUser === 'function') {
-      window.FixeoAuthSession.setActiveUser({ id: user.id, email: user.email, name: user.name, role: user.role });
-    } else {
-      localStorage.setItem('fixeo_user',      user.email);
-      localStorage.setItem('fixeo_user_name', user.name);
-      localStorage.setItem('fixeo_role',      user.role);
-      localStorage.setItem('role',            user.role); /* clé normalisée */
-      localStorage.setItem('user',            JSON.stringify({ id: user.id, name: user.name, role: user.role })); /* objet normalisé */
-      /* Ensure no leftover admin flags for standard users */
-      localStorage.removeItem('fixeo_admin');
-      sessionStorage.removeItem('fixeo_admin_auth');
-    }
-    /* ── STEP 7 : Safe Debug ── */
-    console.log('USER LOGIN:', user);
-    const roleLabel = user.role === 'artisan' ? 'Artisan' : 'Client';
-    notifications.success(`Bienvenue ${user.name} !`, `✅ Connexion réussie en tant que ${roleLabel}. Redirection…`);
-    /* ── STEP 4 : Redirection basée sur le rôle ── */
-    setTimeout(() => {
-      if (user.role === 'admin') {
-        window.location.href = 'admin.html';
-      } else if (user.role === 'artisan') {
-        window.location.href = 'dashboard-artisan.html';
-      } else {
-        window.location.href = 'dashboard-client.html';
-      }
-    }, 1500);
-  }, 1200);
-  setTimeout(() => { btn.innerHTML = '<span>Se connecter</span>'; btn.disabled = false; }, 5000);
+  const { user, error } = await window.FixeoAuth.signIn({ email: email, password: passEl.value });
+
+  if (error) {
+    _resetLoginBtn();
+    // Translate common Supabase error messages to French
+    const msg = _translateAuthError(error.message || error.msg || '');
+    _showLoginError('❌ ' + msg);
+    return;
+  }
+
+  _hideLoginError();
+  const role = (user && user.role) || 'client';
+  const name = (user && user.full_name) || email.split('@')[0];
+  const roleLabel = role === 'artisan' ? 'Artisan' : 'Client';
+  console.log('USER LOGIN:', { email, role });
+  notifications.success(`Bienvenue ${name} !`, `✅ Connexion réussie en tant que ${roleLabel}. Redirection…`);
+  setTimeout(() => { window.FixeoAuth.redirectByRole(role); }, 1200);
 }
 
-// ── Signup ────────────────────────────────────────────────
-function handleSignup(e) {
+/* ── REAL SIGNUP (Supabase) ───────────────────────────────── */
+async function handleSignup(e) {
   e.preventDefault();
-  const nameEl    = document.getElementById('signup-name');
-  const emailEl   = document.getElementById('signup-email');
-  const passEl    = document.getElementById('signup-password');
-  const termsEl   = document.getElementById('terms');
-  const errEl     = document.getElementById('signup-error');
-  const btn       = document.getElementById('signup-btn');
+  const nameEl  = document.getElementById('signup-name');
+  const emailEl = document.getElementById('signup-email');
+  const passEl  = document.getElementById('signup-password');
+  const termsEl = document.getElementById('terms');
+  const errEl   = document.getElementById('signup-error');
+  const btn     = document.getElementById('signup-btn');
 
   errEl.style.display = 'none';
 
+  // Validation (preserved exactly)
   if (!nameEl.value.trim()) {
     errEl.textContent = '❌ Veuillez entrer votre nom complet.';
     errEl.style.display = 'block'; nameEl.focus(); return;
@@ -686,50 +655,97 @@ function handleSignup(e) {
   btn.innerHTML = '<span class="spinner" style="width:20px;height:20px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:8px"></span> Création…';
   btn.disabled = true;
 
-  const target = _selectedType === 'artisan' ? 'dashboard-artisan.html' : 'dashboard-client.html';
+  const role    = _selectedType === 'artisan' ? 'artisan' : 'client';
+  const city    = (document.getElementById('signup-city')?.value    || '').trim();
+  const phone   = (document.getElementById('signup-phone')?.value   || '').trim();
 
-  setTimeout(() => {
-    // ── Save auth state for header-unified.js ──
-    /* STEP 2 : Force role consistency (default = 'client') */
-    const signupRole = _selectedType === 'artisan' ? 'artisan' : 'client';
-    const signupName = nameEl.value.trim().split(' ')[0];
-    const signupId   = 'new-' + Date.now();
-    if (window.FixeoAuthSession && typeof window.FixeoAuthSession.setActiveUser === 'function') {
-      window.FixeoAuthSession.setActiveUser({ id: signupId, email: emailEl.value.trim(), name: signupName, role: signupRole });
-    } else {
-      localStorage.setItem('fixeo_user',      emailEl.value.trim());
-      localStorage.setItem('fixeo_user_name', signupName);
-      localStorage.setItem('fixeo_role',      signupRole);
-      localStorage.setItem('role',            signupRole); /* clé normalisée */
-      localStorage.setItem('user',            JSON.stringify({ id: signupId, name: signupName, role: signupRole })); /* objet normalisé */
-    }
-    /* STEP 7 : Safe Debug */
-    console.log('USER LOGIN:', { id: signupId, email: emailEl.value.trim(), role: signupRole });
-    notifications.success('Compte créé !', `Bienvenue sur Fixeo, ${nameEl.value.split(' ')[0]} ! Vérifiez votre email.`);
-    setTimeout(() => { window.location.href = target; }, 2000);
-  }, 1400);
+  if (!window.FixeoAuth) { await new Promise(r => setTimeout(r, 600)); }
+  if (!window.FixeoAuth) {
+    btn.disabled = false; btn.innerHTML = '<span>Créer mon compte</span>';
+    errEl.textContent = '❌ Service indisponible. Réessayez.'; errEl.style.display = 'block';
+    return;
+  }
 
-  setTimeout(() => { btn.innerHTML = '<span>Créer mon compte</span>'; btn.disabled = false; }, 6000);
+  const { user, error } = await window.FixeoAuth.signUp({
+    email:     emailEl.value.trim(),
+    password:  passEl.value,
+    full_name: nameEl.value.trim(),
+    phone:     phone,
+    role:      role,
+    city:      city
+  });
+
+  btn.disabled = false;
+  btn.innerHTML = '<span>Créer mon compte</span>';
+
+  if (error) {
+    const msg = _translateAuthError(error.message || '');
+    errEl.textContent = '❌ ' + msg;
+    errEl.style.display = 'block';
+    return;
+  }
+
+  errEl.style.display = 'none';
+  console.log('USER LOGIN:', { email: emailEl.value.trim(), role });
+  notifications.success('Compte créé !', `Bienvenue sur Fixeo, ${nameEl.value.split(' ')[0]} ! Vérifiez votre email pour confirmer votre compte.`);
+  setTimeout(() => { window.FixeoAuth.redirectByRole(role); }, 2000);
 }
 
-// ── Social login ──────────────────────────────────────────
-function socialLogin(provider) {
-  const label    = provider === 'google' ? 'Google' : 'Facebook';
-  const mockName = label.charAt(0) + ' User';
-  const mockId   = 'social-' + Date.now();
-  // ── Save auth state for header-unified.js ──
-  const mockEmail = provider + '_user@fixeo.ma';
-  if (window.FixeoAuthSession && typeof window.FixeoAuthSession.setActiveUser === 'function') {
-    window.FixeoAuthSession.setActiveUser({ id: mockId, email: mockEmail, name: mockName, role: 'client' });
-  } else {
-    localStorage.setItem('fixeo_user',      mockEmail);
-    localStorage.setItem('fixeo_user_name', mockName);
-    localStorage.setItem('fixeo_role',      'client');
-    localStorage.setItem('role',            'client'); /* clé normalisée */
-    localStorage.setItem('user',            JSON.stringify({ id: mockId, name: mockName, role: 'client' })); /* objet normalisé */
+/* ── FORGOT PASSWORD ─────────────────────────────────────── */
+async function handleForgotPassword(e) {
+  e.preventDefault();
+  const emailEl = document.getElementById('login-email');
+  const email   = (emailEl?.value || '').trim();
+
+  if (!email || !emailEl.checkValidity()) {
+    _showLoginError('❌ Entrez d\'abord votre email pour recevoir un lien de réinitialisation.');
+    emailEl && emailEl.focus();
+    return;
   }
-  notifications.info(`🔗 ${label}`, `Redirection vers l'authentification ${label}…`);
-  setTimeout(() => { window.location.href = 'dashboard-client.html'; }, 1800);
+
+  _hideLoginError();
+  const link = document.getElementById('forgot-password-link');
+  if (link) { link.textContent = 'Envoi…'; link.style.pointerEvents = 'none'; }
+
+  if (!window.FixeoAuth) { await new Promise(r => setTimeout(r, 600)); }
+
+  const { error } = await window.FixeoAuth.resetPassword(email);
+
+  if (link) { link.textContent = 'Mot de passe oublié ?'; link.style.pointerEvents = ''; }
+
+  if (error) {
+    _showLoginError('❌ ' + (error.message || 'Erreur lors de l\'envoi. Réessayez.'));
+    return;
+  }
+
+  notifications.success('Email envoyé !', `Un lien de réinitialisation a été envoyé à ${email}. Vérifiez votre boîte mail.`);
+}
+
+/* ── Social login — disabled (no real OAuth configured yet) ─ */
+function socialLogin(provider) {
+  // Social buttons are visually disabled (opacity + pointer-events:none in HTML)
+  // This function is kept as a stub for future Phase 3 implementation
+  console.info('[FixeoAuth] Social login not yet configured for provider:', provider);
+}
+
+/* ── Auth error translation helper ──────────────────────── */
+function _translateAuthError(msg) {
+  if (!msg) return 'Erreur d\'authentification.';
+  const m = msg.toLowerCase();
+  if (m.includes('invalid login') || m.includes('invalid credentials'))
+    return 'Email ou mot de passe incorrect.';
+  if (m.includes('email not confirmed') || m.includes('email_not_confirmed'))
+    return 'Votre email n\'est pas encore confirmé. Vérifiez votre boîte mail.';
+  if (m.includes('user already registered') || m.includes('already registered'))
+    return 'Cet email est déjà utilisé. Connectez-vous ou réinitialisez votre mot de passe.';
+  if (m.includes('password') && m.includes('short'))
+    return 'Mot de passe trop court (minimum 6 caractères).';
+  if (m.includes('rate limit') || m.includes('too many'))
+    return 'Trop de tentatives. Attendez quelques minutes.';
+  if (m.includes('network') || m.includes('fetch'))
+    return 'Erreur réseau. Vérifiez votre connexion.';
+  // Return original if no known pattern
+  return msg;
 }
 
 // ── Toggle password visibility ────────────────────────────
