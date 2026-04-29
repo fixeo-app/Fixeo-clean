@@ -181,7 +181,7 @@
 
     /* Availability badge */
     var availHtml = isAvail
-      ? '<span class="pvc-avail-badge pvc-avail-badge--on">🟢 Disponible</span>'
+      ? '<span class="pvc-avail-badge pvc-avail-badge--on">🟢 Disponible maintenant</span>'
       : isToday
         ? '<span class="pvc-avail-badge pvc-avail-badge--today">🟡 Aujourd\'hui</span>'
         : '<span class="pvc-avail-badge pvc-avail-badge--off">Sur RDV</span>';
@@ -273,14 +273,18 @@ if (!isVer && !isClaimed) {
       /* ── Info chips ── */
       (chips ? '<div class="pvc-info-bar">' + chips + '</div>' : '') +
 
+      /* Step 1 — FOMO line after chips */
+      '<div class="pvc-fomo">\ud83d\udd25 23 r\u00e9servations aujourd\'hui dans votre zone</div>' +
+
+      /* Step 3 — Trust line after stats */
+      '<div class="pvc-trust-line">\u2714\ufe0f Artisan v\u00e9rifi\u00e9 \u2022 Paiement apr\u00e8s intervention</div>' +
+
       /* ── Footer: price + CTAs ── */
-      /* Change 1+3: big price first, label below, market hint as .pvc-price-hint */
-      /* Change 4: button text "Réserver maintenant", full-width scale hover */
+      /* Step 2: clean vertical structure — label, amount, hint all in column */
       '<div class="pvc-footer">' +
         '<div class="pvc-price-block">' +
-          '<span class="pvc-price-amount">' + pricing.from + '<span class="price-currency">MAD</span></span>' +
-          '<span class="pvc-price-from">\u00c0 partir de</span>' +
-          /* Change 3 — market hint: tight, secondary, aligned with price block */
+          '<div class="pvc-price-from">\u00c0 partir de</div>' +
+          '<div class="pvc-price-amount">' + pricing.from + '<span class="price-currency">MAD</span></div>' +
           (function() {
             var _cat = (a.category || a.service || '').toLowerCase().trim();
             var _info = MAR_PRICES[_cat];
@@ -292,9 +296,13 @@ if (!isVer && !isClaimed) {
             '</div>';
           })() +
         '</div>' +
-        '<div class="pvc-cta-row">' +
-          '<button class="pvc-btn-reserve-v2 fhp-btn-reserve" type="button">R\u00e9server en 1 clic</button>' +
-          '<button class="pvc-btn-profile-v2 fhp-btn-profile" type="button">Profil</button>' +
+        '<div class="pvc-cta-col">' +
+          '<div class="pvc-cta-row">' +
+            '<button class="pvc-btn-reserve-v2 fhp-btn-reserve" type="button">R\u00e9server en 1 clic</button>' +
+            '<button class="pvc-btn-profile-v2 fhp-btn-profile" type="button">Profil</button>' +
+          '</div>' +
+          /* Step 6 — under-CTA trust text */
+          '<div class="pvc-under-cta">Sans engagement \u2014 paiement apr\u00e8s intervention</div>' +
         '</div>' +
       '</div>' +
     '</article>';

@@ -1241,7 +1241,7 @@ function buildOtherArtisanCard(a) {
   const verificationPending = safeBadges.includes('pending') || a.verificationStatus === 'pending';
   const isNewArtisan = safeBadges.includes('new') || a.onboardingStatus === 'nouveau';
   const primaryBadge = isVerified ? '<span class="badge verified" style="box-shadow:0 8px 24px rgba(46, 204, 113, .12)">✔ Vérifié</span>' : '';
-  const availableText = a.availabilityLabel || 'Disponible';
+  const availableText = a.availabilityLabel || 'Disponible maintenant';
   const secondaryBadge = isAvailable ? `<span class="badge available" style="box-shadow:0 8px 24px rgba(32, 201, 151, .16);font-weight:800">🟢 ${availableText}</span>` : '';
   const newBadge = isNewArtisan ? '<span class="badge new">✨ Nouveau</span>' : '';
   const topBadge = smartSortMeta.top_artisan ? '<span class="badge" style="background:rgba(124,58,237,.16);color:#a855f7;border:1px solid rgba(167,139,250,.42);box-shadow:0 8px 24px rgba(124,58,237,.14)">Top artisan</span>' : '';
@@ -1282,16 +1282,26 @@ function buildOtherArtisanCard(a) {
         <span style="margin-left:auto;color:rgba(255,255,255,.5);font-size:.78rem">⚡ ${responseLabel}</span>
       </div>
 
-      <!-- Change 6: no duplicate category chip; Change 7: 12px margin -->
-      <div class="artisan-skills" style="margin-bottom:12px;gap:.5rem">
+      <!-- Step 1 — FOMO line -->
+      <div class="pvc-fomo">🔥 23 réservations aujourd'hui dans votre zone</div>
+
+      <!-- Step 3 — Trust line -->
+      <div class="pvc-trust-line">✔️ Artisan vérifié • Paiement après intervention</div>
+
+      <!-- skills chips -->
+      <div class="artisan-skills" style="margin-bottom:12px;gap:.5rem;margin-top:8px">
         <span style="display:inline-flex;align-items:center;padding:.42rem .78rem;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.08);color:#fff;font-size:.8rem;font-weight:700">${service}</span>
         ${deduped.map(skill => `<span style="display:inline-flex;align-items:center;padding:.42rem .78rem;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.78);font-size:.78rem">${skill}</span>`).join('')}
       </div>
 
-      <!-- Change 5: dead text removed; Change 4+7: Réserver maintenant, full-width, 16px top -->
-      <div class="result-actions card-buttons" style="display:flex;align-items:center;justify-content:flex-end;gap:.75rem;flex-wrap:wrap;margin-top:16px">
-        <button class="btn-primary btn-other-profile ssb2-btn-profile secondary-btn" onclick="event.stopPropagation();if(window.FixeoPublicProfileLinks){window.FixeoPublicProfileLinks.openBySourceId(${serializedArtisanId}, event);}else if(window.openArtisanModal){openArtisanModal(${serializedArtisanId});}" title="Voir le profil complet" style="font-weight:700;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);box-shadow:none;min-width:100px">Voir profil</button>
-        <button class="btn-primary fhp-btn-reserve-list" onclick="event.stopPropagation();if(window.FixeoReservation){window.FixeoReservation.open(${serializedArtisanId});}else if(window.openReservationModal){window.openReservationModal(${serializedArtisanId});}" title="Réserver cet artisan" style="min-width:170px;font-weight:800;background:linear-gradient(135deg,#E1306C,#833AB4);border:none;box-shadow:0 8px 22px rgba(225,48,108,.22);transition:transform .18s ease,box-shadow .18s ease" onmouseenter="this.style.transform='scale(1.02) translateY(-1px)';this.style.boxShadow='0 12px 28px rgba(225,48,108,.32)'" onmouseleave="this.style.transform='';this.style.boxShadow='0 8px 22px rgba(225,48,108,.22)'">R\u00e9server en 1 clic</button>
+      <!-- CTAs + Step 6 under-CTA trust -->
+      <div class="result-actions card-buttons" style="display:flex;flex-direction:column;align-items:stretch;gap:.5rem;margin-top:16px">
+        <div style="display:flex;align-items:center;justify-content:flex-end;gap:.75rem;flex-wrap:wrap">
+          <button class="btn-primary btn-other-profile ssb2-btn-profile secondary-btn" onclick="event.stopPropagation();if(window.FixeoPublicProfileLinks){window.FixeoPublicProfileLinks.openBySourceId(${serializedArtisanId}, event);}else if(window.openArtisanModal){openArtisanModal(${serializedArtisanId});}" title="Voir le profil complet" style="font-weight:700;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);box-shadow:none;min-width:100px">Voir profil</button>
+          <button class="btn-primary fhp-btn-reserve-list" onclick="event.stopPropagation();if(window.FixeoReservation){window.FixeoReservation.open(${serializedArtisanId});}else if(window.openReservationModal){window.openReservationModal(${serializedArtisanId});}" title="Réserver cet artisan" style="min-width:170px;font-weight:800;background:linear-gradient(135deg,#E1306C,#833AB4);border:none;box-shadow:0 8px 22px rgba(225,48,108,.22);transition:all .2s ease" onmouseenter="this.style.transform='scale(1.02) translateY(-1px)';this.style.boxShadow='0 12px 28px rgba(225,48,108,.32)'" onmouseleave="this.style.transform='';this.style.boxShadow='0 8px 22px rgba(225,48,108,.22)'">R\u00e9server en 1 clic</button>
+        </div>
+        <!-- Step 6 — under-CTA trust text -->
+        <div class="pvc-under-cta" style="text-align:right">Sans engagement — paiement après intervention</div>
       </div>
     </article>`;
 }

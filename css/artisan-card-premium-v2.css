@@ -381,7 +381,8 @@
   font-weight: 800;
   cursor: pointer;
   white-space: nowrap;
-  transition: transform .18s ease, box-shadow .18s ease;
+  /* Step 4 — micro-animation: all .2s ease (superset of previous transform+box-shadow) */
+  transition: all .2s ease;
   letter-spacing: .02em;
   box-shadow: 0 6px 18px rgba(225,48,108,.22);
 }
@@ -496,3 +497,49 @@
   animation-delay: calc(var(--anim-delay, 0) * 80ms);
 }
 .pvc-card.fhp-visible { opacity: 1; }
+
+/* ─── MICRO-CONVERSION ADDITIONS (fhp10) ──────────────────────── */
+
+/* Step 1 — FOMO line */
+.pvc-fomo {
+  font-size: .68rem;
+  opacity: .75;
+  margin-top: 6px;
+  color: #ffb86b;
+  letter-spacing: .2px;
+  padding: 0 18px;
+}
+
+/* Step 2 — price-block: explicit column for spec compliance */
+.pvc-price-block {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* Step 3 — trust line */
+.pvc-trust-line {
+  font-size: .65rem;
+  opacity: .6;
+  margin-top: 4px;
+  padding: 0 18px;
+  color: rgba(255,255,255,.7);
+}
+
+/* Step 6 — under-CTA micro-copy */
+.pvc-under-cta {
+  font-size: .6rem;
+  opacity: .5;
+  margin-top: 4px;
+  text-align: center;
+  color: rgba(255,255,255,.6);
+}
+
+/* Step 6 — pvc-cta-col wraps row + under-cta */
+.pvc-cta-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0;
+  flex-shrink: 0;
+}
