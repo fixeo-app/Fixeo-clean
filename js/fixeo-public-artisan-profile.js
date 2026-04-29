@@ -799,6 +799,35 @@
   }
 
   function init() {
+    /* ── Step B: early prefetch render ─────────────────────────────────────────
+       If sessionStorage has a prefetch written by the homepage card click,
+       render immediately before the full data-resolution chain runs.
+       The normal init() flow continues after this block — Supabase async,
+       collectArtisanSeeds, fallback chain — all unchanged.
+    ─────────────────────────────────────────────────────────────────────────── */
+    try {
+      var _earlyRoot = document.getElementById('public-artisan-root');
+      var _earlyParams = new URLSearchParams(window.location.search || '');
+      var _earlyId = String(_earlyParams.get('id') || _earlyParams.get('artisan') || '').trim();
+      if (_earlyRoot && _earlyId && typeof sessionStorage !== 'undefined') {
+        var _earlyRaw = sessionStorage.getItem('fixeo_profile_prefetch_' + _earlyId);
+        if (_earlyRaw) {
+          var _earlyArtisan = JSON.parse(_earlyRaw);
+          if (_earlyArtisan && typeof _earlyArtisan === 'object') {
+            var _earlyRequests = (function () {
+              try { return JSON.parse(localStorage.getItem('fixeo_client_requests') || '[]') || []; } catch (e) { return []; }
+            })();
+            var _earlyData = computeProfileDataFromArtisanLike(_earlyArtisan, _earlyRequests, _earlyId);
+            if (_earlyData) {
+              renderProfile(_earlyRoot, _earlyData);
+              /* Task 3 — mark body so CSS can apply optional fade-in */
+              document.body.classList.add('prefetch-render');
+            }
+          }
+        }
+      }
+    } catch (e) {}
+
     // If FixeoSupabaseLoader available, try async lookup first (Supabase → FixeoDB fallback)
     var urlId = (new URLSearchParams(window.location.search)).get('id') ||
                 (new URLSearchParams(window.location.search)).get('artisan');
