@@ -13,28 +13,108 @@
   const MODAL_ID = 'fixeo-reservation-modal';
   const BACKDROP_ID = 'fixeo-reservation-backdrop';
 
+  /* SERVICE_MAP v2 — user-intent structure (Urgence→Dépannage→Installation→Entretien→Projet)
+   * Added: serrurerie, carrelage, toiture
+   * Removed: misplaced entries (Carrelage from bricolage, Vitrerie from nettoyage,
+   *           Carrelage & joints from maconnerie, DIY/IKEA branding)
+   * Original keys preserved — getServices() fallback unchanged */
   const SERVICE_MAP = {
-    plomberie:    ['Fuite d\'eau — réparation', 'Installation sanitaire', 'Chauffe-eau', 'Salle de bain complète', 'Urgence 24/7'],
-    electricite:  ['Tableau électrique', 'Prises / Interrupteurs', 'Éclairage LED', 'Domotique', 'Urgence électrique'],
-    peinture:     ['Peinture intérieure', 'Peinture extérieure', 'Décoration murale', 'Ravalement de façade'],
-    nettoyage:    ['Nettoyage complet domicile', 'Fin de chantier', 'Entretien régulier', 'Désinfection', 'Vitrerie'],
-    jardinage:    ['Tonte de pelouse', 'Taille arbres & haies', 'Aménagement paysager', 'Arrosage automatique'],
-    demenagement: ['Déménagement complet', 'Emballage seul', 'Transport mobilier', 'Montage / démontage meubles'],
-    bricolage:    ['Montage meubles IKEA', 'Fixations murales', 'Petits travaux DIY', 'Carrelage'],
-    climatisation:['Installation climatiseur', 'Entretien annuel', 'Réparation panne', 'Pompe à chaleur'],
-    menuiserie:   ['Portes & Fenêtres', 'Meubles sur mesure', 'Parquet / plancher', 'Terrasse bois'],
-    maconnerie:   ['Carrelage & joints', 'Enduit & plâtre', 'Construction muret', 'Rénovation façade'],
+    plomberie:    ['Fuite d\'eau \u2014 r\u00e9paration', 'Urgence plomberie', 'Installation sanitaire', 'R\u00e9paration chauffe-eau', 'Salle de bain compl\u00e8te'],
+    electricite:  ['Urgence \u00e9lectrique', 'Panne \u00e9lectrique', 'Installation \u00e9lectrique', 'Prise ou interrupteur en panne', 'Mise \u00e0 niveau installation'],
+    peinture:     ['Peinture int\u00e9rieure', 'Peinture ext\u00e9rieure', 'D\u00e9coration murale', 'Ravalement de fa\u00e7ade'],
+    nettoyage:    ['Nettoyage domicile complet', 'Nettoyage apr\u00e8s travaux', 'Entretien r\u00e9gulier', 'D\u00e9sinfection', 'Nettoyage vitres'],
+    jardinage:    ['Entretien jardin', 'Tonte pelouse', 'Taille haies', 'Am\u00e9nagement ext\u00e9rieur', 'D\u00e9broussaillage'],
+    demenagement: ['D\u00e9m\u00e9nagement complet', 'Transport mobilier', 'Emballage \u0026 protection', 'Montage / d\u00e9montage meubles'],
+    bricolage:    ['Montage meubles', 'Petites r\u00e9parations', 'Fixations murales', 'Travaux carrelage l\u00e9ger', 'Intervention rapide bricolage'],
+    climatisation:['Panne climatiseur', 'Urgence climatisation', 'Installation climatiseur', 'Entretien climatiseur', 'R\u00e9paration climatiseur'],
+    menuiserie:   ['Porte ou fen\u00eatre bloqu\u00e9e', 'R\u00e9paration menuiserie', 'Fabrication sur mesure', 'Am\u00e9nagement bois', 'Intervention rapide menuiserie'],
+    maconnerie:   ['R\u00e9paration mur', 'Travaux pl\u00e2trerie', 'Construction petit ouvrage', 'R\u00e9novation fa\u00e7ade'],
+    serrurerie:   ['Porte bloqu\u00e9e', 'Ouverture de porte', 'Changement serrure', 'S\u00e9curisation porte', 'Urgence serrurerie'],
+    carrelage:    ['Pose carrelage', 'R\u00e9paration joints', 'Carrelage salle de bain', 'R\u00e9novation carrelage'],
+    toiture:      ['Fuite toiture', '\u00c9tanch\u00e9it\u00e9 terrasse', 'R\u00e9paration tuiles', 'Nettoyage toiture'],
   };
 
   /* ── Per-service price ranges (plomberie phase 1 — display only)
      Key = exact service string from SERVICE_MAP.
      Used in dropdown labels + dynamic hint. Does NOT affect serviceTotal or payment. */
+  /* SERVICE_PRICING v2 — complete coverage for all SERVICE_MAP entries
+   * Source: fixeo-pricing-marocain.js category ranges, split per service type
+   * Used by: _onServiceChange (display only), renderStep2 _svcBase (Step 2 total)
+   * DO NOT change these values without updating fixeo-pricing-marocain.js accordingly */
   const SERVICE_PRICING = {
-    "Fuite d'eau \u2014 r\u00e9paration": { from: 150, to: 300 },
-    'Installation sanitaire':            { from: 250, to: 600 },
-    'Chauffe-eau':                       { from: 400, to: 900 },
-    'Salle de bain compl\u00e8te':       { from: 1500, to: 5000 },
-    'Urgence 24/7':                      { from: 300, to: 600 },
+    /* ── plomberie ── */
+    'Fuite d\'eau \u2014 r\u00e9paration':     { from: 150, to: 300 },
+    'Urgence plomberie':                       { from: 200, to: 400 },
+    'Installation sanitaire':                  { from: 250, to: 600 },
+    'R\u00e9paration chauffe-eau':             { from: 200, to: 500 },
+    'Salle de bain compl\u00e8te':             { from: 1500, to: 5000 },
+    /* ── electricite ── */
+    'Urgence \u00e9lectrique':                 { from: 200, to: 500 },
+    'Panne \u00e9lectrique':                   { from: 150, to: 350 },
+    'Installation \u00e9lectrique':            { from: 200, to: 600 },
+    'Prise ou interrupteur en panne':          { from: 100, to: 200 },
+    'Mise \u00e0 niveau installation':         { from: 400, to: 1200 },
+    /* ── climatisation ── */
+    'Panne climatiseur':                       { from: 200, to: 500 },
+    'Urgence climatisation':                   { from: 300, to: 600 },
+    'Installation climatiseur':                { from: 500, to: 900 },
+    'Entretien climatiseur':                   { from: 200, to: 350 },
+    'R\u00e9paration climatiseur':             { from: 250, to: 600 },
+    /* ── menuiserie ── */
+    'Porte ou fen\u00eatre bloqu\u00e9e':      { from: 150, to: 350 },
+    'R\u00e9paration menuiserie':              { from: 200, to: 500 },
+    'Fabrication sur mesure':                  { from: 800, to: 2500 },
+    'Am\u00e9nagement bois':                   { from: 500, to: 1500 },
+    'Intervention rapide menuiserie':          { from: 150, to: 400 },
+    /* ── serrurerie ── */
+    'Porte bloqu\u00e9e':                      { from: 150, to: 350 },
+    'Ouverture de porte':                      { from: 150, to: 300 },
+    'Changement serrure':                      { from: 200, to: 450 },
+    'S\u00e9curisation porte':                 { from: 300, to: 700 },
+    'Urgence serrurerie':                      { from: 200, to: 450 },
+    /* ── nettoyage ── */
+    'Nettoyage domicile complet':              { from: 250, to: 600 },
+    'Nettoyage apr\u00e8s travaux':            { from: 300, to: 700 },
+    'Entretien r\u00e9gulier':                 { from: 150, to: 350 },
+    'D\u00e9sinfection':                       { from: 300, to: 600 },
+    'Nettoyage vitres':                        { from: 150, to: 400 },
+    /* ── jardinage ── */
+    'Entretien jardin':                        { from: 150, to: 400 },
+    'Tonte pelouse':                           { from: 100, to: 250 },
+    'Taille haies':                            { from: 150, to: 350 },
+    'Am\u00e9nagement ext\u00e9rieur':         { from: 500, to: 2000 },
+    'D\u00e9broussaillage':                    { from: 150, to: 400 },
+    /* ── bricolage ── */
+    'Montage meubles':                         { from: 100, to: 250 },
+    'Petites r\u00e9parations':                { from: 100, to: 300 },
+    'Fixations murales':                       { from: 80,  to: 200 },
+    'Travaux carrelage l\u00e9ger':            { from: 150, to: 400 },
+    'Intervention rapide bricolage':           { from: 100, to: 300 },
+    /* ── maconnerie ── */
+    'R\u00e9paration mur':                     { from: 150, to: 400 },
+    'Travaux pl\u00e2trerie':                  { from: 200, to: 600 },
+    'Construction petit ouvrage':              { from: 500, to: 2000 },
+    'R\u00e9novation fa\u00e7ade':             { from: 800, to: 3000 },
+    /* ── carrelage ── */
+    'Pose carrelage':                          { from: 200, to: 600 },
+    'R\u00e9paration joints':                  { from: 100, to: 250 },
+    'Carrelage salle de bain':                 { from: 500, to: 1500 },
+    'R\u00e9novation carrelage':               { from: 400, to: 1200 },
+    /* ── toiture ── */
+    'Fuite toiture':                           { from: 300, to: 700 },
+    '\u00c9tanch\u00e9it\u00e9 terrasse':      { from: 500, to: 1500 },
+    'R\u00e9paration tuiles':                  { from: 250, to: 600 },
+    'Nettoyage toiture':                       { from: 300, to: 700 },
+    /* ── peinture ── */
+    'Peinture int\u00e9rieure':                { from: 800, to: 1500 },
+    'Peinture ext\u00e9rieure':               { from: 1000, to: 3000 },
+    'D\u00e9coration murale':                  { from: 500, to: 1500 },
+    'Ravalement de fa\u00e7ade':              { from: 2000, to: 8000 },
+    /* ── demenagement ── */
+    'D\u00e9m\u00e9nagement complet':          { from: 800, to: 2500 },
+    'Transport mobilier':                      { from: 400, to: 1200 },
+    'Emballage \u0026 protection':            { from: 300, to: 800 },
+    'Montage / d\u00e9montage meubles':       { from: 200, to: 600 },
   };
 
   const TIME_SLOTS = [
