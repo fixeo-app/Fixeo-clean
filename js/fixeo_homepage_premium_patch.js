@@ -96,34 +96,41 @@
 
   
   /* ─── Moroccan pricing by service ──────────────────────────── */
+  /* MAR_PRICES v2 — aligned with fixeo-pricing-marocain.js canonical values.
+   * to/range values kept proportional to from increases.
+   * Used only for display: card price badge + hint line. Never feeds payment. */
   var MAR_PRICES = {
-    plomberie:    { from: 80,  to: 300,  label: '80–300 MAD' },
+    plomberie:    { from: 150, to: 400,  label: '150–400 MAD' },
     electricite:  { from: 100, to: 400,  label: '100–400 MAD' },
     menuiserie:   { from: 150, to: 600,  label: '150–600 MAD' },
-    peinture:     { from: 100, to: 500,  label: '100–500 MAD' },
-    nettoyage:    { from: 60,  to: 250,  label: '60–250 MAD' },
-    climatisation:{ from: 150, to: 600,  label: '150–600 MAD' },
+    peinture:     { from: 800, to: 2500, label: '800–2 500 MAD' },
+    nettoyage:    { from: 200, to: 600,  label: '200–600 MAD' },
+    climatisation:{ from: 200, to: 700,  label: '200–700 MAD' },
     maconnerie:   { from: 200, to: 800,  label: '200–800 MAD' },
-    carrelage:    { from: 120, to: 450,  label: '120–450 MAD' },
-    jardinage:    { from: 80,  to: 300,  label: '80–300 MAD' },
-    serrurerie:   { from: 60,  to: 250,  label: '60–250 MAD' },
-    demenagement: { from: 300, to: 1200, label: '300–1 200 MAD' },
-    bricolage:    { from: 80,  to: 350,  label: '80–350 MAD' },
-    etancheite:   { from: 200, to: 700,  label: '200–700 MAD' },
-    vitrerie:     { from: 100, to: 400,  label: '100–400 MAD' },
+    carrelage:    { from: 150, to: 500,  label: '150–500 MAD' },
+    jardinage:    { from: 150, to: 450,  label: '150–450 MAD' },
+    serrurerie:   { from: 150, to: 400,  label: '150–400 MAD' },
+    demenagement: { from: 500, to: 1500, label: '500–1 500 MAD' },
+    bricolage:    { from: 100, to: 350,  label: '100–350 MAD' },
+    toiture:      { from: 300, to: 900,  label: '300–900 MAD' },
+    etancheite:   { from: 250, to: 900,  label: '250–900 MAD' },
+    vitrerie:     { from: 200, to: 700,  label: '200–700 MAD' },
     soudure:      { from: 150, to: 500,  label: '150–500 MAD' },
-    informatique: { from: 80,  to: 300,  label: '80–300 MAD' }
+    informatique: { from: 100, to: 350,  label: '100–350 MAD' }
   };
 
   function _getPricing(a) {
     var cat  = (a.category || a.service || '').toLowerCase().trim();
     var info = MAR_PRICES[cat];
+    /* priceFrom > 100: real artisan-specific price set by admin or Supabase.
+     * priceFrom <= 100: main.js normalizer default (null → 100) — treat as absent,
+     * fall through to category-level MAR_PRICES so cards show market rate. */
     if (a.price_from || a.priceFrom) {
       var pf = parseInt(a.price_from || a.priceFrom, 10);
-      if (!isNaN(pf) && pf > 0) return { from: pf, label: 'À partir de ' + pf + ' MAD' };
+      if (!isNaN(pf) && pf > 100) return { from: pf, label: '\u00c0 partir de ' + pf + ' MAD' };
     }
-    if (info) return { from: info.from, label: 'À partir de ' + info.from + ' MAD', range: info.label };
-    return { from: 150, label: 'À partir de 150 MAD' };
+    if (info) return { from: info.from, label: '\u00c0 partir de ' + info.from + ' MAD', range: info.label };
+    return { from: 150, label: '\u00c0 partir de 150 MAD' };
   }
 
   function _responseTimeLabel(rt) {
