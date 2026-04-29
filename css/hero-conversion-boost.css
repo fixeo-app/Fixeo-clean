@@ -90,16 +90,25 @@
 
 @media (max-width: 768px) {
 
-  /* Pull search box above secondary CTA */
-  .hero-content > #hero-quick-search,
-  .hero-content > #hero-quick-search.qsm-inline-host,
-  .hero-content > .search-box {
+  /* ── ORDER MAP — using #home prefix to beat optimizer's (1,1,0) specificity ──
+     Optimizer final block sets:
+       #home search        → order:3
+       #home secondary     → order:4   ← this is what was winning
+       #home artisan       → order:5
+       hcb-fomo/trust      → order:0   ← floated to top (no rule = 0)
+     Our overrides below use #home to match specificity + load after = WIN
+  ─────────────────────────────────────────────────────────────────────────── */
+
+  /* Search: order 3 (same as optimizer — no change needed) */
+  #home #hero-quick-search,
+  #home #hero-quick-search.qsm-inline-host,
+  #home .hero-content > .search-box {
     order: 3 !important;
     margin-top: 0 !important;
   }
 
-  /* FOMO: visually attached to main CTA — negative pull closes the gap */
-  .hero-content > .hcb-fomo {
+  /* FOMO: order 5 — directly under search/CTA */
+  #home .hcb-fomo {
     order: 5 !important;
     margin-top: -2px !important;
     padding-top: 6px !important;
@@ -109,8 +118,8 @@
     font-size: 0.72rem !important;
   }
 
-  /* Trust block: compact single line, right after FOMO */
-  .hero-content > .hcb-trust-block {
+  /* Trust block: order 6 — right after FOMO */
+  #home .hcb-trust-block {
     order: 6 !important;
     margin-top: 6px !important;
     opacity: 0.85;
@@ -119,17 +128,12 @@
     font-size: 0.75rem !important;
   }
 
-  .hcb-trust-item {
+  #home .hcb-trust-item {
     font-size: 0.75rem !important;
   }
 
-  /* Secondary CTA alias — both class names map to order:7 */
-  .hero-content > .hcb-secondary-cta {
-    order: 7 !important;
-  }
-
-  /* Secondary CTA: pushed down, visually softer */
-  .hero-content > .marketplace-secondary-entry {
+  /* Secondary CTA: order 8 — after trust (beats optimizer's order:4) */
+  #home .marketplace-secondary-entry {
     order: 8 !important;
     margin-top: 10px !important;
     opacity: 0.88;
@@ -137,16 +141,16 @@
     transform-origin: center top;
   }
 
-  /* Artisan block: lowest, softest — not competing with client CTA */
-  .hero-content > .hcb-artisan-block,
-  .hero-content > .hero-artisan-entry {
+  /* Artisan block: order 9 — lowest, softest */
+  #home .hero-artisan-entry,
+  #home .hcb-artisan-block {
     order: 9 !important;
     opacity: 0.75 !important;
     margin-top: 14px !important;
   }
 
   /* Soften secondary CTA button vs main CTA */
-  .marketplace-secondary-entry .btn-secondary-marketplace {
+  #home .marketplace-secondary-entry .btn-secondary-marketplace {
     background: rgba(255, 255, 255, 0.06) !important;
     border: 1px solid rgba(255, 255, 255, 0.18) !important;
     box-shadow: none !important;
@@ -158,21 +162,21 @@
   }
 
   /* Micro trust below secondary CTA */
-  .hcb-micro-trust {
+  #home .hcb-micro-trust {
     font-size: 0.65rem !important;
     opacity: 0.55 !important;
     margin-top: 4px;
   }
 
   /* Reduce quick-filter visual weight so CTA dominates */
-  .qsm-service-suggestions,
-  .qsm-quick-filters-row,
-  .qsm-filters-row {
+  #home .qsm-service-suggestions,
+  #home .qsm-quick-filters-row,
+  #home .qsm-filters-row {
     opacity: 0.75;
   }
 
   /* Ensure CTA button never overflows */
-  .qsm-btn-search {
+  #home .qsm-btn-search {
     min-width: 0 !important;
     width: 100% !important;
     white-space: normal !important;
@@ -236,19 +240,19 @@
 @media (max-width: 768px) {
 
   /* CTA: ultra-soft glow pulse — 3.2s, no transform, no scale */
-  .qsm-btn-search {
+  #home .qsm-btn-search {
     animation: hcb-cta-pulse 3.2s ease-in-out infinite !important;
   }
   /* Keep hover/focus override clean — stops pulse, shows full glow */
-  .qsm-btn-search:hover,
-  .qsm-btn-search:focus-visible {
+  #home .qsm-btn-search:hover,
+  #home .qsm-btn-search:focus-visible {
     animation: none !important;
     box-shadow: 0 0 38px rgba(255, 120, 200, 0.42),
                 0 6px 22px rgba(225, 48, 108, 0.32) !important;
   }
 
   /* FOMO: live breath — 3.6s, opacity only, 0.8s delay */
-  .hero-content > .hcb-fomo {
+  #home .hcb-fomo {
     animation: hcb-fomo-breathe 3.6s ease-in-out 0.8s infinite !important;
   }
 
@@ -257,10 +261,12 @@
 
 /* ── Respect user motion preference ──────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
+  #home .qsm-btn-search,
   .qsm-btn-search {
     animation: none !important;
   }
-  .hero-content > .hcb-fomo {
+  #home .hcb-fomo,
+  .hcb-fomo {
     animation: none !important;
     opacity: 0.9 !important;
   }
