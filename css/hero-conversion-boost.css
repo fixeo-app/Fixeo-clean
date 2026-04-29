@@ -83,8 +83,8 @@
    Our overrides:
      #hero-quick-search                  → order: 3 (pull search up)
      .marketplace-secondary-entry        → order: 8 (push secondary down)
-     .hcb-fomo                           → order: 5 (right after CTA)
-     .hcb-trust-block                    → order: 6
+     .hcb-fomo                           → order: 5 (DOM reordered to match — directly after search)
+     .hcb-trust-block                    → order: 6 (DOM reordered to match — after FOMO)
      .hcb-artisan-block                  → order: 9 (soften, push lower)
    ================================================================ */
 
