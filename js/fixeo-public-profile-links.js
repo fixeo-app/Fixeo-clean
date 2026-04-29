@@ -446,6 +446,15 @@
 
   function openBySourceId(sourceId, event) {
     var artisan = findArtisanInPool(sourceId) || { id: sourceId };
+    /* ── Fix A: prefetch artisan into sessionStorage before navigation ── */
+    try {
+      if (artisan && sourceId && typeof sessionStorage !== 'undefined') {
+        sessionStorage.setItem(
+          'fixeo_profile_prefetch_' + String(sourceId),
+          JSON.stringify(artisan)
+        );
+      }
+    } catch (e) {}
     return openProfile(artisan, event);
   }
 

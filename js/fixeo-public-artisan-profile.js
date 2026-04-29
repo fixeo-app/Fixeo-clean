@@ -271,6 +271,20 @@
 
   function collectArtisanSeeds() {
     var pool = [];
+    /* ── Fix A: sessionStorage prefetch — check before expensive localStorage parse ── */
+    try {
+      var _prefetchId = (function () {
+        var params = new URLSearchParams(window.location.search || '');
+        return String(params.get('id') || params.get('artisan') || '').trim();
+      })();
+      if (_prefetchId && typeof sessionStorage !== 'undefined') {
+        var _raw = sessionStorage.getItem('fixeo_profile_prefetch_' + _prefetchId);
+        if (_raw) {
+          var _prefetchedArtisan = JSON.parse(_raw);
+          if (_prefetchedArtisan) pool.unshift(_prefetchedArtisan);
+        }
+      }
+    } catch (e) {}
     // Primary: FixeoDB (which is synced from Supabase via fixeo-supabase-loader.js)
     if (window.FixeoDB) {
       pool = pool.concat(window.FixeoDB.getAllArtisans());
