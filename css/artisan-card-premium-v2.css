@@ -262,6 +262,7 @@
   padding: 8px 18px 0;
   flex-wrap: wrap;
 }
+/* Change 2 — badge hierarchy: secondary badges (real/claim) dimmed */
 .pvc-badge-v2 {
   font-size: .65rem;
   font-weight: 600;
@@ -279,49 +280,84 @@
   color: #ffa502;
   border: 1px solid rgba(255,165,2,.2);
 }
+/* "Profil réel" — secondary info, visually muted */
+.pvc-badge-v2--real {
+  background: transparent;
+  color: rgba(255,255,255,.35);
+  border: 1px solid rgba(255,255,255,.1);
+  font-weight: 500;
+  opacity: .7;
+}
+/* "Profil à revendiquer" / "Revendiqué" — tertiary, near-invisible */
 .pvc-badge-v2--claim {
-  background: rgba(131,58,180,.1);
-  color: #b374e8;
-  border: 1px solid rgba(131,58,180,.2);
+  background: transparent;
+  color: rgba(255,255,255,.28);
+  border: 1px solid rgba(255,255,255,.08);
+  font-weight: 400;
+  opacity: .5;
 }
 
-/* ─── PRICING FOOTER ─────────────────────────────────────────── */
+/* ─── PRICING FOOTER — Change 1 + 7: price dominance + rhythm ── */
 .pvc-footer {
   margin-top: auto;
-  padding: 14px 18px 16px;
+  padding: 16px 18px 18px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
+  gap: 12px;
   border-top: 1px solid rgba(255,255,255,.06);
 }
 
 .pvc-price-block {
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 2px;
 }
+/* Change 1 — label BELOW number, small, muted */
 .pvc-price-from {
-  font-size: .62rem;
-  color: rgba(255,255,255,.35);
+  font-size: .68rem;
+  color: rgba(255,255,255,.45);
   font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: .06em;
+  order: 2;            /* renders after the amount */
+  letter-spacing: .01em;
+  text-transform: none; /* remove uppercase spam */
 }
+/* Change 1 — BIG dominant price: 22–24px bold */
 .pvc-price-amount {
-  font-size: 1.05rem;
+  font-size: 1.45rem;
   font-weight: 800;
   color: #fff;
-  line-height: 1.1;
+  line-height: 1;
+  order: 1;
 }
 .pvc-price-amount .price-currency {
-  font-size: .7rem;
-  font-weight: 600;
-  color: rgba(255,255,255,.55);
-  margin-left: 2px;
+  font-size: .78rem;
+  font-weight: 700;
+  color: rgba(255,255,255,.65);
+  margin-left: 3px;
+  vertical-align: super;
+  line-height: 0;
+}
+/* Change 3 — market hint block under price */
+.pvc-price-hint {
+  order: 3;
+  margin-top: 4px;
+  line-height: 1.4;
+}
+.pvc-price-hint-market {
+  font-size: .72rem;
+  color: rgba(255,255,255,.38);
+}
+.pvc-price-hint-rec {
+  font-size: .73rem;
+  color: rgba(255,255,255,.52);
+}
+.pvc-price-hint-rec strong {
+  color: rgba(255,255,255,.72);
+  font-weight: 700;
 }
 
-/* ─── CTA BUTTONS ────────────────────────────────────────────── */
+/* ─── CTA BUTTONS — Change 4: full-width + scale hover ──────── */
 .pvc-cta-row {
   display: flex;
   gap: 7px;
@@ -329,21 +365,25 @@
 }
 
 .pvc-btn-reserve-v2 {
-  padding: 8px 14px;
-  border-radius: 10px;
+  padding: 10px 18px;
+  border-radius: 12px;
   border: none;
   background: linear-gradient(135deg, #E1306C, #833AB4);
   color: #fff;
-  font-size: .78rem;
-  font-weight: 700;
+  font-size: .82rem;
+  font-weight: 800;
   cursor: pointer;
   white-space: nowrap;
-  transition: opacity .15s, transform .15s;
-  letter-spacing: .01em;
+  transition: transform .18s ease, box-shadow .18s ease;
+  letter-spacing: .02em;
+  box-shadow: 0 6px 18px rgba(225,48,108,.22);
 }
 .pvc-btn-reserve-v2:hover {
-  opacity: .9;
-  transform: scale(1.03);
+  transform: scale(1.02) translateY(-1px);
+  box-shadow: 0 10px 26px rgba(225,48,108,.32);
+}
+.pvc-btn-reserve-v2:active {
+  transform: scale(.99);
 }
 
 .pvc-btn-profile-v2 {

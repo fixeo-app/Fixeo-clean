@@ -1249,39 +1249,49 @@ function buildOtherArtisanCard(a) {
   const responseLabel = responseTime > 0 ? `Réponse : ${responseTime} min` : 'Réponse rapide';
   const serializedArtisanId = JSON.stringify(String(a.id));
 
+  /* Change 6: skip skill chip if it duplicates the category label */
+  const categoryNorm = (a.category || '').toLowerCase().trim();
+  const deduped = visibleSkills.filter(sk => sk && sk.toLowerCase().trim() !== categoryNorm).slice(0, 3);
+
   return `
     <article class="artisan-card other-card discover-harmonized-card result-card" data-id="${a.id}" style="position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.12);background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.035));box-shadow:0 18px 44px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.05);transition:transform .22s ease, box-shadow .22s ease, border-color .22s ease" onmouseenter="this.style.transform='translateY(-4px)';this.style.boxShadow='0 24px 54px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.07)';this.style.borderColor='rgba(225,48,108,.28)'" onmouseleave="this.style.transform='translateY(0)';this.style.boxShadow='0 18px 44px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.05)';this.style.borderColor='rgba(255,255,255,.12)'">
-      <div class="result-top" style="align-items:flex-start;gap:1rem;margin-bottom:.95rem">
+      <!-- Change 7: tighter vertical rhythm — gap 8px header, 10px meta, 12px price, 16px CTA -->
+      <div class="result-top" style="align-items:flex-start;gap:1rem;margin-bottom:8px">
         <img class="artisan-avatar artisan-avatar-image" src="${imageSrc}" alt="${a.name}" loading="lazy" onerror="this.onerror=null;this.src='default-avatar.jpg';" style="border:2px solid rgba(255,255,255,.14);box-shadow:0 10px 28px rgba(0,0,0,.18)"/>
         <div class="artisan-main artisan-identity artisan-card-heading" style="min-width:0;flex:1">
-          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:.75rem;flex-wrap:wrap;margin-bottom:.35rem">
+          <!-- Change 1: big price block — dominant number, label below, aligned left -->
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:.75rem;flex-wrap:wrap;margin-bottom:8px">
             <div style="min-width:0;flex:1">
               <h3 class="artisan-name" style="margin:0;font-size:1.18rem;line-height:1.15;font-weight:800;letter-spacing:-.01em">${a.name}</h3>
-              <p class="artisan-service" style="margin:.28rem 0 0;color:rgba(255,255,255,.78);font-size:.92rem"><span style="color:#fff;font-weight:700">${profession}</span> • ${a.city || 'Maroc'}</p>
+              <p class="artisan-service" style="margin:8px 0 0;color:rgba(255,255,255,.78);font-size:.92rem"><span style="color:#fff;font-weight:700">${profession}</span> • ${a.city || 'Maroc'}</p>
             </div>
-            <div class="artisan-price-block fixeo-price-badge-wrap" style="margin-left:auto">
-              ${window._fpb ? _fpb(a) : '<span class="fpb-from">\u00c0 partir de '+(a.priceFrom||150)+' MAD</span>'}
+            <!-- Change 1: price dominance — big number first, label second -->
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:1px;margin-left:auto;text-align:right">
+              <span style="font-size:1.45rem;font-weight:800;color:#fff;line-height:1">${window._fpb ? '' : (a.priceFrom && a.priceFrom > 100 ? a.priceFrom : 150)}<span style="font-size:.75rem;font-weight:700;color:rgba(255,255,255,.6);margin-left:2px;vertical-align:super;line-height:0">${window._fpb ? '' : 'MAD'}</span></span>
+              ${window._fpb ? _fpb(a) : '<span style="font-size:.68rem;color:rgba(255,255,255,.42);font-weight:500">\u00c0 partir de</span>'}
             </div>
           </div>
-          <div class="artisan-badges badges" style="gap:.45rem;margin-top:.45rem">${primaryBadge}${topBadge}${newBadge}${secondaryBadge}${pendingBadge}</div>
+          <div class="artisan-badges badges" style="gap:.45rem;margin-top:8px">${primaryBadge}${topBadge}${newBadge}${secondaryBadge}${pendingBadge}</div>
         </div>
       </div>
 
-      <div class="artisan-rating-row artisan-rating" style="display:flex;align-items:center;gap:.55rem;flex-wrap:wrap;margin-bottom:.9rem;padding:.8rem .95rem;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07)">
+      <!-- Change 7: 10px margin meta row -->
+      <div class="artisan-rating-row artisan-rating" style="display:flex;align-items:center;gap:.55rem;flex-wrap:wrap;margin-bottom:10px;padding:.8rem .95rem;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07)">
         <span style="font-weight:800;color:#ffd166">⭐ ${rating.toFixed(1)}</span>
         <span style="color:rgba(255,255,255,.82);font-weight:700">(${reviews} avis)</span>
-        <span style="margin-left:auto;color:rgba(255,255,255,.62);font-size:.8rem">TrustScore ${Number(a.trustScore || a.trust_score || smartSortMeta.trust_score || 0)}/100</span>
+        <span style="margin-left:auto;color:rgba(255,255,255,.5);font-size:.78rem">⚡ ${responseLabel}</span>
       </div>
 
-      <div class="artisan-skills" style="margin-bottom:1rem;gap:.5rem">
+      <!-- Change 6: no duplicate category chip; Change 7: 12px margin -->
+      <div class="artisan-skills" style="margin-bottom:12px;gap:.5rem">
         <span style="display:inline-flex;align-items:center;padding:.42rem .78rem;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.08);color:#fff;font-size:.8rem;font-weight:700">${service}</span>
-        ${visibleSkills.map(skill => `<span style="display:inline-flex;align-items:center;padding:.42rem .78rem;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.78);font-size:.78rem">${skill}</span>`).join('')}
+        ${deduped.map(skill => `<span style="display:inline-flex;align-items:center;padding:.42rem .78rem;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.78);font-size:.78rem">${skill}</span>`).join('')}
       </div>
 
-      <div class="result-actions card-buttons" style="display:flex;align-items:center;justify-content:space-between;gap:.9rem;flex-wrap:wrap;margin-top:auto">
-        <div style="color:rgba(255,255,255,.62);font-size:.8rem;font-weight:700">Profil détaillé, avis et réservation depuis la fiche artisan</div>
-        <button class="btn-primary btn-other-profile ssb2-btn-profile secondary-btn" onclick="event.stopPropagation();if(window.FixeoPublicProfileLinks){window.FixeoPublicProfileLinks.openBySourceId(${serializedArtisanId}, event);}else if(window.openArtisanModal)
-      {openArtisanModal(${serializedArtisanId});}" title="Voir le profil complet" style="min-width:170px;font-weight:800;box-shadow:0 12px 30px rgba(225,48,108,.18)">Voir profil</button>
+      <!-- Change 5: dead text removed; Change 4+7: Réserver maintenant, full-width, 16px top -->
+      <div class="result-actions card-buttons" style="display:flex;align-items:center;justify-content:flex-end;gap:.75rem;flex-wrap:wrap;margin-top:16px">
+        <button class="btn-primary btn-other-profile ssb2-btn-profile secondary-btn" onclick="event.stopPropagation();if(window.FixeoPublicProfileLinks){window.FixeoPublicProfileLinks.openBySourceId(${serializedArtisanId}, event);}else if(window.openArtisanModal){openArtisanModal(${serializedArtisanId});}" title="Voir le profil complet" style="font-weight:700;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);box-shadow:none;min-width:100px">Voir profil</button>
+        <button class="btn-primary fhp-btn-reserve-list" onclick="event.stopPropagation();if(window.FixeoReservation){window.FixeoReservation.open(${serializedArtisanId});}else if(window.openReservationModal){window.openReservationModal(${serializedArtisanId});}" title="Réserver cet artisan" style="min-width:170px;font-weight:800;background:linear-gradient(135deg,#E1306C,#833AB4);border:none;box-shadow:0 8px 22px rgba(225,48,108,.22);transition:transform .18s ease,box-shadow .18s ease" onmouseenter="this.style.transform='scale(1.02) translateY(-1px)';this.style.boxShadow='0 12px 28px rgba(225,48,108,.32)'" onmouseleave="this.style.transform='';this.style.boxShadow='0 8px 22px rgba(225,48,108,.22)'">R\u00e9server maintenant</button>
       </div>
     </article>`;
 }

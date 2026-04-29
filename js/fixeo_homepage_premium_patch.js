@@ -274,30 +274,26 @@ if (!isVer && !isClaimed) {
       (chips ? '<div class="pvc-info-bar">' + chips + '</div>' : '') +
 
       /* ── Footer: price + CTAs ── */
+      /* Change 1+3: big price first, label below, market hint as .pvc-price-hint */
+      /* Change 4: button text "Réserver maintenant", full-width scale hover */
       '<div class="pvc-footer">' +
         '<div class="pvc-price-block">' +
-          '<span class="pvc-price-from">À partir de</span>' +
           '<span class="pvc-price-amount">' + pricing.from + '<span class="price-currency">MAD</span></span>' +
+          '<span class="pvc-price-from">\u00c0 partir de</span>' +
+          /* Change 3 — market hint: tight, secondary, aligned with price block */
+          (function() {
+            var _cat = (a.category || a.service || '').toLowerCase().trim();
+            var _info = MAR_PRICES[_cat];
+            if (!_info || !_info.to) return '';
+            var _rec = Math.round((_info.from + _info.to) / 2);
+            return '<div class="pvc-price-hint">' +
+              '<div class="pvc-price-hint-market">March\u00e9\u00a0: ' + _info.label + '</div>' +
+              '<div class="pvc-price-hint-rec">\ud83d\udca1 Prix conseill\u00e9 Fixeo\u00a0: <strong>~' + _rec + '\u00a0MAD</strong></div>' +
+            '</div>';
+          })() +
         '</div>' +
-        /* ── Fixeo pricing hint ── */
-        (function() {
-          if (!pricing.range) return '';
-          var _cat = (a.category || a.service || '').toLowerCase().trim();
-          var _info = MAR_PRICES[_cat];
-          if (!_info || !_info.to) return '';
-          var _rec = Math.round((_info.from + _info.to) / 2);
-          return '<div style="margin-top:4px;line-height:1.3">' +
-            '<div style="font-size:.75rem;color:rgba(255,255,255,.35)">' +
-              'March\u00e9\u00a0: ' + pricing.range +
-            '</div>' +
-            '<div style="font-size:.78rem;color:rgba(255,255,255,.55)">' +
-              '\ud83d\udca1 Prix recommand\u00e9 Fixeo\u00a0: ' +
-              '<strong style="color:rgba(255,255,255,.85)">~' + _rec + '\u00a0MAD</strong>' +
-            '</div>' +
-          '</div>';
-        })() +
         '<div class="pvc-cta-row">' +
-          '<button class="pvc-btn-reserve-v2 fhp-btn-reserve" type="button">📅 Réserver</button>' +
+          '<button class="pvc-btn-reserve-v2 fhp-btn-reserve" type="button">R\u00e9server maintenant</button>' +
           '<button class="pvc-btn-profile-v2 fhp-btn-profile" type="button">Profil</button>' +
         '</div>' +
       '</div>' +
