@@ -293,7 +293,7 @@ if (!isVer && !isClaimed) {
           })() +
         '</div>' +
         '<div class="pvc-cta-row">' +
-          '<button class="pvc-btn-reserve-v2 fhp-btn-reserve" type="button">R\u00e9server maintenant</button>' +
+          '<button class="pvc-btn-reserve-v2 fhp-btn-reserve" type="button">R\u00e9server en 1 clic</button>' +
           '<button class="pvc-btn-profile-v2 fhp-btn-profile" type="button">Profil</button>' +
         '</div>' +
       '</div>' +

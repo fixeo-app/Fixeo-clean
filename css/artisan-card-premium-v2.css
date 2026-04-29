@@ -280,21 +280,22 @@
   color: #ffa502;
   border: 1px solid rgba(255,165,2,.2);
 }
-/* "Profil réel" — secondary info, visually muted */
+/* Task 4 — secondary badges: visible but not dominant */
 .pvc-badge-v2--real {
   background: transparent;
-  color: rgba(255,255,255,.35);
-  border: 1px solid rgba(255,255,255,.1);
-  font-weight: 500;
-  opacity: .7;
+  color: rgba(255,255,255,.38);
+  border: 1px solid rgba(255,255,255,.09);
+  font-size: .62rem;
+  font-weight: 400;
+  opacity: .42;
 }
-/* "Profil à revendiquer" / "Revendiqué" — tertiary, near-invisible */
 .pvc-badge-v2--claim {
   background: transparent;
-  color: rgba(255,255,255,.28);
-  border: 1px solid rgba(255,255,255,.08);
+  color: rgba(255,255,255,.32);
+  border: 1px solid rgba(255,255,255,.07);
+  font-size: .62rem;
   font-weight: 400;
-  opacity: .5;
+  opacity: .38;
 }
 
 /* ─── PRICING FOOTER — Change 1 + 7: price dominance + rhythm ── */
@@ -313,22 +314,23 @@
   flex-direction: column;
   gap: 2px;
 }
-/* Change 1 — label BELOW number, small, muted */
+/* Task 1 — label ABOVE number (order:1), price dominant below (order:2) */
 .pvc-price-from {
-  font-size: .68rem;
-  color: rgba(255,255,255,.45);
-  font-weight: 500;
-  order: 2;            /* renders after the amount */
+  font-size: .69rem;      /* ~11px */
+  color: rgba(255,255,255,.55);
+  font-weight: 400;
+  order: 1;               /* renders first — above the amount */
   letter-spacing: .01em;
-  text-transform: none; /* remove uppercase spam */
+  text-transform: none;
+  line-height: 1.2;
 }
-/* Change 1 — BIG dominant price: 22–24px bold */
+/* Task 1 — BIG dominant price: 22–24px bold */
 .pvc-price-amount {
-  font-size: 1.45rem;
+  font-size: 1.45rem;     /* ~23px */
   font-weight: 800;
   color: #fff;
-  line-height: 1;
-  order: 1;
+  line-height: 1.1;
+  order: 2;               /* renders second — below the label */
 }
 .pvc-price-amount .price-currency {
   font-size: .78rem;
@@ -338,23 +340,28 @@
   vertical-align: super;
   line-height: 0;
 }
-/* Change 3 — market hint block under price */
+/* Task 2 — market/recommended block under price: vertical, tight, secondary */
 .pvc-price-hint {
   order: 3;
-  margin-top: 4px;
-  line-height: 1.4;
+  margin-top: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  line-height: 1.35;
 }
 .pvc-price-hint-market {
-  font-size: .72rem;
-  color: rgba(255,255,255,.38);
+  font-size: .73rem;    /* ~12px */
+  color: rgba(255,255,255,.42);
+  font-weight: 400;
 }
 .pvc-price-hint-rec {
-  font-size: .73rem;
-  color: rgba(255,255,255,.52);
+  font-size: .73rem;    /* ~12px */
+  color: rgba(255,255,255,.55);
+  font-weight: 400;
 }
 .pvc-price-hint-rec strong {
   color: rgba(255,255,255,.72);
-  font-weight: 700;
+  font-weight: 600;
 }
 
 /* ─── CTA BUTTONS — Change 4: full-width + scale hover ──────── */
