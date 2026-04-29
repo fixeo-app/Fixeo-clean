@@ -1,0 +1,82 @@
+/* ================================================================
+   hero-conversion-boost.css — Steps 9+10 (visual hierarchy + mobile)
+   CSS ONLY. Zero layout changes. Zero specificity conflicts.
+   ================================================================ */
+
+/* ── Step 9a: Headline weight + tracking ──────────────────────── */
+.hero-section .hero-title,
+.hero-section h1.hero-title {
+  font-weight: 800;
+  letter-spacing: -0.3px;
+}
+
+/* ── Step 9c: CTA glow ────────────────────────────────────────── */
+.qsm-btn-search {
+  box-shadow: 0 0 25px rgba(255, 120, 200, 0.25),
+              0 4px 16px rgba(225, 48, 108, 0.2) !important;
+}
+.qsm-btn-search:hover,
+.qsm-btn-search:focus-visible {
+  box-shadow: 0 0 35px rgba(255, 120, 200, 0.38),
+              0 6px 20px rgba(225, 48, 108, 0.3) !important;
+}
+
+/* ── Step 5: trust block ──────────────────────────────────────── */
+.hcb-trust-block {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+  margin-top: 10px;
+  margin-bottom: 2px;
+}
+
+.hcb-trust-item {
+  font-size: 0.75rem;
+  opacity: 0.8;
+  color: rgba(255, 255, 255, 0.85);
+  white-space: nowrap;
+}
+
+/* ── Step 6: FOMO line ────────────────────────────────────────── */
+.hcb-fomo {
+  font-size: 0.75rem;
+  color: rgba(255, 120, 120, 0.9);
+  margin-top: 6px;
+  margin-bottom: 4px;
+  text-shadow: 0 0 12px rgba(255, 80, 80, 0.18);
+}
+
+/* ── Step 8: micro trust below secondary CTA ─────────────────── */
+.hcb-micro-trust {
+  font-size: 0.7rem !important;
+  opacity: 0.6 !important;
+  text-align: center;
+  margin-top: 6px;
+}
+
+/* ── Step 10: mobile optimization ────────────────────────────── */
+@media (max-width: 600px) {
+  .hcb-trust-block {
+    gap: 8px 10px;
+  }
+
+  .hcb-trust-item {
+    font-size: 0.72rem;
+  }
+
+  .hcb-fomo {
+    font-size: 0.72rem;
+  }
+
+  .hcb-micro-trust {
+    font-size: 0.68rem !important;
+  }
+
+  /* Ensure CTA never overflows on small screens */
+  .qsm-btn-search {
+    min-width: 0;
+    width: 100%;
+    white-space: normal;
+    text-align: center;
+  }
+}

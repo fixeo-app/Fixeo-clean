@@ -7,17 +7,17 @@
   <script defer src="js/fixeo-supabase-loader.js?v=sl1"></script>
   <script defer src="js/fixeo-auth-supabase.js?v=auth2"></script>
 
-  <link rel="icon" type="image/png" href="img/favicon.png" sizes="32x32"> 
+  <link rel="icon" type="image/png" href="img/favicon.png" sizes="32x32">
   <link rel="apple-touch-icon" href="img/favicon.png">
-<!-- FIXEO v50a38b9 — 2026-04-13 -->
+<!-- FIXEO v50a38b9 - 2026-04-13 -->
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<meta name="description" content="Fixeo — Trouvez des artisans vérifiés près de chez vous. Plombiers, électriciens, peintres et plus encore."/>
+<meta name="description" content="Fixeo - Trouvez des artisans vérifiés près de chez vous. Plombiers, électriciens, peintres et plus encore."/>
 <meta name="keywords" content="artisan, plombier, électricien, peintre, fixeo, maroc, service à domicile"/>
-<meta property="og:title" content="Fixeo — Artisans à portée de main"/>
+<meta property="og:title" content="Fixeo - Artisans à portée de main"/>
 <meta property="og:description" content="Trouvez des artisans vérifiés, notés et disponibles. Intervention rapide."/>
 <meta name="theme-color" content="#0D0D1A"/>
-<title>Fixeo — Artisans à portée de main</title>
+<title>Fixeo - Artisans à portée de main</title>
 
 <!-- Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
@@ -45,7 +45,7 @@
 <link rel="stylesheet" href="css/header-unified.css?v=50a38b9"/>
 <link rel="stylesheet" href="css/auth-global.css?v=50a38b9"/>
 <link rel="stylesheet" href="css/slot-lock.css?v=50a38b9"/>
-<!-- ★ V13 HOMEPAGE REVAMP — Highest priority, loaded last -->
+<!-- ★ V13 HOMEPAGE REVAMP - Highest priority, loaded last -->
 <link rel="stylesheet" href="css/artisan-cards-v13.css?v=50a38b9"/>
 <link rel="stylesheet" href="css/homepage-v13.css?v=50a38b9"/>
 <link rel="stylesheet" href="css/marketplace-premium-patch.css?v=50a38b9"/>
@@ -57,6 +57,7 @@
 <link rel="stylesheet" href="css/fixeo-header-global.css?v=50a38b9"/>
 <link rel="stylesheet" href="css/hero-premium-upgrade.css?v=50a38b9"/>
 <link rel="stylesheet" href="css/hero-ux-fixes.css?v=50a38b9"/>
+  <link rel="stylesheet" href="css/hero-conversion-boost.css?v=hcb1"/>
 <link rel="stylesheet" href="css/how-it-works-premium.css?v=50a38b9"/>
 <link rel="stylesheet" href="css/services-premium.css?v=svcv7"/>
   <link rel="stylesheet" href="css/why-fixeo.css?v=svcv5"/>
@@ -108,7 +109,7 @@
 }
 
 /* ═══════════════════════════════════════════════════
-   CONVERSION BOOST v22 — STYLES
+   CONVERSION BOOST v22 - STYLES
 ═══════════════════════════════════════════════════ */
 
 /* ── Badges hot / fast ── */
@@ -543,7 +544,7 @@ button:hover {
 }
 
 /* ==============================================================
-   FIXEO HERO CRO — clarté, confiance, action (sans casser le design)
+   FIXEO HERO CRO - clarté, confiance, action (sans casser le design)
 ============================================================== */
 .hero-content {
   max-width: 860px !important;
@@ -698,7 +699,7 @@ button:hover {
 
 
 /* ==============================================================
-   HERO SIMPLIFICATION 2026 — amélioration progressive
+   HERO SIMPLIFICATION 2026 - amélioration progressive
 ============================================================== */
 .hero-section,
 .hero.hero-section,
@@ -934,7 +935,7 @@ section#home.hero.hero-section {
 }
 
 /* ══════════════════════════════════════════════════════════
-   MOBILE HEADER / MENU OVERLAY — LOCAL FIX ONLY
+   MOBILE HEADER / MENU OVERLAY - LOCAL FIX ONLY
    Scope: index mobile only
 ══════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
@@ -1297,7 +1298,7 @@ section#home.hero.hero-section {
 }
 
 /* ══════════════════════════════════════════════════════════
-   MOBILE HEADER LINE REBALANCE — LOCAL ONLY
+   MOBILE HEADER LINE REBALANCE - LOCAL ONLY
    Scope: horizontal header composition only
 ══════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
@@ -1472,7 +1473,7 @@ section#home.hero.hero-section {
 }
 
 /* ══════════════════════════════════════════════════════════
-   MOBILE HEADER LINE — PREMIUM VISUAL PATCH ONLY
+   MOBILE HEADER LINE - PREMIUM VISUAL PATCH ONLY
    Scope: mobile header row only
 ══════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
@@ -1758,7 +1759,7 @@ section#home.hero.hero-section {
     width: 100% !important;
     max-width: 100% !important;
   }
-  /* Premium vedette grid inside artisans-section — ID specificity beats all !important class rules */
+  /* Premium vedette grid inside artisans-section - ID specificity beats all !important class rules */
   #fixeo-homepage-vedette-grid {
     display: grid !important;
     grid-template-columns: repeat(2, 1fr) !important;
@@ -1852,7 +1853,7 @@ section#home.hero.hero-section {
     transform: translateY(0);
   }
 
-  /* ── Pointer-events & z-index fix — ensure clicks reach buttons ── */
+  /* ── Pointer-events & z-index fix - ensure clicks reach buttons ── */
   #fixeo-homepage-vedette-grid {
     position: relative !important;
     z-index: 1 !important;
@@ -1886,23 +1887,23 @@ section#home.hero.hero-section {
   }
 </style>
 
-<!-- ★ ANTI-FOUC SHIELD v3 — EXHAUSTIVE. Loaded last in <head>.
+<!-- ★ ANTI-FOUC SHIELD v3 - EXHAUSTIVE. Loaded last in <head>.
      Prevents ALL flashes of old/legacy/unstyled content before JS + CSS settle.
      Strategy: every visible section starts invisible (opacity:0) at parse-time.
      body.fixeo-sections-ready (added by JS) reveals them with smooth fade-in.
      body.fixeo-search-mode bypasses hiding for results chrome.
-     No external CSS dependency — this works before any .css file loads.
+     No external CSS dependency - this works before any .css file loads.
 -->
 <style id="fixeo-anti-fouc">
   /* ══════════════════════════════════════════════════════════════
-     ANTI-FOUC v4 — DEFINITIVE
+     ANTI-FOUC v4 - DEFINITIVE
      Only hide what MUST be hidden. No opacity:0 on layout sections
-     (opacity:0 causes invisible layout gaps). 
-     Inline script right after <body> adds fixeo-sections-ready 
-     synchronously — zero delay, zero gap.
+     (opacity:0 causes invisible layout gaps).
+     Inline script right after <body> adds fixeo-sections-ready
+     synchronously - zero delay, zero gap.
   ══════════════════════════════════════════════════════════════ */
 
-  /* A. RESULTS CHROME — never visible on homepage */
+  /* A. RESULTS CHROME - never visible on homepage */
   html body #artisans-section .results-header,
   html body #artisans-section .results-filters,
   html body #artisans-section .results-toolbar,
@@ -1923,7 +1924,7 @@ section#home.hero.hero-section {
     display: revert !important;
   }
 
-  /* B. LEGACY MOBILE NAV drawer — display:none at parse time */
+  /* B. LEGACY MOBILE NAV drawer - display:none at parse time */
   html body .mobile-nav:not(.open),
   html body .mobile-nav-backdrop {
     display: none !important;
@@ -1961,22 +1962,22 @@ section#home.hero.hero-section {
     opacity: 1 !important;
   }
 
-  /* D. CHIPS — opacity:0 only (no layout shift) until JS stagger */
+  /* D. CHIPS - opacity:0 only (no layout shift) until JS stagger */
   #services .service-chip:not(.svc-visible):not(.v12-fade-in) {
     opacity: 0 !important;
   }
 
-  /* E. HEADER FLASH SHIELD — hide old Urgent button in .nav-actions at ALL
+  /* E. HEADER FLASH SHIELD - hide old Urgent button in .nav-actions at ALL
      viewports before fixeo-header-global.js mount() tags it .fixeo-gh-original-node.
      body.fixeo-gh-enabled is set at parse time (body class), so this rule
      applies immediately at first paint on desktop AND mobile.
-     Selector is scoped to .nav-actions > .btn-express — does NOT affect
+     Selector is scoped to .nav-actions > .btn-express - does NOT affect
      the floating FAB (#fixeo-urgent-fab) which is a separate element. */
   html body.fixeo-gh-enabled .nav-actions > .btn-express {
     display: none !important;
   }
 
-  /* F. LEGACY SECTION PRE-HIDE — permanently hides duplicate/legacy blocks
+  /* F. LEGACY SECTION PRE-HIDE - permanently hides duplicate/legacy blocks
      that overlap with current premium sections and must never appear.
      .trust-section: duplicate of #why-fixeo-section content; stays in DOM
        as a layout anchor for moveHowItWorksAfterTrust() but renders nothing.
@@ -1992,19 +1993,19 @@ section#home.hero.hero-section {
   <link rel="stylesheet" href="css/services-uber-premium.css?v=sup4">
   <link rel="stylesheet" href="css/testimonials-cta-premium.css?v=tcp1">
   <link rel="stylesheet" href="css/header-logo-premium.css?v=hlp5">
-  <!-- ══ LOGO OVERRIDE — image-only, no emoji, no text ══ -->
+  <!-- ══ LOGO OVERRIDE - image-only, no emoji, no text ══ -->
   <style id="fixeo-logo-override">
     /* Kill legacy logo-icon and logo-text */
     .navbar-brand .logo-icon, .logo-wrap .logo-icon, .fixeo-gh-brand .logo-icon
       { display:none !important; width:0 !important; height:0 !important; min-width:0 !important; flex:0 !important; }
     .navbar-brand .logo-text, .logo-wrap .logo-text, .fixeo-gh-brand .logo-text
       { display:none !important; width:0 !important; height:0 !important; }
-    /* Brand containers — no clipping */
+    /* Brand containers - no clipping */
     .navbar-brand, .logo-wrap
       { max-width:220px !important; overflow:visible !important; gap:0 !important; background:transparent !important; }
     .fixeo-gh-brand
       { max-width:180px !important; overflow:visible !important; gap:0 !important; background:transparent !important; }
-    /* Logo image — clean, no hacks */
+    /* Logo image - clean, no hacks */
     img.fixeo-logo-img {
       display:block !important;
       height:32px !important;
@@ -2082,7 +2083,7 @@ section#home.hero.hero-section {
 <script>
 (function(){
   var b = document.documentElement;
-  // Mark sections-ready instantly — no waiting for DOMContentLoaded
+  // Mark sections-ready instantly - no waiting for DOMContentLoaded
   document.addEventListener('DOMContentLoaded', function() {
     document.body.classList.add('fixeo-sections-ready');
   }, { once: true, capture: true });
@@ -2160,12 +2161,12 @@ section#home.hero.hero-section {
 <a href="#main-content" class="skip-link">Aller au contenu principal</a>
 
 <!-- ═══════════════════════════════════════════════════════════
-     NAVBAR V13 — STICKY + DEMANDE URGENTE
+     NAVBAR V13 - STICKY + DEMANDE URGENTE
 ════════════════════════════════════════════════════════════ -->
 <nav class="navbar" role="navigation" aria-label="Navigation principale">
 
   <!-- Logo -->
-  <a href="index.html" class="navbar-brand logo-wrap" aria-label="Fixeo — Accueil">
+  <a href="index.html" class="navbar-brand logo-wrap" aria-label="Fixeo - Accueil">
     <img src="img/logo.png" alt="Fixeo" class="fixeo-logo-img" height="38" loading="eager" onerror="this.onerror=null;this.alt='Fixeo';this.style.display='none';var t=document.createElement('span');t.className='fixeo-logo-text';t.textContent='Fixeo';this.parentNode.appendChild(t);">
   </a>
 
@@ -2217,7 +2218,7 @@ section#home.hero.hero-section {
 
   <!-- Right actions -->
   <div class="nav-actions">
-    <!-- Demande urgente — STICKY visible -->
+    <!-- Demande urgente - STICKY visible -->
     <button class="btn btn-express btn-sm"
             type="button"
             onclick="window.FixeoClientRequest ? FixeoClientRequest.openExpress(this) : (window.FixeoReservation ? FixeoReservation.openExpress() : openModal('express-modal'))"
@@ -2358,25 +2359,38 @@ section#home.hero.hero-section {
   <!-- Hero content -->
   <div class="hero-content">
 
-    <!-- H1 -->
+    <!-- H1 — Step 1: upgraded headline -->
     <h1 class="hero-title">
-      <span data-i18n="hero_title_1">Trouvez un artisan fiable</span><br/>
-      <span data-i18n="hero_title_2">en moins de 2 minutes</span>
+      <span data-i18n="hero_title_1">Un artisan v&#233;rifi&#233;, disponible maintenant</span><br/>
+      <span data-i18n="hero_title_2">pr&#232;s de chez vous</span>
     </h1>
 
+    <!-- Step 2: upgraded subtext -->
     <p class="hero-subtitle" data-i18n="hero_subtitle">
-      Plombier, électricien, climatisation… des professionnels vérifiés près de chez vous. Réponse rapide, sans prise de tête.
+      +700 artisans v&#233;rifi&#233;s &#8226; Intervention rapide &#8226; Paiement apr&#232;s service
     </p>
 
     <!-- Recherche rapide inline dans le hero -->
     <div id="hero-quick-search" class="search-box" role="search" aria-label="Recherche rapide d'artisans"></div>
 
+    <!-- Step 5: trust block below CTA -->
+    <div class="hcb-trust-block" aria-label="Garanties Fixeo">
+      <span class="hcb-trust-item">&#x1F7E2; Disponible maintenant</span>
+      <span class="hcb-trust-item">&#11088; 4.8/5 clients satisfaits</span>
+      <span class="hcb-trust-item">&#x26A1; R&#233;ponse en moins de 15&nbsp;min</span>
+    </div>
+
+    <!-- Step 6: FOMO line -->
+    <div class="hcb-fomo" aria-live="polite">&#x1F525; 23 demandes en cours dans votre zone</div>
+
     <!-- Entrée secondaire marketplace — comparaison de devis -->
     <div class="marketplace-secondary-entry" aria-label="Comparer plusieurs offres d'artisans">
+      <!-- Step 7: upgraded secondary CTA text -->
       <button class="btn-secondary-marketplace" type="button" data-open-request-form="true" data-request-mode="marketplace">
-        📨 Publier ma demande
+        &#x1F4E8; Publier ma demande gratuitement
       </button>
-      <p class="marketplace-secondary-copy">Recevez plusieurs propositions d’artisans gratuitement</p>
+      <!-- Step 8: micro trust below secondary CTA -->
+      <p class="marketplace-secondary-copy hcb-micro-trust">Sans engagement &#8226; Gratuit &#8226; Paiement apr&#232;s intervention</p>
     </div>
 
     <div class="hero-artisan-entry" aria-label="Entrée onboarding artisan">
@@ -2497,7 +2511,7 @@ section#home.hero.hero-section {
     <div class="section-header">
       <span class="section-tag">SEO LOCAL</span>
       <h2 id="seo-local-links-title">Pages service + ville</h2>
-      <p>Accédez directement aux principales pages locales prêtes pour l’indexation.</p>
+      <p>Accédez directement aux principales pages locales prêtes pour l'indexation.</p>
     </div>
     <div class="category-chips" role="list" aria-label="Pages locales populaires">
       <a class="chip service-chip" role="listitem" href="/plombier-casablanca">Plombier à Casablanca</a>
@@ -2511,20 +2525,20 @@ section#home.hero.hero-section {
 <div class="section-divider" aria-hidden="true"></div>
 
 <!-- ══════════════════════════════════════════════════════════
-     3. ARTISANS VEDETTE V13 — Single section, 2×5 grid
+     3. ARTISANS VEDETTE V13 - Single section, 2×5 grid
 ══════════════════════════════════════════════════════════ -->
 <section class="section" id="secondary-search-section" aria-labelledby="vedette-title">
   <div class="container">
     <div class="section-header">
       <span class="section-tag">SÉLECTION PREMIUM</span>
       <h2 id="vedette-title">⭐ Artisans Vedettes</h2>
-      <p>Notre sélection de professionnels les mieux notés — disponibles et vérifiés</p>
+      <p>Notre sélection de professionnels les mieux notés - disponibles et vérifiés</p>
     </div>
 
     <!-- 2 lignes × 5 cartes -->
     <div class="ssb2-vedette-section" id="ssb2-vedette-section">
       <div class="ssb2-vedette-grid" id="ssb2-vedette-grid"
-           aria-label="Artisans vedettes — sélection premium"></div>
+           aria-label="Artisans vedettes - sélection premium"></div>
       <div class="ssb2-vedette-more-wrap">
         <button id="ssb2-vedette-more" class="ssb2-btn-more" style="display:none"
                 aria-label="Charger plus d'artisans vedettes">
@@ -2537,7 +2551,7 @@ section#home.hero.hero-section {
 
 <div class="section-divider" aria-hidden="true"></div>
 
-<!-- ★ CONVERSION BOOST v22 — Top Artisans du Moment -->
+<!-- ★ CONVERSION BOOST v22 - Top Artisans du Moment -->
 <section id="top-artisans" class="section section-sm top-artisan-section" aria-labelledby="top-artisans-title">
   <div class="container">
     <div class="section-header">
@@ -2645,7 +2659,7 @@ section#home.hero.hero-section {
           </div>
         </div>
 
-        <!-- Artisans grid (injected by main.js) — pagination by homepage-v13.js -->
+        <!-- Artisans grid (injected by main.js) - pagination by homepage-v13.js -->
         <div class="artisans-grid results-list" id="artisans-container"
              aria-live="polite" aria-label="Liste des artisans vérifiés"></div>
         <div id="loading-artisans" style="display:none" aria-live="polite">Chargement des artisans...</div>
@@ -2702,10 +2716,10 @@ section#home.hero.hero-section {
 </section>
 
 <!-- ══════════════════════════════════════════════════════════
-     6. RÉALISATIONS V13 — 3×3 grid, lazy-load
+     6. RÉALISATIONS V13 - 3×3 grid, lazy-load
 ══════════════════════════════════════════════════════════ -->
 <!-- ══════════════════════════════════════════════════════════
-     POURQUOI CHOISIR FIXEO — Trust section
+     POURQUOI CHOISIR FIXEO - Trust section
      ══════════════════════════════════════════════════════════ -->
 <section class="section" id="why-fixeo-section" aria-labelledby="why-fixeo-title">
   <div class="container">
@@ -2748,7 +2762,7 @@ section#home.hero.hero-section {
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
         </div>
         <h3>Partout au Maroc</h3>
-        <p>Artisans locaux disponibles dans 42 villes — Casablanca, Rabat, Marrakech et plus</p>
+        <p>Artisans locaux disponibles dans 42 villes - Casablanca, Rabat, Marrakech et plus</p>
       </div>
     </div>
   </div>
@@ -2758,7 +2772,7 @@ section#home.hero.hero-section {
 
 
 <!-- ══════════════════════════════════════════════════════════
-     8. TÉMOIGNAGES V13 — 6 avis, carousel mobile
+     8. TÉMOIGNAGES V13 - 6 avis, carousel mobile
 ══════════════════════════════════════════════════════════ -->
 <section class="section testimonial-section" aria-labelledby="testimonials-title">
   <div class="container">
@@ -2766,14 +2780,14 @@ section#home.hero.hero-section {
       <span class="section-tag">TÉMOIGNAGES</span>
       <div class="social-proof-bar">⭐ 4.9/5 sur +18 000 missions • 97% clients satisfaits • +5 000 artisans vérifiés</div>
       <h2 id="testimonials-title" class="testimonial-title">Ils nous font confiance partout au Maroc</h2>
-      <p>Plus de 18 000 missions réalisées — des clients satisfaits témoignent</p>
+      <p>Plus de 18 000 missions réalisées - des clients satisfaits témoignent</p>
     </div>
     <div class="testimonials-grid">
 
       <div class="testimonial-card">
         <div class="testimonial-stars">★★★★★</div>
         <div class="trust-badges">✔ Client vérifié</div>
-        <div class="testimonial-quote"><span class="quote-mark">“</span>Super service ! Karim est arrivé en moins d'une heure et a résolu ma fuite d'eau en 30 minutes. Je recommande vivement Fixeo à tous mes amis.</div>
+        <div class="testimonial-quote"><span class="quote-mark">"</span>Super service ! Karim est arrivé en moins d'une heure et a résolu ma fuite d'eau en 30 minutes. Je recommande vivement Fixeo à tous mes amis.</div>
         <div class="testimonial-author">
           <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#E1306C,#833AB4);display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;font-size:.88rem;color:#fff">YT</div>
           <div>
@@ -2786,7 +2800,7 @@ section#home.hero.hero-section {
       <div class="testimonial-card">
         <div class="testimonial-stars">★★★★★</div>
         <div class="trust-badges">✔ Client vérifié</div>
-        <div class="testimonial-quote"><span class="quote-mark">“</span>Fixeo a changé ma façon de chercher des artisans. L'application est intuitive, les profils sont détaillés et les artisans sont très professionnels.</div>
+        <div class="testimonial-quote"><span class="quote-mark">"</span>Fixeo a changé ma façon de chercher des artisans. L'application est intuitive, les profils sont détaillés et les artisans sont très professionnels.</div>
         <div class="testimonial-author">
           <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#405DE6,#833AB4);display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;font-size:.88rem;color:#fff">MA</div>
           <div>
@@ -2799,7 +2813,7 @@ section#home.hero.hero-section {
       <div class="testimonial-card">
         <div class="testimonial-stars">★★★★★</div>
         <div class="trust-badges">✔ Client vérifié</div>
-        <div class="testimonial-quote"><span class="quote-mark">“</span>J'ai pu comparer 3 artisans côte à côte et choisir la meilleure offre. Gain de temps incroyable ! Le système de badges donne confiance.</div>
+        <div class="testimonial-quote"><span class="quote-mark">"</span>J'ai pu comparer 3 artisans côte à côte et choisir la meilleure offre. Gain de temps incroyable ! Le système de badges donne confiance.</div>
         <div class="testimonial-author">
           <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#FCAF45,#F77737);display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;font-size:.88rem;color:#fff">LB</div>
           <div>
@@ -2812,7 +2826,7 @@ section#home.hero.hero-section {
       <div class="testimonial-card">
         <div class="testimonial-stars">★★★★★</div>
         <div class="trust-badges">✔ Client vérifié</div>
-        <div class="testimonial-quote"><span class="quote-mark">“</span>Rachid a rénové mes menuiseries en 2 jours chrono. Résultat parfait, je suis ravie ! Prix très compétitif et artisan très ponctuel.</div>
+        <div class="testimonial-quote"><span class="quote-mark">"</span>Rachid a rénové mes menuiseries en 2 jours chrono. Résultat parfait, je suis ravie ! Prix très compétitif et artisan très ponctuel.</div>
         <div class="testimonial-author">
           <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#20c997,#3742fa);display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;font-size:.88rem;color:#fff">HA</div>
           <div>
@@ -2825,7 +2839,7 @@ section#home.hero.hero-section {
       <div class="testimonial-card">
         <div class="testimonial-stars">★★★★★</div>
         <div class="trust-badges">✔ Client vérifié</div>
-        <div class="testimonial-quote"><span class="quote-mark">“</span>Samir a installé ma climatisation en quelques heures. Professionnel, rapide et très abordable. Je recommande sans hésitation !</div>
+        <div class="testimonial-quote"><span class="quote-mark">"</span>Samir a installé ma climatisation en quelques heures. Professionnel, rapide et très abordable. Je recommande sans hésitation !</div>
         <div class="testimonial-author">
           <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#833AB4,#E1306C);display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;font-size:.88rem;color:#fff">KF</div>
           <div>
@@ -2838,7 +2852,7 @@ section#home.hero.hero-section {
       <div class="testimonial-card">
         <div class="testimonial-stars">★★★★★</div>
         <div class="trust-badges">✔ Client vérifié</div>
-        <div class="testimonial-quote"><span class="quote-mark">“</span>Fatima et son équipe ont fait un travail de nettoyage exceptionnel après mes travaux. Elles sont venues le lendemain même, impeccable !</div>
+        <div class="testimonial-quote"><span class="quote-mark">"</span>Fatima et son équipe ont fait un travail de nettoyage exceptionnel après mes travaux. Elles sont venues le lendemain même, impeccable !</div>
         <div class="testimonial-author">
           <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#405DE6,#E1306C);display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;font-size:.88rem;color:#fff">NB</div>
           <div>
@@ -2856,12 +2870,12 @@ section#home.hero.hero-section {
 <div class="section-divider" aria-hidden="true"></div>
 
 <!-- ═══════════════════════════════════════════════════════════
-     9. CTA FINAL — Conversion
+     9. CTA FINAL - Conversion
 ════════════════════════════════════════════════════════════ -->
 <section class="section final-cta-section" aria-labelledby="final-cta-title">
   <div class="container">
     <div class="final-cta">
-      <p class="urgency">🔥 Intervention possible aujourd’hui</p>
+      <p class="urgency">🔥 Intervention possible aujourd'hui</p>
       <h2 id="final-cta-title">Trouvez votre artisan en moins de 2 minutes</h2>
       <p class="subtitle">
         Des artisans vérifiés, disponibles près de chez vous. Réponse rapide garantie.
@@ -2966,7 +2980,7 @@ section#home.hero.hero-section {
 </footer>
 
 <!-- ═══════════════════════════════════════════════════════════
-     MODALS — preserved from v11/v12 (backend intact)
+     MODALS - preserved from v11/v12 (backend intact)
 ════════════════════════════════════════════════════════════ -->
 <div class="modal" id="artisan-modal" role="dialog" aria-modal="true" aria-label="Détails artisan"></div>
 
@@ -2991,7 +3005,7 @@ section#home.hero.hero-section {
   </div>
 </div>
 
-<!-- Content modal (FAQ, CGU…) -->
+<!-- Content modal (FAQ, CGU...) -->
 <div class="modal" id="content-modal" role="dialog" aria-modal="true" aria-label="Contenu">
   <div class="modal-header">
     <h3 id="content-modal-title">Contenu</h3>
@@ -3000,12 +3014,12 @@ section#home.hero.hero-section {
   <div id="content-modal-body" class="legal-modal-content"></div>
 </div>
 
-<!-- Request modal — publication de demande client -->
+<!-- Request modal - publication de demande client -->
 <div class="modal request-modal" id="request-modal" role="dialog" aria-modal="true" aria-labelledby="request-modal-title" aria-describedby="request-modal-subtitle">
   <div class="modal-header request-modal-header">
     <div>
       <h3 id="request-modal-title">Décrivez votre besoin</h3>
-      <p id="request-modal-subtitle" class="request-modal-subtitle">Recevez des offres d’artisans vérifiés rapidement</p>
+      <p id="request-modal-subtitle" class="request-modal-subtitle">Recevez des offres d'artisans vérifiés rapidement</p>
     </div>
     <button class="modal-close" type="button" onclick="window.FixeoClientRequest && window.FixeoClientRequest.closeStandard ? window.FixeoClientRequest.closeStandard('request-modal') : closeModal('request-modal')" aria-label="Fermer">✕</button>
   </div>
@@ -3014,7 +3028,7 @@ section#home.hero.hero-section {
     <form id="request-form" class="request-form" novalidate>
       <div class="request-field">
         <label for="request-problem">Problème</label>
-        <input id="request-problem" name="problem" type="text" placeholder="Décrivez votre problème (ex: fuite d’eau, panne électricité...)" maxlength="120" required />
+        <input id="request-problem" name="problem" type="text" placeholder="Décrivez votre problème (ex: fuite d'eau, panne électricité...)" maxlength="120" required />
       </div>
 
       <div class="request-field">
@@ -3053,8 +3067,8 @@ section#home.hero.hero-section {
         <select id="request-budget" name="budget">
           <option value="">Sélectionner un budget</option>
           <option value="Moins de 100 MAD">Moins de 100 MAD</option>
-          <option value="100 – 300 MAD">100 – 300 MAD</option>
-          <option value="300 – 700 MAD">300 – 700 MAD</option>
+          <option value="100 - 300 MAD">100 - 300 MAD</option>
+          <option value="300 - 700 MAD">300 - 700 MAD</option>
           <option value="+700 MAD">+700 MAD</option>
         </select>
       </div>
@@ -3128,10 +3142,10 @@ section#home.hero.hero-section {
 <script src="js/artisan-onboarding-store.js?v=50a38b9"></script>
 <script src="js/fixeo-public-profile-links.js?v=50a38b9"></script>
 <script src="js/main.js?v=50a38b9"></script>
-<!-- fixeo_seed_patch.js DISABLED — seeds now in Supabase -->
+<!-- fixeo_seed_patch.js DISABLED - seeds now in Supabase -->
   <script src="js/fixeo-matching-engine.js?v=me1"></script>
   <script src="js/fixeo-pricing-marocain.js?v=pm1"></script>
-  <!-- fixeo-artisans-master-loader.js DISABLED — data now from Supabase (fixeo-supabase-loader.js) -->
+  <!-- fixeo-artisans-master-loader.js DISABLED - data now from Supabase (fixeo-supabase-loader.js) -->
 <script>
 /* ── Page-level utility functions (unchanged from v11/v12) ── */
 function submitComment() {
@@ -3153,7 +3167,7 @@ function openComparatorModal() {
       type: 'info',
       title: 'Sélectionnez au moins 2 artisans',
       message: 'Cliquez sur "+ Comparer" sur les cartes artisans.',
-      icon: 'ℹ️'
+      icon: 'i️'
     });
     return;
   }
@@ -3296,7 +3310,7 @@ function openContentModal(type) {
     press: ['Presse', '<p>Pour toute demande presse, contactez-nous à presse@fixeo.ma</p>'],
     blog: ['Blog Fixeo', '<p>Conseils, astuces et actualités du monde de l\\'artisanat au Maroc.</p>'],
     faq: ['FAQ', '<p><strong>Comment fonctionne la réservation ?</strong><br>Choisissez votre artisan, sélectionnez un créneau disponible, confirmez et payez en ligne.</p><p><strong>Quels sont les frais ?</strong><br>Une commission de 15% est appliquée sur chaque transaction.</p>'],
-    contact: ['Nous contacter', '<p>Email : support@fixeo.ma<br>Tel : +212 5XX XX XX XX<br>Disponible 7j/7, 8h–20h</p>'],
+    contact: ['Nous contacter', '<p>Email : support@fixeo.ma<br>Tel : +212 5XX XX XX XX<br>Disponible 7j/7, 8h-20h</p>'],
     cgu: ['Conditions Générales d\\'Utilisation', '<p>En utilisant Fixeo vous acceptez nos CGU. Pour plus d\\'informations, consultez notre document complet.</p>'],
     privacy: ['Politique de confidentialité', '<p>Vos données personnelles sont protégées et ne sont jamais vendues à des tiers.</p>']
   };
@@ -3327,7 +3341,7 @@ function openContentModal(type) {
 
 <script>
 /* ================================================================
-   FIXEO v22 — CONVERSION BOOST ENGINE
+   FIXEO v22 - CONVERSION BOOST ENGINE
    1. Artisan Recommandé (Hero)
    2. Section Top Artisans
    3. Filtres Rapides
@@ -3683,7 +3697,7 @@ window.addEventListener('load', function () {
 
 </div>
 </div>
- 
+
   <script>
 (function () {
   document.addEventListener('click', function (e) {
@@ -3729,7 +3743,7 @@ window.addEventListener('load', function () {
   }, true); // ⚠️ capture mode = PRIORITÉ MAX
 })();
 </script>
-<!-- Payment engines — loaded last: only needed at payment step inside reservation modal -->
+<!-- Payment engines - loaded last: only needed at payment step inside reservation modal -->
 <script src="js/payment.js?v=50a38b9"></script>
 <script src="js/cod-payment.js?v=50a38b9"></script>
 </body>
