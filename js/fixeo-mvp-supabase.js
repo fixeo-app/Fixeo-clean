@@ -29,7 +29,7 @@
   }
 
   function formatDate(value) {
-    if (!value) return '—';
+    if (!value) return '-';
     try {
       return new Date(value).toLocaleString('fr-FR', {
         day: '2-digit',
@@ -116,7 +116,7 @@
       var initial = btn ? btn.innerHTML : '';
       if (btn) {
         btn.disabled = true;
-        btn.innerHTML = '<span class="spinner" style="width:20px;height:20px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:8px"></span> Connexion…';
+        btn.innerHTML = '<span class="spinner" style="width:20px;height:20px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:8px"></span> Connexion...';
       }
 
       try {
@@ -175,7 +175,7 @@
       }
       if (!termsEl.checked) {
         if (errEl) {
-          errEl.textContent = '❌ Vous devez accepter les conditions d’utilisation.';
+          errEl.textContent = '❌ Vous devez accepter les conditions d'utilisation.';
           errEl.style.display = 'block';
         }
         return;
@@ -185,7 +185,7 @@
       var initial = btn ? btn.innerHTML : '';
       if (btn) {
         btn.disabled = true;
-        btn.innerHTML = '<span class="spinner" style="width:20px;height:20px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:8px"></span> Création…';
+        btn.innerHTML = '<span class="spinner" style="width:20px;height:20px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:8px"></span> Création...';
       }
 
       try {
@@ -199,7 +199,7 @@
         });
 
         if (result.needsEmailConfirmation) {
-          notify('success', 'Compte créé', 'Votre compte est créé. Vérifiez votre email pour confirmer l’inscription, puis connectez-vous.');
+          notify('success', 'Compte créé', 'Votre compte est créé. Vérifiez votre email pour confirmer l'inscription, puis connectez-vous.');
           if (window.switchTab) window.switchTab('login');
           return;
         }
@@ -245,7 +245,7 @@
         '</div>' +
         '<div class="form-group">' +
           '<label class="form-label">Description</label>' +
-          '<textarea class="form-control" name="description" rows="4" placeholder="Décrivez votre besoin…" required></textarea>' +
+          '<textarea class="form-control" name="description" rows="4" placeholder="Décrivez votre besoin..." required></textarea>' +
         '</div>' +
         '<button class="btn btn-primary w-100" type="submit">Envoyer la demande</button>' +
       '</form>';
@@ -266,7 +266,7 @@
     try { profile = await FixeoSupabase.getProfile(userId); } catch (_) {}
     if (profile) return profile;
 
-    // Profile missing — create it via patchProfile (upsert-like via update; if 0 rows, insert)
+    // Profile missing - create it via patchProfile (upsert-like via update; if 0 rows, insert)
     var fallbackName = (email && email.indexOf('@') > -1) ? email.split('@')[0] : 'Utilisateur';
     try {
       var sb = await FixeoSupabase.getClient();
@@ -291,10 +291,10 @@
 
   /**
    * Hydrate the settings form fields from a profile object.
-   * Works for both client and artisan — uses IDs we added to HTML.
+   * Works for both client and artisan - uses IDs we added to HTML.
    */
   function _hydrateSettingsForm(profile, email, dashType) {
-    // Always overwrite on load — user hasn't started typing yet.
+    // Always overwrite on load - user hasn't started typing yet.
     // Source of truth: Supabase profile + session email. Never localStorage.
     if (dashType === 'client') {
       var nameEl  = document.getElementById('settings-client-name');
@@ -347,7 +347,7 @@
     btn.addEventListener('click', async function () {
       var original = btn.innerHTML;
       btn.disabled = true;
-      btn.innerHTML = '<span style="display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:8px"></span> Sauvegarde…';
+      btn.innerHTML = '<span style="display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:8px"></span> Sauvegarde...';
 
       try {
         var payload = getPayload();
@@ -403,33 +403,93 @@
     } catch (_) {}
   }
 
+  // ── withTimeout ───────────────────────────────────────────────────────────
+  // Races a promise against a timeout. On timeout resolves with { data: [], error: 'timeout' }
+  // so callers always get a safe value — never hangs, never throws.
+  function withTimeout(promise, ms, label) {
+    var timer;
+    var sentinel = new Promise(function (resolve) {
+      timer = window.setTimeout(function () {
+        console.warn('[Fixeo Dashboard] ' + label + ' timeout after ' + ms + 'ms');
+        resolve({ data: [], error: 'timeout' });
+      }, ms);
+    });
+    return Promise.race([
+      promise.then(function (v) { window.clearTimeout(timer); return v; },
+                   function (e) { window.clearTimeout(timer); return { data: [], error: e }; }),
+      sentinel
+    ]);
+  }
+
+  // ── _renderEmptyStates ─────────────────────────────────────────────────────
+  // Immediately fills all sections with empty states so the dashboard is never blank.
+  // Called synchronously right after reveal — before any data fetch.
+  function _renderClientEmptyStates() {
+    var statsEl    = document.getElementById('client-stats-grid');
+    var requestsEl = document.getElementById('client-requests-list');
+    var repliesEl  = document.getElementById('client-replies-list');
+    var actionsEl  = document.getElementById('client-action-list');
+    var favoritesEl = document.getElementById('client-favorites-list');
+
+    if (statsEl && !statsEl.dataset.real) {
+      statsEl.innerHTML = [
+        { value: 0, label: 'Demandes créées' },
+        { value: 0, label: 'Devis reçus' },
+        { value: 0, label: 'Devis acceptés' },
+        { value: 0, label: 'Missions créées' }
+      ].map(function (s) {
+        return '<div class="client-stat-card"><span class="stat-number">' + s.value + '</span><span class="stat-label">' + s.label + '</span></div>';
+      }).join('');
+    }
+    if (requestsEl && !requestsEl.dataset.real) {
+      requestsEl.innerHTML = '<div class="request-card" style="text-align:center;padding:28px 20px"><p style="margin:0 0 12px;font-size:1.1rem">📋</p><p style="margin:0;font-weight:600">Aucune demande pour le moment</p><p style="margin:8px 0 16px;opacity:.65;font-size:.88rem">Créez votre première demande pour trouver un artisan qualifié.</p><button class="btn btn-primary" type="button" onclick="window.openNewRequestModal&&openNewRequestModal()">+ Créer une demande</button></div>';
+    }
+    if (repliesEl && !repliesEl.dataset.real) {
+      repliesEl.innerHTML = '<div class="reply-card" style="text-align:center;padding:28px 20px"><p style="margin:0 0 8px;font-size:1.1rem">💬</p><p style="margin:0;font-weight:600">Aucune réponse reçue</p><p style="margin:8px 0 0;opacity:.65;font-size:.88rem">Les artisans répondront à vos demandes ici.</p></div>';
+    }
+    if (actionsEl && !actionsEl.dataset.real) {
+      actionsEl.innerHTML = '<div class="client-action-item" style="opacity:.65;text-align:center;padding:20px 0"><p style="margin:0">Aucune action en attente. Tout est à jour ✅</p></div>';
+    }
+    if (favoritesEl && !favoritesEl.dataset.real) {
+      favoritesEl.innerHTML = '<div class="favorite-item" style="opacity:.65;text-align:center;padding:16px 0"><span>Aucun artisan favori pour le moment.</span></div>';
+    }
+  }
+
   async function renderClientDashboard() {
     if (currentPage() !== 'dashboard-client.html') return;
 
-    // ── Hard failsafe: reveal dashboard after 2500ms no matter what.
-    // Fires immediately at function entry so even a hung requireAuth won't
-    // leave the user staring at a blank screen.
+    var FixeoSupabase = ensureSupabase();
+
+    // ── DOM references (needed across all phases) ──────────────────────────
+    var statsEl     = document.getElementById('client-stats-grid');
+    var requestsEl  = document.getElementById('client-requests-list');
+    var repliesEl   = document.getElementById('client-replies-list');
+    var heroName    = document.getElementById('client-hero-name');
+    var bookingsFull = document.getElementById('client-bookings-full');
+
+    // ── PHASE 0: Instant reveal + empty states ─────────────────────────────
+    // Runs synchronously at function entry — no await, no network.
+    // Dashboard is visible and populated with empty states in <1 render frame.
+    window._fixeoOverviewDisabled = true; // block mock renderer from overwriting
+    revealClientDashboard('phase0-instant');
+    _renderClientEmptyStates();
+
+    // ── Hard failsafe: belts-and-suspenders 2500ms timeout ────────────────
     var _failsafeTimer = window.setTimeout(function () {
       revealClientDashboard('failsafe-2500ms');
-      // Populate hero with a safe placeholder if still blank
-      var heroName = document.getElementById('client-hero-name');
-      if (heroName && !heroName.textContent.trim()) {
-        heroName.style.visibility = 'visible';
-      }
+      var hn = document.getElementById('client-hero-name');
+      if (hn && !hn.textContent.trim()) hn.style.visibility = 'visible';
     }, 2500);
 
-    var FixeoSupabase = ensureSupabase();
-    await FixeoSupabase.init();
-
+    // ── Modal registration (sync, no await) ───────────────────────────────
     window.openNewRequestModal = function () {
       var modalTitle = document.getElementById('modal-title');
-      var modalBody = document.getElementById('modal-body');
-      var overlay = document.getElementById('modal-overlay');
+      var modalBody  = document.getElementById('modal-body');
+      var overlay    = document.getElementById('modal-overlay');
       if (!modalTitle || !modalBody || !overlay) return;
       modalTitle.textContent = '+ Nouvelle demande';
       modalBody.innerHTML = clientRequestModalHtml();
       overlay.classList.add('open');
-
       var form = document.getElementById('fixeo-service-request-form');
       if (!form) return;
       form.addEventListener('submit', async function (event) {
@@ -438,8 +498,8 @@
         try {
           await FixeoSupabase.submitServiceRequest({
             service_category: String(formData.get('service_category') || '').trim(),
-            city: String(formData.get('city') || '').trim(),
-            description: String(formData.get('description') || '').trim()
+            city:             String(formData.get('city') || '').trim(),
+            description:      String(formData.get('description') || '').trim()
           });
           closeModalIfAny();
           notify('success', 'Demande envoyée', 'Votre demande a été enregistrée dans Supabase.');
@@ -450,96 +510,106 @@
       }, { once: true });
     };
 
-    var statsEl = document.getElementById('client-stats-grid');
-    var requestsEl = document.getElementById('client-requests-list');
-    var repliesEl = document.getElementById('client-replies-list');
-    var heroName = document.getElementById('client-hero-name');
-    var bookingsFull = document.getElementById('client-bookings-full');
+    // ── PHASE 1: Auth + profile (async, non-blocking to empty-state render) ─
+    // If this fails/hangs, dashboard is already visible with empty states.
+    var auth = null;
+    try {
+      await withTimeout(FixeoSupabase.init(), 3000, 'supabase-init');
+      var authResult = await withTimeout(
+        FixeoSupabase.requireAuth('client'),
+        3000, 'requireAuth'
+      );
+      // withTimeout may return { data:[], error:'timeout' } — treat as auth failure
+      if (authResult && authResult.user) {
+        auth = authResult;
+      } else if (authResult && authResult.error) {
+        console.warn('[Fixeo Dashboard] auth timeout/error — staying on empty states');
+      } else {
+        auth = authResult; // normal requireAuth result
+      }
+    } catch (_authErr) {
+      console.warn('[Fixeo Dashboard] requireAuth failed:', _authErr && _authErr.message);
+    }
+
+    if (!auth || !auth.user) {
+      window.clearTimeout(_failsafeTimer);
+      revealClientDashboard('no-auth');
+      return;
+    }
+
+    // Profile — non-blocking own try/catch
+    var _cProfile = null;
+    try {
+      var _profileResult = await withTimeout(
+        _ensureProfile(FixeoSupabase, auth.user.id, auth.user.email || '', 'client'),
+        3000, 'ensureProfile'
+      );
+      // withTimeout returns {data:[], error:'timeout'} on timeout — not a profile object
+      if (_profileResult && !_profileResult.error) _cProfile = _profileResult;
+    } catch (_profileErr) {
+      console.warn('[Fixeo Dashboard] profile fetch failed, using email fallback:', _profileErr && _profileErr.message);
+    }
+
+    // Resolve display name — fallback chain: profile.full_name → email prefix → ''
+    var _cDisplayName = (_cProfile && _cProfile.full_name ? _cProfile.full_name.trim() : '')
+      || (auth.user.email ? auth.user.email.split('@')[0] : '');
+    var _cDisplayFirst = _cDisplayName.split(' ')[0] || _cDisplayName;
+
+    // Update UI with real name (dashboard already visible)
+    if (heroName) {
+      heroName.textContent = escapeHtml(_cDisplayName);
+      heroName.style.visibility = 'visible';
+    }
+    var _cSidebarUser = document.getElementById('sidebar-username');
+    if (_cSidebarUser) _cSidebarUser.textContent = escapeHtml(_cDisplayFirst || _cDisplayName);
+
+    var _cNavChip = document.getElementById('global-username') || document.querySelector('.nav-user-name');
+    if (_cNavChip && _cDisplayName) {
+      var _cRole = (_cProfile && _cProfile.role) || 'client';
+      var _cRoleLabel = _cRole === 'artisan' ? 'Artisan' : (_cRole === 'admin' ? 'Admin' : 'Client');
+      _cNavChip.textContent = _cDisplayName + ' (' + _cRoleLabel + ')';
+    }
+
+    _hydrateSettingsForm(_cProfile, auth.user.email || '', 'client');
+    _wireSettingsSave(FixeoSupabase, auth.user.id, 'settings-client-save', function () {
+      return {
+        full_name: (document.getElementById('settings-client-name')  || {}).value || '',
+        phone:     (document.getElementById('settings-client-phone') || {}).value || '',
+        city:      (document.getElementById('settings-client-city')  || {}).value || ''
+      };
+    });
+
+    window.clearTimeout(_failsafeTimer);
+    revealClientDashboard('profile-resolved');
+
+    // ── PHASE 2: Data loading — fully parallel, each section independent ──
+    // requests must resolve first because quotes depend on request IDs.
+    // requests + missions are parallel. quotes follows requests.
+    // Each section updates itself — failures in one don't affect others.
+    var requests = [], quotes = [], missions = [];
 
     try {
-      var auth = await FixeoSupabase.requireAuth('client');
+      // requests and missions are fully independent — run in parallel
+      var _dataResults = await withTimeout(
+        Promise.allSettled([
+          FixeoSupabase.listClientRequests(),
+          FixeoSupabase.listClientMissions()
+        ]),
+        4000, 'requests+missions'
+      );
 
-      /* ── STEP 1: Profile hydration — runs BEFORE data queries.
-         Even if _ensureProfile fails we use email prefix and reveal. ── */
-      var _cProfile = null;
-      try {
-        _cProfile = await _ensureProfile(
-          FixeoSupabase,
-          auth.user.id,
-          auth.user.email || '',
-          'client'
-        );
-      } catch (_profileErr) {
-        console.warn('[Fixeo Dashboard] profile fetch failed, using email fallback:', _profileErr && _profileErr.message);
-        // _cProfile stays null — display name falls back to email prefix below
-      }
+      // withTimeout may return {data:[],error:'timeout'} — check shape
+      var _dataArray = Array.isArray(_dataResults) ? _dataResults : [];
 
-      // Resolve display name — fallback chain: profile.full_name → email prefix → ''
-      var _cDisplayName = (_cProfile && _cProfile.full_name ? _cProfile.full_name.trim() : '')
-        || (auth.user.email ? auth.user.email.split('@')[0] : '');
-      var _cDisplayFirst = _cDisplayName.split(' ')[0] || _cDisplayName;
+      var _reqResult  = _dataArray[0] && _dataArray[0].status === 'fulfilled' ? _dataArray[0].value : [];
+      var _missResult = _dataArray[1] && _dataArray[1].status === 'fulfilled' ? _dataArray[1].value : [];
 
-      // Hero greeting — reveal after setting real name
-      if (heroName) {
-        heroName.textContent = escapeHtml(_cDisplayName);
-        heroName.style.visibility = 'visible';
-      }
+      requests = Array.isArray(_reqResult)  ? _reqResult  : [];
+      missions = Array.isArray(_missResult) ? _missResult : [];
 
-      // Sidebar name
-      var _cSidebarUser = document.getElementById('sidebar-username');
-      if (_cSidebarUser) {
-        _cSidebarUser.textContent = escapeHtml(_cDisplayFirst || _cDisplayName);
-      }
-
-      // Header nav chip — override stale auth-global write
-      var _cNavChip = document.getElementById('global-username') || document.querySelector('.nav-user-name');
-      if (_cNavChip && _cDisplayName) {
-        var _cRole = (_cProfile && _cProfile.role) || 'client';
-        var _cRoleLabel = _cRole === 'artisan' ? 'Artisan' : (_cRole === 'admin' ? 'Admin' : 'Client');
-        _cNavChip.textContent = _cDisplayName + ' (' + _cRoleLabel + ')';
-      }
-
-      // Settings form — always from Supabase, never localStorage
-      _hydrateSettingsForm(_cProfile, auth.user.email || '', 'client');
-
-      // Wire save button (idempotent — _wireSettingsSave checks for existing listener)
-      _wireSettingsSave(FixeoSupabase, auth.user.id, 'settings-client-save', function () {
-        return {
-          full_name: (document.getElementById('settings-client-name')  || {}).value || '',
-          phone:     (document.getElementById('settings-client-phone') || {}).value || '',
-          city:      (document.getElementById('settings-client-city')  || {}).value || ''
-        };
-      });
-
-      // ── REVEAL: profile resolved (or fell back) — safe to show dashboard ──
-      window.clearTimeout(_failsafeTimer);
-      revealClientDashboard('profile-resolved');
-
-      /* ── STEP 2: Data queries — after UI is already showing real name ── */
-      var requests = await FixeoSupabase.listClientRequests();
-      var quotes = await FixeoSupabase.listQuotesForRequestIds(requests.map(function (item) { return item.id; }));
-      var missions = await FixeoSupabase.listClientMissions();
-
-      var stats = [
-        { value: requests.length, label: 'Demandes créées' },
-        { value: quotes.length, label: 'Devis reçus' },
-        { value: quotes.filter(function (quote) { return quote.status === 'accepted'; }).length, label: 'Devis acceptés' },
-        { value: missions.length, label: 'Missions créées' }
-      ];
-
-      // Disable the inline mock renderer — real data is here now
-      window._fixeoOverviewDisabled = true;
-
-      if (statsEl) {
-        statsEl.innerHTML = stats.map(function (stat) {
-          return '<div class="client-stat-card"><span class="stat-number">' + escapeHtml(stat.value) + '</span><span class="stat-label">' + escapeHtml(stat.label) + '</span></div>';
-        }).join('');
-        statsEl.dataset.real = '1';
-      }
-
+      // Render requests section immediately after it resolves
       if (requestsEl) {
         requestsEl.innerHTML = requests.length ? requests.map(function (requestRow) {
-          var state = FixeoSupabase.computeRequestState(requestRow, quotes, missions);
           return '' +
             '<div class="request-card">' +
               '<div class="request-top">' +
@@ -547,11 +617,10 @@
                   '<h3>' + escapeHtml(requestRow.service_category || 'Service') + '</h3>' +
                   '<p>' + escapeHtml(formatDate(requestRow.created_at)) + '</p>' +
                 '</div>' +
-                '<span class="request-status ' + escapeHtml(state.className) + '">' + escapeHtml(state.label) + '</span>' +
+                '<span class="request-status status-open">En attente</span>' +
               '</div>' +
               '<div class="request-meta">' +
                 '<span>📍 ' + escapeHtml(requestRow.city || '—') + '</span>' +
-                '<span>💬 ' + escapeHtml(state.quotes.length) + ' devis</span>' +
               '</div>' +
               '<p style="margin:0 0 14px;opacity:.78">' + escapeHtml(requestRow.description || '—') + '</p>' +
               '<div class="request-actions">' +
@@ -559,9 +628,19 @@
               '</div>' +
             '</div>';
         }).join('') : '<div class="request-card" style="text-align:center;padding:28px 20px"><p style="margin:0 0 12px;font-size:1.1rem">📋</p><p style="margin:0;font-weight:600">Aucune demande pour le moment</p><p style="margin:8px 0 16px;opacity:.65;font-size:.88rem">Créez votre première demande pour trouver un artisan qualifié.</p><button class="btn btn-primary" type="button" onclick="window.openNewRequestModal&&openNewRequestModal()">+ Créer une demande</button></div>';
-        if (requestsEl) requestsEl.dataset.real = '1';
+        requestsEl.dataset.real = '1';
       }
 
+      // Quotes depend on request IDs — fetched after requests resolve
+      if (requests.length) {
+        var _quotesResult = await withTimeout(
+          FixeoSupabase.listQuotesForRequestIds(requests.map(function (r) { return r.id; })),
+          3000, 'quotes'
+        );
+        quotes = Array.isArray(_quotesResult) ? _quotesResult : [];
+      }
+
+      // Render replies section
       if (repliesEl) {
         repliesEl.innerHTML = quotes.length ? quotes.map(function (quote) {
           var relatedRequest = requests.find(function (item) { return item.id === quote.request_id; }) || null;
@@ -587,31 +666,47 @@
               '</div>' +
             '</div>';
         }).join('') : '<div class="reply-card" style="text-align:center;padding:28px 20px"><p style="margin:0 0 8px;font-size:1.1rem">💬</p><p style="margin:0;font-weight:600">Aucune réponse reçue</p><p style="margin:8px 0 0;opacity:.65;font-size:.88rem">Les artisans répondront à vos demandes ici.</p></div>';
-        if (repliesEl) repliesEl.dataset.real = '1';
+        repliesEl.dataset.real = '1';
       }
 
-      // Action list — real-data context (no pending quotes = no urgent actions)
+      // Stats — assembled from requests + quotes + missions (all now resolved)
+      if (statsEl) {
+        var statsData = [
+          { value: requests.length, label: 'Demandes créées' },
+          { value: quotes.length,   label: 'Devis reçus' },
+          { value: quotes.filter(function (q) { return q.status === 'accepted'; }).length, label: 'Devis acceptés' },
+          { value: missions.length, label: 'Missions créées' }
+        ];
+        statsEl.innerHTML = statsData.map(function (stat) {
+          return '<div class="client-stat-card"><span class="stat-number">' + escapeHtml(stat.value) + '</span><span class="stat-label">' + escapeHtml(stat.label) + '</span></div>';
+        }).join('');
+        statsEl.dataset.real = '1';
+      }
+
+      // Actions
       var actionsEl = document.getElementById('client-action-list');
       if (actionsEl) {
-        if (quotes.filter(function(q){ return q.status === 'pending'; }).length > 0) {
-          actionsEl.innerHTML = '<div class="client-action-item"><span class="client-action-pill">À faire</span><strong>Vous avez ' + escapeHtml(quotes.filter(function(q){ return q.status === 'pending'; }).length) + ' devis en attente de décision</strong><p>Comparez les offres et acceptez le meilleur artisan.</p><div class="client-action-buttons"><button class="btn btn-primary" type="button" onclick="showSection(\'messages\')">Voir les devis</button></div></div>';
+        var pendingCount = quotes.filter(function (q) { return q.status === 'pending'; }).length;
+        if (pendingCount > 0) {
+          actionsEl.innerHTML = '<div class="client-action-item"><span class="client-action-pill">À faire</span><strong>Vous avez ' + escapeHtml(pendingCount) + ' devis en attente de décision</strong><p>Comparez les offres et acceptez le meilleur artisan.</p><div class="client-action-buttons"><button class="btn btn-primary" type="button" onclick="showSection(\'messages\')">Voir les devis</button></div></div>';
         } else {
           actionsEl.innerHTML = '<div class="client-action-item" style="opacity:.65;text-align:center;padding:20px 0"><p style="margin:0">Aucune action en attente. Tout est à jour ✅</p></div>';
         }
         actionsEl.dataset.real = '1';
       }
 
-      // Favorites — no favorites feature yet, clean empty state
+      // Favorites — static empty state (no feature yet)
       var favoritesEl = document.getElementById('client-favorites-list');
       if (favoritesEl && !favoritesEl.dataset.real) {
         favoritesEl.innerHTML = '<div class="favorite-item" style="opacity:.65;text-align:center;padding:16px 0"><span>Aucun artisan favori pour le moment.</span></div>';
         favoritesEl.dataset.real = '1';
       }
 
-      // Show progress tracker only when real missions exist
+      // Progress tracker
       var progressTracker = document.getElementById('booking-progress-tracker');
       if (progressTracker) progressTracker.style.display = missions.length ? 'block' : 'none';
 
+      // Bookings table (missions view)
       if (bookingsFull) {
         if (missions.length && typeof window.renderBookingsTable === 'function') {
           var rows = missions.map(function (mission) {
@@ -632,34 +727,33 @@
         }
       }
 
-      repliesEl && repliesEl.querySelectorAll('[data-accept-quote]').forEach(function (button) {
-        button.addEventListener('click', async function () {
-          var quoteId = button.getAttribute('data-accept-quote');
-          button.disabled = true;
-          try {
-            var result = await FixeoSupabase.acceptQuote(quoteId);
-            if (result.commission_ok) {
-              notify('success', 'Devis accepté', 'Mission créée avec commission 15% validée automatiquement.');
-            } else {
-              notify('success', 'Devis accepté', 'Mission créée. Vérifiez la commission générée dans Supabase.');
+      // Accept-quote handlers (wired after replies are rendered)
+      if (repliesEl) {
+        repliesEl.querySelectorAll('[data-accept-quote]').forEach(function (button) {
+          button.addEventListener('click', async function () {
+            var quoteId = button.getAttribute('data-accept-quote');
+            button.disabled = true;
+            try {
+              var result = await FixeoSupabase.acceptQuote(quoteId);
+              if (result.commission_ok) {
+                notify('success', 'Devis accepté', 'Mission créée avec commission 15% validée automatiquement.');
+              } else {
+                notify('success', 'Devis accepté', 'Mission créée. Vérifiez la commission générée dans Supabase.');
+              }
+              await renderClientDashboard();
+            } catch (error) {
+              button.disabled = false;
+              notify('error', 'Impossible d\'accepter le devis', FixeoSupabase.getReadableError(error));
             }
-            await renderClientDashboard();
-          } catch (error) {
-            button.disabled = false;
-            notify('error', 'Impossible d’accepter le devis', FixeoSupabase.getReadableError(error));
-          }
+          });
         });
-      });
-    } catch (error) {
-      if (requestsEl) requestsEl.innerHTML = '<div class="request-card"><p style="margin:0">' + escapeHtml(FixeoSupabase.getReadableError(error)) + '</p></div>';
-      if (repliesEl) repliesEl.innerHTML = '';
-      if (bookingsFull) bookingsFull.innerHTML = '';
-    } finally {
-      // Always reveal — catch + finally are defence-in-depth against any hang.
-      // revealClientDashboard is idempotent: safe to call even if already revealed.
-      window.clearTimeout(_failsafeTimer);
-      revealClientDashboard('finally');
+      }
+
+    } catch (_dataErr) {
+      // Data phase error — dashboard already visible with empty states, safe to ignore
+      console.warn('[Fixeo Dashboard] data phase error (non-fatal):', _dataErr && _dataErr.message);
     }
+    // Note: no finally needed — revealClientDashboard already called in phase0 and profile-resolved
   }
 
   function artisanQuoteModalHtml(requestId) {
@@ -671,7 +765,7 @@
         '</div>' +
         '<div class="form-group">' +
           '<label class="form-label">Message</label>' +
-          '<textarea class="form-control" name="message" rows="4" placeholder="Expliquez votre proposition…" required></textarea>' +
+          '<textarea class="form-control" name="message" rows="4" placeholder="Expliquez votre proposition..." required></textarea>' +
         '</div>' +
         '<button class="btn btn-primary w-100" type="submit">Envoyer le devis</button>' +
       '</form>';
@@ -772,7 +866,7 @@
               '<h3>' + escapeHtml(requestRow.service_category || 'Service') + ' • ' + escapeHtml(requestRow.city || 'Maroc') + '</h3>' +
               '<span class="request-time">' + escapeHtml(formatDate(requestRow.created_at)) + '</span>' +
             '</div>' +
-            '<p class="request-desc">' + escapeHtml(requestRow.description || '—') + '</p>' +
+            '<p class="request-desc">' + escapeHtml(requestRow.description || '-') + '</p>' +
             '<div class="request-client">👤 Client #' + escapeHtml(String(requestRow.client_profile_id || '').slice(0, 8)) + '</div>' +
             '<div class="request-meta">' +
               '<span>' + (alreadyQuoted ? '✅ Devis déjà envoyé' : '⚡ Nouvelle demande') + '</span>' +
