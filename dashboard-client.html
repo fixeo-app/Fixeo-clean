@@ -1243,7 +1243,7 @@ function fixeoOpenRequest() {
       if (e.target === ov) { ov.classList.remove('open'); ov.removeEventListener('click', esc); }
     });
   }
-  // Helper: ensure overlay is closed and body is not content-less after a failed attempt
+  // Helper: ensure overlay is closed if body is still empty after a failed attempt
   function _safeClose() {
     var ov = document.getElementById('modal-overlay');
     if (ov) {
@@ -1251,17 +1251,43 @@ function fixeoOpenRequest() {
       if (!body || !body.innerHTML.trim()) ov.classList.remove('open');
     }
   }
+  // Helper: 50ms after a successful openNewRequestModal() call, check whether
+  // #modal-body was actually populated. If the Supabase override ran but failed
+  // silently (e.g. clientRequestModalHtml() returned empty), inject a guaranteed
+  // fallback form so the user never sees a grey blank screen.
+  function _guardBody() {
+    setTimeout(function () {
+      var body = document.getElementById('modal-body');
+      var ov   = document.getElementById('modal-overlay');
+      if (!ov || !ov.classList.contains('open')) return; // overlay already closed — nothing to do
+      if (body && body.innerHTML.trim()) return;         // body has content — Supabase version worked
+      console.warn('[Fixeo] Modal body empty after 50ms \u2192 injecting fallback form');
+      if (body) {
+        body.innerHTML =
+          '<div class="form-group"><label class="form-label">Type de service</label>' +
+          '<select class="form-control"><option>Plomberie</option><option>\u00C9lectricit\u00E9</option>' +
+          '<option>Peinture</option><option>Carrelage</option><option>Nettoyage</option>' +
+          '<option>Jardinage</option><option>Autre</option></select></div>' +
+          '<div class="form-group"><label class="form-label">Description</label>' +
+          '<textarea class="form-control" rows="3" placeholder="D\u00E9crivez votre besoin\u2026"></textarea></div>' +
+          '<div class="form-group"><label class="form-label">Adresse</label>' +
+          '<input type="text" class="form-control" placeholder="Rue, Quartier, Ville"></div>' +
+          '<button class="btn btn-primary w-100" onclick="closeModal();window.notifications&&notifications.success(' +
+          '\'Demande envoy\u00E9e !\',\'Vous recevrez des devis sous 24h.\')">Envoyer la demande</button>';
+      }
+    }, 50);
+  }
 
   // Step 1 — Supabase / override version (window lookup)
   if (typeof window.openNewRequestModal === 'function') {
-    try { window.openNewRequestModal(); _attachEscape(); return; }
+    try { window.openNewRequestModal(); _attachEscape(); _guardBody(); return; }
     catch (e1) { _safeClose(); console.warn('[Fixeo] openNewRequestModal (window) failed:', e1); }
   }
 
   // Step 2 — Inline version (direct reference, bypasses window lookup)
   // openNewRequestModal is defined earlier in this same <script> block.
   if (typeof openNewRequestModal === 'function') {
-    try { openNewRequestModal(); _attachEscape(); return; }
+    try { openNewRequestModal(); _attachEscape(); _guardBody(); return; }
     catch (e2) { _safeClose(); console.warn('[Fixeo] openNewRequestModal (local) failed:', e2); }
   }
 
@@ -1804,14 +1830,33 @@ document.addEventListener('DOMContentLoaded', () => {
         var ov = document.getElementById('modal-overlay');
         if (ov) { var b = document.getElementById('modal-body'); if (!b || !b.innerHTML.trim()) ov.classList.remove('open'); }
       }
+      function _guardBody() {
+        setTimeout(function () {
+          var body = document.getElementById('modal-body');
+          var ov   = document.getElementById('modal-overlay');
+          if (!ov || !ov.classList.contains('open')) return;
+          if (body && body.innerHTML.trim()) return;
+          console.warn('[Fixeo] Modal body empty \u2192 fallback');
+          if (body) {
+            body.innerHTML =
+              '<div class="form-group"><label class="form-label">Type de service</label>' +
+              '<select class="form-control"><option>Plomberie</option><option>\u00C9lectricit\u00E9</option>' +
+              '<option>Peinture</option><option>Autre</option></select></div>' +
+              '<div class="form-group"><label class="form-label">Description</label>' +
+              '<textarea class="form-control" rows="3" placeholder="D\u00E9crivez votre besoin\u2026"></textarea></div>' +
+              '<button class="btn btn-primary w-100" onclick="closeModal();window.notifications&&notifications.success(' +
+              '\'Demande envoy\u00E9e !\',\'Vous recevrez des devis sous 24h.\')">Envoyer la demande</button>';
+          }
+        }, 50);
+      }
       // Step 1 — window.openNewRequestModal
       if (typeof window.openNewRequestModal === 'function') {
-        try { window.openNewRequestModal(); _attachEscape(); return; }
+        try { window.openNewRequestModal(); _attachEscape(); _guardBody(); return; }
         catch (e1) { _safeClose(); console.warn('[Fixeo] openNewRequestModal (window) failed:', e1); }
       }
       // Step 2 — global openNewRequestModal (hoisted from same page)
       if (typeof openNewRequestModal === 'function') {
-        try { openNewRequestModal(); _attachEscape(); return; }
+        try { openNewRequestModal(); _attachEscape(); _guardBody(); return; }
         catch (e2) { _safeClose(); console.warn('[Fixeo] openNewRequestModal (local) failed:', e2); }
       }
       // Step 3 — overlay clean; navigate
