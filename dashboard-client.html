@@ -441,6 +441,105 @@ select option{background:#1a1a2e!important;color:#fff!important;}
     grid-template-columns: 1fr;
   }
 }
+
+/* ── UX Upgrade additions ──────────────────────────────── */
+.fixeo-hero-trust {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  margin-top: 8px;
+  font-size: .8rem;
+  opacity: .8;
+  color: rgba(255,255,255,.85);
+}
+
+.fixeo-smart-cta {
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.09);
+  border-radius: 14px;
+  padding: 18px 20px;
+  margin-bottom: 16px;
+}
+.fixeo-smart-cta h3 {
+  margin: 0 0 6px;
+  font-size: .97rem;
+  font-weight: 700;
+}
+.fixeo-smart-cta p {
+  margin: 0 0 12px;
+  font-size: .84rem;
+  opacity: .72;
+}
+.fixeo-smart-cta-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.fixeo-artisans-preview {
+  margin-top: 20px;
+}
+.fixeo-artisans-preview h4 {
+  font-size: .93rem;
+  font-weight: 700;
+  margin: 0 0 12px;
+}
+.fixeo-artisan-static-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+}
+.fixeo-artisan-static-card {
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.09);
+  border-radius: 14px;
+  padding: 14px 12px;
+  text-align: center;
+}
+.fixeo-artisan-static-card .fxasc-name {
+  font-size: .82rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.fixeo-artisan-static-card .fxasc-rating {
+  font-size: .76rem;
+  opacity: .75;
+  margin-bottom: 10px;
+}
+.btn-fxasc {
+  display: inline-block;
+  background: var(--grad-primary, linear-gradient(135deg,#E1306C,#833AB4));
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 5px 14px;
+  font-size: .77rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+}
+.btn-fxasc:hover { opacity: .88; }
+
+.fixeo-fab {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9999;
+  background: var(--grad-primary, linear-gradient(135deg,#E1306C,#833AB4));
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 13px 22px;
+  font-size: .9rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 6px 24px rgba(225,48,108,.45);
+}
+
+@media (max-width: 768px) {
+  .fixeo-fab { display: block; }
+}
 </style>
 
   <link rel="stylesheet" href="css/fixeo-chat-mvp.css">
@@ -714,6 +813,10 @@ select option{background:#1a1a2e!important;color:#fff!important;}
             <div class="section-tag">Dashboard client</div>
             <h1>Bonjour <span id="client-hero-name" style="visibility:hidden">…</span> 👋</h1>
             <p>Suivez vos demandes, consultez les réponses et trouvez rapidement le bon artisan.</p>
+            <div class="fixeo-hero-trust">
+              <span>+500 artisans vérifiés disponibles aujourd'hui</span>
+              <span>• Réponse en moins de 5 minutes ⚡</span>
+            </div>
           </div>
 
           <div class="client-hero-actions">
@@ -734,6 +837,15 @@ select option{background:#1a1a2e!important;color:#fff!important;}
                 <p>Vos demandes sont suivies et prêtes à être comparées en un coup d’œil.</p>
               </div>
               <button class="btn btn-secondary" onclick="showSection('bookings')">Voir tout</button>
+            </div>
+
+            <div class="fixeo-smart-cta" id="fixeo-smart-cta">
+              <h3>🚀 Lancez votre première demande</h3>
+              <p>Décrivez votre besoin en 30 secondes. Des artisans proches vous répondent rapidement.</p>
+              <div class="fixeo-smart-cta-actions">
+                <button class="btn btn-primary" onclick="openNewRequestModal()">Publier ma demande gratuitement</button>
+                <button class="btn btn-secondary" onclick="window.location='index.html#artisans-section'">Trouver un artisan maintenant</button>
+              </div>
             </div>
 
             <div id="client-requests-list"></div>
@@ -773,6 +885,32 @@ select option{background:#1a1a2e!important;color:#fff!important;}
             </div>
 
             <div class="favorite-list" id="client-favorites-list"></div>
+          </section>
+
+          <section class="dashboard-panel" style="padding:18px 16px">
+            <div class="fixeo-artisans-preview">
+              <h4>👨‍🔧 Artisans recommandés</h4>
+              <!-- renderRecommended() will populate this when real data is available -->
+              <div id="recommended-artisans">
+                <div class="fixeo-artisan-static-cards">
+                  <div class="fixeo-artisan-static-card">
+                    <div class="fxasc-name">Plombier — Fès</div>
+                    <div class="fxasc-rating">⭐ 4.8 (32 avis)</div>
+                    <button class="btn-fxasc" onclick="openNewRequestModal()">Contacter</button>
+                  </div>
+                  <div class="fixeo-artisan-static-card">
+                    <div class="fxasc-name">Électricien — Fès</div>
+                    <div class="fxasc-rating">⭐ 4.7 (21 avis)</div>
+                    <button class="btn-fxasc" onclick="openNewRequestModal()">Contacter</button>
+                  </div>
+                  <div class="fixeo-artisan-static-card">
+                    <div class="fxasc-name">Peintre — Fès</div>
+                    <div class="fxasc-rating">⭐ 4.9 (18 avis)</div>
+                    <button class="btn-fxasc" onclick="openNewRequestModal()">Contacter</button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </section>
         </aside>
       </div>
@@ -1459,6 +1597,9 @@ document.addEventListener('DOMContentLoaded', () => {
 <script src="js/fixeo-session-bridge.js?v=sb1"></script>
 
 <script src="js/fixeo-chat-mvp.js"></script>
+
+<!-- Mobile FAB — visible only on ≤768px -->
+<button class="fixeo-fab" onclick="openNewRequestModal()" aria-label="Publier une demande">+ Demande</button>
 
 </body>
 </html>
