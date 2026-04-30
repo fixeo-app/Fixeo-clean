@@ -784,8 +784,8 @@ select option{background:#1a1a2e!important;color:#fff!important;}
         <h2 style="font-size:1.3rem">📅 Mes réservations</h2>
         <button class="btn btn-primary" onclick="openNewRequestModal()">+ Nouvelle demande</button>
       </div>
-      <!-- Progress tracker -->
-      <div class="chart-card" style="margin-bottom:20px;padding:20px">
+      <!-- Progress tracker: hidden until a real mission exists -->
+      <div class="chart-card" id="booking-progress-tracker" style="margin-bottom:20px;padding:20px;display:none">
         <h4 style="margin-bottom:16px;font-size:.95rem">Suivi de votre dernière mission</h4>
         <div class="booking-progress">
           <div class="progress-step done"><div class="step-circle">✓</div><div class="step-label">Demande</div></div>
@@ -816,20 +816,22 @@ select option{background:#1a1a2e!important;color:#fff!important;}
         <!-- Chat window -->
         <div class="chart-card" style="padding:0;display:flex;flex-direction:column;overflow:hidden">
           <div class="chat-header" style="flex-shrink:0">
-            <img src="https://i.pravatar.cc/36?img=1" style="width:36px;height:36px;border-radius:50%;object-fit:cover;flex-shrink:0" alt="Youssef">
+            <div style="width:36px;height:36px;border-radius:50%;background:var(--glass-bg);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0">💬</div>
             <div style="min-width:0">
-              <div style="font-weight:700;font-size:.9rem">Youssef El Mansouri</div>
-              <div style="font-size:.72rem;color:var(--success)">● En ligne</div>
+              <div style="font-weight:700;font-size:.9rem" id="dash-chat-contact-name">Sélectionnez une conversation</div>
+              <div style="font-size:.72rem;color:var(--text-muted)">Messagerie artisans</div>
             </div>
           </div>
-          <div class="chat-messages" id="dash-messages" style="flex:1;padding:14px;overflow-y:auto">
-            <div class="msg received">Bonjour ! Je suis disponible lundi pour le devis. 😊</div>
-            <div class="msg sent">Parfait, je confirme pour lundi 10h.</div>
-            <div class="msg received">Très bien ! À lundi alors. Je préparerai tout le matériel nécessaire.</div>
+          <div class="chat-messages" id="dash-messages" style="flex:1;padding:14px;overflow-y:auto;display:flex;align-items:center;justify-content:center">
+            <div style="text-align:center;opacity:.55">
+              <div style="font-size:2rem;margin-bottom:8px">💬</div>
+              <p style="margin:0;font-size:.88rem">Aucune conversation artisan active pour le moment.</p>
+              <p style="margin:6px 0 0;font-size:.78rem;opacity:.7">Acceptez un devis pour démarrer une conversation.</p>
+            </div>
           </div>
-          <div class="chat-input-row" style="flex-shrink:0">
-            <input type="text" id="dash-chat-input" class="chat-input" placeholder="Écrire un message…">
-            <button class="btn btn-primary btn-sm" onclick="sendDashMessage()">→</button>
+          <div class="chat-input-row" style="flex-shrink:0;opacity:.4;pointer-events:none">
+            <input type="text" id="dash-chat-input" class="chat-input" placeholder="Écrire un message…" disabled>
+            <button class="btn btn-primary btn-sm" disabled>→</button>
           </div>
         </div>
       </div>
@@ -916,7 +918,7 @@ select option{background:#1a1a2e!important;color:#fff!important;}
       <button class="btn btn-ghost btn-sm" onclick="toggleChat()" style="margin-left:auto;flex-shrink:0">✕</button>
     </div>
     <div class="chat-messages" id="chat-messages">
-      <div class="msg received">Bonjour Sarah ! Comment puis-je vous aider ? 😊</div>
+      <div class="msg received">Bonjour ! Comment puis-je vous aider ? 😊</div>
     </div>
     <div class="chat-input-row">
       <input type="text" id="chat-input-field" class="chat-input" placeholder="Écrire un message…">
@@ -1299,35 +1301,34 @@ document.addEventListener('DOMContentLoaded', () => {
   const preview = document.getElementById('client-bookings-preview');
   const full    = document.getElementById('client-bookings-full');
 
-  /* Charger les réservations/missions COD depuis localStorage + données démo */
-  function loadAllBookings() {
-    const DEFAULT_BOOKINGS = [
-      { id:'REQ-001', service:'Plomberie',   artisan:'Karim B.',  status:'active',    amount:'350 MAD', date:'14/06', method:'—' },
-      { id:'REQ-002', service:'Peinture',    artisan:'Sara D.',   status:'pending',   amount:'800 MAD', date:'12/06', method:'—' },
-      { id:'REQ-003', service:'Électricité', artisan:'Omar T.',   status:'completed', amount:'220 MAD', date:'08/06', method:'Paiement cash' },
-    ];
-    let paypalBookings = [];
+  /* Charger les réservations confirmées depuis localStorage (PayPal/COD).
+     Supabase missions sont injectées séparément par fixeo-mvp-supabase.js
+     dans #client-bookings-full — aucune donnée démo ici. */
+  function loadConfirmedLocalBookings() {
     try {
       const stored = JSON.parse(localStorage.getItem('fixeo_reservations') || '[]');
-      paypalBookings = stored.filter(r => r.payStatus === 'paid' || r.status === 'confirmed');
-    } catch(e) {}
-    return [...paypalBookings, ...DEFAULT_BOOKINGS];
+      return stored.filter(r => r.payStatus === 'paid' || r.status === 'confirmed');
+    } catch(e) { return []; }
   }
 
-  const ALL_BOOKINGS = loadAllBookings();
-  if (preview) renderBookingsTable(preview, ALL_BOOKINGS.slice(0,3));
-  if (full)    renderBookingsTable(full, ALL_BOOKINGS);
+  // Preview zone: only confirmed local bookings (empty = empty state, not fake data)
+  const localBookings = loadConfirmedLocalBookings();
+  if (preview) {
+    if (localBookings.length) {
+      renderBookingsTable(preview, localBookings.slice(0, 3));
+    } else {
+      preview.innerHTML = '';  // fixeo-mvp-supabase.js will populate client-bookings-full
+    }
+  }
 
-  /* Mise à jour temps-réel après évolution des missions COD */
+  /* Mise à jour temps-réel après paiement confirmé */
   window.addEventListener('fixeo:payment:success', function() {
-    const updated = loadAllBookings();
-    if (preview) renderBookingsTable(preview, updated.slice(0,3));
-    if (full)    renderBookingsTable(full, updated);
+    const updated = loadConfirmedLocalBookings();
+    if (preview && updated.length) renderBookingsTable(preview, updated.slice(0, 3));
   });
   window.addEventListener('fixeo:paypal:paid', function() {
-    const updated = loadAllBookings();
-    if (preview) renderBookingsTable(preview, updated.slice(0,3));
-    if (full)    renderBookingsTable(full, updated);
+    const updated = loadConfirmedLocalBookings();
+    if (preview && updated.length) renderBookingsTable(preview, updated.slice(0, 3));
   });
 
   renderContacts();

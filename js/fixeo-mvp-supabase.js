@@ -547,6 +547,10 @@
         favoritesEl.dataset.real = '1';
       }
 
+      // Show progress tracker only when real missions exist
+      var progressTracker = document.getElementById('booking-progress-tracker');
+      if (progressTracker) progressTracker.style.display = missions.length ? 'block' : 'none';
+
       if (bookingsFull) {
         if (missions.length && typeof window.renderBookingsTable === 'function') {
           var rows = missions.map(function (mission) {
