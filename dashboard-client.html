@@ -1002,27 +1002,34 @@ select option{background:#1a1a2e!important;color:#fff!important;}
    Both #request-modal and #express-modal share identical direct children.
    ───────────────────────────────────────────────────────────────────────────── */
 
-/* 1 ─ Modal root: fullscreen transparent centering container */
-[data-dash-type="client"] #request-modal.open,
-[data-dash-type="client"] #express-modal.open {
-  position:   fixed      !important;
-  inset:      0          !important;
-  display:    flex       !important;
-  align-items:     center !important;
-  justify-content: center !important;
-  width:      100vw      !important;
-  max-width:  100vw      !important;
-  height:     100vh      !important;
-  max-height: 100vh      !important;
-  margin:     0          !important;
-  transform:  none       !important;  /* kills translate(-50%,-50%) from request-form.css */
-  background: transparent !important; /* container is NOT the card */
-  border:     none       !important;
-  box-shadow: none       !important;
-  border-radius: 0       !important;
-  overflow:   hidden     !important;
-  padding:    0          !important;
-  z-index:    99995      !important;
+/* 1 ─ Modal root: fullscreen transparent centering container
+   flex-direction:column is the critical fix — without it, the default
+   flex-direction:row places .modal-header and .request-modal-shell
+   SIDE BY SIDE instead of stacked, giving two detached horizontal blocks.
+   Scoped to @media(min-width:768px) so mobile behaviour is untouched. */
+@media (min-width: 768px) {
+  [data-dash-type="client"] #request-modal.open,
+  [data-dash-type="client"] #express-modal.open {
+    position:        fixed       !important;
+    inset:           0           !important;
+    display:         flex        !important;
+    flex-direction:  column      !important;  /* stack header above shell */
+    align-items:     center      !important;
+    justify-content: center      !important;
+    width:           100vw       !important;
+    max-width:       100vw       !important;
+    height:          100vh       !important;
+    max-height:      100vh       !important;
+    margin:          0           !important;
+    transform:       none        !important;
+    background:      transparent !important;
+    border:          none        !important;
+    box-shadow:      none        !important;
+    border-radius:   0           !important;
+    overflow:        hidden      !important;
+    padding:         0           !important;
+    z-index:         99995       !important;
+  }
 }
 
 /* 2 ─ Width constraint shared by header + shell (the visible card) */
