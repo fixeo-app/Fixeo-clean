@@ -115,7 +115,7 @@ function normalizeMarketplaceArtisanRecord(raw) {
 // 🔥 SOURCE PRINCIPALE = DB
 let category = raw.category;
 
-console.log('DEBUG RAW:', raw.category, raw.service, raw.specialty, raw.job);
+if (window.FIXEO_DEBUG_SEARCH) console.log('DEBUG RAW:', raw.category, raw.service, raw.specialty, raw.job);
 
 if (!category || category.trim() === '') {
   category = marketplacePickFirst(
@@ -123,7 +123,7 @@ if (!category || category.trim() === '') {
     raw.specialty,
     raw.job
   );
-  console.log('DEBUG SKILLS:', raw.skills);
+  if (window.FIXEO_DEBUG_SEARCH) console.log('DEBUG SKILLS:', raw.skills);
 
   if (!category && Array.isArray(raw.skills) && raw.skills.length) {
     category = raw.skills[0];
@@ -139,7 +139,7 @@ category = marketplaceNormalizeCategory(category)
 // Fallback intelligent
 
   const categoryResolved = marketplaceResolveCanonicalCategory(category) || 'bricolage';
-  console.log('DEBUG RESOLVED:', categoryResolved);
+  if (window.FIXEO_DEBUG_SEARCH) console.log('DEBUG RESOLVED:', categoryResolved);
   let service = categoryResolved;
   const city = marketplacePickFirst(raw.city, raw.ville);
   const description = marketplacePickFirst(raw.description, raw.bio && raw.bio.fr, raw.bio && raw.bio.en, raw.bio && raw.bio.ar, raw.bio);

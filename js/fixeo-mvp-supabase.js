@@ -510,39 +510,118 @@
       }, { once: true });
     };
 
+    // ── _applyClientProfile ────────────────────────────────────────────────
+    // Writes auth + profile data into the DOM. Idempotent — safe to call
+    // multiple times. Guards every write so stale/null data never overwrites
+    // a value that was already set by a faster path.
+    function _applyClientProfile(authObj, profileObj) {
+      if (!authObj || !authObj.user) return;
+      var email = authObj.user.email || '';
+      var displayName = (profileObj && profileObj.full_name ? profileObj.full_name.trim() : '')
+        || (email ? email.split('@')[0] : '');
+      var displayFirst = displayName.split(' ')[0] || displayName;
+      if (!displayName) return; // nothing useful to write
+
+      var hn = document.getElementById('client-hero-name');
+      if (hn) { hn.textContent = escapeHtml(displayName); hn.style.visibility = 'visible'; }
+
+      var su = document.getElementById('sidebar-username');
+      if (su) su.textContent = escapeHtml(displayFirst || displayName);
+
+      var nc = document.getElementById('global-username') || document.querySelector('.nav-user-name');
+      if (nc) {
+        var role = (profileObj && profileObj.role) || 'client';
+        var roleLabel = role === 'artisan' ? 'Artisan' : (role === 'admin' ? 'Admin' : 'Client');
+        nc.textContent = displayName + ' (' + roleLabel + ')';
+      }
+
+      _hydrateSettingsForm(profileObj, email, 'client');
+      _wireSettingsSave(FixeoSupabase, authObj.user.id, 'settings-client-save', function () {
+        return {
+          full_name: (document.getElementById('settings-client-name')  || {}).value || '',
+          phone:     (document.getElementById('settings-client-phone') || {}).value || '',
+          city:      (document.getElementById('settings-client-city')  || {}).value || ''
+        };
+      });
+    }
+
+    // ── Late hydration retry ───────────────────────────────────────────────
+    // Called at 1s / 3s / 6s after dashboard reveals.
+    // Handles the case where Supabase connects AFTER the initial timeout.
+    // Idempotent: skips if hero already has a non-empty name.
+    var _hydrateAttempted = false;
+    function _hydrateClientProfileIfPossible() {
+      if (_hydrateAttempted) return;
+      var hn = document.getElementById('client-hero-name');
+      if (hn && hn.textContent && hn.textContent.trim()) {
+        _hydrateAttempted = true; // already hydrated — stop retrying
+        return;
+      }
+      var fs = window.FixeoSupabase;
+      if (!fs || typeof fs.requireAuth !== 'function') return; // supabase not ready yet
+      _hydrateAttempted = true; // attempt once — prevent parallel retries
+      fs.init().then(function () {
+        return fs.requireAuth('client');
+      }).then(function (authObj) {
+        if (!authObj || !authObj.user) { _hydrateAttempted = false; return; } // allow future retry
+        return _ensureProfile(fs, authObj.user.id, authObj.user.email || '', 'client')
+          .then(function (profileObj) {
+            _applyClientProfile(authObj, profileObj || null);
+            console.log('[Fixeo Dashboard] late hydration succeeded');
+          });
+      }).catch(function (e) {
+        _hydrateAttempted = false; // allow next retry
+        console.warn('[Fixeo Dashboard] late hydration attempt failed:', e && e.message);
+      });
+    }
+
+    var _lateRetry1 = window.setTimeout(_hydrateClientProfileIfPossible, 1000);
+    var _lateRetry2 = window.setTimeout(_hydrateClientProfileIfPossible, 3000);
+    var _lateRetry3 = window.setTimeout(_hydrateClientProfileIfPossible, 6000);
+
     // ── PHASE 1: Auth + profile (async, non-blocking to empty-state render) ─
-    // If this fails/hangs, dashboard is already visible with empty states.
+    // Timeouts raised: Supabase init often takes 2–4s on cold start.
+    // If auth times out the dashboard stays on empty states but the late
+    // hydration retries above will fill in name/settings when ready.
     var auth = null;
     try {
-      await withTimeout(FixeoSupabase.init(), 3000, 'supabase-init');
+      await withTimeout(FixeoSupabase.init(), 6000, 'supabase-init');
       var authResult = await withTimeout(
         FixeoSupabase.requireAuth('client'),
-        3000, 'requireAuth'
+        6000, 'requireAuth'
       );
-      // withTimeout may return { data:[], error:'timeout' } — treat as auth failure
+      // withTimeout resolves {data:[], error:'timeout'} on timeout — not a user object
       if (authResult && authResult.user) {
         auth = authResult;
       } else if (authResult && authResult.error) {
-        console.warn('[Fixeo Dashboard] auth timeout/error — staying on empty states');
+        console.warn('[Fixeo Dashboard] auth timed out — late retries will hydrate when ready');
       } else {
-        auth = authResult; // normal requireAuth result
+        auth = authResult; // normal requireAuth result (redirect or session object)
       }
     } catch (_authErr) {
-      console.warn('[Fixeo Dashboard] requireAuth failed:', _authErr && _authErr.message);
+      console.warn('[Fixeo Dashboard] requireAuth threw:', _authErr && _authErr.message);
     }
 
     if (!auth || !auth.user) {
+      // Don't hard-return to nowhere — dashboard is already visible with empty states.
+      // Late retries will hydrate once Supabase is ready.
       window.clearTimeout(_failsafeTimer);
-      revealClientDashboard('no-auth');
-      return;
+      revealClientDashboard('no-auth-yet');
+      return; // data queries need auth — skip them, late retry handles everything
     }
+
+    // Cancel late retries — we have auth now, proceeding normally
+    window.clearTimeout(_lateRetry1);
+    window.clearTimeout(_lateRetry2);
+    window.clearTimeout(_lateRetry3);
+    _hydrateAttempted = true; // prevent late retries from firing after us
 
     // Profile — non-blocking own try/catch
     var _cProfile = null;
     try {
       var _profileResult = await withTimeout(
         _ensureProfile(FixeoSupabase, auth.user.id, auth.user.email || '', 'client'),
-        3000, 'ensureProfile'
+        5000, 'ensureProfile'
       );
       // withTimeout returns {data:[], error:'timeout'} on timeout — not a profile object
       if (_profileResult && !_profileResult.error) _cProfile = _profileResult;
@@ -550,34 +629,8 @@
       console.warn('[Fixeo Dashboard] profile fetch failed, using email fallback:', _profileErr && _profileErr.message);
     }
 
-    // Resolve display name — fallback chain: profile.full_name → email prefix → ''
-    var _cDisplayName = (_cProfile && _cProfile.full_name ? _cProfile.full_name.trim() : '')
-      || (auth.user.email ? auth.user.email.split('@')[0] : '');
-    var _cDisplayFirst = _cDisplayName.split(' ')[0] || _cDisplayName;
-
-    // Update UI with real name (dashboard already visible)
-    if (heroName) {
-      heroName.textContent = escapeHtml(_cDisplayName);
-      heroName.style.visibility = 'visible';
-    }
-    var _cSidebarUser = document.getElementById('sidebar-username');
-    if (_cSidebarUser) _cSidebarUser.textContent = escapeHtml(_cDisplayFirst || _cDisplayName);
-
-    var _cNavChip = document.getElementById('global-username') || document.querySelector('.nav-user-name');
-    if (_cNavChip && _cDisplayName) {
-      var _cRole = (_cProfile && _cProfile.role) || 'client';
-      var _cRoleLabel = _cRole === 'artisan' ? 'Artisan' : (_cRole === 'admin' ? 'Admin' : 'Client');
-      _cNavChip.textContent = _cDisplayName + ' (' + _cRoleLabel + ')';
-    }
-
-    _hydrateSettingsForm(_cProfile, auth.user.email || '', 'client');
-    _wireSettingsSave(FixeoSupabase, auth.user.id, 'settings-client-save', function () {
-      return {
-        full_name: (document.getElementById('settings-client-name')  || {}).value || '',
-        phone:     (document.getElementById('settings-client-phone') || {}).value || '',
-        city:      (document.getElementById('settings-client-city')  || {}).value || ''
-      };
-    });
+    // Write auth + profile into DOM (hero, sidebar, nav chip, settings)
+    _applyClientProfile(auth, _cProfile);
 
     window.clearTimeout(_failsafeTimer);
     revealClientDashboard('profile-resolved');
