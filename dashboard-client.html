@@ -988,90 +988,93 @@ select option{background:#1a1a2e!important;color:#fff!important;}
 .fxd-nudge-btn:hover  { transform: translateY(-1px) !important; }
 .fxd-nudge-btn:active { transform: scale(.96) !important; }
 
-/* ══ Dashboard modal centering ─────────────────────────────────────────────────────────────────────
-   ROOT CAUSE: #request-modal / #express-modal carry class="modal request-modal"
-   on ONE element. The previous selector "#request-modal .request-modal" targeted
-   nothing (no child with that class exists). Meanwhile request-form.css applies
-   max-width:560px + transform:translate(-50%,-50%) to the same element that
-   fixeo_v5_fixes.css has set to position:fixed; inset:0 — shifting the 560px
-   container 280px offscreen left.
-
-   FIX: Override the modal root element itself. Make it a true fullscreen transparent
-   centering container (transform:none; width:100vw; background:transparent).
-   Style .modal-header and .request-modal-shell as the visible card halves.
-   Both #request-modal and #express-modal share identical direct children.
+/* ══ Dashboard modal — desktop UX (all rules @media≥768px except backdrop) ───────────────────
+   Architecture: #request-modal / #express-modal are ONE element with both
+   class="modal" (fixeo_v5_fixes owns display/position/inset) and
+   class="request-modal" (request-form.css adds transform/max-width).
+   We override on the element root directly (no child .request-modal exists).
+   DOM children: > .modal-header  +  > .request-modal-shell
    ───────────────────────────────────────────────────────────────────────────── */
-
-/* 1 ─ Modal root: fullscreen transparent centering container
-   flex-direction:column is the critical fix — without it, the default
-   flex-direction:row places .modal-header and .request-modal-shell
-   SIDE BY SIDE instead of stacked, giving two detached horizontal blocks.
-   Scoped to @media(min-width:768px) so mobile behaviour is untouched. */
 @media (min-width: 768px) {
+
+  /* 1 ─ Modal root (open): fullscreen transparent column-flex centering container */
   [data-dash-type="client"] #request-modal.open,
   [data-dash-type="client"] #express-modal.open {
-    position:        fixed       !important;
-    inset:           0           !important;
-    display:         flex        !important;
-    flex-direction:  column      !important;  /* stack header above shell */
-    align-items:     center      !important;
-    justify-content: center      !important;
-    width:           100vw       !important;
-    max-width:       100vw       !important;
-    height:          100vh       !important;
-    max-height:      100vh       !important;
-    margin:          0           !important;
-    transform:       none        !important;
-    background:      transparent !important;
-    border:          none        !important;
-    box-shadow:      none        !important;
-    border-radius:   0           !important;
-    overflow:        hidden      !important;
-    padding:         0           !important;
-    z-index:         99995       !important;
+    position:        fixed        !important;
+    inset:           0            !important;
+    display:         flex         !important;
+    flex-direction:  column       !important;  /* stack header above shell */
+    align-items:     center       !important;
+    justify-content: center       !important;
+    width:           100vw        !important;
+    max-width:       100vw        !important;
+    height:          100vh        !important;
+    max-height:      100vh        !important;
+    margin:          0            !important;
+    transform:       none         !important;  /* kills translate(-50%,-50%) from request-form.css */
+    background:      transparent  !important;  /* container is NOT the card */
+    border:          none         !important;
+    box-shadow:      none         !important;
+    border-radius:   0            !important;
+    overflow:        hidden       !important;
+    padding:         40px 16px    !important;  /* viewport breathing room top/bottom */
+    z-index:         99995        !important;
   }
+
+  /* 1b ─ Closed state: ensure column stacking is consistent */
+  [data-dash-type="client"] #request-modal,
+  [data-dash-type="client"] #express-modal {
+    flex-direction:  column       !important;
+    align-items:     center       !important;
+  }
+
+  /* 2 ─ Card width — both children share the same column width */
+  [data-dash-type="client"] #request-modal.open > .modal-header,
+  [data-dash-type="client"] #express-modal.open > .modal-header,
+  [data-dash-type="client"] #request-modal.open > .request-modal-shell,
+  [data-dash-type="client"] #express-modal.open > .request-modal-shell {
+    width:     min(92vw, 520px) !important;
+  }
+
+  /* 3 ─ Header: top card half + sticky so it stays visible above any overflow */
+  [data-dash-type="client"] #request-modal.open > .modal-header,
+  [data-dash-type="client"] #express-modal.open > .modal-header {
+    position:        sticky       !important;
+    top:             0            !important;
+    z-index:         2            !important;
+    backdrop-filter: blur(12px)   !important;
+    background:      rgba(18, 18, 28, 0.97) !important;
+    border:          1px solid rgba(255,255,255,.14) !important;
+    border-bottom:   none         !important;
+    border-radius:   22px 22px 0 0 !important;
+    padding:         20px 22px 16px !important;
+  }
+
+  /* 4 ─ Shell: scrollable bottom card half */
+  [data-dash-type="client"] #request-modal.open > .request-modal-shell,
+  [data-dash-type="client"] #express-modal.open > .request-modal-shell {
+    flex:            1            !important;
+    overflow-y:      auto         !important;
+    max-height:      75vh         !important;
+    padding-right:   6px          !important;
+    background:      rgba(18, 18, 28, 0.97) !important;
+    border:          1px solid rgba(255,255,255,.14) !important;
+    border-top:      none         !important;
+    border-radius:   0 0 22px 22px !important;
+    padding:         0 22px 22px  !important;
+  }
+
 }
 
-/* 2 ─ Width constraint shared by header + shell (the visible card) */
-[data-dash-type="client"] #request-modal.open > .modal-header,
-[data-dash-type="client"] #express-modal.open > .modal-header,
-[data-dash-type="client"] #request-modal.open > .request-modal-shell,
-[data-dash-type="client"] #express-modal.open > .request-modal-shell {
-  width:     min(92vw, 640px) !important;
-  max-width: 640px            !important;
-}
-
-/* 3 ─ Header: top half of the card */
-[data-dash-type="client"] #request-modal.open > .modal-header,
-[data-dash-type="client"] #express-modal.open > .modal-header {
-  background:    rgba(18, 18, 28, 0.97) !important;
-  border:        1px solid rgba(255,255,255,.14) !important;
-  border-bottom: none                            !important;
-  border-radius: 22px 22px 0 0                  !important;
-  padding:       20px 22px 16px                 !important;
-}
-
-/* 4 ─ Shell: bottom half of the card */
-[data-dash-type="client"] #request-modal.open > .request-modal-shell,
-[data-dash-type="client"] #express-modal.open > .request-modal-shell {
-  background:    rgba(18, 18, 28, 0.97) !important;
-  border:        1px solid rgba(255,255,255,.14) !important;
-  border-top:    none                            !important;
-  border-radius: 0 0 22px 22px                  !important;
-  padding:       0 22px 22px                    !important;
-  max-height:    78vh                            !important;
-  overflow-y:    auto                            !important;
-}
-
-/* 5 ─ Backdrop */
+/* 5 ─ Backdrop (all viewports) */
 [data-dash-type="client"] #main-backdrop.open {
-  position:          fixed              !important;
-  inset:             0                  !important;
-  z-index:           99990              !important;
-  background:        rgba(0,0,0,.58)    !important;
-  backdrop-filter:   blur(10px)         !important;
-  -webkit-backdrop-filter: blur(10px)   !important;
-  display:           block              !important;
+  position:                fixed             !important;
+  inset:                   0                 !important;
+  z-index:                 99990             !important;
+  background:              rgba(0,0,0,.58)   !important;
+  backdrop-filter:         blur(10px)        !important;
+  -webkit-backdrop-filter: blur(10px)        !important;
+  display:                 block             !important;
 }
 </style>
 
