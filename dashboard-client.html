@@ -68,6 +68,7 @@ select option{background:#1a1a2e!important;color:#fff!important;}
 ::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#E1306C,#833AB4)!important;border-radius:4px!important}
 </style>
 <link rel="stylesheet" href="css/fixeo_v5_fixes.css">
+<link rel="stylesheet" href="css/request-form.css">
 <link rel="stylesheet" href="css/payment.css">
   <link rel="stylesheet" href="css/reservation.css">
 <link rel="stylesheet" href="css/header-unified.css"/>
@@ -1678,26 +1679,38 @@ function closeModal() { document.getElementById('modal-overlay').classList.remov
  * openUrgent():  calls expressRequest() — the only urgent modal on this page.
  * ------------------------------------------------------------------- */
 window.FixeoDashboardModals = (function () {
+  'use strict';
+
   function openRequest() {
+    /* Tier 1 — real homepage modal: problem + city + urgency chips + budget + phone */
+    if (window.FixeoClientRequest && typeof window.FixeoClientRequest.open === 'function') {
+      window.FixeoClientRequest.open();
+      return;
+    }
+    /* Tier 2 — Supabase dashboard modal (fixeo-mvp-supabase.js override of openNewRequestModal) */
     if (typeof window.fixeoOpenRequest === 'function') {
       window.fixeoOpenRequest();
-    } else if (typeof window.openNewRequestModal === 'function') {
-      window.openNewRequestModal();
-    } else if (typeof openNewRequestModal === 'function') {
-      openNewRequestModal();
-    } else {
-      window.location.href = 'index.html#express-request-section';
+      return;
     }
+    /* Tier 3 — navigate */
+    window.location.href = 'index.html#express-request-section';
   }
+
   function openUrgent() {
+    /* Tier 1 — real homepage express modal: textarea + suggestion chips + city */
+    if (window.FixeoClientRequest && typeof window.FixeoClientRequest.openExpress === 'function') {
+      window.FixeoClientRequest.openExpress();
+      return;
+    }
+    /* Tier 2 — dashboard inline urgent form */
     if (typeof window.expressRequest === 'function') {
       window.expressRequest();
-    } else if (typeof expressRequest === 'function') {
-      expressRequest();
-    } else {
-      openRequest();
+      return;
     }
+    /* Tier 3 — degrade to standard request modal */
+    openRequest();
   }
+
   return { openRequest: openRequest, openUrgent: openUrgent };
 }());
 
@@ -2161,6 +2174,73 @@ document.addEventListener('DOMContentLoaded', () => {
 
 <!-- ══ AUTH GLOBAL + HEADER-UNIFIED (manquait dans dashboards) ══ -->
 <script src="js/fixeo-supabase-core.js"></script>
+<script>
+/* openModal / closeModal shim — required by request-form.js.
+   Defines window.openModal (not present without main.js).
+   Wraps existing dashboard closeModal() to be ID-aware:
+     - 'request-modal' / 'express-modal' → close via backdrop system
+     - all other IDs (incl. modal-overlay) → original dashboard behaviour
+   Captured at shim-execution time, before request-form.js init. */
+(function () {
+  'use strict';
+  var REQUEST_IDS = { 'request-modal': true, 'express-modal': true };
+
+  /* openModal — not defined on dashboard (main.js absent) */
+  if (typeof window.openModal !== 'function') {
+    window.openModal = function (id) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      el.classList.add('open');
+      var bd = document.getElementById('main-backdrop');
+      if (bd) {
+        bd.classList.add('open');
+        bd.removeAttribute('hidden');
+        bd.setAttribute('aria-hidden', 'false');
+      }
+      document.body.style.overflow = 'hidden';
+    };
+  }
+
+  /* closeModal — wrap existing to add ID-awareness */
+  var _origClose = (typeof window.closeModal === 'function') ? window.closeModal : null;
+  window.closeModal = function (id) {
+    if (REQUEST_IDS[id]) {
+      /* Close the named request/express modal */
+      var el = document.getElementById(id);
+      if (el) el.classList.remove('open');
+      /* Only reset backdrop + scroll if no other request modal is still open */
+      var anyOpen = Object.keys(REQUEST_IDS).some(function (k) {
+        var m = document.getElementById(k);
+        return m && m.classList.contains('open');
+      });
+      if (!anyOpen) {
+        var bd = document.getElementById('main-backdrop');
+        if (bd) {
+          bd.classList.remove('open');
+          bd.setAttribute('aria-hidden', 'true');
+        }
+        document.body.style.overflow = '';
+      }
+    } else if (_origClose) {
+      /* All other IDs — original dashboard closeModal (handles #modal-overlay) */
+      _origClose(id);
+    } else {
+      var el2 = document.getElementById(id);
+      if (el2) el2.classList.remove('open');
+    }
+  };
+
+  /* Backdrop click-to-dismiss */
+  document.addEventListener('click', function (e) {
+    var bd = document.getElementById('main-backdrop');
+    if (e.target === bd) {
+      window.closeModal('request-modal');
+      window.closeModal('express-modal');
+    }
+  });
+}());
+</script>
+<script src="js/request-form.js"></script>
 <script src="js/header-unified.js"></script>
 <script src="js/auth-global.js"></script>
 <script src="js/fixeo-mvp-supabase.js"></script>
@@ -2169,6 +2249,85 @@ document.addEventListener('DOMContentLoaded', () => {
 <script src="js/fixeo-chat-mvp.js"></script>
 
 <!-- Mobile FAB - visible only on ≤768px -->
+<!-- ── Real homepage modals (request-form.js) ────────────────────────────
+     #request-modal  = standard "Publier ma demande" form
+     #main-backdrop  = shared backdrop for both modals
+     These are identical copies from index.html — request-form.js binds them by ID. -->
+<div class="modal-backdrop" id="main-backdrop" aria-hidden="true"></div>
+
+<div class="modal request-modal" id="request-modal" role="dialog" aria-modal="true" aria-labelledby="request-modal-title" aria-describedby="request-modal-subtitle">
+  <div class="modal-header request-modal-header">
+    <div>
+      <h3 id="request-modal-title">Décrivez votre besoin</h3>
+      <p id="request-modal-subtitle" class="request-modal-subtitle">Recevez des offres d’artisans vérifiés rapidement</p>
+    </div>
+    <button class="modal-close" type="button" onclick="window.FixeoClientRequest && window.FixeoClientRequest.closeStandard ? window.FixeoClientRequest.closeStandard('request-modal') : document.getElementById('request-modal').classList.remove('open')" aria-label="Fermer">✕</button>
+  </div>
+  <div class="request-modal-shell">
+    <form id="request-form" class="request-form" novalidate>
+      <div class="request-field">
+        <label for="request-problem">Problème</label>
+        <input id="request-problem" name="problem" type="text" placeholder="Décrivez votre problème (ex: fuite d’eau, panne électricité...)" maxlength="120" required />
+      </div>
+      <div class="request-field">
+        <label for="request-city">Ville</label>
+        <select id="request-city" name="ville" required>
+          <option value="">Choisir une ville</option>
+          <option value="Casablanca">Casablanca</option>
+          <option value="Rabat">Rabat</option>
+          <option value="Marrakech">Marrakech</option>
+          <option value="Fès">Fès</option>
+          <option value="Tanger">Tanger</option>
+          <option value="Agadir">Agadir</option>
+          <option value="Meknès">Meknès</option>
+          <option value="Oujda">Oujda</option>
+        </select>
+      </div>
+      <div class="request-field">
+        <span class="request-label">Urgence</span>
+        <div class="request-choice-grid" role="radiogroup" aria-label="Urgence">
+          <label class="request-choice-card">
+            <input type="radio" name="urgence" value="Urgent (moins de 30 min)" required />
+            <span class="request-choice-title">Urgent</span>
+            <span class="request-choice-meta">moins de 30 min</span>
+          </label>
+          <label class="request-choice-card">
+            <input type="radio" name="urgence" value="Normal" checked />
+            <span class="request-choice-title">Normal</span>
+            <span class="request-choice-meta">délai classique</span>
+          </label>
+        </div>
+      </div>
+      <div class="request-field">
+        <label for="request-budget">Budget <span class="request-optional">(optionnel)</span></label>
+        <select id="request-budget" name="budget">
+          <option value="">Sélectionner un budget</option>
+          <option value="Moins de 100 MAD">Moins de 100 MAD</option>
+          <option value="100 - 300 MAD">100 - 300 MAD</option>
+          <option value="300 - 700 MAD">300 - 700 MAD</option>
+          <option value="+700 MAD">+700 MAD</option>
+        </select>
+      </div>
+      <div class="request-field">
+        <label for="request-phone">Téléphone</label>
+        <input id="request-phone" name="telephone" type="tel" inputmode="tel" placeholder="06 12 34 56 78" maxlength="20" required />
+      </div>
+      <button class="btn btn-primary request-submit-btn" type="submit">Recevoir des offres maintenant</button>
+      <div class="request-trust-copy" aria-hidden="true">
+        <span>Réponse moyenne : moins de 15 minutes</span>
+        <span>Gratuit et sans engagement</span>
+      </div>
+    </form>
+    <div id="request-success" class="request-success" hidden>
+      <div class="request-success-icon">✅</div>
+      <h4>Votre demande a été publiée sur Fixeo</h4>
+      <p>Votre demande reste dans Fixeo. Vous pouvez aussi la partager sur WhatsApp si vous le souhaitez.</p>
+      <a class="btn request-secondary-btn request-whatsapp-btn" id="request-whatsapp-link" href="#" target="_self" rel="noopener">Partager aussi sur WhatsApp</a>
+      <button class="btn request-secondary-btn" type="button" id="request-new-one">Publier une autre demande</button>
+    </div>
+  </div>
+</div>
+
 <button class="fixeo-fab fxd-fab-v2" onclick="FixeoDashboardModals.openRequest()" aria-label="Publier une demande">
   <span class="fxd-fab-icon">+</span>
   <span class="fxd-fab-label">Demande</span>
