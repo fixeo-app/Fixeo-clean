@@ -988,72 +988,83 @@ select option{background:#1a1a2e!important;color:#fff!important;}
 .fxd-nudge-btn:hover  { transform: translateY(-1px) !important; }
 .fxd-nudge-btn:active { transform: scale(.96) !important; }
 
-/* ══ Dashboard-scoped positioning for real homepage modals ════════════════════
-   Scope: [data-dash-type="client"] on <body> (already present, no new class needed).
+/* ══ Dashboard modal centering ─────────────────────────────────────────────────────────────────────
+   ROOT CAUSE: #request-modal / #express-modal carry class="modal request-modal"
+   on ONE element. The previous selector "#request-modal .request-modal" targeted
+   nothing (no child with that class exists). Meanwhile request-form.css applies
+   max-width:560px + transform:translate(-50%,-50%) to the same element that
+   fixeo_v5_fixes.css has set to position:fixed; inset:0 — shifting the 560px
+   container 280px offscreen left.
 
-   WHY NEEDED:
-   fixeo_v5_fixes.css sets on every .modal:
-     display:none !important; position:fixed !important; inset:0 !important;
-     align-items:center !important; justify-content:center !important;
-   When .modal.open fires display:flex the modal IS the full-viewport flex
-   container. The .request-modal child must be a flex item centred inside it.
-   Without these overrides the child inherits inset:0 and stretches fullscreen,
-   or appears top-left because transform:translate(-50%,-58%) has no top/left
-   to anchor against.
-
-   STRATEGY: let fixeo_v5_fixes.css own the outer container (position:fixed,
-   inset:0, display:flex, align/justify center) and correct only the INNER
-   panel (.request-modal child) dimensions + the backdrop z-index.
+   FIX: Override the modal root element itself. Make it a true fullscreen transparent
+   centering container (transform:none; width:100vw; background:transparent).
+   Style .modal-header and .request-modal-shell as the visible card halves.
+   Both #request-modal and #express-modal share identical direct children.
    ───────────────────────────────────────────────────────────────────────────── */
 
-/* Outer container: raise above dashboard stacking contexts */
-[data-dash-type="client"] #request-modal,
-[data-dash-type="client"] #express-modal {
-  z-index: 99995 !important;  /* above sidebar/header (z-fixed:300), below our panel */
+/* 1 ─ Modal root: fullscreen transparent centering container */
+[data-dash-type="client"] #request-modal.open,
+[data-dash-type="client"] #express-modal.open {
+  position:   fixed      !important;
+  inset:      0          !important;
+  display:    flex       !important;
+  align-items:     center !important;
+  justify-content: center !important;
+  width:      100vw      !important;
+  max-width:  100vw      !important;
+  height:     100vh      !important;
+  max-height: 100vh      !important;
+  margin:     0          !important;
+  transform:  none       !important;  /* kills translate(-50%,-50%) from request-form.css */
+  background: transparent !important; /* container is NOT the card */
+  border:     none       !important;
+  box-shadow: none       !important;
+  border-radius: 0       !important;
+  overflow:   hidden     !important;
+  padding:    0          !important;
+  z-index:    99995      !important;
 }
 
-/* Inner panel: constrain dimensions, reset transform for flex-child centering.
-   fixeo_v5_fixes.css already centres the flex container; the child just needs
-   its own width/max-height and a clean transform (no translate needed for
-   flex-child centred by the parent). */
-[data-dash-type="client"] #request-modal .request-modal,
-[data-dash-type="client"] #express-modal .request-modal {
-  position: relative !important;  /* flex item, not absolutely positioned */
-  inset: unset !important;
-  transform: none !important;     /* flex centering handles placement */
-  max-width: min(92vw, 640px) !important;
-  width: min(92vw, 640px) !important;
-  max-height: 86vh !important;
-  overflow-y: auto !important;
-  margin: 0 !important;           /* remove any margin: 0 auto that could shift */
-  pointer-events: auto !important;
-  /* Preserve glassmorphism look */
-  background: rgba(20, 20, 40, 0.97) !important;
-  border: 1px solid rgba(255,255,255,.12) !important;
-  border-radius: 18px !important;
-  padding: 24px !important;
-  box-shadow: 0 0 0 1px rgba(225,48,108,.15), 0 24px 60px rgba(0,0,0,.72) !important;
+/* 2 ─ Width constraint shared by header + shell (the visible card) */
+[data-dash-type="client"] #request-modal.open > .modal-header,
+[data-dash-type="client"] #express-modal.open > .modal-header,
+[data-dash-type="client"] #request-modal.open > .request-modal-shell,
+[data-dash-type="client"] #express-modal.open > .request-modal-shell {
+  width:     min(92vw, 640px) !important;
+  max-width: 640px            !important;
 }
 
-/* Animate-in: closed state uses scale(.985), open state clean scale(1) */
-[data-dash-type="client"] #request-modal:not(.open) .request-modal,
-[data-dash-type="client"] #express-modal:not(.open) .request-modal {
-  transform: scale(0.985) !important;
-  opacity: 0 !important;
-}
-[data-dash-type="client"] #request-modal.open .request-modal,
-[data-dash-type="client"] #express-modal.open .request-modal {
-  transform: none !important;
-  opacity: 1 !important;
-  transition: transform 0.2s ease, opacity 0.18s ease !important;
+/* 3 ─ Header: top half of the card */
+[data-dash-type="client"] #request-modal.open > .modal-header,
+[data-dash-type="client"] #express-modal.open > .modal-header {
+  background:    rgba(18, 18, 28, 0.97) !important;
+  border:        1px solid rgba(255,255,255,.14) !important;
+  border-bottom: none                            !important;
+  border-radius: 22px 22px 0 0                  !important;
+  padding:       20px 22px 16px                 !important;
 }
 
-/* Backdrop: sit just below the modal container */
-[data-dash-type="client"] #main-backdrop {
-  z-index: 99990 !important;  /* below modal container (99995), above everything else */
-  background: rgba(0,0,0,.58) !important;
-  backdrop-filter: blur(10px) !important;
-  -webkit-backdrop-filter: blur(10px) !important;
+/* 4 ─ Shell: bottom half of the card */
+[data-dash-type="client"] #request-modal.open > .request-modal-shell,
+[data-dash-type="client"] #express-modal.open > .request-modal-shell {
+  background:    rgba(18, 18, 28, 0.97) !important;
+  border:        1px solid rgba(255,255,255,.14) !important;
+  border-top:    none                            !important;
+  border-radius: 0 0 22px 22px                  !important;
+  padding:       0 22px 22px                    !important;
+  max-height:    78vh                            !important;
+  overflow-y:    auto                            !important;
+}
+
+/* 5 ─ Backdrop */
+[data-dash-type="client"] #main-backdrop.open {
+  position:          fixed              !important;
+  inset:             0                  !important;
+  z-index:           99990              !important;
+  background:        rgba(0,0,0,.58)    !important;
+  backdrop-filter:   blur(10px)         !important;
+  -webkit-backdrop-filter: blur(10px)   !important;
+  display:           block              !important;
 }
 </style>
 
