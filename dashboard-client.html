@@ -1774,5 +1774,39 @@ document.addEventListener('DOMContentLoaded', () => {
 <!-- Mobile FAB - visible only on ≤768px -->
 <button class="fixeo-fab" onclick="fixeoOpenRequest()" aria-label="Publier une demande">+ Demande</button>
 
+<!-- Safety net: guarantee window.fixeoOpenRequest is globally reachable.
+     The function is already defined inline above (line ~1236); this block
+     ensures it is also addressable as window.fixeoOpenRequest even in
+     environments that do not hoist named functions onto window. -->
+<script>
+(function () {
+  'use strict';
+  if (typeof window.fixeoOpenRequest !== 'function') {
+    window.fixeoOpenRequest = function () {
+      try {
+        if (typeof window.openNewRequestModal === 'function') {
+          window.openNewRequestModal();
+          var overlay = document.getElementById('modal-overlay');
+          if (overlay) {
+            overlay.addEventListener('click', function esc(e) {
+              if (e.target === overlay) {
+                overlay.classList.remove('open');
+                overlay.removeEventListener('click', esc);
+              }
+            });
+          }
+          return;
+        }
+      } catch (e) {
+        var ov = document.getElementById('modal-overlay');
+        if (ov) ov.classList.remove('open');
+        console.warn('[Fixeo] modal failed:', e);
+      }
+      window.location.href = 'index.html#express-request-section';
+    };
+  }
+}());
+</script>
+
 </body>
 </html>
