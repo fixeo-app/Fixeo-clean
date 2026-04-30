@@ -118,20 +118,32 @@
     };
   }
 
+  function safeArray(val) {
+    return Array.isArray(val) ? val : [];
+  }
+
   function readConversations() {
-    return parseJSON(localStorage.getItem(CONVERSATION_KEY), []).map(normalizeConversation);
+    var raw = localStorage.getItem(CONVERSATION_KEY);
+    if (!raw) return [];
+    var parsed;
+    try { parsed = JSON.parse(raw); } catch (_) { return []; }
+    return safeArray(parsed).map(normalizeConversation);
   }
 
   function writeConversations(items) {
-    localStorage.setItem(CONVERSATION_KEY, JSON.stringify(items.map(normalizeConversation)));
+    localStorage.setItem(CONVERSATION_KEY, JSON.stringify(safeArray(items).map(normalizeConversation)));
   }
 
   function readMessages() {
-    return parseJSON(localStorage.getItem(MESSAGE_KEY), []).map(normalizeMessage);
+    var raw = localStorage.getItem(MESSAGE_KEY);
+    if (!raw) return [];
+    var parsed;
+    try { parsed = JSON.parse(raw); } catch (_) { return []; }
+    return safeArray(parsed).map(normalizeMessage);
   }
 
   function writeMessages(items) {
-    localStorage.setItem(MESSAGE_KEY, JSON.stringify(items.map(normalizeMessage)));
+    localStorage.setItem(MESSAGE_KEY, JSON.stringify(safeArray(items).map(normalizeMessage)));
   }
 
   function readPresence() {
@@ -284,8 +296,11 @@
   }
 
   function ensureMissionBackedConversations() {
-    getMissionList().forEach(function (mission) {
-      const hasArtisan = mission.artisan_id || mission.target_artisan_id || (mission.proposals || []).length;
+    var missions = getMissionList();
+    if (!Array.isArray(missions)) return;
+    missions.forEach(function (mission) {
+      if (!mission) return;
+      const hasArtisan = mission.artisan_id || mission.target_artisan_id || safeArray(mission.proposals).length;
       if (hasArtisan) ensureConversationForMission(mission);
     });
   }
@@ -439,17 +454,21 @@
       return readConversations().find(function (conversation) { return conversation.id === conversationId; }) || null;
     },
     listConversations: function () {
+      if (!this.currentUser) return [];
       const user = this.currentUser;
       const visibleIds = user.role === 'artisan'
         ? [user.id, ARTISAN_FALLBACK.id, 'artisan', 'artisan_local']
         : [user.id, CLIENT_FALLBACK.id, 'client', 'client_local'];
-      return readConversations()
-        .filter(function (conversation) {
-          return user.role === 'artisan'
-            ? visibleIds.indexOf(conversation.artisan_id) >= 0
-            : visibleIds.indexOf(conversation.client_id) >= 0;
-        })
-        .sort(function (a, b) { return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime(); });
+      try {
+        return safeArray(readConversations())
+          .filter(function (conversation) {
+            if (!conversation) return false;
+            return user.role === 'artisan'
+              ? visibleIds.indexOf(conversation.artisan_id) >= 0
+              : visibleIds.indexOf(conversation.client_id) >= 0;
+          })
+          .sort(function (a, b) { return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime(); });
+      } catch (_) { return []; }
     },
     getActiveConversation: function () {
       return this.getConversation(this.activeConversationId) || this.listConversations()[0] || null;
@@ -507,8 +526,10 @@
       return ownMessages.length ? ownMessages[ownMessages.length - 1].seen_at : null;
     },
     renderConversationList: function (container) {
+      if (!container) return;
+      if (!this.currentUser) { container.innerHTML = ''; return; }
       const user = this.currentUser;
-      const conversations = this.listConversations();
+      const conversations = safeArray(this.listConversations());
       if (!conversations.length) {
         container.innerHTML = '<div class="fixeo-chat-empty"><div><strong>Aucune conversation</strong><br>Ouvrez un contact pour démarrer.</div></div>';
         return;
@@ -568,6 +589,7 @@
       container.scrollTop = container.scrollHeight;
     },
     renderMain: function (conversation) {
+      if (!this.root) return;
       const main = this.root.querySelector('[data-chat-main]');
       if (!main) return;
       if (!conversation) {
@@ -609,11 +631,16 @@
     updateLauncherBadge: function () {
       const badge = this.launcher && this.launcher.querySelector('.badge');
       if (!badge) return;
-      const unread = this.listConversations().reduce(function (sum, conversation) {
-        return sum + getUnreadCountForConversation(conversation, api.currentUser);
-      }, 0);
-      badge.textContent = unread;
-      badge.classList.toggle('has-unread', unread > 0);
+      if (!this.currentUser) return;
+      try {
+        const conversations = safeArray(this.listConversations());
+        const unread = conversations.reduce(function (sum, conversation) {
+          if (!conversation) return sum;
+          return sum + getUnreadCountForConversation(conversation, api.currentUser);
+        }, 0);
+        badge.textContent = unread;
+        badge.classList.toggle('has-unread', unread > 0);
+      } catch (_) {}
     },
     injectHeroButtons: function () {
       if (!document.querySelector('.fixeo-chat-hero-btn') && document.querySelector('.dashboard-hero-actions')) {
@@ -754,32 +781,45 @@
       this.root = root;
     },
     render: function () {
-      ensureMissionBackedConversations();
-      const active = this.getActiveConversation();
-      if (active) {
-        this.activeConversationId = active.id;
-        localStorage.setItem(ACTIVE_KEY, active.id);
-        markConversationSeen(active.id);
+      if (!this.root) return;
+      try {
+        ensureMissionBackedConversations();
+        const active = this.getActiveConversation();
+        if (active) {
+          this.activeConversationId = active.id;
+          localStorage.setItem(ACTIVE_KEY, active.id);
+          markConversationSeen(active.id);
+        }
+        const list = this.root.querySelector('[data-chat-list]');
+        if (list) this.renderConversationList(list);
+        this.renderMain(active);
+        this.updateLauncherBadge();
+        this.injectHeroButtons();
+      } catch (err) {
+        console.warn('[FixeoChat] render error (non-fatal):', err && err.message);
       }
-      const list = this.root.querySelector('[data-chat-list]');
-      this.renderConversationList(list);
-      this.renderMain(active);
-      this.updateLauncherBadge();
-      this.injectHeroButtons();
     },
     init: function () {
-      ensureMissionBackedConversations();
-      if (getPageName() === 'artisan.html') ensureProfileDraftConversation();
-      this.updatePresence();
-      this.createUI();
-      this.bindEvents();
-      this.bindLegacyHooks();
-      this.render();
+      try { ensureMissionBackedConversations(); } catch (_) {}
+      try { if (getPageName() === 'artisan.html') ensureProfileDraftConversation(); } catch (_) {}
+      try { this.updatePresence(); } catch (_) {}
+      try { this.createUI(); } catch (_) {}
+      try { this.bindEvents(); } catch (_) {}
+      try { this.bindLegacyHooks(); } catch (_) {}
+      try { this.render(); } catch (_) {}
     }
   };
 
   window.FixeoChat = api;
   document.addEventListener('DOMContentLoaded', function () {
-    api.init();
+    // Deferred init: chat must never block dashboard render.
+    // setTimeout(fn, 0) yields to the browser so dashboard paints first.
+    window.setTimeout(function () {
+      try {
+        api.init();
+      } catch (err) {
+        console.warn('[FixeoChat] init disabled due to error:', err && err.message);
+      }
+    }, 0);
   });
 })(window, document);
