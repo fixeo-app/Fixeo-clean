@@ -430,11 +430,9 @@
 
     try {
       var auth = await FixeoSupabase.requireAuth('client');
-      var requests = await FixeoSupabase.listClientRequests();
-      var quotes = await FixeoSupabase.listQuotesForRequestIds(requests.map(function (item) { return item.id; }));
-      var missions = await FixeoSupabase.listClientMissions();
 
-      /* ── Profile hydration (Phase 1) ── */
+      /* ── STEP 1: Profile hydration — runs BEFORE data queries so UI
+         updates immediately without waiting for 4 sequential DB calls. ── */
       var _cProfile = await _ensureProfile(
         FixeoSupabase,
         auth.user.id,
@@ -442,38 +440,35 @@
         'client'
       );
 
-      // Hero greeting
-      if (heroName) {
-        var _cFirstName = (_cProfile && _cProfile.full_name ? _cProfile.full_name : '').split(' ')[0]
-          || (auth.user.email ? auth.user.email.split('@')[0] : '');
-        heroName.textContent = escapeHtml(_cFirstName);
-        heroName.style.visibility = 'visible'; // reveal after real name is set
-      }
-
-      // Resolve display name once, use everywhere
+      // Resolve display name from profile, fallback to email prefix — never hardcoded
       var _cDisplayName = (_cProfile && _cProfile.full_name ? _cProfile.full_name.trim() : '')
         || (auth.user.email ? auth.user.email.split('@')[0] : '');
       var _cDisplayFirst = _cDisplayName.split(' ')[0] || _cDisplayName;
 
-      // Sidebar name
-      var _cSidebarUser = document.getElementById('sidebar-username');
-      if (_cSidebarUser && _cDisplayFirst) {
-        _cSidebarUser.textContent = _cDisplayFirst;
+      // Hero greeting — reveal after setting real name
+      if (heroName) {
+        heroName.textContent = escapeHtml(_cDisplayName); // full name in hero
+        heroName.style.visibility = 'visible';
       }
 
-      // Header nav chip (auth-global wrote stale localStorage name — override with real)
+      // Sidebar name
+      var _cSidebarUser = document.getElementById('sidebar-username');
+      if (_cSidebarUser) {
+        _cSidebarUser.textContent = escapeHtml(_cDisplayFirst || _cDisplayName);
+      }
+
+      // Header nav chip — override stale auth-global write
       var _cNavChip = document.getElementById('global-username') || document.querySelector('.nav-user-name');
       if (_cNavChip && _cDisplayName) {
-        // auth-global formats as "Name (Rôle)" — replicate the pattern
         var _cRole = (_cProfile && _cProfile.role) || 'client';
         var _cRoleLabel = _cRole === 'artisan' ? 'Artisan' : (_cRole === 'admin' ? 'Admin' : 'Client');
         _cNavChip.textContent = _cDisplayName + ' (' + _cRoleLabel + ')';
       }
 
-      // Hydrate settings form once DOM is ready — always from Supabase, never localStorage
+      // Settings form — always from Supabase, never localStorage
       _hydrateSettingsForm(_cProfile, auth.user.email || '', 'client');
 
-      // Wire save button
+      // Wire save button (idempotent — _wireSettingsSave checks for existing listener)
       _wireSettingsSave(FixeoSupabase, auth.user.id, 'settings-client-save', function () {
         return {
           full_name: (document.getElementById('settings-client-name')  || {}).value || '',
@@ -481,6 +476,20 @@
           city:      (document.getElementById('settings-client-city')  || {}).value || ''
         };
       });
+
+      // Reveal dashboard — remove anti-FOUC style now that real name is in place
+      var _cAntiFlash = document.getElementById('fixeo-client-anti-fouc');
+      if (_cAntiFlash) _cAntiFlash.remove();
+      var _cLayout = document.querySelector('.dashboard-layout');
+      if (_cLayout) {
+        _cLayout.style.opacity = '';
+        _cLayout.style.transition = 'opacity .15s ease';
+      }
+
+      /* ── STEP 2: Data queries — after UI is already showing real name ── */
+      var requests = await FixeoSupabase.listClientRequests();
+      var quotes = await FixeoSupabase.listQuotesForRequestIds(requests.map(function (item) { return item.id; }));
+      var missions = await FixeoSupabase.listClientMissions();
 
       var stats = [
         { value: requests.length, label: 'Demandes créées' },
@@ -616,6 +625,14 @@
       if (requestsEl) requestsEl.innerHTML = '<div class="request-card"><p style="margin:0">' + escapeHtml(FixeoSupabase.getReadableError(error)) + '</p></div>';
       if (repliesEl) repliesEl.innerHTML = '';
       if (bookingsFull) bookingsFull.innerHTML = '';
+    } finally {
+      // Always reveal dashboard — even on error (so user sees the error, not a blank screen)
+      var _cAntiFlashF = document.getElementById('fixeo-client-anti-fouc');
+      if (_cAntiFlashF) _cAntiFlashF.remove();
+      var _cLayoutF = document.querySelector('.dashboard-layout');
+      if (_cLayoutF && !_cLayoutF.style.opacity) {
+        _cLayoutF.style.opacity = '';
+      }
     }
   }
 

@@ -135,7 +135,10 @@
   }
 
   function readPresence() {
-    return parseJSON(localStorage.getItem(PRESENCE_KEY), {});
+    // JSON.parse(null) returns null (not an error), so we must guard explicitly
+    var raw = localStorage.getItem(PRESENCE_KEY);
+    if (!raw) return {};
+    try { var parsed = JSON.parse(raw); return parsed && typeof parsed === 'object' ? parsed : {}; } catch (_) { return {}; }
   }
 
   function writePresence(presence) {
@@ -482,10 +485,12 @@
       if (this.root) this.root.classList.remove('open');
     },
     updatePresence: function () {
+      if (!this.currentUser || !this.currentUser.id) return;
       const presence = readPresence();
+      if (!presence || typeof presence !== 'object') return;
       presence[this.currentUser.id] = {
-        name: this.currentUser.name,
-        role: this.currentUser.role,
+        name: this.currentUser.name || '',
+        role: this.currentUser.role || 'client',
         last_seen: nowIso(),
         online: true
       };
@@ -715,8 +720,9 @@
       });
       window.setInterval(function () { api.updatePresence(); api.updateLauncherBadge(); }, 30000);
       window.addEventListener('beforeunload', function () {
+        if (!api.currentUser || !api.currentUser.id) return;
         const presence = readPresence();
-        if (presence[api.currentUser.id]) {
+        if (presence && presence[api.currentUser.id]) {
           presence[api.currentUser.id].online = false;
           presence[api.currentUser.id].last_seen = nowIso();
           writePresence(presence);

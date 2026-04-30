@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="fr" dir="ltr">
 <head>
+  <!-- Anti-FOUC: hide dashboard until Supabase hydration is complete.
+       Revealed by fixeo-mvp-supabase.js after profile fetch. -->
+  <style id="fixeo-client-anti-fouc">
+    .dashboard-layout { opacity: 0 !important; transition: none !important; }
+  </style>
   <script src="js/fixeo-db.js?v=db2"></script>
   <script src="js/supabase-client.js?v=sc2"></script>
   <script src="js/fixeo-repository.js?v=repo2"></script>
