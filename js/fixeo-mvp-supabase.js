@@ -294,17 +294,17 @@
    * Works for both client and artisan — uses IDs we added to HTML.
    */
   function _hydrateSettingsForm(profile, email, dashType) {
+    // Always overwrite on load — user hasn't started typing yet
     if (dashType === 'client') {
       var nameEl  = document.getElementById('settings-client-name');
       var emailEl = document.getElementById('settings-client-email');
       var phoneEl = document.getElementById('settings-client-phone');
       var cityEl  = document.getElementById('settings-client-city');
-      if (nameEl  && !nameEl.value)  nameEl.value  = profile.full_name || '';
-      if (emailEl && !emailEl.value) emailEl.value = email || profile.email || '';
-      if (phoneEl && !phoneEl.value) phoneEl.value = profile.phone || '';
+      if (nameEl)  nameEl.value  = profile.full_name || '';
+      if (emailEl) emailEl.value = email || profile.email || '';
+      if (phoneEl) phoneEl.value = profile.phone || '';
       if (cityEl) {
         var city = profile.city || '';
-        // Try to match existing option
         var opt = Array.from(cityEl.options).find(function(o) { return o.value === city || o.text === city; });
         if (opt) cityEl.value = opt.value;
       }
@@ -313,9 +313,9 @@
       var emailEl = document.getElementById('settings-artisan-email');
       var phoneEl = document.getElementById('settings-artisan-phone');
       var cityEl  = document.getElementById('settings-artisan-city');
-      if (nameEl  && !nameEl.value)  nameEl.value  = profile.full_name || '';
-      if (emailEl && !emailEl.value) emailEl.value = email || profile.email || '';
-      if (phoneEl && !phoneEl.value) phoneEl.value = profile.phone || '';
+      if (nameEl)  nameEl.value  = profile.full_name || '';
+      if (emailEl) emailEl.value = email || profile.email || '';
+      if (phoneEl) phoneEl.value = profile.phone || '';
       if (cityEl) {
         var city = profile.city || '';
         var opt = Array.from(cityEl.options).find(function(o) { return o.value === city || o.text === city; });
@@ -466,10 +466,14 @@
         { value: missions.length, label: 'Missions créées' }
       ];
 
+      // Disable the inline mock renderer — real data is here now
+      window._fixeoOverviewDisabled = true;
+
       if (statsEl) {
         statsEl.innerHTML = stats.map(function (stat) {
           return '<div class="client-stat-card"><span class="stat-number">' + escapeHtml(stat.value) + '</span><span class="stat-label">' + escapeHtml(stat.label) + '</span></div>';
         }).join('');
+        statsEl.dataset.real = '1';
       }
 
       if (requestsEl) {
@@ -493,7 +497,8 @@
                 '<button class="btn btn-secondary" type="button" onclick="window.openNewRequestModal && openNewRequestModal()">Nouvelle demande</button>' +
               '</div>' +
             '</div>';
-        }).join('') : '<div class="request-card"><p style="margin:0">Aucune demande Supabase pour le moment.</p></div>';
+        }).join('') : '<div class="request-card" style="text-align:center;padding:28px 20px"><p style="margin:0 0 12px;font-size:1.1rem">📋</p><p style="margin:0;font-weight:600">Aucune demande pour le moment</p><p style="margin:8px 0 16px;opacity:.65;font-size:.88rem">Créez votre première demande pour trouver un artisan qualifié.</p><button class="btn btn-primary" type="button" onclick="window.openNewRequestModal&&openNewRequestModal()">+ Créer une demande</button></div>';
+        if (requestsEl) requestsEl.dataset.real = '1';
       }
 
       if (repliesEl) {
@@ -520,7 +525,26 @@
                   : '<button class="btn btn-primary" type="button" data-accept-quote="' + escapeHtml(quote.id) + '">Accepter ce devis</button>') +
               '</div>' +
             '</div>';
-        }).join('') : '<div class="reply-card"><p style="margin:0">Aucun devis reçu pour le moment.</p></div>';
+        }).join('') : '<div class="reply-card" style="text-align:center;padding:28px 20px"><p style="margin:0 0 8px;font-size:1.1rem">💬</p><p style="margin:0;font-weight:600">Aucune réponse reçue</p><p style="margin:8px 0 0;opacity:.65;font-size:.88rem">Les artisans répondront à vos demandes ici.</p></div>';
+        if (repliesEl) repliesEl.dataset.real = '1';
+      }
+
+      // Action list — real-data context (no pending quotes = no urgent actions)
+      var actionsEl = document.getElementById('client-action-list');
+      if (actionsEl) {
+        if (quotes.filter(function(q){ return q.status === 'pending'; }).length > 0) {
+          actionsEl.innerHTML = '<div class="client-action-item"><span class="client-action-pill">À faire</span><strong>Vous avez ' + escapeHtml(quotes.filter(function(q){ return q.status === 'pending'; }).length) + ' devis en attente de décision</strong><p>Comparez les offres et acceptez le meilleur artisan.</p><div class="client-action-buttons"><button class="btn btn-primary" type="button" onclick="showSection(\'messages\')">Voir les devis</button></div></div>';
+        } else {
+          actionsEl.innerHTML = '<div class="client-action-item" style="opacity:.65;text-align:center;padding:20px 0"><p style="margin:0">Aucune action en attente. Tout est à jour ✅</p></div>';
+        }
+        actionsEl.dataset.real = '1';
+      }
+
+      // Favorites — no favorites feature yet, clean empty state
+      var favoritesEl = document.getElementById('client-favorites-list');
+      if (favoritesEl && !favoritesEl.dataset.real) {
+        favoritesEl.innerHTML = '<div class="favorite-item" style="opacity:.65;text-align:center;padding:16px 0"><span>Aucun artisan favori pour le moment.</span></div>';
+        favoritesEl.dataset.real = '1';
       }
 
       if (bookingsFull) {

@@ -1250,99 +1250,45 @@ function getFixeoClientName() {
 }
 
 function renderClientDashboardOverview() {
+  // Guard: disabled once Supabase real data has populated the same sections
+  if (window._fixeoOverviewDisabled) return;
+
   const heroName = document.getElementById('client-hero-name');
   if (heroName) heroName.textContent = getFixeoClientName();
 
+  // Stats: show loading zeros — Supabase will overwrite with real counts
   const statsEl = document.getElementById('client-stats-grid');
+  if (statsEl && !statsEl.dataset.real) {
+    statsEl.innerHTML = [
+      { value: '—', label: 'Demandes actives' },
+      { value: '—', label: 'Réponses reçues' },
+      { value: '—', label: 'Artisans favoris' },
+      { value: '—', label: 'Rendez-vous à venir' }
+    ].map(stat => `
+      <div class="client-stat-card">
+        <span class="stat-number">${fixeoEscapeHtml(stat.value)}</span>
+        <span class="stat-label">${fixeoEscapeHtml(stat.label)}</span>
+      </div>
+    `).join('');
+  }
+
+  // Requests/replies/favorites/actions: show empty state — Supabase will overwrite
   const requestsEl = document.getElementById('client-requests-list');
+  if (requestsEl && !requestsEl.dataset.real) {
+    requestsEl.innerHTML = '<div class="request-card"><p style="margin:0;opacity:.6">Chargement de vos demandes…</p></div>';
+  }
   const repliesEl = document.getElementById('client-replies-list');
+  if (repliesEl && !repliesEl.dataset.real) {
+    repliesEl.innerHTML = '<div class="reply-card"><p style="margin:0;opacity:.6">Chargement des réponses…</p></div>';
+  }
   const favoritesEl = document.getElementById('client-favorites-list');
+  if (favoritesEl && !favoritesEl.dataset.real) {
+    favoritesEl.innerHTML = '<div class="favorite-item" style="opacity:.6">Aucun artisan favori pour le moment.</div>';
+  }
   const actionsEl = document.getElementById('client-action-list');
-  if (!statsEl || !requestsEl || !repliesEl || !favoritesEl || !actionsEl) return;
-
-  const totalReplies = FIXEO_CLIENT_OVERVIEW.requests.reduce((sum, item) => sum + Number(item.replies || 0), 0);
-  const upcomingAppointments = FIXEO_CLIENT_OVERVIEW.requests.filter(item => item.statusClass === 'status-confirmed').length;
-
-  const stats = [
-    { value: FIXEO_CLIENT_OVERVIEW.requests.filter(item => item.statusClass !== 'status-closed').length, label: 'Demandes actives' },
-    { value: totalReplies, label: 'Réponses reçues' },
-    { value: FIXEO_CLIENT_OVERVIEW.favorites.length, label: 'Artisans favoris' },
-    { value: upcomingAppointments, label: 'Rendez-vous à venir' }
-  ];
-
-  statsEl.innerHTML = stats.map(stat => `
-    <div class="client-stat-card">
-      <span class="stat-number">${fixeoEscapeHtml(stat.value)}</span>
-      <span class="stat-label">${fixeoEscapeHtml(stat.label)}</span>
-    </div>
-  `).join('');
-
-  requestsEl.innerHTML = FIXEO_CLIENT_OVERVIEW.requests.map(request => `
-    <div class="request-card">
-      <div class="request-top">
-        <div>
-          <h3>${fixeoEscapeHtml(request.title)}</h3>
-          <p>${fixeoEscapeHtml(request.submittedAt)}</p>
-        </div>
-
-        <span class="request-status ${fixeoEscapeHtml(request.statusClass)}">${fixeoEscapeHtml(request.statusLabel)}</span>
-      </div>
-
-      <div class="request-meta">
-        <span>${fixeoEscapeHtml(request.replies)} réponses reçues</span>
-        <span>Réponse moyenne : ${fixeoEscapeHtml(request.avgResponse)}</span>
-      </div>
-
-      <div class="request-actions">
-        <button class="btn btn-primary" onclick="showSection('messages')">Voir réponses</button>
-        <button class="btn btn-secondary" onclick="openNewRequestModal()">Modifier</button>
-      </div>
-    </div>
-  `).join('');
-
-  repliesEl.innerHTML = FIXEO_CLIENT_OVERVIEW.replies.map(reply => `
-    <div class="reply-card">
-      <div class="reply-top">
-        <img class="reply-avatar" src="${fixeoEscapeHtml(reply.avatar)}" alt="${fixeoEscapeHtml(reply.name)}">
-        <div class="reply-info">
-          <h3>${fixeoEscapeHtml(reply.name)}</h3>
-          <p>${fixeoEscapeHtml(reply.specialty)}</p>
-          <div class="reply-meta">
-            <span>⭐ ${fixeoEscapeHtml(reply.rating)}</span>
-            <span>✔ ${fixeoEscapeHtml(reply.verified)}</span>
-          </div>
-        </div>
-        <div class="reply-price">
-          <strong>${fixeoEscapeHtml(reply.price)}</strong>
-          <span>${fixeoEscapeHtml(reply.responseTime)}</span>
-        </div>
-      </div>
-
-      <div class="reply-actions">
-        <button class="btn btn-primary btn-other-profile" type="button" data-public-profile="true" data-artisan-name="${fixeoEscapeHtml(reply.name)}" data-artisan-category="${fixeoEscapeHtml(reply.specialty)}" data-artisan-city="${fixeoEscapeHtml(reply.city || '')}">Voir profil</button>
-        <button class="btn btn-secondary" onclick="showSection('messages')">Contacter</button>
-      </div>
-    </div>
-  `).join('');
-
-  favoritesEl.innerHTML = FIXEO_CLIENT_OVERVIEW.favorites.map(item => `
-    <div class="favorite-item">
-      <strong>${fixeoEscapeHtml(item.name)}</strong>
-      <span>${fixeoEscapeHtml(item.subtitle)}</span>
-    </div>
-  `).join('');
-
-  actionsEl.innerHTML = FIXEO_CLIENT_OVERVIEW.actions.map(action => `
-    <div class="client-action-item">
-      <span class="client-action-pill">${fixeoEscapeHtml(action.pill)}</span>
-      <strong>${fixeoEscapeHtml(action.title)}</strong>
-      <p>${fixeoEscapeHtml(action.description)}</p>
-      <div class="client-action-buttons">
-        <button class="btn btn-primary" onclick="${action.primaryAction}">${fixeoEscapeHtml(action.primaryLabel)}</button>
-        <button class="btn btn-secondary" onclick="${action.secondaryAction}">${fixeoEscapeHtml(action.secondaryLabel)}</button>
-      </div>
-    </div>
-  `).join('');
+  if (actionsEl && !actionsEl.dataset.real) {
+    actionsEl.innerHTML = '<div class="client-action-item" style="opacity:.6">Aucune action en attente.</div>';
+  }
 }
 
 
@@ -1388,7 +1334,6 @@ document.addEventListener('DOMContentLoaded', () => {
   renderReviews();
   renderRecommended();
   renderClientDashboardOverview();
-  setTimeout(renderClientDashboardOverview, 250);
 
   /* Notification de bienvenue ou suivi COD */
   const hasPaidOrder = sessionStorage.getItem('fixeo_pp_captured');
