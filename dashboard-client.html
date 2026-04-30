@@ -711,7 +711,7 @@ select option{background:#1a1a2e!important;color:#fff!important;}
         <div class="client-dashboard-top">
           <div>
             <div class="section-tag">Dashboard client</div>
-            <h1>Bonjour <span id="client-hero-name">Youness</span> 👋</h1>
+            <h1>Bonjour <span id="client-hero-name" style="visibility:hidden">…</span> 👋</h1>
             <p>Suivez vos demandes, consultez les réponses et trouvez rapidement le bon artisan.</p>
           </div>
 
@@ -1237,26 +1237,17 @@ function fixeoEscapeHtml(value) {
 }
 
 function getFixeoClientName() {
-  try {
-    const storedName = localStorage.getItem('fixeo_user_name');
-    if (storedName && storedName.trim()) return storedName.trim().split(' ')[0];
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      const parsed = JSON.parse(storedUser);
-      if (parsed?.name) return String(parsed.name).trim().split(' ')[0];
-    }
-    const storedEmail = localStorage.getItem('fixeo_user');
-    if (storedEmail && storedEmail.includes('@')) return storedEmail.split('@')[0];
-  } catch (error) {}
-  return 'Youness';
+  // FOUC fix: never read stale localStorage name — Supabase is the only source of truth.
+  // Hero name is set exclusively by fixeo-mvp-supabase.js after profile fetch.
+  return '';
 }
 
 function renderClientDashboardOverview() {
   // Guard: disabled once Supabase real data has populated the same sections
   if (window._fixeoOverviewDisabled) return;
 
-  const heroName = document.getElementById('client-hero-name');
-  if (heroName) heroName.textContent = getFixeoClientName();
+  // Hero name: set exclusively by fixeo-mvp-supabase.js after Supabase profile fetch.
+  // Do NOT touch it here — would flash stale/empty value before real data arrives.
 
   // Stats: show loading zeros — Supabase will overwrite with real counts
   const statsEl = document.getElementById('client-stats-grid');
@@ -1297,6 +1288,39 @@ function renderClientDashboardOverview() {
 // ── Init ──────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   if (window.dashboard) window.dashboard.init('client');
+
+  /* ── Stale-user guard ────────────────────────────────────────────
+     If a different user logged in, clear stale name/session localStorage
+     keys so auth-global.js never renders the previous user's name.
+     The current Supabase user ID is fetched async later by fixeo-mvp-supabase.
+     Here we do a fast pre-check using the Supabase localStorage token if available. */
+  (function() {
+    try {
+      const storedId = localStorage.getItem('fixeo_user_id');
+      // Attempt to read current Supabase session from its own localStorage key
+      let currentId = null;
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k && k.includes('supabase') && k.includes('auth-token')) {
+          try {
+            const parsed = JSON.parse(localStorage.getItem(k) || '{}');
+            const uid = parsed && parsed.user && parsed.user.id;
+            if (uid) { currentId = uid; break; }
+          } catch(_) {}
+        }
+      }
+      if (currentId && storedId && storedId !== currentId) {
+        // Different user — clear stale display keys
+        ['fixeo_user_name', 'fixeo_user', 'fixeo_current_user',
+         'fixeo_user_id', 'fixeo_profile', 'user'].forEach(function(k) {
+          try { localStorage.removeItem(k); } catch(_) {}
+        });
+      }
+      if (currentId) {
+        try { localStorage.setItem('fixeo_user_id', currentId); } catch(_) {}
+      }
+    } catch(_) {}
+  })();
 
   const preview = document.getElementById('client-bookings-preview');
   const full    = document.getElementById('client-bookings-full');

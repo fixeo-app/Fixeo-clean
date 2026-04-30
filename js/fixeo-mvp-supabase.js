@@ -294,19 +294,27 @@
    * Works for both client and artisan — uses IDs we added to HTML.
    */
   function _hydrateSettingsForm(profile, email, dashType) {
-    // Always overwrite on load — user hasn't started typing yet
+    // Always overwrite on load — user hasn't started typing yet.
+    // Source of truth: Supabase profile + session email. Never localStorage.
     if (dashType === 'client') {
       var nameEl  = document.getElementById('settings-client-name');
       var emailEl = document.getElementById('settings-client-email');
       var phoneEl = document.getElementById('settings-client-phone');
       var cityEl  = document.getElementById('settings-client-city');
-      if (nameEl)  nameEl.value  = profile.full_name || '';
-      if (emailEl) emailEl.value = email || profile.email || '';
-      if (phoneEl) phoneEl.value = profile.phone || '';
-      if (cityEl) {
-        var city = profile.city || '';
-        var opt = Array.from(cityEl.options).find(function(o) { return o.value === city || o.text === city; });
+      var resolvedName  = (profile && profile.full_name) ? profile.full_name.trim() : '';
+      var resolvedEmail = email || (profile && profile.email) || '';
+      var resolvedPhone = (profile && profile.phone) ? profile.phone.trim() : '';
+      var resolvedCity  = (profile && profile.city)  ? profile.city.trim()  : '';
+      if (nameEl)  nameEl.value  = resolvedName;
+      if (emailEl) emailEl.value = resolvedEmail;
+      if (phoneEl) phoneEl.value = resolvedPhone;
+      if (cityEl && resolvedCity) {
+        var opt = Array.from(cityEl.options).find(function(o) { return o.value === resolvedCity || o.text === resolvedCity; });
         if (opt) cityEl.value = opt.value;
+      }
+      // Sync localStorage so auth-global.js re-renders with real name
+      if (resolvedName) {
+        try { localStorage.setItem('fixeo_user_name', resolvedName); } catch(_) {}
       }
     } else {
       var nameEl  = document.getElementById('settings-artisan-name');
@@ -437,17 +445,32 @@
       // Hero greeting
       if (heroName) {
         var _cFirstName = (_cProfile && _cProfile.full_name ? _cProfile.full_name : '').split(' ')[0]
-          || (auth.user.email ? auth.user.email.split('@')[0] : 'Client');
+          || (auth.user.email ? auth.user.email.split('@')[0] : '');
         heroName.textContent = escapeHtml(_cFirstName);
+        heroName.style.visibility = 'visible'; // reveal after real name is set
       }
+
+      // Resolve display name once, use everywhere
+      var _cDisplayName = (_cProfile && _cProfile.full_name ? _cProfile.full_name.trim() : '')
+        || (auth.user.email ? auth.user.email.split('@')[0] : '');
+      var _cDisplayFirst = _cDisplayName.split(' ')[0] || _cDisplayName;
 
       // Sidebar name
       var _cSidebarUser = document.getElementById('sidebar-username');
-      if (_cSidebarUser && _cProfile && _cProfile.full_name) {
-        _cSidebarUser.textContent = _cProfile.full_name.split(' ')[0] || _cProfile.full_name;
+      if (_cSidebarUser && _cDisplayFirst) {
+        _cSidebarUser.textContent = _cDisplayFirst;
       }
 
-      // Hydrate settings form once DOM is ready
+      // Header nav chip (auth-global wrote stale localStorage name — override with real)
+      var _cNavChip = document.getElementById('global-username') || document.querySelector('.nav-user-name');
+      if (_cNavChip && _cDisplayName) {
+        // auth-global formats as "Name (Rôle)" — replicate the pattern
+        var _cRole = (_cProfile && _cProfile.role) || 'client';
+        var _cRoleLabel = _cRole === 'artisan' ? 'Artisan' : (_cRole === 'admin' ? 'Admin' : 'Client');
+        _cNavChip.textContent = _cDisplayName + ' (' + _cRoleLabel + ')';
+      }
+
+      // Hydrate settings form once DOM is ready — always from Supabase, never localStorage
       _hydrateSettingsForm(_cProfile, auth.user.email || '', 'client');
 
       // Wire save button
