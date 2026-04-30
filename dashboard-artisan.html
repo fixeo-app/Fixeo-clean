@@ -610,7 +610,7 @@ select option{background:#1a1a2e!important;color:#fff!important;}
       <section class="artisan-dashboard-hero">
         <div class="dashboard-top">
           <div>
-            <h1>Bonjour Karim 👋</h1>
+            <h1>Bonjour <span id="artisan-hero-name">…</span> 👋</h1>
             <p>Vous avez <strong id="new-requests-count">5 nouvelles demandes</strong> aujourd’hui</p>
           </div>
 
@@ -924,11 +924,18 @@ select option{background:#1a1a2e!important;color:#fff!important;}
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:800px">
         <div class="chart-card" style="padding:24px">
           <h4 style="margin-bottom:20px">Profil</h4>
-          <div class="form-group"><label class="form-label">Nom</label><input type="text" class="form-control" value="Youssef El Mansouri"></div>
-          <div class="form-group"><label class="form-label">Spécialité</label><input type="text" class="form-control" value="Plomberie"></div>
-          <div class="form-group"><label class="form-label">Tarif horaire (MAD)</label><input type="number" class="form-control" value="150"></div>
-          <div class="form-group"><label class="form-label">Bio</label><textarea class="form-control" rows="3">Plombier certifié avec 12 ans d'expérience. Urgences 24/7.</textarea></div>
-          <button class="btn btn-primary w-100" onclick="notifications.success('✅ Profil mis à jour !','')">Sauvegarder</button>
+          <div class="form-group"><label class="form-label">Nom</label><input type="text" class="form-control" id="settings-artisan-name" placeholder="Votre nom complet"></div>
+          <div class="form-group"><label class="form-label">Téléphone</label><input type="tel" class="form-control" id="settings-artisan-phone" placeholder="+212 6XX XXX XXX"></div>
+          <div class="form-group"><label class="form-label">Ville</label>
+            <select class="form-control" id="settings-artisan-city">
+              <option value="">Choisir une ville</option>
+              <option>Casablanca</option><option>Rabat</option><option>Marrakech</option>
+              <option>Fès</option><option>Agadir</option><option>Meknès</option>
+              <option>Tanger</option><option>Salé</option><option>Oujda</option>
+            </select>
+          </div>
+          <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-control" id="settings-artisan-email" placeholder="votre@email.com" readonly></div>
+          <button class="btn btn-primary w-100" id="settings-artisan-save">Sauvegarder</button>
         </div>
         <div class="chart-card" style="padding:24px">
           <h4 style="margin-bottom:20px">Disponibilité & Alertes</h4>

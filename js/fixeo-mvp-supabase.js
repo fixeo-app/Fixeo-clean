@@ -251,6 +251,134 @@
       '</form>';
   }
 
+  /* ══════════════════════════════════════════════════════════
+   * PROFILE LAYER v1.0
+   * Shared helpers: load profile, hydrate settings, wire save
+   * ══════════════════════════════════════════════════════════ */
+
+  /**
+   * Ensure a profile row exists for `userId`.
+   * If `getProfile()` returns null, insert a minimal row and return it.
+   * Uses the authenticated JWT (auth.uid() = id policy satisfied).
+   */
+  async function _ensureProfile(FixeoSupabase, userId, email, role) {
+    var profile = null;
+    try { profile = await FixeoSupabase.getProfile(userId); } catch (_) {}
+    if (profile) return profile;
+
+    // Profile missing — create it via patchProfile (upsert-like via update; if 0 rows, insert)
+    var fallbackName = (email && email.indexOf('@') > -1) ? email.split('@')[0] : 'Utilisateur';
+    try {
+      var sb = await FixeoSupabase.getClient();
+      var insertRes = await sb.from('profiles').insert([{
+        id:         userId,
+        full_name:  fallbackName,
+        role:       role || 'client',
+        phone:      '',
+        city:       '',
+        created_at: new Date().toISOString()
+      }]);
+      if (insertRes.error) {
+        console.warn('[fixeo-mvp] _ensureProfile insert error:', insertRes.error.message);
+      }
+      // Re-fetch after insert
+      try { profile = await FixeoSupabase.getProfile(userId); } catch (_) {}
+    } catch (err) {
+      console.warn('[fixeo-mvp] _ensureProfile failed:', err.message);
+    }
+    return profile || { id: userId, full_name: fallbackName, role: role || 'client', phone: '', city: '', email: email };
+  }
+
+  /**
+   * Hydrate the settings form fields from a profile object.
+   * Works for both client and artisan — uses IDs we added to HTML.
+   */
+  function _hydrateSettingsForm(profile, email, dashType) {
+    if (dashType === 'client') {
+      var nameEl  = document.getElementById('settings-client-name');
+      var emailEl = document.getElementById('settings-client-email');
+      var phoneEl = document.getElementById('settings-client-phone');
+      var cityEl  = document.getElementById('settings-client-city');
+      if (nameEl  && !nameEl.value)  nameEl.value  = profile.full_name || '';
+      if (emailEl && !emailEl.value) emailEl.value = email || profile.email || '';
+      if (phoneEl && !phoneEl.value) phoneEl.value = profile.phone || '';
+      if (cityEl) {
+        var city = profile.city || '';
+        // Try to match existing option
+        var opt = Array.from(cityEl.options).find(function(o) { return o.value === city || o.text === city; });
+        if (opt) cityEl.value = opt.value;
+      }
+    } else {
+      var nameEl  = document.getElementById('settings-artisan-name');
+      var emailEl = document.getElementById('settings-artisan-email');
+      var phoneEl = document.getElementById('settings-artisan-phone');
+      var cityEl  = document.getElementById('settings-artisan-city');
+      if (nameEl  && !nameEl.value)  nameEl.value  = profile.full_name || '';
+      if (emailEl && !emailEl.value) emailEl.value = email || profile.email || '';
+      if (phoneEl && !phoneEl.value) phoneEl.value = profile.phone || '';
+      if (cityEl) {
+        var city = profile.city || '';
+        var opt = Array.from(cityEl.options).find(function(o) { return o.value === city || o.text === city; });
+        if (opt) cityEl.value = opt.value;
+      }
+    }
+  }
+
+  /**
+   * Wire the save button to call patchProfile() with current form values.
+   * saveBtnId: DOM id of the save button
+   * getPayload: function() → object with fields to save
+   */
+  function _wireSettingsSave(FixeoSupabase, userId, saveBtnId, getPayload) {
+    var btn = document.getElementById(saveBtnId);
+    if (!btn) return;
+
+    // Remove any existing fake onclick
+    btn.removeAttribute('onclick');
+
+    btn.addEventListener('click', async function () {
+      var original = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = '<span style="display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:8px"></span> Sauvegarde…';
+
+      try {
+        var payload = getPayload();
+        // Only pass non-empty values
+        var cleaned = {};
+        if (payload.full_name && payload.full_name.trim()) cleaned.full_name = payload.full_name.trim();
+        if (payload.phone    && payload.phone.trim())     cleaned.phone    = payload.phone.trim();
+        if (payload.city     && payload.city.trim())      cleaned.city     = payload.city.trim();
+        // role never changed from settings form
+
+        if (!Object.keys(cleaned).length) {
+          notify('info', 'Aucune modification', 'Modifiez au moins un champ avant de sauvegarder.');
+          return;
+        }
+
+        await FixeoSupabase.patchProfile(userId, cleaned);
+
+        // Sync localStorage name if changed
+        if (cleaned.full_name) {
+          try {
+            localStorage.setItem('fixeo_user_name', cleaned.full_name);
+            var storedUser = JSON.parse(localStorage.getItem('user') || '{}');
+            storedUser.name = cleaned.full_name;
+            localStorage.setItem('user', JSON.stringify(storedUser));
+          } catch (_) {}
+        }
+
+        notify('success', '✅ Profil mis à jour', 'Vos modifications ont été enregistrées.');
+      } catch (err) {
+        notify('error', 'Erreur de sauvegarde', FixeoSupabase.getReadableError(err));
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = original;
+      }
+    });
+  }
+
+  /* ── End profile layer ──────────────────────────────────── */
+
   async function renderClientDashboard() {
     if (currentPage() !== 'dashboard-client.html') return;
 
@@ -298,7 +426,38 @@
       var quotes = await FixeoSupabase.listQuotesForRequestIds(requests.map(function (item) { return item.id; }));
       var missions = await FixeoSupabase.listClientMissions();
 
-      if (heroName) heroName.textContent = escapeHtml((auth.profile && auth.profile.full_name ? auth.profile.full_name : '').split(' ')[0] || 'Client');
+      /* ── Profile hydration (Phase 1) ── */
+      var _cProfile = await _ensureProfile(
+        FixeoSupabase,
+        auth.user.id,
+        auth.user.email || '',
+        'client'
+      );
+
+      // Hero greeting
+      if (heroName) {
+        var _cFirstName = (_cProfile && _cProfile.full_name ? _cProfile.full_name : '').split(' ')[0]
+          || (auth.user.email ? auth.user.email.split('@')[0] : 'Client');
+        heroName.textContent = escapeHtml(_cFirstName);
+      }
+
+      // Sidebar name
+      var _cSidebarUser = document.getElementById('sidebar-username');
+      if (_cSidebarUser && _cProfile && _cProfile.full_name) {
+        _cSidebarUser.textContent = _cProfile.full_name.split(' ')[0] || _cProfile.full_name;
+      }
+
+      // Hydrate settings form once DOM is ready
+      _hydrateSettingsForm(_cProfile, auth.user.email || '', 'client');
+
+      // Wire save button
+      _wireSettingsSave(FixeoSupabase, auth.user.id, 'settings-client-save', function () {
+        return {
+          full_name: (document.getElementById('settings-client-name')  || {}).value || '',
+          phone:     (document.getElementById('settings-client-phone') || {}).value || '',
+          city:      (document.getElementById('settings-client-city')  || {}).value || ''
+        };
+      });
 
       var stats = [
         { value: requests.length, label: 'Demandes créées' },
@@ -471,6 +630,41 @@
 
     try {
       var auth = await FixeoSupabase.requireAuth('artisan');
+
+      /* ── Profile hydration (Phase 1) ── */
+      var _aProfile = await _ensureProfile(
+        FixeoSupabase,
+        auth.user.id,
+        auth.user.email || '',
+        'artisan'
+      );
+
+      // Hero greeting
+      var _aHeroName = document.getElementById('artisan-hero-name');
+      if (_aHeroName) {
+        var _aFirstName = (_aProfile && _aProfile.full_name ? _aProfile.full_name : '').split(' ')[0]
+          || (auth.user.email ? auth.user.email.split('@')[0] : 'Artisan');
+        _aHeroName.textContent = escapeHtml(_aFirstName);
+      }
+
+      // Sidebar name
+      var _aSidebarUser = document.getElementById('sidebar-username');
+      if (_aSidebarUser && _aProfile && _aProfile.full_name) {
+        _aSidebarUser.textContent = _aProfile.full_name.split(' ')[0] || _aProfile.full_name;
+      }
+
+      // Hydrate settings form
+      _hydrateSettingsForm(_aProfile, auth.user.email || '', 'artisan');
+
+      // Wire save button
+      _wireSettingsSave(FixeoSupabase, auth.user.id, 'settings-artisan-save', function () {
+        return {
+          full_name: (document.getElementById('settings-artisan-name')  || {}).value || '',
+          phone:     (document.getElementById('settings-artisan-phone') || {}).value || '',
+          city:      (document.getElementById('settings-artisan-city')  || {}).value || ''
+        };
+      });
+
       var openRequests = await FixeoSupabase.listOpenRequests();
       var allQuotes = await FixeoSupabase.listQuotesForRequestIds(openRequests.map(function (item) { return item.id; }));
       var artisanQuotes = allQuotes.filter(function (quote) { return quote.artisan_profile_id === auth.profile.id; });

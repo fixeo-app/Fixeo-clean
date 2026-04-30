@@ -848,19 +848,24 @@ select option{background:#1a1a2e!important;color:#fff!important;}
         <h4 style="margin-bottom:20px">Profil</h4>
         <div class="form-group">
           <label class="form-label">Nom complet</label>
-          <input type="text" class="form-control" value="Sarah Alami">
+          <input type="text" class="form-control" id="settings-client-name" placeholder="Votre nom complet">
         </div>
         <div class="form-group">
           <label class="form-label">Email</label>
-          <input type="email" class="form-control" value="sarah.alami@example.com">
+          <input type="email" class="form-control" id="settings-client-email" placeholder="votre@email.com" readonly>
         </div>
         <div class="form-group">
           <label class="form-label">Téléphone</label>
-          <input type="tel" class="form-control" value="+212 661 234 567">
+          <input type="tel" class="form-control" id="settings-client-phone" placeholder="+212 6XX XXX XXX">
         </div>
         <div class="form-group">
           <label class="form-label">Ville</label>
-          <select class="form-control"><option selected>Casablanca</option><option>Rabat</option><option>Marrakech</option></select>
+          <select class="form-control" id="settings-client-city">
+            <option value="">Choisir une ville</option>
+            <option>Casablanca</option><option>Rabat</option><option>Marrakech</option>
+            <option>Fès</option><option>Agadir</option><option>Meknès</option>
+            <option>Tanger</option><option>Salé</option><option>Oujda</option>
+          </select>
         </div>
         <div class="hr"></div>
         <h4 style="margin-bottom:20px">Notifications</h4>
@@ -879,8 +884,7 @@ select option{background:#1a1a2e!important;color:#fff!important;}
           </div>
         </div>
         <div class="hr"></div>
-        <button class="btn btn-primary w-100"
-          onclick="notifications.success('✅ Paramètres sauvegardés','Vos modifications ont bien été enregistrées.')">
+        <button class="btn btn-primary w-100" id="settings-client-save">
           Enregistrer les modifications
         </button>
       </div>
