@@ -387,8 +387,36 @@
 
   /* ── End profile layer ──────────────────────────────────── */
 
+  // ── revealClientDashboard ──────────────────────────────────────────────────
+  // Single canonical reveal function. Idempotent — safe to call multiple times.
+  // Removes the anti-FOUC <style> tag and clears opacity so the dashboard fades in.
+  function revealClientDashboard(reason) {
+    try {
+      var style = document.getElementById('fixeo-client-anti-fouc');
+      if (style) style.remove();
+      var layout = document.querySelector('.dashboard-layout');
+      if (layout) {
+        layout.style.transition = 'opacity .15s ease';
+        layout.style.opacity = '';
+      }
+      if (reason) console.log('[Fixeo Dashboard] revealed:', reason);
+    } catch (_) {}
+  }
+
   async function renderClientDashboard() {
     if (currentPage() !== 'dashboard-client.html') return;
+
+    // ── Hard failsafe: reveal dashboard after 2500ms no matter what.
+    // Fires immediately at function entry so even a hung requireAuth won't
+    // leave the user staring at a blank screen.
+    var _failsafeTimer = window.setTimeout(function () {
+      revealClientDashboard('failsafe-2500ms');
+      // Populate hero with a safe placeholder if still blank
+      var heroName = document.getElementById('client-hero-name');
+      if (heroName && !heroName.textContent.trim()) {
+        heroName.style.visibility = 'visible';
+      }
+    }, 2500);
 
     var FixeoSupabase = ensureSupabase();
     await FixeoSupabase.init();
@@ -431,23 +459,29 @@
     try {
       var auth = await FixeoSupabase.requireAuth('client');
 
-      /* ── STEP 1: Profile hydration — runs BEFORE data queries so UI
-         updates immediately without waiting for 4 sequential DB calls. ── */
-      var _cProfile = await _ensureProfile(
-        FixeoSupabase,
-        auth.user.id,
-        auth.user.email || '',
-        'client'
-      );
+      /* ── STEP 1: Profile hydration — runs BEFORE data queries.
+         Even if _ensureProfile fails we use email prefix and reveal. ── */
+      var _cProfile = null;
+      try {
+        _cProfile = await _ensureProfile(
+          FixeoSupabase,
+          auth.user.id,
+          auth.user.email || '',
+          'client'
+        );
+      } catch (_profileErr) {
+        console.warn('[Fixeo Dashboard] profile fetch failed, using email fallback:', _profileErr && _profileErr.message);
+        // _cProfile stays null — display name falls back to email prefix below
+      }
 
-      // Resolve display name from profile, fallback to email prefix — never hardcoded
+      // Resolve display name — fallback chain: profile.full_name → email prefix → ''
       var _cDisplayName = (_cProfile && _cProfile.full_name ? _cProfile.full_name.trim() : '')
         || (auth.user.email ? auth.user.email.split('@')[0] : '');
       var _cDisplayFirst = _cDisplayName.split(' ')[0] || _cDisplayName;
 
       // Hero greeting — reveal after setting real name
       if (heroName) {
-        heroName.textContent = escapeHtml(_cDisplayName); // full name in hero
+        heroName.textContent = escapeHtml(_cDisplayName);
         heroName.style.visibility = 'visible';
       }
 
@@ -477,14 +511,9 @@
         };
       });
 
-      // Reveal dashboard — remove anti-FOUC style now that real name is in place
-      var _cAntiFlash = document.getElementById('fixeo-client-anti-fouc');
-      if (_cAntiFlash) _cAntiFlash.remove();
-      var _cLayout = document.querySelector('.dashboard-layout');
-      if (_cLayout) {
-        _cLayout.style.opacity = '';
-        _cLayout.style.transition = 'opacity .15s ease';
-      }
+      // ── REVEAL: profile resolved (or fell back) — safe to show dashboard ──
+      window.clearTimeout(_failsafeTimer);
+      revealClientDashboard('profile-resolved');
 
       /* ── STEP 2: Data queries — after UI is already showing real name ── */
       var requests = await FixeoSupabase.listClientRequests();
@@ -626,13 +655,10 @@
       if (repliesEl) repliesEl.innerHTML = '';
       if (bookingsFull) bookingsFull.innerHTML = '';
     } finally {
-      // Always reveal dashboard — even on error (so user sees the error, not a blank screen)
-      var _cAntiFlashF = document.getElementById('fixeo-client-anti-fouc');
-      if (_cAntiFlashF) _cAntiFlashF.remove();
-      var _cLayoutF = document.querySelector('.dashboard-layout');
-      if (_cLayoutF && !_cLayoutF.style.opacity) {
-        _cLayoutF.style.opacity = '';
-      }
+      // Always reveal — catch + finally are defence-in-depth against any hang.
+      // revealClientDashboard is idempotent: safe to call even if already revealed.
+      window.clearTimeout(_failsafeTimer);
+      revealClientDashboard('finally');
     }
   }
 
