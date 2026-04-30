@@ -1529,7 +1529,7 @@ const FIXEO_CLIENT_OVERVIEW = {
   actions: [
     {
       title: 'Comparer les réponses pour la demande plomberie',
-      description: '3 devis sont déjà disponibles. Vous pouvez ouvrir les réponses et choisir l'artisan le plus rassurant.',
+      description: '3 devis sont déjà disponibles. Vous pouvez ouvrir les réponses et choisir l\u2019artisan le plus rassurant.',
       pill: 'Priorité du jour',
       primaryLabel: 'Voir les réponses',
       primaryAction: "showSection('messages')",
@@ -1538,11 +1538,11 @@ const FIXEO_CLIENT_OVERVIEW = {
     },
     {
       title: 'Confirmer votre rendez-vous électricité',
-      description: 'Un créneau est prévu demain à 10h. Confirmez-le maintenant pour verrouiller l'intervention.',
+      description: 'Un créneau est prévu demain à 10h. Confirmez-le maintenant pour verrouiller l\u2019intervention.',
       pill: 'Rendez-vous à venir',
       primaryLabel: 'Confirmer',
       primaryAction: "notifications.success('Rendez-vous confirmé', 'Votre intervention a bien été validée.')",
-      secondaryLabel: 'Contacter l'artisan',
+      secondaryLabel: 'Contacter l\u2019artisan',
       secondaryAction: "showSection('messages')"
     }
   ]
@@ -1816,6 +1816,48 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       // Step 3 — overlay clean; navigate
       window.location.href = 'index.html#express-request-section';
+    };
+  }
+}());
+</script>
+
+<!-- Expose expressRequest on window so onclick="expressRequest()" always resolves.
+     The function is defined at line ~1348 inside a large inline script block.
+     If that block failed to parse (e.g. earlier syntax error), this block
+     provides a safe standalone fallback. -->
+<script>
+(function () {
+  'use strict';
+  // Attach inline definition to window (no-op if already on window)
+  if (typeof expressRequest === 'function' && typeof window.expressRequest !== 'function') {
+    window.expressRequest = expressRequest;
+  }
+  // Full standalone fallback for worst case
+  if (typeof window.expressRequest !== 'function') {
+    window.expressRequest = function () {
+      var overlay  = document.getElementById('modal-overlay');
+      var titleEl  = document.getElementById('modal-title');
+      var bodyEl   = document.getElementById('modal-body');
+      if (!overlay || !titleEl || !bodyEl) {
+        if (typeof window.fixeoOpenRequest === 'function') { window.fixeoOpenRequest(); }
+        return;
+      }
+      titleEl.textContent = '\uD83D\uDE80 Demande Express';
+      bodyEl.innerHTML =
+        '<p style="margin-bottom:16px;color:var(--text-muted)">Un artisan disponible interviendra dans l\u2019heure.</p>' +
+        '<div class="form-group"><label class="form-label">Service</label>' +
+        '<select class="form-control"><option>Plomberie</option><option>\u00C9lectricit\u00E9</option><option>Peinture</option><option>Autre</option></select></div>' +
+        '<div class="form-group"><label class="form-label">Probl\u00E8me</label>' +
+        '<textarea class="form-control" rows="3" placeholder="D\u00E9crivez le probl\u00E8me urgent\u2026"></textarea></div>' +
+        '<button class="btn btn-express w-100" onclick="' +
+          'document.getElementById(\'modal-overlay\').classList.remove(\'open\');' +
+          'window.notifications && notifications.success(\'\uD83D\uDE80 Demande envoy\u00E9e !\',\'Un artisan vous contactera dans 15 min.\')' +
+        '">Envoyer maintenant</button>';
+      overlay.classList.add('open');
+      // Backdrop click-escape
+      overlay.addEventListener('click', function esc(e) {
+        if (e.target === overlay) { overlay.classList.remove('open'); overlay.removeEventListener('click', esc); }
+      });
     };
   }
 }());
