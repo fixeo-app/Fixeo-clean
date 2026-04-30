@@ -442,13 +442,54 @@ select option{background:#1a1a2e!important;color:#fff!important;}
   }
 }
 
-/* ── Modal overlay safety boost ────────────────────────── */
-/* Ensure modal-overlay is always on top of glassmorphism stacking contexts */
-#modal-overlay { z-index: 8000 !important; }
-#modal-overlay .modal { z-index: 8001 !important; position: relative !important; }
-/* Cursor hint that clicking the backdrop dismisses */
-#modal-overlay { cursor: pointer; }
-#modal-overlay .modal { cursor: default; }
+/* ── Modal overlay — full visibility override ────────────────────────────
+   fixeo_v5_fixes.css sets .modal { display:none !important; position:fixed !important;
+   inset:0 !important; z-index:9100 !important } which overrides the inline style.
+   We use #modal-overlay (ID = specificity 0-1-0-0) to beat any class-only !important.
+   All properties use !important to win regardless of load order. */
+
+/* Overlay: hidden by default */
+#modal-overlay {
+  display: none !important;
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 99990 !important;
+  background: rgba(0,0,0,.55) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  align-items: center !important;
+  justify-content: center !important;
+  pointer-events: auto !important;
+  cursor: pointer;
+}
+/* Overlay: visible when .open */
+#modal-overlay.open {
+  display: flex !important;
+}
+
+/* Modal panel: always visible when overlay is open */
+#modal-overlay .modal,
+#modal-overlay.open .modal {
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  position: relative !important;
+  inset: unset !important;
+  transform: none !important;
+  z-index: 100000 !important;
+  max-width: 640px !important;
+  width: min(92vw, 640px) !important;
+  max-height: 85vh !important;
+  overflow-y: auto !important;
+  pointer-events: auto !important;
+  cursor: default;
+  /* keep the glassmorphism look */
+  background: rgba(20,20,40,0.97) !important;
+  border: 1px solid rgba(255,255,255,.15) !important;
+  border-radius: 18px !important;
+  padding: 28px !important;
+  box-shadow: 0 0 0 1px rgba(225,48,108,.2), 0 24px 64px rgba(0,0,0,.7) !important;
+}
 
 /* ── UX Upgrade additions ──────────────────────────────── */
 .fixeo-hero-trust {
@@ -1251,16 +1292,52 @@ function fixeoOpenRequest() {
       if (!body || !body.innerHTML.trim()) ov.classList.remove('open');
     }
   }
-  // Helper: 50ms after a successful openNewRequestModal() call, check whether
-  // #modal-body was actually populated. If the Supabase override ran but failed
-  // silently (e.g. clientRequestModalHtml() returned empty), inject a guaranteed
-  // fallback form so the user never sees a grey blank screen.
+  // Helper: 50ms after openNewRequestModal() — check BOTH body content AND panel visibility.
+  // fixeo_v5_fixes.css .modal{display:none!important} can override inline styles;
+  // our CSS override (#modal-overlay.open .modal) handles it, but this JS guard
+  // provides a belt-and-suspenders inline-style force as a final fallback.
   function _guardBody() {
     setTimeout(function () {
-      var body = document.getElementById('modal-body');
-      var ov   = document.getElementById('modal-overlay');
-      if (!ov || !ov.classList.contains('open')) return; // overlay already closed — nothing to do
-      if (body && body.innerHTML.trim()) return;         // body has content — Supabase version worked
+      var ov    = document.getElementById('modal-overlay');
+      var panel = ov ? ov.querySelector('.modal') : null;
+      var body  = document.getElementById('modal-body');
+      if (!ov || !ov.classList.contains('open')) return; // overlay already closed — fine
+
+      // ── Visibility check ───────────────────────────────────────────────
+      var panelHidden = false;
+      if (panel) {
+        var cs = window.getComputedStyle(panel);
+        panelHidden = (
+          panel.offsetWidth === 0 ||
+          panel.offsetHeight === 0 ||
+          cs.display === 'none' ||
+          cs.visibility === 'hidden' ||
+          cs.opacity === '0'
+        );
+      }
+      if (panelHidden && panel) {
+        // CSS rule is still beating us — force inline styles directly
+        console.warn('[Fixeo] Modal panel invisible after 50ms \u2192 forcing inline visibility');
+        panel.style.setProperty('display',     'block',    'important');
+        panel.style.setProperty('opacity',     '1',        'important');
+        panel.style.setProperty('visibility',  'visible',  'important');
+        panel.style.setProperty('position',    'relative', 'important');
+        panel.style.setProperty('inset',       'unset',    'important');
+        panel.style.setProperty('transform',   'none',     'important');
+        panel.style.setProperty('z-index',     '100000',   'important');
+        panel.style.setProperty('max-width',   '640px',    'important');
+        panel.style.setProperty('width',       'min(92vw,640px)', 'important');
+        panel.style.setProperty('max-height',  '85vh',     'important');
+        panel.style.setProperty('overflow-y',  'auto',     'important');
+        panel.style.setProperty('pointer-events','auto',   'important');
+        panel.style.setProperty('background',  'rgba(20,20,40,0.97)', 'important');
+        panel.style.setProperty('border',      '1px solid rgba(255,255,255,.15)', 'important');
+        panel.style.setProperty('border-radius','18px',    'important');
+        panel.style.setProperty('padding',     '28px',     'important');
+      }
+
+      // ── Body content check ─────────────────────────────────────────────
+      if (body && body.innerHTML.trim()) return; // content present — OK
       console.warn('[Fixeo] Modal body empty after 50ms \u2192 injecting fallback form');
       if (body) {
         body.innerHTML =
@@ -1832,9 +1909,31 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       function _guardBody() {
         setTimeout(function () {
-          var body = document.getElementById('modal-body');
-          var ov   = document.getElementById('modal-overlay');
+          var ov    = document.getElementById('modal-overlay');
+          var panel = ov ? ov.querySelector('.modal') : null;
+          var body  = document.getElementById('modal-body');
           if (!ov || !ov.classList.contains('open')) return;
+          if (panel) {
+            var cs = window.getComputedStyle(panel);
+            if (panel.offsetWidth===0||panel.offsetHeight===0||cs.display==='none'||cs.visibility==='hidden'||cs.opacity==='0') {
+              panel.style.setProperty('display','block','important');
+              panel.style.setProperty('opacity','1','important');
+              panel.style.setProperty('visibility','visible','important');
+              panel.style.setProperty('position','relative','important');
+              panel.style.setProperty('inset','unset','important');
+              panel.style.setProperty('transform','none','important');
+              panel.style.setProperty('z-index','100000','important');
+              panel.style.setProperty('max-width','640px','important');
+              panel.style.setProperty('width','min(92vw,640px)','important');
+              panel.style.setProperty('max-height','85vh','important');
+              panel.style.setProperty('overflow-y','auto','important');
+              panel.style.setProperty('pointer-events','auto','important');
+              panel.style.setProperty('background','rgba(20,20,40,0.97)','important');
+              panel.style.setProperty('border','1px solid rgba(255,255,255,.15)','important');
+              panel.style.setProperty('border-radius','18px','important');
+              panel.style.setProperty('padding','28px','important');
+            }
+          }
           if (body && body.innerHTML.trim()) return;
           console.warn('[Fixeo] Modal body empty \u2192 fallback');
           if (body) {
