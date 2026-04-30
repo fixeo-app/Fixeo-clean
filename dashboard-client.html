@@ -987,6 +987,74 @@ select option{background:#1a1a2e!important;color:#fff!important;}
 .fxd-cta-btn:active { transform: scale(.96) !important; }
 .fxd-nudge-btn:hover  { transform: translateY(-1px) !important; }
 .fxd-nudge-btn:active { transform: scale(.96) !important; }
+
+/* ══ Dashboard-scoped positioning for real homepage modals ════════════════════
+   Scope: [data-dash-type="client"] on <body> (already present, no new class needed).
+
+   WHY NEEDED:
+   fixeo_v5_fixes.css sets on every .modal:
+     display:none !important; position:fixed !important; inset:0 !important;
+     align-items:center !important; justify-content:center !important;
+   When .modal.open fires display:flex the modal IS the full-viewport flex
+   container. The .request-modal child must be a flex item centred inside it.
+   Without these overrides the child inherits inset:0 and stretches fullscreen,
+   or appears top-left because transform:translate(-50%,-58%) has no top/left
+   to anchor against.
+
+   STRATEGY: let fixeo_v5_fixes.css own the outer container (position:fixed,
+   inset:0, display:flex, align/justify center) and correct only the INNER
+   panel (.request-modal child) dimensions + the backdrop z-index.
+   ───────────────────────────────────────────────────────────────────────────── */
+
+/* Outer container: raise above dashboard stacking contexts */
+[data-dash-type="client"] #request-modal,
+[data-dash-type="client"] #express-modal {
+  z-index: 99995 !important;  /* above sidebar/header (z-fixed:300), below our panel */
+}
+
+/* Inner panel: constrain dimensions, reset transform for flex-child centering.
+   fixeo_v5_fixes.css already centres the flex container; the child just needs
+   its own width/max-height and a clean transform (no translate needed for
+   flex-child centred by the parent). */
+[data-dash-type="client"] #request-modal .request-modal,
+[data-dash-type="client"] #express-modal .request-modal {
+  position: relative !important;  /* flex item, not absolutely positioned */
+  inset: unset !important;
+  transform: none !important;     /* flex centering handles placement */
+  max-width: min(92vw, 640px) !important;
+  width: min(92vw, 640px) !important;
+  max-height: 86vh !important;
+  overflow-y: auto !important;
+  margin: 0 !important;           /* remove any margin: 0 auto that could shift */
+  pointer-events: auto !important;
+  /* Preserve glassmorphism look */
+  background: rgba(20, 20, 40, 0.97) !important;
+  border: 1px solid rgba(255,255,255,.12) !important;
+  border-radius: 18px !important;
+  padding: 24px !important;
+  box-shadow: 0 0 0 1px rgba(225,48,108,.15), 0 24px 60px rgba(0,0,0,.72) !important;
+}
+
+/* Animate-in: closed state uses scale(.985), open state clean scale(1) */
+[data-dash-type="client"] #request-modal:not(.open) .request-modal,
+[data-dash-type="client"] #express-modal:not(.open) .request-modal {
+  transform: scale(0.985) !important;
+  opacity: 0 !important;
+}
+[data-dash-type="client"] #request-modal.open .request-modal,
+[data-dash-type="client"] #express-modal.open .request-modal {
+  transform: none !important;
+  opacity: 1 !important;
+  transition: transform 0.2s ease, opacity 0.18s ease !important;
+}
+
+/* Backdrop: sit just below the modal container */
+[data-dash-type="client"] #main-backdrop {
+  z-index: 99990 !important;  /* below modal container (99995), above everything else */
+  background: rgba(0,0,0,.58) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+}
 </style>
 
   <link rel="stylesheet" href="css/fixeo-chat-mvp.css">
