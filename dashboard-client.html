@@ -1269,8 +1269,8 @@ select option{background:#1a1a2e!important;color:#fff!important;}
           </div>
 
           <div class="client-hero-actions fxd-hero-actions-v2">
-            <button class="btn btn-primary fxd-hero-cta fxd-cta-primary" onclick="openNewRequestModal()">Publier ma demande</button>
-            <button class="btn fxd-hero-cta fxd-cta-urgent" onclick="expressRequest()">⚡ Besoin urgent</button>
+            <button class="btn btn-primary fxd-hero-cta fxd-cta-primary" onclick="FixeoDashboardModals.openRequest()">Publier ma demande</button>
+            <button class="btn fxd-hero-cta fxd-cta-urgent" onclick="FixeoDashboardModals.openUrgent()">⚡ Besoin urgent</button>
           </div>
         </div>
       </section>
@@ -1295,7 +1295,7 @@ select option{background:#1a1a2e!important;color:#fff!important;}
                 <div class="fxd-nudge-label">Astuce Fixeo</div>
                 <p class="fxd-nudge-msg">Les clients qui décrivent précisément leur besoin reçoivent <strong>3x plus de réponses</strong>.</p>
               </div>
-              <button class="btn btn-primary fxd-nudge-cta" onclick="fixeoOpenRequest()">Créer une demande optimisée</button>
+              <button class="btn btn-primary fxd-nudge-cta" onclick="FixeoDashboardModals.openRequest()">Créer une demande optimisée</button>
             </div>
 
             <!-- Step 2 — Primary empty-state activation block -->
@@ -1304,7 +1304,7 @@ select option{background:#1a1a2e!important;color:#fff!important;}
               <h3 class="fxd-empty-title">Aucune demande pour le moment</h3>
               <p class="fxd-empty-sub">Décrivez votre besoin en 30 secondes et recevez des propositions immédiatement.</p>
               <div class="fixeo-smart-cta-actions fxd-empty-actions">
-                <button class="btn btn-primary fxd-cta-btn" onclick="fixeoOpenRequest()">Publier ma demande gratuitement</button>
+                <button class="btn btn-primary fxd-cta-btn" onclick="FixeoDashboardModals.openRequest()">Publier ma demande gratuitement</button>
                 <button class="btn btn-secondary fxd-cta-btn" onclick="window.location.href='index.html#artisans-section'">Trouver un artisan</button>
               </div>
             </div>
@@ -1363,7 +1363,7 @@ select option{background:#1a1a2e!important;color:#fff!important;}
                     <div class="fxasc-stars" aria-label="4.8 étoiles">★★★★★</div>
                     <div class="fxasc-rating">4.8 <span class="fxasc-reviews">(32 avis)</span></div>
                     <div class="fxasc-avail">🟢 Disponible aujourd'hui</div>
-                    <button class="btn-fxasc fxd-devis-btn" onclick="fixeoOpenRequest()">Demander un devis</button>
+                    <button class="btn-fxasc fxd-devis-btn" onclick="FixeoDashboardModals.openRequest()">Demander un devis</button>
                   </div>
                   <div class="fixeo-artisan-static-card fxd-acard-v2">
                     <div class="fxasc-avatar">⚡</div>
@@ -1372,7 +1372,7 @@ select option{background:#1a1a2e!important;color:#fff!important;}
                     <div class="fxasc-stars" aria-label="4.7 étoiles">★★★★★</div>
                     <div class="fxasc-rating">4.7 <span class="fxasc-reviews">(21 avis)</span></div>
                     <div class="fxasc-avail">🟢 Disponible aujourd'hui</div>
-                    <button class="btn-fxasc fxd-devis-btn" onclick="fixeoOpenRequest()">Demander un devis</button>
+                    <button class="btn-fxasc fxd-devis-btn" onclick="FixeoDashboardModals.openRequest()">Demander un devis</button>
                   </div>
                   <div class="fixeo-artisan-static-card fxd-acard-v2">
                     <div class="fxasc-avatar">🎨</div>
@@ -1381,7 +1381,7 @@ select option{background:#1a1a2e!important;color:#fff!important;}
                     <div class="fxasc-stars" aria-label="4.9 étoiles">★★★★★</div>
                     <div class="fxasc-rating">4.9 <span class="fxasc-reviews">(18 avis)</span></div>
                     <div class="fxasc-avail">🟢 Disponible aujourd'hui</div>
-                    <button class="btn-fxasc fxd-devis-btn" onclick="fixeoOpenRequest()">Demander un devis</button>
+                    <button class="btn-fxasc fxd-devis-btn" onclick="FixeoDashboardModals.openRequest()">Demander un devis</button>
                   </div>
                 </div>
               </div>
@@ -1396,7 +1396,7 @@ select option{background:#1a1a2e!important;color:#fff!important;}
     <div id="section-bookings" style="display:none">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px">
         <h2 style="font-size:1.3rem">📅 Mes réservations</h2>
-        <button class="btn btn-primary" onclick="openNewRequestModal()">+ Nouvelle demande</button>
+        <button class="btn btn-primary" onclick="FixeoDashboardModals.openRequest()">+ Nouvelle demande</button>
       </div>
       <!-- Progress tracker: hidden until a real mission exists -->
       <div class="chart-card" id="booking-progress-tracker" style="margin-bottom:20px;padding:20px;display:none">
@@ -1583,83 +1583,47 @@ function fixeoOpenRequest() {
       if (!body || !body.innerHTML.trim()) ov.classList.remove('open');
     }
   }
-  // Helper: 50ms after openNewRequestModal() — check BOTH body content AND panel visibility.
-  // fixeo_v5_fixes.css .modal{display:none!important} can override inline styles;
-  // our CSS override (#modal-overlay.open .modal) handles it, but this JS guard
-  // provides a belt-and-suspenders inline-style force as a final fallback.
-  function _guardBody() {
+    // Helper: after open, force panel visibility if CSS !important is still blocking
+  // (belt-and-suspenders for fixeo_v5_fixes.css .modal{display:none!important}).
+  // Does NOT inject any fallback form — trusts the real modal to populate #modal-body.
+  function _guardVisibility() {
     setTimeout(function () {
       var ov    = document.getElementById('modal-overlay');
       var panel = ov ? ov.querySelector('.modal') : null;
-      var body  = document.getElementById('modal-body');
-      if (!ov || !ov.classList.contains('open')) return; // overlay already closed — fine
-
-      // ── Visibility check ───────────────────────────────────────────────
-      var panelHidden = false;
-      if (panel) {
-        var cs = window.getComputedStyle(panel);
-        panelHidden = (
-          panel.offsetWidth === 0 ||
-          panel.offsetHeight === 0 ||
-          cs.display === 'none' ||
-          cs.visibility === 'hidden' ||
-          cs.opacity === '0'
-        );
-      }
-      if (panelHidden && panel) {
-        // CSS rule is still beating us — force inline styles directly
-        console.warn('[Fixeo] Modal panel invisible after 50ms \u2192 forcing inline visibility');
-        panel.style.setProperty('display',     'block',    'important');
-        panel.style.setProperty('opacity',     '1',        'important');
-        panel.style.setProperty('visibility',  'visible',  'important');
-        panel.style.setProperty('position',    'relative', 'important');
-        panel.style.setProperty('inset',       'unset',    'important');
-        panel.style.setProperty('transform',   'none',     'important');
-        panel.style.setProperty('z-index',     '100000',   'important');
-        panel.style.setProperty('max-width',   '640px',    'important');
-        panel.style.setProperty('width',       'min(92vw,640px)', 'important');
-        panel.style.setProperty('max-height',  '85vh',     'important');
-        panel.style.setProperty('overflow-y',  'auto',     'important');
-        panel.style.setProperty('pointer-events','auto',   'important');
-        panel.style.setProperty('background',  'rgba(20,20,40,0.97)', 'important');
-        panel.style.setProperty('border',      '1px solid rgba(255,255,255,.15)', 'important');
-        panel.style.setProperty('border-radius','18px',    'important');
-        panel.style.setProperty('padding',     '28px',     'important');
-      }
-
-      // ── Body content check ─────────────────────────────────────────────
-      if (body && body.innerHTML.trim()) return; // content present — OK
-      console.warn('[Fixeo] Modal body empty after 50ms \u2192 injecting fallback form');
-      if (body) {
-        body.innerHTML =
-          '<div class="form-group"><label class="form-label">Type de service</label>' +
-          '<select class="form-control"><option>Plomberie</option><option>\u00C9lectricit\u00E9</option>' +
-          '<option>Peinture</option><option>Carrelage</option><option>Nettoyage</option>' +
-          '<option>Jardinage</option><option>Autre</option></select></div>' +
-          '<div class="form-group"><label class="form-label">Description</label>' +
-          '<textarea class="form-control" rows="3" placeholder="D\u00E9crivez votre besoin\u2026"></textarea></div>' +
-          '<div class="form-group"><label class="form-label">Adresse</label>' +
-          '<input type="text" class="form-control" placeholder="Rue, Quartier, Ville"></div>' +
-          '<button class="btn btn-primary w-100" onclick="closeModal();window.notifications&&notifications.success(' +
-          '\'Demande envoy\u00E9e !\',\'Vous recevrez des devis sous 24h.\')">Envoyer la demande</button>';
+      if (!ov || !ov.classList.contains('open') || !panel) return;
+      var cs = window.getComputedStyle(panel);
+      if (panel.offsetWidth === 0 || panel.offsetHeight === 0 ||
+          cs.display === 'none' || cs.visibility === 'hidden' || cs.opacity === '0') {
+        console.warn('[Fixeo] Modal panel invisible \u2192 forcing visibility');
+        panel.style.setProperty('display',        'block',              'important');
+        panel.style.setProperty('opacity',         '1',                  'important');
+        panel.style.setProperty('visibility',      'visible',            'important');
+        panel.style.setProperty('position',        'relative',           'important');
+        panel.style.setProperty('inset',           'unset',              'important');
+        panel.style.setProperty('transform',       'none',               'important');
+        panel.style.setProperty('z-index',         '100000',             'important');
+        panel.style.setProperty('max-width',       '640px',              'important');
+        panel.style.setProperty('width',           'min(92vw,640px)',    'important');
+        panel.style.setProperty('max-height',      '85vh',               'important');
+        panel.style.setProperty('overflow-y',      'auto',               'important');
+        panel.style.setProperty('pointer-events',  'auto',               'important');
       }
     }, 50);
   }
 
-  // Step 1 — Supabase / override version (window lookup)
+  // Step 1 — Supabase override (window.openNewRequestModal set by fixeo-mvp-supabase.js)
   if (typeof window.openNewRequestModal === 'function') {
-    try { window.openNewRequestModal(); _attachEscape(); _guardBody(); return; }
+    try { window.openNewRequestModal(); _attachEscape(); _guardVisibility(); return; }
     catch (e1) { _safeClose(); console.warn('[Fixeo] openNewRequestModal (window) failed:', e1); }
   }
 
-  // Step 2 — Inline version (direct reference, bypasses window lookup)
-  // openNewRequestModal is defined earlier in this same <script> block.
+  // Step 2 — Inline fallback (defined in this same script block)
   if (typeof openNewRequestModal === 'function') {
-    try { openNewRequestModal(); _attachEscape(); _guardBody(); return; }
+    try { openNewRequestModal(); _attachEscape(); _guardVisibility(); return; }
     catch (e2) { _safeClose(); console.warn('[Fixeo] openNewRequestModal (local) failed:', e2); }
   }
 
-  // Step 3 — Both failed; overlay is clean (safeClose ran). Navigate.
+  // Step 3 — Both failed; navigate
   window.location.href = 'index.html#express-request-section';
 }
 
@@ -1707,6 +1671,35 @@ function sendDashMessage() {
 
 // ── Close modal ───────────────────────────────────────────
 function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); }
+
+/* ── FixeoDashboardModals ─ clean CTA dispatcher ────────────────────────────
+ * openRequest(): calls fixeoOpenRequest() which prefers window.openNewRequestModal
+ *               (Supabase form) with visibility guard. Falls back to inline form.
+ * openUrgent():  calls expressRequest() — the only urgent modal on this page.
+ * ------------------------------------------------------------------- */
+window.FixeoDashboardModals = (function () {
+  function openRequest() {
+    if (typeof window.fixeoOpenRequest === 'function') {
+      window.fixeoOpenRequest();
+    } else if (typeof window.openNewRequestModal === 'function') {
+      window.openNewRequestModal();
+    } else if (typeof openNewRequestModal === 'function') {
+      openNewRequestModal();
+    } else {
+      window.location.href = 'index.html#express-request-section';
+    }
+  }
+  function openUrgent() {
+    if (typeof window.expressRequest === 'function') {
+      window.expressRequest();
+    } else if (typeof expressRequest === 'function') {
+      expressRequest();
+    } else {
+      openRequest();
+    }
+  }
+  return { openRequest: openRequest, openUrgent: openUrgent };
+}());
 
 // ── New request modal ─────────────────────────────────────
 function openNewRequestModal() {
@@ -2176,7 +2169,7 @@ document.addEventListener('DOMContentLoaded', () => {
 <script src="js/fixeo-chat-mvp.js"></script>
 
 <!-- Mobile FAB - visible only on ≤768px -->
-<button class="fixeo-fab fxd-fab-v2" onclick="fixeoOpenRequest()" aria-label="Publier une demande">
+<button class="fixeo-fab fxd-fab-v2" onclick="FixeoDashboardModals.openRequest()" aria-label="Publier une demande">
   <span class="fxd-fab-icon">+</span>
   <span class="fxd-fab-label">Demande</span>
 </button>
@@ -2201,58 +2194,39 @@ document.addEventListener('DOMContentLoaded', () => {
         var ov = document.getElementById('modal-overlay');
         if (ov) { var b = document.getElementById('modal-body'); if (!b || !b.innerHTML.trim()) ov.classList.remove('open'); }
       }
-      function _guardBody() {
+      function _guardVisibility() {
         setTimeout(function () {
           var ov    = document.getElementById('modal-overlay');
           var panel = ov ? ov.querySelector('.modal') : null;
-          var body  = document.getElementById('modal-body');
-          if (!ov || !ov.classList.contains('open')) return;
-          if (panel) {
-            var cs = window.getComputedStyle(panel);
-            if (panel.offsetWidth===0||panel.offsetHeight===0||cs.display==='none'||cs.visibility==='hidden'||cs.opacity==='0') {
-              panel.style.setProperty('display','block','important');
-              panel.style.setProperty('opacity','1','important');
-              panel.style.setProperty('visibility','visible','important');
-              panel.style.setProperty('position','relative','important');
-              panel.style.setProperty('inset','unset','important');
-              panel.style.setProperty('transform','none','important');
-              panel.style.setProperty('z-index','100000','important');
-              panel.style.setProperty('max-width','640px','important');
-              panel.style.setProperty('width','min(92vw,640px)','important');
-              panel.style.setProperty('max-height','85vh','important');
-              panel.style.setProperty('overflow-y','auto','important');
-              panel.style.setProperty('pointer-events','auto','important');
-              panel.style.setProperty('background','rgba(20,20,40,0.97)','important');
-              panel.style.setProperty('border','1px solid rgba(255,255,255,.15)','important');
-              panel.style.setProperty('border-radius','18px','important');
-              panel.style.setProperty('padding','28px','important');
-            }
-          }
-          if (body && body.innerHTML.trim()) return;
-          console.warn('[Fixeo] Modal body empty \u2192 fallback');
-          if (body) {
-            body.innerHTML =
-              '<div class="form-group"><label class="form-label">Type de service</label>' +
-              '<select class="form-control"><option>Plomberie</option><option>\u00C9lectricit\u00E9</option>' +
-              '<option>Peinture</option><option>Autre</option></select></div>' +
-              '<div class="form-group"><label class="form-label">Description</label>' +
-              '<textarea class="form-control" rows="3" placeholder="D\u00E9crivez votre besoin\u2026"></textarea></div>' +
-              '<button class="btn btn-primary w-100" onclick="closeModal();window.notifications&&notifications.success(' +
-              '\'Demande envoy\u00E9e !\',\'Vous recevrez des devis sous 24h.\')">Envoyer la demande</button>';
+          if (!ov || !ov.classList.contains('open') || !panel) return;
+          var cs = window.getComputedStyle(panel);
+          if (panel.offsetWidth===0||panel.offsetHeight===0||cs.display==='none'||cs.visibility==='hidden'||cs.opacity==='0') {
+            panel.style.setProperty('display','block','important');
+            panel.style.setProperty('opacity','1','important');
+            panel.style.setProperty('visibility','visible','important');
+            panel.style.setProperty('position','relative','important');
+            panel.style.setProperty('inset','unset','important');
+            panel.style.setProperty('transform','none','important');
+            panel.style.setProperty('z-index','100000','important');
+            panel.style.setProperty('max-width','640px','important');
+            panel.style.setProperty('width','min(92vw,640px)','important');
+            panel.style.setProperty('max-height','85vh','important');
+            panel.style.setProperty('overflow-y','auto','important');
+            panel.style.setProperty('pointer-events','auto','important');
           }
         }, 50);
       }
-      // Step 1 — window.openNewRequestModal
+      // Step 1 — window.openNewRequestModal (Supabase override)
       if (typeof window.openNewRequestModal === 'function') {
-        try { window.openNewRequestModal(); _attachEscape(); _guardBody(); return; }
+        try { window.openNewRequestModal(); _attachEscape(); _guardVisibility(); return; }
         catch (e1) { _safeClose(); console.warn('[Fixeo] openNewRequestModal (window) failed:', e1); }
       }
-      // Step 2 — global openNewRequestModal (hoisted from same page)
+      // Step 2 — inline openNewRequestModal
       if (typeof openNewRequestModal === 'function') {
-        try { openNewRequestModal(); _attachEscape(); _guardBody(); return; }
+        try { openNewRequestModal(); _attachEscape(); _guardVisibility(); return; }
         catch (e2) { _safeClose(); console.warn('[Fixeo] openNewRequestModal (local) failed:', e2); }
       }
-      // Step 3 — overlay clean; navigate
+      // Step 3 — navigate
       window.location.href = 'index.html#express-request-section';
     };
   }
