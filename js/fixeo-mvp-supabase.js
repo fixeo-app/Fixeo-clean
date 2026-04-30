@@ -175,7 +175,7 @@
       }
       if (!termsEl.checked) {
         if (errEl) {
-          errEl.textContent = '❌ Vous devez accepter les conditions d'utilisation.';
+          errEl.textContent = "❌ Vous devez accepter les conditions d'utilisation.";
           errEl.style.display = 'block';
         }
         return;
@@ -199,7 +199,7 @@
         });
 
         if (result.needsEmailConfirmation) {
-          notify('success', 'Compte créé', 'Votre compte est créé. Vérifiez votre email pour confirmer l'inscription, puis connectez-vous.');
+          notify('success', 'Compte créé', "Votre compte est créé. Vérifiez votre email pour confirmer l'inscription, puis connectez-vous.");
           if (window.switchTab) window.switchTab('login');
           return;
         }
