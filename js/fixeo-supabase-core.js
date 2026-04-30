@@ -177,16 +177,21 @@
     initPromise = (async function () {
       tryHydrateFromSupabaseStorage();
 
-      // ── Fast path: reuse FixeoSupabaseClient (supabase-client.js) if already connected.
-      // supabase-client.js is loaded in <head> with hardcoded credentials and auto-connects
-      // at DOMContentLoaded. On Vercel, /api/env.js returns 404 so window.FIXEO_ENV is never
-      // set — without this, init() would throw "Variables Supabase manquantes" every time.
-      // This check runs before loadSdk() so it is always zero-cost when Stack 1 is ready.
-      if (window.FixeoSupabaseClient
-          && window.FixeoSupabaseClient.CONFIGURED
-          && window.FixeoSupabaseClient.client) {
-        if (!client) client = window.FixeoSupabaseClient.client;
-        return client;
+      // ── Fast path: await FixeoSupabaseClient.ready() (supabase-client.js, HEAD).
+      // On Vercel /api/env.js returns 404 so window.FIXEO_ENV is never set.
+      // supabase-client.js is loaded in <head> with hardcoded creds and fires ready()
+      // at DOMContentLoaded. We await that promise so the SDK is guaranteed loaded
+      // before we check .client — fixes "SDK not loaded yet" from the sync check.
+      if (window.FixeoSupabaseClient && window.FixeoSupabaseClient.CONFIGURED) {
+        try {
+          await window.FixeoSupabaseClient.ready();
+          if (window.FixeoSupabaseClient.client) {
+            if (!client) client = window.FixeoSupabaseClient.client;
+            return client;
+          }
+        } catch (e) {
+          console.warn('[FixeoSupabase] Fast path ready() failed, falling back', e);
+        }
       }
 
       await loadSdk();
