@@ -442,6 +442,14 @@ select option{background:#1a1a2e!important;color:#fff!important;}
   }
 }
 
+/* ── Modal overlay safety boost ────────────────────────── */
+/* Ensure modal-overlay is always on top of glassmorphism stacking contexts */
+#modal-overlay { z-index: 8000 !important; }
+#modal-overlay .modal { z-index: 8001 !important; position: relative !important; }
+/* Cursor hint that clicking the backdrop dismisses */
+#modal-overlay { cursor: pointer; }
+#modal-overlay .modal { cursor: default; }
+
 /* ── UX Upgrade additions ──────────────────────────────── */
 .fixeo-hero-trust {
   display: flex;
@@ -843,8 +851,8 @@ select option{background:#1a1a2e!important;color:#fff!important;}
               <h3>🚀 Lancez votre première demande</h3>
               <p>Décrivez votre besoin en 30 secondes. Des artisans proches vous répondent rapidement.</p>
               <div class="fixeo-smart-cta-actions">
-                <button class="btn btn-primary" onclick="openNewRequestModal()">Publier ma demande gratuitement</button>
-                <button class="btn btn-secondary" onclick="window.location='index.html#artisans-section'">Trouver un artisan maintenant</button>
+                <button class="btn btn-primary" onclick="fixeoOpenRequest()">Publier ma demande gratuitement</button>
+                <button class="btn btn-secondary" onclick="window.location.href='index.html#artisans-section'">Trouver un artisan maintenant</button>
               </div>
             </div>
 
@@ -896,17 +904,17 @@ select option{background:#1a1a2e!important;color:#fff!important;}
                   <div class="fixeo-artisan-static-card">
                     <div class="fxasc-name">Plombier — Fès</div>
                     <div class="fxasc-rating">⭐ 4.8 (32 avis)</div>
-                    <button class="btn-fxasc" onclick="openNewRequestModal()">Contacter</button>
+                    <button class="btn-fxasc" onclick="fixeoOpenRequest()">Contacter</button>
                   </div>
                   <div class="fixeo-artisan-static-card">
                     <div class="fxasc-name">Électricien — Fès</div>
                     <div class="fxasc-rating">⭐ 4.7 (21 avis)</div>
-                    <button class="btn-fxasc" onclick="openNewRequestModal()">Contacter</button>
+                    <button class="btn-fxasc" onclick="fixeoOpenRequest()">Contacter</button>
                   </div>
                   <div class="fixeo-artisan-static-card">
                     <div class="fxasc-name">Peintre — Fès</div>
                     <div class="fxasc-rating">⭐ 4.9 (18 avis)</div>
-                    <button class="btn-fxasc" onclick="openNewRequestModal()">Contacter</button>
+                    <button class="btn-fxasc" onclick="fixeoOpenRequest()">Contacter</button>
                   </div>
                 </div>
               </div>
@@ -1086,6 +1094,36 @@ select option{background:#1a1a2e!important;color:#fff!important;}
 
 
 <script>
+// ── Safe request modal dispatcher ────────────────────────
+// Called by all CTA buttons. Defensive: works regardless of whether
+// fixeo-mvp-supabase.js has finished registering window.openNewRequestModal.
+// If overlay ever becomes visible without a modal, escape hatch clears it.
+function fixeoOpenRequest() {
+  // 1. Try the live (Supabase) version first — registered by fixeo-mvp-supabase.js
+  if (typeof window.openNewRequestModal === 'function') {
+    try {
+      window.openNewRequestModal();
+      // Attach one-time overlay click-escape so grey screen can never trap the user
+      var overlay = document.getElementById('modal-overlay');
+      if (overlay) {
+        overlay.addEventListener('click', function escapeOverlay(e) {
+          if (e.target === overlay) {
+            overlay.classList.remove('open');
+            overlay.removeEventListener('click', escapeOverlay);
+          }
+        });
+      }
+      return;
+    } catch(err) {
+      // fall through to escape hatch
+      var ov = document.getElementById('modal-overlay');
+      if (ov) ov.classList.remove('open');
+    }
+  }
+  // 2. Fallback: navigate to homepage request section
+  window.location.href = 'index.html#express-request-section';
+}
+
 // ── Section navigation ────────────────────────────────────
 function showSection(name) {
   ['overview','bookings','messages','reviews','settings'].forEach(s => {
@@ -1599,7 +1637,7 @@ document.addEventListener('DOMContentLoaded', () => {
 <script src="js/fixeo-chat-mvp.js"></script>
 
 <!-- Mobile FAB — visible only on ≤768px -->
-<button class="fixeo-fab" onclick="openNewRequestModal()" aria-label="Publier une demande">+ Demande</button>
+<button class="fixeo-fab" onclick="fixeoOpenRequest()" aria-label="Publier une demande">+ Demande</button>
 
 </body>
 </html>
