@@ -3354,19 +3354,15 @@ function openContentModal(type) {
   'use strict';
 
   function loadRecommendedArtisan() {
-    fetch('/api/artisans/recommended')
-      .then(res => { if (!res.ok) throw new Error('no api'); return res.json(); })
-      .then(a => showRecommended(a))
-      .catch(() => {
-        const list = window.ARTISANS || (typeof ARTISANS !== 'undefined' ? ARTISANS : []);
-        if (!list.length) return;
-        const avail = list.filter(a => a.availability === 'available');
-        const best = (avail.length ? avail : list).sort((a, b) =>
-          ((b.trustScore || 0) * 1.2 + (b.rating || 0) * 5) -
-          ((a.trustScore || 0) * 1.2 + (a.rating || 0) * 5)
-        )[0];
-        if (best) showRecommended(best);
-      });
+    /* /api/artisans/recommended not available on Vercel — use local data directly. */
+    const list = window.ARTISANS || (typeof ARTISANS !== 'undefined' ? ARTISANS : []);
+    if (!list.length) return;
+    const avail = list.filter(a => a.availability === 'available');
+    const best = (avail.length ? avail : list).sort((a, b) =>
+      ((b.trustScore || 0) * 1.2 + (b.rating || 0) * 5) -
+      ((a.trustScore || 0) * 1.2 + (a.rating || 0) * 5)
+    )[0];
+    if (best) showRecommended(best);
   }
 
   function showRecommended(a) {
@@ -3430,20 +3426,16 @@ function openContentModal(type) {
   }
 
   function loadTopArtisans() {
-    fetch('/api/artisans/top')
-      .then(res => { if (!res.ok) throw new Error('no api'); return res.json(); })
-      .then(data => renderTopArtisans(data))
-      .catch(() => {
-        const list = window.ARTISANS || (typeof ARTISANS !== 'undefined' ? ARTISANS : []);
-        if (!list.length) return;
-        const top = [...list]
-          .sort((a, b) =>
-            ((b.trustScore || 0) + (b.rating || 0) * 10 + (b.reviewCount || 0) * 0.1) -
-            ((a.trustScore || 0) + (a.rating || 0) * 10 + (a.reviewCount || 0) * 0.1)
-          )
-          .slice(0, 6);
-        renderTopArtisans(top);
-      });
+    /* /api/artisans/top not available on Vercel — use local data directly. */
+    const list = window.ARTISANS || (typeof ARTISANS !== 'undefined' ? ARTISANS : []);
+    if (!list.length) return;
+    const top = [...list]
+      .sort((a, b) =>
+        ((b.trustScore || 0) + (b.rating || 0) * 10 + (b.reviewCount || 0) * 0.1) -
+        ((a.trustScore || 0) + (a.rating || 0) * 10 + (a.reviewCount || 0) * 0.1)
+      )
+      .slice(0, 6);
+    renderTopArtisans(top);
   }
 
   function renderTopArtisans(data) {

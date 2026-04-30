@@ -243,43 +243,18 @@ function refreshMarketplaceAfterLoad() {
 }
 
 (function loadMarketplaceArtisans() {
-  const API_BASE = (function () {
-    const h = window.location.hostname;
-    if (h.includes('ngrok') || h.includes('tunnel') || h.includes('loca.lt'))
-      return window.location.origin;
-    if (h === 'localhost' || h === '127.0.0.1')
-      return window.location.protocol + '//' + h + ':3001';
-    return window.location.origin;
-  })();
+  /* API fetch removed — /api/marketplace/artisans is not available on Vercel.
+     Data comes from localStorage (FixeoDB) via readMarketplaceLocalArtisans()
+     and is overridden by fixeo-supabase-loader.js (fires 800ms after DCL).
+     Removing the fetch eliminates: the 404, the 4-second AbortController timer,
+     and the stale console warn on every page load. */
 
   const localArtisans = readMarketplaceLocalArtisans();
   if (localArtisans.length) {
     replaceMarketplaceArtisans(localArtisans);
   }
-
-  const ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
-  const tmo = ctrl ? setTimeout(() => ctrl.abort(), 4000) : null;
-
-  fetch(API_BASE + '/api/marketplace/artisans', { signal: ctrl ? ctrl.signal : undefined })
-    .then((response) => {
-      if (tmo) clearTimeout(tmo);
-      if (!response.ok) throw new Error('HTTP ' + response.status);
-      return response.json();
-    })
-    .then((body) => {
-      if (!body.success || !Array.isArray(body.artisans)) return;
-      replaceMarketplaceArtisans(body.artisans);
-      refreshMarketplaceAfterLoad();
-      window.dispatchEvent(new CustomEvent('fixeo:marketplace-artisans-updated', {
-        detail: { count: ARTISANS.length }
-      }));
-      console.log('[Fixeo Marketplace] ✅ Artisans chargés :', ARTISANS.length);
-    })
-    .catch((error) => {
-      if (tmo) clearTimeout(tmo);
-      refreshMarketplaceAfterLoad();
-      console.warn('[Fixeo Marketplace] ⚠️ API indisponible — source locale utilisée si disponible. Err:', error.message);
-    });
+  /* fixeo-supabase-loader.js will call replaceMarketplaceArtisans + refreshMarketplaceAfterLoad
+     after loading from Supabase, so no explicit call needed here. */
 })();
 
 
