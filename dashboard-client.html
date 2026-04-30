@@ -13,7 +13,7 @@
   <link rel="apple-touch-icon" href="img/favicon.png">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fixeo — Espace Client</title>
+  <title>Fixeo - Espace Client</title>
   <script src="js/fixeo-auth-guard.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -548,23 +548,139 @@ select option{background:#1a1a2e!important;color:#fff!important;}
 @media (max-width: 768px) {
   .fixeo-fab { display: block; }
 }
+
+/* ── Task 1: Hero button sizing + glow ───────────────────── */
+.fxd-hero-cta {
+  padding: 14px 28px !important;          /* +10% on .btn base 12px/24px */
+  font-size: 1rem !important;
+  transition: transform .18s ease, box-shadow .18s ease, opacity .18s ease !important;
+}
+.fxd-hero-cta.btn-primary:hover {
+  box-shadow: 0 0 0 3px rgba(225,48,108,.35), 0 8px 28px rgba(225,48,108,.55) !important;
+  transform: translateY(-2px) !important;
+}
+.fxd-hero-cta.btn-secondary:hover {
+  box-shadow: 0 0 0 2px rgba(255,255,255,.25), 0 6px 18px rgba(255,255,255,.12) !important;
+  transform: translateY(-2px) !important;
+}
+.fxd-hero-cta:active { transform: scale(.97) !important; }
+
+/* Task 1: Hero trust line polish */
+.fixeo-hero-trust {
+  gap: 8px 16px;
+  font-size: .82rem;
+  font-weight: 500;
+}
+.fixeo-hero-trust span { letter-spacing: .01em; }
+
+/* ── Task 3: Nudge card ──────────────────────────────────── */
+.fxd-nudge-card {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  border-radius: 12px;
+  background: rgba(255,255,255,.03);
+  border: 1px solid transparent;
+  background-clip: padding-box;
+  box-shadow: inset 0 0 0 1px rgba(225,48,108,.3);
+}
+.fxd-nudge-text {
+  flex: 1;
+  min-width: 160px;
+  font-size: .86rem;
+  font-weight: 600;
+  color: rgba(255,255,255,.9);
+}
+.fxd-nudge-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.fxd-nudge-btn { padding: 8px 16px !important; font-size: .83rem !important; }
+
+/* ── Task 2: Smart CTA button sizing ────────────────────── */
+.fxd-cta-btn { padding: 11px 22px !important; font-size: .88rem !important; }
+.fxd-cta-btn:active { transform: scale(.97) !important; }
+
+/* ── Task 4: À faire empty astuce ───────────────────────── */
+.fxd-action-empty-hint {
+  margin-top: 10px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(255,255,255,.04);
+  border: 1px dashed rgba(255,255,255,.12);
+  font-size: .83rem;
+  color: rgba(255,255,255,.65);
+  line-height: 1.5;
+}
+
+/* ── Task 5: Artisan card enhancements ───────────────────── */
+.fxasc-badge {
+  display: inline-block;
+  font-size: .68rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: linear-gradient(135deg,rgba(225,48,108,.18),rgba(131,58,180,.18));
+  border: 1px solid rgba(225,48,108,.3);
+  color: rgba(255,255,255,.9);
+  margin-bottom: 6px;
+  letter-spacing: .03em;
+}
+.fxasc-avail {
+  font-size: .72rem;
+  color: #4ade80;
+  margin-bottom: 8px;
+  font-weight: 600;
+  letter-spacing: .01em;
+}
+/* Improve "Demander un devis" button */
+.btn-fxasc {
+  width: 100%;
+  padding: 7px 0 !important;
+  font-size: .8rem !important;
+  border-radius: 9px !important;
+  transition: transform .15s ease, box-shadow .15s ease, opacity .15s ease !important;
+}
+.btn-fxasc:hover {
+  opacity: 1 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 14px rgba(225,48,108,.4) !important;
+}
+.btn-fxasc:active { transform: scale(.96) !important; }
+
+/* ── Task 6: Micro-interactions — cards ─────────────────── */
+.fixeo-artisan-static-card {
+  transition: transform .18s ease, box-shadow .18s ease !important;
+}
+.fixeo-artisan-static-card:hover {
+  transform: scale(1.02) !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,.35) !important;
+}
+/* KPI cards */
+.kpi-card {
+  transition: transform .18s ease, box-shadow .18s ease !important;
+}
+/* dashboard-panel lift */
+.dashboard-panel {
+  transition: box-shadow .18s ease !important;
+}
 </style>
 
   <link rel="stylesheet" href="css/fixeo-chat-mvp.css">
   <link rel="stylesheet" href="css/header-logo-premium.css?v=hlp5">
-  <!-- ══ LOGO OVERRIDE — image-only, no emoji, no text ══ -->
+  <!-- ══ LOGO OVERRIDE - image-only, no emoji, no text ══ -->
   <style id="fixeo-logo-override">
     /* Kill legacy logo-icon and logo-text */
     .navbar-brand .logo-icon, .logo-wrap .logo-icon, .fixeo-gh-brand .logo-icon
       { display:none !important; width:0 !important; height:0 !important; min-width:0 !important; flex:0 !important; }
     .navbar-brand .logo-text, .logo-wrap .logo-text, .fixeo-gh-brand .logo-text
       { display:none !important; width:0 !important; height:0 !important; }
-    /* Brand containers — no clipping */
+    /* Brand containers - no clipping */
     .navbar-brand, .logo-wrap
       { max-width:220px !important; overflow:visible !important; gap:0 !important; background:transparent !important; }
     .fixeo-gh-brand
       { max-width:180px !important; overflow:visible !important; gap:0 !important; background:transparent !important; }
-    /* Logo image — clean, no hacks */
+    /* Logo image - clean, no hacks */
     img.fixeo-logo-img {
       display:block !important;
       height:32px !important;
@@ -594,7 +710,7 @@ select option{background:#1a1a2e!important;color:#fff!important;}
 <body data-theme="dark" data-dash-type="client">
 
 <!-- ═══════════════════════════════════════════════════════════════
-     FIXEO V10 — HEADER UNIFIÉ (centralisé)
+     FIXEO V10 - HEADER UNIFIÉ (centralisé)
      Règles de visibilité :
        data-auth="guest"      → visible si NON connecté (défaut)
        data-auth="logged-in"  → visible si connecté  (body.is-logged-in)
@@ -606,7 +722,7 @@ select option{background:#1a1a2e!important;color:#fff!important;}
 <nav class="navbar" role="navigation" aria-label="Navigation principale">
 
   <!-- ── Logo ── -->
-  <a href="index.html" class="navbar-brand logo-wrap" aria-label="Fixeo — Accueil">
+  <a href="index.html" class="navbar-brand logo-wrap" aria-label="Fixeo - Accueil">
     <img src="img/logo.png" alt="Fixeo" class="fixeo-logo-img" height="38" loading="eager" onerror="this.onerror=null;this.alt='Fixeo';this.style.display='none';var t=document.createElement('span');t.className='fixeo-logo-text';t.textContent='Fixeo';this.parentNode.appendChild(t);">
   </a>
 
@@ -654,14 +770,14 @@ select option{background:#1a1a2e!important;color:#fff!important;}
     </div>
     <a href="pricing.html"            class="nav-link">Tarifs</a>
 
-    <!-- Dashboard — visible uniquement si connecté -->
+    <!-- Dashboard - visible uniquement si connecté -->
     <a href="dashboard-client.html"
        class="nav-link"
        data-role="dashboard"
        data-auth="logged-in"
        data-i18n="nav_dashboard">📊 Dashboard</a>
 
-    <!-- Admin — visible uniquement si admin -->
+    <!-- Admin - visible uniquement si admin -->
     <a href="admin.html"
        class="nav-link"
        data-role="admin"
@@ -734,13 +850,13 @@ select option{background:#1a1a2e!important;color:#fff!important;}
   <a href="index.html#artisans-section" class="nav-link" data-i18n="nav_artisans">👷 Artisans</a>
   <a href="pricing.html"            class="nav-link">💎 Tarifs</a>
 
-  <!-- Dashboard mobile — connectés uniquement -->
+  <!-- Dashboard mobile - connectés uniquement -->
   <a href="dashboard-client.html"
      class="nav-link"
      data-role="dashboard"
      data-auth="logged-in">📊 Dashboard</a>
 
-  <!-- Admin mobile — admins uniquement -->
+  <!-- Admin mobile - admins uniquement -->
   <a href="admin.html"
      class="nav-link"
      data-role="admin"
@@ -819,17 +935,18 @@ select option{background:#1a1a2e!important;color:#fff!important;}
         <div class="client-dashboard-top">
           <div>
             <div class="section-tag">Dashboard client</div>
-            <h1>Bonjour <span id="client-hero-name" style="visibility:hidden">…</span> 👋</h1>
-            <p>Suivez vos demandes, consultez les réponses et trouvez rapidement le bon artisan.</p>
+            <h1>Bonjour <span id="client-hero-name" style="visibility:hidden">...</span> 👋</h1>
+            <p>Décrivez votre besoin en 30 secondes. Des artisans proches vous répondent rapidement.</p>
             <div class="fixeo-hero-trust">
-              <span>+500 artisans vérifiés disponibles aujourd'hui</span>
-              <span>• Réponse en moins de 5 minutes ⚡</span>
+              <span>✔️ Réponse en moins de 5 minutes</span>
+              <span>✔️ Artisans vérifiés</span>
+              <span>✔️ Gratuit</span>
             </div>
           </div>
 
           <div class="client-hero-actions">
-            <button class="btn btn-primary" onclick="openNewRequestModal()">Nouvelle demande</button>
-            <button class="btn btn-secondary" onclick="expressRequest()">Besoin urgent</button>
+            <button class="btn btn-primary fxd-hero-cta" onclick="openNewRequestModal()">Nouvelle demande</button>
+            <button class="btn btn-secondary fxd-hero-cta" onclick="expressRequest()">Besoin urgent</button>
           </div>
         </div>
       </section>
@@ -842,17 +959,27 @@ select option{background:#1a1a2e!important;color:#fff!important;}
             <div class="client-section-header">
               <div>
                 <h2>Mes demandes</h2>
-                <p>Vos demandes sont suivies et prêtes à être comparées en un coup d’œil.</p>
+                <p>Vos demandes sont suivies et prêtes à être comparées en un coup d'œil.</p>
               </div>
               <button class="btn btn-secondary" onclick="showSection('bookings')">Voir tout</button>
             </div>
 
+            <!-- Smart nudge card (Task 3) -->
+            <div class="fxd-nudge-card">
+              <span class="fxd-nudge-text">Besoin d'un plombier, électricien ou peintre aujourd'hui&nbsp;?</span>
+              <div class="fxd-nudge-actions">
+                <button class="btn btn-primary fxd-nudge-btn" onclick="fixeoOpenRequest()">Demande rapide</button>
+                <button class="btn btn-secondary fxd-nudge-btn" onclick="window.location.href='index.html#artisans-section'">Voir les artisans</button>
+              </div>
+            </div>
+
+            <!-- Primary activation block (Task 2) -->
             <div class="fixeo-smart-cta" id="fixeo-smart-cta">
               <h3>🚀 Lancez votre première demande</h3>
-              <p>Décrivez votre besoin en 30 secondes. Des artisans proches vous répondent rapidement.</p>
+              <p>Expliquez votre besoin en quelques mots. Les artisans disponibles vous répondent rapidement avec prix et délai.</p>
               <div class="fixeo-smart-cta-actions">
-                <button class="btn btn-primary" onclick="fixeoOpenRequest()">Publier ma demande gratuitement</button>
-                <button class="btn btn-secondary" onclick="window.location.href='index.html#artisans-section'">Trouver un artisan maintenant</button>
+                <button class="btn btn-primary fxd-cta-btn" onclick="fixeoOpenRequest()">Publier ma demande gratuitement</button>
+                <button class="btn btn-secondary fxd-cta-btn" onclick="window.location.href='index.html#artisans-section'">Trouver un artisan maintenant</button>
               </div>
             </div>
 
@@ -877,12 +1004,14 @@ select option{background:#1a1a2e!important;color:#fff!important;}
             <div class="client-section-header">
               <div>
                 <h2>À faire maintenant</h2>
-                <p>L’action la plus utile est toujours visible sans surcharger l’interface.</p>
               </div>
             </div>
 
             <div class="client-action-list" id="client-action-list"></div>
-            <div class="client-subtle-note">Fixeo vous aide à décider vite, sans multiplier les étapes inutiles.</div>
+            <!-- Empty-state astuce - shown by default; hidden by fixeo-mvp-supabase when real actions exist -->
+            <div class="fxd-action-empty-hint" id="fxd-action-empty-hint">
+              💡 Astuce&nbsp;: créez une première demande pour commencer à recevoir des propositions.
+            </div>
           </section>
 
           <section class="client-favorites-section dashboard-panel">
@@ -902,19 +1031,25 @@ select option{background:#1a1a2e!important;color:#fff!important;}
               <div id="recommended-artisans">
                 <div class="fixeo-artisan-static-cards">
                   <div class="fixeo-artisan-static-card">
+                    <div class="fxasc-badge">⭐ Vérifié</div>
                     <div class="fxasc-name">Plombier — Fès</div>
                     <div class="fxasc-rating">⭐ 4.8 (32 avis)</div>
-                    <button class="btn-fxasc" onclick="fixeoOpenRequest()">Contacter</button>
+                    <div class="fxasc-avail">Disponible aujourd'hui</div>
+                    <button class="btn-fxasc" onclick="fixeoOpenRequest()">Demander un devis</button>
                   </div>
                   <div class="fixeo-artisan-static-card">
+                    <div class="fxasc-badge">⭐ Vérifié</div>
                     <div class="fxasc-name">Électricien — Fès</div>
                     <div class="fxasc-rating">⭐ 4.7 (21 avis)</div>
-                    <button class="btn-fxasc" onclick="fixeoOpenRequest()">Contacter</button>
+                    <div class="fxasc-avail">Disponible aujourd'hui</div>
+                    <button class="btn-fxasc" onclick="fixeoOpenRequest()">Demander un devis</button>
                   </div>
                   <div class="fixeo-artisan-static-card">
+                    <div class="fxasc-badge">⭐ Vérifié</div>
                     <div class="fxasc-name">Peintre — Fès</div>
                     <div class="fxasc-rating">⭐ 4.9 (18 avis)</div>
-                    <button class="btn-fxasc" onclick="fixeoOpenRequest()">Contacter</button>
+                    <div class="fxasc-avail">Disponible aujourd'hui</div>
+                    <button class="btn-fxasc" onclick="fixeoOpenRequest()">Demander un devis</button>
                   </div>
                 </div>
               </div>
@@ -956,7 +1091,7 @@ select option{background:#1a1a2e!important;color:#fff!important;}
         <!-- Contacts list -->
         <div class="chart-card" style="padding:0;overflow:hidden;display:flex;flex-direction:column">
           <div style="padding:12px;border-bottom:1px solid var(--glass-border);flex-shrink:0">
-            <input type="text" class="chat-input" placeholder="🔍 Rechercher…" style="width:100%">
+            <input type="text" class="chat-input" placeholder="🔍 Rechercher..." style="width:100%">
           </div>
           <div style="overflow-y:auto;flex:1" id="contacts-list"></div>
         </div>
@@ -977,7 +1112,7 @@ select option{background:#1a1a2e!important;color:#fff!important;}
             </div>
           </div>
           <div class="chat-input-row" style="flex-shrink:0;opacity:.4;pointer-events:none">
-            <input type="text" id="dash-chat-input" class="chat-input" placeholder="Écrire un message…" disabled>
+            <input type="text" id="dash-chat-input" class="chat-input" placeholder="Écrire un message..." disabled>
             <button class="btn btn-primary btn-sm" disabled>→</button>
           </div>
         </div>
@@ -1068,7 +1203,7 @@ select option{background:#1a1a2e!important;color:#fff!important;}
       <div class="msg received">Bonjour ! Comment puis-je vous aider ? 😊</div>
     </div>
     <div class="chat-input-row">
-      <input type="text" id="chat-input-field" class="chat-input" placeholder="Écrire un message…">
+      <input type="text" id="chat-input-field" class="chat-input" placeholder="Écrire un message...">
       <button class="btn btn-primary btn-sm" onclick="sendMessage()">→</button>
     </div>
   </div>
@@ -1099,7 +1234,7 @@ select option{background:#1a1a2e!important;color:#fff!important;}
 // fixeo-mvp-supabase.js has finished registering window.openNewRequestModal.
 // If overlay ever becomes visible without a modal, escape hatch clears it.
 function fixeoOpenRequest() {
-  // 1. Try the live (Supabase) version first — registered by fixeo-mvp-supabase.js
+  // 1. Try the live (Supabase) version first - registered by fixeo-mvp-supabase.js
   if (typeof window.openNewRequestModal === 'function') {
     try {
       window.openNewRequestModal();
@@ -1182,7 +1317,7 @@ function openNewRequestModal() {
     </div>
     <div class="form-group">
       <label class="form-label">Description</label>
-      <textarea class="form-control" rows="3" placeholder="Décrivez votre besoin…"></textarea>
+      <textarea class="form-control" rows="3" placeholder="Décrivez votre besoin..."></textarea>
     </div>
     <div class="form-group">
       <label class="form-label">Date souhaitée</label>
@@ -1212,7 +1347,7 @@ function expressRequest() {
     </div>
     <div class="form-group">
       <label class="form-label">Problème</label>
-      <textarea class="form-control" rows="3" placeholder="Décrivez le problème urgent…"></textarea>
+      <textarea class="form-control" rows="3" placeholder="Décrivez le problème urgent..."></textarea>
     </div>
     <button class="btn btn-express w-100"
       onclick="closeModal();notifications.success('🚀 Demande envoyée !','Un artisan vous contactera dans 15 min.')">
@@ -1306,15 +1441,15 @@ function renderBookingsTable(container, bookings) {
         ${bookings.map(j => {
           const s = statusConf[j.payStatus] || statusConf[j.status] || statusConf.pending;
           const payBadge = '';
-          const refText = j.bookingRef || j.id || '—';
+          const refText = j.bookingRef || j.id || '-';
           return `<tr>
             <td style="color:var(--text-muted);font-family:monospace;font-size:.8rem">${refText}${payBadge}</td>
-            <td>${j.artisan || j.artisanName || '—'}</td>
-            <td>${j.service || '—'}</td>
+            <td>${j.artisan || j.artisanName || '-'}</td>
+            <td>${j.service || '-'}</td>
             <td><span style="background:${s.bg};color:${s.color};padding:3px 10px;border-radius:999px;font-size:.74rem;font-weight:700;border:1px solid ${s.color}33">${s.label}</span></td>
-            <td style="font-size:.8rem;color:rgba(255,255,255,.6)">${j.method || j.paymentMethod || '—'}</td>
-            <td style="font-weight:700;color:var(--accent2)">${j.price ? j.price + ' MAD' : (j.amount || '—')}</td>
-            <td style="color:var(--text-muted)">${j.date || j.createdAt || '—'}</td>
+            <td style="font-size:.8rem;color:rgba(255,255,255,.6)">${j.method || j.paymentMethod || '-'}</td>
+            <td style="font-weight:700;color:var(--accent2)">${j.price ? j.price + ' MAD' : (j.amount || '-')}</td>
+            <td style="color:var(--text-muted)">${j.date || j.createdAt || '-'}</td>
           </tr>`;
         }).join('')}
       </tbody>
@@ -1376,7 +1511,7 @@ const FIXEO_CLIENT_OVERVIEW = {
       statusClass: 'status-closed',
       statusLabel: 'Clôturée',
       replies: 0,
-      avgResponse: '—'
+      avgResponse: '-'
     }
   ],
   replies: [],
@@ -1384,7 +1519,7 @@ const FIXEO_CLIENT_OVERVIEW = {
   actions: [
     {
       title: 'Comparer les réponses pour la demande plomberie',
-      description: '3 devis sont déjà disponibles. Vous pouvez ouvrir les réponses et choisir l’artisan le plus rassurant.',
+      description: '3 devis sont déjà disponibles. Vous pouvez ouvrir les réponses et choisir l'artisan le plus rassurant.',
       pill: 'Priorité du jour',
       primaryLabel: 'Voir les réponses',
       primaryAction: "showSection('messages')",
@@ -1393,11 +1528,11 @@ const FIXEO_CLIENT_OVERVIEW = {
     },
     {
       title: 'Confirmer votre rendez-vous électricité',
-      description: 'Un créneau est prévu demain à 10h. Confirmez-le maintenant pour verrouiller l’intervention.',
+      description: 'Un créneau est prévu demain à 10h. Confirmez-le maintenant pour verrouiller l'intervention.',
       pill: 'Rendez-vous à venir',
       primaryLabel: 'Confirmer',
       primaryAction: "notifications.success('Rendez-vous confirmé', 'Votre intervention a bien été validée.')",
-      secondaryLabel: 'Contacter l’artisan',
+      secondaryLabel: 'Contacter l'artisan',
       secondaryAction: "showSection('messages')"
     }
   ]
@@ -1414,7 +1549,7 @@ function fixeoEscapeHtml(value) {
 }
 
 function getFixeoClientName() {
-  // FOUC fix: never read stale localStorage name — Supabase is the only source of truth.
+  // FOUC fix: never read stale localStorage name - Supabase is the only source of truth.
   // Hero name is set exclusively by fixeo-mvp-supabase.js after profile fetch.
   return '';
 }
@@ -1424,16 +1559,16 @@ function renderClientDashboardOverview() {
   if (window._fixeoOverviewDisabled) return;
 
   // Hero name: set exclusively by fixeo-mvp-supabase.js after Supabase profile fetch.
-  // Do NOT touch it here — would flash stale/empty value before real data arrives.
+  // Do NOT touch it here - would flash stale/empty value before real data arrives.
 
-  // Stats: show loading zeros — Supabase will overwrite with real counts
+  // Stats: show loading zeros - Supabase will overwrite with real counts
   const statsEl = document.getElementById('client-stats-grid');
   if (statsEl && !statsEl.dataset.real) {
     statsEl.innerHTML = [
-      { value: '—', label: 'Demandes actives' },
-      { value: '—', label: 'Réponses reçues' },
-      { value: '—', label: 'Artisans favoris' },
-      { value: '—', label: 'Rendez-vous à venir' }
+      { value: '-', label: 'Demandes actives' },
+      { value: '-', label: 'Réponses reçues' },
+      { value: '-', label: 'Artisans favoris' },
+      { value: '-', label: 'Rendez-vous à venir' }
     ].map(stat => `
       <div class="client-stat-card">
         <span class="stat-number">${fixeoEscapeHtml(stat.value)}</span>
@@ -1442,14 +1577,14 @@ function renderClientDashboardOverview() {
     `).join('');
   }
 
-  // Requests/replies/favorites/actions: show empty state — Supabase will overwrite
+  // Requests/replies/favorites/actions: show empty state - Supabase will overwrite
   const requestsEl = document.getElementById('client-requests-list');
   if (requestsEl && !requestsEl.dataset.real) {
-    requestsEl.innerHTML = '<div class="request-card"><p style="margin:0;opacity:.6">Chargement de vos demandes…</p></div>';
+    requestsEl.innerHTML = '<div class="request-card"><p style="margin:0;opacity:.6">Chargement de vos demandes...</p></div>';
   }
   const repliesEl = document.getElementById('client-replies-list');
   if (repliesEl && !repliesEl.dataset.real) {
-    repliesEl.innerHTML = '<div class="reply-card"><p style="margin:0;opacity:.6">Chargement des réponses…</p></div>';
+    repliesEl.innerHTML = '<div class="reply-card"><p style="margin:0;opacity:.6">Chargement des réponses...</p></div>';
   }
   const favoritesEl = document.getElementById('client-favorites-list');
   if (favoritesEl && !favoritesEl.dataset.real) {
@@ -1487,7 +1622,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
       if (currentId && storedId && storedId !== currentId) {
-        // Different user — clear stale display keys
+        // Different user - clear stale display keys
         ['fixeo_user_name', 'fixeo_user', 'fixeo_current_user',
          'fixeo_user_id', 'fixeo_profile', 'user'].forEach(function(k) {
           try { localStorage.removeItem(k); } catch(_) {}
@@ -1504,7 +1639,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* Charger les réservations confirmées depuis localStorage (PayPal/COD).
      Supabase missions sont injectées séparément par fixeo-mvp-supabase.js
-     dans #client-bookings-full — aucune donnée démo ici. */
+     dans #client-bookings-full - aucune donnée démo ici. */
   function loadConfirmedLocalBookings() {
     try {
       const stored = JSON.parse(localStorage.getItem('fixeo_reservations') || '[]');
@@ -1556,7 +1691,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const hamburger = document.getElementById('hamburger') || document.querySelector('.hamburger');
     const sidebar = document.getElementById('sidebar') || document.querySelector('.sidebar');
     const overlay = document.querySelector('.sidebar-overlay');
-    
+
     if (hamburger && sidebar) {
       hamburger.addEventListener('click', function() {
         sidebar.classList.toggle('open');
@@ -1578,7 +1713,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (mobOv) mobOv.style.display = sidebar.classList.contains('open') ? 'block' : 'none';
       });
     }
-    
+
     // Active nav link highlight
     const currentPage = window.location.hash || '#overview';
     document.querySelectorAll('.sidebar-link[href]').forEach(link => {
@@ -1586,7 +1721,7 @@ document.addEventListener('DOMContentLoaded', () => {
         link.classList.add('active');
       }
     });
-    
+
     // Section switching
     window.showSection = function(name) {
       document.querySelectorAll('[id^="section-"]').forEach(s => {
@@ -1608,17 +1743,17 @@ document.addEventListener('DOMContentLoaded', () => {
         if (mobOv) mobOv.style.display = 'none';
       }
     };
-    
+
     // Show default overview section
     const sections = document.querySelectorAll('[id^="section-"]');
     if (sections.length > 0) {
       let shown = false;
-      sections.forEach((s, i) => { 
+      sections.forEach((s, i) => {
         if (i === 0 && !shown) { s.style.display = 'block'; shown = true; }
         else if (i > 0) { s.style.display = 'none'; }
       });
     }
-    
+
     // Notification button
     document.querySelector('.notif-btn')?.addEventListener('click', function() {
       window.notifSystem?.togglePanel();
@@ -1636,7 +1771,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 <script src="js/fixeo-chat-mvp.js"></script>
 
-<!-- Mobile FAB — visible only on ≤768px -->
+<!-- Mobile FAB - visible only on ≤768px -->
 <button class="fixeo-fab" onclick="fixeoOpenRequest()" aria-label="Publier une demande">+ Demande</button>
 
 </body>
