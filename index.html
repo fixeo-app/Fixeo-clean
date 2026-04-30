@@ -52,7 +52,7 @@
 <link rel="stylesheet" href="css/hero-performance.css?v=50a38b9"/>
 <link rel="stylesheet" href="css/request-form.css?v=50a38b9"/>
 <link rel="stylesheet" href="css/marketplace-secondary-entry.css?v=50a38b9"/>
-<link rel="stylesheet" href="css/homepage-conversion-optimizer.css?v=50a38b9"/>
+<link rel="stylesheet" href="css/homepage-conversion-optimizer.css?v=50a38b9" media="print" onload="this.media='all'"/><noscript><link rel="stylesheet" href="css/homepage-conversion-optimizer.css?v=50a38b9"/></noscript>
 <link rel="stylesheet" href="css/artisan-onboarding.css?v=50a38b9"/>
 <link rel="stylesheet" href="css/fixeo-header-global.css?v=50a38b9"/>
 <link rel="stylesheet" href="css/hero-premium-upgrade.css?v=50a38b9"/>
@@ -3140,8 +3140,7 @@ section#home.hero.hero-section {
 <script src="js/fixeo-session-mobile.js?v=50a38b9"></script>
 <script src="js/fixeo-header-global.js?v=50a38b9"></script>
 <script src="js/i18n.js?v=50a38b9"></script>
-<script src="js/notifications.js?v=50a38b9"></script>
-<script src="js/artisan-onboarding-store.js?v=50a38b9"></script>
+<script defer src="js/notifications.js?v=50a38b9"></script>
 <script src="js/fixeo-public-profile-links.js?v=50a38b9"></script>
 <script src="js/main.js?v=50a38b9"></script>
 <!-- fixeo_seed_patch.js DISABLED - seeds now in Supabase -->
@@ -3326,10 +3325,8 @@ function openContentModal(type) {
 
 <script src="js/v3_ultra_stable.js?v=50a38b9"></script>
 <script src="js/pricing.js?v=50a38b9"></script>
-<script src="js/artisan-subscription.js?v=50a38b9"></script>
 <script src="js/fixeo_v5_fixes.js?v=50a38b9"></script>
 <script src="js/smart-search.js?v=50a38b9"></script>
-<script src="js/reservation.js?v=50a38b9"></script>
 <script src="js/hero-search-modal.js?v=50a38b9"></script>
 <script src="js/secondary-search.js?v=50a38b9"></script>
 <script src="js/quick-search-modal.js?v=50a38b9"></script>
@@ -3337,7 +3334,6 @@ function openContentModal(type) {
 <script src="js/auth-global.js?v=50a38b9"></script>
 <script src="js/fixeo-auth-guard.js?v=50a38b9"></script>
 <script src="js/fixeo-session-bridge.js?v=sb1"></script>
-<script src="js/slot-lock.js?v=50a38b9"></script>
 <script src="js/homepage-v13.js?v=50a38b9"></script>
 <script src="js/hero-performance.js?v=50a38b9"></script>
 <script src="js/fixeo_homepage_premium_patch.js?v=fhp6"></script>
@@ -3545,7 +3541,7 @@ function openContentModal(type) {
 <script src="js/marketplace-premium-patch.js?v=50a38b9"></script>
 <script src="js/fixeo-client-requests-store.js?v=50a38b9"></script>
 <script src="js/request-form.js?v=50a38b9"></script>
-<script src="js/homepage-conversion-optimizer.js?v=50a38b9"></script>
+<script defer src="js/homepage-conversion-optimizer.js?v=50a38b9"></script>
 <script src="js/hero-ux-fixes.js?v=50a38b9"></script>
 <script src="js/how-it-works-premium.js?v=50a38b9"></script>
 <script src="js/services-premium.js?v=svcv8"></script>
@@ -3618,7 +3614,7 @@ function openContentModal(type) {
 })();
 </script>
 
-<script src="js/fixeo-artisan-request-notifications.js?v=50a38b9"></script>
+<script defer src="js/fixeo-artisan-request-notifications.js?v=50a38b9"></script>
 <script src="js/why-fixeo.js?v=svcv5"></script>
 
 <button
@@ -3738,8 +3734,71 @@ window.addEventListener('load', function () {
   }, true); // ⚠️ capture mode = PRIORITÉ MAX
 })();
 </script>
-<!-- Payment engines - loaded last: only needed at payment step inside reservation modal -->
-<script src="js/payment.js?v=50a38b9"></script>
-<script src="js/cod-payment.js?v=50a38b9"></script>
+
+<script>
+/* ── Lazy loader for reservation stack (reservation.js, slot-lock.js, payment.js, cod-payment.js)
+   These scripts are NOT needed until the user clicks Réserver.
+   Combined size: 153 KB — loading them at page load blocked first paint by ~500ms.
+   ──────────────────────────────────────────────────────────────────────────────────────────── */
+(function () {
+  'use strict';
+
+  var _loaded = false;
+  var _loading = false;
+  var _queue  = [];
+
+  function loadScriptOnce(src) {
+    return new Promise(function (resolve) {
+      if (document.querySelector('script[src="' + src + '"]')) return resolve();
+      var s = document.createElement('script');
+      s.src  = src;
+      s.onload = resolve;
+      s.onerror = resolve; /* never block the queue on a load failure */
+      document.body.appendChild(s);
+    });
+  }
+
+  function loadReservationStack(cb) {
+    if (_loaded) { if (cb) cb(); return; }
+    if (_loading) { if (cb) _queue.push(cb); return; }
+    _loading = true;
+    if (cb) _queue.push(cb);
+
+    /* Load in dependency order: reservation → slot-lock → payment → cod-payment */
+    loadScriptOnce('js/reservation.js?v=50a38b9')
+      .then(function () { return loadScriptOnce('js/slot-lock.js?v=50a38b9'); })
+      .then(function () { return loadScriptOnce('js/payment.js?v=50a38b9'); })
+      .then(function () { return loadScriptOnce('js/cod-payment.js?v=50a38b9'); })
+      .then(function () {
+        _loaded  = true;
+        _loading = false;
+        _queue.forEach(function (fn) { try { fn(); } catch (_) {} });
+        _queue = [];
+      });
+  }
+
+  /* Patch openBookingModal to lazy-load the stack first */
+  var _origOpenBooking = window.openBookingModal;
+  window.openBookingModal = function (artisanId) {
+    loadReservationStack(function () {
+      if (window.FixeoReservation) {
+        window.FixeoReservation.openBooking(artisanId);
+      } else if (_origOpenBooking) {
+        _origOpenBooking(artisanId);
+      }
+    });
+  };
+
+  /* Expose for any other callers (e.g. SecondarySearch._handleReserve) */
+  window._loadReservationStack = loadReservationStack;
+
+  /* Preload on idle so first-click is instant */
+  var _idle = window.requestIdleCallback
+    ? function (cb) { window.requestIdleCallback(cb, { timeout: 3000 }); }
+    : function (cb) { setTimeout(cb, 2000); };
+  _idle(function () { loadReservationStack(null); });
+
+})();
+</script>
 </body>
 </html>
