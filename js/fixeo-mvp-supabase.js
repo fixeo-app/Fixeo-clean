@@ -579,57 +579,118 @@
     var _lateRetry2 = window.setTimeout(_hydrateClientProfileIfPossible, 3000);
     var _lateRetry3 = window.setTimeout(_hydrateClientProfileIfPossible, 6000);
 
-    // ── PHASE 1: Auth + profile (async, non-blocking to empty-state render) ─
-    // Timeouts raised: Supabase init often takes 2–4s on cold start.
-    // If auth times out the dashboard stays on empty states but the late
-    // hydration retries above will fill in name/settings when ready.
+    // ── PHASE 1: Session fast path → profile in background ───────────────
+    //
+    // Strategy (fastest to slowest, first success wins):
+    //   Step A — getSession() directly: single round-trip, ~200–400ms.
+    //             Gives us user.id + email immediately. Apply name from
+    //             user_metadata.full_name or email prefix right away.
+    //   Step B — _ensureProfile() in background (non-blocking): fetches
+    //             full profile (phone, city, role). Merged into DOM when done.
+    //   Fallback — requireAuth() as a safety net only if getSession fails.
+    //             Required for data queries (has role check).
+    //
+    // requireAuth does NOT block hero/sidebar/settings anymore.
+
     var auth = null;
+
+    // ── Step A: getSession fast path (~200–500ms) ──────────────────────────
+    var _sessionFastPath = null;
     try {
       await withTimeout(FixeoSupabase.init(), 6000, 'supabase-init');
+      var _sessionResult = await withTimeout(
+        FixeoSupabase.getSession(),
+        4000, 'getSession'
+      );
+      // getSession returns the session object directly (not wrapped in {data, error})
+      // It returns null if not logged in, or {user:{id,email,...}} if logged in
+      if (_sessionResult && _sessionResult.user) {
+        _sessionFastPath = _sessionResult;
+      } else if (_sessionResult && _sessionResult.error) {
+        console.warn('[Fixeo Dashboard] getSession timeout — falling back to requireAuth');
+      }
+    } catch (_sessErr) {
+      console.warn('[Fixeo Dashboard] getSession threw:', _sessErr && _sessErr.message);
+    }
+
+    if (_sessionFastPath && _sessionFastPath.user) {
+      // ── Apply name immediately from session (no profile fetch needed yet) ──
+      // user_metadata.full_name is set at signup; email prefix is always available
+      var _sessionUser = _sessionFastPath.user;
+      var _quickName = (_sessionUser.user_metadata && _sessionUser.user_metadata.full_name)
+        || (_sessionUser.email ? _sessionUser.user_metadata && _sessionUser.user_metadata.name : '')
+        || (_sessionUser.email ? _sessionUser.email.split('@')[0] : '');
+      if (_quickName) {
+        _applyClientProfile({ user: _sessionUser }, { full_name: _quickName, role: 'client' });
+        console.log('[Fixeo Dashboard] session fast path — name applied:', _quickName);
+      }
+      window.clearTimeout(_failsafeTimer);
+      window.clearTimeout(_lateRetry1);
+      window.clearTimeout(_lateRetry2);
+      window.clearTimeout(_lateRetry3);
+      _hydrateAttempted = true;
+      revealClientDashboard('session-fast-path');
+    }
+
+    // ── Step B: requireAuth (for role check + data queries) ───────────────
+    // Runs after fast path has already painted the name. Not time-critical.
+    try {
       var authResult = await withTimeout(
         FixeoSupabase.requireAuth('client'),
         6000, 'requireAuth'
       );
-      // withTimeout resolves {data:[], error:'timeout'} on timeout — not a user object
       if (authResult && authResult.user) {
         auth = authResult;
       } else if (authResult && authResult.error) {
-        console.warn('[Fixeo Dashboard] auth timed out — late retries will hydrate when ready');
+        // timed out — if we have a session fast path we can still do data queries
+        if (_sessionFastPath && _sessionFastPath.user) {
+          auth = { user: _sessionFastPath.user, profile: null };
+          console.warn('[Fixeo Dashboard] requireAuth timed out, using session fallback for data queries');
+        } else {
+          console.warn('[Fixeo Dashboard] requireAuth timed out — late retries will hydrate when ready');
+        }
       } else {
-        auth = authResult; // normal requireAuth result (redirect or session object)
+        auth = authResult;
       }
     } catch (_authErr) {
-      console.warn('[Fixeo Dashboard] requireAuth threw:', _authErr && _authErr.message);
+      // requireAuth throws 'Session expirée' if not logged in — normal for guests
+      if (_sessionFastPath && _sessionFastPath.user) {
+        auth = { user: _sessionFastPath.user, profile: null };
+        console.warn('[Fixeo Dashboard] requireAuth failed, using session fallback:', _authErr && _authErr.message);
+      } else {
+        console.warn('[Fixeo Dashboard] requireAuth threw:', _authErr && _authErr.message);
+      }
     }
 
     if (!auth || !auth.user) {
-      // Don't hard-return to nowhere — dashboard is already visible with empty states.
-      // Late retries will hydrate once Supabase is ready.
+      // Truly not logged in — both getSession and requireAuth returned nothing.
       window.clearTimeout(_failsafeTimer);
-      revealClientDashboard('no-auth-yet');
-      return; // data queries need auth — skip them, late retry handles everything
+      revealClientDashboard('no-auth');
+      return;
     }
 
-    // Cancel late retries — we have auth now, proceeding normally
+    // Cancel any pending late retries — we have a real user now
     window.clearTimeout(_lateRetry1);
     window.clearTimeout(_lateRetry2);
     window.clearTimeout(_lateRetry3);
-    _hydrateAttempted = true; // prevent late retries from firing after us
+    _hydrateAttempted = true;
 
-    // Profile — non-blocking own try/catch
-    var _cProfile = null;
-    try {
-      var _profileResult = await withTimeout(
-        _ensureProfile(FixeoSupabase, auth.user.id, auth.user.email || '', 'client'),
-        5000, 'ensureProfile'
-      );
-      // withTimeout returns {data:[], error:'timeout'} on timeout — not a profile object
-      if (_profileResult && !_profileResult.error) _cProfile = _profileResult;
-    } catch (_profileErr) {
-      console.warn('[Fixeo Dashboard] profile fetch failed, using email fallback:', _profileErr && _profileErr.message);
+    // ── Step C: Profile fetch (background, non-blocking) ──────────────────
+    // requireAuth may have already bundled a profile — use it if available.
+    var _cProfile = (auth.profile && auth.profile.id) ? auth.profile : null;
+    if (!_cProfile) {
+      try {
+        var _profileResult = await withTimeout(
+          _ensureProfile(FixeoSupabase, auth.user.id, auth.user.email || '', 'client'),
+          5000, 'ensureProfile'
+        );
+        if (_profileResult && !_profileResult.error) _cProfile = _profileResult;
+      } catch (_profileErr) {
+        console.warn('[Fixeo Dashboard] profile fetch failed, using session fallback:', _profileErr && _profileErr.message);
+      }
     }
 
-    // Write auth + profile into DOM (hero, sidebar, nav chip, settings)
+    // Write full profile into DOM — merges over the quick name already applied
     _applyClientProfile(auth, _cProfile);
 
     window.clearTimeout(_failsafeTimer);
