@@ -6449,3 +6449,38 @@
     transition: opacity 0.2s ease !important;
   }
 }
+
+/* ================================================================
+   HERO OPTION B — TRUST CLEANUP + ARTISAN SPACING (min-width: 1024px)
+   CSS only. Desktop only. No HTML/JS/mobile changes.
+   Task 1: hide duplicate trust signals (search chips already show them)
+   Task 2: artisan block breathing room — never compressed against fold
+   ================================================================ */
+@media (min-width: 1024px) {
+
+  /* ── TASK 1: Hide duplicate trust block on desktop ──
+     .hcb-trust-block shows "Disponible maintenant" + "Réponse < 15 min"
+     — exact duplicates of QSM chips "🟢 Disponible maintenant" and
+       "⚡ Réponse < 30 min" already visible inside the search bar.
+     FOMO line (.hcb-fomo) remains untouched and visible.
+     All elements remain in DOM — search/modal/JS logic unaffected. */
+  #home .hcb-trust-block {
+    display: none !important;
+  }
+
+  /* ── TASK 2: Artisan block breathing room ──
+     Give "Vous êtes artisan ?" space above and below so it never
+     visually touches the next section or feels compressed. */
+  #home .hero-artisan-entry,
+  #home .hcb-artisan-block {
+    margin-top: 14px !important;
+    margin-bottom: 18px !important;
+    opacity: 0.48 !important;
+  }
+
+  #home .hero-artisan-entry:hover,
+  #home .hcb-artisan-block:hover {
+    opacity: 0.75 !important;
+    transition: opacity 0.2s ease !important;
+  }
+}
