@@ -6217,3 +6217,140 @@
     transform: translateY(-1px) !important;
   }
 }
+
+/* ================================================================
+   HERO OPTION B — COMPACT PREMIUM PASS (min-width: 1024px)
+   CSS only. Desktop only. No HTML/JS/mobile changes.
+   Goals: tighter vertical rhythm, search dominant, artisan block
+   never half-cut, premium feel without removing anything.
+   ================================================================ */
+@media (min-width: 1024px) {
+
+  /* ── 1. Hero section: reduce padding for tighter overall height ── */
+  #home.hero.hero-section,
+  section#home.hero.hero-section,
+  .hero.hero-section,
+  .hero-section {
+    padding-top: calc(var(--navbar-h, 70px) + 16px) !important;
+    padding-bottom: 40px !important;
+  }
+
+  /* ── 2. Hero content: tighter column gap ── */
+  #home .hero-content,
+  .hero-section .hero-content {
+    gap: 6px !important;
+    max-width: 860px !important;
+  }
+
+  /* ── 3. Title: modest size reduction + tighter line-height ── */
+  #home .hero-title,
+  #home h1.hero-title,
+  .hero-section .hero-title,
+  .hero-section h1.hero-title {
+    font-size: clamp(2.2rem, 4.2vw, 3.6rem) !important;
+    line-height: 1.06 !important;
+    margin-bottom: 2px !important;
+  }
+
+  /* ── 4. Subtitle: tighter ── */
+  #home .hero-subtitle,
+  .hero-section .hero-subtitle {
+    font-size: clamp(0.9rem, 1.6vw, 1.02rem) !important;
+    margin-bottom: 0 !important;
+    line-height: 1.5 !important;
+    opacity: 0.78 !important;
+  }
+
+  /* ── 5. Search bar: no extra top margin (gap handles it) ── */
+  .hero-content > #hero-quick-search,
+  .hero-content > #hero-quick-search.qsm-inline-host,
+  .hero-content > .search-box {
+    margin-top: 4px !important;
+    margin-bottom: 0 !important;
+  }
+
+  /* ── 6. FOMO line: compact, lower opacity, centered ── */
+  #home .hcb-fomo {
+    font-size: 0.7rem !important;
+    margin-top: 2px !important;
+    opacity: 0.72 !important;
+    text-align: center !important;
+    justify-content: center !important;
+  }
+
+  /* ── 7. Trust block: compact pill row, lower opacity ── */
+  #home .hcb-trust-block {
+    margin-top: 2px !important;
+    gap: 3px 8px !important;
+    opacity: 0.65 !important;
+    justify-content: center !important;
+  }
+
+  #home .hcb-trust-item {
+    font-size: 0.68rem !important;
+  }
+
+  #home .hcb-trust-sep {
+    opacity: 0.35 !important;
+  }
+
+  /* ── 8. Secondary CTA: compact with tighter margin ── */
+  .hero-content > .marketplace-secondary-entry {
+    margin-top: 10px !important;
+    gap: 4px !important;
+    width: min(420px, 100%) !important;
+  }
+
+  .hero-content > .marketplace-secondary-entry .hcb-micro-trust {
+    font-size: 0.64rem !important;
+    opacity: 0.5 !important;
+    margin-top: 3px !important;
+  }
+
+  /* ── 9. Artisan block: single compact text line — never half-cut ──
+     Collapse to a slim inline strip. Never shows as a large card.
+     All functionality preserved (link still works). */
+  #home .hero-artisan-entry,
+  #home .hcb-artisan-block {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    padding: 0 !important;
+    margin-top: 12px !important;
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    opacity: 0.55 !important;
+  }
+
+  #home .hero-artisan-entry-copy {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 4px !important;
+  }
+
+  #home .hero-artisan-entry-copy strong,
+  #home .hero-artisan-entry-copy span {
+    font-size: 0.72rem !important;
+    color: rgba(255,255,255,0.72) !important;
+    font-weight: 500 !important;
+    line-height: 1.2 !important;
+  }
+
+  #home .hero-artisan-entry-copy strong {
+    font-weight: 600 !important;
+  }
+
+  #home .hero-artisan-entry-btn {
+    font-size: 0.72rem !important;
+    min-height: 28px !important;
+    padding: 4px 10px !important;
+    border-radius: 8px !important;
+    box-shadow: none !important;
+    opacity: 0.85 !important;
+  }
+}
