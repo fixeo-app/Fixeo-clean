@@ -483,14 +483,29 @@
   }
 
   function initPremiumPatch() {
+    /* Critical: inject hero filters + bind interactions immediately */
     injectHeroMarketplaceFilters();
     bindResultsControls();
     bindSearchInteractions();
     observeDynamicContent();
     readResultsControls();
-    populateCityOptions(getBaseList());
-    updateSharedButtons();
-    refreshResults();
+
+    /* Deferred: populateCityOptions scans entire artisan list to build <option> set;
+       refreshResults calls renderArtisans which at DCL time may have 0 artisans
+       (ARTISANS populated async by fixeo-supabase-loader). Guard + defer both. */
+    var _idle = window.requestIdleCallback
+      ? function(cb){ window.requestIdleCallback(cb, { timeout: 2000 }); }
+      : function(cb){ setTimeout(cb, 350); };
+
+    _idle(function() {
+      populateCityOptions(getBaseList());
+      updateSharedButtons();
+      /* Only call refreshResults if artisans exist — otherwise it triggers
+         a renderArtisans([]) no-op that still traverses the DOM */
+      if (getBaseList().length > 0) {
+        refreshResults();
+      }
+    });
   }
 
   window.FixeoResultsPage = {

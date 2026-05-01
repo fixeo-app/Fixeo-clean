@@ -2109,6 +2109,10 @@ window.addEventListener('fixeo:artisan-created', () => {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
+  /* ── Critical: runs synchronously at DCL ─────────────────────────────────
+     These must be immediate: navbar (scroll), search (hero CTA), express modal,
+     artisan render (above-fold cards), i18n.
+  ── */
   if (typeof syncOnboardingArtisans === 'function') {
     syncOnboardingArtisans();
   } else if (typeof window.syncOnboardingArtisans === 'function') {
@@ -2116,15 +2120,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   initNavbar();
   initSearch();
-  initChat();
-  initMap();
-  initCategoryChips();
   initExpressModal();
-  initStarRating();
-  initBackToTop();
-  initResponsiveArtisanGrid();
   if (!window.__FIXEO_SERVICE_SEO_PAGE__) {
-    // Sort by quality score for initial display (best artisans first)
     var _initList = (window.FixeoMatchingEngine && ARTISANS.length > 0)
       ? window.FixeoMatchingEngine.sortByMatch(ARTISANS.slice(), {})
       : ARTISANS;
@@ -2132,12 +2129,26 @@ document.addEventListener('DOMContentLoaded', () => {
     renderArtisans(_initList);
     refreshMarketplaceFromCurrentFilters();
   }
-  setTimeout(animateCounters, 500);
-  setTimeout(initAnimations, 300);
-  // Apply saved lang
   if (window.i18n) window.i18n.applyTranslations();
-  // Leaflet map needs size trigger after render
-  setTimeout(() => { leafletMap?.invalidateSize(); }, 500);
+
+  /* ── Deferred: runs after first paint via requestIdleCallback / setTimeout ──
+     These are below-fold or interaction-only: no visible first-paint impact.
+  ── */
+  var _idle = window.requestIdleCallback
+    ? function(cb){ window.requestIdleCallback(cb, { timeout: 2000 }); }
+    : function(cb){ setTimeout(cb, 300); };
+
+  _idle(function() {
+    initCategoryChips();      /* service filter chips — below hero */
+    initStarRating();          /* star inputs — inside review form */
+    initBackToTop();           /* back-to-top button — appears after scroll */
+    initResponsiveArtisanGrid(); /* resize handler only, no first-paint work */
+    initChat();                /* chat toggle — bottom-right panel */
+    initMap();                 /* Leaflet map — below fold */
+    setTimeout(animateCounters, 200);
+    setTimeout(initAnimations, 100);
+    setTimeout(function(){ if (leafletMap) leafletMap.invalidateSize(); }, 300);
+  });
 });
 
 // ── SUBMIT COMMENT ────────────────────────────────────────

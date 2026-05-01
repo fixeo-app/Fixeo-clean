@@ -566,14 +566,33 @@ if (mobileUrgentTrigger) {
 
   /* ── INIT ───────────────────────────────────────────────────── */
   function init() {
+    /* ── Critical: must be synchronous ───────────────────────────────────
+       initLocalNavigationResolver: sets window.FixeoGlobalNav (used by auth-guard)
+       applyAuthState: toggles .is-logged-in body class — affects header visibility
+       initSticky: registers scroll listener (passive) + runs once for initial state
+       initHamburger: hamburger toggle must work before any user interaction
+       listenAuthForms: auth form listeners
+    ── */
     initLocalNavigationResolver();
     applyAuthState();
     initSticky();
-    setActiveLink();
     initHamburger();
-    initDropdowns();
-    initQuickSearchShortcut();
     listenAuthForms();
+
+    /* ── Deferred: no first-paint impact ──────────────────────────────────
+       setActiveLink: scroll-spy IntersectionObserver + querySelectorAll on nav links
+       initDropdowns: keyboard/touch dropdown support (CSS handles hover already)
+       initQuickSearchShortcut: '/' keyboard shortcut
+    ── */
+    var _idle = window.requestIdleCallback
+      ? function(cb){ window.requestIdleCallback(cb, { timeout: 2000 }); }
+      : function(cb){ setTimeout(cb, 400); };
+
+    _idle(function() {
+      setActiveLink();
+      initDropdowns();
+      initQuickSearchShortcut();
+    });
   }
 
   if (document.readyState === 'loading') {

@@ -3607,10 +3607,16 @@ function openContentModal(type) {
     syncMobileHeaderOffset();
   }
 
-  document.addEventListener('DOMContentLoaded', initMobileHeaderIsolation);
+  /* 3B: syncMobileHeaderOffset reads navbar.offsetHeight (forced reflow).
+     Was firing twice at startup: once in DCL + once in setTimeout(60ms).
+     Now fires once in a requestAnimationFrame after first paint so the
+     layout is already complete — same result, no startup forced reflow. */
+  document.addEventListener('DOMContentLoaded', function() {
+    syncMobileAccountSummary();  /* no reflow — only localStorage reads + DOM text */
+    requestAnimationFrame(syncMobileHeaderOffset); /* defer offsetHeight read to after paint */
+  });
   window.addEventListener('resize', syncMobileHeaderOffset, { passive: true });
   window.addEventListener('storage', syncMobileAccountSummary);
-  setTimeout(initMobileHeaderIsolation, 60);
 })();
 </script>
 
