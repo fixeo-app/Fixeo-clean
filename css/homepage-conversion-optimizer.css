@@ -6354,3 +6354,98 @@
     opacity: 0.85 !important;
   }
 }
+
+/* ================================================================
+   HERO OPTION B — FINAL POLISH (min-width: 1024px)
+   CSS only. Desktop only. No HTML/JS/mobile/search-logic changes.
+   Tasks: search glass premium, CTA stronger glow, noise reduction,
+   micro-interaction on search container hover/focus.
+   ================================================================ */
+@media (min-width: 1024px) {
+
+  /* ── TASK 1: Search container — premium glass upgrade ── */
+  #hero-quick-search.qsm-inline-host .qsm-bar-card,
+  #hero-quick-search .qsm-bar-card {
+    background: rgba(255,255,255,0.09) !important;
+    border: 1px solid rgba(255,255,255,0.20) !important;
+    box-shadow:
+      0 18px 60px rgba(0,0,0,0.22),
+      0 0 42px rgba(225,48,108,0.10) !important;
+  }
+
+  /* ── TASK 1 + TASK 4: Micro-interaction — hover/focus-within ── */
+  /* Transition on the host element so transform animates smoothly */
+  #hero-quick-search.qsm-inline-host {
+    transition: transform 0.22s ease !important;
+  }
+
+  #hero-quick-search.qsm-inline-host:hover,
+  #hero-quick-search.qsm-inline-host:focus-within {
+    transform: translateY(-1px) !important;
+  }
+
+  /* qsm-bar-card already has transition:border-color,box-shadow,transform */
+  #hero-quick-search.qsm-inline-host:hover .qsm-bar-card,
+  #hero-quick-search.qsm-inline-host:focus-within .qsm-bar-card {
+    border-color: rgba(255,255,255,0.30) !important;
+    box-shadow:
+      0 22px 68px rgba(0,0,0,0.26),
+      0 0 52px rgba(225,48,108,0.16) !important;
+  }
+
+  /* ── TASK 2: Search CTA — stronger glow + contrast ── */
+  #hero-quick-search .qsm-btn-search,
+  #hero-quick-search.qsm-inline-host .qsm-btn-search {
+    box-shadow:
+      0 0 0 1px rgba(225,48,108,0.18) inset,
+      0 16px 40px rgba(225,48,108,0.42) !important;
+    opacity: 1 !important;
+    filter: saturate(1.05) brightness(1.04) !important;
+  }
+
+  #hero-quick-search .qsm-btn-search:hover,
+  #hero-quick-search.qsm-inline-host .qsm-btn-search:hover,
+  #hero-quick-search .qsm-btn-search:focus-visible,
+  #hero-quick-search.qsm-inline-host .qsm-btn-search:focus-visible {
+    box-shadow:
+      0 0 0 1px rgba(225,48,108,0.22) inset,
+      0 20px 48px rgba(225,48,108,0.52) !important;
+    filter: saturate(1.08) brightness(1.06) !important;
+    transform: translateY(-1px) !important;
+  }
+
+  /* ── TASK 3: Reduce visual noise below search ── */
+
+  /* 4px breathing room between search order-slot and fomo order-slot */
+  #home .hcb-fomo {
+    margin-top: 6px !important;
+    opacity: 0.60 !important;
+  }
+
+  #home .hcb-trust-block {
+    margin-top: 0px !important;
+    opacity: 0.52 !important;
+  }
+
+  /* Secondary CTA: slightly more receded */
+  .hero-content > .marketplace-secondary-entry {
+    opacity: 0.82 !important;
+  }
+
+  .hero-content > .marketplace-secondary-entry:hover {
+    opacity: 1 !important;
+    transition: opacity 0.2s ease !important;
+  }
+
+  /* Artisan block: final quieting — step back further */
+  #home .hero-artisan-entry,
+  #home .hcb-artisan-block {
+    opacity: 0.42 !important;
+  }
+
+  #home .hero-artisan-entry:hover,
+  #home .hcb-artisan-block:hover {
+    opacity: 0.75 !important;
+    transition: opacity 0.2s ease !important;
+  }
+}
