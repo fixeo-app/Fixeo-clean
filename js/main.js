@@ -2109,9 +2109,16 @@ window.addEventListener('fixeo:artisan-created', () => {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-  /* ── Critical: runs synchronously at DCL ─────────────────────────────────
-     These must be immediate: navbar (scroll), search (hero CTA), express modal,
-     artisan render (above-fold cards), i18n.
+  /* ── Phase 4: minimised synchronous DCL path ─────────────────────────────
+     HERO + SEARCH only run here. Everything else is deferred.
+
+     Why renderArtisans is NOT here:
+     fixeo_homepage_premium_patch.js hides #artisans-container immediately and
+     renders its own vedette grid (_renderPremiumGrid via _patchRender, 50ms).
+     Calling renderArtisans at DCL with sortByMatch({}) scores all 367 artisans
+     (O(367) ML calls) to produce output that gets hidden 50ms later — wasted work.
+     fixeo-supabase-loader.js calls replaceMarketplaceArtisans → renderArtisans
+     at T+800ms with fresh data, which IS the canonical first visible render.
   ── */
   if (typeof syncOnboardingArtisans === 'function') {
     syncOnboardingArtisans();
@@ -2121,30 +2128,42 @@ document.addEventListener('DOMContentLoaded', () => {
   initNavbar();
   initSearch();
   initExpressModal();
-  if (!window.__FIXEO_SERVICE_SEO_PAGE__) {
-    var _initList = (window.FixeoMatchingEngine && ARTISANS.length > 0)
-      ? window.FixeoMatchingEngine.sortByMatch(ARTISANS.slice(), {})
-      : ARTISANS;
-    window._initialMatchSortedArtisans = _initList;
-    renderArtisans(_initList);
-    refreshMarketplaceFromCurrentFilters();
-  }
   if (window.i18n) window.i18n.applyTranslations();
 
-  /* ── Deferred: runs after first paint via requestIdleCallback / setTimeout ──
-     These are below-fold or interaction-only: no visible first-paint impact.
-  ── */
+  /* Store a quick-sorted initial list for use by applyMarketplaceFilters fallback.
+     Uses quickScore (5 arithmetic ops) instead of full ML scoreArtisan (5 sub-scorers).
+     Cap at initial display count × 4 — no need to sort all 367 for 6 visible cards. */
+  if (!window.__FIXEO_SERVICE_SEO_PAGE__ && ARTISANS.length > 0) {
+    var _cap = (getResponsiveArtisanInitialCount ? getResponsiveArtisanInitialCount() : 6) * 4;
+    var _quick = ARTISANS.slice()
+      .sort(function(a, b) {
+        var sa = Number(a.trustScore || 0) + Number(a.rating || 0) * 10 + (a.availability === 'available' ? 5 : 0);
+        var sb = Number(b.trustScore || 0) + Number(b.rating || 0) * 10 + (b.availability === 'available' ? 5 : 0);
+        return sb - sa;
+      })
+      .slice(0, Math.max(_cap, 24));
+    window._initialMatchSortedArtisans = _quick;
+  }
+
+  /* ── Deferred: everything else after first paint ── */
   var _idle = window.requestIdleCallback
     ? function(cb){ window.requestIdleCallback(cb, { timeout: 2000 }); }
-    : function(cb){ setTimeout(cb, 300); };
+    : function(cb){ setTimeout(cb, 250); };
 
   _idle(function() {
-    initCategoryChips();      /* service filter chips — below hero */
-    initStarRating();          /* star inputs — inside review form */
-    initBackToTop();           /* back-to-top button — appears after scroll */
-    initResponsiveArtisanGrid(); /* resize handler only, no first-paint work */
-    initChat();                /* chat toggle — bottom-right panel */
-    initMap();                 /* Leaflet map — below fold */
+    /* Artisan render: deferred because premium patch hides #artisans-container
+       and renders the vedette grid independently. This provides the SEO/fallback
+       container with content after first paint without blocking hero. */
+    if (!window.__FIXEO_SERVICE_SEO_PAGE__ && ARTISANS.length > 0) {
+      renderArtisans(window._initialMatchSortedArtisans || ARTISANS);
+      refreshMarketplaceFromCurrentFilters();
+    }
+    initCategoryChips();
+    initStarRating();
+    initBackToTop();
+    initResponsiveArtisanGrid();
+    initChat();
+    initMap();
     setTimeout(animateCounters, 200);
     setTimeout(initAnimations, 100);
     setTimeout(function(){ if (leafletMap) leafletMap.invalidateSize(); }, 300);
