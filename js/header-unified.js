@@ -277,15 +277,23 @@
 
     const hero = $('section.hero, #home, .hero');
 
+    /* 4C: rAF ticking guard — getBoundingClientRect forces layout.
+       Without ticking, every scroll event triggers a forced reflow.
+       With ticking, reflow is capped to one per animation frame. */
+    let _stickyTicking = false;
     function onScroll() {
-      const scrolled = window.scrollY > 50;
-      navbar.classList.toggle('scrolled', scrolled);
-
-      /* hero-visible: hero section partially in view */
-      if (hero) {
-        const heroBottom = hero.getBoundingClientRect().bottom;
-        navbar.classList.toggle('hero-visible', heroBottom > 0 && !scrolled);
-      }
+      if (_stickyTicking) return;
+      _stickyTicking = true;
+      requestAnimationFrame(() => {
+        _stickyTicking = false;
+        const scrolled = window.scrollY > 50;
+        navbar.classList.toggle('scrolled', scrolled);
+        /* hero-visible: hero section partially in view */
+        if (hero) {
+          const heroBottom = hero.getBoundingClientRect().bottom;
+          navbar.classList.toggle('hero-visible', heroBottom > 0 && !scrolled);
+        }
+      });
     }
 
     window.addEventListener('scroll', onScroll, { passive: true });

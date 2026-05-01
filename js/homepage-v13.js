@@ -504,23 +504,36 @@
      INIT
   ══════════════════════════════════════════════════════════════════ */
   function init() {
-    initScrollAnimations();
+    /* 4B: split init into synchronous (first-paint critical) and idle (below-fold/animation).
+       initScrollAnimations: 10× querySelectorAll + mass classList.add → deferred.
+       upgradeVedetteCards first call: querySelectorAll + DOM mutations per card → deferred.
+       All other inits are cheap listeners/observers with negligible sync cost. */
+    var _idle = window.requestIdleCallback
+      ? function(cb){ window.requestIdleCallback(cb, { timeout: 1500 }); }
+      : function(cb){ setTimeout(cb, 200); };
+
+    /* Critical path — runs synchronously */
     initLazyLoad();
     initNavbarScroll();
     initCounters();
     initSmoothScroll();
     initCityFilter();
-    upgradeVedetteCards();
     initArtisanPagination();
     initFeedShowMore();
     initBackToTop();
-    initLeaderboardAnimation();
-    removeDuplicateCTA();
-    initHeroStatsDividers();
     initHamburger();
-    watchDynamicCards();
-    initTestimonialsStars();
     initChipKeyboard();
+
+    /* Deferred — no first-paint impact */
+    _idle(function() {
+      initScrollAnimations();   /* 10× querySelectorAll + IntersectionObserver setup */
+      upgradeVedetteCards();    /* querySelectorAll + DOM mutations on vedette cards */
+      initLeaderboardAnimation();
+      removeDuplicateCTA();
+      initHeroStatsDividers();
+      watchDynamicCards();
+      initTestimonialsStars();
+    });
 
     console.log('%c✅ Fixeo V13 UX loaded', 'color:#E1306C;font-weight:700;');
   }

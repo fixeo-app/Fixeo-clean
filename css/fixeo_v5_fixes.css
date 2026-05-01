@@ -1541,3 +1541,41 @@ button, [role="button"] {
   .map-ctrl-btn  { padding: 6px 10px !important; font-size: .76rem !important; }
   .map-ctrl-select { font-size: .76rem !important; }
 }
+
+
+/* ── Phase 4 / Step 6: content-visibility for below-fold sections ──────────────
+   Skips paint/layout for off-screen sections — no visual change.
+   contain-intrinsic-size prevents layout shift when sections scroll into view.
+   Applied only to sections that are clearly below the initial viewport.
+   NOT applied to: hero (#home), navbar, search bar, first artisan grid row.
+   Excluded from mobile (risk of jump-on-scroll on some iOS/Android browsers). */
+@media (min-width: 769px) {
+  #why-fixeo-section {
+    content-visibility: auto;
+    contain-intrinsic-size: 0 520px;
+  }
+  #testimonials-section, .testimonials-section {
+    content-visibility: auto;
+    contain-intrinsic-size: 0 480px;
+  }
+  #how-it-works-section, #how-it-works {
+    content-visibility: auto;
+    contain-intrinsic-size: 0 460px;
+  }
+  /* artisan map section — heavy Leaflet render; skip until in-view */
+  #artisan-map-section {
+    content-visibility: auto;
+    contain-intrinsic-size: 0 480px;
+  }
+}
+
+/* ── Phase 4 / Step 6: will-change only on actively animated elements ─────────
+   Promotes elements to their own compositor layer ONLY during animation.
+   Avoids blanket will-change (which wastes GPU memory).
+   CSS animation keyframes already handle the rest. */
+.v12-fade-in:not(.visible) {
+  will-change: opacity, transform;
+}
+.v12-fade-in.visible {
+  will-change: auto; /* release layer after animation */
+}
