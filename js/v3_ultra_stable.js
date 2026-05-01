@@ -57,9 +57,13 @@
   // FIX 2 — REVENUE CHART: ensure visible demo data on artisan dashboard
   // ══════════════════════════════════════════════════════════
   document.addEventListener('DOMContentLoaded', function() {
+    /* 3A-1: guard — window.dashboard only exists on dashboard pages, never on homepage.
+       Skipping timer/listener registration eliminates 3 setTimeout calls + offsetWidth
+       forced reflows + a permanent resize listener on every homepage load. */
+    if (!window.dashboard) return;
+
     // Force chart render after a short delay to ensure canvas is sized
     function ensureRevenueChart() {
-      if (!window.dashboard) return;
       const months = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
       const revenueData = [5200, 6800, 7400, 5900, 8100, 7200, 9300, 8400, 7800, 10200, 9500, 8400];
 

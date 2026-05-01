@@ -1877,11 +1877,13 @@ function initSearch() {
 function initNavbar() {
   const navbar = document.querySelector('.navbar');
   if (!navbar) return;
+  /* 3A-2: cache .back-to-top once (was queried on every scroll tick);
+     add passive:true so browser can parallelise scroll compositing. */
+  const btt = document.querySelector('.back-to-top');
   window.addEventListener('scroll', () => {
     navbar.classList.toggle('scrolled', window.scrollY > 50);
-    const btt = document.querySelector('.back-to-top');
     btt?.classList.toggle('visible', window.scrollY > 400);
-  });
+  }, { passive: true });
   const hamburger = document.querySelector('.hamburger');
   const mobileNav = document.querySelector('.mobile-nav');
   if (hamburger && mobileNav && !window.FixeoMobileMenu?.initialized) {

@@ -488,10 +488,15 @@ if (!isVer && !isClaimed) {
   /* ── Fade-in animation ── */
   function _triggerFadeIn(pg) {
     var cards = pg.querySelectorAll('.pvc-card, .fhp-card');
+    /* 3A-4: was N individual setTimeouts (one per card, up to 30 timers on main thread).
+       Now: set animationDelay inline (CSS handles the visual stagger), then apply
+       fhp-visible to ALL cards in one requestAnimationFrame — single paint cycle. */
     cards.forEach(function(card, i) {
       card.classList.remove('fhp-visible');
       card.style.animationDelay = (i * 80) + 'ms';
-      setTimeout(function(){ card.classList.add('fhp-visible'); }, 60 + i * 80);
+    });
+    requestAnimationFrame(function() {
+      cards.forEach(function(card) { card.classList.add('fhp-visible'); });
     });
   }
 
@@ -531,9 +536,11 @@ if (!isVer && !isClaimed) {
     var target = _$(SECTION_ID);
     if (!target || !window.MutationObserver) return;
     _containerObserver = new MutationObserver(function() {
-      // Always keep legacy artisans-container hidden — vedette is the card UI
+      /* 3A-3: replaced getComputedStyle(el).display (forced sync layout) with
+         el.style.display — reads only inline style, no layout recalculation.
+         _hide() sets display:none inline so this check is fully equivalent. */
       ['artisans-container','loading-artisans','other-see-more-wrap'].forEach(function(id){
-        var el=_$(id); if(el && getComputedStyle(el).display!=='none') _hide(el);
+        var el=_$(id); if(el && !el.hidden && el.style.display!=='none') _hide(el);
       });
     });
     _containerObserver.observe(target, {childList:true,subtree:true,attributes:true,attributeFilter:['style']});
