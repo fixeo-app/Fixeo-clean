@@ -6135,3 +6135,85 @@
     bottom: calc(10px + env(safe-area-inset-bottom, 0px)) !important;
   }
 }
+
+/* ================================================================
+   HERO OPTION B — DESKTOP ONLY (min-width: 1024px)
+   CSS only. Zero HTML/JS/mobile changes.
+   Goal: search = primary action; "Publier ma demande" = secondary.
+
+   Flex order map for .hero-content (flex-direction: column):
+     order 1 → .hero-title          (unchanged)
+     order 2 → .hero-subtitle       (unchanged)
+     order 3 → #hero-quick-search   (↑ pulled up from 4)
+     order 5 → .hcb-fomo            (under search)
+     order 6 → .hcb-trust-block     (under FOMO)
+     order 8 → .marketplace-secondary-entry (↓ pushed down from 3)
+     order 9 → .hcb-artisan-block   (bottom)
+   ================================================================ */
+@media (min-width: 1024px) {
+
+  /* 1. Search bar: primary position (order 3) */
+  .hero-content > #hero-quick-search,
+  .hero-content > #hero-quick-search.qsm-inline-host,
+  .hero-content > .search-box {
+    order: 3 !important;
+  }
+
+  /* 2. Secondary CTA: below search (order 8) */
+  .hero-content > .marketplace-secondary-entry {
+    order: 8 !important;
+    margin-top: 12px !important;
+  }
+
+  /* 3. FOMO line: directly under search/CTA (order 5) */
+  #home .hcb-fomo {
+    order: 5 !important;
+  }
+
+  /* 4. Trust block: under FOMO (order 6) */
+  #home .hcb-trust-block {
+    order: 6 !important;
+  }
+
+  /* 5. Artisan onboarding: stays at bottom (order 9) */
+  #home .hcb-artisan-block,
+  #home .hero-artisan-entry {
+    order: 9 !important;
+  }
+
+  /* 6. Secondary CTA: reduce visual dominance (ghost style — no pink gradient) */
+  .hero-content > .marketplace-secondary-entry .btn-secondary-marketplace {
+    background: rgba(255,255,255,0.06) !important;
+    border: 1px solid rgba(255,255,255,0.14) !important;
+    box-shadow: none !important;
+    filter: none !important;
+    opacity: 0.88 !important;
+    font-weight: 600 !important;
+    min-height: 48px !important;
+    padding: 12px 20px !important;
+  }
+  .hero-content > .marketplace-secondary-entry .btn-secondary-marketplace:hover,
+  .hero-content > .marketplace-secondary-entry .btn-secondary-marketplace:focus-visible {
+    background: rgba(255,255,255,0.09) !important;
+    border-color: rgba(255,255,255,0.22) !important;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12) !important;
+    opacity: 1 !important;
+    transform: translateY(-1px) !important;
+  }
+
+  /* 7. Search CTA: make visually primary (full glow) */
+  #hero-quick-search .qsm-btn-search,
+  #hero-quick-search.qsm-inline-host .qsm-btn-search {
+    box-shadow: 0 14px 36px rgba(225,48,108,0.35) !important;
+    font-weight: 800 !important;
+    opacity: 1 !important;
+    filter: none !important;
+  }
+  #hero-quick-search .qsm-btn-search:hover,
+  #hero-quick-search.qsm-inline-host .qsm-btn-search:hover,
+  #hero-quick-search .qsm-btn-search:focus-visible,
+  #hero-quick-search.qsm-inline-host .qsm-btn-search:focus-visible {
+    box-shadow: 0 18px 42px rgba(225,48,108,0.45) !important;
+    transform: translateY(-1px) !important;
+  }
+}
