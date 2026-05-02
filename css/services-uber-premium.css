@@ -642,3 +642,137 @@ html body #services.services-section.homepage-conversion-priority .category-chip
                 0 0 0 1px rgba(255,255,255,0.06) !important;
   }
 }
+
+/* ================================================================
+   ULTRA PREMIUM UX BOOST — 2026-05-02
+   Tasks 1–6: primary chips, opacity hierarchy, speed hint,
+   filter-bar subtle, category chips border separator,
+   desktop micro-interaction upgrade.
+   Appended last → wins all cascade ties.
+   ================================================================ */
+
+/* TASK 3 — Speed signal below subtitle */
+#services .services-speed-hint {
+  font-size: 0.84rem !important;
+  color: rgba(255,255,255,0.62) !important;
+  margin: 6px auto 0 !important;
+  text-align: center !important;
+  letter-spacing: 0.01em !important;
+  max-width: 480px !important;
+}
+
+/* TASK 2 — De-emphasise all secondary chips (visible ones only) */
+html body #services.services-section .service-chip.svc-visible {
+  opacity: 0.76 !important;
+  transition: opacity 0.18s ease, transform 0.20s ease,
+              box-shadow 0.20s ease, border-color 0.20s ease,
+              background 0.20s ease !important;
+}
+html body #services.services-section .service-chip.svc-visible:hover {
+  opacity: 1 !important;
+}
+
+/* TASK 1 — Primary service chips: Plomberie, Électricité, Climatisation
+   Use [data-category] attribute selector — same specificity tier,
+   appended last → wins over base .service-chip rule.
+   Primary chips are always "hot" regardless of .active state. */
+html body #services.services-section .service-chip.svc-visible[data-category="plomberie"],
+html body #services.services-section .service-chip.svc-visible[data-category="electricite"],
+html body #services.services-section .service-chip.svc-visible[data-category="climatisation"] {
+  height: 52px !important;
+  padding: 0 26px !important;
+  font-size: 0.93rem !important;
+  font-weight: 700 !important;
+  opacity: 1 !important;
+  background: linear-gradient(135deg, rgba(225,48,108,0.90), rgba(147,51,234,0.82)) !important;
+  border-color: rgba(255,255,255,0.22) !important;
+  color: #fff !important;
+  box-shadow: 0 10px 28px rgba(225,48,108,0.26),
+              inset 0 1px 0 rgba(255,255,255,0.18) !important;
+  transform: translateY(-2px) !important;
+}
+
+/* Primary chip hover — stronger glow */
+html body #services.services-section .service-chip.svc-visible[data-category="plomberie"]:hover,
+html body #services.services-section .service-chip.svc-visible[data-category="electricite"]:hover,
+html body #services.services-section .service-chip.svc-visible[data-category="climatisation"]:hover {
+  background: linear-gradient(135deg, rgba(225,48,108,1), rgba(147,51,234,0.95)) !important;
+  border-color: rgba(255,255,255,0.32) !important;
+  box-shadow: 0 18px 44px rgba(225,48,108,0.40),
+              inset 0 1px 0 rgba(255,255,255,0.24) !important;
+  transform: translateY(-3px) scale(1.02) !important;
+  opacity: 1 !important;
+}
+
+/* Ensure primary chips keep full opacity even in active state */
+html body #services.services-section .service-chip.svc-visible.active[data-category="plomberie"],
+html body #services.services-section .service-chip.svc-visible.active[data-category="electricite"],
+html body #services.services-section .service-chip.svc-visible.active[data-category="climatisation"] {
+  opacity: 1 !important;
+  height: 52px !important;
+  padding: 0 26px !important;
+  font-size: 0.93rem !important;
+  font-weight: 700 !important;
+}
+
+/* TASK 4 — City filter bar: lighter presence */
+#services.services-section .services-filter-bar {
+  opacity: 0.84 !important;
+  transition: opacity 0.22s ease !important;
+}
+#services.services-section .services-filter-bar:hover,
+#services.services-section .services-filter-bar:focus-within {
+  opacity: 1 !important;
+}
+
+/* TASK 5 — Visual separator above chip grid */
+html body #services.services-section .category-chips,
+html body #services.services-section.homepage-conversion-priority .category-chips {
+  margin-top: 16px !important;
+  padding-top: 14px !important;
+  border-top: 1px solid rgba(255,255,255,0.06) !important;
+}
+
+/* TASK 6 — Desktop micro-interaction upgrade */
+@media (min-width: 1024px) {
+
+  html body #services.services-section .service-chip.svc-visible {
+    transition: opacity 0.16s ease, transform 0.22s cubic-bezier(0.34,1.56,0.64,1),
+                box-shadow 0.22s ease, border-color 0.20s ease,
+                background 0.20s ease !important;
+  }
+
+  html body #services.services-section .service-chip.svc-visible:hover {
+    transform: translateY(-3px) !important;
+    box-shadow: 0 12px 28px rgba(0,0,0,0.26),
+                inset 0 1px 0 rgba(255,255,255,0.10) !important;
+    opacity: 1 !important;
+  }
+
+}
+
+/* Mobile safety — keep primary chips readable in horizontal scroll */
+@media (max-width: 768px) {
+
+  html body #services.services-section .service-chip.svc-visible[data-category="plomberie"],
+  html body #services.services-section .service-chip.svc-visible[data-category="electricite"],
+  html body #services.services-section .service-chip.svc-visible[data-category="climatisation"] {
+    height: 48px !important;
+    padding: 0 20px !important;
+    font-size: 0.88rem !important;
+    transform: none !important;
+  }
+
+  html body #services.services-section .service-chip.svc-visible {
+    opacity: 0.88 !important;
+  }
+
+  /* No border-top separator on mobile — chips scroll horizontally */
+  html body #services.services-section .category-chips,
+  html body #services.services-section.homepage-conversion-priority .category-chips {
+    border-top: none !important;
+    margin-top: 8px !important;
+    padding-top: 0 !important;
+  }
+
+}
