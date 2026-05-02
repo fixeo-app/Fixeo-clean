@@ -6760,3 +6760,37 @@
     box-shadow: 0 20px 50px rgba(225,48,108,0.18);
   }
 }
+
+/* ================================================================
+   HOW-IT-WORKS — Fix truncated descriptions
+   Override earlier .homepage-conversion-priority rule (L63) that
+   set white-space:nowrap + text-overflow:ellipsis on .step-card p.
+   Also override the mobile @media(max-width:640px) 2-line clamp.
+   ================================================================ */
+.how-it-works-section .step-card p,
+.how-it-works-section.homepage-conversion-priority .step-card p {
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: unset !important;
+  display: block !important;
+  -webkit-line-clamp: unset !important;
+  -webkit-box-orient: unset !important;
+}
+
+@media (max-width: 640px) {
+  .how-it-works-section .step-card p,
+  .how-it-works-section.homepage-conversion-priority .step-card p {
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: unset !important;
+    display: block !important;
+    -webkit-line-clamp: unset !important;
+    -webkit-box-orient: unset !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .how-it-works-section .step-card {
+    min-height: 230px !important;
+  }
+}
