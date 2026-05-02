@@ -1344,3 +1344,107 @@ html body #services.services-section .chip.service-chip.svc-visible:not([data-ca
   }
 
 }
+
+/* ================================================================
+   SERVICES SECTION — FINAL UX BREAKTHROUGH — 2026-05-02
+   CSS only. services-uber-premium.css only. No HTML, no JS.
+
+   IMPLEMENTATION NOTES:
+   - position:relative added to .category-chips to anchor ::before
+   - ::before creates soft glow behind primary row (not a real border)
+   - Primary chips have order:-3/-2/-1 (prior block) → row 1 is theirs
+   - Desktop row 1 height = 128px (primary) → ::before height:150px covers it
+   - scale(0.97) on secondary chips is visual-only; no grid layout impact
+   - peinture margin-top:22px desktop (new); 18px mobile (overrides prior 12px)
+   ================================================================ */
+
+/* Enable ::before positioning */
+html body #services.services-section .category-chips {
+  position: relative !important;
+}
+
+/* ── TASK 1: Primary zone — stronger glow, z-index anchor ── */
+html body #services.services-section .chip.service-chip[data-category="plomberie"],
+html body #services.services-section .chip.service-chip[data-category="electricite"],
+html body #services.services-section .chip.service-chip[data-category="climatisation"] {
+  position: relative !important;
+  z-index: 2 !important;
+  box-shadow:
+    0 30px 80px rgba(225,48,108,0.35),
+    0 0 40px rgba(147,51,234,0.25) !important;
+}
+
+/* ── TASK 2: Fake background container behind primary row ── */
+html body #services.services-section .category-chips::before {
+  content: "" !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: -10px !important;
+  right: -10px !important;
+  height: 150px !important;
+  background: linear-gradient(
+    180deg,
+    rgba(225,48,108,0.08),
+    rgba(147,51,234,0.05)
+  ) !important;
+  border-radius: 26px !important;
+  filter: blur(18px) !important;
+  z-index: 1 !important;
+  pointer-events: none !important;
+}
+
+/* ── TASK 3: Push secondary row down — clear visual break ── */
+html body #services.services-section .chip.service-chip[data-category="peinture"] {
+  margin-top: 22px !important;
+}
+
+/* ── TASK 4: Badge pops harder ── */
+html body #services.services-section .chip.service-chip[data-category="plomberie"]::after,
+html body #services.services-section .chip.service-chip[data-category="electricite"]::after,
+html body #services.services-section .chip.service-chip[data-category="climatisation"]::after {
+  font-size: 0.75rem !important;
+  font-weight: 800 !important;
+  background: rgba(255,255,255,0.22) !important;
+  border: 1px solid rgba(255,255,255,0.28) !important;
+  box-shadow:
+    0 8px 24px rgba(0,0,0,0.25),
+    0 0 10px rgba(255,255,255,0.15) !important;
+}
+
+/* ── TASK 5: Secondary clearly lower priority ── */
+html body #services.services-section .chip.service-chip.svc-visible:not([data-category="plomberie"]):not([data-category="electricite"]):not([data-category="climatisation"]):not([data-category="all"]):not(.active) {
+  opacity: 0.65 !important;
+  transform: scale(0.97) !important;
+}
+html body #services.services-section .chip.service-chip.svc-visible:not([data-category="plomberie"]):not([data-category="electricite"]):not([data-category="climatisation"]):not([data-category="all"]):hover,
+html body #services.services-section .chip.service-chip.svc-visible:not([data-category="plomberie"]):not([data-category="electricite"]):not([data-category="climatisation"]):not([data-category="all"]):focus-visible {
+  opacity: 1 !important;
+  transform: scale(1) !important;
+}
+
+/* ── MOBILE overrides ── */
+@media (max-width: 768px) {
+
+  /* Task 3 mobile: peinture = row 2 start, needs clear gap */
+  html body #services.services-section .chip.service-chip[data-category="peinture"] {
+    margin-top: 18px !important;
+  }
+
+  /* Task 4 mobile: badge smaller */
+  html body #services.services-section .chip.service-chip[data-category="plomberie"]::after,
+  html body #services.services-section .chip.service-chip[data-category="electricite"]::after,
+  html body #services.services-section .chip.service-chip[data-category="climatisation"]::after {
+    font-size: 0.62rem !important;
+  }
+
+  /* Task 5 mobile: no scale transform on secondary (avoids clipping in tight grid) */
+  html body #services.services-section .chip.service-chip.svc-visible:not([data-category="plomberie"]):not([data-category="electricite"]):not([data-category="climatisation"]):not([data-category="all"]):not(.active) {
+    transform: none !important;
+  }
+
+  /* ::before height covers mobile primary row (112px) */
+  html body #services.services-section .category-chips::before {
+    height: 130px !important;
+  }
+
+}
