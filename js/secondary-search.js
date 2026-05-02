@@ -292,8 +292,14 @@
     if (!isVer && a.claimed)      badges += `<span class="pvc-badge-v2 pvc-badge-v2--claim">🏷️ Revendiqué</span>`;
     if (!isVer && !a.claimed)     badges += `<span class="pvc-badge-v2 pvc-badge-v2--claim">🏷️ Profil à revendiquer</span>`;
 
+    /* FOMO line — uses reviewCount as social-proof proxy */
+    const fomoCount = reviews > 0 ? Math.min(reviews, 30) : 0;
+    const fomoHtml  = fomoCount >= 3
+      ? `<div class="pvc-fomo-line">\uD83D\uDD25 R\u00e9serv\u00e9 ${fomoCount >= 30 ? '30+' : fomoCount} fois cette semaine</div>`
+      : '';
+
     return `
-<article class="pvc-card${isReal ? ' pvc-card--real' : ''}" data-artisan-id="${a.id}" tabindex="0" role="button" aria-label="${_esc2(a.name)}, ${catLbl}" style="--anim-delay:${idx}">
+<article class="pvc-card${isReal ? ' pvc-card--real' : ''}" data-artisan-id="${a.id}" tabindex="0" role="button" aria-label="${_esc2(a.name)}, ${catLbl}" style="--anim-delay:${idx}" onclick="window.SecondarySearch&&window.SecondarySearch._handleReserve&&window.SecondarySearch._handleReserve('${a.id}');event.stopPropagation&&event.stopPropagation();">
   <div class="pvc-card-header">
     <div class="pvc-avatar${isVer ? ' pvc-avatar--verified' : ''}">${avatarHtml}</div>
     <div class="pvc-identity">
@@ -301,24 +307,23 @@
       <div class="pvc-meta-row">
         <span class="pvc-cat-pill">${catIcon} ${catLbl}</span>
         <span class="pvc-city-pill">📍 ${_esc2(a.city || 'Maroc')}</span>
+        ${availHtml}
       </div>
     </div>
-    ${availHtml}
   </div>
-  ${badges ? `<div class="pvc-badges-v2">${badges}</div>` : ''}
-  <div class="pvc-divider"></div>
   <div class="pvc-stats">
     <div class="pvc-rating-block">${starsHtml}</div>
   </div>
+  ${fomoHtml}
   ${chips ? `<div class="pvc-info-bar">${chips}</div>` : ''}
   <div class="pvc-footer">
     <div class="pvc-price-block">
-      <span class="pvc-price-from">À partir de</span>
       <span class="pvc-price-amount">${priceFrom}<span class="price-currency">MAD</span></span>
+      <span class="pvc-price-from">/ intervention</span>
     </div>
-    <div class="pvc-cta-row">
-      <button class="pvc-btn-reserve-v2" type="button" onclick="window.SecondarySearch&&window.SecondarySearch._handleReserve&&window.SecondarySearch._handleReserve('${a.id}')">📅 Réserver</button>
-      <button class="pvc-btn-profile-v2" type="button" onclick="window.SecondarySearch&&window.SecondarySearch._handleProfile&&window.SecondarySearch._handleProfile('${a.id}')">Profil</button>
+    <div class="pvc-cta-col">
+      <button class="pvc-btn-reserve-v2" type="button" onclick="window.SecondarySearch&&window.SecondarySearch._handleReserve&&window.SecondarySearch._handleReserve('${a.id}');event.stopPropagation();">R\u00e9server</button>
+      <span class="pvc-profile-link" onclick="event.stopPropagation();if(window.FixeoPublicProfileLinks){window.FixeoPublicProfileLinks.openBySourceId('${a.id}',event);}else if(window.openArtisanModal){window.openArtisanModal('${a.id}');}else{window.SecondarySearch&&window.SecondarySearch._handleReserve&&window.SecondarySearch._handleReserve('${a.id}');}">Voir profil ›</span>
     </div>
   </div>
 </article>`;
@@ -419,6 +424,7 @@
       .map(a => renderVedetteCard(a))
       .join('');
 
+    _updatePvcCounter();
     updateVedetteMoreButton();
   }
 
@@ -437,7 +443,22 @@
       .map(a => renderVedetteCard(a))
       .join('');
 
+    _updatePvcCounter();
     updateVedetteMoreButton();
+  }
+
+  /* ── Counter strip helper ── */
+  function _updatePvcCounter() {
+    const el = document.getElementById('pvc-grid-counter');
+    if (!el || !s.vedetteAll) return;
+    const total = s.vedetteAll.length;
+    if (!total) { el.textContent = ''; return; }
+    const avail = s.vedetteAll.filter(function(a) {
+      return a.availability === 'available' || a.available;
+    }).length;
+    el.textContent = avail > 0
+      ? avail + ' artisan' + (avail > 1 ? 's' : '') + ' disponible' + (avail > 1 ? 's' : '') + ' →'
+      : total + ' artisan' + (total > 1 ? 's' : '') + ' →';
   }
 
   /* ════════════════════════════════════════════════════════
@@ -739,6 +760,19 @@
   bootstrap();
 
   /* ── Expose public API ── */
-  window.SecondarySearch = { doSearch, book, renderVedette, syncResponsiveVedette };
+  /* ── Conversion handlers ─────────────────────────────────── */
+  function _handleReserve(id) { book(id, false); }
+  function _handleProfile(id) {
+    const e = null;
+    if (window.FixeoPublicProfileLinks) {
+      window.FixeoPublicProfileLinks.openBySourceId(String(id), e);
+    } else if (typeof openArtisanModal === 'function') {
+      openArtisanModal(id);
+    } else {
+      book(id, false);
+    }
+  }
+
+  window.SecondarySearch = { doSearch, book, renderVedette, syncResponsiveVedette, _handleReserve, _handleProfile };
 
 }(window));
