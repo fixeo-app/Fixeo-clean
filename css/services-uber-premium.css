@@ -1448,3 +1448,56 @@ html body #services.services-section .chip.service-chip.svc-visible:not([data-ca
   }
 
 }
+
+/* ================================================================
+   SERVICES — FINAL HIERARCHY LOCK — 2026-05-02
+   CSS only. services-uber-premium.css only. No HTML, no JS.
+
+   NOTE: transform:scale(1.06) uses !important — required to beat
+   prior `transform:none !important` rules at same specificity.
+   Mobile block resets ALL chip transforms to none !important so
+   scale(0.97) secondary and scale(1.06) primary both neutralised.
+   ================================================================ */
+
+/* ── TASK 1: Primary cards visually bigger + elevated ── */
+html body #services.services-section .chip.service-chip[data-category="plomberie"],
+html body #services.services-section .chip.service-chip[data-category="electricite"],
+html body #services.services-section .chip.service-chip[data-category="climatisation"] {
+  height: 130px !important;
+  min-height: 130px !important;
+  transform: scale(1.06) !important;
+  z-index: 3 !important;
+}
+
+/* ── TASK 2: Stronger separation below primary row ── */
+html body #services.services-section .chip.service-chip[data-category="peinture"] {
+  margin-top: 36px !important;
+}
+
+/* ── TASK 3: Secondary even softer ── */
+html body #services.services-section .chip.service-chip.svc-visible:not([data-category="plomberie"]):not([data-category="electricite"]):not([data-category="climatisation"]):not(.active):not([data-category="all"]) {
+  opacity: 0.55 !important;
+}
+
+/* ── MOBILE ── */
+@media (max-width: 768px) {
+
+  /* Task 1 mobile: primary normal height, no scale */
+  html body #services.services-section .chip.service-chip[data-category="plomberie"],
+  html body #services.services-section .chip.service-chip[data-category="electricite"],
+  html body #services.services-section .chip.service-chip[data-category="climatisation"] {
+    height: 110px !important;
+    min-height: 110px !important;
+  }
+
+  /* Task 2 mobile: strong gap */
+  html body #services.services-section .chip.service-chip[data-category="peinture"] {
+    margin-top: 28px !important;
+  }
+
+  /* Task 4: reset ALL chip transforms on mobile — no scale anywhere */
+  html body #services.services-section .chip.service-chip {
+    transform: none !important;
+  }
+
+}
