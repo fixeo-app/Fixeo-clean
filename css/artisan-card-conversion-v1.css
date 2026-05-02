@@ -452,3 +452,139 @@
     font-size: 1.50rem !important;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   FINAL CLEANUP PASS — v4
+   Fix avatar visibility, price clarity, badge/overlap, CTA
+═══════════════════════════════════════════════════════════════ */
+
+/* ── T1: avatar icon — large centered emoji replaces SVG silhouette ── */
+.pvc-avatar-icon {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  height: 100% !important;
+  font-size: 1.55rem !important;
+  line-height: 1 !important;
+  position: static !important;
+}
+
+/* Hide SVG silhouette fallback (previous approach — fully replaced) */
+.pvc-avatar-svg,
+.pvc-avatar-silhouette {
+  display: none !important;
+}
+
+/* Avatar: dark bg + overflow visible for badge bleed */
+.pvc-avatar {
+  overflow: visible !important;
+  background: linear-gradient(135deg, #1a1a2a 0%, #2c2040 100%) !important;
+}
+
+/* Avatar badge: service icon pill — keep but smaller (emoji already in main circle) */
+.pvc-avatar-badge {
+  width: 18px !important;
+  height: 18px !important;
+  font-size: 9px !important;
+  bottom: -3px !important;
+  right: -3px !important;
+  opacity: 0 !important; /* hide redundant badge — icon already in avatar body */
+}
+
+/* ── T2: meta-row — availability badge right-aligned, no overlap ── */
+.pvc-meta-row {
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  gap: 6px !important;
+  overflow: hidden !important;
+}
+.pvc-cat-pill {
+  flex-shrink: 1 !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+.pvc-city-pill {
+  display: none !important; /* remove city from meta-row to avoid crowding */
+}
+.pvc-avail-badge {
+  flex-shrink: 0 !important;
+  margin-left: auto !important;
+  white-space: nowrap !important;
+  position: static !important;
+}
+
+/* ── T2+: "Profil réel" / pvc-badge-v2--real — belt-and-suspenders ── */
+.pvc-badge-v2--real,
+.pvc-badge-v2--claim,
+[class*="badge-real"],
+[class*="badge-claim"] {
+  display: none !important;
+}
+
+/* ── T3: price block — clear hierarchy ── */
+.pvc-price-block {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2px !important;
+}
+.pvc-price-amount {
+  font-size: 1.65rem !important;
+  font-weight: 900 !important;
+  line-height: 1.0 !important;
+  order: 1 !important;
+}
+.pvc-price-from {
+  font-size: 0.72rem !important;
+  color: #ffd166 !important;
+  font-weight: 600 !important;
+  opacity: 1 !important;
+  letter-spacing: 0 !important;
+  order: 2 !important;
+}
+
+/* ── T4: profile link — clear visual separation from CTA ── */
+.pvc-profile-link {
+  font-size: 0.69rem !important;
+  color: rgba(255,255,255,0.38) !important;
+  margin-top: 4px !important;
+  display: block !important;
+  text-align: center !important;
+  cursor: pointer !important;
+  text-decoration: underline !important;
+  text-decoration-color: rgba(255,255,255,0.18) !important;
+  text-underline-offset: 2px !important;
+}
+.pvc-profile-link:hover {
+  color: rgba(255,255,255,0.65) !important;
+}
+
+/* ── T5: CTA — "Réserver maintenant" — always dominant ── */
+.pvc-btn-reserve-v2 {
+  background: linear-gradient(135deg, #e1306c 0%, #833ab4 100%) !important;
+  color: #fff !important;
+  font-weight: 700 !important;
+  font-size: 0.84rem !important;
+  padding: 11px 18px !important;
+  border-radius: 12px !important;
+  opacity: 1 !important;
+  white-space: nowrap !important;
+  letter-spacing: 0.01em !important;
+}
+.pvc-btn-reserve-v2:hover {
+  background: linear-gradient(135deg, #f0206c 0%, #9b4dca 100%) !important;
+  transform: scale(1.03) translateY(-1px) !important;
+  box-shadow: 0 12px 28px rgba(225, 48, 108, 0.42) !important;
+}
+
+/* Mobile ── */
+@media (max-width: 640px) {
+  .pvc-avatar-icon { font-size: 1.35rem !important; }
+  .pvc-price-amount { font-size: 1.45rem !important; }
+  .pvc-btn-reserve-v2 {
+    padding: 10px 14px !important;
+    font-size: 0.80rem !important;
+  }
+}

@@ -255,13 +255,12 @@
     const rtLbl   = _rtLabel(rt);
     const misLbl  = _missLabel(a);
 
-    /* Avatar — silhouette SVG + service icon badge */
+    /* Avatar — large service icon + small badge overlay (Task 1) */
     const avatarSrc = a.avatar || a.photo || a.photo_url || '';
-    const _svgSilhouette = '<svg viewBox="0 0 24 24" class="pvc-avatar-svg" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>';
     const _iconBadge = '<span class="pvc-avatar-badge" aria-hidden="true">' + catIcon + '</span>';
     const avatarHtml = avatarSrc
-      ? '<img class="pvc-avatar-img" src="' + avatarSrc + '" alt="' + _esc2(a.name) + '" loading="lazy" onerror="this.onerror=null;this.style.display=\'none\';this.nextElementSibling&&(this.nextElementSibling.style.display=\'flex\');" /><span class="pvc-avatar-silhouette" style="display:none">' + _svgSilhouette + '</span>' + _iconBadge
-      : _svgSilhouette + _iconBadge;
+      ? '<img class="pvc-avatar-img" src="' + avatarSrc + '" alt="' + _esc2(a.name) + '" loading="lazy" onerror="this.onerror=null;this.style.display=\'none\';this.nextSibling&&(this.nextSibling.style.display=\'flex\');"/><span class="pvc-avatar-icon" style="display:none">' + catIcon + '</span>'
+      : '<span class="pvc-avatar-icon">' + catIcon + '</span>';
 
     /* Avail */
     const availHtml = isAvail
@@ -321,7 +320,7 @@
       <span class="pvc-price-from">💡 Prix conseillé Fixeo</span>
     </div>
     <div class="pvc-cta-col">
-      <button class="pvc-btn-reserve-v2" type="button" onclick="window.SecondarySearch&&window.SecondarySearch._handleReserve&&window.SecondarySearch._handleReserve('${a.id}');event.stopPropagation();">R\u00e9server</button>
+      <button class="pvc-btn-reserve-v2" type="button" onclick="window.SecondarySearch&&window.SecondarySearch._handleReserve&&window.SecondarySearch._handleReserve('${a.id}');event.stopPropagation();">R\u00e9server maintenant</button>
       <span class="pvc-profile-link" onclick="event.stopPropagation();if(window.FixeoPublicProfileLinks){window.FixeoPublicProfileLinks.openBySourceId('${a.id}',event);}else if(window.openArtisanModal){window.openArtisanModal('${a.id}');}else{window.SecondarySearch&&window.SecondarySearch._handleReserve&&window.SecondarySearch._handleReserve('${a.id}');}">Voir profil ›</span>
     </div>
   </div>
