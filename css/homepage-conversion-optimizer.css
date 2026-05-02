@@ -6513,3 +6513,121 @@
     margin-bottom: 10px !important;
   }
 }
+
+/* ================================================================
+   HERO DESKTOP HEIGHT FIX v2 — TWO PARTS
+   CSS only. No HTML/JS/mobile changes.
+
+   ROOT CAUSE (diagnosed): homepage-v13.css sets
+     section#home { min-height: 100vh !important }  spec (1,0,1)
+   None of our prior @media(min-width:1024px) blocks overrode it.
+   The hero is forced to fill 100vh even when content is shorter.
+
+   PART A — @media(min-width:1024px):
+     Override min-height:100vh with min-height:0 on all desktops.
+     Uses #home.hero.hero-section (spec 1,2,0) > section#home (1,0,1).
+
+   PART B — @media(min-width:1024px) and (max-height:760px):
+     Extra compaction for short-viewport laptops (1366×768, etc).
+     CSS innerHeight ≤ 760px covers 1366×768 with full browser chrome.
+     1440×900+ laptops (innerHeight ~770+) are unaffected.
+   ================================================================ */
+
+/* PART A — Override 100vh on all desktops */
+@media (min-width: 1024px) {
+  #home.hero.hero-section,
+  section#home.hero.hero-section,
+  .hero.hero-section,
+  .hero-section {
+    min-height: 0 !important;
+    height: auto !important;
+  }
+}
+
+/* PART B — Compact mode for short-viewport laptops (≤760px height) */
+@media (min-width: 1024px) and (max-height: 760px) {
+
+  /* 1. Hero padding — near-flush under navbar */
+  #home.hero.hero-section,
+  section#home.hero.hero-section {
+    padding-top: calc(var(--navbar-h, 70px) + 0px) !important;
+    padding-bottom: 14px !important;
+  }
+
+  /* 2. Headline — smaller, tighter */
+  #home .hero-title,
+  #home h1.hero-title {
+    font-size: clamp(1.75rem, 3.1vw, 2.45rem) !important;
+    line-height: 1.0 !important;
+    margin-bottom: 0 !important;
+  }
+
+  /* 3. Subtitle — compact */
+  #home .hero-subtitle {
+    margin-top: 2px !important;
+    margin-bottom: 2px !important;
+    font-size: 0.82rem !important;
+    line-height: 1.25 !important;
+  }
+
+  /* 4. Search bar — compact vertical space */
+  #hero-quick-search {
+    margin-top: 2px !important;
+    margin-bottom: 2px !important;
+  }
+
+  #hero-quick-search .qsm-bar-card {
+    min-height: 58px !important;
+  }
+
+  #hero-quick-search .qsm-filters-row {
+    padding-top: 6px !important;
+    min-height: 22px !important;
+  }
+
+  #hero-quick-search .qsm-qfilter {
+    min-height: 20px !important;
+    padding-top: 2px !important;
+    padding-bottom: 2px !important;
+    font-size: 0.68rem !important;
+  }
+
+  /* 5. FOMO line + secondary CTA */
+  #home .hcb-fomo {
+    margin-top: 2px !important;
+    font-size: 0.62rem !important;
+    line-height: 1.1 !important;
+  }
+
+  .hero-content > .marketplace-secondary-entry {
+    margin-top: 4px !important;
+  }
+
+  .hero-content > .marketplace-secondary-entry .btn-secondary-marketplace {
+    min-height: 36px !important;
+    padding: 8px 18px !important;
+    font-size: 0.78rem !important;
+  }
+
+  .hero-content > .marketplace-secondary-entry .marketplace-microcopy,
+  .hero-content > .marketplace-secondary-entry .hcb-micro-trust {
+    font-size: 0.62rem !important;
+    margin-top: 4px !important;
+  }
+
+  /* 6. Artisan strip — minimal footprint */
+  #home .hero-artisan-entry,
+  #home .hcb-artisan-block {
+    margin-top: 6px !important;
+    margin-bottom: 4px !important;
+    min-height: 26px !important;
+    font-size: 0.68rem !important;
+  }
+
+  #home .hero-artisan-entry .hero-artisan-entry-btn,
+  #home .hcb-artisan-block .hero-artisan-entry-btn {
+    min-height: 24px !important;
+    padding: 5px 12px !important;
+    font-size: 0.66rem !important;
+  }
+}
