@@ -371,3 +371,84 @@
 .pvc-badge-v2--claim {
   display: none !important;
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   FINAL UX POLISH — v3 (Tasks 1–6)
+   Appended block — wins all prior rules in same file
+═══════════════════════════════════════════════════════════════ */
+
+/* ── Task 1: defensive — hide any claim/real badges (belt+suspenders) ── */
+.pvc-badge-v2--claim,
+.pvc-badge-v2--real {
+  display: none !important;
+}
+
+/* ── Task 2: meta-row — avail badge always right-aligned, no overlap ── */
+.pvc-meta-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  flex-wrap: wrap !important;
+}
+.pvc-avail-badge {
+  position: static !important;
+  margin-left: auto !important;
+  white-space: nowrap !important;
+}
+
+/* ── Task 3: initials kill-switch (defensive — already removed from JS) ── */
+.pvc-avatar-initials {
+  display: none !important;
+}
+
+/* ── Task 4: price — dominant amount + strong Fixeo label ── */
+.pvc-price-amount {
+  font-size: 1.70rem !important;
+  font-weight: 900 !important;
+  color: #fff !important;
+  line-height: 1.0 !important;
+  order: 1 !important;
+}
+.pvc-price-from {
+  font-size: 0.72rem !important;
+  color: #ffd166 !important;
+  font-weight: 600 !important;
+  opacity: 1 !important;
+  margin-top: 4px !important;
+  order: 2 !important;
+  line-height: 1.3 !important;
+}
+.pvc-price-hint {
+  color: rgba(255,255,255,0.65) !important;
+  font-size: 0.72rem !important;
+}
+
+/* ── Task 5: CTA — always visible, strong gradient ── */
+.pvc-btn-reserve-v2 {
+  background: linear-gradient(135deg, #ff4d8d, #a855f7) !important;
+  color: #fff !important;
+  font-weight: 700 !important;
+  opacity: 1 !important;
+}
+.pvc-btn-reserve-v2:hover {
+  transform: scale(1.03) !important;
+  opacity: 1 !important;
+}
+
+/* ── Task 6: card micro-interaction ── */
+.pvc-card {
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease !important;
+}
+.pvc-card:hover {
+  transform: translateY(-4px) !important;
+}
+
+/* Mobile: no hover effects (touch devices) */
+@media (max-width: 640px) {
+  .pvc-avail-badge {
+    margin-left: 0 !important; /* wraps below on small screens */
+  }
+  .pvc-price-amount {
+    font-size: 1.50rem !important;
+  }
+}
