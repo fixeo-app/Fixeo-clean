@@ -974,3 +974,125 @@ html body #services.services-section .chip.service-chip.active:hover {
   }
 
 }
+
+/* ================================================================
+   SERVICES CARDS — FINAL POLISH — 2026-05-02
+   CSS only. services-uber-premium.css only.
+   No HTML, no JS, no hero, no how-it-works.
+
+   SPECIFICITY NOTES:
+   Task 3 uses .svc-visible guard (spec 1,9,2) to ensure opacity:0
+   on hidden chips (:not(.svc-visible)) is never overridden.
+   Task 4 ::after: apostrophe uses U+2019 RIGHT SINGLE QUOTATION MARK.
+   Task 2 primary cards use min-height:110px to accommodate ::after line.
+   ================================================================ */
+
+/* ── TASK 1: "Tout voir" — pushed last, more subtle ── */
+html body #services.services-section .chip.service-chip[data-category="all"] {
+  order: 999 !important;
+  margin-top: 10px !important;
+  opacity: 0.60 !important;
+  background: rgba(255,255,255,0.03) !important;
+  border: 1px solid rgba(255,255,255,0.07) !important;
+  box-shadow: none !important;
+}
+
+/* ── TASK 2: Primary services — scale prominence + ::after accommodation ── */
+html body #services.services-section .chip.service-chip[data-category="plomberie"],
+html body #services.services-section .chip.service-chip[data-category="electricite"],
+html body #services.services-section .chip.service-chip[data-category="climatisation"] {
+  transform: scale(1.03) !important;
+  z-index: 2 !important;
+  min-height: 110px !important;
+  height: 110px !important;
+  border: 1px solid rgba(255,255,255,0.28) !important;
+  box-shadow:
+    0 22px 60px rgba(225,48,108,0.30),
+    0 0 40px rgba(147,51,234,0.18) !important;
+}
+
+/* ── TASK 3: Soften secondary visible chips (NOT primary, NOT active) ──
+   Guard: .svc-visible required so opacity:0 on hidden chips is never lost. */
+html body #services.services-section .chip.service-chip.svc-visible:not([data-category="plomberie"]):not([data-category="electricite"]):not([data-category="climatisation"]):not(.active):not([data-category="all"]) {
+  opacity: 0.78 !important;
+}
+html body #services.services-section .chip.service-chip.svc-visible:not([data-category="plomberie"]):not([data-category="electricite"]):not([data-category="climatisation"]):not(.active):not([data-category="all"]):hover {
+  opacity: 1 !important;
+}
+
+/* ── TASK 4: Micro action signal on primary cards via ::after ── */
+html body #services.services-section .chip.service-chip[data-category="plomberie"]::after,
+html body #services.services-section .chip.service-chip[data-category="electricite"]::after,
+html body #services.services-section .chip.service-chip[data-category="climatisation"]::after {
+  content: "Disponible aujourd\2019hui" !important;
+  display: block !important;
+  font-size: 0.68rem !important;
+  line-height: 1 !important;
+  opacity: 0.68 !important;
+  color: rgba(255,255,255,0.85) !important;
+  margin-top: 4px !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.01em !important;
+}
+
+/* ── TASK 5: Card depth — glass gradient background ── */
+html body #services.services-section .chip.service-chip {
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,0.055),
+    rgba(255,255,255,0.020)
+  ) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+}
+
+/* ── TASK 6: Premium hover — desktop only ── */
+@media (min-width: 1024px) {
+
+  html body #services.services-section .chip.service-chip:not([data-category="all"]):hover {
+    transform: translateY(-6px) scale(1.02) !important;
+    box-shadow:
+      0 26px 70px rgba(0,0,0,0.35),
+      0 0 40px rgba(225,48,108,0.22) !important;
+  }
+
+}
+
+/* ── TASK 7: Mobile safety ── */
+@media (max-width: 768px) {
+
+  /* Font size + line-height */
+  html body #services.services-section .chip.service-chip {
+    font-size: 0.80rem !important;
+    line-height: 1.1 !important;
+  }
+
+  /* Smaller ::after hint on mobile */
+  html body #services.services-section .chip.service-chip::after {
+    font-size: 0.62rem !important;
+  }
+
+  /* Primary cards: no scale on mobile (avoids clipping in grid) */
+  html body #services.services-section .chip.service-chip[data-category="plomberie"],
+  html body #services.services-section .chip.service-chip[data-category="electricite"],
+  html body #services.services-section .chip.service-chip[data-category="climatisation"] {
+    transform: none !important;
+    height: 90px !important;
+    min-height: 90px !important;
+  }
+
+  /* "Tout voir" on mobile: restore height/opacity from prior rules */
+  html body #services.services-section .chip.service-chip[data-category="all"] {
+    height: 42px !important;
+    min-height: 42px !important;
+    max-height: 42px !important;
+    opacity: 0.70 !important;
+    margin-top: 8px !important;
+  }
+
+  /* Secondary chip opacity: slightly higher on mobile (better readability) */
+  html body #services.services-section .chip.service-chip.svc-visible:not([data-category="plomberie"]):not([data-category="electricite"]):not([data-category="climatisation"]):not(.active):not([data-category="all"]) {
+    opacity: 0.88 !important;
+  }
+
+}
