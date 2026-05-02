@@ -200,8 +200,10 @@
     /* Cities */
     const cities = (typeof SSB_DATA !== 'undefined')
       ? SSB_DATA.cities
-      : ['Casablanca','Rabat','Marrakech','Fès','Tanger','Agadir',
-         'Meknès','Oujda','Kénitra','Tétouan','Safi','El Jadida'];
+      : (window.FIXEO_CITIES && window.FIXEO_CITIES.length)
+        ? window.FIXEO_CITIES
+        : ['Casablanca','Rabat','Marrakech','Fès','Tanger','Agadir',
+           'Meknès','Oujda','Kénitra','Tétouan','Safi','El Jadida'];
     const cityOpts = cities.map(c => `<option value="${c}">📍 ${c}</option>`).join('');
 
     /* Results HTML */

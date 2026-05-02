@@ -16,21 +16,15 @@
 
   var _done = false;
 
-  var CITIES = [
-    { value: '',           label: '📍 Toutes les villes' },
-    { value: 'Casablanca', label: 'Casablanca' },
-    { value: 'Rabat',      label: 'Rabat' },
-    { value: 'Marrakech',  label: 'Marrakech' },
-    { value: 'Fès',        label: 'Fès' },
-    { value: 'Agadir',     label: 'Agadir' },
-    { value: 'Tanger',     label: 'Tanger' },
-    { value: 'Meknès',     label: 'Meknès' },
-    { value: 'Oujda',      label: 'Oujda' },
-    { value: 'Kénitra',    label: 'Kénitra' },
-    { value: 'Tétouan',    label: 'Tétouan' },
-    { value: 'Safi',       label: 'Safi' },
-    { value: 'El Jadida',  label: 'El Jadida' }
-  ];
+  /* City list — single source of truth via window.FIXEO_CITIES (fixeo-cities.js).
+     Falls back to inline list if the shared file is not yet loaded. */
+  var _citiesBase = (window.FIXEO_CITIES && window.FIXEO_CITIES.length)
+    ? window.FIXEO_CITIES
+    : ['Casablanca','Rabat','Marrakech','Fès','Agadir','Tanger',
+       'Meknès','Oujda','Kénitra','Tétouan','Safi','El Jadida'];
+  var CITIES = [{ value: '', label: '📍 Toutes les villes' }].concat(
+    _citiesBase.map(function(c){ return { value: c, label: c }; })
+  );
 
   var PIN_SVG =
     '<svg class="svc-city-pin" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">' +
