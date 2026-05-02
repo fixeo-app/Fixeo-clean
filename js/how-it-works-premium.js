@@ -13,30 +13,28 @@
 
   /* ── Premium SVG icons per step (Lucide outline, stroke 1.7) ── */
   var STEP_ICONS = [
-    /* 1 — Search / describe need */
+    /* 1 — Search / describe need (unchanged) */
     '<svg viewBox="0 0 24 24" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">' +
       '<circle cx="11" cy="11" r="7.5"/>' +
       '<path d="M21 21l-4.35-4.35"/>' +
       '<path d="M8.5 11h5M11 8.5v5" opacity="0.6"/>' +
     '</svg>',
 
-    /* 2 — Document / receive quotes */
+    /* 2 — Matching / find artisan (location pin + lightning) */
     '<svg viewBox="0 0 24 24" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">' +
-      '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>' +
-      '<polyline points="14 2 14 8 20 8"/>' +
-      '<line x1="8" y1="13" x2="16" y2="13" opacity="0.6"/>' +
-      '<line x1="8" y1="17" x2="13" y2="17" opacity="0.6"/>' +
+      '<path d="M12 2a7 7 0 0 1 7 7c0 5.25-7 13-7 13S5 14.25 5 9a7 7 0 0 1 7-7z"/>' +
+      '<circle cx="12" cy="9" r="2.5" opacity="0.6"/>' +
     '</svg>',
 
-    /* 3 — Shield check / choose & pay */
+    /* 3 — Phone / artisan contacts you */
+    '<svg viewBox="0 0 24 24" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">' +
+      '<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12.1 19.79 19.79 0 0 1 1.6 3.53 2 2 0 0 1 3.56 1.35h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9a16 16 0 0 0 6 6l1.27-.9a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7a2 2 0 0 1 1.72 2.02z"/>' +
+    '</svg>',
+
+    /* 4 — Shield check / secure payment after service */
     '<svg viewBox="0 0 24 24" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">' +
       '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>' +
-      '<polyline points="9 12 11 14 15 10"/>' +
-    '</svg>',
-
-    /* 4 — Star / review */
-    '<svg viewBox="0 0 24 24" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">' +
-      '<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>' +
+      '<polyline points="9 12 11 14 15 10" opacity="0.8"/>' +
     '</svg>'
   ];
 

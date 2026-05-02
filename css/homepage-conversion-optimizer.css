@@ -6743,3 +6743,20 @@
     opacity: 1 !important;
   }
 }
+
+/* ================================================================
+   HOW-IT-WORKS CARDS — Premium hover (min-width: 1024px)
+   Task 3: Uber-level subtle interaction. CSS only. Desktop only.
+   ================================================================ */
+@media (min-width: 1024px) {
+  .how-it-works-card,
+  .how-it-works-section .step-card {
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .how-it-works-card:hover,
+  .how-it-works-section .step-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 50px rgba(225,48,108,0.18);
+  }
+}
