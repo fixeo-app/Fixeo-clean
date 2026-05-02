@@ -6484,3 +6484,32 @@
     transition: opacity 0.2s ease !important;
   }
 }
+
+/* ================================================================
+   HERO DESKTOP HEIGHT FIX (min-width: 1024px)
+   CSS only. Desktop only. No HTML/JS/mobile changes.
+   Goal: hero fits at 100% zoom on 1366×768 / standard laptop.
+   Reduces total stack by ~34px (680→646px).
+   ================================================================ */
+@media (min-width: 1024px) {
+
+  /* −20px: tighter padding overhead */
+  #home.hero.hero-section,
+  section#home.hero.hero-section {
+    padding-top: calc(var(--navbar-h, 70px) + 8px) !important;
+    padding-bottom: 28px !important;
+  }
+
+  /* −14px: 3-line title smaller at max end (3.6rem→3.0rem) */
+  #home .hero-title,
+  #home h1.hero-title {
+    font-size: clamp(2.0rem, 3.8vw, 3.0rem) !important;
+    line-height: 1.04 !important;
+  }
+
+  /* −8px: artisan strip less bottom breathing room */
+  #home .hero-artisan-entry,
+  #home .hcb-artisan-block {
+    margin-bottom: 10px !important;
+  }
+}
