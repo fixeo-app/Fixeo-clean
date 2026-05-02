@@ -6794,3 +6794,40 @@
     min-height: 230px !important;
   }
 }
+
+/* ================================================================
+   HOW-IT-WORKS — Ultra premium polish
+   Task 2: Step 1 subtle visual dominance (entry point emphasis)
+   Task 3: Description readability boost
+   Task 4: All-card hover glow
+   Desktop only for Tasks 2 + 4. Task 3 global.
+   ================================================================ */
+
+/* TASK 3 — Description readability (all viewports) */
+.how-it-works-section .step-card p {
+  opacity: 0.86 !important;
+  line-height: 1.42 !important;
+  font-size: 0.85rem !important;
+}
+
+/* TASK 2 — Step 1 slightly more dominant (desktop only) */
+@media (min-width: 1024px) {
+  .how-it-works-section .step-card:first-child {
+    border-color: rgba(225,48,108,0.28) !important;
+    box-shadow: 0 20px 60px rgba(225,48,108,0.12) !important;
+    transform: translateY(-2px) scale(1.015) !important;
+  }
+
+  .how-it-works-section .step-card:first-child:hover {
+    transform: translateY(-6px) scale(1.018) !important;
+    box-shadow: 0 24px 64px rgba(225,48,108,0.18) !important;
+  }
+}
+
+/* TASK 4 — All-card premium hover glow (desktop only) */
+@media (min-width: 1024px) {
+  .how-it-works-section .step-card:not(:first-child):hover {
+    transform: translateY(-4px) !important;
+    box-shadow: 0 20px 50px rgba(225,48,108,0.16) !important;
+  }
+}
