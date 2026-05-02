@@ -6667,3 +6667,79 @@
     transition: opacity 0.2s ease !important;
   }
 }
+
+/* ================================================================
+   HERO POST-STRIP — .hero-post-strip layout
+   Replaces .hero-content > .marketplace/artisan rules for the
+   moved blocks. Wraps secondary CTA + artisan block after hero.
+   ================================================================ */
+
+/* TASK 2 — Desktop layout */
+@media (min-width: 1024px) {
+  .hero-post-strip {
+    width: min(860px, calc(100% - 32px));
+    margin: 14px auto 34px;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    text-align: center;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 22px;
+    background: rgba(255,255,255,0.035);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+  }
+
+  .hero-post-strip .marketplace-secondary-entry {
+    width: min(420px, 100%);
+    margin: 0 !important;
+    padding: 0 !important;
+    border-top: none !important;
+    opacity: 0.86 !important;
+  }
+
+  .hero-post-strip .hero-artisan-entry,
+  .hero-post-strip .hcb-artisan-block {
+    width: 100%;
+    margin: 0 !important;
+    opacity: 0.58 !important;
+  }
+
+  .hero-post-strip .marketplace-secondary-entry:hover {
+    opacity: 1 !important;
+    transition: opacity 0.2s ease !important;
+  }
+
+  .hero-post-strip .hero-artisan-entry:hover,
+  .hero-post-strip .hcb-artisan-block:hover {
+    opacity: 0.78 !important;
+    transition: opacity 0.2s ease !important;
+  }
+}
+
+/* TASK 3 — Mobile safety alias
+   The 5 broken mobile rules used .hero-content > .marketplace-secondary-entry.
+   Last-winning mobile values: width:100%, margin:6px auto 8px, gap:5px, align-items:stretch.
+   #home .marketplace-secondary-entry and .btn-secondary-marketplace rules still match
+   (not child-scoped) → only need to cover the child-scoped margin/gap/align properties. */
+@media (max-width: 768px) {
+  .hero-post-strip {
+    width: 100%;
+    margin: 0;
+    padding: 0 16px 20px;
+    background: none;
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+  }
+
+  .hero-post-strip .marketplace-secondary-entry {
+    width: 100% !important;
+    margin: 16px auto 26px !important;
+    gap: 8px !important;
+    align-items: stretch !important;
+    border-top: none !important;
+    opacity: 1 !important;
+  }
+}
