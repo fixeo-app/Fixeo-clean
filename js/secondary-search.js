@@ -255,12 +255,13 @@
     const rtLbl   = _rtLabel(rt);
     const misLbl  = _missLabel(a);
 
-    /* Avatar */
-    const initials  = _initials(a.name);
+    /* Avatar — silhouette SVG + service icon badge */
     const avatarSrc = a.avatar || a.photo || a.photo_url || '';
+    const _svgSilhouette = '<svg viewBox="0 0 24 24" class="pvc-avatar-svg" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>';
+    const _iconBadge = '<span class="pvc-avatar-badge" aria-hidden="true">' + catIcon + '</span>';
     const avatarHtml = avatarSrc
-      ? `<img class="pvc-avatar-img" src="${avatarSrc}" alt="${_esc2(a.name)}" loading="lazy" onerror="this.onerror=null;this.style.display='none';var s=this.parentNode.querySelector('.pvc-avatar-initials');if(s)s.style.display='flex';" /><span class="pvc-avatar-initials" style="display:none">${initials}</span>`
-      : `<span class="pvc-avatar-initials">${initials}</span>`;
+      ? '<img class="pvc-avatar-img" src="' + avatarSrc + '" alt="' + _esc2(a.name) + '" loading="lazy" onerror="this.onerror=null;this.style.display=\'none\';this.nextElementSibling&&(this.nextElementSibling.style.display=\'flex\');" /><span class="pvc-avatar-silhouette" style="display:none">' + _svgSilhouette + '</span>' + _iconBadge
+      : _svgSilhouette + _iconBadge;
 
     /* Avail */
     const availHtml = isAvail
@@ -285,14 +286,12 @@
     if (misLbl) chips += `<span class="pvc-info-chip chip-missions">✅ ${misLbl}</span>`;
     if (!rtLbl && !misLbl && isAvail) chips += `<span class="pvc-info-chip chip-urgent">🚀 Intervention rapide</span>`;
 
-    /* Badges */
+    /* Badges — verified/premium only; claim badges removed */
     let badges = '';
-    if (isVer)                    badges += `<span class="pvc-badge-v2 pvc-badge-v2--verified">✔ Vérifié Fixeo</span>`;
-    if (trust >= 90)              badges += `<span class="pvc-badge-v2 pvc-badge-v2--premium">🏅 Premium</span>`;
-    if (!isVer && a.claimed)      badges += `<span class="pvc-badge-v2 pvc-badge-v2--claim">🏷️ Revendiqué</span>`;
-    if (!isVer && !a.claimed)     badges += `<span class="pvc-badge-v2 pvc-badge-v2--claim">🏷️ Profil à revendiquer</span>`;
+    if (isVer)       badges += '<span class="pvc-badge-v2 pvc-badge-v2--verified">✔ Vérifié Fixeo</span>';
+    if (trust >= 90) badges += '<span class="pvc-badge-v2 pvc-badge-v2--premium">🏅 Premium</span>';
 
-    /* FOMO line — uses reviewCount as social-proof proxy */
+/* FOMO line — uses reviewCount as social-proof proxy */
     const fomoCount = reviews > 0 ? Math.min(reviews, 30) : 0;
     const fomoHtml  = fomoCount >= 3
       ? `<div class="pvc-fomo-line">\uD83D\uDD25 R\u00e9serv\u00e9 ${fomoCount >= 30 ? '30+' : fomoCount} fois cette semaine</div>`
@@ -319,7 +318,7 @@
   <div class="pvc-footer">
     <div class="pvc-price-block">
       <span class="pvc-price-amount">${priceFrom}<span class="price-currency">MAD</span></span>
-      <span class="pvc-price-from">/ intervention</span>
+      <span class="pvc-price-from">💡 Prix conseillé Fixeo</span>
     </div>
     <div class="pvc-cta-col">
       <button class="pvc-btn-reserve-v2" type="button" onclick="window.SecondarySearch&&window.SecondarySearch._handleReserve&&window.SecondarySearch._handleReserve('${a.id}');event.stopPropagation();">R\u00e9server</button>
