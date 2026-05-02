@@ -6631,3 +6631,39 @@
     font-size: 0.66rem !important;
   }
 }
+
+/* ================================================================
+   HERO SECONDARY ZONE SEPARATOR (min-width: 1024px)
+   CSS only. Desktop only. No HTML/JS/mobile changes.
+   Strategy A: visual separator line makes secondary zone feel
+   post-hero without moving elements in the DOM.
+   ================================================================ */
+@media (min-width: 1024px) {
+
+  /* 1 + 2. Separator line + calmer secondary CTA zone */
+  .hero-content > .marketplace-secondary-entry {
+    border-top: 1px solid rgba(255,255,255,0.08) !important;
+    padding-top: 10px !important;
+    margin-top: 10px !important;
+    opacity: 0.78 !important;
+  }
+
+  /* 3. Artisan block attached to secondary zone, not core hero */
+  #home .hero-artisan-entry,
+  #home .hcb-artisan-block {
+    margin-top: 8px !important;
+    opacity: 0.42 !important;
+  }
+
+  /* 4. Hover states — slightly stronger to confirm interactivity */
+  .hero-content > .marketplace-secondary-entry:hover {
+    opacity: 1 !important;
+    transition: opacity 0.2s ease !important;
+  }
+
+  #home .hero-artisan-entry:hover,
+  #home .hcb-artisan-block:hover {
+    opacity: 0.72 !important;
+    transition: opacity 0.2s ease !important;
+  }
+}
