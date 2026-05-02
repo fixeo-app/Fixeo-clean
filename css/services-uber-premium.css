@@ -1219,3 +1219,128 @@ html body #services.services-section .chip.service-chip[data-category="all"] {
   }
 
 }
+
+/* ================================================================
+   SERVICES CARDS — FINAL HIERARCHY FIX — 2026-05-02
+   CSS only. services-uber-premium.css only.
+   No HTML, no JS.
+
+   GRID ORDER FIX (critical context):
+   DOM order is: all(0) plomberie(1) electricite(2) PEINTURE(3) climatisation(4) ...
+   peinture sits between primary chips in the DOM.
+   CSS order:-3/-2/-1 on primary chips floats them to positions 1/2/3.
+   Secondary chips (order:0 default) auto-place after them.
+   Result — Desktop 4-col row 1: [plomberie, electricite, climatisation, peinture]
+   Result — Mobile  3-col row 1: [plomberie, electricite, climatisation] (clean primary row)
+
+   SEPARATION MARGIN TARGETS (after order fix):
+   Desktop: 'nettoyage' = row 2 col 1 → add margin-top to create gap after row 1
+   Mobile:  'peinture'  = row 2 col 1 → add margin-top
+
+   HEIGHT MATH:
+   Primary desktop: 128px (18px pad + icon~38px + gap~8px + label~18px + gap~4px + badge~18px + 18px pad ≈ 122px → 128px safe)
+   Primary mobile:  112px (14px pad + icon~30px + gap~6px + label~14px + gap~3px + badge~14px + 14px pad ≈ 109px → 112px safe)
+   Secondary desktop: 88px
+   Secondary mobile:  78px
+   ================================================================ */
+
+/* ── PRIMARY CHIPS: CSS order to guarantee visual position 1/2/3 in grid ── */
+html body #services.services-section .chip.service-chip[data-category="plomberie"] {
+  order: -3 !important;
+}
+html body #services.services-section .chip.service-chip[data-category="electricite"] {
+  order: -2 !important;
+}
+html body #services.services-section .chip.service-chip[data-category="climatisation"] {
+  order: -1 !important;
+}
+
+/* ── TASK 1: Primary cards physically larger ── */
+html body #services.services-section .chip.service-chip[data-category="plomberie"],
+html body #services.services-section .chip.service-chip[data-category="electricite"],
+html body #services.services-section .chip.service-chip[data-category="climatisation"] {
+  min-height: 128px !important;
+  height: 128px !important;
+  padding: 18px 12px !important;
+}
+
+/* ── TASK 2: Secondary cards compact ──
+   .svc-visible guard: prevents fighting opacity:0 on hidden chips */
+html body #services.services-section .chip.service-chip.svc-visible:not([data-category="plomberie"]):not([data-category="electricite"]):not([data-category="climatisation"]):not([data-category="all"]) {
+  min-height: 88px !important;
+  height: 88px !important;
+}
+
+/* ── TASK 3: Visual separation — margin-top on first secondary row ──
+   Desktop 4-col: nettoyage = row 2 col 1 (first item after primary+peinture row)
+   All 4 chips in row 2 get margin-top for a clean gap across the full row */
+html body #services.services-section .chip.service-chip[data-category="nettoyage"],
+html body #services.services-section .chip.service-chip[data-category="menuiserie"],
+html body #services.services-section .chip.service-chip[data-category="serrurerie"],
+html body #services.services-section .chip.service-chip[data-category="maconnerie"] {
+  margin-top: 14px !important;
+}
+
+/* ── TASK 4: Badge more readable ── */
+html body #services.services-section .chip.service-chip[data-category="plomberie"]::after,
+html body #services.services-section .chip.service-chip[data-category="electricite"]::after,
+html body #services.services-section .chip.service-chip[data-category="climatisation"]::after {
+  font-size: 0.72rem !important;
+  font-weight: 800 !important;
+  opacity: 1 !important;
+  color: #fff !important;
+  background: rgba(255,255,255,0.18) !important;
+  border-color: rgba(255,255,255,0.22) !important;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.18) !important;
+}
+
+/* ── TASK 5: Secondary cards calmer — opacity + reduced shadow ── */
+html body #services.services-section .chip.service-chip.svc-visible:not([data-category="plomberie"]):not([data-category="electricite"]):not([data-category="climatisation"]):not([data-category="all"]):not(.active) {
+  opacity: 0.70 !important;
+  box-shadow: 0 8px 22px rgba(0,0,0,0.14) !important;
+}
+html body #services.services-section .chip.service-chip.svc-visible:not([data-category="plomberie"]):not([data-category="electricite"]):not([data-category="climatisation"]):not([data-category="all"]):hover,
+html body #services.services-section .chip.service-chip.svc-visible:not([data-category="plomberie"]):not([data-category="electricite"]):not([data-category="climatisation"]):not([data-category="all"]):focus-visible {
+  opacity: 1 !important;
+}
+
+/* ── MOBILE overrides ── */
+@media (max-width: 768px) {
+
+  /* Task 1 mobile: primary cards slightly larger */
+  html body #services.services-section .chip.service-chip[data-category="plomberie"],
+  html body #services.services-section .chip.service-chip[data-category="electricite"],
+  html body #services.services-section .chip.service-chip[data-category="climatisation"] {
+    min-height: 112px !important;
+    height: 112px !important;
+    padding: 14px 8px !important;
+  }
+
+  /* Task 2 mobile: secondary cards compact */
+  html body #services.services-section .chip.service-chip.svc-visible:not([data-category="plomberie"]):not([data-category="electricite"]):not([data-category="climatisation"]):not([data-category="all"]) {
+    min-height: 78px !important;
+    height: 78px !important;
+  }
+
+  /* Task 3 mobile: peinture = row 2 col 1 (first secondary) + nettoyage row 2 col 2/3 */
+  html body #services.services-section .chip.service-chip[data-category="peinture"],
+  html body #services.services-section .chip.service-chip[data-category="nettoyage"],
+  html body #services.services-section .chip.service-chip[data-category="menuiserie"] {
+    margin-top: 12px !important;
+  }
+
+  /* Desktop row-2 margin reset on mobile (nettoyage/menuiserie already covered above) */
+  html body #services.services-section .chip.service-chip[data-category="serrurerie"],
+  html body #services.services-section .chip.service-chip[data-category="maconnerie"] {
+    margin-top: 0 !important;
+  }
+
+  /* Task 4 mobile: badge smaller */
+  html body #services.services-section .chip.service-chip[data-category="plomberie"]::after,
+  html body #services.services-section .chip.service-chip[data-category="electricite"]::after,
+  html body #services.services-section .chip.service-chip[data-category="climatisation"]::after {
+    font-size: 0.62rem !important;
+    padding: 3px 7px !important;
+  }
+
+}
