@@ -183,14 +183,13 @@
     var rtLabel  = _responseTimeLabel(rt);
     var misLabel = _missionsLabel(a);
 
-    /* Avatar */
-    var initials  = _initials(a.name);
+    /* Avatar — service icon emoji (reliable cross-browser, T1) */
     var avatarSrc = a.avatar || a.photo || a.photo_url || '';
     var avatarHtml = avatarSrc
-      ? '<img class="pvc-avatar-img" src="' + avatarSrc + '" alt="' + _esc(a.name) + '" loading="lazy"' +
-        ' onerror="this.onerror=null;this.style.display=\'none\';var s=this.parentNode.querySelector(\'.pvc-avatar-initials\');if(s)s.style.display=\'flex\';">' +
-        '<span class="pvc-avatar-initials" style="display:none">' + initials + '</span>'
-      : '<span class="pvc-avatar-initials">' + initials + '</span>';
+      ? '<img class="pvc-avatar-img" src="' + avatarSrc + '" alt="' + _esc(a.name) + '" loading="lazy"'
+        + ' onerror="this.onerror=null;this.style.display=\'none\';this.nextSibling&&(this.nextSibling.style.display=\'flex\');">' 
+        + '<span class="pvc-avatar-icon" style="display:none">' + catIcon + '</span>'
+      : '<span class="pvc-avatar-icon">' + catIcon + '</span>';
 
     /* Availability badge */
     var availHtml = isAvail
@@ -217,35 +216,10 @@
     if (misLabel) chips += '<span class="pvc-info-chip chip-missions">✅ ' + misLabel + '</span>';
     if (!rtLabel && !misLabel && isAvail) chips += '<span class="pvc-info-chip chip-urgent">🚀 Intervention rapide</span>';
 
-    /* Trust badges */
+    /* Trust badges — verified/premium only (T2) */
     var badges = '';
-
-// 🟢 Profil réel (NOUVEAU)
-if (isReal) {
-  badges += '<span class="pvc-badge-v2 pvc-badge-v2--real">✨ Profil réel</span>';
-}
-
-// ✔ Vérifié
-if (isVer) {
-  badges += '<span class="pvc-badge-v2 pvc-badge-v2--verified">✔ Vérifié Fixeo</span>';
-}
-
-// 🏅 Premium
-if (trust >= 90) {
-  badges += '<span class="pvc-badge-v2 pvc-badge-v2--premium">🏅 Premium</span>';
-}
-
-// 📦 Revendiqué
-if (isVer && isClaimed) {
-  badges += '<span class="pvc-badge-v2 pvc-badge-v2--claim">📦 Revendiqué</span>';
-}
-
-// ⚠️ À revendiquer
-if (!isVer && !isClaimed) {
-  badges += '<span class="pvc-badge-v2 pvc-badge-v2--claim">📦 Profil à revendiquer</span>';
-}
-
-
+    if (isVer)       badges += '<span class="pvc-badge-v2 pvc-badge-v2--verified">✔ Vérifié Fixeo</span>';
+    if (trust >= 90) badges += '<span class="pvc-badge-v2 pvc-badge-v2--premium">🏅 Premium</span>';
 
     /* Data attribute (for click delegation) */
     var dataAttr;
@@ -311,8 +285,8 @@ if (!isVer && !isClaimed) {
         '</div>' +
         '<div class="pvc-cta-col">' +
           '<div class="pvc-cta-row">' +
-            '<button class="pvc-btn-reserve-v2 fhp-btn-reserve" type="button">R\u00e9server en 1 clic</button>' +
-            '<button class="pvc-btn-profile-v2 fhp-btn-profile" type="button">Profil</button>' +
+            '<button class="pvc-btn-reserve-v2 fhp-btn-reserve" type="button">Réserver maintenant</button>' +
+            '<span class="pvc-profile-link fhp-btn-profile">Voir profil →</span>' +
           '</div>' +
           /* Step 6 — under-CTA trust text */
           '<div class="pvc-under-cta">Sans engagement \u2014 paiement apr\u00e8s intervention</div>' +

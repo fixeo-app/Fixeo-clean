@@ -507,7 +507,7 @@
   white-space: nowrap !important;
 }
 .pvc-city-pill {
-  display: none !important; /* remove city from meta-row to avoid crowding */
+  display: inline-flex !important; /* T3: city restored — visible but subtle */
 }
 .pvc-avail-badge {
   flex-shrink: 0 !important;
@@ -586,5 +586,72 @@
   .pvc-btn-reserve-v2 {
     padding: 10px 14px !important;
     font-size: 0.80rem !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   FIX REAL RENDERER — v5 (fhp-card targets)
+   Scope: #fixeo-homepage-vedette-grid .pvc-card
+   Tasks T6 (mobile footer) + T7 (profile link style)
+═══════════════════════════════════════════════════════════════ */
+
+/* ── T7: profile link — text link style ── */
+.pvc-profile-link {
+  display: inline-block !important;
+  color: rgba(255,255,255,0.72) !important;
+  font-size: 0.78rem !important;
+  font-weight: 500 !important;
+  text-decoration: underline !important;
+  text-decoration-color: rgba(255,255,255,0.30) !important;
+  text-underline-offset: 2px !important;
+  cursor: pointer !important;
+  user-select: none !important;
+  padding: 2px 0 !important;
+  opacity: 1 !important;
+}
+.pvc-profile-link:hover {
+  color: #fff !important;
+  text-decoration-color: rgba(255,255,255,0.65) !important;
+}
+
+/* ── T6: mobile footer — clean vertical layout ── */
+@media (max-width: 640px) {
+  .pvc-footer {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+  }
+
+  .pvc-price-block {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 2px !important;
+  }
+
+  /* Hide market range hint on mobile — too noisy in small card */
+  .pvc-price-hint {
+    display: none !important;
+  }
+
+  .pvc-cta-col {
+    width: 100% !important;
+    align-items: stretch !important;
+  }
+
+  .pvc-cta-row {
+    width: 100% !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+
+  .pvc-btn-reserve-v2 {
+    width: 100% !important;
+    text-align: center !important;
+  }
+
+  .pvc-profile-link {
+    display: block !important;
+    text-align: center !important;
+    margin-top: 4px !important;
   }
 }
