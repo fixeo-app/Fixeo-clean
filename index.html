@@ -3824,20 +3824,22 @@ window.addEventListener('load', function () {
 <script id="fixeo-hero-geo">
 (function() {
   'use strict';
-  var CITY_MAP = {
-    // Reverse-geocode city names from lat/lng bounding boxes (approximate)
-    // Used only for display label — not for search filtering
-  };
 
+  /* ── State flags (T1) ────────────────────────────────────────── */
+  var _geoRequested = false;  // has getCurrentPosition been called?
+  var _geoResolved  = false;  // did it return success?
+  var _geoFailed    = false;  // did it return error/timeout?
+  var _retryCount   = 0;      // user-triggered retries (max 1)
+
+  /* ── Helpers ─────────────────────────────────────────────────── */
   function _setLabel(text) {
     var el = document.getElementById('hero-city-label');
     if (el) el.textContent = text;
   }
 
   function _preselectCity(cityName) {
-    // Try to match to existing #qsm-select-city option
     var sel = document.getElementById('qsm-select-city');
-    if (!sel) return;
+    if (!sel) return false;
     var opts = sel.options;
     var cn = cityName.toLowerCase().trim();
     for (var i = 0; i < opts.length; i++) {
@@ -3849,104 +3851,153 @@ window.addEventListener('load', function () {
     return false;
   }
 
-  function _onSuccess(pos) {
-    try {
-      var lat = pos.coords.latitude;
-      var lng = pos.coords.longitude;
-      // Nominatim reverse geocode — zoom=14 for district-level detail
-      fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + lat + '&lon=' + lng + '&zoom=14&addressdetails=1', {
-        headers: { 'Accept-Language': 'fr' }
-      })
-      .then(function(r) { return r.json(); })
-      .then(function(data) {
-        // T1 — Safe extraction (guard against null/undefined)
-        var addr = (data && data.address) ? data.address : {};
+  /* ── District prefix cleaner (T6) ───────────────────────────── */
+  /* NOTE: curly apostrophes stored as \u2019/\u2018 Unicode escapes
+     so they are safe inside single-quoted JS string literals.       */
+  function _cleanDistrict(s) {
+    if (!s) return null;
+    var prefixes = [
+      'Arrondissement de ', 'Arrondissement d\u2019', 'Arrondissement d\u2018',
+      'Arrondissement d\'',  'Arrondissement ',
+      'Quartier ',
+      'Pr\u00e9fecture de ', 'Pr\u00e9fecture d\u2019', 'Pr\u00e9fecture d\u2018',
+      'Pr\u00e9fecture d\'',  'Pr\u00e9fecture ',
+      'Commune de ', 'Commune d\u2019', 'Commune d\'', 'Commune '
+    ];
+    for (var p = 0; p < prefixes.length; p++) {
+      if (s.indexOf(prefixes[p]) === 0) { s = s.slice(prefixes[p].length); break; }
+    }
+    s = s.trim();
+    return (s.length > 0 && s.length <= 30) ? s : null;
+  }
 
-        // T1 — City (most reliable fields first)
-        var city = addr.city || addr.town || addr.village || addr.county || null;
+  /* ── Reverse geocode + label update (T6) ────────────────────── */
+  function _reverseGeocode(lat, lng) {
+    fetch(
+      'https://nominatim.openstreetmap.org/reverse?format=json&lat=' +
+      lat + '&lon=' + lng + '&zoom=14&addressdetails=1',
+      { headers: { 'Accept-Language': 'fr' } }
+    )
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      var addr = (data && data.address) ? data.address : {};
 
-        // T1 — Raw district (neighbourhood > suburb > city_district > quarter > residential)
-        // Privacy: never read road / street / house_number
-        var rawDistrict = addr.neighbourhood || addr.suburb || addr.city_district
-                        || addr.quarter || addr.residential || null;
+      /* city */
+      var city = addr.city || addr.town || addr.village || addr.county || null;
 
-        // T4 — Debug logging (temporary — remove after confirmed working)
-        console.log('[Fixeo Geo] city:', city);
-        console.log('[Fixeo Geo] rawDistrict:', rawDistrict);
-        console.log('[Fixeo Geo] addr:', addr);
+      /* district — privacy: never read road/street/house_number */
+      var district = _cleanDistrict(
+        addr.neighbourhood || addr.suburb || addr.city_district ||
+        addr.quarter       || addr.residential || null
+      );
 
-        // T1 — Strip administrative prefixes from district label
-        // IMPORTANT: right-quote (\u2019) used as Unicode escape — safe in single-quoted strings
-        var district = rawDistrict ? (function(s) {
-          var prefixes = [
-            'Arrondissement de ', 'Arrondissement d\u2019', 'Arrondissement d\u2018',
-            'Arrondissement d\'', 'Arrondissement ',
-            'Quartier ',
-            'Pr\u00e9fecture de ', 'Pr\u00e9fecture d\u2019', 'Pr\u00e9fecture d\u2018',
-            'Pr\u00e9fecture d\'', 'Pr\u00e9fecture ',
-            'Commune de ', 'Commune d\u2019', 'Commune d\'', 'Commune '
-          ];
-          for (var p = 0; p < prefixes.length; p++) {
-            if (s.indexOf(prefixes[p]) === 0) { s = s.slice(prefixes[p].length); break; }
-          }
-          s = s.trim();
-          // Discard if too long (>30 chars = administrative noise)
-          return s.length > 0 && s.length <= 30 ? s : null;
-        })(rawDistrict) : null;
-
-        // T2 / T3 — Display: city is always sufficient; district enriches when available
-        if (city && district) {
-          _setLabel('\u{1F4CD} ' + city + ' \u2014 ' + district + ' d\u00e9tect\u00e9 \u00b7 Modifier');
-        } else if (city) {
-          _setLabel('\u{1F4CD} ' + city + ' d\u00e9tect\u00e9e \u00b7 Modifier');
-        } else {
-          _setLabel('\u{1F4CD} R\u00e9sultats autour de vous \u00b7 Modifier');
-        }
-
-        // T4 — Preselect city in dropdown (non-blocking, city only)
-        if (city) { _preselectCity(city); }
-
-        // T4 — Store cleaned district as optional helper (non-blocking, never required)
-        if (district) {
-          try { window._fixeoDetectedDistrict = district; } catch(e2) {}
-        }
-      })
-      .catch(function(err) {
-        // T5 — Fetch failed → fallback immediately (no indefinite wait)
-        console.warn('[Fixeo Geo] fetch error:', err);
+      /* T6 — display logic */
+      if (city && district) {
+        _setLabel('\u{1F4CD} ' + city + ' \u2014 ' + district + ' d\u00e9tect\u00e9 \u00b7 Modifier');
+      } else if (city) {
+        _setLabel('\u{1F4CD} ' + city + ' d\u00e9tect\u00e9e \u00b7 Modifier');
+      } else {
         _setLabel('\u{1F4CD} R\u00e9sultats autour de vous \u00b7 Modifier');
-      });
+      }
+
+      if (city) { _preselectCity(city); }
+      if (district) {
+        try { window._fixeoDetectedDistrict = district; } catch(e2) {}
+      }
+    })
+    .catch(function() {
+      /* T6 — Nominatim failed; geo position was valid → generic success label */
+      _setLabel('\u{1F4CD} R\u00e9sultats autour de vous \u00b7 Modifier');
+    });
+  }
+
+  /* ── Geolocation callbacks (T3) ─────────────────────────────── */
+  function _onSuccess(pos) {
+    _geoResolved = true;
+    _geoFailed   = false;
+    try {
+      _reverseGeocode(pos.coords.latitude, pos.coords.longitude);
     } catch(e) {
-      console.warn('[Fixeo Geo] outer error:', e);
-      _setLabel('Choisir une ville');
+      _setLabel('\u{1F4CD} R\u00e9sultats autour de vous \u00b7 Modifier');
     }
   }
 
   function _onError() {
-    _setLabel('Choisir une ville');
+    _geoFailed   = true;
+    _geoResolved = false;
+    _setLabel('\u{1F4CD} Choisir une ville');
   }
 
-  // Wire city-smart click → open city select (dropdown focus)
+  /* ── Request geolocation (T1 / T5) ──────────────────────────── */
+  function _requestGeo(showDetecting) {
+    if (!navigator || !navigator.geolocation) {
+      _setLabel('\u{1F4CD} Choisir une ville');
+      return;
+    }
+    _geoRequested = true;
+    if (showDetecting) { _setLabel('D\u00e9tection de votre ville\u2026'); }
+    navigator.geolocation.getCurrentPosition(_onSuccess, _onError, {
+      timeout: 5000,
+      maximumAge: 300000,
+      enableHighAccuracy: false
+    });
+  }
+
+  /* ── DOMContentLoaded init ───────────────────────────────────── */
   document.addEventListener('DOMContentLoaded', function() {
+
+    /* T2 — Default label: clean, non-blocking */
+    _setLabel('\u{1F4CD} Choisir une ville');
+
+    /* T5 — Permissions API check (optional; degrade safely if unavailable) */
+    function _startGeoFlow() {
+      if (navigator && navigator.permissions && navigator.permissions.query) {
+        navigator.permissions.query({ name: 'geolocation' }).then(function(result) {
+          if (result.state === 'denied') {
+            /* already denied — do not spam permission request */
+            _geoFailed = true;
+            _setLabel('\u{1F4CD} Choisir une ville');
+          } else {
+            /* 'granted' or 'prompt' — safe to request */
+            _requestGeo(true);
+          }
+          /* live state changes (user grants in settings) */
+          result.onchange = function() {
+            if (result.state === 'granted' && !_geoResolved) {
+              _requestGeo(true);
+            } else if (result.state === 'denied') {
+              _geoFailed = true;
+              _setLabel('\u{1F4CD} Choisir une ville');
+            }
+          };
+        }).catch(function() {
+          /* permissions API threw — fall back to direct request */
+          _requestGeo(true);
+        });
+      } else {
+        /* permissions API unavailable — direct request */
+        _requestGeo(true);
+      }
+    }
+
+    _startGeoFlow();
+
+    /* T4 / T5 — City smart line click handler */
     var smartEl = document.getElementById('hero-city-smart');
     if (smartEl) {
       smartEl.addEventListener('click', function() {
+        /* Always open city dropdown first */
         var sel = document.getElementById('qsm-select-city');
         if (sel) { sel.focus(); }
+
+        /* T4 — If geo unresolved and not denied: retry once */
+        if (!_geoResolved && !(_geoFailed && _retryCount >= 1)) {
+          _retryCount++;
+          _requestGeo(false); /* no detecting label on user-triggered retry */
+        }
       });
     }
 
-    // Try geolocation — fully async, no UI blocking
-    if (navigator && navigator.geolocation) {
-      _setLabel('Détection de votre ville…');
-      navigator.geolocation.getCurrentPosition(_onSuccess, _onError, {
-        timeout: 5000,
-        maximumAge: 300000,
-        enableHighAccuracy: false
-      });
-    } else {
-      _setLabel('Choisir une ville');
-    }
   });
 })();
 </script>
