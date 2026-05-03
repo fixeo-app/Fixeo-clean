@@ -235,7 +235,7 @@
 
       /* ── Header ── */
       '<div class="pvc-card-header">' +
-        '<div class="pvc-avatar' + (isVer ? ' pvc-avatar--verified' : '') + '" data-category="' + cat + '">' + avatarHtml + '</div>' +
+        '<div class="pvc-avatar' + (isVer ? ' pvc-avatar--verified' : '') + '" data-category="' + cat + '">' + avatarHtml + '<span class="pvc-avatar-badge">' + catIcon + '</span></div>' +
         '<div class="pvc-identity">' +
           '<h3 class="pvc-name">' + _esc(a.name || '—') + '</h3>' +
           '<div class="pvc-meta-row">' +
@@ -271,14 +271,14 @@
       '<div class="pvc-footer">' +
         '<div class="pvc-price-block">' +
           
-          '<div class="pvc-price-amount">' + pricing.from + '<span class="price-currency">MAD</span></div>' +
+          '<div class="pvc-price-amount">Dès ' + pricing.from + '<span class="price-currency">MAD</span></div>' +
           (function() {
             var _cat = (a.category || a.service || '').toLowerCase().trim();
             var _info = MAR_PRICES[_cat];
             if (!_info || !_info.to) return '';
             var _rec = Math.round((_info.from + _info.to) / 2);
             /* T5: removed 'Marché' row — only Fixeo recommended price */
-            return '<span class="pvc-price-from">💡 Prix conseillé Fixeo : ~' + _rec + ' MAD</span>';
+            return '<span class="pvc-price-from">💡 Estimation Fixeo : ~' + _rec + ' MAD</span>';
           })() +
         '</div>' +
         '<div class="pvc-cta-col">' +

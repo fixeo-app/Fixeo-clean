@@ -864,3 +864,102 @@
     margin-top: 8px !important;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   FINAL POLISH — v7 (micro UX + perception boost)
+   Tasks T1(CSS) T2 T3 T4 T5 T6 T7
+   Real renderer: #fixeo-homepage-vedette-grid .fhp-card
+═══════════════════════════════════════════════════════════════ */
+
+/* ── T1: Price clarity — "Dès" style ── */
+.pvc-price-amount {
+  font-size: 1.75rem !important;
+  font-weight: 900 !important;
+  color: #fff !important;
+  letter-spacing: -0.02em !important;
+  line-height: 1.1 !important;
+}
+/* "Dès" prefix (rendered inline) + currency */
+.pvc-price-amount .price-currency {
+  font-size: 0.90rem !important;
+  font-weight: 700 !important;
+  opacity: 0.80 !important;
+  margin-left: 3px !important;
+  vertical-align: middle !important;
+}
+
+/* ── T2: Avatar service badge (bottom-right icon) ── */
+/* Re-allow overflow:visible on the avatar container so badge bleeds out */
+.fhp-card .pvc-avatar {
+  overflow: visible !important;
+  border-radius: 16px !important;
+}
+/* Clip only the silhouette content, not the badge */
+.fhp-card .pvc-avatar > .pvc-avatar-silhouette,
+.fhp-card .pvc-avatar > .pvc-avatar-img {
+  border-radius: 16px !important;
+  overflow: hidden !important;
+}
+.pvc-avatar-badge {
+  position: absolute !important;
+  bottom: -4px !important;
+  right: -4px !important;
+  width: 22px !important;
+  height: 22px !important;
+  border-radius: 50% !important;
+  background: rgba(0,0,0,0.85) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 11px !important;
+  border: 1.5px solid rgba(255,255,255,0.18) !important;
+  z-index: 4 !important;
+  pointer-events: none !important;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.40) !important;
+}
+
+/* ── T3: Reduce noise — secondary signals lighter ── */
+.pvc-info-chip {
+  opacity: 0.65 !important;
+  font-size: 0.70rem !important;
+}
+.pvc-fomo {
+  opacity: 0.65 !important;
+  font-size: 0.70rem !important;
+}
+.pvc-trust-line {
+  opacity: 0.65 !important;
+  font-size: 0.70rem !important;
+}
+
+/* ── T4: Compact spacing ── */
+.pvc-card .pvc-body {
+  gap: 8px !important;
+}
+.pvc-rating-row,
+.pvc-stats {
+  margin-top: 4px !important;
+}
+
+/* ── T5: CTA premium depth ── */
+.pvc-btn-reserve-v2 {
+  box-shadow: 0 10px 30px rgba(255,77,141,0.35) !important;
+}
+.pvc-btn-reserve-v2:hover {
+  transform: translateY(-2px) scale(1.01) !important;
+  box-shadow: 0 14px 36px rgba(255,77,141,0.48) !important;
+}
+
+/* ── T6: Card hover — desktop only ── */
+@media (min-width: 641px) {
+  .pvc-card:hover {
+    transform: translateY(-6px) !important;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.50) !important;
+  }
+}
+
+/* ── T7: Subtle footer divider ── */
+.pvc-footer {
+  border-top: 1px solid rgba(255,255,255,0.05) !important;
+  padding-top: 12px !important;
+}
