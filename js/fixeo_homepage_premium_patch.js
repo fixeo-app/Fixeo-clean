@@ -205,7 +205,7 @@
                     '<span class="pvc-rating-state">Évaluation en cours</span>';
 
     /* Chips — credible state only (T2: no mission counts) */
-    var chips = '<span class="pvc-info-chip chip-trust">📋 Sélectionné par Fixeo</span>';
+    /* chips removed — info block is FOMO + trust-line only (T2) */
 
     /* Trust badges — verified/premium only (T2) */
     var badges = '';
@@ -248,8 +248,7 @@
         '<div class="pvc-rating-block">' + starsHtml + '</div>' +
       '</div>' +
 
-      /* ── Info chips ── */
-      (chips ? '<div class="pvc-info-bar">' + chips + '</div>' : '') +
+      /* info-bar removed — FOMO line below is the only chip (T2) */
 
       /* Step 1 — FOMO line after chips */
       '<div class="pvc-fomo">🔥 Demande élevée dans votre zone</div>' +
@@ -277,8 +276,7 @@
             '<button class="pvc-btn-reserve-v2 fhp-btn-reserve" type="button">Réserver maintenant</button>' +
             '<span class="pvc-profile-link fhp-btn-profile">Voir profil →</span>' +
           '</div>' +
-          /* Step 6 — under-CTA trust text */
-          '<div class="pvc-under-cta">Sans engagement \u2014 paiement apr\u00e8s intervention</div>' +
+          /* under-CTA removed — paiement covered by trust-line above (T2) */
         '</div>' +
       '</div>' +
     '</article>';

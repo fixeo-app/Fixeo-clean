@@ -1216,3 +1216,43 @@
   font-weight: 500 !important;
   box-shadow: 0 0 12px rgba(255,255,255,0.06) !important;
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   FINAL CLEAN LAUNCH — v12
+   T1: badge kill  T4: avatar badge glow  T5: orphan cleanup
+   CSS-only additions. No layout change. No regression.
+═══════════════════════════════════════════════════════════════ */
+
+/* ── T1: Final badge kill (belt-and-suspenders, last in file) ── */
+.pvc-badge-v2--real {
+  display: none !important;
+}
+.pvc-badge-v2--claim {
+  display: none !important;
+}
+
+/* ── T4: Avatar badge — enhanced depth + subtle glow ── */
+.pvc-avatar-badge {
+  width: 28px !important;
+  height: 28px !important;
+  font-size: 14px !important;
+  opacity: 1 !important;
+  box-shadow:
+    0 4px 12px rgba(0,0,0,0.50),
+    0 0 10px rgba(255,255,255,0.08) !important;
+}
+
+/* ── T5: Hide orphan under-cta if still in DOM from cached render ── */
+.pvc-under-cta {
+  display: none !important;
+}
+
+/* ── T5: Hide chip-trust if still in DOM from cached render ── */
+.pvc-info-chip.chip-trust {
+  display: none !important;
+}
+
+/* ── T5: Hide empty info-bar if no chips remain ── */
+.pvc-info-bar:empty {
+  display: none !important;
+}
