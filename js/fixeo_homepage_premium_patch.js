@@ -183,13 +183,13 @@
     var rtLabel  = _responseTimeLabel(rt);
     var misLabel = _missionsLabel(a);
 
-    /* Avatar — service icon emoji (reliable cross-browser, T1) */
+    /* Avatar — branded silhouette (T1/T3: no initials, no emoji) */
     var avatarSrc = a.avatar || a.photo || a.photo_url || '';
     var avatarHtml = avatarSrc
       ? '<img class="pvc-avatar-img" src="' + avatarSrc + '" alt="' + _esc(a.name) + '" loading="lazy"'
-        + ' onerror="this.onerror=null;this.style.display=\'none\';this.nextSibling&&(this.nextSibling.style.display=\'flex\');">' 
-        + '<span class="pvc-avatar-icon" style="display:none">' + catIcon + '</span>'
-      : '<span class="pvc-avatar-icon">' + catIcon + '</span>';
+        + ' onerror="this.onerror=null;this.style.display=\'none\';var sb=this.parentNode.querySelector(\'.pvc-avatar-silhouette\');if(sb)sb.style.display=\'block\';">' 
+        + '<span class="pvc-avatar-silhouette" style="display:none"></span>'
+      : '<span class="pvc-avatar-silhouette"></span>';
 
     /* Availability badge */
     var availHtml = isAvail
@@ -235,7 +235,7 @@
 
       /* ── Header ── */
       '<div class="pvc-card-header">' +
-        '<div class="pvc-avatar' + (isVer ? ' pvc-avatar--verified' : '') + '">' + avatarHtml + '</div>' +
+        '<div class="pvc-avatar' + (isVer ? ' pvc-avatar--verified' : '') + '" data-category="' + cat + '">' + avatarHtml + '</div>' +
         '<div class="pvc-identity">' +
           '<h3 class="pvc-name">' + _esc(a.name || '—') + '</h3>' +
           '<div class="pvc-meta-row">' +
@@ -270,17 +270,15 @@
       /* Step 2: clean vertical structure — label, amount, hint all in column */
       '<div class="pvc-footer">' +
         '<div class="pvc-price-block">' +
-          '<div class="pvc-price-from">\u00c0 partir de</div>' +
+          
           '<div class="pvc-price-amount">' + pricing.from + '<span class="price-currency">MAD</span></div>' +
           (function() {
             var _cat = (a.category || a.service || '').toLowerCase().trim();
             var _info = MAR_PRICES[_cat];
             if (!_info || !_info.to) return '';
             var _rec = Math.round((_info.from + _info.to) / 2);
-            return '<div class="pvc-price-hint">' +
-              '<div class="pvc-price-hint-market">March\u00e9\u00a0: ' + _info.label + '</div>' +
-              '<div class="pvc-price-hint-rec">\ud83d\udca1 Prix conseill\u00e9 Fixeo\u00a0: <strong>~' + _rec + '\u00a0MAD</strong></div>' +
-            '</div>';
+            /* T5: removed 'Marché' row — only Fixeo recommended price */
+            return '<span class="pvc-price-from">💡 Prix conseillé Fixeo : ~' + _rec + ' MAD</span>';
           })() +
         '</div>' +
         '<div class="pvc-cta-col">' +

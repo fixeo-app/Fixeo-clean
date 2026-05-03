@@ -655,3 +655,212 @@
     margin-top: 4px !important;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   UBER PREMIUM PASS — v6
+   Tasks T2 (silhouette system) + T3 (category gradients)
+         T6 (price CSS) + T7 (profile link) + T8 (mobile footer)
+   Scoped to real renderer: #fixeo-homepage-vedette-grid .fhp-card
+   Loads LAST → wins all specificity ties
+═══════════════════════════════════════════════════════════════ */
+
+/* ── T2: Silhouette system — pvc-avatar-silhouette pseudo-elements ── */
+
+/* Kill emoji/icon approach — silhouette replaces it */
+.fhp-card .pvc-avatar-icon {
+  display: none !important;
+}
+
+/* Silhouette span itself */
+.pvc-avatar-silhouette {
+  display: block !important;
+  position: relative !important;
+  width: 62% !important;
+  height: 62% !important;
+  pointer-events: none !important;
+}
+
+/* Head circle */
+.pvc-avatar-silhouette::before {
+  content: "" !important;
+  position: absolute !important;
+  top: 8% !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: 38% !important;
+  height: 38% !important;
+  border-radius: 50% !important;
+  background: rgba(255,255,255,0.90) !important;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.18) !important;
+}
+
+/* Body/shoulders */
+.pvc-avatar-silhouette::after {
+  content: "" !important;
+  position: absolute !important;
+  bottom: 4% !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: 74% !important;
+  height: 42% !important;
+  border-radius: 999px 999px 22px 22px !important;
+  background: rgba(255,255,255,0.78) !important;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.16) !important;
+}
+
+/* Avatar container base — override overflow:visible so silhouette is clipped cleanly */
+.fhp-card .pvc-avatar {
+  overflow: hidden !important;
+  border-radius: 16px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative !important;
+}
+
+/* ── T3: Category-specific gradients on .pvc-avatar[data-category] ── */
+
+.pvc-avatar[data-category="plomberie"] {
+  background: linear-gradient(135deg, #0ea5e9, #2563eb) !important;
+}
+.pvc-avatar[data-category="electricite"] {
+  background: linear-gradient(135deg, #facc15, #f97316) !important;
+}
+.pvc-avatar[data-category="climatisation"] {
+  background: linear-gradient(135deg, #22d3ee, #06b6d4) !important;
+}
+.pvc-avatar[data-category="peinture"] {
+  background: linear-gradient(135deg, #f472b6, #ec4899) !important;
+}
+.pvc-avatar[data-category="nettoyage"] {
+  background: linear-gradient(135deg, #34d399, #10b981) !important;
+}
+.pvc-avatar[data-category="menuiserie"] {
+  background: linear-gradient(135deg, #a16207, #78350f) !important;
+}
+.pvc-avatar[data-category="serrurerie"] {
+  background: linear-gradient(135deg, #f59e0b, #d97706) !important;
+}
+.pvc-avatar[data-category="maconnerie"] {
+  background: linear-gradient(135deg, #6b7280, #374151) !important;
+}
+.pvc-avatar[data-category="jardinage"] {
+  background: linear-gradient(135deg, #84cc16, #16a34a) !important;
+}
+.pvc-avatar[data-category="bricolage"] {
+  background: linear-gradient(135deg, #f97316, #ea580c) !important;
+}
+.pvc-avatar[data-category="demenagement"] {
+  background: linear-gradient(135deg, #c084fc, #7c3aed) !important;
+}
+.pvc-avatar[data-category="carrelage"] {
+  background: linear-gradient(135deg, #94a3b8, #475569) !important;
+}
+.pvc-avatar[data-category="toiture"] {
+  background: linear-gradient(135deg, #ef4444, #991b1b) !important;
+}
+.pvc-avatar[data-category="vitrerie"] {
+  background: linear-gradient(135deg, #38bdf8, #0369a1) !important;
+}
+.pvc-avatar[data-category="chauffage"] {
+  background: linear-gradient(135deg, #fb923c, #dc2626) !important;
+}
+
+/* ── T6: Price CSS — dominant amount + subtle Fixeo hint ── */
+
+.pvc-price-amount {
+  font-size: 1.75rem !important;
+  font-weight: 900 !important;
+  color: #fff !important;
+  letter-spacing: -0.03em !important;
+  line-height: 1.1 !important;
+}
+
+.pvc-price-from {
+  color: #ffd166 !important;
+  font-weight: 700 !important;
+  font-size: 0.76rem !important;
+  opacity: 1 !important;
+  margin-top: 4px !important;
+  display: block !important;
+}
+
+.pvc-price-hint {
+  color: rgba(255,255,255,0.58) !important;
+  font-size: 0.72rem !important;
+  margin-top: 2px !important;
+}
+
+/* Hide the old nested hint sub-divs (only the simplified span is now rendered) */
+.pvc-price-hint-market {
+  display: none !important;
+}
+.pvc-price-hint-rec {
+  display: none !important;
+}
+
+/* ── T7: Profile link — low-priority text link ── */
+
+.pvc-profile-link {
+  display: inline-block !important;
+  color: rgba(255,255,255,0.62) !important;
+  font-size: 0.78rem !important;
+  font-weight: 500 !important;
+  text-decoration: underline !important;
+  text-decoration-color: rgba(255,255,255,0.28) !important;
+  text-underline-offset: 2px !important;
+  cursor: pointer !important;
+  user-select: none !important;
+  padding: 2px 4px !important;
+  opacity: 1 !important;
+  background: none !important;
+  border: none !important;
+}
+.pvc-profile-link:hover {
+  color: #fff !important;
+  text-decoration-color: rgba(255,255,255,0.65) !important;
+}
+
+/* ── T8: Mobile footer — clean vertical layout ── */
+
+@media (max-width: 640px) {
+  .pvc-footer {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+  }
+
+  .pvc-price-block {
+    width: 100% !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 3px !important;
+  }
+
+  /* Already display:none globally — reinforce for mobile */
+  .pvc-price-hint {
+    display: none !important;
+  }
+
+  .pvc-cta-col {
+    width: 100% !important;
+    align-items: stretch !important;
+  }
+
+  .pvc-cta-row {
+    width: 100% !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+
+  .pvc-btn-reserve-v2 {
+    width: 100% !important;
+    text-align: center !important;
+  }
+
+  .pvc-profile-link {
+    display: block !important;
+    text-align: center !important;
+    margin-top: 8px !important;
+  }
+}
