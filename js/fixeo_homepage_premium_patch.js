@@ -180,8 +180,9 @@
     var isAvail  = avail === 'available' || a.available;
     var isToday  = avail === 'available_today';
     var pricing  = _getPricing(a);
-    var rtLabel  = _responseTimeLabel(rt);
-    var misLabel = _missionsLabel(a);
+    /* rtLabel/misLabel unused since T2 chip rewrite — kept for future use */
+    var rtLabel  = null;
+    var misLabel = null;
 
     /* Avatar — branded silhouette (T1/T3: no initials, no emoji) */
     var avatarSrc = a.avatar || a.photo || a.photo_url || '';
@@ -193,28 +194,18 @@
 
     /* Availability badge */
     var availHtml = isAvail
-      ? '<span class="pvc-avail-badge pvc-avail-badge--on">🟢 Disponible maintenant</span>'
+      ? '<span class="pvc-avail-badge pvc-avail-badge--on">🟢 Réponse rapide</span>'
       : isToday
-        ? '<span class="pvc-avail-badge pvc-avail-badge--today">🟡 Aujourd\'hui</span>'
+        ? '<span class="pvc-avail-badge pvc-avail-badge--today">🟡 Disponible aujourd\'hui</span>'
         : '<span class="pvc-avail-badge pvc-avail-badge--off">Sur RDV</span>';
 
     /* Rating stars */
-    var starsHtml;
-    if (rating > 0) {
-      var s = '', rv = Math.round(rating * 2) / 2;
-      for (var i = 1; i <= 5; i++) s += i <= rv ? '★' : (rv >= i - 0.5 ? '½' : '☆');
-      starsHtml = '<span class="pvc-stars-v2">' + s + '</span>' +
-                  '<span class="pvc-rating-num">' + rating.toFixed(1) + '</span>' +
-                  (reviews > 0 ? '<span class="pvc-reviews-count">(' + reviews + ' avis)</span>' : '');
-    } else {
-      starsHtml = '<span class="pvc-new-label">✨ Nouveau</span>';
-    }
+    /* Rating — always 5 stars + credible state (T1: no fake numbers) */
+    var starsHtml = '<span class="pvc-stars-v2">★★★★★</span>' +
+                    '<span class="pvc-rating-state">Évaluation en cours</span>';
 
-    /* Stat chips: response time + missions */
-    var chips = '';
-    if (rtLabel) chips += '<span class="pvc-info-chip chip-fast">⚡ ' + rtLabel + '</span>';
-    if (misLabel) chips += '<span class="pvc-info-chip chip-missions">✅ ' + misLabel + '</span>';
-    if (!rtLabel && !misLabel && isAvail) chips += '<span class="pvc-info-chip chip-urgent">🚀 Intervention rapide</span>';
+    /* Chips — credible state only (T2: no mission counts) */
+    var chips = '<span class="pvc-info-chip chip-trust">📋 Sélectionné par Fixeo</span>';
 
     /* Trust badges — verified/premium only (T2) */
     var badges = '';
@@ -261,7 +252,7 @@
       (chips ? '<div class="pvc-info-bar">' + chips + '</div>' : '') +
 
       /* Step 1 — FOMO line after chips */
-      '<div class="pvc-fomo">\ud83d\udd25 23 r\u00e9servations aujourd\'hui dans votre zone</div>' +
+      '<div class="pvc-fomo">🔥 Demande élevée dans votre zone</div>' +
 
       /* Step 3 — Trust line after stats */
       '<div class="pvc-trust-line">\u2714\ufe0f Artisan v\u00e9rifi\u00e9 \u2022 Paiement apr\u00e8s intervention</div>' +

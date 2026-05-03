@@ -1155,3 +1155,25 @@
     transform: none !important;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   LAUNCH CLEAN UI — v10 (minimal CSS for new template classes)
+   Supports T1 (pvc-rating-state) + T2 (chip-trust)
+   No layout changes. No structural changes.
+═══════════════════════════════════════════════════════════════ */
+
+/* T1: Rating state label — replaces numeric rating/reviews */
+.pvc-rating-state {
+  font-size: 0.72rem !important;
+  color: rgba(255,255,255,0.55) !important;
+  font-style: italic !important;
+  font-weight: 400 !important;
+  margin-left: 6px !important;
+}
+
+/* T2: Trust chip — replaces mission count */
+.pvc-info-chip.chip-trust {
+  background: rgba(255,255,255,0.07) !important;
+  color: rgba(255,255,255,0.72) !important;
+  border: 1px solid rgba(255,255,255,0.10) !important;
+}
