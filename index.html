@@ -57,7 +57,7 @@
 <link rel="stylesheet" href="css/fixeo-header-global.css?v=50a38b9"/>
 <link rel="stylesheet" href="css/hero-premium-upgrade.css?v=50a38b9"/>
 <link rel="stylesheet" href="css/hero-ux-fixes.css?v=50a38b9"/>
-  <link rel="stylesheet" href="css/hero-conversion-boost.css?v=hcb7"/>
+  <link rel="stylesheet" href="css/hero-conversion-boost.css?v=hcb8"/>
 <link rel="stylesheet" href="css/how-it-works-premium.css?v=50a38b9"/>
 <link rel="stylesheet" href="css/services-premium.css?v=svcv7"/>
   <link rel="stylesheet" href="css/why-fixeo.css?v=svcv5"/>
@@ -2384,6 +2384,16 @@ section#home.hero.hero-section {
 
     <!-- trust block removed: no fake metrics (T1) -->
 
+    <!-- T4 V3: Secondary text link — discreet, non-competing -->
+    <div class="hero-secondary-link-wrap">
+      <button class="hero-secondary-link"
+              type="button"
+              data-open-request-form="true"
+              data-request-mode="marketplace"
+              aria-label="Publier une demande gratuitement">
+        Ou publier une demande gratuitement
+      </button>
+    </div>
 
   </div><!-- /hero-content -->
 </section>
@@ -3851,14 +3861,14 @@ window.addEventListener('load', function () {
       .then(function(data) {
         var city = (data.address && (data.address.city || data.address.town || data.address.village || data.address.county)) || null;
         if (city) {
-          _setLabel('✅ Résultats autour de ' + city);
+          _setLabel('📍 ' + city + ' détectée · Modifier');
           _preselectCity(city);
         } else {
-          _setLabel('✅ Résultats autour de vous');
+          _setLabel('📍 Résultats autour de vous · Modifier');
         }
       })
       .catch(function() {
-        _setLabel('✅ Résultats autour de vous');
+        _setLabel('📍 Résultats autour de vous · Modifier');
       });
     } catch(e) {
       _setLabel('Choisir une ville');

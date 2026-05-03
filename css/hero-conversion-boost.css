@@ -408,3 +408,111 @@
   display: none !important;
 }
 
+
+/* ═══════════════════════════════════════════════════════════════
+   HERO CONVERSION V3 — Single CTA / Clean Flow
+   T2: one CTA  T3: hide post-strip  T4: secondary link
+   T6: mobile stack  T7: hierarchy  T8: clutter removal
+   Appended last → wins all specificity ties
+═══════════════════════════════════════════════════════════════ */
+
+/* ── T3: Hide hero-post-strip (button overload + artisan section) ── */
+.hero-post-strip {
+  display: none !important;
+}
+
+/* ── T4: Secondary text link — inside hero-content ── */
+.hero-secondary-link-wrap {
+  margin-top: 12px !important;
+  text-align: center !important;
+  width: 100% !important;
+}
+.hero-secondary-link {
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
+  font-size: 0.88rem !important;
+  color: rgba(255,255,255,0.60) !important;
+  cursor: pointer !important;
+  text-decoration: underline !important;
+  text-underline-offset: 3px !important;
+  text-decoration-color: rgba(255,255,255,0.25) !important;
+  transition: color 0.2s, text-decoration-color 0.2s !important;
+  letter-spacing: 0.01em !important;
+}
+.hero-secondary-link:hover {
+  color: rgba(255,255,255,0.88) !important;
+  text-decoration-color: rgba(255,255,255,0.55) !important;
+}
+
+/* ── T5: City label "Modifier" hint styling ── */
+.hero-city-smart {
+  /* already defined in V2 — augment only */
+  position: relative !important;
+}
+/* "· Modifier" visual hint — city line acts as tap target */
+.hero-city-smart::after {
+  content: '' !important; /* label already contains "· Modifier" text */
+  pointer-events: none !important;
+}
+
+/* ── T7: Visual hierarchy — reduce weight below CTA ── */
+.hero-city-smart {
+  opacity: 0.82 !important;
+  font-size: 0.82rem !important;
+}
+.hero-city-smart:hover {
+  opacity: 1 !important;
+}
+.hero-secondary-link-wrap {
+  opacity: 0.85 !important;
+}
+
+/* ── T2: CTA is the ONLY dominant button in hero ── */
+/* Ensure no other button in #home competes */
+#home .hero-content button:not(.hero-secondary-link) {
+  /* qsm-btn-search is rendered INSIDE #hero-quick-search, not direct child — safe */
+}
+
+/* ── T8: Remove redundant spacing / noise under hero ── */
+.mobile-social-proof {
+  display: none !important;
+}
+.hero-post-strip + .section-divider {
+  display: none !important;
+}
+
+/* ── T6: Mobile vertical stack — augment V2 rules ── */
+@media (max-width: 768px) {
+  .hero-secondary-link-wrap {
+    margin-top: 14px !important;
+    text-align: center !important;
+  }
+  .hero-secondary-link {
+    font-size: 0.84rem !important;
+    display: inline-block !important;
+    padding: 4px 0 !important;
+  }
+  .hero-city-smart {
+    margin-top: 10px !important;
+    font-size: 0.80rem !important;
+  }
+  /* Ensure search form stacks vertically */
+  .qsm-bar-card {
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+  .qsm-seg-divider {
+    display: none !important;
+  }
+  .qsm-segment {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+  .qsm-btn-search,
+  #qsm-btn-search {
+    width: 100% !important;
+    margin-top: 4px !important;
+  }
+}
+
