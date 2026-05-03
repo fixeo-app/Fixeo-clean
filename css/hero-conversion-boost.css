@@ -516,3 +516,93 @@
   }
 }
 
+
+/* ═══════════════════════════════════════════════════════════════
+   HERO V3 — ORDER FIX (critical)
+   Root cause: .hero-city-smart and .hero-secondary-link-wrap
+   had order:0 (default) → rendered BEFORE hero-title (order:1)
+   Fix: explicit order values — appended last → guaranteed win
+═══════════════════════════════════════════════════════════════
+
+   FINAL FLEX ORDER MAP for .hero-content:
+   order:1  → .hero-title            (headline, dominant)
+   order:2  → .hero-subtitle         (subtext)
+   order:3  → #hero-quick-search     (search bar = first interactive)
+   order:4  → .hero-city-smart       (smart city, below search)
+   order:5  → .hero-secondary-link-wrap (discreet secondary action)
+   order:9+ → all hidden/legacy elements
+
+═══════════════════════════════════════════════════════════════ */
+
+/* ── T1/T2/T5: Enforce strict visual order ── */
+#home .hero-content > .hero-title {
+  order: 1 !important;
+}
+#home .hero-content > .hero-subtitle,
+#home .hero-content > p.hero-subtitle {
+  order: 2 !important;
+}
+#home .hero-content > #hero-quick-search,
+#home .hero-content > .search-box {
+  order: 3 !important;
+}
+#home .hero-content > .hero-city-smart,
+#home .hero-content > #hero-city-smart {
+  order: 4 !important;
+  margin-top: 8px !important;
+}
+#home .hero-content > .hero-secondary-link-wrap {
+  order: 5 !important;
+  margin-top: 10px !important;
+}
+
+/* ── T7: Spacing guide ── */
+#home .hero-content > .hero-title {
+  margin-bottom: 0 !important;
+}
+#home .hero-content > .hero-subtitle {
+  margin-top: 12px !important;
+  margin-bottom: 0 !important;
+}
+#home .hero-content > #hero-quick-search,
+#home .hero-content > .search-box {
+  margin-top: 24px !important;
+}
+
+/* ── T2: Smart city — below search, aligned left (desktop) ── */
+#home .hero-content > .hero-city-smart {
+  opacity: 0.70 !important;
+  font-size: 0.82rem !important;
+  width: fit-content !important;
+  text-align: left !important;
+  align-self: flex-start !important;
+}
+
+/* ── T3: Secondary link — lowest priority, centered ── */
+#home .hero-content > .hero-secondary-link-wrap {
+  opacity: 0.60 !important;
+  text-align: center !important;
+  width: 100% !important;
+  align-self: center !important;
+}
+
+/* ── T6: Mobile — centre everything, full-width city ── */
+@media (max-width: 768px) {
+  #home .hero-content > .hero-city-smart {
+    width: 100% !important;
+    align-self: stretch !important;
+    text-align: center !important;
+    justify-content: center !important;
+  }
+  #home .hero-content > .hero-secondary-link-wrap {
+    margin-top: 12px !important;
+  }
+}
+
+/* ── Belt-and-suspenders: push ALL legacy/hidden elements out ── */
+#home .hero-content > .hcb-fomo,
+#home .hero-content > .hcb-trust-block,
+#home .hero-content > .marketplace-secondary-entry,
+#home .hero-content > .hcb-artisan-block {
+  order: 99 !important;
+}
