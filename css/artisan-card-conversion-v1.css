@@ -1058,3 +1058,100 @@
   transform: scale(0.99) !important;
   transition: transform 0.08s ease !important;
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   WOW LEVEL POLISH — v9 (Apple / Stripe / Uber perception)
+   CSS-only. No JS. No HTML. No other sections.
+   Real renderer: #fixeo-homepage-vedette-grid .fhp-card
+   All rules appended — loads last → wins all specificity ties
+═══════════════════════════════════════════════════════════════ */
+
+/* ── T1: CTA magnet effect ── */
+.pvc-btn-reserve-v2 {
+  box-shadow:
+    0 14px 38px rgba(255,77,141,0.45),
+    0 0 22px rgba(168,85,247,0.32) !important;
+}
+.pvc-btn-reserve-v2:hover {
+  transform: translateY(-2px) scale(1.012) !important;
+  box-shadow:
+    0 20px 52px rgba(255,77,141,0.58),
+    0 0 34px rgba(168,85,247,0.46) !important;
+}
+
+/* ── T2: Price impact ── */
+.pvc-price-amount {
+  font-size: 1.85rem !important;
+  font-weight: 950 !important;
+  letter-spacing: -0.04em !important;
+}
+.pvc-price-from {
+  font-size: 0.78rem !important;
+  opacity: 1 !important;
+}
+
+/* ── T3: Avatar signature depth ── */
+.fhp-card .pvc-avatar {
+  box-shadow:
+    0 0 0 2px rgba(255,255,255,0.05),
+    0 12px 32px rgba(0,0,0,0.52),
+    0 0 34px rgba(255,255,255,0.08) !important;
+}
+.pvc-avatar-badge {
+  box-shadow:
+    0 6px 16px rgba(0,0,0,0.35),
+    0 0 12px rgba(255,255,255,0.10) !important;
+}
+
+/* ── T4: Availability boost ── */
+.pvc-avail-badge {
+  font-weight: 700 !important;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.08),
+    0 0 14px rgba(0,255,120,0.24) !important;
+}
+
+/* ── T5: Card glass depth ── */
+.pvc-card {
+  background:
+    radial-gradient(circle at 18% 0%, rgba(255,255,255,0.055), transparent 34%),
+    linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.018)) !important;
+  border: 1px solid rgba(255,255,255,0.095) !important;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease,
+    background 0.25s ease !important;
+}
+@media (min-width: 641px) {
+  .pvc-card:hover {
+    transform: translateY(-8px) scale(1.012) !important;
+    border-color: rgba(255,255,255,0.16) !important;
+    box-shadow:
+      0 32px 74px rgba(0,0,0,0.55),
+      0 0 48px rgba(225,48,108,0.13) !important;
+  }
+}
+
+/* ── T6: Tap feedback ── */
+.pvc-card:active {
+  transform: scale(0.99) !important;
+}
+.pvc-btn-reserve-v2:active {
+  transform: scale(0.985) !important;
+}
+
+/* ── T7: Mobile safety ── */
+@media (max-width: 640px) {
+  .pvc-price-amount {
+    font-size: 1.72rem !important;
+  }
+  .pvc-btn-reserve-v2 {
+    box-shadow:
+      0 12px 34px rgba(255,77,141,0.42),
+      0 0 20px rgba(168,85,247,0.28) !important;
+  }
+  .pvc-card:hover {
+    transform: none !important;
+  }
+}
