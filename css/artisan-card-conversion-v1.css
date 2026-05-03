@@ -1177,3 +1177,42 @@
   color: rgba(255,255,255,0.72) !important;
   border: 1px solid rgba(255,255,255,0.10) !important;
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   PRE-LAUNCH MICRO-FIXES — v11
+   T1: reinforce badge kill  T2: CTA stretch  T3: chip-trust boost
+   CSS-only. No JS. No HTML. No layout change. No regression.
+═══════════════════════════════════════════════════════════════ */
+
+/* ── T1: belt-and-suspenders — Profil réel badge stays hidden ── */
+.pvc-badge-v2--real,
+.pvc-badge-v2--claim {
+  display: none !important;
+}
+
+/* ── T2: CTA full-width + column on ALL screens (global, no @media) ── */
+.pvc-cta-row {
+  flex-direction: column !important;
+  align-items: stretch !important;
+  gap: 8px !important;
+  width: 100% !important;
+}
+.pvc-btn-reserve-v2 {
+  width: 100% !important;
+  text-align: center !important;
+  display: block !important;
+}
+.pvc-profile-link {
+  display: block !important;
+  text-align: center !important;
+  margin-top: 6px !important;
+}
+
+/* ── T3: "Sélectionné par Fixeo" chip — more visible trust signal ── */
+.pvc-info-chip.chip-trust {
+  background: rgba(255,255,255,0.10) !important;
+  border: 1px solid rgba(255,255,255,0.12) !important;
+  color: rgba(255,255,255,0.85) !important;
+  font-weight: 500 !important;
+  box-shadow: 0 0 12px rgba(255,255,255,0.06) !important;
+}
