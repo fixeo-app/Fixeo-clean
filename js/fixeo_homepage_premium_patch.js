@@ -173,7 +173,6 @@
     var reviews  = parseInt(a.reviewCount || a.reviews || a.review_count || 0, 10);
     var trust    = parseInt(a.trustScore || 0, 10);
     var rt       = parseInt(a.responseTime || 999, 10);
-    var isReal   = !a.claimable && !a._isSeed;
     var isVer    = !!(a.verified || a.certified || trust >= 85);
     var isClaimed= !!(a.claimed);
     var avail    = (a.availability || '').toLowerCase();
@@ -218,7 +217,7 @@
       dataAttr = ' data-artisan=\'' + JSON.stringify(a).replace(/'/g, '&#39;') + '\'';
     } catch(_) { dataAttr = ''; }
 
-    return '<article class="pvc-card fhp-card' + (isReal ? ' pvc-card--real' : '') + '"' +
+    return '<article class="pvc-card fhp-card"' +
       ' data-artisan-id="' + a.id + '"' + dataAttr +
       ' tabindex="0" role="button"' +
       ' aria-label="' + _esc(a.name) + ', ' + catLbl + '"' +
