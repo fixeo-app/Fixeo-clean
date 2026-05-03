@@ -3853,21 +3853,41 @@ window.addEventListener('load', function () {
     try {
       var lat = pos.coords.latitude;
       var lng = pos.coords.longitude;
-      // Use Nominatim reverse geocode (lightweight, no key)
-      fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + lat + '&lon=' + lng + '&zoom=10&addressdetails=1', {
+      // Nominatim reverse geocode — zoom=14 for district-level detail
+      fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + lat + '&lon=' + lng + '&zoom=14&addressdetails=1', {
         headers: { 'Accept-Language': 'fr' }
       })
       .then(function(r) { return r.json(); })
       .then(function(data) {
-        var city = (data.address && (data.address.city || data.address.town || data.address.village || data.address.county)) || null;
-        if (city) {
+        var addr = (data && data.address) || {};
+
+        // T1 — Extract city (most reliable first)
+        var city = addr.city || addr.town || addr.village || addr.county || null;
+
+        // T1 — Extract district (neighbourhood > suburb > city_district > quarter > residential)
+        // T3 — Never expose road, street, house number
+        var district = addr.neighbourhood || addr.suburb || addr.city_district
+                     || addr.quarter || addr.residential || null;
+
+        // T2 — Display logic
+        if (city && district) {
+          _setLabel('📍 ' + city + ' — ' + district + ' détecté · Modifier');
+        } else if (city) {
           _setLabel('📍 ' + city + ' détectée · Modifier');
-          _preselectCity(city);
         } else {
           _setLabel('📍 Résultats autour de vous · Modifier');
         }
+
+        // T4 — Preselect city in dropdown (non-blocking, city only)
+        if (city) { _preselectCity(city); }
+
+        // T4 — Store district as optional helper (non-blocking, never required)
+        if (district) {
+          try { window._fixeoDetectedDistrict = district; } catch(e2) {}
+        }
       })
       .catch(function() {
+        // T2 / T6 — Fail silently, no console error
         _setLabel('📍 Résultats autour de vous · Modifier');
       });
     } catch(e) {
