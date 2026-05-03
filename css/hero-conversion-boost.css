@@ -606,3 +606,41 @@
 #home .hero-content > .hcb-artisan-block {
   order: 99 !important;
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   HERO GEO FINAL POLISH — v10
+   T2: geo block centred under search  T3: spacing
+   Appended last → guaranteed win
+═══════════════════════════════════════════════════════════════ */
+
+/* ── T2: Centre geo line under search bar ── */
+#home .hero-content > .hero-city-smart,
+#home .hero-content > #hero-city-smart {
+  margin: 8px auto 0 !important;
+  max-width: min(90vw, 920px) !important;
+  width: auto !important;
+  align-self: center !important;
+  text-align: center !important;
+  justify-content: center !important;
+}
+
+/* ── T3: Spacing: search→geo 8px already set; geo→secondary 10px ── */
+#home .hero-content > .hero-secondary-link-wrap {
+  margin-top: 10px !important;
+}
+
+/* ── T2: Mobile — centred, max 90vw, text wraps ── */
+@media (max-width: 768px) {
+  #home .hero-content > .hero-city-smart,
+  #home .hero-content > #hero-city-smart {
+    max-width: 90vw !important;
+    width: 100% !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+  }
+  #hero-city-label {
+    white-space: normal !important;
+    word-break: break-word !important;
+    max-width: 100% !important;
+  }
+}

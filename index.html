@@ -57,7 +57,7 @@
 <link rel="stylesheet" href="css/fixeo-header-global.css?v=50a38b9"/>
 <link rel="stylesheet" href="css/hero-premium-upgrade.css?v=50a38b9"/>
 <link rel="stylesheet" href="css/hero-ux-fixes.css?v=50a38b9"/>
-  <link rel="stylesheet" href="css/hero-conversion-boost.css?v=hcb9"/>
+  <link rel="stylesheet" href="css/hero-conversion-boost.css?v=hcb10"/>
 <link rel="stylesheet" href="css/how-it-works-premium.css?v=50a38b9"/>
 <link rel="stylesheet" href="css/services-premium.css?v=svcv7"/>
   <link rel="stylesheet" href="css/why-fixeo.css?v=svcv5"/>
@@ -3866,8 +3866,25 @@ window.addEventListener('load', function () {
 
         // T1 — Extract district (neighbourhood > suburb > city_district > quarter > residential)
         // T3 — Never expose road, street, house number
-        var district = addr.neighbourhood || addr.suburb || addr.city_district
-                     || addr.quarter || addr.residential || null;
+        var rawDistrict = addr.neighbourhood || addr.suburb || addr.city_district
+                        || addr.quarter || addr.residential || null;
+
+        // T1 — Clean administrative prefixes from district label
+        var district = rawDistrict ? (function(s) {
+          var prefixes = [
+            'Arrondissement de ', "Arrondissement d’", "Arrondissement d‘",
+            'Arrondissement d'', 'Arrondissement ',
+            'Quartier ', 'Préfecture de ', "Préfecture d’",
+            "Préfecture d‘", 'Préfecture d'', 'Préfecture ',
+            'Commune de ', 'Commune d'', 'Commune '
+          ];
+          for (var p = 0; p < prefixes.length; p++) {
+            if (s.indexOf(prefixes[p]) === 0) { s = s.slice(prefixes[p].length); break; }
+          }
+          s = s.trim();
+          // Discard if still too long (>30 chars = likely administrative noise)
+          return s.length <= 30 ? s : null;
+        })(rawDistrict) : null;
 
         // T2 — Display logic
         if (city && district) {
@@ -3881,7 +3898,7 @@ window.addEventListener('load', function () {
         // T4 — Preselect city in dropdown (non-blocking, city only)
         if (city) { _preselectCity(city); }
 
-        // T4 — Store district as optional helper (non-blocking, never required)
+        // T4 — Store cleaned district as optional helper (non-blocking, never required)
         if (district) {
           try { window._fixeoDetectedDistrict = district; } catch(e2) {}
         }
