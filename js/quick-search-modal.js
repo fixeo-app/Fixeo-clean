@@ -239,12 +239,12 @@
       <div class="qsm-segment qsm-segment-service" data-qsm-focusable="service">
         <span class="qsm-seg-icon">🔍</span>
         <div class="qsm-seg-body">
-          <span class="qsm-seg-label">🛠 Service ou besoin</span>
+          <!-- service label removed for cleaner UX (T3) -->
           <input
             type="text"
             id="qsm-input-nlp"
             class="qsm-seg-input"
-            placeholder="D\u00e9crivez votre probl\u00e8me (fuite, panne, clim\u2026)"
+            placeholder="D\u00e9crivez votre besoin (plomberie, climatisation, panne...)"
             autocomplete="off"
             spellcheck="false"
             maxlength="80"
@@ -270,7 +270,7 @@
       <div class="qsm-segment qsm-segment-city" data-qsm-focusable="city">
         <span class="qsm-seg-icon">🌆</span>
         <div class="qsm-seg-body">
-          <span class="qsm-seg-label">🌆 Ville</span>
+          <!-- city label removed for cleaner UX (T3) -->
           <select id="qsm-select-city" class="qsm-seg-select" aria-label="Ville">
             <option value="">Choisir une ville</option>
             ${cityOpts}
@@ -294,19 +294,7 @@
       ${suggestionTerms.map(term => `<button type="button" class="qsm-suggestion-chip" data-qsm-suggestion="${_esc(term)}">${_esc(term)}</button>`).join('')}
     </div>
 
-    <!-- Quick filters -->
-    <div class="qsm-filters-row">
-      <span class="qsm-filters-label">Filtres rapides :</span>
-      <button class="qsm-qfilter${st.filters.availableNow ? ' active' : ''}" data-filter="availableNow" aria-pressed="${st.filters.availableNow}">
-        <span class="qsm-qdot"></span>🟢 Disponible maintenant
-      </button>
-      <button class="qsm-qfilter${st.filters.topScore ? ' active' : ''}" data-filter="topScore" aria-pressed="${st.filters.topScore}">
-        <span class="qsm-qdot"></span>⭐ Score &gt; 85%
-      </button>
-      <button class="qsm-qfilter${st.filters.fastResponse ? ' active' : ''}" data-filter="fastResponse" aria-pressed="${st.filters.fastResponse}">
-        <span class="qsm-qdot"></span>⚡ Réponse &lt; 30 min
-      </button>
-    </div>
+    <!-- Quick filters removed: no fake metrics (T1) -->
   </div><!-- /.qsm-search-section -->
 
 </div>`;

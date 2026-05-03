@@ -57,7 +57,7 @@
 <link rel="stylesheet" href="css/fixeo-header-global.css?v=50a38b9"/>
 <link rel="stylesheet" href="css/hero-premium-upgrade.css?v=50a38b9"/>
 <link rel="stylesheet" href="css/hero-ux-fixes.css?v=50a38b9"/>
-  <link rel="stylesheet" href="css/hero-conversion-boost.css?v=hcb6"/>
+  <link rel="stylesheet" href="css/hero-conversion-boost.css?v=hcb7"/>
 <link rel="stylesheet" href="css/how-it-works-premium.css?v=50a38b9"/>
 <link rel="stylesheet" href="css/services-premium.css?v=svcv7"/>
   <link rel="stylesheet" href="css/why-fixeo.css?v=svcv5"/>
@@ -2360,31 +2360,29 @@ section#home.hero.hero-section {
   <!-- Hero content -->
   <div class="hero-content">
 
-    <!-- H1 — Step 1: upgraded headline -->
+    <!-- H1 — V2: clean, direct headline -->
     <h1 class="hero-title">
-      <span data-i18n="hero_title_1">Un artisan v&#233;rifi&#233; disponible maintenant</span><br/>
-      <span data-i18n="hero_title_2">pr&#232;s de chez vous</span>
+      <span data-i18n="hero_title_1">Un artisan chez vous</span><br/>
+      <span data-i18n="hero_title_2">en quelques minutes</span>
     </h1>
 
     <!-- Step 2: upgraded subtext -->
     <p class="hero-subtitle" data-i18n="hero_subtitle">
-      +700 artisans v&#233;rifi&#233;s &#8226; Intervention rapide &#8226; Paiement apr&#232;s service
+      Intervention rapide &#8226; Paiement apr&#232;s intervention &#8226; Sans engagement
     </p>
 
     <!-- Recherche rapide inline dans le hero -->
     <div id="hero-quick-search" class="search-box" role="search" aria-label="Recherche rapide d'artisans"></div>
 
-    <!-- Step 6: FOMO line — directly under main CTA -->
-    <div class="hcb-fomo" aria-live="polite">&#x1F525; 23 demandes en cours dans votre zone</div>
-
-    <!-- Step 5: trust block below FOMO -->
-    <div class="hcb-trust-block" aria-label="Garanties Fixeo">
-      <span class="hcb-trust-item">&#x1F7E2; Disponible maintenant</span>
-      <span class="hcb-trust-sep">&#8226;</span>
-      <span class="hcb-trust-item">&#11088; 4.8/5 clients satisfaits</span>
-      <span class="hcb-trust-sep">&#8226;</span>
-      <span class="hcb-trust-item">&#x26A1; R&#233;ponse &lt; 15&nbsp;min</span>
+    <!-- T4: Smart city line -->
+    <div class="hero-city-smart" id="hero-city-smart">
+      <span class="hero-city-icon">&#128205;</span>
+      <span id="hero-city-label">D&#233;tection de votre ville&#8230;</span>
     </div>
+
+    <!-- FOMO line removed: no fake numbers (T1) -->
+
+    <!-- trust block removed: no fake metrics (T1) -->
 
 
   </div><!-- /hero-content -->
@@ -3334,7 +3332,7 @@ function openContentModal(type) {
   <script src="js/fixeo-cities.js?v=fxc1"></script>
 <script src="js/hero-search-modal.js?v=50a38b9"></script>
 <script src="js/secondary-search.js?v=50a38b9"></script>
-<script src="js/quick-search-modal.js?v=50a38b9"></script>
+<script src="js/quick-search-modal.js?v=qsm10"></script>
 <script src="js/header-unified.js?v=modalfix3"></script>
 <script src="js/auth-global.js?v=50a38b9"></script>
 <script src="js/fixeo-auth-guard.js?v=50a38b9"></script>
@@ -3809,6 +3807,90 @@ window.addEventListener('load', function () {
     : function (cb) { setTimeout(cb, 2000); };
   _idle(function () { loadReservationStack(null); });
 
+})();
+</script>
+
+<!-- T4: Hero smart city — async geolocation, zero-blocking (V2) -->
+<script id="fixeo-hero-geo">
+(function() {
+  'use strict';
+  var CITY_MAP = {
+    // Reverse-geocode city names from lat/lng bounding boxes (approximate)
+    // Used only for display label — not for search filtering
+  };
+
+  function _setLabel(text) {
+    var el = document.getElementById('hero-city-label');
+    if (el) el.textContent = text;
+  }
+
+  function _preselectCity(cityName) {
+    // Try to match to existing #qsm-select-city option
+    var sel = document.getElementById('qsm-select-city');
+    if (!sel) return;
+    var opts = sel.options;
+    var cn = cityName.toLowerCase().trim();
+    for (var i = 0; i < opts.length; i++) {
+      if (opts[i].value.toLowerCase() === cn) {
+        sel.value = opts[i].value;
+        return true;
+      }
+    }
+    return false;
+  }
+
+  function _onSuccess(pos) {
+    try {
+      var lat = pos.coords.latitude;
+      var lng = pos.coords.longitude;
+      // Use Nominatim reverse geocode (lightweight, no key)
+      fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + lat + '&lon=' + lng + '&zoom=10&addressdetails=1', {
+        headers: { 'Accept-Language': 'fr' }
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        var city = (data.address && (data.address.city || data.address.town || data.address.village || data.address.county)) || null;
+        if (city) {
+          _setLabel('✅ Résultats autour de ' + city);
+          _preselectCity(city);
+        } else {
+          _setLabel('✅ Résultats autour de vous');
+        }
+      })
+      .catch(function() {
+        _setLabel('✅ Résultats autour de vous');
+      });
+    } catch(e) {
+      _setLabel('Choisir une ville');
+    }
+  }
+
+  function _onError() {
+    _setLabel('Choisir une ville');
+  }
+
+  // Wire city-smart click → open city select (dropdown focus)
+  document.addEventListener('DOMContentLoaded', function() {
+    var smartEl = document.getElementById('hero-city-smart');
+    if (smartEl) {
+      smartEl.addEventListener('click', function() {
+        var sel = document.getElementById('qsm-select-city');
+        if (sel) { sel.focus(); }
+      });
+    }
+
+    // Try geolocation — fully async, no UI blocking
+    if (navigator && navigator.geolocation) {
+      _setLabel('Détection de votre ville…');
+      navigator.geolocation.getCurrentPosition(_onSuccess, _onError, {
+        timeout: 5000,
+        maximumAge: 300000,
+        enableHighAccuracy: false
+      });
+    } else {
+      _setLabel('Choisir une ville');
+    }
+  });
 })();
 </script>
 </body>

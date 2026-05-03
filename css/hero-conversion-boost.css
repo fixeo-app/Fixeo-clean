@@ -271,3 +271,140 @@
     opacity: 0.9 !important;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   HERO CONVERSION V2 — Clean Hero UX
+   T1: hide fake signals  T4: city-smart  T5: CTA  T6: mobile
+   Appended — loads after other hero CSS → wins all specificity ties
+═══════════════════════════════════════════════════════════════ */
+
+/* ── T1: Kill fake signals — belt-and-suspenders ── */
+.hcb-fomo,
+.hcb-trust-block,
+.qsm-filters-row,
+.qsm-qfilter,
+.hero-quick-filters {
+  display: none !important;
+}
+
+/* ── T2: Headline — clean & direct ── */
+.hero-title {
+  font-size: clamp(2rem, 5vw, 3.4rem) !important;
+  line-height: 1.18 !important;
+  letter-spacing: -0.03em !important;
+  font-weight: 800 !important;
+}
+
+.hero-subtitle {
+  font-size: clamp(0.88rem, 2vw, 1.05rem) !important;
+  opacity: 0.72 !important;
+  margin-top: 10px !important;
+  letter-spacing: 0.01em !important;
+}
+
+/* ── T4: Smart city line ── */
+.hero-city-smart {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  margin-top: 10px !important;
+  padding: 8px 14px !important;
+  background: rgba(255,255,255,0.06) !important;
+  border: 1px solid rgba(255,255,255,0.10) !important;
+  border-radius: 10px !important;
+  font-size: 0.84rem !important;
+  color: rgba(255,255,255,0.75) !important;
+  cursor: pointer !important;
+  width: fit-content !important;
+  max-width: 100% !important;
+  transition: background 0.2s, border-color 0.2s !important;
+  user-select: none !important;
+}
+.hero-city-smart:hover {
+  background: rgba(255,255,255,0.10) !important;
+  border-color: rgba(255,255,255,0.18) !important;
+}
+.hero-city-icon {
+  font-size: 0.95rem !important;
+  line-height: 1 !important;
+  flex-shrink: 0 !important;
+}
+#hero-city-label {
+  font-size: 0.84rem !important;
+  color: inherit !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  max-width: 280px !important;
+}
+
+/* ── T3: Remove visual weight from search bar labels ── */
+.qsm-seg-label {
+  display: none !important;
+}
+
+/* ── T5: CTA dominance ── */
+.qsm-btn-search,
+#qsm-btn-search {
+  background: linear-gradient(135deg, #e1306c 0%, #833ab4 100%) !important;
+  font-size: 1rem !important;
+  font-weight: 700 !important;
+  padding: 14px 28px !important;
+  border-radius: 14px !important;
+  letter-spacing: 0.01em !important;
+  box-shadow: 0 8px 28px rgba(225,48,108,0.40) !important;
+  transition: transform 0.2s, box-shadow 0.2s !important;
+  flex-shrink: 0 !important;
+}
+.qsm-btn-search:hover,
+#qsm-btn-search:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 12px 36px rgba(225,48,108,0.52) !important;
+}
+
+/* ── T5: Secondary CTA — lower visual weight ── */
+.btn-secondary-marketplace {
+  opacity: 0.72 !important;
+  font-size: 0.88rem !important;
+}
+.btn-secondary-marketplace:hover {
+  opacity: 1 !important;
+}
+
+/* ── T6: Mobile — clean vertical stack ── */
+@media (max-width: 768px) {
+  .hero-city-smart {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  #hero-city-label {
+    max-width: 100% !important;
+  }
+  .hero-city-smart {
+    justify-content: center !important;
+  }
+  .hero-title {
+    font-size: clamp(1.75rem, 7vw, 2.6rem) !important;
+    text-align: center !important;
+  }
+  .hero-subtitle {
+    text-align: center !important;
+    font-size: 0.86rem !important;
+  }
+  .qsm-btn-search,
+  #qsm-btn-search {
+    width: 100% !important;
+    padding: 13px 20px !important;
+    font-size: 0.95rem !important;
+  }
+}
+
+/* ── T7: Visual cleanup — reduce clutter ── */
+.marketplace-secondary-copy.hcb-micro-trust {
+  opacity: 0.55 !important;
+  font-size: 0.76rem !important;
+}
+.qsm-filters-label {
+  display: none !important;
+}
+
