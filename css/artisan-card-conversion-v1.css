@@ -963,3 +963,98 @@
   border-top: 1px solid rgba(255,255,255,0.05) !important;
   padding-top: 12px !important;
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   UBER FINAL POLISH — v8
+   CSS-only. No JS touched. No layout broken.
+   Real renderer: #fixeo-homepage-vedette-grid .fhp-card
+   All rules appended — loads last → wins all specificity ties
+═══════════════════════════════════════════════════════════════ */
+
+/* ── T1: Visual noise reduction ── */
+.pvc-info-chip {
+  opacity: 0.45 !important;
+}
+.pvc-trust-line {
+  opacity: 0.45 !important;
+  font-size: 0.68rem !important;
+}
+.pvc-fomo {
+  opacity: 0.75 !important;
+  font-size: 0.70rem !important;
+}
+
+/* ── T2a: Avatar shadow depth ── */
+.fhp-card .pvc-avatar {
+  box-shadow:
+    0 0 0 2px rgba(255,255,255,0.04),
+    0 10px 30px rgba(0,0,0,0.50),
+    0 0 25px rgba(255,255,255,0.05) !important;
+  overflow: visible !important; /* badge must bleed */
+  border-radius: 16px !important;
+}
+
+/* ── T2b: Badge — kill old opacity:0 override + increase size ──
+   The old v2 pass at ~L486 set opacity:0 !important.
+   We appended after it → this wins. ── */
+.pvc-avatar-badge {
+  width: 28px !important;
+  height: 28px !important;
+  font-size: 14px !important;
+  opacity: 1 !important; /* restore: kill the old opacity:0 */
+  bottom: -5px !important;
+  right: -5px !important;
+  position: absolute !important;
+  z-index: 10 !important;
+  background: rgba(0,0,0,0.85) !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: 1.5px solid rgba(255,255,255,0.20) !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.45) !important;
+  pointer-events: none !important;
+}
+
+/* ── T3: CTA column layout on desktop (unify with mobile) ── */
+.pvc-cta-row {
+  flex-direction: column !important;
+  gap: 8px !important;
+  width: 100% !important;
+}
+/* Reserve button full-width in column layout */
+.pvc-btn-reserve-v2 {
+  width: 100% !important;
+  text-align: center !important;
+}
+/* Profile link centered when stacked */
+.pvc-profile-link {
+  text-align: center !important;
+  display: block !important;
+}
+
+/* ── T4: Footer gap breathing room ── */
+.pvc-footer {
+  gap: 10px !important;
+}
+
+/* ── T5: Body density — compact but not cramped ── */
+.pvc-card .pvc-body {
+  gap: 6px !important;
+}
+
+/* ── T6: Desktop hover — premium controlled motion ── */
+@media (min-width: 641px) {
+  .pvc-card:hover {
+    transform: translateY(-8px) scale(1.01) !important;
+    box-shadow:
+      0 28px 64px rgba(0,0,0,0.55),
+      0 0 0 1px rgba(225,48,108,0.18) !important;
+  }
+}
+
+/* ── T7: Click feedback — tactile active state ── */
+.pvc-card:active {
+  transform: scale(0.99) !important;
+  transition: transform 0.08s ease !important;
+}
