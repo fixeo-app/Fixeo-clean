@@ -233,14 +233,17 @@
     window.addEventListener('hashchange', updateActiveNavLink);
 
     // ── Close mobile nav on link click ──────────────────────
-    document.querySelectorAll('.mobile-nav .nav-link, .mobile-nav .btn').forEach(function(link) {
-      link.addEventListener('click', function() {
-        var mNav = document.querySelector('.mobile-nav');
-        var ham  = document.querySelector('.hamburger');
-        if (mNav) mNav.classList.remove('open');
-        if (ham)  { ham.classList.remove('open'); ham.setAttribute('aria-expanded','false'); }
+    // Guard: skip if fixeo-header-global.js owns the menu system
+    if (!(window.FixeoMobileMenu && window.FixeoMobileMenu.owner === 'fixeo-header-global')) {
+      document.querySelectorAll('.mobile-nav .nav-link, .mobile-nav .btn').forEach(function(link) {
+        link.addEventListener('click', function() {
+          var mNav = document.querySelector('.mobile-nav');
+          var ham  = document.querySelector('.hamburger');
+          if (mNav) mNav.classList.remove('open');
+          if (ham)  { ham.classList.remove('open'); ham.setAttribute('aria-expanded','false'); }
+        });
       });
-    });
+    }
 
     // ── Ensure modal backdrop closes all open modals ────────
     var backdrop = document.getElementById('main-backdrop');

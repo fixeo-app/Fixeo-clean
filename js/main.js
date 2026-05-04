@@ -1917,6 +1917,7 @@ function initNavbar() {
 
     window.FixeoMobileMenu = {
       initialized: true,
+      owner: 'main',  /* fallback owner when fixeo-header-global.js did not run */
       open: () => setMenuState(true),
       close: () => setMenuState(false),
       toggle: () => setMenuState(!mobileNav.classList.contains('open')),

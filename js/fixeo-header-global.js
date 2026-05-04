@@ -216,6 +216,30 @@
     const mobileRoot = host.querySelector('.fixeo-gh-mobile');
     setupInteractions(mobileRoot);
     ensureDrawerPortal(mobileRoot);
+
+    /* ── T1: Single-owner declaration ───────────────────────────
+       Marks this file as the canonical mobile menu controller.
+       Other files (header-unified.js, homepage-v13.js, main.js,
+       fixeo_v5_fixes.js) check this flag before attaching
+       hamburger/drawer listeners and skip if already owned.
+    ─────────────────────────────────────────────────────────── */
+    window.FixeoMobileMenu = window.FixeoMobileMenu || {};
+    window.FixeoMobileMenu.initialized = true;
+    window.FixeoMobileMenu.owner = 'fixeo-header-global';
+    window.FixeoMobileMenu.open   = function () { openDrawer(mobileRoot); };
+    window.FixeoMobileMenu.close  = function () { closeDrawer(mobileRoot); };
+    window.FixeoMobileMenu.toggle = function () { toggleDrawer(mobileRoot); };
+    window.FixeoMobileMenu.isOpen = function () {
+      var d = mobileRoot && mobileRoot.querySelector('.fixeo-gh-drawer');
+      return !!(d && d.classList.contains('is-open'));
+    };
+
+    /* ESC key closes drawer */
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && window.FixeoMobileMenu.isOpen()) {
+        closeDrawer(mobileRoot);
+      }
+    });
     if (window.FixeoGlobalNav && typeof window.FixeoGlobalNav.normalizeLinks === 'function') {
       window.FixeoGlobalNav.normalizeLinks(document.body);
     }

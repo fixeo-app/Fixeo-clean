@@ -414,6 +414,7 @@
      14. MOBILE NAV — HAMBURGER
   ══════════════════════════════════════════════════════════════════ */
   function initHamburger() {
+    /* Guard: yield to fixeo-header-global.js if it owns the menu */
     if (window.FixeoMobileMenu && window.FixeoMobileMenu.initialized) return;
     const hamburger = document.querySelector('.hamburger');
     const mobileNav = document.querySelector('.mobile-nav');
