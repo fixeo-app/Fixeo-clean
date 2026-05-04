@@ -86,9 +86,9 @@
       <div class="fixeo-gh-drawer-group">
         <div class="fixeo-gh-drawer-label">Navigation</div>
         <a class="fixeo-gh-drawer-link" href="${isHomepage ? '#home' : 'index.html'}">\uD83C\uDFE0 Accueil</a>
-        <a class="fixeo-gh-drawer-link" href="index.html#services">\uD83D\uDD27 Services</a>
-        <a class="fixeo-gh-drawer-link" href="index.html#artisans-section">\uD83D\uDC77 Artisans</a>
-        <a class="fixeo-gh-drawer-link" href="index.html#how-it-works">\u2139\uFE0F Comment \u00e7a marche</a>
+        <a class="fixeo-gh-drawer-link" href="services.html">\uD83D\uDD27 Services</a>
+        <a class="fixeo-gh-drawer-link" href="artisans.html">\uD83D\uDC77 Artisans</a>
+        <a class="fixeo-gh-drawer-link" href="comment-ca-marche.html">\u2139\uFE0F Comment \u00e7a marche</a>
         <a class="fixeo-gh-drawer-link" href="pricing.html">\uD83D\uDC8E Tarifs</a>
       </div>`;
 

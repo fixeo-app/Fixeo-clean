@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr" data-theme="dark">
+<head>
+  <link rel="icon" type="image/png" href="img/favicon.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="img/favicon.png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta name="description" content="Tous les services à domicile disponibles sur Fixeo : plomberie, électricité, climatisation, peinture, nettoyage et plus. Trouvez un artisan qualifié au Maroc.">
+  <title>Services à domicile au Maroc | Fixeo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/header-unified.css">
+  <link rel="stylesheet" href="css/fixeo-header-global.css">
+  <link rel="stylesheet" href="css/auth-global.css">
+  <style id="fixeo-logo-override">
+    .navbar-brand .logo-icon,.logo-wrap .logo-icon,.fixeo-gh-brand .logo-icon{display:none!important;width:0!important;height:0!important;min-width:0!important;flex:0!important}
+    .navbar-brand .logo-text,.logo-wrap .logo-text,.fixeo-gh-brand .logo-text{display:none!important;width:0!important;height:0!important}
+    .navbar-brand,.logo-wrap{max-width:220px!important;overflow:visible!important;gap:0!important;background:transparent!important}
+    .fixeo-gh-brand{max-width:180px!important;overflow:visible!important;gap:0!important;background:transparent!important}
+    img.fixeo-logo-img{display:block!important;height:32px!important;width:auto!important;object-fit:contain!important;object-position:left center!important;background:transparent!important;mix-blend-mode:normal!important;filter:none!important;box-shadow:none!important;border:none!important;flex:0 0 auto!important;overflow:visible!important}
+    .fixeo-gh-brand img.fixeo-logo-img,.fixeo-gh-mobile-bar img.fixeo-logo-img{height:26px!important;width:auto!important}
+    @media(max-width:480px){img.fixeo-logo-img{height:24px!important}.fixeo-gh-brand img.fixeo-logo-img{height:22px!important}}
+  </style>
+  <style>
+    /* ── Reset & Base ── */
+    *,*::before,*::after{box-sizing:border-box}
+    body{margin:0;font-family:Cairo,Tajawal,Arial,sans-serif;background:linear-gradient(135deg,#0D0D1A 0%,#1a1a2e 60%,#16213e 100%);color:#e8eaf0;min-height:100vh;padding-top:70px}
+    :root{--cp-muted:rgba(232,234,240,0.58);--cp-card:rgba(255,255,255,0.055);--cp-border:rgba(255,255,255,0.09);--cp-grad:linear-gradient(135deg,#E1306C,#833AB4)}
+    .cp-container{max-width:1060px;margin:0 auto;padding:0 20px}
+    a{text-decoration:none}
+    /* ── Hero ── */
+    .cp-hero{padding:72px 20px 60px;text-align:center;position:relative;overflow:hidden}
+    .cp-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(225,48,108,0.12),transparent);pointer-events:none}
+    .cp-hero-label{display:inline-block;padding:5px 16px;border-radius:999px;border:1px solid rgba(225,48,108,0.35);color:rgba(225,48,108,0.9);font-size:0.78rem;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;margin-bottom:22px}
+    .cp-hero h1{font-size:clamp(1.7rem,4vw,2.8rem);font-weight:900;line-height:1.15;letter-spacing:-0.02em;margin:0 0 18px;color:#fff}
+    .cp-hero h1 .hl{background:var(--cp-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .cp-hero p{font-size:clamp(0.97rem,1.8vw,1.12rem);color:var(--cp-muted);max-width:580px;margin:0 auto 32px;line-height:1.65}
+    /* ── Buttons ── */
+    .cp-btn{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:14px;font-size:0.95rem;font-weight:800;cursor:pointer;border:none;text-decoration:none;transition:transform 0.15s,box-shadow 0.15s;color:#fff}
+    .cp-btn:hover{transform:translateY(-1px)}
+    .cp-btn-primary{background:var(--cp-grad);box-shadow:0 8px 24px rgba(225,48,108,0.25)}
+    .cp-btn-primary:hover{box-shadow:0 12px 32px rgba(225,48,108,0.38)}
+    .cp-btn-outline{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.14)}
+    .cp-btn-outline:hover{background:rgba(255,255,255,0.12)}
+    .cp-btn-row{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+    /* ── Section ── */
+    .cp-section{padding:56px 0}
+    .cp-section-alt{background:rgba(255,255,255,0.022);margin:0 -20px;padding:56px 20px}
+    .cp-section-title{font-size:clamp(1.2rem,2.5vw,1.65rem);font-weight:800;color:#fff;margin:0 0 8px;letter-spacing:-0.01em}
+    .cp-section-sub{font-size:0.92rem;color:var(--cp-muted);margin:0 0 36px;line-height:1.6}
+    /* ── Service cards grid ── */
+    .cp-service-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+    .cp-svc-card{background:var(--cp-card);border:1px solid var(--cp-border);border-radius:20px;padding:24px 20px;transition:transform 0.18s,border-color 0.18s,box-shadow 0.18s}
+    .cp-svc-card:hover{transform:translateY(-3px);border-color:rgba(225,48,108,0.28);box-shadow:0 12px 32px rgba(0,0,0,0.22)}
+    .cp-svc-icon{font-size:2rem;margin-bottom:12px;display:block}
+    .cp-svc-name{font-size:1rem;font-weight:800;color:#fff;margin:0 0 6px}
+    .cp-svc-desc{font-size:0.84rem;color:var(--cp-muted);margin:0 0 6px;line-height:1.55}
+    .cp-svc-example{font-size:0.77rem;color:rgba(255,255,255,0.33);font-style:italic;margin:0 0 14px}
+    .cp-svc-cta{display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-weight:700;color:rgba(225,48,108,0.9);padding:6px 14px;border-radius:10px;border:1px solid rgba(225,48,108,0.22);transition:background 0.15s;cursor:pointer;background:none}
+    .cp-svc-cta:hover{background:rgba(225,48,108,0.1)}
+    /* ── Feature grid ── */
+    .cp-feat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:16px}
+    .cp-feat-card{background:var(--cp-card);border:1px solid var(--cp-border);border-radius:18px;padding:22px 18px}
+    .cp-feat-icon{font-size:1.6rem;margin-bottom:10px;display:block}
+    .cp-feat-title{font-size:0.96rem;font-weight:800;color:#fff;margin:0 0 6px}
+    .cp-feat-text{font-size:0.84rem;color:var(--cp-muted);margin:0;line-height:1.55}
+    /* ── Price grid ── */
+    .cp-price-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px}
+    .cp-price-card{background:var(--cp-card);border:1px solid var(--cp-border);border-radius:16px;padding:18px 16px}
+    .cp-price-service{font-size:0.9rem;font-weight:700;color:#fff;margin:0 0 4px}
+    .cp-price-range{font-size:1rem;font-weight:800;color:rgba(225,48,108,0.9);margin:0 0 4px}
+    .cp-price-note{font-size:0.76rem;color:var(--cp-muted);margin:0}
+    /* ── CTA band ── */
+    .cp-cta-band{padding:64px 20px;text-align:center;background:linear-gradient(135deg,rgba(225,48,108,0.10),rgba(131,58,180,0.10));border-top:1px solid rgba(255,255,255,0.07);border-bottom:1px solid rgba(255,255,255,0.07)}
+    .cp-cta-band h2{font-size:clamp(1.3rem,3vw,2rem);font-weight:900;color:#fff;margin:0 0 12px}
+    .cp-cta-band p{font-size:0.96rem;color:var(--cp-muted);max-width:500px;margin:0 auto 28px;line-height:1.6}
+    /* ── Urgency/planning strip ── */
+    .cp-split{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+    .cp-split-card{background:var(--cp-card);border:1px solid var(--cp-border);border-radius:20px;padding:26px 22px}
+    .cp-split-badge{display:inline-block;padding:3px 12px;border-radius:999px;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:12px}
+    .cp-split-badge-red{background:rgba(225,48,108,0.15);color:rgba(225,48,108,0.9);border:1px solid rgba(225,48,108,0.25)}
+    .cp-split-badge-blue{background:rgba(56,189,248,0.12);color:rgba(56,189,248,0.9);border:1px solid rgba(56,189,248,0.22)}
+    .cp-split-title{font-size:1.05rem;font-weight:800;color:#fff;margin:0 0 10px}
+    .cp-split-text{font-size:0.87rem;color:var(--cp-muted);margin:0 0 16px;line-height:1.6}
+    @media(max-width:640px){.cp-split{grid-template-columns:1fr}.cp-service-grid{grid-template-columns:1fr}.cp-hero{padding:48px 16px 40px}.cp-section{padding:40px 0}.cp-section-alt{padding:40px 16px}}
+  </style>
+</head>
+
+<body class="fixeo-gh-enabled">
+
+<!-- ── Navbar ── -->
+<nav class="navbar" role="navigation" aria-label="Navigation principale">
+  <a href="index.html" class="navbar-brand logo-wrap" aria-label="Fixeo - Accueil">
+    <img src="img/logo.png" alt="Fixeo" class="fixeo-logo-img" height="38" loading="eager"
+         onerror="this.onerror=null;this.alt='Fixeo';this.style.display='none'">
+  </a>
+  <nav class="navbar-nav" aria-label="Menu principal">
+    <a href="services.html" class="nav-link active">Services</a>
+    <a href="artisans.html" class="nav-link">Artisans</a>
+    <a href="comment-ca-marche.html" class="nav-link">Comment ça marche</a>
+    <a href="pricing.html" class="nav-link">Tarifs</a>
+    <a href="dashboard-client.html" class="nav-link" data-role="dashboard" data-auth="logged-in">📊 Dashboard</a>
+    <a href="admin.html" class="nav-link" data-role="admin" data-auth="admin">🛡 Admin</a>
+  </nav>
+  <div class="nav-actions">
+    <a href="auth.html" id="login-btn" class="btn-nav btn-nav-outline" data-auth="guest">Connexion</a>
+    <a href="auth.html#signup" id="register-btn" class="btn-nav btn-nav-primary" data-auth="guest">Inscription</a>
+    <div class="nav-has-dropdown" data-auth="logged-in" style="display:none">
+      <div class="nav-user-chip" tabindex="0" aria-haspopup="true" aria-label="Mon compte">
+        <div class="nav-user-avatar" id="global-avatar">U</div>
+        <span class="nav-user-name" id="global-username">Mon Compte</span>
+        <span class="nav-arrow" style="font-size:0.6rem;opacity:0.5">▾</span>
+      </div>
+      <div class="nav-dropdown" role="menu" style="min-width:200px;right:0;left:auto">
+        <a href="dashboard-client.html" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">📊</span>Mon Dashboard</a>
+        <a href="dashboard-artisan.html" class="nav-dropdown-item" role="menuitem" data-role-show="artisan" style="display:none"><span class="dd-icon">👷</span>Espace Artisan</a>
+        <div class="nav-dropdown-divider"></div>
+        <a href="#" id="logout-btn" class="nav-dropdown-item" role="menuitem" onclick="window.fixeoLogout?.();return false;"><span class="dd-icon">🚪</span>Déconnexion</a>
+      </div>
+    </div>
+  </div>
+  <button class="hamburger" aria-label="Ouvrir le menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- ── Hero ── -->
+<section class="cp-hero" aria-labelledby="svc-hero-title">
+  <div class="cp-container">
+    <span class="cp-hero-label">Fixeo Services</span>
+    <h1 id="svc-hero-title">Tous les services à domicile,<br><span class="hl">centralisés dans Fixeo</span></h1>
+    <p>Décrivez votre besoin, Fixeo vous oriente vers le bon artisan. Intervention rapide, paiement après service, artisan vérifié.</p>
+    <div class="cp-btn-row">
+      <a href="index.html#home" class="cp-btn cp-btn-primary">🔍 Décrire mon besoin</a>
+      <a href="artisans.html" class="cp-btn cp-btn-outline">Voir les artisans</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── Services grid ── -->
+<section class="cp-section cp-container" aria-labelledby="svc-grid-title">
+  <h2 class="cp-section-title" id="svc-grid-title">Services disponibles</h2>
+  <p class="cp-section-sub">8 catégories principales couvrant les besoins courants à domicile et en entreprise.</p>
+  <div class="cp-service-grid">
+
+    <div class="cp-svc-card">
+      <span class="cp-svc-icon">🚿</span>
+      <p class="cp-svc-name">Plomberie</p>
+      <p class="cp-svc-desc">Fuites, canalisations, robinetterie, chauffe-eau, WC bloqué.</p>
+      <p class="cp-svc-example">Ex : "J'ai une fuite sous l'évier"</p>
+      <a href="index.html#home" class="cp-svc-cta">Demander ce service →</a>
+    </div>
+
+    <div class="cp-svc-card">
+      <span class="cp-svc-icon">⚡</span>
+      <p class="cp-svc-name">Électricité</p>
+      <p class="cp-svc-desc">Panne de courant, tableau électrique, installation de prises, éclairage.</p>
+      <p class="cp-svc-example">Ex : "Un disjoncteur saute souvent"</p>
+      <a href="index.html#home" class="cp-svc-cta">Demander ce service →</a>
+    </div>
+
+    <div class="cp-svc-card">
+      <span class="cp-svc-icon">❄️</span>
+      <p class="cp-svc-name">Climatisation</p>
+      <p class="cp-svc-desc">Installation, maintenance, nettoyage de climatiseur, recharge de gaz.</p>
+      <p class="cp-svc-example">Ex : "Mon clim ne refroidit plus"</p>
+      <a href="index.html#home" class="cp-svc-cta">Demander ce service →</a>
+    </div>
+
+    <div class="cp-svc-card">
+      <span class="cp-svc-icon">🎨</span>
+      <p class="cp-svc-name">Peinture</p>
+      <p class="cp-svc-desc">Peinture intérieure / extérieure, préparation des murs, ravalement.</p>
+      <p class="cp-svc-example">Ex : "Je veux repeindre mon salon"</p>
+      <a href="index.html#home" class="cp-svc-cta">Demander ce service →</a>
+    </div>
+
+    <div class="cp-svc-card">
+      <span class="cp-svc-icon">🧹</span>
+      <p class="cp-svc-name">Nettoyage</p>
+      <p class="cp-svc-desc">Grand ménage, nettoyage de fin de chantier, vitres, moquettes, canapés.</p>
+      <p class="cp-svc-example">Ex : "Nettoyage après travaux"</p>
+      <a href="index.html#home" class="cp-svc-cta">Demander ce service →</a>
+    </div>
+
+    <div class="cp-svc-card">
+      <span class="cp-svc-icon">🪚</span>
+      <p class="cp-svc-name">Menuiserie</p>
+      <p class="cp-svc-desc">Portes, fenêtres, parquet, placards sur mesure, meubles.</p>
+      <p class="cp-svc-example">Ex : "Installer une porte de chambre"</p>
+      <a href="index.html#home" class="cp-svc-cta">Demander ce service →</a>
+    </div>
+
+    <div class="cp-svc-card">
+      <span class="cp-svc-icon">🔑</span>
+      <p class="cp-svc-name">Serrurerie</p>
+      <p class="cp-svc-desc">Ouverture de porte, changement de serrure, blindage, dépannage urgent.</p>
+      <p class="cp-svc-example">Ex : "Porte claquée, je suis bloqué"</p>
+      <a href="index.html#home" class="cp-svc-cta">Demander ce service →</a>
+    </div>
+
+    <div class="cp-svc-card">
+      <span class="cp-svc-icon">🚛</span>
+      <p class="cp-svc-name">Déménagement</p>
+      <p class="cp-svc-desc">Transport de meubles, emballage, manutention, camion avec chauffeur.</p>
+      <p class="cp-svc-example">Ex : "Déménager un appartement 3 pièces"</p>
+      <a href="index.html#home" class="cp-svc-cta">Demander ce service →</a>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── Urgence vs planifié ── -->
+<div class="cp-section-alt">
+  <div class="cp-container">
+    <h2 class="cp-section-title" id="urgence-title">Urgence ou demande planifiée</h2>
+    <p class="cp-section-sub">Fixeo gère les deux cas. Vous choisissez le mode adapté à votre situation.</p>
+    <div class="cp-split">
+      <div class="cp-split-card">
+        <span class="cp-split-badge cp-split-badge-red">⚡ Urgence</span>
+        <p class="cp-split-title">Besoin immédiat</p>
+        <p class="cp-split-text">Fuite d'eau, panne électrique, porte bloquée — Fixeo identifie un artisan disponible rapidement. Vous décrivez, on oriente.</p>
+        <a href="index.html#home" class="cp-btn cp-btn-primary" style="font-size:0.88rem;padding:11px 22px">⚡ Demande urgente</a>
+      </div>
+      <div class="cp-split-card">
+        <span class="cp-split-badge cp-split-badge-blue">📅 Planifié</span>
+        <p class="cp-split-title">Travaux à programmer</p>
+        <p class="cp-split-text">Rénovation, peinture, installation — publiez votre demande, consultez les artisans disponibles et choisissez votre créneau.</p>
+        <a href="index.html#home" class="cp-btn cp-btn-outline" style="font-size:0.88rem;padding:11px 22px">📝 Publier une demande</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Estimation des prix ── -->
+<section class="cp-section cp-container" aria-labelledby="price-title">
+  <h2 class="cp-section-title" id="price-title">Estimation des prix</h2>
+  <p class="cp-section-sub">Fourchettes indicatives pour les interventions courantes. L'estimation finale dépend du détail de votre besoin et de votre ville.</p>
+  <div class="cp-price-grid">
+    <div class="cp-price-card">
+      <p class="cp-price-service">🚿 Plomberie</p>
+      <p class="cp-price-range">150 – 600 MAD</p>
+      <p class="cp-price-note">Dépannage courant</p>
+    </div>
+    <div class="cp-price-card">
+      <p class="cp-price-service">⚡ Électricité</p>
+      <p class="cp-price-range">200 – 800 MAD</p>
+      <p class="cp-price-note">Diagnostic + intervention</p>
+    </div>
+    <div class="cp-price-card">
+      <p class="cp-price-service">❄️ Climatisation</p>
+      <p class="cp-price-range">300 – 1 200 MAD</p>
+      <p class="cp-price-note">Maintenance / installation</p>
+    </div>
+    <div class="cp-price-card">
+      <p class="cp-price-service">🎨 Peinture</p>
+      <p class="cp-price-range">40 – 80 MAD/m²</p>
+      <p class="cp-price-note">Selon surface et préparation</p>
+    </div>
+    <div class="cp-price-card">
+      <p class="cp-price-service">🧹 Nettoyage</p>
+      <p class="cp-price-range">200 – 700 MAD</p>
+      <p class="cp-price-note">Selon surface</p>
+    </div>
+    <div class="cp-price-card">
+      <p class="cp-price-service">🔑 Serrurerie</p>
+      <p class="cp-price-range">150 – 500 MAD</p>
+      <p class="cp-price-note">Ouverture / remplacement</p>
+    </div>
+  </div>
+  <p style="margin-top:18px;font-size:0.82rem;color:rgba(255,255,255,0.35);text-align:center">
+    💡 Paiement uniquement après intervention confirmée. Aucun acompte exigé.
+  </p>
+</section>
+
+<!-- ── Pourquoi Fixeo ── -->
+<div class="cp-section-alt">
+  <div class="cp-container">
+    <h2 class="cp-section-title">Pourquoi choisir Fixeo</h2>
+    <p class="cp-section-sub">Une approche différente des plateformes classiques.</p>
+    <div class="cp-feat-grid">
+      <div class="cp-feat-card">
+        <span class="cp-feat-icon">✔️</span>
+        <p class="cp-feat-title">Artisans vérifiés</p>
+        <p class="cp-feat-text">Chaque profil indique la spécialité déclarée. Les profils actifs accumulent les évaluations clients au fil du temps.</p>
+      </div>
+      <div class="cp-feat-card">
+        <span class="cp-feat-icon">💳</span>
+        <p class="cp-feat-title">Paiement après intervention</p>
+        <p class="cp-feat-text">Vous ne payez qu'une fois l'intervention terminée et validée. Aucun acompte, aucune surprise.</p>
+      </div>
+      <div class="cp-feat-card">
+        <span class="cp-feat-icon">📍</span>
+        <p class="cp-feat-title">Couverture nationale</p>
+        <p class="cp-feat-text">Casablanca, Rabat, Marrakech, Fès, Agadir, Tanger et plus — artisans disponibles dans les principales villes du Maroc.</p>
+      </div>
+      <div class="cp-feat-card">
+        <span class="cp-feat-icon">⚡</span>
+        <p class="cp-feat-title">Réponse rapide</p>
+        <p class="cp-feat-text">Décrivez votre besoin en 30 secondes. Fixeo oriente vers les artisans disponibles dans votre zone sans attendre.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── CTA final ── -->
+<div class="cp-cta-band">
+  <div class="cp-container">
+    <h2>Quel est votre besoin ?</h2>
+    <p>Décrivez-le en quelques mots. Fixeo fait le reste.</p>
+    <a href="index.html#home" class="cp-btn cp-btn-primary" style="font-size:1rem;padding:16px 34px">🔍 Décrire mon besoin</a>
+  </div>
+</div>
+
+<!-- ── Footer ── -->
+<footer role="contentinfo" style="margin-top:0">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo-wrap" style="margin-bottom:14px">
+          <img src="img/logo.png" alt="Fixeo" style="height:38px;width:auto;object-fit:contain;background:transparent">
+        </div>
+        <p class="footer-desc">La plateforme de référence pour trouver des artisans qualifiés au Maroc.</p>
+        <a href="onboarding-artisan.html" class="footer-artisan-link">🛠 Je suis artisan</a>
+      </div>
+      <div class="footer-links">
+        <h4>Navigation</h4>
+        <ul>
+          <li><a href="index.html">Accueil</a></li>
+          <li><a href="services.html">Services</a></li>
+          <li><a href="artisans.html">Artisans</a></li>
+          <li><a href="comment-ca-marche.html">Comment ça marche</a></li>
+          <li><a href="pricing.html">Tarifs</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h4>Pour les artisans</h4>
+        <ul>
+          <li><a href="onboarding-artisan.html">Rejoindre Fixeo</a></li>
+          <li><a href="dashboard-artisan.html">Espace artisan</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 Fixeo. Tous droits réservés.</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ── Scripts (header + auth only) ── -->
+<script src="js/fixeo-header-global.js?v=50a38b9"></script>
+<script src="js/i18n.js?v=50a38b9"></script>
+<script src="js/header-unified.js?v=modalfix3"></script>
+<script src="js/auth-global.js?v=50a38b9"></script>
+</body>
+</html>

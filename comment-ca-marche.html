@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr" data-theme="dark">
+<head>
+  <link rel="icon" type="image/png" href="img/favicon.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="img/favicon.png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta name="description" content="Comment Fixeo trouve le bon artisan en quelques minutes : décrivez votre besoin, Fixeo identifie le service, vous consultez et réservez. Paiement après intervention.">
+  <title>Comment ça marche | Fixeo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/header-unified.css">
+  <link rel="stylesheet" href="css/fixeo-header-global.css">
+  <link rel="stylesheet" href="css/auth-global.css">
+  <style id="fixeo-logo-override">
+    .navbar-brand .logo-icon,.logo-wrap .logo-icon,.fixeo-gh-brand .logo-icon{display:none!important;width:0!important;height:0!important;min-width:0!important;flex:0!important}
+    .navbar-brand .logo-text,.logo-wrap .logo-text,.fixeo-gh-brand .logo-text{display:none!important;width:0!important;height:0!important}
+    .navbar-brand,.logo-wrap{max-width:220px!important;overflow:visible!important;gap:0!important;background:transparent!important}
+    .fixeo-gh-brand{max-width:180px!important;overflow:visible!important;gap:0!important;background:transparent!important}
+    img.fixeo-logo-img{display:block!important;height:32px!important;width:auto!important;object-fit:contain!important;object-position:left center!important;background:transparent!important;mix-blend-mode:normal!important;filter:none!important;box-shadow:none!important;border:none!important;flex:0 0 auto!important;overflow:visible!important}
+    .fixeo-gh-brand img.fixeo-logo-img,.fixeo-gh-mobile-bar img.fixeo-logo-img{height:26px!important;width:auto!important}
+    @media(max-width:480px){img.fixeo-logo-img{height:24px!important}.fixeo-gh-brand img.fixeo-logo-img{height:22px!important}}
+  </style>
+  <style>
+    *,*::before,*::after{box-sizing:border-box}
+    body{margin:0;font-family:Cairo,Tajawal,Arial,sans-serif;background:linear-gradient(135deg,#0D0D1A 0%,#1a1a2e 60%,#16213e 100%);color:#e8eaf0;min-height:100vh;padding-top:70px}
+    :root{--cp-muted:rgba(232,234,240,0.58);--cp-card:rgba(255,255,255,0.055);--cp-border:rgba(255,255,255,0.09);--cp-grad:linear-gradient(135deg,#E1306C,#833AB4)}
+    .cp-container{max-width:960px;margin:0 auto;padding:0 20px}
+    a{text-decoration:none}
+    /* Hero */
+    .cp-hero{padding:72px 20px 60px;text-align:center;position:relative;overflow:hidden}
+    .cp-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 55% at 50% 0%,rgba(56,189,248,0.10),transparent);pointer-events:none}
+    .cp-hero-label{display:inline-block;padding:5px 16px;border-radius:999px;border:1px solid rgba(56,189,248,0.35);color:rgba(100,210,255,0.9);font-size:0.78rem;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;margin-bottom:22px}
+    .cp-hero h1{font-size:clamp(1.7rem,4vw,2.8rem);font-weight:900;line-height:1.15;letter-spacing:-0.02em;margin:0 0 18px;color:#fff}
+    .cp-hero h1 .hl{background:var(--cp-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .cp-hero p{font-size:clamp(0.97rem,1.8vw,1.12rem);color:var(--cp-muted);max-width:560px;margin:0 auto 32px;line-height:1.65}
+    /* Buttons */
+    .cp-btn{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:14px;font-size:0.95rem;font-weight:800;cursor:pointer;border:none;text-decoration:none;transition:transform 0.15s,box-shadow 0.15s;color:#fff}
+    .cp-btn:hover{transform:translateY(-1px)}
+    .cp-btn-primary{background:var(--cp-grad);box-shadow:0 8px 24px rgba(225,48,108,0.25)}
+    .cp-btn-primary:hover{box-shadow:0 12px 32px rgba(225,48,108,0.38)}
+    .cp-btn-row{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+    /* Sections */
+    .cp-section{padding:56px 0}
+    .cp-section-alt{background:rgba(255,255,255,0.022);margin:0 -20px;padding:56px 20px}
+    .cp-section-title{font-size:clamp(1.2rem,2.5vw,1.65rem);font-weight:800;color:#fff;margin:0 0 8px;letter-spacing:-0.01em}
+    .cp-section-sub{font-size:0.92rem;color:var(--cp-muted);margin:0 0 36px;line-height:1.6}
+    /* Steps */
+    .cp-steps{display:flex;flex-direction:column;gap:0}
+    .cp-step{display:flex;gap:22px;align-items:flex-start;padding:24px 0;border-bottom:1px solid var(--cp-border)}
+    .cp-step:last-child{border-bottom:none}
+    .cp-step-num{flex:0 0 48px;height:48px;border-radius:15px;background:var(--cp-grad);display:flex;align-items:center;justify-content:center;font-size:1.15rem;font-weight:900;color:#fff;box-shadow:0 6px 18px rgba(225,48,108,0.22)}
+    .cp-step-body{flex:1;padding-top:3px}
+    .cp-step-title{font-size:1.02rem;font-weight:800;color:#fff;margin:0 0 6px}
+    .cp-step-desc{font-size:0.88rem;color:var(--cp-muted);margin:0;line-height:1.6}
+    .cp-step-tag{display:inline-block;margin-top:8px;padding:3px 10px;border-radius:8px;font-size:0.72rem;font-weight:700;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.09);color:rgba(255,255,255,0.5)}
+    /* Tech grid */
+    .cp-tech-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:16px}
+    .cp-tech-card{background:var(--cp-card);border:1px solid var(--cp-border);border-radius:18px;padding:22px 18px}
+    .cp-tech-icon{font-size:1.6rem;margin-bottom:10px;display:block}
+    .cp-tech-title{font-size:0.96rem;font-weight:800;color:#fff;margin:0 0 6px}
+    .cp-tech-text{font-size:0.84rem;color:var(--cp-muted);margin:0;line-height:1.55}
+    /* FAQ */
+    .cp-faq{display:flex;flex-direction:column;gap:0}
+    .cp-faq-item{border-bottom:1px solid var(--cp-border);padding:18px 0}
+    .cp-faq-item:last-child{border-bottom:none}
+    .cp-faq-q{font-size:0.97rem;font-weight:700;color:#fff;margin:0 0 8px}
+    .cp-faq-a{font-size:0.87rem;color:var(--cp-muted);margin:0;line-height:1.6}
+    /* CTA band */
+    .cp-cta-band{padding:64px 20px;text-align:center;background:linear-gradient(135deg,rgba(56,189,248,0.08),rgba(225,48,108,0.10));border-top:1px solid rgba(255,255,255,0.07);border-bottom:1px solid rgba(255,255,255,0.07)}
+    .cp-cta-band h2{font-size:clamp(1.3rem,3vw,2rem);font-weight:900;color:#fff;margin:0 0 12px}
+    .cp-cta-band p{font-size:0.96rem;color:var(--cp-muted);max-width:500px;margin:0 auto 28px;line-height:1.6}
+    @media(max-width:640px){.cp-hero{padding:48px 16px 40px}.cp-section{padding:40px 0}.cp-section-alt{padding:40px 16px}.cp-step-num{flex:0 0 40px;height:40px;border-radius:12px;font-size:1rem}.cp-tech-grid{grid-template-columns:1fr 1fr}}
+    @media(max-width:400px){.cp-tech-grid{grid-template-columns:1fr}}
+  </style>
+</head>
+
+<body class="fixeo-gh-enabled">
+
+<nav class="navbar" role="navigation" aria-label="Navigation principale">
+  <a href="index.html" class="navbar-brand logo-wrap" aria-label="Fixeo - Accueil">
+    <img src="img/logo.png" alt="Fixeo" class="fixeo-logo-img" height="38" loading="eager"
+         onerror="this.onerror=null;this.alt='Fixeo';this.style.display='none'">
+  </a>
+  <nav class="navbar-nav" aria-label="Menu principal">
+    <a href="services.html" class="nav-link">Services</a>
+    <a href="artisans.html" class="nav-link">Artisans</a>
+    <a href="comment-ca-marche.html" class="nav-link active">Comment ça marche</a>
+    <a href="pricing.html" class="nav-link">Tarifs</a>
+    <a href="dashboard-client.html" class="nav-link" data-role="dashboard" data-auth="logged-in">📊 Dashboard</a>
+    <a href="admin.html" class="nav-link" data-role="admin" data-auth="admin">🛡 Admin</a>
+  </nav>
+  <div class="nav-actions">
+    <a href="auth.html" id="login-btn" class="btn-nav btn-nav-outline" data-auth="guest">Connexion</a>
+    <a href="auth.html#signup" id="register-btn" class="btn-nav btn-nav-primary" data-auth="guest">Inscription</a>
+    <div class="nav-has-dropdown" data-auth="logged-in" style="display:none">
+      <div class="nav-user-chip" tabindex="0" aria-haspopup="true" aria-label="Mon compte">
+        <div class="nav-user-avatar" id="global-avatar">U</div>
+        <span class="nav-user-name" id="global-username">Mon Compte</span>
+        <span class="nav-arrow" style="font-size:0.6rem;opacity:0.5">▾</span>
+      </div>
+      <div class="nav-dropdown" role="menu" style="min-width:200px;right:0;left:auto">
+        <a href="dashboard-client.html" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">📊</span>Mon Dashboard</a>
+        <a href="dashboard-artisan.html" class="nav-dropdown-item" role="menuitem" data-role-show="artisan" style="display:none"><span class="dd-icon">👷</span>Espace Artisan</a>
+        <div class="nav-dropdown-divider"></div>
+        <a href="#" id="logout-btn" class="nav-dropdown-item" role="menuitem" onclick="window.fixeoLogout?.();return false;"><span class="dd-icon">🚪</span>Déconnexion</a>
+      </div>
+    </div>
+  </div>
+  <button class="hamburger" aria-label="Ouvrir le menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- ── Hero ── -->
+<section class="cp-hero" aria-labelledby="ccm-hero-title">
+  <div class="cp-container">
+    <span class="cp-hero-label">Comment ça marche</span>
+    <h1 id="ccm-hero-title">Comment Fixeo trouve<br><span class="hl">le bon artisan</span></h1>
+    <p>Un parcours simple : besoin, ville, artisan, intervention. Pas de comparaisons interminables, pas d'offres à trier.</p>
+    <div class="cp-btn-row">
+      <a href="index.html#home" class="cp-btn cp-btn-primary">🔍 Trouver mon artisan maintenant</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── Les 5 étapes ── -->
+<section class="cp-section cp-container" aria-labelledby="steps-title">
+  <h2 class="cp-section-title" id="steps-title">Le parcours Fixeo en 5 étapes</h2>
+  <p class="cp-section-sub">De votre besoin à l'intervention, voici exactement ce qui se passe.</p>
+  <div class="cp-steps">
+
+    <div class="cp-step">
+      <div class="cp-step-num">1</div>
+      <div class="cp-step-body">
+        <p class="cp-step-title">Décrivez votre besoin</p>
+        <p class="cp-step-desc">En quelques mots : "fuite sous l'évier", "prise qui ne fonctionne plus", "repeindre le salon". Pas besoin d'être technique — Fixeo comprend le langage courant.</p>
+        <span class="cp-step-tag">⏱ 30 secondes</span>
+      </div>
+    </div>
+
+    <div class="cp-step">
+      <div class="cp-step-num">2</div>
+      <div class="cp-step-body">
+        <p class="cp-step-title">Fixeo identifie le service et la ville</p>
+        <p class="cp-step-desc">Le moteur de matching Fixeo catégorise automatiquement votre besoin (plomberie, électricité, etc.) et utilise votre ville pour filtrer les artisans disponibles à proximité.</p>
+        <span class="cp-step-tag">📍 Géolocalisation intelligente</span>
+      </div>
+    </div>
+
+    <div class="cp-step">
+      <div class="cp-step-num">3</div>
+      <div class="cp-step-body">
+        <p class="cp-step-title">Vous consultez les artisans pertinents</p>
+        <p class="cp-step-desc">Fixeo affiche les profils correspondant à votre besoin et votre ville. Chaque profil indique la spécialité, la ville et une estimation de prix. Pas de liste de 50 profils — seulement les pertinents.</p>
+        <span class="cp-step-tag">💡 Estimation de prix incluse</span>
+      </div>
+    </div>
+
+    <div class="cp-step">
+      <div class="cp-step-num">4</div>
+      <div class="cp-step-body">
+        <p class="cp-step-title">Vous réservez ou publiez une demande</p>
+        <p class="cp-step-desc">Deux options : réserver directement un artisan qui vous convient, ou publier une demande ouverte pour être contacté. Dans les deux cas, c'est gratuit et sans engagement.</p>
+        <span class="cp-step-tag">0 MAD d'acompte</span>
+      </div>
+    </div>
+
+    <div class="cp-step">
+      <div class="cp-step-num">5</div>
+      <div class="cp-step-body">
+        <p class="cp-step-title">Paiement après intervention</p>
+        <p class="cp-step-desc">L'artisan intervient, vous validez le travail, vous payez. Simple. Aucun prépaiement, aucune carte bancaire requise à la réservation. Le paiement est sécurisé par la plateforme.</p>
+        <span class="cp-step-tag">💳 Paiement après validation</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── La technologie Fixeo ── -->
+<div class="cp-section-alt">
+  <div class="cp-container">
+    <h2 class="cp-section-title">La technologie Fixeo</h2>
+    <p class="cp-section-sub">Ce qui se passe en arrière-plan quand vous décrivez votre besoin.</p>
+    <div class="cp-tech-grid">
+      <div class="cp-tech-card">
+        <span class="cp-tech-icon">🔀</span>
+        <p class="cp-tech-title">Matching service / ville</p>
+        <p class="cp-tech-text">Votre description est analysée pour identifier la catégorie de service et associer les artisans disponibles dans votre zone géographique.</p>
+      </div>
+      <div class="cp-tech-card">
+        <span class="cp-tech-icon">📍</span>
+        <p class="cp-tech-title">Géolocalisation intelligente</p>
+        <p class="cp-tech-text">Fixeo détecte automatiquement votre ville via la géolocalisation. Vous pouvez toujours la modifier pour rechercher ailleurs.</p>
+      </div>
+      <div class="cp-tech-card">
+        <span class="cp-tech-icon">💡</span>
+        <p class="cp-tech-title">Estimation de prix</p>
+        <p class="cp-tech-text">Chaque catégorie de service dispose de fourchettes tarifaires basées sur les interventions courantes au Maroc. Vous savez à quoi vous attendre avant de contacter.</p>
+      </div>
+      <div class="cp-tech-card">
+        <span class="cp-tech-icon">👷</span>
+        <p class="cp-tech-title">Profils artisans structurés</p>
+        <p class="cp-tech-text">Chaque artisan renseigne sa spécialité principale, ses zones d'intervention et ses disponibilités. Les profils évoluent avec les évaluations réelles.</p>
+      </div>
+      <div class="cp-tech-card">
+        <span class="cp-tech-icon">⚡</span>
+        <p class="cp-tech-title">Réservation rapide</p>
+        <p class="cp-tech-text">Pas de formulaire long. Un besoin, une ville, un créneau — Fixeo gère la coordination entre vous et l'artisan.</p>
+      </div>
+      <div class="cp-tech-card">
+        <span class="cp-tech-icon">🔒</span>
+        <p class="cp-tech-title">Paiement sécurisé</p>
+        <p class="cp-tech-text">Le paiement n'est déclenché qu'après validation de l'intervention. La plateforme protège à la fois le client et l'artisan.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── FAQ ── -->
+<section class="cp-section cp-container" aria-labelledby="faq-title">
+  <h2 class="cp-section-title" id="faq-title">Questions fréquentes</h2>
+  <p class="cp-section-sub">Ce que les utilisateurs demandent le plus souvent.</p>
+  <div class="cp-faq">
+
+    <div class="cp-faq-item">
+      <p class="cp-faq-q">Faut-il créer un compte pour chercher un artisan ?</p>
+      <p class="cp-faq-a">Non. Vous pouvez consulter les artisans disponibles sans compte. Un compte est nécessaire uniquement pour réserver ou publier une demande.</p>
+    </div>
+
+    <div class="cp-faq-item">
+      <p class="cp-faq-q">Combien coûte l'utilisation de Fixeo ?</p>
+      <p class="cp-faq-a">Gratuit pour les clients. Vous ne payez que l'intervention de l'artisan, après qu'elle soit réalisée. Aucun frais de service caché.</p>
+    </div>
+
+    <div class="cp-faq-item">
+      <p class="cp-faq-q">Comment sont sélectionnés les artisans ?</p>
+      <p class="cp-faq-a">Les artisans déclarent leur spécialité et leur zone lors de l'inscription. Leur profil est progressivement enrichi par les évaluations des clients après chaque intervention.</p>
+    </div>
+
+    <div class="cp-faq-item">
+      <p class="cp-faq-q">Que se passe-t-il si le travail n'est pas satisfaisant ?</p>
+      <p class="cp-faq-a">Le paiement n'est validé qu'après votre confirmation. En cas de litige, Fixeo offre un support client pour traiter la situation.</p>
+    </div>
+
+    <div class="cp-faq-item">
+      <p class="cp-faq-q">Puis-je demander une intervention urgente ?</p>
+      <p class="cp-faq-a">Oui. Le mode urgence Fixeo oriente vers les artisans disponibles immédiatement dans votre ville. Décrivez votre urgence et Fixeo priorise les réponses rapides.</p>
+    </div>
+
+    <div class="cp-faq-item">
+      <p class="cp-faq-q">Je suis artisan — comment rejoindre Fixeo ?</p>
+      <p class="cp-faq-a">Créez votre profil via la page dédiée. Indiquez vos spécialités, votre ville et vos disponibilités. Votre profil sera visible dès validation.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── CTA final ── -->
+<div class="cp-cta-band">
+  <div class="cp-container">
+    <h2>Prêt à trouver votre artisan ?</h2>
+    <p>Décrivez votre besoin. Fixeo fait le matching. Vous choisissez.</p>
+    <a href="index.html#home" class="cp-btn cp-btn-primary" style="font-size:1rem;padding:16px 34px">🔍 Trouver mon artisan maintenant</a>
+  </div>
+</div>
+
+<footer role="contentinfo" style="margin-top:0">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo-wrap" style="margin-bottom:14px">
+          <img src="img/logo.png" alt="Fixeo" style="height:38px;width:auto;object-fit:contain;background:transparent">
+        </div>
+        <p class="footer-desc">La plateforme de référence pour trouver des artisans qualifiés au Maroc.</p>
+        <a href="onboarding-artisan.html" class="footer-artisan-link">🛠 Je suis artisan</a>
+      </div>
+      <div class="footer-links">
+        <h4>Navigation</h4>
+        <ul>
+          <li><a href="index.html">Accueil</a></li>
+          <li><a href="services.html">Services</a></li>
+          <li><a href="artisans.html">Artisans</a></li>
+          <li><a href="comment-ca-marche.html">Comment ça marche</a></li>
+          <li><a href="pricing.html">Tarifs</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h4>Pour les artisans</h4>
+        <ul>
+          <li><a href="onboarding-artisan.html">Rejoindre Fixeo</a></li>
+          <li><a href="dashboard-artisan.html">Espace artisan</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 Fixeo. Tous droits réservés.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/fixeo-header-global.js?v=50a38b9"></script>
+<script src="js/i18n.js?v=50a38b9"></script>
+<script src="js/header-unified.js?v=modalfix3"></script>
+<script src="js/auth-global.js?v=50a38b9"></script>
+</body>
+</html>

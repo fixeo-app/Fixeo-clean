@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr" data-theme="dark">
+<head>
+  <link rel="icon" type="image/png" href="img/favicon.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="img/favicon.png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta name="description" content="Le réseau d'artisans Fixeo au Maroc : plombiers, électriciens, peintres vérifiés dans votre ville. Comment Fixeo construit la confiance artisan-client.">
+  <title>Réseau d'artisans vérifiés au Maroc | Fixeo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/header-unified.css">
+  <link rel="stylesheet" href="css/fixeo-header-global.css">
+  <link rel="stylesheet" href="css/auth-global.css">
+  <style id="fixeo-logo-override">
+    .navbar-brand .logo-icon,.logo-wrap .logo-icon,.fixeo-gh-brand .logo-icon{display:none!important;width:0!important;height:0!important;min-width:0!important;flex:0!important}
+    .navbar-brand .logo-text,.logo-wrap .logo-text,.fixeo-gh-brand .logo-text{display:none!important;width:0!important;height:0!important}
+    .navbar-brand,.logo-wrap{max-width:220px!important;overflow:visible!important;gap:0!important;background:transparent!important}
+    .fixeo-gh-brand{max-width:180px!important;overflow:visible!important;gap:0!important;background:transparent!important}
+    img.fixeo-logo-img{display:block!important;height:32px!important;width:auto!important;object-fit:contain!important;object-position:left center!important;background:transparent!important;mix-blend-mode:normal!important;filter:none!important;box-shadow:none!important;border:none!important;flex:0 0 auto!important;overflow:visible!important}
+    .fixeo-gh-brand img.fixeo-logo-img,.fixeo-gh-mobile-bar img.fixeo-logo-img{height:26px!important;width:auto!important}
+    @media(max-width:480px){img.fixeo-logo-img{height:24px!important}.fixeo-gh-brand img.fixeo-logo-img{height:22px!important}}
+  </style>
+  <style>
+    *,*::before,*::after{box-sizing:border-box}
+    body{margin:0;font-family:Cairo,Tajawal,Arial,sans-serif;background:linear-gradient(135deg,#0D0D1A 0%,#1a1a2e 60%,#16213e 100%);color:#e8eaf0;min-height:100vh;padding-top:70px}
+    :root{--cp-muted:rgba(232,234,240,0.58);--cp-card:rgba(255,255,255,0.055);--cp-border:rgba(255,255,255,0.09);--cp-grad:linear-gradient(135deg,#E1306C,#833AB4)}
+    .cp-container{max-width:1060px;margin:0 auto;padding:0 20px}
+    a{text-decoration:none}
+    /* Hero */
+    .cp-hero{padding:72px 20px 60px;text-align:center;position:relative;overflow:hidden}
+    .cp-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(131,58,180,0.14),transparent);pointer-events:none}
+    .cp-hero-label{display:inline-block;padding:5px 16px;border-radius:999px;border:1px solid rgba(131,58,180,0.4);color:rgba(167,110,255,0.9);font-size:0.78rem;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;margin-bottom:22px}
+    .cp-hero h1{font-size:clamp(1.7rem,4vw,2.8rem);font-weight:900;line-height:1.15;letter-spacing:-0.02em;margin:0 0 18px;color:#fff}
+    .cp-hero h1 .hl{background:var(--cp-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .cp-hero p{font-size:clamp(0.97rem,1.8vw,1.12rem);color:var(--cp-muted);max-width:580px;margin:0 auto 32px;line-height:1.65}
+    /* Buttons */
+    .cp-btn{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:14px;font-size:0.95rem;font-weight:800;cursor:pointer;border:none;text-decoration:none;transition:transform 0.15s,box-shadow 0.15s;color:#fff}
+    .cp-btn:hover{transform:translateY(-1px)}
+    .cp-btn-primary{background:var(--cp-grad);box-shadow:0 8px 24px rgba(225,48,108,0.25)}
+    .cp-btn-primary:hover{box-shadow:0 12px 32px rgba(225,48,108,0.38)}
+    .cp-btn-outline{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.14)}
+    .cp-btn-outline:hover{background:rgba(255,255,255,0.12)}
+    .cp-btn-row{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+    /* Sections */
+    .cp-section{padding:56px 0}
+    .cp-section-alt{background:rgba(255,255,255,0.022);margin:0 -20px;padding:56px 20px}
+    .cp-section-title{font-size:clamp(1.2rem,2.5vw,1.65rem);font-weight:800;color:#fff;margin:0 0 8px;letter-spacing:-0.01em}
+    .cp-section-sub{font-size:0.92rem;color:var(--cp-muted);margin:0 0 36px;line-height:1.6}
+    /* Trust cards */
+    .cp-trust-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
+    .cp-trust-card{background:var(--cp-card);border:1px solid var(--cp-border);border-radius:18px;padding:22px 20px;display:flex;flex-direction:column;gap:10px}
+    .cp-trust-icon{font-size:1.7rem}
+    .cp-trust-title{font-size:0.97rem;font-weight:800;color:#fff;margin:0}
+    .cp-trust-text{font-size:0.84rem;color:var(--cp-muted);margin:0;line-height:1.55}
+    /* Two columns */
+    .cp-two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
+    .cp-col-card{background:var(--cp-card);border:1px solid var(--cp-border);border-radius:20px;padding:28px 22px}
+    .cp-col-label{display:inline-block;padding:3px 12px;border-radius:999px;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:14px}
+    .cp-label-pink{background:rgba(225,48,108,0.13);color:rgba(225,48,108,0.9);border:1px solid rgba(225,48,108,0.22)}
+    .cp-label-purple{background:rgba(131,58,180,0.15);color:rgba(167,110,255,0.9);border:1px solid rgba(131,58,180,0.25)}
+    .cp-col-title{font-size:1.05rem;font-weight:800;color:#fff;margin:0 0 14px}
+    .cp-col-list{list-style:none;padding:0;margin:0 0 20px;display:flex;flex-direction:column;gap:10px}
+    .cp-col-list li{display:flex;align-items:flex-start;gap:10px;font-size:0.88rem;color:var(--cp-muted);line-height:1.55}
+    .cp-col-list li::before{content:'';flex:0 0 6px;height:6px;border-radius:50%;background:var(--cp-grad);margin-top:7px}
+    /* City grid */
+    .cp-city-grid{display:flex;flex-wrap:wrap;gap:10px}
+    .cp-city-pill{padding:7px 16px;border-radius:999px;border:1px solid var(--cp-border);background:var(--cp-card);font-size:0.85rem;font-weight:600;color:rgba(255,255,255,0.75)}
+    /* Métier grid */
+    .cp-metier-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+    .cp-metier-item{background:var(--cp-card);border:1px solid var(--cp-border);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:10px;font-size:0.88rem;font-weight:700;color:rgba(255,255,255,0.82)}
+    /* CTA band */
+    .cp-cta-band{padding:64px 20px;text-align:center;background:linear-gradient(135deg,rgba(131,58,180,0.10),rgba(225,48,108,0.10));border-top:1px solid rgba(255,255,255,0.07);border-bottom:1px solid rgba(255,255,255,0.07)}
+    .cp-cta-band h2{font-size:clamp(1.3rem,3vw,2rem);font-weight:900;color:#fff;margin:0 0 12px}
+    .cp-cta-band p{font-size:0.96rem;color:var(--cp-muted);max-width:500px;margin:0 auto 28px;line-height:1.6}
+    @media(max-width:640px){.cp-two-col{grid-template-columns:1fr}.cp-trust-grid{grid-template-columns:1fr 1fr}.cp-hero{padding:48px 16px 40px}.cp-section{padding:40px 0}.cp-section-alt{padding:40px 16px}}
+    @media(max-width:400px){.cp-trust-grid{grid-template-columns:1fr}}
+  </style>
+</head>
+
+<body class="fixeo-gh-enabled">
+
+<nav class="navbar" role="navigation" aria-label="Navigation principale">
+  <a href="index.html" class="navbar-brand logo-wrap" aria-label="Fixeo - Accueil">
+    <img src="img/logo.png" alt="Fixeo" class="fixeo-logo-img" height="38" loading="eager"
+         onerror="this.onerror=null;this.alt='Fixeo';this.style.display='none'">
+  </a>
+  <nav class="navbar-nav" aria-label="Menu principal">
+    <a href="services.html" class="nav-link">Services</a>
+    <a href="artisans.html" class="nav-link active">Artisans</a>
+    <a href="comment-ca-marche.html" class="nav-link">Comment ça marche</a>
+    <a href="pricing.html" class="nav-link">Tarifs</a>
+    <a href="dashboard-client.html" class="nav-link" data-role="dashboard" data-auth="logged-in">📊 Dashboard</a>
+    <a href="admin.html" class="nav-link" data-role="admin" data-auth="admin">🛡 Admin</a>
+  </nav>
+  <div class="nav-actions">
+    <a href="auth.html" id="login-btn" class="btn-nav btn-nav-outline" data-auth="guest">Connexion</a>
+    <a href="auth.html#signup" id="register-btn" class="btn-nav btn-nav-primary" data-auth="guest">Inscription</a>
+    <div class="nav-has-dropdown" data-auth="logged-in" style="display:none">
+      <div class="nav-user-chip" tabindex="0" aria-haspopup="true" aria-label="Mon compte">
+        <div class="nav-user-avatar" id="global-avatar">U</div>
+        <span class="nav-user-name" id="global-username">Mon Compte</span>
+        <span class="nav-arrow" style="font-size:0.6rem;opacity:0.5">▾</span>
+      </div>
+      <div class="nav-dropdown" role="menu" style="min-width:200px;right:0;left:auto">
+        <a href="dashboard-client.html" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">📊</span>Mon Dashboard</a>
+        <a href="dashboard-artisan.html" class="nav-dropdown-item" role="menuitem" data-role-show="artisan" style="display:none"><span class="dd-icon">👷</span>Espace Artisan</a>
+        <div class="nav-dropdown-divider"></div>
+        <a href="#" id="logout-btn" class="nav-dropdown-item" role="menuitem" onclick="window.fixeoLogout?.();return false;"><span class="dd-icon">🚪</span>Déconnexion</a>
+      </div>
+    </div>
+  </div>
+  <button class="hamburger" aria-label="Ouvrir le menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- ── Hero ── -->
+<section class="cp-hero" aria-labelledby="art-hero-title">
+  <div class="cp-container">
+    <span class="cp-hero-label">Réseau Fixeo</span>
+    <h1 id="art-hero-title">Des artisans sélectionnés pour intervenir<br><span class="hl">près de chez vous</span></h1>
+    <p>Fixeo organise les profils par métier, ville, disponibilité et qualité. Vous trouvez rapidement, vous réservez simplement.</p>
+    <div class="cp-btn-row">
+      <a href="index.html#artisans-section" class="cp-btn cp-btn-primary">👷 Trouver un artisan</a>
+      <a href="onboarding-artisan.html" class="cp-btn cp-btn-outline">Je suis artisan</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── Comment Fixeo construit la confiance ── -->
+<section class="cp-section cp-container" aria-labelledby="trust-title">
+  <h2 class="cp-section-title" id="trust-title">Comment Fixeo construit la confiance</h2>
+  <p class="cp-section-sub">Chaque profil artisan sur Fixeo repose sur des critères clairs et vérifiables.</p>
+  <div class="cp-trust-grid">
+    <div class="cp-trust-card">
+      <span class="cp-trust-icon">✔️</span>
+      <p class="cp-trust-title">Profil vérifié progressivement</p>
+      <p class="cp-trust-text">La spécialité et la ville sont déclarées à l'inscription. Les évaluations s'accumulent au fil des interventions réelles.</p>
+    </div>
+    <div class="cp-trust-card">
+      <span class="cp-trust-icon">🧰</span>
+      <p class="cp-trust-title">Spécialité claire</p>
+      <p class="cp-trust-text">Chaque artisan est associé à un ou plusieurs métiers précis. Pas de profils généralistes flous — vous savez ce que vous demandez.</p>
+    </div>
+    <div class="cp-trust-card">
+      <span class="cp-trust-icon">💡</span>
+      <p class="cp-trust-title">Estimation transparente</p>
+      <p class="cp-trust-text">Fixeo affiche une fourchette de prix indicative avant tout contact. Vous savez approximativement à quoi vous attendre.</p>
+    </div>
+    <div class="cp-trust-card">
+      <span class="cp-trust-icon">💳</span>
+      <p class="cp-trust-title">Paiement après intervention</p>
+      <p class="cp-trust-text">Aucun acompte, aucun prépaiement. Vous réglez uniquement après que le travail est fait et que vous l'avez validé.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── Pour les clients / Pour les artisans ── -->
+<div class="cp-section-alt">
+  <div class="cp-container">
+    <h2 class="cp-section-title">Deux côtés de la plateforme</h2>
+    <p class="cp-section-sub">Fixeo sert à la fois les clients qui cherchent et les artisans qui interviennent.</p>
+    <div class="cp-two-col">
+
+      <div class="cp-col-card">
+        <span class="cp-col-label cp-label-pink">🏠 Pour les clients</span>
+        <p class="cp-col-title">Trouvez rapidement, réservez simplement</p>
+        <ul class="cp-col-list">
+          <li>Décrivez votre besoin en 30 secondes</li>
+          <li>Fixeo identifie les artisans disponibles dans votre ville</li>
+          <li>Consultez les profils et les estimations de prix</li>
+          <li>Réservez ou publiez une demande ouverte</li>
+          <li>Payez après l'intervention, sans engagement préalable</li>
+        </ul>
+        <a href="index.html#artisans-section" class="cp-btn cp-btn-primary" style="font-size:0.88rem;padding:12px 22px">👷 Trouver un artisan</a>
+      </div>
+
+      <div class="cp-col-card">
+        <span class="cp-col-label cp-label-purple">🔧 Pour les artisans</span>
+        <p class="cp-col-title">Rejoignez le réseau Fixeo</p>
+        <ul class="cp-col-list">
+          <li>Créez ou revendiquez votre profil artisan</li>
+          <li>Indiquez vos spécialités et votre zone d'intervention</li>
+          <li>Recevez des demandes qualifiées dans votre métier</li>
+          <li>Gérez vos missions depuis votre espace artisan</li>
+          <li>Construisez votre réputation avec les avis clients</li>
+        </ul>
+        <div style="display:flex;flex-wrap:wrap;gap:10px">
+          <a href="onboarding-artisan.html" class="cp-btn cp-btn-primary" style="font-size:0.88rem;padding:12px 22px">🧰 Je suis artisan</a>
+          <a href="onboarding-artisan.html" class="cp-btn cp-btn-outline" style="font-size:0.88rem;padding:12px 22px">Revendiquer un profil</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ── Métiers disponibles ── -->
+<section class="cp-section cp-container" aria-labelledby="metiers-title">
+  <h2 class="cp-section-title" id="metiers-title">Métiers disponibles sur Fixeo</h2>
+  <p class="cp-section-sub">13 catégories de services couvrant les besoins courants à domicile et en entreprise.</p>
+  <div class="cp-metier-grid">
+    <div class="cp-metier-item">🚿 Plomberie</div>
+    <div class="cp-metier-item">⚡ Électricité</div>
+    <div class="cp-metier-item">❄️ Climatisation</div>
+    <div class="cp-metier-item">🎨 Peinture</div>
+    <div class="cp-metier-item">🧹 Nettoyage</div>
+    <div class="cp-metier-item">🪚 Menuiserie</div>
+    <div class="cp-metier-item">🔑 Serrurerie</div>
+    <div class="cp-metier-item">🧱 Maçonnerie</div>
+    <div class="cp-metier-item">🌿 Jardinage</div>
+    <div class="cp-metier-item">🔩 Bricolage</div>
+    <div class="cp-metier-item">🚛 Déménagement</div>
+    <div class="cp-metier-item">🪟 Carrelage</div>
+    <div class="cp-metier-item">🏠 Toiture</div>
+  </div>
+</section>
+
+<!-- ── Villes couvertes ── -->
+<div class="cp-section-alt">
+  <div class="cp-container">
+    <h2 class="cp-section-title">Villes couvertes</h2>
+    <p class="cp-section-sub">Artisans disponibles dans les principales villes du Maroc.</p>
+    <div class="cp-city-grid">
+      <span class="cp-city-pill">📍 Casablanca</span>
+      <span class="cp-city-pill">📍 Rabat</span>
+      <span class="cp-city-pill">📍 Marrakech</span>
+      <span class="cp-city-pill">📍 Fès</span>
+      <span class="cp-city-pill">📍 Tanger</span>
+      <span class="cp-city-pill">📍 Agadir</span>
+      <span class="cp-city-pill">📍 Meknès</span>
+      <span class="cp-city-pill">📍 Oujda</span>
+      <span class="cp-city-pill">📍 Kénitra</span>
+      <span class="cp-city-pill">📍 Tétouan</span>
+      <span class="cp-city-pill">📍 Salé</span>
+      <span class="cp-city-pill">📍 Laâyoune</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── CTA final ── -->
+<div class="cp-cta-band">
+  <div class="cp-container">
+    <h2>Trouvez votre artisan maintenant</h2>
+    <p>Décrivez votre besoin, indiquez votre ville. Fixeo identifie les profils adaptés.</p>
+    <div class="cp-btn-row">
+      <a href="index.html#artisans-section" class="cp-btn cp-btn-primary" style="font-size:1rem;padding:16px 34px">👷 Voir les artisans</a>
+      <a href="onboarding-artisan.html" class="cp-btn cp-btn-outline" style="font-size:1rem;padding:16px 34px">🧰 Je suis artisan</a>
+    </div>
+  </div>
+</div>
+
+<footer role="contentinfo" style="margin-top:0">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo-wrap" style="margin-bottom:14px">
+          <img src="img/logo.png" alt="Fixeo" style="height:38px;width:auto;object-fit:contain;background:transparent">
+        </div>
+        <p class="footer-desc">La plateforme de référence pour trouver des artisans qualifiés au Maroc.</p>
+        <a href="onboarding-artisan.html" class="footer-artisan-link">🛠 Je suis artisan</a>
+      </div>
+      <div class="footer-links">
+        <h4>Navigation</h4>
+        <ul>
+          <li><a href="index.html">Accueil</a></li>
+          <li><a href="services.html">Services</a></li>
+          <li><a href="artisans.html">Artisans</a></li>
+          <li><a href="comment-ca-marche.html">Comment ça marche</a></li>
+          <li><a href="pricing.html">Tarifs</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h4>Pour les artisans</h4>
+        <ul>
+          <li><a href="onboarding-artisan.html">Rejoindre Fixeo</a></li>
+          <li><a href="dashboard-artisan.html">Espace artisan</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 Fixeo. Tous droits réservés.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/fixeo-header-global.js?v=50a38b9"></script>
+<script src="js/i18n.js?v=50a38b9"></script>
+<script src="js/header-unified.js?v=modalfix3"></script>
+<script src="js/auth-global.js?v=50a38b9"></script>
+</body>
+</html>
