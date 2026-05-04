@@ -85,7 +85,7 @@
     const navSection = `
       <div class="fixeo-gh-drawer-group">
         <div class="fixeo-gh-drawer-label">Navigation</div>
-        <a class="fixeo-gh-drawer-link" href="index.html">\uD83C\uDFE0 Accueil</a>
+        <a class="fixeo-gh-drawer-link" href="${isHomepage ? '#home' : 'index.html'}">\uD83C\uDFE0 Accueil</a>
         <a class="fixeo-gh-drawer-link" href="index.html#services">\uD83D\uDD27 Services</a>
         <a class="fixeo-gh-drawer-link" href="index.html#artisans-section">\uD83D\uDC77 Artisans</a>
         <a class="fixeo-gh-drawer-link" href="index.html#how-it-works">\u2139\uFE0F Comment \u00e7a marche</a>
@@ -108,7 +108,7 @@
       <div class="fixeo-gh-drawer-group">
         <div class="fixeo-gh-drawer-label">Pour les artisans</div>
         <a class="fixeo-gh-drawer-link" href="onboarding-artisan.html">\uD83E\uDDF0 Je suis artisan</a>
-        <a class="fixeo-gh-drawer-link" href="artisan.html">\uD83D\uDC64 Revendiquer mon profil</a>
+        <a class="fixeo-gh-drawer-link" href="onboarding-artisan.html">\uD83D\uDC64 Revendiquer mon profil</a>
         <a class="fixeo-gh-drawer-link" href="dashboard-artisan.html">\uD83D\uDCCA Espace artisan</a>
       </div>`;
 
@@ -125,8 +125,8 @@
         </div>`
       : `<div class="fixeo-gh-drawer-group">
           <div class="fixeo-gh-drawer-label">Compte</div>
-          <a class="fixeo-gh-drawer-cta is-primary fixeo-gh-drawer-link" href="auth.html?mode=login">\uD83D\uDD13 Connexion</a>
-          <a class="fixeo-gh-drawer-link" href="auth.html?mode=register">\u2728 Inscription</a>
+          <a class="fixeo-gh-drawer-cta is-primary fixeo-gh-drawer-link" href="auth.html">\uD83D\uDD13 Connexion</a>
+          <a class="fixeo-gh-drawer-link" href="auth.html#signup">\u2728 Inscription</a>
         </div>`;
 
     /* ── Language selector ───────────────────────────────────── */
@@ -387,6 +387,12 @@
     link.href = getAvatarHref(user);
     link.setAttribute('title', user ? user.name : 'Mon compte');
     link.setAttribute('aria-label', user ? `Mon compte ${user.name}` : 'Mon compte');
+
+    /* Role-based visibility: show [data-role-show="artisan"] only to artisans */
+    const isArtisan = !!(user && user.role === 'artisan');
+    document.querySelectorAll('[data-role-show="artisan"]').forEach(function (el) {
+      el.style.display = isArtisan ? '' : 'none';
+    });
   }
 
   function toggleDashboardSidebar(root) {
