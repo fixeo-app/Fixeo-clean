@@ -79,18 +79,70 @@
 
   function buildDrawerMarkup() {
     const dashboardLinks = getDashboardLinks();
-    const commonLinks = [
-      { href: 'index.html', label: '🏠 Accueil' },
-      { href: 'index.html#services', label: '🛠 Services' },
-      { href: 'index.html#artisans-section', label: '👷 Artisans' },
-      { href: 'pricing.html', label: '💎 Tarifs' },
-      { href: 'artisan.html', label: '👤 Profil artisan' },
-      { href: 'onboarding-artisan.html', label: '🧰 Je suis artisan' }
-    ];
+    const user = getAuthUser();
 
+    /* ── Section 1 — Navigation ──────────────────────────────── */
+    const navSection = `
+      <div class="fixeo-gh-drawer-group">
+        <div class="fixeo-gh-drawer-label">Navigation</div>
+        <a class="fixeo-gh-drawer-link" href="index.html">\uD83C\uDFE0 Accueil</a>
+        <a class="fixeo-gh-drawer-link" href="index.html#services">\uD83D\uDD27 Services</a>
+        <a class="fixeo-gh-drawer-link" href="index.html#artisans-section">\uD83D\uDC77 Artisans</a>
+        <a class="fixeo-gh-drawer-link" href="index.html#how-it-works">\u2139\uFE0F Comment \u00e7a marche</a>
+        <a class="fixeo-gh-drawer-link" href="pricing.html">\uD83D\uDC8E Tarifs</a>
+      </div>`;
+
+    /* ── Section 2 — Besoin d'un artisan ─────────────────────── */
+    const clientSection = `
+      <div class="fixeo-gh-drawer-group">
+        <div class="fixeo-gh-drawer-label">Besoin d\u2019un artisan</div>
+        <a class="fixeo-gh-drawer-link" href="index.html#artisans-section">\uD83D\uDD0D Trouver un artisan</a>
+        ${isHomepage
+          ? '<button type="button" class="fixeo-gh-drawer-link fixeo-gh-drawer-cta is-primary" data-open-request-form="true" data-request-mode="marketplace">\uD83D\uDCDD Publier une demande</button>'
+          : '<a class="fixeo-gh-drawer-link fixeo-gh-drawer-cta is-primary" href="index.html">\uD83D\uDCDD Publier une demande</a>'
+        }
+      </div>`;
+
+    /* ── Section 3 — Pour les artisans ───────────────────────── */
+    const artisanSection = `
+      <div class="fixeo-gh-drawer-group">
+        <div class="fixeo-gh-drawer-label">Pour les artisans</div>
+        <a class="fixeo-gh-drawer-link" href="onboarding-artisan.html">\uD83E\uDDF0 Je suis artisan</a>
+        <a class="fixeo-gh-drawer-link" href="artisan.html">\uD83D\uDC64 Revendiquer mon profil</a>
+        <a class="fixeo-gh-drawer-link" href="dashboard-artisan.html">\uD83D\uDCCA Espace artisan</a>
+      </div>`;
+
+    /* ── Section 4 — Compte (auth-aware) ─────────────────────── */
+    const compteSection = user
+      ? `<div class="fixeo-gh-drawer-group fixeo-gh-drawer-compte">
+          <div class="fixeo-gh-drawer-label">Mon compte</div>
+          <a class="fixeo-gh-drawer-link fixeo-gh-drawer-compte-user" href="${user.role === 'artisan' ? 'dashboard-artisan.html' : 'dashboard-client.html'}">
+            <span class="fixeo-gh-drawer-avatar">${esc(user.name.charAt(0).toUpperCase())}</span>
+            <span>${esc(user.name)}</span>
+          </a>
+          <a class="fixeo-gh-drawer-link" href="${user.role === 'artisan' ? 'dashboard-artisan.html' : 'dashboard-client.html'}">\uD83D\uDCCA Mon dashboard</a>
+          <a class="fixeo-gh-drawer-link" id="fixeo-gh-drawer-logout" href="#">\uD83D\uDEAA D\u00e9connexion</a>
+        </div>`
+      : `<div class="fixeo-gh-drawer-group">
+          <div class="fixeo-gh-drawer-label">Compte</div>
+          <a class="fixeo-gh-drawer-cta is-primary fixeo-gh-drawer-link" href="auth.html?mode=login">\uD83D\uDD13 Connexion</a>
+          <a class="fixeo-gh-drawer-link" href="auth.html?mode=register">\u2728 Inscription</a>
+        </div>`;
+
+    /* ── Language selector ───────────────────────────────────── */
+    const langSection = `
+      <div class="fixeo-gh-drawer-group fixeo-gh-drawer-lang">
+        <div class="fixeo-gh-drawer-label">Langue</div>
+        <div class="fixeo-gh-drawer-lang-row">
+          <button class="fixeo-gh-drawer-lang-btn" data-lang="fr">FR</button>
+          <button class="fixeo-gh-drawer-lang-btn" data-lang="ar">AR</button>
+          <button class="fixeo-gh-drawer-lang-btn" data-lang="en">EN</button>
+        </div>
+      </div>`;
+
+    /* ── Dashboard section (only on dashboard pages) ─────────── */
     const dashboardMarkup = dashboardLinks.length
-      ? `
-        <div class="fixeo-gh-drawer-group">
+      ? `<div class="fixeo-gh-drawer-group">
           <div class="fixeo-gh-drawer-label">Dashboard</div>
           ${dashboardLinks.map(link => `<a class="fixeo-gh-drawer-link" href="${link.href}" ${link.onclick ? `onclick="${link.onclick}"` : ''}>${link.label}</a>`).join('')}
         </div>`
@@ -98,19 +150,12 @@
 
     return `
       <div class="fixeo-gh-drawer" aria-hidden="true">
-        <div class="fixeo-gh-drawer-group">
-          <div class="fixeo-gh-drawer-label">Navigation</div>
-          ${commonLinks.map(link => `<a class="fixeo-gh-drawer-link" href="${link.href}">${link.label}</a>`).join('')}
-        </div>
+        ${navSection}
         ${dashboardMarkup}
-        <div class="fixeo-gh-drawer-group">
-          <div class="fixeo-gh-drawer-label">Actions</div>
-          ${isHomepage
-            ? '<button type="button" class="fixeo-gh-drawer-cta is-primary" data-open-request-form="true" data-request-mode="marketplace">Publier une demande</button>'
-            : '<a class="fixeo-gh-drawer-cta is-primary" href="index.html">Publier une demande</a>'
-          }
-          <a class="fixeo-gh-drawer-cta" href="auth.html">Connexion / compte</a>
-        </div>
+        ${clientSection}
+        ${artisanSection}
+        ${compteSection}
+        ${langSection}
       </div>
       <button class="fixeo-gh-backdrop" type="button" aria-label="Fermer le menu"></button>`;
   }
@@ -423,6 +468,38 @@
     });
 
     root.querySelector('.fixeo-gh-backdrop')?.addEventListener('click', function () {
+      closeDrawer(root);
+    });
+
+    /* Logout link wired here so it works even after DOM rebuild */
+    root.addEventListener('click', function (e) {
+      const logout = e.target.closest('#fixeo-gh-drawer-logout');
+      if (!logout) return;
+      e.preventDefault();
+      try {
+        localStorage.removeItem('user');
+        localStorage.removeItem('fixeo_user_name');
+        localStorage.removeItem('fixeo_user');
+        localStorage.removeItem('fixeo_role');
+        localStorage.removeItem('fixeo_avatar');
+        if (window.supabase && typeof window.supabase.auth?.signOut === 'function') {
+          window.supabase.auth.signOut();
+        }
+      } catch (_) {}
+      window.location.href = 'index.html';
+    });
+
+    /* Language buttons in drawer */
+    root.addEventListener('click', function (e) {
+      const btn = e.target.closest('.fixeo-gh-drawer-lang-btn');
+      if (!btn) return;
+      const lang = btn.dataset.lang;
+      if (!lang) return;
+      const sel = document.getElementById('lang-select');
+      if (sel) { sel.value = lang; sel.dispatchEvent(new Event('change')); }
+      else if (window.i18n && typeof window.i18n.setLang === 'function') {
+        window.i18n.setLang(lang);
+      }
       closeDrawer(root);
     });
 

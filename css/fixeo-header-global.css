@@ -422,3 +422,52 @@
     display: none !important;
   }
 }
+
+/* ── IA refonte additions (2026-05-04) ─────────────────────────── */
+/* Drawer compte: user avatar initial circle */
+body.fixeo-gh-enabled .fixeo-gh-drawer-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #E1306C, #833AB4);
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #fff;
+  flex: 0 0 28px;
+}
+
+/* Drawer compte: highlight row */
+body.fixeo-gh-enabled .fixeo-gh-drawer-compte-user {
+  background: rgba(225,48,108,0.08);
+  border-radius: 14px;
+}
+
+/* Drawer lang: pill row */
+body.fixeo-gh-enabled .fixeo-gh-drawer-lang-row {
+  display: flex;
+  gap: 8px;
+  padding: 4px 0;
+}
+
+body.fixeo-gh-enabled .fixeo-gh-drawer-lang-btn {
+  flex: 1;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.7);
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  transition: background 0.15s, color 0.15s;
+}
+
+body.fixeo-gh-enabled .fixeo-gh-drawer-lang-btn:hover {
+  background: rgba(255,255,255,0.12);
+  color: #fff;
+}
+/* ────────────────────────────────────────────────────────────────── */
