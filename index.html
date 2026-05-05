@@ -1992,6 +1992,7 @@ section#home.hero.hero-section {
 </style>
   <link rel="stylesheet" href="css/services-uber-premium.css?v=sup4">
   <link rel="stylesheet" href="css/testimonials-cta-premium.css?v=tcp1">
+  <link rel="stylesheet" href="css/homepage-bottom-v1.css?v=hbv1" media="print" onload="this.media='all'">
   <link rel="stylesheet" href="css/header-logo-premium.css?v=hlp5">
   <!-- ══ LOGO OVERRIDE - image-only, no emoji, no text ══ -->
   <style id="fixeo-logo-override">
@@ -2502,12 +2503,12 @@ section#home.hero.hero-section {
 <!-- Service artisans (injected by JS) -->
 <div id="service-artisans-section" class="container services-grid" style="padding-bottom:24px"></div>
 
-<section class="section section-sm" aria-labelledby="seo-local-links-title" style="display:none" aria-hidden="true">
+<section class="section section-sm" aria-labelledby="seo-local-links-title" style="padding:32px 0">
   <div class="container">
     <div class="section-header">
-      <span class="section-tag">SEO LOCAL</span>
-      <h2 id="seo-local-links-title">Pages service + ville</h2>
-      <p>Accédez directement aux principales pages locales prêtes pour l'indexation.</p>
+
+      <h2 id="seo-local-links-title" style="font-size:1rem;font-weight:700;color:rgba(255,255,255,.55);margin:0 0 16px;letter-spacing:.02em">Services disponibles au Maroc</h2>
+
     </div>
     <div class="category-chips" role="list" aria-label="Pages locales populaires">
       <a class="chip service-chip" role="listitem" href="/plombier-casablanca">Plombier à Casablanca</a>
@@ -2722,7 +2723,7 @@ section#home.hero.hero-section {
   <div class="container">
     <div class="section-header why-fixeo-header">
       <span class="section-tag">CONFIANCE</span>
-      <h2 id="why-fixeo-title">Pourquoi choisir Fixeo ?</h2>
+      <h2 id="why-fixeo-title">Pourquoi utiliser Fixeo ?</h2>
       <p>La plateforme de confiance pour tous vos besoins en artisanat au Maroc</p>
     </div>
     <div class="why-fixeo-grid" id="why-fixeo-grid">
@@ -2774,10 +2775,9 @@ section#home.hero.hero-section {
 <section class="section testimonial-section" aria-labelledby="testimonials-title">
   <div class="container">
     <div class="section-header">
-      <span class="section-tag">TÉMOIGNAGES</span>
-      <div class="social-proof-bar">⭐ 4.9/5 sur +18 000 missions • 97% clients satisfaits • +5 000 artisans vérifiés</div>
+      <span class="section-tag">Avis clients récents</span>
       <h2 id="testimonials-title" class="testimonial-title">Ils nous font confiance partout au Maroc</h2>
-      <p>Plus de 18 000 missions réalisées - des clients satisfaits témoignent</p>
+      <p>Des clients partagent leur expérience Fixeo.</p>
     </div>
     <div class="testimonials-grid">
 
@@ -2820,7 +2820,7 @@ section#home.hero.hero-section {
         </div>
       </div>
 
-      <div class="testimonial-card">
+      <div class="testimonial-card" style="display:none">
         <div class="testimonial-stars">★★★★★</div>
         <div class="trust-badges">✔ Client vérifié</div>
         <div class="testimonial-quote"><span class="quote-mark">"</span>Rachid a rénové mes menuiseries en 2 jours chrono. Résultat parfait, je suis ravie ! Prix très compétitif et artisan très ponctuel.</div>
@@ -2833,7 +2833,7 @@ section#home.hero.hero-section {
         </div>
       </div>
 
-      <div class="testimonial-card">
+      <div class="testimonial-card" style="display:none">
         <div class="testimonial-stars">★★★★★</div>
         <div class="trust-badges">✔ Client vérifié</div>
         <div class="testimonial-quote"><span class="quote-mark">"</span>Samir a installé ma climatisation en quelques heures. Professionnel, rapide et très abordable. Je recommande sans hésitation !</div>
@@ -2846,7 +2846,7 @@ section#home.hero.hero-section {
         </div>
       </div>
 
-      <div class="testimonial-card">
+      <div class="testimonial-card" style="display:none">
         <div class="testimonial-stars">★★★★★</div>
         <div class="trust-badges">✔ Client vérifié</div>
         <div class="testimonial-quote"><span class="quote-mark">"</span>Fatima et son équipe ont fait un travail de nettoyage exceptionnel après mes travaux. Elles sont venues le lendemain même, impeccable !</div>
@@ -2872,17 +2872,21 @@ section#home.hero.hero-section {
 <section class="section final-cta-section" aria-labelledby="final-cta-title">
   <div class="container">
     <div class="final-cta">
-      <p class="urgency">🔥 Intervention possible aujourd'hui</p>
-      <h2 id="final-cta-title">Trouvez votre artisan en moins de 2 minutes</h2>
-      <p class="subtitle">
-        Des artisans vérifiés, disponibles près de chez vous. Réponse rapide garantie.
-      </p>
-      <button class="cta-main" type="button"
-              onclick="if(window.QuickSearchModal&&typeof QuickSearchModal.focusInline==='function'){QuickSearchModal.focusInline();}else{document.getElementById('artisans-section')?.scrollIntoView({behavior:'smooth'});}">
-        Réserver maintenant
-      </button>
-      <p class="cta-proof">
-        ✔️ Sans engagement • ✔️ Réponse en quelques minutes
+      <h2 id="final-cta-title">Trouvez votre artisan maintenant</h2>
+      <p class="subtitle">Des artisans disponibles près de chez vous. Réponse rapide garantie.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin:24px 0 16px">
+        <button class="cta-main" type="button"
+                onclick="if(window.FixeoClientRequest&&typeof FixeoClientRequest.open==='function'){FixeoClientRequest.open();}else if(window.QuickSearchModal&&typeof QuickSearchModal.focusInline==='function'){QuickSearchModal.focusInline();}else{document.getElementById('artisans-section')?.scrollIntoView({behavior:'smooth'});}">
+          📝 Publier ma demande gratuitement
+        </button>
+        <button class="btn-express btn-express-inline" type="button"
+                onclick="window.FixeoClientRequest ? FixeoClientRequest.openExpress(this) : openModal('express-modal'); return false;"
+                style="padding:14px 26px;font-size:.95rem;font-weight:700;border-radius:14px;border:1.5px solid rgba(225,48,108,.4);background:rgba(225,48,108,.1);color:rgba(255,180,200,.9);cursor:pointer;display:inline-flex;align-items:center;gap:8px">
+          ⚡ Besoin urgent
+        </button>
+      </div>
+      <p class="cta-proof" style="font-size:.82rem;color:rgba(255,255,255,.38);margin:0">
+        Gratuit &nbsp;•&nbsp; Sans engagement &nbsp;•&nbsp; Réponse rapide
       </p>
     </div>
   </div>
@@ -2900,10 +2904,8 @@ section#home.hero.hero-section {
     <div class="v13-partners-row" aria-label="Partenaires et certifications">
       <span class="v13-partner-badge">🛡 Artisans vérifiés</span>
       <span class="v13-partner-badge">💳 Paiement sécurisé</span>
-      <span class="v13-partner-badge">📍 42 villes couvertes</span>
-      <span class="v13-partner-badge">⭐ 4.9/5 note moyenne</span>
+      <span class="v13-partner-badge">📍 12 villes couvertes</span>
       <span class="v13-partner-badge">🔒 Données protégées</span>
-      <span class="v13-partner-badge">📞 Support 7j/7</span>
     </div>
 
     <div class="footer-grid">
@@ -2924,28 +2926,25 @@ section#home.hero.hero-section {
         </div>
       </div>
 
-      <!-- Services -->
+      <!-- Navigation -->
       <div class="footer-links">
-        <h4>Services</h4>
+        <h4>Navigation</h4>
         <ul>
-          <li><a href="/plombier-casablanca">Plombier à Casablanca</a></li>
-          <li><a href="/electricien-rabat">Électricien à Rabat</a></li>
-          <li><a href="/peinture-fes">Peinture à Fès</a></li>
-          <li><a href="/serrurier-marrakech">Serrurier à Marrakech</a></li>
-          <li><a href="index.html#services">Tous les services</a></li>
-          <li><a href="index.html#artisans-section">Artisans au Maroc</a></li>
+          <li><a href="index.html">Accueil</a></li>
+          <li><a href="services.html">Services</a></li>
+          <li><a href="artisans.html">Artisans</a></li>
+          <li><a href="comment-ca-marche.html">Comment ça marche</a></li>
+          <li><a href="pricing.html">Tarifs</a></li>
         </ul>
       </div>
 
-      <!-- Entreprise -->
+      <!-- Artisans -->
       <div class="footer-links">
-        <h4>Entreprise</h4>
+        <h4>Artisans</h4>
         <ul>
-          <li><a href="#" onclick="openContentModal('about');return false;">À propos</a></li>
-          <li><a href="#" onclick="openContentModal('careers');return false;">Carrières</a></li>
-          <li><a href="#" onclick="openContentModal('press');return false;">Presse</a></li>
-          <li><a href="#" onclick="openContentModal('blog');return false;">Blog</a></li>
-          <li><a href="pricing.html">Tarifs</a></li>
+          <li><a href="rejoindre-fixeo.html">Rejoindre Fixeo</a></li>
+          <li><a href="rejoindre-fixeo.html#revendiquer">Revendiquer mon profil</a></li>
+          <li><a href="dashboard-artisan.html">Espace artisan</a></li>
         </ul>
       </div>
 
@@ -2953,8 +2952,8 @@ section#home.hero.hero-section {
       <div class="footer-links">
         <h4>Support</h4>
         <ul>
-          <li><a href="#" onclick="openContentModal('faq');return false;">FAQ</a></li>
           <li><a href="#" onclick="openContentModal('contact');return false;">Contact</a></li>
+          <li><a href="#" onclick="openContentModal('faq');return false;">FAQ</a></li>
           <li><a href="#" onclick="openContentModal('cgu');return false;">CGU</a></li>
           <li><a href="#" onclick="openContentModal('privacy');return false;">Confidentialité</a></li>
         </ul>
@@ -2967,7 +2966,7 @@ section#home.hero.hero-section {
       <div style="display:flex;gap:.75rem;flex-wrap:wrap">
         <a href="auth.html" style="color:rgba(255,255,255,.35)">Connexion</a>
         <span style="color:rgba(255,255,255,.18)">·</span>
-        <a href="artisan.html" style="color:rgba(255,255,255,.35)">Profil artisan</a>
+        <a href="rejoindre-fixeo.html" style="color:rgba(255,255,255,.35)">Je suis artisan</a>
         <span style="color:rgba(255,255,255,.18)">·</span>
         <a href="dashboard-client.html" style="color:rgba(255,255,255,.35)">Dashboard</a>
       </div>
@@ -3126,8 +3125,8 @@ section#home.hero.hero-section {
   </div>
 </div>
 
-<!-- Back to top -->
-<button class="back-to-top" aria-label="Retour en haut" style="opacity:0;transform:translateY(12px);pointer-events:none">↑</button>
+<!-- Back to top (hidden) -->
+<button class="back-to-top" aria-label="Retour en haut" style="display:none" aria-hidden="true">↑</button>
 
 <!-- ═══════════════════════════════════════════════════════════
      SCRIPTS V13

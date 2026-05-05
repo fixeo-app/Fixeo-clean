@@ -1,0 +1,94 @@
+/* ══════════════════════════════════════════════
+   homepage-bottom-v1.css
+   Bottom-of-page UX overrides — non-breaking
+   Loads AFTER all other CSS via deferred media=print trick
+   ══════════════════════════════════════════════ */
+
+/* ── 2. Testimonials: 3-col grid (hide 4-6 already done inline) ── */
+.testimonials-grid {
+  grid-template-columns: repeat(3, 1fr) !important;
+}
+@media (max-width: 900px) {
+  .testimonials-grid { grid-template-columns: repeat(2, 1fr) !important; }
+}
+@media (max-width: 560px) {
+  .testimonials-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ── 3. Why-Fixeo section: already premium, just tighten ── */
+#why-fixeo-section .section-header p {
+  font-size: .9rem;
+  color: rgba(232,234,240,.52);
+}
+
+/* ── 4. SEO block: grid chips, muted palette ── */
+[aria-labelledby="seo-local-links-title"] .section-header {
+  text-align: left !important;
+  margin-bottom: 12px;
+}
+[aria-labelledby="seo-local-links-title"] .category-chips {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+}
+[aria-labelledby="seo-local-links-title"] .chip.service-chip {
+  font-size: .78rem !important;
+  padding: 6px 14px !important;
+  opacity: .62 !important;
+  font-weight: 600 !important;
+}
+[aria-labelledby="seo-local-links-title"] .chip.service-chip:hover {
+  opacity: .9 !important;
+}
+
+/* ── 5. Footer: ensure 4-col grid is clean ── */
+.footer-grid {
+  grid-template-columns: 1.6fr 1fr 1fr 1fr;
+  gap: 32px;
+}
+@media (max-width: 900px) {
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 560px) {
+  .footer-grid { grid-template-columns: 1fr; }
+}
+
+/* ── 6. FAB size reduction ── */
+#fixeo-urgent-fab {
+  width: 52px !important;
+  height: 52px !important;
+  min-width: unset !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  box-shadow: 0 4px 16px rgba(225,48,108,.3) !important;
+  right: 18px !important;
+  bottom: 22px !important;
+}
+#fixeo-urgent-fab .ufab-label {
+  display: none !important;
+}
+#fixeo-urgent-fab .ufab-icon {
+  width: 22px !important;
+  height: 22px !important;
+}
+
+/* ── 1. Final CTA section: clean spacing ── */
+.final-cta-section .final-cta {
+  max-width: 580px;
+  margin: 0 auto;
+  text-align: center;
+}
+.final-cta-section .btn-express-inline {
+  transition: background .15s, border-color .15s !important;
+}
+.final-cta-section .btn-express-inline:hover {
+  background: rgba(225,48,108,.18) !important;
+  border-color: rgba(225,48,108,.6) !important;
+}
+
+/* ── Testimonial section-tag update ── */
+.testimonial-section .section-tag {
+  background: rgba(52,211,153,.1);
+  border-color: rgba(52,211,153,.2);
+  color: rgba(52,211,153,.85);
+}
