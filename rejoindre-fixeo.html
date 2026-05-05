@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr" data-theme="dark">
+<head>
+  <link rel="icon" type="image/png" href="img/favicon.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="img/favicon.png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta name="description" content="Rejoignez Fixeo — la plateforme qui connecte artisans et clients au Maroc. Recevez des demandes qualifiées, développez votre activité, construisez votre réputation.">
+  <title>Rejoindre Fixeo — Développez votre activité d'artisan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/header-unified.css">
+  <link rel="stylesheet" href="css/fixeo-header-global.css">
+  <link rel="stylesheet" href="css/auth-global.css">
+  <style id="fixeo-logo-override">
+    .navbar-brand .logo-icon,.logo-wrap .logo-icon,.fixeo-gh-brand .logo-icon{display:none!important;width:0!important;height:0!important;min-width:0!important;flex:0!important}
+    .navbar-brand .logo-text,.logo-wrap .logo-text,.fixeo-gh-brand .logo-text{display:none!important;width:0!important;height:0!important}
+    .navbar-brand,.logo-wrap{max-width:220px!important;overflow:visible!important;gap:0!important;background:transparent!important}
+    .fixeo-gh-brand{max-width:180px!important;overflow:visible!important;gap:0!important;background:transparent!important}
+    img.fixeo-logo-img{display:block!important;height:32px!important;width:auto!important;object-fit:contain!important;object-position:left center!important;background:transparent!important;mix-blend-mode:normal!important;filter:none!important;box-shadow:none!important;border:none!important;flex:0 0 auto!important;overflow:visible!important}
+    .fixeo-gh-brand img.fixeo-logo-img,.fixeo-gh-mobile-bar img.fixeo-logo-img{height:26px!important;width:auto!important}
+    @media(max-width:480px){img.fixeo-logo-img{height:24px!important}.fixeo-gh-brand img.fixeo-logo-img{height:22px!important}}
+  </style>
+  <style>
+    /* ─── Reset & base ─── */
+    *,*::before,*::after{box-sizing:border-box}
+    body{margin:0;font-family:Cairo,Tajawal,Arial,sans-serif;background:#0a0a14;color:#e8eaf0;min-height:100vh;padding-top:70px;overflow-x:hidden}
+    a{text-decoration:none;color:inherit}
+
+    /* ─── Design tokens ─── */
+    :root{
+      --pink:#E1306C;
+      --purple:#833AB4;
+      --blue:#38bdf8;
+      --grad:linear-gradient(135deg,#E1306C,#833AB4);
+      --grad-h:linear-gradient(135deg,#f0406e,#9b4fd4);
+      --muted:rgba(232,234,240,.58);
+      --card:rgba(255,255,255,.055);
+      --border:rgba(255,255,255,.09);
+      --border-glow:rgba(225,48,108,.3);
+    }
+
+    /* ─── Animations ─── */
+    @keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes glowPulse{0%,100%{box-shadow:0 0 20px rgba(225,48,108,.22)}50%{box-shadow:0 0 38px rgba(225,48,108,.42)}}
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+
+    .rj-fade-in{opacity:0;transform:translateY(20px);transition:opacity .55s ease,transform .55s ease}
+    .rj-fade-in.visible{opacity:1;transform:translateY(0)}
+
+    /* ─── Container ─── */
+    .rj-wrap{max-width:1060px;margin:0 auto;padding:0 22px}
+
+    /* ════════════════════════════
+       1. HERO
+    ════════════════════════════ */
+    .rj-hero{
+      position:relative;min-height:86vh;display:flex;align-items:center;
+      padding:88px 22px 72px;text-align:center;overflow:hidden;
+    }
+    /* Radial glow background */
+    .rj-hero::before{
+      content:'';position:absolute;inset:0;pointer-events:none;
+      background:
+        radial-gradient(ellipse 90% 70% at 50% -10%,rgba(225,48,108,.15),transparent 65%),
+        radial-gradient(ellipse 60% 50% at 80% 80%,rgba(131,58,180,.10),transparent 60%),
+        radial-gradient(ellipse 50% 40% at 20% 70%,rgba(56,189,248,.08),transparent 55%);
+    }
+    /* Animated grid overlay */
+    .rj-hero::after{
+      content:'';position:absolute;inset:0;pointer-events:none;opacity:.03;
+      background-image:linear-gradient(rgba(255,255,255,.3) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.3) 1px,transparent 1px);
+      background-size:50px 50px;
+    }
+    .rj-hero-inner{position:relative;z-index:1;max-width:760px;margin:0 auto}
+
+    .rj-hero-badge{
+      display:inline-flex;align-items:center;gap:7px;
+      padding:6px 18px;border-radius:999px;
+      background:rgba(225,48,108,.10);
+      border:1px solid rgba(225,48,108,.28);
+      color:rgba(255,140,170,.9);
+      font-size:.76rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+      margin-bottom:28px;
+    }
+    .rj-hero-badge-dot{width:6px;height:6px;border-radius:50%;background:#E1306C;animation:glowPulse 2s infinite}
+
+    .rj-hero h1{
+      font-size:clamp(2rem,5.5vw,3.6rem);font-weight:900;line-height:1.1;
+      letter-spacing:-.03em;margin:0 0 22px;color:#fff;
+    }
+    .rj-hl{
+      background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+      display:inline-block;
+    }
+
+    .rj-hero p{
+      font-size:clamp(1rem,1.9vw,1.18rem);color:var(--muted);
+      max-width:560px;margin:0 auto 38px;line-height:1.7;
+    }
+
+    /* CTA buttons */
+    .rj-cta-row{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin-bottom:32px}
+    .rj-btn{
+      display:inline-flex;align-items:center;gap:9px;
+      padding:16px 34px;border-radius:16px;font-size:.97rem;font-weight:800;
+      cursor:pointer;border:none;color:#fff;transition:transform .15s,box-shadow .15s;
+    }
+    .rj-btn:hover{transform:translateY(-2px)}
+    .rj-btn-primary{
+      background:var(--grad);
+      box-shadow:0 8px 28px rgba(225,48,108,.3);
+      animation:glowPulse 3s ease-in-out infinite;
+    }
+    .rj-btn-primary:hover{background:var(--grad-h);box-shadow:0 14px 40px rgba(225,48,108,.45)}
+    .rj-btn-outline{
+      background:rgba(255,255,255,.07);
+      border:1px solid rgba(255,255,255,.16);
+    }
+    .rj-btn-outline:hover{background:rgba(255,255,255,.13)}
+
+    .rj-hero-trust{
+      font-size:.82rem;color:rgba(255,255,255,.38);
+      display:flex;align-items:center;justify-content:center;gap:8px;
+    }
+    .rj-hero-trust span{color:rgba(52,211,153,.7)}
+
+    /* ════════════════════════════
+       2. VALUE PROPOSITION
+    ════════════════════════════ */
+    .rj-section{padding:72px 22px}
+    .rj-section-alt{background:rgba(255,255,255,.022)}
+
+    .rj-section-label{
+      display:inline-block;padding:4px 14px;border-radius:999px;
+      font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+      background:rgba(225,48,108,.1);border:1px solid rgba(225,48,108,.22);
+      color:rgba(225,48,108,.9);margin-bottom:14px;
+    }
+    .rj-section-title{font-size:clamp(1.25rem,2.8vw,1.85rem);font-weight:900;color:#fff;margin:0 0 10px;letter-spacing:-.015em}
+    .rj-section-sub{font-size:.93rem;color:var(--muted);margin:0 0 44px;line-height:1.65;max-width:580px}
+
+    .rj-val-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px}
+    .rj-val-card{
+      background:var(--card);border:1px solid var(--border);border-radius:22px;
+      padding:26px 20px;display:flex;flex-direction:column;gap:12px;
+      transition:transform .2s,border-color .2s,box-shadow .2s;
+    }
+    .rj-val-card:hover{transform:translateY(-4px);border-color:var(--border-glow);box-shadow:0 14px 36px rgba(0,0,0,.25)}
+    .rj-val-icon{font-size:2rem;animation:float 4s ease-in-out infinite}
+    .rj-val-card:nth-child(2) .rj-val-icon{animation-delay:.5s}
+    .rj-val-card:nth-child(3) .rj-val-icon{animation-delay:1s}
+    .rj-val-card:nth-child(4) .rj-val-icon{animation-delay:1.5s}
+    .rj-val-card:nth-child(5) .rj-val-icon{animation-delay:2s}
+    .rj-val-title{font-size:.98rem;font-weight:800;color:#fff;margin:0}
+    .rj-val-text{font-size:.84rem;color:var(--muted);margin:0;line-height:1.55}
+
+    /* ════════════════════════════
+       3. HOW IT WORKS — TIMELINE
+    ════════════════════════════ */
+    .rj-steps-wrap{position:relative;max-width:680px;margin:0 auto}
+    /* vertical connector line */
+    .rj-steps-wrap::before{
+      content:'';position:absolute;left:23px;top:24px;bottom:24px;width:2px;
+      background:linear-gradient(to bottom,rgba(225,48,108,.5),rgba(131,58,180,.5));
+      border-radius:2px;
+    }
+    .rj-step{display:flex;gap:22px;align-items:flex-start;padding:20px 0;position:relative}
+    .rj-step-num{
+      flex:0 0 48px;height:48px;border-radius:15px;
+      background:var(--grad);
+      display:flex;align-items:center;justify-content:center;
+      font-size:1.05rem;font-weight:900;color:#fff;
+      box-shadow:0 6px 18px rgba(225,48,108,.25);
+      z-index:1;position:relative;
+    }
+    .rj-step-body{flex:1;padding-top:4px}
+    .rj-step-title{font-size:1rem;font-weight:800;color:#fff;margin:0 0 5px}
+    .rj-step-desc{font-size:.87rem;color:var(--muted);margin:0;line-height:1.6}
+
+    /* ════════════════════════════
+       4. CLAIM PROFILE
+    ════════════════════════════ */
+    .rj-claim-band{
+      background:linear-gradient(135deg,rgba(131,58,180,.14),rgba(225,48,108,.10));
+      border:1px solid rgba(131,58,180,.2);
+      border-radius:28px;padding:44px 36px;text-align:center;
+      position:relative;overflow:hidden;
+    }
+    .rj-claim-band::before{
+      content:'';position:absolute;inset:0;pointer-events:none;
+      background:radial-gradient(ellipse 80% 80% at 50% 0%,rgba(131,58,180,.12),transparent);
+    }
+    .rj-claim-tag{
+      display:inline-block;padding:4px 14px;border-radius:999px;
+      font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+      background:rgba(131,58,180,.15);border:1px solid rgba(131,58,180,.3);
+      color:rgba(167,110,255,.9);margin-bottom:18px;position:relative;z-index:1;
+    }
+    .rj-claim-title{font-size:clamp(1.2rem,2.5vw,1.7rem);font-weight:900;color:#fff;margin:0 0 12px;position:relative;z-index:1}
+    .rj-claim-text{font-size:.92rem;color:var(--muted);margin:0 0 28px;line-height:1.65;max-width:480px;margin-left:auto;margin-right:auto;position:relative;z-index:1}
+
+    /* ════════════════════════════
+       5. TECHNOLOGY
+    ════════════════════════════ */
+    .rj-tech-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .rj-tech-card{
+      background:var(--card);border:1px solid var(--border);border-radius:18px;
+      padding:22px 18px;transition:border-color .2s;
+    }
+    .rj-tech-card:hover{border-color:rgba(56,189,248,.25)}
+    .rj-tech-icon{font-size:1.55rem;margin-bottom:10px;display:block}
+    .rj-tech-title{font-size:.93rem;font-weight:800;color:#fff;margin:0 0 6px}
+    .rj-tech-text{font-size:.83rem;color:var(--muted);margin:0;line-height:1.55}
+
+    /* ════════════════════════════
+       6. MARKET SHIFT
+    ════════════════════════════ */
+    .rj-market-wrap{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:center}
+    .rj-market-problem{
+      background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
+      border-radius:22px;padding:28px 24px;
+    }
+    .rj-market-solution{
+      background:linear-gradient(135deg,rgba(225,48,108,.09),rgba(131,58,180,.09));
+      border:1px solid rgba(225,48,108,.18);border-radius:22px;padding:28px 24px;
+    }
+    .rj-market-eyebrow{font-size:.73rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin:0 0 10px;opacity:.6}
+    .rj-market-eyebrow-r{color:rgba(225,48,108,.9)}
+    .rj-market-title{font-size:1.08rem;font-weight:800;color:#fff;margin:0 0 10px;line-height:1.3}
+    .rj-market-text{font-size:.87rem;color:var(--muted);margin:0;line-height:1.65}
+    .rj-market-list{list-style:none;padding:0;margin:14px 0 0;display:flex;flex-direction:column;gap:8px}
+    .rj-market-list li{display:flex;align-items:flex-start;gap:9px;font-size:.87rem;color:var(--muted);line-height:1.5}
+    .rj-market-list li::before{content:'';flex:0 0 6px;height:6px;border-radius:50%;background:var(--grad);margin-top:6px}
+
+    /* ════════════════════════════
+       7. FINAL CTA BAND
+    ════════════════════════════ */
+    .rj-final-band{
+      padding:84px 22px;text-align:center;
+      background:linear-gradient(135deg,rgba(225,48,108,.11),rgba(131,58,180,.11));
+      border-top:1px solid rgba(255,255,255,.07);
+      position:relative;overflow:hidden;
+    }
+    .rj-final-band::before{
+      content:'';position:absolute;inset:0;pointer-events:none;
+      background:radial-gradient(ellipse 70% 60% at 50% 50%,rgba(225,48,108,.09),transparent);
+    }
+    .rj-final-band h2{
+      font-size:clamp(1.5rem,3.5vw,2.4rem);font-weight:900;color:#fff;
+      margin:0 0 14px;letter-spacing:-.02em;position:relative;z-index:1;
+    }
+    .rj-final-band p{
+      font-size:.97rem;color:var(--muted);max-width:480px;margin:0 auto 34px;
+      line-height:1.65;position:relative;z-index:1;
+    }
+    .rj-final-band .rj-cta-row{position:relative;z-index:1}
+
+    /* ─── Responsive ─── */
+    @media(max-width:800px){
+      .rj-tech-grid{grid-template-columns:repeat(2,1fr)}
+      .rj-market-wrap{grid-template-columns:1fr}
+    }
+    @media(max-width:560px){
+      .rj-hero{min-height:unset;padding:72px 16px 60px}
+      .rj-section{padding:48px 16px}
+      .rj-tech-grid{grid-template-columns:1fr 1fr}
+      .rj-val-grid{grid-template-columns:1fr 1fr}
+      .rj-claim-band{padding:32px 20px;border-radius:20px}
+      .rj-btn{padding:14px 26px;font-size:.92rem}
+      .rj-steps-wrap::before{left:19px}
+      .rj-step-num{flex:0 0 40px;height:40px;border-radius:12px;font-size:.95rem}
+    }
+    @media(max-width:380px){
+      .rj-val-grid{grid-template-columns:1fr}
+      .rj-tech-grid{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+
+<body class="fixeo-gh-enabled">
+
+<!-- ── Navbar ── -->
+<nav class="navbar" role="navigation" aria-label="Navigation principale">
+  <a href="index.html" class="navbar-brand logo-wrap" aria-label="Fixeo - Accueil">
+    <img src="img/logo.png" alt="Fixeo" class="fixeo-logo-img" height="38" loading="eager"
+         onerror="this.onerror=null;this.alt='Fixeo';this.style.display='none'">
+  </a>
+  <nav class="navbar-nav" aria-label="Menu principal">
+    <a href="services.html" class="nav-link">Services</a>
+    <a href="artisans.html" class="nav-link">Artisans</a>
+    <a href="comment-ca-marche.html" class="nav-link">Comment ça marche</a>
+    <a href="pricing.html" class="nav-link">Tarifs</a>
+    <a href="dashboard-client.html" class="nav-link" data-role="dashboard" data-auth="logged-in">📊 Dashboard</a>
+    <a href="admin.html" class="nav-link" data-role="admin" data-auth="admin">🛡 Admin</a>
+  </nav>
+  <div class="nav-actions">
+    <a href="auth.html" id="login-btn" class="btn-nav btn-nav-outline" data-auth="guest">Connexion</a>
+    <a href="auth.html#signup" id="register-btn" class="btn-nav btn-nav-primary" data-auth="guest">Inscription</a>
+    <div class="nav-has-dropdown" data-auth="logged-in" style="display:none">
+      <div class="nav-user-chip" tabindex="0" aria-haspopup="true" aria-label="Mon compte">
+        <div class="nav-user-avatar" id="global-avatar">U</div>
+        <span class="nav-user-name" id="global-username">Mon Compte</span>
+        <span class="nav-arrow" style="font-size:0.6rem;opacity:0.5">▾</span>
+      </div>
+      <div class="nav-dropdown" role="menu" style="min-width:200px;right:0;left:auto">
+        <a href="dashboard-client.html" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">📊</span>Mon Dashboard</a>
+        <a href="dashboard-artisan.html" class="nav-dropdown-item" role="menuitem" data-role-show="artisan" style="display:none"><span class="dd-icon">👷</span>Espace Artisan</a>
+        <div class="nav-dropdown-divider"></div>
+        <a href="#" id="logout-btn" class="nav-dropdown-item" role="menuitem" onclick="window.fixeoLogout?.();return false;"><span class="dd-icon">🚪</span>Déconnexion</a>
+      </div>
+    </div>
+  </div>
+  <button class="hamburger" aria-label="Ouvrir le menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- ════════════════════
+     1. HERO
+════════════════════ -->
+<section class="rj-hero" aria-labelledby="rj-hero-title">
+  <div class="rj-hero-inner rj-fade-in">
+    <div class="rj-hero-badge">
+      <span class="rj-hero-badge-dot"></span>
+      Réseau artisan Fixeo
+    </div>
+    <h1 id="rj-hero-title">
+      Développez votre activité<br>
+      <span class="rj-hl">avec Fixeo</span>
+    </h1>
+    <p>Recevez des demandes qualifiées, gagnez en visibilité et construisez votre réputation dans votre ville.</p>
+    <div class="rj-cta-row">
+      <a href="onboarding-artisan.html" class="rj-btn rj-btn-primary">🧰 Rejoindre Fixeo</a>
+      <a href="#revendiquer" class="rj-btn rj-btn-outline">👤 Revendiquer mon profil</a>
+    </div>
+    <p class="rj-hero-trust">
+      <span>✓</span> Déjà des artisans actifs dans votre ville
+    </p>
+  </div>
+</section>
+
+<!-- ════════════════════
+     2. VALUE PROPOSITION
+════════════════════ -->
+<section class="rj-section" aria-labelledby="rj-val-title">
+  <div class="rj-wrap">
+    <span class="rj-section-label">Pourquoi Fixeo</span>
+    <h2 class="rj-section-title rj-fade-in" id="rj-val-title">Tout ce que Fixeo fait pour vous</h2>
+    <p class="rj-section-sub rj-fade-in">Fixeo simplifie la relation artisan-client. Vous vous concentrez sur votre métier, Fixeo s'occupe du reste.</p>
+    <div class="rj-val-grid">
+      <div class="rj-val-card rj-fade-in">
+        <span class="rj-val-icon">📍</span>
+        <p class="rj-val-title">Visibilité locale instantanée</p>
+        <p class="rj-val-text">Votre profil apparaît en priorité pour les clients qui cherchent votre métier dans votre ville.</p>
+      </div>
+      <div class="rj-val-card rj-fade-in">
+        <span class="rj-val-icon">⚡</span>
+        <p class="rj-val-title">Demandes clients en temps réel</p>
+        <p class="rj-val-text">Recevez les demandes pertinentes directement — sans prospection, sans démarchage.</p>
+      </div>
+      <div class="rj-val-card rj-fade-in">
+        <span class="rj-val-icon">💰</span>
+        <p class="rj-val-title">Paiement après intervention</p>
+        <p class="rj-val-text">Le client paie après validation. Vous êtes payé pour votre travail, pas pour une promesse.</p>
+      </div>
+      <div class="rj-val-card rj-fade-in">
+        <span class="rj-val-icon">⭐</span>
+        <p class="rj-val-title">Réputation &amp; avis clients</p>
+        <p class="rj-val-text">Chaque intervention est une opportunité de construire votre réputation sur la plateforme.</p>
+      </div>
+      <div class="rj-val-card rj-fade-in">
+        <span class="rj-val-icon">📱</span>
+        <p class="rj-val-title">Profil professionnel sans effort</p>
+        <p class="rj-val-text">Créez ou revendiquez votre profil en quelques minutes. Fixeo le met en avant auprès des bons clients.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════
+     3. HOW IT WORKS
+════════════════════ -->
+<div class="rj-section rj-section-alt" aria-labelledby="rj-steps-title">
+  <div class="rj-wrap">
+    <span class="rj-section-label">Comment ça marche</span>
+    <h2 class="rj-section-title rj-fade-in" id="rj-steps-title">5 étapes pour démarrer</h2>
+    <p class="rj-section-sub rj-fade-in">De la création de profil à vos premières demandes clients.</p>
+    <div class="rj-steps-wrap">
+
+      <div class="rj-step rj-fade-in">
+        <div class="rj-step-num">1</div>
+        <div class="rj-step-body">
+          <p class="rj-step-title">Créez votre profil</p>
+          <p class="rj-step-desc">Inscrivez-vous sur Fixeo et renseignez vos informations de base. Rapide, gratuit, sans engagement.</p>
+        </div>
+      </div>
+
+      <div class="rj-step rj-fade-in">
+        <div class="rj-step-num">2</div>
+        <div class="rj-step-body">
+          <p class="rj-step-title">Choisissez votre métier et ville</p>
+          <p class="rj-step-desc">Sélectionnez votre ou vos spécialités (plomberie, électricité, peinture…) et votre zone d'intervention.</p>
+        </div>
+      </div>
+
+      <div class="rj-step rj-fade-in">
+        <div class="rj-step-num">3</div>
+        <div class="rj-step-body">
+          <p class="rj-step-title">Fixeo vous référence</p>
+          <p class="rj-step-desc">Votre profil est indexé dans le moteur Fixeo. Il apparaît dans les résultats lorsqu'un client cherche votre service dans votre ville.</p>
+        </div>
+      </div>
+
+      <div class="rj-step rj-fade-in">
+        <div class="rj-step-num">4</div>
+        <div class="rj-step-body">
+          <p class="rj-step-title">Recevez des demandes</p>
+          <p class="rj-step-desc">Les clients réservent ou publient une demande. Vous recevez les sollicitations qualifiées dans votre espace artisan.</p>
+        </div>
+      </div>
+
+      <div class="rj-step rj-fade-in">
+        <div class="rj-step-num">5</div>
+        <div class="rj-step-body">
+          <p class="rj-step-title">Développez votre activité</p>
+          <p class="rj-step-desc">Chaque intervention validée renforce votre profil. Vos avis clients et votre historique vous font monter dans les résultats Fixeo.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════
+     4. CLAIM PROFILE
+════════════════════ -->
+<section class="rj-section" id="revendiquer" aria-labelledby="rj-claim-title">
+  <div class="rj-wrap">
+    <div class="rj-claim-band rj-fade-in">
+      <span class="rj-claim-tag">Profil existant ?</span>
+      <h2 class="rj-claim-title" id="rj-claim-title">Votre profil existe déjà ?</h2>
+      <p class="rj-claim-text">
+        Fixeo référence de nombreux artisans au Maroc. Il est possible que votre profil soit déjà visible sur la plateforme. Revendiquez-le et complétez vos informations pour apparaître en priorité dans les résultats.
+      </p>
+      <a href="onboarding-artisan.html" class="rj-btn rj-btn-primary">👤 Revendiquer mon profil</a>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════
+     5. TECHNOLOGY
+════════════════════ -->
+<div class="rj-section rj-section-alt" aria-labelledby="rj-tech-title">
+  <div class="rj-wrap">
+    <span class="rj-section-label">Intelligence Fixeo</span>
+    <h2 class="rj-section-title rj-fade-in" id="rj-tech-title">La technologie qui travaille pour vous</h2>
+    <p class="rj-section-sub rj-fade-in">En arrière-plan, Fixeo met en place des systèmes pour vous faire apparaître devant les bons clients au bon moment.</p>
+    <div class="rj-tech-grid">
+      <div class="rj-tech-card rj-fade-in">
+        <span class="rj-tech-icon">🔀</span>
+        <p class="rj-tech-title">Matching intelligent</p>
+        <p class="rj-tech-text">Votre profil est mis en face des demandes qui correspondent exactement à votre métier et à votre zone.</p>
+      </div>
+      <div class="rj-tech-card rj-fade-in">
+        <span class="rj-tech-icon">📍</span>
+        <p class="rj-tech-title">Géolocalisation automatique</p>
+        <p class="rj-tech-text">Fixeo détecte la ville du client et filtre les artisans disponibles à proximité. Votre zone est respectée.</p>
+      </div>
+      <div class="rj-tech-card rj-fade-in">
+        <span class="rj-tech-icon">🚀</span>
+        <p class="rj-tech-title">Priorisation des actifs</p>
+        <p class="rj-tech-text">Les artisans avec profil complet et interventions récentes sont mis en avant dans les résultats.</p>
+      </div>
+      <div class="rj-tech-card rj-fade-in">
+        <span class="rj-tech-icon">🛡</span>
+        <p class="rj-tech-title">Algorithme de confiance</p>
+        <p class="rj-tech-text">Chaque évaluation client renforce votre score de confiance et améliore votre position dans Fixeo.</p>
+      </div>
+      <div class="rj-tech-card rj-fade-in">
+        <span class="rj-tech-icon">📱</span>
+        <p class="rj-tech-title">Plateforme mobile-first</p>
+        <p class="rj-tech-text">Gérez votre profil, vos missions et vos demandes depuis votre téléphone. Fixeo est pensé pour le terrain.</p>
+      </div>
+      <div class="rj-tech-card rj-fade-in">
+        <span class="rj-tech-icon">💡</span>
+        <p class="rj-tech-title">Estimation transparente</p>
+        <p class="rj-tech-text">Les clients voient une fourchette de prix avant de vous contacter. Moins de négociation, plus d'interventions qualifiées.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════
+     6. MARKET SHIFT
+════════════════════ -->
+<section class="rj-section" aria-labelledby="rj-market-title">
+  <div class="rj-wrap">
+    <span class="rj-section-label">Le marché change</span>
+    <h2 class="rj-section-title rj-fade-in" id="rj-market-title">Fixeo restructure le marché de l'artisanat</h2>
+    <p class="rj-section-sub rj-fade-in">Deux réalités que Fixeo est en train de changer.</p>
+    <div class="rj-market-wrap">
+      <div class="rj-market-problem rj-fade-in">
+        <p class="rj-market-eyebrow">Le problème actuel</p>
+        <p class="rj-market-title">Le marché manque de visibilité et d'organisation</p>
+        <p class="rj-market-text">La majorité des artisans qualifiés au Maroc n'ont aucune présence digitale. Ils dépendent du bouche-à-oreille, de l'aléatoire, et ne contrôlent pas leur flux de travail.</p>
+        <ul class="rj-market-list">
+          <li>Dépendance au bouche-à-oreille</li>
+          <li>Pas de visibilité en dehors de leur réseau proche</li>
+          <li>Revenus imprévisibles, clientèle non fidélisée</li>
+          <li>Aucune trace de réputation accumulée</li>
+        </ul>
+      </div>
+      <div class="rj-market-solution rj-fade-in">
+        <p class="rj-market-eyebrow rj-market-eyebrow-r">La solution Fixeo</p>
+        <p class="rj-market-title">Une connexion directe et structurée entre artisans et clients</p>
+        <p class="rj-market-text">Fixeo crée l'infrastructure qui manquait : matching automatique, profils vérifiés, paiement sécurisé. Les artisans ont enfin les outils pour construire une activité durable.</p>
+        <ul class="rj-market-list">
+          <li>Demandes entrantes qualifiées par métier et ville</li>
+          <li>Visibilité numérique permanente et gratuite</li>
+          <li>Réputation construite sur les vrais avis clients</li>
+          <li>Paiement sécurisé après chaque intervention</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════
+     7. FINAL CTA
+════════════════════ -->
+<div class="rj-final-band" aria-labelledby="rj-final-title">
+  <div class="rj-wrap">
+    <h2 id="rj-final-title" class="rj-fade-in">Rejoignez Fixeo dès aujourd'hui</h2>
+    <p class="rj-fade-in">Créez votre profil gratuitement. Les premières demandes arrivent dès que vous êtes référencé.</p>
+    <div class="rj-cta-row rj-fade-in">
+      <a href="onboarding-artisan.html" class="rj-btn rj-btn-primary">🧰 Créer mon profil artisan</a>
+      <a href="onboarding-artisan.html" class="rj-btn rj-btn-outline">👤 Revendiquer mon profil</a>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════
+     8. FOOTER
+════════════════════ -->
+<footer role="contentinfo">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo-wrap" style="margin-bottom:14px">
+          <img src="img/logo.png" alt="Fixeo" style="height:38px;width:auto;object-fit:contain;background:transparent">
+        </div>
+        <p class="footer-desc">La plateforme de référence pour trouver des artisans qualifiés au Maroc. Rapide, sécurisé, vérifié.</p>
+        <a href="rejoindre-fixeo.html" class="footer-artisan-link">🛠 Je suis artisan</a>
+      </div>
+      <div class="footer-links">
+        <h4>Navigation</h4>
+        <ul>
+          <li><a href="index.html">Accueil</a></li>
+          <li><a href="services.html">Services</a></li>
+          <li><a href="artisans.html">Artisans</a></li>
+          <li><a href="comment-ca-marche.html">Comment ça marche</a></li>
+          <li><a href="pricing.html">Tarifs</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h4>Pour les artisans</h4>
+        <ul>
+          <li><a href="rejoindre-fixeo.html">Rejoindre Fixeo</a></li>
+          <li><a href="rejoindre-fixeo.html#revendiquer">Revendiquer mon profil</a></li>
+          <li><a href="dashboard-artisan.html">Espace artisan</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 Fixeo. Tous droits réservés.</span>
+      <div style="display:flex;gap:.75rem;flex-wrap:wrap">
+        <a href="auth.html" style="color:rgba(255,255,255,.35)">Connexion</a>
+        <span style="color:rgba(255,255,255,.18)">·</span>
+        <a href="pricing.html" style="color:rgba(255,255,255,.35)">Tarifs</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ── Scripts ── -->
+<script src="js/fixeo-header-global.js?v=50a38b9"></script>
+<script src="js/i18n.js?v=50a38b9"></script>
+<script src="js/header-unified.js?v=modalfix3"></script>
+<script src="js/auth-global.js?v=50a38b9"></script>
+
+<!-- ── Scroll-triggered fade-in ── -->
+<script>
+(function(){
+  'use strict';
+  var els = document.querySelectorAll('.rj-fade-in');
+  if (!els.length) return;
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if (e.isIntersecting){
+        e.target.classList.add('visible');
+        io.unobserve(e.target);
+      }
+    });
+  },{threshold:0.12});
+  els.forEach(function(el){ io.observe(el); });
+
+  // Smooth scroll for #revendiquer anchor
+  document.querySelectorAll('a[href="#revendiquer"]').forEach(function(a){
+    a.addEventListener('click',function(e){
+      var t = document.getElementById('revendiquer');
+      if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth',block:'start'});}
+    });
+  });
+})();
+</script>
+</body>
+</html>

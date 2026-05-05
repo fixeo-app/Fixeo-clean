@@ -107,8 +107,8 @@
     const artisanSection = `
       <div class="fixeo-gh-drawer-group">
         <div class="fixeo-gh-drawer-label">Pour les artisans</div>
-        <a class="fixeo-gh-drawer-link" href="onboarding-artisan.html">\uD83E\uDDF0 Je suis artisan</a>
-        <a class="fixeo-gh-drawer-link" href="onboarding-artisan.html">\uD83D\uDC64 Revendiquer mon profil</a>
+        <a class="fixeo-gh-drawer-link" href="rejoindre-fixeo.html">\uD83E\uDDF0 Je suis artisan</a>
+        <a class="fixeo-gh-drawer-link" href="rejoindre-fixeo.html#revendiquer">\uD83D\uDC64 Revendiquer mon profil</a>
         <a class="fixeo-gh-drawer-link" href="dashboard-artisan.html">\uD83D\uDCCA Espace artisan</a>
       </div>`;
 
