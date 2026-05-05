@@ -20,25 +20,7 @@
   color: rgba(232,234,240,.52);
 }
 
-/* ── 4. SEO block: muted chips ── */
-[aria-labelledby="seo-local-links-title"] .section-header {
-  text-align: left !important;
-  margin-bottom: 12px;
-}
-[aria-labelledby="seo-local-links-title"] .category-chips {
-  display: flex !important;
-  flex-wrap: wrap !important;
-  gap: 8px !important;
-}
-[aria-labelledby="seo-local-links-title"] .chip.service-chip {
-  font-size: .78rem !important;
-  padding: 6px 14px !important;
-  opacity: .62 !important;
-  font-weight: 600 !important;
-}
-[aria-labelledby="seo-local-links-title"] .chip.service-chip:hover {
-  opacity: .9 !important;
-}
+/* ── 4. SEO block: removed from DOM — no CSS needed ── */
 
 /* ── 5. Footer: 4-col grid ── */
 .footer-grid {
