@@ -265,3 +265,31 @@
     max-width: 100% !important;
   }
 }
+
+/* ══════════════════════════════════════════════
+   WhatsApp floating button override
+   chat-toggle is now an <a> tag — reset link styles
+   ══════════════════════════════════════════════ */
+a.chat-toggle-wa {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-decoration: none !important;
+  color: #fff !important;
+  /* WhatsApp green tint */
+  background: linear-gradient(135deg, #25D366 0%, #128C7E 100%) !important;
+  box-shadow: 0 4px 20px rgba(37,211,102,.40) !important;
+  border: none !important;
+}
+a.chat-toggle-wa:hover {
+  transform: scale(1.08) !important;
+  box-shadow: 0 6px 28px rgba(37,211,102,.55) !important;
+}
+a.chat-toggle-wa svg {
+  fill: #fff !important;
+  flex-shrink: 0;
+}
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  a.chat-toggle-wa { transition: none !important; }
+}
