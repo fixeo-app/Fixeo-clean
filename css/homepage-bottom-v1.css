@@ -155,14 +155,17 @@
   letter-spacing: .03em !important;
 }
 
-/* Mobile: full-width buttons */
+/* Mobile: full-width buttons + bottom padding clears FAB */
 @media (max-width: 600px) {
-  .final-cta-section { padding: 56px 16px 64px; }
+  .final-cta-section {
+    padding: 56px 16px 84px; /* extra bottom so FAB never covers proof line */
+  }
   .final-cta-primary { max-width: 100% !important; }
   .final-cta-urgent  {
     width: 100% !important;
     justify-content: center !important;
   }
+  .final-cta { gap: 0; }
 }
 
 /* ══════════════════════════════════════════════

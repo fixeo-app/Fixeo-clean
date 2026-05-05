@@ -1992,7 +1992,7 @@ section#home.hero.hero-section {
 </style>
   <link rel="stylesheet" href="css/services-uber-premium.css?v=sup4">
   <link rel="stylesheet" href="css/testimonials-cta-premium.css?v=tcp1">
-  <link rel="stylesheet" href="css/homepage-bottom-v1.css?v=hbv2" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="css/homepage-bottom-v1.css?v=hbv3" media="print" onload="this.media='all'">
   <link rel="stylesheet" href="css/header-logo-premium.css?v=hlp5">
   <!-- ══ LOGO OVERRIDE - image-only, no emoji, no text ══ -->
   <style id="fixeo-logo-override">
@@ -2873,7 +2873,7 @@ section#home.hero.hero-section {
   <div class="container">
     <div class="final-cta">
       <!-- 1. Title -->
-      <h2 id="final-cta-title" class="final-cta-title">Publiez votre demande et recevez des réponses en quelques minutes</h2>
+      <h2 id="final-cta-title" class="final-cta-title">Publiez votre demande et recevez des offres en quelques minutes</h2>
       <!-- 2. Subtitle -->
       <p class="final-cta-sub">Gratuit &nbsp;•&nbsp; Sans engagement &nbsp;•&nbsp; Réponse rapide</p>
       <!-- 3. Primary CTA -->
@@ -2881,15 +2881,15 @@ section#home.hero.hero-section {
               onclick="if(window.FixeoClientRequest&&typeof FixeoClientRequest.open==='function'){FixeoClientRequest.open();}else if(window.QuickSearchModal&&typeof QuickSearchModal.focusInline==='function'){QuickSearchModal.focusInline();}else{document.getElementById('artisans-section')?.scrollIntoView({behavior:'smooth'});}">
         📝 Publier ma demande gratuitement
       </button>
-      <!-- 4. Secondary urgent CTA -->
+      <!-- 4. Secondary urgent CTA (one only) -->
       <button class="btn-express final-cta-urgent" type="button"
               data-open-express-request="true"
               data-request-mode="express"
               onclick="window.FixeoClientRequest ? FixeoClientRequest.openExpress(this) : (window.FixeoReservation ? FixeoReservation.openExpress() : openModal('express-modal')); return false;">
-        ⚡ Besoin urgent
+        Besoin urgent ⚡
       </button>
-      <!-- 5. Proof line -->
-      <p class="final-cta-proof">⚡ Réponse moyenne : moins de 10 minutes</p>
+      <!-- 5. Proof line (no fake timing) -->
+      <p class="final-cta-proof">⚡ Demande traitée en priorité</p>
     </div>
   </div>
 </section>
@@ -2954,10 +2954,11 @@ section#home.hero.hero-section {
       <div class="footer-links">
         <h4>Support</h4>
         <ul>
-          <li><a href="#" onclick="openContentModal('contact');return false;">Contact</a></li>
-          <li><a href="#" onclick="openContentModal('faq');return false;">FAQ</a></li>
-          <li><a href="#" onclick="openContentModal('cgu');return false;">CGU</a></li>
-          <li><a href="#" onclick="openContentModal('privacy');return false;">Confidentialité</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="faq.html">FAQ</a></li>
+          <li><a href="cgu.html">CGU</a></li>
+          <li><a href="confidentialite.html">Confidentialité</a></li>
+          <li><a href="whatsapp.html">WhatsApp Fixeo</a></li>
         </ul>
       </div>
     </div>
