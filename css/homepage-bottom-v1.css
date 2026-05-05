@@ -1,10 +1,9 @@
 /* ══════════════════════════════════════════════
-   homepage-bottom-v1.css
+   homepage-bottom-v1.css  v2
    Bottom-of-page UX overrides — non-breaking
-   Loads AFTER all other CSS via deferred media=print trick
    ══════════════════════════════════════════════ */
 
-/* ── 2. Testimonials: 3-col grid (hide 4-6 already done inline) ── */
+/* ── 2. Testimonials: 3-col grid ── */
 .testimonials-grid {
   grid-template-columns: repeat(3, 1fr) !important;
 }
@@ -15,13 +14,13 @@
   .testimonials-grid { grid-template-columns: 1fr !important; }
 }
 
-/* ── 3. Why-Fixeo section: already premium, just tighten ── */
+/* ── 3. Why-Fixeo section ── */
 #why-fixeo-section .section-header p {
   font-size: .9rem;
   color: rgba(232,234,240,.52);
 }
 
-/* ── 4. SEO block: grid chips, muted palette ── */
+/* ── 4. SEO block: muted chips ── */
 [aria-labelledby="seo-local-links-title"] .section-header {
   text-align: left !important;
   margin-bottom: 12px;
@@ -41,7 +40,7 @@
   opacity: .9 !important;
 }
 
-/* ── 5. Footer: ensure 4-col grid is clean ── */
+/* ── 5. Footer: 4-col grid ── */
 .footer-grid {
   grid-template-columns: 1.6fr 1fr 1fr 1fr;
   gap: 32px;
@@ -53,42 +52,126 @@
   .footer-grid { grid-template-columns: 1fr; }
 }
 
-/* ── 6. FAB size reduction ── */
-#fixeo-urgent-fab {
-  width: 52px !important;
-  height: 52px !important;
-  min-width: unset !important;
-  padding: 0 !important;
-  border-radius: 50% !important;
-  box-shadow: 0 4px 16px rgba(225,48,108,.3) !important;
-  right: 18px !important;
-  bottom: 22px !important;
-}
-#fixeo-urgent-fab .ufab-label {
-  display: none !important;
-}
-#fixeo-urgent-fab .ufab-icon {
-  width: 22px !important;
-  height: 22px !important;
-}
-
-/* ── 1. Final CTA section: clean spacing ── */
-.final-cta-section .final-cta {
-  max-width: 580px;
-  margin: 0 auto;
-  text-align: center;
-}
-.final-cta-section .btn-express-inline {
-  transition: background .15s, border-color .15s !important;
-}
-.final-cta-section .btn-express-inline:hover {
-  background: rgba(225,48,108,.18) !important;
-  border-color: rgba(225,48,108,.6) !important;
-}
-
-/* ── Testimonial section-tag update ── */
+/* ── Testimonial section-tag ── */
 .testimonial-section .section-tag {
   background: rgba(52,211,153,.1);
   border-color: rgba(52,211,153,.2);
   color: rgba(52,211,153,.85);
+}
+
+/* ══════════════════════════════════════════════
+   TASK 1 — FINAL CTA BLOCK
+   Clean 5-step hierarchy
+   ══════════════════════════════════════════════ */
+
+.final-cta-section {
+  padding: 72px 0 80px;
+  background: linear-gradient(
+    135deg,
+    rgba(225,48,108,.08) 0%,
+    rgba(131,58,180,.08) 100%
+  );
+  border-top: 1px solid rgba(255,255,255,.06);
+}
+
+.final-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* 1. Title */
+.final-cta-title {
+  font-size: clamp(1.35rem, 2.8vw, 2rem) !important;
+  font-weight: 900 !important;
+  color: #fff !important;
+  line-height: 1.2 !important;
+  letter-spacing: -.02em !important;
+  margin: 0 0 14px !important;
+}
+
+/* 2. Subtitle */
+.final-cta-sub {
+  font-size: .85rem;
+  color: rgba(255,255,255,.42);
+  margin: 0 0 28px;
+  letter-spacing: .04em;
+}
+
+/* 3. Primary CTA — already styled by cta-main; just ensure layout */
+.final-cta-primary {
+  display: block !important;
+  width: 100% !important;
+  max-width: 380px !important;
+  margin: 0 0 14px !important;
+  font-size: 1rem !important;
+  padding: 17px 28px !important;
+  /* glow boost */
+  box-shadow: 0 8px 30px rgba(225,48,108,.28) !important;
+  transition: transform .15s, box-shadow .15s !important;
+}
+.final-cta-primary:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 14px 40px rgba(225,48,108,.40) !important;
+}
+
+/* 4. Secondary urgent CTA */
+.final-cta-urgent {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 7px !important;
+  padding: 11px 26px !important;
+  font-size: .88rem !important;
+  font-weight: 700 !important;
+  border-radius: 12px !important;
+  border: 1.5px solid rgba(255,120,40,.38) !important;
+  background: rgba(255,90,30,.09) !important;
+  color: rgba(255,190,150,.88) !important;
+  cursor: pointer !important;
+  margin: 0 0 20px !important;
+  transition: background .15s, border-color .15s !important;
+  /* Reset btn-express overrides that may apply */
+  position: static !important;
+  width: auto !important;
+  height: auto !important;
+  border-radius: 12px !important;
+  animation: none !important;
+}
+.final-cta-urgent:hover {
+  background: rgba(255,90,30,.16) !important;
+  border-color: rgba(255,120,40,.60) !important;
+}
+
+/* 5. Proof line */
+.final-cta-proof {
+  font-size: .78rem !important;
+  color: rgba(255,255,255,.32) !important;
+  margin: 0 !important;
+  letter-spacing: .03em !important;
+}
+
+/* Mobile: full-width buttons */
+@media (max-width: 600px) {
+  .final-cta-section { padding: 56px 16px 64px; }
+  .final-cta-primary { max-width: 100% !important; }
+  .final-cta-urgent  {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+}
+
+/* ══════════════════════════════════════════════
+   TASK 6 — REDUCED MOTION
+   ══════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  #fixeo-urgent-fab,
+  .final-cta-urgent {
+    animation: none !important;
+    transition: none !important;
+  }
 }

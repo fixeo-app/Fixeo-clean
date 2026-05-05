@@ -1,145 +1,168 @@
 /**
- * urgent-fab.css
- * Mobile-only floating "Urgence" pill button — premium Fixeo design.
- * Positioned bottom-left to avoid right-side clutter (chat, back-to-top).
- * Safe-area aware. Zero changes to desktop layout or urgent modal logic.
+ * urgent-fab.css  v2
+ * Floating "⚡ Urgence" pill — visible on mobile AND desktop.
+ * Positioned bottom-left. Premium glow + slow pulse.
+ * Tasks 2, 3, 4, 6 — conversion boost pass.
  */
 
 /* ══════════════════════════════════════════════════════════
-   HIDDEN ON DESKTOP — shown only ≤ 768px
+   BASE — hidden by default, shown at ≤768px and desktop
    ══════════════════════════════════════════════════════════ */
+
 #fixeo-urgent-fab {
-  display: none !important;
+  /* Show on desktop too, but smaller */
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 7px !important;
+
+  position: fixed !important;
+  bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
+  left: calc(18px + env(safe-area-inset-left, 0px)) !important;
+  z-index: 1350 !important;
+
+  /* Desktop: compact pill */
+  height: 42px !important;
+  padding: 0 18px 0 14px !important;
+  border-radius: 999px !important;
+  border: none !important;
+
+  /* Orange/pink gradient — clearly urgent */
+  background: linear-gradient(
+    135deg,
+    rgba(255, 75, 30, 0.82) 0%,
+    rgba(225, 48, 108, 0.70) 100%
+  ) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  border: 1px solid rgba(255, 100, 50, 0.40) !important;
+
+  /* Text */
+  color: #fff !important;
+  font-size: 0.80rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.02em !important;
+  white-space: nowrap !important;
+  line-height: 1 !important;
+  font-family: inherit !important;
+  text-decoration: none !important;
+
+  /* Glow */
+  box-shadow:
+    0 0 0 1px rgba(255, 80, 40, 0.25),
+    0 6px 22px rgba(225, 48, 108, 0.32),
+    0 2px 8px rgba(0, 0, 0, 0.28) !important;
+
+  /* Enter + pulse animations */
+  animation:
+    urgFabEnter 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.8s both,
+    urgPulse 3.6s ease-in-out 2s infinite !important;
+
+  /* Smooth state transitions */
+  transition:
+    transform 0.14s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.18s ease !important;
+
+  cursor: pointer !important;
+  -webkit-tap-highlight-color: transparent !important;
+  touch-action: manipulation !important;
+  user-select: none !important;
+  outline: none !important;
+  overscroll-behavior: none !important;
+}
+
+/* ── Icon ── */
+#fixeo-urgent-fab .ufab-icon {
+  width: 15px !important;
+  height: 15px !important;
+  flex-shrink: 0 !important;
+  fill: none !important;
+  stroke: #fff !important;
+  stroke-width: 2.4 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+  filter: drop-shadow(0 0 5px rgba(255,200,80,.8)) !important;
+  display: block !important;
+}
+
+/* ── Label ── */
+#fixeo-urgent-fab .ufab-label {
+  font-size: 0.80rem !important;
+  font-weight: 700 !important;
+  color: #fff !important;
+  letter-spacing: 0.02em !important;
+  display: inline !important;
+}
+
+/* ── Hover / focus ── */
+#fixeo-urgent-fab:hover,
+#fixeo-urgent-fab:focus-visible {
+  transform: translateY(-2px) scale(1.04) !important;
+  box-shadow:
+    0 0 0 2px rgba(255, 90, 40, 0.35),
+    0 12px 32px rgba(225, 48, 108, 0.48),
+    0 4px 12px rgba(0, 0, 0, 0.28) !important;
+  animation-play-state: paused !important;
+}
+
+/* ── Active / tap ── */
+#fixeo-urgent-fab:active {
+  transform: scale(0.94) !important;
+  transition-duration: 0.06s !important;
+  animation-play-state: paused !important;
+}
+
+/* ── Hide when modal/search is open ── */
+body.fixeo-search-mode #fixeo-urgent-fab,
+body.modal-open #fixeo-urgent-fab {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transform: translateY(14px) scale(0.88) !important;
+  transition: opacity 0.20s ease, transform 0.20s ease !important;
 }
 
 /* ══════════════════════════════════════════════════════════
-   MOBILE ONLY
+   MOBILE — slightly larger tap target
    ══════════════════════════════════════════════════════════ */
 @media (max-width: 768px) {
-
   #fixeo-urgent-fab {
-    /* Show */
-    display: inline-flex !important;
-    align-items: center !important;
-    gap: 7px !important;
-
-    /* Fixed position — bottom-left, safe-area aware */
-    position: fixed !important;
+    height: 48px !important;
+    padding: 0 18px 0 14px !important;
+    font-size: 0.84rem !important;
     bottom: calc(22px + env(safe-area-inset-bottom, 0px)) !important;
     left: calc(14px + env(safe-area-inset-left, 0px)) !important;
-    z-index: 1350 !important; /* above back-to-top (7000 in fixeo_v5_fixes but below chat 1400)
-                                  Note: z-index:1350 is fine for stacking within the FAB layer */
-
-    /* Pill shape */
-    height: 44px !important;
-    padding: 0 16px 0 13px !important;
-    border-radius: 999px !important;
-    border: none !important;
-
-    /* Premium glass + red-orange urgent tint */
+    /* Slightly stronger gradient on mobile */
     background: linear-gradient(
       135deg,
-      rgba(255, 62, 62, 0.22) 0%,
-      rgba(255, 120, 40, 0.18) 100%
+      rgba(255, 70, 20, 0.92) 0%,
+      rgba(225, 48, 108, 0.82) 100%
     ) !important;
-    backdrop-filter: blur(18px) !important;
-    -webkit-backdrop-filter: blur(18px) !important;
-    border: 1px solid rgba(255, 80, 40, 0.28) !important;
-
-    /* Text */
-    color: #fff !important;
-    font-size: 0.82rem !important;
-    font-weight: 700 !important;
-    letter-spacing: 0.01em !important;
-    white-space: nowrap !important;
-    line-height: 1 !important;
-    font-family: inherit !important;
-    text-decoration: none !important;
-
-    /* Glow */
     box-shadow:
-      0 0 0 1px rgba(255, 80, 40, 0.20),
-      0 8px 28px rgba(255, 62, 62, 0.28),
+      0 0 0 1px rgba(255, 80, 40, 0.30),
+      0 8px 28px rgba(225, 48, 108, 0.40),
       0 2px 8px rgba(0, 0, 0, 0.30) !important;
-
-    /* Interaction */
-    cursor: pointer !important;
-    -webkit-tap-highlight-color: transparent !important;
-    touch-action: manipulation !important;
-    user-select: none !important;
-    outline: none !important;
-
-    /* Enter animation */
-    animation:
-      urgFabEnter 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.8s both,
-      urgPulse 3.2s ease-in-out 1.8s infinite !important;
-
-    /* Smooth state transitions */
-    transition:
-      transform 0.14s cubic-bezier(0.34, 1.56, 0.64, 1),
-      box-shadow 0.18s ease,
-      background 0.18s ease !important;
-
-    /* Prevent page scroll on swipe over button */
-    overscroll-behavior: none !important;
   }
-
-  /* ── Icon SVG ── */
   #fixeo-urgent-fab .ufab-icon {
     width: 16px !important;
     height: 16px !important;
-    flex-shrink: 0 !important;
-    fill: none !important;
-    stroke: #fff !important;
-    stroke-width: 2.2 !important;
-    stroke-linecap: round !important;
-    stroke-linejoin: round !important;
-    filter: drop-shadow(0 0 4px rgba(255,160,60,0.7)) !important;
-    display: block !important;
   }
-
-  /* ── Label ── */
   #fixeo-urgent-fab .ufab-label {
-    font-size: 0.82rem !important;
-    font-weight: 700 !important;
-    color: #fff !important;
-    letter-spacing: 0.01em !important;
+    font-size: 0.84rem !important;
   }
+}
 
-  /* ── Hover / focus ── */
-  #fixeo-urgent-fab:hover,
-  #fixeo-urgent-fab:focus-visible {
-    transform: translateY(-2px) scale(1.03) !important;
-    box-shadow:
-      0 0 0 1px rgba(255, 80, 40, 0.30),
-      0 12px 36px rgba(255, 62, 62, 0.40),
-      0 4px 12px rgba(0, 0, 0, 0.30) !important;
-    background: linear-gradient(
-      135deg,
-      rgba(255, 62, 62, 0.30) 0%,
-      rgba(255, 120, 40, 0.26) 100%
-    ) !important;
-    animation-play-state: paused !important;
+/* ══════════════════════════════════════════════════════════
+   DESKTOP — hide FAB when user is scrolled to final CTA
+   (FAB not competing with the block-level CTA)
+   ══════════════════════════════════════════════════════════ */
+@media (min-width: 769px) {
+  #fixeo-urgent-fab {
+    height: 40px !important;
+    padding: 0 16px 0 12px !important;
+    font-size: 0.78rem !important;
+    opacity: 0.72 !important;
   }
-
-  /* ── Active / tap ── */
-  #fixeo-urgent-fab:active {
-    transform: scale(0.95) !important;
-    box-shadow:
-      0 0 0 1px rgba(255, 80, 40, 0.40),
-      0 4px 16px rgba(255, 62, 62, 0.45),
-      0 1px 4px rgba(0, 0, 0, 0.30) !important;
-    transition-duration: 0.06s !important;
-    animation-play-state: paused !important;
-  }
-
-  /* ── Hide when modal/search is open ── */
-  body.fixeo-search-mode #fixeo-urgent-fab,
-  body.modal-open #fixeo-urgent-fab {
-    opacity: 0 !important;
-    pointer-events: none !important;
-    transform: translateY(12px) scale(0.90) !important;
-    transition: opacity 0.20s, transform 0.20s !important;
+  #fixeo-urgent-fab:hover {
+    opacity: 1 !important;
   }
 }
 
@@ -147,11 +170,10 @@
    ANIMATIONS
    ══════════════════════════════════════════════════════════ */
 
-/* Slide up from below on page load */
 @keyframes urgFabEnter {
   from {
     opacity: 0;
-    transform: translateY(24px) scale(0.88);
+    transform: translateY(20px) scale(0.88);
   }
   to {
     opacity: 1;
@@ -159,18 +181,28 @@
   }
 }
 
-/* Subtle breathing glow — barely perceptible, premium not cheap */
+/* Slow premium breathing glow — 3.6s cycle, never aggressive */
 @keyframes urgPulse {
   0%, 100% {
     box-shadow:
-      0 0 0 1px rgba(255, 80, 40, 0.20),
-      0 8px 28px rgba(255, 62, 62, 0.28),
-      0 2px 8px rgba(0, 0, 0, 0.30);
+      0 0 0 1px rgba(255, 80, 40, 0.22),
+      0 6px 22px rgba(225, 48, 108, 0.30),
+      0 2px 8px rgba(0, 0, 0, 0.26);
   }
   50% {
     box-shadow:
-      0 0 0 2px rgba(255, 80, 40, 0.28),
-      0 10px 36px rgba(255, 62, 62, 0.42),
-      0 2px 8px rgba(0, 0, 0, 0.30);
+      0 0 0 2px rgba(255, 80, 40, 0.34),
+      0 10px 34px rgba(225, 48, 108, 0.50),
+      0 2px 8px rgba(0, 0, 0, 0.26);
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+   TASK 6 — REDUCED MOTION
+   ══════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  #fixeo-urgent-fab {
+    animation: none !important;
+    transition: box-shadow .2s ease !important;
   }
 }
