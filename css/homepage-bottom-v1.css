@@ -178,3 +178,90 @@
     transition: none !important;
   }
 }
+
+/* ══════════════════════════════════════════════
+   CENTERING HARDENING v3 — appended block
+   Forces perfect horizontal centering of the
+   final CTA block regardless of JS wrappers.
+   Loads LAST via deferred media=print trick.
+   ══════════════════════════════════════════════ */
+
+/* Section + container: always full-width, centered */
+.final-cta-section {
+  width: 100% !important;
+  box-sizing: border-box !important;
+  overflow-x: clip !important;
+}
+.final-cta-section .container {
+  width: 100% !important;
+  max-width: 1200px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-left: 24px !important;
+  padding-right: 24px !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  justify-content: center !important;
+}
+
+/* .final-cta inner card: centered, no drift */
+.final-cta {
+  width: 100% !important;
+  max-width: 560px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  text-align: center !important;
+  box-sizing: border-box !important;
+}
+
+/* JS-injected actions wrapper: stay centered */
+.final-cta-actions {
+  width: 100% !important;
+  max-width: 400px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 12px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  box-sizing: border-box !important;
+}
+
+/* All direct button children of .final-cta and .final-cta-actions */
+.final-cta > button,
+.final-cta-actions > button {
+  width: 100% !important;
+  max-width: 400px !important;
+  box-sizing: border-box !important;
+}
+
+/* Paragraph elements (subtitle, proof, microtrust) always centered */
+.final-cta > p,
+.final-cta-actions + p {
+  text-align: center !important;
+  width: 100% !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+/* Override any left-alignment from optimizer mobile rules */
+@media (max-width: 768px) {
+  .final-cta-section .container {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+  .final-cta {
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
+  .final-cta-actions {
+    max-width: 100% !important;
+  }
+  .final-cta > button,
+  .final-cta-actions > button {
+    max-width: 100% !important;
+  }
+}

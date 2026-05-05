@@ -134,33 +134,9 @@
       }
     }
 
-    if (!$('.cta-secondary-alt', actions)) {
-      const urgentBtn = document.createElement('button');
-      urgentBtn.type = 'button';
-      urgentBtn.className = 'cta-secondary-alt';
-      urgentBtn.textContent = 'Besoin urgent ⚡';
-      urgentBtn.setAttribute('data-open-express-request', 'true');
-      urgentBtn.setAttribute('data-request-mode', 'express');
-      urgentBtn.addEventListener('click', function(event) {
-        event.preventDefault();
-        if (window.FixeoClientRequest?.openExpress) {
-          window.FixeoClientRequest.openExpress(urgentBtn);
-        } else if (window.FixeoReservation?.openExpress) {
-          window.FixeoReservation.openExpress();
-        } else {
-          document.querySelector('[data-open-request-form="true"]')?.click();
-        }
-      });
-      actions.appendChild(urgentBtn);
-    }
+    /* [patched] cta-secondary-alt injection disabled — .final-cta-urgent already in HTML */
 
-    let microtrust = $('.final-cta-microtrust', finalCta);
-    if (!microtrust) {
-      microtrust = document.createElement('p');
-      microtrust.className = 'final-cta-microtrust';
-      actions.insertAdjacentElement('afterend', microtrust);
-    }
-    microtrust.textContent = 'Réponse moyenne : moins de 10 minutes';
+    /* [patched] final-cta-microtrust injection disabled — .final-cta-proof already in HTML */
 
     const proof = $('.cta-proof', finalCta);
     if (proof) proof.textContent = 'Gratuit • Sans engagement • Artisans vérifiés et notés';
@@ -173,9 +149,7 @@
       requestItem.innerHTML = '<a href="#" data-footer-request-link="true">Publier une demande</a>';
       supportList.prepend(requestItem);
 
-      const whatsappItem = document.createElement('li');
-      whatsappItem.innerHTML = '<a href="https://wa.me/212660484415" target="_blank" rel="noopener">WhatsApp Fixeo</a>';
-      supportList.appendChild(whatsappItem);
+      /* [patched] wa.me footer link disabled — whatsapp.html now in footer */
 
       requestItem.querySelector('a').addEventListener('click', function(event) {
         event.preventDefault();
@@ -193,7 +167,7 @@
       quickActions.className = 'footer-quick-actions';
       quickActions.innerHTML = [
         '<a href="#" data-footer-quick-request="true">Publier une demande</a>',
-        '<a href="https://wa.me/212660484415" target="_blank" rel="noopener">WhatsApp</a>'
+        ''
       ].join('');
       brand.appendChild(quickActions);
       quickActions.querySelector('[data-footer-quick-request="true"]').addEventListener('click', function(event) {
