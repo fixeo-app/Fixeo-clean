@@ -266,11 +266,14 @@
     }
     @media(max-width:560px){
       .rj-hero{min-height:unset;padding:72px 16px 60px}
-      .rj-section{padding:48px 16px}
+      .rj-section{padding:52px 16px}
+      .rj-section-alt{padding:52px 16px}
+      .rj-final-band{padding:60px 16px}
       .rj-tech-grid{grid-template-columns:1fr 1fr}
       .rj-val-grid{grid-template-columns:1fr 1fr}
       .rj-claim-band{padding:32px 20px;border-radius:20px}
-      .rj-btn{padding:14px 26px;font-size:.92rem}
+      .rj-btn{padding:14px 22px;font-size:.91rem;width:100%;justify-content:center}
+      .rj-cta-row{flex-direction:column;align-items:stretch}
       .rj-steps-wrap::before{left:19px}
       .rj-step-num{flex:0 0 40px;height:40px;border-radius:12px;font-size:.95rem}
     }
@@ -324,6 +327,9 @@
 ════════════════════ -->
 <section class="rj-hero" aria-labelledby="rj-hero-title">
   <div class="rj-hero-inner rj-fade-in">
+    <div class="rj-hero-badge" style="background:rgba(52,211,153,.10);border-color:rgba(52,211,153,.28);color:rgba(52,211,153,.9);margin-bottom:10px">
+      ✓ Inscription gratuite
+    </div>
     <div class="rj-hero-badge">
       <span class="rj-hero-badge-dot"></span>
       Réseau artisan Fixeo
@@ -333,12 +339,13 @@
       <span class="rj-hl">avec Fixeo</span>
     </h1>
     <p>Recevez des demandes qualifiées, gagnez en visibilité et construisez votre réputation dans votre ville.</p>
+    <p style="font-size:.93rem;color:rgba(255,255,255,.55);margin:-16px 0 0;line-height:1.6">Des clients recherchent déjà votre service dans votre ville.</p>
     <div class="rj-cta-row">
-      <a href="onboarding-artisan.html" class="rj-btn rj-btn-primary">🧰 Rejoindre Fixeo</a>
+      <a href="onboarding-artisan.html" class="rj-btn rj-btn-primary">🧰 Créer mon profil et recevoir des demandes</a>
       <a href="#revendiquer" class="rj-btn rj-btn-outline">👤 Revendiquer mon profil</a>
     </div>
     <p class="rj-hero-trust">
-      <span>✓</span> Déjà des artisans actifs dans votre ville
+      <span>✓</span> Des artisans sont déjà actifs à Fès, Casablanca, Rabat…
     </p>
   </div>
 </section>
@@ -349,6 +356,7 @@
 <section class="rj-section" aria-labelledby="rj-val-title">
   <div class="rj-wrap">
     <span class="rj-section-label">Pourquoi Fixeo</span>
+    <p class="rj-fade-in" style="font-size:.97rem;color:rgba(255,255,255,.45);margin:0 0 10px;font-style:italic">Aujourd’hui, trouver des clients est difficile et incertain.</p>
     <h2 class="rj-section-title rj-fade-in" id="rj-val-title">Tout ce que Fixeo fait pour vous</h2>
     <p class="rj-section-sub rj-fade-in">Fixeo simplifie la relation artisan-client. Vous vous concentrez sur votre métier, Fixeo s'occupe du reste.</p>
     <div class="rj-val-grid">
@@ -380,6 +388,46 @@
     </div>
   </div>
 </section>
+<div class="rj-fade-in" style="text-align:center;padding:4px 22px 48px">
+  <a href="onboarding-artisan.html" class="rj-btn rj-btn-primary" style="animation:none;display:inline-flex">🧰 Créer mon profil</a>
+</div>
+<!-- ════════════════════
+     6. MARKET SHIFT
+════════════════════ -->
+<section class="rj-section" aria-labelledby="rj-market-title">
+  <div class="rj-wrap">
+    <span class="rj-section-label">Le marché change</span>
+    <h2 class="rj-section-title rj-fade-in" id="rj-market-title">Fixeo restructure le marché de l'artisanat</h2>
+    <p class="rj-section-sub rj-fade-in">Deux réalités que Fixeo est en train de changer.</p>
+    <div class="rj-market-wrap">
+      <div class="rj-market-problem rj-fade-in">
+        <p class="rj-market-eyebrow">Le problème actuel</p>
+        <p class="rj-market-title">Le marché manque de visibilité et d'organisation</p>
+        <p class="rj-market-text">La majorité des artisans qualifiés au Maroc n'ont aucune présence digitale. Ils dépendent du bouche-à-oreille, de l'aléatoire, et ne contrôlent pas leur flux de travail.</p>
+        <ul class="rj-market-list">
+          <li>Dépendance au bouche-à-oreille</li>
+          <li>Pas de visibilité en dehors de leur réseau proche</li>
+          <li>Revenus imprévisibles, clientèle non fidélisée</li>
+          <li>Aucune trace de réputation accumulée</li>
+        </ul>
+      </div>
+      <div class="rj-market-solution rj-fade-in">
+        <p class="rj-market-eyebrow rj-market-eyebrow-r">La solution Fixeo</p>
+        <p class="rj-market-title">Une connexion directe et structurée entre artisans et clients</p>
+        <p class="rj-market-text">Fixeo crée l'infrastructure qui manquait : matching automatique, profils vérifiés, paiement sécurisé. Les artisans ont enfin les outils pour construire une activité durable.</p>
+        <ul class="rj-market-list">
+          <li>Demandes entrantes qualifiées par métier et ville</li>
+          <li>Visibilité numérique permanente et gratuite</li>
+          <li>Réputation construite sur les vrais avis clients</li>
+          <li>Paiement sécurisé après chaque intervention</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="rj-fade-in" style="text-align:center;padding:4px 22px 48px">
+  <a href="onboarding-artisan.html" class="rj-btn rj-btn-primary" style="animation:none;display:inline-flex">🧰 Créer mon profil</a>
+</div>
 
 <!-- ════════════════════
      3. HOW IT WORKS
@@ -395,7 +443,7 @@
         <div class="rj-step-num">1</div>
         <div class="rj-step-body">
           <p class="rj-step-title">Créez votre profil</p>
-          <p class="rj-step-desc">Inscrivez-vous sur Fixeo et renseignez vos informations de base. Rapide, gratuit, sans engagement.</p>
+          <p class="rj-step-desc">Inscription rapide et gratuite. Aucune carte bancaire requise.</p>
         </div>
       </div>
 
@@ -403,7 +451,7 @@
         <div class="rj-step-num">2</div>
         <div class="rj-step-body">
           <p class="rj-step-title">Choisissez votre métier et ville</p>
-          <p class="rj-step-desc">Sélectionnez votre ou vos spécialités (plomberie, électricité, peinture…) et votre zone d'intervention.</p>
+          <p class="rj-step-desc">Choisissez votre métier et votre zone d’intervention.</p>
         </div>
       </div>
 
@@ -411,7 +459,7 @@
         <div class="rj-step-num">3</div>
         <div class="rj-step-body">
           <p class="rj-step-title">Fixeo vous référence</p>
-          <p class="rj-step-desc">Votre profil est indexé dans le moteur Fixeo. Il apparaît dans les résultats lorsqu'un client cherche votre service dans votre ville.</p>
+          <p class="rj-step-desc">Apparaissez automatiquement dans les résultats pour votre ville et votre métier.</p>
         </div>
       </div>
 
@@ -419,7 +467,7 @@
         <div class="rj-step-num">4</div>
         <div class="rj-step-body">
           <p class="rj-step-title">Recevez des demandes</p>
-          <p class="rj-step-desc">Les clients réservent ou publient une demande. Vous recevez les sollicitations qualifiées dans votre espace artisan.</p>
+          <p class="rj-step-desc">Recevez les demandes clients directement dans votre espace artisan.</p>
         </div>
       </div>
 
@@ -427,7 +475,7 @@
         <div class="rj-step-num">5</div>
         <div class="rj-step-body">
           <p class="rj-step-title">Développez votre activité</p>
-          <p class="rj-step-desc">Chaque intervention validée renforce votre profil. Vos avis clients et votre historique vous font monter dans les résultats Fixeo.</p>
+          <p class="rj-step-desc">Développez votre activité et votre réputation sur Fixeo.</p>
         </div>
       </div>
 
@@ -446,6 +494,7 @@
       <p class="rj-claim-text">
         Fixeo référence de nombreux artisans au Maroc. Il est possible que votre profil soit déjà visible sur la plateforme. Revendiquez-le et complétez vos informations pour apparaître en priorité dans les résultats.
       </p>
+      <p style="font-size:.82rem;color:rgba(255,255,255,.38);margin:-4px 0 18px;position:relative;z-index:1">Les profils revendiqués sont prioritaires dans les résultats.</p>
       <a href="onboarding-artisan.html" class="rj-btn rj-btn-primary">👤 Revendiquer mon profil</a>
     </div>
   </div>
@@ -495,45 +544,11 @@
 </div>
 
 <!-- ════════════════════
-     6. MARKET SHIFT
-════════════════════ -->
-<section class="rj-section" aria-labelledby="rj-market-title">
-  <div class="rj-wrap">
-    <span class="rj-section-label">Le marché change</span>
-    <h2 class="rj-section-title rj-fade-in" id="rj-market-title">Fixeo restructure le marché de l'artisanat</h2>
-    <p class="rj-section-sub rj-fade-in">Deux réalités que Fixeo est en train de changer.</p>
-    <div class="rj-market-wrap">
-      <div class="rj-market-problem rj-fade-in">
-        <p class="rj-market-eyebrow">Le problème actuel</p>
-        <p class="rj-market-title">Le marché manque de visibilité et d'organisation</p>
-        <p class="rj-market-text">La majorité des artisans qualifiés au Maroc n'ont aucune présence digitale. Ils dépendent du bouche-à-oreille, de l'aléatoire, et ne contrôlent pas leur flux de travail.</p>
-        <ul class="rj-market-list">
-          <li>Dépendance au bouche-à-oreille</li>
-          <li>Pas de visibilité en dehors de leur réseau proche</li>
-          <li>Revenus imprévisibles, clientèle non fidélisée</li>
-          <li>Aucune trace de réputation accumulée</li>
-        </ul>
-      </div>
-      <div class="rj-market-solution rj-fade-in">
-        <p class="rj-market-eyebrow rj-market-eyebrow-r">La solution Fixeo</p>
-        <p class="rj-market-title">Une connexion directe et structurée entre artisans et clients</p>
-        <p class="rj-market-text">Fixeo crée l'infrastructure qui manquait : matching automatique, profils vérifiés, paiement sécurisé. Les artisans ont enfin les outils pour construire une activité durable.</p>
-        <ul class="rj-market-list">
-          <li>Demandes entrantes qualifiées par métier et ville</li>
-          <li>Visibilité numérique permanente et gratuite</li>
-          <li>Réputation construite sur les vrais avis clients</li>
-          <li>Paiement sécurisé après chaque intervention</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ════════════════════
      7. FINAL CTA
 ════════════════════ -->
 <div class="rj-final-band" aria-labelledby="rj-final-title">
   <div class="rj-wrap">
+    <p class="rj-fade-in" style="font-size:.82rem;color:rgba(255,255,255,.35);letter-spacing:.05em;text-transform:uppercase;margin:0 0 18px;position:relative;z-index:1">Aucune commission au départ.  Aucun engagement.</p>
     <h2 id="rj-final-title" class="rj-fade-in">Rejoignez Fixeo dès aujourd'hui</h2>
     <p class="rj-fade-in">Créez votre profil gratuitement. Les premières demandes arrivent dès que vous êtes référencé.</p>
     <div class="rj-cta-row rj-fade-in">
