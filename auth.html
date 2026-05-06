@@ -9,43 +9,42 @@
   <link rel="apple-touch-icon" href="img/favicon.png">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fixeo — Connexion / Inscription</title>
+  <title>Fixeo &mdash; Connexion / Inscription</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/variables.css">
   <link rel="stylesheet" href="css/auth-global.css"/>
-  <link rel="stylesheet" href="css/auth-premium.css?v=ap1">
+  <link rel="stylesheet" href="css/auth-premium.css?v=ap2">
 </head>
 <body data-theme="dark">
 
 <div class="auth-shell">
 
-  <!-- ── Minimal top bar ──────────────────────────────────── -->
+  <!-- Minimal top bar -->
   <header class="auth-topbar">
     <a href="index.html" class="auth-back-link">Retour</a>
     <div class="auth-topbar-logo">
-      <a href="index.html" aria-label="Fixeo — Accueil">
+      <a href="index.html" aria-label="Fixeo &mdash; Accueil">
         <img src="img/logo.png" alt="Fixeo" height="32"
              onerror="this.style.display='none';var t=document.createElement('span');t.style.cssText='font-size:1.1rem;font-weight:800;color:#fff';t.textContent='Fixeo';this.parentNode.appendChild(t)">
       </a>
     </div>
-    <div style="width:60px"></div><!-- spacer mirrors back link width -->
+    <div style="width:60px"></div>
   </header>
 
-  <!-- ── Card ─────────────────────────────────────────────── -->
+  <!-- Card -->
   <main class="auth-center" id="main-content">
     <div class="auth-box">
 
-      <!-- Heading (swapped by switchTab) -->
-      <h1 class="auth-heading" id="auth-heading">Bon retour 👋</h1>
-      <p class="auth-subheading" id="auth-sub">Connectez-vous à votre espace Fixeo.</p>
+      <h1 class="auth-heading" id="auth-heading">Bon retour &#128075;</h1>
+      <p class="auth-subheading" id="auth-sub">Connectez-vous &agrave; votre espace Fixeo.</p>
 
       <!-- Tabs -->
       <div class="ap-tabs" role="tablist">
         <div class="ap-tab active" id="tab-login"  role="tab" tabindex="0"
              onclick="switchTab('login')"  onkeydown="if(event.key==='Enter')switchTab('login')">Connexion</div>
         <div class="ap-tab"        id="tab-signup" role="tab" tabindex="0"
-             onclick="switchTab('signup')" onkeydown="if(event.key==='Enter')switchTab('signup')">Créer un compte</div>
+             onclick="switchTab('signup')" onkeydown="if(event.key==='Enter')switchTab('signup')">Cr&eacute;er un compte</div>
       </div>
 
       <!-- ══ LOGIN FORM ══════════════════════════════════════ -->
@@ -59,29 +58,29 @@
           </div>
         </div>
 
-        <!-- ── Forgot password mini-screen (replaces password field) ── -->
+        <!-- Forgot password mini-screen -->
         <div id="forgot-screen">
-          <div class="ap-forgot-title">Réinitialiser le mot de passe</div>
+          <div class="ap-forgot-title">R&eacute;initialiser le mot de passe</div>
           <div class="ap-forgot-sub">Entrez votre email ci-dessus. Nous vous enverrons un lien pour choisir un nouveau mot de passe.</div>
           <div id="forgot-success"></div>
           <div id="forgot-error" class="ap-error"></div>
           <button type="button" class="ap-btn" id="forgot-submit-btn" onclick="handleForgotSubmit()">
             <span>Envoyer le lien</span>
           </button>
-          <button type="button" class="ap-forgot-back" onclick="hideForgotScreen()">← Retour à la connexion</button>
+          <button type="button" class="ap-forgot-back" onclick="hideForgotScreen()">&larr; Retour &agrave; la connexion</button>
         </div>
 
         <div id="login-password-group" class="ap-group">
           <div class="ap-label-row">
             <label class="ap-label" for="login-password">Mot de passe</label>
             <button type="button" class="ap-forgot" id="forgot-password-link"
-                    onclick="showForgotScreen(event)">Mot de passe oublié ?</button>
+                    onclick="showForgotScreen(event)">Mot de passe oubli&eacute;&nbsp;?</button>
           </div>
           <div class="ap-input-wrap">
             <input type="password" class="ap-input has-toggle" id="login-password"
-                   placeholder="••••••••" autocomplete="current-password"/>
+                   placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;" autocomplete="current-password"/>
             <button type="button" class="ap-pw-toggle" onclick="togglePassword('login-password')"
-                    aria-label="Afficher/masquer le mot de passe">👁</button>
+                    aria-label="Afficher/masquer le mot de passe">&#128065;</button>
           </div>
         </div>
 
@@ -94,131 +93,194 @@
         </div>
 
         <p class="ap-trust">
-          <span class="ap-trust-icon">🔒</span>
-          Connexion sécurisée • Vos données sont protégées
+          <span class="ap-trust-icon">&#128274;</span>
+          Connexion s&eacute;curis&eacute;e &bull; Vos donn&eacute;es sont prot&eacute;g&eacute;es
         </p>
 
         <!-- Social login: reserved for future OAuth integration -->
 
         <p class="ap-switch">
-          Pas de compte ?
-          <button type="button" onclick="switchTab('signup')">S'inscrire</button>
+          Pas de compte&nbsp;?
+          <button type="button" onclick="switchTab('signup')">S&apos;inscrire</button>
         </p>
 
       </form>
 
-      <!-- ══ SIGNUP FORM ═════════════════════════════════════ -->
-      <form id="signup-form" style="display:none" onsubmit="handleSignup(event)" novalidate autocomplete="on">
+      <!-- ══ SIGNUP FORM ═════════════════════════════════════
+           PHONE-FIRST ARCHITECTURE (Morocco)
+           ─────────────────────────────────────────────────
+           All fields are in one DOM — no duplicate IDs.
+           Visual order is controlled by CSS `order` on
+           .ap-fields-stack (flex column).
+
+           Client order:  name → phone(opt) → email → password
+           Artisan order: name → phone(req)  → email → password
+                          → specialty → city
+
+           handleSignup() reads: #signup-name, #signup-email,
+           #signup-password, #signup-phone, #signup-city.
+           These IDs never change — they are contracts.
+      ════════════════════════════════════════════════════════ -->
+      <form id="signup-form" class="ap-role-client" style="display:none"
+            onsubmit="handleSignup(event)" novalidate autocomplete="on">
 
         <!-- Role cards -->
         <div class="ap-role-row" role="group" aria-label="Type de compte">
           <div class="ap-role-card selected" id="card-client"
                role="radio" aria-checked="true" tabindex="0"
                onclick="selectType('client')" onkeydown="if(event.key==='Enter')selectType('client')">
-            <div class="ap-role-icon">👤</div>
+            <div class="ap-role-icon">&#128100;</div>
             <div class="ap-role-name">Client</div>
             <div class="ap-role-desc">Je cherche un artisan</div>
           </div>
           <div class="ap-role-card" id="card-artisan"
                role="radio" aria-checked="false" tabindex="0"
                onclick="selectType('artisan')" onkeydown="if(event.key==='Enter')selectType('artisan')">
-            <div class="ap-role-icon">🔧</div>
+            <div class="ap-role-icon">&#128295;</div>
             <div class="ap-role-name">Artisan</div>
             <div class="ap-role-desc">Je propose mes services</div>
           </div>
         </div>
 
-        <!-- Hidden radio inputs (for form semantics — not visible) -->
+        <!-- Hidden radio inputs (form semantics) -->
         <input type="radio" name="account-type" value="client"  id="type-client"  checked style="display:none">
         <input type="radio" name="account-type" value="artisan" id="type-artisan"        style="display:none">
 
-        <div class="ap-group">
-          <label class="ap-label" for="signup-name">Nom complet</label>
-          <input type="text" class="ap-input" id="signup-name"
-                 placeholder="Votre nom complet" required autocomplete="name"/>
-        </div>
+        <!-- ── Flex stack — order changed per role via CSS ── -->
+        <div class="ap-fields-stack">
 
-        <div class="ap-group">
-          <label class="ap-label" for="signup-email">Email</label>
-          <input type="email" class="ap-input" id="signup-email"
-                 placeholder="votre@email.com" required autocomplete="email" inputmode="email"/>
-        </div>
-
-        <div class="ap-group">
-          <label class="ap-label" for="signup-password">Mot de passe</label>
-          <div class="ap-input-wrap">
-            <input type="password" class="ap-input has-toggle" id="signup-password"
-                   placeholder="Minimum 8 caractères" required minlength="8"
-                   autocomplete="new-password"/>
-            <button type="button" class="ap-pw-toggle" onclick="togglePassword('signup-password')"
-                    aria-label="Afficher/masquer le mot de passe">👁</button>
+          <!-- NAME — always order:1 -->
+          <div class="ap-group ap-f-name">
+            <label class="ap-label" for="signup-name">Nom complet</label>
+            <input type="text" class="ap-input" id="signup-name"
+                   placeholder="Votre nom complet" required autocomplete="name"/>
           </div>
-          <div class="ap-strength" id="pass-strength">
-            <div class="ap-strength-track">
-              <div class="ap-strength-bar" id="pass-strength-bar"></div>
+
+          <!-- PHONE / WHATSAPP
+               Artisan: order:2 (first contact field, required-feel)
+               Client:  order:4 (after email, optional)           -->
+          <div class="ap-group ap-f-phone" id="artisan-phone-group">
+            <label class="ap-label" for="signup-phone">
+              T&eacute;l&eacute;phone
+              <span class="ap-label-wa">/ WhatsApp</span>
+              <span class="ap-phone-optional ap-optional" id="phone-optional-badge">(optionnel)</span>
+            </label>
+            <input type="tel" class="ap-input ap-input-phone" id="signup-phone"
+                   placeholder="06 XX XX XX XX" autocomplete="tel" inputmode="tel"/>
+            <p class="ap-field-hint ap-hint-wa">
+              Votre num&eacute;ro WhatsApp nous aide &agrave; vous contacter rapidement.
+            </p>
+            <p class="ap-field-hint ap-hint-fmt">
+              Format marocain&nbsp;: 06 / 07&hellip;
+            </p>
+          </div>
+
+          <!-- EMAIL — artisan:3, client:2
+               Framed as dashboard access, not primary identity -->
+          <div class="ap-group ap-f-email">
+            <label class="ap-label" for="signup-email">Email</label>
+            <input type="email" class="ap-input" id="signup-email"
+                   placeholder="votre@email.com" required autocomplete="email" inputmode="email"/>
+            <p class="ap-field-hint">
+              Votre email sert &agrave; acc&eacute;der &agrave; votre espace Fixeo.
+            </p>
+          </div>
+
+          <!-- PASSWORD — artisan:4, client:3 -->
+          <div class="ap-group ap-f-password">
+            <label class="ap-label" for="signup-password">Mot de passe</label>
+            <div class="ap-input-wrap">
+              <input type="password" class="ap-input has-toggle" id="signup-password"
+                     placeholder="Minimum 8 caract&egrave;res" required minlength="8"
+                     autocomplete="new-password"/>
+              <button type="button" class="ap-pw-toggle" onclick="togglePassword('signup-password')"
+                      aria-label="Afficher/masquer le mot de passe">&#128065;</button>
             </div>
-            <div class="ap-strength-label" id="pass-strength-label"></div>
+            <div class="ap-strength" id="pass-strength">
+              <div class="ap-strength-track">
+                <div class="ap-strength-bar" id="pass-strength-bar"></div>
+              </div>
+              <div class="ap-strength-label" id="pass-strength-label"></div>
+            </div>
           </div>
-        </div>
 
-        <!-- Artisan-specific fields -->
-        <div class="ap-artisan-fields" id="artisan-fields">
-          <div class="ap-group">
-            <label class="ap-label" for="signup-specialty">Spécialité</label>
-            <select class="ap-select" id="signup-specialty">
-              <option value="">Choisir une spécialité</option>
-              <option>Plomberie</option><option>Électricité</option><option>Peinture</option>
-              <option>Carrelage</option><option>Menuiserie</option><option>Climatisation</option>
-              <option>Jardinage</option><option>Nettoyage</option><option>Maçonnerie</option>
-              <option>Bricolage</option><option>Déménagement</option><option>Toiture</option>
-              <option>Serrurerie</option>
-            </select>
+          <!-- ARTISAN FIELDS — specialty + city (artisan only, order:5) -->
+          <div class="ap-artisan-fields ap-f-artisan" id="artisan-fields">
+            <p class="ap-section-hint">
+              &#128205; Votre profil pourra appara&icirc;tre dans votre ville apr&egrave;s validation.
+            </p>
+            <div class="ap-group">
+              <label class="ap-label" for="signup-specialty">Sp&eacute;cialit&eacute;</label>
+              <select class="ap-select" id="signup-specialty">
+                <option value="">Choisir une sp&eacute;cialit&eacute;</option>
+                <option>Plomberie</option>
+                <option>&Eacute;lectricit&eacute;</option>
+                <option>Peinture</option>
+                <option>Carrelage</option>
+                <option>Menuiserie</option>
+                <option>Climatisation</option>
+                <option>Jardinage</option>
+                <option>Nettoyage</option>
+                <option>Ma&ccedil;onnerie</option>
+                <option>Bricolage</option>
+                <option>D&eacute;m&eacute;nagement</option>
+                <option>Toiture</option>
+                <option>Serrurerie</option>
+              </select>
+            </div>
+            <div class="ap-group">
+              <label class="ap-label" for="signup-city">Ville</label>
+              <select class="ap-select" id="signup-city">
+                <option value="">Choisir une ville</option>
+                <option>Casablanca</option>
+                <option>Rabat</option>
+                <option>Marrakech</option>
+                <option>F&egrave;s</option>
+                <option>Agadir</option>
+                <option>Tanger</option>
+                <option>Mekn&egrave;s</option>
+                <option>Oujda</option>
+                <option>K&eacute;nitra</option>
+                <option>T&eacute;touan</option>
+                <option>Safi</option>
+                <option>El Jadida</option>
+              </select>
+            </div>
           </div>
-          <div class="ap-group">
-            <label class="ap-label" for="signup-city">Ville</label>
-            <select class="ap-select" id="signup-city">
-              <option value="">Choisir une ville</option>
-              <option>Casablanca</option><option>Rabat</option><option>Marrakech</option>
-              <option>Fès</option><option>Agadir</option><option>Tanger</option>
-              <option>Meknès</option><option>Oujda</option><option>Kénitra</option>
-              <option>Tétouan</option><option>Safi</option><option>El Jadida</option>
-            </select>
-          </div>
-          <div class="ap-group">
-            <label class="ap-label" for="signup-phone">Téléphone</label>
-            <input type="tel" class="ap-input" id="signup-phone"
-                   placeholder="+212 6XX XXX XXX" autocomplete="tel" inputmode="tel"/>
-          </div>
-        </div>
 
-        <!-- Phone for clients — optional, after password -->
-        <div class="ap-group ap-client-phone" id="client-phone-field" style="display:none">
-          <label class="ap-label" for="signup-phone-client">Téléphone <span class="ap-optional">(optionnel)</span></label>
-          <input type="tel" class="ap-input" id="signup-phone-client"
-                 placeholder="+212 6XX XXX XXX" autocomplete="tel" inputmode="tel"/>
-        </div>
+          <!-- CLIENT HINT — shown for clients only (order:5) -->
+          <p class="ap-section-hint ap-f-client-hint">
+            Vous pourrez suivre vos demandes depuis votre espace Fixeo.
+          </p>
+
+          <!-- HIDDEN client phone field — kept for handleSignup() backward compat -->
+          <input type="tel" id="signup-phone-client" style="display:none" autocomplete="tel"/>
+
+        </div><!-- /.ap-fields-stack -->
 
         <div class="ap-terms">
           <input type="checkbox" id="terms" required>
           <label for="terms">
-            J'accepte les <a href="cgu.html" target="_blank" rel="noopener">conditions d'utilisation</a>
-            et la <a href="confidentialite.html" target="_blank" rel="noopener">politique de confidentialité</a>
+            J&apos;accepte les
+            <a href="cgu.html" target="_blank" rel="noopener">conditions d&apos;utilisation</a>
+            et la
+            <a href="confidentialite.html" target="_blank" rel="noopener">politique de confidentialit&eacute;</a>
           </label>
         </div>
 
         <div id="signup-error" class="ap-error"></div>
 
         <button type="submit" class="ap-btn" id="signup-btn">
-          <span>Créer mon compte</span>
+          <span>Cr&eacute;er mon compte</span>
         </button>
 
         <p class="ap-trust">
-          <span class="ap-trust-icon">🔒</span>
-          Inscription sécurisée • Vos données sont protégées
+          <span class="ap-trust-icon">&#128274;</span>
+          Inscription s&eacute;curis&eacute;e &bull; Vos donn&eacute;es sont prot&eacute;g&eacute;es
         </p>
 
         <p class="ap-switch">
-          Déjà un compte ?
+          D&eacute;j&agrave; un compte&nbsp;?
           <button type="button" onclick="switchTab('login')">Se connecter</button>
         </p>
 
@@ -226,12 +288,20 @@
 
       <!-- ══ EMAIL CONFIRMATION SCREEN ═══════════════════════ -->
       <div id="email-confirm-screen">
-        <span class="ap-confirm-icon">✉️</span>
-        <div class="ap-confirm-title">Vérifiez votre email</div>
-        <div class="ap-confirm-email">Un lien de confirmation a été envoyé à<br><strong id="confirm-email-display"></strong></div>
-        <div class="ap-confirm-hint">Cliquez sur le lien dans l'email pour activer votre compte. Vérifiez aussi vos spams.</div>
-        <button type="button" class="ap-btn-resend" id="btn-resend-email" onclick="handleResendEmail()">Renvoyer l'email</button>
-        <button type="button" class="ap-confirm-back" onclick="showAuthForms()">← Revenir à la connexion</button>
+        <span class="ap-confirm-icon">&#9993;&#65039;</span>
+        <div class="ap-confirm-title">V&eacute;rifiez votre email</div>
+        <div class="ap-confirm-email">
+          Un lien de confirmation a &eacute;t&eacute; envoy&eacute; &agrave;<br>
+          <strong id="confirm-email-display"></strong>
+        </div>
+        <div class="ap-confirm-hint">
+          Cliquez sur le lien dans l&apos;email pour activer votre compte.
+          V&eacute;rifiez aussi vos spams.
+        </div>
+        <button type="button" class="ap-btn-resend" id="btn-resend-email"
+                onclick="handleResendEmail()">Renvoyer l&apos;email</button>
+        <button type="button" class="ap-confirm-back"
+                onclick="showAuthForms()">&larr; Revenir &agrave; la connexion</button>
       </div>
 
     </div><!-- /.auth-box -->
@@ -251,11 +321,12 @@
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-shrink:0">
       <h3 id="legal-modal-title" style="font-size:1rem;font-weight:700;color:#fff"></h3>
       <button onclick="document.getElementById('legal-modal').classList.remove('open')"
-              style="background:none;border:none;color:rgba(255,255,255,.6);font-size:1.2rem;cursor:pointer">✕</button>
+              style="background:none;border:none;color:rgba(255,255,255,.6);font-size:1.2rem;cursor:pointer">&#10005;</button>
     </div>
-    <div id="legal-modal-body" style="overflow-y:auto;flex:1;color:rgba(255,255,255,.75);font-size:.85rem;line-height:1.8"></div>
+    <div id="legal-modal-body"
+         style="overflow-y:auto;flex:1;color:rgba(255,255,255,.75);font-size:.85rem;line-height:1.8"></div>
     <button onclick="document.getElementById('legal-modal').classList.remove('open')"
-            class="ap-btn" style="margin-top:16px;flex-shrink:0">J'ai compris</button>
+            class="ap-btn" style="margin-top:16px;flex-shrink:0">J&apos;ai compris</button>
   </div>
 </div>
 <style>#legal-modal.open{opacity:1!important;pointer-events:all!important}</style>
@@ -263,10 +334,18 @@
 <script src="js/i18n.js"></script>
 <script src="js/notifications.js"></script>
 <script>
-// ═══════════════════════════════════════════════════════════
-//  FIXEO AUTH — inline logic (DO NOT MODIFY without care)
-//  All function names, IDs and redirect paths are contracts.
-// ═══════════════════════════════════════════════════════════
+// =============================================================
+//  FIXEO AUTH v3 — inline orchestration
+//  Contracts (DO NOT change names/IDs):
+//    switchTab, selectType, handleLogin, handleSignup,
+//    handleForgotPassword, togglePassword
+//    IDs: login-email, login-password, login-btn, login-error
+//         signup-name, signup-email, signup-password,
+//         signup-phone, signup-city, signup-specialty,
+//         signup-btn, signup-error, terms
+//         card-client, card-artisan, type-client, type-artisan
+//         artisan-fields
+// =============================================================
 
 // ── State ─────────────────────────────────────────────────
 let _selectedType = 'client';
@@ -280,44 +359,76 @@ function switchTab(tab) {
   document.getElementById('tab-signup').classList.toggle('active', !isLogin);
   document.getElementById('login-error').style.display  = 'none';
   document.getElementById('signup-error').style.display = 'none';
-  document.getElementById('auth-heading').textContent = isLogin ? 'Bon retour 👋' : 'Créer un compte';
-  document.getElementById('auth-sub').textContent     = isLogin
-    ? 'Connectez-vous \u00e0 votre espace Fixeo.'
-    : 'Rejoignez la communaut\u00e9 Fixeo — c\u2019est gratuit.';
+  document.getElementById('auth-heading').textContent = isLogin
+    ? 'Bon retour \uD83D\uDC4B'
+    : 'Cr\u00E9er un compte';
+  document.getElementById('auth-sub').textContent = isLogin
+    ? 'Connectez-vous \u00E0 votre espace Fixeo.'
+    : 'Rejoignez la communaut\u00E9 Fixeo \u2014 c\u2019est gratuit.';
 }
 
-// ── Role card selection (signup) ──────────────────────────
+// ── Role card selection ─────────────────────────────────── */
 function selectType(type) {
   _selectedType = type;
-  const cc = document.getElementById('card-client');
-  const ca = document.getElementById('card-artisan');
-  const af = document.getElementById('artisan-fields');
-  const cf = document.getElementById('client-phone-field');
+
+  // Radio inputs
   document.getElementById('type-client').checked  = type === 'client';
   document.getElementById('type-artisan').checked = type === 'artisan';
+
+  // Role card active state
+  const cc = document.getElementById('card-client');
+  const ca = document.getElementById('card-artisan');
   cc.classList.toggle('selected', type === 'client');
   cc.setAttribute('aria-checked', type === 'client' ? 'true' : 'false');
   ca.classList.toggle('selected', type === 'artisan');
   ca.setAttribute('aria-checked', type === 'artisan' ? 'true' : 'false');
-  af.style.display = type === 'artisan' ? 'block' : 'none';
-  if (cf) cf.style.display = type === 'client' ? 'block' : 'none';
+
+  // Artisan specialty+city block
+  const af = document.getElementById('artisan-fields');
+  if (af) af.style.display = type === 'artisan' ? 'block' : 'none';
+
+  // Phone optional badge
+  const badge = document.getElementById('phone-optional-badge');
+  if (badge) badge.style.display = type === 'client' ? 'inline' : 'none';
+
+  // Form role class (drives CSS order)
+  const form = document.getElementById('signup-form');
+  if (form) {
+    form.classList.toggle('ap-role-client',  type === 'client');
+    form.classList.toggle('ap-role-artisan', type === 'artisan');
+  }
+
+  // Signup button label
+  const btn = document.getElementById('signup-btn');
+  if (btn) {
+    btn.querySelector('span').textContent =
+      type === 'artisan' ? 'Cr\u00E9er mon profil artisan' : 'Cr\u00E9er mon compte';
+  }
 }
 
-// Handle hash for direct signup navigation
-if (window.location.hash === '#signup') switchTab('signup');
+// ── Hash / param routing ───────────────────────────────────
+(function() {
+  if (window.location.hash === '#signup') switchTab('signup');
+  // ?role=artisan preselects artisan role
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('role') === 'artisan') {
+    switchTab('signup');
+    selectType('artisan');
+  }
+})();
 
-// ── Password visibility toggle ────────────────────────────
+// ── Password visibility toggle ─────────────────────────────
 function togglePassword(id) {
   const input = document.getElementById(id);
   if (input) input.type = input.type === 'password' ? 'text' : 'password';
 }
 
-// ── Password strength (signup) ────────────────────────────
+// ── Password strength ──────────────────────────────────────
 (function() {
   const passInput = document.getElementById('signup-password');
   if (!passInput) return;
   passInput.addEventListener('input', function() {
-    const val = passInput.value;
+    const val   = passInput.value;
     const wrap  = document.getElementById('pass-strength');
     const bar   = document.getElementById('pass-strength-bar');
     const label = document.getElementById('pass-strength-label');
@@ -325,15 +436,15 @@ function togglePassword(id) {
     if (!val) { wrap.style.display = 'none'; return; }
     wrap.style.display = 'block';
     let score = 0;
-    if (val.length >= 8)           score++;
-    if (/[A-Z]/.test(val))         score++;
-    if (/[0-9]/.test(val))         score++;
-    if (/[^A-Za-z0-9]/.test(val))  score++;
+    if (val.length >= 8)          score++;
+    if (/[A-Z]/.test(val))        score++;
+    if (/[0-9]/.test(val))        score++;
+    if (/[^A-Za-z0-9]/.test(val)) score++;
     const levels = [
-      { pct:'25%', bg:'#ff4757', text:'Faible'    },
-      { pct:'50%', bg:'#ffa502', text:'Moyen'     },
-      { pct:'75%', bg:'#60A5FA', text:'Bon'       },
-      { pct:'100%',bg:'#2ed573', text:'Excellent' },
+      { pct:'25%',  bg:'#ff4757', text:'Faible'    },
+      { pct:'50%',  bg:'#ffa502', text:'Moyen'     },
+      { pct:'75%',  bg:'#60A5FA', text:'Bon'       },
+      { pct:'100%', bg:'#2ed573', text:'Excellent' },
     ];
     const lvl = levels[Math.max(0, score - 1)];
     bar.style.width      = lvl.pct;
@@ -343,9 +454,25 @@ function togglePassword(id) {
   });
 })();
 
-/* ───────────────────────────────────────────────────────────
+// ── Phone normalization (display only, stored as-is) ───────
+(function() {
+  const ph = document.getElementById('signup-phone');
+  if (!ph) return;
+  ph.addEventListener('blur', function() {
+    // Normalize +212 6XX XXX XXX → 06 XX XX XX XX for display
+    // This is DISPLAY ONLY — value submitted to handleSignup unchanged
+    var v = ph.value.replace(/\s+/g, '');
+    if (/^\+2126\d{8}$/.test(v)) {
+      ph.value = '0' + v.slice(4, 5) + ' ' + v.slice(5,7) + ' ' + v.slice(7,9) + ' ' + v.slice(9,11) + ' ' + v.slice(11,13);
+    } else if (/^\+2127\d{8}$/.test(v)) {
+      ph.value = '0' + v.slice(4, 5) + ' ' + v.slice(5,7) + ' ' + v.slice(7,9) + ' ' + v.slice(9,11) + ' ' + v.slice(11,13);
+    }
+  });
+})();
+
+/* ─────────────────────────────────────────────────────────────
  * ADMIN EMERGENCY BYPASS — SHA-256 (preserved verbatim)
- * ─────────────────────────────────────────────────────────── */
+ * ──────────────────────────────────────────────────────────── */
 const _ADMIN_EMAIL     = 'admin@fixeo.com';
 const _ADMIN_PASS_HASH = 'c6d729bbfb14021b9852303540c1859737373ffbb108f5e5922246f6ac77b3da';
 const _ADMIN_NAME      = 'Admin Fixeo';
@@ -356,7 +483,7 @@ async function _sha256(str) {
   return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2,'0')).join('');
 }
 
-/* ── Login helpers ─────────────────────────────────────── */
+/* ── Login helpers ───────────────────────────────────────── */
 function _showLoginError(msg) {
   const el = document.getElementById('login-error');
   if (el) { el.textContent = msg; el.style.display = 'block'; }
@@ -376,30 +503,30 @@ function _resetLoginBtn() {
   if (btn) { btn.disabled = false; btn.innerHTML = '<span>Se connecter</span>'; }
 }
 
-/* ── Auth error translation ─────────────────────────────── */
+/* ── Auth error translation ──────────────────────────────── */
 function _translateAuthError(msg) {
-  if (!msg) return 'Erreur d\'authentification.';
+  if (!msg) return 'Erreur d\u2019authentification.';
   const m = msg.toLowerCase();
   if (m.includes('invalid login') || m.includes('invalid credentials'))
     return 'Email ou mot de passe incorrect.';
   if (m.includes('email not confirmed') || m.includes('email_not_confirmed'))
-    return 'Votre email n\'est pas encore confirmé. Vérifiez votre boîte mail.';
+    return 'Votre email n\u2019est pas encore confirm\u00E9. V\u00E9rifiez votre bo\u00EEte mail.';
   if (m.includes('user already registered') || m.includes('already registered'))
-    return 'Cet email est déjà utilisé. Connectez-vous ou réinitialisez votre mot de passe.';
+    return 'Cet email est d\u00E9j\u00E0 utilis\u00E9. Connectez-vous ou r\u00E9initialisez votre mot de passe.';
   if (m.includes('password') && m.includes('short'))
-    return 'Mot de passe trop court (minimum 6 caractères).';
+    return 'Mot de passe trop court (minimum 6 caract\u00E8res).';
   if (m.includes('rate limit') || m.includes('too many'))
     return 'Trop de tentatives. Attendez quelques minutes.';
   if (m.includes('network') || m.includes('fetch'))
-    return 'Erreur réseau. Vérifiez votre connexion.';
+    return 'Erreur r\u00E9seau. V\u00E9rifiez votre connexion.';
   return msg;
 }
 
-/* ───────────────────────────────────────────────────────────
+/* ─────────────────────────────────────────────────────────────
  * HANDLE LOGIN
- * Admin SHA-256 emergency path → preserved exactly.
+ * Admin SHA-256 emergency path preserved exactly.
  * All other users → FixeoAuth.signIn() (real Supabase).
- * ─────────────────────────────────────────────────────────── */
+ * ──────────────────────────────────────────────────────────── */
 async function handleLogin(e) {
   e.preventDefault();
   _hideLoginError();
@@ -407,16 +534,15 @@ async function handleLogin(e) {
   const emailEl = document.getElementById('login-email');
   const passEl  = document.getElementById('login-password');
 
-  if (!emailEl.value.trim()) { _showLoginError('❌ Veuillez entrer votre email.'); emailEl.focus(); return; }
-  if (!emailEl.checkValidity()) { _showLoginError('❌ Adresse email invalide.'); emailEl.focus(); return; }
-  if (!passEl.value) { _showLoginError('❌ Veuillez entrer votre mot de passe.'); passEl.focus(); return; }
+  if (!emailEl.value.trim()) { _showLoginError('\u274C Veuillez entrer votre email.'); emailEl.focus(); return; }
+  if (!emailEl.checkValidity()) { _showLoginError('\u274C Adresse email invalide.'); emailEl.focus(); return; }
+  if (!passEl.value) { _showLoginError('\u274C Veuillez entrer votre mot de passe.'); passEl.focus(); return; }
 
   const email = emailEl.value.trim().toLowerCase();
-
-  _setLoginBtnLoading('Vérification…');
+  _setLoginBtnLoading('V\u00E9rification\u2026');
   const passHash = await _sha256(passEl.value);
 
-  /* ── ADMIN EMERGENCY PATH ── */
+  /* ADMIN EMERGENCY PATH */
   if (email === _ADMIN_EMAIL && passHash === _ADMIN_PASS_HASH) {
     const user = { id: 'admin-001', email: _ADMIN_EMAIL, role: 'admin', token: 'admin-session-' + Date.now() };
     if (window.FixeoAuthSession && typeof window.FixeoAuthSession.setActiveUser === 'function') {
@@ -431,16 +557,16 @@ async function handleLogin(e) {
       sessionStorage.setItem('fixeo_admin_auth', '1');
     }
     console.log('USER LOGIN:', user);
-    notifications.success('Bienvenue Admin !', '🛡 Accès administrateur accordé. Redirection…');
+    notifications.success('Bienvenue Admin\u00A0!', '\uD83D\uDEE1 Acc\u00E8s administrateur accord\u00E9. Redirection\u2026');
     setTimeout(() => { window.location.href = 'admin.html'; }, 1500);
     return;
   }
 
-  /* ── REAL SUPABASE LOGIN ── */
+  /* REAL SUPABASE LOGIN */
   if (!window.FixeoAuth) { await new Promise(r => setTimeout(r, 600)); }
   if (!window.FixeoAuth) {
     _resetLoginBtn();
-    _showLoginError('❌ Service d\'authentification indisponible. Réessayez.');
+    _showLoginError('\u274C Service d\u2019authentification indisponible. R\u00E9essayez.');
     return;
   }
 
@@ -448,7 +574,7 @@ async function handleLogin(e) {
 
   if (error) {
     _resetLoginBtn();
-    _showLoginError('❌ ' + _translateAuthError(error.message || error.msg || ''));
+    _showLoginError('\u274C ' + _translateAuthError(error.message || error.msg || ''));
     return;
   }
 
@@ -457,14 +583,16 @@ async function handleLogin(e) {
   const name      = (user && user.full_name) || email.split('@')[0];
   const roleLabel = role === 'artisan' ? 'Artisan' : 'Client';
   console.log('USER LOGIN:', { email, role });
-  notifications.success('Bienvenue ' + name + ' !', '✅ Connexion réussie en tant que ' + roleLabel + '. Redirection…');
+  notifications.success('Bienvenue\u00A0' + name + '\u00A0!', '\u2705 Connexion r\u00E9ussie en tant que ' + roleLabel + '. Redirection\u2026');
   setTimeout(() => { window.FixeoAuth.redirectByRole(role); }, 1200);
 }
 
-/* ───────────────────────────────────────────────────────────
+/* ─────────────────────────────────────────────────────────────
  * HANDLE SIGNUP
- * Real Supabase via FixeoAuth.signUp().
- * ─────────────────────────────────────────────────────────── */
+ * Real Supabase via FixeoAuth.signUp() — UNCHANGED.
+ * Phone: reads #signup-phone (single field, both roles).
+ * City:  reads #signup-city (artisan only; '' for clients).
+ * ──────────────────────────────────────────────────────────── */
 async function handleSignup(e) {
   e.preventDefault();
   const nameEl  = document.getElementById('signup-name');
@@ -477,36 +605,33 @@ async function handleSignup(e) {
   errEl.style.display = 'none';
 
   if (!nameEl.value.trim()) {
-    errEl.textContent = '❌ Veuillez entrer votre nom complet.';
+    errEl.textContent = '\u274C Veuillez entrer votre nom complet.';
     errEl.style.display = 'block'; nameEl.focus(); return;
   }
   if (!emailEl.value.trim() || !emailEl.checkValidity()) {
-    errEl.textContent = '❌ Adresse email invalide.';
+    errEl.textContent = '\u274C Adresse email invalide.';
     errEl.style.display = 'block'; emailEl.focus(); return;
   }
   if (passEl.value.length < 8) {
-    errEl.textContent = '❌ Le mot de passe doit contenir au moins 8 caractères.';
+    errEl.textContent = '\u274C Le mot de passe doit contenir au moins 8 caract\u00E8res.';
     errEl.style.display = 'block'; passEl.focus(); return;
   }
   if (!termsEl.checked) {
-    errEl.textContent = '❌ Vous devez accepter les conditions d\'utilisation.';
+    errEl.textContent = '\u274C Vous devez accepter les conditions d\u2019utilisation.';
     errEl.style.display = 'block'; return;
   }
 
-  btn.innerHTML = '<span class="ap-spinner"></span> Création…';
-  btn.disabled = true;
+  btn.innerHTML = '<span class="ap-spinner"></span> Cr\u00E9ation\u2026';
+  btn.disabled  = true;
 
   const role  = _selectedType === 'artisan' ? 'artisan' : 'client';
-  const city  = (document.getElementById('signup-city')?.value  || '').trim();
-  const phoneEl = role === 'artisan'
-    ? document.getElementById('signup-phone')
-    : document.getElementById('signup-phone-client');
-  const phone = ((phoneEl && phoneEl.value) || '').trim();
+  const city  = (document.getElementById('signup-city')?.value || '').trim();
+  const phone = (document.getElementById('signup-phone')?.value || '').trim();
 
   if (!window.FixeoAuth) { await new Promise(r => setTimeout(r, 600)); }
   if (!window.FixeoAuth) {
-    btn.disabled = false; btn.innerHTML = '<span>Créer mon compte</span>';
-    errEl.textContent = '❌ Service indisponible. Réessayez.'; errEl.style.display = 'block';
+    btn.disabled = false; btn.querySelector('span').textContent = role === 'artisan' ? 'Cr\u00E9er mon profil artisan' : 'Cr\u00E9er mon compte';
+    errEl.textContent = '\u274C Service indisponible. R\u00E9essayez.'; errEl.style.display = 'block';
     return;
   }
 
@@ -520,109 +645,106 @@ async function handleSignup(e) {
   });
 
   btn.disabled = false;
-  btn.innerHTML = '<span>Créer mon compte</span>';
+  btn.querySelector('span').textContent = role === 'artisan' ? 'Cr\u00E9er mon profil artisan' : 'Cr\u00E9er mon compte';
 
   if (error) {
-    errEl.textContent = '❌ ' + _translateAuthError(error.message || '');
+    errEl.textContent = '\u274C ' + _translateAuthError(error.message || '');
     errEl.style.display = 'block';
     return;
   }
 
   errEl.style.display = 'none';
   console.log('USER LOGIN:', { email: emailEl.value.trim(), role });
-  // Show email confirmation screen instead of immediate redirect
   showConfirmScreen(emailEl.value.trim());
 }
 
-/* ───────────────────────────────────────────────────────────
- * HANDLE FORGOT PASSWORD
- * Reads email from #login-email, calls FixeoAuth.resetPassword().
- * ─────────────────────────────────────────────────────────── */
+/* ─────────────────────────────────────────────────────────────
+ * HANDLE FORGOT PASSWORD (legacy path — preserved)
+ * ──────────────────────────────────────────────────────────── */
 async function handleForgotPassword(e) {
   if (e) e.preventDefault();
   const emailEl = document.getElementById('login-email');
   const email   = (emailEl?.value || '').trim();
 
   if (!email || !emailEl.checkValidity()) {
-    _showLoginError('❌ Entrez votre email ci-dessus pour recevoir un lien de réinitialisation.');
+    _showLoginError('\u274C Entrez votre email ci-dessus pour recevoir un lien de r\u00E9initialisation.');
     emailEl && emailEl.focus();
     return;
   }
 
   _hideLoginError();
   const link = document.getElementById('forgot-password-link');
-  if (link) { link.textContent = 'Envoi…'; link.style.pointerEvents = 'none'; }
+  if (link) { link.textContent = 'Envoi\u2026'; link.style.pointerEvents = 'none'; }
 
   if (!window.FixeoAuth) { await new Promise(r => setTimeout(r, 600)); }
 
   const { error } = await window.FixeoAuth.resetPassword(email);
 
-  if (link) { link.textContent = 'Mot de passe oublié ?'; link.style.pointerEvents = ''; }
+  if (link) { link.textContent = 'Mot de passe oubli\u00E9\u00A0?'; link.style.pointerEvents = ''; }
 
   if (error) {
-    _showLoginError('❌ ' + (error.message || 'Erreur lors de l\'envoi. Réessayez.'));
+    _showLoginError('\u274C ' + (error.message || 'Erreur lors de l\u2019envoi. R\u00E9essayez.'));
     return;
   }
 
-  // Replace error box with success (reuse same element, green style)
   const el = document.getElementById('login-error');
   if (el) {
-    el.style.display = 'block';
-    el.style.color = '#2ed573';
-    el.style.background = 'rgba(46,213,115,0.08)';
-    el.style.borderColor = 'rgba(46,213,115,0.2)';
-    el.textContent = '✅ Email de réinitialisation envoyé à ' + email + '. Vérifiez votre boîte mail.';
+    el.style.display   = 'block';
+    el.style.color     = '#2ed573';
+    el.style.background    = 'rgba(46,213,115,0.08)';
+    el.style.borderColor   = 'rgba(46,213,115,0.2)';
+    el.textContent = '\u2705 Email de r\u00E9initialisation envoy\u00E9 \u00E0 ' + email + '. V\u00E9rifiez votre bo\u00EEte mail.';
   }
 }
 
-/* ── Social login stub (no real OAuth yet) ─────────────── */
+/* ── Social login stub ───────────────────────────────────── */
 function socialLogin(provider) {
   console.info('[FixeoAuth] Social login not yet configured for:', provider);
 }
 
-/* ── Preserved: setLoginMethod stub ────────────────────── */
-function setLoginMethod() {} // phone tab removed — stub preserved for safety
+/* ── Preserved: setLoginMethod stub ─────────────────────── */
+function setLoginMethod() {}
 
-/* ── Forgot password screen ─────────────────────────────── */
+/* ── Forgot password inline screen ──────────────────────── */
 function showForgotScreen(e) {
   if (e) e.preventDefault();
-  document.getElementById('forgot-screen').style.display         = 'block';
-  document.getElementById('login-password-group').style.display  = 'none';
-  document.getElementById('login-submit-wrap').style.display     = 'none';
-  document.getElementById('login-error').style.display           = 'none';
-  document.getElementById('forgot-success').style.display        = 'none';
-  document.getElementById('forgot-error').style.display          = 'none';
+  document.getElementById('forgot-screen').style.display        = 'block';
+  document.getElementById('login-password-group').style.display = 'none';
+  document.getElementById('login-submit-wrap').style.display    = 'none';
+  document.getElementById('login-error').style.display          = 'none';
+  document.getElementById('forgot-success').style.display       = 'none';
+  document.getElementById('forgot-error').style.display         = 'none';
   const fp = document.getElementById('forgot-password-link');
   if (fp) fp.style.display = 'none';
 }
 
 function hideForgotScreen() {
-  document.getElementById('forgot-screen').style.display         = 'none';
-  document.getElementById('login-password-group').style.display  = 'block';
-  document.getElementById('login-submit-wrap').style.display     = 'block';
+  document.getElementById('forgot-screen').style.display        = 'none';
+  document.getElementById('login-password-group').style.display = 'block';
+  document.getElementById('login-submit-wrap').style.display    = 'block';
   const fp = document.getElementById('forgot-password-link');
   if (fp) fp.style.display = '';
 }
 
 async function handleForgotSubmit() {
-  const emailEl  = document.getElementById('login-email');
-  const email    = (emailEl?.value || '').trim();
-  const errEl    = document.getElementById('forgot-error');
-  const succEl   = document.getElementById('forgot-success');
-  const btn      = document.getElementById('forgot-submit-btn');
+  const emailEl = document.getElementById('login-email');
+  const email   = (emailEl?.value || '').trim();
+  const errEl   = document.getElementById('forgot-error');
+  const succEl  = document.getElementById('forgot-success');
+  const btn     = document.getElementById('forgot-submit-btn');
 
   errEl.style.display  = 'none';
   succEl.style.display = 'none';
 
   if (!email || !emailEl.checkValidity()) {
-    errEl.textContent    = '\u274C Entrez votre email dans le champ ci-dessus.';
-    errEl.style.display  = 'block';
+    errEl.textContent   = '\u274C Entrez votre email dans le champ ci-dessus.';
+    errEl.style.display = 'block';
     emailEl && emailEl.focus();
     return;
   }
 
-  btn.innerHTML  = '<span class="ap-spinner"></span> Envoi\u2026';
-  btn.disabled   = true;
+  btn.innerHTML = '<span class="ap-spinner"></span> Envoi\u2026';
+  btn.disabled  = true;
 
   if (!window.FixeoAuth) { await new Promise(r => setTimeout(r, 600)); }
 
@@ -632,17 +754,17 @@ async function handleForgotSubmit() {
   btn.disabled  = false;
 
   if (error) {
-    errEl.textContent   = '\u274C ' + (error.message || 'Erreur lors de l\u2019envoi. R\u00e9essayez.');
+    errEl.textContent   = '\u274C ' + (error.message || 'Erreur lors de l\u2019envoi. R\u00E9essayez.');
     errEl.style.display = 'block';
     return;
   }
 
-  succEl.textContent   = '\u2705 Email envoy\u00e9 \u00e0 ' + email + '. V\u00e9rifiez vos spams si besoin.';
+  succEl.textContent   = '\u2705 Email envoy\u00E9 \u00E0 ' + email + '. V\u00E9rifiez vos spams si besoin.';
   succEl.style.display = 'block';
   btn.style.display    = 'none';
 }
 
-/* ── Email confirmation screen ──────────────────────────── */
+/* ── Email confirmation screen ───────────────────────────── */
 let _pendingConfirmEmail = '';
 
 function showConfirmScreen(email) {
@@ -650,16 +772,17 @@ function showConfirmScreen(email) {
   document.getElementById('confirm-email-display').textContent = email;
   document.getElementById('auth-heading').textContent = 'Confirmez votre email';
   document.getElementById('auth-sub').textContent     = '';
-  document.getElementById('ap-tabs-wrap') && (document.getElementById('ap-tabs-wrap').style.display = 'none');
-  document.querySelector('.ap-tabs') && (document.querySelector('.ap-tabs').style.display = 'none');
-  document.getElementById('login-form').style.display        = 'none';
-  document.getElementById('signup-form').style.display       = 'none';
+  const tabs = document.querySelector('.ap-tabs');
+  if (tabs) tabs.style.display = 'none';
+  document.getElementById('login-form').style.display          = 'none';
+  document.getElementById('signup-form').style.display         = 'none';
   document.getElementById('email-confirm-screen').style.display = 'block';
 }
 
 function showAuthForms() {
   document.getElementById('email-confirm-screen').style.display = 'none';
-  document.querySelector('.ap-tabs') && (document.querySelector('.ap-tabs').style.display = '');
+  const tabs = document.querySelector('.ap-tabs');
+  if (tabs) tabs.style.display = '';
   switchTab('login');
 }
 
@@ -671,42 +794,42 @@ async function handleResendEmail() {
   if (window.FixeoAuth && window.FixeoAuth.resetPassword) {
     await window.FixeoAuth.resetPassword(_pendingConfirmEmail);
   }
-  btn.textContent = '\u2705 Email renvoy\u00e9 !';
+  btn.textContent = '\u2705 Email renvoy\u00E9\u00A0!';
   setTimeout(() => {
     btn.textContent = 'Renvoyer l\u2019email';
     btn.disabled    = false;
   }, 4000);
 }
 
-/* ── Legal modal ────────────────────────────────────────── */
+/* ── Legal modal ─────────────────────────────────────────── */
 function openLegal(type) {
   const titles = {
-    cgu:     "📋 Conditions d'utilisation",
-    privacy: "🔒 Politique de confidentialité"
+    cgu:     "\uD83D\uDCCB Conditions d\u2019utilisation",
+    privacy: "\uD83D\uDD12 Politique de confidentialit\u00E9"
   };
   const contents = {
-    cgu: '<p><strong>Dernière mise à jour : 1er janvier 2025</strong></p>' +
+    cgu: '<p><strong>Derni\u00E8re mise \u00E0 jour\u00A0: 1er janvier 2025</strong></p>' +
          '<h4 style="color:#e1306c;margin:14px 0 6px">1. Objet</h4>' +
-         '<p>Les présentes CGU régissent l\'accès et l\'utilisation de la plateforme Fixeo. En créant un compte, vous acceptez intégralement ces conditions.</p>' +
+         '<p>Les pr\u00E9sentes CGU r\u00E9gissent l\u2019acc\u00E8s et l\u2019utilisation de la plateforme Fixeo. En cr\u00E9ant un compte, vous acceptez int\u00E9gralement ces conditions.</p>' +
          '<h4 style="color:#e1306c;margin:14px 0 6px">2. Inscription</h4>' +
-         '<p>Vous vous engagez à fournir des informations exactes. Tout compte frauduleux pourra être suspendu sans préavis.</p>' +
+         '<p>Vous vous engagez \u00E0 fournir des informations exactes. Tout compte frauduleux pourra \u00EAtre suspendu sans pr\u00E9avis.</p>' +
          '<h4 style="color:#e1306c;margin:14px 0 6px">3. Utilisation</h4>' +
-         '<p>La plateforme est destinée à la mise en relation clients/artisans. Toute utilisation à des fins illégales est prohibée.</p>' +
-         '<h4 style="color:#e1306c;margin:14px 0 6px">4. Responsabilité</h4>' +
-         '<p>Fixeo est un intermédiaire et ne peut être tenu responsable des prestations fournies par les artisans.</p>' +
+         '<p>La plateforme est destin\u00E9e \u00E0 la mise en relation clients/artisans. Toute utilisation \u00E0 des fins ill\u00E9gales est prohib\u00E9e.</p>' +
+         '<h4 style="color:#e1306c;margin:14px 0 6px">4. Responsabilit\u00E9</h4>' +
+         '<p>Fixeo est un interm\u00E9diaire et ne peut \u00EAtre tenu responsable des prestations fournies par les artisans.</p>' +
          '<h4 style="color:#e1306c;margin:14px 0 6px">5. Droit applicable</h4>' +
-         '<p>Ces CGU sont soumises au droit marocain. Tribunal compétent : Casablanca.</p>',
-    privacy: '<p><strong>Dernière mise à jour : 1er janvier 2025</strong></p>' +
-             '<h4 style="color:#e1306c;margin:14px 0 6px">1. Données collectées</h4>' +
-             '<p>Nom, email, téléphone, localisation (avec consentement), historique de navigation sur Fixeo.</p>' +
+         '<p>Ces CGU sont soumises au droit marocain. Tribunal comp\u00E9tent\u00A0: Casablanca.</p>',
+    privacy: '<p><strong>Derni\u00E8re mise \u00E0 jour\u00A0: 1er janvier 2025</strong></p>' +
+             '<h4 style="color:#e1306c;margin:14px 0 6px">1. Donn\u00E9es collect\u00E9es</h4>' +
+             '<p>Nom, email, t\u00E9l\u00E9phone, localisation (avec consentement), historique de navigation sur Fixeo.</p>' +
              '<h4 style="color:#e1306c;margin:14px 0 6px">2. Utilisation</h4>' +
-             '<p>Vos données servent à gérer votre compte, faciliter les mises en relation et améliorer nos services.</p>' +
+             '<p>Vos donn\u00E9es servent \u00E0 g\u00E9rer votre compte, faciliter les mises en relation et am\u00E9liorer nos services.</p>' +
              '<h4 style="color:#e1306c;margin:14px 0 6px">3. Vos droits</h4>' +
-             '<p>Conformément à la loi 09-08, vous disposez des droits d\'accès, rectification, suppression et opposition. Contact : privacy@fixeo.ma</p>' +
-             '<h4 style="color:#e1306c;margin:14px 0 6px">4. Sécurité</h4>' +
-             '<p>Données chiffrées en transit (TLS) et au repos. Accès restreint au personnel habilité.</p>'
+             '<p>Conform\u00E9ment \u00E0 la loi 09-08, vous disposez des droits d\u2019acc\u00E8s, rectification, suppression et opposition. Contact\u00A0: privacy@fixeo.ma</p>' +
+             '<h4 style="color:#e1306c;margin:14px 0 6px">4. S\u00E9curit\u00E9</h4>' +
+             '<p>Donn\u00E9es chiffr\u00E9es en transit (TLS) et au repos. Acc\u00E8s restreint au personnel habilit\u00E9.</p>'
   };
-  document.getElementById('legal-modal-title').textContent = titles[type] || 'Information légale';
+  document.getElementById('legal-modal-title').textContent = titles[type] || 'Information l\u00E9gale';
   document.getElementById('legal-modal-body').innerHTML    = contents[type] || '';
   document.getElementById('legal-modal').classList.add('open');
 }

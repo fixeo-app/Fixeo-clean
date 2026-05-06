@@ -625,3 +625,97 @@ html, body { height: 100%; }
   .ap-role-card { flex-direction: row; align-items: center; gap: 10px; padding: 12px 14px; }
   .ap-role-icon { font-size: 1.4rem; }
 }
+
+/* ══════════════════════════════════════════════════════════
+ * AUTH V3 — Phone-first Morocco (2026-05-06)
+ * ══════════════════════════════════════════════════════════ */
+
+/* ── Fields stack: flex column enables CSS order reordering ── */
+.ap-fields-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* ── Default field order (client) ─────────────────────────
+   name(1) → phone(4/opt) → email(2) → password(3) → hint(5)
+   Phone visually after email for clients.
+   ─────────────────────────────────────────────────────── */
+.ap-role-client .ap-f-name         { order: 1; }
+.ap-role-client .ap-f-email        { order: 2; }
+.ap-role-client .ap-f-password     { order: 3; }
+.ap-role-client .ap-f-phone        { order: 4; }
+.ap-role-client .ap-f-artisan      { order: 5; display: none !important; }
+.ap-role-client .ap-f-client-hint  { order: 6; }
+
+/* ── Artisan field order (phone-first) ────────────────────
+   name(1) → phone(2/req) → email(3) → password(4) → artisan(5)
+   Phone is FIRST contact field — feels natural for Morocco.
+   ─────────────────────────────────────────────────────── */
+.ap-role-artisan .ap-f-name         { order: 1; }
+.ap-role-artisan .ap-f-phone        { order: 2; }
+.ap-role-artisan .ap-f-email        { order: 3; }
+.ap-role-artisan .ap-f-password     { order: 4; }
+.ap-role-artisan .ap-f-artisan      { order: 5; }
+.ap-role-artisan .ap-f-client-hint  { order: 6; display: none; }
+
+/* ── WhatsApp label accent ────────────────────────────────── */
+.ap-label-wa {
+  color: #25D366;
+  font-weight: 600;
+  font-size: 0.8em;
+  margin-left: 4px;
+}
+
+/* ── Phone optional badge ─────────────────────────────────── */
+.ap-phone-optional {
+  margin-left: 6px;
+}
+
+/* ── Field hints ──────────────────────────────────────────── */
+.ap-field-hint {
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.35);
+  margin: 4px 0 0;
+  line-height: 1.4;
+}
+.ap-hint-wa {
+  color: rgba(37,211,102,0.65);
+}
+.ap-hint-fmt {
+  color: rgba(255,255,255,0.25);
+}
+
+/* ── Section hint (artisan city/specialty block) ──────────── */
+.ap-section-hint {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.35);
+  margin: 4px 0 12px;
+  line-height: 1.4;
+  padding: 8px 10px;
+  background: rgba(255,255,255,0.03);
+  border-radius: 8px;
+  border-left: 2px solid rgba(124,58,237,0.4);
+}
+
+/* ── Phone input — comfortable on mobile ─────────────────── */
+.ap-input-phone {
+  font-size: 1rem !important;
+  letter-spacing: 0.05em;
+  min-height: 52px;
+}
+
+/* ── Artisan submit button label change ───────────────────── */
+/* handled via JS selectType() — no CSS needed */
+
+/* ── Mobile comfort pass ──────────────────────────────────── */
+@media (max-width: 480px) {
+  .ap-input-phone {
+    font-size: 1.05rem !important;
+    min-height: 54px;
+    padding: 14px 14px !important;
+  }
+  .ap-field-hint { font-size: 0.7rem; }
+  .ap-section-hint { font-size: 0.72rem; }
+  .ap-label-wa { font-size: 0.75em; }
+}
