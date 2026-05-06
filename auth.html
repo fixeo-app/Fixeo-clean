@@ -14,7 +14,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/variables.css">
   <link rel="stylesheet" href="css/auth-global.css"/>
-  <link rel="stylesheet" href="css/auth-premium.css?v=ap5">
+  <link rel="stylesheet" href="css/auth-premium.css?v=ap6">
 </head>
 <body data-theme="dark">
 
@@ -124,42 +124,50 @@
       <form id="signup-form" class="ap-role-client" style="display:none"
             onsubmit="handleSignup(event)" novalidate autocomplete="on">
 
-        <!-- Role cards -->
-        <div class="ap-role-row" role="group" aria-label="Type de compte">
-          <div class="ap-role-card selected" id="card-client"
-               role="radio" aria-checked="true" tabindex="0"
-               onclick="selectType('client')" onkeydown="if(event.key==='Enter')selectType('client')">
-            <div class="ap-role-icon">&#128100;</div>
-            <div class="ap-role-name">Client</div>
-            <div class="ap-role-desc">Je cherche un artisan</div>
-          </div>
-          <div class="ap-role-card" id="card-artisan"
-               role="radio" aria-checked="false" tabindex="0"
-               onclick="selectType('artisan')" onkeydown="if(event.key==='Enter')selectType('artisan')">
-            <div class="ap-role-icon">&#128295;</div>
-            <div class="ap-role-name">Artisan</div>
-            <div class="ap-role-desc">Je propose mes services</div>
-          </div>
-        </div>
-
-        <!-- Hidden radio inputs (form semantics) -->
+        <!-- Hidden radio inputs (form semantics — untouched) -->
         <input type="radio" name="account-type" value="client"  id="type-client"  checked style="display:none">
         <input type="radio" name="account-type" value="artisan" id="type-artisan"        style="display:none">
+        <!-- HIDDEN: signup-phone-client kept for backward compat -->
+        <input type="tel" id="signup-phone-client" style="display:none" autocomplete="tel"/>
 
-        <!-- ── Flex stack — order changed per role via CSS ── -->
-        <div class="ap-fields-stack">
+        <!-- ══ PROGRESS DOTS ══════════════════════════════════ -->
+        <div class="ap-progress" id="ap-progress" aria-hidden="true">
+          <div class="ap-progress-dots" id="ap-progress-dots"></div>
+          <div class="ap-step-title" id="ap-step-title"></div>
+        </div>
 
-          <!-- NAME — always order:1 -->
-          <div class="ap-group ap-f-name">
+        <!-- ══════════════════════════════════════════════════
+             STEP 1 — Identity + Role
+             Client:  role cards + name + phone(opt)
+             Artisan: role cards + name + phone(req)
+        ════════════════════════════════════════════════════ -->
+        <div class="ap-step" id="ap-step-1">
+
+          <!-- Role cards -->
+          <div class="ap-role-row" role="group" aria-label="Type de compte">
+            <div class="ap-role-card selected" id="card-client"
+                 role="radio" aria-checked="true" tabindex="0"
+                 onclick="selectType('client')" onkeydown="if(event.key==='Enter')selectType('client')">
+              <div class="ap-role-icon">&#128100;</div>
+              <div class="ap-role-name">Client</div>
+              <div class="ap-role-desc">Je cherche un artisan</div>
+            </div>
+            <div class="ap-role-card" id="card-artisan"
+                 role="radio" aria-checked="false" tabindex="0"
+                 onclick="selectType('artisan')" onkeydown="if(event.key==='Enter')selectType('artisan')">
+              <div class="ap-role-icon">&#128295;</div>
+              <div class="ap-role-name">Artisan</div>
+              <div class="ap-role-desc">Je propose mes services</div>
+            </div>
+          </div>
+
+          <div class="ap-group">
             <label class="ap-label" for="signup-name">Nom complet</label>
             <input type="text" class="ap-input" id="signup-name"
                    placeholder="Votre nom complet" required autocomplete="name"/>
           </div>
 
-          <!-- PHONE / WHATSAPP
-               Artisan: order:2 (first contact field, required-feel)
-               Client:  order:4 (after email, optional)           -->
-          <div class="ap-group ap-f-phone" id="artisan-phone-group">
+          <div class="ap-group" id="artisan-phone-group">
             <label class="ap-label" for="signup-phone">
               T&eacute;l&eacute;phone
               <span class="ap-label-wa">/ WhatsApp</span>
@@ -170,24 +178,32 @@
             <p class="ap-field-hint ap-hint-wa">
               Votre num&eacute;ro WhatsApp nous aide &agrave; vous contacter rapidement.
             </p>
-            <p class="ap-field-hint ap-hint-fmt">
-              Format marocain&nbsp;: 06 / 07&hellip;
-            </p>
+            <p class="ap-field-hint ap-hint-fmt">Format marocain&nbsp;: 06 / 07&hellip;</p>
           </div>
 
-          <!-- EMAIL — artisan:3, client:2
-               Framed as dashboard access, not primary identity -->
-          <div class="ap-group ap-f-email">
+          <div class="ap-step-nav">
+            <button type="button" class="ap-btn ap-btn-next" id="ap-next-1"
+                    onclick="nextSignupStep()">
+              <span>Suivant</span>
+              <span class="ap-btn-arrow">&#8594;</span>
+            </button>
+          </div>
+        </div><!-- /#ap-step-1 -->
+
+        <!-- ══════════════════════════════════════════════════
+             STEP 2 — Access / Security
+             Both: email + password + strength
+        ════════════════════════════════════════════════════ -->
+        <div class="ap-step" id="ap-step-2" style="display:none">
+
+          <div class="ap-group">
             <label class="ap-label" for="signup-email">Email</label>
             <input type="email" class="ap-input" id="signup-email"
                    placeholder="votre@email.com" required autocomplete="email" inputmode="email"/>
-            <p class="ap-field-hint">
-              Votre email sert &agrave; acc&eacute;der &agrave; votre espace Fixeo.
-            </p>
+            <p class="ap-field-hint">Votre email sert &agrave; acc&eacute;der &agrave; votre espace Fixeo.</p>
           </div>
 
-          <!-- PASSWORD — artisan:4, client:3 -->
-          <div class="ap-group ap-f-password">
+          <div class="ap-group">
             <label class="ap-label" for="signup-password">Mot de passe</label>
             <div class="ap-input-wrap">
               <input type="password" class="ap-input has-toggle" id="signup-password"
@@ -204,11 +220,29 @@
             </div>
           </div>
 
-          <!-- ARTISAN FIELDS — specialty + city (artisan only, order:5) -->
-          <div class="ap-artisan-fields ap-f-artisan" id="artisan-fields">
-            <p class="ap-section-hint">
-              &#128205; Votre profil pourra appara&icirc;tre dans votre ville apr&egrave;s validation.
-            </p>
+          <div class="ap-step-nav">
+            <button type="button" class="ap-btn ap-btn-next" id="ap-next-2"
+                    onclick="nextSignupStep()">
+              <span>Suivant</span>
+              <span class="ap-btn-arrow">&#8594;</span>
+            </button>
+            <button type="button" class="ap-btn-back" onclick="prevSignupStep()">
+              &#8592; Retour
+            </button>
+          </div>
+        </div><!-- /#ap-step-2 -->
+
+        <!-- ══════════════════════════════════════════════════
+             STEP 3 — Artisan profile (artisan only)
+             OR Final step (client)
+        ════════════════════════════════════════════════════ -->
+        <div class="ap-step" id="ap-step-3" style="display:none">
+
+          <!-- Artisan: specialty + city (shown for artisans, hidden for clients via JS) -->
+          <div id="artisan-fields">
+            <div class="ap-section-hint ap-artisan-hint">
+              &#128205; Votre profil appara&icirc;tra dans votre ville apr&egrave;s validation.
+            </div>
             <div class="ap-group">
               <label class="ap-label" for="signup-specialty">Sp&eacute;cialit&eacute;</label>
               <select class="ap-select" id="signup-specialty">
@@ -248,36 +282,78 @@
             </div>
           </div>
 
-          <!-- CLIENT HINT — shown for clients only (order:5) -->
-          <p class="ap-section-hint ap-f-client-hint">
+          <!-- Client: section hint only -->
+          <div class="ap-section-hint ap-client-hint" style="display:none">
             Vous pourrez suivre vos demandes depuis votre espace Fixeo.
+          </div>
+
+          <!-- Terms proxy for client step 3 (syncs to canonical hidden #terms) -->
+          <div class="ap-terms ap-terms-step3" style="display:none">
+            <input type="checkbox" id="terms-client" onchange="syncTerms(this)">
+            <label for="terms-client">
+              J&apos;accepte les
+              <a href="cgu.html" target="_blank" rel="noopener">conditions d&apos;utilisation</a>
+              et la
+              <a href="confidentialite.html" target="_blank" rel="noopener">politique de confidentialit&eacute;</a>
+            </label>
+          </div>
+
+          <div class="ap-step-nav" id="ap-nav-3">
+            <!-- signup-error + signup-btn moved here by _configureStep() -->
+          </div>
+        </div><!-- /#ap-step-3 -->
+
+        <!-- ══════════════════════════════════════════════════
+             STEP 4 — Artisan final (artisan only)
+             Terms + submit
+        ════════════════════════════════════════════════════ -->
+        <div class="ap-step" id="ap-step-4" style="display:none">
+
+          <div class="ap-section-hint">
+            &#10003; Vous &ecirc;tes presque pr&ecirc;t&nbsp;&mdash; cr&eacute;ez votre profil artisan Fixeo.
+          </div>
+
+          <div class="ap-terms">
+            <input type="checkbox" id="terms-artisan" onchange="syncTerms(this)">
+            <label for="terms-artisan">
+              J&apos;accepte les
+              <a href="cgu.html" target="_blank" rel="noopener">conditions d&apos;utilisation</a>
+              et la
+              <a href="confidentialite.html" target="_blank" rel="noopener">politique de confidentialit&eacute;</a>
+            </label>
+          </div>
+
+          <div id="signup-error-4" class="ap-error"></div>
+
+          <div class="ap-step-nav">
+            <!-- signup-btn is rendered here by _configureStep for artisan step 4 -->
+            <div id="ap-nav-4"></div>
+            <button type="button" class="ap-btn-back" onclick="prevSignupStep()">
+              &#8592; Retour
+            </button>
+          </div>
+
+          <p class="ap-trust">
+            <span class="ap-trust-icon">&#128274;</span>
+            Inscription s&eacute;curis&eacute;e &bull; Vos donn&eacute;es sont prot&eacute;g&eacute;es
           </p>
+        </div><!-- /#ap-step-4 -->
 
-          <!-- HIDDEN client phone field — kept for handleSignup() backward compat -->
-          <input type="tel" id="signup-phone-client" style="display:none" autocomplete="tel"/>
-
-        </div><!-- /.ap-fields-stack -->
-
-        <div class="ap-terms">
-          <input type="checkbox" id="terms" required>
-          <label for="terms">
-            J&apos;accepte les
-            <a href="cgu.html" target="_blank" rel="noopener">conditions d&apos;utilisation</a>
-            et la
-            <a href="confidentialite.html" target="_blank" rel="noopener">politique de confidentialit&eacute;</a>
-          </label>
-        </div>
-
-        <div id="signup-error" class="ap-error"></div>
-
-        <button type="submit" class="ap-btn" id="signup-btn">
+        <!--
+          signup-btn: single canonical submit button.
+          Moved here — outside all step panels.
+          _configureStep() moves it into the active step nav via DOM move.
+          handleSignup() reads this ID for loading state — always in DOM.
+        -->
+        <button type="submit" class="ap-btn" id="signup-btn" style="display:none">
           <span>Cr&eacute;er mon compte</span>
         </button>
 
-        <p class="ap-trust">
-          <span class="ap-trust-icon">&#128274;</span>
-          Inscription s&eacute;curis&eacute;e &bull; Vos donn&eacute;es sont prot&eacute;g&eacute;es
-        </p>
+        <!-- signup-error: single canonical error div — always in DOM -->
+        <div id="signup-error" class="ap-error" style="display:none"></div>
+
+        <!-- terms: single canonical checkbox — always in DOM, synced by proxy checkboxes -->
+        <input type="checkbox" id="terms" style="display:none">
 
         <p class="ap-switch">
           D&eacute;j&agrave; un compte&nbsp;?
@@ -802,6 +878,278 @@ async function handleResendEmail() {
 }
 
 /* ═══════════════════════════════════════════════════════════
+ * MULTI-STEP SIGNUP MANAGER — V6
+ *
+ * Architecture:
+ *   CLIENT  → 3 steps: identity / access / confirm
+ *   ARTISAN → 4 steps: identity / access / profile / confirm
+ *
+ * Step panels: #ap-step-1 … #ap-step-4
+ * State: _currentSignupStep  (1-based)
+ * handleSignup() untouched — fires on form submit at final step
+ *
+ * ALL EXISTING IDs PRESERVED:
+ *   signup-name, signup-email, signup-password, signup-phone,
+ *   signup-city, signup-specialty, terms, signup-btn,
+ *   signup-error, artisan-fields, card-client, card-artisan,
+ *   type-client, type-artisan, artisan-phone-group,
+ *   phone-optional-badge
+ * ═══════════════════════════════════════════════════════════ */
+
+var _currentSignupStep = 1;
+
+// ── Step definitions per role ──────────────────────────────
+var _STEP_CONFIG = {
+  client: {
+    total: 3,
+    titles: [
+      'Votre profil',       // step 1
+      'Votre acc\u00E8s',   // step 2
+      'Derni\u00E8re \u00E9tape' // step 3
+    ]
+  },
+  artisan: {
+    total: 4,
+    titles: [
+      'Votre identit\u00E9',      // step 1
+      'Votre acc\u00E8s',         // step 2
+      'Votre profil artisan',     // step 3
+      'Derni\u00E8re \u00E9tape'  // step 4
+    ]
+  }
+};
+
+// ── Progress dots renderer ─────────────────────────────────
+function renderProgressDots(step, total) {
+  var dotsEl = document.getElementById('ap-progress-dots');
+  if (!dotsEl) return;
+  var html = '';
+  for (var i = 1; i <= total; i++) {
+    var cls = i < step ? 'ap-dot ap-dot-done'
+            : i === step ? 'ap-dot ap-dot-active'
+            : 'ap-dot';
+    html += '<span class="' + cls + '" aria-hidden="true"></span>';
+  }
+  dotsEl.innerHTML = html;
+}
+
+// ── Step title renderer ────────────────────────────────────
+function renderStepTitle(step, role) {
+  var titleEl = document.getElementById('ap-step-title');
+  if (!titleEl) return;
+  var cfg = _STEP_CONFIG[role] || _STEP_CONFIG.client;
+  titleEl.textContent = cfg.titles[step - 1] || '';
+}
+
+// ── Show/hide the correct panel ────────────────────────────
+function renderSignupStep(step, direction) {
+  var role  = _selectedType || 'client';
+  var total = (_STEP_CONFIG[role] || _STEP_CONFIG.client).total;
+
+  // Clamp
+  step = Math.max(1, Math.min(step, total));
+  _currentSignupStep = step;
+
+  // Hide all step panels
+  for (var i = 1; i <= 4; i++) {
+    var panel = document.getElementById('ap-step-' + i);
+    if (!panel) continue;
+    if (i === step) {
+      panel.style.display = 'block';
+      panel.classList.remove('ap-step-exit-left', 'ap-step-exit-right',
+                             'ap-step-enter-left', 'ap-step-enter-right');
+      // Trigger entrance animation
+      panel.classList.add(direction === 'back' ? 'ap-step-enter-right' : 'ap-step-enter-left');
+      requestAnimationFrame(function(p) { return function() {
+        p.classList.remove('ap-step-enter-left', 'ap-step-enter-right');
+      }; }(panel));
+    } else {
+      panel.style.display = 'none';
+    }
+  }
+
+  // Progress + title
+  renderProgressDots(step, total);
+  renderStepTitle(step, role);
+
+  // Step-specific DOM tweaks
+  _configureStep(step, role);
+
+  // Focus first visible input in new step (accessibility)
+  setTimeout(function() {
+    var panel = document.getElementById('ap-step-' + step);
+    if (!panel) return;
+    var first = panel.querySelector('input:not([type=hidden]):not([type=radio]), select');
+    if (first) { try { first.focus(); } catch(e) {} }
+  }, 230);
+}
+
+// ── Per-step DOM configuration ─────────────────────────────
+function _configureStep(step, role) {
+  var isArtisan = role === 'artisan';
+
+  // Always hide canonical signup-btn / signup-error first;
+  // they will be moved into the active panel below.
+  var canonBtn = document.getElementById('signup-btn');
+  var canonErr = document.getElementById('signup-error');
+  var canonTerms = document.getElementById('terms');
+
+  /* STEP 1: show/hide phone optional badge */
+  var badge = document.getElementById('phone-optional-badge');
+  if (badge) badge.style.display = isArtisan ? 'none' : 'inline';
+
+  /* STEP 3: configure based on role */
+  if (step === 3) {
+    var artisanFields = document.getElementById('artisan-fields');
+    var clientHint    = document.querySelector('.ap-client-hint');
+    var termsStep3    = document.querySelector('.ap-terms-step3');
+    var nav3          = document.getElementById('ap-nav-3');
+
+    if (isArtisan) {
+      /* Artisan step 3: specialty + city → Next to step 4 */
+      if (artisanFields) artisanFields.style.display = 'block';
+      if (clientHint)    clientHint.style.display    = 'none';
+      if (termsStep3)    termsStep3.style.display     = 'none';
+      if (canonBtn) { canonBtn.style.display = 'none'; }
+      if (canonErr) { canonErr.style.display = 'none'; }
+      if (nav3) nav3.innerHTML =
+        '<button type="button" class="ap-btn ap-btn-next" onclick="nextSignupStep()">' +
+        '<span>Suivant</span><span class="ap-btn-arrow">&#8594;</span></button>' +
+        '<button type="button" class="ap-btn-back" onclick="prevSignupStep()">&#8592; Retour</button>';
+    } else {
+      /* Client step 3: hint + terms proxy + final submit */
+      if (artisanFields) artisanFields.style.display = 'none';
+      if (clientHint)    clientHint.style.display    = 'block';
+      if (termsStep3)    termsStep3.style.display     = 'flex';
+      /* Place canonical error + btn inside nav3 */
+      if (nav3) {
+        nav3.innerHTML = '';
+        if (canonErr) { canonErr.style.display = 'none'; nav3.appendChild(canonErr); }
+        if (canonBtn) {
+          var span = canonBtn.querySelector('span');
+          if (span) span.textContent = '\uD83D\uDD12\u00A0Cr\u00E9er mon compte';
+          canonBtn.style.display = 'flex';
+          nav3.appendChild(canonBtn);
+        }
+        var backBtn = document.createElement('button');
+        backBtn.type = 'button'; backBtn.className = 'ap-btn-back';
+        backBtn.textContent = '\u2190 Retour';
+        backBtn.setAttribute('onclick', 'prevSignupStep()');
+        nav3.appendChild(backBtn);
+      }
+    }
+  }
+
+  /* STEP 4: artisan final — move canonical btn/error here */
+  if (step === 4) {
+    var nav4         = document.getElementById('ap-nav-4');
+    var termsArtisan = document.getElementById('terms-artisan');
+    var errEl4       = document.getElementById('signup-error-4');
+    /* Sync proxy checkbox → master */
+    if (canonTerms && termsArtisan) termsArtisan.checked = canonTerms.checked;
+    if (errEl4) errEl4.style.display = 'none';
+    if (nav4) {
+      nav4.innerHTML = '';
+      if (canonErr) { canonErr.style.display = 'none'; nav4.appendChild(canonErr); }
+      if (canonBtn) {
+        var span4 = canonBtn.querySelector('span');
+        if (span4) span4.textContent = 'Cr\u00E9er mon profil artisan';
+        canonBtn.style.display = 'flex';
+        nav4.appendChild(canonBtn);
+      }
+    }
+  }
+}
+
+// ── Terms sync: artisan step 4 checkbox → master #terms ───
+function syncTerms(el) {
+  var master = document.getElementById('terms');
+  if (master) master.checked = el.checked;
+}
+
+// ── Step-specific validation ───────────────────────────────
+function validateSignupStep(step) {
+  var role = _selectedType || 'client';
+  var errEl = document.getElementById('signup-error');
+  var show = function(msg) {
+    if (errEl) { errEl.textContent = '\u274C ' + msg; errEl.style.display = 'block'; }
+  };
+  var hide = function() {
+    if (errEl) errEl.style.display = 'none';
+  };
+
+  hide();
+
+  if (step === 1) {
+    var nameEl = document.getElementById('signup-name');
+    if (!nameEl || !nameEl.value.trim()) {
+      show('Veuillez entrer votre nom complet.');
+      if (nameEl) nameEl.focus();
+      return false;
+    }
+    return true;
+  }
+
+  if (step === 2) {
+    var emailEl = document.getElementById('signup-email');
+    var passEl  = document.getElementById('signup-password');
+    if (!emailEl || !emailEl.value.trim() || !emailEl.checkValidity()) {
+      show('Adresse email invalide.');
+      if (emailEl) emailEl.focus();
+      return false;
+    }
+    if (!passEl || passEl.value.length < 8) {
+      show('Le mot de passe doit contenir au moins 8 caract\u00E8res.');
+      if (passEl) passEl.focus();
+      return false;
+    }
+    return true;
+  }
+
+  if (step === 3 && role === 'artisan') {
+    // Artisan specialty + city: optional — just advance
+    return true;
+  }
+
+  return true;
+}
+
+// ── Navigation ─────────────────────────────────────────────
+function nextSignupStep() {
+  var role  = _selectedType || 'client';
+  var total = (_STEP_CONFIG[role] || _STEP_CONFIG.client).total;
+
+  if (!validateSignupStep(_currentSignupStep)) return;
+
+  if (_currentSignupStep < total) {
+    renderSignupStep(_currentSignupStep + 1, 'next');
+  }
+}
+
+function prevSignupStep() {
+  if (_currentSignupStep > 1) {
+    renderSignupStep(_currentSignupStep - 1, 'back');
+  }
+}
+
+// ── Reset step when switching to signup tab ────────────────
+function resetSignupSteps() {
+  _currentSignupStep = 1;
+  renderSignupStep(1, 'next');
+  // Clear errors
+  var errEl = document.getElementById('signup-error');
+  if (errEl) errEl.style.display = 'none';
+}
+
+// ── Reset step when changing role ─────────────────────────
+// (V4 already hooks selectType — we extend that hook below)
+
+// ── handleSignup() guard: re-validate all fields ───────────
+// handleSignup() has its own full validation — it is untouched.
+// We add a pre-flight that shows signup-error in the visible panel.
+var _origHandleSignup = null; // set after DOM ready
+
+/* ═══════════════════════════════════════════════════════════
  * PROGRESSIVE REVEAL + CTA PULSE — V4 UX layer
  * Pure UX orchestration — zero auth logic touched.
  * ═══════════════════════════════════════════════════════════ */
@@ -845,28 +1193,37 @@ function revealSignupFields() {
   });
 }
 
-// Hook: reveal when switching to signup
+// Hook: reset steps + reveal when switching to signup
 const _origSwitchTab = switchTab;
 window.switchTab = function(tab) {
   _origSwitchTab(tab);
   if (tab === 'signup') {
-    // Small delay so form is visible before reveal starts
-    setTimeout(revealSignupFields, 30);
+    setTimeout(function() {
+      resetSignupSteps();
+    }, 20);
   }
 };
 
-// Hook: re-reveal on role change
+// Hook: re-render step 1 on role change (step count changes)
 const _origSelectType = selectType;
 window.selectType = function(type) {
   _origSelectType(type);
-  setTimeout(revealSignupFields, 30);
+  // If still on step 1, just re-render dots + title for new role
+  if (_currentSignupStep === 1) {
+    setTimeout(function() { renderSignupStep(1, 'next'); }, 20);
+  }
 };
 
-// Also reveal on page load if hash/param pre-selects signup
+// Initialise on page load if hash/param pre-selects signup
 (function() {
-  const hasSignup = window.location.hash === '#signup' ||
+  var hasSignup = window.location.hash === '#signup' ||
     new URLSearchParams(window.location.search).get('role') === 'artisan';
-  if (hasSignup) setTimeout(revealSignupFields, 60);
+  if (hasSignup) {
+    setTimeout(function() { resetSignupSteps(); }, 60);
+  } else {
+    // Always initialise dots even if login is shown (avoids flash on switchTab)
+    setTimeout(function() { renderSignupStep(1, 'next'); }, 60);
+  }
 })();
 
 // ── CTA pulse when signup looks complete ──────────────────
@@ -898,8 +1255,11 @@ window.selectType = function(type) {
       var el = document.getElementById(id);
       if (el) el.addEventListener('input', check);
     });
-    var t = document.getElementById('terms');
-    if (t) t.addEventListener('change', check);
+    // Watch canonical terms + both proxy checkboxes
+    ['terms','terms-client','terms-artisan'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) el.addEventListener('change', check);
+    });
     check();
   }
 
