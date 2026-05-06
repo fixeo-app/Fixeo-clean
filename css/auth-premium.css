@@ -1210,18 +1210,35 @@ html, body { height: 100%; }
 }
 
 .ap-scard-icon {
-  font-size: 1.5rem;
-  line-height: 1;
+  width: 32px;
+  height: 32px;
   display: block;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
   transition: transform 0.18s;
-  /* Force emoji font — Cairo doesn't include emoji glyphs */
-  font-family: "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",
-               "Twemoji Mozilla","EmojiOne Color","Android Emoji",sans-serif;
+  flex-shrink: 0;
 }
+
+/* ── Specialty SVG icons (inline data URIs — font-independent) ── */
+/* Palette: soft tones that pop on dark glass */
+.ap-si-plomberie    { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext y='26' font-size='26' font-family='serif'%3E%F0%9F%94%A7%3C/text%3E%3C/svg%3E"); }
+.ap-si-electricite  { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpolygon points='18,2 10,18 16,18 14,30 22,14 16,14' fill='%23FFD60A'/%3E%3C/svg%3E"); }
+.ap-si-clim         { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='4' y='8' width='24' height='10' rx='3' fill='%2360B4FF'/%3E%3Crect x='8' y='18' width='2' height='7' fill='%2360B4FF'/%3E%3Crect x='15' y='18' width='2' height='7' fill='%2360B4FF'/%3E%3Crect x='22' y='18' width='2' height='7' fill='%2360B4FF'/%3E%3Ccircle cx='10' cy='13' r='2' fill='%23fff'/%3E%3C/svg%3E"); }
+.ap-si-peinture     { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='10' cy='10' r='7' fill='%23E1306C'/%3E%3Ccircle cx='22' cy='10' r='7' fill='%23FFD60A'/%3E%3Ccircle cx='16' cy='21' r='7' fill='%2360B4FF'/%3E%3C/svg%3E"); }
+.ap-si-menuiserie   { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='14' y='3' width='4' height='18' rx='2' fill='%23C8944A'/%3E%3Crect x='8' y='16' width='16' height='8' rx='2' fill='%23A07040'/%3E%3C/svg%3E"); }
+.ap-si-maconnerie   { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='20' width='11' height='8' rx='1' fill='%23C87C4A'/%3E%3Crect x='18' y='20' width='11' height='8' rx='1' fill='%23C87C4A'/%3E%3Crect x='10' y='12' width='12' height='8' rx='1' fill='%23A06030'/%3E%3Crect x='3' y='4' width='8' height='8' rx='1' fill='%23C87C4A'/%3E%3Crect x='21' y='4' width='8' height='8' rx='1' fill='%23C87C4A'/%3E%3C/svg%3E"); }
+.ap-si-carrelage    { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='3' width='11' height='11' rx='2' fill='%238B9ECC'/%3E%3Crect x='18' y='3' width='11' height='11' rx='2' fill='%236B7EAA'/%3E%3Crect x='3' y='18' width='11' height='11' rx='2' fill='%236B7EAA'/%3E%3Crect x='18' y='18' width='11' height='11' rx='2' fill='%238B9ECC'/%3E%3C/svg%3E"); }
+.ap-si-nettoyage    { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cellipse cx='16' cy='22' rx='10' ry='6' fill='%2360B4FF' opacity='.4'/%3E%3Crect x='14' y='6' width='4' height='16' rx='2' fill='%2360B4FF'/%3E%3Ccircle cx='16' cy='5' r='3' fill='%23fff' opacity='.7'/%3E%3C/svg%3E"); }
+.ap-si-toiture      { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpolygon points='16,3 2,16 6,16 6,29 26,29 26,16 30,16' fill='%23E1306C' opacity='.8'/%3E%3Crect x='12' y='20' width='8' height='9' rx='1' fill='%23fff' opacity='.5'/%3E%3C/svg%3E"); }
+.ap-si-serrurerie   { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='9' y='14' width='14' height='14' rx='3' fill='%23FFAA00'/%3E%3Cpath d='M10 14 Q10 6 16 6 Q22 6 22 14' stroke='%23FFAA00' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3Ccircle cx='16' cy='21' r='3' fill='%23fff' opacity='.7'/%3E%3C/svg%3E"); }
+.ap-si-demenagement { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='2' y='12' width='22' height='12' rx='3' fill='%23FFAA00'/%3E%3Cpolygon points='24,12 30,18 24,18' fill='%23FFAA00'/%3E%3Ccircle cx='8' cy='26' r='3' fill='%23888'/%3E%3Ccircle cx='20' cy='26' r='3' fill='%23888'/%3E%3Crect x='6' y='6' width='12' height='7' rx='2' fill='%23C87C4A' opacity='.8'/%3E%3C/svg%3E"); }
+.ap-si-jardinage    { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 28 Q16 16 8 10 Q16 8 20 16 Q24 8 24 18 Q20 20 16 28Z' fill='%2344BB77'/%3E%3Crect x='15' y='22' width='2' height='8' rx='1' fill='%23228844'/%3E%3C/svg%3E"); }
+.ap-si-bricolage    { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='14' y='3' width='4' height='20' rx='2' fill='%238888CC'/%3E%3Crect x='6' y='3' width='20' height='5' rx='2' fill='%238888CC'/%3E%3C/svg%3E"); }
 
 .ap-scard:hover .ap-scard-icon,
 .ap-scard.ap-selected .ap-scard-icon {
-  transform: scale(1.1);
+  transform: scale(1.12);
 }
 
 .ap-scard-label {
@@ -1342,7 +1359,7 @@ html, body { height: 100%; }
 @media (max-width: 390px) {
   .ap-specialty-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; }
   .ap-scard { padding: 10px 4px 9px; min-height: 66px; border-radius: 10px; }
-  .ap-scard-icon { font-size: 1.35rem; }
+  .ap-scard-icon { width: 26px; height: 26px; }
   .ap-scard-label { font-size: 0.63rem; }
   .ap-chip { padding: 6px 12px; font-size: 0.74rem; }
 }
@@ -1351,7 +1368,7 @@ html, body { height: 100%; }
 @media (max-width: 360px) {
   .ap-specialty-grid { gap: 5px; }
   .ap-scard { padding: 9px 3px 8px; min-height: 62px; }
-  .ap-scard-icon { font-size: 1.25rem; }
+  .ap-scard-icon { width: 24px; height: 24px; }
   .ap-scard-label { font-size: 0.6rem; }
   .ap-chip { padding: 5px 10px; font-size: 0.7rem; min-height: 32px; }
 }
@@ -1360,5 +1377,5 @@ html, body { height: 100%; }
 @media (max-width: 320px) {
   .ap-specialty-grid { grid-template-columns: repeat(2, 1fr); }
   .ap-scard { min-height: 58px; }
-  .ap-scard-icon { font-size: 1.2rem; }
+  .ap-scard-icon { width: 22px; height: 22px; }
 }
