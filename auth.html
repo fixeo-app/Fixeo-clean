@@ -14,7 +14,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/variables.css">
   <link rel="stylesheet" href="css/auth-global.css"/>
-  <link rel="stylesheet" href="css/auth-premium.css?v=ap6">
+  <link rel="stylesheet" href="css/auth-premium.css?v=ap7">
 </head>
 <body data-theme="dark">
 
@@ -243,43 +243,141 @@
             <div class="ap-section-hint ap-artisan-hint">
               &#128205; Votre profil appara&icirc;tra dans votre ville apr&egrave;s validation.
             </div>
-            <div class="ap-group">
-              <label class="ap-label" for="signup-specialty">Sp&eacute;cialit&eacute;</label>
-              <select class="ap-select" id="signup-specialty">
-                <option value="">Choisir une sp&eacute;cialit&eacute;</option>
-                <option>Plomberie</option>
-                <option>&Eacute;lectricit&eacute;</option>
-                <option>Peinture</option>
-                <option>Carrelage</option>
-                <option>Menuiserie</option>
-                <option>Climatisation</option>
-                <option>Jardinage</option>
-                <option>Nettoyage</option>
-                <option>Ma&ccedil;onnerie</option>
-                <option>Bricolage</option>
-                <option>D&eacute;m&eacute;nagement</option>
-                <option>Toiture</option>
-                <option>Serrurerie</option>
-              </select>
+
+            <!-- Specialty cards (visual) — syncs #signup-specialty -->
+            <div class="ap-field-label">Sp&eacute;cialit&eacute;</div>
+            <div class="ap-specialty-grid" id="ap-specialty-grid" role="listbox"
+                 aria-label="Choisir votre spécialité">
+              <div class="ap-scard" role="option" tabindex="0" data-value="Plomberie"
+                   onclick="selectSpecialty(this)" onkeydown="if(event.key==='Enter'||event.key===' ')selectSpecialty(this)">
+                <span class="ap-scard-icon">&#128295;</span>
+                <span class="ap-scard-label">Plomberie</span>
+              </div>
+              <div class="ap-scard" role="option" tabindex="0" data-value="Électricité"
+                   onclick="selectSpecialty(this)" onkeydown="if(event.key==='Enter'||event.key===' ')selectSpecialty(this)">
+                <span class="ap-scard-icon">&#9889;</span>
+                <span class="ap-scard-label">&Eacute;lectricit&eacute;</span>
+              </div>
+              <div class="ap-scard" role="option" tabindex="0" data-value="Climatisation"
+                   onclick="selectSpecialty(this)" onkeydown="if(event.key==='Enter'||event.key===' ')selectSpecialty(this)">
+                <span class="ap-scard-icon">&#10052;</span>
+                <span class="ap-scard-label">Climatisation</span>
+              </div>
+              <div class="ap-scard" role="option" tabindex="0" data-value="Peinture"
+                   onclick="selectSpecialty(this)" onkeydown="if(event.key==='Enter'||event.key===' ')selectSpecialty(this)">
+                <span class="ap-scard-icon">&#127912;</span>
+                <span class="ap-scard-label">Peinture</span>
+              </div>
+              <div class="ap-scard" role="option" tabindex="0" data-value="Menuiserie"
+                   onclick="selectSpecialty(this)" onkeydown="if(event.key==='Enter'||event.key===' ')selectSpecialty(this)">
+                <span class="ap-scard-icon">&#129490;</span>
+                <span class="ap-scard-label">Menuiserie</span>
+              </div>
+              <div class="ap-scard" role="option" tabindex="0" data-value="Maçonnerie"
+                   onclick="selectSpecialty(this)" onkeydown="if(event.key==='Enter'||event.key===' ')selectSpecialty(this)">
+                <span class="ap-scard-icon">&#129521;</span>
+                <span class="ap-scard-label">Ma&ccedil;onnerie</span>
+              </div>
+              <div class="ap-scard" role="option" tabindex="0" data-value="Carrelage"
+                   onclick="selectSpecialty(this)" onkeydown="if(event.key==='Enter'||event.key===' ')selectSpecialty(this)">
+                <span class="ap-scard-icon">&#127963;</span>
+                <span class="ap-scard-label">Carrelage</span>
+              </div>
+              <div class="ap-scard" role="option" tabindex="0" data-value="Nettoyage"
+                   onclick="selectSpecialty(this)" onkeydown="if(event.key==='Enter'||event.key===' ')selectSpecialty(this)">
+                <span class="ap-scard-icon">&#129529;</span>
+                <span class="ap-scard-label">Nettoyage</span>
+              </div>
+              <div class="ap-scard" role="option" tabindex="0" data-value="Toiture"
+                   onclick="selectSpecialty(this)" onkeydown="if(event.key==='Enter'||event.key===' ')selectSpecialty(this)">
+                <span class="ap-scard-icon">&#127968;</span>
+                <span class="ap-scard-label">Toiture</span>
+              </div>
+              <div class="ap-scard" role="option" tabindex="0" data-value="Serrurerie"
+                   onclick="selectSpecialty(this)" onkeydown="if(event.key==='Enter'||event.key===' ')selectSpecialty(this)">
+                <span class="ap-scard-icon">&#128274;</span>
+                <span class="ap-scard-label">Serrurerie</span>
+              </div>
+              <div class="ap-scard" role="option" tabindex="0" data-value="Déménagement"
+                   onclick="selectSpecialty(this)" onkeydown="if(event.key==='Enter'||event.key===' ')selectSpecialty(this)">
+                <span class="ap-scard-icon">&#128666;</span>
+                <span class="ap-scard-label">D&eacute;m&eacute;nagement</span>
+              </div>
+              <div class="ap-scard" role="option" tabindex="0" data-value="Jardinage"
+                   onclick="selectSpecialty(this)" onkeydown="if(event.key==='Enter'||event.key===' ')selectSpecialty(this)">
+                <span class="ap-scard-icon">&#127807;</span>
+                <span class="ap-scard-label">Jardinage</span>
+              </div>
+              <div class="ap-scard" role="option" tabindex="0" data-value="Bricolage"
+                   onclick="selectSpecialty(this)" onkeydown="if(event.key==='Enter'||event.key===' ')selectSpecialty(this)">
+                <span class="ap-scard-icon">&#128296;</span>
+                <span class="ap-scard-label">Bricolage</span>
+              </div>
             </div>
-            <div class="ap-group">
-              <label class="ap-label" for="signup-city">Ville</label>
-              <select class="ap-select" id="signup-city">
-                <option value="">Choisir une ville</option>
-                <option>Casablanca</option>
-                <option>Rabat</option>
-                <option>Marrakech</option>
-                <option>F&egrave;s</option>
-                <option>Agadir</option>
-                <option>Tanger</option>
-                <option>Mekn&egrave;s</option>
-                <option>Oujda</option>
-                <option>K&eacute;nitra</option>
-                <option>T&eacute;touan</option>
-                <option>Safi</option>
-                <option>El Jadida</option>
-              </select>
+            <!-- Canonical hidden select — ALWAYS synced, read by handleSignup() -->
+            <select id="signup-specialty" style="display:none" aria-hidden="true" tabindex="-1">
+              <option value="">Choisir une sp&eacute;cialit&eacute;</option>
+              <option>Plomberie</option>
+              <option>Électricité</option>
+              <option>Peinture</option>
+              <option>Carrelage</option>
+              <option>Menuiserie</option>
+              <option>Climatisation</option>
+              <option>Jardinage</option>
+              <option>Nettoyage</option>
+              <option>Maçonnerie</option>
+              <option>Bricolage</option>
+              <option>Déménagement</option>
+              <option>Toiture</option>
+              <option>Serrurerie</option>
+            </select>
+
+            <!-- City chips — syncs #signup-city -->
+            <div class="ap-field-label" style="margin-top:18px">Ville</div>
+            <div class="ap-city-chips" id="ap-city-chips" role="listbox"
+                 aria-label="Choisir votre ville">
+              <div class="ap-chip" role="option" tabindex="0" data-value="Casablanca"
+                   onclick="selectCity(this)" onkeydown="if(event.key==='Enter'||event.key===' ')selectCity(this)">Casablanca</div>
+              <div class="ap-chip" role="option" tabindex="0" data-value="Rabat"
+                   onclick="selectCity(this)" onkeydown="if(event.key==='Enter'||event.key===' ')selectCity(this)">Rabat</div>
+              <div class="ap-chip" role="option" tabindex="0" data-value="Marrakech"
+                   onclick="selectCity(this)" onkeydown="if(event.key==='Enter'||event.key===' ')selectCity(this)">Marrakech</div>
+              <div class="ap-chip" role="option" tabindex="0" data-value="Fès"
+                   onclick="selectCity(this)" onkeydown="if(event.key==='Enter'||event.key===' ')selectCity(this)">F&egrave;s</div>
+              <div class="ap-chip" role="option" tabindex="0" data-value="Tanger"
+                   onclick="selectCity(this)" onkeydown="if(event.key==='Enter'||event.key===' ')selectCity(this)">Tanger</div>
+              <div class="ap-chip" role="option" tabindex="0" data-value="Agadir"
+                   onclick="selectCity(this)" onkeydown="if(event.key==='Enter'||event.key===' ')selectCity(this)">Agadir</div>
+              <div class="ap-chip" role="option" tabindex="0" data-value="Meknès"
+                   onclick="selectCity(this)" onkeydown="if(event.key==='Enter'||event.key===' ')selectCity(this)">Mekn&egrave;s</div>
+              <div class="ap-chip" role="option" tabindex="0" data-value="Oujda"
+                   onclick="selectCity(this)" onkeydown="if(event.key==='Enter'||event.key===' ')selectCity(this)">Oujda</div>
+              <div class="ap-chip" role="option" tabindex="0" data-value="Kénitra"
+                   onclick="selectCity(this)" onkeydown="if(event.key==='Enter'||event.key===' ')selectCity(this)">K&eacute;nitra</div>
+              <div class="ap-chip" role="option" tabindex="0" data-value="Tétouan"
+                   onclick="selectCity(this)" onkeydown="if(event.key==='Enter'||event.key===' ')selectCity(this)">T&eacute;touan</div>
+              <div class="ap-chip" role="option" tabindex="0" data-value="Safi"
+                   onclick="selectCity(this)" onkeydown="if(event.key==='Enter'||event.key===' ')selectCity(this)">Safi</div>
+              <div class="ap-chip" role="option" tabindex="0" data-value="El Jadida"
+                   onclick="selectCity(this)" onkeydown="if(event.key==='Enter'||event.key===' ')selectCity(this)">El Jadida</div>
             </div>
+            <!-- Canonical hidden select — ALWAYS synced, read by handleSignup() -->
+            <select id="signup-city" style="display:none" aria-hidden="true" tabindex="-1">
+              <option value="">Choisir une ville</option>
+              <option>Casablanca</option>
+              <option>Rabat</option>
+              <option>Marrakech</option>
+              <option>Fès</option>
+              <option>Agadir</option>
+              <option>Tanger</option>
+              <option>Meknès</option>
+              <option>Oujda</option>
+              <option>Kénitra</option>
+              <option>Tétouan</option>
+              <option>Safi</option>
+              <option>El Jadida</option>
+            </select>
+
           </div>
 
           <!-- Client: section hint (shown for clients only) -->
@@ -985,6 +1083,29 @@ function renderSignupStep(step, direction) {
   renderProgressDots(step, total);
   renderStepTitle(step, role);
 
+  // Reset field-done states when entering step 3 (fresh pass)
+  if (step === 3) {
+    var sg = document.getElementById('ap-specialty-grid');
+    var cc = document.getElementById('ap-city-chips');
+    if (sg) sg.classList.remove('ap-field-done');
+    if (cc) cc.classList.remove('ap-field-done');
+    // Re-apply selected state from hidden selects if user came back
+    var specSel = document.getElementById('signup-specialty');
+    var citySel = document.getElementById('signup-city');
+    if (sg && specSel && specSel.value) {
+      sg.querySelectorAll('.ap-scard').forEach(function(c) {
+        c.classList.toggle('ap-selected', c.dataset.value === specSel.value);
+        c.setAttribute('aria-selected', c.dataset.value === specSel.value ? 'true' : 'false');
+      });
+    }
+    if (cc && citySel && citySel.value) {
+      cc.querySelectorAll('.ap-chip').forEach(function(c) {
+        c.classList.toggle('ap-selected', c.dataset.value === citySel.value);
+        c.setAttribute('aria-selected', c.dataset.value === citySel.value ? 'true' : 'false');
+      });
+    }
+  }
+
   // Step-specific DOM tweaks
   _configureStep(step, role);
 
@@ -1048,6 +1169,76 @@ function _configureStep(step, role) {
 function syncTerms(el) {
   var master = document.getElementById('terms');
   if (master) master.checked = el.checked;
+}
+
+// ── Specialty card selection ────────────────────────────────
+function selectSpecialty(el) {
+  var grid = document.getElementById('ap-specialty-grid');
+  if (!grid) return;
+  // Deselect all
+  grid.querySelectorAll('.ap-scard').forEach(function(c) {
+    c.classList.remove('ap-selected');
+    c.setAttribute('aria-selected','false');
+  });
+  // Select clicked
+  el.classList.add('ap-selected');
+  el.setAttribute('aria-selected','true');
+  // Sync hidden canonical select
+  var val = el.dataset.value || '';
+  var sel = document.getElementById('signup-specialty');
+  if (sel) {
+    for (var i = 0; i < sel.options.length; i++) {
+      if (sel.options[i].value === val || sel.options[i].text === val) {
+        sel.selectedIndex = i; break;
+      }
+    }
+    sel.value = val;
+    sel.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+  // Micro-pulse feedback
+  el.classList.add('ap-tap');
+  setTimeout(function() { el.classList.remove('ap-tap'); }, 320);
+  // Field-done calming: non-selected cards fade after short delay
+  var grid2 = document.getElementById('ap-specialty-grid');
+  if (grid2) {
+    grid2.classList.remove('ap-field-done');
+    setTimeout(function() { grid2.classList.add('ap-field-done'); }, 480);
+  }
+}
+
+// ── City chip selection ─────────────────────────────────────
+function selectCity(el) {
+  var row = document.getElementById('ap-city-chips');
+  if (!row) return;
+  // Deselect all
+  row.querySelectorAll('.ap-chip').forEach(function(c) {
+    c.classList.remove('ap-selected');
+    c.setAttribute('aria-selected','false');
+  });
+  // Select clicked
+  el.classList.add('ap-selected');
+  el.setAttribute('aria-selected','true');
+  // Sync hidden canonical select
+  var val = el.dataset.value || '';
+  var sel = document.getElementById('signup-city');
+  if (sel) {
+    for (var i = 0; i < sel.options.length; i++) {
+      if (sel.options[i].value === val || sel.options[i].text === val) {
+        sel.selectedIndex = i; break;
+      }
+    }
+    sel.value = val;
+    sel.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+  // Micro-pulse feedback
+  el.classList.add('ap-tap');
+  setTimeout(function() { el.classList.remove('ap-tap'); }, 320);
+  // Field-done calming: non-selected chips fade after short delay
+  var row2 = document.getElementById('ap-city-chips');
+  if (row2) {
+    row2.classList.remove('ap-field-done');
+    setTimeout(function() { row2.classList.add('ap-field-done'); }, 420);
+  }
 }
 
 // ── Artisan step 4 proxy submit ─────────────────────────────

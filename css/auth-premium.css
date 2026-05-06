@@ -1113,3 +1113,249 @@ html, body { height: 100%; }
   .ap-dot-active { width: 14px; }
   .ap-step-title { font-size: 0.68rem; }
 }
+
+/* ═══════════════════════════════════════════════════════════
+   AUTH V7 — SPECIALTY CARDS + CITY CHIPS
+   Tactile premium selections — no HTML dropdown psychology
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Field label (above card grid / chips) ──────────────────── */
+.ap-field-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.38);
+  margin-bottom: 10px;
+}
+
+/* ── Specialty cards grid ─────────────────────────────────── */
+.ap-specialty-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.ap-scard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 11px 6px 10px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  cursor: pointer;
+  user-select: none;
+  transition:
+    background 0.18s,
+    border-color 0.18s,
+    transform 0.15s,
+    box-shadow 0.18s;
+  position: relative;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+  min-height: 72px;
+}
+
+.ap-scard::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 0%, rgba(225,48,108,0.12) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.22s;
+  pointer-events: none;
+}
+
+.ap-scard:hover {
+  background: rgba(255,255,255,0.07);
+  border-color: rgba(255,255,255,0.15);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+}
+
+.ap-scard:hover::before { opacity: 1; }
+
+.ap-scard:active {
+  transform: scale(0.96) translateY(0);
+  transition-duration: 0.08s;
+}
+
+/* Selected state */
+.ap-scard.ap-selected {
+  background: rgba(225,48,108,0.14);
+  border-color: rgba(225,48,108,0.55);
+  box-shadow:
+    0 0 0 1px rgba(225,48,108,0.22),
+    0 4px 18px rgba(225,48,108,0.14),
+    inset 0 1px 0 rgba(255,255,255,0.07);
+  transform: translateY(-1px);
+}
+
+.ap-scard.ap-selected::before { opacity: 1; }
+
+/* Checkmark badge on selected card */
+.ap-scard.ap-selected::after {
+  content: '✓';
+  position: absolute;
+  top: 4px;
+  right: 6px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: rgba(225,48,108,0.9);
+  line-height: 1;
+}
+
+.ap-scard-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+  display: block;
+  transition: transform 0.18s;
+}
+
+.ap-scard:hover .ap-scard-icon,
+.ap-scard.ap-selected .ap-scard-icon {
+  transform: scale(1.1);
+}
+
+.ap-scard-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.7);
+  text-align: center;
+  line-height: 1.2;
+  transition: color 0.15s;
+}
+
+.ap-scard.ap-selected .ap-scard-label {
+  color: rgba(255,255,255,0.95);
+}
+
+/* Tap pulse keyframe */
+@keyframes ap-tap-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(225,48,108,0.4); }
+  60%  { box-shadow: 0 0 0 8px rgba(225,48,108,0); }
+  100% { box-shadow: 0 0 0 0 rgba(225,48,108,0); }
+}
+
+.ap-scard.ap-tap {
+  animation: ap-tap-pulse 0.32s ease-out;
+}
+
+/* ── City chips ──────────────────────────────────────────── */
+.ap-city-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.ap-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 14px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 100px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.65);
+  cursor: pointer;
+  user-select: none;
+  transition:
+    background 0.15s,
+    border-color 0.15s,
+    color 0.15s,
+    transform 0.12s,
+    box-shadow 0.15s;
+  min-height: 36px;
+  -webkit-tap-highlight-color: transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+.ap-chip:hover {
+  background: rgba(255,255,255,0.09);
+  border-color: rgba(255,255,255,0.2);
+  color: rgba(255,255,255,0.9);
+  transform: translateY(-1px);
+}
+
+.ap-chip:active {
+  transform: scale(0.95);
+  transition-duration: 0.07s;
+}
+
+/* Selected chip */
+.ap-chip.ap-selected {
+  background: rgba(225,48,108,0.18);
+  border-color: rgba(225,48,108,0.6);
+  color: #fff;
+  box-shadow:
+    0 0 0 1px rgba(225,48,108,0.2),
+    0 3px 12px rgba(225,48,108,0.15);
+  transform: translateY(-1px);
+}
+
+.ap-chip.ap-selected::before {
+  content: '✓ ';
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: rgba(225,48,108,0.9);
+  margin-right: 2px;
+}
+
+.ap-chip.ap-tap {
+  animation: ap-tap-pulse 0.28s ease-out;
+}
+
+/* ── Settled state (after selection — field calming) ─────── */
+.ap-specialty-grid.ap-field-done .ap-scard:not(.ap-selected) {
+  opacity: 0.45;
+  pointer-events: none;
+}
+.ap-specialty-grid.ap-field-done .ap-scard.ap-selected {
+  pointer-events: auto;
+  opacity: 1;
+}
+.ap-city-chips.ap-field-done .ap-chip:not(.ap-selected) {
+  opacity: 0.4;
+  pointer-events: none;
+}
+.ap-city-chips.ap-field-done .ap-chip.ap-selected {
+  pointer-events: auto;
+  opacity: 1;
+}
+
+/* ── Reduced motion ──────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .ap-scard, .ap-chip { transition: none !important; animation: none !important; }
+  .ap-scard.ap-tap, .ap-chip.ap-tap { animation: none !important; }
+}
+
+/* ── Mobile 390px ──────────────────────────────────────────── */
+@media (max-width: 390px) {
+  .ap-specialty-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .ap-scard { padding: 10px 4px 9px; min-height: 66px; border-radius: 10px; }
+  .ap-scard-icon { font-size: 1.35rem; }
+  .ap-scard-label { font-size: 0.63rem; }
+  .ap-chip { padding: 6px 12px; font-size: 0.74rem; }
+}
+
+/* ── Mobile 360px ──────────────────────────────────────────── */
+@media (max-width: 360px) {
+  .ap-specialty-grid { gap: 5px; }
+  .ap-scard { padding: 9px 3px 8px; min-height: 62px; }
+  .ap-scard-icon { font-size: 1.25rem; }
+  .ap-scard-label { font-size: 0.6rem; }
+  .ap-chip { padding: 5px 10px; font-size: 0.7rem; min-height: 32px; }
+}
+
+/* ── Mobile 320px ──────────────────────────────────────────── */
+@media (max-width: 320px) {
+  .ap-specialty-grid { grid-template-columns: repeat(2, 1fr); }
+  .ap-scard { min-height: 58px; }
+  .ap-scard-icon { font-size: 1.2rem; }
+}
