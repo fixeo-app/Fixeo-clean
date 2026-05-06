@@ -59,11 +59,23 @@
           </div>
         </div>
 
-        <div class="ap-group">
+        <!-- ── Forgot password mini-screen (replaces password field) ── -->
+        <div id="forgot-screen">
+          <div class="ap-forgot-title">Réinitialiser le mot de passe</div>
+          <div class="ap-forgot-sub">Entrez votre email ci-dessus. Nous vous enverrons un lien pour choisir un nouveau mot de passe.</div>
+          <div id="forgot-success"></div>
+          <div id="forgot-error" class="ap-error"></div>
+          <button type="button" class="ap-btn" id="forgot-submit-btn" onclick="handleForgotSubmit()">
+            <span>Envoyer le lien</span>
+          </button>
+          <button type="button" class="ap-forgot-back" onclick="hideForgotScreen()">← Retour à la connexion</button>
+        </div>
+
+        <div id="login-password-group" class="ap-group">
           <div class="ap-label-row">
             <label class="ap-label" for="login-password">Mot de passe</label>
             <button type="button" class="ap-forgot" id="forgot-password-link"
-                    onclick="handleForgotPassword(event)">Mot de passe oublié ?</button>
+                    onclick="showForgotScreen(event)">Mot de passe oublié ?</button>
           </div>
           <div class="ap-input-wrap">
             <input type="password" class="ap-input has-toggle" id="login-password"
@@ -75,29 +87,18 @@
 
         <div id="login-error" class="ap-error"></div>
 
-        <button type="submit" class="ap-btn" id="login-btn">
-          <span>Se connecter</span>
-        </button>
+        <div id="login-submit-wrap">
+          <button type="submit" class="ap-btn" id="login-btn">
+            <span>Se connecter</span>
+          </button>
+        </div>
 
         <p class="ap-trust">
           <span class="ap-trust-icon">🔒</span>
           Connexion sécurisée • Vos données sont protégées
         </p>
 
-        <div class="ap-divider">OU</div>
-
-        <!-- Social — disabled until Supabase OAuth configured -->
-        <div class="ap-social-row" aria-hidden="true">
-          <button type="button" class="ap-social-btn" disabled tabindex="-1">
-            <svg viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
-            Google
-          </button>
-          <button type="button" class="ap-social-btn" disabled tabindex="-1">
-            <svg viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-            Facebook
-          </button>
-        </div>
-        <p class="ap-soon">Connexion sociale disponible prochainement</p>
+        <!-- Social login: reserved for future OAuth integration -->
 
         <p class="ap-switch">
           Pas de compte ?
@@ -144,12 +145,6 @@
         </div>
 
         <div class="ap-group">
-          <label class="ap-label" for="signup-phone">Téléphone <span style="opacity:.4;font-weight:400;text-transform:none">(optionnel)</span></label>
-          <input type="tel" class="ap-input" id="signup-phone"
-                 placeholder="+212 6XX XXX XXX" autocomplete="tel" inputmode="tel"/>
-        </div>
-
-        <div class="ap-group">
           <label class="ap-label" for="signup-password">Mot de passe</label>
           <div class="ap-input-wrap">
             <input type="password" class="ap-input has-toggle" id="signup-password"
@@ -175,7 +170,8 @@
               <option>Plomberie</option><option>Électricité</option><option>Peinture</option>
               <option>Carrelage</option><option>Menuiserie</option><option>Climatisation</option>
               <option>Jardinage</option><option>Nettoyage</option><option>Maçonnerie</option>
-              <option>Bricolage</option><option>Déménagement</option>
+              <option>Bricolage</option><option>Déménagement</option><option>Toiture</option>
+              <option>Serrurerie</option>
             </select>
           </div>
           <div class="ap-group">
@@ -183,17 +179,30 @@
             <select class="ap-select" id="signup-city">
               <option value="">Choisir une ville</option>
               <option>Casablanca</option><option>Rabat</option><option>Marrakech</option>
-              <option>Fès</option><option>Agadir</option><option>Meknès</option>
-              <option>Tanger</option><option>Salé</option><option>Oujda</option>
+              <option>Fès</option><option>Agadir</option><option>Tanger</option>
+              <option>Meknès</option><option>Oujda</option><option>Kénitra</option>
+              <option>Tétouan</option><option>Safi</option><option>El Jadida</option>
             </select>
           </div>
+          <div class="ap-group">
+            <label class="ap-label" for="signup-phone">Téléphone</label>
+            <input type="tel" class="ap-input" id="signup-phone"
+                   placeholder="+212 6XX XXX XXX" autocomplete="tel" inputmode="tel"/>
+          </div>
+        </div>
+
+        <!-- Phone for clients — optional, after password -->
+        <div class="ap-group ap-client-phone" id="client-phone-field" style="display:none">
+          <label class="ap-label" for="signup-phone-client">Téléphone <span class="ap-optional">(optionnel)</span></label>
+          <input type="tel" class="ap-input" id="signup-phone-client"
+                 placeholder="+212 6XX XXX XXX" autocomplete="tel" inputmode="tel"/>
         </div>
 
         <div class="ap-terms">
           <input type="checkbox" id="terms" required>
           <label for="terms">
-            J'accepte les <a href="#" onclick="openLegal('cgu');return false">conditions d'utilisation</a>
-            et la <a href="#" onclick="openLegal('privacy');return false">politique de confidentialité</a>
+            J'accepte les <a href="cgu.html" target="_blank" rel="noopener">conditions d'utilisation</a>
+            et la <a href="confidentialite.html" target="_blank" rel="noopener">politique de confidentialité</a>
           </label>
         </div>
 
@@ -214,6 +223,16 @@
         </p>
 
       </form>
+
+      <!-- ══ EMAIL CONFIRMATION SCREEN ═══════════════════════ -->
+      <div id="email-confirm-screen">
+        <span class="ap-confirm-icon">✉️</span>
+        <div class="ap-confirm-title">Vérifiez votre email</div>
+        <div class="ap-confirm-email">Un lien de confirmation a été envoyé à<br><strong id="confirm-email-display"></strong></div>
+        <div class="ap-confirm-hint">Cliquez sur le lien dans l'email pour activer votre compte. Vérifiez aussi vos spams.</div>
+        <button type="button" class="ap-btn-resend" id="btn-resend-email" onclick="handleResendEmail()">Renvoyer l'email</button>
+        <button type="button" class="ap-confirm-back" onclick="showAuthForms()">← Revenir à la connexion</button>
+      </div>
 
     </div><!-- /.auth-box -->
   </main>
@@ -263,8 +282,8 @@ function switchTab(tab) {
   document.getElementById('signup-error').style.display = 'none';
   document.getElementById('auth-heading').textContent = isLogin ? 'Bon retour 👋' : 'Créer un compte';
   document.getElementById('auth-sub').textContent     = isLogin
-    ? 'Connectez-vous à votre espace Fixeo.'
-    : 'Rejoignez +700 artisans et clients Fixeo.';
+    ? 'Connectez-vous \u00e0 votre espace Fixeo.'
+    : 'Rejoignez la communaut\u00e9 Fixeo — c\u2019est gratuit.';
 }
 
 // ── Role card selection (signup) ──────────────────────────
@@ -273,6 +292,7 @@ function selectType(type) {
   const cc = document.getElementById('card-client');
   const ca = document.getElementById('card-artisan');
   const af = document.getElementById('artisan-fields');
+  const cf = document.getElementById('client-phone-field');
   document.getElementById('type-client').checked  = type === 'client';
   document.getElementById('type-artisan').checked = type === 'artisan';
   cc.classList.toggle('selected', type === 'client');
@@ -280,6 +300,7 @@ function selectType(type) {
   ca.classList.toggle('selected', type === 'artisan');
   ca.setAttribute('aria-checked', type === 'artisan' ? 'true' : 'false');
   af.style.display = type === 'artisan' ? 'block' : 'none';
+  if (cf) cf.style.display = type === 'client' ? 'block' : 'none';
 }
 
 // Handle hash for direct signup navigation
@@ -477,7 +498,10 @@ async function handleSignup(e) {
 
   const role  = _selectedType === 'artisan' ? 'artisan' : 'client';
   const city  = (document.getElementById('signup-city')?.value  || '').trim();
-  const phone = (document.getElementById('signup-phone')?.value || '').trim();
+  const phoneEl = role === 'artisan'
+    ? document.getElementById('signup-phone')
+    : document.getElementById('signup-phone-client');
+  const phone = ((phoneEl && phoneEl.value) || '').trim();
 
   if (!window.FixeoAuth) { await new Promise(r => setTimeout(r, 600)); }
   if (!window.FixeoAuth) {
@@ -506,8 +530,8 @@ async function handleSignup(e) {
 
   errEl.style.display = 'none';
   console.log('USER LOGIN:', { email: emailEl.value.trim(), role });
-  notifications.success('Compte créé !', 'Bienvenue sur Fixeo, ' + nameEl.value.split(' ')[0] + ' ! Vérifiez votre email pour confirmer votre compte.');
-  setTimeout(() => { window.FixeoAuth.redirectByRole(role); }, 2000);
+  // Show email confirmation screen instead of immediate redirect
+  showConfirmScreen(emailEl.value.trim());
 }
 
 /* ───────────────────────────────────────────────────────────
@@ -559,6 +583,101 @@ function socialLogin(provider) {
 /* ── Preserved: setLoginMethod stub ────────────────────── */
 function setLoginMethod() {} // phone tab removed — stub preserved for safety
 
+/* ── Forgot password screen ─────────────────────────────── */
+function showForgotScreen(e) {
+  if (e) e.preventDefault();
+  document.getElementById('forgot-screen').style.display         = 'block';
+  document.getElementById('login-password-group').style.display  = 'none';
+  document.getElementById('login-submit-wrap').style.display     = 'none';
+  document.getElementById('login-error').style.display           = 'none';
+  document.getElementById('forgot-success').style.display        = 'none';
+  document.getElementById('forgot-error').style.display          = 'none';
+  const fp = document.getElementById('forgot-password-link');
+  if (fp) fp.style.display = 'none';
+}
+
+function hideForgotScreen() {
+  document.getElementById('forgot-screen').style.display         = 'none';
+  document.getElementById('login-password-group').style.display  = 'block';
+  document.getElementById('login-submit-wrap').style.display     = 'block';
+  const fp = document.getElementById('forgot-password-link');
+  if (fp) fp.style.display = '';
+}
+
+async function handleForgotSubmit() {
+  const emailEl  = document.getElementById('login-email');
+  const email    = (emailEl?.value || '').trim();
+  const errEl    = document.getElementById('forgot-error');
+  const succEl   = document.getElementById('forgot-success');
+  const btn      = document.getElementById('forgot-submit-btn');
+
+  errEl.style.display  = 'none';
+  succEl.style.display = 'none';
+
+  if (!email || !emailEl.checkValidity()) {
+    errEl.textContent    = '\u274C Entrez votre email dans le champ ci-dessus.';
+    errEl.style.display  = 'block';
+    emailEl && emailEl.focus();
+    return;
+  }
+
+  btn.innerHTML  = '<span class="ap-spinner"></span> Envoi\u2026';
+  btn.disabled   = true;
+
+  if (!window.FixeoAuth) { await new Promise(r => setTimeout(r, 600)); }
+
+  const { error } = await window.FixeoAuth.resetPassword(email);
+
+  btn.innerHTML = '<span>Envoyer le lien</span>';
+  btn.disabled  = false;
+
+  if (error) {
+    errEl.textContent   = '\u274C ' + (error.message || 'Erreur lors de l\u2019envoi. R\u00e9essayez.');
+    errEl.style.display = 'block';
+    return;
+  }
+
+  succEl.textContent   = '\u2705 Email envoy\u00e9 \u00e0 ' + email + '. V\u00e9rifiez vos spams si besoin.';
+  succEl.style.display = 'block';
+  btn.style.display    = 'none';
+}
+
+/* ── Email confirmation screen ──────────────────────────── */
+let _pendingConfirmEmail = '';
+
+function showConfirmScreen(email) {
+  _pendingConfirmEmail = email;
+  document.getElementById('confirm-email-display').textContent = email;
+  document.getElementById('auth-heading').textContent = 'Confirmez votre email';
+  document.getElementById('auth-sub').textContent     = '';
+  document.getElementById('ap-tabs-wrap') && (document.getElementById('ap-tabs-wrap').style.display = 'none');
+  document.querySelector('.ap-tabs') && (document.querySelector('.ap-tabs').style.display = 'none');
+  document.getElementById('login-form').style.display        = 'none';
+  document.getElementById('signup-form').style.display       = 'none';
+  document.getElementById('email-confirm-screen').style.display = 'block';
+}
+
+function showAuthForms() {
+  document.getElementById('email-confirm-screen').style.display = 'none';
+  document.querySelector('.ap-tabs') && (document.querySelector('.ap-tabs').style.display = '');
+  switchTab('login');
+}
+
+async function handleResendEmail() {
+  const btn = document.getElementById('btn-resend-email');
+  if (!_pendingConfirmEmail) return;
+  btn.textContent = 'Envoi\u2026';
+  btn.disabled    = true;
+  if (window.FixeoAuth && window.FixeoAuth.resetPassword) {
+    await window.FixeoAuth.resetPassword(_pendingConfirmEmail);
+  }
+  btn.textContent = '\u2705 Email renvoy\u00e9 !';
+  setTimeout(() => {
+    btn.textContent = 'Renvoyer l\u2019email';
+    btn.disabled    = false;
+  }, 4000);
+}
+
 /* ── Legal modal ────────────────────────────────────────── */
 function openLegal(type) {
   const titles = {
@@ -594,12 +713,9 @@ function openLegal(type) {
 </script>
 
 <script src="js/fixeo_v5_fixes.js"></script>
-<script src="js/slot-lock.js"></script>
-<script src="js/cod-payment.js"></script>
 <script src="/api/env.js"></script>
 <script src="js/fixeo-supabase-core.js"></script>
 <script src="js/auth-global.js"></script>
-<script src="js/fixeo-mvp-supabase.js"></script>
 <script src="js/fixeo-session-bridge.js?v=sb1"></script>
 
 </body>

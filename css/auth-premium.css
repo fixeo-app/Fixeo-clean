@@ -456,3 +456,172 @@ html, body { height: 100%; }
 
 /* ── Utility: full-width ────────────────────────────────── */
 .ap-w100 { width: 100%; }
+
+/* ══════════════════════════════════════════════════════════
+ * AUTH V2 — additions (2026-05-06)
+ * ══════════════════════════════════════════════════════════ */
+
+/* ── Tab transition ────────────────────────────────────── */
+#login-form, #signup-form {
+  animation: ap-fade-in 0.18s ease;
+}
+@keyframes ap-fade-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Optional field label ──────────────────────────────── */
+.ap-optional {
+  opacity: 0.4;
+  font-weight: 400;
+  text-transform: none;
+  font-size: 0.78rem;
+}
+
+/* ── Terms — larger tap target ─────────────────────────── */
+.ap-terms {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 16px;
+  cursor: pointer;
+}
+.ap-terms input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  min-width: 18px;
+  margin-top: 2px;
+  cursor: pointer;
+  accent-color: #7c3aed;
+}
+.ap-terms label {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.5);
+  line-height: 1.5;
+  cursor: pointer;
+}
+.ap-terms a {
+  color: rgba(255,255,255,0.75);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.ap-terms a:hover { color: #fff; }
+
+/* ── Email confirmation screen ─────────────────────────── */
+#email-confirm-screen {
+  display: none;
+  text-align: center;
+  padding: 8px 0 4px;
+  animation: ap-fade-in 0.22s ease;
+}
+#email-confirm-screen .ap-confirm-icon {
+  font-size: 2.8rem;
+  line-height: 1;
+  margin-bottom: 16px;
+  display: block;
+}
+#email-confirm-screen .ap-confirm-title {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 8px;
+}
+#email-confirm-screen .ap-confirm-email {
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.55);
+  margin-bottom: 20px;
+  word-break: break-all;
+}
+#email-confirm-screen .ap-confirm-email strong {
+  color: rgba(255,255,255,0.85);
+}
+#email-confirm-screen .ap-confirm-hint {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.38);
+  margin-bottom: 24px;
+  line-height: 1.55;
+}
+#email-confirm-screen .ap-btn-resend {
+  background: none;
+  border: 1px solid rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.55);
+  border-radius: 10px;
+  padding: 10px 20px;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: all 0.18s;
+  width: 100%;
+  margin-bottom: 12px;
+  font-family: inherit;
+}
+#email-confirm-screen .ap-btn-resend:hover {
+  border-color: rgba(255,255,255,0.3);
+  color: rgba(255,255,255,0.8);
+}
+#email-confirm-screen .ap-confirm-back {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.35);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  padding: 4px 0;
+}
+#email-confirm-screen .ap-confirm-back:hover { color: rgba(255,255,255,0.6); }
+
+/* ── Forgot password inline mini-form ──────────────────── */
+#forgot-screen {
+  display: none;
+  animation: ap-fade-in 0.18s ease;
+}
+#forgot-screen .ap-forgot-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 6px;
+}
+#forgot-screen .ap-forgot-sub {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.42);
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+#forgot-screen .ap-forgot-back {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.42);
+  font-size: 0.78rem;
+  cursor: pointer;
+  font-family: inherit;
+  padding: 0;
+  margin-top: 8px;
+  display: block;
+}
+#forgot-screen .ap-forgot-back:hover { color: rgba(255,255,255,0.7); }
+#forgot-success {
+  display: none;
+  font-size: 0.8rem;
+  color: #2ed573;
+  padding: 9px 12px;
+  background: rgba(46,213,115,0.08);
+  border: 1px solid rgba(46,213,115,0.2);
+  border-radius: 8px;
+  margin-bottom: 12px;
+  animation: ap-fade-in 0.18s ease;
+}
+
+/* ── Password show/hide — larger touch target ──────────── */
+.ap-pw-toggle {
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Mobile P1 hardening ───────────────────────────────── */
+@media (max-width: 400px) {
+  .ap-role-row { flex-direction: column; gap: 8px; }
+  .ap-role-card { flex-direction: row; align-items: center; gap: 10px; padding: 12px 14px; }
+  .ap-role-icon { font-size: 1.4rem; }
+}
