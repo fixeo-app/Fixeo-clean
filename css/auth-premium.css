@@ -1222,7 +1222,7 @@ html, body { height: 100%; }
 
 /* ── Specialty SVG icons (inline data URIs — font-independent) ── */
 /* Palette: soft tones that pop on dark glass */
-.ap-si-plomberie    { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext y='26' font-size='26' font-family='serif'%3E%F0%9F%94%A7%3C/text%3E%3C/svg%3E"); }
+.ap-si-plomberie    { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cellipse cx='10' cy='9' rx='6' ry='6' fill='none' stroke='%2360B4FF' stroke-width='3'/%3E%3Crect x='14' y='12' width='4' height='14' rx='2' transform='rotate(-45 16 16)' fill='%2360B4FF'/%3E%3Ccircle cx='10' cy='9' r='3' fill='%2360B4FF'/%3E%3Crect x='18' y='17' width='4' height='10' rx='2' transform='rotate(-45 20 22)' fill='%2399CCFF'/%3E%3C/svg%3E"); }
 .ap-si-electricite  { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpolygon points='18,2 10,18 16,18 14,30 22,14 16,14' fill='%23FFD60A'/%3E%3C/svg%3E"); }
 .ap-si-clim         { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='4' y='8' width='24' height='10' rx='3' fill='%2360B4FF'/%3E%3Crect x='8' y='18' width='2' height='7' fill='%2360B4FF'/%3E%3Crect x='15' y='18' width='2' height='7' fill='%2360B4FF'/%3E%3Crect x='22' y='18' width='2' height='7' fill='%2360B4FF'/%3E%3Ccircle cx='10' cy='13' r='2' fill='%23fff'/%3E%3C/svg%3E"); }
 .ap-si-peinture     { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='10' cy='10' r='7' fill='%23E1306C'/%3E%3Ccircle cx='22' cy='10' r='7' fill='%23FFD60A'/%3E%3Ccircle cx='16' cy='21' r='7' fill='%2360B4FF'/%3E%3C/svg%3E"); }
@@ -1332,20 +1332,25 @@ html, body { height: 100%; }
 }
 
 /* ── Settled state (after selection — field calming) ─────── */
+/* Non-selected recede but stay tappable (user can change mind) */
 .ap-specialty-grid.ap-field-done .ap-scard:not(.ap-selected) {
-  opacity: 0.45;
-  pointer-events: none;
+  opacity: 0.52;
+  transition: opacity 0.3s, background 0.18s, border-color 0.18s, transform 0.15s;
+}
+.ap-specialty-grid.ap-field-done .ap-scard:not(.ap-selected):hover {
+  opacity: 0.82;
 }
 .ap-specialty-grid.ap-field-done .ap-scard.ap-selected {
-  pointer-events: auto;
   opacity: 1;
 }
 .ap-city-chips.ap-field-done .ap-chip:not(.ap-selected) {
-  opacity: 0.4;
-  pointer-events: none;
+  opacity: 0.48;
+  transition: opacity 0.28s, background 0.15s, border-color 0.15s;
+}
+.ap-city-chips.ap-field-done .ap-chip:not(.ap-selected):hover {
+  opacity: 0.8;
 }
 .ap-city-chips.ap-field-done .ap-chip.ap-selected {
-  pointer-events: auto;
   opacity: 1;
 }
 
