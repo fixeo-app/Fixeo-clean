@@ -988,13 +988,16 @@ function renderSignupStep(step, direction) {
   // Step-specific DOM tweaks
   _configureStep(step, role);
 
-  // Focus first visible input in new step (accessibility)
+  // Focus first text/email/tel/password input in active step (accessibility)
+  // Checkbox focus skipped — causes unwanted blur/change event chains
   setTimeout(function() {
     var panel = document.getElementById('ap-step-' + step);
-    if (!panel) return;
-    var first = panel.querySelector('input:not([type=hidden]):not([type=radio]), select');
+    if (!panel || panel.style.display === 'none') return;
+    var first = panel.querySelector(
+      'input[type=text], input[type=email], input[type=tel], input[type=password], select'
+    );
     if (first) { try { first.focus(); } catch(e) {} }
-  }, 230);
+  }, 250);
 }
 
 // ── Per-step DOM configuration — static toggle only ────────
