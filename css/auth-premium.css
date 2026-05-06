@@ -1214,6 +1214,9 @@ html, body { height: 100%; }
   line-height: 1;
   display: block;
   transition: transform 0.18s;
+  /* Force emoji font — Cairo doesn't include emoji glyphs */
+  font-family: "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",
+               "Twemoji Mozilla","EmojiOne Color","Android Emoji",sans-serif;
 }
 
 .ap-scard:hover .ap-scard-icon,
