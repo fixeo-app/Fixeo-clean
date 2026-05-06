@@ -282,25 +282,44 @@
             </div>
           </div>
 
-          <!-- Client: section hint only -->
+          <!-- Client: section hint (shown for clients only) -->
           <div class="ap-section-hint ap-client-hint" style="display:none">
             Vous pourrez suivre vos demandes depuis votre espace Fixeo.
           </div>
 
-          <!-- Terms proxy for client step 3 (syncs to canonical hidden #terms) -->
-          <div class="ap-terms ap-terms-step3" style="display:none">
-            <input type="checkbox" id="terms-client" onchange="syncTerms(this)">
-            <label for="terms-client">
-              J&apos;accepte les
-              <a href="cgu.html" target="_blank" rel="noopener">conditions d&apos;utilisation</a>
-              et la
-              <a href="confidentialite.html" target="_blank" rel="noopener">politique de confidentialit&eacute;</a>
-            </label>
+          <!-- Client step 3: Terms + final submit
+               Shown for clients, hidden for artisans via _configureStep() -->
+          <div id="ap-step3-client-final" style="display:none">
+            <div class="ap-terms">
+              <input type="checkbox" id="terms-client" onchange="syncTerms(this)">
+              <label for="terms-client">
+                J&apos;accepte les
+                <a href="cgu.html" target="_blank" rel="noopener">conditions d&apos;utilisation</a>
+                et la
+                <a href="confidentialite.html" target="_blank" rel="noopener">politique de confidentialit&eacute;</a>
+              </label>
+            </div>
+            <div id="signup-error" class="ap-error"></div>
+            <div class="ap-step-nav">
+              <button type="submit" class="ap-btn" id="signup-btn">
+                <span>&#128274;&nbsp;Cr&eacute;er mon compte</span>
+              </button>
+              <button type="button" class="ap-btn-back" onclick="prevSignupStep()">
+                &#8592; Retour
+              </button>
+            </div>
           </div>
 
-          <div class="ap-step-nav" id="ap-nav-3">
-            <!-- signup-error + signup-btn moved here by _configureStep() -->
+          <!-- Artisan step 3: Next → step 4 -->
+          <div id="ap-step3-artisan-nav" class="ap-step-nav" style="display:none">
+            <button type="button" class="ap-btn ap-btn-next" onclick="nextSignupStep()">
+              <span>Suivant</span><span class="ap-btn-arrow">&#8594;</span>
+            </button>
+            <button type="button" class="ap-btn-back" onclick="prevSignupStep()">
+              &#8592; Retour
+            </button>
           </div>
+
         </div><!-- /#ap-step-3 -->
 
         <!-- ══════════════════════════════════════════════════
@@ -326,8 +345,15 @@
           <div id="signup-error-4" class="ap-error"></div>
 
           <div class="ap-step-nav">
-            <!-- signup-btn is rendered here by _configureStep for artisan step 4 -->
-            <div id="ap-nav-4"></div>
+            <!--
+              Proxy submit: calls handleSignup() via signup-btn.click().
+              signup-btn (real submit) is in step 3 client panel — hidden
+              when artisan is on step 4, so proxy triggers it safely.
+            -->
+            <button type="button" class="ap-btn" id="signup-btn-artisan"
+                    onclick="triggerSignupSubmit()">
+              <span>Cr&eacute;er mon profil artisan</span>
+            </button>
             <button type="button" class="ap-btn-back" onclick="prevSignupStep()">
               &#8592; Retour
             </button>
@@ -339,19 +365,7 @@
           </p>
         </div><!-- /#ap-step-4 -->
 
-        <!--
-          CANONICAL PARKING ZONE — elements always in DOM, moved into
-          active step panel by _configureStep() / _parkCanonicals().
-          handleSignup() finds them by ID regardless of location.
-        -->
-        <div id="ap-canonicals-park" style="display:none" aria-hidden="true">
-          <button type="submit" class="ap-btn" id="signup-btn" style="display:none">
-            <span>Cr&eacute;er mon compte</span>
-          </button>
-          <div id="signup-error" class="ap-error" style="display:none"></div>
-        </div>
-
-        <!-- terms: single canonical checkbox — always in DOM, synced by proxy checkboxes -->
+        <!-- terms: canonical checkbox — always in DOM, synced by proxy checkboxes -->
         <input type="checkbox" id="terms" style="display:none">
 
         <p class="ap-switch">
@@ -983,121 +997,86 @@ function renderSignupStep(step, direction) {
   }, 230);
 }
 
-// ── Canonical element home (outside all step panels) ───────
-// signup-btn, signup-error, terms live here when not active.
-function _parkCanonicals() {
-  var park = document.getElementById('ap-canonicals-park');
-  if (!park) return;
-  ['signup-btn','signup-error'].forEach(function(id) {
-    var el = document.getElementById(id);
-    if (el && el.parentElement !== park) {
-      el.style.display = 'none';
-      park.appendChild(el);
-    }
-  });
-}
-
-// ── Per-step DOM configuration ─────────────────────────────
+// ── Per-step DOM configuration — static toggle only ────────
+// NO DOM movement. Each step has its own static HTML.
+// _configureStep just shows/hides the right sub-elements.
 function _configureStep(step, role) {
   var isArtisan = role === 'artisan';
-
-  // Park canonicals first — resets their location safely
-  _parkCanonicals();
-
-  var canonBtn   = document.getElementById('signup-btn');
-  var canonErr   = document.getElementById('signup-error');
-  var canonTerms = document.getElementById('terms');
 
   /* STEP 1: show/hide phone optional badge */
   var badge = document.getElementById('phone-optional-badge');
   if (badge) badge.style.display = isArtisan ? 'none' : 'inline';
 
-  /* STEP 3: configure based on role */
+  /* STEP 3: show correct sub-blocks for role */
   if (step === 3) {
-    var artisanFields = document.getElementById('artisan-fields');
-    var clientHint    = document.querySelector('.ap-client-hint');
-    var termsStep3    = document.querySelector('.ap-terms-step3');
-    var nav3          = document.getElementById('ap-nav-3');
+    var artisanFields   = document.getElementById('artisan-fields');
+    var clientHint      = document.querySelector('.ap-client-hint');
+    var clientFinal     = document.getElementById('ap-step3-client-final');
+    var artisanNav      = document.getElementById('ap-step3-artisan-nav');
+    var errEl           = document.getElementById('signup-error');
 
     if (isArtisan) {
-      /* Artisan step 3: specialty + city → Next to step 4 */
       if (artisanFields) artisanFields.style.display = 'block';
       if (clientHint)    clientHint.style.display    = 'none';
-      if (termsStep3)    termsStep3.style.display     = 'none';
-      if (canonBtn) { canonBtn.style.display = 'none'; }
-      if (canonErr) { canonErr.style.display = 'none'; }
-      if (nav3) {
-        // Clear non-canonical children only
-        Array.from(nav3.children).forEach(function(c) {
-          if (c.id !== 'signup-btn' && c.id !== 'signup-error') c.remove();
-        });
-        var artNext = document.createElement('button');
-        artNext.type = 'button'; artNext.className = 'ap-btn ap-btn-next';
-        artNext.setAttribute('onclick','nextSignupStep()');
-        artNext.innerHTML = '<span>Suivant</span><span class="ap-btn-arrow">&#8594;</span>';
-        nav3.insertBefore(artNext, nav3.firstChild);
-        var artBack = document.createElement('button');
-        artBack.type = 'button'; artBack.className = 'ap-btn-back';
-        artBack.setAttribute('onclick','prevSignupStep()');
-        artBack.textContent = '\u2190 Retour';
-        nav3.appendChild(artBack);
-      }
+      if (clientFinal)   clientFinal.style.display   = 'none';
+      if (artisanNav)    artisanNav.style.display     = 'flex';
+      if (errEl)         errEl.style.display          = 'none';
     } else {
-      /* Client step 3: hint + terms proxy + final submit */
       if (artisanFields) artisanFields.style.display = 'none';
       if (clientHint)    clientHint.style.display    = 'block';
-      if (termsStep3)    termsStep3.style.display     = 'flex';
-      /* Place canonical error + btn inside nav3 */
-      if (nav3) {
-        // Clear any previous nav3 content (static next/back from artisan path)
-        // but only non-canonical children
-        Array.from(nav3.children).forEach(function(c) {
-          if (c.id !== 'signup-btn' && c.id !== 'signup-error') c.remove();
-        });
-        if (canonErr) { canonErr.style.display = 'none'; nav3.appendChild(canonErr); }
-        if (canonBtn) {
-          var span = canonBtn.querySelector('span');
-          if (span) span.textContent = '\uD83D\uDD12\u00A0Cr\u00E9er mon compte';
-          canonBtn.style.display = 'flex';
-          nav3.appendChild(canonBtn);
-        }
-        var backBtn = document.createElement('button');
-        backBtn.type = 'button'; backBtn.className = 'ap-btn-back';
-        backBtn.textContent = '\u2190 Retour';
-        backBtn.setAttribute('onclick', 'prevSignupStep()');
-        nav3.appendChild(backBtn);
-      }
+      if (clientFinal)   clientFinal.style.display   = 'block';
+      if (artisanNav)    artisanNav.style.display     = 'none';
     }
   }
 
-  /* STEP 4: artisan final — move canonical btn/error here */
+  /* STEP 4: artisan final — reset errors, sync proxy terms */
   if (step === 4) {
-    var nav4         = document.getElementById('ap-nav-4');
-    var termsArtisan = document.getElementById('terms-artisan');
+    var masterTerms  = document.getElementById('terms');
+    var artisanTerms = document.getElementById('terms-artisan');
     var errEl4       = document.getElementById('signup-error-4');
-    /* Sync proxy checkbox → master */
-    if (canonTerms && termsArtisan) termsArtisan.checked = canonTerms.checked;
-    if (errEl4) errEl4.style.display = 'none';
-    if (nav4) {
-      // Clear non-canonical children only
-      Array.from(nav4.children).forEach(function(c) {
-        if (c.id !== 'signup-btn' && c.id !== 'signup-error') c.remove();
-      });
-      if (canonErr) { canonErr.style.display = 'none'; nav4.appendChild(canonErr); }
-      if (canonBtn) {
-        var span4 = canonBtn.querySelector('span');
-        if (span4) span4.textContent = 'Cr\u00E9er mon profil artisan';
-        canonBtn.style.display = 'flex';
-        nav4.appendChild(canonBtn);
-      }
-    }
+    var artisanBtn   = document.getElementById('signup-btn-artisan');
+    if (masterTerms && artisanTerms) artisanTerms.checked = masterTerms.checked;
+    if (errEl4)    errEl4.style.display    = 'none';
+    if (artisanBtn) { artisanBtn.disabled = false; artisanBtn.innerHTML = '<span>Cr\u00E9er mon profil artisan</span>'; }
   }
 }
 
-// ── Terms sync: artisan step 4 checkbox → master #terms ───
+// ── Terms sync: proxy checkboxes → canonical #terms ────────
 function syncTerms(el) {
   var master = document.getElementById('terms');
   if (master) master.checked = el.checked;
+}
+
+// ── Artisan step 4 proxy submit ─────────────────────────────
+// Calls handleSignup() directly by dispatching a submit event on the form.
+// signup-btn (real type=submit) is in step 3 client panel — hidden for artisan.
+// handleSignup() is triggered via form's onsubmit handler.
+function triggerSignupSubmit() {
+  var proxyBtn = document.getElementById('signup-btn-artisan');
+  if (proxyBtn) {
+    proxyBtn.disabled = true;
+    proxyBtn.innerHTML = '<span class="ap-spinner"></span>';
+  }
+  // Mirror handleSignup() call directly — avoids needing click on hidden button
+  var fakeEvent = { preventDefault: function() {} };
+  handleSignup(fakeEvent).then(function() {
+    if (proxyBtn) {
+      proxyBtn.disabled = false;
+      proxyBtn.innerHTML = '<span>Cr\u00E9er mon profil artisan</span>';
+    }
+    // Mirror signup-error to step 4 error zone
+    var err4 = document.getElementById('signup-error-4');
+    var err  = document.getElementById('signup-error');
+    if (err4 && err && err.style.display !== 'none') {
+      err4.textContent    = err.textContent;
+      err4.style.display  = 'block';
+    }
+  }).catch(function() {
+    if (proxyBtn) {
+      proxyBtn.disabled = false;
+      proxyBtn.innerHTML = '<span>Cr\u00E9er mon profil artisan</span>';
+    }
+  });
 }
 
 // ── Step-specific validation ───────────────────────────────
