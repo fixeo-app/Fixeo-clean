@@ -340,17 +340,16 @@
         </div><!-- /#ap-step-4 -->
 
         <!--
-          signup-btn: single canonical submit button.
-          Moved here — outside all step panels.
-          _configureStep() moves it into the active step nav via DOM move.
-          handleSignup() reads this ID for loading state — always in DOM.
+          CANONICAL PARKING ZONE — elements always in DOM, moved into
+          active step panel by _configureStep() / _parkCanonicals().
+          handleSignup() finds them by ID regardless of location.
         -->
-        <button type="submit" class="ap-btn" id="signup-btn" style="display:none">
-          <span>Cr&eacute;er mon compte</span>
-        </button>
-
-        <!-- signup-error: single canonical error div — always in DOM -->
-        <div id="signup-error" class="ap-error" style="display:none"></div>
+        <div id="ap-canonicals-park" style="display:none" aria-hidden="true">
+          <button type="submit" class="ap-btn" id="signup-btn" style="display:none">
+            <span>Cr&eacute;er mon compte</span>
+          </button>
+          <div id="signup-error" class="ap-error" style="display:none"></div>
+        </div>
 
         <!-- terms: single canonical checkbox — always in DOM, synced by proxy checkboxes -->
         <input type="checkbox" id="terms" style="display:none">
@@ -984,14 +983,29 @@ function renderSignupStep(step, direction) {
   }, 230);
 }
 
+// ── Canonical element home (outside all step panels) ───────
+// signup-btn, signup-error, terms live here when not active.
+function _parkCanonicals() {
+  var park = document.getElementById('ap-canonicals-park');
+  if (!park) return;
+  ['signup-btn','signup-error'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el && el.parentElement !== park) {
+      el.style.display = 'none';
+      park.appendChild(el);
+    }
+  });
+}
+
 // ── Per-step DOM configuration ─────────────────────────────
 function _configureStep(step, role) {
   var isArtisan = role === 'artisan';
 
-  // Always hide canonical signup-btn / signup-error first;
-  // they will be moved into the active panel below.
-  var canonBtn = document.getElementById('signup-btn');
-  var canonErr = document.getElementById('signup-error');
+  // Park canonicals first — resets their location safely
+  _parkCanonicals();
+
+  var canonBtn   = document.getElementById('signup-btn');
+  var canonErr   = document.getElementById('signup-error');
   var canonTerms = document.getElementById('terms');
 
   /* STEP 1: show/hide phone optional badge */
@@ -1012,10 +1026,22 @@ function _configureStep(step, role) {
       if (termsStep3)    termsStep3.style.display     = 'none';
       if (canonBtn) { canonBtn.style.display = 'none'; }
       if (canonErr) { canonErr.style.display = 'none'; }
-      if (nav3) nav3.innerHTML =
-        '<button type="button" class="ap-btn ap-btn-next" onclick="nextSignupStep()">' +
-        '<span>Suivant</span><span class="ap-btn-arrow">&#8594;</span></button>' +
-        '<button type="button" class="ap-btn-back" onclick="prevSignupStep()">&#8592; Retour</button>';
+      if (nav3) {
+        // Clear non-canonical children only
+        Array.from(nav3.children).forEach(function(c) {
+          if (c.id !== 'signup-btn' && c.id !== 'signup-error') c.remove();
+        });
+        var artNext = document.createElement('button');
+        artNext.type = 'button'; artNext.className = 'ap-btn ap-btn-next';
+        artNext.setAttribute('onclick','nextSignupStep()');
+        artNext.innerHTML = '<span>Suivant</span><span class="ap-btn-arrow">&#8594;</span>';
+        nav3.insertBefore(artNext, nav3.firstChild);
+        var artBack = document.createElement('button');
+        artBack.type = 'button'; artBack.className = 'ap-btn-back';
+        artBack.setAttribute('onclick','prevSignupStep()');
+        artBack.textContent = '\u2190 Retour';
+        nav3.appendChild(artBack);
+      }
     } else {
       /* Client step 3: hint + terms proxy + final submit */
       if (artisanFields) artisanFields.style.display = 'none';
@@ -1023,7 +1049,11 @@ function _configureStep(step, role) {
       if (termsStep3)    termsStep3.style.display     = 'flex';
       /* Place canonical error + btn inside nav3 */
       if (nav3) {
-        nav3.innerHTML = '';
+        // Clear any previous nav3 content (static next/back from artisan path)
+        // but only non-canonical children
+        Array.from(nav3.children).forEach(function(c) {
+          if (c.id !== 'signup-btn' && c.id !== 'signup-error') c.remove();
+        });
         if (canonErr) { canonErr.style.display = 'none'; nav3.appendChild(canonErr); }
         if (canonBtn) {
           var span = canonBtn.querySelector('span');
@@ -1049,7 +1079,10 @@ function _configureStep(step, role) {
     if (canonTerms && termsArtisan) termsArtisan.checked = canonTerms.checked;
     if (errEl4) errEl4.style.display = 'none';
     if (nav4) {
-      nav4.innerHTML = '';
+      // Clear non-canonical children only
+      Array.from(nav4.children).forEach(function(c) {
+        if (c.id !== 'signup-btn' && c.id !== 'signup-error') c.remove();
+      });
       if (canonErr) { canonErr.style.display = 'none'; nav4.appendChild(canonErr); }
       if (canonBtn) {
         var span4 = canonBtn.querySelector('span');
