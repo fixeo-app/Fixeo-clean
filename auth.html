@@ -14,7 +14,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/variables.css">
   <link rel="stylesheet" href="css/auth-global.css"/>
-  <link rel="stylesheet" href="css/auth-premium.css?v=ap4">
+  <link rel="stylesheet" href="css/auth-premium.css?v=ap5">
 </head>
 <body data-theme="dark">
 
@@ -907,6 +907,59 @@ window.selectType = function(type) {
     document.addEventListener('DOMContentLoaded', watchSignupCompletion);
   } else {
     watchSignupCompletion();
+  }
+})();
+
+/* ═══════════════════════════════════════════════════════════
+ * INVISIBLE PROGRESSION — "completed field calming" (V5)
+ *
+ * When user moves AWAY from a filled field → add .ap-done
+ * → label + border settle back softly (CSS handles visuals).
+ * When field becomes empty again → remove .ap-done.
+ *
+ * Also: select fields get .ap-done-field when a real value
+ * is chosen (browser-safe — no custom dropdown needed).
+ * ═══════════════════════════════════════════════════════════ */
+(function() {
+  function attachFieldCalming() {
+    // Text/email/password/tel inputs
+    var inputs = document.querySelectorAll(
+      '#signup-form .ap-input, #login-form .ap-input'
+    );
+    inputs.forEach(function(inp) {
+      var grp = inp.closest('.ap-group');
+      if (!grp) return;
+
+      inp.addEventListener('blur', function() {
+        if (inp.value.trim().length > 0) {
+          grp.classList.add('ap-done');
+        } else {
+          grp.classList.remove('ap-done');
+        }
+      });
+      inp.addEventListener('input', function() {
+        // Remove ap-done while actively typing
+        grp.classList.remove('ap-done');
+      });
+    });
+
+    // Selects — calms after a real option is chosen
+    var selects = document.querySelectorAll('#signup-form .ap-select');
+    selects.forEach(function(sel) {
+      sel.addEventListener('change', function() {
+        if (sel.value) {
+          sel.classList.add('ap-done-field');
+        } else {
+          sel.classList.remove('ap-done-field');
+        }
+      });
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', attachFieldCalming);
+  } else {
+    attachFieldCalming();
   }
 })();
 
