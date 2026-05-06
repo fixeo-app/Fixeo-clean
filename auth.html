@@ -14,7 +14,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/variables.css">
   <link rel="stylesheet" href="css/auth-global.css"/>
-  <link rel="stylesheet" href="css/auth-premium.css?v=ap2">
+  <link rel="stylesheet" href="css/auth-premium.css?v=ap4">
 </head>
 <body data-theme="dark">
 
@@ -800,6 +800,115 @@ async function handleResendEmail() {
     btn.disabled    = false;
   }, 4000);
 }
+
+/* ═══════════════════════════════════════════════════════════
+ * PROGRESSIVE REVEAL + CTA PULSE — V4 UX layer
+ * Pure UX orchestration — zero auth logic touched.
+ * ═══════════════════════════════════════════════════════════ */
+
+// Ordered list of field selectors per role (in visual order)
+const _REVEAL_CLIENT  = ['.ap-f-name', '.ap-f-email', '.ap-f-password', '.ap-f-phone', '.ap-f-client-hint'];
+const _REVEAL_ARTISAN = ['.ap-f-name', '.ap-f-phone', '.ap-f-email', '.ap-f-password', '.ap-f-artisan'];
+
+// Reveal all fields with stagger when signup form becomes visible
+function revealSignupFields() {
+  const form    = document.getElementById('signup-form');
+  if (!form) return;
+  const isArt   = _selectedType === 'artisan';
+  const selectors = isArt ? _REVEAL_ARTISAN : _REVEAL_CLIENT;
+  const stack   = form.querySelector('.ap-fields-stack');
+  if (!stack) return;
+
+  // Reset all
+  stack.querySelectorAll('.ap-group, .ap-artisan-fields, .ap-section-hint, .ap-f-client-hint')
+    .forEach(el => {
+      el.classList.remove('ap-revealed', 'ap-delay-0','ap-delay-1','ap-delay-2','ap-delay-3','ap-delay-4','ap-delay-5');
+    });
+
+  // Reveal in stagger
+  selectors.forEach(function(sel, i) {
+    const el = stack.querySelector(sel);
+    if (!el) return;
+    el.classList.add('ap-delay-' + i);
+    // Tiny rAF to ensure transition fires after class addition
+    requestAnimationFrame(function() {
+      requestAnimationFrame(function() {
+        el.classList.add('ap-revealed');
+        // Also reveal children (artisan block has inner .ap-group children)
+        if (el.classList.contains('ap-f-artisan')) {
+          el.querySelectorAll('.ap-group').forEach(function(child) {
+            child.classList.add('ap-revealed');
+          });
+        }
+      });
+    });
+  });
+}
+
+// Hook: reveal when switching to signup
+const _origSwitchTab = switchTab;
+window.switchTab = function(tab) {
+  _origSwitchTab(tab);
+  if (tab === 'signup') {
+    // Small delay so form is visible before reveal starts
+    setTimeout(revealSignupFields, 30);
+  }
+};
+
+// Hook: re-reveal on role change
+const _origSelectType = selectType;
+window.selectType = function(type) {
+  _origSelectType(type);
+  setTimeout(revealSignupFields, 30);
+};
+
+// Also reveal on page load if hash/param pre-selects signup
+(function() {
+  const hasSignup = window.location.hash === '#signup' ||
+    new URLSearchParams(window.location.search).get('role') === 'artisan';
+  if (hasSignup) setTimeout(revealSignupFields, 60);
+})();
+
+// ── CTA pulse when signup looks complete ──────────────────
+(function() {
+  function watchSignupCompletion() {
+    const form = document.getElementById('signup-form');
+    if (!form) return;
+    const btn  = document.getElementById('signup-btn');
+    if (!btn)  return;
+
+    var req = ['signup-name','signup-email','signup-password','terms'];
+
+    function check() {
+      var allOk = req.every(function(id) {
+        var el = document.getElementById(id);
+        if (!el) return true;
+        if (el.type === 'checkbox') return el.checked;
+        return el.value.trim().length > 0;
+      });
+      // email must be valid too
+      var em = document.getElementById('signup-email');
+      if (em && !em.checkValidity()) allOk = false;
+
+      btn.classList.toggle('ap-btn-ready', allOk);
+    }
+
+    // Listen on all relevant inputs
+    ['signup-name','signup-email','signup-password'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) el.addEventListener('input', check);
+    });
+    var t = document.getElementById('terms');
+    if (t) t.addEventListener('change', check);
+    check();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', watchSignupCompletion);
+  } else {
+    watchSignupCompletion();
+  }
+})();
 
 /* ── Legal modal ─────────────────────────────────────────── */
 function openLegal(type) {

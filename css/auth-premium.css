@@ -1,11 +1,19 @@
 /*
- * FIXEO — auth-premium.css
- * Ultra-premium auth page styles — Uber / Stripe level
- * Scope: auth.html only. Does NOT affect any other page.
- * 2026-04-29
+ * FIXEO — auth-premium.css  v4  (Uber-level polish)
+ * Scope: auth.html only.
+ * 2026-05-06
+ *
+ * Architecture:
+ *   V1 — base dark card
+ *   V2 — tab fade, terms, confirm screen, forgot screen
+ *   V3 — phone-first flex order, WA hints, mobile comfort
+ *   V4 — progressive reveal, micro-animations, role card glow,
+ *         field breathing, CTA psychology, Uber/Stripe feel
  */
 
-/* ── Page shell ─────────────────────────────────────────── */
+/* ══════════════════════════════════════════════════════════
+ * 1. BASE SHELL
+ * ══════════════════════════════════════════════════════════ */
 html, body { height: 100%; }
 
 .auth-shell {
@@ -13,9 +21,10 @@ html, body { height: 100%; }
   display: flex;
   flex-direction: column;
   background:
-    radial-gradient(ellipse 80% 70% at 15% 10%, rgba(64,93,230,0.18) 0%, transparent 65%),
-    radial-gradient(ellipse 55% 55% at 85% 85%, rgba(193,53,132,0.18) 0%, transparent 65%),
-    linear-gradient(160deg, #0b0b18 0%, #12122a 55%, #14142e 100%);
+    radial-gradient(ellipse 80% 60% at 10% 5%,  rgba(64,93,230,0.15) 0%, transparent 60%),
+    radial-gradient(ellipse 55% 55% at 88% 88%, rgba(193,53,132,0.14) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 40% at 50% 50%, rgba(124,58,237,0.06) 0%, transparent 70%),
+    linear-gradient(160deg, #080812 0%, #0f0f22 50%, #12122a 100%);
 }
 
 /* ── Minimal header ─────────────────────────────────────── */
@@ -28,20 +37,19 @@ html, body { height: 100%; }
   z-index: 10;
   flex-shrink: 0;
 }
-
 .auth-back-link {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   font-size: 0.82rem;
-  color: rgba(255,255,255,0.45);
+  color: rgba(255,255,255,0.38);
   text-decoration: none;
-  transition: color 0.18s;
+  transition: color 0.2s;
   padding: 6px 0;
+  min-height: 44px;
 }
-.auth-back-link:hover { color: rgba(255,255,255,0.8); }
+.auth-back-link:hover { color: rgba(255,255,255,0.75); }
 .auth-back-link::before { content: '←'; font-size: 1rem; }
-
 .auth-topbar-logo {
   position: absolute;
   left: 50%;
@@ -54,283 +62,536 @@ html, body { height: 100%; }
   object-fit: contain;
 }
 
-/* ── Card container ─────────────────────────────────────── */
+/* ══════════════════════════════════════════════════════════
+ * 2. CARD
+ * ══════════════════════════════════════════════════════════ */
 .auth-center {
   flex: 1;
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding: 12px 16px 40px;
+  padding: 8px 16px 48px;
   overflow-y: auto;
 }
-
 .auth-box {
   width: 100%;
   max-width: 420px;
-  background: rgba(255,255,255,0.035);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 20px;
-  padding: 32px 28px 28px;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  box-shadow: 0 24px 64px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.04);
+  background: rgba(255,255,255,0.032);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 22px;
+  padding: 34px 30px 30px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow:
+    0 32px 80px rgba(0,0,0,0.55),
+    0 0 0 1px rgba(255,255,255,0.04),
+    inset 0 1px 0 rgba(255,255,255,0.06);
+  animation: card-enter 0.32s cubic-bezier(0.22,1,0.36,1) both;
+}
+@keyframes card-enter {
+  from { opacity: 0; transform: translateY(20px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);    }
 }
 
 /* ── Heading ────────────────────────────────────────────── */
 .auth-heading {
-  font-size: 1.35rem;
+  font-size: 1.4rem;
   font-weight: 800;
   color: #fff;
   margin: 0 0 4px;
-  line-height: 1.25;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  transition: opacity 0.2s;
 }
 .auth-subheading {
   font-size: 0.82rem;
-  color: rgba(255,255,255,0.42);
-  margin: 0 0 22px;
+  color: rgba(255,255,255,0.38);
+  margin: 0 0 24px;
+  line-height: 1.5;
 }
 
-/* ── Tabs ───────────────────────────────────────────────── */
+/* ══════════════════════════════════════════════════════════
+ * 3. TABS
+ * ══════════════════════════════════════════════════════════ */
 .ap-tabs {
   display: flex;
-  background: rgba(255,255,255,0.05);
-  border-radius: 10px;
+  background: rgba(255,255,255,0.042);
+  border-radius: 11px;
   padding: 3px;
-  margin-bottom: 22px;
+  margin-bottom: 24px;
   gap: 2px;
 }
 .ap-tab {
   flex: 1;
-  padding: 8px 0;
+  padding: 9px 0;
   text-align: center;
   font-size: 0.84rem;
   font-weight: 600;
-  color: rgba(255,255,255,0.45);
-  border-radius: 8px;
+  color: rgba(255,255,255,0.38);
+  border-radius: 9px;
   cursor: pointer;
-  transition: background 0.18s, color 0.18s;
+  transition: background 0.22s, color 0.22s, box-shadow 0.22s;
   user-select: none;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .ap-tab.active {
-  background: rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.09);
   color: #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+.ap-tab:hover:not(.active) {
+  color: rgba(255,255,255,0.6);
+  background: rgba(255,255,255,0.04);
 }
 
-/* ── Form groups ────────────────────────────────────────── */
-.ap-group {
-  margin-bottom: 14px;
+/* ── Form enter animation ───────────────────────────────── */
+#login-form, #signup-form {
+  animation: form-appear 0.2s cubic-bezier(0.22,1,0.36,1) both;
 }
+@keyframes form-appear {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0);   }
+}
+
+/* ══════════════════════════════════════════════════════════
+ * 4. ROLE CARDS — Uber-level selection feel
+ * ══════════════════════════════════════════════════════════ */
+.ap-role-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.ap-role-card {
+  flex: 1;
+  padding: 14px 10px 12px;
+  text-align: center;
+  border-radius: 14px;
+  border: 1.5px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.035);
+  cursor: pointer;
+  transition:
+    border-color 0.22s,
+    background   0.22s,
+    box-shadow   0.22s,
+    transform    0.18s;
+  user-select: none;
+  position: relative;
+  overflow: hidden;
+}
+/* Inner shimmer on unselected hover */
+.ap-role-card:hover:not(.selected) {
+  border-color: rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.06);
+  transform: translateY(-1px);
+}
+/* Selected state — premium accent glow */
+.ap-role-card.selected {
+  border-color: rgba(225,48,108,0.7);
+  background: rgba(225,48,108,0.08);
+  box-shadow:
+    0 0 0 3px rgba(225,48,108,0.12),
+    0 4px 20px rgba(225,48,108,0.15);
+  transform: scale(1.01);
+}
+.ap-role-card.selected::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 13px;
+  background: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(225,48,108,0.12), transparent 70%);
+  pointer-events: none;
+}
+.ap-role-icon {
+  font-size: 1.5rem;
+  margin-bottom: 5px;
+  display: block;
+  transition: transform 0.22s;
+}
+.ap-role-card.selected .ap-role-icon { transform: scale(1.1); }
+.ap-role-name {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 2px;
+}
+.ap-role-desc {
+  font-size: 0.68rem;
+  color: rgba(255,255,255,0.32);
+  line-height: 1.3;
+}
+.ap-role-card.selected .ap-role-desc {
+  color: rgba(255,255,255,0.5);
+}
+
+/* ══════════════════════════════════════════════════════════
+ * 5. FIELDS STACK — progressive reveal (V3 order + V4 motion)
+ * ══════════════════════════════════════════════════════════ */
+.ap-fields-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* Client order */
+.ap-role-client .ap-f-name         { order: 1; }
+.ap-role-client .ap-f-email        { order: 2; }
+.ap-role-client .ap-f-password     { order: 3; }
+.ap-role-client .ap-f-phone        { order: 4; }
+.ap-role-client .ap-f-artisan      { order: 5; display: none !important; }
+.ap-role-client .ap-f-client-hint  { order: 6; }
+
+/* Artisan order — phone-first */
+.ap-role-artisan .ap-f-name         { order: 1; }
+.ap-role-artisan .ap-f-phone        { order: 2; }
+.ap-role-artisan .ap-f-email        { order: 3; }
+.ap-role-artisan .ap-f-password     { order: 4; }
+.ap-role-artisan .ap-f-artisan      { order: 5; }
+.ap-role-artisan .ap-f-client-hint  { order: 6; display: none; }
+
+/* Progressive reveal — fields start hidden, JS adds .ap-revealed */
+.ap-fields-stack .ap-group,
+.ap-fields-stack .ap-artisan-fields,
+.ap-fields-stack .ap-section-hint,
+.ap-fields-stack .ap-f-client-hint {
+  opacity: 0;
+  transform: translateY(10px);
+  transition:
+    opacity   0.24s cubic-bezier(0.22,1,0.36,1),
+    transform 0.24s cubic-bezier(0.22,1,0.36,1);
+  pointer-events: none;
+}
+/* When revealed */
+.ap-fields-stack .ap-group.ap-revealed,
+.ap-fields-stack .ap-artisan-fields.ap-revealed,
+.ap-fields-stack .ap-section-hint.ap-revealed,
+.ap-fields-stack .ap-f-client-hint.ap-revealed {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+/* Stagger delay helper classes (set via JS) */
+.ap-delay-0  { transition-delay: 0ms   !important; }
+.ap-delay-1  { transition-delay: 55ms  !important; }
+.ap-delay-2  { transition-delay: 110ms !important; }
+.ap-delay-3  { transition-delay: 165ms !important; }
+.ap-delay-4  { transition-delay: 220ms !important; }
+.ap-delay-5  { transition-delay: 275ms !important; }
+
+/* ══════════════════════════════════════════════════════════
+ * 6. FORM GROUPS & LABELS
+ * ══════════════════════════════════════════════════════════ */
+.ap-group { margin-bottom: 16px; }
+
 .ap-label {
   display: block;
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   font-weight: 600;
-  color: rgba(255,255,255,0.55);
-  margin-bottom: 6px;
+  color: rgba(255,255,255,0.48);
+  margin-bottom: 7px;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
+  transition: color 0.18s;
 }
+/* Label brightens when field is focused */
+.ap-group:focus-within .ap-label { color: rgba(255,255,255,0.72); }
+
 .ap-label-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 6px;
+  margin-bottom: 7px;
 }
 .ap-label-row .ap-label { margin-bottom: 0; }
+
 .ap-forgot {
-  font-size: 0.76rem;
-  color: rgba(225,48,108,0.85);
-  text-decoration: none;
+  font-size: 0.75rem;
+  color: rgba(225,48,108,0.7);
   transition: color 0.15s;
   cursor: pointer;
   background: none;
   border: none;
-  padding: 0;
+  padding: 4px 0;
+  min-height: 44px;
+  font-family: inherit;
 }
 .ap-forgot:hover { color: #e1306c; }
 
-/* ── Inputs ─────────────────────────────────────────────── */
+/* ── WhatsApp label accent ────────────────────────────────── */
+.ap-label-wa {
+  color: rgba(37,211,102,0.8);
+  font-weight: 600;
+  font-size: 0.8em;
+  margin-left: 4px;
+}
+
+/* ── Optional badge ───────────────────────────────────────── */
+.ap-optional {
+  opacity: 0.38;
+  font-weight: 400;
+  text-transform: none;
+  font-size: 0.78rem;
+  margin-left: 6px;
+}
+
+/* ══════════════════════════════════════════════════════════
+ * 7. INPUTS — spacious, calm, premium
+ * ══════════════════════════════════════════════════════════ */
 .ap-input-wrap {
   position: relative;
   display: flex;
   align-items: center;
 }
+
 .ap-input {
   width: 100%;
-  background: rgba(255,255,255,0.06) !important;
-  border: 1px solid rgba(255,255,255,0.1) !important;
-  border-radius: 10px !important;
-  padding: 12px 14px !important;
-  font-size: 0.92rem;
+  background: rgba(255,255,255,0.05) !important;
+  border: 1px solid rgba(255,255,255,0.09) !important;
+  border-radius: 12px !important;
+  padding: 14px 16px !important;
+  font-size: 0.93rem;
   color: #fff !important;
   font-family: inherit;
   outline: none;
-  transition: border-color 0.18s, box-shadow 0.18s, background 0.18s;
+  transition:
+    border-color 0.2s,
+    box-shadow   0.2s,
+    background   0.2s;
   box-sizing: border-box;
+  min-height: 50px;
 }
 .ap-input:focus {
-  border-color: rgba(225,48,108,0.6) !important;
-  background: rgba(255,255,255,0.09) !important;
-  box-shadow: 0 0 0 3px rgba(225,48,108,0.14) !important;
+  border-color: rgba(225,48,108,0.55) !important;
+  background: rgba(255,255,255,0.08) !important;
+  box-shadow: 0 0 0 3px rgba(225,48,108,0.1) !important;
 }
-.ap-input::placeholder { color: rgba(255,255,255,0.25); }
-.ap-input.has-toggle { padding-right: 44px !important; }
+.ap-input::placeholder {
+  color: rgba(255,255,255,0.2);
+  font-weight: 400;
+}
+.ap-input.has-toggle { padding-right: 48px !important; }
 
-/* Password toggle button */
+/* Phone input — more spacious, digit-friendly */
+.ap-input-phone {
+  font-size: 1.05rem !important;
+  letter-spacing: 0.06em;
+  min-height: 54px;
+  padding: 15px 16px !important;
+}
+.ap-input-phone:focus {
+  border-color: rgba(37,211,102,0.45) !important;
+  box-shadow: 0 0 0 3px rgba(37,211,102,0.08) !important;
+}
+
+/* ── Password toggle ────────────────────────────────────── */
 .ap-pw-toggle {
   position: absolute;
-  right: 12px;
+  right: 10px;
   top: 50%;
   transform: translateY(-50%);
   background: none;
   border: none;
-  color: rgba(255,255,255,0.35);
+  color: rgba(255,255,255,0.28);
   cursor: pointer;
   font-size: 1rem;
   line-height: 1;
   padding: 0;
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition: color 0.15s;
   z-index: 2;
 }
-.ap-pw-toggle:hover { color: rgba(255,255,255,0.7); }
+.ap-pw-toggle:hover { color: rgba(255,255,255,0.65); }
 
 /* ── Select ─────────────────────────────────────────────── */
 .ap-select {
   width: 100%;
-  background: rgba(255,255,255,0.06) !important;
-  border: 1px solid rgba(255,255,255,0.1) !important;
-  border-radius: 10px !important;
-  padding: 12px 14px !important;
-  font-size: 0.88rem;
+  background: rgba(255,255,255,0.05) !important;
+  border: 1px solid rgba(255,255,255,0.09) !important;
+  border-radius: 12px !important;
+  padding: 14px 40px 14px 16px !important;
+  font-size: 0.9rem;
   color: #fff !important;
   font-family: inherit;
   outline: none;
   cursor: pointer;
   appearance: none;
   -webkit-appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='rgba(255,255,255,0.4)' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='rgba(255,255,255,0.35)' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") !important;
   background-repeat: no-repeat !important;
   background-position: right 14px center !important;
-  padding-right: 36px !important;
-  transition: border-color 0.18s;
+  transition: border-color 0.2s, box-shadow 0.2s;
   box-sizing: border-box;
+  min-height: 50px;
 }
 .ap-select:focus {
-  border-color: rgba(225,48,108,0.6) !important;
-  box-shadow: 0 0 0 3px rgba(225,48,108,0.14) !important;
+  border-color: rgba(225,48,108,0.55) !important;
+  box-shadow: 0 0 0 3px rgba(225,48,108,0.1) !important;
 }
 .ap-select option { background: #1a1a2e; color: #fff; }
 
-/* ── Role cards (signup) ────────────────────────────────── */
-.ap-role-row {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 18px;
+/* ══════════════════════════════════════════════════════════
+ * 8. FIELD HINTS & SECTION HINTS
+ * ══════════════════════════════════════════════════════════ */
+.ap-field-hint {
+  font-size: 0.71rem;
+  color: rgba(255,255,255,0.3);
+  margin: 5px 0 0;
+  line-height: 1.45;
+  animation: ap-hint-in 0.2s ease both;
 }
-.ap-role-card {
-  flex: 1;
-  padding: 13px 10px;
-  text-align: center;
-  border-radius: 12px;
-  border: 1.5px solid rgba(255,255,255,0.1);
-  background: rgba(255,255,255,0.04);
-  cursor: pointer;
-  transition: border-color 0.18s, background 0.18s;
-  user-select: none;
+.ap-hint-wa {
+  color: rgba(37,211,102,0.55);
 }
-.ap-role-card.selected {
-  border-color: #e1306c;
-  background: rgba(225,48,108,0.1);
+.ap-hint-fmt {
+  color: rgba(255,255,255,0.2);
+  font-size: 0.68rem;
 }
-.ap-role-card:hover:not(.selected) {
-  border-color: rgba(255,255,255,0.2);
-  background: rgba(255,255,255,0.07);
+@keyframes ap-hint-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
-.ap-role-icon { font-size: 1.4rem; margin-bottom: 4px; }
-.ap-role-name { font-size: 0.84rem; font-weight: 700; color: #fff; }
-.ap-role-desc { font-size: 0.68rem; color: rgba(255,255,255,0.38); margin-top: 2px; }
+.ap-section-hint {
+  font-size: 0.74rem;
+  color: rgba(255,255,255,0.32);
+  margin: 0 0 14px;
+  line-height: 1.45;
+  padding: 9px 12px;
+  background: rgba(255,255,255,0.025);
+  border-radius: 9px;
+  border-left: 2px solid rgba(124,58,237,0.35);
+}
 
-/* ── Password strength ──────────────────────────────────── */
-.ap-strength {
-  margin-top: 7px;
-  display: none;
-}
+/* ══════════════════════════════════════════════════════════
+ * 9. PASSWORD STRENGTH
+ * ══════════════════════════════════════════════════════════ */
+.ap-strength { margin-top: 8px; display: none; }
 .ap-strength-track {
   height: 3px;
   border-radius: 2px;
-  background: rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.07);
   overflow: hidden;
 }
 .ap-strength-bar {
   height: 100%;
   border-radius: 2px;
   width: 0;
-  transition: width 0.3s, background 0.3s;
+  transition: width 0.35s ease, background 0.35s ease;
 }
 .ap-strength-label {
   font-size: 0.68rem;
-  color: rgba(255,255,255,0.35);
-  margin-top: 3px;
+  color: rgba(255,255,255,0.32);
+  margin-top: 4px;
 }
 
-/* ── Terms ──────────────────────────────────────────────── */
+/* ══════════════════════════════════════════════════════════
+ * 10. TERMS — legible + trust-building
+ * ══════════════════════════════════════════════════════════ */
 .ap-terms {
   display: flex;
   align-items: flex-start;
-  gap: 9px;
-  margin-bottom: 18px;
+  gap: 11px;
+  margin-bottom: 20px;
+  cursor: pointer;
 }
 .ap-terms input[type="checkbox"] {
-  accent-color: #e1306c;
-  width: 15px;
-  height: 15px;
-  margin-top: 2px;
-  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  min-width: 18px;
+  margin-top: 1px;
   cursor: pointer;
+  accent-color: #e1306c;
+  flex-shrink: 0;
 }
 .ap-terms label {
   font-size: 0.77rem;
-  color: rgba(255,255,255,0.45);
+  color: rgba(255,255,255,0.42);
   cursor: pointer;
-  line-height: 1.5;
+  line-height: 1.55;
 }
-.ap-terms a { color: rgba(225,48,108,0.85); text-decoration: none; }
-.ap-terms a:hover { color: #e1306c; }
+.ap-terms a {
+  color: rgba(255,255,255,0.62);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color 0.15s;
+}
+.ap-terms a:hover { color: #fff; }
 
-/* ── CTA Button ─────────────────────────────────────────── */
+/* ══════════════════════════════════════════════════════════
+ * 11. CTA BUTTON — psychology + glow
+ * ══════════════════════════════════════════════════════════ */
 .ap-btn {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   width: 100%;
-  padding: 13px 20px;
+  padding: 15px 20px;
   border: none;
-  border-radius: 12px;
+  border-radius: 13px;
   background: linear-gradient(135deg, #e1306c 0%, #833ab4 50%, #405de6 100%);
   color: #fff;
-  font-size: 0.95rem;
+  font-size: 0.96rem;
   font-weight: 700;
   font-family: inherit;
   cursor: pointer;
-  transition: transform 0.18s, box-shadow 0.18s, opacity 0.18s;
-  box-shadow: 0 4px 24px rgba(225,48,108,0.28);
   letter-spacing: 0.01em;
+  min-height: 52px;
+  position: relative;
+  overflow: hidden;
+  /* Glow */
+  box-shadow:
+    0 4px 20px rgba(225,48,108,0.25),
+    0 1px 4px rgba(0,0,0,0.3);
+  transition:
+    transform   0.2s cubic-bezier(0.22,1,0.36,1),
+    box-shadow  0.2s cubic-bezier(0.22,1,0.36,1),
+    opacity     0.2s;
 }
+/* Shimmer sweep */
+.ap-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.12) 50%, transparent 60%);
+  transform: translateX(-100%);
+  transition: transform 0.55s ease;
+}
+.ap-btn:hover:not(:disabled)::before { transform: translateX(100%); }
 .ap-btn:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 32px rgba(225,48,108,0.38);
+  transform: translateY(-2px);
+  box-shadow:
+    0 8px 32px rgba(225,48,108,0.35),
+    0 2px 8px rgba(0,0,0,0.3);
 }
 .ap-btn:active:not(:disabled) {
-  transform: translateY(0);
-  box-shadow: 0 2px 12px rgba(225,48,108,0.22);
+  transform: translateY(0) scale(0.99);
+  box-shadow:
+    0 2px 10px rgba(225,48,108,0.2),
+    0 1px 3px rgba(0,0,0,0.25);
+  transition-duration: 0.08s;
 }
 .ap-btn:disabled {
-  opacity: 0.65;
+  opacity: 0.5;
   cursor: not-allowed;
   transform: none;
+  box-shadow: none;
+}
+/* Pulse when all fields valid (added by JS) */
+.ap-btn.ap-btn-ready {
+  animation: btn-ready-pulse 2.2s ease infinite;
+}
+@keyframes btn-ready-pulse {
+  0%, 100% { box-shadow: 0 4px 20px rgba(225,48,108,0.25), 0 1px 4px rgba(0,0,0,0.3); }
+  50%       { box-shadow: 0 6px 28px rgba(225,48,108,0.42), 0 1px 4px rgba(0,0,0,0.3); }
 }
 
-/* ── Spinner inside button ──────────────────────────────── */
+/* ── Spinner ─────────────────────────────────────────────── */
 .ap-spinner {
   display: inline-block;
   width: 16px;
@@ -343,74 +604,46 @@ html, body { height: 100%; }
 }
 @keyframes ap-spin { to { transform: rotate(360deg); } }
 
-/* ── Trust line ─────────────────────────────────────────── */
+/* ══════════════════════════════════════════════════════════
+ * 12. TRUST LINE
+ * ══════════════════════════════════════════════════════════ */
 .ap-trust {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  margin-top: 11px;
-  font-size: 0.72rem;
-  color: rgba(255,255,255,0.35);
+  margin-top: 12px;
+  font-size: 0.7rem;
+  color: rgba(255,255,255,0.28);
   text-align: center;
-  line-height: 1.4;
+  line-height: 1.5;
 }
-.ap-trust-icon { font-size: 0.78rem; }
+.ap-trust-icon { font-size: 0.76rem; opacity: 0.7; }
 
-/* ── Divider ────────────────────────────────────────────── */
-.ap-divider {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 18px 0;
-  color: rgba(255,255,255,0.2);
-  font-size: 0.75rem;
-}
-.ap-divider::before,
-.ap-divider::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: rgba(255,255,255,0.08);
-}
-
-/* ── Social buttons (disabled state) ───────────────────── */
-.ap-social-row {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 6px;
-  opacity: 0.4;
-  pointer-events: none;
-}
-.ap-social-btn {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 7px;
-  padding: 10px 12px;
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 10px;
-  background: rgba(255,255,255,0.04);
-  color: rgba(255,255,255,0.6);
+/* ══════════════════════════════════════════════════════════
+ * 13. ERROR BOX
+ * ══════════════════════════════════════════════════════════ */
+.ap-error {
+  display: none;
   font-size: 0.8rem;
-  font-family: inherit;
-  cursor: not-allowed;
-}
-.ap-social-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
-.ap-soon {
-  text-align: center;
-  font-size: 0.68rem;
-  color: rgba(255,255,255,0.22);
-  margin-top: 4px;
+  color: #ff8a9b;
+  margin-bottom: 14px;
+  padding: 10px 13px;
+  background: rgba(255,71,87,0.08);
+  border: 1px solid rgba(255,71,87,0.16);
+  border-radius: 10px;
+  line-height: 1.5;
+  animation: ap-fade-in 0.18s ease;
 }
 
-/* ── Switch link (bottom) ───────────────────────────────── */
+/* ══════════════════════════════════════════════════════════
+ * 14. SWITCH LINK
+ * ══════════════════════════════════════════════════════════ */
 .ap-switch {
   text-align: center;
-  margin-top: 18px;
+  margin-top: 20px;
   font-size: 0.82rem;
-  color: rgba(255,255,255,0.38);
+  color: rgba(255,255,255,0.32);
 }
 .ap-switch a, .ap-switch button {
   color: #e1306c;
@@ -421,301 +654,213 @@ html, body { height: 100%; }
   cursor: pointer;
   font-family: inherit;
   font-size: inherit;
-  padding: 0;
-  margin-left: 4px;
+  padding: 4px;
+  margin-left: 2px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  transition: color 0.15s;
 }
 .ap-switch a:hover, .ap-switch button:hover { color: #ff5a8a; }
 
-/* ── Error box ──────────────────────────────────────────── */
-.ap-error {
-  display: none;
-  font-size: 0.8rem;
-  color: #ff6b81;
-  margin-bottom: 12px;
-  padding: 9px 12px;
-  background: rgba(255,71,87,0.1);
-  border: 1px solid rgba(255,71,87,0.18);
-  border-radius: 8px;
-  line-height: 1.45;
-}
-
-/* ── Artisan extra fields (signup) ──────────────────────── */
-.ap-artisan-fields { display: none; }
-
-/* ── Mobile optimisation ────────────────────────────────── */
-@media (max-width: 480px) {
-  .auth-topbar { padding: 12px 16px; }
-  .auth-topbar-logo img { height: 26px; }
-  .auth-center { padding: 8px 12px 32px; align-items: flex-start; }
-  .auth-box { padding: 22px 18px 22px; border-radius: 16px; }
-  .auth-heading { font-size: 1.2rem; }
-  .ap-btn { padding: 12px 16px; font-size: 0.9rem; }
-  .ap-input { padding: 11px 12px !important; font-size: 0.88rem; }
-  .ap-select { padding: 11px 12px !important; font-size: 0.84rem; }
-}
-
-/* ── Utility: full-width ────────────────────────────────── */
-.ap-w100 { width: 100%; }
-
 /* ══════════════════════════════════════════════════════════
- * AUTH V2 — additions (2026-05-06)
+ * 15. FORGOT PASSWORD SCREEN
  * ══════════════════════════════════════════════════════════ */
-
-/* ── Tab transition ────────────────────────────────────── */
-#login-form, #signup-form {
-  animation: ap-fade-in 0.18s ease;
-}
-@keyframes ap-fade-in {
-  from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* ── Optional field label ──────────────────────────────── */
-.ap-optional {
-  opacity: 0.4;
-  font-weight: 400;
-  text-transform: none;
-  font-size: 0.78rem;
-}
-
-/* ── Terms — larger tap target ─────────────────────────── */
-.ap-terms {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  margin-bottom: 16px;
-  cursor: pointer;
-}
-.ap-terms input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
-  min-width: 18px;
-  margin-top: 2px;
-  cursor: pointer;
-  accent-color: #7c3aed;
-}
-.ap-terms label {
-  font-size: 0.78rem;
-  color: rgba(255,255,255,0.5);
-  line-height: 1.5;
-  cursor: pointer;
-}
-.ap-terms a {
-  color: rgba(255,255,255,0.75);
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
-.ap-terms a:hover { color: #fff; }
-
-/* ── Email confirmation screen ─────────────────────────── */
-#email-confirm-screen {
-  display: none;
-  text-align: center;
-  padding: 8px 0 4px;
-  animation: ap-fade-in 0.22s ease;
-}
-#email-confirm-screen .ap-confirm-icon {
-  font-size: 2.8rem;
-  line-height: 1;
-  margin-bottom: 16px;
-  display: block;
-}
-#email-confirm-screen .ap-confirm-title {
-  font-size: 1.2rem;
-  font-weight: 800;
-  color: #fff;
-  margin-bottom: 8px;
-}
-#email-confirm-screen .ap-confirm-email {
-  font-size: 0.9rem;
-  color: rgba(255,255,255,0.55);
-  margin-bottom: 20px;
-  word-break: break-all;
-}
-#email-confirm-screen .ap-confirm-email strong {
-  color: rgba(255,255,255,0.85);
-}
-#email-confirm-screen .ap-confirm-hint {
-  font-size: 0.78rem;
-  color: rgba(255,255,255,0.38);
-  margin-bottom: 24px;
-  line-height: 1.55;
-}
-#email-confirm-screen .ap-btn-resend {
-  background: none;
-  border: 1px solid rgba(255,255,255,0.15);
-  color: rgba(255,255,255,0.55);
-  border-radius: 10px;
-  padding: 10px 20px;
-  font-size: 0.82rem;
-  cursor: pointer;
-  transition: all 0.18s;
-  width: 100%;
-  margin-bottom: 12px;
-  font-family: inherit;
-}
-#email-confirm-screen .ap-btn-resend:hover {
-  border-color: rgba(255,255,255,0.3);
-  color: rgba(255,255,255,0.8);
-}
-#email-confirm-screen .ap-confirm-back {
-  font-size: 0.78rem;
-  color: rgba(255,255,255,0.35);
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-family: inherit;
-  padding: 4px 0;
-}
-#email-confirm-screen .ap-confirm-back:hover { color: rgba(255,255,255,0.6); }
-
-/* ── Forgot password inline mini-form ──────────────────── */
 #forgot-screen {
   display: none;
-  animation: ap-fade-in 0.18s ease;
+  animation: ap-fade-in 0.2s ease;
 }
-#forgot-screen .ap-forgot-title {
+.ap-forgot-title {
   font-size: 0.95rem;
   font-weight: 700;
   color: #fff;
-  margin-bottom: 6px;
+  margin-bottom: 5px;
 }
-#forgot-screen .ap-forgot-sub {
+.ap-forgot-sub {
   font-size: 0.78rem;
-  color: rgba(255,255,255,0.42);
+  color: rgba(255,255,255,0.38);
   margin-bottom: 16px;
   line-height: 1.5;
 }
-#forgot-screen .ap-forgot-back {
+.ap-forgot-back {
   background: none;
   border: none;
-  color: rgba(255,255,255,0.42);
-  font-size: 0.78rem;
+  color: rgba(255,255,255,0.35);
+  font-size: 0.76rem;
   cursor: pointer;
   font-family: inherit;
   padding: 0;
-  margin-top: 8px;
+  margin-top: 10px;
   display: block;
+  transition: color 0.15s;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
 }
-#forgot-screen .ap-forgot-back:hover { color: rgba(255,255,255,0.7); }
+.ap-forgot-back:hover { color: rgba(255,255,255,0.65); }
 #forgot-success {
   display: none;
   font-size: 0.8rem;
   color: #2ed573;
-  padding: 9px 12px;
-  background: rgba(46,213,115,0.08);
-  border: 1px solid rgba(46,213,115,0.2);
-  border-radius: 8px;
-  margin-bottom: 12px;
+  padding: 10px 13px;
+  background: rgba(46,213,115,0.07);
+  border: 1px solid rgba(46,213,115,0.18);
+  border-radius: 10px;
+  margin-bottom: 14px;
   animation: ap-fade-in 0.18s ease;
 }
 
-/* ── Password show/hide — larger touch target ──────────── */
-.ap-pw-toggle {
-  min-width: 44px;
-  min-height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* ══════════════════════════════════════════════════════════
+ * 16. EMAIL CONFIRMATION SCREEN
+ * ══════════════════════════════════════════════════════════ */
+#email-confirm-screen {
+  display: none;
+  text-align: center;
+  padding: 12px 0 6px;
+  animation: ap-fade-in 0.28s cubic-bezier(0.22,1,0.36,1);
 }
+.ap-confirm-icon {
+  font-size: 3rem;
+  line-height: 1;
+  margin-bottom: 18px;
+  display: block;
+  animation: icon-bounce 0.5s cubic-bezier(0.22,1,0.36,1) both 0.1s;
+}
+@keyframes icon-bounce {
+  from { transform: scale(0.6); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+.ap-confirm-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 8px;
+  letter-spacing: -0.01em;
+}
+.ap-confirm-email {
+  font-size: 0.88rem;
+  color: rgba(255,255,255,0.48);
+  margin-bottom: 20px;
+  word-break: break-all;
+  line-height: 1.5;
+}
+.ap-confirm-email strong {
+  color: rgba(255,255,255,0.82);
+}
+.ap-confirm-hint {
+  font-size: 0.77rem;
+  color: rgba(255,255,255,0.32);
+  margin-bottom: 28px;
+  line-height: 1.6;
+  max-width: 280px;
+  margin-inline: auto;
+}
+.ap-btn-resend {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.5);
+  border-radius: 12px;
+  padding: 12px 20px;
+  font-size: 0.84rem;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s, background 0.2s;
+  width: 100%;
+  margin-bottom: 14px;
+  font-family: inherit;
+  min-height: 48px;
+}
+.ap-btn-resend:hover {
+  border-color: rgba(255,255,255,0.25);
+  color: rgba(255,255,255,0.8);
+  background: rgba(255,255,255,0.08);
+}
+.ap-confirm-back {
+  font-size: 0.76rem;
+  color: rgba(255,255,255,0.28);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  padding: 6px 0;
+  transition: color 0.15s;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+.ap-confirm-back:hover { color: rgba(255,255,255,0.55); }
 
-/* ── Mobile P1 hardening ───────────────────────────────── */
-@media (max-width: 400px) {
-  .ap-role-row { flex-direction: column; gap: 8px; }
-  .ap-role-card { flex-direction: row; align-items: center; gap: 10px; padding: 12px 14px; }
-  .ap-role-icon { font-size: 1.4rem; }
+/* ══════════════════════════════════════════════════════════
+ * 17. ARTISAN FIELDS BLOCK
+ * ══════════════════════════════════════════════════════════ */
+.ap-artisan-fields { display: none; }
+
+/* ══════════════════════════════════════════════════════════
+ * 18. SHARED ANIMATIONS
+ * ══════════════════════════════════════════════════════════ */
+@keyframes ap-fade-in {
+  from { opacity: 0; transform: translateY(5px); }
+  to   { opacity: 1; transform: translateY(0);   }
 }
 
 /* ══════════════════════════════════════════════════════════
- * AUTH V3 — Phone-first Morocco (2026-05-06)
+ * 19. REDUCED MOTION — respect system preference
  * ══════════════════════════════════════════════════════════ */
-
-/* ── Fields stack: flex column enables CSS order reordering ── */
-.ap-fields-stack {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-
-/* ── Default field order (client) ─────────────────────────
-   name(1) → phone(4/opt) → email(2) → password(3) → hint(5)
-   Phone visually after email for clients.
-   ─────────────────────────────────────────────────────── */
-.ap-role-client .ap-f-name         { order: 1; }
-.ap-role-client .ap-f-email        { order: 2; }
-.ap-role-client .ap-f-password     { order: 3; }
-.ap-role-client .ap-f-phone        { order: 4; }
-.ap-role-client .ap-f-artisan      { order: 5; display: none !important; }
-.ap-role-client .ap-f-client-hint  { order: 6; }
-
-/* ── Artisan field order (phone-first) ────────────────────
-   name(1) → phone(2/req) → email(3) → password(4) → artisan(5)
-   Phone is FIRST contact field — feels natural for Morocco.
-   ─────────────────────────────────────────────────────── */
-.ap-role-artisan .ap-f-name         { order: 1; }
-.ap-role-artisan .ap-f-phone        { order: 2; }
-.ap-role-artisan .ap-f-email        { order: 3; }
-.ap-role-artisan .ap-f-password     { order: 4; }
-.ap-role-artisan .ap-f-artisan      { order: 5; }
-.ap-role-artisan .ap-f-client-hint  { order: 6; display: none; }
-
-/* ── WhatsApp label accent ────────────────────────────────── */
-.ap-label-wa {
-  color: #25D366;
-  font-weight: 600;
-  font-size: 0.8em;
-  margin-left: 4px;
-}
-
-/* ── Phone optional badge ─────────────────────────────────── */
-.ap-phone-optional {
-  margin-left: 6px;
-}
-
-/* ── Field hints ──────────────────────────────────────────── */
-.ap-field-hint {
-  font-size: 0.72rem;
-  color: rgba(255,255,255,0.35);
-  margin: 4px 0 0;
-  line-height: 1.4;
-}
-.ap-hint-wa {
-  color: rgba(37,211,102,0.65);
-}
-.ap-hint-fmt {
-  color: rgba(255,255,255,0.25);
-}
-
-/* ── Section hint (artisan city/specialty block) ──────────── */
-.ap-section-hint {
-  font-size: 0.75rem;
-  color: rgba(255,255,255,0.35);
-  margin: 4px 0 12px;
-  line-height: 1.4;
-  padding: 8px 10px;
-  background: rgba(255,255,255,0.03);
-  border-radius: 8px;
-  border-left: 2px solid rgba(124,58,237,0.4);
-}
-
-/* ── Phone input — comfortable on mobile ─────────────────── */
-.ap-input-phone {
-  font-size: 1rem !important;
-  letter-spacing: 0.05em;
-  min-height: 52px;
-}
-
-/* ── Artisan submit button label change ───────────────────── */
-/* handled via JS selectType() — no CSS needed */
-
-/* ── Mobile comfort pass ──────────────────────────────────── */
-@media (max-width: 480px) {
-  .ap-input-phone {
-    font-size: 1.05rem !important;
-    min-height: 54px;
-    padding: 14px 14px !important;
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration:   0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration:  0.01ms !important;
   }
-  .ap-field-hint { font-size: 0.7rem; }
-  .ap-section-hint { font-size: 0.72rem; }
-  .ap-label-wa { font-size: 0.75em; }
+  .ap-fields-stack .ap-group,
+  .ap-fields-stack .ap-artisan-fields,
+  .ap-fields-stack .ap-section-hint,
+  .ap-fields-stack .ap-f-client-hint {
+    opacity: 1 !important;
+    transform: none !important;
+    pointer-events: auto !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+ * 20. MOBILE — Galaxy S9 / iPhone first
+ * ══════════════════════════════════════════════════════════ */
+@media (max-width: 480px) {
+  .auth-topbar  { padding: 12px 16px; }
+  .auth-topbar-logo img { height: 26px; }
+  .auth-center  { padding: 4px 12px 36px; }
+  .auth-box     { padding: 24px 20px 24px; border-radius: 18px; }
+  .auth-heading { font-size: 1.25rem; }
+  .auth-subheading { margin-bottom: 20px; }
+
+  .ap-tab       { min-height: 44px; font-size: 0.82rem; }
+  .ap-tabs      { margin-bottom: 20px; }
+
+  .ap-input     { padding: 13px 14px !important; font-size: 0.9rem; min-height: 50px; }
+  .ap-select    { padding: 13px 36px 13px 14px !important; font-size: 0.86rem; min-height: 50px; }
+  .ap-input-phone { font-size: 1rem !important; min-height: 52px; padding: 14px 14px !important; }
+  .ap-btn       { padding: 14px 18px; font-size: 0.92rem; min-height: 52px; }
+  .ap-group     { margin-bottom: 14px; }
+
+  .ap-field-hint  { font-size: 0.69rem; }
+  .ap-hint-fmt    { font-size: 0.66rem; }
+  .ap-section-hint { font-size: 0.71rem; }
+  .ap-label-wa    { font-size: 0.74em; }
+}
+
+/* Very narrow (360px) */
+@media (max-width: 390px) {
+  .auth-box { padding: 20px 16px 20px; }
+  .ap-role-row { gap: 8px; }
+  .ap-role-card { padding: 12px 8px 10px; }
+  .ap-role-icon { font-size: 1.3rem; }
+  .ap-role-name { font-size: 0.8rem; }
+  .ap-role-desc { font-size: 0.64rem; }
+}
+
+/* Extreme narrow fallback (< 360px) */
+@media (max-width: 349px) {
+  .ap-role-row   { flex-direction: column; }
+  .ap-role-card  { flex-direction: row; align-items: center; gap: 10px; padding: 11px 12px; }
 }
