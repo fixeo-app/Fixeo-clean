@@ -338,3 +338,30 @@
   .fxlps-signals { opacity: 1 !important; transform: none !important; }
   .fxlps-cities  { opacity: 1 !important; transform: none !important; }
 }
+
+/* ══════════════════════════════════════════════════════════
+   FLEX ORDER — position signals AFTER city-smart, BEFORE secondary link
+   hero-content order map:
+     1 → .hero-title
+     2 → .hero-subtitle
+     3 → #hero-quick-search
+     4 → .hero-city-smart
+     5 → .fxlps-signals   ← new
+     6 → .fxlps-cities    ← new
+     7 → .hero-secondary-link-wrap (bumped from 5)
+   ══════════════════════════════════════════════════════════ */
+
+#home .hero-content > .fxlps-signals {
+  order: 5 !important;
+  margin-top: 10px !important;
+}
+
+#home .hero-content > .fxlps-cities {
+  order: 6 !important;
+  margin-top: 0 !important;
+}
+
+/* Bump secondary link down one slot */
+#home .hero-content > .hero-secondary-link-wrap {
+  order: 7 !important;
+}
