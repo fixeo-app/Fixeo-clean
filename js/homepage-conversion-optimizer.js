@@ -71,8 +71,7 @@
     const testimonialSection = $('.testimonial-section');
     if (testimonialSection) {
       testimonialSection.classList.add('homepage-conversion-priority');
-      const subtitle = $('.section-header p', testimonialSection);
-      if (subtitle) subtitle.textContent = 'Avis vérifiés, rapides à lire, pour décider en confiance.';
+      /* [patched v9] vision section — do not overwrite subtitle */
     }
   }
 
