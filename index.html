@@ -1993,6 +1993,7 @@ section#home.hero.hero-section {
   <link rel="stylesheet" href="css/services-uber-premium.css?v=sup4">
   <link rel="stylesheet" href="css/testimonials-cta-premium.css?v=tcp2">
   <link rel="stylesheet" href="css/fixeo-trust-v9.css?v=1">
+  <link rel="stylesheet" href="css/fixeo-hero-lps-v10.css?v=1">
   <link rel="stylesheet" href="css/homepage-bottom-v1.css?v=hbv6" media="print" onload="this.media='all'">
   <link rel="stylesheet" href="css/header-logo-premium.css?v=hlp5">
   <!-- ══ LOGO OVERRIDE - image-only, no emoji, no text ══ -->
@@ -2365,9 +2366,21 @@ section#home.hero.hero-section {
       <span id="hero-city-label">D&#233;tection de votre ville&#8230;</span>
     </div>
 
-    <!-- FOMO line removed: no fake numbers (T1) -->
+    <!-- V10: Live Platform Signals — rotating platform state messages -->
+    <div class="fxlps-signals" id="fxlps-signals" aria-live="polite" aria-atomic="true" aria-label="Activité de la plateforme Fixeo">
+      <span class="fxlps-dot" aria-hidden="true"></span>
+      <span class="fxlps-text" id="fxlps-text"></span>
+    </div>
 
-    <!-- trust block removed: no fake metrics (T1) -->
+    <!-- V10: Morocco city activity pills — static, no fake counts -->
+    <div class="fxlps-cities" id="fxlps-cities" aria-label="Villes actives sur Fixeo">
+      <span class="fxlps-city fxlps-city-active">Casablanca</span>
+      <span class="fxlps-city fxlps-city-active">Rabat</span>
+      <span class="fxlps-city fxlps-city-active">Marrakech</span>
+      <span class="fxlps-city">Fès</span>
+      <span class="fxlps-city">Tanger</span>
+      <span class="fxlps-city">Agadir</span>
+    </div>
 
     <!-- T4 V3: Secondary text link — discreet, non-competing -->
     <div class="hero-secondary-link-wrap">
@@ -3628,6 +3641,7 @@ function openContentModal(type) {
 </button>
 
 <script src="js/testimonials-premium.js?v=tp1"></script>
+<script src="js/fixeo-hero-lps-v10.js?v=1" defer></script>
 
 <script>
 window.addEventListener('load', function () {

@@ -1,0 +1,340 @@
+/* ============================================================
+   fixeo-hero-lps-v10.css
+   FIXEO LIVE PERCEPTION SYSTEM — Homepage Hero V10
+   Pure CSS. Loaded last → wins all cascade.
+   Zero layout shifts. GPU transforms + opacity only.
+   ============================================================ */
+
+/* ══════════════════════════════════════════════════════════
+   PHASE 2 — AMBIENT NETWORK DEPTH
+   Upgrade the hero overlay to feel layered & alive.
+   ══════════════════════════════════════════════════════════ */
+
+/* Layer 1: deepen the ambient radial system */
+.hero-section::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 55% 60% at 8%  30%, rgba(225,48,108,0.055) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 50% at 92% 25%, rgba(131,58,180,0.045) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 40% at 50% 100%, rgba(64,93,230,0.035) 0%, transparent 55%);
+  pointer-events: none;
+  z-index: 1;
+  animation: lps-ambient-breathe 9s ease-in-out infinite;
+}
+
+@keyframes lps-ambient-breathe {
+  0%, 100% { opacity: 0.6; }
+  50%       { opacity: 1;   }
+}
+
+/* Layer 2: directional flow — matching engine perception */
+.hero-section .hero-overlay {
+  background: linear-gradient(
+    155deg,
+    rgba(13,13,26,0.72) 0%,
+    rgba(13,13,26,0.32) 42%,
+    rgba(22,33,62,0.50) 72%,
+    rgba(13,8,22,0.65)  100%
+  ) !important;
+}
+
+/* ══════════════════════════════════════════════════════════
+   PHASE 1 — LIVE PLATFORM SIGNALS STRIP
+   ══════════════════════════════════════════════════════════ */
+
+.fxlps-signals {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin: 10px auto 0;
+  padding: 6px 12px 6px 9px;
+  background: rgba(255,255,255,0.038);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 99px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  max-width: fit-content;
+  /* Entrance */
+  animation: lps-strip-in 0.6s cubic-bezier(0.22,1,0.36,1) both;
+  animation-delay: 0.3s;
+  position: relative;
+  z-index: 3;
+}
+
+@keyframes lps-strip-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0);   }
+}
+
+/* Pulsing green dot */
+.fxlps-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #25d366;
+  flex-shrink: 0;
+  animation: lps-dot-pulse 2.4s ease-in-out infinite;
+  box-shadow: 0 0 0 0 rgba(37,211,102,0.5);
+}
+
+@keyframes lps-dot-pulse {
+  0%   { box-shadow: 0 0 0 0   rgba(37,211,102,0.50); }
+  50%  { box-shadow: 0 0 0 5px rgba(37,211,102,0);    }
+  100% { box-shadow: 0 0 0 0   rgba(37,211,102,0);    }
+}
+
+/* Signal text */
+.fxlps-text {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: rgba(255,255,255,0.62);
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+  /* Text crossfade handled by JS opacity transitions */
+  transition: opacity 0.5s ease;
+  white-space: nowrap;
+}
+
+/* Fade states for JS rotation */
+.fxlps-text.fxlps-fade-out { opacity: 0; }
+.fxlps-text.fxlps-fade-in  { opacity: 1; }
+
+/* ══════════════════════════════════════════════════════════
+   PHASE 5 — MOROCCO CITY ACTIVITY PILLS
+   ══════════════════════════════════════════════════════════ */
+
+.fxlps-cities {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  margin: 8px auto 0;
+  max-width: 360px;
+  position: relative;
+  z-index: 3;
+  animation: lps-cities-in 0.7s cubic-bezier(0.22,1,0.36,1) both;
+  animation-delay: 0.55s;
+}
+
+@keyframes lps-cities-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0);   }
+}
+
+.fxlps-city {
+  font-size: 0.62rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.30);
+  padding: 3px 8px;
+  border-radius: 99px;
+  border: 1px solid rgba(255,255,255,0.07);
+  background: rgba(255,255,255,0.025);
+  letter-spacing: 0.03em;
+  transition: opacity 0.3s, color 0.3s, border-color 0.3s;
+  white-space: nowrap;
+}
+
+.fxlps-city-active {
+  color: rgba(255,255,255,0.55);
+  border-color: rgba(37,211,102,0.20);
+  background: rgba(37,211,102,0.04);
+}
+
+/* Subtle animation: active cities pulse opacity */
+.fxlps-city-active {
+  animation: lps-city-breathe 4s ease-in-out infinite;
+}
+.fxlps-city-active:nth-child(2) { animation-delay: 1.2s; }
+.fxlps-city-active:nth-child(3) { animation-delay: 2.4s; }
+
+@keyframes lps-city-breathe {
+  0%, 100% { opacity: 1;    color: rgba(255,255,255,0.55); }
+  50%       { opacity: 0.75; color: rgba(255,255,255,0.42); }
+}
+
+/* ══════════════════════════════════════════════════════════
+   PHASE 2 — SEARCH BOX AMBIENT ENERGY
+   Add a faint glow around the search container when idle.
+   ══════════════════════════════════════════════════════════ */
+
+#hero-quick-search {
+  position: relative;
+  z-index: 3;
+}
+
+/* Soft ambient glow ring under the search */
+#hero-quick-search::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 14px;
+  background: transparent;
+  box-shadow: 0 0 0 1px rgba(225,48,108,0.10), 0 8px 32px rgba(225,48,108,0.06);
+  pointer-events: none;
+  z-index: -1;
+  animation: lps-search-glow 5s ease-in-out infinite;
+}
+
+@keyframes lps-search-glow {
+  0%, 100% { box-shadow: 0 0 0 1px rgba(225,48,108,0.08),  0 8px 32px rgba(225,48,108,0.05); }
+  50%       { box-shadow: 0 0 0 1px rgba(225,48,108,0.16),  0 10px 40px rgba(225,48,108,0.09); }
+}
+
+/* ══════════════════════════════════════════════════════════
+   PHASE 3 — MATCHING FLOW VISUAL
+   Directional ambient sweep — subtle left→right glow
+   suggesting client → system → artisan orchestration.
+   ══════════════════════════════════════════════════════════ */
+
+.hero-content {
+  position: relative;
+  z-index: 3;
+}
+
+/* Matching sweep: ultra-subtle diagonal shimmer */
+.hero-content::before {
+  content: '';
+  position: absolute;
+  top: -60px; left: -40%;
+  width: 80%; height: 200%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(225,48,108,0.018) 50%,
+    transparent 100%
+  );
+  transform: skewX(-12deg);
+  pointer-events: none;
+  z-index: -1;
+  animation: lps-sweep 8s ease-in-out infinite;
+}
+
+@keyframes lps-sweep {
+  0%   { left: -40%; opacity: 0; }
+  10%  { opacity: 1;  }
+  80%  { opacity: 1;  }
+  100% { left: 80%;  opacity: 0; }
+}
+
+/* ══════════════════════════════════════════════════════════
+   PHASE 6 — CTA PSYCHOLOGY UPGRADE
+   ══════════════════════════════════════════════════════════ */
+
+/* Primary CTA: stronger confidence state */
+.hero-content .btn-primary,
+.hero-content [class*="btn-urgent"],
+.qsm-submit-btn,
+.qsm-cta-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle shimmer sweep on CTA */
+.hero-content .btn-primary::after,
+.qsm-submit-btn::after,
+.qsm-cta-btn::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 60%; height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255,255,255,0.08) 50%,
+    transparent 100%
+  );
+  animation: lps-cta-shimmer 4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes lps-cta-shimmer {
+  0%   { left: -60%; }
+  60%  { left: 120%; }
+  100% { left: 120%; }
+}
+
+/* ══════════════════════════════════════════════════════════
+   PHASE 7 — AMBIENT BUBBLES UPGRADE
+   Existing .hero-bubble/.hero-blob preserved.
+   Add a second network-depth ambient layer.
+   ══════════════════════════════════════════════════════════ */
+
+/* Soft floating network nodes — positioned via CSS, no JS */
+.hero-section .hero-overlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle 2px at 20% 70%, rgba(225,48,108,0.25) 0%, transparent 100%),
+    radial-gradient(circle 2px at 80% 30%, rgba(131,58,180,0.22) 0%, transparent 100%),
+    radial-gradient(circle 2px at 50% 50%, rgba(64,93,230,0.18)  0%, transparent 100%),
+    radial-gradient(circle 3px at 15% 45%, rgba(225,48,108,0.15) 0%, transparent 100%),
+    radial-gradient(circle 2px at 85% 65%, rgba(252,175,69,0.12) 0%, transparent 100%);
+  pointer-events: none;
+  animation: lps-nodes-breathe 7s ease-in-out infinite;
+}
+
+@keyframes lps-nodes-breathe {
+  0%, 100% { opacity: 0.4; }
+  50%       { opacity: 1;   }
+}
+
+/* ══════════════════════════════════════════════════════════
+   PHASE 8 — MOBILE EXPERIENCE
+   ══════════════════════════════════════════════════════════ */
+
+@media (max-width: 640px) {
+  .fxlps-signals {
+    font-size: 0.68rem;
+    padding: 5px 10px 5px 8px;
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .fxlps-text { font-size: 0.68rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 230px; }
+  .fxlps-cities { max-width: 300px; gap: 5px; margin-top: 6px; }
+  .fxlps-city { font-size: 0.58rem; padding: 3px 7px; }
+  /* Suppress sweep on mobile (not visible, save GPU) */
+  .hero-content::before { display: none; }
+  /* Reduce ambient layer on mobile */
+  .hero-section::after { opacity: 0.6; }
+}
+
+@media (max-width: 390px) {
+  .fxlps-signals { max-width: 280px; }
+  .fxlps-text { max-width: 200px; }
+  .fxlps-cities { max-width: 260px; }
+}
+
+@media (max-width: 360px) {
+  .fxlps-city { font-size: 0.56rem; padding: 2px 6px; }
+  .fxlps-text { max-width: 180px; }
+}
+
+/* ══════════════════════════════════════════════════════════
+   PHASE 9 — PERFORMANCE + REDUCED MOTION
+   ══════════════════════════════════════════════════════════ */
+
+/* All animations are transform/opacity — GPU composited */
+
+@media (prefers-reduced-motion: reduce) {
+  .fxlps-signals,
+  .fxlps-cities,
+  .fxlps-dot,
+  .fxlps-city-active,
+  .hero-section::after,
+  .hero-content::before,
+  .hero-section .hero-overlay::after,
+  #hero-quick-search::before,
+  .qsm-submit-btn::after,
+  .qsm-cta-btn::after,
+  .hero-content .btn-primary::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  /* Keep signals visible */
+  .fxlps-signals { opacity: 1 !important; transform: none !important; }
+  .fxlps-cities  { opacity: 1 !important; transform: none !important; }
+}
