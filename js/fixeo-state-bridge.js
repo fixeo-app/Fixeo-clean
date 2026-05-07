@@ -654,8 +654,8 @@
     // Initial render after stores are ready
     function doInit() {
       refreshAll();
-      // Seed demo data if completely empty (first time)
-      _maybeSeedDemoData();
+      // Demo seed disabled — Phase 4 uses real fixeo_client_requests data only
+      // _maybeSeedDemoData();
     }
 
     if (document.readyState === 'loading') {
