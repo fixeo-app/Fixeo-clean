@@ -365,3 +365,53 @@
 #home .hero-content > .hero-secondary-link-wrap {
   order: 7 !important;
 }
+
+/* ══════════════════════════════════════════════════════════
+   V10.3 — CROWDING FIX
+   City pills removed. Signals tightened — whisper level only.
+   ══════════════════════════════════════════════════════════ */
+
+/* Hide city pills if they somehow remain */
+.fxlps-cities { display: none !important; }
+
+/* Signals: smaller, quieter, less margin */
+.fxlps-signals {
+  margin-top: 8px !important;
+  padding: 5px 10px 5px 8px !important;
+  background: rgba(255,255,255,0.028) !important;
+  border-color: rgba(255,255,255,0.055) !important;
+}
+
+.fxlps-text {
+  font-size: 0.68rem !important;
+  color: rgba(255,255,255,0.45) !important;
+}
+
+.fxlps-dot {
+  width: 6px !important;
+  height: 6px !important;
+}
+
+/* On mobile: even quieter */
+@media (max-width: 640px) {
+  .fxlps-signals {
+    margin-top: 6px !important;
+    padding: 4px 9px 4px 7px !important;
+  }
+  .fxlps-text {
+    font-size: 0.64rem !important;
+  }
+}
+
+/* Remove cities from order map (no longer in DOM) */
+#home .hero-content > .fxlps-cities {
+  display: none !important;
+}
+
+/* Restore secondary-link to order:6 (cities gone, one slot freed) */
+#home .hero-content > .hero-secondary-link-wrap {
+  order: 6 !important;
+}
+
+/* Suppress sweep on ALL viewports — too subtle to notice, save GPU */
+.hero-content::before { display: none !important; }
