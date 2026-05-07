@@ -30,7 +30,8 @@
   <link rel="stylesheet" href="css/header-unified.css">
   <link rel="stylesheet" href="css/fixeo-header-global.css">
   <link rel="stylesheet" href="css/auth-global.css">
-  <link rel="stylesheet" href="css/reservation.css" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="css/reservation.css"></noscript>
+  <link rel="stylesheet" href="css/reservation.css">
+  <link rel="stylesheet" href="css/reservation-v2.css?v=1" />
   <link rel="stylesheet" href="css/artisan-profile-premium.css">
   <style>
     .notif-badge:empty{display:none!important}
@@ -234,7 +235,8 @@
       '/js/fixeo-header-global.js',
       '/js/auth-global.js',
       '/js/artisan-onboarding-store.js',
-      '/js/reservation.js'
+      '/js/reservation.js',
+      '/js/reservation-v2.js?v=1'
     ].forEach(function (src) {
       document.write('<script src="' + asset(src) + '"><\/script>');
     });
