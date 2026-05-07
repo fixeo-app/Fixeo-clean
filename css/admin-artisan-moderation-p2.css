@@ -1,0 +1,445 @@
+/* ============================================================
+   FIXEO ADMIN — ARTISAN MODERATION PHASE 2
+   css/admin-artisan-moderation-p2.css
+   Namespace: .fxamp2-*
+   Additive only — zero overrides of admin-artisans.js / admin.js
+   ============================================================ */
+
+/* ══════════════════════════════════════════════════════════
+   MODERATION KPI STRIP
+   ══════════════════════════════════════════════════════════ */
+
+#fxamp2-mod-kpis {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+  padding: 14px 16px;
+  border-radius: 15px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+}
+
+.fxamp2-kpi-item {
+  flex: 1;
+  min-width: 110px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.fxamp2-kpi-value {
+  font-size: 1.15rem;
+  font-weight: 800;
+  line-height: 1;
+}
+.fxamp2-kpi-label {
+  font-size: 0.69rem;
+  opacity: 0.38;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  white-space: nowrap;
+}
+.fxamp2-kpi-item.col-green   .fxamp2-kpi-value { color: #20c997; }
+.fxamp2-kpi-item.col-amber   .fxamp2-kpi-value { color: #ffa502; }
+.fxamp2-kpi-item.col-blue    .fxamp2-kpi-value { color: #6c8ff5; }
+.fxamp2-kpi-item.col-pink    .fxamp2-kpi-value { color: #e1306c; }
+.fxamp2-kpi-item.col-default .fxamp2-kpi-value { color: rgba(255,255,255,0.75); }
+.fxamp2-kpi-item.col-muted   .fxamp2-kpi-value { color: rgba(255,255,255,0.45); }
+
+.fxamp2-kpi-divider {
+  width: 1px;
+  align-self: stretch;
+  background: rgba(255,255,255,0.07);
+  flex-shrink: 0;
+}
+
+/* ══════════════════════════════════════════════════════════
+   FILTER PILL BAR
+   ══════════════════════════════════════════════════════════ */
+
+#fxamp2-filter-bar {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.fxamp2-filter-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.04);
+  color: rgba(255,255,255,0.55);
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  user-select: none;
+  white-space: nowrap;
+}
+.fxamp2-filter-pill:hover {
+  background: rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.80);
+}
+.fxamp2-filter-pill.active {
+  background: rgba(108,143,245,0.12);
+  border-color: rgba(108,143,245,0.35);
+  color: #6c8ff5;
+}
+.fxamp2-filter-pill.active-green {
+  background: rgba(32,201,151,0.10);
+  border-color: rgba(32,201,151,0.30);
+  color: #20c997;
+}
+.fxamp2-filter-pill.active-amber {
+  background: rgba(255,165,2,0.10);
+  border-color: rgba(255,165,2,0.30);
+  color: #ffa502;
+}
+.fxamp2-filter-pill.active-blue {
+  background: rgba(108,143,245,0.10);
+  border-color: rgba(108,143,245,0.30);
+  color: #6c8ff5;
+}
+.fxamp2-filter-pill.active-pink {
+  background: rgba(225,48,108,0.10);
+  border-color: rgba(225,48,108,0.28);
+  color: #e1306c;
+}
+
+.fxamp2-filter-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.08);
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0 5px;
+}
+
+/* Search box */
+#fxamp2-search-wrap {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 180px;
+  max-width: 320px;
+  position: relative;
+}
+#fxamp2-search-wrap::before {
+  content: '';
+  position: absolute;
+  left: 11px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 14px;
+  height: 14px;
+  background: rgba(255,255,255,0.25);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E") center/contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E") center/contain no-repeat;
+  pointer-events: none;
+}
+#fxamp2-search {
+  width: 100%;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 10px;
+  color: rgba(255,255,255,0.80);
+  font-size: 0.79rem;
+  padding: 8px 12px 8px 32px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+#fxamp2-search:focus { border-color: rgba(108,143,245,0.45); }
+#fxamp2-search::placeholder { color: rgba(255,255,255,0.25); }
+
+/* ══════════════════════════════════════════════════════════
+   MODERATION STATUS BADGES (injected per row)
+   ══════════════════════════════════════════════════════════ */
+
+.fxamp2-mod-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* pending_validation */
+.fxamp2-mod-badge.badge-pending {
+  background: rgba(255,165,2,0.10);
+  border: 1px solid rgba(255,165,2,0.25);
+  color: #ffa502;
+}
+/* active */
+.fxamp2-mod-badge.badge-active {
+  background: rgba(32,201,151,0.10);
+  border: 1px solid rgba(32,201,151,0.25);
+  color: #20c997;
+}
+/* incomplete */
+.fxamp2-mod-badge.badge-incomplete {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.45);
+}
+/* claimed_pending */
+.fxamp2-mod-badge.badge-claimed-pending {
+  background: rgba(108,143,245,0.10);
+  border: 1px solid rgba(108,143,245,0.25);
+  color: #6c8ff5;
+}
+/* claimed_approved */
+.fxamp2-mod-badge.badge-claimed-approved {
+  background: rgba(108,143,245,0.10);
+  border: 1px solid rgba(108,143,245,0.25);
+  color: #6c8ff5;
+}
+/* suspended */
+.fxamp2-mod-badge.badge-suspended {
+  background: rgba(225,48,108,0.10);
+  border: 1px solid rgba(225,48,108,0.25);
+  color: #e1306c;
+}
+/* hidden */
+.fxamp2-mod-badge.badge-hidden {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.25);
+}
+
+/* ══════════════════════════════════════════════════════════
+   MODERATION ACTION BUTTONS (injected per row)
+   ══════════════════════════════════════════════════════════ */
+
+.fxamp2-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 11px;
+  border-radius: 8px;
+  font-size: 0.70rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: opacity 0.15s, transform 0.12s;
+  white-space: nowrap;
+}
+.fxamp2-action-btn:hover { opacity: 0.80; transform: translateY(-1px); }
+.fxamp2-action-btn:active { transform: scale(0.97); }
+
+.fxamp2-action-btn.btn-validate {
+  background: linear-gradient(135deg, rgba(32,201,151,0.18), rgba(32,201,151,0.10));
+  border-color: rgba(32,201,151,0.28);
+  color: #20c997;
+}
+.fxamp2-action-btn.btn-validate:hover {
+  background: linear-gradient(135deg, rgba(32,201,151,0.26), rgba(32,201,151,0.16));
+}
+
+.fxamp2-action-btn.btn-pending {
+  background: rgba(255,165,2,0.10);
+  border-color: rgba(255,165,2,0.25);
+  color: #ffa502;
+}
+
+.fxamp2-action-btn.btn-suspend {
+  background: rgba(225,48,108,0.08);
+  border-color: rgba(225,48,108,0.20);
+  color: #e1306c;
+}
+
+.fxamp2-action-btn.btn-approve-claim {
+  background: linear-gradient(135deg, rgba(108,143,245,0.18), rgba(108,143,245,0.10));
+  border-color: rgba(108,143,245,0.28);
+  color: #6c8ff5;
+}
+
+.fxamp2-action-btn.btn-wa {
+  background: rgba(37,211,102,0.08);
+  border-color: rgba(37,211,102,0.20);
+  color: #25d366;
+}
+
+.fxamp2-action-btn.btn-restore {
+  background: rgba(255,255,255,0.05);
+  border-color: rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.50);
+}
+
+/* Validated checkmark cell */
+.fxamp2-validated-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.fxamp2-validated-at {
+  font-size: 0.67rem;
+  opacity: 0.35;
+}
+
+/* Moderation actions wrap */
+.fxamp2-mod-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+/* Row visual states */
+#artisans-admin-tbody tr.row-suspended td { opacity: 0.55; }
+#artisans-admin-tbody tr.row-suspended td:first-child { opacity: 1; }
+#artisans-admin-tbody tr.row-hidden td { opacity: 0.35; }
+#artisans-admin-tbody tr.row-hidden td:first-child { opacity: 1; }
+
+/* ══════════════════════════════════════════════════════════
+   COMPLETENESS PROGRESS BAR (injected per row)
+   ══════════════════════════════════════════════════════════ */
+
+.fxamp2-completeness-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 90px;
+}
+.fxamp2-completeness-track {
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255,255,255,0.08);
+  overflow: hidden;
+}
+.fxamp2-completeness-fill {
+  height: 100%;
+  border-radius: 2px;
+  background: #20c997;
+  transition: width 0.4s ease;
+}
+.fxamp2-completeness-fill.low    { background: #e1306c; }
+.fxamp2-completeness-fill.medium { background: #ffa502; }
+.fxamp2-completeness-fill.high   { background: #20c997; }
+.fxamp2-completeness-pct {
+  font-size: 0.70rem;
+  font-weight: 700;
+}
+.fxamp2-completeness-pct.low    { color: #e1306c; }
+.fxamp2-completeness-pct.medium { color: #ffa502; }
+.fxamp2-completeness-pct.high   { color: #20c997; }
+
+/* ══════════════════════════════════════════════════════════
+   MODERATION STATUS column header tag
+   ══════════════════════════════════════════════════════════ */
+
+#fxamp2-mod-col-header {
+  color: rgba(255,255,255,0.55);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+/* ══════════════════════════════════════════════════════════
+   ARTISAN DASHBOARD VISIBILITY IMPACT
+   Reflected on dashboard-artisan.html via custom event
+   ══════════════════════════════════════════════════════════ */
+
+/* (Applied via JS — no static CSS rules needed for this) */
+
+/* ══════════════════════════════════════════════════════════
+   MOBILE CARD TRANSFORM (≤640px)
+   ══════════════════════════════════════════════════════════ */
+
+@media (max-width: 640px) {
+  .admin-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  #artisans-admin-table thead { display: none; }
+
+  #artisans-admin-tbody tr {
+    display: block;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 14px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+  }
+
+  #artisans-admin-tbody td {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 5px 0;
+    border: none;
+    font-size: 0.80rem;
+    max-width: none;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+  }
+
+  #artisans-admin-tbody td::before {
+    content: attr(data-label);
+    font-size: 0.67rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    opacity: 0.35;
+    white-space: nowrap;
+    min-width: 90px;
+    flex-shrink: 0;
+  }
+
+  #artisans-admin-tbody td[data-label=""]::before { display: none; }
+  #artisans-admin-tbody td[data-label=""] {
+    justify-content: flex-end;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    margin-top: 6px;
+    padding-top: 8px;
+    flex-wrap: wrap;
+  }
+
+  .fxamp2-action-btn {
+    font-size: 0.72rem;
+    padding: 7px 12px;
+    flex: 1;
+    justify-content: center;
+  }
+
+  .fxamp2-mod-actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+   HIDE OLD ARTISAN STATUS FILTER (replaced by fxamp2 pills)
+   ══════════════════════════════════════════════════════════ */
+
+#fxamp2-old-filters-hidden {
+  display: none !important;
+}
+
+/* ══════════════════════════════════════════════════════════
+   REDUCED MOTION
+   ══════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  .fxamp2-filter-pill,
+  .fxamp2-action-btn,
+  .fxamp2-completeness-fill { transition: none; }
+}

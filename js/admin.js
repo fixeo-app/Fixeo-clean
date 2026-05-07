@@ -1306,6 +1306,10 @@ function adminSection(section) {
   if (section === 'artisans' && typeof initArtisansAdmin === 'function') {
     setTimeout(initArtisansAdmin, 50);
   }
+  /* ── P2 : modération artisans (additive, safe no-op if not loaded) ── */
+  if (section === 'artisans' && typeof window._fxAmp2Refresh === 'function') {
+    setTimeout(window._fxAmp2Refresh, 300);
+  }
 }
 
 /* ── Extraire les commandes COD depuis ADMIN_RESERVATIONS ─── */
