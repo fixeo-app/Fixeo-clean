@@ -225,15 +225,32 @@
     'R\u00e9paration toiture':                   { from: 300, to: 800 },
   };
 
+  /* Normalize service name for lookup — handles straight vs curly apostrophe,
+     em dash vs hyphen, and smart quote variants */
+  function _normSvcName(s) {
+    return s
+      .replace(/\u2019/g, '\u0027')  /* curly apostrophe → straight ' */
+      .replace(/\u2018/g, '\u0027')  /* left single quote → straight ' */
+      .replace(/\u2014/g, '-')       /* em dash → hyphen */
+      .replace(/\u2013/g, '-')       /* en dash → hyphen */
+      .trim();
+  }
+
   /* Look up service price — try window.SERVICE_PRICING first, then fallback */
   function _getSvcPrice(svcName) {
+    if (!svcName) return null;
+    var norm = _normSvcName(svcName);
     var SP = window.SERVICE_PRICING || {};
+    /* Try exact match */
     if (SP[svcName]) return SP[svcName];
-    /* Try dash variant */
-    var dashName = svcName.replace(/\u2014/g, '-').replace(/\u2013/g, '-');
-    if (SP[dashName]) return SP[dashName];
-    /* Fallback map */
+    /* Try normalized match against SERVICE_PRICING */
+    var spKey = Object.keys(SP).find(function (k) { return _normSvcName(k) === norm; });
+    if (spKey) return SP[spKey];
+    /* Try fallback map — exact */
     if (SVC_PRICING_FB[svcName]) return SVC_PRICING_FB[svcName];
+    /* Try fallback map — normalized */
+    var fbKey = Object.keys(SVC_PRICING_FB).find(function (k) { return _normSvcName(k) === norm; });
+    if (fbKey) return SVC_PRICING_FB[fbKey];
     return null;
   }
 
