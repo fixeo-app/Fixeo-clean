@@ -390,8 +390,14 @@
   /* ── Badge chips injection ───────────────────────────────────────── */
 
   function injectBadgeRow(form) {
-    /* The hint div is a sibling of the submit btn, inside the form */
-    var hint = form.querySelector('.artisan-onboarding-hint');
+    /* Target the static HTML hint right after #artisan-submit-btn */
+    var submitBtn = $id('artisan-submit-btn');
+    var hint = submitBtn ? submitBtn.nextElementSibling : null;
+    if (!hint || !hint.classList.contains('artisan-onboarding-hint')) {
+      /* Fallback: last .artisan-onboarding-hint in form */
+      var all = form.querySelectorAll('.artisan-onboarding-hint');
+      hint = all.length ? all[all.length - 1] : null;
+    }
     if (!hint || hint.querySelector('.fxao3-badge-row')) return;
 
     /* Replace old hint text with badge row + subtle text */
@@ -465,7 +471,7 @@
     var form = $id('artisan-onboarding-form');
     if (!form) return;
 
-    /* Wait for artisan-onboarding.js to finish populating selects */
+    /* Wait for artisan-onboarding.js to finish populating selects (async loadConfig) */
     window.setTimeout(function () {
       injectModeSelector(form);
       injectMetierGrid(form);
@@ -501,6 +507,14 @@
           cityGrid.classList.add('fxao3-city-has-sel');
         }
       }
+
+      /* Secondary CTA text fix — after artisan-onboarding.js async init completes */
+      window.setTimeout(function () {
+        var cta = $id('artisan-submit-btn');
+        var cfg = MODES[_currentMode];
+        if (cta && cfg) cta.textContent = cfg.cta;
+      }, 600);
+
     }, 120);
   }
 
