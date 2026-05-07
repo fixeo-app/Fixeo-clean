@@ -5,13 +5,8 @@
 
 (function () {
 
-/* ── SAMPLE PAYMENT HISTORY ── */
-const SAMPLE_HISTORY = [
-  { ref: 'TXN-A8F4B2', plan: 'Pro 🏅', method: 'Stripe',  amount: 99,  date: '15/03/2026', status: 'success' },
-  { ref: 'TXN-C3D9E1', plan: 'Pro 🏅', method: 'PayPal',  amount: 99,  date: '15/02/2026', status: 'success' },
-  { ref: 'TXN-F7G2H8', plan: 'Pro 🏅', method: 'CMI',     amount: 99,  date: '15/01/2026', status: 'success' },
-  { ref: 'TXN-J1K5L3', plan: 'Free',   method: '—',       amount: 0,   date: '01/01/2024', status: 'free'    }
-];
+/* ── SAMPLE PAYMENT HISTORY — Phase 1: cleared (was fake demo data) ── */
+const SAMPLE_HISTORY = [];
 
 /* ── Init: load payment history ── */
 function initSubscriptionModule() {
@@ -20,11 +15,16 @@ function initSubscriptionModule() {
 }
 
 /* ── Current Plan Badge in Sidebar ── */
+/* Phase 1: default to 'free' — 'pro' only if real payment history exists */
 function updateCurrentPlanBadge() {
-  const stored = localStorage.getItem('fixeo_current_plan') || 'pro';
-  const labels = { free: 'Free', pro: 'Pro 🏅', premium: 'Premium 👑' };
+  let stored = localStorage.getItem('fixeo_current_plan') || 'free';
+  try {
+    const payHistory = JSON.parse(localStorage.getItem('fixeo_payment_history') || '[]');
+    if (!payHistory.length && (stored === 'pro' || stored === 'premium')) stored = 'free';
+  } catch(e) {}
+  const labels = { free: 'Gratuit', pro: 'Pro', premium: 'Premium' };
   const badge = document.getElementById('current-plan-badge');
-  if (badge) badge.textContent = labels[stored] || 'Pro';
+  if (badge) badge.textContent = labels[stored] || 'Gratuit';
 }
 
 /* ── Payment History Table ── */
@@ -32,9 +32,9 @@ function renderPaymentHistory() {
   const tbody = document.getElementById('artisan-payment-history-body');
   if (!tbody) return;
 
-  // Merge sample + localStorage
+  // Real payment history only (SAMPLE_HISTORY is empty — Phase 1 trust reset)
   const stored = JSON.parse(localStorage.getItem('fixeo_payment_history') || '[]');
-  const all = [...stored, ...SAMPLE_HISTORY].slice(0, 20);
+  const all = [...stored].slice(0, 20);
 
   tbody.innerHTML = all.map(p => `
     <tr style="border-bottom:1px solid rgba(255,255,255,.05)">

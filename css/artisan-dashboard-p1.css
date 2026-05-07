@@ -1,0 +1,546 @@
+/* ============================================================
+   FIXEO — ARTISAN DASHBOARD PHASE 1 — TRUST RESET
+   Additive override layer. Hides fake blocks, surfaces
+   honest empty states and activation guidance.
+   Namespace: .fxadp1-*
+   ============================================================ */
+
+/* ── HIDE FAKE ANALYTICS BLOCKS ────────────────────────── */
+/* Revenue chart section + chart-revenue, chart-jobs canvases */
+.business-secondary-grid,
+#chart-revenue,
+#chart-jobs,
+#chart-revenue-full {
+  display: none !important;
+}
+
+/* "Missions récentes" fake table block */
+.jobs-table,
+.jobs-table-body {
+  display: none !important;
+}
+
+/* The whole "chart-card" wrapping the missions table in overview
+   (identified by its h3 containing "Missions récentes") */
+.chart-card:has(.jobs-table) {
+  display: none !important;
+}
+
+/* Stats bar (92% / 4.9 / 32) — fully fake */
+.artisan-stats {
+  display: none !important;
+}
+
+/* "Pilotage du jour" conversion aside — fake counts */
+.conversion-card {
+  display: none !important;
+}
+
+/* Gamification secondary block in overview (leaderboard preview) */
+.gamification-secondary {
+  display: none !important;
+}
+
+/* ── HIDE FAKE SUBSCRIPTION PLAN CARD ───────────────────── */
+/* We replace via JS; hide the old hardcoded "Pro Actif" card */
+#fxadp1-fake-plan-card {
+  display: none !important;
+}
+
+/* ── CLEAN UP HEADER WELCOME TEXT ───────────────────────── */
+/* Keep the greeting, just suppress the fake count paragraph */
+.dashboard-top p:has(#new-requests-count) {
+  display: none !important;
+}
+/* Fallback for older Chrome without :has */
+#new-requests-count {
+  display: none !important;
+}
+
+/* ── MOBILE SETTINGS GRID FIX ───────────────────────────── */
+@media (max-width: 768px) {
+  /* Override the inline style="grid-template-columns:1fr 1fr" */
+  #section-settings > div {
+    grid-template-columns: 1fr !important;
+  }
+  /* Missions table overflow fix */
+  .jobs-table-wrapper,
+  #section-missions table,
+  #section-earnings table {
+    overflow-x: auto !important;
+    display: block !important;
+    -webkit-overflow-scrolling: touch;
+  }
+  /* Wrap any overflow table in section-missions and section-earnings */
+  #section-missions .chart-card,
+  #section-earnings .chart-card {
+    overflow-x: auto;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+   ACTIVATION COCKPIT
+   ══════════════════════════════════════════════════════════ */
+
+/* ── STATUS BANNER ──────────────────────────────────────── */
+.fxadp1-status-banner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 22px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.07), rgba(255,255,255,0.03));
+  border: 1px solid rgba(255,255,255,0.1);
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.fxadp1-status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.fxadp1-status-dot.verif  { background: #ffa502; box-shadow: 0 0 8px rgba(255,165,2,0.6); }
+.fxadp1-status-dot.active { background: #20c997; box-shadow: 0 0 8px rgba(32,201,151,0.6); }
+.fxadp1-status-dot.incomplete { background: #E1306C; box-shadow: 0 0 8px rgba(225,48,108,0.5); }
+.fxadp1-status-body {
+  flex: 1;
+  min-width: 0;
+}
+.fxadp1-status-label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  opacity: 0.6;
+  margin-bottom: 3px;
+}
+.fxadp1-status-text {
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+.fxadp1-status-meta {
+  font-size: 0.8rem;
+  opacity: 0.6;
+  margin-top: 3px;
+}
+.fxadp1-status-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 18px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.18);
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+  white-space: nowrap;
+  text-decoration: none;
+}
+.fxadp1-status-cta:hover {
+  background: rgba(225,48,108,0.15);
+  border-color: rgba(225,48,108,0.35);
+}
+
+/* ── PROFILE CHECKLIST CARD ─────────────────────────────── */
+.fxadp1-checklist-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 20px;
+  padding: 22px 24px;
+  margin-bottom: 20px;
+}
+.fxadp1-checklist-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+.fxadp1-checklist-title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0;
+}
+.fxadp1-progress-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.12);
+  white-space: nowrap;
+}
+.fxadp1-progress-bar-wrap {
+  height: 5px;
+  border-radius: 99px;
+  background: rgba(255,255,255,0.08);
+  overflow: hidden;
+  margin-bottom: 18px;
+}
+.fxadp1-progress-bar-fill {
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, #E1306C, #833AB4);
+  transition: width 0.6s cubic-bezier(0.34,1.56,0.64,1);
+}
+.fxadp1-checklist-items {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.fxadp1-check-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  transition: background 0.2s;
+}
+.fxadp1-check-row.done {
+  background: rgba(32,201,151,0.06);
+  border-color: rgba(32,201,151,0.15);
+}
+.fxadp1-check-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  flex-shrink: 0;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+}
+.fxadp1-check-row.done .fxadp1-check-icon {
+  background: rgba(32,201,151,0.15);
+  border-color: rgba(32,201,151,0.3);
+  color: #20c997;
+}
+.fxadp1-check-label {
+  flex: 1;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+.fxadp1-check-row.done .fxadp1-check-label {
+  opacity: 0.7;
+}
+.fxadp1-check-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  background: rgba(225,48,108,0.12);
+  border: 1px solid rgba(225,48,108,0.25);
+  color: #E1306C;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+.fxadp1-check-action:hover {
+  background: rgba(225,48,108,0.22);
+}
+
+/* ── HOW IT WORKS EXPLAINER ─────────────────────────────── */
+.fxadp1-howto-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 18px;
+  padding: 20px 22px;
+  margin-bottom: 20px;
+}
+.fxadp1-howto-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  opacity: 0.55;
+  margin-bottom: 14px;
+}
+.fxadp1-howto-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.fxadp1-howto-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+.fxadp1-howto-num {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(225,48,108,0.15);
+  border: 1px solid rgba(225,48,108,0.3);
+  color: #E1306C;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 800;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* ── EMPTY REQUEST STATE ─────────────────────────────────── */
+.fxadp1-empty-requests {
+  padding: 36px 24px;
+  text-align: center;
+  background: rgba(255,255,255,0.03);
+  border: 1px dashed rgba(255,255,255,0.1);
+  border-radius: 18px;
+  margin-bottom: 20px;
+}
+.fxadp1-empty-icon {
+  font-size: 2.4rem;
+  margin-bottom: 12px;
+  opacity: 0.6;
+}
+.fxadp1-empty-title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.fxadp1-empty-hints {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.fxadp1-empty-hints li {
+  font-size: 0.84rem;
+  opacity: 0.65;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+/* ── REAL REQUESTS CONTAINER ─────────────────────────────── */
+/* When real requests exist, shown; hidden until then */
+.fxadp1-real-requests {
+  display: none;
+}
+.fxadp1-real-requests.has-data {
+  display: block;
+}
+
+/* ── AVAILABILITY BLOCK ──────────────────────────────────── */
+.fxadp1-avail-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 18px;
+  padding: 20px 22px;
+  margin-bottom: 20px;
+}
+.fxadp1-avail-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  opacity: 0.55;
+  margin-bottom: 14px;
+}
+.fxadp1-avail-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  font-size: 0.88rem;
+}
+.fxadp1-avail-row:last-child { border-bottom: none; }
+.fxadp1-avail-label { font-weight: 600; }
+.fxadp1-avail-value {
+  font-size: 0.82rem;
+  opacity: 0.65;
+  text-align: right;
+}
+.fxadp1-avail-value.ok {
+  color: #20c997;
+  opacity: 1;
+}
+.fxadp1-avail-value.warn {
+  color: #ffa502;
+  opacity: 1;
+}
+
+/* ── EARNINGS — REAL ACTIVITY SECTION ──────────────────── */
+.fxadp1-activity-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 14px;
+  margin-bottom: 20px;
+}
+.fxadp1-activity-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  padding: 18px;
+  text-align: center;
+}
+.fxadp1-activity-value {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-bottom: 5px;
+}
+.fxadp1-activity-label {
+  font-size: 0.8rem;
+  opacity: 0.6;
+}
+
+/* ── EARNINGS EMPTY STATE ───────────────────────────────── */
+.fxadp1-earnings-empty {
+  padding: 40px 24px;
+  text-align: center;
+  background: rgba(255,255,255,0.03);
+  border: 1px dashed rgba(255,255,255,0.09);
+  border-radius: 18px;
+}
+.fxadp1-earnings-empty-icon {
+  font-size: 2.2rem;
+  margin-bottom: 12px;
+  opacity: 0.55;
+}
+.fxadp1-earnings-empty-title {
+  font-size: 0.98rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.fxadp1-earnings-empty-sub {
+  font-size: 0.84rem;
+  opacity: 0.55;
+  line-height: 1.5;
+}
+
+/* ── PORTFOLIO EMPTY STATE ──────────────────────────────── */
+.fxadp1-portfolio-empty {
+  grid-column: 1 / -1;
+  padding: 40px 24px;
+  text-align: center;
+  background: rgba(255,255,255,0.03);
+  border: 2px dashed rgba(255,255,255,0.1);
+  border-radius: 18px;
+}
+
+/* ── SUBSCRIPTION HONEST STATE ──────────────────────────── */
+.fxadp1-plan-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 20px;
+  padding: 22px 24px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.fxadp1-plan-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.07);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+.fxadp1-plan-body { flex: 1; min-width: 0; }
+.fxadp1-plan-name {
+  font-size: 1.1rem;
+  font-weight: 800;
+  margin-bottom: 3px;
+}
+.fxadp1-plan-sub {
+  font-size: 0.82rem;
+  opacity: 0.55;
+}
+
+/* ── PAYMENT HISTORY EMPTY STATE ────────────────────────── */
+.fxadp1-pay-empty {
+  padding: 28px 20px;
+  text-align: center;
+  font-size: 0.84rem;
+  opacity: 0.5;
+}
+
+/* ── CHAT EMPTY STATE ──────────────────────────────────── */
+.fxadp1-chat-empty {
+  padding: 20px;
+  text-align: center;
+  font-size: 0.82rem;
+  opacity: 0.5;
+  line-height: 1.5;
+}
+
+/* ── PROGRESSION — REAL ONLY TASKS ─────────────────────── */
+.fxadp1-real-xp-note {
+  font-size: 0.8rem;
+  opacity: 0.55;
+  margin-bottom: 14px;
+  line-height: 1.5;
+}
+
+/* ── SIDEBAR PLAN BADGE FIX ─────────────────────────────── */
+/* Will be updated by JS; hide old hardcoded "Pro" */
+#current-plan-badge {
+  /* value set by JS; no hide here */
+}
+
+/* ── SAVE BUTTON DISABLED STATE ─────────────────────────── */
+#settings-artisan-save[disabled] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+#settings-artisan-save[disabled]:hover {
+  transform: none !important;
+}
+
+/* ── MOBILE OVERRIDES ───────────────────────────────────── */
+@media (max-width: 768px) {
+  .fxadp1-status-banner {
+    gap: 10px;
+    padding: 14px 16px;
+  }
+  .fxadp1-checklist-card {
+    padding: 16px;
+  }
+  .fxadp1-activity-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .fxadp1-plan-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+@media (max-width: 390px) {
+  .fxadp1-activity-grid {
+    grid-template-columns: 1fr;
+  }
+  .fxadp1-check-row {
+    padding: 10px 12px;
+  }
+}
