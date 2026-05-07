@@ -192,44 +192,136 @@
     _watchEstimationUpdates(m, block);
   }
 
-  /* Watch [data-res-svc-marche] and [data-res-svc-rec] for updates */
+  /* SERVICE_PRICING fallback — mirrors reservation.js SERVICE_PRICING map.
+     Used when FixeoPricing is not loaded (artisan-profile.html). */
+  var SVC_PRICING_FB = {
+    /* Plomberie */
+    'Fuite d\u2019eau \u2014 r\u00e9paration':  { from: 150, to: 300 },
+    'Urgence plomberie':                         { from: 200, to: 400 },
+    'Installation sanitaire':                    { from: 250, to: 600 },
+    'R\u00e9paration chauffe-eau':               { from: 200, to: 500 },
+    'Salle de bain compl\u00e8te':               { from: 1500, to: 5000 },
+    /* Electricite */
+    'D\u00e9pannage \u00e9lectrique':             { from: 150, to: 350 },
+    'Installation tableau':                      { from: 300, to: 800 },
+    'Prise / interrupteur':                      { from: 80, to: 200 },
+    /* Peinture */
+    'Peinture int\u00e9rieure':                  { from: 20, to: 60 },
+    'Peinture ext\u00e9rieure':                  { from: 25, to: 80 },
+    /* Nettoyage */
+    'Nettoyage domicile':                        { from: 150, to: 400 },
+    /* Climatisation */
+    'Installation climatiseur':                  { from: 400, to: 900 },
+    'Maintenance / nettoyage clim':              { from: 200, to: 500 },
+    /* Menuiserie */
+    'R\u00e9paration porte / fen\u00eatre':      { from: 150, to: 400 },
+    /* Ma\u00e7onnerie */
+    'R\u00e9paration mur / plafond':             { from: 200, to: 600 },
+    /* Serrurerie */
+    'Ouverture de porte':                        { from: 150, to: 300 },
+    /* Carrelage */
+    'Pose carrelage':                            { from: 80, to: 180 },
+    /* Toiture */
+    'R\u00e9paration toiture':                   { from: 300, to: 800 },
+  };
+
+  /* Look up service price — try window.SERVICE_PRICING first, then fallback */
+  function _getSvcPrice(svcName) {
+    var SP = window.SERVICE_PRICING || {};
+    if (SP[svcName]) return SP[svcName];
+    /* Try dash variant */
+    var dashName = svcName.replace(/\u2014/g, '-').replace(/\u2013/g, '-');
+    if (SP[dashName]) return SP[dashName];
+    /* Fallback map */
+    if (SVC_PRICING_FB[svcName]) return SVC_PRICING_FB[svcName];
+    return null;
+  }
+
+  /* Update the V2 estimation block with a given service name */
+  function _updateEstimationBlock(block, svcName) {
+    if (!block) return;
+    var priceRow  = qs('#fxrv2-price-row', block);
+    var priceRangeEl = qs('#fxrv2-price-range', block);
+    var priceRecEl   = qs('#fxrv2-price-rec', block);
+    var subtitle     = qs('.fxrv2-est-subtitle', block);
+
+    var sp = svcName ? _getSvcPrice(svcName) : null;
+    if (sp && sp.from && sp.to && priceRangeEl && priceRow) {
+      var rec = Math.round((sp.from + sp.to) / 2);
+      priceRangeEl.textContent = sp.from + '\u2013' + sp.to + '\u00a0MAD';
+      priceRow.style.display = '';
+      if (subtitle) subtitle.textContent = 'Bas\u00e9e sur les prix du march\u00e9 local';
+      if (priceRecEl) {
+        priceRecEl.innerHTML =
+          'Prix recommand\u00e9 Fixeo\u00a0: <strong style="color:rgba(32,201,151,0.85)">~' +
+          rec + '\u00a0MAD</strong>';
+      }
+    } else {
+      if (priceRow) priceRow.style.display = 'none';
+      if (subtitle) subtitle.textContent = 'S\u00e9lectionnez un service pour voir le prix';
+      if (priceRecEl) priceRecEl.innerHTML = 'Bas\u00e9e sur les prix observ\u00e9s dans votre ville';
+    }
+  }
+
+  /* Watch [data-res-svc-marche] for updates (when FixeoPricing IS loaded),
+     AND hook service pill clicks directly for immediate response */
   function _watchEstimationUpdates(m, block) {
+    /* Strategy 1: MutationObserver on existing hint elements (results.html, index.html) */
     var svcMarcheEl = qs('[data-res-svc-marche]', m);
     var svcRecEl    = qs('[data-res-svc-rec]', m);
-    if (!svcMarcheEl || !svcRecEl) return;
 
-    var priceRow  = qs('#fxrv2-price-row', block);
-    var priceRange = qs('#fxrv2-price-range', block);
-    var priceRec  = qs('#fxrv2-price-rec', block);
-    var subtitle  = qs('.fxrv2-est-subtitle', block);
+    if (svcMarcheEl && svcRecEl) {
+      var updateFn = function () {
+        var marcheTxt = svcMarcheEl.textContent || '';
+        var rangeMatch = marcheTxt.match(/(\d+[\u2013\-]\d+) MAD/);
+        if (rangeMatch) {
+          var priceRangeEl = qs('#fxrv2-price-range', block);
+          var priceRow = qs('#fxrv2-price-row', block);
+          if (priceRangeEl) priceRangeEl.textContent = rangeMatch[1] + '\u00a0MAD';
+          if (priceRow) priceRow.style.display = '';
+          var subtitle = qs('.fxrv2-est-subtitle', block);
+          if (subtitle) subtitle.textContent = 'Bas\u00e9e sur les prix du march\u00e9 local';
+        }
+        var recMatch = (svcRecEl.textContent || '').match(/~(\d+)\u00a0MAD/);
+        var priceRecEl = qs('#fxrv2-price-rec', block);
+        if (recMatch && priceRecEl) {
+          priceRecEl.innerHTML =
+            'Prix recommand\u00e9 Fixeo\u00a0: <strong style="color:rgba(32,201,151,0.85)">~' +
+            recMatch[1] + '\u00a0MAD</strong>';
+        }
+      };
+      var obs = new MutationObserver(updateFn);
+      obs.observe(svcMarcheEl, { childList: true, characterData: true, subtree: true });
+      obs.observe(svcRecEl,    { childList: true, characterData: true, subtree: true });
+    }
 
-    var updateFn = function () {
-      var marcheTxt = svcMarcheEl.textContent || '';
-      var recHTML   = svcRecEl.innerHTML || '';
+    /* Strategy 2: Wrap _onServiceChange for direct update (all pages) */
+    if (window.FixeoReservation && !window.FixeoReservation._rv2SvcHooked) {
+      window.FixeoReservation._rv2SvcHooked = true;
+      var _origSvc = window.FixeoReservation._onServiceChange;
+      window.FixeoReservation._onServiceChange = function (val) {
+        _origSvc.apply(this, arguments);
+        /* Find the current estimation block and update */
+        var mo = document.getElementById('fixeo-reservation-modal');
+        var blk = mo ? qs('.fxrv2-estimation', mo) : null;
+        if (blk) _updateEstimationBlock(blk, val);
+      };
+    }
 
-      /* Extract range like "150\u20133000 MAD" */
-      var rangeMatch = marcheTxt.match(/(\d+[\u2013\-]\d+) MAD/);
-      if (rangeMatch && priceRow && priceRange) {
-        priceRange.textContent = rangeMatch[1] + '\u00a0MAD';
-        priceRow.style.display = '';
-        if (subtitle) subtitle.textContent = 'Bas\u00e9e sur les prix du march\u00e9 local';
-      }
-
-      /* Extract recommended price */
-      var recMatch = (svcRecEl.textContent || '').match(/~(\d+)\u00a0MAD/);
-      if (recMatch && priceRec) {
-        priceRec.innerHTML =
-          'Prix recommand\u00e9 Fixeo\u00a0: <strong style="color:rgba(32,201,151,0.85)">~' +
-          recMatch[1] + '\u00a0MAD</strong>';
-      } else if (priceRec && !recMatch) {
-        priceRec.innerHTML = 'Bas\u00e9e sur les prix observ\u00e9s dans votre ville';
-      }
-    };
-
-    /* MutationObserver on both elements */
-    var obs = new MutationObserver(updateFn);
-    obs.observe(svcMarcheEl, { childList: true, characterData: true, subtree: true });
-    obs.observe(svcRecEl,    { childList: true, characterData: true, subtree: true });
+    /* Strategy 3: Delegate pill click listener for immediate feel */
+    var pillGrid = qs('#res-svc-pills', m);
+    if (pillGrid) {
+      pillGrid.addEventListener('click', function (e) {
+        var pill = e.target.closest('[data-svc]');
+        if (!pill) return;
+        /* Update estimation block immediately on click */
+        requestAnimationFrame(function () {
+          var mo = document.getElementById('fixeo-reservation-modal');
+          var blk = mo ? qs('.fxrv2-estimation', mo) : null;
+          if (blk) _updateEstimationBlock(blk, pill.getAttribute('data-svc'));
+        });
+      });
+    }
   }
 
   /* ── INJECT TRUST PILLS ──────────────────────────────────── */
