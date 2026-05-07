@@ -14,7 +14,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/variables.css">
   <link rel="stylesheet" href="css/auth-global.css"/>
-  <link rel="stylesheet" href="css/auth-premium.css?v=ap10">
+  <link rel="stylesheet" href="css/auth-premium.css?v=ap11">
 </head>
 <body data-theme="dark">
 
@@ -38,6 +38,44 @@
 
       <h1 class="auth-heading" id="auth-heading">Bon retour &#128075;</h1>
       <p class="auth-subheading" id="auth-sub">Connectez-vous &agrave; votre espace Fixeo.</p>
+
+      <!--
+        HERO EMOTIONAL ENTRY ZONE
+        Visible only on signup tab — hidden on login.
+        Crossfades between client/artisan mode.
+        Zero layout impact (absolute within relative container,
+        collapsed via max-height + opacity when hidden).
+      -->
+      <div class="ap-hero-zone" id="ap-hero-zone" aria-hidden="true">
+        <!-- Client hero (default) -->
+        <div class="ap-hero-panel" id="ap-hero-client">
+          <div class="ap-hero-icon" aria-hidden="true">
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="14" cy="10" r="5.5" stroke="currentColor" stroke-width="1.8"/>
+              <path d="M4 24c0-5.523 4.477-10 10-10s10 4.477 10 10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="ap-hero-copy">
+            <p class="ap-hero-title">Trouvez rapidement un artisan fiable</p>
+            <p class="ap-hero-sub">Plomberie, &eacute;lectricit&eacute;, climatisation et plus.</p>
+          </div>
+        </div>
+        <!-- Artisan hero -->
+        <div class="ap-hero-panel ap-hero-panel-hidden" id="ap-hero-artisan">
+          <div class="ap-hero-icon ap-hero-icon-artisan" aria-hidden="true">
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M5 23l4-4 2 2-4 4-2-2z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M11 19l2-2 6-6-4-4-6 6-2 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M19 7l2-2 2 2-2 2-2-2z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="22" cy="6" r="3" fill="rgba(225,48,108,0.35)" stroke="rgba(225,48,108,0.7)" stroke-width="1.2"/>
+            </svg>
+          </div>
+          <div class="ap-hero-copy">
+            <p class="ap-hero-title">D&eacute;veloppez votre activit&eacute; avec Fixeo</p>
+            <p class="ap-hero-sub">Recevez des demandes de clients dans votre ville.</p>
+          </div>
+        </div>
+      </div>
 
       <!-- Tabs -->
       <div class="ap-tabs" role="tablist">
@@ -148,16 +186,28 @@
             <div class="ap-role-card selected" id="card-client"
                  role="radio" aria-checked="true" tabindex="0"
                  onclick="selectType('client')" onkeydown="if(event.key==='Enter')selectType('client')">
-              <div class="ap-role-icon">&#128100;</div>
+              <div class="ap-role-icon">
+                <svg class="ap-role-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.8"/>
+                  <path d="M4 20c0-4.418 3.582-8 8-8s8 3.582 8 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+              </div>
               <div class="ap-role-name">Client</div>
-              <div class="ap-role-desc">Je cherche un artisan</div>
+              <div class="ap-role-desc">Trouvez rapidement un artisan</div>
             </div>
             <div class="ap-role-card" id="card-artisan"
                  role="radio" aria-checked="false" tabindex="0"
                  onclick="selectType('artisan')" onkeydown="if(event.key==='Enter')selectType('artisan')">
-              <div class="ap-role-icon">&#128295;</div>
+              <div class="ap-role-icon">
+                <svg class="ap-role-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M3 21l4-4 2 2-4 4-2-2z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M9 17l2-2 5-5-3-3-5 5-2 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M16 6l2-2 2 2-2 2-2-2z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                  <circle cx="19" cy="5" r="2.5" fill="rgba(225,48,108,0.3)" stroke="rgba(225,48,108,0.8)" stroke-width="1.2"/>
+                </svg>
+              </div>
               <div class="ap-role-name">Artisan</div>
-              <div class="ap-role-desc">Je propose mes services</div>
+              <div class="ap-role-desc">D&eacute;veloppez votre activit&eacute;</div>
             </div>
           </div>
 
@@ -1570,6 +1620,102 @@ function openLegal(type) {
   document.getElementById('legal-modal-body').innerHTML    = contents[type] || '';
   document.getElementById('legal-modal').classList.add('open');
 }
+
+/* ═══════════════════════════════════════════════════════════
+   AUTH V9 — EMOTIONAL ENTRY SYSTEM
+   Hero crossfade + ambient card pulse.
+   ZERO backend changes. CSS-driven where possible.
+   ═══════════════════════════════════════════════════════════ */
+
+// ── Hero zone visibility ────────────────────────────────────
+// Show hero on signup tab, hide on login.
+// Tab hooks already exist — we piggyback on the wrapped switchTab.
+(function() {
+  var _prevHeroSwitchTab = window.switchTab;
+  window.switchTab = function(tab) {
+    _prevHeroSwitchTab(tab);
+    var hz = document.getElementById('ap-hero-zone');
+    if (!hz) return;
+    if (tab === 'signup') {
+      hz.classList.add('ap-hero-visible');
+      hz.removeAttribute('aria-hidden');
+    } else {
+      hz.classList.remove('ap-hero-visible');
+      hz.setAttribute('aria-hidden', 'true');
+    }
+  };
+
+  // Show hero immediately if signup is pre-selected (hash/param)
+  var hasSignup = window.location.hash === '#signup' ||
+    (new URLSearchParams(window.location.search).get('role') === 'artisan');
+  if (hasSignup) {
+    document.addEventListener('DOMContentLoaded', function() {
+      var hz = document.getElementById('ap-hero-zone');
+      if (hz) { hz.classList.add('ap-hero-visible'); hz.removeAttribute('aria-hidden'); }
+    });
+  }
+})();
+
+// ── Hero crossfade: client ↔ artisan ───────────────────────
+// Triggered by the existing selectType wrapper — no new hooks.
+(function() {
+  var _prevHeroSelectType = window.selectType;
+  window.selectType = function(type) {
+    _prevHeroSelectType(type);
+    var client  = document.getElementById('ap-hero-client');
+    var artisan = document.getElementById('ap-hero-artisan');
+    var box     = document.getElementById('ap-hero-zone');
+    if (!client || !artisan) return;
+    if (type === 'artisan') {
+      client.classList.add('ap-hero-panel-hidden');
+      artisan.classList.remove('ap-hero-panel-hidden');
+      if (box) box.setAttribute('data-role', 'artisan');
+    } else {
+      artisan.classList.add('ap-hero-panel-hidden');
+      client.classList.remove('ap-hero-panel-hidden');
+      if (box) box.removeAttribute('data-role');
+    }
+    // Ambient card pulse on role change
+    _apAmbientPulse();
+  };
+})();
+
+// ── Ambient card depth pulse ────────────────────────────────
+// Ultra-subtle opacity breath on auth-box during transitions.
+// GPU-safe: only opacity, 200ms.
+function _apAmbientPulse() {
+  var box = document.querySelector('.auth-box');
+  if (!box || box.classList.contains('ap-pulsing')) return;
+  box.classList.add('ap-pulsing');
+  setTimeout(function() { box.classList.remove('ap-pulsing'); }, 280);
+}
+
+// ── Ambient pulse on step transitions ──────────────────────
+// Piggyback on renderSignupStep (already defined above).
+(function() {
+  var _prevRender = window.renderSignupStep || renderSignupStep;
+  // renderSignupStep is defined as a regular function (not window.*),
+  // so we override via a named function that calls the original then pulses.
+  var _origRenderSignupStep = renderSignupStep;
+  window.renderSignupStep = function(step, dir) {
+    _origRenderSignupStep(step, dir);
+    _apAmbientPulse();
+  };
+})();
+
+// ── Ambient pulse on specialty / city selection ─────────────
+(function() {
+  var _origSpecialty = window.selectSpecialty || selectSpecialty;
+  window.selectSpecialty = function(el) {
+    _origSpecialty(el);
+    _apAmbientPulse();
+  };
+  var _origCity = window.selectCity || selectCity;
+  window.selectCity = function(el) {
+    _origCity(el);
+    _apAmbientPulse();
+  };
+})();
 </script>
 
 <script src="js/fixeo_v5_fixes.js"></script>

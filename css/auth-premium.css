@@ -1384,3 +1384,464 @@ html, body { height: 100%; }
   .ap-scard { min-height: 58px; }
   .ap-scard-icon { width: 22px; height: 22px; }
 }
+
+/* ═══════════════════════════════════════════════════════════
+   AUTH V9 — EMOTIONAL PREMIUM ENTRY SYSTEM
+   8 phases: hero zone, ambient depth, role cards, iconography,
+   conversion psychology, motion system, mobile premium, trust.
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── PHASE 1 — HERO EMOTIONAL ENTRY ZONE ─────────────────── */
+
+.ap-hero-zone {
+  /* Collapsed by default — shown on signup tab only */
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  /* No layout reflow — height transitions smoothly */
+  transition:
+    max-height 0.28s cubic-bezier(0.22,1,0.36,1),
+    opacity    0.22s ease;
+  margin-bottom: 0;
+}
+
+.ap-hero-zone.ap-hero-visible {
+  max-height: 90px;
+  opacity: 1;
+  pointer-events: auto;
+  margin-bottom: 14px;
+}
+
+.ap-hero-panel {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background:
+    radial-gradient(ellipse 80% 100% at 10% 50%, rgba(225,48,108,0.07) 0%, transparent 60%),
+    rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 12px;
+  /* Subtle top glow behind the whole row */
+  box-shadow: 0 -1px 0 0 rgba(225,48,108,0.08) inset;
+  transition: opacity 0.22s ease;
+  position: absolute;
+  width: 100%;
+  left: 0;
+  top: 0;
+}
+
+.ap-hero-zone {
+  position: relative;
+  /* give the absolute panels a real height container */
+  min-height: 0;
+}
+.ap-hero-zone.ap-hero-visible {
+  min-height: 62px;
+}
+
+.ap-hero-panel-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ap-hero-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: rgba(255,255,255,0.75);
+  /* Subtle pink glow on client icon */
+  box-shadow: 0 2px 10px rgba(225,48,108,0.08);
+}
+.ap-hero-icon-artisan {
+  color: rgba(225,48,108,0.85);
+  background: rgba(225,48,108,0.07);
+  border-color: rgba(225,48,108,0.18);
+}
+
+.ap-hero-copy {
+  min-width: 0;
+}
+.ap-hero-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.92);
+  margin: 0 0 2px;
+  line-height: 1.3;
+  /* Subtle text glow */
+  text-shadow: 0 0 20px rgba(255,255,255,0.06);
+}
+.ap-hero-sub {
+  font-size: 0.69rem;
+  color: rgba(255,255,255,0.4);
+  margin: 0;
+  line-height: 1.3;
+}
+
+/* Hero accent when artisan role active */
+.ap-hero-zone[data-role="artisan"] .ap-hero-panel:not(.ap-hero-panel-hidden) {
+  background:
+    radial-gradient(ellipse 80% 100% at 10% 50%, rgba(225,48,108,0.10) 0%, transparent 60%),
+    rgba(225,48,108,0.04);
+  border-color: rgba(225,48,108,0.14);
+}
+
+/* ── PHASE 2 — AMBIENT LIGHT + DEPTH SYSTEM ──────────────── */
+
+/* Ambient radial glow BEHIND the auth card (on auth-shell) */
+.auth-shell::before {
+  content: '';
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -54%);
+  width: 520px;
+  height: 420px;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(225,48,108,0.055) 0%,
+    rgba(80,40,120,0.04) 35%,
+    transparent 70%
+  );
+  pointer-events: none;
+  z-index: 0;
+  /* Very slow breathing */
+  animation: ap-ambient-breathe 6s ease-in-out infinite;
+}
+
+@keyframes ap-ambient-breathe {
+  0%, 100% { opacity: 0.7; transform: translate(-50%,-54%) scale(1);   }
+  50%       { opacity: 1;   transform: translate(-50%,-56%) scale(1.04); }
+}
+
+/* Auth-center must be above the glow */
+.auth-center { position: relative; z-index: 1; }
+
+/* Card depth upgrade */
+.auth-box {
+  /* Inner top-edge highlight — Stripe quality */
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.055),
+    inset 0 1px 0 rgba(255,255,255,0.07),
+    0 4px 6px rgba(0,0,0,0.12),
+    0 12px 32px rgba(0,0,0,0.22),
+    0 32px 64px rgba(0,0,0,0.18),
+    0 0 80px rgba(225,48,108,0.05);
+  /* Faint vignette via border */
+  border-color: rgba(255,255,255,0.065);
+}
+
+/* Ambient card pulse — class added/removed by _apAmbientPulse() */
+@keyframes ap-card-pulse {
+  0%  { box-shadow:
+          0 0 0 1px rgba(255,255,255,0.055),
+          inset 0 1px 0 rgba(255,255,255,0.07),
+          0 4px 6px rgba(0,0,0,0.12),
+          0 12px 32px rgba(0,0,0,0.22),
+          0 32px 64px rgba(0,0,0,0.18),
+          0 0 80px rgba(225,48,108,0.05); }
+  50% { box-shadow:
+          0 0 0 1px rgba(225,48,108,0.14),
+          inset 0 1px 0 rgba(255,255,255,0.09),
+          0 4px 6px rgba(0,0,0,0.12),
+          0 12px 32px rgba(0,0,0,0.25),
+          0 32px 64px rgba(0,0,0,0.20),
+          0 0 100px rgba(225,48,108,0.09); }
+  100%{ box-shadow:
+          0 0 0 1px rgba(255,255,255,0.055),
+          inset 0 1px 0 rgba(255,255,255,0.07),
+          0 4px 6px rgba(0,0,0,0.12),
+          0 12px 32px rgba(0,0,0,0.22),
+          0 32px 64px rgba(0,0,0,0.18),
+          0 0 80px rgba(225,48,108,0.05); }
+}
+.auth-box.ap-pulsing {
+  animation: ap-card-pulse 0.28s ease-out;
+}
+
+/* ── PHASE 3 — ROLE CARDS → PREMIUM ENTRY GATES ──────────── */
+
+.ap-role-card {
+  /* deeper inactive glass */
+  background: rgba(255,255,255,0.025);
+  border-color: rgba(255,255,255,0.07);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.04),
+    0 2px 8px rgba(0,0,0,0.12);
+}
+
+.ap-role-card:hover:not(.selected) {
+  background: rgba(255,255,255,0.05);
+  border-color: rgba(255,255,255,0.14);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.06),
+    0 4px 14px rgba(0,0,0,0.18);
+  transform: translateY(-2px);
+}
+
+/* Tap spring — instant scale down then spring back */
+.ap-role-card:active {
+  transform: scale(0.985) translateY(0) !important;
+  transition-duration: 0.07s !important;
+}
+
+.ap-role-card.selected {
+  /* Elevation + stronger glow ring */
+  background:
+    radial-gradient(ellipse 100% 80% at 50% -10%, rgba(225,48,108,0.14) 0%, transparent 65%),
+    rgba(225,48,108,0.06);
+  border-color: rgba(225,48,108,0.6);
+  box-shadow:
+    0 0 0 2px rgba(225,48,108,0.12),
+    0 0 0 4px rgba(225,48,108,0.04),
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    0 6px 22px rgba(225,48,108,0.14),
+    0 2px 8px rgba(0,0,0,0.15);
+  transform: translateY(-2px) scale(1.015);
+}
+
+/* Shadow expansion on selected */
+.ap-role-card.selected:hover {
+  box-shadow:
+    0 0 0 2px rgba(225,48,108,0.16),
+    0 0 0 5px rgba(225,48,108,0.05),
+    inset 0 1px 0 rgba(255,255,255,0.09),
+    0 8px 28px rgba(225,48,108,0.18),
+    0 2px 8px rgba(0,0,0,0.15);
+}
+
+/* ── PHASE 4 — PREMIUM ROLE CARD ICONOGRAPHY ─────────────── */
+
+/* Replace text emoji icons with inline SVG */
+.ap-role-icon {
+  font-size: 0; /* hide any residual text */
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  margin: 0 auto 7px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.07);
+  transition:
+    transform    0.2s,
+    background   0.2s,
+    border-color 0.2s,
+    box-shadow   0.2s;
+}
+.ap-role-card.selected .ap-role-icon {
+  background: rgba(225,48,108,0.12);
+  border-color: rgba(225,48,108,0.22);
+  box-shadow: 0 0 14px rgba(225,48,108,0.12);
+  transform: scale(1.08);
+}
+.ap-role-svg {
+  width: 20px;
+  height: 20px;
+  color: rgba(255,255,255,0.6);
+  display: block;
+  transition: color 0.2s;
+}
+.ap-role-card.selected .ap-role-svg {
+  color: rgba(255,255,255,0.92);
+}
+
+.ap-role-name {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.88);
+  letter-spacing: -0.01em;
+}
+.ap-role-desc {
+  font-size: 0.65rem;
+  color: rgba(255,255,255,0.32);
+  margin-top: 3px;
+  line-height: 1.35;
+}
+.ap-role-card.selected .ap-role-desc {
+  color: rgba(255,255,255,0.52);
+}
+.ap-role-card.selected .ap-role-name {
+  color: #fff;
+}
+
+/* ── PHASE 5 — FIRST STEP CONVERSION PSYCHOLOGY ──────────── */
+
+/* Tighter breathing — compress dead vertical zones */
+#ap-step-1 .ap-group { margin-bottom: 10px; }
+#ap-step-1 .ap-role-row { margin-bottom: 14px; }
+
+/* Helper text: quieter until focus */
+.ap-field-hint {
+  font-size: 0.67rem;
+  color: rgba(255,255,255,0.24);
+  transition: color 0.2s;
+}
+.ap-group:focus-within .ap-field-hint { color: rgba(255,255,255,0.42); }
+
+/* Label: stronger hierarchy on step 1 */
+#ap-step-1 .ap-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
+}
+#ap-step-1 .ap-group:focus-within .ap-label {
+  color: rgba(255,255,255,0.72);
+}
+
+/* WhatsApp label accent */
+.ap-label-wa {
+  color: rgba(37,211,102,0.8);
+  font-weight: 600;
+}
+
+/* ── PHASE 6 — PREMIUM MOTION SYSTEM ────────────────────────*/
+
+/* Step entrance: from below, soft blur reduction → opacity */
+.ap-step-enter-left,
+.ap-step-enter-right {
+  animation-duration: 0.24s;
+  animation-timing-function: cubic-bezier(0.22,1,0.36,1);
+  animation-fill-mode: both;
+}
+@keyframes step-enter-from-right {
+  from { opacity: 0; transform: translateY(12px); filter: blur(2px); }
+  to   { opacity: 1; transform: translateY(0);    filter: blur(0);   }
+}
+@keyframes step-enter-from-left {
+  from { opacity: 0; transform: translateY(-8px); filter: blur(1.5px); }
+  to   { opacity: 1; transform: translateY(0);    filter: blur(0);     }
+}
+
+/* Button pressure effect */
+.ap-btn {
+  transition:
+    background 0.16s,
+    box-shadow  0.18s,
+    transform   0.1s cubic-bezier(0.34,1.56,0.64,1),
+    opacity     0.15s;
+}
+.ap-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow:
+    0 6px 20px rgba(225,48,108,0.28),
+    0 2px 6px rgba(0,0,0,0.18);
+}
+.ap-btn:active:not(:disabled) {
+  transform: scale(0.984) translateY(0) !important;
+  transition-duration: 0.07s !important;
+  box-shadow:
+    0 2px 8px rgba(225,48,108,0.16),
+    0 1px 3px rgba(0,0,0,0.14) !important;
+}
+
+/* Next button arrow bounce */
+.ap-btn-next:hover .ap-btn-arrow {
+  transform: translateX(4px);
+  transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+/* ── PHASE 6 — FIELD EXPERIENCE ─────────────────────────────*/
+
+/* Focus: soft premium glow + slight depth */
+.ap-input:focus {
+  border-color: rgba(225,48,108,0.50);
+  background: rgba(255,255,255,0.06);
+  box-shadow:
+    0 0 0 3px rgba(225,48,108,0.09),
+    inset 0 1px 0 rgba(255,255,255,0.05);
+  outline: none;
+}
+
+/* Phone field: green focus ring */
+.ap-input-phone:focus {
+  border-color: rgba(37,211,102,0.45) !important;
+  box-shadow:
+    0 0 0 3px rgba(37,211,102,0.08),
+    inset 0 1px 0 rgba(255,255,255,0.04) !important;
+}
+
+/* Completed field calming (ap-done class) */
+.ap-group.ap-done .ap-input {
+  border-color: rgba(255,255,255,0.07);
+  background: rgba(255,255,255,0.03);
+  color: rgba(255,255,255,0.6);
+  transition: border-color 0.3s, background 0.3s, color 0.3s;
+}
+.ap-group.ap-done .ap-label {
+  opacity: 0.28;
+  transition: opacity 0.3s;
+}
+
+/* ── PHASE 7 — MOBILE PREMIUM FEEL ──────────────────────────*/
+
+@media (max-width: 496px) {
+  /* Hero zone slightly shorter */
+  .ap-hero-zone.ap-hero-visible { min-height: 56px; max-height: 80px; }
+  .ap-hero-panel { padding: 10px 12px; gap: 10px; }
+  .ap-hero-icon  { width: 34px; height: 34px; }
+  .ap-hero-title { font-size: 0.78rem; }
+  .ap-hero-sub   { font-size: 0.65rem; }
+
+  /* Role cards: full height tap targets */
+  .ap-role-card  { padding: 12px 6px 10px; }
+  .ap-role-icon  { width: 34px; height: 34px; }
+  .ap-role-svg   { width: 18px; height: 18px; }
+
+  /* Ambient breathing: slightly reduced on mobile (perf) */
+  .auth-shell::before { width: 360px; height: 300px; }
+
+  /* Buttons: full-width, comfortable height */
+  .ap-btn { min-height: 50px; font-size: 0.9rem; }
+  .ap-btn-next { min-height: 50px; }
+}
+
+@media (max-width: 390px) {
+  .ap-hero-title { font-size: 0.74rem; }
+  .ap-role-icon  { width: 32px; height: 32px; }
+}
+
+@media (max-width: 360px) {
+  .ap-hero-panel { padding: 9px 10px; gap: 8px; }
+  .ap-hero-icon  { width: 30px; height: 30px; }
+  .ap-hero-title { font-size: 0.7rem; }
+}
+
+/* ── PHASE 8 — TRUST + REDUCED MOTION ───────────────────────*/
+
+/* Trust strip under login/signup buttons */
+.ap-trust {
+  font-size: 0.66rem;
+  color: rgba(255,255,255,0.24);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 14px;
+  letter-spacing: 0.01em;
+}
+.ap-trust-icon {
+  opacity: 0.55;
+  font-size: 0.72rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-shell::before { animation: none !important; }
+  .ap-hero-panel      { transition: none !important; }
+  .ap-hero-zone       { transition: none !important; }
+  .auth-box.ap-pulsing { animation: none !important; }
+  .ap-btn, .ap-role-card { transition: none !important; }
+  .ap-step-enter-left,
+  .ap-step-enter-right { animation: none !important; }
+}
