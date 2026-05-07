@@ -1,0 +1,632 @@
+/* ============================================================
+   artisan-onboarding-v3.css
+   ARTISAN ACTIVATION V3 — Premium Network Entry Experience
+   Additive CSS only. Never overrides IDs used by artisan-onboarding.js.
+   ============================================================ */
+
+/* ══════════════════════════════════════════════════════════
+   PAGE BACKGROUND — deeper, more premium
+   ══════════════════════════════════════════════════════════ */
+
+.artisan-onboarding-page {
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(225,48,108,0.12) 0%, transparent 55%),
+    radial-gradient(circle at 0% 40%, rgba(64,93,230,0.10) 0%, transparent 40%),
+    radial-gradient(circle at 100% 80%, rgba(131,58,180,0.08) 0%, transparent 38%),
+    linear-gradient(180deg, #090d18 0%, #0d1222 100%) !important;
+}
+
+/* ══════════════════════════════════════════════════════════
+   CARD SHELL — deeper glass
+   ══════════════════════════════════════════════════════════ */
+
+.artisan-onboarding-card {
+  border-radius: 26px !important;
+  padding: 26px 22px 24px !important;
+  border: 1px solid rgba(255,255,255,0.07) !important;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.04),
+    inset 0 1px 0 rgba(255,255,255,0.05),
+    0 4px 20px rgba(0,0,0,0.20),
+    0 24px 60px rgba(0,0,0,0.30) !important;
+  background: rgba(11,14,24,0.96) !important;
+}
+
+/* Kicker: premium cap */
+.artisan-onboarding-kicker {
+  font-size: 0.68rem !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.10em !important;
+  color: rgba(225,48,108,0.75) !important;
+  background: rgba(225,48,108,0.08) !important;
+  border: 1px solid rgba(225,48,108,0.14) !important;
+  padding: 5px 11px !important;
+  border-radius: 99px !important;
+  margin-bottom: 14px !important;
+}
+
+/* Title: premium weight */
+#artisan-onboarding-title {
+  font-size: 1.5rem !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.02em !important;
+  line-height: 1.2 !important;
+  background: linear-gradient(135deg, rgba(255,255,255,0.97) 0%, rgba(255,255,255,0.70) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Subtitle: soft */
+.artisan-onboarding-card > p {
+  color: rgba(255,255,255,0.40) !important;
+  font-size: 0.82rem !important;
+  line-height: 1.6 !important;
+  margin-top: 6px !important;
+  margin-bottom: 0 !important;
+}
+
+/* ══════════════════════════════════════════════════════════
+   MODE SELECTOR — Nouveau / Revendiquer
+   ══════════════════════════════════════════════════════════ */
+
+.fxao3-mode-selector {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 20px 0 0;
+}
+
+.fxao3-mode-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 14px 14px 13px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.07);
+  background: rgba(255,255,255,0.028);
+  cursor: pointer;
+  transition:
+    transform   0.20s cubic-bezier(0.22,1,0.36,1),
+    border-color 0.20s ease,
+    background  0.20s ease,
+    box-shadow  0.20s ease;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+.fxao3-mode-card:hover {
+  transform: translateY(-2px);
+  background: rgba(255,255,255,0.048);
+  border-color: rgba(255,255,255,0.14);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.16);
+}
+
+.fxao3-mode-card:active {
+  transform: scale(0.97) !important;
+  transition-duration: 0.07s !important;
+}
+
+.fxao3-mode-icon {
+  font-size: 1.25rem;
+  line-height: 1;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.fxao3-mode-title {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: rgba(255,255,255,0.82);
+  line-height: 1.25;
+}
+
+.fxao3-mode-meta {
+  font-size: 0.68rem;
+  color: rgba(255,255,255,0.38);
+  line-height: 1.45;
+}
+
+/* Checkmark badge */
+.fxao3-mode-check {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.60rem;
+  color: rgba(255,255,255,0.0);
+  transition: background 0.20s, border-color 0.20s, color 0.20s;
+}
+
+/* Selected state */
+.fxao3-mode-card.fxao3-selected {
+  background:
+    radial-gradient(ellipse 100% 80% at 50% 0%, rgba(225,48,108,0.14) 0%, transparent 70%),
+    rgba(225,48,108,0.06) !important;
+  border-color: rgba(225,48,108,0.50) !important;
+  box-shadow:
+    0 0 0 2px rgba(225,48,108,0.08),
+    0 0 0 4px rgba(225,48,108,0.04),
+    inset 0 1px 0 rgba(255,255,255,0.07),
+    0 8px 24px rgba(225,48,108,0.10) !important;
+  transform: translateY(-2px) scale(1.015) !important;
+}
+
+.fxao3-mode-card.fxao3-selected .fxao3-mode-title {
+  color: rgba(255,255,255,0.96) !important;
+}
+
+.fxao3-mode-card.fxao3-selected .fxao3-mode-check {
+  background: rgba(225,48,108,0.80);
+  border-color: rgba(225,48,108,0.50);
+  color: #fff;
+}
+
+/* Non-selected dim when one is chosen */
+.fxao3-mode-selector.fxao3-has-mode .fxao3-mode-card:not(.fxao3-selected) {
+  opacity: 0.58;
+}
+.fxao3-mode-selector.fxao3-has-mode .fxao3-mode-card:not(.fxao3-selected):hover {
+  opacity: 0.82;
+}
+
+/* ══════════════════════════════════════════════════════════
+   FORM FIELDS — calm structural labels
+   ══════════════════════════════════════════════════════════ */
+
+.artisan-onboarding-field label {
+  font-size: 0.70rem !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.06em !important;
+  color: rgba(255,255,255,0.38) !important;
+}
+
+.artisan-onboarding-field input,
+.artisan-onboarding-field select,
+.artisan-onboarding-field textarea {
+  border-radius: 12px !important;
+  min-height: 48px !important;
+  padding: 11px 14px !important;
+  font-size: 0.88rem !important;
+  border-color: rgba(255,255,255,0.07) !important;
+  background: rgba(255,255,255,0.035) !important;
+  color: rgba(255,255,255,0.88) !important;
+  transition: border-color 0.22s ease, box-shadow 0.22s ease, background 0.22s ease !important;
+}
+
+.artisan-onboarding-field input::placeholder,
+.artisan-onboarding-field textarea::placeholder {
+  color: rgba(255,255,255,0.22) !important;
+  font-style: italic !important;
+}
+
+.artisan-onboarding-field input:focus,
+.artisan-onboarding-field select:focus,
+.artisan-onboarding-field textarea:focus {
+  border-color: rgba(225,48,108,0.32) !important;
+  background: rgba(255,255,255,0.055) !important;
+  box-shadow: 0 0 0 2px rgba(225,48,108,0.08) !important;
+  outline: none !important;
+}
+
+.artisan-onboarding-field textarea {
+  min-height: 80px !important;
+  resize: none !important;
+  line-height: 1.6 !important;
+}
+
+/* Phone field: green focus ring (WhatsApp energy) */
+.artisan-onboarding-field[data-field="phone"] input:focus {
+  border-color: rgba(37,211,102,0.28) !important;
+  box-shadow: 0 0 0 2px rgba(37,211,102,0.07) !important;
+}
+
+/* ══════════════════════════════════════════════════════════
+   MÉTIER CARDS GRID — replaces native select visual
+   ══════════════════════════════════════════════════════════ */
+
+/* Hide native category select */
+.artisan-onboarding-field[data-field="category"] select {
+  display: none !important;
+}
+
+.fxao3-metier-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 7px;
+}
+
+.fxao3-metier-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 11px 4px 9px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.07);
+  background: rgba(255,255,255,0.028);
+  cursor: pointer;
+  transition:
+    transform   0.18s cubic-bezier(0.22,1,0.36,1),
+    border-color 0.18s ease,
+    background  0.18s ease,
+    box-shadow  0.18s ease,
+    opacity     0.18s ease;
+  animation: fxao3-card-in 0.26s cubic-bezier(0.22,1,0.36,1) both;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+/* Stagger */
+.fxao3-metier-card:nth-child(1)  { animation-delay: 0.02s; }
+.fxao3-metier-card:nth-child(2)  { animation-delay: 0.04s; }
+.fxao3-metier-card:nth-child(3)  { animation-delay: 0.06s; }
+.fxao3-metier-card:nth-child(4)  { animation-delay: 0.08s; }
+.fxao3-metier-card:nth-child(5)  { animation-delay: 0.10s; }
+.fxao3-metier-card:nth-child(6)  { animation-delay: 0.12s; }
+.fxao3-metier-card:nth-child(7)  { animation-delay: 0.14s; }
+.fxao3-metier-card:nth-child(8)  { animation-delay: 0.16s; }
+.fxao3-metier-card:nth-child(9)  { animation-delay: 0.18s; }
+.fxao3-metier-card:nth-child(10) { animation-delay: 0.20s; }
+.fxao3-metier-card:nth-child(11) { animation-delay: 0.22s; }
+.fxao3-metier-card:nth-child(12) { animation-delay: 0.24s; }
+
+@keyframes fxao3-card-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0);   }
+}
+
+.fxao3-metier-icon {
+  font-size: 1.25rem;
+  line-height: 1;
+  display: block;
+  transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+.fxao3-metier-label {
+  font-size: 0.62rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.52);
+  text-align: center;
+  line-height: 1.25;
+  letter-spacing: 0.01em;
+  transition: color 0.18s;
+}
+
+.fxao3-metier-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(225,48,108,0.18);
+  background: rgba(225,48,108,0.04);
+  box-shadow: 0 4px 14px rgba(225,48,108,0.07);
+}
+.fxao3-metier-card:hover .fxao3-metier-icon { transform: scale(1.12); }
+.fxao3-metier-card:hover .fxao3-metier-label { color: rgba(255,255,255,0.80); }
+.fxao3-metier-card:active {
+  transform: scale(0.96) !important;
+  transition-duration: 0.07s !important;
+}
+
+/* Selected */
+.fxao3-metier-card.fxao3-metier-sel {
+  background:
+    radial-gradient(ellipse 100% 80% at 50% 0%, rgba(225,48,108,0.16) 0%, transparent 65%),
+    rgba(225,48,108,0.07) !important;
+  border-color: rgba(225,48,108,0.55) !important;
+  box-shadow:
+    0 0 0 2px rgba(225,48,108,0.10),
+    0 0 0 4px rgba(225,48,108,0.04),
+    inset 0 1px 0 rgba(255,255,255,0.07),
+    0 6px 20px rgba(225,48,108,0.12) !important;
+  transform: translateY(-2px) scale(1.04) !important;
+}
+.fxao3-metier-card.fxao3-metier-sel .fxao3-metier-label { color: rgba(255,255,255,0.92) !important; }
+.fxao3-metier-card.fxao3-metier-sel .fxao3-metier-icon  { transform: scale(1.08); }
+
+/* Non-selected fade */
+.fxao3-metier-grid.fxao3-has-sel .fxao3-metier-card:not(.fxao3-metier-sel) { opacity: 0.44; }
+.fxao3-metier-grid.fxao3-has-sel .fxao3-metier-card:not(.fxao3-metier-sel):hover { opacity: 0.82; }
+
+/* ══════════════════════════════════════════════════════════
+   VILLE CHIPS — replaces native city select
+   ══════════════════════════════════════════════════════════ */
+
+/* Hide native city select */
+.artisan-onboarding-field[data-field="city"] select {
+  display: none !important;
+}
+
+.fxao3-city-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.fxao3-city-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 13px;
+  border-radius: 99px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.032);
+  color: rgba(255,255,255,0.56);
+  font-size: 0.74rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    transform   0.18s cubic-bezier(0.22,1,0.36,1),
+    border-color 0.18s ease,
+    background  0.18s ease,
+    color       0.18s ease,
+    opacity     0.18s ease;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  letter-spacing: 0.01em;
+}
+
+.fxao3-city-chip:hover {
+  border-color: rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.07);
+  color: rgba(255,255,255,0.88);
+  transform: translateY(-1px);
+}
+.fxao3-city-chip:active {
+  transform: scale(0.97) !important;
+  transition-duration: 0.07s !important;
+}
+
+.fxao3-city-check {
+  font-size: 0.62rem;
+  opacity: 0;
+  transition: opacity 0.18s;
+  color: rgba(225,48,108,0.90);
+}
+
+.fxao3-city-chip.fxao3-city-sel {
+  background: rgba(225,48,108,0.09) !important;
+  border-color: rgba(225,48,108,0.44) !important;
+  color: rgba(255,255,255,0.94) !important;
+  box-shadow: 0 0 0 2px rgba(225,48,108,0.08), 0 4px 12px rgba(225,48,108,0.08) !important;
+}
+.fxao3-city-chip.fxao3-city-sel .fxao3-city-check { opacity: 1; }
+
+.fxao3-city-grid.fxao3-city-has-sel .fxao3-city-chip:not(.fxao3-city-sel) { opacity: 0.42; }
+.fxao3-city-grid.fxao3-city-has-sel .fxao3-city-chip:not(.fxao3-city-sel):hover { opacity: 0.80; }
+
+/* ══════════════════════════════════════════════════════════
+   PHONE FIELD — WhatsApp perception microcopy
+   ══════════════════════════════════════════════════════════ */
+
+.fxao3-phone-hint {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 2px;
+  font-size: 0.66rem;
+  color: rgba(255,255,255,0.30);
+  line-height: 1.45;
+}
+.fxao3-phone-hint-icon { font-size: 0.80rem; flex-shrink: 0; opacity: 0.60; }
+
+/* ══════════════════════════════════════════════════════════
+   SYSTEM PERCEPTION BLOCK
+   ══════════════════════════════════════════════════════════ */
+
+.fxao3-system-block {
+  display: grid;
+  gap: 7px;
+  padding: 13px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.05);
+  background: rgba(255,255,255,0.022);
+  margin-top: 4px;
+}
+
+.fxao3-system-line {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  font-size: 0.68rem;
+  color: rgba(255,255,255,0.36);
+  line-height: 1.5;
+}
+.fxao3-system-line-icon { flex-shrink: 0; font-size: 0.80rem; opacity: 0.65; margin-top: 0.5px; }
+
+/* ══════════════════════════════════════════════════════════
+   BADGE CHIPS (info row)
+   ══════════════════════════════════════════════════════════ */
+
+.fxao3-badge-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.fxao3-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 99px;
+  font-size: 0.63rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.fxao3-badge-new {
+  background: rgba(64,93,230,0.10);
+  border: 1px solid rgba(64,93,230,0.22);
+  color: rgba(180,200,255,0.75);
+}
+
+.fxao3-badge-online {
+  background: rgba(37,211,102,0.06);
+  border: 1px solid rgba(37,211,102,0.14);
+  color: rgba(80,220,140,0.70);
+}
+.fxao3-badge-online-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: rgba(37,211,102,0.70);
+  flex-shrink: 0;
+}
+
+.fxao3-badge-pending {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.40);
+}
+
+/* ══════════════════════════════════════════════════════════
+   CTA — premium calm button
+   ══════════════════════════════════════════════════════════ */
+
+.artisan-onboarding-submit {
+  min-height: 52px !important;
+  border-radius: 14px !important;
+  font-size: 0.90rem !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.02em !important;
+  background: linear-gradient(135deg, #e1306c 0%, #9b1c4a 100%) !important;
+  box-shadow: none !important;
+  transition:
+    transform 0.18s cubic-bezier(0.22,1,0.36,1),
+    box-shadow 0.22s ease,
+    opacity 0.18s ease !important;
+}
+
+.artisan-onboarding-submit:not(:disabled):hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 28px rgba(225,48,108,0.28) !important;
+}
+
+.artisan-onboarding-submit:not(:disabled):active {
+  transform: scale(0.984) !important;
+  transition-duration: 0.07s !important;
+}
+
+.artisan-onboarding-submit:disabled {
+  opacity: 0.32 !important;
+  cursor: not-allowed !important;
+  box-shadow: none !important;
+}
+
+/* Hint below CTA */
+.artisan-onboarding-hint {
+  font-size: 0.68rem !important;
+  color: rgba(255,255,255,0.28) !important;
+  text-align: center !important;
+  margin-top: 4px !important;
+  line-height: 1.55 !important;
+}
+
+/* ══════════════════════════════════════════════════════════
+   CLAIM MODE — field visibility
+   ══════════════════════════════════════════════════════════ */
+
+/* Claim mode hides description field */
+.fxao3-claim-mode .artisan-onboarding-field[data-field="description"] {
+  display: none !important;
+}
+
+/* Claim mode: dim system block slightly differently */
+.fxao3-claim-mode .fxao3-system-block {
+  border-color: rgba(64,93,230,0.10) !important;
+  background: rgba(64,93,230,0.03) !important;
+}
+
+/* Claim note */
+.fxao3-claim-note {
+  display: none;
+  padding: 11px 13px;
+  border-radius: 12px;
+  border: 1px solid rgba(64,93,230,0.15);
+  background: rgba(64,93,230,0.05);
+  font-size: 0.70rem;
+  color: rgba(255,255,255,0.45);
+  line-height: 1.55;
+  gap: 8px;
+  align-items: flex-start;
+}
+.fxao3-claim-note-icon { flex-shrink: 0; font-size: 0.85rem; opacity: 0.65; }
+
+.fxao3-claim-mode .fxao3-claim-note {
+  display: flex !important;
+}
+.fxao3-new-mode .fxao3-claim-note {
+  display: none !important;
+}
+
+/* ══════════════════════════════════════════════════════════
+   FORM SECTION DIVIDERS
+   ══════════════════════════════════════════════════════════ */
+
+.fxao3-section-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: rgba(255,255,255,0.30);
+  padding-bottom: 4px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  margin-bottom: 2px;
+}
+
+/* ══════════════════════════════════════════════════════════
+   MOBILE
+   ══════════════════════════════════════════════════════════ */
+
+@media (max-width: 640px) {
+  .artisan-onboarding-card { padding: 20px 16px 20px !important; border-radius: 22px !important; }
+  #artisan-onboarding-title { font-size: 1.28rem !important; }
+  .fxao3-mode-selector { gap: 8px; }
+  .fxao3-mode-card { padding: 12px 11px 11px !important; }
+  .fxao3-mode-title { font-size: 0.80rem !important; }
+  .fxao3-mode-meta { font-size: 0.63rem !important; }
+  .fxao3-metier-grid { grid-template-columns: repeat(4, 1fr) !important; gap: 6px !important; }
+  .fxao3-metier-card { padding: 10px 3px 8px !important; }
+  .fxao3-metier-icon { font-size: 1.10rem !important; }
+  .fxao3-metier-label { font-size: 0.58rem !important; }
+  .fxao3-city-chip { font-size: 0.70rem !important; padding: 6px 11px !important; }
+  .artisan-onboarding-submit { min-height: 50px !important; font-size: 0.86rem !important; }
+}
+
+@media (max-width: 390px) {
+  .fxao3-metier-grid { grid-template-columns: repeat(3, 1fr) !important; }
+  .fxao3-metier-label { font-size: 0.56rem !important; }
+  .fxao3-city-chip { font-size: 0.67rem !important; padding: 5px 9px !important; }
+  .fxao3-mode-title { font-size: 0.76rem !important; }
+}
+
+@media (max-width: 360px) {
+  .fxao3-metier-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 5px !important; }
+  .fxao3-metier-card { padding: 9px 2px 7px !important; }
+  .fxao3-metier-icon { font-size: 1.0rem !important; }
+}
+
+/* ══════════════════════════════════════════════════════════
+   REDUCED MOTION
+   ══════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  .fxao3-mode-card,
+  .fxao3-metier-card,
+  .fxao3-city-chip,
+  .artisan-onboarding-submit {
+    animation: none !important;
+    transition: none !important;
+  }
+}
