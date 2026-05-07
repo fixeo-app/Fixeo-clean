@@ -391,10 +391,17 @@
     if (!title || title.dataset.rv2) return;
     title.dataset.rv2 = '1';
     var txt = (title.textContent || '').trim();
-    if (txt === '\uD83D\uDCC5 R\u00e9server un artisan' || txt === '\uD83D\uDCC5 R&#xE9;server un artisan') {
-      title.textContent = 'R\u00e9server un artisan';
+    /* Remove any leading emoji/symbol that Cairo can\u2019t render (multi-codepoint emoji) */
+    /* Replace emoji prefix patterns: 📅 📋 🚀 ⚡ 📍 */
+    var cleaned = txt
+      .replace(/^[\uD800-\uDFFF]{2}[\s]*/u, '') /* surrogate pair emoji */
+      .replace(/^\u26A1\s*/, '')                  /* ⚡ */
+      .replace(/^\uD83D[\uDCC5\uDCCB]\s*/u, '')   /* 📅 📋 */
+      .replace(/^\uD83D\uDE80\s*/u, '')            /* 🚀 */
+      .trim();
+    if (cleaned && cleaned !== txt) {
+      title.textContent = cleaned;
     }
-    /* Step 2: keep as "Récapitulatif" */
   }
 
   /* ── FAKE CONTENT SUPPRESSION ────────────────────────────── */
@@ -421,24 +428,18 @@
   function suppressFakeTextNodes(m) {
     var body = qs('.fixeo-res-body', m);
     if (!body) return;
-    /* Walk all text-only divs (no id, no class, 1 text child) */
-    body.querySelectorAll('div:not([id]):not([class])').forEach(function (el) {
+    /* Suppress ANY div (with or without style/class) that contains fake metrics
+       and has zero element children (pure text leaf node) */
+    body.querySelectorAll('div').forEach(function (el) {
+      if (el.children.length > 0) return; /* skip containers */
       var txt = el.textContent || '';
-      if (txt.indexOf('+23') !== -1 && txt.indexOf('r\u00e9servations') !== -1) {
+      var isFake = (
+        (txt.indexOf('+23') !== -1 && txt.indexOf('r\u00e9servations') !== -1) ||
+        (txt.indexOf('Forte demande') !== -1 && txt.indexOf('disponibilit') !== -1)
+      );
+      if (isFake) {
         el.style.display = 'none';
-      }
-      if (txt.indexOf('Forte demande') !== -1) {
-        el.style.display = 'none';
-      }
-    });
-    /* Also find inline styled divs that contain fake text */
-    body.querySelectorAll('div[style]').forEach(function (el) {
-      var txt = el.textContent || '';
-      if (
-        el.children.length === 0 &&
-        (txt.indexOf('+23') !== -1 || txt.indexOf('Forte demande') !== -1)
-      ) {
-        el.style.display = 'none';
+        el.setAttribute('aria-hidden', 'true');
       }
     });
   }
@@ -538,11 +539,81 @@
     bodyObs.observe(m, { childList: true });
   }
 
+  /* ── HOOK FixeoReservation.open/close for instant upgrade ── */
+  /* Strategy: wrap open() so we run upgradeModal right after render.
+     This is more reliable than MutationObserver for innerHTML assignments. */
+  function hookFixeoReservation() {
+    if (!window.FixeoReservation) return false;
+    if (window.FixeoReservation._rv2Hooked) return true;
+    window.FixeoReservation._rv2Hooked = true;
+
+    var _origOpen = window.FixeoReservation.open;
+    var _origGoStep1 = window.FixeoReservation._goToStep1;
+    var _origSubmitStep1 = window.FixeoReservation._submitStep1;
+
+    /* Wrap open() */
+    window.FixeoReservation.open = function () {
+      _origOpen.apply(this, arguments);
+      /* Defer 2 frames for render to complete */
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+          var m = document.getElementById(MODAL_ID);
+          if (m && m.classList.contains('open')) {
+            delete m.dataset.rv2; /* clear stamp for fresh run */
+            upgradeModal(m);
+          }
+        });
+      });
+    };
+
+    /* Wrap _goToStep1() — step 2→1 transition */
+    window.FixeoReservation._goToStep1 = function () {
+      _origGoStep1.apply(this, arguments);
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+          var m = document.getElementById(MODAL_ID);
+          if (m) { delete m.dataset.rv2; upgradeModal(m); }
+        });
+      });
+    };
+
+    /* Wrap _submitStep1() — step 1→2 transition */
+    window.FixeoReservation._submitStep1 = function () {
+      _origSubmitStep1.apply(this, arguments);
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+          var m = document.getElementById(MODAL_ID);
+          if (m && m.classList.contains('open')) {
+            delete m.dataset.rv2; upgradeModal(m);
+          }
+        });
+      });
+    };
+
+    return true;
+  }
+
   /* ── INIT ────────────────────────────────────────────────── */
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initObserver);
-  } else {
+  function init() {
+    /* Try to hook immediately */
+    if (!hookFixeoReservation()) {
+      /* FixeoReservation not ready — poll up to 5s */
+      var attempts = 0;
+      var pollInterval = setInterval(function () {
+        attempts++;
+        if (hookFixeoReservation() || attempts > 50) {
+          clearInterval(pollInterval);
+        }
+      }, 100);
+    }
+    /* Also run MutationObserver as belt+suspenders */
     initObserver();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
   }
 
 })();
