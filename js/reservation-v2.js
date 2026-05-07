@@ -295,33 +295,19 @@
       obs.observe(svcRecEl,    { childList: true, characterData: true, subtree: true });
     }
 
-    /* Strategy 2: Wrap _onServiceChange for direct update (all pages) */
-    if (window.FixeoReservation && !window.FixeoReservation._rv2SvcHooked) {
-      window.FixeoReservation._rv2SvcHooked = true;
-      var _origSvc = window.FixeoReservation._onServiceChange;
-      window.FixeoReservation._onServiceChange = function (val) {
-        _origSvc.apply(this, arguments);
-        /* Find the current estimation block and update */
+    /* Strategy 2: Delegate pill click on the modal body — bubbles up from pills.
+       _onServiceChange() is a closure call inside _initPills so we can\u2019t wrap it.
+       Instead: catch the click at modal level, after _initPills already fired. */
+    m.addEventListener('click', function (e) {
+      var pill = e.target.closest('#res-svc-pills [data-svc]');
+      if (!pill) return;
+      /* Let _initPills handler run first (synchronous), then update estimation */
+      requestAnimationFrame(function () {
         var mo = document.getElementById('fixeo-reservation-modal');
         var blk = mo ? qs('.fxrv2-estimation', mo) : null;
-        if (blk) _updateEstimationBlock(blk, val);
-      };
-    }
-
-    /* Strategy 3: Delegate pill click listener for immediate feel */
-    var pillGrid = qs('#res-svc-pills', m);
-    if (pillGrid) {
-      pillGrid.addEventListener('click', function (e) {
-        var pill = e.target.closest('[data-svc]');
-        if (!pill) return;
-        /* Update estimation block immediately on click */
-        requestAnimationFrame(function () {
-          var mo = document.getElementById('fixeo-reservation-modal');
-          var blk = mo ? qs('.fxrv2-estimation', mo) : null;
-          if (blk) _updateEstimationBlock(blk, pill.getAttribute('data-svc'));
-        });
+        if (blk) _updateEstimationBlock(blk, pill.getAttribute('data-svc'));
       });
-    }
+    });
   }
 
   /* ── INJECT TRUST PILLS ──────────────────────────────────── */
