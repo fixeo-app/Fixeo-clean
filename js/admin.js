@@ -1288,10 +1288,18 @@ function adminSection(section) {
     targetEl.style.display = 'block';
   }
 
-  /* Si section COD → charger les données */
+  /* Si section COD → charger les données
+     fixeo-admin-cod.js (15%, fixeo_client_requests) est prioritaire.
+     Le renderer legacy (10%, ADMIN_RESERVATIONS) ne doit pas écraser. */
   if (section === 'cod-orders') {
-    renderCODOrders();
-    _updateCODKPIs();
+    if (typeof window.refreshCODOrders === 'function') {
+      /* fixeo-admin-cod.js est chargé → il gère tout */
+      window.refreshCODOrders();
+    } else {
+      /* fallback legacy seulement si fixeo-admin-cod.js absent */
+      renderCODOrders();
+      _updateCODKPIs();
+    }
   }
 
   /* ── V20 : charger le module artisans à la demande ── */

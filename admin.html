@@ -206,6 +206,8 @@
       .fixeo-gh-brand img.fixeo-logo-img { height:22px !important; }
     }
   </style>
+  <!-- Admin Control Center Phase 1 — additive operational layer -->
+  <link rel="stylesheet" href="css/admin-control-center-p1.css?v=1">
 </head>
 <body data-theme="dark" data-dash-type="admin">
 <div class="bg-animated"></div>
@@ -464,23 +466,23 @@
       <div class="admin-kpi-grid">
         <div class="kpi-card admin-kpi" style="border-left:3px solid var(--primary)">
           <div class="kpi-header"><div class="kpi-icon" style="background:rgba(225,48,108,.15);color:var(--primary)">👷</div><div class="kpi-trend up">↑ +8%</div></div>
-          <div class="kpi-value" id="kpi-artisans">12</div>
-          <div class="kpi-label">Artisans actifs</div>
+          <div class="kpi-value" id="kpi-artisans">—</div>
+          <div class="kpi-label">Artisans avec missions</div>
         </div>
         <div class="kpi-card admin-kpi" style="border-left:3px solid var(--info)">
-          <div class="kpi-header"><div class="kpi-icon" style="background:rgba(64,93,230,.15);color:var(--info)">👥</div><div class="kpi-trend up">↑ +12%</div></div>
-          <div class="kpi-value" id="kpi-clients">48</div>
-          <div class="kpi-label">Clients inscrits</div>
+          <div class="kpi-header"><div class="kpi-icon" style="background:rgba(64,93,230,.15);color:var(--info)">👥</div></div>
+          <div class="kpi-value" id="kpi-clients">—</div>
+          <div class="kpi-label">Demandes soumises</div>
         </div>
         <div class="kpi-card admin-kpi" style="border-left:3px solid var(--success)">
-          <div class="kpi-header"><div class="kpi-icon" style="background:rgba(32,201,151,.15);color:var(--success)">🎯</div><div class="kpi-trend up">↑ +22%</div></div>
-          <div class="kpi-value" id="kpi-jobs">87</div>
+          <div class="kpi-header"><div class="kpi-icon" style="background:rgba(32,201,151,.15);color:var(--success)">🎯</div></div>
+          <div class="kpi-value" id="kpi-jobs">—</div>
           <div class="kpi-label">Missions actives</div>
         </div>
         <div class="kpi-card admin-kpi" style="border-left:3px solid var(--warning)">
-          <div class="kpi-header"><div class="kpi-icon" style="background:rgba(252,175,69,.15);color:var(--warning)">💰</div><div class="kpi-trend up">↑ +35%</div></div>
-          <div class="kpi-value" id="kpi-revenue">28 450</div>
-          <div class="kpi-label">Revenus MAD/mois</div>
+          <div class="kpi-header"><div class="kpi-icon" style="background:rgba(252,175,69,.15);color:var(--warning)">💰</div></div>
+          <div class="kpi-value" id="kpi-revenue">—</div>
+          <div class="kpi-label">Commissions totales MAD</div>
         </div>
       </div>
 
@@ -1031,6 +1033,7 @@
 <script src="js/fixeo-mission-system.js"></script>
 <script src="js/admin.js"></script>
 <script src="js/fixeo-admin-cod.js"></script>
+<script src="js/admin-control-center-p1.js?v=1" defer></script>
     <script src="js/fixeo-client-requests-store.js"></script>
 <script src="js/fixeo-state-bridge.js?v=sb1"></script>
   <script src="js/fixeo-claim-system.js?v=cs1"></script>

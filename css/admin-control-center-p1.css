@@ -1,0 +1,391 @@
+/* ============================================================
+   FIXEO ADMIN — CONTROL CENTER PHASE 1
+   css/admin-control-center-p1.css
+   Namespace: .fxacc-*
+   Additive only — zero overrides of core admin.css
+   ============================================================ */
+
+/* ══════════════════════════════════════════════════════════
+   REAL KPI OVERLAY
+   Replaces the 4 fake hardcoded overview KPIs in-place
+   ══════════════════════════════════════════════════════════ */
+
+.fxacc-kpi-real { position: relative; }
+
+/* Hide the hardcoded fake trend badge */
+.fxacc-kpi-real .kpi-trend {
+  display: none !important;
+}
+
+/* Real value injected via JS */
+.fxacc-kpi-real .kpi-value {
+  transition: opacity 0.22s;
+}
+.fxacc-kpi-real[data-loading] .kpi-value {
+  opacity: 0.30;
+}
+
+/* Real KPI sub-note */
+.fxacc-kpi-note {
+  font-size: 0.70rem;
+  opacity: 0.38;
+  margin-top: 4px;
+  font-style: italic;
+}
+
+/* ══════════════════════════════════════════════════════════
+   OPERATIONS OVERVIEW PANEL
+   ══════════════════════════════════════════════════════════ */
+
+#fxacc-ops-panel {
+  margin-top: 22px;
+}
+
+.fxacc-panel-title {
+  font-size: 0.80rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  opacity: 0.38;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+/* ── Operations grid ────────────────────────────────────── */
+
+.fxacc-ops-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.fxacc-ops-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 16px;
+  padding: 14px 16px;
+  transition: border-color 0.17s, background 0.17s;
+  cursor: default;
+}
+.fxacc-ops-card:hover {
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(255,255,255,0.13);
+}
+
+.fxacc-ops-value {
+  font-size: 1.65rem;
+  font-weight: 800;
+  line-height: 1;
+  margin-bottom: 5px;
+}
+.fxacc-ops-label {
+  font-size: 0.75rem;
+  opacity: 0.45;
+}
+.fxacc-ops-sub {
+  font-size: 0.68rem;
+  opacity: 0.28;
+  margin-top: 4px;
+}
+
+/* Color accents */
+.fxacc-ops-card.accent-blue   .fxacc-ops-value { color: #6c8ff5; }
+.fxacc-ops-card.accent-green  .fxacc-ops-value { color: #20c997; }
+.fxacc-ops-card.accent-amber  .fxacc-ops-value { color: #ffa502; }
+.fxacc-ops-card.accent-pink   .fxacc-ops-value { color: #e1306c; }
+.fxacc-ops-card.accent-purple .fxacc-ops-value { color: #bb6bd9; }
+.fxacc-ops-card.accent-teal   .fxacc-ops-value { color: #17ead9; }
+
+/* ══════════════════════════════════════════════════════════
+   MISSION LIFECYCLE TIMELINE
+   ══════════════════════════════════════════════════════════ */
+
+#fxacc-lifecycle-panel {
+  margin-top: 22px;
+}
+
+.fxacc-lifecycle-track {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  overflow-x: auto;
+  padding: 6px 2px 10px;
+  scrollbar-width: none;
+}
+.fxacc-lifecycle-track::-webkit-scrollbar { display: none; }
+
+.fxacc-lc-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  min-width: 80px;
+  position: relative;
+}
+
+/* Connector line */
+.fxacc-lc-step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  width: 100%;
+  height: 1px;
+  background: rgba(255,255,255,0.10);
+  z-index: 0;
+}
+
+.fxacc-lc-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  position: relative;
+  z-index: 1;
+  transition: border-color 0.2s;
+}
+.fxacc-lc-step.has-count .fxacc-lc-dot {
+  border-color: rgba(108,143,245,0.50);
+  background: rgba(108,143,245,0.08);
+  color: #6c8ff5;
+}
+.fxacc-lc-step.has-count.step-active .fxacc-lc-dot {
+  border-color: #6c8ff5;
+}
+
+.fxacc-lc-label {
+  font-size: 0.68rem;
+  text-align: center;
+  opacity: 0.42;
+  margin-top: 6px;
+  line-height: 1.3;
+}
+.fxacc-lc-count {
+  font-size: 0.70rem;
+  font-weight: 700;
+  color: #6c8ff5;
+  margin-top: 3px;
+}
+.fxacc-lc-step.has-count .fxacc-lc-label { opacity: 0.65; }
+
+/* ══════════════════════════════════════════════════════════
+   REQUEST VISIBILITY TABLE
+   ══════════════════════════════════════════════════════════ */
+
+#fxacc-requests-panel {
+  margin-top: 24px;
+}
+
+.fxacc-table-toolbar {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.fxacc-filter {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 9px;
+  color: rgba(255,255,255,0.75);
+  font-size: 0.78rem;
+  padding: 7px 11px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.fxacc-filter:focus { border-color: rgba(108,143,245,0.50); }
+
+.fxacc-filter-select {
+  min-width: 130px;
+}
+
+.fxacc-table-wrap {
+  overflow-x: auto;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.07);
+}
+
+.fxacc-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.79rem;
+}
+.fxacc-table th {
+  padding: 10px 12px;
+  text-align: left;
+  font-weight: 700;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  opacity: 0.42;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  background: rgba(255,255,255,0.02);
+  white-space: nowrap;
+}
+.fxacc-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  vertical-align: middle;
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.fxacc-table tbody tr:last-child td { border-bottom: none; }
+.fxacc-table tbody tr:hover td { background: rgba(255,255,255,0.02); }
+
+/* Status pills */
+.fxacc-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.fxacc-pill.nouvelle    { background:rgba(108,143,245,.12); color:#6c8ff5; border:1px solid rgba(108,143,245,.22); }
+.fxacc-pill.acceptee    { background:rgba(32,201,151,.12);  color:#20c997; border:1px solid rgba(32,201,151,.22); }
+.fxacc-pill.en-cours    { background:rgba(23,234,217,.12);  color:#17ead9; border:1px solid rgba(23,234,217,.22); }
+.fxacc-pill.terminee    { background:rgba(187,107,217,.12); color:#bb6bd9; border:1px solid rgba(187,107,217,.22); }
+.fxacc-pill.validee     { background:rgba(32,201,151,.12);  color:#20c997; border:1px solid rgba(32,201,151,.22); }
+.fxacc-pill.annulee     { background:rgba(255,255,255,.06); color:rgba(255,255,255,.40); border:1px solid rgba(255,255,255,.10); }
+.fxacc-pill.a-payer     { background:rgba(255,165,2,.12);   color:#ffa502; border:1px solid rgba(255,165,2,.22); }
+.fxacc-pill.payee       { background:rgba(32,201,151,.12);  color:#20c997; border:1px solid rgba(32,201,151,.22); }
+.fxacc-pill.a-verifier  { background:rgba(108,143,245,.12); color:#6c8ff5; border:1px solid rgba(108,143,245,.22); }
+
+/* ── Empty state ────────────────────────────────────────── */
+
+.fxacc-empty {
+  text-align: center;
+  padding: 28px 16px;
+  font-size: 0.80rem;
+  opacity: 0.35;
+}
+
+/* ══════════════════════════════════════════════════════════
+   ARTISAN OPERATIONAL VISIBILITY
+   ══════════════════════════════════════════════════════════ */
+
+#fxacc-artisans-panel {
+  margin-top: 24px;
+}
+
+.fxacc-artisan-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 10px;
+}
+
+.fxacc-artisan-row {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 13px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  transition: border-color 0.15s;
+}
+.fxacc-artisan-row:hover { border-color: rgba(255,255,255,0.12); }
+
+.fxacc-artisan-name {
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+.fxacc-artisan-meta {
+  font-size: 0.71rem;
+  opacity: 0.42;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.fxacc-artisan-stats {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+.fxacc-artisan-stat {
+  font-size: 0.68rem;
+  padding: 2px 8px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+.fxacc-artisan-stat.amber { color: #ffa502; }
+.fxacc-artisan-stat.green { color: #20c997; }
+
+/* ══════════════════════════════════════════════════════════
+   COMMISSION QUEUE STATUS BANNER (in cod-orders section)
+   ══════════════════════════════════════════════════════════ */
+
+#fxacc-commission-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  border-radius: 13px;
+  background: rgba(255,165,2,0.05);
+  border: 1px solid rgba(255,165,2,0.14);
+}
+#fxacc-commission-header.all-paid {
+  background: rgba(32,201,151,0.05);
+  border-color: rgba(32,201,151,0.14);
+}
+
+.fxacc-ch-left { display: flex; align-items: center; gap: 10px; }
+.fxacc-ch-label { font-size: 0.82rem; font-weight: 700; }
+.fxacc-ch-sub   { font-size: 0.71rem; opacity: 0.42; margin-top: 2px; }
+.fxacc-ch-amount {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #ffa502;
+  white-space: nowrap;
+}
+#fxacc-commission-header.all-paid .fxacc-ch-amount { color: #20c997; }
+#fxacc-commission-header.all-paid .fxacc-ch-label  { color: #20c997; }
+
+/* ══════════════════════════════════════════════════════════
+   MOBILE
+   ══════════════════════════════════════════════════════════ */
+
+@media (max-width: 900px) {
+  .fxacc-ops-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 768px) {
+  .fxacc-ops-grid { grid-template-columns: repeat(2, 1fr); }
+  .fxacc-table td, .fxacc-table th { padding: 8px 9px; }
+  .fxacc-artisan-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 480px) {
+  .fxacc-ops-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .fxacc-ops-value { font-size: 1.35rem; }
+  .fxacc-table-wrap { border-radius: 10px; }
+  .fxacc-artisan-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 360px) {
+  .fxacc-ops-grid { grid-template-columns: 1fr 1fr; gap: 6px; }
+  .fxacc-ops-card { padding: 11px 11px; border-radius: 12px; }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .fxacc-ops-card,
+  .fxacc-artisan-row,
+  .fxacc-kpi-real .kpi-value { transition: none; }
+}
