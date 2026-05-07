@@ -1,0 +1,378 @@
+/* ============================================================
+   FIXEO ADMIN — COMMISSION QUEUE POLISH PHASE 1B
+   css/admin-commission-polish-p1b.css
+   Namespace: .fxcp1b-*
+   Additive only — zero overrides of admin.js / fixeo-admin-cod.js output
+   ============================================================ */
+
+/* ══════════════════════════════════════════════════════════
+   FILTER BAR (replaces old stale dropdown visually)
+   ══════════════════════════════════════════════════════════ */
+
+#fxcp1b-filter-bar {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.fxcp1b-filter-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.04);
+  color: rgba(255,255,255,0.55);
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  user-select: none;
+  white-space: nowrap;
+}
+.fxcp1b-filter-pill:hover {
+  background: rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.80);
+}
+.fxcp1b-filter-pill.active {
+  background: rgba(108,143,245,0.12);
+  border-color: rgba(108,143,245,0.35);
+  color: #6c8ff5;
+}
+.fxcp1b-filter-pill.active-amber {
+  background: rgba(255,165,2,0.10);
+  border-color: rgba(255,165,2,0.30);
+  color: #ffa502;
+}
+.fxcp1b-filter-pill.active-green {
+  background: rgba(32,201,151,0.10);
+  border-color: rgba(32,201,151,0.30);
+  color: #20c997;
+}
+.fxcp1b-filter-pill.active-blue {
+  background: rgba(108,143,245,0.10);
+  border-color: rgba(108,143,245,0.30);
+  color: #6c8ff5;
+}
+
+.fxcp1b-filter-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.08);
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0 5px;
+}
+.fxcp1b-filter-pill.active   .fxcp1b-filter-count { background: rgba(108,143,245,0.20); }
+.fxcp1b-filter-pill.active-amber .fxcp1b-filter-count { background: rgba(255,165,2,0.18); }
+.fxcp1b-filter-pill.active-green .fxcp1b-filter-count { background: rgba(32,201,151,0.18); }
+
+/* Search box polish */
+#fxcp1b-search-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 180px;
+  max-width: 320px;
+  position: relative;
+}
+#fxcp1b-search-wrap::before {
+  content: '';
+  position: absolute;
+  left: 11px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 14px;
+  height: 14px;
+  background: rgba(255,255,255,0.25);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E") center/contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E") center/contain no-repeat;
+  pointer-events: none;
+}
+#fxcp1b-search {
+  width: 100%;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 10px;
+  color: rgba(255,255,255,0.80);
+  font-size: 0.79rem;
+  padding: 8px 12px 8px 32px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+#fxcp1b-search:focus { border-color: rgba(108,143,245,0.45); }
+#fxcp1b-search::placeholder { color: rgba(255,255,255,0.25); }
+
+/* ══════════════════════════════════════════════════════════
+   TABLE BADGE ENHANCEMENTS
+   Applied to existing fixeo-admin-cod.js rendered rows
+   ══════════════════════════════════════════════════════════ */
+
+/* À évaluer badge */
+.fxcp1b-badge-review {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 0.69rem;
+  font-weight: 700;
+  background: rgba(108,143,245,0.10);
+  border: 1px solid rgba(108,143,245,0.24);
+  color: #6c8ff5;
+  white-space: nowrap;
+}
+
+/* Commission due badge */
+.fxcp1b-badge-due {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 0.69rem;
+  font-weight: 700;
+  background: rgba(255,165,2,0.10);
+  border: 1px solid rgba(255,165,2,0.24);
+  color: #ffa502;
+  white-space: nowrap;
+}
+
+/* Commission paid badge */
+.fxcp1b-badge-paid {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 0.69rem;
+  font-weight: 700;
+  background: rgba(32,201,151,0.10);
+  border: 1px solid rgba(32,201,151,0.24);
+  color: #20c997;
+  white-space: nowrap;
+}
+
+/* Artisan contact cell */
+.fxcp1b-artisan-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.fxcp1b-artisan-name {
+  font-weight: 600;
+  font-size: 0.82rem;
+}
+.fxcp1b-artisan-city {
+  font-size: 0.71rem;
+  opacity: 0.40;
+}
+.fxcp1b-wa-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 2px;
+  font-size: 0.69rem;
+  color: #25d366;
+  text-decoration: none;
+  opacity: 0.80;
+  transition: opacity 0.15s;
+}
+.fxcp1b-wa-link:hover { opacity: 1; }
+.fxcp1b-no-phone {
+  font-size: 0.68rem;
+  opacity: 0.25;
+  font-style: italic;
+}
+
+/* Mark paid button — polish */
+[data-admin-action="mark-commission-paid"] {
+  background: linear-gradient(135deg, #6c8ff5, #405DE6) !important;
+  border: none !important;
+  border-radius: 8px !important;
+  padding: 6px 13px !important;
+  font-size: 0.73rem !important;
+  font-weight: 700 !important;
+  color: #fff !important;
+  cursor: pointer !important;
+  transition: opacity 0.15s, transform 0.12s !important;
+  white-space: nowrap;
+}
+[data-admin-action="mark-commission-paid"]:hover  { opacity: 0.88 !important; transform: translateY(-1px) !important; }
+[data-admin-action="mark-commission-paid"]:active { transform: scale(0.97) !important; }
+
+/* Mark needs review action */
+[data-admin-action="mark-needs-review"] {
+  background: rgba(108,143,245,0.10) !important;
+  border: 1px solid rgba(108,143,245,0.25) !important;
+  border-radius: 8px !important;
+  padding: 5px 11px !important;
+  font-size: 0.70rem !important;
+  font-weight: 600 !important;
+  color: #6c8ff5 !important;
+  cursor: pointer !important;
+  transition: background 0.15s !important;
+  white-space: nowrap;
+}
+[data-admin-action="mark-needs-review"]:hover { background: rgba(108,143,245,0.18) !important; }
+
+/* Paid timestamp cell */
+.fxcp1b-paid-ts {
+  font-size: 0.72rem;
+  opacity: 0.55;
+}
+.fxcp1b-paid-ts strong {
+  color: #20c997;
+  font-weight: 700;
+  opacity: 1;
+  display: block;
+  font-size: 0.79rem;
+}
+
+/* Row highlight — paid row */
+#cod-admin-tbody tr.row-paid td {
+  opacity: 0.60;
+}
+#cod-admin-tbody tr.row-paid td:first-child {
+  opacity: 1;
+}
+
+/* ══════════════════════════════════════════════════════════
+   MOBILE CARD TRANSFORM
+   < 640px: each <tr> becomes a stacked card
+   ══════════════════════════════════════════════════════════ */
+
+@media (max-width: 640px) {
+  /* Wrap the table in a scrollable container IF card mode can't be applied */
+  .admin-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  #cod-admin-table thead { display: none; }
+
+  #cod-admin-tbody tr {
+    display: block;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 14px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+  }
+
+  #cod-admin-tbody td {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 5px 0;
+    border: none;
+    font-size: 0.79rem;
+    max-width: none;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+  }
+
+  #cod-admin-tbody td::before {
+    content: attr(data-label);
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    opacity: 0.38;
+    white-space: nowrap;
+    min-width: 110px;
+    flex-shrink: 0;
+  }
+
+  #cod-admin-tbody td[data-label=""] {
+    justify-content: flex-end;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    margin-top: 6px;
+    padding-top: 8px;
+  }
+  #cod-admin-tbody td[data-label=""]::before { display: none; }
+
+  /* Action buttons full width on mobile */
+  #cod-admin-tbody td[data-label=""] button,
+  #cod-admin-tbody td[data-label=""] .btn {
+    width: 100%;
+    text-align: center;
+    padding: 9px !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+   HIDE old stale toolbar (replaced by fxcp1b-filter-bar)
+   The old toolbar HTML stays in DOM but is visually replaced
+   ══════════════════════════════════════════════════════════ */
+
+#fxcp1b-old-toolbar-hidden {
+  display: none !important;
+}
+
+/* ══════════════════════════════════════════════════════════
+   COMMISSION SUMMARY HEADER (upgrade of #fxacc-commission-header)
+   ══════════════════════════════════════════════════════════ */
+
+#fxcp1b-summary {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+  padding: 14px 16px;
+  border-radius: 15px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+}
+
+.fxcp1b-sum-item {
+  flex: 1;
+  min-width: 120px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.fxcp1b-sum-value {
+  font-size: 1.15rem;
+  font-weight: 800;
+  line-height: 1;
+}
+.fxcp1b-sum-label {
+  font-size: 0.70rem;
+  opacity: 0.38;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+.fxcp1b-sum-item.col-amber .fxcp1b-sum-value { color: #ffa502; }
+.fxcp1b-sum-item.col-green .fxcp1b-sum-value { color: #20c997; }
+.fxcp1b-sum-item.col-blue  .fxcp1b-sum-value { color: #6c8ff5; }
+.fxcp1b-sum-item.col-default .fxcp1b-sum-value { color: rgba(255,255,255,0.75); }
+
+/* Divider between summary items */
+.fxcp1b-sum-divider {
+  width: 1px;
+  align-self: stretch;
+  background: rgba(255,255,255,0.07);
+  flex-shrink: 0;
+}
+
+/* ══════════════════════════════════════════════════════════
+   REDUCED MOTION
+   ══════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  .fxcp1b-filter-pill,
+  [data-admin-action="mark-commission-paid"],
+  [data-admin-action="mark-needs-review"],
+  .fxcp1b-wa-link { transition: none; }
+}
