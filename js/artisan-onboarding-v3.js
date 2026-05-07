@@ -153,11 +153,13 @@
 
     /* CTA */
     var cta = $id('artisan-submit-btn');
-    if (cta && !cta.disabled) cta.textContent = cfg.cta;
+    if (cta) cta.textContent = cfg.cta;
 
-    /* Hint */
-    var hint = $('.artisan-onboarding-hint');
-    if (hint) hint.textContent = cfg.hint;
+    /* Hint — only update if badge row not yet injected (avoid clobbering badge row) */
+    var hint = document.querySelector('#artisan-onboarding-form .artisan-onboarding-hint');
+    if (hint && !hint.querySelector('.fxao3-badge-row')) {
+      hint.textContent = cfg.hint;
+    }
 
     /* System block */
     updateSystemBlock(cfg.system);
@@ -388,7 +390,8 @@
   /* ── Badge chips injection ───────────────────────────────────────── */
 
   function injectBadgeRow(form) {
-    var hint = $('.artisan-onboarding-hint', form);
+    /* The hint div is a sibling of the submit btn, inside the form */
+    var hint = form.querySelector('.artisan-onboarding-hint');
     if (!hint || hint.querySelector('.fxao3-badge-row')) return;
 
     /* Replace old hint text with badge row + subtle text */
