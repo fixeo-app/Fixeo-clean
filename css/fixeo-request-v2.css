@@ -1,0 +1,384 @@
+/* ============================================================
+   fixeo-request-v2.css
+   REQUEST MODAL V2 — Planned Intervention UX
+   Calm · Organized · Premium · Reassuring
+
+   POSITIONING: This modal = planned work, NOT emergency.
+   Additive CSS only. Zero logic/ID changes.
+   ============================================================ */
+
+/* ══════════════════════════════════════════════════════════
+   MODAL SHELL — softer, wider, more organized feel
+   ══════════════════════════════════════════════════════════ */
+
+.request-modal {
+  max-width: 520px !important;
+  border-radius: 22px !important;
+  border: 1px solid rgba(255,255,255,0.07) !important;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.04),
+    inset 0 1px 0 rgba(255,255,255,0.06),
+    0 4px 18px rgba(0,0,0,0.18),
+    0 18px 48px rgba(0,0,0,0.24),
+    0 0 90px rgba(64,130,255,0.04) !important;
+  background: rgba(13,14,22,0.97) !important;
+}
+
+/* Header: organized feel */
+.request-modal .request-modal-header {
+  padding-bottom: 16px !important;
+  border-bottom: 1px solid rgba(255,255,255,0.05) !important;
+  position: relative !important;
+}
+.request-modal .request-modal-header::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; left: 24px; right: 24px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(100,160,255,0.18), transparent);
+}
+
+/* Title: calm authority */
+#request-modal-title {
+  font-size: 1.1rem !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.01em !important;
+  line-height: 1.25 !important;
+  color: rgba(255,255,255,0.97) !important;
+}
+
+/* Subtitle: soft reassurance */
+#request-modal-subtitle {
+  font-size: 0.78rem !important;
+  color: rgba(255,255,255,0.36) !important;
+  margin-top: 4px !important;
+  line-height: 1.55 !important;
+}
+
+/* Shell: comfortable breathing room */
+.request-modal .request-modal-shell {
+  padding-top: 8px !important;
+}
+
+/* ══════════════════════════════════════════════════════════
+   PLANNING BANNER — calm perception strip at top
+   ══════════════════════════════════════════════════════════ */
+
+.fxrq2-plan-strip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 13px;
+  background: rgba(64,130,255,0.05);
+  border: 1px solid rgba(64,130,255,0.10);
+  border-radius: 12px;
+  margin-bottom: 2px;
+}
+
+.fxrq2-plan-icon {
+  font-size: 1.05rem;
+  flex-shrink: 0;
+  opacity: 0.82;
+}
+
+.fxrq2-plan-text {
+  font-size: 0.70rem;
+  color: rgba(255,255,255,0.44);
+  line-height: 1.45;
+  letter-spacing: 0.01em;
+}
+
+.fxrq2-plan-text strong {
+  color: rgba(255,255,255,0.70);
+  font-weight: 700;
+}
+
+/* ══════════════════════════════════════════════════════════
+   FIELD LABELS — calm uppercase system
+   ══════════════════════════════════════════════════════════ */
+
+.request-modal .request-field label,
+.request-modal .request-label {
+  font-size: 0.70rem !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.06em !important;
+  color: rgba(255,255,255,0.38) !important;
+}
+
+/* ══════════════════════════════════════════════════════════
+   INPUT FIELDS — organized, composed feel
+   ══════════════════════════════════════════════════════════ */
+
+.request-modal .request-field input,
+.request-modal .request-field select,
+.request-modal .request-field textarea {
+  min-height: 50px !important;
+  border-radius: 12px !important;
+  font-size: 0.88rem !important;
+  padding: 12px 14px !important;
+  border-color: rgba(255,255,255,0.07) !important;
+  background: rgba(255,255,255,0.035) !important;
+  color: rgba(255,255,255,0.88) !important;
+  transition: border-color 0.22s ease, box-shadow 0.22s ease, background 0.22s ease !important;
+}
+
+.request-modal .request-field input::placeholder,
+.request-modal .request-field textarea::placeholder {
+  color: rgba(255,255,255,0.25) !important;
+  font-style: italic !important;
+}
+
+.request-modal .request-field input:focus,
+.request-modal .request-field select:focus,
+.request-modal .request-field textarea:focus {
+  border-color: rgba(100,160,255,0.28) !important;
+  background: rgba(255,255,255,0.055) !important;
+  box-shadow: 0 0 0 2px rgba(100,160,255,0.07), 0 4px 12px rgba(0,0,0,0.14) !important;
+  outline: none !important;
+}
+
+/* ══════════════════════════════════════════════════════════
+   URGENCY CARDS — "Urgent / Flexible" reframe
+   ══════════════════════════════════════════════════════════ */
+
+.request-modal .request-choice-grid {
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 8px !important;
+}
+
+.request-modal .request-choice-card {
+  border-radius: 12px !important;
+  padding: 12px 13px 11px !important;
+  border-color: rgba(255,255,255,0.07) !important;
+  background: rgba(255,255,255,0.028) !important;
+  transition:
+    transform 0.18s cubic-bezier(0.22,1,0.36,1),
+    border-color 0.18s ease,
+    background 0.18s ease,
+    box-shadow 0.18s ease !important;
+}
+
+.request-modal .request-choice-card:hover {
+  background: rgba(255,255,255,0.05) !important;
+  border-color: rgba(255,255,255,0.14) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.14) !important;
+}
+
+.request-modal .request-choice-card:has(input:checked) {
+  border-color: rgba(100,160,255,0.38) !important;
+  background: linear-gradient(180deg, rgba(64,130,255,0.09), rgba(255,255,255,0.03)) !important;
+  box-shadow:
+    0 0 0 2px rgba(64,130,255,0.07),
+    0 6px 18px rgba(0,0,0,0.14) !important;
+}
+
+.request-modal .request-choice-title {
+  font-size: 0.88rem !important;
+  font-weight: 800 !important;
+}
+
+.request-modal .request-choice-meta {
+  font-size: 0.70rem !important;
+  color: rgba(255,255,255,0.40) !important;
+  line-height: 1.4 !important;
+}
+
+/* Urgency icon badges (injected by JS) */
+.fxrq2-urgence-icon {
+  font-size: 1.1rem;
+  display: block;
+  margin-bottom: 4px;
+}
+
+/* ══════════════════════════════════════════════════════════
+   PLANNING PERCEPTION BLOCK — scheduling reassurance
+   ══════════════════════════════════════════════════════════ */
+
+.fxrq2-schedule-hint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(255,255,255,0.025);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 10px;
+  margin-top: -4px;
+}
+
+.fxrq2-schedule-icon {
+  font-size: 0.9rem;
+  opacity: 0.55;
+  flex-shrink: 0;
+}
+
+.fxrq2-schedule-text {
+  font-size: 0.67rem;
+  color: rgba(255,255,255,0.35);
+  line-height: 1.45;
+  letter-spacing: 0.01em;
+}
+
+/* ══════════════════════════════════════════════════════════
+   DESCRIPTION FIELD — injected by ensureDescriptionField()
+   ══════════════════════════════════════════════════════════ */
+
+.request-modal #request-description {
+  min-height: 72px !important;
+  resize: none !important;
+  font-size: 0.85rem !important;
+  border-radius: 12px !important;
+  padding: 12px 14px !important;
+  background: rgba(255,255,255,0.035) !important;
+  border-color: rgba(255,255,255,0.07) !important;
+  color: rgba(255,255,255,0.80) !important;
+  line-height: 1.6 !important;
+}
+.request-modal #request-description::placeholder {
+  color: rgba(255,255,255,0.22) !important;
+  font-style: italic !important;
+}
+
+/* ══════════════════════════════════════════════════════════
+   PROPOSALS COUNTER — social proof (injected by JS)
+   ══════════════════════════════════════════════════════════ */
+
+.fxrq2-proposals {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 13px;
+  background: rgba(64,210,130,0.04);
+  border: 1px solid rgba(64,210,130,0.08);
+  border-radius: 10px;
+  gap: 10px;
+}
+
+.fxrq2-proposals-text {
+  font-size: 0.70rem;
+  color: rgba(255,255,255,0.40);
+  line-height: 1.4;
+}
+
+.fxrq2-proposals-count {
+  font-size: 0.80rem;
+  font-weight: 800;
+  color: rgba(64,210,130,0.80);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ══════════════════════════════════════════════════════════
+   CTA — calm planning authority (NOT panic)
+   ══════════════════════════════════════════════════════════ */
+
+.request-modal .request-submit-btn {
+  min-height: 52px !important;
+  border-radius: 13px !important;
+  font-size: 0.90rem !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.02em !important;
+  text-transform: none !important;
+  box-shadow: none !important;
+  background: linear-gradient(135deg, #e1306c 0%, #c0265a 100%) !important;
+  transition:
+    transform 0.18s cubic-bezier(0.22,1,0.36,1),
+    box-shadow 0.22s ease,
+    opacity 0.18s ease !important;
+}
+
+.request-modal .request-submit-btn:not(:disabled):hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 28px rgba(225,48,108,0.28) !important;
+}
+
+.request-modal .request-submit-btn:not(:disabled):active {
+  transform: scale(0.985) !important;
+  transition-duration: 0.07s !important;
+}
+
+.request-modal .request-submit-btn:disabled {
+  opacity: 0.38 !important;
+  cursor: not-allowed !important;
+  box-shadow: none !important;
+}
+
+/* ══════════════════════════════════════════════════════════
+   TRUST LINE — planning reassurance
+   ══════════════════════════════════════════════════════════ */
+
+.request-modal .request-trust-copy {
+  font-size: 0.70rem !important;
+  color: rgba(255,255,255,0.28) !important;
+  gap: 3px !important;
+  line-height: 1.6 !important;
+}
+
+/* ══════════════════════════════════════════════════════════
+   SUCCESS STATE — reassuring, not celebratory
+   ══════════════════════════════════════════════════════════ */
+
+.request-modal .request-success-icon {
+  background: linear-gradient(135deg, rgba(64,210,130,0.16), rgba(64,130,255,0.12)) !important;
+  border-color: rgba(64,210,130,0.18) !important;
+}
+
+.request-modal .request-success h4 {
+  font-size: 1.0rem !important;
+  line-height: 1.4 !important;
+}
+
+.request-modal .request-success p {
+  font-size: 0.82rem !important;
+  color: rgba(255,255,255,0.52) !important;
+  line-height: 1.7 !important;
+}
+
+.request-modal .request-secondary-btn {
+  font-size: 0.82rem !important;
+  min-height: 44px !important;
+  border-radius: 11px !important;
+  font-weight: 700 !important;
+}
+
+/* ══════════════════════════════════════════════════════════
+   MOBILE
+   ══════════════════════════════════════════════════════════ */
+
+@media (max-width: 640px) {
+  .request-modal {
+    border-radius: 20px 20px 0 0 !important;
+  }
+  .request-modal .request-modal-shell {
+    padding-top: 4px !important;
+  }
+  .request-modal .request-submit-btn {
+    min-height: 50px !important;
+    font-size: 0.86rem !important;
+  }
+  .fxrq2-plan-strip {
+    padding: 8px 11px !important;
+  }
+  .fxrq2-plan-text { font-size: 0.67rem !important; }
+  .request-modal .request-choice-card { padding: 11px 10px 10px !important; }
+}
+
+@media (max-width: 390px) {
+  .request-modal .request-choice-title { font-size: 0.82rem !important; }
+  .request-modal .request-choice-meta  { font-size: 0.65rem !important; }
+  .fxrq2-plan-text { font-size: 0.64rem !important; }
+}
+
+/* ══════════════════════════════════════════════════════════
+   REDUCED MOTION
+   ══════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  .request-modal .request-submit-btn,
+  .request-modal .request-choice-card,
+  .request-modal .request-field input,
+  .request-modal .request-field select {
+    transition: none !important;
+  }
+}
