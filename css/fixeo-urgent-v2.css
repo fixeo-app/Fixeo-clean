@@ -1,0 +1,463 @@
+/* ============================================================
+   fixeo-urgent-v2.css
+   URGENT MODAL V2 — Uber-level emergency conversion flow
+   Additive CSS only. Preserves all IDs and existing logic.
+   Loaded last → wins cascade.
+   ============================================================ */
+
+/* ══════════════════════════════════════════════════════════
+   MODAL SHELL — deeper glass, tighter width
+   ══════════════════════════════════════════════════════════ */
+
+.express-request-modal {
+  max-width: 460px !important;
+  border-radius: 20px !important;
+  border: 1px solid rgba(255,255,255,0.08) !important;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.05),
+    inset 0 1px 0 rgba(255,255,255,0.07),
+    0 8px 24px rgba(0,0,0,0.22),
+    0 24px 56px rgba(0,0,0,0.28),
+    0 0 80px rgba(225,48,108,0.06) !important;
+  background: rgba(14,14,22,0.97) !important;
+}
+
+/* Header: tighter, pink accent line */
+.express-request-modal-header {
+  padding: 18px 20px 14px !important;
+  border-bottom: 1px solid rgba(255,255,255,0.055) !important;
+  position: relative;
+}
+.express-request-modal-header::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; left: 20%; right: 20%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(225,48,108,0.25), transparent);
+}
+
+/* Shell: comfortable padding */
+.express-request-modal .request-modal-shell {
+  padding: 20px 20px 22px !important;
+  gap: 18px !important;
+}
+
+/* Title: stronger, tighter */
+#express-modal-title {
+  font-size: 1.0rem !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.01em !important;
+  line-height: 1.25 !important;
+  color: rgba(255,255,255,0.96) !important;
+}
+
+/* Subtitle: whisper */
+#express-modal-subtitle {
+  font-size: 0.72rem !important;
+  color: rgba(255,255,255,0.38) !important;
+  margin-top: 3px !important;
+}
+
+/* ══════════════════════════════════════════════════════════
+   LIVE PERCEPTION STRIP — above form
+   ══════════════════════════════════════════════════════════ */
+
+.fxu2-live {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 11px;
+  background: rgba(37,211,102,0.06);
+  border: 1px solid rgba(37,211,102,0.14);
+  border-radius: 99px;
+  width: fit-content;
+  margin: 0 0 4px;
+}
+
+.fxu2-live-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #25d366;
+  flex-shrink: 0;
+  animation: fxu2-dot-pulse 2.2s ease-in-out infinite;
+  box-shadow: 0 0 0 0 rgba(37,211,102,0.5);
+}
+
+@keyframes fxu2-dot-pulse {
+  0%   { box-shadow: 0 0 0 0   rgba(37,211,102,0.55); }
+  55%  { box-shadow: 0 0 0 5px rgba(37,211,102,0);    }
+  100% { box-shadow: 0 0 0 0   rgba(37,211,102,0);    }
+}
+
+.fxu2-live-text {
+  font-size: 0.68rem;
+  font-weight: 500;
+  color: rgba(255,255,255,0.50);
+  letter-spacing: 0.01em;
+}
+
+/* ══════════════════════════════════════════════════════════
+   PROBLEM CARDS — replace old chips-row
+   ══════════════════════════════════════════════════════════ */
+
+/* Hide old chips row — replaced by card grid */
+.express-chips-row {
+  display: none !important;
+}
+
+/* Label: section header */
+.express-request-form label[for="express-request-problem"] {
+  font-size: 0.72rem !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.06em !important;
+  color: rgba(255,255,255,0.42) !important;
+  margin-bottom: 10px !important;
+  display: block !important;
+}
+
+/* Textarea: optional, calmer */
+#express-request-problem {
+  min-height: 52px !important;
+  resize: none !important;
+  font-size: 0.85rem !important;
+  border-radius: 12px !important;
+  padding: 11px 14px !important;
+  background: rgba(255,255,255,0.04) !important;
+  border-color: rgba(255,255,255,0.08) !important;
+  color: rgba(255,255,255,0.75) !important;
+  margin-top: 10px !important;
+  transition: border-color 0.2s, background 0.2s !important;
+}
+#express-request-problem:focus {
+  border-color: rgba(225,48,108,0.32) !important;
+  background: rgba(255,255,255,0.06) !important;
+  outline: none !important;
+  box-shadow: 0 0 0 2px rgba(225,48,108,0.08) !important;
+}
+#express-request-problem::placeholder {
+  color: rgba(255,255,255,0.28) !important;
+  font-style: italic !important;
+}
+
+/* Optional microcopy under textarea */
+.fxu2-detail-hint {
+  font-size: 0.64rem;
+  color: rgba(255,255,255,0.22);
+  margin: 4px 0 0 2px;
+  display: block;
+}
+
+/* ── PROBLEM CARD GRID ─────────────────────────────────── */
+
+.fxu2-problem-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 2px;
+}
+
+.fxu2-pcard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 12px 6px 10px;
+  border-radius: 13px;
+  border: 1px solid rgba(255,255,255,0.07);
+  background: rgba(255,255,255,0.032);
+  cursor: pointer;
+  transition:
+    transform   0.18s cubic-bezier(0.22,1,0.36,1),
+    box-shadow  0.18s ease,
+    border-color 0.18s ease,
+    background  0.18s ease;
+  /* Entrance */
+  animation: fxu2-card-in 0.28s cubic-bezier(0.22,1,0.36,1) both;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+/* Stagger entrance */
+.fxu2-pcard:nth-child(1) { animation-delay: 0.04s; }
+.fxu2-pcard:nth-child(2) { animation-delay: 0.07s; }
+.fxu2-pcard:nth-child(3) { animation-delay: 0.10s; }
+.fxu2-pcard:nth-child(4) { animation-delay: 0.13s; }
+.fxu2-pcard:nth-child(5) { animation-delay: 0.16s; }
+.fxu2-pcard:nth-child(6) { animation-delay: 0.19s; }
+
+@keyframes fxu2-card-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0);   }
+}
+
+.fxu2-pcard-icon {
+  font-size: 1.4rem;
+  line-height: 1;
+  display: block;
+  transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+.fxu2-pcard-label {
+  font-size: 0.64rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.55);
+  text-align: center;
+  line-height: 1.25;
+  letter-spacing: 0.01em;
+  transition: color 0.18s;
+}
+
+/* Hover */
+.fxu2-pcard:hover {
+  transform: translateY(-2px);
+  border-color: rgba(225,48,108,0.18);
+  background: rgba(225,48,108,0.05);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.05),
+    0 4px 14px rgba(225,48,108,0.07);
+}
+.fxu2-pcard:hover .fxu2-pcard-icon {
+  transform: scale(1.12);
+}
+.fxu2-pcard:hover .fxu2-pcard-label {
+  color: rgba(255,255,255,0.78);
+}
+
+/* Tap spring */
+.fxu2-pcard:active {
+  transform: scale(0.96) translateY(0) !important;
+  transition-duration: 0.07s !important;
+}
+
+/* Selected state */
+.fxu2-pcard.fxu2-selected {
+  background:
+    radial-gradient(ellipse 100% 80% at 50% 0%, rgba(225,48,108,0.16) 0%, transparent 65%),
+    rgba(225,48,108,0.07);
+  border-color: rgba(225,48,108,0.55) !important;
+  box-shadow:
+    0 0 0 2px rgba(225,48,108,0.10),
+    0 0 0 4px rgba(225,48,108,0.04),
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    0 6px 20px rgba(225,48,108,0.12) !important;
+  transform: translateY(-2px) scale(1.02) !important;
+}
+.fxu2-pcard.fxu2-selected .fxu2-pcard-label {
+  color: rgba(255,255,255,0.90) !important;
+}
+.fxu2-pcard.fxu2-selected .fxu2-pcard-icon {
+  transform: scale(1.1);
+}
+
+/* Non-selected fade when one is chosen */
+.fxu2-problem-grid.fxu2-has-selection .fxu2-pcard:not(.fxu2-selected) {
+  opacity: 0.45;
+}
+.fxu2-problem-grid.fxu2-has-selection .fxu2-pcard:not(.fxu2-selected):hover {
+  opacity: 0.80;
+}
+
+/* ══════════════════════════════════════════════════════════
+   CITY CHIPS — replace native select
+   ══════════════════════════════════════════════════════════ */
+
+/* Hide native select */
+#express-request-city {
+  display: none !important;
+}
+
+/* Hide native label */
+.express-request-form label[for="express-request-city"] {
+  display: none !important;
+}
+
+/* City section header */
+.fxu2-city-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(255,255,255,0.42);
+  margin: 0 0 8px;
+  display: block;
+}
+
+/* City chip grid */
+.fxu2-city-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.fxu2-city-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 13px;
+  border-radius: 99px;
+  border: 1px solid rgba(255,255,255,0.09);
+  background: rgba(255,255,255,0.038);
+  color: rgba(255,255,255,0.58);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    transform   0.18s cubic-bezier(0.22,1,0.36,1),
+    border-color 0.18s ease,
+    background  0.18s ease,
+    color       0.18s ease,
+    opacity     0.18s ease;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  letter-spacing: 0.01em;
+}
+
+.fxu2-city-chip:hover {
+  border-color: rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.07);
+  color: rgba(255,255,255,0.85);
+  transform: translateY(-1px);
+}
+
+.fxu2-city-chip:active {
+  transform: scale(0.97) !important;
+  transition-duration: 0.07s !important;
+}
+
+/* Selected */
+.fxu2-city-chip.fxu2-city-selected {
+  background: rgba(225,48,108,0.10) !important;
+  border-color: rgba(225,48,108,0.45) !important;
+  color: rgba(255,255,255,0.92) !important;
+  box-shadow: 0 0 0 2px rgba(225,48,108,0.08), 0 4px 12px rgba(225,48,108,0.08) !important;
+}
+
+.fxu2-city-chip-check {
+  font-size: 0.65rem;
+  opacity: 0;
+  transition: opacity 0.18s;
+  color: rgba(225,48,108,0.9);
+}
+.fxu2-city-chip.fxu2-city-selected .fxu2-city-chip-check { opacity: 1; }
+
+/* Non-selected fade */
+.fxu2-city-grid.fxu2-city-has-sel .fxu2-city-chip:not(.fxu2-city-selected) {
+  opacity: 0.42;
+}
+.fxu2-city-grid.fxu2-city-has-sel .fxu2-city-chip:not(.fxu2-city-selected):hover {
+  opacity: 0.80;
+}
+
+/* ══════════════════════════════════════════════════════════
+   CTA UPGRADE
+   ══════════════════════════════════════════════════════════ */
+
+.express-request-modal .request-submit-btn {
+  width: 100% !important;
+  min-height: 52px !important;
+  font-size: 0.88rem !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.04em !important;
+  text-transform: uppercase !important;
+  border-radius: 14px !important;
+  transition:
+    box-shadow 0.22s ease,
+    transform  0.12s cubic-bezier(0.34,1.56,0.64,1),
+    opacity    0.18s ease !important;
+}
+
+/* Disabled: dead/quiet */
+.express-request-modal .request-submit-btn:disabled {
+  opacity: 0.35 !important;
+  box-shadow: none !important;
+  cursor: not-allowed !important;
+}
+
+/* Ready: breathing glow */
+.express-request-modal .request-submit-btn:not(:disabled) {
+  box-shadow: 0 0 0 0 rgba(225,48,108,0.4) !important;
+  animation: fxu2-cta-breathe 2.8s ease-in-out infinite !important;
+}
+
+@keyframes fxu2-cta-breathe {
+  0%, 100% { box-shadow: 0 4px 20px rgba(225,48,108,0.22), 0 0 0 0 rgba(225,48,108,0.30); }
+  50%       { box-shadow: 0 6px 28px rgba(225,48,108,0.35), 0 0 0 6px rgba(225,48,108,0.05); }
+}
+
+.express-request-modal .request-submit-btn:not(:disabled):hover {
+  transform: translateY(-2px) !important;
+}
+.express-request-modal .request-submit-btn:not(:disabled):active {
+  transform: scale(0.984) !important;
+  transition-duration: 0.07s !important;
+  animation-play-state: paused !important;
+}
+
+/* Remove old fomo fake count */
+.express-modal-fomo {
+  display: none !important;
+}
+
+/* Trust line: quieter */
+.express-modal-trust {
+  font-size: 0.67rem !important;
+  color: rgba(255,255,255,0.28) !important;
+  opacity: 1 !important;
+  text-align: center !important;
+  margin-top: 8px !important;
+}
+
+/* Feedback */
+.express-request-feedback {
+  font-size: 0.78rem !important;
+  color: rgba(255,160,180,0.9) !important;
+  padding: 6px 10px !important;
+  border-radius: 8px !important;
+  background: rgba(225,48,108,0.08) !important;
+  border: 1px solid rgba(225,48,108,0.12) !important;
+}
+.express-request-feedback[hidden] { display: none !important; }
+
+/* ══════════════════════════════════════════════════════════
+   MOBILE
+   ══════════════════════════════════════════════════════════ */
+
+@media (max-width: 640px) {
+  .express-request-modal {
+    max-width: 100vw !important;
+    border-radius: 20px 20px 0 0 !important;
+  }
+  .fxu2-problem-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 7px !important;
+  }
+  .fxu2-pcard {
+    padding: 11px 4px 9px !important;
+  }
+  .fxu2-pcard-icon { font-size: 1.25rem !important; }
+  .fxu2-pcard-label { font-size: 0.60rem !important; }
+  .fxu2-city-chip { font-size: 0.70rem !important; padding: 6px 11px !important; }
+  .express-request-modal .request-submit-btn { min-height: 50px !important; font-size: 0.83rem !important; }
+}
+
+@media (max-width: 390px) {
+  .fxu2-pcard-label { font-size: 0.58rem !important; }
+  .fxu2-city-chip { font-size: 0.67rem !important; padding: 5px 9px !important; }
+}
+
+/* ══════════════════════════════════════════════════════════
+   REDUCED MOTION
+   ══════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  .fxu2-live-dot,
+  .fxu2-pcard,
+  .express-request-modal .request-submit-btn {
+    animation: none !important;
+    transition: none !important;
+  }
+}
