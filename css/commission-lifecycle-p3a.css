@@ -1,0 +1,242 @@
+/* ============================================================
+   FIXEO — COMMISSION LIFECYCLE PHASE 3A
+   css/commission-lifecycle-p3a.css
+   Namespace: .fxcl3a-*
+   Additive only — zero overrides of existing classes
+   ============================================================ */
+
+/* ══════════════════════════════════════════════════════════
+   COMMISSION DUE BLOCK (in #fxmlp2-artisan-missions)
+   ══════════════════════════════════════════════════════════ */
+
+#fxcl3a-commission-wrap {
+  margin-top: 20px;
+}
+
+/* ── Overview summary pill (injected in #fxadp2-overview-wrap) ── */
+
+#fxcl3a-overview-pill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: rgba(255,165,2,0.07);
+  border: 1px solid rgba(255,165,2,0.18);
+  margin-bottom: 14px;
+  cursor: default;
+  flex-wrap: wrap;
+}
+#fxcl3a-overview-pill.state-all-paid {
+  background: rgba(32,201,151,0.07);
+  border-color: rgba(32,201,151,0.18);
+}
+#fxcl3a-overview-pill.state-empty { display: none !important; }
+
+.fxcl3a-pill-icon {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.fxcl3a-pill-body { flex: 1; min-width: 0; }
+.fxcl3a-pill-label {
+  font-size: 0.80rem;
+  font-weight: 700;
+  color: rgba(255,165,2,0.90);
+}
+#fxcl3a-overview-pill.state-all-paid .fxcl3a-pill-label {
+  color: #20c997;
+}
+.fxcl3a-pill-sub {
+  font-size: 0.72rem;
+  opacity: 0.45;
+  margin-top: 2px;
+}
+.fxcl3a-pill-amount {
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: rgba(255,165,2,0.95);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+#fxcl3a-overview-pill.state-all-paid .fxcl3a-pill-amount {
+  color: #20c997;
+}
+
+/* ── Section header ───────────────────────────────────────── */
+
+.fxcl3a-section-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.42;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ── Commission card ──────────────────────────────────────── */
+
+.fxcl3a-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 18px;
+  padding: 16px 18px;
+  margin-bottom: 12px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.18s;
+}
+.fxcl3a-card:hover { border-color: rgba(255,255,255,0.14); }
+
+/* State accents — left stripe */
+.fxcl3a-card.state-due::before {
+  content: '';
+  position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+  border-radius: 18px 0 0 18px;
+  background: linear-gradient(180deg, #ffa502, #ff7f00);
+}
+.fxcl3a-card.state-paid::before {
+  content: '';
+  position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+  border-radius: 18px 0 0 18px;
+  background: #20c997;
+}
+.fxcl3a-card.state-review::before {
+  content: '';
+  position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+  border-radius: 18px 0 0 18px;
+  background: #6c8ff5;
+}
+
+/* Card head row */
+.fxcl3a-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.fxcl3a-card-service {
+  font-size: 0.88rem;
+  font-weight: 700;
+  margin-bottom: 3px;
+}
+.fxcl3a-card-meta {
+  font-size: 0.73rem;
+  opacity: 0.42;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Status badge */
+.fxcl3a-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 11px;
+  border-radius: 999px;
+  font-size: 0.70rem;
+  font-weight: 700;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.fxcl3a-badge.due     { background:rgba(255,165,2,.12); border:1px solid rgba(255,165,2,.25); color:#ffa502; }
+.fxcl3a-badge.paid    { background:rgba(32,201,151,.12); border:1px solid rgba(32,201,151,.25); color:#20c997; }
+.fxcl3a-badge.review  { background:rgba(108,143,245,.12); border:1px solid rgba(108,143,245,.25); color:#6c8ff5; }
+
+/* Price breakdown row */
+.fxcl3a-breakdown {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+.fxcl3a-price-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  border-radius: 10px;
+  font-size: 0.76rem;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.09);
+}
+.fxcl3a-price-chip strong {
+  font-weight: 700;
+  font-size: 0.84rem;
+}
+.fxcl3a-price-chip.highlight {
+  background: rgba(255,165,2,0.08);
+  border-color: rgba(255,165,2,0.18);
+  color: #ffa502;
+}
+.fxcl3a-price-chip.highlight.paid-chip {
+  background: rgba(32,201,151,0.08);
+  border-color: rgba(32,201,151,0.18);
+  color: #20c997;
+}
+
+/* Explanation text */
+.fxcl3a-explanation {
+  font-size: 0.75rem;
+  line-height: 1.5;
+  opacity: 0.42;
+  padding: 9px 12px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  margin-top: 6px;
+}
+
+/* Paid date line */
+.fxcl3a-paid-date {
+  font-size: 0.74rem;
+  color: #20c997;
+  opacity: 0.72;
+  margin-top: 6px;
+}
+
+/* Review note */
+.fxcl3a-review-note {
+  font-size: 0.75rem;
+  color: #6c8ff5;
+  opacity: 0.75;
+  margin-top: 6px;
+}
+
+/* ── Empty state ─────────────────────────────────────────── */
+
+.fxcl3a-empty {
+  display: none; /* only shown when explicitly added to DOM */
+  text-align: center;
+  padding: 18px 12px;
+  font-size: 0.80rem;
+  opacity: 0.30;
+}
+
+/* ══════════════════════════════════════════════════════════
+   MOBILE
+   ══════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+  .fxcl3a-card { padding: 13px 14px; border-radius: 14px; }
+  #fxcl3a-overview-pill { padding: 10px 13px; }
+}
+@media (max-width: 480px) {
+  .fxcl3a-breakdown { flex-direction: column; gap: 6px; }
+  .fxcl3a-price-chip { border-radius: 8px; }
+  .fxcl3a-card-head { flex-direction: column; gap: 6px; }
+}
+@media (max-width: 360px) {
+  .fxcl3a-card { padding: 11px 11px; border-radius: 12px; }
+  .fxcl3a-pill-amount { font-size: 0.84rem; }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .fxcl3a-card { transition: none; }
+}
