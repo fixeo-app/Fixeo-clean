@@ -24,19 +24,21 @@
 
   /* ── Config ──────────────────────────────────────────────────────── */
 
+  /* SVG CSS class names matching auth-premium.css .ap-si-{value} system.
+     Zero emoji dependency — SVG data URI backgrounds, cross-environment. */
   var METIERS = [
-    { value: 'plomberie',    label: 'Plomberie',     icon: '\uD83D\uDCA7' },
-    { value: 'electricite',  label: '\u00c9lectricit\u00e9', icon: '\u26A1'   },
-    { value: 'peinture',     label: 'Peinture',      icon: '\uD83C\uDFA8' },
-    { value: 'climatisation',label: 'Climatisation', icon: '\u2744\uFE0F'  },
-    { value: 'menuiserie',   label: 'Menuiserie',    icon: '\uD83E\uDE9A'  },
-    { value: 'maconnerie',   label: 'Ma\u00e7onnerie', icon: '\uD83E\uDDF1'},
-    { value: 'serrurerie',   label: 'Serrurerie',    icon: '\uD83D\uDD10'  },
-    { value: 'nettoyage',    label: 'Nettoyage',     icon: '\uD83E\uDDF9'  },
-    { value: 'jardinage',    label: 'Jardinage',     icon: '\uD83C\uDF3F'  },
-    { value: 'demenagement', label: 'D\u00e9m\u00e9nagement', icon: '\uD83D\uDCE6' },
-    { value: 'toiture',      label: 'Toiture',       icon: '\uD83C\uDFE0'  },
-    { value: 'bricolage',    label: 'Bricolage',     icon: '\uD83D\uDD28'  }
+    { value: 'plomberie',    label: 'Plomberie',            svgClass: 'ap-si-plomberie'    },
+    { value: 'electricite',  label: '\u00c9lectricit\u00e9', svgClass: 'ap-si-electricite'  },
+    { value: 'peinture',     label: 'Peinture',             svgClass: 'ap-si-peinture'     },
+    { value: 'climatisation',label: 'Climatisation',        svgClass: 'ap-si-clim'         },
+    { value: 'menuiserie',   label: 'Menuiserie',           svgClass: 'ap-si-menuiserie'   },
+    { value: 'maconnerie',   label: 'Ma\u00e7onnerie',      svgClass: 'ap-si-maconnerie'   },
+    { value: 'serrurerie',   label: 'Serrurerie',           svgClass: 'ap-si-serrurerie'   },
+    { value: 'nettoyage',    label: 'Nettoyage',            svgClass: 'ap-si-nettoyage'    },
+    { value: 'jardinage',    label: 'Jardinage',            svgClass: 'ap-si-jardinage'    },
+    { value: 'demenagement', label: 'D\u00e9m\u00e9nagement', svgClass: 'ap-si-demenagement' },
+    { value: 'toiture',      label: 'Toiture',              svgClass: 'ap-si-toiture'      },
+    { value: 'bricolage',    label: 'Bricolage',            svgClass: 'ap-si-bricolage'    }
   ];
 
   var CITIES = [
@@ -53,9 +55,9 @@
       cta: 'Rejoindre le r\u00e9seau Fixeo',
       hint: 'Votre profil sera actif imm\u00e9diatement apr\u00e8s validation.',
       system: [
-        { icon: '\uD83D\uDFE2', text: 'Les demandes sont distribu\u00e9es selon votre m\u00e9tier et votre ville.' },
-        { icon: '\uD83D\uDCCD', text: 'Votre visibilit\u00e9 d\u00e9pend de votre zone d\u2019intervention.' },
-        { icon: '\uD83D\uDEE1\uFE0F', text: 'Les profils sont v\u00e9rifi\u00e9s avant activation compl\u00e8te.' }
+        { icon: '\u25CF', text: 'Les demandes sont distribu\u00e9es selon votre m\u00e9tier et votre ville.' },
+        { icon: '\u25CE', text: 'Votre visibilit\u00e9 d\u00e9pend de votre zone d\u2019intervention.' },
+        { icon: '\u25A3', text: 'Les profils sont v\u00e9rifi\u00e9s avant activation compl\u00e8te.' }
       ]
     },
     'claim': {
@@ -65,9 +67,9 @@
       cta: 'Demander la revendication de mon profil',
       hint: 'Votre profil pourra \u00eatre activ\u00e9 apr\u00e8s validation par l\u2019\u00e9quipe Fixeo.',
       system: [
-        { icon: '\uD83D\uDD0D', text: 'Nous utiliserons ces informations pour v\u00e9rifier votre profil.' },
-        { icon: '\uD83D\uDCCD', text: 'Votre ville et votre m\u00e9tier permettent d\u2019identifier votre fiche.' },
-        { icon: '\u23F3', text: 'La v\u00e9rification prend g\u00e9n\u00e9ralement moins de 24h.' }
+        { icon: '\u25A3', text: 'Nous utiliserons ces informations pour v\u00e9rifier votre profil.' },
+        { icon: '\u25CE', text: 'Votre ville et votre m\u00e9tier permettent d\u2019identifier votre fiche.' },
+        { icon: '\u25B7', text: 'La v\u00e9rification prend g\u00e9n\u00e9ralement moins de 24h.' }
       ]
     }
   };
@@ -88,8 +90,8 @@
     selector.className = 'fxao3-mode-selector';
 
     var cards = [
-      { mode: 'new',   icon: '\u2728', title: 'Nouveau sur Fixeo',    meta: 'Cr\u00e9ez votre pr\u00e9sence et recevez des demandes.' },
-      { mode: 'claim', icon: '\uD83D\uDD13', title: 'Revendiquer un profil', meta: 'Votre fiche existe peut-\u00eatre d\u00e9j\u00e0 sur Fixeo. Activez-la.' }
+      { mode: 'new',   icon: '\u2B50', title: 'Nouveau sur Fixeo',    meta: 'Cr\u00e9ez votre pr\u00e9sence et recevez des demandes.' },
+      { mode: 'claim', icon: '\u25A1', title: 'Revendiquer un profil', meta: 'Votre fiche existe peut-\u00eatre d\u00e9j\u00e0 sur Fixeo. Activez-la.' }
     ];
 
     cards.forEach(function (c) {
@@ -211,8 +213,9 @@
       card.setAttribute('role', 'button');
       card.setAttribute('tabindex', '0');
       card.setAttribute('aria-pressed', 'false');
+      /* Use SVG CSS icon (same system as Auth V7 ap-scard-icon) — zero emoji dependency */
       card.innerHTML =
-        '<span class="fxao3-metier-icon" aria-hidden="true">' + m.icon + '</span>' +
+        '<span class="fxao3-metier-icon ap-scard-icon ' + m.svgClass + '" aria-hidden="true"></span>' +
         '<span class="fxao3-metier-label">' + m.label + '</span>';
 
       card.addEventListener('click', function () { selectMetier(m.value, grid, nativeSelect); });
@@ -348,7 +351,7 @@
     var hint = document.createElement('div');
     hint.className = 'fxao3-phone-hint';
     hint.innerHTML =
-      '<span class="fxao3-phone-hint-icon" aria-hidden="true">\uD83D\uDCF1</span>' +
+      '<span class="fxao3-phone-hint-icon" aria-hidden="true">\u25CF</span>' +
       '<span>Les clients pourront vous contacter rapidement via WhatsApp ou t\u00e9l\u00e9phone.</span>';
 
     phoneInput?.insertAdjacentElement('afterend', hint);
@@ -421,7 +424,7 @@
     var note = document.createElement('div');
     note.className = 'fxao3-claim-note';
     note.innerHTML =
-      '<span class="fxao3-claim-note-icon" aria-hidden="true">\uD83D\uDD0D</span>' +
+      '<span class="fxao3-claim-note-icon" aria-hidden="true">\u25A3</span>' +
       '<span>Nous utiliserons ces informations pour v\u00e9rifier votre profil existant. <strong style="color:rgba(255,255,255,0.55);">Aucun faux profil ne sera cr\u00e9\u00e9.</strong> Votre demande de revendication sera examin\u00e9e par l\u2019\u00e9quipe Fixeo.</span>';
 
     /* Insert after first field */
