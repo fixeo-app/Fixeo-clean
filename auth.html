@@ -711,7 +711,7 @@ function togglePassword(id) {
 /* ─────────────────────────────────────────────────────────────
  * ADMIN EMERGENCY BYPASS — SHA-256 (preserved verbatim)
  * ──────────────────────────────────────────────────────────── */
-const _ADMIN_EMAIL     = 'admin@fixeo.com';
+const _ADMIN_EMAIL     = 'admin@fixeo.ma';
 const _ADMIN_PASS_HASH = 'c6d729bbfb14021b9852303540c1859737373ffbb108f5e5922246f6ac77b3da';
 const _ADMIN_NAME      = 'Admin Fixeo';
 
@@ -780,25 +780,18 @@ async function handleLogin(e) {
   _setLoginBtnLoading('V\u00E9rification\u2026');
   const passHash = await _sha256(passEl.value);
 
-  /* ADMIN EMERGENCY PATH */
-  if (email === _ADMIN_EMAIL && passHash === _ADMIN_PASS_HASH) {
-    const user = { id: 'admin-001', email: _ADMIN_EMAIL, role: 'admin', token: 'admin-session-' + Date.now() };
-    if (window.FixeoAuthSession && typeof window.FixeoAuthSession.setActiveUser === 'function') {
-      window.FixeoAuthSession.setActiveUser({ id: user.id, email: user.email, name: _ADMIN_NAME, role: user.role });
-    } else {
-      localStorage.setItem('fixeo_user',      user.email);
-      localStorage.setItem('fixeo_user_name', _ADMIN_NAME);
-      localStorage.setItem('fixeo_role',      user.role);
-      localStorage.setItem('fixeo_admin',     '1');
-      localStorage.setItem('role',            user.role);
-      localStorage.setItem('user',            JSON.stringify({ id: user.id, name: _ADMIN_NAME, role: user.role }));
-      sessionStorage.setItem('fixeo_admin_auth', '1');
-    }
-    console.log('USER LOGIN:', user);
-    notifications.success('Bienvenue Admin\u00A0!', '\uD83D\uDEE1 Acc\u00E8s administrateur accord\u00E9. Redirection\u2026');
-    setTimeout(() => { window.location.href = 'admin.html'; }, 1500);
+  /* ADMIN PATH — Phase 1B+1C: SHA-256 pre-check passes → fall through to
+     REAL SUPABASE LOGIN below (which writes live JWT + routes to admin.html).
+     Do NOT short-circuit here — Phase 1C requires a real Supabase JWT on admin.html.
+     The old emergency path (localStorage-only) is removed: it bypassed Phase 1C. */
+  if (email === _ADMIN_EMAIL && passHash !== _ADMIN_PASS_HASH) {
+    /* SHA-256 pre-check FAILED specifically for admin email — give clear feedback */
+    _resetLoginBtn();
+    _showLoginError('\u274C Mot de passe administrateur incorrect.');
     return;
   }
+  /* If email === _ADMIN_EMAIL and passHash === _ADMIN_PASS_HASH:
+     fall through to real Supabase signIn below — it writes the JWT needed by Phase 1C. */
 
   /* REAL SUPABASE LOGIN */
   if (!window.FixeoAuth) { await new Promise(r => setTimeout(r, 600)); }
@@ -817,10 +810,18 @@ async function handleLogin(e) {
   }
 
   _hideLoginError();
-  const role      = (user && user.role) || 'client';
+  /* Phase 1C routing fix: admin@fixeo.ma must always route to admin.html
+     regardless of what public.users returns (account may lack a row or have role=client).
+     Also write sessionStorage.fixeo_admin_auth='1' so Phase 1C DCL on admin.html passes. */
+  const role      = email === _ADMIN_EMAIL ? 'admin' : ((user && user.role) || 'client');
+  if (role === 'admin') {
+    sessionStorage.setItem('fixeo_admin_auth', '1');
+    localStorage.setItem('fixeo_role',  'admin');
+    localStorage.setItem('role',        'admin');
+    localStorage.removeItem('fixeo_admin'); /* Phase 1B: never persist to localStorage */
+  }
   const name      = (user && user.full_name) || email.split('@')[0];
-  const roleLabel = role === 'artisan' ? 'Artisan' : 'Client';
-  console.log('USER LOGIN:', { email, role });
+  const roleLabel = role === 'artisan' ? 'Artisan' : (role === 'admin' ? 'Admin' : 'Client');
   notifications.success('Bienvenue\u00A0' + name + '\u00A0!', '\u2705 Connexion r\u00E9ussie en tant que ' + roleLabel + '. Redirection\u2026');
   setTimeout(() => { window.FixeoAuth.redirectByRole(role); }, 1200);
 }
