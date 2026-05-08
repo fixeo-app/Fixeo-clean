@@ -1,0 +1,297 @@
+/* ============================================================
+   FIXEO — REAL NOTIFICATION LAYER V1
+   css/fixeo-notifications-real-v1.css
+   Namespace: .fxnrv1-*
+
+   Styles for:
+   1. Fallback toast (only when window.notifications unavailable)
+   2. Fallback minimal panel (only when .notif-panel doesn't exist)
+   3. Badge augmentations (shared with notifications.js badges)
+   ============================================================ */
+
+/* ══════════════════════════════════════════════════════════
+   FALLBACK TOAST
+   ══════════════════════════════════════════════════════════ */
+
+.fxnrv1-toast-wrap {
+  position: fixed;
+  right: 20px;
+  bottom: 24px;
+  z-index: 9500;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.fxnrv1-toast {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-width: 280px;
+  max-width: min(360px, calc(100vw - 32px));
+  background: rgba(14, 14, 26, 0.97);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 16px;
+  padding: 14px 14px 13px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.42);
+  backdrop-filter: blur(18px);
+  pointer-events: auto;
+  animation: fxnrv1-slideup 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes fxnrv1-slideup {
+  from { opacity: 0; transform: translateY(10px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)   scale(1);    }
+}
+
+.fxnrv1-toast-icon {
+  font-size: 1.2rem;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.fxnrv1-toast-body { flex: 1; min-width: 0; }
+.fxnrv1-toast-title {
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.25;
+  margin-bottom: 3px;
+}
+.fxnrv1-toast-msg {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.68);
+  line-height: 1.45;
+}
+.fxnrv1-toast-close {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.40);
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.fxnrv1-toast-close:hover { color: rgba(255, 255, 255, 0.75); }
+
+/* Severity borders */
+.fxnrv1-sev-info    { border-color: rgba(108, 143, 245, 0.30); }
+.fxnrv1-sev-success { border-color: rgba(32,  201, 151, 0.30); }
+.fxnrv1-sev-warning { border-color: rgba(255, 165,   2, 0.28); }
+.fxnrv1-sev-danger  { border-color: rgba(225,  48, 108, 0.32); }
+
+/* ══════════════════════════════════════════════════════════
+   FALLBACK MINIMAL NOTIFICATION PANEL
+   Injected only when .notif-panel (notifications.js) is absent
+   ══════════════════════════════════════════════════════════ */
+
+#fxnrv1-panel {
+  position: fixed;
+  top: 80px;
+  right: 16px;
+  width: min(360px, calc(100vw - 24px));
+  max-height: min(78vh, 600px);
+  background: rgba(12, 12, 22, 0.98);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 18px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.50);
+  backdrop-filter: blur(20px);
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 1250;
+}
+#fxnrv1-panel.open { display: flex; }
+
+.fxnrv1-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 16px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  flex-shrink: 0;
+}
+.fxnrv1-panel-title {
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: #fff;
+}
+.fxnrv1-btn-text {
+  background: none;
+  border: none;
+  color: rgba(108, 143, 245, 0.90);
+  font-size: 0.74rem;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+}
+.fxnrv1-btn-text:hover { color: #6c8ff5; }
+.fxnrv1-btn-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.60);
+  cursor: pointer;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.fxnrv1-btn-icon:hover { background: rgba(255, 255, 255, 0.10); color: #fff; }
+
+.fxnrv1-panel-body {
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 12px 14px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.12) transparent;
+}
+.fxnrv1-panel-body::-webkit-scrollbar { width: 5px; }
+.fxnrv1-panel-body::-webkit-scrollbar-track { background: transparent; }
+.fxnrv1-panel-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 10px; }
+
+/* Notification item */
+.fxnrv1-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 11px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+  transition: background 0.14s, border-color 0.14s;
+  flex-shrink: 0;
+}
+.fxnrv1-item:hover { background: rgba(255, 255, 255, 0.06); border-color: rgba(255, 255, 255, 0.08); }
+.fxnrv1-item.unread {
+  background: rgba(108, 143, 245, 0.07);
+  border-color: rgba(108, 143, 245, 0.18);
+}
+.fxnrv1-item.unread::before {
+  content: '';
+  display: block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #6c8ff5;
+  flex-shrink: 0;
+  margin-top: 6px;
+  margin-left: -4px;
+}
+
+.fxnrv1-item-icon {
+  font-size: 1.1rem;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.fxnrv1-item-body { flex: 1; min-width: 0; }
+.fxnrv1-item-title {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.25;
+  margin-bottom: 3px;
+  word-break: break-word;
+}
+.fxnrv1-item-msg {
+  font-size: 0.76rem;
+  color: rgba(255, 255, 255, 0.58);
+  line-height: 1.45;
+  word-break: break-word;
+}
+.fxnrv1-item-time {
+  font-size: 0.68rem;
+  color: rgba(255, 255, 255, 0.30);
+  white-space: nowrap;
+  flex-shrink: 0;
+  padding-left: 4px;
+  margin-top: 1px;
+}
+
+/* Empty state */
+.fxnrv1-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 40px 20px;
+  color: rgba(255, 255, 255, 0.35);
+  gap: 6px;
+}
+.fxnrv1-empty strong {
+  display: block;
+  font-size: 0.90rem;
+  color: rgba(255, 255, 255, 0.55);
+}
+.fxnrv1-empty span { font-size: 0.78rem; }
+
+/* ══════════════════════════════════════════════════════════
+   BADGE AUGMENTATION
+   Works alongside notifications.js .notif-badge classes
+   ══════════════════════════════════════════════════════════ */
+
+/* Unread count label (inside our own panel header, if needed) */
+.fxnrv1-unread-count {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: #6c8ff5;
+  color: #fff;
+  font-size: 0.66rem;
+  font-weight: 800;
+  padding: 0 4px;
+}
+
+/* ══════════════════════════════════════════════════════════
+   MOBILE
+   ══════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+  .fxnrv1-toast-wrap {
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+  }
+  .fxnrv1-toast {
+    min-width: 0;
+    max-width: none;
+  }
+
+  #fxnrv1-panel {
+    inset: 0;
+    width: 100vw;
+    max-height: 100vh;
+    border-radius: 0;
+    top: 0;
+    right: 0;
+    border: none;
+  }
+  .fxnrv1-panel-head {
+    padding-top: 20px;
+    padding-bottom: 14px;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+   REDUCED MOTION
+   ══════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  .fxnrv1-toast         { animation: none; }
+  .fxnrv1-item          { transition: none; }
+}
