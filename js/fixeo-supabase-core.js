@@ -71,11 +71,12 @@
       if (session && session.access_token) localStorage.setItem('fixeo_token', session.access_token);
       if (profile) localStorage.setItem('fixeo_profile', JSON.stringify(profile));
       if (role === 'admin') {
-        localStorage.setItem('fixeo_admin', '1');
+        /* PHASE 1B: admin token sessionStorage ONLY — no localStorage.fixeo_admin */
         sessionStorage.setItem('fixeo_admin_auth', '1');
-      } else {
         localStorage.removeItem('fixeo_admin');
+      } else {
         sessionStorage.removeItem('fixeo_admin_auth');
+        localStorage.removeItem('fixeo_admin');
       }
     } catch (error) {}
 

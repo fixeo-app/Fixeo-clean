@@ -200,7 +200,9 @@
 
   function applyBodyClasses(user) {
     var isLoggedIn = !!user;
-    var isAdmin = !!(user && user.role === 'admin' && (localStorage.getItem('fixeo_admin') === '1' || sessionStorage.getItem('fixeo_admin_auth') === '1'));
+    /* PHASE 1B: is-admin requires sessionStorage token only.
+       localStorage.fixeo_admin no longer trusted for UI state. */
+    var isAdmin = !!(user && user.role === 'admin' && sessionStorage.getItem('fixeo_admin_auth') === '1');
     document.body.classList.toggle('is-logged-in', isLoggedIn);
     document.body.classList.toggle('is-admin', isAdmin);
   }
@@ -314,8 +316,10 @@
     localStorage.setItem('user', JSON.stringify(normalizedUser));
 
     if (role === 'admin') {
-      localStorage.setItem('fixeo_admin', '1');
+      /* PHASE 1B: admin token goes to sessionStorage ONLY.
+         fixeo_admin localStorage write eliminated — was the primary bypass vector. */
       sessionStorage.setItem('fixeo_admin_auth', '1');
+      localStorage.removeItem('fixeo_admin');
     }
 
     broadcast(normalizedUser);

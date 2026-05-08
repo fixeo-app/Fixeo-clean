@@ -62,7 +62,8 @@
 
   var user  = localStorage.getItem('fixeo_user')  || '';
   var role  = localStorage.getItem('fixeo_role')  || localStorage.getItem('role') || '';
-  var admin = localStorage.getItem('fixeo_admin') === '1';
+  /* PHASE 1B: fixeo_admin localStorage no longer trusted for gate decisions.
+     Admin access requires sessionStorage.fixeo_admin_auth=1 (session-scoped only). */
   var sess  = sessionStorage.getItem('fixeo_admin_auth') === '1';
 
   /* ── FIX-GUARD-0 : Lire aussi l'objet normalisé 'user' (JSON) si clés fixeo_* absentes ── */
@@ -89,16 +90,12 @@
   var VALID_ROLES = ['admin', 'artisan', 'client'];
 
   if (user && !VALID_ROLES.includes(role)) {
-    /* Rôle manquant ou invalide → default 'client'
-       Exception : si l'utilisateur EST l'admin par email */
-    var isAdminEmail = user.toLowerCase() === 'admin@fixeo.com';
-    role = isAdminEmail ? 'admin' : 'client';
+    /* Rôle manquant ou invalide → default 'client'.
+       PHASE 1B: email-based admin auto-bootstrap REMOVED.
+       No email address can escalate to admin automatically. */
+    role = 'client';
     localStorage.setItem('fixeo_role', role);
     localStorage.setItem('role', role);
-    /* Si admin par email mais sans flags → ajouter les flags */
-    if (isAdminEmail) {
-      localStorage.setItem('fixeo_admin', '1');
-    }
   }
 
   /* ── Pages nécessitant une connexion quelconque ─────────────── */
@@ -121,10 +118,11 @@
   }
 
   /* ── FIX-GUARD-2 : Protection admin renforcée ──────────────── */
+  /* PHASE 1B: admin access requires BOTH fixeo_role=admin AND sessionStorage token.
+     localStorage.fixeo_admin alone is never sufficient. */
   if (requiresAdmin.indexOf(page) !== -1) {
-    var isAdmin = (role === 'admin') && (admin || sess);
+    var isAdmin = (role === 'admin') && sess;
     if (!isAdmin) {
-      /* Non-admin : rediriger vers l'accueil */
       window.location.replace('index.html');
       return;
     }

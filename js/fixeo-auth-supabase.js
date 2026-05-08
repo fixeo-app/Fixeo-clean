@@ -155,10 +155,8 @@
       return { user: Object.assign({}, user, { role: role, full_name: fullName }), error: null };
     }
 
-    /* Offline fallback */
-    var knownAdmin = localStorage.getItem('fixeo_admin') === '1' &&
-                     (localStorage.getItem('fixeo_user') === email || email.includes('admin'));
-    var role = knownAdmin ? 'admin' : (localStorage.getItem('fixeo_role') || 'client');
+    /* Offline fallback — PHASE 1B: fixeo_admin localStorage no longer trusted */
+    var role = localStorage.getItem('fixeo_role') || 'client';
     _setLocalSession({ id: localStorage.getItem('user_id') || 'local-' + Date.now(), email: email, role: role });
     log('signIn: offline mode — role=' + role);
     return { user: { id: localStorage.getItem('user_id'), email: email, role: role }, error: null };
@@ -253,11 +251,12 @@
       role: s.role  || 'client'
     }));
     if (s.role === 'admin') {
-      localStorage.setItem('fixeo_admin', '1');
+      /* PHASE 1B: admin token sessionStorage ONLY */
       sessionStorage.setItem('fixeo_admin_auth', '1');
-    } else {
       localStorage.removeItem('fixeo_admin');
+    } else {
       sessionStorage.removeItem('fixeo_admin_auth');
+      localStorage.removeItem('fixeo_admin');
     }
     if (s.phone) localStorage.setItem('user_phone', s.phone);
     window.dispatchEvent(new CustomEvent('fixeo:auth:changed', { detail: s }));

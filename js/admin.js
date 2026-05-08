@@ -15,58 +15,37 @@ const _ADMIN_EMAIL     = 'admin@fixeo.com';
 const _ADMIN_PASS_HASH = 'c6d729bbfb14021b9852303540c1859737373ffbb108f5e5922246f6ac77b3da';
 const _ADMIN_DISPLAY   = 'Admin Fixeo';
 
-/* ── FIX-ADMIN-1 : BOOTSTRAP AUTOMATIQUE COMPTE ADMIN ────────
-   Logique :
-     • Si l'utilisateur connecté est admin@fixeo.com mais
-       les flags de rôle sont manquants/incorrects → correction
-     • Si des flags admin orphelins existent → nettoyage
-     • Appelé AVANT tout autre code d'initialisation
+/* ── PHASE 1B: HARDENED STARTUP GUARD ────────────────────────
+   Replaces old _bootstrapAdminAccount.
+   What changed:
+     REMOVED — Cas 1: auto-promote admin@fixeo.com email to admin role
+               (was the primary 1-write localStorage bypass)
+     REMOVED — Cas 3: email-conditional role default
+   KEPT (defensive) — Cas 4: any non-admin user with role=admin
+               in localStorage → force back to client
+     Also: stale fixeo_admin localStorage key purged at startup
    ─────────────────────────────────────────────────────────── */
-(function _bootstrapAdminAccount() {
+(function _adminStartupGuard() {
   try {
     const storedUser  = localStorage.getItem('fixeo_user')  || '';
     const storedRole  = localStorage.getItem('fixeo_role')  || '';
     const storedAdmin = localStorage.getItem('fixeo_admin') || '';
-    const storedSess  = sessionStorage.getItem('fixeo_admin_auth') || '';
 
-    /* Cas 1 : Admin connecté avec rôle manquant/incorrect → corriger */
-    const isAdminEmail = storedUser.toLowerCase() === _ADMIN_EMAIL;
-    if (isAdminEmail && storedRole !== 'admin') {
-      console.log('[Fixeo Admin] Bootstrap: rôle admin manquant → correction automatique');
-      localStorage.setItem('fixeo_role', 'admin');
-      localStorage.setItem('role',       'admin');
-      localStorage.setItem('fixeo_admin','1');
-    }
-
-    /* Cas 2 : Flags admin orphelins (fixeo_admin=1 mais user ≠ admin) → purge */
-    if (storedAdmin === '1' && !isAdminEmail && storedUser !== '') {
-      console.log('[Fixeo Admin] Bootstrap: flags admin orphelins → purge');
+    /* Always purge stale fixeo_admin from localStorage — no longer trusted */
+    if (storedAdmin) {
       localStorage.removeItem('fixeo_admin');
-      sessionStorage.removeItem('fixeo_admin_auth');
-      if (storedRole === 'admin') {
-        localStorage.setItem('fixeo_role', 'client');
-        localStorage.setItem('role',       'client');
-      }
     }
 
-    /* Cas 3 : Rôle manquant pour un utilisateur connecté → default 'client' */
-    if (storedUser && !storedRole) {
-      const defaultRole = isAdminEmail ? 'admin' : 'client';
-      localStorage.setItem('fixeo_role', defaultRole);
-      localStorage.setItem('role',       defaultRole);
-      console.log('[Fixeo Admin] Bootstrap: rôle manquant → défaut', defaultRole);
-    }
-
-    /* Cas 4 : Rôle invalide pour un non-admin → forcer 'client' */
-    if (storedUser && !isAdminEmail && storedRole === 'admin') {
-      console.log('[Fixeo Admin] Bootstrap: rôle admin non autorisé → forcer client');
+    /* Cas 4 (preserved): any user with role=admin but no active sessionStorage
+       admin session → force role back to client.
+       This prevents a stale fixeo_role=admin from surviving logout. */
+    const hasSessAdminAuth = sessionStorage.getItem('fixeo_admin_auth') === '1';
+    if (storedUser && storedRole === 'admin' && !hasSessAdminAuth) {
       localStorage.setItem('fixeo_role', 'client');
       localStorage.setItem('role',       'client');
-      localStorage.removeItem('fixeo_admin');
-      sessionStorage.removeItem('fixeo_admin_auth');
     }
   } catch (e) {
-    console.warn('[Fixeo Admin] Bootstrap error (silencieux):', e.message);
+    console.warn('[Fixeo Admin] Startup guard error:', e.message);
   }
 })();
 
@@ -97,19 +76,21 @@ async function checkAdminAccess() {
   const passHash = await _sha256admin(pass);
 
   if (emailInput === _ADMIN_EMAIL && passHash === _ADMIN_PASS_HASH) {
-    /* ── FIX-ADMIN-2 : Persist admin auth — toutes les clés synchronisées ── */
-    if (window.FixeoAuthSession?.setActiveUser) {
-      window.FixeoAuthSession.setActiveUser({ id: 'admin-001', email: _ADMIN_EMAIL, name: _ADMIN_DISPLAY, role: 'admin' });
-    } else {
-      sessionStorage.setItem('fixeo_admin_auth', '1');
-      localStorage.setItem('fixeo_user',      _ADMIN_EMAIL);
-      localStorage.setItem('fixeo_user_name', _ADMIN_DISPLAY);
-      localStorage.setItem('fixeo_role',      'admin');
-      localStorage.setItem('fixeo_admin',     '1');
-      localStorage.setItem('role',            'admin');
-      localStorage.setItem('fixeo_logged_in', 'true');
-    }
-    /* ── Re-apply auth state to body ── */
+    /* ── PHASE 1B: Hardened admin session write ─────────────────────────
+       Write sessionStorage.fixeo_admin_auth FIRST (gate token).
+       Write fixeo_role='admin' to localStorage (needed by auth-guard + header).
+       Do NOT write fixeo_admin to localStorage (eliminated bypass vector).
+       Skip FixeoAuthSession.setActiveUser — it writes fixeo_admin to localStorage.
+    ─────────────────────────────────────────────────────────────────── */
+    sessionStorage.setItem('fixeo_admin_auth', '1');
+    localStorage.setItem('fixeo_user',      _ADMIN_EMAIL);
+    localStorage.setItem('fixeo_user_name', _ADMIN_DISPLAY);
+    localStorage.setItem('fixeo_role',      'admin');
+    localStorage.setItem('role',            'admin');
+    localStorage.setItem('fixeo_logged',    '1');
+    /* Explicitly ensure fixeo_admin is NOT in localStorage */
+    localStorage.removeItem('fixeo_admin');
+    /* Re-apply auth state to body */
     document.body.classList.add('is-logged-in', 'is-admin');
     document.getElementById('admin-gate').style.display = 'none';
     document.getElementById('admin-app').style.display  = 'block';
@@ -125,12 +106,12 @@ async function checkAdminAccess() {
   }
 }
 
-/* Auto-bypass gate if already authenticated as admin */
+/* Auto-bypass gate if already authenticated as admin
+   PHASE 1B: sessionStorage ONLY — localStorage.fixeo_admin no longer trusted */
 document.addEventListener('DOMContentLoaded', () => {
-  const alreadyAdmin = (
-    sessionStorage.getItem('fixeo_admin_auth') === '1' ||
-    localStorage.getItem('fixeo_admin') === '1'
-  ) && localStorage.getItem('fixeo_role') === 'admin';
+  const alreadyAdmin =
+    sessionStorage.getItem('fixeo_admin_auth') === '1' &&
+    localStorage.getItem('fixeo_role') === 'admin';
 
   if (alreadyAdmin) {
     document.body.classList.add('is-logged-in', 'is-admin');
