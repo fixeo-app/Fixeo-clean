@@ -141,23 +141,34 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function adminLogout() {
-  /* FIX-ADMIN-4 : Nettoyage complet de TOUTES les clés d'auth */
-  if (window.FixeoAuthSession?.clearActiveUser) {
-    window.FixeoAuthSession.clearActiveUser({ redirectTo: '', reload: false, resetAuthPage: false });
-  } else {
-    [
-      'fixeo_admin', 'fixeo_user', 'fixeo_user_name',
-      'fixeo_role',  'role',       'fixeo_logged_in'
-    ].forEach(k => localStorage.removeItem(k));
-    sessionStorage.removeItem('fixeo_admin_auth');
-  }
-  /* Stopper le polling au logout */
+  /* Stopper le polling */
   _stopAdminOrdersPolling();
+
+  /* Hide admin app immediately (don't wait for redirect) */
   document.body.classList.remove('is-logged-in', 'is-admin');
   const gate = document.getElementById('admin-gate');
   const app  = document.getElementById('admin-app');
   if (gate) gate.style.display = 'flex';
   if (app)  app.style.display  = 'none';
+
+  /* Use canonical global logout — clears ALL keys, calls Supabase signOut */
+  if (typeof window.fixeoGlobalLogout === 'function') {
+    window.fixeoGlobalLogout({ redirectTo: 'index.html' });
+    return;
+  }
+
+  /* Fallback: belt-and-suspenders if module not loaded */
+  if (window.FixeoAuthSession?.clearActiveUser) {
+    window.FixeoAuthSession.clearActiveUser({ redirectTo: '', reload: false, resetAuthPage: false });
+  } else {
+    [
+      'fixeo_admin', 'fixeo_user', 'fixeo_user_name',
+      'fixeo_role',  'role',       'fixeo_logged_in',
+      'user_logged', 'user_role',  'user', 'fixeo_supabase_session'
+    ].forEach(k => localStorage.removeItem(k));
+    sessionStorage.removeItem('fixeo_admin_auth');
+  }
+  window.location.href = 'index.html';
 }
 
 // Allow Enter key on gate

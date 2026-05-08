@@ -54,6 +54,15 @@
   }
 
   function syncSessionToFixeo() {
+    /* LOGOUT GUARD: do not rehydrate if a recent logout just happened */
+    if (typeof window.fixeoIsRecentLogout === 'function' && window.fixeoIsRecentLogout()) return null;
+    /* Lightweight inline check as fallback when fixeo-logout-global.js not yet loaded */
+    try {
+      var _lgKey = window.FIXEO_LOGOUT_GUARD_KEY || 'fixeo_last_logout_at';
+      var _lgTs = parseInt(sessionStorage.getItem(_lgKey) || '0', 10);
+      if (_lgTs > 0 && (Date.now() - _lgTs) < 300000) return null; /* 5 min guard */
+    } catch (_) {}
+
     const user = getUser();
     if (!user || !isLogged()) return null;
 
@@ -98,8 +107,16 @@
 
   function clearSession(options) {
     options = options || {};
+    /* Delegate to canonical global logout (fixeo-logout-global.js) */
+    if (typeof window.fixeoGlobalLogout === 'function') {
+      window.fixeoGlobalLogout({
+        redirectTo: options.redirectTo || 'index.html',
+        skipRedirect: options.skipRedirect === true
+      });
+      return;
+    }
+    /* Fallback if fixeo-logout-global.js not loaded yet */
     try { sessionStorage.removeItem('fixeo_artisan_onboarding_notice_v1'); } catch (error) {}
-
     if (window.FixeoAuthSession?.clearActiveUser) {
       window.FixeoAuthSession.clearActiveUser({
         redirectTo: options.redirectTo || '',
@@ -108,7 +125,6 @@
       });
       return;
     }
-
     SESSION_KEYS.forEach(key => {
       try { localStorage.removeItem(key); } catch (error) {}
     });

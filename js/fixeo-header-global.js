@@ -482,17 +482,20 @@
       const logout = e.target.closest('#fixeo-gh-drawer-logout');
       if (!logout) return;
       e.preventDefault();
-      try {
-        localStorage.removeItem('user');
-        localStorage.removeItem('fixeo_user_name');
-        localStorage.removeItem('fixeo_user');
-        localStorage.removeItem('fixeo_role');
-        localStorage.removeItem('fixeo_avatar');
-        if (window.supabase && typeof window.supabase.auth?.signOut === 'function') {
-          window.supabase.auth.signOut();
-        }
-      } catch (_) {}
-      window.location.href = 'index.html';
+      /* Use canonical global logout — clears ALL keys, calls Supabase signOut */
+      if (typeof window.fixeoGlobalLogout === 'function') {
+        window.fixeoGlobalLogout({ redirectTo: 'index.html' });
+      } else {
+        /* Fallback: belt-and-suspenders if module not loaded */
+        try {
+          ['user','fixeo_user_name','fixeo_user','fixeo_role','fixeo_avatar',
+           'user_logged','user_role','user_name','role','fixeo_admin',
+           'fixeo_logged','fixeo_token','fixeo_supabase_session'
+          ].forEach(function(k){ localStorage.removeItem(k); });
+          sessionStorage.removeItem('fixeo_admin_auth');
+        } catch (_) {}
+        window.location.href = 'index.html';
+      }
     });
 
     /* Language buttons in drawer */
