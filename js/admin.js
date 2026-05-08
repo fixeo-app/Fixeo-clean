@@ -11,7 +11,7 @@
 
 /* ── ADMIN AUTH ────────────────────────────────────────────── */
 /* Identifiants admin sécurisés (SHA-256) */
-const _ADMIN_EMAIL     = 'admin@fixeo.com';
+const _ADMIN_EMAIL     = 'admin@fixeo.ma';
 const _ADMIN_PASS_HASH = 'c6d729bbfb14021b9852303540c1859737373ffbb108f5e5922246f6ac77b3da';
 const _ADMIN_DISPLAY   = 'Admin Fixeo';
 
@@ -49,6 +49,127 @@ const _ADMIN_DISPLAY   = 'Admin Fixeo';
   }
 })();
 
+/* ═══════════════════════════════════════════════════════════════
+   PHASE 1C — LIVE SUPABASE SESSION VALIDATOR
+   ═══════════════════════════════════════════════════════════════
+   Single source of truth for "is this a valid admin session".
+   Called from:
+     - DCL auto-bypass (page load with existing sessionStorage token)
+     - checkAdminAccess() after SHA-256 + Supabase signInWithPassword
+   Returns true only when ALL of:
+     1. sessionStorage.fixeo_admin_auth === '1'
+     2. FixeoSupabaseClient returns a live Supabase session
+     3. session.user.email === _ADMIN_EMAIL ('admin@fixeo.ma')
+   On failure: clears all admin remnants and redirects to auth.html
+   ═══════════════════════════════════════════════════════════════ */
+function _fxAdminRevoke(reason) {
+  /* Hard revoke — wipe all admin state, redirect auth.html */
+  /* Not using fixeoGlobalLogout here to avoid index.html redirect race:
+     we want auth.html specifically for re-login. */
+  try {
+    sessionStorage.removeItem('fixeo_admin_auth');
+    localStorage.removeItem('fixeo_admin');
+    localStorage.removeItem('fixeo_role');
+    localStorage.removeItem('role');
+    localStorage.removeItem('fixeo_user');
+    localStorage.removeItem('fixeo_logged');
+    localStorage.removeItem('user_logged');
+    localStorage.removeItem('user_role');
+  } catch (_) {}
+  document.body.classList.remove('is-logged-in', 'is-admin');
+  const app  = document.getElementById('admin-app');
+  const gate = document.getElementById('admin-gate');
+  if (app)  app.style.display  = 'none';
+  if (gate) gate.style.display = 'flex';
+  /* Sign out Supabase client non-fatally before redirect */
+  try {
+    if (window.FixeoSupabaseClient && window.FixeoSupabaseClient.CONFIGURED) {
+      window.FixeoSupabaseClient.ready().then(function(r) {
+        if (r && r.client && r.client.auth) { r.client.auth.signOut().catch(function(){}); }
+      }).catch(function(){});
+    }
+  } catch (_) {}
+  window.location.href = 'auth.html';
+}
+
+async function _fxAdminValidateSession() {
+  /* Step 1: sessionStorage gate must be set */
+  if (sessionStorage.getItem('fixeo_admin_auth') !== '1') {
+    return false; /* silent — caller decides what to do */
+  }
+
+  /* Step 2: Supabase must be configured */
+  if (!window.FixeoSupabaseClient || !window.FixeoSupabaseClient.CONFIGURED) {
+    /* Supabase not configured — cannot verify live session, revoke */
+    _fxAdminRevoke('supabase-not-configured');
+    return false;
+  }
+
+  /* Step 3: get live session */
+  try {
+    const { client } = await window.FixeoSupabaseClient.ready();
+    if (!client) { _fxAdminRevoke('supabase-client-null'); return false; }
+
+    const { data, error } = await client.auth.getSession();
+    if (error) { _fxAdminRevoke('getSession-error'); return false; }
+
+    const session = data && data.session;
+    if (!session)               { _fxAdminRevoke('no-session');    return false; }
+    if (!session.access_token)  { _fxAdminRevoke('no-token');      return false; }
+    if (!session.user)          { _fxAdminRevoke('no-user');        return false; }
+    if (!session.user.email)    { _fxAdminRevoke('no-email');       return false; }
+
+    /* Step 4: email must match exactly */
+    if (session.user.email !== _ADMIN_EMAIL) {
+      _fxAdminRevoke('wrong-email:' + session.user.email);
+      return false;
+    }
+
+    return true; /* ALL CHECKS PASS */
+  } catch (e) {
+    _fxAdminRevoke('exception:' + (e.message || e));
+    return false;
+  }
+}
+
+/* ── Phase 1C: open admin app after validation passes ─────── */
+function _fxAdminOpen() {
+  document.body.classList.add('is-logged-in', 'is-admin');
+  document.getElementById('admin-gate').style.display = 'none';
+  document.getElementById('admin-app').style.display  = 'block';
+  initAdmin();
+}
+
+/* ── Phase 1C: live auth state monitor ───────────────────────
+   Watches for Supabase SIGNED_OUT, TOKEN_REFRESH_FAILED,
+   USER_DELETED — instantly revokes admin on any of these.
+   Registered once after successful admin open.
+   ─────────────────────────────────────────────────────────── */
+let _fxAdminAuthMonitorRegistered = false;
+function _fxAdminRegisterAuthMonitor() {
+  if (_fxAdminAuthMonitorRegistered) return;
+  _fxAdminAuthMonitorRegistered = true;
+  try {
+    if (!window.FixeoSupabaseClient || !window.FixeoSupabaseClient.CONFIGURED) return;
+    window.FixeoSupabaseClient.ready().then(function({ client }) {
+      if (!client) return;
+      client.auth.onAuthStateChange(function(event, session) {
+        const revokeEvents = ['SIGNED_OUT', 'USER_DELETED', 'TOKEN_REFRESH_FAILED'];
+        if (revokeEvents.indexOf(event) !== -1) {
+          _fxAdminRevoke('auth-state:' + event);
+          return;
+        }
+        /* On any state change with a session: re-validate email */
+        if (session && session.user) {
+          if (session.user.email !== _ADMIN_EMAIL) {
+            _fxAdminRevoke('auth-state-wrong-email');
+          }
+        }
+      });
+    }).catch(function(){});
+  } catch (_) {}
+}
+
 async function _sha256admin(str) {
   const buf  = new TextEncoder().encode(str);
   const hash = await crypto.subtle.digest('SHA-256', buf);
@@ -76,25 +197,51 @@ async function checkAdminAccess() {
   const passHash = await _sha256admin(pass);
 
   if (emailInput === _ADMIN_EMAIL && passHash === _ADMIN_PASS_HASH) {
-    /* ── PHASE 1B: Hardened admin session write ─────────────────────────
-       Write sessionStorage.fixeo_admin_auth FIRST (gate token).
-       Write fixeo_role='admin' to localStorage (needed by auth-guard + header).
-       Do NOT write fixeo_admin to localStorage (eliminated bypass vector).
-       Skip FixeoAuthSession.setActiveUser — it writes fixeo_admin to localStorage.
+    /* ── PHASE 1B+1C: Hardened admin login ──────────────────────────────
+       Step A: Write sessionStorage.fixeo_admin_auth (Phase 1B gate token).
+       Step B: Sign in to Supabase with real credentials (Phase 1C — live JWT).
+       Step C: Validate live session via _fxAdminValidateSession().
+       Step D: Open admin app only after all checks pass.
     ─────────────────────────────────────────────────────────────────── */
+    /* Step A: set Phase 1B sessionStorage token */
     sessionStorage.setItem('fixeo_admin_auth', '1');
     localStorage.setItem('fixeo_user',      _ADMIN_EMAIL);
     localStorage.setItem('fixeo_user_name', _ADMIN_DISPLAY);
     localStorage.setItem('fixeo_role',      'admin');
     localStorage.setItem('role',            'admin');
     localStorage.setItem('fixeo_logged',    '1');
-    /* Explicitly ensure fixeo_admin is NOT in localStorage */
     localStorage.removeItem('fixeo_admin');
-    /* Re-apply auth state to body */
-    document.body.classList.add('is-logged-in', 'is-admin');
-    document.getElementById('admin-gate').style.display = 'none';
-    document.getElementById('admin-app').style.display  = 'block';
-    initAdmin();
+
+    /* Step B: sign in to Supabase so a real JWT is written to fixeo_supabase_session */
+    let _supabaseSignInOk = false;
+    try {
+      if (window.FixeoSupabaseClient && window.FixeoSupabaseClient.CONFIGURED) {
+        const { client } = await window.FixeoSupabaseClient.ready();
+        if (client) {
+          const { error: siErr } = await client.auth.signInWithPassword({
+            email: _ADMIN_EMAIL,
+            password: pass         /* raw password — Supabase hashes server-side */
+          });
+          if (!siErr) { _supabaseSignInOk = true; }
+        }
+      }
+    } catch (_) {}
+
+    /* Step C: validate live session (email match) */
+    const valid = await _fxAdminValidateSession();
+    if (!valid) {
+      /* Session validation failed after Supabase signIn — block */
+      if (btn) { btn.disabled = false; btn.innerHTML = '🔑 Connexion Admin'; }
+      if (errEl) {
+        errEl.style.display = 'block';
+        errEl.textContent   = '❌ Erreur de vérification de session. Réessayez.';
+      }
+      return;
+    }
+
+    /* Step D: open admin + register live auth monitor */
+    _fxAdminOpen();
+    _fxAdminRegisterAuthMonitor();
   } else {
     if (btn) { btn.disabled = false; btn.innerHTML = '🔑 Connexion Admin'; }
     if (errEl) {
@@ -107,18 +254,21 @@ async function checkAdminAccess() {
 }
 
 /* Auto-bypass gate if already authenticated as admin
-   PHASE 1B: sessionStorage ONLY — localStorage.fixeo_admin no longer trusted */
-document.addEventListener('DOMContentLoaded', () => {
-  const alreadyAdmin =
-    sessionStorage.getItem('fixeo_admin_auth') === '1' &&
-    localStorage.getItem('fixeo_role') === 'admin';
+   PHASE 1C: sessionStorage token present → async Supabase session validation.
+   admin-app stays display:none until _fxAdminValidateSession() passes.
+   admin-gate stays visible (covers the page) during async check — no flash. */
+document.addEventListener('DOMContentLoaded', async () => {
+  /* Quick synchronous pre-check: if no sessionStorage token, skip async entirely */
+  if (sessionStorage.getItem('fixeo_admin_auth') !== '1') return;
+  if (localStorage.getItem('fixeo_role') !== 'admin') return;
 
-  if (alreadyAdmin) {
-    document.body.classList.add('is-logged-in', 'is-admin');
-    document.getElementById('admin-gate').style.display = 'none';
-    document.getElementById('admin-app').style.display  = 'block';
-    initAdmin();
+  /* Async Phase 1C validation: getSession() + email check */
+  const valid = await _fxAdminValidateSession();
+  if (valid) {
+    _fxAdminOpen();
+    _fxAdminRegisterAuthMonitor();
   }
+  /* If invalid: _fxAdminValidateSession() already called _fxAdminRevoke() → redirect */
 });
 
 function adminLogout() {
