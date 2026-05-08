@@ -194,10 +194,10 @@
   function applyAuthState() {
     const user = getSessionUser();
     const loggedIn = !!user;
-    const adminMode = !!(user && user.role === 'admin' && (
-      localStorage.getItem('fixeo_admin') === '1' ||
+    /* Phase 1B/1C: localStorage.fixeo_admin is never written — sessionStorage only */
+    const adminMode = !!(user && user.role === 'admin' &&
       sessionStorage.getItem('fixeo_admin_auth') === '1'
-    ));
+    );
 
     document.body.classList.toggle('is-logged-in', loggedIn);
     document.body.classList.toggle('is-admin', adminMode);

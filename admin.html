@@ -223,18 +223,10 @@
 <div class="bg-animated"></div>
 
 
-<!-- ROUTE PROTECTION — Redirect if not admin (frontend guard) -->
-<script>
-(function(){
-  var role  = localStorage.getItem('fixeo_role');
-  var admin = localStorage.getItem('fixeo_admin');
-  var sess  = sessionStorage.getItem('fixeo_admin_auth');
-  // Already authenticated: pass through (admin.js will auto-bypass gate)
-  // Not authenticated: gate will appear — no redirect needed (admin.js handles it)
-  // But if someone navigates here with a non-admin logged-in state, make sure
-  // we don't show a blank page — the gate handles this fine.
-})();
-</script>
+<!-- ROUTE PROTECTION — handled by fixeo-auth-guard.js (head) + admin.js DCL (Phase 1B/1C)
+     Phase 1B: sessionStorage.fixeo_admin_auth=1 required (not localStorage)
+     Phase 1C: live Supabase JWT required + email === admin@fixeo.ma
+     No inline gate logic needed here. -->
 <!-- ADMIN ACCESS GATE -->
 <div id="admin-gate" class="admin-gate">
   <div class="admin-gate-box">

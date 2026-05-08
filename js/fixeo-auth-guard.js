@@ -5,7 +5,7 @@
      FIX-GUARD-1 : Normalisation des rôles (admin/client/artisan)
                    → default "client" si rôle manquant ou invalide
      FIX-GUARD-2 : Protection admin renforcée : vérifier user + role
-                   + flag fixeo_admin + sessionStorage
+                   + sessionStorage.fixeo_admin_auth (Phase 1B/1C — localStorage flag removed)
      FIX-GUARD-3 : Redirection dashboard selon rôle :
                    admin    → admin.html
                    artisan  → dashboard-artisan.html

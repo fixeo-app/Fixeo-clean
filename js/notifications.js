@@ -109,8 +109,8 @@
       ''
     ).trim().toLowerCase();
 
+    /* Phase 1B/1C: localStorage.fixeo_admin is never written — sessionStorage only */
     const isAdmin = role === 'admin'
-      || localStorage.getItem('fixeo_admin') === '1'
       || sessionStorage.getItem('fixeo_admin_auth') === '1';
 
     if (isAdmin) {
