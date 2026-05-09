@@ -163,6 +163,50 @@
     return null;
   }
 
+  /* ─── Live marketplace signals (v13) ───────────────────────
+   * Uses ONLY real artisan fields — score_qualification + rating + city.
+   * Returns HTML for .pvc-live-signals strip: max 2 pills per card.
+   * Tier mapping:
+   *   score >= 90  → "Répond rapidement"  (green, pulse dot)
+   *   score 80–89  → "Actif cette semaine" (blue, pulse dot)
+   *   score < 80   → "Disponible sur RDV"  (muted, no dot)
+   * Context signal:
+   *   rating >= 4.8 → "Très bien noté"
+   *   rating >= 4.5 → "Artisan recommandé"
+   *   else          → "Intervient à {city}"
+   * ─────────────────────────────────────────────────────────── */
+  function _liveSignalsHtml(a) {
+    var sq     = parseInt(a.score_qualification || a.trustScore || 75, 10);
+    var rating = parseFloat(a.rating || 0);
+    var city   = _esc(a.city || 'Maroc');
+
+    /* Signal 1 — activity tier */
+    var sig1Html;
+    if (sq >= 90) {
+      sig1Html = '<span class="pvc-live-signal pvc-live-signal--fast">' +
+                 '<span class="pvc-live-dot"></span>R\u00e9pond rapidement</span>';
+    } else if (sq >= 80) {
+      sig1Html = '<span class="pvc-live-signal pvc-live-signal--active">' +
+                 '<span class="pvc-live-dot"></span>Actif cette semaine</span>';
+    } else {
+      sig1Html = '<span class="pvc-live-signal pvc-live-signal--rdv">' +
+                 'Disponible sur RDV</span>';
+    }
+
+    /* Signal 2 — context / quality */
+    var sig2Text;
+    if (rating >= 4.8) {
+      sig2Text = '\u2b50 Tr\u00e8s bien not\u00e9';
+    } else if (rating >= 4.5) {
+      sig2Text = '\ud83d\udc4d Artisan recommand\u00e9';
+    } else {
+      sig2Text = '\ud83d\udccd Intervient \u00e0 ' + city;
+    }
+    var sig2Html = '<span class="pvc-live-signal pvc-live-signal--context">' + sig2Text + '</span>';
+
+    return '<div class="pvc-live-signals">' + sig1Html + sig2Html + '</div>';
+  }
+
   /* ─── Premium card builder v2 ───────────────────────────────── */
   function _buildCard(a, idx) {
     idx = idx || 0;
@@ -191,12 +235,18 @@
         + '<span class="pvc-avatar-silhouette" style="display:none"></span>'
       : '<span class="pvc-avatar-silhouette"></span>';
 
-    /* Availability badge */
-    var availHtml = isAvail
-      ? '<span class="pvc-avail-badge pvc-avail-badge--on">🟢 Réponse rapide</span>'
-      : isToday
-        ? '<span class="pvc-avail-badge pvc-avail-badge--today">🟡 Disponible aujourd\'hui</span>'
-        : '<span class="pvc-avail-badge pvc-avail-badge--off">Sur RDV</span>';
+    /* Availability badge — v13: tier by score_qualification */
+    var sq13 = parseInt(a.score_qualification || a.trustScore || 75, 10);
+    var availHtml;
+    if (isAvail) {
+      availHtml = sq13 >= 88
+        ? '<span class="pvc-avail-badge pvc-avail-badge--on">\ud83d\udfe2 Disponible</span>'
+        : '<span class="pvc-avail-badge pvc-avail-badge--on">\ud83d\udfe2 Disponible</span>';
+    } else if (isToday) {
+      availHtml = '<span class="pvc-avail-badge pvc-avail-badge--today">\ud83d\udfe1 Disponible aujourd\u2019hui</span>';
+    } else {
+      availHtml = '<span class="pvc-avail-badge pvc-avail-badge--off">Sur RDV</span>';
+    }
 
     /* Rating stars */
     /* Rating — always 5 stars + credible state (T1: no fake numbers) */
@@ -249,8 +299,8 @@
 
       /* info-bar removed — FOMO line below is the only chip (T2) */
 
-      /* Step 1 — FOMO line after chips */
-      '<div class="pvc-fomo">🔥 Demande élevée dans votre zone</div>' +
+      /* Step 1 — Live marketplace signals (v13: replaces static fomo) */
+      _liveSignalsHtml(a) +
 
       /* Step 3 — Trust line after stats */
       '<div class="pvc-trust-line">\u2714\ufe0f Artisan v\u00e9rifi\u00e9 \u2022 Paiement apr\u00e8s intervention</div>' +

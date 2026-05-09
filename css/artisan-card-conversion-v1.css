@@ -1256,3 +1256,144 @@
 .pvc-info-bar:empty {
   display: none !important;
 }
+
+/* ══════════════════════════════════════════════════════════════
+   LIVE MARKETPLACE SIGNALS — v13
+   Append-only. Do NOT edit lines above.
+   Adds: .pvc-live-signal, .pvc-live-dot, subtle hover energy.
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── Live signal strip (replaces pvc-fomo for qualified artisans) ── */
+.pvc-live-signals {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 18px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+
+/* Individual signal pill */
+.pvc-live-signal {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: .63rem;
+  font-weight: 600;
+  letter-spacing: .02em;
+  padding: 3px 8px;
+  border-radius: 20px;
+  white-space: nowrap;
+  line-height: 1.3;
+}
+
+/* Tier 1 — fast response (score >= 90) */
+.pvc-live-signal--fast {
+  background: rgba(32, 201, 151, .10);
+  color: #1fbd8a;
+  border: 1px solid rgba(32, 201, 151, .20);
+}
+
+/* Tier 2 — active this week (score 80–89) */
+.pvc-live-signal--active {
+  background: rgba(96, 165, 250, .10);
+  color: #60a5fa;
+  border: 1px solid rgba(96, 165, 250, .18);
+}
+
+/* Tier 3 — by appointment (score < 80) */
+.pvc-live-signal--rdv {
+  background: rgba(255, 255, 255, .05);
+  color: rgba(255, 255, 255, .45);
+  border: 1px solid rgba(255, 255, 255, .08);
+}
+
+/* Context signal — rating / city */
+.pvc-live-signal--context {
+  background: rgba(246, 201, 14, .08);
+  color: rgba(246, 201, 14, .80);
+  border: 1px solid rgba(246, 201, 14, .14);
+}
+
+/* Live pulse dot (for fast/active only) */
+.pvc-live-dot {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.pvc-live-signal--fast   .pvc-live-dot { background: #1fbd8a; animation: pvc-pulse-dot 2.2s ease-in-out infinite; }
+.pvc-live-signal--active .pvc-live-dot { background: #60a5fa; animation: pvc-pulse-dot 3s ease-in-out infinite; }
+
+@keyframes pvc-pulse-dot {
+  0%, 100% { opacity: 1;   transform: scale(1); }
+  50%       { opacity: .45; transform: scale(.7); }
+}
+
+/* ── Hide old pvc-fomo (replaced by pvc-live-signals) ── */
+.pvc-fomo {
+  display: none !important;
+}
+
+/* ── Hover energy — subtle lift + glow ── */
+#fixeo-homepage-vedette-grid .pvc-card {
+  transition:
+    transform 180ms cubic-bezier(.25,.8,.25,1),
+    box-shadow 180ms cubic-bezier(.25,.8,.25,1),
+    border-color 180ms ease;
+  will-change: transform;
+}
+
+#fixeo-homepage-vedette-grid .pvc-card:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 8px 24px rgba(0,0,0,.45),
+    0 0 0 1px rgba(255,255,255,.07),
+    0 0 16px rgba(32,201,151,.08);
+  border-color: rgba(255,255,255,.10);
+}
+
+/* Stars warm up slightly on card hover */
+#fixeo-homepage-vedette-grid .pvc-card:hover .pvc-stars-v2 {
+  color: #f8d648;
+  transition: color 180ms ease;
+}
+
+/* Rating state text — softer */
+.pvc-rating-state {
+  font-size: .67rem;
+  color: rgba(255,255,255,.38);
+  font-style: italic;
+}
+
+/* ── Trust line upgrade — slightly more visible ── */
+.pvc-trust-line {
+  font-size: .64rem;
+  color: rgba(255,255,255,.52);
+  padding: 0 18px;
+  margin-top: 5px;
+  letter-spacing: .01em;
+}
+
+/* ── Mobile: signal pills stay compact ── */
+@media (max-width: 640px) {
+  .pvc-live-signals {
+    gap: 5px;
+    margin-top: 4px;
+  }
+  .pvc-live-signal {
+    font-size: .60rem;
+    padding: 2px 7px;
+  }
+  #fixeo-homepage-vedette-grid .pvc-card:hover {
+    transform: none; /* no lift on touch — no reflow cost */
+  }
+}
+
+@media (max-width: 380px) {
+  .pvc-live-signal {
+    font-size: .58rem;
+    padding: 2px 6px;
+  }
+}
