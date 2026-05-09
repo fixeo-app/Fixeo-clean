@@ -1497,3 +1497,12 @@
     padding: 4px 0 !important;
   }
 }
+
+/* ── J1-E safety: 320px breakpoint — card can't be wider than viewport ── */
+@media (max-width: 340px) {
+  #fixeo-homepage-vedette-grid .fhp-card {
+    min-width: calc(100vw - 32px) !important;
+    max-width: calc(100vw - 32px) !important;
+    width: calc(100vw - 32px) !important;
+  }
+}
