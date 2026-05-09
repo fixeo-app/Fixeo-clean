@@ -16,11 +16,55 @@
   }
 
   function moveHowItWorksAfterTrust() {
-    const trust = $('.trust-section');
+    // v2: Move how-it-works AFTER #artisans-section (marketplace-first flow).
+    // .trust-section stays hidden as a DOM anchor — no visibility change.
+    const artisans = $('#artisans-section');
     const how = $('.how-it-works-section');
-    if (!trust || !how) return;
-    if (trust.nextElementSibling === how) return;
-    trust.insertAdjacentElement('afterend', how);
+    if (!artisans || !how) return;
+    if (artisans.nextElementSibling === how) return;
+    artisans.insertAdjacentElement('afterend', how);
+  }
+
+  function injectMiniTrustStrip() {
+    // Phase B: compact 4-pill trust strip injected between artisans-section and how-it-works.
+    if (document.getElementById('fxf-mini-trust')) return;
+    var artisans = $('#artisans-section');
+    if (!artisans) return;
+    var strip = document.createElement('div');
+    strip.id = 'fxf-mini-trust';
+    strip.setAttribute('aria-hidden', 'true');
+    strip.innerHTML =
+      '<div class="fxf-trust-inner">' +
+        '<div class="fxf-pill">' +
+          '<span class="fxf-pill-icon">\u2705</span>' +
+          '<div class="fxf-pill-text">' +
+            '<span class="fxf-pill-label">Artisans v\u00e9rifi\u00e9s</span>' +
+            '<span class="fxf-pill-sub">Profils contr\u00f4l\u00e9s par Fixeo</span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="fxf-pill">' +
+          '<span class="fxf-pill-icon">\u26a1</span>' +
+          '<div class="fxf-pill-text">' +
+            '<span class="fxf-pill-label">R\u00e9ponse rapide</span>' +
+            '<span class="fxf-pill-sub">Artisan disponible sous 30\u00a0min</span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="fxf-pill">' +
+          '<span class="fxf-pill-icon">&#128179;</span>' +
+          '<div class="fxf-pill-text">' +
+            '<span class="fxf-pill-label">Paiement apr\u00e8s service</span>' +
+            '<span class="fxf-pill-sub">Vous payez seulement si satisfait</span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="fxf-pill">' +
+          '<span class="fxf-pill-icon">&#128205;</span>' +
+          '<div class="fxf-pill-text">' +
+            '<span class="fxf-pill-label">12 villes couvertes</span>' +
+            '<span class="fxf-pill-sub">Casablanca, Rabat, Marrakech\u2026</span>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    artisans.insertAdjacentElement('afterend', strip);
   }
 
   function optimizeMicrocopy() {
@@ -232,6 +276,7 @@
 
   function init() {
     moveHowItWorksAfterTrust();
+    injectMiniTrustStrip();
     hideSection('#recommended-artisan-section');
     hideSection('#service-artisans-section');
     hideSection('[aria-labelledby="seo-local-links-title"]');

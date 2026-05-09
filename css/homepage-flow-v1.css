@@ -1,0 +1,229 @@
+/* ================================================================
+   homepage-flow-v1.css
+   Marketplace-first homepage flow — CSS companion to
+   homepage-conversion-optimizer.js v2 changes.
+
+   Phase B: Mini trust strip (#fxf-mini-trust) injected by JS
+            between #artisans-section and .how-it-works-section.
+   Phase C: Reduce visual dominance of explanatory sections
+            (how-it-works, why-fixeo, vision, final-cta).
+
+   CSS only for Phases C/D. Phase B strip is JS-injected.
+   Zero HTML structural changes. Zero auth/RLS/logic changes.
+   ================================================================ */
+
+/* ── PHASE B: Mini trust strip ──────────────────────────────────── */
+
+#fxf-mini-trust {
+  padding: 20px 0 28px;
+}
+
+#fxf-mini-trust .fxf-trust-inner {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: stretch;
+  gap: 12px;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+#fxf-mini-trust .fxf-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 18px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.13);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12),
+              inset 0 1px 0 rgba(255,255,255,0.06);
+  flex: 1 1 180px;
+  min-width: 160px;
+  max-width: 240px;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+#fxf-mini-trust .fxf-pill:hover {
+  border-color: rgba(255,255,255,0.15);
+  box-shadow: 0 6px 22px rgba(0,0,0,0.18),
+              inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
+#fxf-mini-trust .fxf-pill-icon {
+  font-size: 1.35rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+#fxf-mini-trust .fxf-pill-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+#fxf-mini-trust .fxf-pill-label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.92);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+#fxf-mini-trust .fxf-pill-sub {
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.48);
+  line-height: 1.2;
+}
+
+/* Subtle divider above strip */
+#fxf-mini-trust::before {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.07), transparent);
+  margin-bottom: 20px;
+}
+
+/* ── PHASE C: Compact explanatory sections ──────────────────────── */
+
+/* How it works — tighter padding */
+#how-it-works.how-it-works-section,
+.how-it-works-section {
+  padding-top: 36px !important;
+  padding-bottom: 44px !important;
+}
+
+/* Smaller section-header gap in how-it-works */
+#how-it-works .section-header,
+#how-it-works .how-header {
+  margin-bottom: 28px !important;
+}
+
+/* Why Fixeo (Technology) — compact */
+#why-fixeo-section {
+  padding-top: 36px !important;
+  padding-bottom: 44px !important;
+}
+
+#why-fixeo-section .section-header,
+#why-fixeo-section .why-fixeo-header {
+  margin-bottom: 28px !important;
+}
+
+/* Vision section — compact */
+.testimonial-section.fxv-section {
+  padding-top: 36px !important;
+  padding-bottom: 44px !important;
+}
+
+.testimonial-section .section-header {
+  margin-bottom: 28px !important;
+}
+
+/* Final CTA — keep prominent, just normalize top spacing */
+.final-cta-section {
+  padding-top: 52px !important;
+}
+
+/* Section dividers between explanation blocks — lighter */
+#how-it-works ~ .section-divider,
+#why-fixeo-section ~ .section-divider {
+  opacity: 0.5 !important;
+}
+
+/* ── PHASE C: Section headers in explanation sections — smaller ─── */
+
+#how-it-works .section-header h2,
+#why-fixeo-section .section-header h2 {
+  font-size: clamp(1.2rem, 2.2vw, 1.65rem) !important;
+  margin-bottom: 8px !important;
+}
+
+#how-it-works .section-header p,
+#why-fixeo-section .section-header p {
+  font-size: 0.84rem !important;
+  opacity: 0.60 !important;
+}
+
+/* ── PHASE D: Mobile ≤ 768px ────────────────────────────────────── */
+@media (max-width: 768px) {
+
+  #fxf-mini-trust {
+    padding: 16px 0 22px;
+  }
+
+  #fxf-mini-trust .fxf-trust-inner {
+    gap: 8px;
+    padding: 0 12px;
+  }
+
+  #fxf-mini-trust .fxf-pill {
+    flex: 1 1 140px;
+    min-width: 130px;
+    max-width: none;
+    padding: 10px 14px;
+    gap: 8px;
+    border-radius: 12px;
+  }
+
+  #fxf-mini-trust .fxf-pill-icon {
+    font-size: 1.2rem;
+  }
+
+  #fxf-mini-trust .fxf-pill-label {
+    font-size: 0.78rem;
+  }
+
+  #fxf-mini-trust .fxf-pill-sub {
+    font-size: 0.68rem;
+  }
+
+  /* Compact explanation sections on mobile */
+  #how-it-works.how-it-works-section,
+  .how-it-works-section {
+    padding-top: 28px !important;
+    padding-bottom: 32px !important;
+  }
+
+  #why-fixeo-section {
+    padding-top: 28px !important;
+    padding-bottom: 32px !important;
+  }
+
+  .testimonial-section.fxv-section {
+    padding-top: 28px !important;
+    padding-bottom: 32px !important;
+  }
+
+  #how-it-works .section-header,
+  #why-fixeo-section .section-header,
+  .testimonial-section .section-header {
+    margin-bottom: 20px !important;
+  }
+
+}
+
+/* ── PHASE D: Very narrow ≤ 380px ──────────────────────────────── */
+@media (max-width: 380px) {
+
+  #fxf-mini-trust .fxf-trust-inner {
+    gap: 6px;
+  }
+
+  #fxf-mini-trust .fxf-pill {
+    flex: 1 1 120px;
+    min-width: 110px;
+    padding: 9px 11px;
+    gap: 7px;
+  }
+
+  #fxf-mini-trust .fxf-pill-label {
+    font-size: 0.75rem;
+  }
+
+}
