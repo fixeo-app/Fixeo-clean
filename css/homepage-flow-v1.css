@@ -335,3 +335,14 @@ footer {
   }
 }
 
+
+/* ── Phase E fix: CTA inner card padding — beat testimonials-cta-premium.css
+      (0,2,2) by using > .container > .final-cta (0,2,3). No !important fights. */
+html body .final-cta-section > .container > .final-cta {
+  padding: 36px 36px !important;
+}
+@media (max-width: 768px) {
+  html body .final-cta-section > .container > .final-cta {
+    padding: 28px 20px !important;
+  }
+}
