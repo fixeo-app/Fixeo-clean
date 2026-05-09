@@ -1708,3 +1708,24 @@
     width: calc(100vw - 32px) !important;
   }
 }
+
+/* ── J2 SPECIFICITY FIX: use double-ID-class selector to beat (2,0,0) from patch CSS ── */
+/* marketplace-premium-patch.css uses #id.class selectors at (2,0,0) → must match or exceed */
+@media (max-width: 640px) {
+  #fixeo-homepage-vedette-grid.ssb2-vedette-grid,
+  #fixeo-homepage-vedette-grid.fhp-grid,
+  #fixeo-homepage-vedette-grid {
+    /* J2: full-viewport grid so next card peeks into view */
+    width: 100vw !important;
+    padding-left: 20px !important;
+    padding-right: 48px !important;
+  }
+  #fixeo-homepage-vedette-grid.ssb2-vedette-grid .fhp-card,
+  #fixeo-homepage-vedette-grid.fhp-grid .fhp-card,
+  #fixeo-homepage-vedette-grid .fhp-card {
+    /* J2: 82vw card width for peek gap */
+    min-width: 82vw !important;
+    max-width: 82vw !important;
+    width: 82vw !important;
+  }
+}
