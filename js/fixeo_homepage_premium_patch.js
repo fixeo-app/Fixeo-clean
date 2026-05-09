@@ -287,14 +287,15 @@
     }
 
     /* Rating — J1: tier-based credible state (no fake numbers, no "Évaluation en cours")
-     * sq = score_qualification (master artisans 68–96); reviews = Supabase reviewCount.
+     * _sq = score_qualification (master artisans 68–96); reviews already declared above.
      * 4 tiers → varied text per card, never identical across the grid. */
+    var _sq = parseInt(a.score_qualification || 0, 10);
     var _ratingStateText;
-    if (sq >= 90 || reviews >= 100) {
+    if (_sq >= 90 || reviews >= 100) {
       _ratingStateText = 'Tr\u00e8s bien not\u00e9';
-    } else if (sq >= 80 || reviews >= 40) {
+    } else if (_sq >= 80 || reviews >= 40) {
       _ratingStateText = 'Bien not\u00e9';
-    } else if (sq >= 70 || reviews >= 10) {
+    } else if (_sq >= 70 || reviews >= 10) {
       _ratingStateText = 'S\u00e9lectionn\u00e9 Fixeo';
     } else {
       _ratingStateText = 'Nouveau sur Fixeo';
