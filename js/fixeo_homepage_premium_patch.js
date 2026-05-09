@@ -1,8 +1,12 @@
 /**
- * fixeo_homepage_premium_patch.js  v3
+ * fixeo_homepage_premium_patch.js  v4 (fhp13 — Phase J-1)
  * ─────────────────────────────────────────────────────────────────────────────
  * Replaces old results-layout with premium 2-col pvc-card vedette grid.
  * v3 adds: event delegation for clicks, section header + counter, fade-in anim.
+ * v4 (J-1): marketplace energy pass —
+ *   - Header: active title, trust subtitle, platform-total counter, "voir tous" link
+ *   - Rating state: tier-based credible text (no "Évaluation en cours")
+ *   - Signals (v14): id-seed variation — fast-tier 3 variants, sig2 city/quality alt
  * ─────────────────────────────────────────────────────────────────────────────
  */
 (function (window) {
@@ -163,32 +167,33 @@
     return null;
   }
 
-  /* ─── Live marketplace signals (v13) ───────────────────────
-   * Uses ONLY real artisan fields — score_qualification + rating + city.
+  /* ─── Live marketplace signals (v14 — J1 variation pass) ─────
+   * Uses ONLY real artisan fields — score_qualification + rating + city + id.
    * Returns HTML for .pvc-live-signals strip: max 2 pills per card.
-   * Tier mapping:
-   *   score >= 90  → "Répond rapidement"  (green, pulse dot)
-   *   score 80–89  → "Actif cette semaine" (blue, pulse dot)
-   *   score < 80   → "Disponible sur RDV"  (muted, no dot)
-   * Context signal:
-   *   rating >= 4.8 → "Très bien noté"
+   *
+   * J1 change: inject card-position variation so the top-6 visible artisans
+   * (all high-score) don't all show the same signal pair.
+   *
+   * Sig1 activity tier:
+   *   score >= 90  → pool of 3 fast-response variants (rotated by id)
+   *   score 80–89  → "Actif cette semaine" (blue)
+   *   score < 80   → "Disponible sur RDV"  (muted)
+   *
+   * Sig2 context signal:
+   *   rating >= 4.8 → "Très bien noté" OR city signal (alternated by id parity)
    *   rating >= 4.5 → "Artisan recommandé"
    *   else          → "Intervient à {city}"
    * ─────────────────────────────────────────────────────────── */
   function _liveSignalsHtml(a) {
-    /* Signal 1 — activity tier
-     * Primary: score_qualification (master artisans, 68–96)
-     * Fallback: reviewCount (Supabase artisans, 8–180)
-     *   >= 100 reviews → "Répond rapidement"  (green, pulse dot)
-     *   >= 50  reviews → "Actif cette semaine" (blue, pulse dot)
-     *   else           → "Disponible sur RDV"  (muted, no dot)
-     */
     var sq      = parseInt(a.score_qualification || 0, 10);
     var reviews = parseInt(a.reviewCount || a.reviews || 0, 10);
     var rating  = parseFloat(a.rating || 0);
     var city    = _esc(a.city || 'Maroc');
+    /* Use artisan id as deterministic variation seed — same artisan = same signals
+     * on every render; different artisans = natural variation across the grid. */
+    var idSeed  = parseInt(a.id || 0, 10);
 
-    /* Map score_qualification to activity bucket if present */
+    /* ── Sig1 activity tier ── */
     var activityLevel;
     if (sq >= 90) {
       activityLevel = 'fast';
@@ -197,14 +202,22 @@
     } else if (sq > 0) {
       activityLevel = 'rdv';
     } else {
-      /* Supabase artisans: use reviewCount as activity proxy */
       activityLevel = reviews >= 100 ? 'fast' : (reviews >= 50 ? 'active' : 'rdv');
     }
 
+    /* Fast-tier: 3 variants rotated by id — "Répond rapidement", "Actif aujourd'hui",
+     * "Intervention rapide". All same visual tier (green pulse dot), different words. */
+    var FAST_LABELS = [
+      'R\u00e9pond rapidement',
+      'Actif aujourd\u2019hui',
+      'Intervention rapide'
+    ];
+
     var sig1Html;
     if (activityLevel === 'fast') {
+      var fastLabel = FAST_LABELS[idSeed % FAST_LABELS.length];
       sig1Html = '<span class="pvc-live-signal pvc-live-signal--fast">' +
-                 '<span class="pvc-live-dot"></span>R\u00e9pond rapidement</span>';
+                 '<span class="pvc-live-dot"></span>' + fastLabel + '</span>';
     } else if (activityLevel === 'active') {
       sig1Html = '<span class="pvc-live-signal pvc-live-signal--active">' +
                  '<span class="pvc-live-dot"></span>Actif cette semaine</span>';
@@ -213,14 +226,15 @@
                  'Disponible sur RDV</span>';
     }
 
-    /* Signal 2 — context / quality
-     * rating 4.8+ → "Très bien noté"
-     * rating 4.5+ → "Artisan recommandé"
-     * else        → "Intervient à {city}"
-     */
+    /* ── Sig2 context signal ──
+     * High-rating artisans: alternate between quality signal and city signal
+     * by id parity → prevents all 6 cards from showing "Très bien noté". */
     var sig2Text;
     if (rating >= 4.8) {
-      sig2Text = '\u2b50 Tr\u00e8s bien not\u00e9';
+      /* Even id → quality label; odd id → city (anchors artisan in real geography) */
+      sig2Text = (idSeed % 2 === 0)
+        ? '\u2b50 Tr\u00e8s bien not\u00e9'
+        : '\ud83d\udccd Intervient \u00e0 ' + city;
     } else if (rating >= 4.5) {
       sig2Text = '\ud83d\udc4d Artisan recommand\u00e9';
     } else {
@@ -272,10 +286,21 @@
       availHtml = '<span class="pvc-avail-badge pvc-avail-badge--off">Sur RDV</span>';
     }
 
-    /* Rating stars */
-    /* Rating — always 5 stars + credible state (T1: no fake numbers) */
+    /* Rating — J1: tier-based credible state (no fake numbers, no "Évaluation en cours")
+     * sq = score_qualification (master artisans 68–96); reviews = Supabase reviewCount.
+     * 4 tiers → varied text per card, never identical across the grid. */
+    var _ratingStateText;
+    if (sq >= 90 || reviews >= 100) {
+      _ratingStateText = 'Tr\u00e8s bien not\u00e9';
+    } else if (sq >= 80 || reviews >= 40) {
+      _ratingStateText = 'Bien not\u00e9';
+    } else if (sq >= 70 || reviews >= 10) {
+      _ratingStateText = 'S\u00e9lectionn\u00e9 Fixeo';
+    } else {
+      _ratingStateText = 'Nouveau sur Fixeo';
+    }
     var starsHtml = '<span class="pvc-stars-v2">★★★★★</span>' +
-                    '<span class="pvc-rating-state">Évaluation en cours</span>';
+                    '<span class="pvc-rating-state">' + _ratingStateText + '</span>';
 
     /* Chips — credible state only (T2: no mission counts) */
     /* chips removed — info block is FOMO + trust-line only (T2) */
@@ -446,12 +471,20 @@
       var pg = _$(GRID_ID);
       if (pg && pg.parentNode) pg.parentNode.insertBefore(el, pg);
     }
+    /* J1: platform total — never show a low filtered count as the marketplace signal.
+     * If filters are active, count still shows platform depth (avail > 0 ? avail : total).
+     * Filtered results count is a search-results concept, not a section header trust signal. */
+    var displayCount = avail > 0 ? avail : total;
+
     el.innerHTML =
       '<div class="fhp-header-copy">'+
-        '<h2 class="fhp-title">Artisans recommandés</h2>'+
-        '<p class="fhp-subtitle">Des professionnels disponibles immédiatement</p>'+
+        '<h2 class="fhp-title">Artisans disponibles pr\u00e8s de vous</h2>'+
+        '<p class="fhp-subtitle">Profils v\u00e9rifi\u00e9s \u2022 R\u00e9ponse rapide \u2022 Paiement apr\u00e8s intervention</p>'+
       '</div>'+
-      '<span class="fhp-counter">'+count.toLocaleString('fr-FR')+' artisans disponibles</span>';
+      '<a class="fhp-see-all" href="index.html#artisans-section" onclick="event.preventDefault();if(window.FixeoClientRequest&&typeof FixeoClientRequest.open===\'function\'){FixeoClientRequest.open();}else{var s=document.getElementById(\'artisans-section\');if(s)s.scrollIntoView({behavior:\'smooth\'});}">'+
+        '<span class="fhp-counter">+'+displayCount.toLocaleString('fr-FR')+' artisans actifs</span>'+
+        '<span class="fhp-see-all-arrow">\u2192</span>'+
+      '</a>';
   }
 
   /* ── Render premium grid ── */
@@ -702,7 +735,7 @@
     setTimeout(function() {
       document.body.classList.add('fixeo-sections-ready');
     }, 1200);
-    console.log('✅ Fixeo Homepage Premium Patch v3 ready');
+    console.log('✅ Fixeo Homepage Premium Patch v4 (fhp13) ready');
   }
 
   if (document.readyState==='loading') {

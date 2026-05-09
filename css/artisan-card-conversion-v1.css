@@ -1397,3 +1397,103 @@
     padding: 2px 6px;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   PHASE J-1 — Marketplace Energy & Trust Refresh — v14
+   Append-only. Never edit lines above.
+   Changes:
+     J1-A: trust line opacity boost (0.45/0.52 → 0.78)
+     J1-B: city pill opacity boost (0.42 → 0.60)
+     J1-C: rating-state credible (non-italic, correct colour per tier)
+     J1-D: section header — new link/counter styles
+     J1-E: mobile swipe hint — narrower card for wider peek
+     J1-F: "Voir profil" touch target boost on mobile
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── J1-A: Trust line — from near-invisible to readable ── */
+.pvc-trust-line {
+  opacity: 0.78 !important;
+  font-size: 0.66rem !important;
+  color: rgba(255,255,255,0.78) !important;
+}
+
+/* ── J1-B: City pill — from whisper to legible ── */
+.pvc-city-pill {
+  color: rgba(255,255,255,0.60) !important;
+  font-size: 0.70rem !important;
+}
+
+/* ── J1-C: Rating state — credible tier text, not italic ghost ── */
+.pvc-rating-state {
+  font-style: normal !important;
+  font-weight: 500 !important;
+  font-size: 0.70rem !important;
+  color: rgba(255,255,255,0.60) !important;
+  margin-left: 7px !important;
+  letter-spacing: 0.01em !important;
+}
+
+/* ── J1-D: Section header — "voir tous" link + counter pill ── */
+
+/* Wrapper becomes a link */
+.fhp-see-all {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  text-decoration: none !important;
+  cursor: pointer !important;
+}
+.fhp-see-all:hover .fhp-counter {
+  background: rgba(32,201,151,0.18) !important;
+  border-color: rgba(32,201,151,0.40) !important;
+}
+.fhp-see-all-arrow {
+  font-size: 0.80rem !important;
+  color: #20c997 !important;
+  opacity: 0.75 !important;
+  transition: transform 0.18s ease !important;
+}
+.fhp-see-all:hover .fhp-see-all-arrow {
+  transform: translateX(3px) !important;
+  opacity: 1 !important;
+}
+
+/* Subtitle — trust signals line: slightly brighter */
+.fhp-subtitle {
+  color: rgba(255,255,255,0.62) !important;
+  font-size: 0.84rem !important;
+  line-height: 1.4 !important;
+}
+
+/* ── J1-E: Mobile swipe discoverability — narrower card = wider peek ── */
+/* On 390px screen: 343px → 318px card = 72px peek gap vs 47px before.
+   The gap + shadow of next card is now clearly visible.
+   Scoped to ≤480px only — preserves desktop/tablet layout. */
+@media (max-width: 480px) {
+  #fixeo-homepage-vedette-grid .fhp-card {
+    min-width: 318px !important;
+    max-width: 318px !important;
+    width: 318px !important;
+  }
+}
+
+/* Swipe hint: subtle "see next" arrow on first card (CSS only, no JS) */
+@media (max-width: 480px) {
+  #fixeo-homepage-vedette-grid {
+    /* Slightly overdrag so next card is partially visible — reinforces swipe */
+    padding-right: 32px !important;
+  }
+}
+
+/* ── J1-F: "Voir profil" — improved touch target on mobile ── */
+@media (max-width: 640px) {
+  .pvc-profile-link {
+    min-height: 36px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 0.76rem !important;
+    color: rgba(255,255,255,0.68) !important;
+    padding: 4px 0 !important;
+  }
+}
