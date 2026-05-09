@@ -1749,3 +1749,120 @@ body.fixeo-hero-search-mode #secondary-search-section {
   }
 
 }
+
+/* ================================================================
+   SEARCH UX UNIFICATION v6 — 2026-05-09
+   Root cause: body.fixeo-hero-search-mode #fixeo-homepage-vedette-grid
+   had `display:grid !important` (specificity 0,2,1) which beat the
+   @media(max-width:640px) flex-carousel rule (0,1,1) at all times.
+   Result: hero-search on mobile stacked cards vertically in a
+   single column instead of the horizontal snap carousel.
+
+   Fix: re-assert the carousel inside a scoped @media block that
+   also carries the body-class selector → specificity (0,3,1) beats
+   the bare (0,2,1) rule.  Desktop (>640px) keeps display:grid.
+
+   Phase B: constrain artisans-section height in hero-search mode
+   so the page doesn't balloon (3333px → ~500px on mobile).
+
+   Phase C: ensure mini-trust strip and how-it-works section stay
+   visible and properly spaced during hero-search mode.
+   ================================================================ */
+
+/* ── Phase A: Mobile carousel preserved in hero-search mode ──────
+   Specificity: body.fixeo-hero-search-mode #id.class.class = (0,3,1)
+   Beats bare rule at L451 (0,2,1). Appended last → also wins cascade.
+   ──────────────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  body.fixeo-hero-search-mode #fixeo-homepage-vedette-grid.ssb2-vedette-grid,
+  body.fixeo-hero-search-mode #fixeo-homepage-vedette-grid.fhp-grid,
+  body.fixeo-hero-search-mode #fixeo-homepage-vedette-grid {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    overflow-y: visible !important;
+    scroll-snap-type: x mandatory !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    gap: 14px !important;
+    padding: 8px 16px 24px !important;
+    grid-template-columns: unset !important;
+    align-items: stretch !important;
+  }
+  body.fixeo-hero-search-mode #fixeo-homepage-vedette-grid::-webkit-scrollbar {
+    display: none !important;
+  }
+  /* Cards: same 88vw snap behaviour as homepage mode */
+  body.fixeo-hero-search-mode #fixeo-homepage-vedette-grid .pvc-card,
+  body.fixeo-hero-search-mode #fixeo-homepage-vedette-grid .fhp-card {
+    min-width: 88vw !important;
+    max-width: 88vw !important;
+    width: 88vw !important;
+    flex-shrink: 0 !important;
+    scroll-snap-align: start !important;
+  }
+}
+
+/* ── Phase B: artisans-section overflow chain fix ────────────────
+   The horizontal snap carousel sits inside:
+     artisans-section > .results-page-shell > .results-layout >
+     .results-main-column > #fixeo-homepage-vedette-grid (flex row)
+   Multiple CSS rules add overflow-x:clip to these ancestors which
+   clips the carousel. We must override the ENTIRE ancestor chain.
+   ──────────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  /* Unclip the ancestor chain so the flex carousel can overflow */
+  body.fixeo-hero-search-mode #artisans-section,
+  body.fixeo-hero-search-mode #artisans-section .container,
+  body.fixeo-hero-search-mode #artisans-section .results-page-shell,
+  body.fixeo-hero-search-mode #artisans-section .results-layout,
+  body.fixeo-hero-search-mode #artisans-section .results-main-column,
+  body.fixeo-hero-search-mode #artisans-section .results-list,
+  body.fixeo-hero-search-mode #artisans-section #artisans-container.artisans-grid {
+    overflow-x: visible !important;
+    overflow-y: visible !important;
+  }
+  /* results-layout: single-column, no sidebar, no padding interference */
+  body.fixeo-hero-search-mode #artisans-section .results-layout {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  body.fixeo-hero-search-mode #artisans-section .results-main-column {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding-left: 0 !important;
+    padding: 0 !important;
+    display: block !important;
+    flex-direction: unset !important;
+  }
+}
+
+/* ── Phase C: trust strip + how-it-works visible in hero-search ── */
+body.fixeo-hero-search-mode #fxf-mini-trust {
+  display: block !important;
+}
+body.fixeo-hero-search-mode .how-it-works-section,
+body.fixeo-hero-search-mode #how-it-works {
+  display: block !important;
+}
+
+/* ── Phase D (768px): tablet hero-search stays 2-col ───────────── */
+@media (max-width: 768px) and (min-width: 641px) {
+  body.fixeo-hero-search-mode #fixeo-homepage-vedette-grid.ssb2-vedette-grid,
+  body.fixeo-hero-search-mode #fixeo-homepage-vedette-grid.fhp-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    display: grid !important;
+  }
+}
+
+/* ── Snap indicator: subtle dot on mobile carousel ──────────────
+   Shows users the carousel is scrollable — improves discoverability.
+   ──────────────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  #artisans-section .fhp-grid-wrap,
+  #fixeo-homepage-vedette-grid {
+    position: relative !important;
+  }
+}
