@@ -346,3 +346,17 @@ html body .final-cta-section > .container > .final-cta {
     padding: 28px 20px !important;
   }
 }
+
+/* ── Phase C mobile footer: 2-column grid at ≤560px to halve scroll height */
+@media (max-width: 560px) {
+  .footer-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px !important;
+  }
+}
+/* Very narrow: back to 1 column at ≤320px */
+@media (max-width: 320px) {
+  .footer-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
