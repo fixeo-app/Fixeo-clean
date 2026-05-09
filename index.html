@@ -1787,18 +1787,22 @@ section#home.hero.hero-section {
       -webkit-overflow-scrolling: touch !important;
       scrollbar-width: none !important;
       gap: 14px !important;
-      padding: 8px 16px 24px !important;
+      /* J2: grid spans full viewport width so next card peeks into view.
+         padding-right:48px = explicit peek gap invitation on right edge. */
+      padding: 8px 48px 24px 20px !important;
       margin-bottom: 0 !important;
-      width: calc(100% + 0px) !important;
+      /* J2: 100vw overflows the container — ancestor overflow:visible allows it */
+      width: 100vw !important;
       /* Remove grid constraint */
       grid-template-columns: none !important;
     }
     #fixeo-homepage-vedette-grid::-webkit-scrollbar { display: none !important; }
     #fixeo-homepage-vedette-grid .pvc-card,
     #fixeo-homepage-vedette-grid .fhp-card {
-      min-width: 88vw !important;
-      max-width: 88vw !important;
-      width: 88vw !important;
+      /* J2: 82vw card = 18vw residual after card → peek gap ~18vw visible */
+      min-width: 82vw !important;
+      max-width: 82vw !important;
+      width: 82vw !important;
       flex-shrink: 0 !important;
       scroll-snap-align: start !important;
     }

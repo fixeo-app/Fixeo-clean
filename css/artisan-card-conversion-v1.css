@@ -1691,3 +1691,20 @@
     transform: translateX(2px) !important;
   }
 }
+
+/* ── J2 card width unification: 82vw across all ≤640px (overrides J-1's 318px) ── */
+@media (max-width: 640px) {
+  #fixeo-homepage-vedette-grid .fhp-card {
+    min-width: 82vw !important;
+    max-width: 82vw !important;
+    width: 82vw !important;
+  }
+}
+/* ≤340px safety: floor at calc(100vw - 32px) so card never clips viewport */
+@media (max-width: 340px) {
+  #fixeo-homepage-vedette-grid .fhp-card {
+    min-width: calc(100vw - 32px) !important;
+    max-width: calc(100vw - 32px) !important;
+    width: calc(100vw - 32px) !important;
+  }
+}
