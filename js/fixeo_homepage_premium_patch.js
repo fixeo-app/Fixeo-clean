@@ -490,7 +490,7 @@
     el.innerHTML =
       '<div class="fhp-header-copy">'+
         '<h2 class="fhp-title">Artisans disponibles pr\u00e8s de vous</h2>'+
-        '<p class="fhp-subtitle">Profils v\u00e9rifi\u00e9s \u2022 R\u00e9ponse rapide \u2022 Paiement apr\u00e8s intervention</p>'+
+        '<p class="fhp-subtitle">Disponibles dans votre ville \u00b7 Paiement apr\u00e8s intervention</p>'+
       '</div>'+
       '<a class="fhp-see-all" href="index.html#artisans-section" onclick="event.preventDefault();if(window.FixeoClientRequest&&typeof FixeoClientRequest.open===\'function\'){FixeoClientRequest.open();}else{var s=document.getElementById(\'artisans-section\');if(s)s.scrollIntoView({behavior:\'smooth\'});}">'+
         '<span class="fhp-counter">+'+displayCount.toLocaleString('fr-FR')+' artisans actifs</span>'+

@@ -1751,3 +1751,124 @@
     width: calc(100vw - 44px) !important;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   PHASE J-2B — Header Hierarchy + City Alignment + Depth Polish
+   Append-only. Never edit lines above. Braces must stay balanced.
+   Changes:
+     J2B-A: City pill — nowrap + ellipsis for long names like "Béni Mellal"
+     J2B-B: Mobile header — 2-row layout (title/subtitle | counter)
+             Title larger + stronger; counter full-width below
+     J2B-C: Subtitle — marketplace depth signal (not features list)
+     J2B-D: Counter pill on mobile — left-aligned, feels like proof not label
+     J2B-E: Desktop header — minor subtitle spacing polish
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── J2B-A: City pill — icon + text always on same line ── */
+/* Root cause: whiteSpace:normal on 29px-wide pill → emoji wraps to next line.
+   Fix: nowrap + ellipsis truncation at a sensible max-width. */
+.pvc-city-pill {
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  max-width: 130px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 2px !important;
+  vertical-align: middle !important;
+  flex-shrink: 1 !important;
+  min-width: 0 !important;
+}
+
+/* ── J2B-B: Mobile header — two-row layout for clear hierarchy ── */
+/* Row 1: title (full width) + subtitle (full width) = emotional content
+   Row 2: "+735 artisans actifs" counter = marketplace proof
+   The counter pill now has its own row → no longer fights the title for space. */
+@media (max-width: 640px) {
+  .fhp-section-header {
+    /* Switch from J-2's flex-row to column on mobile */
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    flex-wrap: nowrap !important;
+    gap: 10px !important;
+    margin-bottom: 16px !important;
+    padding-bottom: 14px !important;
+  }
+  .fhp-header-copy {
+    width: 100% !important;
+    flex: none !important;
+    min-width: 0 !important;
+  }
+  .fhp-title {
+    /* Stronger emotional presence now that it has full width */
+    font-size: 1.15rem !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.01em !important;
+    margin-bottom: 5px !important;
+    line-height: 1.25 !important;
+    white-space: normal !important; /* allow wrapping on narrow screens */
+  }
+  .fhp-subtitle {
+    /* Local + safety signal — clear and legible */
+    font-size: 0.74rem !important;
+    color: rgba(255,255,255,0.58) !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: unset !important;
+    max-width: 100% !important;
+    line-height: 1.4 !important;
+  }
+  /* Counter pill: own row, left-aligned, reads as marketplace proof */
+  .fhp-see-all {
+    width: auto !important;
+    align-self: flex-start !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+  }
+  #fixeo-homepage-header .fhp-counter {
+    /* Slightly larger on mobile — it's now the primary CTA of the header */
+    font-size: 0.72rem !important;
+    padding: 5px 12px !important;
+    font-weight: 700 !important;
+  }
+  /* Arrow: show on mobile in column layout (it was hidden in J-2 row layout) */
+  .fhp-see-all-arrow {
+    display: inline-flex !important;
+    font-size: 0.72rem !important;
+    opacity: 0.80 !important;
+  }
+}
+
+/* ── J2B-C: Desktop subtitle — slightly more breathing room ── */
+@media (min-width: 641px) {
+  .fhp-subtitle {
+    margin-top: 3px !important;
+    line-height: 1.5 !important;
+    font-size: 0.86rem !important;
+  }
+}
+
+/* ── J2B-D: Meta row containing city pill — prevent overflow ── */
+/* The .pvc-meta-row holds cat-pill + city-pill + avail-badge.
+   On narrow cards, enforce nowrap + proper truncation. */
+.pvc-meta-row {
+  flex-wrap: nowrap !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+}
+/* Cat pill must also be able to shrink */
+.pvc-cat-pill {
+  flex-shrink: 1 !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  max-width: 90px !important;
+}
+/* Avail badge: never shrink, never wrap */
+.pvc-avail-badge {
+  flex-shrink: 0 !important;
+  white-space: nowrap !important;
+  margin-left: auto !important;
+}
