@@ -1866,3 +1866,66 @@ body.fixeo-hero-search-mode #how-it-works {
     position: relative !important;
   }
 }
+
+/* ══════════════════════════════════════════════════════════
+   PHASE F — HERO-SEARCH SERVICES VISIBILITY (micro-patch)
+   Goal: keep chips visually present + compact, not invisible.
+   Append-only. Do NOT edit lines above.
+   ══════════════════════════════════════════════════════════ */
+
+/* 1 — Unblock chips/section-header in hero-search mode
+        (overrides L458-464 display:none !important with display:flex !important)
+        Must beat: html body.class #id.class.class.class (0,4,2) → use same or higher */
+html body.fixeo-hero-search-mode #services.services-section .category-chips,
+html body.fixeo-hero-search-mode #services.services-section.homepage-conversion-priority .category-chips {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  scrollbar-width: none !important;
+}
+html body.fixeo-hero-search-mode #services.services-section .category-chips::-webkit-scrollbar {
+  display: none;
+}
+
+/* 2 — Section-header hidden is fine (keeps compact), svc-city-wrap hidden is fine.
+        Filter-bar can stay hidden — chips are the key interactive element. */
+
+/* 3 — Secondary appearance: dimmed + compact
+        Chips stay at reduced opacity so artisan results feel primary */
+html body.fixeo-hero-search-mode #services.services-section .chip.service-chip {
+  opacity: 0.55 !important;
+  transform: scale(0.90) !important;
+  transition: opacity 160ms ease, transform 160ms ease !important;
+  height: 72px !important;
+  min-height: 72px !important;
+}
+html body.fixeo-hero-search-mode #services.services-section .chip.service-chip:hover,
+html body.fixeo-hero-search-mode #services.services-section .chip.service-chip:focus {
+  opacity: 0.85 !important;
+  transform: scale(0.94) !important;
+}
+
+/* 4 — Section padding: enough to show chips, not too much */
+body.fixeo-hero-search-mode #services.services-section,
+body.fixeo-hero-search-mode #services.services-section.homepage-conversion-priority,
+html body.fixeo-hero-search-mode #services.section.section-sm.services-section.homepage-conversion-priority {
+  padding-top: 12px !important;
+  padding-bottom: 12px !important;
+  min-height: 0 !important;
+}
+
+/* 5 — Ensure chips row doesn't cause horizontal page overflow on mobile */
+@media (max-width: 768px) {
+  html body.fixeo-hero-search-mode #services.services-section .category-chips {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+    gap: 6px !important;
+  }
+  html body.fixeo-hero-search-mode #services.services-section .chip.service-chip {
+    min-width: 64px !important;
+    flex-shrink: 0 !important;
+    height: 64px !important;
+    min-height: 64px !important;
+  }
+}
