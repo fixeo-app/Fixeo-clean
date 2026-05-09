@@ -1996,3 +1996,58 @@ html body.fixeo-hero-search-mode #services.services-section.homepage-conversion-
     min-height: 88px !important;
   }
 }
+
+/* ══════════════════════════════════════════════════════════
+   PHASE H — SERVICES GRID COLUMNS IN HERO-SEARCH MODE
+   Root cause: Phase G set display:grid but no grid-template-columns
+   → browser defaulted to 1-column → 16 chips × ~90px = 1442px tall.
+   Fix: explicit multi-column grid, matching homepage-mode layout.
+   Append-only. Never edit lines above.
+   ══════════════════════════════════════════════════════════ */
+
+/* Desktop: 4 columns — same as homepage mode */
+html body.fixeo-hero-search-mode #services.services-section .category-chips,
+html body.fixeo-hero-search-mode #services.services-section.homepage-conversion-priority .category-chips {
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 12px !important;
+}
+
+/* Tablet 641–900px: 3 columns */
+@media (max-width: 900px) and (min-width: 641px) {
+  html body.fixeo-hero-search-mode #services.services-section .category-chips,
+  html body.fixeo-hero-search-mode #services.services-section.homepage-conversion-priority .category-chips {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 10px !important;
+  }
+}
+
+/* Mobile ≤640px: 2 columns — halves single-column height */
+@media (max-width: 640px) {
+  html body.fixeo-hero-search-mode #services.services-section .category-chips,
+  html body.fixeo-hero-search-mode #services.services-section.homepage-conversion-priority .category-chips {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+}
+
+/* Section padding: slightly tighter to reduce total height further */
+body.fixeo-hero-search-mode #services.services-section,
+body.fixeo-hero-search-mode #services.services-section.homepage-conversion-priority,
+html body.fixeo-hero-search-mode #services.section.section-sm.services-section.homepage-conversion-priority {
+  padding-top: 28px !important;
+  padding-bottom: 28px !important;
+}
+
+/* Section-header margin-bottom: tighter */
+html body.fixeo-hero-search-mode #services.services-section .section-header {
+  margin-bottom: 16px !important;
+}
+
+/* Mobile ≤768px: tighter section padding */
+@media (max-width: 768px) {
+  body.fixeo-hero-search-mode #services.services-section,
+  body.fixeo-hero-search-mode #services.services-section.homepage-conversion-priority {
+    padding-top: 20px !important;
+    padding-bottom: 20px !important;
+  }
+}
