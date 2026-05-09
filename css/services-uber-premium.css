@@ -2159,3 +2159,25 @@ html body.fixeo-hero-search-mode #services.services-section .chip.service-chip:f
     min-height: unset !important;
   }
 }
+
+/* ══════════════════════════════════════════════════════════
+   PHASE I — MICRO-FIX: active primary chip compressed in hero-search
+   Root cause: L708-715 sets height:52px/padding:0 26px on
+   .service-chip.svc-visible.active[data-category=primary] with
+   specificity (1,5,2) — higher than later card overrides (1,4,2).
+   In hero-search mode this was never neutralised.
+   Fix: same selector + .chip class → (1,5,2), same specificity,
+   appears later → wins. Restores card dimensions for active chips.
+   Append-only. Never edit lines above.
+   ══════════════════════════════════════════════════════════ */
+
+html body #services.services-section .chip.service-chip.svc-visible.active[data-category="plomberie"],
+html body #services.services-section .chip.service-chip.svc-visible.active[data-category="electricite"],
+html body #services.services-section .chip.service-chip.svc-visible.active[data-category="climatisation"] {
+  height: 120px !important;
+  min-height: 120px !important;
+  padding: 16px 12px !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
