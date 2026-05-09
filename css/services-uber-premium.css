@@ -2053,48 +2053,58 @@ html body.fixeo-hero-search-mode #services.services-section .section-header {
 }
 
 /* ══════════════════════════════════════════════════════════
-   PHASE I — NEUTRALISE ALL HERO-SEARCH-SPECIFIC SERVICES RULES
-   Direction: Services must look IDENTICAL in hero-search mode
-   and normal homepage mode. No special layout, no special chip
-   sizing, no special padding. Just keep the section visible
-   (Phase F/G/H all get overridden here).
+   PHASE I — MAKE HERO-SEARCH MODE VISUALLY IDENTICAL TO NORMAL
+   Direction: mirror every :not(.fixeo-hero-search-mode) rule
+   with a body.fixeo-hero-search-mode equivalent carrying the
+   exact same values. Phases F/G/H overrides are neutralised
+   by these later, same-specificity declarations.
    Append-only. Never edit lines above.
    ══════════════════════════════════════════════════════════ */
 
-/* ── Section: restore normal padding (same as normal homepage) ── */
+/* ── 1. Section visibility: same display/padding as normal mode ── */
 html body.fixeo-hero-search-mode #services.services-section,
 html body.fixeo-hero-search-mode #services.services-section.homepage-conversion-priority,
 html body.fixeo-hero-search-mode #services.section.section-sm.services-section.homepage-conversion-priority {
-  padding-top: unset !important;
-  padding-bottom: unset !important;
+  padding-top: var(--section-padding-top, 60px) !important;
+  padding-bottom: 24px !important;
   min-height: unset !important;
 }
 
-/* ── Section-header: restore normal visibility + margin ── */
+/* ── 2. Section-header: same as normal mode ── */
 html body.fixeo-hero-search-mode #services.services-section .section-header {
   display: block !important;
-  margin-bottom: unset !important;
+  margin-bottom: 20px !important;
 }
 
-/* ── Filter-bar: restore normal visibility ── */
+/* ── 3. Filter-bar: same as normal mode ── */
 html body.fixeo-hero-search-mode #services.services-section .services-filter-bar {
   display: flex !important;
 }
 
-/* ── Chips grid: restore normal grid layout, columns, gap ── */
+/* ── 4. Desktop chips grid: mirror of :not() rule at L800-803
+        display:grid, 4-col, 14px gap — identical to normal mode ── */
 html body.fixeo-hero-search-mode #services.services-section .category-chips,
 html body.fixeo-hero-search-mode #services.services-section.homepage-conversion-priority .category-chips {
   display: grid !important;
-  grid-template-columns: unset !important;
-  gap: unset !important;
-  overflow-x: unset !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 14px !important;
+  max-width: 980px !important;
+  margin: 18px auto 0 !important;
+  padding-top: 14px !important;
+  padding-bottom: 0 !important;
+  border-top: 1px solid rgba(255,255,255,0.06) !important;
+  overflow: visible !important;
+  overflow-x: visible !important;
   flex-wrap: unset !important;
+  scroll-snap-type: none !important;
 }
 
-/* ── Chips: restore normal opacity, transform, height ── */
+/* ── 5. Chip appearance: same as normal mode (phases F/G/H overrides neutralised) ──
+        .chip.service-chip already styled by html body #services rule (both modes).
+        Explicit restate here so hero-search-mode overrides don't win. */
 html body.fixeo-hero-search-mode #services.services-section .chip.service-chip {
-  opacity: unset !important;
-  transform: unset !important;
+  opacity: unset !important;   /* falls through to html body #services rule */
+  transform: unset !important; /* falls through to html body #services rule */
   height: unset !important;
   min-height: unset !important;
   flex-shrink: unset !important;
@@ -2105,48 +2115,47 @@ html body.fixeo-hero-search-mode #services.services-section .chip.service-chip:f
   transform: unset !important;
 }
 
-/* ── Mobile ≤768px: restore normal chip height ── */
+/* ── 6. Mobile ≤768px: mirror :not() rule at L902-905 — 3-col grid ── */
 @media (max-width: 768px) {
+  html body.fixeo-hero-search-mode #services.services-section .category-chips,
+  html body.fixeo-hero-search-mode #services.services-section.homepage-conversion-priority .category-chips {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 12px 12px 0 !important;
+    margin: 12px 0 0 !important;
+    overflow: visible !important;
+    overflow-x: visible !important;
+    border-top: none !important;
+    scroll-snap-type: none !important;
+    flex-wrap: unset !important;
+  }
   html body.fixeo-hero-search-mode #services.services-section .chip.service-chip {
     height: unset !important;
     min-height: unset !important;
   }
   html body.fixeo-hero-search-mode #services.services-section,
   html body.fixeo-hero-search-mode #services.services-section.homepage-conversion-priority {
-    padding-top: unset !important;
-    padding-bottom: unset !important;
-  }
-  html body.fixeo-hero-search-mode #services.services-section .category-chips {
-    padding-left: unset !important;
-    padding-right: unset !important;
-    gap: unset !important;
-    grid-template-columns: unset !important;
+    padding-top: var(--section-padding-top, 60px) !important;
+    padding-bottom: 16px !important;
   }
 }
 
-/* ── Breakpoint overrides (tablet/mobile from Phase H) ── */
+/* ── 7. Tablet overrides from Phase H (neutralise) ── */
 @media (max-width: 900px) and (min-width: 641px) {
   html body.fixeo-hero-search-mode #services.services-section .category-chips,
   html body.fixeo-hero-search-mode #services.services-section.homepage-conversion-priority .category-chips {
-    grid-template-columns: unset !important;
-    gap: unset !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 10px !important;
   }
 }
-@media (max-width: 640px) {
-  html body.fixeo-hero-search-mode #services.services-section .category-chips,
-  html body.fixeo-hero-search-mode #services.services-section.homepage-conversion-priority .category-chips {
-    grid-template-columns: unset !important;
-    gap: unset !important;
-  }
-}
+
+/* ── 8. Phase G ≤768px chip height override (neutralise) ── */
 @media (max-width: 380px) {
   html body.fixeo-hero-search-mode #services.services-section .chip.service-chip {
     height: unset !important;
     min-height: unset !important;
   }
-}
-
-/* ── Speed hint: restore normal visibility in hero-search mode ── */
-body.fixeo-hero-search-mode #services.services-section .services-speed-hint {
-  display: unset !important;
 }
