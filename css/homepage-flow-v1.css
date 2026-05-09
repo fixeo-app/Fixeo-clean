@@ -227,3 +227,111 @@
   }
 
 }
+
+/* ══════════════════════════════════════════════════════════
+   PHASE E — LOWER HOMEPAGE RHYTHM COMPRESSION
+   Append-only. Zero existing lines modified.
+   Goal: tighter lower-page rhythm, less scroll fatigue.
+   Affects: Vision, CTA, Footer.
+   ══════════════════════════════════════════════════════════ */
+
+/* ── Phase A: Technologie Fixeo (why-fixeo-section) — already at
+      36/44px from Phase C above. Tighten card grid gap + header. */
+#why-fixeo-section .why-fixeo-grid,
+#why-fixeo-section .fxm-grid {
+  gap: 10px !important;
+}
+/* Card internal padding — slightly less on desktop */
+#why-fixeo-section .wf-card,
+#why-fixeo-section .fxm-block {
+  padding: 20px !important;
+}
+
+/* ── Phase B: Vision Fixeo (testimonial-section) — tighten header
+      margin-bottom (40px → 20px desktop) + inner blocks spacing.
+      Must beat: testimonials-cta-premium.css html body selector (0,2,1) */
+html body .testimonial-section.fxv-section .section-header {
+  margin-bottom: 20px !important;
+}
+/* fxv-story / fxv-signals / fxv-flow top padding reduction */
+html body .testimonial-section.fxv-section .fxv-story {
+  padding-top: 14px !important;
+}
+html body .testimonial-section.fxv-section .fxv-signals {
+  padding-top: 12px !important;
+}
+
+/* ── Phase B (mobile ≤768px): tighter header mb, smaller body padding */
+@media (max-width: 768px) {
+  html body .testimonial-section.fxv-section .section-header {
+    margin-bottom: 14px !important;
+  }
+  html body .testimonial-section.fxv-section .fxv-story {
+    padding-top: 10px !important;
+  }
+  html body .testimonial-section.fxv-section .fxv-signals {
+    padding-top: 10px !important;
+  }
+  /* Vision section overall: tighter on mobile */
+  .testimonial-section.fxv-section {
+    padding-top: 22px !important;
+    padding-bottom: 26px !important;
+  }
+}
+
+/* ── Phase C: Final CTA — still prominent but not excessive.
+      100px/110px → 64px/72px desktop (already applied at mobile via
+      testimonials-cta-premium responsive).
+      Must beat: html body .final-cta-section (0,2,1) → use (0,3,1) */
+html body .final-cta-section {
+  padding-top: 64px !important;
+  padding-bottom: 72px !important;
+}
+/* Inner .final-cta card: 56px/48px → 36px/32px — feels denser, still premium */
+html body .final-cta-section .final-cta {
+  padding: 36px 36px !important;
+}
+@media (max-width: 768px) {
+  html body .final-cta-section {
+    padding-top: 40px !important;
+    padding-bottom: 48px !important;
+  }
+  html body .final-cta-section .final-cta {
+    padding: 28px 20px !important;
+  }
+}
+
+/* ── Phase C: Footer — tighten generous gaps.
+      Must beat: homepage-v13.css specificity (0,1,1 → use 0,1,1 + !important) */
+footer {
+  padding-top: 36px !important;
+}
+.v13-partners-row {
+  margin-bottom: 28px !important;
+  padding-bottom: 20px !important;
+}
+.footer-grid {
+  gap: 28px !important;
+  margin-bottom: 24px !important;
+}
+@media (max-width: 768px) {
+  footer {
+    padding-top: 24px !important;
+  }
+  .v13-partners-row {
+    margin-bottom: 16px !important;
+    padding-bottom: 14px !important;
+  }
+  .footer-grid {
+    gap: 12px !important;
+    margin-bottom: 16px !important;
+  }
+  /* Footer grid single column on narrow mobile — shrink link list gap */
+  .footer-links li {
+    margin-bottom: 7px !important;
+  }
+  .footer-links h4 {
+    margin-bottom: 10px !important;
+  }
+}
+
