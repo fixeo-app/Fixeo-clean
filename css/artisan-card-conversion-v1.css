@@ -1729,3 +1729,25 @@
     width: 82vw !important;
   }
 }
+
+/* ── J2 peek calibration: 82vw→76vw for proper peek gap (grid starts at ~29px) ── */
+/* Math at 390px: grid.left=29, padL=20, card0.left=49, card0.right=49+296=345,
+   gap=14, card1.left=359, viewport=390, PEEK=31px — clearly visible ── */
+@media (max-width: 640px) {
+  #fixeo-homepage-vedette-grid.ssb2-vedette-grid .fhp-card,
+  #fixeo-homepage-vedette-grid.fhp-grid .fhp-card,
+  #fixeo-homepage-vedette-grid .fhp-card {
+    min-width: 76vw !important;
+    max-width: 76vw !important;
+    width: 76vw !important;
+  }
+}
+@media (max-width: 340px) {
+  #fixeo-homepage-vedette-grid.ssb2-vedette-grid .fhp-card,
+  #fixeo-homepage-vedette-grid.fhp-grid .fhp-card,
+  #fixeo-homepage-vedette-grid .fhp-card {
+    min-width: calc(100vw - 44px) !important;
+    max-width: calc(100vw - 44px) !important;
+    width: calc(100vw - 44px) !important;
+  }
+}
