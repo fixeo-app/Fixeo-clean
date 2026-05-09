@@ -190,8 +190,12 @@
     var rating  = parseFloat(a.rating || 0);
     var city    = _esc(a.city || 'Maroc');
     /* Use artisan id as deterministic variation seed — same artisan = same signals
-     * on every render; different artisans = natural variation across the grid. */
-    var idSeed  = parseInt(a.id || 0, 10);
+     * on every render; different artisans = natural variation across the grid.
+     * IDs may be UUIDs (Supabase) or numeric ints (master artisans).
+     * For UUIDs: derive seed from character code sum of the id string. */
+    var _idStr = String(a.id || '0');
+    var idSeed = 0;
+    for (var _ci = 0; _ci < _idStr.length; _ci++) { idSeed += _idStr.charCodeAt(_ci); }
 
     /* ── Sig1 activity tier ── */
     var activityLevel;
@@ -288,11 +292,17 @@
 
     /* Rating — J1: tier-based credible state (no fake numbers, no "Évaluation en cours")
      * _sq = score_qualification (master artisans 68–96); reviews already declared above.
-     * 4 tiers → varied text per card, never identical across the grid. */
+     * For Supabase artisans (no sq, all reviews>=100), use idSeed to rotate 3 variants
+     * so the 6 visible top-artisan cards show different text, not all "Très bien noté". */
     var _sq = parseInt(a.score_qualification || 0, 10);
+    /* idSeed for rating — same char-sum approach as signals, but local here */
+    var _idSeedR = 0;
+    var _idStrR = String(a.id || '0');
+    for (var _rci = 0; _rci < _idStrR.length; _rci++) { _idSeedR += _idStrR.charCodeAt(_rci); }
+    var HIGH_LABELS = ['Tr\u00e8s bien not\u00e9', 'Artisan s\u00e9rieux', 'Recommand\u00e9'];
     var _ratingStateText;
     if (_sq >= 90 || reviews >= 100) {
-      _ratingStateText = 'Tr\u00e8s bien not\u00e9';
+      _ratingStateText = HIGH_LABELS[_idSeedR % HIGH_LABELS.length];
     } else if (_sq >= 80 || reviews >= 40) {
       _ratingStateText = 'Bien not\u00e9';
     } else if (_sq >= 70 || reviews >= 10) {
