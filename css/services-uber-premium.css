@@ -1501,3 +1501,251 @@ html body #services.services-section .chip.service-chip.svc-visible:not([data-ca
   }
 
 }
+
+/* ================================================================
+   UX BALANCE PASS v5 — 2026-05-09
+   CSS only. services-uber-premium.css only. No HTML, no JS.
+
+   OBJECTIVES:
+   Phase A — Visual balance: primary cards less dominant, secondary
+             cards clearly alive (not disabled).
+   Phase B — Flow continuity: reduce dead space, lighter "Tout voir",
+             fluid transition to artisans section.
+   Phase C — Hero-search mode: keep services section present (not
+             invisible), hide orphaned speed-hint text.
+   Phase D — Mobile: verified at 360/390/412px widths.
+
+   SPECIFICITY NOTES:
+   - Primary reductions beat prior (1,x,2) rules via html prefix +
+     both body-class variants → (1,4,2) or higher.
+   - Secondary brightness uses .svc-visible guard chain, same as
+     prior blocks — last appended wins at equal specificity.
+   - Section-level padding uses #services ID (1,1,0) over .section
+     class (0,1,0) and beats services-premium.css #services rule
+     since we append after it.
+   ================================================================ */
+
+/* ── PHASE A: Primary cards — reduce dominance, stay premium ────── */
+
+/* Calmer height + scale — still clearly featured, not overpowering */
+html body #services.services-section .chip.service-chip[data-category="plomberie"],
+html body #services.services-section .chip.service-chip[data-category="electricite"],
+html body #services.services-section .chip.service-chip[data-category="climatisation"] {
+  height: 108px !important;
+  min-height: 108px !important;
+  transform: scale(1.02) !important;
+  box-shadow:
+    0 14px 36px rgba(225,48,108,0.22),
+    0 0 20px rgba(147,51,234,0.12),
+    inset 0 1px 0 rgba(255,255,255,0.16) !important;
+  border-color: rgba(255,255,255,0.22) !important;
+}
+
+/* Reduce margin that pushes secondary row too far down */
+html body #services.services-section .chip.service-chip[data-category="peinture"] {
+  margin-top: 16px !important;
+}
+html body #services.services-section .chip.service-chip[data-category="nettoyage"],
+html body #services.services-section .chip.service-chip[data-category="menuiserie"],
+html body #services.services-section .chip.service-chip[data-category="serrurerie"],
+html body #services.services-section .chip.service-chip[data-category="maconnerie"] {
+  margin-top: 0 !important;
+}
+
+/* ── PHASE A: Secondary cards — alive, not disabled ─────────────── */
+
+/* Base secondary: opacity 0.82 (was 0.55 — felt dead) */
+html body #services.services-section .chip.service-chip.svc-visible:not([data-category="plomberie"]):not([data-category="electricite"]):not([data-category="climatisation"]):not([data-category="all"]):not(.active) {
+  opacity: 0.82 !important;
+  transform: none !important;
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,0.075),
+    rgba(255,255,255,0.035)
+  ) !important;
+  border: 1px solid rgba(255,255,255,0.13) !important;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.14),
+              inset 0 1px 0 rgba(255,255,255,0.06) !important;
+}
+
+/* Secondary hover: fully alive */
+html body #services.services-section .chip.service-chip.svc-visible:not([data-category="plomberie"]):not([data-category="electricite"]):not([data-category="climatisation"]):not([data-category="all"]):hover,
+html body #services.services-section .chip.service-chip.svc-visible:not([data-category="plomberie"]):not([data-category="electricite"]):not([data-category="climatisation"]):not([data-category="all"]):focus-visible {
+  opacity: 1 !important;
+  transform: translateY(-3px) !important;
+  border-color: rgba(255,255,255,0.22) !important;
+  box-shadow: 0 10px 28px rgba(0,0,0,0.22),
+              inset 0 1px 0 rgba(255,255,255,0.10) !important;
+}
+
+/* ── PHASE A: Background glow behind primary row — softer ──────── */
+html body #services.services-section .category-chips::before {
+  background: linear-gradient(
+    180deg,
+    rgba(225,48,108,0.05),
+    rgba(147,51,234,0.03)
+  ) !important;
+  height: 125px !important;
+  filter: blur(24px) !important;
+}
+
+/* ── PHASE B: Services section — tighter bottom padding ────────── */
+/* Must beat homepage-conversion-optimizer.css which adds .homepage-conversion-priority */
+html body #services.section.section-sm.services-section.homepage-conversion-priority,
+html body #services.section.services-section.homepage-conversion-priority,
+html body #services.services-section.homepage-conversion-priority,
+html body:not(.fixeo-hero-search-mode) #services.services-section,
+html body.fixeo-homepage-mode #services.services-section {
+  padding-bottom: 24px !important;
+}
+
+/* ── PHASE B: "Tout voir" — inline pill, lighter, less footer-like  */
+html body #services.services-section .chip.service-chip[data-category="all"] {
+  order: 999 !important;
+  grid-column: 1 / -1 !important;
+  height: 38px !important;
+  min-height: 38px !important;
+  max-height: 38px !important;
+  margin-top: 16px !important;
+  opacity: 0.62 !important;
+  font-size: 0.80rem !important;
+  font-weight: 500 !important;
+  background: transparent !important;
+  border: 1px solid rgba(255,255,255,0.09) !important;
+  box-shadow: none !important;
+  letter-spacing: 0.01em !important;
+  transition: opacity 0.18s ease, border-color 0.18s ease !important;
+}
+html body #services.services-section .chip.service-chip[data-category="all"]:hover {
+  opacity: 0.90 !important;
+  border-color: rgba(255,255,255,0.18) !important;
+  background: rgba(255,255,255,0.04) !important;
+  transform: none !important;
+}
+
+/* ── PHASE B: Vedette section — reduce top padding, fluid arrival ── */
+#secondary-search-section {
+  padding-top: 40px !important;
+  padding-bottom: 60px !important;
+}
+
+/* ── PHASE B: service-artisans-section — zero gap when empty ──── */
+#service-artisans-section {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+/* When section has content (JS injects cards): restore spacing */
+#service-artisans-section:not(:empty) {
+  padding-bottom: 16px !important;
+}
+
+/* ── PHASE B: section-divider between services and artisans ─────── */
+/* Collapse the divider between #services and #secondary-search-section */
+#services.services-section ~ .section-divider:first-of-type {
+  display: none !important;
+}
+
+/* ── PHASE C: Hero-search mode — keep section presence ─────────── */
+
+/* Hide orphaned speed-hint text when chips are hidden */
+body.fixeo-hero-search-mode #services.services-section .services-speed-hint {
+  display: none !important;
+}
+
+/* Keep a minimal presence instead of total height collapse */
+/* Must beat .homepage-conversion-priority selector */
+body.fixeo-hero-search-mode #services.services-section,
+body.fixeo-hero-search-mode #services.services-section.homepage-conversion-priority,
+html body.fixeo-hero-search-mode #services.section.section-sm.services-section.homepage-conversion-priority {
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
+  min-height: 0 !important;
+}
+
+/* Vedette section: tighter top in search mode (results are primary) */
+body.fixeo-hero-search-mode #secondary-search-section {
+  padding-top: 24px !important;
+}
+
+/* ── PHASE D: Mobile ≤ 768px ────────────────────────────────────── */
+@media (max-width: 768px) {
+
+  /* Primary cards — calmer on mobile, no scale */
+  html body #services.services-section .chip.service-chip[data-category="plomberie"],
+  html body #services.services-section .chip.service-chip[data-category="electricite"],
+  html body #services.services-section .chip.service-chip[data-category="climatisation"] {
+    height: 96px !important;
+    min-height: 96px !important;
+    transform: none !important;
+    box-shadow:
+      0 10px 28px rgba(225,48,108,0.20),
+      inset 0 1px 0 rgba(255,255,255,0.12) !important;
+  }
+
+  /* Secondary cards — alive on mobile */
+  html body #services.services-section .chip.service-chip.svc-visible:not([data-category="plomberie"]):not([data-category="electricite"]):not([data-category="climatisation"]):not([data-category="all"]):not(.active) {
+    opacity: 0.86 !important;
+    transform: none !important;
+  }
+
+  /* peinture row gap on mobile */
+  html body #services.services-section .chip.service-chip[data-category="peinture"] {
+    margin-top: 10px !important;
+  }
+
+  /* "Tout voir" on mobile */
+  html body #services.services-section .chip.service-chip[data-category="all"] {
+    height: 38px !important;
+    min-height: 38px !important;
+    max-height: 38px !important;
+    margin-top: 12px !important;
+    opacity: 0.70 !important;
+    font-size: 0.80rem !important;
+  }
+
+  /* Services section: tighter on mobile */
+  #services.services-section,
+  body:not(.fixeo-hero-search-mode) #services.services-section {
+    padding-bottom: 16px !important;
+  }
+
+  /* Vedette: less top gap on mobile */
+  #secondary-search-section {
+    padding-top: 28px !important;
+  }
+
+  /* No hover lift on mobile secondary */
+  html body #services.services-section .chip.service-chip.svc-visible:not([data-category="plomberie"]):not([data-category="electricite"]):not([data-category="climatisation"]):not([data-category="all"]):hover {
+    transform: none !important;
+    opacity: 0.95 !important;
+  }
+
+  /* Badge smaller on mobile primary */
+  html body #services.services-section .chip.service-chip[data-category="plomberie"]::after,
+  html body #services.services-section .chip.service-chip[data-category="electricite"]::after,
+  html body #services.services-section .chip.service-chip[data-category="climatisation"]::after {
+    font-size: 0.60rem !important;
+    padding: 2px 6px !important;
+  }
+
+}
+
+/* ── PHASE D: Very small mobile ≤ 380px ─────────────────────────── */
+@media (max-width: 380px) {
+
+  html body #services.services-section .chip.service-chip[data-category="plomberie"],
+  html body #services.services-section .chip.service-chip[data-category="electricite"],
+  html body #services.services-section .chip.service-chip[data-category="climatisation"] {
+    height: 88px !important;
+    min-height: 88px !important;
+  }
+
+  html body #services.services-section .chip.service-chip.svc-visible:not([data-category="plomberie"]):not([data-category="electricite"]):not([data-category="climatisation"]):not([data-category="all"]):not(.active) {
+    height: 72px !important;
+    min-height: 72px !important;
+    font-size: 0.72rem !important;
+  }
+
+}
