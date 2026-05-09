@@ -2051,3 +2051,102 @@ html body.fixeo-hero-search-mode #services.services-section .section-header {
     padding-bottom: 20px !important;
   }
 }
+
+/* ══════════════════════════════════════════════════════════
+   PHASE I — NEUTRALISE ALL HERO-SEARCH-SPECIFIC SERVICES RULES
+   Direction: Services must look IDENTICAL in hero-search mode
+   and normal homepage mode. No special layout, no special chip
+   sizing, no special padding. Just keep the section visible
+   (Phase F/G/H all get overridden here).
+   Append-only. Never edit lines above.
+   ══════════════════════════════════════════════════════════ */
+
+/* ── Section: restore normal padding (same as normal homepage) ── */
+html body.fixeo-hero-search-mode #services.services-section,
+html body.fixeo-hero-search-mode #services.services-section.homepage-conversion-priority,
+html body.fixeo-hero-search-mode #services.section.section-sm.services-section.homepage-conversion-priority {
+  padding-top: unset !important;
+  padding-bottom: unset !important;
+  min-height: unset !important;
+}
+
+/* ── Section-header: restore normal visibility + margin ── */
+html body.fixeo-hero-search-mode #services.services-section .section-header {
+  display: block !important;
+  margin-bottom: unset !important;
+}
+
+/* ── Filter-bar: restore normal visibility ── */
+html body.fixeo-hero-search-mode #services.services-section .services-filter-bar {
+  display: flex !important;
+}
+
+/* ── Chips grid: restore normal grid layout, columns, gap ── */
+html body.fixeo-hero-search-mode #services.services-section .category-chips,
+html body.fixeo-hero-search-mode #services.services-section.homepage-conversion-priority .category-chips {
+  display: grid !important;
+  grid-template-columns: unset !important;
+  gap: unset !important;
+  overflow-x: unset !important;
+  flex-wrap: unset !important;
+}
+
+/* ── Chips: restore normal opacity, transform, height ── */
+html body.fixeo-hero-search-mode #services.services-section .chip.service-chip {
+  opacity: unset !important;
+  transform: unset !important;
+  height: unset !important;
+  min-height: unset !important;
+  flex-shrink: unset !important;
+}
+html body.fixeo-hero-search-mode #services.services-section .chip.service-chip:hover,
+html body.fixeo-hero-search-mode #services.services-section .chip.service-chip:focus {
+  opacity: unset !important;
+  transform: unset !important;
+}
+
+/* ── Mobile ≤768px: restore normal chip height ── */
+@media (max-width: 768px) {
+  html body.fixeo-hero-search-mode #services.services-section .chip.service-chip {
+    height: unset !important;
+    min-height: unset !important;
+  }
+  html body.fixeo-hero-search-mode #services.services-section,
+  html body.fixeo-hero-search-mode #services.services-section.homepage-conversion-priority {
+    padding-top: unset !important;
+    padding-bottom: unset !important;
+  }
+  html body.fixeo-hero-search-mode #services.services-section .category-chips {
+    padding-left: unset !important;
+    padding-right: unset !important;
+    gap: unset !important;
+    grid-template-columns: unset !important;
+  }
+}
+
+/* ── Breakpoint overrides (tablet/mobile from Phase H) ── */
+@media (max-width: 900px) and (min-width: 641px) {
+  html body.fixeo-hero-search-mode #services.services-section .category-chips,
+  html body.fixeo-hero-search-mode #services.services-section.homepage-conversion-priority .category-chips {
+    grid-template-columns: unset !important;
+    gap: unset !important;
+  }
+}
+@media (max-width: 640px) {
+  html body.fixeo-hero-search-mode #services.services-section .category-chips,
+  html body.fixeo-hero-search-mode #services.services-section.homepage-conversion-priority .category-chips {
+    grid-template-columns: unset !important;
+    gap: unset !important;
+  }
+}
+@media (max-width: 380px) {
+  html body.fixeo-hero-search-mode #services.services-section .chip.service-chip {
+    height: unset !important;
+    min-height: unset !important;
+  }
+}
+
+/* ── Speed hint: restore normal visibility in hero-search mode ── */
+body.fixeo-hero-search-mode #services.services-section .services-speed-hint {
+  display: unset !important;
+}
