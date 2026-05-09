@@ -176,16 +176,36 @@
    *   else          → "Intervient à {city}"
    * ─────────────────────────────────────────────────────────── */
   function _liveSignalsHtml(a) {
-    var sq     = parseInt(a.score_qualification || a.trustScore || 75, 10);
-    var rating = parseFloat(a.rating || 0);
-    var city   = _esc(a.city || 'Maroc');
+    /* Signal 1 — activity tier
+     * Primary: score_qualification (master artisans, 68–96)
+     * Fallback: reviewCount (Supabase artisans, 8–180)
+     *   >= 100 reviews → "Répond rapidement"  (green, pulse dot)
+     *   >= 50  reviews → "Actif cette semaine" (blue, pulse dot)
+     *   else           → "Disponible sur RDV"  (muted, no dot)
+     */
+    var sq      = parseInt(a.score_qualification || 0, 10);
+    var reviews = parseInt(a.reviewCount || a.reviews || 0, 10);
+    var rating  = parseFloat(a.rating || 0);
+    var city    = _esc(a.city || 'Maroc');
 
-    /* Signal 1 — activity tier */
-    var sig1Html;
+    /* Map score_qualification to activity bucket if present */
+    var activityLevel;
     if (sq >= 90) {
+      activityLevel = 'fast';
+    } else if (sq >= 80) {
+      activityLevel = 'active';
+    } else if (sq > 0) {
+      activityLevel = 'rdv';
+    } else {
+      /* Supabase artisans: use reviewCount as activity proxy */
+      activityLevel = reviews >= 100 ? 'fast' : (reviews >= 50 ? 'active' : 'rdv');
+    }
+
+    var sig1Html;
+    if (activityLevel === 'fast') {
       sig1Html = '<span class="pvc-live-signal pvc-live-signal--fast">' +
                  '<span class="pvc-live-dot"></span>R\u00e9pond rapidement</span>';
-    } else if (sq >= 80) {
+    } else if (activityLevel === 'active') {
       sig1Html = '<span class="pvc-live-signal pvc-live-signal--active">' +
                  '<span class="pvc-live-dot"></span>Actif cette semaine</span>';
     } else {
@@ -193,7 +213,11 @@
                  'Disponible sur RDV</span>';
     }
 
-    /* Signal 2 — context / quality */
+    /* Signal 2 — context / quality
+     * rating 4.8+ → "Très bien noté"
+     * rating 4.5+ → "Artisan recommandé"
+     * else        → "Intervient à {city}"
+     */
     var sig2Text;
     if (rating >= 4.8) {
       sig2Text = '\u2b50 Tr\u00e8s bien not\u00e9';
@@ -235,13 +259,13 @@
         + '<span class="pvc-avatar-silhouette" style="display:none"></span>'
       : '<span class="pvc-avatar-silhouette"></span>';
 
-    /* Availability badge — v13: tier by score_qualification */
-    var sq13 = parseInt(a.score_qualification || a.trustScore || 75, 10);
+    /* Availability badge — v13: use available_today for precision */
+    var isAvailToday = !!(a.available_today);
     var availHtml;
-    if (isAvail) {
-      availHtml = sq13 >= 88
-        ? '<span class="pvc-avail-badge pvc-avail-badge--on">\ud83d\udfe2 Disponible</span>'
-        : '<span class="pvc-avail-badge pvc-avail-badge--on">\ud83d\udfe2 Disponible</span>';
+    if (isAvailToday) {
+      availHtml = '<span class="pvc-avail-badge pvc-avail-badge--on">\ud83d\udfe2 Disponible</span>';
+    } else if (isAvail) {
+      availHtml = '<span class="pvc-avail-badge pvc-avail-badge--on">\ud83d\udfe2 Disponible</span>';
     } else if (isToday) {
       availHtml = '<span class="pvc-avail-badge pvc-avail-badge--today">\ud83d\udfe1 Disponible aujourd\u2019hui</span>';
     } else {
