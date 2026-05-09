@@ -12,7 +12,7 @@
 (function (window) {
   'use strict';
 
-  var MAX_CARDS  = 6;
+  var MAX_CARDS  = 9;
   var GRID_ID    = 'fixeo-homepage-vedette-grid';
   var HEADER_ID  = 'fixeo-homepage-header';
   var SECTION_ID = 'artisans-section';
