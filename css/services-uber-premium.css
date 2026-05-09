@@ -1929,3 +1929,70 @@ html body.fixeo-hero-search-mode #services.section.section-sm.services-section.h
     min-height: 64px !important;
   }
 }
+
+/* ══════════════════════════════════════════════════════════
+   PHASE G — SERVICES ALWAYS VISIBLE (marketplace-first)
+   Direction: Services is a primary discovery zone, never hidden.
+   Overrides Phase F dimmed/compact approach.
+   Append-only. Never edit lines above.
+   ══════════════════════════════════════════════════════════ */
+
+/* 1 — Restore section-header visibility in hero-search mode.
+        Beats L458-464 display:none !important (spec 0,4,2)
+        by using html body selector chain (0,4,2) + later position. */
+html body.fixeo-hero-search-mode #services.services-section .section-header {
+  display: block !important;
+}
+
+/* 2 — Restore filter-bar (city + search bar area) in hero-search mode.
+        Keep it visible so user can pivot category without re-typing hero search. */
+html body.fixeo-hero-search-mode #services.services-section .services-filter-bar {
+  display: flex !important;
+}
+
+/* 3 — Full-opacity chips in both modes.
+        Overrides Phase F opacity:0.55 / scale(0.90) — chips must feel clickable. */
+html body.fixeo-hero-search-mode #services.services-section .chip.service-chip {
+  opacity: 1 !important;
+  transform: none !important;
+  height: auto !important;
+  min-height: unset !important;
+}
+
+/* 4 — Comfortable section padding in hero-search mode.
+        Overrides Phase C 8px and Phase F 12px — needs real breathing room. */
+body.fixeo-hero-search-mode #services.services-section,
+body.fixeo-hero-search-mode #services.services-section.homepage-conversion-priority,
+html body.fixeo-hero-search-mode #services.section.section-sm.services-section.homepage-conversion-priority {
+  padding-top: 36px !important;
+  padding-bottom: 40px !important;
+  min-height: unset !important;
+}
+
+/* 5 — chips row: normal grid layout (not forced flex-nowrap from Phase F).
+        Overrides Phase F display:flex + overflow-x:auto. */
+html body.fixeo-hero-search-mode #services.services-section .category-chips,
+html body.fixeo-hero-search-mode #services.services-section.homepage-conversion-priority .category-chips {
+  display: grid !important;
+  overflow-x: unset !important;
+  flex-wrap: unset !important;
+}
+
+/* 6 — Mobile: keep chips grid, slightly tighter padding. */
+@media (max-width: 768px) {
+  body.fixeo-hero-search-mode #services.services-section,
+  body.fixeo-hero-search-mode #services.services-section.homepage-conversion-priority {
+    padding-top: 24px !important;
+    padding-bottom: 28px !important;
+  }
+  html body.fixeo-hero-search-mode #services.services-section .chip.service-chip {
+    height: 96px !important;
+    min-height: 96px !important;
+  }
+}
+@media (max-width: 380px) {
+  html body.fixeo-hero-search-mode #services.services-section .chip.service-chip {
+    height: 88px !important;
+    min-height: 88px !important;
+  }
+}
