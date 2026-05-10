@@ -121,15 +121,78 @@
     setRequestFeedback(form, '', 'error');
   }
 
+  /* ── Integrity V1-A: Moroccan phone normalizer ────────────
+     Strips non-digits, converts 06/07... → 212 6/7...
+     Returns normalized digit string (12 chars) or '' on failure.
+  ────────────────────────────────────────────────────────── */
+  function _normalizeMARPhone(raw) {
+    var d = String(raw || '').replace(/\D/g, '');
+    if (d.charAt(0) === '0' && d.length >= 2) d = '212' + d.slice(1);
+    return d;
+  }
+
+  /* ── Integrity V1-A: Moroccan phone validator ─────────────
+     Accepts: 06/07/08/09XXXXXXXX, +212 6/7/8/9 XXXXXXXX
+     Rejects: garbage, too-short, non-MAR prefixes, all-same-digit
+  ────────────────────────────────────────────────────────── */
+  function _isValidMARPhone(raw) {
+    if (!raw || !String(raw).trim()) return false;
+    var d = _normalizeMARPhone(String(raw).trim());
+    if (!/^212[6-9]\d{8}$/.test(d)) return false;
+    // Reject all-same-digit (0000000000, 1111111111, etc.)
+    if (/^(\d)\1+$/.test(d)) return false;
+    return true;
+  }
+
+  /* ── Integrity V1-A: Service description quality check ────
+     Rejects: empty, < 4 chars, all-same-char, all-digits, known junk
+  ────────────────────────────────────────────────────────── */
+  function _isUsableService(raw) {
+    var s = String(raw || '').trim();
+    if (s.length < 4) return false;
+    if (/^(.)\1+$/i.test(s.replace(/\s/g, ''))) return false;
+    if (/^\d+$/.test(s)) return false;
+    var exactJunk = ['test', 'aaa', 'aaaa', 'bbbb', 'xxx', 'xxxx', 'essai', 'demo'];
+    if (exactJunk.indexOf(s.toLowerCase()) >= 0) return false;
+    return true;
+  }
+
+  /* ── Integrity V1-A: Address quality check (COD/reservation path)
+     Rejects: < 10 chars, all-same-char, all-digits, all-junk words
+  ────────────────────────────────────────────────────────── */
+  function _isUsableAddress(raw) {
+    var s = String(raw || '').trim();
+    if (s.length < 10) return false;
+    if (/^(.)\1+$/i.test(s.replace(/\s/g, ''))) return false;
+    if (/^\d+$/.test(s)) return false;
+    var low = s.toLowerCase().replace(/\s+/g, ' ');
+    var junkWords = ['test', 'adresse', 'address', 'aaaa', 'bbbb', 'xxxx', 'essai'];
+    var words = low.split(/\s+/);
+    if (words.length > 0 && words.every(function(w) {
+      return junkWords.some(function(j) { return w.startsWith(j); });
+    })) return false;
+    return true;
+  }
+
   function validateRequestPayload(payload) {
-    if (!String(payload?.service || '').trim()) {
+    var svc = String(payload?.service || '').trim();
+    if (!svc) {
       return 'Veuillez renseigner le service demandé.';
+    }
+    /* V1-A: service quality gate */
+    if (!_isUsableService(svc)) {
+      return 'Décrivez votre besoin en quelques mots (ex\u00a0: fuite d\u2019eau, panne électrique).';
     }
     if (!String(payload?.city || payload?.ville || '').trim()) {
       return 'Veuillez sélectionner une ville.';
     }
-    if (!String(payload?.phone || payload?.telephone || '').trim()) {
+    var rawPhone = String(payload?.phone || payload?.telephone || '').trim();
+    if (!rawPhone) {
       return 'Veuillez renseigner votre téléphone.';
+    }
+    /* V1-A: Moroccan phone format gate */
+    if (!_isValidMARPhone(rawPhone)) {
+      return 'Vérifiez votre numéro (format\u00a0: 06 ou 07 + 8 chiffres).';
     }
     return '';
   }

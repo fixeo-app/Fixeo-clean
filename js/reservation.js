@@ -948,6 +948,92 @@
     }
   }
 
+  /* ════════════════════════════════════════════════════════
+     INTEGRITY V1-A — Phone + Address validators
+     (reservation-local copies — no shared dependency)
+  ════════════════════════════════════════════════════════ */
+  function _resNormalizePhone(raw) {
+    var d = String(raw || '').replace(/\D/g, '');
+    if (d.charAt(0) === '0' && d.length >= 2) d = '212' + d.slice(1);
+    return d;
+  }
+  function _resIsValidMARPhone(raw) {
+    if (!raw || !String(raw).trim()) return false;
+    var d = _resNormalizePhone(String(raw).trim());
+    if (!/^212[6-9]\d{8}$/.test(d)) return false;
+    if (/^(\d)\1+$/.test(d)) return false;
+    return true;
+  }
+  function _resIsUsableAddress(raw) {
+    var s = String(raw || '').trim();
+    if (s.length < 10) return false;
+    if (/^(.)\1+$/i.test(s.replace(/\s/g, ''))) return false;
+    if (/^\d+$/.test(s)) return false;
+    var low = s.toLowerCase().replace(/\s+/g, ' ');
+    var junk = ['test', 'adresse', 'address', 'aaaa', 'bbbb', 'xxxx', 'essai'];
+    var words = low.split(/\s+/);
+    if (words.length > 0 && words.every(function(w) {
+      return junk.some(function(j) { return w.startsWith(j); });
+    })) return false;
+    return true;
+  }
+
+  /* ════════════════════════════════════════════════════════
+     INTEGRITY V1-A — Pipeline Bridge
+     Writes a unified request object into fixeo_client_requests
+     after every successful COD booking, making it visible
+     to the artisan inbox (artisan-dashboard-p4.js).
+     — Non-blocking, wrapped in try/catch
+     — Dedup-safe: source:'reservation_cod' + reservation_ref
+       prevent re-injection on page reload
+     — Skips if FixeoClientRequestsStore unavailable
+  ════════════════════════════════════════════════════════ */
+  function _bridgeToArtisanInbox(bookingData, orderID, artisanCity) {
+    try {
+      var store = window.FixeoClientRequestsStore;
+      if (!store || typeof store.appendRequest !== 'function') return;
+
+      /* Check for existing bridged entry with same reservation_ref */
+      var existing = JSON.parse(localStorage.getItem('fixeo_client_requests') || '[]');
+      if (Array.isArray(existing) && existing.some(function(r) {
+        return r.reservation_ref === orderID;
+      })) return; /* already bridged — idempotent guard */
+
+      var payload = {
+        service     : String(bookingData.service     || '').trim() || 'Réservation Fixeo',
+        city        : String(artisanCity             || bookingData.artisanCity || '').trim() || 'Ville à préciser',
+        description : String(bookingData.description || '').trim() ||
+                      'Réservation directe — ' + (bookingData.service || 'service') +
+                      (bookingData.date ? ' · ' + bookingData.date : '') +
+                      (bookingData.timeSlot ? ' · ' + bookingData.timeSlot : ''),
+        budget      : String(bookingData.price ? bookingData.price + ' MAD (réservation)' : ''),
+        phone       : String(bookingData.phone       || '').trim(),
+        urgency     : bookingData.isExpress ? 'Urgent' : 'Normale'
+      };
+
+      var result = store.appendRequest(payload);
+      if (result && result.request && !result.duplicated) {
+        /* Patch source metadata onto the raw stored object */
+        try {
+          var raw = JSON.parse(localStorage.getItem('fixeo_client_requests') || '[]');
+          var reqId = String(result.request.id);
+          var patched = false;
+          for (var i = raw.length - 1; i >= 0; i--) {
+            if (String(raw[i].id) === reqId) {
+              raw[i].source          = 'reservation_cod';
+              raw[i].reservation_ref = orderID;
+              raw[i].artisan_name    = String(bookingData.artisanName || '').trim();
+              raw[i].artisan_id      = String(bookingData.artisanId   || '');
+              patched = true;
+              break;
+            }
+          }
+          if (patched) localStorage.setItem('fixeo_client_requests', JSON.stringify(raw));
+        } catch(_) { /* metadata patch failure is non-critical */ }
+      }
+    } catch(_) { /* bridge failure must never affect booking flow */ }
+  }
+
   function _submitStep1() {
     // Read current values from DOM
     const serviceEl = document.getElementById('res-service');
@@ -975,13 +1061,15 @@
       dateEl && dateEl.focus();
       return;
     }
-    if (!state.address || state.address.trim().length < 5) {
-      _showError('⚠️ Veuillez saisir votre adresse complète.');
+    /* ── V1-A: Address quality gate ──────────────────────── */
+    if (!state.address || !_resIsUsableAddress(state.address)) {
+      _showError('⚠️ Adresse incomplète — précisez la rue, le quartier ou un repère (min. 10 caractères).');
       addrEl && addrEl.focus();
       return;
     }
-    if ((state.isExpress || state.isUrgent) && (!state.phone || state.phone.trim().length < 8)) {
-      _showError('⚠️ Veuillez saisir votre numéro de téléphone.');
+    /* ── V1-A: Moroccan phone validation (all modes) ──────── */
+    if (!state.phone || !_resIsValidMARPhone(state.phone)) {
+      _showError('⚠️ Numéro de téléphone invalide — format\u00a0: 06 ou 07 + 8 chiffres.');
       phoneEl && phoneEl.focus();
       return;
     }
@@ -1069,6 +1157,8 @@
             if (window.gamification && window.gamification.updateMission) {
               window.gamification.updateMission('m2', 1);
             }
+            /* ── V1-A: Pipeline bridge → artisan inbox ─────────── */
+            _bridgeToArtisanInbox(bookingData, orderID, a.city || '');
             /* ── Redirection vers la page de confirmation COD v15 ── */
             const confirmURL = (window.FixeoCOD && window.FixeoCOD.config)
               ? window.FixeoCOD.config.CONFIRMATION_URL
@@ -1108,6 +1198,8 @@
             timeSlot: slotLabel, price: total, isExpress: state.isExpress,
           });
         }
+        /* V1-A: Pipeline bridge (FixeoCOD fallback path) */
+        _bridgeToArtisanInbox(bookingData, codID, a.city || '');
         alert(`\u2705 Votre artisan est r\u00e9serv\u00e9 \u2705\nR\u00e9f\u00e9rence\u00a0: ${codRef}\nMontant\u00a0: ${total} MAD (paiement \u00e0 la livraison)`);
       }
 

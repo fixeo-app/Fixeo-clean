@@ -274,7 +274,10 @@
       ? '<span class="fxadp4-badge urgent">\u26a1 Urgent</span>'
       : '<span class="fxadp4-badge normal">\ud83d\uddd3 Planifi\u00e9</span>';
 
-    var matchBadge = '<span class="fxadp4-badge match">\u2714 M\u00e9tier + ville compatibles</span>';
+    /* V1-A: reservation_cod source gets a "Réservation directe" badge */
+    var matchBadge = r.source === 'reservation_cod'
+      ? '<span class="fxadp4-badge direct">\ud83d\udccc R\u00e9servation directe</span>'
+      : '<span class="fxadp4-badge match">\u2714 M\u00e9tier + ville compatibles</span>';
 
     var budgetHtml = budget
       ? '<div class="fxadp4-card-budget">\ud83d\udcb0 ' + budget + '</div>'

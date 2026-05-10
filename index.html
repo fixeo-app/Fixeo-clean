@@ -3577,7 +3577,7 @@ function openContentModal(type) {
 
 <script src="js/marketplace-premium-patch.js?v=50a38b9"></script>
 <script src="js/fixeo-client-requests-store.js?v=50a38b9"></script>
-<script src="js/request-form.js?v=v2b"></script>
+<script src="js/request-form.js?v=v1a"></script>
 <script defer src="js/homepage-conversion-optimizer.js?v=hco3"></script>
 <script src="js/hero-ux-fixes.js?v=50a38b9"></script>
 <script src="js/how-it-works-premium.js?v=50a38b9"></script>
@@ -3764,7 +3764,7 @@ window.addEventListener('load', function () {
     if (cb) _queue.push(cb);
 
     /* Load in dependency order: reservation → slot-lock → payment → cod-payment */
-    loadScriptOnce('js/reservation.js?v=50a38b9')
+    loadScriptOnce('js/reservation.js?v=v1a')
       .then(function () { return loadScriptOnce('js/slot-lock.js?v=50a38b9'); })
       .then(function () { return loadScriptOnce('js/payment.js?v=50a38b9'); })
       .then(function () { return loadScriptOnce('js/cod-payment.js?v=50a38b9'); })
