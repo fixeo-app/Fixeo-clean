@@ -1370,3 +1370,41 @@ body.fpv2b-loaded .public-artisan-page .public-empty-copy {
   .fpv1h-count       { font-size: 0.80rem; }
   .fpv1h-longevity   { font-size: 0.70rem; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   V1-TC — Trust Cleanup (Trust Correction Pass)
+   Append-only. No overrides.
+   ═══════════════════════════════════════════════════════════════════
+
+   These rules make absence feel intentional, not broken.
+   When a trust signal is withheld (no verified count, no verified rating),
+   the remaining elements must hold the space gracefully.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── Trust sub-line when showing operational availability (no count) ──
+   "Disponible pour de nouvelles interventions" should feel like a
+   professional statement, not a placeholder. Calm, positive, dim.
+   ─────────────────────────────────────────────────────────────────── */
+.public-trust-sub:empty,
+.public-trust-sub {
+  /* existing styles preserved — this only applies a fine-tuned color
+     to the operational availability message so it reads as intentional */
+  transition: none;
+}
+
+/* Artisan with no count/rating shows the trust card in a clean idle state */
+.public-trust-card:not(.has-rating) .public-trust-rating[style*="display: none"] + .public-trust-sub,
+.public-trust-card:not(.has-rating) .public-trust-rating[style*="display:none"] + .public-trust-sub {
+  font-style: italic;
+  color: rgba(255,255,255,0.45);
+  font-size: 0.80rem;
+}
+
+/* ── sig2 context signal: city-only variant (no rating) ──────────── */
+/* When city is the only sig2 (V1-TC replaced "Très bien noté"), the
+   context signal should not compete with the live activity indicator.
+   Slightly dimmer for city-only fallbacks. */
+.pvc-live-signal--context:not(.has-rating-signal) {
+  /* city pill — subtle, informational */
+  opacity: 0.82;
+}

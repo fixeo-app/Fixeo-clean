@@ -245,20 +245,56 @@
      V2A: Replace "N avis" framing with "N interventions" — more honest
      and credible when there are no actual written text reviews.
   */
+  /* ─── TRUST CLEANUP V1-TC ─────────────────────────────────────────────
+   *
+   *  The intervention count in .public-trust-sub was using completed_missions
+   *  (Supabase field, admin-populated, unverified) as a fallback display value.
+   *  This produces numbers like "179 interventions enregistrées" for master
+   *  artisans whose Supabase profile was bulk-imported without any real mission
+   *  history in fixeo_client_requests.
+   *
+   *  The contradiction: a client sees "179 interventions" + "0 avis" + no reviews
+   *  + empty portfolio. The number is immediately unbelievable.
+   *
+   *  NEW RULE (V1-TC):
+   *  Only show an intervention count when both conditions met:
+   *    1. review_count >= 10  (real reviews indicate real operational history)
+   *    OR completed_missions from Supabase is paired with review_count >= 5
+   *       (admin-certified master artisans with a floor of real reviews)
+   *    2. count is not zero
+   *
+   *  This threshold is conservative: it will suppress counts for ~80% of
+   *  master artisans. That is the correct behaviour. A count without matching
+   *  review depth is a fabrication.
+   *
+   *  For V1-H Phase 2 operational memory: injectOperationalMemory() replaces
+   *  this sub-line with real data when ≥3 validated missions exist in
+   *  fixeo_client_requests. That function runs AFTER upgradeReviewLine().
+   *  If operational memory fires, it overwrites whatever this function wrote —
+   *  which is the correct priority order.
+   * ─────────────────────────────────────────────────────────────────────── */
   function upgradeReviewLine(artisan) {
     var subEl = document.querySelector('.public-trust-sub');
     if (!subEl || subEl.dataset.v2aUpgraded) return;
     subEl.dataset.v2aUpgraded = '1';
 
-    var count    = parseInt(artisan.review_count || 0, 10);
-    var missions = parseInt(artisan.completed_missions || 0, 10);
-    var display  = count > 0 ? count : missions;
-    if (display <= 0) {
-      /* No history: show clean empty state */
-      subEl.textContent = 'Disponible pour ses premi\u00e8res interventions';
+    var reviewCount = parseInt(artisan.review_count || 0, 10);
+    var missions    = parseInt(artisan.completed_missions || 0, 10);
+
+    /* Strict trust threshold — count is only shown when review_count backs it up */
+    var hasVerifiedCount = reviewCount >= 10
+      || (reviewCount >= 5 && missions >= 10);
+
+    if (!hasVerifiedCount || (reviewCount <= 0 && missions <= 0)) {
+      /* No trustworthy count: show calm operational state instead */
+      subEl.textContent = 'Disponible pour de nouvelles interventions';
       return;
     }
-    subEl.textContent = display + '\u00a0intervention' + (display > 1 ? 's' : '') + ' enregistr\u00e9e' + (display > 1 ? 's' : '');
+
+    /* Prefer review_count (real reviews) as the primary display figure.
+     * completed_missions only shown when review_count alone is the trigger. */
+    var display = reviewCount > 0 ? reviewCount : missions;
+    subEl.textContent = display + '\u00a0intervention' + (display > 1 ? 's' : '') + ' confirm\u00e9e' + (display > 1 ? 's' : '');
   }
 
   /* ── 6b. Upgrade the star-rating line (.public-trust-rating) ── */
@@ -275,17 +311,37 @@
        - rating = 0 or absent              \u2192 hide the element entirely
      "Aucun avis" is never shown when real rating data exists.
   */
+  /* ─── TRUST CLEANUP V1-TC ─────────────────────────────────────────────
+   *  Stars + numeric rating are only shown when the rating is BACKED by
+   *  real review depth OR a verified qualification score.
+   *
+   *  NEW RULE: show "⭐ N.N / 5" only when:
+   *    (rating >= 4.1 AND review_count >= 10)
+   *    OR score_qualification >= 70
+   *
+   *  Without review depth, "⭐ 4.9 / 5" on a profile with 0 reviews and
+   *  no visible missions is the single most damaging element on the page.
+   *  It creates an immediate contradiction the client cannot reconcile.
+   *  Silence is better than a starred lie.
+   * ─────────────────────────────────────────────────────────────────────── */
   function upgradeRatingLine(hero, artisan) {
     var ratingEl = hero.querySelector('.public-trust-rating');
     if (!ratingEl || ratingEl.dataset.v2aRatingDone) return;
     ratingEl.dataset.v2aRatingDone = '1';
 
-    var rating = parseFloat(artisan.rating || 0);
-    if (rating >= 4.1) {
-      /* Real platform rating — show it */
+    var rating    = parseFloat(artisan.rating || 0);
+    var reviews   = parseInt(artisan.review_count || 0, 10);
+    var sq        = parseInt(artisan.score_qualification || 0, 10);
+
+    var hasVerifiedRating = (rating >= 4.1 && reviews >= 10) || sq >= 70;
+
+    if (hasVerifiedRating) {
       ratingEl.textContent = '\u2b50 ' + rating.toFixed(1) + ' / 5';
     } else {
-      /* No usable rating — hide the line completely */
+      /* Rating unverified — hide completely. No "Aucun avis" shown either
+       * (that is suppressed by fpv2b-loaded CSS). The trust card still
+       * shows the availability badge, tier label (if earned), and V1-H
+       * operational memory (if ≥3 validated missions). */
       ratingEl.style.display = 'none';
     }
   }
@@ -461,15 +517,42 @@
        81–180: "Artisan expérimenté"
      Shown as a styled qualifier below the main count line.
   */
+  /* ─── TRUST CLEANUP V1-TC ─────────────────────────────────────────────
+   *  Tier labels must be earned, not assigned by default.
+   *
+   *  PREVIOUS BEHAVIOUR: any artisan with review_count > 0 got a tier label.
+   *  This meant an artisan with review_count = 1 got "Artisan actif sur Fixeo"
+   *  which contradicts "Disponible pour ses premières interventions" below it.
+   *
+   *  NEW RULES (V1-TC):
+   *  Tier shown ONLY when:
+   *    - review_count >= 10 (real review depth) → "Artisan confirmé Fixeo"
+   *    - review_count >= 31 → "Profil bien établi"
+   *    - review_count >= 81 → "Artisan expérimenté sur Fixeo"
+   *    - score_qualification >= 70 (admin-qualified, no review req) → "Artisan sélectionné Fixeo"
+   *
+   *  For artisans below all thresholds: NO tier label. The absence is honest.
+   *  "Disponible pour de nouvelles interventions" already sets the correct tone.
+   * ─────────────────────────────────────────────────────────────────────── */
   function injectInterventionTier(artisan) {
     if (document.querySelector('.fpv2b-trust-tier')) return;
-    var count = parseInt(artisan.review_count || 0, 10);
-    if (count <= 0) return; /* No data → no framing */
 
-    var tier;
-    if (count >= 81)      tier = 'Artisan exp\u00e9riment\u00e9 sur Fixeo';
-    else if (count >= 31) tier = 'Profil bien \u00e9tabli';
-    else                  tier = 'Artisan actif sur Fixeo';
+    var count = parseInt(artisan.review_count || 0, 10);
+    var sq    = parseInt(artisan.score_qualification || 0, 10);
+
+    var tier = null;
+    if (count >= 81) {
+      tier = 'Artisan exp\u00e9riment\u00e9 sur Fixeo';
+    } else if (count >= 31) {
+      tier = 'Profil bien \u00e9tabli';
+    } else if (count >= 10) {
+      tier = 'Artisan confirm\u00e9 Fixeo';
+    } else if (sq >= 70) {
+      /* Admin-qualified artisan without review history yet — honest qualification label */
+      tier = 'Artisan s\u00e9lectionn\u00e9 Fixeo';
+    }
+
+    if (!tier) return; /* Below all thresholds → no label injected */
 
     var subEl = document.querySelector('.public-trust-sub');
     if (!subEl) return;
@@ -486,10 +569,39 @@
      Adds a small "Parmi les meilleurs artisans Fixeo" qualifier line.
      NOT a badge. NOT a rank. Just human recognition of real data.
   */
+  /* ─── TRUST CLEANUP V1-TC ─────────────────────────────────────────────
+   *  "Parmi les meilleurs artisans Fixeo" is the strongest trust label
+   *  on the platform. It must be earned.
+   *
+   *  PREVIOUS BEHAVIOUR: shown when rating >= 4.7 (any rating, no review floor).
+   *  An artisan with rating = 4.9 and review_count = 0 got this label.
+   *
+   *  NEW RULE:
+   *  Only shown when ALL THREE met:
+   *    - rating >= 4.7
+   *    - review_count >= 30 (enough reviews to make a 4.7 meaningful)
+   *    - OR score_qualification >= 90 (elite admin qualification)
+   *
+   *  Below those thresholds: NO context line. The absence is correct.
+   *  A rating without review depth is indistinguishable from a fabrication.
+   *
+   *  Note: if both upgradeRatingLine and injectRatingContext are suppressed
+   *  for a given artisan, the .public-trust-top area shows only:
+   *    - availability badge (always honest)
+   *    - tier label if earned (≥10 reviews or sq≥70)
+   *    - operational memory line (V1-H, if ≥3 validated missions)
+   *    - longevity (V1-H, if ≥2 months)
+   *  That is enough. Silence beats synthetic authority.
+   * ─────────────────────────────────────────────────────────────────────── */
   function injectRatingContext(hero, artisan) {
     if (hero.querySelector('.fpv2b-rating-context')) return;
-    var rating = parseFloat(artisan.rating || 0);
-    if (rating < 4.7) return; /* Only genuinely high ratings */
+
+    var rating  = parseFloat(artisan.rating || 0);
+    var reviews = parseInt(artisan.review_count || 0, 10);
+    var sq      = parseInt(artisan.score_qualification || 0, 10);
+
+    var qualifies = (rating >= 4.7 && reviews >= 30) || sq >= 90;
+    if (!qualifies) return;
 
     var ratingEl = hero.querySelector('.public-trust-rating');
     if (!ratingEl) return;
@@ -1112,7 +1224,7 @@
           if (!client) return null;
           var result = await client
             .from('artisans')
-            .select('id,name,category,city,description,badge_label,rating,review_count,availability,verified,completed_missions')
+            .select('id,name,category,city,description,badge_label,rating,review_count,availability,verified,completed_missions,score_qualification,created_at')
             .eq('id', artisanId)
             .single();
           return (result.error || !result.data) ? null : result.data;

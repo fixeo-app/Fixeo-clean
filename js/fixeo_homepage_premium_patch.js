@@ -254,15 +254,24 @@
     /* ── Sig2 context signal ──
      * High-rating artisans: alternate between quality signal and city signal
      * by id parity → prevents all 6 cards from showing "Très bien noté". */
+    /* V1-TC Trust Cleanup: rating signals only when backed by real review depth.
+     * Same gate as profile page: (rating >= 4.5 AND reviews >= 10) OR sq >= 70.
+     * Without review floor, "★ Très bien noté" is as fabricated as 5 static stars.
+     * For artisans below threshold: always show city anchoring — which is honest. */
+    var _sig2ReviewFloor = parseInt(a.reviewCount || a.reviews || a.review_count || 0, 10);
+    var _sig2SqVal = parseInt(a.score_qualification || 0, 10);
+    var _hasVerifiedReputation = (_sig2ReviewFloor >= 10 && rating >= 4.5) || _sig2SqVal >= 70;
+
     var sig2Text;
-    if (rating >= 4.8) {
-      /* Even id → quality label; odd id → city (anchors artisan in real geography) */
+    if (_hasVerifiedReputation && rating >= 4.8) {
+      /* Even id → quality label; odd id → city (prevents all cards showing same text) */
       sig2Text = (idSeed % 2 === 0)
         ? '\u2b50 Tr\u00e8s bien not\u00e9'
         : '\ud83d\udccd Intervient \u00e0 ' + city;
-    } else if (rating >= 4.5) {
-      sig2Text = '\ud83d\udc4d Artisan recommand\u00e9';
+    } else if (_hasVerifiedReputation && rating >= 4.5) {
+      sig2Text = '\ud83d\udc4d Artisan confirm\u00e9';
     } else {
+      /* Honest city anchor — always available, never fabricated */
       sig2Text = '\ud83d\udccd Intervient \u00e0 ' + city;
     }
     var sig2Html = '<span class="pvc-live-signal pvc-live-signal--context">' + sig2Text + '</span>';
