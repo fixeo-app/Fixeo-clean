@@ -60,7 +60,7 @@
 <link rel="stylesheet" href="css/hero-premium-upgrade.css?v=50a38b9"/>
 <link rel="stylesheet" href="css/hero-ux-fixes.css?v=50a38b9"/>
   <link rel="stylesheet" href="css/hero-conversion-boost.css?v=hcb10"/>
-<link rel="stylesheet" href="css/how-it-works-premium.css?v=50a38b9"/>
+<link rel="stylesheet" href="css/how-it-works-premium.css?v=hiw2"/>
 <link rel="stylesheet" href="css/services-premium.css?v=svcv7"/>
   <link rel="stylesheet" href="css/why-fixeo.css?v=svcv5"/>
   <link rel="stylesheet" href="css/urgent-fab.css?v=fab2"/>
@@ -1791,7 +1791,7 @@ section#home.hero.hero-section {
          padding-right:48px = explicit peek gap invitation on right edge. */
       padding: 8px 48px 24px 20px !important;
       margin-bottom: 0 !important;
-      /* J2: 100vw overflows the container — ancestor overflow:visible allows it */
+      /* J2: 100vw overflows the container - ancestor overflow:visible allows it */
       width: 100vw !important;
       /* Remove grid constraint */
       grid-template-columns: none !important;
@@ -2355,7 +2355,7 @@ section#home.hero.hero-section {
   <!-- Hero content -->
   <div class="hero-content">
 
-    <!-- H1 — V2: clean, direct headline -->
+    <!-- H1 - V2: clean, direct headline -->
     <h1 class="hero-title">
       <span data-i18n="hero_title_1">Un artisan chez vous</span><br/>
       <span data-i18n="hero_title_2">en quelques minutes</span>
@@ -2375,13 +2375,13 @@ section#home.hero.hero-section {
       <span id="hero-city-label">D&#233;tection de votre ville&#8230;</span>
     </div>
 
-    <!-- V10: Live Platform Signals — rotating platform state messages -->
+    <!-- V10: Live Platform Signals - rotating platform state messages -->
     <div class="fxlps-signals" id="fxlps-signals" aria-live="polite" aria-atomic="true" aria-label="Activité de la plateforme Fixeo">
       <span class="fxlps-dot" aria-hidden="true"></span>
       <span class="fxlps-text" id="fxlps-text"></span>
     </div>
 
-    <!-- T4 V3: Secondary text link — discreet, non-competing -->
+    <!-- T4 V3: Secondary text link - discreet, non-competing -->
     <div class="hero-secondary-link-wrap">
       <button class="hero-secondary-link"
               type="button"
@@ -2516,7 +2516,7 @@ section#home.hero.hero-section {
 <!-- Service artisans (injected by JS) -->
 <div id="service-artisans-section" class="container services-grid" style="padding-bottom:24px"></div>
 
-<!-- SEO local pages linked via footer and static routes — visible block removed -->
+<!-- SEO local pages linked via footer and static routes - visible block removed -->
 
 <div class="section-divider" aria-hidden="true"></div>
 
@@ -2679,34 +2679,34 @@ section#home.hero.hero-section {
 <section id="how-it-works" class="section how-it-works-section" aria-labelledby="how-title">
   <div class="container">
     <div class="section-header how-header">
-      <span class="section-tag">COMMENT ÇA MARCHE</span>
-      <h2 id="how-title" data-i18n="how_title">Comment ça marche</h2>
-      <p class="how-subtitle" data-i18n="how_subtitle">&#x26A1; Trouvez un artisan en quelques minutes</p>
+      <span class="section-tag hiw-tag">COMMENT ÇA MARCHE</span>
+      <h2 id="how-title" data-i18n="how_title">Simple. Rapide. Garanti.</h2>
+      <p class="how-subtitle" data-i18n="how_subtitle">De votre besoin à l'intervention — en quelques minutes</p>
     </div>
     <div class="steps-grid steps-container" role="list">
       <div class="step-card step-highlight" role="listitem">
         <div class="step-number" aria-hidden="true">1</div>
         <div class="step-icon" aria-hidden="true">🔎</div>
         <h3 data-i18n="how_step1_title">Décrivez votre besoin</h3>
-        <p data-i18n="how_step1_desc">Expliquez votre problème (fuite, panne…)</p>
+        <p data-i18n="how_step1_desc">Plomberie, électricité, peinture… Décrivez le problème en quelques mots.</p>
       </div>
       <div class="step-card" role="listitem">
         <div class="step-number" aria-hidden="true">2</div>
         <div class="step-icon" aria-hidden="true">&#x26A1;</div>
-        <h3 data-i18n="how_step2_title">On trouve un artisan disponible</h3>
-        <p data-i18n="how_step2_desc">Fixeo trouve un artisan qualifié près de vous</p>
-      </div>
-      <div class="step-card step-highlight" role="listitem">
-        <div class="step-number" aria-hidden="true">3</div>
-        <div class="step-icon" aria-hidden="true">&#x1F4DE;</div>
-        <h3 data-i18n="how_step3_title">L’artisan vous contacte</h3>
-        <p data-i18n="how_step3_desc">Un artisan vous appelle rapidement</p>
+        <h3 data-i18n="how_step2_title">Fixeo trouve votre artisan</h3>
+        <p data-i18n="how_step2_desc">Notre système identifie l'artisan qualifié le plus proche, disponible maintenant.</p>
       </div>
       <div class="step-card" role="listitem">
+        <div class="step-number" aria-hidden="true">3</div>
+        <div class="step-icon" aria-hidden="true">&#x1F4DE;</div>
+        <h3 data-i18n="how_step3_title">L'artisan vous contacte</h3>
+        <p data-i18n="how_step3_desc">Vous recevez un appel sous 30 min. Vous validez avant toute intervention.</p>
+      </div>
+      <div class="step-card step-highlight step-highlight-payment" role="listitem">
         <div class="step-number" aria-hidden="true">4</div>
         <div class="step-icon" aria-hidden="true">&#x1F6E1;&#xFE0F;</div>
-        <h3 data-i18n="how_step4_title">Intervention &amp; paiement sécurisé</h3>
-        <p data-i18n="how_step4_desc">Intervention, puis paiement après service</p>
+        <h3 data-i18n="how_step4_title">Vous payez après l'intervention</h3>
+        <p data-i18n="how_step4_desc">Aucun paiement avant que le travail soit fait. Vous êtes satisfait ou on règle ça.</p>
       </div>
     </div>
   </div>
@@ -2801,13 +2801,13 @@ section#home.hero.hero-section {
 
 
 <!-- ══════════════════════════════════════════════════════════
-     8. VISION FIXEO — replaces fake testimonials
+     8. VISION FIXEO - replaces fake testimonials
 ══════════════════════════════════════════════════════════ -->
 <section class="section testimonial-section fxv-section" aria-labelledby="testimonials-title">
   <div class="container">
     <div class="section-header">
       <span class="section-tag">VISION FIXEO</span>
-      <h2 id="testimonials-title" class="testimonial-title">Repenser l’artisanat au Maroc avec la technologie</h2>
+      <h2 id="testimonials-title" class="testimonial-title">Repenser l'artisanat au Maroc avec la technologie</h2>
       <p>Fixeo construit une nouvelle infrastructure de confiance pour connecter rapidement clients et artisans partout au Maroc.</p>
     </div>
 
@@ -2816,7 +2816,7 @@ section#home.hero.hero-section {
       <p class="fxv-story-text">Pendant des années, trouver un artisan fiable était lent, stressant et imprévisible.<br><br>Fixeo construit une plateforme moderne pensée pour simplifier la recherche, accélérer les interventions et valoriser les artisans sérieux.</p>
     </div>
 
-    <!-- Platform signals — real metrics only -->
+    <!-- Platform signals - real metrics only -->
     <div class="fxv-signals">
       <div class="fxv-signal">
         <span class="fxv-signal-value">12</span>
@@ -3306,12 +3306,12 @@ function openContentModal(type) {
 
   const map = {
     about: ['À propos de Fixeo', '<p>Fixeo est la plateforme de mise en relation entre particuliers et artisans qualifiés au Maroc. Notre mission : simplifier et sécuriser chaque intervention à domicile.</p>'],
-    careers: ['Carrières', '<p>Rejoignez l’équipe Fixeo ! Nous recrutons des talents passionnés par l’innovation et le service client.</p>'],
+    careers: ['Carrières', '<p>Rejoignez l'équipe Fixeo ! Nous recrutons des talents passionnés par l'innovation et le service client.</p>'],
     press: ['Presse', '<p>Pour toute demande presse, contactez-nous à presse@fixeo.ma</p>'],
-    blog: ['Blog Fixeo', '<p>Conseils, astuces et actualités du monde de l’artisanat au Maroc.</p>'],
+    blog: ['Blog Fixeo', '<p>Conseils, astuces et actualités du monde de l'artisanat au Maroc.</p>'],
     faq: ['FAQ', '<p><strong>Comment fonctionne la réservation ?</strong><br>Choisissez votre artisan, sélectionnez un créneau disponible, confirmez et payez en ligne.</p><p><strong>Quels sont les frais ?</strong><br>Une commission de 15% est appliquée sur chaque transaction.</p>'],
     contact: ['Nous contacter', '<p>Email : support@fixeo.ma<br>Tel : +212 5XX XX XX XX<br>Disponible 7j/7, 8h-20h</p>'],
-    cgu: ['Conditions Générales d’Utilisation', '<p>En utilisant Fixeo vous acceptez nos CGU. Pour plus d’informations, consultez notre document complet.</p>'],
+    cgu: ['Conditions Générales d'Utilisation', '<p>En utilisant Fixeo vous acceptez nos CGU. Pour plus d'informations, consultez notre document complet.</p>'],
     privacy: ['Politique de confidentialité', '<p>Vos données personnelles sont protégées et ne sont jamais vendues à des tiers.</p>']
   };
 
@@ -3350,7 +3350,7 @@ function openContentModal(type) {
   'use strict';
 
   function loadRecommendedArtisan() {
-    /* /api/artisans/recommended not available on Vercel — use local data directly. */
+    /* /api/artisans/recommended not available on Vercel - use local data directly. */
     const list = window.ARTISANS || (typeof ARTISANS !== 'undefined' ? ARTISANS : []);
     if (!list.length) return;
     const avail = list.filter(a => a.availability === 'available');
@@ -3422,7 +3422,7 @@ function openContentModal(type) {
   }
 
   function loadTopArtisans() {
-    /* /api/artisans/top not available on Vercel — use local data directly. */
+    /* /api/artisans/top not available on Vercel - use local data directly. */
     const list = window.ARTISANS || (typeof ARTISANS !== 'undefined' ? ARTISANS : []);
     if (!list.length) return;
     const top = [...list]
@@ -3610,9 +3610,9 @@ function openContentModal(type) {
   /* 3B: syncMobileHeaderOffset reads navbar.offsetHeight (forced reflow).
      Was firing twice at startup: once in DCL + once in setTimeout(60ms).
      Now fires once in a requestAnimationFrame after first paint so the
-     layout is already complete — same result, no startup forced reflow. */
+     layout is already complete - same result, no startup forced reflow. */
   document.addEventListener('DOMContentLoaded', function() {
-    syncMobileAccountSummary();  /* no reflow — only localStorage reads + DOM text */
+    syncMobileAccountSummary();  /* no reflow - only localStorage reads + DOM text */
     requestAnimationFrame(syncMobileHeaderOffset); /* defer offsetHeight read to after paint */
   });
   window.addEventListener('resize', syncMobileHeaderOffset, { passive: true });
@@ -3649,7 +3649,7 @@ window.addEventListener('load', function () {
   document.body.classList.add('fixeo-sections-ready');
 }, { once: true });
 </script>
- <!-- SEO city/service pages accessible via direct URLs — inline block removed -->
+ <!-- SEO city/service pages accessible via direct URLs - inline block removed -->
 
   <script>
 (function () {
@@ -3700,7 +3700,7 @@ window.addEventListener('load', function () {
 <script>
 /* ── Lazy loader for reservation stack (reservation.js, slot-lock.js, payment.js, cod-payment.js)
    These scripts are NOT needed until the user clicks Réserver.
-   Combined size: 153 KB — loading them at page load blocked first paint by ~500ms.
+   Combined size: 153 KB - loading them at page load blocked first paint by ~500ms.
    ──────────────────────────────────────────────────────────────────────────────────────────── */
 (function () {
   'use strict';
@@ -3764,7 +3764,7 @@ window.addEventListener('load', function () {
 })();
 </script>
 
-<!-- T4: Hero smart city — async geolocation, zero-blocking (V2) -->
+<!-- T4: Hero smart city - async geolocation, zero-blocking (V2) -->
 <script id="fixeo-hero-geo">
 (function() {
   'use strict';
@@ -3829,13 +3829,13 @@ window.addEventListener('load', function () {
       /* city */
       var city = addr.city || addr.town || addr.village || addr.county || null;
 
-      /* district — privacy: never read road/street/house_number */
+      /* district - privacy: never read road/street/house_number */
       var district = _cleanDistrict(
         addr.neighbourhood || addr.suburb || addr.city_district ||
         addr.quarter       || addr.residential || null
       );
 
-      /* T6 — display logic */
+      /* T6 - display logic */
       if (city && district) {
         _setLabel('\u{1F4CD} ' + city + ' \u2014 ' + district + ' d\u00e9tect\u00e9 \u00b7 Modifier');
       } else if (city) {
@@ -3864,7 +3864,7 @@ window.addEventListener('load', function () {
       }
     })
     .catch(function() {
-      /* T6 — Nominatim failed; geo position was valid → generic success label */
+      /* T6 - Nominatim failed; geo position was valid → generic success label */
       _setLabel('\u{1F4CD} R\u00e9sultats autour de vous \u00b7 Modifier');
     });
   }
@@ -3904,19 +3904,19 @@ window.addEventListener('load', function () {
   /* ── DOMContentLoaded init ───────────────────────────────────── */
   document.addEventListener('DOMContentLoaded', function() {
 
-    /* T2 — Default label: clean, non-blocking */
+    /* T2 - Default label: clean, non-blocking */
     _setLabel('\u{1F4CD} Choisir une ville');
 
-    /* T5 — Permissions API check (optional; degrade safely if unavailable) */
+    /* T5 - Permissions API check (optional; degrade safely if unavailable) */
     function _startGeoFlow() {
       if (navigator && navigator.permissions && navigator.permissions.query) {
         navigator.permissions.query({ name: 'geolocation' }).then(function(result) {
           if (result.state === 'denied') {
-            /* already denied — do not spam permission request */
+            /* already denied - do not spam permission request */
             _geoFailed = true;
             _setLabel('\u{1F4CD} Choisir une ville');
           } else {
-            /* 'granted' or 'prompt' — safe to request */
+            /* 'granted' or 'prompt' - safe to request */
             _requestGeo(true);
           }
           /* live state changes (user grants in settings) */
@@ -3929,18 +3929,18 @@ window.addEventListener('load', function () {
             }
           };
         }).catch(function() {
-          /* permissions API threw — fall back to direct request */
+          /* permissions API threw - fall back to direct request */
           _requestGeo(true);
         });
       } else {
-        /* permissions API unavailable — direct request */
+        /* permissions API unavailable - direct request */
         _requestGeo(true);
       }
     }
 
     _startGeoFlow();
 
-    /* T4 / T5 — City smart line click handler */
+    /* T4 / T5 - City smart line click handler */
     var smartEl = document.getElementById('hero-city-smart');
     if (smartEl) {
       smartEl.addEventListener('click', function() {
@@ -3948,7 +3948,7 @@ window.addEventListener('load', function () {
         var sel = document.getElementById('qsm-select-city');
         if (sel) { sel.focus(); }
 
-        /* T4 — If geo unresolved and not denied: retry once */
+        /* T4 - If geo unresolved and not denied: retry once */
         if (!_geoResolved && !(_geoFailed && _retryCount >= 1)) {
           _retryCount++;
           _requestGeo(false); /* no detecting label on user-triggered retry */

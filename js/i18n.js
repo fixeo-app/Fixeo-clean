@@ -1,5 +1,5 @@
 // ============================================================
-//  FIXEO V3 FINAL SUPER — i18n (FR / AR / EN)
+//  FIXEO V3 FINAL SUPER - i18n (FR / AR / EN)
 // ============================================================
 const FIXEO_TRANSLATIONS = {
   fr: {
@@ -136,16 +136,16 @@ const FIXEO_TRANSLATIONS = {
     map_title: "Artisans près de vous",
     map_btn_locate: "Me localiser",
     // How it works
-    how_title: "Comment ça marche",
-    how_subtitle: "⚡ Trouvez un artisan en quelques minutes",
+    how_title: "Simple. Rapide. Garanti.",
+    how_subtitle: "De votre besoin à l'intervention — en quelques minutes",
     how_step1_title: "Décrivez votre besoin",
-    how_step1_desc: "Expliquez votre problème (fuite, panne…)",
-    how_step2_title: "On trouve un artisan disponible",
-    how_step2_desc: "Fixeo trouve un artisan qualifié près de vous",
-    how_step3_title: "L’artisan vous contacte",
-    how_step3_desc: "Un artisan vous appelle rapidement",
-    how_step4_title: "Intervention & paiement sécurisé",
-    how_step4_desc: "Intervention, puis paiement après service",
+    how_step1_desc: "Plomberie, électricité, peinture… Décrivez le problème en quelques mots.",
+    how_step2_title: "Fixeo trouve votre artisan",
+    how_step2_desc: "Notre système identifie l'artisan qualifié le plus proche, disponible maintenant.",
+    how_step3_title: "L'artisan vous contacte",
+    how_step3_desc: "Vous recevez un appel sous 30 min. Vous validez avant toute intervention.",
+    how_step4_title: "Vous payez après l'intervention",
+    how_step4_desc: "Aucun paiement avant que le travail soit fait. Vous êtes satisfait ou on règle ça.",
     // Comparator
     comp_title: "Comparer les artisans",
     comp_btn: "Comparer ({n})",
@@ -217,7 +217,7 @@ const FIXEO_TRANSLATIONS = {
     art_verified: "✓ موثَّق",
     art_top: "⭐ أفضل حرفي",
     feed_title: "المنجزات",
-    feed_subtitle: "قبل وبعد — أعمال حرفيينا",
+    feed_subtitle: "قبل وبعد - أعمال حرفيينا",
     feed_before: "قبل",
     feed_after: "بعد",
     feed_like: "إعجاب",
@@ -294,7 +294,7 @@ const FIXEO_TRANSLATIONS = {
     how_title: "كيف يعمل",
     how_subtitle: "⚡ جد حرفيًا بسرعة",
     how_step1_title: "اشرح احتياجك",
-    how_step1_desc: "صف المشكلة (تسرب، عطل…)",
+    how_step1_desc: "صف المشكلة (تسرب، عطل...)",
     how_step2_title: "نجد لك حرفيًا متاحًا",
     how_step2_desc: "Fixeo يجد حرفيًا مؤهلاً بالقرب منك",
     how_step3_title: "الحرفي يتصل بك",
@@ -446,7 +446,7 @@ const FIXEO_TRANSLATIONS = {
     how_title: "How it works",
     how_subtitle: "⚡ Find an artisan in minutes",
     how_step1_title: "Describe your need",
-    how_step1_desc: "Describe your issue (leak, breakdown…)",
+    how_step1_desc: "Describe your issue (leak, breakdown...)",
     how_step2_title: "We find an available artisan",
     how_step2_desc: "Fixeo finds a qualified artisan near you",
     how_step3_title: "The artisan contacts you",

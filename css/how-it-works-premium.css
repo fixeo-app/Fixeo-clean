@@ -293,3 +293,98 @@
   .how-it-works-section .step-card:nth-child(3),
   .how-it-works-section .step-card:nth-child(4) { transition-delay: 0ms !important; }
 }
+
+/* ══════════════════════════════════════════════════════════════════════
+   L-1: Process Section Premium Polish
+   Append-only. Braces must stay balanced. Never modify existing blocks.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── L1-A: Section header — hide redundant tag, upgrade subtitle register ── */
+/* The h2 is now "Simple. Rapide. Garanti." — the tag would repeat meaning */
+.how-it-works-section .hiw-tag {
+  display: none !important;
+}
+
+/* Subtitle: increase presence — it's the process promise, not a tooltip */
+.how-it-works-section .how-subtitle {
+  font-size: 0.92rem !important;
+  color: rgba(255, 255, 255, 0.60) !important;
+  letter-spacing: 0.005em !important;
+  margin-top: 6px !important;
+}
+
+/* Title: tighter, more confident */
+.how-it-works-section #how-title {
+  letter-spacing: -0.025em !important;
+}
+
+/* ── L1-B: Step-4 highlight — emerald (payment safety) not pink (urgency) ── */
+/* Step 4 carries the single biggest trust promise: "Vous payez après".
+   Pink = urgency/danger register. Emerald = safety/success = correct. */
+.how-it-works-section .step-highlight-payment {
+  background: rgba(32, 201, 151, 0.06) !important;
+  border: 1px solid rgba(32, 201, 151, 0.22) !important;
+  box-shadow: 0 2px 16px rgba(32, 201, 151, 0.06),
+              inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
+}
+.how-it-works-section .step-highlight-payment:hover {
+  background: rgba(32, 201, 151, 0.10) !important;
+  border-color: rgba(32, 201, 151, 0.36) !important;
+  box-shadow: 0 14px 36px rgba(32, 201, 151, 0.10),
+              inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+}
+/* Step-4 number badge: emerald */
+.how-it-works-section .step-highlight-payment .step-number {
+  background: rgba(32, 201, 151, 0.18) !important;
+  border-color: rgba(32, 201, 151, 0.38) !important;
+}
+/* Step-4 icon: emerald stroke */
+.how-it-works-section .step-highlight-payment .step-icon {
+  background: rgba(32, 201, 151, 0.10) !important;
+  border-color: rgba(32, 201, 151, 0.24) !important;
+}
+.how-it-works-section .step-highlight-payment .step-icon svg {
+  stroke: rgba(32, 201, 151, 0.92) !important;
+}
+
+/* ── L1-C: Description text — bump legibility ── */
+/* Was 0.48 opacity on 0.8rem — borderline on small screens.
+   0.58 = readable without losing the soft secondary register. */
+.how-it-works-section .step-card p {
+  color: rgba(255, 255, 255, 0.58) !important;
+  font-size: 0.82rem !important;
+  line-height: 1.6 !important;
+}
+
+/* ── L1-D: Step-4 description — key promise gets extra visual weight ── */
+.how-it-works-section .step-highlight-payment p {
+  color: rgba(32, 201, 151, 0.72) !important;
+}
+
+/* ── L1-E: Desktop h3 — slightly tighter line-height for 4-col layout ── */
+@media (min-width: 769px) {
+  .how-it-works-section .step-card h3 {
+    font-size: 0.97rem !important;
+    line-height: 1.25 !important;
+  }
+}
+
+/* ── L1-F: Mobile — card sizing refinement ── */
+/* 80vw cards can feel too wide on 390px. 78vw = 304px — more cards peek. */
+@media (max-width: 640px) {
+  .how-it-works-section .step-card {
+    flex: 0 0 78vw !important;
+    max-width: 300px !important;
+  }
+  /* Larger description on mobile for readability (touch = arm's length) */
+  .how-it-works-section .step-card p {
+    font-size: 0.84rem !important;
+  }
+}
+
+/* ── L1-G: Transition section-top — add a faint separator gradient from artisan section ── */
+/* The mini-trust strip sits between artisans and how-it-works.
+   Add a faint top border to how-it-works itself for visual breathing. */
+.how-it-works-section {
+  border-top: 1px solid rgba(255, 255, 255, 0.04) !important;
+}
