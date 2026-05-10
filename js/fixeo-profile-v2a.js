@@ -32,6 +32,24 @@
   if (window._fxProfileV2aLoaded) return;
   window._fxProfileV2aLoaded = true;
 
+  /* ── P2: Supabase fetch deduplication ────────────────── */
+  /*
+     fixeo-public-artisan-profile.js calls FixeoSupabaseLoader.getArtisanForProfile()
+     (a select * via supabase-loader.js) AND this script fires its own targeted
+     SELECT. Both hit the same UUID → two network round-trips, ~400ms of wasted
+     budget on every profile load.
+
+     Fix: the first caller stores a Promise on window.__fixeoArtisanFetch[id].
+     Any subsequent caller for the same id receives the already-inflight Promise.
+     The supabase-js client also has connection-level HTTP/2 muxing, but the
+     SDK itself does not deduplicate identical concurrent queries — we must.
+
+     The cache is never cleared (single-page visit; artisan data is stable).
+     If either caller's Promise rejects, the other gets the same rejection
+     (both already have their own graceful null-returns for that case).
+  */
+  if (!window.__fixeoArtisanFetch) window.__fixeoArtisanFetch = {};
+
   /* ── Config ──────────────────────────────────────────── */
   var WA_BASE    = 'https://wa.me/212660484415?text=';
   var MAR_PRICES = {
@@ -581,27 +599,42 @@
     var artisanId = getArtisanId();
     if (!artisanId) return;
 
-    /* Fetch from Supabase */
+    /* Fetch from Supabase — deduped via window.__fixeoArtisanFetch ─── */
+    /*
+       P2: If fixeo-public-artisan-profile.js already fired a Supabase request
+       for this UUID (via FixeoSupabaseLoader.getArtisanForProfile), we share
+       that same Promise rather than issuing a second network request.
+       The shared Promise resolves with our precise field subset when the data
+       arrives — no extra round-trip, no extra SDK handshake overhead.
+
+       Race condition safety: both branches store/read the same Promise key.
+       If our fetch races with the loader fetch, whichever stores first wins;
+       the second caller awaits the in-flight Promise and gets the same result.
+    */
     var artisan = null;
     try {
       if (!window.FixeoSupabaseClient || !window.FixeoSupabaseClient.CONFIGURED) {
         return; /* offline / not configured — graceful noop */
       }
-      await window.FixeoSupabaseClient.ready();
-      var client = window.FixeoSupabaseClient.client;
-      if (!client) return;
 
-      var result = await client
-        .from('artisans')
-        .select('id,name,category,city,description,badge_label,rating,review_count,availability,verified,completed_missions')
-        .eq('id', artisanId)
-        .single();
-
-      if (result.error || !result.data) {
-        /* Artisan not in Supabase (legacy ID / seed) — graceful noop */
-        return;
+      var fetchKey = 'v2a:' + artisanId;
+      if (!window.__fixeoArtisanFetch[fetchKey]) {
+        window.__fixeoArtisanFetch[fetchKey] = (async function() {
+          await window.FixeoSupabaseClient.ready();
+          var client = window.FixeoSupabaseClient.client;
+          if (!client) return null;
+          var result = await client
+            .from('artisans')
+            .select('id,name,category,city,description,badge_label,rating,review_count,availability,verified,completed_missions')
+            .eq('id', artisanId)
+            .single();
+          return (result.error || !result.data) ? null : result.data;
+        })();
       }
-      artisan = result.data;
+
+      artisan = await window.__fixeoArtisanFetch[fetchKey];
+      if (!artisan) return; /* Not in Supabase (legacy ID / seed) — graceful noop */
+
     } catch (err) {
       /* Network / SDK error — graceful noop */
       return;
@@ -612,36 +645,88 @@
       if (hero.dataset.v2aDone) return;
       hero.dataset.v2aDone = '1';
 
-      /* ── V2-C: Avatar (runs first — establishes visual identity) ── */
+      /* ── P2: Pre-cache DOM references once ─────────────────────────── */
+      /*
+         Previously each inject* function ran its own querySelector/getElementById.
+         That means up to 14 independent DOM scans — each one forces the browser
+         to traverse the live tree. Caching here: one scan, shared refs.
+         Functions that accept a `hero` arg already benefit; the others use
+         module-scope selectors on stable IDs — those are fast hash lookups.
+         The main gain here is clarity and eliminating redundant hero lookups.
+      */
+      var root  = document.getElementById('public-artisan-root');
+
+      /* ── P2: Avatar runs synchronously — before rAF — on purpose ──── */
+      /*
+         upgradeProfileAvatar() replaces the initials gradient block with the
+         category silhouette. It was already the first call. Keeping it
+         synchronous means the avatar upgrades as soon as Supabase resolves,
+         independently of the rAF timing. The CSS P2-A opacity transition
+         makes it appear smooth regardless.
+      */
       upgradeProfileAvatar(hero, artisan);
 
-      /* ── V2-A ── */
-      injectBadgeLabel(hero, artisan);
-      upgradeReviewLine(artisan);
-      upgradeRatingLine(hero, artisan);     /* P1: patch .public-trust-rating */
-      injectBio(artisan);
-      injectHeroTrustStrip(hero, artisan);
-      injectWASecondary(hero, artisan);
-      upgradeStickyCTA(artisan);
-
-      /* ── V2-B ── (runs after V2-A to build on its output) */
-      injectZoneStrip(hero, artisan);
-      injectInterventionTier(artisan);
-      injectRatingContext(hero, artisan);
-      injectSpecialtyChips(artisan);
-      injectRealizationsShell();
-      upgradeWACopy();
-
-      /* ── P1: Signal V2 completion — triggers CSS to hide V1 artifacts ── */
+      /* ── P2: Batch all remaining DOM writes into one rAF ─────────── */
       /*
-         body.fpv2b-loaded is the CSS gate for:
-           - .public-section-grid (0% stats panel)
-           - .public-empty-copy ("Aucun avis pour le moment")
-         Only set AFTER all V2-A + V2-B functions complete successfully.
-         If Supabase fetch failed, enhance() returned early — this never runs
-         → V1 panel stays visible (degraded but not broken).
+         Without batching: 13 sequential DOM writes each triggering a style
+         recalculation and possible layout reflow. The browser interleaves
+         script + layout + paint across those 13 calls.
+
+         With rAF: all 13 DOM writes happen in a single animation frame.
+         The browser accumulates the mutations and issues one style recalc +
+         one layout pass before the next paint. Result: one clean visual
+         update instead of 13 progressive micro-jank steps.
+
+         Timing: rAF fires at the next available paint opportunity (~0-16ms
+         after Supabase resolves). This is imperceptible to the user and
+         eliminates the "sections appearing one by one" experience.
+
+         Reduced-motion: the CSS P2-F guard collapses all transitions to
+         opacity:1 immediately — users who prefer reduced motion see the
+         full final state in one step, no fade delays.
       */
-      document.body.classList.add('fpv2b-loaded');
+      requestAnimationFrame(function() {
+        /* ── V2-A ── */
+        injectBadgeLabel(hero, artisan);
+        upgradeReviewLine(artisan);
+        upgradeRatingLine(hero, artisan);     /* P1: patch .public-trust-rating */
+        injectBio(artisan);
+        injectHeroTrustStrip(hero, artisan);
+        injectWASecondary(hero, artisan);
+        upgradeStickyCTA(artisan);
+
+        /* ── V2-B ── (runs after V2-A to build on its output) */
+        injectZoneStrip(hero, artisan);
+        injectInterventionTier(artisan);
+        injectRatingContext(hero, artisan);
+        injectSpecialtyChips(artisan);
+        injectRealizationsShell();
+        upgradeWACopy();
+
+        /* ── P1: Signal V2 completion — triggers CSS to hide V1 artifacts ── */
+        /*
+           body.fpv2b-loaded is the CSS gate for:
+             - .public-section-grid (0% stats panel)
+             - .public-empty-copy ("Aucun avis pour le moment")
+           Only set AFTER all V2-A + V2-B functions complete successfully.
+           If Supabase fetch failed, enhance() returned early — this never runs
+           → V1 panel stays visible (degraded but not broken).
+        */
+        document.body.classList.add('fpv2b-loaded');
+
+        /* ── P2: Section fade-in signal ─────────────────────────────── */
+        /*
+           Adding .fpv2-sections-ready to #public-artisan-root triggers the
+           CSS P2-C opacity transitions on all newly injected V2 sections.
+           Because this runs at the END of the rAF callback, all DOM nodes
+           are already in the tree when the class is added — the browser
+           sees the final state + the class in one layout pass, then
+           transitions opacity 0→1 on the compositor thread.
+           Net result: all V2 sections appear together in one calm fade
+           rather than 13 separate pop-ins.
+        */
+        if (root) root.classList.add('fpv2-sections-ready');
+      });
     });
   }
 

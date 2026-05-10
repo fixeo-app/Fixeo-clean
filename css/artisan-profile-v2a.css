@@ -918,3 +918,155 @@ body.fpv2b-loaded .public-artisan-page .public-empty-copy {
     color: transparent !important;
   }
 }
+
+/* ================================================================
+   V2-P2 — Phase P-2 Performance & Render Unification
+   Appended 2026-05-10 (profile-p2)
+
+   P2-A  Avatar upgrade transition — silhouette fades in (compositor)
+   P2-B  Avatar will-change during transition window
+   P2-C  V2 injected sections — fade-in on appearance
+   P2-D  Claim button fade-in (masks setTimeout(800) pop-in)
+   P2-E  content-visibility on below-fold sections (mobile paint budget)
+   P2-F  Reduced-motion guard for all P2 transitions
+   P2-G  P3 slot: .fpv2b-prestations-section placeholder (room reserved)
+   ================================================================ */
+
+/* ── P2-A: Silhouette fade-in — smooth compositor transition ── */
+/*
+   V2-C JS adds class + child element; making the transition GPU-composited
+   prevents a paint on the main thread during the Supabase callback burst.
+   The fallback block transitions from "solid gradient" (P1-A) to "gradient
+   + silhouette SVG" over 200ms — so short it feels instantaneous on fast
+   devices, long enough to eliminate the jarring pop on slow devices.
+*/
+.public-artisan-page .fpv2c-silhouette-host {
+  transition: opacity 0.2s ease-out !important;
+}
+.public-artisan-page .fpv2c-silhouette {
+  opacity: 0;
+  transition: opacity 0.22s ease-out;
+  /* Compositor hint — keeps silhouette upgrade off main thread */
+  will-change: opacity;
+}
+.public-artisan-page .fpv2c-silhouette-host .fpv2c-silhouette {
+  opacity: 1;
+}
+
+/* ── P2-B: Avatar block — compositor layer promotion during transition ── */
+/*
+   Applied to the fallback block itself (not the img path).
+   Once the transition ends (200ms), will-change is cleared by the browser.
+   Avoids persistent layer creation that wastes GPU memory.
+*/
+.public-artisan-page .public-avatar-fallback {
+  will-change: contents;
+}
+
+/* ── P2-C: V2 injected sections — graceful fade-in ── */
+/*
+   Each V2-A/B section is hidden at opacity:0 on creation (see JS P2).
+   The single rAF flush after all 14 DOM writes complete triggers the class
+   .fpv2-sections-ready on #public-artisan-root → CSS transition fires.
+   Benefit: the profile doesn't jank through 14 individual repaints.
+   Instead the whole V2 layer appears in one smooth fade.
+*/
+.public-artisan-page .fpv2a-hero-trust-strip,
+.public-artisan-page .fpv2a-wa-cta,
+.public-artisan-page .fpv2b-zone-strip,
+.public-artisan-page .fpv2b-wa-sub,
+.public-artisan-page #fpv2a-bio,
+.public-artisan-page #fpv2b-tier,
+.public-artisan-page #fpv2b-rating-ctx,
+.public-artisan-page #fpv2b-realizations,
+.public-artisan-page .fpv2b-specialty-chips {
+  opacity: 0;
+  transition: opacity 0.18s ease-out;
+  will-change: opacity;
+}
+#public-artisan-root.fpv2-sections-ready .fpv2a-hero-trust-strip,
+#public-artisan-root.fpv2-sections-ready .fpv2a-wa-cta,
+#public-artisan-root.fpv2-sections-ready .fpv2b-zone-strip,
+#public-artisan-root.fpv2-sections-ready .fpv2b-wa-sub,
+#public-artisan-root.fpv2-sections-ready #fpv2a-bio,
+#public-artisan-root.fpv2-sections-ready #fpv2b-tier,
+#public-artisan-root.fpv2-sections-ready #fpv2b-rating-ctx,
+#public-artisan-root.fpv2-sections-ready #fpv2b-realizations,
+#public-artisan-root.fpv2-sections-ready .fpv2b-specialty-chips {
+  opacity: 1;
+}
+
+/* ── P2-D: Claim button — fade-in masks setTimeout(800) pop-in ── */
+/*
+   fixeo-claim-system.js fires injectClaimButton at T+1000-1200ms.
+   Without transition, the button pops in abruptly during scroll.
+   This opacity transition makes it feel like a calm late reveal.
+*/
+.public-artisan-page .fixeo-claim-wrapper {
+  opacity: 0;
+  animation: fpv2p2-claimFadeIn 0.3s ease-out 0.05s forwards;
+}
+@keyframes fpv2p2-claimFadeIn {
+  to { opacity: 1; }
+}
+
+/* ── P2-E: content-visibility on below-fold panels (mobile) ── */
+/*
+   On mid-range Android, painting below-fold content at DCL wastes
+   the first ~200ms paint budget on invisible content.
+   content-visibility:auto defers paint until the element is near viewport.
+   contain-intrinsic-size prevents layout shift when it's measured.
+   Applied only to sections that are reliably below-fold on mobile (< 768px).
+   NOT applied to hero / trust-card / first panel (above fold).
+*/
+@media (max-width: 767px) {
+  .public-artisan-page #ppui-services,
+  .public-artisan-page #ppui-trust-section,
+  .public-artisan-page #fpv2b-realizations,
+  .public-artisan-page .fixeo-claim-wrapper {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 200px;
+  }
+}
+
+/* ── P2-F: Reduced-motion — collapse all P2 transitions ── */
+@media (prefers-reduced-motion: reduce) {
+  .public-artisan-page .fpv2c-silhouette,
+  .public-artisan-page .fpv2a-hero-trust-strip,
+  .public-artisan-page .fpv2a-wa-cta,
+  .public-artisan-page .fpv2b-zone-strip,
+  .public-artisan-page .fpv2b-wa-sub,
+  .public-artisan-page #fpv2a-bio,
+  .public-artisan-page #fpv2b-tier,
+  .public-artisan-page #fpv2b-rating-ctx,
+  .public-artisan-page #fpv2b-realizations,
+  .public-artisan-page .fpv2b-specialty-chips {
+    transition: none !important;
+    opacity: 1 !important;
+    will-change: auto !important;
+    animation: none !important;
+  }
+  .public-artisan-page .fixeo-claim-wrapper {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+  .public-artisan-page .fpv2c-silhouette-host {
+    transition: none !important;
+  }
+}
+
+/* ── P2-G: P3 slot — Prestations & Prix section (reserved) ── */
+/*
+   injectPrestationsSection() will inject #fpv2b-prestations between
+   .fpv2b-zone-strip and .fpv2b-specialty-chips.
+   This rule pre-wires the fade-in for when P3 lands.
+   DO NOT IMPLEMENT CONTENT HERE — P3 only.
+*/
+.public-artisan-page #fpv2b-prestations {
+  opacity: 0;
+  transition: opacity 0.18s ease-out;
+  will-change: opacity;
+}
+#public-artisan-root.fpv2-sections-ready #fpv2b-prestations {
+  opacity: 1;
+}
