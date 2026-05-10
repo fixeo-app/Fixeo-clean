@@ -244,6 +244,97 @@
   }
 
   /* ════════════════════════════════════════════════════════
+     V2-C — UNIFIED PREMIUM AVATAR SYSTEM
+     ════════════════════════════════════════════════════════ */
+
+  /* Category slug normalizer — matches T3 CSS selectors */
+  var CAT_SLUG_MAP = {
+    'plomberie':     'plomberie',
+    'electricite':   'electricite',
+    '\u00e9lectricit\u00e9': 'electricite',
+    'peinture':      'peinture',
+    'nettoyage':     'nettoyage',
+    'jardinage':     'jardinage',
+    'climatisation': 'climatisation',
+    'ma\u00e7onnerie':   'maconnerie',
+    'maconnerie':    'maconnerie',
+    'menuiserie':    'menuiserie',
+    'serrurerie':    'serrurerie',
+    'carrelage':     'carrelage',
+    'd\u00e9m\u00e9nagement': 'demenagement',
+    'demenagement':  'demenagement',
+    'bricolage':     'bricolage',
+    'toiture':       'toiture',
+    'vitrerie':      'vitrerie',
+    '\u00e9tancheite':  'etancheite',
+    'etancheite':    'etancheite',
+    'soudure':       'soudure',
+    'informatique':  'informatique'
+  };
+
+  var CAT_ICONS_V2C = {
+    plomberie: '\ud83d\udd27',     electricite: '\u26a1',
+    peinture: '\ud83c\udfa8',      nettoyage: '\ud83e\uddf9',
+    jardinage: '\ud83c\udf3f',     demenagement: '\ud83d\udce6',
+    bricolage: '\ud83d\udd28',     climatisation: '\u2744\ufe0f',
+    menuiserie: '\ud83e\ude9a',    maconnerie: '\ud83e\uddf1',
+    serrurerie: '\ud83d\udd11',    carrelage: '\ud83c\udfe0',
+    etancheite: '\ud83d\udee1',    vitrerie: '\ud83e\ude9f',
+    soudure: '\ud83d\udd25',       informatique: '\ud83d\udcbb',
+    toiture: '\ud83c\udfe0',       chauffage: '\ud83d\udd25'
+  };
+
+  function _catSlug(category) {
+    if (!category) return '';
+    var key = (category || '').toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+    return CAT_SLUG_MAP[key] || CAT_SLUG_MAP[category.toLowerCase().trim()] || '';
+  }
+
+  /* ── V2C: Upgrade profile avatar (initials → silhouette) ── */
+  /*
+     Replaces the "AB"-style fallback avatar with the same silhouette
+     system used on homepage artisan cards (pvc-avatar-silhouette).
+     Does NOT modify real photo avatars (<img> fallback path untouched).
+     Category gradient + glow make the avatar feel ecosystem-native.
+  */
+  function upgradeProfileAvatar(hero, artisan) {
+    var wrap     = hero.querySelector('.public-avatar-wrap');
+    var fallback = hero.querySelector('.public-avatar-fallback');
+    if (!fallback || !wrap) return; /* real photo path — noop */
+    if (fallback.dataset.v2cDone) return;
+    fallback.dataset.v2cDone = '1';
+
+    var slug     = _catSlug(artisan.category);
+    var catIcon  = (slug && CAT_ICONS_V2C[slug]) || '\ud83d\udd27';
+
+    /* 1. Apply category slug for CSS gradient targeting */
+    if (slug) fallback.setAttribute('data-category', slug);
+
+    /* 2. Swap class to trigger silhouette CSS system */
+    fallback.classList.add('fpv2c-silhouette-host');
+    /* Kill residual initials text — use textContent='', keep DOM clean */
+    fallback.textContent = '';
+
+    /* 3. Inject silhouette span */
+    var sil = document.createElement('span');
+    sil.className = 'fpv2c-silhouette';
+    fallback.appendChild(sil);
+
+    /* 4. Mark wrap for badge positioning context */
+    wrap.classList.add('fpv2c-active');
+
+    /* 5. Inject category badge (bottom-right of wrap) */
+    if (!wrap.querySelector('.fpv2c-badge')) {
+      var badge = document.createElement('span');
+      badge.className = 'fpv2c-badge';
+      badge.setAttribute('aria-hidden', 'true');
+      badge.textContent = catIcon;
+      wrap.appendChild(badge);
+    }
+  }
+
+  /* ════════════════════════════════════════════════════════
      V2-B — PROFESSIONAL DEPTH
      ════════════════════════════════════════════════════════ */
 
@@ -491,6 +582,9 @@
     waitForHero(function(hero) {
       if (hero.dataset.v2aDone) return;
       hero.dataset.v2aDone = '1';
+
+      /* ── V2-C: Avatar (runs first — establishes visual identity) ── */
+      upgradeProfileAvatar(hero, artisan);
 
       /* ── V2-A ── */
       injectBadgeLabel(hero, artisan);

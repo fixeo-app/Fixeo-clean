@@ -580,3 +580,269 @@
     transition: none !important;
   }
 }
+
+/* ================================================================
+   V2-C — UNIFIED PREMIUM AVATAR SYSTEM
+   Sections:
+   V2C-A  Silhouette host base
+   V2C-B  Silhouette pseudo-element system (head + shoulders)
+   V2C-C  Category-specific gradients (T3 mirror for profile)
+   V2C-D  Category-specific glow (profile-exclusive)
+   V2C-E  Category badge (bottom-right corner)
+   V2C-F  Wrap positioning context (fpv2c-active)
+   V2C-G  Mobile adjustments
+   V2C-H  Reduced-motion guard
+   ================================================================ */
+
+/* ── V2C-A: Silhouette host base ─────────────────────────────── */
+/*
+   Transforms .public-avatar-fallback from "initials div"
+   to "premium category-gradient silhouette canvas".
+   font-size:0 kills any remaining text node (initials text).
+   overflow:hidden clips the silhouette cleanly within border-radius.
+*/
+.fpv2c-silhouette-host {
+  /* Override the flat pink gradient — category gradients win via data-category */
+  background: linear-gradient(135deg, #1a1a2e, #2d2d44) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: hidden !important;
+  font-size: 0 !important;        /* kills any residual initials text node */
+  color: transparent !important;  /* belt + suspenders */
+  position: relative !important;
+}
+
+/* ── V2C-B: Silhouette span (::before = head, ::after = shoulders) ── */
+/*
+   Mirrors the homepage pvc-avatar-silhouette system exactly.
+   White shapes on gradient background = clean professional identity.
+   Not an emoji. Not initials. Not a face. A form — human presence.
+*/
+.fpv2c-silhouette {
+  display: block !important;
+  position: relative !important;
+  width: 62% !important;
+  height: 62% !important;
+  pointer-events: none !important;
+  flex-shrink: 0 !important;
+}
+
+/* Head circle */
+.fpv2c-silhouette::before {
+  content: "" !important;
+  position: absolute !important;
+  top: 8% !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: 38% !important;
+  height: 38% !important;
+  border-radius: 50% !important;
+  background: rgba(255,255,255,0.88) !important;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.20) !important;
+}
+
+/* Shoulders arc */
+.fpv2c-silhouette::after {
+  content: "" !important;
+  position: absolute !important;
+  bottom: 4% !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: 74% !important;
+  height: 42% !important;
+  border-radius: 999px 999px 22px 22px !important;
+  background: rgba(255,255,255,0.76) !important;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.18) !important;
+}
+
+/* ── V2C-C: Category gradients (T3 mirror — profile context) ─── */
+/*
+   Exact match with homepage T3 gradients.
+   The user sees the same color language on the card AND on the profile.
+   Seamless transition: marketplace → profile page.
+*/
+.fpv2c-silhouette-host[data-category="plomberie"] {
+  background: linear-gradient(135deg, #0ea5e9, #2563eb) !important;
+}
+.fpv2c-silhouette-host[data-category="electricite"] {
+  background: linear-gradient(135deg, #facc15, #f97316) !important;
+}
+.fpv2c-silhouette-host[data-category="climatisation"] {
+  background: linear-gradient(135deg, #22d3ee, #06b6d4) !important;
+}
+.fpv2c-silhouette-host[data-category="peinture"] {
+  background: linear-gradient(135deg, #f472b6, #ec4899) !important;
+}
+.fpv2c-silhouette-host[data-category="nettoyage"] {
+  background: linear-gradient(135deg, #34d399, #10b981) !important;
+}
+.fpv2c-silhouette-host[data-category="menuiserie"] {
+  background: linear-gradient(135deg, #a16207, #78350f) !important;
+}
+.fpv2c-silhouette-host[data-category="serrurerie"] {
+  background: linear-gradient(135deg, #f59e0b, #d97706) !important;
+}
+.fpv2c-silhouette-host[data-category="maconnerie"] {
+  background: linear-gradient(135deg, #6b7280, #374151) !important;
+}
+.fpv2c-silhouette-host[data-category="jardinage"] {
+  background: linear-gradient(135deg, #84cc16, #16a34a) !important;
+}
+.fpv2c-silhouette-host[data-category="bricolage"] {
+  background: linear-gradient(135deg, #f97316, #ea580c) !important;
+}
+.fpv2c-silhouette-host[data-category="demenagement"] {
+  background: linear-gradient(135deg, #c084fc, #7c3aed) !important;
+}
+.fpv2c-silhouette-host[data-category="carrelage"] {
+  background: linear-gradient(135deg, #94a3b8, #475569) !important;
+}
+.fpv2c-silhouette-host[data-category="toiture"] {
+  background: linear-gradient(135deg, #ef4444, #991b1b) !important;
+}
+.fpv2c-silhouette-host[data-category="vitrerie"] {
+  background: linear-gradient(135deg, #38bdf8, #0369a1) !important;
+}
+.fpv2c-silhouette-host[data-category="etancheite"] {
+  background: linear-gradient(135deg, #64748b, #1e3a5f) !important;
+}
+.fpv2c-silhouette-host[data-category="soudure"] {
+  background: linear-gradient(135deg, #fb923c, #dc2626) !important;
+}
+.fpv2c-silhouette-host[data-category="informatique"] {
+  background: linear-gradient(135deg, #818cf8, #4f46e5) !important;
+}
+
+/* ── V2C-D: Category-specific glow (profile-exclusive) ────────── */
+/*
+   Profile avatars are 120px (vs 60px on cards) — the glow scale must be
+   proportionally larger to feel correct at this size.
+   Each category gets a subtle colored glow matching its gradient.
+   This is the key V2-C innovation: the avatar *feels alive* in its category.
+*/
+.fpv2c-silhouette-host[data-category="plomberie"] {
+  box-shadow: 0 12px 36px rgba(14,165,233,0.35) !important;
+}
+.fpv2c-silhouette-host[data-category="electricite"] {
+  box-shadow: 0 12px 36px rgba(250,204,21,0.30) !important;
+}
+.fpv2c-silhouette-host[data-category="climatisation"] {
+  box-shadow: 0 12px 36px rgba(34,211,238,0.35) !important;
+}
+.fpv2c-silhouette-host[data-category="peinture"] {
+  box-shadow: 0 12px 36px rgba(244,114,182,0.35) !important;
+}
+.fpv2c-silhouette-host[data-category="nettoyage"] {
+  box-shadow: 0 12px 36px rgba(52,211,153,0.30) !important;
+}
+.fpv2c-silhouette-host[data-category="menuiserie"] {
+  box-shadow: 0 12px 36px rgba(161,98,7,0.45) !important;
+}
+.fpv2c-silhouette-host[data-category="serrurerie"] {
+  box-shadow: 0 12px 36px rgba(245,158,11,0.35) !important;
+}
+.fpv2c-silhouette-host[data-category="maconnerie"] {
+  box-shadow: 0 12px 36px rgba(107,114,128,0.45) !important;
+}
+.fpv2c-silhouette-host[data-category="jardinage"] {
+  box-shadow: 0 12px 36px rgba(132,204,22,0.35) !important;
+}
+.fpv2c-silhouette-host[data-category="bricolage"] {
+  box-shadow: 0 12px 36px rgba(249,115,22,0.35) !important;
+}
+.fpv2c-silhouette-host[data-category="demenagement"] {
+  box-shadow: 0 12px 36px rgba(192,132,252,0.35) !important;
+}
+.fpv2c-silhouette-host[data-category="carrelage"] {
+  box-shadow: 0 12px 36px rgba(148,163,184,0.30) !important;
+}
+.fpv2c-silhouette-host[data-category="toiture"] {
+  box-shadow: 0 12px 36px rgba(239,68,68,0.35) !important;
+}
+.fpv2c-silhouette-host[data-category="vitrerie"] {
+  box-shadow: 0 12px 36px rgba(56,189,248,0.35) !important;
+}
+.fpv2c-silhouette-host[data-category="informatique"] {
+  box-shadow: 0 12px 36px rgba(129,140,248,0.35) !important;
+}
+
+/* ── V2C-E: Category badge (bottom-right) ────────────────────── */
+/*
+   Mirrors homepage .pvc-avatar-badge.
+   Scaled up for the larger 120px profile avatar.
+   Dark glass pill with category emoji — same system, larger.
+*/
+.fpv2c-active {
+  position: relative !important;
+}
+
+.fpv2c-badge {
+  position: absolute !important;
+  bottom: -5px !important;
+  right: -5px !important;
+  width: 28px !important;
+  height: 28px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 14px !important;
+  line-height: 1 !important;
+  background: rgba(8,8,24,0.85) !important;
+  border: 1.5px solid rgba(255,255,255,0.22) !important;
+  border-radius: 50% !important;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.45) !important;
+  z-index: 4 !important;
+  pointer-events: none !important;
+  backdrop-filter: blur(6px) !important;
+}
+
+/* ── V2C-F: Wrap (fpv2c-active positioning context) ─────────── */
+/*
+   .public-avatar-wrap already has position:relative in artisan-profile-premium.css
+   Redundant but explicit — ensures the badge is positioned correctly.
+*/
+.public-avatar-wrap.fpv2c-active {
+  position: relative !important;
+  display: inline-block !important;
+}
+
+/* ── V2C-G: Mobile adjustments ──────────────────────────────── */
+@media (max-width: 767px) {
+  .fpv2c-badge {
+    width: 24px !important;
+    height: 24px !important;
+    font-size: 12px !important;
+    bottom: -4px !important;
+    right: -4px !important;
+  }
+  /* Tighten glow on mobile — smaller viewport, less ambient bleed */
+  .fpv2c-silhouette-host[data-category] {
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25) !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .fpv2c-badge {
+    width: 22px !important;
+    height: 22px !important;
+    font-size: 11px !important;
+  }
+}
+
+@media (max-width: 320px) {
+  .fpv2c-badge {
+    width: 20px !important;
+    height: 20px !important;
+    font-size: 10px !important;
+    bottom: -3px !important;
+    right: -3px !important;
+  }
+}
+
+/* ── V2C-H: Reduced-motion guard ──────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .fpv2c-silhouette-host {
+    transition: none !important;
+  }
+}
