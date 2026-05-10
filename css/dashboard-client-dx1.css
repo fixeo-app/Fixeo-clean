@@ -558,3 +558,329 @@ section.client-dashboard-hero .client-dashboard-top:focus-within {
     animation: none !important;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   FIXEO — Dashboard Client DX-3
+   Real Operational Marketplace Connection
+   Appended to dashboard-client-dx1.css — never modifies existing lines
+   Version: v3 (2026-05-10)
+
+   Sections:
+   DX3-A  Artisan card grid
+   DX3-B  Artisan card anatomy
+   DX3-C  Availability / rating chips
+   DX3-D  CTA button
+   DX3-E  WhatsApp continuity CTA
+   DX3-F  Empty / fallback state
+   DX3-G  Mobile optimizations
+   DX3-H  Reduced-motion guard
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── DX3-A: Artisan card grid ────────────────────────────────── */
+/*
+   Dashboard sidebar: 2-col grid on desktop, 1-col on mobile.
+   Cards are smaller/denser than homepage pvc-card (sidebar context).
+*/
+.fxd3-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+/* ── DX3-B: Artisan card anatomy ─────────────────────────────── */
+.fxd3-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 14px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  animation: fxd3-card-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) calc(var(--fxd3-delay, 0) * 80ms) both;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.fxd3-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(225, 48, 108, 0.12);
+}
+
+@keyframes fxd3-card-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0);   }
+}
+
+/* Card top row: avatar + info + availability */
+.fxd3-card-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+/* Avatar: category-colored square icon */
+.fxd3-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(225, 48, 108, 0.18), rgba(131, 58, 180, 0.18));
+  border: 1px solid rgba(225, 48, 108, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 1rem;
+}
+
+.fxd3-avatar-icon {
+  display: block;
+  line-height: 1;
+}
+
+/* Name + meta */
+.fxd3-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.fxd3-name {
+  font-size: 0.80rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 3px;
+}
+
+.fxd3-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.fxd3-cat {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.72);
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fxd3-city {
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.48);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── DX3-C: Availability / rating chips ──────────────────────── */
+/* Availability badge: top-right of card-top */
+.fxd3-avail {
+  display: inline-block;
+  font-size: 0.60rem;
+  font-weight: 700;
+  padding: 3px 7px;
+  border-radius: 99px;
+  flex-shrink: 0;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  margin-left: auto;
+}
+
+.fxd3-avail--on {
+  background: rgba(74, 222, 128, 0.12);
+  border: 1px solid rgba(74, 222, 128, 0.25);
+  color: rgba(74, 222, 128, 0.9);
+}
+
+.fxd3-avail--busy {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.45);
+}
+
+/* Label row: badge_label + review count */
+.fxd3-label-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.fxd3-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: rgba(225, 48, 108, 0.85);
+  letter-spacing: 0.02em;
+}
+
+.fxd3-reviews {
+  font-size: 0.64rem;
+  color: rgba(255, 255, 255, 0.42);
+  margin-left: auto;
+}
+
+/* ── DX3-D: CTA button ───────────────────────────────────────── */
+.fxd3-cta {
+  width: 100%;
+  padding: 8px 0;
+  border: none;
+  border-radius: 9px;
+  background: linear-gradient(135deg, #E1306C, #833AB4);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  letter-spacing: 0.01em;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+  margin-top: auto;
+}
+
+.fxd3-cta:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(225, 48, 108, 0.4);
+}
+
+.fxd3-cta:active {
+  transform: scale(0.97);
+  opacity: 0.9;
+}
+
+/* ── DX3-E: WhatsApp continuity CTA ──────────────────────────── */
+/* Injected inside status banner when artisan is confirmed/active */
+#fxd3-whatsapp-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 14px;
+  border-radius: 10px;
+  background: rgba(37, 211, 102, 0.12);
+  border: 1px solid rgba(37, 211, 102, 0.28);
+  color: rgba(37, 211, 102, 0.9);
+  text-decoration: none;
+  font-size: 0.78rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  white-space: nowrap;
+  font-family: inherit;
+  cursor: pointer;
+  margin-top: 4px;
+}
+
+#fxd3-whatsapp-cta:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(37, 211, 102, 0.25);
+  text-decoration: none;
+  color: rgba(37, 211, 102, 1);
+}
+
+#fxd3-whatsapp-cta:active {
+  transform: scale(0.97);
+}
+
+.fxd3-wa-icon {
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.fxd3-wa-text {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+/* ── DX3-F: Empty / fallback state ───────────────────────────── */
+.fxd3-empty {
+  padding: 12px 0;
+  text-align: center;
+}
+
+.fxd3-empty-msg {
+  font-size: 0.80rem;
+  color: rgba(255, 255, 255, 0.55);
+  margin: 0 0 10px;
+  line-height: 1.5;
+}
+
+.fxd3-browse-link {
+  display: inline-block;
+  font-size: 0.80rem;
+  font-weight: 700;
+  color: rgba(225, 48, 108, 0.9);
+  text-decoration: none;
+  padding: 7px 16px;
+  border-radius: 8px;
+  border: 1px solid rgba(225, 48, 108, 0.3);
+  background: rgba(225, 48, 108, 0.06);
+  transition: transform 0.15s ease;
+}
+
+.fxd3-browse-link:hover {
+  transform: translateY(-1px);
+  text-decoration: none;
+  color: rgba(225, 48, 108, 1);
+}
+
+/* ── DX3-G: Mobile optimizations ────────────────────────────── */
+@media (max-width: 768px) {
+  /* On mobile: 2-col grid stays (cards are small enough) */
+  .fxd3-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .fxd3-card {
+    padding: 12px 10px;
+    border-radius: 12px;
+  }
+
+  .fxd3-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+  }
+
+  .fxd3-name {
+    font-size: 0.76rem;
+  }
+
+  .fxd3-cta {
+    font-size: 0.68rem !important;
+    padding: 7px 0 !important;
+  }
+
+  /* WhatsApp CTA: full width on mobile */
+  #fxd3-whatsapp-cta {
+    width: 100%;
+    justify-content: center;
+    margin-top: 8px;
+  }
+}
+
+/* Extra-small: 360px */
+@media (max-width: 360px) {
+  .fxd3-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── DX3-H: Reduced-motion guard ─────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .fxd3-card {
+    animation: none !important;
+    transition: none !important;
+  }
+  .fxd3-cta,
+  .fxd3-browse-link,
+  #fxd3-whatsapp-cta {
+    transition: none !important;
+  }
+}
