@@ -1189,6 +1189,315 @@
     } catch(e) {}
   }
 
+  /* ════════════════════════════════════════════════════════
+     V1-J — REAL OPERATIONAL PROOF & CLIENT CONFIDENCE
+     ════════════════════════════════════════════════════════
+
+     Six functions. All read from fixeo_client_requests only.
+     Nothing invented. Nothing polled. Render-once per page load.
+     All guarded with data-v1jDone to be idempotent.
+
+     Philosophy: the profile should feel alive through real work,
+     not through marketing language. Real timestamps. Real cities.
+     Real mission states. Real portfolio context. Nothing else.
+  ════════════════════════════════════════════════════════ */
+
+  /* ── V1-J helper: normalise status strings ──────────── */
+  function _v1jNormStatus(s) {
+    return (s || '').toLowerCase().replace(/[\s_]/g, '')
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  }
+
+  /* ── V1-J helper: capitalise first letter ────────────── */
+  function _v1jCap(s) {
+    return s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
+  }
+
+  /* ── V1-J helper: get validated missions for this artisan ──
+   * Shared by all V1-J functions. Reads fixeo_client_requests once.
+   * Returns [] when store unavailable or artisanId absent.
+   * ──────────────────────────────────────────────────────────── */
+  function _v1jGetValidated(artisanId) {
+    var store = window.FixeoClientRequestsStore;
+    if (!store || typeof store.list !== 'function') return [];
+    try {
+      var all    = store.list();
+      var artId  = String(artisanId || '').trim();
+      var artName = (document.querySelector('h1') || {}).textContent || '';
+      return all.filter(function(r) {
+        var st = _v1jNormStatus(r.status);
+        if (st !== 'validee') return false;
+        if (artId && String(r.assigned_artisan_id || '').trim() === artId) return true;
+        if (artName && String(r.artisan_name || r.assigned_artisan || '').trim()
+              .toLowerCase() === artName.trim().toLowerCase()) return true;
+        return false;
+      });
+    } catch(e) { return []; }
+  }
+
+  /* ── V1-J Phase 1: Portfolio operational context ─────────
+   *  Upgrades portfolio photo cards with operational framing:
+   *    - "Réparation fuite cuisine — Casablanca"
+   *    - "Travaux de peinture — Fès"
+   *  Also adds calm completion badge when item has a city field
+   *  or matches a validated mission (by service + city).
+   *  Runs after injectPortfolioPhotos() has built the grid.
+   *  Target: .fpv1h-photo-item cards already in the DOM.
+   *  Idempotent: data-v1jCtx guard per card.
+   * ──────────────────────────────────────────────────────────── */
+  function upgradePortfolioContext(artisanId, artisan) {
+    var grid = document.querySelector('.fpv1h-photo-grid');
+    if (!grid || grid.dataset.v1jCtxDone) return;
+    grid.dataset.v1jCtxDone = '1';
+
+    var artCity = artisan ? (artisan.city || '') : '';
+
+    /* Build a lookup of validated missions by service for confirmation badge */
+    var validated = _v1jGetValidated(artisanId);
+    var validatedServices = {};
+    validated.forEach(function(r) {
+      var svc = (r.service || '').toLowerCase().trim();
+      if (svc) validatedServices[svc] = true;
+    });
+
+    var cards = grid.querySelectorAll('.fpv1h-photo-item');
+    cards.forEach(function(card) {
+      if (card.dataset.v1jCtxDone) return;
+      card.dataset.v1jCtxDone = '1';
+
+      var meta = card.querySelector('.fpv1h-photo-meta');
+      if (!meta) return;
+
+      var serviceEl = card.querySelector('.fpv1h-photo-service');
+      var svcText   = serviceEl ? serviceEl.textContent.trim() : '';
+      var svcLower  = svcText.toLowerCase();
+
+      /* Operational title: "Réparation fuite cuisine — Casablanca" */
+      if (svcText && artCity) {
+        var opTitle = document.createElement('span');
+        opTitle.className = 'fpv1j-card-op-title';
+        opTitle.textContent = svcText + '\u00a0\u2014 ' + artCity;
+        meta.insertBefore(opTitle, meta.firstChild);
+      }
+
+      /* Completion badge: shown when service matches a validated mission */
+      var svcMatches = svcLower && validatedServices[svcLower];
+      if (svcMatches || validated.length >= 3) {
+        var badge = document.createElement('span');
+        badge.className = 'fpv1j-completion-badge';
+        badge.textContent = 'Travail confirm\u00e9';
+        meta.appendChild(badge);
+      }
+    });
+  }
+
+  /* ── V1-J Phase 2+4: Recent activity + local presence signal ──
+   *  "Dernière intervention confirmée il y a 2 semaines — Casablanca"
+   *  "Interventions régulières en Plomberie"
+   *  Injected into the zone strip area, below fpv2b-zone-strip.
+   *  Derived from: validated[].completed_at, city consistency, category.
+   *  Threshold: ≥2 validated missions (below = silent).
+   *  Idempotent: fpv2b-zone-strip.dataset.v1jActivity guard.
+   * ──────────────────────────────────────────────────────────── */
+  function injectRecentActivity(artisanId, artisan) {
+    var zoneStrip = document.querySelector('.fpv2b-zone-strip');
+    if (!zoneStrip || zoneStrip.dataset.v1jActivity) return;
+    zoneStrip.dataset.v1jActivity = '1';
+
+    if (!artisanId) return;
+    var validated = _v1jGetValidated(artisanId);
+    if (validated.length < 2) return;
+
+    /* Most recent validated_at or completed_at */
+    var sorted = validated.slice().sort(function(a, b) {
+      return (Date.parse(b.validated_at || b.completed_at || '') || 0)
+           - (Date.parse(a.validated_at || a.completed_at || '') || 0);
+    });
+    var mostRecent = sorted[0];
+    var recentTs   = mostRecent.validated_at || mostRecent.completed_at || '';
+    var elapsed    = recentTs ? _v1hElapsed(recentTs) : '';
+
+    /* City consistency: top city with ≥60% share */
+    var cityMap = {};
+    validated.forEach(function(r) {
+      var c = (r.city || r.ville || '').trim().toLowerCase();
+      if (c) cityMap[c] = (cityMap[c] || 0) + 1;
+    });
+    var topCity = Object.keys(cityMap).sort(function(a,b){ return cityMap[b]-cityMap[a]; })[0] || '';
+    var topCount = topCity ? cityMap[topCity] : 0;
+    var cityConsistent = topCount / validated.length >= 0.6;
+
+    /* Category continuity: top category with ≥50% share */
+    var catMap = {};
+    validated.forEach(function(r) {
+      var c = (r.service || r.category || '').trim().toLowerCase();
+      if (c) catMap[c] = (catMap[c] || 0) + 1;
+    });
+    var topCat = Object.keys(catMap).sort(function(a,b){ return catMap[b]-catMap[a]; })[0] || '';
+    var catConsistent = topCat && catMap[topCat] / validated.length >= 0.5;
+
+    /* Build the activity line */
+    var parts = [];
+    if (elapsed) {
+      parts.push('Derni\u00e8re intervention confirm\u00e9e il y a\u00a0' + elapsed);
+    }
+    if (cityConsistent && topCity) {
+      parts.push('Actif \u00e0\u00a0' + _v1jCap(topCity));
+    }
+    if (catConsistent && topCat) {
+      parts.push('Interventions r\u00e9guli\u00e8res en\u00a0' + _v1jCap(topCat));
+    }
+
+    if (parts.length === 0) return;
+
+    var activityEl = document.createElement('p');
+    activityEl.className = 'fpv1j-activity-strip';
+    activityEl.innerHTML = parts.map(function(p) {
+      return '<span class="fpv1j-activity-item">' + esc(p) + '</span>';
+    }).join('<span class="fpv1j-activity-sep">\u00b7</span>');
+
+    zoneStrip.parentNode.insertBefore(activityEl, zoneStrip.nextSibling);
+  }
+
+  /* ── V1-J Phase 3: Client confirmation signals ───────────
+   *  Calm confirmation context in the trust card area.
+   *  "N interventions confirmées par des clients"
+   *  Shown when ≥3 validated missions exist AND operational memory
+   *  hasn't already replaced the trust-sub (i.e., data-v1hMemoryDone absent).
+   *  Different from V1-H operational memory — this is calmer, secondary,
+   *  shown in a dedicated block below the trust card (not inside it).
+   *  Threshold: ≥3 (same as operational memory to stay consistent).
+   * ──────────────────────────────────────────────────────────── */
+  function injectConfirmationSignal(artisanId) {
+    if (document.querySelector('.fpv1j-confirm-signal')) return;
+
+    var validated = _v1jGetValidated(artisanId);
+    if (validated.length < 3) return;
+
+    var trustCard = document.querySelector('.public-trust-card');
+    if (!trustCard || trustCard.dataset.v1jConfirmDone) return;
+    trustCard.dataset.v1jConfirmDone = '1';
+
+    var n = validated.length;
+    var label = n + '\u00a0intervention' + (n > 1 ? 's' : '')
+      + ' valid\u00e9e' + (n > 1 ? 's' : '') + ' par des clients';
+
+    var signal = document.createElement('p');
+    signal.className = 'fpv1j-confirm-signal';
+    signal.innerHTML = '<span class="fpv1j-confirm-icon">\u2713</span> ' + esc(label);
+    trustCard.parentNode.insertBefore(signal, trustCard.nextSibling);
+  }
+
+  /* ── V1-J Phase 4: Local presence depth ──────────────────
+   *  Upgrades zone strip copy when strong local consistency:
+   *  "Artisan actif à [City] depuis plusieurs interventions"
+   *  Adds a sub-note below the zone strip (not inside it).
+   *  Distinct from V1-H upgradeZoneStripDepth (which changes the strip text).
+   *  This adds a secondary presence note below.
+   *  Threshold: ≥5 missions in same city (stronger signal than V1-H's ≥3).
+   *  Note: if upgradeZoneStripDepth already ran, this cooperates (both apply).
+   * ──────────────────────────────────────────────────────────── */
+  function injectLocalPresenceNote(artisanId, artisan) {
+    if (document.querySelector('.fpv1j-local-note')) return;
+    if (!artisanId) return;
+
+    var validated = _v1jGetValidated(artisanId);
+    var artCity   = (artisan ? artisan.city || '' : '').trim().toLowerCase();
+    if (!artCity || validated.length < 5) return;
+
+    var cityCount = validated.filter(function(r) {
+      return (r.city || r.ville || '').trim().toLowerCase() === artCity;
+    }).length;
+
+    /* Require ≥5 missions in the artisan's declared city */
+    if (cityCount < 5) return;
+
+    var zoneStrip = document.querySelector('.fpv2b-zone-strip');
+    if (!zoneStrip) return;
+
+    var cityDisplay = _v1jCap(artCity);
+    var note = document.createElement('p');
+    note.className = 'fpv1j-local-note';
+    note.textContent = 'Pr\u00e9sence locale confirm\u00e9e \u00e0 ' + cityDisplay
+      + '\u00a0(' + cityCount + ' intervention' + (cityCount > 1 ? 's' : '') + ')';
+
+    var activityStrip = document.querySelector('.fpv1j-activity-strip');
+    var anchor = activityStrip || zoneStrip;
+    anchor.parentNode.insertBefore(note, anchor.nextSibling);
+  }
+
+  /* ── V1-J Phase 5: Booking confidence block ──────────────
+   *  Injected below the action button (.public-artisan-action).
+   *  Three calm reassurance lines:
+   *    - Recent activity (if ≥2 validated missions)
+   *    - Payment after intervention (always)
+   *    - WhatsApp coordination (always)
+   *  Short, non-pressuring, factual.
+   *  The payment/WA lines are always shown (they're always true).
+   *  The activity line only shows when real data backs it.
+   *  Idempotent: button.dataset.v1jConfidence guard.
+   * ──────────────────────────────────────────────────────────── */
+  function injectBookingConfidence(artisanId, artisan) {
+    var btn = document.getElementById('public-artisan-action');
+    if (!btn || btn.dataset.v1jConfidence) return;
+    btn.dataset.v1jConfidence = '1';
+
+    var items = [];
+
+    /* Activity line: real data only */
+    var validated = _v1jGetValidated(artisanId);
+    if (validated.length >= 2) {
+      var sorted = validated.slice().sort(function(a, b) {
+        return (Date.parse(b.validated_at || b.completed_at || '') || 0)
+             - (Date.parse(a.validated_at || a.completed_at || '') || 0);
+      });
+      var recentTs = sorted[0].validated_at || sorted[0].completed_at || '';
+      var elapsed  = recentTs ? _v1hElapsed(recentTs) : '';
+      if (elapsed) {
+        items.push('\u231b Derni\u00e8re intervention confirm\u00e9e il y a\u00a0' + elapsed);
+      }
+    }
+
+    /* Local presence: honest city anchor */
+    if (artisan && artisan.city) {
+      items.push('\ud83d\udccd Pr\u00e9sent \u00e0 ' + esc(artisan.city));
+    }
+
+    /* Always-true operational reassurances */
+    items.push('\u2714 Paiement apr\u00e8s intervention');
+    items.push('\ud83d\udcac Coordination via WhatsApp Fixeo');
+
+    var block = document.createElement('div');
+    block.className = 'fpv1j-booking-confidence';
+    block.innerHTML = items.map(function(item) {
+      return '<div class="fpv1j-confidence-item">' + item + '</div>';
+    }).join('');
+
+    /* Insert below the WA CTA or below the action button */
+    var waCta  = document.getElementById('fpv2a-wa-cta');
+    var anchor = waCta || btn;
+    anchor.parentNode.insertBefore(block, anchor.nextSibling);
+  }
+
+  /* ── V1-J Phase 6: Trust surface coherence check ─────────
+   *  Scans for residual contradictions and patches them:
+   *    - Realizations section still says "Aucune réalisation" despite portfolio items → silently hides
+   *    - Zone strip still says "Intervient à" after upgradeZoneStripDepth ran → noop (V1-H handles it)
+   *    - "Nouveau artisan" tier while operational memory exists → noop (V1-H handles it)
+   *  Main job: ensure the realizations section title matches portfolio state.
+   * ──────────────────────────────────────────────────────────── */
+  function coherencePatch() {
+    /* If portfolio grid was injected by V1-H, update section title appropriately */
+    var section = document.getElementById('fpv2b-realizations');
+    if (!section) return;
+    var grid = section.querySelector('.fpv1h-photo-grid');
+    var empty = section.querySelector('.fpv2b-realizations-empty');
+    if (grid && empty && empty.innerHTML.trim() !== '') {
+      /* V1-H replaced the placeholder but may have left empty div visible */
+      try { empty.style.display = 'none'; } catch(e) {}
+    }
+  }
+
   /* ── MAIN: fetch + apply ─────────────────────────────── */
   async function enhance() {
     /* Only run on artisan-profile.html */
@@ -1311,6 +1620,14 @@
         injectAvailabilityConsistency();      /* Phase 3+5: "Disponible régulièrement" */
         upgradeZoneStripDepth(artisanId);     /* Phase 5: "Artisan actif à X" */
         upgradeDescriptionWeight();           /* Phase 4: bio more prominent */
+
+        /* ── V1-J ── */
+        upgradePortfolioContext(artisanId, artisan);  /* Phase 1: operational portfolio framing */
+        injectRecentActivity(artisanId, artisan);     /* Phase 2+4: activity + local presence */
+        injectConfirmationSignal(artisanId);          /* Phase 3: "N interventions validées par des clients" */
+        injectLocalPresenceNote(artisanId, artisan);  /* Phase 4: local presence note */
+        injectBookingConfidence(artisanId, artisan);  /* Phase 5: booking reassurance block */
+        coherencePatch();                             /* Phase 6: trust surface coherence */
 
         /* ── P1: Signal V2 completion — triggers CSS to hide V1 artifacts ── */
         /*

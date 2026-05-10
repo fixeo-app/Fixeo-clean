@@ -1408,3 +1408,154 @@ body.fpv2b-loaded .public-artisan-page .public-empty-copy {
   /* city pill — subtle, informational */
   opacity: 0.82;
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   V1-J — Real Operational Proof & Client Confidence
+   Append-only. No overrides.
+   Namespace: .fpv1j-*
+   ═══════════════════════════════════════════════════════════════════
+
+   Design language:
+   - Calm and professional. No badges, no stars, no urgency.
+   - Text-forward: information over decoration.
+   - Consistent dim/opacity treatment matching the V1-H layer.
+   - Mobile-first: 390px base, 360px / 320px guards.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── Phase 1: Portfolio operational context ─────────────────────────
+   "Travaux de Plomberie — Casablanca" title above service name.
+   "Travail confirmé" badge at bottom of card meta.
+   Both are secondary — never louder than the photo.
+   ─────────────────────────────────────────────────────────────────── */
+
+.fpv1j-card-op-title {
+  display: block;
+  font-size: 0.73rem;
+  color: rgba(255,255,255,0.38);
+  font-style: italic;
+  margin-bottom: 4px;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fpv1j-completion-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 5px;
+  padding: 2px 8px;
+  border-radius: 99px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: rgba(32,201,151,0.75);
+  background: rgba(32,201,151,0.07);
+  border: 1px solid rgba(32,201,151,0.14);
+}
+.fpv1j-completion-badge::before {
+  content: '✓';
+  font-weight: 700;
+}
+
+/* ── Phase 2+4: Recent activity strip ──────────────────────────────
+   "Dernière intervention confirmée il y a 2 semaines · Actif à Casablanca"
+   Dim. Secondary. Below zone strip. Single line (wraps on mobile).
+   ─────────────────────────────────────────────────────────────────── */
+
+.fpv1j-activity-strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px;
+  margin: 6px 0 0;
+  font-size: 0.76rem;
+  color: rgba(255,255,255,0.40);
+  line-height: 1.45;
+}
+.fpv1j-activity-item {
+  white-space: nowrap;
+}
+.fpv1j-activity-sep {
+  color: rgba(255,255,255,0.18);
+  font-size: 0.80rem;
+}
+
+/* ── Phase 3: Confirmation signal ──────────────────────────────────
+   "✓ N interventions validées par des clients"
+   Below .public-trust-card. Calm emerald. Not a banner.
+   ─────────────────────────────────────────────────────────────────── */
+
+.fpv1j-confirm-signal {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 8px 0 0;
+  font-size: 0.79rem;
+  color: rgba(32,201,151,0.68);
+  line-height: 1.40;
+}
+.fpv1j-confirm-icon {
+  font-size: 0.85rem;
+  opacity: 0.75;
+  flex-shrink: 0;
+}
+
+/* ── Phase 4: Local presence note ──────────────────────────────────
+   "Présence locale confirmée à Casablanca (7 interventions)"
+   Below activity strip or zone strip. Dim, small, supporting.
+   ─────────────────────────────────────────────────────────────────── */
+
+.fpv1j-local-note {
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.30);
+  margin: 5px 0 0;
+  font-style: italic;
+  letter-spacing: 0.01em;
+  line-height: 1.45;
+}
+
+/* ── Phase 5: Booking confidence block ─────────────────────────────
+   Below action button / WA CTA.
+   Three calm reassurance lines. No urgency. No pressure.
+   Slightly separated from button to avoid visual crowding.
+   ─────────────────────────────────────────────────────────────────── */
+
+.fpv1j-booking-confidence {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin: 12px 0 0;
+  padding: 11px 14px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.025);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.fpv1j-confidence-item {
+  font-size: 0.77rem;
+  color: rgba(255,255,255,0.45);
+  line-height: 1.45;
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+/* ── Mobile guards ──────────────────────────────────────────────── */
+
+@media (max-width: 480px) {
+  .fpv1j-activity-strip     { font-size: 0.74rem; gap: 4px; }
+  .fpv1j-confirm-signal     { font-size: 0.76rem; }
+  .fpv1j-booking-confidence { padding: 9px 11px; margin-top: 10px; }
+  .fpv1j-confidence-item    { font-size: 0.74rem; }
+  .fpv1j-card-op-title      { font-size: 0.70rem; }
+  .fpv1j-local-note         { font-size: 0.70rem; }
+}
+@media (max-width: 360px) {
+  .fpv1j-activity-strip  { flex-direction: column; align-items: flex-start; gap: 2px; }
+  .fpv1j-activity-sep    { display: none; }
+  .fpv1j-booking-confidence { padding: 8px 10px; }
+}
+@media (max-width: 320px) {
+  .fpv1j-booking-confidence { margin-top: 8px; }
+  .fpv1j-confidence-item    { font-size: 0.72rem; }
+}
