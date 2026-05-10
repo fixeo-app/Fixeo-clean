@@ -458,3 +458,94 @@
   .fxm-block::after { transition: none !important; }
   .fxm-icon { transition: none !important; }
 }
+
+/* ══════════════════════════════════════════════════════════════════════
+   V-1: Living Marketplace Infrastructure — Vision Polish
+   Append-only. Zero existing lines modified. Braces balanced.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── V1-A: Section tag — hide (h2 now carries full identity) ────── */
+.fxv-section .fxv-vtag {
+  display: none !important;
+}
+
+/* ── V1-B: Signal labels — legibility pass ──────────────────────── */
+/* Was 0.66rem / rgba 0.32 — borderline invisible on mobile */
+.fxv-signal-label {
+  font-size: 0.70rem !important;
+  color: rgba(255, 255, 255, 0.54) !important;
+  letter-spacing: 0.02em !important;
+}
+/* Signal values — tighten letter-spacing for <30min format */
+.fxv-signal-value {
+  letter-spacing: -0.04em !important;
+}
+/* The <30min "plus" is the unit — slightly muted */
+.fxv-signal-plus {
+  color: rgba(255, 255, 255, 0.44) !important;
+  font-size: 0.58em !important;
+}
+/* Override specifically for the last signal (<30min) unit display */
+.fxv-signal:last-child .fxv-signal-plus {
+  font-size: 0.52em !important;
+  vertical-align: baseline !important;
+  margin-left: 2px !important;
+  color: rgba(255, 255, 255, 0.40) !important;
+}
+
+/* ── V1-C: Flow step progressive accent — 1→2→3→4 hierarchy ────── */
+/* Steps 1–3 use a subtle progressive tint (dim→medium→bright→pink)
+   so the eye reads the flow as a directional progression, not 4 equal dots.
+   Step 4 already has pink from existing .fxv-flow-step-end rule. */
+.fxv-flow-step-1 .fxv-flow-num {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-color: rgba(255, 255, 255, 0.09) !important;
+  color: rgba(255, 255, 255, 0.55) !important;
+}
+.fxv-flow-step-2 .fxv-flow-num {
+  background: rgba(131, 58, 180, 0.10) !important;
+  border-color: rgba(131, 58, 180, 0.22) !important;
+  color: rgba(255, 255, 255, 0.72) !important;
+}
+.fxv-flow-step-3 .fxv-flow-num {
+  background: rgba(196, 53, 144, 0.12) !important;
+  border-color: rgba(196, 53, 144, 0.26) !important;
+  color: rgba(255, 255, 255, 0.84) !important;
+}
+/* Step 4 (.fxv-flow-step-end) already pink in base — preserved */
+
+/* ── V1-D: Flow labels — legibility pass ───────────────────────── */
+/* Was 0.70rem / rgba 0.40 — too faint, too small */
+.fxv-flow-label {
+  font-size: 0.73rem !important;
+  color: rgba(255, 255, 255, 0.56) !important;
+}
+.fxv-flow-step-end .fxv-flow-label {
+  color: rgba(255, 255, 255, 0.74) !important;
+  font-weight: 600 !important;
+}
+
+/* ── V1-E: Story text — single focused paragraph ───────────────── */
+/* New copy is one sentence, no <br><br>. Slightly more visible. */
+.fxv-story-text {
+  color: rgba(255, 255, 255, 0.60) !important;
+  font-size: 0.90rem !important;
+  line-height: 1.72 !important;
+}
+
+/* ── V1-F: Mobile refinements ≤ 640px ──────────────────────────── */
+@media (max-width: 640px) {
+  .fxv-story-text {
+    font-size: 0.86rem !important;
+    line-height: 1.68 !important;
+  }
+  /* Signal labels at small viewports — keep visible */
+  .fxv-signal-label {
+    font-size: 0.63rem !important;
+    color: rgba(255, 255, 255, 0.50) !important;
+  }
+  /* Flow labels at small viewports */
+  .fxv-flow-label {
+    font-size: 0.68rem !important;
+  }
+}
