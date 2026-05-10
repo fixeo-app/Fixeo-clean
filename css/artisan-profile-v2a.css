@@ -1,0 +1,341 @@
+/* ================================================================
+   FIXEO — Artisan Profile V2-A
+   Trust Rebuild & Humanization Styles
+
+   Sections:
+   V2A-A  Hero breathing animation
+   V2A-B  badge_label chip
+   V2A-C  Real bio section
+   V2A-D  Hero trust strip (price + paiement)
+   V2A-E  WhatsApp secondary CTA (hero + sticky)
+   V2A-F  ppui cleanup: CTA reassurance text
+   V2A-G  Honest trust indicators (ppui-trust-grid--v2a)
+   V2A-H  Mobile-first adjustments
+   V2A-I  Reduced-motion guard
+   ================================================================ */
+
+/* ── V2A-A: Hero breathing — calm, stable, no scale ────────── */
+/*
+   Profile hero is the "secure consultation" space — even calmer than auth.
+   No scale transform: content stays perfectly still.
+   Only ambient glow modulation — 9s (slowest in the ecosystem).
+   Pauses on focus-within (user interacting with CTA).
+   hierarchy: hero 5.5s / auth 6.5s / dashboard 8.0s / profile 9.0s
+*/
+@keyframes fpv2a-hero-breathe {
+  0%, 100% {
+    box-shadow:
+      0 24px 64px rgba(0,0,0,0.35),
+      0 0 0 1px rgba(255,255,255,0.04),
+      0 0 60px rgba(225,48,108,0.06);
+  }
+  45% {
+    box-shadow:
+      0 24px 64px rgba(0,0,0,0.35),
+      0 0 0 1px rgba(255,255,255,0.07),
+      0 0 80px rgba(225,48,108,0.11);
+  }
+}
+
+.public-profile-hero {
+  animation: fpv2a-hero-breathe 9s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+  will-change: box-shadow;
+}
+
+.public-profile-hero:focus-within {
+  animation-play-state: paused;
+}
+
+/* ── V2A-B: badge_label chip ────────────────────────────────── */
+/*
+   The artisan's real editorial label from the DB.
+   Placed at the TOP of the trust card — first data after name.
+   Premium, distinct, never generic.
+*/
+.fpv2a-badge-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 5px 14px;
+  border-radius: 99px;
+  font-size: 0.73rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  background: linear-gradient(135deg, rgba(225,48,108,0.14), rgba(131,58,180,0.14));
+  border: 1px solid rgba(225,48,108,0.28);
+  color: rgba(225,48,108,0.95);
+  margin-bottom: 10px;
+  width: fit-content;
+  text-transform: none;
+}
+
+/* ── V2A-C: Real bio section ─────────────────────────────────── */
+/*
+   Only rendered when artisan.description is populated (non-empty).
+   Short, professional, specific — not generic.
+   Subtle fade-in on appearance.
+*/
+.fpv2a-bio-section {
+  /* inherits .ppui-section styles */
+}
+
+.fpv2a-bio-text {
+  font-size: 0.93rem;
+  color: rgba(255,255,255,0.80);
+  line-height: 1.75;
+  margin: 0;
+  font-weight: 400;
+  letter-spacing: 0.005em;
+}
+
+/* Override ppui-section-title for bio: no heavy icon needed */
+.fpv2a-bio-section .ppui-section-title {
+  font-size: 1.05rem !important;
+  font-weight: 800 !important;
+  color: #fff;
+  margin: 0 0 12px !important;
+}
+
+/* ── V2A-D: Hero trust strip (price + paiement) ─────────────── */
+/*
+   Grounding reassurance just below the CTA.
+   Two signals: market price anchor + paiement promise.
+   Subtle, not aggressive.
+*/
+.fpv2a-trust-strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  margin-top: 8px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+}
+
+.fpv2a-price-anchor {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.55);
+  letter-spacing: 0.01em;
+}
+
+.fpv2a-strip-sep {
+  display: inline-block;
+  width: 1px;
+  height: 12px;
+  background: rgba(255,255,255,0.12);
+  vertical-align: middle;
+}
+
+.fpv2a-paiement {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: rgba(74, 222, 128, 0.80);
+  letter-spacing: 0.01em;
+}
+
+/* ── V2A-E: WhatsApp secondary CTA ──────────────────────────── */
+/*
+   Below-the-fold entry for first contact.
+   Less prominent than reservation CTA — a gentle invitation.
+   WhatsApp green: authentic, controlled opacity.
+*/
+#fpv2a-wa-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  justify-content: center;
+  padding: 10px 16px;
+  border-radius: 14px;
+  background: rgba(37, 211, 102, 0.07);
+  border: 1px solid rgba(37, 211, 102, 0.20);
+  color: rgba(37, 211, 102, 0.82);
+  text-decoration: none;
+  font-size: 0.82rem;
+  font-weight: 700;
+  font-family: 'Cairo', 'Tajawal', sans-serif;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: background 0.18s ease, color 0.18s ease, transform 0.15s ease;
+}
+
+#fpv2a-wa-cta:hover {
+  background: rgba(37, 211, 102, 0.12);
+  color: rgba(37, 211, 102, 1);
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+
+#fpv2a-wa-cta:active {
+  transform: scale(0.98);
+}
+
+.fpv2a-wa-icon {
+  font-size: 1rem;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.fpv2a-wa-text {
+  line-height: 1.2;
+}
+
+/* ── Sticky dual CTA bar (mobile) ────────────────────────────── */
+.ppui-sticky-cta--v2a {
+  display: none;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 10px;
+}
+
+.ppui-sticky-wa-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: rgba(37, 211, 102, 0.10);
+  border: 1px solid rgba(37, 211, 102, 0.25);
+  color: rgba(37, 211, 102, 0.90);
+  text-decoration: none;
+  font-size: 0.78rem;
+  font-weight: 800;
+  font-family: 'Cairo', 'Tajawal', sans-serif;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  flex-shrink: 0;
+}
+
+.ppui-sticky-wa-btn:hover {
+  background: rgba(37, 211, 102, 0.16);
+  text-decoration: none;
+  color: rgba(37, 211, 102, 1);
+}
+
+/* ── V2A-F: CTA reassurance text (ppui upgrade) ─────────────── */
+/*
+   "✔️ Paiement après intervention · Réponse rapide"
+   injected by premium-ui.js _upgradeCTA().
+   Calm, small, below the reservation button.
+*/
+.ppui-cta-reassurance {
+  margin: 6px 0 0 !important;
+  font-size: 0.73rem !important;
+  color: rgba(255,255,255,0.45) !important;
+  text-align: center;
+  line-height: 1.4;
+  font-family: 'Cairo', 'Tajawal', sans-serif;
+}
+
+/* ── V2A-G: Honest trust indicators (ppui-trust-grid--v2a) ───── */
+/*
+   Overrides the 4-column grid to 3-column max (only 3 items now).
+   Matches the reduced honest item set.
+*/
+.ppui-trust-grid--v2a {
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)) !important;
+  gap: 10px !important;
+}
+
+/* ── V2A-H: Mobile-first adjustments ───────────────────────── */
+@media (max-width: 767px) {
+  /* Sticky dual CTA */
+  .ppui-sticky-cta--v2a {
+    display: grid !important;
+  }
+
+  .ppui-sticky-cta--v2a .ppui-sticky-cta-btn {
+    flex: 1;
+    min-width: 0;
+    font-size: 0.88rem !important;
+  }
+
+  .ppui-sticky-wa-btn {
+    font-size: 0.72rem !important;
+    padding: 12px 12px !important;
+  }
+
+  /* WA CTA: full-width on mobile */
+  #fpv2a-wa-cta {
+    font-size: 0.80rem;
+  }
+
+  /* Trust strip: stack on very narrow */
+  .fpv2a-trust-strip {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .fpv2a-strip-sep {
+    display: none;
+  }
+
+  /* Bio section: slightly tighter on mobile */
+  .fpv2a-bio-text {
+    font-size: 0.88rem;
+  }
+
+  /* badge_label chip: slightly smaller */
+  .fpv2a-badge-label {
+    font-size: 0.70rem;
+    padding: 4px 12px;
+  }
+
+  /* Trust grid: 2-col max on mobile */
+  .ppui-trust-grid--v2a {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+/* 360px */
+@media (max-width: 360px) {
+  #fpv2a-wa-cta {
+    font-size: 0.74rem;
+    padding: 9px 12px;
+  }
+  .ppui-sticky-cta--v2a .ppui-sticky-cta-btn {
+    font-size: 0.82rem !important;
+  }
+  .ppui-sticky-wa-btn {
+    font-size: 0.68rem !important;
+    padding: 10px 10px !important;
+  }
+  .ppui-trust-grid--v2a {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* 320px */
+@media (max-width: 320px) {
+  .fpv2a-badge-label {
+    font-size: 0.65rem;
+    padding: 4px 10px;
+  }
+  #fpv2a-wa-cta {
+    font-size: 0.70rem !important;
+    padding: 8px 10px !important;
+  }
+  .fpv2a-bio-text {
+    font-size: 0.82rem;
+  }
+}
+
+/* ── V2A-I: Reduced-motion guard ────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .public-profile-hero {
+    animation: none !important;
+    will-change: auto !important;
+  }
+  #fpv2a-wa-cta,
+  .ppui-sticky-wa-btn {
+    transition: none !important;
+    transform: none !important;
+  }
+}

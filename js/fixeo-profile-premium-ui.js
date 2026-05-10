@@ -1,9 +1,21 @@
 /**
- * fixeo-profile-premium-ui.js
+ * fixeo-profile-premium-ui.js  v2a
  * ─────────────────────────────────────────────────────────────────────────────
  * Cosmetic DOM upgrade for artisan-profile.html
  * Enriches HTML injected by fixeo-public-artisan-profile.js AFTER render.
  * NEVER modifies: reservation logic, #public-artisan-action, routing, JS fns.
+ *
+ * V2-A CHANGES (2026-05-10):
+ *   - Removed: emoji portfolio placeholders (_injectPortfolio removed)
+ *   - Removed: synthetic bio (_injectAbout removed — real bio via v2a.js)
+ *   - Removed: unconditional fake badges ("Identité vérifiée", "Profil vérifié Fixeo")
+ *   - Removed: "Réponse en moins de 20 min" hardcoded hint
+ *   - Removed: "Urgence 24h" unconditional chip from services
+ *   - Removed: "Identité vérifiée" + "Réponse rapide" from trust indicators
+ *   - Suppressed: trust score bar when score = 0 (hide, not show)
+ *   - Kept: badge row (honest signals only), trust bar (score>0 only),
+ *           CTA upgrade, services (without fake chips), trust indicators
+ *           (honest subset), sticky mobile CTA
  * ─────────────────────────────────────────────────────────────────────────────
  */
 (function (window, document) {
@@ -18,22 +30,22 @@
   };
 
   var CAT_SKILLS = {
-    plomberie:    ['Fuite d\'eau','Débouchage','Installation','Chauffe-eau','Remplacement robinets'],
-    electricite:  ['Tableau électrique','Prises & interrupteurs','Éclairage LED','Dépannage','Conformité NF'],
-    peinture:     ['Peinture intérieure','Revêtements muraux','Enduit de finition','Décoration','Rénovation'],
-    nettoyage:    ['Nettoyage professionnel','Vitrerie','Moquette','Après-travaux','Désinfection'],
-    jardinage:    ['Tonte pelouse','Taille haies','Entretien potager','Arrosage automatique','Élagage'],
-    demenagement: ['Emballage','Transport','Montage meubles','Stockage','Déménagement international'],
-    bricolage:    ['Montage meubles','Petites réparations','Fixation','Carrelage','Parquet'],
-    climatisation:['Installation split','Entretien climatiseur','Pompe à chaleur','Ventilation','Réfrigération'],
-    menuiserie:   ['Portes & fenêtres','Cuisine sur mesure','Dressing','Parquet','Escaliers'],
-    maconnerie:   ['Gros œuvre','Rénovation','Carrelage','Enduit','Isolation'],
-    serrurerie:   ['Ouverture urgence','Blindage','Serrure multipoints','Coffre-fort','Interphone'],
-    carrelage:    ['Pose carrelage','Faïence','Rénovation sol','Joints','Imperméabilisation'],
-    etancheite:   ['Toiture-terrasse','Sous-sol','Piscine','Balcon','Traitement humidité'],
-    vitrerie:     ['Double vitrage','Miroirs','Cloisons verre','Remplacement','Sécurité'],
-    soudure:      ['Soudure TIG/MIG','Acier inox','Aluminium','Garde-corps','Portails'],
-    informatique: ['Dépannage PC','Réseau Wi-Fi','Installation logiciels','Sauvegarde','Conseil']
+    plomberie:    ['Fuite d\'eau','Débouchage','Installation sanitaire','Chauffe-eau','Robinetterie'],
+    electricite:  ['Tableau électrique','Prises & interrupteurs','Éclairage','Dépannage électrique','Câblage'],
+    peinture:     ['Peinture intérieure','Enduit de finition','Revêtements muraux','Décoration','Rénovation'],
+    nettoyage:    ['Nettoyage professionnel','Vitrerie','Après-travaux','Désinfection','Entretien locaux'],
+    jardinage:    ['Tonte & entretien','Taille de haies','Aménagement extérieur','Élagage','Arrosage'],
+    demenagement: ['Emballage','Transport','Montage meubles','Manutention','Stockage'],
+    bricolage:    ['Montage meubles','Fixation & perçage','Petites réparations','Parquet','Carrelage'],
+    climatisation:['Installation split','Entretien & maintenance','Pompe à chaleur','Ventilation','Recharge gaz'],
+    menuiserie:   ['Portes & fenêtres','Menuiserie sur mesure','Dressing & rangements','Parquet','Escaliers'],
+    maconnerie:   ['Gros œuvre','Cloisons','Enduit & plâtrerie','Rénovation','Isolation'],
+    serrurerie:   ['Ouverture urgence','Blindage porte','Serrure multipoints','Interphone','Dépannage'],
+    carrelage:    ['Pose carrelage','Faïence salle de bain','Rénovation sol','Joints & imperméabilisation','Ragréage'],
+    etancheite:   ['Toiture-terrasse','Traitement humidité','Sous-sol','Balcon & terrasse','Façade'],
+    vitrerie:     ['Double vitrage','Remplacement vitres','Cloisons verre','Miroirs','Sécurité vitrée'],
+    soudure:      ['Soudure TIG/MIG','Garde-corps','Portails','Acier & inox','Structures métalliques'],
+    informatique: ['Dépannage PC','Réseau & Wi-Fi','Installation logiciels','Sauvegarde données','Conseil']
   };
 
   function _esc(str) {
@@ -72,23 +84,33 @@
     return { name: name.trim(), category: category, city: city, trust: trust, rating: rating, reviews: reviews, isAvail: isAvail };
   }
 
-  /* ── Inject badge row below availability pill ── */
+  /* ── Inject badge row — V2A: honest signals only ── */
   function _injectBadges(data) {
     if (document.querySelector('.ppui-badge-row')) return;
     var heroMain = document.querySelector('.public-hero-main');
     if (!heroMain) return;
 
     var badges = [];
-    if (data.trust >= 85 || data.reviews >= 5)
-      badges.push('<span class="ppui-badge ppui-badge--verified">✔ Vérifié Fixeo</span>');
-    if (data.trust >= 90)
-      badges.push('<span class="ppui-badge ppui-badge--premium">🏅 Premium</span>');
-    if (data.isAvail)
-      badges.push('<span class="ppui-badge ppui-badge--fast">⚡ Dispo maintenant</span>');
-    if (!badges.length)
-      badges.push('<span class="ppui-badge ppui-badge--fixeo">🔧 Profil vérifié Fixeo</span>');
-    if (data.reviews === 0)
-      badges.push('<span class="ppui-badge ppui-badge--new">✨ Nouveau professionnel</span>');
+
+    /* Availability signal — honest (always accurate) */
+    if (data.isAvail) {
+      badges.push('<span class="ppui-badge ppui-badge--fast">\u26a1 Disponible maintenant</span>');
+    }
+
+    /* Review-based credibility — only when real reviews exist */
+    if (data.reviews > 0) {
+      badges.push('<span class="ppui-badge ppui-badge--verified">\u2714 Artisan actif</span>');
+    }
+
+    /* V2A: badge_label is injected by fixeo-profile-v2a.js into data-badge-label attr
+     * on the hero element — read it here if available */
+    var heroEl = document.querySelector('.public-profile-hero');
+    var badgeLabel = heroEl && heroEl.dataset.badgeLabel;
+    if (badgeLabel) {
+      badges.push('<span class="ppui-badge ppui-badge--fixeo ppui-badge--label">' + _esc(badgeLabel) + '</span>');
+    }
+
+    if (!badges.length) return; /* V2A: show nothing rather than fake fallback */
 
     var row = document.createElement('div');
     row.className = 'ppui-badge-row';
@@ -103,14 +125,22 @@
     }
   }
 
-  /* ── Upgrade trust score: add visual bar ── */
+  /* ── Upgrade trust score: add visual bar ONLY when score > 0 ── */
   function _upgradeTrustScore(data) {
     var scoreEl = document.querySelector('.public-trust-score');
-    if (!scoreEl || scoreEl.querySelector('.ppui-trust-bar-wrap')) return;
+    if (!scoreEl) return;
+
+    /* V2A: if score is 0 or very low, hide entirely — showing "0/100" destroys trust */
+    if (data.trust <= 0) {
+      scoreEl.style.display = 'none';
+      return;
+    }
+
+    if (scoreEl.querySelector('.ppui-trust-bar-wrap')) return;
     var score = data.trust;
     var barHtml =
       '<div class="ppui-trust-bar-wrap">' +
-        '<span class="ppui-trust-bar-label">Trust Score</span>' +
+        '<span class="ppui-trust-bar-label">Indice de confiance</span>' +
         '<div class="ppui-trust-bar-track"><div class="ppui-trust-bar-fill" style="width:'+score+'%"></div></div>' +
         '<span class="ppui-trust-score-val">'+score+' / 100</span>' +
       '</div>';
@@ -118,75 +148,48 @@
     scoreEl.insertAdjacentHTML('afterend', barHtml);
   }
 
-  /* ── Upgrade CTA button label ── */
+  /* ── Upgrade CTA button label — V2A: no fake urgency hint ── */
   function _upgradeCTA(data) {
     var btn = document.getElementById('public-artisan-action');
     if (!btn || btn.dataset.ppuiUpgraded) return;
     btn.dataset.ppuiUpgraded = '1';
     /* Only improve label — never change onclick/id */
     if (data.isAvail) {
-      btn.textContent = '📅 Réserver cet artisan';
+      btn.textContent = 'R\u00e9server l\u2019intervention';
     } else {
-      btn.textContent = '📅 Demander intervention';
+      btn.textContent = 'Demander une intervention';
     }
-    /* Add urgency sub-label */
-    if (data.isAvail && !btn.nextElementSibling?.classList.contains('ppui-cta-hint')) {
-      var hint = document.createElement('p');
-      hint.className = 'ppui-cta-hint';
-      hint.style.cssText = 'margin:8px 0 0;font-size:.76rem;color:rgba(255,255,255,.5);text-align:center;';
-      hint.textContent = '⚡ Réponse moyenne en moins de 20 min';
-      btn.parentNode.insertBefore(hint, btn.nextSibling);
+    /* V2A: REMOVED "Réponse en moins de 20 min" — hardcoded fake urgency */
+    /* V2A: ADD "Paiement après intervention" reassurance below CTA */
+    if (!btn.nextElementSibling || !btn.nextElementSibling.classList.contains('ppui-cta-reassurance')) {
+      var reassurance = document.createElement('p');
+      reassurance.className = 'ppui-cta-reassurance';
+      reassurance.innerHTML = '\u2714\ufe0f Paiement apr\u00e8s intervention &nbsp;&bull;&nbsp; R\u00e9ponse rapide';
+      btn.parentNode.insertBefore(reassurance, btn.nextSibling);
     }
   }
 
-  /* ── Inject "À propos" section ── */
-  function _injectAbout(data) {
-    if (document.getElementById('ppui-about')) return;
-    var root = document.querySelector('.public-artisan-shell');
-    if (!root) return;
-
-    var catIcon = CAT_ICONS[data.category] || '🔧';
-    var catLabel = (document.querySelector('.public-hero-meta')||{}).textContent || data.category;
-    catLabel = catLabel.split('•')[0].trim();
-
-    var bio = data.reviews > 0
-      ? 'Artisan qualifié spécialisé en '+_esc(catLabel)+', basé à '+_esc(data.city)+'. Professionnel vérifié par Fixeo avec un historique de missions validées et des avis clients authentiques.'
-      : 'Nouveau professionnel recommandé, spécialisé en '+_esc(catLabel)+', disponible pour ses premières missions à '+_esc(data.city)+'. Profil vérifié par l\'équipe Fixeo.';
-
-    var section = document.createElement('section');
-    section.id = 'ppui-about';
-    section.className = 'ppui-section';
-    section.innerHTML =
-      '<p class="ppui-section-kicker">À propos</p>'+
-      '<h2 class="ppui-section-title">'+catIcon+' '+_esc(catLabel)+' à '+_esc(data.city)+'</h2>'+
-      '<p class="ppui-about-text">'+bio+'</p>';
-
-    /* Insert before the .public-section-grid */
-    var grid = root.querySelector('.public-section-grid');
-    if (grid) root.insertBefore(section, grid);
-    else root.appendChild(section);
-  }
-
-  /* ── Inject Services section ── */
+  /* ── Inject Services section — V2A: no fake "Urgence 24h" chip ── */
   function _injectServices(data) {
     if (document.getElementById('ppui-services')) return;
     var root = document.querySelector('.public-artisan-shell');
     if (!root) return;
 
-    var skills = CAT_SKILLS[data.category] ||
-                 ['Intervention rapide','Devis gratuit','Travail soigné','Garantie satisfaction'];
+    var skills = CAT_SKILLS[data.category];
+    /* V2A: only inject services section if we have real category-level skills */
+    if (!skills) return;
+
     var catIcon = CAT_ICONS[data.category] || '🔧';
 
     var section = document.createElement('section');
     section.id = 'ppui-services';
     section.className = 'ppui-section';
     section.innerHTML =
-      '<p class="ppui-section-kicker">Services proposés</p>'+
-      '<h2 class="ppui-section-title">Prestations disponibles</h2>'+
+      '<p class="ppui-section-kicker">Sp\u00e9cialit\u00e9s</p>'+
+      '<h2 class="ppui-section-title">Prestations propos\u00e9es</h2>'+
       '<div class="ppui-services-grid">'+
         skills.map(function(s){ return '<span class="ppui-service-chip">'+catIcon+' '+_esc(s)+'</span>'; }).join('')+
-        '<span class="ppui-service-chip">🏡 Devis gratuit</span>'+
-        '<span class="ppui-service-chip">📞 Urgence 24h</span>'+
+        /* V2A: removed "Devis gratuit" and "Urgence 24h" — not artisan-specific */
       '</div>';
 
     var grid = root.querySelector('.public-section-grid');
@@ -194,56 +197,41 @@
     else root.appendChild(section);
   }
 
-  /* ── Inject Réalisations portfolio section ── */
-  function _injectPortfolio(data) {
-    if (document.getElementById('ppui-portfolio')) return;
-    var root = document.querySelector('.public-artisan-shell');
-    if (!root) return;
-
-    var icons = ['🔧','⚙️','🏠','🛠️','✨','🏗️'];
-    var catIcon = CAT_ICONS[data.category] || '🔧';
-    var placeholders = [catIcon,'✅','📸','🏆','⭐','🛠️'].slice(0,6);
-
-    var section = document.createElement('section');
-    section.id = 'ppui-portfolio';
-    section.className = 'ppui-section';
-    section.innerHTML =
-      '<p class="ppui-section-kicker">Réalisations</p>'+
-      '<h2 class="ppui-section-title">Exemples de travaux</h2>'+
-      '<div class="ppui-portfolio-grid">'+
-        placeholders.map(function(icon, i){
-          return '<div class="ppui-portfolio-item" title="Réalisation '+(i+1)+'">'+icon+'</div>';
-        }).join('')+
-      '</div>'+
-      '<p style="margin:14px 0 0;font-size:.78rem;color:rgba(255,255,255,.4);font-style:italic;">'+
-        'Photos de réalisations disponibles sur demande'+
-      '</p>';
-
-    /* Insert after services section */
-    var services = document.getElementById('ppui-services');
-    var grid = root.querySelector('.public-section-grid');
-    var anchor = services ? services.nextSibling : (grid || null);
-    if (anchor) root.insertBefore(section, anchor);
-    else root.appendChild(section);
-  }
-
-  /* ── Inject Trust indicators block inside stats panel ── */
+  /* ── Inject Trust indicators — V2A: honest subset only ── */
   function _injectTrustIndicators(data) {
     if (document.querySelector('.ppui-trust-grid')) return;
-    /* Find the stats panel (second .public-panel) */
     var panels = document.querySelectorAll('.public-panel');
     var statsPanel = panels.length >= 2 ? panels[1] : null;
     if (!statsPanel) return;
 
+    /* V2A: removed "Identité vérifiée" (verified=false for all) and
+     * "Réponse rapide" (no real response time data).
+     * Kept: real review signal + Fixeo platform guarantee.
+     * Added: "Paiement après intervention" — this is 100% real and powerful. */
     var items = [
-      { icon: '🔒', label: 'Identité vérifiée', sub: 'Contrôle Fixeo' },
-      { icon: '⭐', label: data.reviews > 0 ? data.reviews+' avis clients' : 'Nouveau profil', sub: data.reviews > 0 ? 'Avis authentiques' : 'Disponible pour 1ères missions' },
-      { icon: '⚡', label: 'Réponse rapide', sub: 'Moins de 30 min en moyenne' },
-      { icon: '🛡️', label: 'Paiement sécurisé', sub: 'Transactions protégées Fixeo' }
+      {
+        icon: '\u2b50',
+        label: data.reviews > 0 ? data.reviews + '\u00a0interventions enregistr\u00e9es' : 'Artisan s\u00e9lectionn\u00e9 Fixeo',
+        sub: data.reviews > 0 ? 'Historique v\u00e9rifiable' : 'Disponible pour ses premi\u00e8res missions'
+      },
+      {
+        icon: '\ud83d\udcb3',
+        label: 'Paiement apr\u00e8s intervention',
+        sub: 'Vous payez uniquement apr\u00e8s satisfaction'
+      }
     ];
 
+    /* V2A: only add city trust item if city is known */
+    if (data.city) {
+      items.push({
+        icon: '\ud83d\udccd',
+        label: 'Zone\u00a0: ' + data.city,
+        sub: 'Artisan local v\u00e9rifi\u00e9 par Fixeo'
+      });
+    }
+
     var grid = document.createElement('div');
-    grid.className = 'ppui-trust-grid';
+    grid.className = 'ppui-trust-grid ppui-trust-grid--v2a';
     grid.innerHTML = items.map(function(item){
       return '<div class="ppui-trust-item">'+
         '<span class="ppui-trust-icon">'+item.icon+'</span>'+
@@ -254,16 +242,23 @@
     statsPanel.appendChild(grid);
   }
 
-  /* ── Sticky mobile CTA (does NOT duplicate reservation logic — calls original btn) ── */
-  function _injectStickyCTA() {
+  /* ── Sticky mobile CTA — V2A: dual action (reserve + WhatsApp) ── */
+  function _injectStickyCTA(data) {
     if (document.getElementById('ppui-sticky-cta')) return;
     var wrap = document.createElement('div');
     wrap.id = 'ppui-sticky-cta';
-    wrap.className = 'ppui-sticky-cta';
-    wrap.innerHTML = '<button class="ppui-sticky-cta-btn" type="button" id="ppui-sticky-btn">📅 Réserver cet artisan</button>';
+    wrap.className = 'ppui-sticky-cta ppui-sticky-cta--v2a';
+    /* V2A: dual CTA — primary reserve + secondary WhatsApp relay */
+    wrap.innerHTML =
+      '<button class="ppui-sticky-cta-btn" type="button" id="ppui-sticky-btn">R\u00e9server l\u2019intervention</button>' +
+      '<a class="ppui-sticky-wa-btn" id="ppui-sticky-wa" ' +
+        'href="https://wa.me/212660484415?text=Bonjour%20Fixeo%2C%20je%20suis%20int%C3%A9ress%C3%A9%20par%20un%20artisan%20pour%20une%20intervention." ' +
+        'target="_blank" rel="noopener noreferrer">' +
+        '\ud83d\udcac Contacter' +
+      '</a>';
     document.body.appendChild(wrap);
 
-    /* Delegate to the original #public-artisan-action */
+    /* Primary delegates to original reservation button */
     document.getElementById('ppui-sticky-btn').addEventListener('click', function() {
       var orig = document.getElementById('public-artisan-action');
       if (orig) orig.click();
@@ -295,16 +290,15 @@
 
     var data = _parseHeroData();
 
-    _injectBadges(data);
+    /* V2A REMOVED: _injectPortfolio (emoji placeholders) */
+    /* V2A REMOVED: _injectAbout (synthetic bio) */
+    /* V2A: run badge injection AFTER v2a.js may have set data-badge-label */
+    setTimeout(function() { _injectBadges(data); }, 150);
     _upgradeTrustScore(data);
     _upgradeCTA(data);
-    _injectAbout(data);
     _injectServices(data);
-    _injectPortfolio(data);
     _injectTrustIndicators(data);
-    _injectStickyCTA();
-
-    console.log('✅ Fixeo Profile Premium UI injected');
+    _injectStickyCTA(data);
   }
 
   /* ── Watch for async render (MutationObserver) ── */
@@ -312,10 +306,8 @@
     var root = document.getElementById('public-artisan-root');
     if (!root) return;
 
-    /* Try immediately first */
     upgrade();
 
-    /* Watch for dynamic injection */
     if (window.MutationObserver) {
       var obs = new MutationObserver(function() {
         if (root.querySelector('.public-profile-hero')) {
