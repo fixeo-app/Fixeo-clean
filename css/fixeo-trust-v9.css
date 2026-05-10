@@ -549,3 +549,11 @@
     font-size: 0.68rem !important;
   }
 }
+
+/* ── V1-A fix: Override testimonials-cta-premium.css specificity (0,2,2) ── */
+/* That file uses: html body .testimonial-section .section-tag = (0,2,2)
+   Our original .fxv-section .fxv-vtag = (0,2,0) was too weak.
+   This selector: html body .fxv-section .section-tag.fxv-vtag = (0,3,2) — wins cleanly. */
+html body .fxv-section .section-tag.fxv-vtag {
+  display: none !important;
+}
