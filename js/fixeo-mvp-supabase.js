@@ -795,6 +795,9 @@
           return '<div class="client-stat-card"><span class="stat-number">' + escapeHtml(stat.value) + '</span><span class="stat-label">' + escapeHtml(stat.label) + '</span></div>';
         }).join('');
         statsEl.dataset.real = '1';
+        // DX-1: mark grid when at least one stat is non-zero (enables CSS full-opacity reveal)
+        var hasAnyData = statsData.some(function (s) { return s.value > 0; });
+        if (hasAnyData) statsEl.classList.add('fxd-has-data');
       }
 
       // Actions

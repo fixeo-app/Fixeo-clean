@@ -16,8 +16,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Fixeo - Espace Client</title>
   <script src="js/fixeo-auth-guard.js?v=p1b"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+<!-- Fonts: deferred, matches homepage/auth pattern (DX-1) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&family=Tajawal:wght@400;500;700&display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&family=Tajawal:wght@400;500;700&display=swap"></noscript>
   <link rel="stylesheet" href="css/variables.css">
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/style.css">
@@ -1089,6 +1092,8 @@ select option{background:#1a1a2e!important;color:#fff!important;}
   <link rel="stylesheet" href="css/fixeo-notifications-real-v1.css?v=1">
   <!-- Phase 2 Mission Lifecycle — additive -->
   <link rel="stylesheet" href="css/mission-lifecycle-p2.css?v=1">
+  <!-- DX-1: Trust Cleanup & Typography upgrade -->
+  <link rel="stylesheet" href="css/dashboard-client-dx1.css?v=1">
   <!-- ══ LOGO OVERRIDE - image-only, no emoji, no text ══ -->
   <style id="fixeo-logo-override">
     /* Kill legacy logo-icon and logo-text */
@@ -1325,18 +1330,14 @@ select option{background:#1a1a2e!important;color:#fff!important;}
       </a>
       <a class="sidebar-link" href="#messages" onclick="showSection('messages')">
         <span class="icon">💬</span><span>Messages</span>
-        <span style="margin-left:auto;font-size:.7rem;padding:2px 8px;background:var(--accent-red);border-radius:20px;color:#fff;flex-shrink:0">2</span>
       </a>
-      <a class="sidebar-link" href="#reviews" onclick="showSection('reviews')">
-        <span class="icon">⭐</span><span>Mes avis</span>
-      </a>
+      <!-- Mes avis: hidden until reviews table exists in Supabase -->
+      <!-- <a class="sidebar-link" href="#reviews" onclick="showSection('reviews')"><span class="icon">⭐</span><span>Mes avis</span></a> -->
       <div class="sidebar-section-label">Découvrir</div>
       <a class="sidebar-link" href="index.html#artisans-section">
         <span class="icon">🔍</span><span>Trouver un artisan</span>
       </a>
-      <a class="sidebar-link" href="index.html#feed-section">
-        <span class="icon">📸</span><span>Réalisations</span>
-      </a>
+      <!-- Réalisations: feed-section doesn't exist in index.html — removed to avoid dead link -->
       <div class="sidebar-section-label">Compte</div>
       <a class="sidebar-link" href="#settings" onclick="showSection('settings')">
         <span class="icon">⚙️</span><span>Paramètres</span>
@@ -1355,7 +1356,7 @@ select option{background:#1a1a2e!important;color:#fff!important;}
       <section class="client-dashboard-hero">
         <div class="client-dashboard-top fxd-hero-v2">
           <div class="fxd-hero-copy">
-            <div class="section-tag fxd-hero-badge">DASHBOARD CLIENT</div>
+            <div class="section-tag fxd-hero-badge">VOTRE ESPACE FIXEO</div>
             <h1 class="fxd-hero-headline">Publiez votre demande en&nbsp;30&nbsp;secondes ⚡</h1>
             <p class="fxd-hero-sub">Des artisans vérifiés vous répondent rapidement avec prix et délai.</p>
             <div class="fixeo-hero-trust fxd-trust-v2">
@@ -1391,10 +1392,10 @@ select option{background:#1a1a2e!important;color:#fff!important;}
             <div class="fxd-nudge-card fxd-nudge-v2">
               <div class="fxd-nudge-icon">💡</div>
               <div class="fxd-nudge-body">
-                <div class="fxd-nudge-label">Astuce Fixeo</div>
-                <p class="fxd-nudge-msg">Les clients qui décrivent précisément leur besoin reçoivent <strong>3x plus de réponses</strong>.</p>
+                <div class="fxd-nudge-label">Conseil</div>
+                <p class="fxd-nudge-msg">Décrivez votre besoin avec précision — les artisans qualifiés de votre ville seront alertés <strong>immédiatement</strong>.</p>
               </div>
-              <button class="btn btn-primary fxd-nudge-cta" onclick="FixeoDashboardModals.openRequest()">Créer une demande optimisée</button>
+              <button class="btn btn-primary fxd-nudge-cta" onclick="FixeoDashboardModals.openRequest()">Publier une demande</button>
             </div>
 
             <!-- Step 2 — Primary empty-state activation block -->
@@ -1449,42 +1450,18 @@ select option{background:#1a1a2e!important;color:#fff!important;}
             <div class="favorite-list" id="client-favorites-list"></div>
           </section>
 
-          <section class="dashboard-panel" style="padding:18px 16px">
-            <div class="fixeo-artisans-preview">
-              <h4>👨‍🔧 Artisans recommandés</h4>
-              <!-- renderRecommended() will populate this when real data is available -->
-              <div id="recommended-artisans">
-                <div class="fixeo-artisan-static-cards">
-                  <div class="fixeo-artisan-static-card fxd-acard-v2">
-                    <div class="fxasc-avatar">🔧</div>
-                    <div class="fxasc-badge">✔️ Vérifié</div>
-                    <div class="fxasc-name">Plombier — Fès</div>
-                    <div class="fxasc-stars" aria-label="4.8 étoiles">★★★★★</div>
-                    <div class="fxasc-rating">4.8 <span class="fxasc-reviews">(32 avis)</span></div>
-                    <div class="fxasc-avail">🟢 Disponible aujourd'hui</div>
-                    <button class="btn-fxasc fxd-devis-btn" onclick="FixeoDashboardModals.openRequest()">Demander un devis</button>
-                  </div>
-                  <div class="fixeo-artisan-static-card fxd-acard-v2">
-                    <div class="fxasc-avatar">⚡</div>
-                    <div class="fxasc-badge">✔️ Vérifié</div>
-                    <div class="fxasc-name">Électricien — Fès</div>
-                    <div class="fxasc-stars" aria-label="4.7 étoiles">★★★★★</div>
-                    <div class="fxasc-rating">4.7 <span class="fxasc-reviews">(21 avis)</span></div>
-                    <div class="fxasc-avail">🟢 Disponible aujourd'hui</div>
-                    <button class="btn-fxasc fxd-devis-btn" onclick="FixeoDashboardModals.openRequest()">Demander un devis</button>
-                  </div>
-                  <div class="fixeo-artisan-static-card fxd-acard-v2">
-                    <div class="fxasc-avatar">🎨</div>
-                    <div class="fxasc-badge">✔️ Vérifié</div>
-                    <div class="fxasc-name">Peintre — Fès</div>
-                    <div class="fxasc-stars" aria-label="4.9 étoiles">★★★★★</div>
-                    <div class="fxasc-rating">4.9 <span class="fxasc-reviews">(18 avis)</span></div>
-                    <div class="fxasc-avail">🟢 Disponible aujourd'hui</div>
-                    <button class="btn-fxasc fxd-devis-btn" onclick="FixeoDashboardModals.openRequest()">Demander un devis</button>
-                  </div>
-                </div>
+          <section class="dashboard-panel fxd-marketplace-panel" style="padding:18px 16px">
+            <div class="fxd-mp-header">
+              <span class="fxd-mp-icon">&#127959;</span>
+              <div>
+                <div class="fxd-mp-title">861 artisans dans votre r&eacute;seau</div>
+                <div class="fxd-mp-sub">Plombiers, &eacute;lectriciens, peintres et plus &mdash; disponibles maintenant.</div>
               </div>
             </div>
+            <div id="recommended-artisans">
+              <!-- Real artisan cards injected here by renderRecommended() when available -->
+            </div>
+            <a href="index.html#artisans-section" class="btn btn-secondary fxd-mp-cta">Explorer les artisans &rarr;</a>
           </section>
         </aside>
       </div>
@@ -1619,27 +1596,7 @@ select option{background:#1a1a2e!important;color:#fff!important;}
   </div>
 </div>
 
-<!-- Chat widget -->
-<div class="chat-widget">
-  <div class="chat-panel" id="chat-panel">
-    <div class="chat-panel-header">
-      <div style="width:36px;height:36px;border-radius:50%;background:var(--grad-primary);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0">🔧</div>
-      <div style="min-width:0">
-        <div style="font-weight:700;font-size:.9rem">Support Fixeo</div>
-        <div style="font-size:.72rem;color:var(--success)">● En ligne</div>
-      </div>
-      <button class="btn btn-ghost btn-sm" onclick="toggleChat()" style="margin-left:auto;flex-shrink:0">✕</button>
-    </div>
-    <div class="chat-messages" id="chat-messages">
-      <div class="msg received">Bonjour ! Comment puis-je vous aider ? 😊</div>
-    </div>
-    <div class="chat-input-row">
-      <input type="text" id="chat-input-field" class="chat-input" placeholder="Écrire un message...">
-      <button class="btn btn-primary btn-sm" onclick="sendMessage()">→</button>
-    </div>
-  </div>
-  <button class="chat-toggle" onclick="toggleChat()">💬</button>
-</div>
+<!-- Chat widget removed: fake "● En ligne" bot replaced — real WhatsApp support link to be added in Phase DX-3 -->
 
 <script src="js/fixeo-session-mobile.js"></script>
 <script src="js/fixeo-header-global.js"></script>

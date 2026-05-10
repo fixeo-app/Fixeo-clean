@@ -1,0 +1,226 @@
+/* ═══════════════════════════════════════════════════════════════
+   FIXEO — Dashboard Client DX-1
+   Trust Cleanup & Typography Upgrade
+
+   Scope: dashboard-client.html only
+   Strategy: append-only; zero impact on JS IDs, auth, modal system
+   Version: v1 (2026-05-10)
+
+   Sections:
+   DX1-A  Typography parity with homepage/auth
+   DX1-B  Stats grid: hide-when-zero treatment
+   DX1-C  Marketplace panel (replaces fake artisan cards)
+   DX1-D  Hero badge polish
+   DX1-E  Empty-state intelligent styling
+   DX1-F  Reduced-motion guard
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── DX1-A: Typography parity ────────────────────────────────── */
+/* Match homepage/auth font-smoothing + text-rendering
+   (main.css sets font-family via var(--font-main) ✅; smoothing was missing) */
+.dashboard-layout {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Hero headline: clamp + letter-spacing to match auth/homepage heading register */
+.fxd-hero-headline {
+  font-size: clamp(1.25rem, 3vw, 1.75rem) !important;
+  letter-spacing: -0.022em !important;
+  font-weight: 800 !important;
+  line-height: 1.2 !important;
+}
+
+/* Hero sub: tighter line-height for compactness */
+.fxd-hero-sub {
+  font-size: 0.92rem !important;
+  line-height: 1.55 !important;
+  letter-spacing: 0 !important;
+}
+
+/* Trust pills: subtle letter-spacing for readability */
+.fxd-trust-v2 span {
+  letter-spacing: 0.01em;
+}
+
+/* Section headings in panels */
+.client-section-header h2 {
+  font-size: 1.05rem !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.01em;
+}
+
+/* Section description text */
+.client-section-header p {
+  font-size: 0.82rem !important;
+  line-height: 1.5;
+}
+
+/* ── DX1-B: Stats grid — zero-state treatment ────────────────── */
+/* When all stats are 0 (new user), de-emphasise instead of removing
+   (removal requires JS; de-emphasis is CSS-safe and reversible)        */
+#client-stats-grid:not([data-real]) .client-stat-card {
+  opacity: 0.42;
+  filter: grayscale(0.3);
+}
+
+/* When real data lands (data-real='1'), fade in naturally */
+#client-stats-grid[data-real] .client-stat-card {
+  opacity: 1;
+  filter: none;
+  transition: opacity 0.35s ease, filter 0.35s ease;
+}
+
+/* Stat number: bigger, bolder */
+.client-stat-card .stat-number {
+  font-size: clamp(1.5rem, 3vw, 2rem) !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.03em;
+}
+
+.client-stat-card .stat-label {
+  font-size: 0.72rem !important;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  opacity: 0.7;
+}
+
+/* ── DX1-C: Marketplace panel ────────────────────────────────── */
+.fxd-marketplace-panel {
+  background: rgba(255,255,255,0.03) !important;
+  border: 1px solid rgba(255,255,255,0.08) !important;
+  border-radius: 16px !important;
+  transition: box-shadow 0.2s ease !important;
+}
+
+.fxd-marketplace-panel:hover {
+  box-shadow: 0 6px 24px rgba(0,0,0,0.25), 0 0 0 1px rgba(255,255,255,0.06) !important;
+}
+
+.fxd-mp-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.fxd-mp-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.fxd-mp-title {
+  font-size: 0.97rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 4px;
+  letter-spacing: -0.01em;
+}
+
+.fxd-mp-sub {
+  font-size: 0.80rem;
+  color: rgba(255,255,255,0.62);
+  line-height: 1.5;
+}
+
+.fxd-mp-cta {
+  display: inline-block !important;
+  width: 100%;
+  text-align: center;
+  margin-top: 14px;
+  font-size: 0.85rem !important;
+  font-weight: 700 !important;
+  padding: 10px 16px !important;
+  border-radius: 10px !important;
+  text-decoration: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease !important;
+}
+
+.fxd-mp-cta:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 16px rgba(255,255,255,0.08) !important;
+  text-decoration: none;
+}
+
+/* ── DX1-D: Hero badge — ESPACE CLIENT register ──────────────── */
+.fxd-hero-badge {
+  font-size: 0.68rem !important;
+  letter-spacing: 0.1em !important;
+  font-weight: 800 !important;
+  text-transform: uppercase;
+  /* Emerald tint for "safe / personal space" register
+     (vs pink = urgent; blue = request) */
+  background: rgba(74,222,128,0.12) !important;
+  border: 1px solid rgba(74,222,128,0.28) !important;
+  color: rgba(74,222,128,0.92) !important;
+  padding: 4px 10px !important;
+  border-radius: 99px !important;
+}
+
+/* ── DX1-E: Empty states — intelligent copy ──────────────────── */
+/* Nudge card — honest register */
+.fxd-nudge-label {
+  font-size: 0.68rem !important;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  /* Neutral amber: advice, not alarm */
+  color: rgba(251,191,36,0.9) !important;
+  margin-bottom: 4px;
+}
+
+/* Primary empty state: invitation tone */
+.fxd-empty-title {
+  font-size: 1rem !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.01em !important;
+}
+
+.fxd-empty-sub {
+  font-size: 0.84rem !important;
+  line-height: 1.55 !important;
+}
+
+/* Requests empty state: de-emphasise "Aucune demande" heading (it's a sub-state, not a title) */
+#fixeo-smart-cta .fxd-empty-icon {
+  opacity: 0.45;
+}
+
+/* Replies section: slimmer empty state */
+#client-replies-list .reply-card {
+  padding: 20px 16px !important;
+}
+
+/* Favorites: lighter empty text */
+#client-favorites-list .favorite-item {
+  font-size: 0.82rem !important;
+  padding: 14px 0 !important;
+}
+
+/* Actions empty hint: more readable */
+#fxd-action-empty-hint {
+  font-size: 0.80rem !important;
+  line-height: 1.55;
+  color: rgba(255,255,255,0.58) !important;
+  border-style: dashed !important;
+  border-color: rgba(255,255,255,0.1) !important;
+}
+
+/* ── DX1-F: Reduced-motion guard ─────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  #client-stats-grid[data-real] .client-stat-card {
+    transition: none !important;
+  }
+  .fxd-mp-cta:hover {
+    transform: none !important;
+  }
+}
+
+/* ── DX1-G: Stats grid live data marker ──────────────────────── */
+/* When JS marks the grid as having real non-zero data, full opacity */
+#client-stats-grid.fxd-has-data .client-stat-card {
+  opacity: 1 !important;
+  filter: none !important;
+}
