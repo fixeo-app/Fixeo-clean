@@ -502,3 +502,257 @@
     transition: none !important;
   }
 }
+
+/* ================================================================
+   V2-C — INTERVENTION TIMELINE CONTINUITY
+   Appended 2026-05-10 (resv2c-timeline)
+
+   Surfaces:
+     .fxv2c-timeline            — full horizontal timeline (confirmation.html)
+     .fxv2c-mini                — compact inline timeline (dashboard cards)
+   Namespace: .fxv2c-*
+   ================================================================ */
+
+/* ── V2-C Full Timeline — confirmation.html ─────────────── */
+/*
+   Replaces the V2-B .conf-status-row 4-item grid.
+   Fully horizontal with connector line on desktop.
+   Vertical single-column on mobile ≤ 390px.
+   Four states: enregistrée | en coordination | confirmée | terminée.
+   State classes: .fxv2c-done (past) | .fxv2c-active (current) | [none] (future)
+*/
+.fxv2c-timeline {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  position: relative;
+  gap: 0;
+  margin: 0 0 20px;
+  padding: 0 4px;
+}
+
+/* Connector line behind all steps */
+.fxv2c-timeline::before {
+  content: '';
+  position: absolute;
+  top: 16px; /* vertically centered on the circle */
+  left: 20px;
+  right: 20px;
+  height: 2px;
+  background: rgba(255,255,255,.08);
+  z-index: 0;
+}
+
+/* Progress fill — covers from step 1 to active step */
+.fxv2c-timeline::after {
+  content: '';
+  position: absolute;
+  top: 16px;
+  left: 20px;
+  height: 2px;
+  background: linear-gradient(90deg, #20C997, rgba(32,201,151,.4));
+  z-index: 0;
+  /* Width set per state via modifier classes on the timeline element */
+  width: var(--fxv2c-progress, 0%);
+  transition: width 0.4s ease-out;
+}
+/* State 1: just registered */
+.fxv2c-timeline[data-state="1"]  { --fxv2c-progress: 0%; }
+/* State 2: coordination active */
+.fxv2c-timeline[data-state="2"]  { --fxv2c-progress: 33%; }
+/* State 3: artisan confirmed */
+.fxv2c-timeline[data-state="3"]  { --fxv2c-progress: 66%; }
+/* State 4: complete */
+.fxv2c-timeline[data-state="4"]  { --fxv2c-progress: 100%; }
+
+.fxv2c-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  z-index: 1;
+  text-align: center;
+}
+
+/* Circle */
+.fxv2c-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .85rem;
+  font-weight: 800;
+  flex-shrink: 0;
+  border: 2px solid rgba(255,255,255,.1);
+  background: rgba(255,255,255,.05);
+  color: rgba(255,255,255,.3);
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+/* Done: filled green */
+.fxv2c-step.fxv2c-done .fxv2c-circle {
+  background: rgba(32,201,151,.18);
+  border-color: rgba(32,201,151,.45);
+  color: #20C997;
+}
+
+/* Active: prominent — amber/green gradient ring */
+.fxv2c-step.fxv2c-active .fxv2c-circle {
+  background: rgba(32,201,151,.1);
+  border-color: #20C997;
+  color: #20C997;
+  box-shadow: 0 0 0 3px rgba(32,201,151,.12);
+}
+
+/* Label */
+.fxv2c-label {
+  font-size: .65rem;
+  font-weight: 700;
+  color: rgba(255,255,255,.3);
+  line-height: 1.35;
+  letter-spacing: .02em;
+  word-break: break-word;
+}
+.fxv2c-step.fxv2c-done .fxv2c-label  { color: rgba(32,201,151,.75); }
+.fxv2c-step.fxv2c-active .fxv2c-label { color: rgba(255,255,255,.85); }
+
+/* ── V2-C Mini Timeline — dashboard booking cards ─────── */
+/*
+   Compact horizontal 4-dot row shown below each booking card.
+   Does NOT use connector lines — just dots with labels.
+   Mobile-safe: wraps cleanly, no overflow.
+*/
+.fxv2c-mini {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-top: 8px;
+  overflow: hidden;
+}
+.fxv2c-mini-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  flex: 1;
+  min-width: 0;
+  position: relative;
+}
+/* Connector line between dots */
+.fxv2c-mini-step + .fxv2c-mini-step::before {
+  content: '';
+  position: absolute;
+  top: 5px;
+  right: 50%;
+  left: -50%;
+  height: 1.5px;
+  background: rgba(255,255,255,.08);
+  z-index: 0;
+}
+.fxv2c-mini-step.fxv2c-done + .fxv2c-mini-step::before,
+.fxv2c-mini-step.fxv2c-done + .fxv2c-mini-step.fxv2c-active::before {
+  background: rgba(32,201,151,.3);
+}
+.fxv2c-mini-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.1);
+  border: 1.5px solid rgba(255,255,255,.12);
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+}
+.fxv2c-mini-step.fxv2c-done  .fxv2c-mini-dot { background: rgba(32,201,151,.6); border-color: #20C997; }
+.fxv2c-mini-step.fxv2c-active .fxv2c-mini-dot {
+  background: rgba(32,201,151,.2);
+  border-color: #20C997;
+  box-shadow: 0 0 0 2px rgba(32,201,151,.15);
+}
+.fxv2c-mini-label {
+  font-size: .58rem;
+  color: rgba(255,255,255,.28);
+  text-align: center;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 52px;
+}
+.fxv2c-mini-step.fxv2c-done  .fxv2c-mini-label { color: rgba(32,201,151,.6); }
+.fxv2c-mini-step.fxv2c-active .fxv2c-mini-label { color: rgba(255,255,255,.72); }
+
+/* ── WhatsApp contextual hint (state-specific) ────────── */
+/*
+   Shown below the WA button on confirmation.html.
+   Content injected by JS based on state.
+   Low-emphasis — does not compete with primary WA button.
+*/
+.fxv2c-wa-context {
+  font-size: .72rem;
+  color: rgba(37,211,102,.5);
+  text-align: center;
+  margin: -2px 0 10px;
+  line-height: 1.45;
+}
+
+/* ── Mobile ≤ 390px — compact circles ─────────────────── */
+@media (max-width: 390px) {
+  .fxv2c-circle {
+    width: 28px;
+    height: 28px;
+    font-size: .78rem;
+  }
+  .fxv2c-label {
+    font-size: .6rem;
+  }
+  .fxv2c-timeline::before,
+  .fxv2c-timeline::after {
+    top: 14px;
+  }
+}
+
+/* ── Mobile ≤ 360px — hide labels, just dots ──────────── */
+@media (max-width: 360px) {
+  .fxv2c-label {
+    display: none;
+  }
+  .fxv2c-timeline {
+    justify-content: center;
+    gap: 12px;
+  }
+  .fxv2c-timeline::before,
+  .fxv2c-timeline::after {
+    left: 16px;
+    right: 16px;
+  }
+}
+
+/* ── Mobile ≤ 320px — even tighter circles ────────────── */
+@media (max-width: 320px) {
+  .fxv2c-circle {
+    width: 24px;
+    height: 24px;
+    font-size: .7rem;
+  }
+  .fxv2c-mini-label {
+    font-size: .52rem;
+    max-width: 40px;
+  }
+}
+
+/* ── Reduced-motion — collapse connector transition ────── */
+@media (prefers-reduced-motion: reduce) {
+  .fxv2c-timeline::after {
+    transition: none !important;
+  }
+  .fxv2c-circle,
+  .fxv2c-mini-dot {
+    transition: none !important;
+  }
+}

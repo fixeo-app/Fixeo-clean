@@ -76,7 +76,7 @@ select option{background:#1a1a2e!important;color:#fff!important;}
 <link rel="stylesheet" href="css/payment.css">
   <link rel="stylesheet" href="css/reservation.css">
   <link rel="stylesheet" href="css/reservation-v2.css?v=3" />
-  <link rel="stylesheet" href="css/reservation-v2a.css?v=v2b" />
+  <link rel="stylesheet" href="css/reservation-v2a.css?v=v2c" />
 <link rel="stylesheet" href="css/header-unified.css"/>
 <link rel="stylesheet" href="css/fixeo-header-global.css"/>
 <link rel="stylesheet" href="css/auth-global.css"/>
@@ -964,6 +964,85 @@ select option{background:#1a1a2e!important;color:#fff!important;}
 #modal-overlay .btn-express.w-100 {
   background: linear-gradient(135deg,#FCAF45,#F77737,#E1306C) !important;
   box-shadow: 0 4px 16px rgba(247,119,55,.4) !important;
+}
+
+/* ── V2-C: Booking cards with mini-timeline ─────────────── */
+.fxv2c-booking-card {
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 14px;
+  padding: 14px 16px 12px;
+  margin-bottom: 10px;
+  transition: border-color .15s;
+}
+.fxv2c-booking-card:hover { border-color: rgba(32,201,151,.2); }
+.fxv2c-booking-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.fxv2c-booking-service {
+  font-size: .9rem;
+  font-weight: 700;
+  color: rgba(255,255,255,.9);
+  line-height: 1.3;
+}
+.fxv2c-booking-meta {
+  font-size: .75rem;
+  color: rgba(255,255,255,.45);
+  margin-top: 2px;
+}
+.fxv2c-booking-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 5px;
+  flex-shrink: 0;
+}
+.fxv2c-booking-amount {
+  font-size: .92rem;
+  font-weight: 800;
+  color: #20C997;
+}
+.fxv2c-booking-badge {
+  font-size: .68rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid;
+  white-space: nowrap;
+}
+.fxv2c-booking-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8px;
+  gap: 8px;
+}
+.fxv2c-booking-ref {
+  font-family: monospace;
+  font-size: .7rem;
+  color: rgba(255,255,255,.3);
+}
+.fxv2c-booking-wa {
+  font-size: .72rem;
+  font-weight: 700;
+  color: rgba(37,211,102,.7);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color .12s;
+}
+.fxv2c-booking-wa:hover { color: #25d366; text-decoration: none; }
+@media (max-width: 480px) {
+  .fxv2c-booking-card { padding: 12px 12px 10px; }
+  .fxv2c-booking-service { font-size: .85rem; }
+  .fxv2c-booking-footer { flex-wrap: wrap; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fxv2c-booking-card { transition: none !important; }
+  .fxv2c-booking-wa   { transition: none !important; }
 }
 
 /* ── Step 8: FAB v2 ────────────────────────────────────── */
@@ -1890,6 +1969,47 @@ function renderReviews() {
 }
 
 // ── Render bookings table ─────────────────────────────────
+/* ── V2-C: Timeline state resolver ─────────────────────────────────
+   Derives a 1-4 state integer from a booking/reservation object.
+   State 1: registered only (no payStatus)
+   State 2: COD pending — coordination in progress
+   State 3: confirmed — artisan confirmed, intervention scheduled
+   State 4: completed / validated / paid final
+   This is read-only from localStorage data — no fake inference.
+*/
+function getTimelineState(booking) {
+  const s = (booking.status || '').toLowerCase();
+  const ps = (booking.payStatus || '').toLowerCase();
+  if (s === 'completed' || s === 'validated' || ps === 'validated' || ps === 'paid') return 4;
+  if (s === 'confirmed') return 3;
+  if (ps === 'pending_cod' || (booking.paymentMethod || '').includes('Delivery')) return 2;
+  return 2; /* default for any new COD booking */
+}
+
+/* ── V2-C: Mini timeline HTML builder ──────────────────────────────
+   Renders a .fxv2c-mini 4-dot row for a given timeline state (1-4).
+   Used inside each booking row in renderBookingsTable().
+*/
+function buildMiniTimeline(state) {
+  const steps = [
+    { label: 'Enregistrée' },
+    { label: 'Coordination' },
+    { label: 'Confirmée' },
+    { label: 'Terminée' },
+  ];
+  const stepsHtml = steps.map(function(step, i) {
+    const stepNum = i + 1;
+    let cls = 'fxv2c-mini-step';
+    if (stepNum < state)  cls += ' fxv2c-done';
+    if (stepNum === state) cls += ' fxv2c-active';
+    return `<div class="${cls}">
+      <div class="fxv2c-mini-dot"></div>
+      <div class="fxv2c-mini-label">${step.label}</div>
+    </div>`;
+  }).join('');
+  return `<div class="fxv2c-mini" aria-label="Avancement">${stepsHtml}</div>`;
+}
+
 function renderBookingsTable(container, bookings) {
   const statusConf = {
     active:    { label:'Actif',      color:'#E1306C', bg:'rgba(225,48,108,.12)' },
@@ -1899,28 +2019,48 @@ function renderBookingsTable(container, bookings) {
     paid:      { label:'Payé ✅',    color:'#20c997', bg:'rgba(32,201,151,.15)' },
     cancelled: { label:'Annulé',     color:'#ff4757', bg:'rgba(255,71,87,.12)'  },
   };
-  container.innerHTML = `
-    <table class="jobs-table" style="width:100%">
-      <thead><tr>
-        <th>Réf.</th><th>Artisan</th><th>Service</th><th>Statut</th><th>Paiement</th><th>Montant</th><th>Date</th>
-      </tr></thead>
-      <tbody>
-        ${bookings.map(j => {
-          const s = statusConf[j.payStatus] || statusConf[j.status] || statusConf.pending;
-          const payBadge = '';
-          const refText = j.bookingRef || j.id || '-';
-          return `<tr>
-            <td style="color:var(--text-muted);font-family:monospace;font-size:.8rem">${refText}${payBadge}</td>
-            <td>${j.artisan || j.artisanName || '-'}</td>
-            <td>${j.service || '-'}</td>
-            <td><span style="background:${s.bg};color:${s.color};padding:3px 10px;border-radius:999px;font-size:.74rem;font-weight:700;border:1px solid ${s.color}33">${s.label}</span></td>
-            <td style="font-size:.8rem;color:rgba(255,255,255,.6)">${j.method || j.paymentMethod || '-'}</td>
-            <td style="font-weight:700;color:var(--accent2)">${j.price ? j.price + ' MAD' : (j.amount || '-')}</td>
-            <td style="color:var(--text-muted)">${j.date || j.createdAt || '-'}</td>
-          </tr>`;
-        }).join('')}
-      </tbody>
-    </table>`;
+  /* V2-C: Premium booking cards instead of table — richer timeline context */
+  container.innerHTML = bookings.map(j => {
+    const s       = statusConf[j.payStatus] || statusConf[j.status] || statusConf.pending;
+    const refText = j.bookingRef || j.id || '-';
+    const state   = getTimelineState(j);
+    const mini    = buildMiniTimeline(state);
+
+    /* WhatsApp coordination link — pre-built from stored data */
+    const waHints = {
+      2: 'Pr\u00e9ciser ou partager une photo',
+      3: 'Confirmer l\u2019horaire',
+      4: 'Mission termin\u00e9e'
+    };
+    const waLines = ['Bonjour, je coordonne mon intervention Fixeo :'];
+    if (j.artisan || j.artisanName) waLines.push('Artisan : ' + (j.artisan || j.artisanName));
+    if (j.service)   waLines.push('Service : ' + j.service);
+    if (j.date)      waLines.push('Date : ' + j.date);
+    if (j.bookingRef) waLines.push('R\u00e9f. : ' + j.bookingRef);
+    waLines.push('');
+    waLines.push(state === 4 ? 'Tout s\u2019est bien pass\u00e9. Merci.' :
+                 state === 3 ? 'Pouvez-vous confirmer l\u2019horaire exact\u00a0?' :
+                               'Pouvez-vous me confirmer le cr\u00e9neau\u00a0?');
+    const waHref = 'https://wa.me/212660484415?text=' + encodeURIComponent(waLines.join('\n'));
+
+    return `<div class="fxv2c-booking-card">
+      <div class="fxv2c-booking-head">
+        <div class="fxv2c-booking-info">
+          <div class="fxv2c-booking-service">${j.service || 'Intervention'}</div>
+          <div class="fxv2c-booking-meta">${j.artisan || j.artisanName || ''} ${j.date ? '· ' + j.date : ''}</div>
+        </div>
+        <div class="fxv2c-booking-right">
+          <span class="fxv2c-booking-amount">${j.price ? j.price + ' MAD' : (j.amount || '')}</span>
+          <span class="fxv2c-booking-badge" style="color:${s.color};background:${s.bg};border-color:${s.color}33">${s.label}</span>
+        </div>
+      </div>
+      ${mini}
+      <div class="fxv2c-booking-footer">
+        <span class="fxv2c-booking-ref">${refText}</span>
+        ${state < 4 ? `<a class="fxv2c-booking-wa" href="${waHref}" target="_blank" rel="noopener noreferrer">&#x1F4AC; ${waHints[state] || waHints[2]}</a>` : ''}
+      </div>
+    </div>`;
+  }).join('');
 }
 
 // ── Recommended artisans ──────────────────────────────────
@@ -2123,6 +2263,57 @@ document.addEventListener('DOMContentLoaded', () => {
       preview.innerHTML = '';  // fixeo-mvp-supabase.js will populate client-bookings-full
     }
   }
+
+  /* V2-C: Activate booking-progress-tracker for the most recent COD booking.
+     Derives the state from the freshest reservation in localStorage.
+     Static read — no polling, no interval, no fetch.
+     Only reveals the tracker when a real COD reservation exists.
+  */
+  (function activateProgressTracker() {
+    const tracker = document.getElementById('booking-progress-tracker');
+    if (!tracker || !localBookings.length) return;
+
+    const latest  = localBookings[0]; /* most recent (unshift on creation) */
+    const state   = getTimelineState(latest);
+
+    /* Build timeline inside the existing tracker card */
+    const steps = [
+      { label: 'Enregistr\u00e9e',  icon: '\u2713' },
+      { label: 'Coordination',      icon: '\u1F4DE' },
+      { label: 'Confirm\u00e9e',    icon: '\u1F527' },
+      { label: 'Termin\u00e9e',     icon: '\u2705' },
+    ];
+    const stepsHtml = steps.map(function(step, i) {
+      const num = i + 1;
+      let cls = 'fxv2c-step';
+      if (num < state)  cls += ' fxv2c-done';
+      if (num === state) cls += ' fxv2c-active';
+      return `<div class="${cls}">
+        <div class="fxv2c-circle">${step.icon}</div>
+        <div class="fxv2c-label">${step.label}</div>
+      </div>`;
+    }).join('');
+
+    const heading = tracker.querySelector('h4');
+    if (heading && latest.artisan) {
+      heading.textContent = 'Dernière intervention : ' + latest.artisan +
+        (latest.service ? ' · ' + latest.service : '');
+    }
+
+    /* Replace the old progress bar HTML with fxv2c-timeline */
+    const oldProgress = tracker.querySelector('.booking-progress');
+    if (oldProgress) {
+      const tl = document.createElement('div');
+      tl.className = 'fxv2c-timeline';
+      tl.setAttribute('data-state', String(state));
+      tl.setAttribute('role', 'list');
+      tl.setAttribute('aria-label', '\u00c9tapes de l\u2019intervention');
+      tl.innerHTML = stepsHtml;
+      oldProgress.replaceWith(tl);
+    }
+
+    tracker.style.display = 'block';
+  })();
 
   /* Mise à jour temps-réel après paiement confirmé */
   window.addEventListener('fixeo:payment:success', function() {
