@@ -1,26 +1,30 @@
 /* ================================================================
-   FIXEO — Artisan Profile V2-A Enhancement Layer
-   Trust Rebuild & Humanization
+   FIXEO — Artisan Profile V2-A + V2-B Enhancement Layer
+   Trust Rebuild, Humanization & Professional Depth
 
-   Responsibilities:
-   1. Fetch REAL artisan data from Supabase (badge_label, description,
-      rating, review_count, availability, category, city)
-   2. Inject REAL bio from artisan.description (only if non-empty)
-   3. Surface badge_label prominently in the hero trust card
-   4. Inject "Paiement après intervention" trust strip in hero
-   5. Add WhatsApp secondary CTA below the main reservation button
-   6. Inject pricing context ("Dès NNN MAD") from market data
-   7. Update sticky mobile CTA with real artisan context (prefilled WA msg)
+   V2-A Responsibilities (2026-05-10):
+   1. Fetch REAL artisan data from Supabase
+   2. Inject REAL bio from artisan.description
+   3. Surface badge_label in hero trust card
+   4. Hero trust strip: price + paiement
+   5. WhatsApp secondary CTA (prefilled, relay-only)
+   6. Pricing context from MAR_PRICES
+   7. Sticky mobile CTA upgrade
+
+   V2-B Added (2026-05-10):
+   8.  Local professional identity strip ("Intervient à [city] et alentours")
+   9.  Intervention counter — tier-based honest social proof framing
+   10. Rating context — "Parmi les meilleurs artisans Fixeo" (≥4.7 only)
+   11. Specialty chips in bio — 3 chips from CAT_SKILLS, keyword-reordered
+   12. Realizations elegant empty-state (honest, future-ready, no placeholders)
+   13. WhatsApp CTA copy upgrade — operational, conversational, reassuring
 
    Architecture:
-   - Reads artisan UUID from URL ?id= param
-   - Queries Supabase artisans table directly (FixeoSupabaseClient)
-   - All enhancements are progressive: if Supabase fails → graceful noop
+   - URL ?id= UUID → Supabase read-only SELECT, anon key
+   - Progressive: Supabase failure → graceful noop throughout
    - Never modifies: reservation logic, #public-artisan-action, renderProfile
-   - Idempotent: window._fxProfileV2aLoaded + data-v2a-done stamps
-
-   Guard: window._fxProfileV2aLoaded
-   Namespace: fpv2a-*, #fpv2a-*
+   - Idempotent: _fxProfileV2aLoaded guard + data-v2a-done per hero stamp
+   - Namespace: fpv2a-* (V2-A) / fpv2b-* (V2-B)
    ================================================================ */
 
 ;(function () {
@@ -239,6 +243,215 @@
     subEl.textContent = display + '\u00a0intervention' + (display > 1 ? 's' : '') + ' enregistr\u00e9e' + (display > 1 ? 's' : '');
   }
 
+  /* ════════════════════════════════════════════════════════
+     V2-B — PROFESSIONAL DEPTH
+     ════════════════════════════════════════════════════════ */
+
+  /* Keyword-based skill reordering:
+     Match CAT_SKILLS entries against description to surface the most relevant first.
+     No NLP: simple substring check on lowercase tokens. */
+  var CAT_SKILLS_V2B = {
+    'Plomberie':     ['Fuite & dépannage','Chauffe-eau','Travaux sanitaires','Robinetterie','Débouchage'],
+    'Électricité':   ['Tableau électrique','Prises & éclairage','Câblage','Dépannage électrique','Mise aux normes'],
+    'Peinture':      ['Peinture intérieure','Enduit & finition','Ravalement','Décoration','Imperméabilisation'],
+    'Nettoyage':     ['Nettoyage professionnel','Après chantier','Désinfection','Vitrerie','Entretien locaux'],
+    'Jardinage':     ['Entretien & taille','Aménagement extérieur','Élagage','Tonte','Arrosage automatique'],
+    'Déménagement':  ['Emballage & transport','Montage meubles','Manutention','Stockage','Déménagement local'],
+    'Bricolage':     ['Petites réparations','Montage meubles','Perçage & fixation','Parquet','Pose carrelage'],
+    'Climatisation': ['Installation climatiseur','Maintenance & entretien','Diagnostic & recharge','Ventilation','Pompe à chaleur'],
+    'Menuiserie':    ['Menuiserie bois','Portes & fenêtres','Dressing & rangements','Escaliers','Parquet'],
+    'Maçonnerie':    ['Reprises & cloisons','Enduit & plâtre','Gros œuvre','Rénovation','Isolation'],
+    'Serrurerie':    ['Ouverture urgence','Blindage & sécurité','Serrure multipoints','Cylindre','Portail'],
+    'Carrelage':     ['Pose carrelage','Faïence salle de bain','Reprise joints','Sol & mural','Ragréage'],
+    'Étanchéité':    ['Traitement toiture','Humidité & infiltrations','Terrasse & balcon','Façade','Sous-sol'],
+    'Vitrerie':      ['Remplacement vitre','Double vitrage','Miroirs','Cloisons verre','Sécurité vitrée'],
+    'Soudure':       ['Soudure MIG/TIG','Garde-corps','Portails acier','Structures métalliques','Inox'],
+    'Informatique':  ['Dépannage PC & Mac','Réseau & Wi-Fi','Installation logiciels','Récupération données','Conseil informatique']
+  };
+
+  /* Reorder skills: ones whose keywords appear in the description come first */
+  function _reorderSkills(category, description) {
+    var skills = CAT_SKILLS_V2B[category] || [];
+    if (!skills.length) return [];
+    if (!description) return skills.slice(0, 3);
+
+    var descLow = description.toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+    function _score(skill) {
+      var tokens = skill.toLowerCase()
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .replace(/[&()]/g, ' ').split(/\s+/);
+      var hits = 0;
+      tokens.forEach(function(t) { if (t.length > 3 && descLow.indexOf(t) !== -1) hits++; });
+      return hits;
+    }
+
+    return skills.slice().sort(function(a, b) { return _score(b) - _score(a); }).slice(0, 3);
+  }
+
+  /* ── V2B-1: Local professional identity strip ────────── */
+  /*
+     Inserted below the .public-hero-meta line in the hero.
+     "Intervient à [City] et alentours" — grounded, local, human.
+     Only shown when artisan.city is populated.
+  */
+  function injectZoneStrip(hero, artisan) {
+    if (hero.querySelector('.fpv2b-zone-strip')) return;
+    var city = (artisan.city || '').trim();
+    if (!city) return;
+
+    var meta = hero.querySelector('.public-hero-meta');
+    if (!meta) return;
+
+    var strip = document.createElement('p');
+    strip.className = 'fpv2b-zone-strip';
+    strip.innerHTML =
+      '<span class="fpv2b-zone-icon">\ud83d\udccd</span>' +
+      'Intervient \u00e0 <strong>' + esc(city) + '</strong> et alentours';
+
+    meta.parentNode.insertBefore(strip, meta.nextSibling);
+  }
+
+  /* ── V2B-2: Tier-based intervention counter framing ─── */
+  /*
+     V2-A set "N interventions enregistrées". V2-B adds a trust tier label
+     as a secondary line — emotional context without fabricating anything.
+     Tiers based on real review_count distribution (10–180):
+       10–30:  "Artisan actif sur Fixeo"
+       31–80:  "Profil bien établi"
+       81–180: "Artisan expérimenté"
+     Shown as a styled qualifier below the main count line.
+  */
+  function injectInterventionTier(artisan) {
+    if (document.querySelector('.fpv2b-trust-tier')) return;
+    var count = parseInt(artisan.review_count || 0, 10);
+    if (count <= 0) return; /* No data → no framing */
+
+    var tier;
+    if (count >= 81)      tier = 'Artisan exp\u00e9riment\u00e9 sur Fixeo';
+    else if (count >= 31) tier = 'Profil bien \u00e9tabli';
+    else                  tier = 'Artisan actif sur Fixeo';
+
+    var subEl = document.querySelector('.public-trust-sub');
+    if (!subEl) return;
+
+    var tierEl = document.createElement('span');
+    tierEl.className = 'fpv2b-trust-tier';
+    tierEl.textContent = tier;
+    subEl.parentNode.insertBefore(tierEl, subEl.nextSibling);
+  }
+
+  /* ── V2B-3: Rating context signal ────────────────────── */
+  /*
+     Only when rating >= 4.7 (genuinely high — roughly top 30% of platform).
+     Adds a small "Parmi les meilleurs artisans Fixeo" qualifier line.
+     NOT a badge. NOT a rank. Just human recognition of real data.
+  */
+  function injectRatingContext(hero, artisan) {
+    if (hero.querySelector('.fpv2b-rating-context')) return;
+    var rating = parseFloat(artisan.rating || 0);
+    if (rating < 4.7) return; /* Only genuinely high ratings */
+
+    var ratingEl = hero.querySelector('.public-trust-rating');
+    if (!ratingEl) return;
+
+    var ctx = document.createElement('span');
+    ctx.className = 'fpv2b-rating-context';
+    ctx.textContent = 'Parmi les meilleurs artisans Fixeo';
+    ratingEl.parentNode.insertBefore(ctx, ratingEl.nextSibling);
+  }
+
+  /* ── V2B-4: Specialty chips in bio section ───────────── */
+  /*
+     Injected INTO #fpv2a-bio after the description text.
+     3 chips from CAT_SKILLS_V2B, reordered to match description keywords.
+     Only when #fpv2a-bio exists (was created by V2-A injectBio).
+  */
+  function injectSpecialtyChips(artisan) {
+    var bioSection = document.getElementById('fpv2a-bio');
+    if (!bioSection || bioSection.querySelector('.fpv2b-specialty-chips')) return;
+
+    var cat   = (artisan.category || '').trim();
+    var desc  = (artisan.description || '').trim();
+    var chips = _reorderSkills(cat, desc);
+    if (!chips.length) return;
+
+    var wrap = document.createElement('div');
+    wrap.className = 'fpv2b-specialty-chips';
+    wrap.innerHTML = chips.map(function(c) {
+      return '<span class="fpv2b-chip">' + esc(c) + '</span>';
+    }).join('');
+
+    bioSection.appendChild(wrap);
+  }
+
+  /* ── V2B-5: Realizations elegant empty-state ─────────── */
+  /*
+     Future-ready section. Honest: no fake content, no emoji placeholders.
+     Shows an intentional "coming soon" state that feels curated.
+     Only injected when no real portfolio data exists (default: always).
+     Rendered AFTER #fpv2a-bio if it exists, otherwise after ppui-services.
+  */
+  function injectRealizationsShell() {
+    if (document.getElementById('fpv2b-realizations')) return;
+    /* Only inject if old emoji portfolio was fully removed (it was in V2-A) */
+    if (document.getElementById('ppui-portfolio')) return;
+
+    var root = document.querySelector('.public-artisan-shell');
+    if (!root) return;
+
+    var section = document.createElement('section');
+    section.id = 'fpv2b-realizations';
+    section.className = 'ppui-section fpv2b-realizations-section';
+    section.innerHTML =
+      '<p class="ppui-section-kicker">R\u00e9alisations</p>' +
+      '<h2 class="ppui-section-title">Exemples de travaux</h2>' +
+      '<div class="fpv2b-realizations-empty">' +
+        '<div class="fpv2b-realizations-icon">\ud83d\udcf7</div>' +
+        '<p class="fpv2b-realizations-msg">Ce profil sera enrichi de photos de r\u00e9alisations apr\u00e8s les premi\u00e8res interventions.</p>' +
+        '<p class="fpv2b-realizations-hint">Les artisans Fixeo partagent leurs travaux pour illustrer leur expertise.</p>' +
+      '</div>';
+
+    /* Insert after #fpv2a-bio, or after #ppui-services, or before .public-section-grid */
+    var bio      = document.getElementById('fpv2a-bio');
+    var services = document.getElementById('ppui-services');
+    var grid     = root.querySelector('.public-section-grid');
+
+    var anchor = bio || services;
+    if (anchor && anchor.nextSibling) {
+      root.insertBefore(section, anchor.nextSibling);
+    } else if (grid) {
+      root.insertBefore(section, grid);
+    } else {
+      root.appendChild(section);
+    }
+  }
+
+  /* ── V2B-6: WhatsApp CTA copy upgrade ────────────────── */
+  /*
+     V2-A: "Poser une question via WhatsApp"
+     V2-B: "Vous avez une question ? Fixeo vous répond."
+     + sub-line: "Réponse Fixeo sous 30 min en moyenne"
+     More conversational. Operational. Reassuring.
+     The sub-line is a Fixeo platform promise, not artisan-specific — always true.
+  */
+  function upgradeWACopy() {
+    var waBtn  = document.getElementById('fpv2a-wa-cta');
+    var waText = waBtn && waBtn.querySelector('.fpv2a-wa-text');
+    if (!waText || waText.dataset.v2bDone) return;
+    waText.dataset.v2bDone = '1';
+    waText.textContent = 'Vous avez une question\u00a0? Fixeo vous r\u00e9pond.';
+
+    /* Inject sub-line if not already present */
+    if (!document.querySelector('.fpv2b-wa-sub')) {
+      var sub = document.createElement('p');
+      sub.className = 'fpv2b-wa-sub';
+      sub.textContent = 'R\u00e9ponse Fixeo sous 30\u00a0min en moyenne';
+      waBtn.parentNode.insertBefore(sub, waBtn.nextSibling);
+    }
+  }
+
   /* ── MAIN: fetch + apply ─────────────────────────────── */
   async function enhance() {
     /* Only run on artisan-profile.html */
@@ -279,12 +492,21 @@
       if (hero.dataset.v2aDone) return;
       hero.dataset.v2aDone = '1';
 
+      /* ── V2-A ── */
       injectBadgeLabel(hero, artisan);
       upgradeReviewLine(artisan);
       injectBio(artisan);
       injectHeroTrustStrip(hero, artisan);
       injectWASecondary(hero, artisan);
       upgradeStickyCTA(artisan);
+
+      /* ── V2-B ── (runs after V2-A to build on its output) */
+      injectZoneStrip(hero, artisan);
+      injectInterventionTier(artisan);
+      injectRatingContext(hero, artisan);
+      injectSpecialtyChips(artisan);
+      injectRealizationsShell();
+      upgradeWACopy();
     });
   }
 

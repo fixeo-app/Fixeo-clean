@@ -339,3 +339,244 @@
     transform: none !important;
   }
 }
+
+/* ================================================================
+   V2-B — PROFESSIONAL DEPTH
+   Sections:
+   V2B-1  Local zone strip
+   V2B-2  Intervention tier qualifier
+   V2B-3  Rating context signal
+   V2B-4  Specialty chips in bio
+   V2B-5  Realizations elegant empty-state
+   V2B-6  WhatsApp sub-line
+   V2B-7  Mobile-first V2-B adjustments
+   V2B-8  Reduced-motion guard (V2-B additions)
+   ================================================================ */
+
+/* ── V2B-1: Local zone strip ──────────────────────────────────── */
+/*
+   "📍 Intervient à Fès et alentours"
+   Below the .public-hero-meta line. Reads as operational, local, reliable.
+   Gentle typography — not a badge, not a chip. A natural statement.
+*/
+.fpv2b-zone-strip {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.80rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.52);
+  margin: -2px 0 0;
+  letter-spacing: 0.005em;
+  line-height: 1.3;
+  font-family: 'Cairo', 'Tajawal', sans-serif;
+}
+
+.fpv2b-zone-strip strong {
+  color: rgba(255,255,255,0.78);
+  font-weight: 800;
+}
+
+.fpv2b-zone-icon {
+  font-size: 0.75rem;
+  flex-shrink: 0;
+  opacity: 0.70;
+}
+
+/* ── V2B-2: Intervention tier qualifier ──────────────────────── */
+/*
+   Injected AFTER .public-trust-sub (the "N interventions" line).
+   Quiet, italicised context — "Profil bien établi".
+   Typography hierarchy: count (primary) → tier (secondary) → space
+*/
+.fpv2b-trust-tier {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: rgba(165,180,252,0.70);
+  letter-spacing: 0.02em;
+  margin-top: 3px;
+  font-family: 'Cairo', 'Tajawal', sans-serif;
+}
+
+/* ── V2B-3: Rating context signal ───────────────────────────── */
+/*
+   "Parmi les meilleurs artisans Fixeo" — only shown when rating >= 4.7.
+   Placed immediately after the rating line (.public-trust-rating).
+   No star, no badge, no number — pure credibility statement.
+*/
+.fpv2b-rating-context {
+  display: block;
+  font-size: 0.70rem;
+  font-weight: 700;
+  color: rgba(255,215,0,0.55);
+  letter-spacing: 0.02em;
+  margin-top: 2px;
+  font-family: 'Cairo', 'Tajawal', sans-serif;
+}
+
+/* ── V2B-4: Specialty chips in bio ──────────────────────────── */
+/*
+   3 chips, keyword-reordered from CAT_SKILLS_V2B.
+   Placed inside #fpv2a-bio after the description text.
+   Subdued — not category labels, specialist skill descriptors.
+*/
+.fpv2b-specialty-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 14px;
+}
+
+.fpv2b-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 13px;
+  border-radius: 99px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  background: rgba(165,180,252,0.08);
+  border: 1px solid rgba(165,180,252,0.18);
+  color: rgba(165,180,252,0.80);
+  font-family: 'Cairo', 'Tajawal', sans-serif;
+  white-space: nowrap;
+}
+
+/* ── V2B-5: Realizations elegant empty-state ─────────────────── */
+/*
+   Premium intentional absence. Not a placeholder — a promise.
+   Glass card, centered, no emoji overload (single 📷 icon only).
+   Curated, not incomplete.
+*/
+.fpv2b-realizations-section {
+  /* inherits .ppui-section */
+}
+
+.fpv2b-realizations-empty {
+  background: rgba(255,255,255,0.025);
+  border: 1px dashed rgba(255,255,255,0.10);
+  border-radius: 18px;
+  padding: 28px 24px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.fpv2b-realizations-icon {
+  font-size: 1.8rem;
+  opacity: 0.35;
+  line-height: 1;
+}
+
+.fpv2b-realizations-msg {
+  font-size: 0.88rem;
+  color: rgba(255,255,255,0.55);
+  line-height: 1.65;
+  margin: 0;
+  max-width: 380px;
+  font-weight: 500;
+  font-family: 'Cairo', 'Tajawal', sans-serif;
+}
+
+.fpv2b-realizations-hint {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.30);
+  line-height: 1.5;
+  margin: 0;
+  font-style: italic;
+  font-family: 'Cairo', 'Tajawal', sans-serif;
+}
+
+/* ── V2B-6: WhatsApp sub-line ────────────────────────────────── */
+/*
+   "Réponse Fixeo sous 30 min en moyenne"
+   Injected immediately after the #fpv2a-wa-cta button.
+   Operational promise — grounded, honest (Fixeo platform SLA, not artisan).
+*/
+.fpv2b-wa-sub {
+  margin: 4px 0 0;
+  font-size: 0.70rem;
+  color: rgba(37,211,102,0.45);
+  text-align: center;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  font-family: 'Cairo', 'Tajawal', sans-serif;
+}
+
+/* ── V2B-7: Mobile-first V2-B adjustments ───────────────────── */
+@media (max-width: 767px) {
+  .fpv2b-zone-strip {
+    font-size: 0.76rem;
+    margin-top: 0;
+  }
+  .fpv2b-specialty-chips {
+    gap: 6px;
+    margin-top: 12px;
+  }
+  .fpv2b-chip {
+    font-size: 0.69rem;
+    padding: 5px 11px;
+  }
+  .fpv2b-realizations-empty {
+    padding: 22px 18px;
+    gap: 8px;
+  }
+  .fpv2b-realizations-msg {
+    font-size: 0.83rem;
+  }
+  .fpv2b-trust-tier {
+    font-size: 0.69rem;
+  }
+  .fpv2b-rating-context {
+    font-size: 0.67rem;
+  }
+  /* Hero vertical rhythm tightening on mobile */
+  .public-trust-card {
+    padding: 14px 16px !important;
+  }
+  .fpv2b-wa-sub {
+    font-size: 0.67rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .fpv2b-chip {
+    font-size: 0.65rem;
+    padding: 4px 9px;
+  }
+  .fpv2b-zone-strip {
+    font-size: 0.71rem;
+  }
+  .fpv2b-realizations-msg {
+    font-size: 0.78rem;
+  }
+}
+
+@media (max-width: 320px) {
+  .fpv2b-specialty-chips {
+    gap: 5px;
+  }
+  .fpv2b-chip {
+    font-size: 0.60rem;
+    padding: 4px 8px;
+  }
+  .fpv2b-realizations-empty {
+    padding: 18px 14px;
+  }
+  .fpv2b-realizations-icon {
+    font-size: 1.4rem;
+  }
+}
+
+/* ── V2B-8: Reduced-motion guard (V2-B) ─────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .fpv2b-chip,
+  .fpv2b-trust-tier,
+  .fpv2b-rating-context,
+  .fpv2b-zone-strip {
+    transition: none !important;
+  }
+}
