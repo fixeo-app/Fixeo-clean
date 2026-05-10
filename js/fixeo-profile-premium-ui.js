@@ -197,47 +197,83 @@
     else root.appendChild(section);
   }
 
-  /* ── Inject Trust indicators — V2A: honest subset only ── */
+  /* ── Inject Trust indicators — V1-JC: threshold-gated, operational panel fallback ── */
   function _injectTrustIndicators(data) {
     if (document.querySelector('.ppui-trust-grid')) return;
     var panels = document.querySelectorAll('.public-panel');
     var statsPanel = panels.length >= 2 ? panels[1] : null;
     if (!statsPanel) return;
 
-    /* V2A: removed "Identité vérifiée" (verified=false for all) and
-     * "Réponse rapide" (no real response time data).
-     * Kept: real review signal + Fixeo platform guarantee.
-     * Added: "Paiement après intervention" — this is 100% real and powerful. */
-    var items = [
-      {
-        icon: '\u2b50',
-        label: data.reviews > 0 ? data.reviews + '\u00a0interventions enregistr\u00e9es' : 'Artisan s\u00e9lectionn\u00e9 Fixeo',
-        sub: data.reviews > 0 ? 'Historique v\u00e9rifiable' : 'Disponible pour ses premi\u00e8res missions'
-      },
-      {
-        icon: '\ud83d\udcb3',
-        label: 'Paiement apr\u00e8s intervention',
-        sub: 'Vous payez uniquement apr\u00e8s satisfaction'
-      }
-    ];
+    /* V1-JC: Merge with real Supabase data (review_count, score_qualification).
+     * window._fixeoCurrentArtisan is set by fixeo-profile-v2a.js after Supabase resolves.
+     * Premium-ui.js runs at T+0 before Supabase — we read what's available at call time.
+     * _injectTrustIndicators is called from upgrade() synchronously, but premium-ui.js
+     * re-fires setTimeout(upgrade, 200) if hero not yet present.
+     * By T+200ms, fixeo-profile-v2a.js should have resolved for cached fetches.
+     */
+    var _sb    = window._fixeoCurrentArtisan || {};
+    var _rc    = parseInt(_sb.review_count  || data.reviews || 0, 10);
+    var _sq    = parseInt(_sb.score_qualification || 0, 10);
+    var _city  = (_sb.city || data.city || '').trim();
+    var _avail = _sb.availability || (data.isAvail ? 'available' : '');
 
-    /* V2A: only add city trust item if city is known */
-    if (data.city) {
-      items.push({
-        icon: '\ud83d\udccd',
-        label: 'Zone\u00a0: ' + data.city,
-        sub: 'Artisan local v\u00e9rifi\u00e9 par Fixeo'
-      });
-    }
+    /* V1-TC thresholds (matches fixeo-profile-v2a.js exactly):
+     * Qualified = (review_count >= 5) OR (score_qualification >= 70)
+     * Below threshold → operational confidence panel (no zeros, no empty analytics)
+     */
+    var _isQualified = _rc >= 5 || _sq >= 70;
 
     var grid = document.createElement('div');
     grid.className = 'ppui-trust-grid ppui-trust-grid--v2a';
-    grid.innerHTML = items.map(function(item){
-      return '<div class="ppui-trust-item">'+
-        '<span class="ppui-trust-icon">'+item.icon+'</span>'+
-        '<div class="ppui-trust-text"><strong>'+_esc(item.label)+'</strong><span>'+_esc(item.sub)+'</span></div>'+
-      '</div>';
-    }).join('');
+
+    if (_isQualified) {
+      /* ── QUALIFIED PATH: show real metrics ── */
+      var items = [
+        {
+          icon: '\u2b50',
+          label: _rc + '\u00a0confirmations',
+          sub: 'Historique v\u00e9rifiable'
+        },
+        {
+          icon: '\ud83d\udcb3',
+          label: 'Paiement apr\u00e8s intervention',
+          sub: 'Vous payez uniquement apr\u00e8s satisfaction'
+        }
+      ];
+      if (_city) {
+        items.push({
+          icon: '\ud83d\udccd',
+          label: 'Zone\u00a0: ' + _city,
+          sub: 'Artisan local disponible'
+        });
+      }
+      grid.innerHTML = items.map(function(item){
+        return '<div class="ppui-trust-item">'+
+          '<span class="ppui-trust-icon">'+item.icon+'</span>'+
+          '<div class="ppui-trust-text"><strong>'+_esc(item.label)+'</strong><span>'+_esc(item.sub)+'</span></div>'+
+          '</div>';
+      }).join('');
+    } else {
+      /* ── SPARSE PATH: operational confidence panel (no zeros, no empty analytics) ──
+       * Replaces the 0%/0%/0 grid with actionable operational information.
+       * Visual density preserved — same card count, same layout rhythm.
+       */
+      grid.classList.add('ppui-trust-grid--operational');
+
+      var opItems = [
+        { icon: '\u2705', label: 'Paiement apr\u00e8s intervention',         sub: 'Vous payez uniquement une fois satisfait' },
+        { icon: '\ud83d\udccd', label: 'Artisan local' + (_city ? '\u00a0\u00e0 ' + _city : ''),  sub: 'Disponible dans votre zone' },
+        { icon: '\ud83d\udcac', label: 'Coordination via WhatsApp Fixeo',    sub: 'R\u00e9ponse rapide selon disponibilit\u00e9' },
+        { icon: '\u26a1',  label: 'Intervention sans avance',                sub: 'R\u00e9glement apr\u00e8s le travail effectu\u00e9' }
+      ];
+
+      grid.innerHTML = opItems.map(function(item){
+        return '<div class="ppui-trust-item ppui-trust-item--op">'+
+          '<span class="ppui-trust-icon">'+item.icon+'</span>'+
+          '<div class="ppui-trust-text"><strong>'+_esc(item.label)+'</strong><span>'+_esc(item.sub)+'</span></div>'+
+          '</div>';
+      }).join('');
+    }
 
     statsPanel.appendChild(grid);
   }

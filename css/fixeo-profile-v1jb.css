@@ -237,3 +237,232 @@
     transition: none !important;
   }
 }
+
+/* ════════════════════════════════════════════════════════════
+   V1-JC ADDITIONS — Trust Coherence + Real Avatar Alignment
+   Version: v1jc (appended to v1jb file)
+   ════════════════════════════════════════════════════════════ */
+
+/* ── A. Operational confidence panel (sparse artisan, no zeros) ──
+   Replaces 0%/0%/0 trust grid with 4 operational cards.
+   Same visual density, same card count, same layout rhythm.
+   ─────────────────────────────────────────────────────────── */
+
+.ppui-trust-grid--operational .ppui-trust-item--op {
+  /* Slightly warmer tint vs qualified item — signals "in progress" not "empty" */
+  border-color: rgba(255,255,255,0.07) !important;
+  background: rgba(255,255,255,0.024) !important;
+}
+
+.ppui-trust-grid--operational .ppui-trust-icon {
+  /* Larger icon for information-dense items (longer labels) */
+  font-size: 1.1rem !important;
+  min-width: 1.5rem;
+  text-align: center;
+}
+
+.ppui-trust-grid--operational .ppui-trust-text strong {
+  /* Slightly lower opacity — informational, not proof-of-achievement */
+  color: rgba(255,255,255,0.78) !important;
+  font-weight: 600 !important;
+  font-size: 0.82rem !important;
+}
+
+.ppui-trust-grid--operational .ppui-trust-text span {
+  color: rgba(255,255,255,0.38) !important;
+  font-size: 0.70rem !important;
+}
+
+/* ── B. Modal coordination chips (when no stars earned) ──
+   .fxrva-coord-chips appears in .fixeo-res-artisan-row area
+   when rating/review threshold not met.
+   Shows: 💳 Paiement après intervention · 💬 Coordination Fixeo
+   ─────────────────────────────────────────────────────────── */
+
+.fxrva-coord-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 4px;
+}
+
+.fxrva-coord-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px 8px;
+  border-radius: 20px;
+  background: rgba(32,201,151,0.06);
+  border: 1px solid rgba(32,201,151,0.14);
+  font-size: 0.69rem;
+  font-weight: 500;
+  color: rgba(255,255,255,0.62);
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+}
+
+/* ── C. Modal rating row when qualified (stars present) ──
+   When trust gates pass, ensure stars render cleanly.
+   ─────────────────────────────────────────────────────────── */
+
+.fixeo-res-artisan-row:not(:empty) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  margin-top: 3px;
+}
+
+.fixeo-res-stars {
+  color: #FBBF24;
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+}
+
+.fixeo-res-rating {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.80);
+}
+
+.fixeo-res-reviews {
+  font-size: 0.73rem;
+  color: rgba(255,255,255,0.45);
+}
+
+/* ── D. WhatsApp button: premium muted emerald (Priority 5) ──
+   Reduces harsh green saturation → softer glow, better harmony.
+   Targets: .fpv2a-wa-cta button + sticky .ppui-sticky-wa-btn
+   ─────────────────────────────────────────────────────────── */
+
+/* Public profile WA CTA */
+.fpv2a-wa-cta a,
+.fpv2a-wa-cta button,
+a.fpv2a-wa-btn,
+button.fpv2a-wa-btn {
+  /* Muted emerald glass — not neon WA green */
+  background: rgba(20,184,166,0.10) !important;
+  border: 1px solid rgba(20,184,166,0.24) !important;
+  color: rgba(255,255,255,0.72) !important;
+  box-shadow: 0 2px 12px rgba(20,184,166,0.08) !important;
+  transition: background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease !important;
+}
+
+.fpv2a-wa-cta a:hover,
+.fpv2a-wa-cta button:hover,
+a.fpv2a-wa-btn:hover,
+button.fpv2a-wa-btn:hover {
+  background: rgba(20,184,166,0.15) !important;
+  border-color: rgba(20,184,166,0.34) !important;
+  box-shadow: 0 4px 18px rgba(20,184,166,0.14) !important;
+}
+
+/* Sticky CTA secondary WA button — muted to harmonize with pink primary */
+.ppui-sticky-wa-btn {
+  background: rgba(20,184,166,0.10) !important;
+  border: 1px solid rgba(20,184,166,0.22) !important;
+  color: rgba(255,255,255,0.68) !important;
+  font-size: 0.75rem !important;
+}
+
+.ppui-sticky-wa-btn:hover {
+  background: rgba(20,184,166,0.16) !important;
+  border-color: rgba(20,184,166,0.30) !important;
+}
+
+/* ── E. Estimation block: MAD amount prominence (Priority 4) ──
+   The emerald card is good. Make the MAD number more visually dominant.
+   Move card up by reducing top gap (less dead space before it).
+   ─────────────────────────────────────────────────────────── */
+
+.fixeo-res-price-info {
+  margin-top: 6px !important;  /* was 10px — slightly tighter above-fold */
+  margin-bottom: 10px !important;
+}
+
+/* MAD amount — dominant display */
+.fixeo-res-price-info strong {
+  font-size: 1.05rem !important;  /* bumped from 0.95rem */
+  font-weight: 900 !important;
+  letter-spacing: -0.02em;
+  color: rgba(255,255,255,0.92) !important;
+}
+
+/* Service name prefix before MAD — keep readable, not dominant */
+.fixeo-res-price-info .fxrva-price-service {
+  font-size: 0.76rem;
+  color: rgba(255,255,255,0.46);
+  display: block;
+  margin-bottom: 3px;
+}
+
+/* ── F. Avatar: V1-JC refinements ──
+   The V1-JB avatar is solid. Minor refinements:
+   - Shadow depth increased for stronger presence
+   - Inner highlight ring more visible
+   - Ensure circular even at edge cases
+   ─────────────────────────────────────────────────────────── */
+
+.fpv1jb-initials-avatar {
+  box-shadow:
+    0 10px 32px rgba(0,0,0,0.36),
+    0 0 0 5px rgba(255,255,255,0.045),
+    inset 0 1.5px 0 rgba(255,255,255,0.12) !important;
+}
+
+/* Ensure border-radius persists even if V2C tries to override after V1-JB */
+.public-avatar-fallback.fpv1jb-initials-avatar {
+  border-radius: 50% !important;
+  overflow: hidden !important;
+  /* Remove the V2C silhouette ::before + ::after that create a person shape */
+  contain: layout style !important;
+}
+
+/* ── G. V1-JC: Hide "0 avis" string if it somehow escaped V1-TC ──
+   Belt-and-suspenders CSS guard:
+   When the review sub line contains "(0" it's always a zero-count display.
+   This rule makes the stars line invisible, not the whole card.
+   ─────────────────────────────────────────────────────────── */
+
+/* Hide stars when fixeo-res-stars is followed by fixeo-res-reviews containing "(0" —
+ * cannot detect text content in CSS directly.
+ * Instead: hide the row children via JS class added by V1-JC (below).
+ * CSS rule is kept as structural context for the .fxrva-res-row--no-trust class. */
+
+.fixeo-res-artisan-row.fxrva-res-row--no-trust .fixeo-res-stars,
+.fixeo-res-artisan-row.fxrva-res-row--no-trust .fixeo-res-rating,
+.fixeo-res-artisan-row.fxrva-res-row--no-trust .fixeo-res-reviews {
+  display: none !important;
+}
+
+/* ── H. Mobile guards: V1-JC additions ── */
+
+@media (max-width: 480px) {
+  .fxrva-coord-chip {
+    font-size: 0.64rem !important;
+    padding: 3px 7px !important;
+  }
+  .ppui-trust-grid--operational .ppui-trust-text strong {
+    font-size: 0.78rem !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .fxrva-coord-chips {
+    gap: 4px;
+  }
+  .fxrva-coord-chip {
+    font-size: 0.61rem !important;
+    padding: 2px 6px !important;
+  }
+}
+
+@media (max-width: 320px) {
+  .fxrva-coord-chips {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .fxrva-coord-chip {
+    white-space: normal;
+  }
+}

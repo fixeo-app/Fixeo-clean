@@ -36,7 +36,7 @@
   <link rel="stylesheet" href="css/reservation-v2a.css?v=v2c" />
   <link rel="stylesheet" href="css/artisan-profile-premium.css">
   <link rel="stylesheet" href="css/artisan-profile-v2a.css?v=p3">
-  <link rel="stylesheet" href="css/fixeo-profile-v1jb.css?v=v1jb">
+  <link rel="stylesheet" href="css/fixeo-profile-v1jb.css?v=v1jc">
   <style>
     .notif-badge:empty{display:none!important}
     .notif-panel,.notification-panel{z-index:600!important}
@@ -239,7 +239,7 @@
       '/js/fixeo-header-global.js',
       '/js/auth-global.js',
       '/js/artisan-onboarding-store.js',
-      '/js/reservation.js?v=v1a',
+      '/js/reservation.js?v=v1jc',
       '/js/reservation-v2.js?v=3'
     ].forEach(function (src) {
       document.write('<script src="' + asset(src) + '"><\/script>');
@@ -375,8 +375,8 @@
       '/js/fixeo-profile-premium-ui.js?v=p1',
       '/js/fixeo-claim-system.js?v=cs1',
       '/js/fixeo-client-requests-store.js',
-      '/js/fixeo-profile-v2a.js?v=v1j',
-      '/js/fixeo-profile-v1jb.js?v=v1jb'
+      '/js/fixeo-profile-v2a.js?v=v1jc',
+      '/js/fixeo-profile-v1jb.js?v=v1jc'
     ].forEach(function (src) {
       document.write('<script src="' + asset(src) + '"><\/script>');
     });
@@ -480,6 +480,24 @@
 
       var artisan = findCurrentArtisan();
       if (!artisan) return;
+      /* V1-JC: Merge real Supabase trust data (review_count, score_qualification, rating)
+       * into the artisan object before opening the modal.
+       * window._fixeoCurrentArtisan is set by fixeo-profile-v2a.js after Supabase resolves.
+       * Without this merge, normalizeArtisan() uses fallback rating=4.8 reviewCount=0
+       * which made V1-TC thresholds fire incorrectly in the modal.
+       */
+      var _sbArtisan = window._fixeoCurrentArtisan;
+      if (_sbArtisan && typeof _sbArtisan === 'object') {
+        artisan = Object.assign({}, artisan, {
+          rating:             parseFloat(_sbArtisan.rating) || 0,
+          reviewCount:        parseInt(_sbArtisan.review_count, 10) || 0,
+          review_count:       parseInt(_sbArtisan.review_count, 10) || 0,
+          scoreQualification: parseInt(_sbArtisan.score_qualification, 10) || 0,
+          score_qualification:parseInt(_sbArtisan.score_qualification, 10) || 0,
+          availability:       _sbArtisan.availability || artisan.availability,
+          city:               _sbArtisan.city || artisan.city
+        });
+      }
       window.FixeoReservation.open(artisan, false);
     }, true);
   })(window, document);

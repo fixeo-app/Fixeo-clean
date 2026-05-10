@@ -1543,6 +1543,14 @@
       artisan = await window.__fixeoArtisanFetch[fetchKey];
       if (!artisan) return; /* Not in Supabase (legacy ID / seed) — graceful noop */
 
+      /* V1-JC: Expose real Supabase artisan data globally so artisan-profile.html
+       * findCurrentArtisan() can merge it into the FixeoReservation.open() call.
+       * Includes review_count and score_qualification so the modal trust gate
+       * (V1-TC thresholds) has real data instead of normalizeArtisan() fallbacks.
+       * Read by: artisan-profile.html inline script (immediately before open() call).
+       */
+      window._fixeoCurrentArtisan = artisan;
+
     } catch (err) {
       /* Network / SDK error — graceful noop */
       return;

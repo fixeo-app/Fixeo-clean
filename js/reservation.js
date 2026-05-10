@@ -196,8 +196,14 @@
         initials: input.initials || (input.name ? input.name.split(' ').map(w => w[0]).join('').substring(0,2) : 'AR'),
         category: input.category || input.specialty?.toLowerCase() || 'bricolage',
         city: input.city || 'Maroc',
-        rating: input.rating || 4.8,
-        reviewCount: input.reviewCount || 0,
+        /* V1-JC: Do NOT fabricate rating/review defaults.
+         * rating=0 and reviewCount=0 must stay 0 so _resModalTrust() gates correctly.
+         * Supabase artisans arrive here from artisan-profile.html findCurrentArtisan()
+         * which now merges window._fixeoCurrentArtisan (real data, set by fixeo-profile-v2a.js).
+         */
+        rating: (typeof input.rating === 'number') ? input.rating : (input.rating ? parseFloat(input.rating) : 0),
+        reviewCount: parseInt(input.reviewCount || input.review_count || 0, 10),
+        scoreQualification: parseInt(input.scoreQualification || input.score_qualification || 0, 10),
         trustScore: input.trustScore || 90,
         priceFrom: (function() {
           var _cat = input.category || input.specialty || 'bricolage';
@@ -259,6 +265,47 @@
       document.body.appendChild(modal);
     }
     return modal;
+  }
+
+  /* ════════════════════════════════════════════════════════
+     V1-JC: Premium initials avatar for the reservation modal
+     Mirrors fixeo-profile-v1jb.js _nameHash + _initials for
+     visual coherence between profile page and modal card.
+  ════════════════════════════════════════════════════════ */
+  var _MODAL_AVATAR_GRADIENTS = [
+    ['135deg','#1e3a5f','#2d6a9f'],
+    ['135deg','#1a2a1a','#2d5a3d'],
+    ['135deg','#2a1a3e','#5a2d8a'],
+    ['135deg','#2a1a1a','#7a3d2d'],
+    ['135deg','#1a2a3a','#2d5a7a'],
+    ['135deg','#2a2a1a','#6a5a2d'],
+    ['135deg','#1a1a2a','#3d3d6a'],
+    ['135deg','#2a1a2a','#6a2d5a'],
+    ['135deg','#1a2a2a','#2d6a6a'],
+  ];
+  function _modalAvatarGrad(name) {
+    var h = 0, s = String(name || '');
+    for (var i = 0; i < s.length; i++) { h = (h * 31 + s.charCodeAt(i)) & 0x7fffffff; }
+    return _MODAL_AVATAR_GRADIENTS[h % _MODAL_AVATAR_GRADIENTS.length];
+  }
+  function _modalInitials(name) {
+    var parts = String(name || '').trim().split(/\s+/).filter(Boolean);
+    if (!parts.length) return '?';
+    if (parts.length === 1) return parts[0].slice(0,2).toUpperCase();
+    return (parts[0][0] + parts[parts.length-1][0]).toUpperCase();
+  }
+  function _modalAvatarHtml(a, catIcon) {
+    var grad    = _modalAvatarGrad(a.name || '');
+    var letters = _modalInitials(a.name || a.initials || '');
+    var bgStyle = 'background:linear-gradient(' + grad[0] + ',' + grad[1] + ',' + grad[2] + ')';
+    return '<div class="fixeo-res-artisan-avatar fxrva-avatar fxrva-initials-av" data-category="' +
+      sanitize(a.category || '') + '" style="' + bgStyle + ';font-size:1.2rem;font-weight:800;' +
+      'color:rgba(255,255,255,.88);border-radius:50%;display:flex;align-items:center;justify-content:center;' +
+      'box-shadow:0 6px 20px rgba(0,0,0,.30),0 0 0 3px rgba(255,255,255,.04),inset 0 1px 0 rgba(255,255,255,.10);' +
+      'position:relative;overflow:hidden;letter-spacing:-.02em">' +
+      '<span style="position:relative;z-index:2">' + sanitize(letters) + '</span>' +
+      '<span class="fxrva-cat-badge" aria-hidden="true">' + catIcon + '</span>' +
+      '</div>';
   }
 
   /* ════════════════════════════════════════════════════════
@@ -376,18 +423,41 @@
 
           <!-- Artisan Card -->
           <div class="fixeo-res-artisan-card">
-            <div class="fixeo-res-artisan-avatar fxrva-avatar" data-category="${a.category || ''}"><span class="fxrva-silhouette" aria-hidden="true"></span><span class="fxrva-cat-badge" aria-hidden="true">${catIcon}</span></div>
+            ${_modalAvatarHtml(a, catIcon)}
             <div class="fixeo-res-artisan-info">
               <div class="fixeo-res-artisan-name">${sanitize(a.name)}</div>
               <div class="fixeo-res-artisan-meta">
                 ${catIcon} ${catLabel} · 📍 ${sanitize(a.city)}
               </div>
-              <div class="fixeo-res-artisan-row">
-                <span class="fixeo-res-stars">${'★'.repeat(Math.floor(a.rating || 4))}</span>
-                <span class="fixeo-res-rating">${a.rating || '4.8'}</span>
-                <span class="fixeo-res-reviews">(${a.reviewCount || 0} avis)</span>
-                <span class="fixeo-res-avail ${availClass}">${availLabel}</span>
-              </div>
+              ${/* V1-JC: Apply V1-TC trust thresholds to modal.
+               * Stars: (rating >= 4.1 AND reviewCount >= 10) OR scoreQualification >= 70
+               * Count: reviewCount >= 10 OR (reviewCount >= 5 AND scoreQualification >= 50)
+               * Neither: show operational chips instead
+               * This matches fixeo-profile-v2a.js V1-TC logic exactly.
+               */ (function(){
+                var _r   = a.rating           || 0;
+                var _rc  = a.reviewCount       || 0;
+                var _sq  = a.scoreQualification|| 0;
+                var _showStars  = (_r >= 4.1 && _rc >= 10) || _sq >= 70;
+                var _showCount  = _rc >= 10 || (_rc >= 5 && _sq >= 50);
+                var _starsHtml  = _showStars
+                  ? '<span class="fixeo-res-stars">' + '\u2605'.repeat(Math.min(5, Math.floor(_r))) + '</span><span class="fixeo-res-rating">' + _r.toFixed(1) + '</span>'
+                  : '';
+                var _countHtml  = _showCount
+                  ? '<span class="fixeo-res-reviews">(' + _rc + ' confirmations)</span>'
+                  : '';
+                return '<div class="fixeo-res-artisan-row">' +
+                  _starsHtml + _countHtml +
+                  '<span class="fixeo-res-avail ' + availClass + '">' + availLabel + '</span>' +
+                  '</div>' +
+                  /* Operational chips when no trust signals earned */
+                  (!_showStars && !_showCount
+                    ? '<div class="fxrva-coord-chips">' +
+                        '<span class="fxrva-coord-chip">💳 Paiement après intervention</span>' +
+                        '<span class="fxrva-coord-chip">💬 Coordination Fixeo</span>' +
+                      '</div>'
+                    : '');
+               })()}
               <div class="fixeo-res-badges">${badgesHtml}</div>
             </div>
             <div class="fixeo-res-artisan-price">
@@ -731,7 +801,8 @@
       const availClass = a.availability === 'available' ? 'available' : 'busy';
       return `
         <div class="fixeo-res-picker-card" onclick="FixeoReservation._selectArtisanFromPicker(${a.id})">
-          <div class="fixeo-res-picker-avatar fxrva-avatar fxrva-avatar--sm" data-category="${a.category || ''}"><span class="fxrva-silhouette" aria-hidden="true"></span></div>
+          ${(function(){ var _g=_modalAvatarGrad(a.name||''),_l=_modalInitials(a.name||a.initials||'');
+            return '<div class="fixeo-res-picker-avatar fxrva-avatar fxrva-initials-av fxrva-avatar--sm" data-category="'+(a.category||'')+'" style="background:linear-gradient('+_g[0]+','+_g[1]+','+_g[2]+');font-size:.85rem;font-weight:800;color:rgba(255,255,255,.88);border-radius:50%;display:flex;align-items:center;justify-content:center;letter-spacing:-.02em"><span>'+sanitize(_l)+'</span></div>'; })()} 
           <div class="fixeo-res-picker-info">
             <div class="fixeo-res-picker-name">${sanitize(a.name)}</div>
             <div class="fixeo-res-picker-cat">${catIcon} ${CATEGORY_LABELS[a.category] || a.category}</div>
