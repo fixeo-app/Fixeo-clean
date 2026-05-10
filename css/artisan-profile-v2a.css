@@ -846,3 +846,75 @@
     transition: none !important;
   }
 }
+
+/* ================================================================
+   V2-P1 — Phase P-1 Patch Fixes
+   Appended 2026-05-10 (profile-p1)
+
+   P1-A  Pre-hide initials flash (font-size:0 immediately on load)
+   P1-B  Hide "Nouveau" trust badge (superceded by fpv2a-badge-label)
+   P1-C  Hide 0%-stats panel (body.fpv2b-loaded gate — safe)
+   P1-D  Hide "Aucun avis" empty-copy (when V2 data overrides it)
+   ================================================================ */
+
+/* ── P1-A: Pre-hide initials text on fallback avatar ──────────── */
+/*
+   artisan-profile-premium.css sets font-size:2.4rem on .public-avatar-fallback
+   This makes "HA" initials fully visible for 400-800ms before V2-C fires.
+   Setting font-size:0 + color:transparent immediately hides the text node
+   while keeping the gradient rectangle as a visual placeholder.
+   V2-C JS then upgrades the block to the silhouette when Supabase resolves.
+   Real <img> avatars are unaffected (they use .public-avatar, not .public-avatar-fallback).
+*/
+.public-artisan-page .public-avatar-fallback {
+  font-size: 0 !important;
+  color: transparent !important;
+}
+
+/* ── P1-B: Hide old "Nouveau" / trust_level badge ─────────────── */
+/*
+   getTrustLevel(0) = 'Nouveau' for all Supabase artisans (trust_score absent).
+   This badge is replaced by .fpv2a-badge-label (injected by V2-A from real
+   artisan.badge_label). Hiding the V1 badge removes the misleading "Nouveau"
+   chip without affecting any V2 signal.
+*/
+.public-artisan-page .public-trust-badge {
+  display: none !important;
+}
+
+/* ── P1-C: Hide old V1 stats panel after V2 enhancement completes ── */
+/*
+   .public-section-grid contains "Indicateurs de confiance":
+     - Taux de confirmation: 0%  (always 0 — no mission data in localStorage)
+     - Taux de paiement: 0%      (always 0)
+     - Ancienneté: Nouveau artisan (always — no timestamps)
+     - Aucun avis pour le moment (always — reviews from missions only)
+   V2-B injects replacements (zone strip, tier, rating context, specialty chips,
+   realizations shell). Once V2-B completes, JS adds .fpv2b-loaded to body.
+   This rule hides the V1 panel ONLY after V2-B has successfully run.
+   Failure-safe: if Supabase fails → enhance() returns early → body never gets
+   .fpv2b-loaded → V1 panel stays visible (degraded but not broken).
+*/
+body.fpv2b-loaded .public-artisan-page .public-section-grid {
+  display: none !important;
+}
+
+/* ── P1-D: Hide "Aucun avis pour le moment" (empty-copy paragraph) ── */
+/*
+   renderProfile() in fixeo-public-artisan-profile.js always shows this
+   because reviews come from local missions (always empty for Supabase artisans).
+   Hidden via the same fpv2b-loaded gate — only disappears after V2 confirms
+   real data from Supabase, leaving nothing visible without a replacement.
+   If Supabase fails → stays visible (honest "no data yet" message).
+*/
+body.fpv2b-loaded .public-artisan-page .public-empty-copy {
+  display: none !important;
+}
+
+/* ── P1 Mobile guard: ensure no overflow on 320px ─────────────── */
+@media (max-width: 360px) {
+  .public-artisan-page .public-avatar-fallback {
+    font-size: 0 !important;
+    color: transparent !important;
+  }
+}

@@ -5,7 +5,7 @@
   var REGISTRY_KEY = 'fixeo_public_artisans_registry';
   var SLUG_MAP_KEY = 'fixeo_artisan_slug_map';
   var REVIEWS_BATCH = 5;
-  var DEFAULT_PROFILE_DESCRIPTION = 'Artisan vérifié Fixeo. Voir avis clients, Trust Score, disponibilité et demander intervention.';
+  var DEFAULT_PROFILE_DESCRIPTION = 'Artisan Fixeo. Voir interventions, disponibilit\u00e9 et r\u00e9server une intervention en ligne.';
   var MARKETPLACE_FALLBACK_URL = '/index.html#artisans-section';
   var MARKETPLACE_LOCAL_STORAGE_KEY = 'fixeo_admin_artisans_v21';
 

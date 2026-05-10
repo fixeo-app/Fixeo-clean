@@ -237,10 +237,39 @@
     var display  = count > 0 ? count : missions;
     if (display <= 0) {
       /* No history: show clean empty state */
-      subEl.textContent = 'Disponible pour ses premi\u00e8res missions';
+      subEl.textContent = 'Disponible pour ses premi\u00e8res interventions';
       return;
     }
     subEl.textContent = display + '\u00a0intervention' + (display > 1 ? 's' : '') + ' enregistr\u00e9e' + (display > 1 ? 's' : '');
+  }
+
+  /* ── 6b. Upgrade the star-rating line (.public-trust-rating) ── */
+  /*
+     P1 fix: upgradeReviewLine() only patched .public-trust-sub.
+     .public-trust-rating (the top line inside .public-trust-card) was missed.
+     renderProfile() sets it to "\u2b50 Aucun avis pour le moment" when
+     stats.average_rating === null — which is always the case for Supabase
+     artisans loaded from localStorage (no mission-based rating computed).
+
+     This function replaces that line with real Supabase artisan.rating.
+     Logic:
+       - rating >= 4.1 (platform minimum)  \u2192 show "\u2b50 X.X / 5"
+       - rating = 0 or absent              \u2192 hide the element entirely
+     "Aucun avis" is never shown when real rating data exists.
+  */
+  function upgradeRatingLine(hero, artisan) {
+    var ratingEl = hero.querySelector('.public-trust-rating');
+    if (!ratingEl || ratingEl.dataset.v2aRatingDone) return;
+    ratingEl.dataset.v2aRatingDone = '1';
+
+    var rating = parseFloat(artisan.rating || 0);
+    if (rating >= 4.1) {
+      /* Real platform rating — show it */
+      ratingEl.textContent = '\u2b50 ' + rating.toFixed(1) + ' / 5';
+    } else {
+      /* No usable rating — hide the line completely */
+      ratingEl.style.display = 'none';
+    }
   }
 
   /* ════════════════════════════════════════════════════════
@@ -589,6 +618,7 @@
       /* ── V2-A ── */
       injectBadgeLabel(hero, artisan);
       upgradeReviewLine(artisan);
+      upgradeRatingLine(hero, artisan);     /* P1: patch .public-trust-rating */
       injectBio(artisan);
       injectHeroTrustStrip(hero, artisan);
       injectWASecondary(hero, artisan);
@@ -601,6 +631,17 @@
       injectSpecialtyChips(artisan);
       injectRealizationsShell();
       upgradeWACopy();
+
+      /* ── P1: Signal V2 completion — triggers CSS to hide V1 artifacts ── */
+      /*
+         body.fpv2b-loaded is the CSS gate for:
+           - .public-section-grid (0% stats panel)
+           - .public-empty-copy ("Aucun avis pour le moment")
+         Only set AFTER all V2-A + V2-B functions complete successfully.
+         If Supabase fetch failed, enhance() returned early — this never runs
+         → V1 panel stays visible (degraded but not broken).
+      */
+      document.body.classList.add('fpv2b-loaded');
     });
   }
 

@@ -35,7 +35,7 @@
   <link rel="stylesheet" href="css/reservation-v2.css?v=3" />
   <link rel="stylesheet" href="css/reservation-v2a.css" />
   <link rel="stylesheet" href="css/artisan-profile-premium.css">
-  <link rel="stylesheet" href="css/artisan-profile-v2a.css">
+  <link rel="stylesheet" href="css/artisan-profile-v2a.css?v=p1">
   <style>
     .notif-badge:empty{display:none!important}
     .notif-panel,.notification-panel{z-index:600!important}
@@ -370,10 +370,10 @@
     var asset = window.__fixeoProfileAssetPath || function (path) { return path; };
     [
       '/js/fixeo-public-profile-links.js',
-      '/js/fixeo-public-artisan-profile.js',
-      '/js/fixeo-profile-premium-ui.js',
+      '/js/fixeo-public-artisan-profile.js?v=p1',
+      '/js/fixeo-profile-premium-ui.js?v=p1',
       '/js/fixeo-claim-system.js?v=cs1',
-      '/js/fixeo-profile-v2a.js'
+      '/js/fixeo-profile-v2a.js?v=p1'
     ].forEach(function (src) {
       document.write('<script src="' + asset(src) + '"><\/script>');
     });
