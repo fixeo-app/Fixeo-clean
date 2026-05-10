@@ -360,3 +360,85 @@ html body .final-cta-section > .container > .final-cta {
     grid-template-columns: 1fr !important;
   }
 }
+
+/* ══════════════════════════════════════════════════════════════════════
+   L-2: Trust Strip — Marketplace Signal Premium Polish
+   Append-only. Braces balanced. Never modify existing blocks.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── L2-A: Per-pill subtle accent — 4 distinct signals, one identity ── */
+/* Each pill carries a different type of signal — a micro-tint communicates
+   this without labels or headers. All remain within the same glassmorphism
+   language. Differences are intentional but subtle — NOT dashboard-loud. */
+
+/* Pill 1 — Quality / verification (warm gold-white — trust, authority) */
+#fxf-mini-trust .fxf-pill-verified {
+  border-color: rgba(251, 211, 141, 0.18) !important;
+}
+#fxf-mini-trust .fxf-pill-verified .fxf-pill-label {
+  color: rgba(255, 255, 255, 0.96) !important;
+}
+
+/* Pill 2 — Live availability (emerald — active, now, alive) */
+#fxf-mini-trust .fxf-pill-available {
+  border-color: rgba(32, 201, 151, 0.22) !important;
+}
+#fxf-mini-trust .fxf-pill-available .fxf-pill-label {
+  color: rgba(32, 201, 151, 0.94) !important;
+}
+#fxf-mini-trust .fxf-pill-available .fxf-pill-icon {
+  color: rgba(32, 201, 151, 1.00) !important;
+}
+
+/* Pill 3 — Payment safety (emerald — same register as L-1 step-4) */
+#fxf-mini-trust .fxf-pill-payment {
+  border-color: rgba(32, 201, 151, 0.18) !important;
+}
+#fxf-mini-trust .fxf-pill-payment .fxf-pill-label {
+  color: rgba(32, 201, 151, 0.88) !important;
+}
+
+/* Pill 4 — Geographic coverage (soft blue-violet — scope, scale) */
+#fxf-mini-trust .fxf-pill-coverage {
+  border-color: rgba(139, 92, 246, 0.20) !important;
+}
+#fxf-mini-trust .fxf-pill-coverage .fxf-pill-label {
+  color: rgba(192, 168, 255, 0.90) !important;
+}
+#fxf-mini-trust .fxf-pill-coverage .fxf-pill-icon {
+  color: rgba(192, 168, 255, 0.88) !important;
+}
+
+/* ── L2-B: Sub-text legibility pass ── */
+/* Was 0.48 opacity on 0.72rem — barely legible. 0.56 = readable. */
+#fxf-mini-trust .fxf-pill-sub {
+  color: rgba(255, 255, 255, 0.56) !important;
+  line-height: 1.3 !important;
+}
+
+/* ── L2-C: Pill hover — per-accent enhancement ── */
+#fxf-mini-trust .fxf-pill-available:hover {
+  border-color: rgba(32, 201, 151, 0.36) !important;
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.18),
+              0 0 0 0 transparent,
+              inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+}
+#fxf-mini-trust .fxf-pill-payment:hover {
+  border-color: rgba(32, 201, 151, 0.30) !important;
+}
+#fxf-mini-trust .fxf-pill-coverage:hover {
+  border-color: rgba(139, 92, 246, 0.34) !important;
+}
+
+/* ── L2-D: Mobile — sub-text slightly smaller to keep 2-row pill clean ── */
+@media (max-width: 640px) {
+  #fxf-mini-trust .fxf-pill-sub {
+    font-size: 0.67rem !important;
+    color: rgba(255, 255, 255, 0.50) !important;
+  }
+  /* Pill 4 sub text is longer ("Casablanca · Rabat · …") — allow wrap gracefully */
+  #fxf-mini-trust .fxf-pill-coverage .fxf-pill-sub {
+    white-space: normal !important;
+    line-height: 1.25 !important;
+  }
+}

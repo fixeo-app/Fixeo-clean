@@ -33,34 +33,41 @@
     var strip = document.createElement('div');
     strip.id = 'fxf-mini-trust';
     strip.setAttribute('aria-hidden', 'true');
+    /* L-2: Marketplace-signal copy. Each pill = operational confidence, not a feature list.
+     * Pill 1 — quality gate (human validation, not just "verified" badge)
+     * Pill 2 — live availability signal (present tense: "Disponible maintenant")
+     * Pill 3 — payment guarantee (consistent with L-1 "après intervention" language)
+     * Pill 4 — active marketplace network (not a static city count)
+     * No apostrophes (U+2019) inside single-quoted JS strings — use \u2019 if needed.
+     * All strings here use double-escape for safe embedding. */
     strip.innerHTML =
       '<div class="fxf-trust-inner">' +
-        '<div class="fxf-pill">' +
-          '<span class="fxf-pill-icon">\u2705</span>' +
+        '<div class="fxf-pill fxf-pill-verified">' +
+          '<span class="fxf-pill-icon">\u2714\ufe0f</span>' +
           '<div class="fxf-pill-text">' +
-            '<span class="fxf-pill-label">Artisans v\u00e9rifi\u00e9s</span>' +
-            '<span class="fxf-pill-sub">Profils contr\u00f4l\u00e9s par Fixeo</span>' +
+            '<span class="fxf-pill-label">Artisans qualifi\u00e9s</span>' +
+            '<span class="fxf-pill-sub">Chaque profil valid\u00e9 par notre \u00e9quipe</span>' +
           '</div>' +
         '</div>' +
-        '<div class="fxf-pill">' +
+        '<div class="fxf-pill fxf-pill-available">' +
           '<span class="fxf-pill-icon">\u26a1</span>' +
           '<div class="fxf-pill-text">' +
-            '<span class="fxf-pill-label">R\u00e9ponse rapide</span>' +
-            '<span class="fxf-pill-sub">Artisan disponible sous 30\u00a0min</span>' +
+            '<span class="fxf-pill-label">Disponible maintenant</span>' +
+            '<span class="fxf-pill-sub">R\u00e9ponse garantie sous 30\u00a0min</span>' +
           '</div>' +
         '</div>' +
-        '<div class="fxf-pill">' +
+        '<div class="fxf-pill fxf-pill-payment">' +
           '<span class="fxf-pill-icon">&#128179;</span>' +
           '<div class="fxf-pill-text">' +
-            '<span class="fxf-pill-label">Paiement apr\u00e8s service</span>' +
-            '<span class="fxf-pill-sub">Vous payez seulement si satisfait</span>' +
+            '<span class="fxf-pill-label">Paiement apr\u00e8s intervention</span>' +
+            '<span class="fxf-pill-sub">Z\u00e9ro avance \u2014 vous payez quand c\u2019est fait</span>' +
           '</div>' +
         '</div>' +
-        '<div class="fxf-pill">' +
+        '<div class="fxf-pill fxf-pill-coverage">' +
           '<span class="fxf-pill-icon">&#128205;</span>' +
           '<div class="fxf-pill-text">' +
-            '<span class="fxf-pill-label">12 villes couvertes</span>' +
-            '<span class="fxf-pill-sub">Casablanca, Rabat, Marrakech\u2026</span>' +
+            '<span class="fxf-pill-label">Actif dans tout le Maroc</span>' +
+            '<span class="fxf-pill-sub">Casablanca \u00b7 Rabat \u00b7 Marrakech \u00b7 F\u00e8s \u00b7 Agadir\u2026</span>' +
           '</div>' +
         '</div>' +
       '</div>';
