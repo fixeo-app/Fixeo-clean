@@ -1157,34 +1157,47 @@
     var section = document.getElementById('fpv2b-realizations');
     if (!section || section.dataset.v1hPortfolioDone) return;
 
-    try {
-      /* Only render own portfolio (localStorage is artisan-device-local) */
-      var myId = localStorage.getItem('user_id')
-               || localStorage.getItem('fixeo_user_id')
-               || localStorage.getItem('sb_user_id') || '';
-      if (!myId || String(myId).trim() !== String(artisanId || '').trim()) return;
+    /* V2-B1: Local-first read with Supabase fallback.
+     * Priority:
+     *   1. FixeoPortfolioMirror.fetchForArtisan() — Supabase first, localStorage fallback
+     *   2. Direct localStorage (when mirror module not loaded)
+     * The own-device gate is REMOVED — portfolio must be visible to all visitors.
+     * _renderPortfolioGrid() is idempotent (data-v1hPortfolioDone guard).
+     */
 
-      var portfolio = JSON.parse(localStorage.getItem('fixeo_portfolio') || '[]');
-      if (!Array.isArray(portfolio) || portfolio.length === 0) return;
+    function _renderPortfolioGrid(items) {
+      /* Guard: only render once */
+      if (section.dataset.v1hPortfolioDone) return;
+      if (!Array.isArray(items) || items.length === 0) return;
 
       section.dataset.v1hPortfolioDone = '1';
 
       /* Build photo grid — newest first, max 6 items */
-      var items = portfolio.slice().reverse().slice(0, 6);
+      var sorted = items.slice().sort(function(a, b) {
+        return (Date.parse(b.created_at || '') || 0) - (Date.parse(a.created_at || '') || 0);
+      }).slice(0, 6);
+
       var gridHtml = '<div class="fpv1h-photo-grid">'
-        + items.map(function(item) {
+        + sorted.map(function(item) {
             var service = esc(item.service || '');
             var desc    = esc(item.description || '');
+            var city    = esc(item.city || '');
             var date    = item.created_at ? _v1hElapsed(item.created_at) : '';
-            return '<div class="fpv1h-photo-item">'
-              + (item.after_image
-                  ? '<img class="fpv1h-photo-img" src="' + esc(item.after_image) + '" alt="' + service + '" loading="lazy">'
-                  : item.before_image
-                  ? '<img class="fpv1h-photo-img" src="' + esc(item.before_image) + '" alt="' + service + '" loading="lazy">'
+            /* V2-B1: Prefer server URLs over base64 */
+            var imgSrc  = item.after_image_url  || item.after_image
+                       || item.before_image_url || item.before_image || '';
+            return '<div class="fpv1h-photo-item" data-portfolio-id="' + esc(String(item.id || '')) + '">'
+              /* Aspect-ratio container prevents layout shift */
+              + '<div class="fpv1h-photo-aspect">'
+              + (imgSrc
+                  ? '<img class="fpv1h-photo-img" src="' + esc(imgSrc) + '" alt="' + service + '" '
+                    + 'width="400" height="300" loading="lazy" decoding="async">'
                   : '<div class="fpv1h-photo-placeholder">\ud83d\udcf7</div>')
+              + '</div>'
               + '<div class="fpv1h-photo-meta">'
               +   (service ? '<span class="fpv1h-photo-service">' + service + '</span>' : '')
               +   (desc    ? '<span class="fpv1h-photo-desc">' + desc + '</span>' : '')
+              +   (city    ? '<span class="fpv1h-photo-city">\ud83d\udccd\u00a0' + city + '</span>' : '')
               +   (date    ? '<span class="fpv1h-photo-date">il y a\u00a0' + date + '</span>' : '')
               + '</div>'
               + '</div>';
@@ -1192,10 +1205,48 @@
         + '</div>';
 
       /* Replace placeholder with real grid */
-      section.querySelector('.fpv2b-realizations-empty').innerHTML = '';
-      section.querySelector('h2.ppui-section-title').textContent = 'R\u00e9alisations';
+      var empty = section.querySelector('.fpv2b-realizations-empty');
+      if (empty) empty.innerHTML = '';
+      var h2 = section.querySelector('h2.ppui-section-title');
+      if (h2) h2.textContent = 'R\u00e9alisations';
       section.insertAdjacentHTML('beforeend', gridHtml);
+    }
+
+    /* FAST PATH: Check localStorage first for instant render */
+    try {
+      var localAll = JSON.parse(localStorage.getItem('fixeo_portfolio') || '[]');
+      /* Match by artisan alias set when identity module available */
+      var localItems = [];
+      if (Array.isArray(localAll) && localAll.length > 0) {
+        var aid = String(artisanId || '').trim();
+        var hasId = window.FixeoArtisanIdentity
+          && typeof window.FixeoArtisanIdentity.requestMatchesArtisan === 'function';
+        var artRef = { id: aid };
+        var sbArt  = window._fixeoCurrentArtisan;
+        if (sbArt) artRef = Object.assign({}, sbArt, { id: aid });
+        var aliases = hasId ? window.FixeoArtisanIdentity.resolveAliases(artRef) : [aid];
+
+        localItems = localAll.filter(function(p) {
+          if (!p.artisan_id) return false;
+          return aliases.indexOf(String(p.artisan_id)) !== -1;
+        });
+      }
+      /* Render local items immediately (may be from artisan's own device) */
+      if (localItems.length > 0) _renderPortfolioGrid(localItems);
     } catch(e) {}
+
+    /* SERVER PATH: Async Supabase fetch for cross-device / public visitor display */
+    if (window.FixeoPortfolioMirror
+        && typeof window.FixeoPortfolioMirror.fetchForArtisan === 'function') {
+      window.FixeoPortfolioMirror.fetchForArtisan(artisanId).then(function(serverItems) {
+        if (!Array.isArray(serverItems) || serverItems.length === 0) return;
+        /* Re-render with server data (may include items from other devices) */
+        section.dataset.v1hPortfolioDone = ''; /* reset guard to allow re-render */
+        _renderPortfolioGrid(serverItems);
+      }).catch(function(e) {
+        /* Silent — local render above is already showing */
+      });
+    }
   }
 
   /* ════════════════════════════════════════════════════════

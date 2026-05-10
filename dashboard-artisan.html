@@ -1223,14 +1223,33 @@ function _v1hRenderPortfolioGrid() {
     card.className = 'portfolio-item fxv1h-portfolio-card';
     card.style.cssText = 'position:relative;overflow:hidden;border-radius:12px;background:var(--bg-card);border:1px solid var(--glass-border);min-height:160px;display:flex;flex-direction:column;';
 
-    var imgSrc = item.after_image || item.before_image || '';
-    card.innerHTML = (imgSrc
-        ? '<img src="' + imgSrc + '" alt="' + (item.service||'') + '" style="width:100%;height:140px;object-fit:cover;display:block;" loading="lazy">'
-        : '<div style="height:90px;display:flex;align-items:center;justify-content:center;font-size:2rem;opacity:.4">\ud83d\udcf7</div>')
-      + '<div style="padding:8px 10px 10px;">'
+    /* V2-B1: Prefer server URLs over base64 (smaller DOM, faster render)
+     * Priority: after_image_url → after_image → before_image_url → before_image
+     * Loading: lazy (no layout shift) with explicit aspect-ratio container
+     */
+    var imgSrc = item.after_image_url  || item.after_image
+              || item.before_image_url || item.before_image || '';
+
+    /* Sync status indicator (subtle, artisan-only, never shown on public profile) */
+    var syncDot = '';
+    if (item.sync_status === 'pending_upload' || item.sync_status === 'pending_identity') {
+      syncDot = '<span style="position:absolute;top:6px;left:8px;width:7px;height:7px;border-radius:50%;background:#f59e0b;opacity:.8" title="En attente de synchronisation"></span>';
+    }
+
+    card.innerHTML = '<div style="width:100%;aspect-ratio:4/3;overflow:hidden;background:var(--bg-secondary,#111);flex-shrink:0;">'
+        + (imgSrc
+          ? '<img src="' + imgSrc + '" alt="' + (item.service||'r\u00e9alisation') + '" '
+            + 'width="400" height="300" '
+            + 'style="width:100%;height:100%;object-fit:cover;display:block;" '
+            + 'loading="lazy" decoding="async">'
+          : '<div style="height:100%;display:flex;align-items:center;justify-content:center;font-size:2rem;opacity:.4">\ud83d\udcf7</div>')
+        + '</div>'
+      + '<div style="padding:8px 10px 10px;flex:1;">'
       + (item.service ? '<div style="font-size:.78rem;font-weight:700;opacity:.85">' + item.service + '</div>' : '')
       + (item.description ? '<div style="font-size:.73rem;opacity:.55;margin-top:3px;line-height:1.4">' + item.description + '</div>' : '')
+      + (item.city ? '<div style="font-size:.70rem;opacity:.4;margin-top:2px">\ud83d\udccd\u00a0' + item.city + '</div>' : '')
       + '</div>'
+      + syncDot
       + '<button onclick="_v1hDeletePortfolioItem(\'' + item.id + '\')" '
       + 'style="position:absolute;top:6px;right:6px;background:rgba(0,0,0,.55);border:none;color:#fff;border-radius:50%;width:24px;height:24px;font-size:.7rem;cursor:pointer;line-height:1;" '
       + 'title="Supprimer">\u00d7</button>';
@@ -1241,12 +1260,22 @@ function _v1hRenderPortfolioGrid() {
 }
 
 function _v1hDeletePortfolioItem(itemId) {
-  try {
-    var portfolio = JSON.parse(localStorage.getItem('fixeo_portfolio') || '[]');
-    portfolio = portfolio.filter(function(i){ return String(i.id) !== String(itemId); });
-    localStorage.setItem('fixeo_portfolio', JSON.stringify(portfolio));
-    _v1hRenderPortfolioGrid();
-  } catch(e) {}
+  /* V2-B1: Mirror-aware delete.
+   * Removes from localStorage immediately (UI updates instantly).
+   * Attempts server metadata + storage delete asynchronously (fire and forget).
+   */
+  if (window.FixeoPortfolioMirror
+      && typeof window.FixeoPortfolioMirror.mirrorDelete === 'function') {
+    window.FixeoPortfolioMirror.mirrorDelete(itemId);
+  } else {
+    /* Fallback: localStorage only */
+    try {
+      var portfolio = JSON.parse(localStorage.getItem('fixeo_portfolio') || '[]');
+      portfolio = portfolio.filter(function(i){ return String(i.id) !== String(itemId); });
+      localStorage.setItem('fixeo_portfolio', JSON.stringify(portfolio));
+    } catch(e) {}
+  }
+  _v1hRenderPortfolioGrid();
 }
 
 /* ── V1-H Phase 1: Portfolio upload — REAL persistence ───────────────── */
@@ -1273,6 +1302,12 @@ function openAddPortfolio() {
 function _v1hSavePortfolioItem() {
   var service  = (document.getElementById('pf-service')  || {}).value || '';
   var desc     = (document.getElementById('pf-desc')     || {}).value || '';
+  var city     = (function() {
+    /* Prefer user_city from localStorage, fallback to artisan city from profile */
+    try {
+      return localStorage.getItem('user_city') || localStorage.getItem('fixeo_city') || '';
+    } catch(e) { return ''; }
+  })();
   var beforeEl = document.getElementById('pf-before');
   var afterEl  = document.getElementById('pf-after');
   var progress = document.getElementById('pf-progress');
@@ -1283,38 +1318,99 @@ function _v1hSavePortfolioItem() {
   var beforeFile = beforeEl && beforeEl.files && beforeEl.files[0] || null;
   var afterFile  = afterEl  && afterEl.files  && afterEl.files[0]  || null;
 
+  /* V2-B1: Mirror-aware save.
+   * 1. Compress images (unchanged from V1-H)
+   * 2. Write to localStorage immediately (zero-latency UI)
+   * 3. Async upload to Supabase Storage + metadata table (background)
+   * 4. Fallback message if server sync fails (no crash, no fake success)
+   */
   function _doSave(beforeUrl, afterUrl) {
-    try {
-      var artisanId = localStorage.getItem('user_id')
-                   || localStorage.getItem('fixeo_user_id')
-                   || localStorage.getItem('sb_user_id') || '';
-      var portfolio = [];
-      try { portfolio = JSON.parse(localStorage.getItem('fixeo_portfolio') || '[]'); } catch(e) {}
-      var item = {
-        id:           'pf-' + Date.now() + '-' + Math.floor(Math.random()*10000),
-        artisan_id:   artisanId,
-        service:      service,
-        description:  desc,
-        created_at:   new Date().toISOString(),
-        before_image: beforeUrl || null,
-        after_image:  afterUrl  || null
-      };
-      portfolio.push(item);
-      localStorage.setItem('fixeo_portfolio', JSON.stringify(portfolio));
-      closeModal();
-      _v1hRenderPortfolioGrid();
-      if (typeof notifications !== 'undefined' && notifications.success) {
-        notifications.success('\ud83d\udcf8 R\u00e9alisation ajout\u00e9e\u00a0!', 'Elle appara\u00eet dans votre portfolio et sur votre fiche publique.');
+    var localId = 'pf-' + Date.now() + '-' + Math.floor(Math.random()*10000);
+
+    /* V2-B1: Use FixeoPortfolioMirror if loaded; fall back to direct localStorage */
+    if (window.FixeoPortfolioMirror
+        && typeof window.FixeoPortfolioMirror.mirrorSave === 'function') {
+
+      window.FixeoPortfolioMirror.mirrorSave({
+        localId:     localId,
+        service:     service,
+        description: desc,
+        city:        city,
+        afterUrl:    afterUrl  || null,
+        beforeUrl:   beforeUrl || null,
+        createdAt:   new Date().toISOString(),
+
+        onLocalSaved: function(item) {
+          /* Immediately close modal and re-render grid from localStorage */
+          if (typeof closeModal === 'function') closeModal();
+          _v1hRenderPortfolioGrid();
+          if (saveBtn) saveBtn.disabled = false;
+          if (typeof notifications !== 'undefined' && notifications.success) {
+            notifications.success('\ud83d\udcf8 R\u00e9alisation ajout\u00e9e\u00a0!',
+              'Photo enregistr\u00e9e. Synchronisation serveur en cours\u2026');
+          }
+        },
+
+        onServerSynced: function(item) {
+          /* Silently re-render grid so server URLs replace base64 in cards */
+          _v1hRenderPortfolioGrid();
+          /* Invalidate public profile read cache so new clients see it */
+          if (window.FixeoPortfolioMirror && item && item.artisan_id) {
+            window.FixeoPortfolioMirror.invalidateCache(item.artisan_id);
+          }
+          if (item.sync_status === 'local_only') {
+            /* Storage/table unavailable — calm informational note only */
+            if (typeof notifications !== 'undefined' && notifications.info) {
+              notifications.info(
+                'Photo enregistr\u00e9e localement.',
+                'Synchronisation serveur \u00e0 r\u00e9essayer. Votre photo reste visible sur cet appareil.'
+              );
+            }
+          }
+        }
+      }).catch(function(e) {
+        console.warn('[Portfolio] mirrorSave threw:', e && e.message);
+        /* Grid already rendered from onLocalSaved — no additional action needed */
+      });
+
+    } else {
+      /* Pure localStorage fallback (FixeoPortfolioMirror not loaded yet) */
+      try {
+        var artisanId = localStorage.getItem('user_id')
+                     || localStorage.getItem('fixeo_user_id')
+                     || localStorage.getItem('sb_user_id') || '';
+        var portfolio = [];
+        try { portfolio = JSON.parse(localStorage.getItem('fixeo_portfolio') || '[]'); } catch(e) {}
+        portfolio.push({
+          id:           localId,
+          artisan_id:   artisanId,
+          service:      service,
+          description:  desc,
+          city:         city,
+          created_at:   new Date().toISOString(),
+          before_image: beforeUrl || null,
+          after_image:  afterUrl  || null,
+          sync_status:  'pending_upload',
+        });
+        localStorage.setItem('fixeo_portfolio', JSON.stringify(portfolio));
+        if (typeof closeModal === 'function') closeModal();
+        _v1hRenderPortfolioGrid();
+        if (saveBtn) saveBtn.disabled = false;
+        if (typeof notifications !== 'undefined' && notifications.success) {
+          notifications.success('\ud83d\udcf8 R\u00e9alisation ajout\u00e9e\u00a0!',
+            'Elle appara\u00eet dans votre portfolio et sur votre fiche publique.');
+        }
+      } catch(storageErr) {
+        if (progress) progress.textContent = 'Erreur de sauvegarde. Photo peut-\u00eatre trop lourde.';
+        if (saveBtn) saveBtn.disabled = false;
       }
-    } catch(storageErr) {
-      if (progress) progress.textContent = 'Erreur de sauvegarde. Photo peut-\u00eatre trop lourde.';
-      if (saveBtn) saveBtn.disabled = false;
     }
   }
 
   /* Process photos: compress before → compress after → save */
   if (afterFile) {
     _v1hCompressImage(afterFile, function(afterUrl) {
+      if (progress) progress.textContent = 'Upload en cours\u2026';
       if (beforeFile) {
         _v1hCompressImage(beforeFile, function(beforeUrl) { _doSave(beforeUrl, afterUrl); });
       } else {
@@ -1322,7 +1418,10 @@ function _v1hSavePortfolioItem() {
       }
     });
   } else if (beforeFile) {
-    _v1hCompressImage(beforeFile, function(beforeUrl) { _doSave(beforeUrl, null); });
+    _v1hCompressImage(beforeFile, function(beforeUrl) {
+      if (progress) progress.textContent = 'Upload en cours\u2026';
+      _doSave(beforeUrl, null);
+    });
   } else {
     _doSave(null, null);
   }
@@ -1671,5 +1770,7 @@ document.addEventListener('DOMContentLoaded', () => {
 <!-- V1-I: Coordination Confidence Layer -->
 <script src="js/fixeo-coordination-v1i.js?v=v1i" defer></script>
 <script src="js/fixeo-mission-mirror.js?v=v2a1" defer></script>
+<!-- V2-B1: Portfolio Supabase Storage Mirror -->
+<script src="js/fixeo-portfolio-mirror.js?v=v2b1" defer></script>
 </body>
 </html>

@@ -36,7 +36,7 @@
   <link rel="stylesheet" href="css/reservation-v2a.css?v=v2c" />
   <link rel="stylesheet" href="css/artisan-profile-premium.css">
   <link rel="stylesheet" href="css/artisan-profile-v2a.css?v=p3">
-  <link rel="stylesheet" href="css/fixeo-profile-v1jb.css?v=v1jc">
+  <link rel="stylesheet" href="css/fixeo-profile-v1jb.css?v=v2b1">
   <style>
     .notif-badge:empty{display:none!important}
     .notif-panel,.notification-panel{z-index:600!important}
@@ -377,7 +377,7 @@
       '/js/fixeo-artisan-identity.js?v=v2a3',
       '/js/fixeo-client-requests-store.js',
       '/js/fixeo-mission-rehydration.js?v=v2a2',
-      '/js/fixeo-profile-v2a.js?v=v2a2',
+      '/js/fixeo-profile-v2a.js?v=v2b1',
       '/js/fixeo-profile-v1jb.js?v=v1jc'
     ].forEach(function (src) {
       document.write('<script src="' + asset(src) + '"><\/script>');
@@ -539,5 +539,7 @@
   })(document);
 </script>
 <script src="js/fixeo-mission-mirror.js?v=v2a1" defer></script>
+<!-- V2-B1: Portfolio public read (fetchForArtisan) -->
+<script src="js/fixeo-portfolio-mirror.js?v=v2b1" defer></script>
 </body>
 </html>

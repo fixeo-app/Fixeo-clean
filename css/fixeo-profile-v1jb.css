@@ -466,3 +466,96 @@ button.fpv2a-wa-btn:hover {
     white-space: normal;
   }
 }
+
+/* ══════════════════════════════════════════════════════════
+   V2-B1 — Portfolio public display (append-only)
+   Namespace: .fpv1h-photo-*
+   No layout shift: aspect-ratio container on every image card
+   ══════════════════════════════════════════════════════════ */
+
+/* Aspect-ratio wrapper — prevents CLS when image loads */
+.fpv1h-photo-aspect {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.04);
+  flex-shrink: 0;
+}
+
+.fpv1h-photo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* City label under service/desc */
+.fpv1h-photo-city {
+  display: block;
+  font-size: 0.69rem;
+  opacity: 0.38;
+  margin-top: 2px;
+}
+
+/* Grid: 2-col on mobile, 3-col on wider screens */
+.fpv1h-photo-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  padding: 4px 0 8px;
+}
+
+@media (min-width: 600px) {
+  .fpv1h-photo-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.fpv1h-photo-item {
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--bg-card, rgba(255, 255, 255, 0.04));
+  border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.08));
+  display: flex;
+  flex-direction: column;
+}
+
+.fpv1h-photo-meta {
+  padding: 7px 9px 9px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.fpv1h-photo-service {
+  font-size: 0.76rem;
+  font-weight: 700;
+  opacity: 0.85;
+  display: block;
+}
+
+.fpv1h-photo-desc {
+  font-size: 0.70rem;
+  opacity: 0.50;
+  line-height: 1.4;
+  display: block;
+}
+
+.fpv1h-photo-date {
+  font-size: 0.67rem;
+  opacity: 0.35;
+  display: block;
+  margin-top: auto;
+  padding-top: 4px;
+}
+
+.fpv1h-photo-placeholder {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  opacity: 0.3;
+}
