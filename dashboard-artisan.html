@@ -355,7 +355,7 @@ select option{background:#1a1a2e!important;color:#fff!important;}
 }
 </style>
 
-  <link rel="stylesheet" href="css/fixeo-chat-mvp.css">
+  <!-- fixeo-chat-mvp.css removed V1-A (chat widget removed) -->
   <link rel="stylesheet" href="css/header-logo-premium.css?v=hlp5">
   <!-- Phase 1 Trust Reset — additive override -->
   <link rel="stylesheet" href="css/artisan-dashboard-p1.css?v=1">
@@ -364,9 +364,9 @@ select option{background:#1a1a2e!important;color:#fff!important;}
   <!-- Phase 3 Live Visibility Engine — additive override -->
   <link rel="stylesheet" href="css/artisan-dashboard-p3.css?v=1">
   <!-- Phase 4 Real Request Inbox — additive override -->
-  <link rel="stylesheet" href="css/artisan-dashboard-p4.css?v=v1a">
+  <link rel="stylesheet" href="css/artisan-dashboard-p4.css?v=da-v1a">
   <!-- Phase 2 Mission Lifecycle — additive -->
-  <link rel="stylesheet" href="css/mission-lifecycle-p2.css?v=1">
+  <link rel="stylesheet" href="css/mission-lifecycle-p2.css?v=da-v1a">
   <!-- Phase 3A Commission Engine — additive -->
   <link rel="stylesheet" href="css/commission-lifecycle-p3a.css?v=1">
   <link rel="stylesheet" href="css/fixeo-notifications-real-v1.css?v=1">
@@ -601,12 +601,12 @@ select option{background:#1a1a2e!important;color:#fff!important;}
       <div class="sidebar-section-label">Tableau de bord</div>
       <a class="sidebar-link active" href="#overview"   onclick="showSection('overview')"><span class="icon">📊</span><span>Vue d'ensemble</span></a>
       <a class="sidebar-link"        href="#requests"   onclick="showSection('requests')"><span class="icon">📬</span><span>Demandes</span>
-        <span style="margin-left:auto;font-size:.68rem;padding:2px 8px;background:var(--accent-red);border-radius:20px;color:#fff;flex-shrink:0">5</span></a>
+        <span id="fxadp4-sidebar-badge" style="margin-left:auto;font-size:.68rem;padding:2px 8px;background:var(--accent-red);border-radius:20px;color:#fff;flex-shrink:0;display:none">0</span></a>
       <a class="sidebar-link"        href="#missions"   onclick="showSection('missions')"><span class="icon">🎯</span><span>Missions</span></a>
       <a class="sidebar-link"        href="#earnings"   onclick="showSection('earnings')"><span class="icon">💰</span><span>Revenus</span></a>
       <a class="sidebar-link"        href="#portfolio"  onclick="showSection('portfolio')"><span class="icon">📸</span><span>Portfolio</span></a>
       <div class="sidebar-section-label">Gamification</div>
-      <a class="sidebar-link"        href="#progression" onclick="showSection('progression')"><span class="icon">🔥</span><span>Progression</span></a>
+      <!-- Progression nav item removed — V1-A trust cleanup -->
       <div class="sidebar-section-label">Abonnement</div>
       <a class="sidebar-link"        href="#subscription" onclick="showSection('subscription')"><span class="icon">💎</span><span>Mon Abonnement</span><span style="margin-left:auto;font-size:.6rem;padding:2px 7px;background:var(--grad-primary);border-radius:20px;color:#fff;flex-shrink:0" id="current-plan-badge">Pro</span></a>
       <div class="sidebar-section-label">Profil</div>
@@ -788,66 +788,18 @@ select option{background:#1a1a2e!important;color:#fff!important;}
         <h2 style="font-size:1.3rem">📸 Mon portfolio</h2>
         <button class="btn btn-primary" onclick="openAddPortfolio()">+ Ajouter une réalisation</button>
       </div>
+      <!-- V1-A: Demo Unsplash photos removed. Portfolio starts empty — artisan's own work only. -->
       <div class="portfolio-grid" id="portfolio-grid">
-        <div class="portfolio-item">
-          <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=300&h=300&fit=crop&q=80" alt="Réalisation plomberie" loading="lazy">
-          <div class="overlay"><button class="btn btn-sm">Voir</button></div>
-        </div>
-        <div class="portfolio-item">
-          <img src="https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=300&h=300&fit=crop&q=80" alt="Réalisation salle de bain" loading="lazy">
-          <div class="overlay"><button class="btn btn-sm">Voir</button></div>
-        </div>
-        <div class="portfolio-item">
-          <img src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=300&h=300&fit=crop&q=80" alt="Réalisation travaux" loading="lazy">
-          <div class="overlay"><button class="btn btn-sm">Voir</button></div>
-        </div>
-        <div class="portfolio-item">
-          <img src="https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=300&h=300&fit=crop&q=80" alt="Réalisation cuisine" loading="lazy">
-          <div class="overlay"><button class="btn btn-sm">Voir</button></div>
-        </div>
-        <div class="portfolio-item" style="border:2px dashed var(--glass-border);display:flex;align-items:center;justify-content:center;cursor:pointer;background:var(--bg-card)" onclick="openAddPortfolio()">
+        <div class="portfolio-item" style="border:2px dashed var(--glass-border);display:flex;align-items:center;justify-content:center;cursor:pointer;background:var(--bg-card);min-height:160px" onclick="openAddPortfolio()">
           <div style="text-align:center">
             <div style="font-size:2rem;margin-bottom:6px">+</div>
-            <div style="font-size:.8rem;color:var(--text-muted)">Ajouter</div>
+            <div style="font-size:.8rem;color:var(--text-muted)">Ajouter une réalisation</div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- ── PROGRESSION ────────────────────────────────────── -->
-    <div id="section-progression" style="display:none">
-      <section class="dashboard-gamification">
-        <div class="gamification-header">
-          <h2>🔥 Votre progression</h2>
-          <p>Niveau actuel : <span class="level-name">Apprenti</span></p>
-          <div class="xp-bar">
-            <div class="xp-fill"></div>
-          </div>
-          <div class="xp-level-text">120 XP · 57%</div>
-        </div>
-
-        <div class="gamification-grid">
-          <div class="gamification-card">
-            <h3>🏆 Badges</h3>
-            <div class="badges-grid" data-badges></div>
-          </div>
-
-          <div class="gamification-card">
-            <h3>🎯 Missions</h3>
-            <ul class="gamification-mission-list">
-              <li>Compléter profil (+50 XP)</li>
-              <li>1ère mission (+100 XP)</li>
-              <li>5 avis (+150 XP)</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="gamification-card leaderboard">
-          <h3>🏅 Classement</h3>
-          <div class="leaderboard-list" data-leaderboard></div>
-        </div>
-      </section>
-    </div>
+    <!-- section-progression removed — V1-A trust cleanup (gamification was fake/disconnected) -->
 
     <!-- ── SETTINGS ───────────────────────────────────────── -->
     <div id="section-subscription" style="display:none">
@@ -895,7 +847,7 @@ select option{background:#1a1a2e!important;color:#fff!important;}
           <div style="font-size:1.8rem">👑</div>
           <div>
             <div style="font-size:1rem;font-weight:700">Passez au Premium — 199 MAD/mois</div>
-            <div style="font-size:.82rem;color:var(--text-muted)">Profil 1ère position, vidéos illimitées, support VIP 2h, rapports IA</div>
+            <div style="font-size:.82rem;color:var(--text-muted)">Profil 1ère position, vidéos illimitées, support VIP 2h</div>
           </div>
           <button class="btn btn-premium btn-sm" style="margin-left:auto" onclick="upgradeToPremium()">Upgrader →</button>
         </div>
@@ -903,8 +855,8 @@ select option{background:#1a1a2e!important;color:#fff!important;}
           <div style="font-size:.82rem;color:rgba(255,255,255,.75)">👑 Badge Premium Elite</div>
           <div style="font-size:.82rem;color:rgba(255,255,255,.75)">📹 Vidéos illimitées</div>
           <div style="font-size:.82rem;color:rgba(255,255,255,.75)">🥇 1ère position résultats</div>
-          <div style="font-size:.82rem;color:rgba(255,255,255,.75)">🤖 Devis automatiques IA</div>
-          <div style="font-size:.82rem;color:rgba(255,255,255,.75)">📊 Rapport mensuel</div>
+          <div style="font-size:.82rem;color:rgba(255,255,255,.75)">⚡ Missions urgentes prioritaires</div>
+          <div style="font-size:.82rem;color:rgba(255,255,255,.75)">📸 Portfolio vidéo illimité</div>
           <div style="font-size:.82rem;color:rgba(255,255,255,.75)">⚡ Support VIP 2h</div>
         </div>
       </div>
@@ -992,35 +944,19 @@ select option{background:#1a1a2e!important;color:#fff!important;}
   </div>
 </div>
 
-<!-- Chat widget -->
-<div class="chat-widget">
-  <div class="chat-panel" id="chat-panel">
-    <div class="chat-panel-header">
-      <div style="font-weight:700;font-size:.9rem;flex:1">Messages</div>
-      <button class="btn btn-ghost btn-sm" onclick="toggleChat()" style="flex-shrink:0">✕</button>
-    </div>
-    <div class="chat-messages" id="chat-messages">
-      <div class="msg received">Bonjour, je suis intéressé par vos services. 😊</div>
-    </div>
-    <div class="chat-input-row">
-      <input type="text" id="chat-input-field" class="chat-input" placeholder="Écrire un message…">
-      <button class="btn btn-primary btn-sm" onclick="sendMessage()">→</button>
-    </div>
-  </div>
-  <button class="chat-toggle" onclick="toggleChat()">💬</button>
-</div>
+<!-- Chat widget removed — V1-A trust cleanup -->
 
 <script src="js/fixeo-session-mobile.js"></script>
 <script src="js/fixeo-header-global.js"></script>
 <script src="js/i18n.js"></script>
 <script src="js/notifications.js"></script>
-<script src="js/gamification.js"></script>
-<script src="js/dashboard.js"></script>
+<!-- gamification.js removed V1-A (XP/leaderboard system disconnected from real data) -->
+<!-- dashboard.js removed V1-A (canvas charts use fake revenue data; chart canvases CSS-hidden) -->
 <script src="js/artisan-onboarding-store.js"></script>
 <script src="js/fixeo-client-requests-store.js"></script>
 <script src="js/fixeo-trust-score.js"></script>
 <script src="js/fixeo-dashboard-artisan-existing.js"></script>
-<script src="js/main.js"></script>
+<!-- main.js removed V1-A (marketplace engine; not needed on artisan dashboard) -->
 <script src="js/fixeo-mission-system.js"></script>
 <script src="js/fixeo-artisan-cod.js"></script>
   <script src="js/fixeo-state-bridge.js?v=sb1"></script>
@@ -1057,25 +993,11 @@ function toggleAvailability(cb) {
   notifications.info(cb.checked ? '✅ Vous êtes disponible' : '⚪ Vous êtes hors ligne', '');
 }
 
-// ── Chat ──────────────────────────────────────────────────
-function toggleChat()  { document.getElementById('chat-panel').classList.toggle('open'); }
-function sendMessage() {
-  const i = document.getElementById('chat-input-field');
-  const m = document.getElementById('chat-messages');
-  if (!i||!m||!i.value.trim()) return;
-  m.innerHTML += `<div class="msg sent">${i.value}</div>`;
-  m.scrollTop = m.scrollHeight; i.value = '';
-  setTimeout(() => {
-    m.innerHTML += `<div class="msg received">Merci pour votre réponse rapide !</div>`;
-    m.scrollTop = m.scrollHeight;
-  }, 1500);
-}
-
 // ── Modal ─────────────────────────────────────────────────
 function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); }
 
-// ── Requests ─────────────────────────────────────────────
-const BUSINESS_REQUESTS = [
+// ── Requests (V1-A: BUSINESS_REQUESTS + demo functions removed) ──────────
+/* const BUSINESS_REQUESTS = [
   {
     id:'DEM-001',
     client:'Ahmed Karimi',
@@ -1203,11 +1125,10 @@ function acceptDemoRequest(btn) {
 }
 
 function rejectDemoRequest(btn) {
-  const card = btn.closest('.request-card');
-  if (!card) return;
-  card.classList.add('is-rejected');
+    card.classList.add('is-rejected');
   card.style.pointerEvents = 'none';
-}
+} */
+/* END V1-A dead-code block */
 
 // ── Add portfolio ─────────────────────────────────────────
 function openAddPortfolio() {
@@ -1236,50 +1157,11 @@ function openAddPortfolio() {
   document.getElementById('modal-overlay').classList.add('open');
 }
 
-// ── Chart tab switch ──────────────────────────────────────
-function switchChart(type, tab) {
-  document.querySelectorAll('.chart-tab').forEach(t => t.classList.remove('active'));
-  tab.classList.add('active');
-  if (!window.dashboard) return;
-  const months = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
-  if (type === 'revenue') {
-    window.dashboard.drawLineChart('chart-revenue', months, window.dashboard.artisanData.revenueByMonth, '#20c997');
-  } else {
-    const reqData = [8,12,15,9,14,11,18,13,16,20,17,14];
-    window.dashboard.drawBarChart('chart-revenue', months, reqData, '#E1306C');
-  }
-}
-
-// ── Init ──────────────────────────────────────────────────
+// ── Init (V1-A: gamification.renderAll + fake charts removed) ────────────
 document.addEventListener('DOMContentLoaded', () => {
-  if (window.dashboard) window.dashboard.init('artisan');
-
-  if (window.gamification) {
-    window.gamification.renderAll();
-    document.querySelectorAll('[data-missions]').forEach(c => window.gamification.renderMissions(c));
-    document.querySelectorAll('[data-xp-bar]').forEach(el => window.gamification.renderXPBar(el));
-    document.querySelectorAll('[data-badges]').forEach(c => window.gamification.renderBadges(c));
-    document.querySelectorAll('[data-leaderboard]').forEach(c => window.gamification.renderLeaderboard(c));
-  }
-
-  // FIX 2: Ensure revenue charts render with demo data
-  function _drawAllCharts() {
-    if (!window.dashboard) return;
-    const months = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
-    const revenueData = [5200,6800,7400,5900,8100,7200,9300,8400,7800,10200,9500,8400];
-    const canvas1 = document.getElementById('chart-revenue');
-    if (canvas1 && canvas1.offsetWidth > 0)
-      window.dashboard.drawLineChart('chart-revenue', months, revenueData, '#20c997', 'Revenus');
-    const canvas2 = document.getElementById('chart-revenue-full');
-    if (canvas2 && canvas2.offsetWidth > 0)
-      window.dashboard.drawLineChart('chart-revenue-full', months, revenueData, '#20c997', 'Revenus');
-  }
-  setTimeout(_drawAllCharts, 300);
-  setTimeout(_drawAllCharts, 700);
-  window.addEventListener('resize', _drawAllCharts);
-
-  /* Phase 1 Trust Reset: renderDemoRequests() suppressed — fake data removed */
-  /* notifications.runDemo() — method did not exist; removed */
+  /* dashboard.init, gamification.renderAll, _drawAllCharts — all removed V1-A
+     Chart canvas elements hidden by artisan-dashboard-p1.css (.business-secondary-grid)
+     Gamification section (#section-progression) removed from DOM V1-A */
 });
 </script>
 
@@ -1543,10 +1425,10 @@ document.addEventListener('DOMContentLoaded', () => {
 <script src="js/fixeo-supabase-core.js?v=p1b"></script>
 <script src="js/header-unified.js"></script>
 <script src="js/auth-global.js?v=p1b"></script>
-<script src="js/fixeo-mvp-supabase.js"></script>
+<script src="js/fixeo-mvp-supabase.js?v=v1a"></script>
 <script src="js/fixeo-session-bridge.js?v=sb1"></script>
 
-<script src="js/fixeo-chat-mvp.js"></script>
+<!-- fixeo-chat-mvp.js removed V1-A (localStorage-only fake chat widget) -->
 <script src="js/fixeo-client-requests-dashboard.js"></script>
 <script src="js/fixeo-artisan-request-notifications.js"></script>
 <!-- Phase 1 Trust Reset -->
@@ -1556,9 +1438,9 @@ document.addEventListener('DOMContentLoaded', () => {
 <!-- Phase 3 Live Visibility Engine -->
 <script src="js/artisan-dashboard-p3.js?v=1" defer></script>
 <!-- Phase 4 Real Request Inbox -->
-<script src="js/artisan-dashboard-p4.js?v=v1a" defer></script>
+<script src="js/artisan-dashboard-p4.js?v=da-v1a" defer></script>
 <!-- Phase 2 Mission Lifecycle -->
-<script src="js/mission-lifecycle-p2.js?v=1" defer></script>
+<script src="js/mission-lifecycle-p2.js?v=da-v1a" defer></script>
 <!-- Phase 3A Commission Engine -->
 <script src="js/commission-lifecycle-p3a.js?v=1" defer></script>
 <script src="js/fixeo-notifications-real-v1.js?v=1" defer></script>

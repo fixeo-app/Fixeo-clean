@@ -329,6 +329,40 @@
         var opt = Array.from(cityEl.options).find(function(o) { return o.value === city || o.text === city; });
         if (opt) cityEl.value = opt.value;
       }
+      /* ── V1-A Onboarding sync: write user_city + user_name to localStorage ──
+         Guarantees p4.js getArtisan() city filter has real data immediately
+         after Supabase login — without requiring onboarding-artisan.html path.
+         user_job is attempted from artisans table; falls back to existing value.
+      ─────────────────────────────────────────────────────────────────────── */
+      try {
+        var _syncCity = (profile.city || '').trim();
+        var _syncName = (profile.full_name || '').trim();
+        if (_syncCity) localStorage.setItem('user_city', _syncCity);
+        if (_syncName) {
+          localStorage.setItem('user_name', _syncName);
+          localStorage.setItem('fixeo_user_name', _syncName);
+        }
+        /* Attempt artisans table lookup for service_category (job field) */
+        if (window.FixeoSupabaseClient && typeof window.FixeoSupabaseClient.getClient === 'function') {
+          window.FixeoSupabaseClient.getClient().then(function(sb) {
+            return sb.from('artisans')
+              .select('service_category')
+              .or('id.eq.' + (profile.id || '') + ',legacy_id.eq.' + (profile.id || ''))
+              .maybeSingle();
+          }).then(function(res) {
+            var svc = res && res.data && res.data.service_category;
+            if (svc && svc.trim()) {
+              localStorage.setItem('user_job', svc.trim());
+              /* Nudge p4 to re-render with new job data */
+              try {
+                window.dispatchEvent(new CustomEvent('fixeo:artisan:profile-synced', {
+                  detail: { city: _syncCity, job: svc.trim() }
+                }));
+              } catch(_) {}
+            }
+          }).catch(function() { /* silent — non-critical */ });
+        }
+      } catch(_) { /* sync failure must never break the artisan dashboard */ }
     }
   }
 
@@ -365,14 +399,18 @@
 
         await FixeoSupabase.patchProfile(userId, cleaned);
 
-        // Sync localStorage name if changed
+        // Sync localStorage — name + city (ensures p4.js inbox filter is current)
         if (cleaned.full_name) {
           try {
             localStorage.setItem('fixeo_user_name', cleaned.full_name);
+            localStorage.setItem('user_name', cleaned.full_name);
             var storedUser = JSON.parse(localStorage.getItem('user') || '{}');
             storedUser.name = cleaned.full_name;
             localStorage.setItem('user', JSON.stringify(storedUser));
           } catch (_) {}
+        }
+        if (cleaned.city) {
+          try { localStorage.setItem('user_city', cleaned.city); } catch (_) {}
         }
 
         notify('success', '✅ Profil mis à jour', 'Vos modifications ont été enregistrées.');

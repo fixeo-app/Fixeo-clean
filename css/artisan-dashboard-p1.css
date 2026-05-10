@@ -544,3 +544,8 @@
     padding: 10px 12px;
   }
 }
+
+/* V1-A: Hide empty legacy request list placeholder — p4.js renders into requests-grid */
+#priority-requests-list:empty { display: none !important; }
+/* V1-A: Chat widget CSS no longer needed — widget removed */
+.chat-widget { display: none !important; }

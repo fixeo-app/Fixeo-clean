@@ -210,21 +210,44 @@
     dispatch('fixeo:missions:updated',        { missions: [] });
     dispatch('fixeo:state:updated',           { event: 'request-accepted' });
 
-    // Update card DOM immediately
+    // Update card DOM immediately — post-accept: WA CTA primary action
     var card = el('fxadp4-card-' + reqId);
     if (card) {
       card.classList.add('state-accepted');
       var actions = card.querySelector('.fxadp4-card-actions');
       if (actions) {
-        actions.innerHTML = '<span class="fxadp4-accepted-label">\u2713 Demande accept\u00e9e</span>';
+        var waLink = buildWALink(found.phone || found.telephone);
+        var art    = getArtisan();
+        var artName = (art.name || 'Artisan Fixeo').split(' ')[0];
+        var svc   = (found.service || 'votre demande').toLowerCase();
+        var city  = found.city || found.ville || art.city || 'votre ville';
+        var waMsg = encodeURIComponent(
+          'Bonjour, je suis ' + artName + ', artisan Fixeo sp\u00e9cialis\u00e9 en ' + svc + ' \u00e0 ' + city + '. '
+          + 'J\u2019ai bien re\u00e7u votre demande et je suis disponible pour intervenir. '
+          + 'Pouvez-vous me confirmer l\u2019adresse et l\u2019heure souhait\u00e9e\u00a0?'
+        );
+        var waHref = waLink
+          ? waLink.replace(/\?text=.*$/, '') + '?text=' + waMsg
+          : '';
+        /* V1-A: post-accept state: WA CTA primary + Terminer secondary */
+        actions.innerHTML = '<span class="fxadp4-accepted-label">\u2713 Accept\u00e9e</span>'
+          + (waHref
+            ? '<a class="fxadp4-btn-wa fxadp4-btn-wa--primary" href="' + esc(waHref) + '" target="_blank" rel="noopener">'
+              + '\ud83d\udcf2 Coordonner via WhatsApp'
+              + '</a>'
+            : '')
+          + '<button class="fxadp4-btn-done" onclick="_fxP4Done(\'' + id + '\')">'
+            + '\u2713 Marquer termin\u00e9e'
+            + '</button>';
       }
     }
 
-    // Update overview mini-inbox
+    // Update overview mini-inbox + sidebar badge
     _refreshOverviewCount();
+    _updateSidebarBadge();
 
     if (window.notifications) {
-      notifications.success('Demande accept\u00e9e !', 'Contactez le client pour planifier l\u2019intervention.');
+      notifications.success('Demande accept\u00e9e !', 'Contactez le client via WhatsApp pour coordonner.');
     }
   };
 
@@ -255,7 +278,42 @@
     // Dispatch
     dispatch('fixeo:state:updated', { event: 'request-ignored' });
     _refreshOverviewCount();
+    _updateSidebarBadge();
   };
+
+  /* ── V1-A: Mark intervention done from accepted card ─── */
+  window._fxP4Done = function(reqId) {
+    var list = readRequests();
+    list.forEach(function(r, i) {
+      if (String(r.id) === String(reqId)) {
+        list[i] = Object.assign({}, r, {
+          status: 'termin\u00e9e',
+          completed_at: new Date().toISOString()
+        });
+      }
+    });
+    writeRequests(list);
+    dispatch('fixeo:client-request-updated', { id: reqId, status: 'termin\u00e9e' });
+    dispatch('fixeo:state:updated', { event: 'request-done' });
+    /* Navigate artisan to Missions tab to see the completed entry */
+    if (typeof showSection === 'function') showSection('missions');
+    if (window.notifications) notifications.success('Intervention termin\u00e9e', 'Elle appara\u00eet dans vos Missions.');
+  };
+
+  /* ── V1-A: Update sidebar "Demandes [N]" badge ────────── */
+  function _updateSidebarBadge() {
+    var artisan  = getArtisan();
+    var requests = getMatchingRequests(artisan);
+    var count    = requests.length;
+    var badge    = document.getElementById('fxadp4-sidebar-badge');
+    if (!badge) return;
+    if (count > 0) {
+      badge.textContent = String(count);
+      badge.style.display = '';
+    } else {
+      badge.style.display = 'none';
+    }
+  }
 
   /* ── RENDER: full request card ───────────────────────── */
   function renderCard(r) {
@@ -283,15 +341,35 @@
       ? '<div class="fxadp4-card-budget">\ud83d\udcb0 ' + budget + '</div>'
       : '';
 
+    /* V1-A: STATE A = new (accept + ignore), STATE B = accepted (WA primary + done) */
     var actionsHtml;
     if (acceptedState) {
-      actionsHtml = '<span class="fxadp4-accepted-label">\u2713 Accept\u00e9e</span>';
+      /* STATE B — Accepted: WhatsApp is now the primary action */
+      var art       = getArtisan();
+      var artName   = (art.name || 'Artisan Fixeo').split(' ')[0];
+      var svcLow    = (r.service || 'votre demande').toLowerCase();
+      var cityCtx   = r.city || r.ville || art.city || 'votre ville';
+      var waMsgAcc  = encodeURIComponent(
+        'Bonjour, je suis ' + artName + ', artisan Fixeo sp\u00e9cialis\u00e9 en ' + svcLow + ' \u00e0 ' + cityCtx + '. '
+        + 'J\u2019ai bien re\u00e7u votre demande et je suis disponible pour intervenir. '
+        + 'Pouvez-vous me confirmer l\u2019adresse et l\u2019heure souhait\u00e9e\u00a0?'
+      );
+      var waAccHref = waLink
+        ? waLink.replace(/\?text=.*$/, '') + '?text=' + waMsgAcc
+        : '';
+      actionsHtml = '<span class="fxadp4-accepted-label">\u2713 Accept\u00e9e</span>'
+        + (waAccHref
+          ? '<a class="fxadp4-btn-wa fxadp4-btn-wa--primary" href="' + esc(waAccHref) + '" target="_blank" rel="noopener">'
+            + '\ud83d\udcf2 Coordonner via WhatsApp'
+            + '</a>'
+          : '')
+        + '<button class="fxadp4-btn-done" onclick="_fxP4Done(\'' + id + '\')">'
+          + '\u2713 Marquer termin\u00e9e'
+          + '</button>';
     } else {
-      actionsHtml = '<button class="fxadp4-btn-accept" onclick="_fxP4Accept(\'' + id + '\')">Accepter la demande</button>';
-      if (waLink) {
-        actionsHtml += '<a class="fxadp4-btn-wa" href="' + esc(waLink) + '" target="_blank" rel="noopener">\ud83d\udcf2 WhatsApp</a>';
-      }
-      actionsHtml += '<button class="fxadp4-btn-ignore" onclick="_fxP4Ignore(\'' + id + '\')">Passer</button>';
+      /* STATE A — New: accept is primary, ignore is secondary, no pre-accept WA */
+      actionsHtml = '<button class="fxadp4-btn-accept" onclick="_fxP4Accept(\'' + id + '\')">Accepter la demande</button>'
+        + '<button class="fxadp4-btn-ignore" onclick="_fxP4Ignore(\'' + id + '\')">Passer</button>';
     }
 
     return '<div class="fxadp4-card' + (isUrgent ? ' is-urgent' : '') + (acceptedState ? ' state-accepted' : '') + '" id="fxadp4-card-' + id + '">'
@@ -471,6 +549,7 @@
 
     injectOverviewInbox(artisan, requests);
     injectFullInbox(artisan, requests);
+    _updateSidebarBadge();
 
     // Sync notification bell badge via existing P4-friendly interface
     dispatch('fixeo:artisan-inbox:updated', { count: requests.length });
@@ -518,6 +597,19 @@
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
+
+    /* ── V1-A: Re-render inbox when Supabase profile sync completes ──
+       Fires after fixeo-mvp-supabase.js writes user_job from artisans table.
+       Guard: only re-render if job was previously empty (avoid churn).
+    ────────────────────────────────────────────────────────────────── */
+    window.addEventListener('fixeo:artisan:profile-synced', function(e) {
+      var wasEmpty = !localStorage.getItem('user_job') ||
+                     !(localStorage.getItem('user_job') || '').trim();
+      if (wasEmpty && e.detail && e.detail.job) {
+        localStorage.setItem('user_job', e.detail.job);
+      }
+      render();
+    });
   } else {
     setTimeout(init, 0);
   }

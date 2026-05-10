@@ -255,10 +255,31 @@
       ? '<div class="fxmlp2-waiting-hint">\u23f3 En attente de confirmation client pour cl\u00f4turer la mission.</div>'
       : '';
 
+    // V1-A: Build WA coordination link for accepted missions
+    function _buildMissionWA(raw, svcLabel, cityLabel) {
+      var d = String(raw || '').replace(/\D/g, '');
+      if (d.charAt(0) === '0') d = '212' + d.slice(1);
+      if (!/^212[6-9]\d{8}$/.test(d)) return '';
+      var artName = (ls('user_name', '') || ls('fixeo_user_name', '') || 'Artisan Fixeo').split(' ')[0];
+      var msg = encodeURIComponent(
+        'Bonjour, je suis ' + artName + ', artisan Fixeo sp\u00e9cialis\u00e9 en '
+        + (svcLabel || 'intervention').toLowerCase() + ' \u00e0 ' + (cityLabel || 'votre ville') + '. '
+        + 'Je suis en route pour votre intervention. '
+        + 'Pouvez-vous m\u2019indiquer votre adresse pr\u00e9cise\u00a0?'
+      );
+      return 'https://wa.me/' + d + '?text=' + msg;
+    }
+
     // Action button
     var actionHtml = '';
     if (st === 'accept\u00e9e') {
+      var mWaHref = _buildMissionWA(r.phone || r.telephone, r.service, r.city || r.ville);
       actionHtml = '<div class="fxmlp2-actions">'
+        + (mWaHref
+          ? '<a class="fxmlp2-btn-wa" href="' + mWaHref.replace(/"/g, '&quot;') + '" target="_blank" rel="noopener">'
+            + '\ud83d\udcf2 Coordonner via WhatsApp'
+            + '</a>'
+          : '')
         + '<button class="fxmlp2-btn-start" onclick="_fxMlP2Start(\'' + id + '\')">'
         + '\u25b6 D\u00e9marrer l\u2019intervention'
         + '</button>'

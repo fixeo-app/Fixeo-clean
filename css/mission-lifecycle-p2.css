@@ -395,3 +395,26 @@
   .fxmlp2-live-dot::before { animation: none; opacity: 1; }
   .fxmlp2-btn-start, .fxmlp2-btn-complete, .fxmlp2-btn-confirm { transition: none; }
 }
+
+/* ── V1-A: WA coordination button on accepted mission cards ── */
+.fxmlp2-btn-wa {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 18px;
+  font-size: 0.86rem;
+  font-weight: 700;
+  border-radius: 13px;
+  background: linear-gradient(135deg, #25d366 0%, #1da851 100%);
+  color: #fff;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: opacity .18s, transform .12s;
+  -webkit-tap-highlight-color: transparent;
+}
+.fxmlp2-btn-wa:hover  { opacity: .9; }
+.fxmlp2-btn-wa:active { transform: scale(0.97); }
+@media (max-width: 480px) {
+  .fxmlp2-btn-wa { justify-content: center; }
+}
