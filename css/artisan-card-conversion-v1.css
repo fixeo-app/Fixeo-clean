@@ -2027,3 +2027,106 @@
     transition: transform 0.07s ease, box-shadow 0.07s ease !important;
   }
 }
+
+/* ══════════════════════════════════════════════════════════════════════
+   K-2: City Explore Strip — Premium Local Marketplace Exploration
+   ══════════════════════════════════════════════════════════════════════
+   Sits below the artisan carousel. Shows adjacent + national city chips.
+   Philosophy: app-like exploration feel — NOT an annuaire / SEO footer.
+   Append-only. Do not modify existing blocks. Braces must stay balanced.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── K2-A: Strip container ── */
+.fhp-explore-strip {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+  margin-top: 24px !important;
+  padding: 16px 0 0 0 !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.07) !important;
+}
+
+/* ── K2-B: "Explorer" label ── */
+.fhp-explore-label {
+  font-size: 0.72rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.06em !important;
+  text-transform: uppercase !important;
+  color: rgba(255, 255, 255, 0.38) !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+  margin-right: 4px !important;
+  padding-top: 1px !important;
+}
+
+/* ── K2-C: City chip base ── */
+.fhp-explore-chip {
+  display: inline-flex !important;
+  align-items: center !important;
+  padding: 5px 13px !important;
+  border-radius: 20px !important;
+  border: 1px solid rgba(255, 255, 255, 0.13) !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  color: rgba(255, 255, 255, 0.62) !important;
+  font-size: 0.80rem !important;
+  font-weight: 500 !important;
+  line-height: 1 !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+  transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease !important;
+  -webkit-tap-highlight-color: transparent !important;
+  user-select: none !important;
+  flex-shrink: 0 !important;
+}
+.fhp-explore-chip:hover {
+  background: rgba(255, 255, 255, 0.10) !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
+  color: rgba(255, 255, 255, 0.88) !important;
+}
+.fhp-explore-chip:active {
+  background: rgba(255, 255, 255, 0.15) !important;
+  transform: scale(0.97) !important;
+  transition: transform 0.08s ease !important;
+}
+
+/* ── K2-D: Adjacent-city chips — subtle green tint (regional intelligence) ── */
+/* Adjacent cities get a faint emerald accent — they are geographically "close".
+   This communicates regional connectivity without any explicit label. */
+.fhp-explore-chip.fhp-explore-adj {
+  border-color: rgba(32, 201, 151, 0.28) !important;
+  color: rgba(32, 201, 151, 0.82) !important;
+  background: rgba(32, 201, 151, 0.06) !important;
+}
+.fhp-explore-chip.fhp-explore-adj:hover {
+  background: rgba(32, 201, 151, 0.13) !important;
+  border-color: rgba(32, 201, 151, 0.46) !important;
+  color: rgba(32, 201, 151, 1.00) !important;
+}
+
+/* ── K2-E: Mobile — horizontal scroll strip ── */
+@media (max-width: 640px) {
+  .fhp-explore-strip {
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    padding: 16px 0 12px 0 !important;
+    margin-top: 20px !important;
+    /* Right fade — visual continuation cue */
+    -webkit-mask-image: linear-gradient(to right, black 80%, transparent 100%) !important;
+    mask-image: linear-gradient(to right, black 80%, transparent 100%) !important;
+  }
+  .fhp-explore-strip::-webkit-scrollbar {
+    display: none !important;
+  }
+  .fhp-explore-label {
+    font-size: 0.68rem !important;
+  }
+  .fhp-explore-chip {
+    font-size: 0.76rem !important;
+    padding: 6px 12px !important;
+  }
+}

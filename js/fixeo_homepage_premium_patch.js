@@ -12,10 +12,11 @@
 (function (window) {
   'use strict';
 
-  var MAX_CARDS  = 9;
-  var GRID_ID    = 'fixeo-homepage-vedette-grid';
-  var HEADER_ID  = 'fixeo-homepage-header';
-  var SECTION_ID = 'artisans-section';
+  var MAX_CARDS   = 9;
+  var GRID_ID     = 'fixeo-homepage-vedette-grid';
+  var HEADER_ID   = 'fixeo-homepage-header';
+  var EXPLORE_ID  = 'fixeo-homepage-explore';   /* K-2: city explore strip */
+  var SECTION_ID  = 'artisans-section';
 
   var _searchActive = false;
   var _originalRenderArtisans = null;
@@ -514,6 +515,92 @@
       '</a>';
   }
 
+  /* ── K-2: City explore strip ──────────────────────────────────────────
+   * Injected below the carousel grid. Shows adjacent + key national cities
+   * as lightweight tappable chips. Clicking a chip re-renders the grid for
+   * that city, allowing seamless marketplace exploration without full search.
+   *
+   * Philosophy:
+   *   - Premium / app-like — NOT an annuaire / SEO footer
+   *   - Adjacent cities first (regional intelligence), then national hubs
+   *   - Chips are sorted: adjacent (if geo known) → remaining FIXEO_CITIES
+   *   - Active city chip highlighted — shows user current city context
+   *   - Mobile: horizontal scroll, snap; Desktop: centered inline wrap
+   *   - Idempotency: element recreated each render (innerHTML-replaced)
+   *   - Fallback: if geo unknown, shows all 12 FIXEO_CITIES in default order
+   * ─────────────────────────────────────────────────────────────────── */
+  var _ZONES = (window.FixeoMatchingEngine && window.FixeoMatchingEngine.ZONES_ADJACENTES) || {
+    'Casablanca':['Mohammedia','Berrechid','El Jadida'],
+    'Rabat':['Sal\u00e9','Temara','K\u00e9nitra'],
+    'Marrakech':['Safi','Agadir'],
+    'Tanger':['T\u00e9touan'],
+    'F\u00e8s':['Mekn\u00e8s'],
+    'Agadir':['Safi','Marrakech'],
+    'Mekn\u00e8s':['F\u00e8s'],
+    'T\u00e9touan':['Tanger'],
+    'Oujda':[],
+    'K\u00e9nitra':['Rabat','Sal\u00e9'],
+    'Safi':[],
+    'El Jadida':['Casablanca'],
+  };
+
+  var _ALL_CITIES = (window.FIXEO_CITIES && window.FIXEO_CITIES.length)
+    ? window.FIXEO_CITIES
+    : ['Casablanca','Rabat','Marrakech','F\u00e8s','Agadir','Tanger','Mekn\u00e8s','Oujda','K\u00e9nitra','T\u00e9touan','Safi','El Jadida'];
+
+  function _buildExploreStrip(ctx) {
+    var pg = _$(GRID_ID);
+    if (!pg || !pg.parentNode) return;
+
+    var detectedCity = ctx.city || (typeof window.FIXEO_DETECTED_CITY === 'string' ? window.FIXEO_DETECTED_CITY : '') || '';
+    var activeCity   = detectedCity;
+
+    /* Build ordered city list: adjacent first, then remaining */
+    var adjacent = detectedCity ? (_ZONES[detectedCity] || []) : [];
+    var ordered  = [];
+    /* Adjacent cities always come first */
+    adjacent.forEach(function(c) { if (ordered.indexOf(c) === -1) ordered.push(c); });
+    /* Then remaining FIXEO_CITIES (excluding active + already added) */
+    _ALL_CITIES.forEach(function(c) {
+      if (c !== activeCity && ordered.indexOf(c) === -1) ordered.push(c);
+    });
+
+    /* Limit to 8 chips (readability) */
+    var chips = ordered.slice(0, 8);
+    if (!chips.length) return; /* nothing to show */
+
+    /* Build HTML */
+    var html = '<div class="fhp-explore-label">Explorer</div>';
+    html += chips.map(function(city) {
+      var isAdj = adjacent.indexOf(city) !== -1;
+      return '<button class="fhp-explore-chip' + (isAdj ? ' fhp-explore-adj' : '') + '" data-explore-city="' + city + '" type="button" aria-label="Voir les artisans \u00e0 ' + city + '">' + city + '</button>';
+    }).join('');
+
+    /* Inject or update strip */
+    var strip = _$(EXPLORE_ID);
+    if (!strip) {
+      strip = document.createElement('div');
+      strip.id = EXPLORE_ID;
+      strip.className = 'fhp-explore-strip';
+      pg.parentNode.insertBefore(strip, pg.nextSibling);
+    }
+    strip.innerHTML = html;
+
+    /* Chip click — update city context and re-render */
+    strip.querySelectorAll('.fhp-explore-chip').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var city = btn.getAttribute('data-explore-city');
+        if (!city) return;
+        /* Write to filter-city (P2) so it beats geo P3 */
+        var fc = document.getElementById('filter-city');
+        if (fc) fc.value = city;
+        /* Also expose as global geo so _buildHeader reads it */
+        try { window.FIXEO_DETECTED_CITY = city; } catch(e) {}
+        _renderPremiumGrid();
+      });
+    });
+  }
+
   /* ── Render premium grid ── */
   function _getOrCreateGrid() {
     var pg = _$(GRID_ID);
@@ -590,6 +677,7 @@
       }
 
       _buildHeader(list.length, sorted.length);
+      _buildExploreStrip(ctx);   /* K-2: city exploration strip below carousel */
       _triggerFadeIn(pg);
     });
   }
