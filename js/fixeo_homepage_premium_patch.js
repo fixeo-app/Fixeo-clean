@@ -206,7 +206,12 @@
     var idSeed = 0;
     for (var _ci = 0; _ci < _idStr.length; _ci++) { idSeed += _idStr.charCodeAt(_ci); }
 
-    /* ── Sig1 activity tier ── */
+    /* ── V1-D: Sig1 activity tier ──
+     * For self-registered artisans (sq=0, reviews=0): use real availability field
+     * to determine tier. Avoids showing 'Disponible sur RDV' for artisans who
+     * explicitly set themselves as 'available' via the V1-C dashboard bridge. */
+    var availField = (a.availability || '').toLowerCase();
+    var isAvailNow = availField === 'available' || availField === 'available_today' || availField === 'disponible';
     var activityLevel;
     if (sq >= 90) {
       activityLevel = 'fast';
@@ -214,8 +219,15 @@
       activityLevel = 'active';
     } else if (sq > 0) {
       activityLevel = 'rdv';
+    } else if (reviews >= 100) {
+      activityLevel = 'fast';
+    } else if (reviews >= 50) {
+      activityLevel = 'active';
+    } else if (isAvailNow) {
+      /* V1-D: newly-registered artisan, availability confirmed via dashboard */
+      activityLevel = 'active';
     } else {
-      activityLevel = reviews >= 100 ? 'fast' : (reviews >= 50 ? 'active' : 'rdv');
+      activityLevel = 'rdv';
     }
 
     /* Fast-tier: 3 variants rotated by id — "Répond rapidement", "Actif aujourd'hui",
@@ -631,7 +643,25 @@
     } else {
       list = fullList;
     }
-    if (!list.length && hasFilters) list = fullList; // fallback: no results → show all
+    /* V1-D: sparse-market fallback hierarchy:
+     * 1. Filtered results (exact city + category match)
+     * 2. Category-only match (drop city) — artisans in other cities
+     * 3. Full list (no filters)
+     * This gives "honest density" — client sees real artisans but understands city context. */
+    if (!list.length && hasFilters) {
+      /* Try: same category, any city */
+      if (ctx.city && ctx.service) {
+        var catOnly = { city: '', service: ctx.service, query: ctx.query };
+        var seStateCat = { query: ctx.query, category: ctx.service, city: '', sortBy: 'rating', availability: '', minRating: 0, maxPrice: 0, verifiedOnly: false };
+        var catResults = window.searchEngine ? window.searchEngine.filter(seStateCat) : [];
+        list = catResults.length ? catResults : fullList;
+        if (catResults.length) window._fxDensityMode = 'category-fallback';
+      } else {
+        list = fullList;
+      }
+    } else {
+      window._fxDensityMode = null;
+    }
 
     var pg = _getOrCreateGrid();
 

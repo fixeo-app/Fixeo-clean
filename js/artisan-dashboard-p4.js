@@ -136,32 +136,82 @@
     return normalizeText((artisan.city||'') + '|' + (artisan.job||'')).replace(/\s+/g,'_') || 'artisan-fixeo';
   }
 
+  /* ── V1-D: Adjacent city map (mirrors matching engine ZONES_ADJACENTES) ── */
+  var ADJACENT_CITIES = {
+    'casablanca':  ['mohammedia','berrechid','bouskoura','el jadida'],
+    'rabat':       ['sale','temara','skhirat','kenitra'],
+    'marrakech':   ['tamansourt','ait ourir','safi'],
+    'tanger':      ['tetouan','fnideq','mdiq'],
+    'fes':         ['meknes','sefrou'],
+    'agadir':      ['inezgane','ait melloul','dcheira'],
+    'meknes':      ['fes','sefrou'],
+    'tetouan':     ['tanger','fnideq'],
+    'oujda':       [],
+    'kenitra':     ['rabat','sale'],
+    'safi':        ['marrakech'],
+    'el jadida':   ['casablanca'],
+    'mohammedia':  ['casablanca'],
+    'sale':        ['rabat','kenitra'],
+    'temara':      ['rabat'],
+    'berrechid':   ['casablanca'],
+  };
+
+  /* ── V1-D: Is a request city adjacent to artisan city? ─── */
+  function _isAdjacentCity(artisanCity, requestCity) {
+    if (!artisanCity || !requestCity) return false;
+    var nac = normalizeText(artisanCity);
+    var nrc = normalizeText(requestCity);
+    var adj = ADJACENT_CITIES[nac] || [];
+    return adj.some(function(c){ return normalizeText(c) === nrc; });
+  }
+
   function getMatchingRequests(artisan) {
     var ignored = new Set(readIgnored());
     var city = normalizeText(artisan.city);
 
-    return readRequests().filter(function(r) {
+    var exact = [], adjacent = [];
+
+    readRequests().forEach(function(r) {
       // Must be available status
-      if (!isAvailableStatus(r.status)) return false;
+      if (!isAvailableStatus(r.status)) return;
       // Must not be locked/assigned
-      if (r.locked || r.assigned_artisan || r.assigned_artisan_id) return false;
+      if (r.locked || r.assigned_artisan || r.assigned_artisan_id) return;
       // Must not be ignored by this artisan
-      if (ignored.has(String(r.id))) return false;
-      // Must not be ignored via field
+      if (ignored.has(String(r.id))) return;
       var ignoredBy = Array.isArray(r.ignored_by_artisans) ? r.ignored_by_artisans : [];
-      if (ignoredBy.indexOf(getArtisanId(artisan)) >= 0) return false;
-      // Must match city
-      if (city && normalizeText(r.city || r.ville || '') !== city) return false;
+      if (ignoredBy.indexOf(getArtisanId(artisan)) >= 0) return;
       // Must match job/service
-      if (!matchesJob(r, artisan.job)) return false;
-      return true;
-    }).sort(function(a, b) {
-      // Urgent first, then newest first
-      var au = /urgent/i.test(a.urgency||'') ? 1 : 0;
-      var bu = /urgent/i.test(b.urgency||'') ? 1 : 0;
-      if (bu !== au) return bu - au;
-      return (Date.parse(b.created_at||'')||0) - (Date.parse(a.created_at||'')||0);
+      if (!matchesJob(r, artisan.job)) return;
+      // City matching: exact first, then V1-D adjacent city
+      var rCity = normalizeText(r.city || r.ville || '');
+      if (!city || rCity === city) {
+        exact.push(r);
+      } else if (city && _isAdjacentCity(artisan.city, r.city || r.ville || '')) {
+        /* V1-D: Adjacent city requests — shown at lower priority (appended after exact) */
+        adjacent.push(Object.assign({}, r, { _adjacent_city: true }));
+      }
     });
+
+    /* Sort each pool: urgent first, then newest */
+    function sortPool(pool) {
+      return pool.sort(function(a, b) {
+        var au = /urgent/i.test(a.urgency||'') ? 1 : 0;
+        var bu = /urgent/i.test(b.urgency||'') ? 1 : 0;
+        if (bu !== au) return bu - au;
+        return (Date.parse(b.created_at||'')||0) - (Date.parse(a.created_at||'')||0);
+      });
+    }
+
+    /* V1-D: Adjacent requests only shown when no exact-city requests exist
+       OR when exact pool has < 3 requests (sparse market fallback).
+       Never shown alongside a full exact pool — avoids confusion. */
+    var combined;
+    if (exact.length >= 3) {
+      combined = sortPool(exact);
+    } else {
+      combined = sortPool(exact).concat(sortPool(adjacent));
+    }
+    return combined;
   }
 
   /* ── Phone → WA link ─────────────────────────────────── */
@@ -317,14 +367,15 @@
 
   /* ── RENDER: full request card ───────────────────────── */
   function renderCard(r) {
-    var isUrgent = /urgent/i.test(r.urgency||'');
-    var waLink   = buildWALink(r.phone || r.telephone);
-    var service  = esc(r.service || 'Demande client');
-    var city     = esc(r.city || r.ville || 'Ville non pr\u00e9cis\u00e9e');
-    var desc     = esc(r.description || r.probleme || '');
-    var budget   = esc(r.budget || '');
-    var time     = relativeTime(r.created_at || r.date);
-    var id       = String(r.id);
+    var isUrgent  = /urgent/i.test(r.urgency||'');
+    var isAdjacent = !!r._adjacent_city;
+    var waLink    = buildWALink(r.phone || r.telephone);
+    var service   = esc(r.service || 'Demande client');
+    var city      = esc(r.city || r.ville || 'Ville non pr\u00e9cis\u00e9e');
+    var desc      = esc(r.description || r.probleme || '');
+    var budget    = esc(r.budget || '');
+    var time      = relativeTime(r.created_at || r.date);
+    var id        = String(r.id);
 
     var acceptedState = !isAvailableStatus(r.status) || r.locked;
 
@@ -372,7 +423,7 @@
         + '<button class="fxadp4-btn-ignore" onclick="_fxP4Ignore(\'' + id + '\')">Passer</button>';
     }
 
-    return '<div class="fxadp4-card' + (isUrgent ? ' is-urgent' : '') + (acceptedState ? ' state-accepted' : '') + '" id="fxadp4-card-' + id + '">'
+    return '<div class="fxadp4-card' + (isUrgent ? ' is-urgent' : '') + (acceptedState ? ' state-accepted' : '') + '" id="fxadp4-card-' + id + '"' + (isAdjacent ? ' data-adjacent="1"' : '') + '>'
       + '<div class="fxadp4-card-top">'
       + '<div class="fxadp4-card-badges">' + urgencyBadge + matchBadge + '</div>'
       + '<div class="fxadp4-card-time">' + esc(time) + '</div>'
@@ -428,15 +479,24 @@
     if (requests.length === 0) {
       html += renderEmptyState(artisan);
     } else {
+      /* V1-D: Separate exact-city from adjacent-city requests */
+      var exactRequests    = requests.filter(function(r){ return !r._adjacent_city; });
+      var adjacentRequests = requests.filter(function(r){ return !!r._adjacent_city; });
       html += '<div class="fxadp4-card-list">';
-      requests.forEach(function(r) { html += renderCard(r); });
+      exactRequests.forEach(function(r){ html += renderCard(r); });
+      if (adjacentRequests.length > 0) {
+        html += '<div class="fxadp4-adj-separator">'
+          + '<span>\ud83d\udccc Demandes dans les villes proches</span>'
+          + '</div>';
+        adjacentRequests.forEach(function(r){ html += renderCard(r); });
+      }
       html += '</div>';
     }
 
     return html;
   }
 
-  /* ── RENDER: empty state ─────────────────────────────── */
+  /* ── V1-D: RENDER: empty state — honest, operational, with context ── */
   function renderEmptyState(artisan) {
     var hasJob  = !!(artisan.job  && artisan.job.trim().length  > 1);
     var hasCity = !!(artisan.city && artisan.city.trim().length > 1);
@@ -444,15 +504,43 @@
                      artisan.avail === 'week' ? 'Cette semaine' :
                      artisan.avail === 'off'  ? 'Indisponible' : 'Non d\u00e9finie';
 
+    /* V1-D: Check if adjacent cities have requests — give artisan honest context */
+    var adjInfo = '';
+    if (hasCity && hasJob) {
+      try {
+        var allR = readRequests();
+        var adjCities = ADJACENT_CITIES[normalizeText(artisan.city)] || [];
+        var adjReqs = allR.filter(function(r) {
+          if (!isAvailableStatus(r.status)) return false;
+          if (r.locked || r.assigned_artisan || r.assigned_artisan_id) return false;
+          if (!matchesJob(r, artisan.job)) return false;
+          var rCity = normalizeText(r.city || r.ville || '');
+          return adjCities.some(function(c){ return normalizeText(c) === rCity; });
+        });
+        if (adjReqs.length > 0) {
+          var adjCityName = adjReqs[0].city || adjReqs[0].ville || '';
+          adjInfo = '<div class="fxadp4-empty-adj">'
+            + '<span class="fxadp4-adj-icon">\ud83d\udccc</span>'
+            + adjReqs.length + ' demande' + (adjReqs.length > 1 ? 's' : '') + ' similaire'
+            + (adjReqs.length > 1 ? 's' : '') + ' dans une ville proche'
+            + (adjCityName ? ' (' + esc(adjCityName) + ')' : '')
+            + ' — Fixeo vous les montrera si aucune demande locale n\u2019arrive dans votre zone.'
+            + '</div>';
+        }
+      } catch(e) {}
+    }
+
     return '<div class="fxadp4-empty">'
       + '<div class="fxadp4-empty-icon">\ud83d\udcec</div>'
-      + '<div class="fxadp4-empty-title">Aucune demande compatible pour le moment</div>'
-      + '<div class="fxadp4-empty-sub">Les demandes apparaîtront ici lorsqu\u2019elles correspondent \u00e0 votre m\u00e9tier et votre ville.</div>'
+      + '<div class="fxadp4-empty-title">Pas encore de demande dans votre zone</div>'
+      + '<div class="fxadp4-empty-sub">Les nouvelles demandes correspondant \u00e0 votre m\u00e9tier et votre ville apparaissent ici automatiquement.</div>'
+      + adjInfo
       + '<div class="fxadp4-empty-pills">'
       + '<span class="fxadp4-epill ' + (hasJob  ? 'ok'   : 'warn') + '">\u2692 ' + esc(hasJob  ? artisan.job  : 'M\u00e9tier non d\u00e9fini') + '</span>'
       + '<span class="fxadp4-epill ' + (hasCity ? 'ok'   : 'warn') + '">\ud83d\udccd ' + esc(hasCity ? artisan.city : 'Ville non d\u00e9finie') + '</span>'
       + '<span class="fxadp4-epill neutral">\ud83d\uddd3 ' + esc(availLabel) + '</span>'
       + '</div>'
+      + '<div class="fxadp4-empty-hint">Votre profil est actif. Fixeo vous notifiera d\u00e8s qu\u2019une demande arrive dans votre zone.</div>'
       + '</div>';
   }
 
