@@ -590,6 +590,192 @@
     }
   }
 
+  /* ════════════════════════════════════════════════════════
+     P-3 — PRESTATIONS & PRIX SECTION
+     ════════════════════════════════════════════════════════
+
+     Brings market pricing intelligence from the reservation modal
+     directly into the artisan profile — without creating an
+     ecommerce catalog, a pricing table, or fixed quotation UX.
+
+     DATA SOURCE: Mirrors SERVICE_MAP + SERVICE_PRICING from
+     reservation.js exactly. PROFILE_PRICING is a standalone
+     constant — no import, no coupling, no dependency. If
+     reservation.js changes its ranges, update this constant too.
+
+     TRUST STRATEGY: All wording uses "fourchette" / "généralement
+     constaté" framing. The section footer makes explicit that the
+     final price is confirmed at coordination — not guaranteed here.
+     Goal: reduce price UNCERTAINTY, not set price EXPECTATIONS.
+
+     CATEGORY COVERAGE: 13 slugs (all SERVICE_MAP keys).
+     Each has exactly 4 services (curated for scanning speed).
+     Services ordered: most frequent use-case first.
+
+     INJECTION POINT: After #fpv2a-bio (or after #ppui-services
+     if no bio), before #fpv2b-realizations.
+     This is the correct narrative position: after "who is this
+     artisan" and before "what have they done" — pricing belongs
+     in the "what do they do" zone.
+     ════════════════════════════════════════════════════════ */
+
+  /* ── P3: Pricing data — mirrors reservation.js SERVICE_PRICING ── */
+  /*
+     Intentionally standalone. Exactly 4 services per category.
+     Selected for: highest frequency, clearest user recognition,
+     widest range spread (avoids anchoring on extremes).
+     All values are identical to reservation.js SERVICE_PRICING.
+  */
+  var PROFILE_PRICING = {
+    plomberie: [
+      { label: 'Fuite d\u2019eau \u2014 r\u00e9paration',  from: 150,  to: 300  },
+      { label: 'Urgence plomberie',                         from: 200,  to: 400  },
+      { label: 'Installation sanitaire',                    from: 250,  to: 600  },
+      { label: 'R\u00e9paration chauffe-eau',               from: 200,  to: 500  }
+    ],
+    electricite: [
+      { label: 'Panne \u00e9lectrique',                     from: 150,  to: 350  },
+      { label: 'Urgence \u00e9lectrique',                   from: 200,  to: 500  },
+      { label: 'Installation \u00e9lectrique',              from: 200,  to: 600  },
+      { label: 'Prise ou interrupteur en panne',            from: 100,  to: 200  }
+    ],
+    climatisation: [
+      { label: 'Panne climatiseur',                         from: 200,  to: 500  },
+      { label: 'Entretien climatiseur',                     from: 200,  to: 350  },
+      { label: 'Installation climatiseur',                  from: 500,  to: 900  },
+      { label: 'R\u00e9paration climatiseur',               from: 250,  to: 600  }
+    ],
+    menuiserie: [
+      { label: 'Porte ou fen\u00eatre bloqu\u00e9e',        from: 150,  to: 350  },
+      { label: 'R\u00e9paration menuiserie',                from: 200,  to: 500  },
+      { label: 'Intervention rapide',                       from: 150,  to: 400  },
+      { label: 'Fabrication sur mesure',                    from: 800,  to: 2500 }
+    ],
+    serrurerie: [
+      { label: 'Ouverture de porte',                        from: 150,  to: 300  },
+      { label: 'Porte bloqu\u00e9e',                        from: 150,  to: 350  },
+      { label: 'Changement serrure',                        from: 200,  to: 450  },
+      { label: 'S\u00e9curisation porte',                   from: 300,  to: 700  }
+    ],
+    nettoyage: [
+      { label: 'Nettoyage domicile complet',                from: 250,  to: 600  },
+      { label: 'Entretien r\u00e9gulier',                   from: 150,  to: 350  },
+      { label: 'Nettoyage apr\u00e8s travaux',              from: 300,  to: 700  },
+      { label: 'D\u00e9sinfection',                         from: 300,  to: 600  }
+    ],
+    jardinage: [
+      { label: 'Entretien jardin',                          from: 150,  to: 400  },
+      { label: 'Tonte pelouse',                             from: 100,  to: 250  },
+      { label: 'Taille haies',                              from: 150,  to: 350  },
+      { label: 'Am\u00e9nagement ext\u00e9rieur',           from: 500,  to: 2000 }
+    ],
+    demenagement: [
+      { label: 'D\u00e9m\u00e9nagement complet',            from: 800,  to: 2500 },
+      { label: 'Transport mobilier',                        from: 400,  to: 1200 },
+      { label: 'Emballage \u0026 protection',               from: 300,  to: 800  },
+      { label: 'Montage / d\u00e9montage meubles',          from: 200,  to: 600  }
+    ],
+    bricolage: [
+      { label: 'Petites r\u00e9parations',                  from: 100,  to: 300  },
+      { label: 'Montage meubles',                           from: 100,  to: 250  },
+      { label: 'Fixations murales',                         from: 80,   to: 200  },
+      { label: 'Intervention rapide',                       from: 100,  to: 300  }
+    ],
+    maconnerie: [
+      { label: 'R\u00e9paration mur',                       from: 150,  to: 400  },
+      { label: 'Travaux pl\u00e2trerie',                    from: 200,  to: 600  },
+      { label: 'Construction petit ouvrage',                from: 500,  to: 2000 },
+      { label: 'R\u00e9novation fa\u00e7ade',               from: 800,  to: 3000 }
+    ],
+    peinture: [
+      { label: 'Peinture int\u00e9rieure',                  from: 800,  to: 1500 },
+      { label: 'Peinture ext\u00e9rieure',                  from: 1000, to: 3000 },
+      { label: 'D\u00e9coration murale',                    from: 500,  to: 1500 },
+      { label: 'Ravalement de fa\u00e7ade',                 from: 2000, to: 8000 }
+    ],
+    carrelage: [
+      { label: 'Pose carrelage',                            from: 200,  to: 600  },
+      { label: 'R\u00e9paration joints',                    from: 100,  to: 250  },
+      { label: 'Carrelage salle de bain',                   from: 500,  to: 1500 },
+      { label: 'R\u00e9novation carrelage',                 from: 400,  to: 1200 }
+    ],
+    toiture: [
+      { label: 'Fuite toiture',                             from: 300,  to: 700  },
+      { label: 'R\u00e9paration tuiles',                    from: 250,  to: 600  },
+      { label: '\u00c9tanch\u00e9it\u00e9 terrasse',        from: 500,  to: 1500 },
+      { label: 'Nettoyage toiture',                         from: 300,  to: 700  }
+    ]
+  };
+
+  /* ── P3: Inject "Prestations & Prix" section ─────────── */
+  /*
+     Injected AFTER #fpv2a-bio (artisan description section) and
+     BEFORE #fpv2b-realizations — the correct narrative position:
+       "Who is this artisan" → "What does it cost" → "What have they done"
+
+     Idempotent: guarded by #fpv2b-prestations ID check.
+     Category: uses _catSlug() for exact SERVICE_MAP key matching.
+     Graceful: no category match → silent noop (no section injected).
+
+     Visual: 4 service rows (label + range) in a premium glass card.
+     Each row renders as: [service label] [from–to MAD]
+     Footer: explicit "estimation marché" disclaimer + payment reassurance.
+     No CTA spam — the profile's existing booking CTA handles conversion.
+  */
+  function injectPrestationsSection(artisan) {
+    if (document.getElementById('fpv2b-prestations')) return;
+
+    var slug = _catSlug(artisan.category);
+    var rows = PROFILE_PRICING[slug];
+    if (!rows || !rows.length) return; /* unsupported category — noop */
+
+    var root = document.querySelector('.public-artisan-shell');
+    if (!root) return;
+
+    /* Build rows HTML */
+    var rowsHtml = rows.map(function(row) {
+      return '<div class="fpv2p3-row">' +
+        '<span class="fpv2p3-svc">' + esc(row.label) + '</span>' +
+        '<span class="fpv2p3-range">' + row.from + '\u202f\u2013\u202f' + row.to + '\u202fMAD</span>' +
+      '</div>';
+    }).join('');
+
+    var section = document.createElement('section');
+    section.id = 'fpv2b-prestations';
+    section.className = 'ppui-section fpv2p3-section';
+    section.innerHTML =
+      '<p class="ppui-section-kicker">Tarifs march\u00e9</p>' +
+      '<h2 class="ppui-section-title">Prestations \u0026 prix</h2>' +
+      '<div class="fpv2p3-grid">' + rowsHtml + '</div>' +
+      '<p class="fpv2p3-footer">' +
+        '<span class="fpv2p3-footer-icon">\ud83d\udcb3</span>' +
+        'Fourchette g\u00e9n\u00e9ralement constat\u00e9e sur le march\u00e9 local\u00a0\u2014 ' +
+        'le tarif d\u00e9finitif est confirm\u00e9 lors de la coordination avec l\u2019artisan.' +
+      '</p>';
+
+    /* Injection order: after #fpv2a-bio → after #ppui-services → before grid → append */
+    var bio      = document.getElementById('fpv2a-bio');
+    var services = document.getElementById('ppui-services');
+    var grid     = root.querySelector('.public-section-grid');
+    var realiz   = document.getElementById('fpv2b-realizations');
+
+    /* Prefer: after bio. If no bio: after ppui-services. Never after realizations. */
+    var anchor = bio || services;
+    if (anchor) {
+      /* Insert immediately after anchor, before realizations if present */
+      var insertTarget = anchor.nextSibling;
+      if (realiz && insertTarget === realiz) {
+        root.insertBefore(section, realiz);
+      } else {
+        root.insertBefore(section, insertTarget);
+      }
+    } else if (grid) {
+      root.insertBefore(section, grid);
+    } else {
+      root.appendChild(section);
+    }
+  }
+
   /* ── MAIN: fetch + apply ─────────────────────────────── */
   async function enhance() {
     /* Only run on artisan-profile.html */
@@ -700,6 +886,7 @@
         injectInterventionTier(artisan);
         injectRatingContext(hero, artisan);
         injectSpecialtyChips(artisan);
+        injectPrestationsSection(artisan);    /* P3: market pricing intelligence */
         injectRealizationsShell();
         upgradeWACopy();
 

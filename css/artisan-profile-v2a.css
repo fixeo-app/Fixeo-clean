@@ -1070,3 +1070,162 @@ body.fpv2b-loaded .public-artisan-page .public-empty-copy {
 #public-artisan-root.fpv2-sections-ready #fpv2b-prestations {
   opacity: 1;
 }
+
+/* ================================================================
+   V2-P3 — Prestations & Prix Section
+   Appended 2026-05-10 (profile-p3)
+
+   Namespace: .fpv2p3-*
+   Scope:     .public-artisan-page #fpv2b-prestations
+   ================================================================ */
+
+/* ── P3: Section wrapper — glass card, consistent with V2-B depth ── */
+.public-artisan-page .fpv2p3-section {
+  /* ppui-section already provides padding/background from premium-ui.css;
+     we only add the bottom-border detail and header emphasis  */
+  border-top: 1px solid rgba(255,255,255,.06);
+}
+
+/* ── P3: Section kicker (inherits ppui-section-kicker) — override color ── */
+.public-artisan-page .fpv2p3-section .ppui-section-kicker {
+  color: #34d399; /* emerald — signals "operational / pricing" register */
+}
+
+/* ── P3: Section title — tight, scannable ── */
+.public-artisan-page .fpv2p3-section .ppui-section-title {
+  margin-top: 2px;
+  margin-bottom: 12px;
+  font-size: 1.05rem;
+}
+
+/* ── P3: Pricing grid — vertical stack, thumb-width rows ── */
+.public-artisan-page .fpv2p3-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(13,18,40,.45);
+  margin-bottom: 14px;
+}
+
+/* ── P3: Row — label left / range right — single scan line ── */
+.public-artisan-page .fpv2p3-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px 14px;
+  border-bottom: 1px solid rgba(255,255,255,.05);
+  /* Hover: subtle lift for desktop */
+  transition: background 0.12s ease;
+}
+.public-artisan-page .fpv2p3-row:last-child {
+  border-bottom: none;
+}
+@media (hover: hover) {
+  .public-artisan-page .fpv2p3-row:hover {
+    background: rgba(255,255,255,.04);
+  }
+}
+
+/* ── P3: Service label — left, readable, secondary weight ── */
+.public-artisan-page .fpv2p3-svc {
+  font-size: .88rem;
+  color: rgba(255,255,255,.82);
+  font-weight: 500;
+  line-height: 1.35;
+  /* Allow wrap on very narrow screens — never clip */
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+/* ── P3: Price range — right, emerald, strong — draws the eye ── */
+.public-artisan-page .fpv2p3-range {
+  font-size: .88rem;
+  font-weight: 800;
+  color: #34d399;
+  white-space: nowrap;
+  flex: 0 0 auto;
+  letter-spacing: -.01em;
+}
+
+/* ── P3: Footer disclaimer — critical trust + legal safety ── */
+.public-artisan-page .fpv2p3-footer {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  font-size: .78rem;
+  color: rgba(255,255,255,.48);
+  line-height: 1.55;
+  margin: 0;
+  padding: 10px 4px 0;
+}
+.public-artisan-page .fpv2p3-footer-icon {
+  font-size: .9rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* ── P3: Mobile — 360px narrow ── */
+@media (max-width: 390px) {
+  .public-artisan-page .fpv2p3-row {
+    padding: 10px 12px;
+    gap: 8px;
+  }
+  .public-artisan-page .fpv2p3-svc {
+    font-size: .84rem;
+  }
+  .public-artisan-page .fpv2p3-range {
+    font-size: .84rem;
+  }
+}
+@media (max-width: 360px) {
+  .public-artisan-page .fpv2p3-row {
+    padding: 9px 10px;
+    gap: 6px;
+  }
+  .public-artisan-page .fpv2p3-svc {
+    font-size: .82rem;
+  }
+  .public-artisan-page .fpv2p3-range {
+    font-size: .82rem;
+  }
+}
+@media (max-width: 320px) {
+  /* Stack label + price vertically on 320px — price below label */
+  .public-artisan-page .fpv2p3-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    padding: 10px 10px;
+  }
+  .public-artisan-page .fpv2p3-range {
+    font-size: .86rem;
+    padding-left: 0;
+  }
+}
+
+/* ── P3: Desktop — wider row breathing room ── */
+@media (min-width: 768px) {
+  .public-artisan-page .fpv2p3-row {
+    padding: 12px 18px;
+  }
+  .public-artisan-page .fpv2p3-svc {
+    font-size: .92rem;
+  }
+  .public-artisan-page .fpv2p3-range {
+    font-size: .92rem;
+  }
+  .public-artisan-page .fpv2p3-footer {
+    font-size: .8rem;
+  }
+}
+
+/* ── P3: Reduced-motion (no hover transition) ── */
+@media (prefers-reduced-motion: reduce) {
+  .public-artisan-page .fpv2p3-row {
+    transition: none !important;
+  }
+}
