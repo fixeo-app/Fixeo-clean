@@ -364,9 +364,9 @@ select option{background:#1a1a2e!important;color:#fff!important;}
   <!-- Phase 3 Live Visibility Engine — additive override -->
   <link rel="stylesheet" href="css/artisan-dashboard-p3.css?v=1">
   <!-- Phase 4 Real Request Inbox — additive override -->
-  <link rel="stylesheet" href="css/artisan-dashboard-p4.css?v=da-v1a">
+  <link rel="stylesheet" href="css/artisan-dashboard-p4.css?v=da-v1b">
   <!-- Phase 2 Mission Lifecycle — additive -->
-  <link rel="stylesheet" href="css/mission-lifecycle-p2.css?v=da-v1a">
+  <link rel="stylesheet" href="css/mission-lifecycle-p2.css?v=da-v1b">
   <!-- Phase 3A Commission Engine — additive -->
   <link rel="stylesheet" href="css/commission-lifecycle-p3a.css?v=1">
   <link rel="stylesheet" href="css/fixeo-notifications-real-v1.css?v=1">
@@ -747,38 +747,33 @@ select option{background:#1a1a2e!important;color:#fff!important;}
       <div class="requests-stack" id="requests-grid"></div>
     </div>
 
-    <!-- ── MISSIONS ──────────────────────────────────────── -->
+    <!-- ── MISSIONS — V1-B operational intervention tracker ── -->
     <div id="section-missions" style="display:none">
-      <h2 style="font-size:1.3rem;margin-bottom:20px">🎯 Missions actives</h2>
+      <div class="section-heading" style="margin-bottom:20px">
+        <h2>🎯 Mes interventions</h2>
+        <span class="section-note">Coordonnez via WhatsApp · Démarrez · Terminez</span>
+      </div>
+      <!-- mission-lifecycle-p2.js injects #fxmlp2-artisan-missions here (before cod panel) -->
       <div id="artisan-cod-missions" class="fixeo-proposal-list" style="margin-bottom:18px"></div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px" data-missions></div>
+      <!-- Legacy data-missions grid removed V1-B (was empty anyway — p2 owns this section) -->
       <div id="artisan-cod-notifications" class="fixeo-notification-list" style="margin-top:18px"></div>
     </div>
 
-    <!-- ── EARNINGS ───────────────────────────────────────── -->
+    <!-- ── EARNINGS — V1-B: fake KPIs replaced with real-data-only area ── -->
     <div id="section-earnings" style="display:none">
-      <h2 style="font-size:1.3rem;margin-bottom:20px">💰 Revenus</h2>
-      <div id="artisan-cod-earnings" style="margin-bottom:18px"></div>
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px">
-        <div class="kpi-card">
-          <div class="kpi-header"><div class="kpi-icon" style="background:rgba(32,201,151,.15);color:var(--success)">💵</div><div class="kpi-trend up">↑ +15%</div></div>
-          <div class="kpi-value" style="color:var(--success)">9 600</div>
-          <div class="kpi-label">MAD ce mois</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-header"><div class="kpi-icon" style="background:rgba(64,93,230,.15);color:var(--accent-blue)">📊</div><div class="kpi-trend up">↑ +8%</div></div>
-          <div class="kpi-value" style="color:var(--accent-blue)">47 200</div>
-          <div class="kpi-label">MAD ce trimestre</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-header"><div class="kpi-icon" style="background:rgba(255,215,0,.15);color:var(--gold)">🏆</div><div class="kpi-trend up">↑ +22%</div></div>
-          <div class="kpi-value" style="color:var(--gold)">112 400</div>
-          <div class="kpi-label">MAD cette année</div>
-        </div>
+      <div class="section-heading" style="margin-bottom:20px">
+        <h2>💰 Revenus</h2>
+        <span class="section-note">Issus de vos interventions clôturées</span>
       </div>
-      <div class="chart-card">
-        <div class="chart-header"><h3 style="font-size:1rem">📈 Évolution des revenus</h3></div>
-        <div style="height:250px"><canvas id="chart-revenue-full"></canvas></div>
+      <!-- commission-lifecycle-p3a.js injects real commission data here -->
+      <div id="artisan-cod-earnings" style="margin-bottom:18px"></div>
+      <!-- V1-B: fake KPI cards (9600/47200/112400 MAD) removed — no real data source -->
+      <!-- V1-B: fake canvas revenue chart removed — dashboard.js no longer loaded -->
+      <div class="fxv1b-earnings-placeholder" id="fxv1b-earnings-placeholder">
+        <div class="fxv1b-earn-icon">💵</div>
+        <div class="fxv1b-earn-title">Vos revenus apparaîtront ici</div>
+        <div class="fxv1b-earn-sub">Complétez une intervention et confirmez-la avec le client. Fixeo calcule automatiquement votre revenu net (commission 15%).</div>
+        <button class="fxv1b-earn-cta" onclick="showSection('missions')">🎯 Voir mes interventions →</button>
       </div>
     </div>
 
@@ -908,7 +903,7 @@ select option{background:#1a1a2e!important;color:#fff!important;}
           <div style="display:flex;flex-direction:column;gap:16px">
             <div style="display:flex;align-items:center;justify-content:space-between">
               <span>Disponible maintenant</span>
-              <label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+              <label class="toggle-switch"><input type="checkbox" checked id="avail-toggle-cb" onchange="toggleAvailability(this)"><span class="toggle-slider"></span></label>
             </div>
             <div style="display:flex;align-items:center;justify-content:space-between">
               <span>Demandes Express</span>
@@ -981,16 +976,28 @@ document.getElementById('hamburger')?.addEventListener('click', () => {
   document.getElementById('hamburger').classList.toggle('open');
 });
 
-// ── Availability toggle ───────────────────────────────────
+// ── Availability toggle — V1-B: wired to _fxAdP2SetAvail ────────────────
 function toggleAvailability(cb) {
-  const st = document.getElementById('avail-status');
-  if (!st) return;
-  if (cb.checked) {
-    st.textContent = '● Disponible'; st.className = 'availability-status online';
+  var key = cb.checked ? 'now' : 'off';
+  /* Delegate to p2's canonical setter (updates localStorage + sidebar + avail UI) */
+  if (typeof _fxAdP2SetAvail === 'function') {
+    _fxAdP2SetAvail(key);
   } else {
-    st.textContent = '○ Hors ligne'; st.className = 'availability-status offline';
+    /* Fallback if p2 hasn't loaded yet */
+    try { localStorage.setItem('fixeo_avail_status', key); } catch(e){}
+    var st = document.getElementById('avail-status');
+    if (st) {
+      st.textContent = cb.checked ? '\u25cf Disponible' : '\u25cb Hors ligne';
+      st.className = 'availability-status' + (cb.checked ? ' online' : ' offline');
+    }
+    if (typeof notifications !== 'undefined') {
+      notifications.info(cb.checked ? '\u2705 Vous \u00eates disponible' : '\u26aa Vous \u00eates hors ligne', '');
+    }
   }
-  notifications.info(cb.checked ? '✅ Vous êtes disponible' : '⚪ Vous êtes hors ligne', '');
+  /* Sync the checked state back (in case delegated setter changes it) */
+  var avail = 'now';
+  try { avail = localStorage.getItem('fixeo_avail_status') || 'now'; } catch(e){}
+  cb.checked = (avail !== 'off');
 }
 
 // ── Modal ─────────────────────────────────────────────────
@@ -1157,11 +1164,30 @@ function openAddPortfolio() {
   document.getElementById('modal-overlay').classList.add('open');
 }
 
-// ── Init (V1-A: gamification.renderAll + fake charts removed) ────────────
+// ── Init (V1-B) ───────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
-  /* dashboard.init, gamification.renderAll, _drawAllCharts — all removed V1-A
-     Chart canvas elements hidden by artisan-dashboard-p1.css (.business-secondary-grid)
-     Gamification section (#section-progression) removed from DOM V1-A */
+  /* V1-B: Hide earnings placeholder when commission-lifecycle-p3a.js injects real cards */
+  function _checkEarningsReal() {
+    var codEarnings = document.getElementById('artisan-cod-earnings');
+    var placeholder = document.getElementById('fxv1b-earnings-placeholder');
+    if (!placeholder) return;
+    if (codEarnings && codEarnings.children.length > 0) {
+      placeholder.style.display = 'none';
+    }
+  }
+  /* Check on load + when commission lifecycle dispatches updates */
+  setTimeout(_checkEarningsReal, 600);
+  window.addEventListener('fixeo:mission-validated',         _checkEarningsReal);
+  window.addEventListener('fixeo:client-request-updated',    _checkEarningsReal);
+  window.addEventListener('fixeo:commission:rendered',       _checkEarningsReal);
+
+  /* V1-B: Sync availability checkbox to localStorage on load */
+  var availChk = document.querySelector('.toggle-switch input[type="checkbox"]');
+  if (availChk) {
+    var storedAvail = 'now';
+    try { storedAvail = localStorage.getItem('fixeo_avail_status') || 'now'; } catch(e){}
+    availChk.checked = (storedAvail !== 'off');
+  }
 });
 </script>
 
@@ -1438,9 +1464,9 @@ document.addEventListener('DOMContentLoaded', () => {
 <!-- Phase 3 Live Visibility Engine -->
 <script src="js/artisan-dashboard-p3.js?v=1" defer></script>
 <!-- Phase 4 Real Request Inbox -->
-<script src="js/artisan-dashboard-p4.js?v=da-v1a" defer></script>
+<script src="js/artisan-dashboard-p4.js?v=da-v1b" defer></script>
 <!-- Phase 2 Mission Lifecycle -->
-<script src="js/mission-lifecycle-p2.js?v=da-v1a" defer></script>
+<script src="js/mission-lifecycle-p2.js?v=da-v1b" defer></script>
 <!-- Phase 3A Commission Engine -->
 <script src="js/commission-lifecycle-p3a.js?v=1" defer></script>
 <script src="js/fixeo-notifications-real-v1.js?v=1" defer></script>

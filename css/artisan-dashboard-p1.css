@@ -549,3 +549,58 @@
 #priority-requests-list:empty { display: none !important; }
 /* V1-A: Chat widget CSS no longer needed — widget removed */
 .chat-widget { display: none !important; }
+
+/* ══════════════════════════════════════════════════════════
+   V1-B: Earnings — real-data placeholder (replaces fake KPIs)
+   ══════════════════════════════════════════════════════════ */
+
+.fxv1b-earnings-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 40px 24px;
+  background: rgba(255,255,255,0.02);
+  border: 1px dashed rgba(255,255,255,0.09);
+  border-radius: 18px;
+  gap: 8px;
+}
+.fxv1b-earn-icon { font-size: 2rem; opacity: 0.40; }
+.fxv1b-earn-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  opacity: 0.70;
+  margin-top: 6px;
+}
+.fxv1b-earn-sub {
+  font-size: 0.82rem;
+  opacity: 0.45;
+  line-height: 1.55;
+  max-width: 340px;
+}
+.fxv1b-earn-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-size: 0.84rem;
+  font-weight: 700;
+  background: rgba(32,201,151,0.10);
+  color: #20c997;
+  border: 1px solid rgba(32,201,151,0.20);
+  cursor: pointer;
+  margin-top: 8px;
+  transition: background 0.16s;
+  -webkit-tap-highlight-color: transparent;
+}
+.fxv1b-earn-cta:hover { background: rgba(32,201,151,0.18); }
+
+/* ══════════════════════════════════════════════════════════
+   V1-B: Section-missions heading style
+   ══════════════════════════════════════════════════════════ */
+
+#section-missions .section-note {
+  font-size: 0.78rem;
+  opacity: 0.45;
+}

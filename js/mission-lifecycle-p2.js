@@ -1,5 +1,5 @@
 /* ============================================================
-   FIXEO — MISSION LIFECYCLE PHASE 2
+   FIXEO — MISSION LIFECYCLE PHASE 2  (v=da-v1b)
    js/mission-lifecycle-p2.js
 
    Works on BOTH dashboards:
@@ -225,58 +225,103 @@
     setTimeout(_renderArtisan, 150);
   };
 
-  /* ── Render artisan mission card ─────────────────────── */
+  /* ── V1-B: Build contextual WA message per mission state ─── */
+  function _buildMissionWA(raw, svcLabel, cityLabel, missionState) {
+    var d = String(raw || '').replace(/\D/g, '');
+    if (d.charAt(0) === '0') d = '212' + d.slice(1);
+    if (!/^212[6-9]\d{8}$/.test(d)) return '';
+    var artName = (ls('user_name', '') || ls('fixeo_user_name', '') || 'Artisan Fixeo').split(' ')[0];
+    var svcLow = (svcLabel || 'intervention').toLowerCase();
+    var city   = cityLabel || 'votre ville';
+    var msg;
+    if (missionState === 'en_cours') {
+      msg = 'Bonjour, je suis ' + artName + ' (Fixeo). Je suis en route pour votre intervention de '
+          + svcLow + ' \u00e0 ' + city + '. '
+          + 'Pouvez-vous me confirmer l\u2019adresse pr\u00e9cise et votre disponibilit\u00e9\u00a0?';
+    } else if (missionState === 'termin\u00e9e') {
+      msg = 'Bonjour, je suis ' + artName + ' (Fixeo). L\u2019intervention de ' + svcLow + ' est termin\u00e9e. '
+          + 'Pouvez-vous confirmer que tout est en ordre de votre c\u00f4t\u00e9\u00a0? Merci !';
+    } else {
+      msg = 'Bonjour, je suis ' + artName + ', artisan Fixeo sp\u00e9cialis\u00e9 en ' + svcLow + ' \u00e0 ' + city + '. '
+          + 'J\u2019ai accept\u00e9 votre demande et suis disponible pour intervenir. '
+          + 'Pouvez-vous me confirmer l\u2019adresse et l\u2019heure souhait\u00e9e\u00a0?';
+    }
+    return 'https://wa.me/' + d + '?text=' + encodeURIComponent(msg);
+  }
+
+  /* ── V1-B: State progression strip ──────────────────────── */
+  function _renderStateStrip(st) {
+    var steps = [
+      { key: 'accept\u00e9e', label: 'Accept\u00e9e' },
+      { key: 'en_cours',       label: 'En cours'       },
+      { key: 'termin\u00e9e', label: 'Termin\u00e9e'  }
+    ];
+    var activeIdx = -1;
+    steps.forEach(function(s, i){ if (s.key === st) activeIdx = i; });
+    var html = '<div class="fxmlp2-state-strip" role="list">';
+    steps.forEach(function(s, i) {
+      var cls = i < activeIdx  ? 'done'
+              : i === activeIdx ? 'active'
+              : 'pending';
+      html += '<div class="fxmlp2-strip-step ' + cls + '" role="listitem">'
+            + '<div class="fxmlp2-strip-dot"></div>'
+            + '<span>' + s.label + '</span>'
+            + '</div>';
+      if (i < steps.length - 1) {
+        html += '<div class="fxmlp2-strip-line' + (i < activeIdx ? ' done' : '') + '"></div>';
+      }
+    });
+    return html + '</div>';
+  }
+
+  /* ── Render artisan mission card (V1-B) ──────────────── */
   function _renderArtisanCard(r) {
-    var st   = normalizeStatus(r.status);
-    var id   = esc(String(r.id));
-    var svc  = esc(r.service || 'Intervention');
-    var city = esc(r.city || r.ville || 'Maroc');
-    var time = esc(relativeTime(r.accepted_at || r.created_at));
+    var st      = normalizeStatus(r.status);
+    var id      = esc(String(r.id));
+    var svc     = esc(r.service || 'Intervention');
+    var city    = esc(r.city || r.ville || 'Maroc');
+    var rawCity = r.city || r.ville || '';
+
+    /* Timestamps */
+    var acceptedTs = r.accepted_at  || r.created_at;
+    var startedTs  = r.started_at   || '';
+    var doneTs     = r.completed_at || '';
+
+    var timeLabel = st === 'en_cours' && startedTs
+      ? 'D\u00e9marr\u00e9e ' + relativeTime(startedTs)
+      : st === 'termin\u00e9e' && doneTs
+      ? 'Termin\u00e9e ' + relativeTime(doneTs)
+      : 'Accept\u00e9e ' + relativeTime(acceptedTs);
 
     var stateCls = st === 'accept\u00e9e' ? 'state-accepted' :
-                   st === 'en_cours'      ? 'state-en-cours' :
+                   st === 'en_cours'       ? 'state-en-cours' :
                    st === 'termin\u00e9e' ? 'state-terminee' : '';
 
-    var badgeHtml = st === 'accept\u00e9e'
-      ? '<span class="fxmlp2-state-badge accepted">Artisan assign\u00e9</span>'
-      : st === 'en_cours'
-      ? '<span class="fxmlp2-state-badge en-cours">Intervention en cours</span>'
-      : '<span class="fxmlp2-state-badge terminee waiting-confirm">En attente de confirmation</span>';
+    /* Contextual WA */
+    var waHref = _buildMissionWA(r.phone || r.telephone || '', r.service, rawCity, st);
 
-    // Client info (anonymous until accepted — phone already known to artisan)
-    var clientHtml = '<div class="fxmlp2-client-block">'
-      + '<div class="fxmlp2-client-avatar">\ud83d\udc64</div>'
-      + '<div class="fxmlp2-client-label">Demande client'
-      + '<div class="fxmlp2-client-sub">' + svc + ' \u00b7 ' + city + ' \u00b7 ' + time + '</div></div>'
-      + '</div>';
+    /* State badge */
+    var badgeHtml;
+    if      (st === 'accept\u00e9e') badgeHtml = '<span class="fxmlp2-state-badge accepted">\u2714 \u00c0 coordonner</span>';
+    else if (st === 'en_cours')       badgeHtml = '<span class="fxmlp2-state-badge en-cours"><span class="fxmlp2-pulse-dot"></span>En cours</span>';
+    else                              badgeHtml = '<span class="fxmlp2-state-badge terminee waiting-confirm">\u23f3 Attente client</span>';
 
-    // Waiting hint for terminée
-    var waitHtml = st === 'termin\u00e9e'
-      ? '<div class="fxmlp2-waiting-hint">\u23f3 En attente de confirmation client pour cl\u00f4turer la mission.</div>'
-      : '';
-
-    // V1-A: Build WA coordination link for accepted missions
-    function _buildMissionWA(raw, svcLabel, cityLabel) {
-      var d = String(raw || '').replace(/\D/g, '');
-      if (d.charAt(0) === '0') d = '212' + d.slice(1);
-      if (!/^212[6-9]\d{8}$/.test(d)) return '';
-      var artName = (ls('user_name', '') || ls('fixeo_user_name', '') || 'Artisan Fixeo').split(' ')[0];
-      var msg = encodeURIComponent(
-        'Bonjour, je suis ' + artName + ', artisan Fixeo sp\u00e9cialis\u00e9 en '
-        + (svcLabel || 'intervention').toLowerCase() + ' \u00e0 ' + (cityLabel || 'votre ville') + '. '
-        + 'Je suis en route pour votre intervention. '
-        + 'Pouvez-vous m\u2019indiquer votre adresse pr\u00e9cise\u00a0?'
-      );
-      return 'https://wa.me/' + d + '?text=' + msg;
+    /* Coordination hint per state */
+    var hintHtml = '';
+    if (st === 'accept\u00e9e' && waHref) {
+      hintHtml = '<div class="fxmlp2-coord-hint">Confirmez l\u2019adresse et l\u2019heure avec le client.</div>';
+    } else if (st === 'en_cours' && waHref) {
+      hintHtml = '<div class="fxmlp2-coord-hint fxmlp2-coord-hint--active">Interv. d\u00e9marr\u00e9e \u2014 pr\u00e9venez le client de tout changement.</div>';
+    } else if (st === 'termin\u00e9e') {
+      hintHtml = '<div class="fxmlp2-coord-hint fxmlp2-coord-hint--done">En attente de confirmation client pour cl\u00f4turer.</div>';
     }
 
-    // Action button
-    var actionHtml = '';
+    /* Action buttons per state */
+    var actionHtml;
     if (st === 'accept\u00e9e') {
-      var mWaHref = _buildMissionWA(r.phone || r.telephone, r.service, r.city || r.ville);
       actionHtml = '<div class="fxmlp2-actions">'
-        + (mWaHref
-          ? '<a class="fxmlp2-btn-wa" href="' + mWaHref.replace(/"/g, '&quot;') + '" target="_blank" rel="noopener">'
+        + (waHref
+          ? '<a class="fxmlp2-btn-wa" href="' + waHref.replace(/"/g, '&quot;') + '" target="_blank" rel="noopener">'
             + '\ud83d\udcf2 Coordonner via WhatsApp'
             + '</a>'
           : '')
@@ -286,43 +331,75 @@
         + '</div>';
     } else if (st === 'en_cours') {
       actionHtml = '<div class="fxmlp2-actions">'
+        + (waHref
+          ? '<a class="fxmlp2-btn-wa fxmlp2-btn-wa--secondary" href="' + waHref.replace(/"/g, '&quot;') + '" target="_blank" rel="noopener">'
+            + '\ud83d\udcf2 Contacter le client'
+            + '</a>'
+          : '')
         + '<button class="fxmlp2-btn-complete" onclick="_fxMlP2Complete(\'' + id + '\')">'
         + '\u2713 Marquer comme termin\u00e9e'
         + '</button>'
         + '</div>';
-    } else if (st === 'termin\u00e9e') {
+    } else {
       actionHtml = '<div class="fxmlp2-actions">'
-        + '<span class="fxmlp2-done-label">\u23f3 En attente client</span>'
+        + (waHref
+          ? '<a class="fxmlp2-btn-wa fxmlp2-btn-wa--ghost" href="' + waHref.replace(/"/g, '&quot;') + '" target="_blank" rel="noopener">'
+            + '\ud83d\udcf2 Demander la confirmation'
+            + '</a>'
+          : '<span class="fxmlp2-done-label">\u23f3 En attente client</span>')
         + '</div>';
     }
 
-    return '<div class="fxmlp2-mission-card ' + stateCls + '">'
+    return '<div class="fxmlp2-mission-card ' + stateCls + '" id="fxmlp2-card-' + id + '">'
+      + _renderStateStrip(st)
       + '<div class="fxmlp2-card-head">'
       + '<div>'
       + '<div class="fxmlp2-card-service">' + svc + '</div>'
-      + '<div class="fxmlp2-card-meta"><span>\ud83d\udccd ' + city + '</span></div>'
+      + '<div class="fxmlp2-card-meta"><span>\ud83d\udccd ' + city + '</span>'
+      + '<span class="fxmlp2-card-time">' + esc(timeLabel) + '</span></div>'
       + '</div>'
       + badgeHtml
       + '</div>'
-      + clientHtml
-      + waitHtml
+      + hintHtml
       + actionHtml
       + '</div>';
   }
 
-  /* ── Render artisan mission history ─────────────────── */
+  /* ── Render artisan mission history (V1-B: calm, real-work feel) ─ */
   function _renderArtisanHistory(missions) {
     var hist = missions.filter(function(r) { return COMPLETE_STATUSES.includes(normalizeStatus(r.status)); });
     if (!hist.length) return '';
+
+    /* Earn total from real commission_amount fields only — no invention */
+    var totalNet = 0;
+    hist.forEach(function(r) {
+      var net = parseFloat(String(r.artisan_net || '0').replace(/[^\d.]/g,'')) || 0;
+      totalNet += net;
+    });
+    var earningsSummary = totalNet > 0
+      ? '<span class="fxmlp2-hist-earn">' + Math.round(totalNet).toLocaleString('fr-FR') + ' MAD net</span>'
+      : '';
+
     var itemsHtml = hist.map(function(r) {
       var st = normalizeStatus(r.status);
       var isCancelled = st === 'annul\u00e9e';
+      /* Real date from best available timestamp */
+      var dateStr = formatDate(r.validated_at || r.completed_at || r.created_at);
+      /* Show artisan_net if it was calculated (commission lifecycle wrote it) */
+      var netStr = '';
+      if (!isCancelled && r.artisan_net && parseFloat(r.artisan_net) > 0) {
+        netStr = '<span class="fxmlp2-hist-item-earn">'
+          + Math.round(parseFloat(r.artisan_net)).toLocaleString('fr-FR') + ' MAD</span>';
+      }
       return '<div class="fxmlp2-history-item">'
         + '<div class="fxmlp2-history-icon">' + (isCancelled ? '\u274c' : '\u2713') + '</div>'
         + '<div class="fxmlp2-history-body">'
-        + '<div class="fxmlp2-history-service">' + esc(r.service||'Intervention') + ' \u2014 ' + esc(r.city||'Maroc') + '</div>'
-        + '<div class="fxmlp2-history-meta">' + esc(formatDate(r.validated_at||r.completed_at||r.created_at)) + '</div>'
+        + '<div class="fxmlp2-history-service">'
+        + esc(r.service || 'Intervention') + ' \u2014 ' + esc(r.city || 'Maroc')
         + '</div>'
+        + '<div class="fxmlp2-history-meta">' + esc(dateStr) + '</div>'
+        + '</div>'
+        + netStr
         + '<span class="fxmlp2-history-status' + (isCancelled ? ' cancelled' : '') + '">'
         + (isCancelled ? 'Annul\u00e9e' : 'Cl\u00f4tur\u00e9e')
         + '</span>'
@@ -330,12 +407,26 @@
     }).join('');
 
     return '<div class="fxmlp2-history-wrap">'
-      + '<div class="fxmlp2-history-title">\u23f3 Historique (' + hist.length + ')</div>'
+      + '<div class="fxmlp2-history-title">'
+      + '<span>\ud83d\udcc5 Interventions termin\u00e9es (' + hist.length + ')</span>'
+      + earningsSummary
+      + '</div>'
       + itemsHtml
       + '</div>';
   }
 
-  /* ── Main artisan render ─────────────────────────────── */
+  /* ── V1-B: Get availability state safely ────────────────── */
+  function _getAvail() {
+    try { return localStorage.getItem('fixeo_avail_status') || 'now'; } catch(e){ return 'now'; }
+  }
+
+  /* ── V1-B: Sync stat-missions-count with real data ──────── */
+  function _syncMissionCount(active) {
+    var el2 = document.getElementById('stat-missions-count');
+    if (el2 && active.length > 0) el2.textContent = String(active.length);
+  }
+
+  /* ── Main artisan render (V1-B) ──────────────────────────── */
   function _renderArtisan() {
     var container = el('fxmlp2-artisan-missions');
     if (!container) return;
@@ -343,21 +434,59 @@
     var artisan  = getArtisan();
     var missions = getArtisanMissions(artisan);
     var active   = missions.filter(function(r){ return ACTIVE_STATUSES.includes(normalizeStatus(r.status)); });
+    var avail    = _getAvail();
+
+    _syncMissionCount(active);
+
+    /* V1-B: Availability banner — shown when artisan is set to 'off' with active missions */
+    var availBanner = '';
+    if (avail === 'off' && active.length > 0) {
+      availBanner = '<div class="fxmlp2-avail-warning">'
+        + '<span class="fxmlp2-avail-warning-dot"></span>'
+        + '<span>Vous \u00eates marqu\u00e9 <strong>Indisponible</strong> mais avez '
+        + active.length + ' intervention' + (active.length > 1 ? 's' : '') + ' active'
+        + (active.length > 1 ? 's' : '') + '. '
+        + 'Passez <button class="fxmlp2-avail-inline-btn" onclick="_fxAdP2SetAvail && _fxAdP2SetAvail(\'now\')">'
+        + 'Disponible</button> pour accepter de nouvelles demandes.</span>'
+        + '</div>';
+    }
 
     if (!missions.length) {
-      container.innerHTML = '<div class="fxmlp2-history-empty">Aucune mission en cours pour le moment.</div>';
+      container.innerHTML = availBanner
+        + '<div class="fxmlp2-empty-missions">'
+        + '<div class="fxmlp2-empty-icon">\ud83c\udfd7\ufe0f</div>'
+        + '<div class="fxmlp2-empty-title">Pas encore d\u2019intervention</div>'
+        + '<div class="fxmlp2-empty-sub">Acceptez une demande depuis votre bo\u00eete de r\u00e9ception pour d\u00e9marrer votre premi\u00e8re intervention.</div>'
+        + '<button class="fxmlp2-empty-cta" onclick="showSection(\'requests\')">\ud83d\udcec Voir les demandes \u203a</button>'
+        + '</div>';
       return;
     }
 
-    var countBadge = active.length
-      ? '<span class="fxmlp2-section-badge">' + active.length + '</span>'
-      : '<span class="fxmlp2-section-badge zero">0</span>';
+    var countBadge = '<span class="fxmlp2-section-badge' + (active.length === 0 ? ' zero' : '') + '">'
+      + active.length + '</span>';
 
-    var html = '<div class="fxmlp2-section-header">'
-      + '<h2 class="fxmlp2-section-title">Mes interventions ' + countBadge + '</h2>'
+    /* V1-B: Section header with clear priority labels */
+    var html = availBanner
+      + '<div class="fxmlp2-section-header">'
+      + '<h2 class="fxmlp2-section-title">Interventions actives ' + countBadge + '</h2>'
+      + (active.length === 0 ? '<span class="fxmlp2-section-subtitle">Toutes vos interventions sont termin\u00e9es</span>' : '')
       + '</div>';
 
-    active.forEach(function(r) { html += _renderArtisanCard(r); });
+    if (active.length === 0) {
+      html += '<div class="fxmlp2-all-done">'
+        + '\u2705 Aucune intervention en attente. Consultez l\u2019historique ci-dessous.'
+        + '</div>';
+    }
+
+    /* Priority order: en_cours first, then acceptée, then terminée */
+    var sorted = active.slice().sort(function(a, b) {
+      var order = { 'en_cours': 0, 'accept\u00e9e': 1, 'termin\u00e9e': 2 };
+      var oa = order[normalizeStatus(a.status)] !== undefined ? order[normalizeStatus(a.status)] : 9;
+      var ob = order[normalizeStatus(b.status)] !== undefined ? order[normalizeStatus(b.status)] : 9;
+      return oa - ob;
+    });
+
+    sorted.forEach(function(r) { html += _renderArtisanCard(r); });
     html += _renderArtisanHistory(missions);
 
     container.innerHTML = html;

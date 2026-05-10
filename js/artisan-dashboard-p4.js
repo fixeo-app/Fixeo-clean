@@ -458,9 +458,52 @@
 
   /* ── RENDER: overview mini-inbox ─────────────────────── */
   function renderOverviewInbox(artisan, requests) {
-    var shown  = requests.slice(0, MAX_OVERVIEW_ITEMS);
+    var shown   = requests.slice(0, MAX_OVERVIEW_ITEMS);
     var hasMore = requests.length > MAX_OVERVIEW_ITEMS;
-    var total  = requests.length;
+    var total   = requests.length;
+    var avail   = artisan.avail || 'now';
+
+    /* V1-B: Pull active mission count for overview priority block */
+    var activeMissions = [];
+    try {
+      var allReqs = JSON.parse(localStorage.getItem(REQUESTS_KEY) || '[]');
+      var myId  = getArtisanId(artisan);
+      var myName = normalizeText(artisan.name || '');
+      activeMissions = allReqs.filter(function(r) {
+        var st = (r.status || '').toLowerCase().replace(/\s+/g,'_').replace(/[éè]/g,'e');
+        if (!['acceptee','en_cours','terminee'].some(function(s){ return st === s || st.startsWith(s); })) return false;
+        var rid  = String(r.assigned_artisan_id || '').trim();
+        var rnam = normalizeText(r.assigned_artisan || '');
+        return (myId && rid && rid === myId) || (myName.length > 1 && rnam && rnam === myName);
+      });
+    } catch(e){}
+
+    /* Active mission mini-strip (shown above new requests when missions exist) */
+    var missionStripHtml = '';
+    if (activeMissions.length > 0) {
+      var enCours = activeMissions.filter(function(r){
+        var s = (r.status||'').toLowerCase(); return s === 'en_cours';
+      });
+      var accepted = activeMissions.filter(function(r){
+        var s = (r.status||'').toLowerCase().replace(/[éè]/g,'e');
+        return s === 'acceptee' || s === 'accept\u00e9e';
+      });
+      var missionLabel = enCours.length > 0
+        ? '\ud83d\udd34 ' + enCours.length + ' en cours'
+        : '\ud83d\udccc ' + accepted.length + ' \u00e0 coordonner';
+      missionStripHtml = '<div class="fxadp4-mission-strip" onclick="showSection(\'missions\')">'
+        + '<div class="fxadp4-mission-strip-dot' + (enCours.length > 0 ? ' active' : '') + '"></div>'
+        + '<div class="fxadp4-mission-strip-body">'
+        + '<span class="fxadp4-mission-strip-label">' + missionLabel + '</span>'
+        + '<span class="fxadp4-mission-strip-sub">Voir mes interventions \u203a</span>'
+        + '</div>'
+        + '</div>';
+    }
+
+    /* Availability softener — when off, title changes tone (no inbox blocking) */
+    var titleLabel = avail === 'off'
+      ? 'Demandes en attente '
+      : 'Nouvelles demandes ';
 
     var itemsHtml = shown.map(function(r) {
       var isUrgent = /urgent/i.test(r.urgency||'');
@@ -475,16 +518,21 @@
     }).join('');
 
     return '<div class="fxadp4-overview-inbox" id="fxadp4-overview-inbox">'
+      + missionStripHtml
       + '<div class="fxadp4-overview-header">'
       + '<h3 class="fxadp4-overview-title">'
-      + 'Nouvelles demandes '
+      + titleLabel
       + '<span class="fxadp4-count-badge' + (total === 0 ? ' zero' : '') + '">' + total + '</span>'
       + '</h3>'
       + (total > 0 ? '<button class="fxadp4-see-all" onclick="showSection(\'requests\')">Voir tout \u203a</button>' : '')
       + '</div>'
       + (shown.length > 0 ? itemsHtml : '')
-      + (total === 0 ? '<div style="font-size:0.8rem;opacity:0.4;padding:8px 0">Aucune demande compatible pour le moment.</div>' : '')
-      + (hasMore ? '<div style="font-size:0.76rem;opacity:0.38;margin-top:4px;text-align:center">+ ' + (total - MAX_OVERVIEW_ITEMS) + ' autres</div>' : '')
+      + (total === 0
+        ? '<div class="fxadp4-overview-empty">'
+          + (avail === 'off' ? '\u23f8 Vous \u00eates hors ligne. Les demandes vous attendent.' : 'Aucune demande compatible pour le moment.')
+          + '</div>'
+        : '')
+      + (hasMore ? '<div class="fxadp4-overview-more">+ ' + (total - MAX_OVERVIEW_ITEMS) + ' autres demandes</div>' : '')
       + '</div>';
   }
 

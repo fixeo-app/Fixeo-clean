@@ -418,3 +418,311 @@
 @media (max-width: 480px) {
   .fxmlp2-btn-wa { justify-content: center; }
 }
+
+/* ══════════════════════════════════════════════════════════
+   V1-B: State progression strip
+   ══════════════════════════════════════════════════════════ */
+
+.fxmlp2-state-strip {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 14px;
+  padding: 0 2px;
+}
+.fxmlp2-strip-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+}
+.fxmlp2-strip-step span {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  color: rgba(255,255,255,0.30);
+}
+.fxmlp2-strip-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.12);
+  border: 2px solid rgba(255,255,255,0.14);
+  transition: background 0.2s, border-color 0.2s;
+}
+.fxmlp2-strip-step.done .fxmlp2-strip-dot {
+  background: #20c997;
+  border-color: rgba(32,201,151,0.5);
+}
+.fxmlp2-strip-step.done span { color: #20c997; }
+.fxmlp2-strip-step.active .fxmlp2-strip-dot {
+  background: #6c8ff5;
+  border-color: rgba(108,143,245,0.5);
+  box-shadow: 0 0 0 3px rgba(108,143,245,0.18);
+}
+.fxmlp2-strip-step.active span { color: rgba(255,255,255,0.85); }
+
+.fxmlp2-strip-line {
+  flex: 1;
+  height: 2px;
+  background: rgba(255,255,255,0.08);
+  margin-bottom: 14px; /* align with dot center */
+  border-radius: 2px;
+}
+.fxmlp2-strip-line.done {
+  background: rgba(32,201,151,0.35);
+}
+
+/* ══════════════════════════════════════════════════════════
+   V1-B: Pulse dot for en-cours badge
+   ══════════════════════════════════════════════════════════ */
+
+.fxmlp2-pulse-dot {
+  display: inline-block;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: #6c8ff5;
+  margin-right: 5px;
+  vertical-align: middle;
+  animation: fxmlp2-pulse-badge 2s ease-in-out infinite;
+}
+@keyframes fxmlp2-pulse-badge {
+  0%,100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.45; transform: scale(0.75); }
+}
+
+/* ══════════════════════════════════════════════════════════
+   V1-B: Coordination hint strip
+   ══════════════════════════════════════════════════════════ */
+
+.fxmlp2-coord-hint {
+  font-size: 0.77rem;
+  color: rgba(255,255,255,0.48);
+  margin-bottom: 12px;
+  line-height: 1.4;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.03);
+  border-left: 2px solid rgba(255,255,255,0.10);
+}
+.fxmlp2-coord-hint--active {
+  border-left-color: #6c8ff5;
+  background: rgba(108,143,245,0.06);
+  color: rgba(200,210,255,0.65);
+}
+.fxmlp2-coord-hint--done {
+  border-left-color: rgba(255,165,2,0.35);
+  background: rgba(255,165,2,0.04);
+  color: rgba(255,165,2,0.65);
+}
+
+/* ══════════════════════════════════════════════════════════
+   V1-B: WA button variants
+   ══════════════════════════════════════════════════════════ */
+
+/* Secondary WA (en-cours: alongside Complete) */
+.fxmlp2-btn-wa--secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 15px;
+  font-size: 0.80rem;
+  font-weight: 700;
+  border-radius: 12px;
+  background: rgba(37,211,102,0.12);
+  color: #25d366;
+  border: 1px solid rgba(37,211,102,0.22);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.16s, color 0.14s;
+  -webkit-tap-highlight-color: transparent;
+}
+.fxmlp2-btn-wa--secondary:hover {
+  background: rgba(37,211,102,0.20);
+}
+
+/* Ghost WA (terminée: request confirmation, low prominence) */
+.fxmlp2-btn-wa--ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 15px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  border-radius: 12px;
+  background: transparent;
+  color: rgba(255,255,255,0.38);
+  border: 1px solid rgba(255,255,255,0.10);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.16s, color 0.14s, border-color 0.14s;
+  -webkit-tap-highlight-color: transparent;
+}
+.fxmlp2-btn-wa--ghost:hover {
+  background: rgba(37,211,102,0.07);
+  color: rgba(37,211,102,0.80);
+  border-color: rgba(37,211,102,0.18);
+}
+
+/* ══════════════════════════════════════════════════════════
+   V1-B: Mission card time label
+   ══════════════════════════════════════════════════════════ */
+
+.fxmlp2-card-time {
+  display: inline-block;
+  margin-left: 8px;
+  font-size: 0.70rem;
+  opacity: 0.38;
+}
+
+/* ══════════════════════════════════════════════════════════
+   V1-B: History earnings inline
+   ══════════════════════════════════════════════════════════ */
+
+.fxmlp2-hist-earn {
+  margin-left: auto;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #20c997;
+  opacity: 0.75;
+  white-space: nowrap;
+}
+.fxmlp2-history-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.fxmlp2-hist-item-earn {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 9px;
+  border-radius: 8px;
+  font-size: 0.70rem;
+  font-weight: 700;
+  color: #20c997;
+  background: rgba(32,201,151,0.08);
+  border: 1px solid rgba(32,201,151,0.14);
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-right: 6px;
+}
+
+/* ══════════════════════════════════════════════════════════
+   V1-B: Empty missions state (operational, not gamified)
+   ══════════════════════════════════════════════════════════ */
+
+.fxmlp2-empty-missions {
+  text-align: center;
+  padding: 36px 24px;
+  background: rgba(255,255,255,0.02);
+  border: 1px dashed rgba(255,255,255,0.08);
+  border-radius: 18px;
+  margin-bottom: 16px;
+}
+.fxmlp2-empty-icon { font-size: 2rem; margin-bottom: 10px; opacity: 0.55; }
+.fxmlp2-empty-title { font-size: 0.95rem; font-weight: 700; margin-bottom: 7px; }
+.fxmlp2-empty-sub {
+  font-size: 0.82rem; opacity: 0.50; line-height: 1.5;
+  max-width: 320px; margin: 0 auto 16px;
+}
+.fxmlp2-empty-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-size: 0.84rem;
+  font-weight: 700;
+  background: rgba(64,93,230,0.14);
+  color: #6c8ff5;
+  border: 1px solid rgba(64,93,230,0.22);
+  cursor: pointer;
+  transition: background 0.16s;
+  -webkit-tap-highlight-color: transparent;
+}
+.fxmlp2-empty-cta:hover { background: rgba(64,93,230,0.22); }
+
+/* ══════════════════════════════════════════════════════════
+   V1-B: All-done message
+   ══════════════════════════════════════════════════════════ */
+
+.fxmlp2-all-done {
+  font-size: 0.82rem;
+  color: rgba(32,201,151,0.65);
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(32,201,151,0.06);
+  border: 1px solid rgba(32,201,151,0.12);
+  margin-bottom: 16px;
+}
+
+/* ══════════════════════════════════════════════════════════
+   V1-B: Availability warning in missions (off + active)
+   ══════════════════════════════════════════════════════════ */
+
+.fxmlp2-avail-warning {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: rgba(255,165,2,0.07);
+  border: 1px solid rgba(255,165,2,0.18);
+  margin-bottom: 16px;
+  font-size: 0.80rem;
+  color: rgba(255,165,2,0.80);
+  line-height: 1.45;
+}
+.fxmlp2-avail-warning-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: rgba(255,165,2,0.70);
+  flex-shrink: 0;
+}
+.fxmlp2-avail-inline-btn {
+  display: inline;
+  background: none;
+  border: none;
+  color: #ffa502;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: inherit;
+  padding: 0;
+}
+
+/* ══════════════════════════════════════════════════════════
+   V1-B: Section subtitle
+   ══════════════════════════════════════════════════════════ */
+
+.fxmlp2-section-subtitle {
+  display: block;
+  font-size: 0.76rem;
+  opacity: 0.42;
+  margin-top: 2px;
+}
+
+/* ══════════════════════════════════════════════════════════
+   V1-B: Mobile refinements
+   ══════════════════════════════════════════════════════════ */
+
+@media (max-width: 480px) {
+  .fxmlp2-state-strip { margin-bottom: 12px; }
+  .fxmlp2-strip-step span { font-size: 0.60rem; }
+  .fxmlp2-coord-hint { font-size: 0.74rem; padding: 7px 10px; }
+  .fxmlp2-btn-wa--secondary,
+  .fxmlp2-btn-wa--ghost { justify-content: center; }
+  .fxmlp2-empty-missions { padding: 28px 16px; }
+}
+@media (max-width: 360px) {
+  .fxmlp2-strip-dot { width: 8px; height: 8px; }
+  .fxmlp2-history-title { flex-direction: column; align-items: flex-start; gap: 4px; }
+  .fxmlp2-hist-earn { margin-left: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fxmlp2-pulse-dot { animation: none; opacity: 1; }
+  .fxmlp2-strip-step.active .fxmlp2-strip-dot { box-shadow: none; }
+}
