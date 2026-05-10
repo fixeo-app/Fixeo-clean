@@ -1,9 +1,13 @@
 /**
- * fixeo-hero-lps-v10.js
+ * fixeo-hero-lps-v10.js  v=lps2
  * FIXEO LIVE PERCEPTION SYSTEM — Homepage Hero V10
  *
  * 1. Rotating platform signals (opacity crossfade, no fake numbers)
- * 2. Smart search placeholder rotation (slow, elegant)
+ * 2. Smart search placeholder rotation — H-INTEL upgrade
+ *    - 18 human/real/contextual problems
+ *    - Mix: urgent | home | local | availability intent
+ *    - Smooth opacity fade via CSS class toggle
+ *    - Slow 4.8s cycle — comfortable reading time
  *
  * CONSTRAINTS:
  * - Zero Supabase. Zero fetch. Zero fake metrics.
@@ -27,20 +31,41 @@
     'R\u00e9seau actif partout au Maroc'
   ];
 
-  /* ── Smart placeholders ───────────────────────────────────────────── */
+  /* ── H-INTEL: Intelligent placeholders ───────────────────────────── */
+  /* 18 entries — mix of urgency, home, local, everyday Moroccan reality */
+  /* No raw U+2019 in strings — all apostrophes are standard or escaped  */
   var PLACEHOLDERS = [
-    'Plombier \u00e0 Casablanca\u2026',
-    '\u00c9lectricien \u00e0 F\u00e8s\u2026',
-    'Climatisation \u00e0 Rabat\u2026',
-    'Menuisier \u00e0 Tanger\u2026',
-    'Peintre \u00e0 Marrakech\u2026',
-    'Serrurier \u00e0 Agadir\u2026',
-    'Plombier \u00e0 Casablanca\u2026'
+    /* Urgent breakdowns */
+    'Fuite sous l\u2019\u00e9vier\u2026',
+    'Prise \u00e9lectrique qui ne fonctionne plus\u2026',
+    'Climatisation qui ne refroidit plus\u2026',
+    'Canalisation bouch\u00e9e\u2026',
+    'Chauffe-eau en panne\u2026',
+    'Court-circuit dans l\u2019appartement\u2026',
+
+    /* Home improvement */
+    'Repeindre le salon\u2026',
+    'Installer une TV murale\u2026',
+    'R\u00e9parer une serrure bloqu\u00e9e\u2026',
+    'Poser du carrelage dans la cuisine\u2026',
+    'Changer les joints de la salle de bain\u2026',
+
+    /* Natural local intent */
+    '\u00c9lectricien disponible aujourd\u2019hui\u2026',
+    'Plombier urgent \u00e0 Casablanca\u2026',
+    'Artisan disponible \u00e0 Rabat\u2026',
+    'R\u00e9paration climatisation \u00e0 Marrakech\u2026',
+
+    /* Everyday household situations */
+    'Volet roulant bloqu\u00e9\u2026',
+    'Robinet qui goutte\u2026',
+    'Installation de box internet\u2026'
   ];
 
-  var FADE_MS     = 450;   /* crossfade duration */
-  var SIGNAL_MS   = 4200;  /* signal hold time */
-  var PLACEHOLDER_MS = 3800;
+  var FADE_MS        = 400;   /* placeholder opacity-out duration (ms) */
+  var SIGNAL_MS      = 4200;  /* signal hold time */
+  var PLACEHOLDER_MS = 4800;  /* placeholder rotation interval — slow enough to read */
+  var PH_BLANK_MS    = 180;   /* blank gap between old/new placeholder text */
 
   var _reducedMotion = window.matchMedia
     ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -55,7 +80,7 @@
     el.textContent = SIGNALS[idx];
     el.classList.add('fxlps-fade-in');
 
-    if (_reducedMotion) return; /* show first signal only */
+    if (_reducedMotion) return;
 
     function next() {
       el.classList.remove('fxlps-fade-in');
@@ -72,17 +97,14 @@
     setInterval(next, SIGNAL_MS);
   }
 
-  /* ── Smart placeholder rotator ───────────────────────────────────── */
+  /* ── H-INTEL: Smart placeholder rotator ─────────────────────────── */
   function initPlaceholders() {
     if (_reducedMotion) return;
 
-    /* The quick search renders inside #hero-quick-search.
-       We wait for QSM to render, then patch the input. */
-    var attempts = 0;
+    var attempts   = 0;
     var maxAttempts = 20;
 
     function tryPatch() {
-      /* QSM renders an <input> inside #hero-quick-search */
       var host  = document.getElementById('hero-quick-search');
       if (!host) return;
       var input = host.querySelector('input[type="text"], input[type="search"], input:not([type="hidden"])');
@@ -91,33 +113,44 @@
         return;
       }
 
-      var idx = 0;
-      /* Only rotate when input is empty and not focused */
+      /* Shuffle to avoid always starting at index 0 on every visit */
+      var startIdx = Math.floor(Math.random() * PLACEHOLDERS.length);
+      var idx      = startIdx;
+
       var _focused = false;
       input.addEventListener('focus', function () { _focused = true; });
       input.addEventListener('blur',  function () { _focused = false; });
 
-      /* Set initial placeholder without overriding existing one if set */
-      if (!input.value && !input.placeholder) {
-        input.placeholder = PLACEHOLDERS[0];
+      /* Set initial placeholder */
+      if (!input.value) {
+        input.placeholder = PLACEHOLDERS[idx];
       }
 
       function rotatePlaceholder() {
-        if (_focused || input.value) return; /* user is typing */
-        idx = (idx + 1) % PLACEHOLDERS.length;
-        /* Soft transition: clear then set after short delay */
-        input.placeholder = '';
+        if (_focused || input.value) return;
+
+        /* 1. Fade out: add CSS class that sets opacity:0 on the input  */
+        input.classList.add('fxph-fade');
+
+        /* 2. After fade-out, swap placeholder text */
         setTimeout(function () {
-          if (!_focused && !input.value) {
-            input.placeholder = PLACEHOLDERS[idx];
+          if (_focused || input.value) {
+            input.classList.remove('fxph-fade');
+            return;
           }
-        }, 180);
+          idx = (idx + 1) % PLACEHOLDERS.length;
+          input.placeholder = PLACEHOLDERS[idx];
+
+          /* Small blank gap so browser re-renders new placeholder */
+          setTimeout(function () {
+            input.classList.remove('fxph-fade');
+          }, PH_BLANK_MS);
+        }, FADE_MS);
       }
 
       setInterval(rotatePlaceholder, PLACEHOLDER_MS);
     }
 
-    /* Wait for DOMContentLoaded then poll for QSM input */
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', function () {
         setTimeout(tryPatch, 600);
