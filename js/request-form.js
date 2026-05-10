@@ -8,37 +8,37 @@
   const MAX_URGENT_EVENTS = 250;
   const REQUEST_COPY = {
     default: {
-      title: 'Décrivez votre besoin',
-      subtitle: 'Recevez des offres d’artisans vérifiés rapidement',
-      submit: 'Recevoir des offres maintenant',
+      title: 'Quel est le probl\u00e8me\u00a0?',
+      subtitle: 'Un artisan Fixeo vous rappelle sous 30\u00a0min',
+      submit: 'Envoyer ma demande',
       trust: [
-        'Réponse moyenne : moins de 15 minutes',
-        'Gratuit et sans engagement'
+        'Gratuit \u00b7 Sans engagement',
+        'Paiement apr\u00e8s intervention'
       ],
-      successTitle: 'Votre demande a été publiée sur Fixeo',
-      successText: 'Les artisans compatibles peuvent maintenant voir votre demande sans quitter Fixeo.'
+      successTitle: 'Votre demande est prise en charge',
+      successText: 'Un artisan Fixeo vous contacte sous 30\u00a0min. Vous pouvez suivre et coordonner via WhatsApp.'
     },
     marketplace: {
-      title: 'Publiez votre demande',
-      subtitle: 'Décrivez votre besoin pour recevoir plusieurs propositions rapidement',
-      submit: 'Recevoir plusieurs offres',
+      title: 'D\u00e9crivez votre besoin',
+      subtitle: 'Un artisan disponible pr\u00e8s de chez vous vous r\u00e9pond rapidement',
+      submit: 'Envoyer ma demande',
       trust: [
-        'Plusieurs artisans peuvent vous répondre',
-        'Gratuit et sans engagement'
+        'Gratuit \u00b7 Sans engagement',
+        'Paiement apr\u00e8s intervention'
       ],
-      successTitle: 'Votre demande a été publiée sur Fixeo',
-      successText: 'Les artisans compatibles peuvent maintenant voir votre demande sans quitter Fixeo.'
+      successTitle: 'Votre demande est prise en charge',
+      successText: 'Un artisan Fixeo vous contacte sous 30\u00a0min. Vous pouvez suivre et coordonner via WhatsApp.'
     },
     express: {
-      title: 'Demande urgente ⚡',
-      subtitle: 'Lancez un parcours express pour être recontacté au plus vite par Fixeo',
-      submit: 'Recevoir une prise en charge express',
+      title: 'Intervention urgente \u26a1',
+      subtitle: 'Fixeo trouve un artisan disponible maintenant dans votre ville',
+      submit: 'Trouver un artisan maintenant',
       trust: [
-        'Priorité urgente • rappel rapide',
-        'Gratuit et sans engagement'
+        'R\u00e9ponse rapide \u00b7 Artisan disponible',
+        'Gratuit \u00b7 Sans engagement'
       ],
-      successTitle: 'Votre demande a bien été publiée sur Fixeo',
-      successText: 'Votre demande urgente reste dans Fixeo et peut être partagée sur WhatsApp seulement si vous le souhaitez.'
+      successTitle: 'Votre demande urgente est prise en charge',
+      successText: 'Fixeo recherche un artisan disponible maintenant. Restez joignable pour la coordination via WhatsApp.'
     }
   };
   let redirectTimer = null;
@@ -585,7 +585,7 @@
   const CITY_FALLBACKS = ['Casablanca', 'Rabat', 'Marrakech', 'Fès', 'Tanger', 'Agadir', 'Meknès', 'Oujda'];
   const STEP_COPY = {
     form: {
-      title: '⚡ Intervention urgente — Artisan disponible maintenant',
+      title: '⚡ Intervention urgente - Artisan disponible maintenant',
       subtitle: 'Un artisan peut vous rappeler en quelques minutes.'
     },
     results: {
@@ -715,7 +715,7 @@
           <form id="express-request-form" class="request-form express-request-form" novalidate>
             <div class="request-field">
               <label for="express-request-problem">Que se passe-t-il ?</label>
-              <textarea id="express-request-problem" name="problem" rows="2" maxlength="160" placeholder="Ex : fuite d'eau, panne électrique, porte bloquée…" required></textarea>
+              <textarea id="express-request-problem" name="problem" rows="2" maxlength="160" placeholder="Ex : fuite d'eau, panne électrique, porte bloquée..." required></textarea>
             </div>
             <div class="express-chips-row" role="group" aria-label="Suggestions rapides">
               <button type="button" class="express-chip" data-text="Fuite d'eau">🚰 Fuite d'eau</button>
@@ -731,14 +731,14 @@
             </div>
             <p id="express-request-feedback" class="express-request-feedback" aria-live="polite" hidden></p>
             <button class="btn btn-primary request-submit-btn express-request-submit" type="submit">Trouver un artisan maintenant</button>
-            <p class="express-modal-fomo">🟢 23 artisans disponibles maintenant</p>
+            <p class="express-modal-fomo">\ud83d\udfe2 Artisans disponibles en ce moment</p>
             <p class="express-modal-trust">Artisans vérifiés &nbsp;·&nbsp; Réponse rapide &nbsp;·&nbsp; Gratuit</p>
           </form>
         </div>
 
         <div class="express-request-step express-request-step-results" data-step="results" hidden>
           <div class="express-results-intro">
-            <span class="express-results-kicker">⚡ Intervention rapide – artisans prêts à vous répondre</span>
+            <span class="express-results-kicker">⚡ Intervention rapide - artisans prêts à vous répondre</span>
             <strong class="express-results-heading">🔥 Réponse en quelques minutes</strong>
           </div>
           <div id="express-request-summary" class="express-request-summary"></div>
@@ -1198,7 +1198,7 @@
     setResultsFeedback('');
 
     if (!Array.isArray(state.results) || !state.results.length) {
-      list.innerHTML = '<div class="express-preview-empty">Aucun artisan n’est disponible immédiatement pour cette demande.</div>';
+      list.innerHTML = '<div class="express-preview-empty">Aucun artisan n\u2019est disponible imm\u00e9diatement pour cette demande.</div>';
       if (moreBtn) moreBtn.hidden = true;
       return;
     }

@@ -38,6 +38,7 @@
 <link rel="stylesheet" href="css/payment.css?v=50a38b9" media="print" onload="this.media='all'"/><noscript><link rel="stylesheet" href="css/payment.css?v=50a38b9"/></noscript>
 <link rel="stylesheet" href="css/reservation.css?v=50a38b9" media="print" onload="this.media='all'"/><noscript><link rel="stylesheet" href="css/reservation.css?v=50a38b9"/></noscript>
 <link rel="stylesheet" href="css/reservation-v2.css?v=3" />
+<link rel="stylesheet" href="css/reservation-v2a.css" />
 <link rel="stylesheet" href="css/smart-search.css?v=50a38b9"/>
 <link rel="stylesheet" href="css/smart-search-map.css?v=50a38b9"/>
 <link rel="stylesheet" href="css/artisan_cards_v8.css?v=50a38b9"/>
@@ -3019,8 +3020,8 @@ section#home.hero.hero-section {
 <div class="modal request-modal" id="request-modal" role="dialog" aria-modal="true" aria-labelledby="request-modal-title" aria-describedby="request-modal-subtitle">
   <div class="modal-header request-modal-header">
     <div>
-      <h3 id="request-modal-title">Décrivez votre besoin</h3>
-      <p id="request-modal-subtitle" class="request-modal-subtitle">Recevez des offres d'artisans vérifiés rapidement</p>
+      <h3 id="request-modal-title">Quel est le probl&#232;me&#160;?</h3>
+      <p id="request-modal-subtitle" class="request-modal-subtitle">Un artisan Fixeo vous rappelle sous 30&#160;min</p>
     </div>
     <button class="modal-close" type="button" onclick="window.FixeoClientRequest && window.FixeoClientRequest.closeStandard ? window.FixeoClientRequest.closeStandard('request-modal') : closeModal('request-modal')" aria-label="Fermer">✕</button>
   </div>
@@ -3028,8 +3029,8 @@ section#home.hero.hero-section {
   <div class="request-modal-shell">
     <form id="request-form" class="request-form" novalidate>
       <div class="request-field">
-        <label for="request-problem">Problème</label>
-        <input id="request-problem" name="problem" type="text" placeholder="Décrivez votre problème (ex: fuite d'eau, panne électricité...)" maxlength="120" required />
+        <label for="request-problem">Votre besoin</label>
+        <input id="request-problem" name="problem" type="text" placeholder="Ex&#160;: fuite d&#8217;eau, panne &#233;lectrique, porte bloqu&#233;e&#8230;" maxlength="120" required />
       </div>
 
       <div class="request-field">
@@ -3079,20 +3080,22 @@ section#home.hero.hero-section {
         <input id="request-phone" name="telephone" type="tel" inputmode="tel" placeholder="06 12 34 56 78" maxlength="20" required />
       </div>
 
-      <button class="btn btn-primary request-submit-btn" type="submit">Recevoir des offres maintenant</button>
+      <button class="btn btn-primary request-submit-btn" type="submit">Envoyer ma demande</button>
 
       <div class="request-trust-copy" aria-hidden="true">
-        <span>Réponse moyenne : moins de 15 minutes</span>
-        <span>Gratuit et sans engagement</span>
+        <span>Gratuit &#183; Sans engagement</span>
+        <span>Paiement apr&#232;s intervention</span>
       </div>
     </form>
 
-    <div id="request-success" class="request-success" hidden>
-      <div class="request-success-icon">✅</div>
-      <h4>Votre demande a été publiée sur Fixeo</h4>
-      <p>Votre demande reste dans Fixeo. Vous pouvez aussi la partager sur WhatsApp si vous le souhaitez.</p>
-      <a class="btn request-secondary-btn request-whatsapp-btn" id="request-whatsapp-link" href="#" target="_self" rel="noopener">Partager aussi sur WhatsApp</a>
-      <button class="btn request-secondary-btn" type="button" id="request-new-one">Publier une autre demande</button>
+    <div id="request-success" class="request-success fxrva-success" hidden>
+      <div class="request-success-icon fxrva-success-icon">&#x2714;&#xFE0F;</div>
+      <h4 class="fxrva-success-title">Votre demande est prise en charge</h4>
+      <p class="fxrva-success-sub">Un artisan Fixeo vous contacte sous 30&#160;min. Vous pouvez suivre et coordonner via WhatsApp.</p>
+      <a class="btn fxrva-wa-primary" id="request-whatsapp-link" href="#" target="_blank" rel="noopener noreferrer">
+        <span class="fxrva-wa-ico">&#x1F4AC;</span> Rester en contact via WhatsApp
+      </a>
+      <button class="btn fxrva-new-request" type="button" id="request-new-one">Publier une autre demande</button>
     </div>
   </div>
 </div>

@@ -1,0 +1,373 @@
+/* ================================================================
+   FIXEO — Reservation Modal V2-A
+   Trust Cleanup, Unified Avatar System & Operational Language
+
+   Append-only. Scoped to #fixeo-reservation-modal + .fxrva-* namespace.
+   Never modifies existing reservation.css rules.
+
+   Sections:
+   V2A-RES-A  Unified avatar system (silhouette, 52px)
+   V2A-RES-B  Picker avatar system (silhouette, 40px)
+   V2A-RES-C  Category-gradient + glow for reservation avatar
+   V2A-RES-D  Coordination strip (replaces fake "+23 réservations")
+   V2A-RES-E  Step 1 operational footer (replaces SSL-heavy footer)
+   V2A-RES-F  Step 2 honest trust row
+   V2A-RES-G  Success state: WhatsApp-primary
+   V2A-RES-H  Mobile-first adjustments
+   V2A-RES-I  Reduced-motion guard
+   ================================================================ */
+
+/* ── V2A-RES-A: Unified avatar system (52px — reservation card) ── */
+/*
+   Mirrors V2-C silhouette system from artisan-profile-v2a.css.
+   .fxrva-avatar replaces the initials rendering:
+   - font-size:0 kills residual text node
+   - dark base gradient + category override via [data-category]
+   - ::before head circle / ::after shoulders arc
+   Scoped to reservation modal context for isolation.
+*/
+#fixeo-reservation-modal .fixeo-res-artisan-avatar.fxrva-avatar {
+  background: linear-gradient(135deg, #1a1a2e, #2d2d44) !important;
+  font-size: 0 !important;
+  color: transparent !important;
+  overflow: hidden !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative !important;
+}
+
+/* ── Silhouette spans ── */
+#fixeo-reservation-modal .fxrva-silhouette {
+  display: block !important;
+  position: relative !important;
+  width: 64% !important;
+  height: 64% !important;
+  pointer-events: none !important;
+  flex-shrink: 0 !important;
+}
+
+/* Head circle */
+#fixeo-reservation-modal .fxrva-silhouette::before {
+  content: "" !important;
+  position: absolute !important;
+  top: 8% !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: 38% !important;
+  height: 38% !important;
+  border-radius: 50% !important;
+  background: rgba(255,255,255,0.88) !important;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.18) !important;
+}
+
+/* Shoulders arc */
+#fixeo-reservation-modal .fxrva-silhouette::after {
+  content: "" !important;
+  position: absolute !important;
+  bottom: 4% !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: 74% !important;
+  height: 42% !important;
+  border-radius: 999px 999px 18px 18px !important;
+  background: rgba(255,255,255,0.76) !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.16) !important;
+}
+
+/* Category badge — positioned from the flex avatar */
+#fixeo-reservation-modal .fxrva-cat-badge {
+  position: absolute !important;
+  bottom: -3px !important;
+  right: -3px !important;
+  width: 20px !important;
+  height: 20px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 10px !important;
+  line-height: 1 !important;
+  background: rgba(8,8,24,0.88) !important;
+  border: 1.5px solid rgba(255,255,255,0.20) !important;
+  border-radius: 50% !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.40) !important;
+  z-index: 4 !important;
+  pointer-events: none !important;
+}
+
+/* ── V2A-RES-B: Picker avatar (40px) ─────────────────────────── */
+#fixeo-reservation-modal .fixeo-res-picker-avatar.fxrva-avatar--sm {
+  background: linear-gradient(135deg, #1a1a2e, #2d2d44) !important;
+  font-size: 0 !important;
+  color: transparent !important;
+  overflow: hidden !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative !important;
+}
+
+#fixeo-reservation-modal .fxrva-avatar--sm .fxrva-silhouette {
+  width: 60% !important;
+  height: 60% !important;
+}
+
+/* ── V2A-RES-C: Category-specific gradients (T3 mirror) ────────── */
+/*
+   Same exact gradient values as artisan-profile-v2a.css V2C-C.
+   User sees the same color from homepage card → profile → reservation.
+   Scoped by #fixeo-reservation-modal for zero bleed to other surfaces.
+*/
+#fixeo-reservation-modal .fxrva-avatar[data-category="plomberie"] {
+  background: linear-gradient(135deg, #0ea5e9, #2563eb) !important;
+  box-shadow: 0 6px 20px rgba(14,165,233,0.28) !important;
+}
+#fixeo-reservation-modal .fxrva-avatar[data-category="electricite"] {
+  background: linear-gradient(135deg, #facc15, #f97316) !important;
+  box-shadow: 0 6px 20px rgba(250,204,21,0.25) !important;
+}
+#fixeo-reservation-modal .fxrva-avatar[data-category="climatisation"] {
+  background: linear-gradient(135deg, #22d3ee, #06b6d4) !important;
+  box-shadow: 0 6px 20px rgba(34,211,238,0.28) !important;
+}
+#fixeo-reservation-modal .fxrva-avatar[data-category="peinture"] {
+  background: linear-gradient(135deg, #f472b6, #ec4899) !important;
+  box-shadow: 0 6px 20px rgba(244,114,182,0.28) !important;
+}
+#fixeo-reservation-modal .fxrva-avatar[data-category="nettoyage"] {
+  background: linear-gradient(135deg, #34d399, #10b981) !important;
+  box-shadow: 0 6px 20px rgba(52,211,153,0.25) !important;
+}
+#fixeo-reservation-modal .fxrva-avatar[data-category="menuiserie"] {
+  background: linear-gradient(135deg, #a16207, #78350f) !important;
+  box-shadow: 0 6px 20px rgba(161,98,7,0.35) !important;
+}
+#fixeo-reservation-modal .fxrva-avatar[data-category="serrurerie"] {
+  background: linear-gradient(135deg, #f59e0b, #d97706) !important;
+  box-shadow: 0 6px 20px rgba(245,158,11,0.28) !important;
+}
+#fixeo-reservation-modal .fxrva-avatar[data-category="maconnerie"] {
+  background: linear-gradient(135deg, #6b7280, #374151) !important;
+  box-shadow: 0 6px 20px rgba(107,114,128,0.35) !important;
+}
+#fixeo-reservation-modal .fxrva-avatar[data-category="jardinage"] {
+  background: linear-gradient(135deg, #84cc16, #16a34a) !important;
+  box-shadow: 0 6px 20px rgba(132,204,22,0.28) !important;
+}
+#fixeo-reservation-modal .fxrva-avatar[data-category="bricolage"] {
+  background: linear-gradient(135deg, #f97316, #ea580c) !important;
+  box-shadow: 0 6px 20px rgba(249,115,22,0.28) !important;
+}
+#fixeo-reservation-modal .fxrva-avatar[data-category="demenagement"] {
+  background: linear-gradient(135deg, #c084fc, #7c3aed) !important;
+  box-shadow: 0 6px 20px rgba(192,132,252,0.28) !important;
+}
+#fixeo-reservation-modal .fxrva-avatar[data-category="carrelage"] {
+  background: linear-gradient(135deg, #94a3b8, #475569) !important;
+  box-shadow: 0 6px 20px rgba(148,163,184,0.25) !important;
+}
+#fixeo-reservation-modal .fxrva-avatar[data-category="toiture"] {
+  background: linear-gradient(135deg, #ef4444, #991b1b) !important;
+  box-shadow: 0 6px 20px rgba(239,68,68,0.28) !important;
+}
+#fixeo-reservation-modal .fxrva-avatar[data-category="informatique"] {
+  background: linear-gradient(135deg, #818cf8, #4f46e5) !important;
+  box-shadow: 0 6px 20px rgba(129,140,248,0.28) !important;
+}
+
+/* ── V2A-RES-D: Coordination strip (below artisan card, Step 1) ─── */
+/*
+   Replaces "+23 réservations aujourd'hui dans votre zone" (hardcoded fake).
+   "✔ Coordonné par Fixeo · Paiement après intervention"
+   Real platform promise. Calm. No scarcity.
+*/
+.fxrva-artisan-coord {
+  font-size: 0.64rem !important;
+  color: rgba(255,255,255,0.42) !important;
+  margin: -6px 0 10px !important;
+  padding-left: 2px !important;
+  font-family: 'Cairo', 'Tajawal', sans-serif !important;
+  letter-spacing: 0.01em !important;
+}
+
+/* ── V2A-RES-E: Step 1 operational footer ─────────────────────── */
+/*
+   Replaces: 🔒 SSL 256-bit · 🛡️ 3D Secure · ✅ PCI-DSS · 🔄 Remboursement 14j
+   (e-commerce checkout anxiety at wrong moment — user hasn't chosen payment yet)
+
+   Replaces with: ✔ Gratuit & sans engagement · 💳 Paiement après intervention · 💬 Coordination Fixeo
+   These are the three most reassuring true signals at this moment.
+*/
+.fxrva-footer-step1 .fixeo-res-security {
+  display: none !important; /* remove old ecommerce badges */
+}
+
+.fxrva-op-strip {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-wrap: wrap !important;
+  gap: 6px 16px !important;
+  font-size: 0.64rem !important;
+  color: rgba(255,255,255,0.38) !important;
+  font-family: 'Cairo', 'Tajawal', sans-serif !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.01em !important;
+  padding: 0 !important;
+}
+
+/* ── V2A-RES-F: Step 2 honest trust row ──────────────────────── */
+/*
+   Replaces: ✅ Artisan vérifié · 🛡️ Paiement sécurisé · 🔄 Support Fixeo
+   (first item is factually false for all 861 artisans; second is e-commerce framing)
+
+   Replaces with: 💳 Paiement après intervention · 💬 Coordination Fixeo · ✔ Sans engagement
+   These are always true, and answer the user's real questions.
+*/
+.fxrva-trust-row.fixeo-res-trust-row .fixeo-res-trust-icon {
+  /* de-emphasize the icon slightly — content > decoration */
+  opacity: 0.75 !important;
+}
+
+/* ── V2A-RES-G: Success state — WhatsApp primary ──────────────── */
+/*
+   Replaces: ✅ icon (pink gradient) + "publiée" passive language
+             + secondary WA button + equal-weight "Publier autre" button
+
+   Replaces with: green checkmark icon + "prise en charge" active language
+                  + PRIMARY WA button (full-width, WA green)
+                  + text-only secondary button
+*/
+.fxrva-success {
+  /* inherits .request-success */
+}
+
+.fxrva-success-icon {
+  background: linear-gradient(135deg, rgba(52,211,153,0.18), rgba(16,185,129,0.14)) !important;
+  border-color: rgba(52,211,153,0.22) !important;
+  box-shadow: 0 12px 28px rgba(0,0,0,0.22), 0 0 24px rgba(52,211,153,0.12) !important;
+}
+
+.fxrva-success-title {
+  color: #fff !important;
+  font-size: 1.05rem !important;
+  font-weight: 800 !important;
+  margin: 10px 0 0 !important;
+  line-height: 1.35 !important;
+}
+
+.fxrva-success-sub {
+  font-size: 0.82rem !important;
+  color: rgba(255,255,255,0.62) !important;
+  line-height: 1.65 !important;
+  margin: 6px 0 14px !important;
+}
+
+/* WhatsApp PRIMARY button — full-width, WA green */
+.fxrva-wa-primary {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+  padding: 13px 20px !important;
+  border-radius: 14px !important;
+  background: rgba(37,211,102,0.12) !important;
+  border: 1.5px solid rgba(37,211,102,0.30) !important;
+  color: rgba(37,211,102,0.92) !important;
+  font-size: 0.90rem !important;
+  font-weight: 800 !important;
+  font-family: 'Cairo', 'Tajawal', sans-serif !important;
+  text-decoration: none !important;
+  cursor: pointer !important;
+  transition: background 0.18s ease, color 0.18s ease !important;
+  margin-bottom: 8px !important;
+}
+
+.fxrva-wa-primary:hover {
+  background: rgba(37,211,102,0.18) !important;
+  color: rgba(37,211,102,1) !important;
+  text-decoration: none !important;
+}
+
+.fxrva-wa-ico {
+  font-size: 1.1rem !important;
+  line-height: 1 !important;
+  flex-shrink: 0 !important;
+}
+
+/* Secondary — text link, de-emphasised */
+.fxrva-new-request {
+  background: transparent !important;
+  border: none !important;
+  color: rgba(255,255,255,0.38) !important;
+  font-size: 0.74rem !important;
+  font-weight: 600 !important;
+  font-family: 'Cairo', 'Tajawal', sans-serif !important;
+  cursor: pointer !important;
+  padding: 4px 0 !important;
+  text-decoration: underline !important;
+  text-underline-offset: 3px !important;
+  width: 100% !important;
+  text-align: center !important;
+}
+
+.fxrva-new-request:hover {
+  color: rgba(255,255,255,0.60) !important;
+  background: transparent !important;
+}
+
+/* ── V2A-RES-H: Mobile-first adjustments ─────────────────────── */
+@media (max-width: 767px) {
+  #fixeo-reservation-modal .fxrva-cat-badge {
+    width: 18px !important;
+    height: 18px !important;
+    font-size: 9px !important;
+    bottom: -2px !important;
+    right: -2px !important;
+  }
+  .fxrva-op-strip {
+    gap: 4px 10px !important;
+    font-size: 0.61rem !important;
+  }
+  .fxrva-wa-primary {
+    font-size: 0.86rem !important;
+    padding: 12px 16px !important;
+  }
+  .fxrva-success-title {
+    font-size: 1.0rem !important;
+  }
+  .fxrva-artisan-coord {
+    font-size: 0.61rem !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .fxrva-wa-primary {
+    font-size: 0.80rem !important;
+    gap: 6px !important;
+  }
+  .fxrva-success-title {
+    font-size: 0.94rem !important;
+  }
+  .fxrva-op-strip {
+    font-size: 0.58rem !important;
+  }
+}
+
+@media (max-width: 320px) {
+  .fxrva-wa-primary {
+    font-size: 0.75rem !important;
+    padding: 11px 12px !important;
+  }
+  .fxrva-new-request {
+    font-size: 0.68rem !important;
+  }
+}
+
+/* ── V2A-RES-I: Reduced-motion guard ─────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .fxrva-wa-primary {
+    transition: none !important;
+  }
+}

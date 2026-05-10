@@ -207,7 +207,7 @@
         })(),
         priceUnit: input.priceUnit || 'intervention',
         availability: input.availability || 'available',
-        badges: input.badges || ['verified'],
+        badges: input.badges || [],
         skills: input.skills || [],
         phone: input.phone || '',
         email: input.email || '',
@@ -376,7 +376,7 @@
 
           <!-- Artisan Card -->
           <div class="fixeo-res-artisan-card">
-            <div class="fixeo-res-artisan-avatar">${sanitize(a.initials || 'AR')}</div>
+            <div class="fixeo-res-artisan-avatar fxrva-avatar" data-category="${a.category || ''}"><span class="fxrva-silhouette" aria-hidden="true"></span><span class="fxrva-cat-badge" aria-hidden="true">${catIcon}</span></div>
             <div class="fixeo-res-artisan-info">
               <div class="fixeo-res-artisan-name">${sanitize(a.name)}</div>
               <div class="fixeo-res-artisan-meta">
@@ -395,7 +395,7 @@
               <div class="fixeo-res-price-unit" id="res-price-unit" style="${state.selectedService ? 'display:none' : ''}">${a.priceLabel || ('\u00c0 partir de ' + (a.priceFrom||150) + ' MAD')}</div>
             </div>
           </div>
-          <div style="font-size:.65rem;color:rgba(255,255,255,.5);margin:-6px 0 10px;padding-left:2px">\u2714 +23 r\u00e9servations aujourd\u2019hui dans votre zone</div>
+          <div class="fxrva-artisan-coord">\u2714 Coordonn\u00e9 par Fixeo &nbsp;\u00b7&nbsp; Paiement apr\u00e8s intervention</div>
 
           ${expressHeader}
 
@@ -507,20 +507,18 @@
             <button class="fixeo-res-btn-primary" id="res-step1-cta"
                     style="${state.isUrgent ? 'background:linear-gradient(135deg,#ff416c,#ff4b2b);box-shadow:0 6px 20px rgba(255,65,108,.35);font-size:1rem;font-weight:800;height:52px;border-radius:14px;letter-spacing:.02em' : ''}"
                     onclick="FixeoReservation._submitStep1()">
-              ${state.isUrgent ? '⚡ Trouver un artisan maintenant' : 'Voir le prix final en 1 clic \u2192'}
+              ${state.isUrgent ? '\u26a1 Trouver un artisan maintenant' : 'Confirmer les d\u00e9tails \u2192'}
             </button>
             ${state.isUrgent ? '' : '<div style="text-align:center;font-size:.65rem;color:rgba(255,255,255,.5);margin-top:6px">\u2714 Sans engagement \u2014 paiement apr\u00e8s intervention</div>'}
-            ${state.isUrgent ? '' : '<div style="text-align:center;font-size:.65rem;color:rgba(255,180,80,.7);margin-top:5px">\u26a1 Forte demande aujourd\u2019hui \u2014 disponibilit\u00e9 limit\u00e9e</div>'}
           </div>
         </div>
 
-        <!-- Footer -->
-        <div class="fixeo-res-footer">
-          <div class="fixeo-res-security">
-            <span>🔒 SSL 256-bit</span>
-            <span>🛡️ 3D Secure</span>
-            <span>✅ PCI-DSS</span>
-            <span>🔄 Remboursement 14j</span>
+        <!-- Footer — Step 1: operational reassurance only -->
+        <div class="fixeo-res-footer fxrva-footer-step1">
+          <div class="fxrva-op-strip">
+            <span>\u2714 Gratuit &amp; sans engagement</span>
+            <span>\ud83d\udcb3 Paiement apr\u00e8s intervention</span>
+            <span>\ud83d\udcac Coordination Fixeo</span>
           </div>
         </div>
       </div>
@@ -637,19 +635,19 @@
             </div>` : ''}
           </div>
 
-          <!-- Trust badges -->
-          <div class="fixeo-res-trust-row">
+          <!-- Trust signals — Step 2: honest, operational -->
+          <div class="fixeo-res-trust-row fxrva-trust-row">
             <div class="fixeo-res-trust-item">
-              <span class="fixeo-res-trust-icon">✅</span>
-              <span>Artisan v\u00e9rifi\u00e9</span>
+              <span class="fixeo-res-trust-icon">\ud83d\udcb3</span>
+              <span>Paiement apr\u00e8s intervention</span>
             </div>
             <div class="fixeo-res-trust-item">
-              <span class="fixeo-res-trust-icon">🛡️</span>
-              <span>Paiement s\u00e9curis\u00e9</span>
+              <span class="fixeo-res-trust-icon">\ud83d\udcac</span>
+              <span>Coordination Fixeo</span>
             </div>
             <div class="fixeo-res-trust-item">
-              <span class="fixeo-res-trust-icon">🔄</span>
-              <span>Support Fixeo disponible</span>
+              <span class="fixeo-res-trust-icon">\u2714</span>
+              <span>Sans engagement</span>
             </div>
           </div>
 
@@ -727,7 +725,7 @@
       const availClass = a.availability === 'available' ? 'available' : 'busy';
       return `
         <div class="fixeo-res-picker-card" onclick="FixeoReservation._selectArtisanFromPicker(${a.id})">
-          <div class="fixeo-res-picker-avatar">${sanitize(a.initials)}</div>
+          <div class="fixeo-res-picker-avatar fxrva-avatar fxrva-avatar--sm" data-category="${a.category || ''}"><span class="fxrva-silhouette" aria-hidden="true"></span></div>
           <div class="fixeo-res-picker-info">
             <div class="fixeo-res-picker-name">${sanitize(a.name)}</div>
             <div class="fixeo-res-picker-cat">${catIcon} ${CATEGORY_LABELS[a.category] || a.category}</div>
@@ -1012,12 +1010,12 @@
   function _urgentConfirm(btn, total) {
     if (!btn) { _proceedToPayment(total); return; }
     btn.disabled = true;
-    btn.textContent = '🔎 Recherche d\'un artisan disponible…';
+    btn.textContent = 'Fixeo pr\u00e9pare l\u2019intervention\u2026';
     btn.style.opacity = '0.85';
     btn.style.cursor = 'not-allowed';
     setTimeout(function() {
       if (btn) {
-        btn.textContent = '✅ Artisan en cours de confirmation…';
+        btn.textContent = '\u2714 Intervention enregistr\u00e9e\u2026';
         btn.style.background = 'linear-gradient(135deg,#20c997,#0d9e76)';
       }
       setTimeout(function() { _proceedToPayment(total); }, 900);
