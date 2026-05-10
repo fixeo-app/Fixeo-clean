@@ -466,15 +466,21 @@
                      autocomplete="street-address"/>
             </div>
 
-            ${(state.isExpress || state.isUrgent) ? `
+            ${/* V1-JB fix: phone field shown in ALL modes (was express/urgent only).
+               * Without it, _submitStep1 validation fires "numéro invalide"
+               * with no visible field to fill — a critical conversion blocker.
+               * Microcopy: operational coordination only, not marketing.
+               */ ''}
             <div class="fixeo-res-field">
               <label class="fixeo-res-label">📞 Votre téléphone *</label>
               <input type="tel" class="fixeo-res-input" id="res-phone"
-                     placeholder="+212 6XX XXX XXX"
+                     placeholder="06XXXXXXXX"
                      value="${sanitize(state.phone)}"
+                     inputmode="tel"
                      oninput="FixeoReservation._onPhoneChange(this.value)"
                      autocomplete="tel"/>
-            </div>` : ''}
+              <div style="margin-top:4px;font-size:.68rem;color:rgba(255,255,255,.32);padding-left:2px">Utilis\u00e9 uniquement pour la coordination avec l\u2019artisan.</div>
+            </div>
 
             ${state.isUrgent ? `
             <div class="fixeo-res-field">
@@ -626,7 +632,7 @@
               <span class="fixeo-res-total-amount">${total.toLocaleString('fr-FR')} MAD</span>
             </div>
             <div style="font-size:.72rem;color:rgba(255,255,255,.38);margin-top:8px;line-height:1.5;padding:0 2px;border-top:1px solid rgba(255,255,255,.06);padding-top:8px">
-              Un agent Fixeo vous contacte pour confirmer votre cr\u00e9neau.<br>Aucune surprise sur le prix.
+              L\u2019artisan peut vous contacter via WhatsApp pour confirmer l\u2019horaire.<br>Aucune surprise sur le prix.
             </div>
             ${state.isUrgent ? `<div style="font-size:.75rem;color:rgba(255,255,255,.45);margin-top:6px;line-height:1.4;padding:0 2px">
               • ${serviceTotal} MAD service estimé<br>

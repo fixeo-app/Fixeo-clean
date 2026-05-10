@@ -1,0 +1,239 @@
+/*
+ * fixeo-profile-v1jb.css — V1-JB Mobile Profile Conversion & Trust Polish
+ * Version: v1jb
+ * Append-only. No overrides of P1/P2/P3/V1-H/V1-J/V1-TC rules.
+ * Loaded on: artisan-profile.html only
+ *
+ * Contains:
+ *  1. Premium typographic avatar (initials, gradient, glassmorphism)
+ *  2. Sticky CTA hidden-until-scroll
+ *  3. "Indicateurs de confiance" threshold hide
+ *  4. Modal spacing + breathing room
+ *  5. Estimation block emphasis
+ *  6. Mobile guards 390/360/320px
+ */
+
+/* ════════════════════════════════════════════════════════════
+   1. PREMIUM TYPOGRAPHIC AVATAR
+   Replaces the generic user silhouette with initials avatar.
+   Applied via JS: .fpv1jb-initials-avatar class on .public-avatar-fallback
+   ════════════════════════════════════════════════════════════ */
+
+.fpv1jb-initials-avatar {
+  /* Reset V2C silhouette system (which sets font-size:0 to hide initials text) */
+  font-size: 1.75rem !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.03em;
+  color: rgba(255,255,255,0.92) !important;
+  border-radius: 50% !important;       /* circular, not square */
+  width: 104px;
+  height: 104px;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative;
+  overflow: hidden;
+  /* Soft glassmorphism border */
+  border: 1.5px solid rgba(255,255,255,0.12) !important;
+  box-shadow:
+    0 8px 24px rgba(0,0,0,0.30),
+    0 0 0 4px rgba(255,255,255,0.04),
+    inset 0 1px 0 rgba(255,255,255,0.10) !important;
+  /* gradient set via inline style by JS (per-artisan derived from name hash) */
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Remove pseudo-element silhouette for initials-avatar */
+.fpv1jb-initials-avatar::before,
+.fpv1jb-initials-avatar::after {
+  content: none !important;
+  display: none !important;
+}
+
+/* Subtle inner shine */
+.fpv1jb-initials-avatar::after {
+  content: '' !important;
+  display: block !important;
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(
+    160deg,
+    rgba(255,255,255,0.08) 0%,
+    transparent 60%
+  );
+  pointer-events: none;
+  border-radius: 50%;
+}
+
+/* ════════════════════════════════════════════════════════════
+   2. STICKY CTA — HIDDEN UNTIL HERO SCROLLS PAST VIEWPORT
+   .ppui-sticky-cta--v2a is initially hidden via JS transform/opacity.
+   This CSS provides the animation + initial state.
+   ════════════════════════════════════════════════════════════ */
+
+/* Initial hidden state — overrides the display:none from v2a.css */
+@media (max-width: 767px) {
+  .ppui-sticky-cta--v2a {
+    /* Transform approach: avoids layout shift (display:none → block causes reflow) */
+    transform: translateY(100%) !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transition:
+      transform 0.28s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+      opacity 0.22s ease !important;
+  }
+
+  .ppui-sticky-cta--v2a.fpv1jb-sticky-visible {
+    transform: translateY(0) !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════
+   3. TRUST INDICATORS — hide when profile is sparse
+   JS adds .fpv1jb-trust-hidden to .ppui-trust-grid--v2a
+   when missions < 3 AND confirmations < 2
+   ════════════════════════════════════════════════════════════ */
+
+.fpv1jb-trust-hidden {
+  display: none !important;
+}
+
+/* Hide the section title when section is hidden */
+.fpv1jb-trust-hidden ~ .ppui-section-label,
+.ppui-section-label:has(+ .fpv1jb-trust-hidden),
+.ppui-trust-section-title:has(+ .fpv1jb-trust-hidden) {
+  display: none !important;
+}
+
+/* ════════════════════════════════════════════════════════════
+   4. ESTIMATION FIXEO BLOCK — premium emphasis
+   The estimation block (#res-tarif-estime / .fixeo-res-price-info)
+   gets upgraded visual treatment:
+   - slightly more prominent card
+   - cleaner MAD amount rendering
+   - better spacing in normal (non-urgent) mode
+   ════════════════════════════════════════════════════════════ */
+
+.fixeo-res-price-info {
+  /* Upgrade from basic grey to a calmer card with softer glow */
+  background: rgba(32,201,151,0.06) !important;
+  border: 1px solid rgba(32,201,151,0.16) !important;
+  border-radius: 12px !important;
+  padding: 12px 14px !important;
+  margin: 10px 0 !important;
+  font-size: 0.83rem !important;
+  color: rgba(255,255,255,0.62) !important;
+  line-height: 1.55 !important;
+}
+.fixeo-res-price-info strong {
+  color: rgba(255,255,255,0.88) !important;
+  font-weight: 700 !important;
+  font-size: 0.95rem !important;
+}
+/* Subtle glow on the estimated price */
+.fixeo-res-price-info em {
+  font-style: normal !important;
+  color: rgba(255,255,255,0.72) !important;
+}
+
+/* ════════════════════════════════════════════════════════════
+   5. BOOKING MODAL POLISH — breathing room + form rhythm
+   ════════════════════════════════════════════════════════════ */
+
+/* More breathing room between fields */
+.fixeo-res-field {
+  margin-bottom: 14px !important;
+}
+.fixeo-res-field:last-of-type {
+  margin-bottom: 0 !important;
+}
+
+/* Input: consistent height, readable on 320px */
+.fixeo-res-input,
+.fixeo-res-textarea {
+  font-size: 0.92rem !important;
+  padding: 11px 14px !important;
+  border-radius: 11px !important;
+}
+
+/* Label: slightly more weight */
+.fixeo-res-label {
+  font-size: 0.78rem !important;
+  font-weight: 600 !important;
+  margin-bottom: 5px !important;
+  color: rgba(255,255,255,0.72) !important;
+}
+
+/* Primary CTA button: more prominent */
+.fixeo-res-btn-primary {
+  font-size: 0.96rem !important;
+  height: 50px !important;
+  border-radius: 14px !important;
+  letter-spacing: 0.01em !important;
+}
+
+/* ════════════════════════════════════════════════════════════
+   6. EMPTY REVIEW STATE — upgraded text
+   Applied via JS: .fpv1jb-review-empty-upgraded replaces
+   "Aucun avis pour le moment" with operational framing.
+   ════════════════════════════════════════════════════════════ */
+
+.fpv1jb-review-state-text {
+  font-style: italic;
+  color: rgba(255,255,255,0.40);
+  font-size: 0.80rem;
+  line-height: 1.55;
+}
+
+/* ════════════════════════════════════════════════════════════
+   7. MOBILE GUARDS — 390 / 360 / 320px
+   ════════════════════════════════════════════════════════════ */
+
+@media (max-width: 480px) {
+  .fpv1jb-initials-avatar {
+    width: 90px !important;
+    height: 90px !important;
+    font-size: 1.55rem !important;
+  }
+  .fixeo-res-field { margin-bottom: 12px !important; }
+  .fixeo-res-input { font-size: 0.88rem !important; padding: 10px 12px !important; }
+  .fixeo-res-btn-primary { font-size: 0.90rem !important; height: 48px !important; }
+  .fixeo-res-price-info { padding: 10px 12px !important; font-size: 0.80rem !important; }
+}
+
+@media (max-width: 360px) {
+  .fpv1jb-initials-avatar {
+    width: 82px !important;
+    height: 82px !important;
+    font-size: 1.4rem !important;
+  }
+  .fixeo-res-input { font-size: 0.85rem !important; padding: 9px 11px !important; }
+  .fixeo-res-btn-primary { font-size: 0.86rem !important; height: 46px !important; }
+  .ppui-sticky-cta--v2a .ppui-sticky-cta-btn { font-size: 0.82rem !important; }
+  .ppui-sticky-wa-btn { font-size: 0.68rem !important; padding: 10px 9px !important; }
+}
+
+@media (max-width: 320px) {
+  .fpv1jb-initials-avatar {
+    width: 74px !important;
+    height: 74px !important;
+    font-size: 1.25rem !important;
+  }
+  .fixeo-res-input { font-size: 0.82rem !important; }
+  .fixeo-res-btn-primary { font-size: 0.82rem !important; height: 44px !important; }
+  /* Prevent stacked compression in sticky */
+  .ppui-sticky-cta--v2a {
+    grid-template-columns: 1fr !important;
+  }
+  .ppui-sticky-wa-btn { display: none !important; } /* too narrow for two buttons */
+}
+
+/* prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .ppui-sticky-cta--v2a {
+    transition: none !important;
+  }
+}
