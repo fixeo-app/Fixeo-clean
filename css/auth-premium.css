@@ -1843,3 +1843,175 @@ html, body { height: 100%; }
   .ap-step-enter-left,
   .ap-step-enter-right { animation: none !important; }
 }
+
+/* ══════════════════════════════════════════════════════════════════════
+   AUTH-X — Intelligence & Typography Unification (ap13)
+   Append-only. Zero existing lines modified. Braces balanced.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── AX-1: Typography unification — match homepage ecosystem exactly ── */
+/* auth.html had no body font-family → system font fallback on first paint */
+html body {
+  font-family: 'Cairo', 'Tajawal', system-ui, sans-serif !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+  font-feature-settings: 'kern' 1, 'liga' 1 !important;
+  text-rendering: optimizeLegibility !important;
+}
+
+/* ── AX-2: Heading hierarchy — marketplace continuity ── */
+/* "Bon retour sur Fixeo" / "Rejoindre Fixeo" — needs more authority */
+.auth-heading {
+  font-size: 1.45rem !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.025em !important;
+  line-height: 1.15 !important;
+  color: #fff !important;
+  margin-bottom: 5px !important;
+}
+
+/* Subheading: slight bump in readability — was 0.80rem/0.35 opacity */
+.auth-subheading {
+  font-size: 0.82rem !important;
+  color: rgba(255,255,255,0.42) !important;
+  line-height: 1.5 !important;
+  margin-bottom: 20px !important;
+}
+
+/* ── AX-3: Input focus — deeper premium glow + border luminosity ── */
+/* Current: 3px rgba(225,48,108,0.09) glow. Upgrade: layered glow ring */
+.ap-input:focus {
+  border-color: rgba(225,48,108,0.55) !important;
+  background: rgba(255,255,255,0.075) !important;
+  box-shadow:
+    0 0 0 3px rgba(225,48,108,0.10),
+    0 0 0 1px rgba(225,48,108,0.30),
+    0 4px 16px rgba(225,48,108,0.07) !important;
+}
+
+/* Placeholder: slightly more visible — was 0.18, now 0.24 */
+.ap-input::placeholder {
+  color: rgba(255,255,255,0.24) !important;
+  font-weight: 400 !important;
+}
+
+/* ── AX-4: Input wrap — subtle border luminosity on hover ── */
+/* Adds life to the form between interactions */
+.ap-input-wrap:hover .ap-input:not(:focus) {
+  border-color: rgba(255,255,255,0.14) !important;
+  background: rgba(255,255,255,0.055) !important;
+}
+
+/* ── AX-5: Label micro-typography — tighter, more premium ── */
+/* Match homepage section-header label tracking */
+.ap-label {
+  font-size: 0.69rem !important;
+  letter-spacing: 0.075em !important;
+  font-weight: 700 !important;
+  color: rgba(255,255,255,0.38) !important;
+}
+.ap-group:focus-within .ap-label {
+  color: rgba(255,255,255,0.68) !important;
+}
+
+/* ── AX-6: Auth card — idle breathing border luminosity ── */
+/* Ultra-soft border modulation: card breathes while user reads */
+/* Only CSS — no JS; paused by :focus-within on the card */
+.auth-box {
+  animation: ax-card-breathe 6.5s cubic-bezier(0.45,0.05,0.55,0.95) infinite !important;
+  will-change: box-shadow !important;
+}
+.auth-box:focus-within {
+  animation: none !important; /* pauses when user engages */
+}
+@keyframes ax-card-breathe {
+  0%, 100% {
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,0.055),
+      inset 0 1px 0 rgba(255,255,255,0.07),
+      0 4px 6px rgba(0,0,0,0.12),
+      0 12px 32px rgba(0,0,0,0.22),
+      0 32px 64px rgba(0,0,0,0.18),
+      0 0 80px rgba(225,48,108,0.04);
+  }
+  50% {
+    box-shadow:
+      0 0 0 1px rgba(225,48,108,0.11),
+      inset 0 1px 0 rgba(255,255,255,0.09),
+      0 4px 6px rgba(0,0,0,0.12),
+      0 12px 32px rgba(0,0,0,0.24),
+      0 32px 64px rgba(0,0,0,0.20),
+      0 0 100px rgba(225,48,108,0.08);
+  }
+}
+
+/* ── AX-7: Trust line — operational copy ── */
+/* ap-trust text is hardcoded in HTML — CSS only upgrades visual */
+.ap-trust {
+  color: rgba(255,255,255,0.28) !important;
+  font-size: 0.68rem !important;
+  gap: 6px !important;
+  letter-spacing: 0.015em !important;
+}
+.ap-trust-icon {
+  opacity: 0.50 !important;
+}
+
+/* ── AX-8: Tab strip refinement ── */
+/* Slightly more opaque active tab = clearer which tab is live */
+.ap-tab.active {
+  background: rgba(255,255,255,0.10) !important;
+  color: rgba(255,255,255,0.95) !important;
+  font-weight: 700 !important;
+}
+
+/* ── AX-9: Micro trust strip below tabs ── */
+/* Inline platform signal — visible on both login/signup */
+/* Injected via CSS ::after on ap-tabs — no HTML change needed */
+/* SKIP: would require content: attr() trick — not safe cross-browser */
+/* Instead: enhance the ap-trust line visual contrast */
+.ap-trust {
+  background: rgba(255,255,255,0.018) !important;
+  border: 1px solid rgba(255,255,255,0.05) !important;
+  border-radius: 8px !important;
+  padding: 6px 12px !important;
+  margin-top: 12px !important;
+}
+
+/* ── AX-10: Mobile ≤ 390px refinements ── */
+@media (max-width: 390px) {
+  .auth-heading {
+    font-size: 1.30rem !important;
+  }
+  .auth-subheading {
+    font-size: 0.78rem !important;
+  }
+  .ap-input {
+    font-size: 0.88rem !important;
+  }
+  .ap-btn {
+    font-size: 0.91rem !important;
+  }
+  .ap-trust {
+    font-size: 0.64rem !important;
+    padding: 5px 10px !important;
+  }
+}
+
+/* ── AX-11: Very narrow ≤ 360px ── */
+@media (max-width: 360px) {
+  .auth-heading {
+    font-size: 1.22rem !important;
+  }
+  .auth-box {
+    padding: 22px 18px 20px !important;
+  }
+}
+
+/* ── AX-12: Reduced motion — kill card breathe ── */
+@media (prefers-reduced-motion: reduce) {
+  .auth-box {
+    animation: none !important;
+    will-change: auto !important;
+  }
+}

@@ -12,10 +12,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Fixeo &mdash; Connexion / Inscription</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'"><noscript><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet"></noscript>
   <link rel="stylesheet" href="css/variables.css">
   <link rel="stylesheet" href="css/auth-global.css"/>
-  <link rel="stylesheet" href="css/auth-premium.css?v=ap12">
+  <link rel="stylesheet" href="css/auth-premium.css?v=ap13">
 </head>
 <body data-theme="dark">
 
@@ -37,8 +38,8 @@
   <main class="auth-center" id="main-content">
     <div class="auth-box">
 
-      <h1 class="auth-heading" id="auth-heading">Bon retour &#128075;</h1>
-      <p class="auth-subheading" id="auth-sub">Connectez-vous &agrave; votre espace Fixeo.</p>
+      <h1 class="auth-heading" id="auth-heading">Bon retour sur Fixeo</h1>
+      <p class="auth-subheading" id="auth-sub">Votre r&eacute;seau d&rsquo;artisans vous attend.</p>
 
       <!--
         HERO EMOTIONAL ENTRY ZONE
@@ -598,11 +599,11 @@ function switchTab(tab) {
   document.getElementById('login-error').style.display  = 'none';
   document.getElementById('signup-error').style.display = 'none';
   document.getElementById('auth-heading').textContent = isLogin
-    ? 'Bon retour \uD83D\uDC4B'
-    : 'Cr\u00E9er un compte';
+    ? 'Bon retour sur Fixeo'
+    : 'Rejoindre Fixeo';
   document.getElementById('auth-sub').textContent = isLogin
-    ? 'Connectez-vous \u00E0 votre espace Fixeo.'
-    : 'Rejoignez la communaut\u00E9 Fixeo \u2014 c\u2019est gratuit.';
+    ? 'Votre r\u00e9seau d\u2019artisans vous attend.'
+    : 'Acc\u00e9dez \u00e0 861 artisans qualifi\u00e9s dans tout le Maroc.';
 }
 
 // ── Role card selection ─────────────────────────────────── */
