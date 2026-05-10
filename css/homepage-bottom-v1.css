@@ -275,3 +275,212 @@ a.chat-toggle-wa svg {
 @media (prefers-reduced-motion: reduce) {
   a.chat-toggle-wa { transition: none !important; }
 }
+
+/* ══════════════════════════════════════════════════════════════════════
+   F-1: Footer Premium Redesign — Airbnb/Uber-level
+   Append-only. Zero existing lines modified. Braces balanced.
+   Loaded via deferred media=print trick → wins all cascade ties.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── F1-A: Footer wrapper — deeper glass, sharper border ── */
+footer {
+  padding: 48px 0 0 !important;
+  background:
+    radial-gradient(ellipse 80% 40% at 20% -10%, rgba(131,58,180,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 110%, rgba(225,48,108,0.05) 0%, transparent 60%),
+    rgba(8,8,18,0.98) !important;
+  border-top: 1px solid rgba(255,255,255,0.09) !important;
+}
+
+/* ── F1-B: Trust badges — per-badge accent + L-2 consistency ── */
+/* Strip gets 5 badges (was 4). Aligned with L-2 trust pill language. */
+.v13-partners-row {
+  gap: 8px !important;
+  margin-bottom: 36px !important;
+  padding-bottom: 28px !important;
+}
+/* Base: reset to slightly more refined */
+.v13-partner-badge {
+  font-size: 0.78rem !important;
+  font-weight: 600 !important;
+  padding: 6px 14px !important;
+  color: rgba(255,255,255,0.62) !important;
+  background: rgba(255,255,255,0.04) !important;
+  border-color: rgba(255,255,255,0.09) !important;
+  letter-spacing: 0.01em !important;
+}
+/* Per-badge accent — matches L-2 fxf-pill color system */
+.v13-partner-badge.fpb-verified {
+  border-color: rgba(251,211,141,0.16) !important;
+}
+.v13-partner-badge.fpb-payment {
+  border-color: rgba(32,201,151,0.18) !important;
+  color: rgba(32,201,151,0.82) !important;
+}
+.v13-partner-badge.fpb-available {
+  border-color: rgba(32,201,151,0.20) !important;
+  color: rgba(32,201,151,0.76) !important;
+}
+.v13-partner-badge.fpb-coverage {
+  border-color: rgba(139,92,246,0.18) !important;
+  color: rgba(192,168,255,0.80) !important;
+}
+.v13-partner-badge.fpb-secure {
+  border-color: rgba(100,200,255,0.14) !important;
+  color: rgba(180,230,255,0.70) !important;
+}
+
+/* ── F1-C: Footer grid — more breathing room + brand refinement ── */
+.footer-grid {
+  gap: 48px 40px !important;
+  margin-bottom: 36px !important;
+  align-items: start !important;
+}
+
+/* Brand desc — slightly more visible */
+.footer-desc {
+  font-size: 0.84rem !important;
+  color: rgba(255,255,255,0.44) !important;
+  line-height: 1.70 !important;
+  max-width: 260px !important;
+  margin-bottom: 20px !important;
+}
+
+/* Brand CTA — new class replaces footer-artisan-link */
+/* Premium pill button — replaces the old plain link */
+.footer-artisan-cta {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 7px !important;
+  padding: 10px 16px !important;
+  border-radius: 12px !important;
+  background: rgba(225,48,108,0.09) !important;
+  border: 1px solid rgba(225,48,108,0.22) !important;
+  color: rgba(255,160,180,0.88) !important;
+  font-size: 0.80rem !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
+  transition: background 0.18s ease, border-color 0.18s ease !important;
+  white-space: nowrap !important;
+  letter-spacing: 0.01em !important;
+}
+.footer-artisan-cta:hover {
+  background: rgba(225,48,108,0.16) !important;
+  border-color: rgba(225,48,108,0.38) !important;
+  color: rgba(255,180,200,0.96) !important;
+}
+
+/* ── F1-D: Column headers — premium treatment ── */
+/* Reduce all-caps to track a bit; add accent underline */
+.footer-links h4 {
+  font-size: 0.76rem !important;
+  font-weight: 700 !important;
+  color: rgba(255,255,255,0.52) !important;
+  letter-spacing: 0.12em !important;
+  margin-bottom: 18px !important;
+  text-transform: uppercase !important;
+  padding-bottom: 10px !important;
+  border-bottom: 1px solid rgba(255,255,255,0.06) !important;
+}
+
+/* ── F1-E: Footer links — premium row style ── */
+/* Each link gets a micro-interaction: left border reveal on hover */
+.footer-links li {
+  margin-bottom: 0 !important;
+}
+.footer-links a {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  font-size: 0.84rem !important;
+  color: rgba(255,255,255,0.42) !important;
+  text-decoration: none !important;
+  padding: 7px 0 !important;
+  border-bottom: 1px solid rgba(255,255,255,0.035) !important;
+  transition: color 0.18s ease, padding-left 0.18s ease !important;
+  position: relative !important;
+}
+.footer-links li:last-child a {
+  border-bottom: none !important;
+}
+.footer-links a::before {
+  content: '›' !important;
+  font-size: 0.90rem !important;
+  color: rgba(255,255,255,0.20) !important;
+  transition: color 0.18s ease, transform 0.18s ease !important;
+  flex-shrink: 0 !important;
+  margin-right: 2px !important;
+}
+.footer-links a:hover {
+  color: rgba(255,255,255,0.82) !important;
+  padding-left: 4px !important;
+}
+.footer-links a:hover::before {
+  color: rgba(225,48,108,0.72) !important;
+  transform: translateX(2px) !important;
+}
+
+/* ── F1-F: Footer bottom — cleaner divider + copyright ── */
+.footer-bottom {
+  padding: 16px 0 20px !important;
+  border-top: 1px solid rgba(255,255,255,0.055) !important;
+  font-size: 0.78rem !important;
+  color: rgba(255,255,255,0.28) !important;
+  margin-top: 8px !important;
+}
+
+/* ── F1-G: Mobile ≤ 768px footer ── */
+@media (max-width: 768px) {
+  footer {
+    padding: 36px 0 0 !important;
+  }
+  .v13-partners-row {
+    justify-content: flex-start !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    padding-left: 4px !important;
+    padding-right: 4px !important;
+    mask-image: linear-gradient(to right, #000 80%, transparent 100%) !important;
+    -webkit-mask-image: linear-gradient(to right, #000 80%, transparent 100%) !important;
+    margin-bottom: 28px !important;
+    padding-bottom: 20px !important;
+  }
+  .v13-partners-row::-webkit-scrollbar { display: none !important; }
+  .v13-partner-badge {
+    flex-shrink: 0 !important;
+    font-size: 0.74rem !important;
+    padding: 5px 12px !important;
+  }
+  .footer-grid {
+    gap: 28px 24px !important;
+  }
+  .footer-desc {
+    max-width: none !important;
+    font-size: 0.82rem !important;
+  }
+  .footer-artisan-cta {
+    font-size: 0.78rem !important;
+    padding: 9px 14px !important;
+  }
+  .footer-links h4 {
+    font-size: 0.72rem !important;
+    margin-bottom: 12px !important;
+  }
+  .footer-links a {
+    font-size: 0.82rem !important;
+    padding: 6px 0 !important;
+  }
+}
+
+/* ── F1-H: Very narrow ≤ 380px ── */
+@media (max-width: 380px) {
+  .v13-partner-badge {
+    font-size: 0.70rem !important;
+    padding: 5px 10px !important;
+  }
+  .footer-links a {
+    font-size: 0.80rem !important;
+  }
+}
