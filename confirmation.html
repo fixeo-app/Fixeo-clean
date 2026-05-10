@@ -294,6 +294,55 @@
       100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
     }
 
+    /* ── Status active state (V2-B: "Coordination en cours") ── */
+    .conf-status-item.conf-status-done  { border-color: rgba(32,201,151,.22); background: rgba(32,201,151,.05); }
+    .conf-status-item.conf-status-done  .conf-status-text  { color: rgba(32,201,151,.8); }
+    .conf-status-item.conf-status-active { border-color: rgba(255,210,80,.25); background: rgba(255,210,80,.04); }
+    .conf-status-item.conf-status-active .conf-status-text { color: rgba(255,210,80,.9); }
+    .conf-status-item.conf-status-active .conf-status-icon { animation: confPulse 1.8s ease-in-out infinite; }
+    @keyframes confPulse {
+      0%, 100% { transform: scale(1);    opacity: 1; }
+      50%       { transform: scale(1.12); opacity: .8; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .conf-status-item.conf-status-active .conf-status-icon { animation: none !important; }
+    }
+
+    /* ── WhatsApp coordination CTA (V2-B) ─────────── */
+    .conf-btn-wa {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      padding: 14px 18px;
+      border-radius: 14px;
+      background: rgba(37,211,102,.1);
+      border: 1.5px solid rgba(37,211,102,.28);
+      color: rgba(37,211,102,.92);
+      font-family: var(--font);
+      font-size: .95rem;
+      font-weight: 800;
+      text-decoration: none;
+      transition: background .15s, color .15s;
+    }
+    .conf-btn-wa:hover {
+      background: rgba(37,211,102,.17);
+      color: #25d366;
+      text-decoration: none;
+    }
+    .conf-wa-main { flex: 1; text-align: center; }
+    .conf-wa-hint {
+      font-size: .72rem;
+      color: rgba(255,255,255,.38);
+      text-align: center;
+      margin: 6px 0 0;
+      line-height: 1.45;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .conf-btn-wa { transition: none !important; }
+    }
+
     /* ── Responsive ──────────────────────────────── */
     @media (max-width: 520px) {
       .conf-card         { padding: 28px 18px 24px; }
@@ -303,6 +352,7 @@
       .conf-title        { font-size: 1.3rem; }
       .conf-actions      { flex-direction: column; }
       .conf-btn-secondary{ text-align: center; }
+      .conf-btn-wa       { font-size: .88rem; padding: 13px 14px; }
     }
   </style>
   <link rel="stylesheet" href="css/header-logo-premium.css?v=hlp5">
@@ -359,11 +409,11 @@
     <!-- Icône -->
     <div class="conf-icon-wrap" aria-hidden="true">✅</div>
 
-    <!-- Titre -->
-    <h1 class="conf-title">Commande Confirmée !</h1>
+    <!-- Titre — V2-B: operational coordination framing -->
+    <h1 class="conf-title">Intervention coordonnée</h1>
     <p class="conf-subtitle">
-      Merci pour votre réservation.<br/>
-      Un agent vous contactera sous peu pour confirmer.
+      Votre intervention est enregistrée et la coordination a commencé.<br/>
+      Restez joignable — un agent Fixeo vous contacte pour confirmer le créneau.
     </p>
 
     <!-- Méthode de paiement -->
@@ -372,23 +422,23 @@
       <span>Paiement à la livraison (Cash on Delivery)</span>
     </div>
 
-    <!-- Statut steps -->
+    <!-- Statut steps — V2-B: honest operational flow -->
     <div class="conf-status-row">
-      <div class="conf-status-item">
+      <div class="conf-status-item conf-status-done">
         <span class="conf-status-icon">✅</span>
-        <div class="conf-status-text">Réservation<br/>enregistrée</div>
+        <div class="conf-status-text">Intervention<br/>enregistrée</div>
       </div>
-      <div class="conf-status-item">
+      <div class="conf-status-item conf-status-active">
         <span class="conf-status-icon">📞</span>
-        <div class="conf-status-text">Appel de<br/>confirmation</div>
+        <div class="conf-status-text">Coordination<br/>en cours</div>
       </div>
       <div class="conf-status-item">
         <span class="conf-status-icon">🔧</span>
-        <div class="conf-status-text">Intervention<br/>planifiée</div>
+        <div class="conf-status-text">Artisan<br/>confirmé</div>
       </div>
       <div class="conf-status-item">
         <span class="conf-status-icon">💵</span>
-        <div class="conf-status-text">Paiement à<br/>la livraison</div>
+        <div class="conf-status-text">Paiement après<br/>intervention</div>
       </div>
     </div>
 
@@ -396,14 +446,23 @@
     <div id="conf-details-grid" class="conf-info-grid" style="display:none;"></div>
     <div id="conf-total-row"    class="conf-total-row"  style="display:none;"></div>
 
-    <!-- Notice -->
+    <!-- Notice — V2-B: coordination clarity -->
     <div class="conf-notice">
-      <span class="conf-notice-icon">ℹ️</span>
+      <span class="conf-notice-icon">📋</span>
       <div class="conf-notice-text">
-        📞 <strong>Un agent Fixeo va vous contacter</strong> pour confirmer votre créneau.<br/>
-        Préparez le <strong>montant en espèces</strong> le jour de l'intervention.<br/>
-        Votre créneau est <strong>verrouillé</strong> dès maintenant.
+        <strong>Votre créneau est verrouillé.</strong> Un agent Fixeo vous contacte
+        pour confirmer l'heure exacte et préparer la coordination.<br/>
+        Préparez le <strong>montant en espèces</strong> — vous ne payez qu'après l'intervention.
       </div>
+    </div>
+
+    <!-- WhatsApp coordination CTA — V2-B -->
+    <div id="conf-wa-cta" class="conf-wa-section" style="margin-bottom:16px;display:none">
+      <a id="conf-wa-link" class="conf-btn-wa" href="#" target="_blank" rel="noopener noreferrer">
+        <span aria-hidden="true">💬</span>
+        <span class="conf-wa-main">Coordonner via WhatsApp</span>
+      </a>
+      <p class="conf-wa-hint">Partager une photo, votre localisation ou préciser l'intervention</p>
     </div>
 
     <!-- Actions -->
@@ -516,6 +575,28 @@
         if (order.orderID)   parts.push('Réf : ' + esc(order.orderID));
         if (order.bookingRef) parts.push(esc(order.bookingRef));
         if (parts.length) refEl.textContent = parts.join(' · ');
+      }
+
+      /* ── WhatsApp coordination CTA — V2-B ──
+         Build a contextual WA message from the order data and
+         reveal the coordination CTA. Never shown if no order data.
+         Message uses the same operational framing as request-form.js.
+      */
+      var waSection = document.getElementById('conf-wa-cta');
+      var waLink    = document.getElementById('conf-wa-link');
+      if (waSection && waLink && order.artisan) {
+        var waLines = ['Bonjour, je viens de confirmer une intervention Fixeo :'];
+        if (order.artisan)   waLines.push('Artisan : ' + order.artisan);
+        if (order.service)   waLines.push('Service : ' + order.service);
+        if (order.date)      waLines.push('Date : ' + order.date);
+        if (order.timeSlot)  waLines.push('Créneau : ' + order.timeSlot);
+        if (order.address)   waLines.push('Adresse : ' + order.address);
+        if (order.orderID)   waLines.push('Référence : ' + order.orderID);
+        waLines.push('');
+        waLines.push('Pouvez-vous me confirmer le créneau exact ?');
+        var waMsg = encodeURIComponent(waLines.join('\n'));
+        waLink.href = 'https://wa.me/212660484415?text=' + waMsg;
+        waSection.style.display = 'block';
       }
 
       /* ── Nettoyer le localStorage (one-shot) ── */

@@ -38,7 +38,7 @@
 <link rel="stylesheet" href="css/payment.css?v=50a38b9" media="print" onload="this.media='all'"/><noscript><link rel="stylesheet" href="css/payment.css?v=50a38b9"/></noscript>
 <link rel="stylesheet" href="css/reservation.css?v=50a38b9" media="print" onload="this.media='all'"/><noscript><link rel="stylesheet" href="css/reservation.css?v=50a38b9"/></noscript>
 <link rel="stylesheet" href="css/reservation-v2.css?v=3" />
-<link rel="stylesheet" href="css/reservation-v2a.css" />
+<link rel="stylesheet" href="css/reservation-v2a.css?v=v2b" />
 <link rel="stylesheet" href="css/smart-search.css?v=50a38b9"/>
 <link rel="stylesheet" href="css/smart-search-map.css?v=50a38b9"/>
 <link rel="stylesheet" href="css/artisan_cards_v8.css?v=50a38b9"/>
@@ -3088,14 +3088,53 @@ section#home.hero.hero-section {
       </div>
     </form>
 
+    <!-- V2-B: Upgraded success state — operational coordination framing -->
     <div id="request-success" class="request-success fxrva-success" hidden>
-      <div class="request-success-icon fxrva-success-icon">&#x2714;&#xFE0F;</div>
-      <h4 class="fxrva-success-title">Votre demande est prise en charge</h4>
-      <p class="fxrva-success-sub">Un artisan Fixeo vous contacte sous 30&#160;min. Vous pouvez suivre et coordonner via WhatsApp.</p>
-      <a class="btn fxrva-wa-primary" id="request-whatsapp-link" href="#" target="_blank" rel="noopener noreferrer">
-        <span class="fxrva-wa-ico">&#x1F4AC;</span> Rester en contact via WhatsApp
+
+      <!-- Status icon -->
+      <div class="request-success-icon fxrva-success-icon" aria-hidden="true">&#x2714;&#xFE0F;</div>
+
+      <!-- Title + sub — populated by showSuccess() from REQUEST_COPY -->
+      <h4 class="fxrva-success-title">Fixeo coordonne votre intervention</h4>
+      <p class="fxrva-success-sub">Votre demande est enregistr&#233;e. Un artisan disponible dans votre zone sera s&#233;lectionn&#233; et vous contactera pour confirmer.</p>
+
+      <!-- Coordination steps — visual process clarity -->
+      <div class="fxrva-coord-steps" aria-label="&#201;tapes de coordination">
+        <div class="fxrva-coord-step">
+          <span class="fxrva-coord-icon" aria-hidden="true">&#x2705;</span>
+          <span class="fxrva-coord-label">Demand&#x65; enregistr&#233;e</span>
+        </div>
+        <div class="fxrva-coord-sep" aria-hidden="true">&#x2192;</div>
+        <div class="fxrva-coord-step">
+          <span class="fxrva-coord-icon" aria-hidden="true">&#x1F50D;</span>
+          <span class="fxrva-coord-label">Artisan s&#233;lectionn&#233;</span>
+        </div>
+        <div class="fxrva-coord-sep" aria-hidden="true">&#x2192;</div>
+        <div class="fxrva-coord-step">
+          <span class="fxrva-coord-icon" aria-hidden="true">&#x1F4AC;</span>
+          <span class="fxrva-coord-label">Confirmation WhatsApp</span>
+        </div>
+      </div>
+
+      <!-- Notice — coordination guidance — populated by showSuccess() -->
+      <p class="fxrva-success-notice" hidden>
+        Restez joignable sur WhatsApp &#8212; c&#x2019;est l&#xE0; que se fait la coordination.
+      </p>
+
+      <!-- WhatsApp primary CTA -->
+      <a class="btn fxrva-wa-primary" id="request-whatsapp-link"
+         href="#" target="_blank" rel="noopener noreferrer"
+         aria-label="Rester joignable via WhatsApp">
+        <span class="fxrva-wa-ico" aria-hidden="true">&#x1F4AC;</span>
+        <span class="fxrva-wa-main-label">Rester joignable via WhatsApp</span>
       </a>
+
+      <!-- Contextual sub-label — what to do on WA — populated by showSuccess() -->
+      <p class="fxrva-wa-sub-label" hidden>Partager une photo ou pr&#233;ciser l&#x2019;intervention</p>
+
+      <!-- Secondary action -->
       <button class="btn fxrva-new-request" type="button" id="request-new-one">Publier une autre demande</button>
+
     </div>
   </div>
 </div>
@@ -3538,7 +3577,7 @@ function openContentModal(type) {
 
 <script src="js/marketplace-premium-patch.js?v=50a38b9"></script>
 <script src="js/fixeo-client-requests-store.js?v=50a38b9"></script>
-<script src="js/request-form.js?v=50a38b9"></script>
+<script src="js/request-form.js?v=v2b"></script>
 <script defer src="js/homepage-conversion-optimizer.js?v=hco3"></script>
 <script src="js/hero-ux-fixes.js?v=50a38b9"></script>
 <script src="js/how-it-works-premium.js?v=50a38b9"></script>

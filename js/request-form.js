@@ -15,8 +15,12 @@
         'Gratuit \u00b7 Sans engagement',
         'Paiement apr\u00e8s intervention'
       ],
-      successTitle: 'Votre demande est prise en charge',
-      successText: 'Un artisan Fixeo vous contacte sous 30\u00a0min. Vous pouvez suivre et coordonner via WhatsApp.'
+      /* V2-B success state — operational coordination framing */
+      successTitle: 'Fixeo coordonne votre intervention',
+      successText: 'Votre demande est enregistr\u00e9e. Un artisan disponible dans votre zone sera s\u00e9lectionn\u00e9 et vous contactera pour confirmer.',
+      successNotice: 'Restez joignable sur WhatsApp\u00a0\u2014 c\u2019est l\u00e0 que se fait la coordination.',
+      successWaLabel: 'Rester joignable via WhatsApp',
+      successWaSubLabel: 'Partager une photo ou pr\u00e9ciser l\u2019intervention'
     },
     marketplace: {
       title: 'D\u00e9crivez votre besoin',
@@ -26,8 +30,11 @@
         'Gratuit \u00b7 Sans engagement',
         'Paiement apr\u00e8s intervention'
       ],
-      successTitle: 'Votre demande est prise en charge',
-      successText: 'Un artisan Fixeo vous contacte sous 30\u00a0min. Vous pouvez suivre et coordonner via WhatsApp.'
+      successTitle: 'Fixeo coordonne votre intervention',
+      successText: 'Votre demande est publi\u00e9e. Les artisans disponibles dans votre secteur peuvent la consulter imm\u00e9diatement.',
+      successNotice: 'Restez joignable\u00a0\u2014 vous pouvez aussi partager une photo ou votre localisation via WhatsApp pour acc\u00e9l\u00e9rer la coordination.',
+      successWaLabel: 'Rester joignable via WhatsApp',
+      successWaSubLabel: 'Partager une photo ou pr\u00e9ciser l\u2019intervention'
     },
     express: {
       title: 'Intervention urgente \u26a1',
@@ -37,8 +44,11 @@
         'R\u00e9ponse rapide \u00b7 Artisan disponible',
         'Gratuit \u00b7 Sans engagement'
       ],
-      successTitle: 'Votre demande urgente est prise en charge',
-      successText: 'Fixeo recherche un artisan disponible maintenant. Restez joignable pour la coordination via WhatsApp.'
+      successTitle: 'Fixeo mobilise un artisan',
+      successText: 'Votre urgence est en cours de traitement. Fixeo recherche l\u2019artisan le plus proche disponible maintenant.',
+      successNotice: '\u26a1 Restez sur WhatsApp\u00a0\u2014 la coordination se fait en temps r\u00e9el. Partagez votre localisation si possible.',
+      successWaLabel: 'Coordination urgente via WhatsApp',
+      successWaSubLabel: 'Envoyer ma localisation'
     }
   };
   let redirectTimer = null;
@@ -370,26 +380,66 @@
   }
 
   function showSuccess(whatsappLink, mode) {
+    /*
+       V2-B: Upgraded success state.
+       Populates the richer #request-success HTML structure:
+         - .fxrva-success-title     ← copy.successTitle
+         - .fxrva-success-sub       ← copy.successText
+         - .fxrva-success-notice    ← copy.successNotice (new — honest notice block)
+         - #request-whatsapp-link   ← WA primary CTA (main label)
+         - .fxrva-wa-sub-label      ← contextual secondary label (photo/location hint)
+       Falls back cleanly if new elements are absent (backward compat with
+       dashboard-client.html which has a simpler success block).
+    */
     const form = $('#request-form');
     const success = $('#request-success');
-    const successTitle = $('#request-success h4');
-    const successText = $('#request-success p');
-    const whatsappBtn = $('#request-whatsapp-link');
     const copy = getModalCopy(mode);
     if (!form || !success) return;
 
     form.hidden = true;
     success.hidden = false;
 
+    /* ── Title ── */
+    const successTitle = success.querySelector('.fxrva-success-title') ||
+                         success.querySelector('h4');
     if (successTitle) successTitle.textContent = copy.successTitle;
+
+    /* ── Sub-text ── */
+    const successText = success.querySelector('.fxrva-success-sub') ||
+                        success.querySelector('p');
     if (successText) successText.textContent = copy.successText;
+
+    /* ── Notice block — coordination guidance ── */
+    const noticeEl = success.querySelector('.fxrva-success-notice');
+    if (noticeEl && copy.successNotice) {
+      noticeEl.textContent = copy.successNotice;
+      noticeEl.hidden = false;
+    }
+
+    /* ── WA primary button ── */
+    const whatsappBtn = document.getElementById('request-whatsapp-link');
     if (whatsappBtn) {
       whatsappBtn.href = whatsappLink;
-      whatsappBtn.setAttribute('aria-label', mode === 'express' ? 'Partager aussi sur WhatsApp prioritaire' : 'Partager aussi sur WhatsApp');
-      whatsappBtn.textContent = mode === 'express' ? 'Partager aussi sur WhatsApp prioritaire' : 'Partager aussi sur WhatsApp';
-      whatsappBtn.setAttribute('target', '_self');
-      whatsappBtn.setAttribute('rel', 'noopener');
-      whatsappBtn.dataset.optionalShare = 'true';
+      whatsappBtn.setAttribute('target', '_blank');
+      whatsappBtn.setAttribute('rel', 'noopener noreferrer');
+      whatsappBtn.setAttribute('aria-label', copy.successWaLabel || 'Coordination via WhatsApp');
+      /* Label: icon + main text */
+      const waIco = whatsappBtn.querySelector('.fxrva-wa-ico');
+      const waMainLabel = whatsappBtn.querySelector('.fxrva-wa-main-label');
+      if (waMainLabel) {
+        waMainLabel.textContent = copy.successWaLabel || 'Rester joignable via WhatsApp';
+      } else if (!waIco) {
+        /* Older structure (dashboard) — plain text */
+        whatsappBtn.textContent = copy.successWaLabel || 'Rester joignable via WhatsApp';
+      }
+      delete whatsappBtn.dataset.optionalShare;
+    }
+
+    /* ── WA sub-label (contextual action hint) ── */
+    const waSubLabel = success.querySelector('.fxrva-wa-sub-label');
+    if (waSubLabel && copy.successWaSubLabel) {
+      waSubLabel.textContent = copy.successWaSubLabel;
+      waSubLabel.hidden = false;
     }
   }
 

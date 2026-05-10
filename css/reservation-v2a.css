@@ -371,3 +371,134 @@
     transition: none !important;
   }
 }
+
+/* ================================================================
+   V2-B SUCCESS STATE — Operational Coordination UX
+   Appended 2026-05-10 (resv2b-success)
+
+   New elements: .fxrva-coord-steps, .fxrva-success-notice,
+                 .fxrva-wa-main-label, .fxrva-wa-sub-label
+   Scope: #request-success.fxrva-success
+   ================================================================ */
+
+/* ── Coordination steps row ─────────────────────────────────── */
+/*
+   Three-step visual: Demande enregistrée → Artisan sélectionné → WhatsApp
+   Answers "what happens now?" immediately, before the user reads anything.
+   Horizontal on desktop/tablet; wraps gracefully on 320px.
+*/
+.fxrva-coord-steps {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 12px 0 14px;
+  flex-wrap: wrap;
+}
+.fxrva-coord-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-align: center;
+}
+.fxrva-coord-icon {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+.fxrva-coord-label {
+  font-size: .68rem;
+  font-weight: 700;
+  color: rgba(255,255,255,.52);
+  letter-spacing: .02em;
+  white-space: nowrap;
+}
+.fxrva-coord-sep {
+  font-size: .75rem;
+  color: rgba(255,255,255,.22);
+  margin: 0 2px;
+  margin-bottom: 14px; /* align with icon row visually */
+  align-self: flex-start;
+  padding-top: 6px;
+}
+
+/* ── Success notice — honest coordination guidance ─────────── */
+/*
+   Shows the WhatsApp coordination instruction.
+   Populated and un-hidden by showSuccess() from REQUEST_COPY.successNotice.
+   Positioned between steps and CTA — in the user's natural reading path.
+*/
+.fxrva-success-notice {
+  font-size: .78rem;
+  color: rgba(255,255,255,.52);
+  line-height: 1.6;
+  margin: 0 0 12px;
+  padding: 8px 12px;
+  background: rgba(37,211,102,.05);
+  border: 1px solid rgba(37,211,102,.14);
+  border-radius: 10px;
+  text-align: center;
+}
+
+/* ── WA button inner label ──────────────────────────────────── */
+/*
+   .fxrva-wa-main-label: the visible text inside the WA primary button.
+   Populated by showSuccess() from REQUEST_COPY.successWaLabel.
+   Allows mode-specific labeling (urgent vs default vs marketplace)
+   without changing the button element's identity or event bindings.
+*/
+.fxrva-wa-main-label {
+  flex: 1 1 auto;
+  text-align: center;
+}
+
+/* ── WA sub-label — contextual action hint ──────────────────── */
+/*
+   Appears below the primary WA button.
+   "Partager une photo ou préciser l'intervention" (default/marketplace)
+   "Envoyer ma localisation" (express/urgent)
+   Low-emphasis: dims to not compete with primary button.
+   Hidden by default — showSuccess() reveals + populates it.
+*/
+.fxrva-wa-sub-label {
+  font-size: .72rem;
+  color: rgba(37,211,102,.55);
+  text-align: center;
+  margin: -4px 0 8px;
+  line-height: 1.4;
+}
+
+/* ── Mobile adjustments ─────────────────────────────────────── */
+@media (max-width: 360px) {
+  .fxrva-coord-label {
+    font-size: .62rem;
+    white-space: normal;
+    max-width: 52px;
+  }
+  .fxrva-coord-sep {
+    display: none; /* simplify on very narrow screens */
+  }
+  .fxrva-success-notice {
+    font-size: .72rem;
+    padding: 7px 10px;
+  }
+  .fxrva-wa-sub-label {
+    font-size: .68rem;
+  }
+}
+@media (max-width: 320px) {
+  .fxrva-coord-steps {
+    gap: 4px;
+  }
+  .fxrva-coord-icon {
+    font-size: .95rem;
+  }
+}
+
+/* ── Reduced-motion guard ────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .fxrva-success-notice,
+  .fxrva-wa-sub-label {
+    transition: none !important;
+  }
+}
