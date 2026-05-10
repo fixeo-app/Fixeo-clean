@@ -1551,6 +1551,33 @@
        */
       window._fixeoCurrentArtisan = artisan;
 
+      /* V2-A2: Pre-seed localStorage with validated Supabase missions for this artisan.
+       * This runs BEFORE waitForHero/rAF so that when the synchronous V1-H/J functions
+       * (injectOperationalMemory, _v1jGetValidated) read localStorage they find
+       * server-restored data — even on a new device where localStorage is empty.
+       *
+       * SEQUENCE:
+       *   1. Supabase artisan fetch resolves (above)
+       *   2. [NOW] FixeoMissionRehydration.getValidatedForArtisan() checks LS
+       *      → if sparse: fetches missions from Supabase, merges into LS
+       *      → if rich:   returns immediately (cache hit)
+       *   3. waitForHero fires → rAF fires → V1-H/J functions run
+       *      They read LS and find the pre-seeded data naturally.
+       *
+       * Failure model: if rehydration throws or times out, the try/catch
+       * ensures we fall through to waitForHero normally. V1-H/J render
+       * with whatever is in LS (graceful degradation, no blank states).
+       */
+      try {
+        if (window.FixeoMissionRehydration &&
+            typeof window.FixeoMissionRehydration.getValidatedForArtisan === 'function') {
+          await window.FixeoMissionRehydration.getValidatedForArtisan(artisan.id || artisanId);
+        }
+      } catch (_v2a2Err) {
+        /* Non-critical: log and continue. V1-H/J gracefully render with LS-only data. */
+        console.warn('[v2a2] rehydration pre-seed failed:', _v2a2Err && _v2a2Err.message);
+      }
+
     } catch (err) {
       /* Network / SDK error — graceful noop */
       return;
