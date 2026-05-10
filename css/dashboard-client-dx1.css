@@ -224,3 +224,337 @@
   opacity: 1 !important;
   filter: none !important;
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   FIXEO — Dashboard Client DX-2
+   Living Dashboard / Context-Aware Experience
+   Appended to dashboard-client-dx1.css — never modifies existing lines
+   Version: v2 (2026-05-10)
+
+   Sections:
+   DX2-A  Hero breathing ambient system
+   DX2-B  Hero headline fade transition
+   DX2-C  Active request status banner
+   DX2-D  Stats grid hide-when-zero
+   DX2-E  Marketplace continuity strip
+   DX2-F  Mobile first-screen improvements
+   DX2-G  Reduced-motion guard
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── DX2-A: Hero card breathing ──────────────────────────────── */
+/*
+   Dashboard breathing philosophy:
+   Homepage hero: 5.5s — discovery, kinetic energy
+   Auth card:     6.5s — secure entry, calm deliberate
+   Dashboard:     8.0s — operational background, quiet persistence
+
+   The dashboard is "already open" — it breathes like a resting system,
+   not a discovery moment. Ultra-subtle border luminosity only.
+   No scale transform (don't shift content). Pure glow modulation.
+*/
+section.client-dashboard-hero .client-dashboard-top {
+  animation: fxd2-hero-breathe 8s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+  will-change: box-shadow;
+}
+/* Pause when user interacts with anything inside the hero */
+section.client-dashboard-hero .client-dashboard-top:focus-within {
+  animation: none;
+}
+
+@keyframes fxd2-hero-breathe {
+  0%, 100% {
+    box-shadow:
+      0 20px 60px rgba(0, 0, 0, 0.22),
+      0 0 0 1px rgba(255, 255, 255, 0.04),
+      0 0 40px rgba(225, 48, 108, 0.00);
+  }
+  50% {
+    box-shadow:
+      0 20px 60px rgba(0, 0, 0, 0.26),
+      0 0 0 1px rgba(225, 48, 108, 0.10),
+      0 0 60px rgba(225, 48, 108, 0.06);
+  }
+}
+
+/* ── DX2-B: Hero headline context fade ───────────────────────── */
+/* Soft opacity fade when DX-2 swaps headline text */
+.fxd2-hero-fade {
+  opacity: 0;
+  transition: opacity 0.18s ease;
+}
+
+/* ── DX2-C: Active request status banner ─────────────────────── */
+#fxd2-status-banner {
+  margin-bottom: 20px;
+  animation: fxd2-banner-in 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes fxd2-banner-in {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+.fxd2-banner-inner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  flex-wrap: wrap;
+}
+
+.fxd2-banner-icon {
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+
+.fxd2-banner-copy {
+  flex: 1;
+  min-width: 160px;
+}
+
+.fxd2-banner-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.01em;
+  margin-bottom: 3px;
+}
+
+.fxd2-banner-sub {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.62);
+  line-height: 1.5;
+}
+
+.fxd2-banner-cta {
+  flex-shrink: 0;
+  padding: 9px 18px;
+  border-radius: 10px;
+  border: none;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+  font-family: inherit;
+}
+
+.fxd2-banner-cta:hover {
+  transform: translateY(-1px);
+  opacity: 0.92;
+}
+
+.fxd2-banner-cta:active {
+  transform: scale(0.97);
+}
+
+/* Accent variants */
+.fxd2-banner--active {
+  background:
+    radial-gradient(circle at 0% 50%, rgba(225, 48, 108, 0.14) 0%, transparent 60%),
+    rgba(255, 255, 255, 0.03);
+  border-color: rgba(225, 48, 108, 0.28);
+  box-shadow: 0 0 0 1px rgba(225, 48, 108, 0.08) inset;
+}
+.fxd2-banner--active .fxd2-banner-cta {
+  background: linear-gradient(135deg, #E1306C, #833AB4);
+  color: #fff;
+}
+
+.fxd2-banner--assigned {
+  background:
+    radial-gradient(circle at 0% 50%, rgba(59, 130, 246, 0.12) 0%, transparent 60%),
+    rgba(255, 255, 255, 0.03);
+  border-color: rgba(59, 130, 246, 0.25);
+}
+.fxd2-banner--assigned .fxd2-banner-title {
+  color: rgba(147, 197, 253, 1);
+}
+.fxd2-banner--assigned .fxd2-banner-cta {
+  background: rgba(59, 130, 246, 0.18);
+  color: rgba(147, 197, 253, 1);
+  border: 1px solid rgba(59, 130, 246, 0.35);
+}
+
+.fxd2-banner--waiting {
+  background:
+    radial-gradient(circle at 0% 50%, rgba(251, 191, 36, 0.10) 0%, transparent 60%),
+    rgba(255, 255, 255, 0.03);
+  border-color: rgba(251, 191, 36, 0.22);
+}
+.fxd2-banner--waiting .fxd2-banner-cta {
+  background: rgba(251, 191, 36, 0.15);
+  color: rgba(253, 224, 71, 1);
+  border: 1px solid rgba(251, 191, 36, 0.30);
+}
+
+/* ── DX2-D: Stats grid — full hide when all-zero ─────────────── */
+/*
+   DX-1 de-emphasised zero stats with opacity/grayscale.
+   DX-2 hides the grid entirely via JS-added class.
+   CSS provides the hide; JS (dx2.js) adds/removes the class.
+*/
+#client-stats-grid.fxd2-stats-hidden {
+  display: none !important;
+}
+
+/* Smooth reveal when stats appear with data */
+#client-stats-grid:not(.fxd2-stats-hidden) {
+  animation: fxd2-stats-reveal 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes fxd2-stats-reveal {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0);   }
+}
+
+/* ── DX2-E: Marketplace continuity strip ─────────────────────── */
+#fxd2-continuity-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  margin-bottom: 20px;
+  animation: fxd2-strip-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both;
+}
+
+@keyframes fxd2-strip-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.fxd2-cs-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.58);
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+/* ── DX2-F: Mobile first-screen improvements ─────────────────── */
+/*
+   On mobile (<768px): the first screen should show:
+   1. Status banner (if active) — full width, prominent
+   2. Hero (contextual greeting + CTAs) — compact
+   3. Continuity strip (if new user) — 2-per-row max
+   Nothing else above the fold.
+*/
+@media (max-width: 768px) {
+  /* Hero: compact padding on mobile */
+  section.client-dashboard-hero .client-dashboard-top {
+    padding: 22px 20px !important;
+    border-radius: 18px !important;
+    gap: 18px;
+  }
+
+  /* Hero: stack vertically, copy first then CTAs */
+  .fxd-hero-v2 {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  /* CTAs: full-width stack on mobile */
+  .fxd-hero-actions-v2 {
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+
+  .fxd-hero-actions-v2 .btn {
+    width: 100% !important;
+    text-align: center;
+    justify-content: center;
+  }
+
+  /* Hero headline: slightly smaller on mobile */
+  .fxd-hero-headline {
+    font-size: clamp(1.1rem, 5vw, 1.4rem) !important;
+  }
+
+  /* Trust pills: wrap into 2 columns max */
+  .fxd-trust-v2 {
+    gap: 5px 10px !important;
+    font-size: 0.75rem !important;
+  }
+
+  /* Status banner: full-width, no horizontal shrink */
+  #fxd2-status-banner {
+    margin-bottom: 16px;
+  }
+
+  .fxd2-banner-inner {
+    padding: 14px 16px !important;
+    gap: 12px !important;
+    border-radius: 14px !important;
+  }
+
+  .fxd2-banner-cta {
+    width: 100%;
+    text-align: center;
+    padding: 10px 16px !important;
+  }
+
+  /* Continuity strip: 2-per-row, smaller text */
+  #fxd2-continuity-strip {
+    gap: 6px 8px !important;
+  }
+
+  .fxd2-cs-pill {
+    font-size: 0.68rem !important;
+    padding: 4px 10px !important;
+  }
+
+  /* Marketplace panel: tighter on mobile */
+  .fxd-marketplace-panel {
+    padding: 14px 14px !important;
+  }
+
+  .fxd-mp-title {
+    font-size: 0.88rem !important;
+  }
+
+  .fxd-mp-sub {
+    font-size: 0.75rem !important;
+  }
+}
+
+/* Extra-small: 320px */
+@media (max-width: 360px) {
+  .fxd-hero-headline {
+    font-size: 1.05rem !important;
+  }
+  .fxd-hero-badge {
+    font-size: 0.60rem !important;
+  }
+  .fxd2-cs-pill {
+    font-size: 0.65rem !important;
+    padding: 3px 8px !important;
+  }
+}
+
+/* ── DX2-G: Reduced-motion guard ─────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  section.client-dashboard-hero .client-dashboard-top {
+    animation: none !important;
+    will-change: auto !important;
+  }
+  .fxd2-hero-fade {
+    transition: none !important;
+    opacity: 1 !important;
+  }
+  #fxd2-status-banner {
+    animation: none !important;
+  }
+  @keyframes fxd2-stats-reveal {
+    from { opacity: 1; transform: none; }
+  }
+  #fxd2-continuity-strip {
+    animation: none !important;
+  }
+}
