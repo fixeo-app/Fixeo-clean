@@ -884,3 +884,302 @@ section.client-dashboard-hero .client-dashboard-top:focus-within {
     transition: none !important;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   FIXEO — Dashboard Client DX-WA
+   WhatsApp-Native Operational Dashboard
+   Appended to dashboard-client-dx1.css — never modifies existing lines
+   Version: v4 (2026-05-10)
+
+   Sections:
+   DXWA-A  WhatsApp action pills (contextual, in-card)
+   DXWA-B  Status banner WhatsApp CTA
+   DXWA-C  WhatsApp support hub (sidebar)
+   DXWA-D  Artisan contact hint upgrade
+   DXWA-E  Mobile-first WhatsApp UX
+   DXWA-F  Reduced-motion guard
+
+   Design philosophy:
+   - WhatsApp green: elegant, controlled, premium — not neon or spammy
+   - Spacing: generous, thumb-accessible on mobile
+   - Never more prominent than the core request card content
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── DXWA-A: WhatsApp action pills ───────────────────────────── */
+/*
+   Injected after the action row of each request card.
+   Pills are compact — label + icon — not full-width buttons.
+   Multiple pills wrap naturally on small screens.
+*/
+.fxdwa-actions {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(37, 211, 102, 0.1);
+}
+
+.fxdwa-label {
+  font-size: 0.70rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.45);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  margin-bottom: 7px;
+}
+
+.fxdwa-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.fxdwa-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 11px;
+  border-radius: 99px;
+  background: rgba(37, 211, 102, 0.08);
+  border: 1px solid rgba(37, 211, 102, 0.20);
+  color: rgba(37, 211, 102, 0.85);
+  text-decoration: none;
+  font-size: 0.72rem;
+  font-weight: 700;
+  font-family: inherit;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  white-space: nowrap;
+  line-height: 1.2;
+}
+
+.fxdwa-pill:hover {
+  background: rgba(37, 211, 102, 0.14);
+  box-shadow: 0 3px 12px rgba(37, 211, 102, 0.18);
+  transform: translateY(-1px);
+  text-decoration: none;
+  color: rgba(37, 211, 102, 1);
+}
+
+.fxdwa-pill:active {
+  transform: scale(0.96);
+}
+
+.fxdwa-pill-icon {
+  font-size: 0.85rem;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.fxdwa-pill-text {
+  line-height: 1.2;
+}
+
+/* ── DXWA-B: Status banner WhatsApp CTA ──────────────────────── */
+/*
+   Contextual CTA inserted inside the DX-2 status banner.
+   More prominent than a pill (it IS the next action) but
+   still WhatsApp-green controlled, not aggressive.
+*/
+#fxdwa-banner-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 16px;
+  border-radius: 10px;
+  background: rgba(37, 211, 102, 0.12);
+  border: 1px solid rgba(37, 211, 102, 0.28);
+  color: rgba(37, 211, 102, 0.92);
+  text-decoration: none;
+  font-size: 0.80rem;
+  font-weight: 700;
+  font-family: inherit;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  white-space: nowrap;
+  margin-top: 4px;
+}
+
+#fxdwa-banner-cta:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(37, 211, 102, 0.25);
+  text-decoration: none;
+  color: rgba(37, 211, 102, 1);
+}
+
+#fxdwa-banner-cta:active {
+  transform: scale(0.97);
+}
+
+.fxdwa-bcta-icon {
+  font-size: 1.05rem;
+  flex-shrink: 0;
+}
+
+.fxdwa-bcta-text {
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+/* ── DXWA-C: WhatsApp support hub ────────────────────────────── */
+/*
+   Calm, premium sidebar support entry point.
+   Only shown when user has active requests (honest, contextual).
+   Glass style: matches marketplace panel aesthetic.
+*/
+#fxdwa-support-hub {
+  margin: 14px 0 10px;
+  border-radius: 12px;
+  background: rgba(37, 211, 102, 0.05);
+  border: 1px solid rgba(37, 211, 102, 0.14);
+  overflow: hidden;
+}
+
+.fxdwa-support-inner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+}
+
+.fxdwa-support-icon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+  line-height: 1;
+  opacity: 0.85;
+}
+
+.fxdwa-support-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.fxdwa-support-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 2px;
+}
+
+.fxdwa-support-sub {
+  font-size: 0.68rem;
+  color: rgba(255, 255, 255, 0.48);
+  line-height: 1.4;
+}
+
+.fxdwa-support-cta {
+  display: inline-block;
+  padding: 7px 13px;
+  border-radius: 9px;
+  background: rgba(37, 211, 102, 0.12);
+  border: 1px solid rgba(37, 211, 102, 0.25);
+  color: rgba(37, 211, 102, 0.9);
+  font-size: 0.70rem;
+  font-weight: 700;
+  font-family: inherit;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: transform 0.15s ease, background 0.15s ease;
+  white-space: nowrap;
+}
+
+.fxdwa-support-cta:hover {
+  background: rgba(37, 211, 102, 0.18);
+  transform: translateY(-1px);
+  text-decoration: none;
+  color: rgba(37, 211, 102, 1);
+}
+
+.fxdwa-support-cta:active {
+  transform: scale(0.97);
+}
+
+/* ── DXWA-D: Artisan contact hint upgrade ────────────────────── */
+/*
+   Replaces p1.js "Il vous contactera" static text with
+   "Contact via WhatsApp Fixeo" — same element, new class.
+   Subtle: smaller, green-tinted.
+*/
+.fxdwa-contact-hint {
+  font-size: 0.68rem !important;
+  font-weight: 600 !important;
+  color: rgba(37, 211, 102, 0.72) !important;
+  letter-spacing: 0.01em;
+}
+
+/* ── DXWA-E: Mobile-first WhatsApp UX ───────────────────────── */
+@media (max-width: 768px) {
+  /* Pills: full-width on narrow screens for thumb ease */
+  .fxdwa-pills {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .fxdwa-pill {
+    justify-content: center;
+    width: 100%;
+    padding: 9px 14px;
+    font-size: 0.74rem;
+    border-radius: 11px;
+  }
+
+  /* Banner CTA: full-width */
+  #fxdwa-banner-cta {
+    width: 100%;
+    justify-content: center;
+    margin-top: 8px;
+  }
+
+  /* Support hub: tighter on mobile */
+  .fxdwa-support-inner {
+    padding: 10px 12px;
+    gap: 8px;
+  }
+
+  .fxdwa-support-cta {
+    padding: 8px 12px;
+    font-size: 0.70rem;
+  }
+}
+
+/* Extra small: 360px */
+@media (max-width: 360px) {
+  .fxdwa-pill {
+    font-size: 0.70rem !important;
+    padding: 8px 12px !important;
+  }
+
+  .fxdwa-support-inner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .fxdwa-support-cta {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* 320px minimum */
+@media (max-width: 320px) {
+  .fxdwa-pill-text {
+    font-size: 0.68rem;
+  }
+  #fxdwa-banner-cta {
+    font-size: 0.72rem;
+    padding: 8px 12px;
+  }
+}
+
+/* ── DXWA-F: Reduced-motion guard ────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .fxdwa-pill,
+  #fxdwa-banner-cta,
+  .fxdwa-support-cta {
+    transition: none !important;
+    transform: none !important;
+  }
+}
