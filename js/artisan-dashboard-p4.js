@@ -67,6 +67,33 @@
     return 'Il y a ' + Math.round(s/86400) + ' j';
   }
 
+  /* ── V1-E-A: Human-readable elapsed duration ─────────────
+   *  Returns calm, non-anxious elapsed string.
+   *  e.g. "2 h", "3 jours", "hier", "quelques minutes"
+   *  NEVER produces countdowns, SLAs or urgency framing.
+   * ────────────────────────────────────────────────────── */
+  function _elapsedHuman(isoStr) {
+    if (!isoStr) return '';
+    var ms = Date.now() - (Date.parse(isoStr)||0);
+    if (ms < 0) return '';
+    var mins = Math.floor(ms / 60000);
+    if (mins < 2)   return 'quelques minutes';
+    if (mins < 60)  return mins + ' min';
+    var hrs = Math.floor(ms / 3600000);
+    if (hrs < 24)   return hrs + ' h';
+    var days = Math.floor(ms / 86400000);
+    if (days === 1) return 'hier';
+    if (days < 7)   return days + ' jours';
+    if (days < 30)  return Math.floor(days / 7) + ' semaines';
+    return Math.floor(days / 30) + ' mois';
+  }
+
+  /* ── V1-E-A: Stall thresholds (calm, not SLA promises) ──
+   *  acceptée → coordination stall after 2 h (soft reminder)
+   *  No countdown, no deadline, no urgency framing.
+   * ────────────────────────────────────────────────────── */
+  var STALL_ACCEPTED_MS  = 2  * 3600 * 1000;  // 2 h
+
   /* ── Read artisan profile ────────────────────────────── */
   function getArtisan() {
     return {
@@ -416,11 +443,29 @@
           : '')
         + '<button class="fxadp4-btn-done" onclick="_fxP4Done(\'' + id + '\')">'
           + '\u2713 Marquer termin\u00e9e'
-          + '</button>';
+          + '</button>'
+
+      /* V1-E-A: Coordination reminder — soft, calm, not urgent.
+         Only shows when accepted_at is old enough AND request is still acceptée.
+         NEVER shown on new (state-A) cards. */
     } else {
       /* STATE A — New: accept is primary, ignore is secondary, no pre-accept WA */
       actionsHtml = '<button class="fxadp4-btn-accept" onclick="_fxP4Accept(\'' + id + '\')">Accepter la demande</button>'
         + '<button class="fxadp4-btn-ignore" onclick="_fxP4Ignore(\'' + id + '\')">Passer</button>';
+    }
+
+    /* V1-E-A: Coordination stall strip — only for accepted cards with old accepted_at */
+    var stallHtml = '';
+    if (acceptedState) {
+      var acceptedMs = r.accepted_at ? (Date.now() - (Date.parse(r.accepted_at) || 0)) : 0;
+      var elapsedAccepted = _elapsedHuman(r.accepted_at);
+      if (acceptedMs > STALL_ACCEPTED_MS && elapsedAccepted) {
+        stallHtml = '<div class="fxadp4-stall-strip fxadp4-stall--coord">'
+          + '<span class="fxadp4-stall-icon">\ud83d\udcac</span>'
+          + '<span class="fxadp4-stall-text">Accept\u00e9e il y a ' + esc(elapsedAccepted)
+          + ' \u2014 confirmez l\u2019adresse avec le client.</span>'
+          + '</div>';
+      }
     }
 
     return '<div class="fxadp4-card' + (isUrgent ? ' is-urgent' : '') + (acceptedState ? ' state-accepted' : '') + '" id="fxadp4-card-' + id + '"' + (isAdjacent ? ' data-adjacent="1"' : '') + '>'
@@ -432,6 +477,7 @@
       + '<div class="fxadp4-card-city">\ud83d\udccd ' + city + '</div>'
       + (desc ? '<div class="fxadp4-card-desc">' + desc + '</div>' : '')
       + budgetHtml
+      + stallHtml
       + '<div class="fxadp4-card-actions">' + actionsHtml + '</div>'
       + '</div>';
   }
@@ -540,7 +586,23 @@
       + '<span class="fxadp4-epill ' + (hasCity ? 'ok'   : 'warn') + '">\ud83d\udccd ' + esc(hasCity ? artisan.city : 'Ville non d\u00e9finie') + '</span>'
       + '<span class="fxadp4-epill neutral">\ud83d\uddd3 ' + esc(availLabel) + '</span>'
       + '</div>'
-      + '<div class="fxadp4-empty-hint">Votre profil est actif. Fixeo vous notifiera d\u00e8s qu\u2019une demande arrive dans votre zone.</div>'
+      /* V1-E-A: Profile completeness tip — only shown when a field blocks matching.
+         Non-critical: visible inline, no modal, no interruption.
+         Session-key guard prevents re-showing once dismissed this session. */
+      + ((!hasJob || !hasCity)
+        ? '<div class="fxadp4-profile-tip">'
+          + '\u2139\ufe0f '
+          + (!hasJob && !hasCity
+            ? 'Ajoutez votre m\u00e9tier et votre ville dans '
+            : !hasJob ? 'Ajoutez votre m\u00e9tier dans '
+            : 'Ajoutez votre ville dans ')
+          + '<button class="fxadp4-tip-link" onclick="showSection(\'settings\')">'
+          + 'Param\u00e8tres'
+          + '</button>'
+          + ' pour appara\u00eetre dans les r\u00e9sultats clients.'
+          + '</div>'
+        : '')
+      + '<div class="fxadp4-empty-hint">Votre profil est actif. Revenez v\u00e9rifier \u2014 les premi\u00e8res demandes arrivent sans pr\u00e9venir.</div>'
       + '</div>';
   }
 

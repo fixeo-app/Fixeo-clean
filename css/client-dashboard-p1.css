@@ -475,3 +475,29 @@ body.fxclp1-has-requests .fixeo-smart-cta.fxd-empty-v2 {
   .fxclp1-card-service { font-size: 0.90rem; }
   .fxclp1-timeline { display: none; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   V1-E-A — Client validation nudge (client-dashboard-p1)
+   Append-only. No overrides to existing rules.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── Validation nudge ─────────────────────────────────────────────
+   Shown above the "Confirmer" button when intervention completed > 4h.
+   Calm, informational, no blame language, no pressure.
+   Emerald-tinted — positive completion tone, not warning.
+   ────────────────────────────────────────────────────────────────── */
+.fxclp1-validation-nudge {
+  padding: 9px 13px;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  font-size: 0.80rem;
+  line-height: 1.45;
+  color: rgba(32,201,151,0.80);
+  background: rgba(32,201,151,0.06);
+  border: 1px solid rgba(32,201,151,0.14);
+  font-style: italic;
+}
+
+@media (max-width: 480px) {
+  .fxclp1-validation-nudge { font-size: 0.76rem; padding: 8px 11px; }
+}

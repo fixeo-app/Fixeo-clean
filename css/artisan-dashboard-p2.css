@@ -842,3 +842,27 @@
   .fxadp2-avail-header { flex-direction: column; align-items: flex-start; }
   .fxadp2-avail-public-badge { font-size: 0.70rem; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   V1-E-A — Availability decay indicator (artisan-dashboard-p2)
+   Append-only. No overrides to existing rules.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── Availability note: off state with elapsed ────────────────────
+   When artisan is off and off_since is recorded, note shows elapsed.
+   Amber tone — visible but not alarming. Calm operational state.
+   ────────────────────────────────────────────────────────────────── */
+.fxadp2-avail-note--off {
+  color: rgba(255,165,0,0.70) !important;
+  background: rgba(255,165,0,0.04);
+  border-radius: 7px;
+  padding: 7px 11px;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  margin-top: 4px;
+  border: 1px solid rgba(255,165,0,0.10);
+}
+
+@media (max-width: 480px) {
+  .fxadp2-avail-note--off { font-size: 0.74rem; padding: 6px 10px; }
+}

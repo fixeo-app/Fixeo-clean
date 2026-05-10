@@ -391,7 +391,32 @@
             + '</button>';
         }).join('')
       + '</div>'
-      + '<div class="fxadp2-avail-note" id="fxadp2-avail-note">Votre statut est enregistr\u00e9 et refl\u00e8te votre disponibilit\u00e9 pour les nouvelles demandes.</div>'
+      /* V1-E-A: Availability decay indicator — calm, non-pressuring.
+       * When 'off' and fixeo_avail_off_since is set, show elapsed inline.
+       * "Vous êtes indisponible depuis 3 jours."
+       * No auto-reactivation. No lost-client simulation. Just honest state. */
+      + (function() {
+          if (stored !== 'off') return '<div class="fxadp2-avail-note" id="fxadp2-avail-note">Votre statut est enregistr\u00e9 et refl\u00e8te votre disponibilit\u00e9 pour les nouvelles demandes.</div>';
+          try {
+            var offSince = localStorage.getItem('fixeo_avail_off_since') || '';
+            if (!offSince) return '<div class="fxadp2-avail-note" id="fxadp2-avail-note">Vous \u00eates actuellement indisponible sur Fixeo.</div>';
+            var offMs = Date.now() - (Date.parse(offSince) || 0);
+            var offMins = Math.floor(offMs / 60000);
+            var offLabel = offMins < 60
+              ? offMins + '\u00a0min'
+              : Math.floor(offMs / 3600000) < 24
+              ? Math.floor(offMs / 3600000) + '\u00a0h'
+              : Math.floor(offMs / 86400000) === 1
+              ? 'hier'
+              : Math.floor(offMs / 86400000) + ' jours';
+            return '<div class="fxadp2-avail-note fxadp2-avail-note--off" id="fxadp2-avail-note">'
+              + 'Vous \u00eates indisponible depuis\u00a0' + offLabel + '.'
+              + ' R\u00e9activez votre disponibilit\u00e9 lorsque vous \u00eates pr\u00eat.'
+              + '</div>';
+          } catch(e) {
+            return '<div class="fxadp2-avail-note" id="fxadp2-avail-note">Vous \u00eates actuellement indisponible sur Fixeo.</div>';
+          }
+        })()
       + (profilePreviewHtml
         ? '<div class="fxadp2-avail-preview-row">' + profilePreviewHtml + '</div>'
         : '')
@@ -481,11 +506,33 @@
         + 'Votre profil indique que vous \u00eates pr\u00eat \u00e0 intervenir.';
       note.style.color = 'rgba(32,201,151,0.80)';
     }
-    /* Reset to default style after 4s */
+    /* V1-E-A: Reset note after 4s — restore elapsed indicator if still off */
     setTimeout(function() {
-      if (note) {
+      if (!note) return;
+      note.style.color = '';
+      var currentKey = ls('fixeo_avail_status', 'now');
+      if (currentKey === 'off') {
+        try {
+          var offSince = localStorage.getItem('fixeo_avail_off_since') || '';
+          var offMs = offSince ? (Date.now() - (Date.parse(offSince) || 0)) : 0;
+          var offMins = Math.floor(offMs / 60000);
+          var offLabel = offMins < 60
+            ? offMins + '\u00a0min'
+            : Math.floor(offMs / 3600000) < 24
+            ? Math.floor(offMs / 3600000) + '\u00a0h'
+            : Math.floor(offMs / 86400000) === 1
+            ? 'hier'
+            : Math.floor(offMs / 86400000) + ' jours';
+          if (offLabel) {
+            note.className = 'fxadp2-avail-note fxadp2-avail-note--off';
+            note.innerHTML = 'Vous \u00eates indisponible depuis\u00a0' + offLabel + '. '
+              + 'R\u00e9activez votre disponibilit\u00e9 lorsque vous \u00eates pr\u00eat.';
+            return;
+          }
+        } catch(e) {}
+        note.innerHTML = 'Vous \u00eates actuellement indisponible sur Fixeo.';
+      } else {
         note.innerHTML = 'Votre statut est enregistr\u00e9 et refl\u00e8te votre disponibilit\u00e9 pour les nouvelles demandes.';
-        note.style.color = '';
       }
     }, 4000);
   }
@@ -493,6 +540,18 @@
   /* ── Availability setter ─────────────────────────────── */
   window._fxAdP2SetAvail = function(key) {
     lsSet('fixeo_avail_status', key);
+
+    /* V1-E-A: Record when availability was last set to 'off' for elapsed indicator.
+     * Only written on 'off' transition. Cleared on 'now' or 'week' to reset. */
+    try {
+      if (key === 'off') {
+        if (!localStorage.getItem('fixeo_avail_off_since')) {
+          localStorage.setItem('fixeo_avail_off_since', new Date().toISOString());
+        }
+      } else {
+        localStorage.removeItem('fixeo_avail_off_since');
+      }
+    } catch (e) {}
 
     /* V1-C: Bridge to marketplace pool + Supabase (non-blocking) */
     _bridgeAvailToMarketplace(key);

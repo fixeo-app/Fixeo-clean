@@ -77,6 +77,34 @@
       return new Date(isoStr).toLocaleDateString('fr-FR', { day:'2-digit', month:'short', year:'numeric' });
     } catch(e){ return ''; }
   }
+  /* ── V1-E-A: Human elapsed duration (calm, non-anxious) ──
+   *  Mirrors the helper in artisan-dashboard-p4.js.
+   *  Used for mission stall indicators only.
+   *  NEVER produces countdowns, SLAs, or urgency framing.
+   * ────────────────────────────────────────────────────── */
+  function _elapsedHuman(isoStr) {
+    if (!isoStr) return '';
+    var ms = Date.now() - (Date.parse(isoStr) || 0);
+    if (ms < 0) return '';
+    var mins = Math.floor(ms / 60000);
+    if (mins < 2)   return 'quelques minutes';
+    if (mins < 60)  return mins + '\u00a0min';
+    var hrs = Math.floor(ms / 3600000);
+    if (hrs < 24)   return hrs + '\u00a0h';
+    var days = Math.floor(ms / 86400000);
+    if (days === 1) return 'hier';
+    if (days < 7)   return days + ' jours';
+    if (days < 30)  return Math.floor(days / 7) + ' semaines';
+    return Math.floor(days / 30) + ' mois';
+  }
+
+  /* ── V1-E-A: Stall thresholds ─────────────────────────
+   *  en_cours → elapsed hint after 4 h (soft, non-urgent)
+   *  terminée → client validation reminder after 4 h
+   * ────────────────────────────────────────────────────── */
+  var STALL_EN_COURS_MS  = 4  * 3600 * 1000;  // 4 h
+  var STALL_TERMINEE_MS  = 4  * 3600 * 1000;  // 4 h
+
   function relativeTime(isoStr) {
     var ms = Date.now() - (Date.parse(isoStr||'')||0);
     var s = ms/1000;
@@ -316,6 +344,35 @@
       hintHtml = '<div class="fxmlp2-coord-hint fxmlp2-coord-hint--done">En attente de confirmation client pour cl\u00f4turer.</div>';
     }
 
+    /* V1-E-A: Operational elapsed strips — calm, non-anxious, inline.
+     *  en_cours: "Intervention démarrée il y a 6 h — marquez-la comme terminée si elle est finalisée."
+     *  terminée: "Intervention terminée il y a 8 h — en attente de confirmation client."
+     *  NEVER: countdown, SLA, blame language, urgency framing.
+     * ----------------------------------------------------------------------- */
+    var elapsedStripHtml = '';
+    if (st === 'en_cours') {
+      var enCoursTs = startedTs || acceptedTs;
+      var enCoursMs = enCoursTs ? (Date.now() - (Date.parse(enCoursTs) || 0)) : 0;
+      var enCoursEl = _elapsedHuman(enCoursTs);
+      if (enCoursMs > STALL_EN_COURS_MS && enCoursEl) {
+        elapsedStripHtml = '<div class="fxmlp2-elapsed-strip fxmlp2-elapsed--en-cours">'
+          + '<span class="fxmlp2-elapsed-icon">\u231b</span>'
+          + 'Intervention d\u00e9marr\u00e9e il y a ' + esc(enCoursEl)
+          + ' \u2014 pensez \u00e0 marquer comme termin\u00e9e si elle est finalis\u00e9e.'
+          + '</div>';
+      }
+    } else if (st === 'termin\u00e9e') {
+      var doneMs = doneTs ? (Date.now() - (Date.parse(doneTs) || 0)) : 0;
+      var doneEl = _elapsedHuman(doneTs);
+      if (doneMs > STALL_TERMINEE_MS && doneEl) {
+        elapsedStripHtml = '<div class="fxmlp2-elapsed-strip fxmlp2-elapsed--terminee">'
+          + '<span class="fxmlp2-elapsed-icon">\u23f3</span>'
+          + 'Intervention termin\u00e9e il y a ' + esc(doneEl)
+          + ' \u2014 en attente de confirmation du client.'
+          + '</div>';
+      }
+    }
+
     /* Action buttons per state */
     var actionHtml;
     if (st === 'accept\u00e9e') {
@@ -361,6 +418,7 @@
       + badgeHtml
       + '</div>'
       + hintHtml
+      + elapsedStripHtml
       + actionHtml
       + '</div>';
   }

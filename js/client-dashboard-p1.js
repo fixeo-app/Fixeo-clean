@@ -179,8 +179,30 @@
     }
 
     // Terminée — client must confirm
+    // V1-E-A: Add elapsed context when intervention completed > 4h ago.
+    // Calm, non-pressuring. No blame. No urgency. Just operational clarity.
     if (step === 3) {
+      var completedAt = r.completed_at || '';
+      var completedMs = completedAt ? (Date.now() - (Date.parse(completedAt) || 0)) : 0;
+      var VALIDATION_NUDGE_MS = 4 * 3600 * 1000; // 4 h
+      var nudgeHtml = '';
+      if (completedMs > VALIDATION_NUDGE_MS) {
+        var elapsedMins  = Math.floor(completedMs / 60000);
+        var elapsedLabel = elapsedMins < 60
+          ? elapsedMins + '\u00a0min'
+          : Math.floor(completedMs / 3600000) < 24
+          ? Math.floor(completedMs / 3600000) + '\u00a0h'
+          : Math.floor(completedMs / 86400000) === 1
+          ? 'hier'
+          : Math.floor(completedMs / 86400000) + ' jours';
+        nudgeHtml = '<div class="fxclp1-validation-nudge">'
+          + 'L\u2019intervention semble termin\u00e9e'
+          + (elapsedLabel ? ' il y a\u00a0' + elapsedLabel : '')
+          + '. Confirmez si tout est en ordre.'
+          + '</div>';
+      }
       return '<div class="fxclp1-actions">'
+        + nudgeHtml
         + '<button class="fxclp1-btn-validate" '
         + 'data-bridge-action="client-validate" '
         + 'data-request-id="' + id + '" '

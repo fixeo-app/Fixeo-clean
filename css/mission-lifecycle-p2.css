@@ -726,3 +726,50 @@
   .fxmlp2-pulse-dot { animation: none; opacity: 1; }
   .fxmlp2-strip-step.active .fxmlp2-strip-dot { box-shadow: none; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   V1-E-A — Mission elapsed strips (mission-lifecycle-p2)
+   Append-only. No overrides to existing rules.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── Elapsed strip — shared base ──────────────────────────────────
+   Inline, below coordination hint, above action buttons.
+   Calm tone: amber for en_cours, blue for terminée.
+   NEVER: red, countdown, timer, SLA, urgency.
+   ────────────────────────────────────────────────────────────────── */
+.fxmlp2-elapsed-strip {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  padding: 9px 13px;
+  border-radius: 9px;
+  margin: 6px 0 4px;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  font-style: italic;
+}
+
+.fxmlp2-elapsed-icon {
+  flex-shrink: 0;
+  font-size: 0.90rem;
+  margin-top: 1px;
+}
+
+/* en_cours — soft amber, not alarming */
+.fxmlp2-elapsed--en-cours {
+  background: rgba(255,165,0,0.06);
+  border: 1px solid rgba(255,165,0,0.12);
+  color: rgba(255,200,80,0.70);
+}
+
+/* terminée — soft blue-lavender, waiting tone */
+.fxmlp2-elapsed--terminee {
+  background: rgba(108,143,245,0.06);
+  border: 1px solid rgba(108,143,245,0.12);
+  color: rgba(160,185,255,0.70);
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .fxmlp2-elapsed-strip { padding: 8px 11px; font-size: 0.74rem; }
+}

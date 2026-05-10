@@ -686,3 +686,80 @@
   .fxadp4-mission-strip { padding: 10px 12px; }
   .fxadp4-mission-strip-label { font-size: 0.80rem; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   V1-E-A — Passive Operational Reminders (artisan-dashboard-p4)
+   Append-only. No overrides to existing rules.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── Coordination stall strip ──────────────────────────────────────
+   Shown on accepted cards when accepted_at > 2h without progression.
+   Calm amber tone. Not a warning. Not urgent. Operational context.
+   ────────────────────────────────────────────────────────────────── */
+.fxadp4-stall-strip {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  margin: 8px 0 4px;
+  font-size: 0.80rem;
+  line-height: 1.45;
+}
+
+.fxadp4-stall--coord {
+  background: rgba(255,165,0,0.07);
+  border: 1px solid rgba(255,165,0,0.15);
+  color: rgba(255,200,80,0.80);
+}
+
+.fxadp4-stall-icon {
+  flex-shrink: 0;
+  font-size: 0.95rem;
+  margin-top: 1px;
+}
+
+.fxadp4-stall-text {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ── Profile completeness tip ──────────────────────────────────────
+   Only shown when métier or ville is missing (blocks matching).
+   Blue-tinted, non-alarming. Inline button links to settings.
+   ────────────────────────────────────────────────────────────────── */
+.fxadp4-profile-tip {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 9px 13px;
+  border-radius: 10px;
+  margin: 6px 0 2px;
+  font-size: 0.78rem;
+  color: rgba(150,180,255,0.75);
+  background: rgba(64,93,230,0.06);
+  border: 1px solid rgba(64,93,230,0.12);
+  line-height: 1.4;
+}
+
+.fxadp4-tip-link {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: rgba(108,143,245,0.90);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  -webkit-tap-highlight-color: transparent;
+}
+.fxadp4-tip-link:hover { color: rgba(150,180,255,1); }
+
+/* ── Mobile ────────────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .fxadp4-stall-strip  { padding: 9px 11px; font-size: 0.76rem; }
+  .fxadp4-profile-tip  { padding: 8px 11px; font-size: 0.75rem; }
+}
