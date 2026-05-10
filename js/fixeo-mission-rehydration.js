@@ -326,6 +326,23 @@
     var aid = String(artisanId || '').trim();
     if (!aid) return [];
 
+    /* V2-A3: Resolve all aliases for this artisan so we can query Supabase
+     * against multiple possible artisan_profile_id values.
+     * This fixes the mismatch: URL param "1042" vs stored "hassan_benali" vs UUID.
+     */
+    var queryIds = [aid]; /* always include the URL param as-is */
+    if (window.FixeoArtisanIdentity) {
+      /* Build artisan reference object from all available sources */
+      var artRef = { id: aid };
+      if (window._fixeoCurrentArtisan) {
+        artRef = Object.assign({}, window._fixeoCurrentArtisan, { id: aid });
+      }
+      var aliases = window.FixeoArtisanIdentity.resolveAliases(artRef);
+      aliases.forEach(function(a) {
+        if (queryIds.indexOf(a) === -1) queryIds.push(a);
+      });
+    }
+
     /* In-memory cache hit */
     var cached = _artisanCache[aid];
     if (cached && (Date.now() - cached.ts) < CACHE_TTL_MS) {
@@ -349,10 +366,15 @@
     if (!client) return [];
 
     try {
+      /* V2-A3: Query by IN (all alias IDs) + OR artisan_name match
+       * Supabase .in() replaces single .eq() — handles all alias forms.
+       * artisan_name IS NOT used as query filter (too slow for text search);
+       * name matching is done post-fetch in _localValidatedForArtisan.
+       */
       var result = await client
         .from(MIRROR_TABLE)
         .select('request_id,service,city,status,created_at,accepted_at,completed_at,validated_at,artisan_name,artisan_profile_id,client_profile_id,agreed_price,source,reservation_ref,budget')
-        .eq('artisan_profile_id', aid)
+        .in('artisan_profile_id', queryIds)
         .in('status', ['validée', 'validated', 'intervention_confirmée'])
         .order('validated_at', { ascending: false })
         .limit(MAX_ROWS);
@@ -394,13 +416,28 @@
   ════════════════════════════════════════════════════════════ */
 
   function _localValidatedForArtisan(artisanId) {
-    var aid     = String(artisanId || '').trim();
-    var local   = _readLocal();
+    var local = _readLocal();
+
+    /* V2-A3: Build artisan object for alias-based matching.
+     * Prefer FixeoArtisanIdentity.requestMatchesArtisan() which checks ALL aliases.
+     * Fallback to name-based matching when identity module not loaded.
+     */
     var artName = '';
     try {
       var h1 = document.querySelector('#public-artisan-root h1, .public-hero-main h1');
-      artName = h1 ? h1.textContent.trim().toLowerCase() : '';
+      artName = h1 ? h1.textContent.trim() : '';
     } catch (e) { /* noop */ }
+
+    /* Build a pseudo-artisan object for alias resolution */
+    var artisanRef = { id: artisanId };
+    if (artName) artisanRef.name = artName;
+
+    /* Also include Supabase artisan data if available */
+    var sbArt = window._fixeoCurrentArtisan;
+    if (sbArt) artisanRef = Object.assign({}, sbArt, { id: artisanId });
+
+    var hasIdentityModule = window.FixeoArtisanIdentity
+      && typeof window.FixeoArtisanIdentity.requestMatchesArtisan === 'function';
 
     return local.filter(function(r) {
       /* Status check: validée (various normalizations) */
@@ -408,10 +445,19 @@
         .normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[\s_]/g, '');
       if (st !== 'validee' && st !== 'validated') return false;
 
-      /* Artisan match: by ID or by name */
+      /* V2-A3: alias-based matching if FixeoArtisanIdentity loaded */
+      if (hasIdentityModule) {
+        return window.FixeoArtisanIdentity.requestMatchesArtisan(r, artisanRef);
+      }
+
+      /* Fallback: legacy exact + name matching */
+      var aid = String(artisanId || '').trim();
       if (aid && String(r.assigned_artisan_id || '').trim() === aid) return true;
-      if (artName && String(r.assigned_artisan || r.artisan_name || '').trim().toLowerCase() === artName) return true;
-      if (aid && String(r.artisan_profile_id || '').trim() === aid) return true;
+      if (aid && String(r.artisan_profile_id  || '').trim() === aid) return true;
+      if (artName) {
+        var rArtName = String(r.assigned_artisan || r.artisan_name || '').trim().toLowerCase();
+        if (rArtName && rArtName === artName.toLowerCase()) return true;
+      }
       return false;
     });
   }

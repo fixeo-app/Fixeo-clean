@@ -963,14 +963,23 @@
     try {
       var allReqs = store.list();
       var artId   = String(artisanId).trim();
+      var artName = ((document.querySelector('#public-artisan-root h1, .public-hero-main h1') || {}).textContent || '').trim();
 
-      /* Match by assigned_artisan_id OR artisan name match fallback */
-      var artName = (document.querySelector('h1') || {}).textContent || '';
+      /* V2-A3: Use FixeoArtisanIdentity alias-based matching when available */
+      var hasId = window.FixeoArtisanIdentity
+        && typeof window.FixeoArtisanIdentity.requestMatchesArtisan === 'function';
+      var artisanRef = { id: artId };
+      if (artName) artisanRef.name = artName;
+      var sbArt = window._fixeoCurrentArtisan;
+      if (sbArt) artisanRef = Object.assign({}, sbArt, { id: artId });
+
       var validated = allReqs.filter(function(r) {
-        return r.status === 'valid\u00e9e'
-          && (String(r.assigned_artisan_id || '').trim() === artId
-              || (artName && String(r.artisan_name || r.assigned_artisan || '').trim()
-                    .toLowerCase() === artName.trim().toLowerCase()));
+        if (r.status !== 'valid\u00e9e') return false;
+        if (hasId) return window.FixeoArtisanIdentity.requestMatchesArtisan(r, artisanRef);
+        /* Legacy fallback */
+        return String(r.assigned_artisan_id || '').trim() === artId
+          || (artName && String(r.artisan_name || r.assigned_artisan || '').trim().toLowerCase()
+                === artName.toLowerCase());
       });
 
       if (validated.length < 3) return; /* below display threshold */
@@ -1223,13 +1232,36 @@
     try {
       var all    = store.list();
       var artId  = String(artisanId || '').trim();
-      var artName = (document.querySelector('h1') || {}).textContent || '';
+      var artName = ((document.querySelector('#public-artisan-root h1, .public-hero-main h1') || {}).textContent || '').trim();
+
+      /* V2-A3: Use FixeoArtisanIdentity for alias-based matching when available.
+       * Builds artisan reference from URL id + Supabase data (_fixeoCurrentArtisan)
+       * so that records stored with any form of the ID all match.
+       */
+      var hasId = window.FixeoArtisanIdentity
+        && typeof window.FixeoArtisanIdentity.requestMatchesArtisan === 'function';
+
+      var artisanRef = null;
+      if (hasId) {
+        artisanRef = { id: artId };
+        if (artName) artisanRef.name = artName;
+        var sbArt = window._fixeoCurrentArtisan;
+        if (sbArt) artisanRef = Object.assign({}, sbArt, { id: artId });
+      }
+
       return all.filter(function(r) {
         var st = _v1jNormStatus(r.status);
         if (st !== 'validee') return false;
+
+        /* V2-A3: alias-based match (fixes hassan_benali !== 1042 problem) */
+        if (hasId && artisanRef) {
+          return window.FixeoArtisanIdentity.requestMatchesArtisan(r, artisanRef);
+        }
+
+        /* Legacy fallback (exact ID or exact name) */
         if (artId && String(r.assigned_artisan_id || '').trim() === artId) return true;
         if (artName && String(r.artisan_name || r.assigned_artisan || '').trim()
-              .toLowerCase() === artName.trim().toLowerCase()) return true;
+              .toLowerCase() === artName.toLowerCase()) return true;
         return false;
       });
     } catch(e) { return []; }

@@ -145,10 +145,41 @@
     var userId = _userId();
     var role   = _userRole();
 
-    /* Resolve profile IDs from the request or current user context */
+    /* V2-A3: Resolve canonical artisan ID for Supabase write.
+     * Priority: artisan_id_canonical (set by FixeoArtisanIdentity.attachCanonicalIdToRequest)
+     *   → artisan_profile_id (may already be canonical from V2-A3 enrichment)
+     *   → assigned_artisan_id (may be normalized name slug — kept as fallback)
+     *   → artisanIdFromContext (authenticated user ID when role=artisan)
+     * The canonical ID is the key that V2-A2 queries use to match against
+     * the public profile URL param — they must agree on the same value.
+     */
     var clientProfileId  = String(req.client_profile_id  || (role === 'client'  ? userId : '') || '').trim() || null;
-    var artisanProfileId = String(req.artisan_profile_id || req.assigned_artisan_id ||
-                                  (role === 'artisan' ? userId : '') || '').trim() || null;
+    var artisanCanonical = '';
+    if (window.FixeoArtisanIdentity) {
+      artisanCanonical = String(
+        req.artisan_id_canonical ||
+        req.artisan_profile_id   ||
+        req.assigned_artisan_id  ||
+        (role === 'artisan' ? userId : '')
+        || ''
+      ).trim();
+      /* If we only have a name slug (no hyphens, short, no digits beyond basic) but userId is real,
+       * prefer userId (the authenticated artisan's own UUID is the strongest canonical value). */
+      var hasOnlySlug = artisanCanonical
+        && !/[0-9]{3,}/.test(artisanCanonical)           /* not a long numeric ID */
+        && !artisanCanonical.includes('-')                /* not a UUID */
+        && artisanCanonical.replace(/[^a-z_]/g,'').length > 4;
+      if (hasOnlySlug && role === 'artisan' && userId) {
+        artisanCanonical = userId;
+      }
+    } else {
+      artisanCanonical = String(
+        req.artisan_id_canonical || req.artisan_profile_id || req.assigned_artisan_id ||
+        (role === 'artisan' ? userId : '')
+        || ''
+      ).trim();
+    }
+    var artisanProfileId = artisanCanonical || null;
 
     var status  = _normalizeStatus(req.status);
     var now     = new Date().toISOString();

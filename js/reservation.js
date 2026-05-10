@@ -1101,6 +1101,21 @@
               raw[i].reservation_ref = orderID;
               raw[i].artisan_name    = String(bookingData.artisanName || '').trim();
               raw[i].artisan_id      = String(bookingData.artisanId   || '');
+              /* V2-A3: Write canonical artisan identity so V2-A1 mirror and
+               * V2-A2 rehydration both use the same strong ID for Supabase writes/reads.
+               * Prefer _artisan_id_canonical (from profile page) > artisanId (URL param).
+               */
+              var _artisan4bridge = state && state.artisan ? state.artisan : {};
+              var _canonId = String(
+                _artisan4bridge._artisan_id_canonical ||
+                _artisan4bridge._supabase_id ||
+                _artisan4bridge.owner_account_id ||
+                bookingData.artisanId || ''
+              ).trim();
+              if (_canonId) {
+                raw[i].artisan_id_canonical = _canonId;
+                raw[i].artisan_profile_id   = _canonId;
+              }
               patched = true;
               break;
             }

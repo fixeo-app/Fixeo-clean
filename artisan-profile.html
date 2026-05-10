@@ -374,6 +374,7 @@
       '/js/fixeo-public-artisan-profile.js?v=p1',
       '/js/fixeo-profile-premium-ui.js?v=p1',
       '/js/fixeo-claim-system.js?v=cs1',
+      '/js/fixeo-artisan-identity.js?v=v2a3',
       '/js/fixeo-client-requests-store.js',
       '/js/fixeo-mission-rehydration.js?v=v2a2',
       '/js/fixeo-profile-v2a.js?v=v2a2',
@@ -484,8 +485,6 @@
       /* V1-JC: Merge real Supabase trust data (review_count, score_qualification, rating)
        * into the artisan object before opening the modal.
        * window._fixeoCurrentArtisan is set by fixeo-profile-v2a.js after Supabase resolves.
-       * Without this merge, normalizeArtisan() uses fallback rating=4.8 reviewCount=0
-       * which made V1-TC thresholds fire incorrectly in the modal.
        */
       var _sbArtisan = window._fixeoCurrentArtisan;
       if (_sbArtisan && typeof _sbArtisan === 'object') {
@@ -496,8 +495,17 @@
           scoreQualification: parseInt(_sbArtisan.score_qualification, 10) || 0,
           score_qualification:parseInt(_sbArtisan.score_qualification, 10) || 0,
           availability:       _sbArtisan.availability || artisan.availability,
-          city:               _sbArtisan.city || artisan.city
+          city:               _sbArtisan.city || artisan.city,
+          /* V2-A3: Carry through Supabase identity fields so V2-A1 mirror
+           * writes canonical artisan_profile_id (UUID/numeric ID, not name slug) */
+          _supabase_id:       _sbArtisan.id || _sbArtisan._supabase_id || artisan._supabase_id || '',
+          owner_account_id:   _sbArtisan.owner_account_id || artisan.owner_account_id || ''
         });
+      }
+      /* V2-A3: Enrich request's artisan identity before reservation bridge writes it */
+      if (window.FixeoArtisanIdentity
+          && typeof window.FixeoArtisanIdentity.resolveCanonicalId === 'function') {
+        artisan._artisan_id_canonical = window.FixeoArtisanIdentity.resolveCanonicalId(artisan);
       }
       window.FixeoReservation.open(artisan, false);
     }, true);
