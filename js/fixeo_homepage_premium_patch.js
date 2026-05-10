@@ -60,8 +60,16 @@
     var cityEl = document.getElementById('filter-city') || document.getElementById('services-city-filter') || document.getElementById('ssb2-select-city');
     var catEl  = document.getElementById('filter-category') || document.getElementById('ssb2-select-cat');
     var qEl    = document.getElementById('search-input') || document.getElementById('ssb2-input-nlp');
+    /* K-1: City priority hierarchy
+     *   P1: services-city-filter (manual user pick in services section)
+     *   P2: filter-city / ssb2-select-city (QSM search or chip selection)
+     *   P3: window.FIXEO_DETECTED_CITY (geo reverse-geocode, written by hero-geo script)
+     *   P4: '' → current national fallback behavior (unchanged)
+     * Manual intent always wins; geo is a silent fallback only. */
+    var cityVal = (cityEl && cityEl.value) ? cityEl.value.trim() : '';
+    if (!cityVal) { cityVal = (typeof window.FIXEO_DETECTED_CITY === 'string' ? window.FIXEO_DETECTED_CITY : '') || ''; }
     return {
-      city:    (cityEl && cityEl.value) ? cityEl.value.trim() : '',
+      city:    cityVal,
       service: (catEl  && catEl.value)  ? catEl.value.trim()  : '',
       query:   (qEl    && qEl.value)    ? qEl.value.trim()    : '',
     };
@@ -487,9 +495,17 @@
      * Filtered results count is a search-results concept, not a section header trust signal. */
     var displayCount = avail > 0 ? avail : total;
 
+    /* K-1: dynamic title — city-aware when geo or manual city is known.
+     * Counter always stays national (displayCount = platform total).
+     * cityName is the explicit user pick or geo city — never a raw filter value. */
+    var _cityName = ctx.city || (typeof window.FIXEO_DETECTED_CITY === 'string' ? window.FIXEO_DETECTED_CITY : '') || '';
+    var _titleText = _cityName
+      ? 'Artisans disponibles \u00e0 ' + _cityName
+      : 'Artisans disponibles pr\u00e8s de vous';
+
     el.innerHTML =
       '<div class="fhp-header-copy">'+
-        '<h2 class="fhp-title">Artisans disponibles pr\u00e8s de vous</h2>'+
+        '<h2 class="fhp-title">' + _titleText + '</h2>'+
         '<p class="fhp-subtitle">Disponibles dans votre ville \u00b7 Paiement apr\u00e8s intervention</p>'+
       '</div>'+
       '<a class="fhp-see-all" href="index.html#artisans-section" onclick="event.preventDefault();if(window.FixeoClientRequest&&typeof FixeoClientRequest.open===\'function\'){FixeoClientRequest.open();}else{var s=document.getElementById(\'artisans-section\');if(s)s.scrollIntoView({behavior:\'smooth\'});}">'+
@@ -755,6 +771,13 @@
     init();
   }
 
-  window.FixeoHomepagePremium = { refresh:_renderPremiumGrid, enterSearch:_enterSearchMode, enterHomepage:_enterHomepageMode };
+  /* K-2: refreshIfIdle — re-render only when user hasn't started a search.
+   * Called by hero-geo script after geo city resolves (250ms delay).
+   * _searchActive guards against re-rendering during/after user interactions. */
+  function _refreshIfIdle() {
+    if (!_searchActive) { _renderPremiumGrid(); }
+  }
+
+  window.FixeoHomepagePremium = { refresh:_renderPremiumGrid, enterSearch:_enterSearchMode, enterHomepage:_enterHomepageMode, refreshIfIdle:_refreshIfIdle };
 
 }(window));

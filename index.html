@@ -3336,7 +3336,7 @@ function openContentModal(type) {
 <script src="js/fixeo-session-bridge.js?v=sb1"></script>
 <script src="js/homepage-v13.js?v=50a38b9"></script>
 <script src="js/hero-performance.js?v=50a38b9"></script>
-<script src="js/fixeo_homepage_premium_patch.js?v=fhp13e"></script>
+<script src="js/fixeo_homepage_premium_patch.js?v=fhp14"></script>
 
 <script>
 /* ================================================================
@@ -3845,6 +3845,20 @@ window.addEventListener('load', function () {
       }
 
       if (city) { _preselectCity(city); }
+      if (city) {
+        /* K-1: expose detected city globally for fhp.js ranking pipeline.
+         * fhp._getFilterContext() reads this as Priority-3 fallback (below manual selections).
+         * try/catch: safe if window is restricted; no side effects. */
+        try { window.FIXEO_DETECTED_CITY = city; } catch(e2) {}
+        /* K-2: silently re-rank the artisan grid now that we know the city.
+         * Only fires if user hasn't already interacted with search/filters.
+         * 250ms delay ensures FIXEO_DETECTED_CITY is written before refresh() reads it. */
+        try {
+          if (window.FixeoHomepagePremium && typeof window.FixeoHomepagePremium.refreshIfIdle === 'function') {
+            setTimeout(function() { window.FixeoHomepagePremium.refreshIfIdle(); }, 250);
+          }
+        } catch(e3) {}
+      }
       if (district) {
         try { window._fixeoDetectedDistrict = district; } catch(e2) {}
       }
