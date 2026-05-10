@@ -749,3 +749,96 @@
   .fxadp2-hero-cta { padding: 10px 16px; font-size: 0.8rem; }
   .fxadp2-readiness-head { flex-direction: column; align-items: flex-start; }
 }
+
+/* ══════════════════════════════════════════════════════════
+   V1-C: Availability public badge + profile preview link
+   ══════════════════════════════════════════════════════════ */
+
+.fxadp2-avail-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.fxadp2-avail-public-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 11px;
+  border-radius: 20px;
+  font-size: 0.73rem;
+  font-weight: 700;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+.fxadp2-avail-public-badge.ok {
+  background: rgba(32,201,151,0.10);
+  color: #20c997;
+  border-color: rgba(32,201,151,0.22);
+}
+.fxadp2-avail-public-badge.warn {
+  background: rgba(255,165,2,0.09);
+  color: #ffa502;
+  border-color: rgba(255,165,2,0.20);
+}
+
+.fxadp2-avail-preview-row {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+
+.fxadp2-profile-preview-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.40);
+  text-decoration: none;
+  padding: 5px 0;
+  transition: color 0.16s;
+  -webkit-tap-highlight-color: transparent;
+}
+.fxadp2-profile-preview-link:hover { color: rgba(255,255,255,0.72); }
+
+/* ══════════════════════════════════════════════════════════
+   V1-C: Settings section — profile publishing feel
+   ══════════════════════════════════════════════════════════ */
+
+#section-settings .section-note {
+  font-size: 0.78rem;
+  opacity: 0.45;
+}
+
+/* Form group improvements */
+#section-settings .form-group textarea.form-control {
+  font-family: inherit;
+  line-height: 1.5;
+}
+#section-settings .form-label {
+  font-size: 0.84rem;
+  font-weight: 600;
+  opacity: 0.80;
+  margin-bottom: 5px;
+  display: block;
+}
+
+/* ══════════════════════════════════════════════════════════
+   V1-C: Sidebar profile preview link
+   ══════════════════════════════════════════════════════════ */
+
+#sidebar-profile-preview:hover {
+  opacity: 0.72 !important;
+  text-decoration: underline;
+}
+
+/* ══════════════════════════════════════════════════════════
+   V1-C: Mobile
+   ══════════════════════════════════════════════════════════ */
+
+@media (max-width: 480px) {
+  .fxadp2-avail-header { flex-direction: column; align-items: flex-start; }
+  .fxadp2-avail-public-badge { font-size: 0.70rem; }
+}

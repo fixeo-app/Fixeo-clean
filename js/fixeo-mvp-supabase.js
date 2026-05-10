@@ -329,6 +329,11 @@
         var opt = Array.from(cityEl.options).find(function(o) { return o.value === city || o.text === city; });
         if (opt) cityEl.value = opt.value;
       }
+      /* V1-C: Hydrate job + description from localStorage (not stored in Supabase profiles) */
+      var jobEl  = document.getElementById('settings-artisan-job');
+      var descEl = document.getElementById('settings-artisan-desc');
+      if (jobEl  && !jobEl.value)  { try { jobEl.value  = localStorage.getItem('user_job')          || ''; } catch(_){} }
+      if (descEl && !descEl.value) { try { descEl.value = localStorage.getItem('user_description') || ''; } catch(_){} }
       /* ── V1-A Onboarding sync: write user_city + user_name to localStorage ──
          Guarantees p4.js getArtisan() city filter has real data immediately
          after Supabase login — without requiring onboarding-artisan.html path.

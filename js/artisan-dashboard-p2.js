@@ -351,7 +351,7 @@
       + '</div>';
   }
 
-  /* ── RENDER: Premium availability selector ───────────── */
+  /* ── V1-C: Render availability selector with public presence feeling ── */
   function renderAvailability() {
     var stored = ls('fixeo_avail_status', 'now');
     var opts = [
@@ -360,9 +360,27 @@
       { key: 'off',  dot: 'off',  label: 'Indisponible' }
     ];
 
+    /* V1-C: Build profile preview URL from localStorage artisan id */
+    var artisanId = ls('user_id', ls('fixeo_user_id', ls('sb_user_id', '')));
+    var profilePreviewHtml = '';
+    if (artisanId) {
+      profilePreviewHtml = '<a class="fxadp2-profile-preview-link" '
+        + 'href="/artisan-profile.html?id=' + encodeURIComponent(artisanId) + '" '
+        + 'target="_blank" rel="noopener">'
+        + '\ud83d\udc41\ufe0f Voir mon profil public'
+        + '</a>';
+    }
+
+    /* V1-C: Public availability label (what clients see) */
+    var publicLabel = stored === 'now'  ? '\ud83d\udfe2 Disponible'
+                    : stored === 'week' ? '\ud83d\udfe1 Disponible cette semaine'
+                    : '\u26ab Indisponible';
+    var publicCls   = stored === 'off' ? 'warn' : 'ok';
+
     return '<div class="fxadp2-avail" id="fxadp2-avail">'
       + '<div class="fxadp2-avail-header">'
-      + '<h3 class="fxadp2-avail-title">Disponibilit\u00e9</h3>'
+      + '<h3 class="fxadp2-avail-title">Ma disponibilit\u00e9</h3>'
+      + '<span class="fxadp2-avail-public-badge ' + publicCls + '">' + publicLabel + '</span>'
       + '</div>'
       + '<div class="fxadp2-avail-options" id="fxadp2-avail-opts">'
       + opts.map(function(o){
@@ -373,7 +391,10 @@
             + '</button>';
         }).join('')
       + '</div>'
-      + '<div class="fxadp2-avail-note">Votre statut est visible dans votre profil et influence les demandes que vous recevez.</div>'
+      + '<div class="fxadp2-avail-note" id="fxadp2-avail-note">Votre statut est enregistr\u00e9 et refl\u00e8te votre disponibilit\u00e9 pour les nouvelles demandes.</div>'
+      + (profilePreviewHtml
+        ? '<div class="fxadp2-avail-preview-row">' + profilePreviewHtml + '</div>'
+        : '')
       + '</div>';
   }
 
@@ -390,9 +411,93 @@
   /* ── Global helper for action card ──────────────────── */
   window.lsSet_p2 = function(k,v){ try { localStorage.setItem(k,v); } catch(e){} };
 
+  /* ── V1-C: Map fixeo_avail_status → marketplace / Supabase availability strings ── */
+  function _availKeyToPublic(key) {
+    if (key === 'now')  return 'available';
+    if (key === 'week') return 'available';
+    return 'unavailable';
+  }
+
+  /* ── V1-C: Bridge availability to marketplace pool (fixeo_admin_artisans_v21) ── */
+  function _bridgeAvailToMarketplace(key) {
+    var POOL_KEY = 'fixeo_admin_artisans_v21';
+    var publicVal = _availKeyToPublic(key);
+    try {
+      var userId = ls('user_id', ls('fixeo_user_id', ls('sb_user_id', '')));
+      if (!userId) return;
+      var pool = [];
+      try { pool = JSON.parse(localStorage.getItem(POOL_KEY) || '[]'); } catch(e){ return; }
+      if (!Array.isArray(pool)) return;
+      var updated = false;
+      pool = pool.map(function(art) {
+        var rid = String(art.id || '');
+        var roid = String(art.owner_account_id || '');
+        if (rid === userId || roid === userId) {
+          updated = true;
+          return Object.assign({}, art, { availability: publicVal });
+        }
+        return art;
+      });
+      if (updated) {
+        localStorage.setItem(POOL_KEY, JSON.stringify(pool));
+      }
+    } catch(e) { /* silent — non-critical */ }
+  }
+
+  /* ── V1-C: Non-blocking Supabase availability update ────── */
+  function _syncAvailToSupabase(key) {
+    var publicVal = _availKeyToPublic(key);
+    try {
+      if (!window.FixeoSupabaseClient || typeof window.FixeoSupabaseClient.getClient !== 'function') return;
+      var userId = ls('user_id', ls('fixeo_user_id', ls('sb_user_id', '')));
+      if (!userId) return;
+      window.FixeoSupabaseClient.getClient().then(function(sb) {
+        return sb.from('artisans')
+          .update({ availability: publicVal })
+          .or('id.eq.' + userId + ',legacy_id.eq.' + userId);
+      }).then(function() {
+        /* Success — silent */
+      }).catch(function() {
+        /* RLS may reject — silent, localStorage bridge is sufficient */
+      });
+    } catch(e) { /* silent */ }
+  }
+
+  /* ── V1-C: Show availability confirmation in the avail card ── */
+  function _showAvailConfirmation(key) {
+    /* try new stable id first, fallback to old note class */
+    var note = el('fxadp2-avail-note') || qs('.fxadp2-avail-note');
+    if (!note) return;
+    if (key === 'off') {
+      note.innerHTML = '\u26ab Statut <strong>Indisponible</strong> enregistr\u00e9. '
+        + 'Votre profil reste visible mais vous n\u2019\u00eates pas propos\u00e9 aux nouveaux clients.';
+      note.style.color = 'rgba(255,165,2,0.75)';
+    } else if (key === 'week') {
+      note.innerHTML = '\ud83d\udfe1 Statut <strong>Disponible cette semaine</strong> enregistr\u00e9. '
+        + 'Votre profil indique que vous pouvez intervenir cette semaine.';
+      note.style.color = 'rgba(255,165,2,0.65)';
+    } else {
+      note.innerHTML = '\ud83d\udfe2 Statut <strong>Disponible maintenant</strong> enregistr\u00e9. '
+        + 'Votre profil indique que vous \u00eates pr\u00eat \u00e0 intervenir.';
+      note.style.color = 'rgba(32,201,151,0.80)';
+    }
+    /* Reset to default style after 4s */
+    setTimeout(function() {
+      if (note) {
+        note.innerHTML = 'Votre statut est enregistr\u00e9 et refl\u00e8te votre disponibilit\u00e9 pour les nouvelles demandes.';
+        note.style.color = '';
+      }
+    }, 4000);
+  }
+
   /* ── Availability setter ─────────────────────────────── */
   window._fxAdP2SetAvail = function(key) {
     lsSet('fixeo_avail_status', key);
+
+    /* V1-C: Bridge to marketplace pool + Supabase (non-blocking) */
+    _bridgeAvailToMarketplace(key);
+    _syncAvailToSupabase(key);
+
     // Update sidebar availability status
     var st = el('avail-status');
     if (st) {
@@ -416,8 +521,13 @@
         btn.classList.add(key === 'off' ? 'selected-warn' : 'selected');
       }
     });
+
+    /* V1-C: Confirmation feedback in availability note */
+    _showAvailConfirmation(key);
+
     // Refresh action cards (avail item may be done now)
     refreshActionCards();
+
     if (window.notifications && key !== 'off') {
       notifications.success(
         key === 'now' ? 'Disponible maintenant' : 'Disponible cette semaine',

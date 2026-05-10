@@ -539,6 +539,9 @@
       var phone = (el('settings-artisan-phone') || {}).value  || '';
       var city  = (el('settings-artisan-city')  || {}).value  || '';
       var email = (el('settings-artisan-email') || {}).value  || '';
+      /* V1-C: new fields */
+      var job   = ((el('settings-artisan-job')  || {}).value  || '').trim();
+      var desc  = ((el('settings-artisan-desc') || {}).value  || '').trim();
 
       if (!name.trim()) {
         if (window.notifications) notifications.warn('Champ requis', 'Veuillez saisir votre nom complet.');
@@ -551,6 +554,9 @@
         localStorage.setItem('fixeo_user_name', name);
         localStorage.setItem('user_phone',      phone);
         localStorage.setItem('user_city',       city);
+        /* V1-C: job + description */
+        if (job)  localStorage.setItem('user_job', job);
+        if (desc) localStorage.setItem('user_description', desc);
         // Update sidebar name immediately
         var sidebarName = el('sidebar-username');
         if (sidebarName) sidebarName.textContent = name;
@@ -558,6 +564,10 @@
         if (heroName) heroName.textContent = name.split(' ')[0];
         // Refresh checklist/status
         refreshActivationState();
+        /* V1-C: Emit profile:updated so p2/p3 rebuild overview cockpit */
+        try {
+          document.dispatchEvent(new CustomEvent('fixeo:profile:updated'));
+        } catch(ee) {}
         if (window.notifications) notifications.success('Profil mis \u00e0 jour', 'Vos informations ont \u00e9t\u00e9 sauvegard\u00e9es.');
       } catch(e) {
         if (window.notifications) notifications.warn('Erreur', 'Impossible de sauvegarder.');

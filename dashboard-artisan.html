@@ -360,7 +360,7 @@ select option{background:#1a1a2e!important;color:#fff!important;}
   <!-- Phase 1 Trust Reset — additive override -->
   <link rel="stylesheet" href="css/artisan-dashboard-p1.css?v=1">
   <!-- Phase 2 Premium Activation Cockpit — additive override -->
-  <link rel="stylesheet" href="css/artisan-dashboard-p2.css?v=1">
+  <link rel="stylesheet" href="css/artisan-dashboard-p2.css?v=da-v1c">
   <!-- Phase 3 Live Visibility Engine — additive override -->
   <link rel="stylesheet" href="css/artisan-dashboard-p3.css?v=1">
   <!-- Phase 4 Real Request Inbox — additive override -->
@@ -594,7 +594,10 @@ select option{background:#1a1a2e!important;color:#fff!important;}
       <div style="min-width:0">
         <div id="sidebar-username" style="font-weight:700;font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Chargement...</div>
         <div id="sidebar-role" style="font-size:.68rem;color:var(--accent2,rgba(255,255,255,.55));margin-top:1px;">🔧 Artisan</div>
-        <div id="avail-status" class="availability-status online" style="font-size:.68rem;padding:2px 8px;margin-top:3px;display:inline-flex">● Disponible</div>
+        <div style="display:flex;align-items:center;gap:6px;margin-top:3px;flex-wrap:wrap">
+          <div id="avail-status" class="availability-status online" style="font-size:.68rem;padding:2px 8px;display:inline-flex">● Disponible</div>
+          <a id="sidebar-profile-preview" href="/artisan-profile.html" target="_blank" rel="noopener" style="font-size:.65rem;opacity:.42;color:inherit;text-decoration:none;white-space:nowrap" title="Voir mon profil public">👁 Mon profil</a>
+        </div>
       </div>
     </div>
     <nav class="sidebar-nav">
@@ -881,13 +884,24 @@ select option{background:#1a1a2e!important;color:#fff!important;}
     </div>
 
     <div id="section-settings" style="display:none">
-      <h2 style="font-size:1.3rem;margin-bottom:20px">⚙️ Paramètres</h2>
+      <div class="section-heading" style="margin-bottom:20px">
+        <h2>⚙️ Mon profil & Paramètres</h2>
+        <span class="section-note">Ce que les clients voient sur votre fiche publique</span>
+      </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:800px">
         <div class="chart-card" style="padding:24px">
-          <h4 style="margin-bottom:20px">Profil</h4>
-          <div class="form-group"><label class="form-label">Nom</label><input type="text" class="form-control" id="settings-artisan-name" placeholder="Votre nom complet"></div>
-          <div class="form-group"><label class="form-label">Téléphone</label><input type="tel" class="form-control" id="settings-artisan-phone" placeholder="+212 6XX XXX XXX"></div>
-          <div class="form-group"><label class="form-label">Ville</label>
+          <h4 style="margin-bottom:20px">Profil public</h4>
+          <div class="form-group"><label class="form-label">Nom complet</label><input type="text" class="form-control" id="settings-artisan-name" placeholder="Votre nom complet"></div>
+          <div class="form-group"><label class="form-label">Métier / Spécialité</label>
+            <select class="form-control" id="settings-artisan-job">
+              <option value="">Choisir un métier</option>
+              <option>Plomberie</option><option>Électricité</option><option>Peinture</option>
+              <option>Climatisation</option><option>Nettoyage</option><option>Menuiserie</option>
+              <option>Serrurerie</option><option>Maçonnerie</option><option>Jardinage</option>
+              <option>Carrelage</option><option>Toiture</option><option>Chauffage</option>
+            </select>
+          </div>
+          <div class="form-group"><label class="form-label">Ville d'intervention</label>
             <select class="form-control" id="settings-artisan-city">
               <option value="">Choisir une ville</option>
               <option>Casablanca</option><option>Rabat</option><option>Marrakech</option>
@@ -895,8 +909,13 @@ select option{background:#1a1a2e!important;color:#fff!important;}
               <option>Tanger</option><option>Salé</option><option>Oujda</option>
             </select>
           </div>
+          <div class="form-group"><label class="form-label">Téléphone WhatsApp</label><input type="tel" class="form-control" id="settings-artisan-phone" placeholder="+212 6XX XXX XXX"></div>
+          <div class="form-group">
+            <label class="form-label">Description courte <span style="font-size:.72rem;opacity:.45;font-weight:400">— visible sur votre profil public</span></label>
+            <textarea class="form-control" id="settings-artisan-desc" rows="3" placeholder="Ex : Plombier expérimenté à Casablanca, spécialisé en réparations urgentes et installations sanitaires. Intervention rapide et travail soigné." style="resize:vertical;min-height:80px;font-size:.9rem"></textarea>
+          </div>
           <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-control" id="settings-artisan-email" placeholder="votre@email.com" readonly></div>
-          <button class="btn btn-primary w-100" id="settings-artisan-save">Sauvegarder</button>
+          <button class="btn btn-primary w-100" id="settings-artisan-save">Sauvegarder le profil</button>
         </div>
         <div class="chart-card" style="padding:24px">
           <h4 style="margin-bottom:20px">Disponibilité & Alertes</h4>
@@ -1164,8 +1183,36 @@ function openAddPortfolio() {
   document.getElementById('modal-overlay').classList.add('open');
 }
 
-// ── Init (V1-B) ───────────────────────────────────────────────────────────
+// ── Init (V1-C) ──────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
+  /* V1-C: Wire sidebar profile preview link to real artisan ID */
+  (function() {
+    var previewLink = document.getElementById('sidebar-profile-preview');
+    if (!previewLink) return;
+    var artId = '';
+    try {
+      artId = localStorage.getItem('user_id') || localStorage.getItem('fixeo_user_id') || localStorage.getItem('sb_user_id') || '';
+    } catch(e){}
+    if (artId) {
+      previewLink.href = '/artisan-profile.html?id=' + encodeURIComponent(artId);
+      previewLink.style.opacity = '0.50';
+    }
+    /* Also hydrate settings form fields from localStorage on each section-settings show */
+    var origShowSection = window.showSection;
+    if (typeof origShowSection === 'function') {
+      window.showSection = function(sec) {
+        origShowSection(sec);
+        if (sec === 'settings') {
+          var jobEl  = document.getElementById('settings-artisan-job');
+          var descEl = document.getElementById('settings-artisan-desc');
+          try {
+            if (jobEl  && !jobEl.value)  jobEl.value  = localStorage.getItem('user_job')         || '';
+            if (descEl && !descEl.value) descEl.value = localStorage.getItem('user_description') || '';
+          } catch(e){}
+        }
+      };
+    }
+  })();
   /* V1-B: Hide earnings placeholder when commission-lifecycle-p3a.js injects real cards */
   function _checkEarningsReal() {
     var codEarnings = document.getElementById('artisan-cod-earnings');
@@ -1451,16 +1498,16 @@ document.addEventListener('DOMContentLoaded', () => {
 <script src="js/fixeo-supabase-core.js?v=p1b"></script>
 <script src="js/header-unified.js"></script>
 <script src="js/auth-global.js?v=p1b"></script>
-<script src="js/fixeo-mvp-supabase.js?v=v1a"></script>
+<script src="js/fixeo-mvp-supabase.js?v=da-v1c"></script>
 <script src="js/fixeo-session-bridge.js?v=sb1"></script>
 
 <!-- fixeo-chat-mvp.js removed V1-A (localStorage-only fake chat widget) -->
 <script src="js/fixeo-client-requests-dashboard.js"></script>
 <script src="js/fixeo-artisan-request-notifications.js"></script>
 <!-- Phase 1 Trust Reset -->
-<script src="js/artisan-dashboard-p1.js?v=1" defer></script>
+<script src="js/artisan-dashboard-p1.js?v=da-v1c" defer></script>
 <!-- Phase 2 Premium Activation Cockpit -->
-<script src="js/artisan-dashboard-p2.js?v=1" defer></script>
+<script src="js/artisan-dashboard-p2.js?v=da-v1c" defer></script>
 <!-- Phase 3 Live Visibility Engine -->
 <script src="js/artisan-dashboard-p3.js?v=1" defer></script>
 <!-- Phase 4 Real Request Inbox -->
