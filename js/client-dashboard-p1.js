@@ -152,17 +152,29 @@
       + '<div class="fxclp1-artisan-avatar">\ud83d\udc77</div>'
       + '<div class="fxclp1-artisan-body">'
       + '<div class="fxclp1-artisan-name">' + name + '</div>'
-      + '<div class="fxclp1-artisan-sub">' + (since ? 'Assign\u00e9 le ' + esc(since) : 'Artisan confirm\u00e9') + '</div>'
+      + '<div class="fxclp1-artisan-sub">' + (since ? 'Coordination d\u00e9marr\u00e9e le ' + esc(since) : 'Coordination en cours') + '</div>'
       + '</div>'
-      + '<div class="fxclp1-artisan-contact">Il vous contactera</div>'
+      + '<div class="fxclp1-artisan-contact">Coordination WhatsApp active</div>'
       + '</div>';
   }
 
-  /* ── Contact hint (no phone available) ──────────────── */
+  /* ── Contact hint (no phone available) — V1-I upgraded ──────────────── */
   function renderContactHint(step) {
     if (step < 1) return '';
+    /* step 1 = acceptée, step 2 = en_cours */
+    if (step === 1) {
+      return '<div class="fxclp1-contact-hint">'
+        + 'La coordination a d\u00e9marr\u00e9. L\u2019artisan peut vous contacter via WhatsApp '
+        + 'pour confirmer l\u2019horaire et l\u2019adresse.'
+        + '</div>';
+    }
+    if (step === 2) {
+      return '<div class="fxclp1-contact-hint">'
+        + 'Intervention en cours. Aucune action requise pour l\u2019instant.'
+        + '</div>';
+    }
     return '<div class="fxclp1-contact-hint">'
-      + '\u2139\ufe0f L\u2019artisan vous contactera directement pour planifier l\u2019intervention.'
+      + 'La coordination continue via WhatsApp si n\u00e9cessaire.'
       + '</div>';
   }
 

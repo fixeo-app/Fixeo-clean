@@ -1,0 +1,337 @@
+/*
+ * fixeo-coordination-v1i.css — V1-I Coordination Confidence Layer
+ * Append-only. No overrides of existing rules.
+ * Namespace: .fxci-* (coordination layer)
+ * Loaded on: confirmation.html, dashboard-client.html, dashboard-artisan.html
+ *
+ * Philosophy: calm operational context, not dispatch theater.
+ * No live indicators. No ETA. No urgency. No fake "agent assigned".
+ * Every element below appears only when real data is present.
+ */
+
+/* ═══════════════════════════════════════════════════════════════════
+   PHASE 1 — Coordination context strip (in-card quiet signal)
+   Appears in: accepted mission cards, confirmation page, client dashboard
+   ═══════════════════════════════════════════════════════════════════ */
+
+.fxci-coord-strip {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding: 10px 13px;
+  border-radius: 9px;
+  background: rgba(255,255,255,0.038);
+  border-left: 2px solid rgba(255,255,255,0.12);
+  margin: 10px 0 2px;
+  font-size: 0.80rem;
+  color: rgba(255,255,255,0.58);
+  line-height: 1.50;
+}
+.fxci-coord-strip--accepted {
+  border-left-color: rgba(32,201,151,0.35);
+  background: rgba(32,201,151,0.04);
+}
+.fxci-coord-strip--en-cours {
+  border-left-color: rgba(99,179,237,0.35);
+  background: rgba(99,179,237,0.04);
+}
+.fxci-coord-strip--terminee {
+  border-left-color: rgba(131,58,180,0.28);
+  background: rgba(131,58,180,0.03);
+}
+.fxci-coord-strip--waiting {
+  border-left-color: rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.02);
+}
+.fxci-coord-icon {
+  font-size: 0.85rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+  opacity: 0.70;
+}
+.fxci-coord-text {
+  flex: 1;
+  min-width: 0;
+}
+.fxci-coord-text strong {
+  font-weight: 600;
+  color: rgba(255,255,255,0.72);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   PHASE 2 — Artisan identity card (confirmation / client dashboard)
+   Small quiet card below timeline on confirmation.html
+   ═══════════════════════════════════════════════════════════════════ */
+
+.fxci-artisan-id-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 16px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  margin: 16px 0 8px;
+}
+.fxci-artisan-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(32,201,151,0.12);
+  border: 1px solid rgba(32,201,151,0.20);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.35rem;
+  flex-shrink: 0;
+}
+.fxci-artisan-body {
+  flex: 1;
+  min-width: 0;
+}
+.fxci-artisan-name {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.90);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.fxci-artisan-meta {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.42);
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.fxci-artisan-avail {
+  font-size: 0.70rem;
+  font-weight: 600;
+  color: rgba(32,201,151,0.85);
+  padding: 2px 8px;
+  border-radius: 99px;
+  background: rgba(32,201,151,0.10);
+  border: 1px solid rgba(32,201,151,0.18);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   PHASE 2 — Next-step clarity block
+   "What happens next" guidance — calm, not anxious
+   ═══════════════════════════════════════════════════════════════════ */
+
+.fxci-next-step {
+  padding: 12px 14px;
+  border-radius: 9px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  margin: 10px 0;
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.50);
+  line-height: 1.55;
+}
+.fxci-next-step-label {
+  font-size: 0.70rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.28);
+  margin-bottom: 5px;
+}
+.fxci-next-step-text {
+  color: rgba(255,255,255,0.58);
+  font-size: 0.80rem;
+  line-height: 1.55;
+}
+
+/* Same-day context signal */
+.fxci-sameday-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 11px;
+  border-radius: 99px;
+  background: rgba(32,201,151,0.10);
+  border: 1px solid rgba(32,201,151,0.22);
+  font-size: 0.73rem;
+  font-weight: 600;
+  color: rgba(32,201,151,0.85);
+  margin-bottom: 10px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   PHASE 3 — Operational reliability signal chips (artisan profile area)
+   Small passive chips shown when real data supports them
+   ═══════════════════════════════════════════════════════════════════ */
+
+.fxci-reliability-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 8px 0 0;
+}
+.fxci-rel-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 99px;
+  font-size: 0.71rem;
+  font-weight: 500;
+  color: rgba(255,255,255,0.48);
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  white-space: nowrap;
+}
+.fxci-rel-chip--avail {
+  color: rgba(32,201,151,0.72);
+  background: rgba(32,201,151,0.06);
+  border-color: rgba(32,201,151,0.14);
+}
+.fxci-rel-chip--recent {
+  color: rgba(99,179,237,0.72);
+  background: rgba(99,179,237,0.05);
+  border-color: rgba(99,179,237,0.12);
+}
+.fxci-rel-chip--zone {
+  color: rgba(255,255,255,0.50);
+  background: rgba(255,255,255,0.03);
+  border-color: rgba(255,255,255,0.07);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   PHASE 4 — Client state context (per-request cards — dashboard-client)
+   Replaces generic static "waiting" with operational context text
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Improved artisan block when assigned */
+.fxclp1-artisan-block.fxci-upgraded {
+  border-left: 2px solid rgba(32,201,151,0.30);
+  background: rgba(32,201,151,0.03);
+}
+.fxclp1-artisan-block.fxci-upgraded .fxclp1-artisan-contact {
+  display: none; /* replaced by fxci-coord-strip below */
+}
+
+/* Waiting state operational context */
+.fxci-waiting-context {
+  padding: 9px 12px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.025);
+  border-left: 2px solid rgba(255,255,255,0.08);
+  font-size: 0.77rem;
+  color: rgba(255,255,255,0.42);
+  line-height: 1.50;
+  margin: 8px 0 2px;
+  font-style: italic;
+}
+
+/* Validated state — calm closure */
+.fxci-closed-strip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  border-radius: 8px;
+  background: rgba(32,201,151,0.05);
+  border: 1px solid rgba(32,201,151,0.12);
+  font-size: 0.77rem;
+  color: rgba(32,201,151,0.65);
+  margin: 8px 0 2px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   PHASE 5 — Artisan sparse market calm empty state
+   Replaces anxiety with operational clarity
+   ═══════════════════════════════════════════════════════════════════ */
+
+.fxci-sparse-note {
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.025);
+  border: 1px solid rgba(255,255,255,0.06);
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.40);
+  line-height: 1.58;
+  margin: 10px 0 6px;
+  font-style: italic;
+  text-align: center;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   CONFIRMATION PAGE — V1-I coordination context block
+   Injected below fxv2c-timeline on confirmation.html
+   ═══════════════════════════════════════════════════════════════════ */
+
+.fxci-conf-coord {
+  margin: 14px 0 10px;
+}
+.fxci-conf-coord-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.26);
+  margin-bottom: 8px;
+}
+.fxci-conf-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.fxci-conf-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: 9px;
+  background: rgba(255,255,255,0.035);
+  border-left: 2px solid rgba(255,255,255,0.09);
+  font-size: 0.79rem;
+  color: rgba(255,255,255,0.52);
+  line-height: 1.45;
+}
+.fxci-conf-step--active {
+  border-left-color: rgba(32,201,151,0.38);
+  background: rgba(32,201,151,0.04);
+  color: rgba(255,255,255,0.62);
+}
+.fxci-conf-step-icon {
+  font-size: 0.90rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+  opacity: 0.65;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   MOBILE ADJUSTMENTS
+   ═══════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 480px) {
+  .fxci-coord-strip    { padding: 9px 11px; font-size: 0.77rem; }
+  .fxci-artisan-id-card { padding: 11px 13px; gap: 10px; }
+  .fxci-artisan-avatar { width: 38px; height: 38px; font-size: 1.15rem; }
+  .fxci-artisan-name   { font-size: 0.87rem; }
+  .fxci-next-step      { padding: 10px 12px; font-size: 0.76rem; }
+  .fxci-conf-step      { padding: 8px 10px; font-size: 0.77rem; }
+  .fxci-rel-chip       { font-size: 0.69rem; padding: 3px 8px; }
+}
+@media (max-width: 360px) {
+  .fxci-artisan-id-card { flex-wrap: wrap; }
+  .fxci-artisan-avail  { width: 100%; text-align: center; }
+  .fxci-coord-strip    { font-size: 0.75rem; gap: 7px; }
+  .fxci-conf-step      { font-size: 0.75rem; gap: 7px; }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .fxci-coord-strip,
+  .fxci-artisan-id-card,
+  .fxci-next-step,
+  .fxci-conf-step {
+    transition: none !important;
+    animation: none !important;
+  }
+}

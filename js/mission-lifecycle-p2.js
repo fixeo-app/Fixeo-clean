@@ -248,7 +248,7 @@
     dispatch('fixeo:state:updated', { event: 'mission-completed' });
 
     if (window.notifications && window.notifications.success) {
-      window.notifications.success('Intervention termin\u00e9e', 'En attente de confirmation client.');
+      window.notifications.success('Intervention termin\u00e9e', 'Le client confirmera quand il est pr\u00eat.');
     }
     setTimeout(_renderArtisan, 150);
   };
@@ -332,7 +332,7 @@
     var badgeHtml;
     if      (st === 'accept\u00e9e') badgeHtml = '<span class="fxmlp2-state-badge accepted">\u2714 \u00c0 coordonner</span>';
     else if (st === 'en_cours')       badgeHtml = '<span class="fxmlp2-state-badge en-cours"><span class="fxmlp2-pulse-dot"></span>En cours</span>';
-    else                              badgeHtml = '<span class="fxmlp2-state-badge terminee waiting-confirm">\u23f3 Attente client</span>';
+    else                              badgeHtml = '<span class="fxmlp2-state-badge terminee waiting-confirm">\u2713 Termin\u00e9e</span>';
 
     /* Coordination hint per state */
     var hintHtml = '';
@@ -341,7 +341,7 @@
     } else if (st === 'en_cours' && waHref) {
       hintHtml = '<div class="fxmlp2-coord-hint fxmlp2-coord-hint--active">Interv. d\u00e9marr\u00e9e \u2014 pr\u00e9venez le client de tout changement.</div>';
     } else if (st === 'termin\u00e9e') {
-      hintHtml = '<div class="fxmlp2-coord-hint fxmlp2-coord-hint--done">En attente de confirmation client pour cl\u00f4turer.</div>';
+      hintHtml = '<div class="fxmlp2-coord-hint fxmlp2-coord-hint--done">Mission finalis\u00e9e. Le client confirme quand il est pr\u00eat \u2014 c\u2019est normal.</div>';
     }
 
     /* V1-E-A: Operational elapsed strips — calm, non-anxious, inline.
