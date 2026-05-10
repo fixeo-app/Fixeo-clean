@@ -268,3 +268,57 @@
   transition: opacity 0.55s ease, transform 0.55s cubic-bezier(0.22,1,0.36,1),
               border-color 0.22s ease, background 0.22s ease, box-shadow 0.22s ease !important;
 }
+
+/* ══════════════════════════════════════════════════════════════════════
+   M-1: Intelligent Marketplace System — Copy & Visual Polish
+   Append-only. Zero existing lines modified. Braces balanced.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── M1-A: Section tag — hide (h2 already carries section identity) ── */
+/* "TECHNOLOGIE FIXEO" over "Le système intelligent…" = same redundancy as L-1 */
+#why-fixeo-section .wfx-tag {
+  display: none !important;
+}
+
+/* ── M1-B: Subtitle — slightly more visible (was 0.52 opacity) ── */
+/* New copy is shorter + warmer — deserves more presence */
+#why-fixeo-section .why-fixeo-header p {
+  color: rgba(255, 255, 255, 0.62) !important;
+  font-size: 0.88rem !important;
+  max-width: 420px !important;
+}
+
+/* ── M1-C: why-card-6 hover — was missing entirely (bug fix) ── */
+/* Matched to star icon (gold) — same register as rating/reputation signal */
+.why-card-6:hover {
+  border-color: rgba(255, 193, 7, 0.28) !important;
+  box-shadow: 0 20px 48px rgba(255, 193, 7, 0.10) !important;
+}
+.why-card-6 .wf-icon-wrap {
+  background: rgba(255, 193, 7, 0.10);
+  border-color: rgba(255, 193, 7, 0.20);
+}
+.why-card-6 .wf-icon-wrap svg {
+  stroke: #ffc107;
+}
+
+/* ── M1-D: Description text — slightly more legible ── */
+/* was rgba(255,255,255,0.60) — fine; but new descriptions are longer */
+/* bump line-height for the longer copy to breathe */
+.wf-card p {
+  line-height: 1.6 !important;
+}
+
+/* ── M1-E: Mobile (≤ 480px) — description size for longer text ── */
+/* New descriptions are ~10 words longer on average; 0.74rem was borderline */
+@media (max-width: 480px) {
+  .wf-card p {
+    font-size: 0.76rem !important;
+    line-height: 1.55 !important;
+  }
+  /* Horizontal card layout at ≤480px: ensure text column fills properly */
+  .wf-card .fxm-block-content {
+    flex: 1;
+    min-width: 0;
+  }
+}
