@@ -531,7 +531,7 @@
      Only injected when no real portfolio data exists (default: always).
      Rendered AFTER #fpv2a-bio if it exists, otherwise after ppui-services.
   */
-  function injectRealizationsShell() {
+  function injectRealizationsShell(artisan) {
     if (document.getElementById('fpv2b-realizations')) return;
     /* Only inject if old emoji portfolio was fully removed (it was in V2-A) */
     if (document.getElementById('ppui-portfolio')) return;
@@ -539,15 +539,23 @@
     var root = document.querySelector('.public-artisan-shell');
     if (!root) return;
 
+    /* V1-H Phase 1+4: Category-specific empty state (sparse market identity) */
+    var cat = (artisan && (artisan.category || artisan.service || artisan.metier)) || '';
+    var catNorm = cat.charAt(0).toUpperCase() + cat.slice(1).toLowerCase();
+    var catEmptyMsg = catNorm
+      ? 'Cet artisan enrichira bientôt son profil avec des photos de ses travaux de\u00a0' + catNorm + '.'
+      : 'Ce profil sera enrichi de photos de r\u00e9alisations apr\u00e8s les premi\u00e8res interventions.';
+    var sectionTitle = catNorm ? 'Travaux de\u00a0' + catNorm : 'Exemples de travaux';
+
     var section = document.createElement('section');
     section.id = 'fpv2b-realizations';
     section.className = 'ppui-section fpv2b-realizations-section';
     section.innerHTML =
       '<p class="ppui-section-kicker">R\u00e9alisations</p>' +
-      '<h2 class="ppui-section-title">Exemples de travaux</h2>' +
+      '<h2 class="ppui-section-title">' + esc(sectionTitle) + '</h2>' +
       '<div class="fpv2b-realizations-empty">' +
         '<div class="fpv2b-realizations-icon">\ud83d\udcf7</div>' +
-        '<p class="fpv2b-realizations-msg">Ce profil sera enrichi de photos de r\u00e9alisations apr\u00e8s les premi\u00e8res interventions.</p>' +
+        '<p class="fpv2b-realizations-msg">' + esc(catEmptyMsg) + '</p>' +
         '<p class="fpv2b-realizations-hint">Les artisans Fixeo partagent leurs travaux pour illustrer leur expertise.</p>' +
       '</div>';
 
@@ -776,6 +784,299 @@
     }
   }
 
+  /* ════════════════════════════════════════════════════════
+     V1-H — OPERATIONAL IDENTITY & MARKETPLACE MEMORY
+     ════════════════════════════════════════════════════════
+
+     Philosophy: identity emerges from real work, not marketing.
+     Every signal below is derived exclusively from real data:
+       - fixeo_client_requests (localStorage mission history)
+       - artisan.created_at (Supabase longevity)
+       - fixeo_avail_off_since (V1-E-A availability tracking)
+       - user_job / user_city (profile completeness)
+
+     No counters are fabricated. No signals appear when data is absent.
+     All functions are guarded: if data is missing → silent no-op.
+     All DOM insertions are append-only, idempotent (data-vhDone guards).
+  ════════════════════════════════════════════════════════ */
+
+  /* ── V1-H helper: elapsed human (same logic as artisan-dashboard-p4.js) ── */
+  function _v1hElapsed(isoStr) {
+    if (!isoStr) return '';
+    var ms = Date.now() - (Date.parse(isoStr) || 0);
+    if (ms < 0) return '';
+    var days = Math.floor(ms / 86400000);
+    if (days < 1)  return 'aujourd\u2019hui';
+    if (days === 1) return 'hier';
+    if (days < 7)  return days + ' jours';
+    var weeks = Math.floor(days / 7);
+    if (weeks < 5) return weeks + '\u00a0semaine' + (weeks > 1 ? 's' : '');
+    var months = Math.floor(days / 30);
+    if (months < 12) return months + '\u00a0mois';
+    var years = Math.floor(months / 12);
+    return years + '\u00a0an' + (years > 1 ? 's' : '');
+  }
+
+  /* ── V1-H Phase 6: Suppress "Trust Score: N / 100" ──────
+   *  This element is rendered by fixeo-public-artisan-profile.js
+   *  as "Trust Score : 0 / 100" for all artisans without admin scoring.
+   *  It is actively damaging — "0/100" reads as a failing grade.
+   *  Suppressed entirely. The trust card already communicates quality
+   *  through rating line + tier badge without needing a raw number.
+   * ──────────────────────────────────────────────────────────── */
+  function suppressTrustScore() {
+    var el = document.querySelector('.public-trust-score');
+    if (!el || el.dataset.v1hHidden) return;
+    el.dataset.v1hHidden = '1';
+    el.style.display = 'none';
+  }
+
+  /* ── V1-H Phase 2 + 3: Operational memory from real missions ──
+   *  Reads fixeo_client_requests to compute:
+   *   - validated mission count for this artisan
+   *   - most recent validated_at timestamp
+   *   - city consistency (all validated missions in same city)
+   *  Injects a calm operational strip below the trust badge.
+   *  NEVER shows when count = 0 or data is absent.
+   *  THRESHOLD: 3 validated missions before count appears.
+   * ──────────────────────────────────────────────────────────── */
+  function injectOperationalMemory(artisanId) {
+    if (!artisanId) return;
+    if (document.querySelector('.fpv1h-op-memory')) return;
+
+    /* Requires fixeo-client-requests-store.js to be loaded */
+    var store = window.FixeoClientRequestsStore;
+    if (!store || typeof store.list !== 'function') return;
+
+    try {
+      var allReqs = store.list();
+      var artId   = String(artisanId).trim();
+
+      /* Match by assigned_artisan_id OR artisan name match fallback */
+      var artName = (document.querySelector('h1') || {}).textContent || '';
+      var validated = allReqs.filter(function(r) {
+        return r.status === 'valid\u00e9e'
+          && (String(r.assigned_artisan_id || '').trim() === artId
+              || (artName && String(r.artisan_name || r.assigned_artisan || '').trim()
+                    .toLowerCase() === artName.trim().toLowerCase()));
+      });
+
+      if (validated.length < 3) return; /* below display threshold */
+
+      /* Most recent validated_at */
+      var sortedByDate = validated.slice().sort(function(a, b) {
+        return (Date.parse(b.validated_at||b.completed_at||'') || 0)
+             - (Date.parse(a.validated_at||a.completed_at||'') || 0);
+      });
+      var mostRecent = sortedByDate[0];
+      var recentTs   = mostRecent.validated_at || mostRecent.completed_at || '';
+      var recentEl   = recentTs ? _v1hElapsed(recentTs) : '';
+
+      /* City consistency: are ≥80% of validated missions in the same city? */
+      var cityMap = {};
+      validated.forEach(function(r) {
+        var c = (r.city || r.ville || '').trim().toLowerCase();
+        if (c) cityMap[c] = (cityMap[c] || 0) + 1;
+      });
+      var topCity = Object.keys(cityMap).sort(function(a,b){ return cityMap[b]-cityMap[a]; })[0] || '';
+      var topCityCount = topCity ? cityMap[topCity] : 0;
+      var isCityConsistent = topCityCount / validated.length >= 0.8;
+
+      /* Build the memory strip */
+      var countText = validated.length + '\u00a0intervention'
+        + (validated.length > 1 ? 's' : '') + ' confirm\u00e9e'
+        + (validated.length > 1 ? 's' : '');
+      var recencyText = recentEl ? 'Derni\u00e8re il y a\u00a0' + recentEl : '';
+      var cityText = (isCityConsistent && topCity)
+        ? 'Actif \u00e0\u00a0' + _normCity(topCity)
+        : '';
+
+      var subEl = document.querySelector('.public-trust-sub');
+      if (!subEl) return;
+
+      /* Replace the trust sub-line with real operational data */
+      if (!subEl.dataset.v1hMemoryDone) {
+        subEl.dataset.v1hMemoryDone = '1';
+        subEl.innerHTML =
+          '<span class="fpv1h-count">\u2713\u00a0' + esc(countText) + '</span>'
+          + (recencyText ? '<span class="fpv1h-sep">\u2014</span><span class="fpv1h-recency">' + esc(recencyText) + '</span>' : '')
+          + (cityText    ? '<span class="fpv1h-sep">\u2014</span><span class="fpv1h-city">' + esc(cityText) + '</span>' : '');
+      }
+    } catch(e) {}
+  }
+
+  /* Capitalizes a city name from lowercase storage */
+  function _normCity(c) {
+    return String(c || '').replace(/\b\w/g, function(l){ return l.toUpperCase(); });
+  }
+
+  /* ── V1-H Phase 3: Longevity signal ──────────────────────
+   *  "Membre Fixeo depuis N mois" — computed from artisan.created_at.
+   *  Only shown when age ≥ 2 months (meaningful signal).
+   *  Injected as a dim line below the trust tier label.
+   * ──────────────────────────────────────────────────────────── */
+  function injectLongevity(artisan) {
+    if (document.querySelector('.fpv1h-longevity')) return;
+    var createdAt = artisan.created_at || '';
+    if (!createdAt) return;
+
+    var ms     = Date.now() - (Date.parse(createdAt) || 0);
+    var months = Math.floor(ms / (30 * 86400000));
+    if (months < 2) return; /* below meaningful threshold */
+
+    var label = months < 12
+      ? 'Membre Fixeo depuis\u00a0' + months + '\u00a0mois'
+      : months < 24
+      ? 'Membre Fixeo depuis\u00a01\u00a0an'
+      : 'Membre Fixeo depuis\u00a0' + Math.floor(months / 12) + '\u00a0ans';
+
+    /* Inject below tier label (.fpv2b-trust-tier) or below .public-trust-sub */
+    var anchor = document.querySelector('.fpv2b-trust-tier') || document.querySelector('.public-trust-sub');
+    if (!anchor) return;
+
+    var span = document.createElement('p');
+    span.className = 'fpv1h-longevity';
+    span.textContent = label;
+    anchor.parentNode.insertBefore(span, anchor.nextSibling);
+  }
+
+  /* ── V1-H Phase 3+5: Availability consistency signal ─────
+   *  "Disponible régulièrement" when artisan has never toggled off
+   *  (fixeo_avail_off_since absent) and account > 14 days.
+   *  Displayed as a secondary line in the zone strip area.
+   *  Note: reads localStorage — only meaningful when viewing
+   *  own profile. On shared devices, this signal may be absent. ─── */
+  function injectAvailabilityConsistency() {
+    if (document.querySelector('.fpv1h-avail-consistent')) return;
+    try {
+      var offSince = localStorage.getItem('fixeo_avail_off_since');
+      var avail    = localStorage.getItem('fixeo_avail_status') || '';
+      if (offSince || !avail || avail === 'off') return; /* has been offline at some point */
+
+      var zoneStrip = document.querySelector('.fpv2b-zone-strip');
+      if (!zoneStrip || zoneStrip.dataset.v1hAvailDone) return;
+      zoneStrip.dataset.v1hAvailDone = '1';
+
+      var hint = document.createElement('span');
+      hint.className = 'fpv1h-avail-consistent';
+      hint.textContent = '\u00a0\u2014 disponible r\u00e9guli\u00e8rement';
+      zoneStrip.appendChild(hint);
+    } catch(e) {}
+  }
+
+  /* ── V1-H Phase 5: Zone strip depth upgrade ──────────────
+   *  When ≥3 validated missions in the artisan's city:
+   *  "Intervient à [City]" → "Artisan actif à [City]"
+   *  Reflects operational rootedness, not just stated location.
+   * ──────────────────────────────────────────────────────────── */
+  function upgradeZoneStripDepth(artisanId) {
+    var zoneStrip = document.querySelector('.fpv2b-zone-strip');
+    if (!zoneStrip || zoneStrip.dataset.v1hDepthDone) return;
+    zoneStrip.dataset.v1hDepthDone = '1';
+
+    if (!artisanId) return;
+    var store = window.FixeoClientRequestsStore;
+    if (!store || typeof store.list !== 'function') return;
+
+    try {
+      var allReqs  = store.list();
+      var artId    = String(artisanId).trim();
+      var artName  = (document.querySelector('h1') || {}).textContent || '';
+      var validated = allReqs.filter(function(r) {
+        return r.status === 'valid\u00e9e'
+          && (String(r.assigned_artisan_id || '').trim() === artId
+              || (artName && String(r.artisan_name || r.assigned_artisan || '').trim()
+                    .toLowerCase() === artName.trim().toLowerCase()));
+      });
+      if (validated.length < 3) return;
+
+      /* Check if all validated are in the profile city */
+      var cityStrong = document.querySelector('.fpv2b-zone-strip strong');
+      if (!cityStrong) return;
+      var profileCity = cityStrong.textContent.trim().toLowerCase();
+      var cityCount = validated.filter(function(r) {
+        return (r.city || r.ville || '').trim().toLowerCase() === profileCity;
+      }).length;
+      if (cityCount / validated.length < 0.8) return;
+
+      /* Upgrade: "Intervient à" → "Artisan actif à" */
+      var icon = zoneStrip.querySelector('.fpv2b-zone-icon');
+      var iconHtml = icon ? icon.outerHTML : '<span class="fpv2b-zone-icon">\ud83d\udccd</span>';
+      zoneStrip.innerHTML = iconHtml
+        + 'Artisan actif \u00e0\u00a0<strong>' + esc(cityStrong.textContent) + '</strong>';
+    } catch(e) {}
+  }
+
+  /* ── V1-H Phase 4: Description visual weight ─────────────
+   *  The artisan-written description is the strongest identity
+   *  signal. Adds a 'fpv2a-bio-section--has-content' class when
+   *  description is ≥ 60 chars (a real professional description).
+   *  CSS uses this to give the section slightly more visual weight.
+   * ──────────────────────────────────────────────────────────── */
+  function upgradeDescriptionWeight() {
+    var bio = document.getElementById('fpv2a-bio');
+    if (!bio || bio.dataset.v1hDescDone) return;
+    bio.dataset.v1hDescDone = '1';
+    var bioText = bio.querySelector('.fpv2a-bio-text');
+    if (!bioText) return;
+    var len = (bioText.textContent || '').trim().length;
+    if (len >= 60) {
+      bio.classList.add('fpv2a-bio-section--rich');
+    }
+  }
+
+  /* ── V1-H Phase 1: Portfolio photos on public profile ────
+   *  If fixeo_portfolio has items AND artisanId matches the
+   *  currently logged-in artisan, replace the placeholder with
+   *  real photo grid.
+   *  Safety: compares URL artisanId with localStorage user_id.
+   *  If no match (viewing someone else's profile), no-op.
+   * ──────────────────────────────────────────────────────────── */
+  function injectPortfolioPhotos(artisanId) {
+    var section = document.getElementById('fpv2b-realizations');
+    if (!section || section.dataset.v1hPortfolioDone) return;
+
+    try {
+      /* Only render own portfolio (localStorage is artisan-device-local) */
+      var myId = localStorage.getItem('user_id')
+               || localStorage.getItem('fixeo_user_id')
+               || localStorage.getItem('sb_user_id') || '';
+      if (!myId || String(myId).trim() !== String(artisanId || '').trim()) return;
+
+      var portfolio = JSON.parse(localStorage.getItem('fixeo_portfolio') || '[]');
+      if (!Array.isArray(portfolio) || portfolio.length === 0) return;
+
+      section.dataset.v1hPortfolioDone = '1';
+
+      /* Build photo grid — newest first, max 6 items */
+      var items = portfolio.slice().reverse().slice(0, 6);
+      var gridHtml = '<div class="fpv1h-photo-grid">'
+        + items.map(function(item) {
+            var service = esc(item.service || '');
+            var desc    = esc(item.description || '');
+            var date    = item.created_at ? _v1hElapsed(item.created_at) : '';
+            return '<div class="fpv1h-photo-item">'
+              + (item.after_image
+                  ? '<img class="fpv1h-photo-img" src="' + esc(item.after_image) + '" alt="' + service + '" loading="lazy">'
+                  : item.before_image
+                  ? '<img class="fpv1h-photo-img" src="' + esc(item.before_image) + '" alt="' + service + '" loading="lazy">'
+                  : '<div class="fpv1h-photo-placeholder">\ud83d\udcf7</div>')
+              + '<div class="fpv1h-photo-meta">'
+              +   (service ? '<span class="fpv1h-photo-service">' + service + '</span>' : '')
+              +   (desc    ? '<span class="fpv1h-photo-desc">' + desc + '</span>' : '')
+              +   (date    ? '<span class="fpv1h-photo-date">il y a\u00a0' + date + '</span>' : '')
+              + '</div>'
+              + '</div>';
+          }).join('')
+        + '</div>';
+
+      /* Replace placeholder with real grid */
+      section.querySelector('.fpv2b-realizations-empty').innerHTML = '';
+      section.querySelector('h2.ppui-section-title').textContent = 'R\u00e9alisations';
+      section.insertAdjacentHTML('beforeend', gridHtml);
+    } catch(e) {}
+  }
+
   /* ── MAIN: fetch + apply ─────────────────────────────── */
   async function enhance() {
     /* Only run on artisan-profile.html */
@@ -887,8 +1188,17 @@
         injectRatingContext(hero, artisan);
         injectSpecialtyChips(artisan);
         injectPrestationsSection(artisan);    /* P3: market pricing intelligence */
-        injectRealizationsShell();
+        injectRealizationsShell(artisan);     /* V1-H: category-aware shell + real photos */
+        injectPortfolioPhotos(artisanId);    /* V1-H: real portfolio photos if available */
         upgradeWACopy();
+
+        /* ── V1-H ── */
+        suppressTrustScore();                 /* Phase 6: hide "Trust Score: 0/100" */
+        injectOperationalMemory(artisanId);   /* Phase 2: validated missions, recency */
+        injectLongevity(artisan);             /* Phase 3: "Membre depuis N mois" */
+        injectAvailabilityConsistency();      /* Phase 3+5: "Disponible régulièrement" */
+        upgradeZoneStripDepth(artisanId);     /* Phase 5: "Artisan actif à X" */
+        upgradeDescriptionWeight();           /* Phase 4: bio more prominent */
 
         /* ── P1: Signal V2 completion — triggers CSS to hide V1 artifacts ── */
         /*

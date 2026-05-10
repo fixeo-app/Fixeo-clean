@@ -331,8 +331,16 @@
     } else {
       _ratingStateText = 'Nouveau sur Fixeo';
     }
-    var starsHtml = '<span class="pvc-stars-v2">★★★★★</span>' +
-                    '<span class="pvc-rating-state">' + _ratingStateText + '</span>';
+    /* V1-H Phase 6: Remove static ★★★★★ for artisans without real data.
+     * Master artisans (sq≥70 or reviews≥10) earned the label — show it cleanly.
+     * New/self-registered artisans: no stars. Honest tier state only.
+     * Stars are a decoration, not data. Their absence is more honest than their presence. */
+    var hasRealQuality = (_sq >= 70 || reviews >= 10);
+    var starsHtml = (hasRealQuality
+      ? '<span class="pvc-stars-v2" aria-hidden="true">\u2605\u2605\u2605\u2605\u2605</span>'
+      : '')
+      + '<span class="pvc-rating-state' + (hasRealQuality ? '' : ' pvc-rating-state--new') + '">'
+      + _ratingStateText + '</span>';
 
     /* Chips — credible state only (T2: no mission counts) */
     /* chips removed — info block is FOMO + trust-line only (T2) */

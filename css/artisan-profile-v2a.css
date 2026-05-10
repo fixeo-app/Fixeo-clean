@@ -1229,3 +1229,144 @@ body.fpv2b-loaded .public-artisan-page .public-empty-copy {
     transition: none !important;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   V1-H — Operational Identity & Marketplace Memory
+   Append-only. No overrides.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── Phase 6: Rating block — no static stars for new artisans ────── */
+.pvc-rating-state--new {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.42);
+  font-weight: 500;
+  font-style: italic;
+  letter-spacing: 0.01em;
+}
+
+/* ── Phase 2+3: Operational memory in trust card sub-line ──────────
+   Replaces "Disponible pour ses premières interventions" with real data.
+   Calm, dim, factual. Never louder than the rating line above it.
+   ─────────────────────────────────────────────────────────────────── */
+.fpv1h-count {
+  color: rgba(32,201,151,0.85);
+  font-weight: 600;
+  font-size: 0.84rem;
+}
+.fpv1h-sep {
+  margin: 0 5px;
+  color: rgba(255,255,255,0.20);
+}
+.fpv1h-recency {
+  color: rgba(255,255,255,0.38);
+  font-size: 0.78rem;
+  font-style: italic;
+}
+.fpv1h-city {
+  color: rgba(255,255,255,0.38);
+  font-size: 0.78rem;
+}
+
+/* ── Phase 3: Longevity signal ──────────────────────────────────────
+   "Membre Fixeo depuis N mois" — below tier label.
+   Very dim. Supporting context only. Not a headline.
+   ─────────────────────────────────────────────────────────────────── */
+.fpv1h-longevity {
+  font-size: 0.73rem;
+  color: rgba(255,255,255,0.28);
+  font-style: italic;
+  margin: 3px 0 0;
+  letter-spacing: 0.01em;
+  line-height: 1.4;
+}
+
+/* ── Phase 3+5: Availability consistency — inline in zone strip ─────
+   "disponible régulièrement" appended after city name.
+   Soft emerald. Non-competitive. One sentence.
+   ─────────────────────────────────────────────────────────────────── */
+.fpv1h-avail-consistent {
+  font-size: 0.80rem;
+  color: rgba(32,201,151,0.55);
+  font-weight: 400;
+}
+
+/* ── Phase 4: Bio section visual weight upgrade ─────────────────────
+   When description is ≥60 chars, the section gets richer styling.
+   Slightly larger text, more breathing room. Still calm, not loud.
+   ─────────────────────────────────────────────────────────────────── */
+.fpv2a-bio-section--rich .fpv2a-bio-text {
+  font-size: 0.925rem;
+  line-height: 1.70;
+  color: rgba(255,255,255,0.75);
+  letter-spacing: 0.005em;
+}
+
+/* ── Phase 1: Public portfolio photo grid ───────────────────────────
+   Replaces placeholder when artisan has real photos in fixeo_portfolio.
+   2 columns on mobile (390px). Max 3 columns on wider screens.
+   ─────────────────────────────────────────────────────────────────── */
+.fpv1h-photo-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-top: 12px;
+}
+@media (min-width: 640px) {
+  .fpv1h-photo-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+.fpv1h-photo-item {
+  border-radius: 10px;
+  overflow: hidden;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.07);
+}
+
+.fpv1h-photo-img {
+  width: 100%;
+  height: 130px;
+  object-fit: cover;
+  display: block;
+}
+@media (max-width: 390px) {
+  .fpv1h-photo-img { height: 110px; }
+}
+
+.fpv1h-photo-placeholder {
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  opacity: 0.3;
+}
+
+.fpv1h-photo-meta {
+  padding: 7px 9px 9px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.fpv1h-photo-service {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.75);
+}
+.fpv1h-photo-desc {
+  font-size: 0.70rem;
+  color: rgba(255,255,255,0.42);
+  line-height: 1.35;
+}
+.fpv1h-photo-date {
+  font-size: 0.68rem;
+  color: rgba(255,255,255,0.25);
+  font-style: italic;
+}
+
+/* Mobile 360px */
+@media (max-width: 360px) {
+  .fpv1h-photo-grid  { grid-template-columns: repeat(2, 1fr); gap: 7px; }
+  .fpv1h-photo-meta  { padding: 5px 7px 7px; }
+  .fpv1h-count       { font-size: 0.80rem; }
+  .fpv1h-longevity   { font-size: 0.70rem; }
+}
