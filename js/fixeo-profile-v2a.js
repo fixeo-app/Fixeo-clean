@@ -1866,6 +1866,19 @@
            rather than 13 separate pop-ins.
         */
         if (root) root.classList.add('fpv2-sections-ready');
+
+        /* ── V2-C6B: Real-photo gate for avatar-wrap visibility ── */
+        /*
+         * CSS rule: .public-profile-hero:not(.has-real-avatar) .public-avatar-wrap { display:none }
+         * When a real photo is present (.public-avatar-img), hero gets .has-real-avatar
+         * so avatar-wrap is shown. Without it (generic fallback), avatar-wrap is hidden.
+         * Runs AFTER all V2 inject functions so upgradeProfileAvatar() has already
+         * had the chance to swap in a real photo from artisan.photo_url / artisan.avatar.
+         */
+        var _avatarImg = hero ? hero.querySelector('.public-avatar-img') : null;
+        if (_avatarImg && hero) {
+          hero.classList.add('has-real-avatar');
+        }
       });
     });
   }

@@ -1568,3 +1568,74 @@ body.fpv2b-loaded.public-artisan-page .public-empty-copy {
   .fpv1j-booking-confidence { margin-top: 8px; }
   .fpv1j-confidence-item    { font-size: 0.72rem; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   V2-C6B — Hero Density Reduction
+   Scope: body.fpv2b-loaded.public-artisan-page (V2 fully rendered)
+   Goal:  Remove duplicate / non-client-facing elements from hero,
+          hide generic fallback avatar, tighten vertical rhythm.
+   Rules: append-only, no !important on layout-defining properties
+          that would fight existing cascade; only new selectors.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── 1. Claim button — not client-facing, pollutes hero CTA area ── */
+body.fpv2b-loaded.public-artisan-page .fixeo-claim-wrapper {
+  display: none !important;
+}
+
+/* ── 2. Duplicate availability badge-row ────────────────────────── */
+/*    "⚡ Disponible maintenant" ppui-badge-row duplicates the
+     .public-availability pill already above the artisan name.
+     Hide the badge-row; the pill is the canonical signal.         */
+body.fpv2b-loaded.public-artisan-page .ppui-badge-row {
+  display: none !important;
+}
+
+/* ── 3. Booking confidence block ────────────────────────────────── */
+/*    All three items are already covered by V2 elements:
+     "📍 Présent à X"              → fpv2b-zone-strip
+     "✔ Paiement après intervention" → fpv2a-trust-strip
+     "💬 Coordination WhatsApp"    → fpv2a-wa-cta
+     Hiding the entire block removes ~88px and 3 duplicate lines.  */
+body.fpv2b-loaded.public-artisan-page .fpv1j-booking-confidence {
+  display: none !important;
+}
+
+/* ── 4. "Fixeo vous répond rapidement" wa-sub ───────────────────── */
+/*    Redundant with the WA CTA text already present above it.      */
+body.fpv2b-loaded.public-artisan-page .fpv2b-wa-sub {
+  display: none !important;
+}
+
+/* ── 5. Orange fallback avatar — desktop ────────────────────────── */
+/*    The generic fallback (initials/person icon) adds visual noise
+     on desktop when no real photo exists. Switch hero to single-column
+     so the content area gets full width.
+     When a real .public-avatar-img is present (photo loaded by
+     upgradeProfileAvatar()), the avatar-wrap is restored via the
+     .has-real-avatar class added by V2 JS below.                   */
+@media (min-width: 768px) {
+  body.fpv2b-loaded.public-artisan-page .public-profile-hero:not(.has-real-avatar) {
+    grid-template-columns: 1fr !important;
+  }
+  body.fpv2b-loaded.public-artisan-page .public-profile-hero:not(.has-real-avatar) .public-avatar-wrap {
+    display: none !important;
+  }
+}
+
+/* ── 6. Mobile avatar — hide fallback, allow real photo ─────────── */
+/*    On mobile the avatar sits above the name (single-col stacking).
+     A generic orange circle adds nothing. Hide it.
+     Real photos show via .has-real-avatar (same class as desktop).  */
+@media (max-width: 767px) {
+  body.fpv2b-loaded.public-artisan-page .public-profile-hero:not(.has-real-avatar) .public-avatar-wrap {
+    display: none !important;
+  }
+}
+
+/* ── 7. Trust strip: remove separator bar on narrow mobile ──────── */
+@media (max-width: 360px) {
+  body.fpv2b-loaded.public-artisan-page .fpv2a-strip-sep {
+    display: none !important;
+  }
+}
