@@ -32,6 +32,15 @@
   if (window._fxProfileV2aLoaded) return;
   window._fxProfileV2aLoaded = true;
 
+  /* V2-C5D: IIFE-level sentinel — runs at SCRIPT PARSE TIME, before DCL,
+   * before any async, before getArtisanForProfile() could possibly resolve.
+   * renderArtisanProfile() in fixeo-public-artisan-profile.js reads this flag
+   * to decide PATH A vs PATH B. Setting it here (vs inside enhance() at DCL)
+   * closes the narrow window where a phone's stale-cached JS (missing the
+   * enhance()-level sentinel) could allow PATH A to fire and wipe root.innerHTML.
+   * Idempotent with the sentinel inside enhance() — both set the same flag. */
+  window.__fixeoV2EnhanceStarted = true;
+
   /* ── P2: Supabase fetch deduplication ────────────────── */
   /*
      fixeo-public-artisan-profile.js calls FixeoSupabaseLoader.getArtisanForProfile()
