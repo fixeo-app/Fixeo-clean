@@ -2418,3 +2418,21 @@ body.public-artisan-page .public-profile-hero {
   color:       rgba(255,255,255,0.52) !important;
   font-weight: 600 !important;
 }
+
+/* V2-C6F hotfix: prevent 320px overflow from platform trust chips + indicator block */
+@media (max-width: 320px) {
+  .fpv2h-ptrust-chip {
+    white-space: normal !important;  /* allow chip text to wrap */
+    max-width:   140px;
+  }
+  #fpv2pi-block {
+    overflow: hidden;
+  }
+  .fpv2pi-grid {
+    grid-template-columns: 1fr !important;  /* force 1-col below 360px already, but reinforce */
+    width: 100%;
+  }
+  .fpv2pi-value {
+    font-size: 0.84rem;
+  }
+}
