@@ -328,7 +328,7 @@ if (typeof syncOnboardingArtisans === 'function') {
 } else if (typeof window.syncOnboardingArtisans === 'function') {
   window.syncOnboardingArtisans();
 } else {
-  console.warn('[Fixeo Marketplace] syncOnboardingArtisans indisponible — poursuite sans synchronisation onboarding.');
+  /* syncOnboardingArtisans not loaded on this page — silent fallback (V2-C6F-hp2) */
 }
 
 function marketplaceIsVerifiedArtisan(artisan) {
