@@ -166,12 +166,12 @@
       '<div class="fxrv2-est-market">' +
         '<span class="fxrv2-est-market-icon" aria-hidden="true">\u25CE</span>' +
         /* V2-C5A: honest indicative pricing language */
-        '<span id="fxrv2-price-rec">Prix indicatif bas\u00e9 sur des interventions similaires dans votre ville</span>' +
+        '<span id="fxrv2-price-rec">Bas\u00e9 sur les interventions similaires dans votre ville</span>' +
       '</div>' +
       '<div class="fxrv2-est-pay">' +
         '<span style="color:rgba(32,201,151,0.55)" aria-hidden="true">\u25CF</span>' +
-        /* V2-C5A: added "Le prix final est confirmé avec l'artisan avant toute intervention." */
-        'Le prix final est confirm\u00e9 avec l\u2019artisan avant toute intervention.\u00a0Aucun paiement maintenant.' +
+        /* V2-C5A: short form only — full indicative text lives in #fxrv2-price-rec */
+        'Aucun paiement maintenant.' +
       '</div>';
 
     /* V2-C5A: Insert ABOVE the form (before .fixeo-res-form), not inside it.
@@ -267,15 +267,13 @@
       priceRow.style.display = '';
       if (subtitle) subtitle.textContent = 'Prix indicatif bas\u00e9 sur des interventions similaires'; /* V2-C5A */
       if (priceRecEl) {
-        /* V2-C5A: honest pricing language — no synthetic "recommandé" authority */
-        priceRecEl.innerHTML =
-          'Prix indicatif bas\u00e9 sur des interventions similaires dans votre ville. ' +
-          'Le prix final est confirm\u00e9 avec l\u2019artisan avant toute intervention.';
+        /* V2-C5A: market context line — "Le prix final" shown separately in fxrv2-est-pay */
+        priceRecEl.innerHTML = 'Prix indicatif bas\u00e9 sur des interventions similaires dans votre ville';
       }
     } else {
       if (priceRow) priceRow.style.display = 'none';
       if (subtitle) subtitle.textContent = 'Choisissez un service pour voir le prix indicatif'; /* V2-C5A */
-      if (priceRecEl) priceRecEl.innerHTML = 'Prix indicatif bas\u00e9 sur des interventions similaires dans votre ville'; /* V2-C5A */
+      if (priceRecEl) priceRecEl.innerHTML = 'Basé sur les interventions similaires dans votre ville'; /* V2-C5A: neutral when no service selected */
     }
   }
 
@@ -300,10 +298,8 @@
         }
         var priceRecEl = qs('#fxrv2-price-rec', block);
         if (priceRecEl) {
-          /* V2-C5A: consistent honest pricing wording, no synthetic "recommandé" */
-          priceRecEl.innerHTML =
-            'Prix indicatif bas\u00e9 sur des interventions similaires dans votre ville. ' +
-            'Le prix final est confirm\u00e9 avec l\u2019artisan avant toute intervention.';
+          /* V2-C5A: market context line only — no duplication with fxrv2-est-pay */
+          priceRecEl.innerHTML = 'Prix indicatif bas\u00e9 sur des interventions similaires dans votre ville';
         }
       };
       var obs = new MutationObserver(updateFn);
