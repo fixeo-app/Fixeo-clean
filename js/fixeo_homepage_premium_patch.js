@@ -759,7 +759,17 @@
   }
 
   function _showResultsChrome() {
-    OLD_IDS.forEach(function(id){ _show(_$(id)); });
+    /* V2-C6F-hp: Never show legacy #loading-artisans or #no-artisan when entering
+     * search mode. The vedette grid (#fixeo-homepage-vedette-grid) is the results UI.
+     * These elements belong to the old results layout — surfacing them causes the
+     * "Chargement des artisans… / Aucun artisan" block to appear under recommended artisan.
+     * The density module (fixeo-marketplace-density.js) then enhances #no-artisan with
+     * a full glass card, compounding the visual pollution.
+     * _hideResultsChrome still hides them (via OLD_IDS loop) — no change there. */
+    var SHOW_SAFE_IDS = OLD_IDS.filter(function(id) {
+      return id !== 'loading-artisans' && id !== 'no-artisan';
+    });
+    SHOW_SAFE_IDS.forEach(function(id){ _show(_$(id)); });
     OLD_SELS.forEach(function(sel){ _show(_q(sel)); });
     var layout  = _q('#'+SECTION_ID+' .results-layout');
     var mainCol = _q('#'+SECTION_ID+' .results-main-column');
