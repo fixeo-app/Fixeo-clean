@@ -1389,7 +1389,10 @@ try {
   if (!container) return;
 
   if (loadingEl) loadingEl.style.display = 'none';
-  if (emptyEl) emptyEl.style.display = 'none';
+  // V2-C2A: Only hide emptyEl when there are items to show.
+  // Previously unconditional — this caused #no-artisan to be hidden even when
+  // urgent-results.js had correctly set it to display:block for a 0-result city.
+  if (emptyEl && smartSortedList.length > 0) emptyEl.style.display = 'none';
 
   _otherArtisansList = smartSortedList;
 

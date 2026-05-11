@@ -1,5 +1,5 @@
 /**
- * fixeo-marketplace-density.js  v1.0 (V1-D)
+ * fixeo-marketplace-density.js  v2c2a (V2-C2A)
  * ─────────────────────────────────────────────────────────────────────────────
  * Honest marketplace density layer.
  * Improves low-density and empty states without inventing activity.
@@ -28,21 +28,33 @@
      ADJACENT CITY MAP (mirrors fixeo-matching-engine.js)
   ══════════════════════════════════════════════════════════ */
   var ZONES = {
-    'Casablanca':  ['Mohammedia', 'Berrechid', 'El Jadida'],
-    'Rabat':       ['Salé', 'Temara', 'Kénitra'],
-    'Marrakech':   ['Safi', 'Agadir'],
-    'Tanger':      ['Tétouan'],
-    'Fès':         ['Meknès'],
-    'Agadir':      ['Inezgane', 'Safi'],
-    'Meknès':      ['Fès'],
-    'Tétouan':     ['Tanger'],
-    'Oujda':       [],
-    'Kénitra':     ['Rabat', 'Salé'],
-    'Safi':        ['Marrakech'],
-    'El Jadida':   ['Casablanca'],
-    'Mohammedia':  ['Casablanca'],
-    'Salé':        ['Rabat', 'Kénitra'],
-    'Temara':      ['Rabat'],
+    'Casablanca':   ['Mohammedia', 'Berrechid', 'El Jadida', 'Settat', 'Khouribga'],
+    'Rabat':        ['Salé', 'Temara', 'Kénitra'],
+    'Marrakech':    ['Safi', 'Agadir', 'Béni Mellal'],
+    'Tanger':       ['Tétouan'],
+    'Fès':          ['Meknès', 'Errachidia'],
+    'Agadir':       ['Inezgane', 'Safi', 'Laâyoune'],
+    'Meknès':       ['Fès'],
+    'Tétouan':      ['Tanger'],
+    'Oujda':        [],
+    'Kénitra':      ['Rabat', 'Salé'],
+    'Safi':         ['Marrakech'],
+    'El Jadida':    ['Casablanca'],
+    'Mohammedia':   ['Casablanca'],
+    'Salé':         ['Rabat', 'Kénitra'],
+    'Temara':       ['Rabat'],
+    // V2-C2A: Southern / eastern cities absent from original map
+    'Ouarzazate':   ['Marrakech', 'Agadir'],
+    'Errachidia':   ['Fès', 'Meknès'],
+    'Laâyoune':     ['Agadir'],
+    'Dakhla':       ['Laâyoune'],
+    'Béni Mellal':  ['Marrakech', 'Casablanca'],
+    'Khouribga':    ['Casablanca', 'Béni Mellal'],
+    'Settat':       ['Casablanca'],
+    'Inezgane':     ['Agadir'],
+    'Berrechid':    ['Casablanca'],
+    'Nador':        ['Oujda'],
+    'Taza':         ['Fès', 'Oujda'],
   };
 
   /* ══════════════════════════════════════════════════════════
@@ -61,15 +73,29 @@
   }
 
   function _getContext() {
-    var cityEl = document.getElementById('filter-city')
+    // V2-C2A: results.html urgent-flow uses results-filter-city (the visible
+    // <select> populated by urgent-results.js), NOT filter-city (hidden input).
+    // Priority: results-filter-city → filter-city → ssb2 → services-city-filter
+    var cityEl = document.getElementById('results-filter-city')
+               || document.getElementById('filter-city')
                || document.getElementById('ssb2-select-city')
                || document.getElementById('services-city-filter');
     var catEl  = document.getElementById('filter-category')
                || document.getElementById('ssb2-select-cat');
-    return {
-      city:    (cityEl && cityEl.value) ? cityEl.value.trim() : '',
-      service: (catEl  && catEl.value)  ? catEl.value.trim()  : '',
-    };
+    var city = (cityEl && cityEl.value) ? cityEl.value.trim() : '';
+    var service = (catEl && catEl.value) ? catEl.value.trim() : '';
+
+    // V2-C2A: Also read city/service from URL params for results.html context
+    // so _buildEmptyStateContent gets correct city even before filter select is wired.
+    if (!city || !service) {
+      try {
+        var params = new URLSearchParams(window.location.search);
+        if (!city)    city    = (params.get('city')  || '').trim();
+        if (!service) service = (params.get('query') || params.get('category') || params.get('service') || '').trim();
+      } catch (e) {}
+    }
+
+    return { city: city, service: service };
   }
 
   /* ══════════════════════════════════════════════════════════
@@ -266,13 +292,18 @@
      LISTEN: filter changes → re-check empty state
   ══════════════════════════════════════════════════════════ */
   function _bindFilterListeners() {
-    var cityEl = document.getElementById('filter-city');
-    var catEl  = document.getElementById('filter-category');
-    [cityEl, catEl].forEach(function (el) {
+    // V2-C2A: results.html uses results-filter-city, not filter-city.
+    // Bind both so empty-state re-renders correctly on city dropdown change.
+    var cityIds = ['filter-city', 'results-filter-city'];
+    var catEl   = document.getElementById('filter-category');
+    cityIds.forEach(function (id) {
+      var el = document.getElementById(id);
       if (el) el.addEventListener('change', function () {
-        /* Small delay to let renderArtisans complete */
         setTimeout(_renderEmptyState, 300);
       });
+    });
+    if (catEl) catEl.addEventListener('change', function () {
+      setTimeout(_renderEmptyState, 300);
     });
   }
 

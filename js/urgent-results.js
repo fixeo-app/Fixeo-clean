@@ -601,17 +601,49 @@
       apply();
     });
 
-    apply();
-
-    // ── CLOBBER GUARD ────────────────────────────────────────────────────────
-    // main.js refreshMarketplaceFromCurrentFilters() fires a requestAnimationFrame
-    // callback (applyMarketplaceFilters → renderArtisans) AFTER DOMContentLoaded —
-    // which overwrites fxu-card output back to old .artisan-card markup.
-    // Neutralize window.renderArtisans so any pending rAF from main.js is a no-op.
-    // This ONLY affects the urgent results page (guarded by __FIXEO_URGENT_PAGE__).
+    // ── CLOBBER GUARD (V2-C2A) ───────────────────────────────────────────────
+    // Must be installed BEFORE apply() fires so that any pending rAF or idle
+    // callback from main.js / fixeo-supabase-loader.js cannot:
+    //   (a) overwrite #artisans-container with unfiltered 861-artisan cards
+    //   (b) reset #no-artisan to display:none via renderArtisans unconditional hide
+    //   (c) clobber results-count with raw pool count via afterRender()
+    // urgent-results.js is the exclusive owner of this page's render outputs.
     window.renderArtisans = function urgentPageGuard() {
       // no-op — urgent results page owns #artisans-container exclusively
     };
+    // Also disable FixeoResultsPage.afterRender so marketplace-premium-patch.js
+    // cannot overwrite results-count with filtered.length from its own (unfiltered)
+    // state after replaceMarketplaceArtisans fires from fixeo-supabase-loader.js.
+    if (window.FixeoResultsPage && typeof window.FixeoResultsPage.afterRender === 'function') {
+      window.FixeoResultsPage.afterRender = function urgentAfterRenderGuard() {
+        // no-op — count and empty state owned by urgent-results.js on this page
+      };
+    }
+    // Also intercept FixeoResultsPage.refresh so it cannot trigger renderArtisans
+    if (window.FixeoResultsPage && typeof window.FixeoResultsPage.refresh === 'function') {
+      window.FixeoResultsPage.refresh = function urgentRefreshGuard() {
+        // no-op
+      };
+    }
+    // Defer apply() one rAF so ARTISANS[] is populated by fixeo-supabase-loader
+    // before first filter run when page loads cold (ARTISANS may be empty at DCL).
+    // Falls back to synchronous apply() if rAF already in progress.
+    if (Array.isArray(window.ARTISANS) && window.ARTISANS.length > 0) {
+      apply();
+    } else {
+      // Wait for supabase loader to populate ARTISANS, then apply
+      var _applyTimer = setInterval(function () {
+        if (Array.isArray(window.ARTISANS) && window.ARTISANS.length > 0) {
+          clearInterval(_applyTimer);
+          apply();
+        }
+      }, 100);
+      // Safety fallback: always apply after 2s even if ARTISANS stays empty
+      setTimeout(function () {
+        clearInterval(_applyTimer);
+        apply();
+      }, 2000);
+    }
   }
 
   if (document.readyState === 'loading') {
