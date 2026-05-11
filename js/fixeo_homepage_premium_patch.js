@@ -482,8 +482,9 @@
         e.preventDefault();
         _doProfile(a);
       } else {
-        /* Whole-card click → Réserver */
-        _doReserve(a);
+        /* pf-nav: Whole-card click → public profile (reserve button handles booking) */
+        e.preventDefault();
+        _doProfile(a);
       }
     });
 
@@ -496,7 +497,8 @@
       var a = null;
       try { a = JSON.parse(card.getAttribute('data-artisan').replace(/&#39;/g,"'")); } catch(_) {}
       if (!a) a = { id: card.getAttribute('data-artisan-id') };
-      _doReserve(a);
+      /* pf-nav: keyboard card activation → public profile */
+      _doProfile(a);
     });
   }
 

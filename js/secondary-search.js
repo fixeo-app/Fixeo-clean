@@ -174,7 +174,7 @@
     ].filter(Boolean).join('');
 
     return `
-<div class="ssb2-card" data-artisan-id="${a.id}" onclick="window.SecondarySearch.book(${a.id}, false)" role="button" tabindex="0" aria-label="Réserver ${a.name}">
+<div class="ssb2-card" data-artisan-id="${a.id}" onclick="if(window.FixeoPublicProfileLinks){window.FixeoPublicProfileLinks.openBySourceId(String(${a.id}));}else{window.location.href='artisan-profile.html?id='+encodeURIComponent(String(${a.id}));}" role="button" tabindex="0" aria-label="Voir le profil de ${a.name}">
   <div class="ssb2-card-topline">
     <img class="avatar ssb2-card-photo" src="${avatar}" alt="${a.name}" onerror="this.onerror=null;this.src='default-avatar.jpg';"/>
     <div class="ssb2-card-title-wrap">
@@ -297,7 +297,7 @@
       : '';
 
     return `
-<article class="pvc-card${isReal ? ' pvc-card--real' : ''}" data-artisan-id="${a.id}" tabindex="0" role="button" aria-label="${_esc2(a.name)}, ${catLbl}" style="--anim-delay:${idx}" onclick="window.SecondarySearch&&window.SecondarySearch._handleReserve&&window.SecondarySearch._handleReserve('${a.id}');event.stopPropagation&&event.stopPropagation();">
+<article class="pvc-card${isReal ? ' pvc-card--real' : ''}" data-artisan-id="${a.id}" tabindex="0" role="button" aria-label="${_esc2(a.name)}, ${catLbl}" style="--anim-delay:${idx}" onclick="(function(id){if(window.FixeoPublicProfileLinks){window.FixeoPublicProfileLinks.openBySourceId(String(id));}else{window.location.href='artisan-profile.html?id='+encodeURIComponent(String(id));}}('${a.id}'));event.stopPropagation&&event.stopPropagation();">
   <div class="pvc-card-header">
     <div class="pvc-avatar${isVer ? ' pvc-avatar--verified' : ''}">${avatarHtml}</div>
     <div class="pvc-identity">

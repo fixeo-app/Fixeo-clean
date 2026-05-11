@@ -466,7 +466,8 @@
         e.stopPropagation();
         _ucDoProfile(artisan);
       } else {
-        _ucDoReserve(artisan, state);
+        /* pf-nav: card body click → public profile (reserve button handles booking) */
+        _ucDoProfile(artisan);
       }
     });
   }

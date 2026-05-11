@@ -1,6 +1,6 @@
 // ============================================================
 //  FIXEO V3 — MAIN CORE (Artisans · Search · Map · Chat)
-//  @version v2c6h — perf-p1: dedup localStorage parse
+//  @version v2c6h-pf — perf-p1 + pf-nav: profile-first card navigation
 // ============================================================
 
 // ── ARTISAN DATA ─────────────────────────────────────────────
@@ -2197,6 +2197,29 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(initAnimations, 100);
     setTimeout(function(){ if (leafletMap) leafletMap.invalidateSize(); }, 300);
   });
+
+  /* pf-nav: Card body click → public artisan profile.
+     Delegated on document so it covers dynamically rendered cards
+     in #artisans-container (renderArtisans() replaces innerHTML).
+     Buttons inside cards already call event.stopPropagation() so
+     "Réserver" and "Voir profil" buttons are unaffected. */
+  if (!window.__FIXEO_CARD_NAV_BOUND__) {
+    window.__FIXEO_CARD_NAV_BOUND__ = true;
+    document.addEventListener('click', function(e) {
+      /* Only handle clicks NOT on a button/link child */
+      if (e.target.closest('button, a, [role="button"]')) return;
+      var card = e.target.closest('.artisan-card[data-id], .result-card[data-id]');
+      if (!card) return;
+      var id = card.getAttribute('data-id');
+      if (!id) return;
+      e.preventDefault();
+      if (window.FixeoPublicProfileLinks && typeof window.FixeoPublicProfileLinks.openBySourceId === 'function') {
+        window.FixeoPublicProfileLinks.openBySourceId(id, e);
+      } else {
+        window.location.href = 'artisan-profile.html?id=' + encodeURIComponent(id);
+      }
+    });
+  }
 });
 
 // ── SUBMIT COMMENT ────────────────────────────────────────
