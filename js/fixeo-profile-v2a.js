@@ -212,6 +212,114 @@
     anchor.parentNode.insertBefore(strip, anchor.nextSibling);
   }
 
+  /* ── 3b. Platform trust chip row ─────────────────────── */
+  /*
+     V2-C6D: Replace seeded/fake metric prominence with real PLATFORM trust.
+     These signals ARE what Fixeo guarantees — they cannot be faked because
+     they are structural: every artisan on Fixeo has these platform protections.
+     Shown as a compact chip row BELOW the rating line, above the CTA.
+     Idempotent: guarded by .fpv2h-platform-trust existence check.
+  */
+  function injectHeroPlatformTrust(hero, artisan) {
+    if (hero.querySelector('.fpv2h-platform-trust')) return;
+    var trustCard = hero.querySelector('.public-trust-card');
+    if (!trustCard) return;
+
+    var chips = [
+      { icon: '\u2705', text: 'Profil enregistr\u00e9 sur Fixeo' },
+      { icon: '\ud83d\udcb3', text: 'Paiement apr\u00e8s intervention' },
+      { icon: '\ud83d\udccd', text: 'Intervention locale' },
+      { icon: '\u2696\ufe0f', text: 'Tarification encadr\u00e9e' }
+    ];
+
+    var row = document.createElement('div');
+    row.className = 'fpv2h-platform-trust';
+    row.innerHTML = chips.map(function(c) {
+      return '<span class="fpv2h-ptrust-chip"><span class="fpv2h-ptrust-icon" aria-hidden="true">' +
+        c.icon + '</span>' + esc(c.text) + '</span>';
+    }).join('');
+
+    /* Insert at bottom of trust card, after all existing trust card content */
+    trustCard.appendChild(row);
+  }
+
+  /* ── 3c. Hero inline estimation block ────────────────── */
+  /*
+     V2-C6D: Bring market pricing intelligence INTO the hero — not just below.
+     Shows 3-4 service chips for the artisan's category.
+     Clicking a chip updates the price range instantly (no network request).
+     Data source: PROFILE_PRICING (same as injectPrestationsSection).
+     Reuses fxrv2-estimation CSS visual language for consistency with modal.
+     Idempotent: guarded by #fpv2h-estimation existence check.
+     Graceful: no category match → silent noop.
+  */
+  function injectHeroEstimation(hero, artisan) {
+    if (document.getElementById('fpv2h-estimation')) return;
+    var slug = _catSlug(artisan.category);
+    var rows = PROFILE_PRICING[slug];
+    if (!rows || !rows.length) return;
+
+    /* Show first 3 services as chips; clicking reveals price range */
+    var chipRows = rows.slice(0, 3);
+
+    var section = document.createElement('div');
+    section.id = 'fpv2h-estimation';
+    section.className = 'fpv2h-estimation';
+
+    /* Price display row — hidden until chip selected */
+    section.innerHTML =
+      '<div class="fpv2h-est-header">' +
+        '<span class="fpv2h-est-icon" aria-hidden="true">\u25a3</span>' +
+        '<span class="fpv2h-est-title">Estimation Fixeo</span>' +
+        '<span class="fpv2h-est-hint">Tap un service</span>' +
+      '</div>' +
+      '<div class="fpv2h-chips" role="group" aria-label="Services proposés">' +
+        chipRows.map(function(r, i) {
+          return '<button type="button" class="fpv2h-chip" data-from="' + r.from +
+            '" data-to="' + r.to + '" data-idx="' + i + '">' + esc(r.label) + '</button>';
+        }).join('') +
+      '</div>' +
+      '<div class="fpv2h-price-row" id="fpv2h-price-row" aria-live="polite">' +
+        '<span class="fpv2h-price-range" id="fpv2h-price-range"></span>' +
+        '<span class="fpv2h-price-note">MAD — indicatif</span>' +
+      '</div>';
+
+    /* Interaction: chip click → price update */
+    section.addEventListener('click', function(e) {
+      var chip = e.target.closest('.fpv2h-chip');
+      if (!chip) return;
+      /* Deactivate all, activate clicked */
+      section.querySelectorAll('.fpv2h-chip').forEach(function(c) {
+        c.classList.remove('fpv2h-chip--active');
+        c.setAttribute('aria-pressed', 'false');
+      });
+      chip.classList.add('fpv2h-chip--active');
+      chip.setAttribute('aria-pressed', 'true');
+      /* Update price display */
+      var from = chip.getAttribute('data-from');
+      var to   = chip.getAttribute('data-to');
+      var rangeEl = document.getElementById('fpv2h-price-range');
+      var rowEl   = document.getElementById('fpv2h-price-row');
+      if (rangeEl) rangeEl.textContent = from + '\u202f\u2013\u202f' + to;
+      if (rowEl)   rowEl.classList.add('fpv2h-price-row--visible');
+      /* Also update hint text */
+      var hint = section.querySelector('.fpv2h-est-hint');
+      if (hint) hint.textContent = 'Prix indicatif';
+    });
+
+    /* Inject below the WA CTA (or trust strip), inside hero-main */
+    var heroMain = hero.querySelector('.public-hero-main');
+    if (!heroMain) return;
+    var waCta = hero.querySelector('#fpv2a-wa-cta');
+    var trustStrip = hero.querySelector('.fpv2a-trust-strip');
+    var anchor = waCta || trustStrip;
+    if (anchor && anchor.parentNode === heroMain) {
+      heroMain.insertBefore(section, anchor.nextSibling);
+    } else {
+      heroMain.appendChild(section);
+    }
+  }
+
   /* ── 4. WhatsApp secondary CTA in hero ───────────────── */
   /*
      Lower-friction first contact below the main reservation button.
@@ -1796,7 +1904,9 @@
         upgradeRatingLine(hero, artisan);     /* P1: patch .public-trust-rating */
         injectBio(artisan);
         injectHeroTrustStrip(hero, artisan);
+        injectHeroPlatformTrust(hero, artisan);  /* V2-C6D: platform trust chip row */
         injectWASecondary(hero, artisan);
+        injectHeroEstimation(hero, artisan);     /* V2-C6D: live estimation in hero */
         upgradeStickyCTA(artisan);
 
         /* ── V2-B ── (runs after V2-A to build on its output) */

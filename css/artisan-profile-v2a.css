@@ -1791,3 +1791,238 @@ body.fpv2b-loaded.public-artisan-page .fpv2a-trust-strip {
     border-radius: 20px !important;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   V2-C6D — Platform Trust + Hero Estimation + Polish
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── Platform trust chip row (.fpv2h-platform-trust) ──────────── */
+.fpv2h-platform-trust {
+  display:   flex;
+  flex-wrap: wrap;
+  gap:       6px;
+  margin-top: 10px;
+}
+.fpv2h-ptrust-chip {
+  display:       inline-flex;
+  align-items:   center;
+  gap:           5px;
+  background:    rgba(255,255,255,0.06);
+  border:        1px solid rgba(255,255,255,0.10);
+  border-radius: 999px;
+  padding:       5px 10px;
+  font-size:     0.74rem;
+  font-weight:   600;
+  color:         rgba(255,255,255,0.78);
+  line-height:   1;
+  white-space:   nowrap;
+  letter-spacing: 0.01em;
+}
+.fpv2h-ptrust-icon {
+  font-size: 0.80rem;
+  line-height: 1;
+}
+
+/* ── Hero estimation block (.fpv2h-estimation) ─────────────────── */
+#fpv2h-estimation {
+  margin-top:    12px;
+  padding:       14px 16px;
+  background:    rgba(255,255,255,0.04);
+  border:        1px solid rgba(255,255,255,0.09);
+  border-radius: 16px;
+  position:      relative;
+  overflow:      hidden;
+}
+/* Subtle accent top line — estimation is a feature, not a card-within-card */
+#fpv2h-estimation::before {
+  content:          '';
+  position:         absolute;
+  top: 0; left: 0; right: 0;
+  height:           2px;
+  background:       linear-gradient(90deg, rgba(99,102,241,0.6), rgba(139,92,246,0.6));
+  border-radius:    2px 2px 0 0;
+}
+.fpv2h-est-header {
+  display:     flex;
+  align-items: center;
+  gap:         8px;
+  margin-bottom: 10px;
+}
+.fpv2h-est-icon {
+  display:        flex;
+  align-items:    center;
+  justify-content: center;
+  width:          28px;
+  height:         28px;
+  background:     rgba(99,102,241,0.15);
+  border:         1px solid rgba(99,102,241,0.25);
+  border-radius:  8px;
+  font-size:      0.9rem;
+  flex-shrink:    0;
+}
+.fpv2h-est-title {
+  font-size:   0.85rem;
+  font-weight: 800;
+  color:       rgba(255,255,255,0.92);
+  letter-spacing: 0.01em;
+}
+.fpv2h-est-hint {
+  font-size:  0.72rem;
+  color:      rgba(255,255,255,0.40);
+  margin-left: auto;
+  font-style: italic;
+}
+
+/* ── Estimation chips ───────────────────────────────────────────── */
+.fpv2h-chips {
+  display:   flex;
+  flex-wrap: wrap;
+  gap:       6px;
+}
+.fpv2h-chip {
+  display:       inline-flex;
+  align-items:   center;
+  background:    rgba(255,255,255,0.06);
+  border:        1px solid rgba(255,255,255,0.12);
+  border-radius: 10px;
+  padding:       7px 12px;
+  font-size:     0.78rem;
+  font-weight:   600;
+  color:         rgba(255,255,255,0.80);
+  cursor:        pointer;
+  transition:    background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  white-space:   nowrap;
+  -webkit-tap-highlight-color: transparent;
+  line-height:   1.2;
+}
+.fpv2h-chip:hover {
+  background:    rgba(99,102,241,0.15);
+  border-color:  rgba(99,102,241,0.35);
+  color:         #fff;
+}
+.fpv2h-chip--active {
+  background:    rgba(99,102,241,0.22) !important;
+  border-color:  rgba(99,102,241,0.55) !important;
+  color:         #fff !important;
+  box-shadow:    0 0 0 3px rgba(99,102,241,0.12);
+}
+
+/* ── Price reveal row ───────────────────────────────────────────── */
+.fpv2h-price-row {
+  display:     none;
+  align-items: baseline;
+  gap:         6px;
+  margin-top:  10px;
+  padding-top: 10px;
+  border-top:  1px solid rgba(255,255,255,0.07);
+}
+.fpv2h-price-row--visible {
+  display: flex !important;
+  animation: fpv2h-priceIn 0.20s ease-out;
+}
+@keyframes fpv2h-priceIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fpv2h-price-range {
+  font-size:   1.05rem;
+  font-weight: 900;
+  color:       #a5b4fc;
+  letter-spacing: -0.01em;
+}
+.fpv2h-price-note {
+  font-size:  0.74rem;
+  color:      rgba(255,255,255,0.45);
+  font-style: italic;
+}
+
+/* ── Mobile adjustments ─────────────────────────────────────────── */
+@media (max-width: 480px) {
+  #fpv2h-estimation { padding: 12px 14px; }
+  .fpv2h-chip       { font-size: 0.74rem; padding: 6px 10px; }
+  .fpv2h-ptrust-chip { font-size: 0.70rem; padding: 4px 9px; }
+}
+@media (max-width: 360px) {
+  .fpv2h-ptrust-chip { font-size: 0.68rem; padding: 4px 8px; }
+  .fpv2h-chips { gap: 4px; }
+  .fpv2h-chip { font-size: 0.72rem; padding: 5px 9px; }
+}
+
+/* ── Skeleton pulse speed improvement ──────────────────────────── */
+/*    V2-C6D: 1.6s → 1.1s — less jarring, faster perceived load     */
+@keyframes fxsk-pulse {
+  0%,100% { opacity: 0.45; }
+  50%     { opacity: 0.95; }
+}
+.fxsk-hero .fxsk-avatar,
+.fxsk-hero .fxsk-line,
+.fxsk-hero .fxsk-cta {
+  animation-duration: 1.1s !important;
+}
+
+/* ── Premium section breathing pass ─────────────────────────────── */
+/*    Increase vertical gap between sections for a premium feel.
+     Also tighten ppui-section-kicker → title spacing.               */
+body.fpv2b-loaded.public-artisan-page .public-artisan-shell {
+  gap: 24px !important;
+}
+body.fpv2b-loaded.public-artisan-page .ppui-section {
+  padding: 22px 22px !important;
+}
+body.fpv2b-loaded.public-artisan-page .ppui-section-kicker {
+  font-size:      0.70rem !important;
+  letter-spacing: 0.10em !important;
+  margin-bottom:  4px !important;
+}
+body.fpv2b-loaded.public-artisan-page .ppui-section-title {
+  font-size:   1.1rem !important;
+  font-weight: 800 !important;
+  margin:      0 0 14px !important;
+  line-height: 1.2 !important;
+}
+
+/* ── Trust strip: horizontal wrap on narrow mobile ─────────────── */
+@media (max-width: 420px) {
+  body.fpv2b-loaded.public-artisan-page .fpv2a-trust-strip {
+    flex-wrap: wrap !important;
+    gap:       6px !important;
+  }
+  body.fpv2b-loaded.public-artisan-page .fpv2a-strip-sep {
+    display: none !important;
+  }
+}
+
+/* ── Fpv2b specialty chips: unified style with hero estimation ──── */
+/*    V2-C6D: align fpv2b-chip border-radius and sizing with
+     fpv2h-chip for product coherence                               */
+body.fpv2b-loaded.public-artisan-page .fpv2b-chip {
+  border-radius: 10px !important;
+  font-size:     0.78rem !important;
+  padding:       7px 12px !important;
+  transition:    background 0.15s ease, border-color 0.15s ease !important;
+}
+body.fpv2b-loaded.public-artisan-page .fpv2b-chip:hover {
+  background:   rgba(99,102,241,0.15) !important;
+  border-color: rgba(99,102,241,0.35) !important;
+  color:        #fff !important;
+}
+
+/* ── Fade-in on profile root replace (skeleton → profile) ────────── */
+/*    When renderProfile() replaces root.innerHTML, the sections
+     that V2 then injects get the fpv2-sections-ready fade.
+     But the HERO itself appears snap. Add a very short hero entry.  */
+body.public-artisan-page .public-profile-hero {
+  animation: fpv2h-heroIn 0.22s ease-out both;
+}
+@keyframes fpv2h-heroIn {
+  from { opacity: 0.7; transform: translateY(4px); }
+  to   { opacity: 1;   transform: translateY(0); }
+}
+
+/* ── Profile hero: tighter padding on narrow mobile ─────────────── */
+@media (max-width: 390px) {
+  body.fpv2b-loaded.public-artisan-page .public-profile-hero {
+    padding: 16px 14px !important;
+    border-radius: 20px !important;
+  }
+}
