@@ -211,12 +211,36 @@
     'R\u00e9paration porte / fen\u00eatre':      { from: 150, to: 400 },
     /* Ma\u00e7onnerie */
     'R\u00e9paration mur / plafond':             { from: 200, to: 600 },
-    /* Serrurerie */
+    /* Serrurerie — V2-C6F: added all SERVICE_MAP keys to match SERVICE_PRICING */
+    'Porte bloqu\u00e9e':                        { from: 150, to: 350 },
     'Ouverture de porte':                        { from: 150, to: 300 },
-    /* Carrelage */
-    'Pose carrelage':                            { from: 80, to: 180 },
+    'Changement serrure':                        { from: 200, to: 450 },
+    'S\u00e9curisation porte':                   { from: 300, to: 700 },
+    'Urgence serrurerie':                        { from: 200, to: 450 },
+    /* Carrelage — added full list */
+    'Pose carrelage':                            { from: 200, to: 600 },
+    'R\u00e9paration joints':                    { from: 100, to: 250 },
+    'Carrelage salle de bain':                   { from: 500, to: 1500 },
+    'R\u00e9novation carrelage':                 { from: 400, to: 1200 },
+    /* Plomberie extras */
+    'Fuite d\u2019eau \u2014 r\u00e9paration':   { from: 150, to: 300 },
+    'Urgence plomberie':                         { from: 200, to: 400 },
+    'Installation sanitaire':                    { from: 250, to: 600 },
+    'R\u00e9paration chauffe-eau':               { from: 200, to: 500 },
+    /* Electricite extras */
+    'Panne \u00e9lectrique':                     { from: 150, to: 350 },
+    'Urgence \u00e9lectrique':                   { from: 200, to: 500 },
+    'Installation \u00e9lectrique':              { from: 200, to: 600 },
+    'Prise ou interrupteur en panne':            { from: 100, to: 200 },
     /* Toiture */
     'R\u00e9paration toiture':                   { from: 300, to: 800 },
+    'Fuite toiture':                             { from: 300, to: 700 },
+    'R\u00e9paration tuiles':                    { from: 250, to: 600 },
+    '\u00c9tanch\u00e9it\u00e9 terrasse':         { from: 500, to: 1500 },
+    /* Menuiserie extras */
+    'Porte ou fen\u00eatre bloqu\u00e9e':        { from: 150, to: 350 },
+    'R\u00e9paration menuiserie':                { from: 200, to: 500 },
+    'Intervention rapide':                       { from: 150, to: 400 },
   };
 
   /* Normalize service name for lookup — handles straight vs curly apostrophe,
