@@ -475,6 +475,7 @@
   function buildFallbackCard(artisan) { return buildUrgentCard(artisan, 0); }
 
   function updateSummary(state, results) {
+    console.log('[V2C2A-TRACE] updateSummary called: results.length='+results.length+' city='+state.city);
     $('#urgent-city').textContent = state.city || 'Toutes les villes';
     $('#urgent-query').textContent = state.query || 'Besoin urgent';
     $('#results-main-meta').textContent = `${results.length} artisan${results.length > 1 ? 's' : ''} disponible${results.length > 1 ? 's' : ''} • Priorité aux réponses rapides`;
