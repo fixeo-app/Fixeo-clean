@@ -361,4 +361,25 @@
     init();
   }
 
+  /* V2-B2A Patch 6: Trust grid re-injection after server data arrives.
+   * fixeo-profile-v2a.js dispatches 'fixeo:artisan:resolved' after:
+   *   - Supabase artisan fetch succeeds
+   *   - window._fixeoCurrentArtisan is set with real review_count
+   *   - old stale trust grid (built from null data at T+1ms) is removed
+   * We then re-run _injectTrustIndicators() with fresh DOM-scraped data.
+   * _parseHeroData() re-reads .public-trust-sub which upgradeReviewLine()
+   * has already patched with real review_count → thresholds fire correctly.
+   * Guard: if grid already present (only removed on success), skip.
+   * No-op on profiles where enhance() exits early (local fallback stays).
+   */
+  document.addEventListener('fixeo:artisan:resolved', function() {
+    if (document.querySelector('.ppui-trust-grid')) return; /* already re-injected */
+    var hero = document.querySelector('.public-profile-hero');
+    if (!hero) return;
+    try {
+      var data = _parseHeroData();
+      _injectTrustIndicators(data);
+    } catch(e) {}
+  });
+
 })(window, document);

@@ -1072,7 +1072,20 @@
     try {
       var offSince = localStorage.getItem('fixeo_avail_off_since');
       var avail    = localStorage.getItem('fixeo_avail_status') || '';
-      if (offSince || !avail || avail === 'off') return; /* has been offline at some point */
+
+      /* V2-B2A Patch 8: Server availability fallback.
+       * If the artisan's Supabase row says "available" AND there is no local
+       * "went offline" record, treat as consistent regardless of fixeo_avail_status.
+       * This makes "disponible régulièrement" visible to cross-device visitors
+       * even when fixeo_avail_status was never written to their localStorage.
+       * Local override still wins: if offSince is set, we skip regardless.
+       */
+      var sbAvail = window._fixeoCurrentArtisan && window._fixeoCurrentArtisan.availability;
+      var isServerAvail = (sbAvail === 'available');
+
+      /* Gate: skip if went offline, OR if no signal from either source */
+      if (offSince) return;
+      if (!isServerAvail && (!avail || avail === 'off')) return;
 
       var zoneStrip = document.querySelector('.fpv2b-zone-strip');
       if (!zoneStrip || zoneStrip.dataset.v1hAvailDone) return;
@@ -1611,28 +1624,72 @@
       var fetchKey = 'v2a:' + artisanId;
       if (!window.__fixeoArtisanFetch[fetchKey]) {
         window.__fixeoArtisanFetch[fetchKey] = (async function() {
+          /* V2-B2A Patch 1: score_qualification column removed (does not exist in this project).
+           * Any code that reads artisan.score_qualification receives undefined → || 0 fallback.
+           * Patch 2: Two-step Population A + B resolution (mirrors getArtisanForProfile).
+           *   Step 1: .eq('legacy_id', artisanId) — numeric IDs like "1042" (Population A)
+           *   Step 2: .eq('id', artisanId)         — UUIDs (Population B / Supabase-auth)
+           * Both steps use .maybeSingle() — no error when 0 rows (unlike .single()).
+           */
           await window.FixeoSupabaseClient.ready();
           var client = window.FixeoSupabaseClient.client;
           if (!client) return null;
-          var result = await client
-            .from('artisans')
-            .select('id,name,category,city,description,badge_label,rating,review_count,availability,verified,completed_missions,score_qualification,created_at')
-            .eq('id', artisanId)
-            .single();
-          return (result.error || !result.data) ? null : result.data;
+
+          var SELECT = 'id,legacy_id,name,category,city,description,badge_label,rating,' +
+                       'review_count,availability,verified,completed_missions,' +
+                       'owner_user_id,created_at';
+
+          /* Step 1: Population A — try legacy_id */
+          var r1 = await client.from('artisans').select(SELECT)
+                               .eq('legacy_id', artisanId).maybeSingle();
+          if (!r1.error && r1.data) return r1.data;
+
+          /* Step 2: Population B — try UUID */
+          var r2 = await client.from('artisans').select(SELECT)
+                               .eq('id', artisanId).maybeSingle();
+          if (!r2.error && r2.data) return r2.data;
+
+          /* Not found in either path — graceful noop */
+          return null;
         })();
       }
 
       artisan = await window.__fixeoArtisanFetch[fetchKey];
       if (!artisan) return; /* Not in Supabase (legacy ID / seed) — graceful noop */
 
-      /* V1-JC: Expose real Supabase artisan data globally so artisan-profile.html
-       * findCurrentArtisan() can merge it into the FixeoReservation.open() call.
-       * Includes review_count and score_qualification so the modal trust gate
-       * (V1-TC thresholds) has real data instead of normalizeArtisan() fallbacks.
-       * Read by: artisan-profile.html inline script (immediately before open() call).
+      /* V2-B2A Patch 3: Expose complete Supabase artisan data globally.
+       * Normalises the raw DB row into a shape consumed by:
+       *   - artisan-profile.html findCurrentArtisan() merge → FixeoReservation.open()
+       *   - fixeo-profile-premium-ui.js _injectTrustIndicators()
+       *   - V2-A3 FixeoArtisanIdentity.resolveAliases()
+       *   - V2-B1 FixeoPortfolioMirror.fetchForArtisan()
+       *   - injectAvailabilityConsistency() server fallback
+       * score_qualification is absent from this Supabase project → default 0.
+       * owner_account_id = owner_user_id (DB column alias for V2-A3 identity).
        */
-      window._fixeoCurrentArtisan = artisan;
+      window._fixeoCurrentArtisan = {
+        id:                   artisan.id || '',
+        legacy_id:            artisan.legacy_id || '',
+        name:                 artisan.name || '',
+        category:             artisan.category || '',
+        city:                 artisan.city || '',
+        description:          artisan.description || '',
+        badge_label:          artisan.badge_label || '',
+        rating:               parseFloat(artisan.rating) || 0,
+        review_count:         parseInt(artisan.review_count || 0, 10),
+        availability:         artisan.availability || 'available',
+        verified:             !!artisan.verified,
+        completed_missions:   parseInt(artisan.completed_missions || 0, 10),
+        /* score_qualification column does not exist in this project → always 0 */
+        score_qualification:  0,
+        /* V2-A3 identity aliases */
+        owner_account_id:     artisan.owner_user_id || '',
+        _supabase_id:         artisan.id || '',
+        /* Convenience aliases for reservation modal */
+        photo_url:            artisan.photo_url || artisan.avatar || '',
+        avatar:               artisan.photo_url || artisan.avatar || '',
+        created_at:           artisan.created_at || '',
+      };
 
       /* V2-A2: Pre-seed localStorage with validated Supabase missions for this artisan.
        * This runs BEFORE waitForHero/rAF so that when the synchronous V1-H/J functions
@@ -1757,6 +1814,24 @@
            → V1 panel stays visible (degraded but not broken).
         */
         document.body.classList.add('fpv2b-loaded');
+
+        /* V2-B2A Patch 6: Trust grid re-injection with server data.
+         * premium-ui.js built the trust grid at T+1ms before _fixeoCurrentArtisan existed.
+         * Now that server data is available, remove the stale grid and dispatch
+         * a calm event — premium-ui listens and re-builds with real review_count.
+         * Guard: only remove if _fixeoCurrentArtisan is set (i.e. server data available).
+         * No removal without server data — local-only fallback stays in place.
+         */
+        if (window._fixeoCurrentArtisan) {
+          var _staleGrid = document.querySelector('.ppui-trust-grid');
+          if (_staleGrid) _staleGrid.remove();
+          try {
+            document.dispatchEvent(new CustomEvent('fixeo:artisan:resolved', {
+              bubbles: false,
+              detail: { artisan: window._fixeoCurrentArtisan }
+            }));
+          } catch(e) {}
+        }
 
         /* ── P2: Section fade-in signal ─────────────────────────────── */
         /*

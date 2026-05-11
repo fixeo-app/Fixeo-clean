@@ -436,6 +436,21 @@
     var normalizedId = String(artisanId || '').trim();
     if (!normalizedId) return false;
 
+    /* V2-B2A Patch 9: Use V2-A3 alias-based matching when FixeoArtisanIdentity is loaded.
+     * Builds artisan reference with all known aliases (URL id + Supabase data).
+     * Falls back to exact ID match for backward compat when module not loaded.
+     */
+    if (window.FixeoArtisanIdentity
+        && typeof window.FixeoArtisanIdentity.requestMatchesArtisan === 'function') {
+      var _artRef = { id: normalizedId };
+      var _sbArt  = window._fixeoCurrentArtisan;
+      if (_sbArt && typeof _sbArt === 'object') {
+        _artRef = Object.assign({}, _sbArt, { id: normalizedId });
+      }
+      return window.FixeoArtisanIdentity.requestMatchesArtisan(raw, _artRef);
+    }
+
+    /* Legacy exact-match fallback (V2-A3 not loaded) */
     var nested = raw.artisan && typeof raw.artisan === 'object' ? raw.artisan : {};
     var candidateIds = [
       raw.assigned_artisan_id,
@@ -894,6 +909,64 @@
       renderNotFound(root);
     }
   }
+
+  /* V2-B2A Patch 4: Define renderArtisanProfile so FixeoSupabaseLoader.getArtisanForProfile()
+   * can refresh the base render with live server data.
+   *
+   * Before V2-B2A this call was a silent noop: the function wasn't defined anywhere,
+   * so the live Supabase artisan (correct name, city, availability, rating) was fetched
+   * and immediately discarded — the base render stayed frozen at localStorage pool data.
+   *
+   * This hook:
+   *  1. Receives the normalized artisan object from getArtisanForProfile() / _toFixeo()
+   *  2. Re-computes profile stats from existing localStorage requests (V2-A3 alias-aware)
+   *  3. Calls renderProfile() with fresh data → hero updates with server name/city/avail
+   *  4. Dispatches 'fixeo:public-profile:server-rendered' for downstream listeners
+   *
+   * Guards:
+   *  - Only runs on artisan-profile.html (root element check)
+   *  - Idempotent: skips if called with the same artisan id twice
+   *  - Does NOT touch booking/lifecycle/reservation paths
+   */
+  var _serverRenderDoneId = '';
+  window.renderArtisanProfile = function(artisan) {
+    if (!artisan || typeof artisan !== 'object') return;
+    var root = document.getElementById('public-artisan-root');
+    if (!root) return;
+
+    /* Skip if base render for same artisan was already done with server data */
+    var artisanId = String(artisan.id || artisan.legacy_id || '').trim();
+    if (!artisanId) return;
+    if (_serverRenderDoneId === artisanId) return;
+    _serverRenderDoneId = artisanId;
+
+    try {
+      var requests = loadRequests();
+
+      /* V2-B2A Patch 9: Use V2-A3 alias-aware mission matching for base render.
+       * computeProfileData() uses matchesArtisan() which is exact-ID only.
+       * Build the artisanLike object with all known aliases so
+       * computeProfileDataFromArtisanLike gets the widest request match.
+       */
+      var profileData = computeProfileDataFromArtisanLike(artisan, requests, artisanId);
+      if (!profileData) return;
+
+      renderProfile(root, profileData);
+
+      /* Notify downstream systems (V2-B2A Patch 6 trust grid re-injection
+       * already happens via the fixeo:artisan:resolved event in v2a.js,
+       * but profile re-render may reset some injected elements — a second
+       * event lets premium-ui re-apply badges/services/trust grid if needed) */
+      try {
+        document.dispatchEvent(new CustomEvent('fixeo:public-profile:server-rendered', {
+          bubbles: false,
+          detail: { artisan: artisan }
+        }));
+      } catch(e) {}
+    } catch(e) {
+      console.warn('[FixeoPublicArtisanProfile] renderArtisanProfile error:', e && e.message);
+    }
+  };
 
   window.FixeoPublicArtisanProfile = {
     init: init,

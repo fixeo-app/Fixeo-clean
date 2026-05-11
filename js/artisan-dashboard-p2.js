@@ -471,13 +471,22 @@
 
   /* ── V1-C: Non-blocking Supabase availability update ────── */
   function _syncAvailToSupabase(key) {
+    /* V2-B2A Patch 8: Use FixeoSupabaseClient.ready() (public API).
+     * Previous code called FixeoSupabaseClient.getClient() which is a private
+     * internal function — not exposed on the public object → always returned
+     * undefined → the Promise chain silently failed → artisans.availability
+     * was NEVER updated in Supabase from the dashboard.
+     * Fixed: use .ready() which returns { client } after SDK loads.
+     */
     var publicVal = _availKeyToPublic(key);
     try {
-      if (!window.FixeoSupabaseClient || typeof window.FixeoSupabaseClient.getClient !== 'function') return;
+      if (!window.FixeoSupabaseClient || !window.FixeoSupabaseClient.CONFIGURED) return;
       var userId = ls('user_id', ls('fixeo_user_id', ls('sb_user_id', '')));
       if (!userId) return;
-      window.FixeoSupabaseClient.getClient().then(function(sb) {
-        return sb.from('artisans')
+      window.FixeoSupabaseClient.ready().then(function(r) {
+        if (!r || !r.client) return;
+        return r.client
+          .from('artisans')
           .update({ availability: publicVal })
           .or('id.eq.' + userId + ',legacy_id.eq.' + userId);
       }).then(function() {
