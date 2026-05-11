@@ -1596,6 +1596,15 @@
 
   /* ── MAIN: fetch + apply ─────────────────────────────── */
   async function enhance() {
+    /* V2-C5C: Sentinel — set SYNCHRONOUSLY before any await.
+     * renderArtisanProfile() in fixeo-public-artisan-profile.js checks this flag
+     * to decide whether V2 has authority over the page. Once this line runs,
+     * PATH A (full renderProfile() DOM wipe) is permanently blocked for this session.
+     * Safe fallback: if enhance() exits early (wrong page, no artisanId, Supabase failure),
+     * the sentinel is still set — renderArtisanProfile() will use surgical PATH B only,
+     * which is always safe (updates 4 fields in-place, no DOM wipe). */
+    window.__fixeoV2EnhanceStarted = true;
+
     /* Only run on artisan-profile.html */
     var page = window.location.pathname.split('/').pop() || '';
     if (page && page !== 'artisan-profile.html') return;

@@ -959,7 +959,8 @@
       var v2Done   = !!(
         (hero && hero.getAttribute('data-v2a-done')) ||
         document.body.classList.contains('fpv2b-loaded') ||
-        root.classList.contains('fpv2-sections-ready')
+        root.classList.contains('fpv2-sections-ready') ||
+        window.__fixeoV2EnhanceStarted  /* V2-C5C: sentinel — enhance() started, block PATH A */
       );
 
       if (v2Done) {
