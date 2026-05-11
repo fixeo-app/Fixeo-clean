@@ -1,0 +1,355 @@
+/*
+ * fixeo-footer-global.css — v gf1
+ * Global Footer Authority System
+ *
+ * Single source of truth for the Fixeo premium footer.
+ * Applied via fixeo-footer-global.js (HTML injection) on pages without
+ * a native footer (artisan-profile, results, auth, etc.).
+ * Homepage loads this too — its native footer gains .fixeo-footer-v1 class.
+ *
+ * DO NOT duplicate these rules in page-specific CSS files.
+ * Append-only: add rules below existing ones, never modify above.
+ */
+
+/* ── BASE FOOTER SHELL ─────────────────────────────────────── */
+footer.fixeo-footer-v1,
+.fixeo-footer-inject {
+  background: rgba(13,13,26,0.97);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(255,255,255,0.07);
+  padding: 48px 0 0;
+  margin-top: 0;
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* ── PARTNER / TRUST BADGES ROW ───────────────────────────── */
+.fixeo-footer-v1 .v13-partners-row,
+.fixeo-footer-inject .v13-partners-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 36px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid rgba(255,255,255,0.055);
+}
+
+.fixeo-footer-v1 .v13-partner-badge,
+.fixeo-footer-inject .v13-partner-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.55);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+/* ── FOOTER GRID ───────────────────────────────────────────── */
+.fixeo-footer-v1 .footer-grid,
+.fixeo-footer-inject .footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 32px;
+  margin-bottom: 32px;
+}
+
+/* ── BRAND COLUMN ──────────────────────────────────────────── */
+.fixeo-footer-v1 .footer-brand,
+.fixeo-footer-inject .footer-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.fixeo-footer-v1 .footer-desc,
+.fixeo-footer-inject .footer-desc {
+  color: rgba(255,255,255,0.44);
+  font-size: 0.85rem;
+  line-height: 1.65;
+  margin: 0 0 14px;
+  max-width: 280px;
+}
+
+.fixeo-footer-v1 .footer-artisan-cta,
+.fixeo-footer-inject .footer-artisan-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  background: rgba(225,48,108,0.09);
+  border: 1px solid rgba(225,48,108,0.22);
+  color: rgba(255,160,180,0.88);
+  font-size: 0.80rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.18s ease, border-color 0.18s ease;
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+  width: fit-content;
+}
+
+.fixeo-footer-v1 .footer-artisan-cta:hover,
+.fixeo-footer-inject .footer-artisan-cta:hover {
+  background: rgba(225,48,108,0.16);
+  border-color: rgba(225,48,108,0.38);
+  color: rgba(255,180,200,0.96);
+}
+
+/* ── LINK COLUMNS ──────────────────────────────────────────── */
+.fixeo-footer-v1 .footer-links,
+.fixeo-footer-inject .footer-links {
+  display: flex;
+  flex-direction: column;
+}
+
+.fixeo-footer-v1 .footer-links h4,
+.fixeo-footer-inject .footer-links h4 {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.52);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin: 0 0 18px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.fixeo-footer-v1 .footer-links ul,
+.fixeo-footer-inject .footer-links ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.fixeo-footer-v1 .footer-links li,
+.fixeo-footer-inject .footer-links li {
+  margin: 0;
+}
+
+.fixeo-footer-v1 .footer-links a,
+.fixeo-footer-inject .footer-links a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.84rem;
+  color: rgba(255,255,255,0.42);
+  text-decoration: none;
+  padding: 7px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.035);
+  transition: color 0.18s ease, padding-left 0.18s ease;
+  position: relative;
+}
+
+.fixeo-footer-v1 .footer-links li:last-child a,
+.fixeo-footer-inject .footer-links li:last-child a {
+  border-bottom: none;
+}
+
+.fixeo-footer-v1 .footer-links a::before,
+.fixeo-footer-inject .footer-links a::before {
+  content: '›';
+  font-size: 0.90rem;
+  color: rgba(255,255,255,0.20);
+  transition: color 0.18s ease, transform 0.18s ease;
+  flex-shrink: 0;
+  margin-right: 2px;
+}
+
+.fixeo-footer-v1 .footer-links a:hover,
+.fixeo-footer-inject .footer-links a:hover {
+  color: rgba(255,255,255,0.82);
+  padding-left: 4px;
+}
+
+.fixeo-footer-v1 .footer-links a:hover::before,
+.fixeo-footer-inject .footer-links a:hover::before {
+  color: rgba(225,48,108,0.72);
+  transform: translateX(2px);
+}
+
+/* ── FOOTER BOTTOM ─────────────────────────────────────────── */
+.fixeo-footer-v1 .footer-bottom,
+.fixeo-footer-inject .footer-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0 20px;
+  border-top: 1px solid rgba(255,255,255,0.055);
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.28);
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.fixeo-footer-v1 .footer-bottom a,
+.fixeo-footer-inject .footer-bottom a {
+  color: rgba(255,255,255,0.32);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.fixeo-footer-v1 .footer-bottom a:hover,
+.fixeo-footer-inject .footer-bottom a:hover {
+  color: rgba(255,255,255,0.62);
+}
+
+/* ── TABLET (≤ 900px) — 2-col grid ────────────────────────── */
+@media (max-width: 900px) {
+  .fixeo-footer-v1 .footer-grid,
+  .fixeo-footer-inject .footer-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .fixeo-footer-v1 .footer-brand,
+  .fixeo-footer-inject .footer-brand {
+    grid-column: 1 / -1;
+  }
+  .fixeo-footer-v1 .footer-desc,
+  .fixeo-footer-inject .footer-desc {
+    max-width: none;
+  }
+}
+
+/* ── MOBILE (≤ 768px) — single column, horizontal badge scroll ─ */
+@media (max-width: 768px) {
+  .fixeo-footer-v1,
+  .fixeo-footer-inject {
+    padding-top: 32px;
+    overflow-x: hidden;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .fixeo-footer-v1 .container,
+  .fixeo-footer-inject .container {
+    padding-left: 16px;
+    padding-right: 16px;
+    overflow-x: hidden;
+  }
+
+  .fixeo-footer-v1 .v13-partners-row,
+  .fixeo-footer-inject .v13-partners-row {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    margin-bottom: 24px;
+    padding-bottom: 18px;
+    gap: 8px;
+    mask-image: linear-gradient(to right, #000 80%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, #000 80%, transparent 100%);
+  }
+
+  .fixeo-footer-v1 .v13-partners-row::-webkit-scrollbar,
+  .fixeo-footer-inject .v13-partners-row::-webkit-scrollbar {
+    display: none;
+  }
+
+  .fixeo-footer-v1 .v13-partner-badge,
+  .fixeo-footer-inject .v13-partner-badge {
+    flex-shrink: 0;
+    font-size: 0.74rem;
+    padding: 5px 12px;
+  }
+
+  .fixeo-footer-v1 .footer-grid,
+  .fixeo-footer-inject .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 22px;
+    margin-bottom: 22px;
+  }
+
+  .fixeo-footer-v1 .footer-brand,
+  .fixeo-footer-inject .footer-brand {
+    grid-column: auto;
+    margin-bottom: 2px;
+  }
+
+  .fixeo-footer-v1 .footer-desc,
+  .fixeo-footer-inject .footer-desc {
+    max-width: none;
+    font-size: 0.82rem;
+    margin-bottom: 12px;
+  }
+
+  .fixeo-footer-v1 .footer-artisan-cta,
+  .fixeo-footer-inject .footer-artisan-cta {
+    font-size: 0.78rem;
+    padding: 9px 14px;
+  }
+
+  .fixeo-footer-v1 .footer-links h4,
+  .fixeo-footer-inject .footer-links h4 {
+    font-size: 0.72rem;
+    margin-bottom: 12px;
+  }
+
+  .fixeo-footer-v1 .footer-links a,
+  .fixeo-footer-inject .footer-links a {
+    font-size: 0.82rem;
+    padding: 6px 0;
+  }
+
+  .fixeo-footer-v1 .footer-bottom,
+  .fixeo-footer-inject .footer-bottom {
+    padding: 14px 0 16px;
+    gap: 8px;
+    font-size: 0.76rem;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .fixeo-footer-v1 .footer-bottom > div {
+    gap: 0.55rem;
+  }
+}
+
+/* ── VERY NARROW (≤ 380px) ─────────────────────────────────── */
+@media (max-width: 380px) {
+  .fixeo-footer-v1 .v13-partner-badge,
+  .fixeo-footer-inject .v13-partner-badge {
+    font-size: 0.70rem;
+    padding: 5px 10px;
+  }
+
+  .fixeo-footer-v1 .footer-links a,
+  .fixeo-footer-inject .footer-links a {
+    font-size: 0.80rem;
+  }
+}
+
+/* ── AUTH MINIMAL FOOTER ───────────────────────────────────── */
+/* Used on auth.html — copyright only, no full grid */
+footer.fixeo-footer-auth {
+  background: rgba(13,13,26,0.85);
+  border-top: 1px solid rgba(255,255,255,0.055);
+  padding: 18px 0;
+  text-align: center;
+  font-size: 0.76rem;
+  color: rgba(255,255,255,0.25);
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: auto;
+}
+
+footer.fixeo-footer-auth a {
+  color: rgba(255,255,255,0.32);
+  text-decoration: none;
+  margin: 0 6px;
+}
+
+footer.fixeo-footer-auth a:hover {
+  color: rgba(255,255,255,0.60);
+}
