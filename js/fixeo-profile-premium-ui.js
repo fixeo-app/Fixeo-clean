@@ -24,7 +24,7 @@
   var CAT_ICONS = {
     plomberie:'🔧', electricite:'⚡', peinture:'🎨', nettoyage:'🧹',
     jardinage:'🌿', demenagement:'📦', bricolage:'🔨', climatisation:'❄️',
-    menuiserie:'🪚', maconnerie:'🧱', serrurerie:'🔑', carrelage:'🏠',
+    menuiserie:'🪚', maconnerie:'🧱', serrurerie:'🔑', carrelage:'🔲', /* V2-C5A: was 🏠 */
     etancheite:'🛡', vitrerie:'🪟', soudure:'🔥', informatique:'💻',
     plombier:'🔧', electricien:'⚡', peintre:'🎨'
   };
@@ -231,8 +231,8 @@
       var items = [
         {
           icon: '\u2b50',
-          label: _rc + '\u00a0confirmations',
-          sub: 'Historique v\u00e9rifiable'
+          label: _rc + '\u00a0avis clients',  /* V2-C5A: was "confirmations" */
+          sub: 'Not\u00e9 par des clients'    /* V2-C5A: was "Historique vérifiable" */
         },
         {
           icon: '\ud83d\udcb3',

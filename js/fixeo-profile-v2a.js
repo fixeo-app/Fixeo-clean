@@ -294,7 +294,7 @@
     /* Prefer review_count (real reviews) as the primary display figure.
      * completed_missions only shown when review_count alone is the trigger. */
     var display = reviewCount > 0 ? reviewCount : missions;
-    subEl.textContent = display + '\u00a0intervention' + (display > 1 ? 's' : '') + ' confirm\u00e9e' + (display > 1 ? 's' : '');
+    subEl.textContent = display + '\u00a0avis client' + (display > 1 ? 's' : '') + ' enregistr\u00e9' + (display > 1 ? 's' : ''); /* V2-C5A: was "interventions confirmées" — removed unverifiable claim */
   }
 
   /* ── 6b. Upgrade the star-rating line (.public-trust-rating) ── */
@@ -381,10 +381,10 @@
     jardinage: '\ud83c\udf3f',     demenagement: '\ud83d\udce6',
     bricolage: '\ud83d\udd28',     climatisation: '\u2744\ufe0f',
     menuiserie: '\ud83e\ude9a',    maconnerie: '\ud83e\uddf1',
-    serrurerie: '\ud83d\udd11',    carrelage: '\ud83c\udfe0',
+    serrurerie: '\ud83d\udd11',    carrelage: '\ud83d\udd32',  /* 🔲 tile frame — was 🏠 */
     etancheite: '\ud83d\udee1',    vitrerie: '\ud83e\ude9f',
     soudure: '\ud83d\udd25',       informatique: '\ud83d\udcbb',
-    toiture: '\ud83c\udfe0',       chauffage: '\ud83d\udd25'
+    toiture: '\ud83c\udfd7',       chauffage: '\ud83c\udf21'   /* 🏗️ / 🌡️ — were duplicate 🏠/🔥 */
   };
 
   function _catSlug(category) {
@@ -542,7 +542,7 @@
 
     var tier = null;
     if (count >= 81) {
-      tier = 'Artisan exp\u00e9riment\u00e9 sur Fixeo';
+      tier = 'Pr\u00e9sent sur Fixeo depuis un moment'; /* V2-C5A: was "Artisan expérimenté sur Fixeo" */
     } else if (count >= 31) {
       tier = 'Profil bien \u00e9tabli';
     } else if (count >= 10) {
@@ -705,7 +705,7 @@
     if (!document.querySelector('.fpv2b-wa-sub')) {
       var sub = document.createElement('p');
       sub.className = 'fpv2b-wa-sub';
-      sub.textContent = 'R\u00e9ponse Fixeo sous 30\u00a0min en moyenne';
+      sub.textContent = 'Fixeo vous r\u00e9pond rapidement'; /* V2-C5A: removed unverifiable SLA "30 min" */
       waBtn.parentNode.insertBefore(sub, waBtn.nextSibling);
     }
   }

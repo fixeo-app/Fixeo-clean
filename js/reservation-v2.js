@@ -128,6 +128,14 @@
   }
 
   /* ── UPGRADE ESTIMATION BLOCK ────────────────────────────── */
+  /*
+   * V2-C5A: Moved estimation to TOP of form — above service/date/address fields.
+   * Goal: price transparency is the FIRST conversion signal the user sees.
+   * New position: between .fixeo-res-artisan-card and .fixeo-res-form.
+   * Wording updated: "Choisissez un service pour voir le prix indicatif" +
+   *   "Prix indicatif basé sur des interventions similaires dans votre ville."
+   *   "Le prix final est confirmé avec l'artisan avant toute intervention."
+   */
   function upgradeEstimation(m) {
     var tarifEl = qs('#res-tarif-estime', m);
     if (!tarifEl || tarifEl.dataset.rv2) return;
@@ -141,52 +149,42 @@
     block.className = 'fxrv2-estimation';
     block.dataset.rv2est = '1';
 
-    /* Get current service pricing from existing DOM */
-    var svcPriceEl = qs('[data-res-svc-marche]', m);
-    var priceRange = '';
-    if (svcPriceEl) {
-      var txt = svcPriceEl.textContent || '';
-      /* Extract "150–300 MAD" pattern */
-      var match = txt.match(/(\d+[\u2013\-]\d+ MAD)/);
-      if (match) priceRange = match[1];
-    }
-
-    /* Get recommended price from existing DOM */
-    var recEl = qs('[data-res-svc-rec]', m);
-    var recPrice = '';
-    if (recEl) {
-      var rmatch = recEl.textContent.match(/~(\d+ MAD)/);
-      if (rmatch) recPrice = rmatch[1];
-    }
-
-    var showPrice = priceRange || '';
-    var showRec   = recPrice ? ('Prix recommand\u00e9\u00a0: <strong style="color:rgba(32,201,151,0.85)">' + recPrice + '</strong>') : '';
-
     block.innerHTML =
       '<div class="fxrv2-est-header">' +
         '<div class="fxrv2-est-brain" aria-hidden="true">\u25A3</div>' +
         '<div>' +
           '<div class="fxrv2-est-title">Estimation Fixeo</div>' +
-          '<div class="fxrv2-est-subtitle">S\u00e9lectionnez un service pour voir le prix</div>' +
+          /* V2-C5A: updated initial text — more instructional */
+          '<div class="fxrv2-est-subtitle">Choisissez un service pour voir le prix indicatif</div>' +
         '</div>' +
       '</div>' +
-      '<div class="fxrv2-est-price" id="fxrv2-price-row" style="' + (showPrice ? '' : 'display:none') + '">' +
-        '<span class="fxrv2-est-price-label">Fourchette\u00a0:</span>' +
-        '<span class="fxrv2-est-price-range" id="fxrv2-price-range">' + showPrice + '</span>' +
+      '<div class="fxrv2-est-price" id="fxrv2-price-row" style="display:none">' +
+        '<span class="fxrv2-est-price-label">Estimation\u00a0:</span>' +
+        '<span class="fxrv2-est-price-range" id="fxrv2-price-range"></span>' +
         '<span class="fxrv2-est-price-unit">MAD</span>' +
       '</div>' +
       '<div class="fxrv2-est-market">' +
         '<span class="fxrv2-est-market-icon" aria-hidden="true">\u25CE</span>' +
-        '<span id="fxrv2-price-rec">' + (showRec || 'Bas\u00e9e sur les prix observ\u00e9s dans votre ville') + '</span>' +
+        /* V2-C5A: honest indicative pricing language */
+        '<span id="fxrv2-price-rec">Prix indicatif bas\u00e9 sur des interventions similaires dans votre ville</span>' +
       '</div>' +
       '<div class="fxrv2-est-pay">' +
         '<span style="color:rgba(32,201,151,0.55)" aria-hidden="true">\u25CF</span>' +
-        'Aucun paiement maintenant \u2014 vous payez apr\u00e8s l\u2019intervention' +
+        /* V2-C5A: added "Le prix final est confirmé avec l'artisan avant toute intervention." */
+        'Le prix final est confirm\u00e9 avec l\u2019artisan avant toute intervention.\u00a0Aucun paiement maintenant.' +
       '</div>';
 
-    /* Insert before the tarifEl (which stays in DOM, we just enhance around it) */
-    tarifEl.style.display = 'none'; /* hide original, show V2 */
-    tarifEl.parentNode.insertBefore(block, tarifEl);
+    /* V2-C5A: Insert ABOVE the form (before .fixeo-res-form), not inside it.
+     * This makes price the first thing the user sees after the artisan card.
+     * Fallback: if form not found, insert before tarifEl (original behavior). */
+    var resForm = qs('.fixeo-res-form', m);
+    var insertTarget = resForm || tarifEl;
+    if (insertTarget && insertTarget.parentNode) {
+      insertTarget.parentNode.insertBefore(block, insertTarget);
+    }
+
+    /* Hide original tarif element (stays in DOM for JS hooks) */
+    tarifEl.style.display = 'none';
 
     /* Watch for service changes via existing DOM updates */
     _watchEstimationUpdates(m, block);
@@ -264,19 +262,20 @@
 
     var sp = svcName ? _getSvcPrice(svcName) : null;
     if (sp && sp.from && sp.to && priceRangeEl && priceRow) {
-      var rec = Math.round((sp.from + sp.to) / 2);
-      priceRangeEl.textContent = sp.from + '\u2013' + sp.to + '\u00a0MAD';
+      /* V2-C5A: show range as "N–M MAD — estimation indicative" */
+      priceRangeEl.textContent = sp.from + '\u2013' + sp.to + '\u00a0MAD \u2014 estimation indicative';
       priceRow.style.display = '';
-      if (subtitle) subtitle.textContent = 'Bas\u00e9e sur les prix du march\u00e9 local';
+      if (subtitle) subtitle.textContent = 'Prix indicatif bas\u00e9 sur des interventions similaires'; /* V2-C5A */
       if (priceRecEl) {
+        /* V2-C5A: honest pricing language — no synthetic "recommandé" authority */
         priceRecEl.innerHTML =
-          'Prix recommand\u00e9 Fixeo\u00a0: <strong style="color:rgba(32,201,151,0.85)">~' +
-          rec + '\u00a0MAD</strong>';
+          'Prix indicatif bas\u00e9 sur des interventions similaires dans votre ville. ' +
+          'Le prix final est confirm\u00e9 avec l\u2019artisan avant toute intervention.';
       }
     } else {
       if (priceRow) priceRow.style.display = 'none';
-      if (subtitle) subtitle.textContent = 'S\u00e9lectionnez un service pour voir le prix';
-      if (priceRecEl) priceRecEl.innerHTML = 'Bas\u00e9e sur les prix observ\u00e9s dans votre ville';
+      if (subtitle) subtitle.textContent = 'Choisissez un service pour voir le prix indicatif'; /* V2-C5A */
+      if (priceRecEl) priceRecEl.innerHTML = 'Prix indicatif bas\u00e9 sur des interventions similaires dans votre ville'; /* V2-C5A */
     }
   }
 
@@ -294,17 +293,17 @@
         if (rangeMatch) {
           var priceRangeEl = qs('#fxrv2-price-range', block);
           var priceRow = qs('#fxrv2-price-row', block);
-          if (priceRangeEl) priceRangeEl.textContent = rangeMatch[1] + '\u00a0MAD';
+          if (priceRangeEl) priceRangeEl.textContent = rangeMatch[1] + '\u00a0MAD \u2014 estimation indicative'; /* V2-C5A */
           if (priceRow) priceRow.style.display = '';
           var subtitle = qs('.fxrv2-est-subtitle', block);
-          if (subtitle) subtitle.textContent = 'Bas\u00e9e sur les prix du march\u00e9 local';
+          if (subtitle) subtitle.textContent = 'Prix indicatif bas\u00e9 sur des interventions similaires'; /* V2-C5A */
         }
-        var recMatch = (svcRecEl.textContent || '').match(/~(\d+)\u00a0MAD/);
         var priceRecEl = qs('#fxrv2-price-rec', block);
-        if (recMatch && priceRecEl) {
+        if (priceRecEl) {
+          /* V2-C5A: consistent honest pricing wording, no synthetic "recommandé" */
           priceRecEl.innerHTML =
-            'Prix recommand\u00e9 Fixeo\u00a0: <strong style="color:rgba(32,201,151,0.85)">~' +
-            recMatch[1] + '\u00a0MAD</strong>';
+            'Prix indicatif bas\u00e9 sur des interventions similaires dans votre ville. ' +
+            'Le prix final est confirm\u00e9 avec l\u2019artisan avant toute intervention.';
         }
       };
       var obs = new MutationObserver(updateFn);
@@ -351,10 +350,12 @@
       wrap.appendChild(pill);
     });
 
-    /* Insert right before the estimation block / tarif bar */
-    var tarifEl = qs('#res-tarif-estime', m);
+    /* V2-C5A: Insert trust pills before .fxrv2-estimation block (which is now above the form).
+     * Fallback: before .fixeo-res-form or before #res-tarif-estime. */
     var estBlock = qs('.fxrv2-estimation', m);
-    var insertBefore = estBlock || tarifEl;
+    var resForm  = qs('.fixeo-res-form', m);
+    var tarifEl  = qs('#res-tarif-estime', m);
+    var insertBefore = estBlock || resForm || tarifEl;
     if (insertBefore && insertBefore.parentNode) {
       insertBefore.parentNode.insertBefore(wrap, insertBefore);
     }

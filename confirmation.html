@@ -405,7 +405,7 @@
     <h1 class="conf-title">Intervention coordonnée</h1>
     <p class="conf-subtitle">
       Votre intervention est enregistrée et la coordination a commencé.<br/>
-      Restez joignable — un agent Fixeo vous contacte pour confirmer le créneau.
+      Votre artisan vous contactera via WhatsApp pour confirmer le créneau.
     </p>
 
     <!-- Méthode de paiement -->
@@ -470,6 +470,13 @@
       <p class="conf-wa-hint fxv2c-wa-context" id="conf-wa-context">
         Partager une photo, votre localisation ou pr&#233;ciser l&#x2019;intervention
       </p>
+    </div>
+
+    <!-- Artisan profile link — V2-C5A: continuity from booking to profile -->
+    <div id="conf-artisan-link" style="display:none;margin:0 0 16px;text-align:center;">
+      <a id="conf-artisan-link-a" href="#" style="color:rgba(255,255,255,0.7);font-size:0.85rem;text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.2);padding-bottom:1px;">
+        → Voir le profil de l'artisan
+      </a>
     </div>
 
     <!-- Actions -->
@@ -675,6 +682,51 @@
     document.addEventListener('DOMContentLoaded', function () {
       launchConfetti();
       injectOrderDetails();
+      /* V2-C5A: Inject artisan profile link if artisan UUID is recoverable */
+      (function injectArtisanProfileLink() {
+        try {
+          var linkWrap = document.getElementById('conf-artisan-link');
+          var linkEl   = document.getElementById('conf-artisan-link-a');
+          if (!linkWrap || !linkEl) return;
+
+          /* Try fixeo_client_requests (most recent entry with assigned_artisan_id) */
+          var artisanId   = '';
+          var artisanName = '';
+          try {
+            var reqs = JSON.parse(localStorage.getItem('fixeo_client_requests') || '[]');
+            if (Array.isArray(reqs)) {
+              for (var i = reqs.length - 1; i >= 0; i--) {
+                var r = reqs[i];
+                if (r && r.assigned_artisan_id && /^[0-9a-f-]{36}$/i.test(r.assigned_artisan_id)) {
+                  artisanId   = r.assigned_artisan_id;
+                  artisanName = r.assigned_artisan || r.artisan_name || '';
+                  break;
+                }
+              }
+            }
+          } catch (e) { /* ignore */ }
+
+          /* Fallback: lastOrder artisan name + URL param artisan id if available */
+          if (!artisanId) {
+            try {
+              var lo = JSON.parse(localStorage.getItem('lastOrder') || '{}');
+              if (lo.artisanId && /^[0-9a-f-]{36}$/i.test(lo.artisanId)) {
+                artisanId   = lo.artisanId;
+                artisanName = lo.artisan || '';
+              }
+            } catch (e) { /* ignore */ }
+          }
+
+          if (!artisanId) return; /* nothing to link — hide silently */
+
+          var label = artisanName
+            ? '\u2192 Voir le profil de ' + artisanName
+            : '\u2192 Voir le profil de l\u2019artisan';
+          linkEl.textContent = label;
+          linkEl.href = 'artisan-profile.html?id=' + encodeURIComponent(artisanId);
+          linkWrap.style.display = 'block';
+        } catch (e) { /* fail silently — non-critical */ }
+      })();
     });
 
   })();

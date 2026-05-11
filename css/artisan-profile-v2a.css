@@ -805,6 +805,12 @@
 .public-avatar-wrap.fpv2c-active {
   position: relative !important;
   display: inline-block !important;
+  /* V2-C5A: premium ring + elevation — glassmorphism, not neon */
+  border-radius: 28px !important;
+  box-shadow:
+    0 0 0 2px rgba(255, 255, 255, 0.07),
+    0 8px 28px rgba(0, 0, 0, 0.32),
+    0 2px 8px rgba(0, 0, 0, 0.20) !important;
 }
 
 /* ── V2C-G: Mobile adjustments ──────────────────────────────── */

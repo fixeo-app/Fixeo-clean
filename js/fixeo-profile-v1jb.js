@@ -191,7 +191,12 @@
       }
     } catch(e) {}
 
-    /* Hide when below threshold */
+    /* V2-C5A: If the grid is already in --operational mode (no metrics, only guarantees),
+     * NEVER hide it — operational guarantees must always be visible to the user.
+     * Only hide the metrics-heavy qualified grid when evidence is too sparse. */
+    if (trustGrid.classList.contains('ppui-trust-grid--operational')) return;
+
+    /* Hide the qualified (metrics) grid when below threshold */
     if (missions < 3 || confirmed < 2) {
       trustGrid.classList.add('fpv1jb-trust-hidden');
 

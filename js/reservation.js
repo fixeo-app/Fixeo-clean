@@ -444,7 +444,7 @@
                   ? '<span class="fixeo-res-stars">' + '\u2605'.repeat(Math.min(5, Math.floor(_r))) + '</span><span class="fixeo-res-rating">' + _r.toFixed(1) + '</span>'
                   : '';
                 var _countHtml  = _showCount
-                  ? '<span class="fixeo-res-reviews">(' + _rc + ' confirmations)</span>'
+                  ? '<span class="fixeo-res-reviews">(' + _rc + ' avis)</span>' /* V2-C5A: was "confirmations" */
                   : '';
                 return '<div class="fixeo-res-artisan-row">' +
                   _starsHtml + _countHtml +

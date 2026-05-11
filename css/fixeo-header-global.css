@@ -440,6 +440,10 @@ body.fixeo-gh-enabled .navbar-toggle {
   .fixeo-gh-shell--synthetic {
     display: none !important;
   }
+  /* V2-C5A: hide hamburger menu portal on desktop — was adding ~344px phantom block to page height */
+  #fixeo-gh-menu-portal {
+    display: none !important;
+  }
 }
 
 /* ── IA refonte additions (2026-05-04) ─────────────────────────── */
