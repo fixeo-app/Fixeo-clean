@@ -154,6 +154,16 @@
     }
   </style>
 
+<!-- SEO-1A: Artisan profile base SEO tags (populated dynamically by fixeo-public-artisan-profile.js) -->
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+<meta property="og:type" content="profile">
+<meta property="og:site_name" content="Fixeo">
+<meta property="og:image" content="https://fixeo.ma/img/logo.png">
+<meta property="og:locale" content="fr_MA">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@FixeoMaroc">
+<!-- Dynamic LD+JSON injected at render time by fixeo-seo-profile.js -->
+<script id="fixeo-profile-jsonld" type="application/ld+json">{"@context":"https://schema.org","@type":"ProfessionalService","name":"Artisan Fixeo","url":"https://fixeo.ma/artisan-profile.html","provider":{"@type":"Organization","name":"Fixeo","url":"https://fixeo.ma/"}}</script>
 </head>
 <body data-theme="dark" class="public-artisan-page fixeo-gh-enabled">
 <!-- perf-profile-1: Instant preseed — runs synchronously at body-parse time (before any other script).
@@ -641,5 +651,7 @@
 <script src="js/fixeo-claim-system.js?v=v2c3b" defer></script>
 <!-- gf1: Global footer injection -->
 <script src="js/fixeo-footer-global.js?v=gf1" defer></script>
+<!-- SEO-1A: Dynamic profile SEO enrichment (title/description/OG/JSON-LD updated on artisan resolve) -->
+<script src="js/fixeo-seo-profile.js?v=seo1" defer></script>
 </body>
 </html>

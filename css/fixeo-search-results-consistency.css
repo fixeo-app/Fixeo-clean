@@ -1,0 +1,96 @@
+
+/* ================================================================
+   FIXEO — Search Results Cards Consistency Fix
+   File: css/fixeo-search-results-consistency.css
+   
+   renderCard() in secondary-search.js now outputs pvc-card markup.
+   This file ensures the ssb2-results-grid container renders pvc-cards
+   identically to the homepage vedette grid.
+   
+   Zero changes to homepage layout, vedette grid, or ssb2 bar.
+================================================================ */
+
+/* ── Result grid: 2-col layout matching homepage vedette ───────── */
+#ssb2-results-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 16px !important;
+  padding: 0 !important;
+}
+
+@media (max-width: 720px) {
+  #ssb2-results-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+}
+
+/* ── Cards inside result grid: same width as vedette cards ─────── */
+#ssb2-results-grid .pvc-card,
+#ssb2-results-grid .ssb2-result-card {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+}
+
+/* ── Mobile: stack vertically (no carousel in search results) ───── */
+@media (max-width: 640px) {
+  #ssb2-results-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    flex-direction: unset !important;
+    flex-wrap: unset !important;
+    overflow-x: unset !important;
+    scroll-snap-type: unset !important;
+  }
+
+  #ssb2-results-grid .pvc-card,
+  #ssb2-results-grid .ssb2-result-card {
+    min-width: unset !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    flex-shrink: unset !important;
+    scroll-snap-align: unset !important;
+  }
+}
+
+/* ── Matching active state indicator ───────────────────────────── */
+/* Shows a pulsing "Matching actif" chip on artisan cards when
+   the matching engine has scored them. Zero layout change. */
+.pvc-card[data-match-score],
+article.pvc-card[data-match-score] {
+  position: relative;
+}
+.pvc-card[data-match-score]::after,
+article.pvc-card[data-match-score]::after {
+  content: '🎯 Matching actif';
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: linear-gradient(135deg, #833AB4, #E1306C);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 20px;
+  letter-spacing: 0.03em;
+  pointer-events: none;
+  z-index: 2;
+  animation: matchPulse 2s ease-in-out infinite;
+}
+@keyframes matchPulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.7; }
+}
+
+/* ── Smooth section reveal (anti-FOUC belt-and-suspenders) ──────── */
+#secondary-search-section,
+#top-artisans,
+#artisans-section {
+  transition: opacity 0.3s ease !important;
+}
+html body.fixeo-sections-ready #secondary-search-section,
+html body.fixeo-sections-ready #top-artisans,
+html body.fixeo-sections-ready #artisans-section {
+  opacity: 1 !important;
+}

@@ -59,7 +59,7 @@
 <link rel="stylesheet" href="css/marketplace-secondary-entry.css?v=50a38b9"/>
 <link rel="stylesheet" href="css/homepage-conversion-optimizer.css?v=50a38b9" media="print" onload="this.media='all'"/><noscript><link rel="stylesheet" href="css/homepage-conversion-optimizer.css?v=50a38b9"/></noscript>
 <link rel="stylesheet" href="css/artisan-onboarding.css?v=50a38b9"/>
-<link rel="stylesheet" href="css/fixeo-header-global.css?v=fxgh2"/>
+<link rel="stylesheet" href="css/fixeo-header-global.css?v=50a38b9"/>
 <link rel="stylesheet" href="css/hero-premium-upgrade.css?v=50a38b9"/>
 <link rel="stylesheet" href="css/hero-ux-fixes.css?v=50a38b9"/>
   <link rel="stylesheet" href="css/hero-conversion-boost.css?v=hcb10"/>
@@ -2003,7 +2003,6 @@ section#home.hero.hero-section {
   <link rel="stylesheet" href="css/testimonials-cta-premium.css?v=tcp2">
   <link rel="stylesheet" href="css/homepage-flow-v1.css?v=4">
   <link rel="stylesheet" href="css/fixeo-trust-v9.css?v=4">
-  <link rel="stylesheet" href="css/fixeo-footer-global.css?v=gf1">
   <link rel="stylesheet" href="css/fixeo-hero-lps-v10.css?v=4">
   <link rel="stylesheet" href="css/fixeo-urgent-v2.css?v=1">
   <link rel="stylesheet" href="css/fixeo-request-v2.css?v=1">
@@ -2091,87 +2090,6 @@ section#home.hero.hero-section {
   }
 </style>
 
-<!-- SEO-1A: Structured Data Foundation -->
-<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://fixeo.ma/">
-<meta property="og:site_name" content="Fixeo">
-<meta property="og:image" content="https://fixeo.ma/img/logo.png">
-<meta property="og:locale" content="fr_MA">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:site" content="@FixeoMaroc">
-<meta name="twitter:title" content="Fixeo — Artisans vérifiés au Maroc">
-<meta name="twitter:description" content="Trouvez des artisans vérifiés, notés et disponibles près de chez vous au Maroc. Plombiers, électriciens, serruriers, peintres — intervention rapide.">
-<meta name="twitter:image" content="https://fixeo.ma/img/logo.png">
-<link rel="canonical" href="https://fixeo.ma/">
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "Organization",
-      "@id": "https://fixeo.ma/#organization",
-      "name": "Fixeo",
-      "url": "https://fixeo.ma/",
-      "logo": {
-        "@type": "ImageObject",
-        "url": "https://fixeo.ma/img/logo.png",
-        "width": 200,
-        "height": 60
-      },
-      "description": "Marketplace de mise en relation entre particuliers et artisans vérifiés au Maroc.",
-      "foundingDate": "2024",
-      "areaServed": {
-        "@type": "Country",
-        "name": "Maroc"
-      },
-      "serviceType": ["Plomberie", "Électricité", "Serrurerie", "Climatisation", "Peinture"],
-      "contactPoint": {
-        "@type": "ContactPoint",
-        "contactType": "customer support",
-        "availableLanguage": ["French", "Arabic"]
-      }
-    },
-    {
-      "@type": "WebSite",
-      "@id": "https://fixeo.ma/#website",
-      "url": "https://fixeo.ma/",
-      "name": "Fixeo",
-      "publisher": { "@id": "https://fixeo.ma/#organization" },
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": {
-          "@type": "EntryPoint",
-          "urlTemplate": "https://fixeo.ma/?q={search_term_string}"
-        },
-        "query-input": "required name=search_term_string"
-      }
-    },
-    {
-      "@type": "LocalBusiness",
-      "@id": "https://fixeo.ma/#localbusiness",
-      "name": "Fixeo — Artisans au Maroc",
-      "url": "https://fixeo.ma/",
-      "description": "Plateforme de mise en relation avec des artisans vérifiés dans toutes les villes du Maroc.",
-      "areaServed": [
-        "Casablanca", "Rabat", "Marrakech", "Fès", "Tanger", "Agadir",
-        "Meknès", "Oujda", "Kénitra", "Témara", "Salé", "Mohammedia"
-      ],
-      "hasOfferCatalog": {
-        "@type": "OfferCatalog",
-        "name": "Services d'artisans",
-        "itemListElement": [
-          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Plomberie" } },
-          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Électricité" } },
-          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Serrurerie" } },
-          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Climatisation" } },
-          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Peinture" } }
-        ]
-      }
-    }
-  ]
-}
-</script>
 </head>
 
 <body class="fixeo-homepage-mode fixeo-gh-enabled">
@@ -2991,7 +2909,7 @@ section#home.hero.hero-section {
 <!-- ═══════════════════════════════════════════════════════════
      9. FOOTER V13
 ════════════════════════════════════════════════════════════ -->
-<footer class="fixeo-footer-v1" role="contentinfo">
+<footer role="contentinfo">
   <div class="container">
 
     <!-- Partners / trust badges -->
@@ -3262,10 +3180,10 @@ section#home.hero.hero-section {
 <script src="js/i18n.js?v=i18n3"></script>
 <script defer src="js/notifications.js?v=50a38b9"></script>
 <script src="js/fixeo-public-profile-links.js?v=50a38b9"></script>
-<script src="js/main.js?v=v2c6h-pf"></script>
+<script src="js/main.js?v=v2c6g"></script>
 <!-- fixeo_seed_patch.js DISABLED - seeds now in Supabase -->
   <script src="js/fixeo-matching-engine.js?v=me1"></script>
-  <script src="js/fixeo-pricing-marocain.js?v=pm1" defer></script>
+  <script src="js/fixeo-pricing-marocain.js?v=pm1"></script>
   <!-- fixeo-artisans-master-loader.js DISABLED - data now from Supabase (fixeo-supabase-loader.js) -->
 <script>
 /* ── Page-level utility functions (unchanged from v11/v12) ── */
@@ -3443,13 +3361,13 @@ function openContentModal(type) {
 }
 </script>
 
-<script src="js/v3_ultra_stable.js?v=50a38b9" defer></script>
+<script src="js/v3_ultra_stable.js?v=50a38b9"></script>
 <script src="js/pricing.js?v=50a38b9"></script>
 <script src="js/fixeo_v5_fixes.js?v=50a38b9"></script>
-<script src="js/smart-search.js?v=50a38b9" defer></script>
+<script src="js/smart-search.js?v=50a38b9"></script>
   <script src="js/fixeo-cities.js?v=fxc1"></script>
-<script src="js/hero-search-modal.js?v=50a38b9" defer></script>
-<script src="js/secondary-search.js?v=pf-nav1" defer></script>
+<script src="js/hero-search-modal.js?v=50a38b9"></script>
+<script src="js/secondary-search.js?v=50a38b9"></script>
 <script src="js/quick-search-modal.js?v=qsm10"></script>
 <script src="js/header-unified.js?v=modalfix3"></script>
 <script src="js/auth-global.js?v=50a38b9"></script>
@@ -3457,7 +3375,7 @@ function openContentModal(type) {
 <script src="js/fixeo-session-bridge.js?v=sb1"></script>
 <script src="js/homepage-v13.js?v=50a38b9"></script>
 <script src="js/hero-performance.js?v=50a38b9" defer></script>
-<script src="js/fixeo_homepage_premium_patch.js?v=fhp17"></script>
+<script src="js/fixeo_homepage_premium_patch.js?v=fhp16"></script>
 
 <script>
 /* ================================================================

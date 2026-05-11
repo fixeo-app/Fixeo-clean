@@ -1,6 +1,11 @@
+# SEO-1A: Updated robots.txt — Fixeo
+# Last updated: 2026-05-12
+
 User-agent: *
 
+# App-shell / auth pages (no SEO value)
 Disallow: /admin
+Disallow: /admin.html
 Disallow: /dashboard
 Disallow: /dashboard-client
 Disallow: /dashboard-client.html
@@ -8,13 +13,29 @@ Disallow: /dashboard-artisan
 Disallow: /dashboard-artisan.html
 Disallow: /auth
 Disallow: /auth.html
+Disallow: /onboarding-artisan.html
+
+# Transactional / post-action pages (no SEO value)
 Disallow: /payment-success
 Disallow: /payment-success.html
 Disallow: /payment-cancel
 Disallow: /payment-cancel.html
 Disallow: /confirmation
 Disallow: /confirmation.html
+
+# Dynamic search results (no canonical, no SEO value)
+Disallow: /results.html
+
+# Legacy redirect page (handled by noindex, listed here for safety)
+Disallow: /artisan.html
+
+# Internal flows
 Disallow: /demandes
 Disallow: /api/
+
+# Allow important static assets
+Allow: /img/
+Allow: /css/
+Allow: /js/fixeo-supabase-loader.js
 
 Sitemap: https://fixeo.ma/sitemap.xml
