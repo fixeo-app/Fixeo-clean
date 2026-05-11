@@ -1639,3 +1639,155 @@ body.fpv2b-loaded.public-artisan-page .fpv2b-wa-sub {
     display: none !important;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   V2-C6C — True V2 Hero Template (CSS-only reshape)
+   Scope: body.fpv2b-loaded.public-artisan-page
+   Goal:  Flatten the nested "card-within-card" V1 pattern.
+          The .public-trust-card retains its DOM for JS hooks but loses
+          its visual card treatment — becoming a flat identity block.
+          No class names removed. No renderProfile() HTML changed.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── 1. Flatten trust card — remove nested card appearance ─────── */
+/*    artisan-profile-premium.css sets bg, border, border-radius,
+     padding, and a gradient ::before stripe on .public-trust-card.
+     All of those are what make the hero look V1.
+     We override them to transparent/none here.                     */
+body.fpv2b-loaded.public-artisan-page .public-trust-card {
+  background:    transparent !important;
+  border:        none !important;
+  border-radius: 0 !important;
+  padding:       0 !important;
+  gap:           6px !important;
+  position:      static !important;
+  overflow:      visible !important;
+}
+body.fpv2b-loaded.public-artisan-page .public-trust-card::before {
+  display: none !important;   /* removes the gradient top stripe */
+}
+
+/* ── 2. Trust top: stack vertically, remove spacer layout ──────── */
+body.fpv2b-loaded.public-artisan-page .public-trust-top {
+  flex-direction: column !important;
+  align-items:    flex-start !important;
+  gap:            4px !important;
+}
+
+/* ── 3. Rating line: clean gold, prominent ─────────────────────── */
+body.fpv2b-loaded.public-artisan-page .public-trust-rating {
+  font-size:   1.15rem !important;
+  font-weight: 900 !important;
+  color:       #FFD700 !important;
+  line-height: 1.2 !important;
+}
+
+/* ── 4. Review sub-line: readable, not muted ───────────────────── */
+body.fpv2b-loaded.public-artisan-page .public-trust-sub {
+  font-size:   0.88rem !important;
+  color:       rgba(255,255,255,0.78) !important;
+  font-weight: 500 !important;
+  margin-top:  0 !important;
+}
+
+/* ── 5. Trust badge: hide — fpv2a-badge-label replaces it ──────── */
+/*    .public-trust-badge is the V1 "Nouveau / Confirmé" pill.
+     V2 replaced it with .fpv2a-badge-label ("Top Artisan" etc.)
+     which is injected INSIDE the trust card by injectBadgeLabel().  */
+body.fpv2b-loaded.public-artisan-page .public-trust-badge {
+  display: none !important;
+}
+
+/* ── 6. Trust score: already hidden by suppressTrustScore() ─────  */
+/*    Belt-and-suspenders: ensure it never shows                    */
+body.fpv2b-loaded.public-artisan-page .public-trust-score {
+  display: none !important;
+}
+
+/* ── 7. hero-main: flex column, tighter rhythm ─────────────────── */
+/*    Inline critical CSS sets display:grid, gap:12px on hero-main.
+     Switch to flex column for finer control.                       */
+body.fpv2b-loaded.public-artisan-page .public-hero-main {
+  display:        flex !important;
+  flex-direction: column !important;
+  gap:            6px !important;
+}
+
+/* ── 8. hero-main h1: larger, more dominant ────────────────────── */
+body.fpv2b-loaded.public-artisan-page .public-hero-main h1 {
+  font-size:   clamp(1.45rem, 5vw, 1.9rem) !important;
+  font-weight: 900 !important;
+  line-height: 1.1 !important;
+  margin:      0 0 2px !important;
+}
+
+/* ── 9. hero-meta: slightly more visible ───────────────────────── */
+body.fpv2b-loaded.public-artisan-page .public-hero-meta {
+  font-size:  0.93rem !important;
+  color:      rgba(255,255,255,0.72) !important;
+  margin:     0 0 4px !important;
+}
+
+/* ── 10. Availability pill: tighten top margin ─────────────────── */
+body.fpv2b-loaded.public-artisan-page .public-profile-hero .public-availability {
+  margin-bottom: 2px !important;
+}
+
+/* ── 11. CTA button: bolder, full-width on mobile ──────────────── */
+body.fpv2b-loaded.public-artisan-page .public-action-btn {
+  margin-top:    8px !important;
+  padding:       15px 28px !important;
+  font-size:     1.02rem !important;
+  border-radius: 14px !important;
+  width:         100% !important;
+  letter-spacing: 0.01em !important;
+}
+@media (min-width: 768px) {
+  body.fpv2b-loaded.public-artisan-page .public-action-btn {
+    width: auto !important;
+  }
+}
+
+/* ── 12. ppui-cta-reassurance: style as compact chip row ────────── */
+body.fpv2b-loaded.public-artisan-page .ppui-cta-reassurance {
+  font-size:  0.78rem !important;
+  color:      rgba(255,255,255,0.55) !important;
+  margin-top: 4px !important;
+}
+
+/* ── 13. fpv2a-badge-label: elevated, sits above rating ────────── */
+/*    Already styled in prior rules. Ensure proper margin here.    */
+body.fpv2b-loaded.public-artisan-page .fpv2a-badge-label {
+  margin-bottom: 4px !important;
+}
+
+/* ── 14. fpv2b-zone-strip: tighter top margin ──────────────────── */
+body.fpv2b-loaded.public-artisan-page .fpv2b-zone-strip {
+  margin-top: 2px !important;
+}
+
+/* ── 15. fpv2a-trust-strip: separate from button ───────────────── */
+body.fpv2b-loaded.public-artisan-page .fpv2a-trust-strip {
+  margin-top: 6px !important;
+}
+
+/* ── 16. Desktop hero: single unified column ───────────────────── */
+/*    V2-C6B already collapses the grid to 1fr when no real avatar.
+     When has-real-avatar: keep 2-col but reduce avatar column size */
+@media (min-width: 768px) {
+  body.fpv2b-loaded.public-artisan-page .public-profile-hero.has-real-avatar {
+    grid-template-columns: 96px minmax(0, 1fr) !important;
+    align-items:           flex-start !important;
+    gap:                   20px !important;
+  }
+  body.fpv2b-loaded.public-artisan-page .public-profile-hero.has-real-avatar .public-avatar-wrap {
+    display:        block !important;
+    width:          96px !important;
+    padding-top:    6px !important;
+  }
+  body.fpv2b-loaded.public-artisan-page .public-profile-hero.has-real-avatar .public-avatar {
+    width:         96px !important;
+    height:        96px !important;
+    border-radius: 20px !important;
+  }
+}
