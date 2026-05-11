@@ -29,7 +29,7 @@
       neighborhoods: 'Maarif, Aïn Diab, Hay Hassani, Bourgogne, Sidi Bernoussi',
       context: 'Grande ville commerciale, forte densité résidentielle et industrielle.',
       demand_note: 'Forte demande en appartements et immeubles anciens.',
-      pricing: 'Les tarifs varient selon l'urgence, le quartier et la complexité.',
+      pricing: 'Les tarifs varient selon l\'urgence, le quartier et la complexité.',
       lat: 33.5731, lng: -7.5898
     },
     rabat: {
@@ -44,7 +44,7 @@
       label: 'Marrakech',
       neighborhoods: 'Guéliz, Hivernage, Médina, Targa, Massira',
       context: 'Forte activité touristique et riad, avec un parc immobilier mixte.',
-      demand_note: 'Riads, villas touristiques et résidences privées constituent l'essentiel des demandes.',
+      demand_note: 'Riads, villas touristiques et résidences privées constituent l\'essentiel des demandes.',
       pricing: 'Les interventions dans les riads peuvent nécessiter des équipements spécifiques.',
       lat: 31.6295, lng: -7.9811
     },
@@ -52,7 +52,7 @@
       label: 'Fès',
       neighborhoods: 'Médina, Ville Nouvelle, Aïn Chkef, Jnane el-Ouard',
       context: 'Ville impériale avec un patrimoine architectural dense et un habitat ancien.',
-      demand_note: 'L'habitat ancien de la médina génère une forte demande en rénovation et dépannage.',
+      demand_note: 'L\'habitat ancien de la médina génère une forte demande en rénovation et dépannage.',
       pricing: 'Interventions dans la médina peuvent inclure des frais de déplacement spécifiques.',
       lat: 34.0181, lng: -5.0078
     },
@@ -76,14 +76,14 @@
       label: 'Meknès',
       neighborhoods: 'Ville Nouvelle, Médina, Hamria, Zitoune',
       context: 'Ville impériale à caractère résidentiel calme, parc immobilier diversifié.',
-      demand_note: 'Demandes régulières dans l'habitat collectif de la Ville Nouvelle.',
+      demand_note: 'Demandes régulières dans l\'habitat collectif de la Ville Nouvelle.',
       pricing: 'Tarifs généralement inférieurs à Casablanca pour des interventions équivalentes.',
       lat: 33.8935, lng: -5.5473
     },
     oujda: {
       label: 'Oujda',
       neighborhoods: 'Centre-ville, Sidi Maâfa, Lazaret, Hay Qods',
-      context: 'Carrefour commercial de l'Oriental, forte densité résidentielle.',
+      context: 'Carrefour commercial de l\'Oriental, forte densité résidentielle.',
       demand_note: 'Demandes concentrées dans les quartiers résidentiels centraux.',
       pricing: 'Marché local avec tarifs adaptés au coût de la vie régional.',
       lat: 34.6867, lng: -1.9114
@@ -98,9 +98,9 @@
     },
     temara: {
       label: 'Témara',
-      neighborhoods: 'Hay Nahda, Harhoura, Plage Sables d'Or, Cité OLM',
+      neighborhoods: 'Hay Nahda, Harhoura, Plage Sables d\'Or, Cité OLM',
       context: 'Zone résidentielle satellite de Rabat, forte densité pavillonnaire.',
-      demand_note: 'Villas et maisons individuelles constituent l'essentiel du parc.',
+      demand_note: 'Villas et maisons individuelles constituent l\'essentiel du parc.',
       pricing: 'Tarifs comparables à Rabat, déplacements depuis Rabat possibles.',
       lat: 33.9265, lng: -6.9071
     },
@@ -141,7 +141,7 @@
       neighborhoods: 'Centre-ville, Hay Moulay Ismail, Dcheira',
       context: 'Ville minière phosphatière, habitat ouvrier et immeubles collectifs.',
       demand_note: 'Fort parc de logements collectifs liés aux industries OCP.',
-      pricing: 'Tarifs modérés, bonne disponibilité d'artisans locaux.',
+      pricing: 'Tarifs modérés, bonne disponibilité d\'artisans locaux.',
       lat: 32.8811, lng: -6.9063
     },
     safi: {
@@ -181,7 +181,7 @@
       neighborhoods: 'Médina, Martil, Malalyine, Hay Jamaa',
       context: 'Ville de la région du Nord, architecture andalouse et habitat traditionnel.',
       demand_note: 'Médina dense génère une demande spécifique en rénovation.',
-      pricing: 'Tarifs accessibles, forte disponibilité d'artisans locaux.',
+      pricing: 'Tarifs accessibles, forte disponibilité d\'artisans locaux.',
       lat: 35.5889, lng: -5.3626
     }
   };
@@ -193,22 +193,22 @@
     plombier: {
       label: 'Plombier',
       icon: '🚿',
-      lead_prefix: 'Besoin d'un plombier',
-      lead_suffix: 'Fixeo vous aide à trouver rapidement un artisan disponible pour une fuite d'eau, un débouchage, une installation sanitaire ou une panne de chauffe-eau.',
+      lead_prefix: 'Besoin d\'un plombier',
+      lead_suffix: 'Fixeo vous aide à trouver rapidement un artisan disponible pour une fuite d\'eau, un débouchage, une installation sanitaire ou une panne de chauffe-eau.',
       stat1_title: 'Interventions fréquentes',
-      stat1_body: 'Fuite d'eau, siphon bouché, robinetterie, chauffe-eau ou canalisation bouchée.',
+      stat1_body: 'Fuite d\'eau, siphon bouché, robinetterie, chauffe-eau ou canalisation bouchée.',
       stat2_title: 'Sans déplacement inutile',
-      stat2_body: 'L'artisan intervient directement chez vous après confirmation de la demande.',
+      stat2_body: 'L\'artisan intervient directement chez vous après confirmation de la demande.',
       stat3_title: 'Tarification honnête',
       stat3_body: 'Paiement après intervention, sans avance ni frais cachés.',
       related_services: ['electricien', 'serrurier'],
-      context_text: 'En plomberie, les interventions les plus courantes concernent les fuites, le débouchage de canalisations et l'entretien des chauffe-eau. Un diagnostic rapide évite souvent des dégâts plus importants.',
-      urgency_text: 'Pour une fuite ou une coupure d'eau urgente, signalez votre besoin sur Fixeo — nous vous mettons en contact avec un plombier disponible.'
+      context_text: 'En plomberie, les interventions les plus courantes concernent les fuites, le débouchage de canalisations et l\'entretien des chauffe-eau. Un diagnostic rapide évite souvent des dégâts plus importants.',
+      urgency_text: 'Pour une fuite ou une coupure d\'eau urgente, signalez votre besoin sur Fixeo — nous vous mettons en contact avec un plombier disponible.'
     },
     electricien: {
       label: 'Électricien',
       icon: '⚡',
-      lead_prefix: 'Besoin d'un électricien',
+      lead_prefix: 'Besoin d\'un électricien',
       lead_suffix: 'Fixeo vous aide à trouver un électricien qualifié pour un dépannage électrique, une installation, une mise aux normes ou une panne.',
       stat1_title: 'Interventions courantes',
       stat1_body: 'Panne électrique, disjoncteur, court-circuit, installation de tableau, prise ou éclairage.',
@@ -223,7 +223,7 @@
     serrurier: {
       label: 'Serrurier',
       icon: '🔑',
-      lead_prefix: 'Besoin d'un serrurier',
+      lead_prefix: 'Besoin d\'un serrurier',
       lead_suffix: 'Fixeo vous aide à trouver rapidement un serrurier pour une ouverture de porte, un remplacement de serrure ou une urgence.',
       stat1_title: 'Ouverture de porte',
       stat1_body: 'Porte claquée, clé perdue ou cassée, serrure bloquée — intervention rapide.',
@@ -238,8 +238,8 @@
     climatisation: {
       label: 'Climatisation',
       icon: '❄️',
-      lead_prefix: 'Besoin d'un technicien en climatisation',
-      lead_suffix: 'Fixeo vous aide à trouver un spécialiste pour l'installation, l'entretien, la recharge gaz ou la réparation de votre climatiseur.',
+      lead_prefix: 'Besoin d\'un technicien en climatisation',
+      lead_suffix: 'Fixeo vous aide à trouver un spécialiste pour l\'installation, l\'entretien, la recharge gaz ou la réparation de votre climatiseur.',
       stat1_title: 'Installation',
       stat1_body: 'Pose de split, climatiseur central, gainable ou multi-split.',
       stat2_title: 'Entretien & nettoyage',
@@ -247,13 +247,13 @@
       stat3_title: 'Dépannage rapide',
       stat3_body: 'Climatiseur en panne, mauvais refroidissement ou bruit anormal.',
       related_services: ['electricien', 'plombier'],
-      context_text: 'L'entretien régulier d'un climatiseur améliore ses performances et prolonge sa durée de vie. Un nettoyage annuel des filtres est fortement conseillé.',
+      context_text: 'L\'entretien régulier d\'un climatiseur améliore ses performances et prolonge sa durée de vie. Un nettoyage annuel des filtres est fortement conseillé.',
       urgency_text: 'Climatiseur en panne en plein été ? Trouvez un technicien disponible rapidement via Fixeo.'
     },
     peinture: {
       label: 'Peinture',
       icon: '🎨',
-      lead_prefix: 'Besoin d'un peintre',
+      lead_prefix: 'Besoin d\'un peintre',
       lead_suffix: 'Fixeo vous aide à trouver un artisan peintre pour vos travaux intérieurs, extérieurs, finitions ou remise en état.',
       stat1_title: 'Travaux courants',
       stat1_body: 'Peinture intérieure, revêtements, finitions et remise en état.',
@@ -263,7 +263,7 @@
       stat3_body: 'Paiement après réalisation, tarification claire.',
       related_services: ['electricien', 'plombier'],
       context_text: 'Les travaux de peinture les plus demandés concernent la rénovation intérieure, les finitions et la remise en état après travaux.',
-      urgency_text: 'Besoin d'un peintre disponible rapidement ? Trouvez un artisan via Fixeo.'
+      urgency_text: 'Besoin d\'un peintre disponible rapidement ? Trouvez un artisan via Fixeo.'
     }
   };
 
@@ -382,7 +382,7 @@
     // Card 2: local neighborhoods
     var h3_2 = cards[1].querySelector('h3');
     var p_2 = cards[1].querySelector('p');
-    if (h3_2) h3_2.textContent = 'Zones d'intervention';
+    if (h3_2) h3_2.textContent = 'Zones d\'intervention';
     if (p_2) p_2.textContent = 'Interventions à ' + city.label + ' : ' + city.neighborhoods + '. ' + city.context;
 
     // Card 3: marketplace value
