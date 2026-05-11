@@ -245,13 +245,21 @@
 
   /* ── 3c. Hero inline estimation block ────────────────── */
   /*
-     V2-C6D: Bring market pricing intelligence INTO the hero — not just below.
-     Shows 3-4 service chips for the artisan's category.
-     Clicking a chip updates the price range instantly (no network request).
-     Data source: PROFILE_PRICING (same as injectPrestationsSection).
-     Reuses fxrv2-estimation CSS visual language for consistency with modal.
+     V2-C6E: Replace simple chips with modal-style service cards.
+     Each card shows: service name + price range + badge on first item.
+     Click → card activates (pink border/glow, matching .fixeo-res-slot.active),
+             estimation block updates with full trust copy.
+     Data source: PROFILE_PRICING (same as injectPrestationsSection, no new requests).
      Idempotent: guarded by #fpv2h-estimation existence check.
      Graceful: no category match → silent noop.
+
+     Visual language:
+       Cards  = dark glass, 10px radius, 1.5px border — SAME as .fixeo-res-slot
+       Active = pink gradient bg + #E1306C border + glow — SAME as .fixeo-res-slot.active
+       Price  = emerald green, bold, on card — visible without clicking
+       Badge  = "⚡ Rapide" on first card — SAME badge as reservation.js idx===0 rule
+
+     Layout: 2-column grid at ≥360px, 1-column below 360px (matches modal grid)
   */
   function injectHeroEstimation(hero, artisan) {
     if (document.getElementById('fpv2h-estimation')) return;
@@ -259,58 +267,74 @@
     var rows = PROFILE_PRICING[slug];
     if (!rows || !rows.length) return;
 
-    /* Show first 3 services as chips; clicking reveals price range */
-    var chipRows = rows.slice(0, 3);
+    /* Show all services (max 4) as cards — same count as modal */
+    var cardRows = rows.slice(0, 4);
 
     var section = document.createElement('div');
     section.id = 'fpv2h-estimation';
     section.className = 'fpv2h-estimation';
 
-    /* Price display row — hidden until chip selected */
+    /* Build cards HTML — mirrors reservation.js card structure */
+    var cardsHtml = cardRows.map(function(r, i) {
+      var badge = i === 0
+        ? '<span class="fpv2h-card-badge">\u26a1 Rapide</span>'
+        : '';
+      return '<button type="button" class="fpv2h-svc-card" ' +
+        'data-from="' + r.from + '" data-to="' + r.to + '" ' +
+        'data-idx="' + i + '" aria-pressed="false">' +
+        '<span class="fpv2h-card-name">' + esc(r.label) + '</span>' +
+        '<span class="fpv2h-card-price">' + r.from + '\u202f\u2013\u202f' + r.to + '\u00a0MAD</span>' +
+        badge +
+      '</button>';
+    }).join('');
+
     section.innerHTML =
       '<div class="fpv2h-est-header">' +
-        '<span class="fpv2h-est-icon" aria-hidden="true">\u25a3</span>' +
         '<span class="fpv2h-est-title">Estimation Fixeo</span>' +
-        '<span class="fpv2h-est-hint">Tap un service</span>' +
+        '<span class="fpv2h-est-hint" id="fpv2h-est-hint">S\u00e9lectionnez un service</span>' +
       '</div>' +
-      '<div class="fpv2h-chips" role="group" aria-label="Services proposés">' +
-        chipRows.map(function(r, i) {
-          return '<button type="button" class="fpv2h-chip" data-from="' + r.from +
-            '" data-to="' + r.to + '" data-idx="' + i + '">' + esc(r.label) + '</button>';
-        }).join('') +
+      '<div class="fpv2h-svc-grid" role="group" aria-label="Services propos\u00e9s">' +
+        cardsHtml +
       '</div>' +
-      '<div class="fpv2h-price-row" id="fpv2h-price-row" aria-live="polite">' +
-        '<span class="fpv2h-price-range" id="fpv2h-price-range"></span>' +
-        '<span class="fpv2h-price-note">MAD — indicatif</span>' +
+      /* Estimation reveal — hidden until first selection */
+      '<div class="fpv2h-est-result" id="fpv2h-est-result" aria-live="polite">' +
+        '<div class="fpv2h-est-amount">' +
+          '<span class="fpv2h-est-label">Fourchette estim\u00e9e\u00a0:</span>' +
+          '<span class="fpv2h-est-range" id="fpv2h-est-range"></span>' +
+          '<span class="fpv2h-est-unit">MAD — estimation indicative</span>' +
+        '</div>' +
+        '<p class="fpv2h-est-sub">Prix indicatif bas\u00e9 sur des interventions similaires dans votre ville.</p>' +
+        '<p class="fpv2h-est-sub">Le prix final est confirm\u00e9 avec l\u2019artisan avant toute intervention.</p>' +
+        '<p class="fpv2h-est-sub fpv2h-est-pay">\ud83d\udcb3 Aucun paiement maintenant.</p>' +
       '</div>';
 
-    /* Interaction: chip click → price update */
+    /* Card click interaction */
     section.addEventListener('click', function(e) {
-      var chip = e.target.closest('.fpv2h-chip');
-      if (!chip) return;
-      /* Deactivate all, activate clicked */
-      section.querySelectorAll('.fpv2h-chip').forEach(function(c) {
-        c.classList.remove('fpv2h-chip--active');
+      var card = e.target.closest('.fpv2h-svc-card');
+      if (!card) return;
+      /* Deactivate all */
+      section.querySelectorAll('.fpv2h-svc-card').forEach(function(c) {
+        c.classList.remove('fpv2h-svc-card--active');
         c.setAttribute('aria-pressed', 'false');
       });
-      chip.classList.add('fpv2h-chip--active');
-      chip.setAttribute('aria-pressed', 'true');
-      /* Update price display */
-      var from = chip.getAttribute('data-from');
-      var to   = chip.getAttribute('data-to');
-      var rangeEl = document.getElementById('fpv2h-price-range');
-      var rowEl   = document.getElementById('fpv2h-price-row');
-      if (rangeEl) rangeEl.textContent = from + '\u202f\u2013\u202f' + to;
-      if (rowEl)   rowEl.classList.add('fpv2h-price-row--visible');
-      /* Also update hint text */
-      var hint = section.querySelector('.fpv2h-est-hint');
-      if (hint) hint.textContent = 'Prix indicatif';
+      /* Activate clicked */
+      card.classList.add('fpv2h-svc-card--active');
+      card.setAttribute('aria-pressed', 'true');
+      /* Update estimation */
+      var from = card.getAttribute('data-from');
+      var to   = card.getAttribute('data-to');
+      var rangeEl  = document.getElementById('fpv2h-est-range');
+      var resultEl = document.getElementById('fpv2h-est-result');
+      var hintEl   = document.getElementById('fpv2h-est-hint');
+      if (rangeEl)  rangeEl.textContent = from + '\u202f\u2013\u202f' + to + '\u202f';
+      if (resultEl) resultEl.classList.add('fpv2h-est-result--visible');
+      if (hintEl)   hintEl.textContent = 'Prix indicatif';
     });
 
     /* Inject below the WA CTA (or trust strip), inside hero-main */
     var heroMain = hero.querySelector('.public-hero-main');
     if (!heroMain) return;
-    var waCta = hero.querySelector('#fpv2a-wa-cta');
+    var waCta      = hero.querySelector('#fpv2a-wa-cta');
     var trustStrip = hero.querySelector('.fpv2a-trust-strip');
     var anchor = waCta || trustStrip;
     if (anchor && anchor.parentNode === heroMain) {
@@ -969,11 +993,19 @@
     var root = document.querySelector('.public-artisan-shell');
     if (!root) return;
 
-    /* Build rows HTML */
-    var rowsHtml = rows.map(function(row) {
-      return '<div class="fpv2p3-row">' +
-        '<span class="fpv2p3-svc">' + esc(row.label) + '</span>' +
-        '<span class="fpv2p3-range">' + row.from + '\u202f\u2013\u202f' + row.to + '\u202fMAD</span>' +
+    /* V2-C6E: Build service cards matching hero estimation card language.
+       Same 2-col card grid, same dark glass style, same badge rule.
+       "Prestations & prix" now uses visual language consistent with the hero.
+       No interactive selection here — the hero block handles that. This is
+       a reference/overview section showing all 4 services + prices at a glance. */
+    var cardsHtml = rows.map(function(row, i) {
+      var badge = i === 0
+        ? '<span class="fpv2p3-card-badge">\u26a1 Rapide</span>'
+        : '';
+      return '<div class="fpv2p3-card">' +
+        '<span class="fpv2p3-card-name">' + esc(row.label) + '</span>' +
+        '<span class="fpv2p3-card-price">' + row.from + '\u202f\u2013\u202f' + row.to + '\u00a0MAD</span>' +
+        badge +
       '</div>';
     }).join('');
 
@@ -983,7 +1015,7 @@
     section.innerHTML =
       '<p class="ppui-section-kicker">Tarifs march\u00e9</p>' +
       '<h2 class="ppui-section-title">Prestations \u0026 prix</h2>' +
-      '<div class="fpv2p3-grid">' + rowsHtml + '</div>' +
+      '<div class="fpv2p3-card-grid">' + cardsHtml + '</div>' +
       '<p class="fpv2p3-footer">' +
         '<span class="fpv2p3-footer-icon">\ud83d\udcb3</span>' +
         'Fourchette g\u00e9n\u00e9ralement constat\u00e9e sur le march\u00e9 local\u00a0\u2014 ' +
