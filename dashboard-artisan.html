@@ -3,7 +3,7 @@
 <head>
   <script src="js/fixeo-db.js?v=db2"></script>
   <script src="js/supabase-client.js?v=sc2"></script>
-  <script src="js/fixeo-logout-global.js?v=1"></script>
+  <script src="js/fixeo-logout-global.js?v=v2c4a"></script>
   <script src="js/fixeo-repository.js?v=repo2"></script>
   <script src="js/fixeo-supabase-loader.js?v=sl1"></script>
   <script src="js/fixeo-auth-supabase.js?v=p1b"></script>
@@ -618,7 +618,7 @@ select option{background:#1a1a2e!important;color:#fff!important;}
       <div class="sidebar-section-label">Profil</div>
       <a class="sidebar-link"        href="artisan.html"><span class="icon">👤</span><span>Mon profil public</span></a>
       <a class="sidebar-link"        href="#settings"   onclick="showSection('settings')"><span class="icon">⚙️</span><span>Paramètres</span></a>
-      <a class="sidebar-link"        href="auth.html"><span class="icon">🚪</span><span>Déconnexion</span></a>
+      <a class="sidebar-link" href="#" onclick="if(typeof window.fixeoGlobalLogout==='function'){fixeoGlobalLogout();}else{['fixeo_user','fixeo_role','fixeo_logged','user_id','user_logged','role','user'].forEach(function(k){try{localStorage.removeItem(k);}catch(_){}});window.location.href='auth.html';}return false;"><span class="icon">🚪</span><span>Déconnexion</span></a>
     </nav>
   </aside>
 

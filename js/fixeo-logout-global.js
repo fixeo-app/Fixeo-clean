@@ -1,5 +1,5 @@
 /**
- * FIXEO — Global Logout v1.0  (fixeo-logout-global.js)
+ * FIXEO — Global Logout v1.1  (fixeo-logout-global.js)
  * =====================================================
  * Single canonical logout path for all surfaces:
  *   mobile drawer · mobile avatar · desktop header ·
@@ -69,7 +69,13 @@
     /* role shortcuts */
     'role',
     /* Supabase SDK custom storage key (supabase-client.js) */
-    'fixeo_supabase_session'
+    'fixeo_supabase_session',
+    /* V2-C4A: artisan-specific profile/state keys (postdate original spec) */
+    'sb_user_id',           /* legacy Supabase UUID — mission-mirror priority chain (sb_user_id > fixeo_user_id > user_id) */
+    'user_description',     /* artisan service bio — dashboard profile form pre-fill; PII on shared device */
+    'fixeo_portfolio',      /* artisan portfolio photos (base64 + server URLs) — shown on artisan dashboard */
+    'fixeo_avail_status',   /* artisan availability choice — re-fetched from Supabase on next login (V1-C) */
+    'fixeo_avail_off_since' /* artisan availability-off timestamp */
   ];
 
   /* ── sessionStorage keys to clear ───────────────────────── */
@@ -84,7 +90,7 @@
      fixeo_client_requests, fixeo_notifications_v1,
      fixeo_artisan_moderation, fixeo_missions_v2,
      fixeo_artisans_db, fixeo_reservations,
-     fixeo_claim_requests, fixeo_avail_status,
+     fixeo_claim_requests,
      fixeo_notif_dedup_v1, fixeo_bridge_notifications  */
 
   /* ── Helpers ─────────────────────────────────────────────── */
@@ -262,6 +268,6 @@
   /* Expose full key lists for external reference */
   window._fixeoAuthLsKeys = AUTH_LS_KEYS;
 
-  console.info('[FixeoLogout v1] Ready');
+  console.info('[FixeoLogout v1.1] Ready');
 
 })(window);
