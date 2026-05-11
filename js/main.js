@@ -1,10 +1,16 @@
 // ============================================================
 //  FIXEO V3 — MAIN CORE (Artisans · Search · Map · Chat)
-// =====================f=======================================
+//  @version v2c6h — perf-p1: dedup localStorage parse
+// ============================================================
 
 // ── ARTISAN DATA ─────────────────────────────────────────────
 const ARTISANS = [];
 const MARKETPLACE_LOCAL_STORAGE_KEY = 'fixeo_admin_artisans_v21';
+/* perf-p1: shared parse cache — populated by cleanupMarketplaceLocalArtisans(),
+   consumed by readMarketplaceLocalArtisans() in the same synchronous evaluation
+   tick. Eliminates the second JSON.parse(~1MB) at file scope on every page load.
+   Reset to null after first read so no stale data survives across async calls. */
+var _marketplaceRawParseCache = null;
 
 window.ARTISANS = ARTISANS;
 
@@ -12,15 +18,20 @@ function cleanupMarketplaceLocalArtisans() {
   try {
     const parsed = marketplaceSafeJSONParse(localStorage.getItem(MARKETPLACE_LOCAL_STORAGE_KEY) || '[]', []);
     const source = Array.isArray(parsed) ? parsed : [];
+    /* perf-p1: cache the parsed array so readMarketplaceLocalArtisans() can skip
+       its own JSON.parse. Cache is consumed once then nulled. */
+    _marketplaceRawParseCache = source;
     const cleaned = source.filter(function (artisan) {
       const candidateId = marketplacePickFirst(artisan && artisan.id, artisan && artisan.artisan_id, artisan && artisan.public_id);
       return !marketplaceIsDemoIdentifier(candidateId);
     });
     if (cleaned.length !== source.length) {
       localStorage.setItem(MARKETPLACE_LOCAL_STORAGE_KEY, JSON.stringify(cleaned));
+      /* Written cleaned array — update cache so readMarketplaceLocalArtisans sees cleaned data */
+      _marketplaceRawParseCache = cleaned;
     }
   } catch (error) {
-    // no-op
+    _marketplaceRawParseCache = null; // no-op; reader will parse independently
   }
 }
 
@@ -205,11 +216,17 @@ cleanupMarketplaceLocalArtisans();
 
 function readMarketplaceLocalArtisans() {
   try {
-    const parsed = marketplaceSafeJSONParse(localStorage.getItem(MARKETPLACE_LOCAL_STORAGE_KEY) || '[]', []);
-    return (Array.isArray(parsed) ? parsed : [])
+    /* perf-p1: consume shared parse cache from cleanupMarketplaceLocalArtisans()
+       if available (same sync tick). Falls back to independent parse if cache missing. */
+    const source = _marketplaceRawParseCache !== null
+      ? _marketplaceRawParseCache
+      : marketplaceSafeJSONParse(localStorage.getItem(MARKETPLACE_LOCAL_STORAGE_KEY) || '[]', []);
+    _marketplaceRawParseCache = null; // consume once — prevent stale use on later async calls
+    return (Array.isArray(source) ? source : [])
       .map(normalizeMarketplaceArtisanRecord)
       .filter((artisan) => artisan && artisan.status === 'active');
   } catch (error) {
+    _marketplaceRawParseCache = null;
     return [];
   }
 }

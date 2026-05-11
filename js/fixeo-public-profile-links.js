@@ -637,10 +637,26 @@
     }, 40);
   }
 
+  /* perf-p1: Skip full document scan at DCL if no artisan card containers exist yet.
+     The MutationObserver below handles cards added later (vedette grid, search results).
+     This saves a wasted querySelectorAll over the entire document at DCL time when
+     no artisan cards have rendered yet (which is always the case on homepage). */
+  function _hasArtisanContainers() {
+    var KNOWN = ['#ssb2-vedette-grid', '#artisans-container', '#hero-results-grid', '#service-artisans-section'];
+    for (var i = 0; i < KNOWN.length; i++) {
+      var el = document.querySelector(KNOWN[i]);
+      if (el && el.children.length > 0) return true;
+    }
+    return false;
+  }
+
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function () { enhanceCards(document); }, { once: true });
+    document.addEventListener('DOMContentLoaded', function () {
+      if (_hasArtisanContainers()) enhanceCards(document);
+      /* else: MutationObserver fires when containers are populated */
+    }, { once: true });
   } else {
-    enhanceCards(document);
+    if (_hasArtisanContainers()) enhanceCards(document);
   }
 
   var observer = new MutationObserver(function (mutations) {
