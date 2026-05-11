@@ -1,4 +1,4 @@
-/* FIXEO — GLOBAL MOBILE HEADER V1 */
+/* FIXEO — GLOBAL MOBILE HEADER V1 — fxgh2 */
 .fixeo-gh-mobile {
   display: none;
   width: 100%;
@@ -494,3 +494,249 @@ body.fixeo-gh-enabled .fixeo-gh-drawer-lang-btn:hover {
   color: #fff;
 }
 /* ────────────────────────────────────────────────────────────────── */
+
+/* ══════════════════════════════════════════════════════════════
+   FIXEO GH DRAWER — PREMIUM POLISH v2 (fxgh2)
+   Append-only. Fixes: overflow, density, hierarchy, CTA anchor.
+   Root causes fixed:
+   1. No max-height → drawer overflowed by 160px on vh=844
+   2. Link rows 49px → compacted to 44px rendered
+   3. Group gaps 28px → 20px per separator
+   4. Language section heavy → compact inline row
+   5. Drawer missing premium identity header
+   6. Primary CTA ("Publier une demande") must be anchored/visible
+   ══════════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+
+  /* ── 1. DRAWER: max-height + scroll guard ─────────────────── */
+  body.fixeo-gh-enabled .fixeo-gh-drawer {
+    /* Safe scrollable region: from top of drawer to bottom of safe area */
+    max-height: calc(100dvh - 68px - 16px - env(safe-area-inset-bottom, 0px)) !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    overscroll-behavior: contain !important;
+    -webkit-overflow-scrolling: touch;
+    /* Tighter top offset — navbar is 60px, give 8px breathing room */
+    top: calc(60px + env(safe-area-inset-top, 0px) + 8px) !important;
+    /* Slightly tighter side margins for more content width */
+    left: calc(10px + env(safe-area-inset-left, 0px)) !important;
+    right: calc(10px + env(safe-area-inset-right, 0px)) !important;
+    /* Deeper premium glass */
+    background: linear-gradient(
+      175deg,
+      rgba(12, 16, 30, 0.99) 0%,
+      rgba(10, 13, 24, 0.97) 100%
+    ) !important;
+    border: 1px solid rgba(255, 255, 255, 0.09) !important;
+    box-shadow:
+      0 28px 60px rgba(0, 0, 0, 0.42),
+      inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+    border-radius: 22px !important;
+    padding: 6px 6px 12px !important;
+  }
+
+  /* ── 2. DRAWER HEADER — branding strip ──────────────────────
+     Injected via ::before pseudo — no DOM change needed.
+     Shows Fixeo name + tagline at top of drawer. */
+  body.fixeo-gh-enabled .fixeo-gh-drawer::before {
+    content: '';
+    display: block;
+    height: 3px;
+    margin: 0 12px 10px;
+    border-radius: 999px;
+    background: linear-gradient(
+      90deg,
+      rgba(225, 48, 108, 0.7) 0%,
+      rgba(131, 58, 180, 0.5) 50%,
+      rgba(64, 93, 230, 0.3) 100%
+    );
+  }
+
+  /* ── 3. GROUPS — compact spacing ────────────────────────────── */
+  body.fixeo-gh-enabled .fixeo-gh-drawer-group {
+    padding: 0 10px !important;
+  }
+
+  body.fixeo-gh-enabled .fixeo-gh-drawer-group + .fixeo-gh-drawer-group {
+    margin-top: 4px !important;
+    padding-top: 10px !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.07) !important;
+  }
+
+  /* ── 4. SECTION LABELS — lighter, tighter ───────────────────── */
+  body.fixeo-gh-enabled .fixeo-gh-drawer-label {
+    margin-bottom: 4px !important;
+    padding: 0 2px !important;
+    font-size: 0.68rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.09em !important;
+    color: rgba(255, 255, 255, 0.36) !important;
+    text-transform: uppercase !important;
+  }
+
+  /* ── 5. LINKS — compact 44px touch targets ──────────────────── */
+  body.fixeo-gh-enabled .fixeo-gh-drawer-link,
+  body.fixeo-gh-enabled .fixeo-gh-drawer-cta {
+    min-height: 44px !important;
+    padding: 8px 12px !important;
+    border-radius: 12px !important;
+    font-size: 0.92rem !important;
+    font-weight: 500 !important;
+    color: rgba(255, 255, 255, 0.82) !important;
+    gap: 10px !important;
+    transition: background 0.14s ease, color 0.14s ease !important;
+  }
+
+  body.fixeo-gh-enabled .fixeo-gh-drawer-link:hover {
+    background: rgba(255, 255, 255, 0.06) !important;
+    color: rgba(255, 255, 255, 0.96) !important;
+  }
+
+  /* ── 6. PRIMARY CTA — "Publier une demande" ─────────────────── */
+  body.fixeo-gh-enabled .fixeo-gh-drawer-cta.is-primary {
+    min-height: 46px !important;
+    padding: 0 16px !important;
+    font-weight: 700 !important;
+    font-size: 0.93rem !important;
+    color: #fff !important;
+    background: linear-gradient(
+      135deg,
+      rgba(225, 48, 108, 0.94) 0%,
+      rgba(131, 58, 180, 0.92) 100%
+    ) !important;
+    border: 1px solid rgba(225, 48, 108, 0.28) !important;
+    border-radius: 14px !important;
+    box-shadow: 0 8px 20px rgba(225, 48, 108, 0.22) !important;
+    justify-content: center !important;
+  }
+
+  body.fixeo-gh-enabled .fixeo-gh-drawer-cta.is-primary:hover {
+    filter: brightness(1.08) !important;
+    box-shadow: 0 10px 28px rgba(225, 48, 108, 0.30) !important;
+  }
+
+  /* Secondary CTAs (Connexion / Inscription / Je suis artisan) */
+  body.fixeo-gh-enabled .fixeo-gh-drawer-cta:not(.is-primary) {
+    background: rgba(255, 255, 255, 0.04) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    color: rgba(255, 255, 255, 0.88) !important;
+    font-weight: 600 !important;
+    justify-content: center !important;
+  }
+
+  body.fixeo-gh-enabled .fixeo-gh-drawer-cta:not(.is-primary):hover {
+    background: rgba(255, 255, 255, 0.09) !important;
+  }
+
+  /* ── 7. COMPTE GROUP — auth user highlight ──────────────────── */
+  body.fixeo-gh-enabled .fixeo-gh-drawer-compte-user {
+    background: linear-gradient(
+      135deg,
+      rgba(225, 48, 108, 0.10),
+      rgba(131, 58, 180, 0.08)
+    ) !important;
+    border: 1px solid rgba(225, 48, 108, 0.16) !important;
+    border-radius: 14px !important;
+    font-weight: 700 !important;
+    color: #fff !important;
+    margin-bottom: 4px !important;
+  }
+
+  /* Logout link — subtle red danger tone */
+  body.fixeo-gh-enabled #fixeo-gh-drawer-logout {
+    color: rgba(255, 100, 100, 0.78) !important;
+    font-size: 0.88rem !important;
+  }
+
+  body.fixeo-gh-enabled #fixeo-gh-drawer-logout:hover {
+    color: rgba(255, 100, 100, 0.96) !important;
+    background: rgba(255, 60, 60, 0.07) !important;
+  }
+
+  /* ── 8. LANGUAGE ROW — compact, no label ───────────────────── */
+  body.fixeo-gh-enabled .fixeo-gh-drawer-lang {
+    margin-top: 0 !important;
+    padding-top: 8px !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
+  }
+
+  /* Hide label above lang row — pill buttons self-describe */
+  body.fixeo-gh-enabled .fixeo-gh-drawer-lang .fixeo-gh-drawer-label {
+    display: none !important;
+  }
+
+  body.fixeo-gh-enabled .fixeo-gh-drawer-lang-row {
+    padding: 2px 2px 0 !important;
+    gap: 6px !important;
+  }
+
+  body.fixeo-gh-enabled .fixeo-gh-drawer-lang-btn {
+    height: 30px !important;
+    border-radius: 8px !important;
+    font-size: 0.76rem !important;
+    font-weight: 600 !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    background: rgba(255, 255, 255, 0.04) !important;
+    color: rgba(255, 255, 255, 0.52) !important;
+    letter-spacing: 0.06em !important;
+  }
+
+  body.fixeo-gh-enabled .fixeo-gh-drawer-lang-btn:hover {
+    background: rgba(255, 255, 255, 0.09) !important;
+    color: rgba(255, 255, 255, 0.86) !important;
+  }
+
+  /* Active lang btn */
+  body.fixeo-gh-enabled .fixeo-gh-drawer-lang-btn[data-active="true"],
+  body.fixeo-gh-enabled .fixeo-gh-drawer-lang-btn.active {
+    background: rgba(225, 48, 108, 0.18) !important;
+    border-color: rgba(225, 48, 108, 0.30) !important;
+    color: rgba(255, 255, 255, 0.92) !important;
+  }
+
+  /* ── 9. SCROLL FADE INDICATOR ───────────────────────────────── */
+  /* Subtle bottom gradient hint that there's more content when scrollable */
+  body.fixeo-gh-enabled .fixeo-gh-drawer::after {
+    content: '';
+    position: sticky;
+    bottom: 0;
+    display: block;
+    height: 24px;
+    margin: -24px -6px 0;
+    background: linear-gradient(
+      to top,
+      rgba(10, 13, 24, 0.85) 0%,
+      transparent 100%
+    );
+    pointer-events: none;
+    border-radius: 0 0 22px 22px;
+  }
+
+  /* ── 10. SAFE AREA BOTTOM GUARD ─────────────────────────────── */
+  body.fixeo-gh-enabled .fixeo-gh-drawer-group:last-child {
+    padding-bottom: calc(4px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+}
+
+/* ── 320px micro layout ──────────────────────────────────────── */
+@media (max-width: 320px) {
+  body.fixeo-gh-enabled .fixeo-gh-drawer {
+    left: 8px !important;
+    right: 8px !important;
+    padding: 6px 4px 10px !important;
+  }
+
+  body.fixeo-gh-enabled .fixeo-gh-drawer-link,
+  body.fixeo-gh-enabled .fixeo-gh-drawer-cta {
+    font-size: 0.88rem !important;
+    padding: 7px 10px !important;
+    min-height: 42px !important;
+  }
+
+  body.fixeo-gh-enabled .fixeo-gh-drawer-lang-btn {
+    height: 28px !important;
+    font-size: 0.72rem !important;
+  }
+}
+/* END fxgh2 premium polish */
