@@ -163,15 +163,11 @@
         '<span class="fxrv2-est-price-range" id="fxrv2-price-range"></span>' +
         '<span class="fxrv2-est-price-unit">MAD</span>' +
       '</div>' +
-      '<div class="fxrv2-est-market">' +
-        '<span class="fxrv2-est-market-icon" aria-hidden="true">\u25CE</span>' +
-        /* V2-C5A: honest indicative pricing language */
-        '<span id="fxrv2-price-rec">Bas\u00e9 sur les interventions similaires dans votre ville</span>' +
-      '</div>' +
-      '<div class="fxrv2-est-pay">' +
-        '<span style="color:rgba(32,201,151,0.55)" aria-hidden="true">\u25CF</span>' +
-        /* V2-C5A: short form only — full indicative text lives in #fxrv2-price-rec */
-        'Aucun paiement maintenant.' +
+      /* V2-C6F: add "Le prix final" line to match public profile trust copy exactly */
+      '<div class="fxrv2-est-subs" id="fxrv2-est-subs" style="display:none">' +
+        '<p class="fxrv2-est-sub" id="fxrv2-price-rec">Prix indicatif bas\u00e9 sur des interventions similaires dans votre ville.</p>' +
+        '<p class="fxrv2-est-sub">Le prix final est confirm\u00e9 avec l\u2019artisan avant toute intervention.</p>' +
+        '<p class="fxrv2-est-sub fxrv2-est-pay">\ud83d\udcb3 Aucun paiement maintenant.</p>' +
       '</div>';
 
     /* V2-C5A: Insert ABOVE the form (before .fixeo-res-form), not inside it.
@@ -260,20 +256,22 @@
     var priceRecEl   = qs('#fxrv2-price-rec', block);
     var subtitle     = qs('.fxrv2-est-subtitle', block);
 
+    /* V2-C6F: subs block (3 trust lines, hidden until service selected) */
+    var subsBlock = qs('#fxrv2-est-subs', block);
+
     var sp = svcName ? _getSvcPrice(svcName) : null;
     if (sp && sp.from && sp.to && priceRangeEl && priceRow) {
-      /* V2-C5A: show range as "N–M MAD — estimation indicative" */
+      /* V2-C6F: range as "N–M MAD — estimation indicative" (unchanged from V2-C5A) */
       priceRangeEl.textContent = sp.from + '\u2013' + sp.to + '\u00a0MAD \u2014 estimation indicative';
       priceRow.style.display = '';
-      if (subtitle) subtitle.textContent = 'Prix indicatif bas\u00e9 sur des interventions similaires'; /* V2-C5A */
-      if (priceRecEl) {
-        /* V2-C5A: market context line — "Le prix final" shown separately in fxrv2-est-pay */
-        priceRecEl.innerHTML = 'Prix indicatif bas\u00e9 sur des interventions similaires dans votre ville';
-      }
+      /* V2-C6F: updated hint (matches profile) */
+      if (subtitle) subtitle.textContent = 'Prix indicatif';
+      /* V2-C6F: show subs block with all 3 trust lines (matches profile) */
+      if (subsBlock) subsBlock.style.display = '';
     } else {
       if (priceRow) priceRow.style.display = 'none';
-      if (subtitle) subtitle.textContent = 'Choisissez un service pour voir le prix indicatif'; /* V2-C5A */
-      if (priceRecEl) priceRecEl.innerHTML = 'Basé sur les interventions similaires dans votre ville'; /* V2-C5A: neutral when no service selected */
+      if (subtitle) subtitle.textContent = 'S\u00e9lectionnez un service pour voir le prix indicatif';
+      if (subsBlock) subsBlock.style.display = 'none';
     }
   }
 
@@ -290,16 +288,13 @@
         var rangeMatch = marcheTxt.match(/(\d+[\u2013\-]\d+) MAD/);
         if (rangeMatch) {
           var priceRangeEl = qs('#fxrv2-price-range', block);
-          var priceRow = qs('#fxrv2-price-row', block);
-          if (priceRangeEl) priceRangeEl.textContent = rangeMatch[1] + '\u00a0MAD \u2014 estimation indicative'; /* V2-C5A */
-          if (priceRow) priceRow.style.display = '';
+          var priceRow     = qs('#fxrv2-price-row', block);
+          var subsBlock    = qs('#fxrv2-est-subs', block); /* V2-C6F */
+          if (priceRangeEl) priceRangeEl.textContent = rangeMatch[1] + '\u00a0MAD \u2014 estimation indicative';
+          if (priceRow)  priceRow.style.display = '';
+          if (subsBlock) subsBlock.style.display = ''; /* V2-C6F: reveal trust lines */
           var subtitle = qs('.fxrv2-est-subtitle', block);
-          if (subtitle) subtitle.textContent = 'Prix indicatif bas\u00e9 sur des interventions similaires'; /* V2-C5A */
-        }
-        var priceRecEl = qs('#fxrv2-price-rec', block);
-        if (priceRecEl) {
-          /* V2-C5A: market context line only — no duplication with fxrv2-est-pay */
-          priceRecEl.innerHTML = 'Prix indicatif bas\u00e9 sur des interventions similaires dans votre ville';
+          if (subtitle) subtitle.textContent = 'Prix indicatif'; /* V2-C6F: matches profile */
         }
       };
       var obs = new MutationObserver(updateFn);

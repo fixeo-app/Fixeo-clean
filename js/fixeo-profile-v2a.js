@@ -344,6 +344,110 @@
     }
   }
 
+  /* ── 3d. Transparent performance indicators ─────────────
+     V2-C6F: Compact block showing honest artisan indicators.
+     All values derived from REAL data only — no fabrication.
+     Empty / unearned indicators shown with honest empty state.
+     Placement: inside hero-main, after estimation block.
+     Idempotent: guarded by #fpv2pi-block existence check.
+  */
+  function injectPerformanceIndicators(artisanId, artisan) {
+    if (document.getElementById('fpv2pi-block')) return;
+    var heroMain = document.querySelector('.public-profile-hero .public-hero-main');
+    if (!heroMain) return;
+
+    /* ── Gather real values ── */
+
+    /* 1. Missions validées: read from FixeoClientRequestsStore via _v1jGetValidated */
+    var validated = [];
+    try { validated = _v1jGetValidated(artisanId); } catch(e) {}
+    var missionsCount = validated.length;
+
+    /* 2. Avis enregistrés: seeded data — NEVER present as verified reviews */
+    var reviewCount = parseInt(artisan && artisan.review_count, 10) || 0;
+
+    /* 3. Réalisations publiées: real portfolio count from localStorage */
+    var portfolioCount = 0;
+    try {
+      var pf = JSON.parse(localStorage.getItem('fixeo_portfolio') || '[]');
+      if (Array.isArray(pf)) portfolioCount = pf.length;
+    } catch(e) {}
+
+    /* ── Build indicator definitions ── */
+    var indicators = [
+      {
+        icon: '\u2714',
+        label: 'Missions valid\u00e9es',
+        value: missionsCount > 0 ? String(missionsCount) : '0',
+        sub: missionsCount > 0 ? 'via Fixeo' : 'Aucune encore',
+        active: missionsCount > 0
+      },
+      {
+        icon: '\u2665',
+        label: 'Avis enregistr\u00e9s',
+        /* Seeded data: honest label — not "verified reviews" */
+        value: reviewCount > 0 ? String(reviewCount) : '\u2014',
+        sub: reviewCount > 0 ? 'Donn\u00e9es import\u00e9es' : 'Bient\u00f4t disponibles',
+        active: false /* never show as earned */
+      },
+      {
+        icon: '\ud83d\uddbc',
+        label: 'R\u00e9alisations',
+        value: portfolioCount > 0 ? String(portfolioCount) : '0',
+        sub: portfolioCount > 0 ? 'publi\u00e9es' : 'Aucune encore',
+        active: portfolioCount > 0
+      },
+      {
+        icon: '\ud83d\udcb3',
+        label: 'Paiement apr\u00e8s',
+        value: 'Actif',
+        sub: 'Garanti Fixeo',
+        active: true
+      },
+      {
+        icon: '\u2696\ufe0f',
+        label: 'Tarification',
+        value: 'Encadr\u00e9e',
+        sub: 'Fixeo garantit',
+        active: true
+      },
+      {
+        icon: '\u23f1',
+        label: 'D\u00e9lai r\u00e9ponse',
+        value: '\u2014',
+        sub: 'En cours de mesure',
+        active: false
+      }
+    ];
+
+    var cardsHtml = indicators.map(function(ind) {
+      return '<div class="fpv2pi-card' + (ind.active ? ' fpv2pi-card--active' : '') + '">' +
+        '<span class="fpv2pi-icon" aria-hidden="true">' + ind.icon + '</span>' +
+        '<span class="fpv2pi-value">' + esc(ind.value) + '</span>' +
+        '<span class="fpv2pi-label">' + esc(ind.label) + '</span>' +
+        '<span class="fpv2pi-sub">' + esc(ind.sub) + '</span>' +
+      '</div>';
+    }).join('');
+
+    var block = document.createElement('div');
+    block.id = 'fpv2pi-block';
+    block.className = 'fpv2pi-block';
+    block.innerHTML =
+      '<div class="fpv2pi-header">' +
+        '<span class="fpv2pi-title">Indicateurs de performance</span>' +
+      '</div>' +
+      '<div class="fpv2pi-grid">' + cardsHtml + '</div>' +
+      '<p class="fpv2pi-footer">Ces indicateurs \u00e9voluent avec les interventions r\u00e9alis\u00e9es via Fixeo.</p>';
+
+    /* Inject after #fpv2h-estimation if present, else append to hero-main */
+    var est = document.getElementById('fpv2h-estimation');
+    if (est && est.parentNode === heroMain) {
+      heroMain.insertBefore(block, est.nextSibling);
+    } else {
+      heroMain.appendChild(block);
+    }
+  }
+
   /* ── 4. WhatsApp secondary CTA in hero ───────────────── */
   /*
      Lower-friction first contact below the main reservation button.
@@ -1938,7 +2042,8 @@
         injectHeroTrustStrip(hero, artisan);
         injectHeroPlatformTrust(hero, artisan);  /* V2-C6D: platform trust chip row */
         injectWASecondary(hero, artisan);
-        injectHeroEstimation(hero, artisan);     /* V2-C6D: live estimation in hero */
+        injectHeroEstimation(hero, artisan);          /* V2-C6D: live estimation in hero */
+        injectPerformanceIndicators(artisanId, artisan); /* V2-C6F: transparent indicators */
         upgradeStickyCTA(artisan);
 
         /* ── V2-B ── (runs after V2-A to build on its output) */

@@ -2297,3 +2297,124 @@ body.public-artisan-page .public-profile-hero {
   .fpv2h-card-name { font-size: 0.84rem; }
   .fpv2h-card-price { font-size: 0.76rem; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   V2-C6F — Performance indicators + modal estimation alignment
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── Performance indicators block ──────────────────────────────── */
+#fpv2pi-block {
+  margin-top:    14px;
+  padding:       14px 16px;
+  background:    rgba(255,255,255,0.03);
+  border:        1px solid rgba(255,255,255,0.07);
+  border-radius: 16px;
+}
+.fpv2pi-header {
+  margin-bottom: 10px;
+}
+.fpv2pi-title {
+  font-size:      0.72rem;
+  font-weight:    700;
+  color:          rgba(255,255,255,0.40);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ── 2×3 grid of indicator cards ───────────────────────────────── */
+.fpv2pi-grid {
+  display:               grid;
+  grid-template-columns: 1fr 1fr;
+  gap:                   7px;
+}
+.fpv2pi-card {
+  display:        flex;
+  flex-direction: column;
+  align-items:    flex-start;
+  gap:            2px;
+  background:     rgba(255,255,255,0.03);
+  border:         1px solid rgba(255,255,255,0.06);
+  border-radius:  10px;
+  padding:        10px 11px;
+  line-height:    1.3;
+}
+/* Active indicator (earned / platform guarantee) — slight teal accent */
+.fpv2pi-card--active {
+  border-color: rgba(52,211,153,0.18);
+  background:   rgba(52,211,153,0.04);
+}
+.fpv2pi-icon {
+  font-size:   0.80rem;
+  line-height: 1;
+  margin-bottom: 2px;
+}
+.fpv2pi-value {
+  font-size:      0.92rem;
+  font-weight:    900;
+  color:          rgba(255,255,255,0.88);
+  letter-spacing: -0.01em;
+}
+.fpv2pi-card--active .fpv2pi-value {
+  color: #34d399;  /* emerald for earned/guaranteed values */
+}
+.fpv2pi-label {
+  font-size:   0.68rem;
+  font-weight: 600;
+  color:       rgba(255,255,255,0.55);
+  line-height: 1.2;
+}
+.fpv2pi-sub {
+  font-size:   0.62rem;
+  color:       rgba(255,255,255,0.30);
+  line-height: 1.3;
+  font-style:  italic;
+}
+.fpv2pi-card--active .fpv2pi-sub {
+  color: rgba(52,211,153,0.55);
+  font-style: normal;
+}
+
+/* ── Footer disclaimer ──────────────────────────────────────────── */
+.fpv2pi-footer {
+  font-size:   0.67rem;
+  color:       rgba(255,255,255,0.25);
+  line-height: 1.5;
+  margin:      8px 0 0;
+  font-style:  italic;
+}
+
+/* ── Mobile adjustments ─────────────────────────────────────────── */
+@media (max-width: 480px) {
+  #fpv2pi-block { padding: 12px 13px; }
+  .fpv2pi-grid  { gap: 6px; }
+  .fpv2pi-card  { padding: 9px 10px; }
+}
+@media (max-width: 360px) {
+  /* 1-col on very narrow — fits everything */
+  .fpv2pi-grid { grid-template-columns: 1fr; }
+  .fpv2pi-card { padding: 8px 10px; }
+  .fpv2pi-value { font-size: 0.88rem; }
+}
+
+/* ── Modal estimation subs: match profile sub-text style ─────────
+   New .fxrv2-est-subs block + .fxrv2-est-sub text lines.
+   Must NOT conflict with existing .fxrv2-est-pay, .fxrv2-est-market. */
+.fxrv2-est-subs {
+  margin-top:     8px;
+  padding-top:    8px;
+  border-top:     1px solid rgba(255,255,255,0.06);
+  display:        flex;
+  flex-direction: column;
+  gap:            3px;
+}
+.fxrv2-est-sub {
+  font-size:   0.71rem;
+  color:       rgba(255,255,255,0.38);
+  line-height: 1.5;
+  margin:      0;
+}
+/* Third line: "Aucun paiement" — slightly brighter */
+.fxrv2-est-pay {
+  color:       rgba(255,255,255,0.52) !important;
+  font-weight: 600 !important;
+}

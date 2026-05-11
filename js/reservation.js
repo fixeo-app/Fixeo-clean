@@ -295,6 +295,21 @@
     return (parts[0][0] + parts[parts.length-1][0]).toUpperCase();
   }
   function _modalAvatarHtml(a, catIcon) {
+    /* V2-C6F: Use real photo when available (same priority as profile + homepage).
+     * Source: a.avatar || a.photo_url || a.photo — all mapped by fixeo-supabase-loader.js.
+     * Fallback: name-hash gradient + initials (unchanged from V1-JC). */
+    var photoSrc = a.avatar || a.photo_url || a.photo || '';
+    if (photoSrc) {
+      return '<div class="fixeo-res-artisan-avatar fxrva-avatar fxrva-photo-av" data-category="' +
+        sanitize(a.category || '') + '" style="border-radius:50%;overflow:hidden;' +
+        'box-shadow:0 6px 20px rgba(0,0,0,.30),0 0 0 3px rgba(255,255,255,.04);' +
+        'position:relative;background:linear-gradient(135deg,#1a1a2a,#2a2a3e)">' +
+        '<img src="' + sanitize(photoSrc) + '" alt="' + sanitize(a.name || '') + '" ' +
+        'style="width:100%;height:100%;object-fit:cover;border-radius:inherit;display:block;" ' +
+        'onerror="this.style.display=\'none\';this.parentNode.classList.add(\'fxrva-photo-err\')">' +
+        '<span class="fxrva-cat-badge" aria-hidden="true">' + catIcon + '</span>' +
+        '</div>';
+    }
     var grad    = _modalAvatarGrad(a.name || '');
     var letters = _modalInitials(a.name || a.initials || '');
     var bgStyle = 'background:linear-gradient(' + grad[0] + ',' + grad[1] + ',' + grad[2] + ')';

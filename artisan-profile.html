@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- fixeo-artisan-profile v2c6e — modal service cards + v2c6d + hero estimation + polish + v2c6c hero template + v2c6b density reduction + avatar gate + v2c6 render authority Authority patch + BFCache guard + /artisan/* no-store headers -->
+<!-- fixeo-artisan-profile v2c6f — perf indicators + modal est + avatar + v2c6e + v2c6d + hero estimation + polish + v2c6c hero template + v2c6b density reduction + avatar gate + v2c6 render authority Authority patch + BFCache guard + /artisan/* no-store headers -->
 <html lang="fr" dir="ltr">
 <head>
   <script src="/js/fixeo-db.js?v=db2"></script>
@@ -40,7 +40,7 @@
   <link rel="stylesheet" href="css/reservation-v2.css?v=3" />
   <link rel="stylesheet" href="css/reservation-v2a.css?v=v2c" />
   <link rel="stylesheet" href="css/artisan-profile-premium.css">
-  <link rel="stylesheet" href="css/artisan-profile-v2a.css?v=v2c6e">
+  <link rel="stylesheet" href="css/artisan-profile-v2a.css?v=v2c6f">
   <link rel="stylesheet" href="css/fixeo-profile-v1jb.css?v=v2c5a">
   <style>
     .notif-badge:empty{display:none!important}
@@ -277,8 +277,8 @@
       '/js/header-unified.js?v=v2c3b',
       '/js/fixeo-header-global.js?v=v2c5a',
       '/js/auth-global.js?v=v2c3b',
-      '/js/reservation.js?v=v2c5a',
-      '/js/reservation-v2.js?v=v2c5a'
+      '/js/reservation.js?v=v2c6f',
+      '/js/reservation-v2.js?v=v2c6f'
     ].forEach(function (src) {
       document.write('<script src="' + asset(src) + '"><\/script>');
     });
@@ -413,7 +413,7 @@
       '/js/fixeo-profile-premium-ui.js?v=v2c5a',
       '/js/fixeo-artisan-identity.js?v=v2a3',
       '/js/fixeo-client-requests-store.js?v=v2c3b',
-      '/js/fixeo-profile-v2a.js?v=v2c6e',
+      '/js/fixeo-profile-v2a.js?v=v2c6f',
       '/js/fixeo-profile-v1jb.js?v=v2c5a'
     ].forEach(function (src) {
       document.write('<script src="' + asset(src) + '"><\/script>');
@@ -535,7 +535,10 @@
           /* V2-A3: Carry through Supabase identity fields so V2-A1 mirror
            * writes canonical artisan_profile_id (UUID/numeric ID, not name slug) */
           _supabase_id:       _sbArtisan.id || _sbArtisan._supabase_id || artisan._supabase_id || '',
-          owner_account_id:   _sbArtisan.owner_account_id || artisan.owner_account_id || ''
+          owner_account_id:   _sbArtisan.owner_account_id || artisan.owner_account_id || '',
+          /* V2-C6F: pass photo_url through so modal can render real photo avatar */
+          photo_url:          _sbArtisan.photo_url || artisan.photo_url || artisan.avatar || '',
+          avatar:             _sbArtisan.photo_url || artisan.avatar || artisan.photo_url || ''
         });
       }
       /* V2-A3: Enrich request's artisan identity before reservation bridge writes it */
