@@ -1871,9 +1871,13 @@ function initSearch() {
     window.__FIXEO_FILTER_EVENTS_BOUND__ = true;
   }
 
-  requestAnimationFrame(() => {
-    applyMarketplaceFilters();
-  });
+  // V2-C2A: urgent-results.js owns #artisans-container on results.html.
+  // Skip rAF applyMarketplaceFilters() when urgent page has taken ownership.
+  if (!window.__FIXEO_URGENT_PAGE__) {
+    requestAnimationFrame(() => {
+      applyMarketplaceFilters();
+    });
+  }
 }
 
 // ── NAVBAR SCROLL ─────────────────────────────────────────────
