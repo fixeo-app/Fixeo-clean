@@ -2158,7 +2158,11 @@ document.addEventListener('DOMContentLoaded', () => {
     /* Artisan render: deferred because premium patch hides #artisans-container
        and renders the vedette grid independently. This provides the SEO/fallback
        container with content after first paint without blocking hero. */
-    if (!window.__FIXEO_SERVICE_SEO_PAGE__ && ARTISANS.length > 0) {
+    // V2-C2A: urgent-results.js owns #artisans-container on the results page.
+    // Skip renderArtisans + refreshMarketplaceFromCurrentFilters when urgent page
+    // has taken ownership — checked via window.__FIXEO_URGENT_PAGE__ flag set by
+    // urgent-results.js at parse time (before defer scripts run).
+    if (!window.__FIXEO_SERVICE_SEO_PAGE__ && !window.__FIXEO_URGENT_PAGE__ && ARTISANS.length > 0) {
       renderArtisans(window._initialMatchSortedArtisans || ARTISANS);
       refreshMarketplaceFromCurrentFilters();
     }
