@@ -611,6 +611,16 @@
     window.renderArtisans = function urgentPageGuard() {
       // no-op — urgent results page owns #artisans-container exclusively
     };
+    // Neutralize applyMarketplaceFilters and refreshMarketplaceFromCurrentFilters:
+    // these functions in main.js call marketplaceSyncResultsCount(861) and
+    // marketplaceSyncCardsVisibility which write results-count and emptyEl.style
+    // using the unfiltered ARTISANS pool — clobbering urgent-results correct values.
+    window.applyMarketplaceFilters = function urgentApplyGuard() {
+      return []; // no-op — urgent page owns all marketplace DOM outputs
+    };
+    window.refreshMarketplaceFromCurrentFilters = function urgentRefreshGuard() {
+      // no-op — urgent page owns all marketplace DOM outputs
+    };
     // Also disable FixeoResultsPage.afterRender so marketplace-premium-patch.js
     // cannot overwrite results-count with filtered.length from its own (unfiltered)
     // state after replaceMarketplaceArtisans fires from fixeo-supabase-loader.js.
@@ -621,7 +631,7 @@
     }
     // Also intercept FixeoResultsPage.refresh so it cannot trigger renderArtisans
     if (window.FixeoResultsPage && typeof window.FixeoResultsPage.refresh === 'function') {
-      window.FixeoResultsPage.refresh = function urgentRefreshGuard() {
+      window.FixeoResultsPage.refresh = function urgentResultsRefreshGuard() {
         // no-op
       };
     }
