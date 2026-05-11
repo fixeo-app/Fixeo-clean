@@ -895,7 +895,9 @@
    Failure-safe: if Supabase fails → enhance() returns early → body never gets
    .fpv2b-loaded → V1 panel stays visible (degraded but not broken).
 */
-body.fpv2b-loaded .public-artisan-page .public-section-grid {
+/* V2-B2C P1: Chained selector — .public-artisan-page IS on body, not a child of it.
+ * Descendant combinator (space) never matched. Fixed to compound/chained selector. */
+body.fpv2b-loaded.public-artisan-page .public-section-grid {
   display: none !important;
 }
 
@@ -907,7 +909,8 @@ body.fpv2b-loaded .public-artisan-page .public-section-grid {
    real data from Supabase, leaving nothing visible without a replacement.
    If Supabase fails → stays visible (honest "no data yet" message).
 */
-body.fpv2b-loaded .public-artisan-page .public-empty-copy {
+/* V2-B2C P1: Same chained selector fix as above. */
+body.fpv2b-loaded.public-artisan-page .public-empty-copy {
   display: none !important;
 }
 

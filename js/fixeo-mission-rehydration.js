@@ -113,19 +113,34 @@
      Fields mapped to match normalizeRequest() in fixeo-client-requests-store.js.
   ════════════════════════════════════════════════════════════ */
   function _normalizeRow(row) {
-    if (!row || !row.request_id) return null;
+    /* V2-B2C P2: Accept both row.id and row.request_id as the mission identity key.
+     * The narrowed SELECT returns 'id' (Supabase PK) and 'request_id' (legacy FK).
+     * Either is sufficient for de-duplication and localStorage merge.
+     * All previously-expected optional fields default gracefully when absent.
+     */
+    var missionId = String(row.request_id || row.id || '').trim();
+    if (!missionId) return null;
     var status = _normalizeStatus(row.status);
+
+    /* Derive timestamps from what is available.
+     * validated_at / completed_at / accepted_at are not in the narrowed SELECT —
+     * fall back to created_at so downstream date-rendering functions don't get ''.
+     */
+    var ts_created   = row.created_at  || new Date().toISOString();
+    var ts_validated = row.validated_at || (status === 'validée' ? ts_created : '');
+    var ts_completed = row.completed_at || '';
+    var ts_accepted  = row.accepted_at  || '';
 
     return {
       /* Identity */
-      id:                   String(row.request_id).trim(),
+      id:                   missionId,
       reservation_ref:      String(row.reservation_ref || '').trim(),
-      source:               String(row.source || 'hydrated').trim(),
+      source:               String(row.source || 'supabase_mission').trim(),
 
-      /* Service data */
-      service:              String(row.service || 'Service Fixeo').trim(),
+      /* Service data — optional fields absent from narrow SELECT → safe defaults */
+      service:              String(row.service || '').trim(),
       city:                 String(row.city || '').trim(),
-      description:          String(row.description || 'Restauré depuis Fixeo').trim(),
+      description:          String(row.description || '').trim(),
       budget:               String(row.budget || (row.agreed_price ? String(row.agreed_price) + ' MAD' : '')).trim(),
       urgency:              'Normale',
       phone:                String(row.client_phone || '').trim(),
@@ -138,10 +153,10 @@
       viewed:               false,
 
       /* Timestamps */
-      created_at:           row.created_at  || new Date().toISOString(),
-      accepted_at:          row.accepted_at  || '',
-      completed_at:         row.completed_at || '',
-      validated_at:         row.validated_at || '',
+      created_at:           ts_created,
+      accepted_at:          ts_accepted,
+      completed_at:         ts_completed,
+      validated_at:         ts_validated,
 
       /* Artisan */
       assigned_artisan:     String(row.artisan_name || '').trim() || null,
@@ -371,12 +386,20 @@
        * artisan_name IS NOT used as query filter (too slow for text search);
        * name matching is done post-fetch in _localValidatedForArtisan.
        */
+      /* V2-B2C P2: SELECT narrowed to confirmed-existing columns only.
+       * Removed non-existent columns: service, city, accepted_at, completed_at,
+       * validated_at, artisan_name, source, reservation_ref, budget.
+       * Confirmed existing: id, request_id, status, artisan_profile_id,
+       * client_profile_id, agreed_price, created_at.
+       * _normalizeRow already handles missing fields gracefully via || fallbacks.
+       * .order changed from validated_at (missing) to created_at (exists).
+       */
       var result = await client
         .from(MIRROR_TABLE)
-        .select('request_id,service,city,status,created_at,accepted_at,completed_at,validated_at,artisan_name,artisan_profile_id,client_profile_id,agreed_price,source,reservation_ref,budget')
+        .select('id,request_id,status,artisan_profile_id,client_profile_id,agreed_price,created_at')
         .in('artisan_profile_id', queryIds)
         .in('status', ['validée', 'validated', 'intervention_confirmée'])
-        .order('validated_at', { ascending: false })
+        .order('created_at', { ascending: false })
         .limit(MAX_ROWS);
 
       if (result.error) {

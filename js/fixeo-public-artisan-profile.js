@@ -910,23 +910,36 @@
     }
   }
 
-  /* V2-B2A Patch 4: Define renderArtisanProfile so FixeoSupabaseLoader.getArtisanForProfile()
-   * can refresh the base render with live server data.
+  /* V2-B2C P0: renderArtisanProfile — safe server-data hook (no DOM wipe after V2 ran).
    *
-   * Before V2-B2A this call was a silent noop: the function wasn't defined anywhere,
-   * so the live Supabase artisan (correct name, city, availability, rating) was fetched
-   * and immediately discarded — the base render stayed frozen at localStorage pool data.
+   * V2-B2A introduced a critical regression: this function called renderProfile(root, data)
+   * unconditionally. renderProfile() does root.innerHTML = '...' — destroying every
+   * V2-A/B injection (bio, zone strip, trust grid, badge, activity, portfolio, etc.)
+   * because getArtisanForProfile() resolves at T+~900ms, well after enhance() rAF at T+~100ms.
    *
-   * This hook:
-   *  1. Receives the normalized artisan object from getArtisanForProfile() / _toFixeo()
-   *  2. Re-computes profile stats from existing localStorage requests (V2-A3 alias-aware)
-   *  3. Calls renderProfile() with fresh data → hero updates with server name/city/avail
-   *  4. Dispatches 'fixeo:public-profile:server-rendered' for downstream listeners
+   * V2-B2C fix — two execution paths:
    *
-   * Guards:
-   *  - Only runs on artisan-profile.html (root element check)
-   *  - Idempotent: skips if called with the same artisan id twice
-   *  - Does NOT touch booking/lifecycle/reservation paths
+   * PATH A (V2 NOT yet run): hero does not have data-v2a-done stamp AND body does not have
+   *   fpv2b-loaded AND root does not have fpv2-sections-ready.
+   *   → Safe to call renderProfile(root, data): V2 will run on top of the refreshed base.
+   *   → Also updates SEO meta.
+   *
+   * PATH B (V2 already ran): hero has data-v2a-done, OR body has fpv2b-loaded, OR root has
+   *   fpv2-sections-ready.
+   *   → DO NOT call renderProfile(). DO NOT touch root.innerHTML.
+   *   → Surgical field updates only:
+   *       h1 — name
+   *       .public-hero-meta — category + city
+   *       .public-availability — label + className
+   *       .public-avatar / .public-avatar-fallback — initials or src if available
+   *   → These are the only fields that could differ from the localStorage-pool render
+   *     and are safe to update in-place (text nodes and class attributes, not layout).
+   *   → No V2-injected DOM is touched.
+   *   → SEO meta still updated (no DOM).
+   *
+   * Idempotency: _serverRenderDoneId dedup prevents double-call for same artisan.
+   * Guard: artisan.id required; root required; profile page only (root id check).
+   * Does NOT touch booking/lifecycle/reservation paths.
    */
   var _serverRenderDoneId = '';
   window.renderArtisanProfile = function(artisan) {
@@ -934,35 +947,95 @@
     var root = document.getElementById('public-artisan-root');
     if (!root) return;
 
-    /* Skip if base render for same artisan was already done with server data */
     var artisanId = String(artisan.id || artisan.legacy_id || '').trim();
     if (!artisanId) return;
     if (_serverRenderDoneId === artisanId) return;
     _serverRenderDoneId = artisanId;
 
     try {
-      var requests = loadRequests();
+      /* Detect whether V2 injections have already run on this page load.
+       * Any of the three signals is sufficient — they are all set by enhance() rAF. */
+      var hero     = root.querySelector('.public-profile-hero');
+      var v2Done   = !!(
+        (hero && hero.getAttribute('data-v2a-done')) ||
+        document.body.classList.contains('fpv2b-loaded') ||
+        root.classList.contains('fpv2-sections-ready')
+      );
 
-      /* V2-B2A Patch 9: Use V2-A3 alias-aware mission matching for base render.
-       * computeProfileData() uses matchesArtisan() which is exact-ID only.
-       * Build the artisanLike object with all known aliases so
-       * computeProfileDataFromArtisanLike gets the widest request match.
-       */
-      var profileData = computeProfileDataFromArtisanLike(artisan, requests, artisanId);
-      if (!profileData) return;
+      if (v2Done) {
+        /* ── PATH B: Surgical field updates only — preserve all V2 DOM ── */
+        /*
+         * V2 injections are in the tree. We must NOT call renderProfile().
+         * Update only the 4 base-render fields that may differ from the
+         * localStorage-pool version the user is currently viewing.
+         * All selectors target the base hero structure written by renderProfile()
+         * at T+0ms; they are guaranteed to exist when V2 has run (V2 needs them).
+         */
+        var avail = availabilityMeta(artisan.availability || 'available');
 
-      renderProfile(root, profileData);
+        /* Name */
+        var h1 = hero && hero.querySelector('.public-hero-main h1');
+        if (h1 && artisan.name) h1.textContent = artisan.name;
 
-      /* Notify downstream systems (V2-B2A Patch 6 trust grid re-injection
-       * already happens via the fixeo:artisan:resolved event in v2a.js,
-       * but profile re-render may reset some injected elements — a second
-       * event lets premium-ui re-apply badges/services/trust grid if needed) */
+        /* Category + city meta */
+        var metaEl = hero && hero.querySelector('.public-hero-meta');
+        if (metaEl && artisan.category && artisan.city) {
+          metaEl.textContent = artisan.category + ' \u2022 ' + artisan.city;
+        }
+
+        /* Availability badge */
+        var availEl = hero && hero.querySelector('.public-availability');
+        if (availEl) {
+          availEl.textContent  = avail.label;
+          availEl.className    = 'public-availability ' + avail.className;
+        }
+
+        /* Avatar: upgrade initials to real src if photo_url available;
+         * only when V2 hasn't already replaced it (data-v2a-done means
+         * upgradeProfileAvatar() may have run — don't fight it) */
+        if (!hero.getAttribute('data-v2a-done')) {
+          var avatarImg = hero && hero.querySelector('.public-avatar-img');
+          var avatarFb  = hero && hero.querySelector('.public-avatar-fallback');
+          if (!avatarImg && avatarFb && artisan.photo_url) {
+            var img = document.createElement('img');
+            img.className = 'public-avatar public-avatar-img';
+            img.alt       = escapeHtml(artisan.name || '');
+            img.src       = artisan.photo_url;
+            avatarFb.parentNode.replaceChild(img, avatarFb);
+          }
+        }
+
+        /* SEO meta — no DOM impact */
+        try {
+          updateSeoMeta({
+            title: (artisan.name || '') + ' - ' + categoryLabel(artisan.category || '') + ' - ' + (artisan.city || '') + ' | Fixeo',
+            description: DEFAULT_PROFILE_DESCRIPTION,
+            canonicalHref: buildCanonicalProfileHref(artisan)
+          });
+        } catch(e) {}
+
+      } else {
+        /* ── PATH A: V2 not yet run — safe full re-render with server data ── */
+        /*
+         * The base hero is still the T+0ms localStorage-pool render.
+         * renderProfile() replaces root.innerHTML with server-correct data
+         * (name, city, availability, rating from Supabase).
+         * V2-A enhance() will run on top of this refreshed hero shortly after.
+         */
+        var requests    = loadRequests();
+        var profileData = computeProfileDataFromArtisanLike(artisan, requests, artisanId);
+        if (!profileData) return;
+        renderProfile(root, profileData);
+      }
+
+      /* Notify downstream (premium-ui trust grid, V2-A3 identity, etc.) */
       try {
         document.dispatchEvent(new CustomEvent('fixeo:public-profile:server-rendered', {
           bubbles: false,
           detail: { artisan: artisan }
         }));
       } catch(e) {}
+
     } catch(e) {
       console.warn('[FixeoPublicArtisanProfile] renderArtisanProfile error:', e && e.message);
     }
