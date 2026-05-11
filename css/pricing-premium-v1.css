@@ -1,0 +1,628 @@
+/*
+ * pricing-premium-v1.css — v pp1
+ * Ultra-Premium Pricing Page Rework
+ *
+ * Append-only authority file for pricing.html.
+ * Fixes root-cause visual issues in pricing.css / fixeo_v5_fixes.css
+ * without modifying those files.
+ *
+ * Root causes addressed:
+ *   1. fixeo_v5_fixes.css line 862: .pricing-card { border: 1px solid rgba(255,255,255,0.12) !important }
+ *      kills all per-card accent differentiation → we override with higher-specificity !important
+ *   2. Grid shows 2 cols at ~900px → explicit 3-col grid at ≥900px
+ *   3. All cards same visual weight → intentional hierarchy (Free calm, Pro dominant, Premium elite)
+ *   4. Hero no trust/outcome signals → pills + outcome headline styling
+ *
+ * DO NOT touch: payment.js, pricing.js, billing toggle, FAQ accordion logic
+ */
+
+/* ══════════════════════════════════════════════════════════
+   1. HERO — OUTCOME-FIRST
+   ══════════════════════════════════════════════════════════ */
+
+.pricing-hero {
+  padding: 100px 24px 52px !important;
+  background:
+    radial-gradient(ellipse 55% 40% at 30% 0%, rgba(225,48,108,0.14) 0%, transparent 65%),
+    radial-gradient(ellipse 40% 35% at 75% 10%, rgba(131,58,180,0.10) 0%, transparent 60%),
+    linear-gradient(170deg, #07071a 0%, #0c0c22 100%) !important;
+}
+
+.pricing-hero h1 {
+  font-size: clamp(1.9rem, 3.5vw, 2.9rem) !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.02em !important;
+  line-height: 1.15 !important;
+  margin: 10px 0 14px !important;
+}
+
+.pricing-hero p {
+  font-size: 1.0rem !important;
+  line-height: 1.65 !important;
+  max-width: 480px !important;
+  margin: 0 auto 24px !important;
+  color: rgba(255,255,255,0.52) !important;
+}
+
+/* ── Trust outcome pills ── */
+.pricing-trust-pills {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 28px;
+}
+
+.pricing-trust-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.10);
+  color: rgba(255,255,255,0.62);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+.pricing-trust-pill.pill-green {
+  background: rgba(32,201,151,0.07);
+  border-color: rgba(32,201,151,0.20);
+  color: rgba(32,201,151,0.88);
+}
+
+.pricing-trust-pill.pill-pink {
+  background: rgba(225,48,108,0.07);
+  border-color: rgba(225,48,108,0.20);
+  color: rgba(255,140,170,0.88);
+}
+
+.pricing-trust-pill.pill-purple {
+  background: rgba(131,58,180,0.08);
+  border-color: rgba(131,58,180,0.22);
+  color: rgba(180,130,255,0.88);
+}
+
+/* ── Billing toggle: polish ── */
+.billing-toggle {
+  background: rgba(255,255,255,0.04) !important;
+  border: 1px solid rgba(255,255,255,0.09) !important;
+}
+
+/* ══════════════════════════════════════════════════════════
+   2. PRICING GRID — 3-COL AUTHORITY
+   ══════════════════════════════════════════════════════════ */
+
+@media (min-width: 900px) {
+  .pricing-grid {
+    grid-template-columns: 1fr 1.08fr 1fr !important; /* Pro slightly wider */
+    gap: 20px !important;
+    align-items: start !important;
+  }
+}
+
+@media (min-width: 1100px) {
+  .pricing-grid {
+    grid-template-columns: 1fr 1.1fr 1fr !important;
+    gap: 24px !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+   3. PLAN CARD DIFFERENTIATION
+   (overrides fixeo_v5_fixes.css !important border reset)
+   ══════════════════════════════════════════════════════════ */
+
+/* ── FREE: calm, starter, lighter ── */
+.pricing-card[data-plan="free"] {
+  background: rgba(255,255,255,0.035) !important;
+  border: 1px solid rgba(255,255,255,0.09) !important;
+  box-shadow: none !important;
+  opacity: 0.96;
+}
+
+.pricing-card[data-plan="free"]:hover {
+  border-color: rgba(255,255,255,0.18) !important;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.22) !important;
+  transform: translateY(-3px) !important;
+}
+
+/* ── PRO: dominant, recommended, accent ── */
+.pricing-card[data-plan="pro"] {
+  background: linear-gradient(160deg, rgba(225,48,108,0.09) 0%, rgba(131,58,180,0.07) 100%) !important;
+  border: 1.5px solid rgba(225,48,108,0.55) !important;
+  box-shadow:
+    0 0 0 1px rgba(225,48,108,0.10),
+    0 8px 40px rgba(225,48,108,0.18),
+    inset 0 1px 0 rgba(255,255,255,0.06) !important;
+  position: relative !important;
+  z-index: 2 !important; /* lifts above Free/Premium */
+}
+
+.pricing-card[data-plan="pro"]:hover {
+  border-color: rgba(225,48,108,0.75) !important;
+  box-shadow:
+    0 0 0 1px rgba(225,48,108,0.15),
+    0 16px 52px rgba(225,48,108,0.25),
+    inset 0 1px 0 rgba(255,255,255,0.08) !important;
+  transform: translateY(-6px) !important;
+}
+
+/* Pro: glow aura */
+.pricing-card[data-plan="pro"]::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(ellipse 75% 45% at 50% 0%, rgba(225,48,108,0.12) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── PREMIUM: exclusive, gold-accented ── */
+.pricing-card[data-plan="premium"] {
+  background: linear-gradient(160deg, rgba(252,175,69,0.06) 0%, rgba(255,120,50,0.04) 100%) !important;
+  border: 1px solid rgba(252,175,69,0.38) !important;
+  box-shadow:
+    0 0 0 1px rgba(252,175,69,0.08),
+    0 6px 30px rgba(252,175,69,0.08),
+    inset 0 1px 0 rgba(255,255,255,0.04) !important;
+}
+
+.pricing-card[data-plan="premium"]:hover {
+  border-color: rgba(252,175,69,0.58) !important;
+  box-shadow:
+    0 0 0 1px rgba(252,175,69,0.12),
+    0 14px 44px rgba(252,175,69,0.14),
+    inset 0 1px 0 rgba(255,255,255,0.06) !important;
+  transform: translateY(-4px) !important;
+}
+
+/* ══════════════════════════════════════════════════════════
+   4. PLAN HEADER VISUAL HIERARCHY
+   ══════════════════════════════════════════════════════════ */
+
+/* Icon: size reflects plan importance */
+.pricing-card[data-plan="free"] .plan-icon {
+  font-size: 1.8rem !important;
+  opacity: 0.7;
+}
+
+.pricing-card[data-plan="pro"] .plan-icon {
+  font-size: 2.6rem !important;
+  filter: drop-shadow(0 0 12px rgba(225,48,108,0.5));
+}
+
+.pricing-card[data-plan="premium"] .plan-icon {
+  font-size: 2.2rem !important;
+  filter: drop-shadow(0 0 10px rgba(252,175,69,0.4));
+}
+
+/* Plan name */
+.pricing-card[data-plan="free"] .plan-name {
+  color: rgba(255,255,255,0.72) !important;
+  font-size: 1.2rem !important;
+}
+
+.pricing-card[data-plan="pro"] .plan-name {
+  color: #fff !important;
+  font-size: 1.55rem !important;
+  background: linear-gradient(135deg, #fff 30%, rgba(225,48,108,0.9) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.pricing-card[data-plan="premium"] .plan-name {
+  color: #FCA337 !important;
+  font-size: 1.35rem !important;
+}
+
+/* Price amount color per plan */
+.pricing-card[data-plan="free"] .price-amount {
+  color: rgba(255,255,255,0.65) !important;
+  font-size: 2.2rem !important;
+}
+
+.pricing-card[data-plan="pro"] .price-amount {
+  color: #fff !important;
+  font-size: 3.2rem !important;
+  text-shadow: 0 0 24px rgba(225,48,108,0.35);
+}
+
+.pricing-card[data-plan="premium"] .price-amount {
+  color: #FCA337 !important;
+  font-size: 2.8rem !important;
+}
+
+/* Plan desc: outcome-focused styling */
+.plan-desc {
+  font-size: 0.88rem !important;
+  line-height: 1.55 !important;
+  color: rgba(255,255,255,0.48) !important;
+}
+
+.pricing-card[data-plan="pro"] .plan-desc {
+  color: rgba(255,180,200,0.72) !important;
+}
+
+.pricing-card[data-plan="premium"] .plan-desc {
+  color: rgba(252,200,120,0.65) !important;
+}
+
+/* Popular badge: more prominent */
+.popular-badge {
+  position: absolute !important;
+  top: -1px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  right: auto !important;
+  background: linear-gradient(135deg, #E1306C, #833AB4) !important;
+  color: #fff !important;
+  font-size: 0.68rem !important;
+  font-weight: 800 !important;
+  padding: 5px 16px !important;
+  border-radius: 0 0 10px 10px !important;
+  letter-spacing: 0.06em !important;
+  white-space: nowrap !important;
+  box-shadow: 0 4px 14px rgba(225,48,108,0.35) !important;
+  z-index: 10 !important;
+}
+
+/* ══════════════════════════════════════════════════════════
+   5. FEATURE LISTS — REDUCED NOISE
+   ══════════════════════════════════════════════════════════ */
+
+.plan-features {
+  margin: 0 0 20px !important;
+}
+
+.plan-features li {
+  font-size: 0.85rem !important;
+  padding: 6px 0 !important;
+  border-bottom: 1px solid rgba(255,255,255,0.04) !important;
+  gap: 8px !important;
+  line-height: 1.4 !important;
+}
+
+/* Disabled features: much more subdued — don't compete visually */
+.feat-no {
+  color: rgba(255,255,255,0.22) !important;
+  font-size: 0.80rem !important;
+}
+
+.feat-no .feat-icon {
+  opacity: 0.3 !important;
+}
+
+/* Enabled features per-plan accent */
+.pricing-card[data-plan="pro"] .feat-ok {
+  color: rgba(255,255,255,0.90) !important;
+}
+
+.pricing-card[data-plan="premium"] .feat-ok {
+  color: rgba(255,220,150,0.88) !important;
+}
+
+/* ── Feature section divider (replaces long list density) ── */
+.plan-feature-group-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.22);
+  text-transform: uppercase;
+  letter-spacing: 0.10em;
+  padding: 10px 0 4px;
+  display: block;
+}
+
+/* ══════════════════════════════════════════════════════════
+   6. PLAN BUTTONS — PREMIUM TREATMENT
+   ══════════════════════════════════════════════════════════ */
+
+.pricing-card[data-plan="free"] .plan-btn {
+  background: rgba(255,255,255,0.07) !important;
+  border: 1px solid rgba(255,255,255,0.14) !important;
+  color: rgba(255,255,255,0.72) !important;
+  box-shadow: none !important;
+}
+
+.pricing-card[data-plan="free"] .plan-btn:hover {
+  background: rgba(255,255,255,0.11) !important;
+  color: #fff !important;
+  transform: translateY(-1px) !important;
+}
+
+.pricing-card[data-plan="pro"] .plan-btn {
+  background: linear-gradient(135deg, #E1306C, #833AB4) !important;
+  border: none !important;
+  color: #fff !important;
+  box-shadow: 0 8px 24px rgba(225,48,108,0.32) !important;
+  font-size: 1.0rem !important;
+  padding: 14px 20px !important;
+  letter-spacing: 0.01em !important;
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+.pricing-card[data-plan="pro"] .plan-btn:hover {
+  box-shadow: 0 12px 32px rgba(225,48,108,0.42) !important;
+  transform: translateY(-2px) !important;
+  filter: brightness(1.06) !important;
+}
+
+.pricing-card[data-plan="premium"] .plan-btn {
+  background: linear-gradient(135deg, #FCA337, #E1306C) !important;
+  border: none !important;
+  color: #fff !important;
+  box-shadow: 0 8px 24px rgba(252,175,69,0.25) !important;
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+.pricing-card[data-plan="premium"] .plan-btn:hover {
+  box-shadow: 0 12px 32px rgba(252,175,69,0.35) !important;
+  transform: translateY(-2px) !important;
+  filter: brightness(1.06) !important;
+}
+
+/* ══════════════════════════════════════════════════════════
+   7. COMPARISON TABLE — PREMIUM TREATMENT
+   ══════════════════════════════════════════════════════════ */
+
+.comparison-wrap {
+  margin-bottom: 56px !important;
+}
+
+.comparison-wrap h2 {
+  font-size: clamp(1.4rem, 2.5vw, 1.9rem) !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.01em !important;
+}
+
+.comparison-table-wrap {
+  border-radius: 16px !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(255,255,255,0.07) !important;
+}
+
+.comparison-table {
+  background: rgba(13,13,26,0.6) !important;
+  border: none !important;
+}
+
+.comparison-table th {
+  background: rgba(255,255,255,0.05) !important;
+  font-size: 0.80rem !important;
+  font-weight: 700 !important;
+  padding: 16px 16px !important;
+  letter-spacing: 0.01em !important;
+}
+
+.comparison-table td {
+  padding: 12px 16px !important;
+  font-size: 0.83rem !important;
+}
+
+.comparison-table thead th:nth-child(3) {
+  background: rgba(225,48,108,0.08) !important;
+  border-bottom: 2px solid rgba(225,48,108,0.30) !important;
+}
+
+.comparison-table tbody td:nth-child(3) {
+  background: rgba(225,48,108,0.04) !important;
+}
+
+.comparison-table tbody tr:hover td {
+  background: rgba(255,255,255,0.025) !important;
+}
+
+.comparison-table tbody tr:hover td:nth-child(3) {
+  background: rgba(225,48,108,0.06) !important;
+}
+
+.feat-name {
+  font-weight: 600 !important;
+  color: rgba(255,255,255,0.75) !important;
+  font-size: 0.83rem !important;
+}
+
+/* ── Mobile: scrollable table with plan label hints ── */
+@media (max-width: 768px) {
+  .comparison-table-wrap {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    border-radius: 12px !important;
+  }
+
+  .comparison-table {
+    min-width: 480px !important; /* ensures columns don't collapse too narrow */
+  }
+
+  .comparison-table th,
+  .comparison-table td {
+    padding: 10px 12px !important;
+    font-size: 0.78rem !important;
+    white-space: nowrap !important;
+  }
+
+  .feat-name {
+    white-space: normal !important;
+    min-width: 120px !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+   8. FAQ — PREMIUM GLASS
+   ══════════════════════════════════════════════════════════ */
+
+.faq-section {
+  margin-bottom: 56px !important;
+}
+
+.faq-section h2 {
+  font-size: clamp(1.4rem, 2.5vw, 1.9rem) !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.01em !important;
+}
+
+.faq-grid {
+  gap: 10px !important;
+}
+
+.faq-item {
+  background: rgba(255,255,255,0.03) !important;
+  border: 1px solid rgba(255,255,255,0.07) !important;
+  border-radius: 14px !important;
+  overflow: hidden !important;
+  transition: border-color 0.2s ease !important;
+}
+
+.faq-item:hover {
+  border-color: rgba(255,255,255,0.12) !important;
+}
+
+.faq-item.open {
+  border-color: rgba(225,48,108,0.22) !important;
+  background: rgba(225,48,108,0.03) !important;
+}
+
+.faq-q {
+  padding: 18px 20px !important;
+  font-size: 0.88rem !important;
+  font-weight: 600 !important;
+  color: rgba(255,255,255,0.85) !important;
+}
+
+.faq-q:hover {
+  background: rgba(255,255,255,0.025) !important;
+}
+
+.faq-item.open .faq-q {
+  color: #fff !important;
+}
+
+.faq-arrow {
+  font-size: 0.72rem !important;
+  color: rgba(255,255,255,0.30) !important;
+  transition: transform 0.3s ease !important;
+}
+
+.faq-item.open .faq-arrow {
+  color: rgba(225,48,108,0.7) !important;
+}
+
+.faq-a {
+  font-size: 0.84rem !important;
+  line-height: 1.65 !important;
+  color: rgba(255,255,255,0.48) !important;
+}
+
+/* ══════════════════════════════════════════════════════════
+   9. MOBILE CARD EXPERIENCE (≤ 768px)
+   ══════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+  .pricing-hero {
+    padding: 88px 16px 40px !important;
+  }
+
+  .pricing-hero h1 {
+    font-size: clamp(1.7rem, 6vw, 2.1rem) !important;
+  }
+
+  .pricing-trust-pills {
+    gap: 7px !important;
+  }
+
+  .pricing-trust-pill {
+    font-size: 0.72rem !important;
+    padding: 5px 11px !important;
+  }
+
+  .pricing-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  /* Mobile: Pro card gets extra prominence */
+  .pricing-card[data-plan="pro"] {
+    order: -1 !important; /* Pro first on mobile */
+    box-shadow:
+      0 0 0 1px rgba(225,48,108,0.15),
+      0 12px 36px rgba(225,48,108,0.18) !important;
+  }
+
+  .pricing-card[data-plan="pro"] .plan-btn {
+    padding: 14px 20px !important;
+    font-size: 1.0rem !important;
+  }
+
+  /* Cards: reduce padding on mobile */
+  .pricing-card {
+    padding: 24px 20px !important;
+  }
+
+  .pricing-card[data-plan="pro"] {
+    padding: 28px 22px !important;
+  }
+
+  /* Popular badge: centered on top */
+  .popular-badge {
+    font-size: 0.64rem !important;
+    padding: 4px 14px !important;
+  }
+
+  /* Price: keep readable */
+  .pricing-card[data-plan="pro"] .price-amount {
+    font-size: 2.8rem !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+   10. NARROW MOBILE (≤ 380px)
+   ══════════════════════════════════════════════════════════ */
+
+@media (max-width: 380px) {
+  .pricing-hero {
+    padding: 80px 14px 36px !important;
+  }
+
+  .pricing-trust-pills {
+    justify-content: flex-start !important;
+  }
+
+  .pricing-trust-pill {
+    font-size: 0.70rem !important;
+    padding: 5px 10px !important;
+  }
+
+  .pricing-card {
+    padding: 20px 16px !important;
+  }
+
+  .billing-toggle {
+    padding: 6px 12px !important;
+    gap: 8px !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+   11. FOOTER TRANSITION — OLD FOOTER SUPPRESSION
+   (pricing.html has legacy footer.footer — suppressed here,
+    replaced by fixeo-footer-global.js injection)
+   ══════════════════════════════════════════════════════════ */
+
+footer.footer {
+  display: none !important;
+}
+
+/* Smooth transition from last section to footer */
+.fixeo-footer-v1,
+.fixeo-footer-inject {
+  margin-top: 0 !important;
+  border-top: 1px solid rgba(255,255,255,0.05) !important;
+}

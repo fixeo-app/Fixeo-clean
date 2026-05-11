@@ -15,6 +15,8 @@
 <link rel="stylesheet" href="css/ui_fixes.css"/>
 <link rel="stylesheet" href="css/fixeo_v5_fixes.css"/>
 <link rel="stylesheet" href="css/pricing.css"/>
+<link rel="stylesheet" href="css/fixeo-footer-global.css?v=gf1"/>
+<link rel="stylesheet" href="css/pricing-premium-v1.css?v=pp1"/>
 <link rel="stylesheet" href="css/payment.css"/>
 <link rel="stylesheet" href="css/reservation.css">
 <link rel="stylesheet" href="css/header-unified.css"/>
@@ -256,8 +258,14 @@
 <section class="pricing-hero">
   <div class="pricing-hero-inner">
     <span class="section-tag">ABONNEMENTS ARTISANS</span>
-    <h1>Choisissez votre <span class="text-gradient">Plan</span></h1>
-    <p>Développez votre activité avec Fixeo. Commencez gratuitement, montez en puissance quand vous êtes prêt.</p>
+    <h1>Développez votre activité<br>avec <span class="text-gradient">Fixeo</span></h1>
+    <p>Commencez gratuitement. Passez au niveau supérieur quand vous voulez recevoir plus de demandes et être mieux visible.</p>
+    <!-- Trust outcome pills -->
+    <div class="pricing-trust-pills">
+      <span class="pricing-trust-pill pill-green">✓ Sans engagement</span>
+      <span class="pricing-trust-pill pill-pink">🔒 Paiement sécurisé</span>
+      <span class="pricing-trust-pill pill-purple">🇲🇦 Pensé pour les artisans marocains</span>
+    </div>
     <div class="billing-toggle">
       <span id="toggle-monthly" class="billing-label active" onclick="setBilling('monthly')">Mensuel</span>
       <div class="toggle-switch-wrap" onclick="toggleBilling()">
@@ -283,19 +291,17 @@
             <span class="price-currency">MAD</span>
             <span class="price-period">/mois</span>
           </div>
-          <p class="plan-desc">Idéal pour démarrer et tester la plateforme.</p>
+          <p class="plan-desc">Pour tester Fixeo et créer une première présence sans risque.</p>
         </div>
         <ul class="plan-features">
           <li class="feat-ok"><span class="feat-icon">✅</span> Profil public de base</li>
-          <li class="feat-ok"><span class="feat-icon">✅</span> 3 demandes/mois</li>
+          <li class="feat-ok"><span class="feat-icon">✅</span> 3 demandes par mois</li>
           <li class="feat-ok"><span class="feat-icon">✅</span> 1 photo de portfolio</li>
           <li class="feat-ok"><span class="feat-icon">✅</span> Avis clients visibles</li>
-          <li class="feat-ok"><span class="feat-icon">✅</span> Accès app mobile</li>
-          <li class="feat-no"><span class="feat-icon">❌</span> Badge vérifié</li>
-          <li class="feat-no"><span class="feat-icon">❌</span> Mise en avant dans les résultats</li>
-          <li class="feat-no"><span class="feat-icon">❌</span> Statistiques avancées</li>
-          <li class="feat-no"><span class="feat-icon">❌</span> Support prioritaire</li>
-          <li class="feat-no"><span class="feat-icon">❌</span> Portfolio illimité</li>
+          <li class="feat-ok"><span class="feat-icon">✅</span> Accès mobile</li>
+          <li class="feat-no"><span class="feat-icon">—</span> Badge vérifié</li>
+          <li class="feat-no"><span class="feat-icon">—</span> Mise en avant dans les résultats</li>
+          <li class="feat-no"><span class="feat-icon">—</span> Support prioritaire</li>
         </ul>
         <button class="btn btn-secondary btn-lg w-100 plan-btn" onclick="selectPlan('free')">Commencer gratuitement</button>
       </div>
@@ -311,19 +317,17 @@
             <span class="price-currency">MAD</span>
             <span class="price-period">/mois</span>
           </div>
-          <p class="plan-desc">Pour les artisans actifs qui veulent se démarquer.</p>
+          <p class="plan-desc">Pour recevoir plus de demandes et améliorer votre visibilité dans votre zone.</p>
         </div>
         <ul class="plan-features">
-          <li class="feat-ok"><span class="feat-icon">✅</span> Tout du plan Free</li>
           <li class="feat-ok"><span class="feat-icon">✅</span> Demandes illimitées</li>
           <li class="feat-ok"><span class="feat-icon">✅</span> <strong>Badge "Pro Vérifié" 🏅</strong></li>
-          <li class="feat-ok"><span class="feat-icon">✅</span> 10 photos de portfolio</li>
           <li class="feat-ok"><span class="feat-icon">✅</span> Mise en avant dans les résultats</li>
+          <li class="feat-ok"><span class="feat-icon">✅</span> 10 photos de portfolio</li>
           <li class="feat-ok"><span class="feat-icon">✅</span> Statistiques avancées</li>
-          <li class="feat-ok"><span class="feat-icon">✅</span> Réponse automatique aux demandes</li>
-          <li class="feat-ok"><span class="feat-icon">✅</span> Support prioritaire (24h)</li>
           <li class="feat-ok"><span class="feat-icon">✅</span> Accès aux missions urgentes</li>
-          <li class="feat-no"><span class="feat-icon">❌</span> Profil Premium en tête de liste</li>
+          <li class="feat-ok"><span class="feat-icon">✅</span> Support prioritaire (24h)</li>
+          <li class="feat-no"><span class="feat-icon">—</span> 1ère position dans les résultats</li>
         </ul>
         <button class="btn btn-primary btn-lg w-100 plan-btn" onclick="selectPlan('pro')">
           <span>🚀 Passer au Pro</span>
@@ -341,19 +345,17 @@
             <span class="price-currency">MAD</span>
             <span class="price-period">/mois</span>
           </div>
-          <p class="plan-desc">Pour les pros qui veulent dominer leur marché local.</p>
+          <p class="plan-desc">Pour devenir prioritaire dans votre zone et accélérer votre croissance locale.</p>
         </div>
         <ul class="plan-features">
-          <li class="feat-ok"><span class="feat-icon">✅</span> Tout du plan Pro</li>
-          <li class="feat-ok"><span class="feat-icon">✅</span> <strong>Badge "Premium Elite" 👑</strong></li>
-          <li class="feat-ok"><span class="feat-icon">✅</span> Photos & vidéos illimitées</li>
           <li class="feat-ok"><span class="feat-icon">✅</span> <strong>1ère position dans les résultats</strong></li>
-          <li class="feat-ok"><span class="feat-icon">✅</span> Profil boosté × 5 visibilité</li>
+          <li class="feat-ok"><span class="feat-icon">✅</span> <strong>Badge "Premium Elite" 👑</strong></li>
+          <li class="feat-ok"><span class="feat-icon">✅</span> Photos &amp; vidéos illimitées</li>
           <li class="feat-ok"><span class="feat-icon">✅</span> Tableau de bord IA avancé</li>
           <li class="feat-ok"><span class="feat-icon">✅</span> Devis automatiques IA</li>
           <li class="feat-ok"><span class="feat-icon">✅</span> Support VIP (2h max)</li>
           <li class="feat-ok"><span class="feat-icon">✅</span> Rapport mensuel de performance</li>
-          <li class="feat-ok"><span class="feat-icon">✅</span> Accès beta aux nouvelles fonctionnalités</li>
+          <li class="feat-ok"><span class="feat-icon">✅</span> Accès beta fonctionnalités</li>
         </ul>
         <button class="btn btn-premium btn-lg w-100 plan-btn" onclick="selectPlan('premium')">
           <span>👑 Passer au Premium</span>
@@ -555,28 +557,7 @@
   </div>
 </div>
 
-<!-- FOOTER -->
-<footer class="footer">
-  <div class="container">
-    <div class="footer-content">
-      <div class="footer-brand">
-        <div class="logo-wrap" style="margin-bottom:12px">
-          <img src="img/logo.png" alt="Fixeo" style="height:38px;width:auto;object-fit:contain;background:transparent" onerror="this.onerror=null;this.alt='Fixeo';">
-        </div>
-        <p style="color:var(--text-muted);font-size:.85rem">La marketplace des artisans au Maroc.</p>
-      </div>
-      <div class="footer-links">
-        <a href="index.html">Accueil</a>
-        <a href="pricing.html">Tarifs</a>
-        <a href="dashboard-artisan.html">Dashboard Artisan</a>
-        <a href="auth.html">Connexion</a>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <p>© 2025 Fixeo — Tous droits réservés</p>
-    </div>
-  </div>
-</footer>
+<!-- FOOTER: replaced by fixeo-footer-global.js injection (gf1) -->
 
 <script src="js/fixeo-session-mobile.js"></script>
 <script src="js/fixeo-header-global.js"></script>
@@ -590,5 +571,7 @@
 <script src="js/header-unified.js"></script>
 <script src="js/auth-global.js"></script>
 <script src="js/fixeo-artisan-request-notifications.js"></script>
+<!-- gf1: Global footer injection -->
+<script src="js/fixeo-footer-global.js?v=gf1" defer></script>
 </body>
 </html>
