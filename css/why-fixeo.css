@@ -502,3 +502,8 @@
   .why-fixeo-grid .why-card-1 h3 { font-size: 0.93rem !important; }
   .why-fixeo-grid .why-card-1 p  { font-size: 0.80rem !important; max-width: none !important; }
 }
+
+/* V3-fix: clip the bottom-right ambient glow that was causing horizontal overflow */
+#why-fixeo-section {
+  overflow: hidden !important;
+}
