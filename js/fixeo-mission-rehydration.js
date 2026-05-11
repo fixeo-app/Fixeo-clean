@@ -393,11 +393,26 @@
        * client_profile_id, agreed_price, created_at.
        * _normalizeRow already handles missing fields gracefully via || fallbacks.
        * .order changed from validated_at (missing) to created_at (exists).
+       *
+       * V2-B2C P2b: UUID-filter on queryIds.
+       * artisan_profile_id is a UUID column — Postgres rejects non-UUID values
+       * in an IN clause with "invalid input syntax for type uuid: ...".
+       * V2-A3 resolveAliases() always appends the name slug (e.g. "mounir_zerouali")
+       * for backward compat with legacy localStorage records, but the Supabase
+       * missions table only stores UUIDs.
+       * Fix: strip non-UUID values before the .in() call.
+       * UUID regex: 8-4-4-4-12 hex groups (standard RFC 4122 format).
        */
+      var UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      var uuidQueryIds = queryIds.filter(function(q) { return UUID_RE.test(q); });
+      /* Fallback: if filtering removes everything (e.g. legacy numeric IDs only),
+       * skip the Supabase query gracefully — no UUID match possible. */
+      if (!uuidQueryIds.length) return [];
+
       var result = await client
         .from(MIRROR_TABLE)
         .select('id,request_id,status,artisan_profile_id,client_profile_id,agreed_price,created_at')
-        .in('artisan_profile_id', queryIds)
+        .in('artisan_profile_id', uuidQueryIds)
         .in('status', ['validée', 'validated', 'intervention_confirmée'])
         .order('created_at', { ascending: false })
         .limit(MAX_ROWS);
