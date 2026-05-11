@@ -5,7 +5,7 @@
   <script src="/js/supabase-client.js?v=sc2"></script>
   <script src="/js/fixeo-logout-global.js?v=1"></script>
   <script src="/js/fixeo-repository.js?v=repo2"></script>
-  <script src="/js/fixeo-supabase-loader.js?v=sl1"></script>
+  <script src="/js/fixeo-supabase-loader.js?v=v2c3b"></script>
   <script src="/js/fixeo-auth-supabase.js?v=p1d"></script>
 
   <link rel="icon" type="image/png" href="img/favicon.png" sizes="32x32">
@@ -28,14 +28,14 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/artisan-profile-conversion.css">
   <link rel="stylesheet" href="css/fixeo_v5_fixes.css">
-  <link rel="stylesheet" href="css/header-unified.css">
-  <link rel="stylesheet" href="css/fixeo-header-global.css">
-  <link rel="stylesheet" href="css/auth-global.css">
+  <link rel="stylesheet" href="css/header-unified.css?v=v2c3b">
+  <link rel="stylesheet" href="css/fixeo-header-global.css?v=v2c3b">
+  <link rel="stylesheet" href="css/auth-global.css?v=v2c3b">
   <link rel="stylesheet" href="css/reservation.css">
   <link rel="stylesheet" href="css/reservation-v2.css?v=3" />
   <link rel="stylesheet" href="css/reservation-v2a.css?v=v2c" />
   <link rel="stylesheet" href="css/artisan-profile-premium.css">
-  <link rel="stylesheet" href="css/artisan-profile-v2a.css?v=v2b2c">
+  <link rel="stylesheet" href="css/artisan-profile-v2a.css?v=v2c3b">
   <link rel="stylesheet" href="css/fixeo-profile-v1jb.css?v=v2b1">
   <style>
     .notif-badge:empty{display:none!important}
@@ -86,6 +86,27 @@
       .public-stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
       .public-action-btn,.public-more-btn{width:auto}
     }
+    /* ── V2-C3B: PROFILE SKELETON ────────────────────────────────
+       Visible immediately at first paint. Replaced naturally when
+       renderProfile() sets root.innerHTML at DCL.
+       No fake data. Pure structural placeholders.
+     ──────────────────────────────────────────────────────────── */
+    .fxsk-hero{padding:18px;display:grid;gap:16px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);border-radius:24px;backdrop-filter:blur(16px)}
+    .fxsk-top{display:flex;gap:16px;align-items:flex-start}
+    .fxsk-avatar{width:80px;height:80px;border-radius:20px;background:rgba(255,255,255,.1);flex-shrink:0}
+    .fxsk-lines{flex:1;display:grid;gap:10px;padding-top:6px}
+    .fxsk-line{border-radius:8px;background:rgba(255,255,255,.1)}
+    .fxsk-line--title{height:22px;width:65%}
+    .fxsk-line--sub{height:14px;width:45%}
+    .fxsk-line--badge{height:24px;width:30%;border-radius:999px}
+    .fxsk-cta{height:48px;border-radius:14px;background:rgba(225,48,108,.18);border:1px solid rgba(225,48,108,.3)}
+    @keyframes fxsk-pulse{0%,100%{opacity:.5}50%{opacity:1}}
+    .fxsk-hero .fxsk-avatar,.fxsk-hero .fxsk-line,.fxsk-hero .fxsk-cta{animation:fxsk-pulse 1.6s ease-in-out infinite}
+    .fxsk-hero .fxsk-line--title{animation-delay:.1s}
+    .fxsk-hero .fxsk-line--sub{animation-delay:.25s}
+    .fxsk-hero .fxsk-line--badge{animation-delay:.4s}
+    .fxsk-hero .fxsk-cta{animation-delay:.2s}
+    @media(min-width:768px){.fxsk-top{align-items:center}.fxsk-avatar{width:104px;height:104px}}
   </style>
   <link rel="stylesheet" href="css/header-logo-premium.css?v=hlp5">
   <!-- ══ LOGO OVERRIDE — image-only, no emoji, no text ══ -->
@@ -227,18 +248,30 @@
 </div>
 
 <main id="main-content" class="public-artisan-wrap">
-  <div class="container public-artisan-shell" id="public-artisan-root" aria-live="polite"></div>
+  <!-- V2-C3B: skeleton visible at first paint, replaced by renderProfile() at DCL -->
+  <div class="container public-artisan-shell" id="public-artisan-root" aria-live="polite">
+    <div class="fxsk-hero" aria-hidden="true">
+      <div class="fxsk-top">
+        <div class="fxsk-avatar"></div>
+        <div class="fxsk-lines">
+          <div class="fxsk-line fxsk-line--title"></div>
+          <div class="fxsk-line fxsk-line--sub"></div>
+          <div class="fxsk-line fxsk-line--badge"></div>
+        </div>
+      </div>
+      <div class="fxsk-cta"></div>
+    </div>
+  </div>
 </main>
 
 <script>
   (function (window, document) {
     var asset = window.__fixeoProfileAssetPath || function (path) { return path; };
     [
-      '/js/notifications.js',
-      '/js/header-unified.js',
-      '/js/fixeo-header-global.js',
-      '/js/auth-global.js',
-      '/js/artisan-onboarding-store.js',
+      '/js/notifications.js?v=v2c3b',
+      '/js/header-unified.js?v=v2c3b',
+      '/js/fixeo-header-global.js?v=v2c3b',
+      '/js/auth-global.js?v=v2c3b',
       '/js/reservation.js?v=v1jc',
       '/js/reservation-v2.js?v=3'
     ].forEach(function (src) {
@@ -370,14 +403,13 @@
   (function (window, document) {
     var asset = window.__fixeoProfileAssetPath || function (path) { return path; };
     [
-      '/js/fixeo-public-profile-links.js',
+      '/js/fixeo-public-profile-links.js?v=v2c3b',
       '/js/fixeo-public-artisan-profile.js?v=v2b2c',
       '/js/fixeo-profile-premium-ui.js?v=v2b2a',
-      '/js/fixeo-claim-system.js?v=cs1',
       '/js/fixeo-artisan-identity.js?v=v2a3',
-      '/js/fixeo-client-requests-store.js',
+      '/js/fixeo-client-requests-store.js?v=v2c3b',
       '/js/fixeo-mission-rehydration.js?v=v2b2c',
-      '/js/fixeo-profile-v2a.js?v=v2b2a',
+      '/js/fixeo-profile-v2a.js?v=v2c3b',
       '/js/fixeo-profile-v1jb.js?v=v1jc'
     ].forEach(function (src) {
       document.write('<script src="' + asset(src) + '"><\/script>');
@@ -541,5 +573,7 @@
 <script src="js/fixeo-mission-mirror.js?v=v2c1" defer></script>
 <!-- V2-B1: Portfolio public read (fetchForArtisan) -->
 <script src="js/fixeo-portfolio-mirror.js?v=v2b1" defer></script>
+<!-- V2-C3B: Claim system deferred — non-critical, loads after profile renders -->
+<script src="js/fixeo-claim-system.js?v=v2c3b" defer></script>
 </body>
 </html>

@@ -275,7 +275,11 @@
   /* ── Auto-load on appropriate pages ──────────────────────── */
   var path = window.location.pathname.toLowerCase();
   var isHomepage     = path === '/' || path.endsWith('index.html') || path.endsWith('/');
-  var isMarketplace  = path.includes('marketplace') || path.includes('artisan');
+  /* V2-C3B: artisan-profile.html only needs getArtisanForProfile() — NOT the full
+   * 861-artisan marketplace load. Exclude it explicitly so we don't waste bandwidth
+   * fetching the entire artisans table (select * limit 1000) on every profile view. */
+  var isPublicProfile = path.includes('artisan-profile');
+  var isMarketplace  = !isPublicProfile && (path.includes('marketplace') || path.includes('artisan') || path.includes('results') || path.includes('artisans'));
   var isAdmin        = path.includes('admin');
 
   if (isHomepage || isMarketplace || isAdmin) {

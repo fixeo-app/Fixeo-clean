@@ -4,6 +4,25 @@
   width: 100%;
 }
 
+/* ── V2-C3B: FIRST-PAINT FLASH PREVENTION ──────────────────────
+   body.fixeo-gh-enabled is written in HTML before any JS runs.
+   At first paint the new .fixeo-gh-mobile bar is NOT yet in the DOM
+   (it's injected by mount() at DCL). Without these rules the legacy
+   .hamburger and .navbar-toggle remain visible on mobile for the
+   ~3-4 seconds it takes 600KB of sync JS to finish executing.
+   These rules kill all legacy mobile-menu triggers the instant the
+   first byte of CSS is parsed — no flash window at all.
+   Only hide controls that fixeo-header-global.js REPLACES.
+   The new .fixeo-gh-menu button is inside .fixeo-gh-mobile which
+   is display:none until mount() shows it, so hiding .hamburger here
+   does not leave the user without a menu button.
+ ────────────────────────────────────────────────────────────── */
+body.fixeo-gh-enabled .hamburger,
+body.fixeo-gh-enabled .mobile-menu-toggle,
+body.fixeo-gh-enabled .navbar-toggle {
+  display: none !important;
+}
+
 @media (max-width: 768px) {
   body.fixeo-gh-enabled .fixeo-gh-original-node,
   body.fixeo-gh-enabled .fixeo-gh-legacy-drawer,
