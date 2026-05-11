@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- fixeo-artisan-profile v2c5f — BFCache guard + /artisan/* no-store headers -->
 <html lang="fr" dir="ltr">
 <head>
   <script src="/js/fixeo-db.js?v=db2"></script>
@@ -14,6 +15,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Profil artisan | Fixeo</title>
   <meta name="description" content="Artisan vérifié Fixeo. Voir avis clients, Trust Score, disponibilité et demander intervention.">
+  <!-- V2-C5F: Strong no-cache hints for HTTP/1.0 proxies and mobile WebViews that ignore Cache-Control -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
   <script>
@@ -569,6 +574,22 @@
       }, { once: true });
     }
   })(document);
+</script>
+<!-- V2-C5F: BFCache guard — forces a clean reload when page is restored from
+     the browser back-forward cache (iOS Safari / Android Chrome). Without this,
+     navigating Back to the profile can restore a stale JS execution context that
+     pre-dates the v2c5d sentinel, causing the old V1 profile to reappear briefly.
+     e.persisted === true ONLY on bfcache restore; never fires on normal page load.
+     No reload loop: a reloaded page is fetched fresh and e.persisted = false. -->
+<script>
+  (function() {
+    'use strict';
+    window.addEventListener('pageshow', function(e) {
+      if (e.persisted) {
+        window.location.reload();
+      }
+    });
+  }());
 </script>
 <script src="js/fixeo-mission-mirror.js?v=v2c1" defer></script>
 <!-- V2-B1: Portfolio public read (fetchForArtisan) -->
