@@ -793,8 +793,6 @@ function ensureMarketplaceAdvancedFilters() {
 }
 
 function marketplaceSyncResultsCount(count) {
-  // V2-C2A-TRACE: temporary trace to find the caller; remove after debug
-  if (window.__FIXEO_URGENT_PAGE__) { console.warn('[V2C2A-TRACE] marketplaceSyncResultsCount called with', count, 'on urgent page\n', new Error().stack); }
   const label = marketplaceBuildResultsLabel(count);
   const controls = marketplaceGetFilterControls();
   if (controls.resultsCount) controls.resultsCount.textContent = label;
