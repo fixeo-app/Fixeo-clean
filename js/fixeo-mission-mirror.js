@@ -1,6 +1,6 @@
 /*
  * fixeo-mission-mirror.js — V2-A1: Mission Persistence Mirror
- * Version: v2a1
+ * Version: v2c1
  * Role: Durable Supabase mirror of the localStorage mission lifecycle.
  *
  * ARCHITECTURE:
@@ -184,42 +184,51 @@
     var status  = _normalizeStatus(req.status);
     var now     = new Date().toISOString();
 
+    /* V2-C1: Supabase missions table has EXACTLY 7 columns:
+     *   id, request_id, status, artisan_profile_id, client_profile_id,
+     *   agreed_price, created_at
+     * DO NOT write any other field — Supabase rejects unknown columns.
+     *
+     * UUID guard: artisan_profile_id is a UUID column. Non-UUID values
+     * (name slugs, numeric IDs) cause 22P02 error. Filter strictly.
+     */
+    var UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (artisanProfileId && !UUID_RE.test(artisanProfileId)) {
+      /* Not a UUID — cannot write to UUID column. Silently drop. */
+      console.warn(LOG_PREFIX, 'artisan_profile_id is not a UUID, skipping write:', artisanProfileId);
+      artisanProfileId = null;
+    }
+    if (clientProfileId && !UUID_RE.test(clientProfileId)) {
+      clientProfileId = null;
+    }
+
+    /* Extract numeric agreed_price (strip ' MAD' suffix if present) */
+    var agreedPrice = null;
+    var priceRaw = req.final_price || req.agreed_price || req.budget || '';
+    var priceNum = parseFloat(String(priceRaw).replace(/[^0-9.]/g, ''));
+    if (!isNaN(priceNum) && priceNum > 0) agreedPrice = priceNum;
+
     var row = {
-      /* Stable identity — used as upsert key */
+      /* Stable identity — upsert key */
       request_id:         String(req.id).trim(),
 
-      /* Participants */
-      client_profile_id:  clientProfileId,
-      artisan_profile_id: artisanProfileId,
-      artisan_name:       String(req.assigned_artisan || req.artisan_name || '').trim() || null,
-      client_name:        String(req.client_name || '').trim() || null,
-
-      /* Mission data */
-      service:            String(req.service || '').trim() || null,
-      city:               String(req.city    || '').trim() || null,
-      budget:             String(req.budget  || '').trim() || null,
+      /* Status */
       status:             status,
 
-      /* Timestamps — only include if set (empty string → null) */
-      created_at:         req.created_at  || now,
-      updated_at:         now,
+      /* Participants — UUID only or null */
+      artisan_profile_id: artisanProfileId,
+      client_profile_id:  clientProfileId,
 
-      /* Lifecycle timestamps — only set when present */
-      accepted_at:        req.accepted_at  || null,
-      completed_at:       req.completed_at || null,
-      validated_at:       req.validated_at || null,
+      /* Financial */
+      agreed_price:       agreedPrice,
 
-      /* Source tracking */
-      reservation_ref:    String(req.reservation_ref || '').trim() || null,
-      source:             String(req.source || 'client_request').trim(),
-
-      /* Financial — map to agreed_price (used by existing schema) */
-      agreed_price:       Number(req.final_price || 0) || null,
+      /* Timestamp */
+      created_at:         req.created_at || now,
     };
 
-    /* Remove null values to keep upsert payload lean */
+    /* Remove null / undefined values — keep payload minimal */
     Object.keys(row).forEach(function(k) {
-      if (row[k] === null || row[k] === undefined || row[k] === '') {
+      if (row[k] === null || row[k] === undefined) {
         delete row[k];
       }
     });
@@ -438,9 +447,20 @@
       var role   = _userRole();
       var column = (role === 'artisan') ? 'artisan_profile_id' : 'client_profile_id';
 
+      /* V2-C1: SELECT narrowed to confirmed-existing columns only.
+       * missions table has 7 columns: id, request_id, status,
+       * artisan_profile_id, client_profile_id, agreed_price, created_at.
+       * All other columns have been removed to prevent 400 errors. */
+      var UUID_RE_H = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      if (!UUID_RE_H.test(userId)) {
+        /* userId is not a UUID — cannot query UUID column safely */
+        sessionStorage.setItem(HYDRATE_KEY, '1');
+        return;
+      }
+
       var result = await client
         .from(MIRROR_TABLE)
-        .select('request_id,service,city,status,created_at,accepted_at,completed_at,validated_at,artisan_name,artisan_profile_id,client_profile_id,agreed_price,source,reservation_ref,budget')
+        .select('id,request_id,status,artisan_profile_id,client_profile_id,agreed_price,created_at')
         .eq(column, userId)
         .order('created_at', { ascending: false })
         .limit(20);
@@ -461,30 +481,33 @@
       var addedCount = 0;
 
       result.data.forEach(function(row) {
-        var rid = String(row.request_id || '').trim();
+        var rid = String(row.request_id || row.id || '').trim();
         if (!rid || localIds.has(rid)) return; /* already present — skip */
 
-        /* Convert Supabase row → localStorage request format */
+        var rowStatus = _normalizeStatus(row.status);
+        var ts = row.created_at || new Date().toISOString();
+        /* Convert Supabase row → localStorage request format.
+         * Fields absent from the narrow SELECT default to safe values. */
         rawLocal.push({
           id:              rid,
-          service:         row.service  || 'Service Fixeo',
-          city:            row.city     || '',
-          budget:          row.budget   || (row.agreed_price ? row.agreed_price + ' MAD' : ''),
-          status:          _normalizeStatus(row.status),
-          created_at:      row.created_at  || new Date().toISOString(),
-          accepted_at:     row.accepted_at  || '',
-          completed_at:    row.completed_at || '',
-          validated_at:    row.validated_at || '',
-          assigned_artisan: row.artisan_name || '',
-          assigned_artisan_id: row.artisan_profile_id || '',
-          client_profile_id:  row.client_profile_id  || '',
-          reservation_ref: row.reservation_ref || '',
-          source:          row.source || 'hydrated',
+          service:         '',                /* not in schema */
+          city:            '',                /* not in schema */
+          budget:          row.agreed_price ? String(row.agreed_price) + ' MAD' : '',
+          status:          rowStatus,
+          created_at:      ts,
+          accepted_at:     '',
+          completed_at:    '',
+          validated_at:    rowStatus === 'validée' ? ts : '',
+          assigned_artisan: '',
+          assigned_artisan_id: String(row.artisan_profile_id || '').trim(),
+          client_profile_id:  String(row.client_profile_id  || '').trim(),
+          reservation_ref: '',               /* not in schema */
+          source:          'hydrated',
           final_price:     Number(row.agreed_price || 0),
           description:     'Restauré depuis Fixeo',
           phone:           '',
           urgency:         'Normale',
-          locked:          row.status !== 'nouvelle',
+          locked:          rowStatus !== 'nouvelle',
           locked_at:       '',
           viewed:          false,
           commission_amount: 0,
@@ -551,7 +574,7 @@
      for future phases (V2-A2, etc) to trigger explicit syncs.
   ════════════════════════════════════════════════════════════ */
   window.FixeoMissionMirror = {
-    version: 'v2a1',
+    version: 'v2c1',
 
     /* Explicit single-request mirror (e.g. after COD payment completion) */
     mirror: function(requestId) {

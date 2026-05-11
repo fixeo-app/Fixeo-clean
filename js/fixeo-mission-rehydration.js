@@ -1,6 +1,6 @@
 /*
  * fixeo-mission-rehydration.js — V2-A2: Mission Rehydration & Server Trust Fallback
- * Version: v2a2
+ * Version: v2c1
  *
  * ROLE:
  *   The read-side durability layer.
@@ -281,10 +281,26 @@
     var role   = _userRole();
     var column = (role === 'artisan') ? 'artisan_profile_id' : 'client_profile_id';
 
+    /* V2-C1: UUID guard — artisan_profile_id / client_profile_id are UUID columns.
+     * Non-UUID userId (name slug, numeric) would cause 22P02 error in .eq() call.
+     * Skip gracefully if userId is not a valid UUID. */
+    var UUID_RE_D = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!UUID_RE_D.test(userId)) {
+      sessionStorage.setItem(SESSION_DASHBOARD_DONE, '1');
+      return;
+    }
+
     try {
+      /* V2-C1: SELECT narrowed to confirmed-existing columns only.
+       * Removed non-existent columns: service, city, budget, accepted_at,
+       * completed_at, validated_at, artisan_name, source, reservation_ref,
+       * description, client_phone.
+       * Confirmed existing: id, request_id, status, artisan_profile_id,
+       * client_profile_id, agreed_price, created_at.
+       * _normalizeRow already handles absent fields gracefully via || fallbacks. */
       var result = await client
         .from(MIRROR_TABLE)
-        .select('request_id,service,city,budget,status,created_at,accepted_at,completed_at,validated_at,artisan_name,artisan_profile_id,client_profile_id,agreed_price,source,reservation_ref,description,client_phone')
+        .select('id,request_id,status,artisan_profile_id,client_profile_id,agreed_price,created_at')
         .eq(column, userId)
         .order('created_at', { ascending: false })
         .limit(MAX_ROWS);
@@ -562,7 +578,7 @@
      PUBLIC API — window.FixeoMissionRehydration
   ════════════════════════════════════════════════════════════ */
   window.FixeoMissionRehydration = {
-    version: 'v2a2',
+    version: 'v2c1',
 
     /* Primary trust API: used by fixeo-profile-v2a.js V1-H/J functions */
     getValidatedForArtisan: getValidatedForArtisan,
