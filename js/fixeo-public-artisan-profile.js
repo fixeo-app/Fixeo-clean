@@ -954,13 +954,28 @@
 
     try {
       /* Detect whether V2 injections have already run on this page load.
-       * Any of the three signals is sufficient — they are all set by enhance() rAF. */
+       *
+       * Three hard signals — all set inside enhance() rAF callback, never before:
+       *   data-v2a-done  : stamped on hero by waitForHero() immediately before rAF
+       *   fpv2b-loaded   : added to body at end of rAF (CSS gate for V1 hide rules)
+       *   fpv2-sections-ready : added to root at end of rAF (CSS opacity trigger)
+       *
+       * Sentinel signal — __fixeoV2EnhanceStarted:
+       *   Set at IIFE parse time (V2-C5D) AND at top of enhance() (V2-C5C).
+       *   Means "enhance() module has loaded and started". NOT "rAF completed".
+       *   V2-C6A FIX: sentinel only counts toward v2Done when a hero element
+       *   is already in the DOM. If renderNotFound() was called (no hero —
+       *   public-profile-state shown instead), sentinel MUST NOT block PATH A,
+       *   because PATH A is the only way to recover the page with server data
+       *   and give enhance() a hero to work with.
+       *   When hero IS present + sentinel=true: V2 is in progress → PATH B safe.
+       *   When hero IS absent + sentinel=true: V2 is waiting → PATH A required. */
       var hero     = root.querySelector('.public-profile-hero');
       var v2Done   = !!(
         (hero && hero.getAttribute('data-v2a-done')) ||
         document.body.classList.contains('fpv2b-loaded') ||
         root.classList.contains('fpv2-sections-ready') ||
-        window.__fixeoV2EnhanceStarted  /* V2-C5C: sentinel — enhance() started, block PATH A */
+        (window.__fixeoV2EnhanceStarted && !!hero)  /* V2-C6A: sentinel only if hero present */
       );
 
       if (v2Done) {
