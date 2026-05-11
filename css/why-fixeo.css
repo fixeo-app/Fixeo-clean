@@ -322,3 +322,183 @@
     min-width: 0;
   }
 }
+
+/* ══════════════════════════════════════════════════════════════════════
+   V3 — Intelligence Section Hierarchy Pass (append-only, v3)
+   Goal: Fix 5-col 6-card layout (card-6 alone on row 2).
+         Promote card-1 to anchor "hero" card (wider, elevated).
+         Add visual depth — warm dark tones, accented focal card.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── Section ambient: richer dark depth ── */
+#why-fixeo-section::before {
+  background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(225,48,108,0.09) 0%, transparent 65%) !important;
+  width: 100% !important;
+  height: 500px !important;
+  top: -60px !important;
+  left: 0 !important;
+  transform: none !important;
+}
+/* Add second ambient spot — purple depth from bottom-right */
+#why-fixeo-section::after {
+  content: '' !important;
+  position: absolute !important;
+  bottom: -60px; right: -80px !important;
+  width: 500px; height: 400px !important;
+  background: radial-gradient(ellipse at center, rgba(131,58,180,0.07) 0%, transparent 70%) !important;
+  pointer-events: none !important;
+  z-index: 0 !important;
+}
+
+/* ── Grid: 3+3 layout (fixes the 5-col orphan bug) ── */
+/* was: repeat(5, 1fr) → card-6 alone on row 2 = full width */
+/* fix: repeat(3, 1fr) → 2 clean rows of 3 */
+.why-fixeo-grid {
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 16px !important;
+}
+/* Re-establish the promote-card-1 as a wide anchor: spans 2 cols */
+/* "Le bon artisan, au bon moment" is the core value prop — it leads */
+.why-fixeo-grid .why-card-1 {
+  grid-column: span 2 !important;
+  flex-direction: row !important;
+  align-items: flex-start !important;
+  gap: 20px !important;
+  padding: 28px 28px 26px !important;
+  background: rgba(32,201,151,0.06) !important;
+  border-color: rgba(32,201,151,0.18) !important;
+  box-shadow:
+    0 0 0 1px rgba(32,201,151,0.07),
+    0 4px 24px rgba(32,201,151,0.08),
+    inset 0 1px 0 rgba(255,255,255,0.05) !important;
+}
+/* Top shimmer line on anchor card */
+.why-fixeo-grid .why-card-1::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0; left: 0; right: 0 !important;
+  height: 1px !important;
+  background: linear-gradient(90deg, transparent 0%, rgba(32,201,151,0.45) 40%, transparent 100%) !important;
+  border-radius: 20px 20px 0 0 !important;
+  pointer-events: none !important;
+  z-index: 1 !important;
+}
+/* Remove the existing ::after shimmer on why-card-1 (would double-stack) */
+.why-fixeo-grid .why-card-1.wf-card::after {
+  display: none !important;
+}
+/* Anchor card: bigger icon */
+.why-fixeo-grid .why-card-1 .wf-icon-wrap {
+  width: 52px !important;
+  height: 52px !important;
+  flex-shrink: 0 !important;
+  border-radius: 16px !important;
+  background: rgba(32,201,151,0.14) !important;
+  border-color: rgba(32,201,151,0.28) !important;
+}
+.why-fixeo-grid .why-card-1 .wf-icon-wrap svg {
+  width: 24px !important; height: 24px !important;
+}
+/* Anchor card: larger h3 */
+.why-fixeo-grid .why-card-1 .wf-card h3,
+.why-fixeo-grid .why-card-1 h3 {
+  font-size: 1.05rem !important;
+  font-weight: 750 !important;
+  color: rgba(255,255,255,0.97) !important;
+  letter-spacing: -0.02em !important;
+  line-height: 1.25 !important;
+  margin-bottom: 6px !important;
+}
+.why-fixeo-grid .why-card-1 p {
+  font-size: 0.86rem !important;
+  color: rgba(255,255,255,0.58) !important;
+  line-height: 1.65 !important;
+  max-width: 420px !important;
+}
+/* Anchor card hover */
+.why-fixeo-grid .why-card-1:hover {
+  background: rgba(32,201,151,0.09) !important;
+  border-color: rgba(32,201,151,0.28) !important;
+  box-shadow:
+    0 0 0 1px rgba(32,201,151,0.10),
+    0 18px 44px rgba(32,201,151,0.11),
+    inset 0 1px 0 rgba(255,255,255,0.07) !important;
+}
+
+/* ── Support cards (2-6): reduced backdrop, more breathing ── */
+.why-fixeo-grid .wf-card:not(.why-card-1) {
+  background: rgba(255,255,255,0.038) !important;
+  border-color: rgba(255,255,255,0.085) !important;
+  padding: 22px 18px 20px !important;
+}
+.why-fixeo-grid .wf-card:not(.why-card-1) h3 {
+  font-size: 0.90rem !important;
+  color: rgba(255,255,255,0.87) !important;
+}
+.why-fixeo-grid .wf-card:not(.why-card-1) p {
+  font-size: 0.78rem !important;
+  color: rgba(255,255,255,0.48) !important;
+}
+
+/* ── Section header: bring back tag, upgrade h2 ── */
+#why-fixeo-section .wfx-tag {
+  display: inline-flex !important;
+  align-items: center !important;
+  padding: 4px 12px !important;
+  border-radius: 999px !important;
+  background: rgba(131,58,180,0.12) !important;
+  border: 1px solid rgba(131,58,180,0.26) !important;
+  color: rgba(190,140,255,0.90) !important;
+  font-size: 0.68rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.09em !important;
+  text-transform: uppercase !important;
+  margin-bottom: 10px !important;
+}
+
+/* ── Responsive grid fixes ── */
+/* Tablet: anchor card back to full-width, all equal */
+@media (max-width: 1100px) and (min-width: 769px) {
+  .why-fixeo-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+  .why-fixeo-grid .why-card-1 {
+    grid-column: span 2 !important;
+  }
+}
+/* 768px and below: 2-col grid, anchor reverts to 1-col */
+@media (max-width: 768px) {
+  .why-fixeo-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+  .why-fixeo-grid .why-card-1 {
+    grid-column: span 2 !important; /* full width on tablet portrait */
+    flex-direction: row !important;
+    padding: 20px 16px !important;
+    gap: 14px !important;
+  }
+  .why-fixeo-grid .why-card-1 .wf-icon-wrap {
+    width: 44px !important; height: 44px !important;
+  }
+  .why-fixeo-grid .why-card-1 h3 { font-size: 0.97rem !important; }
+  .why-fixeo-grid .why-card-1 p  { font-size: 0.82rem !important; }
+}
+/* 480px: single col, all cards equal */
+@media (max-width: 480px) {
+  .why-fixeo-grid {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+  .why-fixeo-grid .why-card-1 {
+    grid-column: span 1 !important;
+    flex-direction: row !important;
+    padding: 16px 14px !important;
+    gap: 14px !important;
+  }
+  .why-fixeo-grid .why-card-1 .wf-icon-wrap {
+    width: 42px !important; height: 42px !important;
+  }
+  .why-fixeo-grid .why-card-1 h3 { font-size: 0.93rem !important; }
+  .why-fixeo-grid .why-card-1 p  { font-size: 0.80rem !important; max-width: none !important; }
+}

@@ -557,3 +557,155 @@
 html body .fxv-section .section-tag.fxv-vtag {
   display: none !important;
 }
+
+/* ══════════════════════════════════════════════════════════════════════
+   V3 — Vision Section Premium Upgrade (append-only, v3)
+   Goal: Make the Vision section feel like a live platform dashboard,
+         not a static infographic. Deepen the metrics, strengthen the
+         orchestration headline, make the flow feel directional.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── Section background: deeper, warmer dark ── */
+.fxv-section {
+  background:
+    radial-gradient(ellipse 80% 55% at 15% 30%, rgba(131,58,180,0.13) 0%, transparent 65%),
+    radial-gradient(ellipse 70% 50% at 85% 70%, rgba(225,48,108,0.09) 0%, transparent 65%),
+    linear-gradient(180deg, rgba(12,10,22,0.0) 0%, rgba(8,6,18,0.0) 100%) !important;
+  padding: 80px 0 88px !important;
+}
+
+/* ── Header: orchestration title gets gradient text ── */
+.fxv-section .testimonial-title,
+.fxv-section h2 {
+  background: linear-gradient(135deg, #fff 40%, rgba(200,140,255,0.85) 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  font-size: clamp(1.65rem, 3.2vw, 2.35rem) !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.025em !important;
+  line-height: 1.18 !important;
+}
+.fxv-section .section-header p {
+  color: rgba(255,255,255,0.52) !important;
+  font-size: 0.92rem !important;
+}
+
+/* ── Story block: stronger glass, more readable text ── */
+.fxv-story {
+  background:
+    linear-gradient(135deg, rgba(255,255,255,0.048) 0%, rgba(255,255,255,0.018) 100%) !important;
+  border-color: rgba(255,255,255,0.10) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    0 6px 24px rgba(0,0,0,0.18) !important;
+  max-width: 580px !important;
+}
+/* Shimmer line: purple tint */
+.fxv-story::before {
+  background: linear-gradient(90deg, transparent, rgba(131,58,180,0.40), transparent) !important;
+}
+.fxv-story-text {
+  color: rgba(255,255,255,0.62) !important;
+  font-size: 0.90rem !important;
+  line-height: 1.80 !important;
+}
+
+/* ── Metrics strip: individual accent per metric ── */
+.fxv-signals {
+  background:
+    linear-gradient(135deg, rgba(255,255,255,0.038) 0%, rgba(255,255,255,0.014) 100%) !important;
+  border-color: rgba(255,255,255,0.09) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.07),
+    0 6px 28px rgba(0,0,0,0.20) !important;
+  max-width: 660px !important;
+  padding: 22px 16px !important;
+}
+.fxv-signals::before {
+  background: linear-gradient(90deg, transparent, rgba(225,48,108,0.28), transparent) !important;
+}
+/* Signal values: bigger, more contrast */
+.fxv-signal-value {
+  font-size: clamp(1.4rem, 4vw, 1.95rem) !important;
+  color: rgba(255,255,255,0.97) !important;
+  font-weight: 800 !important;
+}
+/* Signal labels: more readable */
+.fxv-signal-label {
+  font-size: 0.69rem !important;
+  color: rgba(255,255,255,0.42) !important;
+  letter-spacing: 0.02em !important;
+}
+/* Per-signal accent on values (nth-child targeting the 4 signals) */
+/* Signal 1 (Villes) — blue accent */
+.fxv-signals .fxv-signal:nth-child(1) .fxv-signal-value { color: rgba(100,180,255,0.95) !important; }
+/* Signal 2 (Artisans) — pink accent */
+.fxv-signals .fxv-signal:nth-child(3) .fxv-signal-value { color: rgba(255,255,255,0.97) !important; }
+/* Signal 3 (Spécialités) — purple accent */
+.fxv-signals .fxv-signal:nth-child(5) .fxv-signal-value { color: rgba(190,140,255,0.95) !important; }
+/* Signal 4 (<30min) — emerald accent */
+.fxv-signals .fxv-signal:nth-child(7) .fxv-signal-value { color: rgba(32,201,151,0.95) !important; }
+/* Separator lines: slightly more visible */
+.fxv-signal-sep {
+  background: rgba(255,255,255,0.10) !important;
+  height: 40px !important;
+}
+/* "+" superscript: accent match */
+.fxv-signal-plus { color: rgba(225,48,108,0.85) !important; }
+
+/* ── Flow: directional emphasis ── */
+.fxv-flow {
+  max-width: 680px !important;
+  margin-top: 36px !important;
+}
+/* All step numbers: subtle base */
+.fxv-flow-num {
+  background: rgba(255,255,255,0.055) !important;
+  border-color: rgba(255,255,255,0.10) !important;
+  color: rgba(255,255,255,0.60) !important;
+  font-size: 0.75rem !important;
+}
+/* Step 2 (Fixeo analyse) — highlight as the "intelligence" moment */
+.fxv-flow-step-2 .fxv-flow-num {
+  background: rgba(131,58,180,0.18) !important;
+  border-color: rgba(131,58,180,0.34) !important;
+  color: rgba(200,150,255,0.95) !important;
+  box-shadow: 0 0 12px rgba(131,58,180,0.20) !important;
+}
+.fxv-flow-step-2 .fxv-flow-label {
+  color: rgba(200,150,255,0.70) !important;
+  font-size: 0.71rem !important;
+}
+/* Step 4 (Intervention) — success green */
+.fxv-flow-step-end .fxv-flow-num {
+  background: rgba(32,201,151,0.16) !important;
+  border-color: rgba(32,201,151,0.30) !important;
+  color: rgba(32,201,151,0.95) !important;
+  box-shadow: 0 0 14px rgba(32,201,151,0.16) !important;
+}
+.fxv-flow-step-end .fxv-flow-label {
+  color: rgba(32,201,151,0.75) !important;
+}
+/* Arrows: progressive brightness — gets more vivid toward end */
+.fxv-flow-arrow:nth-of-type(2) { color: rgba(255,255,255,0.16) !important; }
+.fxv-flow-arrow:nth-of-type(4) { color: rgba(131,58,180,0.35) !important; }
+.fxv-flow-arrow:nth-of-type(6) { color: rgba(32,201,151,0.35) !important; }
+/* Flow labels: general legibility */
+.fxv-flow-label {
+  font-size: 0.70rem !important;
+  letter-spacing: 0.01em !important;
+  color: rgba(255,255,255,0.38) !important;
+}
+
+/* ── Mobile ── */
+@media (max-width: 640px) {
+  .fxv-section { padding: 56px 0 64px !important; }
+  .fxv-story { max-width: 100% !important; }
+  .fxv-signals { max-width: 100% !important; }
+  .fxv-signal-value { font-size: clamp(1.2rem, 7vw, 1.5rem) !important; }
+  .fxv-signal-label { font-size: 0.62rem !important; }
+  .fxv-signal-sep { height: 30px !important; }
+  .fxv-flow-step-2 .fxv-flow-num,
+  .fxv-flow-step-end .fxv-flow-num { box-shadow: none !important; }
+}

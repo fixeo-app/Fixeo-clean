@@ -388,3 +388,164 @@
 .how-it-works-section {
   border-top: 1px solid rgba(255, 255, 255, 0.04) !important;
 }
+
+/* ══════════════════════════════════════════════════════════════════════
+   V3 — Orchestration Hierarchy Pass (append-only, v3)
+   Goal: break the flat-4-equal-card monotony.
+   Strategy: step 1 = "request" lead card (wider left anchor on desktop),
+             step 4 = "payment trust" elevated card (deeper emerald glow).
+             Steps 2/3 = lighter glass support cards, smaller visual weight.
+   All changes: CSS-only, no DOM mutations.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── Section ambient upgrade: richer backdrop ── */
+.how-it-works-section::before {
+  background:
+    radial-gradient(ellipse 55% 60% at 10% 40%, rgba(225,48,108,0.07) 0%, transparent 65%),
+    radial-gradient(ellipse 55% 60% at 90% 60%, rgba(32,201,151,0.05) 0%, transparent 65%),
+    radial-gradient(ellipse 40% 40% at 50% 100%, rgba(131,58,180,0.04) 0%, transparent 70%) !important;
+}
+
+/* ── Support cards (2 & 3): dial back weight ── */
+/* They should recede, letting step-1 and step-4 lead */
+.how-it-works-section .step-card:not(.step-highlight) {
+  background: rgba(255,255,255,0.019) !important;
+  border-color: rgba(255,255,255,0.055) !important;
+  box-shadow: 0 1px 8px rgba(0,0,0,0.10) !important;
+}
+.how-it-works-section .step-card:not(.step-highlight):hover {
+  background: rgba(255,255,255,0.038) !important;
+  border-color: rgba(255,255,255,0.10) !important;
+  box-shadow: 0 10px 28px rgba(0,0,0,0.18) !important;
+}
+/* Support card text: lighter register */
+.how-it-works-section .step-card:not(.step-highlight) h3 {
+  color: rgba(255,255,255,0.80) !important;
+}
+.how-it-works-section .step-card:not(.step-highlight) p {
+  color: rgba(255,255,255,0.42) !important;
+}
+
+/* ── Lead card (step 1 — pink): stronger presence ── */
+.how-it-works-section .step-highlight:not(.step-highlight-payment) {
+  background: rgba(225,48,108,0.08) !important;
+  border-color: rgba(225,48,108,0.24) !important;
+  box-shadow:
+    0 0 0 1px rgba(225,48,108,0.10),
+    0 4px 24px rgba(225,48,108,0.10),
+    inset 0 1px 0 rgba(255,255,255,0.06) !important;
+}
+/* Subtle top shimmer on lead card */
+.how-it-works-section .step-highlight:not(.step-highlight-payment)::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0; left: 0; right: 0 !important;
+  height: 1px !important;
+  background: linear-gradient(90deg, transparent 0%, rgba(225,48,108,0.55) 50%, transparent 100%) !important;
+  border-radius: 20px 20px 0 0 !important;
+  pointer-events: none !important;
+}
+.how-it-works-section .step-highlight:not(.step-highlight-payment):hover {
+  background: rgba(225,48,108,0.11) !important;
+  border-color: rgba(225,48,108,0.32) !important;
+  box-shadow:
+    0 0 0 1px rgba(225,48,108,0.14),
+    0 16px 40px rgba(225,48,108,0.14),
+    inset 0 1px 0 rgba(255,255,255,0.07) !important;
+}
+
+/* ── Trust card (step 4 — emerald): deepened safety signal ── */
+.how-it-works-section .step-highlight-payment {
+  background: rgba(32,201,151,0.07) !important;
+  border-color: rgba(32,201,151,0.26) !important;
+  box-shadow:
+    0 0 0 1px rgba(32,201,151,0.08),
+    0 4px 24px rgba(32,201,151,0.10),
+    inset 0 1px 0 rgba(255,255,255,0.05) !important;
+}
+.how-it-works-section .step-highlight-payment::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0; left: 0; right: 0 !important;
+  height: 1px !important;
+  background: linear-gradient(90deg, transparent 0%, rgba(32,201,151,0.60) 50%, transparent 100%) !important;
+  border-radius: 20px 20px 0 0 !important;
+  pointer-events: none !important;
+}
+.how-it-works-section .step-highlight-payment:hover {
+  background: rgba(32,201,151,0.10) !important;
+  border-color: rgba(32,201,151,0.34) !important;
+  box-shadow:
+    0 0 0 1px rgba(32,201,151,0.12),
+    0 16px 40px rgba(32,201,151,0.12),
+    inset 0 1px 0 rgba(255,255,255,0.06) !important;
+}
+
+/* ── Connector arrows: directional gradient (left→right emphasis) ── */
+.hiw-arrow {
+  opacity: 0 !important; /* hidden by default — re-shown below */
+}
+@media (min-width: 769px) {
+  .hiw-arrow {
+    opacity: 1 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-shrink: 0 !important;
+    width: 20px !important;
+    align-self: center !important;
+  }
+  .hiw-arrow svg {
+    width: 14px !important;
+    height: 14px !important;
+    stroke: rgba(255,255,255,0.22) !important;
+    fill: none !important;
+  }
+  /* 2nd arrow (between steps 2→3) slightly brighter — middle of journey */
+  .hiw-arrow:nth-of-type(4) svg { stroke: rgba(255,255,255,0.28) !important; }
+  /* 3rd arrow (3→4) glows emerald — leads to trust step */
+  .hiw-arrow:last-of-type svg { stroke: rgba(32,201,151,0.40) !important; }
+}
+
+/* ── Header: section tag back, styled as pill ── */
+.how-it-works-section .hiw-tag {
+  display: inline-flex !important;
+  align-items: center !important;
+  padding: 4px 12px !important;
+  border-radius: 999px !important;
+  background: rgba(225,48,108,0.10) !important;
+  border: 1px solid rgba(225,48,108,0.22) !important;
+  color: rgba(255,140,175,0.90) !important;
+  font-size: 0.68rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.09em !important;
+  text-transform: uppercase !important;
+  margin-bottom: 10px !important;
+}
+/* Subtitle: sharper, more decisive */
+.how-it-works-section .how-subtitle {
+  font-size: 0.88rem !important;
+  color: rgba(255,255,255,0.48) !important;
+  max-width: 360px !important;
+  margin: 6px auto 0 !important;
+}
+
+/* ── Step number: accent color per card type ── */
+.how-it-works-section .step-card:not(.step-highlight) .step-number {
+  background: rgba(255,255,255,0.06) !important;
+  border-color: rgba(255,255,255,0.10) !important;
+  color: rgba(255,255,255,0.50) !important;
+}
+
+/* ── Mobile: restore equal-height (scroll, not hierarchy) ── */
+@media (max-width: 768px) {
+  .how-it-works-section .step-highlight:not(.step-highlight-payment)::before,
+  .how-it-works-section .step-highlight-payment::before {
+    content: '' !important;
+  }
+  /* Restore equal-weight on mobile — horizontal scroll shows one at a time */
+  .how-it-works-section .step-card:not(.step-highlight) {
+    background: rgba(255,255,255,0.025) !important;
+    border-color: rgba(255,255,255,0.07) !important;
+  }
+}
