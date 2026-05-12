@@ -425,8 +425,8 @@
 /* ── H1-A: Search container ambient breath ── */
 /* Only on the inline hero instance — not on modal instances */
 #hero-quick-search .qsm-bar-card {
-  animation: fxhero-breath 5.5s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
-  will-change: transform, box-shadow;
+  animation: fxhero-breath 4.5s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+  will-change: box-shadow;
 }
 
 /* Pause breath when user interacts with search */
@@ -435,17 +435,17 @@
 }
 
 @keyframes fxhero-breath {
-  0%   {
-    transform: scale(1);
-    box-shadow: 0 0 0 0 rgba(225,48,108,0), 0 8px 24px rgba(0,0,0,0.12);
+  0%, 100% {
+    box-shadow:
+      0 8px 24px rgba(0,0,0,0.12),
+      0 0  0px  0px rgba(255,107,53,0),
+      0 0  0px  0px rgba(225,48,108,0);
   }
-  50%  {
-    transform: scale(1.006);
-    box-shadow: 0 0 22px 2px rgba(225,48,108,0.09), 0 10px 32px rgba(0,0,0,0.16);
-  }
-  100% {
-    transform: scale(1);
-    box-shadow: 0 0 0 0 rgba(225,48,108,0), 0 8px 24px rgba(0,0,0,0.12);
+  50% {
+    box-shadow:
+      0 10px 36px rgba(0,0,0,0.18),
+      0 0 32px  8px rgba(255,107,53,0.22),
+      0 0 56px 18px rgba(225,48,108,0.12);
   }
 }
 
