@@ -752,6 +752,8 @@
   }
 
   function renderProfile(root, data) {
+    /* rf4: mark sentinel so cold-visit index fetch .then() never overwrites a full render */
+    try { window.__fxHeroRendered = window.__fxHeroRendered || (data && data.artisan && data.artisan.id) || '__rendered__'; } catch(e) {}
     var artisan = data.artisan;
     var stats = data.stats;
     var availability = availabilityMeta(artisan.availability);

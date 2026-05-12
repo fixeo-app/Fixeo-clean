@@ -10,13 +10,13 @@
       "use": "@vercel/static"
     },
     {
-  "src": "*.xml",
-  "use": "@vercel/static"
-},
-{
-  "src": "*.txt",
-  "use": "@vercel/static"
-},
+      "src": "*.xml",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "*.txt",
+      "use": "@vercel/static"
+    },
     {
       "src": "css/**",
       "use": "@vercel/static"
@@ -35,6 +35,10 @@
     },
     {
       "src": "img/**",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "data/**",
       "use": "@vercel/static"
     }
   ],
@@ -111,6 +115,19 @@
         {
           "key": "Cache-Control",
           "value": "public, max-age=3600, stale-while-revalidate=86400"
+        }
+      ]
+    },
+    {
+      "source": "/data/(.*)\\.json",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600, stale-while-revalidate=86400"
+        },
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
         }
       ]
     }
