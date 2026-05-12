@@ -824,7 +824,12 @@
       var _earlyRoot = document.getElementById('public-artisan-root');
       var _earlyParams = new URLSearchParams(window.location.search || '');
       var _earlyId = String(_earlyParams.get('id') || _earlyParams.get('artisan') || '').trim();
-      if (_earlyRoot && _earlyId && typeof sessionStorage !== 'undefined') {
+      /* perf3: skip DCL early-render if inline fast-path already rendered the hero.
+         window.__fxHeroRendered is set by the inline fxfp script at body-parse time.
+         We still run the full Supabase resolution chain below — this only skips
+         the redundant DOM write at DCL that would cause a flash. */
+      if (_earlyRoot && _earlyId && window.__fxHeroRendered !== _earlyId
+          && typeof sessionStorage !== 'undefined') {
         var _earlyRaw = sessionStorage.getItem('fixeo_profile_prefetch_' + _earlyId);
         if (_earlyRaw) {
           var _earlyArtisan = JSON.parse(_earlyRaw);

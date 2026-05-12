@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- fixeo-artisan-profile perf2 — sync JS 322KB→72KB (-78%), skeleton→content FCP optimized -->
+<!-- fixeo-artisan-profile perf3 — sync JS 322KB→72KB (-78%), skeleton→content FCP optimized -->
 <html lang="fr" dir="ltr">
 <head>
   <!-- perf2: Only truly parse-time required scripts remain sync.
@@ -114,6 +114,11 @@
     .fxsk-hero .fxsk-line--badge{animation-delay:.4s}
     .fxsk-hero .fxsk-cta{animation-delay:.2s}
     @media(min-width:768px){.fxsk-top{align-items:center}.fxsk-avatar{width:104px;height:104px}}
+    /* perf3: fast-path hero — matches renderProfile hero layout exactly.
+       Animates in softly; V2 enhance() replaces it without flicker. */
+    .fxfp-hero{animation:fxfp-in .22s ease-out both}
+    @keyframes fxfp-in{from{opacity:.6;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+    @media(prefers-reduced-motion:reduce){.fxfp-hero{animation:none}}
   </style>
   <link rel="stylesheet" href="css/header-logo-premium.css?v=hlp5">
   <!-- ══ LOGO OVERRIDE — image-only, no emoji, no text ══ -->
@@ -303,6 +308,52 @@
     </div>
   </div>
 </main>
+<!-- perf3: Inline hero fast-path (~1.2KB).
+     Runs synchronously at body-parse time (after skeleton HTML exists in DOM).
+     Reads sessionStorage preseed → replaces skeleton with real hero HTML
+     using ONLY inline CSS classes already defined above.
+     Sets window.__fxHeroRendered sentinel to suppress DCL double-render. -->
+<script>
+(function(){
+  try {
+    var id = new URLSearchParams(window.location.search).get('id');
+    if (!id) return;
+    var raw = sessionStorage.getItem('fixeo_profile_prefetch_' + id);
+    if (!raw) return;
+    var a = JSON.parse(raw);
+    if (!a || typeof a !== 'object') return;
+    var name = String(a.name || a.artisan_name || '').trim();
+    if (!name) return;
+    var svc  = String(a.category || a.service || a.speciality || '').trim() || 'Artisan';
+    var city = String(a.city || a.ville || '').trim() || 'Maroc';
+    var avail = String(a.availability || a.status || '').toLowerCase();
+    var availCls = avail === 'available' || avail === 'disponible' ? 'is-available'
+                 : avail === 'busy' || avail === 'occupé' ? 'is-busy' : 'is-unknown';
+    var availLbl = availCls === 'is-available' ? '⚡ Disponible'
+                 : availCls === 'is-busy' ? '🕐 Occupé' : '— Statut inconnu';
+    var photo = String(a.photo_url || a.avatar || a.photo || a.image || '').trim();
+    var initials = name.split(' ').map(function(w){ return w[0] || ''; }).join('').substring(0,2).toUpperCase() || '?';
+    var avatarHtml = photo
+      ? '<img class="public-avatar" src="' + photo.replace(/"/g,'&quot;') + '" alt="' + name.replace(/"/g,'&quot;') + '" loading="eager" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'">'
+        + '<div class="public-avatar public-avatar-fallback" aria-hidden="true" style="display:none">' + initials + '</div>'
+      : '<div class="public-avatar public-avatar-fallback" aria-hidden="true">' + initials + '</div>';
+    var html = '<section class="public-profile-hero fxfp-hero">'
+      + '<div class="public-avatar-wrap">' + avatarHtml + '</div>'
+      + '<div class="public-hero-main">'
+      + '<span class="public-availability ' + availCls + '">' + availLbl + '</span>'
+      + '<h1>' + name.replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</h1>'
+      + '<p class="public-hero-meta">' + svc.replace(/</g,'&lt;') + ' · ' + city.replace(/</g,'&lt;') + '</p>'
+      + '<button class="btn btn-primary public-action-btn" type="button" id="public-artisan-action">Réserver l\'intervention</button>'
+      + '</div></section>';
+    var root = document.getElementById('public-artisan-root');
+    if (root) {
+      root.innerHTML = html;
+      document.body.classList.add('fxfp-rendered');
+      window.__fxHeroRendered = id;
+    }
+  } catch(e) {}
+}());
+</script>
 
 <!-- perf2: Batch 1 — header + auth sync (nav/auth state needed at first paint).
      fixeo-db, fixeo-repository, fixeo-auth-supabase, fixeo-supabase-loader
@@ -437,6 +488,10 @@
 </script>
 <!-- perf2: Batch 2 — all deferred (DCL order: links → render → v2 enhance).
      All three use DCL listeners internally; defer preserves execution order. -->
+<!-- perf3: reservation.js moved before profile scripts — CTA-ready before V2 enhance fires.
+     Prevents dead-click on fast taps of the fxfp-hero CTA. -->
+<script src="js/reservation.js?v=v2c6f" defer></script>
+<script src="js/reservation-v2.js?v=v2c6f-b" defer></script>
 <script src="/js/fixeo-public-profile-links.js?v=v2c3b" defer></script>
 <script src="/js/fixeo-public-artisan-profile.js?v=v2c6" defer></script>
 <script src="/js/fixeo-profile-v2a.js?v=v2c6f" defer></script>
@@ -530,7 +585,16 @@
     document.addEventListener('click', function (event) {
       var button = event.target && event.target.closest ? event.target.closest('#public-artisan-action') : null;
       if (!button) return;
-      if (!window.FixeoReservation || typeof window.FixeoReservation.open !== 'function') return;
+      if (!window.FixeoReservation || typeof window.FixeoReservation.open !== 'function') {
+        /* perf3: reservation engine not yet ready — show brief loading hint, retry in 600ms */
+        if (button && !button.dataset.fxLoading) {
+          var _origTxt = button.textContent;
+          button.dataset.fxLoading = '1';
+          button.textContent = 'Chargement…';
+          setTimeout(function(){ button.textContent = _origTxt; delete button.dataset.fxLoading; }, 1200);
+        }
+        return;
+      }
 
       event.preventDefault();
       event.stopPropagation();
@@ -622,8 +686,7 @@
        - profile-v1jb last (lowest priority, already 200ms-throttled internally)
      All 7 scripts guard against missing dependencies with typeof checks. -->
 <script src="js/notifications.js?v=v2c3b" defer></script>
-<script src="js/reservation.js?v=v2c6f" defer></script>
-<script src="js/reservation-v2.js?v=v2c6f-b" defer></script>
+<!-- reservation.js + reservation-v2.js moved earlier (perf3) — removed from here -->
 <script src="js/fixeo-profile-premium-ui.js?v=v2c5a" defer></script>
 <script src="js/fixeo-client-requests-store.js?v=v2c3b" defer></script>
 <script src="js/fixeo-artisan-identity.js?v=v2a3" defer></script>
