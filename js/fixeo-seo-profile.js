@@ -9,7 +9,9 @@
  *   - og:title / og:description / og:url / og:image
  *   - twitter:title / twitter:description
  *   - <link rel="canonical">
- *   - JSON-LD ProfessionalService + AggregateRating + BreadcrumbList + FAQPage
+ *   - JSON-LD ProfessionalService + BreadcrumbList + FAQPage
+ *   NOTE: AggregateRating intentionally omitted from structured data (safe-mode,
+ *         review system not yet fully verifiable). Visible UI trust signals are kept.
  *
  * Lightweight: no DOM thrash, no polling, no setInterval.
  * Fires ONCE per page load via event listener.
@@ -168,15 +170,7 @@
     if (category) svc.serviceType = _esc(svcLabel);
     if (city) svc.areaServed = { '@type': 'City', 'name': _esc(city) };
     if (photo) svc.image = photo;
-    if (rating && reviews >= 3) {
-      svc.aggregateRating = {
-        '@type': 'AggregateRating',
-        'ratingValue': parseFloat(rating),
-        'reviewCount': parseInt(reviews, 10),
-        'bestRating': 5,
-        'worstRating': 1
-      };
-    }
+    /* AggregateRating intentionally excluded (safe-mode: review data not yet GSC-verified) */
     ld['@graph'].push(svc);
 
     /* BreadcrumbList */
