@@ -424,8 +424,9 @@
 
 /* ── H1-A: Search container ambient breath ── */
 /* Only on the inline hero instance — not on modal instances */
+/* v6 — 3-layer atmospheric aura: amber near / orange mid / pink far */
 #hero-quick-search .qsm-bar-card {
-  animation: fxhero-breath 4.5s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+  animation: fxhero-breath 5.5s cubic-bezier(0.37, 0, 0.63, 1) infinite;
   will-change: box-shadow;
 }
 
@@ -435,17 +436,21 @@
 }
 
 @keyframes fxhero-breath {
+  /* Resting: card always faintly lit — never dead against the dark hero */
   0%, 100% {
     box-shadow:
-      0 8px 24px rgba(0,0,0,0.12),
-      0 0  0px  0px rgba(255,107,53,0),
-      0 0  0px  0px rgba(225,48,108,0);
+      0 8px 28px rgba(0,0,0,0.20),
+      0 0 40px  0px rgba(255,140,50, 0.06),
+      0 0  0px  0px rgba(255, 95,45, 0),
+      0 0  0px  0px rgba(200, 40,100,0);
   }
+  /* Peak: warm amber core blooms outward through mid-orange into deep pink haze */
   50% {
     box-shadow:
-      0 10px 36px rgba(0,0,0,0.18),
-      0 0 32px  8px rgba(255,107,53,0.22),
-      0 0 56px 18px rgba(225,48,108,0.12);
+      0 10px 40px rgba(0,0,0,0.26),
+      0 0 28px  4px rgba(255,140, 50, 0.30),
+      0 0 58px 14px rgba(255, 95, 45, 0.17),
+      0 0 90px 22px rgba(200, 40,100, 0.09);
   }
 }
 
