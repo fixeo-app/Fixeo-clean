@@ -363,8 +363,7 @@
     try { validated = _v1jGetValidated(artisanId); } catch(e) {}
     var missionsCount = validated.length;
 
-    /* 2. Avis enregistrés: seeded data — NEVER present as verified reviews */
-    var reviewCount = parseInt(artisan && artisan.review_count, 10) || 0;
+    /* 2. hts-1: Avis indicator removed — replaced with Délai de réponse (no seeded count) */
 
     /* 3. Réalisations publiées: real portfolio count from localStorage */
     var portfolioCount = 0;
@@ -383,12 +382,12 @@
         active: missionsCount > 0
       },
       {
-        icon: '\u2665',
-        label: 'Avis enregistr\u00e9s',
-        /* Seeded data: honest label — not "verified reviews" */
-        value: reviewCount > 0 ? String(reviewCount) : '\u2014',
-        sub: reviewCount > 0 ? 'Donn\u00e9es import\u00e9es' : 'Bient\u00f4t disponibles',
-        active: false /* never show as earned */
+        /* hts-1: Replace seeded "Avis enregistrés" with honest "Délai de réponse" indicator */
+        icon: '\u23f1',
+        label: 'D\u00e9lai de r\u00e9ponse',
+        value: 'En cours',
+        sub: 'En cours de mesure',
+        active: false
       },
       {
         icon: '\ud83d\uddbc',
