@@ -227,7 +227,7 @@
     var links = [];
 
     /* Same city, other services (2 links) — only for known service pages */
-    var knownSvcs = ['plombier','electricien','serrurier','climatisation','peinture'];
+    var knownSvcs = ['plombier','electricien','serrurier','climatisation']; /* peinture excluded: only fes page exists */
     var relSvcs = SVC_RELATED[svcSlug] || [];
     relSvcs.filter(function(rs){ return knownSvcs.indexOf(rs) !== -1; }).slice(0, 2).forEach(function(rs) {
       if (!citySlug) return;
