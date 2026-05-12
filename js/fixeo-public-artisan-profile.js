@@ -1119,6 +1119,20 @@
           });
         } catch(e) {}
 
+        /* rf5: If hero is an fxfp-hero (fast-path minimal render), it is missing
+           .public-trust-card and .public-section-grid. Inject them now via
+           renderProfile() hydration path so V2 enhance() finds the expected scaffolds.
+           We pass a computed profileData built from server artisan data.
+           renderProfile()'s hydration branch detects .fxfp-hero and adds missing pieces
+           without touching name/meta already updated above. */
+        if (hero && hero.classList.contains('fxfp-hero') && !root.querySelector('.public-section-grid')) {
+          try {
+            var _requests = loadRequests();
+            var _pd = computeProfileDataFromArtisanLike(artisan, _requests, artisanId);
+            if (_pd) renderProfile(root, _pd); /* hydration branch fires (fxfp-hero detected) */
+          } catch(_e) {}
+        }
+
       } else {
         /* ── PATH A: V2 not yet run — safe full re-render with server data ── */
         /*
