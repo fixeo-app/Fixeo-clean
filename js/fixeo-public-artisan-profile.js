@@ -776,6 +776,7 @@
        but is missing: .public-trust-card and .public-section-grid.
        We add them surgically. V2 enhance() finds them as expected. */
     var _fxfpHero = root.querySelector('.fxfp-hero');
+    console.warn('[rf5 renderProfile] fxfpHero=', !!_fxfpHero, 'hasTrustCard=', !!root.querySelector('.public-trust-card'));
     if (_fxfpHero) {
       try {
         var _hMain = _fxfpHero.querySelector('.public-hero-main');
@@ -832,6 +833,7 @@
         bindReviewsToggle(data.reviews);
         return; /* hydration complete — skip full root.innerHTML write below */
       } catch(_e) {
+        console.warn('[rf5 hydrate] error in hydration path:', _e && _e.message ? _e.message : _e);
         /* If hydration fails for any reason, fall through to full render */
       }
     }
@@ -1127,10 +1129,15 @@
            without touching name/meta already updated above. */
         if (hero && hero.classList.contains('fxfp-hero') && !root.querySelector('.public-section-grid')) {
           try {
+            console.warn('[rf5b] fxfp-hero detected, calling renderProfile hydration');
             var _requests = loadRequests();
             var _pd = computeProfileDataFromArtisanLike(artisan, _requests, artisanId);
+            console.warn('[rf5b] profileData computed:', !!_pd);
             if (_pd) renderProfile(root, _pd); /* hydration branch fires (fxfp-hero detected) */
-          } catch(_e) {}
+            console.warn('[rf5b] after renderProfile: trustCard=', !!root.querySelector('.public-trust-card'), 'sectionGrid=', !!root.querySelector('.public-section-grid'));
+          } catch(_e) { console.warn('[rf5b] error:', _e && _e.message); }
+        } else {
+          console.warn('[rf5b] skip: fxfp=', hero && hero.classList.contains('fxfp-hero'), 'noGrid=', !root.querySelector('.public-section-grid'));
         }
 
       } else {
