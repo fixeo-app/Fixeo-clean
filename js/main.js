@@ -1249,7 +1249,15 @@ function buildOtherArtisanCard(a) {
     <article class="artisan-card other-card discover-harmonized-card result-card" data-id="${a.id}" style="position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.12);background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.035));box-shadow:0 18px 44px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.05);transition:transform .22s ease, box-shadow .22s ease, border-color .22s ease" onmouseenter="this.style.transform='translateY(-4px)';this.style.boxShadow='0 24px 54px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.07)';this.style.borderColor='rgba(225,48,108,.28)'" onmouseleave="this.style.transform='translateY(0)';this.style.boxShadow='0 18px 44px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.05)';this.style.borderColor='rgba(255,255,255,.12)'">
       <!-- Change 7: tighter vertical rhythm — gap 8px header, 10px meta, 12px price, 16px CTA -->
       <div class="result-top" style="align-items:flex-start;gap:1rem;margin-bottom:8px">
-        <img class="artisan-avatar artisan-avatar-image" src="${imageSrc}" alt="${a.name}" loading="lazy" onerror="this.onerror=null;this.src='default-avatar.jpg';" style="border:2px solid rgba(255,255,255,.14);box-shadow:0 10px 28px rgba(0,0,0,.18)"/>
+        ${(function(){
+          /* av-unity-1: consistent initials avatar — same ig-gradient as profile hero & modal */
+          var _ph = a.avatar || a.photo || a.image;
+          var _in = a.initials || 'FA';
+          if (_ph) {
+            return '<img class="artisan-avatar artisan-avatar-image" src="'+_ph+'" alt="'+a.name+'" loading="lazy" style="border:2px solid rgba(255,255,255,.14);box-shadow:0 10px 28px rgba(0,0,0,.18)">';
+          }
+          return '<div class="artisan-avatar artisan-av-initials" style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#E1306C 0%,#833AB4 60%,#405DE6 100%);border:2px solid rgba(255,255,255,.14);box-shadow:0 10px 28px rgba(0,0,0,.18);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.1rem;color:#fff;letter-spacing:-.01em;flex-shrink:0">'+_in+'</div>';
+        })()}
         <div class="artisan-main artisan-identity artisan-card-heading" style="min-width:0;flex:1">
           <!-- Change 1: big price block — dominant number, label below, aligned left -->
           <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:.75rem;flex-wrap:wrap;margin-bottom:8px">

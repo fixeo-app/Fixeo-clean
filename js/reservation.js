@@ -272,16 +272,10 @@
      Mirrors fixeo-profile-v1jb.js _nameHash + _initials for
      visual coherence between profile page and modal card.
   ════════════════════════════════════════════════════════ */
+  /* av-unity-1: Unified ig-gradient for all modal avatars — matches profile hero fallback exactly.
+   3-part format: [angle, color1, 'color2 stop%, color3 stop%'] → consistent identity across contexts. */
   var _MODAL_AVATAR_GRADIENTS = [
-    ['135deg','#1e3a5f','#2d6a9f'],
-    ['135deg','#1a2a1a','#2d5a3d'],
-    ['135deg','#2a1a3e','#5a2d8a'],
-    ['135deg','#2a1a1a','#7a3d2d'],
-    ['135deg','#1a2a3a','#2d5a7a'],
-    ['135deg','#2a2a1a','#6a5a2d'],
-    ['135deg','#1a1a2a','#3d3d6a'],
-    ['135deg','#2a1a2a','#6a2d5a'],
-    ['135deg','#1a2a2a','#2d6a6a'],
+    ['135deg','#E1306C','#833AB4 60%, #405DE6 100%']
   ];
   function _modalAvatarGrad(name) {
     var h = 0, s = String(name || '');

@@ -1,5 +1,5 @@
 /*!
- * fixeo-footer-global.js — v gf2b
+ * fixeo-footer-global.js — v gf3a
  * Global Footer Injection Authority
  *
  * Injects the canonical Fixeo premium footer HTML on public-facing pages

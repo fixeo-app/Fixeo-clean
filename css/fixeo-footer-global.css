@@ -1,5 +1,5 @@
 /*
- * fixeo-footer-global.css — v gf2b
+ * fixeo-footer-global.css — v gf3a
  * Global Footer Authority System
  *
  * Single source of truth for the Fixeo premium footer.
@@ -18,7 +18,7 @@ footer.fixeo-footer-v1,
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-top: 1px solid rgba(255,255,255,0.07);
-  padding: 48px 0 0;
+  padding: 56px 0 0;
   margin-top: 0;
   position: relative;
   z-index: 10;
@@ -31,11 +31,12 @@ footer.fixeo-footer-v1,
 .fixeo-footer-inject .v13-partners-row {
   display: flex;
   align-items: center;
+  justify-content: center;
   flex-wrap: wrap;
   gap: 10px;
-  margin-bottom: 36px;
-  padding-bottom: 28px;
-  border-bottom: 1px solid rgba(255,255,255,0.055);
+  margin-bottom: 48px;
+  padding-bottom: 32px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
 }
 
 .fixeo-footer-v1 .v13-partner-badge,
@@ -43,15 +44,23 @@ footer.fixeo-footer-v1,
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 7px 14px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.08);
-  color: rgba(255,255,255,0.55);
-  font-size: 0.78rem;
-  font-weight: 500;
+  padding: 7px 18px;
+  border-radius: 9999px;
+  background: rgba(255,255,255,0.055);
+  border: 1px solid rgba(255,255,255,0.10);
+  color: rgba(255,255,255,0.68);
+  font-size: 0.82rem;
+  font-weight: 600;
   letter-spacing: 0.01em;
   white-space: nowrap;
+  transition: all 0.22s ease;
+}
+
+.fixeo-footer-v1 .v13-partner-badge:hover,
+.fixeo-footer-inject .v13-partner-badge:hover {
+  background: rgba(225,48,108,0.10);
+  border-color: rgba(225,48,108,0.25);
+  color: rgba(255,255,255,0.88);
 }
 
 /* ── FOOTER GRID ───────────────────────────────────────────── */
@@ -59,8 +68,8 @@ footer.fixeo-footer-v1,
 .fixeo-footer-inject .footer-grid {
   display: grid;
   grid-template-columns: 2fr 1fr 1fr 1fr;
-  gap: 32px;
-  margin-bottom: 32px;
+  gap: 40px;
+  margin-bottom: 40px;
 }
 
 /* ── BRAND COLUMN ──────────────────────────────────────────── */
@@ -115,12 +124,12 @@ footer.fixeo-footer-v1,
 
 .fixeo-footer-v1 .footer-links h4,
 .fixeo-footer-inject .footer-links h4 {
-  font-size: 0.76rem;
+  font-size: 0.88rem;
   font-weight: 700;
-  color: rgba(255,255,255,0.52);
-  letter-spacing: 0.12em;
+  color: rgba(255,255,255,0.85);
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  margin: 0 0 18px;
+  margin: 0 0 16px;
   padding-bottom: 10px;
   border-bottom: 1px solid rgba(255,255,255,0.06);
 }
@@ -142,12 +151,12 @@ footer.fixeo-footer-v1,
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 0.84rem;
-  color: rgba(255,255,255,0.42);
+  font-size: 0.87rem;
+  color: rgba(255,255,255,0.48);
   text-decoration: none;
   padding: 7px 0;
   border-bottom: 1px solid rgba(255,255,255,0.035);
-  transition: color 0.18s ease, padding-left 0.18s ease;
+  transition: color 0.20s ease, padding-left 0.18s ease;
   position: relative;
 }
 
@@ -184,10 +193,10 @@ footer.fixeo-footer-v1,
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 0 20px;
-  border-top: 1px solid rgba(255,255,255,0.055);
-  font-size: 0.78rem;
-  color: rgba(255,255,255,0.28);
+  padding: 18px 0;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.35);
   flex-wrap: wrap;
   gap: 10px;
   margin-top: 8px;
