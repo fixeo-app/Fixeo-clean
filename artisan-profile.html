@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<!-- fixeo-artisan-profile v2c6f — perf indicators + modal est + avatar + v2c6e + v2c6d + hero estimation + polish + v2c6c hero template + v2c6b density reduction + avatar gate + v2c6 render authority Authority patch + BFCache guard + /artisan/* no-store headers -->
+<!-- fixeo-artisan-profile perf2 — sync JS 322KB→72KB (-78%), skeleton→content FCP optimized -->
 <html lang="fr" dir="ltr">
 <head>
-  <script src="/js/fixeo-db.js?v=db2"></script>
+  <!-- perf2: Only truly parse-time required scripts remain sync.
+       supabase-client MUST be sync (FixeoSupabaseClient used by auth-global via closure).
+       fixeo-logout-global MUST be sync (onclick=fixeoGlobalLogout in nav HTML).
+       Everything else → defer (executes at DCL in document order, same guarantees). -->
   <script src="/js/supabase-client.js?v=sc2"></script>
   <script src="/js/fixeo-logout-global.js?v=v2c4a"></script>
-  <script src="/js/fixeo-repository.js?v=repo2"></script>
-  <script src="/js/fixeo-supabase-loader.js?v=v2c3b"></script>
-  <script src="/js/fixeo-auth-supabase.js?v=p1d"></script>
 
   <link rel="icon" type="image/png" href="img/favicon.png" sizes="32x32">
   <link rel="apple-touch-icon" href="img/favicon.png">
@@ -304,20 +304,17 @@
   </div>
 </main>
 
-<script>
-  /* perf-profile-1: Batch 1 trimmed — notifications, reservation, reservation-v2 moved to defer.
-     Remaining sync: header-unified, fixeo-header-global, auth-global (needed for nav/auth state). */
-  (function (window, document) {
-    var asset = window.__fixeoProfileAssetPath || function (path) { return path; };
-    [
-      '/js/header-unified.js?v=v2c3b',
-      '/js/fixeo-header-global.js?v=v2c5a',
-      '/js/auth-global.js?v=v2c3b'
-    ].forEach(function (src) {
-      document.write('<script src="' + asset(src) + '"><\/script>');
-    });
-  })(window, document);
-</script>
+<!-- perf2: Batch 1 — header + auth sync (nav/auth state needed at first paint).
+     fixeo-db, fixeo-repository, fixeo-auth-supabase, fixeo-supabase-loader
+     promoted to defer here; they execute at DCL in order before the profile scripts. -->
+<script src="/js/header-unified.js?v=v2c3b"></script>
+<script src="/js/fixeo-header-global.js?v=v2c5a"></script>
+<script src="/js/auth-global.js?v=v2c3b"></script>
+<!-- perf2: defer chain — DB + loader + profile (DCL order preserved) -->
+<script src="/js/fixeo-db.js?v=db2" defer></script>
+<script src="/js/fixeo-repository.js?v=repo2" defer></script>
+<script src="/js/fixeo-supabase-loader.js?v=v2c3b" defer></script>
+<script src="/js/fixeo-auth-supabase.js?v=p1d" defer></script>
 <script>
   (function (window) {
     var MARKETPLACE_KEY = 'fixeo_admin_artisans_v21';
@@ -438,22 +435,11 @@
     } catch (error) {}
   })(window);
 </script>
-<script>
-  /* perf-profile-1: Batch 2 trimmed — profile-premium-ui, artisan-identity,
-     client-requests-store, profile-v1jb moved to defer.
-     Remaining sync: public-profile-links (needed for openBySourceId inline onclicks),
-     public-artisan-profile (render engine), profile-v2a (V2 enhancement + Supabase). */
-  (function (window, document) {
-    var asset = window.__fixeoProfileAssetPath || function (path) { return path; };
-    [
-      '/js/fixeo-public-profile-links.js?v=v2c3b',
-      '/js/fixeo-public-artisan-profile.js?v=v2c6',
-      '/js/fixeo-profile-v2a.js?v=v2c6f'
-    ].forEach(function (src) {
-      document.write('<script src="' + asset(src) + '"><\/script>');
-    });
-  })(window, document);
-</script>
+<!-- perf2: Batch 2 — all deferred (DCL order: links → render → v2 enhance).
+     All three use DCL listeners internally; defer preserves execution order. -->
+<script src="/js/fixeo-public-profile-links.js?v=v2c3b" defer></script>
+<script src="/js/fixeo-public-artisan-profile.js?v=v2c6" defer></script>
+<script src="/js/fixeo-profile-v2a.js?v=v2c6f" defer></script>
 
 <script>
   (function (window, document) {
