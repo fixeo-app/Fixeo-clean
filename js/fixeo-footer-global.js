@@ -1,5 +1,5 @@
 /*!
- * fixeo-footer-global.js — v gf2
+ * fixeo-footer-global.js — v gf2b
  * Global Footer Injection Authority
  *
  * Injects the canonical Fixeo premium footer HTML on public-facing pages
@@ -108,6 +108,7 @@
     '          <li><a href="cgu.html">CGU</a></li>',
     '          <li><a href="confidentialite.html">Confidentialit\u00e9</a></li>',
     '          <li><a href="whatsapp.html">WhatsApp Fixeo</a></li>',
+    '          <li><a href="presse-partenariats.html">Presse &amp; Partenariats</a></li>',
     '        </ul>',
     '      </div>',
     '    </div>',

@@ -71,4 +71,12 @@
     <priority>0.7</priority>
   </url>
 
+  <!-- Press & Partners page -->
+  <url>
+    <loc>https://fixeo.ma/presse-partenariats.html</loc>
+    <lastmod>2026-05-12</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+
 </urlset>
