@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Fixeo Sitemap Index — seo4
+  Segmented sitemap architecture for scalable indexation.
+  Last updated: 2026-05-12
+
+  Segments:
+    sitemap-static.xml          → Homepage + strategic informational pages
+    sitemap-local-plombier.xml  → 20 plombier city pages
+    sitemap-local-electricien.xml → 20 electricien city pages
+    sitemap-local-serrurier.xml → 20 serrurier city pages
+    sitemap-local-climatisation.xml → 20 climatisation city pages
+    sitemap-profiles.xml        → Public artisan profile seed list
+
+  Add to Google Search Console: https://fixeo.ma/sitemap-index.xml
+-->
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <!-- Strategic static pages (highest authority) -->
+  <sitemap>
+    <loc>https://fixeo.ma/sitemap-static.xml</loc>
+    <lastmod>2026-05-12</lastmod>
+  </sitemap>
+
+  <!-- Local service pages — plombier (20 cities) -->
+  <sitemap>
+    <loc>https://fixeo.ma/sitemap-local-plombier.xml</loc>
+    <lastmod>2026-05-12</lastmod>
+  </sitemap>
+
+  <!-- Local service pages — electricien (20 cities) -->
+  <sitemap>
+    <loc>https://fixeo.ma/sitemap-local-electricien.xml</loc>
+    <lastmod>2026-05-12</lastmod>
+  </sitemap>
+
+  <!-- Local service pages — serrurier (20 cities) -->
+  <sitemap>
+    <loc>https://fixeo.ma/sitemap-local-serrurier.xml</loc>
+    <lastmod>2026-05-12</lastmod>
+  </sitemap>
+
+  <!-- Local service pages — climatisation (20 cities) -->
+  <sitemap>
+    <loc>https://fixeo.ma/sitemap-local-climatisation.xml</loc>
+    <lastmod>2026-05-12</lastmod>
+  </sitemap>
+
+  <!-- Artisan profiles (seed list — expands to full 861-profile sitemap via build script) -->
+  <sitemap>
+    <loc>https://fixeo.ma/sitemap-profiles.xml</loc>
+    <lastmod>2026-05-12</lastmod>
+  </sitemap>
+
+</sitemapindex>

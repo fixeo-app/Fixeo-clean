@@ -38,4 +38,8 @@ Allow: /img/
 Allow: /css/
 Allow: /js/fixeo-supabase-loader.js
 
+# Sitemap index (segmented architecture — seo4)
+Sitemap: https://fixeo.ma/sitemap-index.xml
+
+# Legacy monolithic sitemap (preserved for redirect compatibility)
 Sitemap: https://fixeo.ma/sitemap.xml
