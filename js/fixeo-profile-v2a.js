@@ -523,23 +523,9 @@
     if (!subEl || subEl.dataset.v2aUpgraded) return;
     subEl.dataset.v2aUpgraded = '1';
 
-    var reviewCount = parseInt(artisan.review_count || 0, 10);
-    var missions    = parseInt(artisan.completed_missions || 0, 10);
-
-    /* Strict trust threshold — count is only shown when review_count backs it up */
-    var hasVerifiedCount = reviewCount >= 10
-      || (reviewCount >= 5 && missions >= 10);
-
-    if (!hasVerifiedCount || (reviewCount <= 0 && missions <= 0)) {
-      /* No trustworthy count: show calm operational state instead */
-      subEl.textContent = 'Disponible pour de nouvelles interventions';
-      return;
-    }
-
-    /* Prefer review_count (real reviews) as the primary display figure.
-     * completed_missions only shown when review_count alone is the trigger. */
-    var display = reviewCount > 0 ? reviewCount : missions;
-    subEl.textContent = display + '\u00a0avis client' + (display > 1 ? 's' : '') + ' enregistr\u00e9' + (display > 1 ? 's' : ''); /* V2-C5A: was "interventions confirmées" — removed unverifiable claim */
+    /* hts-1: All review_count and completed_missions are seeded/imported data.
+       Never display a count from seeded data. Always use the honest operational framing. */
+    subEl.textContent = 'Disponible pour de nouvelles interventions';
   }
 
   /* ── 6b. Upgrade the star-rating line (.public-trust-rating) ── */
@@ -573,22 +559,9 @@
     var ratingEl = hero.querySelector('.public-trust-rating');
     if (!ratingEl || ratingEl.dataset.v2aRatingDone) return;
     ratingEl.dataset.v2aRatingDone = '1';
-
-    var rating    = parseFloat(artisan.rating || 0);
-    var reviews   = parseInt(artisan.review_count || 0, 10);
-    var sq        = parseInt(artisan.score_qualification || 0, 10);
-
-    var hasVerifiedRating = (rating >= 4.1 && reviews >= 10) || sq >= 70;
-
-    if (hasVerifiedRating) {
-      ratingEl.textContent = '\u2b50 ' + rating.toFixed(1) + ' / 5';
-    } else {
-      /* Rating unverified — hide completely. No "Aucun avis" shown either
-       * (that is suppressed by fpv2b-loaded CSS). The trust card still
-       * shows the availability badge, tier label (if earned), and V1-H
-       * operational memory (if ≥3 validated missions). */
-      ratingEl.style.display = 'none';
-    }
+    /* hts-1: rating is seeded/imported data — never display it as verified signal.
+       The .public-trust-rating already shows "Profil enregistré sur Fixeo" from
+       renderProfile() honest base. Leave it unchanged. */
   }
 
   /* ════════════════════════════════════════════════════════
@@ -780,32 +753,11 @@
    *  "Disponible pour de nouvelles interventions" already sets the correct tone.
    * ─────────────────────────────────────────────────────────────────────── */
   function injectInterventionTier(artisan) {
-    if (document.querySelector('.fpv2b-trust-tier')) return;
-
-    var count = parseInt(artisan.review_count || 0, 10);
-    var sq    = parseInt(artisan.score_qualification || 0, 10);
-
-    var tier = null;
-    if (count >= 81) {
-      tier = 'Pr\u00e9sent sur Fixeo depuis un moment'; /* V2-C5A: was "Artisan expérimenté sur Fixeo" */
-    } else if (count >= 31) {
-      tier = 'Profil bien \u00e9tabli';
-    } else if (count >= 10) {
-      tier = 'Artisan confirm\u00e9 Fixeo';
-    } else if (sq >= 70) {
-      /* Admin-qualified artisan without review history yet — honest qualification label */
-      tier = 'Artisan s\u00e9lectionn\u00e9 Fixeo';
-    }
-
-    if (!tier) return; /* Below all thresholds → no label injected */
-
-    var subEl = document.querySelector('.public-trust-sub');
-    if (!subEl) return;
-
-    var tierEl = document.createElement('span');
-    tierEl.className = 'fpv2b-trust-tier';
-    tierEl.textContent = tier;
-    subEl.parentNode.insertBefore(tierEl, subEl.nextSibling);
+    /* hts-1: review_count is seeded/imported data. Tier labels derived from it
+       are indistinguishable from fabrication. Suppressed entirely.
+       Honest alternative already shown: "Disponible pour de nouvelles interventions"
+       via upgradeReviewLine(). No additional tier label needed. */
+    void artisan;
   }
 
   /* ── V2B-3: Rating context signal ────────────────────── */
@@ -839,22 +791,9 @@
    *  That is enough. Silence beats synthetic authority.
    * ─────────────────────────────────────────────────────────────────────── */
   function injectRatingContext(hero, artisan) {
-    if (hero.querySelector('.fpv2b-rating-context')) return;
-
-    var rating  = parseFloat(artisan.rating || 0);
-    var reviews = parseInt(artisan.review_count || 0, 10);
-    var sq      = parseInt(artisan.score_qualification || 0, 10);
-
-    var qualifies = (rating >= 4.7 && reviews >= 30) || sq >= 90;
-    if (!qualifies) return;
-
-    var ratingEl = hero.querySelector('.public-trust-rating');
-    if (!ratingEl) return;
-
-    var ctx = document.createElement('span');
-    ctx.className = 'fpv2b-rating-context';
-    ctx.textContent = 'Parmi les meilleurs artisans Fixeo';
-    ratingEl.parentNode.insertBefore(ctx, ratingEl.nextSibling);
+    /* hts-1: rating is seeded data — "Parmi les meilleurs" would be fabricated authority.
+       Suppressed entirely. Silence beats synthetic ranking. */
+    void hero; void artisan;
   }
 
   /* ── V2B-4: Specialty chips in bio section ───────────── */

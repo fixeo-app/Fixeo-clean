@@ -790,15 +790,16 @@
         if (_hMain && !_hMain.querySelector('.public-trust-card')) {
           var _tc = document.createElement('div');
           _tc.className = 'public-trust-card';
+          /* hts-1: Honest trust signals — no seeded rating/review_count display */
           _tc.innerHTML =
             '<div class="public-trust-top">' +
               '<div>' +
-                '<div class="public-trust-rating">' + (stats.average_rating != null ? '⭐ ' + escapeHtml(formatRating(stats.average_rating)) + ' / 5' : '⭐ Aucun avis pour le moment') + '</div>' +
-                '<div class="public-trust-sub">' + escapeHtml((stats.total_reviews || 0) + ' avis \u2022 ' + (stats.missions_validées || 0) + ' missions validées') + '</div>' +
+                '<div class="public-trust-rating">Profil enregistr\u00e9 sur Fixeo</div>' +
+                '<div class="public-trust-sub">Donn\u00e9es en cours de v\u00e9rification</div>' +
               '</div>' +
               '<span class="public-trust-badge" style="color:' + trustTheme.color + ';background:' + trustTheme.bg + ';border-color:' + trustTheme.border + '">' + escapeHtml(stats.trust_level) + '</span>' +
             '</div>' +
-            '<div class="public-trust-score">Trust Score\u00a0: ' + escapeHtml(String(stats.trust_score || 0)) + ' / 100</div>';
+            '<div class="public-trust-score">Paiement apr\u00e8s satisfaction</div>';
           var _cta = _hMain.querySelector('#public-artisan-action, .public-action-btn');
           if (_cta) _hMain.insertBefore(_tc, _cta);
           else _hMain.appendChild(_tc);
@@ -847,15 +848,16 @@
           '<span class="public-availability ' + escapeHtml(availability.className) + '">' + escapeHtml(availability.label) + '</span>' +
           '<h1>' + escapeHtml(artisan.name) + '</h1>' +
           '<p class="public-hero-meta">' + escapeHtml(artisan.category + ' \u2022 ' + artisan.city) + '</p>' +
+          /* hts-1: Honest trust signals — no seeded rating/review_count display */
           '<div class="public-trust-card">' +
             '<div class="public-trust-top">' +
               '<div>' +
-                '<div class="public-trust-rating">' + (stats.average_rating != null ? '⭐ ' + escapeHtml(formatRating(stats.average_rating)) + ' / 5' : '⭐ Aucun avis pour le moment') + '</div>' +
-                '<div class="public-trust-sub">' + escapeHtml((stats.total_reviews || 0) + ' avis \u2022 ' + (stats.missions_validées || 0) + ' missions validées') + '</div>' +
+                '<div class="public-trust-rating">Profil enregistr\u00e9 sur Fixeo</div>' +
+                '<div class="public-trust-sub">Donn\u00e9es en cours de v\u00e9rification</div>' +
               '</div>' +
               '<span class="public-trust-badge" style="color:' + trustTheme.color + ';background:' + trustTheme.bg + ';border-color:' + trustTheme.border + '">' + escapeHtml(stats.trust_level) + '</span>' +
             '</div>' +
-            '<div class="public-trust-score">Trust Score\u00a0: ' + escapeHtml(String(stats.trust_score || 0)) + ' / 100</div>' +
+            '<div class="public-trust-score">Paiement apr\u00e8s satisfaction</div>' +
           '</div>' +
           '<button class="btn btn-primary public-action-btn" type="button" id="public-artisan-action">Demander intervention</button>' +
         '</div>' +

@@ -444,34 +444,16 @@
               <div class="fixeo-res-artisan-meta">
                 ${catIcon} ${catLabel} · 📍 ${sanitize(a.city)}
               </div>
-              ${/* V1-JC: Apply V1-TC trust thresholds to modal.
-               * Stars: (rating >= 4.1 AND reviewCount >= 10) OR scoreQualification >= 70
-               * Count: reviewCount >= 10 OR (reviewCount >= 5 AND scoreQualification >= 50)
-               * Neither: show operational chips instead
-               * This matches fixeo-profile-v2a.js V1-TC logic exactly.
-               */ (function(){
-                var _r   = a.rating           || 0;
-                var _rc  = a.reviewCount       || 0;
-                var _sq  = a.scoreQualification|| 0;
-                var _showStars  = (_r >= 4.1 && _rc >= 10) || _sq >= 70;
-                var _showCount  = _rc >= 10 || (_rc >= 5 && _sq >= 50);
-                var _starsHtml  = _showStars
-                  ? '<span class="fixeo-res-stars">' + '\u2605'.repeat(Math.min(5, Math.floor(_r))) + '</span><span class="fixeo-res-rating">' + _r.toFixed(1) + '</span>'
-                  : '';
-                var _countHtml  = _showCount
-                  ? '<span class="fixeo-res-reviews">(' + _rc + ' avis)</span>' /* V2-C5A: was "confirmations" */
-                  : '';
+              ${/* hts-1: rating and reviewCount are seeded data — never display in modal.
+               * Always show honest operational chips: availability + platform trust. */
+               (function(){
                 return '<div class="fixeo-res-artisan-row">' +
-                  _starsHtml + _countHtml +
                   '<span class="fixeo-res-avail ' + availClass + '">' + availLabel + '</span>' +
                   '</div>' +
-                  /* Operational chips when no trust signals earned */
-                  (!_showStars && !_showCount
-                    ? '<div class="fxrva-coord-chips">' +
-                        '<span class="fxrva-coord-chip">💳 Paiement après intervention</span>' +
-                        '<span class="fxrva-coord-chip">💬 Coordination Fixeo</span>' +
-                      '</div>'
-                    : '');
+                  '<div class="fxrva-coord-chips">' +
+                    '<span class="fxrva-coord-chip">\ud83d\udcb3 Paiement apr\u00e8s intervention</span>' +
+                    '<span class="fxrva-coord-chip">Tarification encadr\u00e9e Fixeo</span>' +
+                  '</div>';
                })()}
               <div class="fixeo-res-badges">${badgesHtml}</div>
             </div>
@@ -759,7 +741,7 @@
                     <div style="font-weight:700;font-size:.9rem;color:#fff">Paiement à la livraison (Cash on Delivery)</div>
                     <div style="font-size:.75rem;color:rgba(255,255,255,.5);margin-top:2px">Payez uniquement apr\u00e8s l\u2019intervention, en toute s\u00e9curit\u00e9.</div>
                   </div>
-                  <span style="font-size:.67rem;font-weight:700;padding:2px 8px;border-radius:20px;background:rgba(32,201,151,.2);color:#20C997;border:1px solid rgba(32,201,151,.3);white-space:nowrap">⭐ Recommandé</span>
+                  <span style="font-size:.67rem;font-weight:700;padding:2px 8px;border-radius:20px;background:rgba(32,201,151,.2);color:#20C997;border:1px solid rgba(32,201,151,.3);white-space:nowrap">✅ Sécurisé</span>
                 </label>
 
                 <!-- CMI -->
@@ -822,8 +804,7 @@
             <div class="fixeo-res-picker-name">${sanitize(a.name)}</div>
             <div class="fixeo-res-picker-cat">${catIcon} ${CATEGORY_LABELS[a.category] || a.category}</div>
             <div class="fixeo-res-picker-meta">
-              <span class="fixeo-res-stars small">${'★'.repeat(Math.floor(a.rating))}</span>
-              <span>${a.rating}</span>
+              <!-- hts-1: rating is seeded data — not displayed in picker card -->
               <span class="fixeo-res-avail ${availClass} small">● ${a.availability === 'available' ? 'Dispo' : 'Occupé'}</span>
             </div>
             <div class="fixeo-res-picker-price">${a.priceLabel || ('\u00c0 partir de ' + (a.priceFrom||150) + ' MAD')}</div>

@@ -226,33 +226,9 @@
     var grid = document.createElement('div');
     grid.className = 'ppui-trust-grid ppui-trust-grid--v2a';
 
-    if (_isQualified) {
-      /* ── QUALIFIED PATH: show real metrics ── */
-      var items = [
-        {
-          icon: '\u2b50',
-          label: _rc + '\u00a0avis clients',  /* V2-C5A: was "confirmations" */
-          sub: 'Not\u00e9 par des clients'    /* V2-C5A: was "Historique vérifiable" */
-        },
-        {
-          icon: '\ud83d\udcb3',
-          label: 'Paiement apr\u00e8s intervention',
-          sub: 'Vous payez uniquement apr\u00e8s satisfaction'
-        }
-      ];
-      if (_city) {
-        items.push({
-          icon: '\ud83d\udccd',
-          label: 'Zone\u00a0: ' + _city,
-          sub: 'Artisan local disponible'
-        });
-      }
-      grid.innerHTML = items.map(function(item){
-        return '<div class="ppui-trust-item">'+
-          '<span class="ppui-trust-icon">'+item.icon+'</span>'+
-          '<div class="ppui-trust-text"><strong>'+_esc(item.label)+'</strong><span>'+_esc(item.sub)+'</span></div>'+
-          '</div>';
-      }).join('');
+    /* hts-1: review_count is seeded data — never show "N avis clients" in any path.
+       Both qualified and unqualified paths now use the same honest operational panel. */
+    if (false && _isQualified) { /* disabled — honest panel always used */ void _rc;
     } else {
       /* ── SPARSE PATH: operational confidence panel (no zeros, no empty analytics) ──
        * Replaces the 0%/0%/0 grid with actionable operational information.
