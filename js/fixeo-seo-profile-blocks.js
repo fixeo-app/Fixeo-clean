@@ -84,7 +84,12 @@
     electricien: 'electricien', electricite: 'electricien', electricite_generale: 'electricien',
     serrurier: 'serrurier', serrurerie: 'serrurier',
     climatisation: 'climatisation', clim: 'climatisation',
-    peinture: 'peinture', peintre: 'peinture'
+    peinture: 'peinture', peintre: 'peinture',
+    carrelage: 'carrelage', carreleur: 'carrelage',
+    maconnerie: 'maconnerie', macon: 'maconnerie',
+    menuiserie: 'menuiserie', menuisier: 'menuiserie',
+    jardinage: 'jardinage', jardinier: 'jardinage',
+    nettoyage: 'nettoyage', demenagement: 'demenagement'
   };
 
   var SVC_RELATED = {
@@ -92,7 +97,14 @@
     electricien: ['plombier', 'climatisation'],
     serrurier: ['electricien', 'plombier'],
     climatisation: ['electricien', 'plombier'],
-    peinture: ['electricien', 'plombier']
+    peinture: ['electricien', 'plombier'],
+    /* Extended categories — unknown svcSlug still gets nearby city links */
+    carrelage: ['plombier', 'peinture'],
+    maconnerie: ['plombier', 'electricien'],
+    menuiserie: ['serrurier', 'electricien'],
+    jardinage: ['plombier', 'electricien'],
+    nettoyage: ['plombier', 'electricien'],
+    demenagement: ['electricien', 'plombier']
   };
 
   var SVC_DISPLAY = {
@@ -214,9 +226,10 @@
 
     var links = [];
 
-    /* Same city, other services (2 links) */
+    /* Same city, other services (2 links) — only for known service pages */
+    var knownSvcs = ['plombier','electricien','serrurier','climatisation','peinture'];
     var relSvcs = SVC_RELATED[svcSlug] || [];
-    relSvcs.slice(0, 2).forEach(function(rs) {
+    relSvcs.filter(function(rs){ return knownSvcs.indexOf(rs) !== -1; }).slice(0, 2).forEach(function(rs) {
       if (!citySlug) return;
       links.push({
         href: rs + '-' + citySlug + '.html',
@@ -225,15 +238,16 @@
       });
     });
 
-    /* Same service, nearby cities (2 links) */
+    /* Same service, nearby cities (2 links) — only if svcSlug maps to a known page */
     var nearby = NEARBY[citySlug] || [];
-    nearby.slice(0, 2).forEach(function(nc) {
-      if (!svcSlug) return;
+    var nearbyLimit = links.length >= 2 ? 2 : 3; /* show more nearby if no related-service links */
+    nearby.slice(0, nearbyLimit).forEach(function(nc) {
+      var svcForLink = knownSvcs.indexOf(svcSlug) !== -1 ? svcSlug : 'plombier'; /* safe fallback */
       var ncLabel = CITY_LABELS[nc] || nc;
       links.push({
-        href: svcSlug + '-' + nc + '.html',
-        label: svcLabel + ' \u00e0 ' + ncLabel,
-        desc: 'Artisans ' + svcLabel.toLowerCase() + ' disponibles \u00e0 ' + ncLabel + '.'
+        href: svcForLink + '-' + nc + '.html',
+        label: SVC_DISPLAY[svcForLink] + ' \u00e0 ' + ncLabel,
+        desc: 'Artisans disponibles \u00e0 ' + ncLabel + '.'
       });
     });
 
