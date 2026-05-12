@@ -644,3 +644,46 @@
     max-width: 100% !important;
   }
 }
+
+/* ================================================================
+   HERO SEARCH GLOW — Premium breathing effect (hcb11)
+   CSS-only. box-shadow + border-color only. No layout impact.
+   Palette: Fixeo orange #FF6B35 / pink-rose #E1306C / ambient dark.
+   ================================================================ */
+
+@keyframes hcb-search-breathe {
+  0%, 100% {
+    border-color: rgba(255, 255, 255, 0.14);
+    box-shadow:
+      0 8px 40px rgba(0, 0, 0, 0.45),
+      0 0 0 1px rgba(255, 255, 255, 0.04),
+      0 0 0px 0px rgba(255, 107, 53, 0),
+      0 0 0px 0px rgba(225,  48, 108, 0);
+  }
+  50% {
+    border-color: rgba(255, 107, 53, 0.42);
+    box-shadow:
+      0 8px 40px rgba(0, 0, 0, 0.45),
+      0 0 0 1px rgba(255, 255, 255, 0.06),
+      0 0 28px 6px  rgba(255, 107, 53, 0.22),
+      0 0 52px 14px rgba(225,  48, 108, 0.10);
+  }
+}
+
+#home .search-bar-wrap .ssb-card {
+  animation: hcb-search-breathe 4.5s ease-in-out infinite;
+  /* Override static box-shadow from hero-search-v9.css safely via animation */
+  will-change: box-shadow, border-color;
+}
+
+/* Pause animation during active focus — let :focus-within style take over cleanly */
+#home .search-bar-wrap .ssb-card:focus-within {
+  animation: none !important;
+}
+
+/* Accessibility: respect user motion preference */
+@media (prefers-reduced-motion: reduce) {
+  #home .search-bar-wrap .ssb-card {
+    animation: none !important;
+  }
+}
