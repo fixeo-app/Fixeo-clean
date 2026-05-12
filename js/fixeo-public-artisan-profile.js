@@ -768,6 +768,74 @@
       canonicalHref: buildCanonicalProfileHref(artisan)
     });
 
+    /* rf5: hydrate-not-replace — if fxfp fast-path already rendered a hero,
+       update it in-place rather than wiping root.innerHTML.
+       This eliminates the "flash" between fast-path hero and full render.
+       The fxfp-hero has the correct outer structure (.public-profile-hero,
+       .public-hero-main, .public-availability, h1, .public-hero-meta, CTA)
+       but is missing: .public-trust-card and .public-section-grid.
+       We add them surgically. V2 enhance() finds them as expected. */
+    var _fxfpHero = root.querySelector('.fxfp-hero');
+    if (_fxfpHero) {
+      try {
+        var _hMain = _fxfpHero.querySelector('.public-hero-main');
+        /* 1 — update availability, name, meta in place */
+        var _aEl = _hMain && _hMain.querySelector('.public-availability');
+        if (_aEl) { _aEl.textContent = availability.label; _aEl.className = 'public-availability ' + availability.className; }
+        var _h1 = _hMain && _hMain.querySelector('h1');
+        if (_h1) _h1.textContent = artisan.name;
+        var _meta = _hMain && _hMain.querySelector('.public-hero-meta');
+        if (_meta) _meta.textContent = artisan.category + ' \u2022 ' + artisan.city;
+        /* 2 — inject trust-card before the CTA (it doesn't exist in fxfp-hero) */
+        if (_hMain && !_hMain.querySelector('.public-trust-card')) {
+          var _tc = document.createElement('div');
+          _tc.className = 'public-trust-card';
+          _tc.innerHTML =
+            '<div class="public-trust-top">' +
+              '<div>' +
+                '<div class="public-trust-rating">' + (stats.average_rating != null ? '⭐ ' + escapeHtml(formatRating(stats.average_rating)) + ' / 5' : '⭐ Aucun avis pour le moment') + '</div>' +
+                '<div class="public-trust-sub">' + escapeHtml((stats.total_reviews || 0) + ' avis \u2022 ' + (stats.missions_validées || 0) + ' missions validées') + '</div>' +
+              '</div>' +
+              '<span class="public-trust-badge" style="color:' + trustTheme.color + ';background:' + trustTheme.bg + ';border-color:' + trustTheme.border + '">' + escapeHtml(stats.trust_level) + '</span>' +
+            '</div>' +
+            '<div class="public-trust-score">Trust Score\u00a0: ' + escapeHtml(String(stats.trust_score || 0)) + ' / 100</div>';
+          var _cta = _hMain.querySelector('#public-artisan-action, .public-action-btn');
+          if (_cta) _hMain.insertBefore(_tc, _cta);
+          else _hMain.appendChild(_tc);
+        }
+        /* 3 — update CTA text to match full render */
+        var _ctaEl = _fxfpHero.querySelector('#public-artisan-action');
+        if (_ctaEl) _ctaEl.textContent = 'Demander intervention';
+        /* 4 — append section-grid (reviews + stats) after hero */
+        if (!root.querySelector('.public-section-grid')) {
+          var _sg = document.createElement('section');
+          _sg.className = 'public-section-grid';
+          _sg.innerHTML =
+            '<article class="public-panel">' +
+              '<div class="public-section-heading">Avis clients</div>' +
+              '<h2>Les derniers avis</h2>' +
+              reviewsHtml +
+            '</article>' +
+            '<article class="public-panel">' +
+              '<div class="public-section-heading">Statistiques</div>' +
+              '<h2>Indicateurs de confiance</h2>' +
+              '<div class="public-stats-grid">' +
+                buildStatCard('Missions terminées', String(stats.missions_terminées || 0), 'Interventions finalisées') +
+                buildStatCard('Taux de confirmation', formatPercent(stats.confirmation_rate), 'Clients ayant confirmé') +
+                buildStatCard('Taux de paiement', formatPercent(stats.payment_rate), 'Commissions réglées') +
+                buildStatCard('Ancienneté', stats.seniority || 'Nouveau artisan', 'Présence estimée sur Fixeo') +
+              '</div>' +
+            '</article>';
+          root.appendChild(_sg);
+        }
+        bindActionButton();
+        bindReviewsToggle(data.reviews);
+        return; /* hydration complete — skip full root.innerHTML write below */
+      } catch(_e) {
+        /* If hydration fails for any reason, fall through to full render */
+      }
+    }
+
     root.innerHTML = '' +
       '<section class="public-profile-hero">' +
         '<div class="public-avatar-wrap">' +
@@ -778,16 +846,16 @@
         '<div class="public-hero-main">' +
           '<span class="public-availability ' + escapeHtml(availability.className) + '">' + escapeHtml(availability.label) + '</span>' +
           '<h1>' + escapeHtml(artisan.name) + '</h1>' +
-          '<p class="public-hero-meta">' + escapeHtml(artisan.category + ' • ' + artisan.city) + '</p>' +
+          '<p class="public-hero-meta">' + escapeHtml(artisan.category + ' \u2022 ' + artisan.city) + '</p>' +
           '<div class="public-trust-card">' +
             '<div class="public-trust-top">' +
               '<div>' +
                 '<div class="public-trust-rating">' + (stats.average_rating != null ? '⭐ ' + escapeHtml(formatRating(stats.average_rating)) + ' / 5' : '⭐ Aucun avis pour le moment') + '</div>' +
-                '<div class="public-trust-sub">' + escapeHtml((stats.total_reviews || 0) + ' avis • ' + (stats.missions_validées || 0) + ' missions validées') + '</div>' +
+                '<div class="public-trust-sub">' + escapeHtml((stats.total_reviews || 0) + ' avis \u2022 ' + (stats.missions_validées || 0) + ' missions validées') + '</div>' +
               '</div>' +
               '<span class="public-trust-badge" style="color:' + trustTheme.color + ';background:' + trustTheme.bg + ';border-color:' + trustTheme.border + '">' + escapeHtml(stats.trust_level) + '</span>' +
             '</div>' +
-            '<div class="public-trust-score">Trust Score : ' + escapeHtml(String(stats.trust_score || 0)) + ' / 100</div>' +
+            '<div class="public-trust-score">Trust Score\u00a0: ' + escapeHtml(String(stats.trust_score || 0)) + ' / 100</div>' +
           '</div>' +
           '<button class="btn btn-primary public-action-btn" type="button" id="public-artisan-action">Demander intervention</button>' +
         '</div>' +
@@ -906,6 +974,17 @@
       }
 
       if (!profileData) {
+        /* rf5: If fast-path (fxfp) or index-fetch already rendered a hero for this artisan,
+           DON'T wipe it with renderNotFound(). The FixeoSupabaseLoader async call above
+           (getArtisanForProfile) is already in flight and will call renderArtisanProfile(a)
+           when it resolves — PATH A will write the full profile correctly.
+           Only show renderNotFound if no fast-path ran (true cold + no index either). */
+        var _hasHeroSentinel = (typeof window.__fxHeroRendered === 'string' && window.__fxHeroRendered === requestedId);
+        var _hasFxfpHero = !!root.querySelector('.fxfp-hero, .public-profile-hero');
+        if (_hasHeroSentinel || _hasFxfpHero) {
+          /* Hero already visible — defer to Supabase async path; do nothing here */
+          return;
+        }
         renderNotFound(root);
         return;
       }
@@ -913,7 +992,10 @@
       renderProfile(root, profileData);
     } catch (error) {
       console.warn('[FixeoPublicArtisanProfile] render fallback after error:', error && error.message ? error.message : error);
-      renderNotFound(root);
+      /* rf5: Don't wipe a fast-path hero on non-fatal errors. Supabase async will recover. */
+      if (!root.querySelector('.fxfp-hero, .public-profile-hero')) {
+        renderNotFound(root);
+      }
     }
   }
 
