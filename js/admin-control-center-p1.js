@@ -38,6 +38,15 @@
   var COMMISSION_RATE = 0.15;
   var ARTISANS_KEY    = 'fixeo_artisans';
 
+  /* ── Supabase service_requests cache (admin-sb1) ─────────────
+   * In-memory store for Supabase-sourced requests, refreshed
+   * asynchronously. localStorage write always happens first;
+   * this only adds cross-device Supabase rows to the admin view.
+   * Never blocks render — stale cache is fine on first paint.
+   * ─────────────────────────────────────────────────────────── */
+  var _sbReqCache = []; /* rows mapped to System A shape */
+  var _sbFetchBusy = false; /* prevent overlapping fetches */
+
   var LIFECYCLE_STEPS = [
     { key: 'nouvelle',     label: 'Demande\npubli\u00e9e' },
     { key: 'accept\u00e9e', label: 'Artisan\nassign\u00e9' },
@@ -57,15 +66,109 @@
     catch(e) { return '—'; }
   }
 
-  /* ── Read fixeo_client_requests ──────────────────────────── */
+  /* ── Read fixeo_client_requests ──────────────────────────────
+   * admin-sb1: merges localStorage (System A) with cached Supabase
+   * service_requests (System B). Deduplication via supabase_request_id
+   * cross-ref written by fixeo-reservation-supabase-bridge.js.
+   * If both caches are empty the existing empty-state renders as before.
+   * ─────────────────────────────────────────────────────────── */
   function readRequests() {
+    var lsRows = [];
     try {
       if (window.FixeoClientRequestsStore && typeof window.FixeoClientRequestsStore.list === 'function') {
-        return window.FixeoClientRequestsStore.list();
+        lsRows = window.FixeoClientRequestsStore.list();
+      } else {
+        var raw = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        lsRows = Array.isArray(raw) ? raw : [];
       }
-      var raw = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-      return Array.isArray(raw) ? raw : [];
-    } catch(e) { return []; }
+    } catch(_) { lsRows = []; }
+
+    /* Build dedup set from localStorage rows.
+     * Keys: (a) supabase_request_id already patched by bridge,
+     *       (b) the Supabase id stored as id when row came from Supabase.
+     * Any Supabase row whose id is already represented is skipped. */
+    var seen = new Set();
+    lsRows.forEach(function(r) {
+      if (r.supabase_request_id) seen.add(String(r.supabase_request_id));
+      if (r.id) seen.add(String(r.id));
+    });
+
+    /* Append non-duplicate Supabase rows */
+    var sbOnly = _sbReqCache.filter(function(r) {
+      return !seen.has(String(r.id));
+    });
+
+    return lsRows.concat(sbOnly);
+  }
+
+  /* ── Fetch service_requests from Supabase (admin-sb1) ────────
+   * Async, fire-and-forget. Uses FixeoSupabaseClient which is already
+   * loaded on admin.html via supabase-client.js.
+   * Maps Supabase row shape → System A shape expected by renderAll().
+   * On any failure: leaves _sbReqCache unchanged, single console.warn.
+   * ─────────────────────────────────────────────────────────── */
+  function _fetchSupabaseRequests() {
+    var fsc = window.FixeoSupabaseClient;
+    if (!fsc || !fsc.CONFIGURED) return; /* Supabase not set up — graceful no-op */
+    if (_sbFetchBusy) return;
+    _sbFetchBusy = true;
+
+    fsc.ready().then(function() {
+      var sb = fsc.client;
+      if (!sb) { _sbFetchBusy = false; return; }
+
+      /* Must have an authenticated session — admin is always authed */
+      return sb.auth.getSession().then(function(res) {
+        var session = res && res.data && res.data.session;
+        if (!session) { _sbFetchBusy = false; return; }
+
+        /* Read all service_requests ordered newest-first, cap at 200 */
+        return sb
+          .from('service_requests')
+          .select('id, client_profile_id, service_category, city, description, status, created_at')
+          .order('created_at', { ascending: false })
+          .limit(200)
+          .then(function(result) {
+            _sbFetchBusy = false;
+            if (result.error) {
+              console.warn('[Admin-sb1] service_requests fetch error:', result.error.message || result.error.code);
+              return;
+            }
+            var rows = Array.isArray(result.data) ? result.data : [];
+            /* Map Supabase row → System A shape.
+             * Unmapped fields (commission, artisan, price) default to
+             * zero/empty — the existing empty-pill CSS handles them. */
+            _sbReqCache = rows.map(function(r) {
+              /* status mapping: Supabase 'new' → System A 'nouvelle' */
+              var st = String(r.status || 'new').toLowerCase();
+              if (st === 'new') st = 'nouvelle';
+              return {
+                id              : String(r.id || ''),
+                service         : String(r.service_category || '').trim() || 'Service',
+                city            : String(r.city || '').trim() || '—',
+                description     : String(r.description || '').trim(),
+                status          : st,
+                assigned_artisan: '',
+                assigned_artisan_id: '',
+                budget          : '',
+                final_price     : 0,
+                commission_amount: 0,
+                commission_status: '',
+                commission_paid : false,
+                created_at      : String(r.created_at || new Date().toISOString()),
+                validated_at    : '',
+                /* cross-ref marker so readRequests() dedup recognises it */
+                _source         : 'supabase'
+              };
+            });
+            /* Trigger a re-render so newly fetched rows appear promptly */
+            setTimeout(renderAll, 0);
+          });
+      });
+    }).catch(function(err) {
+      _sbFetchBusy = false;
+      console.warn('[Admin-sb1] Supabase fetch failed:', err && err.message);
+    });
   }
 
   function normalizeStatus(s) {
@@ -364,7 +467,14 @@
 
   function renderRequestsPanel() {
     var existing = el('fxacc-requests-panel');
-    if (existing) { _renderRequestsTable(readRequests()); return; } /* just re-render table */
+    if (existing) {
+      /* admin-sb1: keep title count accurate as Supabase cache populates */
+      var allReqs = readRequests();
+      var titleEl = existing.querySelector('.fxacc-panel-title');
+      if (titleEl) titleEl.textContent = 'Toutes les demandes (' + allReqs.length + ')';
+      _renderRequestsTable(allReqs);
+      return;
+    }
 
     var opsPanel = el('fxacc-ops-panel');
     if (!opsPanel) return;
@@ -568,7 +678,8 @@
     window.addEventListener('storage', function(e) {
       if (e.key === STORAGE_KEY) setTimeout(renderAll, 80);
     });
-    setInterval(renderAll, 45000);
+    /* admin-sb1: refresh Supabase cache in parallel with the 45s renderAll cycle */
+    setInterval(function() { _fetchSupabaseRequests(); renderAll(); }, 45000);
   }
 
   function init() {
@@ -576,6 +687,9 @@
     setTimeout(function() {
       renderAll();
       bindEvents();
+      /* admin-sb1: first Supabase fetch — delayed 800ms so auth session
+       * has time to hydrate (fixeo-auth-supabase.js runs async on load) */
+      setTimeout(_fetchSupabaseRequests, 800);
     }, 350);
     /* Safety re-render at 1.5s for late-loading admin data */
     setTimeout(renderAll, 1500);
