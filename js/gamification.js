@@ -64,11 +64,12 @@ const LEVELS = [
 
 class GamificationEngine {
   constructor() {
+    /* dashboard-p0: zeroed all default state — no XP, badges, or mission progress pre-awarded */
     this.state = JSON.parse(localStorage.getItem('fixeo_gam') || 'null') || {
-      xp: 120,
-      unlockedBadges: ['newcomer', 'verified', 'early_bird'],
-      missionProgress: { m1: 1, m2: 0, m3: 2, m4: 1, m5: 0, m6: 0 },
-      completedMissions: ['m1']
+      xp: 0,
+      unlockedBadges: [],
+      missionProgress: {},
+      completedMissions: []
     };
     this.badges = BADGES;
     this.missions = MISSIONS;

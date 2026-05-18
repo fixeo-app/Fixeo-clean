@@ -343,11 +343,8 @@ const ADMIN_PAYMENTS = [];
 
 const ADMIN_SUBSCRIPTIONS = [];
 
-const ADMIN_REGISTRATIONS = [
-  { id:1, name:'Mourad Saidi', specialty:'Plâtrerie', city:'Casablanca', email:'mourad@email.ma', phone:'+212 6 12 34 56 78', experience:'8 ans', submitted:'13/03/2026' },
-  { id:2, name:'Houda Benali', specialty:'Carrelage', city:'Rabat', email:'houda@email.ma', phone:'+212 6 23 45 67 89', experience:'5 ans', submitted:'12/03/2026' },
-  { id:3, name:'Tarik Lahlou', specialty:'Peinture industrielle', city:'Tanger', email:'tarik@email.ma', phone:'+212 6 34 56 78 90', experience:'12 ans', submitted:'10/03/2026' }
-];
+/* dashboard-p0: ADMIN_REGISTRATIONS cleared — no demo data in production */
+const ADMIN_REGISTRATIONS = [];
 
 const ADMIN_REVIEWS = [];
 

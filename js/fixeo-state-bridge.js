@@ -194,7 +194,7 @@
         inactive: totalArtisans - activeArtisans
       },
       clients: {
-        total: Math.max(clientIds.size, 1)
+        total: clientIds.size /* dashboard-p0: removed Math.max floor — true 0 when no real clients */
       },
       requests: {
         total: totalRequests,
