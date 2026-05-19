@@ -161,6 +161,8 @@
                 _source         : 'supabase'
               };
             });
+            /* Expose to FixeoAdminEngine unified read layer */
+            if (Array.isArray(window.__fxAccSbCache)) window.__fxAccSbCache = _sbReqCache.slice();
             /* Trigger a re-render so newly fetched rows appear promptly */
             setTimeout(renderAll, 0);
           });

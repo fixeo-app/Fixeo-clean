@@ -207,7 +207,9 @@
       .fixeo-gh-brand img.fixeo-logo-img { height:22px !important; }
     }
   </style>
-  <!-- Admin Control Center Phase 1 — additive operational layer -->
+  <!-- Unified Business Engine — single source of truth for all admin sections -->
+<script src="js/admin-unified-engine.js?v=v1" defer></script>
+<!-- Admin Control Center Phase 1 — additive operational layer -->
   <link rel="stylesheet" href="css/admin-control-center-p1.css?v=1">
   <!-- Admin Commission Queue Polish Phase 1B — additive -->
   <link rel="stylesheet" href="css/admin-commission-polish-p1b.css?v=1">
@@ -436,17 +438,17 @@
     <nav class="sidebar-nav">
       <div class="sidebar-section-label">Tableau de bord</div>
       <a class="sidebar-link active" onclick="adminSection('overview')"><span class="icon">📊</span><span>Vue d'ensemble</span></a>
-      <a class="sidebar-link" onclick="adminSection('artisans')"><span class="icon">👷</span><span>Artisans</span><span class="sidebar-count" id="sc-artisans">12</span></a>
-      <a class="sidebar-link" onclick="adminSection('clients')"><span class="icon">👥</span><span>Clients</span><span class="sidebar-count" id="sc-clients">48</span></a>
-      <a class="sidebar-link" onclick="adminSection('reservations')"><span class="icon">📅</span><span>Réservations</span><span class="sidebar-count pending" id="sc-reservations">5</span></a>
+      <a class="sidebar-link" onclick="adminSection('artisans')"><span class="icon">👷</span><span>Artisans</span><span class="sidebar-count" id="sc-artisans">—</span></a>
+      <a class="sidebar-link" onclick="adminSection('clients')"><span class="icon">👥</span><span>Clients</span><span class="sidebar-count" id="sc-clients">—</span></a>
+      <a class="sidebar-link" onclick="adminSection('reservations')"><span class="icon">📅</span><span>Réservations</span><span class="sidebar-count pending" id="sc-reservations">0</span></a>
       <a class="sidebar-link" onclick="adminSection('cod-orders')" id="sidebar-cod-link"><span class="icon">💵</span><span>Missions & commissions</span><span class="sidebar-count" id="sc-cod" style="background:#20C997;color:#000">0</span></a>
-      <a class="sidebar-link" onclick="adminSection('registrations')"><span class="icon">📝</span><span>Inscriptions</span><span class="sidebar-count pending" id="sc-regs">3</span></a>
+      <a class="sidebar-link" onclick="adminSection('registrations')"><span class="icon">📝</span><span>Inscriptions</span><span class="sidebar-count pending" id="sc-regs">0</span></a>
       <div class="sidebar-section-label">Finance</div>
       <a class="sidebar-link" onclick="adminSection('subscriptions')"><span class="icon">💳</span><span>Abonnements</span></a>
       <a class="sidebar-link" onclick="adminSection('payments')"><span class="icon">💰</span><span>Paiements</span></a>
       <div class="sidebar-section-label">Modération</div>
-      <a class="sidebar-link" onclick="adminSection('reviews')"><span class="icon">⭐</span><span>Avis</span><span class="sidebar-count pending" id="sc-reviews">2</span></a>
-      <a class="sidebar-link" onclick="adminSection('reports')"><span class="icon">🚩</span><span>Signalements</span><span class="sidebar-count pending" id="sc-reports">5</span></a>
+      <a class="sidebar-link" onclick="adminSection('reviews')"><span class="icon">⭐</span><span>Avis</span><span class="sidebar-count pending" id="sc-reviews">0</span></a>
+      <a class="sidebar-link" onclick="adminSection('reports')"><span class="icon">🚩</span><span>Signalements</span><span class="sidebar-count pending" id="sc-reports">0</span></a>
       <div class="sidebar-section-label">Paramètres</div>
       <a class="sidebar-link" onclick="adminSection('settings')"><span class="icon">⚙️</span><span>Paramètres</span></a>
     </nav>
@@ -1036,7 +1038,7 @@
 <script src="js/fixeo-mission-system.js"></script>
 <script src="js/admin.js?v=p1c"></script>
 <script src="js/fixeo-admin-cod.js"></script>
-<script src="js/admin-control-center-p1.js?v=admin-sb1" defer></script>
+<script src="js/admin-control-center-p1.js?v=ue1" defer></script>
 <script src="js/admin-commission-polish-p1b.js?v=1" defer></script>
 <script src="js/admin-artisan-moderation-p2.js?v=1" defer></script>
 <script src="js/admin-mission-supervision-p3.js?v=1" defer></script>
