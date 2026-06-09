@@ -2793,7 +2793,7 @@ function initAdmin() {
               <h3 style="font-size:1rem;margin:0">💰 Revenus Fixeo</h3>
             </div>
             <div class="admin-kpi-grid" style="margin-top:4px">
-              ${ceoKpiCard('var(--success)', 'rgba(32,201,151,.15)', 'var(--success)', '📅', ceoNumber(data.revenues.today), 'Revenus aujourd'hui')}
+              ${ceoKpiCard('var(--success)', 'rgba(32,201,151,.15)', 'var(--success)', '📅', ceoNumber(data.revenues.today), 'Revenus aujourd\'hui')}
               ${ceoKpiCard('var(--info)', 'rgba(64,93,230,.15)', 'var(--info)', '🗓️', ceoNumber(data.revenues.month), 'Revenus ce mois')}
               ${ceoKpiCard('var(--warning)', 'rgba(252,175,69,.15)', 'var(--warning)', '⏳', ceoNumber(data.revenues.due), 'Commissions en attente')}
               ${ceoKpiCard('var(--primary)', 'rgba(225,48,108,.15)', 'var(--primary)', '✅', ceoNumber(data.revenues.paid), 'Commissions payées')}
