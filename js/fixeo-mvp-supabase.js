@@ -789,8 +789,114 @@
           return { cls: 'status-open', label: 'En attente' };
         }
 
+        /* ── p1b: register Supabase card confirm handler on window (idempotent) ──────
+         * Called via onclick="window._fxSbConfirmRequest(id, this)" from the card.
+         * Writes 'valid\u00e9e' to Supabase service_requests + client LS + dispatches event.
+         * Single registration — safe to overwrite on every renderClientDashboard call. */
+        window._fxSbConfirmRequest = function(sbId, btn) {
+          if (!sbId || !btn) return;
+          btn.disabled = true;
+          btn.textContent = 'Confirmation en cours\u2026';
+
+          var FS = window.FixeoSupabase;
+          if (!FS || typeof FS.getClient !== 'function') {
+            btn.disabled = false;
+            btn.textContent = 'Confirmer l\u2019intervention';
+            console.warn('[p1b] FixeoSupabase not available');
+            return;
+          }
+
+          FS.getClient().then(function(sb) {
+            if (!sb) throw new Error('No Supabase client');
+            return sb.from('service_requests')
+              .update({ status: 'valid\u00e9e' })
+              .eq('id', sbId);
+          }).then(function(res) {
+            if (res && res.error) {
+              throw new Error(res.error.message || res.error.code || 'update failed');
+            }
+
+            /* Success — update LS mirror and dispatch re-render event */
+            (function() {
+              var LS_KEY = 'fixeo_client_requests';
+              try {
+                var lsRaw = localStorage.getItem(LS_KEY);
+                var lsArr = lsRaw ? JSON.parse(lsRaw) : [];
+                if (!Array.isArray(lsArr)) return;
+                var changed = false;
+                lsArr.forEach(function(r, i) {
+                  var match = (String(r.supabase_request_id || '') === sbId)
+                           || (String(r.id || '') === sbId);
+                  if (!match) return;
+                  lsArr[i] = Object.assign({}, r, {
+                    status: 'valid\u00e9e',
+                    client_confirmation: 'confirm\u00e9e',
+                    validated_at: new Date().toISOString()
+                  });
+                  changed = true;
+                });
+                if (changed) localStorage.setItem(LS_KEY, JSON.stringify(lsArr));
+              } catch(e) {
+                console.warn('[p1b] LS mirror update error:', e && e.message);
+              }
+            })();
+
+            /* Notify user */
+            try {
+              if (window.notifications && typeof window.notifications.success === 'function') {
+                window.notifications.success('Intervention confirm\u00e9e', 'La mission est cl\u00f4tur\u00e9e. Merci\u00a0!');
+              }
+            } catch(e) {}
+
+            /* Dispatch so P1 + P2 re-render */
+            try {
+              window.dispatchEvent(new CustomEvent('fixeo:client-request-updated', { detail: { id: sbId } }));
+            } catch(e) {}
+
+            /* Re-render this Supabase section in-place */
+            try {
+              if (typeof renderClientDashboard === 'function') renderClientDashboard();
+            } catch(e) {}
+
+          }).catch(function(err) {
+            console.warn('[p1b] Confirm request failed:', sbId, err && err.message);
+            btn.disabled = false;
+            btn.textContent = 'Confirmer l\u2019intervention';
+            try {
+              if (window.notifications && typeof window.notifications.error === 'function') {
+                window.notifications.error('Erreur', 'La confirmation a \u00e9chou\u00e9. R\u00e9essayez.');
+              }
+            } catch(e) {}
+          });
+        };
+
         requestsEl.innerHTML = requests.length ? requests.map(function (requestRow) {
           var badge = _fxReqStatusBadge(requestRow.status);
+          var rawSt = String(requestRow.status || 'new').toLowerCase().trim();
+          var isTerminee = rawSt === 'termin\u00e9e' || rawSt === 'terminee';
+
+          /* p1b: confirm block — only for terminée status */
+          var confirmHtml = '';
+          if (isTerminee) {
+            var safeId = escapeHtml(requestRow.id);
+            confirmHtml = '<div class="fxsb-confirm-block" style="margin-top:14px;padding:14px;'
+              + 'background:rgba(255,193,7,0.08);border:1px solid rgba(255,193,7,0.3);'
+              + 'border-radius:10px">'
+              + '<div style="font-size:.87rem;font-weight:600;margin-bottom:6px">'
+              + '\u2728 L\u2019intervention est termin\u00e9e\u00a0?'
+              + '</div>'
+              + '<div style="font-size:.82rem;opacity:.8;margin-bottom:10px">'
+              + 'Confirmez pour cl\u00f4turer la mission.'
+              + '</div>'
+              + '<button class="btn btn-primary fxsb-confirm-btn" '
+              + 'style="width:100%;padding:10px" '
+              + 'type="button" '
+              + 'onclick="window._fxSbConfirmRequest(\'' + safeId + '\', this)">'
+              + '\u2713 Confirmer l\u2019intervention'
+              + '</button>'
+              + '</div>';
+          }
+
           /* FIX 4A: data-sb-id on each card so P1 dedup can identify Supabase-sourced cards */
           return '' +
             '<div class="request-card" data-sb-id="' + escapeHtml(requestRow.id) + '">' +
@@ -805,6 +911,7 @@
                 '<span>\ud83d\udccd ' + escapeHtml(requestRow.city || '\u2014') + '</span>' +
               '</div>' +
               '<p style="margin:0 0 14px;opacity:.78">' + escapeHtml(requestRow.description || '\u2014') + '</p>' +
+              confirmHtml +
               '<div class="request-actions">' +
                 '<button class="btn btn-secondary" type="button" onclick="window.openNewRequestModal && openNewRequestModal()">Nouvelle demande</button>' +
               '</div>' +
