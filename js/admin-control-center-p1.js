@@ -197,6 +197,14 @@
             });
             /* Expose to FixeoAdminEngine unified read layer */
             if (Array.isArray(window.__fxAccSbCache)) window.__fxAccSbCache = _sbReqCache.slice();
+            /* v3-sb: notify supervision-p3 so it re-reads the merged cache.
+             * supervision-p3.bindGlobalEvents() already listens to
+             * fixeo:client-request-updated and calls render() on it. */
+            try {
+              window.dispatchEvent(new CustomEvent('fixeo:client-request-updated', {
+                detail: { source: 'supabase-fetch', count: _sbReqCache.length }
+              }));
+            } catch (_) {}
             /* Trigger a re-render so newly fetched rows appear promptly */
             setTimeout(renderAll, 0);
           });

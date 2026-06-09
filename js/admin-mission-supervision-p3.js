@@ -1,9 +1,10 @@
 /* ============================================================
-   FIXEO ADMIN — MISSION SUPERVISION PHASE 3  (v3-price)
+   FIXEO ADMIN — MISSION SUPERVISION PHASE 3  (v3-sb)
    js/admin-mission-supervision-p3.js
 
    OBJECTIVE: Real mission supervision center.
-   Single source of truth: fixeo_client_requests
+   Single source of truth: fixeo_client_requests (localStorage)
+   + window.__fxAccSbCache (Supabase rows fetched by admin-control-center-p1)
 
    v3-assign additions (surgical append only):
    - Assign Artisan button on nouvelle/unassigned cards
@@ -23,6 +24,14 @@
      commission_amount, artisan_net, client_confirmation='en_attente'
    - commission_due NOT set yet — becomes due only after client validates
    - "Prix final confirmé" badge shown on terminée cards where price_validated=true
+
+   v3-sb additions:
+   - readReqs() now merges window.__fxAccSbCache (Supabase rows) after
+     reading localStorage. Deduplication by id + supabase_request_id.
+     Supabase rows are appended AFTER localStorage rows — localStorage
+     always wins for any matching id.
+   - admin-control-center-p1 dispatches fixeo:client-request-updated
+     after cache write → supervision re-renders automatically.
 
    NEVER: re-renders commission queue, artisan table, overview KPIs,
           forks lifecycle, creates duplicate stores, fake data,
@@ -107,13 +116,53 @@
     return ex>0?ex:parseMoney(r.budget||'');
   }
 
-  /* ── Read requests ───────────────────────────────────────── */
+  /* ── Read requests (v3-sb: localStorage + Supabase cache merge) ─
+   *
+   * Source A: FixeoClientRequestsStore.list() or raw localStorage
+   *           (fixeo_client_requests) — always primary.
+   * Source B: window.__fxAccSbCache — Supabase service_requests rows
+   *           mapped by admin-control-center-p1._fetchSupabaseRequests().
+   *           Appended AFTER localStorage rows; any row whose id or
+   *           supabase_request_id already appears in Source A is skipped.
+   *
+   * Guard: if __fxAccSbCache is absent or empty, behaviour is identical
+   * to the previous version — no regression for offline/LS-only mode.
+   * ────────────────────────────────────────────────────────── */
   function readReqs() {
+    var lsRows = [];
     try {
-      if (window.FixeoClientRequestsStore&&typeof window.FixeoClientRequestsStore.list==='function') return window.FixeoClientRequestsStore.list();
-      var raw=JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]');
-      return Array.isArray(raw)?raw:[];
-    } catch(e){ return []; }
+      if (window.FixeoClientRequestsStore && typeof window.FixeoClientRequestsStore.list === 'function') {
+        lsRows = window.FixeoClientRequestsStore.list();
+      } else {
+        var raw = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        lsRows = Array.isArray(raw) ? raw : [];
+      }
+    } catch (e) { lsRows = []; }
+
+    /* v3-sb: merge Supabase cache when available */
+    var sbRows = [];
+    try {
+      if (Array.isArray(window.__fxAccSbCache)) sbRows = window.__fxAccSbCache;
+    } catch (_) {}
+
+    if (!sbRows.length) return lsRows;
+
+    /* Build dedup set from localStorage rows.
+     * Keys: (a) the row's own id, (b) its supabase_request_id cross-ref
+     * written by fixeo-reservation-supabase-bridge when a LS booking
+     * was mirrored to Supabase. Both prevent double-card. */
+    var seen = new Set();
+    lsRows.forEach(function (r) {
+      if (r.id)                  seen.add(String(r.id));
+      if (r.supabase_request_id) seen.add(String(r.supabase_request_id));
+    });
+
+    /* Append only Supabase rows not already represented in localStorage */
+    var sbOnly = sbRows.filter(function (r) {
+      return r.id && !seen.has(String(r.id));
+    });
+
+    return lsRows.concat(sbOnly);
   }
 
   /* ── Classify blocked cases ──────────────────────────────── */
