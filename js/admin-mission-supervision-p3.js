@@ -1,14 +1,23 @@
 /* ============================================================
-   FIXEO ADMIN — MISSION SUPERVISION PHASE 3
+   FIXEO ADMIN — MISSION SUPERVISION PHASE 3  (v3-assign)
    js/admin-mission-supervision-p3.js
 
    OBJECTIVE: Real mission supervision center.
    Single source of truth: fixeo_client_requests
-   
-   Adds a dedicated "Supervision" section to the admin sidebar.
+
+   v3-assign additions (surgical append only):
+   - Assign Artisan button on nouvelle/unassigned cards
+   - Inline artisan picker from FixeoDB filtered by city + category
+   - On confirm: patches assigned_artisan, assigned_artisan_id,
+     artisan_phone, status='acceptée', accepted_at
+   - artisan_phone stored on request → artisan WA button now reliable
+   - mark-inprogress action (acceptée → en_cours)
+   - mark-complete action (en_cours → terminée)
 
    NEVER: re-renders commission queue, artisan table, overview KPIs,
-          forks lifecycle, creates duplicate stores, fake data
+          forks lifecycle, creates duplicate stores, fake data,
+          touches reservation.js, fixeo-mission-system.js,
+          Supabase schema, RLS, cod-payment.js
    ============================================================ */
 ;(function () {
   'use strict';
@@ -376,6 +385,96 @@
     grid.innerHTML = visible.map(function(r) { return _renderCard(r, m); }).join('');
   }
 
+  /* ════════════════════════════════════════════════════════
+     ARTISAN PICKER — helpers
+     ════════════════════════════════════════════════════════ */
+
+  /**
+   * Return artisans from FixeoDB filtered by city + category.
+   * Falls back to city-only, then returns all if no match.
+   * Always returns an array, never throws.
+   */
+  function _candidateArtisans(city, service) {
+    var all = [];
+    try {
+      if (window.FixeoDB && typeof window.FixeoDB.getAllArtisans === 'function') {
+        all = window.FixeoDB.getAllArtisans() || [];
+      }
+    } catch(e) { return []; }
+    if (!all.length) return [];
+
+    var cityNorm = String(city||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
+    var svcNorm  = String(service||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
+
+    /* Category keywords → artisan.category match */
+    var catMap = {
+      'plomb':    ['plomberie','plombier'],
+      'electr':   ['electricite','electricien','électricité'],
+      'serrur':   ['serrurerie','serrurier'],
+      'clim':     ['climatisation'],
+      'peint':    ['peinture','peintre'],
+      'carrel':   ['carrelage'],
+      'macon':    ['maconnerie','maçonnerie'],
+      'menuis':   ['menuiserie'],
+      'bricol':   ['bricolage'],
+      'jardinage':['jardinage'],
+      'nettoy':   ['nettoyage']
+    };
+
+    var matchCats = [];
+    Object.keys(catMap).forEach(function(k) {
+      if (svcNorm.includes(k)) matchCats = matchCats.concat(catMap[k]);
+    });
+
+    function cityMatch(a) {
+      if (!cityNorm) return true;
+      var ac = String(a.city||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+      return ac.includes(cityNorm) || cityNorm.includes(ac.split(' ')[0]);
+    }
+    function catMatch(a) {
+      if (!matchCats.length) return true;
+      var ac = String(a.category||a.specialty||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+      return matchCats.some(function(c){ return ac.includes(c) || c.includes(ac); });
+    }
+
+    /* Try: city + category */
+    var both = all.filter(function(a){ return cityMatch(a) && catMatch(a); });
+    if (both.length >= 1) return both.slice(0,30);
+
+    /* Fallback: city only */
+    var cityOnly = all.filter(cityMatch);
+    if (cityOnly.length >= 1) return cityOnly.slice(0,30);
+
+    /* Last resort: all */
+    return all.slice(0,30);
+  }
+
+  /**
+   * Render the inline artisan picker injected below a card.
+   * Hidden by default — toggled by the Assigner button.
+   */
+  function _renderAssignPicker(reqId, city, service) {
+    var candidates = _candidateArtisans(city, service);
+    var opts = candidates.map(function(a) {
+      var label = esc(a.name || '—') + ' — ' + esc(a.city||'') + (a.category ? ' (' + esc(a.category) + ')' : '');
+      var val   = [a.id||'', a.name||'', a.phone||a.phone_public||'', a.category||''].join('||');
+      return '<option value="' + esc(val) + '">' + label + '</option>';
+    }).join('');
+
+    if (!opts) {
+      opts = '<option value="">Aucun artisan disponible</option>';
+    }
+
+    return '<div class="fxams3-assign-picker" id="fxams3-picker-' + esc(String(reqId)) + '" style="display:none">'
+      + '<select class="fxams3-picker-select" id="fxams3-picker-sel-' + esc(String(reqId)) + '">'
+      + '<option value="">-- Choisir un artisan --</option>'
+      + opts
+      + '</select>'
+      + '<button class="fxams3-act-btn btn-confirm-assign" data-act="confirm-assign" data-req-id="' + esc(String(reqId)) + '">✓ Confirmer</button>'
+      + '<button class="fxams3-act-btn btn-cancel-assign" data-act="cancel-assign" data-req-id="' + esc(String(reqId)) + '">✕</button>'
+      + '</div>';
+  }
+
   /* ── Single mission card ─────────────────────────────────── */
   function _renderCard(r, m) {
     var st     = normSt(r.status);
@@ -417,20 +516,40 @@
       ? '<button class="fxams3-act-btn wa-client" data-act="wa" data-url="' + esc(waClientUrl) + '">Client WA</button>'
       : '';
 
-    /* WA artisan — lookup from missions or artisans store */
+    /* WA artisan — prefer stored artisan_phone, then FixeoDB name lookup */
     var artWaBtn = '';
     var artName = String(r.assigned_artisan||'').trim();
     if (artName) {
-      /* Try FixeoDB */
-      var artPhone2 = '';
-      if (window.FixeoDB&&typeof window.FixeoDB.getAllArtisans==='function') {
+      /* Priority 1: phone stored directly on request at assignment time */
+      var artPhone2 = String(r.artisan_phone||'').trim();
+      /* Priority 2: FixeoDB UUID match (most reliable — avoids name collisions) */
+      if (!artPhone2 && r.assigned_artisan_id && window.FixeoDB && typeof window.FixeoDB.getAllArtisans==='function') {
         var arts = window.FixeoDB.getAllArtisans();
-        var found = arts.find(function(a){ return a.name&&a.name.toLowerCase()===artName.toLowerCase(); });
-        if (found) artPhone2 = String(found.phone||'').trim();
+        var foundById = arts.find(function(a){ return String(a.id||'')===String(r.assigned_artisan_id); });
+        if (foundById) artPhone2 = String(foundById.phone||foundById.phone_public||'').trim();
       }
-      if (!artPhone2) artPhone2 = String(r.artisan_phone||'').trim();
+      /* Priority 3: FixeoDB name match (fallback, less reliable) */
+      if (!artPhone2 && window.FixeoDB && typeof window.FixeoDB.getAllArtisans==='function') {
+        var arts2 = window.FixeoDB.getAllArtisans();
+        var foundByName = arts2.find(function(a){ return a.name&&a.name.toLowerCase()===artName.toLowerCase(); });
+        if (foundByName) artPhone2 = String(foundByName.phone||foundByName.phone_public||'').trim();
+      }
       var waArtUrl = buildWALink(artPhone2, artName, 'Concernant une intervention en cours sur Fixeo.');
       if (waArtUrl) artWaBtn = '<button class="fxams3-act-btn wa-artisan" data-act="wa" data-url="' + esc(waArtUrl) + '">' + esc(artName.split(' ')[0]) + ' WA</button>';
+    }
+
+    /* Assign Artisan button — only when unassigned and status is nouvelle */
+    var assignBtn = '';
+    if (st==='nouvelle' && !artName) {
+      assignBtn = '<button class="fxams3-act-btn btn-assign" data-act="open-assign" data-req-id="' + esc(String(r.id||'')) + '" data-city="' + esc(r.city||'') + '" data-service="' + esc(r.service||'') + '">\ud83d\udc64 Assigner</button>';
+    }
+
+    /* Status progression buttons */
+    var progressBtn = '';
+    if (st==='accept\u00e9e') {
+      progressBtn = '<button class="fxams3-act-btn btn-inprogress" data-act="mark-inprogress" data-req-id="' + esc(String(r.id||'')) + '">\u25b6 D\u00e9marrer</button>';
+    } else if (st==='en_cours') {
+      progressBtn = '<button class="fxams3-act-btn btn-complete" data-act="mark-complete" data-req-id="' + esc(String(r.id||'')) + '">\u2713 Terminer</button>';
     }
 
     /* Flag action */
@@ -472,11 +591,14 @@
         + (fp>0 ? '<div class="fxams3-meta-item"><div class="fxams3-meta-label">Prix</div><div class="fxams3-meta-value">' + esc(fp.toLocaleString('fr-FR')+' MAD') + '</div></div>' : '')
       + '</div>'
       + '<div class="fxams3-card-actions">'
+        + assignBtn
+        + progressBtn
         + waClientBtn
         + artWaBtn
         + flagBtn
         + '<button class="fxams3-act-btn btn-refresh" data-act="refresh">\u21bb</button>'
       + '</div>'
+      + _renderAssignPicker(r.id, r.city, r.service)
     + '</div>';
   }
 
@@ -575,6 +697,61 @@
         if (act==='refresh')               { render(); return; }
         if (act==='flag-review'   && reqId){ _writeReqPatch(reqId,{commission_pending_review:true});  _showToast('\u29d7 Mission flaggu\u00e9e pour \u00e9valuation','info'); render(); return; }
         if (act==='unflag-review' && reqId){ _writeReqPatch(reqId,{commission_pending_review:false}); _showToast('\u29d7 Flag retir\u00e9','success'); render(); return; }
+
+        /* ── Assign Artisan ───────────────────────────────── */
+        if (act==='open-assign' && reqId) {
+          /* Toggle picker visibility */
+          var pickerId = 'fxams3-picker-' + reqId;
+          var picker = document.getElementById(pickerId);
+          if (picker) {
+            var isOpen = picker.style.display !== 'none';
+            picker.style.display = isOpen ? 'none' : 'flex';
+          }
+          return;
+        }
+
+        if (act==='cancel-assign' && reqId) {
+          var pickerC = document.getElementById('fxams3-picker-' + reqId);
+          if (pickerC) pickerC.style.display = 'none';
+          return;
+        }
+
+        if (act==='confirm-assign' && reqId) {
+          var sel = document.getElementById('fxams3-picker-sel-' + reqId);
+          if (!sel || !sel.value) { _showToast('Choisissez un artisan dans la liste','info'); return; }
+          var parts = sel.value.split('||');
+          var aId    = parts[0] || '';
+          var aName  = parts[1] || '';
+          var aPhone = parts[2] || '';
+          var aCat   = parts[3] || '';
+          if (!aName) { _showToast('Artisan invalide','info'); return; }
+          _writeReqPatch(reqId, {
+            assigned_artisan    : aName,
+            assigned_artisan_id : aId,
+            artisan_phone       : aPhone,
+            artisan_category    : aCat,
+            status              : 'accept\u00e9e',
+            accepted_at         : nowISO()
+          });
+          _showToast('\u2705 Artisan assign\u00e9\u00a0: ' + aName, 'success');
+          render();
+          return;
+        }
+
+        /* ── Status progression ───────────────────────────── */
+        if (act==='mark-inprogress' && reqId) {
+          _writeReqPatch(reqId, { status:'en_cours', in_progress_at: nowISO() });
+          _showToast('\u25b6 Mission d\u00e9marr\u00e9e', 'success');
+          render();
+          return;
+        }
+
+        if (act==='mark-complete' && reqId) {
+          _writeReqPatch(reqId, { status:'termin\u00e9e', completed_at: nowISO() });
+          _showToast('\u2713 Mission termin\u00e9e', 'success');
+          render();
+          return;
+        }
       });
     }
   }

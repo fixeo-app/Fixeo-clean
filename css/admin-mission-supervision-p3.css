@@ -530,3 +530,80 @@
 @media (prefers-reduced-motion: reduce) {
   .fxams3-card, .fxams3-pill, .fxams3-act-btn { transition: none; }
 }
+
+/* ══════════════════════════════════════════════════════════
+   v3-assign — Artisan Picker + Status Progression Buttons
+   ══════════════════════════════════════════════════════════ */
+
+/* Assign button */
+.fxams3-act-btn.btn-assign {
+  color: #a78bfa;
+  border-color: rgba(167,139,250,0.22);
+  background: rgba(167,139,250,0.06);
+}
+.fxams3-act-btn.btn-assign:hover {
+  background: rgba(167,139,250,0.12);
+  color: #c4b5fd;
+}
+
+/* In-progress button */
+.fxams3-act-btn.btn-inprogress {
+  color: #60a5fa;
+  border-color: rgba(96,165,250,0.22);
+  background: rgba(96,165,250,0.06);
+}
+.fxams3-act-btn.btn-inprogress:hover {
+  background: rgba(96,165,250,0.12);
+  color: #93c5fd;
+}
+
+/* Complete button */
+.fxams3-act-btn.btn-complete {
+  color: #34d399;
+  border-color: rgba(52,211,153,0.22);
+  background: rgba(52,211,153,0.06);
+}
+.fxams3-act-btn.btn-complete:hover {
+  background: rgba(52,211,153,0.12);
+  color: #6ee7b7;
+}
+
+/* Inline artisan picker */
+.fxams3-assign-picker {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
+  margin-top: 6px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 7px;
+  flex-wrap: wrap;
+}
+
+.fxams3-picker-select {
+  flex: 1;
+  min-width: 180px;
+  background: rgba(18,18,28,0.85);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.82);
+  border-radius: 5px;
+  padding: 5px 8px;
+  font-size: .76rem;
+  outline: none;
+}
+.fxams3-picker-select:focus {
+  border-color: rgba(167,139,250,0.40);
+}
+
+.fxams3-act-btn.btn-confirm-assign {
+  color: #34d399;
+  border-color: rgba(52,211,153,0.25);
+  background: rgba(52,211,153,0.07);
+  white-space: nowrap;
+}
+.fxams3-act-btn.btn-cancel-assign {
+  color: rgba(255,255,255,0.35);
+  border-color: rgba(255,255,255,0.08);
+  white-space: nowrap;
+}
