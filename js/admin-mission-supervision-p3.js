@@ -75,13 +75,14 @@
   /* ── Status normalization ────────────────────────────────── */
   function normSt(s) {
     var n = String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
-    if (n==='nouvelle'||n==='disponible'||n==='') return 'nouvelle';
+    /* 'new' is the Supabase default status — map to 'nouvelle' */
+    if (n==='nouvelle'||n==='disponible'||n===''||n==='new') return 'nouvelle';
     if (n==='acceptee'||n==='accepte') return 'accept\u00e9e';
     if (n==='en cours'||n==='en_cours'||n==='encours') return 'en_cours';
     if (n==='terminee'||n==='termine') return 'termin\u00e9e';
     if (n==='validee'||n==='valide'||n==='intervention confirmee'||n==='intervention_confirmee') return 'valid\u00e9e';
     if (n==='annulee'||n==='annule') return 'annul\u00e9e';
-    return s||'nouvelle';
+    return 'nouvelle'; /* unknown status treated as nouvelle — shows Assigner */
   }
 
   function parseMoney(v) {
@@ -538,9 +539,13 @@
       if (waArtUrl) artWaBtn = '<button class="fxams3-act-btn wa-artisan" data-act="wa" data-url="' + esc(waArtUrl) + '">' + esc(artName.split(' ')[0]) + ' WA</button>';
     }
 
-    /* Assign Artisan button — only when unassigned and status is nouvelle */
+    /* Assign Artisan button — show whenever no artisan is assigned,
+       regardless of exact status value. Covers 'nouvelle', 'new', '',
+       undefined, and any unrecognised status from LS or Supabase. */
     var assignBtn = '';
-    if (st==='nouvelle' && !artName) {
+    var hasArtisan = !!(artName || String(r.assigned_artisan_id||'').trim());
+    var isTerminal = (st==='valid\u00e9e' || st==='annul\u00e9e');
+    if (!hasArtisan && !isTerminal) {
       assignBtn = '<button class="fxams3-act-btn btn-assign" data-act="open-assign" data-req-id="' + esc(String(r.id||'')) + '" data-city="' + esc(r.city||'') + '" data-service="' + esc(r.service||'') + '">\ud83d\udc64 Assigner</button>';
     }
 
