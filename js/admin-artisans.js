@@ -634,6 +634,11 @@ function _closeArtisanFormPanel() {
 }
 
 function _updateArtisansSidebarCount() {
+  /* Delegate to unified engine when available — prevents overwriting canonical values */
+  if (window.FixeoAdminEngine) {
+    window.FixeoAdminEngine.refresh();
+    return;
+  }
   const active = _artisansList.filter(a => a.status === 'active').length;
   const badge  = document.getElementById('sc-artisans');
   const kpiEl  = document.getElementById('kpi-artisans');
@@ -647,10 +652,17 @@ function _updateArtisansSidebarCount() {
    KPIs artisans
 ══════════════════════════════════════════════════════════════ */
 function _updateArtisansKPIs(list) {
+  /* Prefer engine computation — uses canonical .status logic and correct data source.
+   * Falls back to local list only if engine is not loaded. */
+  if (window.FixeoAdminEngine) {
+    window.FixeoAdminEngine.updateArtisanKPIs();
+    return;
+  }
   list = list || _artisansList;
   const total     = list.length;
-  const active    = list.filter(a => a.status === 'active').length;
-  const inactive  = list.filter(a => a.status !== 'active').length;
+  /* Guard against Supabase artisans missing .status field: treat 'active'|undefined|'available' as active */
+  const active    = list.filter(a => a.status === 'active' || (!a.status && (a.available || a.availability === 'available'))).length;
+  const inactive  = total - active;
   const certified = list.filter(a => a.certified === true || a.certified === 'true' || a.certified === 'yes').length;
 
   const el = id => document.getElementById(id);

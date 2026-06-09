@@ -1,5 +1,5 @@
 /* ============================================================
-   FIXEO V14 — ADMIN DASHBOARD JS — ULTIMATE FIX
+   FIXEO V14 - ADMIN DASHBOARD JS - ULTIMATE FIX
    ============================================================
    CORRECTIONS V14 :
      FIX-ADMIN-1 : Bootstrap automatique compte admin au démarrage
@@ -18,10 +18,10 @@ const _ADMIN_DISPLAY   = 'Admin Fixeo';
 /* ── PHASE 1B: HARDENED STARTUP GUARD ────────────────────────
    Replaces old _bootstrapAdminAccount.
    What changed:
-     REMOVED — Cas 1: auto-promote admin@fixeo.com email to admin role
+     REMOVED - Cas 1: auto-promote admin@fixeo.com email to admin role
                (was the primary 1-write localStorage bypass)
-     REMOVED — Cas 3: email-conditional role default
-   KEPT (defensive) — Cas 4: any non-admin user with role=admin
+     REMOVED - Cas 3: email-conditional role default
+   KEPT (defensive) - Cas 4: any non-admin user with role=admin
                in localStorage → force back to client
      Also: stale fixeo_admin localStorage key purged at startup
    ─────────────────────────────────────────────────────────── */
@@ -31,7 +31,7 @@ const _ADMIN_DISPLAY   = 'Admin Fixeo';
     const storedRole  = localStorage.getItem('fixeo_role')  || '';
     const storedAdmin = localStorage.getItem('fixeo_admin') || '';
 
-    /* Always purge stale fixeo_admin from localStorage — no longer trusted */
+    /* Always purge stale fixeo_admin from localStorage - no longer trusted */
     if (storedAdmin) {
       localStorage.removeItem('fixeo_admin');
     }
@@ -50,7 +50,7 @@ const _ADMIN_DISPLAY   = 'Admin Fixeo';
 })();
 
 /* ═══════════════════════════════════════════════════════════════
-   PHASE 1C — LIVE SUPABASE SESSION VALIDATOR
+   PHASE 1C - LIVE SUPABASE SESSION VALIDATOR
    ═══════════════════════════════════════════════════════════════
    Single source of truth for "is this a valid admin session".
    Called from:
@@ -63,7 +63,7 @@ const _ADMIN_DISPLAY   = 'Admin Fixeo';
    On failure: clears all admin remnants and redirects to auth.html
    ═══════════════════════════════════════════════════════════════ */
 function _fxAdminRevoke(reason) {
-  /* Hard revoke — wipe all admin state, redirect auth.html */
+  /* Hard revoke - wipe all admin state, redirect auth.html */
   /* Not using fixeoGlobalLogout here to avoid index.html redirect race:
      we want auth.html specifically for re-login. */
   try {
@@ -95,12 +95,12 @@ function _fxAdminRevoke(reason) {
 async function _fxAdminValidateSession() {
   /* Step 1: sessionStorage gate must be set */
   if (sessionStorage.getItem('fixeo_admin_auth') !== '1') {
-    return false; /* silent — caller decides what to do */
+    return false; /* silent - caller decides what to do */
   }
 
   /* Step 2: Supabase must be configured */
   if (!window.FixeoSupabaseClient || !window.FixeoSupabaseClient.CONFIGURED) {
-    /* Supabase not configured — cannot verify live session, revoke */
+    /* Supabase not configured - cannot verify live session, revoke */
     _fxAdminRevoke('supabase-not-configured');
     return false;
   }
@@ -142,7 +142,7 @@ function _fxAdminOpen() {
 
 /* ── Phase 1C: live auth state monitor ───────────────────────
    Watches for Supabase SIGNED_OUT, TOKEN_REFRESH_FAILED,
-   USER_DELETED — instantly revokes admin on any of these.
+   USER_DELETED - instantly revokes admin on any of these.
    Registered once after successful admin open.
    ─────────────────────────────────────────────────────────── */
 let _fxAdminAuthMonitorRegistered = false;
@@ -191,7 +191,7 @@ async function checkAdminAccess() {
     return;
   }
 
-  if (btn) { btn.disabled = true; btn.innerHTML = '⏳ Vérification…'; }
+  if (btn) { btn.disabled = true; btn.innerHTML = '⏳ Vérification...'; }
   if (errEl) { errEl.style.display = 'none'; errEl.textContent = ''; }
 
   const passHash = await _sha256admin(pass);
@@ -199,7 +199,7 @@ async function checkAdminAccess() {
   if (emailInput === _ADMIN_EMAIL && passHash === _ADMIN_PASS_HASH) {
     /* ── PHASE 1B+1C: Hardened admin login ──────────────────────────────
        Step A: Write sessionStorage.fixeo_admin_auth (Phase 1B gate token).
-       Step B: Sign in to Supabase with real credentials (Phase 1C — live JWT).
+       Step B: Sign in to Supabase with real credentials (Phase 1C - live JWT).
        Step C: Validate live session via _fxAdminValidateSession().
        Step D: Open admin app only after all checks pass.
     ─────────────────────────────────────────────────────────────────── */
@@ -220,7 +220,7 @@ async function checkAdminAccess() {
         if (client) {
           const { error: siErr } = await client.auth.signInWithPassword({
             email: _ADMIN_EMAIL,
-            password: pass         /* raw password — Supabase hashes server-side */
+            password: pass         /* raw password - Supabase hashes server-side */
           });
           if (!siErr) { _supabaseSignInOk = true; }
         }
@@ -230,7 +230,7 @@ async function checkAdminAccess() {
     /* Step C: validate live session (email match) */
     const valid = await _fxAdminValidateSession();
     if (!valid) {
-      /* Session validation failed after Supabase signIn — block */
+      /* Session validation failed after Supabase signIn - block */
       if (btn) { btn.disabled = false; btn.innerHTML = '🔑 Connexion Admin'; }
       if (errEl) {
         errEl.style.display = 'block';
@@ -256,7 +256,7 @@ async function checkAdminAccess() {
 /* Auto-bypass gate if already authenticated as admin
    PHASE 1C: sessionStorage token present → async Supabase session validation.
    admin-app stays display:none until _fxAdminValidateSession() passes.
-   admin-gate stays visible (covers the page) during async check — no flash. */
+   admin-gate stays visible (covers the page) during async check - no flash. */
 document.addEventListener('DOMContentLoaded', async () => {
   /* Quick synchronous pre-check: if no sessionStorage token, skip async entirely */
   if (sessionStorage.getItem('fixeo_admin_auth') !== '1') return;
@@ -282,7 +282,7 @@ function adminLogout() {
   if (gate) gate.style.display = 'flex';
   if (app)  app.style.display  = 'none';
 
-  /* Use canonical global logout — clears ALL keys, calls Supabase signOut */
+  /* Use canonical global logout - clears ALL keys, calls Supabase signOut */
   if (typeof window.fixeoGlobalLogout === 'function') {
     window.fixeoGlobalLogout({ redirectTo: 'index.html' });
     return;
@@ -325,7 +325,7 @@ function adminSection(name) {
 
 /* ── DATA STORES ─────────────────────────────────────────────── */
 /* V20: ADMIN_ARTISANS conservé comme fallback legacy (API in admin-artisans.js) */
-// ADMIN_ARTISANS is loaded from FixeoDB on init — see _initAdminBase()
+// ADMIN_ARTISANS is loaded from FixeoDB on init - see _initAdminBase()
 const ADMIN_ARTISANS = [];
 
 const ADMIN_CLIENTS = [
@@ -343,7 +343,7 @@ const ADMIN_PAYMENTS = [];
 
 const ADMIN_SUBSCRIPTIONS = [];
 
-/* dashboard-p0: ADMIN_REGISTRATIONS cleared — no demo data in production */
+/* dashboard-p0: ADMIN_REGISTRATIONS cleared - no demo data in production */
 const ADMIN_REGISTRATIONS = [];
 
 const ADMIN_REVIEWS = [];
@@ -353,7 +353,7 @@ const ADMIN_REPORTS = [];
 let currentArtisanId = null;
 
 /* ── INIT ────────────────────────────────────────────────────── */
-/* initAdmin defined below in the Réservations module (V10) — this placeholder ensures
+/* initAdmin defined below in the Réservations module (V10) - this placeholder ensures
    backward compat if the append fails for any reason */
 function _initAdminBase() {
   updateLastTime();
@@ -406,40 +406,38 @@ function refreshAdminData() {
 
 /* ── CHARTS ──────────────────────────────────────────────────── */
 function renderAdminCharts() {
-  // Revenue chart
-  const revCtx = document.getElementById('admin-chart-revenue');
-  if (revCtx) {
-    new Chart(revCtx, {
-      type: 'line',
-      data: {
-        labels: ['Sep','Oct','Nov','Déc','Jan','Fév','Mar'],
-        datasets:[{
-          label:'Revenus (MAD)',
-          data:[12800,15400,14200,18900,22100,25800,28450],
-          borderColor:'#E1306C', backgroundColor:'rgba(225,48,108,0.12)',
-          tension:0.4, fill:true, pointBackgroundColor:'#E1306C', pointRadius:4
-        }]
-      },
-      options: {
-        responsive:true, maintainAspectRatio:false,
-        plugins:{ legend:{ display:false } },
-        scales:{
-          x:{ grid:{color:'rgba(255,255,255,0.05)'}, ticks:{color:'rgba(255,255,255,0.5)',font:{size:11}} },
-          y:{ grid:{color:'rgba(255,255,255,0.05)'}, ticks:{color:'rgba(255,255,255,0.5)',font:{size:11}} }
-        }
-      }
-    });
-  }
+  // Charts are managed by FixeoAdminEngine.injectEmptyStates() which replaces
+  // fake-data canvases with honest operational empty states.
+  // This stub preserves the function signature so call sites don't break.
+  if (window.FixeoAdminEngine) { window.FixeoAdminEngine.refresh(); return; }
 
-  // Subscriptions chart
-  const subCtx = document.getElementById('admin-chart-subs');
+  // Legacy path: replace canvases with empty states directly (no fake data)
+  ['admin-chart-revenue', 'admin-chart-subs'].forEach(function(id) {
+    var canvas = document.getElementById(id);
+    if (!canvas) return;
+    var wrap = canvas.parentElement;
+    if (!wrap || wrap.dataset.fxueChart) return;
+    wrap.dataset.fxueChart = '1';
+    var label = id.includes('revenue') ? 'Aucune commission encaissée' : 'Aucun abonnement actif';
+    var body  = id.includes('revenue')
+      ? 'Les revenus apparaîtront après les premières missions validées.'
+      : 'Les abonnements actifs s\'afficheront ici automatiquement.';
+    wrap.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;'
+      + 'height:100%;min-height:120px;padding:20px;text-align:center;color:var(--text-muted)">'
+      + '<div style="font-weight:600;font-size:.9rem;margin-bottom:6px;color:var(--text)">' + label + '</div>'
+      + '<div style="font-size:.78rem;line-height:1.5">' + body + '</div>'
+      + '</div>';
+  });
+
+  // Subscriptions chart - kept as stub for call-site compatibility
+  const subCtx = false && document.getElementById('admin-chart-subs');
   if (subCtx) {
     new Chart(subCtx, {
       type: 'doughnut',
       data: {
         labels: ['Free','Pro','Premium'],
         datasets:[{
-          data:[6,4,2],
+          data:[0,0,0],
           backgroundColor:['rgba(255,255,255,0.15)','rgba(225,48,108,0.65)','rgba(252,175,69,0.65)'],
           borderColor:['rgba(255,255,255,0.1)','rgba(225,48,108,0.8)','rgba(252,175,69,0.8)'],
           borderWidth:2
@@ -455,45 +453,28 @@ function renderAdminCharts() {
 
 /* ── ACTIVITY LIST ───────────────────────────────────────────── */
 function renderActivityList() {
+  /* Delegate to engine's real-activity injector when available */
+  if (window.FixeoAdminEngine) { window.FixeoAdminEngine.refresh(); return; }
+  /* Fallback: honest empty state (no fake data) */
   const list = document.getElementById('admin-activity-list');
-  if (!list) return;
-  const activities = [
-    { icon:'👷', title:'Nouvelles données artisan disponibles après synchronisation.', time:'En attente d’activité réelle' },
-    { icon:'💳', title:'Les paiements réels apparaîtront ici automatiquement.', time:'Synchronisation dynamique' },
-    { icon:'⭐', title:'Les avis clients modérés seront listés ici.', time:'Aucune donnée fictive affichée' }
-  ];
-  list.innerHTML = activities.map(a => `
-    <div class="admin-activity-item">
-      <div class="activity-icon">${a.icon}</div>
-      <div class="activity-text">
-        <div class="activity-title">${a.title}</div>
-        <div class="activity-time">${a.time}</div>
-      </div>
-    </div>
-  `).join('');
+  if (!list || list.dataset.fxueDone) return;
+  list.innerHTML = '<div style="text-align:center;padding:24px 16px;color:var(--text-muted)">'
+    + '<div style="font-size:1.3rem;margin-bottom:6px">🕐</div>'
+    + '<div style="font-size:.85rem">Aucune activité récente.</div>'
+    + '<div style="font-size:.78rem;margin-top:4px">Les demandes, missions et paiements apparaîtront ici automatiquement.</div>'
+    + '</div>';
 }
 
 /* ── ALERTS ──────────────────────────────────────────────────── */
 function renderAdminAlerts() {
-  const el = document.getElementById('admin-alerts');
-  if (!el) return;
-  el.innerHTML = `
-    <div class="admin-alert">
-      <div class="alert-icon">📝</div>
-      <div class="alert-text">3 demandes d'inscription artisan en attente d'approbation</div>
-      <span class="alert-action" onclick="adminSection('registrations')">Voir →</span>
-    </div>
-    <div class="admin-alert">
-      <div class="alert-icon">⭐</div>
-      <div class="alert-text">2 avis clients en attente de modération</div>
-      <span class="alert-action" onclick="adminSection('reviews')">Voir →</span>
-    </div>
-    <div class="admin-alert">
-      <div class="alert-icon">🚩</div>
-      <div class="alert-text">5 signalements ouverts nécessitent une action</div>
-      <span class="alert-action" onclick="adminSection('reports')">Voir →</span>
-    </div>
-  `;
+  /* Delegate to engine which builds alerts from real request data */
+  if (window.FixeoAdminEngine) { window.FixeoAdminEngine.refresh(); return; }
+  /* Fallback: honest empty state (no fake counts) */
+  const alertEl = document.getElementById('admin-alerts');
+  if (!alertEl || alertEl.dataset.fxueDone) return;
+  alertEl.innerHTML = '<div style="text-align:center;padding:20px 16px;color:var(--text-muted);font-size:.83rem">'
+    + '✅ Aucune action requise pour le moment. Les alertes opérationnelles apparaîtront ici si nécessaire.'
+    + '</div>';
 }
 
 /* ── ARTISANS TABLE ──────────────────────────────────────────── */
@@ -666,12 +647,12 @@ function renderSubscriptions() {
       <td><span class="plan-badge plan-${s.plan}">${planLabel(s.plan)}</span></td>
       <td>${s.start}</td>
       <td>${s.renewal}</td>
-      <td>${s.amount > 0 ? s.amount + ' MAD' : '—'}</td>
+      <td>${s.amount > 0 ? s.amount + ' MAD' : '-'}</td>
       <td><span class="status-badge status-${s.status}">${statusLabel(s.status)}</span></td>
       <td>
         ${s.plan !== 'free'
           ? `<button class="tbl-btn danger" onclick="cancelSubscription('${s.artisan}')">Annuler</button>`
-          : '<span style="color:var(--text-muted);font-size:.78rem">—</span>'}
+          : '<span style="color:var(--text-muted);font-size:.78rem">-</span>'}
       </td>
     </tr>
   `).join('');
@@ -691,7 +672,7 @@ function renderPayments() {
       <td>${p.artisan}</td>
       <td><span class="plan-badge plan-${p.plan.toLowerCase()}">${p.plan}</span></td>
       <td>${p.method}</td>
-      <td>${p.amount > 0 ? p.amount + ' MAD' : '—'}</td>
+      <td>${p.amount > 0 ? p.amount + ' MAD' : '-'}</td>
       <td>${p.date}</td>
       <td><span class="status-badge status-${p.status}">${p.status === 'success' ? '✅ Succès' : p.status === 'failed' ? '❌ Échoué' : '↩ Remboursé'}</span></td>
     </tr>
@@ -741,7 +722,7 @@ function renderReports() {
       <div class="review-mod-header">
         <div class="admin-avatar" style="background:rgba(225,48,108,.2);color:var(--primary)">🚩</div>
         <div>
-          <div style="font-weight:700;font-size:.9rem">${r.type} — ${r.target}</div>
+          <div style="font-weight:700;font-size:.9rem">${r.type} - ${r.target}</div>
           <div style="font-size:.78rem;color:var(--text-muted)">Signalé par ${r.reporter} · ${r.date}</div>
         </div>
         <span class="status-badge status-${statusColors[r.status]||'pending'}">${r.status}</span>
@@ -858,7 +839,7 @@ function statusLabel(status) {
 })();
 
 /* ================================================================
-   FIXEO V10 — MODULE RÉSERVATIONS ADMIN
+   FIXEO V10 - MODULE RÉSERVATIONS ADMIN
    Intégré de façon non-destructive · Tous les systèmes existants
    restent intacts.
    ================================================================ */
@@ -893,16 +874,16 @@ function _mergeLocalStorageReservations() {
           id        : r.id || ('RES-LS-' + Date.now()),
           client    : r.client || r.clientName || localStorage.getItem('fixeo_user_name') || 'Client',
           clientId  : r.clientId || 0,
-          artisan   : r.artisan || r.artisanName || '—',
+          artisan   : r.artisan || r.artisanName || '-',
           artisanId : r.artisanId || 0,
-          service   : r.service || '—',
-          city      : r.city || '—',
+          service   : r.service || '-',
+          city      : r.city || '-',
           date      : r.date || new Date().toLocaleDateString('fr-FR'),
-          time      : r.timeSlot || r.time || '—',
+          time      : r.timeSlot || r.time || '-',
           status    : r.status || 'pending',
           payStatus : r.payStatus || (r.status === 'confirmed' ? 'paid' : 'pending_pay'),
           price     : r.price || r.amount || 0,
-          method    : r.method || r.paymentMethod || '—',
+          method    : r.method || r.paymentMethod || '-',
           txnId     : r.txnId  || r.transactionId || '',
           commission: r.commission || 0,
           netArtisan: r.netArtisan || 0,
@@ -920,21 +901,21 @@ function _mergeLocalStorageReservations() {
           id        : hid,
           client    : localStorage.getItem('fixeo_user_name') || 'Client',
           clientId  : 0,
-          artisan   : h.artisan || '—',
+          artisan   : h.artisan || '-',
           artisanId : h.artisanId || 0,
-          service   : h.service || '—',
-          city      : '—',
-          date      : h.date || '—',
-          time      : h.timeSlot || '—',
+          service   : h.service || '-',
+          city      : '-',
+          date      : h.date || '-',
+          time      : h.timeSlot || '-',
           status    : (h.status === 'confirmed' || h.status === 'paid') ? 'confirmed' : 'pending',
           payStatus : (h.payStatus || h.status === 'paid') ? 'paid' : 'pending_pay',
           price     : h.amount || 0,
-          method    : h.paymentMethod || h.method || '—',
+          method    : h.paymentMethod || h.method || '-',
           txnId     : h.id || '',
           commission: h.commission || Math.round((h.amount || 0) * FIXEO_COMMISSION_RATE),
           netArtisan: h.netArtisan || ((h.amount || 0) - Math.round((h.amount || 0) * FIXEO_COMMISSION_RATE)),
           type      : h.type || 'standard',
-          createdAt : h.transactionDate || h.date || '—',
+          createdAt : h.transactionDate || h.date || '-',
         });
       }
     });
@@ -991,7 +972,7 @@ function renderUrgentPerformanceKPIs() {
 let _currentResId = null;
 
 /* ── INIT ──────────────────────────────────────────────────────── */
-/* ── V10 INIT — replaces base initAdmin ─────────────────────── */
+/* ── V10 INIT - replaces base initAdmin ─────────────────────── */
 function initAdmin() {
   /* Base init */
   updateLastTime();
@@ -1105,12 +1086,12 @@ function renderReservations(data) {
             ? '<span class="stripe-method-badge">💳 Stripe</span>'
             : (r.method === 'CMI'
               ? '<span class="cmi-method-badge">🇲🇦 CMI</span>'
-              : (r.method || '—')))}
+              : (r.method || '-')))}
       </td>
       <td style="font-family:monospace;font-size:.7rem;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.txnId || ''}">
         ${r.txnId
-          ? `<span class="res-txn-id">${r.txnId.substring(0,14)}${r.txnId.length > 14 ? '…' : ''}</span>`
-          : '<span style="color:var(--text-muted)">—</span>'}
+          ? `<span class="res-txn-id">${r.txnId.substring(0,14)}${r.txnId.length > 14 ? '...' : ''}</span>`
+          : '<span style="color:var(--text-muted)">-</span>'}
       </td>
       <td>
         ${(function(){
@@ -1228,7 +1209,7 @@ function viewReservationDetail(id) {
             <span class="res-pay-value">
               ${r.method === 'PayPal'
                 ? '<span class="paypal-method-badge">🅿️ PayPal Sandbox</span>'
-                : (r.method || '—')}
+                : (r.method || '-')}
             </span>
           </div>
           <div class="res-pay-row">
@@ -1376,16 +1357,16 @@ window.FixeoAdminReservations = {
       id       : 'RES-' + Date.now().toString(36).toUpperCase(),
       client   : bookingData.clientName  || localStorage.getItem('fixeo_user_name') || 'Client',
       clientId : bookingData.clientId    || 0,
-      artisan  : bookingData.artisanName || bookingData.artisan || '—',
+      artisan  : bookingData.artisanName || bookingData.artisan || '-',
       artisanId: bookingData.artisanId   || 0,
-      service  : bookingData.service     || '—',
-      city     : bookingData.city        || '—',
+      service  : bookingData.service     || '-',
+      city     : bookingData.city        || '-',
       date     : bookingData.date        || new Date().toLocaleDateString('fr-FR'),
-      time     : bookingData.timeSlot    || bookingData.time || '—',
+      time     : bookingData.timeSlot    || bookingData.time || '-',
       status   : 'pending',
       payStatus: bookingData.paid ? 'paid' : 'pending_pay',
       price    : bookingData.price       || bookingData.amount || 0,
-      method   : bookingData.paymentMethod || bookingData.method || '—',
+      method   : bookingData.paymentMethod || bookingData.method || '-',
       type     : bookingData.isExpress   ? 'express' : 'standard',
       createdAt: new Date().toLocaleDateString('fr-FR'),
     };
@@ -1405,7 +1386,7 @@ window.FixeoAdminReservations = {
 };
 
 /* ══════════════════════════════════════════════════════════════
-   FIXEO V14 — MODULE COD ADMIN
+   FIXEO V14 - MODULE COD ADMIN
    Gère l'affichage et les actions pour les commandes
    Cash on Delivery dans le dashboard administrateur.
 ══════════════════════════════════════════════════════════════ */
@@ -1522,7 +1503,7 @@ function renderCODOrders(data) {
       pending_cod : '<span class="status-badge" style="background:rgba(255,193,7,.15);color:#ffc107;border:1px solid rgba(255,193,7,.3)">💵 En attente COD</span>',
       cod_paid    : '<span class="status-badge" style="background:rgba(32,201,151,.15);color:#20C997;border:1px solid rgba(32,201,151,.3)">✅ COD Encaissé</span>',
       paid        : '<span class="status-badge" style="background:rgba(32,201,151,.15);color:#20C997">✅ Payé</span>',
-    }[r.payStatus] || `<span class="status-badge">${r.payStatus || '—'}</span>`;
+    }[r.payStatus] || `<span class="status-badge">${r.payStatus || '-'}</span>`;
 
     return `
     <tr>
@@ -1532,19 +1513,19 @@ function renderCODOrders(data) {
       <td>
         <div class="admin-user-cell">
           <div class="admin-avatar" style="background:linear-gradient(135deg,#20C997,#17a884);font-size:.72rem;color:#000">${r.client ? r.client.charAt(0) : '?'}</div>
-          <span style="font-size:.84rem;font-weight:600">${r.client || '—'}</span>
+          <span style="font-size:.84rem;font-weight:600">${r.client || '-'}</span>
         </div>
       </td>
       <td>
         <div class="admin-user-cell">
           <div class="admin-avatar" style="font-size:.72rem">${r.artisan ? r.artisan.charAt(0) : '?'}</div>
-          <span style="font-size:.84rem;font-weight:600">${r.artisan || '—'}</span>
+          <span style="font-size:.84rem;font-weight:600">${r.artisan || '-'}</span>
         </div>
       </td>
-      <td style="font-size:.82rem;max-width:150px">${r.service || '—'}</td>
+      <td style="font-size:.82rem;max-width:150px">${r.service || '-'}</td>
       <td style="font-size:.8rem;white-space:nowrap">
-        <div>${r.date || '—'}</div>
-        <div style="color:rgba(255,255,255,.45);font-size:.73rem">${r.time || r.timeSlot || '—'}</div>
+        <div>${r.date || '-'}</div>
+        <div style="color:rgba(255,255,255,.45);font-size:.73rem">${r.time || r.timeSlot || '-'}</div>
       </td>
       <td><span class="status-badge res-status-${r.status}">${_resStatusLabel(r.status)}</span></td>
       <td>${payStatusHtml}</td>
@@ -1607,7 +1588,7 @@ function confirmCODPayment(id) {
   renderReservations();
   _updateCODKPIs();
   _updateReservationKPIs();
-  if (typeof showToast === 'function') showToast('✅ Paiement COD encaissé — ' + id, 'success');
+  if (typeof showToast === 'function') showToast('✅ Paiement COD encaissé - ' + id, 'success');
 }
 
 /* ── Annuler une commande COD ────────────────────────────── */
@@ -1629,7 +1610,7 @@ function cancelCODOrder(id) {
   renderReservations();
   _updateCODKPIs();
   _updateReservationKPIs();
-  if (typeof showToast === 'function') showToast('❌ Commande COD annulée — ' + id, 'error');
+  if (typeof showToast === 'function') showToast('❌ Commande COD annulée - ' + id, 'error');
 }
 
 /* ── Badge sidebar COD ───────────────────────────────────── */
@@ -1644,7 +1625,7 @@ function _updateCODSidebarBadge() {
 }
 
 /* ══════════════════════════════════════════════════════════════
-   ADMIN ORDERS — Récupération API + Polling automatique
+   ADMIN ORDERS - Récupération API + Polling automatique
    ─────────────────────────────────────────────────────────────
    • Endpoint  : GET /api/admin/orders
    • Polling   : toutes les 10 secondes
@@ -1692,13 +1673,13 @@ function _fetchAdminOrdersFromAPI(onDone) {
           id           : id,
           bookingRef   : o.bookingRef || id,
           client       : (o.clientDetails && o.clientDetails.name) || 'Client',
-          artisan      : (o.clientDetails && o.clientDetails.artisanName) || '—',
+          artisan      : (o.clientDetails && o.clientDetails.artisanName) || '-',
           artisanId    : (o.clientDetails && o.clientDetails.artisanId) || 0,
-          service      : (o.clientDetails && o.clientDetails.service) || '—',
-          date         : (o.clientDetails && o.clientDetails.date) || o.createdAt || '—',
-          timeSlot     : (o.clientDetails && (o.clientDetails.timeSlot || o.clientDetails.time)) || '—',
-          address      : (o.clientDetails && o.clientDetails.address) || '—',
-          phone        : (o.clientDetails && o.clientDetails.phone) || '—',
+          service      : (o.clientDetails && o.clientDetails.service) || '-',
+          date         : (o.clientDetails && o.clientDetails.date) || o.createdAt || '-',
+          timeSlot     : (o.clientDetails && (o.clientDetails.timeSlot || o.clientDetails.time)) || '-',
+          address      : (o.clientDetails && o.clientDetails.address) || '-',
+          phone        : (o.clientDetails && o.clientDetails.phone) || '-',
           price        : o.totalAmount || 0,
           commission   : o.commission  || 0,
           netArtisan   : o.netArtisan  || 0,
@@ -1717,12 +1698,12 @@ function _fetchAdminOrdersFromAPI(onDone) {
       renderCODOrders();
       _updateCODKPIs();
       _updateCODSidebarBadge();
-      console.log('[Fixeo Admin] ✅ Commandes API chargées — ' + body.count + ' ordre(s) (COD: ' + body.codCount + ', PayPal: ' + body.paypalCount + ')');
+      console.log('[Fixeo Admin] ✅ Commandes API chargées - ' + body.count + ' ordre(s) (COD: ' + body.codCount + ', PayPal: ' + body.paypalCount + ')');
       if (typeof onDone === 'function') onDone(true, body.count);
     })
     .catch(function (err) {
       if (tmo) clearTimeout(tmo);
-      console.warn('[Fixeo Admin] ⚠️ /api/admin/orders indisponible — fallback localStorage. Err:', err.message);
+      console.warn('[Fixeo Admin] ⚠️ /api/admin/orders indisponible - fallback localStorage. Err:', err.message);
       if (typeof onDone === 'function') onDone(false, 0);
     });
 }
@@ -1764,7 +1745,7 @@ function initAdmin() {
 
 
 /* ================================================================
-   FIXEO V16 — MISSION STATUS MANAGEMENT
+   FIXEO V16 - MISSION STATUS MANAGEMENT
    Suivi complet des missions (demande → commission)
    JS only · non-destructive override layer
    ================================================================ */
@@ -1847,7 +1828,7 @@ function initAdmin() {
   }
 
   function _formatMissionDate(value) {
-    if (!value) return '—';
+    if (!value) return '-';
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) return value;
     return date.toLocaleString('fr-FR', {
@@ -2105,12 +2086,12 @@ function initAdmin() {
           <td>
             <div class="admin-user-cell">
               <div class="admin-avatar" style="font-size:.72rem">${(r.artisan || 'A').charAt(0)}</div>
-              <span style="font-size:.84rem;font-weight:600">${r.artisan || '—'}</span>
+              <span style="font-size:.84rem;font-weight:600">${r.artisan || '-'}</span>
             </div>
           </td>
-          <td style="font-size:.82rem;max-width:160px">${r.service || '—'}</td>
+          <td style="font-size:.82rem;max-width:160px">${r.service || '-'}</td>
           <td style="font-size:.82rem;white-space:nowrap">
-            <div>${r.date || '—'}</div>
+            <div>${r.date || '-'}</div>
             <div style="font-size:.72rem;color:var(--text-muted)">${_formatMissionDate(r.updatedAt)}</div>
           </td>
           <td>${_missionBadge(r.status)}</td>
@@ -2128,10 +2109,10 @@ function initAdmin() {
                 ? '<span class="stripe-method-badge">💳 Stripe</span>'
                 : (r.method === 'CMI'
                   ? '<span class="cmi-method-badge">🇲🇦 CMI</span>'
-                  : (r.method || '—')))}
+                  : (r.method || '-')))}
           </td>
           <td style="font-family:monospace;font-size:.7rem;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.txnId || ''}">
-            ${r.txnId ? `<span class="res-txn-id">${r.txnId.substring(0,14)}${r.txnId.length > 14 ? '…' : ''}</span>` : '<span style="color:var(--text-muted)">—</span>'}
+            ${r.txnId ? `<span class="res-txn-id">${r.txnId.substring(0,14)}${r.txnId.length > 14 ? '...' : ''}</span>` : '<span style="color:var(--text-muted)">-</span>'}
           </td>
           <td>${occupied ? '<span class="slot-admin-badge-booked">🔴 Occupé</span>' : '<span class="slot-admin-badge-free">🟢 Libre</span>'}</td>
           <td style="white-space:nowrap">${_missionActionButtons(r)}</td>
@@ -2244,7 +2225,7 @@ function initAdmin() {
     const noteMap = {
       [MISSION_STATUS.SELECTED]: 'Mission acceptée par l\'admin',
       [MISSION_STATUS.IN_PROGRESS]: 'Mission démarrée',
-      [MISSION_STATUS.DONE]: 'Mission terminée — commission Fixeo due'
+      [MISSION_STATUS.DONE]: 'Mission terminée - commission Fixeo due'
     };
 
     const changed = _setMissionStatus(reservation, action.next, noteMap[action.next] || action.label);
@@ -2256,7 +2237,7 @@ function initAdmin() {
     if (_currentResId === id && document.getElementById('reservation-detail-modal')?.classList.contains('open')) {
       viewReservationDetail(id);
     }
-    showToast(`✅ ${action.label} — ${reservation.id}`, 'success');
+    showToast(`✅ ${action.label} - ${reservation.id}`, 'success');
   };
   window.advanceMissionStatus = advanceMissionStatus;
 
@@ -2279,10 +2260,10 @@ function initAdmin() {
           ${_detailRow('Commission Fixeo', `<strong style="color:var(--warning)">${Number(r.commission || 0).toLocaleString('fr-FR')} MAD</strong>`)}
           ${_detailRow('Statut commission', _commissionBadge(r))}
           ${_detailRow('Type', r.type === 'express' ? '<span class="res-express-badge" style="font-size:.78rem">⚡ Express</span>' : '📋 Standard')}
-          ${_detailRow('Service', r.service || '—')}
-          ${_detailRow('Ville', `📍 ${r.city || '—'}`)}
-          ${_detailRow('Date intervention', r.date || '—')}
-          ${_detailRow('Créneau', r.time || '—')}
+          ${_detailRow('Service', r.service || '-')}
+          ${_detailRow('Ville', `📍 ${r.city || '-'}`)}
+          ${_detailRow('Date intervention', r.date || '-')}
+          ${_detailRow('Créneau', r.time || '-')}
         </div>
         <div class="res-detail-block">
           <h4 class="res-detail-section-title">👤 Parties concernées</h4>
@@ -2296,7 +2277,7 @@ function initAdmin() {
           <div class="res-person-card">
             <div class="admin-avatar">${(r.artisan || 'A').charAt(0)}</div>
             <div>
-              <div style="font-weight:700;font-size:.88rem">${r.artisan || '—'}</div>
+              <div style="font-weight:700;font-size:.88rem">${r.artisan || '-'}</div>
               <div style="font-size:.74rem;color:var(--text-muted)">Artisan · ID ${r.artisanId || 0}</div>
             </div>
           </div>
@@ -2409,7 +2390,7 @@ function initAdmin() {
     renderReservations();
     _updateCODKPIs();
     _updateReservationKPIs();
-    showToast('✅ Paiement COD encaissé — ' + id, 'success');
+    showToast('✅ Paiement COD encaissé - ' + id, 'success');
   };
   window.confirmCODPayment = confirmCODPayment;
 
@@ -2427,7 +2408,7 @@ function initAdmin() {
     renderReservations();
     _updateCODKPIs();
     _updateReservationKPIs();
-    showToast('❌ Commande COD annulée — ' + id, 'error');
+    showToast('❌ Commande COD annulée - ' + id, 'error');
   };
   window.cancelCODOrder = cancelCODOrder;
 
@@ -2447,7 +2428,7 @@ function initAdmin() {
 
 
 /* ================================================================
-   FIXEO V18 — CEO DASHBOARD
+   FIXEO V18 - CEO DASHBOARD
    Vue business & prise de décision
    JS only · non-destructive
    ================================================================ */
@@ -2680,8 +2661,8 @@ function initAdmin() {
     };
     funnel.rate = ceoPercent(funnel.missionsCreated, funnel.opens);
 
-    const topCity = ceoTopEntry(ceoCountBy(missions, (m) => m.city || '—'));
-    const topService = ceoTopEntry(ceoCountBy(missions, (m) => m.service || '—'));
+    const topCity = ceoTopEntry(ceoCountBy(missions, (m) => m.city || '-'));
+    const topService = ceoTopEntry(ceoCountBy(missions, (m) => m.service || '-'));
     const topPerformer = ceoTopArtisans(missions)[0] || null;
 
     return {
@@ -2812,7 +2793,7 @@ function initAdmin() {
               <h3 style="font-size:1rem;margin:0">💰 Revenus Fixeo</h3>
             </div>
             <div class="admin-kpi-grid" style="margin-top:4px">
-              ${ceoKpiCard('var(--success)', 'rgba(32,201,151,.15)', 'var(--success)', '📅', ceoNumber(data.revenues.today), 'Revenus aujourd’hui')}
+              ${ceoKpiCard('var(--success)', 'rgba(32,201,151,.15)', 'var(--success)', '📅', ceoNumber(data.revenues.today), 'Revenus aujourd'hui')}
               ${ceoKpiCard('var(--info)', 'rgba(64,93,230,.15)', 'var(--info)', '🗓️', ceoNumber(data.revenues.month), 'Revenus ce mois')}
               ${ceoKpiCard('var(--warning)', 'rgba(252,175,69,.15)', 'var(--warning)', '⏳', ceoNumber(data.revenues.due), 'Commissions en attente')}
               ${ceoKpiCard('var(--primary)', 'rgba(225,48,108,.15)', 'var(--primary)', '✅', ceoNumber(data.revenues.paid), 'Commissions payées')}
@@ -2885,7 +2866,7 @@ function initAdmin() {
             <div style="display:grid;gap:10px">
               ${ceoInsight('🏙️', `La ville la plus active est ${topCityText}.`)}
               ${ceoInsight('🛠️', `Le service le plus demandé est ${topServiceText}.`)}
-              ${ceoInsight('🏆', `L’artisan top performer est ${topPerformerText}.`)}
+              ${ceoInsight('🏆', `L'artisan top performer est ${topPerformerText}.`)}
             </div>
           </div>
 

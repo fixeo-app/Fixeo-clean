@@ -1,5 +1,5 @@
 /**
- * admin-unified-engine.js — v1
+ * admin-unified-engine.js — v2
  * =====================================================================
  * Fixeo Admin — Unified Business Engine
  *
@@ -81,6 +81,10 @@
   function setText(id, v) { var node = el(id); if (node) node.textContent = v; }
   function roundMoney(n) { return Math.round(Number(n) || 0); }
   function safeJSON(str, fb) { try { var r = JSON.parse(str); return r != null ? r : fb; } catch(_) { return fb; } }
+  /* fmtN: safe number formatter — undefined/null/NaN/0 all become '0', never '—' or 'NaN' */
+  function fmtN(n) { var v = Math.round(Number(n) || 0); return String(v); }
+  /* fmtMAD: money format with fallback to 0 MAD */
+  function fmtMAD(n) { var v = roundMoney(n); return v > 0 ? v.toLocaleString('fr-FR') + ' MAD' : '0 MAD'; }
 
   /* ── Diacritics strip (for normalization) ──────────────── */
   function _stripDiac(s) {
@@ -316,18 +320,17 @@
     var activeMissions       = m.accepted + m.inProgress;   /* sc-cod: active missions */
     var uniqueClients        = _countUniqueClients();
 
-    /* Sidebar badges */
-    setText('sc-artisans',     String(ak.active || '—'));
-    setText('sc-clients',      String(uniqueClients || '—'));
-    setText('sc-reservations', String(activeRequests || '0'));
-    setText('sc-cod',          String(activeMissions || '0'));
+    /* Sidebar badges — fmtN() guarantees 0 never becomes '—' */
+    setText('sc-artisans',     fmtN(ak.active));
+    setText('sc-clients',      fmtN(uniqueClients));
+    setText('sc-reservations', fmtN(activeRequests));
+    setText('sc-cod',          fmtN(activeMissions));
 
-    /* sc-regs: registrations are localStorage ADMIN_REGISTRATIONS (empty in production) */
-    /* Leave sc-regs untouched — admin.js manages it via ADMIN_REGISTRATIONS.length */
-
-    /* sc-reviews / sc-reports: no real data yet — set to 0 (remove fake values) */
-    setText('sc-reviews',  '0');
-    setText('sc-reports',  '0');
+    /* sc-regs: ADMIN_REGISTRATIONS (production = empty array); leave at '0' */
+    setText('sc-regs',    '0');
+    /* sc-reviews / sc-reports: no real data yet */
+    setText('sc-reviews', '0');
+    setText('sc-reports', '0');
   }
 
   /* Count unique clients by phone or name from requests */
@@ -358,10 +361,10 @@
     var activeMissions       = m.validated + m.inProgress + m.accepted + m.completed;
     var totalComm            = m.commissionsDue + m.commissionsPaid;
 
-    setText('kpi-artisans', String(artisansWithMissions || '—'));
-    setText('kpi-clients',  String(uniqueClients || '—'));
-    setText('kpi-jobs',     String(activeMissions || '—'));
-    setText('kpi-revenue',  totalComm > 0 ? totalComm.toLocaleString('fr-FR') : '—');
+    setText('kpi-artisans', fmtN(artisansWithMissions));
+    setText('kpi-clients',  fmtN(uniqueClients));
+    setText('kpi-jobs',     fmtN(activeMissions));
+    setText('kpi-revenue',  fmtMAD(totalComm));
   }
 
   /* ════════════════════════════════════════════════════════
@@ -372,10 +375,12 @@
      ════════════════════════════════════════════════════════ */
   function updateArtisanKPIs(ak) {
     ak = ak || computeArtisanKPIs();
-    setText('art-kpi-total',    String(ak.total));
-    setText('art-kpi-active',   String(ak.active));
-    setText('art-kpi-inactive', String(ak.inactive));
-    setText('art-kpi-certified', String(ak.certified));
+    setText('art-kpi-total',     fmtN(ak.total));
+    setText('art-kpi-active',    fmtN(ak.active));
+    setText('art-kpi-inactive',  fmtN(ak.inactive));
+    setText('art-kpi-certified', fmtN(ak.certified));
+    /* Render-authority marker: legacy writers check this before overwriting */
+    window.__fxEngineKpiTs = Date.now();
   }
 
   /* ════════════════════════════════════════════════════════
@@ -408,6 +413,16 @@
       body: 'Les profils clients apparaîtront ici automatiquement après inscription.',
       action: null,
       isTableBody: true
+    },
+    'admin-activity-list': {
+      icon: '🕐',
+      title: 'Aucune activité récente',
+      body: 'Les demandes, missions et paiements apparaîtront ici automatiquement.'
+    },
+    'admin-alerts': {
+      icon: '✅',
+      title: 'Aucune action requise',
+      body: 'Tout est en ordre. Les alertes opérationnelles apparaîtront ici si nécessaire.'
     }
   };
 
@@ -442,6 +457,33 @@
     Object.keys(EMPTY_STATES).forEach(function(id) {
       _injectEmptyState(id, EMPTY_STATES[id]);
     });
+    /* Chart canvases: replace fake-data charts with real empty states.
+     * We wrap the canvas's parent so the canvas element is preserved
+     * (Chart.js may already have rendered; we replace parent content only
+     * if canvas has no real data — i.e. Chart.js rendered fake data). */
+    _injectChartEmptyState('admin-chart-revenue',
+      '📈 Revenus mensuels',
+      'Aucune commission encaissée pour le moment.',
+      'Les revenus apparaîtront ici après les premières missions validées.');
+    _injectChartEmptyState('admin-chart-subs',
+      '📊 Abonnements',
+      'Aucun abonnement actif.',
+      'Les plans actifs apparaîtront ici dès que les artisans s\'abonneront.');
+  }
+
+  function _injectChartEmptyState(canvasId, title, line1, line2) {
+    var canvas = el(canvasId);
+    if (!canvas) return;
+    var wrap = canvas.parentElement;
+    if (!wrap || wrap.dataset.fxueChart) return;
+    wrap.dataset.fxueChart = '1';
+    /* Replace canvas container with honest empty state */
+    wrap.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;'
+      + 'height:100%;min-height:120px;padding:20px;text-align:center;color:var(--text-muted)">'
+      + '<div style="font-size:1.6rem;margin-bottom:8px">' + title.split(' ')[0] + '</div>'
+      + '<div style="font-weight:600;font-size:.9rem;margin-bottom:4px;color:var(--text)">' + esc(line1) + '</div>'
+      + '<div style="font-size:.78rem;line-height:1.5">' + esc(line2) + '</div>'
+      + '</div>';
   }
 
   /* ════════════════════════════════════════════════════════
@@ -498,12 +540,85 @@
     updateSidebarBadges(m, ak);
     updateOverviewKPIs(m, ak);
     updateArtisanKPIs(ak);
+    _injectRealActivity();
+    _injectRealAlerts(m);
     injectEmptyStates();
 
     /* Dispatch so individual modules re-render their sections */
     try {
       window.dispatchEvent(new CustomEvent(REFRESH_EVENT, { detail: { metrics: m, artisanKPIs: ak } }));
     } catch (_) {}
+  }
+
+  /* ── Real-data activity feed ─────────────────────────────── */
+  var STATUS_ICON = {
+    'nouvelle':     '📋',
+    'accept\u00e9e':'🔧',
+    'en_cours':     '⚡',
+    'termin\u00e9e':'✅',
+    'valid\u00e9e': '🌟',
+    'annul\u00e9e': '❌',
+    'needs_review': '⚠️'
+  };
+
+  function _injectRealActivity() {
+    var listEl = el('admin-activity-list');
+    if (!listEl) return;
+    var reqs = readRequests();
+    if (!reqs.length) return; /* let empty-state handle it */
+    /* Show 5 most recent */
+    var recent = reqs.slice().sort(function(a,b) {
+      return new Date(b.created_at || 0) - new Date(a.created_at || 0);
+    }).slice(0, 5);
+    var html = recent.map(function(r) {
+      var st = normalizeStatus(r.status);
+      var icon = STATUS_ICON[st] || '📋';
+      var svc = esc(String(r.service || r.probleme || 'Demande').slice(0, 28));
+      var city = r.city ? ' · ' + esc(String(r.city).slice(0, 15)) : '';
+      var stLabel = statusLabel(st);
+      var ts = r.created_at ? _relTime(r.created_at) : '';
+      return '<div class="admin-activity-item">'
+        + '<div class="activity-icon">' + icon + '</div>'
+        + '<div class="activity-text">'
+        + '<div class="activity-title">' + svc + city + '</div>'
+        + '<div class="activity-time">' + esc(stLabel) + (ts ? ' · ' + esc(ts) : '') + '</div>'
+        + '</div></div>';
+    }).join('');
+    listEl.innerHTML = html;
+  }
+
+  function _relTime(isoStr) {
+    try {
+      var diff = Date.now() - new Date(isoStr).getTime();
+      var min = Math.floor(diff / 60000);
+      if (min < 2)   return 'à l\'instant';
+      if (min < 60)  return 'il y a ' + min + ' min';
+      var h = Math.floor(min / 60);
+      if (h  < 24)   return 'il y a ' + h + 'h';
+      var d = Math.floor(h / 24);
+      return 'il y a ' + d + 'j';
+    } catch(_) { return ''; }
+  }
+
+  /* ── Real-data alerts ────────────────────────────────────── */
+  function _injectRealAlerts(m) {
+    var alertEl = el('admin-alerts');
+    if (!alertEl) return;
+    var items = [];
+    if (m.activeRequests > 0)
+      items.push({ icon: '📋', text: m.activeRequests + ' demande' + (m.activeRequests > 1 ? 's' : '') + ' en attente d\'artisan', section: 'reservations' });
+    if (m.pendingReview > 0)
+      items.push({ icon: '⚠️', text: m.pendingReview + ' mission' + (m.pendingReview > 1 ? 's' : '') + ' à évaluer (prix manquant)', section: 'cod-orders' });
+    if (m.commissionsDue > 0)
+      items.push({ icon: '💰', text: 'Commissions dues : ' + fmtMAD(m.commissionsDue), section: 'cod-orders' });
+    if (!items.length) return; /* let empty-state show "Tout est en ordre" */
+    alertEl.innerHTML = items.map(function(item) {
+      return '<div class="admin-alert">'
+        + '<div class="alert-icon">' + item.icon + '</div>'
+        + '<div class="alert-text">' + esc(item.text) + '</div>'
+        + '<span class="alert-action" onclick="adminSection(\'' + item.section + '\')">Voir \u2192</span>'
+        + '</div>';
+    }).join('');
   }
 
   /* ── Event sources that trigger a refresh ───────────────── */
@@ -593,10 +708,14 @@
     onRefresh:  onRefresh,
     offRefresh: offRefresh,
 
+    /* Formatting helpers (available to other modules) */
+    fmtN:   fmtN,
+    fmtMAD: fmtMAD,
+
     /* Flags */
     INTERVALS_MANAGED: true,  /* tells other modules they can skip their own setInterval */
     REFRESH_EVENT:     REFRESH_EVENT,
-    VERSION:           'v1'
+    VERSION:           'v2'
   };
 
   /* ── Boot ───────────────────────────────────────────────── */

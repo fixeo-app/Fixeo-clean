@@ -109,6 +109,10 @@
       availability:        row.availability || 'available',
       available:           row.availability === 'available',
       available_today:     row.availability === 'available',
+      /* status: canonical field used by admin KPI counters.
+       * Supabase artisans table has no 'status' column — derive from availability.
+       * 'active' = artisan is available and not suspended. */
+      status:              (row.suspended || row.hidden) ? 'inactive' : 'active',
       verified:            !!row.verified,
       verification_status: row.verified ? 'verified' : (row.claimed ? 'pending' : 'unverified'),
       claimed:             !!row.claimed,
