@@ -19,6 +19,11 @@
     return safeTrim(String(value || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, ''));
   }
 
+  /* ev-bus: lightweight safe dispatcher - never throws, never duplicates */
+  function _dispatch(name, detail) {
+    try { window.dispatchEvent(new CustomEvent(name, { detail: detail || {} })); } catch (e) { /* noop */ }
+  }
+
   function resolveCurrentUserId() {
     return safeTrim(
       localStorage.getItem('user_id') ||
@@ -66,7 +71,7 @@
 
   function formatMoney(amount) {
     const safeAmount = Number(amount || 0);
-    if (!Number.isFinite(safeAmount) || safeAmount <= 0) return '—';
+    if (!Number.isFinite(safeAmount) || safeAmount <= 0) return '-';
     return `${Math.round(safeAmount).toLocaleString('fr-FR')} MAD`;
   }
 
@@ -563,7 +568,7 @@
         window.showToast?.("Cette demande vient d'être acceptée par un autre artisan", "info");
         window.notifications?.error?.("Cette demande vient d'être acceptée par un autre artisan", "");
       } else {
-        window.notifications?.error?.('Impossible d’accepter la demande', 'Cette demande est introuvable ou déjà traitée.');
+        window.notifications?.error?.("Impossible d’accepter la demande", "Cette demande est introuvable ou déjà traitée.");
       }
       renderAll();
       return;
@@ -595,6 +600,16 @@
 
     if (isClientConfirm) {
       window.notifications?.success?.('Mission validée', 'La mission a été confirmée côté client.');
+      /* ev-bus: dispatch fixeo:mission-validated so trust engine + commission lifecycle react */
+      const _req = updated.id ? updated : (updated.request || updated);
+      const _price = Number(_req.final_price || _req.price_from || 0);
+      _dispatch('fixeo:mission-validated', {
+        requestId:   String(requestId),
+        artisanId:   safeTrim(_req.assigned_artisan_id || ''),
+        artisanName: safeTrim(_req.assigned_artisan    || ''),
+        price:       _price,
+        commission:  Math.round(_price * 0.15)
+      });
     } else {
       window.notifications?.success?.(
         action === 'start' ? 'Mission démarrée' : 'Mission terminée',
@@ -649,12 +664,21 @@
     if (!result?.ok) {
       button.disabled = false;
       button.classList.remove('loading');
-      window.notifications?.error?.('Avis impossible', 'Cet avis est déjà envoyé ou la mission ne peut pas recevoir d’avis.');
+      window.notifications?.error?.("Avis impossible", "Cet avis est déjà envoyé ou la mission ne peut pas recevoir d’avis.");
       renderAll();
       return;
     }
 
-    window.notifications?.success?.('Avis enregistré', 'L’avis client a été ajouté à la mission.');
+    window.notifications?.success?.('Avis enregistré', "L\u2019avis client a \u00e9t\u00e9 ajout\u00e9 \u00e0 la mission.");
+    /* ev-bus: dispatch fixeo:review-submitted so trust engine + artisan notifications react */
+    const _revReq = result.request || {};
+    _dispatch('fixeo:review-submitted', {
+      requestId:   String(requestId),
+      artisanId:   safeTrim(_revReq.assigned_artisan_id || profile.userId || ''),
+      artisanName: safeTrim(_revReq.assigned_artisan    || ''),
+      rating:      rating,
+      comment:     String(comment || '').trim()
+    });
     renderAll();
   }
 

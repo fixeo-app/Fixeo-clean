@@ -319,11 +319,13 @@
     if (!id) return false;
     const rawRequests = readAllRequests();
     let changed = false;
+    let paidMission = null; /* ev-bus: capture for commission-paid event */
     const nextRequests = rawRequests.map(function (raw, index) {
       const mission = normalizeMission(raw, index);
       if (String(mission.id) !== id) return raw;
       if (!isEligibleForPayment(mission)) return raw;
       changed = true;
+      paidMission = mission; /* ev-bus: capture before patch */
       return Object.assign({}, raw, {
         id: mission.id,
         commission_status: 'payée',
@@ -335,6 +337,17 @@
     if (!changed) return false;
     localStorage.setItem(STORAGE_KEY, JSON.stringify(nextRequests));
     try {
+      /* ev-bus: always dispatch both events — order: specific first, then general */
+      window.dispatchEvent(new CustomEvent('fixeo:commission-paid', {
+        detail: {
+          requestId:    id,
+          artisanId:    paidMission ? paidMission.assigned_artisan_id : '',
+          artisanName:  paidMission ? paidMission.assigned_artisan    : '',
+          commission:   paidMission ? paidMission.commission_amount   : 0,
+          price:        paidMission ? paidMission.final_price         : 0,
+          paidBy:       'admin'
+        }
+      }));
       window.dispatchEvent(new CustomEvent('fixeo:client-request-updated', { detail: { id: id, commission_status: 'payée' } }));
     } catch (error) {
       /* noop */
