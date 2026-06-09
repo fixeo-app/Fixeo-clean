@@ -1,5 +1,5 @@
 /* ============================================================
-   FIXEO ADMIN — MISSION SUPERVISION PHASE 3  (v3-assign)
+   FIXEO ADMIN — MISSION SUPERVISION PHASE 3  (v3-price)
    js/admin-mission-supervision-p3.js
 
    OBJECTIVE: Real mission supervision center.
@@ -12,7 +12,17 @@
      artisan_phone, status='acceptée', accepted_at
    - artisan_phone stored on request → artisan WA button now reliable
    - mark-inprogress action (acceptée → en_cours)
-   - mark-complete action (en_cours → terminée)
+   - mark-complete → replaced by final price step (Phase 1)
+
+   v3-price additions:
+   - "Terminer" on en_cours opens inline price entry step
+   - Price input with live commission + artisan_net preview
+   - Validation: numeric, 50–50000 MAD, inline error
+   - On confirm: patches final_price, price_validated, price_validated_by,
+     price_validated_at, status='terminée', completed_at,
+     commission_amount, artisan_net, client_confirmation='en_attente'
+   - commission_due NOT set yet — becomes due only after client validates
+   - "Prix final confirmé" badge shown on terminée cards where price_validated=true
 
    NEVER: re-renders commission queue, artisan table, overview KPIs,
           forks lifecycle, creates duplicate stores, fake data,
@@ -476,6 +486,46 @@
       + '</div>';
   }
 
+  /* ════════════════════════════════════════════════════════
+     PRICE STEP — inline final price entry
+     ════════════════════════════════════════════════════════ */
+
+  /**
+   * Render the inline price entry step below a card.
+   * Hidden by default — shown when admin clicks "Terminer" on en_cours.
+   * prevFp: existing final_price (pre-fills if already set, e.g. budget).
+   */
+  function _renderPriceStep(reqId, prevFp) {
+    var safeId   = esc(String(reqId));
+    var prefill  = (prevFp && prevFp > 0) ? prevFp : '';
+    /* Pre-compute preview only if prefill exists */
+    var preComm  = prefill ? roundMoney(prefill * COMMISSION_RATE) : '';
+    var preNet   = prefill ? roundMoney(prefill - preComm)          : '';
+
+    return '<div class="fxams3-price-step" id="fxams3-price-step-' + safeId + '" style="display:none">'
+      + '<div class="fxams3-price-step-title">\ud83d\udcb0 Montant final de l\u2019intervention</div>'
+      + '<div class="fxams3-price-step-row">'
+        + '<input class="fxams3-price-input" id="fxams3-price-input-' + safeId + '"'
+          + ' type="number" min="50" max="50000" step="1"'
+          + ' placeholder="Ex\u00a0: 600"'
+          + (prefill ? ' value="' + prefill + '"' : '')
+          + ' autocomplete="off">'
+        + '<span class="fxams3-price-unit">MAD</span>'
+      + '</div>'
+      + '<div class="fxams3-price-preview" id="fxams3-price-preview-' + safeId + '">'
+        + (prefill
+            ? '<span>Commission Fixeo (15\u00a0%)\u00a0: <strong id="fxams3-comm-' + safeId + '">' + preComm.toLocaleString('fr-FR') + '\u00a0MAD</strong>'
+              + '&nbsp;&nbsp;Net artisan\u00a0: <strong id="fxams3-net-' + safeId + '">' + preNet.toLocaleString('fr-FR') + '\u00a0MAD</strong></span>'
+            : '<span id="fxams3-comm-' + safeId + '"></span><span id="fxams3-net-' + safeId + '"></span>')
+        + '</div>'
+      + '<div class="fxams3-price-error" id="fxams3-price-err-' + safeId + '" style="display:none"></div>'
+      + '<div class="fxams3-price-step-actions">'
+        + '<button class="fxams3-act-btn btn-confirm-price" data-act="confirm-price" data-req-id="' + safeId + '">\u2713 Confirmer et terminer</button>'
+        + '<button class="fxams3-act-btn btn-cancel-price" data-act="cancel-price-step" data-req-id="' + safeId + '">\u2190 Annuler</button>'
+      + '</div>'
+    + '</div>';
+  }
+
   /* ── Single mission card ─────────────────────────────────── */
   function _renderCard(r, m) {
     var st     = normSt(r.status);
@@ -554,7 +604,20 @@
     if (st==='accept\u00e9e') {
       progressBtn = '<button class="fxams3-act-btn btn-inprogress" data-act="mark-inprogress" data-req-id="' + esc(String(r.id||'')) + '">\u25b6 D\u00e9marrer</button>';
     } else if (st==='en_cours') {
-      progressBtn = '<button class="fxams3-act-btn btn-complete" data-act="mark-complete" data-req-id="' + esc(String(r.id||'')) + '">\u2713 Terminer</button>';
+      /* v3-price: open inline price step instead of direct mark-complete */
+      progressBtn = '<button class="fxams3-act-btn btn-complete" data-act="open-price-step" data-req-id="' + esc(String(r.id||'')) + '">\u2713 Terminer</button>';
+    }
+
+    /* v3-price: show "Prix final confirmé" badge on terminée cards */
+    var priceBadge = '';
+    if (st==='termin\u00e9e' && r.price_validated===true && fp>0) {
+      var commPreview = roundMoney(fp * COMMISSION_RATE);
+      var netPreview  = fp - commPreview;
+      priceBadge = '<div class="fxams3-price-confirmed-badge">'
+        + '\u2713 Prix final\u00a0: ' + esc(fp.toLocaleString('fr-FR')) + '\u00a0MAD'
+        + ' &nbsp;|&nbsp; Commission\u00a0: ' + esc(commPreview.toLocaleString('fr-FR')) + '\u00a0MAD'
+        + ' &nbsp;|&nbsp; Net artisan\u00a0: ' + esc(netPreview.toLocaleString('fr-FR')) + '\u00a0MAD'
+        + '</div>';
     }
 
     /* Flag action */
@@ -595,6 +658,7 @@
         + (r.validated_at ? '<div class="fxams3-meta-item"><div class="fxams3-meta-label">Valid\u00e9</div><div class="fxams3-meta-value">' + fmtShort(r.validated_at) + '</div></div>' : '')
         + (fp>0 ? '<div class="fxams3-meta-item"><div class="fxams3-meta-label">Prix</div><div class="fxams3-meta-value">' + esc(fp.toLocaleString('fr-FR')+' MAD') + '</div></div>' : '')
       + '</div>'
+      + (priceBadge ? priceBadge : '')
       + '<div class="fxams3-card-actions">'
         + assignBtn
         + progressBtn
@@ -604,6 +668,7 @@
         + '<button class="fxams3-act-btn btn-refresh" data-act="refresh">\u21bb</button>'
       + '</div>'
       + _renderAssignPicker(r.id, r.city, r.service)
+      + _renderPriceStep(r.id, fp)
     + '</div>';
   }
 
@@ -751,14 +816,106 @@
           return;
         }
 
-        if (act==='mark-complete' && reqId) {
-          _writeReqPatch(reqId, { status:'termin\u00e9e', completed_at: nowISO() });
-          _showToast('\u2713 Mission termin\u00e9e', 'success');
+        /* ── v3-price: open inline price step ──────────────── */
+        if (act==='open-price-step' && reqId) {
+          var stepEl = document.getElementById('fxams3-price-step-' + reqId);
+          if (stepEl) {
+            var isOpen = stepEl.style.display !== 'none';
+            stepEl.style.display = isOpen ? 'none' : 'block';
+            /* Focus the input when opening */
+            if (!isOpen) {
+              var inp = document.getElementById('fxams3-price-input-' + reqId);
+              if (inp) {
+                setTimeout(function(){ inp.focus(); inp.select(); }, 60);
+                /* Live preview on input */
+                inp.oninput = function() {
+                  _updatePricePreview(reqId, inp.value);
+                };
+              }
+            }
+          }
+          return;
+        }
+
+        if (act==='cancel-price-step' && reqId) {
+          var stepC = document.getElementById('fxams3-price-step-' + reqId);
+          if (stepC) stepC.style.display = 'none';
+          return;
+        }
+
+        if (act==='confirm-price' && reqId) {
+          var priceInp = document.getElementById('fxams3-price-input-' + reqId);
+          var errEl    = document.getElementById('fxams3-price-err-' + reqId);
+          var price    = priceInp ? Number(priceInp.value) : 0;
+
+          /* Validate */
+          var errMsg = _validatePrice(price);
+          if (errMsg) {
+            if (errEl) { errEl.textContent = errMsg; errEl.style.display = 'block'; }
+            if (priceInp) priceInp.focus();
+            return;
+          }
+          if (errEl) errEl.style.display = 'none';
+
+          var comm = roundMoney(price * COMMISSION_RATE);
+          var net  = price - comm;
+
+          _writeReqPatch(reqId, {
+            status              : 'termin\u00e9e',
+            final_price         : price,
+            price_validated     : true,
+            price_validated_by  : 'admin',
+            price_validated_at  : nowISO(),
+            completed_at        : nowISO(),
+            commission_amount   : comm,
+            artisan_net         : net,
+            commission_due      : false,   /* becomes true only after client validates */
+            client_confirmation : 'en_attente'
+          });
+
+          _showToast('\u2713 Mission termin\u00e9e &mdash; ' + price.toLocaleString('fr-FR') + '\u202fMAD &mdash; commission\u00a0: ' + comm.toLocaleString('fr-FR') + '\u202fMAD', 'success');
           render();
           return;
         }
       });
     }
+  }
+
+  /* ── v3-price: live preview helper ───────────────────────── */
+  function _updatePricePreview(reqId, rawVal) {
+    var price = Number(rawVal);
+    var commEl = document.getElementById('fxams3-comm-' + reqId);
+    var netEl  = document.getElementById('fxams3-net-'  + reqId);
+    var prevEl = document.getElementById('fxams3-price-preview-' + reqId);
+    var errEl  = document.getElementById('fxams3-price-err-' + reqId);
+    if (errEl) errEl.style.display = 'none';
+
+    if (!price || !isFinite(price) || price <= 0) {
+      if (commEl) commEl.textContent = '';
+      if (netEl)  netEl.textContent  = '';
+      if (prevEl) prevEl.innerHTML   = '<span id="fxams3-comm-' + esc(String(reqId)) + '"></span><span id="fxams3-net-' + esc(String(reqId)) + '"></span>';
+      return;
+    }
+
+    var comm = roundMoney(price * COMMISSION_RATE);
+    var net  = price - comm;
+    var html = '<span>Commission Fixeo (15\u00a0%)\u00a0: <strong id="fxams3-comm-' + esc(String(reqId)) + '">'
+      + comm.toLocaleString('fr-FR') + '\u00a0MAD</strong>'
+      + '&nbsp;&nbsp;Net artisan\u00a0: <strong id="fxams3-net-' + esc(String(reqId)) + '">'
+      + net.toLocaleString('fr-FR') + '\u00a0MAD</strong></span>';
+    if (prevEl) prevEl.innerHTML = html;
+  }
+
+  /* ── v3-price: price validation ──────────────────────────── */
+  function _validatePrice(price) {
+    if (!price || !isFinite(price)) return 'Saisissez un montant valide.';
+    if (price < 50)     return 'Montant minimum\u00a0: 50\u00a0MAD.';
+    if (price > 50000)  return 'Montant maximum\u00a0: 50\u202f000\u00a0MAD. V\u00e9rifiez le montant.';
+    if (!Number.isInteger(price) && price !== Math.round(price * 100) / 100) {
+      /* Allow decimals but not more than 2dp */
+      return 'Montant invalide \u2014 utilisez un nombre entier ou 2 d\u00e9cimales.';
+    }
+    return ''; /* valid */
   }
 
   /* Patch a request in fixeo_client_requests by id */
