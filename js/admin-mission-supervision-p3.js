@@ -967,7 +967,17 @@
     return ''; /* valid */
   }
 
-  /* Patch a request in fixeo_client_requests by id */
+  /* Patch a request in fixeo_client_requests by id.
+   *
+   * v3-sb: If the target id is not found in localStorage (Supabase-only row),
+   * clone the row from window.__fxAccSbCache into the localStorage array first,
+   * then apply the patch. This makes Supabase-sourced cards fully actionable
+   * (Démarrer, Terminer, Assigner, Flaguer) without any schema change.
+   *
+   * LocalStorage rows always win — existing LS rows are patched in-place as
+   * before. The adoption path only fires when changed===false after the map,
+   * meaning the id genuinely did not exist in localStorage.
+   */
   function _writeReqPatch(id, patch) {
     try {
       var arr = JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]');
@@ -977,6 +987,31 @@
         changed = true;
         return Object.assign({},r,patch);
       });
+
+      /* v3-sb: Supabase-only row adoption ───────────────────
+       * If the row wasn't found in localStorage, look it up in the
+       * Supabase cache, clone it into the array, then re-run the patch. */
+      if (!changed && Array.isArray(window.__fxAccSbCache)) {
+        var sbRow = null;
+        for (var i=0; i<window.__fxAccSbCache.length; i++) {
+          if (String(window.__fxAccSbCache[i].id||'')===String(id)) {
+            sbRow = window.__fxAccSbCache[i];
+            break;
+          }
+        }
+        if (sbRow) {
+          /* Clone the Supabase row into the LS array.
+           * Next readReqs() dedup will favour this LS copy over the cache. */
+          var adopted = Object.assign({}, sbRow);
+          arr.push(adopted);
+          next = arr.map(function(r) {
+            if (String(r.id||'')!==String(id)) return r;
+            changed = true;
+            return Object.assign({},r,patch);
+          });
+        }
+      }
+
       if (changed) {
         localStorage.setItem(STORAGE_KEY,JSON.stringify(next));
         try{ window.dispatchEvent(new CustomEvent('fixeo:client-request-updated',{detail:{id:id}})); }catch(er){}

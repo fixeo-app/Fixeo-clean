@@ -139,12 +139,9 @@
              * v2: extract artisan/date/phone/ref from encoded description
              * so admin supervision panel shows rich booking context. */
             _sbReqCache = rows.map(function(r) {
-              /* status mapping: Supabase 'new' → System A 'nouvelle' */
-              var st = String(r.status || 'new').toLowerCase();
-              if (st === 'new') st = 'nouvelle';
               var desc = String(r.description || '').trim();
 
-              /* Parse encoded metadata from description field.
+              /* Parse encoded metadata FIRST — status elevation depends on artisanName.
                * Bridge writes: "Base desc [Key: val · Key: val]" */
               var artisanName = '';
               var phone       = '';
@@ -155,26 +152,40 @@
               var resRef      = '';
               var metaMatch   = desc.match(/\[(.+)\]$/);
               if (metaMatch) {
-                var parts = metaMatch[1].split(' · ');
+                var parts = metaMatch[1].split(' \u00b7 ');
                 parts.forEach(function(part) {
                   var kv = part.match(/^([^:]+):\s*(.+)$/);
                   if (!kv) return;
                   var key = kv[1].trim().toLowerCase();
                   var val = kv[2].trim();
-                  if (key === 'artisan')   artisanName = val;
-                  else if (key === 'tél')  phone       = val;
-                  else if (key === 'budget') budget     = val;
-                  else if (key === 'date') date         = val;
-                  else if (key === 'créneau') timeSlot  = val;
-                  else if (key === 'adresse') address   = val;
-                  else if (key === 'réf')  resRef       = val;
+                  if (key === 'artisan')         artisanName = val;
+                  else if (key === 't\u00e9l')   phone       = val;
+                  else if (key === 'budget')     budget      = val;
+                  else if (key === 'date')       date        = val;
+                  else if (key === 'cr\u00e9neau') timeSlot  = val;
+                  else if (key === 'adresse')    address     = val;
+                  else if (key === 'r\u00e9f')   resRef      = val;
                 });
+              }
+
+              /* Status mapping — done AFTER description parse so artisanName is known.
+               * 'new' → 'nouvelle' (default).
+               * If the row already has an artisan name from the booking flow,
+               * the client selected this artisan intentionally on artisan-profile.html.
+               * Elevate to 'acceptée' so Démarrer is available immediately. */
+              var rawSt = String(r.status || 'new').toLowerCase();
+              var st;
+              if (rawSt === 'new' || rawSt === 'nouvelle') {
+                st = artisanName ? 'accept\u00e9e' : 'nouvelle';
+              } else {
+                /* Pass other statuses (en_cours, terminée, etc.) through unchanged */
+                st = rawSt;
               }
 
               return {
                 id               : String(r.id || ''),
                 service          : String(r.service_category || '').trim() || 'Service',
-                city             : String(r.city || '').trim() || '—',
+                city             : String(r.city || '').trim() || '\u2014',
                 description      : desc,
                 status           : st,
                 assigned_artisan : artisanName,
