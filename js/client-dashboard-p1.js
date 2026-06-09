@@ -81,10 +81,43 @@
     try { localStorage.setItem(REQUESTS_KEY, JSON.stringify(list)); } catch(e){}
   }
 
+  /* ── Collect Supabase card ids from #client-requests-list ─── */
+  function _getSbRenderedIds() {
+    /* FIX 4B: Return a Set of UUIDs already rendered by fixeo-mvp-supabase.js
+     * (cards have data-sb-id attribute added by FIX 4A).
+     * Any LS row whose supabase_request_id or id is in this set is a duplicate
+     * and must be suppressed so Supabase card wins. */
+    var ids = new Set ? new Set() : { _m:{}, has:function(k){return !!this._m[k];}, add:function(k){this._m[k]=1;} };
+    try {
+      var sbList = document.getElementById('client-requests-list');
+      if (!sbList) return ids;
+      var cards = sbList.querySelectorAll('[data-sb-id]');
+      for (var i = 0; i < cards.length; i++) {
+        var sbId = cards[i].getAttribute('data-sb-id');
+        if (sbId) ids.add(sbId);
+      }
+    } catch(e) {}
+    return ids;
+  }
+
   /* ── Match requests to current user ─────────────────── */
   function getMyRequests(identity) {
     var all = readRequests();
-    // If no identity, show all (first-time user may not have profile yet)
+
+    /* FIX 4B: suppress LS rows that are already shown by the Supabase renderer.
+     * Supabase card wins — its status is authoritative (updated by v3-sync).
+     * We filter BEFORE identity matching so dedup is always applied. */
+    var sbIds = _getSbRenderedIds();
+    if (sbIds.add) { /* Set available */
+      all = all.filter(function(r) {
+        var sbRef  = String(r.supabase_request_id || '');
+        var ownId  = String(r.id || '');
+        /* If either reference is already rendered as a Supabase card, skip */
+        return !(sbRef && sbIds.has(sbRef)) && !(ownId && sbIds.has(ownId));
+      });
+    }
+
+    // If no identity, show all remaining (first-time user may not have profile yet)
     var hasIdentity = identity.phone.length >= 7 || identity.name.length >= 2;
     if (!hasIdentity) return all.slice().sort(_sortNewestFirst);
 

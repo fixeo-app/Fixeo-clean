@@ -791,8 +791,9 @@
 
         requestsEl.innerHTML = requests.length ? requests.map(function (requestRow) {
           var badge = _fxReqStatusBadge(requestRow.status);
+          /* FIX 4A: data-sb-id on each card so P1 dedup can identify Supabase-sourced cards */
           return '' +
-            '<div class="request-card">' +
+            '<div class="request-card" data-sb-id="' + escapeHtml(requestRow.id) + '">' +
               '<div class="request-top">' +
                 '<div>' +
                   '<h3>' + escapeHtml(requestRow.service_category || 'Service') + '</h3>' +
@@ -810,6 +811,89 @@
             '</div>';
         }).join('') : '<div class="request-card" style="text-align:center;padding:28px 20px"><p style="margin:0 0 12px;font-size:1.1rem">\ud83d\udccb</p><p style="margin:0;font-weight:600">Aucune demande pour le moment</p><p style="margin:8px 0 16px;opacity:.65;font-size:.88rem">Cr\u00e9ez votre premi\u00e8re demande pour trouver un artisan qualifi\u00e9.</p><button class="btn btn-primary" type="button" onclick="window.openNewRequestModal&&openNewRequestModal()">+ Cr\u00e9er une demande</button></div>';
         requestsEl.dataset.real = '1';
+
+        /* ── FIX 2: Supabase → localStorage status write-back ────────────────
+         * After Supabase service_requests are fetched and rendered, sync any
+         * updated statuses back into fixeo_client_requests localStorage so that
+         * client-dashboard-p1.js (Layer A) sees the admin's lifecycle updates.
+         *
+         * MATCH STRATEGY (priority order):
+         *   1. LS row where r.supabase_request_id === Supabase row.id
+         *   2. LS row where r.id === Supabase row.id  (adopted rows)
+         *
+         * NEVER creates new LS rows — only patches status on existing ones.
+         * NEVER overwrites statuses that are already more advanced than Supabase.
+         * Dispatches fixeo:client-request-updated after any write so P1 + P2
+         * re-render immediately (confirm button appears for terminée cards).
+         * ──────────────────────────────────────────────────────────────────── */
+        if (requests.length) {
+          (function _syncSbStatusToLS() {
+            var LS_KEY = 'fixeo_client_requests';
+            /* Status advancement order — never downgrade */
+            var STATUS_ORDER = ['nouvelle', 'accept\u00e9e', 'en_cours', 'termin\u00e9e', 'valid\u00e9e', 'annul\u00e9e'];
+            function rankOf(s) {
+              var idx = STATUS_ORDER.indexOf(String(s||'nouvelle').toLowerCase().trim());
+              return idx === -1 ? 0 : idx;
+            }
+            /* Map Supabase status values to System A labels */
+            var SB_TO_LOCAL = {
+              'new'           : 'nouvelle',
+              'nouvelle'      : 'nouvelle',
+              'accept\u00e9e' : 'accept\u00e9e',
+              'accepted'      : 'accept\u00e9e',
+              'en_cours'      : 'en_cours',
+              'termin\u00e9e' : 'termin\u00e9e',
+              'terminee'      : 'termin\u00e9e',
+              'valid\u00e9e'  : 'valid\u00e9e',
+              'validated'     : 'valid\u00e9e',
+              'annul\u00e9e'  : 'annul\u00e9e',
+              'cancelled'     : 'annul\u00e9e'
+            };
+            try {
+              var lsRaw = localStorage.getItem(LS_KEY);
+              var lsArr = lsRaw ? JSON.parse(lsRaw) : [];
+              if (!Array.isArray(lsArr) || !lsArr.length) return;
+
+              var changed = false;
+              var updatedIds = [];
+
+              requests.forEach(function(sbRow) {
+                var sbUUID = String(sbRow.id || '');
+                var sbStatus = SB_TO_LOCAL[String(sbRow.status || 'new').toLowerCase().trim()];
+                if (!sbUUID || !sbStatus) return;
+
+                lsArr.forEach(function(r, i) {
+                  /* Match: supabase_request_id cross-ref OR direct id match */
+                  var match = (String(r.supabase_request_id || '') === sbUUID)
+                           || (String(r.id || '') === sbUUID);
+                  if (!match) return;
+
+                  /* Never downgrade a status that is already more advanced */
+                  var currentRank = rankOf(r.status);
+                  var sbRank      = rankOf(sbStatus);
+                  if (sbRank <= currentRank) return;
+
+                  /* Patch status and preserve all other fields */
+                  lsArr[i] = Object.assign({}, r, { status: sbStatus });
+                  changed = true;
+                  updatedIds.push(String(r.id || sbUUID));
+                });
+              });
+
+              if (changed) {
+                localStorage.setItem(LS_KEY, JSON.stringify(lsArr));
+                /* Notify P1 + P2 to re-render — confirm button appears for terminée */
+                updatedIds.forEach(function(uid) {
+                  try {
+                    window.dispatchEvent(new CustomEvent('fixeo:client-request-updated', { detail: { id: uid } }));
+                  } catch(e) {}
+                });
+              }
+            } catch(e) {
+              console.warn('[v3-client-sync] LS write-back error:', e && e.message);
+            }
+          })();
+        }
       }
 
       // Quotes depend on request IDs — fetched after requests resolve

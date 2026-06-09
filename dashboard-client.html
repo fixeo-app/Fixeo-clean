@@ -1778,10 +1778,9 @@ function showSection(name) {
 }
 
 // ── Mobile sidebar ────────────────────────────────────────
-document.getElementById('hamburger')?.addEventListener('click', () => {
-  document.getElementById('sidebar').classList.toggle('open');
-  document.getElementById('hamburger').classList.toggle('open');
-});
+// Handler removed — DOMContentLoaded block at line ~2350 is the single
+// hamburger listener (includes overlay + aria-expanded + mobile close).
+// Duplicate listener here caused toggle × 2 = sidebar stayed closed.
 
 // ── Chat helpers ──────────────────────────────────────────
 function toggleChat()  { document.getElementById('chat-panel').classList.toggle('open'); }
@@ -2494,7 +2493,7 @@ document.addEventListener('DOMContentLoaded', () => {
 <script src="js/request-form.js?v=v1a"></script>
 <script src="js/header-unified.js"></script>
 <script src="js/auth-global.js?v=p1b"></script>
-<script src="js/fixeo-mvp-supabase.js"></script>
+<script src="js/fixeo-mvp-supabase.js?v=s1"></script>
 <script src="js/fixeo-session-bridge.js?v=sb1"></script>
 
 <script src="js/fixeo-chat-mvp.js"></script>
@@ -2691,7 +2690,7 @@ document.addEventListener('DOMContentLoaded', () => {
 <script src="js/fixeo-artisan-identity.js?v=v2a3" defer></script>
 <script src="js/fixeo-mission-rehydration.js?v=v2c1" defer></script>
 <!-- Phase 1 Client Sync — real request display -->
-<script src="js/client-dashboard-p1.js?v=da-v1e" defer></script>
+<script src="js/client-dashboard-p1.js?v=p1s1" defer></script>
 <!-- DX-2: Living Dashboard / Context-Aware Experience -->
 <script src="js/dashboard-client-dx2.js?v=1" defer></script>
 <!-- DX-3: Real Operational Marketplace Connection -->
@@ -2699,7 +2698,7 @@ document.addEventListener('DOMContentLoaded', () => {
 <!-- DX-WA: WhatsApp-Native Operational Dashboard -->
 <script src="js/dashboard-client-dxwa.js?v=1" defer></script>
 <!-- Phase 2 Mission Lifecycle — additive -->
-<script src="js/mission-lifecycle-p2.js?v=da-v1e" defer></script>
+<script src="js/mission-lifecycle-p2.js?v=da-v1f" defer></script>
 <script src="js/fixeo-notifications-real-v1.js?v=1" defer></script>
 <!-- V1-I: Coordination Confidence Layer -->
 <script src="js/fixeo-coordination-v1i.js?v=v1i" defer></script>
