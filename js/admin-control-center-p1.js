@@ -136,29 +136,63 @@
             }
             var rows = Array.isArray(result.data) ? result.data : [];
             /* Map Supabase row → System A shape.
-             * Unmapped fields (commission, artisan, price) default to
-             * zero/empty — the existing empty-pill CSS handles them. */
+             * v2: extract artisan/date/phone/ref from encoded description
+             * so admin supervision panel shows rich booking context. */
             _sbReqCache = rows.map(function(r) {
               /* status mapping: Supabase 'new' → System A 'nouvelle' */
               var st = String(r.status || 'new').toLowerCase();
               if (st === 'new') st = 'nouvelle';
+              var desc = String(r.description || '').trim();
+
+              /* Parse encoded metadata from description field.
+               * Bridge writes: "Base desc [Key: val · Key: val]" */
+              var artisanName = '';
+              var phone       = '';
+              var budget      = '';
+              var date        = '';
+              var timeSlot    = '';
+              var address     = '';
+              var resRef      = '';
+              var metaMatch   = desc.match(/\[(.+)\]$/);
+              if (metaMatch) {
+                var parts = metaMatch[1].split(' · ');
+                parts.forEach(function(part) {
+                  var kv = part.match(/^([^:]+):\s*(.+)$/);
+                  if (!kv) return;
+                  var key = kv[1].trim().toLowerCase();
+                  var val = kv[2].trim();
+                  if (key === 'artisan')   artisanName = val;
+                  else if (key === 'tél')  phone       = val;
+                  else if (key === 'budget') budget     = val;
+                  else if (key === 'date') date         = val;
+                  else if (key === 'créneau') timeSlot  = val;
+                  else if (key === 'adresse') address   = val;
+                  else if (key === 'réf')  resRef       = val;
+                });
+              }
+
               return {
-                id              : String(r.id || ''),
-                service         : String(r.service_category || '').trim() || 'Service',
-                city            : String(r.city || '').trim() || '—',
-                description     : String(r.description || '').trim(),
-                status          : st,
-                assigned_artisan: '',
+                id               : String(r.id || ''),
+                service          : String(r.service_category || '').trim() || 'Service',
+                city             : String(r.city || '').trim() || '—',
+                description      : desc,
+                status           : st,
+                assigned_artisan : artisanName,
                 assigned_artisan_id: '',
-                budget          : '',
-                final_price     : 0,
+                phone            : phone,
+                budget           : budget,
+                date             : date,
+                time             : timeSlot,
+                address          : address,
+                reservation_ref  : resRef,
+                final_price      : 0,
                 commission_amount: 0,
                 commission_status: '',
-                commission_paid : false,
-                created_at      : String(r.created_at || new Date().toISOString()),
-                validated_at    : '',
+                commission_paid  : false,
+                created_at       : String(r.created_at || new Date().toISOString()),
+                validated_at     : '',
                 /* cross-ref marker so readRequests() dedup recognises it */
-                _source         : 'supabase'
+                _source          : 'supabase'
               };
             });
             /* Expose to FixeoAdminEngine unified read layer */
