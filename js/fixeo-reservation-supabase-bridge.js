@@ -230,42 +230,25 @@
   }
 
   /* ═══════════════════════════════════════════════════════════
-     EVENT LISTENER
+     EVENT LISTENER — for non-navigating flows (index.html, dashboard)
      Fires AFTER localStorage write — System A is already durable.
      Fire-and-forget: never blocks or delays booking UX.
 
-     TIMING NOTE: fixeo:client-request-created fires synchronously
-     inside store.appendRequest(), BEFORE _bridgeToArtisanInbox
-     patches artisan_name / date / timeSlot / address / reservation_ref
-     back onto the localStorage record.
+     NOTE: The COD artisan-profile booking flow redirects to
+     confirmation.html immediately after dispatching this event.
+     Page navigation kills any pending async work here.
+     For that flow, fixeo-confirmation-sync.js handles the insert
+     on the destination page, where the LS record is fully patched.
 
-     Fix: defer by 1 tick (setTimeout 0) so _bridgeToArtisanInbox
-     finishes its synchronous patch, then re-read the FULL patched
-     record from localStorage by ID before mirroring to Supabase.
+     This listener handles: urgent requests (index.html),
+     dashboard-client requests — any flow without navigation.
      ═══════════════════════════════════════════════════════════ */
   window.addEventListener('fixeo:client-request-created', function (e) {
-    var reqFromEvent = e && e.detail;
-    if (!reqFromEvent || !reqFromEvent.id) return;
-    var reqId = String(reqFromEvent.id);
-
-    /* Defer 1 tick to let synchronous LS patch in _bridgeToArtisanInbox complete */
-    setTimeout(function () {
-      /* Re-read the fully-patched record from localStorage by ID */
-      var fullyPatched = reqFromEvent; /* fallback to event payload if LS re-read fails */
-      try {
-        var raw = safeJSON(localStorage.getItem(LS_KEY), []);
-        for (var i = raw.length - 1; i >= 0; i--) {
-          if (String(raw[i].id) === reqId) {
-            fullyPatched = raw[i];
-            break;
-          }
-        }
-      } catch (_) { /* non-critical — fallback to event payload */ }
-
-      _mirrorToSupabase(fullyPatched).catch(function (err) {
-        console.warn(LOG, 'Unhandled async error:', err && err.message);
-      });
-    }, 0);
+    var req = e && e.detail;
+    if (!req || !req.id) return;
+    _mirrorToSupabase(req).catch(function (err) {
+      console.warn(LOG, 'Unhandled async error:', err && err.message);
+    });
   });
 
 })(window);
