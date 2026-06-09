@@ -766,7 +766,31 @@
 
       // Render requests section immediately after it resolves
       if (requestsEl) {
+        /* v3-sync: real status display — map Supabase status values to
+         * human-readable labels and existing CSS classes.
+         * Classes available: status-open (yellow), status-confirmed (green),
+         *                    status-closed (grey).
+         * No new CSS added — uses what dashboard-client.html already defines. */
+        function _fxReqStatusBadge(rawStatus) {
+          var s = String(rawStatus || 'new').toLowerCase().trim();
+          if (s === 'new' || s === 'nouvelle')
+            return { cls: 'status-open',      label: 'Nouvelle' };
+          if (s === 'accept\u00e9e' || s === 'accepted')
+            return { cls: 'status-confirmed',  label: 'Accept\u00e9e' };
+          if (s === 'en_cours' || s === 'en cours')
+            return { cls: 'status-confirmed',  label: 'En cours' };
+          if (s === 'termin\u00e9e' || s === 'terminee')
+            return { cls: 'status-open',       label: 'Termin\u00e9e \u2014 \u00e0 confirmer' };
+          if (s === 'valid\u00e9e' || s === 'validated' || s === 'validee')
+            return { cls: 'status-closed',     label: 'Valid\u00e9e' };
+          if (s === 'annul\u00e9e' || s === 'cancelled' || s === 'annulee')
+            return { cls: 'status-closed',     label: 'Annul\u00e9e' };
+          /* pending / unknown */
+          return { cls: 'status-open', label: 'En attente' };
+        }
+
         requestsEl.innerHTML = requests.length ? requests.map(function (requestRow) {
+          var badge = _fxReqStatusBadge(requestRow.status);
           return '' +
             '<div class="request-card">' +
               '<div class="request-top">' +
@@ -774,17 +798,17 @@
                   '<h3>' + escapeHtml(requestRow.service_category || 'Service') + '</h3>' +
                   '<p>' + escapeHtml(formatDate(requestRow.created_at)) + '</p>' +
                 '</div>' +
-                '<span class="request-status status-open">En attente</span>' +
+                '<span class="request-status ' + badge.cls + '">' + badge.label + '</span>' +
               '</div>' +
               '<div class="request-meta">' +
-                '<span>📍 ' + escapeHtml(requestRow.city || '—') + '</span>' +
+                '<span>\ud83d\udccd ' + escapeHtml(requestRow.city || '\u2014') + '</span>' +
               '</div>' +
-              '<p style="margin:0 0 14px;opacity:.78">' + escapeHtml(requestRow.description || '—') + '</p>' +
+              '<p style="margin:0 0 14px;opacity:.78">' + escapeHtml(requestRow.description || '\u2014') + '</p>' +
               '<div class="request-actions">' +
                 '<button class="btn btn-secondary" type="button" onclick="window.openNewRequestModal && openNewRequestModal()">Nouvelle demande</button>' +
               '</div>' +
             '</div>';
-        }).join('') : '<div class="request-card" style="text-align:center;padding:28px 20px"><p style="margin:0 0 12px;font-size:1.1rem">📋</p><p style="margin:0;font-weight:600">Aucune demande pour le moment</p><p style="margin:8px 0 16px;opacity:.65;font-size:.88rem">Créez votre première demande pour trouver un artisan qualifié.</p><button class="btn btn-primary" type="button" onclick="window.openNewRequestModal&&openNewRequestModal()">+ Créer une demande</button></div>';
+        }).join('') : '<div class="request-card" style="text-align:center;padding:28px 20px"><p style="margin:0 0 12px;font-size:1.1rem">\ud83d\udccb</p><p style="margin:0;font-weight:600">Aucune demande pour le moment</p><p style="margin:8px 0 16px;opacity:.65;font-size:.88rem">Cr\u00e9ez votre premi\u00e8re demande pour trouver un artisan qualifi\u00e9.</p><button class="btn btn-primary" type="button" onclick="window.openNewRequestModal&&openNewRequestModal()">+ Cr\u00e9er une demande</button></div>';
         requestsEl.dataset.real = '1';
       }
 

@@ -1016,8 +1016,87 @@
         localStorage.setItem(STORAGE_KEY,JSON.stringify(next));
         try{ window.dispatchEvent(new CustomEvent('fixeo:client-request-updated',{detail:{id:id}})); }catch(er){}
         try{ window.dispatchEvent(new CustomEvent('fixeo:commission-updated',{detail:{id:id}})); }catch(er){}
+
+        /* v3-sync: fire-and-forget Supabase write-back for Supabase-origin rows.
+         * Only fires when the row has a Supabase id (UUID or supabase_request_id).
+         * Never blocks the UI — console.warn on failure only.
+         * Only 'status' is written (only confirmed-safe column). */
+        var patchedRow = null;
+        for (var pi=0; pi<next.length; pi++) {
+          if (String(next[pi].id||'')===String(id)) { patchedRow = next[pi]; break; }
+        }
+        if (patchedRow) _syncStatusToSupabase(patchedRow, patch);
       }
     } catch(er){}
+  }
+
+  /* ── v3-sync: Write admin status update back to Supabase ──────────────
+   * Determines the Supabase row id, maps local status to Supabase value,
+   * and issues a single UPDATE. Silent failure — never affects local flow.
+   *
+   * Supabase row is identified by (in priority order):
+   *   1. patchedRow.supabase_request_id  — bridge cross-ref
+   *   2. patchedRow.id when _source==='supabase' or id looks like UUID
+   *
+   * Status map (local System A → Supabase):
+   *   nouvelle → 'new'
+   *   acceptée → 'accept\u00e9e'
+   *   en_cours → 'en_cours'
+   *   termin\u00e9e → 'termin\u00e9e'
+   *   valid\u00e9e  → 'valid\u00e9e'
+   * ─────────────────────────────────────────────────────────────────── */
+  var _UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  function _looksLikeUUID(s) { return _UUID_RE.test(String(s||'')); }
+
+  var _SB_STATUS_MAP = {
+    'nouvelle'   : 'new',
+    'accept\u00e9e'   : 'accept\u00e9e',
+    'en_cours'   : 'en_cours',
+    'termin\u00e9e'   : 'termin\u00e9e',
+    'valid\u00e9e'    : 'valid\u00e9e'
+  };
+
+  function _syncStatusToSupabase(row, patch) {
+    /* Only proceed if the patch contains a status change */
+    if (!patch || !patch.status) return;
+
+    /* Determine the Supabase row UUID to UPDATE */
+    var sbId = '';
+    if (_looksLikeUUID(row.supabase_request_id)) {
+      sbId = String(row.supabase_request_id);
+    } else if (row._source === 'supabase' && _looksLikeUUID(row.id)) {
+      sbId = String(row.id);
+    } else if (_looksLikeUUID(row.id)) {
+      /* Heuristic: UUID-shaped id without explicit _source marker —
+       * may be a bridge-synced row. Attempt the update; harmless on miss. */
+      sbId = String(row.id);
+    }
+    if (!sbId) return; /* Non-UUID local id — not a Supabase row */
+
+    /* Map local status to Supabase value */
+    var sbStatus = _SB_STATUS_MAP[String(patch.status||'').trim()];
+    if (!sbStatus) return; /* Unknown status — skip to avoid corrupting Supabase */
+
+    /* Get Supabase client — FixeoSupabaseClient is loaded via supabase-client.js */
+    var fsc = window.FixeoSupabaseClient;
+    if (!fsc || !fsc.CONFIGURED) return;
+
+    /* Fire-and-forget — intentionally NOT awaited */
+    fsc.ready().then(function() {
+      var sb = fsc.client;
+      if (!sb) return;
+      return sb.from('service_requests')
+        .update({ status: sbStatus })
+        .eq('id', sbId)
+        .then(function(res) {
+          if (res && res.error) {
+            console.warn('[v3-sync] Supabase status write-back failed:', sbId, res.error.message || res.error.code);
+          }
+          /* No-op on success — UI already updated via localStorage */
+        });
+    }).catch(function(err) {
+      console.warn('[v3-sync] Supabase write-back error:', sbId, err && err.message);
+    });
   }
 
   function _showToast(msg, type) {
