@@ -22,7 +22,7 @@
 (function (window, document) {
   'use strict';
 
-  var VERSION = 'v1e';
+  var VERSION = 'v1f';
 
   /* ── STATE ────────────────────────────────────────────────── */
   var _state = {
@@ -868,7 +868,7 @@
         client_profile_id:  reqCheck.data.client_profile_id || null,
         agreed_price:       0,
         commission_amount:  0,
-        status:             'assigned'
+        status:             'pending'   /* missions CHECK: pending|done|cancelled|validated */
       }).select('id').maybeSingle();
       if (missionInsert.error) throw missionInsert.error;
       if (!missionInsert.data) throw new Error('Création de mission bloquée (vérifiez les droits RLS).');
