@@ -758,3 +758,17 @@ body.fixeo-gh-enabled .fixeo-gh-drawer-espace:active {
   box-shadow: 0 0 24px rgba(225,48,108,0.26) !important;
   transform: translateY(-1px);
 }
+
+/* ── ⚡ Avatar workspace state — logged-in shortcut ── fxgh-espace-avatar ── */
+body.fixeo-gh-enabled .fixeo-gh-avatar--espace {
+  background: linear-gradient(135deg, #E1306C 0%, #833AB4 100%);
+  box-shadow: 0 0 10px rgba(225, 48, 108, 0.55), 0 0 20px rgba(131, 58, 180, 0.30);
+  font-size: 1.05rem;
+  cursor: pointer;
+  transition: transform .15s, box-shadow .15s;
+}
+body.fixeo-gh-enabled .fixeo-gh-avatar-link:hover .fixeo-gh-avatar--espace,
+body.fixeo-gh-enabled .fixeo-gh-avatar-link:active .fixeo-gh-avatar--espace {
+  transform: scale(1.08);
+  box-shadow: 0 0 16px rgba(225, 48, 108, 0.70), 0 0 28px rgba(131, 58, 180, 0.45);
+}

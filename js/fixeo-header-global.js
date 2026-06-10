@@ -38,7 +38,8 @@
   }
 
   function getAvatarInitial(user) {
-    return (user?.name || 'U').trim().charAt(0).toUpperCase() || 'U';
+    /* Logged-in: always show ⚡ as workspace shortcut icon */
+    return user ? '\u26A1' : 'U';
   }
 
   function resolveCoreHref(href) {
@@ -386,9 +387,11 @@
     const link = root?.querySelector('.fixeo-gh-avatar-link');
     if (!avatar || !link) return;
     avatar.textContent = getAvatarInitial(user);
+    /* Toggle premium workspace class — adds glow/gradient when logged in */
+    avatar.classList.toggle('fixeo-gh-avatar--espace', !!user);
     link.href = getAvatarHref(user);
-    link.setAttribute('title', user ? user.name : 'Mon compte');
-    link.setAttribute('aria-label', user ? `Mon compte ${user.name}` : 'Mon compte');
+    link.setAttribute('title', user ? 'Mon Espace Fixeo' : 'Mon compte');
+    link.setAttribute('aria-label', user ? 'Mon Espace Fixeo' : 'Mon compte');
 
     /* Role-based visibility: show [data-role-show="artisan"] only to artisans */
     const isArtisan = !!(user && user.role === 'artisan');
