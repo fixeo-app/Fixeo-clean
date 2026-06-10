@@ -22,7 +22,7 @@
 (function (window, document) {
   'use strict';
 
-  var VERSION = 'v1c';
+  var VERSION = 'v1d';
 
   /* ── STATE ────────────────────────────────────────────────── */
   var _state = {
@@ -457,7 +457,7 @@
 
     /* WhatsApp CTA always visible for active missions */
     if (st === 'assigned' || st === 'in_progress' || st === 'completed') {
-      html += '<a class="fxa-btn fxa-btn-wa" href="https://wa.me/212600000000?text=Bonjour+Fixeo%2C+mission+' + esc(reqId.slice(0,8)) + '" target="_blank" rel="noopener">💬 Fixeo</a>';
+      html += '<a class="fxa-btn fxa-btn-wa" href="https://wa.me/212660484415?text=Bonjour+Fixeo%2C+mission+' + esc(reqId.slice(0,8)) + '" target="_blank" rel="noopener">💬 Fixeo</a>';
     }
 
     return html + '</div>';
@@ -646,7 +646,7 @@
     var sec = el('fxav2-sec-support');
     if (!sec) return;
     sec.innerHTML = '<div class="fxa-section-head"><h2>🆘 Support Fixeo</h2></div>'
-      + _supportItem('https://wa.me/212600000000', '💬', 'WhatsApp Support', 'Réponse rapide 7j/7')
+      + _supportItem('https://wa.me/212660484415', '💬', 'WhatsApp Support', 'Réponse rapide 7j/7')
       + _supportItem('mailto:contact@fixeo.ma',    '📧', 'Email',            'contact@fixeo.ma')
       + _supportItem('https://fixeo.ma',           '🌐', 'Site web',         'www.fixeo.ma')
       + '<div class="fxa-error-banner" style="border-color:rgba(255,255,255,.10);color:rgba(255,255,255,.4);background:rgba(255,255,255,.03);margin-top:16px">'
@@ -864,7 +864,7 @@
 
   function _doContactFixeo(requestId) {
     var msg = 'Bonjour Fixeo, je suis intéressé par la demande ' + (requestId ? requestId.slice(0, 8) : '');
-    window.open('https://wa.me/212600000000?text=' + encodeURIComponent(msg), '_blank', 'noopener');
+    window.open('https://wa.me/212660484415?text=' + encodeURIComponent(msg), '_blank', 'noopener');
   }
 
   /* ── MODAL ────────────────────────────────────────────────── */
