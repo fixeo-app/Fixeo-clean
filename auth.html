@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="fr" dir="ltr">
 <head>
+  <script src="js/fixeo-phone-utils.js?v=wa1a"></script>
   <script src="js/supabase-client.js?v=sc2"></script>
   <script src="js/fixeo-logout-global.js?v=v2c4a"></script>
   <script src="js/fixeo-repository.js?v=repo2"></script>
-  <script src="js/fixeo-auth-supabase.js?v=p1d"></script>
+  <script src="js/fixeo-auth-supabase.js?v=wa1a"></script>
 
   <link rel="icon" type="image/png" href="img/favicon.png" sizes="32x32">
   <link rel="apple-touch-icon" href="img/favicon.png">
@@ -92,17 +93,20 @@
       <form id="login-form" onsubmit="handleLogin(event)" novalidate autocomplete="on">
 
         <div class="ap-group">
-          <label class="ap-label" for="login-email">Email</label>
+          <label class="ap-label" for="login-email">
+            <span class="ap-label-wa-icon">📱</span> Num&eacute;ro WhatsApp ou email
+          </label>
           <div class="ap-input-wrap">
-            <input type="email" class="ap-input" id="login-email"
-                   placeholder="votre@email.com" autocomplete="email" inputmode="email"/>
+            <input type="text" class="ap-input" id="login-email"
+                   placeholder="06 XX XX XX XX" autocomplete="tel email" inputmode="tel"/>
           </div>
+          <p class="ap-field-hint">Format marocain&nbsp;: 06&nbsp;/ 07&hellip; ou votre email</p>
         </div>
 
         <!-- Forgot password mini-screen -->
         <div id="forgot-screen">
           <div class="ap-forgot-title">R&eacute;initialiser le mot de passe</div>
-          <div class="ap-forgot-sub">Entrez votre email ci-dessus. Nous vous enverrons un lien pour choisir un nouveau mot de passe.</div>
+          <div class="ap-forgot-sub">Entrez votre num&eacute;ro WhatsApp ci-dessus. Notre &eacute;quipe vous aidera via WhatsApp.</div>
           <div id="forgot-success"></div>
           <div id="forgot-error" class="ap-error"></div>
           <button type="button" class="ap-btn" id="forgot-submit-btn" onclick="handleForgotSubmit()">
@@ -222,14 +226,12 @@
 
           <div class="ap-group" id="artisan-phone-group">
             <label class="ap-label" for="signup-phone">
-              T&eacute;l&eacute;phone
-              <span class="ap-label-wa">/ WhatsApp</span>
-              <span class="ap-phone-optional ap-optional" id="phone-optional-badge">(optionnel)</span>
+              <span class="ap-label-wa-icon">📱</span> Num&eacute;ro WhatsApp
             </label>
             <input type="tel" class="ap-input ap-input-phone" id="signup-phone"
-                   placeholder="06 XX XX XX XX" autocomplete="tel" inputmode="tel"/>
+                   placeholder="06 XX XX XX XX" autocomplete="tel" inputmode="tel" required/>
             <p class="ap-field-hint ap-hint-wa">
-              Votre num&eacute;ro WhatsApp nous aide &agrave; vous contacter rapidement.
+              Votre num&eacute;ro WhatsApp — votre identifiant unique sur Fixeo.
             </p>
             <p class="ap-field-hint ap-hint-fmt">Format marocain&nbsp;: 06 / 07&hellip;</p>
           </div>
@@ -249,11 +251,13 @@
         ════════════════════════════════════════════════════ -->
         <div class="ap-step" id="ap-step-2" style="display:none">
 
-          <div class="ap-group">
-            <label class="ap-label" for="signup-email">Email</label>
-            <input type="email" class="ap-input" id="signup-email"
-                   placeholder="votre@email.com" required autocomplete="email" inputmode="email"/>
-            <p class="ap-field-hint">Votre email sert &agrave; acc&eacute;der &agrave; votre espace Fixeo.</p>
+          <!-- WhatsApp-first: email field hidden — synthetic email generated from phone.
+               ID #signup-email preserved for handleSignup() compatibility.
+               Value is populated by JS before submit (see wa-first patch block). -->
+          <div class="ap-group" id="signup-email-group" style="display:none" aria-hidden="true">
+            <label class="ap-label" for="signup-email">Email interne</label>
+            <input type="text" class="ap-input" id="signup-email"
+                   placeholder="" autocomplete="off" tabindex="-1"/>
           </div>
 
           <div class="ap-group">
@@ -528,20 +532,38 @@
 
       <!-- ══ EMAIL CONFIRMATION SCREEN ═══════════════════════ -->
       <div id="email-confirm-screen">
-        <span class="ap-confirm-icon">&#9993;&#65039;</span>
-        <div class="ap-confirm-title">V&eacute;rifiez votre email</div>
-        <div class="ap-confirm-email">
-          Un lien de confirmation a &eacute;t&eacute; envoy&eacute; &agrave;<br>
-          <strong id="confirm-email-display"></strong>
+        <!-- Phone-first success state (shown when isPhoneSignup=true) -->
+        <div id="confirm-phone-state" style="display:none">
+          <span class="ap-confirm-icon">&#9989;</span>
+          <div class="ap-confirm-title">Compte cr&eacute;&eacute;&nbsp;!</div>
+          <div class="ap-confirm-email">
+            Bienvenue sur Fixeo.<br>
+            <strong id="confirm-phone-display"></strong>
+          </div>
+          <div class="ap-confirm-hint">
+            Votre espace est pr&ecirc;t. Connectez-vous avec votre num&eacute;ro WhatsApp et votre mot de passe.
+          </div>
+          <button type="button" class="ap-btn" onclick="showAuthForms()">
+            <span>Se connecter</span>
+          </button>
         </div>
-        <div class="ap-confirm-hint">
-          Cliquez sur le lien dans l&apos;email pour activer votre compte.
-          V&eacute;rifiez aussi vos spams.
+        <!-- Legacy email confirmation state (shown for real email signups) -->
+        <div id="confirm-email-state">
+          <span class="ap-confirm-icon">&#9993;&#65039;</span>
+          <div class="ap-confirm-title">V&eacute;rifiez votre email</div>
+          <div class="ap-confirm-email">
+            Un lien de confirmation a &eacute;t&eacute; envoy&eacute; &agrave;<br>
+            <strong id="confirm-email-display"></strong>
+          </div>
+          <div class="ap-confirm-hint">
+            Cliquez sur le lien dans l&apos;email pour activer votre compte.
+            V&eacute;rifiez aussi vos spams.
+          </div>
+          <button type="button" class="ap-btn-resend" id="btn-resend-email"
+                  onclick="handleResendEmail()">Renvoyer l&apos;email</button>
+          <button type="button" class="ap-confirm-back"
+                  onclick="showAuthForms()">&larr; Revenir &agrave; la connexion</button>
         </div>
-        <button type="button" class="ap-btn-resend" id="btn-resend-email"
-                onclick="handleResendEmail()">Renvoyer l&apos;email</button>
-        <button type="button" class="ap-confirm-back"
-                onclick="showAuthForms()">&larr; Revenir &agrave; la connexion</button>
       </div>
 
     </div><!-- /.auth-box -->
@@ -748,11 +770,11 @@ function _translateAuthError(msg) {
   if (!msg) return 'Erreur d\u2019authentification.';
   const m = msg.toLowerCase();
   if (m.includes('invalid login') || m.includes('invalid credentials'))
-    return 'Email ou mot de passe incorrect.';
+    return 'Num\u00e9ro WhatsApp ou mot de passe incorrect.';
   if (m.includes('email not confirmed') || m.includes('email_not_confirmed'))
-    return 'Votre email n\u2019est pas encore confirm\u00E9. V\u00E9rifiez votre bo\u00EEte mail.';
+    return 'Compte non activ\u00e9. Contactez le support Fixeo sur WhatsApp.';
   if (m.includes('user already registered') || m.includes('already registered'))
-    return 'Cet email est d\u00E9j\u00E0 utilis\u00E9. Connectez-vous ou r\u00E9initialisez votre mot de passe.';
+    return 'Ce num\u00e9ro WhatsApp est d\u00e9j\u00e0 utilis\u00e9. Connectez-vous ou contactez le support.';
   if (m.includes('password') && m.includes('short'))
     return 'Mot de passe trop court (minimum 6 caract\u00E8res).';
   if (m.includes('rate limit') || m.includes('too many'))
@@ -773,29 +795,36 @@ async function handleLogin(e) {
 
   const emailEl = document.getElementById('login-email');
   const passEl  = document.getElementById('login-password');
+  const rawId   = (emailEl.value || '').trim();
 
-  if (!emailEl.value.trim()) { _showLoginError('\u274C Veuillez entrer votre email.'); emailEl.focus(); return; }
-  if (!emailEl.checkValidity()) { _showLoginError('\u274C Adresse email invalide.'); emailEl.focus(); return; }
+  if (!rawId) {
+    _showLoginError('\u274C Entrez votre num\u00E9ro WhatsApp ou email.');
+    emailEl.focus(); return;
+  }
   if (!passEl.value) { _showLoginError('\u274C Veuillez entrer votre mot de passe.'); passEl.focus(); return; }
 
-  const email = emailEl.value.trim().toLowerCase();
+  /* Validate: must be a valid phone OR a valid email */
+  const pu = window._fxPhone;
+  const isPhone = pu && pu.isPhoneIdentifier(rawId);
+  const isEmail = rawId.indexOf('@') > -1;
+  if (!isPhone && !isEmail) {
+    _showLoginError('\u274C Format invalide. Entrez votre num\u00E9ro 06/07 ou votre email.');
+    emailEl.focus(); return;
+  }
+
+  /* Canonical email for admin check — rawId lowercased, used only for admin path */
+  const email = rawId.toLowerCase();
   _setLoginBtnLoading('V\u00E9rification\u2026');
   const passHash = await _sha256(passEl.value);
 
-  /* ADMIN PATH — Phase 1B+1C: SHA-256 pre-check passes → fall through to
-     REAL SUPABASE LOGIN below (which writes live JWT + routes to admin.html).
-     Do NOT short-circuit here — Phase 1C requires a real Supabase JWT on admin.html.
-     The old emergency path (localStorage-only) is removed: it bypassed Phase 1C. */
+  /* ADMIN PATH — email-only, unchanged. Phone users can never match admin@fixeo.ma. */
   if (email === _ADMIN_EMAIL && passHash !== _ADMIN_PASS_HASH) {
-    /* SHA-256 pre-check FAILED specifically for admin email — give clear feedback */
     _resetLoginBtn();
     _showLoginError('\u274C Mot de passe administrateur incorrect.');
     return;
   }
-  /* If email === _ADMIN_EMAIL and passHash === _ADMIN_PASS_HASH:
-     fall through to real Supabase signIn below — it writes the JWT needed by Phase 1C. */
 
-  /* REAL SUPABASE LOGIN */
+  /* REAL SUPABASE LOGIN — passes rawId; FixeoAuth.signIn() handles phone→synthetic internally */
   if (!window.FixeoAuth) { await new Promise(r => setTimeout(r, 600)); }
   if (!window.FixeoAuth) {
     _resetLoginBtn();
@@ -803,7 +832,8 @@ async function handleLogin(e) {
     return;
   }
 
-  const { user, error } = await window.FixeoAuth.signIn({ email: email, password: passEl.value });
+  /* Pass rawId — FixeoAuth.signIn detects phone vs email and synthesizes internally */
+  const { user, error } = await window.FixeoAuth.signIn({ email: rawId, password: passEl.value });
 
   if (error) {
     _resetLoginBtn();
@@ -822,7 +852,7 @@ async function handleLogin(e) {
     localStorage.setItem('role',        'admin');
     localStorage.removeItem('fixeo_admin'); /* Phase 1B: never persist to localStorage */
   }
-  const name      = (user && user.full_name) || email.split('@')[0];
+  const name      = (user && user.full_name) || (email.indexOf('@') > -1 && !(_fxPhone && _fxPhone.isSyntheticEmail(email)) ? email.split('@')[0] : rawId);
   const roleLabel = role === 'artisan' ? 'Artisan' : (role === 'admin' ? 'Admin' : 'Client');
   notifications.success('Bienvenue\u00A0' + name + '\u00A0!', '\u2705 Connexion r\u00E9ussie en tant que ' + roleLabel + '. Redirection\u2026');
   setTimeout(() => { window.FixeoAuth.redirectByRole(role); }, 1200);
@@ -849,10 +879,28 @@ async function handleSignup(e) {
     errEl.textContent = '\u274C Veuillez entrer votre nom complet.';
     errEl.style.display = 'block'; nameEl.focus(); return;
   }
-  if (!emailEl.value.trim() || !emailEl.checkValidity()) {
-    errEl.textContent = '\u274C Adresse email invalide.';
-    errEl.style.display = 'block'; emailEl.focus(); return;
+
+  /* WhatsApp-first: phone is the primary identifier (collected in step 1).
+     email field is hidden — we synthesize it from phone before calling signUp. */
+  const role  = _selectedType === 'artisan' ? 'artisan' : 'client';
+  const city  = (document.getElementById('signup-city')?.value || '').trim();
+  const rawPhone = (document.getElementById('signup-phone')?.value || '').trim();
+
+  const pu = window._fxPhone;
+  const phoneResult = pu ? pu.phoneFromRaw(rawPhone) : null;
+  if (!phoneResult || !phoneResult.syntheticEmail) {
+    errEl.textContent = '\u274C Num\u00E9ro WhatsApp invalide. Format attendu\u00A0: 06 XX XX XX XX';
+    errEl.style.display = 'block';
+    const phEl = document.getElementById('signup-phone');
+    if (phEl) phEl.focus();
+    return;
   }
+
+  /* Synthesize email from phone — user never sees this */
+  const syntheticEmail = phoneResult.syntheticEmail;
+  /* Populate the hidden #signup-email field so legacy form handlers don't fail */
+  if (emailEl) emailEl.value = syntheticEmail;
+
   if (passEl.value.length < 8) {
     errEl.textContent = '\u274C Le mot de passe doit contenir au moins 8 caract\u00E8res.';
     errEl.style.display = 'block'; passEl.focus(); return;
@@ -865,9 +913,7 @@ async function handleSignup(e) {
   btn.innerHTML = '<span class="ap-spinner"></span> Cr\u00E9ation\u2026';
   btn.disabled  = true;
 
-  const role  = _selectedType === 'artisan' ? 'artisan' : 'client';
-  const city  = (document.getElementById('signup-city')?.value || '').trim();
-  const phone = (document.getElementById('signup-phone')?.value || '').trim();
+  const phone = rawPhone;
 
   if (!window.FixeoAuth) { await new Promise(r => setTimeout(r, 600)); }
   if (!window.FixeoAuth) {
@@ -877,10 +923,10 @@ async function handleSignup(e) {
   }
 
   const { user, error } = await window.FixeoAuth.signUp({
-    email:     emailEl.value.trim(),
+    email:     syntheticEmail,  /* synthetic, never shown to user */
     password:  passEl.value,
     full_name: nameEl.value.trim(),
-    phone:     phone,
+    phone:     phone,           /* real phone stored in profiles.phone */
     role:      role,
     city:      city
   });
@@ -895,7 +941,8 @@ async function handleSignup(e) {
   }
 
   errEl.style.display = 'none';
-  showConfirmScreen(emailEl.value.trim());
+  /* WhatsApp-first: always show phone success screen (never show synthetic email) */
+  showConfirmScreen(phone, true);
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -903,38 +950,7 @@ async function handleSignup(e) {
  * ──────────────────────────────────────────────────────────── */
 async function handleForgotPassword(e) {
   if (e) e.preventDefault();
-  const emailEl = document.getElementById('login-email');
-  const email   = (emailEl?.value || '').trim();
-
-  if (!email || !emailEl.checkValidity()) {
-    _showLoginError('\u274C Entrez votre email ci-dessus pour recevoir un lien de r\u00E9initialisation.');
-    emailEl && emailEl.focus();
-    return;
-  }
-
-  _hideLoginError();
-  const link = document.getElementById('forgot-password-link');
-  if (link) { link.textContent = 'Envoi\u2026'; link.style.pointerEvents = 'none'; }
-
-  if (!window.FixeoAuth) { await new Promise(r => setTimeout(r, 600)); }
-
-  const { error } = await window.FixeoAuth.resetPassword(email);
-
-  if (link) { link.textContent = 'Mot de passe oubli\u00E9\u00A0?'; link.style.pointerEvents = ''; }
-
-  if (error) {
-    _showLoginError('\u274C ' + (error.message || 'Erreur lors de l\u2019envoi. R\u00E9essayez.'));
-    return;
-  }
-
-  const el = document.getElementById('login-error');
-  if (el) {
-    el.style.display   = 'block';
-    el.style.color     = '#2ed573';
-    el.style.background    = 'rgba(46,213,115,0.08)';
-    el.style.borderColor   = 'rgba(46,213,115,0.2)';
-    el.textContent = '\u2705 Email de r\u00E9initialisation envoy\u00E9 \u00E0 ' + email + '. V\u00E9rifiez votre bo\u00EEte mail.';
-  }
+  /* Preserved as no-op — actual reset is handled by showForgotScreen + handleForgotSubmit */
 }
 
 /* ── Social login stub ───────────────────────────────────── */
@@ -967,8 +983,8 @@ function hideForgotScreen() {
 }
 
 async function handleForgotSubmit() {
-  const emailEl = document.getElementById('login-email');
-  const email   = (emailEl?.value || '').trim();
+  const identEl = document.getElementById('login-email');
+  const rawId   = (identEl?.value || '').trim();
   const errEl   = document.getElementById('forgot-error');
   const succEl  = document.getElementById('forgot-success');
   const btn     = document.getElementById('forgot-submit-btn');
@@ -976,10 +992,33 @@ async function handleForgotSubmit() {
   errEl.style.display  = 'none';
   succEl.style.display = 'none';
 
-  if (!email || !emailEl.checkValidity()) {
-    errEl.textContent   = '\u274C Entrez votre email dans le champ ci-dessus.';
+  if (!rawId) {
+    errEl.textContent   = '\u274C Entrez votre num\u00E9ro WhatsApp dans le champ ci-dessus.';
     errEl.style.display = 'block';
-    emailEl && emailEl.focus();
+    identEl && identEl.focus();
+    return;
+  }
+
+  const pu = window._fxPhone;
+  const isPhone = pu && pu.isPhoneIdentifier(rawId);
+
+  if (isPhone) {
+    /* Phase 1: WhatsApp support path — no self-service OTP yet */
+    const normalized = pu.normalizePhone(rawId);
+    const waNumber = '212660484415'; /* Fixeo support WhatsApp */
+    const waText = encodeURIComponent('Bonjour, je souhaite r\u00E9initialiser mon mot de passe Fixeo pour le num\u00E9ro ' + normalized);
+    succEl.innerHTML = '\u2705 Contactez le support Fixeo sur WhatsApp\u00A0:'
+      + '<br><a href="https://wa.me/' + waNumber + '?text=' + waText + '" target="_blank" rel="noopener" '
+      + 'style="color:#25D366;font-weight:700;display:inline-block;margin-top:8px">📱 Ouvrir WhatsApp Support</a>';
+    succEl.style.display = 'block';
+    btn.style.display    = 'none';
+    return;
+  }
+
+  /* Legacy email path — unchanged for existing email accounts */
+  if (rawId.indexOf('@') === -1) {
+    errEl.textContent   = '\u274C Format invalide. Entrez votre num\u00E9ro 06/07 ou votre email.';
+    errEl.style.display = 'block';
     return;
   }
 
@@ -988,7 +1027,7 @@ async function handleForgotSubmit() {
 
   if (!window.FixeoAuth) { await new Promise(r => setTimeout(r, 600)); }
 
-  const { error } = await window.FixeoAuth.resetPassword(email);
+  const { error } = await window.FixeoAuth.resetPassword(rawId);
 
   btn.innerHTML = '<span>Envoyer le lien</span>';
   btn.disabled  = false;
@@ -999,7 +1038,7 @@ async function handleForgotSubmit() {
     return;
   }
 
-  succEl.textContent   = '\u2705 Email envoy\u00E9 \u00E0 ' + email + '. V\u00E9rifiez vos spams si besoin.';
+  succEl.textContent   = '\u2705 Email envoy\u00E9 \u00E0 ' + rawId + '. V\u00E9rifiez vos spams si besoin.';
   succEl.style.display = 'block';
   btn.style.display    = 'none';
 }
@@ -1007,16 +1046,34 @@ async function handleForgotSubmit() {
 /* ── Email confirmation screen ───────────────────────────── */
 let _pendingConfirmEmail = '';
 
-function showConfirmScreen(email) {
-  _pendingConfirmEmail = email;
-  document.getElementById('confirm-email-display').textContent = email;
-  document.getElementById('auth-heading').textContent = 'Confirmez votre email';
-  document.getElementById('auth-sub').textContent     = '';
+function showConfirmScreen(identifier, isPhoneSignup) {
+  _pendingConfirmEmail = isPhoneSignup ? '' : identifier;
   const tabs = document.querySelector('.ap-tabs');
   if (tabs) tabs.style.display = 'none';
-  document.getElementById('login-form').style.display          = 'none';
-  document.getElementById('signup-form').style.display         = 'none';
+  document.getElementById('login-form').style.display           = 'none';
+  document.getElementById('signup-form').style.display          = 'none';
   document.getElementById('email-confirm-screen').style.display = 'block';
+
+  const phoneState = document.getElementById('confirm-phone-state');
+  const emailState = document.getElementById('confirm-email-state');
+
+  if (isPhoneSignup) {
+    /* Phone-first: show success, never show synthetic email */
+    const pu = window._fxPhone;
+    const displayPhone = (pu ? pu.formatPhoneForDisplay(pu.normalizePhone(identifier) || identifier) : identifier) || identifier;
+    document.getElementById('confirm-phone-display').textContent = displayPhone;
+    document.getElementById('auth-heading').textContent = 'Compte cr\u00e9\u00e9\u00a0!';
+    document.getElementById('auth-sub').textContent     = '';
+    if (phoneState) phoneState.style.display = 'block';
+    if (emailState) emailState.style.display = 'none';
+  } else {
+    /* Legacy email path: show email confirmation instructions */
+    document.getElementById('confirm-email-display').textContent = identifier;
+    document.getElementById('auth-heading').textContent = 'Confirmez votre email';
+    document.getElementById('auth-sub').textContent     = '';
+    if (phoneState) phoneState.style.display = 'none';
+    if (emailState) emailState.style.display = 'block';
+  }
 }
 
 function showAuthForms() {
@@ -1340,23 +1397,27 @@ function validateSignupStep(step) {
   hide();
 
   if (step === 1) {
-    var nameEl = document.getElementById('signup-name');
+    var nameEl  = document.getElementById('signup-name');
+    var phoneEl = document.getElementById('signup-phone');
     if (!nameEl || !nameEl.value.trim()) {
       show('Veuillez entrer votre nom complet.');
       if (nameEl) nameEl.focus();
+      return false;
+    }
+    /* WhatsApp-first: phone is now required */
+    var rawPh = (phoneEl ? phoneEl.value : '').trim();
+    var puV = window._fxPhone;
+    if (!rawPh || !(puV && puV.isPhoneIdentifier(rawPh))) {
+      show('Num\u00E9ro WhatsApp requis. Format\u00A0: 06 XX XX XX XX');
+      if (phoneEl) phoneEl.focus();
       return false;
     }
     return true;
   }
 
   if (step === 2) {
-    var emailEl = document.getElementById('signup-email');
-    var passEl  = document.getElementById('signup-password');
-    if (!emailEl || !emailEl.value.trim() || !emailEl.checkValidity()) {
-      show('Adresse email invalide.');
-      if (emailEl) emailEl.focus();
-      return false;
-    }
+    /* WhatsApp-first: email field is hidden — validate password only */
+    var passEl = document.getElementById('signup-password');
     if (!passEl || passEl.value.length < 8) {
       show('Le mot de passe doit contenir au moins 8 caract\u00E8res.');
       if (passEl) passEl.focus();
@@ -1502,7 +1563,8 @@ window.selectType = function(type) {
     const btn  = document.getElementById('signup-btn');
     if (!btn)  return;
 
-    var req = ['signup-name','signup-email','signup-password','terms'];
+    /* WhatsApp-first: email removed from required; phone + name + password + terms */
+    var req = ['signup-name','signup-phone','signup-password','terms'];
 
     function check() {
       var allOk = req.every(function(id) {
@@ -1511,15 +1573,15 @@ window.selectType = function(type) {
         if (el.type === 'checkbox') return el.checked;
         return el.value.trim().length > 0;
       });
-      // email must be valid too
-      var em = document.getElementById('signup-email');
-      if (em && !em.checkValidity()) allOk = false;
+      /* Phone must be a valid Moroccan number */
+      var ph = document.getElementById('signup-phone');
+      var _puC = window._fxPhone;
+      if (ph && _puC && ph.value.trim() && !_puC.isPhoneIdentifier(ph.value.trim())) allOk = false;
 
       btn.classList.toggle('ap-btn-ready', allOk);
     }
 
-    // Listen on all relevant inputs
-    ['signup-name','signup-email','signup-password'].forEach(function(id) {
+    ['signup-name','signup-phone','signup-password'].forEach(function(id) {
       var el = document.getElementById(id);
       if (el) el.addEventListener('input', check);
     });
@@ -1723,8 +1785,9 @@ function _apAmbientPulse() {
 
 <script src="js/fixeo_v5_fixes.js"></script>
 <script src="/api/env.js"></script>
-<script src="js/fixeo-supabase-core.js?v=p1d"></script>
-<script src="js/auth-global.js?v=p1b"></script>
+<script src="js/fixeo-phone-utils.js?v=wa1a"></script>
+<script src="js/fixeo-supabase-core.js?v=wa1a"></script>
+<script src="js/auth-global.js?v=wa1a"></script>
 <script src="js/fixeo-session-bridge.js?v=sb1"></script>
 <!-- app-provision-v1: Silent background profile provisioning (covers signIn path) -->
 <script src="js/fixeo-profile-provision.js?v=v1" defer></script>

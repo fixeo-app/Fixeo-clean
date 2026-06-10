@@ -62,7 +62,14 @@
     };
 
     try {
-      localStorage.setItem('fixeo_user', user.email || user.id || '');
+      /* Guard: never store synthetic email as the user-facing identifier */
+      var pu = window.FixeoPhoneUtils || window._fxPhone;
+      var userIdentifier = user.email || user.id || '';
+      if (pu && pu.isSyntheticEmail(userIdentifier)) {
+        /* Convert synthetic email back to phone for display storage */
+        userIdentifier = pu.syntheticEmailToPhone(userIdentifier) || userIdentifier;
+      }
+      localStorage.setItem('fixeo_user', userIdentifier);
       localStorage.setItem('fixeo_user_name', name);
       localStorage.setItem('fixeo_role', role);
       localStorage.setItem('role', role);
@@ -71,7 +78,7 @@
       if (session && session.access_token) localStorage.setItem('fixeo_token', session.access_token);
       if (profile) localStorage.setItem('fixeo_profile', JSON.stringify(profile));
       if (role === 'admin') {
-        /* PHASE 1B: admin token sessionStorage ONLY — no localStorage.fixeo_admin */
+        /* PHASE 1B: admin token sessionStorage ONLY - no localStorage.fixeo_admin */
         sessionStorage.setItem('fixeo_admin_auth', '1');
         localStorage.removeItem('fixeo_admin');
       } else {
@@ -156,12 +163,12 @@
     if (!error) return 'Une erreur inattendue est survenue.';
     if (typeof error === 'string') return error;
     var message = error.message || error.msg || 'Une erreur inattendue est survenue.';
-    if (/invalid login credentials/i.test(message)) return 'Email ou mot de passe incorrect.';
-    if (/email not confirmed/i.test(message)) return 'Email non confirmé. Vérifiez votre boîte mail avant de vous connecter.';
+    if (/invalid login credentials/i.test(message)) return 'Num\u00e9ro WhatsApp ou mot de passe incorrect.';
+    if (/email not confirmed/i.test(message)) return 'Compte non activ\u00e9. Contactez le support Fixeo sur WhatsApp.';
     if (/over_email_send_rate_limit/i.test(message) || /email rate limit exceeded/i.test(message)) {
-      return 'Limite d’envoi d’email atteinte côté Supabase. Réessayez dans quelques minutes ou désactivez temporairement la confirmation email pour vos tests MVP.';
+      return 'Trop de tentatives. R\u00e9essayez dans quelques minutes.';
     }
-    if (/User already registered/i.test(message)) return 'Cet email est déjà utilisé.';
+    if (/User already registered/i.test(message)) return 'Ce num\u00e9ro WhatsApp est d\u00e9j\u00e0 utilis\u00e9.';
     if (/signup is disabled/i.test(message)) return 'Les inscriptions sont actuellement désactivées.';
     return message;
   }
@@ -182,7 +189,7 @@
       // On Vercel /api/env.js returns 404 so window.FIXEO_ENV is never set.
       // supabase-client.js is loaded in <head> with hardcoded creds and fires ready()
       // at DOMContentLoaded. We await that promise so the SDK is guaranteed loaded
-      // before we check .client — fixes "SDK not loaded yet" from the sync check.
+      // before we check .client - fixes "SDK not loaded yet" from the sync check.
       if (window.FixeoSupabaseClient && window.FixeoSupabaseClient.CONFIGURED) {
         try {
           await window.FixeoSupabaseClient.ready();
@@ -369,12 +376,19 @@
     };
   }
 
-  async function login(email, password) {
+  async function login(rawInput, password) {
     var sb = await getClient();
-    var response = await sb.auth.signInWithPassword({ email: email, password: password });
+    /* WhatsApp-first: resolve phone → synthetic email if needed */
+    var emailToUse = rawInput;
+    var pu = window.FixeoPhoneUtils || window._fxPhone;
+    if (pu && pu.isPhoneIdentifier(rawInput)) {
+      var pr = pu.phoneFromRaw(rawInput);
+      if (pr.syntheticEmail) emailToUse = pr.syntheticEmail;
+    }
+    var response = await sb.auth.signInWithPassword({ email: emailToUse, password: password });
     if (response.error) throw response.error;
     var session = response.data ? response.data.session : null;
-    if (!session || !session.user) throw new Error('Session Supabase introuvable après connexion.');
+    if (!session || !session.user) throw new Error('Session Supabase introuvable apr\u00e8s connexion.');
     return syncUserFromSession(session);
   }
 

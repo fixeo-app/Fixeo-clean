@@ -32,7 +32,7 @@
 ;(function (window) {
   'use strict';
 
-  var VERSION = '2.0';
+  var VERSION = '3.0'; /* wa-first: phone+password auth via synthetic email */
 
   function isSB() { return !!(window.FixeoSupabaseClient && window.FixeoSupabaseClient.CONFIGURED); }
   function sb()    { return window.FixeoSupabaseClient && window.FixeoSupabaseClient.client; }
@@ -41,10 +41,28 @@
     fn('[FixeoAuth v2]', msg);
   }
 
+  /* ── Phone utils (FixeoPhoneUtils loaded before this script) ── */
+  function _pu() { return window.FixeoPhoneUtils || window._fxPhone || null; }
+
+  /* ── Resolve auth identifier → email (real or synthetic) ── */
+  /* Accepts: email (passed through unchanged)
+               phone (0660484415, +212660484415, etc.) → synthetic email
+     Returns: { email: string, isPhone: boolean } */
+  function _resolveIdentifier(raw) {
+    var pu = _pu();
+    if (pu && pu.isPhoneIdentifier(raw)) {
+      var result = pu.phoneFromRaw(raw);
+      if (result.syntheticEmail) {
+        return { email: result.syntheticEmail, isPhone: true, normalized: result.normalized };
+      }
+    }
+    return { email: (raw || '').trim().toLowerCase(), isPhone: false, normalized: null };
+  }
+
   /* ── Role → redirect map ─────────────────────────────────── */
   var ROLE_REDIRECT = {
     admin:   'admin.html',
-    artisan: 'dashboard-artisan.html',
+    artisan: 'dashboard-artisan-v2.html', /* updated: V1 frozen */
     client:  'dashboard-client.html'
   };
 
@@ -53,14 +71,36 @@
    * Creates: auth.users → public.users → public.profiles
    * ══════════════════════════════════════════════════════════ */
   async function signUp(opts) {
-    var email    = (opts.email    || '').trim().toLowerCase();
+    var rawEmail = (opts.email    || '').trim().toLowerCase();
     var password =  opts.password || '';
     var role     = (opts.role     || 'client').toLowerCase();
     var fullName =  opts.full_name || opts.name || '';
     var phone    =  opts.phone    || '';
     var city     =  opts.city     || '';
+    var isPhoneSignup = false;
 
-    if (!email || !password) return { user: null, error: { message: 'Email et mot de passe requis.' } };
+    /* WhatsApp-first: if phone provided and no email, synthesize email from phone */
+    var email = rawEmail;
+    if (phone && !email) {
+      var pu = _pu();
+      if (pu) {
+        var pr = pu.phoneFromRaw(phone);
+        if (pr.syntheticEmail) {
+          email = pr.syntheticEmail;
+          isPhoneSignup = true;
+        }
+      }
+    }
+    /* Also handle case where caller passes phone in email field (legacy compatibility) */
+    if (!email && !phone) {
+      return { user: null, error: { message: 'Numéro WhatsApp (ou email) et mot de passe requis.' } };
+    }
+    if (!email) {
+      return { user: null, error: { message: 'Numéro WhatsApp invalide. Format attendu\u00a0: 06 XX XX XX XX' } };
+    }
+    if (!password) {
+      return { user: null, error: { message: 'Mot de passe requis.' } };
+    }
 
     if (isSB()) {
       await window.FixeoSupabaseClient.ready();
@@ -76,7 +116,7 @@
       var user  = _ref.data && _ref.data.user;
       var error = _ref.error;
       if (error) return { user: null, error: error };
-      if (!user) return { user: null, error: { message: 'Inscription échouée. Vérifiez votre email.' } };
+      if (!user) return { user: null, error: { message: 'Inscription \u00e9chou\u00e9e. V\u00e9rifiez votre num\u00e9ro WhatsApp.' } };
 
       /* Step 2: Insert into public.users (authenticated JWT auto-used by client) */
       var _ref2 = await sb().from('users').insert([{
@@ -106,16 +146,19 @@
         log('signUp: public.profiles insert error: ' + _ref3.error.message, 'error');
       }
 
-      _setLocalSession({ id: user.id, email: email, role: role, name: fullName, phone: phone });
-      log('signUp: success — ' + email + ' (' + role + ')');
-      return { user: Object.assign({}, user, { role: role }), error: null };
+      /* Store phone (not synthetic email) as the user-facing identifier */
+      var storedId = isPhoneSignup ? phone : email;
+      _setLocalSession({ id: user.id, email: storedId, role: role, name: fullName, phone: phone });
+      log('signUp: success — ' + (isPhoneSignup ? phone : email) + ' (' + role + ')');
+      return { user: Object.assign({}, user, { role: role, isPhoneSignup: isPhoneSignup }), error: null };
     }
 
     /* Offline fallback */
     var uid = 'local-' + Date.now();
-    _setLocalSession({ id: uid, email: email, role: role, name: fullName, phone: phone });
-    log('signUp: offline mode — ' + email);
-    return { user: { id: uid, email: email, role: role }, error: null };
+    var storedId = isPhoneSignup ? phone : email;
+    _setLocalSession({ id: uid, email: storedId, role: role, name: fullName, phone: phone });
+    log('signUp: offline mode — ' + (isPhoneSignup ? phone : email));
+    return { user: { id: uid, email: storedId, role: role }, error: null };
   }
 
   /* ══════════════════════════════════════════════════════════
@@ -123,10 +166,17 @@
    * Reads role from public.users; falls back to user_metadata
    * ══════════════════════════════════════════════════════════ */
   async function signIn(opts) {
-    var email    = (opts.email    || '').trim().toLowerCase();
+    /* Accept phone or email as identifier */
+    var rawId    = (opts.email || opts.identifier || opts.phone || '').trim();
     var password =  opts.password || '';
 
-    if (!email || !password) return { user: null, error: { message: 'Email et mot de passe requis.' } };
+    if (!rawId || !password) {
+      return { user: null, error: { message: 'Numéro WhatsApp (ou email) et mot de passe requis.' } };
+    }
+
+    /* Resolve: phone → synthetic email; email → unchanged */
+    var resolved = _resolveIdentifier(rawId);
+    var email    = resolved.email;
 
     if (isSB()) {
       await window.FixeoSupabaseClient.ready();
@@ -150,8 +200,10 @@
         fullName = meta.full_name  || '';
       }
 
-      _setLocalSession({ id: user.id, email: email, role: role, name: fullName });
-      log('signIn: success — ' + email + ' role=' + role);
+      /* Store normalized phone (not synthetic email) when phone-first login */
+      var storedId = resolved.isPhone ? (resolved.normalized || rawId) : email;
+      _setLocalSession({ id: user.id, email: storedId, role: role, name: fullName });
+      log('signIn: success — ' + (resolved.isPhone ? resolved.normalized : email) + ' role=' + role);
       return { user: Object.assign({}, user, { role: role, full_name: fullName }), error: null };
     }
 
@@ -166,9 +218,22 @@
    * RESET PASSWORD
    * Sends Supabase password reset email
    * ══════════════════════════════════════════════════════════ */
-  async function resetPassword(email) {
-    email = (email || '').trim().toLowerCase();
-    if (!email) return { error: { message: 'Veuillez entrer votre adresse email.' } };
+  async function resetPassword(rawInput) {
+    var input = (rawInput || '').trim();
+    if (!input) return { error: { message: 'Veuillez entrer votre num\u00e9ro WhatsApp ou email.' } };
+
+    /* If input is a phone number: synthesize email for Supabase reset call */
+    var resolved = _resolveIdentifier(input);
+    var email = resolved.email;
+
+    if (resolved.isPhone) {
+      /* Phase 1: Supabase sends reset link to synthetic email (no real mailbox).
+         The caller (auth.html handleForgotSubmit) detects isPhoneIdentifier and
+         shows the WhatsApp support CTA instead of "check your inbox". */
+      return { error: null, isPhone: true, normalizedPhone: resolved.normalized };
+    }
+
+    if (!email) return { error: { message: 'Adresse email invalide.' } };
 
     if (isSB()) {
       await window.FixeoSupabaseClient.ready();
@@ -177,11 +242,11 @@
       var _ref = await sb().auth.resetPasswordForEmail(email, { redirectTo: redirectTo });
       if (_ref.error) return { error: _ref.error };
       log('resetPassword: email sent to ' + email);
-      return { error: null };
+      return { error: null, isPhone: false };
     }
 
     /* Offline: can't send email — inform user */
-    return { error: { message: 'Réinitialisation non disponible en mode hors-ligne.' } };
+    return { error: { message: 'R\u00e9initialisation non disponible en mode hors-ligne.' } };
   }
 
   /* ══════════════════════════════════════════════════════════

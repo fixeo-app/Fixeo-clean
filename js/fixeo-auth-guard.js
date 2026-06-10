@@ -44,14 +44,24 @@
           }
         }
         if (session && session.user) {
-          var email = session.user.email || session.user.id || '';
+          var rawEmail = session.user.email || session.user.id || '';
           var roleValue = normalizeRole((session.user.user_metadata && session.user.user_metadata.role) || 'client');
-          var name = (session.user.user_metadata && session.user.user_metadata.full_name) || (email.indexOf('@') > -1 ? email.split('@')[0] : 'Utilisateur');
-          localStorage.setItem('fixeo_user', email);
+          /* Guard: if Supabase session email is a synthetic phone-email, store phone instead */
+          var _pu = window.FixeoPhoneUtils || window._fxPhone;
+          var storedId = (_pu && _pu.isSyntheticEmail(rawEmail))
+            ? (_pu.syntheticEmailToPhone(rawEmail) || rawEmail)
+            : rawEmail;
+          /* Name: prefer user_metadata.full_name; never derive from synthetic email */
+          var name = (session.user.user_metadata && session.user.user_metadata.full_name) || '';
+          if (!name && !(_pu && _pu.isSyntheticEmail(rawEmail)) && rawEmail.indexOf('@') > -1) {
+            name = rawEmail.split('@')[0];
+          }
+          if (!name) name = 'Utilisateur';
+          localStorage.setItem('fixeo_user', storedId);
           localStorage.setItem('fixeo_user_name', name);
           localStorage.setItem('fixeo_role', roleValue);
           localStorage.setItem('role', roleValue);
-          localStorage.setItem('user', JSON.stringify({ id: session.user.id, name: name, role: roleValue, email: email }));
+          localStorage.setItem('user', JSON.stringify({ id: session.user.id, name: name, role: roleValue, email: storedId }));
           break;
         }
       }

@@ -73,7 +73,13 @@
     var legacyStatus = safeTrim(localStorage.getItem('user_status')) || 'online';
 
     var name = fixeoName || legacyName || safeTrim(jsonUser.name);
-    var email = fixeoUser || safeTrim(jsonUser.email) || legacyPhone;
+    /* Guard: fixeo_user may store a synthetic email (212XXXXXXXXX@fixeo.ma) for phone users.
+       Never display the synthetic email — convert back to phone for the identifier. */
+    var _pu = window.FixeoPhoneUtils || window._fxPhone;
+    var _rawFixeoUser = fixeoUser || safeTrim(jsonUser.email) || legacyPhone;
+    var email = (_pu && _pu.isSyntheticEmail(_rawFixeoUser))
+      ? (_pu.syntheticEmailToPhone(_rawFixeoUser) || _rawFixeoUser)
+      : _rawFixeoUser;
     var role = normalizeRole(fixeoRole || legacyRole || jsonUser.role || 'client');
     var avatar = fixeoAvatar || legacyAvatar || safeTrim(jsonUser.avatar);
     var job = legacyJob || safeTrim(jsonUser.job);
@@ -82,7 +88,10 @@
     var status = legacyStatus || safeTrim(jsonUser.status) || 'online';
     var id = safeTrim(jsonUser.id) || email || name;
 
-    if (!name && email && email.indexOf('@') > -1) name = email.split('@')[0];
+    /* Only derive name from email if it is a real email (not synthetic phone-email) */
+    if (!name && email && email.indexOf('@') > -1 && !(_pu && _pu.isSyntheticEmail(email))) {
+      name = email.split('@')[0];
+    }
     if (!name && !email && !legacyLogged) return null;
     if (!name) name = 'Utilisateur';
 
@@ -279,8 +288,11 @@
     var phone = safeTrim(payload.phone);
     var status = safeTrim(payload.status || 'online');
     var id = safeTrim(payload.id || email || name || ('fixeo-' + role));
+    var _puGA = window.FixeoPhoneUtils || window._fxPhone;
 
-    if (!name && email && email.indexOf('@') > -1) name = email.split('@')[0];
+    if (!name && email && email.indexOf('@') > -1 && !(_puGA && _puGA.isSyntheticEmail(email))) {
+      name = email.split('@')[0];
+    }
     if (!name) name = 'Utilisateur';
     if (!email) email = phone || (role + '-' + id);
 
