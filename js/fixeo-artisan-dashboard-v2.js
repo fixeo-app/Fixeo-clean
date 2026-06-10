@@ -22,7 +22,7 @@
 (function (window, document) {
   'use strict';
 
-  var VERSION = 'v1i';
+  var VERSION = 'v1j';
 
   /* ── STATE ────────────────────────────────────────────────── */
   var _state = {
@@ -288,20 +288,40 @@
     }
     console.log('[fxav2] TRACE _state.myMissions.length after assign =', _state.myMissions.length);
 
-    /* Also fetch service_requests for assigned missions to get status/city/description */
+    /* Enrich missions with service_request data (category, city, description, date).
+     * The bulk .in() query requires a SELECT RLS policy covering assigned requests.
+     * If it returns 0 rows (RLS blocks artisan from reading client's requests),
+     * fall back to individual per-mission queries using client_profile_id path. */
     if (_state.myMissions.length) {
       var reqIds = _state.myMissions.map(function(m) { return m.request_id; }).filter(Boolean);
       if (reqIds.length) {
+        var SR_COLS = 'id,service_category,city,description,status,final_price,created_at,updated_at';
         var srRes = await sb.from('service_requests')
-          .select('id,service_category,city,description,status,final_price,created_at,updated_at')
+          .select(SR_COLS)
           .in('id', reqIds);
-        if (!srRes.error) {
-          var srMap = {};
-          (srRes.data || []).forEach(function(r) { srMap[r.id] = r; });
-          _state.myMissions = _state.myMissions.map(function(m) {
-            return Object.assign({}, m, { _request: srMap[m.request_id] || null });
-          });
+        var srMap = {};
+        if (!srRes.error && srRes.data && srRes.data.length) {
+          srRes.data.forEach(function(r) { srMap[r.id] = r; });
+        } else {
+          /* Bulk read returned nothing (RLS) — try individual queries per mission.
+           * service_requests with status='assigned' are readable via artisan_read_new_requests
+           * only if status='new'; assigned rows need a separate SELECT policy.
+           * For now: attempt each individually (silent fail → _request stays null). */
+          for (var mi = 0; mi < _state.myMissions.length; mi++) {
+            var rid = _state.myMissions[mi].request_id;
+            if (!rid) continue;
+            var indRes = await sb.from('service_requests')
+              .select(SR_COLS)
+              .eq('id', rid)
+              .maybeSingle();
+            if (!indRes.error && indRes.data) {
+              srMap[rid] = indRes.data;
+            }
+          }
         }
+        _state.myMissions = _state.myMissions.map(function(m) {
+          return Object.assign({}, m, { _request: srMap[m.request_id] || null });
+        });
       }
     }
   }
@@ -395,40 +415,69 @@
       + '</div>';
   }
 
-  /* ── RENDER: MISSION CARD (assigned) ─────────────────────── */
+  /* ── RENDER: MISSION CARD ────────────────────────────────── */
   function _renderMissionCard(mission) {
-    var req  = mission._request || {};
-    var st   = String(req.status || mission.status || 'pending').toLowerCase().trim();
-    var name = _missionStatusLabel(st);
+    var req   = mission._request || null;
+    var st    = String((req && req.status) || mission.status || 'pending').toLowerCase().trim();
     var badge = _missionBadge(st);
-    var price = Number(req.final_price || mission.agreed_price || 0);
+    var price = Number((req && req.final_price) || mission.agreed_price || 0);
     var net   = price > 0 ? Math.round(price * 0.85) : 0;
+    var mDate = (req && req.created_at) || mission.created_at || '';
 
-    var priceRow = '';
+    /* ── Header: category + badge ── */
+    var catLabel = (req && (req.service_category || req.category))
+      || mission.service_category || '';
+    var headerHtml = '<div class="fxa-card-head">'
+      + '<span class="fxa-card-service">' + esc(catLabel || 'Demande') + '</span>'
+      + badge
+      + '</div>';
+
+    /* ── Meta row: city + date ── */
+    var city = (req && req.city) || '';
+    var metaHtml = '<div class="fxa-card-meta">'
+      + (city ? '<span class="fxa-card-meta-item">📍 ' + esc(city) + '</span>' : '')
+      + '<span class="fxa-card-meta-item">🕐 ' + esc(timeAgo(mDate)) + '</span>'
+      + '</div>';
+
+    /* ── Description ── */
+    var desc = (req && req.description) || '';
+    var descHtml = desc
+      ? '<div class="fxa-card-desc">' + esc(desc.slice(0, 180)) + (desc.length > 180 ? '…' : '') + '</div>'
+      : '';
+
+    /* ── Price rows ── */
+    var priceHtml = '';
     if (price > 0) {
-      priceRow = '<div class="fxa-info-row">'
+      priceHtml = '<div class="fxa-info-row">'
         + '<span class="fxa-info-label">Prix final</span>'
         + '<span class="fxa-info-value">' + price.toLocaleString('fr-FR') + ' MAD</span>'
         + '</div>'
         + '<div class="fxa-info-row">'
-        + '<span class="fxa-info-label">Votre revenu (85%)</span>'
+        + '<span class="fxa-info-label">Votre revenu (85 %)</span>'
         + '<span class="fxa-info-value" style="color:#20c997">' + net.toLocaleString('fr-FR') + ' MAD</span>'
         + '</div>';
     }
 
+    /* ── Fallback banner when _request is null (RLS blocked enrichment) ── */
+    var fallbackHtml = '';
+    if (!req) {
+      var shortId = String(mission.request_id || mission.id || '').slice(0, 8);
+      fallbackHtml = '<div class="fxa-info-row" style="opacity:.7">'
+        + '<span class="fxa-info-label">Réf. demande</span>'
+        + '<span class="fxa-info-value fxa-muted">#' + esc(shortId) + '</span>'
+        + '</div>'
+        + '<div class="fxa-info-row" style="opacity:.7">'
+        + '<span class="fxa-info-label">Statut mission</span>'
+        + '<span class="fxa-info-value fxa-muted">' + esc(_missionStatusLabel(st)) + '</span>'
+        + '</div>';
+    }
+
     return '<div class="fxa-card">'
-      + '<div class="fxa-card-head">'
-      + '<span class="fxa-card-service">'
-      + esc(req.service_category || 'Mission')
-      + '</span>'
-      + badge
-      + '</div>'
-      + '<div class="fxa-card-meta">'
-      + (req.city ? '<span class="fxa-card-meta-item">📍 ' + esc(req.city) + '</span>' : '')
-      + '<span class="fxa-card-meta-item">🕐 ' + esc(timeAgo(req.created_at || mission.created_at)) + '</span>'
-      + '</div>'
-      + (req.description ? '<div class="fxa-card-desc">' + esc(req.description) + '</div>' : '')
-      + priceRow
+      + headerHtml
+      + metaHtml
+      + descHtml
+      + fallbackHtml
+      + priceHtml
       + _missionActions(mission, st)
       + '</div>';
   }
