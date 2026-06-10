@@ -503,6 +503,20 @@
       }
     });
 
+    /* ── Avatar workspace shortcut — delegated, works regardless of href timing ── */
+    root.addEventListener('click', function (e) {
+      const avatarLink = e.target.closest('.fixeo-gh-avatar-link');
+      if (!avatarLink) return;
+      e.preventDefault();
+      e.stopPropagation();
+      const u = getAuthUser();
+      const dest = (u && u.role === 'artisan')
+        ? 'dashboard-artisan-v2.html'
+        : (u ? 'dashboard-client.html' : 'auth.html');
+      console.warn('[fixeo-gh] avatar workspace click →', dest);
+      window.location.href = dest;
+    });
+
     /* Language buttons in drawer */
     root.addEventListener('click', function (e) {
       const btn = e.target.closest('.fixeo-gh-drawer-lang-btn');

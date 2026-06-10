@@ -176,6 +176,9 @@ body.fixeo-gh-enabled .navbar-toggle {
   body.fixeo-gh-enabled .fixeo-gh-avatar-link {
     text-decoration: none;
     overflow: hidden;
+    cursor: pointer;
+    pointer-events: auto;
+    z-index: 1201; /* above bar (1200) — ensures tap target is never covered */
   }
 
   body.fixeo-gh-enabled .fixeo-gh-avatar {
