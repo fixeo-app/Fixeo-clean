@@ -596,6 +596,26 @@
 .fxa-profile-name-lg { font-size: 1.0rem; font-weight: 800; }
 .fxa-profile-email   { font-size: .75rem; color: var(--fxa-text-muted); margin-top: 2px; }
 
+/* ── HIDDEN UTILITY (modal/overlay toggle) ───────────────── */
+/* MUST be present: JS uses classList.add/remove('hidden') to show/hide the modal.
+   Without this rule, 'hidden' class is inert and the modal overlay remains
+   permanently visible as a full-screen backdrop, blocking all pointer-events. */
+.hidden { display: none !important; }
+
+/* ── MODAL OVERLAY ────────────────────────────────────────── */
+/* Rendered as display:none (.hidden) until JS removes 'hidden'.
+   Inline display:flex was removed from HTML — it was overriding .hidden. */
+.fxa-modal-overlay {
+  display: flex;           /* shown state; .hidden overrides to none */
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 400;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0;
+}
+
 /* ── COMING SOON ──────────────────────────────────────────── */
 .fxa-coming-soon {
   text-align: center;

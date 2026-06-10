@@ -22,7 +22,7 @@
 (function (window, document) {
   'use strict';
 
-  var VERSION = 'v1a';
+  var VERSION = 'v1b';
 
   /* ── STATE ────────────────────────────────────────────────── */
   var _state = {
