@@ -294,19 +294,21 @@
      * fall back to individual per-mission queries using client_profile_id path. */
     if (_state.myMissions.length) {
       var reqIds = _state.myMissions.map(function(m) { return m.request_id; }).filter(Boolean);
+      console.log('[fxav2] ENRICH reqIds=', JSON.stringify(reqIds));
       if (reqIds.length) {
         var SR_COLS = 'id,service_category,city,description,status,final_price,created_at,updated_at';
+        console.log('[fxav2] ENRICH SR_COLS=', SR_COLS);
         var srRes = await sb.from('service_requests')
           .select(SR_COLS)
           .in('id', reqIds);
+        console.log('[fxav2] ENRICH bulk srRes.error=', srRes.error ? JSON.stringify(srRes.error) : null);
+        console.log('[fxav2] ENRICH bulk srRes.data=', JSON.stringify(srRes.data));
+        console.log('[fxav2] ENRICH bulk srRes.data.length=', srRes.data ? srRes.data.length : 'null');
         var srMap = {};
         if (!srRes.error && srRes.data && srRes.data.length) {
           srRes.data.forEach(function(r) { srMap[r.id] = r; });
         } else {
-          /* Bulk read returned nothing (RLS) — try individual queries per mission.
-           * service_requests with status='assigned' are readable via artisan_read_new_requests
-           * only if status='new'; assigned rows need a separate SELECT policy.
-           * For now: attempt each individually (silent fail → _request stays null). */
+          /* Bulk read returned nothing — try individual queries per mission. */
           for (var mi = 0; mi < _state.myMissions.length; mi++) {
             var rid = _state.myMissions[mi].request_id;
             if (!rid) continue;
@@ -314,11 +316,15 @@
               .select(SR_COLS)
               .eq('id', rid)
               .maybeSingle();
+            console.log('[fxav2] ENRICH fallback rid=' + rid
+              + ' error=' + (indRes.error ? JSON.stringify(indRes.error) : null)
+              + ' data=' + JSON.stringify(indRes.data));
             if (!indRes.error && indRes.data) {
               srMap[rid] = indRes.data;
             }
           }
         }
+        console.log('[fxav2] ENRICH final srMap keys=', JSON.stringify(Object.keys(srMap)));
         _state.myMissions = _state.myMissions.map(function(m) {
           return Object.assign({}, m, { _request: srMap[m.request_id] || null });
         });
