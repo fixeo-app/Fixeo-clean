@@ -22,7 +22,7 @@
 (function (window, document) {
   'use strict';
 
-  var VERSION = 'v1m';
+  var VERSION = 'v1n';
 
   /* ── STATE ────────────────────────────────────────────────── */
   var _state = {
@@ -296,7 +296,7 @@
       var reqIds = _state.myMissions.map(function(m) { return m.request_id; }).filter(Boolean);
       console.log('[fxav2] ENRICH reqIds=', JSON.stringify(reqIds));
       if (reqIds.length) {
-        var SR_COLS = 'id,service_category,city,description,status,created_at,updated_at'; /* final_price col does not exist */
+        var SR_COLS = 'id,service_category,city,description,status,created_at'; /* final_price,updated_at cols do not exist */
         console.log('[fxav2] ENRICH SR_COLS=', SR_COLS);
         var srRes = await sb.from('service_requests')
           .select(SR_COLS)
