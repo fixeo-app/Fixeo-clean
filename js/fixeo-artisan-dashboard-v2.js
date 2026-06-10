@@ -22,7 +22,7 @@
 (function (window, document) {
   'use strict';
 
-  var VERSION = 'v1h-trace';
+  var VERSION = 'v1i';
 
   /* ── STATE ────────────────────────────────────────────────── */
   var _state = {
@@ -493,14 +493,26 @@
     var ap = _state.artisanProfile;
     var profHtml = _renderProfileHeader();
 
-    /* No profile linked gate */
+    /* No profile linked gate — but still show missions if any exist */
     if (!ap) {
+      /* ── DIAGNOSTIC TRACE ── */
+      console.log('[fxav2] TRACE _renderDashboard: artisanProfile=null, myMissions.length=', _state.myMissions.length);
+      var activeFallback = _state.myMissions.filter(function(m) {
+        var st = (m._request && m._request.status) || m.status || '';
+        return st === 'pending' || st === 'assigned' || st === 'in_progress' || st === 'completed';
+      });
+      var missionFallbackHtml = activeFallback.length
+        ? '<div class="fxa-section-head" style="margin-top:20px"><h2>⚡ Mes missions</h2>'
+          + '<span class="fxa-section-count">' + activeFallback.length + '</span></div>'
+          + '<div class="fxa-card-list">' + activeFallback.map(_renderMissionCard).join('') + '</div>'
+        : '';
       sec.innerHTML = profHtml
         + '<div class="fxa-no-profile">'
         + '<div class="fxa-no-profile-icon">⚠️</div>'
         + '<div class="fxa-no-profile-title">Profil artisan non associé</div>'
         + '<div class="fxa-no-profile-sub">Votre compte n\'est pas encore lié à un profil artisan Fixeo. Contactez le support pour associer votre compte.</div>'
-        + '</div>';
+        + '</div>'
+        + missionFallbackHtml;
       return;
     }
 
@@ -575,10 +587,17 @@
     var sec = el('fxav2-sec-missions');
     if (!sec) return;
 
+    /* ── DIAGNOSTIC TRACE ── */
+    console.log('[fxav2] TRACE _renderMyMissions: myMissions.length=', _state.myMissions.length);
+    _state.myMissions.forEach(function(m,i){
+      console.log('[fxav2] TRACE mission['+i+'] status='+m.status+' _request='+(m._request?m._request.status:'null'));
+    });
+
     var active = _state.myMissions.filter(function(m) {
       var st = (m._request && m._request.status) || m.status || '';
       return st === 'pending' || st === 'assigned' || st === 'in_progress' || st === 'completed';
     });
+    console.log('[fxav2] TRACE _renderMyMissions: active.length=', active.length);
 
     var html = '<div class="fxa-section-head"><h2>⚡ Mes missions</h2>'
       + '<span class="fxa-section-count">' + active.length + '</span>'
