@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0d0d1a">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Fixeo &mdash; Mon espace artisan</title>
+  <link rel="icon" type="image/png" href="img/favicon.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="img/favicon.png">
+  <!-- Fonts (deferred) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet"></noscript>
+  <!-- V2 CSS — single file, no V1 CSS -->
+  <link rel="stylesheet" href="css/fixeo-artisan-dashboard-v2.css?v=v1a">
+  <!-- Supabase + auth guard — synchronous, must be in head -->
+  <script src="js/supabase-client.js?v=sc2"></script>
+  <script src="js/fixeo-auth-guard.js?v=v2"></script>
+</head>
+<body class="fxa-body">
+
+<!-- ══════════════════════════════════════════════════════════
+     HEADER
+════════════════════════════════════════════════════════════ -->
+<header class="fxa-header">
+  <button class="fxa-hamburger" id="fxav2-hamburger"
+          aria-label="Ouvrir le menu" aria-expanded="false"
+          aria-controls="fxav2-sidebar">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="fxa-header-logo">Fixeo</div>
+  <div><!-- notification bell placeholder --></div>
+</header>
+
+<!-- ══════════════════════════════════════════════════════════
+     SIDEBAR
+════════════════════════════════════════════════════════════ -->
+<aside class="fxa-sidebar" id="fxav2-sidebar" aria-hidden="true">
+
+  <!-- Profile block -->
+  <div class="fxa-sidebar-profile">
+    <div class="fxa-sidebar-avatar" id="fxav2-sb-avatar">🔧</div>
+    <div>
+      <div class="fxa-sidebar-name" id="fxav2-sb-name">Chargement…</div>
+      <div class="fxa-sidebar-sub"  id="fxav2-sb-sub"></div>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="fxa-nav" role="navigation" aria-label="Navigation principale">
+    <button class="fxa-nav-link active" data-section="dashboard">
+      <span class="icon">🏠</span> Tableau de bord
+    </button>
+    <button class="fxa-nav-link" data-section="available">
+      <span class="icon">📬</span> Demandes disponibles
+    </button>
+    <button class="fxa-nav-link" data-section="missions">
+      <span class="icon">⚡</span> Mes missions
+    </button>
+    <button class="fxa-nav-link" data-section="history">
+      <span class="icon">📁</span> Historique
+    </button>
+    <button class="fxa-nav-link" data-section="profile">
+      <span class="icon">👤</span> Mon profil
+    </button>
+    <button class="fxa-nav-link" data-section="support">
+      <span class="icon">🆘</span> Support Fixeo
+    </button>
+  </nav>
+
+  <div class="fxa-sidebar-footer">
+    <button class="fxa-logout-btn" id="fxav2-logout">Se déconnecter</button>
+  </div>
+
+</aside>
+
+<!-- Overlay backdrop -->
+<div class="fxa-overlay" id="fxav2-overlay" aria-hidden="true"></div>
+
+<!-- ══════════════════════════════════════════════════════════
+     MAIN CONTENT
+════════════════════════════════════════════════════════════ -->
+<main class="fxa-main" id="fxav2-main" role="main">
+  <div class="fxa-content">
+
+    <!-- KPI BAR -->
+    <div class="fxa-kpi-bar" id="fxav2-kpi-bar">
+      <div class="fxa-kpi">
+        <span class="fxa-kpi-val loading" id="fxav2-kpi-available" aria-label="Demandes disponibles"></span>
+        <span class="fxa-kpi-label">Disponibles</span>
+      </div>
+      <div class="fxa-kpi">
+        <span class="fxa-kpi-val loading" id="fxav2-kpi-active" aria-label="Missions actives"></span>
+        <span class="fxa-kpi-label">En cours</span>
+      </div>
+      <div class="fxa-kpi">
+        <span class="fxa-kpi-val loading" id="fxav2-kpi-done" aria-label="Missions terminées"></span>
+        <span class="fxa-kpi-label">Terminées</span>
+      </div>
+      <div class="fxa-kpi">
+        <span class="fxa-kpi-val loading" id="fxav2-kpi-revenue" aria-label="Revenus nets"></span>
+        <span class="fxa-kpi-label">Revenus nets</span>
+      </div>
+    </div>
+
+    <!-- SECTIONS -->
+    <section class="fxa-section active" id="fxav2-sec-dashboard"
+             role="region" aria-label="Tableau de bord">
+    </section>
+
+    <section class="fxa-section" id="fxav2-sec-available"
+             role="region" aria-label="Demandes disponibles">
+    </section>
+
+    <section class="fxa-section" id="fxav2-sec-missions"
+             role="region" aria-label="Mes missions">
+    </section>
+
+    <section class="fxa-section" id="fxav2-sec-history"
+             role="region" aria-label="Historique">
+    </section>
+
+    <section class="fxa-section" id="fxav2-sec-profile"
+             role="region" aria-label="Mon profil">
+    </section>
+
+    <section class="fxa-section" id="fxav2-sec-support"
+             role="region" aria-label="Support Fixeo">
+    </section>
+
+  </div>
+</main>
+
+<!-- ══════════════════════════════════════════════════════════
+     BOTTOM NAV (mobile only)
+════════════════════════════════════════════════════════════ -->
+<nav class="fxa-bottom-nav" role="navigation" aria-label="Navigation rapide">
+  <button class="fxa-bottom-btn active" data-section="dashboard" aria-label="Tableau de bord">
+    <span class="bicon">🏠</span><span>Accueil</span>
+  </button>
+  <button class="fxa-bottom-btn" data-section="available" aria-label="Demandes disponibles">
+    <span class="bicon">📬</span><span>Demandes</span>
+  </button>
+  <button class="fxa-bottom-btn" data-section="missions" aria-label="Mes missions">
+    <span class="bicon">⚡</span><span>Missions</span>
+  </button>
+  <button class="fxa-bottom-btn" data-section="profile" aria-label="Mon profil">
+    <span class="bicon">👤</span><span>Profil</span>
+  </button>
+</nav>
+
+<!-- ══════════════════════════════════════════════════════════
+     MODAL
+════════════════════════════════════════════════════════════ -->
+<div class="hidden" id="fxav2-modal-overlay" role="dialog"
+     aria-modal="true" aria-label="Action"
+     style="position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:400;display:flex;align-items:flex-end;justify-content:center;padding:0">
+  <div style="background:#1a1a2e;border:1px solid rgba(255,255,255,.12);border-radius:20px 20px 0 0;width:100%;max-width:500px;padding:24px 20px;position:relative">
+    <button id="fxav2-modal-close" aria-label="Fermer"
+            style="position:absolute;top:16px;right:16px;background:rgba(255,255,255,.08);border:none;color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:1.1rem">×</button>
+    <div id="fxav2-modal-body"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="fxa-toast-wrap" id="fxav2-toast-wrap" aria-live="polite" aria-atomic="false"></div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SCRIPTS — 3 remaining (5 total with head scripts)
+════════════════════════════════════════════════════════════ -->
+<script src="js/fixeo-supabase-core.js?v=core1"></script>
+<script src="js/fixeo-logout-global.js?v=v2c4a"></script>
+<script src="js/fixeo-artisan-dashboard-v2.js?v=v1a" defer></script>
+
+</body>
+</html>
