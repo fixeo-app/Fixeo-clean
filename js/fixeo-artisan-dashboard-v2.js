@@ -22,7 +22,7 @@
 (function (window, document) {
   'use strict';
 
-  var VERSION = 'v1g';
+  var VERSION = 'v1h';
 
   /* ── STATE ────────────────────────────────────────────────── */
   var _state = {
@@ -243,10 +243,12 @@
       _state.artisanProfile = await _loadArtisanProfile(uid);
     }
 
-    /* Fetch open requests + artisan missions in parallel */
+    /* Fetch open requests in parallel; missions queried separately below
+     * using artisanProfile.id (artisans PK) — NOT auth.profile.id (auth uid).
+     * listArtisanMissions() uses auth.profile.id which may differ from
+     * artisans.id when owner_user_id ≠ profiles.id in the current session. */
     var results = await Promise.allSettled([
-      FS.listOpenRequests(),
-      FS.listArtisanMissions()
+      FS.listOpenRequests()
     ]);
 
     /* Open requests — filter to matching only */
@@ -257,19 +259,29 @@
       _state.openRequests = [];
     }
 
-    /* My missions (service_requests where artisan is assigned) */
-    if (results[1].status === 'fulfilled') {
-      var missions = results[1].value || [];
-      /* missions table has request_id — enrich with service_request data */
-      _state.myMissions = missions;
-    } else {
-      console.warn('[fxav2] listArtisanMissions error:', results[1].reason && results[1].reason.message);
+    /* My missions — query by artisans.id (the artisan table PK stored in
+     * _state.artisanProfile.id) so the link is always artisan-identity-based,
+     * not session-uid-based.  This fixes the mismatch where missions were
+     * inserted with artisan_profile_id = session uid ≠ artisanProfile.id.
+     *
+     * Going forward _doAcceptMission also writes artisanProfile.id so
+     * both sides of the link use the same UUID. */
+    var sb = await FS.getClient();
+    var artisanId = _state.artisanProfile && _state.artisanProfile.id;
+    var mRes = artisanId
+      ? await sb.from('missions').select('*')
+          .eq('artisan_profile_id', artisanId)
+          .order('created_at', { ascending: false })
+      : { data: [], error: null };
+    if (mRes.error) {
+      console.warn('[fxav2] listMissions error:', mRes.error.message);
       _state.myMissions = [];
+    } else {
+      _state.myMissions = mRes.data || [];
     }
 
     /* Also fetch service_requests for assigned missions to get status/city/description */
     if (_state.myMissions.length) {
-      var sb = await FS.getClient();
       var reqIds = _state.myMissions.map(function(m) { return m.request_id; }).filter(Boolean);
       if (reqIds.length) {
         var srRes = await sb.from('service_requests')
@@ -837,8 +849,11 @@
     try {
       var FS = window.FixeoSupabase;
       var sb = await FS.getClient();
-      var auth = await FS.requireAuth('artisan');
-      var artisanProfileId = auth.profile.id;  /* profiles.id = auth.uid() */
+      await FS.requireAuth('artisan');
+      /* Use artisans.id (artisan table PK), NOT auth.profile.id (session uid).
+       * auth.uid may differ from artisans.id; missions must reference the
+       * artisan record so listMissions can find them by artisanProfile.id. */
+      var artisanProfileId = _state.artisanProfile.id;
 
       /* ── Guard 1: request must still be status='new' ──── */
       var reqCheck = await sb.from('service_requests')
