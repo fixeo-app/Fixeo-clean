@@ -8,7 +8,7 @@
   'use strict';
 
   /* ── VERSION ──────────────────────────────────────────────────── */
-  var VERSION = 'v2e';
+  var VERSION = 'v2f';
 
   /* ── PIPELINE DEFINITION ──────────────────────────────────────── */
   /* Maps a unified key to display config.
@@ -19,7 +19,7 @@
     ACCEPTED:                       { label: 'Devis accept\u00e9',         badge: 'accepted',  step: 2, icon: '\u2705' },
     ARTISAN_ASSIGNED:               { label: 'Artisan assign\u00e9',       badge: 'assigned',  step: 2, icon: '\uD83D\uDC77' },
     IN_PROGRESS:                    { label: 'Intervention en cours',      badge: 'progress',  step: 3, icon: '\u26A1' },
-    COMPLETED_WAITING_CONFIRMATION: { label: 'Termin\u00e9e \u2014 \u00e0 confirmer', badge: 'confirm', step: 4, icon: '\u23F3' },
+    COMPLETED_WAITING_CONFIRMATION: { label: '\u00c0 confirmer',                    badge: 'confirm', step: 4, icon: '\u23F3' },
     COMPLETED:                      { label: 'Valid\u00e9e',               badge: 'done',      step: 5, icon: '\u2B50' },
     CANCELLED:                      { label: 'Annul\u00e9e',               badge: 'cancelled', step: -1, icon: '\u274C' }
   };
@@ -267,11 +267,11 @@
 
   function _renderConfirmBlock(req) {
     return '<div class="fxv2-confirm-block">'
-      + '<div class="fxv2-confirm-title">\u2728 L\u2019intervention est termin\u00e9e\u00a0?</div>'
-      + '<div class="fxv2-confirm-sub">Confirmez pour cl\u00f4turer la mission et lib\u00e9rer l\u2019artisan.</div>'
+      + '<div class="fxv2-confirm-title">\u23F3 Prestation termin\u00e9e \u2014 en attente de votre confirmation</div>'
+      + '<div class="fxv2-confirm-sub">Confirmez la prestation pour cl\u00f4turer la mission.</div>'
       + '<button class="fxv2-btn fxv2-btn-success fxv2-btn-confirm-sticky"'
       + ' data-action="confirm-done" data-id="' + esc(req.id) + '">'
-      + '\u2713 Confirmer la fin de l\u2019intervention'
+      + '\u2713 Confirmer la prestation'
       + '</button>'
       + '</div>';
   }
@@ -763,7 +763,7 @@
     } catch (e) {
       console.warn('[fxv2] confirmDone error:', e && e.message);
       _toast('\u274C ' + (e && e.message ? e.message : 'Erreur lors de la confirmation.'), 'error');
-      _btnReset(btn, '\u2713 Confirmer la fin de l\u2019intervention');
+      _btnReset(btn, '\u2713 Confirmer la prestation');
     }
   }
 
