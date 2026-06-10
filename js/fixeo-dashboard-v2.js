@@ -8,7 +8,7 @@
   'use strict';
 
   /* ── VERSION ──────────────────────────────────────────────────── */
-  var VERSION = 'v2c';
+  var VERSION = 'v2d';
 
   /* ── PIPELINE DEFINITION ──────────────────────────────────────── */
   /* Maps a unified key to display config.
@@ -726,16 +726,35 @@
        * Writing the French 'validée' is rejected by the constraint and the update silently
        * fails (Supabase JS returns {data:[], error:null} without .select() even on CHECK violation),
        * causing the card to remain at 'À confirmer' after the toast. */
+      /* Use .maybeSingle() — NOT .single().
+       *
+       * .single() throws PGRST116 "Cannot coerce the result to a single JSON object"
+       * whenever the UPDATE matches 0 rows. This happens when:
+       *   (a) RLS is enabled with no FOR UPDATE policy → row is silently blocked
+       *   (b) requestId UUID does not match any row (double-click, stale data)
+       *   (c) row already updated to 'validated' by a concurrent call
+       *
+       * .maybeSingle() returns {data: null, error: null} on 0 rows instead of throwing.
+       * We then detect the null and surface a safe error message without a JS exception.
+       */
       var res = await sb.from('service_requests')
         .update({ status: 'validated' })
         .eq('id', requestId)
-        .select('id, status')   /* force a read-back so constraint violations surface as errors */
-        .single();
+        .select('id, status')
+        .maybeSingle();
 
       if (res.error) throw res.error;
 
-      /* Verify the DB actually accepted the update before showing success */
-      if (!res.data || res.data.status !== 'validated') {
+      /* 0 rows updated — RLS blocking the write or UUID mismatch */
+      if (res.data === null) {
+        throw new Error(
+          'La mise \u00e0 jour a \u00e9t\u00e9 bloqu\u00e9e (droits insuffisants ou demande introuvable). ' +
+          'Veuillez contacter le support Fixeo.'
+        );
+      }
+
+      /* Verify the DB actually committed the correct value */
+      if (res.data.status !== 'validated') {
         throw new Error('La mise \u00e0 jour n\u2019a pas \u00e9t\u00e9 persist\u00e9e. Veuillez r\u00e9essayer.');
       }
 
