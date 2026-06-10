@@ -22,7 +22,7 @@
 (function (window, document) {
   'use strict';
 
-  var VERSION = 'v1f';
+  var VERSION = 'v1g';
 
   /* ── STATE ────────────────────────────────────────────────── */
   var _state = {
@@ -289,8 +289,8 @@
   /* ── KPI COMPUTATION ──────────────────────────────────────── */
   function _computeKPIs() {
     var assigned   = _state.myMissions.filter(function(m) {
-      var st = m._request && m._request.status;
-      return st === 'assigned' || st === 'in_progress';
+      var st = (m._request && m._request.status) || m.status || '';
+      return st === 'pending' || st === 'assigned' || st === 'in_progress';
     }).length;
 
     var completed  = _state.myMissions.filter(function(m) {
@@ -378,7 +378,7 @@
   /* ── RENDER: MISSION CARD (assigned) ─────────────────────── */
   function _renderMissionCard(mission) {
     var req  = mission._request || {};
-    var st   = String(req.status || mission.status || 'assigned').toLowerCase().trim();
+    var st   = String(req.status || mission.status || 'pending').toLowerCase().trim();
     var name = _missionStatusLabel(st);
     var badge = _missionBadge(st);
     var price = Number(req.final_price || mission.agreed_price || 0);
@@ -415,6 +415,7 @@
 
   function _missionStatusLabel(st) {
     var m = {
+      'pending':     'Mission acceptée',
       'assigned':    'Artisan assigné',
       'in_progress': 'En cours',
       'completed':   'Terminée — en attente confirmation',
@@ -426,6 +427,7 @@
 
   function _missionBadge(st) {
     var cls = {
+      'pending':     'fxa-badge-assigned',
       'assigned':    'fxa-badge-assigned',
       'in_progress': 'fxa-badge-progress',
       'completed':   'fxa-badge-confirm',
@@ -439,7 +441,7 @@
     var reqId = (mission._request && mission._request.id) || mission.request_id || '';
     var html  = '<div class="fxa-actions">';
 
-    if (st === 'assigned') {
+    if (st === 'pending' || st === 'assigned') {
       html += '<button class="fxa-btn fxa-btn-primary" '
         + 'data-action="start-mission" data-req-id="' + esc(reqId) + '">'
         + '▶ Démarrer l\'intervention</button>';
@@ -456,7 +458,7 @@
     }
 
     /* WhatsApp CTA always visible for active missions */
-    if (st === 'assigned' || st === 'in_progress' || st === 'completed') {
+    if (st === 'pending' || st === 'assigned' || st === 'in_progress' || st === 'completed') {
       html += '<a class="fxa-btn fxa-btn-wa" href="https://wa.me/212660484415?text=Bonjour+Fixeo%2C+mission+' + esc(reqId.slice(0,8)) + '" target="_blank" rel="noopener">💬 Fixeo</a>';
     }
 
@@ -509,8 +511,8 @@
 
     /* Active missions (max 2) */
     var activeMissions = _state.myMissions.filter(function(m) {
-      var st = m._request && m._request.status;
-      return st === 'assigned' || st === 'in_progress' || st === 'completed';
+      var st = (m._request && m._request.status) || m.status || '';
+      return st === 'pending' || st === 'assigned' || st === 'in_progress' || st === 'completed';
     }).slice(0, 2);
     var missionHtml = '';
     if (activeMissions.length) {
@@ -554,8 +556,8 @@
     if (!sec) return;
 
     var active = _state.myMissions.filter(function(m) {
-      var st = m._request && m._request.status;
-      return st === 'assigned' || st === 'in_progress' || st === 'completed';
+      var st = (m._request && m._request.status) || m.status || '';
+      return st === 'pending' || st === 'assigned' || st === 'in_progress' || st === 'completed';
     });
 
     var html = '<div class="fxa-section-head"><h2>⚡ Mes missions</h2>'
