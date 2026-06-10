@@ -22,7 +22,7 @@
 (function (window, document) {
   'use strict';
 
-  var VERSION = 'v1b';
+  var VERSION = 'v1b-diag';
 
   /* ── STATE ────────────────────────────────────────────────── */
   var _state = {
@@ -108,10 +108,52 @@
 
   function _filterMatching(requests) {
     var ap = _state.artisanProfile;
-    if (!ap) return [];
-    return requests.filter(function(r) {
-      return _cityMatch(r.city, ap) && _categoryMatch(r.service_category, ap);
-    });
+
+    /* ── DIAGNOSTIC v1b-diag ─────────────────────────────────
+     * Temporary — remove after root cause confirmed.
+     * Logs visible in browser DevTools → Console.             */
+    console.group('[fxav2-diag] _filterMatching');
+    console.log('ARTISAN PROFILE');
+    console.log('  city=', ap ? JSON.stringify(ap.city) : 'null (no profile)');
+    console.log('  service_category=', ap ? JSON.stringify(ap.service_category) : 'null');
+    console.log('  category=', ap ? JSON.stringify(ap.category) : 'null');
+    console.log('  work_zone=', ap ? JSON.stringify(ap.work_zone) : 'null');
+    console.log('REQUESTS LOADED=', requests.length);
+
+    if (!ap) {
+      console.log('  → artisanProfile is null — returning []');
+      console.groupEnd();
+      return [];
+    }
+
+    var afterCity = requests.filter(function(r) { return _cityMatch(r.city, ap); });
+    console.log('AFTER CITY FILTER=', afterCity.length);
+    if (afterCity.length && afterCity.length <= 10) {
+      afterCity.forEach(function(r, i) {
+        console.log('  [city-pass '+i+'] city='+JSON.stringify(r.city)+' cat='+JSON.stringify(r.service_category));
+      });
+    }
+    if (requests.length !== afterCity.length) {
+      var cityBlocked = requests.filter(function(r){ return !_cityMatch(r.city, ap); });
+      cityBlocked.slice(0,5).forEach(function(r,i){
+        console.log('  [city-BLOCKED '+i+'] city='+JSON.stringify(r.city)+' cat='+JSON.stringify(r.service_category));
+      });
+    }
+
+    var afterCat = afterCity.filter(function(r) { return _categoryMatch(r.service_category, ap); });
+    console.log('AFTER CATEGORY FILTER=', afterCat.length);
+    if (afterCity.length !== afterCat.length) {
+      var catBlocked = afterCity.filter(function(r){ return !_categoryMatch(r.service_category, ap); });
+      catBlocked.slice(0,5).forEach(function(r,i){
+        console.log('  [cat-BLOCKED '+i+'] city='+JSON.stringify(r.city)+' cat='+JSON.stringify(r.service_category));
+      });
+    }
+
+    console.log('FINAL RENDERED=', afterCat.length);
+    console.groupEnd();
+    /* ── END DIAGNOSTIC ───────────────────────────────────── */
+
+    return afterCat;
   }
 
   /* ── DATA FETCH ───────────────────────────────────────────── */
@@ -127,6 +169,11 @@
       .eq('owner_user_id', userId)
       .maybeSingle();
 
+    /* ── DIAGNOSTIC v1b-diag ─────────────────────────── */
+    console.log('[fxav2-diag] _loadArtisanProfile uid='+userId);
+    console.log('[fxav2-diag]   r1.error='+JSON.stringify(r1.error)+' r1.data='+JSON.stringify(r1.data));
+    /* ── END DIAGNOSTIC ──────────────────────────────── */
+
     if (!r1.error && r1.data) return r1.data;
 
     /* Fallback: profiles.phone = artisans.phone (for accounts linked by phone) */
@@ -138,6 +185,11 @@
                 'owner_user_id,claimed,claim_status,badge_label,avatar_color,work_zone')
         .eq('phone_public', phone)
         .maybeSingle();
+
+      /* ── DIAGNOSTIC ──────────────────────────────── */
+      console.log('[fxav2-diag]   phone fallback phone='+phone+' r2.error='+JSON.stringify(r2.error)+' r2.data='+JSON.stringify(r2.data));
+      /* ── END DIAGNOSTIC ──────────────────────────── */
+
       if (!r2.error && r2.data) return r2.data;
     }
 
