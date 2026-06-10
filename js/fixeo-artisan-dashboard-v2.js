@@ -22,7 +22,7 @@
 (function (window, document) {
   'use strict';
 
-  var VERSION = 'v1d';
+  var VERSION = 'v1e';
 
   /* ── STATE ────────────────────────────────────────────────── */
   var _state = {
@@ -368,8 +368,8 @@
           ? '<div class="fxa-card-desc">' + esc(req.description) + '</div>'
           : '')
       + '<div class="fxa-actions">'
-      + '<button class="fxa-btn fxa-btn-primary" data-action="contact-fixeo" data-req-id="' + esc(req.id) + '">'
-      + '📩 Contacter Fixeo'
+      + '<button class="fxa-btn fxa-btn-primary" data-action="accept-mission" data-req-id="' + esc(req.id) + '">'
+      + '✅ Accepter la mission'
       + '</button>'
       + '</div>'
       + '</div>';
@@ -801,9 +801,9 @@
       var action = btn.dataset.action;
       var reqId  = btn.dataset.reqId || '';
       switch (action) {
+        case 'accept-mission':   return _doAcceptMission(reqId, btn);
         case 'start-mission':    return _doStartMission(reqId, btn);
         case 'complete-mission': return _doCompleteMission(reqId, btn);
-        case 'contact-fixeo':    return _doContactFixeo(reqId);
         case 'go-available':     return _showSection('available');
         case 'logout':
           if (window.FixeoLogout && typeof window.FixeoLogout.logout === 'function') {
@@ -818,6 +818,81 @@
   }
 
   /* ── ACTIONS ──────────────────────────────────────────────── */
+  /* ── ACCEPT MISSION ──────────────────────────────────────────
+   * 1. Guard: verify request still status='new' (race-condition check)
+   * 2. Guard: verify no mission row exists yet for this request_id
+   * 3. INSERT missions row: request_id, artisan_profile_id, client_profile_id,
+   *    agreed_price=0, commission_amount=0, status='assigned'
+   * 4. UPDATE service_requests SET status='assigned'
+   * 5. Refresh state (_fetch + _render) — removes from available, adds to missions
+   * All guards use .maybeSingle() — no PGRST116.                              */
+  async function _doAcceptMission(requestId, btn) {
+    if (!requestId) return;
+    var ap = _state.artisanProfile;
+    if (!ap) { _toast('❌ Profil artisan non chargé.', 'error'); return; }
+
+    _btnBusy(btn, 'Acceptation…');
+    try {
+      var FS = window.FixeoSupabase;
+      var sb = await FS.getClient();
+      var auth = await FS.requireAuth('artisan');
+      var artisanProfileId = auth.profile.id;  /* profiles.id = auth.uid() */
+
+      /* ── Guard 1: request must still be status='new' ──── */
+      var reqCheck = await sb.from('service_requests')
+        .select('id, status, client_profile_id')
+        .eq('id', requestId)
+        .maybeSingle();
+      if (reqCheck.error) throw reqCheck.error;
+      if (!reqCheck.data) throw new Error('Demande introuvable.');
+      if (reqCheck.data.status !== 'new') {
+        throw new Error('Cette demande a déjà été prise en charge.');
+      }
+
+      /* ── Guard 2: no mission row yet for this request ─── */
+      var missionCheck = await sb.from('missions')
+        .select('id')
+        .eq('request_id', requestId)
+        .maybeSingle();
+      if (missionCheck.error && String(missionCheck.error.code || '') !== 'PGRST116') {
+        throw missionCheck.error;
+      }
+      if (missionCheck.data) {
+        throw new Error('Une mission existe déjà pour cette demande.');
+      }
+
+      /* ── Step 1: INSERT mission row ───────────────────── */
+      var missionInsert = await sb.from('missions').insert({
+        request_id:         requestId,
+        artisan_profile_id: artisanProfileId,
+        client_profile_id:  reqCheck.data.client_profile_id || null,
+        agreed_price:       0,
+        commission_amount:  0,
+        status:             'assigned'
+      }).select('id').maybeSingle();
+      if (missionInsert.error) throw missionInsert.error;
+      if (!missionInsert.data) throw new Error('Création de mission bloquée (vérifiez les droits RLS).');
+
+      /* ── Step 2: UPDATE service_requests status ───────── */
+      var srUpdate = await sb.from('service_requests')
+        .update({ status: 'assigned' })
+        .eq('id', requestId)
+        .eq('status', 'new')        /* optimistic lock — fails silently if raced */
+        .select('id, status')
+        .maybeSingle();
+      if (srUpdate.error) throw srUpdate.error;
+      /* srUpdate.data may be null if status was already changed — mission still created */
+
+      _toast('🎉 Mission acceptée ! Elle apparaît dans "Mes missions".', 'success');
+      await _refresh();  /* re-fetches open requests + missions, re-renders */
+
+    } catch(e) {
+      console.warn('[fxav2] acceptMission error:', e && e.message);
+      _toast('❌ ' + (e && e.message ? e.message : 'Erreur lors de l\'acceptation.'), 'error');
+      _btnReset(btn);
+    }
+  }
+
   async function _doStartMission(requestId, btn) {
     if (!requestId) return;
     _btnBusy(btn, 'Démarrage…');
