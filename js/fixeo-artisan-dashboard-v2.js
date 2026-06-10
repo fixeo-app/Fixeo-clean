@@ -22,7 +22,7 @@
 (function (window, document) {
   'use strict';
 
-  var VERSION = 'v1k';
+  var VERSION = 'v1l';
 
   /* ── STATE ────────────────────────────────────────────────── */
   var _state = {
@@ -995,7 +995,7 @@
       var FS = window.FixeoSupabase;
       var sb = await FS.getClient();
       var res = await sb.from('service_requests')
-        .update({ status: 'en_cours' })
+        .update({ status: 'in_progress' })   /* DB CHECK: new|assigned|in_progress|completed|validated|cancelled */
         .eq('id', requestId)
         .select('id, status')
         .maybeSingle();
