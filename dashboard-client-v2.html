@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0d0d1a">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Fixeo &mdash; Mon espace client</title>
+  <link rel="icon" type="image/png" href="img/favicon.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="img/favicon.png">
+  <!-- Fonts (deferred for performance) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet"></noscript>
+  <!-- V2 CSS only — no V1 CSS loaded -->
+  <link rel="stylesheet" href="css/fixeo-dashboard-v2.css?v=v2a">
+  <!-- Supabase client (must be synchronous, before auth guard) -->
+  <script src="js/supabase-client.js?v=sc2"></script>
+  <!-- Auth guard (sync, head — redirects non-clients immediately) -->
+  <script src="js/fixeo-auth-guard.js?v=v2"></script>
+</head>
+<body class="fxv2-body">
+
+<!-- ══════════════════════════════════════════════════════════
+     HEADER
+════════════════════════════════════════════════════════════ -->
+<header class="fxv2-header">
+  <button class="fxv2-hamburger" id="fxv2-hamburger"
+          aria-label="Ouvrir le menu" aria-expanded="false"
+          aria-controls="fxv2-sidebar">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="fxv2-header-logo">Fixeo</div>
+  <div><!-- reserved for future notification bell --></div>
+</header>
+
+<!-- ══════════════════════════════════════════════════════════
+     SIDEBAR
+════════════════════════════════════════════════════════════ -->
+<aside class="fxv2-sidebar" id="fxv2-sidebar" aria-hidden="true">
+
+  <!-- Profile block (filled by JS) -->
+  <div class="fxv2-sidebar-profile">
+    <div class="fxv2-sidebar-avatar" id="fxv2-sb-avatar">👤</div>
+    <div>
+      <div class="fxv2-sidebar-name" id="fxv2-sb-name">Chargement…</div>
+      <div class="fxv2-sidebar-sub"  id="fxv2-sb-sub"></div>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="fxv2-nav" role="navigation" aria-label="Navigation principale">
+    <button class="fxv2-nav-link active" data-section="dashboard">
+      <span class="icon">🏠</span> Tableau de bord
+    </button>
+    <button class="fxv2-nav-link" data-section="requests">
+      <span class="icon">📋</span> Mes demandes
+    </button>
+    <button class="fxv2-nav-link" data-section="missions">
+      <span class="icon">⚡</span> Mes missions
+    </button>
+    <button class="fxv2-nav-link" data-section="messages">
+      <span class="icon">💬</span> Messages
+    </button>
+    <button class="fxv2-nav-link" data-section="history">
+      <span class="icon">📁</span> Historique
+    </button>
+    <button class="fxv2-nav-link" data-section="profile">
+      <span class="icon">👤</span> Profil
+    </button>
+    <button class="fxv2-nav-link" data-section="support">
+      <span class="icon">🆘</span> Support Fixeo
+    </button>
+  </nav>
+
+  <!-- Logout -->
+  <div class="fxv2-sidebar-footer">
+    <button class="fxv2-logout-btn" id="fxv2-logout">Se déconnecter</button>
+  </div>
+
+</aside>
+
+<!-- Overlay backdrop for mobile sidebar -->
+<div class="fxv2-overlay" id="fxv2-overlay" aria-hidden="true"></div>
+
+<!-- ══════════════════════════════════════════════════════════
+     MAIN CONTENT
+════════════════════════════════════════════════════════════ -->
+<main class="fxv2-main" id="fxv2-main" role="main">
+
+  <!-- KPI BAR (real Supabase values only) -->
+  <div class="fxv2-kpi-bar" id="fxv2-kpi-bar">
+    <div class="fxv2-kpi">
+      <span class="fxv2-kpi-val loading" id="fxv2-kpi-active" aria-label="Demandes actives"></span>
+      <span class="fxv2-kpi-label">Demandes actives</span>
+    </div>
+    <div class="fxv2-kpi">
+      <span class="fxv2-kpi-val loading" id="fxv2-kpi-pending" aria-label="En attente"></span>
+      <span class="fxv2-kpi-label">En attente</span>
+    </div>
+    <div class="fxv2-kpi">
+      <span class="fxv2-kpi-val loading" id="fxv2-kpi-today" aria-label="Interventions aujourd'hui"></span>
+      <span class="fxv2-kpi-label">Aujourd'hui</span>
+    </div>
+    <div class="fxv2-kpi">
+      <span class="fxv2-kpi-val loading" id="fxv2-kpi-done" aria-label="Terminées"></span>
+      <span class="fxv2-kpi-label">Terminées</span>
+    </div>
+  </div>
+
+  <!-- SECTIONS — one rendered per section, shown/hidden by JS -->
+
+  <section class="fxv2-section active" id="fxv2-sec-dashboard"
+           role="region" aria-label="Tableau de bord">
+    <!-- populated by _renderDashboard() -->
+  </section>
+
+  <section class="fxv2-section" id="fxv2-sec-requests"
+           role="region" aria-label="Mes demandes">
+    <!-- populated by _renderRequests() -->
+  </section>
+
+  <section class="fxv2-section" id="fxv2-sec-missions"
+           role="region" aria-label="Mes missions">
+    <!-- populated by _renderMissions() -->
+  </section>
+
+  <section class="fxv2-section" id="fxv2-sec-messages"
+           role="region" aria-label="Messages">
+    <!-- populated by _renderMessages() -->
+  </section>
+
+  <section class="fxv2-section" id="fxv2-sec-history"
+           role="region" aria-label="Historique">
+    <!-- populated by _renderHistory() -->
+  </section>
+
+  <section class="fxv2-section" id="fxv2-sec-profile"
+           role="region" aria-label="Mon profil">
+    <!-- populated by _renderProfile() -->
+  </section>
+
+  <section class="fxv2-section" id="fxv2-sec-support"
+           role="region" aria-label="Support Fixeo">
+    <!-- populated by _renderSupport() -->
+  </section>
+
+</main>
+
+<!-- ══════════════════════════════════════════════════════════
+     BOTTOM NAV (mobile only, sticky)
+════════════════════════════════════════════════════════════ -->
+<nav class="fxv2-bottom-nav" role="navigation" aria-label="Navigation rapide">
+  <button class="fxv2-bottom-btn active" data-section="dashboard" aria-label="Tableau de bord">
+    <span class="bicon">🏠</span>
+    <span>Accueil</span>
+  </button>
+  <button class="fxv2-bottom-btn" data-section="requests" aria-label="Mes demandes">
+    <span class="bicon">📋</span>
+    <span>Demandes</span>
+  </button>
+  <button class="fxv2-bottom-btn" data-section="missions" aria-label="Mes missions">
+    <span class="bicon">⚡</span>
+    <span>Missions</span>
+  </button>
+  <button class="fxv2-bottom-btn" data-section="profile" aria-label="Mon profil">
+    <span class="bicon">👤</span>
+    <span>Profil</span>
+  </button>
+</nav>
+
+<!-- ══════════════════════════════════════════════════════════
+     MODAL (new request + future actions)
+════════════════════════════════════════════════════════════ -->
+<div class="fxv2-modal-overlay hidden" id="fxv2-modal-overlay" role="dialog"
+     aria-modal="true" aria-label="Fenêtre d'action">
+  <div class="fxv2-modal">
+    <button class="fxv2-modal-close" id="fxv2-modal-close" aria-label="Fermer">×</button>
+    <div id="fxv2-modal-body"><!-- modal content injected by JS --></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     TOAST NOTIFICATIONS
+════════════════════════════════════════════════════════════ -->
+<div class="fxv2-toast-wrap" id="fxv2-toast-wrap" aria-live="polite" aria-atomic="false"></div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SCRIPTS — 3 remaining (5 total including head scripts)
+     Load order: supabase-core → logout → dashboard-v2
+════════════════════════════════════════════════════════════ -->
+<script src="js/fixeo-supabase-core.js?v=core1"></script>
+<script src="js/fixeo-logout-global.js?v=v2c4a"></script>
+<script src="js/fixeo-dashboard-v2.js?v=v2a" defer></script>
+
+</body>
+</html>
