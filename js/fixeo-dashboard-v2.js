@@ -8,7 +8,7 @@
   'use strict';
 
   /* ── VERSION ──────────────────────────────────────────────────── */
-  var VERSION = 'v2a';
+  var VERSION = 'v2b';
 
   /* ── PIPELINE DEFINITION ──────────────────────────────────────── */
   /* Maps a unified key to display config.
@@ -97,12 +97,31 @@
   function computePipeline(req, quotes, missions) {
     var st = String(req.status || 'new').toLowerCase().trim();
 
-    /* Admin-set statuses — always authoritative */
-    if (st === 'valid\u00e9e' || st === 'validee' || st === 'validated') return PIPELINE.COMPLETED;
-    if (st === 'termin\u00e9e' || st === 'terminee') return PIPELINE.COMPLETED_WAITING_CONFIRMATION;
-    if (st === 'en_cours' || st === 'en cours') return PIPELINE.IN_PROGRESS;
-    if (st === 'accept\u00e9e' || st === 'accepted') return PIPELINE.ARTISAN_ASSIGNED;
-    if (st === 'annul\u00e9e' || st === 'cancelled') return PIPELINE.CANCELLED;
+    /* Admin-set statuses — always authoritative.
+     * Supports both English DB enum values (new canonical) and
+     * French legacy values written by v3-sync and admin LS patches.
+     *
+     * English DB enum (confirmed production constraint):
+     *   new | assigned | in_progress | completed | validated | cancelled
+     *
+     * French legacy (V1 admin LS, v3-sync write-back):
+     *   nouvelle | acceptée | en_cours | terminée | validée | annulée
+     */
+
+    /* COMPLETED / validée */
+    if (st === 'validated' || st === 'valid\u00e9e' || st === 'validee') return PIPELINE.COMPLETED;
+
+    /* COMPLETED_WAITING_CONFIRMATION / terminée */
+    if (st === 'completed' || st === 'termin\u00e9e' || st === 'terminee') return PIPELINE.COMPLETED_WAITING_CONFIRMATION;
+
+    /* IN_PROGRESS / en_cours */
+    if (st === 'in_progress' || st === 'en_cours' || st === 'en cours') return PIPELINE.IN_PROGRESS;
+
+    /* ARTISAN_ASSIGNED / acceptée */
+    if (st === 'assigned' || st === 'accept\u00e9e' || st === 'accepted') return PIPELINE.ARTISAN_ASSIGNED;
+
+    /* CANCELLED / annulée */
+    if (st === 'cancelled' || st === 'annul\u00e9e' || st === 'annulee') return PIPELINE.CANCELLED;
 
     /* 'new' — derive from quotes and missions */
     var rQuotes   = (quotes  || []).filter(function (q) { return q.request_id === req.id; });
