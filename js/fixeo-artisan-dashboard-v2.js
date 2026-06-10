@@ -22,7 +22,7 @@
 (function (window, document) {
   'use strict';
 
-  var VERSION = 'v1j';
+  var VERSION = 'v1k';
 
   /* ── STATE ────────────────────────────────────────────────── */
   var _state = {
@@ -330,7 +330,7 @@
   function _computeKPIs() {
     var assigned   = _state.myMissions.filter(function(m) {
       var st = (m._request && m._request.status) || m.status || '';
-      return st === 'pending' || st === 'assigned' || st === 'in_progress';
+      return st === 'pending' || st === 'assigned' || st === 'in_progress' || st === 'en_cours';
     }).length;
 
     var completed  = _state.myMissions.filter(function(m) {
@@ -487,6 +487,7 @@
       'pending':     'Mission acceptée',
       'assigned':    'Artisan assigné',
       'in_progress': 'En cours',
+      'en_cours':    'Intervention en cours',
       'completed':   'Terminée — en attente confirmation',
       'validated':   'Validée',
       'cancelled':   'Annulée'
@@ -499,6 +500,7 @@
       'pending':     'fxa-badge-assigned',
       'assigned':    'fxa-badge-assigned',
       'in_progress': 'fxa-badge-progress',
+      'en_cours':    'fxa-badge-progress',
       'completed':   'fxa-badge-confirm',
       'validated':   'fxa-badge-done',
       'cancelled':   'fxa-badge-cancelled'
@@ -514,7 +516,7 @@
       html += '<button class="fxa-btn fxa-btn-primary" '
         + 'data-action="start-mission" data-req-id="' + esc(reqId) + '">'
         + '▶ Démarrer l\'intervention</button>';
-    } else if (st === 'in_progress') {
+    } else if (st === 'in_progress' || st === 'en_cours') {
       html += '<button class="fxa-btn fxa-btn-success" '
         + 'data-action="complete-mission" data-req-id="' + esc(reqId) + '">'
         + '✓ Marquer terminée</button>';
@@ -527,7 +529,7 @@
     }
 
     /* WhatsApp CTA always visible for active missions */
-    if (st === 'pending' || st === 'assigned' || st === 'in_progress' || st === 'completed') {
+    if (st === 'pending' || st === 'assigned' || st === 'in_progress' || st === 'en_cours' || st === 'completed') {
       html += '<a class="fxa-btn fxa-btn-wa" href="https://wa.me/212660484415?text=Bonjour+Fixeo%2C+mission+' + esc(reqId.slice(0,8)) + '" target="_blank" rel="noopener">💬 Fixeo</a>';
     }
 
@@ -548,7 +550,7 @@
       console.log('[fxav2] TRACE _renderDashboard: artisanProfile=null, myMissions.length=', _state.myMissions.length);
       var activeFallback = _state.myMissions.filter(function(m) {
         var st = (m._request && m._request.status) || m.status || '';
-        return st === 'pending' || st === 'assigned' || st === 'in_progress' || st === 'completed';
+        return st === 'pending' || st === 'assigned' || st === 'in_progress' || st === 'en_cours' || st === 'completed';
       });
       var missionFallbackHtml = activeFallback.length
         ? '<div class="fxa-section-head" style="margin-top:20px"><h2>⚡ Mes missions</h2>'
@@ -593,7 +595,7 @@
     /* Active missions (max 2) */
     var activeMissions = _state.myMissions.filter(function(m) {
       var st = (m._request && m._request.status) || m.status || '';
-      return st === 'pending' || st === 'assigned' || st === 'in_progress' || st === 'completed';
+      return st === 'pending' || st === 'assigned' || st === 'in_progress' || st === 'en_cours' || st === 'completed';
     }).slice(0, 2);
     var missionHtml = '';
     if (activeMissions.length) {
@@ -644,7 +646,7 @@
 
     var active = _state.myMissions.filter(function(m) {
       var st = (m._request && m._request.status) || m.status || '';
-      return st === 'pending' || st === 'assigned' || st === 'in_progress' || st === 'completed';
+      return st === 'pending' || st === 'assigned' || st === 'in_progress' || st === 'en_cours' || st === 'completed';
     });
     console.log('[fxav2] TRACE _renderMyMissions: active.length=', active.length);
 
@@ -993,7 +995,7 @@
       var FS = window.FixeoSupabase;
       var sb = await FS.getClient();
       var res = await sb.from('service_requests')
-        .update({ status: 'in_progress' })
+        .update({ status: 'en_cours' })
         .eq('id', requestId)
         .select('id, status')
         .maybeSingle();
