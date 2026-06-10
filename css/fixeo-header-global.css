@@ -740,3 +740,21 @@ body.fixeo-gh-enabled .fixeo-gh-drawer-lang-btn:hover {
   }
 }
 /* END fxgh2 premium polish */
+
+/* ── ⚡ Mon Espace Fixeo — premium drawer CTA — fxgh-espace ── */
+body.fixeo-gh-enabled .fixeo-gh-drawer-espace {
+  background: linear-gradient(135deg, rgba(225,48,108,0.18), rgba(131,58,180,0.22)) !important;
+  border: 1px solid rgba(225,48,108,0.42) !important;
+  box-shadow: 0 0 16px rgba(225,48,108,0.14), inset 0 1px 0 rgba(255,255,255,0.07) !important;
+  border-radius: 12px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.01em;
+  margin-top: 6px !important;
+  transition: background .2s, box-shadow .2s, transform .15s !important;
+}
+body.fixeo-gh-enabled .fixeo-gh-drawer-espace:hover,
+body.fixeo-gh-enabled .fixeo-gh-drawer-espace:active {
+  background: linear-gradient(135deg, rgba(225,48,108,0.30), rgba(131,58,180,0.34)) !important;
+  box-shadow: 0 0 24px rgba(225,48,108,0.26) !important;
+  transform: translateY(-1px);
+}

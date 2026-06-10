@@ -50,7 +50,7 @@
 
   function getAvatarHref(user) {
     if (!user) return resolveCoreHref('auth.html');
-    if (user.role === 'artisan') return resolveCoreHref('dashboard-artisan.html');
+    if (user.role === 'artisan') return resolveCoreHref('dashboard-artisan-v2.html');
     if (user.role === 'admin') return resolveCoreHref('admin.html');
     return resolveCoreHref('dashboard-client.html');
   }
@@ -114,14 +114,15 @@
       </div>`;
 
     /* ── Section 4 — Compte (auth-aware) ─────────────────────── */
+    const _dashDest = user && user.role === 'artisan' ? 'dashboard-artisan-v2.html' : 'dashboard-client.html';
     const compteSection = user
       ? `<div class="fixeo-gh-drawer-group fixeo-gh-drawer-compte">
           <div class="fixeo-gh-drawer-label">Mon compte</div>
-          <a class="fixeo-gh-drawer-link fixeo-gh-drawer-compte-user" href="${user.role === 'artisan' ? 'dashboard-artisan.html' : 'dashboard-client.html'}">
+          <a class="fixeo-gh-drawer-link fixeo-gh-drawer-compte-user" href="${_dashDest}">
             <span class="fixeo-gh-drawer-avatar">${esc(user.name.charAt(0).toUpperCase())}</span>
             <span>${esc(user.name)}</span>
           </a>
-          <a class="fixeo-gh-drawer-link" href="${user.role === 'artisan' ? 'dashboard-artisan.html' : 'dashboard-client.html'}">\uD83D\uDCCA Mon dashboard</a>
+          <a class="fixeo-gh-drawer-link fixeo-gh-drawer-espace" href="${_dashDest}">\u26A1 Mon Espace Fixeo</a>
           <a class="fixeo-gh-drawer-link" id="fixeo-gh-drawer-logout" href="#">\uD83D\uDEAA D\u00e9connexion</a>
         </div>`
       : `<div class="fixeo-gh-drawer-group">
