@@ -22,7 +22,13 @@
 (function (window, document) {
   'use strict';
 
-  var VERSION = 'v1n';
+  /* ── ARTISAN ENGINE PRODUCTION BASELINE — v1p ─────────────────────────────
+   * Mission lifecycle: accept (pending) → start (in_progress) → complete (completed)
+   * SR_COLS: id,service_category,city,description,status,created_at (no final_price/updated_at)
+   * RLS: artisan_read_own_linked_requests + artisan_update_assigned_requests on service_requests
+   * Identity: artisans WHERE owner_user_id=auth.uid() OR phone_public=profiles.phone
+   * ─────────────────────────────────────────────────────────────────────────── */
+  var VERSION = 'v1p';
 
   /* ── STATE ────────────────────────────────────────────────── */
   var _state = {
@@ -147,50 +153,10 @@
   function _filterMatching(requests) {
     var ap = _state.artisanProfile;
 
-    /* ── DIAGNOSTIC v1b-diag ─────────────────────────────────
-     * Temporary — remove after root cause confirmed.
-     * Logs visible in browser DevTools → Console.             */
-    console.group('[fxav2-diag] _filterMatching');
-    console.log('ARTISAN PROFILE');
-    console.log('  city=', ap ? JSON.stringify(ap.city) : 'null (no profile)');
-    console.log('  service_category=', ap ? JSON.stringify(ap.service_category) : 'null');
-    console.log('  category=', ap ? JSON.stringify(ap.category) : 'null');
-    console.log('  work_zone=', ap ? JSON.stringify(ap.work_zone) : 'null');
-    console.log('REQUESTS LOADED=', requests.length);
-
-    if (!ap) {
-      console.log('  → artisanProfile is null — returning []');
-      console.groupEnd();
-      return [];
-    }
+    if (!ap) { return []; }
 
     var afterCity = requests.filter(function(r) { return _cityMatch(r.city, ap); });
-    console.log('AFTER CITY FILTER=', afterCity.length);
-    if (afterCity.length && afterCity.length <= 10) {
-      afterCity.forEach(function(r, i) {
-        console.log('  [city-pass '+i+'] city='+JSON.stringify(r.city)+' cat='+JSON.stringify(r.service_category));
-      });
-    }
-    if (requests.length !== afterCity.length) {
-      var cityBlocked = requests.filter(function(r){ return !_cityMatch(r.city, ap); });
-      cityBlocked.slice(0,5).forEach(function(r,i){
-        console.log('  [city-BLOCKED '+i+'] city='+JSON.stringify(r.city)+' cat='+JSON.stringify(r.service_category));
-      });
-    }
-
-    var afterCat = afterCity.filter(function(r) { return _categoryMatch(r.service_category, ap); });
-    console.log('AFTER CATEGORY FILTER=', afterCat.length);
-    if (afterCity.length !== afterCat.length) {
-      var catBlocked = afterCity.filter(function(r){ return !_categoryMatch(r.service_category, ap); });
-      catBlocked.slice(0,5).forEach(function(r,i){
-        console.log('  [cat-BLOCKED '+i+'] city='+JSON.stringify(r.city)+' cat='+JSON.stringify(r.service_category));
-      });
-    }
-
-    console.log('FINAL RENDERED=', afterCat.length);
-    console.groupEnd();
-    /* ── END DIAGNOSTIC ───────────────────────────────────── */
-
+    var afterCat  = afterCity.filter(function(r) { return _categoryMatch(r.service_category, ap); });
     return afterCat;
   }
 
@@ -207,11 +173,6 @@
       .eq('owner_user_id', userId)
       .maybeSingle();
 
-    /* ── DIAGNOSTIC v1b-diag ─────────────────────────── */
-    console.log('[fxav2-diag] _loadArtisanProfile uid='+userId);
-    console.log('[fxav2-diag]   r1.error='+JSON.stringify(r1.error)+' r1.data='+JSON.stringify(r1.data));
-    /* ── END DIAGNOSTIC ──────────────────────────────── */
-
     if (!r1.error && r1.data) return r1.data;
 
     /* Fallback: profiles.phone = artisans.phone (for accounts linked by phone) */
@@ -223,11 +184,6 @@
                 'owner_user_id,claimed,claim_status,badge_label,avatar_color,work_zone')
         .eq('phone_public', phone)
         .maybeSingle();
-
-      /* ── DIAGNOSTIC ──────────────────────────────── */
-      console.log('[fxav2-diag]   phone fallback phone='+phone+' r2.error='+JSON.stringify(r2.error)+' r2.data='+JSON.stringify(r2.data));
-      /* ── END DIAGNOSTIC ──────────────────────────── */
-
       if (!r2.error && r2.data) return r2.data;
     }
 
@@ -268,25 +224,17 @@
      * both sides of the link use the same UUID. */
     var sb = await FS.getClient();
     var artisanId = _state.artisanProfile && _state.artisanProfile.id;
-    /* ── DIAGNOSTIC TRACE (remove after verification) ── */
-    console.log('[fxav2] TRACE artisanProfile.id =', artisanId);
-    console.log('[fxav2] TRACE _state.artisanProfile =', JSON.stringify(_state.artisanProfile));
     var mRes = artisanId
       ? await sb.from('missions').select('*')
           .eq('artisan_profile_id', artisanId)
           .order('created_at', { ascending: false })
       : { data: [], error: null };
-    console.log('[fxav2] TRACE missions query artisan_profile_id =', artisanId);
-    console.log('[fxav2] TRACE missions error =', mRes.error ? JSON.stringify(mRes.error) : null);
-    console.log('[fxav2] TRACE missions data =', JSON.stringify(mRes.data));
-    console.log('[fxav2] TRACE missions rows returned =', (mRes.data || []).length);
     if (mRes.error) {
       console.warn('[fxav2] listMissions error:', mRes.error.message);
       _state.myMissions = [];
     } else {
       _state.myMissions = mRes.data || [];
     }
-    console.log('[fxav2] TRACE _state.myMissions.length after assign =', _state.myMissions.length);
 
     /* Enrich missions with service_request data (category, city, description, date).
      * The bulk .in() query requires a SELECT RLS policy covering assigned requests.
@@ -294,16 +242,11 @@
      * fall back to individual per-mission queries using client_profile_id path. */
     if (_state.myMissions.length) {
       var reqIds = _state.myMissions.map(function(m) { return m.request_id; }).filter(Boolean);
-      console.log('[fxav2] ENRICH reqIds=', JSON.stringify(reqIds));
       if (reqIds.length) {
-        var SR_COLS = 'id,service_category,city,description,status,created_at'; /* final_price,updated_at cols do not exist */
-        console.log('[fxav2] ENRICH SR_COLS=', SR_COLS);
+        var SR_COLS = 'id,service_category,city,description,status,created_at';
         var srRes = await sb.from('service_requests')
           .select(SR_COLS)
           .in('id', reqIds);
-        console.log('[fxav2] ENRICH bulk srRes.error=', srRes.error ? JSON.stringify(srRes.error) : null);
-        console.log('[fxav2] ENRICH bulk srRes.data=', JSON.stringify(srRes.data));
-        console.log('[fxav2] ENRICH bulk srRes.data.length=', srRes.data ? srRes.data.length : 'null');
         var srMap = {};
         if (!srRes.error && srRes.data && srRes.data.length) {
           srRes.data.forEach(function(r) { srMap[r.id] = r; });
@@ -316,15 +259,9 @@
               .select(SR_COLS)
               .eq('id', rid)
               .maybeSingle();
-            console.log('[fxav2] ENRICH fallback rid=' + rid
-              + ' error=' + (indRes.error ? JSON.stringify(indRes.error) : null)
-              + ' data=' + JSON.stringify(indRes.data));
-            if (!indRes.error && indRes.data) {
-              srMap[rid] = indRes.data;
-            }
+            if (!indRes.error && indRes.data) { srMap[rid] = indRes.data; }
           }
         }
-        console.log('[fxav2] ENRICH final srMap keys=', JSON.stringify(Object.keys(srMap)));
         _state.myMissions = _state.myMissions.map(function(m) {
           return Object.assign({}, m, { _request: srMap[m.request_id] || null });
         });
@@ -552,8 +489,6 @@
 
     /* No profile linked gate — but still show missions if any exist */
     if (!ap) {
-      /* ── DIAGNOSTIC TRACE ── */
-      console.log('[fxav2] TRACE _renderDashboard: artisanProfile=null, myMissions.length=', _state.myMissions.length);
       var activeFallback = _state.myMissions.filter(function(m) {
         var st = (m._request && m._request.status) || m.status || '';
         return st === 'pending' || st === 'assigned' || st === 'in_progress' || st === 'en_cours' || st === 'completed';
@@ -644,17 +579,10 @@
     var sec = el('fxav2-sec-missions');
     if (!sec) return;
 
-    /* ── DIAGNOSTIC TRACE ── */
-    console.log('[fxav2] TRACE _renderMyMissions: myMissions.length=', _state.myMissions.length);
-    _state.myMissions.forEach(function(m,i){
-      console.log('[fxav2] TRACE mission['+i+'] status='+m.status+' _request='+(m._request?m._request.status:'null'));
-    });
-
     var active = _state.myMissions.filter(function(m) {
       var st = (m._request && m._request.status) || m.status || '';
       return st === 'pending' || st === 'assigned' || st === 'in_progress' || st === 'en_cours' || st === 'completed';
     });
-    console.log('[fxav2] TRACE _renderMyMissions: active.length=', active.length);
 
     var html = '<div class="fxa-section-head"><h2>⚡ Mes missions</h2>'
       + '<span class="fxa-section-count">' + active.length + '</span>'
