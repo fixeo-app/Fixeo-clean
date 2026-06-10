@@ -1201,6 +1201,44 @@ section#home.hero.hero-section {
     margin-top: 0 !important;
   }
 
+  /* ── ⚡ Mon Espace Fixeo — premium CTA link ── */
+  .mobile-nav-fixeo-space {
+    display: flex !important;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 13px 18px !important;
+    margin: 4px 0 10px !important;
+    border-radius: 14px !important;
+    background: linear-gradient(135deg, rgba(225,48,108,0.18), rgba(131,58,180,0.22)) !important;
+    border: 1px solid rgba(225,48,108,0.40) !important;
+    box-shadow: 0 0 18px rgba(225,48,108,0.15), inset 0 1px 0 rgba(255,255,255,0.07) !important;
+    color: #fff !important;
+    font-weight: 700 !important;
+    font-size: 0.97rem !important;
+    letter-spacing: 0.01em;
+    text-decoration: none !important;
+    transition: background .2s, box-shadow .2s, transform .15s;
+    cursor: pointer;
+  }
+  .mobile-nav-fixeo-space:hover,
+  .mobile-nav-fixeo-space:active {
+    background: linear-gradient(135deg, rgba(225,48,108,0.30), rgba(131,58,180,0.34)) !important;
+    box-shadow: 0 0 26px rgba(225,48,108,0.28) !important;
+    transform: translateY(-1px);
+  }
+
+  /* Make avatar clickable visual cue */
+  #mobile-account-avatar {
+    cursor: pointer;
+    transition: opacity .15s, transform .15s;
+  }
+  #mobile-account-avatar:hover,
+  #mobile-account-avatar:active {
+    opacity: .82;
+    transform: scale(.94);
+  }
+
   .hero,
   .hero-section {
     padding-top: calc(var(--navbar-height, 70px) + 28px) !important;
@@ -2393,7 +2431,9 @@ section#home.hero.hero-section {
     <div class="mobile-nav-label">Compte</div>
 
     <div class="mobile-nav-account-summary" id="mobile-account-summary" hidden>
-      <div class="mobile-nav-account-avatar" id="mobile-account-avatar">U</div>
+      <div class="mobile-nav-account-avatar" id="mobile-account-avatar"
+           style="cursor:pointer" title="Accéder à mon espace"
+           onclick="window._fixeoAvatarNav()">U</div>
       <div class="mobile-nav-account-copy">
         <strong id="mobile-account-name">Mon compte</strong>
         <span id="mobile-account-role">Client Fixeo</span>
@@ -2406,8 +2446,10 @@ section#home.hero.hero-section {
     </div>
 
     <div class="mobile-nav-user" data-auth="logged-in">
-      <a href="dashboard-client.html" class="nav-link mobile-nav-account-link" data-role="dashboard">
-        👤 Mon compte
+      <!-- ⚡ Primary CTA: My Fixeo Space — routes to correct dashboard by role -->
+      <a href="#" class="nav-link mobile-nav-fixeo-space" id="mobile-fixeo-space-link"
+         onclick="window._fixeoAvatarNav();return false;">
+        ⚡ Mon Espace Fixeo
       </a>
       <a href="dashboard-client.html" class="nav-link mobile-nav-account-link mobile-nav-requests-link">
         📋 Mes demandes
@@ -3742,6 +3784,14 @@ function openContentModal(type) {
   window.addEventListener('resize', syncMobileHeaderOffset, { passive: true });
   window.addEventListener('storage', syncMobileAccountSummary);
 })();
+</script>
+
+<script>
+/* ── _fixeoAvatarNav: avatar click + Espace Fixeo → correct dashboard by role ── */
+window._fixeoAvatarNav = function () {
+  var role = localStorage.getItem('fixeo_role') || localStorage.getItem('role') || '';
+  window.location.href = (role === 'artisan') ? 'dashboard-artisan-v2.html' : 'dashboard-client.html';
+};
 </script>
 
 <script defer src="js/fixeo-artisan-request-notifications.js?v=50a38b9"></script>
