@@ -1,0 +1,2707 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <!-- Anti-FOUC: hide dashboard until Supabase hydration is complete.
+       Revealed by fixeo-mvp-supabase.js after profile fetch. -->
+  <style id="fixeo-client-anti-fouc">
+    .dashboard-layout { opacity: 0 !important; transition: none !important; }
+  </style>
+  <script src="js/supabase-client.js?v=sc2"></script>
+  <script src="js/fixeo-logout-global.js?v=v2c4a"></script>
+  <script src="js/fixeo-supabase-loader.js?v=sl1"></script>
+
+  <link rel="icon" type="image/png" href="img/favicon.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="img/favicon.png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fixeo - Espace Client</title>
+  <script src="js/fixeo-auth-guard.js?v=p1b"></script>
+<!-- Fonts: deferred, matches homepage/auth pattern (DX-1) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&family=Tajawal:wght@400;500;700&display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&family=Tajawal:wght@400;500;700&display=swap"></noscript>
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/style.css">
+<style>
+/* ── GLOBAL PAGE FIXES ───────────────────────────────────── */
+::-webkit-scrollbar{width:12px!important;height:12px!important}
+::-webkit-scrollbar-track{background:rgba(255,255,255,0.04)!important;border-radius:6px!important}
+::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#E1306C,#833AB4)!important;border-radius:6px!important;border:2px solid rgba(255,255,255,0.05)!important;min-height:40px!important}
+::-webkit-scrollbar-thumb:hover{background:linear-gradient(180deg,#C13584,#405DE6)!important}
+*{scrollbar-width:thick;scrollbar-color:#E1306C rgba(255,255,255,0.04)}
+/* Form controls always readable */
+select,input,textarea{color:#fff!important;background:rgba(255,255,255,0.08)!important;border:1px solid rgba(255,255,255,0.15)!important;border-radius:var(--radius-md)!important}
+select option{background:#1a1a2e!important;color:#fff!important;padding:8px!important}
+select:focus,input:focus,textarea:focus{outline:none!important;border-color:var(--primary)!important;box-shadow:0 0 0 3px rgba(225,48,108,0.2)!important}
+/* Buttons harmony */
+.btn{display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:8px!important}
+.btn-primary{background:var(--grad-primary)!important;color:#fff!important}
+.btn-secondary{background:rgba(255,255,255,0.09)!important;border:1px solid rgba(255,255,255,0.2)!important;color:#fff!important}
+/* Notification badge */
+.notif-badge:empty{display:none!important}
+/* Dropdown z-index */
+.notif-panel,.notification-panel{z-index:600!important}
+/* Dashboard cards layout */
+.kpi-card{transition:transform 0.2s ease,box-shadow 0.2s ease}
+.kpi-card:hover{transform:translateY(-2px)!important}
+/* Search filters */
+.search-filters{display:flex!important;gap:10px!important;flex-wrap:wrap!important;align-items:center!important}
+.filter-input,.form-control{padding:10px 14px!important;min-width:120px!important}
+/* Section headings */
+.section-tag{display:inline-block!important;margin-bottom:8px!important}
+/* Responsive mobile */
+@media(max-width:768px){
+  .search-filters{flex-direction:column!important}
+  .filter-input,.form-control{width:100%!important;min-width:unset!important}
+}
+</style>
+
+<style>
+/* Dashboard client V3 complete fixes */
+select,input,textarea{color:#fff!important;background:rgba(255,255,255,0.08)!important;}
+select option{background:#1a1a2e!important;color:#fff!important;}
+.notif-panel{z-index:900!important}
+.notif-item-title,.notif-item-body{white-space:normal!important;word-break:break-word!important;}
+.toast-title{white-space:normal!important;word-break:break-word!important;}
+/* KPI cards hover */
+.kpi-card:hover{transform:translateY(-3px)!important;box-shadow:0 12px 40px rgba(225,48,108,0.2)!important;}
+/* Scrollbar */
+::-webkit-scrollbar{width:8px!important}
+::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#E1306C,#833AB4)!important;border-radius:4px!important}
+</style>
+<link rel="stylesheet" href="css/fixeo_v5_fixes.css">
+<link rel="stylesheet" href="css/request-form.css">
+<link rel="stylesheet" href="css/payment.css">
+  <link rel="stylesheet" href="css/reservation.css">
+  <link rel="stylesheet" href="css/reservation-v2.css?v=3" />
+  <link rel="stylesheet" href="css/reservation-v2a.css?v=v2c" />
+<link rel="stylesheet" href="css/header-unified.css"/>
+<link rel="stylesheet" href="css/fixeo-header-global.css"/>
+<link rel="stylesheet" href="css/auth-global.css"/>
+<link rel="stylesheet" href="css/fixeo-cod-commission.css"/>
+  <link rel="stylesheet" href="css/slot-lock.css">
+
+<style>
+/* ── FIXEO CLIENT DASHBOARD OPTIMIZED OVERVIEW ───────────── */
+.client-dashboard-hero {
+  margin-bottom: 28px;
+}
+
+.client-dashboard-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding: 28px;
+  border-radius: 24px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background:
+    radial-gradient(circle at top right, rgba(225,48,108,0.16), transparent 34%),
+    linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.03));
+  box-shadow: 0 20px 60px rgba(0,0,0,0.22);
+}
+
+.client-dashboard-top h1 {
+  font-size: 30px;
+  font-weight: 800;
+  margin: 0 0 8px;
+}
+
+.client-dashboard-top p {
+  margin: 0;
+  opacity: 0.75;
+  max-width: 720px;
+}
+
+.client-hero-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.client-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.client-stat-card,
+.dashboard-panel {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.16);
+}
+
+.client-stat-card {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stat-number {
+  font-size: 28px;
+  font-weight: 800;
+}
+
+.stat-label {
+  font-size: 14px;
+  opacity: 0.75;
+}
+
+.client-dashboard-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(280px, 0.95fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.client-dashboard-main,
+.client-dashboard-side {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.client-requests-section,
+.client-replies-section,
+.client-favorites-section,
+.client-next-actions-section {
+  margin-bottom: 0;
+  padding: 20px;
+}
+
+.client-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+  text-align: left;
+}
+
+.client-section-header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.client-section-header p {
+  margin: 6px 0 0;
+  font-size: 13px;
+  opacity: 0.72;
+}
+
+.request-card,
+.reply-card,
+.favorite-item,
+.client-action-item {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 18px;
+}
+
+.request-card {
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.request-card:last-child,
+.reply-card:last-child,
+.favorite-item:last-child,
+.client-action-item:last-child {
+  margin-bottom: 0;
+}
+
+.request-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: start;
+  margin-bottom: 10px;
+}
+
+.request-top h3 {
+  margin: 0 0 4px;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.request-top p {
+  margin: 0;
+  opacity: 0.75;
+  font-size: 14px;
+}
+
+.request-meta {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-size: 13px;
+  opacity: 0.8;
+  margin-bottom: 14px;
+}
+
+.request-actions,
+.reply-actions,
+.client-action-buttons {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.request-status {
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.status-open {
+  background: rgba(255, 193, 7, 0.12);
+  color: #ffd166;
+}
+
+.status-confirmed {
+  background: rgba(0, 255, 150, 0.12);
+  color: #4ade80;
+}
+
+.status-closed {
+  background: rgba(255,255,255,0.08);
+  color: #ddd;
+}
+
+.reply-card {
+  padding: 18px;
+  margin-bottom: 16px;
+}
+
+.reply-top {
+  display: grid;
+  grid-template-columns: 60px 1fr auto;
+  gap: 14px;
+  align-items: start;
+}
+
+.reply-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 16px;
+  object-fit: cover;
+}
+
+.reply-info h3 {
+  margin: 0 0 4px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.reply-info p {
+  margin: 0 0 6px;
+  opacity: 0.75;
+}
+
+.reply-meta {
+  display: flex;
+  gap: 10px;
+  font-size: 13px;
+  flex-wrap: wrap;
+}
+
+.reply-price {
+  text-align: right;
+}
+
+.reply-price strong {
+  display: block;
+  color: #ffd166;
+  font-size: 16px;
+}
+
+.reply-price span {
+  font-size: 12px;
+  opacity: 0.75;
+}
+
+.reply-actions {
+  margin-top: 14px;
+}
+
+.favorite-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.favorite-item {
+  padding: 14px 16px;
+}
+
+.favorite-item strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 15px;
+}
+
+.favorite-item span {
+  font-size: 13px;
+  opacity: 0.72;
+}
+
+.client-action-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.client-action-item {
+  padding: 16px;
+}
+
+.client-action-item strong {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 15px;
+}
+
+.client-action-item p {
+  margin: 0 0 12px;
+  font-size: 13px;
+  opacity: 0.72;
+  line-height: 1.55;
+}
+
+.client-action-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 12px;
+}
+
+.client-subtle-note {
+  font-size: 12px;
+  opacity: 0.68;
+  margin-top: 12px;
+}
+
+.client-dashboard-overview .btn-primary,
+.client-dashboard-overview .btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 1180px) {
+  .client-dashboard-shell {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 1024px) {
+  .client-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .client-dashboard-top,
+  .request-top,
+  .reply-top {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .client-dashboard-top {
+    padding: 22px;
+  }
+
+  .client-hero-actions {
+    width: 100%;
+    justify-content: stretch;
+  }
+
+  .client-hero-actions .btn {
+    width: 100%;
+  }
+
+  .reply-price {
+    text-align: left;
+  }
+}
+
+@media (max-width: 640px) {
+  .client-stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Modal overlay — full visibility override ────────────────────────────
+   fixeo_v5_fixes.css sets .modal { display:none !important; position:fixed !important;
+   inset:0 !important; z-index:9100 !important } which overrides the inline style.
+   We use #modal-overlay (ID = specificity 0-1-0-0) to beat any class-only !important.
+   All properties use !important to win regardless of load order. */
+
+/* Overlay: hidden by default */
+#modal-overlay {
+  display: none !important;
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 99990 !important;
+  background: rgba(0,0,0,.55) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  align-items: center !important;
+  justify-content: center !important;
+  pointer-events: auto !important;
+  cursor: pointer;
+}
+/* Overlay: visible when .open */
+#modal-overlay.open {
+  display: flex !important;
+}
+
+/* Modal panel: always visible when overlay is open */
+#modal-overlay .modal,
+#modal-overlay.open .modal {
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  position: relative !important;
+  inset: unset !important;
+  transform: none !important;
+  z-index: 100000 !important;
+  max-width: 640px !important;
+  width: min(92vw, 640px) !important;
+  max-height: 85vh !important;
+  overflow-y: auto !important;
+  pointer-events: auto !important;
+  cursor: default;
+  /* keep the glassmorphism look */
+  background: rgba(20,20,40,0.97) !important;
+  border: 1px solid rgba(255,255,255,.15) !important;
+  border-radius: 18px !important;
+  padding: 28px !important;
+  box-shadow: 0 0 0 1px rgba(225,48,108,.2), 0 24px 64px rgba(0,0,0,.7) !important;
+}
+
+/* ── UX Upgrade additions ──────────────────────────────── */
+.fixeo-hero-trust {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  margin-top: 8px;
+  font-size: .8rem;
+  opacity: .8;
+  color: rgba(255,255,255,.85);
+}
+
+.fixeo-smart-cta {
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.09);
+  border-radius: 14px;
+  padding: 18px 20px;
+  margin-bottom: 16px;
+}
+.fixeo-smart-cta h3 {
+  margin: 0 0 6px;
+  font-size: .97rem;
+  font-weight: 700;
+}
+.fixeo-smart-cta p {
+  margin: 0 0 12px;
+  font-size: .84rem;
+  opacity: .72;
+}
+.fixeo-smart-cta-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.fixeo-artisans-preview {
+  margin-top: 20px;
+}
+.fixeo-artisans-preview h4 {
+  font-size: .93rem;
+  font-weight: 700;
+  margin: 0 0 12px;
+}
+.fixeo-artisan-static-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+}
+.fixeo-artisan-static-card {
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.09);
+  border-radius: 14px;
+  padding: 14px 12px;
+  text-align: center;
+}
+.fixeo-artisan-static-card .fxasc-name {
+  font-size: .82rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.fixeo-artisan-static-card .fxasc-rating {
+  font-size: .76rem;
+  opacity: .75;
+  margin-bottom: 10px;
+}
+.btn-fxasc {
+  display: inline-block;
+  background: var(--grad-primary, linear-gradient(135deg,#E1306C,#833AB4));
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 5px 14px;
+  font-size: .77rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+}
+.btn-fxasc:hover { opacity: .88; }
+
+.fixeo-fab {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9999;
+  background: var(--grad-primary, linear-gradient(135deg,#E1306C,#833AB4));
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 13px 22px;
+  font-size: .9rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 6px 24px rgba(225,48,108,.45);
+}
+
+@media (max-width: 768px) {
+  .fixeo-fab { display: block; }
+}
+
+/* ── Task 1: Hero button sizing + glow ───────────────────── */
+.fxd-hero-cta {
+  padding: 14px 28px !important;          /* +10% on .btn base 12px/24px */
+  font-size: 1rem !important;
+  transition: transform .18s ease, box-shadow .18s ease, opacity .18s ease !important;
+}
+.fxd-hero-cta.btn-primary:hover {
+  box-shadow: 0 0 0 3px rgba(225,48,108,.35), 0 8px 28px rgba(225,48,108,.55) !important;
+  transform: translateY(-2px) !important;
+}
+.fxd-hero-cta.btn-secondary:hover {
+  box-shadow: 0 0 0 2px rgba(255,255,255,.25), 0 6px 18px rgba(255,255,255,.12) !important;
+  transform: translateY(-2px) !important;
+}
+.fxd-hero-cta:active { transform: scale(.97) !important; }
+
+/* Task 1: Hero trust line polish */
+.fixeo-hero-trust {
+  gap: 8px 16px;
+  font-size: .82rem;
+  font-weight: 500;
+}
+.fixeo-hero-trust span { letter-spacing: .01em; }
+
+/* ── Task 3: Nudge card ──────────────────────────────────── */
+.fxd-nudge-card {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  border-radius: 12px;
+  background: rgba(255,255,255,.03);
+  border: 1px solid transparent;
+  background-clip: padding-box;
+  box-shadow: inset 0 0 0 1px rgba(225,48,108,.3);
+}
+.fxd-nudge-text {
+  flex: 1;
+  min-width: 160px;
+  font-size: .86rem;
+  font-weight: 600;
+  color: rgba(255,255,255,.9);
+}
+.fxd-nudge-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.fxd-nudge-btn { padding: 8px 16px !important; font-size: .83rem !important; }
+
+/* ── Task 2: Smart CTA button sizing ────────────────────── */
+.fxd-cta-btn { padding: 11px 22px !important; font-size: .88rem !important; }
+.fxd-cta-btn:active { transform: scale(.97) !important; }
+
+/* ── Task 4: À faire empty astuce ───────────────────────── */
+.fxd-action-empty-hint {
+  margin-top: 10px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(255,255,255,.04);
+  border: 1px dashed rgba(255,255,255,.12);
+  font-size: .83rem;
+  color: rgba(255,255,255,.65);
+  line-height: 1.5;
+}
+
+/* ── Task 5: Artisan card enhancements ───────────────────── */
+.fxasc-badge {
+  display: inline-block;
+  font-size: .68rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: linear-gradient(135deg,rgba(225,48,108,.18),rgba(131,58,180,.18));
+  border: 1px solid rgba(225,48,108,.3);
+  color: rgba(255,255,255,.9);
+  margin-bottom: 6px;
+  letter-spacing: .03em;
+}
+.fxasc-avail {
+  font-size: .72rem;
+  color: #4ade80;
+  margin-bottom: 8px;
+  font-weight: 600;
+  letter-spacing: .01em;
+}
+/* Improve "Demander un devis" button */
+.btn-fxasc {
+  width: 100%;
+  padding: 7px 0 !important;
+  font-size: .8rem !important;
+  border-radius: 9px !important;
+  transition: transform .15s ease, box-shadow .15s ease, opacity .15s ease !important;
+}
+.btn-fxasc:hover {
+  opacity: 1 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 14px rgba(225,48,108,.4) !important;
+}
+.btn-fxasc:active { transform: scale(.96) !important; }
+
+/* ── Task 6: Micro-interactions — cards ─────────────────── */
+.fixeo-artisan-static-card {
+  transition: transform .18s ease, box-shadow .18s ease !important;
+}
+.fixeo-artisan-static-card:hover {
+  transform: scale(1.02) !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,.35) !important;
+}
+/* KPI cards */
+.kpi-card {
+  transition: transform .18s ease, box-shadow .18s ease !important;
+}
+/* dashboard-panel lift */
+.dashboard-panel {
+  transition: box-shadow .18s ease !important;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   FXD v2 — Uber-level UX upgrade  (Steps 1–8)
+   All selectors scoped to fxd- prefix or #modal-overlay.
+   Zero impact on Supabase JS IDs or existing modal logic.
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Step 1: Hero v2 ───────────────────────────────────── */
+.fxd-hero-v2 {
+  flex-direction: column;
+  align-items: flex-start !important;
+  gap: 28px;
+  padding: 36px 32px !important;
+  background:
+    radial-gradient(circle at 80% 20%, rgba(225,48,108,.22) 0%, transparent 50%),
+    radial-gradient(circle at 10% 90%, rgba(131,58,180,.18) 0%, transparent 50%),
+    linear-gradient(160deg, rgba(255,255,255,.055), rgba(255,255,255,.025)) !important;
+}
+@media (min-width: 640px) {
+  .fxd-hero-v2 { flex-direction: row; align-items: center !important; }
+}
+.fxd-hero-copy { flex: 1; min-width: 0; }
+.fxd-hero-badge {
+  display: inline-block;
+  font-size: .7rem !important;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 99px;
+  background: rgba(225,48,108,.15);
+  border: 1px solid rgba(225,48,108,.35);
+  color: rgba(225,48,108,.95);
+  margin-bottom: 12px !important;
+}
+.fxd-hero-headline {
+  font-size: clamp(1.35rem, 3vw, 1.75rem) !important;
+  font-weight: 800 !important;
+  line-height: 1.2 !important;
+  margin: 0 0 10px !important;
+  background: linear-gradient(135deg, #fff 60%, rgba(225,48,108,.85));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.fxd-hero-sub {
+  font-size: .93rem !important;
+  opacity: .78 !important;
+  margin: 0 0 14px !important;
+  line-height: 1.5;
+}
+.fxd-trust-v2 {
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  font-size: .8rem;
+  font-weight: 600;
+  color: rgba(255,255,255,.8);
+}
+.fxd-hero-actions-v2 {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+/* Step 1 — CTA buttons */
+.fxd-cta-primary {
+  padding: 14px 26px !important;
+  font-size: 1rem !important;
+  font-weight: 800 !important;
+  box-shadow: 0 4px 20px rgba(225,48,108,.5) !important;
+}
+.fxd-cta-primary:hover {
+  box-shadow: 0 0 0 3px rgba(225,48,108,.35), 0 8px 28px rgba(225,48,108,.55) !important;
+  transform: translateY(-2px) !important;
+}
+.fxd-cta-urgent {
+  padding: 14px 22px !important;
+  font-size: .95rem !important;
+  font-weight: 700 !important;
+  background: rgba(255,255,255,.06) !important;
+  border: 1px solid rgba(225,48,108,.5) !important;
+  color: #fff !important;
+  box-shadow: 0 0 0 0 rgba(225,48,108,0), inset 0 0 0 1px rgba(225,48,108,.3) !important;
+  animation: fxd-urgent-pulse 2.4s ease-in-out infinite;
+}
+.fxd-cta-urgent:hover {
+  box-shadow: 0 0 0 3px rgba(225,48,108,.3), 0 6px 20px rgba(225,48,108,.35) !important;
+  transform: translateY(-2px) !important;
+  background: rgba(225,48,108,.12) !important;
+}
+@keyframes fxd-urgent-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(225,48,108,.0), inset 0 0 0 1px rgba(225,48,108,.3) !important; }
+  50%       { box-shadow: 0 0 0 4px rgba(225,48,108,.18), inset 0 0 0 1px rgba(225,48,108,.5) !important; }
+}
+.fxd-hero-cta:active { transform: scale(.96) !important; }
+
+/* ── Step 3: Nudge card v2 ─────────────────────────────── */
+.fxd-nudge-v2 {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 12px 16px;
+  padding: 16px 18px;
+  margin-bottom: 14px;
+  border-radius: 14px;
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(225,48,108,.25);
+  box-shadow: inset 0 0 0 1px rgba(225,48,108,.08);
+}
+.fxd-nudge-icon {
+  font-size: 1.3rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.fxd-nudge-body { flex: 1; min-width: 160px; }
+.fxd-nudge-label {
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: rgba(225,48,108,.9);
+  margin-bottom: 4px;
+}
+.fxd-nudge-msg {
+  font-size: .84rem;
+  opacity: .8;
+  margin: 0;
+  line-height: 1.45;
+}
+.fxd-nudge-msg strong { color: #fff; opacity: 1; }
+.fxd-nudge-cta {
+  padding: 9px 16px !important;
+  font-size: .82rem !important;
+  font-weight: 700 !important;
+  flex-shrink: 0;
+  align-self: center;
+}
+.fxd-nudge-cta:hover { transform: translateY(-1px) !important; }
+.fxd-nudge-cta:active { transform: scale(.96) !important; }
+
+/* ── Step 2: Empty state v2 ────────────────────────────── */
+.fxd-empty-v2 {
+  text-align: center;
+  padding: 32px 24px !important;
+  background: rgba(255,255,255,.03) !important;
+  border: 1px dashed rgba(255,255,255,.1) !important;
+}
+.fxd-empty-icon {
+  font-size: 2rem;
+  margin-bottom: 10px;
+  display: block;
+  opacity: .55;
+}
+.fxd-empty-title {
+  font-size: 1.05rem !important;
+  font-weight: 700 !important;
+  margin: 0 0 8px !important;
+}
+.fxd-empty-sub {
+  font-size: .87rem !important;
+  opacity: .65 !important;
+  margin: 0 0 18px !important;
+  max-width: 380px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.fxd-empty-actions {
+  justify-content: center !important;
+  flex-wrap: wrap;
+  gap: 10px !important;
+}
+
+/* ── Step 4+7: Artisan cards v2 ────────────────────────── */
+.fxd-acard-v2 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 18px 14px !important;
+  background: rgba(255,255,255,.05) !important;
+  border: 1px solid rgba(255,255,255,.1) !important;
+  transition: transform .18s ease, box-shadow .18s ease !important;
+}
+.fxd-acard-v2:hover {
+  transform: translateY(-2px) scale(1.02) !important;
+  box-shadow: 0 10px 32px rgba(0,0,0,.4), 0 0 0 1px rgba(225,48,108,.2) !important;
+}
+.fxasc-avatar {
+  font-size: 1.6rem;
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: rgba(225,48,108,.12);
+  border: 1px solid rgba(225,48,108,.25);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 10px;
+}
+.fxasc-stars {
+  color: #f59e0b;
+  font-size: .9rem;
+  letter-spacing: .06em;
+  margin-bottom: 2px;
+}
+.fxasc-reviews {
+  font-size: .72rem;
+  opacity: .6;
+}
+.fxd-devis-btn {
+  margin-top: 10px !important;
+  transition: transform .15s ease, box-shadow .15s ease !important;
+}
+.fxd-devis-btn:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 16px rgba(225,48,108,.45) !important;
+  opacity: 1 !important;
+}
+.fxd-devis-btn:active { transform: scale(.95) !important; }
+
+/* ── Step 6: Modal form UX ─────────────────────────────── */
+#modal-overlay .modal-header::after {
+  content: 'Trouvez un artisan en moins de 5 minutes ⚡';
+  display: block;
+  font-size: .78rem;
+  opacity: .6;
+  font-weight: 400;
+  margin-top: 4px;
+  width: 100%;
+}
+#modal-overlay .form-group { margin-bottom: 18px !important; }
+#modal-overlay .form-control {
+  border-radius: 10px !important;
+  border: 1px solid rgba(255,255,255,.14) !important;
+  transition: border-color .15s ease, box-shadow .15s ease !important;
+}
+#modal-overlay .form-control:focus {
+  border-color: rgba(225,48,108,.7) !important;
+  box-shadow: 0 0 0 3px rgba(225,48,108,.18) !important;
+  outline: none !important;
+}
+#modal-overlay .btn-primary.w-100,
+#modal-overlay .btn-express.w-100 {
+  margin-top: 8px !important;
+  padding: 13px !important;
+  font-size: .95rem !important;
+  font-weight: 700 !important;
+  letter-spacing: .02em;
+  border: none !important;
+  box-shadow: 0 4px 16px rgba(225,48,108,.4) !important;
+}
+#modal-overlay .btn-express.w-100 {
+  background: linear-gradient(135deg,#FCAF45,#F77737,#E1306C) !important;
+  box-shadow: 0 4px 16px rgba(247,119,55,.4) !important;
+}
+
+/* ── V2-C: Booking cards with mini-timeline ─────────────── */
+.fxv2c-booking-card {
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 14px;
+  padding: 14px 16px 12px;
+  margin-bottom: 10px;
+  transition: border-color .15s;
+}
+.fxv2c-booking-card:hover { border-color: rgba(32,201,151,.2); }
+.fxv2c-booking-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.fxv2c-booking-service {
+  font-size: .9rem;
+  font-weight: 700;
+  color: rgba(255,255,255,.9);
+  line-height: 1.3;
+}
+.fxv2c-booking-meta {
+  font-size: .75rem;
+  color: rgba(255,255,255,.45);
+  margin-top: 2px;
+}
+.fxv2c-booking-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 5px;
+  flex-shrink: 0;
+}
+.fxv2c-booking-amount {
+  font-size: .92rem;
+  font-weight: 800;
+  color: #20C997;
+}
+.fxv2c-booking-badge {
+  font-size: .68rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid;
+  white-space: nowrap;
+}
+.fxv2c-booking-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8px;
+  gap: 8px;
+}
+.fxv2c-booking-ref {
+  font-family: monospace;
+  font-size: .7rem;
+  color: rgba(255,255,255,.3);
+}
+.fxv2c-booking-wa {
+  font-size: .72rem;
+  font-weight: 700;
+  color: rgba(37,211,102,.7);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color .12s;
+}
+.fxv2c-booking-wa:hover { color: #25d366; text-decoration: none; }
+@media (max-width: 480px) {
+  .fxv2c-booking-card { padding: 12px 12px 10px; }
+  .fxv2c-booking-service { font-size: .85rem; }
+  .fxv2c-booking-footer { flex-wrap: wrap; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fxv2c-booking-card { transition: none !important; }
+  .fxv2c-booking-wa   { transition: none !important; }
+}
+
+/* ── Step 8: FAB v2 ────────────────────────────────────── */
+.fxd-fab-v2 {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  padding: 15px 24px !important;
+  min-width: 130px;
+  box-shadow: 0 6px 28px rgba(225,48,108,.55) !important;
+  transition: transform .18s ease, box-shadow .18s ease !important;
+}
+.fxd-fab-v2:hover {
+  transform: translateY(-2px) scale(1.04) !important;
+  box-shadow: 0 10px 36px rgba(225,48,108,.65) !important;
+}
+.fxd-fab-v2:active { transform: scale(.95) !important; }
+.fxd-fab-icon { font-size: 1.1rem; font-weight: 700; }
+.fxd-fab-label { font-size: .88rem; font-weight: 700; }
+@media (max-width: 768px) {
+  .fxd-fab-v2 { display: flex !important; }
+}
+
+/* ── Step 7: Global micro-interactions ─────────────────── */
+/* All .btn transitions already set; reinforce press for new classes */
+.fxd-cta-btn:hover  { transform: translateY(-1px) !important; }
+.fxd-cta-btn:active { transform: scale(.96) !important; }
+.fxd-nudge-btn:hover  { transform: translateY(-1px) !important; }
+.fxd-nudge-btn:active { transform: scale(.96) !important; }
+
+/* ══ Dashboard modal — desktop UX (all rules @media≥768px except backdrop) ───────────────────
+   Architecture: #request-modal / #express-modal are ONE element with both
+   class="modal" (fixeo_v5_fixes owns display/position/inset) and
+   class="request-modal" (request-form.css adds transform/max-width).
+   We override on the element root directly (no child .request-modal exists).
+   DOM children: > .modal-header  +  > .request-modal-shell
+   ───────────────────────────────────────────────────────────────────────────── */
+@media (min-width: 768px) {
+
+  /* 1 ─ Modal root (open): fullscreen transparent column-flex centering container */
+  [data-dash-type="client"] #request-modal.open,
+  [data-dash-type="client"] #express-modal.open {
+    position:        fixed        !important;
+    inset:           0            !important;
+    display:         flex         !important;
+    flex-direction:  column       !important;  /* stack header above shell */
+    align-items:     center       !important;
+    justify-content: center       !important;
+    width:           100vw        !important;
+    max-width:       100vw        !important;
+    height:          100vh        !important;
+    max-height:      100vh        !important;
+    margin:          0            !important;
+    transform:       none         !important;  /* kills translate(-50%,-50%) from request-form.css */
+    background:      transparent  !important;  /* container is NOT the card */
+    border:          none         !important;
+    box-shadow:      none         !important;
+    border-radius:   0            !important;
+    overflow:        hidden       !important;
+    padding:         40px 16px    !important;  /* viewport breathing room top/bottom */
+    z-index:         99995        !important;
+  }
+
+  /* 1b ─ Closed state: ensure column stacking is consistent */
+  [data-dash-type="client"] #request-modal,
+  [data-dash-type="client"] #express-modal {
+    flex-direction:  column       !important;
+    align-items:     center       !important;
+  }
+
+  /* 2 ─ Card width — both children share the same column width */
+  [data-dash-type="client"] #request-modal.open > .modal-header,
+  [data-dash-type="client"] #express-modal.open > .modal-header,
+  [data-dash-type="client"] #request-modal.open > .request-modal-shell,
+  [data-dash-type="client"] #express-modal.open > .request-modal-shell {
+    width:     min(92vw, 520px) !important;
+  }
+
+  /* 3 ─ Header: top card half + sticky so it stays visible above any overflow */
+  [data-dash-type="client"] #request-modal.open > .modal-header,
+  [data-dash-type="client"] #express-modal.open > .modal-header {
+    position:        sticky       !important;
+    top:             0            !important;
+    z-index:         2            !important;
+    backdrop-filter: blur(12px)   !important;
+    background:      rgba(18, 18, 28, 0.97) !important;
+    border:          1px solid rgba(255,255,255,.14) !important;
+    border-bottom:   none         !important;
+    border-radius:   22px 22px 0 0 !important;
+    padding:         20px 22px 16px !important;
+  }
+
+  /* 4 ─ Shell: scrollable bottom card half */
+  [data-dash-type="client"] #request-modal.open > .request-modal-shell,
+  [data-dash-type="client"] #express-modal.open > .request-modal-shell {
+    flex:            1            !important;
+    overflow-y:      auto         !important;
+    max-height:      75vh         !important;
+    padding-right:   6px          !important;
+    background:      rgba(18, 18, 28, 0.97) !important;
+    border:          1px solid rgba(255,255,255,.14) !important;
+    border-top:      none         !important;
+    border-radius:   0 0 22px 22px !important;
+    padding:         0 22px 22px  !important;
+  }
+
+}
+
+/* 5 ─ Backdrop (all viewports) */
+[data-dash-type="client"] #main-backdrop.open {
+  position:                fixed             !important;
+  inset:                   0                 !important;
+  z-index:                 99990             !important;
+  background:              rgba(0,0,0,.58)   !important;
+  backdrop-filter:         blur(10px)        !important;
+  -webkit-backdrop-filter: blur(10px)        !important;
+  display:                 block             !important;
+}
+</style>
+
+  <link rel="stylesheet" href="css/fixeo-chat-mvp.css">
+  <link rel="stylesheet" href="css/header-logo-premium.css?v=hlp5">
+  <link rel="stylesheet" href="css/fixeo-urgent-v2.css?v=1">
+  <link rel="stylesheet" href="css/fixeo-request-v2.css?v=1">
+  <!-- Phase 1 Client Sync — real request display -->
+  <link rel="stylesheet" href="css/client-dashboard-p1.css?v=da-v1e">
+  <link rel="stylesheet" href="css/fixeo-coordination-v1i.css?v=v1i">
+  <link rel="stylesheet" href="css/fixeo-notifications-real-v1.css?v=1">
+  <!-- Phase 2 Mission Lifecycle — additive -->
+  <link rel="stylesheet" href="css/mission-lifecycle-p2.css?v=da-v1e">
+  <!-- DX-1: Trust Cleanup & Typography upgrade -->
+  <link rel="stylesheet" href="css/dashboard-client-dx1.css?v=4">
+  <!-- ══ LOGO OVERRIDE - image-only, no emoji, no text ══ -->
+  <style id="fixeo-logo-override">
+    /* Kill legacy logo-icon and logo-text */
+    .navbar-brand .logo-icon, .logo-wrap .logo-icon, .fixeo-gh-brand .logo-icon
+      { display:none !important; width:0 !important; height:0 !important; min-width:0 !important; flex:0 !important; }
+    .navbar-brand .logo-text, .logo-wrap .logo-text, .fixeo-gh-brand .logo-text
+      { display:none !important; width:0 !important; height:0 !important; }
+    /* Brand containers - no clipping */
+    .navbar-brand, .logo-wrap
+      { max-width:220px !important; overflow:visible !important; gap:0 !important; background:transparent !important; }
+    .fixeo-gh-brand
+      { max-width:180px !important; overflow:visible !important; gap:0 !important; background:transparent !important; }
+    /* Logo image - clean, no hacks */
+    img.fixeo-logo-img {
+      display:block !important;
+      height:32px !important;
+      width:auto !important;
+      object-fit:contain !important;
+      object-position:left center !important;
+      background:transparent !important;
+      mix-blend-mode:normal !important;
+      filter:none !important;
+      box-shadow:none !important;
+      border:none !important;
+      flex:0 0 auto !important;
+      overflow:visible !important;
+    }
+    /* Mobile bar logo */
+    .fixeo-gh-brand img.fixeo-logo-img,
+    .fixeo-gh-mobile-bar img.fixeo-logo-img {
+      height:26px !important;
+      width:auto !important;
+    }
+    @media (max-width:480px) {
+      img.fixeo-logo-img { height:24px !important; }
+      .fixeo-gh-brand img.fixeo-logo-img { height:22px !important; }
+    }
+  </style>
+</head>
+<body data-theme="dark" data-dash-type="client">
+
+<!-- ═══════════════════════════════════════════════════════════════
+     FIXEO V10 - HEADER UNIFIÉ (centralisé)
+     Règles de visibilité :
+       data-auth="guest"      → visible si NON connecté (défaut)
+       data-auth="logged-in"  → visible si connecté  (body.is-logged-in)
+       data-auth="admin"      → visible si admin      (body.is-admin)
+     JS : js/header-unified.js gère tout automatiquement.
+════════════════════════════════════════════════════════════════════ -->
+<a href="#main-content" class="skip-link">Aller au contenu</a>
+
+<nav class="navbar" role="navigation" aria-label="Navigation principale">
+
+  <!-- ── Logo ── -->
+  <a href="index.html" class="navbar-brand logo-wrap" aria-label="Fixeo - Accueil">
+    <img src="img/logo.png" alt="Fixeo" class="fixeo-logo-img" height="38" loading="eager" onerror="this.onerror=null;this.alt='Fixeo';this.style.display='none';var t=document.createElement('span');t.className='fixeo-logo-text';t.textContent='Fixeo';this.parentNode.appendChild(t);">
+  </a>
+
+  <!-- ── Menu principal desktop ── -->
+  <nav class="navbar-nav" aria-label="Menu principal">
+    <a href="index.html"             class="nav-link" data-i18n="nav_home">Accueil</a>
+
+    <!-- Services avec dropdown -->
+    <div class="nav-has-dropdown">
+      <a href="index.html#services" class="nav-link" data-i18n="nav_services">
+        Services <span class="nav-arrow">▾</span>
+      </a>
+      <div class="nav-dropdown" role="menu" aria-label="Sous-menu Services">
+        <a href="index.html#services" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🔧</span>Tous les services</a>
+        <a href="index.html#services?cat=plomberie" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🚿</span>Plomberie</a>
+        <a href="index.html#services?cat=electricite" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">⚡</span>Électricité</a>
+        <a href="index.html#services?cat=peinture" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🎨</span>Peinture</a>
+        <a href="index.html#services?cat=climatisation" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">❄️</span>Climatisation</a>
+        <a href="index.html#services?cat=nettoyage" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🧹</span>Nettoyage</a>
+        <a href="index.html#services?cat=menuiserie" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🪚</span>Menuiserie</a>
+        <a href="index.html#services?cat=serrurerie" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🔑</span>Serrurerie</a>
+        <a href="index.html#services?cat=maconnerie" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🧱</span>Maçonnerie</a>
+        <a href="index.html#services?cat=jardinage" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🌿</span>Jardinage</a>
+        <a href="index.html#services?cat=bricolage" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🔩</span>Bricolage</a>
+        <a href="index.html#services?cat=demenagement" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🚛</span>Déménagement</a>
+        <a href="index.html#services?cat=carrelage" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🏁</span>Carrelage</a>
+        <a href="index.html#services?cat=toiture" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🏠</span>Toiture</a>
+        <a href="index.html#services?cat=vitrerie" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🪟</span>Vitrerie</a>
+        <a href="index.html#services?cat=chauffage" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🔥</span>Chauffage</a>
+      </div>
+    </div>
+
+    <!-- Artisans avec dropdown -->
+    <div class="nav-has-dropdown">
+      <a href="index.html#artisans-section" class="nav-link" data-i18n="nav_artisans">
+        Artisans <span class="nav-arrow">▾</span>
+      </a>
+      <div class="nav-dropdown" role="menu" aria-label="Sous-menu Artisans">
+        <a href="index.html#artisans-section" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">👷</span>Tous les artisans</a>
+        <a href="artisan.html"                class="nav-dropdown-item" role="menuitem"><span class="dd-icon">⭐</span>Profil artisan</a>
+        <div class="nav-dropdown-divider"></div>
+        <a href="index.html#artisans-section?filter=available" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🟢</span>Disponibles maintenant</a>
+        <a href="index.html#artisans-section?filter=top" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🏆</span>Top notés</a>
+      </div>
+    </div>
+    <a href="pricing.html"            class="nav-link">Tarifs</a>
+    <a href="presse-partenariats.html" class="nav-link">Presse</a>
+
+    <!-- Dashboard - visible uniquement si connecté -->
+    <a href="dashboard-client.html"
+       class="nav-link"
+       data-role="dashboard"
+       data-auth="logged-in"
+       data-i18n="nav_dashboard">📊 Dashboard</a>
+
+    <!-- Admin - visible uniquement si admin -->
+    <a href="admin.html"
+       class="nav-link"
+       data-role="admin"
+       data-auth="admin">🛡 Admin</a>
+  </nav>
+
+  <!-- ── Actions à droite ── -->
+  <div class="nav-actions">
+
+    <!-- Recherche rapide -->
+    <button class="btn-quick-search"
+            onclick="window.QuickSearchModal && QuickSearchModal.open()"
+            aria-label="Recherche rapide (touche /)"
+            title="Recherche rapide [ / ]">
+      <span class="bqs-icon">🔍</span>
+      <span class="bqs-text">Recherche rapide</span>
+    </button>
+
+    <!-- Sélecteur de langue -->
+    <select id="lang-select" class="lang-selector" aria-label="Choisir la langue">
+      <option value="fr">🇫🇷 FR</option>
+      <option value="ar">🇲🇦 AR</option>
+      <option value="en">🇬🇧 EN</option>
+    </select>
+
+    <!-- Notifications -->
+    <button class="notif-btn"
+            aria-label="Notifications"
+            title="Notifications"
+            onclick="window.notifSystem?.togglePanel()">
+      🔔<span class="notif-badge" aria-live="polite"></span>
+    </button>
+
+    <!-- Invité : Connexion / Inscription -->
+    <a href="auth.html" id="login-btn" class="btn-nav btn-nav-outline" data-auth="guest" data-i18n="nav_login">Connexion</a>
+    <a href="auth.html#signup" id="register-btn" class="btn-nav btn-nav-primary" data-auth="guest" data-i18n="nav_signup">Inscription</a>
+
+    <!-- Connecté : chip utilisateur avec dropdown -->
+    <div class="nav-has-dropdown" data-auth="logged-in" style="display:none">
+      <div class="nav-user-chip" tabindex="0" aria-haspopup="true" aria-label="Mon compte">
+        <div class="nav-user-avatar" id="global-avatar">U</div>
+        <span class="nav-user-name" id="global-username">Bonjour, Invité</span>
+        <span class="nav-arrow" style="font-size:0.6rem;opacity:0.6">▾</span>
+      </div>
+      <div class="nav-dropdown" role="menu" aria-label="Menu utilisateur" style="min-width:200px;right:0;left:auto;transform:translateX(0) translateY(-8px)">
+        <!-- Compte connecté affichage -->
+        <div id="user-info" style="padding:10px 14px 8px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:4px"></div>
+        <a href="dashboard-client.html" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">📊</span>Mon Dashboard</a>
+        <a href="dashboard-artisan.html" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">👷</span>Espace Artisan</a>
+        <div class="nav-dropdown-divider"></div>
+        <a href="#" id="logout-btn" class="nav-dropdown-item" role="menuitem" onclick="window.fixeoLogout && fixeoLogout(); return false;"><span class="dd-icon">🚪</span>Déconnexion</a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── Hamburger mobile ── -->
+  <button class="hamburger" aria-label="Ouvrir le menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     MOBILE NAV DRAWER
+════════════════════════════════════════════════════════════════════ -->
+<div class="mobile-nav" role="navigation" aria-label="Menu mobile">
+
+  <a href="index.html"              class="nav-link" data-i18n="nav_home">🏠 Accueil</a>
+  <a href="index.html#services"     class="nav-link" data-i18n="nav_services">🔧 Services</a>
+  <a href="index.html#artisans-section" class="nav-link" data-i18n="nav_artisans">👷 Artisans</a>
+  <a href="pricing.html"            class="nav-link">💎 Tarifs</a>
+
+  <!-- Dashboard mobile - connectés uniquement -->
+  <a href="dashboard-client.html"
+     class="nav-link"
+     data-role="dashboard"
+     data-auth="logged-in">📊 Dashboard</a>
+
+  <!-- Admin mobile - admins uniquement -->
+  <a href="admin.html"
+     class="nav-link"
+     data-role="admin"
+     data-auth="admin">🛡 Admin</a>
+
+  <div class="mobile-nav-divider"></div>
+
+  <!-- Recherche rapide mobile -->
+  <button class="btn-quick-search"
+          onclick="window.QuickSearchModal && QuickSearchModal.open()"
+          aria-label="Recherche rapide">
+    <span class="bqs-icon">🔍</span>
+    <span class="bqs-text">Recherche rapide</span>
+  </button>
+
+  <!-- Auth buttons mobile -->
+  <div class="mobile-nav-auth" data-auth="guest">
+    <a href="auth.html"        class="btn-nav btn-nav-outline" data-i18n="nav_login">Connexion</a>
+    <a href="auth.html#signup" class="btn-nav btn-nav-primary" data-i18n="nav_signup">Inscription</a>
+  </div>
+
+  <!-- Déconnexion mobile (connectés) -->
+  <a href="#" class="nav-link" data-auth="logged-in"
+     onclick="window.fixeoLogout && fixeoLogout(); return false;">🚪 Déconnexion</a>
+
+</div>
+
+<div class="dashboard-layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-mini-profile">
+      <div id="sidebar-avatar" class="avatar-ring" style="width:44px;height:44px;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;background:var(--grad-primary,linear-gradient(135deg,#E1306C,#833AB4));font-size:1.1rem;font-weight:700;color:#fff;flex-shrink:0;">C</div>
+      <div style="min-width:0">
+        <div id="sidebar-username" style="font-weight:700;font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Chargement...</div>
+        <div id="sidebar-role" style="font-size:.72rem;color:var(--accent2)">👤 Client ⭐</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Principal</div>
+      <a class="sidebar-link active" href="#overview" onclick="showSection('overview')">
+        <span class="icon">📊</span><span>Vue d'ensemble</span>
+      </a>
+      <a class="sidebar-link" href="#bookings" onclick="showSection('bookings')">
+        <span class="icon">📅</span><span>Mes réservations</span>
+      </a>
+      <a class="sidebar-link" href="#messages" onclick="showSection('messages')">
+        <span class="icon">💬</span><span>Messages</span>
+      </a>
+      <!-- Mes avis: hidden until reviews table exists in Supabase -->
+      <!-- <a class="sidebar-link" href="#reviews" onclick="showSection('reviews')"><span class="icon">⭐</span><span>Mes avis</span></a> -->
+      <div class="sidebar-section-label">Découvrir</div>
+      <a class="sidebar-link" href="index.html#artisans-section">
+        <span class="icon">🔍</span><span>Trouver un artisan</span>
+      </a>
+      <!-- Réalisations: feed-section doesn't exist in index.html — removed to avoid dead link -->
+      <div class="sidebar-section-label">Compte</div>
+      <a class="sidebar-link" href="#settings" onclick="showSection('settings')">
+        <span class="icon">⚙️</span><span>Paramètres</span>
+      </a>
+      <a class="sidebar-link" href="auth.html">
+        <span class="icon">🚪</span><span>Déconnexion</span>
+      </a>
+    </nav>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="dashboard-content" id="main-content">
+
+    <div id="section-overview" class="client-dashboard-overview">
+      <div id="client-cod-overview"></div>
+      <section class="client-dashboard-hero">
+        <div class="client-dashboard-top fxd-hero-v2">
+          <div class="fxd-hero-copy">
+            <div class="section-tag fxd-hero-badge">VOTRE ESPACE FIXEO</div>
+            <h1 class="fxd-hero-headline">Publiez votre demande en&nbsp;30&nbsp;secondes ⚡</h1>
+            <p class="fxd-hero-sub">Des artisans vérifiés vous répondent rapidement avec prix et délai.</p>
+            <div class="fixeo-hero-trust fxd-trust-v2">
+              <span>✔️ Réponse en moins de 5 min</span>
+              <span>✔️ Artisans vérifiés</span>
+              <span>✔️ Gratuit</span>
+            </div>
+            <!-- hidden span kept for JS hydration -->
+            <span id="client-hero-name" style="display:none" aria-hidden="true">...</span>
+          </div>
+
+          <div class="client-hero-actions fxd-hero-actions-v2">
+            <button class="btn btn-primary fxd-hero-cta fxd-cta-primary" onclick="FixeoDashboardModals.openRequest()">Publier ma demande</button>
+            <button class="btn fxd-hero-cta fxd-cta-urgent" onclick="FixeoDashboardModals.openUrgent()">⚡ Besoin urgent</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="client-stats-grid" id="client-stats-grid"></section>
+
+      <div class="client-dashboard-shell">
+        <div class="client-dashboard-main">
+          <section class="client-requests-section dashboard-panel">
+            <div class="client-section-header">
+              <div>
+                <h2>Mes demandes</h2>
+                <p>Vos demandes sont suivies et prêtes à être comparées en un coup d'œil.</p>
+              </div>
+              <button class="btn btn-secondary" onclick="showSection('bookings')">Voir tout</button>
+            </div>
+
+            <!-- Step 3 — Psychological nudge card -->
+            <div class="fxd-nudge-card fxd-nudge-v2">
+              <div class="fxd-nudge-icon">💡</div>
+              <div class="fxd-nudge-body">
+                <div class="fxd-nudge-label">Conseil</div>
+                <p class="fxd-nudge-msg">Décrivez votre besoin avec précision — les artisans qualifiés de votre ville seront alertés <strong>immédiatement</strong>.</p>
+              </div>
+              <button class="btn btn-primary fxd-nudge-cta" onclick="FixeoDashboardModals.openRequest()">Publier une demande</button>
+            </div>
+
+            <!-- Step 2 — Primary empty-state activation block -->
+            <div class="fixeo-smart-cta fxd-empty-v2" id="fixeo-smart-cta">
+              <div class="fxd-empty-icon">📋</div>
+              <h3 class="fxd-empty-title">Aucune demande pour le moment</h3>
+              <p class="fxd-empty-sub">Décrivez votre besoin en 30 secondes et recevez des propositions immédiatement.</p>
+              <div class="fixeo-smart-cta-actions fxd-empty-actions">
+                <button class="btn btn-primary fxd-cta-btn" onclick="FixeoDashboardModals.openRequest()">Publier ma demande gratuitement</button>
+                <button class="btn btn-secondary fxd-cta-btn" onclick="window.location.href='index.html#artisans-section'">Trouver un artisan</button>
+              </div>
+            </div>
+
+            <div id="client-requests-list"></div>
+          </section>
+
+          <section class="client-replies-section dashboard-panel">
+            <div class="client-section-header">
+              <div>
+                <h2>Réponses reçues</h2>
+                <p>Les artisans les plus pertinents remontent immédiatement avec prix et délai.</p>
+              </div>
+              <button class="btn btn-secondary" onclick="showSection('messages')">Voir tout</button>
+            </div>
+
+            <div id="client-replies-list"></div>
+          </section>
+        </div>
+
+        <aside class="client-dashboard-side">
+          <section class="client-next-actions-section dashboard-panel">
+            <div class="client-section-header">
+              <div>
+                <h2>À faire maintenant</h2>
+              </div>
+            </div>
+
+            <div class="client-action-list" id="client-action-list"></div>
+            <!-- Empty-state astuce - shown by default; hidden by fixeo-mvp-supabase when real actions exist -->
+            <div class="fxd-action-empty-hint" id="fxd-action-empty-hint">
+              💡 Astuce&nbsp;: créez une première demande pour commencer à recevoir des propositions.
+            </div>
+          </section>
+
+          <section class="client-favorites-section dashboard-panel">
+            <div class="client-section-header">
+              <div>
+                <h2>Mes artisans favoris</h2>
+              </div>
+            </div>
+
+            <div class="favorite-list" id="client-favorites-list"></div>
+          </section>
+
+          <section class="dashboard-panel fxd-marketplace-panel" style="padding:18px 16px">
+            <div class="fxd-mp-header">
+              <span class="fxd-mp-icon">&#127959;</span>
+              <div>
+                <div class="fxd-mp-title">861 artisans dans votre r&eacute;seau</div>
+                <div class="fxd-mp-sub">Plombiers, &eacute;lectriciens, peintres et plus &mdash; disponibles maintenant.</div>
+              </div>
+            </div>
+            <div id="recommended-artisans">
+              <!-- Real artisan cards injected here by renderRecommended() when available -->
+            </div>
+            <a href="index.html#artisans-section" class="btn btn-secondary fxd-mp-cta">Explorer les artisans &rarr;</a>
+          </section>
+        </aside>
+      </div>
+    </div>
+
+
+    <!-- ── BOOKINGS ───────────────────────────────────────── -->
+    <div id="section-bookings" style="display:none">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px">
+        <h2 style="font-size:1.3rem">📅 Mes réservations</h2>
+        <button class="btn btn-primary" onclick="FixeoDashboardModals.openRequest()">+ Nouvelle demande</button>
+      </div>
+      <!-- Progress tracker: hidden until a real mission exists -->
+      <div class="chart-card" id="booking-progress-tracker" style="margin-bottom:20px;padding:20px;display:none">
+        <h4 style="margin-bottom:16px;font-size:.95rem">Suivi de votre dernière mission</h4>
+        <div class="booking-progress">
+          <div class="progress-step done"><div class="step-circle">✓</div><div class="step-label">Demande</div></div>
+          <div class="progress-step done"><div class="step-circle">✓</div><div class="step-label">Confirmée</div></div>
+          <div class="progress-step active"><div class="step-circle">3</div><div class="step-label">En cours</div></div>
+          <div class="progress-step"><div class="step-circle">4</div><div class="step-label">Terminée</div></div>
+          <div class="progress-step"><div class="step-circle">5</div><div class="step-label">Évaluation</div></div>
+        </div>
+      </div>
+      <div id="client-cod-bookings"></div>
+      <div class="chart-card" style="padding:0;overflow:hidden">
+        <div id="client-bookings-full"></div>
+      </div>
+    </div>
+
+    <!-- ── MESSAGES ───────────────────────────────────────── -->
+    <div id="section-messages" style="display:none">
+      <h2 style="font-size:1.3rem;margin-bottom:20px">💬 Messages & réponses artisans</h2>
+      <div id="client-cod-messages" style="margin-bottom:18px"></div>
+      <div style="display:grid;grid-template-columns:280px 1fr;gap:14px;height:500px;min-height:0">
+        <!-- Contacts list -->
+        <div class="chart-card" style="padding:0;overflow:hidden;display:flex;flex-direction:column">
+          <div style="padding:12px;border-bottom:1px solid var(--glass-border);flex-shrink:0">
+            <input type="text" class="chat-input" placeholder="🔍 Rechercher..." style="width:100%">
+          </div>
+          <div style="overflow-y:auto;flex:1" id="contacts-list"></div>
+        </div>
+        <!-- Chat window -->
+        <div class="chart-card" style="padding:0;display:flex;flex-direction:column;overflow:hidden">
+          <div class="chat-header" style="flex-shrink:0">
+            <div style="width:36px;height:36px;border-radius:50%;background:var(--glass-bg);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0">💬</div>
+            <div style="min-width:0">
+              <div style="font-weight:700;font-size:.9rem" id="dash-chat-contact-name">Sélectionnez une conversation</div>
+              <div style="font-size:.72rem;color:var(--text-muted)">Messagerie artisans</div>
+            </div>
+          </div>
+          <div class="chat-messages" id="dash-messages" style="flex:1;padding:14px;overflow-y:auto;display:flex;align-items:center;justify-content:center">
+            <div style="text-align:center;opacity:.55">
+              <div style="font-size:2rem;margin-bottom:8px">💬</div>
+              <p style="margin:0;font-size:.88rem">Aucune conversation artisan active pour le moment.</p>
+              <p style="margin:6px 0 0;font-size:.78rem;opacity:.7">Acceptez un devis pour démarrer une conversation.</p>
+            </div>
+          </div>
+          <div class="chat-input-row" style="flex-shrink:0;opacity:.4;pointer-events:none">
+            <input type="text" id="dash-chat-input" class="chat-input" placeholder="Écrire un message..." disabled>
+            <button class="btn btn-primary btn-sm" disabled>→</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── REVIEWS ────────────────────────────────────────── -->
+    <div id="section-reviews" style="display:none">
+      <h2 style="font-size:1.3rem;margin-bottom:20px">⭐ Mes avis donnés</h2>
+      <div class="reviews-list" id="reviews-list"></div>
+    </div>
+
+    <!-- ── SETTINGS ───────────────────────────────────────── -->
+    <div id="section-settings" style="display:none">
+      <h2 style="font-size:1.3rem;margin-bottom:20px">⚙️ Paramètres</h2>
+      <div class="chart-card" style="padding:24px;max-width:520px">
+        <h4 style="margin-bottom:20px">Profil</h4>
+        <div class="form-group">
+          <label class="form-label">Nom complet</label>
+          <input type="text" class="form-control" id="settings-client-name" placeholder="Votre nom complet">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-control" id="settings-client-email" placeholder="votre@email.com" readonly>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Téléphone</label>
+          <input type="tel" class="form-control" id="settings-client-phone" placeholder="+212 6XX XXX XXX">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Ville</label>
+          <select class="form-control" id="settings-client-city">
+            <option value="">Choisir une ville</option>
+            <option>Casablanca</option><option>Rabat</option><option>Marrakech</option>
+            <option>Fès</option><option>Agadir</option><option>Meknès</option>
+            <option>Tanger</option><option>Salé</option><option>Oujda</option>
+          </select>
+        </div>
+        <div class="hr"></div>
+        <h4 style="margin-bottom:20px">Notifications</h4>
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <span style="font-size:.9rem">Notifications email</span>
+            <label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <span style="font-size:.9rem">WhatsApp</span>
+            <label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <span style="font-size:.9rem">Push notifications</span>
+            <label class="toggle-switch"><input type="checkbox"><span class="toggle-slider"></span></label>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <button class="btn btn-primary w-100" id="settings-client-save">
+          Enregistrer les modifications
+        </button>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Modal overlay -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal" style="position:static;transform:none;opacity:1;display:block">
+    <div class="modal-header">
+      <h3 id="modal-title">Nouvelle demande</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<!-- Chat widget removed: fake "● En ligne" bot replaced — real WhatsApp support link to be added in Phase DX-3 -->
+
+<script src="js/fixeo-session-mobile.js"></script>
+<script src="js/fixeo-header-global.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/notifications.js"></script>
+<script src="js/gamification.js"></script>
+
+<script src="js/reservation.js?v=v1a"></script>
+  <script src="js/reservation-v2.js?v=3" defer></script>
+  <script src="js/slot-lock.js"></script>
+<script src="js/cod-payment.js"></script>
+<script src="js/payment.js"></script>
+
+<script src="js/fixeo-mission-system.js"></script>
+<script src="js/fixeo-client-cod.js"></script>
+    <script src="js/fixeo-client-requests-store.js"></script>
+<script src="js/fixeo-state-bridge.js?v=sb1"></script>
+
+
+
+<script>
+// ── Safe request modal dispatcher ────────────────────────
+// Called by all CTA buttons. Three-tier fallback:
+//   1. window.openNewRequestModal (Supabase version, registered by fixeo-mvp-supabase.js)
+//   2. openNewRequestModal (local inline definition — always present, no window. lookup)
+//   3. Safe navigation — only if both modal paths fail AND overlay is clean
+function fixeoOpenRequest() {
+  // Helper: attach one-time backdrop click-escape after any successful open
+  function _attachEscape() {
+    var ov = document.getElementById('modal-overlay');
+    if (!ov) return;
+    ov.addEventListener('click', function esc(e) {
+      if (e.target === ov) { ov.classList.remove('open'); ov.removeEventListener('click', esc); }
+    });
+  }
+  // Helper: ensure overlay is closed if body is still empty after a failed attempt
+  function _safeClose() {
+    var ov = document.getElementById('modal-overlay');
+    if (ov) {
+      var body = document.getElementById('modal-body');
+      if (!body || !body.innerHTML.trim()) ov.classList.remove('open');
+    }
+  }
+    // Helper: after open, force panel visibility if CSS !important is still blocking
+  // (belt-and-suspenders for fixeo_v5_fixes.css .modal{display:none!important}).
+  // Does NOT inject any fallback form — trusts the real modal to populate #modal-body.
+  function _guardVisibility() {
+    setTimeout(function () {
+      var ov    = document.getElementById('modal-overlay');
+      var panel = ov ? ov.querySelector('.modal') : null;
+      if (!ov || !ov.classList.contains('open') || !panel) return;
+      var cs = window.getComputedStyle(panel);
+      if (panel.offsetWidth === 0 || panel.offsetHeight === 0 ||
+          cs.display === 'none' || cs.visibility === 'hidden' || cs.opacity === '0') {
+        console.warn('[Fixeo] Modal panel invisible \u2192 forcing visibility');
+        panel.style.setProperty('display',        'block',              'important');
+        panel.style.setProperty('opacity',         '1',                  'important');
+        panel.style.setProperty('visibility',      'visible',            'important');
+        panel.style.setProperty('position',        'relative',           'important');
+        panel.style.setProperty('inset',           'unset',              'important');
+        panel.style.setProperty('transform',       'none',               'important');
+        panel.style.setProperty('z-index',         '100000',             'important');
+        panel.style.setProperty('max-width',       '640px',              'important');
+        panel.style.setProperty('width',           'min(92vw,640px)',    'important');
+        panel.style.setProperty('max-height',      '85vh',               'important');
+        panel.style.setProperty('overflow-y',      'auto',               'important');
+        panel.style.setProperty('pointer-events',  'auto',               'important');
+      }
+    }, 50);
+  }
+
+  // Step 1 — Supabase override (window.openNewRequestModal set by fixeo-mvp-supabase.js)
+  if (typeof window.openNewRequestModal === 'function') {
+    try { window.openNewRequestModal(); _attachEscape(); _guardVisibility(); return; }
+    catch (e1) { _safeClose(); console.warn('[Fixeo] openNewRequestModal (window) failed:', e1); }
+  }
+
+  // Step 2 — Inline fallback (defined in this same script block)
+  if (typeof openNewRequestModal === 'function') {
+    try { openNewRequestModal(); _attachEscape(); _guardVisibility(); return; }
+    catch (e2) { _safeClose(); console.warn('[Fixeo] openNewRequestModal (local) failed:', e2); }
+  }
+
+  // Step 3 — Both failed; navigate
+  window.location.href = 'index.html#express-request-section';
+}
+
+// ── Section navigation ────────────────────────────────────
+function showSection(name) {
+  ['overview','bookings','messages','reviews','settings'].forEach(s => {
+    const el = document.getElementById('section-'+s);
+    if (el) el.style.display = s === name ? 'block' : 'none';
+  });
+  document.querySelectorAll('.sidebar-link').forEach(l => {
+    l.classList.toggle('active', l.getAttribute('href') === '#'+name);
+  });
+}
+
+// ── Mobile sidebar ────────────────────────────────────────
+// Handler removed — DOMContentLoaded block at line ~2350 is the single
+// hamburger listener (includes overlay + aria-expanded + mobile close).
+// Duplicate listener here caused toggle × 2 = sidebar stayed closed.
+
+// ── Chat helpers ──────────────────────────────────────────
+function toggleChat()  { document.getElementById('chat-panel').classList.toggle('open'); }
+function sendMessage() {
+  const i = document.getElementById('chat-input-field');
+  const m = document.getElementById('chat-messages');
+  if (!i||!m||!i.value.trim()) return;
+  m.innerHTML += `<div class="msg sent">${i.value}</div>`;
+  m.scrollTop = m.scrollHeight; i.value = '';
+  setTimeout(() => {
+    m.innerHTML += `<div class="msg received">Merci pour votre message ! Notre équipe vous répond sous peu. 👷</div>`;
+    m.scrollTop = m.scrollHeight;
+  }, 1200);
+}
+function sendDashMessage() {
+  const i = document.getElementById('dash-chat-input');
+  const m = document.getElementById('dash-messages');
+  if (!i||!m||!i.value.trim()) return;
+  m.innerHTML += `<div class="msg sent">${i.value}</div>`;
+  m.scrollTop = m.scrollHeight; i.value = '';
+  setTimeout(() => {
+    m.innerHTML += `<div class="msg received">Reçu ! Je serai là à l'heure convenue. 👍</div>`;
+    m.scrollTop = m.scrollHeight;
+  }, 1000);
+}
+
+// ── Close modal ───────────────────────────────────────────
+function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); }
+
+/* ── FixeoDashboardModals ─ clean CTA dispatcher ────────────────────────────
+ * openRequest(): calls fixeoOpenRequest() which prefers window.openNewRequestModal
+ *               (Supabase form) with visibility guard. Falls back to inline form.
+ * openUrgent():  calls expressRequest() — the only urgent modal on this page.
+ * ------------------------------------------------------------------- */
+window.FixeoDashboardModals = (function () {
+  'use strict';
+
+  function openRequest() {
+    /* Tier 1 — real homepage modal: problem + city + urgency chips + budget + phone */
+    if (window.FixeoClientRequest && typeof window.FixeoClientRequest.open === 'function') {
+      window.FixeoClientRequest.open();
+      return;
+    }
+    /* Tier 2 — Supabase dashboard modal (fixeo-mvp-supabase.js override of openNewRequestModal) */
+    if (typeof window.fixeoOpenRequest === 'function') {
+      window.fixeoOpenRequest();
+      return;
+    }
+    /* Tier 3 — navigate */
+    window.location.href = 'index.html#express-request-section';
+  }
+
+  function openUrgent() {
+    /* Tier 1 — real homepage express modal: textarea + suggestion chips + city */
+    if (window.FixeoClientRequest && typeof window.FixeoClientRequest.openExpress === 'function') {
+      window.FixeoClientRequest.openExpress();
+      return;
+    }
+    /* Tier 2 — dashboard inline urgent form */
+    if (typeof window.expressRequest === 'function') {
+      window.expressRequest();
+      return;
+    }
+    /* Tier 3 — degrade to standard request modal */
+    openRequest();
+  }
+
+  return { openRequest: openRequest, openUrgent: openUrgent };
+}());
+
+// ── New request modal ─────────────────────────────────────
+function openNewRequestModal() {
+  document.getElementById('modal-title').textContent = '+ Nouvelle demande';
+  document.getElementById('modal-body').innerHTML = `
+    <div class="form-group">
+      <label class="form-label">Type de service</label>
+      <select class="form-control">
+        <option>Plomberie</option><option>Électricité</option><option>Peinture</option>
+        <option>Carrelage</option><option>Nettoyage</option><option>Jardinage</option><option>Autre</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Description</label>
+      <textarea class="form-control" rows="3" placeholder="Décrivez votre besoin..."></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Date souhaitée</label>
+      <input type="date" class="form-control">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Adresse</label>
+      <input type="text" class="form-control" placeholder="Rue, Quartier, Ville">
+    </div>
+    <button class="btn btn-primary w-100"
+      onclick="closeModal();notifications.success('Demande envoyée !','Vous recevrez des devis sous 24h.')">
+      Envoyer la demande
+    </button>`;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+// ── Express modal ─────────────────────────────────────────
+function expressRequest() {
+  document.getElementById('modal-title').textContent = '🚀 Demande Express';
+  document.getElementById('modal-body').innerHTML = `
+    <p style="margin-bottom:16px;color:var(--text-muted)">Un artisan disponible interviendra dans l'heure.</p>
+    <div class="form-group">
+      <label class="form-label">Service</label>
+      <select class="form-control">
+        <option>Plomberie</option><option>Électricité</option><option>Peinture</option><option>Autre</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Problème</label>
+      <textarea class="form-control" rows="3" placeholder="Décrivez le problème urgent..."></textarea>
+    </div>
+    <button class="btn btn-express w-100"
+      onclick="closeModal();notifications.success('🚀 Demande envoyée !','Un artisan vous contactera dans 15 min.')">
+      Envoyer maintenant
+    </button>`;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+// ── Spending chart tab ────────────────────────────────────
+function switchSpendingChart(period, tab) {
+  document.querySelectorAll('.chart-tab').forEach(t => t.classList.remove('active'));
+  tab.classList.add('active');
+  if (!window.dashboard) return;
+  const months6 = ['Jan','Fév','Mar','Avr','Mai','Jun'];
+  const months12 = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
+  if (period === '6m') {
+    window.dashboard.drawLineChart('chart-spending', months6, [320,480,610,290,720,540], '#E1306C');
+  } else {
+    window.dashboard.drawLineChart('chart-spending', months12, window.dashboard.clientData.monthlySpending, '#E1306C');
+  }
+}
+
+// ── Render contacts list ──────────────────────────────────
+function renderContacts() {
+  const contacts = [];
+  const el = document.getElementById('contacts-list');
+  if (!el) return;
+  if (!contacts.length) {
+    el.innerHTML = '<div style="padding:16px 14px;color:var(--text-muted)">Aucune conversation artisan active pour le moment.</div>';
+    return;
+  }
+  el.innerHTML = contacts.map((c,i) => `
+    <div style="display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;
+      border-bottom:1px solid rgba(255,255,255,.04);transition:background .2s;
+      ${i===0?'background:rgba(255,255,255,.06)':''}"
+      onmouseenter="this.style.background='rgba(255,255,255,.05)'"
+      onmouseleave="this.style.background='${i===0?'rgba(255,255,255,.06)':'none'}'">
+      <img src="https://i.pravatar.cc/36?img=${c.img}" style="width:38px;height:38px;border-radius:50%;object-fit:cover;flex-shrink:0" alt="${c.name}">
+      <div style="flex:1;min-width:0">
+        <div style="font-size:.85rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.name}</div>
+        <div style="font-size:.73rem;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.msg}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0">
+        <div style="font-size:.68rem;color:var(--text-muted)">${c.time}</div>
+        ${c.unread ? `<span style="width:18px;height:18px;background:var(--accent-red);border-radius:50%;font-size:.65rem;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center">${c.unread}</span>` : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── Render reviews ────────────────────────────────────────
+function renderReviews() {
+  const reviews = [];
+  const el = document.getElementById('reviews-list');
+  if (!el) return;
+  if (!reviews.length) {
+    el.innerHTML = '<div class="review-card" style="color:var(--text-muted)">Aucun avis artisan réel à afficher pour le moment.</div>';
+    return;
+  }
+  el.innerHTML = reviews.map(r => `
+    <div class="review-card">
+      <div class="review-header">
+        <img src="https://i.pravatar.cc/40?img=${r.img}" class="review-avatar" alt="${r.name}">
+        <div style="flex:1;min-width:0">
+          <div class="review-name">${r.name}</div>
+          <div class="review-date">${r.specialty} · ${r.date}</div>
+        </div>
+        <div class="stars" style="flex-shrink:0">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</div>
+      </div>
+      <p style="font-size:.85rem;margin:0;line-height:1.6">${r.comment}</p>
+    </div>
+  `).join('');
+}
+
+// ── Render bookings table ─────────────────────────────────
+/* ── V2-C: Timeline state resolver ─────────────────────────────────
+   Derives a 1-4 state integer from a booking/reservation object.
+   State 1: registered only (no payStatus)
+   State 2: COD pending — coordination in progress
+   State 3: confirmed — artisan confirmed, intervention scheduled
+   State 4: completed / validated / paid final
+   This is read-only from localStorage data — no fake inference.
+*/
+function getTimelineState(booking) {
+  const s = (booking.status || '').toLowerCase();
+  const ps = (booking.payStatus || '').toLowerCase();
+  if (s === 'completed' || s === 'validated' || ps === 'validated' || ps === 'paid') return 4;
+  if (s === 'confirmed') return 3;
+  if (ps === 'pending_cod' || (booking.paymentMethod || '').includes('Delivery')) return 2;
+  return 2; /* default for any new COD booking */
+}
+
+/* ── V2-C: Mini timeline HTML builder ──────────────────────────────
+   Renders a .fxv2c-mini 4-dot row for a given timeline state (1-4).
+   Used inside each booking row in renderBookingsTable().
+*/
+function buildMiniTimeline(state) {
+  const steps = [
+    { label: 'Enregistrée' },
+    { label: 'Coordination' },
+    { label: 'Confirmée' },
+    { label: 'Terminée' },
+  ];
+  const stepsHtml = steps.map(function(step, i) {
+    const stepNum = i + 1;
+    let cls = 'fxv2c-mini-step';
+    if (stepNum < state)  cls += ' fxv2c-done';
+    if (stepNum === state) cls += ' fxv2c-active';
+    return `<div class="${cls}">
+      <div class="fxv2c-mini-dot"></div>
+      <div class="fxv2c-mini-label">${step.label}</div>
+    </div>`;
+  }).join('');
+  return `<div class="fxv2c-mini" aria-label="Avancement">${stepsHtml}</div>`;
+}
+
+function renderBookingsTable(container, bookings) {
+  const statusConf = {
+    active:    { label:'Actif',      color:'#E1306C', bg:'rgba(225,48,108,.12)' },
+    pending:   { label:'En attente', color:'#ffa502', bg:'rgba(255,165,2,.12)'  },
+    completed: { label:'Terminé',    color:'#20c997', bg:'rgba(32,201,151,.12)' },
+    confirmed: { label:'Confirmé',   color:'#20c997', bg:'rgba(32,201,151,.12)' },
+    paid:      { label:'Payé ✅',    color:'#20c997', bg:'rgba(32,201,151,.15)' },
+    cancelled: { label:'Annulé',     color:'#ff4757', bg:'rgba(255,71,87,.12)'  },
+  };
+  /* V2-C: Premium booking cards instead of table — richer timeline context */
+  container.innerHTML = bookings.map(j => {
+    const s       = statusConf[j.payStatus] || statusConf[j.status] || statusConf.pending;
+    const refText = j.bookingRef || j.id || '-';
+    const state   = getTimelineState(j);
+    const mini    = buildMiniTimeline(state);
+
+    /* WhatsApp coordination link — pre-built from stored data */
+    const waHints = {
+      2: 'Pr\u00e9ciser ou partager une photo',
+      3: 'Confirmer l\u2019horaire',
+      4: 'Mission termin\u00e9e'
+    };
+    const waLines = ['Bonjour, je coordonne mon intervention Fixeo :'];
+    if (j.artisan || j.artisanName) waLines.push('Artisan : ' + (j.artisan || j.artisanName));
+    if (j.service)   waLines.push('Service : ' + j.service);
+    if (j.date)      waLines.push('Date : ' + j.date);
+    if (j.bookingRef) waLines.push('R\u00e9f. : ' + j.bookingRef);
+    waLines.push('');
+    waLines.push(state === 4 ? 'Tout s\u2019est bien pass\u00e9. Merci.' :
+                 state === 3 ? 'Pouvez-vous confirmer l\u2019horaire exact\u00a0?' :
+                               'Pouvez-vous me confirmer le cr\u00e9neau\u00a0?');
+    const waHref = 'https://wa.me/212660484415?text=' + encodeURIComponent(waLines.join('\n'));
+
+    return `<div class="fxv2c-booking-card">
+      <div class="fxv2c-booking-head">
+        <div class="fxv2c-booking-info">
+          <div class="fxv2c-booking-service">${j.service || 'Intervention'}</div>
+          <div class="fxv2c-booking-meta">${j.artisan || j.artisanName || ''} ${j.date ? '· ' + j.date : ''}</div>
+        </div>
+        <div class="fxv2c-booking-right">
+          <span class="fxv2c-booking-amount">${j.price ? j.price + ' MAD' : (j.amount || '')}</span>
+          <span class="fxv2c-booking-badge" style="color:${s.color};background:${s.bg};border-color:${s.color}33">${s.label}</span>
+        </div>
+      </div>
+      ${mini}
+      <div class="fxv2c-booking-footer">
+        <span class="fxv2c-booking-ref">${refText}</span>
+        ${state < 4 ? `<a class="fxv2c-booking-wa" href="${waHref}" target="_blank" rel="noopener noreferrer">&#x1F4AC; ${waHints[state] || waHints[2]}</a>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── Recommended artisans ──────────────────────────────────
+function renderRecommended() {
+  const rec = document.getElementById('recommended-artisans');
+  if (!rec || typeof ARTISANS === 'undefined') return;
+  const top = ARTISANS.filter(a => a.rating >= 4.8).slice(0, 3);
+  rec.innerHTML = top.map(a => `
+    <div class="artisan-card" onclick="window.location='index.html#artisans-section'">
+      <div class="artisan-card-cover" style="background:linear-gradient(135deg,${getCategoryColor(a.category)})">
+        <div class="availability-dot ${a.availability}"></div>
+      </div>
+      <div class="artisan-card-body">
+        <div class="artisan-avatar-wrap">
+          <div class="artisan-avatar-placeholder">${a.initials}</div>
+        </div>
+        <div class="artisan-name">${a.name}</div>
+        <div class="artisan-category">${getCategoryLabel(a.category,'fr')} · ${a.city}</div>
+        <div class="artisan-rating">
+          <div class="stars">${'★'.repeat(Math.floor(a.rating))}</div>
+          <span style="font-weight:700">${a.rating}</span>
+        </div>
+        <div class="artisan-footer">
+          <div class="artisan-price">${a.priceFrom} MAD<span>/${a.priceUnit}</span></div>
+          <button class="btn btn-sm btn-primary" onclick="event.stopPropagation();if(window.FixeoReservation){FixeoReservation.open(a)}else{window.location='index.html#artisans-section'}">📅 Réserver</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+
+// ── Client overview optimized ─────────────────────────────
+const FIXEO_CLIENT_OVERVIEW = {
+  requests: [
+    {
+      title: 'Plomberie • Casablanca',
+      submittedAt: 'Demande envoyée le 24 mars',
+      statusClass: 'status-open',
+      statusLabel: 'En attente',
+      replies: 3,
+      avgResponse: '18 min'
+    },
+    {
+      title: 'Électricité • Rabat',
+      submittedAt: 'Demande envoyée le 23 mars',
+      statusClass: 'status-confirmed',
+      statusLabel: 'Rendez-vous confirmé',
+      replies: 2,
+      avgResponse: '26 min'
+    },
+    {
+      title: 'Peinture • Casablanca',
+      submittedAt: 'Demande envoyée le 21 mars',
+      statusClass: 'status-closed',
+      statusLabel: 'Clôturée',
+      replies: 0,
+      avgResponse: '-'
+    }
+  ],
+  replies: [],
+  favorites: [],
+  actions: [
+    {
+      title: 'Comparer les réponses pour la demande plomberie',
+      description: '3 devis sont déjà disponibles. Vous pouvez ouvrir les réponses et choisir l\u2019artisan le plus rassurant.',
+      pill: 'Priorité du jour',
+      primaryLabel: 'Voir les réponses',
+      primaryAction: "showSection('messages')",
+      secondaryLabel: 'Modifier la demande',
+      secondaryAction: 'openNewRequestModal()'
+    },
+    {
+      title: 'Confirmer votre rendez-vous électricité',
+      description: 'Un créneau est prévu demain à 10h. Confirmez-le maintenant pour verrouiller l\u2019intervention.',
+      pill: 'Rendez-vous à venir',
+      primaryLabel: 'Confirmer',
+      primaryAction: "notifications.success('Rendez-vous confirmé', 'Votre intervention a bien été validée.')",
+      secondaryLabel: 'Contacter l\u2019artisan',
+      secondaryAction: "showSection('messages')"
+    }
+  ]
+};
+
+function fixeoEscapeHtml(value) {
+  return String(value ?? '').replace(/[&<>"']/g, char => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  }[char]));
+}
+
+function getFixeoClientName() {
+  // FOUC fix: never read stale localStorage name - Supabase is the only source of truth.
+  // Hero name is set exclusively by fixeo-mvp-supabase.js after profile fetch.
+  return '';
+}
+
+function renderClientDashboardOverview() {
+  // Guard: disabled once Supabase real data has populated the same sections
+  if (window._fixeoOverviewDisabled) return;
+
+  // Hero name: set exclusively by fixeo-mvp-supabase.js after Supabase profile fetch.
+  // Do NOT touch it here - would flash stale/empty value before real data arrives.
+
+  // Stats: show loading zeros - Supabase will overwrite with real counts
+  const statsEl = document.getElementById('client-stats-grid');
+  if (statsEl && !statsEl.dataset.real) {
+    statsEl.innerHTML = [
+      { value: '-', label: 'Demandes actives' },
+      { value: '-', label: 'Réponses reçues' },
+      { value: '-', label: 'Artisans favoris' },
+      { value: '-', label: 'Rendez-vous à venir' }
+    ].map(stat => `
+      <div class="client-stat-card">
+        <span class="stat-number">${fixeoEscapeHtml(stat.value)}</span>
+        <span class="stat-label">${fixeoEscapeHtml(stat.label)}</span>
+      </div>
+    `).join('');
+  }
+
+  // Requests/replies/favorites/actions: show empty state - Supabase will overwrite
+  const requestsEl = document.getElementById('client-requests-list');
+  if (requestsEl && !requestsEl.dataset.real) {
+    requestsEl.innerHTML = '<div class="request-card"><p style="margin:0;opacity:.6">Chargement de vos demandes...</p></div>';
+  }
+  const repliesEl = document.getElementById('client-replies-list');
+  if (repliesEl && !repliesEl.dataset.real) {
+    repliesEl.innerHTML = '<div class="reply-card"><p style="margin:0;opacity:.6">Chargement des réponses...</p></div>';
+  }
+  const favoritesEl = document.getElementById('client-favorites-list');
+  if (favoritesEl && !favoritesEl.dataset.real) {
+    favoritesEl.innerHTML = '<div class="favorite-item" style="opacity:.6">Aucun artisan favori pour le moment.</div>';
+  }
+  const actionsEl = document.getElementById('client-action-list');
+  if (actionsEl && !actionsEl.dataset.real) {
+    actionsEl.innerHTML = '<div class="client-action-item" style="opacity:.6">Aucune action en attente.</div>';
+  }
+}
+
+
+// ── Init ──────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  if (window.dashboard) window.dashboard.init('client');
+
+  /* ── Stale-user guard ────────────────────────────────────────────
+     If a different user logged in, clear stale name/session localStorage
+     keys so auth-global.js never renders the previous user's name.
+     The current Supabase user ID is fetched async later by fixeo-mvp-supabase.
+     Here we do a fast pre-check using the Supabase localStorage token if available. */
+  (function() {
+    try {
+      const storedId = localStorage.getItem('fixeo_user_id');
+      // Attempt to read current Supabase session from its own localStorage key
+      let currentId = null;
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k && k.includes('supabase') && k.includes('auth-token')) {
+          try {
+            const parsed = JSON.parse(localStorage.getItem(k) || '{}');
+            const uid = parsed && parsed.user && parsed.user.id;
+            if (uid) { currentId = uid; break; }
+          } catch(_) {}
+        }
+      }
+      if (currentId && storedId && storedId !== currentId) {
+        // Different user - clear stale display keys
+        ['fixeo_user_name', 'fixeo_user', 'fixeo_current_user',
+         'fixeo_user_id', 'fixeo_profile', 'user'].forEach(function(k) {
+          try { localStorage.removeItem(k); } catch(_) {}
+        });
+      }
+      if (currentId) {
+        try { localStorage.setItem('fixeo_user_id', currentId); } catch(_) {}
+      }
+    } catch(_) {}
+  })();
+
+  const preview = document.getElementById('client-bookings-preview');
+  const full    = document.getElementById('client-bookings-full');
+
+  /* Charger les réservations confirmées depuis localStorage (PayPal/COD).
+     Supabase missions sont injectées séparément par fixeo-mvp-supabase.js
+     dans #client-bookings-full - aucune donnée démo ici. */
+  function loadConfirmedLocalBookings() {
+    try {
+      const stored = JSON.parse(localStorage.getItem('fixeo_reservations') || '[]');
+      return stored.filter(r => r.payStatus === 'paid' || r.status === 'confirmed');
+    } catch(e) { return []; }
+  }
+
+  // Preview zone: only confirmed local bookings (empty = empty state, not fake data)
+  const localBookings = loadConfirmedLocalBookings();
+  if (preview) {
+    if (localBookings.length) {
+      renderBookingsTable(preview, localBookings.slice(0, 3));
+    } else {
+      preview.innerHTML = '';  // fixeo-mvp-supabase.js will populate client-bookings-full
+    }
+  }
+
+  /* V2-C: Activate booking-progress-tracker for the most recent COD booking.
+     Derives the state from the freshest reservation in localStorage.
+     Static read — no polling, no interval, no fetch.
+     Only reveals the tracker when a real COD reservation exists.
+  */
+  (function activateProgressTracker() {
+    const tracker = document.getElementById('booking-progress-tracker');
+    if (!tracker || !localBookings.length) return;
+
+    const latest  = localBookings[0]; /* most recent (unshift on creation) */
+    const state   = getTimelineState(latest);
+
+    /* Build timeline inside the existing tracker card */
+    const steps = [
+      { label: 'Enregistr\u00e9e',  icon: '\u2713' },
+      { label: 'Coordination',      icon: '\u1F4DE' },
+      { label: 'Confirm\u00e9e',    icon: '\u1F527' },
+      { label: 'Termin\u00e9e',     icon: '\u2705' },
+    ];
+    const stepsHtml = steps.map(function(step, i) {
+      const num = i + 1;
+      let cls = 'fxv2c-step';
+      if (num < state)  cls += ' fxv2c-done';
+      if (num === state) cls += ' fxv2c-active';
+      return `<div class="${cls}">
+        <div class="fxv2c-circle">${step.icon}</div>
+        <div class="fxv2c-label">${step.label}</div>
+      </div>`;
+    }).join('');
+
+    const heading = tracker.querySelector('h4');
+    if (heading && latest.artisan) {
+      heading.textContent = 'Dernière intervention : ' + latest.artisan +
+        (latest.service ? ' · ' + latest.service : '');
+    }
+
+    /* Replace the old progress bar HTML with fxv2c-timeline */
+    const oldProgress = tracker.querySelector('.booking-progress');
+    if (oldProgress) {
+      const tl = document.createElement('div');
+      tl.className = 'fxv2c-timeline';
+      tl.setAttribute('data-state', String(state));
+      tl.setAttribute('role', 'list');
+      tl.setAttribute('aria-label', '\u00c9tapes de l\u2019intervention');
+      tl.innerHTML = stepsHtml;
+      oldProgress.replaceWith(tl);
+    }
+
+    tracker.style.display = 'block';
+  })();
+
+  /* Mise à jour temps-réel après paiement confirmé */
+  window.addEventListener('fixeo:payment:success', function() {
+    const updated = loadConfirmedLocalBookings();
+    if (preview && updated.length) renderBookingsTable(preview, updated.slice(0, 3));
+  });
+  window.addEventListener('fixeo:paypal:paid', function() {
+    const updated = loadConfirmedLocalBookings();
+    if (preview && updated.length) renderBookingsTable(preview, updated.slice(0, 3));
+  });
+
+  renderContacts();
+  renderReviews();
+  renderRecommended();
+  renderClientDashboardOverview();
+
+  /* Notification de bienvenue ou suivi COD */
+  const hasPaidOrder = sessionStorage.getItem('fixeo_pp_captured');
+  setTimeout(() => {
+    if (hasPaidOrder) {
+      notifications.success('Bienvenue !', 'Suivez vos missions COD et confirmez la fin de mission ici.');
+    } else {
+      notifications.success('Bienvenue !', 'Votre espace client est prêt.');
+    }
+  }, 600);
+});
+</script>
+
+<script>
+// ── DASHBOARD HAMBURGER & SIDEBAR FIX ────────────────────
+(function() {
+  document.addEventListener('DOMContentLoaded', function() {
+    const hamburger = document.getElementById('hamburger') || document.querySelector('.hamburger');
+    const sidebar = document.getElementById('sidebar') || document.querySelector('.sidebar');
+    const overlay = document.querySelector('.sidebar-overlay');
+
+    if (hamburger && sidebar) {
+      hamburger.addEventListener('click', function() {
+        sidebar.classList.toggle('open');
+        hamburger.classList.toggle('open');
+        hamburger.setAttribute('aria-expanded', sidebar.classList.contains('open'));
+        // Create overlay if not exists
+        if (!document.querySelector('.sidebar-mobile-overlay')) {
+          const ov = document.createElement('div');
+          ov.className = 'sidebar-mobile-overlay';
+          ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:250;display:none;backdrop-filter:blur(4px)';
+          ov.addEventListener('click', function() {
+            sidebar.classList.remove('open');
+            hamburger.classList.remove('open');
+            ov.style.display = 'none';
+          });
+          document.body.appendChild(ov);
+        }
+        const mobOv = document.querySelector('.sidebar-mobile-overlay');
+        if (mobOv) mobOv.style.display = sidebar.classList.contains('open') ? 'block' : 'none';
+      });
+    }
+
+    // Active nav link highlight
+    const currentPage = window.location.hash || '#overview';
+    document.querySelectorAll('.sidebar-link[href]').forEach(link => {
+      if (link.getAttribute('href') === currentPage) {
+        link.classList.add('active');
+      }
+    });
+
+    // Section switching
+    window.showSection = function(name) {
+      document.querySelectorAll('[id^="section-"]').forEach(s => {
+        s.style.display = 'none';
+      });
+      const target = document.getElementById('section-' + name);
+      if (target) { target.style.display = 'block'; }
+      // Update active link
+      document.querySelectorAll('.sidebar-link').forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === '#' + name || link.getAttribute('onclick')?.includes("'"+name+"'")) {
+          link.classList.add('active');
+        }
+      });
+      // Close mobile sidebar
+      if (window.innerWidth <= 768) {
+        sidebar?.classList.remove('open');
+        const mobOv = document.querySelector('.sidebar-mobile-overlay');
+        if (mobOv) mobOv.style.display = 'none';
+      }
+    };
+
+    // Show default overview section
+    const sections = document.querySelectorAll('[id^="section-"]');
+    if (sections.length > 0) {
+      let shown = false;
+      sections.forEach((s, i) => {
+        if (i === 0 && !shown) { s.style.display = 'block'; shown = true; }
+        else if (i > 0) { s.style.display = 'none'; }
+      });
+    }
+
+    // Notification button
+    document.querySelector('.notif-btn')?.addEventListener('click', function() {
+      window.notifSystem?.togglePanel();
+    });
+  });
+})();
+</script>
+
+<!-- ══ AUTH GLOBAL + HEADER-UNIFIED (manquait dans dashboards) ══ -->
+<script src="js/fixeo-supabase-core.js?v=p1b"></script>
+<script>
+/* openModal / closeModal shim — required by request-form.js.
+   Defines window.openModal (not present without main.js).
+   Wraps existing dashboard closeModal() to be ID-aware:
+     - 'request-modal' / 'express-modal' → close via backdrop system
+     - all other IDs (incl. modal-overlay) → original dashboard behaviour
+   Captured at shim-execution time, before request-form.js init. */
+(function () {
+  'use strict';
+  var REQUEST_IDS = { 'request-modal': true, 'express-modal': true };
+
+  /* openModal — not defined on dashboard (main.js absent) */
+  if (typeof window.openModal !== 'function') {
+    window.openModal = function (id) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      el.classList.add('open');
+      var bd = document.getElementById('main-backdrop');
+      if (bd) {
+        bd.classList.add('open');
+        bd.removeAttribute('hidden');
+        bd.setAttribute('aria-hidden', 'false');
+      }
+      document.body.style.overflow = 'hidden';
+    };
+  }
+
+  /* closeModal — wrap existing to add ID-awareness */
+  var _origClose = (typeof window.closeModal === 'function') ? window.closeModal : null;
+  window.closeModal = function (id) {
+    if (REQUEST_IDS[id]) {
+      /* Close the named request/express modal */
+      var el = document.getElementById(id);
+      if (el) el.classList.remove('open');
+      /* Only reset backdrop + scroll if no other request modal is still open */
+      var anyOpen = Object.keys(REQUEST_IDS).some(function (k) {
+        var m = document.getElementById(k);
+        return m && m.classList.contains('open');
+      });
+      if (!anyOpen) {
+        var bd = document.getElementById('main-backdrop');
+        if (bd) {
+          bd.classList.remove('open');
+          bd.setAttribute('aria-hidden', 'true');
+        }
+        document.body.style.overflow = '';
+      }
+    } else if (_origClose) {
+      /* All other IDs — original dashboard closeModal (handles #modal-overlay) */
+      _origClose(id);
+    } else {
+      var el2 = document.getElementById(id);
+      if (el2) el2.classList.remove('open');
+    }
+  };
+
+  /* Backdrop click-to-dismiss */
+  document.addEventListener('click', function (e) {
+    var bd = document.getElementById('main-backdrop');
+    if (e.target === bd) {
+      window.closeModal('request-modal');
+      window.closeModal('express-modal');
+    }
+  });
+}());
+</script>
+<script src="js/fixeo-reservation-supabase-bridge.js?v=v2" defer></script>
+<script src="js/request-form.js?v=v1a"></script>
+<script src="js/header-unified.js"></script>
+<script src="js/auth-global.js?v=p1b"></script>
+<script src="js/fixeo-mvp-supabase.js?v=p1b"></script>
+<script src="js/fixeo-session-bridge.js?v=sb1"></script>
+
+<script src="js/fixeo-chat-mvp.js"></script>
+
+<!-- Mobile FAB - visible only on ≤768px -->
+<!-- ── Real homepage modals (request-form.js) ────────────────────────────
+     #request-modal  = standard "Publier ma demande" form
+     #main-backdrop  = shared backdrop for both modals
+     These are identical copies from index.html — request-form.js binds them by ID. -->
+<div class="modal-backdrop" id="main-backdrop" aria-hidden="true"></div>
+
+<div class="modal request-modal" id="request-modal" role="dialog" aria-modal="true" aria-labelledby="request-modal-title" aria-describedby="request-modal-subtitle">
+  <div class="modal-header request-modal-header">
+    <div>
+      <h3 id="request-modal-title">Décrivez votre besoin</h3>
+      <p id="request-modal-subtitle" class="request-modal-subtitle">Recevez des offres d’artisans vérifiés rapidement</p>
+    </div>
+    <button class="modal-close" type="button" onclick="window.FixeoClientRequest && window.FixeoClientRequest.closeStandard ? window.FixeoClientRequest.closeStandard('request-modal') : document.getElementById('request-modal').classList.remove('open')" aria-label="Fermer">✕</button>
+  </div>
+  <div class="request-modal-shell">
+    <form id="request-form" class="request-form" novalidate>
+      <div class="request-field">
+        <label for="request-problem">Problème</label>
+        <input id="request-problem" name="problem" type="text" placeholder="Décrivez votre problème (ex: fuite d’eau, panne électricité...)" maxlength="120" required />
+      </div>
+      <div class="request-field">
+        <label for="request-city">Ville</label>
+        <select id="request-city" name="ville" required>
+          <option value="">Choisir une ville</option>
+          <option value="Casablanca">Casablanca</option>
+          <option value="Rabat">Rabat</option>
+          <option value="Marrakech">Marrakech</option>
+          <option value="Fès">Fès</option>
+          <option value="Tanger">Tanger</option>
+          <option value="Agadir">Agadir</option>
+          <option value="Meknès">Meknès</option>
+          <option value="Oujda">Oujda</option>
+        </select>
+      </div>
+      <div class="request-field">
+        <span class="request-label">Urgence</span>
+        <div class="request-choice-grid" role="radiogroup" aria-label="Urgence">
+          <label class="request-choice-card">
+            <input type="radio" name="urgence" value="Urgent (moins de 30 min)" required />
+            <span class="request-choice-title">Urgent</span>
+            <span class="request-choice-meta">moins de 30 min</span>
+          </label>
+          <label class="request-choice-card">
+            <input type="radio" name="urgence" value="Normal" checked />
+            <span class="request-choice-title">Normal</span>
+            <span class="request-choice-meta">délai classique</span>
+          </label>
+        </div>
+      </div>
+      <div class="request-field">
+        <label for="request-budget">Budget <span class="request-optional">(optionnel)</span></label>
+        <select id="request-budget" name="budget">
+          <option value="">Sélectionner un budget</option>
+          <option value="Moins de 100 MAD">Moins de 100 MAD</option>
+          <option value="100 - 300 MAD">100 - 300 MAD</option>
+          <option value="300 - 700 MAD">300 - 700 MAD</option>
+          <option value="+700 MAD">+700 MAD</option>
+        </select>
+      </div>
+      <div class="request-field">
+        <label for="request-phone">Téléphone</label>
+        <input id="request-phone" name="telephone" type="tel" inputmode="tel" placeholder="06 12 34 56 78" maxlength="20" required />
+      </div>
+      <button class="btn btn-primary request-submit-btn" type="submit">Recevoir des offres maintenant</button>
+      <div class="request-trust-copy" aria-hidden="true">
+        <span>Réponse moyenne : moins de 15 minutes</span>
+        <span>Gratuit et sans engagement</span>
+      </div>
+    </form>
+    <div id="request-success" class="request-success" hidden>
+      <div class="request-success-icon">✅</div>
+      <h4>Votre demande a été publiée sur Fixeo</h4>
+      <p>Votre demande reste dans Fixeo. Vous pouvez aussi la partager sur WhatsApp si vous le souhaitez.</p>
+      <a class="btn request-secondary-btn request-whatsapp-btn" id="request-whatsapp-link" href="#" target="_self" rel="noopener">Partager aussi sur WhatsApp</a>
+      <button class="btn request-secondary-btn" type="button" id="request-new-one">Publier une autre demande</button>
+    </div>
+  </div>
+</div>
+
+<button class="fixeo-fab fxd-fab-v2" onclick="FixeoDashboardModals.openRequest()" aria-label="Publier une demande">
+  <span class="fxd-fab-icon">+</span>
+  <span class="fxd-fab-label">Demande</span>
+</button>
+
+<!-- Safety net: guarantee window.fixeoOpenRequest is globally reachable.
+     The function is already defined inline above (line ~1236); this block
+     ensures it is also addressable as window.fixeoOpenRequest even in
+     environments that do not hoist named functions onto window. -->
+<script>
+(function () {
+  'use strict';
+  if (typeof window.fixeoOpenRequest !== 'function') {
+    window.fixeoOpenRequest = function () {
+      function _attachEscape() {
+        var ov = document.getElementById('modal-overlay');
+        if (!ov) return;
+        ov.addEventListener('click', function esc(e) {
+          if (e.target === ov) { ov.classList.remove('open'); ov.removeEventListener('click', esc); }
+        });
+      }
+      function _safeClose() {
+        var ov = document.getElementById('modal-overlay');
+        if (ov) { var b = document.getElementById('modal-body'); if (!b || !b.innerHTML.trim()) ov.classList.remove('open'); }
+      }
+      function _guardVisibility() {
+        setTimeout(function () {
+          var ov    = document.getElementById('modal-overlay');
+          var panel = ov ? ov.querySelector('.modal') : null;
+          if (!ov || !ov.classList.contains('open') || !panel) return;
+          var cs = window.getComputedStyle(panel);
+          if (panel.offsetWidth===0||panel.offsetHeight===0||cs.display==='none'||cs.visibility==='hidden'||cs.opacity==='0') {
+            panel.style.setProperty('display','block','important');
+            panel.style.setProperty('opacity','1','important');
+            panel.style.setProperty('visibility','visible','important');
+            panel.style.setProperty('position','relative','important');
+            panel.style.setProperty('inset','unset','important');
+            panel.style.setProperty('transform','none','important');
+            panel.style.setProperty('z-index','100000','important');
+            panel.style.setProperty('max-width','640px','important');
+            panel.style.setProperty('width','min(92vw,640px)','important');
+            panel.style.setProperty('max-height','85vh','important');
+            panel.style.setProperty('overflow-y','auto','important');
+            panel.style.setProperty('pointer-events','auto','important');
+          }
+        }, 50);
+      }
+      // Step 1 — window.openNewRequestModal (Supabase override)
+      if (typeof window.openNewRequestModal === 'function') {
+        try { window.openNewRequestModal(); _attachEscape(); _guardVisibility(); return; }
+        catch (e1) { _safeClose(); console.warn('[Fixeo] openNewRequestModal (window) failed:', e1); }
+      }
+      // Step 2 — inline openNewRequestModal
+      if (typeof openNewRequestModal === 'function') {
+        try { openNewRequestModal(); _attachEscape(); _guardVisibility(); return; }
+        catch (e2) { _safeClose(); console.warn('[Fixeo] openNewRequestModal (local) failed:', e2); }
+      }
+      // Step 3 — navigate
+      window.location.href = 'index.html#express-request-section';
+    };
+  }
+}());
+</script>
+
+<!-- Expose expressRequest on window so onclick="expressRequest()" always resolves.
+     The function is defined at line ~1348 inside a large inline script block.
+     If that block failed to parse (e.g. earlier syntax error), this block
+     provides a safe standalone fallback. -->
+<script>
+(function () {
+  'use strict';
+  // Attach inline definition to window (no-op if already on window)
+  if (typeof expressRequest === 'function' && typeof window.expressRequest !== 'function') {
+    window.expressRequest = expressRequest;
+  }
+  // Full standalone fallback for worst case
+  if (typeof window.expressRequest !== 'function') {
+    window.expressRequest = function () {
+      var overlay  = document.getElementById('modal-overlay');
+      var titleEl  = document.getElementById('modal-title');
+      var bodyEl   = document.getElementById('modal-body');
+      if (!overlay || !titleEl || !bodyEl) {
+        if (typeof window.fixeoOpenRequest === 'function') { window.fixeoOpenRequest(); }
+        return;
+      }
+      titleEl.textContent = '\uD83D\uDE80 Demande Express';
+      bodyEl.innerHTML =
+        '<p style="margin-bottom:16px;color:var(--text-muted)">Un artisan disponible interviendra dans l\u2019heure.</p>' +
+        '<div class="form-group"><label class="form-label">Service</label>' +
+        '<select class="form-control"><option>Plomberie</option><option>\u00C9lectricit\u00E9</option><option>Peinture</option><option>Autre</option></select></div>' +
+        '<div class="form-group"><label class="form-label">Probl\u00E8me</label>' +
+        '<textarea class="form-control" rows="3" placeholder="D\u00E9crivez le probl\u00E8me urgent\u2026"></textarea></div>' +
+        '<button class="btn btn-express w-100" onclick="' +
+          'document.getElementById(\'modal-overlay\').classList.remove(\'open\');' +
+          'window.notifications && notifications.success(\'\uD83D\uDE80 Demande envoy\u00E9e !\',\'Un artisan vous contactera dans 15 min.\')' +
+        '">Envoyer maintenant</button>';
+      overlay.classList.add('open');
+      // Backdrop click-escape
+      overlay.addEventListener('click', function esc(e) {
+        if (e.target === overlay) { overlay.classList.remove('open'); overlay.removeEventListener('click', esc); }
+      });
+    };
+  }
+}());
+</script>
+
+<script src="js/fixeo-urgent-v2.js?v=1" defer></script>
+<script src="js/fixeo-request-v2.js?v=1" defer></script>
+<!-- V2-A2: Mission Rehydration — loads before dashboard p1 to pre-seed localStorage -->
+<script src="js/fixeo-artisan-identity.js?v=v2a3" defer></script>
+<script src="js/fixeo-mission-rehydration.js?v=v2c1" defer></script>
+<!-- Phase 1 Client Sync — real request display -->
+<script src="js/client-dashboard-p1.js?v=p1s1" defer></script>
+<!-- DX-2: Living Dashboard / Context-Aware Experience -->
+<script src="js/dashboard-client-dx2.js?v=1" defer></script>
+<!-- DX-3: Real Operational Marketplace Connection -->
+<script src="js/dashboard-client-dx3.js?v=1" defer></script>
+<!-- DX-WA: WhatsApp-Native Operational Dashboard -->
+<script src="js/dashboard-client-dxwa.js?v=1" defer></script>
+<!-- Phase 2 Mission Lifecycle — additive -->
+<script src="js/mission-lifecycle-p2.js?v=da-v1f" defer></script>
+<script src="js/fixeo-notifications-real-v1.js?v=1" defer></script>
+<!-- V1-I: Coordination Confidence Layer -->
+<script src="js/fixeo-coordination-v1i.js?v=v1i" defer></script>
+<script src="js/fixeo-mission-mirror.js?v=v2c1" defer></script>
+</body>
+</html>
