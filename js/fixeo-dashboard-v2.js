@@ -8,7 +8,7 @@
   'use strict';
 
   /* ── VERSION ──────────────────────────────────────────────────── */
-  var VERSION = 'v2b';
+  var VERSION = 'v2c';
 
   /* ── PIPELINE DEFINITION ──────────────────────────────────────── */
   /* Maps a unified key to display config.
@@ -720,12 +720,27 @@
     try {
       var FS  = window.FixeoSupabase;
       var sb  = await FS.getClient();
+
+      /* Write English enum value 'validated' — matches the production DB CHECK constraint:
+       *   new | assigned | in_progress | completed | validated | cancelled
+       * Writing the French 'validée' is rejected by the constraint and the update silently
+       * fails (Supabase JS returns {data:[], error:null} without .select() even on CHECK violation),
+       * causing the card to remain at 'À confirmer' after the toast. */
       var res = await sb.from('service_requests')
-        .update({ status: 'valid\u00e9e' })
-        .eq('id', requestId);
+        .update({ status: 'validated' })
+        .eq('id', requestId)
+        .select('id, status')   /* force a read-back so constraint violations surface as errors */
+        .single();
+
       if (res.error) throw res.error;
+
+      /* Verify the DB actually accepted the update before showing success */
+      if (!res.data || res.data.status !== 'validated') {
+        throw new Error('La mise \u00e0 jour n\u2019a pas \u00e9t\u00e9 persist\u00e9e. Veuillez r\u00e9essayer.');
+      }
+
       _toast('\u2705 Intervention confirm\u00e9e\u00a0! Merci pour votre confiance.', 'success');
-      await _refresh();
+      await _refresh();    /* re-fetch → computePipeline maps 'validated' → COMPLETED → CTA gone */
     } catch (e) {
       console.warn('[fxv2] confirmDone error:', e && e.message);
       _toast('\u274C ' + (e && e.message ? e.message : 'Erreur lors de la confirmation.'), 'error');
