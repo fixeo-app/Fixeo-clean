@@ -16,7 +16,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
   <noscript><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet"></noscript>
   <!-- V2 CSS only — no V1 CSS loaded -->
-  <link rel="stylesheet" href="css/fixeo-dashboard-v2.css?v=v2a">
+  <link rel="stylesheet" href="css/fixeo-dashboard-v2.css?v=v2b">
   <!-- Supabase client (must be synchronous, before auth guard) -->
   <script src="js/supabase-client.js?v=sc2"></script>
   <!-- Auth guard (sync, head — redirects non-clients immediately) -->
@@ -33,7 +33,7 @@
           aria-controls="fxv2-sidebar">
     <span></span><span></span><span></span>
   </button>
-  <div class="fxv2-header-logo">Fixeo</div>
+  <a class="fxv2-header-logo" href="/" aria-label="Retour à l'accueil Fixeo">Fixeo</a>
   <div><!-- reserved for future notification bell --></div>
 </header>
 
@@ -78,6 +78,9 @@
 
   <!-- Logout -->
   <div class="fxv2-sidebar-footer">
+    <a class="fxv2-nav-link fxv2-home-link" href="/">
+      <span class="icon">🏠</span> Accueil Fixeo
+    </a>
     <button class="fxv2-logout-btn" id="fxv2-logout">Se déconnecter</button>
   </div>
 
