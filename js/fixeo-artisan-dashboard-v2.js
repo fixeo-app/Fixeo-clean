@@ -22,7 +22,7 @@
 (function (window, document) {
   'use strict';
 
-  var VERSION = 'v1h';
+  var VERSION = 'v1h-trace';
 
   /* ── STATE ────────────────────────────────────────────────── */
   var _state = {
@@ -268,17 +268,25 @@
      * both sides of the link use the same UUID. */
     var sb = await FS.getClient();
     var artisanId = _state.artisanProfile && _state.artisanProfile.id;
+    /* ── DIAGNOSTIC TRACE (remove after verification) ── */
+    console.log('[fxav2] TRACE artisanProfile.id =', artisanId);
+    console.log('[fxav2] TRACE _state.artisanProfile =', JSON.stringify(_state.artisanProfile));
     var mRes = artisanId
       ? await sb.from('missions').select('*')
           .eq('artisan_profile_id', artisanId)
           .order('created_at', { ascending: false })
       : { data: [], error: null };
+    console.log('[fxav2] TRACE missions query artisan_profile_id =', artisanId);
+    console.log('[fxav2] TRACE missions error =', mRes.error ? JSON.stringify(mRes.error) : null);
+    console.log('[fxav2] TRACE missions data =', JSON.stringify(mRes.data));
+    console.log('[fxav2] TRACE missions rows returned =', (mRes.data || []).length);
     if (mRes.error) {
       console.warn('[fxav2] listMissions error:', mRes.error.message);
       _state.myMissions = [];
     } else {
       _state.myMissions = mRes.data || [];
     }
+    console.log('[fxav2] TRACE _state.myMissions.length after assign =', _state.myMissions.length);
 
     /* Also fetch service_requests for assigned missions to get status/city/description */
     if (_state.myMissions.length) {
