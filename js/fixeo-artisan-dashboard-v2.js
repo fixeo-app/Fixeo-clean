@@ -22,7 +22,7 @@
 (function (window, document) {
   'use strict';
 
-  var VERSION = 'v1b-diag';
+  var VERSION = 'v1c';
 
   /* ── STATE ────────────────────────────────────────────────── */
   var _state = {
@@ -94,16 +94,54 @@
     return zones.some(function(z) { return normalizeText(z) === req; });
   }
 
+  /* ── SERVICE FAMILY SYNONYMS ─────────────────────────────────
+   * Maps canonical artisan service_category (normalized) to a list
+   * of normalized keywords that should also match that category.
+   * Used by _categoryMatch() AFTER the primary exact/keyword test.
+   * Add new families here — no other code changes needed.          */
+  var CATEGORY_SYNONYMS = {
+    'plomberie': [
+      'plomberie','fuite','fuite deau','eau','robinet','canalisation',
+      'debouchage','evier','lavabo','wc','toilette',
+      'chauffe eau','chauffe-eau','siphon'
+    ],
+    'serrurerie': [
+      'serrurerie','serrure','porte bloquee','ouverture de porte',
+      'cle','verrou','cylindre','canon'
+    ],
+    'electricite': [
+      'electricite','panne electrique','prise','disjoncteur',
+      'tableau electrique','court circuit','courtcircuit','lumiere','interrupteur'
+    ]
+  };
+
+  /* Returns true if any word in reqNorm matches any synonym of canonicalNorm. */
+  function _synonymMatch(reqNorm, canonicalNorm) {
+    var synonyms = CATEGORY_SYNONYMS[canonicalNorm];
+    if (!synonyms) return false;
+    /* Split request text into words for per-word lookup */
+    var words = reqNorm.split(/\s+/).filter(Boolean);
+    return synonyms.some(function(syn) {
+      /* Full-phrase match OR any single word of request matches a synonym */
+      return reqNorm === syn
+        || reqNorm.includes(syn)
+        || syn.includes(reqNorm)
+        || words.some(function(w) { return w === syn || syn.includes(w) && w.length >= 4; });
+    });
+  }
+
   function _categoryMatch(reqCat, artisan) {
     if (!reqCat || !artisan) return false;
     var req  = normalizeText(reqCat);
     var sc   = normalizeText(artisan.service_category || '');
     var cat  = normalizeText(artisan.category || '');
     if (!req) return false;
-    /* exact or keyword-prefix match (handles subcategories) */
-    return req === sc || req === cat
-      || (sc  && (sc.includes(req)  || req.includes(sc)))
-      || (cat && (cat.includes(req) || req.includes(cat)));
+    /* 1. Exact or keyword-prefix match (unchanged) */
+    if (req === sc || req === cat
+        || (sc  && (sc.includes(req)  || req.includes(sc)))
+        || (cat && (cat.includes(req) || req.includes(cat)))) return true;
+    /* 2. Synonym / service-family match */
+    return _synonymMatch(req, sc) || _synonymMatch(req, cat);
   }
 
   function _filterMatching(requests) {
