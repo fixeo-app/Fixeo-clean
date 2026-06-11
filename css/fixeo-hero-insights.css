@@ -1,0 +1,186 @@
+/**
+ * FIXEO HERO INSIGHTS BAR — CSS
+ * File: css/fixeo-hero-insights.css
+ * Version: fxhi-v1a — 2026-06-11
+ * ─────────────────────────────────────────────────────────────
+ * Glassmorphism insight bar. Appears between the QSM search
+ * card and #hero-city-smart. Max height 60px. Mobile-first.
+ * Namespace: #fxhi-bar, .fxhi-*
+ * Append-only. No existing styles overridden.
+ * ─────────────────────────────────────────────────────────────
+ */
+
+/* ════════════════════════════════════════════════════════════
+   INSIGHT BAR CONTAINER
+   ════════════════════════════════════════════════════════════ */
+#fxhi-bar {
+  /* Hidden by default — shown via JS when insight is available */
+  display: none;
+  align-items: center;
+  gap: 0;
+
+  /* Inserted by JS between #hero-quick-search and #hero-city-smart */
+  width: 100%;
+  max-width: 680px;
+  margin: 8px auto 0;
+  border-radius: 14px;
+
+  /* Glassmorphism — dark premium */
+  background: rgba(15, 15, 25, 0.55);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+
+  /* Height constraint */
+  min-height: 44px;
+  max-height: 60px;
+  overflow: hidden;
+
+  /* Entry animation */
+  animation: fxhi-enter .22s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  transform-origin: top center;
+}
+
+#fxhi-bar.visible {
+  display: flex;
+}
+
+@keyframes fxhi-enter {
+  from {
+    opacity: 0;
+    transform: scaleY(0.7) translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: scaleY(1) translateY(0);
+  }
+}
+
+/* ════════════════════════════════════════════════════════════
+   INSIGHT PILLS (flex row inside bar)
+   ════════════════════════════════════════════════════════════ */
+.fxhi-pills {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex: 1;
+  overflow: hidden;
+  padding: 0 4px;
+}
+
+/* Each pill */
+.fxhi-pill {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 14px;
+  font-size: .78rem;
+  font-weight: 700;
+  white-space: nowrap;
+  color: rgba(255, 255, 255, 0.85);
+  border-right: 1px solid rgba(255, 255, 255, 0.07);
+  flex-shrink: 0;
+  letter-spacing: .01em;
+  transition: background .15s;
+}
+.fxhi-pill:last-child {
+  border-right: none;
+}
+
+/* Category pill — left accent line using box-shadow */
+.fxhi-pill-category {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.fxhi-pill-category .fxhi-pill-icon {
+  font-size: .88rem;
+}
+
+.fxhi-pill-category .fxhi-pill-label {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: .68rem;
+  font-weight: 500;
+  margin-left: 1px;
+}
+
+/* Count pill — green accent */
+.fxhi-pill-count {
+  color: #5eddc5;
+}
+.fxhi-pill-count .fxhi-pill-value {
+  font-size: .78rem;
+  font-weight: 800;
+}
+
+/* Urgency pill — pulsing red */
+.fxhi-pill-urgent {
+  color: #ff6b9d;
+  animation: fxhi-urgent-pulse 1.8s ease-in-out infinite;
+}
+@keyframes fxhi-urgent-pulse {
+  0%,100% { opacity: 1; }
+  50%      { opacity: .65; }
+}
+
+/* Price pill — amber */
+.fxhi-pill-price {
+  color: #ffd070;
+}
+.fxhi-pill-price .fxhi-pill-range {
+  font-weight: 800;
+}
+.fxhi-pill-price .fxhi-pill-unit {
+  font-size: .65rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.35);
+  margin-left: 2px;
+}
+
+/* Separator dot between pills (decorative) */
+.fxhi-sep {
+  width: 1px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.07);
+  flex-shrink: 0;
+  display: none; /* shown only when between two pills */
+}
+
+/* ════════════════════════════════════════════════════════════
+   CTA LABEL UPDATE
+   The #qsm-btn-search text node is changed by JS.
+   No CSS changes needed for the button itself.
+   This block is intentionally empty — zero override.
+   ════════════════════════════════════════════════════════════ */
+
+/* ════════════════════════════════════════════════════════════
+   RESPONSIVE
+   ════════════════════════════════════════════════════════════ */
+
+/* Tablet / large mobile: show all 3 pills */
+@media (max-width: 600px) {
+  #fxhi-bar {
+    max-width: calc(100% - 0px);
+    border-radius: 12px;
+    margin-top: 6px;
+  }
+
+  .fxhi-pill {
+    padding: 8px 10px;
+    font-size: .73rem;
+  }
+
+  .fxhi-pill-category .fxhi-pill-label {
+    display: none; /* hide "détectée" sub-label on very narrow */
+  }
+}
+
+/* Very small screens: hide price pill if only 2 key insights */
+@media (max-width: 380px) {
+  .fxhi-pill-price {
+    display: none;
+  }
+}
