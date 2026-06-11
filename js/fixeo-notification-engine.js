@@ -32,7 +32,7 @@
 
   if (window.FixeoNotifEngine) return; // idempotent
 
-  var VERSION = 'v1a';
+  var VERSION = 'v1b';
 
   /* ── Helpers ──────────────────────────────────────────────── */
   function _dispatch(name, detail) {
@@ -392,27 +392,29 @@
     placeholder.innerHTML = _bellHTML();
   }
 
-  /* Wire admin bell: replace no-op onclick with real handler */
+  /* Wire admin bell: remove the broken no-op onclick attribute.
+   *
+   * ROOT CAUSE (v1a bug — double toggle):
+   *   fixeo-notifications-real-v1.js _injectMinimalPanel() registers a
+   *   document-level CAPTURE-phase listener (addEventListener(..., true)).
+   *   Capture fires top-down BEFORE element listeners — so v1.js toggles
+   *   the panel open first, then our element click handler toggled it
+   *   closed again. Net result: nothing visible happens.
+   *
+   * FIX: do NOT add any toggle logic here. Remove onclick only.
+   *   v1.js's document capture listener handles all click-to-open logic.
+   *   We are purely cleaning up the invalid onclick attribute so it doesn't
+   *   throw in strict contexts when notifSystem is undefined.
+   */
   function _wireAdminBell() {
-    var bell = document.querySelector('.notif-btn[onclick*="notifSystem"]');
+    /* Selector matches the original admin.html markup:
+     *   <button class="notif-btn" onclick="window.notifSystem?.togglePanel()"> */
+    var bell = document.querySelector('.notif-btn[onclick]');
     if (!bell) return;
-    /* Remove the broken onclick; the document listener in fixeo-notifications-real-v1.js
-     * will catch the click via .notif-btn selector. We just need to remove the
-     * onclick so it doesn't interfere or throw in strict environments. */
-    bell.removeAttribute('onclick');
-    /* Belt-and-suspenders: also add our own click handler */
     if (bell._fxneWired) return;
     bell._fxneWired = true;
-    bell.addEventListener('click', function(e) {
-      e.stopPropagation();
-      var panel = document.getElementById('fxnrv1-panel');
-      if (!panel) return;
-      panel.classList.toggle('open');
-      if (panel.classList.contains('open')) {
-        var sys = window.FixeoNotificationsV1;
-        if (sys && typeof sys.renderPanel === 'function') sys.renderPanel();
-      }
-    });
+    /* Remove the broken onclick — v1.js document capture listener takes over */
+    bell.removeAttribute('onclick');
   }
 
   /* Badge CSS injection for client/artisan (where fixeo-notifications-real-v1.css
