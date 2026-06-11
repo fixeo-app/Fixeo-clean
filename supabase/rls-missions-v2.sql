@@ -7,16 +7,17 @@
 -- WHAT THIS DOES:
 --   1. Enables RLS on public.missions (idempotent)
 --   2. Drops all stale / conflicting policies
---   3. Creates 5 narrow policies:
---        a. deny_anon_all       — anon can do nothing
---        b. artisan_select_own  — artisan sees own missions only
---        c. artisan_insert_own  — artisan can INSERT if artisan_profile_id is theirs
---        d. artisan_update_own  — artisan can UPDATE own missions (start/complete)
---        e. client_select_own   — client sees missions where client_profile_id = auth.uid()
+--   3. Creates 6 narrow policies:
+--        a. missions_deny_anon          — anon can do nothing
+--        b. artisan_select_own_missions — artisan sees own missions only
+--        c. artisan_insert_own_missions — artisan can INSERT if artisan_profile_id is theirs
+--        d. artisan_update_own_missions — artisan can UPDATE own missions (start/complete)
+--        e. admin_all_missions          — admin has full SELECT/INSERT/UPDATE/DELETE
+--        f. client_select_own_missions  — client sees missions where client_profile_id = auth.uid()
 --
 -- DOES NOT:
 --   - Reference artisan_profiles table (does not exist)
---   - Use any table other than public.artisans and public.missions
+--   - Use any table other than public.artisans, public.missions, public.users, public.profiles
 --   - Modify any other table, index, or constraint
 --   - Touch service_requests, profiles, users, or any other table
 --
@@ -41,9 +42,11 @@ DROP POLICY IF EXISTS "missions_owner_update"         ON public.missions;
 DROP POLICY IF EXISTS "missions_owner_delete"         ON public.missions;
 DROP POLICY IF EXISTS "missions_no_anon_insert"       ON public.missions;
 DROP POLICY IF EXISTS "missions_no_anon_delete"       ON public.missions;
+DROP POLICY IF EXISTS "artisan_select_own_missions"   ON public.missions;
 DROP POLICY IF EXISTS "artisan_insert_own_missions"   ON public.missions;
 DROP POLICY IF EXISTS "artisan_update_own_missions"   ON public.missions;
 DROP POLICY IF EXISTS "client_select_own_missions"    ON public.missions;
+DROP POLICY IF EXISTS "admin_all_missions"            ON public.missions;
 DROP POLICY IF EXISTS "missions_deny_anon"            ON public.missions;
 
 
@@ -130,7 +133,37 @@ CREATE POLICY "artisan_update_own_missions"
   );
 
 
--- ── Step 3e: Client SELECT own missions ─────────────────────
+-- ── Step 3e: Admin full access ──────────────────────────────
+-- Admin users can SELECT / INSERT / UPDATE / DELETE any mission.
+-- Checks both public.users and public.profiles for role = 'admin'
+-- to handle accounts created via either registration path.
+CREATE POLICY "admin_all_missions"
+  ON public.missions
+  FOR ALL
+  TO authenticated
+  USING (
+    EXISTS (
+      SELECT 1 FROM public.users u
+      WHERE u.id = auth.uid() AND u.role = 'admin'
+    )
+    OR EXISTS (
+      SELECT 1 FROM public.profiles p
+      WHERE p.id = auth.uid() AND p.role = 'admin'
+    )
+  )
+  WITH CHECK (
+    EXISTS (
+      SELECT 1 FROM public.users u
+      WHERE u.id = auth.uid() AND u.role = 'admin'
+    )
+    OR EXISTS (
+      SELECT 1 FROM public.profiles p
+      WHERE p.id = auth.uid() AND p.role = 'admin'
+    )
+  );
+
+
+-- ── Step 3f: Client SELECT own missions ─────────────────────
 -- Client can read missions where client_profile_id = their auth.uid().
 -- Used by client dashboard to see the artisan assigned to their request.
 CREATE POLICY "client_select_own_missions"
