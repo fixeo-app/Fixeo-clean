@@ -44,7 +44,7 @@
   'use strict';
 
   if (window.FixeoTrackingEngine) return;
-  var VERSION = 'ftrk-v1a';
+  var VERSION = 'ftrk-v1b';
 
   /* ══════════════════════════════════════════════════════════
      TRACKING STEP DEFINITIONS
@@ -169,11 +169,28 @@
   var _postSubmitPaused = false;
   var _postSubmitCurrentKey = 'RECEIVED';
 
+  /* Inject a style rule that prevents #faire-dispatch from ever showing
+     when ftrk owns the post-submit surface. AIRE uses classList.add('visible')
+     to show it; this rule has higher specificity and fires regardless of timing.
+     Idempotent — only injected once. */
+  function _suppressAireDispatch() {
+    if (_el('ftrk-faire-suppress')) return;
+    var style = document.createElement('style');
+    style.id = 'ftrk-faire-suppress';
+    /* Suppress both .visible state and any direct display set by AIRE */
+    style.textContent = '#faire-dispatch, #faire-dispatch.visible { display: none !important; }';
+    document.head.appendChild(style);
+  }
+
   function _ensurePostSubmitTracker() {
     if (_el('ftrk-post-submit')) return _el('ftrk-post-submit');
 
     var success = _el('request-success');
     if (!success) return null;
+
+    /* Suppress AIRE's #faire-dispatch animation — ftrk owns this surface.
+       Called before DOM insertion so even a same-tick AIRE inject is covered. */
+    _suppressAireDispatch();
 
     /* Build tracker element */
     var tracker = document.createElement('div');
@@ -184,12 +201,12 @@
     /* Initial render: RECEIVED active, rest waiting */
     tracker.innerHTML = _buildPostSubmitHTML('RECEIVED', null);
 
-    /* Insert at top of success block (before dispatch animation if present) */
+    /* Insert at top of success block.
+       If #faire-dispatch already exists (AIRE injected it before us), insert
+       before it. If not, insert before the title. Either way it's hidden above. */
     var dispatchEl = _el('faire-dispatch');
     if (dispatchEl && dispatchEl.parentNode === success) {
       success.insertBefore(tracker, dispatchEl);
-      /* Hide the aire-v1a dispatch animation since we replace it */
-      dispatchEl.style.display = 'none';
     } else {
       var firstChild = success.querySelector('.fxrva-success-title') || success.firstElementChild;
       success.insertBefore(tracker, firstChild);

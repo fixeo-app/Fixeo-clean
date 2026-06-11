@@ -8,7 +8,7 @@
   'use strict';
 
   /* ── VERSION ──────────────────────────────────────────────────── */
-  var VERSION = 'v2f';
+  var VERSION = 'v2g';
 
   /* ── PIPELINE DEFINITION ──────────────────────────────────────── */
   /* Maps a unified key to display config.
@@ -945,5 +945,12 @@
 
   /* ── BOOT ─────────────────────────────────────────────────────── */
   document.addEventListener('DOMContentLoaded', init);
+
+  /* ── PUBLIC API — minimal surface for companion scripts ────────
+     Expose read-only access to _state and _refresh so external
+     engines (fixeo-tracking-engine.js) can observe dashboard data
+     and trigger a re-fetch without coupling to internal functions.
+     Read-only intent: callers should never mutate _state directly.  */
+  window.FixeoDashboardV2 = { _state: _state, _refresh: _refresh };
 
 })(window, document);

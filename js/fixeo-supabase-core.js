@@ -504,7 +504,7 @@
         proposed_price: Number(payload.proposed_price),
         message: payload.message,
         status: 'pending'
-      }).eq('id', existingQuoteResponse.data.id).select('*').single();
+      }).eq('id', existingQuoteResponse.data.id).select('*').maybeSingle();
     } else {
       response = await sb.from('quotes').insert({
         request_id: payload.request_id,
@@ -512,7 +512,7 @@
         proposed_price: Number(payload.proposed_price),
         message: payload.message,
         status: 'pending'
-      }).select('*').single();
+      }).select('*').maybeSingle();
     }
 
     if (response.error) throw response.error;
@@ -552,7 +552,7 @@
       artisan_profile_id: quoteRow.artisan_profile_id,
       agreed_price: Number(quoteRow.proposed_price || 0),
       status: 'validated'
-    }).select('*').single();
+    }).select('*').maybeSingle();
 
     if (response.error) {
       var conflictCodes = ['23505', '23503'];
@@ -580,8 +580,9 @@
       throw new Error('Ce devis ne vous appartient pas.');
     }
 
-    var updateRes = await sb.from('quotes').update({ status: 'accepted' }).eq('id', quoteId).select('*').single();
+    var updateRes = await sb.from('quotes').update({ status: 'accepted' }).eq('id', quoteId).select('*').maybeSingle();
     if (updateRes.error) throw updateRes.error;
+    if (!updateRes.data) throw new Error('Devis introuvable ou déjà traité.');
 
     await sb.from('quotes').update({ status: 'rejected' }).eq('request_id', requestRes.data.id).neq('id', quoteId).eq('status', 'pending');
 
