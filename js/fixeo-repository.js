@@ -348,17 +348,94 @@
    * approveClaimRequest(claimId, note)
    */
   async function approveClaimRequest(claimId, note) {
-    // Local approve
-    if (window.FixeoClaimSystem) window.FixeoClaimSystem.adminApproveClaim(claimId, note);
+    // Step 1: Local approve (localStorage + in-memory)
+    var localResult = null;
+    if (window.FixeoClaimSystem) localResult = window.FixeoClaimSystem.adminApproveClaim(claimId, note);
 
     if (isSupabaseMode()) {
       await window.FixeoSupabaseClient.ready();
-      var _ref = await sb().from(T_CLAIMS)
+
+      // Step 2: Mark claim_requests row as approved
+      var _refClaim = await sb().from(T_CLAIMS)
         .update({ status: 'approved', notes: note || '', reviewed_at: new Date().toISOString() })
-        .or('id.eq.' + claimId + ',id.eq.' + claimId)
-        .select().single();
-      var error = _ref.error;
-      if (error) log('approveClaimRequest Supabase error: ' + error.message, 'error');
+        .eq('id', claimId)
+        .select()
+        .maybeSingle();
+      if (_refClaim.error) log('approveClaimRequest claim update error: ' + _refClaim.error.message, 'error');
+
+      var claimRow = _refClaim.data;
+
+      // Step 3: Resolve requester_user_id and artisan UUID from the claim row.
+      // claim_requests.artisan_legacy_id is the string passed from the profile page
+      // (?id= param = artisans.id UUID since all legacy_ids are NULL).
+      // We try the Supabase UUID directly first, then fall back to legacy_id lookup.
+      var artisanUUID = null;
+      var requesterUID = null;
+
+      if (claimRow) {
+        requesterUID = claimRow.requester_user_id || null;
+        // artisan_legacy_id holds the UUID from the URL param (since legacy_id=NULL for all rows)
+        var legacyId = claimRow.artisan_legacy_id || null;
+        if (legacyId) {
+          // Try direct UUID match first
+          var _refA = await sb().from(T_ARTISANS).select('id').eq('id', legacyId).maybeSingle();
+          if (!_refA.error && _refA.data) {
+            artisanUUID = _refA.data.id;
+          } else {
+            // Fallback: legacy_id text match (future-proof if legacy_ids get populated)
+            var _refB = await sb().from(T_ARTISANS).select('id').eq('legacy_id', legacyId).maybeSingle();
+            if (!_refB.error && _refB.data) artisanUUID = _refB.data.id;
+          }
+        }
+      }
+
+      // Also accept artisanUUID/requesterUID from localResult if Supabase claim fetch failed
+      if (!artisanUUID && localResult && localResult.artisanId) artisanUUID = localResult.artisanId;
+      if (!requesterUID && localResult) {
+        // localResult.userId comes from fixeo-claim-system.adminApproveClaim claim.user_id
+        var localClaims = [];
+        try { localClaims = JSON.parse(localStorage.getItem('fixeo_claim_requests') || '[]'); } catch(e) {}
+        var lc = localClaims.find(function(c) { return c.id === claimId; });
+        if (lc) requesterUID = lc.user_id || null;
+      }
+
+      // Step 4: Update artisans.owner_user_id by UUID (not legacy_id — all legacy_ids are NULL)
+      if (artisanUUID && requesterUID) {
+        var _refArt = await sb().from(T_ARTISANS)
+          .update({
+            owner_user_id:       requesterUID,
+            claimed:             true,
+            claim_status:        'approved',
+            updated_at:          new Date().toISOString()
+          })
+          .eq('id', artisanUUID)
+          .select('id,owner_user_id,claimed,claim_status')
+          .maybeSingle();
+        if (_refArt.error) {
+          log('approveClaimRequest artisan update error: ' + _refArt.error.message, 'error');
+        } else {
+          log('approveClaimRequest: artisans.owner_user_id set for ' + artisanUUID);
+        }
+      } else {
+        log('approveClaimRequest: could not resolve artisanUUID or requesterUID — artisan row not updated', 'warn');
+      }
+
+      // Step 5: Promote user role to 'artisan' in profiles and users tables
+      if (requesterUID) {
+        var _refProf = await sb().from('profiles')
+          .update({ role: 'artisan' })
+          .eq('id', requesterUID)
+          .maybeSingle();
+        if (_refProf.error) log('approveClaimRequest profiles.role update error: ' + _refProf.error.message, 'error');
+        else log('approveClaimRequest: profiles.role = artisan for ' + requesterUID);
+
+        var _refUser = await sb().from('users')
+          .update({ role: 'artisan' })
+          .eq('id', requesterUID)
+          .maybeSingle();
+        if (_refUser.error) log('approveClaimRequest users.role update error: ' + _refUser.error.message, 'error');
+        else log('approveClaimRequest: users.role = artisan for ' + requesterUID);
+      }
     }
     return { ok: true };
   }

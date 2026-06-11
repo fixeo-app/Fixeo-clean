@@ -23,7 +23,7 @@
   const CLAIMS_KEY    = 'fixeo_claim_requests';
   const ARTISANS_KEY  = 'fixeo_admin_artisans_v21';
   const ONBOARD_KEY   = 'fixeo_onboarding_sessions';
-  const VERSION       = '1.0';
+  const VERSION       = 'ce2a';
 
   const MOROCCAN_CITIES = [
     'Casablanca','Rabat','Marrakech','Fès','Agadir','Tanger','Meknès','Oujda',
@@ -205,11 +205,34 @@
 
     patchArtisanInStorage(claim.artisan_id, patch);
 
-    // Also set session for the artisan owner (so dashboard links immediately)
-    // Store the claim approval in localStorage so the owner's next login picks it up
-    const pending = safeJSON(localStorage.getItem('fixeo_claim_approvals') || '[]', []);
-    pending.push({ user_id: claim.user_id, artisan_id: claim.artisan_id, claim_id: claimId, approved_at: nowISO() });
-    localStorage.setItem('fixeo_claim_approvals', JSON.stringify(pending));
+    // Supabase role promotion (if client is available — admin is authenticated)
+    // Updates artisans.owner_user_id by UUID + profiles.role + users.role = 'artisan'
+    // This path fires when FixeoRepository is NOT loaded (e.g. admin loaded without repository.js).
+    // When FixeoRepository IS loaded, approveClaimRequest() handles the same writes — no double-write
+    // because both use .eq('id', uuid) / .eq('id', requesterUID) which are idempotent.
+    if (!window.FixeoRepository) {
+      (async function _supabasePromote() {
+        try {
+          var FS = window.FixeoSupabase;
+          if (!FS) return;
+          var sb = await FS.getClient();
+          var artisanUUID = claim.artisan_id; // already UUID (legacy_id=NULL, loader sets id=UUID)
+          var requesterUID = claim.user_id;
+          if (artisanUUID && requesterUID) {
+            await sb.from('artisans').update({
+              owner_user_id: requesterUID,
+              claimed: true,
+              claim_status: 'approved',
+              updated_at: new Date().toISOString()
+            }).eq('id', artisanUUID);
+            await sb.from('profiles').update({ role: 'artisan' }).eq('id', requesterUID);
+            await sb.from('users').update({ role: 'artisan' }).eq('id', requesterUID);
+          }
+        } catch(e) {
+          console.warn('[ClaimSystem] Supabase promotion failed:', e && e.message);
+        }
+      })();
+    }
 
     dispatch('fixeo:claim-approved', { claimId, artisanId: claim.artisan_id, userId: claim.user_id });
     return { ok: true, artisanId: claim.artisan_id };
@@ -597,31 +620,79 @@
     const container = document.getElementById('admin-section-claims');
     if (!container) return;
 
-    const claims = readClaims();
-    const pending  = claims.filter(c => c.status === 'pending');
-    const approved = claims.filter(c => c.status === 'approved');
-    const rejected = claims.filter(c => c.status === 'rejected');
+    // Show loading state immediately
+    container.innerHTML = '<div style="color:rgba(255,255,255,.45);text-align:center;padding:40px">Chargement…</div>';
 
-    // Update sidebar badge
-    const badge = document.getElementById('sc-claims');
-    if (badge) badge.textContent = pending.length;
+    // Try Supabase first (real cross-browser source of truth), fall back to localStorage
+    function _render(claims) {
+      // Normalise Supabase rows to the shape _renderClaimRow() expects
+      const normalised = claims.map(function(c) {
+        // Supabase rows have different field names than localStorage rows
+        if (c.requester_user_id !== undefined) {
+          var ob = {};
+          try { ob = typeof c.onboarding_data === 'string' ? JSON.parse(c.onboarding_data) : (c.onboarding_data || {}); } catch(e) {}
+          return {
+            id:            c.id,
+            artisan_id:    c.artisan_legacy_id || '',
+            artisan_name:  ob.artisan_name || c.artisan_name || '',
+            artisan_service: ob.artisan_service || c.artisan_service || '',
+            artisan_city:  ob.artisan_city   || c.artisan_city   || '',
+            status:        c.status || 'pending',
+            user_id:       c.requester_user_id || '',
+            user_name:     c.requester_name   || '',
+            user_phone:    c.requester_phone  || '',
+            onboarding:    ob,
+            submitted_at:  c.created_at || nowISO(),
+            processed_at:  c.reviewed_at || null,
+            admin_note:    c.notes || ''
+          };
+        }
+        return c; // already localStorage shape
+      });
 
-    container.innerHTML = `
-      <h2 style="font-size:1.2rem;font-weight:700;margin-bottom:16px">
-        🏷️ Revendications de profil
-        ${pending.length ? `<span style="background:#E1306C;color:#fff;font-size:.7rem;padding:2px 8px;border-radius:20px;margin-left:8px">${pending.length} en attente</span>` : ''}
-      </h2>
+      const pending  = normalised.filter(function(c) { return c.status === 'pending'; });
+      const approved = normalised.filter(function(c) { return c.status === 'approved'; });
+      const rejected = normalised.filter(function(c) { return c.status === 'rejected'; });
 
-      ${pending.length === 0 ? `
-        <div style="color:rgba(255,255,255,.45);text-align:center;padding:40px">
-          Aucune demande en attente.
+      // Update sidebar badge
+      const badge = document.getElementById('sc-claims');
+      if (badge) badge.textContent = pending.length;
+
+      container.innerHTML = `
+        <h2 style="font-size:1.2rem;font-weight:700;margin-bottom:16px">
+          🏷️ Revendications de profil
+          ${pending.length ? `<span style="background:#E1306C;color:#fff;font-size:.7rem;padding:2px 8px;border-radius:20px;margin-left:8px">${pending.length} en attente</span>` : ''}
+        </h2>
+
+        ${normalised.length === 0 ? `
+          <div style="color:rgba(255,255,255,.45);text-align:center;padding:40px">
+            Aucune demande enregistrée.
+          </div>
+        ` : ''}
+
+        <div class="claims-table-wrap">
+          ${[...pending,...approved,...rejected].map(c => _renderClaimRow(c)).join('')}
         </div>
-      ` : ''}
+      `;
+    }
 
-      <div class="claims-table-wrap">
-        ${[...pending,...approved,...rejected].map(c => _renderClaimRow(c)).join('')}
-      </div>
-    `;
+    // Try FixeoRepository (Supabase) — async
+    if (window.FixeoRepository && typeof window.FixeoRepository.getClaimRequests === 'function') {
+      window.FixeoRepository.getClaimRequests({}).then(function(rows) {
+        if (Array.isArray(rows) && rows.length > 0) {
+          _render(rows);
+        } else {
+          // Supabase returned empty — merge with localStorage as fallback
+          _render(readClaims());
+        }
+      }).catch(function(e) {
+        console.warn('[ClaimSystem] getClaimRequests failed, falling back to localStorage:', e && e.message);
+        _render(readClaims());
+      });
+    } else {
+      // No repository — localStorage only
+      _render(readClaims());
+    }
   }
 
   function _renderClaimRow(c) {

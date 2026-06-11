@@ -639,6 +639,32 @@
 .fxa-no-profile-title { font-size: .95rem; font-weight: 800; color: #FCAF45; margin-bottom: 6px; }
 .fxa-no-profile-sub   { font-size: .80rem; color: var(--fxa-text-sub); line-height: 1.5; }
 
+/* ── Claim pending / rejected states ────────────────────────── */
+.fxa-claim-pending {
+  display: flex; align-items: flex-start; gap: 14px;
+  background: rgba(255,165,2,.10); border: 1px solid rgba(255,165,2,.3);
+  border-radius: var(--fxa-radius-lg); padding: 20px;
+  margin-bottom: 20px;
+}
+.fxa-claim-pending-icon  { font-size: 1.8rem; flex-shrink: 0; }
+.fxa-claim-pending-title { font-size: .9rem; font-weight: 700; color: #ffa502; margin-bottom: 4px; }
+.fxa-claim-pending-sub   { font-size: .78rem; color: var(--fxa-text-sub); line-height: 1.5; }
+.fxa-claim-rejected {
+  display: flex; align-items: flex-start; gap: 14px;
+  background: rgba(255,93,115,.08); border: 1px solid rgba(255,93,115,.25);
+  border-radius: var(--fxa-radius-lg); padding: 20px;
+  margin-bottom: 20px;
+}
+.fxa-claim-rejected-icon  { font-size: 1.8rem; flex-shrink: 0; }
+.fxa-claim-rejected-title { font-size: .9rem; font-weight: 700; color: #ff5d73; margin-bottom: 4px; }
+.fxa-claim-rejected-sub   { font-size: .78rem; color: var(--fxa-text-sub); line-height: 1.5; }
+.fxa-btn-wa {
+  padding: 8px 16px; border-radius: 8px; background: rgba(37,211,102,.15);
+  border: 1px solid rgba(37,211,102,.3); color: #25d366; font-size: .78rem;
+  font-weight: 600; text-decoration: none; transition: background .2s;
+}
+.fxa-btn-wa:hover { background: rgba(37,211,102,.25); }
+
 /* ── DESKTOP (≥768px) ─────────────────────────────────────── */
 @media (min-width: 768px) {
   .fxa-sidebar {

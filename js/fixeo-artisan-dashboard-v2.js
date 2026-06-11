@@ -28,7 +28,7 @@
    * RLS: artisan_read_own_linked_requests + artisan_update_assigned_requests on service_requests
    * Identity: artisans WHERE owner_user_id=auth.uid() OR phone_public=profiles.phone
    * ─────────────────────────────────────────────────────────────────────────── */
-  var VERSION = 'v1p';
+  var VERSION = 'v2a';;
 
   /* ── STATE ────────────────────────────────────────────────── */
   var _state = {
@@ -498,13 +498,57 @@
           + '<span class="fxa-section-count">' + activeFallback.length + '</span></div>'
           + '<div class="fxa-card-list">' + activeFallback.map(_renderMissionCard).join('') + '</div>'
         : '';
-      sec.innerHTML = profHtml
-        + '<div class="fxa-no-profile">'
-        + '<div class="fxa-no-profile-icon">⚠️</div>'
-        + '<div class="fxa-no-profile-title">Profil artisan non associé</div>'
-        + '<div class="fxa-no-profile-sub">Votre compte n\'est pas encore lié à un profil artisan Fixeo. Contactez le support pour associer votre compte.</div>'
-        + '</div>'
-        + missionFallbackHtml;
+      /* Check Supabase claim_requests for a pending claim from this user */
+      var uid = _state.session && _state.session.user && _state.session.user.id;
+      (async function _renderNoProfile() {
+        var claimHtml = '';
+        try {
+          if (uid && window.FixeoSupabase) {
+            var sbC = await window.FixeoSupabase.getClient();
+            var cr = await sbC.from('claim_requests')
+              .select('id,artisan_legacy_id,requester_name,status,created_at,onboarding_data')
+              .eq('requester_user_id', uid)
+              .order('created_at', { ascending: false })
+              .limit(1)
+              .maybeSingle();
+            if (!cr.error && cr.data) {
+              var crRow = cr.data;
+              var ob = {};
+              try { ob = typeof crRow.onboarding_data === 'string' ? JSON.parse(crRow.onboarding_data) : (crRow.onboarding_data || {}); } catch(e) {}
+              var artisanName = ob.artisan_name || crRow.artisan_legacy_id || '';
+              if (crRow.status === 'pending') {
+                claimHtml = '<div class="fxa-claim-pending">'
+                  + '<div class="fxa-claim-pending-icon">⏳</div>'
+                  + '<div class="fxa-claim-pending-body">'
+                  + '<div class="fxa-claim-pending-title">Revendication en cours de validation</div>'
+                  + '<div class="fxa-claim-pending-sub">Votre demande pour <strong>' + esc(artisanName) + '</strong> est en attente de validation par l\'équipe Fixeo. Vous serez contacté sous 24h par WhatsApp.</div>'
+                  + '</div></div>';
+              } else if (crRow.status === 'rejected') {
+                claimHtml = '<div class="fxa-claim-rejected">'
+                  + '<div class="fxa-claim-rejected-icon">❌</div>'
+                  + '<div class="fxa-claim-rejected-body">'
+                  + '<div class="fxa-claim-rejected-title">Demande de revendication refusée</div>'
+                  + '<div class="fxa-claim-rejected-sub">Votre demande n\'a pas pu être validée. Contactez le support Fixeo pour plus d\'informations.</div>'
+                  + '<a href="https://wa.me/212660484415" target="_blank" class="fxa-btn fxa-btn-wa" style="margin-top:10px;display:inline-block">📲 Contacter le support</a>'
+                  + '</div></div>';
+              }
+            }
+          }
+        } catch(e) {
+          console.warn('[fxav2] claim check failed:', e && e.message);
+        }
+
+        if (!claimHtml) {
+          claimHtml = '<div class="fxa-no-profile">'
+            + '<div class="fxa-no-profile-icon">🏷️</div>'
+            + '<div class="fxa-no-profile-title">Aucun profil artisan associé</div>'
+            + '<div class="fxa-no-profile-sub">Votre compte n\'est pas encore lié à un profil artisan. Rendez-vous sur la fiche d\'un artisan pour revendiquer votre profil, ou contactez le support.</div>'
+            + '<a href="https://wa.me/212660484415" target="_blank" class="fxa-btn fxa-btn-wa" style="margin-top:12px;display:inline-block">📲 Contacter le support</a>'
+            + '</div>';
+        }
+
+        sec.innerHTML = profHtml + claimHtml + missionFallbackHtml;
+      })();
       return;
     }
 
