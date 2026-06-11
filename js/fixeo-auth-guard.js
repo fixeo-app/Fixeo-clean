@@ -8,7 +8,7 @@
                    + sessionStorage.fixeo_admin_auth (Phase 1B/1C — localStorage flag removed)
      FIX-GUARD-3 : Redirection dashboard selon rôle :
                    admin    → admin.html
-                   artisan  → dashboard-artisan.html
+                   artisan  → dashboard-artisan-v2.html  (V2 — V1 frozen)
                    client   → dashboard-client.html
      FIX-GUARD-4 : Éviter les boucles de redirection
    ================================================================ */
@@ -109,11 +109,13 @@
   }
 
   /* ── Pages nécessitant une connexion quelconque ─────────────── */
-  var requiresLogin = ['dashboard-client.html', 'dashboard-artisan.html'];
+  /* V2 guard: both V1 (frozen) and V2 artisan dashboard require login.
+     V1 kept in list so bookmarks/direct links still redirect to auth. */
+  var requiresLogin = ['dashboard-client.html', 'dashboard-artisan.html', 'dashboard-artisan-v2.html'];
   /* Pages nécessitant un rôle admin */
   var requiresAdmin = ['admin.html'];
-  /* Pages nécessitant un rôle artisan */
-  var requiresArtisan = ['dashboard-artisan.html'];
+  /* Pages nécessitant un rôle artisan — V2 is the active URL */
+  var requiresArtisan = ['dashboard-artisan.html', 'dashboard-artisan-v2.html'];
   /* Pages nécessitant un rôle client */
   var requiresClient = ['dashboard-client.html'];
 
@@ -139,12 +141,24 @@
   }
 
   /* ── FIX-GUARD-3 : Redirection dashboard selon rôle ─────────── */
-  if (page === 'dashboard-artisan.html' && user && role !== 'artisan' && role !== 'admin') {
+  /* V1 artisan page: non-artisan sent to client; artisan sent to V2 */
+  if (page === 'dashboard-artisan.html' && user) {
+    if (role !== 'artisan' && role !== 'admin') {
+      window.location.replace('dashboard-client.html');
+      return;
+    }
+    /* Artisan landed on V1 (frozen) — silently upgrade to V2 */
+    window.location.replace('dashboard-artisan-v2.html');
+    return;
+  }
+  /* V2 artisan page: non-artisan sent to client dashboard */
+  if (page === 'dashboard-artisan-v2.html' && user && role !== 'artisan' && role !== 'admin') {
     window.location.replace('dashboard-client.html');
     return;
   }
+  /* Client page: artisan redirected to V2 */
   if (page === 'dashboard-client.html' && user && role === 'artisan') {
-    window.location.replace('dashboard-artisan.html');
+    window.location.replace('dashboard-artisan-v2.html');
     return;
   }
 
