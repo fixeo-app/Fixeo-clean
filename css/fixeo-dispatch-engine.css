@@ -1,0 +1,62 @@
+/*
+ * FIXEO SMART DISPATCH ENGINE — CSS v1a
+ * =======================================
+ * Scoped to .fxdisp-* — zero interference with existing admin styles.
+ */
+
+/* ── Score badge pulse animation (top artisans) ──────── */
+@keyframes fxdisp-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(32,201,151,.4); }
+  70%  { box-shadow: 0 0 0 8px rgba(32,201,151,0); }
+  100% { box-shadow: 0 0 0 0 rgba(32,201,151,0); }
+}
+
+/* ── Request block ──────────────────────────────────── */
+.fxdisp-request-block {
+  transition: border-color .2s;
+}
+.fxdisp-request-block:hover {
+  border-color: rgba(255,255,255,.15) !important;
+}
+
+/* ── Artisan card ───────────────────────────────────── */
+.fxdisp-artisan-card {
+  transition: border-color .15s, transform .15s;
+}
+.fxdisp-artisan-card:hover {
+  border-color: rgba(64,93,230,.5) !important;
+  transform: translateY(-1px);
+}
+
+/* ── Assign button ──────────────────────────────────── */
+.fxdisp-assign-btn {
+  transition: opacity .15s, transform .1s !important;
+}
+.fxdisp-assign-btn:hover:not(:disabled) {
+  opacity: .85;
+  transform: translateY(-1px);
+}
+.fxdisp-assign-btn:disabled {
+  opacity: .4;
+  cursor: not-allowed;
+}
+
+/* ── Top-scored artisan highlight ────────────────────── */
+.fxdisp-artisan-card:first-child {
+  border-color: rgba(32,201,151,.25) !important;
+}
+.fxdisp-artisan-card:first-child .fxdisp-assign-btn {
+  animation: fxdisp-pulse 2s infinite;
+}
+
+/* ── KPI strip ──────────────────────────────────────── */
+#fxdisp-kpi-strip .kpi-card {
+  min-height: 72px;
+}
+
+/* ── Mobile adjustments ─────────────────────────────── */
+@media (max-width: 600px) {
+  #fxdisp-kpi-strip {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
