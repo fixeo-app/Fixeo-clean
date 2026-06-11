@@ -414,7 +414,7 @@
       city: payload.city,
       description: payload.description,
       status: 'new'
-    }).select('*').single();
+    }).select('*').maybeSingle();
 
     if (response.error) throw response.error;
     dispatch('fixeo:data:changed', { type: 'service_request_created', request: response.data });
