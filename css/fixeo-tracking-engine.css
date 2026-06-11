@@ -1,0 +1,286 @@
+/**
+ * FIXEO CLIENT TRACKING ENGINE — CSS
+ * File: css/fixeo-tracking-engine.css
+ * Version: ftrk-v1a — 2026-06-11
+ * ─────────────────────────────────────────────────────────────
+ * Namespace: .ftrk-* / #ftrk-*
+ * Append-only. Zero overrides to existing styles.
+ * Targets: index.html (post-submit) + dashboard-client.html (tracking card)
+ * ─────────────────────────────────────────────────────────────
+ */
+
+/* ═══════════════════════════════════════════════════════════
+   POST-SUBMIT TRACKING TIMELINE
+   Replaces / augments #faire-dispatch inside #request-success.
+   Vertical Uber-style timeline.
+   ══════════════════════════════════════════════════════════= */
+#ftrk-post-submit {
+  display: none;
+  flex-direction: column;
+  gap: 0;
+  margin: 16px 0 8px;
+  animation: ftrk-fadein .22s ease-out;
+}
+#ftrk-post-submit.visible { display: flex; }
+
+/* Single step row */
+.ftrk-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  position: relative;
+}
+
+/* Vertical connector line (between steps) */
+.ftrk-step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 14px;
+  top: 32px;
+  width: 2px;
+  height: calc(100% - 8px);
+  background: rgba(255, 255, 255, 0.07);
+  transition: background .4s;
+}
+.ftrk-step.done:not(:last-child)::after,
+.ftrk-step.active:not(:last-child)::after {
+  background: rgba(32, 201, 151, 0.35);
+}
+
+/* Icon circle */
+.ftrk-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .9rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+  transition: all .3s;
+  position: relative;
+  z-index: 1;
+}
+
+.ftrk-step.waiting  .ftrk-icon {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1.5px solid rgba(255, 255, 255, 0.10);
+  color: rgba(255, 255, 255, 0.20);
+}
+.ftrk-step.done     .ftrk-icon {
+  background: rgba(32, 201, 151, 0.15);
+  border: 1.5px solid rgba(32, 201, 151, 0.35);
+  color: #5eddc5;
+}
+.ftrk-step.active   .ftrk-icon {
+  background: rgba(91, 140, 255, 0.15);
+  border: 1.5px solid rgba(91, 140, 255, 0.40);
+  color: #9bb8ff;
+  animation: ftrk-active-pulse 1.8s ease-in-out infinite;
+}
+.ftrk-step.skipped  .ftrk-icon {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1.5px solid rgba(255, 255, 255, 0.07);
+  color: rgba(255, 255, 255, 0.15);
+}
+
+@keyframes ftrk-active-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(91, 140, 255, 0); }
+  50%       { box-shadow: 0 0 0 6px rgba(91, 140, 255, 0.12); }
+}
+
+/* Text area */
+.ftrk-body {
+  flex: 1;
+  padding: 4px 0 18px;
+}
+
+.ftrk-label {
+  font-size: .82rem;
+  font-weight: 700;
+  line-height: 1.3;
+  transition: color .3s;
+}
+.ftrk-step.waiting  .ftrk-label { color: rgba(255, 255, 255, 0.22); }
+.ftrk-step.done     .ftrk-label { color: rgba(255, 255, 255, 0.80); }
+.ftrk-step.active   .ftrk-label { color: #fff; }
+.ftrk-step.skipped  .ftrk-label { color: rgba(255, 255, 255, 0.15); }
+
+.ftrk-sublabel {
+  font-size: .72rem;
+  font-weight: 400;
+  margin-top: 2px;
+  color: rgba(255, 255, 255, 0.40);
+}
+.ftrk-step.active .ftrk-sublabel { color: rgba(255, 255, 255, 0.55); }
+.ftrk-step.done   .ftrk-sublabel { color: rgba(255, 255, 255, 0.35); }
+
+/* Artisan chip inside tracking (when assigned) */
+.ftrk-artisan-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 7px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 10px;
+  padding: 5px 10px;
+}
+.ftrk-artisan-avatar {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #E1306C, #833AB4);
+  display: flex; align-items: center; justify-content: center;
+  font-size: .65rem; font-weight: 800; color: #fff;
+  flex-shrink: 0;
+}
+.ftrk-artisan-name  { font-size: .75rem; font-weight: 700; color: rgba(255,255,255,.8); }
+.ftrk-artisan-meta  { font-size: .65rem; color: rgba(255,255,255,.4); }
+
+/* ═══════════════════════════════════════════════════════════
+   DASHBOARD LIVE TRACKER CARD
+   Injected at top of #fxv2-sec-dashboard below section head.
+   ══════════════════════════════════════════════════════════= */
+#ftrk-live-card {
+  background: linear-gradient(135deg, rgba(91,140,255,0.06) 0%, rgba(131,58,180,0.05) 100%);
+  border: 1px solid rgba(91,140,255,0.20);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 16px;
+  animation: ftrk-fadein .25s ease-out;
+}
+
+.ftrk-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.ftrk-card-title {
+  font-size: .82rem;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.85);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.ftrk-live-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: #20c997;
+  flex-shrink: 0;
+  animation: ftrk-live-blink 1.5s ease-in-out infinite;
+}
+@keyframes ftrk-live-blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: .35; }
+}
+
+.ftrk-card-svc {
+  font-size: .7rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.40);
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 20px;
+  padding: 2px 9px;
+}
+
+/* Status hero block */
+.ftrk-status-hero {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 0;
+}
+
+.ftrk-status-icon-large {
+  font-size: 2rem;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.ftrk-status-text-block {
+  flex: 1;
+}
+
+.ftrk-status-label-large {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.2;
+}
+
+.ftrk-status-sublabel {
+  font-size: .75rem;
+  color: rgba(255, 255, 255, 0.45);
+  margin-top: 3px;
+}
+
+/* Compact 5-dot progress bar */
+.ftrk-progress-bar {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  margin-top: 12px;
+}
+.ftrk-progress-dot {
+  flex: 1;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.08);
+  transition: background .3s;
+}
+.ftrk-progress-dot.done    { background: rgba(32, 201, 151, 0.65); }
+.ftrk-progress-dot.active  {
+  background: rgba(91, 140, 255, 0.80);
+  animation: ftrk-progress-shimmer 1.5s ease-in-out infinite;
+}
+@keyframes ftrk-progress-shimmer {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: .55; }
+}
+
+/* Artisan chip in dashboard card */
+.ftrk-card-artisan {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+.ftrk-card-artisan-avatar {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #E1306C, #833AB4);
+  display: flex; align-items: center; justify-content: center;
+  font-size: .75rem; font-weight: 800; color: #fff; flex-shrink: 0;
+}
+.ftrk-card-artisan-name  { font-size: .82rem; font-weight: 700; color: rgba(255,255,255,.85); }
+.ftrk-card-artisan-meta  { font-size: .68rem; color: rgba(255,255,255,.40); }
+
+/* Refresh label */
+.ftrk-refresh-hint {
+  font-size: .65rem;
+  color: rgba(255, 255, 255, 0.22);
+  text-align: right;
+  margin-top: 10px;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   UTILITY
+   ══════════════════════════════════════════════════════════= */
+@keyframes ftrk-fadein {
+  from { opacity: 0; transform: translateY(5px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Mobile: ensure readable on small screens */
+@media (max-width: 420px) {
+  .ftrk-status-label-large  { font-size: .92rem; }
+  .ftrk-label               { font-size: .78rem; }
+  .ftrk-card-title          { font-size: .78rem; }
+}
