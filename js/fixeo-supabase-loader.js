@@ -16,7 +16,7 @@
 ;(function (window) {
   'use strict';
 
-  var VERSION    = '1.0';
+  var VERSION    = '1.1';
   var PAGE_SIZE  = 1000;   // fetch up to 1000 per request (Supabase default limit)
   var LOADED     = false;
 
@@ -86,6 +86,12 @@
       priceLabel:  row.price_label || '',
       priceType:   'fixed_estimate',
       priceUnit:   'intervention',
+
+      /* Response time — DB column is response_time_min; code uses responseTime */
+      responseTime: parseInt(row.response_time_min || 30, 10),
+
+      /* Completed missions — used by Trust Engine scoring + Dispatch trust dimension */
+      completed_missions: parseInt(row.completed_missions || 0, 10),
 
       /* Media */
       photo:       row.photo_url || '',

@@ -36,6 +36,7 @@ DROP POLICY IF EXISTS "user_read_own_notifications"          ON public.notificat
 DROP POLICY IF EXISTS "user_update_own_notifications"        ON public.notifications;
 DROP POLICY IF EXISTS "admin_all_notifications"              ON public.notifications;
 DROP POLICY IF EXISTS "service_role_insert_notifications"    ON public.notifications;
+DROP POLICY IF EXISTS "user_insert_notifications"            ON public.notifications;
 
 -- ── Step 5: RLS policies ──────────────────────────────────────
 
@@ -61,6 +62,15 @@ CREATE POLICY "user_update_own_notifications"
   TO authenticated
   USING     (recipient_user_id = auth.uid())
   WITH CHECK (recipient_user_id = auth.uid());
+
+-- Authenticated users: insert notifications
+-- Used by fixeo-notification-engine.js fire-and-forget INSERTs
+-- WITH CHECK(true) — client-side filters are enforced at the app layer
+CREATE POLICY "user_insert_notifications"
+  ON public.notifications
+  FOR INSERT
+  TO authenticated
+  WITH CHECK (true);
 
 -- Admin: read all notifications
 -- Identifies admin by profiles.role = 'admin'
@@ -110,13 +120,7 @@ ORDER BY cmd;
 -- a specific user_id (they are broadcast to the admin role).
 -- Client/artisan rows always have recipient_user_id set.
 --
--- INSERT policy: currently absent for authenticated users.
--- Notifications are written by:
---   (a) fixeo-notification-engine.js — client-side, via FixeoSupabaseClient
---       authenticated as the acting user.
--- If per-user INSERT is required, add:
---   CREATE POLICY "user_insert_own_notifications"
---     ON public.notifications FOR INSERT TO authenticated
---     WITH CHECK (recipient_user_id = auth.uid());
--- Currently we allow inserts via the admin policy only.
--- TODO: add explicit INSERT policy once server-side function is implemented.
+-- INSERT policy: user_insert_notifications added 2026-06-11
+-- WITH CHECK(true) allows any authenticated user to insert.
+-- Required by fixeo-notification-engine.js fire-and-forget INSERTs.
+-- See CREATE POLICY "user_insert_notifications" above.
