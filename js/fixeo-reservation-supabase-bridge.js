@@ -1,5 +1,5 @@
 /**
- * fixeo-reservation-supabase-bridge.js  — v2
+ * fixeo-reservation-supabase-bridge.js  — v3
  * ==========================================================
  * Persistence bridge: System A (localStorage) → System B (Supabase).
  * Every confirmed request or booking is written to service_requests
@@ -52,7 +52,7 @@
  * • Homepage / hero / search NOT touched
  * • Version: v2 (bumped from v1 — guest insert support)
  *
- * @version v2
+ * @version v3
  */
 (function (window) {
   'use strict';
@@ -194,13 +194,16 @@
     }
 
     /* ── 4. Insert ──────────────────────────────────────────── */
+    /* v3: anon INSERT works (RLS allows) but anon SELECT does NOT (RLS deny_select).
+     * Chaining .select('id').single() triggers Prefer:return=representation which
+     * requires a read-back — blocked for anon → 401/RLS error.
+     * Fix: INSERT without select chain (Prefer:return=minimal), no read-back needed.
+     * supabase_request_id patch is skipped for anon; localStorage id is sufficient. */
     var insertRes;
     try {
       insertRes = await sb
         .from(TABLE)
-        .insert(payload)
-        .select('id')
-        .single();
+        .insert(payload);
     } catch (e) {
       console.warn(LOG, 'Insert threw:', e && e.message);
       return;
@@ -211,8 +214,8 @@
       return;
     }
 
-    var newId = insertRes && insertRes.data && insertRes.data.id;
-    if (!newId) return;
+    /* No id read-back for anon inserts — data persisted, localStorage id is canonical */
+    var newId = null;
 
     /* ── 5. Patch supabase_request_id back onto localStorage ── */
     _patchSupabaseId(req.id, newId);
