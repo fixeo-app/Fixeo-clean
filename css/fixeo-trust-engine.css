@@ -1,0 +1,171 @@
+/**
+ * FIXEO TRUST ENGINE — CSS
+ * File: css/fixeo-trust-engine.css
+ * Version: fte-v1a — 2026-06-11
+ * ─────────────────────────────────────────────────────────────
+ * Append-only. All selectors namespaced .fte-* or #fte-*.
+ * Reuses .qsm-card infrastructure — zero overrides.
+ * ─────────────────────────────────────────────────────────────
+ */
+
+/* ════════════════════════════════════════════════════════════
+   AI RECOMMENDATION BADGE
+   Top card only — first result in search.
+   Subtle premium glow, not aggressive.
+   ════════════════════════════════════════════════════════════ */
+.fte-recommended-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: linear-gradient(135deg, rgba(91,140,255,0.18) 0%, rgba(131,58,180,0.15) 100%);
+  border: 1px solid rgba(91,140,255,0.35);
+  border-radius: 20px;
+  padding: 3px 10px;
+  font-size: .7rem;
+  font-weight: 700;
+  color: #9bb8ff;
+  white-space: nowrap;
+  letter-spacing: .01em;
+  animation: fte-rec-glow 3s ease-in-out infinite;
+}
+
+@keyframes fte-rec-glow {
+  0%,100% { box-shadow: 0 0 0 0 rgba(91,140,255,0); }
+  50%      { box-shadow: 0 0 8px 2px rgba(91,140,255,0.18); }
+}
+
+/* Card glow when carrying the recommendation badge */
+.qsm-card.fte-top-card {
+  border-color: rgba(91,140,255,0.30) !important;
+  box-shadow: 0 0 0 1px rgba(91,140,255,0.12), inset 0 0 40px rgba(91,140,255,0.04);
+}
+
+/* ════════════════════════════════════════════════════════════
+   TRUST SIGNAL CHIPS
+   Injected into .qsm-card-badges (existing flex container).
+   Each chip = one verified data signal.
+   ════════════════════════════════════════════════════════════ */
+
+/* Verified by Fixeo — green */
+.qsm-badge.fte-verified {
+  background: rgba(32,201,151,0.12);
+  border-color: rgba(32,201,151,0.28);
+  color: #5eddc5;
+}
+
+/* Phone verified — blue-white */
+.qsm-badge.fte-phone {
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.65);
+}
+
+/* Top Artisan (trust ≥ 90) — amber */
+.qsm-badge.fte-top {
+  background: rgba(252,175,69,0.12);
+  border-color: rgba(252,175,69,0.28);
+  color: #ffd070;
+}
+
+/* Same city — teal */
+.qsm-badge.fte-city {
+  background: rgba(32,201,151,0.08);
+  border-color: rgba(32,201,151,0.18);
+  color: #5eddc5;
+}
+
+/* Active recently — green dot */
+.qsm-badge.fte-active {
+  background: rgba(32,201,151,0.08);
+  border-color: rgba(32,201,151,0.15);
+  color: rgba(255,255,255,0.7);
+}
+
+/* Complete profile */
+.qsm-badge.fte-complete {
+  background: rgba(255,255,255,0.05);
+  border-color: rgba(255,255,255,0.10);
+  color: rgba(255,255,255,0.55);
+}
+
+/* ════════════════════════════════════════════════════════════
+   FIXEO SCORE BADGE
+   Compact inline score — replaces the raw "🛡 XX%" chip.
+   ════════════════════════════════════════════════════════════ */
+.fte-score-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px;
+  border-radius: 20px;
+  font-size: .7rem;
+  font-weight: 700;
+  white-space: nowrap;
+  position: relative;
+}
+
+.fte-score-badge.high {
+  background: rgba(32,201,151,0.13);
+  border: 1px solid rgba(32,201,151,0.28);
+  color: #5eddc5;
+}
+
+.fte-score-badge.medium {
+  background: rgba(252,175,69,0.10);
+  border: 1px solid rgba(252,175,69,0.22);
+  color: #ffc94d;
+}
+
+.fte-score-badge.low {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.09);
+  color: rgba(255,255,255,0.45);
+}
+
+.fte-score-label {
+  font-size: .6rem;
+  font-weight: 400;
+  opacity: .55;
+  margin-left: 1px;
+}
+
+/* ════════════════════════════════════════════════════════════
+   TRUST ROW
+   Wrapper injected after .qsm-card-badges when trust signals
+   fill the badge row. Only shown if signals exist.
+   ════════════════════════════════════════════════════════════ */
+.fte-trust-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 5px;
+  animation: fte-fadein .2s ease-out;
+}
+
+@keyframes fte-fadein {
+  from { opacity: 0; transform: translateY(3px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ════════════════════════════════════════════════════════════
+   RECOMMENDATION ROW
+   Injected above .qsm-card-top (inside .qsm-card-info)
+   ════════════════════════════════════════════════════════════ */
+.fte-rec-row {
+  margin-bottom: 5px;
+  animation: fte-fadein .22s ease-out;
+}
+
+/* ════════════════════════════════════════════════════════════
+   MOBILE
+   ════════════════════════════════════════════════════════════ */
+@media (max-width: 480px) {
+  .fte-recommended-badge {
+    font-size: .65rem;
+    padding: 2px 8px;
+  }
+  .fte-score-badge {
+    font-size: .65rem;
+    padding: 2px 7px;
+  }
+}
