@@ -32,7 +32,7 @@
 
   if (window.FixeoNotifCenter) return;
 
-  var VERSION    = 'fnc-v1a';
+  var VERSION    = 'fnc-v1b';
   var POLL_MS    = 30000;    /* 30-second polling interval */
   var MAX_FETCH  = 50;       /* max rows per poll */
   var LOG        = '[FixeoNotifCenter]';
@@ -471,27 +471,32 @@
     }
   }
 
-  /* Fallback: listen to generic events from artisan dashboard
-     (artisan V2 fires fixeo:client-request-updated after _refresh()) */
+  /* Fallback: listen to fixeo:artisan:mission-* events.
+     These are dispatched by the public wrappers in window.FixeoArtisanV2.
+     DEDUP GUARD: if _patchArtisanActions() already attached (av2._fncHooked = true),
+     the patch calls _onArtisan*() directly AND the wrapper dispatches the event.
+     To prevent double-fire, we skip event-listener callbacks when hooked.
+     Result: only one notification path fires per action, regardless of timing. */
   function _listenArtisanEvents() {
-    /* Track what we've already notified to avoid double-fire */
-    var _notifiedAccept   = new Set();
-    var _notifiedStart    = new Set();
-    var _notifiedComplete = new Set();
-
     window.addEventListener('fixeo:artisan:mission-accepted', function(e) {
+      var av2 = window.FixeoArtisanV2;
+      if (av2 && av2._fncHooked) return; /* direct patch path handles this */
       var d = (e && e.detail) || {};
       var reqId = String(d.requestId || d.id || '').trim();
       if (reqId) _onArtisanAccepted(reqId);
     });
 
     window.addEventListener('fixeo:artisan:mission-started', function(e) {
+      var av2 = window.FixeoArtisanV2;
+      if (av2 && av2._fncHooked) return;
       var d = (e && e.detail) || {};
       var reqId = String(d.requestId || d.id || '').trim();
       if (reqId) _onArtisanStarted(reqId);
     });
 
     window.addEventListener('fixeo:artisan:mission-completed', function(e) {
+      var av2 = window.FixeoArtisanV2;
+      if (av2 && av2._fncHooked) return;
       var d = (e && e.detail) || {};
       var reqId = String(d.requestId || d.id || '').trim();
       if (reqId) _onArtisanCompleted(reqId);

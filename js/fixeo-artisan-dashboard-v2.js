@@ -28,7 +28,7 @@
    * RLS: artisan_read_own_linked_requests + artisan_update_assigned_requests on service_requests
    * Identity: artisans WHERE owner_user_id=auth.uid() OR phone_public=profiles.phone
    * ─────────────────────────────────────────────────────────────────────────── */
-  var VERSION = 'v2a';;
+  var VERSION = 'v2b';
 
   /* ── STATE ────────────────────────────────────────────────── */
   var _state = {
@@ -1114,6 +1114,45 @@
       }
     }
   }
+
+  /* ═══════════════════════════════════════════════════════════
+     PUBLIC API — window.FixeoArtisanV2
+     Minimal safe exposure for Notification Center + external hooks.
+     Wrappers dispatch fixeo:artisan:mission-* events AFTER the private
+     action succeeds, so any listener (FixeoNotifCenter G-2) is notified.
+     The private _do* functions are NOT changed — behavior identical.
+     Version: v2b — 2026-06-11
+  ════════════════════════════════════════════════════════════ */
+  function _dispatchMissionEvent(type, requestId) {
+    try {
+      window.dispatchEvent(new CustomEvent('fixeo:artisan:' + type, {
+        detail: { requestId: requestId, artisanId: _state.artisanProfile && _state.artisanProfile.id }
+      }));
+    } catch(e) { /* silent */ }
+  }
+
+  window.FixeoArtisanV2 = {
+    VERSION: VERSION,
+
+    /* Read-only state reference — consumers MUST NOT write to this object */
+    get _state() { return _state; },
+
+    /* Thin wrappers: identical to internal handlers but dispatch notification events */
+    acceptMission: async function(requestId, btn) {
+      await _doAcceptMission(requestId, btn);
+      _dispatchMissionEvent('mission-accepted', requestId);
+    },
+
+    startMission: async function(requestId, btn) {
+      await _doStartMission(requestId, btn);
+      _dispatchMissionEvent('mission-started', requestId);
+    },
+
+    completeMission: async function(requestId, btn) {
+      await _doCompleteMission(requestId, btn);
+      _dispatchMissionEvent('mission-completed', requestId);
+    }
+  };
 
   document.addEventListener('DOMContentLoaded', init);
 
