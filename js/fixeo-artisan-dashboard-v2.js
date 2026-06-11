@@ -871,9 +871,9 @@
       var action = btn.dataset.action;
       var reqId  = btn.dataset.reqId || '';
       switch (action) {
-        case 'accept-mission':   return _doAcceptMission(reqId, btn);
-        case 'start-mission':    return _doStartMission(reqId, btn);
-        case 'complete-mission': return _doCompleteMission(reqId, btn);
+        case 'accept-mission':   _doAcceptMission(reqId, btn); return;
+        case 'start-mission':    _doStartMission(reqId, btn); return;
+        case 'complete-mission': _doCompleteMission(reqId, btn); return;
         case 'go-available':     return _showSection('available');
         case 'logout':
           if (window.FixeoLogout && typeof window.FixeoLogout.logout === 'function') {
@@ -957,6 +957,7 @@
       /* srUpdate.data may be null if status was already changed — mission still created */
 
       _toast('🎉 Mission acceptée ! Elle apparaît dans "Mes missions".', 'success');
+      _dispatchMissionEvent('mission-accepted', requestId);
       await _refresh();  /* re-fetches open requests + missions, re-renders */
 
     } catch(e) {
@@ -980,6 +981,7 @@
       if (res.error) throw res.error;
       if (!res.data) throw new Error('Mise à jour bloquée (droits insuffisants ou demande introuvable).');
       _toast('▶ Intervention démarrée !', 'success');
+      _dispatchMissionEvent('mission-started', requestId);
       await _refresh();
     } catch(e) {
       console.warn('[fxav2] startMission error:', e && e.message);
@@ -1002,6 +1004,7 @@
       if (res.error) throw res.error;
       if (!res.data) throw new Error('Mise à jour bloquée (droits insuffisants ou demande introuvable).');
       _toast('✅ Intervention marquée terminée. En attente de confirmation client.', 'success');
+      _dispatchMissionEvent('mission-completed', requestId);
       await _refresh();
     } catch(e) {
       console.warn('[fxav2] completeMission error:', e && e.message);

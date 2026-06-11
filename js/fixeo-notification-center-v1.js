@@ -441,62 +441,34 @@
   }
 
   function _patchArtisanActions(av2) {
+    /* Mark as hooked — idempotency guard only.
+       Notifications are driven by fixeo:artisan:mission-* events dispatched
+       inside _doAcceptMission/_doStartMission/_doCompleteMission (v2b).
+       _listenArtisanEvents is the sole notification trigger — no direct calls here. */
     if (av2._fncHooked) return;
     av2._fncHooked = true;
-
-    var origAccept   = av2.acceptMission   && av2.acceptMission.bind(av2);
-    var origStart    = av2.startMission    && av2.startMission.bind(av2);
-    var origComplete = av2.completeMission && av2.completeMission.bind(av2);
-
-    if (origAccept) {
-      av2.acceptMission = async function(requestId, btn) {
-        var result = await origAccept(requestId, btn);
-        _onArtisanAccepted(requestId);
-        return result;
-      };
-    }
-    if (origStart) {
-      av2.startMission = async function(requestId, btn) {
-        var result = await origStart(requestId, btn);
-        _onArtisanStarted(requestId);
-        return result;
-      };
-    }
-    if (origComplete) {
-      av2.completeMission = async function(requestId, btn) {
-        var result = await origComplete(requestId, btn);
-        _onArtisanCompleted(requestId);
-        return result;
-      };
-    }
   }
 
-  /* Fallback: listen to fixeo:artisan:mission-* events.
-     These are dispatched by the public wrappers in window.FixeoArtisanV2.
-     DEDUP GUARD: if _patchArtisanActions() already attached (av2._fncHooked = true),
-     the patch calls _onArtisan*() directly AND the wrapper dispatches the event.
-     To prevent double-fire, we skip event-listener callbacks when hooked.
-     Result: only one notification path fires per action, regardless of timing. */
+  /* Listen to fixeo:artisan:mission-* events — sole notification trigger.
+     These are dispatched from inside _doAcceptMission/_doStartMission/_doCompleteMission
+     (artisan-dashboard-v2.js v2b) immediately after a successful DB write.
+     Events only fire on the success path (inside try, after _toast('success')).
+     Dedup is handled downstream by fixeo-notifications-real-v1.js (4h TTL per type+ref+audience).
+     No _fncHooked guard needed here — events are dispatched once per action. */
   function _listenArtisanEvents() {
     window.addEventListener('fixeo:artisan:mission-accepted', function(e) {
-      var av2 = window.FixeoArtisanV2;
-      if (av2 && av2._fncHooked) return; /* direct patch path handles this */
       var d = (e && e.detail) || {};
       var reqId = String(d.requestId || d.id || '').trim();
       if (reqId) _onArtisanAccepted(reqId);
     });
 
     window.addEventListener('fixeo:artisan:mission-started', function(e) {
-      var av2 = window.FixeoArtisanV2;
-      if (av2 && av2._fncHooked) return;
       var d = (e && e.detail) || {};
       var reqId = String(d.requestId || d.id || '').trim();
       if (reqId) _onArtisanStarted(reqId);
     });
 
     window.addEventListener('fixeo:artisan:mission-completed', function(e) {
-      var av2 = window.FixeoArtisanV2;
-      if (av2 && av2._fncHooked) return;
       var d = (e && e.detail) || {};
       var reqId = String(d.requestId || d.id || '').trim();
       if (reqId) _onArtisanCompleted(reqId);
