@@ -1,7 +1,7 @@
 /**
  * FIXEO HERO INSIGHTS BAR — CSS
  * File: css/fixeo-hero-insights.css
- * Version: fxhi-v1b — 2026-06-11
+ * Version: fxhi-v1c — 2026-06-11
  * ─────────────────────────────────────────────────────────────
  * Glassmorphism insight bar. Appears between the QSM search
  * card and #hero-city-smart. Max height 60px. Mobile-first.
@@ -126,7 +126,19 @@
   50%      { opacity: .65; }
 }
 
-/* Price pill — amber */
+/* Response time pill — clean white (priority 3 on mobile) */
+.fxhi-pill-time {
+  color: rgba(255, 255, 255, 0.82);
+}
+.fxhi-pill-time .fxhi-pill-unit {
+  font-size: .62rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.28);
+  margin-left: 3px;
+  white-space: nowrap;
+}
+
+/* Price pill — amber (priority 4 — lowest on mobile, hidden first) */
 .fxhi-pill-price {
   color: #ffd070;
 }

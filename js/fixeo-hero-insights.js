@@ -31,7 +31,7 @@
   'use strict';
 
   if (window.FixeoHeroInsights) return;
-  var VERSION = 'fxhi-v1b';
+  var VERSION = 'fxhi-v1c';
 
   /* ══════════════════════════════════════════════════════════
      CONSTANTS
@@ -139,6 +139,95 @@
   }
 
   /* ══════════════════════════════════════════════════════════
+     RESPONSE TIME — compute from real artisan pool
+  ══════════════════════════════════════════════════════════ */
+
+  /* Urgency boosts by category: shave minutes off the estimate when urgent */
+  var URGENCY_BOOST = {
+    serrurerie:   5,
+    plomberie:    5,
+    electricite:  5,
+    _default:     3
+  };
+
+  /**
+   * Returns { label, qualifier } or null.
+   * label     — e.g. "Réponse estimée : 12 min"
+   * qualifier — e.g. "indicatif" | "selon disponibilité" (always non-committal)
+   *
+   * Uses ONLY artisans with availability==='available' and a valid responseTime.
+   * Falls back to safe generic copy if pool is unavailable.
+   */
+  function _getAvgResponseTime(catKey, city, isUrgent) {
+    try {
+      var db = window.FixeoDB;
+      if (!db || typeof db.getAllArtisans !== 'function') return _fallbackRT(isUrgent);
+
+      var all = db.getAllArtisans() || [];
+      if (!all.length) return _fallbackRT(isUrgent);
+
+      var normCat  = (catKey || '').toLowerCase();
+      var normCity = _norm(city || '');
+
+      /* Filter: available + matching category + optional city */
+      var pool = all.filter(function(a) {
+        var avail = (a.availability || '').toLowerCase();
+        if (avail !== 'available' && avail !== 'disponible') return false;
+        var rt = Number(a.responseTime);
+        if (!Number.isFinite(rt) || rt <= 0 || rt > 240) return false;
+        var aCat = (a.category || a.service || '').toLowerCase();
+        return aCat.includes(normCat) || normCat.includes(aCat) || normCat === 'bricolage';
+      });
+
+      /* Prefer city-matched subset if non-empty */
+      if (normCity && pool.length > 3) {
+        var cityPool = pool.filter(function(a) {
+          return _norm(a.city || a.ville || '').includes(normCity) ||
+                 normCity.includes(_norm(a.city || a.ville || ''));
+        });
+        if (cityPool.length >= 2) pool = cityPool;
+      }
+
+      if (!pool.length) return _fallbackRT(isUrgent);
+
+      /* Median (more robust than mean against outliers) */
+      var times = pool.map(function(a) { return Number(a.responseTime); }).sort(function(x, y) { return x - y; });
+      var mid   = Math.floor(times.length / 2);
+      var median = times.length % 2 ? times[mid] : Math.round((times[mid - 1] + times[mid]) / 2);
+
+      /* Apply urgency boost — artisans deprioritise non-urgent queue */
+      if (isUrgent) {
+        var boost = URGENCY_BOOST[normCat] || URGENCY_BOOST._default;
+        median = Math.max(5, median - boost);
+      }
+
+      /* Round to nearest 5 for a natural look; cap display at 90 min */
+      var display = Math.min(90, Math.round(median / 5) * 5);
+
+      return {
+        label:     'Réponse estimée : ' + display + ' min',
+        qualifier: 'indicatif'
+      };
+
+    } catch(e) {
+      return _fallbackRT(isUrgent);
+    }
+  }
+
+  function _fallbackRT(isUrgent) {
+    /* Safe non-committal fallback — never a guarantee */
+    if (isUrgent) {
+      return { label: 'Réponse prioritaire', qualifier: 'selon disponibilité' };
+    }
+    return { label: 'Réponse rapide', qualifier: 'selon disponibilité' };
+  }
+
+  function _norm(s) {
+    return String(s || '').toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+  }
+
+  /* ══════════════════════════════════════════════════════════
      RENDER — update bar content based on analysis
   ══════════════════════════════════════════════════════════ */
   function _renderBar(category, isUrgent, city) {
@@ -190,7 +279,22 @@
       hasPills = true;
     }
 
-    /* Pill 3: Price */
+    /* Pill 3: Response time
+       Computed from real responseTime field on artisan objects.
+       Uses available artisans only. Falls back to safe indicative copy. */
+    if (category) {
+      var rt = _getAvgResponseTime(category.cat, city, isUrgent);
+      if (rt) {
+        html += '<div class="fxhi-pill fxhi-pill-time">'
+          + '<span>🕒</span>'
+          + '<span>' + _escHtml(rt.label) + '</span>'
+          + '<span class="fxhi-pill-unit">' + _escHtml(rt.qualifier) + '</span>'
+          + '</div>';
+        hasPills = true;
+      }
+    }
+
+    /* Pill 4: Price (lowest mobile priority — hidden at <380px via CSS) */
     if (category && !isUrgent) {
       var range = null;
       try {
