@@ -1,5 +1,5 @@
 /**
- * FIXEO SMART DISPATCH ENGINE — v1a
+ * FIXEO SMART DISPATCH ENGINE — v1b
  * ====================================
  * Phases 1–4: Scoring, Suggestions UI, One-Click Assignment, Operations KPIs
  *
@@ -32,7 +32,7 @@
 
   /* ── CONSTANTS ───────────────────────────────────────────────────────── */
 
-  var VERSION = 'v1a';
+  var VERSION = 'v1b';
 
   /* Score weights (sum = 100) */
   var W = {
@@ -891,6 +891,13 @@
     _bindEvents();
     _hookAdminSection();
 
+    /* v1b FIX: inject sidebar link + section container immediately on load.
+     * Previously called only from refreshSuggestions() / adminSection('dispatch'),
+     * creating a chicken-and-egg: the link never appeared because it was only
+     * injected when the user clicked it — which they couldn't since it didn't exist.
+     * Defer by one tick to ensure admin.js has already populated the sidebar DOM. */
+    setTimeout(_ensureSuggestionsSection, 0);
+
     // Refresh when admin data changes
     window.addEventListener('fixeo:admin:refresh', function(e) {
       var detail = (e && e.detail) || {};
@@ -902,7 +909,7 @@
       }
     });
 
-    // Auto-refresh badge on load
+    // Auto-refresh badge on load (after _ensureSuggestionsSection has run)
     setTimeout(function() {
       var pending = _getPendingRequests().length;
       var badge = document.getElementById('sc-dispatch');
