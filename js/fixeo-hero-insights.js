@@ -31,7 +31,7 @@
   'use strict';
 
   if (window.FixeoHeroInsights) return;
-  var VERSION = 'fxhi-v1a';
+  var VERSION = 'fxhi-v1b';
 
   /* ══════════════════════════════════════════════════════════
      CONSTANTS
@@ -115,10 +115,26 @@
     bar.setAttribute('aria-label', 'Analyse intelligente de votre demande');
     bar.innerHTML = '<div class="fxhi-pills" id="fxhi-pills"></div>';
 
-    /* Insert after #hero-quick-search */
-    var qsm = _el('hero-quick-search');
-    if (!qsm) return null;
-    qsm.parentNode.insertBefore(bar, qsm.nextSibling);
+    /* Insert inside .qsm-search-section, after .qsm-bar-card,
+       before .qsm-service-suggestions (the QSM suggestion chips).
+       This places the bar: problem → city → CTA → [bar] → suggestion pills */
+    var qsmHost = _el('hero-quick-search');
+    if (!qsmHost) return null;
+
+    var searchSection = qsmHost.querySelector('.qsm-search-section');
+    var suggPills     = searchSection && searchSection.querySelector('.qsm-service-suggestions');
+
+    if (searchSection && suggPills) {
+      /* Between .qsm-bar-card and .qsm-service-suggestions */
+      searchSection.insertBefore(bar, suggPills);
+    } else if (searchSection) {
+      /* Fallback: append at end of .qsm-search-section */
+      searchSection.appendChild(bar);
+    } else {
+      /* Last fallback: after #hero-quick-search in parent */
+      qsmHost.parentNode.insertBefore(bar, qsmHost.nextSibling);
+    }
+
     return bar;
   }
 

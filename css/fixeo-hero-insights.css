@@ -1,7 +1,7 @@
 /**
  * FIXEO HERO INSIGHTS BAR — CSS
  * File: css/fixeo-hero-insights.css
- * Version: fxhi-v1a — 2026-06-11
+ * Version: fxhi-v1b — 2026-06-11
  * ─────────────────────────────────────────────────────────────
  * Glassmorphism insight bar. Appears between the QSM search
  * card and #hero-city-smart. Max height 60px. Mobile-first.
@@ -19,11 +19,11 @@
   align-items: center;
   gap: 0;
 
-  /* Inserted by JS between #hero-quick-search and #hero-city-smart */
+  /* Inserted by JS inside .qsm-search-section, after CTA button */
   width: 100%;
-  max-width: 680px;
-  margin: 8px auto 0;
-  border-radius: 14px;
+  max-width: 100%;
+  margin: 8px 0 0;
+  border-radius: 12px;
 
   /* Glassmorphism — dark premium */
   background: rgba(15, 15, 25, 0.55);
