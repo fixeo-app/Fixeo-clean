@@ -1,0 +1,326 @@
+/**
+ * FIXEO Admin Command Center V3 — CSS
+ * File: css/admin-command-center-v3.css
+ * Version: acc-v3a — 2026-06-11
+ * ─────────────────────────────────────────────────────────────
+ * Namespace: .fxv3-* / #fxv3-*
+ * Append-only. Zero overrides to acc-v2a styles.
+ * ─────────────────────────────────────────────────────────────
+ */
+
+/* ═══════════════════════════════════════════════════════════
+   OPS SUMMARY BAR
+   Horizontal scrollable row of KPI tiles at section top.
+   ══════════════════════════════════════════════════════════= */
+#fxv3-ops-bar {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 12px 12px 4px;
+  margin: 0 -4px 4px;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+#fxv3-ops-bar::-webkit-scrollbar { display: none; }
+
+.fxv3-kpi-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 72px;
+  padding: 10px 8px 8px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1.5px solid rgba(255, 255, 255, 0.07);
+  cursor: pointer;
+  transition: border-color .2s, background .2s;
+  flex-shrink: 0;
+  position: relative;
+  gap: 3px;
+}
+.fxv3-kpi-tile:active { background: rgba(255, 255, 255, 0.08); }
+.fxv3-kpi-tile.has-alert {
+  border-color: rgba(225, 48, 108, 0.40);
+  background: rgba(225, 48, 108, 0.06);
+}
+.fxv3-kpi-tile.has-alert.amber {
+  border-color: rgba(252, 167, 53, 0.40);
+  background: rgba(252, 167, 53, 0.06);
+}
+.fxv3-kpi-tile.has-alert.green {
+  border-color: rgba(32, 201, 151, 0.40);
+  background: rgba(32, 201, 151, 0.06);
+}
+
+.fxv3-kpi-icon  { font-size: 1.1rem; line-height: 1; }
+.fxv3-kpi-count {
+  font-size: 1.15rem;
+  font-weight: 800;
+  line-height: 1;
+  color: #fff;
+  min-height: 22px;
+}
+.fxv3-kpi-count.zero { color: rgba(255,255,255,.25); font-weight: 400; }
+.fxv3-kpi-label {
+  font-size: .6rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.40);
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* Alert dot on tile */
+.fxv3-kpi-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: #E1306C;
+  position: absolute;
+  top: 6px; right: 6px;
+  animation: fxv3-pulse 1.6s ease-in-out infinite;
+}
+.fxv3-kpi-dot.amber { background: #FCA735; }
+.fxv3-kpi-dot.green { background: #20C997; }
+
+@keyframes fxv3-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: .5; transform: scale(.75); }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SECTION HEADER (shared by all V3 sections)
+   ══════════════════════════════════════════════════════════= */
+.fxv3-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 4px 10px;
+}
+.fxv3-section-title {
+  font-size: .9rem;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.85);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.fxv3-section-count {
+  font-size: .7rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.40);
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 20px;
+  padding: 2px 8px;
+}
+.fxv3-refresh-btn {
+  background: none;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 8px;
+  color: rgba(255,255,255,.55);
+  font-size: .75rem;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: border-color .2s;
+}
+.fxv3-refresh-btn:hover { border-color: rgba(255,255,255,.3); }
+
+/* ═══════════════════════════════════════════════════════════
+   V3 OPERATIONAL CARDS
+   Used in: À Assigner, En Attente, En Cours, À Valider
+   ══════════════════════════════════════════════════════════= */
+.fxv3-op-card {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 12px;
+  padding: 12px 12px 10px;
+  margin-bottom: 8px;
+  transition: border-color .2s;
+  animation: fxv3-card-in .18s ease-out;
+}
+.fxv3-op-card.urgent  { border-color: rgba(225, 48, 108, 0.30); background: rgba(225, 48, 108, 0.04); }
+.fxv3-op-card.waiting { border-color: rgba(252, 167, 53, 0.25); }
+.fxv3-op-card.active  { border-color: rgba(91, 140, 255, 0.25); }
+.fxv3-op-card.done    { border-color: rgba(32, 201, 151, 0.25); }
+
+@keyframes fxv3-card-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Card meta row */
+.fxv3-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 5px;
+}
+.fxv3-card-ref {
+  font-size: .65rem;
+  font-weight: 700;
+  color: rgba(255,255,255,.30);
+  font-family: monospace;
+  letter-spacing: .03em;
+}
+.fxv3-card-ago {
+  font-size: .65rem;
+  color: rgba(255,255,255,.25);
+  margin-left: auto;
+}
+.fxv3-card-urgent-badge {
+  font-size: .6rem;
+  font-weight: 800;
+  background: rgba(225,48,108,.20);
+  color: #e1306c;
+  border: 1px solid rgba(225,48,108,.30);
+  border-radius: 4px;
+  padding: 1px 5px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+/* Card main content */
+.fxv3-card-svc {
+  font-size: .88rem;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.fxv3-card-city {
+  font-size: .72rem;
+  color: rgba(255,255,255,.45);
+  margin-bottom: 6px;
+}
+.fxv3-card-desc {
+  font-size: .72rem;
+  color: rgba(255,255,255,.40);
+  margin-bottom: 8px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.fxv3-card-artisan {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: .72rem;
+  color: rgba(255,255,255,.55);
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 8px;
+  padding: 3px 8px;
+  margin-bottom: 8px;
+}
+
+/* Actions row */
+.fxv3-card-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+.fxv3-act {
+  font-size: .72rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: opacity .15s;
+  white-space: nowrap;
+}
+.fxv3-act:active { opacity: .7; }
+
+/* Action variants */
+.fxv3-act-dispatch  { background: rgba(91,140,255,.15);  color: #9bb8ff; border: 1px solid rgba(91,140,255,.25); }
+.fxv3-act-wa        { background: rgba(37,211,102,.12);  color: #25d366; border: 1px solid rgba(37,211,102,.25); }
+.fxv3-act-validate  { background: rgba(32,201,151,.15);  color: #5eddc5; border: 1px solid rgba(32,201,151,.30); }
+.fxv3-act-reassign  { background: rgba(252,167,53,.12);  color: #fca735; border: 1px solid rgba(252,167,53,.25); }
+.fxv3-act-cancel    { background: rgba(225,48,108,.10);  color: #e1306c; border: 1px solid rgba(225,48,108,.25); }
+.fxv3-act-collect   { background: rgba(252,167,53,.15);  color: #fca735; border: 1px solid rgba(252,167,53,.30); }
+.fxv3-act-collected { background: rgba(32,201,151,.08);  color: rgba(32,201,151,.5); border: 1px solid rgba(32,201,151,.15); cursor: default; }
+
+/* Commission amount in card */
+.fxv3-card-amount {
+  font-size: .88rem;
+  font-weight: 800;
+  color: #fca735;
+  display: inline-block;
+  margin-bottom: 4px;
+}
+.fxv3-card-amount.collected { color: rgba(32,201,151,.6); text-decoration: line-through; }
+
+/* ═══════════════════════════════════════════════════════════
+   EMPTY STATE
+   ══════════════════════════════════════════════════════════= */
+.fxv3-empty {
+  text-align: center;
+  padding: 32px 16px;
+  color: rgba(255,255,255,.25);
+}
+.fxv3-empty-icon  { font-size: 2.2rem; margin-bottom: 8px; }
+.fxv3-empty-title { font-size: .85rem; font-weight: 700; color: rgba(255,255,255,.35); margin-bottom: 4px; }
+.fxv3-empty-sub   { font-size: .72rem; }
+
+/* ═══════════════════════════════════════════════════════════
+   VALIDATE TOAST FEEDBACK
+   ══════════════════════════════════════════════════════════= */
+#fxv3-toast {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: rgba(20, 22, 30, 0.95);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-size: .78rem;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s, transform .2s;
+  z-index: 9999;
+  backdrop-filter: blur(8px);
+}
+#fxv3-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MISSIONS FETCH LOADING STATE
+   ══════════════════════════════════════════════════════════= */
+.fxv3-loading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px;
+  color: rgba(255,255,255,.30);
+  font-size: .78rem;
+}
+.fxv3-loading-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: rgba(91,140,255,.6);
+  animation: fxv3-loading-blink .8s ease-in-out infinite;
+}
+.fxv3-loading-dot:nth-child(2) { animation-delay: .15s; }
+.fxv3-loading-dot:nth-child(3) { animation-delay: .30s; }
+@keyframes fxv3-loading-blink {
+  0%, 100% { opacity: .3; }
+  50%       { opacity: 1; }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MOBILE: bottom-nav spacing (tabs already managed by V2)
+   ══════════════════════════════════════════════════════════= */
+@media (max-width: 768px) {
+  .fxv3-op-card { border-radius: 10px; }
+  .fxv3-act     { font-size: .7rem; padding: 5px 9px; }
+  .fxv3-kpi-tile { min-width: 64px; }
+}
