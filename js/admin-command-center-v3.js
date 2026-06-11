@@ -1,7 +1,7 @@
 /**
  * FIXEO Admin Command Center V3 — Operational Cockpit
  * File: js/admin-command-center-v3.js
- * Version: acc-v3a — 2026-06-11
+ * Version: acc-v3b — 2026-06-11
  * ─────────────────────────────────────────────────────────────
  * ADDITIVE ONLY — zero modifications to acc-v2a / p1 / p3.
  *
@@ -31,7 +31,7 @@
   'use strict';
 
   if (window.FixeoAccV3) return;
-  var VERSION = 'acc-v3a';
+  var VERSION = 'acc-v3b';
 
   /* ═══════════════════════════════════════════════════════════
      TINY UTILITIES (re-implemented — no dependency on V2 internals)
@@ -126,15 +126,29 @@
     } catch(e) { return []; }
   }
 
+  /* Supabase client resolver — admin.html exposes FixeoSupabaseClient (not FixeoSupabase) */
+  async function _getSbClient() {
+    /* Primary: FixeoSupabaseClient (supabase-client.js — always loaded on admin.html) */
+    var fsc = window.FixeoSupabaseClient;
+    if (fsc && fsc.CONFIGURED) {
+      await fsc.ready();
+      if (fsc.client) return fsc.client;
+    }
+    /* Fallback: FixeoSupabase.getClient() (fixeo-supabase-core.js — loaded on dashboards) */
+    var FS = window.FixeoSupabase;
+    if (FS && typeof FS.getClient === 'function') {
+      return await FS.getClient();
+    }
+    throw new Error('[FixeoAccV3] No Supabase client available');
+  }
+
   /* Missions cache (fetched once on init, refreshed every 90s) */
   var _missionsCache = [];
   var _missionsFetchedAt = 0;
 
   async function _fetchMissions() {
     try {
-      var FS = window.FixeoSupabase;
-      if (!FS || typeof FS.getClient !== 'function') return [];
-      var sb = await FS.getClient();
+      var sb = await _getSbClient();
       var res = await sb.from('missions')
         .select('id,request_id,artisan_profile_id,client_profile_id,status,agreed_price,commission_amount,created_at')
         .not('status', 'eq', 'cancelled')
@@ -162,9 +176,7 @@
     if (!reqId) return;
     if (btn) { btn.disabled = true; btn.textContent = '⏳…'; }
     try {
-      var FS = window.FixeoSupabase;
-      if (!FS) throw new Error('FixeoSupabase not available');
-      var sb = await FS.getClient();
+      var sb = await _getSbClient();
       var res = await sb.from('service_requests')
         .update({ status: 'validated' })
         .eq('id', reqId)
