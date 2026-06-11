@@ -1,0 +1,779 @@
+/* ============================================================
+   FIXEO ADMIN COMMAND CENTER — Mobile-First Layer
+   File: css/admin-command-center.css
+   Version: acc-v1a — 2026-06-11
+   Namespace: .fxacc-*
+   ============================================================
+   APPEND-ONLY. Does not override existing rules — only adds
+   mobile-specific layout, bottom nav, card styles, and
+   responsive overrides that fill gaps in admin.css / main.css.
+   Safe: all selectors scoped to .fxacc-* or @media breakpoints
+   that do not conflict with existing admin.css rules.
+   ============================================================ */
+
+/* ── CSS variables ──────────────────────────────────────────── */
+:root {
+  --acc-pink:     #E1306C;
+  --acc-green:    #20C997;
+  --acc-amber:    #FCA735;
+  --acc-blue:     #5B8CFF;
+  --acc-purple:   #9B59B6;
+  --acc-surface:  rgba(255,255,255,0.05);
+  --acc-border:   rgba(255,255,255,0.09);
+  --acc-text:     rgba(255,255,255,0.90);
+  --acc-muted:    rgba(255,255,255,0.45);
+  --acc-radius:   14px;
+  --acc-bnav-h:   64px; /* bottom nav height */
+}
+
+/* ════════════════════════════════════════════════════════════
+   MOBILE BOTTOM NAV BAR
+   ════════════════════════════════════════════════════════════ */
+#fxacc-bottom-nav {
+  display: none; /* shown only on mobile via media query */
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: var(--acc-bnav-h);
+  background: rgba(12,12,22,0.98);
+  border-top: 1px solid var(--acc-border);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  z-index: 1100;
+  align-items: stretch;
+  justify-content: space-around;
+  padding: 0;
+  /* Safe area for notched phones */
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.fxacc-tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px 4px;
+  border-radius: 0;
+  position: relative;
+  color: var(--acc-muted);
+  transition: color .15s;
+  min-width: 0;
+}
+.fxacc-tab:active { background: rgba(255,255,255,0.04); }
+.fxacc-tab.active { color: var(--acc-pink); }
+
+.fxacc-tab-icon {
+  font-size: 1.2rem;
+  line-height: 1;
+  position: relative;
+  display: inline-block;
+}
+.fxacc-tab-label {
+  font-size: .58rem;
+  font-weight: 600;
+  letter-spacing: .02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 56px;
+}
+
+/* Badge on tab icon */
+.fxacc-tab-badge {
+  position: absolute;
+  top: -4px; right: -6px;
+  min-width: 16px; height: 16px;
+  border-radius: 9999px;
+  background: var(--acc-pink);
+  color: #fff;
+  font-size: .6rem;
+  font-weight: 800;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 0 3px;
+  pointer-events: none;
+  border: 2px solid rgba(12,12,22,0.98);
+}
+.fxacc-tab-badge.visible { display: flex; }
+
+/* Active indicator line */
+.fxacc-tab.active::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 20%; right: 20%;
+  height: 2px;
+  background: var(--acc-pink);
+  border-radius: 0 0 3px 3px;
+}
+
+/* ════════════════════════════════════════════════════════════
+   MOBILE LAYOUT ADJUSTMENTS
+   Push content above bottom nav; fix sidebar z-index
+   ════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  #fxacc-bottom-nav { display: flex; }
+
+  /* Pad bottom of main content above bottom nav */
+  .dashboard-content,
+  #main-content {
+    padding-bottom: calc(var(--acc-bnav-h) + 16px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  /* Sidebar must be above bottom nav */
+  .sidebar#admin-sidebar {
+    z-index: 1200;
+    /* Sidebar overlay backdrop */
+  }
+
+  /* Overlay when sidebar is open */
+  .sidebar#admin-sidebar.open::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: -1;
+    pointer-events: auto;
+  }
+
+  /* Tables: horizontal scroll with sticky first column */
+  .admin-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: var(--acc-radius);
+  }
+  .admin-table {
+    min-width: 600px;
+  }
+  .admin-table thead th:first-child,
+  .admin-table tbody td:first-child {
+    position: sticky;
+    left: 0;
+    background: rgba(20,20,32,0.98);
+    z-index: 2;
+  }
+
+  /* Section headers: compact on mobile */
+  #main-content h2 {
+    font-size: 1.1rem !important;
+  }
+
+  /* KPI grid: force 2 columns on mobile */
+  .admin-kpi-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+  .kpi-card.admin-kpi {
+    padding: 12px !important;
+  }
+  .kpi-value {
+    font-size: 1.4rem !important;
+  }
+
+  /* Charts: single column */
+  #admin-section-overview > div[style*="grid-template-columns:2fr 1fr"] {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  /* Filter row: stack on mobile */
+  #admin-section-reservations > div[style*="display:flex"][style*="gap:10px"] {
+    flex-direction: column !important;
+  }
+  .filter-input { width: 100% !important; }
+}
+
+/* ════════════════════════════════════════════════════════════
+   SECTION: INBOX (admin-section-inbox)
+   New section injected by admin-command-center.js
+   ════════════════════════════════════════════════════════════ */
+#admin-section-inbox {
+  display: none; /* shown via adminSection('inbox') */
+}
+
+/* Section header */
+.fxacc-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.fxacc-section-title {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--acc-text);
+  margin: 0;
+}
+.fxacc-section-sub {
+  font-size: .78rem;
+  color: var(--acc-muted);
+  margin: 4px 0 0;
+}
+.fxacc-btn-refresh {
+  background: rgba(225,48,108,0.12);
+  color: var(--acc-pink);
+  border: 1px solid rgba(225,48,108,0.25);
+  border-radius: 10px;
+  padding: 8px 14px;
+  font-size: .8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .15s;
+  white-space: nowrap;
+}
+.fxacc-btn-refresh:hover { background: rgba(225,48,108,0.22); }
+.fxacc-btn-refresh:active { background: rgba(225,48,108,0.3); transform: scale(.97); }
+
+/* Filter pills */
+.fxacc-filters {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.fxacc-filter-pill {
+  background: var(--acc-surface);
+  border: 1px solid var(--acc-border);
+  border-radius: 20px;
+  color: var(--acc-muted);
+  font-size: .75rem;
+  font-weight: 600;
+  padding: 5px 14px;
+  cursor: pointer;
+  transition: all .15s;
+  white-space: nowrap;
+}
+.fxacc-filter-pill:hover { border-color: rgba(255,255,255,0.2); color: var(--acc-text); }
+.fxacc-filter-pill.active {
+  background: rgba(225,48,108,0.15);
+  border-color: rgba(225,48,108,0.4);
+  color: var(--acc-pink);
+}
+.fxacc-filter-pill .fxacc-pill-count {
+  background: rgba(255,255,255,0.1);
+  border-radius: 9999px;
+  padding: 0 5px;
+  font-size: .68rem;
+  margin-left: 4px;
+}
+
+/* Request cards grid */
+.fxacc-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Individual request card */
+.fxacc-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--acc-border);
+  border-radius: var(--acc-radius);
+  padding: 14px 16px;
+  transition: border-color .15s, background .15s;
+  position: relative;
+  overflow: hidden;
+}
+.fxacc-card:hover { border-color: rgba(255,255,255,0.15); }
+.fxacc-card.urgent {
+  border-left: 3px solid var(--acc-amber);
+  background: rgba(252,167,53,0.04);
+}
+.fxacc-card.unassigned { border-left: 3px solid var(--acc-pink); }
+.fxacc-card.assigned   { border-left: 3px solid var(--acc-blue); }
+.fxacc-card.in-progress { border-left: 3px solid var(--acc-green); }
+.fxacc-card.completed  { border-left: 3px solid var(--acc-purple); }
+.fxacc-card.validated  { border-left: 3px solid rgba(255,255,255,0.2); }
+
+/* Card: top row */
+.fxacc-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.fxacc-card-left { flex: 1; min-width: 0; }
+.fxacc-card-ref {
+  font-size: .68rem;
+  color: var(--acc-muted);
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  margin-bottom: 3px;
+}
+.fxacc-card-service {
+  font-size: .92rem;
+  font-weight: 800;
+  color: var(--acc-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.fxacc-card-city {
+  font-size: .78rem;
+  color: var(--acc-muted);
+  margin-top: 2px;
+}
+
+/* Status badge */
+.fxacc-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: .72rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.fxacc-status-new       { background: rgba(225,48,108,0.15); color: var(--acc-pink);   border: 1px solid rgba(225,48,108,0.3); }
+.fxacc-status-assigned  { background: rgba(91,140,255,0.15); color: var(--acc-blue);   border: 1px solid rgba(91,140,255,0.3); }
+.fxacc-status-progress  { background: rgba(32,201,151,0.15); color: var(--acc-green);  border: 1px solid rgba(32,201,151,0.3); }
+.fxacc-status-completed { background: rgba(155,89,182,0.15); color: var(--acc-purple); border: 1px solid rgba(155,89,182,0.3); }
+.fxacc-status-validated { background: rgba(255,255,255,0.06); color: var(--acc-muted); border: 1px solid rgba(255,255,255,0.12); }
+.fxacc-status-cancelled { background: rgba(255,255,255,0.04); color: var(--acc-muted); border: 1px solid rgba(255,255,255,0.08); }
+
+/* Card: meta row */
+.fxacc-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+  font-size: .76rem;
+  color: var(--acc-muted);
+}
+.fxacc-card-meta-item { display: flex; align-items: center; gap: 4px; }
+.fxacc-card-meta-item strong { color: var(--acc-text); font-weight: 600; }
+
+/* Urgency badge */
+.fxacc-urgency-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: .68rem; font-weight: 800; letter-spacing: .04em;
+  background: rgba(252,167,53,0.18); color: var(--acc-amber);
+  border: 1px solid rgba(252,167,53,0.35); border-radius: 20px;
+  padding: 2px 8px;
+}
+
+/* Card: description snippet */
+.fxacc-card-desc {
+  font-size: .78rem;
+  color: var(--acc-muted);
+  line-height: 1.5;
+  margin-bottom: 12px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Card: action row */
+.fxacc-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.fxacc-act {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: .78rem;
+  font-weight: 700;
+  padding: 7px 13px;
+  border-radius: 9px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all .15s;
+  white-space: nowrap;
+  background: none;
+  text-decoration: none;
+}
+.fxacc-act:active { transform: scale(.96); }
+
+/* Primary: Assign */
+.fxacc-act-assign {
+  background: rgba(225,48,108,0.15);
+  color: var(--acc-pink);
+  border-color: rgba(225,48,108,0.3);
+}
+.fxacc-act-assign:hover { background: rgba(225,48,108,0.25); }
+
+/* Secondary: WA */
+.fxacc-act-wa {
+  background: rgba(37,211,102,0.12);
+  color: #25D366;
+  border-color: rgba(37,211,102,0.25);
+}
+.fxacc-act-wa:hover { background: rgba(37,211,102,0.22); }
+
+/* Tertiary: View full */
+.fxacc-act-view {
+  background: var(--acc-surface);
+  color: var(--acc-muted);
+  border-color: var(--acc-border);
+}
+.fxacc-act-view:hover { color: var(--acc-text); border-color: rgba(255,255,255,0.2); }
+
+/* Danger: Cancel */
+.fxacc-act-cancel {
+  background: rgba(255,255,255,0.04);
+  color: rgba(255,255,255,0.35);
+  border-color: rgba(255,255,255,0.08);
+}
+
+/* Empty state */
+.fxacc-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: var(--acc-muted);
+  text-align: center;
+  gap: 10px;
+}
+.fxacc-empty-icon { font-size: 2.5rem; }
+.fxacc-empty-title { font-weight: 700; font-size: .9rem; color: var(--acc-text); }
+.fxacc-empty-sub { font-size: .8rem; max-width: 260px; line-height: 1.5; }
+
+/* ════════════════════════════════════════════════════════════
+   SECTION: MISSION CONTROL (wraps admin-section-missions)
+   ════════════════════════════════════════════════════════════ */
+
+/* Mobile enhancements for existing fxams3 cards */
+@media (max-width: 768px) {
+  /* fxams3 pipeline: horizontal scroll */
+  #fxams3-pipeline {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
+    gap: 0 !important;
+  }
+  .fxams3-pipe-stage {
+    min-width: 80px;
+    flex: 0 0 auto;
+  }
+
+  /* fxams3 cards grid: single column */
+  #fxams3-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* fxams3 cards: ensure actions visible on small screens */
+  .fxams3-card-actions {
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+  }
+  .fxams3-act-btn {
+    font-size: .74rem !important;
+    padding: 6px 10px !important;
+  }
+
+  /* KPI strip: scroll on mobile */
+  #fxams3-kpi-strip {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    flex-wrap: nowrap !important;
+  }
+  .fxams3-kpi {
+    flex: 0 0 auto !important;
+    min-width: 80px !important;
+  }
+
+  /* Section header: stack on mobile */
+  #fxams3-section-header {
+    flex-wrap: wrap !important;
+  }
+
+  /* Filter pills: horizontal scroll */
+  #fxams3-filter-pills {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    flex-wrap: nowrap !important;
+    padding-bottom: 4px;
+  }
+  .fxams3-pill {
+    flex: 0 0 auto !important;
+    white-space: nowrap !important;
+  }
+
+  /* Assign picker: full width on mobile */
+  .fxams3-assign-picker {
+    flex-direction: column !important;
+  }
+  .fxams3-picker-select {
+    width: 100% !important;
+    margin-bottom: 8px;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════
+   DISPATCH ENGINE — mobile enhancements
+   ════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .fxdisp-kpi-strip {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    flex-wrap: nowrap !important;
+    padding-bottom: 4px;
+  }
+  .fxdisp-kpi {
+    flex: 0 0 auto !important;
+    min-width: 90px !important;
+  }
+  .fxdisp-suggestion-block {
+    flex-direction: column !important;
+  }
+  .fxdisp-artisan-card {
+    width: 100% !important;
+    max-width: none !important;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════
+   SECTION: COMMISSION TRACKER (fxacc-commissions)
+   Mobile-friendly view wrapping cod-orders data
+   ════════════════════════════════════════════════════════════ */
+#admin-section-commissions {
+  display: none;
+}
+
+/* Commission card */
+.fxacc-comm-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--acc-border);
+  border-radius: var(--acc-radius);
+  padding: 14px 16px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  transition: border-color .15s;
+}
+.fxacc-comm-card:hover { border-color: rgba(255,255,255,0.15); }
+.fxacc-comm-card.pending-comm {
+  border-left: 3px solid var(--acc-amber);
+}
+.fxacc-comm-card.paid-comm {
+  border-left: 3px solid var(--acc-green);
+}
+
+.fxacc-comm-left { flex: 1; min-width: 0; }
+.fxacc-comm-ref {
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--acc-muted);
+  margin-bottom: 3px;
+}
+.fxacc-comm-service {
+  font-size: .9rem;
+  font-weight: 700;
+  color: var(--acc-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.fxacc-comm-artisan {
+  font-size: .76rem;
+  color: var(--acc-muted);
+  margin-top: 2px;
+}
+
+.fxacc-comm-right {
+  text-align: right;
+  flex-shrink: 0;
+}
+.fxacc-comm-amount {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--acc-amber);
+  white-space: nowrap;
+}
+.fxacc-comm-status-paid   { font-size: .72rem; color: var(--acc-green); font-weight: 700; margin-top: 3px; }
+.fxacc-comm-status-pending { font-size: .72rem; color: var(--acc-amber); font-weight: 700; margin-top: 3px; }
+
+/* Commission summary strip */
+.fxacc-comm-summary {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.fxacc-comm-kpi {
+  flex: 1;
+  min-width: 110px;
+  background: var(--acc-surface);
+  border: 1px solid var(--acc-border);
+  border-radius: 12px;
+  padding: 12px 14px;
+  text-align: center;
+}
+.fxacc-comm-kpi-value {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--acc-text);
+  margin-bottom: 4px;
+}
+.fxacc-comm-kpi-label {
+  font-size: .68rem;
+  color: var(--acc-muted);
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+/* ════════════════════════════════════════════════════════════
+   FLOATING ACTION BUTTON (mobile only)
+   ════════════════════════════════════════════════════════════ */
+#fxacc-fab {
+  display: none;
+  position: fixed;
+  bottom: calc(var(--acc-bnav-h) + 16px + env(safe-area-inset-bottom, 0px));
+  right: 16px;
+  width: 50px; height: 50px;
+  border-radius: 50%;
+  background: var(--acc-pink);
+  color: #fff;
+  border: none;
+  box-shadow: 0 4px 20px rgba(225,48,108,0.5);
+  cursor: pointer;
+  font-size: 1.3rem;
+  align-items: center;
+  justify-content: center;
+  z-index: 1090;
+  transition: transform .15s, box-shadow .15s;
+}
+#fxacc-fab:active { transform: scale(.93); box-shadow: 0 2px 10px rgba(225,48,108,0.4); }
+
+@media (max-width: 768px) {
+  #fxacc-fab { display: flex; }
+}
+
+/* ════════════════════════════════════════════════════════════
+   QUICK CONTACT OVERLAY (mobile)
+   ════════════════════════════════════════════════════════════ */
+#fxacc-contact-sheet {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 1300;
+  align-items: flex-end;
+  justify-content: center;
+}
+#fxacc-contact-sheet.open { display: flex; }
+#fxacc-contact-overlay {
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,0.65);
+  cursor: pointer;
+}
+#fxacc-contact-body {
+  position: relative;
+  background: rgba(18,18,30,0.99);
+  border: 1px solid var(--acc-border);
+  border-radius: 20px 20px 0 0;
+  padding: 20px 20px calc(20px + env(safe-area-inset-bottom, 0px));
+  width: 100%;
+  max-width: 520px;
+  z-index: 1;
+  box-shadow: 0 -12px 40px rgba(0,0,0,0.5);
+}
+.fxacc-sheet-handle {
+  width: 36px; height: 4px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 2px;
+  margin: 0 auto 16px;
+}
+.fxacc-sheet-title {
+  font-size: .9rem;
+  font-weight: 800;
+  color: var(--acc-text);
+  margin-bottom: 4px;
+}
+.fxacc-sheet-sub {
+  font-size: .76rem;
+  color: var(--acc-muted);
+  margin-bottom: 18px;
+}
+.fxacc-contact-btns {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.fxacc-contact-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--acc-border);
+  background: var(--acc-surface);
+  color: var(--acc-text);
+  font-size: .86rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background .15s;
+}
+.fxacc-contact-btn:hover { background: rgba(255,255,255,0.08); }
+.fxacc-contact-btn:active { transform: scale(.98); }
+.fxacc-contact-btn-icon { font-size: 1.2rem; flex-shrink: 0; }
+.fxacc-contact-btn-desc { font-size: .72rem; color: var(--acc-muted); font-weight: 400; margin-top: 1px; }
+
+/* ════════════════════════════════════════════════════════════
+   LOADING SPINNER (inline)
+   ════════════════════════════════════════════════════════════ */
+.fxacc-spinner {
+  display: inline-block;
+  width: 18px; height: 18px;
+  border: 2px solid rgba(255,255,255,0.15);
+  border-top-color: var(--acc-pink);
+  border-radius: 50%;
+  animation: fxacc-spin .7s linear infinite;
+  vertical-align: middle;
+}
+@keyframes fxacc-spin { to { transform: rotate(360deg); } }
+
+/* ════════════════════════════════════════════════════════════
+   INBOX: Urgency highlight (pulsing border)
+   ════════════════════════════════════════════════════════════ */
+@keyframes fxacc-urgency-pulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(252,167,53,0.3); }
+  50%      { box-shadow: 0 0 0 6px rgba(252,167,53,0); }
+}
+.fxacc-card.urgent {
+  animation: fxacc-urgency-pulse 2.5s ease-in-out infinite;
+}
+
+/* ════════════════════════════════════════════════════════════
+   RESPONSIVE: Desktop — hide bottom nav, show full sidebar
+   ════════════════════════════════════════════════════════════ */
+@media (min-width: 769px) {
+  #fxacc-bottom-nav { display: none !important; }
+  #fxacc-fab        { display: none !important; }
+  .dashboard-content,
+  #main-content {
+    /* Undo the mobile bottom padding */
+    padding-bottom: 32px !important;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════
+   SECTION TRANSITION (smooth section switch)
+   ════════════════════════════════════════════════════════════ */
+.fxacc-section-fade {
+  animation: fxacc-fadein .2s ease-out;
+}
+@keyframes fxacc-fadein {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
