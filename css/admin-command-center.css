@@ -777,3 +777,184 @@
   from { opacity: 0; transform: translateY(6px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+
+/* ============================================================
+   ADMIN COMMAND CENTER — Phase 2 additions
+   Version: acc-v2a — 2026-06-11
+   ============================================================ */
+
+/* ── P2: Mobile header slim ─────────────────────────────────── */
+/* Admin page only: reduce header noise on mobile */
+body.is-admin @media (max-width: 768px),
+@media (max-width: 768px) {
+  /* Hide search button + language selector in admin mobile header */
+  .navbar .btn-quick-search { display: none !important; }
+  .navbar .lang-selector    { display: none !important; }
+  /* Reduce navbar height ~30% on mobile */
+  .navbar { height: 52px !important; min-height: 52px !important; }
+  .dashboard-layout,
+  .dashboard-content,
+  #main-content { padding-top: 52px !important; }
+  .sidebar { top: 52px !important; }
+}
+
+/* ── P3: Admin ops hamburger menu ───────────────────────────── */
+/* The injected admin ops menu replaces .mobile-nav links for admin */
+#fxacc-ops-menu {
+  display: none;
+  flex-direction: column;
+  padding: 8px 0;
+}
+#fxacc-ops-menu.visible { display: flex; }
+
+.fxacc-ops-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  font-size: .9rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.82);
+  text-decoration: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  transition: background .12s, color .12s;
+}
+.fxacc-ops-link:hover { background: rgba(255,255,255,0.06); color: #fff; }
+.fxacc-ops-link.active { color: var(--acc-pink); }
+.fxacc-ops-link-icon { font-size: 1.1rem; width: 22px; flex-shrink: 0; }
+.fxacc-ops-divider {
+  height: 1px;
+  background: rgba(255,255,255,0.07);
+  margin: 6px 16px;
+}
+.fxacc-ops-badge {
+  margin-left: auto;
+  font-size: .65rem;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 20px;
+  background: rgba(225,48,108,0.2);
+  color: var(--acc-pink);
+  display: none;
+}
+.fxacc-ops-badge.show { display: inline-block; }
+
+/* ── P5: Emergency Queue ────────────────────────────────────── */
+#admin-section-emergency { display: none; }
+
+.fxacc-emergency-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: rgba(255,60,60,0.08);
+  border: 1px solid rgba(255,60,60,0.2);
+  border-radius: 12px;
+  margin-bottom: 16px;
+}
+.fxacc-emergency-pulse {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: #FF3C3C;
+  animation: fxacc-emergency-pulse 1.2s ease-in-out infinite;
+  flex-shrink: 0;
+}
+@keyframes fxacc-emergency-pulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(255,60,60,0.5); }
+  50%      { box-shadow: 0 0 0 8px rgba(255,60,60,0); }
+}
+.fxacc-emergency-title {
+  font-weight: 800;
+  color: #FF3C3C;
+  font-size: .9rem;
+}
+.fxacc-emergency-count {
+  margin-left: auto;
+  font-size: .75rem;
+  color: rgba(255,255,255,0.5);
+}
+
+/* Emergency card overrides */
+.fxacc-card.emergency {
+  border-left: 3px solid #FF3C3C !important;
+  background: rgba(255,60,60,0.04) !important;
+  animation: fxacc-urgency-pulse 1.8s ease-in-out infinite;
+}
+
+/* ── P6: Commission mark collected ─────────────────────────── */
+.fxacc-act-collect {
+  background: rgba(32,201,151,0.12);
+  color: var(--acc-green);
+  border-color: rgba(32,201,151,0.3);
+}
+.fxacc-act-collect:hover { background: rgba(32,201,151,0.22); }
+.fxacc-act-collected {
+  background: rgba(255,255,255,0.04);
+  color: rgba(255,255,255,0.25);
+  border-color: transparent;
+  cursor: default;
+  pointer-events: none;
+}
+
+/* ── P7: Inbox search bar ───────────────────────────────────── */
+.fxacc-search-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 12px;
+  padding: 0 14px;
+  transition: border-color .15s;
+}
+.fxacc-search-bar:focus-within { border-color: rgba(225,48,108,0.4); }
+.fxacc-search-input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  color: #fff;
+  font-size: .86rem;
+  padding: 11px 0;
+}
+.fxacc-search-input::placeholder { color: rgba(255,255,255,0.3); }
+.fxacc-search-icon { color: rgba(255,255,255,0.3); font-size: 1rem; flex-shrink: 0; }
+.fxacc-search-clear {
+  background: none; border: none; cursor: pointer;
+  color: rgba(255,255,255,0.3); font-size: .9rem; padding: 4px;
+  display: none;
+}
+.fxacc-search-clear.show { display: block; }
+.fxacc-search-clear:hover { color: rgba(255,255,255,0.6); }
+
+/* ── P4: Dispatch artisan card enhanced ─────────────────────── */
+/* Scoped override for mobile — cards stack, more space for info */
+@media (max-width: 768px) {
+  .fxdisp-artisan-card {
+    padding: 14px !important;
+    border-radius: 12px !important;
+  }
+  /* Make score badge larger / more prominent */
+  .fxdisp-artisan-card > div:first-child {
+    font-size: .9rem !important;
+    padding: 4px 12px !important;
+  }
+}
+
+/* Activity recency indicator dot */
+.fxacc-activity-dot {
+  display: inline-block;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+.fxacc-activity-dot.recent   { background: var(--acc-green); }
+.fxacc-activity-dot.moderate { background: var(--acc-amber); }
+.fxacc-activity-dot.inactive { background: rgba(255,255,255,0.2); }
+

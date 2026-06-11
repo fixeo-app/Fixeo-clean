@@ -34,7 +34,7 @@
   if (window._fxAccCcLoaded) return; // idempotent
   window._fxAccCcLoaded = true;
 
-  var VERSION = 'acc-v1a';
+  var VERSION = 'acc-v2a';
 
   /* ── Helpers ──────────────────────────────────────────────── */
   function el(id) { return document.getElementById(id); }
@@ -121,6 +121,7 @@
      ════════════════════════════════════════════════════════════ */
 
   var _inboxFilter = 'all';
+  var _inboxSearch = '';
 
   function _ensureInboxSection() {
     if (el('admin-section-inbox')) return;
@@ -138,6 +139,13 @@
         '<button class="fxacc-btn-refresh" onclick="window.FixeoAccCC.refreshInbox()">',
           '🔄 Actualiser',
         '</button>',
+      '</div>',
+
+      /* P7: Inline search */
+      '<div class="fxacc-search-bar">',
+        '<span class="fxacc-search-icon">🔍</span>',
+        '<input class="fxacc-search-input" id="fxacc-inbox-search" type="text" placeholder="Rechercher client, ville, service…" autocomplete="off" autocorrect="off">',
+        '<button class="fxacc-search-clear" id="fxacc-inbox-search-clear" aria-label="Effacer">✕</button>',
       '</div>',
 
       '<div class="fxacc-filters" id="fxacc-inbox-filters">',
@@ -175,6 +183,25 @@
       _inboxFilter = pill.dataset.filter || 'all';
       _renderInboxCards();
     });
+
+    /* P7: Search input */
+    var searchInput = div.querySelector('#fxacc-inbox-search');
+    var searchClear = div.querySelector('#fxacc-inbox-search-clear');
+    if (searchInput) {
+      searchInput.addEventListener('input', function() {
+        _inboxSearch = this.value.toLowerCase().trim();
+        if (searchClear) searchClear.classList.toggle('show', _inboxSearch.length > 0);
+        _renderInboxCards();
+      });
+    }
+    if (searchClear) {
+      searchClear.addEventListener('click', function() {
+        if (searchInput) { searchInput.value = ''; }
+        _inboxSearch = '';
+        searchClear.classList.remove('show');
+        _renderInboxCards();
+      });
+    }
 
     /* Card action delegation */
     div.addEventListener('click', function(e) {
@@ -240,8 +267,24 @@
       if (el2) el2.textContent = counts[k] || 0;
     });
 
-    /* Filter */
+    /* Filter by tab */
     var filtered = _inboxFilter === 'all' ? reqs : reqs.filter(function(r) { return _stKey(r) === _inboxFilter; });
+
+    /* Filter by search */
+    if (_inboxSearch) {
+      var q = _inboxSearch;
+      filtered = filtered.filter(function(r) {
+        return [
+          r.service_category, r.service, r.serviceType,
+          r.city, r.location,
+          r.client_name, r.name, r.fullName,
+          r.phone, r.clientPhone,
+          r.assigned_artisan, r.artisanName,
+          r.description,
+          String(r.id||'').slice(-6)
+        ].some(function(v){ return v && String(v).toLowerCase().includes(q); });
+      });
+    }
 
     /* Non-terminal requests for tab badge (new + assigned + progress) */
     var actionable = counts.new + counts.assigned + counts.progress;
@@ -270,7 +313,7 @@
     container.classList.add('fxacc-section-fade');
   }
 
-  function _renderInboxCard(r) {
+  function _renderInboxCard(r, forceEmergency) {
     var stKey  = _stKey(r);
     var stConf = ST_CONFIG[stKey] || ST_CONFIG['new'];
     var isUrg  = String(r.urgency||'').toLowerCase().includes('urgent');
@@ -323,8 +366,9 @@
         + '</button>';
     }
 
+    var isEmg = forceEmergency || _isEmergency(r);
     return [
-      '<div class="fxacc-card ' + stConf.cardCls + (isUrg ? ' urgent' : '') + '">',
+      '<div class="fxacc-card ' + stConf.cardCls + (isUrg ? ' urgent' : '') + (isEmg && forceEmergency ? ' emergency' : '') + '">',
         '<div class="fxacc-card-top">',
           '<div class="fxacc-card-left">',
             '<div class="fxacc-card-ref">#' + refId + ' · ' + ago + (urgBadge ? ' &nbsp;' + urgBadge : '') + '</div>',
@@ -375,7 +419,59 @@
       '<div class="fxacc-comm-summary" id="fxacc-comm-summary"></div>',
       '<div class="fxacc-cards" id="fxacc-comm-cards"></div>',
     ].join('');
+    /* P6: mark-collected delegation */
+    div.addEventListener('click', function(e) {
+      var btn = e.target.closest('[data-acc-act="mark-collected"]');
+      if (!btn) return;
+      var reqId = btn.dataset.reqId || '';
+      if (!reqId) return;
+      btn.disabled = true;
+      btn.textContent = '…';
+      _markCommissionCollected(reqId, btn);
+    });
+
     main.appendChild(div);
+  }
+
+  /* P6: Mark commission as collected — localStorage update (Supabase write-back is a future step) */
+  function _markCommissionCollected(reqId, btn) {
+    try {
+      var STORAGE_KEY = 'fixeo_client_requests';
+      var raw = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+      var found = false;
+      if (Array.isArray(raw)) {
+        raw = raw.map(function(r) {
+          if (String(r.id||'') === String(reqId)) {
+            found = true;
+            return Object.assign({}, r, { commission_paid: true, commission_status: 'payée' });
+          }
+          return r;
+        });
+        if (found) {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(raw));
+        }
+      }
+      /* Visual feedback */
+      var card = document.getElementById('fxacc-comm-' + reqId);
+      if (card) {
+        card.classList.remove('pending-comm');
+        card.classList.add('paid-comm');
+        if (btn) {
+          btn.className = 'fxacc-act fxacc-act-collected';
+          btn.disabled = true;
+          btn.textContent = '✓ Perçue';
+        }
+        var statusEl = card.querySelector('.fxacc-comm-status-pending');
+        if (statusEl) {
+          statusEl.className = 'fxacc-comm-status-paid';
+          statusEl.textContent = '✓ Perçue';
+        }
+      }
+      _syncBadges();
+    } catch(e) {
+      console.warn('[FixeoAccCC] markCommissionCollected error:', e && e.message);
+      if (btn) { btn.disabled = false; btn.textContent = '💰 Marquer perçue'; }
+    }
   }
 
   function _renderCommissions() {
@@ -451,12 +547,18 @@
       var city    = esc(r.city || '');
       var ago     = timeAgo(r.created_at);
 
+      /* P6: collect button */
+      var collectBtn = isPaid
+        ? '<button class="fxacc-act fxacc-act-collected" disabled>✓ Perçue</button>'
+        : '<button class="fxacc-act fxacc-act-collect" data-acc-act="mark-collected" data-req-id="' + esc(String(r.id||'')) + '">💰 Marquer perçue</button>';
+
       html += [
-        '<div class="fxacc-comm-card ' + (isPaid ? 'paid-comm' : 'pending-comm') + '">',
+        '<div class="fxacc-comm-card ' + (isPaid ? 'paid-comm' : 'pending-comm') + '" id="fxacc-comm-' + esc(String(r.id||'')) + '">',
           '<div class="fxacc-comm-left">',
             '<div class="fxacc-comm-ref">#' + refId + ' · ' + ago + '</div>',
             '<div class="fxacc-comm-service">' + svc + (city ? ' — ' + city : '') + '</div>',
             '<div class="fxacc-comm-artisan">🔧 ' + artisan + '</div>',
+            '<div style="margin-top:8px">' + collectBtn + '</div>',
           '</div>',
           '<div class="fxacc-comm-right">',
             '<div class="fxacc-comm-amount">' + comm.toLocaleString('fr-FR') + ' MAD</div>',
@@ -473,6 +575,274 @@
   }
 
   /* ════════════════════════════════════════════════════════════
+     P5. EMERGENCY QUEUE SECTION
+     ════════════════════════════════════════════════════════════ */
+
+  /* Emergency service categories */
+  var EMERGENCY_CATS = ['serrurerie','plomberie','electricite','électricité','urgence','fuite','panne','debouchage','débouchage','chauffage'];
+
+  function _isEmergency(r) {
+    if (String(r.urgency||'').toLowerCase().includes('urgent')) return true;
+    var svc = String(r.service_category||r.service||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+    return EMERGENCY_CATS.some(function(cat) { return svc.includes(cat); });
+  }
+
+  function _ensureEmergencySection() {
+    if (el('admin-section-emergency')) return;
+    var main = el('main-content');
+    if (!main) return;
+    var div = document.createElement('div');
+    div.id = 'admin-section-emergency';
+    div.style.display = 'none';
+    div.innerHTML = [
+      '<div class="fxacc-emergency-header">',
+        '<div class="fxacc-emergency-pulse"></div>',
+        '<span class="fxacc-emergency-title">🚨 File d\'urgence</span>',
+        '<span class="fxacc-emergency-count" id="fxacc-emg-count">0 demande(s)</span>',
+        '<button class="fxacc-btn-refresh" style="margin-left:auto;padding:6px 10px;font-size:.75rem" onclick="window.FixeoAccCC.refreshEmergency()">🔄</button>',
+      '</div>',
+      '<div class="fxacc-section-head" style="margin-bottom:12px">',
+        '<div>',
+          '<h2 class="fxacc-section-title">Demandes urgentes</h2>',
+          '<p class="fxacc-section-sub">Serrurerie · Plomberie · Électricité · Urgences</p>',
+        '</div>',
+      '</div>',
+      '<div class="fxacc-cards" id="fxacc-emg-cards"></div>',
+    ].join('');
+    /* Insert after inbox section */
+    var inboxSec = el('admin-section-inbox');
+    if (inboxSec && inboxSec.nextSibling) main.insertBefore(div, inboxSec.nextSibling);
+    else main.appendChild(div);
+
+    /* Same card action delegation as inbox */
+    div.addEventListener('click', function(e) {
+      var btn = e.target.closest('[data-acc-act]');
+      if (!btn) return;
+      var act = btn.dataset.accAct;
+      var reqId = btn.dataset.reqId || '';
+      var phone = btn.dataset.phone || '';
+      var name  = btn.dataset.name  || '';
+      if (act === 'assign') {
+        if (typeof window.adminSection === 'function') adminSection('missions');
+        setTimeout(function() {
+          var assignBtn = document.querySelector('.fxams3-act-btn.btn-assign[data-req-id="' + reqId + '"]');
+          if (assignBtn) assignBtn.click();
+        }, 600);
+        return;
+      }
+      if (act === 'contact-sheet') { _openContactSheet(name, phone, reqId); return; }
+      if (act === 'wa') { window.open(btn.dataset.waUrl, '_blank', 'noopener'); return; }
+    });
+  }
+
+  function _renderEmergencyCards() {
+    var countEl   = el('fxacc-emg-count');
+    var container = el('fxacc-emg-cards');
+    if (!container) return;
+
+    var reqs = _readReqs().filter(function(r) {
+      var k = _stKey(r);
+      return _isEmergency(r) && k !== 'validated' && k !== 'cancelled';
+    }).sort(function(a,b) {
+      /* Sort: new first, then by created_at desc */
+      var ak = _stKey(a) === 'new' ? 0 : 1;
+      var bk = _stKey(b) === 'new' ? 0 : 1;
+      if (ak !== bk) return ak - bk;
+      return new Date(b.created_at||0) - new Date(a.created_at||0);
+    });
+
+    if (countEl) countEl.textContent = reqs.length + ' demande' + (reqs.length !== 1 ? 's' : '');
+    _setBadge('emergency', reqs.length > 0 ? reqs.length : null);
+
+    if (reqs.length === 0) {
+      container.innerHTML = [
+        '<div class="fxacc-empty">',
+          '<div class="fxacc-empty-icon">✅</div>',
+          '<div class="fxacc-empty-title">Aucune urgence en cours</div>',
+          '<div class="fxacc-empty-sub">La file d\'urgence est vide.</div>',
+        '</div>'
+      ].join('');
+      return;
+    }
+    container.innerHTML = reqs.map(function(r) {
+      /* Reuse inbox card but force emergency class */
+      return _renderInboxCard(r, true);
+    }).join('');
+  }
+
+  function refreshEmergency() { _renderEmergencyCards(); }
+
+  /* ════════════════════════════════════════════════════════════
+     P4. DISPATCH CARD ENHANCEMENT
+     Adds last activity, acceptance hint, trust visual to
+     existing dispatch engine artisan cards via MutationObserver.
+     Non-invasive: only adds content after dispatch renders.
+     ════════════════════════════════════════════════════════════ */
+  function _enhanceDispatchCards() {
+    /* Observe #admin-section-dispatch for DOM changes */
+    var dispatchSection = null;
+    var observerAttached = false;
+
+    function _doEnhance() {
+      var cards = document.querySelectorAll('.fxdisp-artisan-card:not([data-acc-enhanced])');
+      cards.forEach(function(card) {
+        card.setAttribute('data-acc-enhanced', '1');
+        /* Get artisan name from card text — first bold div */
+        var nameEl = card.querySelector('div[style*="font-weight:700"]');
+        var cardName = nameEl ? nameEl.textContent.trim() : '';
+        if (!cardName) return;
+
+        /* Look up artisan in pool */
+        var artisans = [];
+        try {
+          if (window.FixeoDB && typeof window.FixeoDB.getAllArtisans === 'function') {
+            artisans = window.FixeoDB.getAllArtisans() || [];
+          }
+        } catch(e) {}
+        var artisan = artisans.find(function(a) {
+          return a.name && a.name.toLowerCase() === cardName.toLowerCase();
+        });
+        if (!artisan) return;
+
+        /* Compute activity recency */
+        var daysSince = 999;
+        try {
+          var d = new Date(artisan.updated_at || artisan.created_at);
+          daysSince = (Date.now() - d.getTime()) / 86400000;
+        } catch(e) {}
+        var dotCls = daysSince <= 1 ? 'recent' : daysSince <= 14 ? 'moderate' : 'inactive';
+        var actLabel = daysSince <= 1 ? 'Actif aujourd\'hui'
+                     : daysSince <= 7  ? 'Actif il y a ' + Math.round(daysSince) + 'j'
+                     : daysSince <= 30  ? 'Actif il y a ' + Math.round(daysSince) + 'j'
+                     : 'Inactif ' + Math.round(daysSince) + 'j';
+
+        /* Build extra info strip */
+        var reviewCount = Number(artisan.reviewCount || artisan.review_count || 0);
+        var extraHtml = [
+          '<div style="font-size:.72rem;color:rgba(255,255,255,.4);display:flex;gap:8px;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.06);margin-top:6px;padding-top:6px">',
+            '<span><span class="fxacc-activity-dot ' + dotCls + '"></span>' + actLabel + '</span>',
+            reviewCount > 0 ? '<span>📝 ' + reviewCount + ' avis</span>' : '',
+            artisan.phone || artisan.phone_public ? '<span>📱 Contactable</span>' : '',
+            artisan.onboarding_completed ? '<span>✓ Profil complet</span>' : '',
+          '</div>',
+        ].join('');
+
+        /* Inject before the assign button */
+        var assignBtn = card.querySelector('.fxdisp-assign-btn');
+        if (assignBtn) {
+          var extra = document.createElement('div');
+          extra.innerHTML = extraHtml;
+          card.insertBefore(extra.firstChild, assignBtn);
+        }
+      });
+    }
+
+    function _attachObserver() {
+      if (observerAttached) return;
+      dispatchSection = el('admin-section-dispatch');
+      if (!dispatchSection) return;
+      observerAttached = true;
+      var obs = new MutationObserver(function() { _doEnhance(); });
+      obs.observe(dispatchSection, { childList: true, subtree: true });
+      /* Also run immediately in case content already exists */
+      _doEnhance();
+    }
+
+    /* Attach observer when dispatch section is first shown */
+    document.addEventListener('click', function(e) {
+      var link = e.target.closest('[onclick*="dispatch"], .fxacc-tab[id="fxacc-tab-dispatch"]');
+      if (link) setTimeout(_attachObserver, 300);
+    });
+    /* Also try after a delay in case dispatch renders on load */
+    setTimeout(_attachObserver, 2000);
+  }
+
+  /* ════════════════════════════════════════════════════════════
+     P2. ADMIN OPS HAMBURGER MENU
+     Replaces public .mobile-nav links with admin operations links
+     Injected once; hides public nav links on admin page.
+     ════════════════════════════════════════════════════════════ */
+
+  var OPS_LINKS = [
+    { icon: '📥', label: 'Boîte de réception', section: 'inbox',       badge: 'inbox'       },
+    { icon: '🚨', label: 'File d\'urgence',     section: 'emergency',  badge: 'emergency'   },
+    { icon: '🔧', label: 'Missions actives',    section: 'missions',   badge: 'missions'    },
+    { icon: '🤖', label: 'Dispatch IA',          section: 'dispatch',  badge: 'dispatch'    },
+    { icon: '💰', label: 'Commissions',          section: 'commissions',badge: 'commissions' },
+    null, /* divider */
+    { icon: '📊', label: 'Vue d\'ensemble',     section: 'overview',   badge: null          },
+    { icon: '👷', label: 'Artisans',             section: 'artisans',  badge: null          },
+    { icon: '👥', label: 'Clients',              section: 'clients',   badge: null          },
+    { icon: '📅', label: 'Réservations',         section: 'reservations',badge: null        },
+    null, /* divider */
+    { icon: '⚙️', label: 'Paramètres',          section: 'settings',  badge: null          },
+    { icon: '🚪', label: 'Déconnexion',          section: 'logout',    badge: null          },
+  ];
+
+  function _ensureAdminOpsMenu() {
+    if (el('fxacc-ops-menu')) return;
+    var mobileNav = document.querySelector('.mobile-nav');
+    if (!mobileNav) return;
+
+    /* Hide public nav links — they're irrelevant for admin */
+    mobileNav.querySelectorAll('a[href="index.html"], a[href="index.html#services"], a[href="index.html#artisans-section"], a[href="pricing.html"]').forEach(function(a) {
+      a.style.display = 'none';
+    });
+
+    /* Build ops menu */
+    var opsDiv = document.createElement('div');
+    opsDiv.id = 'fxacc-ops-menu';
+    opsDiv.className = 'fxacc-ops-menu visible';
+
+    var html = '';
+    OPS_LINKS.forEach(function(link) {
+      if (!link) {
+        html += '<div class="fxacc-ops-divider"></div>';
+        return;
+      }
+      html += '<button class="fxacc-ops-link" data-ops-section="' + esc(link.section) + '">'
+        + '<span class="fxacc-ops-link-icon">' + link.icon + '</span>'
+        + esc(link.label)
+        + (link.badge ? '<span class="fxacc-ops-badge" id="fxacc-ops-badge-' + esc(link.badge) + '"></span>' : '')
+        + '</button>';
+    });
+    opsDiv.innerHTML = html;
+
+    /* Insert at top of mobile nav */
+    mobileNav.insertBefore(opsDiv, mobileNav.firstChild);
+
+    /* Click delegation */
+    opsDiv.addEventListener('click', function(e) {
+      var btn = e.target.closest('.fxacc-ops-link');
+      if (!btn) return;
+      var section = btn.dataset.opsSection || '';
+      /* Close hamburger */
+      var hamburgers = document.querySelectorAll('.hamburger');
+      var mNav = document.querySelector('.mobile-nav');
+      hamburgers.forEach(function(h) { h.setAttribute('aria-expanded','false'); h.classList.remove('active'); });
+      if (mNav) mNav.classList.remove('open');
+      document.body.classList.remove('mobile-menu-open');
+
+      if (section === 'logout') {
+        if (typeof window.fixeoLogout === 'function') window.fixeoLogout();
+        return;
+      }
+      setTimeout(function() { _navToSection(section, section); }, 80);
+    });
+  }
+
+  function _syncOpsBadges() {
+    /* Mirror bottom-nav badges to ops menu badges */
+    ['inbox','emergency','missions','dispatch','commissions'].forEach(function(id) {
+      var bottomBadge = el('fxacc-badge-' + id);
+      var opsBadge    = el('fxacc-ops-badge-' + id);
+      if (!bottomBadge || !opsBadge) return;
+      opsBadge.textContent = bottomBadge.textContent;
+      opsBadge.classList.toggle('show', bottomBadge.classList.contains('visible'));
+    });
+  }
+
+  /* ════════════════════════════════════════════════════════════
      3. BOTTOM TAB NAVIGATION
      ════════════════════════════════════════════════════════════ */
 
@@ -481,8 +851,8 @@
   /* Tab config: id → { label, icon, section } */
   var TABS = [
     { id: 'inbox',       icon: '📥', label: 'Inbox',      section: 'inbox'       },
+    { id: 'emergency',   icon: '🚨', label: 'Urgences',   section: 'emergency'   },
     { id: 'missions',    icon: '🔧', label: 'Missions',   section: 'missions'    },
-    { id: 'dispatch',    icon: '🤖', label: 'Dispatch',   section: 'dispatch'    },
     { id: 'commissions', icon: '💰', label: 'Commissions',section: 'commissions' },
     { id: 'more',        icon: '☰',  label: 'Plus',       section: null          }
   ];
@@ -777,6 +1147,13 @@
     _setBadge('inbox', actCount > 0 ? actCount : null);
     _setBadge('missions', doneCount > 0 ? doneCount : null);
 
+    /* Emergency badge: urgent + emergency-category requests that need action */
+    var emergencyCount = reqs.filter(function(r) {
+      var k = _stKey(r);
+      return _isEmergency(r) && k !== 'validated' && k !== 'cancelled';
+    }).length;
+    _setBadge('emergency', emergencyCount > 0 ? emergencyCount : null);
+
     /* Commission badge: count missions needing commission collection */
     var commPending = reqs.filter(function(r) {
       var k = _stKey(r);
@@ -804,39 +1181,42 @@
 
   function _init() {
     _ensureInboxSection();
+    _ensureEmergencySection();
     _ensureCommissionsSection();
     _ensureBottomNav();
     _ensureFAB();
     _patchAdminSectionForMobileClose();
+    _ensureAdminOpsMenu();
+    _enhanceDispatchCards();
 
     /* Initial data render */
     setTimeout(function() {
       _syncBadges();
-      /* If mobile, default to inbox tab */
+      _syncOpsBadges();
+      /* P1: Mobile default landing = Inbox */
       if (isMobile()) {
-        _setActiveTab('inbox');
+        _navToSection('inbox', 'inbox');
       }
-    }, 800);
+    }, 1000); /* Wait for adminSection(overview) from admin.js to complete first */
 
     /* Re-sync badges when requests update */
-    window.addEventListener('fixeo:admin:refresh',           _syncBadges);
-    window.addEventListener('fixeo:client-request-updated', function() {
+    function _onUpdate() {
       _syncBadges();
-      /* If inbox is visible, re-render */
+      _syncOpsBadges();
+      /* Re-render visible sections */
       var inboxSection = el('admin-section-inbox');
-      if (inboxSection && inboxSection.style.display !== 'none') {
-        _renderInboxCards();
-      }
-      /* If commissions visible, re-render */
-      var commSection = el('admin-section-commissions');
-      if (commSection && commSection.style.display !== 'none') {
-        _renderCommissions();
-      }
-    });
-    window.addEventListener('fixeo:data:changed', _syncBadges);
+      if (inboxSection && inboxSection.style.display !== 'none') _renderInboxCards();
+      var emergSection = el('admin-section-emergency');
+      if (emergSection && emergSection.style.display !== 'none') _renderEmergencyCards();
+      var commSection  = el('admin-section-commissions');
+      if (commSection  && commSection.style.display  !== 'none') _renderCommissions();
+    }
+    window.addEventListener('fixeo:admin:refresh',           _onUpdate);
+    window.addEventListener('fixeo:client-request-updated', _onUpdate);
+    window.addEventListener('fixeo:data:changed', function() { _syncBadges(); _syncOpsBadges(); });
 
     /* Periodic badge refresh every 60s */
-    setInterval(_syncBadges, 60000);
+    setInterval(function() { _syncBadges(); _syncOpsBadges(); }, 60000);
 
     console.log('[FixeoAccCC] Admin Command Center ' + VERSION + ' ready');
   }
@@ -846,6 +1226,7 @@
     VERSION:            VERSION,
     refreshInbox:       refreshInbox,
     refreshCommissions: refreshCommissions,
+    refreshEmergency:   refreshEmergency,
     goSection:          goSection,
     closeMoreSheet:     closeMoreSheet,
     syncBadges:         _syncBadges
