@@ -2046,6 +2046,7 @@ section#home.hero.hero-section {
   <link rel="stylesheet" href="css/fixeo-urgent-v2.css?v=1">
   <link rel="stylesheet" href="css/fixeo-request-v2.css?v=1">
   <link rel="stylesheet" href="css/fixeo-request-modal-v2.css?v=rmv2-v1a">
+  <link rel="stylesheet" href="css/fixeo-live-engine-v1.css?v=fle-v1a">
   <link rel="stylesheet" href="css/fixeo-ai-request-engine.css?v=aire-v1a">
   <link rel="stylesheet" href="css/fixeo-hero-insights.css?v=fxhi-v1c">
   <link rel="stylesheet" href="css/fixeo-trust-engine.css?v=fte-v1a">
@@ -2586,6 +2587,82 @@ section#home.hero.hero-section {
     </div>
   </div>
 </section>
+
+<!-- ══════════════════════════════════════════════════════════
+     FIXEO LIVE ENGINE V1 — fle-v1a
+     Real-time infrastructure showcase — below hero, above services
+══════════════════════════════════════════════════════════ -->
+<section id="fle-section" aria-labelledby="fle-title">
+  <div class="container">
+
+    <!-- Header -->
+    <header class="fle-header">
+      <div class="fle-tag"><span class="fle-tag-dot" aria-hidden="true"></span>LIVE</div>
+      <h2 id="fle-title" class="fle-title">FIXEO LIVE <span>ENGINE</span></h2>
+      <p class="fle-subtitle">Infrastructure temps réel des services à domicile</p>
+      <p class="fle-micro">Chaque demande est analysée, scorée et dispatchée en temps réel.</p>
+    </header>
+
+    <!-- 4-block grid -->
+    <div class="fle-grid">
+
+      <!-- BLOCK 1 — LIVE REQUEST FEED -->
+      <div class="fle-card">
+        <div class="fle-card-tag">
+          <span class="fle-card-tag-dot live" aria-hidden="true"></span>
+          DEMANDES EN DIRECT
+        </div>
+        <ul id="fle-feed-list" class="fle-feed-list" aria-label="Demandes récentes" aria-live="polite"></ul>
+      </div>
+
+      <!-- BLOCK 2 — AI MATCHING PIPELINE -->
+      <div class="fle-card">
+        <div class="fle-card-tag">
+          <span class="fle-card-tag-dot ai" aria-hidden="true"></span>
+          MOTEUR IA DISPATCH
+        </div>
+        <div id="fle-pipeline" class="fle-pipeline" aria-label="Pipeline de matching" role="list"></div>
+      </div>
+
+      <!-- BLOCK 3 — BEST MATCH -->
+      <div class="fle-card">
+        <div class="fle-card-tag">
+          <span class="fle-card-tag-dot match" aria-hidden="true"></span>
+          MEILLEURE CORRESPONDANCE
+        </div>
+        <div id="fle-match-inner"></div>
+      </div>
+
+      <!-- BLOCK 4 — NETWORK STATS -->
+      <div class="fle-card">
+        <div class="fle-card-tag">
+          <span class="fle-card-tag-dot stats" aria-hidden="true"></span>
+          RÉSEAU FIXEO
+        </div>
+        <div class="fle-stats-grid">
+          <div class="fle-stat-item">
+            <div class="fle-stat-num fle-stat-num-accent" id="fle-stat-artisans">861+</div>
+            <div class="fle-stat-label">artisans<br>enregistrés</div>
+          </div>
+          <div class="fle-stat-item">
+            <div class="fle-stat-num" id="fle-stat-cities">20</div>
+            <div class="fle-stat-label">villes<br>couvertes</div>
+          </div>
+          <div class="fle-stat-item">
+            <div class="fle-stat-num" id="fle-stat-avail">24/7</div>
+            <div class="fle-stat-label">disponibilité<br>garantie</div>
+          </div>
+          <div class="fle-stat-item">
+            <div class="fle-stat-num fle-stat-num-accent" id="fle-stat-rate">92%</div>
+            <div class="fle-stat-label">missions<br>résolues</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /fle-grid -->
+  </div><!-- /container -->
+</section>
+<!-- /FIXEO LIVE ENGINE -->
 
 <div class="section-divider" aria-hidden="true"></div>
 
@@ -3835,6 +3912,7 @@ window._fixeoAvatarNav = function () {
 <script src="js/fixeo-urgent-v2.js?v=1" defer></script>
 <script src="js/fixeo-request-v2.js?v=1" defer></script>
 <script src="js/fixeo-request-modal-v2.js?v=rmv2-v1a" defer></script>
+<script src="js/fixeo-live-engine-v1.js?v=fle-v1a" defer></script>
 <script src="js/fixeo-ai-request-engine.js?v=aire-v1a" defer></script>
 <script src="js/fixeo-hero-insights.js?v=fxhi-v1c" defer></script>
 <script src="js/fixeo-trust-engine.js?v=fte-v1a" defer></script>
