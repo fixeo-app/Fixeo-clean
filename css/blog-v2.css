@@ -1,0 +1,425 @@
+/**
+ * FIXEO Blog V2 CSS — blog-v2.css
+ * Version: blog-v2a — 2026-06-12
+ * Styles: TOC, FAQ accordion, author block, related grid,
+ *         reading time badge, CTA box, breadcrumb, featured hero
+ */
+
+/* ── Variables ─────────────────────────────────────────────── */
+:root {
+  --v2-glass-bg: rgba(255,255,255,0.04);
+  --v2-glass-border: rgba(255,255,255,0.10);
+  --v2-magenta: #e040fb;
+  --v2-violet: #7c4dff;
+  --v2-green: #00e676;
+  --v2-text: #e8eaf0;
+  --v2-muted: #8892a4;
+  --v2-radius: 12px;
+  --v2-radius-sm: 8px;
+}
+
+/* ── Breadcrumb ────────────────────────────────────────────── */
+.blog-breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.82rem;
+  color: var(--v2-muted);
+  margin-bottom: 1.2rem;
+}
+.blog-breadcrumb a {
+  color: var(--v2-muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.blog-breadcrumb a:hover { color: var(--v2-magenta); }
+.blog-breadcrumb span[aria-hidden] { opacity: 0.5; }
+
+/* ── Reading time badge ────────────────────────────────────── */
+.blog-reading-time {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.82rem;
+  color: var(--v2-muted);
+  background: rgba(224,64,251,0.08);
+  border: 1px solid rgba(224,64,251,0.2);
+  border-radius: 20px;
+  padding: 0.15rem 0.65rem;
+  white-space: nowrap;
+}
+.blog-reading-time-sm {
+  font-size: 0.75rem;
+  color: var(--v2-muted);
+}
+
+/* ── Table of Contents ─────────────────────────────────────── */
+.blog-toc {
+  margin: 2rem 0;
+}
+.blog-toc-inner {
+  background: var(--v2-glass-bg);
+  border: 1px solid var(--v2-glass-border);
+  border-left: 3px solid var(--v2-magenta);
+  border-radius: var(--v2-radius);
+  padding: 1.25rem 1.5rem;
+  backdrop-filter: blur(8px);
+}
+.blog-toc-title {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--v2-magenta);
+  margin-bottom: 0.75rem;
+}
+.blog-toc-list {
+  margin: 0;
+  padding-left: 1.4rem;
+  list-style: decimal;
+}
+.blog-toc-list li {
+  margin-bottom: 0.4rem;
+  line-height: 1.5;
+}
+.blog-toc-list a {
+  color: var(--v2-text);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.2s;
+}
+.blog-toc-list a:hover { color: var(--v2-magenta); }
+
+/* ── FAQ Accordion ─────────────────────────────────────────── */
+.blog-faq {
+  margin: 2.5rem 0;
+}
+.blog-faq h2 {
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  color: var(--v2-text);
+}
+.blog-faq-item {
+  background: var(--v2-glass-bg);
+  border: 1px solid var(--v2-glass-border);
+  border-radius: var(--v2-radius-sm);
+  margin-bottom: 0.75rem;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+.blog-faq-item[open] {
+  border-color: rgba(224,64,251,0.35);
+}
+.blog-faq-item summary {
+  list-style: none;
+  padding: 1rem 1.25rem;
+  cursor: pointer;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-size: 0.95rem;
+  color: var(--v2-text);
+  user-select: none;
+  transition: background 0.2s;
+}
+.blog-faq-item summary:hover {
+  background: rgba(255,255,255,0.04);
+}
+.blog-faq-item summary::-webkit-details-marker { display: none; }
+.blog-faq-item summary::after {
+  content: '▸';
+  flex-shrink: 0;
+  color: var(--v2-magenta);
+  font-size: 0.8rem;
+  transition: transform 0.25s ease;
+  margin-top: 0.15rem;
+}
+.blog-faq-item[open] summary::after {
+  transform: rotate(90deg);
+}
+.blog-faq-answer {
+  padding: 0 1.25rem 1rem;
+  font-size: 0.92rem;
+  color: var(--v2-muted);
+  line-height: 1.7;
+  border-top: 1px solid var(--v2-glass-border);
+}
+.blog-faq-answer p { margin: 0.5rem 0 0; }
+
+/* ── Author block ──────────────────────────────────────────── */
+.blog-author-block {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  background: var(--v2-glass-bg);
+  border: 1px solid var(--v2-glass-border);
+  border-radius: var(--v2-radius);
+  padding: 1.25rem 1.5rem;
+  margin: 2.5rem 0;
+  backdrop-filter: blur(8px);
+}
+.blog-author-avatar {
+  font-size: 2.2rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.blog-author-name {
+  display: block;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--v2-text);
+  margin-bottom: 0.35rem;
+}
+.blog-author-bio {
+  font-size: 0.87rem;
+  color: var(--v2-muted);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ── CTA Box (glass card, gradient border) ─────────────────── */
+.blog-cta-v2 {
+  position: relative;
+  background: rgba(10,10,20,0.7);
+  border-radius: var(--v2-radius);
+  padding: 2px; /* border via gradient wrapper */
+  background: linear-gradient(135deg, var(--v2-magenta), var(--v2-violet));
+  margin: 2.5rem 0;
+}
+.blog-cta-v2-inner {
+  background: rgba(10,10,20,0.88);
+  border-radius: calc(var(--v2-radius) - 2px);
+  padding: 1.75rem 2rem;
+  backdrop-filter: blur(12px);
+  text-align: center;
+}
+.blog-cta-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--v2-text);
+  margin: 0 0 0.5rem;
+}
+.blog-cta-desc {
+  font-size: 0.92rem;
+  color: var(--v2-muted);
+  margin: 0 0 1.25rem;
+  line-height: 1.6;
+}
+.blog-cta-btns {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.blog-cta-btn-primary {
+  background: linear-gradient(135deg, var(--v2-magenta), var(--v2-violet));
+  color: #fff !important;
+  border: none;
+  padding: 0.7rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: opacity 0.2s, transform 0.15s;
+  display: inline-block;
+}
+.blog-cta-btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+.blog-cta-btn-secondary {
+  background: var(--v2-glass-bg);
+  color: var(--v2-text) !important;
+  border: 1px solid var(--v2-glass-border);
+  padding: 0.7rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: border-color 0.2s, background 0.2s;
+  display: inline-block;
+}
+.blog-cta-btn-secondary:hover {
+  border-color: var(--v2-violet);
+  background: rgba(124,77,255,0.1);
+}
+
+/* Standalone CTA (in sections) */
+.blog-cta-v2:not(:has(.blog-cta-v2-inner)) {
+  padding: 1.5rem 2rem;
+  text-align: center;
+}
+
+/* ── Related articles grid ─────────────────────────────────── */
+.blog-related-articles {
+  margin: 2.5rem 0;
+}
+.blog-related-articles h2 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: var(--v2-text);
+}
+.blog-related-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+.blog-related-card {
+  background: var(--v2-glass-bg);
+  border: 1px solid var(--v2-glass-border);
+  border-radius: var(--v2-radius-sm);
+  transition: border-color 0.2s, transform 0.15s;
+  overflow: hidden;
+}
+.blog-related-card:hover {
+  border-color: rgba(224,64,251,0.35);
+  transform: translateY(-2px);
+}
+.blog-related-link {
+  display: block;
+  padding: 1rem;
+  text-decoration: none;
+  color: inherit;
+}
+.blog-related-cat {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--v2-magenta);
+  margin-bottom: 0.4rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.blog-related-link h4 {
+  font-size: 0.88rem;
+  color: var(--v2-text);
+  margin: 0 0 0.5rem;
+  line-height: 1.4;
+}
+@media (max-width: 768px) {
+  .blog-related-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Featured hero (blog index) ────────────────────────────── */
+.blog-featured {
+  margin: 1.5rem 0 2.5rem;
+}
+.blog-featured-link {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 0;
+  background: var(--v2-glass-bg);
+  border: 1px solid var(--v2-glass-border);
+  border-radius: var(--v2-radius);
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.2s;
+}
+.blog-featured-link:hover { border-color: rgba(224,64,251,0.4); }
+.blog-featured-img-wrap {
+  overflow: hidden;
+  max-height: 320px;
+}
+.blog-featured-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.3s ease;
+}
+.blog-featured-link:hover .blog-featured-img-wrap img { transform: scale(1.02); }
+.blog-featured-body {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  justify-content: center;
+}
+.blog-featured-title {
+  font-size: 1.4rem;
+  color: var(--v2-text);
+  line-height: 1.3;
+  margin: 0;
+}
+.blog-featured-desc {
+  font-size: 0.9rem;
+  color: var(--v2-muted);
+  line-height: 1.6;
+  margin: 0;
+}
+.blog-featured-cta {
+  font-size: 0.9rem;
+  color: var(--v2-magenta);
+  font-weight: 600;
+}
+@media (max-width: 768px) {
+  .blog-featured-link {
+    grid-template-columns: 1fr;
+  }
+  .blog-featured-img-wrap { max-height: 200px; }
+}
+
+/* ── Blog index footer link ───────────────────────────────── */
+.blog-index-footer {
+  text-align: center;
+  padding: 2rem 1rem;
+  font-size: 0.9rem;
+  color: var(--v2-muted);
+  border-top: 1px solid var(--v2-glass-border);
+  margin-top: 2rem;
+}
+.blog-footer-link {
+  color: var(--v2-magenta);
+  text-decoration: none;
+  font-weight: 600;
+}
+.blog-footer-link:hover { text-decoration: underline; }
+
+/* ── Blog card meta (reading time on cards) ────────────────── */
+.blog-card-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: var(--v2-muted);
+  margin-top: 0.5rem;
+}
+
+/* ── Inline LP links ───────────────────────────────────────── */
+a.lp-inline-link {
+  color: var(--v2-green);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  font-weight: 500;
+}
+a.lp-inline-link:hover {
+  color: #69f0ae;
+}
+
+/* ── Category filter tabs (shown — all visible, :target highlight) */
+.blog-cat-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+.blog-cat-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.4rem 0.85rem;
+  border-radius: 20px;
+  font-size: 0.82rem;
+  background: var(--v2-glass-bg);
+  border: 1px solid var(--v2-glass-border);
+  color: var(--v2-muted);
+  text-decoration: none;
+  transition: border-color 0.2s, color 0.2s, background 0.2s;
+}
+.blog-cat-pill:hover,
+.blog-cat-pill:target {
+  border-color: var(--v2-magenta);
+  color: var(--v2-text);
+  background: rgba(224,64,251,0.08);
+}
