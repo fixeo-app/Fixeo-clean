@@ -8,7 +8,7 @@
   'use strict';
 
   /* ── VERSION ──────────────────────────────────────────────────── */
-  var VERSION = 'v2g';
+  var VERSION = 'v2h';
 
   /* ── PIPELINE DEFINITION ──────────────────────────────────────── */
   /* Maps a unified key to display config.
@@ -35,8 +35,9 @@
 
   var CITIES = [
     'Casablanca', 'Rabat', 'Marrakech', 'F\u00e8s', 'Tanger',
-    'Agadir', 'Mekn\u00e8s', 'Oujda', 'Kenitra', 'Tetouan',
-    'El Jadida', 'B\u00e9ni Mellal', 'Nador', 'Sal\u00e9', 'Khouribga'
+    'Agadir', 'Mekn\u00e8s', 'Oujda', 'K\u00e9nitra', 'T\u00e9touan',
+    'El Jadida', 'B\u00e9ni Mellal', 'Nador', 'Sal\u00e9', 'Khouribga',
+    'Safi', 'Temara', 'Taza', 'Ouarzazate', 'Mohammedia'
   ];
 
   /* ── STATE ────────────────────────────────────────────────────── */

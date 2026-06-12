@@ -1,0 +1,179 @@
+/**
+ * FIXEO Request Modal V2 — fixeo-request-modal-v2.css
+ * Version: rmv2-v1a — 2026-06-12
+ * Namespace: .fxrm2-* only — zero overrides to existing .request-* classes
+ * Additive over request-form.css, hero-search-modal.css
+ */
+
+/* ── Native input hide (keeps DOM for request-form.js but removes from visual flow) ── */
+.fxrm2-native-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  overflow: hidden !important;
+  clip: rect(0,0,0,0) !important;
+  white-space: nowrap !important;
+  pointer-events: none !important;
+  opacity: 0 !important;
+}
+
+/* ── Section wrappers ── */
+.fxrm2-chip-section {
+  margin-bottom: 18px;
+}
+.fxrm2-city-section {
+  margin-bottom: 16px;
+  /* hidden by default in express mode — shown after problem chip click */
+  transition: opacity .15s;
+}
+
+/* ── Section labels ── */
+.fxrm2-chip-label {
+  font-size: .78rem;
+  font-weight: 700;
+  color: rgba(255,255,255,.5);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  margin: 0 0 10px;
+}
+
+/* ── Problem chip grid ── */
+.fxrm2-chip-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+@media (max-width: 420px) {
+  .fxrm2-chip-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.fxrm2-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 12px 8px;
+  background: rgba(255,255,255,.04);
+  border: 1.5px solid rgba(255,255,255,.09);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background .14s, border-color .14s, transform .1s;
+  min-height: 64px;
+  -webkit-tap-highlight-color: transparent;
+  text-align: center;
+}
+.fxrm2-chip:hover {
+  background: rgba(255,255,255,.08);
+  border-color: rgba(255,255,255,.18);
+}
+.fxrm2-chip:active { transform: scale(.96); }
+.fxrm2-chip.selected {
+  background: rgba(225,48,108,.14);
+  border-color: rgba(225,48,108,.5);
+}
+.fxrm2-chip-icon {
+  font-size: 1.35rem;
+  line-height: 1;
+}
+.fxrm2-chip-label-text {
+  font-size: .72rem;
+  font-weight: 700;
+  color: rgba(255,255,255,.82);
+  line-height: 1.25;
+}
+.fxrm2-chip.selected .fxrm2-chip-label-text {
+  color: #fff;
+}
+
+/* ── City chip row ── */
+.fxrm2-city-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.fxrm2-city-chip {
+  padding: 6px 12px;
+  background: rgba(255,255,255,.04);
+  border: 1.5px solid rgba(255,255,255,.08);
+  border-radius: 20px;
+  font-size: .78rem;
+  font-weight: 600;
+  color: rgba(255,255,255,.7);
+  cursor: pointer;
+  transition: background .13s, border-color .13s;
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+}
+.fxrm2-city-chip:hover {
+  background: rgba(255,255,255,.08);
+  color: #fff;
+}
+.fxrm2-city-chip.selected {
+  background: rgba(32,201,151,.14);
+  border-color: rgba(32,201,151,.45);
+  color: #20C997;
+}
+
+/* ── Phone input upgrade ── */
+.fxrm2-phone-upgraded {
+  font-size: 1rem !important;
+  letter-spacing: .06em;
+  padding: 12px 14px !important;
+}
+
+/* ── Tracking ref badge ── */
+.fxrva-tracking-ref {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+.fxrva-ref-label {
+  font-size: .72rem;
+  color: rgba(255,255,255,.45);
+  white-space: nowrap;
+}
+.fxrva-ref-token {
+  font-size: .78rem;
+  font-weight: 700;
+  font-family: 'Courier New', monospace;
+  color: #20C997;
+  letter-spacing: .04em;
+  word-break: break-all;
+}
+
+/* ── Dashboard link / guest hint ── */
+.fxrva-dashboard-link {
+  margin-top: 8px;
+  margin-bottom: 4px;
+  text-align: center;
+}
+.fxrva-link-dashboard {
+  display: inline-block;
+  font-size: .84rem;
+  font-weight: 700;
+  color: #20C997;
+  text-decoration: none;
+  padding: 8px 18px;
+  border: 1.5px solid rgba(32,201,151,.3);
+  border-radius: 8px;
+  transition: background .15s, border-color .15s;
+}
+.fxrva-link-dashboard:hover {
+  background: rgba(32,201,151,.1);
+  border-color: rgba(32,201,151,.55);
+}
+.fxrva-guest-ref-hint {
+  font-size: .78rem;
+  color: rgba(255,255,255,.45);
+  text-align: center;
+  margin: 0;
+}

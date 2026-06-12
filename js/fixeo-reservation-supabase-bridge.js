@@ -113,6 +113,9 @@
     var date    = safeStr(req.date);
     var slot    = safeStr(req.timeSlot || req.time);
 
+    /* V2: tracking ref from request-form.js v2 */
+    var trackingRef = safeStr(req.tracking_ref);
+
     if (artisan)                   parts.push('Artisan: ' + artisan);
     if (date)                      parts.push('Date: ' + date);
     if (slot)                      parts.push('Créneau: ' + slot);
@@ -121,6 +124,7 @@
     if (budget)                    parts.push('Budget: ' + budget);
     if (urgency && urgency !== 'Normale') parts.push('Urgence: ' + urgency);
     if (ref)                       parts.push('Réf: ' + ref);
+    if (trackingRef)               parts.push('Track: ' + trackingRef);
 
     return parts.length
       ? base + ' [' + parts.join(' · ') + ']'

@@ -2045,6 +2045,7 @@ section#home.hero.hero-section {
   <link rel="stylesheet" href="css/fixeo-hero-lps-v10.css?v=6">
   <link rel="stylesheet" href="css/fixeo-urgent-v2.css?v=1">
   <link rel="stylesheet" href="css/fixeo-request-v2.css?v=1">
+  <link rel="stylesheet" href="css/fixeo-request-modal-v2.css?v=rmv2-v1a">
   <link rel="stylesheet" href="css/fixeo-ai-request-engine.css?v=aire-v1a">
   <link rel="stylesheet" href="css/fixeo-hero-insights.css?v=fxhi-v1c">
   <link rel="stylesheet" href="css/fixeo-trust-engine.css?v=fte-v1a">
@@ -2345,7 +2346,7 @@ section#home.hero.hero-section {
     <!-- Demande urgente - STICKY visible -->
     <button class="btn btn-express btn-sm"
             type="button"
-            onclick="window.FixeoClientRequest ? FixeoClientRequest.openExpress(this) : (window.FixeoReservation ? FixeoReservation.openExpress() : openModal('express-modal'))"
+            onclick="window.FixeoClientRequest ? FixeoClientRequest.openExpress(this) : (window.FixeoReservation ? FixeoReservation.openExpress() : openModal('request-modal'))"
             data-open-express-request="true"
             data-request-mode="express"
             aria-label="Urgent" title="Urgent">
@@ -2406,7 +2407,7 @@ section#home.hero.hero-section {
   <div class="mobile-nav-section mobile-nav-section-actions">
     <div class="mobile-nav-label">Actions</div>
     <a href="#" class="nav-link mobile-nav-action-link mobile-nav-action-link-urgent"
-       onclick="window.FixeoClientRequest ? FixeoClientRequest.openExpress(this) : (window.FixeoReservation ? FixeoReservation.openExpress() : openModal('express-modal')); return false;"
+       onclick="window.FixeoClientRequest ? FixeoClientRequest.openExpress(this) : (window.FixeoReservation ? FixeoReservation.openExpress() : openModal('request-modal')); return false;"
        data-open-express-request="true"
        data-request-mode="express">⚡ Demande urgente</a>
     <button type="button"
@@ -3024,7 +3025,7 @@ section#home.hero.hero-section {
       <button class="btn-express final-cta-urgent" type="button"
               data-open-express-request="true"
               data-request-mode="express"
-              onclick="window.FixeoClientRequest ? FixeoClientRequest.openExpress(this) : (window.FixeoReservation ? FixeoReservation.openExpress() : openModal('express-modal')); return false;">
+              onclick="window.FixeoClientRequest ? FixeoClientRequest.openExpress(this) : (window.FixeoReservation ? FixeoReservation.openExpress() : openModal('request-modal')); return false;">
         Besoin urgent ⚡
       </button>
       <!-- 5. Proof line (no fake timing) -->
@@ -3177,6 +3178,18 @@ section#home.hero.hero-section {
           <option value="Agadir">Agadir</option>
           <option value="Meknès">Meknès</option>
           <option value="Oujda">Oujda</option>
+          <option value="Kénitra">Kénitra</option>
+          <option value="Tétouan">Tétouan</option>
+          <option value="Salé">Salé</option>
+          <option value="Temara">Temara</option>
+          <option value="El Jadida">El Jadida</option>
+          <option value="Béni Mellal">Béni Mellal</option>
+          <option value="Nador">Nador</option>
+          <option value="Khouribga">Khouribga</option>
+          <option value="Safi">Safi</option>
+          <option value="Taza">Taza</option>
+          <option value="Ouarzazate">Ouarzazate</option>
+          <option value="Mohammedia">Mohammedia</option>
         </select>
       </div>
 
@@ -3710,7 +3723,7 @@ function openContentModal(type) {
 <script src="js/marketplace-premium-patch.js?v=50a38b9"></script>
 <script src="js/fixeo-client-requests-store.js?v=50a38b9"></script>
 <script src="js/fixeo-reservation-supabase-bridge.js?v=v3" defer></script>
-<script src="js/request-form.js?v=v1a"></script>
+<script src="js/request-form.js?v=rmv2-v1a"></script>
 <script defer src="js/homepage-conversion-optimizer.js?v=hco3"></script>
 <script src="js/hero-ux-fixes.js?v=50a38b9"></script>
 <script src="js/how-it-works-premium.js?v=50a38b9" defer></script>
@@ -3807,7 +3820,7 @@ window._fixeoAvatarNav = function () {
   class="btn-express"
   data-open-express-request="true"
   data-request-mode="express"
-  onclick="window.FixeoClientRequest ? FixeoClientRequest.openExpress(this) : (window.FixeoReservation ? FixeoReservation.openExpress() : openModal('express-modal')); return false;"
+  onclick="window.FixeoClientRequest ? FixeoClientRequest.openExpress(this) : (window.FixeoReservation ? FixeoReservation.openExpress() : openModal('request-modal')); return false;"
   aria-label="Demande urgente"
   title="Demande urgente"
 >
@@ -3821,6 +3834,7 @@ window._fixeoAvatarNav = function () {
 <script src="js/fixeo-hero-lps-v10.js?v=lps2" defer></script>
 <script src="js/fixeo-urgent-v2.js?v=1" defer></script>
 <script src="js/fixeo-request-v2.js?v=1" defer></script>
+<script src="js/fixeo-request-modal-v2.js?v=rmv2-v1a" defer></script>
 <script src="js/fixeo-ai-request-engine.js?v=aire-v1a" defer></script>
 <script src="js/fixeo-hero-insights.js?v=fxhi-v1c" defer></script>
 <script src="js/fixeo-trust-engine.js?v=fte-v1a" defer></script>

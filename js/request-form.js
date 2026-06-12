@@ -64,6 +64,50 @@
     return REQUEST_COPY[mode] || REQUEST_COPY.default;
   }
 
+  /* ── V2: Service category normalization ─────────────────────────
+     Maps raw problem text → canonical service_category slug.
+     Used by Smart Dispatch V2, Admin V3, and Notification Engine.
+     Never throws — returns original text as fallback.
+  ────────────────────────────────────────────────────────────── */
+  var _SERVICE_NORM_MAP = [
+    { slug: 'plomberie',     words: ['fuite','plomberie','plombier','robinet','tuyau','eau','chauffe','chauffe-eau','sanitaire','canalisation','wc','debouchage','débouchage','évier','evier','bain','douche','toilette'] },
+    { slug: 'serrurerie',    words: ['serrure','serrurier','serrurerie','porte bloqu','porte bloq','bloquée','bloquee','cle','clé','clef','clef','effraction','barillet','cylindre','portail'] },
+    { slug: 'electricite',   words: ['panne elec','panne élec','electricit','électricité','electricien','électricien','disjoncteur','court-circuit','courant','coupure','tableau','prise','lumiere','lumière','câble','cable','interrupteur'] },
+    { slug: 'climatisation', words: ['clim','climatisation','climatiseur','froid','ventilation','reversible','réversible','pompe','chaleur'] },
+    { slug: 'peinture',      words: ['peinture','peintre','facade','façade','mur','enduit','ravalement'] },
+    { slug: 'menuiserie',    words: ['menuiserie','menuisier','bois','porte','placard','volet','parquet','paroi','fenetre','fenêtre'] },
+    { slug: 'maconnerie',    words: ['maçonnerie','maconnerie','macon','maçon','béton','beton','carrelage','dallage','mur porteur','chape','crépi','crêpi'] },
+    { slug: 'nettoyage',     words: ['nettoyage','menage','ménage','nettoyer','desinfection','désinfection','vitres'] },
+    { slug: 'jardinage',     words: ['jardinage','jardinier','pelouse','haie','arrosage','jardin','taille'] },
+    { slug: 'demenagement',  words: ['demenagement','déménagement','demenager','déménager','transport meuble','carton','déménage'] },
+    { slug: 'plomberie',     words: ['gaz','chauffe gaz','gaz','odeur gaz'] }  /* gaz = plomberie urgence */
+  ];
+
+  function _normalizeServiceCategory(raw) {
+    if (!raw) return '';
+    var s = String(raw).toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9 ]/g, ' ').trim();
+    for (var i = 0; i < _SERVICE_NORM_MAP.length; i++) {
+      var entry = _SERVICE_NORM_MAP[i];
+      for (var j = 0; j < entry.words.length; j++) {
+        if (s.indexOf(entry.words[j]) !== -1) return entry.slug;
+      }
+    }
+    return ''; /* unknown — caller falls back to raw text */
+  }
+
+  /* ── V2: Tracking reference generator ───────────────────────────
+     Generates a short unique token for guest request tracking.
+     Format: fxtrk-XXXXXXXX (8 alphanumeric chars)
+  ────────────────────────────────────────────────────────────── */
+  function _genTrackingRef() {
+    var chars = 'abcdefghjkmnpqrstuvwxyz23456789';
+    var ref = 'fxtrk-';
+    for (var i = 0; i < 8; i++) ref += chars[Math.floor(Math.random() * chars.length)];
+    return ref;
+  }
+
   function getFormPayload(form, triggerMode) {
     const urgenceValue = form.querySelector('input[name="urgence"]:checked')?.value || 'Normal';
     const serviceValue = ($('#request-problem', form)?.value || '').trim();
@@ -71,9 +115,11 @@
     const cityValue = ($('#request-city', form)?.value || '').trim();
     const budgetValue = ($('#request-budget', form)?.value || '').trim();
     const phoneValue = ($('#request-phone', form)?.value || '').trim();
+    /* V2: normalize to canonical service_category slug */
+    const normalizedCategory = _normalizeServiceCategory(serviceValue) || serviceValue;
     return {
-      service: serviceValue,
-      problem: serviceValue,
+      service: normalizedCategory,           /* canonical slug for Dispatch V2 + Admin */
+      problem: serviceValue,                 /* original text preserved for display */
       description: descriptionValue || 'Description à préciser',
       ville: cityValue,
       city: cityValue,
@@ -82,7 +128,9 @@
       budget: budgetValue,
       telephone: phoneValue,
       phone: phoneValue,
-      source: triggerMode || 'default'
+      source: triggerMode || 'default',
+      _normalized_category: normalizedCategory,
+      _raw_problem: serviceValue
     };
   }
 
@@ -199,6 +247,9 @@
 
   function saveRequest(payload) {
     try {
+      /* V2: generate tracking ref before store write */
+      var trackingRef = _genTrackingRef();
+
       if (window.FixeoClientRequestsStore?.appendRequest) {
         return window.FixeoClientRequestsStore.appendRequest({
           service: payload.service || payload.problem,
@@ -207,6 +258,7 @@
           budget: payload.budget,
           phone: payload.phone || payload.telephone,
           urgency: payload.urgency || payload.urgence,
+          tracking_ref: trackingRef,
           viewed: false
         }) || { request: null, duplicated: false };
       }
@@ -221,6 +273,7 @@
         budget: payload.budget || '',
         phone: payload.phone || payload.telephone || '',
         urgency: payload.urgency || payload.urgence || 'Normal',
+        tracking_ref: trackingRef,
         status: 'nouvelle',
         created_at: new Date().toISOString(),
         assigned_artisan: null,
@@ -442,17 +495,18 @@
     modal.setAttribute('data-request-mode', mode);
   }
 
-  function showSuccess(whatsappLink, mode) {
+  function showSuccess(whatsappLink, mode, savedRequest) {
     /*
-       V2-B: Upgraded success state.
+       V2-C: Upgraded success state with tracking ref + auth dashboard link.
        Populates the richer #request-success HTML structure:
          - .fxrva-success-title     ← copy.successTitle
          - .fxrva-success-sub       ← copy.successText
-         - .fxrva-success-notice    ← copy.successNotice (new — honest notice block)
-         - #request-whatsapp-link   ← WA primary CTA (main label)
-         - .fxrva-wa-sub-label      ← contextual secondary label (photo/location hint)
-       Falls back cleanly if new elements are absent (backward compat with
-       dashboard-client.html which has a simpler success block).
+         - .fxrva-success-notice    ← copy.successNotice
+         - #request-whatsapp-link   ← WA primary CTA
+         - .fxrva-wa-sub-label      ← contextual secondary label
+         - #fxrva-tracking-ref      ← tracking ref badge (injected if absent)
+         - #fxrva-dashboard-link    ← "Voir ma demande" (auth users only, injected if absent)
+       Falls back cleanly if new elements are absent.
     */
     const form = $('#request-form');
     const success = $('#request-success');
@@ -486,24 +540,86 @@
       whatsappBtn.setAttribute('target', '_blank');
       whatsappBtn.setAttribute('rel', 'noopener noreferrer');
       whatsappBtn.setAttribute('aria-label', copy.successWaLabel || 'Coordination via WhatsApp');
-      /* Label: icon + main text */
       const waIco = whatsappBtn.querySelector('.fxrva-wa-ico');
       const waMainLabel = whatsappBtn.querySelector('.fxrva-wa-main-label');
       if (waMainLabel) {
         waMainLabel.textContent = copy.successWaLabel || 'Rester joignable via WhatsApp';
       } else if (!waIco) {
-        /* Older structure (dashboard) — plain text */
         whatsappBtn.textContent = copy.successWaLabel || 'Rester joignable via WhatsApp';
       }
       delete whatsappBtn.dataset.optionalShare;
     }
 
-    /* ── WA sub-label (contextual action hint) ── */
+    /* ── WA sub-label ── */
     const waSubLabel = success.querySelector('.fxrva-wa-sub-label');
     if (waSubLabel && copy.successWaSubLabel) {
       waSubLabel.textContent = copy.successWaSubLabel;
       waSubLabel.hidden = false;
     }
+
+    /* ── V2-C: Tracking ref badge ────────────────────────────────
+       Show ref for both guest and auth. Guests can note it down.
+       Injected once and updated on each submit (modal may be reused).
+    ─────────────────────────────────────────────────────────── */
+    try {
+      const trackRef = savedRequest && savedRequest.tracking_ref;
+      let refEl = success.querySelector('#fxrva-tracking-ref');
+      if (!refEl) {
+        refEl = document.createElement('div');
+        refEl.id = 'fxrva-tracking-ref';
+        refEl.className = 'fxrva-tracking-ref';
+        /* Insert before WA button */
+        const waBtn = success.querySelector('#request-whatsapp-link, .fxrva-wa-primary');
+        if (waBtn) waBtn.insertAdjacentElement('beforebegin', refEl);
+        else success.appendChild(refEl);
+      }
+      if (trackRef) {
+        refEl.innerHTML =
+          '<span class="fxrva-ref-label">Référence demande&nbsp;:</span>' +
+          '<span class="fxrva-ref-token">' + trackRef + '</span>';
+        refEl.hidden = false;
+      } else {
+        refEl.hidden = true;
+      }
+
+      /* ── V2-C: Auth dashboard link ─────────────────────────────
+         Check if user is authenticated via FixeoSupabase session.
+         If yes → show "Voir ma demande dans mon espace".
+         If no  → show "Gardez cette référence pour le suivi".
+      ──────────────────────────────────────────────────────── */
+      let linkEl = success.querySelector('#fxrva-dashboard-link');
+      if (!linkEl) {
+        linkEl = document.createElement('div');
+        linkEl.id = 'fxrva-dashboard-link';
+        linkEl.className = 'fxrva-dashboard-link';
+        const newOneBtn = success.querySelector('#request-new-one, .fxrva-new-request');
+        if (newOneBtn) newOneBtn.insertAdjacentElement('beforebegin', linkEl);
+        else success.appendChild(linkEl);
+      }
+
+      /* Async auth check — non-blocking, updates linkEl when resolved */
+      (async function() {
+        try {
+          var isAuth = false;
+          var FS = window.FixeoSupabase;
+          if (FS && FS.getClient) {
+            var sb = await FS.getClient();
+            var sess = await sb.auth.getSession();
+            isAuth = !!(sess && sess.data && sess.data.session && sess.data.session.user);
+          }
+          if (isAuth) {
+            linkEl.innerHTML =
+              '<a href="dashboard-client.html" class="fxrva-link-dashboard">' +
+              '📋 Voir ma demande dans mon espace</a>';
+          } else {
+            linkEl.innerHTML = trackRef
+              ? '<p class="fxrva-guest-ref-hint">💾 Notez votre référence — elle vous permettra de suivre votre demande.</p>'
+              : '';
+          }
+          linkEl.hidden = false;
+        } catch (_) { linkEl.hidden = true; }
+      })();
+    } catch (_) { /* non-critical — success screen still works */ }
   }
 
   function resetRequestModal() {
@@ -606,7 +722,7 @@
         return;
       }
 
-      showSuccess(whatsappLink, triggerMode);
+      showSuccess(whatsappLink, triggerMode, savedRequest);
       setRequestFeedback(form, duplicated ? 'Cette demande existe déjà dans Fixeo.' : 'Votre demande a été publiée sur Fixeo', 'success');
       form.reset();
       ensureDescriptionField();
