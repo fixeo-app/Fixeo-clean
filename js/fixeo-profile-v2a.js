@@ -1840,7 +1840,8 @@
 
           var SELECT = 'id,legacy_id,name,category,city,description,badge_label,rating,' +
                        'review_count,availability,verified,completed_missions,' +
-                       'owner_user_id,created_at';
+                       'owner_user_id,created_at,' +
+                       'response_time_min,phone,is_claimed,trust_score'; /* fxpv3-v1a: extended */
 
           /* Step 1: Population A — try legacy_id */
           var r1 = await client.from('artisans').select(SELECT)
@@ -1892,6 +1893,11 @@
         photo_url:            artisan.photo_url || artisan.avatar || '',
         avatar:               artisan.photo_url || artisan.avatar || '',
         created_at:           artisan.created_at || '',
+        /* fxpv3-v1a: extended fields for profile V3 enhancement layer */
+        response_time_min:    parseInt(artisan.response_time_min || 0, 10),
+        phone:                artisan.phone || '',
+        is_claimed:           !!artisan.is_claimed,
+        trust_score:          parseFloat(artisan.trust_score) || 0,
       };
 
       /* V2-A2: Pre-seed localStorage with validated Supabase missions for this artisan.
