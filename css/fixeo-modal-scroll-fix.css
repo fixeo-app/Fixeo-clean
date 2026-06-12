@@ -1,0 +1,132 @@
+/**
+ * fixeo-modal-scroll-fix.css — fxmsf-v1a
+ *
+ * ROOT CAUSE FIX: fixeo-urgent-modal-v3.css fuv3-v1a contains:
+ *   #request-modal.open { position: relative; }
+ * This overrides main.css .modal { position: fixed }, detaching the modal
+ * from viewport anchoring and causing the page to scroll behind it on mobile.
+ *
+ * ADDITIONAL: The entire .modal is the scroll container (header + content scroll
+ * together), and iOS momentum scrolling propagates past the modal boundary.
+ * Fix: modal = overflow:hidden container; shell = isolated scroll container.
+ *
+ * Applies to: #request-modal and standard .request-modal only.
+ * Does NOT affect: dashboard fxv2-modal-overlay, comment-modal, content-modal,
+ *                  express-modal (IIFE2 legacy), artisan reservation modal.
+ *
+ * Version: fxmsf-v1a — 2026-06-12
+ * Load order: AFTER fixeo-urgent-modal-v3-patch.css (last in head)
+ */
+
+/* ── 1. OVERRIDE: restore fixed positioning — fuv3-v1a wrongly sets relative ── */
+#request-modal.open {
+  position: fixed !important;    /* undo fuv3-v1a position:relative override */
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) scale(1) !important;
+}
+
+/* ── 2. Modal frame: fixed viewport container, clips overflow ─────────────── */
+#request-modal {
+  /* Frame must not scroll — only the inner shell scrolls */
+  overflow: hidden !important;
+  /* Use dvh for accurate mobile viewport (excludes browser chrome) */
+  max-height: min(90dvh, 780px) !important;
+  /* Flex column so header stays pinned and shell fills remaining height */
+  display: flex !important;
+  flex-direction: column !important;
+  padding: 0 !important; /* padding moved inside header/shell */
+  /* Suppress the default .modal.open display:block to allow flex */
+}
+
+/* Only apply flex layout when actually open */
+#request-modal:not(.open) {
+  display: none !important;
+  flex-direction: column !important; /* keep ready for open */
+}
+
+/* ── 3. Header: pinned, never scrolls ────────────────────────────────────── */
+#request-modal .request-modal-header {
+  flex-shrink: 0;
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  position: relative; /* needed for fuv3 accent bar absolute positioning */
+  z-index: 1;
+}
+
+/* fuv3 accent bar: top of header (header is now the positioned ancestor) */
+#request-modal .fuv3-accent-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  border-radius: 2px 2px 0 0; /* match modal border-radius top */
+}
+
+/* ── 4. Shell: isolated scroll container ────────────────────────────────── */
+#request-modal .request-modal-shell {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch; /* iOS momentum scroll within shell only */
+  overscroll-behavior: contain;      /* prevent scroll chaining to page */
+  padding: 16px 20px 20px;
+  min-height: 0; /* flex child must have min-height:0 to allow shrinking */
+}
+
+/* ── 5. Body scroll lock: belt-and-suspenders on modal open ─────────────── */
+body.fxmsf-locked {
+  overflow: hidden !important;
+  /* iOS Safari: prevent rubber-band scroll of body */
+  position: fixed;
+  width: 100%;
+  /* Preserve scroll position (restored by JS shim) */
+  left: 0;
+  right: 0;
+}
+
+/* ── 6. Submit button: always reachable — pad bottom of shell ───────────── */
+#request-modal .request-submit-btn {
+  margin-top: 6px;
+  margin-bottom: env(safe-area-inset-bottom, 0px); /* iPhone home indicator */
+}
+
+/* ── 7. fuv3 injected trust booster — bottom padding safe area ─────────── */
+#request-modal #fuv3-trust-booster {
+  padding-bottom: max(12px, env(safe-area-inset-bottom, 12px));
+}
+
+/* ── 8. Mobile ≤640px refinements ────────────────────────────────────────── */
+@media (max-width: 640px) {
+  #request-modal {
+    max-height: min(92dvh, 780px) !important;
+    width: calc(100% - 16px) !important;
+    border-radius: 18px !important;
+    /* Bottom-anchored on very small phones */
+    top: 50% !important;
+  }
+
+  #request-modal .request-modal-header {
+    padding: 14px 16px 12px;
+  }
+
+  #request-modal .request-modal-shell {
+    padding: 12px 16px 16px;
+  }
+}
+
+/* ── 9. Desktop — preserve original feel ────────────────────────────────── */
+@media (min-width: 641px) {
+  #request-modal {
+    max-height: min(88vh, 760px) !important;
+  }
+}
+
+/* ── 10. Standard modal (non-urgent) identical shell behavior ───────────── */
+/* Ensures "Publier ma demande" (default mode) also benefits from fix */
+#request-modal[data-request-mode="default"] .request-modal-shell,
+#request-modal:not([data-request-mode]) .request-modal-shell {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}

@@ -42,5 +42,52 @@
     _patch();
   }
 
-  window.FixeoExpressShim = { VERSION: 'fxrs-v1a' };
+  window.FixeoExpressShim = { VERSION: 'fxrs-v1b' };
+})();
+
+/* ── iOS body scroll lock for #request-modal ── */
+(function () {
+  'use strict';
+  var _scrollY = 0;
+  var _locked  = false;
+
+  function _lock() {
+    if (_locked) return;
+    _locked  = true;
+    _scrollY = window.scrollY || window.pageYOffset || 0;
+    document.body.classList.add('fxmsf-locked');
+    document.body.style.top = '-' + _scrollY + 'px';
+  }
+
+  function _unlock() {
+    if (!_locked) return;
+    _locked = false;
+    document.body.classList.remove('fxmsf-locked');
+    document.body.style.top = '';
+    document.body.style.overflow = '';
+    window.scrollTo(0, _scrollY);
+  }
+
+  function _init() {
+    var modal = document.getElementById('request-modal');
+    if (!modal) return;
+
+    var obs = new MutationObserver(function (muts) {
+      muts.forEach(function (m) {
+        if (m.attributeName !== 'class') return;
+        if (modal.classList.contains('open')) {
+          _lock();
+        } else {
+          _unlock();
+        }
+      });
+    });
+    obs.observe(modal, { attributes: true, attributeFilter: ['class'] });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', _init, { once: true });
+  } else {
+    _init();
+  }
 })();
