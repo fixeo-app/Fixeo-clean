@@ -1,0 +1,294 @@
+/* ============================================================
+   FIXEO AI ESTIMATION ENGINE V1 — STYLES
+   Version: faee-v1a
+   Namespace: .faee-* / #faee-*
+   Zero overrides to existing .fxrv2-* or .fixeo-res-* styles
+   ============================================================ */
+
+/* ── Container ─────────────────────────────────────────────── */
+.faee-container {
+  margin: 12px 0 8px;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  will-change: opacity, transform;
+}
+
+.faee-container.faee-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Base Card ─────────────────────────────────────────────── */
+.faee-card {
+  position: relative;
+  background: linear-gradient(135deg,
+    rgba(18, 18, 28, 0.95) 0%,
+    rgba(24, 20, 40, 0.95) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 16px;
+  padding: 18px 18px 14px;
+  overflow: hidden;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.04),
+    0 4px 24px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+/* Premium top glow bar */
+.faee-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(255, 120, 40, 0.8) 25%,
+    rgba(255, 60, 120, 0.9) 55%,
+    rgba(140, 60, 255, 0.8) 80%,
+    transparent 100%);
+  border-radius: 16px 16px 0 0;
+}
+
+/* Subtle background glow */
+.faee-card::after {
+  content: '';
+  position: absolute;
+  top: -30%; left: 20%; right: 20%;
+  height: 60%;
+  background: radial-gradient(ellipse,
+    rgba(255, 80, 120, 0.06) 0%,
+    transparent 70%);
+  pointer-events: none;
+}
+
+/* ── Urgent variant ────────────────────────────────────────── */
+.faee-card.faee-urgent {
+  border-color: rgba(255, 65, 108, 0.35);
+  background: linear-gradient(135deg,
+    rgba(25, 12, 22, 0.97) 0%,
+    rgba(28, 16, 24, 0.97) 100%);
+  animation: faee-pulse-border 2.5s ease-in-out infinite;
+}
+
+.faee-card.faee-urgent::before {
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(255, 40, 80, 0.9) 30%,
+    rgba(255, 80, 40, 0.95) 60%,
+    transparent 100%);
+}
+
+@keyframes faee-pulse-border {
+  0%, 100% { box-shadow: 0 0 0 1px rgba(255, 65, 108, 0.35), 0 4px 24px rgba(0,0,0,.45); }
+  50%       { box-shadow: 0 0 0 1px rgba(255, 65, 108, 0.6), 0 4px 32px rgba(255,65,108,.12); }
+}
+
+/* ── Header row ────────────────────────────────────────────── */
+.faee-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.faee-logo-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.faee-logo-mark {
+  font-size: 0.75rem;
+  background: linear-gradient(135deg, #ff783c, #ff3c7a, #8c3cff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
+}
+
+.faee-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.faee-urgent-badge {
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #ff4169;
+  background: rgba(255, 65, 105, 0.12);
+  border: 1px solid rgba(255, 65, 105, 0.35);
+  padding: 3px 8px;
+  border-radius: 20px;
+  animation: faee-badge-blink 1.8s ease-in-out infinite;
+}
+
+@keyframes faee-badge-blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.6; }
+}
+
+/* ── Price hero ────────────────────────────────────────────── */
+.faee-price-block {
+  margin-bottom: 14px;
+  text-align: left;
+}
+
+.faee-price-range {
+  font-size: 1.75rem;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  background: linear-gradient(135deg, #ffffff 30%, rgba(255,255,255,0.7) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.faee-price-note {
+  font-size: 0.68rem;
+  color: rgba(255, 255, 255, 0.38);
+  margin-top: 3px;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+
+/* ── Stats grid ────────────────────────────────────────────── */
+.faee-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+/* If 4 stats (artisan count added), use 4-col */
+.faee-stats:has(.faee-stat:nth-child(4)) {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.faee-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 10px;
+  padding: 9px 10px;
+}
+
+.faee-stat-val {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.faee-stat-lbl {
+  font-size: 0.62rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.38);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* ── Surcharges ────────────────────────────────────────────── */
+.faee-surcharges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.faee-surcharge-badge {
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: rgba(255, 200, 60, 0.10);
+  border: 1px solid rgba(255, 200, 60, 0.25);
+  color: rgba(255, 220, 100, 0.9);
+  letter-spacing: 0.02em;
+}
+
+.faee-card.faee-urgent .faee-surcharge-badge {
+  background: rgba(255, 65, 108, 0.10);
+  border-color: rgba(255, 65, 108, 0.28);
+  color: rgba(255, 120, 130, 0.95);
+}
+
+/* ── Disclaimer ────────────────────────────────────────────── */
+.faee-disclaimer {
+  font-size: 0.63rem;
+  color: rgba(255, 255, 255, 0.32);
+  line-height: 1.5;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  margin-top: 4px;
+}
+
+/* ── Idle state (no service selected) ─────────────────────── */
+.faee-idle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  opacity: 0.85;
+}
+
+.faee-idle-icon {
+  font-size: 1.1rem;
+  background: linear-gradient(135deg, #ff783c, #ff3c7a);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  flex-shrink: 0;
+  animation: faee-idle-pulse 3s ease-in-out infinite;
+}
+
+@keyframes faee-idle-pulse {
+  0%, 100% { opacity: 0.6; }
+  50%       { opacity: 1; }
+}
+
+.faee-idle-text {
+  font-size: 0.76rem;
+  color: rgba(255, 255, 255, 0.45);
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+/* ── Mobile ────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .faee-card {
+    padding: 15px 14px 12px;
+    border-radius: 14px;
+  }
+
+  .faee-price-range {
+    font-size: 1.5rem;
+  }
+
+  .faee-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .faee-stats:has(.faee-stat:nth-child(4)) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .faee-stat-val {
+    font-size: 0.73rem;
+  }
+
+  .faee-label {
+    font-size: 0.58rem;
+  }
+}
