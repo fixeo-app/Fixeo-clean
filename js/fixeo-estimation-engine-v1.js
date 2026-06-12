@@ -1,9 +1,11 @@
 /* ============================================================
    FIXEO AI ESTIMATION ENGINE V1
-   Version: faee-v1a
-   Strategy: Additive hook onto #fixeo-reservation-modal via
-             MutationObserver — ZERO changes to reservation.js,
-             reservation-v2.js, or any other existing file.
+   Version: faee-v1b
+   Strategy: Additive hooks onto:
+     1. #fixeo-reservation-modal (artisan reservation)
+     2. #request-modal (homepage "Publier une demande" + Urgent)
+   ZERO changes to reservation.js, reservation-v2.js,
+   request-form.js, fixeo-request-modal-v2.js, or any core file.
    Namespace: .faee-* / #faee-* / window.FixeoEstimation
    Guard:     window._fxEstV1Loaded
    ============================================================ */
@@ -13,8 +15,9 @@
   if (window._fxEstV1Loaded) return;
   window._fxEstV1Loaded = true;
 
-  var VERSION = 'faee-v1a';
-  var MODAL_ID = 'fixeo-reservation-modal';
+  var VERSION          = 'faee-v1b';
+  var MODAL_ID         = 'fixeo-reservation-modal';   /* artisan reservation modal */
+  var REQUEST_MODAL_ID = 'request-modal';              /* homepage request modal    */
 
   /* ── HELPERS ─────────────────────────────────────────────── */
   function qs(sel, ctx)  { return (ctx || document).querySelector(sel); }
@@ -400,21 +403,156 @@
     m._faeeObs = obs; /* store ref for cleanup */
   }
 
+  /* ── REQUEST MODAL INTEGRATION (#request-modal) ─────────── */
+  /* Reads: #request-problem (text), #request-city (select),
+            input[name="urgence"] (radio)
+     Injects: #faee-rm-container ABOVE the submit button
+     Never touches: submit, validation, request-form.js, request-modal-v2.js */
+
+  function _readRequestModalState(m) {
+    var problemEl = qs('#request-problem', m);
+    var cityEl    = qs('#request-city',    m);
+    var urgRadio  = m.querySelector('input[name="urgence"]:checked');
+    var isUrgent  = urgRadio && urgRadio.value && urgRadio.value.toLowerCase().indexOf('urgent') !== -1;
+
+    /* Also check if modal was opened in express mode (class on modal or data attr) */
+    var isExpress = m.classList.contains('express') ||
+                    m.dataset.mode === 'express' ||
+                    !!(qs('.fxrm2-chip.fxrm2-chip-active[data-urgency="urgent"]', m));
+
+    var problem   = (problemEl ? problemEl.value : '').trim();
+    var city      = (cityEl    ? cityEl.value    : '').trim();
+
+    /* Also pick up chip-selected problem label if text input is empty */
+    if (!problem) {
+      var activeChip = qs('.fxrm2-chip-active .fxrm2-chip-label-text', m)
+                    || qs('.fxrm2-chip.active .fxrm2-chip-label-text', m);
+      if (activeChip) problem = activeChip.textContent.trim();
+    }
+
+    return {
+      serviceName: problem,
+      description: problem,
+      artisan:     { city: city },
+      isUrgent:    isUrgent || isExpress,
+      isExpress:   isExpress
+    };
+  }
+
+  function _getOrCreateRMContainer(m) {
+    var existing = qs('#faee-rm-container', m);
+    if (existing) return existing;
+
+    var container = document.createElement('div');
+    container.id = 'faee-rm-container';
+    container.className = 'faee-container faee-rm';
+
+    /* Inject BEFORE the submit button — inside #request-form, above .request-submit-btn */
+    var submitBtn = qs('.request-submit-btn', m);
+    if (submitBtn && submitBtn.parentNode) {
+      submitBtn.parentNode.insertBefore(container, submitBtn);
+    } else {
+      /* Fallback: append to form body */
+      var form = qs('#request-form', m) || qs('.request-modal-shell', m);
+      if (form) form.appendChild(container);
+    }
+
+    return container;
+  }
+
+  function _updateRM(m) {
+    /* Only update when modal is visible */
+    if (!m) return;
+    var isOpen = m.classList.contains('open') || m.style.display === 'block' ||
+                 m.style.display === 'flex'   || !m.hidden;
+    if (!isOpen) return;
+
+    try {
+      var st     = _readRequestModalState(m);
+      var result = analyze(st);
+      /* For request modal: show card only when problem text exists OR urgent mode */
+      var hasProblem = !!st.serviceName || st.isUrgent;
+      var html   = _renderCard(result, hasProblem);
+      var cont   = _getOrCreateRMContainer(m);
+      if (cont) {
+        if (cont.innerHTML !== html) cont.innerHTML = html;
+        cont.classList.add('faee-visible');
+      }
+    } catch(e) {
+      if (window.console && console.warn) console.warn('[faee-rm] update error', e);
+    }
+  }
+
+  function _attachToRequestModal(m) {
+    if (m._faeeRmObs) return; /* already attached */
+
+    var _t = null;
+    function _debounce() {
+      clearTimeout(_t);
+      _t = setTimeout(function() { _updateRM(m); }, 200);
+    }
+
+    /* Immediate render (deferred — let request-modal-v2.js run its chips first) */
+    setTimeout(function() { _updateRM(m); }, 50);
+
+    /* Watch problem input (text) */
+    var problemEl = qs('#request-problem', m);
+    if (problemEl) {
+      problemEl.addEventListener('input',  _debounce);
+      problemEl.addEventListener('change', _debounce);
+    }
+
+    /* Watch city select */
+    var cityEl = qs('#request-city', m);
+    if (cityEl) cityEl.addEventListener('change', _debounce);
+
+    /* Watch urgency radios */
+    var urgRadios = qsa('input[name="urgence"]', m);
+    urgRadios.forEach(function(r) { r.addEventListener('change', _debounce); });
+
+    /* MutationObserver — catches chip clicks (request-modal-v2.js writes to input value) */
+    var obs = new MutationObserver(function(muts) {
+      var relevant = muts.some(function(mu) {
+        return mu.type === 'childList' ||
+               (mu.type === 'attributes' && (mu.attributeName === 'class' || mu.attributeName === 'value'));
+      });
+      if (relevant) _debounce();
+    });
+    obs.observe(m, {
+      childList: true, subtree: true,
+      attributes: true, attributeFilter: ['class','value','data-mode']
+    });
+
+    m._faeeRmObs = obs;
+  }
+
   /* ── BOOT — MutationObserver on document ─────────────────── */
 
   function _boot() {
-    /* Try immediate attach if modal already exists */
+    /* 1. Reservation modal (#fixeo-reservation-modal) */
     var m = document.getElementById(MODAL_ID);
     if (m) _attachToModal(m);
 
-    /* Watch for modal insertion / display */
+    /* 2. Request modal (#request-modal) */
+    var rm = document.getElementById(REQUEST_MODAL_ID);
+    if (rm) _attachToRequestModal(rm);
+
+    /* Watch for either modal insertion/appearance */
     var docObs = new MutationObserver(function() {
       var modal = document.getElementById(MODAL_ID);
-      if (modal && !modal._faeeObs) {
-        _attachToModal(modal);
-      }
+      if (modal && !modal._faeeObs) _attachToModal(modal);
+
+      var reqModal = document.getElementById(REQUEST_MODAL_ID);
+      if (reqModal && !reqModal._faeeRmObs) _attachToRequestModal(reqModal);
     });
-    docObs.observe(document.body, { childList: true, subtree: true });
+    docObs.observe(document.body, { childList: true, subtree: false });
+
+    /* Also watch class changes on body/modals for open/close events */
+    var bodyObs = new MutationObserver(function() {
+      var reqModal = document.getElementById(REQUEST_MODAL_ID);
+      if (reqModal) _updateRM(reqModal);
+    });
+    bodyObs.observe(document.body, { attributes: true, attributeFilter: ['class'] });
   }
 
   if (document.readyState === 'loading') {
@@ -430,6 +568,10 @@
     update:   function() {
       var m = document.getElementById(MODAL_ID);
       if (m) _update(m);
+    },
+    updateRequest: function() {
+      var rm = document.getElementById(REQUEST_MODAL_ID);
+      if (rm) _updateRM(rm);
     }
   };
 

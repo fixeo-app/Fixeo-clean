@@ -292,3 +292,41 @@
     font-size: 0.58rem;
   }
 }
+
+/* ── Request modal variant (.faee-rm) ──────────────────────── */
+/* Slightly more compact — fits inside a tighter form context   */
+.faee-rm.faee-container {
+  margin: 14px 0 10px;
+}
+
+.faee-rm .faee-card {
+  border-radius: 14px;
+  padding: 16px 16px 12px;
+}
+
+.faee-rm .faee-price-range {
+  font-size: 1.55rem;
+}
+
+.faee-rm .faee-stats {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+/* ETA stat hidden in request modal (no artisan assigned yet) */
+.faee-rm .faee-stat:nth-child(3) {
+  display: none;
+}
+
+/* Show ETA again if 4 stats present (artisan count found) */
+.faee-rm .faee-stats:has(.faee-stat:nth-child(4)) .faee-stat:nth-child(3) {
+  display: flex;
+}
+
+@media (max-width: 480px) {
+  .faee-rm .faee-card {
+    padding: 13px 12px 10px;
+  }
+  .faee-rm .faee-price-range {
+    font-size: 1.3rem;
+  }
+}
