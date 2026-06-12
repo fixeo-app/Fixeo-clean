@@ -1,0 +1,616 @@
+/**
+ * FIXEO Admin Command Center V4 — admin-command-center-v4.css
+ * Version: acc-v4a — 2026-06-12
+ * Namespace: .fxv4-* / #fxv4-* only — zero overrides to V3/.fxv3-*
+ * Dark premium war room — high information density — mobile usable
+ */
+
+/* ══ WAR ROOM BANNER ═════════════════════════════════════════ */
+#fxv4-warroom {
+  background: #000;
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: 16px;
+  margin-bottom: 20px;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Ambient glow */
+#fxv4-warroom::before {
+  content: '';
+  position: absolute;
+  top: -60px; left: -60px;
+  width: 280px; height: 280px;
+  background: radial-gradient(circle, rgba(225,48,108,.07) 0%, transparent 65%);
+  pointer-events: none;
+}
+#fxv4-warroom::after {
+  content: '';
+  position: absolute;
+  bottom: -40px; right: -40px;
+  width: 220px; height: 220px;
+  background: radial-gradient(circle, rgba(64,93,230,.06) 0%, transparent 65%);
+  pointer-events: none;
+}
+
+/* ── War room header ── */
+.fxv4-wr-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px 10px;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.fxv4-wr-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.fxv4-wr-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: .6rem;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: #E1306C;
+  background: rgba(225,48,108,.1);
+  border: 1px solid rgba(225,48,108,.22);
+  border-radius: 20px;
+  padding: 3px 10px;
+}
+.fxv4-pulse-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: #E1306C;
+  animation: fxv4-pulse 1.5s ease-in-out infinite;
+  flex-shrink: 0;
+}
+@keyframes fxv4-pulse {
+  0%,100% { opacity:1; transform:scale(1); }
+  50%      { opacity:.3; transform:scale(.6); }
+}
+.fxv4-wr-title {
+  font-size: .9rem;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: -.01em;
+}
+.fxv4-wr-meta {
+  font-size: .68rem;
+  color: rgba(255,255,255,.3);
+}
+.fxv4-wr-refresh {
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 7px;
+  padding: 6px 12px;
+  font-size: .72rem;
+  font-weight: 700;
+  color: rgba(255,255,255,.6);
+  cursor: pointer;
+  transition: background .14s, border-color .14s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.fxv4-wr-refresh:hover { background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.2); }
+
+/* ══ MODULE LAYOUT ════════════════════════════════════════════ */
+.fxv4-modules {
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Top row: 2 modules side by side (feed + SLA) */
+.fxv4-row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+/* Middle row: 3 modules (city + artisan + revenue) */
+.fxv4-row-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+}
+/* Bottom row: 3 modules (funnel + incidents + AI) */
+.fxv4-row-3b {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr 1fr;
+  gap: 12px;
+}
+
+@media (max-width: 1100px) {
+  .fxv4-row-3, .fxv4-row-3b { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 720px) {
+  .fxv4-row-2, .fxv4-row-3, .fxv4-row-3b { grid-template-columns: 1fr; }
+}
+
+/* ══ GLASS CARD BASE ══════════════════════════════════════════ */
+.fxv4-card {
+  background: rgba(255,255,255,.025);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 12px;
+  padding: 14px 12px;
+  overflow: hidden;
+  position: relative;
+}
+.fxv4-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  gap: 6px;
+}
+.fxv4-card-title {
+  font-size: .68rem;
+  font-weight: 800;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.4);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.fxv4-card-dot { width: 4px; height: 4px; border-radius: 50%; flex-shrink: 0; }
+.fxv4-card-dot.red    { background: #E1306C; animation: fxv4-pulse 1.5s ease-in-out infinite; }
+.fxv4-card-dot.amber  { background: #FCA735; }
+.fxv4-card-dot.green  { background: #20C997; }
+.fxv4-card-dot.violet { background: #833AB4; }
+.fxv4-card-dot.blue   { background: #405DE6; }
+
+.fxv4-card-count {
+  font-size: .65rem;
+  font-weight: 700;
+  color: rgba(255,255,255,.3);
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 10px;
+  padding: 2px 8px;
+  white-space: nowrap;
+}
+
+/* ══ MODULE 1 — LIVE REQUEST FEED ════════════════════════════ */
+.fxv4-feed-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  max-height: 280px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,.08) transparent;
+}
+.fxv4-feed-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: 8px;
+  padding: 8px 9px;
+  transition: opacity .3s, transform .3s;
+}
+.fxv4-feed-item.urgent {
+  border-color: rgba(225,48,108,.3);
+  background: rgba(225,48,108,.06);
+  animation: fxv4-urgent-glow 2s ease-in-out infinite alternate;
+}
+@keyframes fxv4-urgent-glow {
+  from { box-shadow: none; }
+  to   { box-shadow: 0 0 8px rgba(225,48,108,.18); }
+}
+.fxv4-feed-item.entering {
+  animation: fxv4-slide-in .4s ease-out forwards;
+}
+@keyframes fxv4-slide-in {
+  from { opacity:0; transform:translateY(-6px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+.fxv4-fi-ico { font-size: .85rem; flex-shrink: 0; margin-top: 1px; }
+.fxv4-fi-body { flex: 1; min-width: 0; }
+.fxv4-fi-title {
+  font-size: .76rem;
+  font-weight: 700;
+  color: rgba(255,255,255,.85);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.fxv4-fi-meta {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 2px;
+  flex-wrap: wrap;
+}
+.fxv4-fi-city  { font-size: .65rem; font-weight: 700; color: #E1306C; }
+.fxv4-fi-svc   { font-size: .63rem; color: rgba(255,255,255,.4); }
+.fxv4-fi-ago   { font-size: .62rem; color: rgba(255,255,255,.28); margin-left: auto; white-space: nowrap; }
+
+/* ══ MODULE 2 — SLA MONITOR ══════════════════════════════════ */
+.fxv4-sla-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+.fxv4-sla-bucket {
+  border-radius: 9px;
+  padding: 10px 9px;
+  border: 1px solid transparent;
+  transition: border-color .2s;
+}
+.fxv4-sla-bucket.green  { background: rgba(32,201,151,.08);  border-color: rgba(32,201,151,.18);  }
+.fxv4-sla-bucket.yellow { background: rgba(252,215,0,.07);   border-color: rgba(252,215,0,.15);   }
+.fxv4-sla-bucket.orange { background: rgba(252,115,22,.08);  border-color: rgba(252,115,22,.18);  }
+.fxv4-sla-bucket.red    { background: rgba(225,48,108,.09);  border-color: rgba(225,48,108,.22);  animation: fxv4-bucket-pulse 2s ease-in-out infinite; }
+@keyframes fxv4-bucket-pulse {
+  0%,100% { border-color: rgba(225,48,108,.22); }
+  50%      { border-color: rgba(225,48,108,.5); }
+}
+.fxv4-sla-range  { font-size: .6rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.4); margin-bottom: 4px; }
+.fxv4-sla-count  { font-size: 1.4rem; font-weight: 900; line-height: 1; letter-spacing: -.02em; }
+.fxv4-sla-bucket.green  .fxv4-sla-count { color: #20C997; }
+.fxv4-sla-bucket.yellow .fxv4-sla-count { color: #FCD34D; }
+.fxv4-sla-bucket.orange .fxv4-sla-count { color: #FB923C; }
+.fxv4-sla-bucket.red    .fxv4-sla-count { color: #F87171; }
+.fxv4-sla-label  { font-size: .62rem; color: rgba(255,255,255,.35); margin-top: 2px; }
+
+/* SLA bar */
+.fxv4-sla-bar-wrap { margin-top: 10px; }
+.fxv4-sla-bar-label { font-size: .6rem; color: rgba(255,255,255,.3); margin-bottom: 4px; display: flex; justify-content: space-between; }
+.fxv4-sla-bar-track { height: 5px; background: rgba(255,255,255,.06); border-radius: 3px; overflow: hidden; }
+.fxv4-sla-bar-fill  { height: 100%; border-radius: 3px; transition: width .8s ease; }
+.fxv4-bar-green  { background: #20C997; }
+.fxv4-bar-yellow { background: #FCD34D; }
+.fxv4-bar-orange { background: #FB923C; }
+.fxv4-bar-red    { background: #F87171; }
+
+/* ══ MODULE 3 — CITY HEATMAP ════════════════════════════════ */
+.fxv4-city-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  max-height: 240px;
+  overflow-y: auto;
+}
+.fxv4-city-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 0;
+}
+.fxv4-city-name {
+  font-size: .74rem;
+  font-weight: 700;
+  color: rgba(255,255,255,.75);
+  width: 80px;
+  flex-shrink: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.fxv4-city-bar-wrap { flex: 1; }
+.fxv4-city-bar-track {
+  height: 6px;
+  background: rgba(255,255,255,.06);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.fxv4-city-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width .9s ease;
+}
+.fxv4-city-stats {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1px;
+  min-width: 38px;
+}
+.fxv4-city-req { font-size: .72rem; font-weight: 800; color: rgba(255,255,255,.8); }
+.fxv4-city-sat {
+  font-size: .6rem;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 8px;
+}
+.fxv4-sat-ok   { background: rgba(32,201,151,.12); color: #20C997; }
+.fxv4-sat-warn { background: rgba(252,115,22,.12);  color: #FB923C; }
+.fxv4-sat-crit { background: rgba(225,48,108,.14);  color: #F87171; }
+
+/* ══ MODULE 4 — ARTISAN AVAILABILITY ═══════════════════════ */
+.fxv4-avail-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin-bottom: 10px;
+}
+.fxv4-avail-stat {
+  text-align: center;
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: 9px;
+  padding: 9px 6px;
+}
+.fxv4-avail-num  { font-size: 1.2rem; font-weight: 900; line-height: 1; letter-spacing: -.02em; }
+.fxv4-avail-stat.online  .fxv4-avail-num { color: #20C997; }
+.fxv4-avail-stat.busy    .fxv4-avail-num { color: #FB923C; }
+.fxv4-avail-stat.offline .fxv4-avail-num { color: rgba(255,255,255,.35); }
+.fxv4-avail-lbl { font-size: .6rem; color: rgba(255,255,255,.35); margin-top: 3px; }
+
+/* Category chips */
+.fxv4-cat-chips { display: flex; flex-wrap: wrap; gap: 4px; }
+.fxv4-cat-chip {
+  font-size: .6rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 10px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.08);
+  color: rgba(255,255,255,.55);
+  cursor: default;
+}
+.fxv4-cat-chip.stress {
+  background: rgba(225,48,108,.12);
+  border-color: rgba(225,48,108,.25);
+  color: #F87171;
+}
+.fxv4-cat-chip.ok {
+  background: rgba(32,201,151,.08);
+  border-color: rgba(32,201,151,.18);
+  color: #6EE7B7;
+}
+
+/* ══ MODULE 5 — REVENUE ENGINE ══════════════════════════════ */
+.fxv4-rev-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+.fxv4-rev-tab {
+  font-size: .62rem;
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  padding: 4px 9px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,.08);
+  background: none;
+  color: rgba(255,255,255,.4);
+  cursor: pointer;
+  transition: all .13s;
+}
+.fxv4-rev-tab.active {
+  background: rgba(252,175,69,.1);
+  border-color: rgba(252,175,69,.3);
+  color: #FCA735;
+}
+.fxv4-rev-kpis {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+.fxv4-rev-kpi {
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: 9px;
+  padding: 9px 10px;
+}
+.fxv4-rev-num  { font-size: 1.1rem; font-weight: 900; color: #fff; line-height: 1; letter-spacing: -.015em; }
+.fxv4-rev-num.accent { color: #FCA735; }
+.fxv4-rev-lbl  { font-size: .6rem; color: rgba(255,255,255,.35); margin-top: 3px; line-height: 1.3; }
+
+/* ══ MODULE 6 — CONVERSION FUNNEL ══════════════════════════ */
+.fxv4-funnel {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.fxv4-funnel-step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.fxv4-funnel-bar-wrap {
+  flex: 1;
+  height: 20px;
+  background: rgba(255,255,255,.04);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+.fxv4-funnel-bar {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 1s ease;
+  position: relative;
+}
+.fxv4-funnel-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  padding: 0 7px;
+  font-size: .65rem;
+  font-weight: 700;
+  color: rgba(255,255,255,.85);
+  white-space: nowrap;
+}
+.fxv4-funnel-stat {
+  min-width: 34px;
+  text-align: right;
+  font-size: .7rem;
+  font-weight: 800;
+  color: rgba(255,255,255,.65);
+}
+.fxv4-funnel-pct {
+  font-size: .6rem;
+  color: rgba(255,255,255,.3);
+  min-width: 28px;
+  text-align: right;
+}
+
+/* ══ MODULE 7 — INCIDENT CENTER ════════════════════════════ */
+.fxv4-incident-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  max-height: 240px;
+  overflow-y: auto;
+}
+.fxv4-incident {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background: rgba(255,255,255,.02);
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+.fxv4-incident.sev-crit {
+  background: rgba(225,48,108,.07);
+  border-color: rgba(225,48,108,.2);
+  animation: fxv4-incident-flash 3s ease-in-out infinite;
+}
+@keyframes fxv4-incident-flash {
+  0%,100% { border-color: rgba(225,48,108,.2); }
+  50%      { border-color: rgba(225,48,108,.5); }
+}
+.fxv4-incident.sev-warn {
+  background: rgba(252,115,22,.05);
+  border-color: rgba(252,115,22,.15);
+}
+.fxv4-inc-ico { font-size: .9rem; flex-shrink: 0; margin-top: 1px; }
+.fxv4-inc-body { flex: 1; min-width: 0; }
+.fxv4-inc-title {
+  font-size: .76rem;
+  font-weight: 700;
+  color: rgba(255,255,255,.85);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.fxv4-inc-sub  { font-size: .63rem; color: rgba(255,255,255,.35); margin-top: 2px; }
+.fxv4-inc-sev {
+  font-size: .58rem;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 8px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.fxv4-sev-crit { background: rgba(225,48,108,.15); color: #F87171; }
+.fxv4-sev-warn { background: rgba(252,115,22,.12);  color: #FB923C; }
+.fxv4-sev-info { background: rgba(64,93,230,.1);    color: #7B9FE8; }
+
+.fxv4-incident-empty {
+  text-align: center;
+  padding: 20px;
+  font-size: .78rem;
+  color: rgba(255,255,255,.3);
+}
+
+/* ══ MODULE 8 — CEO AI INSIGHTS ═════════════════════════════ */
+.fxv4-insights-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 240px;
+  overflow-y: auto;
+}
+.fxv4-insight {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  background: rgba(255,255,255,.025);
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: 8px;
+  padding: 9px 10px;
+  transition: border-color .2s;
+}
+.fxv4-insight:hover { border-color: rgba(255,255,255,.12); }
+.fxv4-insight.insight-alert {
+  background: rgba(225,48,108,.06);
+  border-color: rgba(225,48,108,.18);
+}
+.fxv4-insight.insight-ok {
+  background: rgba(32,201,151,.04);
+  border-color: rgba(32,201,151,.12);
+}
+.fxv4-insight.insight-warn {
+  background: rgba(252,175,69,.05);
+  border-color: rgba(252,175,69,.14);
+}
+.fxv4-ins-ico  { font-size: .95rem; flex-shrink: 0; margin-top: 1px; }
+.fxv4-ins-body { flex: 1; min-width: 0; }
+.fxv4-ins-text {
+  font-size: .78rem;
+  font-weight: 700;
+  color: rgba(255,255,255,.82);
+  line-height: 1.4;
+}
+.fxv4-ins-time { font-size: .62rem; color: rgba(255,255,255,.28); margin-top: 2px; }
+
+/* AI generation animation */
+.fxv4-ai-thinking {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: rgba(255,255,255,.3);
+  font-size: .75rem;
+  padding: 8px 0;
+}
+.fxv4-ai-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: #833AB4;
+  animation: fxv4-ai-bounce .9s ease-in-out infinite;
+}
+.fxv4-ai-dot:nth-child(2) { animation-delay: .2s; }
+.fxv4-ai-dot:nth-child(3) { animation-delay: .4s; }
+@keyframes fxv4-ai-bounce {
+  0%,80%,100% { transform: translateY(0); }
+  40%          { transform: translateY(-6px); }
+}
+
+/* ══ SHARED EMPTY STATE ═════════════════════════════════════ */
+.fxv4-empty {
+  text-align: center;
+  padding: 16px 8px;
+  color: rgba(255,255,255,.3);
+  font-size: .74rem;
+}
+.fxv4-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 12px 0;
+}
+.fxv4-loading-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.2);
+  animation: fxv4-ai-bounce 1s ease-in-out infinite;
+}
+.fxv4-loading-dot:nth-child(2) { animation-delay: .2s; }
+.fxv4-loading-dot:nth-child(3) { animation-delay: .4s; }
+
+/* ══ MOBILE OVERRIDES ═══════════════════════════════════════ */
+@media (max-width: 600px) {
+  .fxv4-modules { padding: 10px; gap: 10px; }
+  .fxv4-card    { padding: 11px 10px; }
+  .fxv4-rev-kpis { grid-template-columns: 1fr 1fr; }
+  .fxv4-avail-grid { grid-template-columns: repeat(3, 1fr); }
+  .fxv4-sla-grid { grid-template-columns: 1fr 1fr; }
+}
