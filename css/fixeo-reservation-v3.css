@@ -1,0 +1,631 @@
+/* ============================================================
+   FIXEO Reservation V3 — fxrv3-v1a
+   Namespace: .fxrv3-* ONLY — zero overrides to .fixeo-res-* or .fxrv2-*
+   ============================================================ */
+
+/* ── 1. CHIP GRID ─────────────────────────────────────────── */
+
+.fxrv3-chip-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin: 0 0 12px 0;
+  padding: 12px 16px 0;
+}
+
+.fxrv3-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  background: #f8f9fa;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 8px 10px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+  text-align: left;
+  min-height: 56px;
+  position: relative;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.fxrv3-chip:hover {
+  border-color: #e53935;
+  background: #fff5f5;
+  box-shadow: 0 2px 8px rgba(229, 57, 53, 0.12);
+}
+
+.fxrv3-chip.fxrv3-chip-active {
+  border-color: #e53935;
+  background: #fff0f0;
+  box-shadow: 0 2px 10px rgba(229, 57, 53, 0.18);
+}
+
+.fxrv3-chip-icon {
+  font-size: 18px;
+  line-height: 1;
+  margin-bottom: 1px;
+}
+
+.fxrv3-chip-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #1a1a1a;
+  line-height: 1.2;
+}
+
+.fxrv3-chip-price {
+  font-size: 9.5px;
+  color: #e53935;
+  font-weight: 500;
+  line-height: 1.2;
+  margin-top: 1px;
+}
+
+/* ── 2. URGENCY SEGMENT ──────────────────────────────────── */
+
+.fxrv3-urgency-segment {
+  display: flex;
+  gap: 6px;
+  padding: 8px 16px 12px;
+  align-items: center;
+}
+
+.fxrv3-urgency-label {
+  font-size: 11px;
+  color: #6b7280;
+  font-weight: 500;
+  white-space: nowrap;
+  margin-right: 4px;
+}
+
+.fxrv3-urgency-btn {
+  flex: 1;
+  padding: 7px 6px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  background: #f8f9fa;
+  font-size: 11px;
+  font-weight: 600;
+  color: #374151;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+  text-align: center;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.fxrv3-urgency-btn:hover {
+  border-color: #9ca3af;
+  background: #f3f4f6;
+}
+
+.fxrv3-urgency-btn[data-urgency="standard"].fxrv3-urgency-active {
+  border-color: #2563eb;
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.fxrv3-urgency-btn[data-urgency="urgent"].fxrv3-urgency-active {
+  border-color: #f59e0b;
+  background: #fffbeb;
+  color: #b45309;
+}
+
+.fxrv3-urgency-btn[data-urgency="extreme"].fxrv3-urgency-active {
+  border-color: #dc2626;
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+/* ── 3. TIMING CHIPS ──────────────────────────────────────── */
+
+.fxrv3-timing-section {
+  padding: 0 16px 12px;
+}
+
+.fxrv3-timing-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 8px;
+}
+
+.fxrv3-timing-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.fxrv3-timing-chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 7px 12px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 20px;
+  background: #f8f9fa;
+  font-size: 12px;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.fxrv3-timing-chip:hover {
+  border-color: #10b981;
+  background: #f0fdf4;
+}
+
+.fxrv3-timing-chip.fxrv3-timing-active {
+  border-color: #10b981;
+  background: #ecfdf5;
+  color: #065f46;
+  font-weight: 600;
+}
+
+.fxrv3-hint-badge {
+  position: absolute;
+  top: -7px;
+  right: 4px;
+  background: #10b981;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 600;
+  padding: 1px 5px;
+  border-radius: 6px;
+  white-space: nowrap;
+  line-height: 1.6;
+}
+
+.fxrv3-demand-badge {
+  position: absolute;
+  top: -7px;
+  right: 4px;
+  background: #f59e0b;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 600;
+  padding: 1px 5px;
+  border-radius: 6px;
+  white-space: nowrap;
+  line-height: 1.6;
+}
+
+/* ── 4. SLOT HIDDEN ──────────────────────────────────────── */
+
+.fxrv3-slot-hidden {
+  display: none !important;
+}
+
+/* ── 5. AI ESTIMATION CARD ───────────────────────────────── */
+
+.fxrv3-ai-card {
+  margin: 0 16px 14px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #0f1923 0%, #1a2535 60%, #0f1923 100%);
+  color: #fff;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.22);
+}
+
+.fxrv3-ai-card::before {
+  content: '';
+  display: block;
+  height: 3px;
+  background: linear-gradient(90deg, #e53935, #ff7043, #ffd600, #e53935);
+  background-size: 200% 100%;
+  animation: fxrv3-glow-bar 3s linear infinite;
+}
+
+@keyframes fxrv3-glow-bar {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 200% 0%; }
+}
+
+.fxrv3-ai-card-inner {
+  padding: 14px 16px 12px;
+}
+
+.fxrv3-ai-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.fxrv3-ai-title {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #9ca3af;
+  text-transform: uppercase;
+}
+
+.fxrv3-ai-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 5px;
+  background: #e53935;
+  color: #fff;
+  letter-spacing: 0.04em;
+}
+
+.fxrv3-ai-price {
+  font-size: 28px;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1;
+  margin-bottom: 2px;
+  letter-spacing: -0.5px;
+}
+
+.fxrv3-ai-price-sub {
+  font-size: 11px;
+  color: #9ca3af;
+  margin-bottom: 10px;
+}
+
+.fxrv3-ai-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.fxrv3-ai-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  padding: 3px 8px;
+  font-size: 11px;
+  color: #d1d5db;
+  font-weight: 500;
+}
+
+.fxrv3-ai-surcharge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: 6px;
+  padding: 3px 8px;
+  font-size: 11px;
+  color: #fbbf24;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.fxrv3-ai-trust {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.fxrv3-ai-trust-item {
+  font-size: 11px;
+  color: #6ee7b7;
+  font-weight: 500;
+}
+
+/* Extreme pulsing variant */
+
+.fxrv3-ai-card.fxrv3-extreme {
+  animation: fxrv3-pulse-border 1.2s ease-in-out infinite;
+  border: 2px solid #dc2626;
+}
+
+@keyframes fxrv3-pulse-border {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.5), 0 4px 20px rgba(0, 0, 0, 0.22); }
+  50% { box-shadow: 0 0 0 6px rgba(220, 38, 38, 0.12), 0 4px 20px rgba(0, 0, 0, 0.22); }
+}
+
+/* ── 6. HERO CONFIRM CARD ────────────────────────────────── */
+
+.fxrv3-hero-card {
+  margin: 0 16px 14px;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+}
+
+.fxrv3-hero-artisan {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 12px;
+}
+
+.fxrv3-hero-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 2px solid #e5e7eb;
+}
+
+.fxrv3-hero-avatar-initials {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #e53935, #ff7043);
+}
+
+.fxrv3-hero-meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.fxrv3-hero-name {
+  font-size: 17px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fxrv3-hero-category {
+  font-size: 13px;
+  color: #6b7280;
+  margin-bottom: 5px;
+}
+
+.fxrv3-hero-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.fxrv3-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.fxrv3-hero-badge-verified {
+  background: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #6ee7b7;
+}
+
+.fxrv3-hero-badge-rating {
+  background: #fffbeb;
+  color: #92400e;
+  border: 1px solid #fcd34d;
+}
+
+.fxrv3-hero-badge-avail {
+  background: #eff6ff;
+  color: #1e40af;
+  border: 1px solid #93c5fd;
+}
+
+/* ── 7. NEXT STEPS ───────────────────────────────────────── */
+
+.fxrv3-next-steps {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.fxrv3-next-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+
+.fxrv3-next-step {
+  position: relative;
+  padding: 7px 0 7px 24px;
+  font-size: 13px;
+  color: #374151;
+  border-left: 2px solid #e5e7eb;
+  margin-left: 6px;
+}
+
+.fxrv3-next-step:last-child {
+  border-left-color: transparent;
+}
+
+.fxrv3-next-step::before {
+  content: '';
+  position: absolute;
+  left: -5px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #e5e7eb;
+}
+
+.fxrv3-next-step.fxrv3-done {
+  color: #065f46;
+  font-weight: 600;
+}
+
+.fxrv3-next-step.fxrv3-done::before {
+  background: #10b981;
+}
+
+/* ── 8. TRACKING LINK ────────────────────────────────────── */
+
+.fxrv3-tracking-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  padding: 8px 16px;
+  background: #eff6ff;
+  border: 1.5px solid #93c5fd;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1d4ed8;
+  text-decoration: none;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.fxrv3-tracking-link:hover {
+  background: #dbeafe;
+  border-color: #3b82f6;
+  text-decoration: none;
+}
+
+/* ── 9. STICKY CTA ───────────────────────────────────────── */
+
+.fxrv3-sticky-cta {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(0, 0, 0, 0.07);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 10;
+}
+
+.fxrv3-sticky-price {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1a1a1a;
+  white-space: nowrap;
+}
+
+.fxrv3-sticky-btn {
+  flex: 1;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, #e53935, #ff5722);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: center;
+  transition: opacity 0.15s, transform 0.1s;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+}
+
+.fxrv3-sticky-btn:hover {
+  opacity: 0.92;
+}
+
+.fxrv3-sticky-btn:active {
+  transform: scale(0.98);
+}
+
+/* ── 10. MOBILE ≤375px ───────────────────────────────────── */
+
+@media (max-width: 375px) {
+  .fxrv3-chip-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+    padding: 10px 12px 0;
+  }
+
+  .fxrv3-urgency-segment {
+    padding: 6px 12px 10px;
+    gap: 4px;
+  }
+
+  .fxrv3-urgency-label {
+    display: none;
+  }
+
+  .fxrv3-timing-section {
+    padding: 0 12px 10px;
+  }
+
+  .fxrv3-ai-card {
+    margin: 0 12px 12px;
+  }
+
+  .fxrv3-ai-price {
+    font-size: 24px;
+  }
+
+  .fxrv3-hero-card {
+    margin: 0 12px 12px;
+    padding: 12px;
+  }
+
+  .fxrv3-hero-avatar,
+  .fxrv3-hero-avatar-initials {
+    width: 64px;
+    height: 64px;
+  }
+
+  .fxrv3-hero-name {
+    font-size: 15px;
+  }
+
+  .fxrv3-sticky-cta {
+    padding: 8px 12px;
+  }
+}
+
+/* ── 11. REDUCED MOTION ──────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .fxrv3-ai-card::before {
+    animation: none;
+    background: #e53935;
+  }
+
+  .fxrv3-ai-card.fxrv3-extreme {
+    animation: none;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.5), 0 4px 20px rgba(0, 0, 0, 0.22);
+  }
+
+  .fxrv3-chip,
+  .fxrv3-urgency-btn,
+  .fxrv3-timing-chip,
+  .fxrv3-sticky-btn,
+  .fxrv3-tracking-link {
+    transition: none;
+  }
+}
