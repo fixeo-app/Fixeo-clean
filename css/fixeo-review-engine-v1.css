@@ -1,0 +1,548 @@
+/* ============================================================
+   FIXEO REVIEW ENGINE V1 — STYLES
+   Version: frev-v1a
+   Namespace: .frev-* / #frev-* — zero overrides to existing rules
+   ============================================================ */
+
+/* ── Screen-reader only ────────────────────────────────────── */
+.frev-sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0,0,0,0);
+  white-space: nowrap; border: 0;
+}
+
+/* ── Profile section wrapper ───────────────────────────────── */
+.frev-profile-section {
+  margin-top: 28px;
+  padding: 22px 18px;
+  background: linear-gradient(135deg,
+    rgba(13, 18, 40, 0.65) 0%,
+    rgba(18, 14, 34, 0.65) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  box-shadow: 0 4px 24px rgba(0,0,0,.35),
+              inset 0 1px 0 rgba(255,255,255,.05);
+}
+
+.frev-section-title {
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #a5b4fc;
+  margin: 0 0 18px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.frev-section-icon { font-size: 0.9rem; }
+
+/* ── Reviews container ─────────────────────────────────────── */
+.frev-reviews-container {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.frev-reviews-container.frev-visible { opacity: 1; }
+
+/* ── Aggregate header ──────────────────────────────────────── */
+.frev-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.frev-aggregate {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.frev-big-score {
+  font-size: 2.4rem;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  color: #fff;
+  line-height: 1;
+}
+
+.frev-big-stars {
+  font-size: 1.1rem;
+  color: #fbbf24;
+  letter-spacing: 2px;
+  line-height: 1;
+  align-self: center;
+}
+
+.frev-count {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.55);
+  align-self: flex-end;
+  margin-left: 4px;
+}
+
+.frev-trust-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: rgba(165, 180, 252, 0.10);
+  border: 1px solid rgba(165, 180, 252, 0.22);
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #a5b4fc;
+  white-space: nowrap;
+}
+
+.frev-trust-icon {
+  font-size: 0.65rem;
+  background: linear-gradient(135deg, #ff783c, #ff3c7a);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Review cards list ─────────────────────────────────────── */
+.frev-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.frev-card {
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+.frev-card:last-child { border-bottom: none; padding-bottom: 0; }
+.frev-card:first-child { padding-top: 0; }
+
+.frev-card-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+.frev-stars {
+  color: #fbbf24;
+  font-size: 0.95rem;
+  letter-spacing: 1px;
+}
+
+.frev-author {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.80);
+}
+
+.frev-verified {
+  font-size: 0.66rem;
+  font-weight: 700;
+  color: #20c997;
+  background: rgba(32, 201, 151, 0.10);
+  border: 1px solid rgba(32, 201, 151, 0.25);
+  padding: 1px 7px;
+  border-radius: 999px;
+  letter-spacing: 0.02em;
+}
+
+.frev-date {
+  font-size: 0.70rem;
+  color: rgba(255, 255, 255, 0.38);
+  margin-left: auto;
+}
+
+.frev-text {
+  margin: 0 0 6px;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.82);
+  line-height: 1.6;
+}
+
+.frev-sub-scores {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.frev-sub {
+  font-size: 0.68rem;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+/* ── Empty / loading states ────────────────────────────────── */
+.frev-loading {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.45);
+  padding: 12px 0;
+}
+
+.frev-empty {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 0;
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.45);
+  line-height: 1.5;
+}
+
+.frev-empty-icon { font-size: 1.1rem; flex-shrink: 0; }
+
+.frev-load-more {
+  display: block;
+  width: 100%;
+  margin-top: 14px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 10px;
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 0.80rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+.frev-load-more:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.18);
+}
+.frev-load-more:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── Homepage artisan card badge ───────────────────────────── */
+.frev-card-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 5px;
+  flex-wrap: wrap;
+}
+
+.frev-badge-stars {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fbbf24;
+}
+
+.frev-badge-count {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.frev-badge-top {
+  font-size: 0.62rem;
+  font-weight: 800;
+  padding: 1px 7px;
+  background: rgba(251, 191, 36, 0.12);
+  border: 1px solid rgba(251, 191, 36, 0.30);
+  color: #fbbf24;
+  border-radius: 999px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* ── Review modal overlay ──────────────────────────────────── */
+.frev-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9100;
+  background: rgba(0, 0, 0, 0.78);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0 0 env(safe-area-inset-bottom, 0);
+  animation: frev-overlay-in 0.25s ease;
+}
+
+.frev-modal-overlay[hidden] { display: none; }
+
+@keyframes frev-overlay-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.frev-modal {
+  width: 100%;
+  max-width: 480px;
+  background: linear-gradient(160deg,
+    rgba(18, 18, 30, 0.98) 0%,
+    rgba(22, 14, 38, 0.98) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 24px 24px 0 0;
+  padding: 22px 22px 32px;
+  box-shadow: 0 -8px 40px rgba(0,0,0,.5),
+              inset 0 1px 0 rgba(255,255,255,.07);
+  animation: frev-modal-slide 0.28s cubic-bezier(0.22,1,0.36,1);
+  overflow-y: auto;
+  max-height: 90vh;
+}
+
+@keyframes frev-modal-slide {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+/* Glow bar */
+.frev-modal::before {
+  content: '';
+  display: block;
+  height: 3px;
+  width: 44px;
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 3px;
+  margin: 0 auto 18px;
+}
+
+.frev-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.frev-modal-header h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.frev-modal-close {
+  background: rgba(255, 255, 255, 0.08);
+  border: none;
+  color: rgba(255,255,255,.7);
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s;
+}
+.frev-modal-close:hover { background: rgba(255,255,255,.15); }
+
+.frev-modal-sub {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.55);
+  margin: 0 0 18px;
+}
+
+/* ── Star picker ────────────────────────────────────────────── */
+.frev-star-picker {
+  display: flex;
+  flex-direction: row-reverse; /* RTL star highlight trick */
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.frev-star-label {
+  cursor: pointer;
+  font-size: 2.2rem;
+  color: rgba(255, 255, 255, 0.18);
+  transition: color 0.12s, transform 0.12s;
+  line-height: 1;
+  user-select: none;
+}
+
+.frev-star-label.active,
+.frev-star-label:hover,
+.frev-star-label:hover ~ .frev-star-label {
+  color: #fbbf24;
+}
+
+.frev-star-label:hover {
+  transform: scale(1.2);
+}
+
+.frev-star-hint {
+  text-align: center;
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.50);
+  min-height: 1.2em;
+  margin-bottom: 16px;
+}
+
+/* ── Sub-score mini stars ────────────────────────────────────── */
+.frev-sub-score-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.frev-sub-score {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 12px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.frev-sub-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.50);
+  text-transform: uppercase;
+}
+
+.frev-mini-stars {
+  display: flex;
+  gap: 3px;
+}
+
+.frev-mini-star {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.18);
+  padding: 0;
+  transition: color 0.1s, transform 0.1s;
+  line-height: 1;
+}
+
+.frev-mini-star.active,
+.frev-mini-star:hover {
+  color: #fbbf24;
+  transform: scale(1.15);
+}
+
+/* ── Textarea ───────────────────────────────────────────────── */
+.frev-field { margin-bottom: 14px; }
+
+.frev-field-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.65);
+  margin-bottom: 6px;
+  letter-spacing: 0.04em;
+}
+
+.frev-optional {
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.40);
+}
+
+.frev-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  color: #fff;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  padding: 10px 12px;
+  resize: vertical;
+  min-height: 72px;
+  transition: border-color 0.2s;
+  font-family: inherit;
+}
+
+.frev-textarea:focus {
+  outline: none;
+  border-color: rgba(165, 180, 252, 0.45);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.frev-char-count {
+  text-align: right;
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.35);
+  margin-top: 4px;
+}
+
+/* ── Submit button ──────────────────────────────────────────── */
+.frev-submit-btn {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #E1306C, #833AB4);
+  border: none;
+  border-radius: 14px;
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 800;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  transition: opacity 0.2s, transform 0.15s;
+  box-shadow: 0 4px 16px rgba(225, 48, 108, 0.35);
+}
+
+.frev-submit-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.frev-submit-btn:not(:disabled):hover {
+  opacity: 0.92;
+  transform: translateY(-1px);
+}
+
+.frev-modal-disclaimer {
+  text-align: center;
+  font-size: 0.66rem;
+  color: rgba(255, 255, 255, 0.30);
+  margin: 10px 0 0;
+}
+
+/* ── Feedback messages ──────────────────────────────────────── */
+.frev-feedback {
+  margin-top: 10px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 0.82rem;
+  font-weight: 500;
+}
+
+.frev-feedback.frev-success {
+  background: rgba(32, 201, 151, 0.12);
+  border: 1px solid rgba(32, 201, 151, 0.30);
+  color: #20c997;
+}
+
+.frev-feedback.frev-error {
+  background: rgba(255, 65, 105, 0.10);
+  border: 1px solid rgba(255, 65, 105, 0.28);
+  color: #ff7a90;
+}
+
+/* ── Mobile ─────────────────────────────────────────────────── */
+@media (min-width: 520px) {
+  .frev-modal {
+    border-radius: 24px;
+    margin: 0 auto 20px;
+  }
+
+  .frev-modal-overlay {
+    align-items: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .frev-big-score { font-size: 2rem; }
+  .frev-sub-score-row { grid-template-columns: 1fr; }
+  .frev-star-label { font-size: 2rem; }
+  .frev-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .frev-date { margin-left: 0; }
+}

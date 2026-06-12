@@ -922,3 +922,29 @@ a.fxv2-header-logo:hover { opacity: .8; }
   transition: background .15s;
 }
 .fxv2-home-link:hover { background: rgba(255,255,255,.08); }
+
+/* ── frev-v1a: Review button in mission card ─────────────── */
+.fxv2-review-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px;
+  background: linear-gradient(135deg,
+    rgba(251,191,36,.15) 0%,
+    rgba(251,191,36,.08) 100%);
+  border: 1px solid rgba(251,191,36,.30);
+  border-radius: 10px;
+  color: #fbbf24;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.18s, border-color 0.18s, transform 0.14s;
+  letter-spacing: 0.02em;
+}
+.fxv2-review-btn:hover {
+  background: linear-gradient(135deg,
+    rgba(251,191,36,.22) 0%,
+    rgba(251,191,36,.13) 100%);
+  border-color: rgba(251,191,36,.50);
+  transform: translateY(-1px);
+}

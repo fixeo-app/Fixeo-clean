@@ -8,7 +8,7 @@
   'use strict';
 
   /* ── VERSION ──────────────────────────────────────────────────── */
-  var VERSION = 'v2h';
+  var VERSION = 'v2i';;
 
   /* ── PIPELINE DEFINITION ──────────────────────────────────────── */
   /* Maps a unified key to display config.
@@ -278,15 +278,33 @@
   }
 
   function _renderRatingPlaceholder(req) {
-    /* Phase 2: rating will write to reviews table.
-       Phase 1: UI is visible but action shows "bient\u00f4t disponible" */
-    return '<div style="margin-top:10px;padding:12px;border:1px dashed rgba(255,255,255,.12);border-radius:10px;">'
-      + '<div style="font-size:.80rem;color:rgba(255,255,255,.45);margin-bottom:4px">Laisser un avis (bient\u00f4t disponible)</div>'
-      + '<div class="fxv2-stars" data-req-id="' + esc(req.id) + '">'
-      + '\u2605\u2605\u2605\u2605\u2605'.split('').map(function (s, i) {
-          return '<span class="fxv2-star" data-action="rate-ph" data-val="' + (i + 1) + '" data-id="' + esc(req.id) + '">' + s + '</span>';
-        }).join('')
-      + '</div></div>';
+    /* frev-v1a: Live review button wired to FixeoReviews.openModal() */
+    var mission    = (_state.missions || []).find(function(m) { return m.request_id === req.id; }) || null;
+    var missionId  = mission ? (mission.id || '') : '';
+    var artisanId  = mission ? (mission.artisan_profile_id || '') : '';
+    var clientId   = (_state.profile && _state.profile.id)    || '';
+    var clientPhone= (_state.profile && _state.profile.phone) || '';
+
+    if (!missionId || !artisanId) {
+      return '<div style="margin-top:10px;padding:10px;border:1px dashed rgba(255,255,255,.10);border-radius:10px;">'
+        + '<div style="font-size:.78rem;color:rgba(255,255,255,.35)">\u2b50 Avis disponible une fois la mission confirm\u00e9e</div>'
+        + '</div>';
+    }
+
+    return '<div style="margin-top:10px">'
+      + '<button class="fxv2-review-btn" type="button"'
+      + ' data-mission-id="' + esc(missionId) + '"'
+      + ' data-artisan-id="' + esc(artisanId) + '"'
+      + ' data-client-id="' + esc(clientId) + '"'
+      + ' data-client-phone="' + esc(clientPhone) + '"'
+      + ' onclick="(function(btn){if(window.FixeoReviews){window.FixeoReviews.openModal({'
+      +   'missionId:btn.dataset.missionId,'
+      +   'artisanId:btn.dataset.artisanId,'
+      +   'clientProfileId:btn.dataset.clientId,'
+      +   'clientPhone:btn.dataset.clientPhone'
+      + '})}})(this)"'
+      + '>\u2b50 Donner mon avis</button>'
+      + '</div>';
   }
 
   function _renderCard(req) {
