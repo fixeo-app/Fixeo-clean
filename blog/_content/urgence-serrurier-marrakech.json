@@ -1,0 +1,91 @@
+{
+  "slug": "urgence-serrurier-marrakech",
+  "category": "urgence",
+  "service": "serrurier",
+  "city": "marrakech",
+  "title": "Serrurier urgence Marrakech : porte bloquée, ouverture rapide",
+  "meta_description": "Serrurier urgence Marrakech disponible 24h/24. Porte claquée, serrure bloquée, effraction — intervention rapide à Guéliz, Médina, Hivernage. Devis immédiat.",
+  "date": "2026-06-12",
+  "hero_image": "/img/blog/urgence-serrurier.webp",
+  "tags": ["serrurier", "urgence", "marrakech", "porte-bloquee", "ouverture"],
+  "estimated_read_min": 4,
+  "related_articles": ["urgence-plombier-casablanca", "prix-serrurier-maroc", "serrurier-marrakech-gueliz"],
+  "internal_links": ["/serrurier/marrakech", "/serrurier/agadir"],
+  "faq": [
+    {
+      "q": "Combien de temps pour un serrurier urgence à Marrakech ?",
+      "a": "Un serrurier d'urgence à Marrakech intervient généralement en 20 à 45 minutes selon votre localisation (Guéliz, Médina, Hivernage, Palmeraie). Via Fixeo, vous êtes mis en contact avec le serrurier disponible le plus proche."
+    },
+    {
+      "q": "Ma porte s'est claquée et je n'ai plus mes clés — que faire ?",
+      "a": "Appelez immédiatement un serrurier professionnel. N'essayez pas de forcer la porte seul — vous risquez d'abîmer la serrure et d'augmenter le coût de l'intervention. Un serrurier expérimenté peut généralement ouvrir une porte claquée sans la dégrader."
+    },
+    {
+      "q": "Combien coûte l'ouverture d'une porte la nuit à Marrakech ?",
+      "a": "L'ouverture d'une porte claquée à Marrakech coûte entre 200 et 450 MAD en journée, et 350 à 650 MAD en soirée/nuit. Les serrures blindées ou de haute sécurité peuvent être plus longues à ouvrir et donc plus chères."
+    }
+  ],
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Porte claquée dans votre riad, serrure grippée après une longue absence, effraction dans un appartement ou une boutique à Marrakech — les urgences serrurerie sont stressantes et demandent une intervention rapide. Ce guide vous aide à réagir efficacement et à trouver un serrurier de confiance à Marrakech."
+    },
+    {
+      "type": "h2",
+      "title": "Situations d'urgence serrurerie à Marrakech",
+      "content": null
+    },
+    {
+      "type": "list",
+      "items": [
+        "Porte claquée — clés restées à l'intérieur",
+        "Clé cassée dans la serrure",
+        "Serrure grippée ou forcée par tentative d'effraction",
+        "Clé perdue — remplacement par sécurité",
+        "Serrure endommagée après effraction — sécurisation urgente",
+        "Volet roulant bloqué (côté serrurerie/ferronnerie)"
+      ]
+    },
+    {
+      "type": "h2",
+      "title": "Que faire en cas de porte bloquée ?",
+      "content": null
+    },
+    {
+      "type": "list",
+      "items": [
+        "Restez calme — les tentatives de forçage amateur aggravent souvent la situation",
+        "Vérifiez si une fenêtre ou porte de service est accessible (uniquement si vous êtes chez vous)",
+        "Contactez le gardien de votre immeuble ou la réception de votre riad",
+        "Appelez un serrurier professionnel — ils peuvent généralement ouvrir sans dégrader la serrure",
+        "Si vous pensez à une effraction, appelez d'abord la police avant d'entrer"
+      ]
+    },
+    {
+      "type": "h2",
+      "title": "Tarifs serrurier urgence à Marrakech",
+      "content": "Les tarifs à Marrakech sont globalement inférieurs à Casablanca, mais peuvent augmenter en haute saison touristique."
+    },
+    {
+      "type": "table",
+      "caption": "Tarifs serrurier urgence Marrakech (2025)",
+      "headers": ["Intervention", "Journée (MAD)", "Nuit / Férié (MAD)"],
+      "rows": [
+        ["Ouverture porte simple claquée", "200–400 MAD", "350–600 MAD"],
+        ["Ouverture porte serrure blindée", "300–600 MAD", "500–900 MAD"],
+        ["Extraction clé cassée dans serrure", "250–450 MAD", "400–700 MAD"],
+        ["Remplacement cylindre standard", "250–500 MAD", "400–700 MAD"],
+        ["Sécurisation post-effraction", "500–1 200 MAD", "700–1 500 MAD"]
+      ]
+    },
+    {
+      "type": "h2",
+      "title": "Zones d'intervention à Marrakech",
+      "content": "Les serruriers d'urgence disponibles via Fixeo couvrent l'ensemble de Marrakech : Guéliz, Médina (Bab Doukkala, Jemaa El Fna, Bab Agnaou), Hivernage, Palmeraie, Massira, Sidi Youssef Ben Ali, et les communes voisines comme Tahannout et Aït Ourir."
+    },
+    {
+      "type": "warning",
+      "content": "Méfiez-vous des serruriers qui arrivent non-sollicités après une urgence (porte claquée dans la rue) et proposent des prix exorbitants. Passez toujours par une plateforme de confiance ou demandez un devis avant d'accepter l'intervention."
+    }
+  ]
+}

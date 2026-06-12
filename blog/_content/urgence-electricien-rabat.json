@@ -1,0 +1,91 @@
+{
+  "slug": "urgence-electricien-rabat",
+  "category": "urgence",
+  "service": "electricien",
+  "city": "rabat",
+  "title": "Électricien urgence Rabat : intervention nuit et weekend",
+  "meta_description": "Électricien urgence Rabat disponible la nuit et le weekend. Panne générale, disjoncteur, court-circuit — intervention rapide à Agdal, Hay Riad, Souissi et partout à Rabat.",
+  "date": "2026-06-12",
+  "hero_image": "/img/blog/urgence-electricien.webp",
+  "tags": ["electricien", "urgence", "rabat", "nuit", "panne"],
+  "estimated_read_min": 4,
+  "related_articles": ["urgence-electricien-tanger", "prix-electricien-maroc", "artisan-verifie-maroc"],
+  "internal_links": ["/electricien/rabat", "/electricien/sale", "/electricien/temara"],
+  "faq": [
+    {
+      "q": "Comment trouver un électricien disponible la nuit à Rabat ?",
+      "a": "Via Fixeo, vous pouvez soumettre une demande d'urgence à tout moment et être mis en contact avec un électricien disponible dans votre quartier à Rabat. La plupart des interventions d'urgence sont prises en charge en moins d'une heure."
+    },
+    {
+      "q": "Mon disjoncteur principal saute constamment — est-ce une urgence ?",
+      "a": "Oui, un disjoncteur principal qui saute régulièrement signale une surcharge ou un défaut d'isolation sérieux. Ne réarmez pas manuellement plus de 2 fois — si le problème persiste, appelez un électricien. Il peut y avoir un risque d'incendie ou d'électrocution."
+    },
+    {
+      "q": "Combien coûte un électricien urgence la nuit à Rabat ?",
+      "a": "Comptez entre 400 et 900 MAD pour une intervention d'urgence nocturne à Rabat (déplacement + 1h d'intervention). La majoration nuit/weekend est généralement de 40 à 60% sur le tarif normal."
+    }
+  ],
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Une panne électrique totale en pleine nuit à Rabat, un disjoncteur qui refuse de se réarmer, ou une odeur de brûlé dans le tableau — ces situations nécessitent une intervention rapide. Ce guide vous explique comment réagir face à une urgence électrique et trouver un électricien disponible rapidement à Rabat et ses environs."
+    },
+    {
+      "type": "h2",
+      "title": "Les urgences électriques les plus courantes à Rabat",
+      "content": null
+    },
+    {
+      "type": "list",
+      "items": [
+        "Panne électrique totale (disjoncteur général sauté, pas de courant dans tout l'appartement)",
+        "Court-circuit — étincelles, fumée, odeur de brûlé",
+        "Disjoncteur différentiel qui saute sans raison apparente",
+        "Prise ou interrupteur qui chauffe anormalement",
+        "Coupure partielle (un circuit ne fonctionne plus)",
+        "Panne après travaux ou rénovation — installation défectueuse"
+      ]
+    },
+    {
+      "type": "h2",
+      "title": "Réflexes de sécurité avant l'arrivée de l'électricien",
+      "content": null
+    },
+    {
+      "type": "list",
+      "items": [
+        "Coupez le disjoncteur général si vous sentez une odeur de brûlé ou voyez des étincelles",
+        "N'essayez jamais de réparer vous-même une installation électrique sous tension",
+        "Si de l'eau est en contact avec une installation électrique, ne touchez à rien — coupez d'abord l'eau",
+        "En cas d'incendie électrique, utilisez un extincteur CO2 (jamais d'eau) ou évacuez et appelez les pompiers",
+        "Gardez une lampe torche ou votre téléphone chargé en cas de panne totale"
+      ]
+    },
+    {
+      "type": "h2",
+      "title": "Tarifs électricien urgence à Rabat",
+      "content": null
+    },
+    {
+      "type": "table",
+      "caption": "Tarifs urgence électricien Rabat (2025)",
+      "headers": ["Prestation", "Heures normales (MAD)", "Nuit / Weekend (MAD)"],
+      "rows": [
+        ["Diagnostic + réarmement disjoncteur", "200–400 MAD", "350–600 MAD"],
+        ["Remplacement disjoncteur défectueux", "300–600 MAD", "500–900 MAD"],
+        ["Réparation court-circuit localisé", "400–800 MAD", "600–1 200 MAD"],
+        ["Remplacement prise/interrupteur défectueux", "200–400 MAD", "350–600 MAD"],
+        ["Diagnostic complexe (câblage, tableau)", "500–1 000 MAD", "700–1 500 MAD"]
+      ]
+    },
+    {
+      "type": "h2",
+      "title": "Zones couvertes à Rabat et alentours",
+      "content": "Les électriciens d'urgence disponibles via Fixeo interviennent dans tout le Grand Rabat : Agdal, Hay Riad, Souissi, Hassan, Océan, Yacoub El Mansour, Temara, Salé, et les communes périphériques comme Skhirate et Bouznika."
+    },
+    {
+      "type": "tip",
+      "content": "Pour les pannes récurrentes (disjoncteur qui saute régulièrement), demandez à l'électricien de faire un bilan complet de votre installation. Mieux vaut prévenir une panne majeure que de multiplier les interventions d'urgence coûteuses."
+    }
+  ]
+}

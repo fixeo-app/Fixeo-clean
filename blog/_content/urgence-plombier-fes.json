@@ -1,0 +1,85 @@
+{
+  "slug": "urgence-plombier-fes",
+  "category": "urgence",
+  "service": "plombier",
+  "city": "fes",
+  "title": "Plombier urgence Fès — intervention en 30 min",
+  "meta_description": "Plombier urgence Fès disponible 24h/7. Fuite d'eau, WC bouché, tuyau éclaté — intervention rapide à la Médina, Ville Nouvelle et Saïss. Devis immédiat.",
+  "date": "2026-06-12",
+  "hero_image": "/img/blog/urgence-plombier.webp",
+  "tags": ["plombier", "urgence", "fes", "medina", "fuite"],
+  "estimated_read_min": 3,
+  "related_articles": ["urgence-plombier-casablanca", "plombier-fes-medina", "prix-plombier-maroc"],
+  "internal_links": ["/plombier/fes", "/plombier/meknes", "/plombier/taza"],
+  "faq": [
+    {
+      "q": "Un plombier urgence peut-il intervenir dans la Médina de Fès ?",
+      "a": "Oui, mais l'accès à certaines ruelles de la Médina est limité aux piétons ou véhicules étroits. Le plombier peut se déplacer à pied avec son matériel pour les interventions simples. Prévoyez un temps d'arrivée légèrement plus long pour la Médina ancienne."
+    },
+    {
+      "q": "Quel est le tarif d'urgence pour un plombier à Fès ?",
+      "a": "Un plombier urgence à Fès coûte entre 200 et 500 MAD en heures ouvrées, et 350 à 700 MAD en dehors des horaires normaux (nuit, weekend). Ces tarifs sont généralement inférieurs à Casablanca ou Rabat."
+    },
+    {
+      "q": "Comment couper l'eau en urgence à Fès ?",
+      "a": "Le robinet d'arrêt général est souvent sous l'évier, dans la salle de bain ou au niveau du compteur d'eau (généralement à l'entrée de l'immeuble ou dans la cour). Pour les maisons dans la Médina, le compteur est parfois dans la rue — contactez Lydec/RADEEF pour une coupure urgente si vous ne le trouvez pas."
+    }
+  ],
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Fès, avec sa Médina millénaire et ses réseaux d'eau anciens, est une ville où les urgences plomberie peuvent être particulièrement complexes. Tuyaux vétustes dans les vieux riads, installations de fortune dans la Médina — trouver un plombier d'urgence qui connaît la ville et ses spécificités est essentiel. Voici comment réagir rapidement."
+    },
+    {
+      "type": "h2",
+      "title": "Spécificités des urgences plomberie à Fès",
+      "content": "La Médina de Fès présente des défis uniques pour les interventions plomberie : ruelles étroites, canalisations centenaires, absence de plan précis des réseaux dans les maisons traditionnelles."
+    },
+    {
+      "type": "list",
+      "items": [
+        "Fuites sur canalisations anciennes en plomb (Médina) — nécessitent un plombier expérimenté",
+        "WC bouchés (réseaux d'égout anciens) — fréquent dans les riad de la Médina",
+        "Rupture de canalisation encastrée dans les murs en pisé",
+        "Chauffe-eau en panne — eau chaude indisponible",
+        "Débordement de citerne sur toit-terrasse (très fréquent en période estivale)"
+      ]
+    },
+    {
+      "type": "h2",
+      "title": "Gestes d'urgence à faire immédiatement",
+      "content": null
+    },
+    {
+      "type": "list",
+      "items": [
+        "Fermez le robinet d'arrêt général (sous l'évier ou au compteur)",
+        "Pour les riads avec puits ou citerne, fermez aussi la pompe de distribution",
+        "Éponger l'eau visible pour limiter les dégâts au sol et aux murs (pisé et eau sont incompatibles)",
+        "Photographiez les dégâts pour l'assurance habitation",
+        "Prévenez le propriétaire ou le gestionnaire du riad si vous êtes locataire"
+      ]
+    },
+    {
+      "type": "h2",
+      "title": "Tarifs urgence plomberie à Fès",
+      "content": null
+    },
+    {
+      "type": "table",
+      "caption": "Tarifs plombier urgence Fès (2025)",
+      "headers": ["Intervention", "Prix (MAD)", "Majoration nuit"],
+      "rows": [
+        ["Débouchage WC", "200–400 MAD", "+50%"],
+        ["Réparation fuite robinet/raccord", "150–350 MAD", "+40%"],
+        ["Détection fuite encastrée", "400–900 MAD", "+50%"],
+        ["Dépannage chauffe-eau", "250–500 MAD", "+40%"],
+        ["Débouchage canalisation", "400–900 MAD", "+50%"]
+      ]
+    },
+    {
+      "type": "tip",
+      "content": "Pour les riad de la Médina, précisez l'adresse exacte (bab, derb, numéro) et la nature de l'accès (accès voiture ou piéton uniquement) lors de votre demande. Cela permet au plombier de préparer son intervention et son matériel."
+    }
+  ]
+}

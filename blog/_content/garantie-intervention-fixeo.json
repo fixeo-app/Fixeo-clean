@@ -1,0 +1,90 @@
+{
+  "slug": "garantie-intervention-fixeo",
+  "category": "confiance",
+  "service": null,
+  "city": null,
+  "title": "Garantie et SAV sur vos interventions Fixeo",
+  "meta_description": "Comment fonctionne la garantie Fixeo sur vos interventions artisans ? SAV, reprise gratuite, médiation en cas de litige — tout ce que vous devez savoir.",
+  "date": "2026-06-12",
+  "hero_image": "/img/blog/garantie-fixeo.webp",
+  "tags": ["garantie", "sav", "confiance", "fixeo", "intervention"],
+  "estimated_read_min": 4,
+  "related_articles": ["artisan-verifie-maroc", "avis-artisans-fixeo", "securite-paiement-fixeo"],
+  "internal_links": ["/plombier/casablanca", "/electricien/rabat"],
+  "faq": [
+    {
+      "q": "Quelle est la durée de la garantie sur une intervention Fixeo ?",
+      "a": "La durée de garantie varie selon le type d'intervention : 3 mois pour les interventions de dépannage (débouchage, réparation fuite simple), 6 mois à 1 an pour les installations et remplacements d'équipements. La garantie constructeur sur les pièces installées s'ajoute à ces durées."
+    },
+    {
+      "q": "Que se passe-t-il si je ne suis pas satisfait de l'intervention ?",
+      "a": "Contactez le service Fixeo dans les 48h suivant l'intervention. Nous intervenons d'abord par médiation pour que l'artisan revienne corriger le travail gratuitement. Si l'artisan refuse ou le travail reste insatisfaisant, Fixeo peut prendre en charge une reprise par un autre artisan dans les conditions de la garantie."
+    },
+    {
+      "q": "La garantie couvre-t-elle les pièces et le matériel ?",
+      "a": "Oui, si les pièces ont été fournies et facturées par l'artisan Fixeo, elles sont couvertes par la garantie (sous réserve d'utilisation normale). Si vous avez fourni vous-même les pièces, seule la main d'œuvre est garantie."
+    }
+  ],
+  "sections": [
+    {
+      "type": "intro",
+      "content": "L'une des plus grandes angoisses lors d'un appel à un artisan est de se retrouver avec un travail bâclé et aucun recours. Fixeo a développé un système de garantie et de service après-vente (SAV) pour que chaque client soit protégé — que ce soit pour une réparation simple ou des travaux importants."
+    },
+    {
+      "type": "h2",
+      "title": "Ce que couvre la garantie Fixeo",
+      "content": null
+    },
+    {
+      "type": "table",
+      "caption": "Garanties par type d'intervention",
+      "headers": ["Type d'intervention", "Durée garantie main d'œuvre", "Garantie pièces"],
+      "rows": [
+        ["Dépannage / réparation urgence", "3 mois", "Garantie fournisseur"],
+        ["Remplacement équipement (chauffe-eau, etc.)", "6 mois", "Garantie constructeur + 6 mois SAV"],
+        ["Installation (climatisation, sanitaire)", "6 mois", "Garantie constructeur"],
+        ["Travaux de rénovation (électricité, plomberie)", "1 an", "Garantie fournisseur matériau"]
+      ]
+    },
+    {
+      "type": "h2",
+      "title": "La procédure SAV étape par étape",
+      "content": null
+    },
+    {
+      "type": "list",
+      "items": [
+        "1. Constatez le problème — prenez des photos ou une vidéo",
+        "2. Contactez Fixeo dans les 48h (chat, téléphone ou email) avec votre numéro de mission",
+        "3. L'équipe Fixeo contacte l'artisan pour organiser une reprise gratuite sous 72h",
+        "4. L'artisan revient corriger le travail — sans frais supplémentaires pour vous",
+        "5. Si l'artisan est indisponible ou refuse, Fixeo envoie un autre artisan vérifié",
+        "6. En cas de litige persistant, notre équipe médiation prend le relais"
+      ]
+    },
+    {
+      "type": "h2",
+      "title": "Ce que la garantie ne couvre pas",
+      "content": "La garantie Fixeo est claire sur ses exclusions pour éviter les abus."
+    },
+    {
+      "type": "list",
+      "items": [
+        "Les dommages causés par une mauvaise utilisation après l'intervention",
+        "Les pannes dues à une nouvelle cause non liée au travail effectué",
+        "Les interventions où le client a modifié lui-même l'installation après la mission",
+        "Les pannes liées à des matériaux fournis par le client lui-même (non garantis par l'artisan)",
+        "Les travaux effectués hors plateforme Fixeo (pas de traçabilité)"
+      ]
+    },
+    {
+      "type": "h2",
+      "title": "Le paiement sécurisé : une protection supplémentaire",
+      "content": "Sur Fixeo, le paiement de l'artisan n'est libéré qu'après votre validation de la mission. Tant que vous n'avez pas confirmé que le travail est terminé et satisfaisant, l'artisan n'est pas payé. C'est la meilleure protection contre les travaux bâclés."
+    },
+    {
+      "type": "tip",
+      "content": "Avant de valider une mission sur Fixeo, prenez quelques minutes pour vérifier le travail : testez le robinet réparé, vérifiez l'absence de fuite, essayez les prises électriques installées. Ne validez qu'une fois que vous êtes satisfait."
+    }
+  ]
+}

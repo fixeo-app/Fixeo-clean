@@ -1,0 +1,105 @@
+{
+  "slug": "comment-choisir-plombier-maroc",
+  "category": "confiance",
+  "service": "plombier",
+  "city": null,
+  "title": "Comment choisir un bon plombier au Maroc : guide complet",
+  "meta_description": "Comment trouver un plombier fiable au Maroc ? Vérification des références, lecture des avis, demande de devis — nos conseils pour éviter les arnaques.",
+  "date": "2026-06-12",
+  "hero_image": "/img/blog/choisir-artisan.webp",
+  "tags": ["plombier", "confiance", "conseils", "devis", "maroc"],
+  "estimated_read_min": 5,
+  "related_articles": ["artisan-verifie-maroc", "avis-artisans-fixeo", "securite-paiement-fixeo"],
+  "internal_links": ["/plombier/casablanca", "/plombier/rabat", "/plombier/marrakech"],
+  "faq": [
+    {
+      "q": "Comment vérifier qu'un plombier est fiable au Maroc ?",
+      "a": "Vérifiez ses avis clients (réels, pas anonymes), demandez des photos de réalisations récentes, exigez un devis écrit avant l'intervention, et vérifiez qu'il propose une garantie sur son travail. Évitez les plombiers qui ne peuvent pas donner de fourchette de prix avant de se déplacer."
+    },
+    {
+      "q": "Faut-il payer un acompte avant une intervention de plomberie ?",
+      "a": "Pour une intervention simple (dépannage, débouchage), évitez de payer avant la fin des travaux. Pour des travaux importants (remplacement chauffe-eau, réfection salle de bain), un acompte de 20 à 30% est raisonnable. Ne payez jamais 100% en avance."
+    },
+    {
+      "q": "Qu'est-ce qu'un artisan vérifié sur Fixeo ?",
+      "a": "Sur Fixeo, chaque artisan a été vérifié : identité confirmée, photos de réalisations validées, et historique de missions. Les avis laissés par les clients sont authentifiés — impossibles à falsifier. Cela garantit que vous choisissez un vrai professionnel, pas un inconnu."
+    },
+    {
+      "q": "Un plombier doit-il fournir une facture après l'intervention ?",
+      "a": "Oui, tout artisan professionnel doit remettre une facture ou un reçu après l'intervention. Cette facture est indispensable pour votre déclaration d'assurance en cas de dégât des eaux. Méfiez-vous des plombiers qui refusent de facturer — cela indique souvent un travail informel sans garantie."
+    }
+  ],
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Trouver un bon plombier au Maroc n'est pas toujours simple. Entre les artisans sérieux et ceux qui surfacturent ou bâclent le travail, le choix peut s'avérer risqué — surtout en cas d'urgence où le temps presse. Ce guide vous donne les critères essentiels pour choisir un plombier de confiance au Maroc, et les pièges à éviter."
+    },
+    {
+      "type": "h2",
+      "title": "Les 5 critères d'un bon plombier",
+      "content": null
+    },
+    {
+      "type": "list",
+      "items": [
+        "Il donne une fourchette de prix avant de se déplacer — pas de surprise à l'arrivée",
+        "Il a des avis clients vérifiables (pas juste de bouche à oreille)",
+        "Il propose une garantie sur son travail (minimum 3 mois pour une réparation)",
+        "Il fournit une facture à la fin de l'intervention",
+        "Il explique ce qu'il va faire AVANT de commencer — pas d'intervention surprise"
+      ]
+    },
+    {
+      "type": "h2",
+      "title": "Les signaux d'alarme (red flags)",
+      "content": "Certains comportements doivent vous alerter immédiatement."
+    },
+    {
+      "type": "list",
+      "items": [
+        "Refuse de donner un devis avant d'intervenir",
+        "Annonce un prix très bas par téléphone puis invente des problèmes supplémentaires sur place",
+        "Demande 100% de paiement en avance",
+        "Ne propose pas de facture (\"prix noir uniquement\")",
+        "Pression pour décider immédiatement, sans vous laisser comparer",
+        "Numéro de téléphone seul, pas d'adresse ni de présence en ligne"
+      ]
+    },
+    {
+      "type": "h2",
+      "title": "Comment lire les avis en ligne au Maroc",
+      "content": "Les avis Google ou Facebook peuvent être manipulés. Voici comment les lire de façon critique."
+    },
+    {
+      "type": "list",
+      "items": [
+        "Méfiez-vous des comptes avec seulement 1 avis et photo générique — souvent des faux",
+        "Les avis qui décrivent précisément la prestation (type de panne, quartier) sont plus fiables",
+        "Regardez aussi les mauvais avis et comment l'artisan y répond — cela révèle son professionnalisme",
+        "Un artisan avec 20 avis à 4.5 étoiles est souvent plus fiable qu'un avec 3 avis à 5 étoiles",
+        "Sur Fixeo, les avis sont liés à une mission réelle — impossibles à acheter ou générer artificiellement"
+      ]
+    },
+    {
+      "type": "h2",
+      "title": "Demander et comparer des devis",
+      "content": "Pour les travaux importants (réfection canalisation, remplacement chauffe-eau), prenez le temps de comparer."
+    },
+    {
+      "type": "table",
+      "caption": "Checklist devis plombier",
+      "headers": ["Élément", "À vérifier"],
+      "rows": [
+        ["Prix total (main d'œuvre + pièces)", "Tout inclus dans le devis ?"],
+        ["Délai d'intervention", "Date de début et durée estimée"],
+        ["Garantie sur le travail", "Durée et conditions"],
+        ["Mode de paiement accepté", "Chèque, virement, espèces"],
+        ["TVA / Facture", "Avec ou sans TVA"]
+      ]
+    },
+    {
+      "type": "tip",
+      "content": "Via Fixeo, vous recevez des devis de plusieurs plombiers vérifiés dans votre ville — sans avoir à chercher vous-même. Le service est gratuit et sans engagement."
+    }
+  ]
+}

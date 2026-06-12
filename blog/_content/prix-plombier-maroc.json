@@ -1,0 +1,120 @@
+{
+  "slug": "prix-plombier-maroc",
+  "category": "prix",
+  "service": "plombier",
+  "city": null,
+  "title": "Prix plombier au Maroc 2025 : tarifs et devis",
+  "meta_description": "Combien coûte un plombier au Maroc ? Tarifs horaires (150–500 MAD), frais de déplacement, comparatif par ville. Obtenez un devis gratuit avec Fixeo.",
+  "date": "2026-06-12",
+  "hero_image": "/img/blog/plombier-prix.webp",
+  "tags": ["plombier", "prix", "tarif", "maroc", "devis"],
+  "estimated_read_min": 6,
+  "related_articles": ["prix-electricien-maroc", "urgence-plombier-casablanca", "comment-choisir-plombier-maroc"],
+  "internal_links": ["/plombier/casablanca", "/plombier/rabat", "/plombier/marrakech"],
+  "faq": [
+    {
+      "q": "Quel est le tarif horaire d'un plombier au Maroc ?",
+      "a": "Le tarif horaire d'un plombier au Maroc varie entre 150 et 500 MAD selon la ville, l'expérience et la complexité de l'intervention. À Casablanca et Rabat, comptez 250–500 MAD/h ; dans les villes secondaires, 150–300 MAD/h."
+    },
+    {
+      "q": "Y a-t-il des frais de déplacement chez un plombier ?",
+      "a": "Oui, la plupart des plombiers facturent un forfait de déplacement entre 50 et 150 MAD, parfois inclus dans le premier tarif d'heure. Vérifiez avant de confirmer l'intervention."
+    },
+    {
+      "q": "Comment obtenir un devis plombier gratuit au Maroc ?",
+      "a": "Via Fixeo, vous décrivez votre problème et recevez des devis d'artisans vérifiés dans votre ville sous quelques minutes. Le service est gratuit et sans engagement."
+    },
+    {
+      "q": "Quelle est la différence entre un plombier et un plombier-zingueur ?",
+      "a": "Le plombier gère les canalisations intérieures (tuyaux, robinets, WC, chauffe-eau). Le plombier-zingueur intervient également sur les toitures, les évacuations extérieures et les gouttières. Les tarifs sont similaires mais le zingueur facture généralement un peu plus cher."
+    }
+  ],
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Une fuite, un tuyau bouché, un chauffe-eau en panne — le plombier est l'un des artisans les plus sollicités au Maroc. Avant de passer un appel, il est utile de connaître les tarifs pratiqués pour éviter les mauvaises surprises. Ce guide vous présente les prix moyens constatés en 2025 pour les interventions les plus courantes, avec un comparatif par ville."
+    },
+    {
+      "type": "h2",
+      "title": "Tarifs horaires d'un plombier au Maroc",
+      "content": "Le prix d'un plombier dépend de plusieurs facteurs : la nature de la panne, l'heure d'intervention, la ville et l'expérience de l'artisan. Voici les fourchettes généralement observées."
+    },
+    {
+      "type": "table",
+      "caption": "Tarifs horaires plombier au Maroc — 2025",
+      "headers": ["Type de plombier", "Tarif horaire (MAD)", "Frais de déplacement"],
+      "rows": [
+        ["Plombier généraliste", "150–350 MAD/h", "50–100 MAD"],
+        ["Plombier qualifié (5+ ans exp.)", "250–450 MAD/h", "80–150 MAD"],
+        ["Plombier urgence 24h/7", "350–600 MAD/h", "100–200 MAD"],
+        ["Plombier-zingueur (toiture)", "300–500 MAD/h", "100–200 MAD"]
+      ]
+    },
+    {
+      "type": "h2",
+      "title": "Prix par type d'intervention",
+      "content": "Au-delà du tarif horaire, certaines prestations ont des prix forfaitaires plus transparents pour le client."
+    },
+    {
+      "type": "table",
+      "caption": "Grille tarifaire indicative — interventions plomberie (2025)",
+      "headers": ["Intervention", "Prix indicatif (MAD)", "Durée estimée"],
+      "rows": [
+        ["Débouchage WC / siphon", "200–450 MAD", "30–60 min"],
+        ["Réparation fuite robinet", "150–350 MAD", "30–45 min"],
+        ["Remplacement chauffe-eau (main d'œuvre)", "400–800 MAD", "2–3h"],
+        ["Détection et réparation fuite encastrée", "600–1 500 MAD", "2–5h"],
+        ["Installation équipement sanitaire", "300–700 MAD", "1–3h"],
+        ["Débouchage canalisation principale (hydrocureur)", "500–1 200 MAD", "1–3h"],
+        ["Remplacement colonne d'eau", "1 000–2 500 MAD", "4–8h"]
+      ]
+    },
+    {
+      "type": "tip",
+      "content": "Demandez systématiquement un devis estimatif avant l'intervention — un plombier sérieux peut vous donner une fourchette de prix par téléphone selon la description du problème."
+    },
+    {
+      "type": "h2",
+      "title": "Comparatif des tarifs plombier par ville",
+      "content": "Les prix varient significativement selon les villes marocaines. Les grandes métropoles affichent des tarifs plus élevés en raison du coût de la vie et de la demande."
+    },
+    {
+      "type": "table",
+      "caption": "Tarif moyen plombier par ville (déplacement + 1h)",
+      "headers": ["Ville", "Tarif moyen", "Observation"],
+      "rows": [
+        ["Casablanca", "300–500 MAD", "Tarifs les plus élevés, forte demande"],
+        ["Rabat", "280–480 MAD", "Similaire à Casablanca"],
+        ["Marrakech", "250–450 MAD", "Hausse en saison touristique"],
+        ["Tanger", "220–420 MAD", "Villes en développement, tarifs croissants"],
+        ["Fès", "200–380 MAD", "Médina : accès parfois difficile"],
+        ["Agadir", "200–400 MAD", "Hausse estivale"],
+        ["Meknès, Oujda, Kenitra", "150–320 MAD", "Tarifs régionaux plus accessibles"]
+      ]
+    },
+    {
+      "type": "h2",
+      "title": "Majoration urgence et horaires décalés",
+      "content": "Les interventions en dehors des heures ouvrées (avant 8h, après 20h, week-ends, jours fériés) entraînent une majoration. Comptez entre +30% et +80% sur le tarif normal. Pour une fuite urgente à Casablanca un samedi soir, le coût total peut atteindre 600 à 1 000 MAD."
+    },
+    {
+      "type": "warning",
+      "content": "Méfiez-vous des plombiers qui refusent de donner un devis avant d'intervenir ou qui annoncent des prix très bas par téléphone puis facturent beaucoup plus. Vérifiez les avis clients avant de confirmer."
+    },
+    {
+      "type": "h2",
+      "title": "Comment réduire la facture de plomberie ?",
+      "content": null
+    },
+    {
+      "type": "list",
+      "items": [
+        "Décrire précisément le problème pour permettre un devis téléphonique fiable",
+        "Éviter les interventions d'urgence en effectuant l'entretien régulier de vos canalisations",
+        "Comparer au moins 2 devis pour les travaux importants (remplacement chauffe-eau, réfection salle de bain)",
+        "Vérifier si votre assurance habitation couvre les dégâts des eaux",
+        "Préférer un plombier local connu dans votre quartier — moins de frais de déplacement"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,87 @@
+{
+  "slug": "electricien-rabat-agdal",
+  "category": "local",
+  "service": "electricien",
+  "city": "rabat",
+  "title": "Électricien Rabat Agdal et Hay Riad : intervention rapide",
+  "meta_description": "Électricien à Rabat Agdal, Hay Riad, Souissi, Hassan — artisans vérifiés disponibles 7j/7. Dépannage, installation, mise aux normes. Devis gratuit.",
+  "date": "2026-06-12",
+  "hero_image": "/img/blog/electricien-rabat.webp",
+  "tags": ["electricien", "rabat", "agdal", "hay-riad", "local"],
+  "estimated_read_min": 4,
+  "related_articles": ["urgence-electricien-rabat", "prix-electricien-maroc", "artisan-verifie-maroc"],
+  "internal_links": ["/electricien/rabat", "/electricien/sale", "/electricien/temara"],
+  "faq": [
+    {
+      "q": "Y a-t-il des électriciens disponibles dans le quartier Agdal à Rabat ?",
+      "a": "Oui, plusieurs électriciens qualifiés et vérifiés par Fixeo opèrent spécifiquement dans le secteur Agdal-Akkari à Rabat. Le délai d'intervention moyen est de 20 à 40 minutes depuis leur zone de base."
+    },
+    {
+      "q": "Mon appartement à Hay Riad est neuf mais j'ai des problèmes électriques — est-ce normal ?",
+      "a": "Non, les appartements neufs à Hay Riad peuvent avoir des défauts d'installation si les travaux ont été sous-traités en cours de construction. Un bilan électrique complet révèle souvent des connexions mal serrées, des mises à la terre absentes ou des disjoncteurs sous-dimensionnés."
+    },
+    {
+      "q": "Comment trouver un électricien fiable près de l'ambassade (Souissi) à Rabat ?",
+      "a": "Via Fixeo, sélectionnez votre quartier (Souissi) lors de la demande. Les artisans disponibles dans ce secteur vous seront proposés avec leurs notes et avis. Le quartier Souissi est bien couvert du fait de la forte concentration de villas et résidences diplomatiques."
+    }
+  ],
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Rabat, capitale administrative du Maroc, concentre une forte densité de logements modernes, d'administrations et de résidences diplomatiques. Les besoins électriques y sont variés : dépannage dans les immeubles anciens de Hassan et Ocean, installation dans les constructions récentes d'Hay Riad, ou mise aux normes dans les villas de Souissi. Les électriciens Fixeo à Rabat couvrent tous ces besoins."
+    },
+    {
+      "type": "h2",
+      "title": "Zones couvertes à Rabat par les électriciens Fixeo",
+      "content": null
+    },
+    {
+      "type": "table",
+      "caption": "Couverture électriciens Fixeo — Grand Rabat",
+      "headers": ["Quartier / Zone", "Type de logement", "Délai moyen"],
+      "rows": [
+        ["Agdal / Akkari", "Appartements modernes, commerces", "15–30 min"],
+        ["Hay Riad", "Résidences récentes, villas", "20–40 min"],
+        ["Souissi", "Villas, ambassades, résidences de standing", "20–35 min"],
+        ["Hassan / Océan", "Appartements anciens, immeubles coloniaux", "15–30 min"],
+        ["Yacoub El Mansour", "Quartier populaire, logements sociaux", "20–40 min"],
+        ["Salé / Tabriquet", "Appartements neufs et anciens", "25–45 min"],
+        ["Témara", "Maisons individuelles, villas", "30–50 min"]
+      ]
+    },
+    {
+      "type": "h2",
+      "title": "Problèmes électriques spécifiques à Rabat",
+      "content": "Chaque quartier de Rabat a ses particularités électriques liées à l'âge du bâti et à la qualité des installations."
+    },
+    {
+      "type": "list",
+      "items": [
+        "Hassan / Océan : immeubles anciens avec câblage aluminium (années 60–80) — présentent des risques et nécessitent souvent une mise aux normes",
+        "Agdal / Hay Riad : immeubles récents avec installations parfois bâclées par des promoteurs — prévoir un bilan au moment de l'emménagement",
+        "Souissi : villas avec piscines et systèmes domotiques — intervention spécialisée nécessaire",
+        "Salé / Tabriquet : fluctuations de tension fréquentes — un régulateur de tension est conseillé pour les appareils sensibles"
+      ]
+    },
+    {
+      "type": "h2",
+      "title": "Services électriques les plus demandés à Rabat",
+      "content": null
+    },
+    {
+      "type": "list",
+      "items": [
+        "Dépannage urgence (panne générale, disjoncteur sauté)",
+        "Installation prises et éclairage (rénovation ou aménagement)",
+        "Mise aux normes tableau électrique (remplacement tableau aluminium)",
+        "Installation climatisation (dérivation électrique dédiée)",
+        "Installation borne de recharge véhicule électrique (en forte croissance à Rabat)",
+        "Bilan électrique complet (avant achat immobilier ou fin de bail)"
+      ]
+    },
+    {
+      "type": "tip",
+      "content": "Si vous êtes locataire à Rabat et que vous constatez des problèmes électriques récurrents (disjoncteur qui saute, prises qui chauffent), signalez-le par écrit à votre propriétaire. La mise aux normes est à sa charge selon le droit marocain."
+    }
+  ]
+}

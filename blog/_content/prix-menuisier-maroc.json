@@ -1,0 +1,106 @@
+{
+  "slug": "prix-menuisier-maroc",
+  "category": "prix",
+  "service": "menuisier",
+  "city": null,
+  "title": "Prix menuisier au Maroc 2025 : portes, fenêtres et cuisines",
+  "meta_description": "Tarifs menuisier au Maroc 2025 : porte intérieure 800–3000 MAD, fenêtre aluminium 600–2500 MAD, cuisine sur mesure 15000–60000 MAD. Guide complet.",
+  "date": "2026-06-12",
+  "hero_image": "/img/blog/menuisier-prix.webp",
+  "tags": ["menuisier", "prix", "porte", "fenetre", "cuisine", "maroc"],
+  "estimated_read_min": 6,
+  "related_articles": ["prix-peinture-maroc", "artisan-verifie-maroc", "garantie-intervention-fixeo"],
+  "internal_links": ["/plombier/casablanca", "/plombier/rabat"],
+  "faq": [
+    {
+      "q": "Quel est le prix d'une porte intérieure posée au Maroc ?",
+      "a": "Le prix d'une porte intérieure standard posée (porte + bâti + quincaillerie + pose) varie entre 800 et 3 000 MAD selon les matériaux (bois massif, MDF, mélaminé) et les finitions. Le seul coût de pose est de 300 à 700 MAD par porte."
+    },
+    {
+      "q": "Combien coûte une fenêtre aluminium au Maroc ?",
+      "a": "Une fenêtre aluminium standard (100x120 cm) coûte entre 600 et 2 500 MAD selon le type (oscillo-battant, coulissant), le profil aluminium et le vitrage (simple ou double vitrage). La pose est de 300 à 600 MAD par fenêtre."
+    },
+    {
+      "q": "Quel budget prévoir pour une cuisine équipée sur mesure au Maroc ?",
+      "a": "Une cuisine sur mesure en bois MDF/mélaminé coûte entre 15 000 et 60 000 MAD pour un appartement standard (2m80 à 5m linéaires), hors électroménager. Les cuisines en bois massif ou avec façades laqués haut de gamme peuvent dépasser 80 000 MAD."
+    }
+  ],
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Le menuisier est l'artisan incontournable pour l'aménagement intérieur au Maroc : portes, fenêtres, cuisines sur mesure, placards et agencements. Les prix varient considérablement selon les matériaux (bois massif, MDF, aluminium, PVC) et le niveau de finition. Ce guide vous donne les tarifs moyens pratiqués en 2025 pour budgéter votre projet sereinement."
+    },
+    {
+      "type": "h2",
+      "title": "Prix des portes intérieures au Maroc",
+      "content": "Le coût d'une porte intérieure dépend du matériau, des finitions et de la quincaillerie choisie."
+    },
+    {
+      "type": "table",
+      "caption": "Prix portes intérieures posées (fourniture + pose, 2025)",
+      "headers": ["Type de porte", "Prix (MAD)", "Durabilité"],
+      "rows": [
+        ["Porte MDF mélaminé (économique)", "800–1 500 MAD", "8–12 ans"],
+        ["Porte bois aggloméré laqué", "1 200–2 200 MAD", "10–15 ans"],
+        ["Porte bois massif pin", "1 800–3 500 MAD", "20–30 ans"],
+        ["Porte bois massif cèdre du Maroc", "2 500–5 000 MAD", "30+ ans"],
+        ["Porte vitrée (verre sécurit + bois)", "2 000–4 500 MAD", "15–20 ans"]
+      ]
+    },
+    {
+      "type": "h2",
+      "title": "Prix des fenêtres et baies vitrées",
+      "content": "L'aluminium est le matériau dominant au Maroc pour les menuiseries extérieures. Le PVC reste moins répandu mais gagne du terrain pour ses propriétés isolantes."
+    },
+    {
+      "type": "table",
+      "caption": "Prix fenêtres au Maroc (fourniture + pose, 2025)",
+      "headers": ["Type", "Dimensions", "Prix (MAD)"],
+      "rows": [
+        ["Fenêtre aluminium simple vitrage", "100x120 cm", "600–1 200 MAD"],
+        ["Fenêtre aluminium double vitrage", "100x120 cm", "1 000–2 500 MAD"],
+        ["Fenêtre PVC double vitrage", "100x120 cm", "900–2 000 MAD"],
+        ["Baie vitrée coulissante (2 vantaux)", "200x210 cm", "3 000–7 000 MAD"],
+        ["Porte-fenêtre oscillo-battante", "90x220 cm", "2 000–5 000 MAD"]
+      ]
+    },
+    {
+      "type": "h2",
+      "title": "Prix d'une cuisine sur mesure au Maroc",
+      "content": "La cuisine sur mesure est le grand chantier menuiserie. Les prix ci-dessous couvrent les meubles hauts et bas, sans électroménager ni plan de travail en granit."
+    },
+    {
+      "type": "table",
+      "caption": "Budget cuisine sur mesure au Maroc (2025)",
+      "headers": ["Gamme", "Matériaux", "Prix au mètre linéaire", "Pour 4 mètres linéaires"],
+      "rows": [
+        ["Entrée de gamme", "MDF mélaminé blanc/gris", "4 000–6 000 MAD/ml", "16 000–24 000 MAD"],
+        ["Milieu de gamme", "MDF laqué, façades modernes", "6 000–10 000 MAD/ml", "24 000–40 000 MAD"],
+        ["Haut de gamme", "Bois massif ou laqué brillant", "10 000–18 000 MAD/ml", "40 000–72 000 MAD"]
+      ]
+    },
+    {
+      "type": "tip",
+      "content": "Pour une cuisine sur mesure, demandez toujours un plan en 3D avant de valider la commande. Un bon menuisier vous proposera cette étude gratuite ou pour un coût symbolique de 200–500 MAD."
+    },
+    {
+      "type": "h2",
+      "title": "Prix des placards et rangements sur mesure",
+      "content": null
+    },
+    {
+      "type": "table",
+      "caption": "Prix placards sur mesure (2025)",
+      "headers": ["Type", "Prix par mètre linéaire", "Pose incluse"],
+      "rows": [
+        ["Placard coulissant (MDF mélaminé)", "2 000–4 000 MAD/ml", "Oui"],
+        ["Dressing sur mesure (bois)", "3 000–6 000 MAD/ml", "Oui"],
+        ["Bibliothèque murale", "1 500–4 000 MAD/ml", "Oui"]
+      ]
+    },
+    {
+      "type": "warning",
+      "content": "Vérifiez que le devis inclut bien : fournitures + main d'œuvre + finitions (chants, poignées, rails). Un devis incomplet peut cacher des coûts supplémentaires importants en cours de chantier."
+    }
+  ]
+}

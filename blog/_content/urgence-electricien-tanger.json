@@ -1,0 +1,85 @@
+{
+  "slug": "urgence-electricien-tanger",
+  "category": "urgence",
+  "service": "electricien",
+  "city": "tanger",
+  "title": "Électricien urgence Tanger : panne électrique, intervention rapide",
+  "meta_description": "Électricien urgence Tanger disponible 24h/7. Panne générale, court-circuit, disjoncteur — intervention rapide au centre-ville, Malabata, Cap Spartel et partout à Tanger.",
+  "date": "2026-06-12",
+  "hero_image": "/img/blog/urgence-electricien.webp",
+  "tags": ["electricien", "urgence", "tanger", "panne", "24h"],
+  "estimated_read_min": 3,
+  "related_articles": ["urgence-electricien-rabat", "prix-electricien-maroc", "artisan-verifie-maroc"],
+  "internal_links": ["/electricien/tanger", "/electricien/tetouan", "/electricien/nador"],
+  "faq": [
+    {
+      "q": "Comment trouver un électricien urgence la nuit à Tanger ?",
+      "a": "Soumettez une demande via Fixeo — même la nuit, des électriciens d'urgence sont disponibles à Tanger. Vous recevez les coordonnées d'un artisan disponible dans votre secteur sous quelques minutes."
+    },
+    {
+      "q": "Quel est le tarif d'un électricien urgence à Tanger ?",
+      "a": "En heures ouvrées, comptez 300 à 500 MAD pour une intervention standard (déplacement + 1h). La nuit ou le weekend, la majoration porte le total à 450–750 MAD selon la complexité de la panne."
+    },
+    {
+      "q": "Les quartiers balnéaires de Tanger (Malabata, Cap Spartel) sont-ils bien couverts ?",
+      "a": "Oui, les électriciens disponibles via Fixeo à Tanger couvrent l'ensemble de la ville y compris les zones résidentielles balnéaires (Malabata, Cap Spartel, Boukhalef) et les quartiers excentrés comme Gzenaya."
+    }
+  ],
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Tanger, ville en pleine expansion et pole économique du nord du Maroc, accueille de nombreuses constructions récentes et des quartiers anciens avec des installations électriques datant de plusieurs décennies. Les pannes électriques — qu'elles surviennent en plein été dans une résidence balnéaire de Malabata ou dans un appartement du centre-ville — nécessitent une intervention rapide. Ce guide vous explique comment agir."
+    },
+    {
+      "type": "h2",
+      "title": "Pannes électriques fréquentes à Tanger",
+      "content": null
+    },
+    {
+      "type": "list",
+      "items": [
+        "Coupure générale suite à surcharge (climatisation + appareils en simultané en été)",
+        "Disjoncteur différentiel sauté — humidité ou appareil défectueux",
+        "Prise murale en court-circuit ou qui chauffe",
+        "Panne d'éclairage dans une partie du logement",
+        "Problème sur tableau électrique ancien (constructions des années 80–90)",
+        "Installation défectueuse après travaux récents"
+      ]
+    },
+    {
+      "type": "h2",
+      "title": "Précautions de sécurité électrique à Tanger",
+      "content": "Le réseau électrique tangérois subit des fluctuations de tension par endroits. Quelques précautions importantes :"
+    },
+    {
+      "type": "list",
+      "items": [
+        "Investissez dans un onduleur ou régulateur de tension pour vos appareils sensibles (TV, ordinateur, réfrigérateur)",
+        "Vérifiez que votre tableau électrique dispose bien d'un disjoncteur différentiel 30mA",
+        "Ne branchez pas de multiprises en cascade — risque de surchauffe",
+        "Faites vérifier votre installation tous les 10 ans par un électricien qualifié",
+        "En cas d'odeur de brûlé, coupez le tableau général et appelez immédiatement un électricien"
+      ]
+    },
+    {
+      "type": "h2",
+      "title": "Tarifs urgence électricien à Tanger",
+      "content": null
+    },
+    {
+      "type": "table",
+      "caption": "Tarifs électricien urgence Tanger (2025)",
+      "headers": ["Prestation", "Heures normales (MAD)", "Nuit / Weekend (MAD)"],
+      "rows": [
+        ["Diagnostic panne + réarmement", "250–450 MAD", "400–650 MAD"],
+        ["Remplacement disjoncteur", "300–550 MAD", "450–750 MAD"],
+        ["Réparation prise/court-circuit", "250–500 MAD", "400–700 MAD"],
+        ["Bilan tableau électrique complet", "500–1 000 MAD", "700–1 400 MAD"]
+      ]
+    },
+    {
+      "type": "tip",
+      "content": "À Tanger, de nombreux nouveaux quartiers résidentiels (Boukhalef, Izmir) ont des installations récentes mais parfois mal réalisées par des sous-traitants peu qualifiés. Si votre logement est neuf et présente des problèmes récurrents, demandez un audit complet de l'installation."
+    }
+  ]
+}

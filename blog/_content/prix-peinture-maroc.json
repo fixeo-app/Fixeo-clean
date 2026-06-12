@@ -1,0 +1,103 @@
+{
+  "slug": "prix-peinture-maroc",
+  "category": "prix",
+  "service": "peinture",
+  "city": null,
+  "title": "Prix peintre en bâtiment Maroc 2025 : tarifs au m²",
+  "meta_description": "Prix d'un peintre au Maroc 2025 : 35–80 MAD/m² pour les murs, devis, comparatif villes. Tout savoir avant de faire peindre votre appartement ou villa.",
+  "date": "2026-06-12",
+  "hero_image": "/img/blog/peinture-prix.webp",
+  "tags": ["peinture", "peintre", "prix", "renovation", "maroc"],
+  "estimated_read_min": 5,
+  "related_articles": ["prix-plombier-maroc", "artisan-verifie-maroc", "comment-choisir-plombier-maroc"],
+  "internal_links": ["/peinture/casablanca", "/peinture/rabat", "/peinture/marrakech"],
+  "faq": [
+    {
+      "q": "Quel est le prix au m² pour une peinture intérieure au Maroc ?",
+      "a": "Le prix moyen pour une peinture intérieure de bonne qualité est de 35 à 80 MAD/m² selon la préparation nécessaire, le nombre de couches et la région. Ce tarif inclut généralement la main d'œuvre mais pas la peinture elle-même."
+    },
+    {
+      "q": "La peinture est-elle incluse dans le prix ?",
+      "a": "Non, dans la plupart des cas, le peintre facture sa main d'œuvre séparément. La peinture (enduit, impression, finition) est fournie par l'artisan ou achetée par le client selon l'accord. Précisez ce point dans le devis."
+    },
+    {
+      "q": "Combien de temps pour peindre un appartement de 80 m² ?",
+      "a": "Pour un appartement de 80 m² avec plafonds et murs, comptez 3 à 5 jours pour un artisan seul (préparation + 2 couches). Avec une équipe de 2, cela peut être réduit à 2–3 jours."
+    }
+  ],
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Rafraîchir les murs d'un appartement ou peindre une villa entière au Maroc — le coût d'un peintre professionnel varie selon la surface, la qualité de la peinture et la préparation des murs. Ce guide vous aide à estimer votre budget peinture en 2025 avec des tarifs réels pratiqués par les artisans marocains."
+    },
+    {
+      "type": "h2",
+      "title": "Prix de la peinture murale au Maroc (main d'œuvre)",
+      "content": "La main d'œuvre représente généralement 50 à 70% du coût total d'un chantier peinture. Voici les tarifs au m² pratiqués en 2025."
+    },
+    {
+      "type": "table",
+      "caption": "Tarifs peinture intérieure — main d'œuvre (2025)",
+      "headers": ["Prestation", "Prix au m² (MAD)", "Observation"],
+      "rows": [
+        ["Peinture murs 1 couche (finition simple)", "20–35 MAD/m²", "Sans préparation lourde"],
+        ["Peinture murs 2 couches (standard)", "35–55 MAD/m²", "La plus courante"],
+        ["Peinture murs avec enduit + 2 couches", "50–80 MAD/m²", "Murs abîmés ou neufs"],
+        ["Peinture plafond (2 couches)", "35–60 MAD/m²", "Peinture blanche satinée"],
+        ["Peinture façade extérieure", "45–90 MAD/m²", "Peinture hydrofuge recommandée"],
+        ["Décoration / peinture à l'effet (béton ciré, etc.)", "80–200 MAD/m²", "Main d'œuvre spécialisée"]
+      ]
+    },
+    {
+      "type": "h2",
+      "title": "Prix des peintures au Maroc (matériaux)",
+      "content": "Le coût des matériaux s'ajoute à la main d'œuvre. Voici les prix moyens des peintures vendues dans les grandes surfaces de bricolage et les négoces au Maroc."
+    },
+    {
+      "type": "table",
+      "caption": "Prix moyens peinture intérieure (pot de 10L, 2025)",
+      "headers": ["Type de peinture", "Prix (MAD/10L)", "Couverture"],
+      "rows": [
+        ["Peinture économique (marque locale)", "120–200 MAD", "60–80 m²/couche"],
+        ["Peinture standard (Valentine, Astral)", "250–400 MAD", "80–100 m²/couche"],
+        ["Peinture premium (Tollens, Dulux)", "400–650 MAD", "90–110 m²/couche"],
+        ["Enduit de finition (10 kg)", "80–160 MAD", "25–40 m²/couche"]
+      ]
+    },
+    {
+      "type": "tip",
+      "content": "Comptez environ 0.12 à 0.15 L de peinture par m² et par couche. Pour 80 m² de murs avec 2 couches, prévoyez 20 à 25 L de peinture finition en plus des impressions et enduits."
+    },
+    {
+      "type": "h2",
+      "title": "Coût total d'une rénovation peinture par type de logement",
+      "content": null
+    },
+    {
+      "type": "table",
+      "caption": "Estimation budget peinture complète (main d'œuvre + matériaux)",
+      "headers": ["Type de logement", "Surface à peindre (murs+plafond)", "Estimation totale (MAD)"],
+      "rows": [
+        ["Studio / F1 (35 m²)", "100–130 m² murs", "4 000–8 000 MAD"],
+        ["Appartement F2 (60 m²)", "180–220 m² murs", "7 000–14 000 MAD"],
+        ["Appartement F3 (90 m²)", "260–310 m² murs", "10 000–20 000 MAD"],
+        ["Villa 3 chambres (150 m²)", "420–500 m² murs + façade", "20 000–40 000 MAD"]
+      ]
+    },
+    {
+      "type": "h2",
+      "title": "Choisir le bon peintre au Maroc",
+      "content": null
+    },
+    {
+      "type": "list",
+      "items": [
+        "Demandez un devis détaillé qui sépare : main d'œuvre, fournitures, nombre de couches",
+        "Vérifiez les références et les photos de chantiers précédents",
+        "Choisissez un artisan qui prépare correctement les murs (enduit, ponçage) — la durabilité en dépend",
+        "Évitez les prix trop bas : une peinture mal appliquée s'écaille en quelques mois",
+        "Fixez un calendrier précis et un acompte maximum de 30% avant le début des travaux"
+      ]
+    }
+  ]
+}

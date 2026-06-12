@@ -1,0 +1,111 @@
+{
+  "slug": "prix-electricien-maroc",
+  "category": "prix",
+  "service": "electricien",
+  "city": null,
+  "title": "Prix électricien au Maroc 2025 : tarifs et coûts d'installation",
+  "meta_description": "Tarifs d'un électricien au Maroc 2025 : 200–600 MAD/h, tableau électrique, installation, urgence. Guide complet pour obtenir un devis fiable.",
+  "date": "2026-06-12",
+  "hero_image": "/img/blog/electricien-prix.webp",
+  "tags": ["electricien", "prix", "tarif", "installation", "maroc"],
+  "estimated_read_min": 5,
+  "related_articles": ["prix-plombier-maroc", "urgence-electricien-rabat", "artisan-verifie-maroc"],
+  "internal_links": ["/electricien/casablanca", "/electricien/rabat", "/electricien/marrakech"],
+  "faq": [
+    {
+      "q": "Quel est le tarif horaire d'un électricien au Maroc ?",
+      "a": "Le tarif horaire d'un électricien varie entre 200 et 600 MAD selon la ville, le type de travaux et l'expérience. Un électricien qualifié pour du tableau électrique ou des travaux en triphasé sera en haut de la fourchette."
+    },
+    {
+      "q": "Combien coûte le remplacement d'un tableau électrique au Maroc ?",
+      "a": "Le remplacement d'un tableau électrique principal coûte entre 1 500 et 4 000 MAD (main d'œuvre incluse), selon le nombre de circuits et la marque du tableau. Schneider et Legrand sont les marques les plus utilisées au Maroc."
+    },
+    {
+      "q": "L'électricien peut-il intervenir le week-end ?",
+      "a": "Oui, mais avec une majoration de 30 à 50% sur le tarif normal. Pour les urgences (panne totale, court-circuit), certains électriciens sont disponibles 24h/7 avec un tarif d'urgence spécifique."
+    }
+  ],
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Une prise en court-circuit, un tableau électrique surchargé ou l'installation d'un climatiseur — les électriciens sont parmi les artisans les plus demandés au Maroc. Ce guide vous présente les tarifs pratiqués en 2025 pour les interventions les plus courantes, avec un comparatif par ville et type de prestation."
+    },
+    {
+      "type": "h2",
+      "title": "Tarifs horaires d'un électricien au Maroc",
+      "content": "Le prix d'un électricien dépend de la nature des travaux (dépannage, installation, mise aux normes) et de la qualification de l'artisan."
+    },
+    {
+      "type": "table",
+      "caption": "Tarifs horaires électricien au Maroc — 2025",
+      "headers": ["Profil", "Tarif horaire (MAD)", "Déplacement"],
+      "rows": [
+        ["Électricien dépannage général", "200–350 MAD/h", "60–120 MAD"],
+        ["Électricien installations", "300–500 MAD/h", "80–150 MAD"],
+        ["Électricien tableau/triphasé", "400–600 MAD/h", "100–200 MAD"],
+        ["Urgence nuit/weekend", "500–800 MAD/h", "150–250 MAD"]
+      ]
+    },
+    {
+      "type": "h2",
+      "title": "Prix par type d'intervention électrique",
+      "content": "Voici les tarifs moyens constatés pour les interventions électriques les plus fréquentes au Maroc."
+    },
+    {
+      "type": "table",
+      "caption": "Grille tarifaire — interventions électriques (2025)",
+      "headers": ["Intervention", "Prix indicatif (MAD)", "Durée"],
+      "rows": [
+        ["Remplacement prise / interrupteur", "150–350 MAD", "30 min"],
+        ["Installation luminaire / plafonnier", "200–450 MAD", "1h"],
+        ["Remplacement disjoncteur", "250–500 MAD", "30–60 min"],
+        ["Remplacement tableau électrique", "1 500–4 000 MAD", "4–8h"],
+        ["Installation prise 220V dédiée", "350–700 MAD", "1–2h"],
+        ["Mise aux normes installation (visite)", "500–1 200 MAD", "2–4h"],
+        ["Installation climatiseur (électricité)", "400–800 MAD", "2–3h"]
+      ]
+    },
+    {
+      "type": "tip",
+      "content": "Pour les travaux d'installation ou de mise aux normes, demandez plusieurs devis. La différence entre artisans peut aller du simple au double sur des travaux importants."
+    },
+    {
+      "type": "h2",
+      "title": "Comparatif des tarifs par ville",
+      "content": null
+    },
+    {
+      "type": "table",
+      "caption": "Tarif moyen électricien par ville (déplacement + 1h)",
+      "headers": ["Ville", "Tarif moyen", "Niveau de prix"],
+      "rows": [
+        ["Casablanca", "350–600 MAD", "Élevé"],
+        ["Rabat", "320–550 MAD", "Élevé"],
+        ["Marrakech", "280–500 MAD", "Moyen-élevé"],
+        ["Tanger", "250–480 MAD", "Moyen"],
+        ["Agadir", "240–450 MAD", "Moyen"],
+        ["Fès, Meknès", "200–380 MAD", "Moyen"],
+        ["Khouribga, Safi, Nador", "180–350 MAD", "Accessible"]
+      ]
+    },
+    {
+      "type": "warning",
+      "content": "Attention aux électriciens non qualifiés qui proposent des prix très bas. Une installation non conforme peut causer incendies ou électrocutions. Vérifiez que l'artisan connaît les normes NM C 15-100 (standard marocain) ou NF C 15-100 (norme française utilisée en référence)."
+    },
+    {
+      "type": "h2",
+      "title": "Ce qui influence le prix final",
+      "content": null
+    },
+    {
+      "type": "list",
+      "items": [
+        "La distance et le temps de déplacement de l'artisan",
+        "L'accessibilité des installations (encastré, faux plafond, sous-sol)",
+        "La fourniture du matériel (câbles, disjoncteurs, prises) — souvent facturée en plus",
+        "L'heure d'intervention (heures ouvrées vs nuit/weekend)",
+        "La qualification : un électricien certifié ONEE coûte plus cher mais assure un travail conforme"
+      ]
+    }
+  ]
+}

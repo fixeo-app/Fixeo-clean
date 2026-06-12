@@ -1,0 +1,91 @@
+{
+  "slug": "artisan-verifie-maroc",
+  "category": "confiance",
+  "service": null,
+  "city": null,
+  "title": "Pourquoi choisir un artisan vérifié Fixeo au Maroc",
+  "meta_description": "Qu'est-ce qu'un artisan vérifié Fixeo ? Processus de vérification, avis authentiques, garantie intervention — pourquoi c'est plus sûr qu'un contact direct ou les flyers.",
+  "date": "2026-06-12",
+  "hero_image": "/img/blog/artisan-verifie.webp",
+  "tags": ["artisan", "confiance", "verification", "fixeo", "maroc"],
+  "estimated_read_min": 4,
+  "related_articles": ["comment-choisir-plombier-maroc", "avis-artisans-fixeo", "garantie-intervention-fixeo"],
+  "internal_links": ["/plombier/casablanca", "/electricien/rabat", "/serrurier/marrakech"],
+  "faq": [
+    {
+      "q": "Comment Fixeo vérifie-t-il ses artisans ?",
+      "a": "Chaque artisan sur Fixeo passe par un processus de vérification en plusieurs étapes : vérification d'identité (CIN ou passeport), validation du numéro professionnel quand applicable, collecte de photos de réalisations récentes, et entretien téléphonique. Les artisans avec un mauvais bilan (annulations répétées, avis négatifs) sont retirés de la plateforme."
+    },
+    {
+      "q": "Que se passe-t-il si un artisan Fixeo fait un mauvais travail ?",
+      "a": "Si vous n'êtes pas satisfait, Fixeo propose une médiation gratuite. Dans la plupart des cas, l'artisan revient corriger le travail. Si le litige persiste, Fixeo peut activer la garantie intervention et prendre en charge les frais de reprise dans les conditions définies."
+    },
+    {
+      "q": "Les artisans Fixeo sont-ils plus chers que ceux trouvés directement ?",
+      "a": "Non — les artisans Fixeo pratiquent les mêmes tarifs que le marché local. La vérification n'implique pas de surcoût pour le client. Ce que vous gagnez, c'est la tranquillité d'esprit de savoir que l'artisan est réel, qualifié et responsable."
+    }
+  ],
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Au Maroc, trouver un artisan fiable reste un défi quotidien pour de nombreux ménages. Les annonces non vérifiées sur Facebook, les flyers dans les boîtes aux lettres, ou le prestataire trouvé « par hasard » — ces méthodes exposent à des risques réels : surfacturation, travail bâclé, voire arnaques pures. C'est pourquoi Fixeo a développé un processus rigoureux de vérification de ses artisans."
+    },
+    {
+      "type": "h2",
+      "title": "Le problème : l'artisanat informel au Maroc",
+      "content": "Le secteur de l'artisanat bâtiment au Maroc est majoritairement informel. Selon les estimations, plus de 70% des petits travaux (plomberie, électricité, peinture) sont réalisés par des travailleurs sans formation certifiée, sans assurance et sans enregistrement officiel. Ce n'est pas toujours synonyme de mauvaise qualité — mais c'est un facteur de risque réel pour le consommateur."
+    },
+    {
+      "type": "list",
+      "items": [
+        "Pas de recours légal si le travail est bâclé",
+        "Pas d'assurance responsabilité civile — vous êtes responsable des dégâts éventuels",
+        "Impossible de vérifier les références réelles",
+        "Pas de facture = pas de déclaration d'assurance possible",
+        "Risque de travaux non conformes aux normes (électricité surtout)"
+      ]
+    },
+    {
+      "type": "h2",
+      "title": "Le processus de vérification Fixeo",
+      "content": "Chaque artisan qui rejoint Fixeo passe par plusieurs étapes avant d'être mis en relation avec des clients."
+    },
+    {
+      "type": "table",
+      "caption": "Étapes de vérification Fixeo",
+      "headers": ["Étape", "Description", "Obligatoire"],
+      "rows": [
+        ["Identité", "Vérification CIN ou passeport", "Oui"],
+        ["Profil professionnel", "Photos, descriptions de métier, zone de couverture", "Oui"],
+        ["Réalisations", "Photos de chantiers récents", "Oui"],
+        ["Entretien", "Appel de validation avec l'équipe Fixeo", "Oui"],
+        ["Formation", "Module en ligne sur les bonnes pratiques", "Recommandé"],
+        ["Avis clients", "Collecte après chaque mission — authentifiés", "Continu"]
+      ]
+    },
+    {
+      "type": "h2",
+      "title": "Le badge artisan vérifié",
+      "content": "Seuls les artisans ayant complété toutes les étapes obligatoires et maintenu une note supérieure à 4/5 affichent le badge 🛡️ artisan vérifié sur leur profil Fixeo. Ce badge est retiré automatiquement en cas d'annulations répétées ou d'avis très négatifs."
+    },
+    {
+      "type": "h2",
+      "title": "Pourquoi c'est important pour vous",
+      "content": null
+    },
+    {
+      "type": "list",
+      "items": [
+        "Vous connaissez l'artisan avant qu'il arrive chez vous — photo, note, avis réels",
+        "Vous bénéficiez d'une garantie en cas de litige",
+        "Le paiement n'est confirmé qu'après votre validation de la mission",
+        "Vous avez une traçabilité complète (devis, mission, facture)",
+        "L'artisan sait qu'il est évalué — cela l'incite à un travail soigné"
+      ]
+    },
+    {
+      "type": "tip",
+      "content": "Avant de valider une mission Fixeo, vérifiez le profil de l'artisan : lisez les 3 derniers avis, regardez ses photos de réalisations, et vérifiez qu'il opère dans votre quartier."
+    }
+  ]
+}

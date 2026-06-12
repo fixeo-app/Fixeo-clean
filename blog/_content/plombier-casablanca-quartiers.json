@@ -1,0 +1,103 @@
+{
+  "slug": "plombier-casablanca-quartiers",
+  "category": "local",
+  "service": "plombier",
+  "city": "casablanca",
+  "title": "Plombier Casablanca : tous les quartiers couverts",
+  "meta_description": "Plombier à Casablanca disponible dans tous les quartiers : Maarif, Ain Diab, Hay Hassani, Bourgogne, Derb Sultan, Belvédère et plus. Intervention rapide, artisans vérifiés.",
+  "date": "2026-06-12",
+  "hero_image": "/img/blog/plombier-casablanca.webp",
+  "tags": ["plombier", "casablanca", "quartiers", "maarif", "ain-diab"],
+  "estimated_read_min": 5,
+  "related_articles": ["urgence-plombier-casablanca", "prix-plombier-maroc", "comment-choisir-plombier-maroc"],
+  "internal_links": ["/plombier/casablanca", "/plombier/mohammedia", "/plombier/sale"],
+  "faq": [
+    {
+      "q": "Un plombier peut-il intervenir rapidement dans un quartier résidentiel à Casablanca comme Ain Diab ?",
+      "a": "Oui, les plombiers disponibles via Fixeo à Casablanca couvrent tous les quartiers résidentiels incluant Ain Diab, Hay Hassani, Anfa et la Corniche. Le délai moyen d'intervention est de 30 à 60 minutes selon le quartier et la disponibilité."
+    },
+    {
+      "q": "Le Maarif est-il bien couvert par les plombiers Fixeo ?",
+      "a": "Absolument. Le Maarif est l'un des quartiers les mieux couverts à Casablanca, avec plusieurs artisans vérifiés basés dans le secteur ou à proximité immédiate (Gauthier, CIL, Bourgogne)."
+    },
+    {
+      "q": "Y a-t-il des plombiers disponibles dans les quartiers populaires comme Hay Hassani ?",
+      "a": "Oui. Fixeo couvre l'ensemble de Casablanca, y compris les quartiers populaires comme Hay Hassani, Derb Sultan, Ben Msik, Hay Mohammadi et Ain Sebaa. Les tarifs sont les mêmes que dans les autres quartiers."
+    }
+  ],
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Casablanca est une métropole de plus de 4 millions d'habitants, avec des quartiers aux profils très différents : résidences de luxe à Ain Diab, appartements haussmanniens à Bourgogne, logements sociaux à Hay Hassani. Les besoins en plomberie sont partout, et les plombiers disponibles via Fixeo couvrent l'ensemble de la ville — avec le même niveau de qualité et de vérification dans chaque quartier."
+    },
+    {
+      "type": "h2",
+      "title": "Couverture par grands secteurs de Casablanca",
+      "content": null
+    },
+    {
+      "type": "table",
+      "caption": "Plombiers Fixeo disponibles par secteur (Casablanca)",
+      "headers": ["Secteur", "Quartiers couverts", "Délai moyen"],
+      "rows": [
+        ["Ouest (balnéaire)", "Ain Diab, Anfa, Corniche, Racine", "20–40 min"],
+        ["Centre", "Maarif, Gauthier, CIL, Bourgogne, Belvédère", "15–30 min"],
+        ["Nord", "Bernoussi, Aïn Sbaa, Sidi Bernoussi, Roches Noires", "25–45 min"],
+        ["Sud", "Hay Hassani, Hay Mohammadi, Derb Sultan", "20–40 min"],
+        ["Est", "Ben Msik, Sbata, Attacharouk", "25–50 min"],
+        ["Périphérie", "Mohammedia, Mansouria, Bouskoura", "40–70 min"]
+      ]
+    },
+    {
+      "type": "h2",
+      "title": "Spécificités par type de logement",
+      "content": "Casablanca concentre une grande variété de types de logements, chacun avec ses problématiques plomberie spécifiques."
+    },
+    {
+      "type": "list",
+      "items": [
+        "Immeubles anciens (années 50–80) : tuyaux en plomb ou galvanisé — fuites fréquentes, remplacement recommandé",
+        "Appartements neufs des années 2000+ : installations en PVC ou PER — généralement fiables mais parfois mal posées par des sous-traitants",
+        "Villas individuelles : réseaux plus complexes, souvent avec piscine, jardin et chauffage au sol",
+        "Résidences fermées (gated communities) : artisan doit s'annoncer à la sécurité — prévenez à l'avance",
+        "Riads reconvertis en centres-ville : installations hybrides anciennes/modernes"
+      ]
+    },
+    {
+      "type": "h2",
+      "title": "Problèmes plomberie les plus courants par quartier",
+      "content": null
+    },
+    {
+      "type": "table",
+      "caption": "Pannes fréquentes par type de quartier à Casablanca",
+      "headers": ["Type de quartier", "Problèmes fréquents", "Urgence typique"],
+      "rows": [
+        ["Maarif / Bourgogne (immeubles anciens)", "Fuites encastrées, robinets vétustes", "Dégâts des eaux entre voisins"],
+        ["Ain Diab (villas, résidences)", "Piscine, arrosage, chauffe-eau solaire", "Panne pompe ou chauffe-eau"],
+        ["Hay Hassani / Ben Msik", "WC bouchés, pression eau faible", "Débouchage urgent"],
+        ["Bernoussi / Sidi Bernoussi (industrie+résidentiel)", "Canalisations mixtes, dépôts calcaire", "Détartrage, remplacement"]
+      ]
+    },
+    {
+      "type": "tip",
+      "content": "Si vous habitez dans une résidence fermée (Sindibad, California, Val Fleuri...), précisez le nom de la résidence et le numéro de vigile lors de votre demande Fixeo pour accélérer l'accès de l'artisan."
+    },
+    {
+      "type": "h2",
+      "title": "Tarifs plombier à Casablanca par quartier",
+      "content": "Les tarifs sont relativement uniformes à Casablanca, avec de légères variations selon les zones périphériques."
+    },
+    {
+      "type": "table",
+      "caption": "Fourchettes tarifaires par secteur (déplacement + 1h)",
+      "headers": ["Secteur", "Tarif journée", "Tarif urgence nuit"],
+      "rows": [
+        ["Centre (Maarif, Gauthier)", "300–550 MAD", "500–800 MAD"],
+        ["Ouest (Ain Diab, Anfa)", "350–600 MAD", "550–900 MAD"],
+        ["Sud (Hay Hassani, Sbata)", "250–450 MAD", "400–700 MAD"],
+        ["Périphérie (Mohammedia)", "300–500 MAD", "450–750 MAD"]
+      ]
+    }
+  ]
+}

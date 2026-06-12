@@ -1,0 +1,96 @@
+{
+  "slug": "avis-artisans-fixeo",
+  "category": "confiance",
+  "service": null,
+  "city": null,
+  "title": "Comment fonctionnent les avis artisans sur Fixeo",
+  "meta_description": "Système d'avis Fixeo expliqué : comment les notes sont collectées, vérifiées et publiées. Pourquoi nos avis sont fiables et impossibles à falsifier.",
+  "date": "2026-06-12",
+  "hero_image": "/img/blog/avis-artisans.webp",
+  "tags": ["avis", "notes", "confiance", "fixeo", "artisan"],
+  "estimated_read_min": 3,
+  "related_articles": ["artisan-verifie-maroc", "garantie-intervention-fixeo", "comment-choisir-plombier-maroc"],
+  "internal_links": ["/plombier/casablanca", "/electricien/rabat"],
+  "faq": [
+    {
+      "q": "Peut-on laisser un avis sans avoir fait une vraie mission sur Fixeo ?",
+      "a": "Non. Le système d'avis Fixeo est fermé : seuls les clients ayant une mission confirmée et terminée peuvent laisser un avis. Chaque avis est lié à un numéro de mission unique, ce qui le rend impossible à falsifier ou acheter."
+    },
+    {
+      "q": "Les avis négatifs sont-ils publiés ou supprimés par Fixeo ?",
+      "a": "Tous les avis vérifiés sont publiés, qu'ils soient positifs ou négatifs. Fixeo ne supprime pas les mauvais avis. L'artisan peut répondre publiquement à un avis négatif, mais ne peut pas le faire effacer. C'est ce qui garantit la fiabilité du système."
+    },
+    {
+      "q": "Comment les avis influencent-ils le classement des artisans ?",
+      "a": "La note globale (sur 5 étoiles) influence directement le positionnement de l'artisan dans les résultats de recherche Fixeo. Un artisan avec une note sous 3.5/5 ou de nombreux avis négatifs récents est dépriorisé, voire suspendu de la plateforme."
+    }
+  ],
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Les avis en ligne sont devenus un outil de décision essentiel pour choisir un artisan. Mais au Maroc comme ailleurs, les faux avis pullulent sur les plateformes généralistes. Sur Fixeo, nous avons construit un système d'avis vérifiés qui garantit l'authenticité de chaque note. Voici comment cela fonctionne."
+    },
+    {
+      "type": "h2",
+      "title": "Comment sont collectés les avis sur Fixeo",
+      "content": null
+    },
+    {
+      "type": "list",
+      "items": [
+        "Après chaque mission terminée, le client reçoit automatiquement une invitation à noter l'artisan",
+        "L'invitation est envoyée par SMS et email — uniquement aux clients ayant une mission validée",
+        "Le client note l'artisan sur 5 étoiles sur 4 critères : ponctualité, qualité du travail, propreté, rapport qualité-prix",
+        "Il peut laisser un commentaire libre (optionnel)",
+        "L'artisan peut répondre à l'avis — sa réponse est visible publiquement"
+      ]
+    },
+    {
+      "type": "h2",
+      "title": "Pourquoi nos avis ne peuvent pas être falsifiés",
+      "content": null
+    },
+    {
+      "type": "list",
+      "items": [
+        "Chaque avis est lié à un numéro de mission unique dans notre base de données",
+        "Le client doit être connecté à son compte Fixeo pour noter (identité vérifiée)",
+        "Un même client ne peut laisser qu'un avis par mission — pas de votes multiples",
+        "Fixeo n'accepte aucun paiement d'artisans pour modifier ou supprimer des avis",
+        "Les avis sont archivés et horodatés — toute modification est tracée en interne"
+      ]
+    },
+    {
+      "type": "h2",
+      "title": "Ce que signifie la note sur le profil artisan",
+      "content": "La note affichée sur le profil est une moyenne pondérée des 20 derniers avis. Les avis récents ont plus de poids que les anciens — un artisan qui s'améliore verra sa note remonter rapidement."
+    },
+    {
+      "type": "table",
+      "caption": "Interprétation des notes Fixeo",
+      "headers": ["Note", "Signification", "Action"],
+      "rows": [
+        ["4.5 – 5.0 ⭐", "Excellent — artisan hautement recommandé", "Priorité dans les résultats"],
+        ["4.0 – 4.5 ⭐", "Très bien — artisan fiable", "Bonne visibilité"],
+        ["3.5 – 4.0 ⭐", "Satisfaisant — quelques points d'amélioration", "Visibilité normale"],
+        ["3.0 – 3.5 ⭐", "Moyen — à surveiller", "Avertissement envoyé"],
+        ["< 3.0 ⭐", "Insuffisant", "Suspension temporaire ou définitive"]
+      ]
+    },
+    {
+      "type": "h2",
+      "title": "Comment lire les avis efficacement",
+      "content": null
+    },
+    {
+      "type": "list",
+      "items": [
+        "Lisez les 3 à 5 avis les plus récents plutôt que la moyenne globale",
+        "Regardez les commentaires sur la ponctualité — crucial pour les urgences",
+        "Vérifiez si l'artisan répond aux avis négatifs de façon professionnelle",
+        "Un artisan avec 15+ missions et 4.2/5 est souvent plus fiable qu'un nouveau avec 5/5 sur 3 missions",
+        "Méfiez-vous d'une note parfaite avec très peu d'avis — peu représentatif"
+      ]
+    }
+  ]
+}

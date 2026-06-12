@@ -1,0 +1,95 @@
+{
+  "slug": "urgence-plombier-casablanca",
+  "category": "urgence",
+  "service": "plombier",
+  "city": "casablanca",
+  "title": "Plombier urgence Casablanca 24h/7 : fuite, WC bouché, intervention rapide",
+  "meta_description": "Plombier urgence Casablanca disponible 24h/24 et 7j/7. Fuite d'eau, WC bouché, tuyau éclaté — intervention en 30 à 60 min. Trouver un plombier maintenant.",
+  "date": "2026-06-12",
+  "hero_image": "/img/blog/urgence-plombier.webp",
+  "tags": ["plombier", "urgence", "casablanca", "24h", "fuite"],
+  "estimated_read_min": 4,
+  "related_articles": ["urgence-plombier-fes", "prix-plombier-maroc", "comment-choisir-plombier-maroc"],
+  "internal_links": ["/plombier/casablanca", "/plombier/mohammedia", "/plombier/sale"],
+  "faq": [
+    {
+      "q": "En combien de temps un plombier urgence arrive à Casablanca ?",
+      "a": "La plupart des plombiers d'urgence à Casablanca (Maarif, Ain Diab, Hay Hassani, Belvédère) interviennent en 30 à 60 minutes selon leur localisation et le trafic. Via Fixeo, vous êtes mis en relation avec le plombier disponible le plus proche."
+    },
+    {
+      "q": "Combien coûte un plombier urgence la nuit à Casablanca ?",
+      "a": "Une intervention d'urgence nocturne (après 20h) à Casablanca coûte en moyenne entre 400 et 800 MAD, selon la nature de la panne et la durée d'intervention. Un plombier peut donner une estimation par téléphone avant de se déplacer."
+    },
+    {
+      "q": "Que faire en attendant le plombier en cas de fuite ?",
+      "a": "Coupez l'arrivée d'eau principale (robinet d'arrêt général, souvent sous l'évier ou dans le local compteur). Récupérez l'eau avec des serviettes ou seaux. Photographiez les dégâts pour votre assurance. Ne touchez pas aux installations électriques si l'eau coule près d'elles."
+    },
+    {
+      "q": "Y a-t-il des plombiers disponibles le vendredi et le dimanche à Casablanca ?",
+      "a": "Oui, plusieurs plombiers à Casablanca sont disponibles 7j/7 y compris les jours fériés. Les plombiers d'urgence sur Fixeo sont sélectionnés pour leur disponibilité en dehors des heures ouvrées."
+    }
+  ],
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Une fuite d'eau qui tache le plafond du voisin, un WC bouché qui déborde, un tuyau qui lâche en pleine nuit — les urgences plomberie ne préviennent pas. À Casablanca, trouver un plombier disponible rapidement peut être stressant si vous ne savez pas où chercher. Ce guide vous explique comment gérer une urgence plomberie et trouver le bon artisan dans les meilleurs délais."
+    },
+    {
+      "type": "h2",
+      "title": "Les urgences plomberie les plus fréquentes à Casablanca",
+      "content": "Casablanca, avec ses immeubles anciens et son réseau d'eau vieillissant dans certains quartiers, est particulièrement exposée à certaines pannes."
+    },
+    {
+      "type": "list",
+      "items": [
+        "Fuite d'eau sur canalisation encastrée (dégâts des eaux chez voisin)",
+        "WC bouché ou qui déborde — urgence la plus courante",
+        "Tuyau éclaté suite à pression excessive ou gel (rare mais possible en hiver à Casablanca)",
+        "Chauffe-eau en panne — perte d'eau chaude",
+        "Robinet d'arrêt bloqué — impossible de couper l'eau",
+        "Évier ou baignoire bouchée — stagnation d'eau"
+      ]
+    },
+    {
+      "type": "h2",
+      "title": "Que faire avant l'arrivée du plombier ?",
+      "content": null
+    },
+    {
+      "type": "list",
+      "items": [
+        "Coupez l'eau au robinet d'arrêt général (souvent sous l'évier ou dans la cuisine)",
+        "Si vous ne trouvez pas le robinet, coupez à la vanne du compteur d'eau (dans le couloir ou la cage d'escalier)",
+        "Protégez les prises et appareils électriques si l'eau est proche",
+        "Photographiez les dégâts visibles pour votre déclaration d'assurance",
+        "Prévenez votre syndic ou le voisin du dessous s'il y a risque de dégât des eaux"
+      ]
+    },
+    {
+      "type": "h2",
+      "title": "Tarifs urgence plombier à Casablanca",
+      "content": "Les interventions d'urgence comportent une majoration sur le tarif standard. Voici les fourchettes pratiquées à Casablanca en 2025."
+    },
+    {
+      "type": "table",
+      "caption": "Tarifs plombier urgence Casablanca (2025)",
+      "headers": ["Intervention", "Heures ouvrées (MAD)", "Nuit/Weekend (MAD)"],
+      "rows": [
+        ["Débouchage WC", "250–450 MAD", "400–700 MAD"],
+        ["Réparation fuite robinet/tuyau", "200–450 MAD", "350–700 MAD"],
+        ["Détection fuite encastrée", "500–1 000 MAD", "700–1 500 MAD"],
+        ["Débouchage canalisation (hydrocureur)", "600–1 200 MAD", "900–1 800 MAD"],
+        ["Dépannage chauffe-eau", "300–600 MAD", "500–900 MAD"]
+      ]
+    },
+    {
+      "type": "tip",
+      "content": "Avant de confirmer l'intervention, demandez au plombier une estimation par téléphone. Un professionnel sérieux peut estimer le coût approximatif selon la description de la panne."
+    },
+    {
+      "type": "h2",
+      "title": "Zones couvertes par les plombiers d'urgence à Casablanca",
+      "content": "Les plombiers disponibles via Fixeo couvrent l'ensemble de Casablanca et ses environs : Maarif, Ain Diab, Belvédère, Hay Hassani, Derb Sultan, Bernoussi, Sidi Bernoussi, Hay Mohammadi, Bourgogne, Gauthier, CIL, et les communes périphériques comme Ain Sbaa, Hay Inara et Ben Msik."
+    }
+  ]
+}

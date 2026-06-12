@@ -1,0 +1,98 @@
+{
+  "slug": "plombier-fes-medina",
+  "category": "local",
+  "service": "plombier",
+  "city": "fes",
+  "title": "Plombier Fès Médina et Ville Nouvelle : intervention rapide",
+  "meta_description": "Plombier à Fès disponible dans la Médina, la Ville Nouvelle et Saïss. Artisans vérifiés, connaissance des canalisations anciennes. Devis gratuit et rapide.",
+  "date": "2026-06-12",
+  "hero_image": "/img/blog/plombier-fes.webp",
+  "tags": ["plombier", "fes", "medina", "ville-nouvelle", "local"],
+  "estimated_read_min": 4,
+  "related_articles": ["urgence-plombier-fes", "prix-plombier-maroc", "comment-choisir-plombier-maroc"],
+  "internal_links": ["/plombier/fes", "/plombier/meknes", "/plombier/taza"],
+  "faq": [
+    {
+      "q": "Y a-t-il des plombiers qui connaissent les canalisations anciennes de la Médina de Fès ?",
+      "a": "Oui. Certains plombiers Fixeo à Fès sont spécialisés dans les interventions en Médina et connaissent les spécificités des canalisations anciennes (réseau d'eau romain partiellement préservé, tuyaux en terre cuite, accès difficile). Mentionnez votre localisation précise dans la Médina lors de votre demande."
+    },
+    {
+      "q": "La Ville Nouvelle de Fès est-elle aussi bien couverte que la Médina ?",
+      "a": "Oui, la Ville Nouvelle (Fès El-Jedid, Narjiss, Zouagha) est très bien couverte avec des délais d'intervention plus courts du fait de l'accessibilité en voiture. Les plombiers peuvent intervenir en 20 à 35 minutes dans la plupart des quartiers de la Ville Nouvelle."
+    }
+  ],
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Fès est une ville à deux vitesses : la Médina, l'une des plus grandes médinas médiévales du monde avec ses ruelles labyrinthiques et ses constructions centenaires, et la Ville Nouvelle avec ses immeubles modernes et ses pavillons. Les besoins plomberie y sont radicalement différents, et les plombiers disponibles via Fixeo sont sélectionnés pour leur connaissance de ces deux univers."
+    },
+    {
+      "type": "h2",
+      "title": "Plomberie en Médina de Fès : défis et spécificités",
+      "content": "La Médina de Fès, classée au Patrimoine Mondial de l'UNESCO, présente des défis uniques pour les interventions plomberie."
+    },
+    {
+      "type": "list",
+      "items": [
+        "Canalisations très anciennes (certaines datent de plusieurs siècles) — en terre cuite, plomb ou alliages anciens",
+        "Plans de réseaux inexistants ou inaccessibles — le plombier doit improviser et détecter",
+        "Accès piéton uniquement dans de nombreuses ruelles — transport du matériel à pied ou à dos de mulet",
+        "Murs en pisé — percer pour réparer une fuite demande des précautions spéciales",
+        "Canaux d'eau traditionnels (seguias) encore actifs dans certaines zones"
+      ]
+    },
+    {
+      "type": "h2",
+      "title": "Couverture par secteur à Fès",
+      "content": null
+    },
+    {
+      "type": "table",
+      "caption": "Zones d'intervention plombiers Fixeo — Fès",
+      "headers": ["Secteur", "Quartiers / zones", "Délai moyen"],
+      "rows": [
+        ["Médina Fès El-Bali", "Bab Bou Jeloud, Andalous, Qaraouiyine, Talaa", "30–60 min"],
+        ["Fès El-Jedid", "Mellah, Jardins Royaux, Bab Semmarine", "20–40 min"],
+        ["Ville Nouvelle", "Narjiss, Zouagha, Ben Souda, Saada", "20–35 min"],
+        ["Saïss / périphérie", "Aïn Chkef, Oued Fès, Aïn Bida", "30–50 min"]
+      ]
+    },
+    {
+      "type": "h2",
+      "title": "Problèmes plomberie fréquents à Fès",
+      "content": null
+    },
+    {
+      "type": "list",
+      "items": [
+        "Fuites sur canalisations encastrées (très fréquent dans les vieux riads)",
+        "Chauffe-eau en panne (eau froide — urgence fréquente en hiver)",
+        "WC bouché ou collecteur bouché (réseau d'égout ancien peu dimensionné)",
+        "Problème de pression eau (faible pression dans les étages supérieurs des riads)",
+        "Calcaire excessif dans les canalisations (eau de Fès très calcaire)",
+        "Citerne sur toit-terrasse — débordement ou panne de flotteur"
+      ]
+    },
+    {
+      "type": "tip",
+      "content": "Si votre riad a une citerne sur toit-terrasse, faites-la inspecter chaque année avant l'été. Les citernes vieillissantes peuvent contaminer l'eau potable. Un plombier peut vérifier l'état du flotteur, du couvercle et de l'alimentation lors d'une visite simple."
+    },
+    {
+      "type": "h2",
+      "title": "Tarifs plombier à Fès",
+      "content": "Les tarifs à Fès sont parmi les plus accessibles du Maroc pour les villes de taille comparable."
+    },
+    {
+      "type": "table",
+      "caption": "Tarifs plombier Fès (2025)",
+      "headers": ["Intervention", "Prix (MAD)"],
+      "rows": [
+        ["Débouchage WC / siphon", "180–380 MAD"],
+        ["Réparation fuite robinet", "120–300 MAD"],
+        ["Remplacement chauffe-eau (MO)", "350–700 MAD"],
+        ["Détection fuite encastrée", "350–800 MAD"],
+        ["Débouchage canalisation", "350–800 MAD"]
+      ]
+    }
+  ]
+}

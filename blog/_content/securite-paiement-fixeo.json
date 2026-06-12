@@ -1,0 +1,91 @@
+{
+  "slug": "securite-paiement-fixeo",
+  "category": "confiance",
+  "service": null,
+  "city": null,
+  "title": "Paiement sécurisé après intervention Fixeo : comment ça marche",
+  "meta_description": "Le paiement Fixeo est sécurisé et libéré seulement après votre validation. Découvrez comment fonctionne notre système de paiement après intervention au Maroc.",
+  "date": "2026-06-12",
+  "hero_image": "/img/blog/paiement-securise.webp",
+  "tags": ["paiement", "securite", "fixeo", "confiance", "artisan"],
+  "estimated_read_min": 3,
+  "related_articles": ["garantie-intervention-fixeo", "artisan-verifie-maroc", "avis-artisans-fixeo"],
+  "internal_links": ["/plombier/casablanca", "/electricien/rabat"],
+  "faq": [
+    {
+      "q": "Quand l'artisan est-il payé sur Fixeo ?",
+      "a": "L'artisan n'est payé qu'après que vous ayez validé la mission sur votre espace Fixeo. Si vous ne validez pas dans les 72h après la fin de la mission (et que vous ne signalez pas de problème), le paiement est libéré automatiquement. En cas de litige, le paiement est gelé jusqu'à résolution."
+    },
+    {
+      "q": "Quels moyens de paiement sont acceptés sur Fixeo ?",
+      "a": "Fixeo accepte les paiements par carte bancaire (Visa, Mastercard, CMI), virement bancaire et paiement mobile (CashPlus, Orange Money). Le paiement en espèces n'est pas disponible sur la plateforme pour des raisons de sécurité et de traçabilité."
+    },
+    {
+      "q": "Mes données bancaires sont-elles sécurisées sur Fixeo ?",
+      "a": "Oui. Fixeo n'héberge pas vos données bancaires directement — les paiements sont traités par CMI (Centre Monétique Interbancaire du Maroc), certifié PCI DSS. Vos coordonnées bancaires ne transitent jamais par nos serveurs."
+    },
+    {
+      "q": "Puis-je payer en espèces directement à l'artisan ?",
+      "a": "Le paiement doit obligatoirement passer par la plateforme Fixeo pour bénéficier de la garantie et du SAV. Si vous payez directement en espèces à l'artisan hors plateforme, vous perdez le bénéfice de la garantie Fixeo et du recours en cas de litige."
+    }
+  ],
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Payer un artisan avant que le travail soit fait ou sans garantie de qualité est l'une des principales sources de litiges au Maroc. Fixeo a développé un système de paiement sécurisé qui protège à la fois le client et l'artisan — inspiré des meilleures pratiques des plateformes de services mondiales, adapté au contexte marocain."
+    },
+    {
+      "type": "h2",
+      "title": "Le principe du paiement conditionnel",
+      "content": "Le paiement sur Fixeo fonctionne comme un escrow (dépôt conditionnel) : le montant est réservé dès la confirmation de la mission, mais n'est libéré à l'artisan qu'après votre validation."
+    },
+    {
+      "type": "list",
+      "items": [
+        "Vous acceptez le devis d'un artisan → le montant est réservé sur votre compte",
+        "L'artisan réalise l'intervention → il marque la mission comme terminée",
+        "Vous recevez une notification pour valider le travail",
+        "Vous validez → le paiement est libéré à l'artisan (généralement sous 24h)",
+        "Vous signalez un problème → le paiement est gelé et le SAV est activé"
+      ]
+    },
+    {
+      "type": "h2",
+      "title": "Pourquoi c'est sécurisé",
+      "content": null
+    },
+    {
+      "type": "table",
+      "caption": "Protections du système de paiement Fixeo",
+      "headers": ["Protection", "Pour le client", "Pour l'artisan"],
+      "rows": [
+        ["Dépôt conditionnel", "Paiement libéré seulement si satisfait", "Paiement garanti si travail validé"],
+        ["Traçabilité complète", "Devis, mission, facture archivés", "Preuve d'intervention"],
+        ["Chiffrement SSL", "Données sécurisées", "Données sécurisées"],
+        ["Médiation en cas de litige", "Recours gratuit", "Protection contre mauvaise foi"]
+      ]
+    },
+    {
+      "type": "h2",
+      "title": "Les moyens de paiement acceptés",
+      "content": "Fixeo s'adapte aux habitudes de paiement marocaines avec plusieurs options."
+    },
+    {
+      "type": "list",
+      "items": [
+        "Carte bancaire (Visa, Mastercard) — paiement immédiat et sécurisé via CMI",
+        "Virement bancaire — disponible pour les montants importants (>1 000 MAD)",
+        "CashPlus / Orange Money — pour les clients sans carte bancaire",
+        "Paiement par application bancaire (Attijariwafa, BMCE, CIH) — via lien de paiement"
+      ]
+    },
+    {
+      "type": "warning",
+      "content": "Ne jamais payer un artisan Fixeo en dehors de la plateforme (espèces, virement direct) — vous perdriez la garantie et tout recours en cas de problème. Si un artisan vous demande de payer hors plateforme, signalez-le à Fixeo immédiatement."
+    },
+    {
+      "type": "tip",
+      "content": "Conservez la facture générée automatiquement par Fixeo après chaque mission — elle est indispensable pour votre déclaration d'assurance habitation en cas de dégât des eaux ou d'incident électrique."
+    }
+  ]
+}
