@@ -312,13 +312,9 @@
   grid-template-columns: repeat(2, 1fr);
 }
 
-/* ETA stat hidden in request modal (no artisan assigned yet) */
+/* faee-v1d: ETA stat restored in request modal — users expect arrival time.
+   Previously hidden; now visible. 4-column grid when artisan count also present. */
 .faee-rm .faee-stat:nth-child(3) {
-  display: none;
-}
-
-/* Show ETA again if 4 stats present (artisan count found) */
-.faee-rm .faee-stats:has(.faee-stat:nth-child(4)) .faee-stat:nth-child(3) {
   display: flex;
 }
 
@@ -328,5 +324,47 @@
   }
   .faee-rm .faee-price-range {
     font-size: 1.3rem;
+  }
+}
+
+/* ── Hero estimation card (.faee-hero) — faee-v1d ────────────
+   Full premium card injected below #hero-quick-search (after #fxhi-bar).
+   Wider, more spacious than modal variant. Mobile collapses to 2-col stats. */
+
+.faee-hero.faee-container {
+  margin: 14px auto 0;
+  max-width: 680px;
+  width: 100%;
+}
+
+.faee-hero .faee-card {
+  border-radius: 20px;
+  padding: 22px 22px 16px;
+}
+
+.faee-hero .faee-price-range {
+  font-size: 2rem;
+}
+
+.faee-hero .faee-stats {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.faee-hero .faee-disclaimer {
+  margin-top: 12px;
+  font-size: 0.70rem;
+}
+
+@media (max-width: 600px) {
+  .faee-hero .faee-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .faee-hero .faee-price-range {
+    font-size: 1.6rem;
+  }
+
+  .faee-hero.faee-container {
+    margin: 10px 0 0;
   }
 }

@@ -1,6 +1,6 @@
 /* ============================================================
    FIXEO AI ESTIMATION ENGINE V1
-   Version: faee-v1c
+   Version: faee-v1d
    Strategy: Additive hooks onto:
      1. #fixeo-reservation-modal (artisan reservation)
      2. #request-modal (homepage "Publier une demande" + Urgent)
@@ -15,7 +15,7 @@
   if (window._fxEstV1Loaded) return;
   window._fxEstV1Loaded = true;
 
-  var VERSION          = 'faee-v1c';
+  var VERSION          = 'faee-v1d';
   var MODAL_ID         = 'fixeo-reservation-modal';   /* artisan reservation modal */
   var REQUEST_MODAL_ID = 'request-modal';              /* homepage request modal    */
 
@@ -554,12 +554,131 @@
     });
     docObs.observe(document.body, { childList: true, subtree: false });
 
-    /* Also watch class changes on body/modals for open/close events */
-    var bodyObs = new MutationObserver(function() {
-      var reqModal = document.getElementById(REQUEST_MODAL_ID);
-      if (reqModal) _updateRM(reqModal);
-    });
-    bodyObs.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    /* faee-v1d fix: watch #request-modal class attribute directly (not body class).
+       openModal() adds .open to the MODAL element, NOT to body — bodyObs never fired.
+       Mirrors the pattern used by fixeo-ai-request-engine.js _watchModalOpen(). */
+    var rm = document.getElementById(REQUEST_MODAL_ID);
+    if (rm) {
+      var modalClassObs = new MutationObserver(function(muts) {
+        muts.forEach(function(mu) {
+          if (mu.attributeName === 'class') {
+            var isNowOpen = rm.classList.contains('open');
+            if (isNowOpen) {
+              /* Modal just opened — fire update with slight delay to let AIRE inject first */
+              setTimeout(function() { _updateRM(rm); }, 120);
+            }
+          }
+        });
+      });
+      modalClassObs.observe(rm, { attributes: true, attributeFilter: ['class'] });
+    }
+
+    /* 3. Hero estimation card — appears below #hero-quick-search when user types */
+    _attachToHero();
+  }
+
+  /* ── HERO ESTIMATION CARD ────────────────────────────────── */
+  /* Injects a full premium estimation card below #hero-quick-search.
+     Triggered by typing in #qsm-input-nlp (Hero Quick Search Modal input).
+     Reads city from URL city param or hero city selector if available.
+     Zero changes to Hero Insights, AIRE, or any existing hero system. */
+
+  var HERO_CONTAINER_ID = 'faee-hero-container';
+
+  function _attachToHero() {
+    /* Only on homepage (index.html) — guard by presence of #hero-quick-search */
+    var heroWrap = document.getElementById('hero-quick-search');
+    if (!heroWrap) return;
+
+    /* Hero input may be injected dynamically by hero-search-modal.js — wait for it */
+    function _tryWireHero() {
+      var input = document.getElementById('qsm-input-nlp');
+      if (input && !input._faeeHeroWired) {
+        input._faeeHeroWired = true;
+        var _t = null;
+        input.addEventListener('input', function() {
+          clearTimeout(_t);
+          _t = setTimeout(function() { _updateHero(input.value); }, 200);
+        });
+        /* Also update on city change if city selector present */
+        var cityEl = document.getElementById('qsm-city') || document.getElementById('hero-city-select');
+        if (cityEl) cityEl.addEventListener('change', function() { _updateHero(input.value); });
+        return true;
+      }
+      return false;
+    }
+
+    if (_tryWireHero()) return;
+
+    /* Hero input not yet in DOM — poll briefly (hero-search-modal loads deferred) */
+    var _attempts = 0;
+    var _poll = setInterval(function() {
+      _attempts++;
+      if (_tryWireHero()) { clearInterval(_poll); return; }
+      if (_attempts > 40) clearInterval(_poll); /* 8s cap */
+    }, 200);
+  }
+
+  function _getHeroCity() {
+    /* Try QSM city field, URL param, or hero city selector */
+    try {
+      var cityEl = document.getElementById('qsm-city')
+                || document.getElementById('hero-city-select')
+                || document.querySelector('.qsm-city-select');
+      if (cityEl && cityEl.value) return cityEl.value;
+      var params = new URLSearchParams(window.location.search);
+      if (params.get('city')) return params.get('city');
+    } catch(_) {}
+    return '';
+  }
+
+  function _getOrCreateHeroContainer() {
+    var existing = document.getElementById(HERO_CONTAINER_ID);
+    if (existing) return existing;
+
+    var container = document.createElement('div');
+    container.id = HERO_CONTAINER_ID;
+    container.className = 'faee-container faee-hero';
+
+    /* Inject after fxhi-bar (Hero Insights), or after hero-quick-search itself */
+    var anchor = document.getElementById('fxhi-bar')
+              || document.getElementById('hero-quick-search');
+    if (anchor && anchor.parentNode) {
+      anchor.parentNode.insertBefore(container, anchor.nextSibling);
+    }
+    return container;
+  }
+
+  function _updateHero(text) {
+    var city = _getHeroCity();
+    var st = {
+      serviceName: (text || '').trim(),
+      description: (text || '').trim(),
+      artisan:     { city: city },
+      isUrgent:    false,
+      isExpress:   false
+    };
+
+    /* Detect urgency from text */
+    if (window.FixeoAIRE && st.serviceName) {
+      try { st.isUrgent = !!window.FixeoAIRE.detectUrgency(st.serviceName, null); } catch(_) {}
+    }
+
+    var result    = analyze(st);
+    var hasText   = !!st.serviceName;
+    var container = _getOrCreateHeroContainer();
+    if (!container) return;
+
+    if (!hasText || !result.catKey) {
+      /* No text or unrecognised service → hide card */
+      container.classList.remove('faee-visible');
+      container.innerHTML = '';
+      return;
+    }
+
+    var html = _renderCard(result, true);
+    if (container.innerHTML !== html) container.innerHTML = html;
+    container.classList.add('faee-visible');
   }
 
   if (document.readyState === 'loading') {
