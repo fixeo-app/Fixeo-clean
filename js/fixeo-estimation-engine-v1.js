@@ -1,6 +1,6 @@
 /* ============================================================
    FIXEO AI ESTIMATION ENGINE V1
-   Version: faee-v1b
+   Version: faee-v1c
    Strategy: Additive hooks onto:
      1. #fixeo-reservation-modal (artisan reservation)
      2. #request-modal (homepage "Publier une demande" + Urgent)
@@ -15,7 +15,7 @@
   if (window._fxEstV1Loaded) return;
   window._fxEstV1Loaded = true;
 
-  var VERSION          = 'faee-v1b';
+  var VERSION          = 'faee-v1c';
   var MODAL_ID         = 'fixeo-reservation-modal';   /* artisan reservation modal */
   var REQUEST_MODAL_ID = 'request-modal';              /* homepage request modal    */
 
@@ -537,13 +537,20 @@
     var rm = document.getElementById(REQUEST_MODAL_ID);
     if (rm) _attachToRequestModal(rm);
 
-    /* Watch for either modal insertion/appearance */
+    /* Watch for either modal insertion/appearance.
+       P1-4 fix (faee-v1c): disconnect docObs once both targets are found —
+       avoids unnecessary callbacks on subsequent body childList changes. */
     var docObs = new MutationObserver(function() {
       var modal = document.getElementById(MODAL_ID);
       if (modal && !modal._faeeObs) _attachToModal(modal);
 
       var reqModal = document.getElementById(REQUEST_MODAL_ID);
       if (reqModal && !reqModal._faeeRmObs) _attachToRequestModal(reqModal);
+
+      /* Disconnect once both modals are wired — no more body watching needed */
+      if (document.getElementById(MODAL_ID) && document.getElementById(REQUEST_MODAL_ID)) {
+        docObs.disconnect();
+      }
     });
     docObs.observe(document.body, { childList: true, subtree: false });
 
