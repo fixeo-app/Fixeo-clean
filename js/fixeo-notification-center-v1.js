@@ -459,19 +459,19 @@
     window.addEventListener('fixeo:artisan:mission-accepted', function(e) {
       var d = (e && e.detail) || {};
       var reqId = String(d.requestId || d.id || '').trim();
-      if (reqId) _onArtisanAccepted(reqId);
+      if (reqId) _onArtisanAccepted(reqId, d.clientProfileId || null);
     });
 
     window.addEventListener('fixeo:artisan:mission-started', function(e) {
       var d = (e && e.detail) || {};
       var reqId = String(d.requestId || d.id || '').trim();
-      if (reqId) _onArtisanStarted(reqId);
+      if (reqId) _onArtisanStarted(reqId, d.clientProfileId || null);
     });
 
     window.addEventListener('fixeo:artisan:mission-completed', function(e) {
       var d = (e && e.detail) || {};
       var reqId = String(d.requestId || d.id || '').trim();
-      if (reqId) _onArtisanCompleted(reqId);
+      if (reqId) _onArtisanCompleted(reqId, d.clientProfileId || null);
     });
   }
 
@@ -485,18 +485,18 @@
     };
   }
 
-  function _onArtisanAccepted(requestId) {
+  function _onArtisanAccepted(requestId, clientProfileId) {
     var NE = window.FixeoNotifEngine;
     if (!NE || typeof NE.notifyMissionAccepted !== 'function') return;
     var ctx = _getArtisanContext();
-    NE.notifyMissionAccepted(requestId, ctx.artisanProfileId, ctx.artisanName, null);
+    NE.notifyMissionAccepted(requestId, ctx.artisanProfileId, ctx.artisanName, clientProfileId || null);
   }
 
-  function _onArtisanStarted(requestId) {
+  function _onArtisanStarted(requestId, clientProfileId) {
     var NE = window.FixeoNotifEngine;
     if (!NE || typeof NE.notifyMissionStarted !== 'function') return;
     var ctx = _getArtisanContext();
-    NE.notifyMissionStarted(requestId, ctx.artisanProfileId, ctx.artisanName, null);
+    NE.notifyMissionStarted(requestId, ctx.artisanProfileId, ctx.artisanName, clientProfileId || null);
 
     /* Admin notification */
     var sys = window.FixeoNotificationsV1;
@@ -527,11 +527,11 @@
     }
   }
 
-  function _onArtisanCompleted(requestId) {
+  function _onArtisanCompleted(requestId, clientProfileId) {
     var NE = window.FixeoNotifEngine;
     if (!NE || typeof NE.notifyMissionCompleted !== 'function') return;
     var ctx = _getArtisanContext();
-    NE.notifyMissionCompleted(requestId, ctx.artisanProfileId, ctx.artisanName, null);
+    NE.notifyMissionCompleted(requestId, ctx.artisanProfileId, ctx.artisanName, clientProfileId || null);
 
     /* Admin notification: À Valider */
     var sys = window.FixeoNotificationsV1;

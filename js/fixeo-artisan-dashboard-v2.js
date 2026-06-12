@@ -957,7 +957,7 @@
       /* srUpdate.data may be null if status was already changed — mission still created */
 
       _toast('🎉 Mission acceptée ! Elle apparaît dans "Mes missions".', 'success');
-      _dispatchMissionEvent('mission-accepted', requestId);
+      _dispatchMissionEvent('mission-accepted', requestId, reqCheck.data.client_profile_id || null);
       await _refresh();  /* re-fetches open requests + missions, re-renders */
 
     } catch(e) {
@@ -981,7 +981,8 @@
       if (res.error) throw res.error;
       if (!res.data) throw new Error('Mise à jour bloquée (droits insuffisants ou demande introuvable).');
       _toast('▶ Intervention démarrée !', 'success');
-      _dispatchMissionEvent('mission-started', requestId);
+      var _sm = _state.myMissions.find(function(m) { return m.request_id === requestId; });
+      _dispatchMissionEvent('mission-started', requestId, _sm && _sm.client_profile_id || null);
       await _refresh();
     } catch(e) {
       console.warn('[fxav2] startMission error:', e && e.message);
@@ -1004,7 +1005,8 @@
       if (res.error) throw res.error;
       if (!res.data) throw new Error('Mise à jour bloquée (droits insuffisants ou demande introuvable).');
       _toast('✅ Intervention marquée terminée. En attente de confirmation client.', 'success');
-      _dispatchMissionEvent('mission-completed', requestId);
+      var _cm = _state.myMissions.find(function(m) { return m.request_id === requestId; });
+      _dispatchMissionEvent('mission-completed', requestId, _cm && _cm.client_profile_id || null);
       await _refresh();
     } catch(e) {
       console.warn('[fxav2] completeMission error:', e && e.message);
@@ -1126,10 +1128,14 @@
      The private _do* functions are NOT changed — behavior identical.
      Version: v2b — 2026-06-11
   ════════════════════════════════════════════════════════════ */
-  function _dispatchMissionEvent(type, requestId) {
+  function _dispatchMissionEvent(type, requestId, clientProfileId) {
     try {
       window.dispatchEvent(new CustomEvent('fixeo:artisan:' + type, {
-        detail: { requestId: requestId, artisanId: _state.artisanProfile && _state.artisanProfile.id }
+        detail: {
+          requestId:       requestId,
+          artisanId:       _state.artisanProfile && _state.artisanProfile.id,
+          clientProfileId: clientProfileId || null
+        }
       }));
     } catch(e) { /* silent */ }
   }
