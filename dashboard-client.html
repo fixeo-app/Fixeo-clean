@@ -16,7 +16,12 @@
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
   <noscript><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet"></noscript>
   <!-- V2 CSS only — no V1 CSS loaded -->
-  <link rel="stylesheet" href="css/fixeo-dashboard-v2.css?v=v2i">
+  <link rel="stylesheet" href="css/fixeo-dashboard-v2.css?v=v2j">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/fixeo-request-modal-v2.css?v=rmv2-v1a">
+  <link rel="stylesheet" href="css/fixeo-urgent-modal-v3.css?v=fuv3-v1a">
+  <link rel="stylesheet" href="css/fixeo-urgent-modal-v3-patch.css?v=fuv3-v1b">
+  <link rel="stylesheet" href="css/fixeo-estimation-engine-v1.css?v=faee-v1d">
   <link rel="stylesheet" href="css/fixeo-notifications-real-v1.css?v=1">
   <link rel="stylesheet" href="css/fixeo-tracking-engine.css?v=ftrk-v1b">
   <link rel="stylesheet" href="css/fixeo-notification-center-v1.css?v=fnc-v1b">
@@ -195,17 +200,159 @@
 ════════════════════════════════════════════════════════════ -->
 <div class="fxv2-toast-wrap" id="fxv2-toast-wrap" aria-live="polite" aria-atomic="false"></div>
 
+<!-- Global request modal (fuv3 V3/V3.1 + rmv2) -->
+<div class="modal request-modal" id="request-modal" role="dialog" aria-modal="true" aria-labelledby="request-modal-title" aria-describedby="request-modal-subtitle">
+  <div class="modal-header request-modal-header">
+    <div>
+      <h3 id="request-modal-title">Quel est le probl&#232;me&#160;?</h3>
+      <p id="request-modal-subtitle" class="request-modal-subtitle">Un artisan Fixeo vous rappelle sous 30&#160;min</p>
+    </div>
+    <button class="modal-close" type="button" onclick="window.FixeoClientRequest && window.FixeoClientRequest.closeStandard ? window.FixeoClientRequest.closeStandard('request-modal') : closeModal('request-modal')" aria-label="Fermer">✕</button>
+  </div>
+
+  <div class="request-modal-shell">
+    <form id="request-form" class="request-form" novalidate>
+      <div class="request-field">
+        <label for="request-problem">Votre besoin</label>
+        <input id="request-problem" name="problem" type="text" placeholder="Ex&#160;: fuite d&#8217;eau, panne &#233;lectrique, porte bloqu&#233;e&#8230;" maxlength="120" required />
+      </div>
+
+      <div class="request-field">
+        <label for="request-city">Ville</label>
+        <select id="request-city" name="ville" required>
+          <option value="">Choisir une ville</option>
+          <option value="Casablanca">Casablanca</option>
+          <option value="Rabat">Rabat</option>
+          <option value="Marrakech">Marrakech</option>
+          <option value="Fès">Fès</option>
+          <option value="Tanger">Tanger</option>
+          <option value="Agadir">Agadir</option>
+          <option value="Meknès">Meknès</option>
+          <option value="Oujda">Oujda</option>
+          <option value="Kénitra">Kénitra</option>
+          <option value="Tétouan">Tétouan</option>
+          <option value="Salé">Salé</option>
+          <option value="Temara">Temara</option>
+          <option value="El Jadida">El Jadida</option>
+          <option value="Béni Mellal">Béni Mellal</option>
+          <option value="Nador">Nador</option>
+          <option value="Khouribga">Khouribga</option>
+          <option value="Safi">Safi</option>
+          <option value="Taza">Taza</option>
+          <option value="Ouarzazate">Ouarzazate</option>
+          <option value="Mohammedia">Mohammedia</option>
+        </select>
+      </div>
+
+      <div class="request-field">
+        <span class="request-label">Urgence</span>
+        <div class="request-choice-grid" role="radiogroup" aria-label="Urgence">
+          <label class="request-choice-card">
+            <input type="radio" name="urgence" value="Urgent (moins de 30 min)" required />
+            <span class="request-choice-title">Urgent</span>
+            <span class="request-choice-meta">moins de 30 min</span>
+          </label>
+          <label class="request-choice-card">
+            <input type="radio" name="urgence" value="Normal" checked />
+            <span class="request-choice-title">Normal</span>
+            <span class="request-choice-meta">délai classique</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="request-field">
+        <label for="request-budget">Budget <span class="request-optional">(optionnel)</span></label>
+        <select id="request-budget" name="budget">
+          <option value="">Sélectionner un budget</option>
+          <option value="Moins de 100 MAD">Moins de 100 MAD</option>
+          <option value="100 - 300 MAD">100 - 300 MAD</option>
+          <option value="300 - 700 MAD">300 - 700 MAD</option>
+          <option value="+700 MAD">+700 MAD</option>
+        </select>
+      </div>
+
+      <div class="request-field">
+        <label for="request-phone">Téléphone</label>
+        <input id="request-phone" name="telephone" type="tel" inputmode="tel" placeholder="06 12 34 56 78" maxlength="20" required />
+      </div>
+
+      <button class="btn btn-primary request-submit-btn" type="submit">Envoyer ma demande</button>
+
+      <div class="request-trust-copy" aria-hidden="true">
+        <span>Gratuit &#183; Sans engagement</span>
+        <span>Paiement apr&#232;s intervention</span>
+      </div>
+    </form>
+
+    <!-- V2-B: Upgraded success state — operational coordination framing -->
+    <div id="request-success" class="request-success fxrva-success" hidden>
+
+      <!-- Status icon -->
+      <div class="request-success-icon fxrva-success-icon" aria-hidden="true">&#x2714;&#xFE0F;</div>
+
+      <!-- Title + sub — populated by showSuccess() from REQUEST_COPY -->
+      <h4 class="fxrva-success-title">Fixeo coordonne votre intervention</h4>
+      <p class="fxrva-success-sub">Votre demande est enregistr&#233;e. Un artisan disponible dans votre zone sera s&#233;lectionn&#233; et vous contactera pour confirmer.</p>
+
+      <!-- Coordination steps — visual process clarity -->
+      <div class="fxrva-coord-steps" aria-label="&#201;tapes de coordination">
+        <div class="fxrva-coord-step">
+          <span class="fxrva-coord-icon" aria-hidden="true">&#x2705;</span>
+          <span class="fxrva-coord-label">Demand&#x65; enregistr&#233;e</span>
+        </div>
+        <div class="fxrva-coord-sep" aria-hidden="true">&#x2192;</div>
+        <div class="fxrva-coord-step">
+          <span class="fxrva-coord-icon" aria-hidden="true">&#x1F50D;</span>
+          <span class="fxrva-coord-label">Artisan s&#233;lectionn&#233;</span>
+        </div>
+        <div class="fxrva-coord-sep" aria-hidden="true">&#x2192;</div>
+        <div class="fxrva-coord-step">
+          <span class="fxrva-coord-icon" aria-hidden="true">&#x1F4AC;</span>
+          <span class="fxrva-coord-label">Confirmation WhatsApp</span>
+        </div>
+      </div>
+
+      <!-- Notice — coordination guidance — populated by showSuccess() -->
+      <p class="fxrva-success-notice" hidden>
+        Restez joignable sur WhatsApp &#8212; c&#x2019;est l&#xE0; que se fait la coordination.
+      </p>
+
+      <!-- WhatsApp primary CTA -->
+      <a class="btn fxrva-wa-primary" id="request-whatsapp-link"
+         href="#" target="_blank" rel="noopener noreferrer"
+         aria-label="Rester joignable via WhatsApp">
+        <span class="fxrva-wa-ico" aria-hidden="true">&#x1F4AC;</span>
+        <span class="fxrva-wa-main-label">Rester joignable via WhatsApp</span>
+      </a>
+
+      <!-- Contextual sub-label — what to do on WA — populated by showSuccess() -->
+      <p class="fxrva-wa-sub-label" hidden>Partager une photo ou pr&#233;ciser l&#x2019;intervention</p>
+
+      <!-- Secondary action -->
+      <button class="btn fxrva-new-request" type="button" id="request-new-one">Publier une autre demande</button>
+
+    </div>
+  </div>
+</div>
+<div class="modal-backdrop" id="main-backdrop" aria-hidden="true"></div>
+
 <!-- ══════════════════════════════════════════════════════════
      SCRIPTS — 3 remaining (5 total including head scripts)
      Load order: supabase-core → logout → dashboard-v2
 ════════════════════════════════════════════════════════════ -->
 <script src="js/fixeo-supabase-core.js?v=sc-v3b"></script>
 <script src="js/fixeo-logout-global.js?v=v2c4a"></script>
-<script src="js/fixeo-dashboard-v2.js?v=v2i" defer></script>
+<script src="js/fixeo-dashboard-v2.js?v=v2j" defer></script>
 <script src="js/fixeo-notifications-real-v1.js?v=1" defer></script>
 <script src="js/fixeo-notification-engine.js?v=v1b" defer></script>
 <script src="js/fixeo-notification-center-v1.js?v=fnc-v1b" defer></script>
 <script src="js/fixeo-tracking-engine.js?v=ftrk-v1b" defer></script>
+<!-- Global request modal stack (request-form + rmv2 + fuv3 V3/V3.1 + faee) -->
+<script src="js/request-form.js?v=rmv2-v1a"></script>
+<script src="js/fixeo-request-modal-v2.js?v=rmv2-v1a" defer></script>
+<script src="js/fixeo-urgent-modal-v3.js?v=fuv3-v1a" defer></script>
+<script src="js/fixeo-urgent-modal-v3-patch.js?v=fuv3-v1b" defer></script>
+<script src="js/fixeo-estimation-engine-v1.js?v=faee-v1d" defer></script>
 
 </body>
 </html>

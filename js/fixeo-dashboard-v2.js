@@ -8,7 +8,7 @@
   'use strict';
 
   /* ── VERSION ──────────────────────────────────────────────────── */
-  var VERSION = 'v2i';;
+  var VERSION = 'v2j'; /* faee-v2a: Client Command Center upgrade */
 
   /* ── PIPELINE DEFINITION ──────────────────────────────────────── */
   /* Maps a unified key to display config.
@@ -342,6 +342,7 @@
       + proposals
       + confirmBlk
       + ratingBlk
+      + _renderTrackingRef(req)
       + (waBtn ? '<div class="fxv2-actions">' + waBtn + '</div>' : '')
       + '</div>';
   }
@@ -361,37 +362,189 @@
   }
 
   /* ── SECTION: DASHBOARD ───────────────────────────────────────── */
+  /* ── HELPER: render tracking ref pill ─────────────────────────── */
+  function _renderTrackingRef(req) {
+    var ref = req.tracking_ref || (req.metadata && req.metadata.tracking_ref);
+    if (!ref) return '';
+    return '<a class="fxv2-tracking-pill" href="/suivi?ref=' + esc(ref) + '" target="_blank" rel="noopener" aria-label="Suivre la demande">'
+      + '\uD83D\uDCF1 ' + esc(ref) + '</a>';
+  }
+
+  /* ── HELPER: render Mission Control Hero card ──────────────────── */
+  function _renderMissionHero(req) {
+    if (!req) return '';
+    var pipeline = req._pipeline;
+    var found    = _findAcceptedArtisan(req);
+    var artisan  = found ? found.artisan : null;
+    var ref      = req.tracking_ref || (req.metadata && req.metadata.tracking_ref);
+
+    var artisanBlock = artisan
+      ? '<div class="fxv2-hero-artisan">'
+          + '<div class="fxv2-hero-artisan-avatar">' + esc(initials(artisan.full_name)) + '</div>'
+          + '<div>'
+            + '<div class="fxv2-hero-artisan-name">' + esc(artisan.full_name) + '</div>'
+            + '<div class="fxv2-hero-artisan-role">' + esc(artisan.service_category || 'Artisan') + ' v\u00e9rifi\u00e9 Fixeo</div>'
+          + '</div>'
+        + '</div>'
+      : '<div class="fxv2-hero-searching">'
+          + '<span class="fxv2-hero-search-dot"></span>'
+          + '<span>Recherche d\u2019un artisan qualifi\u00e9\u2026</span>'
+        + '</div>';
+
+    var refLine = ref
+      ? '<a class="fxv2-tracking-pill fxv2-tracking-pill-hero" href="/suivi?ref=' + esc(ref) + '" target="_blank" rel="noopener">'
+          + '\uD83D\uDCF1 Suivre l\u2019intervention \u2192'
+        + '</a>'
+      : '';
+
+    return '<div class="fxv2-mission-hero">'
+      + '<div class="fxv2-mission-hero-top">'
+        + '<div>'
+          + '<div class="fxv2-mission-hero-label">Mission en cours</div>'
+          + '<div class="fxv2-mission-hero-service">' + esc(req.service_category || 'Service') + '</div>'
+          + '<div class="fxv2-mission-hero-city">\uD83D\uDCCD ' + esc(req.city || '') + '</div>'
+        + '</div>'
+        + _renderBadge(pipeline)
+      + '</div>'
+      + artisanBlock
+      + _renderTimeline(pipeline.step)
+      + (refLine ? '<div style="margin-top:14px">' + refLine + '</div>' : '')
+    + '</div>';
+  }
+
+  /* ── QUICK ACTIONS PANEL ───────────────────────────────────────── */
+  function _renderQuickActions() {
+    return '<div class="fxv2-quick-actions" role="group" aria-label="Actions rapides">'
+      + '<button class="fxv2-qa-btn fxv2-qa-urgent" data-action="new-urgent" aria-label="Demande urgente">'
+          + '<span class="fxv2-qa-icon">\u26A1</span>'
+          + '<span class="fxv2-qa-label">Urgent</span>'
+        + '</button>'
+      + '<button class="fxv2-qa-btn fxv2-qa-standard" data-action="new-request" aria-label="Publier une demande">'
+          + '<span class="fxv2-qa-icon">\uD83D\uDCDD</span>'
+          + '<span class="fxv2-qa-label">Demande</span>'
+        + '</button>'
+      + '<button class="fxv2-qa-btn fxv2-qa-history" data-action="go-history" aria-label="Historique">'
+          + '<span class="fxv2-qa-icon">\uD83D\uDCDC</span>'
+          + '<span class="fxv2-qa-label">Historique</span>'
+        + '</button>'
+      + '<button class="fxv2-qa-btn fxv2-qa-support" data-action="go-support" aria-label="Support">'
+          + '<span class="fxv2-qa-icon">\uD83D\uDCAC</span>'
+          + '<span class="fxv2-qa-label">Support</span>'
+        + '</button>'
+    + '</div>';
+  }
+
+  /* ── SMART INSIGHTS BAND ───────────────────────────────────────── */
+  function _renderInsightsBand() {
+    /* Artisan count: from AIRE if available, else heuristic */
+    var artisanCount = '861+';
+    try {
+      if (window.FixeoAIRE && typeof window.FixeoAIRE.getArtisanCount === 'function') {
+        var n = window.FixeoAIRE.getArtisanCount('', '');
+        if (n && n > 0) artisanCount = n + '+';
+      }
+    } catch (_) {}
+
+    /* ETA: time of day heuristic */
+    var h = new Date().getHours();
+    var etaMin = (h >= 22 || h < 7) ? 35 : (h >= 8 && h < 20) ? 22 : 28;
+    var etaLabel = etaMin + ' min';
+
+    /* Safety tip: rotate daily */
+    var TIPS = [
+      '\uD83D\uDCA1 Signalez les fuites d\u2019eau imm\u00e9diatement pour \u00e9viter les d\u00e9g\u00e2ts',
+      '\uD83D\uDD0D Demandez toujours un devis \u00e9crit avant l\u2019intervention',
+      '\u26A1 En cas de panne \u00e9lectrique, coupez le disjoncteur g\u00e9n\u00e9ral',
+      '\uD83C\uDFC6 Tous nos artisans sont v\u00e9rifi\u00e9s et assur\u00e9s par Fixeo',
+      '\uD83D\uDCF1 Gardez votre r\u00e9f\u00e9rence de suivi pour retracer votre demande'
+    ];
+    var tip = TIPS[new Date().getDate() % TIPS.length];
+
+    return '<div class="fxv2-insights-band">'
+      + '<div class="fxv2-insight-item">'
+          + '<span class="fxv2-insight-dot"></span>'
+          + '<span class="fxv2-insight-val">' + artisanCount + '</span>'
+          + '<span class="fxv2-insight-lbl">artisans actifs</span>'
+        + '</div>'
+      + '<div class="fxv2-insight-sep">\u00b7</div>'
+      + '<div class="fxv2-insight-item">'
+          + '\u23F1\uFE0F <span class="fxv2-insight-val">' + etaLabel + '</span>'
+          + '<span class="fxv2-insight-lbl">ETA moyen</span>'
+        + '</div>'
+      + '<div class="fxv2-insight-sep">\u00b7</div>'
+      + '<div class="fxv2-insight-item fxv2-insight-tip">' + tip + '</div>'
+    + '</div>';
+  }
+
+  /* ── PREMIUM EMPTY STATE ───────────────────────────────────────── */
+  function _renderPremiumEmpty(profile) {
+    var name = (profile && profile.full_name) ? profile.full_name.split(' ')[0] : '';
+    var greeting = name ? ('Bonjour ' + esc(name) + ' \uD83D\uDC4B') : 'Bienvenue sur Fixeo \uD83D\uDC4B';
+
+    return '<div class="fxv2-premium-empty">'
+      + '<div class="fxv2-pe-greeting">' + greeting + '</div>'
+      + '<div class="fxv2-pe-headline">Votre espace artisan<br>en un seul endroit</div>'
+      + '<div class="fxv2-pe-subline">Trouvez un professionnel v\u00e9rifi\u00e9 pour n\u2019importe quel service\u00a0\u2014 plomberie, \u00e9lectricit\u00e9, menuiserie et plus.</div>'
+      /* Trust row */
+      + '<div class="fxv2-pe-trust">'
+        + '<span>\u2714\uFE0F Artisan v\u00e9rifi\u00e9 Fixeo</span>'
+        + '<span>\u2714\uFE0F Aucun paiement maintenant</span>'
+        + '<span>\u2714\uFE0F Prix confirm\u00e9 avant intervention</span>'
+      + '</div>'
+      /* Primary CTA */
+      + '<button class="fxv2-btn fxv2-btn-primary fxv2-pe-cta" data-action="new-request">'
+          + '\uD83D\uDCDD Publier une demande'
+        + '</button>'
+      /* Secondary urgent */
+      + '<button class="fxv2-btn fxv2-pe-urgent-cta" data-action="new-urgent">'
+          + '\u26A1 Demande urgente'
+        + '</button>'
+    + '</div>';
+  }
+
+  /* ── SECTION: DASHBOARD (Command Center) ───────────────────────── */
   function _renderDashboard() {
     var sec = el('fxv2-sec-dashboard');
     if (!sec) return;
     var reqs = _state.requests;
 
-    /* Recent 3 active requests */
-    var active = reqs.filter(function (r) { return r._pipeline.step >= 0 && r._pipeline.step < 5; })
-                     .slice(0, 3);
+    /* Most recent active mission (for hero) */
+    var active = reqs.filter(function (r) { return r._pipeline.step >= 0 && r._pipeline.step < 5; });
+    var topMission = active.length > 0 ? active[0] : null;
 
-    var html = '<div class="fxv2-section-head"><h2>\uD83C\uDFE0 Tableau de bord</h2>'
-      + '<button class="fxv2-btn fxv2-btn-primary" data-action="new-request">+ Nouvelle demande</button>'
-      + '</div>';
+    var html = '';
+
+    /* ── Insights band (always visible) ── */
+    html += _renderInsightsBand();
+
+    /* ── Quick Actions (always visible) ── */
+    html += _renderQuickActions();
 
     if (active.length) {
-      html += '<div class="fxv2-page-subtitle" style="margin-bottom:14px">Demandes r\u00e9centes</div>';
-      html += '<div class="fxv2-card-list">';
-      active.forEach(function (r) { html += _renderCard(r); });
-      html += '</div>';
-      if (reqs.length > 3) {
+      /* ── Mission Control Hero (active mission) ── */
+      html += _renderMissionHero(topMission);
+
+      /* ── More active missions ── */
+      if (active.length > 1) {
+        html += '<div class="fxv2-section-sub-head">Autres demandes actives</div>';
+        html += '<div class="fxv2-card-list">';
+        active.slice(1).forEach(function (r) { html += _renderCard(r); });
+        html += '</div>';
+      }
+
+      /* ── See all link ── */
+      if (reqs.length > active.length) {
         html += '<div style="text-align:center;margin-top:16px">'
-          + '<button class="fxv2-btn fxv2-btn-ghost" data-action="go-requests">Voir toutes les demandes (' + reqs.length + ')</button>'
+          + '<button class="fxv2-btn fxv2-btn-ghost" data-action="go-requests">'
+            + 'Voir l\u2019historique (' + (reqs.length - active.length) + ' termin\u00e9es)'
+          + '</button>'
           + '</div>';
       }
     } else {
-      html += '<div class="fxv2-empty">'
-        + '<div class="fxv2-empty-icon">\uD83D\uDD28</div>'
-        + '<div class="fxv2-empty-title">Aucune demande active</div>'
-        + '<div class="fxv2-empty-sub">Cr\u00e9ez votre premi\u00e8re demande et trouvez un artisan qualifi\u00e9.</div>'
-        + '<button class="fxv2-btn fxv2-btn-primary" data-action="new-request">+ Cr\u00e9er une demande</button>'
-        + '</div>';
+      /* ── Premium empty state ── */
+      html += _renderPremiumEmpty(_state.profile);
     }
+
     sec.innerHTML = html;
   }
 
@@ -686,7 +839,10 @@
         case 'reject-quote':   return _doRejectQuote(id, btn);
         case 'confirm-done':   return _doConfirmDone(id, btn);
         case 'new-request':    return _openNewRequest();
+        case 'new-urgent':     return _openUrgentRequest(btn);
         case 'go-requests':    return _showSection('requests');
+        case 'go-history':     return _showSection('history');
+        case 'go-support':     return _showSection('support');
         case 'logout':
           if (window.FixeoLogout && typeof window.FixeoLogout.logout === 'function') {
             window.FixeoLogout.logout();
@@ -800,6 +956,13 @@
 
   /* ── NEW REQUEST MODAL ────────────────────────────────────────── */
   function _openNewRequest() {
+    /* ── Prefer global request-form.js if available ── */
+    if (window.FixeoClientRequest && typeof window.FixeoClientRequest.open === 'function') {
+      window.FixeoClientRequest.open(null);
+      return;
+    }
+
+    /* ── Fallback: fxv2-modal-overlay (own form, Supabase direct) ── */
     var body = '<div class="fxv2-modal-drag-handle"></div>'
       + '<div class="fxv2-modal-title">\uD83D\uDD28 Nouvelle demande</div>'
       + '<form id="fxv2-req-form">'
@@ -842,6 +1005,16 @@
         _btnReset(sub, 'Envoyer la demande');
       }
     });
+  }
+
+  function _openUrgentRequest(trigger) {
+    /* ── Prefer global V3 urgent modal if available ── */
+    if (window.FixeoClientRequest && typeof window.FixeoClientRequest.openExpress === 'function') {
+      window.FixeoClientRequest.openExpress(trigger || null);
+      return;
+    }
+    /* ── Fallback: open standard modal ── */
+    _openNewRequest();
   }
 
   /* ── MODAL ────────────────────────────────────────────────────── */
