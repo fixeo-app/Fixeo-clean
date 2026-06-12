@@ -483,7 +483,7 @@
 
     return '<div class="fxv2-premium-empty">'
       + '<div class="fxv2-pe-greeting">' + greeting + '</div>'
-      + '<div class="fxv2-pe-headline">Votre espace artisan<br>en un seul endroit</div>'
+      + '<div class="fxv2-pe-headline">Votre espace client<br>en un seul endroit</div>'
       + '<div class="fxv2-pe-subline">Trouvez un professionnel v\u00e9rifi\u00e9 pour n\u2019importe quel service\u00a0\u2014 plomberie, \u00e9lectricit\u00e9, menuiserie et plus.</div>'
       /* Trust row */
       + '<div class="fxv2-pe-trust">'
