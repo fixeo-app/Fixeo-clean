@@ -29,6 +29,10 @@ Disallow: /results.html
 # Legacy redirect page (handled by noindex, listed here for safety)
 Disallow: /artisan.html
 
+# Tracking / suivi page (no indexing value)
+Disallow: /suivi
+Disallow: /suivi.html
+
 # Internal flows
 Disallow: /demandes
 Disallow: /api/
