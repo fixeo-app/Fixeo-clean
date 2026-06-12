@@ -1,0 +1,433 @@
+/**
+ * fixeo-estimation-v2-hero.css — faee-v2a
+ * FIXEO AI Estimation V2 — Homepage Always-On Hero Card
+ *
+ * Namespace: .faev2-* / #faee-v2-hero
+ * Zero interference with faee-v1 (.faee-*), fxhi, AIRE, or any other system.
+ */
+
+/* ═══════════════════════════════════════════════════════════
+   OUTER WRAPPER — full-width band below hero section
+══════════════════════════════════════════════════════════ */
+
+#faee-v2-hero {
+  width: 100%;
+  padding: 0 16px 20px;
+  box-sizing: border-box;
+  opacity: 1;
+  transform: translateY(0);
+  /* Transition managed by JS */
+}
+
+/* ═══════════════════════════════════════════════════════════
+   CARD BASE — dark glass, same family as faee-v1
+══════════════════════════════════════════════════════════ */
+
+.faev2-card {
+  max-width: 740px;
+  margin: 0 auto;
+  padding: 20px 22px 16px;
+  background: rgba(10, 10, 15, 0.80);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 20px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow:
+    0 4px 32px rgba(0, 0, 0, 0.35),
+    0 0 0 1px rgba(225, 48, 108, 0.06) inset;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Ambient glow overlay */
+.faev2-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(225, 48, 108, 0.5) 40%,
+    rgba(64, 93, 230, 0.5) 60%,
+    transparent 100%
+  );
+  border-radius: 20px 20px 0 0;
+  pointer-events: none;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   HEADER ROW
+══════════════════════════════════════════════════════════ */
+
+.faev2-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.faev2-logo-mark {
+  font-size: 1rem;
+  color: #E1306C;
+  line-height: 1;
+  animation: faev2-mark-pulse 3s ease-in-out infinite;
+}
+
+@keyframes faev2-mark-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.55; }
+}
+
+.faev2-title {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  background: linear-gradient(90deg, #E1306C, #833AB4, #405DE6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   IDLE STATE — INVITE TEXT
+══════════════════════════════════════════════════════════ */
+
+.faev2-invite {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.65);
+  margin: 0 0 14px;
+  line-height: 1.4;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   IDLE STATE — SERVICE CHIPS
+══════════════════════════════════════════════════════════ */
+
+.faev2-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-bottom: 14px;
+}
+
+.faev2-chip {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1.5px solid rgba(255, 255, 255, 0.10);
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.80);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, transform 0.12s;
+  -webkit-tap-highlight-color: transparent;
+  white-space: nowrap;
+}
+
+.faev2-chip:hover {
+  background: rgba(225, 48, 108, 0.10);
+  border-color: rgba(225, 48, 108, 0.30);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.faev2-chip:active {
+  transform: scale(0.97);
+}
+
+.faev2-chip-icon {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.faev2-chip-lbl {
+  font-size: 0.76rem;
+  line-height: 1;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   IDLE STATE — TRUST STATS ROW
+══════════════════════════════════════════════════════════ */
+
+.faev2-stats-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  margin-bottom: 14px;
+  font-size: 0.74rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.faev2-stat-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #20C997;
+  animation: faev2-dot-pulse 1.8s ease-in-out infinite;
+  margin-right: 3px;
+  vertical-align: middle;
+}
+
+@keyframes faev2-dot-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(0.75); }
+}
+
+.faev2-stat-item {
+  white-space: nowrap;
+}
+
+.faev2-stat-sep {
+  opacity: 0.3;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ACTIVE STATE — PRICE HERO
+══════════════════════════════════════════════════════════ */
+
+.faev2-price-block {
+  margin-bottom: 12px;
+}
+
+.faev2-price {
+  display: block;
+  font-size: 2.2rem;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  background: linear-gradient(120deg, #fff 0%, rgba(255,255,255,.75) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.faev2-price-na {
+  font-size: 1.6rem;
+  opacity: 0.4;
+}
+
+.faev2-price-note {
+  display: block;
+  font-size: 0.70rem;
+  color: rgba(255, 255, 255, 0.40);
+  font-style: italic;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ACTIVE STATE — STATS ROW
+══════════════════════════════════════════════════════════ */
+
+.faev2-active-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  margin-bottom: 10px;
+  font-size: 0.76rem;
+  color: rgba(255, 255, 255, 0.70);
+  font-weight: 500;
+}
+
+.faev2-active-stat {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  white-space: nowrap;
+}
+
+.faev2-active-stat-service {
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.90);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ACTIVE STATE — SURCHARGES
+══════════════════════════════════════════════════════════ */
+
+.faev2-surcharges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.faev2-surcharge {
+  padding: 3px 9px;
+  background: rgba(225, 48, 108, 0.12);
+  border: 1px solid rgba(225, 48, 108, 0.25);
+  border-radius: 12px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #ff6b8a;
+  letter-spacing: 0.02em;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   URGENT BADGE (active header)
+══════════════════════════════════════════════════════════ */
+
+.faev2-urgent-badge {
+  padding: 2px 8px;
+  background: rgba(225, 48, 108, 0.15);
+  border: 1px solid rgba(225, 48, 108, 0.35);
+  border-radius: 10px;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: #ff6b8a;
+  text-transform: uppercase;
+  animation: faev2-badge-blink 1.8s ease-in-out infinite;
+}
+
+@keyframes faev2-badge-blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.55; }
+}
+
+/* Urgent card: stronger border glow */
+.faev2-card-urgent {
+  border-color: rgba(225, 48, 108, 0.25);
+  box-shadow:
+    0 4px 32px rgba(0, 0, 0, 0.35),
+    0 0 20px rgba(225, 48, 108, 0.08);
+}
+
+.faev2-card-urgent::before {
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(225, 48, 108, 0.7) 35%,
+    rgba(255, 71, 87, 0.7) 65%,
+    transparent 100%
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════
+   DISCLAIMER
+══════════════════════════════════════════════════════════ */
+
+.faev2-disclaimer {
+  font-size: 0.67rem;
+  color: rgba(255, 255, 255, 0.30);
+  margin: 8px 0 12px;
+  line-height: 1.4;
+  font-style: italic;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   CTA BUTTON
+══════════════════════════════════════════════════════════ */
+
+.faev2-cta {
+  display: block;
+  width: 100%;
+  padding: 12px 20px;
+  background: linear-gradient(135deg, #E1306C 0%, #833AB4 100%);
+  border: none;
+  border-radius: 12px;
+  font-size: 0.90rem;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  transition: box-shadow 0.2s ease, transform 0.15s ease;
+  box-shadow: 0 3px 16px rgba(225, 48, 108, 0.25);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.faev2-cta:hover {
+  box-shadow: 0 5px 22px rgba(225, 48, 108, 0.40);
+  transform: translateY(-1px);
+}
+
+.faev2-cta:active {
+  transform: translateY(0);
+}
+
+/* Urgent CTA — pure red */
+.faev2-cta-urgent {
+  background: linear-gradient(135deg, #ff1744 0%, #E1306C 100%);
+  box-shadow: 0 3px 16px rgba(255, 23, 68, 0.30);
+}
+
+.faev2-cta-urgent:hover {
+  box-shadow: 0 5px 22px rgba(255, 23, 68, 0.45);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   BACK LINK
+══════════════════════════════════════════════════════════ */
+
+.faev2-back {
+  display: block;
+  margin: 8px auto 0;
+  background: none;
+  border: none;
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.35);
+  cursor: pointer;
+  padding: 4px 8px;
+  transition: color 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.faev2-back:hover {
+  color: rgba(255, 255, 255, 0.65);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MOBILE — 375px safety
+══════════════════════════════════════════════════════════ */
+
+@media (max-width: 480px) {
+  #faee-v2-hero {
+    padding: 0 12px 16px;
+  }
+
+  .faev2-card {
+    padding: 16px 14px 12px;
+    border-radius: 16px;
+  }
+
+  .faev2-price {
+    font-size: 1.75rem;
+  }
+
+  .faev2-chips {
+    gap: 5px;
+  }
+
+  .faev2-chip {
+    padding: 6px 10px;
+    font-size: 0.72rem;
+  }
+
+  .faev2-cta {
+    font-size: 0.84rem;
+    padding: 11px 16px;
+  }
+
+  .faev2-stats-row {
+    font-size: 0.68rem;
+    gap: 4px 8px;
+  }
+}
+
+@media (max-width: 375px) {
+  .faev2-chip-lbl {
+    font-size: 0.68rem;
+  }
+
+  .faev2-price {
+    font-size: 1.55rem;
+  }
+}
