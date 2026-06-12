@@ -1,0 +1,323 @@
+/**
+ * fixeo-urgent-modal-v3.css — fuv3-v1a
+ * FIXEO Urgent Modal V3 — Premium Emergency Flow Styles
+ *
+ * Namespace: .fuv3-* / #fuv3-*
+ * Zero overrides of rmv2, faee, AIRE, or any other system.
+ * All selectors scoped under #request-modal[data-request-mode="express"]
+ * or explicit .fuv3-* classes.
+ */
+
+/* ═══════════════════════════════════════════════════════════
+   1. URGENT ACCENT BAR — pulsing red glow at top of modal
+══════════════════════════════════════════════════════════ */
+
+.fuv3-accent-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg,
+    #E1306C 0%,
+    #ff4757 40%,
+    #E1306C 100%
+  );
+  background-size: 200% 100%;
+  animation: fuv3-bar-pulse 2s ease-in-out infinite;
+  border-radius: 2px 2px 0 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes fuv3-bar-pulse {
+  0%, 100% { opacity: 1; background-position: 0% 50%; }
+  50%       { opacity: 0.7; background-position: 100% 50%; }
+}
+
+/* Ensure modal has position:relative for the accent bar */
+#request-modal.open {
+  position: relative;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   2. URGENCE BADGE — injected before modal title
+══════════════════════════════════════════════════════════ */
+
+.fuv3-urgent-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  background: rgba(225, 48, 108, 0.15);
+  border: 1px solid rgba(225, 48, 108, 0.35);
+  border-radius: 20px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #ff6b8a;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  animation: fuv3-badge-blink 2.4s ease-in-out infinite;
+}
+
+@keyframes fuv3-badge-blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.65; }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   3. LIVE ARTISAN SIGNAL — below modal header, above chips
+══════════════════════════════════════════════════════════ */
+
+#fuv3-live-signal {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: rgba(32, 201, 151, 0.06);
+  border: 1px solid rgba(32, 201, 151, 0.18);
+  border-radius: 10px;
+  margin-bottom: 16px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.fuv3-signal-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #20C997;
+  flex-shrink: 0;
+  animation: fuv3-dot-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes fuv3-dot-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(0.8); }
+}
+
+.fuv3-signal-count {
+  font-weight: 700;
+  color: #20C997;
+}
+
+.fuv3-signal-text {
+  line-height: 1.3;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   4. SUBMIT VALIDATION STATE
+══════════════════════════════════════════════════════════ */
+
+/* Disabled submit button — urgent mode only */
+#request-modal[data-request-mode="express"] .request-submit-btn.fuv3-btn-disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  background: rgba(255, 255, 255, 0.06) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  color: rgba(255, 255, 255, 0.4) !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Micro-hint text above submit button */
+#fuv3-submit-hint {
+  display: none;
+  margin: 0 0 8px;
+  font-size: 0.73rem;
+  color: rgba(255, 255, 255, 0.4);
+  text-align: center;
+  font-style: italic;
+  line-height: 1.4;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   5. WC BOUCHÉ CHIP — same visual as rmv2 chips, no override
+══════════════════════════════════════════════════════════ */
+
+/* .fuv3-wc-chip inherits all .fxrm2-chip styles — no additions needed */
+/* The chip blends in naturally with rmv2's chip grid */
+
+/* ═══════════════════════════════════════════════════════════
+   6. CITY CHIP GRID — 5 per row on desktop, 4 on mobile
+   Override the flex-wrap layout for tighter urgency UX
+══════════════════════════════════════════════════════════ */
+
+#request-modal[data-request-mode="express"] .fxrm2-city-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 5px;
+}
+
+#request-modal[data-request-mode="express"] .fxrm2-city-chip {
+  padding: 7px 6px;
+  font-size: 0.72rem;
+  text-align: center;
+  white-space: normal;
+  line-height: 1.2;
+}
+
+#request-modal[data-request-mode="express"] .fxrm2-city-chip.selected {
+  /* Urgency green-to-red gradient for selected city in urgent mode */
+  background: rgba(225, 48, 108, 0.12);
+  border-color: rgba(225, 48, 108, 0.35);
+  color: #ff6b8a;
+}
+
+@media (max-width: 480px) {
+  #request-modal[data-request-mode="express"] .fxrm2-city-row {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  #request-modal[data-request-mode="express"] .fxrm2-city-chip {
+    font-size: 0.68rem;
+    padding: 6px 4px;
+  }
+}
+
+@media (max-width: 360px) {
+  #request-modal[data-request-mode="express"] .fxrm2-city-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   7. PROBLEM CHIP GRID — 2 per row in urgent (larger tap targets)
+   Override rmv2's 3-col default for better mobile ergonomics
+══════════════════════════════════════════════════════════ */
+
+#request-modal[data-request-mode="express"] .fxrm2-chip-grid {
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+#request-modal[data-request-mode="express"] .fxrm2-chip {
+  padding: 12px 8px;
+  min-height: 64px;
+  flex-direction: column;
+  gap: 4px;
+  border-radius: 12px;
+}
+
+#request-modal[data-request-mode="express"] .fxrm2-chip-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+#request-modal[data-request-mode="express"] .fxrm2-chip-label-text {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-align: center;
+  line-height: 1.2;
+  white-space: normal;
+}
+
+/* Selected chip in urgent mode: red accent instead of default */
+#request-modal[data-request-mode="express"] .fxrm2-chip.selected {
+  background: rgba(225, 48, 108, 0.14);
+  border-color: rgba(225, 48, 108, 0.4);
+}
+
+#request-modal[data-request-mode="express"] .fxrm2-chip.selected .fxrm2-chip-label-text {
+  color: #ff6b8a;
+}
+
+@media (min-width: 420px) {
+  #request-modal[data-request-mode="express"] .fxrm2-chip-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   8. PHONE INPUT — bigger, more prominent in urgent mode
+══════════════════════════════════════════════════════════ */
+
+#request-modal[data-request-mode="express"] #request-phone {
+  font-size: 1.05rem !important;
+  font-weight: 600 !important;
+  padding: 13px 16px !important;
+  letter-spacing: 0.06em;
+  border-color: rgba(225, 48, 108, 0.25) !important;
+}
+
+#request-modal[data-request-mode="express"] #request-phone:focus {
+  border-color: rgba(225, 48, 108, 0.55) !important;
+  box-shadow: 0 0 0 3px rgba(225, 48, 108, 0.10) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   9. URGENCY RADIO — hide in express mode (always urgent)
+══════════════════════════════════════════════════════════ */
+
+#request-modal[data-request-mode="express"] .request-choice-grid {
+  display: none;
+}
+
+#request-modal[data-request-mode="express"] .request-field:has(.request-choice-grid) {
+  display: none;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   10. BUDGET FIELD — hidden in express mode (handled by request-form.js too)
+══════════════════════════════════════════════════════════ */
+
+#request-modal[data-request-mode="express"] #request-budget,
+#request-modal[data-request-mode="express"] .request-field:has(#request-budget) {
+  display: none;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   11. SUBMIT BUTTON — emergency red gradient in urgent mode
+══════════════════════════════════════════════════════════ */
+
+#request-modal[data-request-mode="express"] .request-submit-btn:not(.fuv3-btn-disabled) {
+  background: linear-gradient(135deg, #E1306C 0%, #ff4757 100%) !important;
+  border: none !important;
+  font-size: 1rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.03em;
+  padding: 14px 20px !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 20px rgba(225, 48, 108, 0.30) !important;
+  transition: box-shadow 0.2s ease, transform 0.15s ease !important;
+}
+
+#request-modal[data-request-mode="express"] .request-submit-btn:not(.fuv3-btn-disabled):hover {
+  box-shadow: 0 6px 28px rgba(225, 48, 108, 0.45) !important;
+  transform: translateY(-1px) !important;
+}
+
+#request-modal[data-request-mode="express"] .request-submit-btn:not(.fuv3-btn-disabled):active {
+  transform: translateY(0) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   12. MOBILE — 375px safety checks
+══════════════════════════════════════════════════════════ */
+
+@media (max-width: 375px) {
+  .fuv3-urgent-badge {
+    font-size: 0.62rem;
+    padding: 2px 8px;
+  }
+
+  #fuv3-live-signal {
+    font-size: 0.72rem;
+    padding: 7px 10px;
+  }
+
+  #request-modal[data-request-mode="express"] .fxrm2-chip {
+    min-height: 56px;
+    padding: 10px 6px;
+  }
+
+  #request-modal[data-request-mode="express"] .fxrm2-chip-icon {
+    font-size: 1.25rem;
+  }
+
+  #request-modal[data-request-mode="express"] .fxrm2-chip-label-text {
+    font-size: 0.65rem;
+  }
+}
