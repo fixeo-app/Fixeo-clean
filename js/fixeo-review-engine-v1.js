@@ -1,6 +1,6 @@
 /* ============================================================
    FIXEO REVIEW ENGINE V1
-   Version: frev-v1a
+   Version: frev-v1b
    Guard:   window._fxRevV1Loaded
    Namespace: .frev-* / #frev-* / window.FixeoReviews
 
@@ -23,7 +23,7 @@
   if (window._fxRevV1Loaded) return;
   window._fxRevV1Loaded = true;
 
-  var VERSION = 'frev-v1a';
+  var VERSION = 'frev-v1b';
 
   /* ── Supabase client ────────────────────────────────────── */
   function _sb() {
@@ -635,9 +635,87 @@
     };
   }
 
-  /* ── BOOT ──────────────────────────────────────────────── */
+  /* ── TABLE EXISTENCE CHECK (P0-3 fix — frev-v1b) ─────────── */
+  /* If the `reviews` table does not yet exist (SQL not applied),
+     probe once at boot. On failure: disable all review UI silently.
+     Never show a fake success toast. Fail closed. */
+
+  var _tableReady = null; /* null = unchecked | true = OK | false = missing */
+
+  async function _probeTable() {
+    if (_tableReady !== null) return _tableReady;
+    try {
+      var sb = await _getSb();
+      if (!sb) { _tableReady = false; return false; }
+      /* A SELECT LIMIT 1 on a missing table returns error.code 42P01 (undefined_table) */
+      var res = await sb.from('reviews').select('id').limit(1);
+      if (res.error) {
+        console.warn('[frev] reviews table not found — review UI disabled until SQL is applied.', res.error.message);
+        _tableReady = false;
+      } else {
+        _tableReady = true;
+      }
+    } catch(e) {
+      console.warn('[frev] table probe failed:', e && e.message);
+      _tableReady = false;
+    }
+    return _tableReady;
+  }
+
+  /* Internal Supabase getter (same pattern as fetchReviews but standalone) */
+  async function _getSb() {
+    try {
+      var FC = window.FixeoSupabaseClient;
+      if (FC && FC.CONFIGURED) {
+        try { await FC.ready(); } catch(_) {}
+        if (FC.client) return FC.client;
+      }
+    } catch(_) {}
+    try {
+      var FS = window.FixeoSupabase;
+      if (FS && typeof FS.getClient === 'function') return await FS.getClient();
+    } catch(_) {}
+    return null;
+  }
+
+  /* Patch openReviewModal to gate on _tableReady */
+  var _origOpenReviewModal = null; /* set after _boot probes */
+
+/* ── BOOT ──────────────────────────────────────────────── */
 
   function _boot() {
+    /* P0-3: probe table existence first; disable review buttons if missing */
+    _probeTable().then(function(ready) {
+      if (!ready) {
+        /* Hide all review buttons already rendered (e.g. client dashboard) */
+        document.querySelectorAll('.fxv2-review-btn, .frev-trigger').forEach(function(btn) {
+          btn.style.display = 'none';
+          btn.setAttribute('aria-hidden', 'true');
+          btn.setAttribute('disabled', 'true');
+        });
+        /* Intercept future openModal calls — return silently instead of showing broken UI */
+        window.FixeoReviews && (window.FixeoReviews.openModal = function() {
+          console.warn('[frev] openModal blocked — reviews table not yet applied.');
+        });
+        /* Watch for dynamically rendered review buttons (client dashboard renders async) */
+        var btnObs = new MutationObserver(function() {
+          document.querySelectorAll('.fxv2-review-btn:not([data-frev-hidden]), .frev-trigger:not([data-frev-hidden])').forEach(function(btn) {
+            btn.style.display = 'none';
+            btn.setAttribute('aria-hidden', 'true');
+            btn.setAttribute('disabled', 'true');
+            btn.dataset.frevHidden = '1';
+          });
+        });
+        btnObs.observe(document.body, { childList: true, subtree: true });
+        /* Disconnect after 30s — dashboard renders well within that */
+        setTimeout(function() { btnObs.disconnect(); }, 30000);
+        return; /* abort rest of boot */
+      }
+      _bootReady(); /* table exists — proceed normally */
+    });
+  }
+
+  function _bootReady() {
     /* 1. Artisan profile page: inject review section */
     var profileRoot = document.getElementById('public-artisan-root');
     if (profileRoot) {

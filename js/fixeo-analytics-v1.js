@@ -1,6 +1,6 @@
 /* ============================================================
    FIXEO ANALYTICS & GROWTH COMMAND CENTER V1
-   js/fixeo-analytics-v1.js   Version: fagc-v1a
+   js/fixeo-analytics-v1.js   Version: fagc-v1b
    Guard: window._fxAgcV1Loaded
 
    ┌─ DATA SOURCES ──────────────────────────────────────────┐
@@ -27,7 +27,7 @@
   if (window._fxAgcV1Loaded) return;
   window._fxAgcV1Loaded = true;
 
-  var VERSION = 'fagc-v1a';
+  var VERSION = 'fagc-v1b';
   var LOG     = '[fagc]';
 
   /* ── Page guard: admin only ─────────────────────────────── */
@@ -60,14 +60,22 @@
   function _pct(a, b) { return b > 0 ? Math.round(a / b * 100) : 0; }
 
   /* ── Supabase ────────────────────────────────────────────── */
+  /* P0-2 fix (fagc-v1b): mirrors acc-v3 resolver.
+     FixeoSupabaseClient is a wrapper — must return .client (raw supabase obj).
+     Returning the wrapper caused sb.from() is not a function → silent zero data. */
   async function _sb() {
-    try {
-      var FS = window.FixeoSupabase;
-      if (FS && FS.getClient) return await FS.getClient();
-    } catch(_) {}
+    /* Primary: FixeoSupabaseClient.client (always present on admin.html) */
     try {
       var FC = window.FixeoSupabaseClient;
-      if (FC) return FC;
+      if (FC && FC.CONFIGURED) {
+        try { await FC.ready(); } catch(_) {}
+        if (FC.client) return FC.client;
+      }
+    } catch(_) {}
+    /* Fallback: FixeoSupabase.getClient() (fixeo-supabase-core.js on dashboards) */
+    try {
+      var FS = window.FixeoSupabase;
+      if (FS && typeof FS.getClient === 'function') return await FS.getClient();
     } catch(_) {}
     return null;
   }

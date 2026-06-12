@@ -1,6 +1,6 @@
 /**
  * FIXEO Admin Command Center V4 — admin-command-center-v4.js
- * Version: acc-v4a — 2026-06-12
+ * Version: acc-v4b — 2026-06-12 (P0-1: robust Supabase resolver)
  * ─────────────────────────────────────────────────────────────────
  * Operational war room — CEO / ops command cockpit.
  * 8 modules injected ADDITIVELY above V3 sections in admin.html.
@@ -32,7 +32,7 @@
   'use strict';
   if (window.FixeoAccV4) return;
 
-  var VERSION = 'acc-v4a';
+  var VERSION = 'acc-v4b';
   var LOG     = '[FixeoAccV4]';
 
   /* ── CITY LIST (canonical) ── */
@@ -96,9 +96,22 @@
     if (_refreshing) return;
     _refreshing = true;
     try {
-      var FS = window.FixeoSupabase;
-      if (!FS || !FS.getClient) { _refreshing = false; return; }
-      var sb = await FS.getClient();
+      /* P0-1 fix (acc-v4b): robust resolver — mirrors acc-v3 pattern.
+         admin.html does NOT load fixeo-supabase-core.js, so window.FixeoSupabase
+         is never set. Use FixeoSupabaseClient.client (supabase-client.js) as
+         primary, fall back to FixeoSupabase.getClient() for dashboard pages. */
+      var sb = null;
+      var _fsc = window.FixeoSupabaseClient;
+      if (_fsc && _fsc.CONFIGURED) {
+        try { await _fsc.ready(); } catch(_) {}
+        if (_fsc.client) sb = _fsc.client;
+      }
+      if (!sb) {
+        var _fs = window.FixeoSupabase;
+        if (_fs && typeof _fs.getClient === 'function') {
+          try { sb = await _fs.getClient(); } catch(_) {}
+        }
+      }
       if (!sb) { _refreshing = false; return; }
 
       /* service_requests — last 200, all non-cancelled */
