@@ -1,0 +1,64 @@
+{
+  "slug": "remplacement-cumulus-maroc",
+  "title": "Remplacement cumulus au Maroc : quand et comment changer",
+  "meta_description": "Votre cumulus est vieux ou en panne ? Découvrez quand remplacer votre chauffe-eau, quel modèle choisir et les coûts au Maroc en 2025.",
+  "category": "plomberie",
+  "tags": [
+    "cumulus",
+    "chauffe-eau",
+    "remplacement",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 6,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Un chauffe-eau dure en moyenne 10 à 15 ans au Maroc. Passé ce délai, la corrosion interne, l'inefficacité énergétique et les risques de fuite plaident pour le remplacement. Mais comment choisir son successeur ?"
+    },
+    {
+      "type": "h2",
+      "title": "Signes que votre cumulus doit être remplacé",
+      "content": "Eau rouillée ou à goût métallique, bruits de claquements lors de la chauffe (tartre), suintements autour de la cuve, facture électrique en hausse anormale, ou appareils de plus de 12 ans. La rouille dans l'eau est le signal le plus urgent : la cuve est perforée."
+    },
+    {
+      "type": "h2",
+      "title": "Quel type de chauffe-eau choisir en 2025 ?",
+      "content": "Électrique : le plus répandu, 800-2000 MAD. Solaire thermique avec appoint électrique : idéal au Maroc, 3000-8000 MAD mais économique sur le long terme. Gaz naturel : dans les zones desservies par GAZPROM/GAZODUC. Thermodynamique (pompe à chaleur) : efficient mais coûteux à l'achat."
+    },
+    {
+      "type": "h2",
+      "title": "Procédure de remplacement",
+      "content": "Coupez l'alimentation électrique et l'arrivée d'eau froide. Vidangez le cumulus via le groupe de sécurité. Déconnectez les raccords. Installez le nouveau chauffe-eau, reconnectez les tuyaux, réarmez le disjoncteur, purgez l'air. Un plombier expérimenté réalise le tout en 2 heures."
+    },
+    {
+      "type": "cta",
+      "text": "Remplacer mon chauffe-eau"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Peut-on remplacer un 100L par un 150L sans travaux supplémentaires ?",
+      "a": "Généralement oui si l'espace le permet. Il faut vérifier que la résistance électrique est compatible avec votre disjoncteur (1500W ou 2000W). Un plombier peut confirmer en quelques minutes."
+    },
+    {
+      "q": "Que faire de l'ancien chauffe-eau ?",
+      "a": "Les plombiers Fixeo peuvent emporter l'ancien appareil pour recyclage. Les cumulus contiennent des matériaux recyclables (acier, cuivre). Certains distributeurs reprennent l'ancien contre remise sur le nouveau."
+    },
+    {
+      "q": "Les subventions existent-elles au Maroc pour un chauffe-eau solaire ?",
+      "a": "Le programme Promasol de l'ADEREE (Agence de Développement des Énergies Renouvelables) a proposé des aides par le passé. Renseignez-vous auprès de l'AMEE ou de votre commune pour les aides actuelles en 2025."
+    }
+  ],
+  "related_articles": [
+    "installation-chauffe-eau-electrique",
+    "chauffe-eau-fuit",
+    "entretien-chauffe-eau-solaire"
+  ],
+  "internal_links": [
+    "/plombier/casablanca",
+    "/plombier/rabat",
+    "/plombier/fes"
+  ]
+}

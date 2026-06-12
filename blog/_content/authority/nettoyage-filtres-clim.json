@@ -1,0 +1,64 @@
+{
+  "slug": "nettoyage-filtres-clim",
+  "title": "Nettoyer les filtres de climatisation soi-même",
+  "meta_description": "Comment nettoyer les filtres de votre climatisation au Maroc : étapes, fréquence et produits recommandés pour maintenir les performances.",
+  "category": "climatisation",
+  "tags": [
+    "filtre clim",
+    "nettoyage",
+    "entretien",
+    "DIY"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 4,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Le nettoyage du filtre est le seul entretien qu'un propriétaire peut réaliser lui-même sur sa climatisation — et c'est aussi le plus important. Un filtre propre = 15 à 30% d'économie sur la consommation électrique."
+    },
+    {
+      "type": "h2",
+      "title": "À quelle fréquence ?",
+      "content": "Toutes les 2 semaines en usage intensif (été marocain). Une fois par mois en usage modéré. Avant et après chaque saison (avant l'été, avant l'hiver si réversible). Dans les villes poussiéreuses (Marrakech, Agadir), plus souvent."
+    },
+    {
+      "type": "h2",
+      "title": "Procédure étape par étape",
+      "content": "Éteignez et débranchez la clim. Ouvrez le panneau frontal de l'unité intérieure (se lève généralement vers le haut). Retirez les filtres (glissières ou clips). Aspirez la poussière. Rincez sous l'eau tiède (pas chaude). Laissez sécher complètement à l'air (JAMAIS sécher au four ou au soleil direct). Réinstallez."
+    },
+    {
+      "type": "h2",
+      "title": "Filtres non lavables",
+      "content": "Certains modèles ont des filtres à charbon actif ou HEPA qui ne se lavent pas — ils se remplacent (30 à 80 MAD). Consultez le manuel pour identifier votre type de filtre."
+    },
+    {
+      "type": "cta",
+      "text": "Entretien professionnel de la clim"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Puis-je remettre un filtre humide dans ma climatisation ?",
+      "a": "Non. Un filtre encore humide favorise le développement de moisissures. Laissez-le sécher complètement (2 à 4 heures à l'air) avant de le réinstaller."
+    },
+    {
+      "q": "Mon filtre est déchiré, que faire ?",
+      "a": "Un filtre déchiré laisse passer la poussière directement dans l'échangeur, colmatant les ailettes et réduisant les performances. Commandez un filtre de remplacement auprès du fabricant ou d'un fournisseur de pièces clim."
+    },
+    {
+      "q": "Pourquoi mon filtre se salit-il si vite ?",
+      "a": "La qualité de l'air de votre logement (poussière, animaux, fumée) détermine la vitesse d'encrassement. Dans les villes poussiéreuses du Maroc, un filtre peut se saturer en 7 à 10 jours en période estivale."
+    }
+  ],
+  "related_articles": [
+    "clim-odeur-mauvaise",
+    "entretien-clim-annuel",
+    "clim-ne-refroidit-plus"
+  ],
+  "internal_links": [
+    "/climatisation/casablanca",
+    "/climatisation/agadir",
+    "/climatisation/marrakech"
+  ]
+}

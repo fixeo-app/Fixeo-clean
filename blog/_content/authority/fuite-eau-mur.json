@@ -1,0 +1,69 @@
+{
+  "slug": "fuite-eau-mur",
+  "title": "Fuite d'eau dans le mur : causes, détection et réparation",
+  "meta_description": "Fuite d'eau dans le mur au Maroc : comment détecter, diagnostiquer et réparer. Guide complet avec prix et conseils d'artisans Fixeo.",
+  "category": "plomberie",
+  "tags": [
+    "fuite eau",
+    "plomberie",
+    "réparation",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 7,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Une tache humide qui s'étend sur votre mur peut cacher une fuite silencieuse. Au Maroc, les canalisations encastrées dans la maçonnerie rendent le diagnostic particulièrement délicat — mais une intervention rapide évite des dégâts coûteux."
+    },
+    {
+      "type": "h2",
+      "title": "Comment détecter une fuite dans le mur ?",
+      "content": "Les signes les plus courants : taches sombres sur le crépi, peinture qui cloque, moisissures en hauteur, ou compteur qui tourne lorsque toutes les robinetteries sont fermées. Un plombier professionnel utilise une caméra endoscopique ou un détecteur d'humidité pour localiser précisément la fuite sans démolition inutile."
+    },
+    {
+      "type": "h2",
+      "title": "Les causes les plus fréquentes au Maroc",
+      "content": "La principale cause est la corrosion des tuyaux en acier galvanisé, très répandus dans les constructions marocaines des années 1970-2000. S'ajoutent les joints défaillants sur les raccords, les vibrations provoquées par la pression d'eau élevée dans certains quartiers, et le gel hivernal dans les régions de Fès, Ifrane ou Meknès."
+    },
+    {
+      "type": "h2",
+      "title": "Réparation : faut-il casser le mur ?",
+      "content": "Pas nécessairement. Si la fuite est localisée avec précision, le plombier peut pratiquer une ouverture ciblée de 20 à 30 cm, réparer ou remplacer la section endommagée, puis refermer avec du mortier. Dans les cas graves de corrosion généralisée, un rechargement complet de la canalisation est recommandé."
+    },
+    {
+      "type": "h2",
+      "title": "Quel artisan appeler à Casablanca, Rabat ou Marrakech ?",
+      "content": "Appelez un plombier certifié via Fixeo. Nos artisans interviennent en moins de 2 heures dans les grandes villes marocaines, avec un devis transparent avant toute intervention. Le paiement n'est dû qu'après réalisation des travaux."
+    },
+    {
+      "type": "cta",
+      "text": "Besoin d'un plombier maintenant ?"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Combien coûte la réparation d'une fuite dans le mur ?",
+      "a": "Au Maroc, le coût dépend de l'accès. Une fuite simple coûte entre 400 et 800 MAD. Si le mur doit être ouvert, comptez 800 à 2000 MAD selon la surface à reboucher."
+    },
+    {
+      "q": "Peut-on détecter une fuite sans ouvrir le mur ?",
+      "a": "Oui. Un plombier professionnel utilise une caméra endoscopique ou un détecteur d'humidité pour localiser précisément la fuite avant d'intervenir."
+    },
+    {
+      "q": "Qui est responsable d'une fuite entre deux appartements ?",
+      "a": "En copropriété marocaine, la responsabilité dépend de l'origine. Si la fuite vient d'une canalisation commune, la copropriété prend en charge. Sinon, c'est le propriétaire de l'appartement source."
+    }
+  ],
+  "related_articles": [
+    "fuite-chasse-eau",
+    "detection-fuite-eau-cachee",
+    "chauffe-eau-fuit"
+  ],
+  "internal_links": [
+    "/plombier/casablanca",
+    "/plombier/rabat",
+    "/plombier/fes"
+  ]
+}

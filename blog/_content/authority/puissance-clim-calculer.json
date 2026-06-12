@@ -1,0 +1,64 @@
+{
+  "slug": "puissance-clim-calculer",
+  "title": "Calculer la puissance de climatisation pour sa pièce",
+  "meta_description": "Comment calculer la puissance en BTU ou kW nécessaire pour climatiser une pièce au Maroc. Formule simple et tableau de référence.",
+  "category": "climatisation",
+  "tags": [
+    "puissance climatisation",
+    "BTU",
+    "calcul",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 5,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Sous-dimensionner sa climatisation est l'erreur la plus coûteuse. L'appareil tourne en continu sans jamais atteindre la température souhaitée, s'use prématurément et consomme autant qu'un appareil plus puissant. Voici comment calculer correctement."
+    },
+    {
+      "type": "h2",
+      "title": "Formule de base",
+      "content": "Puissance en kW = Surface (m²) × 0,1 kW/m². En BTU : Surface × 100. Exemple : chambre de 15m² = 1,5 kW = 5000 BTU. Salon de 30m² = 3 kW = 9000-12000 BTU."
+    },
+    {
+      "type": "h2",
+      "title": "Facteurs de correction au Maroc",
+      "content": "Exposition sud ou ouest : +20%. Étage supérieur sous toiture : +25%. Plafond > 3m : +10% par mètre supplémentaire. Cuisine : +20% (sources de chaleur). Grandes fenêtres sans double vitrage : +15%. Ville très chaude (Marrakech, Ouarzazate) : +15%."
+    },
+    {
+      "type": "h2",
+      "title": "Tableau de référence rapide",
+      "content": "10 à 15 m² : 5000-7000 BTU (1-1,5 kW). 15 à 25 m² : 7000-10000 BTU (1,5-2,5 kW). 25 à 35 m² : 10000-14000 BTU (2,5-3,5 kW). 35 à 50 m² : 14000-18000 BTU (3,5-5 kW). Au-delà de 50m² : multi-split recommandé."
+    },
+    {
+      "type": "cta",
+      "text": "Obtenir un conseil installation"
+    }
+  ],
+  "faq": [
+    {
+      "q": "9000 BTU ou 12000 BTU pour un salon de 20m² ?",
+      "a": "Pour un salon standard à Casablanca ou Rabat : 9000 BTU suffit. A Marrakech ou dans un appartement très ensoleillé : 12000 BTU est plus sûr. Le surplus de puissance vous donnera une marge de confort."
+    },
+    {
+      "q": "Peut-on climatiser une maison entière avec un seul split ?",
+      "a": "Seulement si la maison est un studio ou si les portes restent ouvertes. Pour une villa, un split multi (une unité extérieure, plusieurs intérieures) ou plusieurs split individuels par pièce est nécessaire."
+    },
+    {
+      "q": "Un split surdimensionné est-il problématique ?",
+      "a": "Oui. Un split trop puissant refroidit trop vite, s'arrête avant d'avoir déshumidifié l'air. Résultat : la pièce est froide mais l'air reste humide et inconfortable. Les cycles courts usent aussi le compresseur."
+    }
+  ],
+  "related_articles": [
+    "choisir-climatisation-maroc",
+    "installation-split-quel-mur",
+    "climatisation-multi-split"
+  ],
+  "internal_links": [
+    "/climatisation/casablanca",
+    "/climatisation/agadir",
+    "/climatisation/marrakech"
+  ]
+}

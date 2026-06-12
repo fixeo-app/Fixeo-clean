@@ -1,0 +1,64 @@
+{
+  "slug": "fuite-chasse-eau",
+  "title": "Fuite de chasse d'eau : identifier et réparer rapidement",
+  "meta_description": "Votre chasse d'eau fuit en permanence ? Découvrez les causes (flotteur, clapet, joint) et comment les réparer au Maroc avec un plombier Fixeo.",
+  "category": "plomberie",
+  "tags": [
+    "chasse eau",
+    "WC",
+    "plomberie",
+    "réparation"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 5,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Un bruit d'eau continu dans vos toilettes, même robinets fermés ? C'est presque certainement une fuite de chasse d'eau. En plus du désagrément sonore, ce gaspillage peut représenter jusqu'à 200 litres d'eau par jour — une facture ONEE significative à Casablanca ou Rabat."
+    },
+    {
+      "type": "h2",
+      "title": "Diagnostic : d'où vient la fuite ?",
+      "content": "Trois organes sont en cause dans 95% des cas : le flotteur qui ne coupe plus l'arrivée d'eau, le clapet de fond usé qui laisse l'eau s'écouler vers la cuvette, ou le joint d'étanchéité du mécanisme. Pour confirmer : ajoutez quelques gouttes de colorant dans le réservoir sans actionner la chasse. Si la couleur apparaît dans la cuvette, le clapet est défaillant."
+    },
+    {
+      "type": "h2",
+      "title": "Réparation soi-même ou plombier ?",
+      "content": "Le remplacement d'un flotteur ou d'un clapet est accessible au bricoleur (pièces disponibles en quincaillerie, 30-80 MAD). En revanche, si le problème vient d'une fissure du réservoir ou d'un mécanisme complet à remplacer sur un WC encastré (bâti-support), un plombier professionnel est nécessaire."
+    },
+    {
+      "type": "h2",
+      "title": "Coûts au Maroc",
+      "content": "Remplacement du mécanisme complet : 150 à 350 MAD de main-d'œuvre. Remplacement d'un WC suspendu avec bâti : 800 à 1500 MAD pose comprise. Les artisans Fixeo communiquent le tarif avant intervention."
+    },
+    {
+      "type": "cta",
+      "text": "Faire réparer ma chasse d'eau"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Combien coûte la réparation d'une chasse d'eau qui fuit ?",
+      "a": "Entre 100 et 350 MAD selon la pièce à remplacer. Le flotteur seul coûte 30 à 80 MAD. La main-d'œuvre est généralement de 100 à 200 MAD."
+    },
+    {
+      "q": "Une chasse d'eau qui fuit consomme beaucoup ?",
+      "a": "Oui, une fuite de chasse d'eau peut gaspiller entre 50 et 200 litres d'eau par heure selon l'importance de la fuite. C'est un problème à corriger rapidement."
+    },
+    {
+      "q": "Mon WC fuit par en dessous, que faire ?",
+      "a": "Une fuite par le bas du WC indique généralement un joint de cuvette défaillant ou des boulons de fixation desserrés. Appelez un plombier rapidement pour éviter des dégâts dans le plafond de l'appartement en dessous."
+    }
+  ],
+  "related_articles": [
+    "wc-bouche-comment-deboucher",
+    "fuite-eau-mur",
+    "fuite-sous-evier"
+  ],
+  "internal_links": [
+    "/plombier/casablanca",
+    "/plombier/rabat",
+    "/plombier/fes"
+  ]
+}

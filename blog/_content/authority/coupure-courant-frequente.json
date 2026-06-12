@@ -1,0 +1,64 @@
+{
+  "slug": "coupure-courant-frequente",
+  "title": "Coupures de courant fréquentes chez vous : que faire ?",
+  "meta_description": "Coupures de courant répétées au Maroc ? Distinguer panne ONEE et problème interne, et les solutions pour stabiliser votre alimentation électrique.",
+  "category": "electricite",
+  "tags": [
+    "coupure courant",
+    "ONEE",
+    "alimentation électrique",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 5,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Les coupures de courant restent une réalité dans certaines zones du Maroc, surtout en été quand la demande explose. Mais si vos coupures sont fréquentes UNIQUEMENT chez vous, le problème est interne à votre installation."
+    },
+    {
+      "type": "h2",
+      "title": "ONEE ou installation privée ?",
+      "content": "Si vos voisins ont aussi le courant coupé : problème ONEE — signalez au 0537-71-64-00 (ONEE) ou sur l'application Moneau/ONEE. Si vous seul avez le problème : c'est votre installation. Vérifiez votre disjoncteur principal, puis le compteur."
+    },
+    {
+      "type": "h2",
+      "title": "Causes internes fréquentes",
+      "content": "Disjoncteur principal sous-calibré (votre abonnement ONEE est dépassé), câblage vieillissant qui chauffe et déclenche la protection thermique, ou compteur ONEE qui disjoncte sur dépassement de la puissance souscrite."
+    },
+    {
+      "type": "h2",
+      "title": "Solutions durables",
+      "content": "Augmenter la puissance souscrite auprès de l'ONEE (procédure administrative + coût d'abonnement), remplacer le câblage principal si vieillissant, ou installer un onduleur/groupe électrogène pour les usages critiques (bureau, chambre froide)."
+    },
+    {
+      "type": "cta",
+      "text": "Stabiliser mon alimentation électrique"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Comment augmenter ma puissance ONEE ?",
+      "a": "Rendez-vous à votre agence ONEE avec votre contrat d'abonnement. La procédure prend 5 à 15 jours. Des frais de modification sont appliqués. L'électricien devra peut-être adapter les câbles."
+    },
+    {
+      "q": "Quelle est la puissance ONEE standard pour un appartement ?",
+      "a": "Un appartement standard souscrit en général 3 kVA (ampères 15A). Pour une villa avec climatisation et chauffe-eau électrique, 6 à 9 kVA est recommandé."
+    },
+    {
+      "q": "Un onduleur protège-t-il contre toutes les coupures ?",
+      "a": "Un onduleur UPS protège pendant la durée de sa batterie (5 à 30 minutes selon la capacité). Pour une protection longue, il faut un groupe électrogène. L'onduleur est idéal pour les PC et équipements sensibles."
+    }
+  ],
+  "related_articles": [
+    "panne-tableau-electrique",
+    "generateur-groupe-electrogene",
+    "onduleur-installation-maroc"
+  ],
+  "internal_links": [
+    "/electricien/casablanca",
+    "/electricien/rabat",
+    "/electricien/marrakech"
+  ]
+}

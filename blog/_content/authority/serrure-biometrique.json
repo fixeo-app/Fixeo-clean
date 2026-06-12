@@ -1,0 +1,64 @@
+{
+  "slug": "serrure-biometrique",
+  "title": "Serrure biométrique : installer au Maroc en 2025",
+  "meta_description": "Serrures biométriques à empreinte digitale au Maroc en 2025 : modèles disponibles, installation et avantages pour villas et appartements.",
+  "category": "serrurerie",
+  "tags": [
+    "serrure biométrique",
+    "empreinte digitale",
+    "smart lock",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 5,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Les serrures à empreinte digitale arrivent dans les foyers marocains. Plus de clé à perdre, accès instantané en 0,5 seconde, et possibilité d'enregistrer 100 empreintes pour la famille et le personnel. Tour d'horizon des solutions disponibles."
+    },
+    {
+      "type": "h2",
+      "title": "Comment fonctionnent les serrures biométriques",
+      "content": "Un lecteur capacitif (comme celui de votre smartphone) lit les crêtes de l'empreinte digitale. L'image est comparée aux empreintes enregistrées. En cas de correspondance, un servomoteur ouvre le mécanisme. Temps de traitement : 0,3 à 1 seconde."
+    },
+    {
+      "type": "h2",
+      "title": "Modèles disponibles au Maroc",
+      "content": "Serrures Samsung (SHP-DP728) : la référence premium, 3000 à 6000 MAD. Serrures Yale/Assaabloy : 2000 à 4500 MAD. Marques chinoises (Kaadas, Dessmann) : 1200 à 3000 MAD, rapport qualité/prix correct. La plupart combinent empreinte + code + carte RFID + clé de secours."
+    },
+    {
+      "type": "h2",
+      "title": "Installation et limites",
+      "content": "La plupart fonctionnent sur piles (AA ou lithium), durée de vie 6-12 mois. Un signal sonore avertit quand les piles sont faibles. Limite : la poussière, les doigts mouillés ou les coupures peuvent réduire la précision. Gardez toujours un accès alternatif (code ou clé)."
+    },
+    {
+      "type": "cta",
+      "text": "Installer une serrure biométrique"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Une serrure biométrique peut-elle être trompée par une fausse empreinte ?",
+      "a": "Les capteurs modernes sont résistants aux empreintes en latex ou photos. Les serrures haut de gamme ont une détection de \"vivant\" (lit la chaleur et l'humidité du doigt). Restez sur des marques reconnues pour cette sécurité."
+    },
+    {
+      "q": "Que se passe-t-il si mon doigt est blessé ou bandé ?",
+      "a": "Enregistrez plusieurs doigts (index, majeur, pouces des deux mains) dès l'installation. En cas de blessure, utilisez un autre doigt ou le code PIN de secours."
+    },
+    {
+      "q": "Peut-on installer une serrure biométrique sur une porte blindée ?",
+      "a": "Oui si la serrure biométrique remplace le cylindre existant. Vérifiez la compatibilité avec votre marque de porte blindée. Certaines portes blindées premium ont des serrures biométriques en option d'origine."
+    }
+  ],
+  "related_articles": [
+    "serrure-connectee-maroc",
+    "cylindre-europeen-changer",
+    "serrure-3-points-installation"
+  ],
+  "internal_links": [
+    "/serrurier/casablanca",
+    "/serrurier/rabat",
+    "/serrurier/marrakech"
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "slug": "compresseur-clim-en-panne",
+  "title": "Compresseur climatisation en panne : réparer ou changer ?",
+  "meta_description": "Le compresseur de votre climatisation est en panne au Maroc ? Coûts de réparation vs remplacement, et comment éviter cette panne coûteuse.",
+  "category": "climatisation",
+  "tags": [
+    "compresseur",
+    "panne clim",
+    "réparation",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 6,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Le compresseur est le cœur du climatiseur — et la réparation la plus coûteuse. Comprendre quand réparer et quand remplacer peut vous éviter de gaspiller de l'argent."
+    },
+    {
+      "type": "h2",
+      "title": "Signes d'un compresseur défaillant",
+      "content": "Disjoncteur qui saute au démarrage de la clim, bruit de cognement sourd dans l'unité extérieure, clim qui tourne mais ne refroidit pas du tout malgré une pression de gaz correcte, unité extérieure chaude sans que le ventilateur tourne."
+    },
+    {
+      "type": "h2",
+      "title": "Diagnostic professionnel",
+      "content": "Un technicien mesure la pression d'aspiration et de refoulement, mesure la consommation électrique du compresseur, teste l'isolement des bobines. Ces mesures permettent de confirmer la panne compresseur avec certitude."
+    },
+    {
+      "type": "h2",
+      "title": "Réparer ou remplacer le climatiseur ?",
+      "content": "Remplacement du compresseur seul : 1500 à 4000 MAD (pièce + main-d'œuvre). Si la clim a > 8 ans : le remplacement complet de l'appareil est souvent plus économique (achat + installation = 3000-6000 MAD pour une nouvelle clim avec garantie de 2-5 ans)."
+    },
+    {
+      "type": "cta",
+      "text": "Diagnostiquer mon compresseur"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Un compresseur de clim peut-il être réparé ?",
+      "a": "Rarement. Les compresseurs rotatifs ou scroll sont des ensembles étanches scellés en usine. En cas de panne interne (bobine, roulement), le remplacement complet du compresseur est la seule option."
+    },
+    {
+      "q": "Pourquoi le compresseur tombe-t-il en panne ?",
+      "a": "Manque de lubrifiant (dû à une fuite de gaz prolongée — le gaz emporte l'huile), surtension électrique, filtre sale depuis des années forçant le compresseur, ou simplement usure normale après 10-15 ans."
+    },
+    {
+      "q": "Quelle garantie sur un compresseur neuf ?",
+      "a": "Les compresseurs neufs de marque (Daikin, Mitsubishi, LG) ont 2 à 5 ans de garantie. La main-d'œuvre d'installation est généralement garantie 6 mois à 1 an par le technicien."
+    }
+  ],
+  "related_articles": [
+    "recharge-gaz-climatisation",
+    "clim-ne-refroidit-plus",
+    "entretien-clim-annuel"
+  ],
+  "internal_links": [
+    "/climatisation/casablanca",
+    "/climatisation/agadir",
+    "/climatisation/marrakech"
+  ]
+}

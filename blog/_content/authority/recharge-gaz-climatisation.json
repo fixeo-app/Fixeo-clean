@@ -1,0 +1,64 @@
+{
+  "slug": "recharge-gaz-climatisation",
+  "title": "Recharge gaz climatisation au Maroc : prix et procédure",
+  "meta_description": "Recharger le gaz de votre climatisation au Maroc : types de gaz (R32, R410A), procédure et tarifs 2025 par les techniciens Fixeo.",
+  "category": "climatisation",
+  "tags": [
+    "recharge gaz",
+    "R32",
+    "R410A",
+    "climatisation Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 6,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Un climatiseur perd du gaz uniquement en cas de fuite dans le circuit. Un système étanche ne nécessite jamais de recharge — si votre technicien vous annonce une recharge systématique annuelle, c'est une erreur ou une arnaque."
+    },
+    {
+      "type": "h2",
+      "title": "Types de gaz frigorigènes",
+      "content": "R410A : utilisé sur la plupart des climatiseurs 2010-2021. R32 : gaz des climatiseurs modernes (depuis 2020), moins polluant, plus efficace. R22 : gaz ancien (pré-2010), production interdite, difficile à trouver au Maroc. R290 (propane) : nouveau gaz écologique, encore rare."
+    },
+    {
+      "type": "h2",
+      "title": "Procédure de recharge",
+      "content": "Le technicien vérifie d'abord la pression avec un manifold. S'il y a une fuite, il la répare avant de recharger (sinon le gaz s'échappera de nouveau). Recharge en circuit fermé : ajout de gaz sous pression jusqu'au niveau requis. Test de pression. Mesure des températures d'entrée/sortie pour confirmer le bon fonctionnement."
+    },
+    {
+      "type": "h2",
+      "title": "Prix de recharge au Maroc",
+      "content": "Diagnostic de pression : 100 à 150 MAD. Recharge R32 (500g) : 300 à 500 MAD. Recharge R410A (500g) : 250 à 400 MAD. Réparation fuite + recharge : 600 à 1200 MAD."
+    },
+    {
+      "type": "cta",
+      "text": "Recharger le gaz de ma climatisation"
+    }
+  ],
+  "faq": [
+    {
+      "q": "À quelle fréquence faut-il recharger le gaz d'une climatisation ?",
+      "a": "Jamais, si le système est étanche. Un climatiseur en bon état conserve son gaz à vie. Si vous rechargez tous les ans, cherchez et réparez la fuite — vous économisez en gaz et en interventions."
+    },
+    {
+      "q": "Mon technicien dit que le gaz R22 n'est plus disponible, que faire ?",
+      "a": "Le R22 n'est effectivement plus produit et devient rare. Deux options : convertir le système pour utiliser un substitut (R422D ou R427A, 500-800 MAD), ou remplacer le climatiseur complet (si > 15 ans, c'est souvent plus économique)."
+    },
+    {
+      "q": "Puis-je acheter du gaz R32 et recharger moi-même ?",
+      "a": "Non. La réglementation marocaine interdit la vente de gaz frigorigènes aux particuliers. De plus, la manipulation nécessite des équipements de mesure et de sécurité professionnels."
+    }
+  ],
+  "related_articles": [
+    "clim-ne-refroidit-plus",
+    "entretien-clim-annuel",
+    "compresseur-clim-en-panne"
+  ],
+  "internal_links": [
+    "/climatisation/casablanca",
+    "/climatisation/agadir",
+    "/climatisation/marrakech"
+  ]
+}

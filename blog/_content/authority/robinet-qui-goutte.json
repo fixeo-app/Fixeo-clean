@@ -1,0 +1,64 @@
+{
+  "slug": "robinet-qui-goutte",
+  "title": "Robinet qui goutte : réparer ou remplacer au Maroc",
+  "meta_description": "Un robinet qui goutte gaspille des centaines de litres d'eau. Causes, réparation et coûts au Maroc avec les conseils des plombiers Fixeo.",
+  "category": "plomberie",
+  "tags": [
+    "robinet",
+    "fuite",
+    "économie eau",
+    "plomberie"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 4,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Saviez-vous qu'un robinet qui goutte à raison d'une goutte par seconde gaspille jusqu'à 30 litres d'eau par jour ? Soit 900 litres par mois — directement sur votre facture ONEE. La réparation est souvent simple et peu coûteuse."
+    },
+    {
+      "type": "h2",
+      "title": "Pourquoi un robinet goutte-t-il ?",
+      "content": "Les causes principales : joint de caoutchouc usé (robinet à deux poignées), cartouche céramique défaillante (robinet mitigeur), ou siège de vanne érodé. L'eau calcaire marocaine accélère particulièrement l'usure des joints."
+    },
+    {
+      "type": "h2",
+      "title": "Réparation soi-même",
+      "content": "Pour un robinet classique, fermez la vanne d'arrêt, dévissez la tête du robinet, remplacez le joint (5-15 MAD en quincaillerie). Pour un mitigeur, la cartouche coûte 50 à 150 MAD et son remplacement est à la portée d'un bricoleur avec une clé à molette."
+    },
+    {
+      "type": "h2",
+      "title": "Quand faire appel à un plombier ?",
+      "content": "Si le robinet fuit même après changement du joint, si l'intérieur est corrodé, ou si vous souhaitez profiter de l'intervention pour changer le robinet complet — un plombier Fixeo peut tout gérer en une visite."
+    },
+    {
+      "type": "cta",
+      "text": "Réparer mon robinet"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Combien coûte le remplacement d'un robinet au Maroc ?",
+      "a": "Un robinet standard coûte entre 100 et 400 MAD. La pose par un plombier ajoute 100 à 200 MAD. Comptez 200 à 600 MAD tout compris."
+    },
+    {
+      "q": "Puis-je changer mon robinet sans couper l'eau générale ?",
+      "a": "Si votre robinet dispose d'une vanne d'arrêt sous l'évier, oui. Sinon, il faut couper l'eau au compteur ou à la vanne générale de l'appartement."
+    },
+    {
+      "q": "Mon robinet neuf goutte déjà, pourquoi ?",
+      "a": "Un robinet neuf qui fuit indique généralement un montage incorrect, un joint coincé ou une cartouche défectueuse. Contactez le plombier qui a posé le robinet ou faites-le vérifier par un professionnel."
+    }
+  ],
+  "related_articles": [
+    "fuite-sous-evier",
+    "fuite-eau-mur",
+    "vanne-arret-eau"
+  ],
+  "internal_links": [
+    "/plombier/casablanca",
+    "/plombier/rabat",
+    "/plombier/fes"
+  ]
+}

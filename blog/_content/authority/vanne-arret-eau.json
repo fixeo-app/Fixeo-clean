@@ -1,0 +1,64 @@
+{
+  "slug": "vanne-arret-eau",
+  "title": "Vanne d'arrêt d'eau : localiser et utiliser en urgence",
+  "meta_description": "Où se trouve la vanne d'arrêt d'eau chez vous au Maroc ? Comment la trouver, la manœuvrer et que faire si elle est bloquée. Guide pratique Fixeo.",
+  "category": "plomberie",
+  "tags": [
+    "vanne arrêt eau",
+    "robinet général",
+    "urgence",
+    "plomberie"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 4,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Vous avez une fuite d'eau et vous ne savez pas comment couper l'eau ? Connaître l'emplacement de votre vanne d'arrêt peut faire la différence entre une petite intervention et des milliers de dirhams de dégâts."
+    },
+    {
+      "type": "h2",
+      "title": "Où se trouvent les vannes d'arrêt ?",
+      "content": "Vanne principale de l'appartement : généralement sous l'évier de cuisine ou derrière le WC, parfois dans un placard technique ou à l'entrée du logement. Vanne de l'immeuble : dans le local compteurs au rez-de-chaussée. Vanne du réseau : dans le regard en métal sur le trottoir devant l'immeuble (ONEE)."
+    },
+    {
+      "type": "h2",
+      "title": "Ma vanne est bloquée, que faire ?",
+      "content": "Les vannes à papillon ou à boisseau sphérique non manœuvrées depuis des années se bloquent par le calcaire. N'insistez pas avec force, vous risquez de casser la vanne. Un plombier peut débloquer ou remplacer une vanne en 30 minutes."
+    },
+    {
+      "type": "h2",
+      "title": "Types de vannes et maintenance",
+      "content": "Vanne à boisseau sphérique (levier) : s'ouvre et ferme en 90°, la plus fiable. Vanne à papillon (roue) : plus ancienne, peut fuir au presse-étoupe. Vanne motorisée : pour les installations automatisées. Manœuvrez votre vanne principale deux fois par an pour éviter le blocage."
+    },
+    {
+      "type": "cta",
+      "text": "Réparer ou remplacer ma vanne"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Comment couper l'eau si je ne trouve pas la vanne ?",
+      "a": "Appelez votre gardien d'immeuble (il connaît le local compteurs). En dernier recours, appelez l'ONEE pour couper au compteur. C'est pour ça qu'il faut localiser la vanne AVANT une urgence."
+    },
+    {
+      "q": "Combien coûte le remplacement d'une vanne d'arrêt ?",
+      "a": "Une vanne à boisseau sphérique 1/2'' coûte 30 à 80 MAD. La pose par un plombier : 100 à 200 MAD. Total : 130 à 280 MAD pour être tranquille."
+    },
+    {
+      "q": "La vanne fuit après que je l'ai manœuvrée, que faire ?",
+      "a": "Une fuite autour de la tige de la vanne (presse-étoupe) est courante après une longue période d'inactivité. Un plombier peut resserrer le presse-étoupe ou remplacer la vanne selon son état."
+    }
+  ],
+  "related_articles": [
+    "tuyau-eclate-hiver",
+    "fuite-eau-mur",
+    "robinet-qui-goutte"
+  ],
+  "internal_links": [
+    "/plombier/casablanca",
+    "/plombier/rabat",
+    "/plombier/fes"
+  ]
+}

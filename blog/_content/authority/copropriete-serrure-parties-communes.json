@@ -1,0 +1,64 @@
+{
+  "slug": "copropriete-serrure-parties-communes",
+  "title": "Serrures parties communes immeuble : entretien et responsabilités",
+  "meta_description": "Qui s'occupe des serrures des parties communes d'un immeuble au Maroc ? Responsabilités du syndic, entretien et coûts partagés.",
+  "category": "serrurerie",
+  "tags": [
+    "parties communes",
+    "copropriété",
+    "syndic",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 5,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Dans un immeuble marocain en copropriété, la serrure de la porte d'entrée, le digicode, les serrures de cave et de local à vélos sont des parties communes. Leur entretien est une responsabilité collective."
+    },
+    {
+      "type": "h2",
+      "title": "Qu'est-ce qu'une partie commune ?",
+      "content": "Les parties communes incluent : la porte d'entrée principale et sa serrure, les portes des parkings et garages collectifs, les serrures des locaux techniques (électricité, eau), les digicodes et interphones d'immeuble. Chaque copropriétaire contribue à leur entretien selon sa quote-part."
+    },
+    {
+      "type": "h2",
+      "title": "Procédure pour une réparation",
+      "content": "Signalez le problème au syndic par écrit (email ou courrier). Pour les urgences (porte d'entrée infranchissable), le syndic peut mandater un serrurier en urgence puis régulariser. Pour les travaux importants (digicode, porte blindée collective), une décision en assemblée est requise."
+    },
+    {
+      "type": "h2",
+      "title": "Budget préventif",
+      "content": "Un contrat de maintenance des serrures de parties communes : 200 à 500 MAD/mois pour un immeuble de 10 appartements. Cela couvre les interventions d'urgence et les remplacements préventifs."
+    },
+    {
+      "type": "cta",
+      "text": "Contrat de maintenance immeuble"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Un copropriétaire peut-il changer la serrure des parties communes seul ?",
+      "a": "Non. Toute modification des parties communes nécessite l'accord de l'assemblée générale. Un copropriétaire qui change seul la serrure commune doit en informer tous les autres et fournir des clés à tous."
+    },
+    {
+      "q": "Notre immeuble n'a pas de syndic, qui gère les serrures communes ?",
+      "a": "Sans syndic formel, les copropriétaires doivent désigner un représentant par vote. Fixeo peut intervenir sur mandat d'un seul copropriétaire en urgence, avec régularisation collective ensuite."
+    },
+    {
+      "q": "Le gardien d'immeuble a-t-il le droit de changer les codes d'accès ?",
+      "a": "Uniquement sur instruction du syndic. Le gardien peut avoir une copie des clés et codes, mais ne peut pas les modifier sans autorisation."
+    }
+  ],
+  "related_articles": [
+    "digicode-installation-immeuble",
+    "serrure-electrique-probleme",
+    "plomberie-immeuble-collectif"
+  ],
+  "internal_links": [
+    "/serrurier/casablanca",
+    "/serrurier/rabat",
+    "/serrurier/marrakech"
+  ]
+}

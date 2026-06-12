@@ -1,0 +1,64 @@
+{
+  "slug": "prise-electrique-chauffe",
+  "title": "Prise électrique qui chauffe : danger et que faire",
+  "meta_description": "Une prise électrique chaude est un danger d'incendie. Causes, risques et solutions au Maroc — ne jamais ignorer ce signe d'alerte.",
+  "category": "electricite",
+  "tags": [
+    "prise électrique",
+    "sécurité électrique",
+    "incendie",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 5,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Une prise électrique qui chauffe, noircit, ou sent le brûlé est un signal d'urgence. En France, 80 000 incendies domestiques par an ont une cause électrique. Au Maroc, les installations vieillissantes augmentent ce risque."
+    },
+    {
+      "type": "h2",
+      "title": "Pourquoi une prise chauffe-t-elle ?",
+      "content": "Contacts oxydés ou desserrés dans la prise (résistance de contact augmentée = chaleur), câblage sous-dimensionné pour la charge, prise surchargée par une multiprise avec trop d'appareils, ou prise mal fixée avec mauvais contact."
+    },
+    {
+      "type": "h2",
+      "title": "Que faire immédiatement ?",
+      "content": "Débranchez tous les appareils de cette prise. Coupez le disjoncteur du circuit concerné. N'utilisez plus cette prise. Appelez un électricien — c'est une urgence. Si vous sentez du brûlé et que la prise est chaude, c'est une alerte incendie."
+    },
+    {
+      "type": "h2",
+      "title": "Remplacement de prise",
+      "content": "Le remplacement d'une prise défaillante coûte 50 à 150 MAD (pièce + main-d'œuvre). Profitez-en pour mettre à la terre (prise 2P+T) si ce n'est pas le cas. Ne jamais utiliser de l'adhésif ou du ruban pour « réparer » une prise."
+    },
+    {
+      "type": "cta",
+      "text": "Faire inspecter mes prises électriques"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Est-il normal qu'un chargeur de téléphone chauffe sur une prise ?",
+      "a": "Un léger tiède est normal. Un chargeur chaud, et encore plus la prise murale chaude, n'est pas normal et indique un mauvais contact ou un chargeur défaillant."
+    },
+    {
+      "q": "Puis-je utiliser plusieurs multiprises en série ?",
+      "a": "Absolument non. Les multiprises en cascade multiplient les risques de surchauffe et de court-circuit. Une seule multiprise de qualité avec parafoudre intégré est la limite."
+    },
+    {
+      "q": "Comment savoir si une prise est à la terre ?",
+      "a": "Une prise mise à la terre a 3 broches (deux rondes + une plus longue au centre ou en haut). Une prise 2 broches sans broche de terre n'offre pas la protection requise par les normes actuelles."
+    }
+  ],
+  "related_articles": [
+    "court-circuit-maison",
+    "mise-terre-installation",
+    "verification-installation-electrique"
+  ],
+  "internal_links": [
+    "/electricien/casablanca",
+    "/electricien/rabat",
+    "/electricien/marrakech"
+  ]
+}

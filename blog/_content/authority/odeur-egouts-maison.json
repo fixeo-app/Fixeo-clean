@@ -1,0 +1,64 @@
+{
+  "slug": "odeur-egouts-maison",
+  "title": "Odeur d'égouts dans la maison : causes et solutions",
+  "meta_description": "Une odeur d'égouts envahit votre maison au Maroc ? Découvrez les causes (siphon sec, gaz de canalisation) et les solutions rapides.",
+  "category": "plomberie",
+  "tags": [
+    "odeur égouts",
+    "siphon",
+    "plomberie",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 5,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Une odeur nauséabonde qui remonte des canalisations est non seulement désagréable, mais potentiellement dangereuse : certains gaz d'égout contiennent du sulfure d'hydrogène (H2S), toxique à forte concentration. Ne laissez pas ce problème s'installer."
+    },
+    {
+      "type": "h2",
+      "title": "La cause n°1 : le siphon sec",
+      "content": "Les siphons (sous évier, douche, lavabo) contiennent un coude d'eau qui bloque les gaz. Si un appareil est peu utilisé (salle de bain d'amis, maison de vacances), l'eau s'évapore et les odeurs remontent librement. Solution : versez de l'eau et ajoutez une cuillère d'huile pour ralentir l'évaporation."
+    },
+    {
+      "type": "h2",
+      "title": "Autres causes possibles",
+      "content": "Joint de cuvette WC défaillant, raccord d'évacuation décollé, ventilation défectueuse de la colonne (le tuyau de ventilation sur le toit est bouché), ou encore biofilm dans les canalisations horizontales. Dans les appartements anciens de Casablanca, les raccords en plomb vieillissant sont souvent en cause."
+    },
+    {
+      "type": "h2",
+      "title": "Solutions et prévention",
+      "content": "Vérifiez tous vos siphons, nettoyez-les avec du bicarbonate et du vinaigre. Si l'odeur persiste, appelez un plombier pour une inspection visuelle avec caméra. La ventilation de la colonne est souvent à nettoyer une fois par an dans les régions poussiéreuses."
+    },
+    {
+      "type": "cta",
+      "text": "Faire inspecter mes canalisations"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Les odeurs d'égout sont-elles dangereuses pour la santé ?",
+      "a": "À faible concentration, les gaz d'égout causent maux de tête et nausées. À forte concentration (espaces confinés), le sulfure d'hydrogène peut être dangereux. Aérez et appelez un plombier rapidement."
+    },
+    {
+      "q": "Pourquoi ça sent les égouts seulement le soir ?",
+      "a": "La pression dans le réseau varie au fil de la journée. Le soir, quand la consommation d'eau baisse, la pression dans les colonnes change et les gaz remontent plus facilement par les siphons défaillants."
+    },
+    {
+      "q": "Mon immeuble sent les égouts dans le hall, qui est responsable ?",
+      "a": "C'est la responsabilité du syndic ou du propriétaire des parties communes. Signalez-le officiellement par écrit. Le syndic doit faire intervenir un plombier pour la colonne commune."
+    }
+  ],
+  "related_articles": [
+    "canalisation-bouchee",
+    "wc-bouche-comment-deboucher",
+    "evacuation-eau-lente"
+  ],
+  "internal_links": [
+    "/plombier/casablanca",
+    "/plombier/rabat",
+    "/plombier/fes"
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "slug": "clim-bruyante",
+  "title": "Climatiseur bruyant : diagnostic et réparation au Maroc",
+  "meta_description": "Votre climatiseur fait du bruit anormal au Maroc ? Identifiez le type de bruit (sifflement, claquement, vibration) et la solution appropriée.",
+  "category": "climatisation",
+  "tags": [
+    "climatiseur bruyant",
+    "bruit",
+    "vibration",
+    "diagnostic"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 5,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Un climatiseur silencieux au départ qui devient bruyant après quelques années : les bruits sont souvent des symptômes de problèmes précis qu'il vaut mieux traiter avant qu'ils ne s'aggravent."
+    },
+    {
+      "type": "h2",
+      "title": "Identifier le type de bruit",
+      "content": "Claquement au démarrage : débris dans le ventilateur ou ventilateur déséquilibré. Sifflement aigu : manque de gaz ou fuite frigorigène. Vibrations : fixations de l'unité extérieure desserrées (très fréquent sur les toits-terrasses marocains sous l'effet du vent). Gargouillement : eau dans le tuyau de condensat."
+    },
+    {
+      "type": "h2",
+      "title": "Réparations accessibles",
+      "content": "Vibrations de l'unité extérieure : resserrez les boulons de fixation (clé de 13) et vérifiez les plots anti-vibrations. Nettoyer les ailettes de l'échangeur extérieur à l'eau (accumulation de sable au Maroc). Débris dans le ventilateur : nettoyage simple."
+    },
+    {
+      "type": "h2",
+      "title": "Quand appeler un technicien",
+      "content": "Sifflement (gaz), bruit de compresseur anormal (ronronnement dur), bruit de métal contre métal — ces problèmes nécessitent une intervention professionnelle. Ne tardez pas : une pièce en fin de vie qui casse peut endommager d'autres composants."
+    },
+    {
+      "type": "cta",
+      "text": "Faire diagnostiquer le bruit de ma clim"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Mon climatiseur fait un bruit de gouttes d'eau, est-ce normal ?",
+      "a": "Un léger bruit de ruissellement lors de l'arrêt (eau de condensat qui s'écoule) est tout à fait normal. Un gargouillement continu indique un bouchon partiel dans le tuyau de condensat."
+    },
+    {
+      "q": "L'unité extérieure peut-elle vibrer les murs de mon appartement ?",
+      "a": "Oui, si les fixations sont mauvaises ou si l'unité est posée sur une surface mal isolée. Des plots anti-vibrations (50-100 MAD) ou un cadre amortisseur résoudront le problème."
+    },
+    {
+      "q": "Combien coûte le remplacement d'un ventilateur de clim ?",
+      "a": "Ventilateur d'unité intérieure : 200 à 500 MAD. Ventilateur d'unité extérieure : 400 à 1000 MAD selon la puissance. Main d'œuvre : 200 à 400 MAD."
+    }
+  ],
+  "related_articles": [
+    "clim-casserolle",
+    "entretien-clim-annuel",
+    "compresseur-clim-en-panne"
+  ],
+  "internal_links": [
+    "/climatisation/casablanca",
+    "/climatisation/agadir",
+    "/climatisation/marrakech"
+  ]
+}

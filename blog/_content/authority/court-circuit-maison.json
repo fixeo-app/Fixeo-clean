@@ -1,0 +1,64 @@
+{
+  "slug": "court-circuit-maison",
+  "title": "Court-circuit maison : identifier et réparer en sécurité",
+  "meta_description": "Court-circuit dans votre maison au Maroc ? Comment l'identifier, les dangers et la procédure de réparation sécurisée par un électricien certifié.",
+  "category": "electricite",
+  "tags": [
+    "court-circuit",
+    "sécurité électrique",
+    "électricien",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 6,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Un éclair, une odeur de brûlé, l'obscurité totale dans une pièce — un court-circuit est une des urgences électriques les plus communes. Mais c'est aussi l'une des plus dangereuses si mal gérée."
+    },
+    {
+      "type": "h2",
+      "title": "Qu'est-ce qu'un court-circuit ?",
+      "content": "Un court-circuit se produit quand le conducteur de phase (sous tension) entre en contact avec le conducteur neutre ou la terre. Le courant passe par un chemin de résistance nulle, provoquant une intense production de chaleur en une fraction de seconde. C'est pour ça que les disjoncteurs existent."
+    },
+    {
+      "type": "h2",
+      "title": "Identifier la source",
+      "content": "Commencez par le disjoncteur différentiel (DDR) sauté — il protège un groupe de circuits. Isolez le circuit en problème en éteignant les disjoncteurs individuels. Débranchez tout sur ce circuit. Si le DDR tient à vide, le problème vient d'un appareil. S'il saute même à vide, c'est le câblage."
+    },
+    {
+      "type": "h2",
+      "title": "Que faire et ne pas faire",
+      "content": "FAIRE : couper le disjoncteur, identifier l'origine, appeler un électricien. NE PAS FAIRE : réarmer le disjoncteur différentiel qui saute en continu (il détecte un vrai problème), contourner un fusible, toucher les câbles sans coupure de courant confirmée."
+    },
+    {
+      "type": "cta",
+      "text": "Appeler un électricien d'urgence"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Un court-circuit peut-il causer un incendie ?",
+      "a": "Oui. La chaleur produite par un court-circuit dans un câble peut enflammer les matériaux environnants en quelques secondes. C'est pourquoi les disjoncteurs sont dimensionnés précisément selon la section des câbles."
+    },
+    {
+      "q": "Mon installation n'a pas de DDR (disjoncteur différentiel). Est-ce grave ?",
+      "a": "Oui, c'est une installation non conforme aux normes actuelles. Le DDR protège des électrocutions (courant de fuite vers la terre) et des incendies. Son installation est fortement recommandée."
+    },
+    {
+      "q": "Combien coûte la recherche d'un court-circuit au Maroc ?",
+      "a": "L'intervention d'un électricien pour diagnostic : 150 à 300 MAD. La réparation du câblage défaillant : 200 à 800 MAD selon la longueur et l'accessibilité."
+    }
+  ],
+  "related_articles": [
+    "disjoncteur-saute-souvent",
+    "panne-tableau-electrique",
+    "mise-terre-installation"
+  ],
+  "internal_links": [
+    "/electricien/casablanca",
+    "/electricien/rabat",
+    "/electricien/marrakech"
+  ]
+}

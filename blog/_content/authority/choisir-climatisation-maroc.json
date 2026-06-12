@@ -1,0 +1,64 @@
+{
+  "slug": "choisir-climatisation-maroc",
+  "title": "Choisir sa climatisation au Maroc : guide 2025",
+  "meta_description": "Comment choisir le bon climatiseur au Maroc en 2025 : puissance, marque, type split ou console, et budget. Guide complet Fixeo.",
+  "category": "climatisation",
+  "tags": [
+    "choisir climatisation",
+    "BTU",
+    "split",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 7,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Avec des températures atteignant 45°C à Marrakech et Ouarzazate, choisir le bon climatiseur est une décision à ne pas prendre à la légère. Un appareil sous-dimensionné consomme trop sans refroidir suffisamment; un surdimensionné crée de l'humidité et du froid inconfortable."
+    },
+    {
+      "type": "h2",
+      "title": "Calculer la puissance nécessaire",
+      "content": "Règle de base : 1 kW de froid pour 10 m² (pièce standard, plafond 2,5m). Soit 100 BTU/h par m². Majoration recommandée au Maroc : +20% pour les étages supérieurs très exposés au soleil, +15% pour les pièces avec grandes baies vitrées orientées sud ou ouest. Exemple : salon 25m² = 2,5 kW minimum, soit un 9000-12000 BTU."
+    },
+    {
+      "type": "h2",
+      "title": "Marques disponibles au Maroc",
+      "content": "Premium : Daikin, Mitsubishi, Toshiba (5000-8000 MAD). Milieu de gamme : LG, Samsung, Carrier, Gree (3000-5000 MAD). Entrée de gamme : TCL, Hisense, Chigo (2000-3500 MAD). Les marques premium ont un SAV plus développé au Maroc et une meilleure durée de vie."
+    },
+    {
+      "type": "h2",
+      "title": "Split mural vs console vs cassette",
+      "content": "Split mural (unité murale intérieure) : le plus répandu, 90% des ventes au Maroc. Console mobile : sans installation, mais bruyante et peu efficace. Cassette de plafond : pour les faux-plafonds (bureaux, commerces)."
+    },
+    {
+      "type": "cta",
+      "text": "Choisir et installer ma climatisation"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Quelle marque de climatisation est la plus vendue au Maroc ?",
+      "a": "LG, Gree et Samsung sont les marques les plus vendues au Maroc en volume. Daikin et Mitsubishi Electric sont prisés pour leur qualité et durabilité dans les segments premium."
+    },
+    {
+      "q": "Un climatiseur A+++ consomme-t-il vraiment moins au Maroc ?",
+      "a": "Oui. Un split A+++ a un SCOP (coefficient de performance saisonnier) de 5 ou plus, contre 3,5 pour un appareil standard. À usage équivalent, l'économie sur la facture ONEE peut être de 200 à 500 MAD par été."
+    },
+    {
+      "q": "Faut-il préférer un split réversible même si on ne chauffe pas ?",
+      "a": "Au Maroc, un réversible coûte 10 à 20% de plus. Dans les régions froides (Fès, Meknès, Marrakech en hiver), la pompe à chaleur est jusqu'à 3x plus économique que le chauffage électrique direct."
+    }
+  ],
+  "related_articles": [
+    "puissance-clim-calculer",
+    "installation-split-quel-mur",
+    "climatisation-reversible"
+  ],
+  "internal_links": [
+    "/climatisation/casablanca",
+    "/climatisation/agadir",
+    "/climatisation/marrakech"
+  ]
+}

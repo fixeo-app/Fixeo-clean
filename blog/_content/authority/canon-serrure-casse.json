@@ -1,0 +1,64 @@
+{
+  "slug": "canon-serrure-casse",
+  "title": "Canon de serrure cassé : changer ou réparer ?",
+  "meta_description": "Canon de serrure cassé au Maroc ? Comment changer le cylindre, quel modèle choisir et les tarifs des serruriers Fixeo.",
+  "category": "serrurerie",
+  "tags": [
+    "canon serrure",
+    "cylindre",
+    "remplacement",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 5,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Le canon (cylindre) est le cœur de votre serrure — c'est lui que la clé actionne. Cassé ou usé, il doit être remplacé sans délai. Bonne nouvelle : c'est une intervention rapide et abordable."
+    },
+    {
+      "type": "h2",
+      "title": "Identifier le type de cylindre",
+      "content": "Cylindre européen (oval allongé, standard) : le plus répandu au Maroc dans les portes d'appartement. Cylindre rond (à pêne dormant) : sur les serrures d'armoire ou certaines portes anciennes. Serrure à mortaise : le cylindre est intégré dans un boîtier."
+    },
+    {
+      "type": "h2",
+      "title": "Mesurer avant d'acheter",
+      "content": "Un cylindre européen se mesure en millimètres : longueur côté intérieur + longueur côté extérieur. Exemple : 30x30mm pour une porte de 60mm. Si vous remplacez seul, mesurez avec précision ou apportez l'ancien cylindre en quincaillerie."
+    },
+    {
+      "type": "h2",
+      "title": "Choisir le niveau de sécurité",
+      "content": "Niveau de base (1-2 étoiles) : 100-200 MAD, pour les pièces intérieures. Niveau moyen (3 étoiles) : 200-400 MAD, pour appartement standard. Haute sécurité (5 étoiles, antiperçage, antipick) : 500-1500 MAD, pour porte d'entrée villa."
+    },
+    {
+      "type": "cta",
+      "text": "Changer mon canon de serrure"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Peut-on changer un cylindre soi-même ?",
+      "a": "Oui pour les cylindres européens standards. Il suffit d'ouvrir la porte, retirer la vis centrale de la platine, et sortir le cylindre. La pose du nouveau suit la procédure inverse. Un serrurier le fait en 10 minutes."
+    },
+    {
+      "q": "Mon cylindre a été forcé mais la serrure fonctionne encore, dois-je le changer ?",
+      "a": "Oui impérativement. Un cylindre forcé ou percé est affaibli et peut être ouvert facilement par un cambrioleur expérimenté. Remplacez-le immédiatement."
+    },
+    {
+      "q": "Puis-je avoir plusieurs cylindres avec la même clé (passe) ?",
+      "a": "Oui. Certains fabricants proposent des cylindres \"clé identique\" ou des systèmes de passe-partout. Un serrurier peut configurer un immeuble entier avec une seule clé maître."
+    }
+  ],
+  "related_articles": [
+    "cylindre-europeen-changer",
+    "serrure-3-points-installation",
+    "effraction-renforcement-securite"
+  ],
+  "internal_links": [
+    "/serrurier/casablanca",
+    "/serrurier/rabat",
+    "/serrurier/marrakech"
+  ]
+}

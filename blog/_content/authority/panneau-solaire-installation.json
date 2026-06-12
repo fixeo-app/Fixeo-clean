@@ -1,0 +1,64 @@
+{
+  "slug": "panneau-solaire-installation",
+  "title": "Panneaux solaires : connexion au réseau ONEE au Maroc",
+  "meta_description": "Installer des panneaux solaires raccordés au réseau ONEE au Maroc : démarches administratives, coûts et rentabilité en 2025.",
+  "category": "electricite",
+  "tags": [
+    "panneaux solaires",
+    "photovoltaïque",
+    "ONEE",
+    "énergie solaire"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 7,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Avec 3000 heures d'ensoleillement par an, le Maroc est idéal pour le photovoltaïque. Depuis 2022, la loi marocaine sur l'énergie permet aux particuliers de produire et vendre leur surplus à l'ONEE. Voici comment en profiter."
+    },
+    {
+      "type": "h2",
+      "title": "Cadre légal et démarches",
+      "content": "La loi 13-09 sur les énergies renouvelables permet l'autoconsommation et la vente de surplus. Les démarches : demande d'autorisation à l'ONEE/distributeur, installation par un électricien certifié IRESEN, inspection et raccordement par le distributeur. Délai : 1 à 3 mois."
+    },
+    {
+      "type": "h2",
+      "title": "Installation type pour une villa",
+      "content": "Système 3kWc (kilowatts-crête) pour une villa de 200m² : 10 à 12 panneaux de 300W, onduleur 3kW, câblage DC et AC, compteur bidirectionnel. Production annuelle estimée : 4500 à 5000 kWh — couvrant 60 à 80% des besoins."
+    },
+    {
+      "type": "h2",
+      "title": "Coûts et retour sur investissement",
+      "content": "Installation 3kWc clé en main : 30 000 à 45 000 MAD. Économies annuelles : 3000 à 5000 MAD sur facture ONEE. Amortissement : 7 à 12 ans. Durée de vie panneaux : 25 ans. Le bilan financier est positif à moyen terme."
+    },
+    {
+      "type": "cta",
+      "text": "Étudier mon projet solaire"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Peut-on installer des panneaux solaires en appartement au Maroc ?",
+      "a": "Techniquement possible sur un balcon ou terrasse accessible. En copropriété, une autorisation de l'assemblée générale est nécessaire. Les systèmes plug-and-play (sans raccordement réseau) sont plus simples administrativement."
+    },
+    {
+      "q": "ONEE rachète-t-il le surplus d'électricité solaire ?",
+      "a": "Oui, depuis les décrets d'application de la loi 13-09. Le tarif de rachat est défini par l'ANRE (Autorité Nationale de Régulation de l'Électricité). Renseignez-vous pour les tarifs actuels 2025."
+    },
+    {
+      "q": "Que se passe-t-il lors des coupures ONEE avec des panneaux solaires ?",
+      "a": "Un système raccordé réseau (sans batteries) s'éteint automatiquement lors des coupures (sécurité pour les techniciens ONEE). Pour une autonomie en cas de coupure, des batteries de stockage sont nécessaires (+15 000 à 30 000 MAD)."
+    }
+  ],
+  "related_articles": [
+    "entretien-chauffe-eau-solaire",
+    "compteur-electrique-probleme",
+    "generateur-groupe-electrogene"
+  ],
+  "internal_links": [
+    "/electricien/casablanca",
+    "/electricien/rabat",
+    "/electricien/marrakech"
+  ]
+}

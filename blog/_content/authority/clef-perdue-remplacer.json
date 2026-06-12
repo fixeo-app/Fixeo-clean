@@ -1,0 +1,64 @@
+{
+  "slug": "clef-perdue-remplacer",
+  "title": "Clé perdue : sécuriser son logement au Maroc",
+  "meta_description": "Vous avez perdu votre clé au Maroc ? Les étapes pour sécuriser immédiatement votre logement et éviter un cambriolage. Guide Fixeo.",
+  "category": "serrurerie",
+  "tags": [
+    "clé perdue",
+    "sécurité",
+    "serrure",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 4,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Clé perdue, tombée d'une poche ou volée — dans les 48 heures suivant la perte, votre logement est potentiellement vulnérable. Voici quoi faire."
+    },
+    {
+      "type": "h2",
+      "title": "Évaluer le risque",
+      "content": "La clé était-elle identifiable ? (porte-clé avec adresse ou nom sur l'immeuble = risque élevé). A-t-elle été perdue ou volée ? Si volée, changez immédiatement votre serrure. Si perdue dans la rue, le risque est plus faible mais la prudence s'impose quand même."
+    },
+    {
+      "type": "h2",
+      "title": "Action immédiate",
+      "content": "Changer le cylindre de votre serrure est la SEULE façon d'être sûr que la clé perdue n'ouvre plus. Un cylindre de remplacement standard coûte 200 à 400 MAD posé par un serrurier. Un serrurier Fixeo peut intervenir le jour même."
+    },
+    {
+      "type": "h2",
+      "title": "Prévention future",
+      "content": "Évitez de mettre votre adresse sur votre porte-clés. Faites des doubles uniquement chez un serrurier de confiance. Pour les logements à haute valeur, les systèmes haute sécurité (clés non reproductibles sans carte) sont l'idéal."
+    },
+    {
+      "type": "cta",
+      "text": "Changer ma serrure après perte de clé"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Ma clé perdue est tombée dans mon immeuble, dois-je quand même changer ?",
+      "a": "Si vous êtes certain qu'elle est dans votre immeuble et ne risque pas d'être trouvée par un inconnu, le risque est plus faible. Mais si vous ne la retrouvez pas dans les 24h, changez le cylindre."
+    },
+    {
+      "q": "Puis-je faire couper une nouvelle clé sans changer la serrure ?",
+      "a": "Couper une nouvelle clé ne change rien — la clé perdue peut toujours ouvrir la serrure. Seul le changement du cylindre annule l'accès de la clé perdue."
+    },
+    {
+      "q": "Combien coûte le remplacement d'urgence d'un cylindre le soir ?",
+      "a": "De nuit (après 20h) : 300 à 500 MAD tout compris (cylindre + pose + déplacement). De jour : 200 à 350 MAD."
+    }
+  ],
+  "related_articles": [
+    "changer-serrure-appartement",
+    "cylindre-europeen-changer",
+    "porte-claquee-comment-entrer"
+  ],
+  "internal_links": [
+    "/serrurier/casablanca",
+    "/serrurier/rabat",
+    "/serrurier/marrakech"
+  ]
+}

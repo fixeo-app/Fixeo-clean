@@ -1,0 +1,64 @@
+{
+  "slug": "pompe-chaleur-maroc",
+  "title": "Pompe à chaleur air-air au Maroc : rentabilité 2025",
+  "meta_description": "La pompe à chaleur air-air est-elle rentable au Maroc ? Analyse des économies, coûts d'installation et zones climatiques favorables.",
+  "category": "climatisation",
+  "tags": [
+    "pompe à chaleur",
+    "air-air",
+    "rentabilité",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 6,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "La pompe à chaleur air-air, c'est votre climatiseur réversible — le terme \"pompe à chaleur\" désigne le même appareil mais mis en avant pour son usage chauffage. Au Maroc, c'est la solution de chauffage la plus économique qui existe."
+    },
+    {
+      "type": "h2",
+      "title": "Principe et efficacité",
+      "content": "Pour 1 kW d'électricité consommé, une pompe à chaleur moderne (COP 4,5) produit 4,5 kW de chaleur. Comparé à un convecteur électrique (1 kW consommé = 1 kW de chaleur), l'économie est de 77%. Même par rapport au gaz, la PAC est souvent compétitive."
+    },
+    {
+      "type": "h2",
+      "title": "Zones climatiques favorables au Maroc",
+      "content": "Toutes les régions marocaines avec des hivers > -5°C sont idéales. Zones très favorables : Casablanca, Rabat, Agadir (hivers doux). Favorables : Marrakech, Fès, Meknès (hivers modérés). Nécessite modèle spécial : Ifrane, Atlas, zones montagneuses (< -10°C)."
+    },
+    {
+      "type": "h2",
+      "title": "Coûts et amortissement",
+      "content": "Un split réversible 12000 BTU coûte 1000 à 2000 MAD de plus qu'un simple froid. Économie chauffage vs convecteur électrique : 200 à 600 MAD par mois d'hiver. Amortissement du surcoût : 2 à 4 hivers. Rentabilité totale sur 10 ans : 2000 à 5000 MAD."
+    },
+    {
+      "type": "cta",
+      "text": "Installer ma pompe à chaleur"
+    }
+  ],
+  "faq": [
+    {
+      "q": "La pompe à chaleur fonctionne-t-elle quand il gèle au Maroc ?",
+      "a": "Les modèles standards fonctionnent jusqu'à -7 à -10°C. Pour Ifrane (-15 à -24°C), des modèles spéciaux \"basse température\" (Mitsubishi Zubadan, Daikin Altherma) sont nécessaires."
+    },
+    {
+      "q": "Peut-on avoir des aides pour l'achat d'une PAC au Maroc ?",
+      "a": "L'AMEE (Agence Marocaine pour l'Efficacité Energétique) propose parfois des programmes d'aide. Certaines banques proposent des crédit-vert pour les équipements économes. Renseignez-vous en 2025 auprès de ces organismes."
+    },
+    {
+      "q": "PAC air-air ou air-eau pour une maison entière ?",
+      "a": "Pour une maison avec radiateurs à eau existants : PAC air-eau (plus chère, 15000-40000 MAD). Pour climatisation par air : PAC air-air (splits réversibles, 5000-20000 MAD selon le nombre de pièces)."
+    }
+  ],
+  "related_articles": [
+    "climatisation-reversible",
+    "choisir-climatisation-maroc",
+    "consommation-electrique-clim"
+  ],
+  "internal_links": [
+    "/climatisation/casablanca",
+    "/climatisation/agadir",
+    "/climatisation/marrakech"
+  ]
+}

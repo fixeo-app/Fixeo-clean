@@ -1,0 +1,64 @@
+{
+  "slug": "ampoule-grille-souvent",
+  "title": "Ampoule qui grille souvent : causes électriques à vérifier",
+  "meta_description": "Vos ampoules grillent fréquemment au Maroc ? Ce n'est pas normal. Causes électriques (surtension, vibrations, luminaire défaillant) et solutions.",
+  "category": "electricite",
+  "tags": [
+    "ampoule",
+    "surtension",
+    "luminaire",
+    "LED"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 4,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Une ampoule LED qui grille après seulement quelques mois signale un problème — les LED sont censées durer 15 000 à 25 000 heures. Si vous remplacez vos ampoules tous les 3 mois, cherchez la cause électrique."
+    },
+    {
+      "type": "h2",
+      "title": "La surtension : cause principale",
+      "content": "Le réseau ONEE marocain peut présenter des variations de tension (surtensions nocturnes dans certains quartiers, retours de réseau après coupure). Ces pics de tension brûlent les composants fragiles des LED. Solution : parafoudre sur le tableau ou ampoules avec driver intégré haute qualité."
+    },
+    {
+      "type": "h2",
+      "title": "Autres causes",
+      "content": "Douille corrodée (mauvais contact = surchauffe), variateur non compatible LED (les dimmers à incandescence brûlent les LED), vibrations mécaniques dans les plafonniers, ou ampoules de mauvaise qualité (importations non certifiées très fréquentes au Maroc)."
+    },
+    {
+      "type": "h2",
+      "title": "Solutions pratiques",
+      "content": "Optez pour des ampoules LED de marques certifiées CE. Installez un parafoudre au tableau si les surtensions sont confirmées. Remplacez les dimmers anciens par des dimmers LED compatibles. Vérifiez l'état des douilles et des luminaires."
+    },
+    {
+      "type": "cta",
+      "text": "Diagnostiquer mon problème d'éclairage"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Les ampoules LED chinoises pas chères sont-elles fiables ?",
+      "a": "Beaucoup d'ampoules LED vendues au Maroc (notamment dans les souks et grossistes) n'ont pas de certification CE et contiennent des composants de qualité variable. Préférez les marques reconnues (Philips, Osram, Verbatim) même à prix supérieur."
+    },
+    {
+      "q": "Peut-on utiliser une ampoule LED de 10W dans un luminaire prévu pour 40W ?",
+      "a": "Oui, sans problème. La puissance LED est bien inférieure à l'incandescence équivalente. Un luminaire prévu pour 40W incandescent supporte une LED 10W sans aucun risque."
+    },
+    {
+      "q": "Mon luminaire de salle de bain grille les ampoules vite. Pourquoi ?",
+      "a": "Les luminaires encastrés sans ventilation accumulent la chaleur. La température ambiante dans un encastré peut dépasser 50°C, dégradant les LED. Utilisez des ampoules conçues pour les espaces confinés (mention closed fixture)."
+    }
+  ],
+  "related_articles": [
+    "coupure-courant-frequente",
+    "installation-prise-electrique",
+    "electricite-salle-de-bain"
+  ],
+  "internal_links": [
+    "/electricien/casablanca",
+    "/electricien/rabat",
+    "/electricien/marrakech"
+  ]
+}

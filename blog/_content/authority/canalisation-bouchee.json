@@ -1,0 +1,64 @@
+{
+  "slug": "canalisation-bouchee",
+  "title": "Canalisation bouchée : déboucher efficacement au Maroc",
+  "meta_description": "Canalisation bouchée à la maison au Maroc ? Techniques professionnelles, prix et conseils pour déboucher rapidement sans abîmer vos tuyaux.",
+  "category": "plomberie",
+  "tags": [
+    "canalisation bouchée",
+    "débouchage",
+    "hydrocurage",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 6,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "L'eau stagne dans votre évier, votre douche se transforme en bain forcé, ou vos canalisations font des bruits suspects ? Un bouchon en formation peut devenir une panne complète en quelques jours si l'on n'intervient pas."
+    },
+    {
+      "type": "h2",
+      "title": "Identifier le type de bouchon",
+      "content": "Un bouchon local (un seul appareil) est souvent dû à l'accumulation de graisses, cheveux ou restes alimentaires dans le siphon. Un bouchon en colonne (plusieurs appareils touchés) signale un problème dans la canalisation principale — plus sérieux et nécessitant une intervention professionnelle."
+    },
+    {
+      "type": "h2",
+      "title": "Techniques de débouchage",
+      "content": "Pour un bouchon simple : ventouse, furet manuel ou produit enzymatique. Pour une colonne bouchée : l'hydrocurage haute pression est la technique de référence. Un jet d'eau à 150 bars dans la canalisation élimine les dépôts de graisse, calcaire et racines en quelques minutes."
+    },
+    {
+      "type": "h2",
+      "title": "Prévention des bouchons",
+      "content": "Installez des filtres de siphon. N'évacuez jamais les huiles de cuisson dans l'évier. Versez régulièrement de l'eau bouillante dans vos canalisations. Et chaque année, faites vérifier vos canalisations par un plombier si vous vivez dans un immeuble ancien."
+    },
+    {
+      "type": "cta",
+      "text": "Déboucher mes canalisations"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Quel produit utiliser pour déboucher une canalisation ?",
+      "a": "Les produits enzymatiques (à base de bactéries) sont les plus sûrs pour les canalisations. Évitez la soude caustique pure sur les tuyaux en PVC et les joints en caoutchouc."
+    },
+    {
+      "q": "Combien coûte un hydrocurage au Maroc ?",
+      "a": "Un hydrocurage professionnel coûte entre 300 et 800 MAD selon la longueur à traiter et l'accessibilité. Ce tarif inclut généralement l'inspection visuelle avant et après."
+    },
+    {
+      "q": "À quelle fréquence entretenir ses canalisations ?",
+      "a": "Pour un logement de 4 personnes, un entretien annuel préventif est recommandé. Dans les immeubles anciens ou en zone calcaire (Casablanca, Fès), deux fois par an est préférable."
+    }
+  ],
+  "related_articles": [
+    "wc-bouche-comment-deboucher",
+    "odeur-egouts-maison",
+    "evacuation-eau-lente"
+  ],
+  "internal_links": [
+    "/plombier/casablanca",
+    "/plombier/rabat",
+    "/plombier/fes"
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "slug": "porte-garage-bloquee",
+  "title": "Porte de garage bloquée : débloquer en urgence au Maroc",
+  "meta_description": "Votre porte de garage est bloquée au Maroc ? Ressort cassé, motorisation en panne, guide de dépannage urgent par les experts Fixeo.",
+  "category": "serrurerie",
+  "tags": [
+    "porte garage",
+    "ressort",
+    "blocage",
+    "urgence"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 5,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Voiture bloquée à l'intérieur ou à l'extérieur du garage — une porte de garage bloquée est une urgence réelle, surtout si vous devez partir au travail. Les causes sont différentes selon le type de porte."
+    },
+    {
+      "type": "h2",
+      "title": "Porte sectionnelle ou basculante : diagnostic",
+      "content": "Ressort de torsion cassé (bruit de claquement + impossibilité de soulever) : c'est la cause n°1 de blocage. Câble de levage sorti de gorge. Moteur électrique en panne. Obstacle sous le bas de porte. Le ressort cassé est dangereux — ne tentez pas de réparer seul (tension importante)."
+    },
+    {
+      "type": "h2",
+      "title": "Porte basculante manuelle bloquée",
+      "content": "Vérifiez les charnières et les galets sur les rails. Souvent, un galet sorti du rail suffit à bloquer la porte. La remise en place est accessible à un bricoleur prudent en quelques minutes."
+    },
+    {
+      "type": "h2",
+      "title": "Coûts de réparation",
+      "content": "Ressort de torsion (paire) : 200 à 500 MAD pièce + 150 à 300 MAD pose. Câble de levage : 80 à 150 MAD + pose. Remplacement de moteur sectionnelle : 800 à 2000 MAD."
+    },
+    {
+      "type": "cta",
+      "text": "Débloquer ma porte de garage"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Peut-on ouvrir une porte sectionnelle motorisée manuellement ?",
+      "a": "Oui. Tirez le câble de débrayage rouge (généralement rouge) pour désaccoupler le moteur, puis relevez la porte manuellement. Ce câble est accessible de l'intérieur."
+    },
+    {
+      "q": "Mon ressort de garage est cassé, est-ce dangereux à réparer soi-même ?",
+      "a": "Oui, très dangereux. Les ressorts de torsion sont sous tension extrême et peuvent causer des blessures graves s'ils se détendent brutalement. Appelez un professionnel."
+    },
+    {
+      "q": "Quelle durée de vie pour un ressort de porte de garage ?",
+      "a": "Les ressorts sont dimensionnés pour 10 000 à 30 000 cycles. Pour une utilisation de 5 fois/jour, c'est 6 à 16 ans. Au Maroc, la chaleur et la corrosion réduisent cette durée de vie."
+    }
+  ],
+  "related_articles": [
+    "portail-motorise-probleme",
+    "serrure-electrique-probleme",
+    "ferme-porte-installation"
+  ],
+  "internal_links": [
+    "/serrurier/casablanca",
+    "/serrurier/rabat",
+    "/serrurier/marrakech"
+  ]
+}

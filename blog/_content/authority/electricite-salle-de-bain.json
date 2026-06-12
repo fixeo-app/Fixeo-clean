@@ -1,0 +1,64 @@
+{
+  "slug": "electricite-salle-de-bain",
+  "title": "Électricité salle de bain : normes et zones de sécurité au Maroc",
+  "meta_description": "Normes électriques pour la salle de bain au Maroc : zones de sécurité, types de luminaires et prises autorisés, erreurs à éviter.",
+  "category": "electricite",
+  "tags": [
+    "salle de bain",
+    "normes électriques",
+    "sécurité",
+    "zones"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 5,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "La salle de bain est la pièce la plus dangereuse de la maison du point de vue électrique — eau et électricité sont une combinaison mortelle. Les normes définissent des zones strictes qu'il faut respecter."
+    },
+    {
+      "type": "h2",
+      "title": "Les zones de sécurité",
+      "content": "Zone 0 : dans la baignoire ou douche — aucun équipement électrique autorisé. Zone 1 : au-dessus de la baignoire/douche jusqu'à 2,25m — équipements IPX5 uniquement (classe III, très basse tension). Zone 2 : à 60cm autour des zones 0/1 — luminaires IPX4. Au-delà : installation normale mais DDR 30mA obligatoire pour tout le circuit SDB."
+    },
+    {
+      "type": "h2",
+      "title": "Prises en salle de bain",
+      "content": "Une seule prise est autorisée en salle de bain (pour rasoir/sèche-cheveux) et doit être à transformateur d'isolement ou TBTS (très basse tension de sécurité) et placée hors zone 1 et 2. En pratique : aucune prise classique dans la douche ou baignoire."
+    },
+    {
+      "type": "h2",
+      "title": "Erreurs fréquentes au Maroc",
+      "content": "Spots LED non IP67 dans la douche, rallonge électrique en salle de bain, chauffe-eau sans protection différentielle, sèche-serviettes branché sur prise standard dans zone 2."
+    },
+    {
+      "type": "cta",
+      "text": "Faire vérifier l'électricité de ma SDB"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Puis-je installer une prise dans ma douche pour un radio ?",
+      "a": "Non. Aucune prise ne peut être installée en zone 0 ou 1. Une enceinte Bluetooth waterproof sur batterie est la solution recommandée pour la musique en douche."
+    },
+    {
+      "q": "Mon sèche-serviettes est-il aux normes ?",
+      "a": "Un sèche-serviettes électrique en salle de bain doit être de classe II (double isolation), installé hors zone 1 et 2, et protégé par un DDR 30mA. Sa fixation murale doit être réalisée par un électricien."
+    },
+    {
+      "q": "Les LED dans les spots de douche sont-elles compatibles avec l'humidité ?",
+      "a": "Uniquement les luminaires avec indice IP67 (étanche à l'immersion) sont autorisés en zone 1. En zone 2, IP44 est le minimum. Vérifiez toujours l'indice IP sur l'emballage."
+    }
+  ],
+  "related_articles": [
+    "installation-prise-electrique",
+    "mise-terre-installation",
+    "bidet-installation-maroc"
+  ],
+  "internal_links": [
+    "/electricien/casablanca",
+    "/electricien/rabat",
+    "/electricien/marrakech"
+  ]
+}

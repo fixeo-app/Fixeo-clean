@@ -1,0 +1,64 @@
+{
+  "slug": "serrure-pharmacie-maroc",
+  "title": "Pharmacie et commerces : serrures et contrôle d'accès au Maroc",
+  "meta_description": "Sécuriser une pharmacie ou un commerce au Maroc : serrures, rideaux métalliques, contrôle d'accès et alarmes. Guide professionnel Fixeo.",
+  "category": "serrurerie",
+  "tags": [
+    "sécurité commerce",
+    "pharmacie",
+    "contrôle accès",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 5,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Les pharmacies et commerces marocains sont des cibles privilégiées des cambriolages. La sécurité physique (serrures, rideaux blindés) reste la première ligne de défense, complétée par les systèmes électroniques."
+    },
+    {
+      "type": "h2",
+      "title": "Niveau de sécurité requis",
+      "content": "Pour une pharmacie : serrure multipoints certifiée A2P sur la porte principale, rideau métallique articulé avec serrure à cadenas certifiée, et idéalement une alarme volumétrique. Les stupéfiants nécessitent un coffre ancré certifié."
+    },
+    {
+      "type": "h2",
+      "title": "Contrôle d'accès professionnel",
+      "content": "Badge RFID ou code personnalisé par employé permet de tracer qui accède à quelle heure. Pour une pharmacie avec plusieurs employés, un système de contrôle à 3 niveaux (caissier, pharmacien, responsable) est recommandé."
+    },
+    {
+      "type": "h2",
+      "title": "Budget sécurité commercial",
+      "content": "Serrure multipoints A2P + pose : 1500 à 3000 MAD. Rideau métallique renforcé avec serrure : 3000 à 8000 MAD selon dimensions. Alarme intrusion + surveillance à distance : 3000 à 8000 MAD. Contrôle d'accès RFID : 2000 à 5000 MAD."
+    },
+    {
+      "type": "cta",
+      "text": "Sécuriser mon commerce"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Quelle serrure pour un rideau métallique de commerce au Maroc ?",
+      "a": "Un cadenas A2P★★ minimum sur les maillons du rideau, plus une serrure à béquille sur le châssis. Les rideaux lames ne doivent pas pouvoir être relevés par glissement — des lames spéciales anti-soulèvement existent."
+    },
+    {
+      "q": "Un cambrioleur peut-il passer par le plafond faux d'une pharmacie ?",
+      "a": "C'est une technique connue. Pour les pharmacies dans des centres commerciaux ou immeubles, un grillage métallique au-dessus des cloisons et un détecteur de volume actif 24/7 sont recommandés."
+    },
+    {
+      "q": "La vidéosurveillance remplace-t-elle les serrures de sécurité ?",
+      "a": "Non. La vidéo surveille et documente, les serrures empêchent l'entrée. Les deux sont complémentaires. Un commerce sans serrures solides mais avec caméras sera quand même cambriolé — les images ne récupèrent pas la marchandise volée."
+    }
+  ],
+  "related_articles": [
+    "porte-blindee-installation",
+    "barre-anti-panique",
+    "serrure-connectee-maroc"
+  ],
+  "internal_links": [
+    "/serrurier/casablanca",
+    "/serrurier/rabat",
+    "/serrurier/marrakech"
+  ]
+}

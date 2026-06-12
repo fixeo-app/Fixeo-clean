@@ -1,0 +1,64 @@
+{
+  "slug": "installation-vmc-salle-bain",
+  "title": "VMC salle de bain : obligatoire et installation au Maroc",
+  "meta_description": "Installer une ventilation dans votre salle de bain au Maroc : VMC, extracteur d'air, norme et procédure d'installation complète.",
+  "category": "climatisation",
+  "tags": [
+    "VMC salle de bain",
+    "extracteur",
+    "humidité",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 5,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "La salle de bain est la pièce la plus humide de la maison. Sans ventilation adéquate, l'humidité s'accumule, la peinture s'écaille, et les moisissures s'installent — un problème de santé publique dans de nombreux appartements marocains."
+    },
+    {
+      "type": "h2",
+      "title": "Extracteur simple vs VMC salle de bain",
+      "content": "Extracteur de salle de bain (ventilateur mural simple) : le plus répandu au Maroc, 150 à 400 MAD. Fonctionne en continu ou sur minuterie. VMC simple flux : extrait l'air de toutes les pièces humides (SDB + WC + cuisine) simultanément. Plus efficace et économique pour un appartement entier."
+    },
+    {
+      "type": "h2",
+      "title": "Où doit-il être installé ?",
+      "content": "Le ventilateur doit être positionné le plus haut possible (humidité monte) et aussi loin que possible de la porte (pour aspirer l'air de toute la pièce, pas juste l'air frais qui entre). L'air extrait doit partir VERS L'EXTÉRIEUR — pas vers le couloir ou une autre pièce."
+    },
+    {
+      "type": "h2",
+      "title": "Installation et coûts",
+      "content": "Extracteur standard avec minuterie : 150 à 350 MAD. Pose (perçage mur + câblage) : 200 à 400 MAD. Extracteur avec hygromètre intégré (s'active automatiquement selon l'humidité) : 300 à 600 MAD."
+    },
+    {
+      "type": "cta",
+      "text": "Installer ma ventilation salle de bain"
+    }
+  ],
+  "faq": [
+    {
+      "q": "La ventilation de salle de bain est-elle obligatoire au Maroc ?",
+      "a": "Les nouvelles constructions doivent respecter des critères de ventilation selon les règles de construction. Pour les rénovations, ce n'est pas toujours appliqué mais fortement recommandé pour la santé et la durabilité du logement."
+    },
+    {
+      "q": "Mon extracteur de SDB fait beaucoup de bruit, peut-on le remplacer par un silencieux ?",
+      "a": "Oui. Les extracteurs silencieux modernes (< 25 dB) sont disponibles pour 200 à 500 MAD. Le remplacement est simple si la bouche d'extraction a la même dimension."
+    },
+    {
+      "q": "Combien de temps doit tourner l'extracteur après la douche ?",
+      "a": "Pour éliminer toute l'humidité d'une douche, 15 à 30 minutes suffisent. Un extracteur avec minuterie réglable (disponible dès 200 MAD) est la solution idéale."
+    }
+  ],
+  "related_articles": [
+    "ventilation-vmc-maison",
+    "electricite-salle-de-bain",
+    "clim-odeur-mauvaise"
+  ],
+  "internal_links": [
+    "/climatisation/casablanca",
+    "/climatisation/agadir",
+    "/climatisation/marrakech"
+  ]
+}

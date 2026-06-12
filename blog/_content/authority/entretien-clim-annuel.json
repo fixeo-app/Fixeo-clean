@@ -1,0 +1,64 @@
+{
+  "slug": "entretien-clim-annuel",
+  "title": "Entretien annuel climatisation : pourquoi c'est essentiel",
+  "meta_description": "L'entretien annuel de votre climatisation au Maroc : quand le faire, ce qu'il comprend et comment prolonger la durée de vie de votre appareil.",
+  "category": "climatisation",
+  "tags": [
+    "entretien climatisation",
+    "maintenance",
+    "nettoyage",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 6,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Un climatiseur entretenu consomme 15 à 30% moins d'électricité et dure 5 à 10 ans de plus qu'un appareil négligé. Au Maroc, les températures estivales extrêmes rendent cet entretien encore plus crucial."
+    },
+    {
+      "type": "h2",
+      "title": "Quand faire l'entretien ?",
+      "content": "La période idéale au Maroc est avril-mai, avant les grandes chaleurs. Ainsi, l'appareil est prêt et optimisé pour l'été. L'entretien hivernal (octobre-novembre) est recommandé pour les climatiseurs réversibles utilisés en chauffage."
+    },
+    {
+      "type": "h2",
+      "title": "Ce que comprend un entretien complet",
+      "content": "Nettoyage des filtres à air (lavables à l'eau), nettoyage de l'échangeur intérieur avec produit anti-bactérien, vérification de la pression du gaz, nettoyage de l'unité extérieure, vérification du tuyau de condensat, inspection électrique (câbles, connexions), test de fonctionnement complet."
+    },
+    {
+      "type": "h2",
+      "title": "Coût et fréquence",
+      "content": "Entretien annuel standard (split 9000-12000 BTU) : 200 à 400 MAD. Entretien complet avec nettoyage vapeur : 350 à 600 MAD. Pour un appartement avec 2 climatiseurs : 400 à 800 MAD. Les entreprises proposent des contrats annuels avec 2 visites."
+    },
+    {
+      "type": "cta",
+      "text": "Planifier l'entretien de ma climatisation"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Peut-on faire l'entretien de la climatisation soi-même ?",
+      "a": "Le nettoyage des filtres (tous les 15 jours en été) est accessible à tous. Le nettoyage de l'échangeur, la vérification du gaz et l'inspection électrique nécessitent un technicien qualifié."
+    },
+    {
+      "q": "Que se passe-t-il si je ne fais pas l'entretien ?",
+      "a": "Accumulation de poussière et bactéries dans l'échangeur, réduction de 20-30% de l'efficacité, augmentation de la consommation électrique, risque de panne du compresseur (réparation coûteuse), et propagation de moisissures dans l'air."
+    },
+    {
+      "q": "L'entretien est-il couvert par la garantie fabricant ?",
+      "a": "Non. La garantie couvre les défauts de fabrication, pas l'usure due à un mauvais entretien. En revanche, certains fabricants exigent la preuve d'un entretien régulier pour valider la garantie en cas de panne."
+    }
+  ],
+  "related_articles": [
+    "nettoyage-filtres-clim",
+    "clim-ne-refroidit-plus",
+    "entretien-clim-hivernal"
+  ],
+  "internal_links": [
+    "/climatisation/casablanca",
+    "/climatisation/agadir",
+    "/climatisation/marrakech"
+  ]
+}

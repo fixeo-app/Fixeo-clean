@@ -1,0 +1,64 @@
+{
+  "slug": "entretien-chauffe-eau-solaire",
+  "title": "Entretien chauffe-eau solaire au Maroc : guide annuel",
+  "meta_description": "Entretien de votre chauffe-eau solaire au Maroc : nettoyage des capteurs, vérification du fluide caloporteur, prix et fréquence. Guide expert Fixeo.",
+  "category": "plomberie",
+  "tags": [
+    "chauffe-eau solaire",
+    "entretien",
+    "énergie solaire",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 6,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Le Maroc est l'un des pays les plus ensoleillés au monde — une bénédiction pour les chauffe-eau solaires. Mais sans entretien régulier, un système solaire thermique perd 20 à 40% de son efficacité en 3 à 5 ans."
+    },
+    {
+      "type": "h2",
+      "title": "Nettoyage des capteurs solaires",
+      "content": "La poussière du désert (harmattan), les fientes d'oiseaux et le calcaire des jets d'eau réduisent le rendement des capteurs. Nettoyez les panneaux deux fois par an à l'eau claire (pas de produits abrasifs). Dans les zones poussiéreuses du Maroc (Agadir, Ouarzazate, Marrakech), une fois par mois peut être nécessaire en été."
+    },
+    {
+      "type": "h2",
+      "title": "Vérification du fluide caloporteur",
+      "content": "Le glycol propylène (antigel) dans le circuit primaire se dégrade et s'acidifie avec le temps. À renouveler tous les 3 à 5 ans ou lors d'une chute d'efficacité. Un fluide dégradé peut corroder les échangeurs et rendre le système inutilisable."
+    },
+    {
+      "type": "h2",
+      "title": "Entretien annuel recommandé",
+      "content": "Vérification de la pression du circuit (entre 1,5 et 2,5 bars à froid), purge de l'air dans le circuit, inspection des raccords et de l'isolant, test du groupe de sécurité, vérification de la résistance électrique d'appoint. Un technicien Fixeo réalise ce bilan en 1 à 2 heures."
+    },
+    {
+      "type": "cta",
+      "text": "Planifier l'entretien de mon solaire"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Mon chauffe-eau solaire ne chauffe plus, que faire ?",
+      "a": "Vérifiez d'abord : les capteurs sont-ils propres et bien orientés Sud ? Le fluide caloporteur est-il présent (pression du circuit) ? La résistance d'appoint fonctionne-t-elle ? Un technicien peut diagnostiquer en 30 minutes."
+    },
+    {
+      "q": "Quelle durée de vie pour un chauffe-eau solaire au Maroc ?",
+      "a": "Avec un entretien régulier, 20 à 25 ans pour les capteurs et 10 à 15 ans pour le ballon. L'amortissement se fait généralement en 4 à 7 ans selon la consommation familiale."
+    },
+    {
+      "q": "Peut-on combiner solaire et chauffe-eau électrique ?",
+      "a": "C'est le système le plus répandu : le solaire assure 70-80% des besoins, et l'appoint électrique prend le relais les jours nuageux ou en cas de forte consommation. La résistance électrique ne fonctionne que quelques heures par mois en été."
+    }
+  ],
+  "related_articles": [
+    "installation-chauffe-eau-electrique",
+    "remplacement-cumulus-maroc",
+    "panneau-solaire-installation"
+  ],
+  "internal_links": [
+    "/plombier/casablanca",
+    "/plombier/rabat",
+    "/plombier/fes"
+  ]
+}

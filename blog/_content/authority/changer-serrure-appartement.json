@@ -1,0 +1,64 @@
+{
+  "slug": "changer-serrure-appartement",
+  "title": "Changer sa serrure d'appartement au Maroc : guide complet",
+  "meta_description": "Comment changer la serrure de votre appartement au Maroc : locataire vs propriétaire, quel modèle choisir et les tarifs serruriers en 2025.",
+  "category": "serrurerie",
+  "tags": [
+    "changement serrure",
+    "sécurité",
+    "appartement",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 5,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Vous venez d'emménager dans un appartement dont vous ne connaissez pas tous les anciens détenteurs de clés ? Vous avez perdu votre clé ? Changer la serrure est la seule garantie de sécurité réelle."
+    },
+    {
+      "type": "h2",
+      "title": "Locataire : ai-je le droit de changer ma serrure ?",
+      "content": "Au Maroc, un locataire peut changer la serrure de son logement pour des raisons de sécurité, à condition de remettre un double au propriétaire à la fin du bail. Informez votre propriétaire par précaution. Ne changez jamais les serrures des parties communes sans accord."
+    },
+    {
+      "type": "h2",
+      "title": "Quel type de serrure choisir ?",
+      "content": "Cylindre simple (remplacement à l'identique) : 200 à 500 MAD. Passage à une serrure A2P (certification antieffraction française reconnue) : 500 à 1500 MAD. Serrure connectée : 800 à 3000 MAD (voir article dédié)."
+    },
+    {
+      "type": "h2",
+      "title": "Procédure de remplacement",
+      "content": "Mesurez votre cylindre actuel (longueur intérieure + extérieure). Achetez un cylindre identique ou supérieur. Un serrurier pose le nouveau cylindre en 15 minutes (100-150 MAD main d'œuvre). Total : 300 à 650 MAD pour une sécurité renforcée."
+    },
+    {
+      "type": "cta",
+      "text": "Changer ma serrure maintenant"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Doit-on donner un double de clé au propriétaire ?",
+      "a": "Oui, la tradition marocaine (et souvent le contrat de bail) prévoit que le propriétaire dispose d'un double. Si vous changez la serrure, remettez un double du nouveau cylindre."
+    },
+    {
+      "q": "Le propriétaire peut-il entrer chez moi sans ma permission ?",
+      "a": "Non. Le droit à la jouissance paisible est protégé par le dahir de 1913 et ses modifications. Sauf urgence immédiate (incendie, inondation), le propriétaire doit avoir votre accord pour entrer."
+    },
+    {
+      "q": "Combien de clés peut-on faire pour une serrure haute sécurité ?",
+      "a": "Les serrures haute sécurité (systèmes protégés) ne peuvent être reproduites que chez le fabricant ou distributeur agréé, sur présentation de la carte de propriété. C'est un avantage sécuritaire important."
+    }
+  ],
+  "related_articles": [
+    "cylindre-europeen-changer",
+    "serrure-connectee-maroc",
+    "effraction-renforcement-securite"
+  ],
+  "internal_links": [
+    "/serrurier/casablanca",
+    "/serrurier/rabat",
+    "/serrurier/marrakech"
+  ]
+}

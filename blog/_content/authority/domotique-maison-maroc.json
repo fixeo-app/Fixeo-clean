@@ -1,0 +1,64 @@
+{
+  "slug": "domotique-maison-maroc",
+  "title": "Domotique maison au Maroc : débuter en 2025",
+  "meta_description": "Installer une domotique chez soi au Maroc en 2025 : éclairage connecté, volets roulants, sécurité. Systèmes compatibles et budget.",
+  "category": "electricite",
+  "tags": [
+    "domotique",
+    "maison connectée",
+    "smart home",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 7,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "La domotique n'est plus réservée aux grandes villas. En 2025, pour 2000 à 5000 MAD, vous pouvez rendre votre appartement marocain intelligent : éclairage piloté par smartphone, prises programmables, détecteurs de présence."
+    },
+    {
+      "type": "h2",
+      "title": "Par où commencer ?",
+      "content": "Les kits Wi-Fi type Tuya/Smart Life, compatibles avec Alexa et Google Home, sont les plus accessibles. Commencez par les ampoules connectées (150-250 MAD l'ampoule) puis les prises connectées (100-200 MAD). Aucun câblage supplémentaire requis."
+    },
+    {
+      "type": "h2",
+      "title": "Systèmes filaires vs sans fil",
+      "content": "Sans fil (Zigbee, Z-Wave, WiFi) : installation simple, flexible, idéal pour l'existant. Filaire (KNX, bus DALI) : plus stable, professionnel, à intégrer pendant la construction ou la rénovation lourde. Le sans fil est recommandé pour débuter."
+    },
+    {
+      "type": "h2",
+      "title": "Coûts d'un système domotique au Maroc",
+      "content": "Kit de départ (5 ampoules + 2 prises + hub) : 1000 à 2000 MAD. Installation complète d'un appartement (éclairage, volets, sécurité) : 5000 à 15000 MAD. Système KNX professionnel (villa) : 30000 MAD et plus."
+    },
+    {
+      "type": "cta",
+      "text": "Créer ma maison connectée"
+    }
+  ],
+  "faq": [
+    {
+      "q": "La domotique fonctionne-t-elle avec les coupures ONEE fréquentes ?",
+      "a": "Les systèmes Wi-Fi perdent leur connexion lors des coupures mais reprennent automatiquement. Avec un onduleur pour le routeur et le hub, le système reste opérationnel même sans courant réseau."
+    },
+    {
+      "q": "Mes données domotiques sont-elles sécurisées ?",
+      "a": "Les plateformes chinoises (Tuya) stockent les données sur des serveurs en Chine. Pour plus de confidentialité, préférez des solutions locales (Home Assistant sur Raspberry Pi) ou des marques européennes (Somfy, Legrand Drivia)."
+    },
+    {
+      "q": "Un électricien est-il nécessaire pour la domotique ?",
+      "a": "Pour les ampoules et prises connectées : non, c'est plug-and-play. Pour les interrupteurs connectés (remplacement des interrupteurs muraux) ou les volets motorisés : oui, un électricien qualifié est recommandé."
+    }
+  ],
+  "related_articles": [
+    "installation-prise-electrique",
+    "tableau-electrique-upgrade",
+    "panneau-solaire-installation"
+  ],
+  "internal_links": [
+    "/electricien/casablanca",
+    "/electricien/rabat",
+    "/electricien/marrakech"
+  ]
+}

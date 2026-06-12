@@ -1,0 +1,64 @@
+{
+  "slug": "radiateur-electrique-probleme",
+  "title": "Radiateur électrique en panne : dépannage au Maroc",
+  "meta_description": "Votre radiateur électrique ne chauffe plus au Maroc ? Pannes courantes (résistance, thermostat) et solutions de dépannage rapide.",
+  "category": "climatisation",
+  "tags": [
+    "radiateur électrique",
+    "panne",
+    "chauffage",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 4,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Les hivers de Fès, Meknès ou Marrakech peuvent être froids. Un radiateur électrique en panne en janvier est un problème réel. La plupart des pannes sont simples à diagnostiquer."
+    },
+    {
+      "type": "h2",
+      "title": "Pannes les plus courantes",
+      "content": "Le thermostat est réglé trop bas (réglage accidentel). Le thermostat de sécurité a disjoncté (surchauffe si couverture sur le radiateur). Le fusible thermique interne a sauté (remplacement non accessible à l'utilisateur). La résistance est grillée (remplacement nécessaire)."
+    },
+    {
+      "type": "h2",
+      "title": "Test simple à faire",
+      "content": "Réinitialisez le thermostat de sécurité en cherchant un petit bouton \"Reset\" sur l'arrière ou le dessous du radiateur. Vérifiez que le radiateur est branché sur une prise fonctionnelle. Réglez le thermostat au maximum."
+    },
+    {
+      "type": "h2",
+      "title": "Réparer ou remplacer ?",
+      "content": "Remplacement d'une résistance : 100 à 250 MAD de main-d'œuvre. Pour un radiateur de plus de 10 ans, mieux vaut souvent investir dans un modèle moderne à inertie (plus efficace, programmable). Budget : 800 à 2000 MAD."
+    },
+    {
+      "type": "cta",
+      "text": "Réparer mon radiateur"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Mon radiateur est chaud au toucher mais la pièce reste froide, pourquoi ?",
+      "a": "Le radiateur fonctionne mais est sous-dimensionné pour la surface. Ajoutez un second radiateur ou remplacez par un modèle plus puissant. Un radiateur de 2000W couvre environ 20m² dans une pièce isolée."
+    },
+    {
+      "q": "Radiateur à inertie ou radiateur soufflant pour une chambre ?",
+      "a": "Le radiateur à inertie (fonte ou céramique) est plus confortable et plus économique. Le soufflant chauffe vite mais consomme beaucoup et dessèche l'air. Pour une chambre, l'inertie est préférable."
+    },
+    {
+      "q": "Peut-on utiliser un radiateur électrique toute la nuit au Maroc ?",
+      "a": "Oui avec un thermostat programmable. Réglez à 16-18°C la nuit (confort de sommeil) et 20-21°C le matin. Un minuteur ou thermostat intelligent réduit la facture de 30 à 40%."
+    }
+  ],
+  "related_articles": [
+    "climatisation-reversible",
+    "cable-chauffe-plancher",
+    "consommation-electrique-clim"
+  ],
+  "internal_links": [
+    "/climatisation/casablanca",
+    "/climatisation/agadir",
+    "/climatisation/marrakech"
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "slug": "plomberie-immeuble-collectif",
+  "title": "Plomberie immeuble : responsabilités et entretien au Maroc",
+  "meta_description": "Problème de plomberie dans votre immeuble au Maroc ? Qui est responsable des colonnes communes, fuites entre voisins, entretien collectif. Guide complet.",
+  "category": "plomberie",
+  "tags": [
+    "plomberie immeuble",
+    "copropriété",
+    "colonnes",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 6,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Dans un immeuble, la plomberie est partagée entre parties communes (colonnes montantes) et parties privatives (installations intérieures à chaque appartement). Comprendre cette distinction est essentiel pour savoir qui paie quoi et à qui s'adresser."
+    },
+    {
+      "type": "h2",
+      "title": "Parties communes vs privatives",
+      "content": "Parties communes : les colonnes montantes d'eau froide, chaude et d'évacuation, le compteur général, les canalisations entre le compteur et les dérivations vers chaque appartement. Privatives : tout ce qui est à partir du robinet d'arrêt de chaque appartement."
+    },
+    {
+      "type": "h2",
+      "title": "Fuite entre deux étages : qui paie ?",
+      "content": "La règle générale : le propriétaire de l'appartement d'où vient la fuite est responsable envers son voisin du dessous. Si la fuite vient d'une canalisation commune, c'est la copropriété. En cas de litige, l'expertise d'un plombier certifié établissant l'origine de la fuite est déterminante."
+    },
+    {
+      "type": "h2",
+      "title": "Entretien préventif de l'immeuble",
+      "content": "Un contrat de maintenance plomberie annuel pour l'immeuble évite les urgences coûteuses : inspection des colonnes, vérification des regards, curage préventif. Pour un immeuble de 10 appartements, ce service coûte 2000 à 5000 MAD/an — soit 200 à 500 MAD par appartement."
+    },
+    {
+      "type": "cta",
+      "text": "Contacter le service immeuble Fixeo"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Mon voisin du dessus a une fuite chez lui. Qui paie mes dégâts ?",
+      "a": "C'est votre assurance habitation qui indemnise vos dégâts, puis se retourne contre l'assurance de votre voisin (recours entre assurances). Déclarez le sinistre à votre assureur dans les 5 jours."
+    },
+    {
+      "q": "Le syndic refuse de réparer une fuite en colonne commune. Que faire ?",
+      "a": "Mettez en demeure le syndic par lettre recommandée. En cas d'urgence, vous pouvez faire réaliser les travaux et vous retourner contre la copropriété. Gardez tous les justificatifs."
+    },
+    {
+      "q": "Notre immeuble n'a pas de syndic, comment gérer les travaux communs ?",
+      "a": "Une réunion des copropriétaires permet de décider collectivement. Fixeo propose des interventions immeuble avec devis global. Un représentant désigné peut signer le devis au nom de la copropriété."
+    }
+  ],
+  "related_articles": [
+    "detection-fuite-eau-cachee",
+    "vanne-arret-eau",
+    "fuite-eau-mur"
+  ],
+  "internal_links": [
+    "/plombier/casablanca",
+    "/plombier/rabat",
+    "/plombier/fes"
+  ]
+}

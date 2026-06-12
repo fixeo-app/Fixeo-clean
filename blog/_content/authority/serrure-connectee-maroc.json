@@ -1,0 +1,64 @@
+{
+  "slug": "serrure-connectee-maroc",
+  "title": "Serrure connectée au Maroc : choisir en 2025",
+  "meta_description": "Serrures connectées disponibles au Maroc en 2025 : comparatif, compatibilité, installation et coûts. Guide expert Fixeo.",
+  "category": "serrurerie",
+  "tags": [
+    "serrure connectée",
+    "smart lock",
+    "domotique",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 6,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Ouvrir votre porte avec votre smartphone, créer des codes temporaires pour votre femme de ménage, recevoir une alerte quand votre enfant rentre — les serrures connectées arrivent au Maroc et transforment la sécurité résidentielle."
+    },
+    {
+      "type": "h2",
+      "title": "Types de serrures connectées",
+      "content": "Cylindre connecté (remplace le cylindre existant) : le plus facile à installer, 800 à 2500 MAD. Serrure connectée complète (remplace tout le mécanisme) : 2000 à 6000 MAD. Poignée connectée : idéale pour les portes intérieures ou secondaires."
+    },
+    {
+      "type": "h2",
+      "title": "Connectivité et compatibilité",
+      "content": "Bluetooth : ouverture par téléphone à courte distance, sans abonnement. Wifi : ouverture à distance depuis n'importe où, suivi des accès en temps réel. Zigbee/Z-Wave : intégration domotique avancée. Au Maroc, les modèles Wifi sont les plus pratiques compte tenu de la qualité variable du réseau."
+    },
+    {
+      "type": "h2",
+      "title": "Sécurité des serrures connectées",
+      "content": "Paradoxe : une serrure connectée peut être moins sécurisée si le chiffrement est faible ou si le mot de passe de l'app est simple. Choisissez des marques avec chiffrement AES-256, authentification à deux facteurs, et mise à jour firmware régulière. Préférez les marques avec serveurs en Europe."
+    },
+    {
+      "type": "cta",
+      "text": "Installer une serrure connectée"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Que se passe-t-il si mon smartphone tombe en panne ou est perdu ?",
+      "a": "Toutes les serrures connectées sérieuses gardent un accès par code PIN ou par clé physique de secours. Configurez toujours ces accès alternatifs dès l'installation."
+    },
+    {
+      "q": "La serrure connectée consomme beaucoup de batterie ?",
+      "a": "Les serrures connectées fonctionnent sur piles AA ou AAA avec une autonomie de 6 à 18 mois selon le modèle et la fréquence d'utilisation. Une alerte dans l'app vous prévient quand les piles sont faibles."
+    },
+    {
+      "q": "Une serrure connectée peut-elle être hackée ?",
+      "a": "Théoriquement oui, comme tout système connecté. En pratique, les attaques sur les serrures Bluetooth et Wifi nécessitent une proximité physique et des compétences avancées — le niveau de risque reste très faible pour un usage résidentiel."
+    }
+  ],
+  "related_articles": [
+    "cylindre-europeen-changer",
+    "serrure-3-points-installation",
+    "domotique-maison-maroc"
+  ],
+  "internal_links": [
+    "/serrurier/casablanca",
+    "/serrurier/rabat",
+    "/serrurier/marrakech"
+  ]
+}

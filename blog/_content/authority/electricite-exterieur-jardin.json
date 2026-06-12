@@ -1,0 +1,64 @@
+{
+  "slug": "electricite-exterieur-jardin",
+  "title": "Électricité extérieure jardin : étanchéité et normes au Maroc",
+  "meta_description": "Installer une prise ou un éclairage extérieur dans votre jardin au Maroc : normes d'étanchéité, enterrement des câbles et sécurité.",
+  "category": "electricite",
+  "tags": [
+    "électricité extérieure",
+    "jardin",
+    "éclairage",
+    "IP"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 5,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Éclairage de jardin, prise pour tondeuse, pompe de piscine, éclairage de sécurité — les besoins électriques extérieurs des villas marocaines sont importants. Mais les normes d'étanchéité et d'installation sont spécifiques."
+    },
+    {
+      "type": "h2",
+      "title": "Normes d'étanchéité",
+      "content": "Tout équipement électrique extérieur doit avoir un indice IP minimum : IP44 pour les zones protégées (sous auvent), IP55 pour les zones exposées à la pluie, IP67 pour les luminaires proches de piscine ou fontaine. Les prises extérieures doivent avoir un volet de protection."
+    },
+    {
+      "type": "h2",
+      "title": "Câbles enterrés",
+      "content": "Profondeur minimale d'enfouissement au Maroc : 60 cm sous les pelouses, 80 cm sous les allées. Utilisez des câbles U-1000 R2V (pour extérieur enterré) ou protégez dans une gaine PEHD rouge. L'électricité enterrée doit être signalée par un grillage avertisseur jaune 20cm au-dessus."
+    },
+    {
+      "type": "h2",
+      "title": "Protection et circuit dédié",
+      "content": "Tous les circuits extérieurs doivent être protégés par un DDR 30mA spécifique, séparé des circuits intérieurs. Un disjoncteur dédié facilite la coupure en cas d'intervention. L'interrupteur général extérieur doit être accessible sans entrer dans la maison."
+    },
+    {
+      "type": "cta",
+      "text": "Créer mon installation électrique extérieure"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Puis-je utiliser une rallonge extérieure pour alimenter mes équipements de jardin ?",
+      "a": "Uniquement pour un usage ponctuel avec une rallonge certifiée extérieur (IP44). Pour un usage permanent (pompe, éclairage, chargeur), une installation fixe enterrée est obligatoire."
+    },
+    {
+      "q": "L'éclairage solaire de jardin est-il une bonne alternative au Maroc ?",
+      "a": "Oui, pour l'éclairage décoratif. L'ensoleillement marocain garantit une recharge complète en quelques heures. Pour l'éclairage sécurité (détecteur de mouvement puissant), une installation filaire reste supérieure."
+    },
+    {
+      "q": "Comment alimenter une pompe de piscine extérieure ?",
+      "a": "Circuit dédié depuis tableau, câble 4mm² enterré à 80cm, disjoncteur différentiel type A 30mA 20A minimum. La prise de la pompe doit être à au moins 2m du bord de la piscine (zone de sécurité 2)."
+    }
+  ],
+  "related_articles": [
+    "installation-prise-electrique",
+    "mise-terre-installation",
+    "canalisation-externe-jardins"
+  ],
+  "internal_links": [
+    "/electricien/casablanca",
+    "/electricien/rabat",
+    "/electricien/marrakech"
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "slug": "ferme-porte-installation",
+  "title": "Ferme-porte hydraulique : installation et réglage au Maroc",
+  "meta_description": "Installer un ferme-porte hydraulique au Maroc : utilité, types, installation et réglage de la vitesse de fermeture par les experts Fixeo.",
+  "category": "serrurerie",
+  "tags": [
+    "ferme-porte",
+    "hydraulique",
+    "installation",
+    "ERP"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 4,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Portes qui claquent, courants d'air, portes qui restent ouvertes — le ferme-porte hydraulique règle ces problèmes. Indispensable dans les ERP et recommandé dans les appartements avec jeunes enfants."
+    },
+    {
+      "type": "h2",
+      "title": "Types de ferme-portes",
+      "content": "Ferme-porte à glissière (en bras) : installation sur la tranche de la porte, compact, pour les portes légères à moyennes. Ferme-porte à bras articulé : plus apparent, pour les portes lourdes. Ferme-porte en sol : discret, pour les portes décoratives sans cadre supérieur."
+    },
+    {
+      "type": "h2",
+      "title": "Réglage de la fermeture",
+      "content": "La plupart des ferme-portes hydrauliques ont deux réglages : vitesse de fermeture principale (début à mi-course) et vitesse de claquement (fin de course). Ajustez avec un tournevis plat sur les vis de réglage. Un claquement fort = serrez le réglage fin de course."
+    },
+    {
+      "type": "h2",
+      "title": "Installation et coûts",
+      "content": "Ferme-porte standard (jusqu'à 60kg) : 150 à 400 MAD. Ferme-porte pour porte lourde coupe-feu : 400 à 1000 MAD. Pose par serrurier : 100 à 200 MAD. La plupart des bricoleurs peuvent l'installer seuls avec les instructions."
+    },
+    {
+      "type": "cta",
+      "text": "Installer un ferme-porte"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Mon ferme-porte laisse la porte ouverte à 45°, comment régler ?",
+      "a": "C'est la fonction \"blocage ouverture\" activée (utile pour les livraisons). Pour désactiver, certains modèles ont un levier ou bouton, d'autres nécessitent de repositionner le bras."
+    },
+    {
+      "q": "Puis-je installer un ferme-porte sur une porte métallique ?",
+      "a": "Oui, mais les vis doivent être appropriées pour le métal (tarauder ou utiliser des vis auto-percantes). Vérifiez que l'épaisseur de la porte est suffisante (> 2mm d'acier)."
+    },
+    {
+      "q": "Le ferme-porte est-il obligatoire sur les portes coupe-feu ?",
+      "a": "Oui, dans les ERP et les immeubles d'habitation classés, les portes coupe-feu doivent se fermer automatiquement. Le ferme-porte est un élément obligatoire du dispositif."
+    }
+  ],
+  "related_articles": [
+    "barre-anti-panique",
+    "porte-blindee-installation",
+    "serrure-electrique-probleme"
+  ],
+  "internal_links": [
+    "/serrurier/casablanca",
+    "/serrurier/rabat",
+    "/serrurier/marrakech"
+  ]
+}

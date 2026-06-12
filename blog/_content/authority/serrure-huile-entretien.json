@@ -1,0 +1,64 @@
+{
+  "slug": "serrure-huile-entretien",
+  "title": "Entretien serrure : lubrifier et prolonger la durée de vie",
+  "meta_description": "Comment entretenir ses serrures au Maroc : produits de lubrification, fréquence et gestes simples pour éviter les pannes coûteuses.",
+  "category": "serrurerie",
+  "tags": [
+    "entretien serrure",
+    "lubrification",
+    "maintenance",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 4,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Une serrure qui grince, une clé qui résiste — deux minutes d'entretien par an suffisent à prévenir des réparations coûteuses. Au Maroc, la poussière du désert et l'humidité côtière accélèrent l'usure des mécanismes."
+    },
+    {
+      "type": "h2",
+      "title": "Les bons produits de lubrification",
+      "content": "Poudre de graphite : idéale pour les cylindres (pas de résidu collant). Spray PTFE (Teflon) : polyvalent, ne colle pas la poussière. Huile de paraffine : acceptable. À éviter : huile moteur, WD-40 en usage régulier, graisse épaisse (attire poussière et sable)."
+    },
+    {
+      "type": "h2",
+      "title": "Procédure d'entretien annuel",
+      "content": "Introduisez la poudre de graphite ou le spray PTFE dans l'entrée de clé du cylindre. Actionnez la clé plusieurs fois pour répartir. Lubrifiez aussi les pênes et gâches avec une légère couche de graisse. Vérifiez le serrage des vis de la platine."
+    },
+    {
+      "type": "h2",
+      "title": "Signaux d'alarme à ne pas ignorer",
+      "content": "Clé qui tourne avec résistance inhabituelle, bruit de grattement métallique, clé qui reste coincée en position : ce sont des signes qu'un remplacement prochain sera nécessaire. Mieux vaut l'anticiper que d'être bloqué."
+    },
+    {
+      "type": "cta",
+      "text": "Entretien et réparation serrures"
+    }
+  ],
+  "faq": [
+    {
+      "q": "À quelle fréquence entretenir sa serrure ?",
+      "a": "Une fois par an suffit pour les serrures intérieures. Pour les serrures extérieures exposées aux intempéries et à la poussière : deux fois par an. Dans les zones côtières (sel marin) : tous les 3 mois."
+    },
+    {
+      "q": "Peut-on entretenir soi-même sa serrure multipoints ?",
+      "a": "Oui pour la lubrification du cylindre et des pênes. Le mécanisme interne (tringles, renvois d'angle) peut nécessiter un serrurier pour la lubrification en profondeur."
+    },
+    {
+      "q": "Ma serrure a l'air de rouiller, que faire ?",
+      "a": "La rouille sur les parties apparentes (platine, pênes) indique une mauvaise qualité du métal ou une absence de protection. Nettoyez avec de la laine d'acier fine et appliquez un anti-rouille. Si le mécanisme interne est rouillé, remplacement recommandé."
+    }
+  ],
+  "related_articles": [
+    "serrure-coincee-clef-tourne-pas",
+    "canon-serrure-casse",
+    "porte-bois-gonflee"
+  ],
+  "internal_links": [
+    "/serrurier/casablanca",
+    "/serrurier/rabat",
+    "/serrurier/marrakech"
+  ]
+}

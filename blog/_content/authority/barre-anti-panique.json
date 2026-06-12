@@ -1,0 +1,64 @@
+{
+  "slug": "barre-anti-panique",
+  "title": "Barre anti-panique : installation professionnelle au Maroc",
+  "meta_description": "Installer une barre anti-panique au Maroc : réglementation, types de barres et installation dans les ERP (restaurants, bureaux, mosquées).",
+  "category": "serrurerie",
+  "tags": [
+    "barre anti-panique",
+    "sécurité incendie",
+    "ERP",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 5,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Les établissements recevant du public (restaurants, boutiques, mosquées, bureaux) au Maroc sont tenus d'équiper leurs issues de secours de barres anti-panique. En cas d'incendie, ces dispositifs permettent l'évacuation rapide sans clé."
+    },
+    {
+      "type": "h2",
+      "title": "Fonctionnement et types",
+      "content": "La barre anti-panique s'ouvre d'un simple appui horizontal, même sous panique. Deux types principaux : barre de poussée (pousse = ouverture) et barre touchante (contact = déverrouillage). Pour les établissements avec risque d'incendie, les modèles avec contact de porte (coupure alarme à l'ouverture) sont recommandés."
+    },
+    {
+      "type": "h2",
+      "title": "Réglementation marocaine",
+      "content": "Les ERP marocains doivent se conformer aux prescriptions du Règlement de Construction Parasismique et à la circulaire sur la sécurité incendie. Les issues de secours comptant plus de 50 personnes doivent être équipées de barres anti-panique certifiées EN 1125."
+    },
+    {
+      "type": "h2",
+      "title": "Installation et coûts",
+      "content": "Barre anti-panique standard (EN 1125) : 400 à 1200 MAD. Modèle avec barre de recoupement (ouverture de l'extérieur par clé) : 800 à 2000 MAD. Pose par serrurier certifié : 200 à 400 MAD."
+    },
+    {
+      "type": "cta",
+      "text": "Installer des barres anti-panique"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Est-il obligatoire d'avoir une barre anti-panique dans un restaurant au Maroc ?",
+      "a": "Oui pour les établissements de capacité > 50 personnes ou en cas d'issues de secours définies dans le plan de sécurité. Les obligations précises dépendent de la classification de l'établissement."
+    },
+    {
+      "q": "La barre anti-panique peut-elle être verrouillée de nuit ?",
+      "a": "Oui. La plupart des modèles peuvent être verrouillés avec une clé en dehors des heures d'ouverture. En mode urgence (alarme incendie), le verrouillage se désactive automatiquement."
+    },
+    {
+      "q": "Quelle est la différence entre barre anti-panique et barre d'alarme ?",
+      "a": "La barre d'alarme sonne quand on l'utilise (dissuasion contre sorties non autorisées). La barre anti-panique ouvre sans alarme. Les deux sont compatibles."
+    }
+  ],
+  "related_articles": [
+    "serrure-electrique-probleme",
+    "digicode-installation-immeuble",
+    "ferme-porte-installation"
+  ],
+  "internal_links": [
+    "/serrurier/casablanca",
+    "/serrurier/rabat",
+    "/serrurier/marrakech"
+  ]
+}

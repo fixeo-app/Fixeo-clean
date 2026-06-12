@@ -1,0 +1,64 @@
+{
+  "slug": "ventilation-vmc-maison",
+  "title": "VMC maison : installation et entretien au Maroc",
+  "meta_description": "Installer une VMC (Ventilation Mécanique Contrôlée) au Maroc : types, utilité, installation et entretien des bouches de ventilation.",
+  "category": "climatisation",
+  "tags": [
+    "VMC",
+    "ventilation",
+    "qualité air",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 6,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Dans les logements bien isolés et climatisés marocains, le renouvellement de l'air est souvent négligé. Une VMC assure une qualité d'air constante et réduit l'humidité — évitant moisissures et problèmes respiratoires."
+    },
+    {
+      "type": "h2",
+      "title": "VMC simple flux vs double flux",
+      "content": "Simple flux : extrait l'air vicié des pièces humides (SDB, WC, cuisine) et fait entrer de l'air frais par les grilles de transfert. Solution la plus répandue au Maroc. Double flux : extrait ET insuffle avec récupération de chaleur — plus efficace mais plus coûteux (4000-8000 MAD)."
+    },
+    {
+      "type": "h2",
+      "title": "Installation",
+      "content": "La VMC se pose généralement dans un faux-plafond ou en comble. Des gaines relient le moteur aux bouches dans chaque pièce. L'extraction finale se fait vers l'extérieur. Pour un appartement type, installation par un professionnel : 1500 à 3000 MAD."
+    },
+    {
+      "type": "h2",
+      "title": "Entretien de la VMC",
+      "content": "Nettoyage des bouches d'extraction (tous les 6 mois, avec un aspirateur). Remplacement du filtre du moteur (tous les ans). Vérification du débit par un technicien (tous les 3 ans). Une VMC mal entretenue peut propager des moisissures au lieu de les éliminer."
+    },
+    {
+      "type": "cta",
+      "text": "Installer ma VMC"
+    }
+  ],
+  "faq": [
+    {
+      "q": "La VMC fait-elle beaucoup de bruit ?",
+      "a": "Les VMC modernes (groupe moteur sur silent-blocs, gaines flexibles isolées) sont très silencieuses (< 30 dB). Un bourdonnement excessif indique un entretien défaillant ou un moteur en fin de vie."
+    },
+    {
+      "q": "La VMC est-elle compatible avec la climatisation ?",
+      "a": "Oui et les deux se complètent parfaitement. La clim refroidit, la VMC renouvelle l'air. Dans un logement bien étanche, une VMC est quasi-indispensable pour éviter la condensation et les CO2 excessifs."
+    },
+    {
+      "q": "Mon appartement n'a pas de VMC, puis-je en installer une ?",
+      "a": "Oui dans la plupart des cas. La difficulté dépend de la configuration (faux-plafond existant, accès à l'extérieur). Un technicien Fixeo peut évaluer la faisabilité gratuitement sur devis."
+    }
+  ],
+  "related_articles": [
+    "installation-vmc-salle-bain",
+    "clim-odeur-mauvaise",
+    "choisir-climatisation-maroc"
+  ],
+  "internal_links": [
+    "/climatisation/casablanca",
+    "/climatisation/agadir",
+    "/climatisation/marrakech"
+  ]
+}

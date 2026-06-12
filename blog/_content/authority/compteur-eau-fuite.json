@@ -1,0 +1,64 @@
+{
+  "slug": "compteur-eau-fuite",
+  "title": "Compteur d'eau qui tourne : détecter une fuite cachée",
+  "meta_description": "Votre compteur ONEE tourne quand tout est fermé ? Méthode de détection de fuite cachée et démarches au Maroc. Guide complet Fixeo.",
+  "category": "plomberie",
+  "tags": [
+    "compteur eau",
+    "fuite cachée",
+    "ONEE",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 5,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Facture d'eau anormalement élevée ce mois-ci ? Le compteur qui tourne sans raison est un signal d'alarme clair : vous avez une fuite quelque part. Au Maroc, les fuites invisibles représentent 15 à 20% de la consommation d'eau des ménages."
+    },
+    {
+      "type": "h2",
+      "title": "Comment tester son compteur",
+      "content": "Fermez toutes les vannes et robinets. Relevez les 5 chiffres noirs ET les 3 chiffres rouges du compteur. Attendez 30 minutes. Relevez à nouveau. Si les chiffres ont bougé (même les rouges), vous avez une fuite active. La petite aiguille (ou triangle rouge sur certains compteurs) est encore plus sensible."
+    },
+    {
+      "type": "h2",
+      "title": "Localiser la fuite",
+      "content": "Si le compteur tourne mais que vous ne voyez rien : c'est une fuite cachée (sous dalle, dans mur, sous jardin). Commencez par vérifier les canalisations apparentes, les joints de WC, et les arrivées de chauffe-eau. Si rien n'est visible, appelez un plombier avec équipement de détection."
+    },
+    {
+      "type": "h2",
+      "title": "Démarches auprès de l'ONEE",
+      "content": "Si la fuite est confirmée et réparée, l'ONEE peut accorder un dégrèvement partiel sur la facture exceptionnelle (procédure à demander à votre agence locale avec justificatif de réparation). Gardez la facture du plombier."
+    },
+    {
+      "type": "cta",
+      "text": "Détecter ma fuite cachée"
+    }
+  ],
+  "faq": [
+    {
+      "q": "L'ONEE peut-il m'aider si ma facture est anormalement élevée ?",
+      "a": "Oui, présentez-vous à votre agence ONEE avec votre relevé de compteur avant/après réparation, et la facture du plombier. Un dégrèvement partiel est possible selon la durée de la fuite."
+    },
+    {
+      "q": "Mon compteur a un chiffre anormal, est-ce une erreur de relevé ?",
+      "a": "Les erreurs de relevé existent mais sont rares. Vérifiez d'abord si vous avez une fuite (test compteur 30 min). Si le test est négatif, contactez l'ONEE pour demander une vérification du compteur."
+    },
+    {
+      "q": "Quelle est la consommation normale d'eau au Maroc ?",
+      "a": "Une famille de 4 personnes consomme en moyenne 10 à 15 m³ par mois. Au-delà de 20 m³ sans explication (remplissage piscine, travaux), soupçonnez une fuite."
+    }
+  ],
+  "related_articles": [
+    "detection-fuite-eau-cachee",
+    "fuite-eau-mur",
+    "vanne-arret-eau"
+  ],
+  "internal_links": [
+    "/plombier/casablanca",
+    "/plombier/rabat",
+    "/plombier/fes"
+  ]
+}

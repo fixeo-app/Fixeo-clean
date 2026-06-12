@@ -1,0 +1,64 @@
+{
+  "slug": "serrure-coincee-clef-tourne-pas",
+  "title": "Serrure coincée : clé qui ne tourne pas",
+  "meta_description": "Votre clé ne tourne plus dans la serrure au Maroc ? Diagnostic des causes et solutions pour débloquer sans casser. Guide Fixeo serrurier.",
+  "category": "serrurerie",
+  "tags": [
+    "serrure coincée",
+    "clé bloquée",
+    "serrurier",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 4,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "La clé entre mais ne tourne plus. Ou elle tourne à vide. Ce problème courant au Maroc est souvent dû au calcaire ou à un mécanisme usé — et se résout souvent sans remplacement complet de la serrure."
+    },
+    {
+      "type": "h2",
+      "title": "Diagnostiquer la cause",
+      "content": "Clé qui tourne à vide : le mécanisme interne est cassé (came de la serrure). Clé bloquée mi-rotation : obstacle mécanique (corps étranger, dent de la serrure usée). Clé dure à tourner : manque de lubrification ou calcaire dans le canon."
+    },
+    {
+      "type": "h2",
+      "title": "Solutions à essayer soi-même",
+      "content": "Lubrifiez avec un spray PTFE (Teflon) ou de la poudre de graphite — jamais d'huile grasse qui attire la poussière. Insérez la clé et tapotez légèrement pour mobiliser la serrure. Si ça ne sufffit pas, appelez un serrurier."
+    },
+    {
+      "type": "h2",
+      "title": "Intervention professionnelle",
+      "content": "Un serrurier peut démonter le canon, nettoyer et lubrifier (100-150 MAD), ou remplacer le cylindre si usé (200-400 MAD cylindre + pose)."
+    },
+    {
+      "type": "cta",
+      "text": "Débloquer ma serrure"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Peut-on utiliser de l'huile WD-40 sur une serrure ?",
+      "a": "WD-40 est un dégrippant, pas un lubrifiant longue durée. Il débloque temporairement mais attire la poussière et aggrave le problème avec le temps. Utilisez de la poudre de graphite ou spray PTFE."
+    },
+    {
+      "q": "Ma serrure était lubrifiée mais coince encore, pourquoi ?",
+      "a": "Si la lubrification ne règle pas le problème, les goupilles internes sont usées ou le barillet est mal aligné. Un cylindre de remplacement s'impose."
+    },
+    {
+      "q": "Combien coûte le remplacement d'un cylindre de serrure ?",
+      "a": "Un cylindre standard européen coûte 80 à 200 MAD. La pose par un serrurier : 100 à 150 MAD. Total : 180 à 350 MAD pour un cylindre sécurisé."
+    }
+  ],
+  "related_articles": [
+    "canon-serrure-casse",
+    "cylindre-europeen-changer",
+    "serrure-huile-entretien"
+  ],
+  "internal_links": [
+    "/serrurier/casablanca",
+    "/serrurier/rabat",
+    "/serrurier/marrakech"
+  ]
+}

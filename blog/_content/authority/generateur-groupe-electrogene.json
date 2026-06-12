@@ -1,0 +1,64 @@
+{
+  "slug": "generateur-groupe-electrogene",
+  "title": "Groupe électrogène : choisir et installer au Maroc",
+  "meta_description": "Groupe électrogène au Maroc : choisir la bonne puissance, installation sécurisée et raccordement au réseau. Guide complet Fixeo 2025.",
+  "category": "electricite",
+  "tags": [
+    "groupe électrogène",
+    "générateur",
+    "autonomie",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 6,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Coupures d'électricité fréquentes dans votre zone, commerce ou local industriel à protéger, villa en zone rurale — le groupe électrogène est la solution de backup par excellence au Maroc."
+    },
+    {
+      "type": "h2",
+      "title": "Choisir la puissance adaptée",
+      "content": "Calculez la somme des puissances des équipements à alimenter (en Watts). Multipliez par 1,3 pour la marge de démarrage. Exemple : éclairage 500W + frigo 300W + PC 200W = 1000W × 1,3 = 1300W minimum. Préférez un groupe 2kVA pour cette configuration."
+    },
+    {
+      "type": "h2",
+      "title": "Essence, diesel ou gaz ?",
+      "content": "Essence : moins cher à l'achat, bruyant, consommation élevée. Diesel : plus économique à l'usage, durée de vie plus longue, recommandé pour usage fréquent. Gaz (GPL) : silencieux, propre, mais accès à la bouteille nécessaire. Pour les usages occasionnels, l'essence suffit."
+    },
+    {
+      "type": "h2",
+      "title": "Installation et sécurité",
+      "content": "Le groupe DOIT être à l'extérieur (monoxyde de carbone mortel en intérieur). Connexion au réseau maison via un inverseur de source (ATS) pour basculer automatiquement — un électricien est indispensable pour ce raccordement. Ne jamais connecter directement au tableau sans ATS."
+    },
+    {
+      "type": "cta",
+      "text": "Installer mon groupe électrogène"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Puis-je brancher un groupe électrogène directement sur une prise murale ?",
+      "a": "Non. Ce type de connexion (back-feed) est dangereux et peut tuer des techniciens ONEE qui travaillent sur le réseau. Un inverseur de source (ATS) câblé par un électricien est obligatoire."
+    },
+    {
+      "q": "Quelle marque de groupe électrogène est fiable au Maroc ?",
+      "a": "Honda et Yamaha sont les références fiables mais chères. Kipor et Firman offrent un bon rapport qualité/prix. Évitez les marques inconnues sans service après-vente au Maroc."
+    },
+    {
+      "q": "Combien de temps peut fonctionner un groupe électrogène ?",
+      "a": "Un réservoir de 4L à 50% de charge dure environ 4 à 6 heures. À pleine charge, 2 à 3 heures. Les modèles grande capacité (20L) peuvent fonctionner 12 à 16 heures en continu."
+    }
+  ],
+  "related_articles": [
+    "onduleur-installation-maroc",
+    "panneau-solaire-installation",
+    "coupure-courant-frequente"
+  ],
+  "internal_links": [
+    "/electricien/casablanca",
+    "/electricien/rabat",
+    "/electricien/marrakech"
+  ]
+}

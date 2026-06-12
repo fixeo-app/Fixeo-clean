@@ -1,0 +1,64 @@
+{
+  "slug": "portail-motorise-probleme",
+  "title": "Portail motorisé en panne : dépannage au Maroc",
+  "meta_description": "Votre portail motorisé ne s'ouvre plus au Maroc ? Diagnostiquer les pannes courantes et dépanner avec les experts Fixeo.",
+  "category": "serrurerie",
+  "tags": [
+    "portail motorisé",
+    "automatisme",
+    "panne",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 5,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Le portail motorisé est un confort devenu quasi-standard dans les villas marocaines. Mais quand la télécommande ne répond plus ou que le portail reste bloqué, c'est une situation frustrante — et potentiellement bloquante."
+    },
+    {
+      "type": "h2",
+      "title": "Pannes les plus fréquentes",
+      "content": "Batterie de télécommande épuisée (vérification n°1). Panne d'alimentation électrique du moteur (vérifier le fusible). Obstacle détecté par les cellules photoélectriques (un objet, une feuille). Fin de course mal réglé. Moteur en surchauffe (après usage intensif en été)."
+    },
+    {
+      "type": "h2",
+      "title": "Mode de déverrouillage manuel",
+      "content": "Chaque portail motorisé a un déverrouillage mécanique d'urgence. Généralement un câble rouge ou une clé spéciale qui désaccouple le moteur. Consultez la notice de votre automatisme. C'est vital en cas de panne d'alimentation."
+    },
+    {
+      "type": "h2",
+      "title": "Intervention professionnelle",
+      "content": "Réglage des fins de course et cellules : 100 à 200 MAD. Remplacement d'un bras de motorisation : 300 à 800 MAD. Remplacement du moteur complet : 800 à 2500 MAD selon la marque et la puissance."
+    },
+    {
+      "type": "cta",
+      "text": "Réparer mon portail motorisé"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Combien de cycles mon moteur de portail peut-il faire ?",
+      "a": "Un moteur d'entrée de gamme : 150 000 cycles. Milieu de gamme : 300 000 cycles. Pour une utilisation de 10 fois/jour, ça représente 30 à 80 ans — bien au-delà de votre villa."
+    },
+    {
+      "q": "Ma télécommande ne fonctionne qu'à courte distance, pourquoi ?",
+      "a": "Batterie faible (première vérification), antenne du récepteur endommagée, ou interférences (voisinage 5G, nouveaux équipements). Essayez d'abord avec une batterie neuve."
+    },
+    {
+      "q": "Mon portail s'ouvre tout seul, est-ce dangereux ?",
+      "a": "Oui. Un portail qui s'ouvre seul peut indiquer une interférence de fréquence avec d'autres télécommandes du voisinage, ou un problème de mémoire de la centrale. Appelez un technicien — ce problème peut se corriger par reprogrammation."
+    }
+  ],
+  "related_articles": [
+    "serrure-electrique-probleme",
+    "digicode-installation-immeuble",
+    "porte-garage-bloquee"
+  ],
+  "internal_links": [
+    "/serrurier/casablanca",
+    "/serrurier/rabat",
+    "/serrurier/marrakech"
+  ]
+}

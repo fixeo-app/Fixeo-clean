@@ -1,0 +1,64 @@
+{
+  "slug": "installation-borne-recharge-voiture",
+  "title": "Borne de recharge voiture électrique au Maroc en 2025",
+  "meta_description": "Installer une borne de recharge pour voiture électrique chez soi au Maroc : matériel, normes, coûts 2025 et demandes ONEE.",
+  "category": "electricite",
+  "tags": [
+    "borne recharge",
+    "voiture électrique",
+    "IRVE",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 6,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Le parc de véhicules électriques au Maroc croît rapidement depuis 2023. Que vous ayez une Dacia Spring, un Citroën Ami ou une Tesla, une borne de recharge à domicile change radicalement votre expérience."
+    },
+    {
+      "type": "h2",
+      "title": "Types de bornes disponibles",
+      "content": "Prise renforcée (Green'up) : la plus simple, 1,8 à 3,2 kW, recharge lente. Wallbox 7,4 kW (monophasé) : le standard résidentiel, recharge complète en 6-8h. Wallbox 11 kW (triphasé) : pour les grandes batteries, nécessite un abonnement triphasé. Pour un usage quotidien, la wallbox 7,4 kW est la solution idéale."
+    },
+    {
+      "type": "h2",
+      "title": "Exigences électriques",
+      "content": "Circuit dédié depuis tableau : câble 6mm² (monophasé 7,4kW) ou 4mm² (triphasé avec répartition), disjoncteur différentiel type A (spécifique VE), disjoncteur 32A. L'abonnement ONEE doit permettre la puissance supplémentaire."
+    },
+    {
+      "type": "h2",
+      "title": "Coûts d'installation au Maroc",
+      "content": "Wallbox 7,4kW (Mennekes Type 2) : 3000 à 6000 MAD. Câblage électrique (10m) : 500 à 900 MAD. Mise à niveau tableau si nécessaire : 800 à 1500 MAD. Total installation clé en main : 4300 à 8400 MAD."
+    },
+    {
+      "type": "cta",
+      "text": "Installer ma borne de recharge"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Puis-je recharger mon VE sur une prise normale au Maroc ?",
+      "a": "Oui temporairement. La recharge sur prise 220V (Mode 1) est très lente (10-15h pour 50kWh) et non recommandée en permanence — risque de surchauffe de la prise. C'est un dépannage, pas une solution pérenne."
+    },
+    {
+      "q": "Faut-il un électricien certifié pour installer une borne VE ?",
+      "a": "Oui. En France (et norme de référence au Maroc), l'installation d'IRVE (Infrastructure de Recharge VE) doit être réalisée par un électricien certifié IRVE Niveau 1 ou 2. Fixeo dispose de techniciens formés."
+    },
+    {
+      "q": "Combien coûte la recharge d'une voiture électrique chez soi au Maroc ?",
+      "a": "Avec le tarif ONEE domestique (0,96 MAD/kWh en tranche 1), recharger une batterie de 40 kWh coûte environ 38 MAD. Une Dacia Spring (26,8 kWh) coûte 25 MAD à recharger complètement."
+    }
+  ],
+  "related_articles": [
+    "tableau-electrique-upgrade",
+    "panneau-solaire-installation",
+    "cablage-maison-renovation"
+  ],
+  "internal_links": [
+    "/electricien/casablanca",
+    "/electricien/rabat",
+    "/electricien/marrakech"
+  ]
+}

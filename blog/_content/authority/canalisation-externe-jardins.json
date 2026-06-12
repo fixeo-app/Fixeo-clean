@@ -1,0 +1,64 @@
+{
+  "slug": "canalisation-externe-jardins",
+  "title": "Plomberie extérieure et jardin : installation et réparation au Maroc",
+  "meta_description": "Canalisations extérieures au Maroc : robinet de jardin, arrosage automatique, piscine. Installation, étanchéité et réparation par les plombiers Fixeo.",
+  "category": "plomberie",
+  "tags": [
+    "plomberie extérieure",
+    "jardin",
+    "arrosage",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 5,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Villas et riads marocains avec jardin : les installations plomberie extérieures sont plus complexes qu'on ne le pense. Exposition aux UV, variations thermiques extrêmes entre été et hiver, et risques de fuite invisibles sous terre."
+    },
+    {
+      "type": "h2",
+      "title": "Matériaux recommandés en extérieur",
+      "content": "Le polyéthylène HD (PEHD) enterré est le meilleur choix pour les canalisations extérieures : insensible aux UV, résistant au gel et à la corrosion, durée de vie 50+ ans. En surface : PVC gris protégé UV. Évitez les tuyaux noirs d'arrosage pour les installations permanentes."
+    },
+    {
+      "type": "h2",
+      "title": "Arrosage automatique : installation au Maroc",
+      "content": "Un réseau d'arrosage automatique pour un jardin de 200 m² nécessite : électrovanne reliée à une minuterie ou programmateur, tuyaux PEHD 25mm enterrés à 30cm, têtes d'arrosage rotatives ou statiques selon les zones. Budget installation : 1500 à 5000 MAD selon superficie."
+    },
+    {
+      "type": "h2",
+      "title": "Robinets et raccords extérieurs",
+      "content": "Tout robinet extérieur doit être de type anti-gel (robinet de purge intérieure). Les robinets extérieurs standards fureront les premières nuits de gel à Marrakech ou Fès. Pensez aussi à installer un anti-retour pour protéger le réseau intérieur de la contamination."
+    },
+    {
+      "type": "cta",
+      "text": "Créer mon arrosage extérieur"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Puis-je connecter mon arrosage directement au réseau ONEE ?",
+      "a": "Oui, mais un disconnecteur (clapet anti-retour contrôlable) est obligatoire pour protéger le réseau d'eau potable de toute contamination par l'eau de sol. L'ONEE peut imposer des pénalités en cas d'absence."
+    },
+    {
+      "q": "Comment trouver une fuite dans une canalisation enterrée dans le jardin ?",
+      "a": "Les zones anormalement vertes et humides indiquent une fuite souterraine. Un plombier peut utiliser un géophone (détection acoustique) ou injecter du gaz traceur pour localiser précisément la fuite sans fouilles inutiles."
+    },
+    {
+      "q": "Quel diamètre de tuyau pour alimenter une piscine ?",
+      "a": "Le circuit de filtration d'une piscine standard (8x4m) utilise des tuyaux de 50 à 63mm. L'arrivée d'eau froide pour le remplissage est généralement en 25mm ou 32mm."
+    }
+  ],
+  "related_articles": [
+    "vanne-arret-eau",
+    "detection-fuite-eau-cachee",
+    "pompe-eau-en-panne"
+  ],
+  "internal_links": [
+    "/plombier/casablanca",
+    "/plombier/rabat",
+    "/plombier/fes"
+  ]
+}

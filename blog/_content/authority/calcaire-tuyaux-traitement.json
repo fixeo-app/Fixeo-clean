@@ -1,0 +1,65 @@
+{
+  "slug": "calcaire-tuyaux-traitement",
+  "title": "Calcaire dans les tuyaux : traitement et prévention au Maroc",
+  "meta_description": "L'eau dure calcaire bouche vos tuyaux au Maroc ? Solutions de traitement : adoucisseur, antitartre magnétique, détartrage. Guide Fixeo.",
+  "category": "plomberie",
+  "tags": [
+    "calcaire",
+    "tartre",
+    "adoucisseur",
+    "eau dure",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 6,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "L'eau de Casablanca, Marrakech et Fès est parmi les plus calcaires d'Afrique du Nord (titre hydrotimétrique de 30 à 50°F). Ce calcaire est la première cause de réduction de durée de vie des équipements sanitaires et des chauffe-eau au Maroc."
+    },
+    {
+      "type": "h2",
+      "title": "Comment le calcaire endommage vos installations",
+      "content": "Le tartre s'accumule sur les résistances électriques (réduisant leur efficacité de 30% par mm de dépôt), dans les tuyaux (réduisant le débit), dans les chauffe-eau (bruits de claquements), et sur les robinetteries et pommeaux de douche."
+    },
+    {
+      "type": "h2",
+      "title": "Solutions de traitement",
+      "content": "Adoucisseur à sel : efficace à 99%, 3000-8000 MAD installé. Antitartre magnétique : sans entretien, 200-500 MAD, efficacité variable. Antitartre électronique : 500-1500 MAD, bon rapport qualité/prix. Détartrant chimique annuel : 100-200 MAD pour un traitement de chauffe-eau."
+    },
+    {
+      "type": "h2",
+      "title": "Entretien préventif des appareils",
+      "content": "Détartrez votre chauffe-eau tous les 2 ans avec du vinaigre blanc dilué. Nettoyez les aérateurs de robinets (2-3 fois/an). Remplacez les cartouches filtrantes. Dans les zones très calcaires, prévoyez un entretien annuel par un professionnel."
+    },
+    {
+      "type": "cta",
+      "text": "Traiter mon problème de calcaire"
+    }
+  ],
+  "faq": [
+    {
+      "q": "L'adoucisseur d'eau est-il nécessaire au Maroc ?",
+      "a": "Dans les zones à eau très dure (Casablanca, Marrakech, Fès), un adoucisseur peut doubler la durée de vie de votre chauffe-eau et réduire votre consommation de produits ménagers. L'investissement est rentabilisé en 3 à 5 ans."
+    },
+    {
+      "q": "L'eau adoucie est-elle buvable ?",
+      "a": "L'eau adoucie contient plus de sodium et est déconseillée pour les nourrissons, les personnes sous régime hyposodé et les plantes. Prévoyez un robinet d'eau brute dédié pour l'eau de boisson."
+    },
+    {
+      "q": "Peut-on détartrer soi-même un chauffe-eau ?",
+      "a": "Oui, avec du vinaigre blanc dilué (1L pour 10L d'eau). Vidangez le chauffe-eau, remplissez avec la solution, laissez agir 4 heures, rincez. Cette opération est recommandée tous les 2 ans dans les zones calcaires."
+    }
+  ],
+  "related_articles": [
+    "remplacement-cumulus-maroc",
+    "entretien-chauffe-eau-solaire",
+    "pression-eau-faible-maison"
+  ],
+  "internal_links": [
+    "/plombier/casablanca",
+    "/plombier/rabat",
+    "/plombier/fes"
+  ]
+}

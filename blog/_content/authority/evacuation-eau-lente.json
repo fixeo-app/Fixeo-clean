@@ -1,0 +1,64 @@
+{
+  "slug": "evacuation-eau-lente",
+  "title": "Évacuation d'eau lente : causes et solutions de débouchage",
+  "meta_description": "L'eau s'écoule lentement dans votre évier ou douche au Maroc ? Causes et solutions efficaces pour rétablir un écoulement normal.",
+  "category": "plomberie",
+  "tags": [
+    "évacuation lente",
+    "débouchage",
+    "siphon",
+    "drainage"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 4,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "L'eau qui met 5 minutes pour vider l'évier ou la douche qui fait des flaques à vos pieds : une évacuation lente est le signe d'un bouchon partiel en formation. Intervenir tôt évite l'obstruction complète."
+    },
+    {
+      "type": "h2",
+      "title": "Les coupables habituels",
+      "content": "Dans la douche : accumulation de cheveux et de savon dans le siphon. Dans l'évier de cuisine : graisses alimentaires solidifiées. Dans le lavabo : pâte dentifrice, cosmétiques, cheveux. Dans les WC : dépôts calcaires sur les parois de la canalisation."
+    },
+    {
+      "type": "h2",
+      "title": "Solutions selon le point d'évacuation",
+      "content": "Douche : retirez le cache siphon et enlevez les cheveux à la main (gants recommandés), puis rincez avec de l'eau chaude. Évier cuisine : versez de l'eau bouillante (déloge les graisses), puis du bicarbonate + vinaigre. Si insuffisant : furet rotatif."
+    },
+    {
+      "type": "h2",
+      "title": "Quand la solution chimique est justifiée",
+      "content": "Pour les bouchons graisseux persistants, un déboucheur enzymatique (à base de bactéries) est efficace et respecte vos tuyaux. Les produits chimiques agressifs (soude) peuvent attaquer les joints en caoutchouc des siphons anciens."
+    },
+    {
+      "type": "cta",
+      "text": "Résoudre mon évacuation lente"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Pourquoi mon évier de cuisine se bouche-t-il souvent ?",
+      "a": "Les graisses de cuisson sont la cause principale. Ne versez jamais d'huile de friture dans l'évier — même diluée à l'eau chaude, elle re-solidifie dans les canalisations froides. Jetez les huiles dans une bouteille fermée."
+    },
+    {
+      "q": "Mon siphon de douche est inaccessible, que faire ?",
+      "a": "Certains receveurs de douche encastrés ont des siphons difficiles d'accès. Un plombier peut déboucher par hydrocurage à travers l'orifice d'évacuation sans démontage. Coût : 150 à 300 MAD."
+    },
+    {
+      "q": "L'évacuation lente peut-elle causer des dommages ?",
+      "a": "Oui. Une évacuation lente prolongée favorise le dépôt de calcaire et de matières organiques, accélérant le bouschage total. En salle de bain, elle favorise aussi l'humidité et les moisissures."
+    }
+  ],
+  "related_articles": [
+    "canalisation-bouchee",
+    "wc-bouche-comment-deboucher",
+    "odeur-egouts-maison"
+  ],
+  "internal_links": [
+    "/plombier/casablanca",
+    "/plombier/rabat",
+    "/plombier/fes"
+  ]
+}

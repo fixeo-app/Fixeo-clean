@@ -1,0 +1,64 @@
+{
+  "slug": "clim-mode-degivrage",
+  "title": "Mode dégivrage climatisation : fonctionnement normal ?",
+  "meta_description": "Votre climatisation s'arrête régulièrement en mode dégivrage au Maroc ? Ce que c'est, pourquoi ça arrive et quand c'est anormal.",
+  "category": "climatisation",
+  "tags": [
+    "dégivrage",
+    "mode clim",
+    "givre",
+    "fonctionnement"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 4,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Votre climatisation en mode chauffage s'arrête soudainement, de la vapeur sort de l'unité extérieure, puis elle repart — c'est le mode dégivrage automatique. Un comportement normal, mais parfois excessif."
+    },
+    {
+      "type": "h2",
+      "title": "Qu'est-ce que le mode dégivrage ?",
+      "content": "En mode chauffage par temps froid et humide, le givre se forme sur l'échangeur de l'unité extérieure. Pour maintenir l'efficacité, la clim inverse brièvement le cycle frigorigène pour dégivrer (2 à 10 minutes). Pendant ce temps, l'unité intérieure ne chauffe pas."
+    },
+    {
+      "type": "h2",
+      "title": "Quand c'est normal",
+      "content": "Dégivrage de 2 à 10 minutes toutes les 1 à 2 heures lors d'une journée froide et humide (Fès ou Meknès en janvier) : normal. La vapeur blanche qui sort de l'unité extérieure pendant le dégivrage : normal (eau qui s'évapore)."
+    },
+    {
+      "type": "h2",
+      "title": "Quand c'est anormal",
+      "content": "Dégivrage toutes les 15 minutes, dégivrage en été (signe de manque de gaz), dégivrage en mode froid (givre visible sur l'unité intérieure = filtre sale ou manque de gaz), ou dégivrage qui ne termine jamais."
+    },
+    {
+      "type": "cta",
+      "text": "Vérifier ma climatisation"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Ma clim s'arrête et \"fume\" par l'unité extérieure en hiver, est-ce dangereux ?",
+      "a": "Non. C'est de la vapeur d'eau, pas de la fumée. Le dégivrage réchauffe l'échangeur extérieur qui libère l'eau emprisonnée dans le givre sous forme de vapeur. Tout à fait normal par temps humide et froid."
+    },
+    {
+      "q": "Peut-on désactiver le mode dégivrage ?",
+      "a": "Non et il ne faut pas essayer. Le dégivrage protège l'échangeur et le compresseur. Sans lui, le givre s'accumulerait et bloquerait le système en quelques heures."
+    },
+    {
+      "q": "La clim dégivre toutes les 20 minutes, est-ce normal ?",
+      "a": "Non, c'est excessif. Cela peut indiquer un manque de gaz frigorigène, un filtre encrassé réduisant le flux d'air, ou un problème de sonde de température. Un technicien doit vérifier."
+    }
+  ],
+  "related_articles": [
+    "climatisation-reversible",
+    "recharge-gaz-climatisation",
+    "entretien-clim-annuel"
+  ],
+  "internal_links": [
+    "/climatisation/casablanca",
+    "/climatisation/agadir",
+    "/climatisation/marrakech"
+  ]
+}

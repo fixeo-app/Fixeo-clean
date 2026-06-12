@@ -1,0 +1,64 @@
+{
+  "slug": "fuite-sous-evier",
+  "title": "Fuite sous l'évier : diagnostic et réparation rapide",
+  "meta_description": "Fuite sous votre évier de cuisine ou salle de bain ? Identifiez la cause (siphon, joint, robinet) et réparez rapidement avec les conseils Fixeo.",
+  "category": "plomberie",
+  "tags": [
+    "fuite évier",
+    "siphon",
+    "joint",
+    "plomberie"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 4,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Une flaque sous votre évier, le fond du meuble humide, l'odeur de moisissure qui s'installe : les fuites sous évier sont parmi les plus courantes. Bonne nouvelle — elles sont aussi souvent les plus faciles à réparer."
+    },
+    {
+      "type": "h2",
+      "title": "Trouver la source exacte",
+      "content": "Rincez et séchez complètement le dessous de l'évier. Faites couler de l'eau et observez : la fuite vient-elle du siphon (au niveau des assemblages plastiques), du raccord d'évacuation dans le mur, d'un flexible d'arrivée d'eau, ou du joint entre la cuve et le plan de travail ?"
+    },
+    {
+      "type": "h2",
+      "title": "Réparation selon la cause",
+      "content": "Siphon qui fuit : serrer les écrous ou remplacer le joint torique (2-5 MAD). Flexible sous pression qui fuit : remplacement impératif (30-80 MAD le flexible). Joint silicone évier : nettoyer l'ancien joint et appliquer du silicone sanitaire. Raccord mural : peut nécessiter un plombier."
+    },
+    {
+      "type": "h2",
+      "title": "Précautions importantes",
+      "content": "Un flexible d'arrivée d'eau sous pression (tuyaux tressés alimentant le robinet) doit être remplacé tous les 5-7 ans au Maroc. La rupture d'un flexible peut inonder un appartement entier en quelques minutes."
+    },
+    {
+      "type": "cta",
+      "text": "Réparer ma fuite sous évier"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Mon siphon d'évier fuit, puis-je le remplacer moi-même ?",
+      "a": "Oui. Les siphons sont en plastique vissé sans outils. Coupez juste l'eau, retirez l'ancien siphon, installez le nouveau (30-80 MAD en quincaillerie). La clé est de bien serrer les écrous à la main puis un quart de tour supplémentaire."
+    },
+    {
+      "q": "Combien coûte un plombier pour réparer une fuite sous évier ?",
+      "a": "Une intervention simple (joint, siphon) coûte 100 à 200 MAD de main-d'œuvre. Si le problème est dans la canalisation murale, comptez 200 à 500 MAD."
+    },
+    {
+      "q": "La fuite sous mon évier a abîmé le meuble, que faire ?",
+      "a": "Séchez le meuble rapidement (ventilateur, déshumidificateur). Le MDF humide gonfle et ne se répare pas. Dans certains cas, un remplacement du meuble est nécessaire. Documentez les dégâts pour votre assurance habitation."
+    }
+  ],
+  "related_articles": [
+    "robinet-qui-goutte",
+    "canalisation-bouchee",
+    "fuite-eau-mur"
+  ],
+  "internal_links": [
+    "/plombier/casablanca",
+    "/plombier/rabat",
+    "/plombier/fes"
+  ]
+}

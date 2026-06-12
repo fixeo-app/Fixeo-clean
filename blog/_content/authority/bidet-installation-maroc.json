@@ -1,0 +1,64 @@
+{
+  "slug": "bidet-installation-maroc",
+  "title": "Installation bidet électronique au Maroc : guide 2025",
+  "meta_description": "Installer un bidet électronique au Maroc en 2025 : compatibilité, raccordement eau et électricité, coûts. Guide complet par les experts Fixeo.",
+  "category": "plomberie",
+  "tags": [
+    "bidet",
+    "WC japonais",
+    "installation",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 5,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Les bidets électroniques (appelés aussi WC japonais ou washlets) connaissent un essor au Maroc depuis 2023. Installation plus simple qu'on ne le pense — mais quelques points techniques sont à vérifier avant l'achat."
+    },
+    {
+      "type": "h2",
+      "title": "Types de bidets disponibles au Maroc",
+      "content": "Abattant bidet (remplace l'abattant standard) : le plus courant, prix 800-2500 MAD. WC japonais complet (remplace la cuvette) : 3000-8000 MAD. Douchette bidet simple (non électrique) : 100-300 MAD."
+    },
+    {
+      "type": "h2",
+      "title": "Raccordements nécessaires",
+      "content": "Un abattant bidet électronique nécessite : arrivée d'eau froide (tuyau T avec robinet d'arrêt, déjà présent sur le WC), prise électrique mise à la terre à 30 cm maximum (souvent absente dans les salles de bain marocaines — nécessite un électricien). La plupart des salles de bain marocaines nécessitent l'installation d'une prise."
+    },
+    {
+      "type": "h2",
+      "title": "Installation professionnelle recommandée",
+      "content": "La partie plomberie est accessible au bricoleur. La partie électrique (ajout d'une prise GFCI en salle de bain) doit être réalisée par un électricien selon les normes NF C 15-100 ou leur équivalent marocain."
+    },
+    {
+      "type": "cta",
+      "text": "Faire installer mon bidet"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Mon WC actuel est-il compatible avec un abattant bidet ?",
+      "a": "La plupart des cuvettes rondes ou allongées standard sont compatibles. Mesurez la distance entre les boulons de fixation (généralement 15-16 cm) et la profondeur de la cuvette avant d'acheter."
+    },
+    {
+      "q": "L'eau du bidet est-elle toujours froide ?",
+      "a": "Les bidets non électriques utilisent l'eau froide du réseau. Les abattants électroniques chauffent l'eau instantanément (comme un chauffe-eau instantané) et offrent des réglages de température."
+    },
+    {
+      "q": "Combien d'eau consomme un bidet électronique ?",
+      "a": "Environ 0,5 à 1 litre par utilisation, soit bien moins qu'une chasse d'eau (6-9 litres). Sur l'année, un bidet réduit la consommation de papier toilette de 75% et peut légèrement réduire la consommation d'eau globale."
+    }
+  ],
+  "related_articles": [
+    "installation-chauffe-eau-electrique",
+    "plomberie-salle-de-bain-renovation",
+    "electricite-salle-de-bain"
+  ],
+  "internal_links": [
+    "/plombier/casablanca",
+    "/plombier/rabat",
+    "/plombier/fes"
+  ]
+}

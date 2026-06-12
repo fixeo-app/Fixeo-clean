@@ -1,0 +1,64 @@
+{
+  "slug": "installation-hotte-cuisine",
+  "title": "Hotte de cuisine : installation électrique et ventilation",
+  "meta_description": "Installer une hotte aspirante au Maroc : raccordement électrique, gaine d'évacuation vs recyclage, normes et coûts par les experts Fixeo.",
+  "category": "electricite",
+  "tags": [
+    "hotte cuisine",
+    "ventilation",
+    "installation",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 5,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "La hotte aspirante est indispensable dans les cuisines fermées marocaines où les odeurs de cuissons épicées peuvent envahir tout l'appartement. Mais son installation soulève des questions techniques importantes."
+    },
+    {
+      "type": "h2",
+      "title": "Évacuation vs recyclage",
+      "content": "Évacuation : l'air vicié est expulsé vers l'extérieur via une gaine — solution idéale mais nécessite un passage dans le mur ou la façade. Recyclage : l'air est filtré (charbon actif) et réinjecté dans la cuisine — plus simple mais les filtres coûtent 150-300 MAD/an. Au Maroc, l'évacuation est recommandée si possible."
+    },
+    {
+      "type": "h2",
+      "title": "Raccordement électrique",
+      "content": "La hotte nécessite une prise standard 220V avec mise à la terre, protégée par un DDR 30mA. Si aucune prise n'est disponible au-dessus de la cuisinière, un électricien doit en installer une. Une hotte > 500W peut nécessiter un circuit dédié."
+    },
+    {
+      "type": "h2",
+      "title": "Installation et coûts",
+      "content": "Fixation murale (percement et chevilles si nécessaire) + raccordement électrique + gaine d'évacuation (< 3m) : 300 à 600 MAD par un électricien/artisan. Si création d'une prise murale : ajouter 150 à 250 MAD."
+    },
+    {
+      "type": "cta",
+      "text": "Installer ma hotte de cuisine"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Quelle puissance de hotte pour une cuisine marocaine ?",
+      "a": "Pour une cuisine standard avec cuissons fréquentes (tajines, fritures), une hotte de 600 à 700 m³/h est recommandée. Les petites hottes < 400 m³/h sont insuffisantes pour les cuisines marocaines."
+    },
+    {
+      "q": "Peut-on installer une hotte sans gaine d'évacuation dans une cuisine marocaine ?",
+      "a": "Oui avec un filtre à charbon actif (mode recyclage). Préférable à pas de hotte du tout. Changez les filtres tous les 3 à 6 mois selon l'utilisation."
+    },
+    {
+      "q": "Ma hotte aspire mal, comment améliorer ?",
+      "a": "Nettoyez les filtres gras (trempage dans eau chaude dégraissante). Vérifiez que la gaine d'évacuation n'est pas pliée ou obstruée. Si le ventilateur est usé, son remplacement coûte 100 à 200 MAD."
+    }
+  ],
+  "related_articles": [
+    "electricite-salle-de-bain",
+    "installation-prise-electrique",
+    "cablage-maison-renovation"
+  ],
+  "internal_links": [
+    "/electricien/casablanca",
+    "/electricien/rabat",
+    "/electricien/marrakech"
+  ]
+}

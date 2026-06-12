@@ -1,0 +1,64 @@
+{
+  "slug": "pression-eau-faible-maison",
+  "title": "Pression d'eau faible à la maison : causes et solutions au Maroc",
+  "meta_description": "Pression d'eau insuffisante chez vous au Maroc ? Découvrez pourquoi et comment améliorer votre pression d'eau avec les conseils des plombiers Fixeo.",
+  "category": "plomberie",
+  "tags": [
+    "pression eau",
+    "plomberie",
+    "ONEE",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 6,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Shower décevant, robinet qui ne remplit qu'un mince filet — la faible pression d'eau est l'un des problèmes les plus signalés dans les appartements marocains, notamment dans les immeubles anciens de Casablanca et les zones résidentielles de Rabat."
+    },
+    {
+      "type": "h2",
+      "title": "Causes principales de la faible pression",
+      "content": "Trois sources possibles : le réseau ONEE/RADEEF sous-dimensionné dans votre secteur (vérifiez avec vos voisins), les canalisations encrassées par le calcaire marocain qui réduisent le diamètre utile, ou la vanne d'arrêt principale partiellement fermée."
+    },
+    {
+      "type": "h2",
+      "title": "Solutions techniques",
+      "content": "La solution la plus efficace est l'installation d'une pompe de surpression (300 à 800 MAD selon le modèle). Pour les canalisations entartrées, un traitement chimique ou le remplacement par des tuyaux en PVC ou inox s'impose. Dans un immeuble, la pompe collective est à discuter en copropriété."
+    },
+    {
+      "type": "h2",
+      "title": "Quand appeler un plombier ?",
+      "content": "Si la faible pression est soudaine (rupture possible), si elle touche un seul appartement (problème interne), ou si vous voulez installer un surpresseur — un plombier qualifié réalisera un diagnostic complet et proposera la meilleure solution."
+    },
+    {
+      "type": "cta",
+      "text": "Diagnostiquer ma pression d'eau"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Quel est le coût d'installation d'un surpresseur au Maroc ?",
+      "a": "Un surpresseur domestique coûte entre 400 et 1200 MAD à l'achat. La pose par un plombier ajoute 200 à 400 MAD. Comptez 600 à 1600 MAD tout compris selon la puissance."
+    },
+    {
+      "q": "La faible pression vient-elle de l'ONEE ou de chez moi ?",
+      "a": "Fermez toutes vos robinetteries et vérifiez si vos voisins ont le même problème. Si oui, c'est le réseau ONEE. Si non, le problème est interne à votre installation."
+    },
+    {
+      "q": "Le calcaire peut-il vraiment bloquer mes canalisations ?",
+      "a": "Oui. L'eau de nombreuses villes marocaines est très calcaire. En quelques années, le dépôt de tartre peut réduire le diamètre effectif d'un tuyau de 15 mm à 5 mm, diminuant drastiquement le débit."
+    }
+  ],
+  "related_articles": [
+    "fuite-eau-mur",
+    "calcaire-tuyaux-traitement",
+    "pompe-eau-en-panne"
+  ],
+  "internal_links": [
+    "/plombier/casablanca",
+    "/plombier/rabat",
+    "/plombier/fes"
+  ]
+}

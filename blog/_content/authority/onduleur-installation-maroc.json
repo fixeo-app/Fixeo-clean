@@ -1,0 +1,64 @@
+{
+  "slug": "onduleur-installation-maroc",
+  "title": "Onduleur batterie : backup électrique au Maroc",
+  "meta_description": "Installer un onduleur (UPS) au Maroc pour protéger vos équipements des coupures et surtensions ONEE. Guide de choix et installation.",
+  "category": "electricite",
+  "tags": [
+    "onduleur",
+    "UPS",
+    "coupure courant",
+    "surtension"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 5,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Coupures ONEE intempestives, surtensions nocturnes, micro-coupures qui éteignent votre box internet — au Maroc, l'onduleur (UPS) est un investissement rapidement rentabilisé, surtout pour les télétravailleurs et les PME."
+    },
+    {
+      "type": "h2",
+      "title": "Types d'onduleurs",
+      "content": "Offline (standby) : le plus économique, bascule sur batterie en 5-20ms. Line-interactive : correction des surtensions sans batterie, bascule en 2-10ms. Online (double conversion) : protection maximale, alimentation constante depuis batterie. Pour un usage bureautique, le line-interactive est le meilleur rapport qualité/prix."
+    },
+    {
+      "type": "h2",
+      "title": "Dimensionnement",
+      "content": "Calculez la puissance totale des équipements à protéger (en VA, non en W). Un PC + écran + box internet = 200 à 400W = 300 à 600 VA. Prévoyez 20% de marge. Une batterie de 7Ah offre environ 15 minutes d'autonomie pour 300W."
+    },
+    {
+      "type": "h2",
+      "title": "Installation et entretien",
+      "content": "Un onduleur se branche comme une multiprise (aucune compétence requise). Remplacez la batterie tous les 3 à 4 ans (coût : 100 à 300 MAD selon la capacité). Testez mensuellement en débranchant l'alimentation secteur."
+    },
+    {
+      "type": "cta",
+      "text": "Protéger mes équipements avec un onduleur"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Peut-on brancher une climatisation sur un onduleur ?",
+      "a": "Les climatiseurs ont une puissance trop élevée (1000 à 3000W) et des moteurs qui nécessitent une puissance de démarrage importante. Les onduleurs résidentiels standard ne supportent pas les climatisations."
+    },
+    {
+      "q": "Quelle marque d'onduleur au Maroc ?",
+      "a": "APC (Schneider) et Eaton sont les références mondiales, disponibles au Maroc. Infosec, Mustek et FSP offrent des produits à bon rapport qualité/prix. Évitez les marques inconnues sans SAV local."
+    },
+    {
+      "q": "Mon onduleur bipe continuellement, que faire ?",
+      "a": "Bipements continus = batterie faible ou défaillante. Bipements périodiques = alimentation secteur sur onduleur. Bipements à chaque coupure = fonctionnement normal. Consultez le manuel de votre modèle pour le code sonore précis."
+    }
+  ],
+  "related_articles": [
+    "coupure-courant-frequente",
+    "generateur-groupe-electrogene",
+    "panneau-solaire-installation"
+  ],
+  "internal_links": [
+    "/electricien/casablanca",
+    "/electricien/rabat",
+    "/electricien/marrakech"
+  ]
+}

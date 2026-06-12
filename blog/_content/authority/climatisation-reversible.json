@@ -1,0 +1,64 @@
+{
+  "slug": "climatisation-reversible",
+  "title": "Climatisation réversible : chauffage + froid au Maroc",
+  "meta_description": "La climatisation réversible (pompe à chaleur air-air) est-elle intéressante au Maroc ? Économies sur le chauffage et villes recommandées.",
+  "category": "climatisation",
+  "tags": [
+    "climatisation réversible",
+    "pompe à chaleur",
+    "chauffage",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 5,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "La climatisation réversible chauffe en hiver et refroidit en été. Au Maroc, elle est sous-utilisée alors que certaines régions (Fès, Meknès, Marrakech, Ifrane) ont des hivers réellement froids qui se prêtent parfaitement à ce type d'appareil."
+    },
+    {
+      "type": "h2",
+      "title": "Comment fonctionne la pompe à chaleur ?",
+      "content": "En mode chaud, la clim inverse le sens du circuit frigorigène : l'unité extérieure absorbe les calories de l'air extérieur (même à -7°C) et les restitue à l'intérieur. Pour 1 kW d'électricité consommé, 3 à 5 kW de chaleur sont produits — c'est le COPS."
+    },
+    {
+      "type": "h2",
+      "title": "Quelles villes marocaines en bénéficient ?",
+      "content": "Fès (hivers froids, gelées fréquentes), Meknès, Marrakech (nuits froides même en octobre), Ifrane et le Moyen Atlas, et même Casablanca et Rabat dont les hivers humides et entre 5 et 15°C sont parfaits pour la pompe à chaleur."
+    },
+    {
+      "type": "h2",
+      "title": "Économies réelles",
+      "content": "Un appartement de 80m² chauffé avec un radiateur électrique (2kW) pendant 3 mois = 400-600 MAD de facture ONEE. Avec une pompe à chaleur réversible COP 4 = 100-150 MAD. Économie : 250 à 450 MAD sur la saison de chauffage."
+    },
+    {
+      "type": "cta",
+      "text": "Installer ma climatisation réversible"
+    }
+  ],
+  "faq": [
+    {
+      "q": "La climatisation réversible chauffe-t-elle quand il fait très froid ?",
+      "a": "Les modèles standard fonctionnent jusqu'à -5°C extérieur. Les modèles \"hyper-heating\" (Mitsubishi, Daikin) fonctionnent jusqu'à -25°C. Pour Ifrane (jusqu'à -24°C), ces modèles spéciaux sont nécessaires."
+    },
+    {
+      "q": "Peut-on utiliser une climatisation non-réversible pour chauffer ?",
+      "a": "Non. Un climatiseur simple froid ne peut pas être converti en chauffage. La fonction réversible doit être intégrée à l'achat."
+    },
+    {
+      "q": "La climatisation réversible remplace-t-elle le radiateur électrique ?",
+      "a": "Oui dans la plupart des cas pour les pièces jusqu'à 20-25m². Pour toute une villa, plusieurs splits ou un système multi-split est nécessaire."
+    }
+  ],
+  "related_articles": [
+    "choisir-climatisation-maroc",
+    "pompe-chaleur-maroc",
+    "consommation-electrique-clim"
+  ],
+  "internal_links": [
+    "/climatisation/casablanca",
+    "/climatisation/agadir",
+    "/climatisation/marrakech"
+  ]
+}

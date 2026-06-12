@@ -1,0 +1,64 @@
+{
+  "slug": "mise-terre-installation",
+  "title": "Mise à la terre : pourquoi c'est obligatoire au Maroc",
+  "meta_description": "La mise à la terre de votre installation électrique au Maroc : pourquoi c'est vital, comment la vérifier et la faire installer correctement.",
+  "category": "electricite",
+  "tags": [
+    "mise à la terre",
+    "sécurité",
+    "norme",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 5,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "La mise à la terre (prise de terre) est le dispositif de sécurité électrique le plus important de votre installation. Pourtant, plus de 40% des logements marocains anciens en sont dépourvus."
+    },
+    {
+      "type": "h2",
+      "title": "Comment fonctionne la mise à la terre ?",
+      "content": "En cas de défaut d'isolation (contact entre un fil sous tension et la carcasse métallique d'un appareil), le courant se dirige vers la terre via le conducteur vert/jaune plutôt que vers une personne. Le DDR détecte ce courant de fuite et coupe immédiatement."
+    },
+    {
+      "type": "h2",
+      "title": "Vérifier la présence de terre",
+      "content": "Utilisez un testeur de prise (15-30 MAD) : il indique si la terre est présente, absente ou inversée. La prise doit avoir 3 broches (2 rondes + la broche de terre). Absence de broche de terre = pas de protection."
+    },
+    {
+      "type": "h2",
+      "title": "Installation et coûts",
+      "content": "L'installation d'une prise de terre nécessite un piquet de terre en cuivre enfoncé dans le sol humide (ou un réseau de câbles enterrés), connecté au tableau électrique. Coût : 500 à 1500 MAD selon la configuration du bâtiment."
+    },
+    {
+      "type": "cta",
+      "text": "Vérifier ma mise à la terre"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Sans mise à la terre, est-on en danger ?",
+      "a": "Oui. Sans terre, un défaut d'isolation sur un appareil (lave-linge, chauffe-eau, cuisinière) peut provoquer une électrocution. Le DDR ne peut pas fonctionner correctement sans conducteur de terre."
+    },
+    {
+      "q": "Un appartement en location peut-il être sans mise à la terre ?",
+      "a": "Légalement, tout logement mis en location doit avoir une installation conforme aux normes. L'absence de mise à la terre est une anomalie que le bailleur doit corriger à ses frais."
+    },
+    {
+      "q": "La terre d'un immeuble est-elle partagée ?",
+      "a": "Oui, dans les immeubles modernes. La prise de terre est généralement commune et reliée à toutes les installations. En l'absence de terre commune, chaque appartement peut avoir sa propre prise de terre."
+    }
+  ],
+  "related_articles": [
+    "court-circuit-maison",
+    "cablage-maison-renovation",
+    "verification-installation-electrique"
+  ],
+  "internal_links": [
+    "/electricien/casablanca",
+    "/electricien/rabat",
+    "/electricien/marrakech"
+  ]
+}

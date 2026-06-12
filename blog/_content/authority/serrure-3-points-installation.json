@@ -1,0 +1,64 @@
+{
+  "slug": "serrure-3-points-installation",
+  "title": "Serrure 3 points : installation et avantages au Maroc",
+  "meta_description": "Installer une serrure 3 points au Maroc : avantages sécuritaires, types de mécanismes et coûts d'installation par les serruriers Fixeo.",
+  "category": "serrurerie",
+  "tags": [
+    "serrure 3 points",
+    "multipoints",
+    "sécurité",
+    "installation"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 5,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Une serrure à 3 points (ou multipoints) verrouille simultanément en haut, au milieu et en bas de la porte. Résultat : forcer la porte nécessite une force 3x supérieure — pratiquement impossible sans outillage lourd."
+    },
+    {
+      "type": "h2",
+      "title": "Fonctionnement d'une serrure multipoints",
+      "content": "Quand vous tournez la clé, le mécanisme central actionne des tringles (en haut et en bas) qui engagent des pênes supplémentaires. Certains modèles premium ajoutent des crochets qui s'accrochent dans le chambranle pour résister aux tentatives d'arrachage."
+    },
+    {
+      "type": "h2",
+      "title": "Adapter la serrure à votre porte",
+      "content": "La pose d'une serrure multipoints nécessite une porte adaptée (entraxes standard ou sur-mesure). Sur une porte standard marocaine (entraxe 72mm), la pose directe est généralement possible. Sur les portes bois massif : une légère mortaise peut être nécessaire."
+    },
+    {
+      "type": "h2",
+      "title": "Coûts au Maroc",
+      "content": "Serrure multipoints entrée de gamme : 600 à 1200 MAD posée. Milieu de gamme certifié A2P : 1200 à 2500 MAD. Serrure 5 points + porte renforcée : 3000 à 8000 MAD."
+    },
+    {
+      "type": "cta",
+      "text": "Installer une serrure 3 points"
+    }
+  ],
+  "faq": [
+    {
+      "q": "La serrure 3 points peut-elle s'adapter sur n'importe quelle porte ?",
+      "a": "Pas toujours. La porte doit avoir une épaisseur et une qualité suffisantes pour résister autour des points de verrouillage. Un serrurier évalue si votre porte supporte une multipoints."
+    },
+    {
+      "q": "Une serrure multipoints est-elle plus lente à utiliser ?",
+      "a": "Un seul tour de clé suffit. Le mécanisme entraîne automatiquement tous les pênes. C'est aussi rapide qu'une serrure simple une fois habituée."
+    },
+    {
+      "q": "Peut-on combiner une serrure 3 points avec un cylindre connecté ?",
+      "a": "Oui. Les serrures connectées modernes s'adaptent sur des mécanismes multipoints. Le cylindre mécanique est simplement remplacé par un cylindre motorisé."
+    }
+  ],
+  "related_articles": [
+    "cylindre-europeen-changer",
+    "porte-blindee-installation",
+    "serrure-connectee-maroc"
+  ],
+  "internal_links": [
+    "/serrurier/casablanca",
+    "/serrurier/rabat",
+    "/serrurier/marrakech"
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "slug": "clim-fuit-eau",
+  "title": "Climatisation qui fuit de l'eau : que faire au Maroc ?",
+  "meta_description": "Votre climatisation coule de l'eau au Maroc ? Causes (condensat bloqué, filtre sale) et solutions rapides pour arrêter la fuite.",
+  "category": "climatisation",
+  "tags": [
+    "fuite eau clim",
+    "condensat",
+    "climatisation",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 5,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Une tache humide au plafond sous le climatiseur, ou de l'eau qui coule le long du mur — c'est un problème courant mais à traiter rapidement pour éviter les dégâts sur les murs et plafonds."
+    },
+    {
+      "type": "h2",
+      "title": "Pourquoi le climatiseur produit-il de l'eau ?",
+      "content": "C'est normal. En refroidissant l'air, l'unité intérieure condense l'humidité en eau (comme un verre froid en été). Cette eau doit être évacuée par un tuyau de condensat vers l'extérieur ou dans une canalisation."
+    },
+    {
+      "type": "h2",
+      "title": "Causes de la fuite",
+      "content": "Tuyau de condensat bouché (algues, poussière) : l'eau déborde par l'avant de l'unité. Bac de condensat fissuré. Filtre intérieur trop sale (crée de la glace qui dégèle brutalement). Mauvaise inclinaison de l'unité intérieure (l'eau ne s'écoule pas vers le drain)."
+    },
+    {
+      "type": "h2",
+      "title": "Solution immédiate",
+      "content": "Désolidarisez le tuyau de condensat et soufflez-le ou utilisez un aspirateur pour dégager le bouchon. Nettoyez le bac de condensat. Si l'eau vient de la glace qui fond, éteignez la clim 30 minutes et nettoyez le filtre."
+    },
+    {
+      "type": "cta",
+      "text": "Réparer ma fuite de climatisation"
+    }
+  ],
+  "faq": [
+    {
+      "q": "L'eau qui coule de ma climatisation est-elle dangereuse ?",
+      "a": "L'eau elle-même n'est pas dangereuse, mais elle peut créer des moisissures et des dégâts structurels si la fuite est récurrente. Elle peut aussi causer des courts-circuits si elle coule sur des câbles électriques."
+    },
+    {
+      "q": "À quelle fréquence nettoyer le tuyau de condensat ?",
+      "a": "Une fois par an lors de l'entretien annuel suffit dans la plupart des cas. Dans les régions très poussiéreuses (Marrakech, Agadir), deux fois par an est recommandé."
+    },
+    {
+      "q": "Mon bac de condensat déborde toujours après nettoyage, pourquoi ?",
+      "a": "Vérifiez l'inclinaison de l'unité intérieure : elle doit avoir une légère pente vers le drain (5mm minimum). Si elle est horizontale ou penchée vers l'avant, l'eau s'accumule."
+    }
+  ],
+  "related_articles": [
+    "clim-ne-refroidit-plus",
+    "nettoyage-filtres-clim",
+    "clim-eau-interieur"
+  ],
+  "internal_links": [
+    "/climatisation/casablanca",
+    "/climatisation/agadir",
+    "/climatisation/marrakech"
+  ]
+}

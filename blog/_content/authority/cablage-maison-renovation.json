@@ -1,0 +1,64 @@
+{
+  "slug": "cablage-maison-renovation",
+  "title": "Câblage maison en rénovation : guide complet au Maroc",
+  "meta_description": "Rénover le câblage électrique de votre maison au Maroc : diagnostic, remplacement des fils aluminium, mise aux normes et budget 2025.",
+  "category": "electricite",
+  "tags": [
+    "câblage",
+    "rénovation électrique",
+    "mise aux normes",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 7,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Une maison construite avant 1990 au Maroc a de fortes chances d'avoir une installation électrique qui ne répond plus aux besoins actuels : fils en aluminium, absence de mise à la terre, circuits surchargés. La rénovation du câblage est l'occasion de repartir sur des bases saines."
+    },
+    {
+      "type": "h2",
+      "title": "Diagnostic de l'existant",
+      "content": "Un électricien qualifié réalise un audit : vérification de la section des câbles, présence de mise à la terre, état des gaines, conformité des connexions dans les boîtes de dérivation, et calibrage des disjoncteurs. Cet audit coûte 200 à 400 MAD et peut révéler des dangers invisibles."
+    },
+    {
+      "type": "h2",
+      "title": "Le problème des fils aluminium",
+      "content": "Nombreuses maisons marocaines des années 70-80 ont été câblées en aluminium (moins cher à l'époque). L'aluminium se corrode, se dilate différemment du cuivre et crée des points chauds dans les connexions. Le remplacement par du cuivre est fortement recommandé."
+    },
+    {
+      "type": "h2",
+      "title": "Budget de rénovation électrique",
+      "content": "Appartement 3 pièces (réfection complète avec mise à la terre, tableau neuf) : 4000 à 8000 MAD. Villa 5 pièces : 8000 à 20000 MAD. Remplacement du tableau seul : 1500 à 3000 MAD."
+    },
+    {
+      "type": "cta",
+      "text": "Obtenir un devis câblage complet"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Faut-il vider la maison pour rénover le câblage ?",
+      "a": "Pas nécessairement. Un électricien expérimenté peut souvent passer les nouveaux câbles sans démolition massive, en utilisant les gaines existantes ou en créant des saignées discrètes."
+    },
+    {
+      "q": "La mise à la terre est-elle obligatoire au Maroc ?",
+      "a": "Oui, elle est exigée par les normes marocaines d'installation électrique (NM 07-5-011). De nombreuses installations anciennes ne la respectent pas. La terre protège des électrocutions en cas de défaut d'isolation."
+    },
+    {
+      "q": "Peut-on rénover son câblage en phases ?",
+      "a": "Oui. On commence généralement par la cuisine et la salle de bain (zones à risque), puis les chambres et le salon. Cette approche étalée dans le temps réduit l'impact budgétaire."
+    }
+  ],
+  "related_articles": [
+    "tableau-electrique-upgrade",
+    "mise-terre-installation",
+    "verification-installation-electrique"
+  ],
+  "internal_links": [
+    "/electricien/casablanca",
+    "/electricien/rabat",
+    "/electricien/marrakech"
+  ]
+}

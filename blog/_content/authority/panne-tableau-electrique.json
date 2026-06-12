@@ -1,0 +1,69 @@
+{
+  "slug": "panne-tableau-electrique",
+  "title": "Panne tableau électrique : diagnostic et remise en marche",
+  "meta_description": "Votre tableau électrique est en panne au Maroc ? Guide de diagnostic : DDR sauté, disjoncteur principal, problème d'alimentation. Solutions Fixeo.",
+  "category": "electricite",
+  "tags": [
+    "tableau électrique",
+    "panne",
+    "DDR",
+    "disjoncteur"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 6,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "22h00, vous rentrez et plus rien ne fonctionne. Tableau électrique éteint, maison dans le noir. Voici une méthode pas à pas pour diagnostiquer et remettre votre installation en marche — et savoir quand il faut appeler un électricien."
+    },
+    {
+      "type": "h2",
+      "title": "Étape 1 : Vérifier l'alimentation",
+      "content": "Avant tout, vérifiez si le problème vient de l'ONEE : demandez à un voisin si lui aussi est sans courant. Si oui : coupure réseau, rien à faire. Si non : le problème est dans votre installation."
+    },
+    {
+      "type": "h2",
+      "title": "Étape 2 : Inspecter le tableau",
+      "content": "Ouvrez le coffret. Le disjoncteur principal (le plus grand, en haut ou en bas) est-il en position OFF ? Le DDR (différentiel, bouton test blanc) est-il déclenché ? Si oui, tentez de les réarmer. Si ça saute immédiatement, il y a un défaut actif."
+    },
+    {
+      "type": "h2",
+      "title": "Étape 3 : Isolation du défaut",
+      "content": "Mettez tous les disjoncteurs individuels en position OFF. Réarmez le DDR. Remettez les disjoncteurs un par un. Celui qui fait sauter le DDR indique le circuit problématique. Débranchez tout sur ce circuit et recommencez."
+    },
+    {
+      "type": "h2",
+      "title": "Quand appeler un électricien d'urgence",
+      "content": "Si le DDR saute à vide (aucun disjoncteur d'actif), si le tableau a des traces de brûlure ou une odeur de plastique fondu, si le problème revient régulièrement — appelez immédiatement. Ces signaux indiquent un problème de câblage."
+    },
+    {
+      "type": "cta",
+      "text": "Appeler un électricien de nuit"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Le DDR a un bouton test, à quoi sert-il ?",
+      "a": "Le bouton test simule un courant de défaut pour vérifier que le DDR fonctionne. Testez-le tous les 6 mois : appuyez dessus, le DDR doit déclencher. Si rien ne se passe, votre DDR est défaillant et doit être remplacé."
+    },
+    {
+      "q": "Mon tableau est très ancien (fusibles à cartouche), que faire ?",
+      "a": "Les tableaux à fusibles ne sont plus aux normes. Ils ne protègent pas contre les courants de fuite. Un électricien peut remettre l'installation aux normes avec un tableau à disjoncteurs différentiels. Budget : 1500 à 3000 MAD."
+    },
+    {
+      "q": "Combien de circuits doit avoir un appartement au Maroc ?",
+      "a": "Un appartement moderne de 3 pièces doit avoir au minimum : 1 circuit éclairage, 2-3 circuits prises, 1 circuit cuisine, 1 circuit chauffe-eau, 1 circuit climatisation. Soit 6 à 8 circuits minimum."
+    }
+  ],
+  "related_articles": [
+    "disjoncteur-saute-souvent",
+    "coupure-courant-frequente",
+    "tableau-electrique-upgrade"
+  ],
+  "internal_links": [
+    "/electricien/casablanca",
+    "/electricien/rabat",
+    "/electricien/marrakech"
+  ]
+}

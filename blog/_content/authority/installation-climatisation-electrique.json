@@ -1,0 +1,64 @@
+{
+  "slug": "installation-climatisation-electrique",
+  "title": "Climatisation : partie électrique de l'installation au Maroc",
+  "meta_description": "Installer une climatisation au Maroc : les exigences électriques (circuit dédié, câble adapté, disjoncteur). Ne négligez pas cette étape cruciale.",
+  "category": "electricite",
+  "tags": [
+    "climatisation",
+    "circuit dédié",
+    "électricité",
+    "installation"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 5,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "L'installation d'une climatisation split ne se résume pas à poser les unités et remplir le gaz. La partie électrique est souvent bâclée — et c'est la principale cause de pannes prématurées et d'incendies."
+    },
+    {
+      "type": "h2",
+      "title": "Circuit dédié obligatoire",
+      "content": "Chaque climatiseur de plus de 2000W doit avoir son propre circuit depuis le tableau : câble 2,5mm² (3x2,5mm²) minimum pour un 2,5kW, disjoncteur bipolaire 20A, DDR 30mA. Ne jamais brancher une clim sur une prise standard partagée."
+    },
+    {
+      "type": "h2",
+      "title": "Distance et section du câble",
+      "content": "Pour des distances supérieures à 15 mètres entre le tableau et la climatisation, passez en 4mm². Une chute de tension de plus de 3% réduit les performances et endommage le compresseur à long terme."
+    },
+    {
+      "type": "h2",
+      "title": "Coûts d'installation électrique pour clim",
+      "content": "Circuit dédié depuis tableau (< 10m) : 300 à 500 MAD. Circuit longue distance (> 15m) : 500 à 900 MAD. Si le tableau doit être augmenté en capacité : 500 à 1000 MAD supplémentaires."
+    },
+    {
+      "type": "cta",
+      "text": "Faire câbler ma climatisation"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Ma climatisation peut-elle être branchée sur une multiprise ?",
+      "a": "Catégoriquement non. Une climatisation de 2500W sur une multiprise partagée est un danger immédiat. Elle doit avoir sa propre prise sur son propre circuit protégé."
+    },
+    {
+      "q": "Quelle section de câble pour une climatisation 18000 BTU (5kW) ?",
+      "a": "Pour 5kW : câble 4mm² minimum, disjoncteur bipolaire 25A, DDR 30mA. Pour une installation de plus de 20m, passez en 6mm²."
+    },
+    {
+      "q": "Peut-on avoir plusieurs clims sur le même disjoncteur ?",
+      "a": "Seulement si la somme de leurs puissances ne dépasse pas la capacité du circuit et si le câble est dimensionné en conséquence. En pratique, mieux vaut un circuit par unité pour plus de sécurité."
+    }
+  ],
+  "related_articles": [
+    "tableau-electrique-upgrade",
+    "clim-ne-refroidit-plus",
+    "cablage-maison-renovation"
+  ],
+  "internal_links": [
+    "/electricien/casablanca",
+    "/electricien/rabat",
+    "/electricien/marrakech"
+  ]
+}

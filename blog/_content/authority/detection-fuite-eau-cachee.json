@@ -1,0 +1,64 @@
+{
+  "slug": "detection-fuite-eau-cachee",
+  "title": "Détection fuite eau cachée : méthodes professionnelles au Maroc",
+  "meta_description": "Comment détecter une fuite d'eau cachée dans vos murs ou sous votre dalle ? Techniques et équipements utilisés par les plombiers Fixeo au Maroc.",
+  "category": "plomberie",
+  "tags": [
+    "détection fuite",
+    "fuite cachée",
+    "plomberie",
+    "thermographie"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 6,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Votre compteur d'eau tourne alors que tout est fermé. Il y a une fuite quelque part — mais où ? Les fuites cachées sous la dalle ou dans les murs peuvent gaspiller des milliers de litres avant d'être détectées. Voici comment les traquer."
+    },
+    {
+      "type": "h2",
+      "title": "Test du compteur : confirmer la fuite",
+      "content": "Fermez toutes les robinetteries. Relevez l'index du compteur. Attendez 30 minutes sans utiliser d'eau. Si l'index a bougé, vous avez une fuite active. Si le compteur a un cadran de débit faible (aiguille papillon), elle sera encore plus visible."
+    },
+    {
+      "type": "h2",
+      "title": "Techniques de détection professionnelles",
+      "content": "L'écoute acoustique (géophone) permet d'entendre la vibration de l'eau sous pression à travers le sol ou les murs. La caméra thermique révèle les différences de température causées par l'eau froide ou chaude qui s'échappe. Le gaz traceur (azote) est injecté dans la canalisation et détecté à la surface — la technique la plus précise."
+    },
+    {
+      "type": "h2",
+      "title": "Fuite sous dalle : spécificité marocaine",
+      "content": "Dans les maisons marocaines construites en béton plein (sans vide sanitaire), les canalisations sont souvent noyées dans la dalle. La détection doit être précise pour limiter les travaux de démolition. Un diagnostic non-destructif peut économiser 1000 à 3000 MAD de travaux inutiles."
+    },
+    {
+      "type": "cta",
+      "text": "Détecter ma fuite cachée"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Combien coûte une détection de fuite au Maroc ?",
+      "a": "La détection professionnelle coûte entre 300 et 600 MAD. Ce coût est compensé par les économies sur les travaux de recherche destructifs inutiles et la baisse de la facture d'eau."
+    },
+    {
+      "q": "Peut-on détecter une fuite soi-même ?",
+      "a": "Le test du compteur est accessible à tous. Pour localiser précisément la fuite (sous dalle, dans mur), les équipements professionnels (géophone, caméra thermique) sont indispensables."
+    },
+    {
+      "q": "ONEE peut-il m'aider à détecter une fuite ?",
+      "a": "L'ONEE peut signaler une surconsommation anormale à votre compteur, mais la détection et la réparation restent à votre charge. Certaines agences proposent une aide technique, renseignez-vous auprès de votre agence locale."
+    }
+  ],
+  "related_articles": [
+    "fuite-eau-mur",
+    "compteur-eau-fuite",
+    "tuyau-eclate-hiver"
+  ],
+  "internal_links": [
+    "/plombier/casablanca",
+    "/plombier/rabat",
+    "/plombier/fes"
+  ]
+}

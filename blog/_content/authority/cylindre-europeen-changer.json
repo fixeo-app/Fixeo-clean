@@ -1,0 +1,64 @@
+{
+  "slug": "cylindre-europeen-changer",
+  "title": "Cylindre européen : changer pour plus de sécurité",
+  "meta_description": "Remplacer son cylindre européen au Maroc : choisir le bon niveau de sécurité, les marques fiables et les tarifs de pose.",
+  "category": "serrurerie",
+  "tags": [
+    "cylindre européen",
+    "sécurité",
+    "remplacement",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 5,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "85% des effractions par la porte se font sur le cylindre : crochetage, perçage ou arrachage. Votre cylindre est la pièce la plus importante — et souvent la moins chère à améliorer."
+    },
+    {
+      "type": "h2",
+      "title": "Comprendre les certifications",
+      "content": "NF A2P★ : anti-crochetage. A2P★★ : anti-crochetage + anti-perçage. A2P★★★ : anti-crochetage + anti-perçage + anti-arrachage. Les certifications françaises A2P sont la référence au Maroc pour les cylindres de qualité."
+    },
+    {
+      "type": "h2",
+      "title": "Marques recommandées disponibles au Maroc",
+      "content": "Bricard, Fichet, Mul-T-Lock, Vachette, DOM : ces marques sont disponibles chez les serrureries professionnelles de Casablanca, Rabat et Marrakech. Un cylindre A2P★★ de ces marques coûte 300 à 600 MAD."
+    },
+    {
+      "type": "h2",
+      "title": "Remplacement par un professionnel",
+      "content": "Un serrurier remplace votre cylindre en 15 minutes. Apportez les mesures de l'existant (ou laissez le faire sur place). Il peut vous fournir le cylindre directement."
+    },
+    {
+      "type": "cta",
+      "text": "Changer mon cylindre de sécurité"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Puis-je garder mes anciennes clés avec un nouveau cylindre ?",
+      "a": "Non. Un nouveau cylindre vient avec ses propres clés. Vous recevrez généralement 3 à 5 clés selon le fabricant. Des copies supplémentaires ne peuvent être faites que chez un serrurier agréé pour les cylindres sécurisés."
+    },
+    {
+      "q": "Quelle est la différence entre un cylindre 30+30 et 30+35 ?",
+      "a": "Ce sont les mesures de chaque côté du canon : 30mm côté intérieur, 30 ou 35mm côté extérieur. Si votre cylindre dépasse légèrement la porte côté extérieur (permet de l'attaquer), prenez un 30+30 pour une installation affleurante."
+    },
+    {
+      "q": "Un cylindre haute sécurité peut-il être crocheté ?",
+      "a": "Tout cylindre peut théoriquement être crocheté avec assez de temps et d'outillage. Un A2P★★★ résiste 30 minutes à des outils professionnels — suffisamment pour décourager l'immense majorité des cambrioleurs."
+    }
+  ],
+  "related_articles": [
+    "canon-serrure-casse",
+    "serrure-3-points-installation",
+    "effraction-renforcement-securite"
+  ],
+  "internal_links": [
+    "/serrurier/casablanca",
+    "/serrurier/rabat",
+    "/serrurier/marrakech"
+  ]
+}

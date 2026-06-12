@@ -1,0 +1,64 @@
+{
+  "slug": "climatisation-multi-split",
+  "title": "Multi-split : climatiser plusieurs pièces au Maroc",
+  "meta_description": "Le système multi-split pour climatiser plusieurs pièces avec une seule unité extérieure au Maroc : avantages, coûts et installation.",
+  "category": "climatisation",
+  "tags": [
+    "multi-split",
+    "climatisation",
+    "plusieurs pièces",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 6,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Pour climatiser 2, 3 ou 4 pièces sans multiplier les unités extérieures (esthétique, bruit, surface de toiture), le système multi-split est la solution adoptée par de nombreuses villas et appartements marocains."
+    },
+    {
+      "type": "h2",
+      "title": "Comment fonctionne le multi-split ?",
+      "content": "Une seule unité extérieure (compresseur) est reliée à 2 à 5 unités intérieures indépendantes. Chaque pièce a son propre thermostat et peut être réglée individuellement. La puissance de l'unité extérieure est dimensionnée pour toutes les unités."
+    },
+    {
+      "type": "h2",
+      "title": "Avantages et inconvénients",
+      "content": "Avantages : une seule unité extérieure (plus esthétique), installation plus propre, bruit extérieur réduit. Inconvénients : si le compresseur tombe en panne, tout l'appartement est sans climatisation. La réparation d'un multi-split est plus complexe qu'un mono-split."
+    },
+    {
+      "type": "h2",
+      "title": "Prix d'un système multi-split au Maroc",
+      "content": "Système 2x9000 BTU : 6000 à 10000 MAD installé. 3x9000 BTU : 9000 à 15000 MAD. 4x9000 BTU : 12000 à 20000 MAD. La marque impacte significativement le prix (Daikin 2-3x plus cher que TCL à puissance égale)."
+    },
+    {
+      "type": "cta",
+      "text": "Concevoir mon système multi-split"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Peut-on ajouter une unité intérieure à un multi-split existant ?",
+      "a": "Oui si l'unité extérieure a la capacité résiduelle. Vérifiez les spécifications techniques de votre modèle. Certains systèmes permettent d'ajouter jusqu'à 5 unités intérieures."
+    },
+    {
+      "q": "Le multi-split consomme-t-il plus qu'un mono-split équivalent ?",
+      "a": "La consommation est similaire à puissance équivalente. L'avantage est d'utiliser seulement la puissance nécessaire selon les pièces actives."
+    },
+    {
+      "q": "Quelle marque de multi-split choisir au Maroc ?",
+      "a": "Daikin et Mitsubishi pour la fiabilité premium. LG et Samsung pour le meilleur rapport qualité/prix. Gree pour les budgets serrés avec une qualité honorable."
+    }
+  ],
+  "related_articles": [
+    "choisir-climatisation-maroc",
+    "puissance-clim-calculer",
+    "installation-split-quel-mur"
+  ],
+  "internal_links": [
+    "/climatisation/casablanca",
+    "/climatisation/agadir",
+    "/climatisation/marrakech"
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "slug": "compteur-electrique-probleme",
+  "title": "Problème compteur électrique ONEE/RADEEF au Maroc",
+  "meta_description": "Problème avec votre compteur électrique ONEE ou RADEEF au Maroc ? Démarches, lecture de compteur, facturation anormale et recours.",
+  "category": "electricite",
+  "tags": [
+    "compteur électrique",
+    "ONEE",
+    "RADEEF",
+    "facturation"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 5,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Facture anormalement élevée ? Compteur qui avance trop vite ? Ces problèmes avec les distributeurs d'électricité (ONEE, RADEEF, RADEEC, LYDEC...) concernent de nombreux Marocains. Voici vos droits et les démarches à suivre."
+    },
+    {
+      "type": "h2",
+      "title": "Lire son compteur correctement",
+      "content": "Les compteurs modernes au Maroc sont majoritairement à affichage numérique. Relevez les 5 ou 6 chiffres affichés en kWh. Pour le tarif de nuit (si applicable), un deuxième index est affiché. Photographiez votre compteur à chaque facture pour vérification."
+    },
+    {
+      "type": "h2",
+      "title": "Facture anormalement élevée",
+      "content": "Vérifiez d'abord que l'index de la facture correspond au relevé réel de votre compteur. Si l'estimation ONEE a dépassé la réalité, vous serez remboursé sur la prochaine facture. Si le compteur tourne trop vite : demandez une vérification métrologique (gratuite si l'erreur est confirmée)."
+    },
+    {
+      "type": "h2",
+      "title": "Démarches officielles",
+      "content": "Réclamation écrite à l'agence ONEE/RADEEF locale, avec copie de votre CIN et factures. Délai de réponse officiel : 15 jours. En cas de litige non résolu, le recours au médiateur de la consommation ou au tribunal de proximité est possible."
+    },
+    {
+      "type": "cta",
+      "text": "Consulter un électricien pour diagnostic"
+    }
+  ],
+  "faq": [
+    {
+      "q": "L'ONEE peut-il couper mon électricité sans préavis ?",
+      "a": "Non. La loi marocaine impose un préavis de 10 jours minimum avant coupure pour non-paiement. En cas de danger immédiat (défaut de sécurité), la coupure peut être immédiate avec notification simultanée."
+    },
+    {
+      "q": "Comment savoir si mon compteur est exact ?",
+      "a": "Branchez un appareil de puissance connue (chauffe-eau 2000W) pendant 1 heure : le compteur doit avancer de 2 kWh. Si c'est significativement plus ou moins, le compteur est peut-être défaillant. Demandez une vérification à l'agence."
+    },
+    {
+      "q": "Puis-je choisir mon distributeur électrique au Maroc ?",
+      "a": "Non. La distribution électrique est zonée : ONEE pour la plupart des régions, RADEEF (Fès), RADEEC (Settat), LYDEC (Casablanca), AMENDIS (Tanger, Tétouan). Vous dépendez du distributeur de votre zone."
+    }
+  ],
+  "related_articles": [
+    "coupure-courant-frequente",
+    "verification-installation-electrique",
+    "panneau-solaire-installation"
+  ],
+  "internal_links": [
+    "/electricien/casablanca",
+    "/electricien/rabat",
+    "/electricien/marrakech"
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "slug": "installation-split-quel-mur",
+  "title": "Où installer son split : choix de l'emplacement optimal",
+  "meta_description": "Bien positionner son climatiseur split au Maroc : hauteur, mur, distance de la fenêtre et de l'unité extérieure. Guide installation Fixeo.",
+  "category": "climatisation",
+  "tags": [
+    "installation split",
+    "emplacement",
+    "installation",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 5,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "L'emplacement de votre unité intérieure impacte directement l'efficacité de refroidissement et votre confort. Un climatiseur bien positionné refroidit 20% plus efficacement qu'un mal positionné à puissance égale."
+    },
+    {
+      "type": "h2",
+      "title": "Hauteur idéale d'installation",
+      "content": "L'unité intérieure doit être installée en hauteur (2,0 à 2,5m du sol) pour diffuser l'air froid vers le bas (l'air froid descend naturellement). Évitez les positions trop basses qui créent une zone froide au ras du sol et une zone chaude au plafond."
+    },
+    {
+      "type": "h2",
+      "title": "Positionnement dans la pièce",
+      "content": "Idéalement en face de la zone principale d'occupation (canapé, bureau, lit). Pas directement au-dessus d'une zone de travail ou du lit (jet d'air direct = inconforts). Distance minimale : 20 cm des murs latéraux et du plafond pour le retour d'air."
+    },
+    {
+      "type": "h2",
+      "title": "Contraintes d'installation",
+      "content": "Distance maximale entre unités intérieure et extérieure : 5 à 15m selon le modèle (longueur de la liaison frigorifique). Évitez les liaisons avec beaucoup de coudes (perte d'efficacité). L'unité extérieure doit être à l'ombre si possible au Maroc (éviter la plein soleil au sud)."
+    },
+    {
+      "type": "cta",
+      "text": "Conseils installation sur mesure"
+    }
+  ],
+  "faq": [
+    {
+      "q": "L'unité extérieure peut-elle être posée en toiture terrasse ?",
+      "a": "Oui, c'est très courant au Maroc. Veillez à la fixer solidement (vent fort) et à la protéger si possible du soleil direct. La chaleur excessive autour de l'unité extérieure réduit l'efficacité en été."
+    },
+    {
+      "q": "Peut-on installer un split dans une pièce sans fenêtre ?",
+      "a": "Oui. Le tuyau de liaison passe par la paroi la plus courte vers l'extérieur. Un carottage (perçage de 60-80mm) dans le mur est nécessaire. Le positionnement de l'unité extérieure est la contrainte principale."
+    },
+    {
+      "q": "Quelle distance entre l'unité intérieure et la gaine frigorifique ?",
+      "a": "La sortie de la gaine doit être à moins de 30cm de l'unité intérieure pour minimiser la condensation sur la liaison cuivre. La gaine doit être habillée (cache-câble ou incorporée dans le mur)."
+    }
+  ],
+  "related_articles": [
+    "puissance-clim-calculer",
+    "choisir-climatisation-maroc",
+    "climatisation-multi-split"
+  ],
+  "internal_links": [
+    "/climatisation/casablanca",
+    "/climatisation/agadir",
+    "/climatisation/marrakech"
+  ]
+}

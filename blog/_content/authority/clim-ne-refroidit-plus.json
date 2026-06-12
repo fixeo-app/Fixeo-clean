@@ -1,0 +1,64 @@
+{
+  "slug": "clim-ne-refroidit-plus",
+  "title": "Climatiseur qui ne refroidit plus : causes et solutions",
+  "meta_description": "Votre climatisation ne refroidit plus au Maroc ? Causes fréquentes (gaz, filtre, compresseur) et solutions par les techniciens Fixeo.",
+  "category": "climatisation",
+  "tags": [
+    "climatisation",
+    "panne",
+    "refroidissement",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 6,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "En plein mois d'août à Marrakech ou Agadir, une climatisation qui souffle de l'air tiède est une urgence. Avant d'appeler le technicien, quelques vérifications simples peuvent identifier rapidement le problème."
+    },
+    {
+      "type": "h2",
+      "title": "Vérifications préliminaires",
+      "content": "Mode de fonctionnement incorrect (mode ventilation seulement au lieu de mode froid), température de consigne trop haute, filtre intérieur encrassé (réduit le débit et l'efficacité de 30%), ou unité extérieure obstruée par des feuilles ou de la poussière."
+    },
+    {
+      "type": "h2",
+      "title": "Manque de gaz frigorigène",
+      "content": "C'est la cause la plus fréquente après le filtre sale. Une fuite de gaz R32 ou R410A vide progressivement le circuit. Signes : givre sur le tuyau cuivre entre les unités, compresseur qui tourne sans refroidir, performance dégradée. Solution : recharge gaz par technicien certifié."
+    },
+    {
+      "type": "h2",
+      "title": "Problèmes mécaniques",
+      "content": "Compresseur défaillant (bruit anormal, circuit disjoncteur), ventilateur de l'unité extérieure bloqué, soupape 4 voies en panne (sur les réversibles). Ces réparations nécessitent un technicien qualifié."
+    },
+    {
+      "type": "cta",
+      "text": "Faire diagnostiquer ma climatisation"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Mon climatiseur souffle chaud, est-il en mode chauffage ?",
+      "a": "Vérifiez le mode sur la télécommande — le symbole ❄️ est le froid, 🌡️ ou 🌸 est le chaud. Beaucoup de télécommandes se réinitialisent sur un mode inattendu après une coupure de courant."
+    },
+    {
+      "q": "Peut-on recharger le gaz de la clim soi-même ?",
+      "a": "Non. La manipulation de gaz frigorigènes est réglementée et nécessite des équipements professionnels (manifold, bouteille de recharge). Un technicien certifié est obligatoire."
+    },
+    {
+      "q": "Combien coûte une recharge de gaz climatisation au Maroc ?",
+      "a": "Recharge R32 ou R410A : 400 à 800 MAD selon la quantité. Si une fuite doit être réparée avant : 200 à 500 MAD supplémentaires."
+    }
+  ],
+  "related_articles": [
+    "recharge-gaz-climatisation",
+    "nettoyage-filtres-clim",
+    "entretien-clim-annuel"
+  ],
+  "internal_links": [
+    "/climatisation/casablanca",
+    "/climatisation/agadir",
+    "/climatisation/marrakech"
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "slug": "chauffe-eau-fuit",
+  "title": "Chauffe-eau qui fuit : urgence plomberie au Maroc",
+  "meta_description": "Votre chauffe-eau fuit ? C'est une urgence. Apprenez à couper l'eau, identifier la cause et trouver un plombier rapidement au Maroc.",
+  "category": "plomberie",
+  "tags": [
+    "chauffe-eau",
+    "fuite urgence",
+    "plomberie",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 6,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Un chauffe-eau qui fuit n'est pas un simple inconvénient — c'est une urgence. L'eau chaude sous pression peut causer des dégâts des eaux importants en quelques heures. Voici les gestes immédiats et les solutions."
+    },
+    {
+      "type": "h2",
+      "title": "Gestes d'urgence immédiats",
+      "content": "Coupez l'arrivée d'eau froide du chauffe-eau (vanne située sur le tuyau d'alimentation bleu). Coupez le disjoncteur dédié. Placez des serviettes ou un seau sous la fuite. Appelez un plombier d'urgence."
+    },
+    {
+      "type": "h2",
+      "title": "Diagnostic de la fuite",
+      "content": "La fuite peut venir du groupe de sécurité (normale si l'eau s'écoule en petite quantité lors de la chauffe), d'une résistance corrodée, du joint anode usé, d'un raccord défaillant ou dans le pire cas d'une cuve percée. Seule une cuve percée nécessite le remplacement complet."
+    },
+    {
+      "type": "h2",
+      "title": "Réparation ou remplacement ?",
+      "content": "Un chauffe-eau de moins de 7 ans : réparation possible (groupe de sécurité, joints). Plus de 10 ans et cuve rouillée : remplacement recommandé. Au Maroc, un cumulus 100L vaut entre 800 et 2000 MAD, pose comprise 1500 à 3000 MAD selon la marque."
+    },
+    {
+      "type": "cta",
+      "text": "Appeler un plombier d'urgence"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Mon groupe de sécurité goutte, est-ce normal ?",
+      "a": "Une légère goutte lors de la montée en température est normale — c'est la soupape qui régule la pression. Si c'est un filet continu, le groupe doit être remplacé (80-150 MAD pièce + main-d'œuvre)."
+    },
+    {
+      "q": "Combien coûte le remplacement d'un chauffe-eau au Maroc ?",
+      "a": "Un chauffe-eau électrique 100L entre 800 et 1800 MAD selon la marque. La pose par un plombier certifié : 300 à 600 MAD. Total : 1100 à 2400 MAD installé."
+    },
+    {
+      "q": "Peut-on réparer un chauffe-eau qui fuit de la cuve ?",
+      "a": "Non. Une cuve percée ou corrodée ne peut pas être réparée durablement. Le remplacement complet de l'appareil est la seule solution."
+    }
+  ],
+  "related_articles": [
+    "installation-chauffe-eau-electrique",
+    "remplacement-cumulus-maroc",
+    "fuite-eau-mur"
+  ],
+  "internal_links": [
+    "/plombier/casablanca",
+    "/plombier/rabat",
+    "/plombier/fes"
+  ]
+}

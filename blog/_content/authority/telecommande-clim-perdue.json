@@ -1,0 +1,64 @@
+{
+  "slug": "telecommande-clim-perdue",
+  "title": "Télécommande climatisation perdue : solutions alternatives",
+  "meta_description": "Télécommande de climatisation perdue ou cassée au Maroc ? Solutions pour contrôler votre clim sans télécommande et où trouver un remplacement.",
+  "category": "climatisation",
+  "tags": [
+    "télécommande clim",
+    "perdue",
+    "solution",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 4,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "La télécommande de climatisation — si petite, si facile à perdre, si indispensable. Voici les options pour garder le contrôle de votre clim en attendant le remplacement."
+    },
+    {
+      "type": "h2",
+      "title": "Bouton de secours sur l'unité intérieure",
+      "content": "Presque toutes les climatisations ont un bouton \"Auto\" ou \"Test\" sur l'unité intérieure (souvent caché derrière un panneau latéral ou sous le panneau frontal). Un appui lance le mode automatique (température et vitesse gérées par l'appareil). Consultez votre notice pour le localiser."
+    },
+    {
+      "type": "h2",
+      "title": "Applications smartphone",
+      "content": "Si votre clim a le WiFi intégré : téléchargez l'application du fabricant (SmartThinQ pour LG, SmartControl pour Samsung, Daikin Mobile Controller, etc.). Si non : une application télécommande IR universelle + téléphone avec émetteur IR peut fonctionner."
+    },
+    {
+      "type": "h2",
+      "title": "Trouver une télécommande de remplacement",
+      "content": "Télécommande officielle (même référence) : commandez via le SAV du fabricant ou les boutiques spécialisées de votre ville. Télécommande universelle compatible : 30 à 80 MAD en quincaillerie ou boutiques électronique. Entrez le code de votre marque selon la notice fournie."
+    },
+    {
+      "type": "cta",
+      "text": "Obtenir de l'aide pour ma climatisation"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Puis-je utiliser mon téléphone comme télécommande de clim ?",
+      "a": "Oui si votre smartphone a un émetteur infrarouge (certains modèles Samsung, Xiaomi, Huawei). Téléchargez une application de télécommande IR universelle et configurez votre marque de climatiseur."
+    },
+    {
+      "q": "Combien coûte une télécommande de remplacement officielle ?",
+      "a": "Entre 150 et 400 MAD selon la marque. Les télécommandes LG, Samsung et Gree sont les plus faciles à trouver au Maroc. Pour les marques rares, il faut souvent commander en ligne."
+    },
+    {
+      "q": "Ma télécommande universelle ne fonctionne pas, que faire ?",
+      "a": "Essayez tous les codes de votre marque (chaque marque a plusieurs codes dans les télécommandes universelles). Si aucun ne fonctionne, votre climatiseur a peut-être un protocole IR non standard — optez pour la télécommande officielle."
+    }
+  ],
+  "related_articles": [
+    "clim-ne-s-allume-plus",
+    "domotique-maison-maroc",
+    "choisir-climatisation-maroc"
+  ],
+  "internal_links": [
+    "/climatisation/casablanca",
+    "/climatisation/agadir",
+    "/climatisation/marrakech"
+  ]
+}

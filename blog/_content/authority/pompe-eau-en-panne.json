@@ -1,0 +1,64 @@
+{
+  "slug": "pompe-eau-en-panne",
+  "title": "Pompe à eau en panne : dépannage au Maroc",
+  "meta_description": "Votre pompe à eau ne fonctionne plus ? Causes des pannes les plus courantes et solutions de dépannage rapide avec les plombiers Fixeo.",
+  "category": "plomberie",
+  "tags": [
+    "pompe eau",
+    "panne",
+    "surpresseur",
+    "dépannage"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 5,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "35% des habitations marocaines dépendent d'une pompe pour l'alimentation en eau (forage, citerne sur toit). Quand elle tombe en panne, c'est toute la maison qui est sans eau. Le diagnostic rapide est essentiel."
+    },
+    {
+      "type": "h2",
+      "title": "La pompe ne démarre plus",
+      "content": "Vérifiez d'abord : le disjoncteur de la pompe (souvent sauté), l'interrupteur de pression (pressostat) mal réglé, le condensateur de démarrage défaillant (donne un bourdonnement sans démarrage). Dans 60% des cas, c'est électrique."
+    },
+    {
+      "type": "h2",
+      "title": "La pompe tourne mais ne donne pas d'eau",
+      "content": "Causes possibles : prise d'air (la pompe s'est dé-amorcée), filtre d'aspiration bouché, clapet anti-retour défaillant laissant l'eau retomber, ou niveau de la source d'eau trop bas. Ré-amorçage : remplissez le corps de pompe avec de l'eau propre par le bouchon de remplissage."
+    },
+    {
+      "type": "h2",
+      "title": "La pompe tourne en continu",
+      "content": "Un pressostat mal réglé ou défaillant peut faire tourner la pompe sans arrêt. Ce fonctionnement continu chauffe le moteur et réduit sa durée de vie. La vérification du pressostat et du ballon d'expansion est urgente."
+    },
+    {
+      "type": "cta",
+      "text": "Réparer ma pompe à eau"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Combien coûte la réparation d'une pompe au Maroc ?",
+      "a": "Remplacement du condensateur : 100-200 MAD. Remplacement du pressostat : 150-300 MAD. Pompe de surface complète neuve : 500-1500 MAD. Pompe immergée (forage) : 1500-4000 MAD."
+    },
+    {
+      "q": "Quelle marque de pompe est fiable au Maroc ?",
+      "a": "Pedrollo (Italie), Grundfos (Danemark) et DAB sont les marques les plus présentes et les mieux servies en pièces de rechange au Maroc. Les marques chinoises sont moins chères mais les pièces de rechange sont rares."
+    },
+    {
+      "q": "Mon puits est à sec, que faire ?",
+      "a": "En été, les nappes phréatiques baissent dans de nombreuses régions marocaines. Contactez un puisatier pour vérifier le niveau. Une solution temporaire est d'alimenter depuis une citerne extérieure."
+    }
+  ],
+  "related_articles": [
+    "pression-eau-faible-maison",
+    "tuyau-eclate-hiver",
+    "vanne-arret-eau"
+  ],
+  "internal_links": [
+    "/plombier/casablanca",
+    "/plombier/rabat",
+    "/plombier/fes"
+  ]
+}

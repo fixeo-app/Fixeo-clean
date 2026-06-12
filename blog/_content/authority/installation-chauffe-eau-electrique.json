@@ -1,0 +1,69 @@
+{
+  "slug": "installation-chauffe-eau-electrique",
+  "title": "Installation chauffe-eau électrique au Maroc : guide complet",
+  "meta_description": "Installer un chauffe-eau électrique au Maroc : choix de la capacité, normes, coûts et étapes. Guide pratique par les experts Fixeo.",
+  "category": "plomberie",
+  "tags": [
+    "chauffe-eau",
+    "installation",
+    "électrique",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 7,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Remplacer un chauffe-eau ou en installer un dans une nouvelle construction : un choix structurant qui engage votre confort et vos factures pour les 10 prochaines années. Voici tout ce qu'il faut savoir au Maroc."
+    },
+    {
+      "type": "h2",
+      "title": "Quelle capacité choisir ?",
+      "content": "1 personne : 50 à 80 litres. 2-3 personnes : 100 litres. 4-5 personnes : 150 à 200 litres. Au Maroc, les familles de 4-5 personnes vivent souvent avec un cumulus 100L, ce qui provoque des ruptures de stock d'eau chaude. Mieux vaut prévoir plus grand."
+    },
+    {
+      "type": "h2",
+      "title": "Électrique vs solaire au Maroc",
+      "content": "Le chauffe-eau solaire est idéal au Maroc grâce à l'ensoleillement exceptionnel. Un système de 150L solaire avec appoint électrique amortit son investissement en 3 à 5 ans. L'électrique pur reste plus abordable à l'achat (800-2000 MAD) mais plus coûteux à l'usage."
+    },
+    {
+      "type": "h2",
+      "title": "Normes d'installation au Maroc",
+      "content": "Le chauffe-eau doit être installé avec un groupe de sécurité (obligatoire), une vanne d'arrêt sur l'alimentation froide, et connecté à un circuit électrique dédié avec disjoncteur calibré. La mise à la terre est impérative."
+    },
+    {
+      "type": "h2",
+      "title": "Coûts d'installation en 2025",
+      "content": "Chauffe-eau 100L électrique : 900 à 1800 MAD. Pose par plombier certifié : 350 à 600 MAD. Adaptation électrique si nécessaire : 200 à 400 MAD. Total : 1450 à 2800 MAD installé."
+    },
+    {
+      "type": "cta",
+      "text": "Installer mon chauffe-eau"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Quelle marque de chauffe-eau choisir au Maroc ?",
+      "a": "Les marques les plus fiables disponibles au Maroc : Chaffoteaux (Franco-marocain), Atlantic, Thermor, Ariston. Pour les budgets serrés, les marques locales comme Aures offrent un bon rapport qualité/prix."
+    },
+    {
+      "q": "Combien de temps faut-il pour chauffer un cumulus 100L ?",
+      "a": "Un chauffe-eau électrique 100L avec résistance 1500W met environ 2h30 à chauffer complètement. Programmez-le la nuit pour profiter des tarifs nocturnes ONEE si disponibles dans votre zone."
+    },
+    {
+      "q": "Peut-on installer un chauffe-eau soi-même au Maroc ?",
+      "a": "Techniquement possible pour la partie plomberie, mais la connexion électrique doit être réalisée par un électricien certifié. Un chauffe-eau mal installé peut provoquer des électrocutions ou des inondations."
+    }
+  ],
+  "related_articles": [
+    "chauffe-eau-fuit",
+    "remplacement-cumulus-maroc",
+    "entretien-chauffe-eau-solaire"
+  ],
+  "internal_links": [
+    "/plombier/casablanca",
+    "/plombier/rabat",
+    "/plombier/fes"
+  ]
+}

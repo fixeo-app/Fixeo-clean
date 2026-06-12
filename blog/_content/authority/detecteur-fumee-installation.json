@@ -1,0 +1,64 @@
+{
+  "slug": "detecteur-fumee-installation",
+  "title": "Détecteur de fumée : installation au Maroc",
+  "meta_description": "Installer un détecteur de fumée au Maroc : où le placer, quel modèle choisir et pourquoi c'est indispensable. Guide pratique Fixeo.",
+  "category": "electricite",
+  "tags": [
+    "détecteur fumée",
+    "sécurité incendie",
+    "alarme",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 4,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "80% des victimes d'incendie domestique meurent la nuit, asphyxiées par la fumée avant que le feu ne les atteigne. Un détecteur de fumée à 100 MAD peut sauver votre vie. Au Maroc, leur utilisation reste trop faible."
+    },
+    {
+      "type": "h2",
+      "title": "Où installer les détecteurs ?",
+      "content": "Un détecteur par niveau + couloir de dégagement. Placez-les au plafond (la fumée monte) à au moins 30 cm des murs et de la cuisine (pour éviter les fausses alarmes). Pas dans la cuisine, pas dans la salle de bain. Idéalement : couloir, salon, chambres."
+    },
+    {
+      "type": "h2",
+      "title": "Choisir le bon modèle",
+      "content": "Détecteur ionique : réagit aux feux rapides (papier, alcool). Détecteur optique : réagit aux feux couvants (tissu, mousse). Modèle combiné : le plus recommandé. Cherchez la certification EN14604 ou équivalente."
+    },
+    {
+      "type": "h2",
+      "title": "Installation et entretien",
+      "content": "Vissez au plafond, installez la pile (9V standard). Testez en appuyant sur le bouton test. Testez chaque mois. Remplacez la pile une fois par an. Remplacez l'appareil tous les 10 ans."
+    },
+    {
+      "type": "cta",
+      "text": "Installer mes détecteurs de fumée"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Le détecteur de fumée est-il obligatoire au Maroc ?",
+      "a": "Il n'existe pas encore d'obligation légale généralisée au Maroc pour les logements privés, contrairement à la France. Mais les assurances habitation le recommandent fortement et certaines l'exigent."
+    },
+    {
+      "q": "Mon détecteur sonne sans raison (vapeur de douche, cuisine), que faire ?",
+      "a": "Déplacez-le plus loin de ces sources de vapeur. Installez un modèle optique plutôt qu'ionique (moins sensible à la vapeur). Si le problème persiste, vérifiez que les trous de ventilation ne sont pas obstrués."
+    },
+    {
+      "q": "Peut-on raccorder les détecteurs en réseau ?",
+      "a": "Oui. Les détecteurs interconnectables (câblés ou WiFi) déclenchent toutes les alarmes en même temps. Très recommandé pour les grandes maisons ou villas. Coût supplémentaire : 50 à 150 MAD par détecteur supplémentaire."
+    }
+  ],
+  "related_articles": [
+    "cablage-maison-renovation",
+    "domotique-maison-maroc",
+    "tableau-electrique-upgrade"
+  ],
+  "internal_links": [
+    "/electricien/casablanca",
+    "/electricien/rabat",
+    "/electricien/marrakech"
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "slug": "interrupteur-defaillant",
+  "title": "Interrupteur défaillant : changer soi-même ou appeler ?",
+  "meta_description": "Interrupteur électrique qui ne fonctionne plus au Maroc ? Diagnostic, remplacement sécurisé et quand il vaut mieux appeler un électricien.",
+  "category": "electricite",
+  "tags": [
+    "interrupteur",
+    "éclairage",
+    "remplacement",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 4,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Un interrupteur qui clignote, qui reste sur ON même éteint, ou un va-et-vient qui fait tout sauter — les problèmes d'interrupteurs sont courants dans les maisons marocaines. Voici comment les diagnostiquer et les résoudre."
+    },
+    {
+      "type": "h2",
+      "title": "Types d'interrupteurs et pannes courantes",
+      "content": "Interrupteur simple : s'allume/s'éteint. Va-et-vient : deux interrupteurs contrôlent une même lampe. Minuterie : s'éteint automatiquement. Les pannes les plus courantes : contact usé (lumière vacillante), ressort cassé (interrupteur coincé), ou fil desserré à l'intérieur."
+    },
+    {
+      "type": "h2",
+      "title": "Remplacement sécurisé pas à pas",
+      "content": "Coupez le disjoncteur du circuit (vérifiez avec une lampe que le circuit est bien éteint). Dévissez la plaque, notez la position des fils (photo). Débranchez les fils, connectez-les sur le nouvel interrupteur à l'identique. Revissez, testez."
+    },
+    {
+      "type": "h2",
+      "title": "Interrupteurs connectés : l'opportunité",
+      "content": "Le remplacement est l'occasion idéale de passer à un interrupteur connecté (WiFi ou Zigbee) : contrôle vocal, programmation, détection de présence intégrée. Tarifs : 100 à 350 MAD selon les fonctionnalités."
+    },
+    {
+      "type": "cta",
+      "text": "Remplacer mes interrupteurs"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Un va-et-vient peut-il être remplacé par un interrupteur simple ?",
+      "a": "Oui, mais il faut retirer le second interrupteur du va-et-vient et l'isoler correctement. C'est une opération qui nécessite de comprendre le câblage — un électricien peut le faire en 30 minutes."
+    },
+    {
+      "q": "Mon interrupteur fait des étincelles quand je l'actionne, est-ce normal ?",
+      "a": "De légères étincelles visibles à travers le plastique lors de la coupure sont normales sur les circuits à incandescence. Des étincelles importantes, un craquement fort ou une odeur de brûlé signalent un défaut à réparer."
+    },
+    {
+      "q": "Peut-on poser un interrupteur à variateur sur une LED ?",
+      "a": "Uniquement si l'ampoule LED est marquée \"dimmable\" ET si le variateur est compatible LED. Un variateur à incandescence sur LED provoque des clignotements et peut réduire la durée de vie des ampoules."
+    }
+  ],
+  "related_articles": [
+    "ampoule-grille-souvent",
+    "installation-prise-electrique",
+    "domotique-maison-maroc"
+  ],
+  "internal_links": [
+    "/electricien/casablanca",
+    "/electricien/rabat",
+    "/electricien/marrakech"
+  ]
+}

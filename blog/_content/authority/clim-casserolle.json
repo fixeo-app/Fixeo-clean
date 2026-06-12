@@ -1,0 +1,64 @@
+{
+  "slug": "clim-casserolle",
+  "title": "Bruit casserole du climatiseur : diagnostic au Maroc",
+  "meta_description": "Votre climatiseur fait un bruit de casserole ou de cliquetis au Maroc ? Causes et solutions de ce bruit agaçant mais souvent simple à résoudre.",
+  "category": "climatisation",
+  "tags": [
+    "bruit clim",
+    "cliquetis",
+    "diagnostic",
+    "panne"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 4,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Un bruit de cliquetis, de casserole ou de petits coups répétés dans votre climatisation — agaçant et inquiétant à la fois. La bonne nouvelle : dans 70% des cas, c'est bénin et facilement réparable."
+    },
+    {
+      "type": "h2",
+      "title": "Causes les plus fréquentes",
+      "content": "Débris dans le ventilateur (morceau de plastique, insecte, poussière collée sur une pale) : crée un déséquilibre et un bruit rythmique. Pale de ventilateur déformée. Vis du panneau frontal desserrée. Tuyau de condensat qui claque contre la paroi."
+    },
+    {
+      "type": "h2",
+      "title": "Bruit de dilatation",
+      "content": "Au démarrage ou à l'arrêt, des craquements sont normaux — c'est la dilatation thermique du boîtier plastique (chaud à froid ou inversement). Ce bruit de \"petits coups\" irréguliers n'est pas alarmant."
+    },
+    {
+      "type": "h2",
+      "title": "Quand c'est préoccupant",
+      "content": "Bruit de métal sur métal, sifflement aigu continu, bruit qui s'intensifie progressivement — appelez un technicien. Un compresseur qui commence à cogner doit être remplacé avant qu'il ne détruise les autres composants."
+    },
+    {
+      "type": "cta",
+      "text": "Diagnostiquer le bruit de ma clim"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Comment vérifier si le bruit vient du ventilateur ?",
+      "a": "Passez la clim en mode ventilation uniquement (sans refroidissement). Si le bruit est présent : ventilateur en cause. Si le bruit disparaît en ventilation seule et revient en mode froid : c'est probablement le compresseur ou le circuit frigorigène."
+    },
+    {
+      "q": "Peut-on huiler le ventilateur d'une climatisation ?",
+      "a": "Certains moteurs de ventilateur ont un point de graissage. En général, le roulement des moteurs modernes est étanche et ne nécessite pas de lubrification. Si le moteur grince, il doit être remplacé."
+    },
+    {
+      "q": "Mon climatiseur neuf fait du bruit, dois-je m'inquiéter ?",
+      "a": "Un léger bruit de souffle est normal. Des cliquetis inhabituels sur un appareil neuf doivent être signalés au revendeur ou au technicien installateur — c'est sous garantie."
+    }
+  ],
+  "related_articles": [
+    "clim-bruyante",
+    "entretien-clim-annuel",
+    "compresseur-clim-en-panne"
+  ],
+  "internal_links": [
+    "/climatisation/casablanca",
+    "/climatisation/agadir",
+    "/climatisation/marrakech"
+  ]
+}

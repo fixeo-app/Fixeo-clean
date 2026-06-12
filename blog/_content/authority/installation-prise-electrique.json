@@ -1,0 +1,64 @@
+{
+  "slug": "installation-prise-electrique",
+  "title": "Installer une prise électrique au Maroc : normes et coûts",
+  "meta_description": "Ajouter une prise électrique chez vous au Maroc : procédure, normes de sécurité, prix 2025. Guide pour propriétaires et locataires.",
+  "category": "electricite",
+  "tags": [
+    "prise électrique",
+    "installation",
+    "normes",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 5,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Trop peu de prises dans votre salon ou chambre ? L'ajout d'une prise électrique est l'une des interventions les plus demandées au Maroc — et l'une des plus mal faites quand elle est réalisée sans qualification."
+    },
+    {
+      "type": "h2",
+      "title": "Options d'installation",
+      "content": "Dérivation depuis une prise existante (si la section du câble le permet), extension depuis le tableau sur un nouveau circuit dédié (recommandé pour des usages intensifs), ou multiprise fixe montée en applique (solution temporaire acceptable)."
+    },
+    {
+      "type": "h2",
+      "title": "Normes au Maroc",
+      "content": "Les prises doivent être protégées à la terre (2P+T), protégées par un disjoncteur différentiel 30mA, et installées avec des câbles de section adaptée (2,5mm² pour les circuits prises standard). En salle de bain, les normes sont plus strictes (zones de sécurité)."
+    },
+    {
+      "type": "h2",
+      "title": "Coûts au Maroc",
+      "content": "Prise supplémentaire simple (dérivation) : 100 à 250 MAD. Nouveau circuit depuis tableau (5m) : 300 à 600 MAD. Installation en salle de bain (normes étanchéité) : 250 à 450 MAD."
+    },
+    {
+      "type": "cta",
+      "text": "Ajouter une prise chez moi"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Puis-je installer moi-même une prise électrique au Maroc ?",
+      "a": "Techniquement possible pour un simple remplacement de prise sur un circuit existant. Mais tout travail impliquant le tableau électrique ou la création de nouveaux circuits doit être fait par un électricien certifié."
+    },
+    {
+      "q": "Combien de prises faut-il dans un salon ?",
+      "a": "Les normes recommandent une prise tous les 3-4 mètres de linéaire de mur. Un salon de 20m² doit avoir au moins 4 à 6 prises double pour éviter les multiprises en cascade."
+    },
+    {
+      "q": "Une prise extérieure peut-elle être de type intérieur ?",
+      "a": "Non. Les prises extérieures doivent être de type IP44 minimum (étanche aux projections d'eau) avec un couvercle de protection. L'utilisation d'une prise intérieure à l'extérieur est un danger électrique grave."
+    }
+  ],
+  "related_articles": [
+    "prise-electrique-chauffe",
+    "electricite-exterieur-jardin",
+    "mise-terre-installation"
+  ],
+  "internal_links": [
+    "/electricien/casablanca",
+    "/electricien/rabat",
+    "/electricien/marrakech"
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "slug": "tableau-electrique-upgrade",
+  "title": "Upgrader son tableau électrique : quand et comment",
+  "meta_description": "Quand remplacer son tableau électrique au Maroc ? Signes d'obsolescence, nouvelles normes et coûts de mise à niveau en 2025.",
+  "category": "electricite",
+  "tags": [
+    "tableau électrique",
+    "upgrade",
+    "normes",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 6,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Un tableau électrique remis aux normes, c'est la sécurité pour 20 ans. Un tableau obsolète, c'est un risque quotidien. Au Maroc, de nombreux immeubles des années 80-2000 ont des tableaux qui ne correspondent plus aux usages actuels."
+    },
+    {
+      "type": "h2",
+      "title": "Signes qu'il est temps de changer",
+      "content": "Fusibles à cartouche (pas de disjoncteurs), absence de DDR (différentiel), traces de noir ou odeur de brûlé dans le coffret, tableau qui chauffe, fils qui sortent directement sans gaines, impossibilité d'ajouter des circuits."
+    },
+    {
+      "type": "h2",
+      "title": "Ce que doit contenir un tableau moderne",
+      "content": "Disjoncteur principal bipolaire, 1 ou 2 DDR 30mA (type A pour les circuits avec électronique), disjoncteurs individuels par circuit (éclairage, prises, cuisine, chauffe-eau, clim), étiquetage de chaque circuit."
+    },
+    {
+      "type": "h2",
+      "title": "Coûts de remplacement",
+      "content": "Tableau simple (6-8 circuits) : 800 à 1500 MAD (matériel + pose). Tableau complet pour villa (12-16 circuits avec DDR double) : 2000 à 4000 MAD. Tableau avec parafoudre intégré : ajouter 400 à 800 MAD."
+    },
+    {
+      "type": "cta",
+      "text": "Faire évaluer mon tableau"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Peut-on ajouter un circuit à un tableau existant ?",
+      "a": "Si le tableau a des emplacements libres et que le DDR peut supporter la charge supplémentaire, oui. Un électricien peut évaluer en quelques minutes si l'extension est possible ou si un remplacement est nécessaire."
+    },
+    {
+      "q": "Qu'est-ce qu'un DDR de type A vs AC ?",
+      "a": "Type AC : protection contre les courants sinusoïdaux — standard. Type A : protection contre les courants pulsés aussi (plus complet, requis pour les circuits avec variateurs, chargeurs de voiture, etc.). Préférez le type A pour les nouvelles installations."
+    },
+    {
+      "q": "Un tableau neuf doit-il être certifié ?",
+      "a": "En théorie, les travaux électriques au Maroc doivent être conformes aux normes marocaines NM. Dans la pratique, demandez un électricien qualifié qui travaille avec des composants de marques reconnues (Schneider, Legrand, Hager)."
+    }
+  ],
+  "related_articles": [
+    "cablage-maison-renovation",
+    "mise-terre-installation",
+    "panne-tableau-electrique"
+  ],
+  "internal_links": [
+    "/electricien/casablanca",
+    "/electricien/rabat",
+    "/electricien/marrakech"
+  ]
+}

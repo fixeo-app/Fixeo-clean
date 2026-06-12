@@ -1,0 +1,64 @@
+{
+  "slug": "consommation-electrique-clim",
+  "title": "Consommation électrique climatisation : maîtriser les coûts",
+  "meta_description": "Calculer et réduire la consommation électrique de votre climatisation au Maroc. Astuces pour baisser la facture ONEE en été.",
+  "category": "climatisation",
+  "tags": [
+    "consommation clim",
+    "économie énergie",
+    "ONEE",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 6,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "En été au Maroc, la climatisation peut représenter 40 à 70% de la facture électrique ONEE. Comprendre et maîtriser cette consommation, c'est économiser 200 à 800 MAD par été."
+    },
+    {
+      "type": "h2",
+      "title": "Calculer sa consommation",
+      "content": "Puissance du climatiseur (kW) × heures de fonctionnement × tarif kWh. Exemple : split 1,5 kW × 8h/jour × 0,96 MAD = 11,5 MAD/jour = 345 MAD/mois. Sur 3 mois d'été = 1035 MAD. Pour un split efficace A++ (SEER 7), divisez par 2."
+    },
+    {
+      "type": "h2",
+      "title": "8 conseils pour réduire la consommation",
+      "content": "Réglez à 26°C (pas 18°C). Fermez portes et fenêtres. Utilisez le mode \"Sleep\" la nuit. Nettoyez les filtres chaque semaine. Protégez de l'unité extérieure du soleil. Utilisez les volets pour l'ombrage. Programmez les horaires. Isolez vos fenêtres avec du film solaire."
+    },
+    {
+      "type": "h2",
+      "title": "Impact du réglage de température",
+      "content": "Chaque degré Celsius en moins augmente la consommation de 6 à 8%. Un réglage à 18°C consomme 50% de plus qu'à 26°C pour le même confort relatif. La température idéale recommandée par l'OMS et les fabricants est 24-26°C."
+    },
+    {
+      "type": "cta",
+      "text": "Optimiser ma climatisation"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Vaut-il mieux éteindre la clim quand on sort ?",
+      "a": "Pour moins de 2 heures d'absence : laissez en mode économie (28-30°C). Pour plus de 2 heures : éteignez. Le redémarrage consomme légèrement plus que le maintien à température modérée mais sur plusieurs heures, l'extinction gagne."
+    },
+    {
+      "q": "Le mode sec (dry) économise-t-il de l'électricité ?",
+      "a": "Oui. Le mode sec (déshumidification) consomme 30 à 50% moins que le mode froid. Il rafraîchit en éliminant l'humidité plutôt qu'en abaissant la température. Parfait pour les nuits peu chaudes mais humides (côtes marocaines)."
+    },
+    {
+      "q": "Un thermomètre connecté aide-t-il à économiser ?",
+      "a": "Oui. Un thermomètre connecté (50 à 150 MAD) permet de suivre la température réelle et d'éviter de refroidir plus que nécessaire. Combiné à un split WiFi, vous pouvez programmer finement selon votre emploi du temps."
+    }
+  ],
+  "related_articles": [
+    "choisir-climatisation-maroc",
+    "entretien-clim-annuel",
+    "panneau-solaire-installation"
+  ],
+  "internal_links": [
+    "/climatisation/casablanca",
+    "/climatisation/agadir",
+    "/climatisation/marrakech"
+  ]
+}

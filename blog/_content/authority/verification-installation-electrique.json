@@ -1,0 +1,64 @@
+{
+  "slug": "verification-installation-electrique",
+  "title": "Vérification installation électrique : check-list complète",
+  "meta_description": "Check-list complète pour vérifier la sécurité de votre installation électrique au Maroc. Points à contrôler avant d'acheter ou louer un logement.",
+  "category": "electricite",
+  "tags": [
+    "vérification électrique",
+    "sécurité",
+    "audit",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 6,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Avant d'acheter une maison, de signer un bail ou de rénover — faire vérifier l'installation électrique est une étape souvent négligée au Maroc. Un audit préventif coûte 200 à 400 MAD et peut éviter des travaux de 5000 MAD."
+    },
+    {
+      "type": "h2",
+      "title": "Points à vérifier vous-même",
+      "content": "Testez toutes les prises (testeur de prise 15 MAD), vérifiez que chaque circuit du tableau est étiqueté, testez le bouton test du DDR, vérifiez l'état visuel des câbles apparents (gaines fissurées, fils dénudés), comptez le nombre de prises par pièce."
+    },
+    {
+      "type": "h2",
+      "title": "Ce qu'un électricien doit contrôler",
+      "content": "Mesure de la résistance de la prise de terre (< 100 ohms), mesure de l'isolement des câbles, vérification du calibrage des disjoncteurs vs section des câbles, détection des connexions dans les boîtes de dérivation, test de continuité des conducteurs."
+    },
+    {
+      "type": "h2",
+      "title": "Les anomalies les plus fréquentes au Maroc",
+      "content": "Absence de mise à la terre (> 40% des logements anciens), câbles aluminium non remplacés, boîtes de dérivation ouvertes avec fils apparents, disjoncteurs surdimensionnés (câble 1,5mm² sur disjoncteur 20A = danger), absence de DDR."
+    },
+    {
+      "type": "cta",
+      "text": "Faire auditer mon installation"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Combien coûte un audit électrique complet au Maroc ?",
+      "a": "Un audit électrique complet (mesures, rapport écrit) coûte 300 à 600 MAD selon la superficie. Pour une vente immobilière, ce rapport peut être demandé par l'acheteur ou l'assureur."
+    },
+    {
+      "q": "À quelle fréquence faire vérifier son installation électrique ?",
+      "a": "Pour un logement neuf : à 10 ans. Pour une installation rénovée : à 10 ans. Pour une installation ancienne (> 25 ans) : tous les 5 ans. Après des travaux de rénovation ou un sinistre électrique : immédiatement."
+    },
+    {
+      "q": "Mon bailleur doit-il faire vérifier l'électricité avant location ?",
+      "a": "La loi marocaine exige que le logement soit en état décent. Une installation électrique dangereuse est un vice caché dont le propriétaire est responsable. En cas de doute, demandez un diagnostic avant de signer le bail."
+    }
+  ],
+  "related_articles": [
+    "cablage-maison-renovation",
+    "mise-terre-installation",
+    "tableau-electrique-upgrade"
+  ],
+  "internal_links": [
+    "/electricien/casablanca",
+    "/electricien/rabat",
+    "/electricien/marrakech"
+  ]
+}

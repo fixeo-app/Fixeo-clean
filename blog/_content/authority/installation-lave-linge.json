@@ -1,0 +1,64 @@
+{
+  "slug": "installation-lave-linge",
+  "title": "Raccordement lave-linge : installation plomberie au Maroc",
+  "meta_description": "Installer un lave-linge au Maroc : raccordement eau froide, évacuation, normes et conseils. Guide complet pour une installation correcte.",
+  "category": "plomberie",
+  "tags": [
+    "lave-linge",
+    "installation",
+    "raccordement",
+    "plomberie"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 4,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Installer un lave-linge semble simple — mais un mauvais raccordement peut provoquer des fuites ou une mauvaise évacuation. Voici les bonnes pratiques adoptées par les plombiers Fixeo au Maroc."
+    },
+    {
+      "type": "h2",
+      "title": "Raccordement eau froide",
+      "content": "Le lave-linge se raccorde en eau froide uniquement (sauf modèles spécifiques). Utilisez le robinet d'arrêt fourni (robinet de machine à laver, quart de tour). La pression réseau doit être entre 0,5 et 8 bars. Si votre pression dépasse 4 bars (fréquent dans certains quartiers de Casablanca), installez un réducteur de pression."
+    },
+    {
+      "type": "h2",
+      "title": "Évacuation correcte",
+      "content": "Le tuyau d'évacuation doit être fixé en U à au moins 60 cm de hauteur avant de plonger dans le siphon ou la colonne. Un siphon anti-odeur est recommandé si l'évacuation va directement dans le sol. Diameter minimum : 30 mm."
+    },
+    {
+      "type": "h2",
+      "title": "Erreurs à éviter",
+      "content": "Ne jamais poser le tuyau d'évacuation directement au sol sans siphon (odeurs). Vérifier que le siphon ne se désamorce pas par effet Venturi si d'autres appareils évacuent simultanément. Utiliser des colliers de fixation pour maintenir les tuyaux."
+    },
+    {
+      "type": "cta",
+      "text": "Faire installer mon lave-linge"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Faut-il un plombier pour installer un lave-linge ?",
+      "a": "Si une prise de eau et une évacuation existent déjà à proximité, l'installation est simple. Si des travaux de plomberie sont nécessaires (créer une arrivée d'eau), un plombier est recommandé."
+    },
+    {
+      "q": "Mon lave-linge provoque des odeurs d'égout, pourquoi ?",
+      "a": "Le siphon se vide probablement par effet Venturi ou évaporation. Installez un clapet anti-retour anti-odeur sur l'évacuation. Coût : 30-60 MAD."
+    },
+    {
+      "q": "Quel robinet pour lave-linge au Maroc ?",
+      "a": "Un robinet à quart de tour (ou robinet machine à laver) avec joint en caoutchouc adapté au diamètre du flexible (3/4'' standard). Evitez les robinets à papillon anciens qui peuvent fuir."
+    }
+  ],
+  "related_articles": [
+    "plomberie-cuisine-renovation",
+    "robinet-qui-goutte",
+    "evacuation-eau-lente"
+  ],
+  "internal_links": [
+    "/plombier/casablanca",
+    "/plombier/rabat",
+    "/plombier/fes"
+  ]
+}

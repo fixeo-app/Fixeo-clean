@@ -1,0 +1,64 @@
+{
+  "slug": "disjoncteur-saute-souvent",
+  "title": "Disjoncteur qui saute souvent : causes et solutions",
+  "meta_description": "Votre disjoncteur saute souvent au Maroc ? Découvrez les causes (surcharge, court-circuit, appareil défaillant) et les solutions avec les électriciens Fixeo.",
+  "category": "electricite",
+  "tags": [
+    "disjoncteur",
+    "panne électrique",
+    "tableau électrique",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 6,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Un disjoncteur qui saute une fois, c'est normal. Mais quand ça se répète plusieurs fois par semaine, c'est un signal d'alarme à ne pas ignorer. Au Maroc, où les installations électriques des années 80-90 sont souvent sous-dimensionnées, ce problème est très fréquent."
+    },
+    {
+      "type": "h2",
+      "title": "Les 3 causes principales",
+      "content": "La surcharge (trop d'appareils sur le même circuit), le court-circuit (contact entre deux conducteurs, dangereux), ou un appareil électroménager défaillant qui tire trop de courant. Chaque cause a un profil différent : la surcharge saute progressivement, le court-circuit est immédiat et brutal."
+    },
+    {
+      "type": "h2",
+      "title": "Diagnostic pratique",
+      "content": "Débranchez tous les appareils du circuit concerné, réarmez le disjoncteur. S'il tient : rebranchez les appareils un par un. L'appareil qui fait sauter le disjoncteur à sa connexion est défaillant. S'il saute à vide : problème de cablage ou court-circuit dans la paroi."
+    },
+    {
+      "type": "h2",
+      "title": "Solutions",
+      "content": "Surcharge : répartissez les appareils sur plusieurs circuits ou augmentez le calibre du disjoncteur (avec adaptation du câble). Appareil défaillant : le faire réparer ou remplacer. Court-circuit dans le mur : intervention d'un électricien qualifié obligatoire."
+    },
+    {
+      "type": "cta",
+      "text": "Faire diagnostiquer mon tableau électrique"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Un disjoncteur qui saute est-il dangereux ?",
+      "a": "Le disjoncteur fait son travail — il protège. Le danger, c'est si vous le réarmez en force ou si vous le by-passez. Un disjoncteur qui saute régulièrement indique un problème à résoudre, pas à ignorer."
+    },
+    {
+      "q": "Peut-on remplacer un disjoncteur soi-même au Maroc ?",
+      "a": "Non recommandé. Le tableau électrique contient des parties sous tension même quand le disjoncteur est éteint. Un électricien qualifié est nécessaire pour intervenir en sécurité."
+    },
+    {
+      "q": "Combien coûte le remplacement d'un disjoncteur ?",
+      "a": "Un disjoncteur modulaire coûte 30 à 80 MAD. La main-d'œuvre d'un électricien : 100 à 200 MAD. Total : 130 à 280 MAD."
+    }
+  ],
+  "related_articles": [
+    "court-circuit-maison",
+    "panne-tableau-electrique",
+    "tableau-electrique-upgrade"
+  ],
+  "internal_links": [
+    "/electricien/casablanca",
+    "/electricien/rabat",
+    "/electricien/marrakech"
+  ]
+}

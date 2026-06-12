@@ -1,0 +1,64 @@
+{
+  "slug": "serrure-electrique-probleme",
+  "title": "Serrure électrique en panne : dépannage au Maroc",
+  "meta_description": "Serrure électrique ou motorisée en panne au Maroc ? Diagnostic des pannes les plus courantes et solutions de dépannage par les serruriers Fixeo.",
+  "category": "serrurerie",
+  "tags": [
+    "serrure électrique",
+    "panne",
+    "dépannage",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 5,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Les serrures électriques (gâches électriques, électroaimants, motorisées) sont de plus en plus répandues dans les immeubles et locaux commerciaux marocains. Quand elles tombent en panne, l'accès est bloqué."
+    },
+    {
+      "type": "h2",
+      "title": "Types de serrures électriques",
+      "content": "Gâche électrique : solénoïde qui débloque la gâche en recevant une tension (12V ou 24V). Électroaimant : maintien par champ magnétique (portes coupe-feu). Motorisée : servomoteur qui actionne les pênes. Chaque type a ses pannes spécifiques."
+    },
+    {
+      "type": "h2",
+      "title": "Diagnostic de base",
+      "content": "Vérifiez l'alimentation (transformateur, câble, fusible), testez avec un multimètre (tension aux bornes de la serrure). Si la serrure reçoit bien la tension mais ne réagit pas, le solénoïde ou le moteur est défaillant. Si pas de tension, cherchez côté alimentation ou commande."
+    },
+    {
+      "type": "h2",
+      "title": "Mode de secours",
+      "content": "La plupart des serrures électriques ont un mode de secours mécanique (cylindre de clé). Assurez-vous que ce mode est accessible et fonctionne — c'est vital en cas de panne d'alimentation."
+    },
+    {
+      "type": "cta",
+      "text": "Réparer ma serrure électrique"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Ma serrure électrique s'ouvre même sans courant, est-ce normal ?",
+      "a": "Dépend du type : les gâches en \"fail-safe\" (sécurité ouverte) s'ouvrent sans courant (pour évacuation d'urgence). Les modèles \"fail-secure\" (sécurité fermée) restent fermés. Vérifiez le mode de votre installation."
+    },
+    {
+      "q": "Combien coûte le remplacement d'une gâche électrique ?",
+      "a": "Une gâche électrique 12V standard : 150 à 400 MAD. La pose : 100 à 200 MAD. Total : 250 à 600 MAD selon le modèle."
+    },
+    {
+      "q": "Le code de ma porte d'immeuble ne fonctionne plus, qui appeler ?",
+      "a": "Le digicode ou interphone est une partie commune — c'est au syndic de l'immeuble de le faire réparer. Signalez le problème au syndic par écrit."
+    }
+  ],
+  "related_articles": [
+    "digicode-installation-immeuble",
+    "serrure-connectee-maroc",
+    "porte-blindee-installation"
+  ],
+  "internal_links": [
+    "/serrurier/casablanca",
+    "/serrurier/rabat",
+    "/serrurier/marrakech"
+  ]
+}

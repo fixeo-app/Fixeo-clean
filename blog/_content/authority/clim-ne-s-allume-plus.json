@@ -1,0 +1,64 @@
+{
+  "slug": "clim-ne-s-allume-plus",
+  "title": "Climatiseur qui ne s'allume plus : vérifications de base",
+  "meta_description": "Votre climatisation ne démarre plus au Maroc ? Check-list des vérifications à faire avant d'appeler le technicien. Guide Fixeo.",
+  "category": "climatisation",
+  "tags": [
+    "clim ne démarre plus",
+    "panne",
+    "diagnostic",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 4,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "La télécommande ne répond plus, l'affichage ne s'allume plus, la clim reste muette — avant d'appeler le technicien (et payer le déplacement), vérifiez ces points simples qui résolvent 30% des cas."
+    },
+    {
+      "type": "h2",
+      "title": "Vérifications simples",
+      "content": "Batterie de la télécommande épuisée (première vérification). Disjoncteur de la clim sauté au tableau. Prise murale défaillante (testez avec un autre appareil). Protection anti-gel ou anti-chaleur déclenchée (certains modèles s'éteignent si l'unité extérieure est trop chaude — laissez refroidir 30 min)."
+    },
+    {
+      "type": "h2",
+      "title": "Codes d'erreur",
+      "content": "Beaucoup de climatiseurs affichent un code d'erreur sur l'unité intérieure (clignotement de LED ou code type E1, F2...). Photographiez ce code et consultez le manuel. La plupart des codes sont explicites (pression gaz, sonde température, communication inter-unités)."
+    },
+    {
+      "type": "h2",
+      "title": "Protection de la carte électronique",
+      "content": "Après une coupure ONEE, la carte électronique peut rester bloquée. Solution : coupez l'alimentation électrique de la clim au disjoncteur, attendez 5 minutes, réenclenchez. C'est souvent suffisant pour débloquer."
+    },
+    {
+      "type": "cta",
+      "text": "Faire diagnostiquer ma climatisation"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Ma clim s'allume mais s'éteint après 5 minutes, pourquoi ?",
+      "a": "Protection thermique : le compresseur est en surchauffe (bouchage des ailettes extérieures, température ambiante excessive). Ou protection contre le manque de gaz. Appelez un technicien."
+    },
+    {
+      "q": "L'affichage clignote en rouge, est-ce grave ?",
+      "a": "Dépend du code. Un clignotement rapide en rouge signale souvent une panne sérieuse (compresseur, carte). Un clignotement lent peut juste indiquer un filtre sale. Consultez le manuel de votre modèle."
+    },
+    {
+      "q": "Peut-on réinitialiser une climatisation ?",
+      "a": "Oui : coupez le disjoncteur pendant 5 minutes. Si votre modèle a un bouton \"Reset\" sur l'unité intérieure, utilisez-le. Cette réinitialisation efface les protections temporaires mais pas les pannes réelles."
+    }
+  ],
+  "related_articles": [
+    "clim-ne-refroidit-plus",
+    "panne-tableau-electrique",
+    "compresseur-clim-en-panne"
+  ],
+  "internal_links": [
+    "/climatisation/casablanca",
+    "/climatisation/agadir",
+    "/climatisation/marrakech"
+  ]
+}

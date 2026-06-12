@@ -1,0 +1,64 @@
+{
+  "slug": "cable-chauffe-plancher",
+  "title": "Plancher chauffant électrique : installation au Maroc",
+  "meta_description": "Installer un plancher chauffant électrique au Maroc : sous carrelage, coûts, consommation et meilleures pièces pour ce système confortable.",
+  "category": "electricite",
+  "tags": [
+    "plancher chauffant",
+    "chauffage électrique",
+    "carrelage",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 6,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Les hivers peuvent être froids au Maroc, surtout à Fès, Meknès et Ifrane. Le plancher chauffant électrique offre un confort incomparable — surtout dans les salles de bain et les salons carrelés — sans radiateurs visibles."
+    },
+    {
+      "type": "h2",
+      "title": "Types de planchers chauffants",
+      "content": "Câbles chauffants : flexibles, posés sous le carrelage dans la chape. Nattes chauffantes : précâblées sur support, plus faciles à installer. Câbles à infrarouge : sous parquet flottant. Pour le Maroc : les nattes sous carrelage sont le choix le plus répandu."
+    },
+    {
+      "type": "h2",
+      "title": "Consommation électrique",
+      "content": "Un plancher chauffant de 10m² consomme 1000 à 1500W selon l'usage. Avec un thermostat programmable, la consommation réelle est de 2 à 3 kWh par jour en hiver. Sur une saison de 3 mois, le coût est de 300 à 500 MAD pour une chambre."
+    },
+    {
+      "type": "h2",
+      "title": "Installation : étapes et coûts",
+      "content": "Pose de la natte sur l'ancien carrelage (surfaçage préalable si besoin), enrobage avec chape ou colle flexible, raccordement électrique au thermostat, carrelage par-dessus. Coût : 200 à 400 MAD/m² (natte + pose + raccordement électrique)."
+    },
+    {
+      "type": "cta",
+      "text": "Installer mon plancher chauffant"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Le plancher chauffant consomme-t-il beaucoup d'électricité au Maroc ?",
+      "a": "Avec un thermostat programmable, la consommation est maîtrisée. Régler à 20°C la nuit et 23°C le matin suffit. Sur une salle de bain de 6m², comptez 100 à 150 MAD par mois en hiver."
+    },
+    {
+      "q": "Peut-on installer un plancher chauffant sans tout refaire le carrelage ?",
+      "a": "Oui avec les câbles extra-plats (2mm). Ils se posent sur l'ancien carrelage avec une colle flexible, puis le nouveau carrelage par-dessus. La surélévation totale est de 10 à 15mm."
+    },
+    {
+      "q": "Quel thermostat pour plancher chauffant ?",
+      "a": "Choisissez un thermostat avec sonde de sol (mesure la température au contact du sol, plus précis), programmable 7 jours. Les modèles connectés WiFi (100-200 MAD) permettent la gestion depuis votre smartphone."
+    }
+  ],
+  "related_articles": [
+    "cablage-maison-renovation",
+    "electricite-salle-de-bain",
+    "consommation-electrique-clim"
+  ],
+  "internal_links": [
+    "/electricien/casablanca",
+    "/electricien/rabat",
+    "/electricien/marrakech"
+  ]
+}

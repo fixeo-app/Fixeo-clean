@@ -1,0 +1,64 @@
+{
+  "slug": "clim-odeur-mauvaise",
+  "title": "Climatiseur avec mauvaise odeur : nettoyer les filtres",
+  "meta_description": "Votre climatiseur dégage une mauvaise odeur au Maroc ? Causes (moisissures, filtres, eau stagnante) et solutions de nettoyage efficaces.",
+  "category": "climatisation",
+  "tags": [
+    "odeur climatisation",
+    "moisissures",
+    "nettoyage",
+    "filtre"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 5,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Une odeur de moisi, de plastique brûlé ou d'œuf pourri qui sort de votre climatisation — chaque type d'odeur signale un problème spécifique. Au Maroc, les odeurs de moisissures sont les plus fréquentes avec l'humidité côtière."
+    },
+    {
+      "type": "h2",
+      "title": "Odeur de moisi (la plus fréquente)",
+      "content": "La condensation dans l'échangeur crée un environnement parfait pour les moisissures et bactéries si les filtres ne sont pas nettoyés régulièrement. Solution : nettoyage complet des filtres et de l'échangeur intérieur avec un produit antibactérien spécial clim."
+    },
+    {
+      "type": "h2",
+      "title": "Odeur de brûlé ou plastique",
+      "content": "C'est une alerte sérieuse : poussière brûlée sur le moteur (lors de la première utilisation après l'hiver, c'est souvent passager), câbles qui chauffent (problème électrique à inspecter immédiatement), ou corps de plastique contre une partie chaude."
+    },
+    {
+      "type": "h2",
+      "title": "Solution : nettoyage complet",
+      "content": "Nettoyez les filtres à l'eau tiède savonneuse. Vaporisez un spray désinfectant clim sur l'échangeur (disponible 30-50 MAD en quincaillerie). Laissez sécher en faisant tourner le ventilateur en mode ventilation 30 minutes. Pour une désinfection complète, un technicien utilise la vapeur haute pression."
+    },
+    {
+      "type": "cta",
+      "text": "Désinfecter ma climatisation"
+    }
+  ],
+  "faq": [
+    {
+      "q": "L'air de ma climatisation peut-il me rendre malade ?",
+      "a": "Oui si l'échangeur est colonisé par des bactéries ou moisissures (légionelles, aspergillus). Les personnes allergiques et les enfants sont les plus sensibles. Un entretien régulier élimine ce risque."
+    },
+    {
+      "q": "Peut-on utiliser du vinaigre pour nettoyer la climatisation ?",
+      "a": "Le vinaigre blanc dilué (50/50) peut nettoyer les filtres en plastique et le bac de condensat. N'utilisez pas de vinaigre pur sur l'échangeur en aluminium — il peut le corroder."
+    },
+    {
+      "q": "Mon climatiseur neuf a une odeur de plastique, est-ce normal ?",
+      "a": "Oui, pendant les premières heures de fonctionnement. C'est le chauffage des plastiques neufs. Aérez la pièce et l'odeur disparaît en 1 à 3 jours. Si elle persiste au-delà, contactez le revendeur."
+    }
+  ],
+  "related_articles": [
+    "nettoyage-filtres-clim",
+    "entretien-clim-annuel",
+    "clim-eau-interieur"
+  ],
+  "internal_links": [
+    "/climatisation/casablanca",
+    "/climatisation/agadir",
+    "/climatisation/marrakech"
+  ]
+}

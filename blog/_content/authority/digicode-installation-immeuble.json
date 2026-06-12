@@ -1,0 +1,64 @@
+{
+  "slug": "digicode-installation-immeuble",
+  "title": "Digicode immeuble : installation et entretien au Maroc",
+  "meta_description": "Installer un digicode dans votre immeuble au Maroc : systèmes disponibles, raccordement et entretien. Guide complet pour syndics et copropriétaires.",
+  "category": "serrurerie",
+  "tags": [
+    "digicode",
+    "interphone",
+    "contrôle accès",
+    "immeuble"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 5,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Casablanca, Rabat, Marrakech : dans les grandes villes marocaines, le digicode d'immeuble remplace progressivement les concierges. Sécuriser l'entrée d'un immeuble est un investissement collectif rentable."
+    },
+    {
+      "type": "h2",
+      "title": "Types de systèmes disponibles",
+      "content": "Digicode simple (code numérique) : 500 à 1500 MAD. Visiophone/interphone (son + image + ouverture à distance) : 2000 à 8000 MAD selon le nombre d'appartements. Système badge RFID : 1500 à 4000 MAD avec la centrale."
+    },
+    {
+      "type": "h2",
+      "title": "Installation dans un immeuble",
+      "content": "La centrale est installée à l'entrée principale, reliée à la gâche électrique de la porte. Pour le visiophone, un câblage 2 fils ou IP (cat.6) descend vers chaque appartement. La décision et le financement passent par l'assemblée de copropriété."
+    },
+    {
+      "type": "h2",
+      "title": "Entretien et codes",
+      "content": "Changez le code maître tous les 6 mois. En cas de départ d'un locataire, changez le code (ou désactivez le badge). La gâche électrique nécessite un entretien tous les 2 ans (lubrification, vérification des contacts)."
+    },
+    {
+      "type": "cta",
+      "text": "Installer un digicode dans mon immeuble"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Combien coûte l'installation d'un interphone d'immeuble au Maroc ?",
+      "a": "Pour un immeuble de 8 appartements : interphone audio 2000-4000 MAD, visiophone couleur 5000-10000 MAD, système IP (app smartphone) 8000-15000 MAD. Le coût est partagé entre les copropriétaires."
+    },
+    {
+      "q": "Notre code d'immeuble a été partagé, peut-on le changer facilement ?",
+      "a": "Oui sur la plupart des systèmes modernes. Consultez la notice ou appelez le serrurier qui a installé le système. Le changement de code prend 5 minutes."
+    },
+    {
+      "q": "Le digicode fonctionne-t-il en cas de coupure électrique ?",
+      "a": "Les systèmes modernes ont une batterie de secours (8 à 24h). Sans batterie, une coupure ONEE bloque le digicode — prévoyez toujours un accès mécanique de secours (clé traditionnelle)."
+    }
+  ],
+  "related_articles": [
+    "serrure-electrique-probleme",
+    "copropriete-serrure-parties-communes",
+    "serrure-connectee-maroc"
+  ],
+  "internal_links": [
+    "/serrurier/casablanca",
+    "/serrurier/rabat",
+    "/serrurier/marrakech"
+  ]
+}

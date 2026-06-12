@@ -1,0 +1,64 @@
+{
+  "slug": "tableau-divisionnaire",
+  "title": "Tableau divisionnaire : rôle et installation au Maroc",
+  "meta_description": "Qu'est-ce qu'un tableau divisionnaire et quand en installer un ? Guide pratique pour les villas et commerces au Maroc.",
+  "category": "electricite",
+  "tags": [
+    "tableau divisionnaire",
+    "sous-tableau",
+    "distribution",
+    "Maroc"
+  ],
+  "author": "Équipe Fixeo",
+  "estimated_read_min": 5,
+  "date": "2026-06-12",
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Une villa à deux niveaux, un local commercial avec stockage, une riad avec dépendances : dès que la superficie dépasse un certain seuil, un seul tableau principal ne suffit plus. Le tableau divisionnaire (sous-tableau) est la solution."
+    },
+    {
+      "type": "h2",
+      "title": "Tableau principal vs divisionnaire",
+      "content": "Le tableau principal reçoit l'alimentation ONEE et contient le disjoncteur de branchement. Le tableau divisionnaire est alimenté depuis le tableau principal et distribue les circuits d'une zone ou d'un niveau. Il contient ses propres DDR et disjoncteurs."
+    },
+    {
+      "type": "h2",
+      "title": "Quand est-il nécessaire ?",
+      "content": "Dès que vous avez plus de 12 circuits à gérer, si une partie de l'installation est éloignée du tableau principal (> 20m), pour séparer usage résidentiel et professionnel, ou pour faciliter la gestion de l'énergie par zone."
+    },
+    {
+      "type": "h2",
+      "title": "Installation et coûts",
+      "content": "Tableau divisionnaire vide (8 à 16 modules) : 200 à 400 MAD. Câble d'alimentation depuis tableau principal (10m, 4x10mm²) : 300 à 600 MAD. Pose et raccordement par électricien : 400 à 800 MAD. Total : 900 à 1800 MAD."
+    },
+    {
+      "type": "cta",
+      "text": "Créer mon sous-tableau électrique"
+    }
+  ],
+  "faq": [
+    {
+      "q": "Le tableau divisionnaire doit-il avoir son propre DDR ?",
+      "a": "Oui, il est recommandé d'avoir au minimum un DDR 30mA dans le tableau divisionnaire pour la protection des personnes. Cela permet aussi de localiser rapidement les défauts par zone."
+    },
+    {
+      "q": "Quelle section de câble entre tableau principal et divisionnaire ?",
+      "a": "Dépend de la puissance totale desservie. Pour un sous-tableau de 15A (3kW) : câble 3x4mm². Pour 30A (6kW) : câble 3x10mm². Un électricien calculera la section appropriée selon la charge."
+    },
+    {
+      "q": "Peut-on installer un tableau divisionnaire soi-même ?",
+      "a": "Non. Le câblage du tableau principal implique de travailler sous tension. Seul un électricien qualifié peut réaliser ces travaux en toute sécurité."
+    }
+  ],
+  "related_articles": [
+    "tableau-electrique-upgrade",
+    "cablage-maison-renovation",
+    "panne-tableau-electrique"
+  ],
+  "internal_links": [
+    "/electricien/casablanca",
+    "/electricien/rabat",
+    "/electricien/marrakech"
+  ]
+}
