@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#000000">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Suivi de votre demande — Fixeo</title>
+  <meta name="description" content="Suivez votre demande d'intervention Fixeo en temps réel. Entrez votre référence fxtrk-XXXXXXXX ou connectez-vous pour accéder à votre espace.">
+  <meta name="robots" content="noindex,nofollow">
+  <link rel="canonical" href="https://www.fixeo.ma/suivi">
+  <link rel="icon" type="image/png" href="img/favicon.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="img/favicon.png">
+  <!-- Fonts (deferred) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet"></noscript>
+  <!-- Tracking page CSS -->
+  <link rel="stylesheet" href="css/fixeo-tracking-page-v1.css?v=ftp-v1a">
+  <!-- Supabase (async, non-blocking auth check) -->
+  <script src="js/supabase-client.js?v=sc2" defer></script>
+  <script src="js/fixeo-phone-utils.js?v=wa1a" defer></script>
+</head>
+<body class="ftp-body">
+
+  <!-- ══ NAV ══ -->
+  <nav class="ftp-nav" aria-label="Navigation">
+    <a class="ftp-nav-brand" href="index.html">FI<span>XEO</span></a>
+    <a class="ftp-nav-link" href="dashboard-client.html">Mon espace →</a>
+  </nav>
+
+  <!-- ══ MAIN ══ -->
+  <main>
+    <div class="ftp-container">
+
+      <!-- SECTION 1 — HERO / SEARCH -->
+      <section class="ftp-hero" aria-labelledby="ftp-title">
+        <div class="ftp-hero-tag">
+          <span class="ftp-hero-dot" aria-hidden="true"></span>
+          SUIVI EN DIRECT
+        </div>
+        <h1 id="ftp-title" class="ftp-hero-title">Suivi de votre demande</h1>
+        <p class="ftp-hero-sub">Suivez votre intervention en temps réel</p>
+
+        <div class="ftp-search-bar" role="search">
+          <input
+            type="text"
+            id="ftp-ref-input"
+            class="ftp-search-input"
+            placeholder="fxtrk-xxxxxxxx"
+            autocomplete="off"
+            autocorrect="off"
+            autocapitalize="off"
+            spellcheck="false"
+            inputmode="text"
+            aria-label="Référence de suivi"
+            maxlength="20"
+          >
+          <button type="button" id="ftp-search-btn" class="ftp-search-btn">Rechercher</button>
+        </div>
+        <p class="ftp-search-hint">
+          Entrez votre référence <code>fxtrk-xxxxxxxx</code> reçue après votre demande
+        </p>
+      </section>
+
+      <!-- LOADING STATE -->
+      <div id="ftp-state-loading" class="ftp-state ftp-hidden" aria-live="polite">
+        <div class="ftp-spinner" role="status" aria-label="Chargement"></div>
+        <p class="ftp-state-msg">Recherche de votre demande…</p>
+      </div>
+
+      <!-- EMPTY STATE -->
+      <div id="ftp-state-empty" class="ftp-state ftp-hidden" aria-live="polite">
+        <div class="ftp-state-ico" aria-hidden="true">🔍</div>
+        <h2 class="ftp-state-title">Référence introuvable</h2>
+        <p class="ftp-state-msg" id="ftp-empty-msg">
+          Aucune demande trouvée pour cette référence.<br>
+          Vérifiez la saisie ou contactez notre support.
+        </p>
+        <a class="ftp-btn ftp-btn-wa" href="https://wa.me/212660484415?text=Bonjour%20Fixeo%2C%20je%20ne%20retrouve%20pas%20ma%20demande" target="_blank" rel="noopener" style="display:inline-flex;max-width:320px;margin:0 auto">
+          💬 Contacter Fixeo WhatsApp
+        </a>
+      </div>
+
+      <!-- ERROR STATE -->
+      <div id="ftp-state-error" class="ftp-state ftp-hidden" aria-live="polite">
+        <div class="ftp-state-ico" aria-hidden="true">⚠️</div>
+        <h2 class="ftp-state-title">Erreur de connexion</h2>
+        <p class="ftp-state-msg" id="ftp-error-msg">
+          Impossible de récupérer vos données pour le moment.<br>Réessayez ou contactez le support.
+        </p>
+        <a class="ftp-btn ftp-btn-wa" href="https://wa.me/212660484415" target="_blank" rel="noopener" style="display:inline-flex;max-width:320px;margin:0 auto">
+          💬 Contacter Fixeo
+        </a>
+      </div>
+
+      <!-- ══ RESULTS ══ -->
+      <div id="ftp-results" class="ftp-results ftp-hidden">
+
+        <!-- Auth selector (shown when auth user has multiple requests) -->
+        <div id="ftp-auth-selector" class="ftp-section ftp-hidden"></div>
+
+        <!-- SECTION 2 — STATUS CARD -->
+        <div class="ftp-section" id="ftp-status-section">
+          <div class="ftp-section-label">
+            <span class="ftp-section-label-dot" aria-hidden="true"></span>
+            STATUT DE LA DEMANDE
+          </div>
+          <div class="ftp-status-card" id="ftp-status-card" aria-live="polite"></div>
+        </div>
+
+        <!-- SECTION 3 — TIMELINE -->
+        <div class="ftp-section">
+          <div class="ftp-section-label">
+            <span class="ftp-section-label-dot" aria-hidden="true"></span>
+            PROGRESSION
+          </div>
+          <div class="ftp-card">
+            <ul id="ftp-timeline" class="ftp-timeline" aria-label="Étapes de progression" aria-live="polite"></ul>
+          </div>
+        </div>
+
+        <!-- SECTION 4 — ASSIGNED ARTISAN -->
+        <div class="ftp-section" id="ftp-artisan-section">
+          <div class="ftp-section-label">
+            <span class="ftp-section-label-dot" aria-hidden="true"></span>
+            ARTISAN ASSIGNÉ
+          </div>
+          <div class="ftp-card" id="ftp-artisan-inner" aria-live="polite"></div>
+        </div>
+
+        <!-- SECTION 5 — LIVE UPDATES -->
+        <div class="ftp-section">
+          <div class="ftp-section-label">
+            <span class="ftp-section-label-dot" aria-hidden="true"></span>
+            HISTORIQUE
+          </div>
+          <div class="ftp-card" style="padding:14px 16px">
+            <ul id="ftp-updates-list" class="ftp-updates-list" aria-live="polite"></ul>
+          </div>
+        </div>
+
+        <!-- SECTION 6 — CTA -->
+        <div class="ftp-section">
+          <div class="ftp-section-label">
+            <span class="ftp-section-label-dot" aria-hidden="true"></span>
+            ACTIONS
+          </div>
+          <div id="ftp-cta-inner"></div>
+        </div>
+
+      </div><!-- /ftp-results -->
+
+    </div><!-- /ftp-container -->
+  </main>
+
+  <!-- ══ FOOTER ══ -->
+  <footer class="ftp-footer">
+    <p class="ftp-footer-text">
+      © Fixeo 2025 — 
+      <a class="ftp-footer-link" href="index.html">Accueil</a> · 
+      <a class="ftp-footer-link" href="dashboard-client.html">Mon espace</a> · 
+      <a class="ftp-footer-link" href="https://wa.me/212660484415" target="_blank" rel="noopener">Support</a>
+    </p>
+  </footer>
+
+  <!-- Tracking page JS (must come after supabase-client.js — loaded defer) -->
+  <script src="js/fixeo-tracking-page-v1.js?v=ftp-v1a" defer></script>
+
+</body>
+</html>

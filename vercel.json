@@ -76,6 +76,10 @@
       "dest": "/services.html"
     },
     {
+      "src": "^/suivi$",
+      "dest": "/suivi.html"
+    },
+    {
       "src": "^/blog/([a-z][a-z0-9-]*)$",
       "dest": "/blog/$1.html"
     },
