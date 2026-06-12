@@ -58,4 +58,10 @@
     <lastmod>2026-06-12</lastmod>
   </sitemap>
 
+
+  <!-- Programmatic SEO V2 pages (problems/prices/quartiers) -->
+  <sitemap>
+    <loc>https://fixeo.ma/sitemap-pseo.xml</loc>
+    <lastmod>2026-06-12</lastmod>
+  </sitemap>
 </sitemapindex>

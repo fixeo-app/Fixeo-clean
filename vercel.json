@@ -52,6 +52,78 @@
       "dest": "/artisan-profile.html"
     },
     {
+      "src": "^/fuite-eau/([a-z][a-z-]*)$",
+      "dest": "/problem-fuite-eau-$1.html"
+    },
+    {
+      "src": "^/wc-bouche/([a-z][a-z-]*)$",
+      "dest": "/problem-wc-bouche-$1.html"
+    },
+    {
+      "src": "^/chauffe-eau-en-panne/([a-z][a-z-]*)$",
+      "dest": "/problem-chauffe-eau-en-panne-$1.html"
+    },
+    {
+      "src": "^/porte-bloquee/([a-z][a-z-]*)$",
+      "dest": "/problem-porte-bloquee-$1.html"
+    },
+    {
+      "src": "^/serrure-cassee/([a-z][a-z-]*)$",
+      "dest": "/problem-serrure-cassee-$1.html"
+    },
+    {
+      "src": "^/panne-electrique/([a-z][a-z-]*)$",
+      "dest": "/problem-panne-electrique-$1.html"
+    },
+    {
+      "src": "^/disjoncteur-saute/([a-z][a-z-]*)$",
+      "dest": "/problem-disjoncteur-saute-$1.html"
+    },
+    {
+      "src": "^/climatisation-en-panne/([a-z][a-z-]*)$",
+      "dest": "/problem-climatisation-en-panne-$1.html"
+    },
+    {
+      "src": "^/prix/([a-z][a-z-]*)/([a-z][a-z-]*)$",
+      "dest": "/prix-$1-$2.html"
+    },
+    {
+      "src": "^/a-propos$",
+      "dest": "/a-propos.html"
+    },
+    {
+      "src": "^/comment-ca-marche$",
+      "dest": "/comment-ca-marche.html"
+    },
+    {
+      "src": "^/nos-garanties$",
+      "dest": "/nos-garanties.html"
+    },
+    {
+      "src": "^/verification-artisans$",
+      "dest": "/verification-artisans.html"
+    },
+    {
+      "src": "^/charte-qualite$",
+      "dest": "/charte-qualite.html"
+    },
+    {
+      "src": "^/engagement-fixeo$",
+      "dest": "/engagement-fixeo.html"
+    },
+    {
+      "src": "^/plombier/([a-z][a-z-]*)/([a-z][a-z-]*)$",
+      "dest": "/quartier-plombier-$1-$2.html"
+    },
+    {
+      "src": "^/electricien/([a-z][a-z-]*)/([a-z][a-z-]*)$",
+      "dest": "/quartier-electricite-$1-$2.html"
+    },
+    {
+      "src": "^/serrurier/([a-z][a-z-]*)/([a-z][a-z-]*)$",
+      "dest": "/quartier-serrurerie-$1-$2.html"
+    },
+    {
       "src": "^/plombier/([a-z][a-z-]*)$",
       "dest": "/plombier-$1.html"
     },
