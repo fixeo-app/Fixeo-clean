@@ -48,7 +48,6 @@
       "dest": "/artisan-profile.html"
     },
     {
-      "comment": "SEO clean URLs \u2014 /service/city \u2192 service-city.html (additive, zero breakage to existing .html routes)",
       "src": "^/plombier/([a-z][a-z-]*)$",
       "dest": "/plombier-$1.html"
     },
@@ -69,22 +68,18 @@
       "dest": "/peinture-$1.html"
     },
     {
-      "comment": "City hub pages \u2014 /villes/city \u2192 city landing (future)",
       "src": "^/villes/([a-z][a-z-]*)$",
       "dest": "/villes-$1.html"
     },
     {
-      "comment": "Service hub pages \u2014 /services/service \u2192 services page (future)",
       "src": "^/services/([a-z][a-z-]*)$",
       "dest": "/services.html"
     },
     {
-      "comment": "Blog routing \u2014 /blog/slug \u2192 blog engine (Phase 4)",
       "src": "^/blog/([a-z][a-z0-9-]*)$",
       "dest": "/blog/$1.html"
     },
     {
-      "comment": "Blog index \u2014 /blog \u2192 blog-index.html (Phase 4)",
       "src": "^/blog/?$",
       "dest": "/blog-index.html"
     }
