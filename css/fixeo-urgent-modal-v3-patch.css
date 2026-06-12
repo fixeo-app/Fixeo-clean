@@ -1,0 +1,229 @@
+/**
+ * fixeo-urgent-modal-v3-patch.css — fuv3-v1b
+ * FIXEO Urgent Modal V3.1 — Conversion Optimization Patch CSS
+ *
+ * Namespace: .fuv3-* / #fuv3-* (extends fuv3-v1a)
+ * Zero overrides outside #request-modal scope.
+ */
+
+/* ═══════════════════════════════════════════════════════════
+   P-1: SMART CHIP LABEL
+══════════════════════════════════════════════════════════ */
+
+.fuv3-chip-context-label {
+  margin: 0 0 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(225, 48, 108, 0.80);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   P-2: ENHANCED LIVE SIGNAL — two-line layout
+══════════════════════════════════════════════════════════ */
+
+#fuv3-live-signal.fuv3-signal-enhanced {
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 14px;
+}
+
+.fuv3-signal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+}
+
+.fuv3-signal-line {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.76rem;
+  line-height: 1.3;
+}
+
+.fuv3-signal-sep {
+  font-size: 0.65rem;
+  opacity: 0.4;
+  margin: 0 2px;
+  display: none; /* hidden — lines are stacked now */
+}
+
+.fuv3-signal-eta {
+  font-weight: 700;
+  color: #20C997;
+}
+
+/* Extreme mode: ETA text turns red */
+#request-modal.fuv3-extreme .fuv3-signal-eta {
+  color: #ff6b8a;
+}
+
+#request-modal.fuv3-extreme #fuv3-live-signal {
+  background: rgba(225, 48, 108, 0.06);
+  border-color: rgba(225, 48, 108, 0.18);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   P-3: EXTREME URGENCY TOGGLE
+══════════════════════════════════════════════════════════ */
+
+#fuv3-extreme-toggle {
+  display: flex;
+  gap: 6px;
+  margin: 14px 0 10px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1.5px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.fuv3-toggle-btn {
+  flex: 1;
+  padding: 9px 6px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  -webkit-tap-highlight-color: transparent;
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.fuv3-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Standard active */
+.fuv3-toggle-std.fuv3-toggle-active {
+  background: rgba(32, 201, 151, 0.12);
+  color: #20C997;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Extreme active */
+.fuv3-toggle-ext.fuv3-toggle-active {
+  background: rgba(225, 48, 108, 0.14);
+  color: #ff6b8a;
+}
+
+@media (max-width: 380px) {
+  .fuv3-toggle-btn {
+    font-size: 0.68rem;
+    padding: 8px 4px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   P-3: EXTREME MODE — global intensification
+══════════════════════════════════════════════════════════ */
+
+/* Faster, more intense accent bar pulse */
+#request-modal.fuv3-extreme .fuv3-accent-bar {
+  background: linear-gradient(90deg, #ff1744 0%, #ff4757 40%, #ff1744 100%);
+  animation-duration: 0.8s;
+  height: 4px;
+}
+
+/* Stronger red badge */
+#request-modal.fuv3-extreme .fuv3-urgent-badge {
+  background: rgba(255, 23, 68, 0.2);
+  border-color: rgba(255, 23, 68, 0.5);
+  color: #ff6b8a;
+  animation-duration: 0.9s;
+}
+
+/* Submit glow stronger in extreme */
+#request-modal.fuv3-extreme .request-submit-btn:not(.fuv3-btn-disabled) {
+  background: linear-gradient(135deg, #ff1744 0%, #ff4757 100%) !important;
+  box-shadow: 0 4px 24px rgba(255, 23, 68, 0.45) !important;
+  animation: fuv3-submit-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes fuv3-submit-pulse {
+  0%, 100% { box-shadow: 0 4px 24px rgba(255, 23, 68, 0.45); }
+  50%       { box-shadow: 0 6px 32px rgba(255, 23, 68, 0.65); }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   P-4: TRUST BOOSTER BLOCK
+══════════════════════════════════════════════════════════ */
+
+#fuv3-trust-booster {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin: 12px 0 8px;
+  padding: 11px 14px;
+  background: rgba(32, 201, 151, 0.04);
+  border: 1px solid rgba(32, 201, 151, 0.12);
+  border-radius: 10px;
+}
+
+.fuv3-trust-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.76rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.72);
+  line-height: 1.3;
+}
+
+.fuv3-trust-check {
+  color: #20C997;
+  font-size: 0.80rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+/* Extreme mode: trust block gets red accent */
+#request-modal.fuv3-extreme #fuv3-trust-booster {
+  background: rgba(225, 48, 108, 0.04);
+  border-color: rgba(225, 48, 108, 0.12);
+}
+
+#request-modal.fuv3-extreme .fuv3-trust-check {
+  color: #ff6b8a;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   P-5: MICRO-UX — Submit button CTA upgrade
+══════════════════════════════════════════════════════════ */
+
+/* Smooth text transition on CTA swap */
+#request-modal[data-request-mode="express"] .request-submit-btn {
+  transition: background 0.2s, color 0.15s, box-shadow 0.2s, transform 0.15s !important;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   375px SAFETY
+══════════════════════════════════════════════════════════ */
+
+@media (max-width: 375px) {
+  #fuv3-trust-booster {
+    padding: 9px 10px;
+  }
+
+  .fuv3-trust-item {
+    font-size: 0.70rem;
+  }
+
+  #fuv3-extreme-toggle {
+    margin: 10px 0 8px;
+  }
+
+  .fuv3-chip-context-label {
+    font-size: 0.65rem;
+  }
+}
