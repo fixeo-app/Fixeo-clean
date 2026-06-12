@@ -1,0 +1,139 @@
+/**
+ * FIXEO Hero Suggestions V2 — fxhsv2-v1a
+ * Dynamic, time-aware, demand-aware suggestion chips
+ * Namespace: fxhsv2-* — zero overrides to .qsm-* styles
+ * Mobile-first — no overflow, no layout shift
+ */
+
+/* ══════════════════════════════════════════════════════════
+   CONTEXT LABEL (replaces "Suggestions :")
+══════════════════════════════════════════════════════════ */
+
+.fxhsv2-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.55);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.fxhsv2-label-icon {
+  font-size: 0.78rem;
+  line-height: 1;
+}
+
+/* ══════════════════════════════════════════════════════════
+   CHIP OVERRIDES — additive over .qsm-suggestion-chip
+   Adds: trending badge, animation entry, city-context color
+══════════════════════════════════════════════════════════ */
+
+/* Entry animation for newly injected chips */
+@keyframes fxhsv2-chip-in {
+  from {
+    opacity: 0;
+    transform: translateY(5px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Applied to each chip during a refresh cycle */
+.fxhsv2-chip-animate {
+  animation: fxhsv2-chip-in 0.22s ease both;
+}
+
+/* Stagger delays — applied by JS via data-fxhsv2-delay */
+.fxhsv2-chip-animate[data-fxhsv2-delay="1"] { animation-delay: 0.04s; }
+.fxhsv2-chip-animate[data-fxhsv2-delay="2"] { animation-delay: 0.08s; }
+.fxhsv2-chip-animate[data-fxhsv2-delay="3"] { animation-delay: 0.12s; }
+.fxhsv2-chip-animate[data-fxhsv2-delay="4"] { animation-delay: 0.16s; }
+
+/* Trending chip — first chip in the set */
+.fxhsv2-trending-chip {
+  position: relative;
+}
+
+/* Trending badge (injected as child span) */
+.fxhsv2-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: linear-gradient(90deg, #ff6b35 0%, #ff9500 100%);
+  color: #fff;
+  border-radius: 3px;
+  padding: 1px 4px;
+  margin-left: 4px;
+  vertical-align: middle;
+  line-height: 1.3;
+  position: relative;
+  top: -1px;
+}
+
+/* Urgent chip — time tier 22h–7h */
+.fxhsv2-urgent-chip {
+  border-color: rgba(255, 90, 90, 0.45) !important;
+  color: #ff7070 !important;
+}
+
+.fxhsv2-urgent-chip:hover,
+.fxhsv2-urgent-chip.active {
+  background: rgba(255, 90, 90, 0.15) !important;
+  border-color: rgba(255, 90, 90, 0.7) !important;
+  color: #ff9090 !important;
+}
+
+/* Demand chip — matched from localStorage */
+.fxhsv2-demand-chip {
+  border-color: rgba(32, 201, 151, 0.4) !important;
+}
+
+.fxhsv2-demand-chip:hover,
+.fxhsv2-demand-chip.active {
+  background: rgba(32, 201, 151, 0.12) !important;
+  border-color: rgba(32, 201, 151, 0.7) !important;
+}
+
+/* ══════════════════════════════════════════════════════════
+   MICROCOPY SUBTITLE (e.g. "Populaires à Fès")
+══════════════════════════════════════════════════════════ */
+
+.fxhsv2-microcopy {
+  display: block;
+  font-size: 0.68rem;
+  color: rgba(255, 255, 255, 0.38);
+  margin-top: 5px;
+  letter-spacing: 0.01em;
+  padding-left: 1px;
+  transition: opacity 0.2s;
+}
+
+/* ══════════════════════════════════════════════════════════
+   REDUCED MOTION
+══════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  .fxhsv2-chip-animate {
+    animation: none;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+   MOBILE SAFETY — no chip overflow
+══════════════════════════════════════════════════════════ */
+
+@media (max-width: 400px) {
+  .fxhsv2-badge {
+    display: none; /* hide badge on very small screens to save space */
+  }
+}
