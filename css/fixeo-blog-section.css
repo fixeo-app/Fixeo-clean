@@ -1,0 +1,156 @@
+/**
+ * FIXEO Blog Section — fixeo-blog-section.css
+ * Version: fxblog-v1a — 2026-06-12
+ * Homepage blog preview section (.fxblog-*)
+ */
+
+/* ── Section wrapper ─────────────────────────────────────── */
+.fxblog-section {
+  padding: 5rem 0;
+  background: transparent;
+}
+
+.fxblog-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.fxblog-tag {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #e040fb;
+  margin-bottom: 0.5rem;
+}
+
+.fxblog-title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #e8eaf0;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.fxblog-see-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #e040fb;
+  text-decoration: none;
+  white-space: nowrap;
+  padding-bottom: 0.5rem;
+  transition: gap 0.2s;
+}
+.fxblog-see-all:hover { gap: 0.6rem; }
+
+/* ── Card grid ───────────────────────────────────────────── */
+.fxblog-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+}
+
+@media (max-width: 900px) {
+  .fxblog-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 600px) {
+  .fxblog-grid { grid-template-columns: 1fr; }
+  .fxblog-title { font-size: 1.5rem; }
+}
+
+/* ── Card ────────────────────────────────────────────────── */
+.fxblog-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s, border-color 0.2s;
+}
+.fxblog-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(224,64,251,0.35);
+}
+
+.fxblog-card-link {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  text-decoration: none;
+  color: inherit;
+}
+
+.fxblog-card-body {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  flex: 1;
+}
+
+.fxblog-card-cat {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #e040fb;
+}
+
+.fxblog-card-title {
+  font-size: 0.97rem;
+  font-weight: 700;
+  color: #e8eaf0;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.fxblog-card-excerpt {
+  font-size: 0.85rem;
+  color: #8892a4;
+  line-height: 1.6;
+  margin: 0;
+  flex: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.fxblog-card-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+}
+
+.fxblog-card-time {
+  font-size: 0.75rem;
+  color: rgba(224,64,251,0.8);
+  background: rgba(224,64,251,0.08);
+  border: 1px solid rgba(224,64,251,0.18);
+  border-radius: 20px;
+  padding: 0.1rem 0.55rem;
+  white-space: nowrap;
+}
+
+.fxblog-card-arrow {
+  font-size: 0.85rem;
+  color: #8892a4;
+  transition: color 0.2s, transform 0.2s;
+}
+.fxblog-card:hover .fxblog-card-arrow {
+  color: #e040fb;
+  transform: translateX(3px);
+}
