@@ -15,6 +15,47 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Profil artisan | Fixeo</title>
   <meta name="description" content="Artisan vérifié Fixeo. Voir avis clients, Trust Score, disponibilité et demander intervention.">
+  <!-- seo-profile-preseed: inject canonical/title from URL ?id param synchronously
+       so Googlebot sees a correct canonical even before JS fires.
+       fixeo-seo-profile.js will enrich further once artisan data resolves. -->
+  <script>
+  (function(){
+    try {
+      var id = (new URLSearchParams(window.location.search)).get('id') ||
+               (window.location.pathname.split('/artisan/')[1] || '').split('/')[0];
+      if (!id) return;
+      /* Inject canonical pointing to ?id= URL */
+      var lc = document.createElement('link');
+      lc.rel = 'canonical';
+      lc.href = 'https://fixeo.ma/artisan-profile.html?id=' + encodeURIComponent(id);
+      document.head.appendChild(lc);
+      /* Set base title so Googlebot sees something before JS full render */
+      document.title = 'Artisan Fixeo — Profil vérifié | Fixeo';
+      /* Try preseed from localStorage for richer title */
+      var raw = localStorage.getItem('fixeo_admin_artisans_v21');
+      if (!raw) return;
+      var pool = JSON.parse(raw);
+      if (!Array.isArray(pool)) return;
+      var a = pool.find(function(x){ return x && (String(x.id)===id||String(x.artisan_id)===id||String(x.public_id)===id); });
+      if (!a) return;
+      var name = (a.name || a.full_name || '').trim();
+      var svc  = (a.service_category || a.category || '').replace(/_/g,' ');
+      var city = (a.city || '').trim();
+      if (name) {
+        var parts = [name];
+        if (svc)  parts.push(svc.charAt(0).toUpperCase()+svc.slice(1));
+        if (city) parts.push(city);
+        document.title = parts.join(' — ') + ' | Fixeo';
+        /* og:title early patch */
+        var og = document.querySelector('meta[property="og:title"]');
+        if (og) og.setAttribute('content', document.title);
+        /* meta description early patch */
+        var desc = document.querySelector('meta[name="description"]');
+        if (desc && name && city) desc.setAttribute('content', name + ', artisan ' + svc + ' à ' + city + ' — Fixeo. Profil vérifié, disponibilité et avis clients.');
+      }
+    } catch(e) {}
+  }());
+  </script>
   <!-- V2-C5F: Strong no-cache hints for HTTP/1.0 proxies and mobile WebViews that ignore Cache-Control -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">

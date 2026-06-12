@@ -1,0 +1,106 @@
+{
+  "slug": "prix-serrurier-maroc",
+  "category": "prix",
+  "service": "serrurier",
+  "city": null,
+  "title": "Prix d'un serrurier au Maroc en 2026 — Tarifs et conseils",
+  "meta_desc": "Combien coûte un serrurier au Maroc en 2026 ? Tarifs pour ouverture de porte, remplacement de serrure, urgence de nuit. Guide complet par ville.",
+  "date": "2026-06-12",
+  "hero_image": "/img/blog/serrurier-prix.webp",
+  "tags": ["serrurier", "prix", "maroc", "urgence"],
+  "sections": [
+    {
+      "type": "intro",
+      "content": "Vous avez besoin d'un serrurier au Maroc et vous souhaitez connaître les tarifs avant d'appeler ? Ce guide recense les prix moyens constatés pour les prestations les plus fréquentes : ouverture de porte claquée, remplacement de serrure, pose de cylindre blindé et intervention d'urgence de nuit."
+    },
+    {
+      "type": "h2",
+      "title": "Tarifs moyens d'un serrurier au Maroc",
+      "content": "Les prix varient selon le type d'intervention, la ville et l'heure d'appel. Voici les fourchettes constatées sur le marché marocain en 2026."
+    },
+    {
+      "type": "table",
+      "caption": "Grille tarifaire indicative — serrurier au Maroc (2026)",
+      "headers": ["Prestation", "Tarif indicatif (DH)", "Durée estimée"],
+      "rows": [
+        ["Ouverture porte claquée (serrure simple)", "200–400 DH", "20–40 min"],
+        ["Ouverture porte claquée (serrure blindée)", "350–600 DH", "30–60 min"],
+        ["Remplacement de cylindre serrure", "250–550 DH", "30–45 min"],
+        ["Pose cylindre blindé A2P", "400–900 DH", "45–90 min"],
+        ["Sécurisation après effraction (urgence)", "500–1 200 DH", "1–2h"],
+        ["Installation porte blindée", "1 200–3 500 DH", "4–8h"],
+        ["Majoration nuit / week-end", "+20% à +50%", "—"]
+      ]
+    },
+    {
+      "type": "tip",
+      "content": "Demandez toujours un devis estimatif avant l'intervention — un serrurier sérieux peut vous donner une fourchette de prix par téléphone selon le type de serrure."
+    },
+    {
+      "type": "h2",
+      "title": "Prix d'un serrurier selon la ville",
+      "content": "Les tarifs varient significativement entre les grandes métropoles et les villes secondaires."
+    },
+    {
+      "type": "table",
+      "caption": "Comparatif tarifaire par ville (ouverture porte, tarif moyen 2026)",
+      "headers": ["Ville", "Tarif moyen (DH)", "Observation"],
+      "rows": [
+        ["Casablanca", "250–500 DH", "Tarifs les plus élevés, forte concurrence"],
+        ["Rabat", "220–450 DH", "Similaire à Casablanca"],
+        ["Marrakech", "200–450 DH", "Saisonnalité touristique"],
+        ["Fès", "180–380 DH", "Médina : accès parfois difficile"],
+        ["Agadir", "180–400 DH", "Hausse estivale possible"],
+        ["Meknès, Oujda, Tanger", "150–350 DH", "Tarifs régionaux compétitifs"]
+      ]
+    },
+    {
+      "type": "h2",
+      "title": "Urgence de nuit : combien ça coûte ?",
+      "content": "Une intervention en dehors des heures ouvrées (après 20h ou le week-end) entraîne généralement une majoration de 20 à 50%. Pour une ouverture de porte à Casablanca à 23h, comptez entre 350 et 700 DH. Certains serruriers pratiquent des tarifs fixes d'urgence — vérifiez au moment de l'appel."
+    },
+    {
+      "type": "warning",
+      "content": "Méfiez-vous des serruriers trouvés via des flyers ou résultats d'annonces non vérifiées. Les arnaques aux faux devis sont fréquentes au Maroc — un serrurier sérieux donne un devis avant d'intervenir."
+    },
+    {
+      "type": "h2",
+      "title": "Comment choisir un serrurier fiable ?",
+      "content": null
+    },
+    {
+      "type": "list",
+      "title": null,
+      "items": [
+        "Demandez un devis estimatif par téléphone avant l'intervention",
+        "Vérifiez que l'artisan est bien référencé (profil vérifié, avis clients)",
+        "Évitez les prestataires sans adresse physique ou sans numéro fixe",
+        "Exigez une facture après l'intervention",
+        "Préférez un serrurier local à votre ville — connu dans le quartier"
+      ]
+    },
+    {
+      "type": "faq",
+      "items": [
+        {
+          "q": "Quel est le tarif moyen d'un serrurier pour ouvrir une porte au Maroc ?",
+          "a": "Pour une ouverture de porte standard (porte claquée, clé perdue), le tarif varie entre 200 et 500 DH selon la ville, le type de serrure et l'heure d'intervention. Les serrures blindées coûtent plus cher à ouvrir (350–600 DH)."
+        },
+        {
+          "q": "Peut-on négocier le prix d'un serrurier au Maroc ?",
+          "a": "Il est possible de demander un devis comparatif. Pour les interventions planifiées (remplacement de serrure, installation), contactez 2 à 3 serruriers. Pour les urgences (porte claquée), les marges de négociation sont plus limitées — l'urgence prime."
+        },
+        {
+          "q": "Un serrurier peut-il intervenir sans facturer si je prouve que c'est mon domicile ?",
+          "a": "Non. L'intervention d'un serrurier est facturée quelle que soit la situation. En revanche, un serrurier sérieux peut vous demander une pièce d'identité avant d'intervenir pour s'assurer que vous êtes bien le locataire ou propriétaire."
+        }
+      ]
+    },
+    {
+      "type": "cta",
+      "text": "Besoin d'un serrurier maintenant ? Fixeo vous met en relation avec des artisans vérifiés dans votre ville.",
+      "href": "/index.html#services",
+      "label": "Trouver un serrurier Fixeo"
+    }
+  ]
+}

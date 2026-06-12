@@ -1,0 +1,134 @@
+/**
+ * FIXEO SEO LP Styles — seo-lp-v1.css
+ * Version: lp-v1a — 2026-06-12
+ * Namespace: .seo-pricing-* / .seo-faq-* / .seo-urgency-*
+ * Supplements existing seo-local.css / main.css
+ * ADDITIVE — zero overrides to existing .seo-* rules unless namespaced here
+ */
+
+/* ── Pricing table ── */
+.seo-pricing-section { margin-bottom: 32px; }
+.seo-pricing-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .88rem;
+  margin: 16px 0;
+  background: rgba(255,255,255,.03);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.seo-pricing-table th {
+  background: rgba(255,255,255,.06);
+  padding: 10px 14px;
+  text-align: left;
+  font-size: .8rem;
+  font-weight: 700;
+  color: rgba(255,255,255,.7);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.seo-pricing-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(255,255,255,.05);
+  color: rgba(255,255,255,.85);
+}
+.seo-pricing-table tr:last-child td { border-bottom: none; }
+.seo-pricing-table strong { color: #20C997; }
+.seo-pricing-note {
+  color: rgba(255,255,255,.35);
+  font-size: .75rem;
+  margin-top: 8px;
+  font-style: italic;
+}
+
+/* ── Emergency section ── */
+.seo-emergency-section {
+  background: rgba(225,48,108,.06);
+  border-left: 3px solid rgba(225,48,108,.4);
+  border-radius: 10px;
+  padding: 20px;
+}
+.seo-urgency-list {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.seo-urgency-list li {
+  background: rgba(225,48,108,.12);
+  border: 1px solid rgba(225,48,108,.25);
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: .8rem;
+  color: rgba(255,255,255,.85);
+}
+
+/* ── FAQ section ── */
+.seo-faq-section { margin: 32px 0; }
+.seo-faq-list { display: flex; flex-direction: column; gap: 8px; }
+.seo-faq-item {
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.seo-faq-item summary {
+  padding: 14px 16px;
+  cursor: pointer;
+  font-size: .88rem;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.seo-faq-item summary::-webkit-details-marker { display: none; }
+.seo-faq-item summary::after {
+  content: '+';
+  font-size: 1.2rem;
+  font-weight: 300;
+  color: rgba(255,255,255,.4);
+  flex-shrink: 0;
+}
+.seo-faq-item[open] summary::after { content: '−'; }
+.seo-faq-answer {
+  padding: 0 16px 14px;
+  font-size: .85rem;
+  color: rgba(255,255,255,.7);
+  line-height: 1.6;
+  border-top: 1px solid rgba(255,255,255,.05);
+}
+.seo-faq-answer p { margin: 10px 0 0; }
+
+/* ── Hero stats ── */
+.seo-hero-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin-top: 24px;
+}
+.seo-stat {
+  background: rgba(255,255,255,.04);
+  border-radius: 10px;
+  padding: 14px;
+}
+.seo-stat strong {
+  display: block;
+  font-size: .82rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+  color: #20C997;
+}
+.seo-stat span {
+  font-size: .78rem;
+  color: rgba(255,255,255,.6);
+  line-height: 1.4;
+}
+
+/* ── Mobile ── */
+@media (max-width: 600px) {
+  .seo-pricing-table th, .seo-pricing-table td { padding: 8px 10px; font-size: .8rem; }
+  .seo-hero-stats { grid-template-columns: 1fr; }
+}

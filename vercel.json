@@ -46,6 +46,47 @@
     {
       "src": "^/artisan/(.*)",
       "dest": "/artisan-profile.html"
+    },
+    {
+      "comment": "SEO clean URLs — /service/city → service-city.html (additive, zero breakage to existing .html routes)",
+      "src": "^/plombier/([a-z][a-z-]*)$",
+      "dest": "/plombier-$1.html"
+    },
+    {
+      "src": "^/electricien/([a-z][a-z-]*)$",
+      "dest": "/electricien-$1.html"
+    },
+    {
+      "src": "^/serrurier/([a-z][a-z-]*)$",
+      "dest": "/serrurier-$1.html"
+    },
+    {
+      "src": "^/climatisation/([a-z][a-z-]*)$",
+      "dest": "/climatisation-$1.html"
+    },
+    {
+      "src": "^/peinture/([a-z][a-z-]*)$",
+      "dest": "/peinture-$1.html"
+    },
+    {
+      "comment": "City hub pages — /villes/city → city landing (future)",
+      "src": "^/villes/([a-z][a-z-]*)$",
+      "dest": "/villes-$1.html"
+    },
+    {
+      "comment": "Service hub pages — /services/service → services page (future)",
+      "src": "^/services/([a-z][a-z-]*)$",
+      "dest": "/services.html"
+    },
+    {
+      "comment": "Blog routing — /blog/slug → blog engine (Phase 4)",
+      "src": "^/blog/([a-z][a-z0-9-]*)$",
+      "dest": "/blog/$1.html"
+    },
+    {
+      "comment": "Blog index — /blog → blog-index.html (Phase 4)",
+      "src": "^/blog/?$",
+      "dest": "/blog-index.html"
     }
   ],
   "headers": [
