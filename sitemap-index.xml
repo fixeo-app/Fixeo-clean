@@ -64,4 +64,10 @@
     <loc>https://fixeo.ma/sitemap-pseo.xml</loc>
     <lastmod>2026-06-12</lastmod>
   </sitemap>
+
+  <!-- Trust pages (E-E-A-T: about, guarantees, verification, charter, engagement) -->
+  <sitemap>
+    <loc>https://www.fixeo.ma/sitemap-trust.xml</loc>
+    <lastmod>2026-06-12</lastmod>
+  </sitemap>
 </sitemapindex>
