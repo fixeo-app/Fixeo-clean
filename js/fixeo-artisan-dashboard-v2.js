@@ -28,7 +28,7 @@
    * RLS: artisan_read_own_linked_requests + artisan_update_assigned_requests on service_requests
    * Identity: artisans WHERE owner_user_id=auth.uid() OR phone_public=profiles.phone
    * ─────────────────────────────────────────────────────────────────────────── */
-  var VERSION = 'v2b';
+  var VERSION = 'v2c'; /* fxadv3-v1a: SELECT expanded */
 
   /* ── STATE ────────────────────────────────────────────────── */
   var _state = {
@@ -169,7 +169,8 @@
     var r1 = await sb.from('artisans')
       .select('id,name,full_name,city,service_category,category,phone_public,' +
               'verified,is_verified,availability,rating,review_count,completed_missions,' +
-              'owner_user_id,claimed,claim_status,badge_label,avatar_color,work_zone')
+              'owner_user_id,claimed,claim_status,badge_label,avatar_color,work_zone,' +
+              'response_time_min,trust_score,description') /* fxadv3-v1a: extended */
       .eq('owner_user_id', userId)
       .maybeSingle();
 
@@ -181,7 +182,8 @@
       var r2 = await sb.from('artisans')
         .select('id,name,full_name,city,service_category,category,phone_public,' +
                 'verified,is_verified,availability,rating,review_count,completed_missions,' +
-                'owner_user_id,claimed,claim_status,badge_label,avatar_color,work_zone')
+                'owner_user_id,claimed,claim_status,badge_label,avatar_color,work_zone,' +
+                'response_time_min,trust_score,description') /* fxadv3-v1a: extended */
         .eq('phone_public', phone)
         .maybeSingle();
       if (!r2.error && r2.data) return r2.data;
