@@ -329,7 +329,43 @@ function adminSection(name) {
 const ADMIN_ARTISANS = [];
 
 const ADMIN_CLIENTS = [];         
- 
+ async function loadAdminClientsFromSupabase() {
+  try {
+    if (!window.FixeoSupabaseClient || !window.FixeoSupabaseClient.CONFIGURED) return;
+
+    const { client } = await window.FixeoSupabaseClient.ready();
+
+    const { data, error } = await client
+      .from('users')
+      .select('id, full_name, email, phone, city, created_at')
+      .eq('role', 'client')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.warn('[Fixeo Admin] clients Supabase error:', error);
+      return;
+    }
+
+    ADMIN_CLIENTS.length = 0;
+
+    (data || []).forEach(function(u) {
+      ADMIN_CLIENTS.push({
+        id: u.id,
+        name: u.full_name || u.email || u.phone || 'Client',
+        email: u.email || '',
+        phone: u.phone || '',
+        city: u.city || '',
+        missions: 0,
+        joined: u.created_at ? new Date(u.created_at).toLocaleDateString('fr-FR') : '',
+        status: 'active'
+      });
+    });
+
+    renderClientsTable();
+  } catch (e) {
+    console.warn('[Fixeo Admin] loadAdminClientsFromSupabase failed:', e);
+  }
+}
 const ADMIN_PAYMENTS = [];
 
 const ADMIN_SUBSCRIPTIONS = [];
@@ -972,6 +1008,7 @@ function initAdmin() {
   renderAdminAlerts();
   renderArtisansTable(ADMIN_ARTISANS);
   renderClientsTable();
+  loadAdminClientsFromSupabase();
   renderRegistrations();
   renderSubscriptions();
   renderPayments();
