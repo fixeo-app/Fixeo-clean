@@ -808,7 +808,19 @@ function dismissReport(id) {
 }
 
 /* ── CONFIRM ACTION ──────────────────────────────────────────── */
-function confirmAction(type, id) {
+function confirmAction(type, id) { 
+   if (window.innerWidth <= 768) {
+  const labels = {
+    suspend: "Suspendre cet artisan ?",
+    activate: "Réactiver cet artisan ?",
+    ban_client: "Bannir ce client ?"
+  };
+
+  if (window.confirm(labels[type] || "Confirmer cette action ?")) {
+    executeAction(type, id);
+  }
+  return;
+}
   const labels = {
     suspend: { title:'Suspendre l\'artisan', msg:'L\'artisan n\'aura plus accès à la plateforme. Confirmer ?', icon:'🚫' },
     activate:{ title:'Réactiver l\'artisan', msg:'L\'artisan aura de nouveau accès à la plateforme.', icon:'✅' },
