@@ -993,6 +993,19 @@ function initAdmin() {
   _updateReservationKPIs();
   _updateReservationSidebarCount();
   _updateOverviewReservationKPI();
+   
+setTimeout(function() {
+  _mergeLocalStorageReservations();
+  _updateCODKPIs();
+  _updateCODSidebarBadge();
+
+  if (!window.__fixeoAdminOrdersPollingStarted) {
+    window.__fixeoAdminOrdersPollingStarted = true;
+    _startAdminOrdersPolling();
+  }
+}, 150);
+
+}
 }
 
 /* ── KPI UPDATE ────────────────────────────────────────────────── */
@@ -1728,19 +1741,6 @@ function _stopAdminOrdersPolling() {
     _adminOrdersPollingTimer = null;
     console.log('[Fixeo Admin] ⏹ Polling commandes arrêté');
   }
-}
-
-/* ── Hook initAdmin : COD init + polling API ─────────────── */
-const _origInitAdmin = typeof initAdmin === 'function' ? initAdmin : function(){};
-function initAdmin() {
-  _origInitAdmin();
-  /* Appeler les KPIs COD + démarrer le polling API */
-  setTimeout(function() {
-    _mergeLocalStorageReservations();
-    _updateCODKPIs();
-    _updateCODSidebarBadge();
-    _startAdminOrdersPolling(); /* ← polling auto toutes les 10 secondes */
-  }, 150);
 }
 
 
