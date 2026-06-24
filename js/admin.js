@@ -1006,7 +1006,6 @@ setTimeout(function() {
 }, 150);
 
 }
-}
 
 /* ── KPI UPDATE ────────────────────────────────────────────────── */
 function _updateReservationKPIs() {
