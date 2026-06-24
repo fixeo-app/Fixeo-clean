@@ -667,3 +667,55 @@
     min-height: 46px !important;
   }
 }
+/* FIXEO ADMIN — FORCE MOBILE CONFIRM MODAL */
+@media (max-width: 768px) {
+  .modal,
+  .admin-modal,
+  .modal-overlay,
+  #admin-confirm-modal,
+  #admin-confirm-modal.open {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 16px !important;
+    z-index: 999999 !important;
+    overflow: hidden !important;
+  }
+
+  .modal-dialog,
+  .modal-content,
+  .modal-box,
+  .admin-modal-box,
+  .admin-confirm-box,
+  #admin-confirm-modal > div {
+    position: relative !important;
+    left: auto !important;
+    right: auto !important;
+    top: auto !important;
+    bottom: auto !important;
+    transform: none !important;
+    width: calc(100vw - 32px) !important;
+    max-width: calc(100vw - 32px) !important;
+    min-width: 0 !important;
+    margin: 0 auto !important;
+  }
+
+  .modal-actions,
+  .modal-footer,
+  .admin-modal-actions {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+
+  .modal-actions button,
+  .modal-footer button,
+  .admin-modal-actions button {
+    width: 100% !important;
+    min-height: 46px !important;
+  }
+}
