@@ -328,17 +328,8 @@ function adminSection(name) {
 // ADMIN_ARTISANS is loaded from FixeoDB on init - see _initAdminBase()
 const ADMIN_ARTISANS = [];
 
-const ADMIN_CLIENTS = [
-  { id:1, name:'Mohammed Alami', email:'m.alami@email.ma', city:'Casablanca', missions:12, joined:'15/01/2024', status:'active' },
-  { id:2, name:'Leila Bensouda', email:'l.bensouda@email.ma', city:'Rabat', missions:8, joined:'22/02/2024', status:'active' },
-  { id:3, name:'Ahmed Tahir', email:'a.tahir@email.ma', city:'Marrakech', missions:15, joined:'10/03/2024', status:'active' },
-  { id:4, name:'Yasmine Kabbaj', email:'y.kabbaj@email.ma', city:'Casablanca', missions:3, joined:'05/06/2024', status:'active' },
-  { id:5, name:'Ibrahim Naciri', email:'i.naciri@email.ma', city:'Fès', missions:7, joined:'18/04/2024', status:'active' },
-  { id:6, name:'Fatima Tazi', email:'f.tazi@email.ma', city:'Agadir', missions:20, joined:'01/01/2024', status:'active' },
-  { id:7, name:'Soufiane Berrada', email:'s.berrada@email.ma', city:'Tanger', missions:1, joined:'10/09/2024', status:'active' },
-  { id:8, name:'Hafsa Mernissi', email:'h.mernissi@email.ma', city:'Rabat', missions:9, joined:'25/03/2024', status:'suspended' }
-];
-
+const ADMIN_CLIENTS = [];         
+ 
 const ADMIN_PAYMENTS = [];
 
 const ADMIN_SUBSCRIPTIONS = [];
