@@ -525,4 +525,46 @@
 #edit-artisan-modal .modal-content{
   width: 100% !important;
 }
+/* ─────────────────────────────────────────────
+   FIXEO ADMIN — MOBILE CLIENT CARDS
+───────────────────────────────────────────── */
+@media (max-width: 768px) {
 
+  #clients-admin-table thead {
+    display: none !important;
+  }
+
+  #clients-admin-table,
+  #clients-admin-table tbody,
+  #clients-admin-table tr,
+  #clients-admin-table td {
+    display: block;
+    width: 100%;
+  }
+
+  #clients-admin-table tr {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 18px;
+    margin-bottom: 16px;
+    padding: 14px;
+  }
+
+  #clients-admin-table td {
+    border: none !important;
+    padding: 6px 0;
+  }
+
+  .admin-user-cell {
+    margin-bottom: 12px;
+  }                                    
+
+  .admin-client-actions {
+    margin-top: 14px;
+  }
+
+  .admin-client-actions .tbl-btn {
+    width: 100%;
+    min-height: 44px;
+  }
+}
