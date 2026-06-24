@@ -1725,75 +1725,20 @@ let _adminOrdersPollingTimer = null;
  * @param {Function} [onDone] callback(ok: bool, count: number)
  */
 function _fetchAdminOrdersFromAPI(onDone) {
-  const url  = _ADMIN_API_BASE + '/api/admin/orders';
-  const ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
-  const tmo  = ctrl ? setTimeout(function () { ctrl.abort(); }, 5000) : null;
-
-  fetch(url, { signal: ctrl ? ctrl.signal : undefined })
-    .then(function (r) {
-      if (tmo) clearTimeout(tmo);
-      if (!r.ok) throw new Error('HTTP ' + r.status);
-      return r.json();
-    })
-    .then(function (body) {
-      if (!body.success || !Array.isArray(body.orders)) return;
-
-      /* Merge : ajouter uniquement les nouveaux orderIDs */
-      body.orders.forEach(function (o) {
-        const id = o.orderID || o.bookingRef;
-        if (!id) return;
-        if (ADMIN_RESERVATIONS.find(function (x) { return x.id === id; })) return;
-
-        ADMIN_RESERVATIONS.unshift({
-          id           : id,
-          bookingRef   : o.bookingRef || id,
-          client       : (o.clientDetails && o.clientDetails.name) || 'Client',
-          artisan      : (o.clientDetails && o.clientDetails.artisanName) || '-',
-          artisanId    : (o.clientDetails && o.clientDetails.artisanId) || 0,
-          service      : (o.clientDetails && o.clientDetails.service) || '-',
-          date         : (o.clientDetails && o.clientDetails.date) || o.createdAt || '-',
-          timeSlot     : (o.clientDetails && (o.clientDetails.timeSlot || o.clientDetails.time)) || '-',
-          address      : (o.clientDetails && o.clientDetails.address) || '-',
-          phone        : (o.clientDetails && o.clientDetails.phone) || '-',
-          price        : o.totalAmount || 0,
-          commission   : o.commission  || 0,
-          netArtisan   : o.netArtisan  || 0,
-          paymentMethod: o.paymentMethod || 'Cash on Delivery',
-          method       : o.paymentMethod || 'Cash on Delivery',
-          payStatus    : o.orderStatus  || 'pending_cod',
-          status       : (o.orderStatus === 'completed') ? 'completed' : 'pending',
-          slotLock     : !!o.slotLock,
-          isExpress    : false,
-          createdAt    : o.createdAt || new Date().toLocaleDateString('fr-FR'),
-          transactionDate: o.createdAt || new Date().toLocaleDateString('fr-FR'),
-          _fromAPI     : true,
-        });
-      });
-
-      renderCODOrders();
-      _updateCODKPIs();
-      _updateCODSidebarBadge();
-      console.log('[Fixeo Admin] ✅ Commandes API chargées - ' + body.count + ' ordre(s) (COD: ' + body.codCount + ', PayPal: ' + body.paypalCount + ')');
-      if (typeof onDone === 'function') onDone(true, body.count);
-    })
-    .catch(function (err) {
-      if (tmo) clearTimeout(tmo);
-      console.warn('[Fixeo Admin] ⚠️ /api/admin/orders indisponible - fallback localStorage. Err:', err.message);
-      if (typeof onDone === 'function') onDone(false, 0);
-    });
+  if (typeof onDone === 'function') onDone(false, 0);
+  return Promise.resolve([]);
 }
-
 /**
  * Démarre le polling automatique (toutes les 10 secondes).
  * Déclenche aussi un premier fetch immédiat.
  */
 function _startAdminOrdersPolling() {
-  if (_adminOrdersPollingTimer) clearInterval(_adminOrdersPollingTimer);
-  _fetchAdminOrdersFromAPI(); /* premier appel immédiat */
-  _adminOrdersPollingTimer = setInterval(function () {
-    _fetchAdminOrdersFromAPI();
-  }, 10000); /* ← polling toutes les 10 secondes */
-  console.log('[Fixeo Admin] 🔄 Polling commandes démarré (10s)');
+  if (_adminOrdersPollingTimer) {
+    clearInterval(_adminOrdersPollingTimer);
+    _adminOrdersPollingTimer = null;
+  }
+  console.info('[Fixeo Admin] /api/admin/orders désactivé — mode Supabase/localStorage actif');
+  return;
 }
 
 /** Arrête le polling (appelé au logout). */
