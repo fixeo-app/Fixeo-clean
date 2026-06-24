@@ -598,25 +598,60 @@ function suspendArtisan() {
   showToast('🚫 Statut artisan mis à jour', 'info');
 }
 
-/* ── CLIENTS TABLE ───────────────────────────────────────────── */
+/* ── CLIENTS TABLE / MOBILE CARDS ───────────────────────────── */
 function renderClientsTable() {
   const tbody = document.getElementById('clients-admin-tbody');
   if (!tbody) return;
+
   tbody.innerHTML = ADMIN_CLIENTS.map(c => `
-    <tr>
-      <td>
-        <div class="admin-user-cell">
-          <div class="admin-avatar" style="background:linear-gradient(135deg,#405DE6,#833AB4)">${c.name.charAt(0)}</div>
-          <div class="admin-user-name">${c.name}</div>
+    <tr class="client-admin-row">
+      <td colspan="7">
+        <div class="admin-client-card">
+
+          <div class="admin-client-head">
+            <div class="admin-avatar"
+                 style="background:linear-gradient(135deg,#405DE6,#833AB4)">
+              ${(c.name || 'C').charAt(0).toUpperCase()}
+            </div>
+
+            <div class="admin-client-meta">
+              <div class="admin-user-name">${c.name || 'Client'}</div>
+              <div class="admin-user-email">${c.email || ''}</div>
+            </div>
+          </div>
+
+          <div class="admin-client-grid">
+            <div class="client-info-line">
+              <span>📍 Ville</span>
+              <strong>${c.city || 'Non renseignée'}</strong>
+            </div>
+
+            <div class="client-info-line">
+              <span>🛠️ Missions</span>
+              <strong>${c.missions || 0}</strong>
+            </div>
+
+            <div class="client-info-line">
+              <span>📅 Inscrit le</span>
+              <strong>${c.joined || '-'}</strong>
+            </div>
+
+            <div class="client-info-line">
+              <span>Statut</span>
+              <span class="status-badge status-${c.status || 'active'}">
+                ${statusLabel(c.status || 'active')}
+              </span>
+            </div>
+          </div>
+
+          <div class="admin-client-actions">
+            <button class="tbl-btn danger"
+                    onclick="confirmAction('ban_client','${c.id}')">
+              🚫 Bannir
+            </button>
+          </div>
+
         </div>
-      </td>
-      <td>${c.email}</td>
-      <td>📍 ${c.city}</td>
-      <td>${c.missions}</td>
-      <td>${c.joined}</td>
-      <td><span class="status-badge status-${c.status}">${statusLabel(c.status)}</span></td>
-      <td>
-        <button class="tbl-btn danger" onclick="confirmAction('ban_client',${c.id})">🚫 Bannir</button>
       </td>
     </tr>
   `).join('');
