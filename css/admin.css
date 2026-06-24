@@ -568,3 +568,57 @@
     min-height: 44px;
   }
 }
+/* FIXEO ADMIN — CLIENTS MOBILE FINAL OVERRIDE */
+@media (max-width: 768px) {
+
+  .admin-table-wrap:has(#clients-admin-tbody),
+  .admin-table-container:has(#clients-admin-tbody),
+  .table-wrapper:has(#clients-admin-tbody) {
+    overflow-x: visible !important;
+  }
+
+  table:has(#clients-admin-tbody) {
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  table:has(#clients-admin-tbody) thead {
+    display: none !important;
+  }
+
+  #clients-admin-tbody {
+    display: block !important;
+    width: 100% !important;
+  }
+
+  #clients-admin-tbody tr {
+    display: block !important;
+    width: 100% !important;
+    margin: 0 0 16px 0 !important;
+    padding: 16px !important;
+    border-radius: 18px !important;
+    background: rgba(255,255,255,0.06) !important;
+    border: 1px solid rgba(255,255,255,0.10) !important;
+    overflow: hidden !important;
+  }
+
+  #clients-admin-tbody td {
+    display: block !important;
+    width: 100% !important;
+    padding: 6px 0 !important;
+    border: none !important;
+  }
+
+  #clients-admin-tbody .admin-client-actions,
+  #clients-admin-tbody .tbl-btn {
+    position: relative !important;
+    z-index: 20 !important;
+    pointer-events: auto !important;
+  }
+
+  #clients-admin-tbody .tbl-btn {
+    width: 100% !important;
+    min-height: 46px !important;
+  }
+}
