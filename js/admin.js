@@ -1042,6 +1042,55 @@ function renderUrgentPerformanceKPIs() {
   }
 }
 
+async function loadAdminReservationsFromSupabase() {
+  try {
+    if (!window.FixeoSupabaseClient || !window.FixeoSupabaseClient.CONFIGURED) return;
+
+    const { client } = await window.FixeoSupabaseClient.ready();
+    if (!client) return;
+
+    const { data, error } = await client
+      .from('service_requests')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+
+    ADMIN_RESERVATIONS.length = 0;
+
+    (data || []).forEach(function(r) {
+      ADMIN_RESERVATIONS.push({
+        id: r.id,
+        bookingRef: r.id,
+        client: 'Client',
+        clientId: r.client_profile_id || 0,
+        artisan: '-',
+        artisanId: 0,
+        service: r.service_category || '-',
+        city: r.city || '-',
+        date: r.created_at ? new Date(r.created_at).toLocaleDateString('fr-FR') : '-',
+        time: '-',
+        status: r.status === 'new' ? 'pending' : (r.status || 'pending'),
+        payStatus: 'pending_cod',
+        price: 0,
+        commission: 0,
+        method: 'Cash on Delivery',
+        description: r.description || '',
+        createdAt: r.created_at || new Date().toISOString(),
+        fromSupabase: true
+      });
+    });
+
+    renderReservations();
+    _updateReservationKPIs();
+    _updateReservationSidebarCount();
+    _updateOverviewReservationKPI();
+
+    console.log('[Fixeo Admin] ✅ service_requests chargées:', ADMIN_RESERVATIONS.length);
+  } catch (e) {
+    console.warn('[Fixeo Admin] loadAdminReservationsFromSupabase failed:', e);
+  }
+}
 /* ── STATE ──────────────────────────────────────────────────────── */
 let _currentResId = null;
 
@@ -1063,11 +1112,12 @@ function initAdmin() {
   renderReports();
   renderUrgentPerformanceKPIs();
   /* Réservations module */
-  _mergeLocalStorageReservations();
-  renderReservations();
-  _updateReservationKPIs();
-  _updateReservationSidebarCount();
-  _updateOverviewReservationKPI();
+_mergeLocalStorageReservations();
+renderReservations();
+_updateReservationKPIs();
+_updateReservationSidebarCount();
+_updateOverviewReservationKPI();
+loadAdminReservationsFromSupabase();
    
 setTimeout(function() {
   _mergeLocalStorageReservations();
