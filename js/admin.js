@@ -1819,13 +1819,14 @@ function _stopAdminOrdersPolling() {
    JS only · non-destructive override layer
    ================================================================ */
 (function () {
-  const MISSION_STATUS = {
-    SENT: 'demande_envoyee',
-    SELECTED: 'artisan_selectionne',
-    IN_PROGRESS: 'en_cours',
-    DONE: 'terminee',
-    CANCELLED: 'annulee'
-  };
+const MISSION_STATUS = {
+   SENT: 'demande_envoyee',
+   SELECTED: 'artisan_selectionne',
+   IN_PROGRESS: 'en_cours',
+   DONE: 'terminee',
+   VALIDATED: 'validee',
+   CANCELLED: 'annulee'
+ };
 
   const LEGACY_TO_MISSION = {
     pending: MISSION_STATUS.SENT,
@@ -1877,6 +1878,7 @@ function _stopAdminOrdersPolling() {
       text: '#20C997',
       border: 'rgba(32,201,151,.32)'
     },
+     
     [MISSION_STATUS.CANCELLED]: {
       label: '❌ Annulée',
       shortLabel: 'Annulée',
@@ -1885,13 +1887,22 @@ function _stopAdminOrdersPolling() {
       text: '#ff7b7b',
       border: 'rgba(255,107,107,.28)'
     }
+       [MISSION_STATUS.VALIDATED]: {
+  label: '✅ Validée',
+  shortLabel: 'Validée',
+  icon: '✅',
+  tone: 'rgba(46,204,113,.16)',
+  text: '#2ecc71',
+  border: 'rgba(46,204,113,.32)'
+},
   };
 
-  const MISSION_ACTIONS = {
-    [MISSION_STATUS.SENT]: { label: 'Accepter mission', next: MISSION_STATUS.SELECTED, icon: '✅' },
-    [MISSION_STATUS.SELECTED]: { label: 'Démarrer', next: MISSION_STATUS.IN_PROGRESS, icon: '🚀' },
-    [MISSION_STATUS.IN_PROGRESS]: { label: 'Terminer', next: MISSION_STATUS.DONE, icon: '🏁' }
-  };
+const MISSION_ACTIONS = {
+  [MISSION_STATUS.SENT]: { label: 'Accepter mission', next: MISSION_STATUS.SELECTED, icon: '✅' },
+  [MISSION_STATUS.SELECTED]: { label: 'Démarrer', next: MISSION_STATUS.IN_PROGRESS, icon: '🚀' },
+  [MISSION_STATUS.IN_PROGRESS]: { label: 'Terminer', next: MISSION_STATUS.DONE, icon: '🏁' },
+  [MISSION_STATUS.DONE]: { label: 'Valider mission', next: MISSION_STATUS.VALIDATED, icon: '✅' }
+};
 
   function _missionNow() {
     return new Date().toISOString();
