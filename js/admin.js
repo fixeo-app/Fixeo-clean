@@ -252,6 +252,7 @@ async function checkAdminAccess() {
     }
   }
 }
+window.checkAdminAccess = checkAdminAccess;
 
 /* Auto-bypass gate if already authenticated as admin
    PHASE 1C: sessionStorage token present → async Supabase session validation.
