@@ -1828,23 +1828,29 @@ const MISSION_STATUS = {
    VALIDATED: 'validee',
    CANCELLED: 'annulee'
  };
-
-  const LEGACY_TO_MISSION = {
-    pending: MISSION_STATUS.SENT,
-    confirmed: MISSION_STATUS.SELECTED,
-    accepted: MISSION_STATUS.IN_PROGRESS,
-    inprogress: MISSION_STATUS.IN_PROGRESS,
-    completed: MISSION_STATUS.DONE,
-    cancelled: MISSION_STATUS.CANCELLED
-  };
-
+   
+const LEGACY_TO_MISSION = {
+  pending: MISSION_STATUS.SENT,
+  confirmed: MISSION_STATUS.SELECTED,
+  accepted: MISSION_STATUS.IN_PROGRESS,
+  inprogress: MISSION_STATUS.IN_PROGRESS,
+  completed: MISSION_STATUS.DONE,
+  done: MISSION_STATUS.DONE,
+  terminee: MISSION_STATUS.DONE,
+  validated: MISSION_STATUS.VALIDATED,
+  validee: MISSION_STATUS.VALIDATED,
+  cancelled: MISSION_STATUS.CANCELLED
+};
+   
   const MISSION_TO_LEGACY = {
-    [MISSION_STATUS.SENT]: 'pending',
-    [MISSION_STATUS.SELECTED]: 'confirmed',
-    [MISSION_STATUS.IN_PROGRESS]: 'inprogress',
-    [MISSION_STATUS.DONE]: 'completed',
-    [MISSION_STATUS.CANCELLED]: 'cancelled'
-  };
+  [MISSION_STATUS.SENT]: 'pending',
+  [MISSION_STATUS.SELECTED]: 'confirmed',
+  [MISSION_STATUS.IN_PROGRESS]: 'inprogress',
+  [MISSION_STATUS.DONE]: 'completed',
+  [MISSION_STATUS.VALIDATED]: 'validated',
+  [MISSION_STATUS.CANCELLED]: 'cancelled'
+};
+  
 
   const MISSION_META = {
     [MISSION_STATUS.SENT]: {
@@ -2029,14 +2035,24 @@ const MISSION_ACTIONS = {
   }
 
   function _missionActionButtons(reservation) {
-    const nextAction = _missionNextAction(reservation.status);
-    const buttons = [];
+     const currentStatus = _normalizeMissionStatus(reservation.status);
+let nextAction = _missionNextAction(reservation.status);
+
+if (!nextAction && currentStatus === MISSION_STATUS.DONE) {
+  nextAction = {
+    label: 'Valider mission',
+    next: MISSION_STATUS.VALIDATED,
+    icon: '✅'
+  };
+}
+
+const buttons = [];
 
     if (nextAction) {
       buttons.push(`<button class="tbl-btn" style="background:rgba(64,93,230,.18);color:#9db3ff" onclick="advanceMissionStatus('${reservation.id}')">${nextAction.icon} ${nextAction.label}</button>`);
     }
 
-    if (_normalizeMissionStatus(reservation.status) !== MISSION_STATUS.CANCELLED && _normalizeMissionStatus(reservation.status) !== MISSION_STATUS.DONE) {
+    if (currentStatus !== MISSION_STATUS.CANCELLED && currentStatus !== MISSION_STATUS.DONE && currentStatus !== MISSION_STATUS.VALIDATED) {
       buttons.push(`<button class="tbl-btn danger" onclick="confirmCancelReservation('${reservation.id}')">✕ Annuler</button>`);
     }
 
