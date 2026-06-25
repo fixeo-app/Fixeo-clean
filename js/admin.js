@@ -1887,7 +1887,7 @@ const MISSION_STATUS = {
       tone: 'rgba(255,107,107,.14)',
       text: '#ff7b7b',
       border: 'rgba(255,107,107,.28)'
-    }
+    },
        [MISSION_STATUS.VALIDATED]: {
   label: '✅ Validée',
   shortLabel: 'Validée',
