@@ -1830,6 +1830,7 @@ function _stopAdminOrdersPolling() {
   const LEGACY_TO_MISSION = {
     pending: MISSION_STATUS.SENT,
     confirmed: MISSION_STATUS.SELECTED,
+    accepted: MISSION_STATUS.IN_PROGRESS,
     inprogress: MISSION_STATUS.IN_PROGRESS,
     completed: MISSION_STATUS.DONE,
     cancelled: MISSION_STATUS.CANCELLED
