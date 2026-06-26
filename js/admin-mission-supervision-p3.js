@@ -923,6 +923,11 @@ if (st==='accept\u00e9e') {
             client_confirmation : 'en_attente'
           });
 
+          _showToast('\u2713 Mission termin\u00e9e &mdash; ' + price.toLocaleString('fr-FR') + '\u202fMAD &mdash; commission\u00a0: ' + comm.toLocaleString('fr-FR') + '\u202fMAD', 'success');
+          render();
+          return;
+        }
+         
            if (act==='validate-client' && reqId) {
   var reqs = readReqs();
   var row = reqs.find(function(x){ return String(x.id||'')===String(reqId); });
@@ -944,10 +949,6 @@ if (st==='accept\u00e9e') {
   return;
 }
            
-          _showToast('\u2713 Mission termin\u00e9e &mdash; ' + price.toLocaleString('fr-FR') + '\u202fMAD &mdash; commission\u00a0: ' + comm.toLocaleString('fr-FR') + '\u202fMAD', 'success');
-          render();
-          return;
-        }
       });
     }
   }
