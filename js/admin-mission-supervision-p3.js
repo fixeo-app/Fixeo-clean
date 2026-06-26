@@ -131,12 +131,12 @@
   function readReqs() {
     var lsRows = [];
     try {
-      if (window.FixeoClientRequestsStore && typeof window.FixeoClientRequestsStore.list === 'function') {
-        lsRows = window.FixeoClientRequestsStore.list();
-      } else {
-        var raw = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-        lsRows = Array.isArray(raw) ? raw : [];
-      }
+       var raw = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+lsRows = Array.isArray(raw) ? raw : [];
+
+if (!lsRows.length && window.FixeoClientRequestsStore && typeof window.FixeoClientRequestsStore.list === 'function') {
+  lsRows = window.FixeoClientRequestsStore.list();
+}
     } catch (e) { lsRows = []; }
 
     /* v3-sb: merge Supabase cache when available */
