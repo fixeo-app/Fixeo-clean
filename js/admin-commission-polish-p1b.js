@@ -111,6 +111,17 @@
   }
 }
 
+   /* Build a lookup map: id -> raw request */
+function buildLookup() {
+  var map = {};
+  try {
+    readRaw().forEach(function(r) {
+      if (r && r.id) map[String(r.id)] = r;
+    });
+  } catch(e) {}
+  return map;
+}
+
   /* ── Active filter state ─────────────────────────────────── */
   var _activeFilter = 'all';
   var _searchQuery  = '';
