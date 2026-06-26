@@ -398,6 +398,10 @@ if (!lsRows.length && window.FixeoClientRequestsStore && typeof window.FixeoClie
     if (!grid) return;
 
     var reqs = readReqs();
+    reqs = reqs.filter(function(r) {
+  var st = normSt(r.status);
+  return st !== 'valid\u00e9e' && st !== 'validated';
+}); 
     var modMap = readModMap();
 
     /* Sort: blocked first, then newest first */
