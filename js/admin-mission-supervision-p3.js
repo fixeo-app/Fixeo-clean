@@ -398,6 +398,10 @@ if (!lsRows.length && window.FixeoClientRequestsStore && typeof window.FixeoClie
     if (!grid) return;
 
     var reqs = readReqs();
+       console.log('REQS DEBUG', reqs.map(r => ({
+  id: r.id,
+  status: r.status
+})));
     reqs = reqs.filter(function(r) {
   var st = normSt(r.status);
   return st !== 'valid\u00e9e' && st !== 'validated';
