@@ -650,12 +650,13 @@
 
     /* Status progression buttons */
     var progressBtn = '';
-    if (st==='accept\u00e9e') {
-      progressBtn = '<button class="fxams3-act-btn btn-inprogress" data-act="mark-inprogress" data-req-id="' + esc(String(r.id||'')) + '">\u25b6 D\u00e9marrer</button>';
-    } else if (st==='en_cours') {
-      /* v3-price: open inline price step instead of direct mark-complete */
-      progressBtn = '<button class="fxams3-act-btn btn-complete" data-act="open-price-step" data-req-id="' + esc(String(r.id||'')) + '">\u2713 Terminer</button>';
-    }
+if (st==='accept\u00e9e') {
+  progressBtn = '<button class="fxams3-act-btn btn-inprogress" data-act="mark-inprogress" data-req-id="' + esc(String(r.id||'')) + '">\u25b6 D\u00e9marrer</button>';
+} else if (st==='en_cours') {
+  progressBtn = '<button class="fxams3-act-btn btn-complete" data-act="open-price-step" data-req-id="' + esc(String(r.id||'')) + '">\u2713 Terminer</button>';
+} else if (st==='termin\u00e9e' && String(r.client_confirmation||'').trim()!=='confirm\u00e9e') {
+  progressBtn = '<button class="fxams3-act-btn btn-validate" data-act="validate-client" data-req-id="' + esc(String(r.id||'')) + '">\u2705 Valider</button>';
+}
 
     /* v3-price: show "Prix final confirmé" badge on terminée cards */
     var priceBadge = '';
@@ -922,6 +923,27 @@
             client_confirmation : 'en_attente'
           });
 
+           if (act==='validate-client' && reqId) {
+  var reqs = readReqs();
+  var row = reqs.find(function(x){ return String(x.id||'')===String(reqId); });
+  var fp = row ? deriveFP(row) : 0;
+  var comm = roundMoney(fp * COMMISSION_RATE);
+  var net = fp - comm;
+
+  _writeReqPatch(reqId, {
+    status: 'valid\u00e9e',
+    client_confirmation: 'confirm\u00e9e',
+    validated_at: nowISO(),
+    commission_due: true,
+    commission_amount: comm,
+    artisan_net: net
+  });
+
+  _showToast('\u2705 Mission valid\u00e9e — commission due activ\u00e9e', 'success');
+  render();
+  return;
+}
+           
           _showToast('\u2713 Mission termin\u00e9e &mdash; ' + price.toLocaleString('fr-FR') + '\u202fMAD &mdash; commission\u00a0: ' + comm.toLocaleString('fr-FR') + '\u202fMAD', 'success');
           render();
           return;
