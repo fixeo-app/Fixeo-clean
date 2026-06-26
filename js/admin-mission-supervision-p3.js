@@ -1049,11 +1049,12 @@
   function _looksLikeUUID(s) { return _UUID_RE.test(String(s||'')); }
 
   var _SB_STATUS_MAP = {
-    'nouvelle'   : 'new',
-    'accept\u00e9e'   : 'accept\u00e9e',
-    'en_cours'   : 'en_cours',
-    'termin\u00e9e'   : 'termin\u00e9e',
-    'valid\u00e9e'    : 'valid\u00e9e'
+  'nouvelle'   : 'new',
+  'accept\u00e9e'   : 'assigned',
+  'en_cours'   : 'in_progress',
+  'termin\u00e9e'   : 'completed',
+  'valid\u00e9e'    : 'validated',
+  'annul\u00e9e'    : 'cancelled'
   };
 
   function _syncStatusToSupabase(row, patch) {
