@@ -92,24 +92,24 @@
   }
 
   /* ── Read requests ───────────────────────────────────────── */
+   
   function readRaw() {
-    try {
-      if (window.FixeoClientRequestsStore && typeof window.FixeoClientRequestsStore.list === 'function') {
-        return window.FixeoClientRequestsStore.list();
-      }
-      var arr = JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]');
-      return Array.isArray(arr) ? arr : [];
-    } catch(e) { return []; }
-  }
+  try {
+    if (Array.isArray(window._fxAccSbCache) && window._fxAccSbCache.length) {
+      return window.__fxAccSbCache;
+    }
 
-  /* Build a lookup map: id → raw request */
-  function buildLookup() {
-    var map = {};
-    readRaw().forEach(function(r) {
-      if (r.id) map[String(r.id)] = r;
-    });
-    return map;
+    if (window.FixeoClientRequestsStore && typeof window.FixeoClientRequestsStore.list === 'function') {
+      var storeRows = window.FixeoClientRequestsStore.list();
+      if (Array.isArray(storeRows) && storeRows.length) return storeRows;
+    }
+
+    var arr = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    return Array.isArray(arr) ? arr : [];
+  } catch(e) {
+    return [];
   }
+}
 
   /* ── Active filter state ─────────────────────────────────── */
   var _activeFilter = 'all';
