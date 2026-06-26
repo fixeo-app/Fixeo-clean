@@ -127,7 +127,10 @@
       if (!ACTIVE_STATUSES.includes(st)) return;
       validated++;
       total++;
-      var ca = roundMoney(r.commission_amount || 0);
+      var ca = roundMoney(
+ Number(r.commission_amount) ||
+roundMoney(deriveFinalPrice(r) * 0.15)
+);
       if (r.commission_paid === true || String(r.commission_status||'').trim() === 'pay\u00e9e') {
         paid += ca > 0 ? ca : roundMoney(deriveFinalPrice(r) * COMMISSION_RATE);
       } else if (r.commission_pending_review === true) {
@@ -190,8 +193,11 @@
     });
     if (filter === 'all')     return reqs.length;
     if (filter === 'a_payer') return reqs.filter(function(r) {
-      var ca = roundMoney(r.commission_amount||0);
-      return ACTIVE_STATUSES.includes(normalizeStatus(r.status))
+var ca = roundMoney(
+Number(r.commission_amount) ||
+roundMoney(deriveFinalPrice(r) * 0.15)
+);
+       return ACTIVE_STATUSES.includes(normalizeStatus(r.status))
         && !r.commission_paid && String(r.commission_status||'').trim() !== 'pay\u00e9e'
         && r.commission_pending_review !== true
         && (ca > 0 || deriveFinalPrice(r) > 0);
@@ -354,7 +360,10 @@
       if (!raw) return;
 
       var fp  = deriveFinalPrice(raw);
-      var ca  = roundMoney(raw.commission_amount || 0);
+     var ca = roundMoney(
+  Number(raw.commission_amount) ||
+  roundMoney(deriveFinalPrice(raw) * 0.15)
+);
       var pr  = raw.commission_pending_review === true;
       var st  = normalizeStatus(raw.status);
       var isPaid = raw.commission_paid === true || String(raw.commission_status||'').trim() === 'pay\u00e9e';
