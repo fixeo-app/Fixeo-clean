@@ -93,7 +93,7 @@
 
   /* ── Read requests ───────────────────────────────────────── */
    
-  function readRaw() {
+function readRaw() {
   try {
     if (Array.isArray(window._fxAccSbCache) && window._fxAccSbCache.length) {
       return window.__fxAccSbCache;
