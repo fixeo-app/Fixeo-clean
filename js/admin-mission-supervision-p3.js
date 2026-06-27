@@ -99,8 +99,8 @@
     if (n==='acceptee'||n==='accepte') return 'accept\u00e9e';
     if (n==='en cours'||n==='en_cours'||n==='encours') return 'en_cours';
     if (n==='terminee'||n==='termine') return 'termin\u00e9e';
-    if (n==='validee'||n==='valide'||n==='intervention confirmee'||n==='intervention_confirmee') return 'valid\u00e9e';
-    if (n==='annulee'||n==='annule') return 'annul\u00e9e';
+   if (n==='validated'||n==='validee'||n==='valide'||n==='intervention confirmee'||n==='intervention_confirmee') return 'validée';
+     if (n==='annulee'||n==='annule') return 'annul\u00e9e';
     return 'nouvelle'; /* unknown status treated as nouvelle — shows Assigner */
   }
 
