@@ -314,46 +314,45 @@
     }).join('') : '<tr><td colspan="12" style="text-align:center;color:#7b8190">Aucune mission réelle à afficher.</td></tr>';
   }
 
-  function markCommissionPaidById(missionId) {
-    const id = String(missionId || '').trim();
-    if (!id) return false;
-    const rawRequests = readAllRequests();
-    let changed = false;
-    let paidMission = null; /* ev-bus: capture for commission-paid event */
-    const nextRequests = rawRequests.map(function (raw, index) {
-      const mission = normalizeMission(raw, index);
-      if (String(mission.id) !== id) return raw;
-      if (!isEligibleForPayment(mission)) return raw;
-      changed = true;
-      paidMission = mission; /* ev-bus: capture before patch */
-      return Object.assign({}, raw, {
-        id: mission.id,
-        commission_status: 'payée',
-        commission_paid: true,
-        commission_paid_at: new Date().toISOString(),
-        commission_paid_by: 'admin'
-      });
-    });
-    if (!changed) return false;
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(nextRequests));
-    try {
-      /* ev-bus: always dispatch both events — order: specific first, then general */
+ async function markCommissionPaidById(missionId) {
+  const id = String(missionId || '').trim();
+  if (!id) return false;
+
+  try {
+    if (window.FixeoSupabaseClient && window.FixeoSupabaseClient.CONFIGURED) {
+      const { client } = await window.FixeoSupabaseClient.ready();
+
+      const { error } = await client
+        .from('service_requests')
+        .update({
+          commission_paid: true,
+          commission_status: 'paid',
+          commission_paid_at: new Date().toISOString(),
+          commission_paid_by: 'admin'
+        })
+        .eq('id', id);
+
+      if (error) {
+        console.warn('[Fixeo COD] Supabase mark paid error:', error);
+        return false;
+      }
+
       window.dispatchEvent(new CustomEvent('fixeo:commission-paid', {
-        detail: {
-          requestId:    id,
-          artisanId:    paidMission ? paidMission.assigned_artisan_id : '',
-          artisanName:  paidMission ? paidMission.assigned_artisan    : '',
-          commission:   paidMission ? paidMission.commission_amount   : 0,
-          price:        paidMission ? paidMission.final_price         : 0,
-          paidBy:       'admin'
-        }
+        detail: { requestId: id, paidBy: 'admin' }
       }));
-      window.dispatchEvent(new CustomEvent('fixeo:client-request-updated', { detail: { id: id, commission_status: 'payée' } }));
-    } catch (error) {
-      /* noop */
+
+      window.dispatchEvent(new CustomEvent('fixeo:client-request-updated', {
+        detail: { id: id, commission_status: 'paid' }
+      }));
+
+      return true;
     }
-    return true;
+  } catch (e) {
+    console.warn('[Fixeo COD] Supabase mark paid failed:', e);
   }
+
+  return false;
+}
 
   function renderAll() {
     updateFiltersUi();
@@ -370,14 +369,15 @@
       const target = event.target.closest('[data-admin-action="mark-commission-paid"]');
       if (!target) return;
       const missionId = target.getAttribute('data-mission-id');
-      const changed = markCommissionPaidById(missionId);
-      if (changed) {
-        window.showToast?.('✅ Commission marquée payée', 'success');
-        renderAll();
-      } else {
-        window.showToast?.('ℹ️ Cette commission est déjà réglée ou non éligible', 'info');
-      }
-    });
+     markCommissionPaidById(missionId).then(function(changed) {
+  if (changed) {
+    window.showToast?.('✅ Commission marquée payée', 'success');
+    renderAll();
+  } else {
+    window.showToast?.('ℹ️ Cette commission est déjà réglée ou non éligible', 'info');
+  }
+       });
+    }    
 
     window.addEventListener('storage', function (event) {
       if (event.key === STORAGE_KEY) renderAll();
