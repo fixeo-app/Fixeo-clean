@@ -80,7 +80,17 @@
     if (n==='intervention confirmee'||n==='intervention_confirmee') return 'intervention_confirm\u00e9e';
     return s || '';
   }
-
+function isCommissionPaid(obj) {
+  return (
+    obj.commission_paid === true ||
+    ['payée', 'paid'].includes(
+      String(obj.commission_status || '')
+        .trim()
+        .toLowerCase()
+    )
+  );
+}
+   
   function buildWALink(phone, artisanName) {
     var digits = String(phone||'').replace(/\D/g,'');
     if (digits.length < 9) return '';
@@ -96,7 +106,7 @@
 function readRaw() {
   try {
     if (Array.isArray(window._fxAccSbCache) && window._fxAccSbCache.length) {
-      return window.__fxAccSbCache;
+   return window._fxAccSbCache;
     }
 
     if (window.FixeoClientRequestsStore && typeof window.FixeoClientRequestsStore.list === 'function') {
@@ -142,7 +152,7 @@ function buildLookup() {
  Number(r.commission_amount) ||
 roundMoney(deriveFinalPrice(r) * 0.15)
 );
-      if (r.commission_paid === true || String(r.commission_status||'').trim() === 'pay\u00e9e') {
+    if (isCommissionPaid(r)) {
         paid += ca > 0 ? ca : roundMoney(deriveFinalPrice(r) * COMMISSION_RATE);
       } else if (r.commission_pending_review === true) {
         review++;
@@ -209,11 +219,11 @@ Number(r.commission_amount) ||
 roundMoney(deriveFinalPrice(r) * 0.15)
 );
        return ACTIVE_STATUSES.includes(normalizeStatus(r.status))
-        && !r.commission_paid && String(r.commission_status||'').trim() !== 'pay\u00e9e'
-        && r.commission_pending_review !== true
+       && !isCommissionPaid(r)
+       && r.commission_pending_review !== true
         && (ca > 0 || deriveFinalPrice(r) > 0);
     }).length;
-    if (filter === 'payee')   return reqs.filter(function(r) { return r.commission_paid === true || String(r.commission_status||'').trim() === 'pay\u00e9e'; }).length;
+   if (filter === 'payee') return reqs.filter(function(r) { return isCommissionPaid(r); }).length;
     if (filter === 'review')  return reqs.filter(function(r) { return r.commission_pending_review === true; }).length;
     return reqs.length;
   }
@@ -301,7 +311,7 @@ roundMoney(deriveFinalPrice(r) * 0.15)
       var fp  = deriveFinalPrice(raw);
       var ca  = roundMoney(raw.commission_amount||0);
       var pr  = raw.commission_pending_review === true;
-      var isPaid = raw.commission_paid === true || String(raw.commission_status||'').trim() === 'pay\u00e9e';
+     var isPaid = isCommissionPaid(raw);
       var isDue  = ACTIVE_STATUSES.includes(st) && !isPaid && !pr && (ca > 0 || fp > 0);
 
       var show = true;
@@ -377,8 +387,7 @@ roundMoney(deriveFinalPrice(r) * 0.15)
 );
       var pr  = raw.commission_pending_review === true;
       var st  = normalizeStatus(raw.status);
-      var isPaid = raw.commission_paid === true || String(raw.commission_status||'').trim() === 'pay\u00e9e';
-
+       var isPaid = isCommissionPaid(raw);
       /* ── 3c. "À évaluer" badge in commission column ─────── */
       var commCell = row.cells[4]; /* Commission column */
       if (commCell && pr && !isPaid) {
