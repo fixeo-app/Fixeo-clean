@@ -375,9 +375,9 @@
     renderAll();
   } else {
     window.showToast?.('ℹ️ Cette commission est déjà réglée ou non éligible', 'info');
-  }
-       });
-    }    
+         }
+      });
+    }); 
 
     window.addEventListener('storage', function (event) {
       if (event.key === STORAGE_KEY) renderAll();
