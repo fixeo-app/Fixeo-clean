@@ -118,9 +118,44 @@
   }
 
   function readAllRequests() {
-    const rawList = safeJSONParse(localStorage.getItem(STORAGE_KEY) || '[]', []);
-    return Array.isArray(rawList) ? rawList : [];
+  const rawList = safeJSONParse(localStorage.getItem(STORAGE_KEY) || '[]', []);
+  return Array.isArray(rawList) ? rawList : [];
+}
+
+async function loadRequestsFromSupabase() {
+  try {
+    if (!window.FixeoSupabaseClient || !window.FixeoSupabaseClient.CONFIGURED) {
+      return readAllRequests();
+    }
+
+    const { client } = await window.FixeoSupabaseClient.ready();
+
+    const { data, error } = await client
+      .from('service_requests')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.warn('[Fixeo COD] Supabase read error:', error);
+      return readAllRequests();
+    }
+
+    window.__fixeoCODRequests = Array.isArray(data) ? data : [];
+    return window.__fixeoCODRequests;
+  } catch (e) {
+    console.warn('[Fixeo COD] Supabase read failed:', e);
+    return readAllRequests();
   }
+}
+
+  const supabaseRequests = window.__fixeoSupabaseRequests;
+  if (Array.isArray(supabaseRequests) && supabaseRequests.length) {
+    return supabaseRequests;
+  }
+
+  const rawList = safeJSONParse(localStorage.getItem(STORAGE_KEY) || '[]', []);
+  return Array.isArray(rawList) ? rawList : [];
+}
 
   function normalizeMission(raw, index) {
     const status = normalizeStatus(raw?.status);
@@ -354,12 +389,15 @@
   return false;
 }
 
-  function renderAll() {
-    updateFiltersUi();
-    const allMissions = getAllMissions();
-    updateKpis(getMetrics(allMissions));
-    renderTable(getFilteredMissions());
-  }
+  async function renderAll() {
+  updateFiltersUi();
+
+  await loadRequestsFromSupabase();
+
+  const allMissions = getAllMissions();
+  updateKpis(getMetrics(allMissions));
+  renderTable(getFilteredMissions());
+}
 
   function bindActions() {
     if (actionsBound) return;
