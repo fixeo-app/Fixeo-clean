@@ -128,8 +128,7 @@
 
   return '';
 }
-
- function readAllRequests() {
+function readAllRequests() {
   if (Array.isArray(window._fixeoCODRequests) && window._fixeoCODRequests.length) {
     return window.__fixeoCODRequests;
   }
