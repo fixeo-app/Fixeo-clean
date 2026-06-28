@@ -110,12 +110,24 @@
     return 0;
   }
 
-  function normalizePaymentStatus(raw, commissionAmount, status) {
-    const value = normalizeText(raw?.commission_status || '');
-    if (commissionAmount > 0 && (value === 'payee' || value === 'paye' || raw?.commission_paid === true)) return 'payée';
-    if (commissionAmount > 0 && COMMISSION_ACTIVE_STATUSES.includes(status)) return 'à_payer';
-    return '';
+ function normalizePaymentStatus(raw, commissionAmount, status) {
+  const value = normalizeText(raw?.commission_status || '');
+
+  if (
+    raw?.commission_paid === true ||
+    value === 'payee' ||
+    value === 'paye' ||
+    value === 'paid'
+  ) {
+    return 'payée';
   }
+
+  if (commissionAmount > 0 && COMMISSION_ACTIVE_STATUSES.includes(status)) {
+    return 'à_payer';
+  }
+
+  return '';
+}
 
  function readAllRequests() {
   if (Array.isArray(window._fixeoCODRequests) && window._fixeoCODRequests.length) {
@@ -196,11 +208,10 @@ async function loadRequestsFromSupabase() {
     return !!mission.id && !!mission.assigned_artisan && mission.status !== 'nouvelle';
   }
 
-  function isEligibleForPayment(mission) {
-    return COMMISSION_ACTIVE_STATUSES.includes(mission.status)
-      && mission.commission_amount > 0
-      && mission.commission_status !== 'payée';
-  }
+ function isEligibleForPayment(mission) {
+  return COMMISSION_ACTIVE_STATUSES.includes(mission.status)
+    && mission.commission_status !== 'payée';
+}
 
   function getAllMissions() {
   return readAllRequests()
