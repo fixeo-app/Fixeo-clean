@@ -203,8 +203,10 @@ async function loadRequestsFromSupabase() {
   }
 
   function getAllMissions() {
-    return .map(normalizeMission).filter(isRealMission);
-  }
+  return readAllRequests()
+    .map(normalizeMission)
+    .filter(isRealMission);
+}
 
   function getFilteredMissions() {
     const search = normalizeText(document.getElementById('cod-search')?.value || '');
