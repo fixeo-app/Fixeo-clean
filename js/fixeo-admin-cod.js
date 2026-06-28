@@ -35,7 +35,7 @@
     if (normalized === 'acceptee' || normalized === 'accepte') return 'acceptée';
     if (normalized === 'en cours' || normalized === 'en cours ' || normalized === 'en_cours' || normalized === 'encours') return 'en_cours';
     if (normalized === 'terminee' || normalized === 'termine') return 'terminée';
-    if (normalized === 'validee' || normalized === 'valide') return 'validée';
+    if (normalized === 'validee' || normalized === 'valide' || normalized === 'validated') return 'validée';
     if (normalized === 'intervention confirmee' || normalized === 'intervention confirmee ' || normalized === 'intervention_confirmee') return 'intervention_confirmée';
     return 'nouvelle';
   }
@@ -109,8 +109,7 @@
     if (finalPrice > 0 && COMMISSION_ACTIVE_STATUSES.includes(status)) return roundMoney(finalPrice * COMMISSION_RATE);
     return 0;
   }
-
- function normalizePaymentStatus(raw, commissionAmount, status) {
+function normalizePaymentStatus(raw, commissionAmount, status) {
   const value = normalizeText(raw?.commission_status || '');
 
   if (
@@ -128,6 +127,7 @@
 
   return '';
 }
+
 function readAllRequests() {
   if (Array.isArray(window._fixeoCODRequests) && window._fixeoCODRequests.length) {
     return window.__fixeoCODRequests;
