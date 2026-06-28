@@ -326,7 +326,7 @@
         .from('service_requests')
         .update({
           commission_paid: true,
-          commission_status: 'paid',
+          commission_status: 'payée',
           commission_paid_at: new Date().toISOString(),
           commission_paid_by: 'admin'
         })
@@ -342,7 +342,7 @@
       }));
 
       window.dispatchEvent(new CustomEvent('fixeo:client-request-updated', {
-        detail: { id: id, commission_status: 'paid' }
+        detail: { id: id, commission_status: 'payée' }
       }));
 
       return true;
