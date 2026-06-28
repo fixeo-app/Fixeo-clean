@@ -117,7 +117,11 @@
     return '';
   }
 
-  function readAllRequests() {
+ function readAllRequests() {
+  if (Array.isArray(window._fixeoCODRequests) && window._fixeoCODRequests.length) {
+    return window.__fixeoCODRequests;
+  }
+
   const rawList = safeJSONParse(localStorage.getItem(STORAGE_KEY) || '[]', []);
   return Array.isArray(rawList) ? rawList : [];
 }
@@ -146,15 +150,6 @@ async function loadRequestsFromSupabase() {
     console.warn('[Fixeo COD] Supabase read failed:', e);
     return readAllRequests();
   }
-}
-
-  const supabaseRequests = window.__fixeoSupabaseRequests;
-  if (Array.isArray(supabaseRequests) && supabaseRequests.length) {
-    return supabaseRequests;
-  }
-
-  const rawList = safeJSONParse(localStorage.getItem(STORAGE_KEY) || '[]', []);
-  return Array.isArray(rawList) ? rawList : [];
 }
 
   function normalizeMission(raw, index) {
@@ -208,7 +203,7 @@ async function loadRequestsFromSupabase() {
   }
 
   function getAllMissions() {
-    return readAllRequests().map(normalizeMission).filter(isRealMission);
+    return .map(normalizeMission).filter(isRealMission);
   }
 
   function getFilteredMissions() {
