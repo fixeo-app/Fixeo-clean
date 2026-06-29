@@ -150,9 +150,8 @@ function normalizePaymentStatus(raw, commissionAmount, status) {
 
   return '';
 }
-
 function readAllRequests() {
-  if (Array.isArray(window._fixeoCODRequests) && window._fixeoCODRequests.length) {
+  if (Array.isArray(window.__fixeoCODRequests) && window.__fixeoCODRequests.length) {
     return window.__fixeoCODRequests;
   }
 
