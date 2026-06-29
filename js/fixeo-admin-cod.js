@@ -55,15 +55,16 @@
   }
 
   function parseMoney(value) {
-    if (typeof value === 'number' && Number.isFinite(value)) return roundMoney(value);
-    const matches = String(value || '').match(/\d+[\d\s.,]*/g) || [];
-    if (!matches.length) return 0;
-    const numbers = matches
-      .map((item) => Number(String(item).replace(/\s+/g, '').replace(',', '.')))
-      .filter((item) => Number.isFinite(item) && item > 0);
-    if (!numbers.length) return 0;
-    return roundMoney(numbers.reduce((sum, item) => sum + item, 0) / numbers.length);
-  }
+  const text = String(value || '');
+
+  const madMatch = text.match(/(?:montant\s*:\s*)?(\d{1,6}(?:[.,]\d{1,2})?)\s*(?:MAD|DH|DHS|درهم)/i);
+  if (madMatch) return roundMoney(madMatch[1]);
+
+  const budgetMatch = text.match(/(?:budget|prix|montant)\s*[:\-]?\s*(\d{1,6}(?:[.,]\d{1,2})?)/i);
+  if (budgetMatch) return roundMoney(budgetMatch[1]);
+
+  return 0;
+}
 
   function formatMoney(amount) {
     const safeAmount = roundMoney(amount);
