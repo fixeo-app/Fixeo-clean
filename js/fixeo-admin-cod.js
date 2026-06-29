@@ -162,7 +162,9 @@ async function loadRequestsFromSupabase() {
       return readAllRequests();
     }
 
-    window.__fixeoCODRequests = Array.isArray(data) ? data : [];
+    window.__fixeoCODRequests = Array.isArray(data)
+  ? data.map(normalizeMission)
+  : [];
     return window.__fixeoCODRequests;
   } catch (e) {
     console.warn('[Fixeo COD] Supabase read failed:', e);
