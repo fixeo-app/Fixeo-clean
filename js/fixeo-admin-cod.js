@@ -100,12 +100,23 @@
   }
 
   function deriveFinalPrice(raw) {
-    return roundMoney(raw?.final_price || raw?.price || raw?.agreed_price || parseMoney(raw?.budget || ''));
-  }
+  const direct = roundMoney(raw?.final_price || raw?.price || raw?.agreed_price || 0);
+  if (direct > 0) return direct;
+
+  return parseMoney([
+    raw?.budget,
+    raw?.budget_range,
+    raw?.description
+  ].join(' '));
+}
 
   function deriveCommission(raw, finalPrice, status) {
   const explicit = roundMoney(raw?.commission_amount || raw?.commission || raw?.fixeo_commission || 0);
   if (explicit > 0) return explicit;
+
+if (raw?.commission_paid === true && finalPrice > 0) {
+  return roundMoney(finalPrice * COMMISSION_RATE);
+}
 
   const descriptionPrice = parseMoney(raw?.description || '');
   const basePrice = finalPrice > 0 ? finalPrice : descriptionPrice;
