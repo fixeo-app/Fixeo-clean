@@ -135,12 +135,12 @@ if (raw?.commission_paid === true && finalPrice > 0) {
 function normalizePaymentStatus(raw, commissionAmount, status) {
   const value = normalizeText(raw?.commission_status || '');
 
-  if (
+  if (commissionAmount > 0 && (
     raw?.commission_paid === true ||
     value === 'payee' ||
     value === 'paye' ||
     value === 'paid'
-  ) {
+  )) {
     return 'payée';
   }
 
@@ -150,6 +150,8 @@ function normalizePaymentStatus(raw, commissionAmount, status) {
 
   return '';
 }
+
+  
 function readAllRequests() {
   if (Array.isArray(window.__fixeoCODRequests) && window.__fixeoCODRequests.length) {
     return window.__fixeoCODRequests;
