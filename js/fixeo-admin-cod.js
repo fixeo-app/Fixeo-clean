@@ -203,7 +203,7 @@ async function loadRequestsFromSupabase() {
     })();
     return {
       id,
-      service: String(raw?.service || '').trim() || 'Service à préciser',
+      service: String(raw?.service || raw?.service_category || raw?.category || '').trim() || 'Service à préciser',
       city: String(raw?.city || raw?.ville || '').trim() || 'Ville à préciser',
       description: String(raw?.description || '').trim() || 'Description à préciser',
       phone: String(raw?.phone || raw?.telephone || '').trim(),
@@ -244,7 +244,11 @@ async function loadRequestsFromSupabase() {
 
   function getAllMissions() {
   return readAllRequests()
-    .map(normalizeMission)
+    .map(function (item) {
+      return item && item.final_price !== undefined && item.commission_amount !== undefined
+        ? item
+        : normalizeMission(item);
+    })
     .filter(isRealMission);
 }
 
