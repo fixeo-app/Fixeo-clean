@@ -1572,12 +1572,21 @@ function adminSection(section) {
 
 /* ── Extraire les commandes COD depuis ADMIN_RESERVATIONS ─── */
 function _getCODOrders() {
-  return ADMIN_RESERVATIONS.filter(r =>
-    r.method === 'Cash on Delivery' ||
-    r.method === 'COD' ||
-    r.payStatus === 'pending_cod' ||
-    r.payStatus === 'cod_paid' ||
-    (r.id && r.id.startsWith('COD-'))
+  const src = Array.isArray(window.__fixeoCODRequests)
+    ? window.__fixeoCODRequests
+    : [];
+
+  return src.filter(r =>
+    r &&
+    r.id &&
+    (
+      r.status === 'validée' ||
+      r.status === 'validated' ||
+      r.status === 'intervention_confirmée' ||
+      r.commission_amount > 0 ||
+      r.commission_status === 'à_payer' ||
+      r.commission_status === 'payée'
+    )
   );
 }
 
@@ -1588,8 +1597,16 @@ function _updateCODKPIs() {
   const total      = orders.length;
   const pending    = orders.filter(r => r.status === 'pending' || r.payStatus === 'pending_cod').length;
   const confirmed  = orders.filter(r => r.status === 'confirmed').length;
-  const revenue    = orders.reduce((s, r) => s + (parseFloat(r.price) || 0), 0);
-  const commission = orders.reduce((s, r) => s + (r.commission || Math.round((parseFloat(r.price) || 0) * 0.10)), 0);
+ const revenue = orders.reduce((s, r) => {
+  return s + Number(r.final_price || r.price || 0);
+}, 0);
+
+const commission = orders.reduce((s, r) => {
+  if (r.commission_amount != null) {
+    return s + Number(r.commission_amount || 0);
+  }
+  return s + Math.round(Number(r.final_price || r.price || 0) * 0.15);
+}, 0);
 
   _setKPI('cod-kpi-total',      total);
   _setKPI('cod-kpi-pending',    pending);
@@ -1626,12 +1643,12 @@ function renderCODOrders(data) {
   }
 
   tbody.innerHTML = src.map(r => {
-    const commission = r.commission != null
-      ? r.commission
-      : Math.round((parseFloat(r.price) || 0) * 0.10);
+      const commission = r.commission_amount != null
+  ? r.commission_amount
+      : Math.round((parseFloat(r.final_price || r.price) || 0) * 0.15)
     const netArtisan = r.netArtisan != null
-      ? r.netArtisan
-      : Math.round((parseFloat(r.price) || 0) * 0.90);
+  ? r.netArtisan
+  : Math.round((parseFloat(r.final_price || r.price) || 0) - commission);
 
     const slotLockHtml = (r.slotLock === true || r.slotLock === 'true')
       ? '<span class="slot-admin-badge-booked">🔴 Verrouillé</span>'
