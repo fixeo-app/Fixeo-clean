@@ -204,8 +204,13 @@ async function loadRequestsFromSupabase() {
   }
 
   function isRealMission(mission) {
-    return !!mission.id && !!mission.assigned_artisan && mission.status !== 'nouvelle';
-  }
+  return !!mission.id && (
+    !!mission.assigned_artisan ||
+    !!mission.assigned_artisan_id ||
+    mission.status === 'validée' ||
+    mission.status === 'intervention_confirmée'
+  );
+}
 
  function isEligibleForPayment(mission) {
   return COMMISSION_ACTIVE_STATUSES.includes(mission.status)
