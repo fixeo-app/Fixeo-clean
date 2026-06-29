@@ -303,14 +303,14 @@ async function loadRequestsFromSupabase() {
     if (total) total.textContent = String(metrics.total);
     if (pending) pending.textContent = String(metrics.pending);
     if (confirmed) confirmed.textContent = String(metrics.validated);
-    if (revenue) revenue.textContent = formatMoney(metrics.commissionsPaid);
+    const totalCommissions = metrics.commissionsPaid + metrics.commissionsDue;
+    if (revenue) revenue.textContent = formatMoney(totalCommissions);
     if (commission) commission.textContent = formatMoney(metrics.commissionsDue);
-
     total?.nextElementSibling && (total.nextElementSibling.textContent = 'Missions réelles');
     pending?.nextElementSibling && (pending.nextElementSibling.textContent = 'Missions en attente');
     confirmed?.nextElementSibling && (confirmed.nextElementSibling.textContent = 'Missions validées');
-    revenue?.nextElementSibling && (revenue.nextElementSibling.textContent = 'Commissions payées');
-    commission?.nextElementSibling && (commission.nextElementSibling.textContent = 'Commissions dues');
+    revenue?.nextElementSibling && (revenue.nextElementSibling.textContent = 'Total commissions');
+    commission?.nextElementSibling && (commission.nextElementSibling.textContent = 'À percevoir');
 
     const sidebarCount = document.getElementById('sc-cod');
     if (sidebarCount) sidebarCount.textContent = String(metrics.total);
