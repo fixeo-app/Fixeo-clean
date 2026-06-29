@@ -104,11 +104,18 @@
   }
 
   function deriveCommission(raw, finalPrice, status) {
-    const explicit = roundMoney(raw?.commission_amount || raw?.commission || raw?.fixeo_commission || 0);
-    if (explicit > 0) return explicit;
-    if (finalPrice > 0 && COMMISSION_ACTIVE_STATUSES.includes(status)) return roundMoney(finalPrice * COMMISSION_RATE);
-    return 0;
+  const explicit = roundMoney(raw?.commission_amount || raw?.commission || raw?.fixeo_commission || 0);
+  if (explicit > 0) return explicit;
+
+  const descriptionPrice = parseMoney(raw?.description || '');
+  const basePrice = finalPrice > 0 ? finalPrice : descriptionPrice;
+
+  if (basePrice > 0 && (COMMISSION_ACTIVE_STATUSES.includes(status) || raw?.commission_paid === true)) {
+    return roundMoney(basePrice * COMMISSION_RATE);
   }
+
+  return 0;
+}
 function normalizePaymentStatus(raw, commissionAmount, status) {
   const value = normalizeText(raw?.commission_status || '');
 
