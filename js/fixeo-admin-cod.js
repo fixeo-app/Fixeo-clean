@@ -37,6 +37,10 @@
     if (normalized === 'terminee' || normalized === 'termine') return 'terminée';
     if (normalized === 'validee' || normalized === 'valide' || normalized === 'validated') return 'validée';
     if (normalized === 'intervention confirmee' || normalized === 'intervention confirmee ' || normalized === 'intervention_confirmee') return 'intervention_confirmée';
+    if (normalized === 'validated') return 'validée';
+    if (normalized === 'completed') return 'terminée';
+    if (normalized === 'in progress' || normalized === 'in_progress') return 'en_cours';
+    if (normalized === 'assigned') return 'acceptée';
     return 'nouvelle';
   }
 
