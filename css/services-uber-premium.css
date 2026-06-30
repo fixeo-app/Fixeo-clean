@@ -676,7 +676,8 @@ html body #services.services-section .service-chip.svc-visible:hover {
    Use [data-category] attribute selector — same specificity tier,
    appended last → wins over base .service-chip rule.
    Primary chips are always "hot" regardless of .active state. */
-html body #services.services-section .service-chip.svc-visible[data-category="plomberie"],
+
+/* html body #services.services-section .service-chip.svc-visible[data-category="plomberie"],
 html body #services.services-section .service-chip.svc-visible[data-category="electricite"],
 html body #services.services-section .service-chip.svc-visible[data-category="climatisation"] {
   height: 52px !important;
@@ -690,10 +691,11 @@ html body #services.services-section .service-chip.svc-visible[data-category="cl
   box-shadow: 0 10px 28px rgba(225,48,108,0.26),
               inset 0 1px 0 rgba(255,255,255,0.18) !important;
   transform: translateY(-2px) !important;
-}
+} */
 
-/* Primary chip hover — stronger glow */
-html body #services.services-section .service-chip.svc-visible[data-category="plomberie"]:hover,
+/* 
+ Primary chip hover — stronger glow 
+ html body #services.services-section .service-chip.svc-visible[data-category="plomberie"]:hover,
 html body #services.services-section .service-chip.svc-visible[data-category="electricite"]:hover,
 html body #services.services-section .service-chip.svc-visible[data-category="climatisation"]:hover {
   background: linear-gradient(135deg, rgba(225,48,108,1), rgba(147,51,234,0.95)) !important;
@@ -702,7 +704,7 @@ html body #services.services-section .service-chip.svc-visible[data-category="cl
               inset 0 1px 0 rgba(255,255,255,0.24) !important;
   transform: translateY(-3px) scale(1.02) !important;
   opacity: 1 !important;
-}
+} */
 
 /* Ensure primary chips keep full opacity even in active state */
 html body #services.services-section .service-chip.svc-visible.active[data-category="plomberie"],
