@@ -653,9 +653,10 @@ html body #services.services-section.homepage-conversion-priority .category-chip
 
 /* TASK 3 — Speed signal below subtitle */
 #services .services-speed-hint {
-  font-size: 0.84rem !important;
-  color: rgba(255,255,255,0.62) !important;
-  margin: 6px auto 0 !important;
+  font-size: 0.82rem !important;
+  font-weight: 700 !important;
+  color: rgba(255,255,255,0.92) !important;
+  margin: 10px auto 0 !important;
   text-align: center !important;
   letter-spacing: 0.01em !important;
   max-width: 480px !important;
@@ -2182,4 +2183,22 @@ html body #services.services-section .chip.service-chip.svc-visible.active[data-
   flex-direction: column !important;
   align-items: center !important;
   justify-content: center !important;
+}
+
+@media (max-width: 768px) {
+  #services .services-title,
+  #services .section-header h2 {
+    font-size: 1.45rem !important;
+    line-height: 1.15 !important;
+    margin-bottom: 8px !important;
+    letter-spacing: -0.02em !important;
+  }
+
+  #services .services-subtitle {
+    font-size: 0.88rem !important;
+    line-height: 1.45 !important;
+    color: rgba(255,255,255,0.82) !important;
+    max-width: 340px !important;
+    margin: 0 auto 10px !important;
+  }
 }
