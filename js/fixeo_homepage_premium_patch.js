@@ -941,8 +941,7 @@
     ];
 
     newServices.forEach(service => {
-      if (container.querySelector([data-category="${service.category}"])) return;
-
+     if (container.querySelector('[data-category="' + service.category + '"]')) return;
       const chip = document.createElement('div');
       chip.className = 'chip service-chip v12-fade-in visible svc-visible';
       chip.setAttribute('role', 'listitem');
