@@ -947,8 +947,7 @@
       chip.setAttribute('role', 'listitem');
       chip.setAttribute('data-category', service.category);
       chip.setAttribute('tabindex', '0');
-      chip.innerHTML = <span class="chip-icon">${service.icon}</span>${service.label};
-
+      chip.innerHTML = '<span class="chip-icon">${service.icon}</span>${service.label}';
       container.appendChild(chip);
     });
   }
