@@ -928,3 +928,37 @@
   window.FixeoHomepagePremium = { refresh:_renderPremiumGrid, enterSearch:_enterSearchMode, enterHomepage:_enterHomepageMode, refreshIfIdle:_refreshIfIdle };
 
 }(window));
+
+(function () {
+  function addFixeoNewServiceChips() {
+    const container = document.querySelector('.category-chips');
+    if (!container) return;
+
+    const newServices = [
+      { category: 'energie-solaire', icon: '☀️', label: 'Énergie solaire' },
+      { category: 'securite-surveillance', icon: '🛡️', label: 'Sécurité / Surveillance' },
+      { category: 'corporate-facilities', icon: '🏢', label: 'Corporate Facilities' },
+    ];
+
+    newServices.forEach(service => {
+      if (container.querySelector([data-category="${service.category}"])) return;
+
+      const chip = document.createElement('div');
+      chip.className = 'chip service-chip v12-fade-in visible svc-visible';
+      chip.setAttribute('role', 'listitem');
+      chip.setAttribute('data-category', service.category);
+      chip.setAttribute('tabindex', '0');
+      chip.innerHTML = <span class="chip-icon">${service.icon}</span>${service.label};
+
+      container.appendChild(chip);
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', addFixeoNewServiceChips);
+  } else {
+    addFixeoNewServiceChips();
+  }
+
+  setTimeout(addFixeoNewServiceChips, 800);
+})();
