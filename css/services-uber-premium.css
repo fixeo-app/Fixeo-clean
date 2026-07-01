@@ -2233,14 +2233,6 @@ html body #services.services-section .chip.service-chip.svc-visible.active[data-
   box-shadow: 0 10px 34px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.12) !important;
 }
 
-#services .services-filter-bar::after {
-  content: "⌄";
-  margin-left: -34px;
-  color: rgba(255,255,255,0.82);
-  font-weight: 900;
-  pointer-events: none;
-}
-
 @media (max-width: 768px) {
   #services.services-section .services-filter-bar {
     margin: 12px auto 18px !important;
