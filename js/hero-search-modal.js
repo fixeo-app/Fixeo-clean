@@ -20,12 +20,17 @@
     plomberie: '🔧', electricite: '⚡', peinture: '🎨', nettoyage: '🧹',
     jardinage: '🌿', demenagement: '🚛', bricolage: '🔨', climatisation: '❄️',
     menuiserie: '🪚', maconnerie: '🧱', serrurerie: '🔑', carrelage: '🏠',
-  };
+    'energie-solaire': '☀️',
+    'securite-surveillance': '🛡️',
+    'corporate-facilities': '🏢',
+    };
   const CAT_LABELS = {
     plomberie: 'Plomberie', electricite: 'Électricité', peinture: 'Peinture',
     nettoyage: 'Nettoyage', jardinage: 'Jardinage', demenagement: 'Déménagement',
     bricolage: 'Bricolage', climatisation: 'Climatisation', menuiserie: 'Menuiserie',
-    maconnerie: 'Maçonnerie', serrurerie: 'Serrurerie', carrelage: 'Carrelage',
+    maconnerie: 'Maçonnerie', serrurerie: 'Serrurerie', carrelage: 'Carrelage', 'energie-solaire': 'Énergie solaire',
+'securite-surveillance': 'Sécurité / Surveillance',
+'corporate-facilities': 'Corporate Facilities',
   };
   const BADGE_LABELS = {
     verified:    { icon: '✅', label: 'Vérifié' },
