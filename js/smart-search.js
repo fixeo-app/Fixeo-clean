@@ -817,6 +817,26 @@ class SmartSearchBar {
     /* Category / city change → instant artisan results */
     selectCat?.addEventListener('change',  () => this._syncAndSearch());
     selectCity?.addEventListener('change', () => this._syncAndSearch());
+     /* City quick chips */
+document.querySelectorAll('.city-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    const city = chip.dataset.city;
+
+    if (chip.classList.contains('city-chip-more')) {
+      selectCity?.focus();
+      selectCity?.click();
+      return;
+    }
+
+    if (selectCity && city) {
+      selectCity.value = city;
+      selectCity.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+
+    document.querySelectorAll('.city-chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+  });
+});
 
     /* Clear button */
     clearBtn?.addEventListener('click', () => {
