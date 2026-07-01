@@ -97,6 +97,18 @@ function marketplaceResolveCanonicalCategory(raw) {
   // 🚚 Déménagement
   if (/(demenag|transport meuble)/.test(v)) return 'demenagement';
 
+   // ☀️ Énergie solaire
+if (/(solaire|panneau|photovolta|onduleur|solar)/.test(v)) return 'energie-solaire';
+
+// 🛡️ Sécurité / Surveillance
+if (/(camera|videosurveillance|surveillance|alarme|controle acces|interphone|securite)/.test(v)) return 'securite-surveillance';
+
+// 🏢 Corporate Facilities
+if (/(facility|maintenance bureau|maintenance immeuble|btob|corporate|gestion technique)/.test(v)) return 'corporate-facilities';
+
+// 🚗 Auto Services
+if (/(auto|voiture|vidange|batterie|pneu|mecanique|depannage auto)/.test(v)) return 'auto-services';
+
   return '';
 }
 function marketplaceIsDemoIdentifier(value) {
