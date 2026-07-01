@@ -27,7 +27,7 @@ const FIXEO_TRANSLATIONS = {
     hero_stat_rating: "Note moyenne",
     hero_stat_cities: "Villes couvertes",
     // Categories
-    cat_title: "Quel problème à régler ?",
+    cat_title: "Trouvez le bon artisan. Rapidement. En confiance.",
     cat_plumbing: "Plomberie",
     cat_electric: "Électricité",
     cat_painting: "Peinture",
