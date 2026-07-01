@@ -94,6 +94,9 @@ const SSB_DATA = {
     maconnerie:   { label: 'Maçonnerie',    icon: '🧱' },
     serrurerie:   { label: 'Serrurerie',    icon: '🔑' },
     carrelage:    { label: 'Carrelage',     icon: '🏠' },
+   'energie-solaire': { label: 'Énergie solaire', icon: '☀️' },
+   'securite-surveillance': { label: 'Sécurité / Surveillance', icon: '🛡️' },
+   'corporate-facilities': { label: 'Corporate Facilities', icon: '🏢' },
   },
 
   /* NLP keyword mapping → category */
@@ -110,7 +113,10 @@ const SSB_DATA = {
     { keywords: ['maçon','béton','ciment','mur porteur','démolition','rénovation','crépissage','béton'], cat: 'maconnerie' },
     { keywords: ['serrur','clé','cle','verrou','porte blindée','urgence fermer','ouverture porte'], cat: 'serrurerie' },
     { keywords: ['carrelage','carreaux','sol','faïence','mosaïque','joints','pose sol'], cat: 'carrelage' },
-  ],
+    { keywords: ['solaire','panneau solaire','photovoltaïque','onduleur','batterie solaire'], cat: 'energie-solaire'},
+    { keywords: ['camera','caméra','surveillance','alarme','cctv','sécurité'], cat: 'securite-surveillance'},
+    { keywords: ['facility','maintenance bureau','immeuble','syndic','b2b','corporate'], cat: 'corporate-facilities'},
+      ],
 
   /* Specialties per category */
   specialties: {
