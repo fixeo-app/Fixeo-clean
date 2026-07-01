@@ -817,27 +817,28 @@ class SmartSearchBar {
     /* Category / city change → instant artisan results */
     selectCat?.addEventListener('change',  () => this._syncAndSearch());
     selectCity?.addEventListener('change', () => this._syncAndSearch());
-     /* City quick chips */
-document.querySelectorAll('.city-chip').forEach(chip => {
-  chip.addEventListener('click', () => {
-    const city = chip.dataset.city;
+    /* City quick chips — delegated listener */
+document.addEventListener('click', (e) => {
+  const chip = e.target.closest('.city-chip');
+  if (!chip) return;
 
-    if (chip.classList.contains('city-chip-more')) {
-      selectCity?.focus();
-      selectCity?.click();
-      return;
-    }
+  const select = document.getElementById('services-city-filter');
+  const city = chip.dataset.city;
 
-    if (selectCity && city) {
-      selectCity.value = city;
-      selectCity.dispatchEvent(new Event('change', { bubbles: true }));
-    }
+  if (chip.classList.contains('city-chip-more')) {
+    select?.focus();
+    select?.click();
+    return;
+  }
 
-    document.querySelectorAll('.city-chip').forEach(c => c.classList.remove('active'));
-    chip.classList.add('active');
-  });
+  if (select && city) {
+    select.value = city;
+    select.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+
+  document.querySelectorAll('.city-chip').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
 });
-
     /* Clear button */
     clearBtn?.addEventListener('click', () => {
       inputNLP.value = '';
