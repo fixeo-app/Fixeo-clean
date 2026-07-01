@@ -131,8 +131,29 @@ const SSB_DATA = {
     menuiserie:   ['Fabrication sur mesure', 'Pose parquet', 'Rénovation portes', 'Aménagement placards'],
     maconnerie:   ['Rénovation complète', 'Carrelage', 'Enduit béton', 'Construction mur'],
     serrurerie:   ['Ouverture urgence', 'Changement serrure', 'Porte blindée', 'Coffre-fort'],
-    carrelage:    ['Pose carrelage sol', 'Faïence salle de bain', 'Mosaïque', 'Joints'],
-  },
+   carrelage: ['Pose carrelage sol', 'Faience salle de bain', 'Mosaïque', 'Joints'],
+
+'energie-solaire': [
+  'Installation panneaux',
+  'Maintenance solaire',
+  'Onduleurs',
+  'Batteries'
+],
+
+'securite-surveillance': [
+  'Caméras CCTV',
+  'Alarmes',
+  'Contrôle accès',
+  'Interphone'
+],
+
+'corporate-facilities': [
+  'Maintenance immeuble',
+  'Facility management',
+  'Entretien bureaux',
+  'Support multiservice'
+]
+},
 
   /* Base city list — de-duplicated at build time via _ssbDedup() */
   _rawCities: [
