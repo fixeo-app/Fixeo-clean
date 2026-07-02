@@ -692,3 +692,45 @@
     margin-top: 18px !important;
   }
 }
+/* FIXEO — strict laptop hero fit at 100% zoom */
+@media (min-width: 769px) and (max-height: 820px) {
+  #home.hero-section {
+    padding-top: 72px !important;
+    padding-bottom: 28px !important;
+    min-height: auto !important;
+  }
+
+  #home .hero-content {
+    gap: 10px !important;
+  }
+
+  #home .hero-title {
+    font-size: clamp(2rem, 4vw, 3.8rem) !important;
+    line-height: 0.95 !important;
+    margin-bottom: 10px !important;
+  }
+
+  #home .hero-subtitle {
+    margin-bottom: 10px !important;
+  }
+
+  #home #hero-quick-search,
+  #home .qsm-bar-card {
+    margin-top: 8px !important;
+    margin-bottom: 8px !important;
+  }
+
+  #home .hero-city-smart {
+    margin-top: 6px !important;
+    margin-bottom: 6px !important;
+  }
+
+  #home .hero-secondary-link-wrap {
+    margin-top: 8px !important;
+    margin-bottom: 10px !important;
+  }
+
+  #faee-v2-hero {
+    margin-top: 10px !important;
+  }
+}
