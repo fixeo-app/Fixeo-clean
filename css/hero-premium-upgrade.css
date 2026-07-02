@@ -354,3 +354,36 @@ section#home .hero-artisan-entry-btn:hover {
     font-size: clamp(2rem, 9.5vw, 2.6rem) !important;
   }
 }
+/* FIXEO — iPhone small screens artisan cards */
+@media (max-width: 430px) {
+
+  .pvc-card-header {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 8px !important;
+  }
+
+  .pvc-identity {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .pvc-meta-row {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+    margin-top: 6px !important;
+  }
+
+  .pvc-cat-pill,
+  .pvc-city-pill {
+    font-size: 11px !important;
+    white-space: nowrap !important;
+  }
+
+  .pvc-avail-badge {
+    align-self: flex-start !important;
+    margin-top: 4px !important;
+  }
+}
