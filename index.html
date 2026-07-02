@@ -4325,9 +4325,36 @@ window.addEventListener('load', function () {
 
   });
 })();
+  
 </script>
 <!-- V1-D: Marketplace density layer (availability badge refresh, adjacent-city logic) -->
 <script src="js/fixeo-marketplace-density.js?v=v2c2a" defer></script>
 <script src="js/fixeo-schema-rating.js?v=rating-v1a" defer></script>
+  <script>
+document.addEventListener('click', function(e) {
+  const chip = e.target.closest('.city-chip');
+  if (!chip) return;
+
+  const select = document.getElementById('services-city-filter');
+  const city = chip.dataset.city;
+
+  if (chip.classList.contains('city-chip-more')) {
+    if (select) {
+      select.focus();
+      select.click();
+    }
+    return;
+  }
+
+  if (select && city) {
+    select.value = city;
+    select.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+
+  document.querySelectorAll('.city-chip').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
+}, true);
+</script>
+  
 </body>
 </html>
