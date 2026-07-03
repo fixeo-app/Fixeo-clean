@@ -838,7 +838,8 @@
     }
 
     root.innerHTML = '' +
-      '<section class="public-profile-hero">' +
+      '<section class="public-profile-hero fx-hero-premium">' +
+'<div class="fx-profile-breadcrumb">Fixeo › ' + escapeHtml(categoryLabel(artisan.category)) + ' › ' + escapeHtml(artisan.city) + ' › ' + escapeHtml(artisan.name) + '</div>' +
         '<div class="public-avatar-wrap">' +
           (artisan.avatar
             ? '<img class="public-avatar" src="' + escapeHtml(artisan.avatar) + '" alt="' + escapeHtml(artisan.name) + '">'
