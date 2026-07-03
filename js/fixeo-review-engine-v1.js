@@ -27,9 +27,22 @@
 
   /* ── Supabase client ────────────────────────────────────── */
   function _sb() {
-    return window.FixeoSupabaseClient || window.FixeoSupabase || null;
+  var candidates = [
+    window.FixeoSupabaseClient,
+    window.FixeoSupabase,
+    window.fixeoSupabase,
+    window.supabaseClient,
+    window.sb
+  ];
+
+  for (var i = 0; i < candidates.length; i++) {
+    if (candidates[i] && typeof candidates[i].from === 'function') {
+      return candidates[i];
+    }
   }
 
+  return null;
+}
   /* ── Helpers ────────────────────────────────────────────── */
   function qs(sel, ctx)  { return (ctx || document).querySelector(sel); }
   function esc(s)        { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
