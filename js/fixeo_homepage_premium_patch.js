@@ -371,18 +371,16 @@
       ' aria-label="' + _esc(a.name) + ', ' + catLbl + '"' +
       ' style="--anim-delay:' + idx + '">' +
 
-      /* ── Header ── */
-      '<div class="pvc-card-header">' +
-        '<div class="pvc-avatar' + (isVer ? ' pvc-avatar--verified' : '') + '" data-category="' + cat + '">' + avatarHtml + '<span class="pvc-avatar-badge">' + catIcon + '</span></div>' +
-        '<div class="pvc-identity">' +
-          '<h3 class="pvc-name">' + _esc(a.name || '—') + '</h3>' +
-          '<div class="pvc-meta-row">' +
-            '<span class="pvc-cat-pill">' + catIcon + ' ' + catLbl + '</span>' +
-            '<span class="pvc-city-pill">📍 ' + _esc(a.city || 'Maroc') + '</span>' +
-          '</div>' +
-        '</div>' +
-        availHtml +
-      '</div>' +
+      /* — Header — */
+'<div class="pvc-card-header pvc-card-header-final">' +
+  '<div class="pvc-avatar ' + (isVer ? ' pvc-avatar--verified' : '') + '" data-category="' + cat + '">' + avatarHtml + '<span class="pvc-avatar-badge">' + catIcon + '</span></div>' +
+  '<div class="pvc-identity pvc-identity-final">' +
+    '<h3 class="pvc-name">' + _esc(a.name || '-') + '</h3>' +
+    '<div class="pvc-line pvc-line-city">📍 ' + _esc(a.city || 'Maroc') + '</div>' +
+    '<div class="pvc-line pvc-line-cat">' + catIcon + ' ' + catLbl + '</div>' +
+    '<div class="pvc-line pvc-line-available">' + availHtml + '</div>' +
+  '</div>' +
+'</div>' +
 
       /* ── Badges ── */
       (badges ? '<div class="pvc-badges-v2">' + badges + '</div>' : '') +
