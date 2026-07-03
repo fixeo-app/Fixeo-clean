@@ -897,7 +897,7 @@ try {
   } else {
     sorted = results;
   }
-
+ 
 } catch (error) {
   console.warn('[Fixeo Matching] applyMarketplaceFilters fallback', error);
   sorted = results;
