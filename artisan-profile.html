@@ -802,7 +802,7 @@
 <!-- V2-C6B: Mission rehydration moved from sync batch to defer — saves 28KB from critical path -->
 <!-- <script src="js/fixeo-mission-rehydration.js?v=v2c1" defer></script> -->
 <!-- V2-B1: Portfolio public read (fetchForArtisan) -->
-<script src="js/fixeo-portfolio-mirror.js?v=v2b1" defer></script>
+<!-- <script src="js/fixeo-portfolio-mirror.js?v=v2b1" defer></script> -->
 <!-- V2-C3B: Claim system deferred — non-critical, loads after profile renders -->
 <script src="js/fixeo-claim-system.js?v=ce2a" defer></script>
 <!-- gf1: Global footer injection -->
@@ -822,6 +822,47 @@ window.addEventListener('load', function () {
     document.body.appendChild(s);
   }, 1500);
 });
+</script>
+  <script>
+(function () {
+  function loadPortfolio() {
+    if (window.__fxPortfolioLoaded) return;
+    window.__fxPortfolioLoaded = true;
+
+    var s = document.createElement('script');
+    s.src = 'js/fixeo-portfolio-mirror.js?v=v2b1';
+    s.defer = true;
+    document.body.appendChild(s);
+
+    console.log('[FIXEO] Portfolio lazy-loaded');
+  }
+
+  function initObserver() {
+    var portfolioSection =
+      document.querySelector('.portfolio-section') ||
+      document.querySelector('[data-portfolio]') ||
+      document.body;
+
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          loadPortfolio();
+          observer.disconnect();
+        }
+      });
+    }, {
+      rootMargin: '300px'
+    });
+
+    observer.observe(portfolioSection);
+  }
+
+  if ('IntersectionObserver' in window) {
+    window.addEventListener('load', initObserver);
+  } else {
+    setTimeout(loadPortfolio, 3000);
+  }
+})();
 </script>
 </body>
 </html>
