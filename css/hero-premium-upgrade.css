@@ -355,7 +355,7 @@ section#home .hero-artisan-entry-btn:hover {
   }
 }
 /* FIXEO — Final artisan card layout (all small screens) */
-@media (max-width: 768px) {
+@media (max-width: 520px) {
 
   .pvc-card-header,
   .pvc-card-header-final {
@@ -373,15 +373,15 @@ section#home .hero-artisan-entry-btn:hover {
     display: flex !important;
     flex-direction: column !important;
     align-items: flex-start !important;
-    gap: 6px !important;
+    gap: 4px !important;
     min-width: 0 !important;
     width: 100% !important;
   }
 
   .pvc-name {
     display: block !important;
-    font-size: 18px !important;
-    line-height: 1.2 !important;
+    font-size: 16px !important;
+    line-height: 1.15 !important;
     white-space: normal !important;
     word-break: break-word !important;
   }
@@ -394,12 +394,12 @@ section#home .hero-artisan-entry-btn:hover {
   .pvc-line-city,
   .pvc-line-cat,
   .pvc-line-available {
-    font-size: 13px !important;
+    font-size: 12px !important;
   }
 
   .pvc-avail-badge {
     align-self: flex-start !important;
-    margin-top: 2px !important;
+    margin-top: 1px !important;
   }
 
   .pvc-meta-row {
