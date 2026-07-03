@@ -859,6 +859,12 @@ function marketplaceSyncCardsVisibility(results, state) {
   }
   marketplaceSyncResultsCount(results.length);
 }
+function getInitialMatchSortedArtisansSafe() {
+  if (Array.isArray(window._initialMatchSortedArtisans)) return window._initialMatchSortedArtisans;
+  if (Array.isArray(window.ARTISANS)) return window.ARTISANS;
+  if (Array.isArray(ARTISANS)) return ARTISANS;
+  return [];
+}
 
 function applyMarketplaceFilters(options = {}) {
   if (!window.searchEngine) return [];
@@ -898,7 +904,7 @@ try {
 }
     renderArtisans(sorted, { forceAll: true });
   } else {
-    renderArtisans(_initialMatchSortedArtisans || ARTISANS);
+     renderArtisans(getInitialMatchSortedArtisansSafe());
   }
   marketplaceSyncCardsVisibility(results, state);
 
