@@ -2436,3 +2436,69 @@ body.public-artisan-page .public-profile-hero {
     font-size: 0.84rem;
   }
 }
+
+/* FIXEO — Public profile Hero V4 premium gallery */
+body.public-artisan-page .fx-hero-premium {
+  display: grid !important;
+  grid-template-columns: 320px minmax(0, 1fr) !important;
+  gap: 28px !important;
+  align-items: start !important;
+  padding: 28px !important;
+}
+
+body.public-artisan-page .public-avatar-gallery {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+}
+
+body.public-artisan-page .public-avatar-gallery .public-avatar-wrap {
+  display: flex !important;
+  width: 100% !important;
+}
+
+body.public-artisan-page .public-avatar-gallery .public-avatar {
+  width: 100% !important;
+  height: auto !important;
+  aspect-ratio: 4 / 5 !important;
+  border-radius: 22px !important;
+  object-fit: cover !important;
+}
+
+body.public-artisan-page .public-avatar-thumbs {
+  display: flex !important;
+  gap: 8px !important;
+}
+
+body.public-artisan-page .avatar-thumb {
+  width: 58px !important;
+  height: 58px !important;
+  border-radius: 14px !important;
+  background: rgba(255,255,255,.06) !important;
+  border: 1px solid rgba(255,255,255,.10) !important;
+}
+
+body.public-artisan-page .avatar-thumb.active {
+  border-color: rgba(225,48,108,.75) !important;
+  box-shadow: 0 0 0 2px rgba(225,48,108,.18) !important;
+}
+
+body.public-artisan-page .avatar-thumb.more {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: rgba(255,255,255,.8) !important;
+  font-weight: 800 !important;
+}
+
+@media (max-width: 767px) {
+  body.public-artisan-page .fx-hero-premium {
+    grid-template-columns: 1fr !important;
+    gap: 18px !important;
+    padding: 18px !important;
+  }
+
+  body.public-artisan-page .public-avatar-thumbs {
+    justify-content: center !important;
+  }
+}
