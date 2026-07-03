@@ -840,11 +840,19 @@
     root.innerHTML = '' +
       '<section class="public-profile-hero fx-hero-premium">' +
 '<div class="fx-profile-breadcrumb">Fixeo › ' + escapeHtml(categoryLabel(artisan.category)) + ' › ' + escapeHtml(artisan.city) + ' › ' + escapeHtml(artisan.name) + '</div>' +
-        '<div class="public-avatar-wrap">' +
-          (artisan.avatar
-            ? '<img class="public-avatar" src="' + escapeHtml(artisan.avatar) + '" alt="' + escapeHtml(artisan.name) + '">'
-            : '<div class="public-avatar public-avatar-fallback" aria-hidden="true">' + escapeHtml(getInitials(artisan.name)) + '</div>') +
-        '</div>' +
+        '<div class="public-avatar-gallery">' +
+  '<div class="public-avatar-wrap">' +
+    (artisan.avatar
+      ? '<img class="public-avatar" src="' + escapeHtml(artisan.avatar) + '" alt="' + escapeHtml(artisan.name) + '">'
+      : '<div class="public-avatar public-avatar-fallback" aria-hidden="true">' + escapeHtml(getInitials(artisan.name)) + '</div>') +
+  '</div>' +
+  '<div class="public-avatar-thumbs">' +
+    '<div class="avatar-thumb active"></div>' +
+    '<div class="avatar-thumb"></div>' +
+    '<div class="avatar-thumb"></div>' +
+    '<div class="avatar-thumb more">+2</div>' +
+  '</div>' +
+'</div>' +
         '<div class="public-hero-main">' +
           '<span class="public-availability ' + escapeHtml(availability.className) + '">' + escapeHtml(availability.label) + '</span>' +
           '<h1>' + escapeHtml(artisan.name) + '</h1>' +
