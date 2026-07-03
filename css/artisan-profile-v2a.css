@@ -2438,7 +2438,7 @@ body.public-artisan-page .public-profile-hero {
 }
 
 /* FIXEO — Public profile Hero V4 premium gallery */
-body.public-artisan-page .fx-hero-premium {
+body.public-artisan-page .public-profile-hero.fxfp-hero {
   display: grid !important;
   grid-template-columns: 320px minmax(0, 1fr) !important;
   gap: 28px !important;
@@ -2492,7 +2492,7 @@ body.public-artisan-page .avatar-thumb.more {
 }
 
 @media (max-width: 767px) {
-  body.public-artisan-page .fx-hero-premium {
+  body.public-artisan-page .public-profile-hero.fxfp-hero {
     grid-template-columns: 1fr !important;
     gap: 18px !important;
     padding: 18px !important;
@@ -2501,4 +2501,14 @@ body.public-artisan-page .avatar-thumb.more {
   body.public-artisan-page .public-avatar-thumbs {
     justify-content: center !important;
   }
+}
+
+/* FIXEO — Profile hero premium target fix */
+body.public-artisan-page .public-profile-hero.fxfp-hero {
+  border-radius: 28px;
+  overflow: hidden;
+}
+
+body.public-artisan-page .public-profile-hero.fxfp-hero .public-avatar-wrap {
+  display: block;
 }
