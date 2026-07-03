@@ -2440,10 +2440,15 @@ body.public-artisan-page .public-profile-hero {
 /* FIXEO — Public profile Hero V4 premium gallery */
 body.public-artisan-page .public-profile-hero.fxfp-hero {
   display: grid !important;
-  grid-template-columns: 320px minmax(0, 1fr) !important;
+  grid-template-columns: minmax(0, 1fr) !important;
   gap: 28px !important;
   align-items: start !important;
   padding: 28px !important;
+}
+
+body.public-artisan-page .public-profile-hero.fxfp-hero .public-avatar-gallery,
+body.public-artisan-page .public-profile-hero.fxfp-hero .public-avatar-wrap {
+  display: none !important;
 }
 
 body.public-artisan-page .public-avatar-gallery {
