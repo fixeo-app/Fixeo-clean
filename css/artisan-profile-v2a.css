@@ -2517,3 +2517,17 @@ body.public-artisan-page .public-profile-hero.fxfp-hero {
 body.public-artisan-page .public-profile-hero.fxfp-hero .public-avatar-wrap {
   display: block;
 }
+
+/* FIXEO — Hero full-width content fix */
+body.public-artisan-page .public-profile-hero.fxfp-hero .public-hero-main {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+body.public-artisan-page .public-profile-hero.fxfp-hero .public-trust-card,
+body.public-artisan-page .public-profile-hero.fxfp-hero .public-action-btn,
+body.public-artisan-page .public-profile-hero.fxfp-hero .fpv2a-trust-strip,
+body.public-artisan-page .public-profile-hero.fxfp-hero .fpv2a-wa-cta {
+  width: 100% !important;
+  max-width: none !important;
+}
