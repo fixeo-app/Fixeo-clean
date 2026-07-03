@@ -380,11 +380,14 @@ section#home .hero-artisan-entry-btn:hover {
 
   .pvc-name {
     display: block !important;
-    font-size: 16px !important;
-    line-height: 1.15 !important;
+    font-size: 15px !important;
+    line-height: 1.1 !important;
     white-space: normal !important;
     word-break: break-word !important;
   }
+   .pvc-line-available {
+  margin-top: -2px !important;
+}
 
   .pvc-line {
     display: block !important;
