@@ -1156,23 +1156,16 @@ for (const target of targets) {
             }
           };
           setTimeout(tryInject, 800);
-          setTimeout(() => injectClaimButton(artisanId), 1600);
-          setTimeout(() => injectClaimButton(artisanId), 3000);
-          setTimeout(() => injectClaimButton(artisanId), 5000);
 
           // Also watch for async render
           if (window.MutationObserver) {
             const obs = new MutationObserver(() => {
               if (document.querySelector('#public-artisan-action')) {
                 obs.disconnect();
-                setTimeout(() => {
-    injectClaimButton(artisanId);
-    injectProfileSideCard(artisanId);
-}, 200)
-              setTimeout(() => {
-    injectClaimButton(artisanId);
-    injectProfileSideCard(artisanId);
-}, 900);
+             setTimeout(() => {
+  injectClaimButton(artisanId);
+  injectProfileSideCard(artisanId);
+}, 800);
               }
             });
             obs.observe(document.body, { childList: true, subtree: true });
