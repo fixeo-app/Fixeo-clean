@@ -320,10 +320,10 @@ function injectProfileSideCard(artisanId) {
   const claimStatus = artisan.claim_status || 'unclaimed';
   const isClaimed = artisan.claimed || claimStatus === 'approved';
 
-  const claimHtml = isClaimed
-    ? '<div class="fixeo-claim-badge fixeo-claim-approved">✅ Profil revendiqué</div>'
-    : '<button id="fixeo-claim-btn-side" class="fixeo-claim-btn fx-side-claim-btn" onclick="window.location.href='rejoindre-fixeo.html?id=' + encodeURIComponent('${esc(String(artisanId))}') + '#revendique';"
-
+const claimHtml = isClaimed
+  ? '<div class="fixeo-claim-badge fixeo-claim-approved">✅ Profil revendiqué</div>'
+  : '<button id="fixeo-claim-btn-side" class="fixeo-claim-btn fx-side-claim-btn" onclick="window.location.href=\'' + claimUrl + '\'">🏷️ Revendiquer ce profil</button>';
+  
   const name = artisan.name || 'Artisan Fixeo';
   const category = artisan.category || 'Artisan professionnel';
   const city = artisan.city || 'Maroc';
