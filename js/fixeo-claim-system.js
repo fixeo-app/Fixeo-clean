@@ -341,15 +341,25 @@
       document.querySelector('.public-artisan-shell')
     ];
 
-    for (const target of targets) {
-      if (target) {
-        const wrapper = document.createElement('div');
-        wrapper.className = 'fixeo-claim-wrapper';
-        wrapper.innerHTML = btnHtml;
-        target.appendChild(wrapper);
-        break;
-      }
-    }
+    const actionBtn = document.getElementById('public-artisan-action');
+
+if (actionBtn) {
+  const wrapper = document.createElement('div');
+  wrapper.className = 'fixeo-claim-wrapper';
+  wrapper.innerHTML = btnHtml;
+  actionBtn.insertAdjacentElement('afterend', wrapper);
+  return;
+}
+
+for (const target of targets) {
+  if (target) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'fixeo-claim-wrapper';
+    wrapper.innerHTML = btnHtml;
+    target.appendChild(wrapper);
+    break;
+  }
+}
   }
 
   /* ─────────────────────────────────────────────────────────
