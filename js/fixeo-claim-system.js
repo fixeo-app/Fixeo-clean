@@ -300,14 +300,71 @@
     dispatch('fixeo:profile-updated', { artisanId, updates: allowed });
     return { ok: true, artisan: getArtisanById(artisanId) };
   }
+/* -------------------------------------------------------
+ * 4. PROFILE SIDE CARD — premium identity panel
+ * ------------------------------------------------------ */
 
+function injectProfileSideCard(artisanId) {
+  if (!artisanId) return;
+  if (document.querySelector('.fx-profile-side-card')) return;
+
+  const artisan = getArtisanById(artisanId);
+  if (!artisan) return;
+
+  const shell =
+    document.querySelector('.public-artisan-shell') ||
+    document.getElementById('public-artisan-root');
+
+  if (!shell) return;
+
+  const claimStatus = artisan.claim_status || 'unclaimed';
+  const isClaimed = artisan.claimed || claimStatus === 'approved';
+
+  const claimHtml = isClaimed
+    ? '<div class="fixeo-claim-badge fixeo-claim-approved">✅ Profil revendiqué</div>'
+    : '<button id="fixeo-claim-btn-side" class="fixeo-claim-btn fx-side-claim-btn" onclick="window.FixeoClaimSystem.openClaimModal(\'' + esc(String(artisanId)) + '\')">🏷️ Revendiquer ce profil</button>';
+
+  const name = artisan.name || 'Artisan Fixeo';
+  const category = artisan.category || 'Artisan professionnel';
+  const city = artisan.city || 'Maroc';
+
+  const card = document.createElement('aside');
+  card.className = 'fx-profile-side-card';
+  card.innerHTML = `
+    <div class="fx-side-status">Disponible</div>
+
+    <div class="fx-side-avatar">
+      <div class="fx-side-avatar-fallback">👨‍🔧</div>
+      <span class="fx-side-verified">✓</span>
+    </div>
+
+    <h2>${esc(name)}</h2>
+    <p class="fx-side-job">${esc(category)} professionnel</p>
+    <p class="fx-side-city">📍 ${esc(city)}, Maroc</p>
+
+    <div class="fx-side-stats">
+      <div><span>Temps réponse</span><strong>En cours</strong></div>
+      <div><span>Disponibilité</span><strong>Disponible</strong></div>
+      <div><span>Fixeo Score</span><strong>Nouveau</strong></div>
+    </div>
+
+    ${claimHtml}
+
+    <p class="fx-side-note">
+      Vous êtes cet artisan ? Revendiquez ce profil pour le gérer et développer votre activité.
+    </p>
+  `;
+
+  shell.appendChild(card);
+}
+  
   /* ─────────────────────────────────────────────────────────
    * 4. CLAIM BUTTON — injected into public profile page
    * ─────────────────────────────────────────────────────── */
 
   function injectClaimButton(artisanId) {
     if (!artisanId) return;
-
+    
     // Don't inject twice
     if (document.getElementById('fixeo-claim-btn')) return;
 
@@ -1093,6 +1150,7 @@ for (const target of targets) {
           const tryInject = () => {
             if (document.querySelector('.ppui-cta-wrap, .public-artisan-action-wrap, #public-artisan-action')) {
               injectClaimButton(artisanId);
+              injectProfileSideCard(artisanId);
             } else {
               setTimeout(tryInject, 400);
             }
@@ -1107,8 +1165,14 @@ for (const target of targets) {
             const obs = new MutationObserver(() => {
               if (document.querySelector('#public-artisan-action')) {
                 obs.disconnect();
-                setTimeout(() => injectClaimButton(artisanId), 200);
-              setTimeout(() => injectClaimButton(artisanId), 900);
+                setTimeout(() => {
+    injectClaimButton(artisanId);
+    injectProfileSideCard(artisanId);
+}, 200)
+              setTimeout(() => {
+    injectClaimButton(artisanId);
+    injectProfileSideCard(artisanId);
+}, 900);
               }
             });
             obs.observe(document.body, { childList: true, subtree: true });
