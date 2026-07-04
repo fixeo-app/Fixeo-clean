@@ -2531,3 +2531,24 @@ body.public-artisan-page .public-profile-hero.fxfp-hero .fpv2a-wa-cta {
   width: 100% !important;
   max-width: none !important;
 }
+
+/* FIXEO — Profile V5 hero cleanup */
+body.public-artisan-page .public-profile-hero.fxfp-hero .public-avatar-thumbs,
+body.public-artisan-page .public-profile-hero.fxfp-hero .avatar-thumb {
+  display: none !important;
+}
+
+body.public-artisan-page .public-profile-hero.fxfp-hero .public-avatar-gallery {
+  display: none !important;
+}
+
+body.public-artisan-page .public-profile-hero.fxfp-hero {
+  grid-template-columns: 1fr !important;
+  padding: 24px !important;
+  gap: 18px !important;
+}
+
+body.public-artisan-page .public-profile-hero.fxfp-hero .public-hero-main {
+  width: 100% !important;
+  max-width: none !important;
+}
