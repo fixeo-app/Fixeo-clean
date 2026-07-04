@@ -2730,3 +2730,40 @@ body.public-artisan-page .fx-avatar-badge{
     border:3px solid #111827;
     box-shadow:0 0 18px rgba(34,197,94,.55);
 }
+
+/* ==========================================================
+   FIXEO — Perfect Profile Layout V1
+   Right identity panel + main content
+   ========================================================== */
+
+@media (min-width: 1024px) {
+  body.public-artisan-page .public-artisan-shell,
+  body.public-artisan-page #public-artisan-root {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) 360px !important;
+    gap: 28px !important;
+    align-items: start !important;
+  }
+
+  body.public-artisan-page .public-profile-hero.fxfp-hero {
+    grid-column: 1 !important;
+    width: 100% !important;
+    max-width: none !important;
+  }
+
+  body.public-artisan-page .public-section-grid,
+  body.public-artisan-page .fpv2bio-section,
+  body.public-artisan-page .fpv2b-prestations-section,
+  body.public-artisan-page .fpv2b-realisations-section,
+  body.public-artisan-page .fpv2pi-section,
+  body.public-artisan-page .fpv2-seo-section {
+    grid-column: 1 !important;
+  }
+
+  body.public-artisan-page .fx-profile-side-card {
+    grid-column: 2 !important;
+    grid-row: 1 / span 6 !important;
+    position: sticky !important;
+    top: 96px !important;
+  }
+}
