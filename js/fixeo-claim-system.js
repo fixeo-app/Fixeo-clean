@@ -1098,6 +1098,9 @@ for (const target of targets) {
             }
           };
           setTimeout(tryInject, 800);
+          setTimeout(() => injectClaimButton(artisanId), 1600);
+          setTimeout(() => injectClaimButton(artisanId), 3000);
+          setTimeout(() => injectClaimButton(artisanId), 5000);
 
           // Also watch for async render
           if (window.MutationObserver) {
@@ -1105,6 +1108,7 @@ for (const target of targets) {
               if (document.querySelector('#public-artisan-action')) {
                 obs.disconnect();
                 setTimeout(() => injectClaimButton(artisanId), 200);
+              setTimeout(() => injectClaimButton(artisanId), 900);
               }
             });
             obs.observe(document.body, { childList: true, subtree: true });
