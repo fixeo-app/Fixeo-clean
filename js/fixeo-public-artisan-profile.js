@@ -861,7 +861,7 @@
             '</article>' +
             '<article class="public-panel">' +
               '<div class="public-section-heading">Statistiques</div>' +
-              '<h2>Indicateurs de confiance</h2>' +
+              '<h2>TEST FIXEO 2026</h2>' +
               '<div class="public-stats-grid">' +
                 buildStatCard('Missions terminées', String(stats.missions_terminées || 0), 'Interventions finalisées') +
                 buildStatCard('Taux de confirmation', formatPercent(stats.confirmation_rate), 'Clients ayant confirmé') +
