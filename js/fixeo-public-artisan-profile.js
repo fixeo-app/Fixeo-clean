@@ -912,10 +912,10 @@
           '<div class="public-section-heading">Statistiques</div>' +
           '<h2>Indicateurs de confiance</h2>' +
           '<div class="public-stats-grid">' +
-            buildStatCard('Missions terminées', String(stats.missions_terminées || 0), 'Interventions finalisées') +
-            buildStatCard('Taux de confirmation', formatPercent(stats.confirmation_rate), 'Clients ayant confirmé') +
-            buildStatCard('Taux de paiement', formatPercent(stats.payment_rate), 'Commissions réglées') +
-            buildStatCard('Ancienneté', stats.seniority || 'Nouveau artisan', 'Présence estimée sur Fixeo') +
+            buildStatCard('Disponibilité', availability.label, 'Statut actuel') +
+            buildStatCard('Temps de réponse', 'En apprentissage', 'Mesuré avec les prochaines demandes') +
+            buildStatCard('Confiance FIXEO', stats.trust_level || 'Vérification en cours', 'Contrôle qualité') +
+            buildStatCard('Zone', artisan.city + ' et alentours', 'Zone d’intervention')
           '</div>' +
         '</article>' +
       '</section>';
