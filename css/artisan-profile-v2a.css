@@ -2885,3 +2885,7 @@ body.public-artisan-page .fx-avatar-badge{
   text-align: center;
   color: rgba(255,255,255,.9);
 }
+
+.fx-hero-avatar-label {
+  display: none !important;
+}
