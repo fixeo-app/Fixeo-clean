@@ -342,17 +342,23 @@ const claimHtml = isClaimed
     <p class="fx-side-job">${esc(category)} professionnel</p>
     <p class="fx-side-city">📍 ${esc(city)}, Maroc</p>
 
-    <div class="fx-side-stats">
-      <div><span>Temps réponse</span><strong>En cours</strong></div>
-      <div><span>Disponibilité</span><strong>Disponible</strong></div>
-      <div><span>Fixeo Score</span><strong>Nouveau</strong></div>
-    </div>
+    <div class="fx-side-claim-card">
+  <div class="fx-side-claim-icon">👋</div>
+  <h3>Vous êtes cet artisan ?</h3>
+  <p>Ce profil existe déjà sur FIXEO. Reprenez son contrôle pour développer votre activité.</p>
 
-    ${claimHtml}
+  <ul>
+    <li>Recevez des demandes clients</li>
+    <li>Gérez votre profil</li>
+    <li>Ajoutez vos réalisations</li>
+    <li>Répondez aux avis</li>
+  </ul>
 
-    <p class="fx-side-note">
-      Vous êtes cet artisan ? Revendiquez ce profil pour le gérer et développer votre activité.
-    </p>
+  ${claimHtml}
+
+  <span class="fx-side-claim-note">Gratuit pendant le lancement</span>
+</div>
+
   `;
 
   shell.appendChild(card);
@@ -961,7 +967,7 @@ for (const target of targets) {
       }
       .fixeo-claim-approved { background:rgba(32,201,151,.12); color:#20c997; border:1px solid rgba(32,201,151,.25); }
       .fixeo-claim-pending  { background:rgba(255,165,2,.10);  color:#ffa502; border:1px solid rgba(255,165,2,.25); }
-
+       
       /* ── Modal overlay ── */
       .fixeo-claim-modal-overlay {
         position:fixed; inset:0; background:rgba(0,0,0,.75); backdrop-filter:blur(4px);
@@ -1066,6 +1072,62 @@ for (const target of targets) {
         .fixeo-claim-modal-overlay { align-items:flex-end; }
         .claim-services-grid { grid-template-columns:1fr 1fr; }
       }
+      /* ── Premium Claim Card ───────────────────────────── */
+
+.fx-side-claim-card{
+  margin-top:20px;
+  padding:18px;
+  border-radius:18px;
+  background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));
+  border:1px solid rgba(255,255,255,.08);
+  box-shadow:0 10px 30px rgba(0,0,0,.28);
+}
+
+.fx-side-claim-icon{
+  width:52px;
+  height:52px;
+  border-radius:16px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:28px;
+  margin-bottom:14px;
+  background:linear-gradient(135deg,#8B5CF6,#EC4899);
+}
+
+.fx-side-claim-card h3{
+  margin:0 0 10px;
+  color:#fff;
+  font-size:1.08rem;
+  font-weight:700;
+}
+
+.fx-side-claim-card p{
+  margin:0 0 14px;
+  color:rgba(255,255,255,.72);
+  line-height:1.55;
+  font-size:.92rem;
+}
+
+.fx-side-claim-card ul{
+  margin:0 0 18px;
+  padding-left:18px;
+}
+
+.fx-side-claim-card li{
+  margin:8px 0;
+  color:rgba(255,255,255,.88);
+  font-size:.9rem;
+}
+
+.fx-side-claim-note{
+  display:block;
+  margin-top:14px;
+  text-align:center;
+  font-size:.8rem;
+  color:#31D8FF;
+  font-weight:600;
+}
     `;
     document.head.appendChild(style);
   }
