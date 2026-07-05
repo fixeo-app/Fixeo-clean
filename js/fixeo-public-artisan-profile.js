@@ -750,7 +750,43 @@
         '<a class="btn btn-secondary public-more-btn" href="' + escapeHtml(MARKETPLACE_FALLBACK_URL) + '">Retour aux artisans</a>' +
       '</section>';
   }
+   function renderHeroAvatar(artisan) {
+  var name = artisan && artisan.name ? artisan.name : 'Artisan Fixeo';
+  var category = String((artisan && artisan.category) || '').toLowerCase();
 
+  var photo =
+    artisan.photo_url ||
+    artisan.avatar ||
+    artisan.photo ||
+    artisan.image ||
+    '';
+
+  var fallbackEmoji = '👷';
+
+  if (category.includes('plomb')) fallbackEmoji = '👨‍🔧';
+  else if (category.includes('élect') || category.includes('elect')) fallbackEmoji = '⚡';
+  else if (category.includes('serr')) fallbackEmoji = '🔑';
+  else if (category.includes('peint')) fallbackEmoji = '🎨';
+  else if (category.includes('clim')) fallbackEmoji = '❄️';
+  else if (category.includes('nettoy')) fallbackEmoji = '🧹';
+  else if (category.includes('jardin')) fallbackEmoji = '🌿';
+  else if (category.includes('menuis')) fallbackEmoji = '🪚';
+
+  if (photo) {
+    return '' +
+      '<div class="fx-hero-avatar-card has-photo">' +
+        '<img class="fx-hero-avatar-img" src="' + escapeHtml(photo) + '" alt="' + escapeHtml(name) + '">' +
+        '<span class="fx-hero-avatar-check">✓</span>' +
+      '</div>';
+  }
+
+  return '' +
+    '<div class="fx-hero-avatar-card is-fixeo-hero">' +
+      '<div class="fx-hero-avatar-emoji">' + fallbackEmoji + '</div>' +
+      '<span class="fx-hero-avatar-check">✓</span>' +
+      '<div class="fx-hero-avatar-label">FIXEO Hero</div>' +
+    '</div>';
+}
   function renderProfile(root, data) {
     /* rf4: mark sentinel so cold-visit index fetch .then() never overwrites a full render */
     try { window.__fxHeroRendered = window.__fxHeroRendered || (data && data.artisan && data.artisan.id) || '__rendered__'; } catch(e) {}
@@ -840,19 +876,7 @@
     root.innerHTML = '' +
       '<section class="public-profile-hero fx-hero-premium">' +
 '<div class="fx-profile-breadcrumb">Fixeo › ' + escapeHtml(categoryLabel(artisan.category)) + ' › ' + escapeHtml(artisan.city) + ' › ' + escapeHtml(artisan.name) + '</div>' +
-        '<div class="public-avatar-gallery">' +
-  '<div class="public-avatar-wrap">' +
-    (artisan.avatar
-      ? '<img class="public-avatar" src="' + escapeHtml(artisan.avatar) + '" alt="' + escapeHtml(artisan.name) + '">'
-      : '<div class="public-avatar public-avatar-fallback" aria-hidden="true">' + escapeHtml(getInitials(artisan.name)) + '</div>') +
-  '</div>' +
-  '<div class="public-avatar-thumbs">' +
-    '<div class="avatar-thumb active"></div>' +
-    '<div class="avatar-thumb"></div>' +
-    '<div class="avatar-thumb"></div>' +
-    '<div class="avatar-thumb more">+2</div>' +
-  '</div>' +
-'</div>' +
+       '<div class="fx-hero-avatar-wrap">' + renderHeroAvatar(artisan) + '</div>' +
         '<div class="public-hero-main">' +
           '<span class="public-availability ' + escapeHtml(availability.className) + '">' + escapeHtml(availability.label) + '</span>' +
           '<h1>' + escapeHtml(artisan.name) + '</h1>' +
