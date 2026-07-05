@@ -1146,30 +1146,11 @@ for (const target of targets) {
         const params = new URLSearchParams(window.location.search);
         const artisanId = params.get('id') || params.get('artisan');
         if (artisanId) {
-          // Wait for profile to render then inject claim button
-          const tryInject = () => {
-            if (document.querySelector('.ppui-cta-wrap, .public-artisan-action-wrap, #public-artisan-action')) {
-              injectClaimButton(artisanId);
-              injectProfileSideCard(artisanId);
-            } else {
-              setTimeout(tryInject, 400);
-            }
-          };
-          setTimeout(tryInject, 800);
-
-          // Also watch for async render
-          if (window.MutationObserver) {
-            const obs = new MutationObserver(() => {
-              if (document.querySelector('#public-artisan-action')) {
-                obs.disconnect();
-             setTimeout(() => {
-  injectClaimButton(artisanId);
-  injectProfileSideCard(artisanId);
-}, 800);
-              }
-            });
-            obs.observe(document.body, { childList: true, subtree: true });
-          }
+          // Lightweight profile injection — no repeated observer
+     setTimeout(() => {
+       injectClaimButton(artisanId);
+        injectProfileSideCard(artisanId);
+      }, 600);
         }
       }
     }
