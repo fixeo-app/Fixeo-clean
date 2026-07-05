@@ -373,51 +373,36 @@
     } catch(e) {}
 
     /* ── Build indicator definitions ── */
-    var indicators = [
-      {
-        icon: '\u2714',
-        label: 'Missions valid\u00e9es',
-        value: missionsCount > 0 ? String(missionsCount) : '0',
-        sub: missionsCount > 0 ? 'via Fixeo' : 'Aucune encore',
-        active: missionsCount > 0
-      },
-      {
-        /* hts-1: Replace seeded "Avis enregistrés" with honest "Délai de réponse" indicator */
-        icon: '\u23f1',
-        label: 'D\u00e9lai de r\u00e9ponse',
-        value: 'En cours',
-        sub: 'En cours de mesure',
-        active: false
-      },
-      {
-        icon: '\ud83d\uddbc',
-        label: 'R\u00e9alisations',
-        value: portfolioCount > 0 ? String(portfolioCount) : '0',
-        sub: portfolioCount > 0 ? 'publi\u00e9es' : 'Aucune encore',
-        active: portfolioCount > 0
-      },
-      {
-        icon: '\ud83d\udcb3',
-        label: 'Paiement apr\u00e8s',
-        value: 'Actif',
-        sub: 'Garanti Fixeo',
-        active: true
-      },
-      {
-        icon: '\u2696\ufe0f',
-        label: 'Tarification',
-        value: 'Encadr\u00e9e',
-        sub: 'Fixeo garantit',
-        active: true
-      },
-      {
-        icon: '\u23f1',
-        label: 'D\u00e9lai r\u00e9ponse',
-        value: '\u2014',
-        sub: 'En cours de mesure',
-        active: false
-      }
-    ];
+   var indicators = [
+  {
+    icon: '✅',
+    label: 'Disponibilité',
+    value: 'Disponible',
+    sub: 'Statut actuel',
+    active: true
+  },
+  {
+    icon: '⏱️',
+    label: 'Temps de réponse',
+    value: 'En cours',
+    sub: 'Mesuré avec les prochaines demandes',
+    active: false
+  },
+  {
+    icon: '🛡️',
+    label: 'Confiance FIXEO',
+    value: 'Vérification',
+    sub: 'Contrôle qualité',
+    active: false
+  },
+  {
+    icon: '📍',
+    label: 'Zone',
+    value: 'Fès et alentours',
+    sub: 'Zone d’intervention',
+    active: true
+  }
+];
 
     var cardsHtml = indicators.map(function(ind) {
       return '<div class="fpv2pi-card' + (ind.active ? ' fpv2pi-card--active' : '') + '">' +
