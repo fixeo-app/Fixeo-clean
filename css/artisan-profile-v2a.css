@@ -2889,3 +2889,23 @@ body.public-artisan-page .fx-avatar-badge{
 .fx-hero-avatar-label {
   display: none !important;
 }
+
+.fx-hero-avatar-card{
+  width: 104px !important;
+  height: 104px !important;
+  margin: 0 auto 18px !important;
+  transform: translateY(8px);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.14),
+    0 18px 45px rgba(236,72,153,.22),
+    0 0 45px rgba(32,230,168,.18) !important;
+}
+
+.fx-hero-avatar-card::before{
+  content:"";
+  position:absolute;
+  inset:-18px;
+  border-radius:32px;
+  background: radial-gradient(circle, rgba(236,72,153,.22), rgba(32,230,168,.10), transparent 68%);
+  z-index:-1;
+}
