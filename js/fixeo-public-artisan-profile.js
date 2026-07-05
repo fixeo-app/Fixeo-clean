@@ -815,6 +815,12 @@
     if (_fxfpHero) {
       try {
         var _hMain = _fxfpHero.querySelector('.public-hero-main');
+        if (_hMain && !_fxfpHero.querySelector('.fx-hero-avatar-wrap')) {
+  var _avatarWrap = document.createElement('div');
+  _avatarWrap.className = 'fx-hero-avatar-wrap';
+  _avatarWrap.innerHTML = renderHeroAvatar(artisan);
+  _hMain.parentNode.insertBefore(_avatarWrap, _hMain);
+}
         /* 1 — update availability, name, meta in place */
         var _aEl = _hMain && _hMain.querySelector('.public-availability');
         if (_aEl) { _aEl.textContent = availability.label; _aEl.className = 'public-availability ' + availability.className; }
