@@ -3033,3 +3033,28 @@ body.public-artisan-page .fx-avatar-badge{
   font-weight:750 !important;
   color:#7dffc1 !important;
 }
+
+/* FIXEO Premium CTA */
+
+.public-action-btn{
+    width:100%;
+    min-height:58px;
+    border-radius:18px;
+    font-size:1.05rem;
+    font-weight:800;
+    letter-spacing:.2px;
+    border:none;
+    background:linear-gradient(135deg,#ff5fb8,#ff8b63);
+    color:#fff;
+    box-shadow:0 18px 45px rgba(255,95,184,.35);
+    transition:transform .2s ease, box-shadow .2s ease;
+}
+
+.public-action-btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 24px 55px rgba(255,95,184,.45);
+}
+
+.public-action-btn:active{
+    transform:scale(.98);
+}
