@@ -3168,3 +3168,7 @@ body.fpv2b-loaded.public-artisan-page .public-more-btn,
 body.fpv2b-loaded.public-artisan-page a[href="#intervention-form"].public-more-btn{
   display:none !important;
 }
+
+.public-action-hidden{
+    display:none !important;
+}
