@@ -731,7 +731,9 @@ function injectFloatingReserveButton() {
   });
 
   document.body.appendChild(btn);
-
+    btn.remove();
+    document.body.appendChild(btn);
+  
   var mainBtn = document.getElementById('public-artisan-action');
   if (!mainBtn || !('IntersectionObserver' in window)) {
     btn.classList.add('is-visible');
