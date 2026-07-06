@@ -2834,22 +2834,26 @@ body.public-artisan-page .fx-avatar-badge{
   margin: 18px 0 22px;
 }
 
-.fx-hero-avatar-card {
-  width: 112px;
-  height: 112px;
-  border-radius: 32px;
-  background: linear-gradient(135deg, rgba(255,122,217,.22), rgba(49,216,255,.16));
-  border: 1px solid rgba(255,255,255,.18);
-  box-shadow: 0 20px 50px rgba(255,90,190,.18);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
+.fx-hero-avatar-card{
+    width:132px;
+    height:132px;
+    border-radius:36px;
+    background:
+        radial-gradient(circle at top,rgba(255,255,255,.14),transparent 60%),
+        linear-gradient(180deg,#1b1c2d,#101114);
+    border:1px solid rgba(255,255,255,.12);
+    box-shadow:
+        0 30px 70px rgba(0,0,0,.45),
+        0 0 0 1px rgba(255,255,255,.05) inset;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+    overflow:hidden;
 }
 
-.fx-hero-avatar-emoji {
-  font-size: 46px;
+.fx-hero-avatar-emoji{
+    font-size:58px;
   line-height: 1;
 }
 
