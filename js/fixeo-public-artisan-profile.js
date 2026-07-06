@@ -777,6 +777,39 @@ function injectFloatingReserveButton() {
   btn.setAttribute('aria-hidden', 'true');
   btn.setAttribute('tabindex', '-1');
 }
+  
+  function restoreFloatingReserveButton() {
+  var btn = document.getElementById('fixeo-floating-reserve');
+  if (!btn) return;
+
+  var modal =
+    document.querySelector('.fixeo-reservation-modal') ||
+    document.querySelector('.reservation-modal') ||
+    document.querySelector('.fx-reservation-modal');
+
+  if (!modal) {
+    btn.style.display = '';
+    btn.classList.add('is-visible');
+  }
+}
+  function watchReservationModalClose() {
+  if (window.__fixeoFloatingReserveWatcher) return;
+  window.__fixeoFloatingReserveWatcher = true;
+
+  var observer = new MutationObserver(function () {
+    var modal =
+      document.querySelector('.fixeo-reservation-modal') ||
+      document.querySelector('.reservation-modal') ||
+      document.querySelector('.fx-reservation-modal');
+
+    if (!modal) {
+      restoreFloatingReserveButton();
+    }
+  });
+
+  observer.observe(document.body, { childList: true, subtree: true });
+}
+  
   function bindReviewsToggle(reviews) {
     var button = document.getElementById('public-reviews-more');
     var list = document.getElementById('public-reviews-list');
@@ -796,7 +829,7 @@ function injectFloatingReserveButton() {
 
     renderBatch();
   }
-
+  
   function renderNotFound(root) {
     updateSeoMeta({
       title: 'Profil indisponible | Fixeo',
@@ -935,6 +968,7 @@ function injectFloatingReserveButton() {
         bindActionButton();
         injectFloatingReserveButton();
         hideHeroActionButton();
+        watchReservationModalClose();
         bindReviewsToggle(data.reviews);
         return; /* hydration complete — skip full root.innerHTML write below */
       } catch(_e) {
