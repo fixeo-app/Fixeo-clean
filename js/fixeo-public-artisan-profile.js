@@ -722,7 +722,8 @@ function injectFloatingReserveButton() {
   btn.id = 'fixeo-floating-reserve';
   btn.className = 'fixeo-floating-reserve';
   btn.type = 'button';
-  btn.textContent = 'Réserver cet artisan';
+  btn.textContent = '⚡ Demander une intervention';
+  btn.setAttribute('aria-label', 'Demander une intervention');
 
   btn.addEventListener('click', function () {
     var mainBtn = document.getElementById('public-artisan-action');
@@ -730,6 +731,26 @@ function injectFloatingReserveButton() {
   });
 
   document.body.appendChild(btn);
+
+  var mainBtn = document.getElementById('public-artisan-action');
+  if (!mainBtn || !('IntersectionObserver' in window)) {
+    btn.classList.add('is-visible');
+    return;
+  }
+
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        btn.classList.remove('is-visible');
+      } else {
+        btn.classList.add('is-visible');
+      }
+    });
+  }, {
+    threshold: 0.1
+  });
+
+  observer.observe(mainBtn);
 }
   
   function bindReviewsToggle(reviews) {
