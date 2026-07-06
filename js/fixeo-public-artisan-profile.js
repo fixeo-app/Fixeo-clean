@@ -715,7 +715,23 @@
       target.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
   }
+function injectFloatingReserveButton() {
+  if (document.getElementById('fixeo-floating-reserve')) return;
 
+  var btn = document.createElement('button');
+  btn.id = 'fixeo-floating-reserve';
+  btn.className = 'fixeo-floating-reserve';
+  btn.type = 'button';
+  btn.textContent = 'Réserver cet artisan';
+
+  btn.addEventListener('click', function () {
+    var mainBtn = document.getElementById('public-artisan-action');
+    if (mainBtn) mainBtn.click();
+  });
+
+  document.body.appendChild(btn);
+}
+  
   function bindReviewsToggle(reviews) {
     var button = document.getElementById('public-reviews-more');
     var list = document.getElementById('public-reviews-list');
@@ -872,6 +888,7 @@
           root.appendChild(_sg);
         }
         bindActionButton();
+        injectFloatingReserveButton();
         bindReviewsToggle(data.reviews);
         return; /* hydration complete — skip full root.innerHTML write below */
       } catch(_e) {
