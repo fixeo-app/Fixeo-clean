@@ -754,7 +754,14 @@ function injectFloatingReserveButton() {
 
   observer.observe(mainBtn);
 }
-  
+
+  function hideHeroActionButton() {
+  var btn = document.getElementById('public-artisan-action');
+  if (!btn) return;
+  btn.style.display = 'none';
+  btn.setAttribute('aria-hidden', 'true');
+  btn.setAttribute('tabindex', '-1');
+}
   function bindReviewsToggle(reviews) {
     var button = document.getElementById('public-reviews-more');
     var list = document.getElementById('public-reviews-list');
@@ -912,6 +919,7 @@ function injectFloatingReserveButton() {
         }
         bindActionButton();
         injectFloatingReserveButton();
+        hideHeroActionButton();
         bindReviewsToggle(data.reviews);
         return; /* hydration complete — skip full root.innerHTML write below */
       } catch(_e) {
