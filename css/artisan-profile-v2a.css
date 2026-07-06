@@ -3094,3 +3094,26 @@ body.public-artisan-page .fx-avatar-badge{
     font-size:.85rem;
     color:rgba(255,255,255,.68);
 }
+
+/* FIXEO Premium Reviews */
+
+.public-panel{
+  border-radius:24px !important;
+  background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.03)) !important;
+  border:1px solid rgba(255,255,255,.10) !important;
+  box-shadow:0 18px 50px rgba(0,0,0,.22) !important;
+}
+
+.public-section-heading{
+  color:#7dffc1 !important;
+  font-size:.78rem !important;
+  font-weight:850 !important;
+  letter-spacing:.08em !important;
+  text-transform:uppercase !important;
+}
+
+.public-empty-copy{
+  color:rgba(255,255,255,.68) !important;
+  font-size:.95rem !important;
+  line-height:1.55 !important;
+}
