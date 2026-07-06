@@ -3117,3 +3117,62 @@ body.public-artisan-page .fx-avatar-badge{
   font-size:.95rem !important;
   line-height:1.55 !important;
 }
+
+/* Floating CTA */
+
+.fixeo-floating-reserve{
+position:fixed;
+left:16px;
+right:16px;
+bottom:18px;
+z-index:9999;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+height:58px;
+
+border:none;
+border-radius:18px;
+
+font-size:1rem;
+font-weight:800;
+
+background:linear-gradient(135deg,#ff8a00,#ff4fd8);
+color:#fff;
+
+box-shadow:0 14px 40px rgba(255,90,180,.35);
+
+opacity:0;
+transform:translateY(90px);
+pointer-events:none;
+
+transition:
+opacity .25s,
+transform .25s;
+}
+
+.fixeo-floating-reserve.is-visible{
+opacity:1;
+transform:translateY(0);
+pointer-events:auto;
+}
+
+@media(min-width:768px){
+
+.fixeo-floating-reserve{
+
+left:50%;
+right:auto;
+
+width:420px;
+
+transform:translate(-50%,90px);
+}
+
+.fixeo-floating-reserve.is-visible{
+transform:translate(-50%,0);
+}
+
+}
