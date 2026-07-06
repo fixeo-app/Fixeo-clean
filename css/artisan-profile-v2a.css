@@ -3176,3 +3176,9 @@ transform:translate(-50%,0);
 }
 
 }
+/* Hide legacy duplicate reserve CTA */
+
+body.fpv2b-loaded.public-artisan-page .public-more-btn,
+body.fpv2b-loaded.public-artisan-page a[href="#intervention-form"].public-more-btn{
+  display:none !important;
+}
