@@ -3058,3 +3058,39 @@ body.public-artisan-page .fx-avatar-badge{
 .public-action-btn:active{
     transform:scale(.98);
 }
+
+/* FIXEO Premium Stats */
+
+.public-stats-grid{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:14px;
+    margin-top:18px;
+}
+
+.public-stat-card{
+    background:rgba(255,255,255,.04);
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:18px;
+    padding:16px;
+    backdrop-filter:blur(10px);
+    transition:all .2s ease;
+}
+
+.public-stat-card:hover{
+    transform:translateY(-2px);
+    border-color:rgba(255,255,255,.16);
+}
+
+.public-stat-value{
+    display:block;
+    font-size:1.5rem;
+    font-weight:900;
+    color:#fff;
+    margin-bottom:6px;
+}
+
+.public-stat-label{
+    font-size:.85rem;
+    color:rgba(255,255,255,.68);
+}
