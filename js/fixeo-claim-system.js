@@ -322,7 +322,7 @@ function injectProfileSideCard(artisanId) {
 
 const claimHtml = isClaimed
   ? '<div class="fixeo-claim-badge fixeo-claim-approved">✅ Profil revendiqué</div>'
-  : '<button id="fixeo-claim-btn-side" class="fixeo-claim-btn fx-side-claim-btn" onclick="window.location.href=\'rejoindre-fixeo.html?id=' + encodeURIComponent(String(artisanId)) + '#revendique\'">🏷️ Revendiquer ce profil</button>';
+  : '<button id="fixeo-claim-btn-side" class="fixeo-claim-btn fx-side-claim-btn" onclick="window.location.href=\'rejoindre-fixeo.html?id=' + encodeURIComponent(String(artisanId)) + '#revendique\'">🚀 Revendiquer mon profil FIXEO</button>';
   
   const name = artisan.name || 'Artisan Fixeo';
   const category = artisan.category || 'Artisan professionnel';
@@ -344,19 +344,19 @@ const claimHtml = isClaimed
 
     <div class="fx-side-claim-card">
   <div class="fx-side-claim-icon">👋</div>
-  <h3>Vous êtes cet artisan ?</h3>
-  <p>Ce profil existe déjà sur FIXEO. Reprenez son contrôle pour développer votre activité.</p>
+  <h3>🚀 Prenez le contrôle de votre profil FIXEO</h3>
+  <p>Votre profil est déjà visible auprès des clients FIXEO. Revendiquez-le pour recevoir de nouvelles demandes, personnaliser votre profil et développer votre activité.</p>
 
   <ul>
-    <li>Recevez des demandes clients</li>
-    <li>Gérez votre profil</li>
-    <li>Ajoutez vos réalisations</li>
-    <li>Répondez aux avis</li>
+     <li>Recevez de nouvelles demandes qualifiées</li>
+     <li>Personnalisez votre profil professionnel</li>
+     <li>Mettez en avant vos réalisations</li>
+     <li>Répondez aux avis de vos clients</li>
   </ul>
 
   ${claimHtml}
 
-  <span class="fx-side-claim-note">Gratuit pendant le lancement</span>
+  <span class="fx-side-claim-note">Offert pendant le lancement • Sans engagement</span>
 </div>
 
   `;
