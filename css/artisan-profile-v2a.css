@@ -3005,3 +3005,31 @@ body.public-artisan-page .fx-avatar-badge{
 .public-zone strong{
     color:#ffffff;
 }
+
+/* FIXEO Premium Trust Card */
+.public-trust-card{
+  margin-top:18px !important;
+  padding:18px !important;
+  border-radius:24px !important;
+  background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.035)) !important;
+  border:1px solid rgba(255,255,255,.14) !important;
+  box-shadow:0 22px 60px rgba(0,0,0,.28) !important;
+}
+
+.public-trust-rating{
+  font-size:1.08rem !important;
+  font-weight:850 !important;
+  color:#fff6a8 !important;
+}
+
+.public-trust-sub{
+  margin-top:4px !important;
+  color:rgba(255,255,255,.78) !important;
+  font-size:.92rem !important;
+}
+
+.public-trust-score{
+  margin-top:12px !important;
+  font-weight:750 !important;
+  color:#7dffc1 !important;
+}
