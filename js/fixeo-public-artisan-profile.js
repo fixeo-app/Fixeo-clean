@@ -826,6 +826,27 @@ document.addEventListener('visibilitychange', function () {
   }
 });
   
+  document.addEventListener('touchend', function () {
+  setTimeout(restoreFloatingReserveButton, 250);
+});
+  
+  document.addEventListener('click', function (e) {
+  if (
+    e.target.closest('.reservation-close') ||
+    e.target.closest('.modal-close') ||
+    e.target.closest('[data-close]') ||
+    e.target.closest('button[aria-label="Fermer"]')
+  ) {
+    setTimeout(function () {
+      var btn = document.getElementById('fixeo-floating-reserve');
+      if (!btn) return;
+      btn.removeAttribute('aria-hidden');
+      btn.style.display = '';
+      btn.classList.add('is-visible');
+    }, 350);
+  }
+});
+  
   function bindReviewsToggle(reviews) {
     var button = document.getElementById('public-reviews-more');
     var list = document.getElementById('public-reviews-list');
