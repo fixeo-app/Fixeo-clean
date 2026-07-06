@@ -3172,3 +3172,16 @@ body.fpv2b-loaded.public-artisan-page a[href="#intervention-form"].public-more-b
 .public-action-hidden{
     display:none !important;
 }
+
+body:has(.fixeo-reservation-modal),
+body:has(.reservation-modal),
+body:has(.fx-reservation-modal){
+  --fixeo-modal-open: 1;
+}
+
+body:has(.fixeo-reservation-modal) .fixeo-floating-reserve,
+body:has(.reservation-modal) .fixeo-floating-reserve,
+body:has(.fx-reservation-modal) .fixeo-floating-reserve{
+  display:none !important;
+}
+
