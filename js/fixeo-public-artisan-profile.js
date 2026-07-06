@@ -938,7 +938,7 @@ function injectFloatingReserveButton() {
             '</div>' +
             '<div class="public-trust-score">Paiement apr\u00e8s satisfaction</div>' +
           '</div>' +
-          '<button class="btn btn-primary public-action-btn" type="button" id="public-artisan-action">Demander intervention</button>' +
+          '<button class="btn btn-primary public-action-btn public-action-hidden" type="button" id="public-artisan-action" aria-hidden="true" tabindex="-1">Demander intervention</button>' +
         '</div>' +
       '</section>' +
 
