@@ -2915,40 +2915,42 @@ body.public-artisan-page .fx-avatar-badge{
 }
 
 /* Floating reserve CTA */
-.fixeo-floating-reserve {
-  position: fixed;
-  left: 16px;
-  right: 16px;
-  bottom: calc(18px + env(safe-area-inset-bottom));
-  z-index: 9999;
+.fixeo-floating-reserve{
+  position: fixed !important;
+  left: 16px !important;
+  right: 16px !important;
+  bottom: calc(18px + env(safe-area-inset-bottom)) !important;
+  z-index: 99999 !important;
 
-  height: 58px;
-  border: 0;
-  border-radius: 18px;
-  cursor: pointer;
+  width: auto !important;
+  height: 58px !important;
 
-  background: linear-gradient(135deg, #ff8a3d 0%, #e1306c 45%, #8b5cf6 100%);
-  color: #fff;
-  font-size: 16px;
-  font-weight: 900;
-  letter-spacing: -0.01em;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 
-  box-shadow:
-    0 18px 45px rgba(225, 48, 108, .34),
-    0 0 0 1px rgba(255,255,255,.12) inset;
+  border: 0 !important;
+  border-radius: 18px !important;
+
+  font-size: 1rem !important;
+  font-weight: 900 !important;
+
+  background: linear-gradient(135deg,#ff8a00,#ff4fd8) !important;
+  color: #fff !important;
+
+  box-shadow: 0 18px 45px rgba(255,90,180,.38) !important;
+
+  opacity: 0;
+  transform: translateY(90px);
+  pointer-events: none;
+
+  transition: opacity .22s ease, transform .22s ease;
 }
 
-.fixeo-floating-reserve:active {
-  transform: translateY(1px) scale(.99);
-}
-
-@media (min-width: 760px) {
-  .fixeo-floating-reserve {
-    left: auto;
-    right: 28px;
-    bottom: 28px;
-    width: 320px;
-  }
+.fixeo-floating-reserve.is-visible{
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+  pointer-events: auto !important;
 }
 
 /* FIXEO Premium availability badge */
@@ -3159,23 +3161,7 @@ transform:translateY(0);
 pointer-events:auto;
 }
 
-@media(min-width:768px){
 
-.fixeo-floating-reserve{
-
-left:50%;
-right:auto;
-
-width:420px;
-
-transform:translate(-50%,90px);
-}
-
-.fixeo-floating-reserve.is-visible{
-transform:translate(-50%,0);
-}
-
-}
 /* Hide legacy duplicate reserve CTA */
 
 body.fpv2b-loaded.public-artisan-page .public-more-btn,
