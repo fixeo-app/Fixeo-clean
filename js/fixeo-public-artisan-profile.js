@@ -816,6 +816,15 @@ setTimeout(function () {
 
   observer.observe(document.body, { childList: true, subtree: true });
 }
+  window.addEventListener('pageshow', function () {
+  setTimeout(restoreFloatingReserveButton, 200);
+});
+
+document.addEventListener('visibilitychange', function () {
+  if (!document.hidden) {
+    setTimeout(restoreFloatingReserveButton, 200);
+  }
+});
   
   function bindReviewsToggle(reviews) {
     var button = document.getElementById('public-reviews-more');
