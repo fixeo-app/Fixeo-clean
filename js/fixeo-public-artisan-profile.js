@@ -728,9 +728,15 @@ function injectFloatingReserveButton() {
   btn.addEventListener('click', function () {
     var mainBtn = document.getElementById('public-artisan-action');
     if (mainBtn) {
-  btn.classList.remove('is-visible');
+ btn.classList.remove('is-visible');
+btn.style.display = 'none';
+btn.setAttribute('aria-hidden', 'true');
+mainBtn.click();
+
+setTimeout(function () {
   btn.style.display = 'none';
-  mainBtn.click();
+  btn.classList.remove('is-visible');
+}, 500);
 
   setTimeout(function () {
     var modal =
@@ -788,6 +794,7 @@ function injectFloatingReserveButton() {
     document.querySelector('.fx-reservation-modal');
 
   if (!modal) {
+    btn.removeAttribute('aria-hidden');
     btn.style.display = '';
     btn.classList.add('is-visible');
   }
