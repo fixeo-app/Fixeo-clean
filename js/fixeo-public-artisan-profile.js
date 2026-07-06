@@ -727,7 +727,22 @@ function injectFloatingReserveButton() {
 
   btn.addEventListener('click', function () {
     var mainBtn = document.getElementById('public-artisan-action');
-    if (mainBtn) mainBtn.click();
+    if (mainBtn) {
+  btn.classList.remove('is-visible');
+  btn.style.display = 'none';
+  mainBtn.click();
+
+  setTimeout(function () {
+    var modal =
+      document.querySelector('.fixeo-reservation-modal') ||
+      document.querySelector('.reservation-modal') ||
+      document.querySelector('.fx-reservation-modal');
+
+    if (!modal) {
+      btn.style.display = '';
+    }
+  }, 300);
+}
   });
 
   document.body.appendChild(btn);
