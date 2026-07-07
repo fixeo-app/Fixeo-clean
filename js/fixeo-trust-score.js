@@ -327,6 +327,45 @@
     }
   }
 
+  async function getSupabaseReviewStats(artisanId) {
+  try {
+    var sb = window.FixeoSupabaseClient || window.FixeoSupabase || window.supabaseClient || window.sb;
+    if (!sb || typeof sb.from !== 'function' || !artisanId) return getEmptyTrustStats();
+
+    var res = await sb
+      .from('reviews')
+      .select('rating,response_time_score,quality_score,verified')
+      .eq('artisan_id', artisanId)
+      .eq('verified', true);
+
+    if (res.error || !res.data || !res.data.length) return getEmptyTrustStats();
+
+    var reviews = res.data;
+    var avg = reviews.reduce(function (s, r) { return s + Number(r.rating || 0); }, 0) / reviews.length;
+    var score = Math.round((avg / 5) * 70 + Math.min(reviews.length * 3, 30));
+
+    return {
+      trust_score: score,
+      trust_level: getTrustLevel(score),
+      total_reviews: reviews.length,
+      total_missions: 0,
+      missions_validated: 0,
+      average_rating: Math.round(avg * 10) / 10,
+      confirmation_rate: 0,
+      payment_rate: 0,
+      commissions_paid: 0,
+      missions_completed: 0,
+      missions_confirmed: 0,
+      rating_score: Math.round((avg / 5) * 70),
+      missions_score: 0,
+      confirmation_score: 0,
+      payment_score: 0
+    };
+  } catch (e) {
+    return getEmptyTrustStats();
+  }
+} 
+  
   window.FixeoTrustScore = {
     storageKey: STORAGE_KEY,
     normalizeText: normalizeText,
@@ -335,6 +374,7 @@
     formatPercent: formatPercent,
     formatStars: formatStars,
     getArtisanStats: getArtisanStats,
+    getSupabaseReviewStats: getSupabaseReviewStats,
     enrichArtisan: enrichArtisan,
     sortArtisansByTrust: sortArtisansByTrust,
     applyArtisanProfileTrust: applyArtisanProfileTrust
