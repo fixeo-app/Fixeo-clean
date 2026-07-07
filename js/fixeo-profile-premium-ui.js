@@ -288,6 +288,10 @@
       var origBtn = document.getElementById('public-artisan-action');
       if (origBtn) {
         var obs = new IntersectionObserver(function(entries) {
+          if (document.body.classList.contains('fixeo-booking-modal-open')) {
+    wrap.style.display = 'none';
+    return;
+   }
           wrap.style.display = entries[0].isIntersecting ? 'none' : '';
         }, { threshold: 0.1 });
         obs.observe(origBtn);
