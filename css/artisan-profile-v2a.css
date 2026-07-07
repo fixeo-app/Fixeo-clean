@@ -217,7 +217,7 @@
   text-decoration: none;
   color: rgba(37, 211, 102, 1);
 }
-body.fixeo-booking-modal-open .fixeo-profile-sticky-cta {
+body.fixeo-booking-modal-open #ppui-sticky-cta {
     display: none !important;
 }
 
