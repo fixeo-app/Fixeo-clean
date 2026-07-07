@@ -3187,4 +3187,6 @@ body:has(.reservation-modal) .fixeo-floating-reserve,
 body:has(.fx-reservation-modal) .fixeo-floating-reserve{
   display:none !important;
 }
-
+body.fixeo-booking-modal-open #fixeo-floating-reserve {
+    display: none !important;
+}
