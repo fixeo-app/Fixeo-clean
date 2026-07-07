@@ -766,7 +766,10 @@ setTimeout(function () {
       if (entry.isIntersecting) {
         btn.classList.remove('is-visible');
       } else {
-        btn.classList.add('is-visible');
+    if (!document.body.classList.contains('fixeo-booking-modal-open')) {
+    btn.classList.add('is-visible');
+}
+   }
       }
     });
   }, {
