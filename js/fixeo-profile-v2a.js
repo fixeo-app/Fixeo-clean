@@ -262,6 +262,7 @@
      Layout: 2-column grid at ≥360px, 1-column below 360px (matches modal grid)
   */
   function injectHeroEstimation(hero, artisan) {
+    if (window.innerWidth >= 768 && navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4) return;
     if (document.getElementById('fpv2h-estimation')) return;
     var slug = _catSlug(artisan.category);
     var rows = PROFILE_PRICING[slug];
