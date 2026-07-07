@@ -77,11 +77,31 @@
   var _cache = {}; /* artisanId → { reviews[], stats, ts } */
   var CACHE_TTL = 5 * 60 * 1000; /* 5 min */
 
+   async function resolveArtisanUuid(artisanId) {
+  if (!artisanId) return null;
+  if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(artisanId)) {
+    return artisanId;
+  }
+
+  var sb = await _getSb();
+  if (!sb) return null;
+
+  var res = await sb
+    .from('artisans')
+    .select('id')
+    .eq('legacy_id', artisanId)
+    .maybeSingle();
+
+  if (res.error || !res.data) return null;
+  return res.data.id;
+}
   /* ── FETCH reviews for an artisan ──────────────────────── */
   async function fetchReviews(artisanId, limit) {
     limit = limit || 10;
-    if (!artisanId) return { reviews: [], stats: _emptyStats() };
-
+   if (!artisanId) return { reviews: [], stats: _emptyStats() };
+    artisanId = await resolveArtisanUuid(artisanId);
+   if (!artisanId) return { reviews: [], stats: _emptyStats() };
+     
     var now = Date.now();
     if (_cache[artisanId] && (now - _cache[artisanId].ts) < CACHE_TTL) {
       return { reviews: _cache[artisanId].reviews, stats: _cache[artisanId].stats };
