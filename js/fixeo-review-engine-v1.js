@@ -26,23 +26,23 @@
   var VERSION = 'frev-v1b';
 
   /* ── Supabase client ────────────────────────────────────── */
+   
   function _sb() {
-  var candidates = [
-    window.FixeoSupabaseClient,
-    window.FixeoSupabase,
-    window.fixeoSupabase,
-    window.supabaseClient,
-    window.sb
-  ];
+  if (window.FixeoSupabaseClient && window.FixeoSupabaseClient.client) {
+    return window.FixeoSupabaseClient.client;
+  }
 
-  for (var i = 0; i < candidates.length; i++) {
-    if (candidates[i] && typeof candidates[i].from === 'function') {
-      return candidates[i];
-    }
+  if (window.supabaseClient && typeof window.supabaseClient.from === 'function') {
+    return window.supabaseClient;
+  }
+
+  if (window.sb && typeof window.sb.from === 'function') {
+    return window.sb;
   }
 
   return null;
 }
+   
   /* ── Helpers ────────────────────────────────────────────── */
   function qs(sel, ctx)  { return (ctx || document).querySelector(sel); }
   function esc(s)        { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
@@ -87,7 +87,7 @@
       return { reviews: _cache[artisanId].reviews, stats: _cache[artisanId].stats };
     }
 
-    var sb = _sb();
+    var sb = await _getSb();
     if (!sb) return { reviews: [], stats: _emptyStats() };
 
     try {
@@ -176,7 +176,7 @@
   async function submitReview(opts) {
     /* opts: { missionId, artisanId, rating, reviewText, clientProfileId, clientPhone,
                responseTimeScore, qualityScore } */
-    var sb = _sb();
+    var sb = await _getSb();
     if (!sb) return { ok: false, error: 'Supabase unavailable' };
 
     var missionId = opts.missionId;
@@ -240,7 +240,7 @@
   async function _updateArtisanAggregate(artisanId) {
     /* Re-fetch all reviews for this artisan and update artisans table */
     try {
-      var sb = _sb();
+      var sb = await _getSb();
       if (!sb) return;
       var res = await sb.from('reviews').select('rating,response_time_score,quality_score')
         .eq('artisan_id', artisanId).eq('verified', true);
