@@ -757,9 +757,11 @@ setTimeout(function () {
   
   var mainBtn = document.getElementById('public-artisan-action');
   if (!mainBtn || !('IntersectionObserver' in window)) {
-    btn.classList.add('is-visible');
+    if (!document.body.classList.contains('fixeo-booking-modal-open')) {
+        btn.classList.add('is-visible');
+    }
     return;
-  }
+}
 
   var observer = new IntersectionObserver(function(entries) {
     entries.forEach(function(entry) {
