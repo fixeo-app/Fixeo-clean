@@ -153,6 +153,7 @@
     var btn = document.getElementById('public-artisan-action');
     if (!btn || btn.dataset.ppuiUpgraded) return;
     btn.dataset.ppuiUpgraded = '1';
+    btn.classList.add('fixeo-main-profile-cta');
     /* Only improve label — never change onclick/id */
     if (data.isAvail) {
       btn.textContent = 'R\u00e9server l\u2019intervention';
