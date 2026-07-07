@@ -154,6 +154,9 @@
     if (!btn || btn.dataset.ppuiUpgraded) return;
     btn.dataset.ppuiUpgraded = '1';
     btn.classList.add('fixeo-main-profile-cta');
+    btn.addEventListener('click', function() {
+    document.body.classList.add('fixeo-booking-modal-open');
+});
     /* Only improve label — never change onclick/id */
     if (data.isAvail) {
       btn.textContent = 'R\u00e9server l\u2019intervention';
