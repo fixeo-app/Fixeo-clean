@@ -329,7 +329,17 @@
 
   async function getSupabaseReviewStats(artisanId) {
   try {
-    var sb = window.FixeoSupabaseClient || window.FixeoSupabase || window.supabaseClient || window.sb;
+    var sb = null;
+
+if (window.FixeoSupabaseClient && window.FixeoSupabaseClient.client) {
+  sb = window.FixeoSupabaseClient.client;
+} else if (window.FixeoSupabase && typeof window.FixeoSupabase.getClient === 'function') {
+  sb = await window.FixeoSupabase.getClient();
+} else if (window.supabaseClient && typeof window.supabaseClient.from === 'function') {
+  sb = window.supabaseClient;
+} else if (window.sb && typeof window.sb.from === 'function') {
+  sb = window.sb;
+}
     if (!sb || typeof sb.from !== 'function' || !artisanId) return getEmptyTrustStats();
 
     var res = await sb
