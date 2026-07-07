@@ -217,6 +217,9 @@
   text-decoration: none;
   color: rgba(37, 211, 102, 1);
 }
+body.fixeo-booking-modal-open .fixeo-profile-sticky-cta {
+    display: none !important;
+}
 
 /* ── V2A-F: CTA reassurance text (ppui upgrade) ─────────────── */
 /*
