@@ -1,3 +1,7 @@
+function isLowEndDesktop() {
+  return window.innerWidth >= 768 && navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4;
+}
+
 /* ================================================================
    FIXEO — Artisan Profile V2-A + V2-B Enhancement Layer
    Trust Rebuild, Humanization & Professional Depth
@@ -1964,6 +1968,14 @@
          full final state in one step, no fade delays.
       */
       requestAnimationFrame(function() {
+         if (isLowEndDesktop()) {
+         injectBadgeLabel(hero, artisan);
+         injectBio(artisan);
+         injectWASecondary(hero, artisan);
+         upgradeStickyCTA(artisan);
+          return;
+          }
+         
         /* ── V2-A ── */
         injectBadgeLabel(hero, artisan);
         upgradeReviewLine(artisan);
