@@ -272,10 +272,12 @@
 
     /* Primary delegates to original reservation button */
     document.getElementById('ppui-sticky-btn').addEventListener('click', function() {
-      document.body.classList.add('fixeo-booking-modal-open');
-      var orig = document.getElementById('public-artisan-action');
-      if (orig) orig.click();
-    });
+    var wrap = document.getElementById('ppui-sticky-cta');
+    if (wrap) wrap.style.display = 'none';
+
+    var orig = document.getElementById('public-artisan-action');
+    if (orig) orig.click();
+});
 
     /* Hide when hero CTA is visible */
     if (window.IntersectionObserver) {
