@@ -880,6 +880,7 @@
   ════════════════════════════════════════════════════════ */
   function open(artisanInput, isExpress, urgentContext) {
     document.body.classList.add('fixeo-booking-modal-open');
+    document.getElementById('ppui-sticky-cta')?.style.setProperty('display', 'none', 'important');
     // Reset state — always a clean slate
     state.step = 1;
     state.isExpress = !!isExpress;
@@ -937,6 +938,7 @@
 
   function close() {
      document.body.classList.remove('fixeo-booking-modal-open');
+     document.getElementById('ppui-sticky-cta')?.style.removeProperty('display');
     const modal = document.getElementById(MODAL_ID);
     if (modal) {
       modal.classList.remove('open');
