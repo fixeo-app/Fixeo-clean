@@ -471,8 +471,9 @@ function isLowEndDesktop() {
     var waBtn = document.getElementById('ppui-sticky-wa');
     if (!waBtn || waBtn.dataset.v2aDone) return;
     waBtn.dataset.v2aDone = '1';
+    waBtn.classList.add('fixeo-profile-sticky-cta');
     waBtn.href = buildWaUrl(artisan);
-  }
+}
 
   /* ── 6. Update hero trust card review_count display ──── */
   /*
