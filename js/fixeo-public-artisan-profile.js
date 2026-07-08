@@ -756,11 +756,15 @@ setTimeout(function () {
     document.body.appendChild(btn);
   
   var mainBtn = document.getElementById('public-artisan-action');
-  if (!mainBtn || !('IntersectionObserver' in window)) {
-    if (!document.body.classList.contains('fixeo-booking-modal-open')) {
-        btn.classList.add('is-visible');
-    }
-    return;
+if (!mainBtn) {
+  setTimeout(injectFloatingReserveButton, 300);
+  return;
+}
+if (!('IntersectionObserver' in window)) {
+  if (!document.body.classList.contains('fixeo-booking-modal-open')) {
+    btn.classList.add('is-visible');
+  }
+  return;
 }
 
   var observer = new IntersectionObserver(function(entries) {
