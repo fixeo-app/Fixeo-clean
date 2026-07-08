@@ -900,16 +900,20 @@ document.addEventListener('visibilitychange', function () {
     artisan.image ||
     '';
 
-  var fallbackEmoji = '👷';
+ var fallbackEmoji = '👷‍♂️';
 
-  if (category.includes('plomb')) fallbackEmoji = '👨‍🔧';
-  else if (category.includes('élect') || category.includes('elect')) fallbackEmoji = '⚡';
-  else if (category.includes('serr')) fallbackEmoji = '🔑';
-  else if (category.includes('peint')) fallbackEmoji = '🎨';
-  else if (category.includes('clim')) fallbackEmoji = '❄️';
-  else if (category.includes('nettoy')) fallbackEmoji = '🧹';
-  else if (category.includes('jardin')) fallbackEmoji = '🌿';
-  else if (category.includes('menuis')) fallbackEmoji = '🪚';
+if (category.includes('plomb')) fallbackEmoji = '👨‍🔧';
+else if (category.includes('élect') || category.includes('elect')) fallbackEmoji = '🧑‍🔧';
+else if (category.includes('serr')) fallbackEmoji = '👨‍🏭';
+else if (category.includes('peint')) fallbackEmoji = '👨‍🎨';
+else if (category.includes('clim')) fallbackEmoji = '🧑‍🔧';
+else if (category.includes('nettoy')) fallbackEmoji = '🧑‍💼';
+else if (category.includes('jardin')) fallbackEmoji = '🧑‍🌾';
+else if (category.includes('menuis')) fallbackEmoji = '👨‍🏭';
+else if (category.includes('maçon') || category.includes('macon')) fallbackEmoji = '👷‍♂️';
+else if (category.includes('carrel')) fallbackEmoji = '👷';
+else if (category.includes('chauff')) fallbackEmoji = '👨‍🔧';
+else if (category.includes('bricol')) fallbackEmoji = '🧑‍🔧';
 
   if (photo) {
     return '' +
