@@ -768,19 +768,18 @@ if (!('IntersectionObserver' in window)) {
 }
 
   var observer = new IntersectionObserver(function(entries) {
-    entries.forEach(function(entry) {
-      if (entry.isIntersecting) {
-        btn.classList.remove('is-visible');
-      } else {
-    if (!document.body.classList.contains('fixeo-booking-modal-open')) {
-    btn.classList.add('is-visible');
-}
-   }
+  entries.forEach(function(entry) {
+    if (entry.isIntersecting) {
+      btn.classList.remove('is-visible');
+    } else {
+      if (!document.body.classList.contains('fixeo-booking-modal-open')) {
+        btn.classList.add('is-visible');
       }
-    });
-  }, {
-    threshold: 0.1
+    }
   });
+}, {
+  threshold: 0.1
+});
 
   observer.observe(mainBtn);
 }
