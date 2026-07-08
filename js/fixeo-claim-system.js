@@ -361,7 +361,9 @@ const claimHtml = isClaimed
 
   `;
 
-  shell.appendChild(card);
+  const mobileTarget = document.querySelector('.public-profile-hero') || document.querySelector('.fx-hero-premium');
+   const target = window.innerWidth <= 768 && mobileTarget ? mobileTarget : shell;
+  target.appendChild(card);
 }
   
   /* ─────────────────────────────────────────────────────────
