@@ -1060,6 +1060,7 @@ document.addEventListener('visibilitychange', function () {
       '</section>';
 
     bindActionButton();
+    setTimeout(injectFloatingReserveButton, 300);
     bindReviewsToggle(data.reviews);
   }
 
