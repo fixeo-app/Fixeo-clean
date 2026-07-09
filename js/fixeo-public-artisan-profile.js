@@ -900,21 +900,22 @@ document.addEventListener('visibilitychange', function () {
     artisan.image ||
     '';
 
- var fallbackEmoji = '👷‍♂️';
+  var fallbackEmoji = '👷‍♂️';
 
-if (category.includes('plomb')) fallbackEmoji = '👨‍🔧';
-else if (category.includes('élect') || category.includes('elect')) fallbackEmoji = '🧑‍🔧';
-else if (category.includes('serr')) fallbackEmoji = '👨‍🏭';
-else if (category.includes('peint')) fallbackEmoji = '👨‍🎨';
-else if (category.includes('clim')) fallbackEmoji = '🧑‍🔧';
-else if (category.includes('nettoy')) fallbackEmoji = '🧑‍💼';
-else if (category.includes('jardin')) fallbackEmoji = '🧑‍🌾';
-else if (category.includes('menuis')) fallbackEmoji = '👨‍🏭';
-else if (category.includes('maçon') || category.includes('macon')) fallbackEmoji = '👷‍♂️';
-else if (category.includes('carrel')) fallbackEmoji = '👷';
-else if (category.includes('chauff')) fallbackEmoji = '👨‍🔧';
-else if (category.includes('bricol')) fallbackEmoji = '🧑‍🔧';
+  if (category.includes('plomb')) fallbackEmoji = '👨‍🔧';
+  else if (category.includes('élect') || category.includes('elect')) fallbackEmoji = '🧑‍🔧';
+  else if (category.includes('serr')) fallbackEmoji = '👨‍🏭';
+  else if (category.includes('peint')) fallbackEmoji = '👨‍🎨';
+  else if (category.includes('clim')) fallbackEmoji = '🧑‍🔧';
+  else if (category.includes('nettoy')) fallbackEmoji = '🧑‍💼';
+  else if (category.includes('jardin')) fallbackEmoji = '🧑‍🌾';
+  else if (category.includes('menuis')) fallbackEmoji = '👨‍🏭';
+  else if (category.includes('maçon') || category.includes('macon')) fallbackEmoji = '👷‍♂️';
+  else if (category.includes('carrel')) fallbackEmoji = '👷';
+  else if (category.includes('chauff')) fallbackEmoji = '👨‍🔧';
+  else if (category.includes('bricol')) fallbackEmoji = '🧑‍🔧';
 
+  /* Priority 1 — real photo from Supabase or local pool */
   if (photo) {
     return '' +
       '<div class="fx-hero-avatar-card has-photo">' +
@@ -923,6 +924,26 @@ else if (category.includes('bricol')) fallbackEmoji = '🧑‍🔧';
       '</div>';
   }
 
+  /* Priority 2 — FIXEO Hero image (fxhv2a).
+   * Consult Hero Manager; render inside existing .fx-hero-avatar-card structure.
+   * onerror: hide broken img, restore emoji fallback inline. */
+  var _heroUrl = window.FixeoHeroes
+    ? window.FixeoHeroes.getAvatar(
+        (artisan && artisan.category) || (artisan && artisan.service) || ''
+      )
+    : null;
+
+  if (_heroUrl) {
+    return '' +
+      '<div class="fx-hero-avatar-card is-fixeo-hero">' +
+        '<img class="fx-hero-avatar-img" src="' + escapeHtml(_heroUrl) + '" alt="' + escapeHtml(name) + '" loading="lazy"' +
+          ' onerror="this.style.display=\'none\';var e=this.nextElementSibling;if(e)e.style.display=\'flex\'">' +
+        '<div class="fx-hero-avatar-emoji" style="display:none">' + fallbackEmoji + '</div>' +
+        '<span class="fx-hero-avatar-check">✓</span>' +
+      '</div>';
+  }
+
+  /* Priority 3 — emoji fallback (unchanged) */
   return '' +
     '<div class="fx-hero-avatar-card is-fixeo-hero">' +
       '<div class="fx-hero-avatar-emoji">' + fallbackEmoji + '</div>' +
