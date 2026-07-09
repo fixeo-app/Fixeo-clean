@@ -1319,6 +1319,38 @@ document.addEventListener('visibilitychange', function () {
           }
         }
 
+        /* Hero avatar (PATH B) — fxhv2a.
+         * Inject only when: no real photo, no hero img already present,
+         * and FixeoHeroes resolves a URL for the artisan's category/service.
+         * Target: .fx-hero-avatar-wrap > .fx-hero-avatar-card (NOT .public-avatar-wrap).
+         * The V2A CSS gate (.public-avatar-wrap:not(.has-real-avatar)) never fires
+         * on .fx-hero-avatar-wrap, so this is always safe regardless of data-v2a-done. */
+        if (!artisan.photo_url) {
+          var _avatarWrapB = hero && hero.querySelector('.fx-hero-avatar-wrap');
+          var _existingHeroImg = _avatarWrapB && _avatarWrapB.querySelector('.fx-hero-avatar-img');
+          if (_avatarWrapB && !_existingHeroImg && window.FixeoHeroes) {
+            var _heroUrlB = window.FixeoHeroes.getAvatar(
+              (artisan.category) || (artisan.service) || ''
+            );
+            if (_heroUrlB) {
+              var _card = _avatarWrapB.querySelector('.fx-hero-avatar-card');
+              if (_card) {
+                var _hImg = document.createElement('img');
+                _hImg.className = 'fx-hero-avatar-img';
+                _hImg.alt       = escapeHtml(artisan.name || '');
+                _hImg.src       = _heroUrlB;
+                _hImg.setAttribute('loading', 'lazy');
+                _hImg.onerror   = function () {
+                  this.style.display = 'none';
+                  var _em = this.nextElementSibling;
+                  if (_em) _em.style.display = 'flex';
+                };
+                _card.insertBefore(_hImg, _card.firstChild);
+              }
+            }
+          }
+        }
+
         /* SEO meta — no DOM impact */
         try {
           updateSeoMeta({
