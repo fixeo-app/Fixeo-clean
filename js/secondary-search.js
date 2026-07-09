@@ -166,7 +166,10 @@
     const isAvail = avail === 'available';
     const catLbl  = CAT_LABELS[a.category] || (a.category || 'Service');
     const rating  = parseFloat(a.rating) || 4.8;
-    const avatar  = a.avatar || a.photo || a.image || 'default-avatar.jpg';
+    /* fxhv2a: Hero avatar fallback for ssb2 card */
+    var _ssb2Photo = a.avatar || a.photo || a.image || '';
+    var _ssb2Hero  = (!_ssb2Photo && window.FixeoHeroes) ? window.FixeoHeroes.getAvatar(a.category || a.service || '') : null;
+    const avatar   = _ssb2Photo || _ssb2Hero || 'default-avatar.jpg';
     const badgeHtml = [
       (a.badges || []).includes('verified') ? '<span class="ssb2-badge">✅ Vérifié</span>' : '',
       (a.trustScore || 0) >= 85 ? `<span class="ssb2-badge trust">🛡 ${a.trustScore}%</span>` : '',
@@ -257,9 +260,12 @@
 
     /* Avatar — large service icon + small badge overlay (Task 1) */
     const avatarSrc = a.avatar || a.photo || a.photo_url || '';
+    /* fxhv2a: Hero avatar fallback for pvc card */
+    const _pvcHeroUrl = (!avatarSrc && window.FixeoHeroes) ? window.FixeoHeroes.getAvatar(a.category || a.service || '') : null;
+    const _pvcSrc = avatarSrc || _pvcHeroUrl || '';
     const _iconBadge = '<span class="pvc-avatar-badge" aria-hidden="true">' + catIcon + '</span>';
-    const avatarHtml = avatarSrc
-      ? '<img class="pvc-avatar-img" src="' + avatarSrc + '" alt="' + _esc2(a.name) + '" loading="lazy" onerror="this.onerror=null;this.style.display=\'none\';this.nextSibling&&(this.nextSibling.style.display=\'flex\');"/><span class="pvc-avatar-icon" style="display:none">' + catIcon + '</span>'
+    const avatarHtml = _pvcSrc
+      ? '<img class="pvc-avatar-img" src="' + _pvcSrc + '" alt="' + _esc2(a.name) + '" loading="lazy" onerror="this.onerror=null;this.style.display=\'none\';this.nextSibling&&(this.nextSibling.style.display=\'flex\');"/><span class="pvc-avatar-icon" style="display:none">' + catIcon + '</span>'
       : '<span class="pvc-avatar-icon">' + catIcon + '</span>';
 
     /* Avail */

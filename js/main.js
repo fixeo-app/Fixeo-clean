@@ -1269,10 +1269,16 @@ function buildOtherArtisanCard(a) {
       <div class="result-top" style="align-items:flex-start;gap:1rem;margin-bottom:8px">
         ${(function(){
           /* av-unity-1: consistent initials avatar — same ig-gradient as profile hero & modal */
+          /* fxhv2a: inject Hero avatar when no real photo */
           var _ph = a.avatar || a.photo || a.image;
           var _in = a.initials || 'FA';
           if (_ph) {
             return '<img class="artisan-avatar artisan-avatar-image" src="'+_ph+'" alt="'+a.name+'" loading="lazy" style="border:2px solid rgba(255,255,255,.14);box-shadow:0 10px 28px rgba(0,0,0,.18)">';
+          }
+          var _heroUrl = window.FixeoHeroes ? window.FixeoHeroes.getAvatar(a.category || a.service || '') : null;
+          if (_heroUrl) {
+            return '<img class="artisan-avatar artisan-avatar-image fx-hero-card-img" src="'+_heroUrl+'" alt="'+a.name+'" loading="lazy" style="border:2px solid rgba(255,255,255,.14);box-shadow:0 10px 28px rgba(0,0,0,.18);object-fit:cover" onerror="this.style.display=\'none\';this.nextElementSibling&&(this.nextElementSibling.style.display=\'flex\');">'
+            + '<div class="artisan-avatar artisan-av-initials" style="display:none;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#E1306C 0%,#833AB4 60%,#405DE6 100%);border:2px solid rgba(255,255,255,.14);box-shadow:0 10px 28px rgba(0,0,0,.18);align-items:center;justify-content:center;font-weight:800;font-size:1.1rem;color:#fff;letter-spacing:-.01em;flex-shrink:0">'+_in+'</div>';
           }
           return '<div class="artisan-avatar artisan-av-initials" style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#E1306C 0%,#833AB4 60%,#405DE6 100%);border:2px solid rgba(255,255,255,.14);box-shadow:0 10px 28px rgba(0,0,0,.18);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.1rem;color:#fff;letter-spacing:-.01em;flex-shrink:0">'+_in+'</div>';
         })()}
@@ -1529,7 +1535,14 @@ function openArtisanModal(id) {
       <button class="modal-close" onclick="closeModal('artisan-modal')">✕</button>
     </div>
     <div style="display:flex;gap:1.5rem;flex-wrap:wrap;margin-bottom:1.5rem">
-      <div class="artisan-avatar-placeholder" style="width:80px;height:80px;font-size:1.8rem">${a.initials}</div>
+      ${(function(){
+        /* fxhv2a: Hero avatar in modal when no real photo */
+        var _mph = a.avatar || a.photo || a.image;
+        if (_mph) return '<img class="artisan-avatar-placeholder" src="'+_mph+'" alt="'+a.name+'" style="width:80px;height:80px;border-radius:50%;object-fit:cover">';
+        var _mhero = window.FixeoHeroes ? window.FixeoHeroes.getAvatar(a.category || a.service || '') : null;
+        if (_mhero) return '<img class="artisan-avatar-placeholder fx-hero-modal-img" src="'+_mhero+'" alt="'+a.name+'" loading="lazy" style="width:80px;height:80px;border-radius:50%;object-fit:cover" onerror="this.style.display=\'none\'">';
+        return '<div class="artisan-avatar-placeholder" style="width:80px;height:80px;font-size:1.8rem">'+a.initials+'</div>';
+      })()} 
       <div style="flex:1">
         <div style="font-size:1.1rem;font-weight:700;margin-bottom:.25rem">${a.name}</div>
         <div style="color:rgba(255,255,255,.6);font-size:.85rem;margin-bottom:.5rem">${getCategoryLabel(a.category,lang)} · ${a.city}</div>

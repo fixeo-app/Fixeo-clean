@@ -245,8 +245,11 @@
     // ── Avatar ──────────────────────────────────────────────────
     var initials  = _ucInitials(artisan.name);
     var avatarSrc = artisan.avatar||artisan.photo||artisan.photo_url||'';
-    var avatarInner = avatarSrc
-      ? '<img src="'+avatarSrc+'" alt="'+_ucEsc(artisan.name)+'" loading="lazy"'
+    /* fxhv2a: Hero avatar fallback for urgent results */
+    var _ucHeroUrl = (!avatarSrc && window.FixeoHeroes) ? window.FixeoHeroes.getAvatar(artisan.category||artisan.service||'') : null;
+    var _ucSrc = avatarSrc || _ucHeroUrl || '';
+    var avatarInner = _ucSrc
+      ? '<img src="'+_ucSrc+'" alt="'+_ucEsc(artisan.name)+'" loading="lazy"'
           +' style="width:100%;height:100%;object-fit:cover;border-radius:50%"'
           +' onerror="this.onerror=null;this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\';">'
           +'<span class="fxu-initials" style="display:none;width:100%;height:100%;align-items:center;justify-content:center;font-weight:800;font-size:1rem;letter-spacing:.02em;color:#fff">'+initials+'</span>'
