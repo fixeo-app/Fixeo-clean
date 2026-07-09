@@ -1,132 +1,185 @@
 (function () {
-  "use strict";
+  'use strict';
 
-  const HERO_BASE = "/heroes";
+  /* FixeoHeroes V2 — Pure data provider. Zero DOM access.
+   *
+   * Contract:
+   *   window.FixeoHeroes.getAvatar(category)  → URL string or null
+   *   window.FixeoHeroes.hasHero(category)    → boolean
+   *   window.FixeoHeroes.getHero(category, asset) → URL string or null
+   *
+   * Returns null (not a default) when category is unknown or empty.
+   * Caller decides the fallback behaviour.
+   *
+   * Backward-compat aliases retained:
+   *   window.FIXEO_HEROES.get(category, asset) → URL or null
+   *   window.getFixeoHero(category, asset)     → URL or null
+   */
 
-  const ASSETS = [
-    "avatar",
-    "square",
-    "bust",
-    "tool",
-    "arms",
-    "welcome",
-    "thumbsup",
-    "sticker"
-  ];
+  var HERO_BASE = '/heroes';
 
-  const HERO_PACKS = {
-    plomberie: "plomberie",
-    electricite: "electricite",
-    climatisation: "climatisation",
-
-    serrurerie: "plomberie",
-    menuiserie: "plomberie",
-    peinture: "plomberie",
-    nettoyage: "plomberie",
-    jardinage: "plomberie",
-    maconnerie: "plomberie",
-    carrelage: "plomberie",
-    bricolage: "plomberie",
-    chauffage: "climatisation",
-    toiture: "plomberie",
-    vitrerie: "plomberie",
-    demenagement: "plomberie",
-    securite: "electricite",
-    energie_solaire: "electricite",
-    corporate: "plomberie"
+  /* Primary avatar filename for each active category folder.
+   * All files are .jpg — actual filenames on disk. */
+  var AVATAR_MAP = {
+    plomberie:     'avatar-presenting-transparent.jpg',
+    electricite:   'avatar-presenting-transparent.jpg',
+    climatisation: 'avatar-presenting-transparent.jpg'
   };
 
-  const ALIASES = {
-    plombier: "plomberie",
-    plomberie: "plomberie",
-    plumbing: "plomberie",
-
-    electricien: "electricite",
-    electricite: "electricite",
-    électricité: "electricite",
-    electrical: "electricite",
-
-    clim: "climatisation",
-    climatisation: "climatisation",
-    hvac: "climatisation",
-    "air conditioning": "climatisation",
-    chauffage: "chauffage",
-
-    serrurier: "serrurerie",
-    serrurerie: "serrurerie",
-
-    menuisier: "menuiserie",
-    menuiserie: "menuiserie",
-
-    peintre: "peinture",
-    peinture: "peinture",
-
-    nettoyage: "nettoyage",
-    jardinage: "jardinage",
-    maconnerie: "maconnerie",
-    maçonnerie: "maconnerie",
-    carrelage: "carrelage",
-    bricolage: "bricolage",
-    toiture: "toiture",
-    vitrerie: "vitrerie",
-    demenagement: "demenagement",
-    déménagement: "demenagement",
-    securite: "securite",
-    sécurité: "securite",
-    surveillance: "securite",
-    solaire: "energie_solaire",
-    energie: "energie_solaire",
-    "energie solaire": "energie_solaire",
-    "énergie solaire": "energie_solaire",
-    corporate: "corporate"
+  /* Additional named assets per category (for getHero(category, asset)). */
+  /* Keys are post-_normalize() form: lowercase, ASCII, no hyphens/punctuation, spaces→removed. */
+  var ASSET_MAP = {
+    plomberie: {
+      'avatar':                    'avatar-presenting-transparent.jpg',
+      'avatararmscrossed':         'avatar-arms-crossed-transparent.jpg',
+      'avatardefault':             'avatar-default.jpg',
+      'avatarthumbsuptoolbox':     'avatar-thumbs-up-toolbox-transparent.jpg',
+      'avatarthumbsupwrench':      'avatar-thumbs-up-wrench-transparent.jpg',
+      'avatartransparent':         'avatar-transparent.jpg',
+      'avatarwrench':              'avatar-wrench-transparent.jpg',
+      'avatarround':               'avatar-round.jpg',
+      'fallback':                  'fallback.jpg'
+    }
   };
 
-  function normalizeKey(value) {
-    return String(value || "")
+  /* Category folder routing — slug → folder name.
+   * All unmapped slugs fall through to null (caller handles fallback). */
+  var FOLDER_MAP = {
+    plomberie:     'plomberie',
+    electricite:   'electricite',
+    climatisation: 'plomberie',   /* climatisation/ assets pending */
+    serrurerie:    'plomberie',
+    menuiserie:    'plomberie',
+    peinture:      'plomberie',
+    nettoyage:     'plomberie',
+    jardinage:     'plomberie',
+    maconnerie:    'plomberie',
+    carrelage:     'plomberie',
+    bricolage:     'plomberie',
+    chauffage:     'plomberie',
+    toiture:       'plomberie',
+    vitrerie:      'plomberie',
+    demenagement:  'plomberie',
+    securite:      'plomberie',
+    energie:       'plomberie',
+    corporate:     'plomberie'
+  };
+
+  /* Alias table — raw category string variants → canonical slug. */
+  var ALIAS_MAP = {
+    /* Plomberie */
+    'plombier':           'plomberie',
+    'plomberie':          'plomberie',
+    'plumbing':           'plomberie',
+    /* Electricité */
+    'electricien':        'electricite',
+    'electricite':        'electricite',
+    'electricite ':       'electricite',
+    'electrical':         'electricite',
+    /* Climatisation */
+    'clim':               'climatisation',
+    'climatisation':      'climatisation',
+    'hvac':               'climatisation',
+    'air conditioning':   'climatisation',
+    'chauffage':          'chauffage',
+    /* Serrurerie */
+    'serrurier':          'serrurerie',
+    'serrurerie':         'serrurerie',
+    /* Menuiserie */
+    'menuisier':          'menuiserie',
+    'menuiserie':         'menuiserie',
+    /* Peinture */
+    'peintre':            'peinture',
+    'peinture':           'peinture',
+    /* Others */
+    'nettoyage':          'nettoyage',
+    'jardinage':          'jardinage',
+    'maconnerie':         'maconnerie',
+    'carrelage':          'carrelage',
+    'bricolage':          'bricolage',
+    'toiture':            'toiture',
+    'vitrerie':           'vitrerie',
+    'demenagement':       'demenagement',
+    'securite':           'securite',
+    'surveillance':       'securite',
+    'solaire':            'energie',
+    'energie solaire':    'energie',
+    'corporate':          'corporate'
+  };
+
+  /* Normalize any raw category string to a lowercase ASCII slug. */
+  function _normalize(value) {
+    return String(value || '')
       .toLowerCase()
       .trim()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/[^a-z0-9 ]/g, "")
-      .replace(/\s+/g, " ");
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')  /* strip combining diacritics */
+      .replace(/[^a-z0-9 ]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
   }
 
-  function resolveCategory(category) {
-    const key = normalizeKey(category);
-    return ALIASES[key] || key || "plomberie";
+  /* Resolve a raw category string to a canonical slug.
+   * Returns null when no match found — never a default. */
+  function _resolveSlug(category) {
+    var key = _normalize(category);
+    if (!key) return null;
+    var slug = ALIAS_MAP[key];
+    if (slug) return slug;
+    /* Direct match against known slugs (already normalized input) */
+    if (FOLDER_MAP.hasOwnProperty(key)) return key;
+    return null;
   }
 
-  function resolveAsset(asset) {
-    const key = normalizeKey(asset).replace(/\s+/g, "");
-    return ASSETS.includes(key) ? key : "avatar";
+  /* ── Public API ───────────────────────────────────────────────────── */
+
+  /* getAvatar(category)
+   * Returns the primary avatar URL for the category, or null if unknown.
+   * Never returns a default — caller decides the fallback. */
+  function getAvatar(category) {
+    var slug = _resolveSlug(category);
+    if (!slug) return null;
+    var folder = FOLDER_MAP[slug];
+    if (!folder) return null;
+    var filename = AVATAR_MAP[folder] || AVATAR_MAP['plomberie'];
+    if (!filename) return null;
+    return HERO_BASE + '/' + folder + '/' + filename;
   }
 
-  function getFixeoHero(category, asset) {
-    const resolvedCategory = resolveCategory(category);
-    const assetKey = resolveAsset(asset || "avatar");
-    const folder = HERO_PACKS[resolvedCategory] || "plomberie";
-
-    return ${HERO_BASE}/${folder}/${assetKey}.webp;
+  /* hasHero(category)
+   * Returns true when getAvatar() would return a non-null URL. */
+  function hasHero(category) {
+    return getAvatar(category) !== null;
   }
 
-  function hasFixeoHeroPack(category) {
-    const resolvedCategory = resolveCategory(category);
-    return ["plomberie", "electricite", "climatisation"].includes(
-      HERO_PACKS[resolvedCategory]
-    );
+  /* getHero(category, asset)
+   * Returns a specific named asset URL, or null if not found.
+   * Falls back to primary avatar when asset name unrecognised. */
+  function getHero(category, asset) {
+    var slug = _resolveSlug(category);
+    if (!slug) return null;
+    var folder = FOLDER_MAP[slug];
+    if (!folder) return null;
+    var assetKey = _normalize(asset || 'avatar');
+    var assets = ASSET_MAP[folder];
+    var filename = (assets && assets[assetKey]) || AVATAR_MAP[folder];
+    if (!filename) return null;
+    return HERO_BASE + '/' + folder + '/' + filename;
   }
 
-  window.FIXEO_HEROES = {
-    base: HERO_BASE,
-    assets: ASSETS,
-    packs: HERO_PACKS,
-    aliases: ALIASES,
-    normalizeKey,
-    resolveCategory,
-    resolveAsset,
-    get: getFixeoHero,
-    hasPack: hasFixeoHeroPack
+  /* ── Expose ───────────────────────────────────────────────────────── */
+
+  window.FixeoHeroes = {
+    getAvatar: getAvatar,
+    hasHero:   hasHero,
+    getHero:   getHero
   };
 
-  window.getFixeoHero = getFixeoHero;
+  /* Backward-compat aliases — keep existing callers working. */
+  window.FIXEO_HEROES = {
+    get: getHero,
+    hasPack: hasHero
+  };
+  window.getFixeoHero = getHero;
+
 })();

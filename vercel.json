@@ -44,6 +44,10 @@
     {
       "src": "data/**",
       "use": "@vercel/static"
+    },
+    {
+      "src": "heroes/**",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
