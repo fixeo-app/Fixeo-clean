@@ -140,9 +140,197 @@ const CITY_URL_SLUG = {
   'tetouan': 'tetouan',
 };
 
-/* ── Avatar color → RAFI asset map ── */
-/* When no real photo: use RAFI V2 BlackSilhouette as neutral fallback. */
+/* ══════════════════════════════════════════════════════════════════════
+   FIXEO HEROES — Category-aware hero selection
+   ══════════════════════════════════════════════════════════════════════
+   Architecture:
+     Each category maps to a named "hero slot" (e.g. Hero_01_MasterPlumber).
+     The slot resolves to the best available on-disk asset for that category.
+
+   V3 upgrade path (when Hero_01_MasterPlumber.png etc. are delivered):
+     1. Add the file under heroes/{category}/Hero_01_MasterPlumber.png
+     2. Update the `filename` value in HERO_SLOT_MAP below.
+     3. No other code change required — the selection logic is already here.
+
+   Current state (Phase 2A):
+     - plomberie:     heroes/plomberie/avatar-presenting-transparent.jpg   (real asset on disk)
+     - electricite:   heroes/electricite/avatar-presenting-transparent.jpg  (real asset on disk)
+     - climatisation: routes to plomberie (own pack pending)
+     - serrurerie:    routes to plomberie (own pack pending)
+     - menuiserie:    routes to plomberie (own pack pending)
+     - peinture:      routes to plomberie (own pack pending)
+     - maconnerie:    routes to plomberie (own pack pending)
+     - jardinage:     routes to plomberie (own pack pending)
+     - nettoyage:     routes to plomberie (own pack pending)
+     - unknown:       RAFI_V2_BlackSilhouette.png (neutral silhouette)
+
+   Selection priority (per artisan):
+     1. artisan.photo_url — real uploaded photo (if non-null and non-empty)
+     2. Category hero (from HERO_SLOT_MAP)
+     3. RAFI BlackSilhouette (if category is completely unknown)
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── Universal fallback ── */
 const RAFI_FALLBACK_URL = '/rafi/RAFI_V2_BlackSilhouette.png';
+
+/* ── Hero slot map ──────────────────────────────────────────────────────
+   Each entry defines:
+     slot:     symbolic name (matches future V3 naming convention)
+     folder:   sub-directory under /heroes/
+     filename: current best available file in that folder
+   ──────────────────────────────────────────────────────────────────────
+   To upgrade to V3: replace `filename` with the V3 filename and add the
+   file to heroes/{folder}/. The slot name and folder never change.
+   ────────────────────────────────────────────────────────────────────── */
+const HERO_SLOT_MAP = {
+  /* Slot 01 — Master Plumber */
+  plomberie: {
+    slot:     'Hero_01_MasterPlumber',
+    folder:   'plomberie',
+    filename: 'avatar-presenting-transparent.jpg',  /* V3 target: Hero_01_MasterPlumber.png */
+  },
+  /* Slot 02 — Master Electrician */
+  electricite: {
+    slot:     'Hero_02_MasterElectrician',
+    folder:   'electricite',
+    filename: 'avatar-presenting-transparent.jpg',  /* V3 target: Hero_02_MasterElectrician.png */
+  },
+  /* Slot 03 — Master Locksmith (own pack pending → plomberie fallback) */
+  serrurerie: {
+    slot:     'Hero_03_MasterLocksmith',
+    folder:   'plomberie',                          /* V3 target folder: serrurerie */
+    filename: 'avatar-presenting-transparent.jpg',  /* V3 target: Hero_03_MasterLocksmith.png */
+  },
+  /* Slot 04 — Master HVAC (own pack pending → plomberie fallback) */
+  climatisation: {
+    slot:     'Hero_04_MasterHVAC',
+    folder:   'plomberie',                          /* V3 target folder: climatisation */
+    filename: 'avatar-presenting-transparent.jpg',  /* V3 target: Hero_04_MasterHVAC.png */
+  },
+  /* Slot 05 — Master Carpenter (own pack pending → plomberie fallback) */
+  menuiserie: {
+    slot:     'Hero_05_MasterCarpenter',
+    folder:   'plomberie',                          /* V3 target folder: menuiserie */
+    filename: 'avatar-presenting-transparent.jpg',  /* V3 target: Hero_05_MasterCarpenter.png */
+  },
+  /* Slot 06 — Master Painter (own pack pending → plomberie fallback) */
+  peinture: {
+    slot:     'Hero_06_MasterPainter',
+    folder:   'plomberie',                          /* V3 target folder: peinture */
+    filename: 'avatar-presenting-transparent.jpg',  /* V3 target: Hero_06_MasterPainter.png */
+  },
+  /* Slot 07 — Master Mason (own pack pending → plomberie fallback) */
+  maconnerie: {
+    slot:     'Hero_07_MasterMason',
+    folder:   'plomberie',                          /* V3 target folder: maconnerie */
+    filename: 'avatar-presenting-transparent.jpg',  /* V3 target: Hero_07_MasterMason.png */
+  },
+  /* Slot 08 — Master Gardener (own pack pending → plomberie fallback) */
+  jardinage: {
+    slot:     'Hero_08_MasterGardener',
+    folder:   'plomberie',                          /* V3 target folder: jardinage */
+    filename: 'avatar-presenting-transparent.jpg',  /* V3 target: Hero_08_MasterGardener.png */
+  },
+  /* Slot 09 — Master Cleaning (own pack pending → plomberie fallback) */
+  nettoyage: {
+    slot:     'Hero_09_MasterCleaning',
+    folder:   'plomberie',                          /* V3 target folder: nettoyage */
+    filename: 'avatar-presenting-transparent.jpg',  /* V3 target: Hero_09_MasterCleaning.png */
+  },
+};
+
+/* ── Category normalizer → canonical hero key ──────────────────────────
+   Maps every raw category string variant from Supabase to a key in HERO_SLOT_MAP.
+   Any unmapped category returns null → falls back to RAFI_FALLBACK_URL.
+   ────────────────────────────────────────────────────────────────────── */
+const CATEGORY_TO_HERO_KEY = {
+  /* Plomberie */
+  'plomberie':          'plomberie',
+  'plombier':           'plomberie',
+  /* Électricité */
+  'électricité':        'electricite',
+  'electricite':        'electricite',
+  'electricité':        'electricite',
+  'électricite':        'electricite',
+  'electricite_generale': 'electricite',
+  'electricien':        'electricite',
+  /* Serrurerie */
+  'serrurerie':         'serrurerie',
+  'serrurier':          'serrurerie',
+  /* Climatisation */
+  'climatisation':      'climatisation',
+  'clim':               'climatisation',
+  'chauffage':          'climatisation',
+  /* Menuiserie */
+  'menuiserie':         'menuiserie',
+  'menuisier':          'menuiserie',
+  /* Peinture */
+  'peinture':           'peinture',
+  'peintre':            'peinture',
+  /* Maçonnerie */
+  'maconnerie':         'maconnerie',
+  'maçonnerie':         'maconnerie',
+  'carrelage':          'maconnerie',
+  /* Jardinage */
+  'jardinage':          'jardinage',
+  /* Nettoyage */
+  'nettoyage':          'nettoyage',
+};
+
+/* ── Resolve category string → hero URL ────────────────────────────────
+   Normalizes the raw category string (strips accents, lowercase, trim),
+   looks up the hero slot, returns the absolute /heroes/… path.
+   Returns null if category is unknown — caller should use RAFI_FALLBACK_URL.
+   ────────────────────────────────────────────────────────────────────── */
+function resolveHeroUrl(category) {
+  if (!category) return null;
+
+  /* Normalize: lowercase, strip diacritics, strip non-alpha-space */
+  const normalized = String(category)
+    .toLowerCase()
+    .trim()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')  /* remove combining diacritics */
+    .replace(/[^a-z0-9 _]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  const heroKey = CATEGORY_TO_HERO_KEY[normalized] || null;
+  if (!heroKey) return null;
+
+  const slot = HERO_SLOT_MAP[heroKey];
+  if (!slot) return null;
+
+  return `/heroes/${slot.folder}/${slot.filename}`;
+}
+
+/* ── Resolve the single image to use for a given artisan ───────────────
+   Priority:
+     1. photo_url  — real uploaded photo (non-null, non-empty string)
+     2. Hero slot  — category-matched hero from HERO_SLOT_MAP
+     3. RAFI_FALLBACK_URL — BlackSilhouette for completely unknown category
+
+   This function is the canonical resolver for og:image, twitter:image,
+   JSON-LD image, and the visible <img> element. All four always receive
+   the same URL — guaranteed by calling this once and reusing the result.
+   ────────────────────────────────────────────────────────────────────── */
+function resolveArtisanImage(artisan) {
+  /* Step 1 — Real photo */
+  const photo = artisan.photo_url;
+  if (photo && typeof photo === 'string' && photo.trim().length > 0) {
+    return { url: photo.trim(), isReal: true, isHero: false, isFallback: false };
+  }
+
+  /* Step 2 — Category hero */
+  const category = artisan.category || artisan.service_category || '';
+  const heroUrl = resolveHeroUrl(category);
+  if (heroUrl) {
+    return { url: heroUrl, isReal: false, isHero: true, isFallback: false };
+  }
+
+  /* Step 3 — RAFI BlackSilhouette (completely unknown category) */
+  return { url: RAFI_FALLBACK_URL, isReal: false, isHero: false, isFallback: true };
+}
 
 /* ── HTML escape ── */
 function esc(str) {
@@ -271,8 +459,6 @@ function buildProfileHtml(artisan) {
   const category   = artisan.category || artisan.service_category || '';
   const label      = svcLabel(category);
   const slug       = artisan.public_slug || '';
-  const photo      = artisan.photo_url || null;
-  const hasPhoto   = !!photo;
   const services   = Array.isArray(artisan.services) ? artisan.services : [];
   const priceLabel = esc(artisan.price_label || '');
   const workZone   = esc(artisan.work_zone || '');
@@ -281,6 +467,17 @@ function buildProfileHtml(artisan) {
   const respTime   = artisan.response_time_min || 30;
   const isClaimed  = artisan.claimed || false;
   const description = artisan.description || '';
+
+  /* ── Single image resolution — canonical source for ALL image references ──
+     Resolves once; og:image, twitter:image, JSON-LD image, and <img> src
+     all use this exact same value. No divergence possible.               */
+  const imageRes = resolveArtisanImage(artisan);
+  /* Absolute URL for OG/Twitter/JSON-LD (must include domain) */
+  const absoluteImageUrl = imageRes.url.startsWith('http')
+    ? imageRes.url
+    : `https://www.fixeo.ma${imageRes.url}`;
+  /* Relative URL for the <img> src (served from same origin) */
+  const imgSrc = imageRes.url;
 
   /* Canonical URL */
   const canonicalUrl = `https://www.fixeo.ma/artisan/${esc(slug)}`;
@@ -291,9 +488,6 @@ function buildProfileHtml(artisan) {
   /* Meta description */
   const metaDesc = `${label} à ${city} — ${name}. ${esc(description.replace(/\.$/, ''))}. Profil sur Fixeo.ma.`;
 
-  /* OG image: real photo OR RAFI fallback */
-  const ogImage = hasPhoto ? esc(photo) : `https://www.fixeo.ma${RAFI_FALLBACK_URL}`;
-
   /* LP link for breadcrumb */
   const lpHref = lpUrl(category, rawCity) || 'https://www.fixeo.ma/services.html';
   const lpText = `${label}s à ${city}`;
@@ -301,7 +495,7 @@ function buildProfileHtml(artisan) {
   /* Related internal links */
   const relLinks = buildRelatedLinks(artisan);
 
-  /* JSON-LD */
+  /* JSON-LD — image uses absoluteImageUrl (same resolved value, absolute) */
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -311,7 +505,7 @@ function buildProfileHtml(artisan) {
         'name': escJson(name),
         'description': escJson(description),
         'url': canonicalUrl,
-        'image': ogImage,
+        'image': absoluteImageUrl,           /* ← same resolved image */
         'areaServed': { '@type': 'City', 'name': escJson(artisan.city || '') },
         'serviceType': escJson(label),
         'provider': {
@@ -363,27 +557,49 @@ function buildProfileHtml(artisan) {
     ]
   };
 
-  /* Photo or RAFI fallback section */
-  const photoSection = hasPhoto
-    ? `<div class="ssp-avatar-wrap">
+  /* ── Visible image section ──────────────────────────────────────────
+     isReal   → real circular photo with ring border
+     isHero   → category hero (square/transparent, slightly larger)
+     isFallback → RAFI silhouette (neutral, aria-hidden)
+     ────────────────────────────────────────────────────────────────── */
+  let photoSection;
+  if (imageRes.isReal) {
+    /* Real artisan photo */
+    photoSection = `<div class="ssp-avatar-wrap">
         <img class="ssp-avatar"
-             src="${esc(photo)}"
+             src="${esc(imgSrc)}"
              alt="${name}, ${esc(label)} à ${city}"
              width="120" height="120"
              loading="eager"
              fetchpriority="high"
-             decoding="async">
-      </div>`
-    : `<div class="ssp-avatar-wrap ssp-avatar-wrap--fallback">
+             decoding="async"
+             onerror="this.style.display='none'">
+      </div>`;
+  } else if (imageRes.isHero) {
+    /* Category hero — slightly larger, no circular crop */
+    photoSection = `<div class="ssp-avatar-wrap ssp-avatar-wrap--hero">
+        <img class="ssp-hero-img"
+             src="${esc(imgSrc)}"
+             alt="${name}, ${esc(label)}"
+             width="140" height="140"
+             loading="eager"
+             fetchpriority="high"
+             decoding="async"
+             onerror="this.style.display='none'">
+      </div>`;
+  } else {
+    /* RAFI BlackSilhouette — completely unknown category */
+    photoSection = `<div class="ssp-avatar-wrap ssp-avatar-wrap--fallback">
         <img class="rafi-img rafi-img--head ssp-rafi-fallback"
-             src="${RAFI_FALLBACK_URL}"
+             src="${esc(imgSrc)}"
              alt=""
              aria-hidden="true"
-             width="120" height="120"
+             width="100" height="100"
              loading="eager"
              decoding="async"
              onerror="this.style.display='none'">
       </div>`;
+  }
 
   /* Services tags */
   const svcsSection = services.length
@@ -453,12 +669,12 @@ function buildProfileHtml(artisan) {
   <!-- SEO: Robots -->
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
 
-  <!-- Open Graph -->
+  <!-- Open Graph — og:image, twitter:image, JSON-LD image all use the same resolved URL -->
   <meta property="og:type" content="profile">
   <meta property="og:title" content="${esc(title)}">
   <meta property="og:description" content="${esc(metaDesc)}">
   <meta property="og:url" content="${canonicalUrl}">
-  <meta property="og:image" content="${ogImage}">
+  <meta property="og:image" content="${esc(absoluteImageUrl)}">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="${name} — ${esc(label)} à ${city}">
@@ -470,7 +686,7 @@ function buildProfileHtml(artisan) {
   <meta name="twitter:site" content="@FixeoMaroc">
   <meta name="twitter:title" content="${esc(title)}">
   <meta name="twitter:description" content="${esc(metaDesc)}">
-  <meta name="twitter:image" content="${ogImage}">
+  <meta name="twitter:image" content="${esc(absoluteImageUrl)}">
 
   <!-- JSON-LD: ProfessionalService + BreadcrumbList + WebPage -->
   <script type="application/ld+json">
@@ -541,6 +757,14 @@ ${JSON.stringify(jsonLd, null, 2)}
       border: 3px solid rgba(225,48,108,0.5);
     }
     .ssp-avatar-wrap--fallback { opacity: 0.7; }
+    .ssp-avatar-wrap--hero { opacity: 1; }
+    /* Category hero: transparent image, no circular crop */
+    .ssp-hero-img {
+      width: 140px;
+      height: 140px;
+      object-fit: contain;
+      object-position: center bottom;
+    }
     .ssp-rafi-fallback {
       width: 100px;
       height: 100px;
