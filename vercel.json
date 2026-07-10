@@ -48,6 +48,10 @@
     {
       "src": "heroes/**",
       "use": "@vercel/static"
+    },
+    {
+      "src": "rafi/**",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
