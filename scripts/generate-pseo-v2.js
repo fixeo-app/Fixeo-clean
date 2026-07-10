@@ -888,7 +888,7 @@ function updateSitemapIndex() {
     const entry = `
   <!-- Programmatic SEO V2 pages (problems/prices/quartiers) -->
   <sitemap>
-    <loc>https://fixeo.ma/sitemap-pseo.xml</loc>
+    <loc>https://www.fixeo.ma/sitemap-pseo.xml</loc>
     <lastmod>${today}</lastmod>
   </sitemap>`;
     content = content.replace('</sitemapindex>', entry + '\n</sitemapindex>');

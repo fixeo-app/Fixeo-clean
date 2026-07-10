@@ -1,5 +1,18 @@
 {
   "version": 2,
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "fixeo.ma"
+        }
+      ],
+      "destination": "https://www.fixeo.ma/$1",
+      "permanent": true
+    }
+  ],
   "builds": [
     {
       "src": "api/server.js",
@@ -55,6 +68,10 @@
     },
     {
       "src": "api/lp-fn/index.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "api/artisan-profile-fn/index.js",
       "use": "@vercel/node"
     }
   ],
@@ -287,8 +304,12 @@
       "dest": "/api/lp-fn?slug=nettoyage-agadir"
     },
     {
-      "src": "^/artisan/(.*)",
-      "dest": "/artisan-profile.html"
+      "src": "^/artisan/([a-z0-9][a-z0-9-]{3,118}[a-z0-9])$",
+      "dest": "/api/artisan-profile-fn?slug=$1"
+    },
+    {
+      "src": "^/artisan/(.+)$",
+      "dest": "/api/artisan-profile-fn?slug=$1"
     },
     {
       "src": "^/fuite-eau/([a-z][a-z-]*)$",

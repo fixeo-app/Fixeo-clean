@@ -1,5 +1,5 @@
-# SEO-1A: Updated robots.txt — Fixeo
-# Last updated: 2026-05-12
+# SEO-P1: Canonical domain unified to https://www.fixeo.ma
+# Last updated: 2026-07-11
 
 User-agent: *
 
@@ -43,7 +43,5 @@ Allow: /css/
 Allow: /js/fixeo-supabase-loader.js
 
 # Sitemap index (segmented architecture — seo4)
-Sitemap: https://fixeo.ma/sitemap-index.xml
+Sitemap: https://www.fixeo.ma/sitemap-index.xml
 
-# Legacy monolithic sitemap (preserved for redirect compatibility)
-Sitemap: https://fixeo.ma/sitemap.xml
