@@ -70,4 +70,11 @@
     <loc>https://www.fixeo.ma/sitemap-trust.xml</loc>
     <lastmod>2026-06-12</lastmod>
   </sitemap>
+
+  <!-- SSR Local Landing Pages — Phase 3B PoC (6 pages: plombier + electricien + peintre + macon) -->
+  <sitemap>
+    <loc>https://www.fixeo.ma/sitemap-lp-poc.xml</loc>
+    <lastmod>2026-07-10</lastmod>
+  </sitemap>
+
 </sitemapindex>
