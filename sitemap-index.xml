@@ -71,16 +71,11 @@
     <lastmod>2026-06-12</lastmod>
   </sitemap>
 
-  <!-- SSR Local Landing Pages — Phase 3C Production (40 pages: 8 services × Tier-1 cities) -->
-  <sitemap>
-    <loc>https://www.fixeo.ma/sitemap-lp-poc.xml</loc>
-    <lastmod>2026-07-10</lastmod>
-  </sitemap>
-
-  <!-- SSR Local Landing Pages — Phase 3C Production sitemap (40 eligible pages) -->
+  <!-- SSR Local Landing Pages — Phase 3C Production (40 eligible pages: 8 services × 6 Tier-1 cities) -->
+  <!-- sitemap-lp-poc.xml (Phase 3B, 6 pages) is retained in the repository as an archive but is no longer advertised here -->
   <sitemap>
     <loc>https://www.fixeo.ma/sitemap-lp.xml</loc>
-    <lastmod>2026-07-10</lastmod>
+    <lastmod>2026-07-11</lastmod>
   </sitemap>
 
 </sitemapindex>
