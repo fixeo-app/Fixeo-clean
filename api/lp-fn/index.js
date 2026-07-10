@@ -214,6 +214,28 @@ for (const s of PHASE3C_SERVICES) {
   }
 }
 
+/*
+ * Known-zero combinations — confirmed 0 artisans from live Supabase audit (2026-07-10).
+ * These slugs are within PHASE3C_SCOPE (handler accepts them, returns 404 dynamically),
+ * but must NOT appear in related links or the production sitemap.
+ * When new artisans are added to Supabase for these cities/services, remove from this set.
+ */
+const PHASE3C_ZERO_COMBOS = new Set([
+  'serrurier-fes',
+  'serrurier-agadir',
+  'climatisation-fes',
+  'climatisation-agadir',
+  'macon-fes',
+  'macon-agadir',
+  'peintre-agadir',
+  'nettoyage-fes',
+]);
+
+/* Eligible set = scope minus known-zero combos — use for internal links */
+const PHASE3C_ELIGIBLE = new Set(
+  [...PHASE3C_SCOPE].filter(slug => !PHASE3C_ZERO_COMBOS.has(slug))
+);
+
 /* ══════════════════════════════════════════════════════════════════════
    SECTION D — PUBLIC FIELD ALLOWLIST
    phone, owner_user_id, source, experience, legacy_id: NEVER fetched.
@@ -483,11 +505,11 @@ function buildRelatedLinks(serviceSlug, citySlug, service) {
   const currentCity = CITY_REGISTRY[citySlug];
   const currentService = SERVICE_REGISTRY[serviceSlug];
 
-  /* 1. Same service, other Tier 1 cities in scope */
+  /* 1. Same service, other Tier 1 cities — eligible only (excludes known-zero combos) */
   for (const otherCitySlug of PHASE3C_CITIES) {
     if (otherCitySlug === citySlug) continue;
     const scopeKey = `${serviceSlug}-${otherCitySlug}`;
-    if (!PHASE3C_SCOPE.has(scopeKey)) continue;
+    if (!PHASE3C_ELIGIBLE.has(scopeKey)) continue;
     const otherCity = CITY_REGISTRY[otherCitySlug];
     if (!otherCity) continue;
     links.push({
@@ -497,10 +519,10 @@ function buildRelatedLinks(serviceSlug, citySlug, service) {
     });
   }
 
-  /* 2. Related services in the same city (relatedSlugs) */
+  /* 2. Related services in the same city — eligible only (excludes known-zero combos) */
   for (const relSlug of (service.relatedSlugs || [])) {
     const scopeKey = `${relSlug}-${citySlug}`;
-    if (!PHASE3C_SCOPE.has(scopeKey)) continue;
+    if (!PHASE3C_ELIGIBLE.has(scopeKey)) continue;
     const relService = SERVICE_REGISTRY[relSlug];
     if (!relService || !currentCity) continue;
     links.push({
