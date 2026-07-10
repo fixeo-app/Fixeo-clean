@@ -322,83 +322,126 @@ function resolveHeroUrl(category) {
    SECTION B — PHOTO URL SECURITY VALIDATION
    ══════════════════════════════════════════════════════════════════════
 
-   An artisan photo_url overrides the hero ONLY when ALL of the following
-   conditions pass:
+   An artisan photo_url overrides the hero ONLY when ALL conditions below pass.
+   On any failure: silently return null → caller uses hero or RAFI fallback.
 
-     1. Value is a non-empty string.
-     2. Parses successfully as a URL (no throws).
-     3. Protocol is exactly 'https:' (case-insensitive via URL parser).
-     4. Hostname is on the PHOTO_HOSTNAME_ALLOWLIST below.
-     5. Not a data: URL, javascript: URL, localhost, or private-network address.
+   CONDITIONS (in order):
+     1.  Non-empty string.
+     2.  No malformed percent-encoding (decodeURIComponent must not throw).
+     3.  Parses successfully as a URL (no throws).
+     4.  No embedded credentials (username or password in URL is rejected).
+     5.  Protocol is exactly 'https:'.
+     6.  Port: default HTTPS only — explicit port 443 is accepted; any other
+         explicit port (e.g. :8080, :3000) is rejected.
+     7.  Hostname is on PHOTO_HOSTNAME_ALLOWLIST (exact match — no wildcards).
+     8.  Not a private-network or loopback address.
+     9.  Pathname has an approved image extension (.jpg .jpeg .png .webp .avif).
+         Supabase Storage URLs expose the filename in the path
+         (e.g. /storage/v1/object/public/avatars/photo.jpg) so extension
+         validation is reliable without downloading content.
+         If the path has NO extension (e.g. a proxied URL), the URL is
+         rejected — we never guess content type from a live download.
 
-   On any validation failure: silently return null.
-   Caller falls through to hero or RAFI fallback.
+   PHOTO_HOSTNAME_ALLOWLIST (3 entries — exact hostnames, no wildcards):
+     ztwtbgoqanqzvwiibtuh.supabase.co  — FIXEO primary Supabase storage bucket
+     fixeo.ma                           — FIXEO apex domain
+     www.fixeo.ma                       — FIXEO www (canonical)
 
-   PHOTO_HOSTNAME_ALLOWLIST — approved image sources:
-     ztwtbgoqanqzvwiibtuh.supabase.co  — FIXEO Supabase storage (primary)
-     supabase.co                        — generic Supabase (sub-project safety net)
-     fixeo.ma                           — FIXEO own domain
-     www.fixeo.ma                       — FIXEO www
-     fixeo-cdn.com                      — future CDN (reserved)
-     lh3.googleusercontent.com          — Google profile photos (OAuth)
-     avatars.githubusercontent.com      — GitHub avatars (OAuth)
+   Rationale for removals vs Phase 2A.2:
+     *.supabase.co wildcard  — Third parties can create their own Supabase
+                                projects; a wildcard would trust any of them.
+     fixeo-cdn.com           — Reserved / not yet owned or deployed;
+                                trust must be established before use.
+     lh3.googleusercontent.com — OAuth avatar ≠ artisan profile photo;
+                                  Google image URLs expire and are user-scoped.
+     avatars.githubusercontent.com — Same rationale as Google OAuth.
    ══════════════════════════════════════════════════════════════════════ */
 
+/* Exact hostname allowlist — no wildcards, no sub-domain matching */
 const PHOTO_HOSTNAME_ALLOWLIST = new Set([
-  'ztwtbgoqanqzvwiibtuh.supabase.co',
-  'supabase.co',
-  'fixeo.ma',
-  'www.fixeo.ma',
-  'fixeo-cdn.com',
-  'lh3.googleusercontent.com',
-  'avatars.githubusercontent.com',
+  'ztwtbgoqanqzvwiibtuh.supabase.co', /* FIXEO primary Supabase storage */
+  'fixeo.ma',                          /* FIXEO apex domain               */
+  'www.fixeo.ma',                      /* FIXEO www (canonical)           */
 ]);
 
-/* Private / reserved IP ranges that must never be reached */
+/* Private / reserved network ranges (IPv4) */
 const PRIVATE_IP_RE = /^(127\.|10\.|192\.168\.|172\.(1[6-9]|2[0-9]|3[01])\.)/;
 
+/* Approved image extensions for artisan profile photos */
+const ALLOWED_IMG_EXTS = new Set(['.jpg', '.jpeg', '.png', '.webp', '.avif']);
+
 function validatePhotoUrl(raw) {
+  /* 1. Non-empty string */
   if (!raw || typeof raw !== 'string') return null;
   const trimmed = raw.trim();
   if (!trimmed) return null;
 
-  /* Reject data:, javascript:, and other non-http schemes upfront */
+  /* 2. Reject malformed percent-encoding before further parsing */
+  try {
+    decodeURIComponent(trimmed);
+  } catch (_) {
+    return null;
+  }
+
+  /* Early-reject non-http schemes before URL constructor (prevents edge-case bypasses) */
   const lowered = trimmed.toLowerCase();
   if (
-    lowered.startsWith('data:') ||
+    lowered.startsWith('data:')       ||
     lowered.startsWith('javascript:') ||
-    lowered.startsWith('vbscript:') ||
+    lowered.startsWith('vbscript:')   ||
     lowered.startsWith('blob:')
   ) return null;
 
+  /* 3. URL must parse cleanly */
   let parsed;
   try {
     parsed = new URL(trimmed);
   } catch (_) {
-    return null; /* Malformed URL */
+    return null;
   }
 
-  /* Protocol must be https: */
+  /* 4. No embedded credentials */
+  if (parsed.username || parsed.password) return null;
+
+  /* 5. Protocol must be https: */
   if (parsed.protocol !== 'https:') return null;
 
-  /* Hostname must be on the allowlist */
+  /* 6. Port: default HTTPS only.
+        parsed.port is '' when using the scheme default (443 for https:).
+        An explicit ':443' in the URL is normalized to '' by the URL parser,
+        so both https://host/path and https://host:443/path produce port=''.
+        Any other explicit port (e.g. ':8080') produces a non-empty string → reject. */
+  if (parsed.port !== '') return null;
+
+  /* 7. Hostname must be on the exact allowlist */
   const host = parsed.hostname.toLowerCase();
+  if (!PHOTO_HOSTNAME_ALLOWLIST.has(host)) return null;
 
-  /* Supabase sub-project URLs: *.supabase.co */
-  const isSubabase = host.endsWith('.supabase.co');
-
-  if (!PHOTO_HOSTNAME_ALLOWLIST.has(host) && !isSubabase) return null;
-
-  /* Reject private/loopback IPs even if they somehow matched the hostname */
+  /* 8. Reject private-network and loopback addresses */
   if (PRIVATE_IP_RE.test(host) || host === 'localhost' || host === '::1') return null;
 
-  /* Passed all checks */
+  /* 9. Pathname must end with an approved image extension.
+        We lowercase the full pathname before matching to catch .JPG, .JPEG, etc.
+        Supabase Storage always exposes the original filename in the path, so this
+        is reliable without fetching any content. A path with no extension, or an
+        extension outside the approved set (e.g. .svg, .gif, .bmp, .html) is
+        rejected — we never guess content type from a live download.
+
+        SVG is explicitly excluded: SVG files can contain embedded scripts,
+        foreignObject elements, and event handlers — unsafe as artisan photos. */
+  const lowerPath = parsed.pathname.toLowerCase();
+  const lastDot = lowerPath.lastIndexOf('.');
+  if (lastDot === -1) return null; /* No extension at all — reject */
+  const ext = lowerPath.slice(lastDot); /* e.g. '.jpg' */
+  if (!ALLOWED_IMG_EXTS.has(ext)) return null;
+
+  /* All checks passed */
   return trimmed;
 }
 
 /* ── Resolve the single image to use for a given artisan ───────────────
    Priority:
-     1. photo_url — passes validatePhotoUrl() (HTTPS + allowlisted hostname)
+     1. photo_url — passes validatePhotoUrl() (HTTPS + allowlist + ext check)
      2. Category hero — slot available=true in HERO_SLOT_MAP
      3. RAFI BlackSilhouette — unavailable slot OR unknown category
 
