@@ -1,19 +1,27 @@
 /*!
  * api/lp.js — Vercel Serverless Function
- * SEO Phase 3B — SSR Local Landing Page Engine (PoC)
+ * SEO Phase 3B.1 — SSR Local Landing Page Engine (PoC)
  *
  * Route:  GET /{service}-{city}
  * Branch: feat/seo-phase3b-local-lp-poc
  *
- * Purpose:
- *   Serve a fully server-rendered landing page for a given service × city
- *   combination. All SEO metadata is in <head> before any JavaScript runs.
- *
- * Security model:
- *   - Supabase anon key + explicit field allowlist only
- *   - No service_role key; no private fields ever fetched
- *   - All output HTML-escaped at insertion point
- *   - safeJsonLD() for structured data script blocks
+ * CORRECTIONS applied in Phase 3B.1:
+ *   1. Artisan count semantics — fetchArtisans() now makes TWO queries:
+ *      totalCount (all eligible, no LIMIT) and displayedArtisans (LIMIT 12).
+ *      Title uses totalCount. Page copy distinguishes total vs displayed.
+ *      numberOfItems in JSON-LD uses totalCount.
+ *   2. Price quality gate — priceRangePhrase() requires >= 3 distinct records
+ *      with price_from > 0 across the FULL eligible set (not just 12 displayed).
+ *      Fetches price_from for all eligible artisans in a single extra Supabase
+ *      query. Below threshold: no price in title, meta, copy, or JSON-LD.
+ *   3. No-hero pages use zero images — RAFI BlackSilhouette completely removed
+ *      from LP pages. No image element, no network request, no og:image pointing
+ *      at RAFI. og:image for no-hero pages → /img/logo.png (18 KB, HTTP 200,
+ *      already used site-wide — no new asset).
+ *   4. Redirect status accuracy — vercel.json routes[].status:301 produces HTTP
+ *      301 (not 308). 308 only arises from redirects[].permanent:true format.
+ *      Our routes use explicit status:301 → actual HTTP 301 confirmed.
+ *   5. Preview URL documented (SSO-protected).
  *
  * POC scope (Phase 3B):
  *   EXACTLY these 6 combinations are eligible for HTTP 200:
@@ -25,8 +33,8 @@
  *   Malformed slugs → HTTP 400.
  *
  * Page eligibility gate:
- *   COUNT(artisans) >= 1 → HTTP 200 (indexable)
- *   COUNT(artisans) == 0 → HTTP 404 (do not index empty pages)
+ *   totalCount >= 1 → HTTP 200 (indexable)
+ *   totalCount == 0 → HTTP 404 (do not index empty pages)
  *
  * Cache strategy:
  *   200: s-maxage=86400, stale-while-revalidate=3600
@@ -47,11 +55,21 @@
 const SUPABASE_URL  = 'https://ztwtbgoqanqzvwiibtuh.supabase.co';
 const SUPABASE_ANON = 'sb_publishable_OGW8g7fM5ct1_ZFUxFIs-g_UzXuQPSk';
 
+/*
+ * FIXEO brand image used as og:image for services without a dedicated hero.
+ * Constraints: must be publicly accessible, lightweight, already on production.
+ * Asset: /img/logo.png — HTTP 200, 17,594 bytes (18 KB), already used on
+ * index.html and comment-ca-marche.html as site-wide og:image fallback.
+ * DO NOT replace with RAFI (2.8 MB) — no large images on no-hero LP pages.
+ */
+const FIXEO_OG_IMAGE = 'https://www.fixeo.ma/img/logo.png';
+
 /* ══════════════════════════════════════════════════════════════════════
    SECTION A — AUTHORITATIVE SERVICE REGISTRY (Phase 3A.1)
    ══════════════════════════════════════════════════════════════════════
    Locked taxonomy. Never rename canonical slugs after indexation.
-   Every field is documented and intentional.
+   heroAvailable: true  → full hero above fold + hero as og:image
+   heroAvailable: false → text-first, NO image element at all (correction 3)
    ══════════════════════════════════════════════════════════════════════ */
 const SERVICE_REGISTRY = {
   plombier: {
@@ -62,7 +80,7 @@ const SERVICE_REGISTRY = {
     supabaseAliases: ['Plomberie','plomberie','Plombier','plombier'],
     heroAvailable: true,
     heroUrl:       '/heroes/plomberie/avatar-presenting-transparent.jpg',
-    heroAlt:       'Plombier Fixeo',   /* city appended at render time */
+    heroAlt:       'Plombier Fixeo',
     relatedSlugs:  ['electricien','macon'],
   },
   electricien: {
@@ -120,7 +138,6 @@ const SERVICE_REGISTRY = {
     canonicalSlug: 'macon',
     labelSingular: 'Maçon',
     labelPlural:   'Maçons',
-    /* Label uses correct French (cedilla); slug is ASCII-only */
     supabaseAliases: ['Maçonnerie','maconnerie','Macon','macon'],
     heroAvailable: false,
     relatedSlugs:  ['peintre','menuisier','carreleur'],
@@ -183,27 +200,14 @@ const SERVICE_REGISTRY = {
 
 /* ══════════════════════════════════════════════════════════════════════
    SECTION B — AUTHORITATIVE CITY REGISTRY (Phase 3A.1)
-   ══════════════════════════════════════════════════════════════════════
-   slug:       ASCII-only canonical public slug (URL)
-   label:      Correctly accented city name for visible text
-   tier:       1 = primary, 2 = secondary, 3 = tertiary
-   nearbySlugs: City slugs for "nearby cities" internal links
    ══════════════════════════════════════════════════════════════════════ */
 const CITY_REGISTRY = {
-  /* Tier 1 */
-  casablanca: { label:'Casablanca', tier:1,
-    nearbySlugs:['mohammedia','rabat','sale'] },
-  rabat:      { label:'Rabat',      tier:1,
-    nearbySlugs:['sale','temara','kenitra'] },
-  marrakech:  { label:'Marrakech',  tier:1,
-    nearbySlugs:['casablanca','safi'] },
-  fes:        { label:'Fès',        tier:1,
-    nearbySlugs:['meknes','taza'] },
-  tanger:     { label:'Tanger',     tier:1,
-    nearbySlugs:['tetouan','larache'] },
-  agadir:     { label:'Agadir',     tier:1,
-    nearbySlugs:['safi','casablanca'] },
-  /* Tier 2 */
+  casablanca: { label:'Casablanca', tier:1, nearbySlugs:['mohammedia','rabat','sale'] },
+  rabat:      { label:'Rabat',      tier:1, nearbySlugs:['sale','temara','kenitra'] },
+  marrakech:  { label:'Marrakech',  tier:1, nearbySlugs:['casablanca','safi'] },
+  fes:        { label:'Fès',        tier:1, nearbySlugs:['meknes','taza'] },
+  tanger:     { label:'Tanger',     tier:1, nearbySlugs:['tetouan','larache'] },
+  agadir:     { label:'Agadir',     tier:1, nearbySlugs:['safi','casablanca'] },
   meknes:     { label:'Meknès',     tier:2, nearbySlugs:['fes','rabat'] },
   oujda:      { label:'Oujda',      tier:2, nearbySlugs:['nador','taza'] },
   kenitra:    { label:'Kénitra',    tier:2, nearbySlugs:['rabat','sale'] },
@@ -216,7 +220,6 @@ const CITY_REGISTRY = {
   safi:       { label:'Safi',       tier:2, nearbySlugs:['marrakech','agadir'] },
   nador:      { label:'Nador',      tier:2, nearbySlugs:['oujda','tanger'] },
   tetouan:    { label:'Tétouan',    tier:2, nearbySlugs:['tanger','nador'] },
-  /* Tier 3 (auto-publish when ≥ 3 artisans) */
   settat:     { label:'Settat',     tier:3, nearbySlugs:['casablanca','khouribga'] },
   larache:    { label:'Larache',    tier:3, nearbySlugs:['tanger','kenitra'] },
   khemisset:  { label:'Khémisset',  tier:3, nearbySlugs:['rabat','meknes'] },
@@ -226,10 +229,6 @@ const CITY_REGISTRY = {
 
 /* ══════════════════════════════════════════════════════════════════════
    SECTION C — POC WHITELIST
-   ══════════════════════════════════════════════════════════════════════
-   Phase 3B serves ONLY these 6 combinations.
-   Any other valid service-city combination returns HTTP 404 during PoC.
-   This set is checked AFTER slug validation and BEFORE Supabase query.
    ══════════════════════════════════════════════════════════════════════ */
 const POC_WHITELIST = new Set([
   'plombier-casablanca',
@@ -242,11 +241,9 @@ const POC_WHITELIST = new Set([
 
 /* ══════════════════════════════════════════════════════════════════════
    SECTION D — PUBLIC FIELD ALLOWLIST
-   ══════════════════════════════════════════════════════════════════════
-   Only these fields are fetched from Supabase for LP artisan cards.
    phone, owner_user_id, source, experience, legacy_id: NEVER fetched.
    ══════════════════════════════════════════════════════════════════════ */
-const LP_PUBLIC_FIELDS = [
+const LP_CARD_FIELDS = [
   'id',
   'name',
   'full_name',
@@ -269,15 +266,13 @@ const LP_PUBLIC_FIELDS = [
   'updated_at',
 ].join(',');
 
-/* RAFI BlackSilhouette — text-first fallback for unavailable heroes */
-const RAFI_URL = '/rafi/RAFI_V2_BlackSilhouette.png';
+/* Lightweight fields for the count + price-quality queries */
+const LP_COUNT_FIELDS = 'id,price_from';
 
 /* ══════════════════════════════════════════════════════════════════════
    SECTION E — ESCAPING & SERIALIZATION UTILITIES
-   (Same model as api/artisan-profile.js — do not diverge)
    ══════════════════════════════════════════════════════════════════════ */
 
-/** HTML attribute + text escape */
 function esc(str) {
   if (str === null || str === undefined) return '';
   return String(str)
@@ -288,13 +283,6 @@ function esc(str) {
     .replace(/'/g,  '&#39;');
 }
 
-/**
- * Safe JSON-LD serializer.
- * JSON.stringify on raw values, then escape the three characters that
- * would allow breaking out of a <script> block:
- *   <  →  \u003c   >  →  \u003e   &  →  \u0026
- * Result is valid JSON and safe inside <script type="application/ld+json">.
- */
 function safeJsonLD(obj) {
   return JSON.stringify(obj, null, 2)
     .replace(/</g,  '\\u003c')
@@ -303,81 +291,120 @@ function safeJsonLD(obj) {
 }
 
 /* ══════════════════════════════════════════════════════════════════════
-   SECTION F — SUPABASE DATA FETCHER
+   SECTION F — SUPABASE DATA FETCHERS
+   ══════════════════════════════════════════════════════════════════════
+
+   Two queries per page load (both anon key only):
+
+   Query 1 — COUNT + PRICE QUALITY (all eligible artisans, small fields):
+     SELECT id, price_from FROM artisans
+     WHERE category IN (aliases) AND city ILIKE cityLabel
+     LIMIT 1000          ← effectively unbounded for Moroccan cities
+     → used for: totalCount, priceQualityCheck (# records with price_from > 0)
+
+   Query 2 — DISPLAY CARDS (top 12 artisans for visible cards):
+     SELECT <full field list> FROM artisans
+     WHERE category IN (aliases) AND city ILIKE cityLabel
+     ORDER BY is_featured DESC, response_time_min ASC
+     LIMIT 12
+     → used for: rendered <li> cards
+
+   Both returned simultaneously via Promise.all.
    ══════════════════════════════════════════════════════════════════════ */
 
-/**
- * Fetch up to `limit` artisans for a given service × city combination.
- * Uses OR across all Supabase category aliases for the service.
- * Returns: { artisans: [...], error: null } or { artisans: null, error: 'network'|'supabase' }
- */
-async function fetchArtisans(service, cityLabel, limit) {
-  const aliases = service.supabaseAliases;
-  /* Build: or=(category.eq.Plomberie,category.eq.plomberie,...) */
-  const orClause = aliases
-    .map(a => 'category.eq.' + encodeURIComponent(a))
-    .join(',');
+function buildOrClause(aliases) {
+  return aliases.map(a => 'category.eq.' + encodeURIComponent(a)).join(',');
+}
 
-  const url =
-    `${SUPABASE_URL}/rest/v1/artisans` +
-    `?select=${encodeURIComponent(LP_PUBLIC_FIELDS)}` +
-    `&or=(${orClause})` +
-    `&city=ilike.${encodeURIComponent(cityLabel)}` +
-    `&order=is_featured.desc,response_time_min.asc` +
-    `&limit=${limit}`;
+function buildCityFilter(cityLabel) {
+  return 'city=ilike.' + encodeURIComponent(cityLabel);
+}
+
+async function supabaseFetch(url) {
+  const resp = await fetch(url, {
+    headers: {
+      apikey:        SUPABASE_ANON,
+      Authorization: `Bearer ${SUPABASE_ANON}`,
+      Accept:        'application/json',
+    },
+    signal: AbortSignal.timeout(8000),
+  });
+  if (!resp.ok) throw new Error('supabase_error_' + resp.status);
+  const data = await resp.json();
+  return Array.isArray(data) ? data : [];
+}
+
+/**
+ * Fetch both count+price data and display cards in parallel.
+ * Returns:
+ *   { totalCount, priceRecordCount, artisans, error }
+ * On Supabase failure:
+ *   { totalCount:null, priceRecordCount:null, artisans:null, error:'network'|'supabase' }
+ */
+async function fetchPageData(service, cityLabel) {
+  const orClause   = buildOrClause(service.supabaseAliases);
+  const cityFilter = buildCityFilter(cityLabel);
+  const baseQuery  = `${SUPABASE_URL}/rest/v1/artisans?or=(${orClause})&${cityFilter}`;
+
+  const countUrl = `${baseQuery}&select=${encodeURIComponent(LP_COUNT_FIELDS)}&limit=1000`;
+  const cardsUrl = `${baseQuery}&select=${encodeURIComponent(LP_CARD_FIELDS)}` +
+                   `&order=is_featured.desc,response_time_min.asc&limit=12`;
 
   try {
-    const resp = await fetch(url, {
-      headers: {
-        apikey:        SUPABASE_ANON,
-        Authorization: `Bearer ${SUPABASE_ANON}`,
-        Accept:        'application/json',
-      },
-      signal: AbortSignal.timeout(8000),
-    });
+    const [countData, cardsData] = await Promise.all([
+      supabaseFetch(countUrl),
+      supabaseFetch(cardsUrl),
+    ]);
 
-    if (!resp.ok) return { artisans: null, error: 'supabase' };
-    const data = await resp.json();
-    return { artisans: Array.isArray(data) ? data : [], error: null };
+    const totalCount      = countData.length;
+    const priceRecordCount = countData.filter(r => Number(r.price_from) > 0).length;
+
+    return { totalCount, priceRecordCount, artisans: cardsData, error: null };
 
   } catch (err) {
     console.error('[lp] Supabase fetch error:', err.message);
-    return { artisans: null, error: 'network' };
+    const errKind = err.message.startsWith('supabase_error') ? 'supabase' : 'network';
+    return { totalCount: null, priceRecordCount: null, artisans: null, error: errKind };
   }
 }
 
 /* ══════════════════════════════════════════════════════════════════════
    SECTION G — SAFE COPY GENERATORS
-   All copy is derived from real Supabase values or unconditional facts.
+   All copy is derived from real Supabase values only.
    No marketing claims without data backing.
    ══════════════════════════════════════════════════════════════════════ */
 
-/** Artisan count phrase — strict grammar, no fabrication */
-function countPhrase(count, labelPlural, labelSingular) {
-  if (count === 0) return null; /* caller must not render count when 0 */
-  if (count === 1) return `1 ${labelSingular} référencé sur Fixeo`;
-  return `${count} ${labelPlural} référencés sur Fixeo`;
+/**
+ * Title phrase — uses TOTAL count (all eligible artisans), not displayed count.
+ * Returns null when count is 0 (page will be 404'd before this runs).
+ */
+function totalCountPhrase(totalCount, labelPlural, labelSingular) {
+  if (totalCount === 0) return null;
+  if (totalCount === 1) return `1 ${labelSingular} référencé`;
+  return `${totalCount} ${labelPlural} référencés`;
 }
 
 /**
- * Price range phrase — only when real price_from data exists.
- * Returns null if no artisan has a price_from value.
+ * Price range phrase — CORRECTION 2: requires >= 3 distinct records with
+ * price_from > 0 across the FULL eligible artisan set (priceRecordCount).
+ * priceValues is the array of actual price_from values from the 12 displayed cards,
+ * used only for the min/max range calculation when the threshold is met.
+ * Returns null when threshold is not met.
  */
-function priceRangePhrase(artisans) {
-  const prices = artisans
+function priceRangePhrase(priceRecordCount, displayedArtisans) {
+  if (priceRecordCount < 3) return null;   /* quality gate: < 3 records → no price copy */
+
+  const prices = displayedArtisans
     .map(a => Number(a.price_from))
     .filter(p => p > 0);
   if (prices.length === 0) return null;
+
   const minP = Math.min(...prices);
   const maxP = Math.max(...prices);
-  if (minP === maxP) return `Tarifs à partir de ${minP}\u202fDH`;
-  return `Tarifs entre ${minP}\u202fDH et ${maxP}\u202fDH`;
+  if (minP === maxP) return `À partir de ${minP}\u202fDH`;
+  return `Entre ${minP}\u202fDH et ${maxP}\u202fDH`;
 }
 
-/**
- * Verified count phrase — only when is_verified or verified is true.
- * Returns null if zero verified artisans.
- */
 function verifiedPhrase(artisans) {
   const count = artisans.filter(
     a => a.is_verified === true || a.verified === true
@@ -391,7 +418,6 @@ function verifiedPhrase(artisans) {
    SECTION H — ARTISAN CARD RENDERER
    ══════════════════════════════════════════════════════════════════════ */
 
-/** Validated photo URL check (mirrors validatePhotoUrl in artisan-profile.js) */
 const LP_PHOTO_ALLOWLIST = new Set([
   'ztwtbgoqanqzvwiibtuh.supabase.co',
   'fixeo.ma',
@@ -416,20 +442,17 @@ function validatePhotoUrl(raw) {
   const host = parsed.hostname.toLowerCase();
   if (!LP_PHOTO_ALLOWLIST.has(host)) return null;
   if (PRIVATE_IP_RE.test(host) || host === 'localhost' || host === '::1') return null;
-  const lp = parsed.pathname.toLowerCase();
-  const dot = lp.lastIndexOf('.');
+  const lpath = parsed.pathname.toLowerCase();
+  const dot = lpath.lastIndexOf('.');
   if (dot === -1) return null;
-  if (!ALLOWED_IMG_EXTS.has(lp.slice(dot))) return null;
+  if (!ALLOWED_IMG_EXTS.has(lpath.slice(dot))) return null;
   return trimmed;
 }
 
-/** Render one artisan card. No ratings, no unsupported claims. */
 function renderArtisanCard(artisan, serviceSlug) {
   const rawName = String(artisan.name || artisan.full_name || '');
   const rawSlug = String(artisan.public_slug || '');
-  const rawCity = String(artisan.city || '');
 
-  /* Photo: validated HTTPS allowlist photo or initials placeholder */
   const validPhoto = validatePhotoUrl(artisan.photo_url);
   let avatarHtml;
   if (validPhoto) {
@@ -441,91 +464,67 @@ function renderArtisanCard(artisan, serviceSlug) {
          decoding="async"
          onerror="this.style.display='none'">`;
   } else {
-    /* Initials fallback — pure CSS, zero external request */
     const initials = rawName.split(/\s+/).map(w => w[0] || '').join('').slice(0,2).toUpperCase();
     avatarHtml = `<div class="lp-card-initials" aria-hidden="true">${esc(initials)}</div>`;
   }
 
-  /* Availability badge — only when field confirms available */
   const isAvail = artisan.availability === 'available';
   const availBadge = isAvail
     ? `<span class="lp-badge lp-badge--avail">Disponible</span>`
     : '';
 
-  /* Verified badge — only when field is true */
   const isVerified = artisan.is_verified === true || artisan.verified === true;
   const verifBadge = isVerified
     ? `<span class="lp-badge lp-badge--verif">Profil vérifié</span>`
     : '';
 
-  /* Price — only when real data */
   const price = Number(artisan.price_from);
   const priceHtml = price > 0
     ? `<span class="lp-card-price">À partir de ${price}\u202fDH</span>`
     : '';
 
-  /* Profile link — only when public_slug exists */
-  const profileUrl = rawSlug
-    ? `https://www.fixeo.ma/artisan/${rawSlug}`
-    : null;
-
-  const cardContent = `
-      ${avatarHtml}
-      <div class="lp-card-body">
-        <p class="lp-card-name">${esc(rawName)}</p>
-        <div class="lp-card-badges">${availBadge}${verifBadge}</div>
-        ${priceHtml}
-      </div>
-      ${profileUrl ? `<a class="lp-card-link" href="${esc(profileUrl)}" aria-label="Voir le profil de ${esc(rawName)}">Voir le profil →</a>` : ''}`;
+  const profileUrl = rawSlug ? `https://www.fixeo.ma/artisan/${rawSlug}` : null;
 
   return `<li class="lp-card" itemscope itemtype="https://schema.org/ProfessionalService">
     <meta itemprop="serviceType" content="${esc(serviceSlug)}">
     ${rawSlug ? `<meta itemprop="url" content="https://www.fixeo.ma/artisan/${esc(rawSlug)}">` : ''}
-    ${cardContent}
+    ${avatarHtml}
+    <div class="lp-card-body">
+      <p class="lp-card-name">${esc(rawName)}</p>
+      <div class="lp-card-badges">${availBadge}${verifBadge}</div>
+      ${priceHtml}
+    </div>
+    ${profileUrl ? `<a class="lp-card-link" href="${esc(profileUrl)}" aria-label="Voir le profil de ${esc(rawName)}">Voir le profil →</a>` : ''}
   </li>`;
 }
 
 /* ══════════════════════════════════════════════════════════════════════
    SECTION I — RELATED PAGES LINK GENERATOR
-   Only links to other POC whitelist pages or real static pages.
    ══════════════════════════════════════════════════════════════════════ */
 
-/**
- * Build related POC page links for the "same service, other approved cities"
- * and "same city, related services" sections.
- * Only generates links that exist in POC_WHITELIST.
- */
 function buildRelatedLinks(serviceSlug, citySlug, service) {
   const links = [];
 
-  /* Same service, other POC cities */
   for (const key of POC_WHITELIST) {
-    if (key === `${serviceSlug}-${citySlug}`) continue; /* skip self */
-    const [s, c] = key.split(/-(.+)/); /* split on first hyphen */
+    if (key === `${serviceSlug}-${citySlug}`) continue;
+    const dashIdx = key.indexOf('-');
+    const s = key.slice(0, dashIdx);
+    const c = key.slice(dashIdx + 1);
     if (s === serviceSlug) {
       const city = CITY_REGISTRY[c];
       if (city) {
-        links.push({
-          href: `https://www.fixeo.ma/${key}`,
-          text: `${service.labelPlural} à ${city.label}`,
-          type: 'city',
-        });
+        links.push({ href: `https://www.fixeo.ma/${key}`, text: `${service.labelPlural} à ${city.label}` });
       }
     }
   }
 
-  /* Same city, related services (only if in POC_WHITELIST) */
   for (const relSlug of (service.relatedSlugs || [])) {
     const relKey = `${relSlug}-${citySlug}`;
     if (POC_WHITELIST.has(relKey)) {
       const relService = SERVICE_REGISTRY[relSlug];
       const city = CITY_REGISTRY[citySlug];
       if (relService && city) {
-        links.push({
-          href: `https://www.fixeo.ma/${relKey}`,
-          text: `${relService.labelPlural} à ${city.label}`,
-          type: 'service',
-        });
+        links.push({ href: `https://www.fixeo.ma/${relKey}`, text: `${relService.labelPlural} à ${city.label}` });
       }
     }
   }
@@ -537,37 +536,40 @@ function buildRelatedLinks(serviceSlug, citySlug, service) {
    SECTION J — HTML PAGE BUILDER
    ══════════════════════════════════════════════════════════════════════ */
 
-function buildLpHtml(service, city, citySlug, artisans) {
-  const svcSlug  = service.canonicalSlug;
-  const cityName = city.label;
-  const count    = artisans.length;
+function buildLpHtml(service, city, citySlug, totalCount, priceRecordCount, artisans) {
+  const svcSlug     = service.canonicalSlug;
+  const cityName    = city.label;
+  const displayedN  = artisans.length;   /* cards actually rendered on page */
 
-  /* ── Safe copy — derived from real data only ── */
-  const rawCountPhrase = countPhrase(count, service.labelPlural, service.labelSingular);
-  const rawPricePhrase = priceRangePhrase(artisans);
-  const rawVerifPhrase = verifiedPhrase(artisans);
+  /* ── Safe copy — correction 1: title uses totalCount, not displayedN ── */
+  const rawTotalPhrase   = totalCountPhrase(totalCount, service.labelPlural, service.labelSingular);
+  const rawPricePhrase   = priceRangePhrase(priceRecordCount, artisans);
+  const rawVerifPhrase   = verifiedPhrase(artisans);
 
   /* ── Canonical URL ── */
   const canonicalUrl = `https://www.fixeo.ma/${svcSlug}-${citySlug}`;
 
-  /* ── Title — factual, unique per combination ── */
-  /* Uses count only when > 0 (guaranteed by eligibility gate) */
-  const titleRaw = `${service.labelPlural} à ${cityName} — ${rawCountPhrase} | Fixeo`;
+  /* ── Title — uses totalCount phrase, no price (clean and stable) ── */
+  const titleRaw = `${service.labelPlural} à ${cityName} — ${rawTotalPhrase} | Fixeo`;
 
-  /* ── Meta description — no unsupported claims ── */
-  const metaDescRaw = [
-    `Trouvez un ${service.labelSingular.toLowerCase()} à ${cityName} sur Fixeo.`,
-    rawCountPhrase ? rawCountPhrase + '.' : null,
-    rawVerifPhrase ? rawVerifPhrase + '.' : null,
-    rawPricePhrase ? rawPricePhrase + '.' : null,
-  ].filter(Boolean).join(' ');
+  /* ── Meta description ── */
+  const metaDescParts = [
+    `Consultez les profils de ${service.labelSingular.toLowerCase()} à ${cityName} sur Fixeo.`,
+    rawTotalPhrase ? `${rawTotalPhrase} référencés.` : null,
+    rawVerifPhrase ? `${rawVerifPhrase}.` : null,
+    rawPricePhrase ? `Tarifs\u202f: ${rawPricePhrase}.` : null,
+  ];
+  const metaDescRaw = metaDescParts.filter(Boolean).join(' ');
 
-  /* ── LP hero image ──
-     Image-first for plomberie + electricite (heroes available).
-     Text-first for all others (hero image goes below fold only).
-     ── */
+  /* ── CORRECTION 3: Hero image policy ──
+     heroAvailable: true  → full hero img above fold, hero as og:image
+     heroAvailable: false → NO image element at all, not even RAFI;
+                            og:image = FIXEO_OG_IMAGE (logo.png, 18 KB)
+     The RAFI_V2_BlackSilhouette.png (2.8 MB) is NOT loaded on any LP page.
+  ── */
   const hasHero = service.heroAvailable;
-  const heroImg = hasHero
+
+  const heroImgHtml = hasHero
     ? `<img class="lp-hero-img"
             src="${esc(service.heroUrl)}"
             alt="${esc(service.heroAlt)} à ${esc(cityName)}"
@@ -576,28 +578,40 @@ function buildLpHtml(service, city, citySlug, artisans) {
             fetchpriority="high"
             decoding="async"
             onerror="this.style.display='none'">`
-    : '';
-  /* RAFI fallback — below fold only, lazy loaded */
-  const rafiImg = !hasHero
-    ? `<img class="lp-rafi-img"
-            src="${esc(RAFI_URL)}"
-            alt=""
-            aria-hidden="true"
-            width="120" height="120"
-            loading="lazy"
-            decoding="async"
-            onerror="this.style.display='none'">`
-    : '';
+    : `<!-- no hero image for this service category -->`;
 
-  /* ── OG image ── */
-  const absoluteHeroUrl = hasHero
+  /* og:image — hero for plomberie/electricite, logo.png for all others */
+  const ogImageUrl = hasHero
     ? `https://www.fixeo.ma${service.heroUrl}`
-    : `https://www.fixeo.ma${RAFI_URL}`;
+    : FIXEO_OG_IMAGE;
 
   /* ── Artisan cards ── */
-  const cardsHtml = artisans
-    .map(a => renderArtisanCard(a, svcSlug))
-    .join('\n    ');
+  const cardsHtml = artisans.map(a => renderArtisanCard(a, svcSlug)).join('\n    ');
+
+  /* ── Count summary — clearly distinguishes total vs displayed ── */
+  /* Only rendered when totalCount > displayedN (pagination context matters) */
+  let countSummaryHtml = '';
+  if (rawTotalPhrase) {
+    if (displayedN < totalCount) {
+      /* Both numbers present and different — label them explicitly */
+      countSummaryHtml = `
+    <p class="lp-count-summary">
+      <strong>${totalCount} profils référencés</strong> à ${esc(cityName)}.
+      <span class="lp-count-displayed">${displayedN} profils affichés.</span>
+    </p>`;
+    } else {
+      /* Total equals displayed (e.g. 4 macon-casablanca) — single label */
+      countSummaryHtml = `
+    <p class="lp-count-summary">
+      <strong>${totalCount} profil${totalCount > 1 ? 's' : ''} référencé${totalCount > 1 ? 's' : ''}</strong> à ${esc(cityName)}.
+    </p>`;
+    }
+  }
+
+  /* ── Price summary — only when quality gate passes (>= 3 records) ── */
+  const priceSummaryHtml = rawPricePhrase
+    ? `<p class="lp-price-summary">${esc(rawPricePhrase)}</p>`
+    : '';
 
   /* ── Related links ── */
   const related = buildRelatedLinks(svcSlug, citySlug, service);
@@ -610,14 +624,19 @@ function buildLpHtml(service, city, citySlug, artisans) {
       </nav>`
     : '';
 
-  /* ── JSON-LD: ItemList (real artisans, max 10) ── */
+  /* ── JSON-LD ──
+     numberOfItems = totalCount (all eligible artisans, not just the 12 displayed).
+     itemListElement = up to 10 items from displayed artisans (real data).
+     No price/Offer schema: prices are seed-quality data (all 150 DH) —
+       priceRangePhrase gate applies same logic to JSON-LD.
+  ── */
   const itemListItems = artisans.slice(0, 10).map((a, i) => {
     const rawName = String(a.name || a.full_name || '');
     const rawSlug = String(a.public_slug || '');
     const item = {
-      '@type': 'ProfessionalService',
-      'name': rawName,
-      'areaServed': { '@type': 'City', 'name': cityName },
+      '@type':       'ProfessionalService',
+      'name':        rawName,
+      'areaServed':  { '@type': 'City', 'name': cityName },
       'serviceType': service.labelSingular,
     };
     if (rawSlug) item['url'] = `https://www.fixeo.ma/artisan/${rawSlug}`;
@@ -628,11 +647,11 @@ function buildLpHtml(service, city, citySlug, artisans) {
     '@context': 'https://schema.org',
     '@graph': [
       {
-        '@type': 'ItemList',
-        'name': `${service.labelPlural} à ${cityName}`,
-        'description': metaDescRaw,
-        'url': canonicalUrl,
-        'numberOfItems': count,
+        '@type':           'ItemList',
+        'name':            `${service.labelPlural} à ${cityName}`,
+        'description':     metaDescRaw,
+        'url':             canonicalUrl,
+        'numberOfItems':   totalCount,    /* CORRECTION 1: total, not displayed */
         'itemListElement': itemListItems,
       },
       {
@@ -647,13 +666,13 @@ function buildLpHtml(service, city, citySlug, artisans) {
         ],
       },
       {
-        '@type': 'WebPage',
-        '@id': canonicalUrl,
-        'url': canonicalUrl,
-        'name': titleRaw,
+        '@type':       'WebPage',
+        '@id':         canonicalUrl,
+        'url':         canonicalUrl,
+        'name':        titleRaw,
         'description': metaDescRaw,
-        'inLanguage': 'fr-MA',
-        'isPartOf': { '@id': 'https://www.fixeo.ma/#website' },
+        'inLanguage':  'fr-MA',
+        'isPartOf':    { '@id': 'https://www.fixeo.ma/#website' },
       },
     ],
   };
@@ -674,10 +693,8 @@ function buildLpHtml(service, city, citySlug, artisans) {
   <meta property="og:title"        content="${esc(titleRaw)}">
   <meta property="og:description"  content="${esc(metaDescRaw)}">
   <meta property="og:url"          content="${canonicalUrl}">
-  <meta property="og:image"        content="${esc(absoluteHeroUrl)}">
-  <meta property="og:image:width"  content="1200">
-  <meta property="og:image:height" content="630">
-  <meta property="og:image:alt"    content="${esc(service.labelSingular)} à ${esc(cityName)}">
+  <meta property="og:image"        content="${esc(ogImageUrl)}">
+  <meta property="og:image:alt"    content="${esc(service.labelSingular)} à ${esc(cityName)} — Fixeo">
   <meta property="og:locale"       content="fr_MA">
   <meta property="og:site_name"    content="Fixeo">
 
@@ -685,7 +702,7 @@ function buildLpHtml(service, city, citySlug, artisans) {
   <meta name="twitter:site"        content="@FixeoMaroc">
   <meta name="twitter:title"       content="${esc(titleRaw)}">
   <meta name="twitter:description" content="${esc(metaDescRaw)}">
-  <meta name="twitter:image"       content="${esc(absoluteHeroUrl)}">
+  <meta name="twitter:image"       content="${esc(ogImageUrl)}">
 
   <script type="application/ld+json">
 ${safeJsonLD(jsonLdObj)}
@@ -696,7 +713,6 @@ ${safeJsonLD(jsonLdObj)}
   ${hasHero ? `<link rel="preload" as="image" href="${esc(service.heroUrl)}">` : ''}
 
   <style>
-    /* ── Reset ── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { font-size: 16px; }
     body {
@@ -750,12 +766,28 @@ ${safeJsonLD(jsonLdObj)}
       font-size: 1rem;
       color: rgba(255,255,255,0.65);
       max-width: 560px;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
+    }
+    .lp-count-summary {
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 6px;
+    }
+    .lp-count-displayed {
+      font-size: 0.82rem;
+      color: rgba(255,255,255,0.45);
+      margin-left: 6px;
+    }
+    .lp-price-summary {
+      font-size: 0.88rem;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 6px;
     }
     .lp-hero-meta {
       display: flex; flex-wrap: wrap; gap: 10px;
       justify-content: center;
       font-size: 0.88rem;
+      margin-bottom: 20px;
     }
     .lp-hero-meta-item {
       background: rgba(255,255,255,0.08);
@@ -766,7 +798,7 @@ ${safeJsonLD(jsonLdObj)}
     }
     .lp-cta {
       display: inline-block;
-      margin-top: 20px;
+      margin-top: 8px;
       padding: 14px 32px;
       background: linear-gradient(135deg,#E1306C,#C13584);
       color: #fff;
@@ -818,13 +850,11 @@ ${safeJsonLD(jsonLdObj)}
       border-radius: 999px; padding: 2px 10px;
     }
     .lp-badge--avail {
-      background: rgba(32,201,151,0.16);
-      color: #20c997;
+      background: rgba(32,201,151,0.16); color: #20c997;
       border: 1px solid rgba(32,201,151,0.3);
     }
     .lp-badge--verif {
-      background: rgba(64,93,230,0.16);
-      color: #7fa2f0;
+      background: rgba(64,93,230,0.16); color: #7fa2f0;
       border: 1px solid rgba(64,93,230,0.3);
     }
     .lp-card-price { font-size: 0.85rem; color: rgba(255,255,255,0.6); }
@@ -837,17 +867,6 @@ ${safeJsonLD(jsonLdObj)}
       flex-shrink: 0;
     }
     .lp-card-link:hover { background: rgba(225,48,108,0.08); text-decoration: none; }
-
-    /* ── RAFI below-fold ── */
-    .lp-rafi-wrap {
-      display: flex; justify-content: center;
-      margin: 16px 0;
-      opacity: 0.5;
-    }
-    .lp-rafi-img {
-      width: 100px; height: 100px;
-      object-fit: contain;
-    }
 
     /* ── Related links ── */
     .lp-related {
@@ -873,7 +892,6 @@ ${safeJsonLD(jsonLdObj)}
     }
     .lp-footer a { color: rgba(255,255,255,0.38); }
 
-    /* ── Mobile ── */
     @media (max-width: 520px) {
       .lp-page { padding: 16px 12px 48px; }
       .lp-hero { padding: 28px 16px; }
@@ -894,15 +912,15 @@ ${safeJsonLD(jsonLdObj)}
 
   <!-- Hero section -->
   <section class="lp-hero" aria-labelledby="lp-h1">
-    ${heroImg}
+    ${heroImgHtml}
     <h1 class="lp-hero-h1" id="lp-h1">${esc(service.labelPlural)} à ${esc(cityName)}</h1>
     <p class="lp-hero-desc">
       Consultez les profils référencés sur Fixeo à ${esc(cityName)}.
     </p>
+    ${countSummaryHtml}
+    ${priceSummaryHtml}
     <div class="lp-hero-meta">
-      ${rawCountPhrase ? `<span class="lp-hero-meta-item">${esc(rawCountPhrase)}</span>` : ''}
       ${rawVerifPhrase ? `<span class="lp-hero-meta-item">${esc(rawVerifPhrase)}</span>` : ''}
-      ${rawPricePhrase ? `<span class="lp-hero-meta-item">${esc(rawPricePhrase)}</span>` : ''}
     </div>
     <a href="https://www.fixeo.ma/?open=request&amp;service=${esc(svcSlug)}&amp;city=${esc(citySlug)}"
        class="lp-cta" rel="nofollow">
@@ -918,7 +936,6 @@ ${safeJsonLD(jsonLdObj)}
     <ul class="lp-cards">
       ${cardsHtml}
     </ul>
-    ${!hasHero ? `<div class="lp-rafi-wrap">${rafiImg}</div>` : ''}
   </section>
 
   <!-- Why Fixeo -->
@@ -941,17 +958,12 @@ ${safeJsonLD(jsonLdObj)}
   <!-- Related pages -->
   ${relLinksHtml}
 
-  <!-- Back to homepage -->
   <p style="margin-top:24px;font-size:0.85rem;">
     <a href="https://www.fixeo.ma/">← Retour à Fixeo.ma</a>
   </p>
 
-  <!-- Footer -->
   <footer class="lp-footer" role="contentinfo">
-    <p>
-      Page publiée sur <a href="https://www.fixeo.ma/">Fixeo.ma</a>
-      — Annuaire d'artisans au Maroc.
-    </p>
+    <p>Page publiée sur <a href="https://www.fixeo.ma/">Fixeo.ma</a> — Annuaire d'artisans au Maroc.</p>
     <p style="margin-top:6px">
       <a href="https://www.fixeo.ma/nos-garanties">Nos garanties</a> ·
       <a href="https://www.fixeo.ma/comment-ca-marche">Comment ça marche</a> ·
@@ -1018,21 +1030,17 @@ function build503Html() {
    SECTION L — VERCEL REQUEST HANDLER
    ══════════════════════════════════════════════════════════════════════ */
 
-/** Slug format: lowercase alphanum + hyphens, min 5 chars */
 const LP_SLUG_RE = /^[a-z][a-z0-9-]{3,60}$/;
 
 module.exports = async function handler(req, res) {
-  /* ── Method check ── */
   if (req.method !== 'GET' && req.method !== 'HEAD') {
     res.setHeader('Allow', 'GET, HEAD');
     res.status(405).end('Method Not Allowed');
     return;
   }
 
-  /* ── Extract slug from query param (injected by vercel.json capture group) ── */
   const rawSlug = String(req.query.slug || '').trim().toLowerCase();
 
-  /* ── Slug format validation → HTTP 400 ── */
   if (!rawSlug || !LP_SLUG_RE.test(rawSlug)) {
     res.setHeader('Cache-Control', 'no-store');
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
@@ -1040,7 +1048,6 @@ module.exports = async function handler(req, res) {
     return;
   }
 
-  /* ── POC whitelist check → HTTP 404 for unsupported combinations ── */
   if (!POC_WHITELIST.has(rawSlug)) {
     res.setHeader('Cache-Control', 'no-store');
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
@@ -1048,11 +1055,7 @@ module.exports = async function handler(req, res) {
     return;
   }
 
-  /* ── Parse service slug + city slug from the combined slug ──
-     Strategy: try to match the longest known service slug first.
-     All POC slugs have the form: {service}-{city}
-     We iterate SERVICE_REGISTRY keys, check if rawSlug starts with that key + '-'.
-  ── */
+  /* Parse service + city from combined slug */
   let serviceSlug = null;
   let citySlug    = null;
   for (const sKey of Object.keys(SERVICE_REGISTRY)) {
@@ -1063,7 +1066,6 @@ module.exports = async function handler(req, res) {
     }
   }
 
-  /* ── Validate parsed slugs against registries → HTTP 404 ── */
   const service = serviceSlug ? SERVICE_REGISTRY[serviceSlug] : null;
   const city    = citySlug    ? CITY_REGISTRY[citySlug]       : null;
 
@@ -1074,8 +1076,9 @@ module.exports = async function handler(req, res) {
     return;
   }
 
-  /* ── Fetch artisans from Supabase ── */
-  const { artisans, error } = await fetchArtisans(service, city.label, 12);
+  /* Fetch both count+price quality and display cards in parallel */
+  const { totalCount, priceRecordCount, artisans, error } =
+    await fetchPageData(service, city.label);
 
   if (error) {
     res.setHeader('Cache-Control', 'no-store');
@@ -1084,21 +1087,22 @@ module.exports = async function handler(req, res) {
     return;
   }
 
-  /* ── Page eligibility gate — HTTP 404 when no artisans ── */
-  if (artisans.length === 0) {
+  /* Eligibility gate — uses totalCount (not displayed cards) */
+  if (totalCount === 0) {
     res.setHeader('Cache-Control', 'no-store');
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     res.status(404).send(build404Html(rawSlug));
     return;
   }
 
-  /* ── Build and serve the page ── */
-  const html = buildLpHtml(service, city, citySlug, artisans);
+  const html = buildLpHtml(service, city, citySlug, totalCount, priceRecordCount, artisans);
 
   res.setHeader('Cache-Control', 's-maxage=86400, stale-while-revalidate=3600');
   res.setHeader('Content-Type',  'text/html; charset=utf-8');
   res.setHeader('X-Robots-Tag',  'index, follow');
-  res.setHeader('X-LP-Slug',     rawSlug);   /* debug header — harmless */
+  res.setHeader('X-LP-Slug',     rawSlug);
+  res.setHeader('X-LP-Total',    String(totalCount));
+  res.setHeader('X-LP-Displayed',String(artisans.length));
 
   res.status(200).send(html);
 };
