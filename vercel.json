@@ -2,6 +2,10 @@
   "version": 2,
   "builds": [
     {
+      "src": "api/artisan-profile.js",
+      "use": "@vercel/node"
+    },
+    {
       "src": "api/server.js",
       "use": "@vercel/node"
     },
@@ -56,8 +60,12 @@
   ],
   "routes": [
     {
-      "src": "^/artisan/(.*)",
-      "dest": "/artisan-profile.html"
+      "src": "^/artisan/([a-z0-9][a-z0-9-]{3,118}[a-z0-9])$",
+      "dest": "/api/artisan-profile?slug=$1"
+    },
+    {
+      "src": "^/artisan/(.+)$",
+      "dest": "/api/artisan-profile?slug=$1"
     },
     {
       "src": "^/fuite-eau/([a-z][a-z-]*)$",
@@ -191,19 +199,15 @@
       ]
     },
     {
-      "source": "/artisan/(.*)",
+      "source": "/artisan/:slug*",
       "headers": [
         {
-          "key": "Cache-Control",
-          "value": "no-cache, no-store, must-revalidate"
+          "key": "X-SSR-Profile",
+          "value": "phase2a-poc"
         },
         {
-          "key": "Pragma",
-          "value": "no-cache"
-        },
-        {
-          "key": "Expires",
-          "value": "0"
+          "key": "Vary",
+          "value": "Accept-Encoding"
         }
       ]
     },
