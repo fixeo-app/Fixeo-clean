@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  sitemap-lp-poc.xml — Phase 3B POC Local Landing Pages
+  Contains ONLY the 6 POC combinations that pass the eligibility gate.
+  These are the ONLY SSR LP pages served during the Phase 3B proof of concept.
+
+  Rules:
+    - Only clean canonical URLs (no .html, no ?page=, no legacy URLs)
+    - Only pages confirmed with real artisans via Supabase (count >= 1)
+    - noindex pages, redirects, and unsupported combos are NOT listed
+    - lastmod: date of first PoC deployment on this branch
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <url>
+    <loc>https://www.fixeo.ma/plombier-casablanca</loc>
+    <lastmod>2026-07-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://www.fixeo.ma/plombier-rabat</loc>
+    <lastmod>2026-07-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://www.fixeo.ma/electricien-casablanca</loc>
+    <lastmod>2026-07-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://www.fixeo.ma/electricien-rabat</loc>
+    <lastmod>2026-07-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://www.fixeo.ma/peintre-casablanca</loc>
+    <lastmod>2026-07-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.fixeo.ma/macon-casablanca</loc>
+    <lastmod>2026-07-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+</urlset>
