@@ -141,200 +141,320 @@ const CITY_URL_SLUG = {
 };
 
 /* ══════════════════════════════════════════════════════════════════════
-   FIXEO HEROES — Category-aware hero selection
+   SECTION A — FIXEO HEROES: Category-aware hero selection
    ══════════════════════════════════════════════════════════════════════
-   Architecture:
-     Each category maps to a named "hero slot" (e.g. Hero_01_MasterPlumber).
-     The slot resolves to the best available on-disk asset for that category.
 
-   V3 upgrade path (when Hero_01_MasterPlumber.png etc. are delivered):
-     1. Add the file under heroes/{category}/Hero_01_MasterPlumber.png
-     2. Update the `filename` value in HERO_SLOT_MAP below.
-     3. No other code change required — the selection logic is already here.
+   POLICY (Phase 2A.2):
+     A category hero is used ONLY when the exact approved asset currently
+     exists in the repository under heroes/{folder}/{filename}.
+     No profession may display another profession's hero as an interim fallback.
+     When a category's own asset is unavailable, RAFI_V2_BlackSilhouette is used.
 
-   Current state (Phase 2A):
-     - plomberie:     heroes/plomberie/avatar-presenting-transparent.jpg   (real asset on disk)
-     - electricite:   heroes/electricite/avatar-presenting-transparent.jpg  (real asset on disk)
-     - climatisation: routes to plomberie (own pack pending)
-     - serrurerie:    routes to plomberie (own pack pending)
-     - menuiserie:    routes to plomberie (own pack pending)
-     - peinture:      routes to plomberie (own pack pending)
-     - maconnerie:    routes to plomberie (own pack pending)
-     - jardinage:     routes to plomberie (own pack pending)
-     - nettoyage:     routes to plomberie (own pack pending)
-     - unknown:       RAFI_V2_BlackSilhouette.png (neutral silhouette)
+   Current availability:
+     AVAILABLE    — plomberie     heroes/plomberie/avatar-presenting-transparent.jpg
+     AVAILABLE    — electricite   heroes/electricite/avatar-presenting-transparent.jpg
+     NOT_AVAILABLE — serrurerie   (own asset pending — BlackSilhouette used)
+     NOT_AVAILABLE — climatisation (own asset pending — BlackSilhouette used)
+     NOT_AVAILABLE — menuiserie   (own asset pending — BlackSilhouette used)
+     NOT_AVAILABLE — peinture     (own asset pending — BlackSilhouette used)
+     NOT_AVAILABLE — maconnerie   (own asset pending — BlackSilhouette used)
+     NOT_AVAILABLE — jardinage    (own asset pending — BlackSilhouette used)
+     NOT_AVAILABLE — nettoyage    (own asset pending — BlackSilhouette used)
 
-   Selection priority (per artisan):
-     1. artisan.photo_url — real uploaded photo (if non-null and non-empty)
-     2. Category hero (from HERO_SLOT_MAP)
-     3. RAFI BlackSilhouette (if category is completely unknown)
+   V3 upgrade path (zero code rewrite):
+     When Hero_03_MasterLocksmith.png is delivered for serrurerie:
+       1. Place file at heroes/serrurerie/Hero_03_MasterLocksmith.png
+       2. In HERO_SLOT_MAP.serrurerie set:
+             available: true,
+             folder:    'serrurerie',
+             filename:  'Hero_03_MasterLocksmith.png'
+       3. The resolver picks it up automatically. Nothing else changes.
    ══════════════════════════════════════════════════════════════════════ */
 
-/* ── Universal fallback ── */
+/* ── Universal fallback (unknown category or NOT_AVAILABLE slot) ── */
 const RAFI_FALLBACK_URL = '/rafi/RAFI_V2_BlackSilhouette.png';
 
 /* ── Hero slot map ──────────────────────────────────────────────────────
-   Each entry defines:
-     slot:     symbolic name (matches future V3 naming convention)
-     folder:   sub-directory under /heroes/
-     filename: current best available file in that folder
-   ──────────────────────────────────────────────────────────────────────
-   To upgrade to V3: replace `filename` with the V3 filename and add the
-   file to heroes/{folder}/. The slot name and folder never change.
+   Fields per slot:
+     slot:      Symbolic name (future V3 naming convention — never changes)
+     available: Boolean. true = asset exists on disk and may be served.
+                         false = NOT_AVAILABLE, BlackSilhouette is used instead.
+     folder:    Sub-directory under /heroes/ (only meaningful when available=true)
+     filename:  Exact filename on disk (only meaningful when available=true)
+                V3 target filename documented in comment for each NOT_AVAILABLE slot.
    ────────────────────────────────────────────────────────────────────── */
 const HERO_SLOT_MAP = {
-  /* Slot 01 — Master Plumber */
+  /* Slot 01 — Master Plumber ─────────────── AVAILABLE */
   plomberie: {
-    slot:     'Hero_01_MasterPlumber',
-    folder:   'plomberie',
-    filename: 'avatar-presenting-transparent.jpg',  /* V3 target: Hero_01_MasterPlumber.png */
+    slot:      'Hero_01_MasterPlumber',
+    available: true,
+    folder:    'plomberie',
+    filename:  'avatar-presenting-transparent.jpg', /* V3 target: Hero_01_MasterPlumber.png */
   },
-  /* Slot 02 — Master Electrician */
+  /* Slot 02 — Master Electrician ─────────── AVAILABLE */
   electricite: {
-    slot:     'Hero_02_MasterElectrician',
-    folder:   'electricite',
-    filename: 'avatar-presenting-transparent.jpg',  /* V3 target: Hero_02_MasterElectrician.png */
+    slot:      'Hero_02_MasterElectrician',
+    available: true,
+    folder:    'electricite',
+    filename:  'avatar-presenting-transparent.jpg', /* V3 target: Hero_02_MasterElectrician.png */
   },
-  /* Slot 03 — Master Locksmith (own pack pending → plomberie fallback) */
+  /* Slot 03 — Master Locksmith ──────────── NOT_AVAILABLE */
   serrurerie: {
-    slot:     'Hero_03_MasterLocksmith',
-    folder:   'plomberie',                          /* V3 target folder: serrurerie */
-    filename: 'avatar-presenting-transparent.jpg',  /* V3 target: Hero_03_MasterLocksmith.png */
+    slot:      'Hero_03_MasterLocksmith',
+    available: false,                               /* V3 target folder:   serrurerie */
+    folder:    null,                                /* V3 target filename: Hero_03_MasterLocksmith.png */
+    filename:  null,
   },
-  /* Slot 04 — Master HVAC (own pack pending → plomberie fallback) */
+  /* Slot 04 — Master HVAC ────────────────── NOT_AVAILABLE */
   climatisation: {
-    slot:     'Hero_04_MasterHVAC',
-    folder:   'plomberie',                          /* V3 target folder: climatisation */
-    filename: 'avatar-presenting-transparent.jpg',  /* V3 target: Hero_04_MasterHVAC.png */
+    slot:      'Hero_04_MasterHVAC',
+    available: false,                               /* V3 target folder:   climatisation */
+    folder:    null,                                /* V3 target filename: Hero_04_MasterHVAC.png */
+    filename:  null,
   },
-  /* Slot 05 — Master Carpenter (own pack pending → plomberie fallback) */
+  /* Slot 05 — Master Carpenter ──────────── NOT_AVAILABLE */
   menuiserie: {
-    slot:     'Hero_05_MasterCarpenter',
-    folder:   'plomberie',                          /* V3 target folder: menuiserie */
-    filename: 'avatar-presenting-transparent.jpg',  /* V3 target: Hero_05_MasterCarpenter.png */
+    slot:      'Hero_05_MasterCarpenter',
+    available: false,                               /* V3 target folder:   menuiserie */
+    folder:    null,                                /* V3 target filename: Hero_05_MasterCarpenter.png */
+    filename:  null,
   },
-  /* Slot 06 — Master Painter (own pack pending → plomberie fallback) */
+  /* Slot 06 — Master Painter ─────────────── NOT_AVAILABLE */
   peinture: {
-    slot:     'Hero_06_MasterPainter',
-    folder:   'plomberie',                          /* V3 target folder: peinture */
-    filename: 'avatar-presenting-transparent.jpg',  /* V3 target: Hero_06_MasterPainter.png */
+    slot:      'Hero_06_MasterPainter',
+    available: false,                               /* V3 target folder:   peinture */
+    folder:    null,                                /* V3 target filename: Hero_06_MasterPainter.png */
+    filename:  null,
   },
-  /* Slot 07 — Master Mason (own pack pending → plomberie fallback) */
+  /* Slot 07 — Master Mason ───────────────── NOT_AVAILABLE */
   maconnerie: {
-    slot:     'Hero_07_MasterMason',
-    folder:   'plomberie',                          /* V3 target folder: maconnerie */
-    filename: 'avatar-presenting-transparent.jpg',  /* V3 target: Hero_07_MasterMason.png */
+    slot:      'Hero_07_MasterMason',
+    available: false,                               /* V3 target folder:   maconnerie */
+    folder:    null,                                /* V3 target filename: Hero_07_MasterMason.png */
+    filename:  null,
   },
-  /* Slot 08 — Master Gardener (own pack pending → plomberie fallback) */
+  /* Slot 08 — Master Gardener ────────────── NOT_AVAILABLE */
   jardinage: {
-    slot:     'Hero_08_MasterGardener',
-    folder:   'plomberie',                          /* V3 target folder: jardinage */
-    filename: 'avatar-presenting-transparent.jpg',  /* V3 target: Hero_08_MasterGardener.png */
+    slot:      'Hero_08_MasterGardener',
+    available: false,                               /* V3 target folder:   jardinage */
+    folder:    null,                                /* V3 target filename: Hero_08_MasterGardener.png */
+    filename:  null,
   },
-  /* Slot 09 — Master Cleaning (own pack pending → plomberie fallback) */
+  /* Slot 09 — Master Cleaning ────────────── NOT_AVAILABLE */
   nettoyage: {
-    slot:     'Hero_09_MasterCleaning',
-    folder:   'plomberie',                          /* V3 target folder: nettoyage */
-    filename: 'avatar-presenting-transparent.jpg',  /* V3 target: Hero_09_MasterCleaning.png */
+    slot:      'Hero_09_MasterCleaning',
+    available: false,                               /* V3 target folder:   nettoyage */
+    folder:    null,                                /* V3 target filename: Hero_09_MasterCleaning.png */
+    filename:  null,
   },
 };
 
-/* ── Category normalizer → canonical hero key ──────────────────────────
-   Maps every raw category string variant from Supabase to a key in HERO_SLOT_MAP.
-   Any unmapped category returns null → falls back to RAFI_FALLBACK_URL.
+/* ── Category string → hero slot key ───────────────────────────────────
+   Maps every raw Supabase category string variant to a key in HERO_SLOT_MAP.
+   Lookup is done on the normalized (lowercase, diacritics stripped) string.
+   Any unmapped string returns null → caller uses RAFI_FALLBACK_URL.
    ────────────────────────────────────────────────────────────────────── */
 const CATEGORY_TO_HERO_KEY = {
   /* Plomberie */
-  'plomberie':          'plomberie',
-  'plombier':           'plomberie',
+  'plomberie':             'plomberie',
+  'plombier':              'plomberie',
   /* Électricité */
-  'électricité':        'electricite',
-  'electricite':        'electricite',
-  'electricité':        'electricite',
-  'électricite':        'electricite',
-  'electricite_generale': 'electricite',
-  'electricien':        'electricite',
+  'electricite':           'electricite',   /* after NFD diacritic strip */
+  'electricite_generale':  'electricite',
+  'electricien':           'electricite',
   /* Serrurerie */
-  'serrurerie':         'serrurerie',
-  'serrurier':          'serrurerie',
+  'serrurerie':            'serrurerie',
+  'serrurier':             'serrurerie',
   /* Climatisation */
-  'climatisation':      'climatisation',
-  'clim':               'climatisation',
-  'chauffage':          'climatisation',
+  'climatisation':         'climatisation',
+  'clim':                  'climatisation',
+  'chauffage':             'climatisation',
   /* Menuiserie */
-  'menuiserie':         'menuiserie',
-  'menuisier':          'menuiserie',
+  'menuiserie':            'menuiserie',
+  'menuisier':             'menuiserie',
   /* Peinture */
-  'peinture':           'peinture',
-  'peintre':            'peinture',
+  'peinture':              'peinture',
+  'peintre':               'peinture',
   /* Maçonnerie */
-  'maconnerie':         'maconnerie',
-  'maçonnerie':         'maconnerie',
-  'carrelage':          'maconnerie',
+  'maconnerie':            'maconnerie',   /* after diacritic strip */
+  'carrelage':             'maconnerie',
   /* Jardinage */
-  'jardinage':          'jardinage',
+  'jardinage':             'jardinage',
   /* Nettoyage */
-  'nettoyage':          'nettoyage',
+  'nettoyage':             'nettoyage',
 };
 
-/* ── Resolve category string → hero URL ────────────────────────────────
-   Normalizes the raw category string (strips accents, lowercase, trim),
-   looks up the hero slot, returns the absolute /heroes/… path.
-   Returns null if category is unknown — caller should use RAFI_FALLBACK_URL.
+/* ── Category string normalizer ─────────────────────────────────────────
+   Lowercases, trims, strips NFD diacritics, keeps only [a-z0-9 _].
+   Example: 'Électricité' → 'electricite'
+   ────────────────────────────────────────────────────────────────────── */
+function _normalizeCategoryKey(category) {
+  return String(category || '')
+    .toLowerCase()
+    .trim()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9 _]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/* ── Category → hero URL resolver ───────────────────────────────────────
+   Returns the /heroes/… path ONLY when:
+     (a) the category maps to a known slot, AND
+     (b) that slot's available flag is true.
+   Returns null in all other cases — caller uses RAFI_FALLBACK_URL.
    ────────────────────────────────────────────────────────────────────── */
 function resolveHeroUrl(category) {
   if (!category) return null;
 
-  /* Normalize: lowercase, strip diacritics, strip non-alpha-space */
-  const normalized = String(category)
-    .toLowerCase()
-    .trim()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')  /* remove combining diacritics */
-    .replace(/[^a-z0-9 _]/g, '')
-    .replace(/\s+/g, ' ')
-    .trim();
-
+  const normalized = _normalizeCategoryKey(category);
   const heroKey = CATEGORY_TO_HERO_KEY[normalized] || null;
   if (!heroKey) return null;
 
   const slot = HERO_SLOT_MAP[heroKey];
-  if (!slot) return null;
+  if (!slot || !slot.available) return null;   /* NOT_AVAILABLE → null */
 
   return `/heroes/${slot.folder}/${slot.filename}`;
 }
 
-/* ── Resolve the single image to use for a given artisan ───────────────
-   Priority:
-     1. photo_url  — real uploaded photo (non-null, non-empty string)
-     2. Hero slot  — category-matched hero from HERO_SLOT_MAP
-     3. RAFI_FALLBACK_URL — BlackSilhouette for completely unknown category
+/* ══════════════════════════════════════════════════════════════════════
+   SECTION B — PHOTO URL SECURITY VALIDATION
+   ══════════════════════════════════════════════════════════════════════
 
-   This function is the canonical resolver for og:image, twitter:image,
-   JSON-LD image, and the visible <img> element. All four always receive
-   the same URL — guaranteed by calling this once and reusing the result.
-   ────────────────────────────────────────────────────────────────────── */
-function resolveArtisanImage(artisan) {
-  /* Step 1 — Real photo */
-  const photo = artisan.photo_url;
-  if (photo && typeof photo === 'string' && photo.trim().length > 0) {
-    return { url: photo.trim(), isReal: true, isHero: false, isFallback: false };
+   An artisan photo_url overrides the hero ONLY when ALL of the following
+   conditions pass:
+
+     1. Value is a non-empty string.
+     2. Parses successfully as a URL (no throws).
+     3. Protocol is exactly 'https:' (case-insensitive via URL parser).
+     4. Hostname is on the PHOTO_HOSTNAME_ALLOWLIST below.
+     5. Not a data: URL, javascript: URL, localhost, or private-network address.
+
+   On any validation failure: silently return null.
+   Caller falls through to hero or RAFI fallback.
+
+   PHOTO_HOSTNAME_ALLOWLIST — approved image sources:
+     ztwtbgoqanqzvwiibtuh.supabase.co  — FIXEO Supabase storage (primary)
+     supabase.co                        — generic Supabase (sub-project safety net)
+     fixeo.ma                           — FIXEO own domain
+     www.fixeo.ma                       — FIXEO www
+     fixeo-cdn.com                      — future CDN (reserved)
+     lh3.googleusercontent.com          — Google profile photos (OAuth)
+     avatars.githubusercontent.com      — GitHub avatars (OAuth)
+   ══════════════════════════════════════════════════════════════════════ */
+
+const PHOTO_HOSTNAME_ALLOWLIST = new Set([
+  'ztwtbgoqanqzvwiibtuh.supabase.co',
+  'supabase.co',
+  'fixeo.ma',
+  'www.fixeo.ma',
+  'fixeo-cdn.com',
+  'lh3.googleusercontent.com',
+  'avatars.githubusercontent.com',
+]);
+
+/* Private / reserved IP ranges that must never be reached */
+const PRIVATE_IP_RE = /^(127\.|10\.|192\.168\.|172\.(1[6-9]|2[0-9]|3[01])\.)/;
+
+function validatePhotoUrl(raw) {
+  if (!raw || typeof raw !== 'string') return null;
+  const trimmed = raw.trim();
+  if (!trimmed) return null;
+
+  /* Reject data:, javascript:, and other non-http schemes upfront */
+  const lowered = trimmed.toLowerCase();
+  if (
+    lowered.startsWith('data:') ||
+    lowered.startsWith('javascript:') ||
+    lowered.startsWith('vbscript:') ||
+    lowered.startsWith('blob:')
+  ) return null;
+
+  let parsed;
+  try {
+    parsed = new URL(trimmed);
+  } catch (_) {
+    return null; /* Malformed URL */
   }
 
-  /* Step 2 — Category hero */
+  /* Protocol must be https: */
+  if (parsed.protocol !== 'https:') return null;
+
+  /* Hostname must be on the allowlist */
+  const host = parsed.hostname.toLowerCase();
+
+  /* Supabase sub-project URLs: *.supabase.co */
+  const isSubabase = host.endsWith('.supabase.co');
+
+  if (!PHOTO_HOSTNAME_ALLOWLIST.has(host) && !isSubabase) return null;
+
+  /* Reject private/loopback IPs even if they somehow matched the hostname */
+  if (PRIVATE_IP_RE.test(host) || host === 'localhost' || host === '::1') return null;
+
+  /* Passed all checks */
+  return trimmed;
+}
+
+/* ── Resolve the single image to use for a given artisan ───────────────
+   Priority:
+     1. photo_url — passes validatePhotoUrl() (HTTPS + allowlisted hostname)
+     2. Category hero — slot available=true in HERO_SLOT_MAP
+     3. RAFI BlackSilhouette — unavailable slot OR unknown category
+
+   This function is the SOLE source of truth for the image.
+   og:image, twitter:image, JSON-LD image, and visible <img> src
+   all receive the exact same resolved URL — no divergence possible.
+   ────────────────────────────────────────────────────────────────────── */
+function resolveArtisanImage(artisan) {
+  /* Step 1 — Validated real photo */
+  const validatedPhoto = validatePhotoUrl(artisan.photo_url);
+  if (validatedPhoto) {
+    return { url: validatedPhoto, isReal: true, isHero: false, isFallback: false };
+  }
+
+  /* Step 2 — Available category hero */
   const category = artisan.category || artisan.service_category || '';
   const heroUrl = resolveHeroUrl(category);
   if (heroUrl) {
     return { url: heroUrl, isReal: false, isHero: true, isFallback: false };
   }
 
-  /* Step 3 — RAFI BlackSilhouette (completely unknown category) */
+  /* Step 3 — RAFI BlackSilhouette
+     Reached when: category unknown, or slot NOT_AVAILABLE, or photo invalid */
   return { url: RAFI_FALLBACK_URL, isReal: false, isHero: false, isFallback: true };
 }
 
-/* ── HTML escape ── */
+/* ══════════════════════════════════════════════════════════════════════
+   SECTION C — ESCAPING UTILITIES
+   ══════════════════════════════════════════════════════════════════════
+
+   ESCAPING POLICY (applied consistently throughout the renderer):
+
+   Context              | Function      | Variables
+   ─────────────────────┼───────────────┼────────────────────────────────
+   HTML text content    | esc()         | rawName, rawCity, rawDesc, …
+   HTML attributes      | esc()         | src=, alt=, href=, content=
+   <title> text         | esc()         | rawName, rawCity, rawLabel
+   JSON-LD object       | safeJsonLD()  | entire JSON object, post-stringify
+   Internal URLs        | only fixeo.ma | artisan CTA, breadcrumb, related
+
+   RULES:
+   - All raw* variables hold UNESCAPED Supabase values.
+   - esc() is called at the insertion point, never at variable assignment.
+   - JSON-LD uses JSON.stringify on raw values, then safeJsonLD() replaces
+     </script>-breaking characters in the final string.
+   - escJson() is REMOVED — it was double-escaping pre-escaped values.
+   - absoluteImageUrl is always either our own /heroes/… or /rafi/… URL,
+     or a validated HTTPS URL from the allowlist — safe to embed as-is
+     after esc() for attribute context.
+   - Numeric fields (price_from, response_time_min) cast via Number() —
+     only digits emitted, no injection possible.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── HTML attribute + text escape ── */
 function esc(str) {
-  if (!str) return '';
+  if (str === null || str === undefined) return '';
   return String(str)
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
@@ -343,25 +463,35 @@ function esc(str) {
     .replace(/'/g, '&#39;');
 }
 
-/* ── JSON-LD escape (for strings embedded in JSON) ── */
-function escJson(str) {
-  if (!str) return '';
-  return String(str)
-    .replace(/\\/g, '\\\\')
-    .replace(/"/g, '\\"')
-    .replace(/\n/g, '\\n')
-    .replace(/\r/g, '\\r')
-    .replace(/\t/g, '\\t')
+/* ── Safe JSON-LD serializer ────────────────────────────────────────────
+   Builds the JSON string via JSON.stringify (handles quotes, backslashes,
+   control chars), then replaces the three characters that would allow
+   breaking out of a <script> block in HTML:
+     <  →  \u003c
+     >  →  \u003e
+     &  →  \u0026
+   The result is valid JSON and safe to embed inside <script type="application/ld+json">.
+   This is the same technique used by Django, Ruby on Rails, Next.js.
+   ────────────────────────────────────────────────────────────────────── */
+function safeJsonLD(obj) {
+  return JSON.stringify(obj, null, 2)
     .replace(/</g, '\\u003c')
     .replace(/>/g, '\\u003e')
     .replace(/&/g, '\\u0026');
 }
 
-/* ── Service label resolution ── */
+/* ── Service label resolution — returns a hardcoded string from SVC_LABELS or raw category ── */
 function svcLabel(category) {
   if (!category) return 'Artisan';
-  const key = String(category).toLowerCase().trim();
-  return SVC_LABELS[key] || category;
+  /* Normalize with diacritic strip to match SVC_LABELS keys */
+  const key = String(category)
+    .toLowerCase()
+    .trim()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9 _]/g, '')
+    .trim();
+  return SVC_LABELS[key] || SVC_LABELS[String(category).toLowerCase().trim()] || String(category);
 }
 
 /* ── City URL slug resolution ── */
@@ -453,61 +583,66 @@ function servicesHtml(services) {
 
 /* ── Main HTML generator ── */
 function buildProfileHtml(artisan) {
-  const name       = esc(artisan.name || artisan.full_name || '');
-  const city       = esc(artisan.city || '');
-  const rawCity    = artisan.city || '';
-  const category   = artisan.category || artisan.service_category || '';
-  const label      = svcLabel(category);
-  const slug       = artisan.public_slug || '';
-  const services   = Array.isArray(artisan.services) ? artisan.services : [];
-  const priceLabel = esc(artisan.price_label || '');
-  const workZone   = esc(artisan.work_zone || '');
-  const badgeLabel = esc(artisan.badge_label || '');
-  const avail      = artisan.availability;
-  const respTime   = artisan.response_time_min || 30;
-  const isClaimed  = artisan.claimed || false;
-  const description = artisan.description || '';
+  /* ── Raw variables — unescaped Supabase values ──
+     esc() is applied at each insertion point, never here.
+     This prevents double-escaping and makes escaping auditable. */
+  const rawName        = String(artisan.name || artisan.full_name || '');
+  const rawCity        = String(artisan.city || '');
+  const rawCategory    = String(artisan.category || artisan.service_category || '');
+  const rawLabel       = svcLabel(rawCategory);   /* from hardcoded SVC_LABELS — trusted */
+  const rawSlugVal     = String(artisan.public_slug || '');
+  const rawServices    = Array.isArray(artisan.services) ? artisan.services : [];
+  const rawPriceLabel  = String(artisan.price_label || '');
+  const rawWorkZone    = String(artisan.work_zone || '');
+  const rawBadgeLabel  = String(artisan.badge_label || '');
+  const rawAvail       = artisan.availability;
+  /* Numeric fields: cast via Number() — only digits, no injection */
+  const rawRespTime    = Number(artisan.response_time_min) > 0
+                         ? Number(artisan.response_time_min) : 30;
+  const rawPriceFrom   = Number(artisan.price_from) > 0
+                         ? Number(artisan.price_from) : null;
+  const isClaimed      = artisan.claimed === true;
+  const rawDescription = String(artisan.description || '');
 
-  /* ── Single image resolution — canonical source for ALL image references ──
-     Resolves once; og:image, twitter:image, JSON-LD image, and <img> src
-     all use this exact same value. No divergence possible.               */
+  /* ── Single image resolution ── */
   const imageRes = resolveArtisanImage(artisan);
-  /* Absolute URL for OG/Twitter/JSON-LD (must include domain) */
   const absoluteImageUrl = imageRes.url.startsWith('http')
     ? imageRes.url
     : `https://www.fixeo.ma${imageRes.url}`;
-  /* Relative URL for the <img> src (served from same origin) */
-  const imgSrc = imageRes.url;
+  const imgSrc = imageRes.url;  /* relative for <img> src */
 
-  /* Canonical URL */
-  const canonicalUrl = `https://www.fixeo.ma/artisan/${esc(slug)}`;
+  /* ── Canonical URL — slug already validated by SLUG_RE in the handler ── */
+  const canonicalUrl = `https://www.fixeo.ma/artisan/${rawSlugVal}`;
 
-  /* Title */
-  const title = `${name} — ${label} à ${city} | Fixeo`;
+  /* ── Computed strings — use raw* values; esc() applied at insertion point ── */
+  /* <title> text content: esc() applied once here for the title string itself */
+  const titleRaw   = `${rawName} — ${rawLabel} à ${rawCity} | Fixeo`;
+  /* meta description: raw, esc() at insertion point */
+  const metaDescRaw = `${rawLabel} à ${rawCity} — ${rawName}. ${rawDescription.replace(/\.$/, '')}. Profil sur Fixeo.ma.`;
 
-  /* Meta description */
-  const metaDesc = `${label} à ${city} — ${name}. ${esc(description.replace(/\.$/, ''))}. Profil sur Fixeo.ma.`;
+  /* ── LP link for breadcrumb ── */
+  const lpHref = lpUrl(rawCategory, rawCity) || 'https://www.fixeo.ma/services.html';
+  const lpTextRaw = `${rawLabel}s à ${rawCity}`;
 
-  /* LP link for breadcrumb */
-  const lpHref = lpUrl(category, rawCity) || 'https://www.fixeo.ma/services.html';
-  const lpText = `${label}s à ${city}`;
-
-  /* Related internal links */
+  /* ── Related internal links ── */
   const relLinks = buildRelatedLinks(artisan);
 
-  /* JSON-LD — image uses absoluteImageUrl (same resolved value, absolute) */
-  const jsonLd = {
+  /* ── JSON-LD — built with raw values, serialized via safeJsonLD() ──
+     safeJsonLD() = JSON.stringify + replace(</script>-breaking chars).
+     Raw values go in directly — JSON.stringify handles all quoting/escaping.
+     safeJsonLD() adds the final layer that makes it safe inside <script>. */
+  const jsonLdObj = {
     '@context': 'https://schema.org',
     '@graph': [
       {
         '@type': 'ProfessionalService',
         '@id': `${canonicalUrl}#service`,
-        'name': escJson(name),
-        'description': escJson(description),
+        'name': rawName,
+        'description': rawDescription,
         'url': canonicalUrl,
-        'image': absoluteImageUrl,           /* ← same resolved image */
-        'areaServed': { '@type': 'City', 'name': escJson(artisan.city || '') },
-        'serviceType': escJson(label),
+        'image': absoluteImageUrl,
+        'areaServed': { '@type': 'City', 'name': rawCity },
+        'serviceType': rawLabel,
         'provider': {
           '@type': 'Organization',
           '@id': 'https://www.fixeo.ma/#organization',
@@ -515,24 +650,24 @@ function buildProfileHtml(artisan) {
           'url': 'https://www.fixeo.ma/'
         },
         'mainEntityOfPage': { '@type': 'WebPage', '@id': canonicalUrl },
-        ...(artisan.price_from ? {
-          'priceRange': `À partir de ${artisan.price_from} DH`,
+        ...(rawPriceFrom ? {
+          'priceRange': `À partir de ${rawPriceFrom} DH`,
           'offers': {
             '@type': 'Offer',
             'priceCurrency': 'MAD',
-            'price': String(artisan.price_from),
-            'availability': avail === 'available'
+            'price': String(rawPriceFrom),
+            'availability': rawAvail === 'available'
               ? 'https://schema.org/InStock'
               : 'https://schema.org/OutOfStock'
           }
         } : {}),
-        ...(services.length ? {
+        ...(rawServices.length ? {
           'hasOfferCatalog': {
             '@type': 'OfferCatalog',
-            'name': escJson(`Services ${label} à ${artisan.city || ''}`),
-            'itemListElement': services.map(s => ({
+            'name': `Services ${rawLabel} à ${rawCity}`,
+            'itemListElement': rawServices.map(s => ({
               '@type': 'Offer',
-              'name': escJson(s)
+              'name': String(s)
             }))
           }
         } : {}),
@@ -541,16 +676,16 @@ function buildProfileHtml(artisan) {
         '@type': 'BreadcrumbList',
         'itemListElement': [
           { '@type': 'ListItem', 'position': 1, 'name': 'Fixeo', 'item': 'https://www.fixeo.ma/' },
-          { '@type': 'ListItem', 'position': 2, 'name': escJson(label + 's'), 'item': lpHref },
-          { '@type': 'ListItem', 'position': 3, 'name': escJson(name), 'item': canonicalUrl }
+          { '@type': 'ListItem', 'position': 2, 'name': `${rawLabel}s`, 'item': lpHref },
+          { '@type': 'ListItem', 'position': 3, 'name': rawName, 'item': canonicalUrl }
         ]
       },
       {
         '@type': 'WebPage',
         '@id': canonicalUrl,
         'url': canonicalUrl,
-        'name': escJson(title),
-        'description': escJson(metaDesc),
+        'name': titleRaw,
+        'description': metaDescRaw,
         'inLanguage': 'fr-MA',
         'isPartOf': { '@id': 'https://www.fixeo.ma/#website' }
       }
@@ -558,17 +693,16 @@ function buildProfileHtml(artisan) {
   };
 
   /* ── Visible image section ──────────────────────────────────────────
-     isReal   → real circular photo with ring border
-     isHero   → category hero (square/transparent, slightly larger)
-     isFallback → RAFI silhouette (neutral, aria-hidden)
-     ────────────────────────────────────────────────────────────────── */
+     isReal     → real circular photo with border
+     isHero     → category hero (transparent image, no circular crop)
+     isFallback → RAFI BlackSilhouette (aria-hidden, neutral)
+     ── esc() applied to all src/alt attributes at insertion point ───── */
   let photoSection;
   if (imageRes.isReal) {
-    /* Real artisan photo */
     photoSection = `<div class="ssp-avatar-wrap">
         <img class="ssp-avatar"
              src="${esc(imgSrc)}"
-             alt="${name}, ${esc(label)} à ${city}"
+             alt="${esc(rawName)}, ${esc(rawLabel)} à ${esc(rawCity)}"
              width="120" height="120"
              loading="eager"
              fetchpriority="high"
@@ -576,11 +710,10 @@ function buildProfileHtml(artisan) {
              onerror="this.style.display='none'">
       </div>`;
   } else if (imageRes.isHero) {
-    /* Category hero — slightly larger, no circular crop */
     photoSection = `<div class="ssp-avatar-wrap ssp-avatar-wrap--hero">
         <img class="ssp-hero-img"
              src="${esc(imgSrc)}"
-             alt="${name}, ${esc(label)}"
+             alt="${esc(rawName)}, ${esc(rawLabel)}"
              width="140" height="140"
              loading="eager"
              fetchpriority="high"
@@ -588,7 +721,6 @@ function buildProfileHtml(artisan) {
              onerror="this.style.display='none'">
       </div>`;
   } else {
-    /* RAFI BlackSilhouette — completely unknown category */
     photoSection = `<div class="ssp-avatar-wrap ssp-avatar-wrap--fallback">
         <img class="rafi-img rafi-img--head ssp-rafi-fallback"
              src="${esc(imgSrc)}"
@@ -601,56 +733,64 @@ function buildProfileHtml(artisan) {
       </div>`;
   }
 
-  /* Services tags */
-  const svcsSection = services.length
+  /* Services tags — esc() at insertion */
+  const svcsSection = rawServices.length
     ? `<ul class="ssp-services-list" aria-label="Services proposés">
-        ${servicesHtml(services)}
+        ${rawServices.map(s => `<li class="ssp-service-tag">${esc(s)}</li>`).join('')}
       </ul>`
     : '';
 
-  /* Price info */
-  const priceSection = priceLabel
+  /* Price info — rawPriceLabel is esc()d at insertion */
+  const priceSection = rawPriceLabel
     ? `<div class="ssp-price">
         <span class="ssp-price-icon">💰</span>
-        <span>${priceLabel}</span>
+        <span>${esc(rawPriceLabel)}</span>
       </div>`
     : '';
 
-  /* Zone info */
-  const zoneSection = workZone
+  /* Zone info — rawWorkZone is esc()d at insertion */
+  const zoneSection = rawWorkZone
     ? `<div class="ssp-zone">
         <span class="ssp-zone-icon">📍</span>
-        <span>Zone d'intervention : ${workZone}</span>
+        <span>Zone d'intervention : ${esc(rawWorkZone)}</span>
       </div>`
     : '';
 
-  /* Response time */
+  /* Response time — numeric, safe */
   const respSection = `<div class="ssp-resp">
     <span class="ssp-resp-icon">⏱</span>
-    <span>Réponse estimée : ${respTime} min</span>
+    <span>Réponse estimée : ${rawRespTime} min</span>
   </div>`;
 
-  /* Claim CTA */
+  /* Claim CTA — rawName is esc()d at insertion */
   const claimSection = !isClaimed
     ? `<div class="ssp-claim-cta">
-        <p class="ssp-claim-text">Êtes-vous <strong>${name}</strong> ?</p>
+        <p class="ssp-claim-text">Êtes-vous <strong>${esc(rawName)}</strong> ?</p>
         <a href="https://www.fixeo.ma/rejoindre-fixeo.html" class="ssp-claim-btn">
           Rejoindre Fixeo &amp; revendiquer ce profil →
         </a>
       </div>`
     : '';
 
-  /* Related links section */
+  /* Related links — hrefs are our own generated URLs (safe); text is esc()d */
   const relLinksHtml = relLinks.length
     ? `<nav class="ssp-related" aria-label="Pages liées">
         <h2 class="ssp-related-title">Voir aussi</h2>
         <ul class="ssp-related-list">
-          ${relLinks.map(l => `<li><a href="${esc(l.href)}">${l.text}</a></li>`).join('\n          ')}
+          ${relLinks.map(l => `<li><a href="${esc(l.href)}">${esc(l.text)}</a></li>`).join('\n          ')}
         </ul>
       </nav>`
     : '';
 
-  /* ─── Full HTML ─── */
+  /* ─── Full HTML ─────────────────────────────────────────────────────
+     Escaping per context:
+       <title>: esc(titleRaw)                  — HTML text node
+       content=: esc(metaDescRaw)              — HTML attribute
+       href=: canonicalUrl (fixeo.ma only)     — safe, no user input
+       content= for OG/Twitter: esc(…)         — HTML attribute
+       JSON-LD <script>: safeJsonLD(jsonLdObj) — safe JSON in script tag
+       <h1>, <p> text: esc(rawName) etc.       — HTML text
+     ────────────────────────────────────────────────────────────────── */
   return `<!DOCTYPE html>
 <html lang="fr" dir="ltr">
 <head>
@@ -658,12 +798,12 @@ function buildProfileHtml(artisan) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- SEO: Title — unique per artisan -->
-  <title>${title}</title>
+  <title>${esc(titleRaw)}</title>
 
   <!-- SEO: Meta description — unique per artisan -->
-  <meta name="description" content="${esc(metaDesc)}">
+  <meta name="description" content="${esc(metaDescRaw)}">
 
-  <!-- SEO: Canonical — self-referencing -->
+  <!-- SEO: Canonical — self-referencing, fixeo.ma domain only -->
   <link rel="canonical" href="${canonicalUrl}">
 
   <!-- SEO: Robots -->
@@ -671,26 +811,27 @@ function buildProfileHtml(artisan) {
 
   <!-- Open Graph — og:image, twitter:image, JSON-LD image all use the same resolved URL -->
   <meta property="og:type" content="profile">
-  <meta property="og:title" content="${esc(title)}">
-  <meta property="og:description" content="${esc(metaDesc)}">
+  <meta property="og:title" content="${esc(titleRaw)}">
+  <meta property="og:description" content="${esc(metaDescRaw)}">
   <meta property="og:url" content="${canonicalUrl}">
   <meta property="og:image" content="${esc(absoluteImageUrl)}">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="${name} — ${esc(label)} à ${city}">
+  <meta property="og:image:alt" content="${esc(rawName)} — ${esc(rawLabel)} à ${esc(rawCity)}">
   <meta property="og:locale" content="fr_MA">
   <meta property="og:site_name" content="Fixeo">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:site" content="@FixeoMaroc">
-  <meta name="twitter:title" content="${esc(title)}">
-  <meta name="twitter:description" content="${esc(metaDesc)}">
+  <meta name="twitter:title" content="${esc(titleRaw)}">
+  <meta name="twitter:description" content="${esc(metaDescRaw)}">
   <meta name="twitter:image" content="${esc(absoluteImageUrl)}">
 
   <!-- JSON-LD: ProfessionalService + BreadcrumbList + WebPage -->
+  <!-- safeJsonLD() = JSON.stringify + \u003c/\u003e/\u0026 replacement — safe in <script> -->
   <script type="application/ld+json">
-${JSON.stringify(jsonLd, null, 2)}
+${safeJsonLD(jsonLdObj)}
   </script>
 
   <!-- Fonts -->
@@ -970,37 +1111,38 @@ ${JSON.stringify(jsonLd, null, 2)}
   </a>
 
   <!-- Visible breadcrumb navigation (also in BreadcrumbList JSON-LD above) -->
+  <!-- hrefs are fixeo.ma generated URLs — no user input in href -->
   <nav class="ssp-breadcrumb" aria-label="Fil d'Ariane">
     <a href="https://www.fixeo.ma/">Fixeo</a>
     <span class="ssp-breadcrumb-sep" aria-hidden="true">›</span>
-    <a href="${esc(lpHref)}">${esc(lpText)}</a>
+    <a href="${esc(lpHref)}">${esc(lpTextRaw)}</a>
     <span class="ssp-breadcrumb-sep" aria-hidden="true">›</span>
-    <span aria-current="page">${name}</span>
+    <span aria-current="page">${esc(rawName)}</span>
   </nav>
 
   <!-- Main profile card -->
   <article class="ssp-card" itemscope itemtype="https://schema.org/ProfessionalService">
 
-    <!-- Photo or RAFI fallback -->
+    <!-- Photo or hero or RAFI fallback -->
     ${photoSection}
 
-    <!-- H1 — exactly one per page -->
-    <h1 class="ssp-h1" itemprop="name">${name}</h1>
+    <!-- H1 — exactly one per page; esc() on rawName -->
+    <h1 class="ssp-h1" itemprop="name">${esc(rawName)}</h1>
 
-    <!-- Profession + city -->
+    <!-- Profession + city; rawLabel from hardcoded map (trusted), rawCity esc()d -->
     <p class="ssp-subtitle" itemprop="serviceType">
-      ${esc(label)} à <span itemprop="areaServed">${city}</span>
+      ${esc(rawLabel)} à <span itemprop="areaServed">${esc(rawCity)}</span>
     </p>
 
     <!-- Status badges -->
     <div class="ssp-badges">
       ${availBadge(artisan)}
-      ${badgeLabel ? `<span class="ssp-badge ssp-badge--new">${badgeLabel}</span>` : ''}
+      ${rawBadgeLabel ? `<span class="ssp-badge ssp-badge--new">${esc(rawBadgeLabel)}</span>` : ''}
     </div>
 
-    <!-- Public description -->
-    ${description
-      ? `<p class="ssp-description" itemprop="description">${esc(description)}</p>`
+    <!-- Public description; rawDescription esc()d -->
+    ${rawDescription
+      ? `<p class="ssp-description" itemprop="description">${esc(rawDescription)}</p>`
       : ''}
 
     <!-- Info rows: price, zone, response time -->
@@ -1011,10 +1153,10 @@ ${JSON.stringify(jsonLd, null, 2)}
     </div>
 
     <!-- Services offered -->
-    ${services.length ? `<p class="ssp-services-title">Services proposés</p>${svcsSection}` : ''}
+    ${rawServices.length ? `<p class="ssp-services-title">Services proposés</p>${svcsSection}` : ''}
 
-    <!-- Main CTA -->
-    <a href="https://www.fixeo.ma/?open=request&artisan=${esc(slug)}"
+    <!-- Main CTA — slug already validated by SLUG_RE (alphanum + hyphens only) -->
+    <a href="https://www.fixeo.ma/?open=request&amp;artisan=${esc(rawSlugVal)}"
        class="ssp-cta"
        rel="nofollow">
       Demander une intervention →
