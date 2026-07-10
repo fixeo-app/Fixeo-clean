@@ -119,6 +119,174 @@
       "dest": "/api/lp-fn?slug=macon-casablanca"
     },
     {
+      "src": "^/plombier-fes$",
+      "dest": "/api/lp-fn?slug=plombier-fes"
+    },
+    {
+      "src": "^/plombier-tanger$",
+      "dest": "/api/lp-fn?slug=plombier-tanger"
+    },
+    {
+      "src": "^/plombier-marrakech$",
+      "dest": "/api/lp-fn?slug=plombier-marrakech"
+    },
+    {
+      "src": "^/plombier-agadir$",
+      "dest": "/api/lp-fn?slug=plombier-agadir"
+    },
+    {
+      "src": "^/electricien-fes$",
+      "dest": "/api/lp-fn?slug=electricien-fes"
+    },
+    {
+      "src": "^/electricien-tanger$",
+      "dest": "/api/lp-fn?slug=electricien-tanger"
+    },
+    {
+      "src": "^/electricien-marrakech$",
+      "dest": "/api/lp-fn?slug=electricien-marrakech"
+    },
+    {
+      "src": "^/electricien-agadir$",
+      "dest": "/api/lp-fn?slug=electricien-agadir"
+    },
+    {
+      "src": "^/serrurier-casablanca$",
+      "dest": "/api/lp-fn?slug=serrurier-casablanca"
+    },
+    {
+      "src": "^/serrurier-rabat$",
+      "dest": "/api/lp-fn?slug=serrurier-rabat"
+    },
+    {
+      "src": "^/serrurier-fes$",
+      "dest": "/api/lp-fn?slug=serrurier-fes"
+    },
+    {
+      "src": "^/serrurier-tanger$",
+      "dest": "/api/lp-fn?slug=serrurier-tanger"
+    },
+    {
+      "src": "^/serrurier-marrakech$",
+      "dest": "/api/lp-fn?slug=serrurier-marrakech"
+    },
+    {
+      "src": "^/serrurier-agadir$",
+      "dest": "/api/lp-fn?slug=serrurier-agadir"
+    },
+    {
+      "src": "^/climatisation-casablanca$",
+      "dest": "/api/lp-fn?slug=climatisation-casablanca"
+    },
+    {
+      "src": "^/climatisation-rabat$",
+      "dest": "/api/lp-fn?slug=climatisation-rabat"
+    },
+    {
+      "src": "^/climatisation-fes$",
+      "dest": "/api/lp-fn?slug=climatisation-fes"
+    },
+    {
+      "src": "^/climatisation-tanger$",
+      "dest": "/api/lp-fn?slug=climatisation-tanger"
+    },
+    {
+      "src": "^/climatisation-marrakech$",
+      "dest": "/api/lp-fn?slug=climatisation-marrakech"
+    },
+    {
+      "src": "^/climatisation-agadir$",
+      "dest": "/api/lp-fn?slug=climatisation-agadir"
+    },
+    {
+      "src": "^/menuisier-casablanca$",
+      "dest": "/api/lp-fn?slug=menuisier-casablanca"
+    },
+    {
+      "src": "^/menuisier-rabat$",
+      "dest": "/api/lp-fn?slug=menuisier-rabat"
+    },
+    {
+      "src": "^/menuisier-fes$",
+      "dest": "/api/lp-fn?slug=menuisier-fes"
+    },
+    {
+      "src": "^/menuisier-tanger$",
+      "dest": "/api/lp-fn?slug=menuisier-tanger"
+    },
+    {
+      "src": "^/menuisier-marrakech$",
+      "dest": "/api/lp-fn?slug=menuisier-marrakech"
+    },
+    {
+      "src": "^/menuisier-agadir$",
+      "dest": "/api/lp-fn?slug=menuisier-agadir"
+    },
+    {
+      "src": "^/peintre-rabat$",
+      "dest": "/api/lp-fn?slug=peintre-rabat"
+    },
+    {
+      "src": "^/peintre-fes$",
+      "dest": "/api/lp-fn?slug=peintre-fes"
+    },
+    {
+      "src": "^/peintre-tanger$",
+      "dest": "/api/lp-fn?slug=peintre-tanger"
+    },
+    {
+      "src": "^/peintre-marrakech$",
+      "dest": "/api/lp-fn?slug=peintre-marrakech"
+    },
+    {
+      "src": "^/peintre-agadir$",
+      "dest": "/api/lp-fn?slug=peintre-agadir"
+    },
+    {
+      "src": "^/macon-rabat$",
+      "dest": "/api/lp-fn?slug=macon-rabat"
+    },
+    {
+      "src": "^/macon-fes$",
+      "dest": "/api/lp-fn?slug=macon-fes"
+    },
+    {
+      "src": "^/macon-tanger$",
+      "dest": "/api/lp-fn?slug=macon-tanger"
+    },
+    {
+      "src": "^/macon-marrakech$",
+      "dest": "/api/lp-fn?slug=macon-marrakech"
+    },
+    {
+      "src": "^/macon-agadir$",
+      "dest": "/api/lp-fn?slug=macon-agadir"
+    },
+    {
+      "src": "^/nettoyage-casablanca$",
+      "dest": "/api/lp-fn?slug=nettoyage-casablanca"
+    },
+    {
+      "src": "^/nettoyage-rabat$",
+      "dest": "/api/lp-fn?slug=nettoyage-rabat"
+    },
+    {
+      "src": "^/nettoyage-fes$",
+      "dest": "/api/lp-fn?slug=nettoyage-fes"
+    },
+    {
+      "src": "^/nettoyage-tanger$",
+      "dest": "/api/lp-fn?slug=nettoyage-tanger"
+    },
+    {
+      "src": "^/nettoyage-marrakech$",
+      "dest": "/api/lp-fn?slug=nettoyage-marrakech"
+    },
+    {
+      "src": "^/nettoyage-agadir$",
+      "dest": "/api/lp-fn?slug=nettoyage-agadir"
+    },
+    {
       "src": "^/artisan/(.*)",
       "dest": "/artisan-profile.html"
     },

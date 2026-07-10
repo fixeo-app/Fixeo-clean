@@ -71,9 +71,15 @@
     <lastmod>2026-06-12</lastmod>
   </sitemap>
 
-  <!-- SSR Local Landing Pages — Phase 3B PoC (6 pages: plombier + electricien + peintre + macon) -->
+  <!-- SSR Local Landing Pages — Phase 3C Production (40 pages: 8 services × Tier-1 cities) -->
   <sitemap>
     <loc>https://www.fixeo.ma/sitemap-lp-poc.xml</loc>
+    <lastmod>2026-07-10</lastmod>
+  </sitemap>
+
+  <!-- SSR Local Landing Pages — Phase 3C Production sitemap (40 eligible pages) -->
+  <sitemap>
+    <loc>https://www.fixeo.ma/sitemap-lp.xml</loc>
     <lastmod>2026-07-10</lastmod>
   </sitemap>
 
