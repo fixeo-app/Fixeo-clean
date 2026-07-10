@@ -136,7 +136,7 @@
     _setMeta('meta[name="description"]', 'content', desc);
 
     /* ── Canonical ── */
-    var canonicalUrl = 'https://fixeo.ma/artisan-profile.html' + (id ? '?id=' + encodeURIComponent(id) : '');
+    var canonicalUrl = 'https://www.fixeo.ma/artisan-profile.html' + (id ? '?id=' + encodeURIComponent(id) : '');
     var canon = document.querySelector('link[rel="canonical"]');
     if (canon) canon.setAttribute('href', canonicalUrl);
     else {
@@ -165,7 +165,7 @@
       '@type': 'ProfessionalService',
       'name': _esc(name),
       'url': canonicalUrl,
-      'provider': { '@type': 'Organization', 'name': 'Fixeo', 'url': 'https://fixeo.ma/' }
+      'provider': { '@type': 'Organization', 'name': 'Fixeo', 'url': 'https://www.fixeo.ma/' }
     };
     if (category) svc.serviceType = _esc(svcLabel);
     if (city) svc.areaServed = { '@type': 'City', 'name': _esc(city) };
@@ -175,10 +175,10 @@
 
     /* BreadcrumbList */
     var crumbs = [
-      { '@type': 'ListItem', 'position': 1, 'name': 'Fixeo', 'item': 'https://fixeo.ma/' }
+      { '@type': 'ListItem', 'position': 1, 'name': 'Fixeo', 'item': 'https://www.fixeo.ma/' }
     ];
     if (svcLabel !== 'Artisan') {
-      crumbs.push({ '@type': 'ListItem', 'position': 2, 'name': svcLabel, 'item': 'https://fixeo.ma/services.html' });
+      crumbs.push({ '@type': 'ListItem', 'position': 2, 'name': svcLabel, 'item': 'https://www.fixeo.ma/services.html' });
     }
     if (city) {
       crumbs.push({ '@type': 'ListItem', 'position': crumbs.length + 1, 'name': svcLabel + ' \u00e0 ' + _esc(city), 'item': canonicalUrl });

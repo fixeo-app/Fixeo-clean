@@ -161,7 +161,7 @@ function renderSection(sec, article) {
 }
 
 function buildArticlePage(article) {
-  const canonicalUrl = `https://fixeo.ma/blog/${article.slug}`;
+  const canonicalUrl = `https://www.fixeo.ma/blog/${article.slug}`;
   const cat = CATEGORIES[article.category] || { label: article.category, icon: '📝' };
   const bodyHtml = (article.sections || []).map(s => renderSection(s, article)).join('\n      ');
   const dateISO = article.date || new Date().toISOString().slice(0,10);
@@ -175,9 +175,9 @@ function buildArticlePage(article) {
     'url': canonicalUrl,
     'datePublished': dateISO,
     'dateModified': article.date_modified || dateISO,
-    'image': article.hero_image ? `https://fixeo.ma${article.hero_image}` : 'https://fixeo.ma/img/logo.png',
-    'author': { '@type': 'Organization', 'name': 'Fixeo', 'url': 'https://fixeo.ma/' },
-    'publisher': { '@type': 'Organization', 'name': 'Fixeo', 'logo': { '@type': 'ImageObject', 'url': 'https://fixeo.ma/img/logo.png' } },
+    'image': article.hero_image ? `https://www.fixeo.ma${article.hero_image}` : 'https://www.fixeo.ma/img/logo.png',
+    'author': { '@type': 'Organization', 'name': 'Fixeo', 'url': 'https://www.fixeo.ma/' },
+    'publisher': { '@type': 'Organization', 'name': 'Fixeo', 'logo': { '@type': 'ImageObject', 'url': 'https://www.fixeo.ma/img/logo.png' } },
     'mainEntityOfPage': { '@type': 'WebPage', '@id': canonicalUrl },
     'keywords': (article.tags || []).join(', '),
     'articleSection': cat.label,
@@ -188,9 +188,9 @@ function buildArticlePage(article) {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     'itemListElement': [
-      { '@type': 'ListItem', 'position': 1, 'name': 'Accueil', 'item': 'https://fixeo.ma/' },
-      { '@type': 'ListItem', 'position': 2, 'name': 'Blog', 'item': 'https://fixeo.ma/blog' },
-      { '@type': 'ListItem', 'position': 3, 'name': cat.label, 'item': `https://fixeo.ma/blog?cat=${article.category}` },
+      { '@type': 'ListItem', 'position': 1, 'name': 'Accueil', 'item': 'https://www.fixeo.ma/' },
+      { '@type': 'ListItem', 'position': 2, 'name': 'Blog', 'item': 'https://www.fixeo.ma/blog' },
+      { '@type': 'ListItem', 'position': 3, 'name': cat.label, 'item': `https://www.fixeo.ma/blog?cat=${article.category}` },
       { '@type': 'ListItem', 'position': 4, 'name': article.title, 'item': canonicalUrl }
     ]
   };
@@ -214,7 +214,7 @@ function buildArticlePage(article) {
   <meta property="og:title" content="${esc(article.title)}">
   <meta property="og:description" content="${esc(article.meta_desc)}">
   <meta property="og:url" content="${canonicalUrl}">
-  <meta property="og:image" content="${article.hero_image ? `https://fixeo.ma${esc(article.hero_image)}` : 'https://fixeo.ma/img/logo.png'}">
+  <meta property="og:image" content="${article.hero_image ? `https://www.fixeo.ma${esc(article.hero_image)}` : 'https://www.fixeo.ma/img/logo.png'}">
   <meta property="og:site_name" content="Fixeo">
   <meta property="og:locale" content="fr_MA">
   <meta property="article:published_time" content="${dateISO}">
@@ -366,7 +366,7 @@ function buildIndexPage(articles) {
   }).filter(Boolean).join('\n    ');
 
   const sitemapEntries = articles.map(a =>
-    `  <url>\n    <loc>https://fixeo.ma/blog/${a.slug}</loc>\n    <lastmod>${a.date || new Date().toISOString().slice(0,10)}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.70</priority>\n  </url>`
+    `  <url>\n    <loc>https://www.fixeo.ma/blog/${a.slug}</loc>\n    <lastmod>${a.date || new Date().toISOString().slice(0,10)}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.70</priority>\n  </url>`
   ).join('\n');
 
   return {
@@ -378,17 +378,17 @@ function buildIndexPage(articles) {
   <meta name="generator" content="fixeo-bloggen-v1a">
   <title>Blog Fixeo — Conseils, prix et guides artisans au Maroc</title>
   <meta name="description" content="Conseils pratiques, guides de prix et informations pour trouver le bon artisan au Maroc. Plomberie, électricité, serrurerie et plus.">
-  <link rel="canonical" href="https://fixeo.ma/blog">
+  <link rel="canonical" href="https://www.fixeo.ma/blog">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Blog Fixeo — Conseils artisans au Maroc">
   <meta property="og:description" content="Guides pratiques, tarifs et conseils pour trouver le bon artisan dans votre ville au Maroc.">
-  <meta property="og:url" content="https://fixeo.ma/blog">
-  <meta property="og:image" content="https://fixeo.ma/img/logo.png">
+  <meta property="og:url" content="https://www.fixeo.ma/blog">
+  <meta property="og:image" content="https://www.fixeo.ma/img/logo.png">
   <script type="application/ld+json">${JSON.stringify({
     '@context':'https://schema.org','@type':'Blog',
-    'name':'Blog Fixeo','url':'https://fixeo.ma/blog',
+    'name':'Blog Fixeo','url':'https://www.fixeo.ma/blog',
     'description':'Conseils, guides de prix et informations artisans au Maroc.',
-    'publisher':{'@type':'Organization','name':'Fixeo','url':'https://fixeo.ma/'},
+    'publisher':{'@type':'Organization','name':'Fixeo','url':'https://www.fixeo.ma/'},
     'inLanguage':'fr-MA'
   })}</script>
   <link rel="stylesheet" href="/css/blog-v1.css">
@@ -432,7 +432,7 @@ function buildIndexPage(articles) {
 <!-- Fixeo Blog Sitemap — generated by bloggen-v1a -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://fixeo.ma/blog</loc>
+    <loc>https://www.fixeo.ma/blog</loc>
     <lastmod>${new Date().toISOString().slice(0,10)}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>

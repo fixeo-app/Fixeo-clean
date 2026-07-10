@@ -673,7 +673,7 @@
     sec.innerHTML = '<div class="fxv2-section-head"><h2>\uD83C\uDD98 Support Fixeo</h2></div>'
       + _supportItem('https://wa.me/212660484415', '\uD83D\uDCAC', 'WhatsApp Support', 'R\u00e9ponse rapide 7j/7')
       + _supportItem('mailto:contact@fixeo.ma', '\uD83D\uDCE7', 'Email', 'contact@fixeo.ma')
-      + _supportItem('https://fixeo.ma', '\uD83C\uDF10', 'Site web', 'www.fixeo.ma')
+      + _supportItem('https://www.fixeo.ma', '\uD83C\uDF10', 'Site web', 'www.fixeo.ma')
       + '<div class="fxv2-error-banner" style="margin-top:16px;border-color:rgba(255,255,255,.12);color:rgba(255,255,255,.5);background:rgba(255,255,255,.04)">'
       + 'Version ' + VERSION + ' \u2014 Fixeo Client Dashboard</div>';
   }

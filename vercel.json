@@ -1,5 +1,13 @@
 {
   "version": 2,
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "fixeo.ma" }],
+      "destination": "https://www.fixeo.ma/$1",
+      "permanent": true
+    }
+  ],
   "builds": [
     {
       "src": "api/server.js",

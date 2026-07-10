@@ -720,7 +720,7 @@
     sec.innerHTML = '<div class="fxa-section-head"><h2>🆘 Support Fixeo</h2></div>'
       + _supportItem('https://wa.me/212660484415', '💬', 'WhatsApp Support', 'Réponse rapide 7j/7')
       + _supportItem('mailto:contact@fixeo.ma',    '📧', 'Email',            'contact@fixeo.ma')
-      + _supportItem('https://fixeo.ma',           '🌐', 'Site web',         'www.fixeo.ma')
+      + _supportItem('https://www.fixeo.ma',           '🌐', 'Site web',         'www.fixeo.ma')
       + '<div class="fxa-error-banner" style="border-color:rgba(255,255,255,.10);color:rgba(255,255,255,.4);background:rgba(255,255,255,.03);margin-top:16px">'
       + 'Artisan Dashboard ' + VERSION + ' — Fixeo</div>';
   }

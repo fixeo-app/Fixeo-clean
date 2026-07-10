@@ -7,7 +7,7 @@
   var DEFAULT_SUBTITLE = 'Artisans vérifiés Fixeo disponibles dans votre ville';
   var MARKETPLACE_URL = 'index.html#artisans-section';
   var SERVICES_URL = 'index.html#services';
-  var SITE_ORIGIN = (window.location && /^https?:/i.test(String(window.location.origin || ''))) ? window.location.origin : 'https://fixeo.ma';
+  var SITE_ORIGIN = (window.location && /^https?:/i.test(String(window.location.origin || ''))) ? window.location.origin : 'https://www.fixeo.ma';
   var STATIC_SEO_PAGE_MAP = {
     'plombier-casablanca': 'plombier-casablanca.html',
     'electricien-rabat': 'electricien-rabat.html',

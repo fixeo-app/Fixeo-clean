@@ -370,7 +370,7 @@ function footerHTML() {
       </div>
     </div>
     <div class="footer-bottom">
-      <p>© 2025 Fixeo — Tous droits réservés · <a href="https://fixeo.ma">fixeo.ma</a></p>
+      <p>© 2025 Fixeo — Tous droits réservés · <a href="https://www.fixeo.ma">fixeo.ma</a></p>
     </div>
   </footer>`;
 }
@@ -888,7 +888,7 @@ function updateSitemapIndex() {
     const entry = `
   <!-- Programmatic SEO V2 pages (problems/prices/quartiers) -->
   <sitemap>
-    <loc>https://fixeo.ma/sitemap-pseo.xml</loc>
+    <loc>https://www.fixeo.ma/sitemap-pseo.xml</loc>
     <lastmod>${today}</lastmod>
   </sitemap>`;
     content = content.replace('</sitemapindex>', entry + '\n</sitemapindex>');
