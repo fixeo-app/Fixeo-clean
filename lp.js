@@ -1,5 +1,5 @@
 /*!
- * functions/lp.js — Vercel Serverless Function
+ * lp.js — Vercel Serverless Function
  * SEO Phase 3B.1 — SSR Local Landing Page Engine (PoC)
  *
  * Route:  GET /{service}-{city}
