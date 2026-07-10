@@ -54,7 +54,7 @@
       "use": "@vercel/static"
     },
     {
-      "src": "lp.js",
+      "src": "api/lp.js",
       "use": "@vercel/node"
     }
   ],
@@ -96,27 +96,27 @@
     },
     {
       "src": "^/plombier-casablanca$",
-      "dest": "/lp?slug=plombier-casablanca"
+      "dest": "/api/lp?slug=plombier-casablanca"
     },
     {
       "src": "^/plombier-rabat$",
-      "dest": "/lp?slug=plombier-rabat"
+      "dest": "/api/lp?slug=plombier-rabat"
     },
     {
       "src": "^/electricien-casablanca$",
-      "dest": "/lp?slug=electricien-casablanca"
+      "dest": "/api/lp?slug=electricien-casablanca"
     },
     {
       "src": "^/electricien-rabat$",
-      "dest": "/lp?slug=electricien-rabat"
+      "dest": "/api/lp?slug=electricien-rabat"
     },
     {
       "src": "^/peintre-casablanca$",
-      "dest": "/lp?slug=peintre-casablanca"
+      "dest": "/api/lp?slug=peintre-casablanca"
     },
     {
       "src": "^/macon-casablanca$",
-      "dest": "/lp?slug=macon-casablanca"
+      "dest": "/api/lp?slug=macon-casablanca"
     },
     {
       "src": "^/artisan/(.*)",
