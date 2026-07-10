@@ -52,9 +52,72 @@
     {
       "src": "rafi/**",
       "use": "@vercel/static"
+    },
+    {
+      "src": "api/lp.js",
+      "use": "@vercel/node"
     }
   ],
   "routes": [
+    {
+      "src": "^/plombier-casablanca\\.html$",
+      "headers": {
+        "Location": "/plombier-casablanca"
+      },
+      "status": 301
+    },
+    {
+      "src": "^/plombier-rabat\\.html$",
+      "headers": {
+        "Location": "/plombier-rabat"
+      },
+      "status": 301
+    },
+    {
+      "src": "^/electricien-casablanca\\.html$",
+      "headers": {
+        "Location": "/electricien-casablanca"
+      },
+      "status": 301
+    },
+    {
+      "src": "^/electricien-rabat\\.html$",
+      "headers": {
+        "Location": "/electricien-rabat"
+      },
+      "status": 301
+    },
+    {
+      "src": "^/peinture-casablanca\\.html$",
+      "headers": {
+        "Location": "/peintre-casablanca"
+      },
+      "status": 301
+    },
+    {
+      "src": "^/plombier-casablanca$",
+      "dest": "/api/lp?slug=plombier-casablanca"
+    },
+    {
+      "src": "^/plombier-rabat$",
+      "dest": "/api/lp?slug=plombier-rabat"
+    },
+    {
+      "src": "^/electricien-casablanca$",
+      "dest": "/api/lp?slug=electricien-casablanca"
+    },
+    {
+      "src": "^/electricien-rabat$",
+      "dest": "/api/lp?slug=electricien-rabat"
+    },
+    {
+      "src": "^/peintre-casablanca$",
+      "dest": "/api/lp?slug=peintre-casablanca"
+    },
+    {
+      "src": "^/macon-casablanca$",
+      "dest": "/api/lp?slug=macon-casablanca"
+    },
     {
       "src": "^/artisan/(.*)",
       "dest": "/artisan-profile.html"
