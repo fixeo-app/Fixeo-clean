@@ -1,0 +1,145 @@
+/*
+ * fixeo-rafi-v2.css — RAFI V2 Character Delivery Styles
+ * Phase 1 — Foundation: containers, responsive sizing, accessibility.
+ *
+ * Rules:
+ *   - object-fit: contain (never crop)
+ *   - no filter, no drop-shadow, no recolor
+ *   - transparent background preserved
+ *   - no horizontal overflow
+ *   - prefers-reduced-motion respected
+ *   - all dimensions reserved to prevent CLS
+ *
+ * Do NOT add to hero/LCP regions without Phase 2 approval.
+ */
+
+/* ── Base container ────────────────────────────────────────────── */
+.rafi-img {
+  display: block;
+  object-fit: contain;
+  background: transparent;
+  /* Prevent any inherited filter/shadow from touching artwork */
+  filter: none;
+  /* Reserve layout space — all canonical files are 1:1 square */
+  aspect-ratio: 1 / 1;
+  /* Hard stop on overflow */
+  max-width: 100%;
+  /* Never shrink below 0 in flex containers */
+  flex-shrink: 0;
+}
+
+/* ── Wrapper (optional) ────────────────────────────────────────── */
+/*
+ * .rafi-wrap: inline-block wrapper used when you need to position
+ * an element relative to RAFI (e.g. a badge). Transparent bg only.
+ */
+.rafi-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  overflow: visible;
+}
+
+/* ── Size variants ─────────────────────────────────────────────── */
+
+/* Full body — marketing hero sections */
+.rafi-img--hero {
+  width: 280px;
+  height: 280px;
+}
+
+/* Bust — explainer / about / secondary hero */
+.rafi-img--bust {
+  width: 200px;
+  height: 200px;
+}
+
+/* Head + collar — confirmation, onboarding guide */
+.rafi-img--head {
+  width: 120px;
+  height: 120px;
+}
+
+/* Empty state — silhouette / monochrome */
+.rafi-img--empty {
+  width: 96px;
+  height: 96px;
+  opacity: 0.5;
+}
+
+/* Micro-glyph — widget badge, footer mark */
+.rafi-img--micro {
+  width: 36px;
+  height: 36px;
+}
+
+/* ── Responsive — tablet (max 768px) ───────────────────────────── */
+@media (max-width: 768px) {
+  .rafi-img--hero {
+    width: 200px;
+    height: 200px;
+  }
+
+  .rafi-img--bust {
+    width: 150px;
+    height: 150px;
+  }
+
+  .rafi-img--head {
+    width: 96px;
+    height: 96px;
+  }
+}
+
+/* ── Responsive — mobile (max 480px) ───────────────────────────── */
+@media (max-width: 480px) {
+  .rafi-img--hero {
+    width: 150px;
+    height: 150px;
+  }
+
+  .rafi-img--bust {
+    width: 120px;
+    height: 120px;
+  }
+
+  .rafi-img--head {
+    width: 80px;
+    height: 80px;
+  }
+}
+
+/* ── Reduced motion ─────────────────────────────────────────────── */
+/*
+ * RAFI images are static PNGs — no animation is applied by default.
+ * This block is a forward-compatibility guard for any future
+ * entrance animation added via a separate class.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .rafi-img,
+  .rafi-wrap {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ── Light / dark context helpers ──────────────────────────────── */
+/*
+ * RAFI PNGs use RGBA transparency. They render correctly on both
+ * light and dark backgrounds without modification.
+ * These helpers are for explicit placement context only.
+ */
+.rafi-ctx--light {
+  /* No background change needed — transparency handles it */
+}
+
+.rafi-ctx--dark {
+  /* No background change needed — transparency handles it */
+}
+
+/* ── Inline / text-flow placement ──────────────────────────────── */
+.rafi-img--inline {
+  display: inline-block;
+  vertical-align: middle;
+}

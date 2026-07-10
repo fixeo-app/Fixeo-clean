@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>RAFI V2 — Visual QA Preview (internal)</title>
+  <link rel="stylesheet" href="css/fixeo-rafi-v2.css?v=rfv2a">
+  <style>
+    /* ── Reset & base ─────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Cairo, Tajawal, Arial, sans-serif;
+      background: #0D0D1A;
+      color: #e8eaf0;
+      min-height: 100vh;
+    }
+
+    /* ── Layout ───────────────────────────────────────── */
+    .qa-wrap    { max-width: 1100px; margin: 0 auto; padding: 32px 20px 80px; }
+    .qa-header  { text-align: center; margin-bottom: 48px; padding: 32px 20px; border-bottom: 1px solid rgba(255,255,255,.08); }
+    .qa-header h1 { font-size: 1.5rem; font-weight: 900; color: #fff; margin-bottom: 8px; }
+    .qa-header p  { font-size: 0.85rem; color: rgba(255,255,255,.45); }
+    .qa-badge {
+      display: inline-block;
+      padding: 3px 12px;
+      background: rgba(239,68,68,.15);
+      border: 1px solid rgba(239,68,68,.4);
+      color: #f87171;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    /* ── Section headings ─────────────────────────────── */
+    .qa-section { margin-bottom: 56px; }
+    .qa-section-title {
+      font-size: 1rem;
+      font-weight: 800;
+      color: rgba(255,255,255,.7);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      margin-bottom: 24px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(255,255,255,.07);
+    }
+
+    /* ── Asset grid ───────────────────────────────────── */
+    .qa-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 24px;
+    }
+
+    /* ── Asset card ───────────────────────────────────── */
+    .qa-card {
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.08);
+      overflow: hidden;
+    }
+    .qa-card-canvas {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      min-height: 200px;
+    }
+    .qa-card-canvas--dark  { background: #0D0D1A; }
+    .qa-card-canvas--mid   { background: #1a1a2e; }
+    .qa-card-canvas--light { background: #f0f4f8; }
+    .qa-card-canvas--white { background: #ffffff; }
+    .qa-card-meta {
+      padding: 14px 16px;
+      background: rgba(255,255,255,.04);
+      border-top: 1px solid rgba(255,255,255,.07);
+    }
+    .qa-card-name {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 4px;
+      font-family: monospace;
+    }
+    .qa-card-info {
+      font-size: 0.72rem;
+      color: rgba(255,255,255,.45);
+      line-height: 1.5;
+    }
+
+    /* ── Size comparison row ──────────────────────────── */
+    .qa-sizes {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      gap: 24px;
+      background: rgba(255,255,255,.03);
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: 16px;
+      padding: 24px;
+    }
+    .qa-size-item { text-align: center; }
+    .qa-size-label {
+      display: block;
+      font-size: 0.7rem;
+      color: rgba(255,255,255,.4);
+      margin-top: 8px;
+      font-family: monospace;
+    }
+
+    /* ── Transfer size table ──────────────────────────── */
+    .qa-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+    .qa-table th, .qa-table td { padding: 10px 14px; text-align: left; border-bottom: 1px solid rgba(255,255,255,.06); }
+    .qa-table th { color: rgba(255,255,255,.5); font-weight: 700; font-size: 0.74rem; text-transform: uppercase; letter-spacing: .05em; }
+    .qa-table td { color: rgba(255,255,255,.85); }
+    .qa-table td:last-child { font-family: monospace; font-size: 0.78rem; color: #fbbf24; }
+    .qa-ok   { color: #34d399; font-weight: 700; }
+    .qa-warn { color: #fbbf24; font-weight: 700; }
+  </style>
+</head>
+<body>
+
+<div class="qa-wrap">
+
+  <!-- ── Header ── -->
+  <div class="qa-header">
+    <div class="qa-badge">⚠ Internal QA only — noindex, nofollow</div>
+    <h1>RAFI V2 — Visual QA Preview</h1>
+    <p>Phase 1 · 6 canonical PNG assets · Not linked from navigation, sitemap or footer</p>
+    <p style="margin-top:6px">Branch: <code style="color:#7c8ff5">feat/rafi-v2-integration</code></p>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════
+       SECTION 1 — All six canonical assets on dark bg
+  ═══════════════════════════════════════════════════ -->
+  <div class="qa-section">
+    <div class="qa-section-title">1 — All six canonical assets · dark background</div>
+    <div class="qa-grid">
+
+      <div class="qa-card">
+        <div class="qa-card-canvas qa-card-canvas--dark">
+          <img class="rafi-img rafi-img--bust"
+               src="rafi/RAFI_V2_FullBody_Color.png"
+               alt=""
+               loading="lazy"
+               decoding="async"
+               width="200" height="200">
+        </div>
+        <div class="qa-card-meta">
+          <div class="qa-card-name">RAFI_V2_FullBody_Color.png</div>
+          <div class="qa-card-info">4096×4096 · RGBA · 3.0 MB · Usage: marketing hero</div>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-card-canvas qa-card-canvas--dark">
+          <img class="rafi-img rafi-img--bust"
+               src="rafi/RAFI_V2_Bust_Color.png"
+               alt=""
+               loading="lazy"
+               decoding="async"
+               width="200" height="200">
+        </div>
+        <div class="qa-card-meta">
+          <div class="qa-card-name">RAFI_V2_Bust_Color.png</div>
+          <div class="qa-card-info">4096×4096 · RGBA · 3.9 MB · Usage: explainer / secondary hero</div>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-card-canvas qa-card-canvas--dark">
+          <img class="rafi-img rafi-img--bust"
+               src="rafi/RAFI_V2_HeadCollar_Color.png"
+               alt=""
+               loading="lazy"
+               decoding="async"
+               width="200" height="200">
+        </div>
+        <div class="qa-card-meta">
+          <div class="qa-card-name">RAFI_V2_HeadCollar_Color.png</div>
+          <div class="qa-card-info">4096×4096 · RGBA · 2.9 MB · Usage: confirmation / onboarding guide</div>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-card-canvas qa-card-canvas--dark">
+          <img class="rafi-img rafi-img--bust"
+               src="rafi/RAFI_V2_BlackSilhouette.png"
+               alt=""
+               loading="lazy"
+               decoding="async"
+               width="200" height="200">
+        </div>
+        <div class="qa-card-meta">
+          <div class="qa-card-name">RAFI_V2_BlackSilhouette.png</div>
+          <div class="qa-card-info">4096×4096 · RGBA · 2.7 MB · Usage: empty states</div>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-card-canvas qa-card-canvas--dark">
+          <img class="rafi-img rafi-img--bust"
+               src="rafi/RAFI_V2_OfficialMonochrome.png"
+               alt=""
+               loading="lazy"
+               decoding="async"
+               width="200" height="200">
+        </div>
+        <div class="qa-card-meta">
+          <div class="qa-card-name">RAFI_V2_OfficialMonochrome.png</div>
+          <div class="qa-card-info">4096×4096 · RGBA · 4.1 MB · Usage: trust / authority pages</div>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-card-canvas qa-card-canvas--dark">
+          <img class="rafi-img rafi-img--bust"
+               src="rafi/RAFI_V2_MicroGlyph.png"
+               alt=""
+               loading="lazy"
+               decoding="async"
+               width="200" height="200">
+        </div>
+        <div class="qa-card-meta">
+          <div class="qa-card-name">RAFI_V2_MicroGlyph.png</div>
+          <div class="qa-card-info">4096×4096 · RGBA · 4.0 MB · Usage: widget badge / footer</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════
+       SECTION 2 — Background transparency check
+  ═══════════════════════════════════════════════════ -->
+  <div class="qa-section">
+    <div class="qa-section-title">2 — Alpha transparency on light & white backgrounds</div>
+    <div class="qa-grid">
+
+      <div class="qa-card">
+        <div class="qa-card-canvas qa-card-canvas--light">
+          <img class="rafi-img rafi-img--bust"
+               src="rafi/RAFI_V2_FullBody_Color.png"
+               alt=""
+               loading="lazy"
+               decoding="async"
+               width="200" height="200">
+        </div>
+        <div class="qa-card-meta">
+          <div class="qa-card-name">FullBody_Color · light bg</div>
+          <div class="qa-card-info">Background: #f0f4f8 — no white box should appear</div>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-card-canvas qa-card-canvas--white">
+          <img class="rafi-img rafi-img--bust"
+               src="rafi/RAFI_V2_Bust_Color.png"
+               alt=""
+               loading="lazy"
+               decoding="async"
+               width="200" height="200">
+        </div>
+        <div class="qa-card-meta">
+          <div class="qa-card-name">Bust_Color · white bg</div>
+          <div class="qa-card-info">Background: #ffffff — transparency must hold</div>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-card-canvas qa-card-canvas--light">
+          <img class="rafi-img rafi-img--bust"
+               src="rafi/RAFI_V2_BlackSilhouette.png"
+               alt=""
+               loading="lazy"
+               decoding="async"
+               width="200" height="200">
+        </div>
+        <div class="qa-card-meta">
+          <div class="qa-card-name">BlackSilhouette · light bg</div>
+          <div class="qa-card-info">Black silhouette on light — high contrast check</div>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-card-canvas qa-card-canvas--white">
+          <img class="rafi-img rafi-img--bust"
+               src="rafi/RAFI_V2_OfficialMonochrome.png"
+               alt=""
+               loading="lazy"
+               decoding="async"
+               width="200" height="200">
+        </div>
+        <div class="qa-card-meta">
+          <div class="qa-card-name">OfficialMonochrome · white bg</div>
+          <div class="qa-card-info">Monochrome render on white</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════
+       SECTION 3 — Responsive size variants
+  ═══════════════════════════════════════════════════ -->
+  <div class="qa-section">
+    <div class="qa-section-title">3 — Responsive size variants (Bust_Color reference)</div>
+    <div class="qa-sizes">
+
+      <div class="qa-size-item">
+        <img class="rafi-img rafi-img--hero"
+             src="rafi/RAFI_V2_Bust_Color.png"
+             alt=""
+             loading="lazy"
+             decoding="async"
+             width="280" height="280">
+        <span class="qa-size-label">--hero<br>280px</span>
+      </div>
+
+      <div class="qa-size-item">
+        <img class="rafi-img rafi-img--bust"
+             src="rafi/RAFI_V2_Bust_Color.png"
+             alt=""
+             loading="lazy"
+             decoding="async"
+             width="200" height="200">
+        <span class="qa-size-label">--bust<br>200px</span>
+      </div>
+
+      <div class="qa-size-item">
+        <img class="rafi-img rafi-img--head"
+             src="rafi/RAFI_V2_Bust_Color.png"
+             alt=""
+             loading="lazy"
+             decoding="async"
+             width="120" height="120">
+        <span class="qa-size-label">--head<br>120px</span>
+      </div>
+
+      <div class="qa-size-item">
+        <img class="rafi-img rafi-img--empty"
+             src="rafi/RAFI_V2_BlackSilhouette.png"
+             alt=""
+             loading="lazy"
+             decoding="async"
+             width="96" height="96">
+        <span class="qa-size-label">--empty<br>96px</span>
+      </div>
+
+      <div class="qa-size-item">
+        <img class="rafi-img rafi-img--micro"
+             src="rafi/RAFI_V2_MicroGlyph.png"
+             alt=""
+             loading="lazy"
+             decoding="async"
+             width="36" height="36">
+        <span class="qa-size-label">--micro<br>36px</span>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════
+       SECTION 4 — Transfer size reference table
+  ═══════════════════════════════════════════════════ -->
+  <div class="qa-section">
+    <div class="qa-section-title">4 — Canonical file sizes (source — check DevTools for transferred size)</div>
+    <table class="qa-table">
+      <thead>
+        <tr>
+          <th>File</th>
+          <th>Dims</th>
+          <th>Source size</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>RAFI_V2_FullBody_Color.png</td>
+          <td>4096×4096</td>
+          <td>3,105,671 B (2.96 MB)</td>
+          <td id="s1">—</td>
+        </tr>
+        <tr>
+          <td>RAFI_V2_Bust_Color.png</td>
+          <td>4096×4096</td>
+          <td>4,033,274 B (3.85 MB)</td>
+          <td id="s2">—</td>
+        </tr>
+        <tr>
+          <td>RAFI_V2_HeadCollar_Color.png</td>
+          <td>4096×4096</td>
+          <td>3,055,673 B (2.91 MB)</td>
+          <td id="s3">—</td>
+        </tr>
+        <tr>
+          <td>RAFI_V2_BlackSilhouette.png</td>
+          <td>4096×4096</td>
+          <td>2,847,008 B (2.72 MB)</td>
+          <td id="s4">—</td>
+        </tr>
+        <tr>
+          <td>RAFI_V2_OfficialMonochrome.png</td>
+          <td>4096×4096</td>
+          <td>4,347,228 B (4.15 MB)</td>
+          <td id="s5">—</td>
+        </tr>
+        <tr>
+          <td>RAFI_V2_MicroGlyph.png</td>
+          <td>4096×4096</td>
+          <td>4,234,888 B (4.04 MB)</td>
+          <td id="s6">—</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="font-size:.75rem;color:rgba(255,255,255,.35);margin-top:12px">
+      ⚠ These are source file sizes. Vercel serves them as-is (no transform).
+      Use DevTools Network tab to confirm actual transferred bytes.
+      loading="lazy" means files below the fold are not fetched until scrolled into view.
+    </p>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════
+       SECTION 5 — HTTP status live check
+  ═══════════════════════════════════════════════════ -->
+  <div class="qa-section">
+    <div class="qa-section-title">5 — HTTP 200 live check (JavaScript)</div>
+    <table class="qa-table">
+      <thead>
+        <tr><th>URL</th><th>HTTP status</th></tr>
+      </thead>
+      <tbody id="http-check-body">
+        <tr><td colspan="2" style="color:rgba(255,255,255,.3)">Running checks…</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════
+       SECTION 6 — comment-ca-marche.html integration preview
+  ═══════════════════════════════════════════════════ -->
+  <div class="qa-section">
+    <div class="qa-section-title">6 — Bust_Color integration: comment-ca-marche hero context</div>
+    <!-- Replicates the .cp-hero layout from comment-ca-marche.html for visual validation -->
+    <div style="
+      background: linear-gradient(135deg,#0D0D1A 0%,#1a1a2e 60%,#16213e 100%);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 20px;
+      padding: 48px 24px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    ">
+      <div style="position:absolute;inset:0;background:radial-gradient(ellipse 80% 55% at 50% 0%,rgba(56,189,248,0.10),transparent);pointer-events:none"></div>
+      <div style="position:relative;z-index:1;max-width:680px;margin:0 auto">
+        <span style="display:inline-block;padding:5px 16px;border-radius:999px;border:1px solid rgba(56,189,248,0.35);color:rgba(100,210,255,0.9);font-size:0.78rem;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;margin-bottom:22px">Comment ça marche</span>
+
+        <!-- RAFI Bust_Color — decorative, below h1 -->
+        <div style="display:flex;justify-content:center;margin-bottom:20px">
+          <img class="rafi-img rafi-img--bust"
+               src="rafi/RAFI_V2_Bust_Color.png"
+               alt=""
+               loading="lazy"
+               decoding="async"
+               width="200" height="200">
+        </div>
+
+        <h2 style="font-size:clamp(1.5rem,3.5vw,2.4rem);font-weight:900;line-height:1.15;letter-spacing:-0.02em;margin:0 0 16px;color:#fff">
+          Comment Fixeo trouve<br>
+          <span style="background:linear-gradient(135deg,#E1306C,#833AB4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">le bon artisan</span>
+        </h2>
+        <p style="font-size:clamp(0.95rem,1.8vw,1.1rem);color:rgba(232,234,240,.58);max-width:520px;margin:0 auto 28px;line-height:1.65">
+          Un parcours simple : besoin, ville, artisan, intervention. Pas de comparaisons interminables, pas d'offres à trier.
+        </p>
+        <a href="#" style="display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:14px;font-size:0.95rem;font-weight:800;cursor:pointer;border:none;background:linear-gradient(135deg,#E1306C,#833AB4);box-shadow:0 8px 24px rgba(225,48,108,0.25);color:#fff;text-decoration:none">
+          🔍 Trouver mon artisan maintenant
+        </a>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════
+       SECTION 7 — QA notes
+  ═══════════════════════════════════════════════════ -->
+  <div class="qa-section">
+    <div class="qa-section-title">7 — QA checklist (manual)</div>
+    <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:20px 24px;font-size:0.82rem;color:rgba(255,255,255,.65);line-height:2">
+      <p>☐ All six PNG files load (no broken images above)</p>
+      <p>☐ Transparent backgrounds render correctly on dark <em>and</em> light panels (Section 2)</p>
+      <p>☐ No horizontal overflow on mobile 375px</p>
+      <p>☐ No horizontal overflow on mobile 320px</p>
+      <p>☐ Size variants (Section 3) render at correct dimensions</p>
+      <p>☐ Section 6 integration looks correct — RAFI below label, above h1 text</p>
+      <p>☐ No console errors (DevTools → Console)</p>
+      <p>☐ No 404s in DevTools → Network</p>
+      <p>☐ HTTP status check in Section 5 shows 200 for all six files</p>
+      <p>☐ loading="lazy" — only above-fold images loaded on page load (verify with Network)</p>
+      <p>☐ BlackSilhouette visible on light background (not invisible)</p>
+      <p>☐ MicroGlyph renders cleanly at 36px (Section 3)</p>
+    </div>
+  </div>
+
+</div><!-- /qa-wrap -->
+
+
+<!-- ── Live HTTP check script ─────────────────────────────────── -->
+<script>
+(function() {
+  var files = [
+    'rafi/RAFI_V2_FullBody_Color.png',
+    'rafi/RAFI_V2_Bust_Color.png',
+    'rafi/RAFI_V2_HeadCollar_Color.png',
+    'rafi/RAFI_V2_BlackSilhouette.png',
+    'rafi/RAFI_V2_OfficialMonochrome.png',
+    'rafi/RAFI_V2_MicroGlyph.png'
+  ];
+  var tbody = document.getElementById('http-check-body');
+  tbody.innerHTML = '';
+  var pending = files.length;
+  files.forEach(function(f) {
+    var row = document.createElement('tr');
+    var tdUrl = document.createElement('td');
+    tdUrl.style.fontFamily = 'monospace';
+    tdUrl.style.fontSize = '0.78rem';
+    tdUrl.textContent = '/' + f;
+    var tdStatus = document.createElement('td');
+    tdStatus.textContent = 'checking…';
+    tdStatus.style.color = 'rgba(255,255,255,.3)';
+    row.appendChild(tdUrl);
+    row.appendChild(tdStatus);
+    tbody.appendChild(row);
+
+    var xhr = new XMLHttpRequest();
+    xhr.open('HEAD', '/' + f, true);
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState !== 4) return;
+      var code = xhr.status;
+      if (code === 200) {
+        tdStatus.textContent = '✓ 200 OK';
+        tdStatus.style.color = '#34d399';
+        tdStatus.style.fontWeight = '700';
+      } else {
+        tdStatus.textContent = '✗ ' + code;
+        tdStatus.style.color = '#f87171';
+        tdStatus.style.fontWeight = '700';
+      }
+    };
+    xhr.send();
+  });
+})();
+</script>
+
+</body>
+</html>
