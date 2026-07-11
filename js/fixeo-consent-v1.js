@@ -1,6 +1,6 @@
 /* ============================================================
    FIXEO COOKIE CONSENT MANAGER
-   js/fixeo-consent-v1.js   Version: fcv-v1a
+   js/fixeo-consent-v1.js   Version: fcv-v1b
 
    PURPOSE
    ───────
@@ -60,6 +60,7 @@
 
    CHANGELOG
    ─────────
+   fcv-v1b  2026-07-11  Phase 6.2.5A.1 — blog+SSR coverage, versioned storage, GA cookie deletion, open() fix
    fcv-v1a  2026-07-11  Initial consent manager (Phase 6.2.5A)
    ============================================================ */
 
@@ -70,7 +71,7 @@
   if (window._fxConsentLoaded) return;
   window._fxConsentLoaded = true;
 
-  var VERSION   = 'fcv-v1a';
+  var VERSION   = 'fcv-v1b';
   var STORAGE_KEY = 'fixeo_consent_analytics';
 
   /* ── Consent Mode v2 stub ────────────────────────────────── */
@@ -98,12 +99,44 @@
   });
 
   /* ── Storage helpers ─────────────────────────────────────── */
+  /* Consent record schema v1:                                  */
+  /*   { v: 1, analytics: 'granted'|'denied',                  */
+  /*     ts: <epoch ms first set>, updated: <epoch ms last set>}*/
+  /* Migration: raw string 'granted'/'denied' (schema v0) is   */
+  /* auto-upgraded to v1 with ts: null on first read.          */
+  function _readRecord() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (raw === null) return null;
+      /* v0 raw string migration */
+      if (raw === 'granted' || raw === 'denied') {
+        return { v: 0, analytics: raw, ts: null, updated: null };
+      }
+      /* v1+ JSON */
+      var rec = JSON.parse(raw);
+      if (rec && (rec.analytics === 'granted' || rec.analytics === 'denied')) return rec;
+      return null; /* malformed — treat as unset */
+    } catch (e) { return null; }
+  }
+  function _writeRecord(val) {
+    try {
+      var existing = _readRecord();
+      var now = Date.now();
+      var rec = {
+        v:         1,
+        analytics: val,
+        ts:        (existing && existing.ts) ? existing.ts : now,
+        updated:   now
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(rec));
+    } catch (e) { /* localStorage blocked */ }
+  }
+  /* Backward-compatible helpers used throughout the module */
   function _getStored() {
-    try { return localStorage.getItem(STORAGE_KEY); } catch (e) { return null; }
+    var rec = _readRecord();
+    return rec ? rec.analytics : null;
   }
-  function _setStored(val) {
-    try { localStorage.setItem(STORAGE_KEY, val); } catch (e) { /* blocked */ }
-  }
+  function _setStored(val) { _writeRecord(val); }
 
   /* ── Consent grant/deny ──────────────────────────────────── */
   function _grantAnalytics() {
@@ -118,6 +151,28 @@
   function _denyAnalytics() {
     _setStored('denied');
     /* analytics_storage remains denied — already set at init   */
+    /* Attempt to expire known GA4 cookies on revocation.       */
+    /* No-op in dormant state (no GA cookies exist yet).        */
+    /* Required for post-activation revocation hygiene.         */
+    try {
+      var domains = [location.hostname, '.' + location.hostname.replace(/^www\./, '')];
+      var gaCookies = ['_ga', '_gid', '_gat'];
+      /* GA4 container cookie pattern — safe generic expiry attempt */
+      document.cookie.split(';').forEach(function (c) {
+        var name = c.trim().split('=')[0];
+        if (name === '_ga' || name === '_gid' || name === '_gat' ||
+            /^_ga_/.test(name) || /^_gat_GA/.test(name)) {
+          gaCookies.push(name);
+        }
+      });
+      gaCookies.forEach(function (name) {
+        domains.forEach(function (domain) {
+          ['/',''].forEach(function (path) {
+            document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=' + (path || '/') + ';domain=' + domain;
+          });
+        });
+      });
+    } catch (e) { /* cookie access blocked */ }
     if (window.FixeoAnalyticsBootstrap && typeof window.FixeoAnalyticsBootstrap.denyConsent === 'function') {
       window.FixeoAnalyticsBootstrap.denyConsent();
     }
@@ -356,9 +411,13 @@
       /* Open preferences modal (used by "Gérer les cookies" links) */
       open: function () {
         if (!modal) {
-          /* Banner already accepted/refused — re-init UI on demand */
+          /* Banner already accepted/refused — re-init UI then open modal */
           _stored = null;
           _init();
+          /* _init() builds fresh modal; open it immediately after append */
+          var m = document.getElementById('fcb-modal');
+          var b = document.getElementById('fcb-banner');
+          if (m && b) _openModal(m, b);
           return;
         }
         _openModal(modal, banner);

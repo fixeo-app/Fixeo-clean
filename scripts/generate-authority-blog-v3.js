@@ -227,6 +227,7 @@ function buildArticlePage(article) {
     .navbar-brand .logo-text, .logo-wrap .logo-text  { display:none !important; }
     img.fixeo-logo-img { display:block !important; height:32px !important; width:auto !important; }
   </style>
+  <link rel="stylesheet" href="/css/fixeo-consent-v1.css?v=fcv1b">
 </head>
 <body class="blog-page blog-v2 blog-authority" data-theme="dark">
   <a href="#main-content" class="skip-link">Aller au contenu</a>
@@ -318,6 +319,7 @@ function buildArticlePage(article) {
   <script src="/js/fixeo-header-global.js" defer></script>
   <script src="/js/fixeo-footer-global.js?v=gf3a" defer></script>
   <script src="/js/auth-global.js" defer></script>
+  <script src="/js/fixeo-consent-v1.js?v=fcv1b"></script>
 </body>
 </html>`;
 }
