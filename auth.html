@@ -941,6 +941,24 @@ async function handleSignup(e) {
   }
 
   errEl.style.display = 'none';
+
+  /* Phase 6.2.4 — R-06: dispatch dedicated signup success event.
+     Fires ONLY here: after FixeoAuth.signUp() succeeds (user non-null,
+     error null) and immediately before the confirmation screen is shown.
+     Never fires on: validation failure, duplicate error, Supabase error,
+     login, logout, token refresh, or ordinary session restoration.
+     Payload: role, city, user.id only — no email, phone, name, password. */
+  try {
+    window.dispatchEvent(new CustomEvent('fixeo:signup:complete', {
+      detail: {
+        role:    role,
+        city:    city,
+        user_id: user ? user.id : ''
+      },
+      bubbles: false
+    }));
+  } catch (evErr) { /* noop — analytics failure must never break signup */ }
+
   /* WhatsApp-first: always show phone success screen (never show synthetic email) */
   showConfirmScreen(phone, true);
 }

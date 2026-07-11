@@ -13,11 +13,11 @@
    This file MUST NOT be modified to enable analytics.
    Analytics is activated exclusively by:
      1. Obtaining a GA4 Measurement ID (G-XXXXXXXX)
-     2. Authorising Phase 6.2.2 implementation
+     2. Authorising Phase 6.2.5 — GA4 Activation
      3. Setting analyticsEnabled + ga4Enabled to true
         in a separate, authorised deployment commit
 
-   NEVER MODIFY without explicit Phase 6.2.2 authorisation.
+   NEVER MODIFY without explicit Phase 6.2.5 authorisation.
    ============================================================ */
 
 (function () {
@@ -29,7 +29,7 @@
 
   /* ── Feature flags ──────────────────────────────────────── */
   /* ALL FLAGS DEFAULT TO FALSE.                               */
-  /* Do not change these values until Phase 6.2.2 authorised. */
+  /* Do not change these values until Phase 6.2.5 authorised. */
 
   window.FixeoAnalyticsConfig = Object.freeze({
 
@@ -52,7 +52,7 @@
 
     /* GA4 Measurement ID placeholder.                         */
     /* MUST remain null until a real G-XXXXXXXX ID is          */
-    /* provided in an authorised Phase 6.2.2 commit.           */
+    /* provided in an authorised Phase 6.2.5 commit.           */
     /* Setting this alone does NOT enable tracking —            */
     /* ga4Enabled must also be true.                           */
     measurementId: null,
