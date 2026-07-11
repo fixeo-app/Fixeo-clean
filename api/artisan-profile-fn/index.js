@@ -562,7 +562,8 @@ function svcSlug(category) {
 function lpUrl(category, city) {
   const sv = svcSlug(category);
   const ct = citySlug(city);
-  if (sv && ct) return `https://www.fixeo.ma/${sv}-${ct}.html`;
+  /* Phase 3D.1: use clean LP URL (no .html) — matches the 301 redirect destination */
+  if (sv && ct) return `https://www.fixeo.ma/${sv}-${ct}`;
   if (sv) return `https://www.fixeo.ma/services.html`;
   return null;
 }
@@ -599,7 +600,7 @@ function buildRelatedLinks(artisan) {
     if (sv) {
       const cityLabel = nc.charAt(0).toUpperCase() + nc.slice(1);
       links.push({
-        href: `https://www.fixeo.ma/${sv}-${nc}.html`,
+        href: `https://www.fixeo.ma/${sv}-${nc}`,  /* Phase 3D.1: clean URL */
         text: `${label}s à ${cityLabel}`
       });
     }
@@ -728,6 +729,12 @@ function buildProfileHtml(artisan) {
           { '@type': 'ListItem', 'position': 2, 'name': `${rawLabel}s`, 'item': lpHref },
           { '@type': 'ListItem', 'position': 3, 'name': rawName, 'item': canonicalUrl }
         ]
+      },
+      {
+        '@type': 'WebSite',
+        '@id':   'https://www.fixeo.ma/#website',
+        'url':   'https://www.fixeo.ma/',
+        'name':  'Fixeo',
       },
       {
         '@type': 'WebPage',

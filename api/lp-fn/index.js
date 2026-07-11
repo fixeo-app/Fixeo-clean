@@ -564,7 +564,7 @@ function buildLpHtml(service, city, citySlug, totalCount, priceRecordCount, arti
   /* ── Meta description ── */
   const metaDescParts = [
     `Consultez les profils de ${service.labelSingular.toLowerCase()} à ${cityName} sur Fixeo.`,
-    rawTotalPhrase ? `${rawTotalPhrase} référencés.` : null,
+    rawTotalPhrase ? `${rawTotalPhrase}.` : null,
     rawVerifPhrase ? `${rawVerifPhrase}.` : null,
     rawPricePhrase ? `Tarifs\u202f: ${rawPricePhrase}.` : null,
   ];
@@ -645,6 +645,7 @@ function buildLpHtml(service, city, citySlug, totalCount, priceRecordCount, arti
     '@graph': [
       {
         '@type':           'ItemList',
+        '@id':             `${canonicalUrl}#list`,
         'name':            `${service.labelPlural} à ${cityName}`,
         'description':     metaDescRaw,
         'url':             canonicalUrl,
@@ -654,14 +655,18 @@ function buildLpHtml(service, city, citySlug, totalCount, priceRecordCount, arti
       {
         '@type': 'BreadcrumbList',
         'itemListElement': [
-          { '@type':'ListItem', 'position':1, 'name':'Fixeo',
-            'item':'https://www.fixeo.ma/' },
-          { '@type':'ListItem', 'position':2, 'name':service.labelPlural,
-            'item':`https://www.fixeo.ma/${svcSlug}` },
-          { '@type':'ListItem', 'position':3,
-            'name':`${service.labelPlural} à ${cityName}`,
+          { '@type': 'ListItem', 'position': 1, 'name': 'Fixeo',
+            'item': 'https://www.fixeo.ma/' },
+          { '@type': 'ListItem', 'position': 2,
+            'name': `${service.labelPlural} à ${cityName}`,
             'item': canonicalUrl },
         ],
+      },
+      {
+        '@type': 'WebSite',
+        '@id':   'https://www.fixeo.ma/#website',
+        'url':   'https://www.fixeo.ma/',
+        'name':  'Fixeo',
       },
       {
         '@type':       'WebPage',
