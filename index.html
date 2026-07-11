@@ -2176,11 +2176,20 @@ section#home.hero.hero-section {
         "@type": "Country",
         "name": "Maroc"
       },
-      "serviceType": ["Plomberie", "Électricité", "Serrurerie", "Climatisation", "Peinture"],
+      "serviceType": [
+        "Plomberie",
+        "Électricité",
+        "Serrurerie",
+        "Climatisation",
+        "Peinture"
+      ],
       "contactPoint": {
         "@type": "ContactPoint",
-        "contactType": "customer support",
-        "availableLanguage": ["French", "Arabic"]
+        "contactType": "customer service",
+        "availableLanguage": [
+          "French",
+          "Arabic"
+        ]
       }
     },
     {
@@ -2188,7 +2197,9 @@ section#home.hero.hero-section {
       "@id": "https://www.fixeo.ma/#website",
       "url": "https://www.fixeo.ma/",
       "name": "Fixeo",
-      "publisher": { "@id": "https://www.fixeo.ma/#organization" },
+      "publisher": {
+        "@id": "https://www.fixeo.ma/#organization"
+      },
       "potentialAction": {
         "@type": "SearchAction",
         "target": {
@@ -2196,28 +2207,6 @@ section#home.hero.hero-section {
           "urlTemplate": "https://www.fixeo.ma/?q={search_term_string}"
         },
         "query-input": "required name=search_term_string"
-      }
-    },
-    {
-      "@type": "LocalBusiness",
-      "@id": "https://www.fixeo.ma/#localbusiness",
-      "name": "Fixeo — Artisans au Maroc",
-      "url": "https://www.fixeo.ma/",
-      "description": "Plateforme de mise en relation avec des artisans vérifiés dans toutes les villes du Maroc.",
-      "areaServed": [
-        "Casablanca", "Rabat", "Marrakech", "Fès", "Tanger", "Agadir",
-        "Meknès", "Oujda", "Kénitra", "Témara", "Salé", "Mohammedia"
-      ],
-      "hasOfferCatalog": {
-        "@type": "OfferCatalog",
-        "name": "Services d'artisans",
-        "itemListElement": [
-          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Plomberie" } },
-          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Électricité" } },
-          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Serrurerie" } },
-          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Climatisation" } },
-          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Peinture" } }
-        ]
       }
     }
   ]
