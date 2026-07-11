@@ -3,7 +3,7 @@
  * Premium reading experience for individual article pages
  * Dark-first, mobile-first, no framework, scoped to .ba-* namespace
  * Augments blog-v1.css + blog-v2.css without overriding them
- * Version: 1.0 — 2026-07-11
+ * Version: 2.0 — 2026-07-11 (Phase 4.4: progress bar, active TOC, EEAT, editorial components)
  *
  * Design targets: Stripe Docs × Uber Engineering × Airbnb Editorial
  * — Generous spacing, strong typographic hierarchy, calm elegance
@@ -789,4 +789,833 @@ main.blog-main {
     gap: 10px;
     padding: 14px 16px;
   }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   PHASE 4.4 ADDITIONS
+   ───────────────────────────────────────────────────────────── */
+
+/* ── Reading Progress Bar ──────────────────────────────────── */
+#ba-progress-wrap {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  z-index: 9999;
+  background: transparent;
+  pointer-events: none;
+}
+
+#ba-progress {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #E1306C, #833AB4, #20C997);
+  transition: width .1s linear;
+  border-radius: 0 2px 2px 0;
+}
+
+/* ── Active TOC Link ───────────────────────────────────────── */
+.blog-toc-list a.ba-toc-active {
+  color: var(--ba-text);
+  font-weight: 600;
+}
+
+.blog-toc-list a.ba-toc-active::before {
+  content: '';
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  background: var(--ba-brand);
+  border-radius: 50%;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+/* ── EEAT Author Block V2 ──────────────────────────────────── */
+.blog-author-block-v2 {
+  background: var(--ba-surface);
+  border: 1px solid var(--ba-border);
+  border-left: 3px solid var(--ba-teal);
+  border-radius: var(--ba-radius);
+  padding: 20px 24px;
+  margin: 32px 0;
+}
+
+.blog-author-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.blog-author-avatar-v2 {
+  width: 44px;
+  height: 44px;
+  background: linear-gradient(135deg, #E1306C22, #833AB422);
+  border: 1px solid rgba(225,48,108,.25);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+
+.blog-author-meta {
+  flex: 1;
+}
+
+.blog-author-name-v2 {
+  display: block;
+  font-size: .95rem;
+  font-weight: 700;
+  color: var(--ba-text);
+  margin-bottom: 2px;
+}
+
+.blog-author-role {
+  font-size: .75rem;
+  color: var(--ba-teal);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+
+.blog-eeat-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.blog-eeat-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: .68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid;
+}
+
+.blog-eeat-badge--exp {
+  color: #20C997;
+  border-color: rgba(32,201,151,.3);
+  background: rgba(32,201,151,.08);
+}
+
+.blog-eeat-badge--auth {
+  color: #a78bfa;
+  border-color: rgba(167,139,250,.3);
+  background: rgba(167,139,250,.08);
+}
+
+.blog-eeat-badge--trust {
+  color: #fb923c;
+  border-color: rgba(251,146,60,.3);
+  background: rgba(251,146,60,.08);
+}
+
+.blog-author-bio-v2 {
+  font-size: .85rem;
+  color: var(--ba-muted);
+  line-height: 1.65;
+  margin: 0;
+}
+
+.blog-editorial-note {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--ba-border);
+  font-size: .75rem;
+  color: var(--ba-subtle);
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  line-height: 1.5;
+}
+
+.blog-editorial-note-icon {
+  flex-shrink: 0;
+  font-size: .9rem;
+}
+
+/* ── Category-Specific Intro CTA ───────────────────────────── */
+.blog-intro-cta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: rgba(225,48,108,.06);
+  border: 1px solid rgba(225,48,108,.16);
+  border-radius: var(--ba-radius-sm);
+  padding: 14px 18px;
+  margin: 18px 0 24px;
+  transition: border-color .2s;
+}
+
+.blog-intro-cta:hover {
+  border-color: rgba(225,48,108,.28);
+}
+
+.blog-intro-cta-icon {
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+
+.blog-intro-cta-text {
+  flex: 1;
+}
+
+.blog-intro-cta-label {
+  display: block;
+  font-size: .8rem;
+  font-weight: 700;
+  color: var(--ba-brand);
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  margin-bottom: 2px;
+}
+
+.blog-intro-cta-desc {
+  font-size: .85rem;
+  color: var(--ba-muted);
+  margin: 0;
+}
+
+.blog-intro-cta-btn {
+  display: inline-block;
+  padding: 8px 18px;
+  background: linear-gradient(135deg, #E1306C, #833AB4);
+  color: #fff !important;
+  border-radius: 6px;
+  font-size: .82rem;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: opacity .15s;
+}
+
+.blog-intro-cta-btn:hover {
+  opacity: .85;
+}
+
+@media (max-width: 600px) {
+  .blog-intro-cta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .blog-intro-cta-btn {
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
+  }
+}
+
+/* ── Editorial Components ─── Checklist ────────────────────── */
+.blog-checklist {
+  list-style: none;
+  padding: 0;
+  margin: 4px 0 18px;
+}
+
+.blog-checklist li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: .93rem;
+  color: rgba(255,255,255,.78);
+  line-height: 1.65;
+  margin-bottom: 6px;
+  padding-left: 2px;
+}
+
+.blog-checklist li::before {
+  content: '✓';
+  color: var(--ba-teal);
+  font-weight: 700;
+  font-size: .85rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* ── Average Price block ───────────────────────────────────── */
+.blog-price-block {
+  background: linear-gradient(135deg, rgba(32,201,151,.06), rgba(32,201,151,.02));
+  border: 1px solid rgba(32,201,151,.2);
+  border-radius: var(--ba-radius-sm);
+  padding: 16px 20px;
+  margin: 18px 0;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.blog-price-icon {
+  font-size: 1.8rem;
+  flex-shrink: 0;
+}
+
+.blog-price-label {
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--ba-teal);
+  display: block;
+  margin-bottom: 2px;
+}
+
+.blog-price-value {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--ba-text);
+  letter-spacing: -.01em;
+}
+
+.blog-price-note {
+  font-size: .78rem;
+  color: var(--ba-muted);
+  margin: 2px 0 0;
+}
+
+/* ── Expert Advice block ───────────────────────────────────── */
+.blog-expert {
+  background: rgba(131,58,180,.07);
+  border: 1px solid rgba(131,58,180,.2);
+  border-left: 3px solid #833AB4;
+  border-radius: var(--ba-radius-sm);
+  padding: 16px 20px;
+  margin: 20px 0;
+}
+
+.blog-expert-label {
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .09em;
+  color: #a78bfa;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.blog-expert p {
+  font-size: .9rem;
+  color: rgba(255,255,255,.8);
+  line-height: 1.65;
+  margin: 0;
+  font-style: italic;
+}
+
+/* ── Important block ───────────────────────────────────────── */
+.blog-important {
+  background: rgba(252,175,69,.06);
+  border: 1px solid rgba(252,175,69,.22);
+  border-radius: var(--ba-radius-sm);
+  padding: 14px 18px;
+  margin: 18px 0;
+  display: flex;
+  gap: 12px;
+  font-size: .9rem;
+  color: rgba(255,255,255,.82);
+  line-height: 1.65;
+}
+
+.blog-important-icon {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.blog-important p {
+  margin: 0;
+  color: rgba(255,255,255,.82);
+}
+
+/* ── Related card title: h3 (was h4 — accessibility fix) ───── */
+.blog-related-card h3 {
+  font-size: .88rem;
+  font-weight: 600;
+  color: var(--ba-text);
+  margin: 0 0 4px;
+  line-height: 1.4;
+}
+
+/* ── Internal links block ──────────────────────────────────── */
+.blog-internal-links {
+  background: var(--ba-surface);
+  border: 1px solid var(--ba-border);
+  border-radius: var(--ba-radius-sm);
+  padding: 14px 18px;
+  margin: 24px 0;
+}
+
+.blog-internal-links-title {
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--ba-subtle);
+  display: block;
+  margin-bottom: 10px;
+}
+
+.blog-internal-links ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.blog-internal-links li {
+  margin: 0;
+}
+
+.blog-internal-links a,
+.lp-inline-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: .8rem;
+  color: var(--ba-teal);
+  background: rgba(32,201,151,.07);
+  border: 1px solid rgba(32,201,151,.18);
+  border-radius: 999px;
+  padding: 4px 12px;
+  text-decoration: none;
+  transition: background .15s, border-color .15s;
+  white-space: nowrap;
+}
+
+.blog-internal-links a:hover,
+.lp-inline-link:hover {
+  background: rgba(32,201,151,.14);
+  border-color: rgba(32,201,151,.32);
+  color: #fff;
+}
+
+/* ── Scroll behavior ───────────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   PHASE 4.4 ADDITIONS
+   ───────────────────────────────────────────────────────────── */
+
+/* ── Reading Progress Bar ──────────────────────────────────── */
+#ba-progress-wrap {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  z-index: 9999;
+  background: transparent;
+  pointer-events: none;
+}
+
+#ba-progress {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #E1306C, #833AB4, #20C997);
+  transition: width .1s linear;
+  border-radius: 0 2px 2px 0;
+}
+
+/* ── Active TOC Link ───────────────────────────────────────── */
+.blog-toc-list a.ba-toc-active {
+  color: var(--ba-text);
+  font-weight: 600;
+}
+
+.blog-toc-list a.ba-toc-active::before {
+  content: '';
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  background: var(--ba-brand);
+  border-radius: 50%;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+/* ── EEAT Author Block V2 ──────────────────────────────────── */
+.blog-author-block-v2 {
+  background: var(--ba-surface);
+  border: 1px solid var(--ba-border);
+  border-left: 3px solid var(--ba-teal);
+  border-radius: var(--ba-radius);
+  padding: 20px 24px;
+  margin: 32px 0;
+}
+
+.blog-author-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.blog-author-avatar-v2 {
+  width: 44px;
+  height: 44px;
+  background: linear-gradient(135deg, #E1306C22, #833AB422);
+  border: 1px solid rgba(225,48,108,.25);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+
+.blog-author-meta {
+  flex: 1;
+}
+
+.blog-author-name-v2 {
+  display: block;
+  font-size: .95rem;
+  font-weight: 700;
+  color: var(--ba-text);
+  margin-bottom: 2px;
+}
+
+.blog-author-role {
+  font-size: .75rem;
+  color: var(--ba-teal);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+
+.blog-eeat-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.blog-eeat-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: .68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid;
+}
+
+.blog-eeat-badge--exp {
+  color: #20C997;
+  border-color: rgba(32,201,151,.3);
+  background: rgba(32,201,151,.08);
+}
+
+.blog-eeat-badge--auth {
+  color: #a78bfa;
+  border-color: rgba(167,139,250,.3);
+  background: rgba(167,139,250,.08);
+}
+
+.blog-eeat-badge--trust {
+  color: #fb923c;
+  border-color: rgba(251,146,60,.3);
+  background: rgba(251,146,60,.08);
+}
+
+.blog-author-bio-v2 {
+  font-size: .85rem;
+  color: var(--ba-muted);
+  line-height: 1.65;
+  margin: 0;
+}
+
+.blog-editorial-note {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--ba-border);
+  font-size: .75rem;
+  color: var(--ba-subtle);
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  line-height: 1.5;
+}
+
+.blog-editorial-note-icon {
+  flex-shrink: 0;
+  font-size: .9rem;
+}
+
+/* ── Category-Specific Intro CTA ───────────────────────────── */
+.blog-intro-cta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: rgba(225,48,108,.06);
+  border: 1px solid rgba(225,48,108,.16);
+  border-radius: var(--ba-radius-sm);
+  padding: 14px 18px;
+  margin: 18px 0 24px;
+  transition: border-color .2s;
+}
+
+.blog-intro-cta:hover {
+  border-color: rgba(225,48,108,.28);
+}
+
+.blog-intro-cta-icon {
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+
+.blog-intro-cta-text {
+  flex: 1;
+}
+
+.blog-intro-cta-label {
+  display: block;
+  font-size: .8rem;
+  font-weight: 700;
+  color: var(--ba-brand);
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  margin-bottom: 2px;
+}
+
+.blog-intro-cta-desc {
+  font-size: .85rem;
+  color: var(--ba-muted);
+  margin: 0;
+}
+
+.blog-intro-cta-btn {
+  display: inline-block;
+  padding: 8px 18px;
+  background: linear-gradient(135deg, #E1306C, #833AB4);
+  color: #fff !important;
+  border-radius: 6px;
+  font-size: .82rem;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: opacity .15s;
+}
+
+.blog-intro-cta-btn:hover {
+  opacity: .85;
+}
+
+@media (max-width: 600px) {
+  .blog-intro-cta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .blog-intro-cta-btn {
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
+  }
+}
+
+/* ── Editorial Components ─── Checklist ────────────────────── */
+.blog-checklist {
+  list-style: none;
+  padding: 0;
+  margin: 4px 0 18px;
+}
+
+.blog-checklist li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: .93rem;
+  color: rgba(255,255,255,.78);
+  line-height: 1.65;
+  margin-bottom: 6px;
+  padding-left: 2px;
+}
+
+.blog-checklist li::before {
+  content: '\2713';
+  color: #20C997;
+  font-weight: 700;
+  font-size: .85rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* ── Average Price block ───────────────────────────────────── */
+.blog-price-block {
+  background: linear-gradient(135deg, rgba(32,201,151,.06), rgba(32,201,151,.02));
+  border: 1px solid rgba(32,201,151,.2);
+  border-radius: var(--ba-radius-sm);
+  padding: 16px 20px;
+  margin: 18px 0;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.blog-price-icon {
+  font-size: 1.8rem;
+  flex-shrink: 0;
+}
+
+.blog-price-label {
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: #20C997;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.blog-price-value {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #F0F2F8;
+  letter-spacing: -.01em;
+}
+
+.blog-price-note {
+  font-size: .78rem;
+  color: rgba(255,255,255,.55);
+  margin: 2px 0 0;
+}
+
+/* ── Expert Advice block ───────────────────────────────────── */
+.blog-expert {
+  background: rgba(131,58,180,.07);
+  border: 1px solid rgba(131,58,180,.2);
+  border-left: 3px solid #833AB4;
+  border-radius: var(--ba-radius-sm);
+  padding: 16px 20px;
+  margin: 20px 0;
+}
+
+.blog-expert-label {
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .09em;
+  color: #a78bfa;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.blog-expert p {
+  font-size: .9rem;
+  color: rgba(255,255,255,.8);
+  line-height: 1.65;
+  margin: 0;
+  font-style: italic;
+}
+
+/* ── Important block ───────────────────────────────────────── */
+.blog-important {
+  background: rgba(252,175,69,.06);
+  border: 1px solid rgba(252,175,69,.22);
+  border-radius: var(--ba-radius-sm);
+  padding: 14px 18px;
+  margin: 18px 0;
+  display: flex;
+  gap: 12px;
+  font-size: .9rem;
+  color: rgba(255,255,255,.82);
+  line-height: 1.65;
+}
+
+.blog-important-icon {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.blog-important p {
+  margin: 0;
+  color: rgba(255,255,255,.82);
+}
+
+/* ── Related card title: h3 (accessibility fix from h4) ────── */
+.blog-related-card h3 {
+  font-size: .88rem;
+  font-weight: 600;
+  color: #F0F2F8;
+  margin: 0 0 4px;
+  line-height: 1.4;
+}
+
+/* ── Internal links block redesign ─────────────────────────── */
+.blog-internal-links {
+  background: rgba(255,255,255,.042);
+  border: 1px solid rgba(255,255,255,.09);
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin: 24px 0;
+}
+
+.blog-internal-links-title {
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: rgba(255,255,255,.30);
+  display: block;
+  margin-bottom: 10px;
+}
+
+.blog-internal-links ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.blog-internal-links li {
+  margin: 0;
+}
+
+.blog-internal-links a,
+.lp-inline-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: .8rem;
+  color: #20C997;
+  background: rgba(32,201,151,.07);
+  border: 1px solid rgba(32,201,151,.18);
+  border-radius: 999px;
+  padding: 4px 12px;
+  text-decoration: none;
+  transition: background .15s, border-color .15s;
+  white-space: nowrap;
+}
+
+.blog-internal-links a:hover,
+.lp-inline-link:hover {
+  background: rgba(32,201,151,.14);
+  border-color: rgba(32,201,151,.32);
+  color: #fff;
+}
+
+/* ── Scroll behavior ───────────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
 }
