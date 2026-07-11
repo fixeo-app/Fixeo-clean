@@ -39,7 +39,9 @@
 
    CHANGELOG
    ─────────
-   fab-v1a  2026-07-11  Initial dormant bootstrap deployment (Phase 6.2.2)
+   fab-v1c  2026-07-12  Phase 6.2.5B — GA4 Activation: dynamic gtag.js loader,
+              consent-gated loading, returning visitor auto-load,
+              page_view + Enhanced Measurement, grantConsent() wired
    fab-v1b  2026-07-11  Instrumentation repair (Phase 6.2.4):
               R-01  contact_form_submit: req.service field correction
               R-02  urgent_request_submit: type guard + Option B schema
@@ -61,7 +63,7 @@
   if (window._fxAnalyticsBootstrapLoaded) return;
   window._fxAnalyticsBootstrapLoaded = true;
 
-  var VERSION = 'fab-v1b';
+  var VERSION = 'fab-v1c';
   var LOG     = '[fab]';
 
   /* ── Config dependency check ────────────────────────────── */
@@ -106,6 +108,48 @@
   /* ga4Enabled must be true AND a real measurementId must     */
   /* be present for any gtag() calls to be made.              */
   var _ga4Active = cfg.ga4Enabled && !!cfg.measurementId;
+
+  /* ── Dynamic GA4 loader ──────────────────────────────────── */
+  /* Injects gtag.js ONLY when analytics consent is granted.   */
+  /* Never called when consent is denied.                      */
+  /* Guard prevents double-load on repeated calls.             */
+  /* After load: calls gtag('js', new Date()) + config.        */
+  /* GA4 Enhanced Measurement fires automatically after config. */
+  function _loadGa4() {
+    if (!_ga4Active) return;
+    if (window._fxGa4Loaded) return;
+    window._fxGa4Loaded = true;
+
+    var mid = cfg.measurementId;
+    var s = document.createElement('script');
+    s.async = true;
+    s.src = 'https://www.googletagmanager.com/gtag/js?id=' + mid;
+    s.onload = function () {
+      /* dataLayer already has consent default + update queued. */
+      /* gtag.js processes queued commands on load.             */
+      /* Now register the gtag function and fire initial config. */
+      window.gtag = function () { window.dataLayer.push(arguments); };
+      window.gtag('js', new Date());
+      window.gtag('config', mid, {
+        /* page_view fires automatically via Enhanced Measurement */
+        /* send_page_view: true is the default — leave as-is.    */
+        /* anonymize_ip: deprecated in GA4 (always anonymized).  */
+        /* ads_data_redaction: enabled as defence-in-depth.      */
+        ads_data_redaction: true,
+        url_passthrough:    false
+      });
+      _log('GA4 loaded and configured —', mid);
+    };
+    s.onerror = function () {
+      /* Reset guard on load failure so retry is possible.      */
+      window._fxGa4Loaded = false;
+      _log('GA4 script load error');
+    };
+    /* Insert as first child of <head> to avoid render-blocking */
+    var head = document.getElementsByTagName('head')[0];
+    if (head) head.insertBefore(s, head.firstChild);
+    _log('Injecting gtag.js for', mid);
+  }
 
   /* ── Debug logger ───────────────────────────────────────── */
   function _log() {
@@ -457,22 +501,22 @@
   window.FixeoAnalyticsBootstrap = {
     version: VERSION,
 
-    /* Called by consent banner on Accept */
+    /* Called by fixeo-consent-v1.js _grantAnalytics() on Accept */
+    /* or when a returning visitor's stored state is 'granted'. */
+    /* Loads gtag.js dynamically — only ever called after user   */
+    /* explicitly grants analytics_storage consent.              */
     grantConsent: function () {
       if (!_ga4Active) return;
-      _gtag('consent', 'update', { analytics_storage: 'granted' });
-      try {
-        localStorage.setItem(cfg.consentStorageKey, 'granted');
-      } catch (err) { /* storage may be blocked */ }
-      _log('Consent granted');
+      /* gtag consent update was already queued by consent JS.  */
+      /* Load gtag.js now — it will process the queued grant.   */
+      _loadGa4();
+      _log('Consent granted — GA4 loader triggered');
     },
 
-    /* Called by consent banner on Refuse */
+    /* Called by fixeo-consent-v1.js _denyAnalytics() on Refuse */
+    /* or Revoke. gtag.js will not be loaded.                    */
     denyConsent: function () {
-      try {
-        localStorage.setItem(cfg.consentStorageKey, 'denied');
-      } catch (err) { /* storage may be blocked */ }
-      _log('Consent denied — analytics_storage remains denied');
+      _log('Consent denied — GA4 will not load');
     },
 
     /* Returns the persisted consent state, or null if unknown  */
@@ -484,6 +528,29 @@
       }
     }
   };
+
+  /* ── Returning visitor: auto-load GA4 if already granted ─── */
+  /* consent JS runs before bootstrap (both in <head>).         */
+  /* consent JS already called _grantAnalytics() for returning  */
+  /* visitors, but FixeoAnalyticsBootstrap wasn't defined yet.  */
+  /* We re-check here at bootstrap init time and load if needed.*/
+  try {
+    var _storedConsent = localStorage.getItem(cfg.consentStorageKey);
+    var _consentRecord = null;
+    try { _consentRecord = JSON.parse(_storedConsent); } catch (_) {}
+    /* Handle v1 JSON record or v0 raw string */
+    var _analyticsValue = (_consentRecord && _consentRecord.analytics)
+      ? _consentRecord.analytics
+      : _storedConsent;
+    if (_analyticsValue === 'granted') {
+      _log('Returning visitor — stored consent granted — auto-loading GA4');
+      _loadGa4();
+    } else {
+      _log('Returning visitor — stored consent denied or absent — GA4 suppressed');
+    }
+  } catch (_e) {
+    _log('localStorage read error at init — GA4 suppressed');
+  }
 
   _log('Bootstrap initialised — v' + VERSION + ' | GA4 active:', _ga4Active);
 

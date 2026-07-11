@@ -1,6 +1,6 @@
 /* ============================================================
    FIXEO ANALYTICS CONFIGURATION
-   js/fixeo-analytics-config.js   Version: fac-v1a
+   js/fixeo-analytics-config.js   Version: fac-v1b
 
    PURPOSE
    ───────
@@ -10,14 +10,9 @@
 
    ACTIVATION PROTOCOL
    ───────────────────
-   This file MUST NOT be modified to enable analytics.
-   Analytics is activated exclusively by:
-     1. Obtaining a GA4 Measurement ID (G-XXXXXXXX)
-     2. Authorising Phase 6.2.5 — GA4 Activation
-     3. Setting analyticsEnabled + ga4Enabled to true
-        in a separate, authorised deployment commit
-
-   NEVER MODIFY without explicit Phase 6.2.5 authorisation.
+   Phase 6.2.5B — GA4 Activation — authorised 2026-07-12.
+   Measurement ID: G-ERS9JX72H7
+   All flags activated in fac-v1b per explicit authorisation.
    ============================================================ */
 
 (function () {
@@ -33,29 +28,17 @@
 
   window.FixeoAnalyticsConfig = Object.freeze({
 
-    /* Master kill-switch. When false, the bootstrap module    */
-    /* will not register any event listeners, will not call    */
-    /* gtag(), will not write any cookies, and will not make   */
-    /* any network requests. Takes precedence over all other   */
-    /* flags.                                                  */
-    analyticsEnabled: false,
+    /* Master kill-switch. Phase 6.2.5B — activated.           */
+    analyticsEnabled: true,
 
-    /* GA4-specific flag. When false, no gtag() calls are      */
-    /* made even if analyticsEnabled is somehow true.          */
-    /* Requires a real G-XXXXXXXX measurementId to be set.     */
-    ga4Enabled: false,
+    /* GA4-specific flag. Phase 6.2.5B — activated.            */
+    ga4Enabled: true,
 
-    /* Debug flag. When true, the bootstrap module logs event  */
-    /* lifecycle to console (never logged in production).      */
-    /* Has zero effect when analyticsEnabled is false.         */
+    /* Debug flag. false in production.                        */
     debugAnalytics: false,
 
-    /* GA4 Measurement ID placeholder.                         */
-    /* MUST remain null until a real G-XXXXXXXX ID is          */
-    /* provided in an authorised Phase 6.2.5 commit.           */
-    /* Setting this alone does NOT enable tracking —            */
-    /* ga4Enabled must also be true.                           */
-    measurementId: null,
+    /* GA4 Measurement ID — Phase 6.2.5B authorised.           */
+    measurementId: 'G-ERS9JX72H7',
 
     /* ── Event taxonomy (canonical names — read-only) ──────── */
     /* Locked names from Phase 6.2 blueprint.                  */
@@ -114,7 +97,7 @@
     consentStorageKey: 'fixeo_consent_analytics',
 
     /* ── Version ─────────────────────────────────────────────  */
-    version: 'fac-v1a'
+    version: 'fac-v1b'
 
   });
 
