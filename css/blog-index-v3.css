@@ -1,0 +1,611 @@
+/**
+ * FIXEO Blog Index V3 — blog-index-v3.css
+ * Premium editorial design system for blog-index.html
+ * Dark-first, mobile-first, no framework, no overrides to main.css
+ * Version: 1.0 — 2026-07-11
+ *
+ * Scope: .bi-* namespace exclusively (bi = blog index)
+ * Coexists with blog-v1.css / blog-v2.css without conflict
+ */
+
+/* ─────────────────────────────────────────────────────────────
+   DESIGN TOKENS (local to this file)
+   ───────────────────────────────────────────────────────────── */
+:root {
+  --bi-bg:            #0D0D1A;          /* page bg — matches --bg-dark */
+  --bi-surface:       rgba(255,255,255,.042);
+  --bi-surface-hover: rgba(255,255,255,.075);
+  --bi-border:        rgba(255,255,255,.09);
+  --bi-border-hover:  rgba(255,255,255,.18);
+  --bi-brand:         #E1306C;          /* FIXEO primary */
+  --bi-brand-2:       #833AB4;
+  --bi-brand-grd:     linear-gradient(135deg, #E1306C 0%, #833AB4 100%);
+  --bi-teal:          #20C997;          /* success / accent */
+  --bi-text:          #F5F7FB;
+  --bi-muted:         rgba(255,255,255,.50);
+  --bi-subtle:        rgba(255,255,255,.30);
+  --bi-radius-card:   16px;
+  --bi-radius-pill:   999px;
+  --bi-radius-img:    12px;
+  --bi-img-ratio:     56.25%;           /* 16:9 = 9/16 */
+  --bi-card-transition: transform .22s cubic-bezier(.4,0,.2,1),
+                         border-color .22s ease,
+                         box-shadow .22s ease;
+  --bi-max-w:         1140px;
+  --bi-gap:           20px;
+  --bi-section-gap:   72px;
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   PAGE WRAPPER
+   ───────────────────────────────────────────────────────────── */
+.bi-wrap {
+  max-width: var(--bi-max-w);
+  margin: 0 auto;
+  padding: 0 20px 96px;
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   PAGE HEADER
+   ───────────────────────────────────────────────────────────── */
+.bi-header {
+  padding: 56px 0 40px;
+  text-align: center;
+}
+
+.bi-header-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--bi-brand);
+  background: rgba(225,48,108,.1);
+  border: 1px solid rgba(225,48,108,.22);
+  border-radius: var(--bi-radius-pill);
+  padding: 4px 14px;
+  margin-bottom: 18px;
+}
+
+.bi-header h1 {
+  font-size: clamp(1.75rem, 4vw, 2.8rem);
+  font-weight: 800;
+  line-height: 1.18;
+  margin: 0 0 12px;
+  color: var(--bi-text);
+  letter-spacing: -.02em;
+}
+
+.bi-header-sub {
+  font-size: 1rem;
+  color: var(--bi-muted);
+  margin: 0 auto 28px;
+  max-width: 520px;
+  line-height: 1.65;
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   CATEGORY NAVIGATION PILLS
+   ───────────────────────────────────────────────────────────── */
+.bi-cat-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 0;
+}
+
+.bi-cat-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 16px;
+  border-radius: var(--bi-radius-pill);
+  font-size: .8rem;
+  font-weight: 600;
+  background: var(--bi-surface);
+  border: 1px solid var(--bi-border);
+  color: var(--bi-muted);
+  text-decoration: none;
+  transition: background .18s, border-color .18s, color .18s;
+  white-space: nowrap;
+}
+
+.bi-cat-pill:hover {
+  background: rgba(225,48,108,.1);
+  border-color: rgba(225,48,108,.35);
+  color: var(--bi-text);
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   FEATURED ARTICLE HERO
+   ───────────────────────────────────────────────────────────── */
+.bi-featured {
+  margin: 48px 0 0;
+}
+
+.bi-featured-link {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  background: var(--bi-surface);
+  border: 1px solid var(--bi-border);
+  border-radius: 24px;
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  transition: var(--bi-card-transition);
+}
+
+.bi-featured-link:hover {
+  border-color: rgba(225,48,108,.38);
+  box-shadow: 0 20px 60px rgba(0,0,0,.35);
+  transform: translateY(-2px);
+}
+
+.bi-featured-img {
+  position: relative;
+  overflow: hidden;
+  min-height: 280px;
+  max-height: 360px;
+}
+
+.bi-featured-img img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  transition: transform .4s ease;
+}
+
+.bi-featured-link:hover .bi-featured-img img {
+  transform: scale(1.03);
+}
+
+.bi-featured-body {
+  padding: 36px 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 14px;
+}
+
+.bi-featured-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.bi-featured-cat {
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .09em;
+  color: var(--bi-brand);
+}
+
+.bi-featured-rt {
+  font-size: .72rem;
+  color: var(--bi-subtle);
+}
+
+.bi-featured-body h2 {
+  font-size: clamp(1.25rem, 2.5vw, 1.7rem);
+  font-weight: 800;
+  line-height: 1.25;
+  margin: 0;
+  color: var(--bi-text);
+  letter-spacing: -.015em;
+}
+
+.bi-featured-desc {
+  font-size: .9rem;
+  color: var(--bi-muted);
+  line-height: 1.65;
+  margin: 0;
+}
+
+.bi-featured-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: .85rem;
+  font-weight: 700;
+  color: var(--bi-brand);
+  margin-top: 4px;
+  transition: gap .18s ease;
+}
+
+.bi-featured-link:hover .bi-featured-arrow {
+  gap: 10px;
+}
+
+@media (max-width: 860px) {
+  .bi-featured-link {
+    grid-template-columns: 1fr;
+  }
+  .bi-featured-img {
+    min-height: 220px;
+    max-height: 240px;
+  }
+  .bi-featured-body {
+    padding: 24px 24px;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .bi-featured-img {
+    min-height: 180px;
+    max-height: 200px;
+  }
+  .bi-featured-body {
+    padding: 20px 18px;
+    gap: 8px;
+  }
+  .bi-featured-body h2 {
+    font-size: 1.2rem;
+  }
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   CATEGORY SECTION
+   ───────────────────────────────────────────────────────────── */
+.bi-section {
+  margin-top: var(--bi-section-gap);
+}
+
+.bi-section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 6px;
+}
+
+.bi-section-head h2 {
+  font-size: 1.2rem;
+  font-weight: 800;
+  margin: 0;
+  color: var(--bi-text);
+  letter-spacing: -.01em;
+}
+
+.bi-section-count {
+  font-size: .75rem;
+  color: var(--bi-subtle);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.bi-section-divider {
+  height: 1px;
+  background: var(--bi-border);
+  margin: 12px 0 24px;
+}
+
+.bi-section-desc {
+  font-size: .83rem;
+  color: var(--bi-muted);
+  margin: 0 0 24px;
+  line-height: 1.6;
+}
+
+/* Large category sections: show first 6 visible, rest collapsed */
+.bi-section-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--bi-gap);
+}
+
+/* "show more" toggle — pure CSS + HTML details/summary */
+.bi-more-wrap {
+  margin-top: 20px;
+}
+
+.bi-more-toggle {
+  display: none; /* only shown when section has > threshold cards */
+}
+
+.bi-cards-overflow {
+  /* cards beyond the initial set — always in DOM for SEO */
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--bi-gap);
+  margin-top: var(--bi-gap);
+}
+
+/* progressive disclosure with <details> — no JS needed, SEO-safe */
+.bi-disclosure {
+  margin-top: var(--bi-gap);
+}
+
+.bi-disclosure summary {
+  list-style: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: .82rem;
+  font-weight: 700;
+  color: var(--bi-muted);
+  padding: 8px 16px;
+  border: 1px solid var(--bi-border);
+  border-radius: var(--bi-radius-pill);
+  transition: border-color .18s, color .18s, background .18s;
+  user-select: none;
+}
+
+.bi-disclosure summary::-webkit-details-marker { display: none; }
+
+.bi-disclosure summary::after {
+  content: '↓';
+  font-size: .8rem;
+  transition: transform .22s ease;
+}
+
+.bi-disclosure[open] summary::after {
+  transform: rotate(180deg);
+}
+
+.bi-disclosure summary:hover {
+  border-color: var(--bi-border-hover);
+  color: var(--bi-text);
+  background: var(--bi-surface);
+}
+
+.bi-disclosure-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--bi-gap);
+  margin-top: var(--bi-gap);
+  padding-top: 4px;
+}
+
+@media (max-width: 900px) {
+  .bi-section-grid,
+  .bi-disclosure-grid,
+  .bi-cards-overflow {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 540px) {
+  .bi-section-grid,
+  .bi-disclosure-grid,
+  .bi-cards-overflow {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   ARTICLE CARD
+   ───────────────────────────────────────────────────────────── */
+.bi-card {
+  background: var(--bi-surface);
+  border: 1px solid var(--bi-border);
+  border-radius: var(--bi-radius-card);
+  overflow: hidden;
+  transition: var(--bi-card-transition);
+  display: flex;
+  flex-direction: column;
+}
+
+.bi-card:hover {
+  border-color: var(--bi-border-hover);
+  background: var(--bi-surface-hover);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 40px rgba(0,0,0,.3);
+}
+
+.bi-card-link {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Image container — locked 16:9 ratio */
+.bi-card-img-wrap {
+  position: relative;
+  width: 100%;
+  padding-bottom: var(--bi-img-ratio);  /* 56.25% = 16:9 */
+  overflow: hidden;
+  border-radius: var(--bi-radius-img) var(--bi-radius-img) 0 0;
+  flex-shrink: 0;
+}
+
+.bi-card-img-wrap img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  transition: transform .3s ease;
+}
+
+.bi-card:hover .bi-card-img-wrap img {
+  transform: scale(1.04);
+}
+
+/* Card body */
+.bi-card-body {
+  padding: 16px 18px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.bi-card-badge {
+  font-size: .67rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--bi-brand);
+  display: block;
+}
+
+.bi-card-title {
+  font-size: .92rem;
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--bi-text);
+  margin: 0;
+  /* 2-line clamp for visual consistency */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.bi-card-excerpt {
+  font-size: .78rem;
+  color: var(--bi-muted);
+  line-height: 1.55;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Footer row */
+.bi-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid var(--bi-border);
+}
+
+.bi-card-time {
+  font-size: .7rem;
+  color: var(--bi-subtle);
+}
+
+.bi-card-rt {
+  font-size: .7rem;
+  color: var(--bi-subtle);
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.bi-card-arrow {
+  font-size: .75rem;
+  color: var(--bi-subtle);
+  transition: color .18s, transform .18s;
+}
+
+.bi-card:hover .bi-card-arrow {
+  color: var(--bi-brand);
+  transform: translateX(3px);
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   SMALL SECTIONS (≤ 6 cards) — horizontal list layout variant
+   Used for: Tarifs, Urgences, Confiance, Guides (5–6 cards each)
+   ───────────────────────────────────────────────────────────── */
+.bi-section-grid--small {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+@media (max-width: 900px) {
+  .bi-section-grid--small {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 540px) {
+  .bi-section-grid--small {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   LARGE SECTIONS (25 cards) — initial 6 visible, 19 in <details>
+   ───────────────────────────────────────────────────────────── */
+
+
+/* ─────────────────────────────────────────────────────────────
+   SECTION SEPARATOR ACCENT
+   ───────────────────────────────────────────────────────────── */
+.bi-section-accent {
+  display: inline-block;
+  width: 28px;
+  height: 3px;
+  background: var(--bi-brand-grd);
+  border-radius: 2px;
+  margin-bottom: 16px;
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   PAGE-LEVEL RESPONSIVE ADJUSTMENTS
+   ───────────────────────────────────────────────────────────── */
+@media (max-width: 680px) {
+  :root {
+    --bi-section-gap: 52px;
+    --bi-gap: 14px;
+  }
+  .bi-header {
+    padding: 36px 0 28px;
+  }
+  .bi-header h1 {
+    font-size: 1.65rem;
+  }
+  .bi-section-head h2 {
+    font-size: 1.05rem;
+  }
+  .bi-cat-pill {
+    font-size: .75rem;
+    padding: 6px 13px;
+  }
+}
+
+@media (max-width: 375px) {
+  .bi-wrap {
+    padding: 0 14px 72px;
+  }
+  .bi-cat-nav {
+    gap: 6px;
+  }
+  .bi-cat-pill {
+    padding: 5px 11px;
+    font-size: .72rem;
+  }
+  .bi-card-body {
+    padding: 13px 14px 15px;
+  }
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   HORIZONTAL SCROLL FOR PILLS ON MOBILE (optional, no overflow)
+   ───────────────────────────────────────────────────────────── */
+@media (max-width: 540px) {
+  .bi-cat-nav {
+    /* allow wrapping but ensure no horizontal scroll */
+    justify-content: flex-start;
+    overflow-x: visible;
+    padding-bottom: 4px;
+  }
+}
