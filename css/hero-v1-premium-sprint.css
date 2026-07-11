@@ -1,40 +1,7 @@
-/* ================================================================
-   FIXEO — Hero Premium Sprint V1
-   css/hero-v1-premium-sprint.css   Version: hvps-v1a
-   Scope: #home hero section ONLY
-   Strategy: additive polish — zero layout changes, zero JS changes
-   Cascade: loaded last in <head> → wins all specificity ties
-   Surfaces: Mobile-first. Desktop enhancement.
-   Zero CLS. Zero blocking. No new libraries.
+/* FIXEO — Hero Premium Sprint V1  hvps-v1a  2026-07-12
+   Additive polish. #home scope only. Mobile-first. No layout changes. */
 
-   CHANGELOG
-   ─────────
-   hvps-v1a  2026-07-12  Phase 1.1 — Premium Polish Sprint
-     - Typography: tighter optical fit, sharper weight hierarchy
-     - Vertical rhythm: intentional gap scale (8/16/24/32px)
-     - Background: richer depth gradient + dual-tone radial glow
-     - Search card: deeper shadow, inner highlight, focus ring
-     - CTA: pressed state, active state, ripple-safe shadow
-     - Live signals strip: glass pill refinement
-     - Secondary link: pill button upgrade
-     - Trust section: breathing room, icon weight
-     - Micro-motion: staggered entrance (fade + translateY 6px)
-     - Focus: 2px outline + offset on all interactive elements
-     - Touch targets: min 48px on all tappable elements
-     - prefers-reduced-motion: all animations off
-
-   HARD CONSTRAINTS
-   ─────────────────
-   - NO changes to analytics, consent, SEO
-   - NO new HTML, NO new JS
-   - NO font-family changes (Cairo/Tajawal only)
-   - NO color palette changes (E1306C/833AB4/405DE6)
-   - NO removal of existing rules (additive only)
-   ================================================================ */
-
-/* ╔══════════════════════════════════════════════════════════════
-   ║  1. BACKGROUND — richer depth, less noise
-   ╚══════════════════════════════════════════════════════════════ */
+/* BACKGROUND — richer depth, less noise */
 
 section#home.hero.hero-section {
   background:
@@ -59,9 +26,7 @@ section#home.hero .hero-overlay {
 section#home .hero-bubble { opacity: 0.45 !important; }
 section#home .hero-blob   { opacity: 0.5  !important; }
 
-/* ╔══════════════════════════════════════════════════════════════
-   ║  2. VERTICAL RHYTHM — intentional spacing scale
-   ╚══════════════════════════════════════════════════════════════ */
+/* VERTICAL RHYTHM — intentional spacing scale */
 
 section#home .hero-content {
   gap: 0 !important;               /* control spacing per-element */
@@ -109,9 +74,7 @@ section#home .hero-content > .hero-secondary-link-wrap {
   margin-bottom: 0 !important;
 }
 
-/* ╔══════════════════════════════════════════════════════════════
-   ║  3. TYPOGRAPHY — sharper optical hierarchy
-   ╚══════════════════════════════════════════════════════════════ */
+/* TYPOGRAPHY — sharper optical hierarchy */
 
 section#home h1.hero-title,
 section#home .hero-title {
@@ -156,9 +119,7 @@ section#home .hero-subtitle {
   max-width: 640px !important;
 }
 
-/* ╔══════════════════════════════════════════════════════════════
-   ║  4. SEARCH CARD — deeper glass, refined shadows
-   ╚══════════════════════════════════════════════════════════════ */
+/* SEARCH CARD — deeper glass, refined shadows */
 
 /* Outer container */
 section#home #hero-quick-search.qsm-inline-host {
@@ -243,9 +204,7 @@ section#home .qsm-inline-host .qsm-btn-search.is-loading {
   pointer-events: none !important;
 }
 
-/* ╔══════════════════════════════════════════════════════════════
-   ║  5. CITY SMART PILL — refined glass
-   ╚══════════════════════════════════════════════════════════════ */
+/* CITY SMART PILL — refined glass */
 
 section#home .hero-city-smart {
   background: rgba(255,255,255,0.055) !important;
@@ -276,9 +235,7 @@ section#home .hero-city-smart:focus-visible {
   outline-offset: 2px !important;
 }
 
-/* ╔══════════════════════════════════════════════════════════════
-   ║  6. LIVE PLATFORM SIGNALS STRIP — refined glass pill
-   ╚══════════════════════════════════════════════════════════════ */
+/* LIVE PLATFORM SIGNALS STRIP — refined glass pill */
 
 .fxlps-signals {
   background: rgba(255,255,255,0.048) !important;
@@ -306,9 +263,7 @@ section#home .hero-city-smart:focus-visible {
   letter-spacing: 0.008em !important;
 }
 
-/* ╔══════════════════════════════════════════════════════════════
-   ║  7. SECONDARY LINK — pill button upgrade
-   ╚══════════════════════════════════════════════════════════════ */
+/* SECONDARY LINK — pill button upgrade */
 
 .hero-secondary-link {
   display: inline-flex !important;
@@ -353,9 +308,7 @@ section#home .hero-city-smart:focus-visible {
   transition-duration: 0.08s !important;
 }
 
-/* ╔══════════════════════════════════════════════════════════════
-   ║  8. TRUST SECTION — breathing room + contrast
-   ╚══════════════════════════════════════════════════════════════ */
+/* TRUST SECTION — breathing room + contrast */
 
 .trust-section {
   padding-top: 0 !important;
@@ -400,9 +353,7 @@ section#home .hero-city-smart:focus-visible {
   font-size: 1.15rem !important;
 }
 
-/* ╔══════════════════════════════════════════════════════════════
-   ║  9. MICRO-MOTION — staggered entrance
-   ╚══════════════════════════════════════════════════════════════ */
+/* MICRO-MOTION — staggered entrance */
 
 /* Entrance keyframe — 6px lift, no bounce */
 @keyframes hvps-enter {
@@ -457,9 +408,7 @@ section#home .hero-city-smart:focus-visible {
   }
 }
 
-/* ╔══════════════════════════════════════════════════════════════
-   ║  10. FOCUS STATES — all interactive elements
-   ╚══════════════════════════════════════════════════════════════ */
+/* FOCUS STATES — all interactive elements */
 
 section#home a:focus-visible,
 section#home button:focus-visible {
@@ -474,9 +423,7 @@ section#home button:focus-visible {
   outline-offset: 2px !important;
 }
 
-/* ╔══════════════════════════════════════════════════════════════
-   ║  11. RESPONSIVE — MOBILE (≤767px)
-   ╚══════════════════════════════════════════════════════════════ */
+/* RESPONSIVE — MOBILE (≤767px) */
 
 @media (max-width: 767px) {
 
@@ -568,9 +515,7 @@ section#home button:focus-visible {
   }
 }
 
-/* ╔══════════════════════════════════════════════════════════════
-   ║  12. RESPONSIVE — TABLET (768–1199px)
-   ╚══════════════════════════════════════════════════════════════ */
+/* RESPONSIVE — TABLET (768–1199px) */
 
 @media (min-width: 768px) and (max-width: 1199px) {
 
@@ -591,9 +536,7 @@ section#home button:focus-visible {
   }
 }
 
-/* ╔══════════════════════════════════════════════════════════════
-   ║  13. RESPONSIVE — DESKTOP LARGE (≥1200px)
-   ╚══════════════════════════════════════════════════════════════ */
+/* RESPONSIVE — DESKTOP LARGE (≥1200px) */
 
 @media (min-width: 1200px) {
 
@@ -631,9 +574,7 @@ section#home button:focus-visible {
   }
 }
 
-/* ╔══════════════════════════════════════════════════════════════
-   ║  14. LAPTOP COMPACT (≥769px, ≤820px height)
-   ╚══════════════════════════════════════════════════════════════ */
+/* LAPTOP COMPACT (≥769px, ≤820px height) */
 
 @media (min-width: 769px) and (max-height: 820px) {
 
@@ -665,9 +606,7 @@ section#home button:focus-visible {
   section#home #hero-quick-search { animation-duration: 0.40s !important; }
 }
 
-/* ╔══════════════════════════════════════════════════════════════
-   ║  15. PREFERS-REDUCED-MOTION — all animations off
-   ╚══════════════════════════════════════════════════════════════ */
+/* PREFERS-REDUCED-MOTION — all animations off */
 
 @media (prefers-reduced-motion: reduce) {
 
