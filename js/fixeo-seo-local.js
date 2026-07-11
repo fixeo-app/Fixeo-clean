@@ -450,7 +450,7 @@
     var svc = ctx.svcData;
     var citySlug = ctx.citySlug;
     var serviceName = ctx.service;
-    var pageUrl = 'https://fixeo.ma/' + serviceName + '-' + citySlug + '.html';
+    var pageUrl = 'https://www.fixeo.ma/' + serviceName + '-' + citySlug + '.html';
 
     var ld = {
       '@context': 'https://schema.org',
@@ -462,7 +462,7 @@
           'provider': {
             '@type': 'Organization',
             'name': 'Fixeo',
-            'url': 'https://fixeo.ma/'
+            'url': 'https://www.fixeo.ma/'
           },
           'areaServed': {
             '@type': 'City',
@@ -474,8 +474,8 @@
         {
           '@type': 'BreadcrumbList',
           'itemListElement': [
-            { '@type': 'ListItem', 'position': 1, 'name': 'Fixeo', 'item': 'https://fixeo.ma/' },
-            { '@type': 'ListItem', 'position': 2, 'name': svc.label, 'item': 'https://fixeo.ma/services.html' },
+            { '@type': 'ListItem', 'position': 1, 'name': 'Fixeo', 'item': 'https://www.fixeo.ma/' },
+            { '@type': 'ListItem', 'position': 2, 'name': svc.label, 'item': 'https://www.fixeo.ma/services.html' },
             { '@type': 'ListItem', 'position': 3, 'name': svc.label + ' à ' + city.label, 'item': pageUrl }
           ]
         }

@@ -518,13 +518,13 @@ function buildServiceJsonLD(svcKey, cityKey, svc, city, canonicalUrl) {
     'name': `Fixeo — ${svc.label} à ${city.label}`,
     'description': svc.meta_desc(city.label),
     'url': canonicalUrl,
-    'image': `https://fixeo.ma/img/logo.png`,
+    'image': `https://www.fixeo.ma/img/logo.png`,
     'priceRange': `${city.pricing_low}–${city.pricing_high} DH`,
     'areaServed': { '@type': 'City', 'name': city.label, 'containedInPlace': { '@type': 'Country', 'name': 'Maroc' } },
     'address': { '@type': 'PostalAddress', 'addressLocality': city.label, 'addressCountry': 'MA' },
     'geo': { '@type': 'GeoCoordinates', 'latitude': city.lat, 'longitude': city.lng },
     'serviceType': svc.service_schema,
-    'provider': { '@type': 'Organization', 'name': 'Fixeo', 'url': 'https://fixeo.ma/' },
+    'provider': { '@type': 'Organization', 'name': 'Fixeo', 'url': 'https://www.fixeo.ma/' },
     'hasOfferCatalog': {
       '@type': 'OfferCatalog',
       'name': `Services ${svc.label_adj} à ${city.label}`,
@@ -542,9 +542,9 @@ function buildBreadcrumbJsonLD(svcKey, cityKey, svc, city, canonicalUrl) {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     'itemListElement': [
-      { '@type': 'ListItem', 'position': 1, 'name': 'Accueil', 'item': 'https://fixeo.ma/' },
-      { '@type': 'ListItem', 'position': 2, 'name': 'Services', 'item': 'https://fixeo.ma/services.html' },
-      { '@type': 'ListItem', 'position': 3, 'name': svc.label, 'item': `https://fixeo.ma/services.html` },
+      { '@type': 'ListItem', 'position': 1, 'name': 'Accueil', 'item': 'https://www.fixeo.ma/' },
+      { '@type': 'ListItem', 'position': 2, 'name': 'Services', 'item': 'https://www.fixeo.ma/services.html' },
+      { '@type': 'ListItem', 'position': 3, 'name': svc.label, 'item': `https://www.fixeo.ma/services.html` },
       { '@type': 'ListItem', 'position': 4, 'name': `${svc.label} à ${city.label}`, 'item': canonicalUrl }
     ]
   };
@@ -557,8 +557,8 @@ function buildPage(svcKey, cityKey) {
 
   const filename    = `${svcKey}-${cityKey}.html`;
   const canonicalUrl = CLEAN
-    ? `https://fixeo.ma/${svcKey}/${cityKey}`
-    : `https://fixeo.ma/${filename}`;
+    ? `https://www.fixeo.ma/${svcKey}/${cityKey}`
+    : `https://www.fixeo.ma/${filename}`;
 
   const h1         = `${svc.h1_prefix} ${city.label}`;
   const title      = `${h1} | ${svc.title_suffix}`;
@@ -625,7 +625,7 @@ function buildPage(svcKey, cityKey) {
   <meta property="og:title" content="${esc(h1)} | Fixeo">
   <meta property="og:description" content="${esc(metaDesc)}">
   <meta property="og:url" content="${canonicalUrl}">
-  <meta property="og:image" content="https://fixeo.ma/img/logo.png">
+  <meta property="og:image" content="https://www.fixeo.ma/img/logo.png">
   <meta property="og:site_name" content="Fixeo">
   <meta property="og:locale" content="fr_MA">
 

@@ -1,0 +1,7 @@
+{
+  "name": "fixeo-artisan-profile-fn",
+  "version": "1.0.0",
+  "description": "Fixeo SSR artisan profile — isolated Vercel lambda",
+  "main": "index.js",
+  "engines": { "node": ">=18.0.0" }
+}
