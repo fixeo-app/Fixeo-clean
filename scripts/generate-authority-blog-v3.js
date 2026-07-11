@@ -1,54 +1,159 @@
 #!/usr/bin/env node
 /**
  * FIXEO Authority Blog Engine V3 — generate-authority-blog-v3.js
- * Version: authority-v3a — 2026-06-12
+ * Version: authority-v3b — 2026-07-11
  * ─────────────────────────────────────────────────────────
  * Reads JSON files from blog/_content/authority/
  * Generates HTML files at blog/{slug}.html
  * Updates sitemap-blog.xml (appends new URLs, keeps existing)
+ *
+ * Changelog:
+ *   authority-v3b  2026-07-11  Phase 6.2.5A.2 — full golden restoration:
+ *     - Category-specific og:image / twitter:image / JSON-LD image
+ *     - Author @id (https://www.fixeo.ma/#organization) — locked Phase 4.1 spec
+ *     - wordCount from JSON source (golden values extracted from pre-regression baseline)
+ *     - speakable specification in Article JSON-LD
+ *     - Pretty-printed Article JSON-LD (matches golden format)
+ *     - variables.css + blog-article-v3.css in <head>
+ *     - blog-article-v3.js + reading-progress DOM (ba-progress-wrap)
+ *     - SSR-format internal LP links (/service-city, not /service/city)
+ *     - Canonical 6-city LP link set per service category
+ *     - Intro CTA block with category-specific label/button
+ *     - Author block v2 (blog-author-block-v2)
+ *     - Consent CSS (fcv1b) in <head>, consent JS (fcv1b) before </body>
+ *   authority-v3a  2026-06-12  Initial generator
  * ─────────────────────────────────────────────────────────
  */
 'use strict';
 const fs   = require('fs');
 const path = require('path');
 
-const ROOT         = path.resolve(__dirname, '..');
-const BLOG_DIR     = path.join(ROOT, 'blog');
+const ROOT          = path.resolve(__dirname, '..');
+const BLOG_DIR      = path.join(ROOT, 'blog');
 const AUTHORITY_DIR = path.join(ROOT, 'blog', '_content', 'authority');
-const SITEMAP_BLOG = path.join(ROOT, 'sitemap-blog.xml');
+const SITEMAP_BLOG  = path.join(ROOT, 'sitemap-blog.xml');
 
-const args   = process.argv.slice(2);
-const DRY    = args.includes('--dry-run');
-const FORCE  = args.includes('--force');
+const args  = process.argv.slice(2);
+const DRY   = args.includes('--dry-run');
+const FORCE = args.includes('--force');
 
-// ── Categories ──────────────────────────────────────────────
+// ── Categories ───────────────────────────────────────────────
 const CATEGORIES = {
-  plomberie:     { label: 'Plomberie',          icon: '🔧', desc: 'Guides et conseils plomberie au Maroc.' },
-  electricite:   { label: 'Électricité',        icon: '⚡', desc: 'Guides électricité pour votre maison.' },
-  serrurerie:    { label: 'Serrurerie',         icon: '🔑', desc: 'Sécurité, serrures et accès au Maroc.' },
-  climatisation: { label: 'Climatisation',      icon: '❄️', desc: 'Climatisation et ventilation au Maroc.' },
-  prix:          { label: 'Tarifs & Prix',       icon: '💰', desc: 'Guides de prix par service au Maroc.' },
-  urgence:       { label: 'Urgences',            icon: '🚨', desc: 'Conseils urgence et dépannage.' },
+  plomberie:     { label: 'Plomberie',            icon: '🔧', desc: 'Guides et conseils plomberie au Maroc.' },
+  electricite:   { label: 'Électricité',          icon: '⚡', desc: 'Guides électricité pour votre maison.' },
+  serrurerie:    { label: 'Serrurerie',           icon: '🔑', desc: 'Sécurité, serrures et accès au Maroc.' },
+  climatisation: { label: 'Climatisation',        icon: '❄️', desc: 'Climatisation et ventilation au Maroc.' },
+  prix:          { label: 'Tarifs & Prix',         icon: '💰', desc: 'Guides de prix par service au Maroc.' },
+  urgence:       { label: 'Urgences',              icon: '🚨', desc: 'Conseils urgence et dépannage.' },
   confiance:     { label: 'Confiance & Garanties', icon: '🛡️', desc: 'Artisans vérifiés et garanties.' },
-  local:         { label: 'Guides par ville',    icon: '📍', desc: 'Artisans et conseils par ville.' },
-  guide:         { label: 'Guides pratiques',    icon: '📖', desc: 'Guides pratiques artisanat.' },
-  conseils:      { label: 'Conseils & Entretien', icon: '🔩', desc: 'Conseils entretien et prévention.' }
+  local:         { label: 'Guides par ville',      icon: '📍', desc: 'Artisans et conseils par ville.' },
+  guide:         { label: 'Guides pratiques',      icon: '📖', desc: 'Guides pratiques artisanat.' },
+  conseils:      { label: 'Conseils & Entretien',  icon: '🔩', desc: 'Conseils entretien et prévention.' }
 };
 
+// ── Category → og/twitter/JSON-LD image (Phase 4.3 locked) ──
+// og/twitter/JSON-LD use absolute URLs; hero <img src> uses root-relative path
+const CATEGORY_IMAGES = {
+  plomberie:     'https://www.fixeo.ma/img/blog/plomberie-blog.webp',
+  electricite:   'https://www.fixeo.ma/img/blog/electricite-blog.webp',
+  serrurerie:    'https://www.fixeo.ma/img/blog/serrurerie-blog.webp',
+  climatisation: 'https://www.fixeo.ma/img/blog/climatisation-blog.webp',
+  prix:          'https://www.fixeo.ma/img/blog/tarifs-blog.webp',
+  urgence:       'https://www.fixeo.ma/img/blog/urgence-blog.webp',
+  confiance:     'https://www.fixeo.ma/img/blog/confiance-blog.webp',
+  local:         'https://www.fixeo.ma/img/blog/guides-blog.webp',
+  guide:         'https://www.fixeo.ma/img/blog/guides-blog.webp',
+  conseils:      'https://www.fixeo.ma/img/blog/guides-blog.webp'
+};
+// Root-relative paths for hero <img src> (matches golden format)
+const CATEGORY_HERO_SRC = {
+  plomberie:     '/img/blog/plomberie-blog.webp',
+  electricite:   '/img/blog/electricite-blog.webp',
+  serrurerie:    '/img/blog/serrurerie-blog.webp',
+  climatisation: '/img/blog/climatisation-blog.webp',
+  prix:          '/img/blog/tarifs-blog.webp',
+  urgence:       '/img/blog/urgence-blog.webp',
+  confiance:     '/img/blog/confiance-blog.webp',
+  local:         '/img/blog/guides-blog.webp',
+  guide:         '/img/blog/guides-blog.webp',
+  conseils:      '/img/blog/guides-blog.webp'
+};
+const DEFAULT_IMAGE = 'https://www.fixeo.ma/img/fixeo-logo.webp';
+
+// ── Category → Intro CTA block (Phase 4.4 locked) ───────────
+const CATEGORY_CTA = {
+  plomberie:     { icon: '🔧', label: 'Trouver un plombier vérifié',         desc: 'Intervention rapide, devis gratuit, artisan certifié Fixeo.',              btn: 'Demander un devis' },
+  electricite:   { icon: '⚡', label: 'Trouver un électricien vérifié',      desc: 'Artisan certifié, intervention rapide, paiement sécurisé.',               btn: 'Trouver un électricien' },
+  serrurerie:    { icon: '🔐', label: 'Trouver un serrurier vérifié',        desc: 'Serrurier disponible rapidement, tarifs transparents, certifié Fixeo.',  btn: 'Trouver un serrurier' },
+  climatisation: { icon: '❄️', label: 'Trouver un technicien climatisation', desc: 'Installation et maintenance par un expert certifié Fixeo.',              btn: 'Trouver un technicien' }
+};
+const DEFAULT_CTA = { icon: '🔧', label: 'Trouver un artisan vérifié', desc: 'Artisan certifié, intervention rapide, paiement sécurisé.', btn: 'Trouver un artisan' };
+
+// ── Category → SSR LP internal links (Phase 4.5 locked) ─────
+// Format: /service-city (hyphen, SSR LP routes in vercel.json)
+const CATEGORY_LP_LINKS = {
+  plomberie: [
+    ['/plombier-casablanca', 'Plombier Casablanca'],
+    ['/plombier-rabat',      'Plombier Rabat'],
+    ['/plombier-marrakech',  'Plombier Marrakech'],
+    ['/plombier-fes',        'Plombier Fès'],
+    ['/plombier-tanger',     'Plombier Tanger'],
+    ['/plombier-agadir',     'Plombier Agadir']
+  ],
+  electricite: [
+    ['/electricien-casablanca', 'Electricien Casablanca'],
+    ['/electricien-rabat',      'Electricien Rabat'],
+    ['/electricien-marrakech',  'Electricien Marrakech'],
+    ['/electricien-fes',        'Electricien Fès'],
+    ['/electricien-tanger',     'Electricien Tanger'],
+    ['/electricien-agadir',     'Electricien Agadir']
+  ],
+  serrurerie: [
+    ['/serrurier-casablanca', 'Serrurier Casablanca'],
+    ['/serrurier-rabat',      'Serrurier Rabat'],
+    ['/serrurier-marrakech',  'Serrurier Marrakech'],
+    ['/serrurier-fes',        'Serrurier Fès'],
+    ['/serrurier-tanger',     'Serrurier Tanger'],
+    ['/serrurier-agadir',     'Serrurier Agadir']
+  ],
+  climatisation: [
+    ['/climatisation-casablanca', 'Climatisation Casablanca'],
+    ['/climatisation-rabat',      'Climatisation Rabat'],
+    ['/climatisation-marrakech',  'Climatisation Marrakech']
+  ]
+};
+
+// ── Build title lookup from all JSON sources (for related-article headings) ──
+function buildTitleMap(authorityDir) {
+  const map = {};
+  try {
+    const files = fs.readdirSync(authorityDir).filter(f => f.endsWith('.json'));
+    for (const f of files) {
+      try {
+        const art = JSON.parse(fs.readFileSync(path.join(authorityDir, f), 'utf8'));
+        if (art.slug && art.title) map[art.slug] = art.title;
+      } catch (e) { /* skip malformed */ }
+    }
+  } catch (e) { /* directory not found */ }
+  return map;
+}
+const TITLE_MAP = buildTitleMap(AUTHORITY_DIR);
+
+// ── Helpers ──────────────────────────────────────────────────
 function esc(s) {
   return String(s == null ? '' : s)
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
 function formatDate(d) {
   try {
-    return new Date(d).toLocaleDateString('fr-FR', { day:'numeric', month:'long', year:'numeric' });
-  } catch(e) { return d || ''; }
+    return new Date(d).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+  } catch (e) { return d || ''; }
 }
 
 function countWords(text) {
   if (!text) return 0;
-  return text.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim().split(' ').filter(w => w.length > 2).length;
+  return text.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().split(' ').filter(w => w.length > 2).length;
 }
 
 function calcReadTime(sections, faq) {
@@ -108,11 +213,11 @@ function renderSection(sec, idx) {
 
 function buildRelatedSection(slugs) {
   if (!slugs || !slugs.length) return '';
-  const cards = slugs.slice(0,3).map(slug => {
+  const cards = slugs.slice(0, 3).map(slug => {
+    // Use full article title from title map (Phase 4.4 golden format)
+    const title = TITLE_MAP[slug] || slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
     return `<article class="blog-related-card">
-    <a href="/blog/${esc(slug)}" class="blog-related-link">
-      <h4>${esc(slug.replace(/-/g,' ').replace(/\b\w/g, c => c.toUpperCase()))}</h4>
-      <span class="blog-reading-time-sm">→ Lire l'article</span>
+    <a href="/blog/${esc(slug)}" class="blog-related-link"><h3>${esc(title)}</h3><span class="blog-reading-time-sm">→ Lire l'article</span>
     </a>
   </article>`;
   }).join('\n  ');
@@ -128,7 +233,7 @@ function buildArticlePage(article) {
   const slug         = article.slug;
   const canonicalUrl = `https://www.fixeo.ma/blog/${slug}`;
   const cat          = CATEGORIES[article.category] || { label: article.category || 'Guide', icon: '📖', desc: '' };
-  const today        = new Date().toISOString().slice(0,10);
+  const today        = new Date().toISOString().slice(0, 10);
   const dateISO      = article.date || today;
   const dateFR       = formatDate(dateISO);
   const title        = article.title;
@@ -138,12 +243,53 @@ function buildArticlePage(article) {
   const sections     = article.sections || [];
   const readMin      = article.estimated_read_min || calcReadTime(sections, faq);
 
+  // ── Category images (Phase 4.3 locked) ──────────────────
+  // catImage: absolute URL for og/twitter/JSON-LD
+  // catHeroSrc: root-relative for hero <img src>
+  const catImage   = CATEGORY_IMAGES[article.category] || DEFAULT_IMAGE;
+  const catHeroSrc = CATEGORY_HERO_SRC[article.category] || '/img/fixeo-logo.webp';
+
+  // ── wordCount (from JSON source — Phase 4.4 golden values) ─
+  const wordCount = article.wordCount || null;
+
+  // ── TOC ───────────────────────────────────────────────────
   const tocHtml = buildTOC(sections);
 
-  const bodyParts = sections.map((s, idx) => renderSection(s, idx));
+  // ── Intro CTA (Phase 4.4 locked — inserted after section[0]) ─
+  const cta = CATEGORY_CTA[article.category] || DEFAULT_CTA;
+  const introCta = `      <div class="blog-intro-cta" role="complementary" aria-label="Trouver un artisan">
+        <div class="blog-intro-cta-icon" aria-hidden="true">${cta.icon}</div>
+        <div class="blog-intro-cta-text">
+          <span class="blog-intro-cta-label">${esc(cta.label)}</span>
+          <p class="blog-intro-cta-desc">${esc(cta.desc)}</p>
+        </div>
+        <a href="/?open=request" class="blog-intro-cta-btn">${esc(cta.btn)}</a>
+      </div>`;
+
+  // ── Body: intro section → intro CTA → remaining sections ─
+  // Golden format: section[0] (intro) then CTA then sections[1+]
+  const bodyParts = [];
+  sections.forEach((s, idx) => {
+    bodyParts.push(renderSection(s, idx));
+    if (idx === 0) bodyParts.push(introCta);  // inject CTA after intro
+  });
   const bodyHtml = bodyParts.join('\n');
 
-  // Top-level FAQ
+  // ── Internal LP links (Phase 4.5 locked — /service-city SSR) ─
+  const lpLinks = CATEGORY_LP_LINKS[article.category] || [];
+  let internalLinksHtml = '';
+  if (lpLinks.length) {
+    const items = lpLinks.map(([href, label]) =>
+      `<li><a href="${esc(href)}" class="lp-inline-link">${esc(label)}</a></li>`
+    ).join('\n      ');
+    internalLinksHtml = `<div class="blog-internal-links" aria-label="Pages de service associées">
+        <span class="blog-internal-links-title">🗺️ Trouver un artisan dans votre ville</span>
+        <ul>
+      ${items}
+      </ul></div>`;
+  }
+
+  // ── FAQ ───────────────────────────────────────────────────
   let topFaqHtml = '';
   if (faq.length) {
     topFaqHtml = `<section class="blog-faq" aria-label="FAQ">
@@ -157,43 +303,67 @@ function buildArticlePage(article) {
 
   const relatedHtml = buildRelatedSection(article.related_articles);
 
-  // Internal links section
-  let internalLinksHtml = '';
-  if (article.internal_links && article.internal_links.length) {
-    const linkItems = article.internal_links.map(l => `<li><a href="${esc(l)}" class="lp-inline-link">${esc(l.replace(/\//g,' ').trim().replace(/\b\w/g, c => c.toUpperCase()))}</a></li>`).join('\n      ');
-    internalLinksHtml = `<div class="blog-internal-links"><ul>${linkItems}</ul></div>`;
-  }
+  // ── Tag links ─────────────────────────────────────────────
+  const tagLinks = tags.map(t => `<a href="/blog?tag=${esc(t)}" class="blog-tag">${esc(t)}</a>`).join(' ');
 
+  // ── Article JSON-LD (pretty-printed, Phase 4.4 locked) ───
   const articleLD = {
-    '@context': 'https://schema.org', '@type': 'Article',
-    'headline': title, 'description': metaDesc,
-    'url': canonicalUrl, 'datePublished': dateISO, 'dateModified': dateISO,
-    'image': 'https://www.fixeo.ma/img/fixeo-logo.webp',
-    'author': { '@type': 'Organization', 'name': 'Fixeo', 'url': 'https://www.fixeo.ma/' },
-    'publisher': { '@type': 'Organization', 'name': 'Fixeo', 'logo': { '@type': 'ImageObject', 'url': 'https://www.fixeo.ma/img/fixeo-logo.webp' }},
+    '@context':        'https://schema.org',
+    '@type':           'Article',
+    'headline':        title,
+    'description':     metaDesc,
+    'url':             canonicalUrl,
+    'datePublished':   dateISO,
+    'dateModified':    dateISO,
+    'image':           catImage,
+    'author': {
+      '@type': 'Organization',
+      '@id':   'https://www.fixeo.ma/#organization',
+      'name':  'Fixeo',
+      'url':   'https://www.fixeo.ma/'
+    },
+    'publisher': {
+      '@type': 'Organization',
+      'name':  'Fixeo',
+      'logo':  { '@type': 'ImageObject', 'url': 'https://www.fixeo.ma/img/fixeo-logo.webp' }
+    },
     'mainEntityOfPage': { '@type': 'WebPage', '@id': canonicalUrl },
-    'keywords': tags.join(', '), 'articleSection': cat.label, 'inLanguage': 'fr-MA'
+    'keywords':        tags.join(', '),
+    'articleSection':  cat.label,
+    'inLanguage':      'fr-MA'
+  };
+  if (wordCount) articleLD['wordCount'] = wordCount;
+  articleLD['speakable'] = {
+    '@type':      'SpeakableSpecification',
+    'cssSelector': ['.blog-article-header h1', '.blog-lead', '.blog-intro']
   };
 
   const breadcrumbLD = {
-    '@context': 'https://schema.org', '@type': 'BreadcrumbList',
+    '@context':       'https://schema.org',
+    '@type':          'BreadcrumbList',
     'itemListElement': [
       { '@type': 'ListItem', 'position': 1, 'name': 'Accueil', 'item': 'https://www.fixeo.ma/' },
-      { '@type': 'ListItem', 'position': 2, 'name': 'Blog', 'item': 'https://www.fixeo.ma/blog' },
+      { '@type': 'ListItem', 'position': 2, 'name': 'Blog',    'item': 'https://www.fixeo.ma/blog' },
       { '@type': 'ListItem', 'position': 3, 'name': cat.label, 'item': `https://www.fixeo.ma/blog?cat=${article.category}` },
-      { '@type': 'ListItem', 'position': 4, 'name': title, 'item': canonicalUrl }
+      { '@type': 'ListItem', 'position': 4, 'name': title,     'item': canonicalUrl }
     ]
   };
 
   let faqLD = null;
   if (faq.length) {
     faqLD = {
-      '@context': 'https://schema.org', '@type': 'FAQPage',
-      'mainEntity': faq.map(f => ({ '@type': 'Question', 'name': f.q, 'acceptedAnswer': { '@type': 'Answer', 'text': f.a }}))
+      '@context':    'https://schema.org',
+      '@type':       'FAQPage',
+      'mainEntity':  faq.map(f => ({
+        '@type':         'Question',
+        'name':          f.q,
+        'acceptedAnswer': { '@type': 'Answer', 'text': f.a }
+      }))
     };
   }
 
-  const tagLinks = tags.map(t => `<a href="/blog?tag=${esc(t)}" class="blog-tag">${esc(t)}</a>`).join(' ');
+  // Pretty-print Article JSON-LD to match golden format
+  const articleLDPretty = JSON.stringify(articleLD, null, 2);
 
   return `<!DOCTYPE html>
 <html lang="fr">
@@ -208,18 +378,20 @@ function buildArticlePage(article) {
   <meta property="og:title" content="${esc(title)}">
   <meta property="og:description" content="${esc(metaDesc)}">
   <meta property="og:url" content="${canonicalUrl}">
-  <meta property="og:image" content="https://www.fixeo.ma/img/fixeo-logo.webp">
+  <meta property="og:image" content="${catImage}">
   <meta property="og:site_name" content="Fixeo">
   <meta property="og:locale" content="fr_MA">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="${esc(title)}">
   <meta name="twitter:description" content="${esc(metaDesc)}">
-  <meta name="twitter:image" content="https://www.fixeo.ma/img/fixeo-logo.webp">
-  <script type="application/ld+json">${JSON.stringify(articleLD)}</script>
+  <meta name="twitter:image" content="${catImage}">
+  <script type="application/ld+json">${articleLDPretty}</script>
   <script type="application/ld+json">${JSON.stringify(breadcrumbLD)}</script>
   ${faqLD ? `<script type="application/ld+json">${JSON.stringify(faqLD)}</script>` : ''}
+  <link rel="stylesheet" href="/css/variables.css">
   <link rel="stylesheet" href="/css/blog-v1.css">
   <link rel="stylesheet" href="/css/blog-v2.css">
+  <link rel="stylesheet" href="/css/blog-article-v3.css?v=1">
   <link rel="stylesheet" href="/css/main.css">
   <link rel="icon" href="/img/favicon.ico" type="image/x-icon">
   <style id="fixeo-logo-override">
@@ -230,6 +402,7 @@ function buildArticlePage(article) {
   <link rel="stylesheet" href="/css/fixeo-consent-v1.css?v=fcv1b">
 </head>
 <body class="blog-page blog-v2 blog-authority" data-theme="dark">
+<div id="ba-progress-wrap" aria-hidden="true"><div id="ba-progress"></div></div>
   <a href="#main-content" class="skip-link">Aller au contenu</a>
   <nav class="navbar" role="navigation" aria-label="Navigation principale">
     <a href="/" class="navbar-brand logo-wrap" aria-label="Fixeo — Accueil">
@@ -271,17 +444,27 @@ function buildArticlePage(article) {
           ${tags.length ? `<span class="blog-meta-sep">·</span><div class="blog-tags">${tagLinks}</div>` : ''}
         </div>
       </header>
+        <div class="blog-hero-image">
+          <img src="${catHeroSrc}" alt="${esc(title)}" loading="eager" decoding="async" width="800" height="450">
+        </div>
       ${tocHtml}
       <div class="blog-body" itemprop="articleBody">
         ${bodyHtml}
         ${internalLinksHtml}
       </div>
       ${topFaqHtml}
-      <div class="blog-author-block">
-        <div class="blog-author-avatar">🛡️</div>
-        <div class="blog-author-info">
-          <strong class="blog-author-name">Équipe Fixeo</strong>
-          <p class="blog-author-bio">Nos experts artisans rédigent des guides de qualité pour vous aider à trouver le bon professionnel au Maroc. Tous nos artisans sont vérifiés et notés par de vrais clients.</p>
+      <div class="blog-author-block-v2" role="complementary" aria-label="À propos de cet article">
+        <div class="blog-author-header">
+          <div class="blog-author-avatar-v2" aria-hidden="true">🛡️</div>
+          <div class="blog-author-meta">
+            <strong class="blog-author-name-v2">Guide éditorial Fixeo</strong>
+            <span class="blog-author-role">Publié par l'équipe Fixeo</span>
+          </div>
+        </div>
+        <p class="blog-author-bio-v2">Ce guide est publié par Fixeo, plateforme de mise en relation avec des artisans au Maroc. Les informations fournies sont d'ordre général — vérifiez toujours auprès d'un professionnel qualifié avant toute intervention.</p>
+        <div class="blog-editorial-note" aria-label="Note éditoriale">
+          <span class="blog-editorial-note-icon">📋</span>
+          <span>Guide informatif Fixeo. Les tarifs, délais et procédures mentionnés sont indicatifs et peuvent varier selon votre situation et votre région.</span>
         </div>
       </div>
       <div class="blog-cta-v2" aria-label="Appel à l'action">
@@ -311,7 +494,7 @@ function buildArticlePage(article) {
       </div>
       <div class="blog-sidebar-widget blog-sidebar-cta">
         <h3>Trouver un artisan</h3>
-        <p>Artisans vérifiés disponibles dans votre ville.</p>
+        <p>Artisans vérifiés disponibles dans votre ville.</p></div>
         <a href="/?open=request" class="blog-cta-btn">Demander un devis</a>
       </div>
     </aside>
@@ -319,12 +502,13 @@ function buildArticlePage(article) {
   <script src="/js/fixeo-header-global.js" defer></script>
   <script src="/js/fixeo-footer-global.js?v=gf3a" defer></script>
   <script src="/js/auth-global.js" defer></script>
+  <script src="/js/blog-article-v3.js?v=1" defer></script>
   <script src="/js/fixeo-consent-v1.js?v=fcv1b"></script>
 </body>
 </html>`;
 }
 
-// ── Update sitemap-blog.xml ────────────────────────────────
+// ── Update sitemap-blog.xml ───────────────────────────────────
 function updateSitemapBlog(slugs, today) {
   let existing = '';
   if (fs.existsSync(SITEMAP_BLOG)) {
@@ -334,65 +518,65 @@ function updateSitemapBlog(slugs, today) {
     `  <url>\n    <loc>https://www.fixeo.ma/blog/${slug}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.70</priority>\n  </url>`
   ).join('\n');
   if (!newEntries) return;
-  // Insert before </urlset>
   const updated = existing.replace('</urlset>', newEntries + '\n</urlset>');
   fs.writeFileSync(SITEMAP_BLOG, updated, 'utf8');
-  console.log(`[OK]  sitemap-blog.xml updated with ${slugs.length} new URLs`);
+  console.log(`[OK]  sitemap-blog.xml updated`);
 }
 
-// ── MAIN ────────────────────────────────────────────────────
-if (!fs.existsSync(AUTHORITY_DIR)) {
-  console.error(`[ERR] Directory not found: ${AUTHORITY_DIR}`);
-  process.exit(1);
-}
-
-const jsonFiles = fs.readdirSync(AUTHORITY_DIR).filter(f => f.endsWith('.json'));
-if (!jsonFiles.length) {
-  console.log('No JSON files found in blog/_content/authority/');
-  process.exit(0);
-}
-
-const today = new Date().toISOString().slice(0,10);
-let generated = 0, errors = 0, skipped = 0;
-const generatedSlugs = [];
-
-jsonFiles.forEach(f => {
-  let article;
-  try {
-    article = JSON.parse(fs.readFileSync(path.join(AUTHORITY_DIR, f), 'utf8'));
-  } catch(e) {
-    console.error(`[ERR] Parse error ${f}: ${e.message}`);
-    errors++;
+// ── Main ──────────────────────────────────────────────────────
+function main() {
+  if (!fs.existsSync(AUTHORITY_DIR)) {
+    console.log('No JSON files found in blog/_content/authority/');
     return;
   }
-  if (!article.slug) { console.error(`[ERR] Missing slug in ${f}`); errors++; return; }
-  if (!article.date) article.date = today;
 
-  const outPath = path.join(BLOG_DIR, `${article.slug}.html`);
-  if (!FORCE && fs.existsSync(outPath)) {
-    skipped++;
+  const today = new Date().toISOString().slice(0, 10);
+  const jsonFiles = fs.readdirSync(AUTHORITY_DIR).filter(f => f.endsWith('.json'));
+
+  if (!jsonFiles.length) {
+    console.log('No JSON files found in blog/_content/authority/');
     return;
   }
-  if (DRY) {
-    console.log(`[DRY] /blog/${article.slug}.html`);
-    generated++;
-    generatedSlugs.push(article.slug);
-    return;
-  }
-  try {
+
+  const slugs = [];
+  let generated = 0;
+  let skipped   = 0;
+  let errors    = 0;
+
+  for (const f of jsonFiles) {
+    let article;
+    try {
+      article = JSON.parse(fs.readFileSync(path.join(AUTHORITY_DIR, f), 'utf8'));
+    } catch (e) {
+      console.error(`[ERR] ${f}: ${e.message}`);
+      errors++;
+      continue;
+    }
+
+    const slug = article.slug;
+    if (!slug) { console.error(`[ERR] ${f}: missing slug`); errors++; continue; }
+
+    const outPath = path.join(BLOG_DIR, `${slug}.html`);
+    slugs.push(slug);
+
+    if (!FORCE && fs.existsSync(outPath)) {
+      skipped++;
+      continue;
+    }
+
     const html = buildArticlePage(article);
-    fs.writeFileSync(outPath, html, 'utf8');
-    console.log(`[OK]  /blog/${article.slug}.html`);
+    if (DRY) {
+      console.log(`[DRY] /blog/${slug}.html`);
+    } else {
+      fs.writeFileSync(outPath, html, 'utf8');
+      console.log(`[OK]  /blog/${slug}.html`);
+    }
     generated++;
-    generatedSlugs.push(article.slug);
-  } catch(e) {
-    console.error(`[ERR] ${article.slug}: ${e.message}`);
-    errors++;
   }
-});
 
-if (!DRY && generatedSlugs.length) {
-  updateSitemapBlog(generatedSlugs, today);
+  if (!DRY) updateSitemapBlog(slugs, today);
+
+  console.log(`\nDone: ${generated} generated, ${skipped} skipped, ${errors} errors.`);
 }
 
-console.log(`\nDone: ${generated} generated, ${skipped} skipped, ${errors} errors`);
+main();
