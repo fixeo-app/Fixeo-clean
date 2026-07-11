@@ -352,6 +352,10 @@
       "dest": "/a-propos.html"
     },
     {
+      "src": "^/equipe$",
+      "dest": "/equipe.html"
+    },
+    {
       "src": "^/comment-ca-marche$",
       "dest": "/comment-ca-marche.html"
     },

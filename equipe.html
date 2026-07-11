@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <link rel="icon" type="image/png" href="img/favicon.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="img/favicon.png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta name="description" content="L'équipe éditoriale de Fixeo — guides pratiques sur les artisans au Maroc. Plomberie, électricité, serrurerie, climatisation : nos contenus s'appuient sur les données réelles de la plateforme.">
+  <title>Équipe éditoriale Fixeo | Guides artisans au Maroc</title>
+  <link rel="canonical" href="https://www.fixeo.ma/equipe">
+  <meta name="robots" content="index, follow">
+
+  <!-- OpenGraph -->
+  <meta property="og:type"        content="website">
+  <meta property="og:title"       content="Équipe éditoriale Fixeo — Guides artisans au Maroc">
+  <meta property="og:description" content="Guides pratiques sur la plomberie, l'électricité, la serrurerie et la climatisation au Maroc — produits par Fixeo.">
+  <meta property="og:url"         content="https://www.fixeo.ma/equipe">
+  <meta property="og:image"       content="https://www.fixeo.ma/img/logo.png">
+  <meta property="og:site_name"   content="Fixeo">
+  <meta property="og:locale"      content="fr_MA">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card"        content="summary">
+  <meta name="twitter:title"       content="Équipe éditoriale Fixeo">
+  <meta name="twitter:description" content="Guides pratiques sur les artisans au Maroc — plomberie, électricité, serrurerie, climatisation.">
+  <meta name="twitter:image"       content="https://www.fixeo.ma/img/logo.png">
+
+  <!-- Structured Data: Organization + WebPage + BreadcrumbList + WebSite -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://www.fixeo.ma/#organization",
+        "name": "Fixeo",
+        "url": "https://www.fixeo.ma/",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://www.fixeo.ma/img/logo.png",
+          "width": 200,
+          "height": 60
+        },
+        "description": "Marketplace de mise en relation entre particuliers et artisans vérifiés au Maroc.",
+        "foundingDate": "2024",
+        "areaServed": { "@type": "Country", "name": "Maroc" },
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "contactType": "customer service",
+          "availableLanguage": ["French", "Arabic"]
+        }
+      },
+      {
+        "@type": "WebPage",
+        "@id": "https://www.fixeo.ma/equipe",
+        "url": "https://www.fixeo.ma/equipe",
+        "name": "Équipe éditoriale Fixeo",
+        "description": "Guides pratiques sur les artisans au Maroc — produits par l'équipe Fixeo.",
+        "inLanguage": "fr-MA",
+        "isPartOf": { "@id": "https://www.fixeo.ma/#website" },
+        "about": { "@id": "https://www.fixeo.ma/#organization" }
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://www.fixeo.ma/#website",
+        "url": "https://www.fixeo.ma/",
+        "name": "Fixeo"
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Accueil", "item": "https://www.fixeo.ma/" },
+          { "@type": "ListItem", "position": 2, "name": "Équipe éditoriale", "item": "https://www.fixeo.ma/equipe" }
+        ]
+      }
+    ]
+  }
+  </script>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/header-unified.css">
+  <link rel="stylesheet" href="css/fixeo-header-global.css">
+  <link rel="stylesheet" href="css/auth-global.css">
+  <link rel="stylesheet" href="css/fixeo-footer-global.css?v=gf3a">
+  <style>
+    .eq-page { max-width: 800px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+    .eq-breadcrumb { font-size: 0.85rem; color: #888; margin-bottom: 1.5rem; }
+    .eq-breadcrumb a { color: #E1306C; text-decoration: none; }
+    .eq-breadcrumb a:hover { text-decoration: underline; }
+    .eq-breadcrumb span { margin: 0 0.4em; color: #bbb; }
+    .eq-header { display: flex; align-items: flex-start; gap: 1.5rem; margin-bottom: 2rem; padding-bottom: 2rem; border-bottom: 1px solid #eee; }
+    .eq-logo-wrap { flex-shrink: 0; width: 72px; height: 72px; background: #f4f4f8; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+    .eq-logo-wrap img { width: 48px; height: auto; }
+    .eq-header-text h1 { font-size: 1.5rem; margin: 0 0 0.4rem; color: #111; }
+    .eq-header-text .eq-role { font-size: 0.95rem; color: #E1306C; font-weight: 600; margin-bottom: 0.5rem; }
+    .eq-header-text .eq-org { font-size: 0.9rem; color: #555; }
+    .eq-header-text .eq-org a { color: #E1306C; text-decoration: none; }
+    .eq-section { margin-bottom: 2rem; }
+    .eq-section h2 { font-size: 1.1rem; color: #222; margin-bottom: 0.75rem; border-left: 3px solid #E1306C; padding-left: 0.75rem; }
+    .eq-section p { color: #444; line-height: 1.7; margin-bottom: 0.75rem; }
+    .eq-topics { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
+    .eq-topic-tag { background: #f0f0f5; border-radius: 20px; padding: 0.3rem 0.8rem; font-size: 0.85rem; color: #333; }
+    .eq-articles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; margin-top: 0.75rem; }
+    .eq-article-card { border: 1px solid #eee; border-radius: 8px; padding: 1rem; background: #fafafa; }
+    .eq-article-card a { color: #111; text-decoration: none; font-size: 0.9rem; font-weight: 500; line-height: 1.4; }
+    .eq-article-card a:hover { color: #E1306C; }
+    .eq-article-card .eq-card-cat { font-size: 0.75rem; color: #888; margin-top: 0.4rem; }
+    .eq-trust-links { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 0.5rem; }
+    .eq-trust-links a { color: #E1306C; text-decoration: none; font-size: 0.9rem; border: 1px solid #E1306C; border-radius: 4px; padding: 0.3rem 0.7rem; }
+    .eq-trust-links a:hover { background: #E1306C; color: #fff; }
+    @media (max-width: 600px) {
+      .eq-header { flex-direction: column; gap: 1rem; }
+      .eq-header-text h1 { font-size: 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+  <script src="js/fixeo-header-global.js?v=gfnav1"></script>
+  <script src="js/i18n.js?v=50a38b9"></script>
+  <script src="js/header-unified.js?v=modalfix3"></script>
+  <script src="js/auth-global.js?v=50a38b9"></script>
+
+  <main class="eq-page" role="main">
+
+    <nav class="eq-breadcrumb" aria-label="Fil d'Ariane">
+      <a href="/">Fixeo</a>
+      <span aria-hidden="true">›</span>
+      <span aria-current="page">Équipe éditoriale</span>
+    </nav>
+
+    <header class="eq-header">
+      <div class="eq-logo-wrap" aria-hidden="true">
+        <img src="img/logo.png" alt="Fixeo" width="48" height="auto" loading="eager">
+      </div>
+      <div class="eq-header-text">
+        <h1>Équipe éditoriale Fixeo</h1>
+        <p class="eq-role">Guides pratiques — Services à domicile au Maroc</p>
+        <p class="eq-org">
+          Publié par <a href="/a-propos">Fixeo</a> ·
+          <a href="https://www.fixeo.ma/">www.fixeo.ma</a>
+        </p>
+      </div>
+    </header>
+
+    <section class="eq-section" aria-labelledby="eq-about">
+      <h2 id="eq-about">À propos de l'équipe</h2>
+      <p>
+        Les guides publiés sur Fixeo sont produits par l'équipe Fixeo, spécialisée dans les services
+        à domicile au Maroc. Nos contenus s'appuient sur les données réelles de la plateforme,
+        les retours des artisans référencés et les questions fréquentes de nos utilisateurs.
+      </p>
+      <p>
+        Fixeo est une marketplace marocaine de mise en relation entre particuliers et artisans
+        qualifiés dans plus de 20 villes. Notre connaissance du secteur est directement issue de
+        l'exploitation quotidienne de la plateforme : plombiers, électriciens, serruriers,
+        techniciens en climatisation et autres professionnels du bâtiment.
+      </p>
+    </section>
+
+    <section class="eq-section" aria-labelledby="eq-expertise">
+      <h2 id="eq-expertise">Domaines couverts</h2>
+      <div class="eq-topics" role="list">
+        <span class="eq-topic-tag" role="listitem">Plomberie</span>
+        <span class="eq-topic-tag" role="listitem">Électricité résidentielle</span>
+        <span class="eq-topic-tag" role="listitem">Serrurerie</span>
+        <span class="eq-topic-tag" role="listitem">Climatisation</span>
+        <span class="eq-topic-tag" role="listitem">Urgences à domicile</span>
+        <span class="eq-topic-tag" role="listitem">Tarifs et devis</span>
+        <span class="eq-topic-tag" role="listitem">Sécurité à domicile</span>
+        <span class="eq-topic-tag" role="listitem">Rénovation</span>
+      </div>
+    </section>
+
+    <section class="eq-section" aria-labelledby="eq-method">
+      <h2 id="eq-method">Notre méthode éditoriale</h2>
+      <p>
+        Chaque guide est basé sur des informations vérifiables : fourchettes de prix issues des
+        devis collectés sur la plateforme, descriptions de problèmes signalés par les utilisateurs,
+        procédures validées par les artisans référencés.
+      </p>
+      <p>
+        Nous n'inventons pas de statistiques. Lorsque nous citons des prix ou des délais, ces données
+        proviennent de l'activité réelle de la plateforme ou de sources professionnelles du secteur.
+        Nous indiquons clairement lorsqu'une information est une estimation générale.
+      </p>
+    </section>
+
+    <section class="eq-section" aria-labelledby="eq-articles">
+      <h2 id="eq-articles">Guides récents</h2>
+      <div class="eq-articles-grid">
+        <div class="eq-article-card">
+          <a href="/blog/prix-plombier-maroc">Prix plombier au Maroc 2025 : tarifs et devis</a>
+          <p class="eq-card-cat">Tarifs &amp; Prix</p>
+        </div>
+        <div class="eq-article-card">
+          <a href="/blog/prix-electricien-maroc">Prix électricien au Maroc : tarifs et devis</a>
+          <p class="eq-card-cat">Tarifs &amp; Prix</p>
+        </div>
+        <div class="eq-article-card">
+          <a href="/blog/urgence-plombier-casablanca">Urgence plombier à Casablanca</a>
+          <p class="eq-card-cat">Urgences</p>
+        </div>
+        <div class="eq-article-card">
+          <a href="/blog/comment-choisir-plombier-maroc">Comment choisir un plombier au Maroc</a>
+          <p class="eq-card-cat">Confiance &amp; Garanties</p>
+        </div>
+        <div class="eq-article-card">
+          <a href="/blog/artisan-verifie-maroc">Artisan vérifié : comment le reconnaître</a>
+          <p class="eq-card-cat">Confiance &amp; Garanties</p>
+        </div>
+        <div class="eq-article-card">
+          <a href="/blog/prix-climatisation-maroc">Prix climatisation au Maroc</a>
+          <p class="eq-card-cat">Tarifs &amp; Prix</p>
+        </div>
+      </div>
+      <p style="margin-top:1rem;">
+        <a href="/blog" style="color:#E1306C;text-decoration:none;font-weight:500;">→ Voir tous les guides</a>
+      </p>
+    </section>
+
+    <section class="eq-section" aria-labelledby="eq-trust">
+      <h2 id="eq-trust">En savoir plus sur Fixeo</h2>
+      <div class="eq-trust-links">
+        <a href="/a-propos">À propos de Fixeo</a>
+        <a href="/nos-garanties">Nos garanties</a>
+        <a href="/verification-artisans">Vérification artisans</a>
+        <a href="/contact">Contact</a>
+        <a href="/blog">Blog</a>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="js/fixeo-footer-global.js?v=gf3a"></script>
+</body>
+</html>
