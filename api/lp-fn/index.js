@@ -864,6 +864,7 @@ ${safeJsonLD(jsonLdObj)}
     }
   </style>
   <link rel="stylesheet" href="/css/fixeo-consent-v1.css?v=fcv1b">
+  <script src="/js/fixeo-consent-v1.js?v=fcv1c"></script>
 </head>
 <body>
 <main class="lp-page" role="main">
@@ -937,7 +938,6 @@ ${safeJsonLD(jsonLdObj)}
   </footer>
 
 </main>
-<script src="/js/fixeo-consent-v1.js?v=fcv1b"></script>
 </body>
 </html>`;
 }

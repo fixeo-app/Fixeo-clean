@@ -362,3 +362,42 @@ footer.fixeo-footer-auth a {
 footer.fixeo-footer-auth a:hover {
   color: rgba(255,255,255,0.60);
 }
+
+/* ── CONSENT PREFERENCES BUTTON ───────────────────────────── */
+/* Matches footer link visual — inline-block, no browser chrome */
+.footer-cookie-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+  color: rgba(255,255,255,0.32);
+  text-decoration: none;
+  line-height: inherit;
+  vertical-align: baseline;
+  display: inline;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.footer-cookie-btn:hover,
+.footer-cookie-btn:focus {
+  color: rgba(255,255,255,0.70);
+  text-decoration: underline;
+  outline: 2px solid #38bdf8;
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+footer.fixeo-footer-auth .footer-cookie-btn {
+  color: rgba(255,255,255,0.32);
+  font-size: 0.76rem;
+  margin: 0 6px;
+}
+
+footer.fixeo-footer-auth .footer-cookie-btn:hover,
+footer.fixeo-footer-auth .footer-cookie-btn:focus {
+  color: rgba(255,255,255,0.60);
+}

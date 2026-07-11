@@ -47,7 +47,8 @@
       '\u00a9 2026 Fixeo \u2014 ' +
       '<a href="cgu.html">CGU</a> \u00b7 ' +
       '<a href="confidentialite.html">Confidentialit\u00e9</a> \u00b7 ' +
-      '<a href="contact.html">Contact</a>';
+      '<a href="contact.html">Contact</a> \u00b7 ' +
+      '<button type="button" class="footer-cookie-btn" onclick="window.FixeoConsent && window.FixeoConsent.open()" aria-label="G\u00e9rer vos pr\u00e9f\u00e9rences cookies">Pr\u00e9f\u00e9rences cookies</button>';
     document.body.appendChild(authFooter);
     return;
   }
@@ -122,6 +123,10 @@
     '        <a href="rejoindre-fixeo.html">Je suis artisan</a>',
     '        <span style="color:rgba(255,255,255,.18)">\u00b7</span>',
     '        <a href="dashboard-client.html">Dashboard</a>',
+    '        <span style="color:rgba(255,255,255,.18)">\u00b7</span>',
+    '        <button type="button" class="footer-cookie-btn" onclick="window.FixeoConsent && window.FixeoConsent.open()" aria-label="G\u00e9rer vos pr\u00e9f\u00e9rences cookies">',
+    '          \ud83c\udf6a Pr\u00e9f\u00e9rences cookies',
+    '        </button>',
     '      </div>',
     '    </div>',
 

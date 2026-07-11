@@ -1,6 +1,6 @@
 /* ============================================================
    FIXEO COOKIE CONSENT MANAGER
-   js/fixeo-consent-v1.js   Version: fcv-v1b
+   js/fixeo-consent-v1.js   Version: fcv-v1c
 
    PURPOSE
    ───────
@@ -60,6 +60,7 @@
 
    CHANGELOG
    ─────────
+   fcv-v1c  2026-07-11  Phase 6.2.5A.3 — M-01: _denyAnalytics consent update; M-02: footer link; M-03: <head> init
    fcv-v1b  2026-07-11  Phase 6.2.5A.1 — blog+SSR coverage, versioned storage, GA cookie deletion, open() fix
    fcv-v1a  2026-07-11  Initial consent manager (Phase 6.2.5A)
    ============================================================ */
@@ -71,7 +72,7 @@
   if (window._fxConsentLoaded) return;
   window._fxConsentLoaded = true;
 
-  var VERSION   = 'fcv-v1b';
+  var VERSION   = 'fcv-v1c';
   var STORAGE_KEY = 'fixeo_consent_analytics';
 
   /* ── Consent Mode v2 stub ────────────────────────────────── */
@@ -150,7 +151,15 @@
 
   function _denyAnalytics() {
     _setStored('denied');
-    /* analytics_storage remains denied — already set at init   */
+    /* Consent Mode v2 — queue denied update immediately.       */
+    /* Harmless no-op in dormant state (gtag not loaded).       */
+    /* Required: fires before any future gtag.js activation.    */
+    _gtag('consent', 'update', {
+      analytics_storage:    'denied',
+      ad_storage:           'denied',
+      ad_user_data:         'denied',
+      ad_personalization:   'denied'
+    });
     /* Attempt to expire known GA4 cookies on revocation.       */
     /* No-op in dormant state (no GA cookies exist yet).        */
     /* Required for post-activation revocation hygiene.         */
