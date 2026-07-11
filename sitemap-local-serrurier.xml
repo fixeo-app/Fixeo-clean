@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   Fixeo Local SEO Sitemap — serrurier — seo4
-  20 city pages for serrurier service.
+  18 city pages for serrurier service.
   Priority: 0.85 (major metros) / 0.80 (secondary) / 0.75 (regional)
+  NOTE: serrurier-agadir and serrurier-fes removed (zero artisans — HTTP 404)
 -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -10,19 +11,7 @@
           http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
 
   <url>
-    <loc>https://www.fixeo.ma/serrurier-agadir</loc>
-    <lastmod>2026-07-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
     <loc>https://www.fixeo.ma/serrurier-casablanca</loc>
-    <lastmod>2026-07-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://www.fixeo.ma/serrurier-fes</loc>
     <lastmod>2026-07-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
