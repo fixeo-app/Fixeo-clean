@@ -1,0 +1,469 @@
+/* ============================================================
+   FIXEO COOKIE CONSENT BANNER
+   css/fixeo-consent-v1.css   Version: fcc-v1a
+
+   PURPOSE
+   ───────
+   Styles the FIXEO cookie consent banner and preferences modal.
+   Namespace: fcb-* (fixeo consent banner)
+   Zero overrides to main.css, variables.css, or any other
+   existing stylesheet.
+
+   DESIGN
+   ──────
+   Dark glass-morphism, consistent with the Fixeo design system.
+   Mobile-first. Accessible (focus traps, ARIA live regions).
+   Banner appears bottom-fixed on first visit.
+
+   CHANGELOG
+   ─────────
+   fcc-v1a  2026-07-11  Initial consent banner CSS (Phase 6.2.5A)
+   ============================================================ */
+
+/* ── Reset & base ───────────────────────────────────────────── */
+.fcb-banner *,
+.fcb-modal * {
+  box-sizing: border-box;
+}
+
+/* ── Consent Banner (bottom bar) ────────────────────────────── */
+.fcb-banner {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 99900;
+  padding: 0 20px 20px;
+  pointer-events: none;
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity  0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  /* shown by default — hidden state applied by JS */
+}
+
+.fcb-banner[hidden],
+.fcb-banner[aria-hidden="true"] {
+  display: none !important;
+}
+
+.fcb-banner--out {
+  transform: translateY(100%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.fcb-inner {
+  max-width: 920px;
+  margin: 0 auto;
+  background: rgba(14, 14, 28, 0.97);
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 20px;
+  padding: 24px 28px;
+  pointer-events: all;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.55),
+              0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+/* ── Banner layout ──────────────────────────────────────────── */
+.fcb-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.fcb-icon {
+  font-size: 1.6rem;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.fcb-text {
+  flex: 1;
+  min-width: 200px;
+}
+
+.fcb-text h3 {
+  margin: 0 0 5px;
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 0.01em;
+}
+
+.fcb-text p {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: rgba(232, 234, 240, 0.62);
+}
+
+.fcb-text p a {
+  color: rgba(56, 189, 248, 0.85);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  font-weight: 600;
+}
+
+.fcb-text p a:hover {
+  color: #fff;
+}
+
+/* ── Banner buttons ─────────────────────────────────────────── */
+.fcb-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: nowrap;
+  flex-shrink: 0;
+  align-items: center;
+}
+
+.fcb-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  white-space: nowrap;
+  transition: opacity 0.15s, transform 0.15s;
+  line-height: 1;
+}
+
+.fcb-btn:hover {
+  opacity: 0.88;
+  transform: translateY(-1px);
+}
+
+.fcb-btn:focus-visible {
+  outline: 2px solid #38bdf8;
+  outline-offset: 3px;
+}
+
+.fcb-btn:active {
+  transform: translateY(0);
+}
+
+.fcb-btn--accept {
+  background: linear-gradient(135deg, #E1306C, #833AB4);
+  color: #fff;
+  min-width: 110px;
+}
+
+.fcb-btn--refuse {
+  background: rgba(255, 255, 255, 0.07);
+  color: rgba(232, 234, 240, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.fcb-btn--refuse:hover {
+  background: rgba(255, 255, 255, 0.11);
+  color: #fff;
+}
+
+.fcb-btn--settings {
+  background: transparent;
+  color: rgba(56, 189, 248, 0.8);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  padding: 9px 16px;
+  font-size: 0.8rem;
+}
+
+.fcb-btn--settings:hover {
+  background: rgba(56, 189, 248, 0.08);
+  color: #38bdf8;
+  border-color: rgba(56, 189, 248, 0.5);
+}
+
+/* ── Mobile responsive ──────────────────────────────────────── */
+@media (max-width: 640px) {
+  .fcb-banner {
+    padding: 0 10px 12px;
+  }
+
+  .fcb-inner {
+    padding: 18px 18px;
+    border-radius: 16px;
+  }
+
+  .fcb-row {
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+
+  .fcb-icon {
+    display: none;
+  }
+
+  .fcb-text {
+    min-width: 100%;
+  }
+
+  .fcb-actions {
+    width: 100%;
+    gap: 8px;
+  }
+
+  .fcb-btn {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .fcb-btn--settings {
+    flex: 0 0 auto;
+    width: 100%;
+  }
+}
+
+/* ── Consent Preferences Modal ──────────────────────────────── */
+.fcb-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 99910;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  transition: opacity 0.25s;
+}
+
+.fcb-modal-backdrop[hidden] {
+  display: none !important;
+}
+
+.fcb-modal {
+  background: #0e0e1c;
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 20px;
+  max-width: 520px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+  position: relative;
+}
+
+.fcb-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 28px 0;
+  gap: 12px;
+}
+
+.fcb-modal-title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.fcb-modal-close {
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: rgba(232, 234, 240, 0.6);
+  font-size: 1.1rem;
+  transition: background 0.15s, color 0.15s;
+  flex-shrink: 0;
+  font-family: inherit;
+}
+
+.fcb-modal-close:hover {
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+}
+
+.fcb-modal-close:focus-visible {
+  outline: 2px solid #38bdf8;
+  outline-offset: 2px;
+}
+
+.fcb-modal-body {
+  padding: 20px 28px;
+}
+
+.fcb-modal-intro {
+  font-size: 0.84rem;
+  color: rgba(232, 234, 240, 0.6);
+  line-height: 1.6;
+  margin: 0 0 20px;
+}
+
+/* ── Cookie category cards ──────────────────────────────────── */
+.fcb-category {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 18px 20px;
+  margin-bottom: 12px;
+}
+
+.fcb-category-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.fcb-category-name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+}
+
+.fcb-category-desc {
+  font-size: 0.8rem;
+  color: rgba(232, 234, 240, 0.55);
+  line-height: 1.55;
+  margin: 0;
+}
+
+/* ── Always-active badge ────────────────────────────────────── */
+.fcb-badge-always {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(52, 211, 153, 0.12);
+  border: 1px solid rgba(52, 211, 153, 0.25);
+  color: #34d399;
+  font-size: 0.72rem;
+  font-weight: 700;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ── Toggle switch ──────────────────────────────────────────── */
+.fcb-toggle {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.fcb-toggle input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.fcb-toggle-track {
+  display: block;
+  width: 44px;
+  height: 26px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+  position: relative;
+}
+
+.fcb-toggle-thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.45);
+  transition: left 0.2s, background 0.2s;
+}
+
+.fcb-toggle input:checked + .fcb-toggle-track {
+  background: linear-gradient(135deg, #E1306C, #833AB4);
+  border-color: transparent;
+}
+
+.fcb-toggle input:checked + .fcb-toggle-track .fcb-toggle-thumb {
+  left: 23px;
+  background: #fff;
+}
+
+.fcb-toggle input:focus-visible + .fcb-toggle-track {
+  outline: 2px solid #38bdf8;
+  outline-offset: 2px;
+}
+
+/* ── Modal footer ────────────────────────────────────────────── */
+.fcb-modal-footer {
+  display: flex;
+  gap: 10px;
+  padding: 0 28px 24px;
+  flex-wrap: wrap;
+}
+
+.fcb-btn--save {
+  background: linear-gradient(135deg, #E1306C, #833AB4);
+  color: #fff;
+  flex: 1;
+  min-width: 140px;
+}
+
+.fcb-btn--accept-all {
+  background: rgba(255, 255, 255, 0.07);
+  color: rgba(232, 234, 240, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.fcb-btn--accept-all:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+
+@media (max-width: 480px) {
+  .fcb-modal-header {
+    padding: 20px 20px 0;
+  }
+
+  .fcb-modal-body {
+    padding: 16px 20px;
+  }
+
+  .fcb-modal-footer {
+    padding: 0 20px 20px;
+    flex-direction: column;
+  }
+
+  .fcb-btn--save,
+  .fcb-btn--accept-all {
+    width: 100%;
+    flex: unset;
+  }
+}
+
+/* ── Consent link (in footer / CGU) ─────────────────────────── */
+.fcb-reopen-link {
+  color: rgba(56, 189, 248, 0.7);
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  background: none;
+  border: none;
+  font-family: inherit;
+  padding: 0;
+}
+
+.fcb-reopen-link:hover {
+  color: #38bdf8;
+}

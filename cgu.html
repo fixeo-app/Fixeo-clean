@@ -99,6 +99,7 @@
     .fx-footer a{color:rgba(232,234,240,.42);margin:0 8px}
     .fx-footer a:hover{color:#fff}
 </style>
+  <link rel="stylesheet" href="css/fixeo-consent-v1.css?v=fcv1a">
 </head>
 <body>
 
@@ -135,9 +136,35 @@
   <h2>6. Paiement après intervention</h2>
   <p>Le paiement de l'artisan s'effectue directement entre client et artisan, après service rendu.</p><p>Fixeo ne prélève pas de commission sur les clients.</p><p>Les conditions tarifaires sont définies entre les parties.</p>
 </div>
-<div class="legal-section">
-  <h2>7. Données et confidentialité</h2>
-  <p>Les données collectées sont utilisées uniquement pour le fonctionnement du service.</p><p>Consultez notre Politique de confidentialité pour plus de détails.</p><p>Contact : <a href="mailto:admin@fixeo.ma" style="color:rgba(56,189,248,.8)">admin@fixeo.ma</a></p>
+<div class="legal-section" id="cookies">
+  <h2>7. Données personnelles, cookies et mesure d'audience</h2>
+  <p>Fixeo collecte et traite vos données personnelles dans le respect de la <strong>Loi 09-08</strong> relative à la protection des personnes physiques à l'égard du traitement des données à caractère personnel au Maroc.</p>
+
+  <h3 style="font-size:.95rem;font-weight:700;color:#fff;margin:18px 0 8px">7.1 Données collectées</h3>
+  <p>Nous collectons uniquement les données nécessaires au fonctionnement du service&nbsp;: nom et prénom, numéro de téléphone (identifiant principal), ville, catégorie de service demandé. Ces données sont stockées sur Supabase (hébergement confidentiel) et ne sont jamais revendues à des tiers.</p>
+
+  <h3 style="font-size:.95rem;font-weight:700;color:#fff;margin:18px 0 8px">7.2 Cookies essentiels (exemptés de consentement)</h3>
+  <p>Les cookies suivants sont strictement nécessaires au fonctionnement de la plateforme et ne requièrent pas votre consentement préalable&nbsp;:</p>
+  <ul>
+    <li><strong>Session d'authentification</strong> — maintient votre connexion (durée&nbsp;: session ou 7 jours si «&nbsp;se souvenir de moi&nbsp;»).</li>
+    <li><strong>Préférences utilisateur</strong> — langue, thème (localStorage, données non transmises à nos serveurs).</li>
+    <li><strong>Sécurité CSRF</strong> — protection contre les requêtes inter-sites.</li>
+  </ul>
+
+  <h3 style="font-size:.95rem;font-weight:700;color:#fff;margin:18px 0 8px">7.3 Cookies analytiques (soumis à consentement)</h3>
+  <p>Avec votre accord explicite, nous utilisons <strong>Google Analytics 4</strong> pour mesurer l'audience de la plateforme (pages consultées, durée de visite, type d'appareil). Ces données sont&nbsp;:</p>
+  <ul>
+    <li>anonymisées (adresse IP tronquée) ;</li>
+    <li>utilisées exclusivement à des fins d'amélioration du service ;</li>
+    <li>non utilisées à des fins publicitaires (<code>ad_storage&nbsp;: denied</code> permanent).</li>
+  </ul>
+  <p>Le consentement analytique est <strong>désactivé par défaut</strong>. Il n'est activé qu'après votre accord explicite via le bandeau de cookies. Vous pouvez modifier ce choix à tout moment via le lien «&nbsp;Gérer les cookies&nbsp;» en bas de chaque page ou en cliquant sur&nbsp;: <button type="button" class="fcb-reopen-link" onclick="window.FixeoConsent && window.FixeoConsent.open()">Gérer mes préférences cookies</button>.</p>
+
+  <h3 style="font-size:.95rem;font-weight:700;color:#fff;margin:18px 0 8px">7.4 Durée de conservation</h3>
+  <p>Vos données de compte sont conservées tant que votre compte est actif. En cas de suppression de compte, les données sont effacées dans un délai de 30 jours. Les données analytiques agrégées (non personnelles) sont conservées 26 mois par Google Analytics 4.</p>
+
+  <h3 style="font-size:.95rem;font-weight:700;color:#fff;margin:18px 0 8px">7.5 Vos droits (Loi 09-08)</h3>
+  <p>Conformément à la Loi 09-08, vous disposez d'un droit d'accès, de rectification, d'opposition et de suppression de vos données. Pour exercer ces droits&nbsp;: <a href="mailto:admin@fixeo.ma" style="color:rgba(56,189,248,.8)">admin@fixeo.ma</a>. Toute demande sera traitée dans un délai de 30 jours.</p>
 </div>
 <div class="legal-section">
   <h2>8. Contact</h2>
@@ -153,5 +180,6 @@
   <script src="js/header-unified.js?v=50a38b9"></script>
 
   <script src="js/fixeo-footer-global.js?v=gf3a" defer></script>
+  <script src="js/fixeo-consent-v1.js?v=fcv1a"></script>
 </body>
 </html>
