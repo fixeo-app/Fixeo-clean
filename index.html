@@ -2053,6 +2053,7 @@ section#home.hero.hero-section {
   <link rel="stylesheet" href="css/fixeo-modal-scroll-fix.css?v=fxmsf-v1a">
   <link rel="stylesheet" href="css/fixeo-estimation-v2-hero.css?v=faee-v2a">
   <link rel="stylesheet" href="css/fixeo-live-engine-v1.css?v=fle-v2a">
+  <link rel="stylesheet" href="css/fixeo-brain-engine-v1.css?v=fbe-v1a">
   <link rel="stylesheet" href="css/fixeo-ai-request-engine.css?v=aire-v1a">
   <link rel="stylesheet" href="css/fixeo-hero-insights.css?v=fxhi-v1c">
   <link rel="stylesheet" href="css/fixeo-hero-suggestions-v2.css?v=fxhsv2-v1a">
@@ -2597,103 +2598,108 @@ section#home.hero.hero-section {
 <section id="fle-section" aria-labelledby="fle-title">
   <div class="container">
 
-    <!-- ── Section Header ── -->
-    <header class="fle-header">
-      <div class="fle-tag">DANS LES COULISSES DE FIXEO</div>
-      <h2 id="fle-title" class="fle-title">Ce qui se passe après <span>votre demande</span></h2>
-      <p class="fle-subtitle">FIXEO analyse votre besoin, identifie les artisans compatibles et prépare une mise en relation adaptée — sans masquer les étapes.</p>
+    <!-- ── Header ── -->
+    <header class="fbe-header">
+      <div class="fbe-eyebrow">Dans les coulisses de FIXEO</div>
+      <h2 id="fle-title" class="fbe-title">
+        Le moteur de décision<br><em>FIXEO</em>
+      </h2>
+      <p class="fbe-subtitle">
+        Chaque demande déclenche une analyse en plusieurs étapes — détection du service, localisation, estimation, sélection et scoring des profils.
+      </p>
     </header>
 
-    <!-- ── 8-step processing pipeline ── -->
-    <!-- Each step corresponds to a real implemented capability. See capability matrix below. -->
-    <div class="fle-steps-grid" role="list">
+    <!-- ── Orbital Arena wrapper (scroll-reveal trigger) ── -->
+    <div class="fbe-arena-wrap">
 
-      <!-- Step 1: request persistence -->
-      <div class="fle-step-card fle-card" role="listitem">
-        <div class="fle-step-num" aria-hidden="true">01</div>
-        <div class="fle-step-icon" aria-hidden="true">📥</div>
-        <div class="fle-step-body">
-          <p class="fle-step-label">Votre demande</p>
-          <p class="fle-step-desc">Votre besoin est enregistré de manière sécurisée.</p>
+      <div class="fbe-arena" aria-hidden="true">
+
+        <!-- Center core — FIXEO Engine -->
+        <div class="fbe-core">
+          <img
+            src="rafi/RAFI_V2_MicroGlyph.webp"
+            class="fbe-core-glyph"
+            width="40" height="40"
+            alt=""
+            loading="lazy"
+            decoding="async">
+          <span class="fbe-core-label">FIXEO<br>ENGINE</span>
         </div>
-      </div>
 
-      <!-- Step 2: service detection — fixeo-ai-request-engine.js CATEGORIES map -->
-      <div class="fle-step-card fle-card" role="listitem">
-        <div class="fle-step-num" aria-hidden="true">02</div>
-        <div class="fle-step-icon" aria-hidden="true">🔍</div>
-        <div class="fle-step-body">
-          <p class="fle-step-label">Détection du service</p>
-          <p class="fle-step-desc">Le type d'intervention est identifié : plomberie, électricité, serrurerie et autres spécialités prises en charge.</p>
+        <!-- ── 8 Connector lines (rotated toward each node) ── -->
+        <div class="fbe-conn fbe-conn--1"></div>
+        <div class="fbe-conn fbe-conn--2"></div>
+        <div class="fbe-conn fbe-conn--3"></div>
+        <div class="fbe-conn fbe-conn--4"></div>
+        <div class="fbe-conn fbe-conn--5"></div>
+        <div class="fbe-conn fbe-conn--6"></div>
+        <div class="fbe-conn fbe-conn--7"></div>
+        <div class="fbe-conn fbe-conn--8"></div>
+
+        <!-- ── Intelligence nodes — DESKTOP orbital positions ── -->
+        <!-- N1: Détection du service — fixeo-ai-request-engine.js CATEGORIES -->
+        <div class="fbe-node fbe-node--1">
+          <div class="fbe-node-icon">🔍</div>
+          <span class="fbe-node-label">Détection<br>du service</span>
         </div>
-      </div>
 
-      <!-- Step 3: urgency detection — fixeo-ai-request-engine.js detectUrgency() -->
-      <div class="fle-step-card fle-card" role="listitem">
-        <div class="fle-step-num" aria-hidden="true">03</div>
-        <div class="fle-step-icon" aria-hidden="true">⚡</div>
-        <div class="fle-step-body">
-          <p class="fle-step-label">Analyse de l'urgence</p>
-          <p class="fle-step-desc">Les informations fournies permettent de déterminer le niveau de priorité de la demande.</p>
+        <!-- N2: Analyse de l'urgence — detectUrgency() -->
+        <div class="fbe-node fbe-node--2">
+          <div class="fbe-node-icon">⚡</div>
+          <span class="fbe-node-label">Analyse<br>urgence</span>
         </div>
-      </div>
 
-      <!-- Step 4: location cross-referencing — artisan city field -->
-      <div class="fle-step-card fle-card" role="listitem">
-        <div class="fle-step-num" aria-hidden="true">04</div>
-        <div class="fle-step-icon" aria-hidden="true">📍</div>
-        <div class="fle-step-body">
-          <p class="fle-step-label">Localisation</p>
-          <p class="fle-step-desc">La ville est croisée avec les zones d'intervention déclarées par les artisans.</p>
+        <!-- N3: Localisation — artisan city cross-ref -->
+        <div class="fbe-node fbe-node--3">
+          <div class="fbe-node-icon">📍</div>
+          <span class="fbe-node-label">Localisation</span>
         </div>
-      </div>
 
-      <!-- Step 5: price estimation — fixeo-estimation-engine-v1.js analyze() -->
-      <div class="fle-step-card fle-card" role="listitem">
-        <div class="fle-step-num" aria-hidden="true">05</div>
-        <div class="fle-step-icon" aria-hidden="true">💶</div>
-        <div class="fle-step-body">
-          <p class="fle-step-label">Estimation indicative</p>
-          <p class="fle-step-desc">Une fourchette tarifaire peut être proposée selon la catégorie et les informations disponibles.</p>
+        <!-- N4: Estimation indicative — fixeo-estimation-engine-v1.js analyze() -->
+        <div class="fbe-node fbe-node--4">
+          <div class="fbe-node-icon">💶</div>
+          <span class="fbe-node-label">Estimation<br>indicative</span>
         </div>
-      </div>
 
-      <!-- Step 6: compatible profile extraction — dispatch engine category + city filter -->
-      <div class="fle-step-card fle-card" role="listitem">
-        <div class="fle-step-num" aria-hidden="true">06</div>
-        <div class="fle-step-icon" aria-hidden="true">🗂️</div>
-        <div class="fle-step-body">
-          <p class="fle-step-label">Recherche de profils compatibles</p>
-          <p class="fle-step-desc">FIXEO recherche les artisans correspondant au métier et à la zone concernés.</p>
+        <!-- N5: Profils compatibles — rankArtisansV2 filter -->
+        <div class="fbe-node fbe-node--5">
+          <div class="fbe-node-icon">🗂️</div>
+          <span class="fbe-node-label">Profils<br>compatibles</span>
         </div>
-      </div>
 
-      <!-- Step 7: relevance scoring — fixeo-dispatch-engine-v2.js rankArtisansV2() -->
-      <div class="fle-step-card fle-card" role="listitem">
-        <div class="fle-step-num" aria-hidden="true">07</div>
-        <div class="fle-step-icon" aria-hidden="true">🎯</div>
-        <div class="fle-step-body">
-          <p class="fle-step-label">Score de pertinence</p>
-          <p class="fle-step-desc">Les profils sont comparés selon des critères comme la disponibilité, la spécialité et les signaux de confiance.</p>
+        <!-- N6: Score de pertinence — rankArtisansV2 multi-factor -->
+        <div class="fbe-node fbe-node--6">
+          <div class="fbe-node-icon">🎯</div>
+          <span class="fbe-node-label">Score de<br>pertinence</span>
         </div>
-      </div>
 
-      <!-- Step 8: dispatch preparation — service_requests table + notifications schema -->
-      <div class="fle-step-card fle-card" role="listitem">
-        <div class="fle-step-num" aria-hidden="true">08</div>
-        <div class="fle-step-icon" aria-hidden="true">📤</div>
-        <div class="fle-step-body">
-          <p class="fle-step-label">Préparation de la mise en relation</p>
-          <p class="fle-step-desc">Les profils les plus adaptés peuvent ensuite être proposés pour poursuivre la demande.</p>
+        <!-- N7: Signal de confiance — scoreTrust() 0-100 -->
+        <div class="fbe-node fbe-node--7">
+          <div class="fbe-node-icon">🛡️</div>
+          <span class="fbe-node-label">Signal de<br>confiance</span>
         </div>
-      </div>
 
-    </div><!-- /fle-steps-grid -->
+        <!-- N8: Préparation — service_requests + notifications schema -->
+        <div class="fbe-node fbe-node--8">
+          <div class="fbe-node-icon">📤</div>
+          <span class="fbe-node-label">Préparation<br>mise en relation</span>
+        </div>
 
-    <!-- ── Transparency note ── -->
-    <p class="fle-transparency-note">
-      Fonctionnement réel du moteur FIXEO — les étapes ci-dessus correspondent aux traitements effectivement appliqués à chaque demande.
-    </p>
+        <!-- ── MOBILE GRID (same nodes, re-laid by CSS into 2×4) ── -->
+        <!-- On mobile (≤679px), .fbe-nodes-mobile-grid is shown instead.     -->
+        <!-- JS-free: CSS media query resets absolute positioning to in-flow.  -->
+        <!-- The nodes above reflow into the grid via positional reset.        -->
+
+      </div><!-- /fbe-arena -->
+    </div><!-- /fbe-arena-wrap -->
+
+    <!-- ── Transparency label ── -->
+    <div class="fbe-label-panel" role="note">
+      <p class="fbe-label-text">
+        <strong>Fonctionnement réel du moteur FIXEO</strong> —
+        chaque nœud représente une étape effectivement traitée à chaque demande.
+      </p>
+    </div>
 
   </div><!-- /container -->
 </section>

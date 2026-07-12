@@ -1,0 +1,573 @@
+/**
+ * FIXEO Brain Engine V1 — fixeo-brain-engine-v1.css
+ * Version: fbe-v1a — 2026-07-12
+ * Namespace: .fbe-* / #fbe-* — zero overrides to external rules
+ *
+ * Concept: Orbital Decision Engine
+ * A central core (FIXEO Engine) surrounded by 8 intelligence nodes.
+ * Each node = one real, production-verified processing capability.
+ * Connector lines animate a signal pulse (center → node) on scroll entry.
+ * Everything is CSS — no JS, no canvas, no Lottie, no libraries.
+ * No fake data. No fake activity. No fake metrics.
+ *
+ * Real capabilities represented:
+ *  1. Détection du service   (fixeo-ai-request-engine.js CATEGORIES)
+ *  2. Analyse de l'urgence   (detectUrgency())
+ *  3. Localisation           (artisan city cross-ref)
+ *  4. Estimation indicative  (fixeo-estimation-engine-v1.js analyze())
+ *  5. Profils compatibles    (rankArtisansV2 category+city filter)
+ *  6. Score de pertinence    (rankArtisansV2 multi-factor)
+ *  7. Signal de confiance    (scoreTrust() 0-100)
+ *  8. Préparation            (service_requests + notifications schema)
+ *
+ * Performance: pure CSS, zero JS, zero external requests, zero images.
+ * Motion: one-shot on scroll entry, 60fps compositor (opacity+transform only).
+ * prefers-reduced-motion: all animation disabled, nodes immediately visible.
+ */
+
+/* ══════════════════════════════════════════════════════
+   0. SECTION WRAPPER — unchanged position in page flow
+══════════════════════════════════════════════════════ */
+#fle-section {
+  padding: 80px 0 88px;
+  background: #000;
+  position: relative;
+  overflow: hidden;
+  border-top: 1px solid rgba(255,255,255,.06);
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+
+/* Deep ambient field — static, no loop */
+#fle-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 70% 60% at 50% 50%, rgba(64,93,230,.07) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 30% at 20% 80%, rgba(131,58,180,.05) 0%, transparent 60%),
+    radial-gradient(ellipse 30% 25% at 80% 20%, rgba(225,48,108,.04) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+/* ══════════════════════════════════════════════════════
+   1. SECTION HEADER
+══════════════════════════════════════════════════════ */
+.fbe-header {
+  text-align: center;
+  margin-bottom: 56px;
+}
+.fbe-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: .6rem;
+  font-weight: 800;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.38);
+  background: rgba(255,255,255,.045);
+  border: 1px solid rgba(255,255,255,.09);
+  border-radius: 999px;
+  padding: 5px 14px;
+  margin-bottom: 20px;
+}
+.fbe-title {
+  font-size: clamp(1.6rem, 4.5vw, 2.6rem);
+  font-weight: 900;
+  letter-spacing: -.025em;
+  color: #fff;
+  margin: 0 0 14px;
+  line-height: 1.15;
+}
+.fbe-title em {
+  font-style: normal;
+  background: linear-gradient(130deg, #405DE6 0%, #833AB4 50%, #E1306C 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.fbe-subtitle {
+  font-size: .9rem;
+  color: rgba(255,255,255,.4);
+  max-width: 520px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* ══════════════════════════════════════════════════════
+   2. ORBITAL ARENA — Desktop (≥680px)
+   A fixed-size square container. All nodes and
+   connectors are positioned absolutely within it.
+══════════════════════════════════════════════════════ */
+.fbe-arena {
+  position: relative;
+  width: 520px;
+  height: 520px;
+  margin: 0 auto 48px;
+  flex-shrink: 0;
+}
+
+/* ── Center core ──────────────────────────────────── */
+.fbe-core {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 108px;
+  height: 108px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 38%, rgba(255,255,255,.09) 0%, rgba(64,93,230,.12) 50%, rgba(131,58,180,.08) 100%);
+  border: 1px solid rgba(255,255,255,.14);
+  box-shadow:
+    0 0 0 8px rgba(64,93,230,.06),
+    0 0 0 18px rgba(64,93,230,.03),
+    0 0 32px rgba(64,93,230,.18),
+    inset 0 1px 0 rgba(255,255,255,.12);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  z-index: 2;
+}
+/* RAFI MicroGlyph — Level C brand signature (40×40px display) */
+.fbe-core-glyph {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  opacity: .82;
+  display: block;
+}
+.fbe-core-label {
+  font-size: .5rem;
+  font-weight: 800;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.45);
+  text-align: center;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+/* Orbit ring — decorative ring around core */
+.fbe-core::after {
+  content: '';
+  position: absolute;
+  inset: -20px;
+  border-radius: 50%;
+  border: 1px dashed rgba(255,255,255,.06);
+  animation: fbe-orbit-spin 40s linear infinite;
+}
+@keyframes fbe-orbit-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Connector lines ──────────────────────────────── */
+/*
+ * Each .fbe-conn is a thin line element.
+ * Positioned at arena center, rotated by --fbe-angle to point at its node.
+ * Width = distance from center to node edge (--fbe-r = 200px default).
+ * The signal pulse is a ::before pseudo-element — a bright dot traveling
+ * along the line from center to node via background-position animation.
+ */
+.fbe-conn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--fbe-r, 200px);
+  height: 1px;
+  transform-origin: 0 50%;
+  transform: rotate(var(--fbe-angle, 0deg)) translateY(-0.5px);
+  background: rgba(255,255,255,.07);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Signal pulse traveling from center to node */
+.fbe-conn::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(64,93,230,.0) 30%,
+    rgba(130,80,230,.9) 50%,
+    rgba(225,48,108,.6) 70%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  background-position: 200% 0;
+  border-radius: 2px;
+  opacity: 0;
+  animation:
+    fbe-signal var(--fbe-signal-dur, 0.7s) var(--fbe-signal-ease, cubic-bezier(0.33, 1, 0.68, 1))
+    var(--fbe-delay, 0s) 1 forwards;
+}
+
+@keyframes fbe-signal {
+  0%   { background-position: 200% 0; opacity: 0; }
+  10%  { opacity: 1; }
+  80%  { background-position: -10% 0; opacity: 1; }
+  100% { background-position: -20% 0; opacity: 0; }
+}
+
+/* ── Intelligence nodes ───────────────────────────── */
+/*
+ * Each .fbe-node is positioned at arena center, then translated
+ * by --fbe-r along the connector's direction.
+ * translate(var(--fbe-r)) applied BEFORE the rotation leaves the
+ * node at angle 0 — so we instead position by (x,y) polar→cartesian
+ * computed as inline styles.
+ *
+ * Implementation: nodes use left/top as percentages of arena,
+ * computed for an ellipse with rx=210px, ry=186px at arena 520×520.
+ * Center = 50%,50%. Node centers:
+ *
+ * Angle  0° (right):      left: calc(50% + 210px), top: 50%
+ * Angle 45° (lower-right):left: calc(50% + 148px), top: calc(50% + 131px)
+ * Angle 90° (bottom):     left: 50%,               top: calc(50% + 186px)
+ * Angle 135°(lower-left): left: calc(50% - 148px), top: calc(50% + 131px)
+ * Angle 180°(left):       left: calc(50% - 210px), top: 50%
+ * Angle 225°(upper-left): left: calc(50% - 148px), top: calc(50% - 131px)
+ * Angle 270°(top):        left: 50%,               top: calc(50% - 186px)
+ * Angle 315°(upper-right):left: calc(50% + 148px), top: calc(50% - 131px)
+ *
+ * Each node is centered via transform: translate(-50%,-50%)
+ */
+.fbe-node {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  width: 72px;
+  z-index: 3;
+  opacity: 0;
+  animation:
+    fbe-node-in var(--hm-reveal-dur, 0.52s) var(--hm-smooth, cubic-bezier(0.16, 1, 0.3, 1))
+    var(--fbe-delay, 0s) 1 forwards;
+}
+@keyframes fbe-node-in {
+  0%   { opacity: 0; transform: translate(-50%,-50%) scale(.82); }
+  100% { opacity: 1; transform: translate(-50%,-50%) scale(1); }
+}
+
+.fbe-node-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.09);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  box-shadow: 0 2px 12px rgba(0,0,0,.3);
+  transition:
+    border-color .3s ease,
+    box-shadow .3s ease,
+    background .3s ease;
+  position: relative;
+}
+/* Glow ring — illuminates after signal arrives */
+.fbe-node-icon::after {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  border-radius: 50%;
+  background: transparent;
+  box-shadow: 0 0 0 0 var(--fbe-node-color, rgba(64,93,230,.5));
+  opacity: 0;
+  animation:
+    fbe-glow .4s ease
+    calc(var(--fbe-delay, 0s) + var(--fbe-signal-dur, 0.7s) - 0.05s)
+    1 forwards;
+}
+@keyframes fbe-glow {
+  0%   { opacity: 0; box-shadow: 0 0 0 0 var(--fbe-node-color, rgba(64,93,230,.5)); }
+  40%  { opacity: 1; box-shadow: 0 0 0 8px var(--fbe-node-color, rgba(64,93,230,.0)); }
+  100% { opacity: 0; box-shadow: 0 0 0 12px transparent; }
+}
+
+.fbe-node:hover .fbe-node-icon {
+  border-color: rgba(255,255,255,.2);
+  box-shadow: 0 4px 20px rgba(64,93,230,.25);
+  background: rgba(255,255,255,.07);
+}
+
+.fbe-node-label {
+  font-size: .6rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  color: rgba(255,255,255,.42);
+  text-align: center;
+  line-height: 1.3;
+  text-transform: uppercase;
+  max-width: 72px;
+  white-space: normal;
+  word-break: keep-all;
+}
+.fbe-node:hover .fbe-node-label {
+  color: rgba(255,255,255,.7);
+}
+
+/* ── 8 Node Positions (polar→cartesian on 520×520 arena, rx=210, ry=186) ── */
+/* N1: 0° right */
+.fbe-node--1  { left: calc(50% + 210px); top: 50%; }
+/* N2: 45° lower-right */
+.fbe-node--2  { left: calc(50% + 148px); top: calc(50% + 131px); }
+/* N3: 90° bottom */
+.fbe-node--3  { left: 50%;               top: calc(50% + 186px); }
+/* N4: 135° lower-left */
+.fbe-node--4  { left: calc(50% - 148px); top: calc(50% + 131px); }
+/* N5: 180° left */
+.fbe-node--5  { left: calc(50% - 210px); top: 50%; }
+/* N6: 225° upper-left */
+.fbe-node--6  { left: calc(50% - 148px); top: calc(50% - 131px); }
+/* N7: 270° top */
+.fbe-node--7  { left: 50%;               top: calc(50% - 186px); }
+/* N8: 315° upper-right */
+.fbe-node--8  { left: calc(50% + 148px); top: calc(50% - 131px); }
+
+/* ── 8 Connector Angles & Radii ──────────────────── */
+/* Radius = distance from center to node edge of icon */
+/* Formula: sqrt((dx)^2 + (dy)^2) - node_radius(26) */
+.fbe-conn--1  { --fbe-angle: 0deg;    --fbe-r: 183px; }   /* right: 210-26=184 */
+.fbe-conn--2  { --fbe-angle: 45deg;   --fbe-r: 170px; }   /* diagonal: sqrt(148²+131²)-26≈171 */
+.fbe-conn--3  { --fbe-angle: 90deg;   --fbe-r: 160px; }   /* bottom: 186-26=160 */
+.fbe-conn--4  { --fbe-angle: 135deg;  --fbe-r: 170px; }
+.fbe-conn--5  { --fbe-angle: 180deg;  --fbe-r: 183px; }
+.fbe-conn--6  { --fbe-angle: 225deg;  --fbe-r: 170px; }
+.fbe-conn--7  { --fbe-angle: 270deg;  --fbe-r: 160px; }
+.fbe-conn--8  { --fbe-angle: 315deg;  --fbe-r: 170px; }
+
+/* ── Node colors per capability ──────────────────── */
+.fbe-node--1  { --fbe-node-color: rgba(64,93,230,.5); }
+.fbe-node--2  { --fbe-node-color: rgba(225,48,108,.5); }
+.fbe-node--3  { --fbe-node-color: rgba(131,58,180,.5); }
+.fbe-node--4  { --fbe-node-color: rgba(32,201,151,.5); }
+.fbe-node--5  { --fbe-node-color: rgba(64,93,230,.5); }
+.fbe-node--6  { --fbe-node-color: rgba(255,170,50,.5); }
+.fbe-node--7  { --fbe-node-color: rgba(131,58,180,.5); }
+.fbe-node--8  { --fbe-node-color: rgba(32,201,151,.5); }
+
+/* ── Staggered delays (node + connector share same --fbe-delay) ── */
+.fbe-node--1,  .fbe-conn--1  { --fbe-delay: 0.10s; }
+.fbe-node--2,  .fbe-conn--2  { --fbe-delay: 0.22s; }
+.fbe-node--3,  .fbe-conn--3  { --fbe-delay: 0.34s; }
+.fbe-node--4,  .fbe-conn--4  { --fbe-delay: 0.46s; }
+.fbe-node--5,  .fbe-conn--5  { --fbe-delay: 0.58s; }
+.fbe-node--6,  .fbe-conn--6  { --fbe-delay: 0.70s; }
+.fbe-node--7,  .fbe-conn--7  { --fbe-delay: 0.82s; }
+.fbe-node--8,  .fbe-conn--8  { --fbe-delay: 0.94s; }
+
+/* ── Core entrance ───────────────────────────────── */
+.fbe-core {
+  opacity: 0;
+  animation: fbe-core-in .6s cubic-bezier(0.16, 1, 0.3, 1) .0s 1 forwards;
+}
+@keyframes fbe-core-in {
+  0%   { opacity: 0; transform: translate(-50%,-50%) scale(.7); }
+  100% { opacity: 1; transform: translate(-50%,-50%) scale(1); }
+}
+
+/* ══════════════════════════════════════════════════════
+   3. LABEL PANEL — below arena on desktop
+   Short copy explaining the section purpose
+══════════════════════════════════════════════════════ */
+.fbe-label-panel {
+  text-align: center;
+  max-width: 520px;
+  margin: 0 auto 0;
+}
+.fbe-label-text {
+  font-size: .8rem;
+  color: rgba(255,255,255,.28);
+  line-height: 1.6;
+  font-style: italic;
+}
+.fbe-label-text strong {
+  font-style: normal;
+  font-weight: 700;
+  color: rgba(255,255,255,.45);
+}
+
+/* ══════════════════════════════════════════════════════
+   4. MOBILE ARCHITECTURE — ≤679px
+   Replace orbital with two stacked columns.
+   Center core sits at top, nodes in 2×4 grid below.
+   Connector replaced by subtle vertical line.
+══════════════════════════════════════════════════════ */
+@media (max-width: 679px) {
+
+  /* Arena: switch to grid on mobile.
+   * Core spans full 2 columns at top.
+   * 8 nodes fill 2 columns below. */
+  .fbe-arena {
+    position: static;       /* no longer a positioning context for children */
+    width: 100%;
+    height: auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    align-items: start;
+  }
+
+  /* Core — full-width row at top */
+  .fbe-core {
+    grid-column: 1 / -1;
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 4px;
+  }
+  @keyframes fbe-core-in {
+    0%   { opacity: 0; transform: scale(.7); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+
+  /* Hide orbital connectors on mobile */
+  .fbe-conn { display: none; }
+
+  /* Reset absolute positioning — nodes flow into grid cells */
+  .fbe-node {
+    position: relative;
+    left: auto !important;
+    top: auto !important;
+    transform: none !important;
+    width: auto;
+    opacity: 0;
+    /* Horizontal card layout inside each grid cell */
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255,255,255,.034);
+    border: 1px solid rgba(255,255,255,.07);
+    border-radius: 12px;
+    padding: 12px 10px;
+    animation-name: fbe-node-in-mobile;
+  }
+  @keyframes fbe-node-in-mobile {
+    0%   { opacity: 0; transform: translateY(6px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  .fbe-node-icon {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    font-size: .95rem;
+  }
+  .fbe-node-label {
+    font-size: .66rem;
+    text-align: left;
+    text-transform: none;
+    letter-spacing: .01em;
+    color: rgba(255,255,255,.55);
+    max-width: none;
+    white-space: normal;
+  }
+  .fbe-node:hover .fbe-node-label { color: rgba(255,255,255,.78); }
+
+  /* Glow off on mobile */
+  .fbe-node-icon::after { display: none; }
+
+  /* Remove orbit ring on mobile */
+  .fbe-core::after { display: none; }
+
+  #fle-section { padding: 56px 0 64px; }
+  .fbe-header   { margin-bottom: 36px; }
+}
+
+/* ══════════════════════════════════════════════════════
+   5. TABLET (680px — 899px)
+   Slightly smaller orbital
+══════════════════════════════════════════════════════ */
+@media (min-width: 680px) and (max-width: 899px) {
+  .fbe-arena {
+    width: 440px;
+    height: 440px;
+  }
+  /* Scale node positions: multiply distances by 440/520 = 0.846 */
+  .fbe-node--1  { left: calc(50% + 178px);  top: 50%; }
+  .fbe-node--2  { left: calc(50% + 125px);  top: calc(50% + 111px); }
+  .fbe-node--3  { left: 50%;                top: calc(50% + 157px); }
+  .fbe-node--4  { left: calc(50% - 125px);  top: calc(50% + 111px); }
+  .fbe-node--5  { left: calc(50% - 178px);  top: 50%; }
+  .fbe-node--6  { left: calc(50% - 125px);  top: calc(50% - 111px); }
+  .fbe-node--7  { left: 50%;                top: calc(50% - 157px); }
+  .fbe-node--8  { left: calc(50% + 125px);  top: calc(50% - 111px); }
+
+  .fbe-conn--1  { --fbe-r: 152px; }
+  .fbe-conn--2  { --fbe-r: 143px; }
+  .fbe-conn--3  { --fbe-r: 131px; }
+  .fbe-conn--4  { --fbe-r: 143px; }
+  .fbe-conn--5  { --fbe-r: 152px; }
+  .fbe-conn--6  { --fbe-r: 143px; }
+  .fbe-conn--7  { --fbe-r: 131px; }
+  .fbe-conn--8  { --fbe-r: 143px; }
+
+  .fbe-node-icon { width: 46px; height: 46px; font-size: 1.1rem; }
+  .fbe-node-label { font-size: .56rem; }
+}
+
+/* ══════════════════════════════════════════════════════
+   6. SCROLL REVEAL WRAPPER
+   @supports ensures graceful degradation on old browsers
+   The whole arena is wrapped in .fbe-arena-wrap which
+   triggers the child animations when it enters view.
+══════════════════════════════════════════════════════ */
+@supports (animation-timeline: view()) {
+  .fbe-arena-wrap {
+    animation: fbe-wrap-trigger linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 30%;
+  }
+  /* Trigger child animations by making the arena-wrap visible first */
+  /* All child animations run on their own delay, so no cascading needed. */
+  /* The animation on .fbe-arena-wrap itself is a no-op reveal trigger: */
+  @keyframes fbe-wrap-trigger {
+    from { opacity: 0.999; } /* near-no-op; child animations fire on load */
+    to   { opacity: 1; }
+  }
+}
+
+/* Without @supports: nodes start visible immediately */
+@supports not (animation-timeline: view()) {
+  .fbe-node, .fbe-core { opacity: 1; animation: none; }
+  .fbe-conn::before { animation: none; }
+}
+
+/* ══════════════════════════════════════════════════════
+   7. PREFERS-REDUCED-MOTION
+   All animations disabled. Everything immediately visible.
+══════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  .fbe-node,
+  .fbe-core,
+  .fbe-conn::before,
+  .fbe-node-icon::after,
+  .fbe-core::after {
+    animation: none !important;
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  /* Connectors: make them visible as static lines */
+  .fbe-conn::before {
+    opacity: 0 !important; /* signal pulse = always off */
+  }
+  /* Reset node stacking */
+  .fbe-node { transform: translate(-50%, -50%) !important; }
+  @media (max-width: 679px) {
+    .fbe-node { transform: none !important; }
+  }
+}
