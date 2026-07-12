@@ -94,23 +94,34 @@
 }
 
 /* ═══════════════════════════════════════════════════════════
-   B. PRICE BLOCK — label ABOVE number (Airbnb pattern)
-   .facp-price-block class added to the price div in JS.
-   column-reverse: DOM last (label) appears first visually.
+   B+C. PRICE BLOCK — Airbnb hierarchy (facp-v2c)
+   DOM order: label first, number second → natural flex:column
+   No column-reverse needed — label on top, price dominant below.
+   Uses named classes: .facp-price-label / .facp-price-number / .facp-price-currency
 ══════════════════════════════════════════════════════════ */
 
 .artisan-card.other-card.result-card .facp-price-block {
   display: flex !important;
-  flex-direction: column-reverse !important;  /* label ("À partir de") visually on top */
+  flex-direction: column !important;   /* natural order — label DOM-first = visual-first */
   align-items: flex-end !important;
-  gap: 0 !important;
+  gap: 1px !important;
   text-align: right !important;
   flex-shrink: 0 !important;
-  padding-top: 2px !important;
 }
 
-/* C. PRICE NUMBER — stronger anchor */
-.artisan-card.other-card.result-card .facp-price-block > span:first-child {
+/* "À partir de" label — small secondary, top */
+.artisan-card.other-card.result-card .facp-price-label {
+  font-size: .58rem !important;
+  color: rgba(255,255,255,.34) !important;
+  font-weight: 600 !important;
+  letter-spacing: .05em !important;
+  text-transform: uppercase !important;
+  line-height: 1 !important;
+  display: block !important;
+}
+
+/* Price number — dominant anchor, bottom */
+.artisan-card.other-card.result-card .facp-price-number {
   font-size: 1.75rem !important;
   font-weight: 900 !important;
   letter-spacing: -.04em !important;
@@ -119,31 +130,13 @@
   display: block !important;
 }
 
-/* Price label "À partir de" — small, above number */
-.artisan-card.other-card.result-card .facp-price-block > span:last-child {
-  font-size: .60rem !important;
-  color: rgba(255,255,255,.36) !important;
-  font-weight: 600 !important;
-  letter-spacing: .04em !important;
-  text-transform: uppercase !important;
-  line-height: 1 !important;
-  margin-bottom: 3px !important;
-  display: block !important;
-}
-
-/* Also target the _fpb alternative label */
-.artisan-card.other-card.result-card .facp-price-block > span {
-  display: block !important;
-}
-
-/* MAD superscript inside price span */
-.artisan-card.other-card.result-card .facp-price-block > span:first-child > span {
-  font-size: .70rem !important;
+/* "MAD" currency suffix — inline, secondary weight */
+.artisan-card.other-card.result-card .facp-price-currency {
+  font-size: .72rem !important;
   font-weight: 700 !important;
-  color: rgba(255,255,255,.55) !important;
-  vertical-align: super !important;
-  line-height: 0 !important;
-  margin-left: 1px !important;
+  color: rgba(255,255,255,.52) !important;
+  letter-spacing: .01em !important;
+  vertical-align: baseline !important;  /* inline — no superscript */
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -330,8 +323,8 @@
     padding: 4px 12px !important;
   }
 
-  /* Price block on mobile — compact */
-  .artisan-card.other-card.result-card .facp-price-block > span:first-child {
+  /* Price number on mobile — compact */
+  .artisan-card.other-card.result-card .facp-price-number {
     font-size: 1.55rem !important;
   }
 

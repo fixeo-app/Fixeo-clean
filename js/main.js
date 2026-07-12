@@ -1271,18 +1271,31 @@ function buildOtherArtisanCard(a) {
           /* av-unity-1: consistent initials avatar — same ig-gradient as profile hero & modal */
           /* fxhv2a: inject Hero avatar when no real photo */
           var _ph = a.avatar || a.photo || a.image;
-          /* facp-v2b D5: derive initials from artisan name (first letter of first + last word) */
+          /* facp-v2c D5: derive initials from artisan name (first+last word) */
           var _nameParts = a.name ? a.name.trim().split(/\s+/).filter(Boolean) : [];
           var _in = a.initials || (_nameParts.length >= 2 ? (_nameParts[0][0] + _nameParts[_nameParts.length-1][0]).toUpperCase() : _nameParts.length === 1 ? _nameParts[0][0].toUpperCase() : 'FA');
-          if (_ph) {
-            /* facp-v2b D4: real photo — onerror shows initials fallback if URL broken */
-            return '<img class="artisan-avatar artisan-avatar-image" src="'+_ph+'" alt="'+a.name+'" loading="lazy" style="border:2px solid rgba(255,255,255,.14);box-shadow:0 10px 28px rgba(0,0,0,.18)" onerror="this.style.display=\'none\';var _fb=this.nextElementSibling;if(_fb&&_fb.classList.contains(\'artisan-av-initials\')){_fb.style.display=\'flex\';}">'
-            + '<div class="artisan-avatar artisan-av-initials" style="display:none;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#E1306C 0%,#833AB4 60%,#405DE6 100%);border:2px solid rgba(255,255,255,.14);box-shadow:0 10px 28px rgba(0,0,0,.18);align-items:center;justify-content:center;font-weight:800;font-size:1.1rem;color:#fff;letter-spacing:-.01em;flex-shrink:0">'+_in+'</div>';
-          }
+          /* facp-v2c Task2: compute hero URL always — needed for 3-layer fallback chain */
           var _heroUrl = window.FixeoHeroes ? window.FixeoHeroes.getAvatar(a.category || a.service || '') : null;
+          /* Shared inline styles for all avatar elements */
+          var _avStyle = 'border:2px solid rgba(255,255,255,.14);box-shadow:0 10px 28px rgba(0,0,0,.18)';
+          var _inStyle = 'display:none;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#E1306C 0%,#833AB4 60%,#405DE6 100%);border:2px solid rgba(255,255,255,.14);box-shadow:0 10px 28px rgba(0,0,0,.18);align-items:center;justify-content:center;font-weight:800;font-size:1.1rem;color:#fff;letter-spacing:-.01em;flex-shrink:0';
+          var _initDiv = '<div class="artisan-avatar artisan-av-initials" style="'+_inStyle+'">'+_in+'</div>';
+          if (_ph) {
+            /* facp-v2c Task2: real photo → on fail try hero → on fail show initials */
+            if (_heroUrl) {
+              /* 3-layer chain: photo → hero → initials */
+              var _heroDiv = '<img class="artisan-avatar artisan-av-initials-hero fx-hero-card-img" src="'+_heroUrl+'" alt="'+a.name+'" loading="lazy" style="display:none;'+_avStyle+';object-fit:cover" onerror="this.style.display=\'none\';this.nextElementSibling&&(this.nextElementSibling.style.display=\'flex\');">';
+              return '<img class="artisan-avatar artisan-avatar-image" src="'+_ph+'" alt="'+a.name+'" loading="lazy" style="'+_avStyle+'" onerror="this.style.display=\'none\';var nx=this.nextElementSibling;if(nx){nx.style.display=\'block\';}">'
+                + _heroDiv + _initDiv;
+            }
+            /* 2-layer: photo → initials */
+            return '<img class="artisan-avatar artisan-avatar-image" src="'+_ph+'" alt="'+a.name+'" loading="lazy" style="'+_avStyle+'" onerror="this.style.display=\'none\';this.nextElementSibling&&(this.nextElementSibling.style.display=\'flex\');">'
+              + _initDiv;
+          }
           if (_heroUrl) {
-            return '<img class="artisan-avatar artisan-avatar-image fx-hero-card-img" src="'+_heroUrl+'" alt="'+a.name+'" loading="lazy" style="border:2px solid rgba(255,255,255,.14);box-shadow:0 10px 28px rgba(0,0,0,.18);object-fit:cover" onerror="this.style.display=\'none\';this.nextElementSibling&&(this.nextElementSibling.style.display=\'flex\');">'
-            + '<div class="artisan-avatar artisan-av-initials" style="display:none;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#E1306C 0%,#833AB4 60%,#405DE6 100%);border:2px solid rgba(255,255,255,.14);box-shadow:0 10px 28px rgba(0,0,0,.18);align-items:center;justify-content:center;font-weight:800;font-size:1.1rem;color:#fff;letter-spacing:-.01em;flex-shrink:0">'+_in+'</div>';
+            /* no photo: hero → initials */
+            return '<img class="artisan-avatar artisan-avatar-image fx-hero-card-img" src="'+_heroUrl+'" alt="'+a.name+'" loading="lazy" style="'+_avStyle+';object-fit:cover" onerror="this.style.display=\'none\';this.nextElementSibling&&(this.nextElementSibling.style.display=\'flex\');">'
+              + _initDiv;
           }
           return '<div class="artisan-avatar artisan-av-initials" style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#E1306C 0%,#833AB4 60%,#405DE6 100%);border:2px solid rgba(255,255,255,.14);box-shadow:0 10px 28px rgba(0,0,0,.18);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.1rem;color:#fff;letter-spacing:-.01em;flex-shrink:0">'+_in+'</div>';
         })()}
@@ -1295,10 +1308,10 @@ function buildOtherArtisanCard(a) {
               <!-- facp-v2a: badges moved here — between profession and price -->
               <div class="artisan-badges badges" style="gap:.45rem;margin-top:8px">${primaryBadge}${topBadge}${newBadge}${secondaryBadge}${pendingBadge}</div>
             </div>
-            <!-- facp-v2a: price block — CSS will render as label-above-number (column-reverse) -->
-            <div class="facp-price-block" style="display:flex;flex-direction:column;align-items:flex-end;gap:1px;margin-left:auto;text-align:right">
-              <span style="font-size:1.45rem;font-weight:800;color:#fff;line-height:1">${window._fpb ? '' : (a.priceFrom && a.priceFrom > 100 ? a.priceFrom : 150)}<span style="font-size:.75rem;font-weight:700;color:rgba(255,255,255,.6);margin-left:2px;vertical-align:super;line-height:0">${window._fpb ? '' : 'MAD'}</span></span>
-              ${window._fpb ? _fpb(a) : '<span style="font-size:.68rem;color:rgba(255,255,255,.42);font-weight:500">\u00c0 partir de</span>'}
+            <!-- facp-v2c Task1: label first in DOM (natural column flow) → "À partir de" top, price below -->
+            <div class="facp-price-block" style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;margin-left:auto;text-align:right;flex-shrink:0">
+              ${window._fpb ? _fpb(a) : '<span class="facp-price-label">\u00c0 partir de</span>'}
+              <span class="facp-price-number">${window._fpb ? '' : (a.priceFrom && a.priceFrom > 100 ? a.priceFrom : 150)}<span class="facp-price-currency">${window._fpb ? '' : '\u00a0MAD'}</span></span>
             </div>
           </div>
         </div>
