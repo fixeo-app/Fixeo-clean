@@ -1,0 +1,340 @@
+/**
+ * fixeo-artisan-card-premium-v2.css — facp-v2a
+ * FIXEO Premium Artisan Card Experience — V2 Upgrade
+ *
+ * Namespace: .facp2-* (new elements only)
+ * Load position: AFTER fixeo-artisan-card-premium-v1.css
+ * Strategy: Override only what changes. v1b remains the base.
+ *
+ * V2 improvements (10 targeted upgrades):
+ *   B. Price block  — label-above-number (Airbnb pattern)
+ *   C. Price number — 1.75rem, stronger weight
+ *   D. Badge hierarchy — available dominant, verified secondary
+ *   E. CTA gradient — FIXEO indigo→violet (2-color, branded)
+ *   F. Trust line — teal-accented, structured
+ *   G. Mobile skill chips — secondary hidden ≤639px
+ *   H. Rating row — hairline top separator
+ *   I. Rating row — star score larger
+ *   J. Card surface — richer glass depth
+ *   K. Hover — stronger indigo ring
+ *
+ * HTML change (main.js): .artisan-badges moved inside name-col div
+ *   → hierarchy: Name → Profession → Badges → Price ✅
+ *
+ * JS HOOKS PRESERVED — ALL 17. No onclick, no data-* changes.
+ * TRUTH POLICY: All inherited from v1b. No fake data introduced.
+ *
+ * Version: facp-v2a — 2026-07-12
+ */
+
+/* ═══════════════════════════════════════════════════════════
+   J. CARD SURFACE — richer glass, better depth perception
+   Slightly warmer gradient + stronger ambient shadow
+══════════════════════════════════════════════════════════ */
+
+.artisan-card.other-card.result-card {
+  background:
+    linear-gradient(160deg,
+      rgba(255,255,255,.062) 0%,
+      rgba(255,255,255,.018) 60%,
+      rgba(72,100,255,.022) 100%) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.07),
+    0 2px 4px  rgba(0,0,0,.10),
+    0 8px 28px rgba(0,0,0,.22),
+    0 18px 48px rgba(0,0,0,.18) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   K. HOVER — stronger, more Apple-like indigo ring
+══════════════════════════════════════════════════════════ */
+
+.artisan-card.other-card.result-card:hover {
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.09),
+    0 0 0 1.5px rgba(72, 100, 255, .36),
+    0 8px 24px rgba(72, 100, 255, .08),
+    0 20px 52px rgba(0,0,0,.28) !important;
+  border-color: rgba(72, 100, 255, .28) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   HIERARCHY — facp-v2a badge placement
+   .artisan-badges is now inside name-col (HTML change in main.js).
+   v1 set outer-row to flex:column — we restore it to flex:row
+   so name-col sits LEFT and price-block sits RIGHT.
+   Within name-col: name → profession → badges (column flow).
+══════════════════════════════════════════════════════════ */
+
+/* RESTORE outer-row to row — name-col LEFT, price-block RIGHT */
+.artisan-card.other-card.result-card .artisan-card-heading > div:first-child {
+  flex-direction: row !important;    /* undo v1 column — side-by-side layout */
+  align-items: flex-start !important;
+  gap: 12px !important;
+  flex-wrap: nowrap !important;
+}
+
+/* Name-col — flex column: name → profession → badges */
+.artisan-card.other-card.result-card .artisan-card-heading > div:first-child > div:first-child {
+  display: flex !important;
+  flex-direction: column !important;
+  min-width: 0 !important;
+  flex: 1 !important;
+}
+
+/* Badges inside name-col — clean row of pills */
+.artisan-card.other-card.result-card .artisan-card-heading > div:first-child > div:first-child .artisan-badges,
+.artisan-card.other-card.result-card .artisan-card-heading > div:first-child > div:first-child .badges {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 5px !important;
+  margin-top: 9px !important;
+  align-items: center !important;
+  margin-bottom: 0 !important;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   B. PRICE BLOCK — label ABOVE number (Airbnb pattern)
+   .facp-price-block class added to the price div in JS.
+   column-reverse: DOM last (label) appears first visually.
+══════════════════════════════════════════════════════════ */
+
+.artisan-card.other-card.result-card .facp-price-block {
+  display: flex !important;
+  flex-direction: column-reverse !important;  /* label ("À partir de") visually on top */
+  align-items: flex-end !important;
+  gap: 0 !important;
+  text-align: right !important;
+  flex-shrink: 0 !important;
+  padding-top: 2px !important;
+}
+
+/* C. PRICE NUMBER — stronger anchor */
+.artisan-card.other-card.result-card .facp-price-block > span:first-child {
+  font-size: 1.75rem !important;
+  font-weight: 900 !important;
+  letter-spacing: -.04em !important;
+  color: rgba(255,255,255,.97) !important;
+  line-height: 1 !important;
+  display: block !important;
+}
+
+/* Price label "À partir de" — small, above number */
+.artisan-card.other-card.result-card .facp-price-block > span:last-child {
+  font-size: .60rem !important;
+  color: rgba(255,255,255,.36) !important;
+  font-weight: 600 !important;
+  letter-spacing: .04em !important;
+  text-transform: uppercase !important;
+  line-height: 1 !important;
+  margin-bottom: 3px !important;
+  display: block !important;
+}
+
+/* Also target the _fpb alternative label */
+.artisan-card.other-card.result-card .facp-price-block > span {
+  display: block !important;
+}
+
+/* MAD superscript inside price span */
+.artisan-card.other-card.result-card .facp-price-block > span:first-child > span {
+  font-size: .70rem !important;
+  font-weight: 700 !important;
+  color: rgba(255,255,255,.55) !important;
+  vertical-align: super !important;
+  line-height: 0 !important;
+  margin-left: 1px !important;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   D. BADGE HIERARCHY — available dominant, verified secondary
+   Clear visual weight separation.
+══════════════════════════════════════════════════════════ */
+
+/* Available — primary badge: solid green background, more prominent */
+.artisan-card.other-card.result-card .badge.available {
+  background: rgba(32, 201, 151, .16) !important;
+  border: 1px solid rgba(32, 201, 151, .30) !important;
+  color: rgba(32, 201, 151, .95) !important;
+  font-size: .67rem !important;
+  font-weight: 800 !important;
+  padding: 3px 10px !important;
+  letter-spacing: .01em !important;
+}
+
+/* Verified — secondary: more muted, smaller */
+.artisan-card.other-card.result-card .badge.verified {
+  background: rgba(32, 201, 151, .07) !important;
+  border: 1px solid rgba(32, 201, 151, .16) !important;
+  color: rgba(32, 201, 151, .72) !important;
+  font-size: .63rem !important;
+  font-weight: 600 !important;
+  padding: 2px 8px !important;
+}
+
+/* Top artisan — purple, secondary weight */
+.artisan-card.other-card.result-card .badge[style*="a855f7"] {
+  font-size: .62rem !important;
+  opacity: .75 !important;
+  padding: 2px 8px !important;
+}
+
+/* New artisan — indigo, secondary weight */
+.artisan-card.other-card.result-card .badge.new {
+  font-size: .63rem !important;
+  padding: 2px 8px !important;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   H. RATING ROW — hairline separator + tighter design
+══════════════════════════════════════════════════════════ */
+
+.artisan-card.other-card.result-card .artisan-rating-row {
+  border-top: 1px solid rgba(255,255,255,.06) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  border-left: none !important;
+  border-right: none !important;
+  border-bottom: 1px solid rgba(255,255,255,.06) !important;
+  padding: 10px 0 !important;
+  margin: 0 0 12px !important;
+}
+
+/* I. RATING — star score slightly larger */
+.artisan-card.other-card.result-card .artisan-rating-row > span:first-child {
+  font-size: .94rem !important;
+  font-weight: 900 !important;
+  color: #ffd166 !important;
+  letter-spacing: -.01em !important;
+}
+
+/* Review count — cleaner */
+.artisan-card.other-card.result-card .artisan-rating-row > span:nth-child(2) {
+  font-size: .80rem !important;
+  font-weight: 600 !important;
+  color: rgba(255,255,255,.60) !important;
+}
+
+/* Response time — very secondary, reduced opacity */
+.artisan-card.other-card.result-card .artisan-rating-row > span:last-child {
+  font-size: .70rem !important;
+  color: rgba(255,255,255,.30) !important;
+  font-weight: 500 !important;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   F. TRUST LINE — teal left-border accent
+   "✔️ Artisan vérifié • Paiement après intervention"
+   More scannable with structured layout.
+══════════════════════════════════════════════════════════ */
+
+.artisan-card.other-card.result-card .pvc-trust-line {
+  display: flex !important;
+  align-items: center !important;
+  gap: 7px !important;
+  font-size: .72rem !important;
+  font-weight: 500 !important;
+  color: rgba(32, 201, 151, .70) !important;
+  letter-spacing: .005em !important;
+  padding: 7px 10px !important;
+  margin: 0 0 12px !important;
+  border-radius: 8px !important;
+  background: rgba(32, 201, 151, .05) !important;
+  border: 1px solid rgba(32, 201, 151, .12) !important;
+  border-left: 2px solid rgba(32, 201, 151, .40) !important;
+  line-height: 1.3 !important;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   E. CTA — FIXEO branded indigo→violet gradient
+   Remove Instagram 3-color gradient.
+   Replace with FIXEO design language: indigo to violet.
+══════════════════════════════════════════════════════════ */
+
+.artisan-card.other-card.result-card .fhp-btn-reserve-list {
+  background: linear-gradient(135deg,
+    rgba(72, 100, 255, 1.0)  0%,
+    rgba(100, 72, 220, 1.0) 50%,
+    rgba(131,  58, 180, 1.0) 100%) !important;
+  box-shadow: 0 4px 18px rgba(72, 100, 255, .28) !important;
+  font-size: .92rem !important;
+  padding: 13px 20px !important;
+  letter-spacing: .005em !important;
+}
+
+.artisan-card.other-card.result-card .fhp-btn-reserve-list:hover {
+  box-shadow: 0 6px 26px rgba(72, 100, 255, .40) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Profile link — slightly more visible */
+.artisan-card.other-card.result-card .ssb2-btn-profile {
+  background: rgba(255,255,255,.05) !important;
+  border: 1px solid rgba(255,255,255,.10) !important;
+  color: rgba(255,255,255,.55) !important;
+  font-size: .78rem !important;
+  padding: 9px 16px !important;
+}
+
+.artisan-card.other-card.result-card .ssb2-btn-profile:hover {
+  background: rgba(255,255,255,.08) !important;
+  color: rgba(255,255,255,.82) !important;
+  border-color: rgba(255,255,255,.18) !important;
+}
+
+/* Under-CTA — cleaner, center */
+.artisan-card.other-card.result-card .pvc-under-cta {
+  font-size: .63rem !important;
+  color: rgba(255,255,255,.24) !important;
+  text-align: center !important;
+  font-style: normal !important;
+  letter-spacing: .01em !important;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   G. MOBILE SKILL CHIPS — secondary chips hidden ≤639px
+   Primary category chip stays (profession context).
+   Secondary skill chips: hidden on mobile (visual noise).
+══════════════════════════════════════════════════════════ */
+
+@media (max-width: 639px) {
+  /* Hide secondary skill chips — keep only the first (category) */
+  .artisan-card.other-card.result-card .artisan-skills span:not(:first-child) {
+    display: none !important;
+  }
+
+  /* Primary chip — slightly more padding on mobile */
+  .artisan-card.other-card.result-card .artisan-skills span:first-child {
+    padding: 4px 12px !important;
+  }
+
+  /* Price block on mobile — compact */
+  .artisan-card.other-card.result-card .facp-price-block > span:first-child {
+    font-size: 1.55rem !important;
+  }
+
+  /* Badges — slightly more compact on small screens */
+  .artisan-card.other-card.result-card .badge {
+    font-size: .62rem !important;
+    padding: 2px 8px !important;
+  }
+
+  .artisan-card.other-card.result-card .badge.available {
+    font-size: .64rem !important;
+    padding: 3px 9px !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   REDUCED MOTION — all V2 animations / transitions off
+══════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  .artisan-card.other-card.result-card .fhp-btn-reserve-list,
+  .artisan-card.other-card.result-card .ssb2-btn-profile,
+  .artisan-card.other-card.result-card .facp-price-block {
+    transition: none !important;
+  }
+}
+
+/* version: facp-v2a */

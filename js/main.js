@@ -1283,19 +1283,20 @@ function buildOtherArtisanCard(a) {
           return '<div class="artisan-avatar artisan-av-initials" style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#E1306C 0%,#833AB4 60%,#405DE6 100%);border:2px solid rgba(255,255,255,.14);box-shadow:0 10px 28px rgba(0,0,0,.18);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.1rem;color:#fff;letter-spacing:-.01em;flex-shrink:0">'+_in+'</div>';
         })()}
         <div class="artisan-main artisan-identity artisan-card-heading" style="min-width:0;flex:1">
-          <!-- Change 1: big price block — dominant number, label below, aligned left -->
+          <!-- facp-v2a: identity col — name → profession → badges → price (premium hierarchy) -->
           <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:.75rem;flex-wrap:wrap;margin-bottom:8px">
             <div style="min-width:0;flex:1">
               <h3 class="artisan-name" style="margin:0;font-size:1.18rem;line-height:1.15;font-weight:800;letter-spacing:-.01em">${a.name}</h3>
               <p class="artisan-service" style="margin:8px 0 0;color:rgba(255,255,255,.78);font-size:.92rem"><span style="color:#fff;font-weight:700">${profession}</span> • ${a.city || 'Maroc'}</p>
+              <!-- facp-v2a: badges moved here — between profession and price -->
+              <div class="artisan-badges badges" style="gap:.45rem;margin-top:8px">${primaryBadge}${topBadge}${newBadge}${secondaryBadge}${pendingBadge}</div>
             </div>
-            <!-- Change 1: price dominance — big number first, label second -->
-            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:1px;margin-left:auto;text-align:right">
+            <!-- facp-v2a: price block — CSS will render as label-above-number (column-reverse) -->
+            <div class="facp-price-block" style="display:flex;flex-direction:column;align-items:flex-end;gap:1px;margin-left:auto;text-align:right">
               <span style="font-size:1.45rem;font-weight:800;color:#fff;line-height:1">${window._fpb ? '' : (a.priceFrom && a.priceFrom > 100 ? a.priceFrom : 150)}<span style="font-size:.75rem;font-weight:700;color:rgba(255,255,255,.6);margin-left:2px;vertical-align:super;line-height:0">${window._fpb ? '' : 'MAD'}</span></span>
               ${window._fpb ? _fpb(a) : '<span style="font-size:.68rem;color:rgba(255,255,255,.42);font-weight:500">\u00c0 partir de</span>'}
             </div>
           </div>
-          <div class="artisan-badges badges" style="gap:.45rem;margin-top:8px">${primaryBadge}${topBadge}${newBadge}${secondaryBadge}${pendingBadge}</div>
         </div>
       </div>
 
