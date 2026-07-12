@@ -27,7 +27,7 @@
  *   - rating row: real data from Supabase — preserved
  *   - No fake counters, no fake stars, no fake ETA
  *
- * Version: facp-v1a — 2026-07-12
+ * Version: facp-v1b — 2026-07-12 (Phase 10.1 QA polish)
  */
 
 /* ═══════════════════════════════════════════════════════════
@@ -195,6 +195,7 @@
 .artisan-card.other-card.result-card .artisan-card-heading > div:first-child {
   flex-direction: column !important;
   align-items: flex-start !important;
+  justify-content: flex-start !important;  /* override inline space-between — no gap in column mode */
   gap: 6px !important;
 }
 
@@ -447,7 +448,7 @@
   gap: 8px !important;
   align-items: stretch !important;
   flex-wrap: nowrap !important;
-  justify-content: stretch !important;
+  justify-content: flex-start !important;  /* override inline flex-end — no dead space above buttons */
 }
 
 /* SIGNAL 7A: Reserve button — full-width, premium, large */
@@ -656,4 +657,4 @@
   }
 }
 
-/* version: facp-v1a */
+/* version: facp-v1b */
