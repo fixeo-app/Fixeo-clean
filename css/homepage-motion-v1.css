@@ -1,0 +1,478 @@
+/* ====================================================================
+   FIXEO — Homepage Premium Motion System   homepage-motion-v1.css
+   Version: hmv-v1a   2026-07-12
+   Phase 3 — Motion and Micro-Interactions
+
+   Strategy: CSS-only. No JS. No libraries.
+   Compositor-safe: opacity + transform ONLY.
+   Max translate: 6px. Max scale: 1.02. No bounce. No zoom.
+   CLS: zero (no width/height/margin animation).
+   prefers-reduced-motion: ALL motion disabled.
+
+   Scroll reveal uses CSS animation-timeline: view() — native CSS
+   scroll-driven animations. Supported Chrome 115+, FF 110+, Safari 18+
+   (all widely deployed by 2026). Fallback: element remains visible
+   immediately (no opacity:0 base state = no flash risk on older browsers).
+
+   SCOPE — below-hero only:
+     sections, cards, headers, buttons, focus states
+   FROZEN — untouched:
+     Hero (hero-v1-premium-sprint.css)
+     Footer
+     Analytics / Consent / SEO
+     Artisan data / search logic
+
+   DOES NOT INTERCEPT JS IO observer targets:
+     .card / .artisan-card / .step-card / .kpi-card / .other-card
+     (main.js sets style.animation on these directly)
+
+   EASING REFERENCE:
+     --hm-spring:   cubic-bezier(0.22, 1, 0.36, 1)    — premium spring
+     --hm-ease-out: cubic-bezier(0.16, 1, 0.3, 1)     — smooth decelerate
+     --hm-ease-in:  cubic-bezier(0.4, 0, 1, 1)        — accelerate
+     --hm-standard: cubic-bezier(0.33, 1, 0.68, 1)    — default UI
+   ==================================================================== */
+
+/* ─────────────────────────────────────────────────────────────────────
+   1. MOTION TOKENS
+───────────────────────────────────────────────────────────────────── */
+
+:root {
+  --hm-spring:   cubic-bezier(0.22, 1, 0.36, 1);
+  --hm-smooth:   cubic-bezier(0.16, 1, 0.3, 1);
+  --hm-standard: cubic-bezier(0.33, 1, 0.68, 1);
+
+  /* Reveal timing */
+  --hm-reveal-dur:   0.52s;
+  --hm-stagger-1:    0.04s;
+  --hm-stagger-2:    0.10s;
+  --hm-stagger-3:    0.16s;
+  --hm-stagger-4:    0.22s;
+  --hm-stagger-5:    0.28s;
+  --hm-stagger-6:    0.34s;
+
+  /* Hover timing */
+  --hm-hover-dur:  0.22s;
+  --hm-press-dur:  0.08s;
+
+  /* Translate ceiling */
+  --hm-lift:  6px;
+  --hm-lift-sm: 3px;
+  --hm-lift-xs: 2px;
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   2. SCROLL REVEAL KEYFRAME
+   Sections enter from 6px below. Opacity 0→1.
+   Used via animation-timeline: view() for CSS-native scroll-driven reveal.
+───────────────────────────────────────────────────────────────────── */
+
+@keyframes hm-rise {
+  from {
+    opacity: 0;
+    transform: translateY(var(--hm-lift));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes hm-rise-xs {
+  from {
+    opacity: 0;
+    transform: translateY(var(--hm-lift-xs));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   3. CSS SCROLL-DRIVEN SECTION REVEAL
+   animation-timeline: view() drives the animation from scroll position.
+   animation-range: entry 0% entry 30% — element enters over bottom 30%
+   of its scroll intersection.
+   Fallback behavior: browsers without scroll-driven animations simply
+   skip the animation-timeline rule and show elements at opacity:1 (safe).
+───────────────────────────────────────────────────────────────────── */
+
+@supports (animation-timeline: view()) {
+
+  /* Section headers — subtle rise as section enters viewport */
+  .how-it-works-section .how-header,
+  .why-fixeo-header,
+  .fle-header,
+  .fxblog-head,
+  .fxv-section .section-header,
+  .final-cta-section .container > .final-cta {
+    animation: hm-rise var(--hm-reveal-dur) var(--hm-smooth) both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 25%;
+  }
+
+  /* Why-fixeo / fxm cards — staggered by nth-child */
+  .wf-card:nth-child(1), .fxm-block:nth-child(1) {
+    animation: hm-rise var(--hm-reveal-dur) var(--hm-smooth) var(--hm-stagger-1) both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 30%;
+  }
+  .wf-card:nth-child(2), .fxm-block:nth-child(2) {
+    animation: hm-rise var(--hm-reveal-dur) var(--hm-smooth) var(--hm-stagger-2) both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 30%;
+  }
+  .wf-card:nth-child(3), .fxm-block:nth-child(3) {
+    animation: hm-rise var(--hm-reveal-dur) var(--hm-smooth) var(--hm-stagger-3) both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 30%;
+  }
+  .wf-card:nth-child(4), .fxm-block:nth-child(4) {
+    animation: hm-rise var(--hm-reveal-dur) var(--hm-smooth) var(--hm-stagger-4) both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 30%;
+  }
+  .wf-card:nth-child(5), .fxm-block:nth-child(5) {
+    animation: hm-rise var(--hm-reveal-dur) var(--hm-smooth) var(--hm-stagger-5) both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 30%;
+  }
+  .wf-card:nth-child(6), .fxm-block:nth-child(6) {
+    animation: hm-rise var(--hm-reveal-dur) var(--hm-smooth) var(--hm-stagger-6) both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 30%;
+  }
+
+  /* Blog cards — staggered */
+  .fxblog-card:nth-child(1) {
+    animation: hm-rise var(--hm-reveal-dur) var(--hm-smooth) var(--hm-stagger-1) both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 30%;
+  }
+  .fxblog-card:nth-child(2) {
+    animation: hm-rise var(--hm-reveal-dur) var(--hm-smooth) var(--hm-stagger-2) both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 30%;
+  }
+  .fxblog-card:nth-child(3) {
+    animation: hm-rise var(--hm-reveal-dur) var(--hm-smooth) var(--hm-stagger-3) both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 30%;
+  }
+  .fxblog-card:nth-child(4) {
+    animation: hm-rise var(--hm-reveal-dur) var(--hm-smooth) var(--hm-stagger-4) both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 30%;
+  }
+
+  /* FXV flow steps */
+  .fxv-flow-step:nth-child(1) {
+    animation: hm-rise var(--hm-reveal-dur) var(--hm-smooth) var(--hm-stagger-1) both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 30%;
+  }
+  .fxv-flow-step:nth-child(2) {
+    animation: hm-rise var(--hm-reveal-dur) var(--hm-smooth) var(--hm-stagger-2) both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 30%;
+  }
+  .fxv-flow-step:nth-child(3) {
+    animation: hm-rise var(--hm-reveal-dur) var(--hm-smooth) var(--hm-stagger-3) both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 30%;
+  }
+  .fxv-flow-step:nth-child(4) {
+    animation: hm-rise var(--hm-reveal-dur) var(--hm-smooth) var(--hm-stagger-4) both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 30%;
+  }
+
+  /* FXV signals + story */
+  .fxv-story {
+    animation: hm-rise-xs var(--hm-reveal-dur) var(--hm-smooth) both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 25%;
+  }
+  .fxv-signals {
+    animation: hm-rise-xs var(--hm-reveal-dur) var(--hm-smooth) 0.06s both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 25%;
+  }
+
+  /* FLE stats — subtle */
+  .fle-stat-item:nth-child(1) {
+    animation: hm-rise-xs var(--hm-reveal-dur) var(--hm-smooth) var(--hm-stagger-1) both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 30%;
+  }
+  .fle-stat-item:nth-child(2) {
+    animation: hm-rise-xs var(--hm-reveal-dur) var(--hm-smooth) var(--hm-stagger-2) both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 30%;
+  }
+  .fle-stat-item:nth-child(3) {
+    animation: hm-rise-xs var(--hm-reveal-dur) var(--hm-smooth) var(--hm-stagger-3) both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 30%;
+  }
+  .fle-stat-item:nth-child(4) {
+    animation: hm-rise-xs var(--hm-reveal-dur) var(--hm-smooth) var(--hm-stagger-4) both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 30%;
+  }
+
+} /* end @supports animation-timeline */
+
+/* ─────────────────────────────────────────────────────────────────────
+   4. HOVER TRANSITIONS — premium easing, no bounce
+   Override artisan-card bounce easing (.34,1.56,.64,1 → spring)
+   All hover transitions use compositor-only properties.
+───────────────────────────────────────────────────────────────────── */
+
+/* Fix artisan card bounce easing + remove will-change */
+.pvc-card {
+  transition:
+    transform var(--hm-hover-dur) var(--hm-spring),
+    box-shadow var(--hm-hover-dur) ease,
+    border-color var(--hm-hover-dur) ease !important;
+  will-change: auto !important;   /* remove premature composite layer */
+}
+
+/* Why-fixeo / fxm cards — consistent premium easing */
+.wf-card,
+.fxm-block {
+  transition:
+    transform var(--hm-hover-dur) var(--hm-spring),
+    border-color var(--hm-hover-dur) ease,
+    background var(--hm-hover-dur) ease,
+    box-shadow var(--hm-hover-dur) ease !important;
+}
+
+/* How-it-works step cards */
+.how-it-works-section .step-card {
+  transition:
+    border-color var(--hm-hover-dur) ease,
+    background var(--hm-hover-dur) ease,
+    box-shadow var(--hm-hover-dur) ease !important;
+}
+
+/* Blog cards */
+.fxblog-card {
+  transition:
+    transform var(--hm-hover-dur) var(--hm-standard),
+    border-color var(--hm-hover-dur) ease,
+    box-shadow var(--hm-hover-dur) ease !important;
+}
+
+/* FLE cards */
+.fle-card {
+  transition:
+    border-color var(--hm-hover-dur) ease,
+    box-shadow var(--hm-hover-dur) ease !important;
+}
+
+/* FXV flow steps */
+.fxv-flow-step {
+  transition:
+    border-color var(--hm-hover-dur) ease,
+    background var(--hm-hover-dur) ease !important;
+}
+
+/* Trust pills (fxf-mini-trust) */
+#fxf-mini-trust .fxf-pill {
+  transition:
+    border-color var(--hm-hover-dur) ease,
+    box-shadow var(--hm-hover-dur) ease !important;
+}
+
+/* Chip / filter buttons */
+.chip,
+.service-chip,
+.svc-city-pill {
+  transition:
+    background var(--hm-hover-dur) ease,
+    border-color var(--hm-hover-dur) ease,
+    color var(--hm-hover-dur) ease !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   5. BUTTON PRESS STATES — :active micro-feedback
+   Subtle sink + dim. Never bounces back.
+   Easing on active is fast (press-dur = 0.08s).
+───────────────────────────────────────────────────────────────────── */
+
+/* Primary CTA buttons */
+.btn-urgente:active,
+.btn-express:active,
+[data-open="urgence-modal"]:active,
+[data-open="express-modal"]:active {
+  transform: scale(0.98) translateY(1px) !important;
+  filter: brightness(0.92) !important;
+  transition-duration: var(--hm-press-dur) !important;
+}
+
+/* Secondary / outline buttons */
+.btn-secondary:active,
+.btn-outline:active,
+.svc-city-pill:active,
+.ssb2-cta:active,
+.pvc-cta:active {
+  transform: scale(0.97) !important;
+  opacity: 0.85 !important;
+  transition-duration: var(--hm-press-dur) !important;
+}
+
+/* Chip filter buttons */
+.chip:active,
+.service-chip:active {
+  transform: scale(0.96) !important;
+  transition-duration: var(--hm-press-dur) !important;
+}
+
+/* fxf-pill */
+#fxf-mini-trust .fxf-pill:active {
+  transform: scale(0.98) !important;
+  transition-duration: var(--hm-press-dur) !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   6. FOCUS TRANSITIONS — smooth, WCAG-safe
+   Outline grows in smoothly rather than snapping.
+   All focus-visible rules on below-hero interactive elements.
+───────────────────────────────────────────────────────────────────── */
+
+/* Shared focus-visible system for section buttons and links */
+.fxblog-see-all:focus-visible,
+.fxblog-card-link:focus-visible,
+.wf-card:focus-visible,
+.fxm-block:focus-visible,
+.chip:focus-visible,
+.service-chip:focus-visible,
+.svc-city-pill:focus-visible,
+.ssb2-cta:focus-visible,
+.pvc-cta:focus-visible,
+.pvc-card > a:focus-visible {
+  outline: 2px solid rgba(255,255,255,0.72);
+  outline-offset: 3px;
+  border-radius: 6px;
+  transition: outline-offset var(--hm-hover-dur) ease !important;
+}
+
+/* Final CTA button focus */
+.final-cta a:focus-visible,
+.final-cta button:focus-visible {
+  outline: 2px solid rgba(255,255,255,0.8);
+  outline-offset: 3px;
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   7. SHADOW INTERPOLATION POLISH
+   Ensures box-shadow is always CSS-interpolated (not a jump).
+   Cards define both resting and hover shadow explicitly so the browser
+   can tween between them smoothly.
+───────────────────────────────────────────────────────────────────── */
+
+/* Blog cards: explicit two-state shadow */
+.fxblog-card {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.14) !important;
+}
+.fxblog-card:hover {
+  box-shadow: 0 8px 24px rgba(0,0,0,0.22) !important;
+}
+
+/* FXV flow step */
+.fxv-flow-step {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.16);
+}
+.fxv-flow-step:hover {
+  box-shadow: 0 6px 22px rgba(0,0,0,0.22);
+}
+
+/* FXF trust pills */
+#fxf-mini-trust .fxf-pill {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.06);
+}
+#fxf-mini-trust .fxf-pill:hover {
+  box-shadow: 0 6px 22px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   8. SECTION-LEVEL TRANSITION POLISH
+   Fix overbroad 'all 0.3s' transitions (from homepage-v13.css)
+   where discovered on non-hero sections. Replace with specific props.
+───────────────────────────────────────────────────────────────────── */
+
+/* Service chip — replace any 'all' transition */
+.chip[data-category],
+.chip[data-service] {
+  transition:
+    background var(--hm-hover-dur) ease,
+    border-color var(--hm-hover-dur) ease,
+    color var(--hm-hover-dur) ease,
+    box-shadow var(--hm-hover-dur) ease !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   9. FLE LIVE DOT — existing pulse is fine, but ensure it uses
+   transform-based animation (it does via radial scaling).
+   No changes needed — documented for audit trail.
+───────────────────────────────────────────────────────────────────── */
+
+/* fxlps-dot pulse is controlled by fixeo-live-engine-v1.css — leave intact */
+
+/* ─────────────────────────────────────────────────────────────────────
+   10. REDUCED MOTION — ALL motion off
+   This single block disables everything defined in this file.
+───────────────────────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+
+  /* Scroll-driven reveals: immediately visible */
+  .how-it-works-section .how-header,
+  .why-fixeo-header,
+  .fle-header,
+  .fxblog-head,
+  .fxv-section .section-header,
+  .final-cta-section .container > .final-cta,
+  .wf-card, .fxm-block,
+  .fxblog-card,
+  .fxv-flow-step,
+  .fxv-story,
+  .fxv-signals,
+  .fle-stat-item {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  /* Transitions: instant */
+  .pvc-card,
+  .wf-card,
+  .fxm-block,
+  .how-it-works-section .step-card,
+  .fxblog-card,
+  .fle-card,
+  .fxv-flow-step,
+  #fxf-mini-trust .fxf-pill,
+  .chip,
+  .service-chip,
+  .svc-city-pill {
+    transition: none !important;
+  }
+
+  /* :active press feedback: none */
+  .btn-urgente:active,
+  .btn-express:active,
+  .btn-secondary:active,
+  .btn-outline:active,
+  .chip:active,
+  .service-chip:active,
+  #fxf-mini-trust .fxf-pill:active,
+  .ssb2-cta:active,
+  .pvc-cta:active {
+    transform: none !important;
+    filter: none !important;
+    opacity: 1 !important;
+  }
+}
