@@ -1,58 +1,122 @@
 /**
- * fixeo-estimation-v2-hero.css — faee-v2a
- * FIXEO AI Estimation V2 — Homepage Always-On Hero Card
+ * fixeo-estimation-v2-hero.css — faee-v2b
+ * FIXEO AI Estimation V2 — Homepage Unified Permanent Card
  *
  * Namespace: .faev2-* / #faee-v2-hero
+ * Three states: idle / thinking / active
  * Zero interference with faee-v1 (.faee-*), fxhi, AIRE, or any other system.
+ * Version: faee-v2b — 2026-07-12
  */
 
 /* ═══════════════════════════════════════════════════════════
    OUTER WRAPPER — full-width band below hero section
+   CLS = 0: fixed min-height prevents layout shift on transition
 ══════════════════════════════════════════════════════════ */
 
 #faee-v2-hero {
   width: 100%;
-  padding: 0 16px 20px;
+  padding: 0 16px 24px;
   box-sizing: border-box;
   opacity: 1;
-  transform: translateY(0);
-  /* Transition managed by JS */
+}
+
+/* Fade transition between states — JS-driven */
+#faee-v2-hero.faev2-fading {
+  opacity: 0;
+  transform: translateY(3px);
+  transition: opacity .12s ease, transform .12s ease;
+}
+
+#faee-v2-hero.faev2-fading-in {
+  opacity: 0;
+  transform: translateY(-3px);
+  transition: opacity .18s ease, transform .18s ease;
 }
 
 /* ═══════════════════════════════════════════════════════════
-   CARD BASE — dark glass, same family as faee-v1
+   CARD BASE — glass surface
 ══════════════════════════════════════════════════════════ */
 
 .faev2-card {
   max-width: 740px;
   margin: 0 auto;
-  padding: 20px 22px 16px;
-  background: rgba(10, 10, 15, 0.80);
-  border: 1px solid rgba(255, 255, 255, 0.10);
-  border-radius: 20px;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  padding: 20px 24px 18px;
+  background:
+    linear-gradient(135deg,
+      rgba(255,255,255,.038) 0%,
+      rgba(255,255,255,.018) 100%);
+  border: 1px solid rgba(255, 255, 255, .08);
+  border-radius: 18px;
   box-shadow:
-    0 4px 32px rgba(0, 0, 0, 0.35),
-    0 0 0 1px rgba(225, 48, 108, 0.06) inset;
+    inset 0 1px 0 rgba(255,255,255,.05),
+    0 4px 32px rgba(0,0,0,.30),
+    0 1px 4px  rgba(0,0,0,.16);
   position: relative;
   overflow: hidden;
+  transition: border-color .25s ease, box-shadow .25s ease;
 }
 
-/* Ambient glow overlay */
+/* Top accent line */
 .faev2-card::before {
   content: '';
   position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 2px;
+  top: 0; left: 12%; right: 12%;
+  height: 1px;
   background: linear-gradient(90deg,
-    transparent 0%,
-    rgba(225, 48, 108, 0.5) 40%,
-    rgba(64, 93, 230, 0.5) 60%,
-    transparent 100%
+    transparent,
+    rgba(225, 48, 108, .45),
+    rgba(72,  100, 255, .35),
+    transparent
   );
-  border-radius: 20px 20px 0 0;
+  border-radius: 0;
   pointer-events: none;
+}
+
+/* ── STATE: thinking ─────────────────────────────────────── */
+
+.faev2-card-thinking {
+  border-color: rgba(72, 100, 255, .14) !important;
+}
+
+.faev2-card-thinking::before {
+  background: linear-gradient(90deg,
+    transparent,
+    rgba(72, 100, 255, .50),
+    rgba(131, 58, 180, .40),
+    transparent
+  ) !important;
+  animation: faev2-scan-line 1.8s ease-in-out infinite;
+}
+
+@keyframes faev2-scan-line {
+  0%   { left: -30%; right: 130%; opacity: .60; }
+  50%  { left: 12%;  right: 12%;  opacity: 1;   }
+  100% { left: 130%; right: -30%; opacity: .60; }
+}
+
+/* ── STATE: active ───────────────────────────────────────── */
+
+.faev2-card-active {
+  border-color: rgba(255, 255, 255, .10);
+}
+
+/* ── STATE: urgent ───────────────────────────────────────── */
+
+.faev2-card-urgent {
+  border-color: rgba(225, 48, 108, .22) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.05),
+    0 4px 32px rgba(0,0,0,.30),
+    0 0 24px rgba(225, 48, 108, .09);
+}
+
+.faev2-card-urgent::before {
+  background: linear-gradient(90deg,
+    transparent,
+    rgba(225, 48, 108, .65),
+    rgba(255,  71,  87, .55),
+    transparent
+  );
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -63,50 +127,69 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
   flex-wrap: wrap;
 }
 
 .faev2-logo-mark {
-  font-size: 1rem;
-  color: #E1306C;
+  font-size: .95rem;
+  color: rgba(225, 48, 108, .80);
   line-height: 1;
-  animation: faev2-mark-pulse 3s ease-in-out infinite;
 }
 
-@keyframes faev2-mark-pulse {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0.55; }
+/* Thinking state: logo pulses */
+.faev2-logo-pulse {
+  animation: faev2-logo-think 1.4s ease-in-out infinite;
+}
+
+@keyframes faev2-logo-think {
+  0%, 100% { opacity: 1;    color: rgba(72, 100, 255, .90); }
+  50%       { opacity: .45; color: rgba(131, 58, 180, .80); }
 }
 
 .faev2-title {
-  font-size: 0.65rem;
+  font-size: .60rem;
   font-weight: 800;
-  letter-spacing: 0.10em;
+  letter-spacing: .11em;
   text-transform: uppercase;
-  background: linear-gradient(90deg, #E1306C, #833AB4, #405DE6);
+  background: linear-gradient(90deg, #E1306C 0%, #833AB4 55%, #405DE6 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   line-height: 1;
+  flex-shrink: 0;
+}
+
+.faev2-thinking-badge {
+  font-size: .60rem;
+  font-weight: 700;
+  color: rgba(72, 100, 255, .70);
+  letter-spacing: .06em;
+  animation: faev2-badge-dots 1.4s step-start infinite;
+  margin-left: auto;
+}
+
+@keyframes faev2-badge-dots {
+  0%   { content: 'Analyse'; }
+  33%  { opacity: .60; }
+  66%  { opacity: .30; }
+  100% { opacity: 1; }
 }
 
 /* ═══════════════════════════════════════════════════════════
-   IDLE STATE — INVITE TEXT
+   STATE A — IDLE
 ══════════════════════════════════════════════════════════ */
 
+/* Invite text */
 .faev2-invite {
-  font-size: 0.85rem;
+  font-size: .83rem;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.65);
+  color: rgba(255, 255, 255, .60);
   margin: 0 0 14px;
   line-height: 1.4;
 }
 
-/* ═══════════════════════════════════════════════════════════
-   IDLE STATE — SERVICE CHIPS
-══════════════════════════════════════════════════════════ */
-
+/* Chip grid */
 .faev2-chips {
   display: flex;
   flex-wrap: wrap;
@@ -115,131 +198,163 @@
 }
 
 .faev2-chip {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 5px;
-  padding: 7px 12px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1.5px solid rgba(255, 255, 255, 0.10);
-  border-radius: 20px;
-  font-size: 0.78rem;
+  padding: 7px 13px;
+  background: rgba(255, 255, 255, .048);
+  border: 1px solid rgba(255, 255, 255, .08);
+  border-radius: 999px;
+  font-size: .76rem;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.80);
+  color: rgba(255, 255, 255, .76);
   cursor: pointer;
-  transition: background 0.15s, border-color 0.15s, transform 0.12s;
+  transition: background .15s, border-color .15s, transform .12s, color .15s;
   -webkit-tap-highlight-color: transparent;
   white-space: nowrap;
+  min-height: 32px;
 }
 
 .faev2-chip:hover {
-  background: rgba(225, 48, 108, 0.10);
-  border-color: rgba(225, 48, 108, 0.30);
+  background: rgba(225, 48, 108, .09);
+  border-color: rgba(225, 48, 108, .28);
   color: #fff;
   transform: translateY(-1px);
 }
 
 .faev2-chip:active {
-  transform: scale(0.97);
+  transform: scale(.97);
+  transition: transform .06s;
 }
 
-.faev2-chip-icon {
-  font-size: 1rem;
-  line-height: 1;
-}
+.faev2-chip-icon { font-size: .95rem; line-height: 1; }
+.faev2-chip-lbl  { font-size: .74rem; line-height: 1; }
 
-.faev2-chip-lbl {
-  font-size: 0.76rem;
-  line-height: 1;
-}
-
-/* ═══════════════════════════════════════════════════════════
-   IDLE STATE — TRUST STATS ROW
-══════════════════════════════════════════════════════════ */
-
+/* Trust stats — verified facts only */
 .faev2-stats-row {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 6px 10px;
+  gap: 5px 10px;
   margin-bottom: 14px;
-  font-size: 0.74rem;
+  font-size: .72rem;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.55);
+  color: rgba(255, 255, 255, .42);
 }
 
-.faev2-stat-dot {
-  display: inline-block;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #20C997;
-  animation: faev2-dot-pulse 1.8s ease-in-out infinite;
-  margin-right: 3px;
-  vertical-align: middle;
-}
-
-@keyframes faev2-dot-pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50%       { opacity: 0.5; transform: scale(0.75); }
-}
-
-.faev2-stat-item {
-  white-space: nowrap;
-}
+.faev2-stat-item { white-space: nowrap; }
 
 .faev2-stat-sep {
-  opacity: 0.3;
+  opacity: .25;
+  font-size: .65rem;
 }
 
 /* ═══════════════════════════════════════════════════════════
-   ACTIVE STATE — PRICE HERO
+   STATE B — THINKING
+   Elegant: service badge + scan animation + skeleton values.
+   Never a spinner. Never a skeleton overload.
 ══════════════════════════════════════════════════════════ */
 
+/* Service detected immediately — shows before result */
+.faev2-detected-service {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.faev2-detected-label {
+  font-size: .83rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, .88);
+}
+
+/* Price skeleton — scanning pulse */
+.faev2-price-block.faev2-price-scanning {
+  margin-bottom: 12px;
+}
+
+.faev2-price-scan {
+  display: block;
+  font-size: 2.0rem;
+  font-weight: 900;
+  letter-spacing: -.03em;
+  color: rgba(255, 255, 255, .15);
+  line-height: 1;
+  margin-bottom: 4px;
+  animation: faev2-price-shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes faev2-price-shimmer {
+  0%, 100% { opacity: .15; }
+  50%       { opacity: .40; }
+}
+
+/* Stat skeleton bars */
+.faev2-stats-pending {
+  margin-bottom: 10px;
+}
+
+.faev2-skel {
+  display: inline-block;
+  background: rgba(255, 255, 255, .07);
+  border-radius: 6px;
+  color: transparent !important;
+  animation: faev2-skel-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes faev2-skel-pulse {
+  0%, 100% { opacity: .6; }
+  50%       { opacity: .25; }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   STATE C — ACTIVE / RESULT
+══════════════════════════════════════════════════════════ */
+
+/* Price hero */
 .faev2-price-block {
   margin-bottom: 12px;
 }
 
 .faev2-price {
   display: block;
-  font-size: 2.2rem;
+  font-size: 2.1rem;
   font-weight: 900;
-  letter-spacing: -0.03em;
-  background: linear-gradient(120deg, #fff 0%, rgba(255,255,255,.75) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  letter-spacing: -.03em;
+  color: rgba(255, 255, 255, .95);
   line-height: 1;
   margin-bottom: 4px;
+  /* Animated on entry — starts transparent, fades in via JS */
+  will-change: contents; /* prevent layer promotion but allow smooth text change */
 }
 
 .faev2-price-na {
-  font-size: 1.6rem;
-  opacity: 0.4;
+  font-size: 1.4rem;
+  opacity: .35;
 }
 
 .faev2-price-note {
   display: block;
-  font-size: 0.70rem;
-  color: rgba(255, 255, 255, 0.40);
+  font-size: .68rem;
+  color: rgba(255, 255, 255, .35);
   font-style: italic;
 }
 
-/* ═══════════════════════════════════════════════════════════
-   ACTIVE STATE — STATS ROW
-══════════════════════════════════════════════════════════ */
-
+/* 4-stat row */
 .faev2-active-stats {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px 12px;
+  gap: 5px 12px;
   margin-bottom: 10px;
-  font-size: 0.76rem;
-  color: rgba(255, 255, 255, 0.70);
+  font-size: .74rem;
+  color: rgba(255, 255, 255, .65);
   font-weight: 500;
 }
 
 .faev2-active-stat {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 3px;
   white-space: nowrap;
@@ -247,13 +362,19 @@
 
 .faev2-active-stat-service {
   font-weight: 700;
-  color: rgba(255, 255, 255, 0.90);
+  color: rgba(255, 255, 255, .90);
 }
 
-/* ═══════════════════════════════════════════════════════════
-   ACTIVE STATE — SURCHARGES
-══════════════════════════════════════════════════════════ */
+/* ETA and count values — animated */
+.faev2-eta-val,
+.faev2-count-val {
+  display: inline-block;
+  min-width: 20px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, .90);
+}
 
+/* Surcharges */
 .faev2-surcharges {
   display: flex;
   flex-wrap: wrap;
@@ -263,52 +384,33 @@
 
 .faev2-surcharge {
   padding: 3px 9px;
-  background: rgba(225, 48, 108, 0.12);
-  border: 1px solid rgba(225, 48, 108, 0.25);
+  background: rgba(225, 48, 108, .10);
+  border: 1px solid rgba(225, 48, 108, .22);
   border-radius: 12px;
-  font-size: 0.68rem;
+  font-size: .67rem;
   font-weight: 700;
-  color: #ff6b8a;
-  letter-spacing: 0.02em;
+  color: rgba(255, 150, 160, .90);
+  letter-spacing: .02em;
 }
 
-/* ═══════════════════════════════════════════════════════════
-   URGENT BADGE (active header)
-══════════════════════════════════════════════════════════ */
-
+/* Urgent badge (in header) */
 .faev2-urgent-badge {
   padding: 2px 8px;
-  background: rgba(225, 48, 108, 0.15);
-  border: 1px solid rgba(225, 48, 108, 0.35);
+  background: rgba(225, 48, 108, .12);
+  border: 1px solid rgba(225, 48, 108, .30);
   border-radius: 10px;
-  font-size: 0.65rem;
+  font-size: .60rem;
   font-weight: 800;
-  letter-spacing: 0.06em;
-  color: #ff6b8a;
+  letter-spacing: .07em;
+  color: rgba(255, 120, 140, .95);
   text-transform: uppercase;
-  animation: faev2-badge-blink 1.8s ease-in-out infinite;
+  animation: faev2-urgent-pulse 1.8s ease-in-out infinite;
+  margin-left: auto;
 }
 
-@keyframes faev2-badge-blink {
+@keyframes faev2-urgent-pulse {
   0%, 100% { opacity: 1; }
-  50%       { opacity: 0.55; }
-}
-
-/* Urgent card: stronger border glow */
-.faev2-card-urgent {
-  border-color: rgba(225, 48, 108, 0.25);
-  box-shadow:
-    0 4px 32px rgba(0, 0, 0, 0.35),
-    0 0 20px rgba(225, 48, 108, 0.08);
-}
-
-.faev2-card-urgent::before {
-  background: linear-gradient(90deg,
-    transparent 0%,
-    rgba(225, 48, 108, 0.7) 35%,
-    rgba(255, 71, 87, 0.7) 65%,
-    transparent 100%
-  );
+  50%       { opacity: .55; }
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -316,8 +418,8 @@
 ══════════════════════════════════════════════════════════ */
 
 .faev2-disclaimer {
-  font-size: 0.67rem;
-  color: rgba(255, 255, 255, 0.30);
+  font-size: .65rem;
+  color: rgba(255, 255, 255, .26);
   margin: 8px 0 12px;
   line-height: 1.4;
   font-style: italic;
@@ -331,36 +433,42 @@
   display: block;
   width: 100%;
   padding: 12px 20px;
-  background: linear-gradient(135deg, #E1306C 0%, #833AB4 100%);
+  background: linear-gradient(135deg, #E1306C 0%, #833AB4 55%, #405DE6 100%);
   border: none;
   border-radius: 12px;
-  font-size: 0.90rem;
+  font-size: .88rem;
   font-weight: 700;
   color: #fff;
   cursor: pointer;
-  letter-spacing: 0.02em;
-  transition: box-shadow 0.2s ease, transform 0.15s ease;
-  box-shadow: 0 3px 16px rgba(225, 48, 108, 0.25);
+  letter-spacing: .02em;
+  transition: box-shadow .20s ease, transform .14s ease;
+  box-shadow: 0 3px 16px rgba(225, 48, 108, .22);
   -webkit-tap-highlight-color: transparent;
 }
 
 .faev2-cta:hover {
-  box-shadow: 0 5px 22px rgba(225, 48, 108, 0.40);
+  box-shadow: 0 5px 22px rgba(225, 48, 108, .38);
   transform: translateY(-1px);
 }
 
 .faev2-cta:active {
-  transform: translateY(0);
+  transform: scale(.98);
+  transition: transform .06s;
 }
 
-/* Urgent CTA — pure red */
+.faev2-cta:focus-visible {
+  outline: 2px solid rgba(255,255,255,.72);
+  outline-offset: 2px;
+}
+
+/* Urgent CTA */
 .faev2-cta-urgent {
   background: linear-gradient(135deg, #ff1744 0%, #E1306C 100%);
-  box-shadow: 0 3px 16px rgba(255, 23, 68, 0.30);
+  box-shadow: 0 3px 16px rgba(255, 23, 68, .28);
 }
 
 .faev2-cta-urgent:hover {
-  box-shadow: 0 5px 22px rgba(255, 23, 68, 0.45);
+  box-shadow: 0 5px 22px rgba(255, 23, 68, .44);
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -372,29 +480,36 @@
   margin: 8px auto 0;
   background: none;
   border: none;
-  font-size: 0.72rem;
-  color: rgba(255, 255, 255, 0.35);
+  font-size: .70rem;
+  color: rgba(255, 255, 255, .28);
   cursor: pointer;
   padding: 4px 8px;
-  transition: color 0.15s;
+  transition: color .15s;
   -webkit-tap-highlight-color: transparent;
+  min-height: 30px;
 }
 
 .faev2-back:hover {
-  color: rgba(255, 255, 255, 0.65);
+  color: rgba(255, 255, 255, .60);
+}
+
+.faev2-back:focus-visible {
+  outline: 2px solid rgba(255,255,255,.40);
+  outline-offset: 2px;
+  border-radius: 4px;
 }
 
 /* ═══════════════════════════════════════════════════════════
-   MOBILE — 375px safety
+   MOBILE — 375px / 390px / 430px
 ══════════════════════════════════════════════════════════ */
 
 @media (max-width: 480px) {
   #faee-v2-hero {
-    padding: 0 12px 16px;
+    padding: 0 12px 20px;
   }
 
   .faev2-card {
-    padding: 16px 14px 12px;
+    padding: 16px 16px 14px;
     border-radius: 16px;
   }
 
@@ -402,32 +517,71 @@
     font-size: 1.75rem;
   }
 
+  .faev2-price-scan {
+    font-size: 1.55rem;
+  }
+
   .faev2-chips {
     gap: 5px;
   }
 
   .faev2-chip {
-    padding: 6px 10px;
-    font-size: 0.72rem;
+    padding: 6px 11px;
+    font-size: .72rem;
+    min-height: 30px;
   }
 
   .faev2-cta {
-    font-size: 0.84rem;
+    font-size: .84rem;
     padding: 11px 16px;
   }
 
   .faev2-stats-row {
-    font-size: 0.68rem;
+    font-size: .68rem;
     gap: 4px 8px;
+  }
+
+  .faev2-active-stats {
+    font-size: .70rem;
   }
 }
 
 @media (max-width: 375px) {
   .faev2-chip-lbl {
-    font-size: 0.68rem;
+    font-size: .67rem;
   }
 
   .faev2-price {
-    font-size: 1.55rem;
+    font-size: 1.50rem;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════
+   REDUCED MOTION
+══════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  .faev2-logo-mark,
+  .faev2-logo-pulse,
+  .faev2-thinking-badge,
+  .faev2-urgent-badge,
+  .faev2-price-scan,
+  .faev2-skel,
+  .faev2-card-thinking::before {
+    animation: none !important;
+  }
+
+  #faee-v2-hero.faev2-fading,
+  #faee-v2-hero.faev2-fading-in {
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .faev2-chip,
+  .faev2-cta {
+    transition: none !important;
+  }
+}
+
+/* version: faee-v2b */

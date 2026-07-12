@@ -586,6 +586,10 @@
   var HERO_CONTAINER_ID = 'faee-hero-container';
 
   function _attachToHero() {
+    /* V2 guard (fxv-v2a): if #faee-v2-hero is present, V2 engine handles the
+       homepage estimation card. V1 skips hero injection to prevent duplication. */
+    if (document.getElementById('faee-v2-hero')) return;
+
     /* Only on homepage (index.html) — guard by presence of #hero-quick-search */
     var heroWrap = document.getElementById('hero-quick-search');
     if (!heroWrap) return;
