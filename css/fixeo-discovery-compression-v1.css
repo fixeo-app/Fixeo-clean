@@ -1,0 +1,438 @@
+/* ══════════════════════════════════════════════════════════════════
+   FIXEO — Discovery Compression v1 (dc-v1a)
+   Phase 7.2: Discovery Compression & Premium Flow
+   ══════════════════════════════════════════════════════════════════
+
+   MISSION:
+   Reduce the Discovery zone vertical footprint by ~33%.
+   Visitors reach real artisan cards significantly faster.
+   Cities + services feel like ONE intelligent control surface.
+   Zero JS changes. Zero regression. Mobile-first.
+
+   SCOPE: #services, #secondary-search-section, #top-artisans,
+          #artisans-section — NOTHING ELSE.
+
+   STRATEGY:
+   1. Compress #services header: tighter title, subtitle hidden on mobile
+   2. Merge city + service chips into one visual control surface
+   3. Tighten all section paddings / margins in the Discovery zone
+   4. Remove PROFILS RECOMMANDÉS sub-label (adds height, no value)
+   5. Keep ALL JS IDs, classes, data-attributes intact
+   6. All overrides use !important — specificity war with legacy files
+      (homepage-v13.css sets 80px padding with !important at line 543/673)
+
+   ESTIMATED SAVINGS (mobile 375px):
+     Before: ~660px fixed chrome before first artisan
+     After:  ~440px — a 33% reduction
+
+   Version: dc-v1a — 2026-07-12
+   Namespace: uses existing fxn-*, ssb2-* selectors (no new namespace)
+   ══════════════════════════════════════════════════════════════════ */
+
+
+/* ════════════════════════════════════════════════════════════
+   § 1  DISCOVERY BLOCK — #services container
+   Current mobile: padding 56px top / 28px bottom
+   Compressed:     padding 28px top / 16px bottom
+   Desktop unchanged (still reads correctly with breathing room)
+════════════════════════════════════════════════════════════ */
+
+#services.services-section {
+  padding: 40px 0 20px !important;  /* desktop: was 72px/40px */
+}
+
+
+/* ════════════════════════════════════════════════════════════
+   § 2  DISCOVERY HEADER — compressed
+   Mission: headline + city selector + first chip row visible
+   on iPhone 14 Pro (390px, 844px height) without scrolling.
+
+   Changes:
+   - eyebrow (fxn-eyebrow): hide on mobile, keep on desktop
+   - title (fxn-title): reduce size slightly, remove <br> gap
+   - subtitle (fxn-subtitle): hidden on mobile, visible desktop
+   - header margin-bottom: 40→16px mobile, 40→24px desktop
+════════════════════════════════════════════════════════════ */
+
+/* Header: tighter bottom margin */
+#services .fxn-header {
+  margin-bottom: 20px !important;  /* was 40px */
+  text-align: center;
+}
+
+/* Eyebrow: hidden on all viewports — saves 24px, adds nothing at this density */
+#services .fxn-eyebrow {
+  display: none !important;
+}
+
+/* Title: compact but still premium */
+#services .fxn-title {
+  font-size: clamp(1.25rem, 2.8vw, 1.9rem) !important;  /* was clamp(1.5rem,3.2vw,2.2rem) */
+  margin: 0 0 6px !important;                            /* was 0 0 10px */
+  line-height: 1.12 !important;
+}
+
+/* Subtitle: hide on mobile (saves ~52px), show on desktop */
+#services .fxn-subtitle {
+  display: none !important;  /* mobile: hidden */
+}
+
+
+/* ════════════════════════════════════════════════════════════
+   § 3  CITY + SERVICE CHIPS — ONE UNIFIED CONTROL SURFACE
+   The visitor should not perceive two separate rows.
+   They are one panel: "where" and "what".
+
+   Visual merge via:
+   - Reduce gap between city bar and chip grid
+   - Tighter city bar margin-bottom
+   - Matching border-radius, visual weight
+   - Optional: a hairline separator between city and service rows
+════════════════════════════════════════════════════════════ */
+
+/* City filter bar: reduce bottom gap to chip row */
+#services .services-filter-bar,
+#services .services-filter {
+  margin-bottom: 12px !important;  /* was 28px */
+  justify-content: center !important;
+  gap: 6px !important;
+}
+
+/* City chips: slightly smaller — unify weight with service chips */
+#services .city-chip {
+  padding: 5px 12px !important;   /* was 6px 14px */
+  font-size: .70rem !important;   /* was .72rem */
+  min-height: 30px !important;    /* was 32px */
+  border-radius: 16px !important;
+}
+
+/* Service chips: reduce height to 36px (was 40px via min-height) */
+#services .service-chip,
+#services .chip.service-chip {
+  min-height: 36px !important;    /* was 40px */
+  padding: 7px 15px !important;   /* was 9px 18px */
+  font-size: .78rem !important;   /* was .80rem */
+  gap: 6px !important;            /* was 7px */
+}
+
+/* Chip icon: slightly smaller */
+#services .chip-icon {
+  font-size: .95rem !important;   /* was 1.05rem */
+}
+
+/* Chip grid: tighter gap = more chips per row = fewer rows = less height */
+#services .category-chips {
+  gap: 6px !important;            /* was 8px */
+  margin-bottom: 0 !important;
+}
+
+/* Visual unification: faint horizontal separator between city and service rows */
+#services .category-chips {
+  padding-top: 10px !important;
+  border-top: 1px solid rgba(255, 255, 255, .055) !important;
+  margin-top: 0 !important;
+}
+
+
+/* ════════════════════════════════════════════════════════════
+   § 4  SERVICE ARTISANS ZONE (#service-artisans-section)
+   JS-injected results that appear when a chip is active.
+   Remove padding — artisans should follow chips immediately.
+════════════════════════════════════════════════════════════ */
+
+#service-artisans-section {
+  padding-top: 4px !important;   /* was 8px */
+  padding-bottom: 8px !important; /* was 24px inline style is 24px */
+}
+
+
+/* ════════════════════════════════════════════════════════════
+   § 5  VEDETTE GRID (#secondary-search-section)
+   Remove the PROFILS RECOMMANDÉS sub-label — it adds vertical
+   space without adding information at this density.
+   The grid speaks for itself.
+════════════════════════════════════════════════════════════ */
+
+#secondary-search-section {
+  padding-top: 8px !important;   /* keep from fnv1a */
+  padding-bottom: 8px !important; /* was 16px */
+}
+
+/* Remove the CSS-generated "PROFILS RECOMMANDÉS" label */
+#secondary-search-section .ssb2-vedette-section::before {
+  display: none !important;
+}
+
+/* Counter: reduce bottom margin */
+#secondary-search-section .pvc-grid-counter {
+  margin-bottom: 8px !important;  /* was 12px */
+}
+
+
+/* ════════════════════════════════════════════════════════════
+   § 6  TOP ARTISANS (#top-artisans)
+   Already tight — further compress chrome.
+════════════════════════════════════════════════════════════ */
+
+#top-artisans.top-artisan-section {
+  padding-top: 4px !important;
+  padding-bottom: 8px !important;  /* was 16px */
+}
+
+
+/* ════════════════════════════════════════════════════════════
+   § 7  MAIN ARTISAN GRID (#artisans-section)
+   This is the star. Make it arrive sooner.
+   Reduce top padding so cards appear faster.
+════════════════════════════════════════════════════════════ */
+
+#artisans-section {
+  padding-top: 4px !important;   /* was 8px */
+  padding-bottom: 24px !important; /* was 32px */
+}
+
+
+/* ════════════════════════════════════════════════════════════
+   § 8  SECTION-SM override (trust-section uses section-sm)
+   Don't touch — trust section is outside discovery scope.
+   Ensure section-sm padding isn't affected by our rules.
+════════════════════════════════════════════════════════════ */
+
+/* Intentionally empty — trust section outside scope */
+
+
+/* ════════════════════════════════════════════════════════════
+   § 9  DESKTOP RESTORATION — ≥1024px
+   On desktop, restore breathing room.
+   The compression is primarily a mobile UX improvement.
+   Desktop has plenty of screen — give the header back its space.
+════════════════════════════════════════════════════════════ */
+
+@media (min-width: 1024px) {
+  /* Restore section padding on desktop */
+  #services.services-section {
+    padding: 56px 0 32px !important;
+  }
+
+  /* Show subtitle on desktop — it adds context at this size */
+  #services .fxn-subtitle {
+    display: block !important;
+    margin-top: 4px !important;
+  }
+
+  /* Show eyebrow on desktop — branding moment */
+  #services .fxn-eyebrow {
+    display: block !important;
+    margin-bottom: 8px !important;
+  }
+
+  /* Header margin on desktop */
+  #services .fxn-header {
+    margin-bottom: 28px !important;
+  }
+
+  /* City chips: standard size on desktop */
+  #services .city-chip {
+    padding: 6px 14px !important;
+    font-size: .72rem !important;
+    min-height: 32px !important;
+  }
+
+  /* Service chips: standard size on desktop */
+  #services .service-chip,
+  #services .chip.service-chip {
+    min-height: 38px !important;
+    padding: 8px 17px !important;
+    font-size: .79rem !important;
+  }
+
+  /* Chip grid: standard gap on desktop */
+  #services .category-chips {
+    gap: 8px !important;
+  }
+
+  /* City filter bar: standard margin on desktop */
+  #services .services-filter-bar,
+  #services .services-filter {
+    margin-bottom: 20px !important;
+  }
+
+  /* Vedette section: more breathing room on desktop */
+  #secondary-search-section {
+    padding-top: 12px !important;
+    padding-bottom: 12px !important;
+  }
+
+  /* Show PROFILS RECOMMANDÉS on desktop (space allows it) */
+  #secondary-search-section .ssb2-vedette-section::before {
+    display: block !important;
+  }
+
+  /* Top artisans: standard chrome on desktop */
+  #top-artisans.top-artisan-section {
+    padding-top: 6px !important;
+    padding-bottom: 12px !important;
+  }
+
+  /* Main grid: more bottom breathing on desktop */
+  #artisans-section {
+    padding-top: 8px !important;
+    padding-bottom: 32px !important;
+  }
+}
+
+
+/* ════════════════════════════════════════════════════════════
+   § 10  TABLET — 768px–1023px
+   Middle ground: show subtitle, keep compression.
+════════════════════════════════════════════════════════════ */
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  #services.services-section {
+    padding: 44px 0 24px !important;
+  }
+
+  /* Show subtitle on tablet — enough screen width */
+  #services .fxn-subtitle {
+    display: block !important;
+    font-size: .80rem !important;
+  }
+
+  #services .fxn-header {
+    margin-bottom: 22px !important;
+  }
+
+  #services .service-chip,
+  #services .chip.service-chip {
+    min-height: 36px !important;
+    padding: 7px 14px !important;
+  }
+}
+
+
+/* ════════════════════════════════════════════════════════════
+   § 11  MOBILE-SPECIFIC — ≤767px
+   Primary targets: 375px, 390px, 430px
+   All compression values already set in base rules above.
+   Mobile-specific: ensure no overflow, no CLS, touch targets.
+════════════════════════════════════════════════════════════ */
+
+@media (max-width: 767px) {
+  /* Section padding: compressed */
+  #services.services-section {
+    padding: 28px 0 16px !important;
+  }
+
+  /* Title: slightly smaller on very narrow screens */
+  #services .fxn-title {
+    font-size: clamp(1.15rem, 6vw, 1.45rem) !important;
+    margin: 0 0 4px !important;
+  }
+
+  /* Header: minimal margin */
+  #services .fxn-header {
+    margin-bottom: 14px !important;
+  }
+
+  /* City chips: tight */
+  #services .city-chip {
+    min-height: 30px !important;
+    padding: 4px 11px !important;
+    font-size: .68rem !important;
+  }
+
+  /* City filter bar: compact */
+  #services .services-filter-bar,
+  #services .services-filter {
+    margin-bottom: 10px !important;
+    gap: 5px !important;
+  }
+
+  /* City chips container: tight */
+  #services #city-quick-chips {
+    gap: 5px !important;
+  }
+
+  /* Service chips: compact — preserve 30px min touch target */
+  #services .service-chip,
+  #services .chip.service-chip {
+    min-height: 30px !important;
+    padding: 5px 12px !important;
+    font-size: .74rem !important;
+    gap: 5px !important;
+  }
+
+  /* Chip icon: smaller on mobile */
+  #services .chip-icon {
+    font-size: .88rem !important;
+  }
+
+  /* Chip grid: tight */
+  #services .category-chips {
+    gap: 5px !important;
+    padding-top: 8px !important;
+  }
+
+  /* Service artisans: minimal chrome */
+  #service-artisans-section {
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+  }
+
+  /* Vedette: minimal chrome */
+  #secondary-search-section {
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+  }
+
+  /* Top artisans: minimal */
+  #top-artisans.top-artisan-section {
+    padding-top: 2px !important;
+    padding-bottom: 4px !important;
+  }
+
+  /* Main artisan grid: lead immediately */
+  #artisans-section {
+    padding-top: 4px !important;
+    padding-bottom: 20px !important;
+  }
+}
+
+
+/* ════════════════════════════════════════════════════════════
+   § 12  REDUCED MOTION — no animation changes needed
+   This file adds no animations. Existing animations unaffected.
+════════════════════════════════════════════════════════════ */
+
+/* Intentionally empty — no animations in this file */
+
+
+/* ════════════════════════════════════════════════════════════
+   § 13  CLS PREVENTION
+   All compressed elements maintain explicit min-height where
+   JS injects content (artisans-container, ssb2-vedette-grid,
+   top-list). We do NOT set explicit heights — JS controls
+   these and they were working before.
+
+   NO height/width changes to JS-controlled containers.
+   NO changes to grid column definitions.
+   NO changes to artisan card dimensions.
+   ════════════════════════════════════════════════════════════ */
+
+/* version: dc-v1a */
+
+/* ════════════════════════════════════════════════════════════
+   REDUCED MOTION — explicit block (no animations in this file
+   but referenced by QA policy for completeness)
+════════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  /* This file adds no animations.
+     Existing transition overrides from fixeo-network-v1.css apply. */
+  #services .service-chip,
+  #services .chip.service-chip,
+  #services .city-chip {
+    transition: none !important;
+    transform: none !important;
+  }
+}
