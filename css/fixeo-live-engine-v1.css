@@ -1,8 +1,12 @@
 /**
- * FIXEO Live Engine V1 — fixeo-live-engine-v1.css
- * Version: fle-v1a — 2026-06-12
- * Namespace: .fle-* / #fle-* only — zero overrides to existing rules
- * Mobile-first, dark premium, glassmorphism, glow accents
+ * FIXEO Truth Engine — fle-v2a
+ * Replaces: FIXEO Live Engine V1 (fle-v1a — deceptive simulation, removed 2026-07-12)
+ * Namespace: .fle-* / #fle-* — zero overrides to any external rule
+ *
+ * Architecture: Static 8-step processing pipeline.
+ * No fake live dots. No animated counters. No simulated activity.
+ * All copy corresponds to real implemented capabilities.
+ * Motion: existing homepage-motion-v1.css system only (fle-header, fle-card class hooks preserved).
  */
 
 /* ══════════════════════════════════════════════════════
@@ -17,39 +21,29 @@
   border-bottom: 1px solid rgba(255,255,255,.06);
 }
 
-/* Ambient glow orbs */
+/* Restrained ambient glow — static, no animation */
 #fle-section::before {
   content: '';
   position: absolute;
-  top: -120px;
-  left: -100px;
-  width: 500px;
-  height: 500px;
-  background: radial-gradient(circle, rgba(225,48,108,.08) 0%, transparent 65%);
+  top: -80px;
+  left: -60px;
+  width: 380px;
+  height: 380px;
+  background: radial-gradient(circle, rgba(64,93,230,.06) 0%, transparent 65%);
   pointer-events: none;
-  animation: fle-orb-a 8s ease-in-out infinite alternate;
 }
 #fle-section::after {
   content: '';
   position: absolute;
-  bottom: -80px;
-  right: -60px;
-  width: 400px;
-  height: 400px;
-  background: radial-gradient(circle, rgba(100,60,230,.07) 0%, transparent 65%);
+  bottom: -60px;
+  right: -40px;
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle, rgba(131,58,180,.05) 0%, transparent 65%);
   pointer-events: none;
-  animation: fle-orb-b 10s ease-in-out infinite alternate;
-}
-@keyframes fle-orb-a {
-  from { transform: translate(0,0); }
-  to   { transform: translate(40px, 30px); }
-}
-@keyframes fle-orb-b {
-  from { transform: translate(0,0); }
-  to   { transform: translate(-30px, -20px); }
 }
 
-/* ── Section header ── */
+/* ── Section Header ── */
 .fle-header {
   text-align: center;
   margin-bottom: 52px;
@@ -58,38 +52,27 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: .65rem;
+  font-size: .62rem;
   font-weight: 800;
   letter-spacing: .14em;
   text-transform: uppercase;
-  color: #E1306C;
-  background: rgba(225,48,108,.1);
-  border: 1px solid rgba(225,48,108,.25);
+  color: rgba(255,255,255,.45);
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.1);
   border-radius: 20px;
-  padding: 4px 12px;
-  margin-bottom: 16px;
-}
-.fle-tag-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #E1306C;
-  animation: fle-pulse 1.5s ease-in-out infinite;
-}
-@keyframes fle-pulse {
-  0%,100% { opacity: 1; transform: scale(1); }
-  50%      { opacity: .4; transform: scale(.7); }
+  padding: 4px 14px;
+  margin-bottom: 18px;
 }
 .fle-title {
-  font-size: clamp(1.6rem, 5vw, 2.6rem);
+  font-size: clamp(1.5rem, 4.5vw, 2.4rem);
   font-weight: 900;
   letter-spacing: -.02em;
   color: #fff;
-  margin: 0 0 10px;
-  line-height: 1.15;
+  margin: 0 0 14px;
+  line-height: 1.2;
 }
 .fle-title span {
-  background: linear-gradient(135deg, #E1306C, #833AB4, #405DE6);
+  background: linear-gradient(135deg, #405DE6, #833AB4);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -97,336 +80,157 @@
 .fle-subtitle {
   font-size: .92rem;
   color: rgba(255,255,255,.45);
-  margin: 0 0 6px;
+  margin: 0 auto;
+  max-width: 560px;
+  line-height: 1.55;
 }
-.fle-micro {
-  font-size: .78rem;
-  color: rgba(255,255,255,.3);
+
+/* ══════════════════════════════════════════════════════
+   8-STEP PIPELINE GRID
+   4 × 2 on desktop / 1 column on mobile
+   Class hook .fle-card preserved for motion system
+   (homepage-motion-v1.css targets .fle-card for hover
+   transitions — kept intact)
+══════════════════════════════════════════════════════ */
+.fle-steps-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 40px;
+}
+@media (max-width: 900px) {
+  .fle-steps-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (max-width: 560px) {
+  .fle-steps-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+}
+
+/* ── Step card (L2 glass — matches homepage-sections-v1.css hierarchy) ── */
+/* .fle-step-card also carries .fle-card alias for motion system compatibility */
+.fle-step-card {
+  background: var(--hs-glass-l2, rgba(255,255,255,.034));
+  border: 1px solid var(--hs-border-l2, rgba(255,255,255,.07));
+  border-radius: 18px;
+  padding: 20px 18px 18px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition:
+    border-color .22s ease,
+    box-shadow .22s ease;
+}
+.fle-step-card:hover {
+  border-color: rgba(255,255,255,.13);
+  box-shadow: 0 4px 20px rgba(0,0,0,.25);
+}
+
+/* Step number — top-left, muted */
+.fle-step-num {
+  font-size: .6rem;
+  font-weight: 800;
+  letter-spacing: .12em;
+  color: rgba(255,255,255,.2);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Step icon */
+.fle-step-icon {
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+/* Step text */
+.fle-step-body {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.fle-step-label {
+  font-size: .84rem;
+  font-weight: 700;
+  color: rgba(255,255,255,.88);
+  margin: 0;
+  line-height: 1.3;
+}
+.fle-step-desc {
+  font-size: .75rem;
+  color: rgba(255,255,255,.42);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ── Mobile: compact horizontal card layout (360px–560px) ── */
+@media (max-width: 560px) {
+  .fle-step-card {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px 14px;
+    border-radius: 14px;
+  }
+  .fle-step-icon {
+    font-size: 1.2rem;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .fle-step-num {
+    display: none; /* number shown by position on mobile — clean layout */
+  }
+  .fle-step-label {
+    font-size: .82rem;
+  }
+  .fle-step-desc {
+    font-size: .73rem;
+  }
+}
+
+/* ── Very small (320px) ── */
+@media (max-width: 340px) {
+  .fle-step-card {
+    padding: 14px 12px;
+  }
+  .fle-step-label { font-size: .78rem; }
+  .fle-step-desc  { font-size: .7rem; }
+}
+
+/* ══════════════════════════════════════════════════════
+   TRANSPARENCY NOTE
+══════════════════════════════════════════════════════ */
+.fle-transparency-note {
+  text-align: center;
+  font-size: .72rem;
+  color: rgba(255,255,255,.22);
+  line-height: 1.5;
+  max-width: 640px;
+  margin: 0 auto;
+  padding-top: 4px;
   font-style: italic;
 }
 
-/* ── Grid layout ── */
-.fle-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: auto auto;
-  gap: 16px;
-}
-@media (max-width: 720px) {
-  .fle-grid { grid-template-columns: 1fr; }
-}
-
-/* ── Glass card base ── */
-.fle-card {
-  background: rgba(255,255,255,.03);
-  border: 1px solid rgba(255,255,255,.08);
-  border-radius: 16px;
-  padding: 22px 20px;
-  position: relative;
-  overflow: hidden;
-  transition: border-color .2s;
-}
-.fle-card:hover {
-  border-color: rgba(255,255,255,.14);
-}
-.fle-card-tag {
-  font-size: .62rem;
-  font-weight: 800;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-  color: rgba(255,255,255,.3);
-  margin-bottom: 14px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.fle-card-tag-dot {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-.fle-card-tag-dot.live   { background: #E1306C; animation: fle-pulse 1.5s ease-in-out infinite; }
-.fle-card-tag-dot.ai     { background: #833AB4; }
-.fle-card-tag-dot.match  { background: #20C997; }
-.fle-card-tag-dot.stats  { background: #405DE6; }
-
 /* ══════════════════════════════════════════════════════
-   BLOCK 1 — LIVE REQUEST FEED
+   MOTION SYSTEM HOOKS
+   .fle-header and .fle-card (≡ .fle-step-card) are
+   targeted by homepage-motion-v1.css for scroll reveals.
+   The .fle-card class is added to .fle-step-card via
+   the motion system's generic .fle-card hover rule.
+   No new animation is introduced here.
+   All animation-timeline rules in homepage-motion-v1.css
+   that target .fle-header and .fle-stat-item are inert
+   now (.fle-stat-item no longer exists). They degrade
+   gracefully.
 ══════════════════════════════════════════════════════ */
-.fle-feed-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  min-height: 168px;
-}
-.fle-feed-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  background: rgba(255,255,255,.04);
-  border: 1px solid rgba(255,255,255,.06);
-  border-radius: 10px;
-  padding: 10px 12px;
-  transition: opacity .5s ease, transform .5s ease;
-}
-.fle-feed-item.fle-entering {
-  animation: fle-slide-in .45s ease-out forwards;
-}
-.fle-feed-item.fle-exiting {
-  animation: fle-fade-out .35s ease-in forwards;
-}
-@keyframes fle-slide-in {
-  from { opacity: 0; transform: translateY(-8px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-@keyframes fle-fade-out {
-  from { opacity: 1; transform: translateY(0); }
-  to   { opacity: 0; transform: translateY(4px); }
-}
-.fle-feed-ico {
-  font-size: 1.15rem;
-  flex-shrink: 0;
-  margin-top: 1px;
-}
-.fle-feed-content { flex: 1; min-width: 0; }
-.fle-feed-title {
-  font-size: .82rem;
-  font-weight: 700;
-  color: rgba(255,255,255,.88);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.fle-feed-meta {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 3px;
-}
-.fle-feed-city {
-  font-size: .7rem;
-  font-weight: 700;
-  color: #E1306C;
-}
-.fle-feed-time {
-  font-size: .68rem;
-  color: rgba(255,255,255,.3);
-}
-.fle-feed-status {
-  font-size: .62rem;
-  font-weight: 700;
-  padding: 2px 8px;
-  border-radius: 10px;
-  background: rgba(32,201,151,.12);
-  color: #20C997;
-  border: 1px solid rgba(32,201,151,.2);
-  white-space: nowrap;
-}
 
 /* ══════════════════════════════════════════════════════
-   BLOCK 2 — AI MATCHING PIPELINE
-══════════════════════════════════════════════════════ */
-.fle-pipeline {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-.fle-pipe-step {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 9px 12px;
-  border-radius: 9px;
-  background: rgba(255,255,255,.03);
-  border: 1px solid rgba(255,255,255,.05);
-  transition: all .3s ease;
-  opacity: .35;
-}
-.fle-pipe-step.fle-active {
-  opacity: 1;
-  background: rgba(131,58,180,.1);
-  border-color: rgba(131,58,180,.3);
-}
-.fle-pipe-step.fle-done {
-  opacity: .7;
-  background: rgba(32,201,151,.05);
-  border-color: rgba(32,201,151,.15);
-}
-.fle-pipe-icon {
-  font-size: .95rem;
-  flex-shrink: 0;
-  width: 24px;
-  text-align: center;
-}
-.fle-pipe-text {
-  font-size: .78rem;
-  font-weight: 600;
-  color: rgba(255,255,255,.75);
-  flex: 1;
-}
-.fle-pipe-step.fle-active .fle-pipe-text { color: #fff; }
-.fle-pipe-check {
-  font-size: .7rem;
-  color: #20C997;
-  opacity: 0;
-  transition: opacity .25s;
-}
-.fle-pipe-step.fle-done .fle-pipe-check { opacity: 1; }
-
-/* Sub-scores on scoring step */
-.fle-score-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  margin-top: 6px;
-  padding-left: 34px;
-}
-.fle-score-chip {
-  font-size: .6rem;
-  padding: 2px 8px;
-  border-radius: 10px;
-  background: rgba(131,58,180,.15);
-  color: rgba(255,255,255,.65);
-  border: 1px solid rgba(131,58,180,.2);
-}
-
-/* ══════════════════════════════════════════════════════
-   BLOCK 3 — BEST MATCH CARD
-══════════════════════════════════════════════════════ */
-.fle-match-card {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 16px;
-  background: rgba(255,255,255,.04);
-  border: 1px solid rgba(32,201,151,.2);
-  border-radius: 12px;
-  transition: all .4s ease;
-}
-.fle-match-card.fle-revealing {
-  animation: fle-reveal .5s ease-out forwards;
-}
-@keyframes fle-reveal {
-  from { opacity: 0; transform: scale(.97); }
-  to   { opacity: 1; transform: scale(1); }
-}
-
-/* Score ring */
-.fle-score-ring-wrap {
-  flex-shrink: 0;
-  position: relative;
-  width: 56px;
-  height: 56px;
-}
-.fle-score-ring {
-  width: 56px;
-  height: 56px;
-  transform: rotate(-90deg);
-}
-.fle-ring-bg {
-  fill: none;
-  stroke: rgba(255,255,255,.08);
-  stroke-width: 4;
-}
-.fle-ring-fill {
-  fill: none;
-  stroke: #20C997;
-  stroke-width: 4;
-  stroke-linecap: round;
-  stroke-dasharray: 138; /* 2π × 22 */
-  stroke-dashoffset: 138;
-  transition: stroke-dashoffset 1.2s ease;
-}
-.fle-ring-score {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: .72rem;
-  font-weight: 800;
-  color: #20C997;
-}
-
-.fle-match-info { flex: 1; min-width: 0; }
-.fle-match-name {
-  font-size: .92rem;
-  font-weight: 800;
-  color: #fff;
-  margin: 0 0 3px;
-}
-.fle-match-service {
-  font-size: .76rem;
-  color: rgba(255,255,255,.5);
-  margin: 0 0 8px;
-}
-.fle-match-badges {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-}
-.fle-match-badge {
-  font-size: .62rem;
-  padding: 2px 8px;
-  border-radius: 10px;
-  font-weight: 700;
-}
-.fle-badge-score  { background: rgba(32,201,151,.15);  color: #20C997; border: 1px solid rgba(32,201,151,.3); }
-.fle-badge-eta    { background: rgba(225,48,108,.12);  color: #E1306C; border: 1px solid rgba(225,48,108,.25); }
-.fle-badge-verify { background: rgba(64,93,230,.12);   color: #7B9FE8; border: 1px solid rgba(64,93,230,.25); }
-.fle-badge-city   { background: rgba(255,255,255,.06); color: rgba(255,255,255,.6); border: 1px solid rgba(255,255,255,.1); }
-
-.fle-match-empty {
-  text-align: center;
-  padding: 20px;
-  color: rgba(255,255,255,.3);
-  font-size: .8rem;
-}
-
-/* ══════════════════════════════════════════════════════
-   BLOCK 4 — NETWORK STATS
-══════════════════════════════════════════════════════ */
-.fle-stats-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-.fle-stat-item {
-  background: rgba(255,255,255,.03);
-  border: 1px solid rgba(255,255,255,.06);
-  border-radius: 10px;
-  padding: 14px 12px;
-  text-align: center;
-}
-.fle-stat-num {
-  font-size: 1.5rem;
-  font-weight: 900;
-  color: #fff;
-  line-height: 1;
-  letter-spacing: -.02em;
-}
-.fle-stat-num-accent { color: #20C997; }
-.fle-stat-label {
-  font-size: .66rem;
-  color: rgba(255,255,255,.4);
-  margin-top: 5px;
-  line-height: 1.35;
-}
-
-/* ══════════════════════════════════════════════════════
-   RESPONSIVE TWEAKS
+   RESPONSIVE SECTION PADDING
 ══════════════════════════════════════════════════════ */
 @media (max-width: 480px) {
-  #fle-section { padding: 52px 0 60px; }
-  .fle-header  { margin-bottom: 36px; }
-  .fle-grid    { gap: 12px; }
-  .fle-card    { padding: 16px 14px; }
-  .fle-stats-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
-  .fle-stat-num { font-size: 1.25rem; }
-  .fle-match-card { flex-direction: column; align-items: flex-start; }
-  .fle-score-ring-wrap { align-self: center; }
+  #fle-section      { padding: 52px 0 60px; }
+  .fle-header       { margin-bottom: 36px; }
+  .fle-steps-grid   { margin-bottom: 28px; }
 }
