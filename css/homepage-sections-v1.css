@@ -1,0 +1,769 @@
+/* ====================================================================
+   FIXEO — Homepage Sections Harmonization  homepage-sections-v1.css
+   Version: hsv-v1a  2026-07-12
+   Phase 2.1 — Cards and Section Rhythm
+
+   Strategy: additive polish only. Zero HTML changes. Zero JS changes.
+   Zero SEO changes. Zero analytics changes. Zero consent changes.
+   Does NOT modify:
+     css/hero-v1-premium-sprint.css    (LOCKED)
+     fixeo-footer-global.css           (deferred)
+     homepage-bottom-v1.css            (deferred)
+
+   Design system established here:
+     Card hierarchy: Primary (L1) → Secondary (L2) → Utility (L3)
+     Radius: 18px (cards) / 12px (inner elements) / 999px (badges)
+     Border: rgba(255,255,255, 0.08) default / 0.06 quieter
+     Glass: rgba(255,255,255, 0.038) default / 0.025 quieter
+     Section padding: 56px (tight) / 64px (standard) / 80px (emphasis)
+     Section inner spacing: 32px label-to-title / 36px title-to-content
+   ==================================================================== */
+
+/* ─────────────────────────────────────────────────────────────────────
+   DESIGN TOKENS  (extend homepage-v13 :root without replacing it)
+───────────────────────────────────────────────────────────────────── */
+
+:root {
+  /* Harmonized card system */
+  --hs-card-radius:      18px;
+  --hs-card-radius-sm:   12px;
+  --hs-badge-radius:     999px;
+
+  /* Glass tiers */
+  --hs-glass-l1:   rgba(255,255,255,0.052);  /* primary cards   */
+  --hs-glass-l2:   rgba(255,255,255,0.034);  /* secondary cards */
+  --hs-glass-l3:   rgba(255,255,255,0.020);  /* utility cards   */
+
+  /* Border tiers */
+  --hs-border-l1:  rgba(255,255,255,0.09);
+  --hs-border-l2:  rgba(255,255,255,0.07);
+  --hs-border-l3:  rgba(255,255,255,0.055);
+
+  /* Shadow tiers */
+  --hs-shadow-l1:  0 8px 28px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.055);
+  --hs-shadow-l2:  0 4px 16px rgba(0,0,0,0.20), inset 0 1px 0 rgba(255,255,255,0.035);
+  --hs-shadow-l3:  0 2px 8px  rgba(0,0,0,0.14);
+
+  /* Section rhythm */
+  --hs-section-pad:    64px;
+  --hs-section-pad-sm: 48px;
+  --hs-section-pad-xl: 80px;
+  --hs-header-gap:     36px;    /* section header → content */
+  --hs-card-gap:       14px;    /* card-to-card gap */
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   GLOBAL SECTION RHYTHM
+   Level 1 (conversion): keep strong padding
+   Level 2 (product proof): standard
+   Level 3 (supporting): quieter
+───────────────────────────────────────────────────────────────────── */
+
+/* L2 supporting sections — normalize to 56/64px */
+.how-it-works-section {
+  padding-top: 56px !important;
+  padding-bottom: 64px !important;
+}
+
+#why-fixeo-section,
+section#why-fixeo-section {
+  padding-top: 56px !important;
+  padding-bottom: 64px !important;
+}
+
+/* Blog section — compact content, not conversion */
+.fxblog-section {
+  padding-top: 56px !important;
+  padding-bottom: 64px !important;
+}
+
+/* Services section — already compact via services-premium.css — leave intact */
+
+/* FLE section — product moment, allow full breathing */
+#fle-section {
+  padding-top: 64px !important;
+  padding-bottom: 72px !important;
+}
+
+/* Testimonials/Vision section — L2, keep slightly generous */
+.fxv-section {
+  padding-top: 64px !important;
+  padding-bottom: 72px !important;
+}
+
+/* Final CTA — L1 conversion, reduce the excessive 100-110px to 80px */
+.final-cta-section {
+  padding-top: 80px !important;
+  padding-bottom: 80px !important;
+}
+
+/* Section headers — consistent label→title→description spacing */
+.section-header {
+  margin-bottom: var(--hs-header-gap) !important;
+}
+
+/* Section tag/badge — harmonize across all sections */
+.section-tag {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  padding: 4px 12px !important;
+  border-radius: var(--hs-badge-radius) !important;
+  font-size: 0.68rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.10em !important;
+  text-transform: uppercase !important;
+  margin-bottom: 12px !important;
+}
+
+/* Section h2 — consistent sizing across all non-hero sections */
+.section-header h2,
+.section-header .section-title {
+  font-size: clamp(1.45rem, 2.8vw, 2.0rem) !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.022em !important;
+  line-height: 1.22 !important;
+  margin-bottom: 8px !important;
+}
+
+/* Section description paragraph */
+.section-header p {
+  font-size: 0.875rem !important;
+  color: rgba(255,255,255,0.48) !important;
+  line-height: 1.65 !important;
+  max-width: 520px !important;
+  margin: 0 auto !important;
+}
+
+/* Section dividers — keep subtle */
+.section-divider {
+  height: 1px !important;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.055), transparent) !important;
+  margin: 0 !important;
+  border: none !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   HOW-IT-WORKS CARDS (L2 — product proof)
+   Existing: border-radius 20px, padding 24px 20px, border 0.07
+   Harmonize: 18px radius, 20px 18px padding, border 0.07 (keep)
+───────────────────────────────────────────────────────────────────── */
+
+.how-it-works-section .step-card {
+  border-radius: var(--hs-card-radius) !important;
+  background: var(--hs-glass-l2) !important;
+  border: 1px solid var(--hs-border-l2) !important;
+  box-shadow: var(--hs-shadow-l2) !important;
+  padding: 20px 18px 18px !important;
+  gap: 10px !important;
+  transition:
+    border-color 0.22s ease,
+    background 0.22s ease,
+    box-shadow 0.22s ease !important;
+}
+
+.how-it-works-section .step-card:hover {
+  background: rgba(255,255,255,0.048) !important;
+  border-color: rgba(255,255,255,0.10) !important;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.07) !important;
+}
+
+/* Highlighted step — primary accent, L1 */
+.how-it-works-section .step-card.step-highlight {
+  background: rgba(225,48,108,0.055) !important;
+  border-color: rgba(225,48,108,0.18) !important;
+  box-shadow: 0 8px 28px rgba(225,48,108,0.10), inset 0 1px 0 rgba(255,255,255,0.06) !important;
+}
+
+.how-it-works-section .step-card.step-highlight-payment {
+  background: rgba(64,93,230,0.055) !important;
+  border-color: rgba(64,93,230,0.18) !important;
+  box-shadow: 0 8px 28px rgba(64,93,230,0.10), inset 0 1px 0 rgba(255,255,255,0.06) !important;
+}
+
+/* Step number — quieter */
+.how-it-works-section .step-number {
+  font-size: 0.65rem !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.06em !important;
+  color: rgba(255,255,255,0.35) !important;
+  margin-bottom: 2px !important;
+}
+
+/* Step icon — consistent size */
+.how-it-works-section .step-icon {
+  font-size: 1.6rem !important;
+  line-height: 1 !important;
+  margin-bottom: 2px !important;
+}
+
+/* Step h3 */
+.how-it-works-section .step-card h3 {
+  font-size: 0.95rem !important;
+  font-weight: 700 !important;
+  color: rgba(255,255,255,0.92) !important;
+  line-height: 1.3 !important;
+  letter-spacing: -0.01em !important;
+  margin: 0 !important;
+}
+
+/* Step description */
+.how-it-works-section .step-card p {
+  font-size: 0.80rem !important;
+  color: rgba(255,255,255,0.48) !important;
+  line-height: 1.6 !important;
+  margin: 0 !important;
+}
+
+/* Steps grid — consistent gap */
+.how-it-works-section .steps-container {
+  gap: var(--hs-card-gap) !important;
+}
+
+/* Section header alignment */
+.how-it-works-section .how-header {
+  margin-bottom: var(--hs-header-gap) !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   WHY-FIXEO / FXM CARDS (L2 — product proof)
+   Existing: 20px radius, padding 24px 20px, border 0.08
+   Harmonize: 18px radius, 20px 18px padding, glass l2
+───────────────────────────────────────────────────────────────────── */
+
+.wf-card,
+.fxm-block {
+  border-radius: var(--hs-card-radius) !important;
+  background: var(--hs-glass-l2) !important;
+  border: 1px solid var(--hs-border-l2) !important;
+  box-shadow: var(--hs-shadow-l2) !important;
+  padding: 20px 18px 18px !important;
+  gap: 12px !important;
+  transition:
+    transform 0.22s cubic-bezier(0.22,1,0.36,1),
+    border-color 0.22s ease,
+    background 0.22s ease,
+    box-shadow 0.22s ease !important;
+}
+
+.wf-card:hover,
+.fxm-block:hover {
+  background: rgba(255,255,255,0.048) !important;
+  border-color: rgba(255,255,255,0.10) !important;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.07) !important;
+}
+
+/* Icon container — harmonize */
+.wf-icon-wrap,
+.fxm-icon {
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: var(--hs-card-radius-sm) !important;
+  flex-shrink: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 1.3rem !important;
+}
+
+/* Card content */
+.fxm-block-content h3,
+.wf-card h3 {
+  font-size: 0.92rem !important;
+  font-weight: 700 !important;
+  color: rgba(255,255,255,0.92) !important;
+  line-height: 1.3 !important;
+  letter-spacing: -0.01em !important;
+  margin-bottom: 4px !important;
+}
+
+.fxm-block-content p,
+.wf-card p {
+  font-size: 0.80rem !important;
+  color: rgba(255,255,255,0.45) !important;
+  line-height: 1.65 !important;
+  margin: 0 !important;
+}
+
+/* Grid gap */
+.why-fixeo-grid,
+.fxm-grid {
+  gap: var(--hs-card-gap) !important;
+}
+
+/* Why-fixeo header */
+.why-fixeo-header {
+  margin-bottom: var(--hs-header-gap) !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   FLE CARDS (L1 — product moment — keep distinctive, reduce glow)
+───────────────────────────────────────────────────────────────────── */
+
+.fle-card {
+  border-radius: var(--hs-card-radius) !important;
+  border: 1px solid var(--hs-border-l1) !important;
+  box-shadow: var(--hs-shadow-l1) !important;
+  transition:
+    border-color 0.22s ease,
+    box-shadow 0.22s ease !important;
+}
+
+.fle-card:hover {
+  border-color: rgba(225,48,108,0.22) !important;
+  box-shadow: 0 10px 32px rgba(225,48,108,0.08), inset 0 1px 0 rgba(255,255,255,0.07) !important;
+}
+
+/* FLE stats grid — consistent gap */
+.fle-stats-grid {
+  gap: var(--hs-card-gap) !important;
+}
+
+.fle-stat-item {
+  border-radius: var(--hs-card-radius) !important;
+  border: 1px solid var(--hs-border-l2) !important;
+}
+
+/* FLE header */
+.fle-header {
+  margin-bottom: var(--hs-header-gap) !important;
+}
+
+.fle-title {
+  font-size: clamp(1.55rem, 3.2vw, 2.3rem) !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.025em !important;
+  line-height: 1.15 !important;
+}
+
+.fle-subtitle {
+  font-size: 0.875rem !important;
+  color: rgba(255,255,255,0.50) !important;
+  margin-top: 6px !important;
+}
+
+.fle-micro {
+  font-size: 0.75rem !important;
+  color: rgba(255,255,255,0.32) !important;
+  margin-top: 4px !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   ARTISAN CARDS — pvc-card (L1 — conversion critical)
+   Existing: 20px radius, 0.08 border, good structure
+   Harmonize: 18px radius (align system), reduce hover lift
+───────────────────────────────────────────────────────────────────── */
+
+.pvc-card {
+  border-radius: var(--hs-card-radius) !important;
+  border: 1px solid var(--hs-border-l1) !important;
+  transition:
+    transform 0.22s cubic-bezier(0.22,1,0.36,1),
+    box-shadow 0.22s ease,
+    border-color 0.22s ease !important;
+}
+
+/* Reduce excessive hover lift from -6px to -4px */
+.pvc-card:hover {
+  transform: translateY(-4px) !important;
+  border-color: rgba(225,48,108,0.28) !important;
+  box-shadow:
+    0 10px 36px rgba(225,48,108,0.12),
+    0 4px 14px rgba(0,0,0,0.28) !important;
+}
+
+/* Artisan name — sharper hierarchy */
+.pvc-name,
+.artisan-name {
+  font-size: 0.96rem !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.01em !important;
+  line-height: 1.3 !important;
+  color: rgba(255,255,255,0.95) !important;
+}
+
+/* City + service — muted secondary */
+.pvc-location,
+.pvc-service,
+.artisan-meta {
+  font-size: 0.76rem !important;
+  color: rgba(255,255,255,0.48) !important;
+}
+
+/* Price — clear hierarchy */
+.pvc-price,
+.artisan-price {
+  font-size: 0.88rem !important;
+  font-weight: 700 !important;
+  color: rgba(255,255,255,0.90) !important;
+}
+
+/* Verification badge — prominent */
+.pvc-verified-badge,
+.artisan-verified {
+  font-size: 0.68rem !important;
+  font-weight: 700 !important;
+  padding: 2px 8px !important;
+  border-radius: var(--hs-badge-radius) !important;
+}
+
+/* Grid gap — artisan cards */
+#fixeo-homepage-vedette-grid,
+#ssb2-vedette-grid {
+  gap: var(--hs-card-gap) !important;
+}
+
+/* Artisan section header */
+.secondary-search-section .section-header,
+#artisans-section .results-header-copy {
+  margin-bottom: 28px !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   BLOG CARDS — fxblog-card (L3 — supporting content)
+   Existing: 12px radius, 0.04 glass, good text hierarchy
+   Harmonize: 14px radius, tighten excerpt clamp, reduce height
+───────────────────────────────────────────────────────────────────── */
+
+.fxblog-card {
+  border-radius: 14px !important;
+  border: 1px solid var(--hs-border-l3) !important;
+  background: var(--hs-glass-l3) !important;
+  box-shadow: var(--hs-shadow-l3) !important;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease !important;
+}
+
+.fxblog-card:hover {
+  transform: translateY(-3px) !important;
+  border-color: rgba(224,64,251,0.22) !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.22) !important;
+}
+
+/* Card body — tighter internal spacing */
+.fxblog-card-body {
+  padding: 16px 18px 14px !important;
+  gap: 8px !important;
+}
+
+/* Title — 2 line max */
+.fxblog-card-title {
+  font-size: 0.93rem !important;
+  font-weight: 700 !important;
+  color: rgba(255,255,255,0.90) !important;
+  line-height: 1.38 !important;
+  margin: 0 !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+}
+
+/* Excerpt — 2 lines firm */
+.fxblog-card-excerpt {
+  font-size: 0.80rem !important;
+  color: rgba(255,255,255,0.42) !important;
+  line-height: 1.55 !important;
+  -webkit-line-clamp: 2 !important;
+  margin: 0 !important;
+}
+
+/* Category label */
+.fxblog-card-cat {
+  font-size: 0.68rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.08em !important;
+  color: rgba(224,64,251,0.85) !important;
+}
+
+/* Meta row */
+.fxblog-card-meta {
+  padding-top: 8px !important;
+  border-top: 1px solid rgba(255,255,255,0.05) !important;
+  margin-top: auto !important;
+}
+
+/* Grid gap */
+.fxblog-grid {
+  gap: 14px !important;
+}
+
+/* Blog section header */
+.fxblog-head {
+  margin-bottom: 24px !important;
+}
+
+.fxblog-title {
+  font-size: clamp(1.45rem, 3vw, 1.9rem) !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.02em !important;
+  line-height: 1.2 !important;
+  color: rgba(255,255,255,0.94) !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   VISION / TESTIMONIAL FLOW (L2)
+   FXV story block, signals, flow steps
+───────────────────────────────────────────────────────────────────── */
+
+.fxv-story {
+  border-radius: var(--hs-card-radius) !important;
+  border: 1px solid var(--hs-border-l2) !important;
+  box-shadow: var(--hs-shadow-l2) !important;
+}
+
+.fxv-signals {
+  border-radius: var(--hs-card-radius) !important;
+  border: 1px solid var(--hs-border-l2) !important;
+}
+
+.fxv-flow-step {
+  border-radius: var(--hs-card-radius) !important;
+}
+
+.fxv-signal {
+  padding: 14px 20px !important;
+}
+
+.fxv-section .section-header {
+  margin-bottom: var(--hs-header-gap) !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   FINAL CTA BLOCK (L1 — conversion critical)
+───────────────────────────────────────────────────────────────────── */
+
+.final-cta {
+  border-radius: 22px !important;
+  border: 1px solid rgba(255,255,255,0.09) !important;
+  padding: 56px 32px !important;
+  max-width: 840px !important;
+}
+
+.final-cta-title {
+  font-size: clamp(1.5rem, 3.2vw, 2.2rem) !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.022em !important;
+  line-height: 1.22 !important;
+  max-width: 600px !important;
+  margin: 0 auto 12px !important;
+  color: rgba(255,255,255,0.96) !important;
+}
+
+.final-cta-sub {
+  font-size: 0.87rem !important;
+  color: rgba(255,255,255,0.45) !important;
+  margin-bottom: 28px !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   TRUST STRIP CARDS  (.trust-item — inside hero, but also referenced
+   in below-hero .fxf-pill trust strip)
+   fxf-mini-trust pills — keep existing styling (already good)
+───────────────────────────────────────────────────────────────────── */
+
+/* fxf-pill harmonized radius */
+#fxf-mini-trust .fxf-pill {
+  border-radius: var(--hs-card-radius-sm) !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   MOBILE (≤767px) — Section rhythm tightening
+───────────────────────────────────────────────────────────────────── */
+
+@media (max-width: 767px) {
+
+  :root {
+    --hs-section-pad: 44px;
+    --hs-header-gap:  28px;
+    --hs-card-gap:    10px;
+  }
+
+  /* Sections — tighter on mobile (perceived length reduction) */
+  .how-it-works-section {
+    padding-top: 44px !important;
+    padding-bottom: 52px !important;
+  }
+
+  #why-fixeo-section,
+  section#why-fixeo-section {
+    padding-top: 44px !important;
+    padding-bottom: 52px !important;
+  }
+
+  .fxblog-section {
+    padding-top: 44px !important;
+    padding-bottom: 52px !important;
+  }
+
+  #fle-section {
+    padding-top: 48px !important;
+    padding-bottom: 56px !important;
+  }
+
+  .fxv-section {
+    padding-top: 48px !important;
+    padding-bottom: 56px !important;
+  }
+
+  .final-cta-section {
+    padding-top: 56px !important;
+    padding-bottom: 56px !important;
+  }
+
+  /* Section headers — compact */
+  .section-header {
+    margin-bottom: 24px !important;
+    padding: 0 4px !important;
+  }
+
+  .section-header h2,
+  .section-header .section-title {
+    font-size: clamp(1.3rem, 7.5vw, 1.7rem) !important;
+  }
+
+  /* How-it-works — horizontal scroll on mobile (existing behavior) */
+  .how-it-works-section .step-card {
+    padding: 18px 14px 16px !important;
+  }
+
+  /* Why-fixeo grid — 2-col already via why-fixeo.css, keep gap tight */
+  .why-fixeo-grid,
+  .fxm-grid {
+    gap: 10px !important;
+  }
+
+  .wf-card,
+  .fxm-block {
+    padding: 16px 14px 14px !important;
+    gap: 10px !important;
+  }
+
+  .wf-icon-wrap,
+  .fxm-icon {
+    width: 38px !important;
+    height: 38px !important;
+    font-size: 1.1rem !important;
+  }
+
+  /* Blog cards — full-width text, tighter */
+  .fxblog-card-body {
+    padding: 14px 14px 12px !important;
+  }
+
+  .fxblog-title {
+    font-size: 1.4rem !important;
+  }
+
+  /* Final CTA — mobile breathing room */
+  .final-cta {
+    padding: 40px 20px !important;
+    border-radius: 18px !important;
+    max-width: 100% !important;
+  }
+
+  .final-cta-title {
+    font-size: clamp(1.3rem, 6.5vw, 1.8rem) !important;
+  }
+
+  /* FXV section — compact */
+  .fxv-story {
+    padding: 18px 18px !important;
+    margin-top: 24px !important;
+  }
+
+  .fxv-signals {
+    margin-top: 24px !important;
+    padding: 14px 8px !important;
+  }
+
+  /* FLE — already responsive, just normalize gap */
+  .fle-stats-grid {
+    gap: 10px !important;
+  }
+
+  /* Artisan cards — mobile already handled by artisan-card-mobile-v2.css */
+
+  /* Floating FAB safety: cards have padding-bottom ≥ 80px on mobile to
+     prevent last card CTA from hiding under the fixed FAB (bottom-left, 48px high + 22px) */
+  #fixeo-homepage-vedette-grid,
+  #ssb2-vedette-grid {
+    padding-bottom: 28px !important;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   TABLET (768–1023px)
+───────────────────────────────────────────────────────────────────── */
+
+@media (min-width: 768px) and (max-width: 1023px) {
+
+  :root {
+    --hs-section-pad: 56px;
+    --hs-card-gap:    12px;
+  }
+
+  /* How-it-works — 2-col grid on tablet */
+  .how-it-works-section .steps-container {
+    flex-wrap: wrap !important;
+  }
+  .how-it-works-section .step-card {
+    flex: 1 1 calc(50% - 7px) !important;
+    min-width: calc(50% - 7px) !important;
+  }
+
+  /* Why-fixeo — already 2-col via why-fixeo.css */
+
+  /* Blog — 2-col already */
+
+  /* Final CTA */
+  .final-cta {
+    padding: 48px 28px !important;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   DESKTOP LARGE (≥1200px)
+───────────────────────────────────────────────────────────────────── */
+
+@media (min-width: 1200px) {
+
+  /* Section h2 — slightly larger on big screens */
+  .section-header h2,
+  .section-header .section-title {
+    font-size: clamp(1.65rem, 2.2vw, 2.1rem) !important;
+  }
+
+  /* How-it-works — 4-col */
+  .how-it-works-section .steps-container {
+    flex-wrap: nowrap !important;
+  }
+
+  /* Cards — generous inner padding */
+  .wf-card,
+  .fxm-block {
+    padding: 22px 20px 20px !important;
+  }
+
+  .fxblog-card-body {
+    padding: 18px 20px 16px !important;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   PREFERS-REDUCED-MOTION
+───────────────────────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+
+  .wf-card,
+  .fxm-block,
+  .step-card,
+  .fxblog-card,
+  .pvc-card,
+  .fle-card {
+    transition: none !important;
+  }
+}
