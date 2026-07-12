@@ -143,3 +143,93 @@
   display: inline-block;
   vertical-align: middle;
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   R0 — Final CTA Prototype (RAFI R0 Soft Launch 2026-07-12)
+   Scope: .final-cta-section ONLY
+   Strategy:
+     Mobile (<900px): head asset (80px) centered above title, in-flow
+     Desktop (≥900px): bust asset (176px) flex-sibling to .final-cta
+   No !important cascade battles — added as sibling, not modifying
+   existing .final-cta flex rules.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── Mobile RAFI head — inside .final-cta, above title ──────────── */
+.rafi-fcta-mobile {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  margin-bottom: 20px;
+}
+
+.rafi-fcta-mobile .rafi-img {
+  width: 80px;
+  height: 80px;
+}
+
+/* Hide mobile asset on desktop */
+@media (min-width: 900px) {
+  .rafi-fcta-mobile {
+    display: none;
+  }
+}
+
+/* ── Desktop RAFI bust — flex sibling to .final-cta ─────────────── */
+.rafi-fcta-side {
+  display: none; /* hidden on mobile */
+  align-self: center;
+  flex-shrink: 0;
+  margin-left: 32px;
+}
+
+.rafi-fcta-side .rafi-img {
+  width: 176px;
+  height: 176px;
+}
+
+/* Show desktop asset at ≥900px */
+@media (min-width: 900px) {
+  .rafi-fcta-side {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+/* Tablet intermediate (768–899px): keep mobile head layout */
+@media (min-width: 768px) and (max-width: 899px) {
+  .rafi-fcta-mobile {
+    display: flex;
+  }
+  .rafi-fcta-mobile .rafi-img {
+    width: 96px;
+    height: 96px;
+  }
+}
+
+/* ── Scroll-reveal entrance (reuses existing hm-rise keyframe) ──── */
+/*
+ * .rafi-fcta-side and .rafi-fcta-mobile participate in the
+ * existing .final-cta scroll reveal. No new animation needed —
+ * they enter with the container they live in.
+ */
+
+/* ── Reduced motion: static ─────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .rafi-fcta-side,
+  .rafi-fcta-mobile {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ── Optional companion copy ─────────────────────────────────────── */
+.rafi-fcta-copy {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.42);
+  text-align: center;
+  margin-top: 10px;
+  line-height: 1.4;
+  max-width: 160px;
+  letter-spacing: 0.01em;
+}

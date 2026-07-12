@@ -2213,6 +2213,7 @@ section#home.hero.hero-section {
 </style>
   <link rel="stylesheet" href="css/homepage-sections-v1.css?v=hsv1a">
   <link rel="stylesheet" href="css/homepage-motion-v1.css?v=hmv1a">
+  <link rel="stylesheet" href="css/fixeo-rafi-v2.css?v=rfv2-r0a">
   <link rel="stylesheet" href="css/hero-v1-premium-sprint.css?v=hvps1b">
   <link rel="stylesheet" href="css/fixeo-consent-v1.css?v=fcv1b">
   <script src="js/fixeo-consent-v1.js?v=fcv1c"></script>
@@ -3169,6 +3170,16 @@ section#home.hero.hero-section {
 <section class="section final-cta-section" aria-labelledby="final-cta-title">
   <div class="container">
     <div class="final-cta">
+      <!-- RAFI R0 — Mobile head: visible <900px, above title, in column flow -->
+      <div class="rafi-fcta-mobile" aria-hidden="true">
+        <img
+          src="rafi/RAFI_V2_HeadCollar_Color.webp"
+          class="rafi-img rafi-ctx--dark"
+          width="80" height="80"
+          alt=""
+          loading="lazy"
+          decoding="async">
+      </div>
       <!-- 1. Title -->
       <h2 id="final-cta-title" class="final-cta-title">Publiez votre demande et recevez des offres en quelques minutes</h2>
       <!-- 2. Subtitle -->
@@ -3187,6 +3198,19 @@ section#home.hero.hero-section {
       </button>
       <!-- 5. Proof line (no fake timing) -->
       <p class="final-cta-proof">⚡ Demande traitée en priorité</p>
+    </div>
+    <!-- RAFI R0 — Desktop bust: visible ≥900px, flex sibling to .final-cta -->
+    <div class="rafi-fcta-side" aria-hidden="true">
+      <div>
+        <img
+          src="rafi/RAFI_V2_Bust_Color.webp"
+          class="rafi-img rafi-ctx--dark"
+          width="176" height="176"
+          alt=""
+          loading="lazy"
+          decoding="async">
+        <p class="rafi-fcta-copy">Fixeo trouve le bon artisan.<br>Vous gardez le contrôle.</p>
+      </div>
     </div>
   </div>
 </section>
