@@ -1,0 +1,185 @@
+/* ══════════════════════════════════════════════════════════════════
+   FIXEO Narrative Architecture V1 — fnrv1a
+   Phase 7.1: Homepage Narrative Reorder
+   Namespace: fxn-bridge-*
+   ══════════════════════════════════════════════════════════════════
+   Role: Psychological transition bridges between sections.
+         Visual rhythm corrections.
+         No redesign of any existing section.
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ─────────────────────────────────────────────────────────────────
+   NARRATIVE BRIDGES
+   Three bridges guide the visitor's inner monologue between zones:
+   Discovery → Journey → Brain Engine → Why FIXEO
+   ───────────────────────────────────────────────────────────────── */
+
+.fxn-bridge {
+  padding: 20px 0 0;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.fxn-bridge .container {
+  max-width: 560px;
+}
+
+.fxn-bridge-q {
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.28);
+  line-height: 1.5;
+  margin: 0;
+  padding: 0 16px;
+  /* Subtle separator line above */
+  position: relative;
+}
+
+.fxn-bridge-q::before {
+  content: '';
+  display: block;
+  width: 24px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.10);
+  margin: 0 auto 10px;
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   DISCOVERY → JOURNEY BRIDGE
+   Appears after artisan grid, before Customer Journey
+   Slightly warmer — mirrors the Discovery indigo accent
+   ───────────────────────────────────────────────────────────────── */
+
+.fxn-bridge:nth-of-type(1) .fxn-bridge-q {
+  color: rgba(160, 180, 255, 0.30);
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   JOURNEY → BRAIN ENGINE BRIDGE
+   Appears after Customer Journey, before Brain Engine
+   Violet tint — matches Brain Engine's orbital color
+   ───────────────────────────────────────────────────────────────── */
+
+.fxn-bridge:nth-of-type(2) .fxn-bridge-q {
+  color: rgba(180, 160, 255, 0.28);
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   BRAIN ENGINE → WHY FIXEO BRIDGE
+   Appears after Brain Engine, before Why FIXEO
+   Neutral — transitions from visual to rational
+   ───────────────────────────────────────────────────────────────── */
+
+.fxn-bridge:nth-of-type(3) .fxn-bridge-q {
+  color: rgba(200, 210, 255, 0.24);
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   SECTION RHYTHM — remove visual fatigue
+   The reorder changes which dividers fire where.
+   Ensure consistent breathing room.
+   ───────────────────────────────────────────────────────────────── */
+
+/* Brain Engine: reduce top breathing room now that it follows a bridge */
+#fle-section {
+  padding-top: 40px;
+}
+
+/* Why FIXEO: modest top padding after bridge */
+#why-fixeo-section {
+  padding-top: 40px;
+}
+
+/* FXV Vision: slightly more space — it's the emotional capstone */
+.fxv-section {
+  padding-top: 56px;
+  padding-bottom: 56px;
+}
+
+/* Blog: same rhythm as before — no change */
+
+/* Artisan section: tighten top slightly — it flows from the discovery zone */
+#artisans-section {
+  padding-top: 8px;
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   TRUST RAIL — updated icons need baseline alignment
+   ───────────────────────────────────────────────────────────────── */
+
+.trust-section .trust-icon {
+  font-size: 1rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   FXV VISION — simplified (flow removed; metrics remain)
+   Ensure metrics grid looks balanced with 4 items
+   ───────────────────────────────────────────────────────────────── */
+
+/* fxv-signals: already handles 4 items well; ensure consistent gap */
+.fxv-signals {
+  gap: 0; /* keep existing separator pattern */
+}
+
+/* fxv-story: give slightly more bottom margin now flow block is gone */
+.fxv-story {
+  margin-bottom: 32px;
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   SECTION DIVIDER — positioned correctly after reorder
+   Dividers surrounding Brain Engine: keep existing visual weight
+   ───────────────────────────────────────────────────────────────── */
+
+/* No override needed — dividers are explicit DOM elements */
+
+/* ─────────────────────────────────────────────────────────────────
+   REDUCED MOTION — disable bridge animation (none yet, future-safe)
+   ───────────────────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .fxn-bridge,
+  .fxn-bridge-q,
+  .fxn-bridge-q::before {
+    transition: none;
+    animation: none;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   MOBILE
+   ───────────────────────────────────────────────────────────────── */
+
+@media (max-width: 767px) {
+  .fxn-bridge {
+    padding: 14px 0 0;
+  }
+
+  .fxn-bridge-q {
+    font-size: 0.72rem;
+    padding: 0 24px;
+  }
+
+  #fle-section {
+    padding-top: 32px;
+  }
+
+  #why-fixeo-section {
+    padding-top: 32px;
+  }
+
+  .fxv-section {
+    padding-top: 40px;
+    padding-bottom: 40px;
+  }
+}
+
+/* version: fnrv1a */

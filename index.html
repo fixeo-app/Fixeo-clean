@@ -2056,6 +2056,7 @@ section#home.hero.hero-section {
   <link rel="stylesheet" href="css/fixeo-brain-engine-v1.css?v=fbe-v41">
   <link rel="stylesheet" href="css/fixeo-journey-v1.css?v=fjv1a">
   <link rel="stylesheet" href="css/fixeo-network-v1.css?v=fnv1a">
+  <link rel="stylesheet" href="css/fixeo-narrative-v1.css?v=fnrv1a">
   <link rel="stylesheet" href="css/fixeo-ai-request-engine.css?v=aire-v1a">
   <link rel="stylesheet" href="css/fixeo-hero-insights.css?v=fxhi-v1c">
   <link rel="stylesheet" href="css/fixeo-hero-suggestions-v2.css?v=fxhsv2-v1a">
@@ -2477,7 +2478,7 @@ section#home.hero.hero-section {
 <main id="main-content">
 
 <!-- ══════════════════════════════════════════════════════════
-     1. HERO SECTION V13
+     1. HERO SECTION
 ══════════════════════════════════════════════════════════ -->
 <section class="hero hero-section" id="home" aria-label="Section d'accueil">
   <!-- Gradient overlay -->
@@ -2534,6 +2535,7 @@ section#home.hero.hero-section {
   </div><!-- /hero-content -->
 </section>
 
+
 <!-- faee-v2a: Always-on AI Estimation Card — rendered by fixeo-estimation-v2-hero.js -->
 <div id="faee-v2-hero" aria-label="Estimation IA FIXEO" aria-live="polite"></div>
 
@@ -2557,21 +2559,20 @@ section#home.hero.hero-section {
 
 <div class="section-divider" aria-hidden="true"></div>
 
-<div class="mobile-social-proof" aria-label="Preuve sociale Fixeo">
-  Déjà +500 clients satisfaits au Maroc 🇲🇦
-</div>
-
+<!-- ══════════════════════════════════════════════════════════
+     2. TRUST RAIL — verified production data only
+══════════════════════════════════════════════════════════ -->
 <section class="section section-sm trust-section" aria-label="Confiance Fixeo">
   <div class="container">
     <div class="trust-section-inner">
-      <div class="trust-item"><span class="trust-icon">⭐</span><span>+500 clients satisfaits</span></div>
-      <div class="trust-item"><span class="trust-icon">✔</span><span>Artisans vérifiés</span></div>
-      <div class="trust-item"><span class="trust-icon">⚡</span><span>Réponse rapide &lt; 30 min</span></div>
-      <div class="trust-item"><span class="trust-icon">&#128176;</span><span>Paiement après service</span></div>
+      <div class="trust-item"><span class="trust-icon">✔</span><span>1&#8239;134 artisans vérifiés</span></div>
+      <div class="trust-item"><span class="trust-icon">🛡️</span><span>Profils validés par notre équipe</span></div>
+      <div class="trust-item"><span class="trust-icon">📍</span><span>20 villes au Maroc</span></div>
+      <div class="trust-item"><span class="trust-icon">💰</span><span>Paiement après intervention</span></div>
     </div>
   </div>
 </section>
-
+<!-- Recommended artisan — hidden by default, JS-revealed -->
 <section class="section section-sm recommended-artisan" id="recommended-artisan-section" aria-labelledby="recommended-artisan-title" hidden>
   <div class="container">
     <div class="recommended-artisan-shell">
@@ -2595,8 +2596,369 @@ section#home.hero.hero-section {
     </div>
   </div>
 </section>
+<div class="section-divider" aria-hidden="true"></div>
+<!-- ══════════════════════════════════════════════════════════
+     3. NETWORK DISCOVERY — service chips + city chips + artisan grids
+        ONE coherent discovery zone (JS IDs fully preserved)
+══════════════════════════════════════════════════════════ -->
+<section class="section section-sm services-section" id="services" aria-labelledby="services-title">
+  <div class="container">
+    <!-- ── Network Discovery Header ── -->
+    <header class="fxn-header">
+      <span class="fxn-eyebrow">Réseau FIXEO</span>
+      <h2 id="services-title" class="fxn-title">Quel artisan<br>recherchez-vous&nbsp;?</h2>
+      <p class="fxn-subtitle">Explorez le réseau et découvrez les professionnels disponibles près de chez vous.</p>
+    </header>
 
+    <!-- City filter -->
+    <div class="services-filter services-filter-bar">
+      <span class="services-city-static-label" style="font-size:0.85rem;color:rgba(255,255,255,0.58);font-weight:600">📍 Ville :</span>
+      <select id="services-city-filter" class="city-filter-select" aria-label="Filtrer les artisans par ville">
+        <option value="">Toutes les villes</option>
+        <option value="Casablanca">Casablanca</option>
+        <option value="Rabat">Rabat</option>
+        <option value="Marrakech">Marrakech</option>
+        <option value="Fès">Fès</option>
+        <option value="Agadir">Agadir</option>
+        <option value="Tanger">Tanger</option>
+        <option value="Meknès">Meknès</option>
+        <option value="Oujda">Oujda</option>
+        <option value="Kénitra">Kénitra</option>
+        <option value="Tétouan">Tétouan</option>
+        <option value="Safi">Safi</option>
+        <option value="El Jadida">El Jadida</option>
+      </select>
+      <span id="services-city-label" style="font-size:0.82rem;color:#20c997;display:none">
+        ✅ <span id="services-city-name"></span>
+      </span>
+        <div class="city-quick-chips" id="city-quick-chips">
+  <button class="city-chip" data-city="Casablanca">Casablanca</button>
+  <button class="city-chip" data-city="Rabat">Rabat</button>
+  <button class="city-chip" data-city="Fès">Fès</button>
+  <button class="city-chip" data-city="Tanger">Tanger</button>
+  <button class="city-chip" data-city="Marrakech">Marrakech</button>
+  <button class="city-chip city-chip-more">+ Plus</button>
+</div>
+    </div>
+  
+
+    <!-- Service chips -->
+    <div class="category-chips" role="list" aria-label="Catégories de services">
+      <div class="chip service-chip" role="listitem" data-category="all" tabindex="0"><span class="chip-icon">🔍</span>Tout voir</div>
+      <div class="chip service-chip active" role="listitem" data-category="plomberie" tabindex="0"><span class="chip-icon">🚿</span>Plomberie</div>
+      <div class="chip service-chip" role="listitem" data-category="electricite" tabindex="0"><span class="chip-icon">⚡</span>Électricité</div>
+      <div class="chip service-chip" role="listitem" data-category="peinture" tabindex="0"><span class="chip-icon">🎨</span>Peinture</div>
+      <div class="chip service-chip" role="listitem" data-category="climatisation" tabindex="0"><span class="chip-icon">❄️</span>Climatisation</div>
+      <div class="chip service-chip" role="listitem" data-category="nettoyage" tabindex="0"><span class="chip-icon">🧹</span>Nettoyage</div>
+      <div class="chip service-chip" role="listitem" data-category="menuiserie" tabindex="0"><span class="chip-icon">🪚</span>Menuiserie</div>
+      <div class="chip service-chip" role="listitem" data-category="serrurerie" tabindex="0"><span class="chip-icon">🔑</span>Serrurerie</div>
+      <div class="chip service-chip" role="listitem" data-category="maconnerie" tabindex="0"><span class="chip-icon">🧱</span>Maçonnerie</div>
+      <div class="chip service-chip" role="listitem" data-category="jardinage" tabindex="0"><span class="chip-icon">🌿</span>Jardinage</div>
+      <div class="chip service-chip" role="listitem" data-category="bricolage" tabindex="0"><span class="chip-icon">🔨</span>Bricolage</div>
+      <div class="chip service-chip" role="listitem" data-category="demenagement" tabindex="0"><span class="chip-icon">📦</span>Déménagement</div>
+      <div class="chip service-chip" role="listitem" data-category="carrelage" tabindex="0"><span class="chip-icon">⬜</span>Carrelage</div>
+      <div class="chip service-chip" role="listitem" data-category="toiture" tabindex="0"><span class="chip-icon">🏠</span>Toiture</div>
+      <div class="chip service-chip" role="listitem" data-category="vitrerie" tabindex="0"><span class="chip-icon">🪟</span>Vitrerie</div>
+      <div class="chip service-chip" role="listitem" data-category="chauffage" tabindex="0"><span class="chip-icon">🔥</span>Chauffage</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- Service artisans (injected by JS) -->
+<div id="service-artisans-section" class="container services-grid" style="padding-bottom:24px"></div>
+
+<!-- SEO local pages linked via footer and static routes - visible block removed -->
+
+<div class="section-divider" aria-hidden="true"></div>
+
+<!-- ══════════════════════════════════════════════════════════
+     3. ARTISANS VEDETTE V13 - Single section, 2×5 grid
+══════════════════════════════════════════════════════════ -->
+
+<section class="section" id="secondary-search-section" aria-labelledby="vedette-title">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">SÉLECTION PREMIUM</span>
+      <h2 id="vedette-title">⭐ Artisans Vedettes</h2>
+      <p>Notre sélection de professionnels les mieux notés - disponibles et vérifiés</p>
+    </div>
+
+    <!-- 2 lignes × 5 cartes -->
+    <div class="ssb2-vedette-section" id="ssb2-vedette-section">
+      <div class="pvc-grid-counter" id="pvc-grid-counter" aria-live="polite"></div>
+      <div class="ssb2-vedette-grid" id="ssb2-vedette-grid"
+           aria-label="Artisans vedettes - sélection premium"></div>
+      <div class="ssb2-vedette-more-wrap">
+        <button id="ssb2-vedette-more" class="ssb2-btn-more" style="display:none"
+                aria-label="Charger plus d'artisans vedettes">
+          👷 Voir plus d'artisans
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<div class="section-divider" aria-hidden="true"></div>
+
+<!-- ★ CONVERSION BOOST v22 - Top Artisans du Moment -->
+
+<section id="top-artisans" class="section section-sm top-artisan-section" aria-labelledby="top-artisans-title">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">TENDANCE</span>
+      <h2 id="top-artisans-title">🔥 Les meilleurs artisans du moment</h2>
+      <p class="top-artisan-sub">🔥 Les artisans les mieux notés cette semaine</p>
+    </div>
+    <div id="top-list" class="top-artisans-grid" aria-label="Classement des meilleurs artisans"></div>
+  </div>
+</section>
+
+
+<div class="section-divider" aria-hidden="true"></div>
+
+<!-- ══════════════════════════════════════════════════════════
+     4. DÉCOUVRIR PLUS D'ARTISANS V13
+══════════════════════════════════════════════════════════ -->
+
+<section class="section" id="artisans-section" aria-labelledby="results-main-title">
+  <div class="container results-page-shell">
+    <!-- Hidden inputs for search engine compatibility -->
+    <select id="filter-category" style="display:none" aria-hidden="true"></select>
+    <select id="filter-city" style="display:none" aria-hidden="true"></select>
+    <input type="text" id="search-input" style="display:none" aria-hidden="true"/>
+    <select id="filter-availability" style="display:none" aria-hidden="true"></select>
+    <select id="filter-sort" style="display:none" aria-hidden="true"></select>
+
+    <div class="results-header premium-results-header" style="display:none">
+      <div class="results-header-copy">
+        <span class="results-header-kicker">ARTISANS VÉRIFIÉS</span>
+        <h1 id="results-main-title">Artisans près de chez vous</h1>
+        <p id="results-main-meta"></p>
+      </div>
+      <button class="edit-search-btn" id="edit-results-search-btn" type="button" style="display:none">Modifier la recherche</button>
+    </div>
+
+    <div class="results-layout">
+      <aside class="results-filters" style="display:none" aria-labelledby="results-filters-title">
+        <div class="results-filters-head">
+          <h3 id="results-filters-title">Filtres</h3>
+          <button class="results-reset-btn" id="results-reset-btn" type="button">Réinitialiser</button>
+        </div>
+
+        <div class="results-filter-group">
+          <label for="results-filter-city">Ville</label>
+          <select id="results-filter-city">
+            <option value="">Toutes les villes</option>
+          </select>
+        </div>
+
+        <div class="results-filter-group">
+          <label for="results-filter-rating">Note minimum</label>
+          <select id="results-filter-rating">
+            <option value="0">Toutes les notes</option>
+            <option value="4.8">4,8 et plus</option>
+            <option value="4.5">4,5 et plus</option>
+            <option value="4">4,0 et plus</option>
+          </select>
+        </div>
+
+        <div class="results-filter-group">
+          <label for="results-filter-availability">Disponibilité</label>
+          <select id="results-filter-availability">
+            <option value="">Toutes</option>
+            <option value="available">Disponible maintenant</option>
+            <option value="busy">Prend des réservations</option>
+          </select>
+        </div>
+
+        <div class="results-filter-group">
+          <label for="results-filter-price">Prix max</label>
+          <select id="results-filter-price">
+            <option value="">Tous les prix</option>
+            <option value="100">Jusqu'à 100 MAD</option>
+            <option value="150">Jusqu'à 150 MAD</option>
+            <option value="200">Jusqu'à 200 MAD</option>
+            <option value="300">Jusqu'à 300 MAD</option>
+          </select>
+        </div>
+
+        <label class="results-filter-check" for="results-filter-verified">
+          <input id="results-filter-verified" type="checkbox"/>
+          <span>Artisans vérifiés uniquement</span>
+        </label>
+      </aside>
+
+      <div class="results-main-column">
+        <div class="results-toolbar" style="display:none">
+          <div class="results-toolbar-left">
+            <span id="results-count">24 résultats</span>
+            <span class="results-toolbar-badge" id="other-artisans-count-badge">👷 24 profils</span>
+          </div>
+          <select id="results-sort-select" aria-label="Trier les résultats">
+            <option value="rating">Les mieux notés</option>
+            <option value="response">Les plus rapides</option>
+            <option value="price_asc">Les moins chers</option>
+          </select>
+        </div>
+
+        <div id="other-artisans-banner" class="other-artisans-banner results-trust-strip" style="display:none">
+          <div class="other-artisans-banner-inner">
+            <span class="separator-icon">⚡</span>
+            <div class="separator-text-block">
+              <span class="separator-title">Comparez vite, choisissez en confiance</span>
+              <span class="separator-subtitle">Profils vérifiés, prix visibles et CTA toujours accessibles</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Artisans grid (injected by main.js) - pagination by homepage-v13.js -->
+        <div class="artisans-grid results-list" id="artisans-container"
+             aria-live="polite" aria-label="Liste des artisans vérifiés"></div>
+        <div id="loading-artisans" style="display:none" aria-live="polite">Chargement des artisans...</div>
+        <div id="no-artisan" style="display:none;" aria-live="polite">
+          <p>Aucun artisan disponible pour ces critères pour le moment.</p>
+        </div>
+        <!-- Pagination injected by homepage-v13.js -->
+      </div>
+    </div>
+
+    <button class="mobile-sticky-cta" id="mobile-sticky-cta" type="button" data-open-request-form="true">Publier ma demande</button>
+  </div>
+</section>
+
+<!-- ═══ NARRATIVE BRIDGE ═══ -->
+<div class="fxn-bridge" aria-hidden="true">
+  <div class="container">
+    <p class="fxn-bridge-q">Comment FIXEO sélectionne-t-il les artisans que vous voyez ?</p>
+  </div>
+</div>
+
+<div class="section-divider" aria-hidden="true"></div>
+<!-- ══════════════════════════════════════════════════════════
+     4. CUSTOMER JOURNEY — 5-moment timeline
+══════════════════════════════════════════════════════════ -->
+<section id="how-it-works" class="section how-it-works-section" aria-labelledby="how-title">
+  <div class="container">
+
+    <!-- ── Section header ── -->
+    <header class="cjx-header">
+      <span class="cjx-eyebrow">Comment ça marche</span>
+      <h2 id="how-title" class="cjx-title">Votre besoin.<br>Notre réponse.</h2>
+      <p class="cjx-subtitle">Ce qui se passe dès que vous envoyez votre demande.</p>
+    </header>
+
+    <!-- ══════════════════════════════════════════════════════
+         CUSTOMER JOURNEY — 5 moments
+         Desktop: horizontal timeline, eye L → R
+         Mobile:  vertical timeline, eye top → bottom
+    ══════════════════════════════════════════════════════ -->
+    <div class="cjx-journey" role="list" aria-label="Les 5 étapes de votre mise en relation">
+
+      <!-- Journey line — reveals on scroll, connects all moments -->
+      <div class="cjx-line" aria-hidden="true"></div>
+
+      <!-- ── Moment 1 — Le Problème ── -->
+      <article class="cjx-moment cjx-moment--1" role="listitem">
+        <div class="cjx-moment-icon" aria-hidden="true">💧</div>
+        <div class="cjx-moment-body">
+          <span class="cjx-moment-eyebrow">Vous avez un besoin.</span>
+          <h3 class="cjx-moment-headline">Une fuite.<br>Une panne.<br>Une urgence.</h3>
+          <p class="cjx-moment-sub">Décrivez-le en quelques mots.</p>
+        </div>
+      </article>
+
+      <!-- ── Moment 2 — La Compréhension ── -->
+      <article class="cjx-moment cjx-moment--2" role="listitem">
+        <div class="cjx-moment-icon" aria-hidden="true">⚙️</div>
+        <div class="cjx-moment-body">
+          <span class="cjx-moment-eyebrow">FIXEO comprend.</span>
+          <ul class="cjx-checks" aria-label="Capacités détectées">
+            <li class="cjx-check">
+              <span class="cjx-check-mark" aria-hidden="true">✓</span>
+              Métier identifié
+            </li>
+            <li class="cjx-check">
+              <span class="cjx-check-mark" aria-hidden="true">✓</span>
+              Urgence analysée
+            </li>
+            <li class="cjx-check">
+              <span class="cjx-check-mark" aria-hidden="true">✓</span>
+              Ville détectée
+            </li>
+            <li class="cjx-check">
+              <span class="cjx-check-mark" aria-hidden="true">✓</span>
+              Estimation préparée
+            </li>
+          </ul>
+        </div>
+      </article>
+
+      <!-- ── Moment 3 — Le Moteur ── -->
+      <article class="cjx-moment cjx-moment--3" role="listitem">
+        <div class="cjx-moment-icon" aria-hidden="true">🔮</div>
+        <div class="cjx-moment-body">
+          <span class="cjx-moment-eyebrow">Le moteur travaille.</span>
+          <div class="cjx-engine-words">
+            <div class="cjx-engine-row">
+              <span>Matching</span>
+              <span class="cjx-engine-dot" aria-hidden="true"></span>
+              <span>Sélection</span>
+            </div>
+            <div class="cjx-engine-row">
+              <span>Score</span>
+              <span class="cjx-engine-dot" aria-hidden="true"></span>
+              <span>Confiance</span>
+            </div>
+          </div>
+          <p class="cjx-engine-count">Parmi 1 134 artisans au Maroc.</p>
+        </div>
+      </article>
+
+      <!-- ── Moment 4 — Le Profil ── -->
+      <article class="cjx-moment cjx-moment--4" role="listitem">
+        <div class="cjx-moment-icon" aria-hidden="true">👤</div>
+        <div class="cjx-moment-body">
+          <span class="cjx-moment-eyebrow">Votre artisan.</span>
+          <h3 class="cjx-moment-headline">Les profils les&nbsp;plus adaptés vous sont proposés.</h3>
+          <p class="cjx-moment-sub">Pas imposé. Vous choisissez.</p>
+        </div>
+      </article>
+
+      <!-- ── Moment 5 — La Mise en Relation ── -->
+      <article class="cjx-moment cjx-moment--5" role="listitem">
+        <div class="cjx-moment-icon" aria-hidden="true">🤝</div>
+        <div class="cjx-moment-body">
+          <span class="cjx-moment-eyebrow">La mise en relation.</span>
+          <h3 class="cjx-moment-headline">La conversation commence.<br>La mission aussi.</h3>
+          <div class="cjx-final-trio" aria-label="Simple, Rapide, Humain">
+            <span>Simple</span>
+            <span>·</span>
+            <span>Rapide</span>
+            <span>·</span>
+            <span>Humain</span>
+          </div>
+        </div>
+      </article>
+
+    </div><!-- /.cjx-journey -->
+
+  </div><!-- /.container -->
+</section>
+
+<!-- ═══ NARRATIVE BRIDGE ═══ -->
+<div class="fxn-bridge" aria-hidden="true">
+  <div class="container">
+    <p class="fxn-bridge-q">Que se passe-t-il réellement derrière chaque mise en relation ?</p>
+  </div>
+</div>
+
+<div class="section-divider" aria-hidden="true"></div>
 <!-- FIXEO Truth Engine — fle-v2a (2026-07-12: simulation removed) -->
+<!-- ══════════════════════════════════════════════════════════
+     5. BRAIN ENGINE — orbital intelligence (MOVED from position 4)
+══════════════════════════════════════════════════════════ -->
 <section id="fle-section" aria-labelledby="fle-title">
   <div class="container">
 
@@ -2824,353 +3186,18 @@ section#home.hero.hero-section {
 
   </div><!-- /container -->
 </section>
-<!-- /fle-section -->
-
 <div class="section-divider" aria-hidden="true"></div>
 
-<!-- ══════════════════════════════════════════════════════════
-     2. SERVICES SECTION V13
-══════════════════════════════════════════════════════════ -->
-<section class="section section-sm services-section" id="services" aria-labelledby="services-title">
+<!-- ═══ NARRATIVE BRIDGE ═══ -->
+<div class="fxn-bridge" aria-hidden="true">
   <div class="container">
-    <!-- ── Network Discovery Header ── -->
-    <header class="fxn-header">
-      <span class="fxn-eyebrow">Réseau FIXEO</span>
-      <h2 id="services-title" class="fxn-title">Quel artisan<br>recherchez-vous&nbsp;?</h2>
-      <p class="fxn-subtitle">Explorez le réseau et découvrez les professionnels disponibles près de chez vous.</p>
-    </header>
-
-    <!-- City filter -->
-    <div class="services-filter services-filter-bar">
-      <span class="services-city-static-label" style="font-size:0.85rem;color:rgba(255,255,255,0.58);font-weight:600">📍 Ville :</span>
-      <select id="services-city-filter" class="city-filter-select" aria-label="Filtrer les artisans par ville">
-        <option value="">Toutes les villes</option>
-        <option value="Casablanca">Casablanca</option>
-        <option value="Rabat">Rabat</option>
-        <option value="Marrakech">Marrakech</option>
-        <option value="Fès">Fès</option>
-        <option value="Agadir">Agadir</option>
-        <option value="Tanger">Tanger</option>
-        <option value="Meknès">Meknès</option>
-        <option value="Oujda">Oujda</option>
-        <option value="Kénitra">Kénitra</option>
-        <option value="Tétouan">Tétouan</option>
-        <option value="Safi">Safi</option>
-        <option value="El Jadida">El Jadida</option>
-      </select>
-      <span id="services-city-label" style="font-size:0.82rem;color:#20c997;display:none">
-        ✅ <span id="services-city-name"></span>
-      </span>
-        <div class="city-quick-chips" id="city-quick-chips">
-  <button class="city-chip" data-city="Casablanca">Casablanca</button>
-  <button class="city-chip" data-city="Rabat">Rabat</button>
-  <button class="city-chip" data-city="Fès">Fès</button>
-  <button class="city-chip" data-city="Tanger">Tanger</button>
-  <button class="city-chip" data-city="Marrakech">Marrakech</button>
-  <button class="city-chip city-chip-more">+ Plus</button>
+    <p class="fxn-bridge-q">Pourquoi ce moteur vous garantit-il le meilleur artisan ?</p>
+  </div>
 </div>
-    </div>
-  
-
-    <!-- Service chips -->
-    <div class="category-chips" role="list" aria-label="Catégories de services">
-      <div class="chip service-chip" role="listitem" data-category="all" tabindex="0"><span class="chip-icon">🔍</span>Tout voir</div>
-      <div class="chip service-chip active" role="listitem" data-category="plomberie" tabindex="0"><span class="chip-icon">🚿</span>Plomberie</div>
-      <div class="chip service-chip" role="listitem" data-category="electricite" tabindex="0"><span class="chip-icon">⚡</span>Électricité</div>
-      <div class="chip service-chip" role="listitem" data-category="peinture" tabindex="0"><span class="chip-icon">🎨</span>Peinture</div>
-      <div class="chip service-chip" role="listitem" data-category="climatisation" tabindex="0"><span class="chip-icon">❄️</span>Climatisation</div>
-      <div class="chip service-chip" role="listitem" data-category="nettoyage" tabindex="0"><span class="chip-icon">🧹</span>Nettoyage</div>
-      <div class="chip service-chip" role="listitem" data-category="menuiserie" tabindex="0"><span class="chip-icon">🪚</span>Menuiserie</div>
-      <div class="chip service-chip" role="listitem" data-category="serrurerie" tabindex="0"><span class="chip-icon">🔑</span>Serrurerie</div>
-      <div class="chip service-chip" role="listitem" data-category="maconnerie" tabindex="0"><span class="chip-icon">🧱</span>Maçonnerie</div>
-      <div class="chip service-chip" role="listitem" data-category="jardinage" tabindex="0"><span class="chip-icon">🌿</span>Jardinage</div>
-      <div class="chip service-chip" role="listitem" data-category="bricolage" tabindex="0"><span class="chip-icon">🔨</span>Bricolage</div>
-      <div class="chip service-chip" role="listitem" data-category="demenagement" tabindex="0"><span class="chip-icon">📦</span>Déménagement</div>
-      <div class="chip service-chip" role="listitem" data-category="carrelage" tabindex="0"><span class="chip-icon">⬜</span>Carrelage</div>
-      <div class="chip service-chip" role="listitem" data-category="toiture" tabindex="0"><span class="chip-icon">🏠</span>Toiture</div>
-      <div class="chip service-chip" role="listitem" data-category="vitrerie" tabindex="0"><span class="chip-icon">🪟</span>Vitrerie</div>
-      <div class="chip service-chip" role="listitem" data-category="chauffage" tabindex="0"><span class="chip-icon">🔥</span>Chauffage</div>
-    </div>
-  </div>
-</section>
-
-<!-- Service artisans (injected by JS) -->
-<div id="service-artisans-section" class="container services-grid" style="padding-bottom:24px"></div>
-
-<!-- SEO local pages linked via footer and static routes - visible block removed -->
-
-<div class="section-divider" aria-hidden="true"></div>
 
 <!-- ══════════════════════════════════════════════════════════
-     3. ARTISANS VEDETTE V13 - Single section, 2×5 grid
+     6. WHY FIXEO — 6 rational benefits
 ══════════════════════════════════════════════════════════ -->
-<section class="section" id="secondary-search-section" aria-labelledby="vedette-title">
-  <div class="container">
-    <div class="section-header">
-      <span class="section-tag">SÉLECTION PREMIUM</span>
-      <h2 id="vedette-title">⭐ Artisans Vedettes</h2>
-      <p>Notre sélection de professionnels les mieux notés - disponibles et vérifiés</p>
-    </div>
-
-    <!-- 2 lignes × 5 cartes -->
-    <div class="ssb2-vedette-section" id="ssb2-vedette-section">
-      <div class="pvc-grid-counter" id="pvc-grid-counter" aria-live="polite"></div>
-      <div class="ssb2-vedette-grid" id="ssb2-vedette-grid"
-           aria-label="Artisans vedettes - sélection premium"></div>
-      <div class="ssb2-vedette-more-wrap">
-        <button id="ssb2-vedette-more" class="ssb2-btn-more" style="display:none"
-                aria-label="Charger plus d'artisans vedettes">
-          👷 Voir plus d'artisans
-        </button>
-      </div>
-    </div>
-  </div>
-</section>
-
-<div class="section-divider" aria-hidden="true"></div>
-
-<!-- ★ CONVERSION BOOST v22 - Top Artisans du Moment -->
-<section id="top-artisans" class="section section-sm top-artisan-section" aria-labelledby="top-artisans-title">
-  <div class="container">
-    <div class="section-header">
-      <span class="section-tag">TENDANCE</span>
-      <h2 id="top-artisans-title">🔥 Les meilleurs artisans du moment</h2>
-      <p class="top-artisan-sub">🔥 Les artisans les mieux notés cette semaine</p>
-    </div>
-    <div id="top-list" class="top-artisans-grid" aria-label="Classement des meilleurs artisans"></div>
-  </div>
-</section>
-
-<div class="section-divider" aria-hidden="true"></div>
-
-<!-- ══════════════════════════════════════════════════════════
-     4. DÉCOUVRIR PLUS D'ARTISANS V13
-══════════════════════════════════════════════════════════ -->
-<section class="section" id="artisans-section" aria-labelledby="results-main-title">
-  <div class="container results-page-shell">
-    <!-- Hidden inputs for search engine compatibility -->
-    <select id="filter-category" style="display:none" aria-hidden="true"></select>
-    <select id="filter-city" style="display:none" aria-hidden="true"></select>
-    <input type="text" id="search-input" style="display:none" aria-hidden="true"/>
-    <select id="filter-availability" style="display:none" aria-hidden="true"></select>
-    <select id="filter-sort" style="display:none" aria-hidden="true"></select>
-
-    <div class="results-header premium-results-header" style="display:none">
-      <div class="results-header-copy">
-        <span class="results-header-kicker">ARTISANS VÉRIFIÉS</span>
-        <h1 id="results-main-title">Artisans près de chez vous</h1>
-        <p id="results-main-meta"></p>
-      </div>
-      <button class="edit-search-btn" id="edit-results-search-btn" type="button" style="display:none">Modifier la recherche</button>
-    </div>
-
-    <div class="results-layout">
-      <aside class="results-filters" style="display:none" aria-labelledby="results-filters-title">
-        <div class="results-filters-head">
-          <h3 id="results-filters-title">Filtres</h3>
-          <button class="results-reset-btn" id="results-reset-btn" type="button">Réinitialiser</button>
-        </div>
-
-        <div class="results-filter-group">
-          <label for="results-filter-city">Ville</label>
-          <select id="results-filter-city">
-            <option value="">Toutes les villes</option>
-          </select>
-        </div>
-
-        <div class="results-filter-group">
-          <label for="results-filter-rating">Note minimum</label>
-          <select id="results-filter-rating">
-            <option value="0">Toutes les notes</option>
-            <option value="4.8">4,8 et plus</option>
-            <option value="4.5">4,5 et plus</option>
-            <option value="4">4,0 et plus</option>
-          </select>
-        </div>
-
-        <div class="results-filter-group">
-          <label for="results-filter-availability">Disponibilité</label>
-          <select id="results-filter-availability">
-            <option value="">Toutes</option>
-            <option value="available">Disponible maintenant</option>
-            <option value="busy">Prend des réservations</option>
-          </select>
-        </div>
-
-        <div class="results-filter-group">
-          <label for="results-filter-price">Prix max</label>
-          <select id="results-filter-price">
-            <option value="">Tous les prix</option>
-            <option value="100">Jusqu'à 100 MAD</option>
-            <option value="150">Jusqu'à 150 MAD</option>
-            <option value="200">Jusqu'à 200 MAD</option>
-            <option value="300">Jusqu'à 300 MAD</option>
-          </select>
-        </div>
-
-        <label class="results-filter-check" for="results-filter-verified">
-          <input id="results-filter-verified" type="checkbox"/>
-          <span>Artisans vérifiés uniquement</span>
-        </label>
-      </aside>
-
-      <div class="results-main-column">
-        <div class="results-toolbar" style="display:none">
-          <div class="results-toolbar-left">
-            <span id="results-count">24 résultats</span>
-            <span class="results-toolbar-badge" id="other-artisans-count-badge">👷 24 profils</span>
-          </div>
-          <select id="results-sort-select" aria-label="Trier les résultats">
-            <option value="rating">Les mieux notés</option>
-            <option value="response">Les plus rapides</option>
-            <option value="price_asc">Les moins chers</option>
-          </select>
-        </div>
-
-        <div id="other-artisans-banner" class="other-artisans-banner results-trust-strip" style="display:none">
-          <div class="other-artisans-banner-inner">
-            <span class="separator-icon">⚡</span>
-            <div class="separator-text-block">
-              <span class="separator-title">Comparez vite, choisissez en confiance</span>
-              <span class="separator-subtitle">Profils vérifiés, prix visibles et CTA toujours accessibles</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Artisans grid (injected by main.js) - pagination by homepage-v13.js -->
-        <div class="artisans-grid results-list" id="artisans-container"
-             aria-live="polite" aria-label="Liste des artisans vérifiés"></div>
-        <div id="loading-artisans" style="display:none" aria-live="polite">Chargement des artisans...</div>
-        <div id="no-artisan" style="display:none;" aria-live="polite">
-          <p>Aucun artisan disponible pour ces critères pour le moment.</p>
-        </div>
-        <!-- Pagination injected by homepage-v13.js -->
-      </div>
-    </div>
-
-    <button class="mobile-sticky-cta" id="mobile-sticky-cta" type="button" data-open-request-form="true">Publier ma demande</button>
-  </div>
-</section>
-
-<div class="section-divider" aria-hidden="true"></div>
-
-<!-- ══════════════════════════════════════════════════════════
-     5. COMMENT ÇA MARCHE V13
-══════════════════════════════════════════════════════════ -->
-<section id="how-it-works" class="section how-it-works-section" aria-labelledby="how-title">
-  <div class="container">
-
-    <!-- ── Section header ── -->
-    <header class="cjx-header">
-      <span class="cjx-eyebrow">Comment ça marche</span>
-      <h2 id="how-title" class="cjx-title">Votre besoin.<br>Notre réponse.</h2>
-      <p class="cjx-subtitle">Ce qui se passe dès que vous envoyez votre demande.</p>
-    </header>
-
-    <!-- ══════════════════════════════════════════════════════
-         CUSTOMER JOURNEY — 5 moments
-         Desktop: horizontal timeline, eye L → R
-         Mobile:  vertical timeline, eye top → bottom
-    ══════════════════════════════════════════════════════ -->
-    <div class="cjx-journey" role="list" aria-label="Les 5 étapes de votre mise en relation">
-
-      <!-- Journey line — reveals on scroll, connects all moments -->
-      <div class="cjx-line" aria-hidden="true"></div>
-
-      <!-- ── Moment 1 — Le Problème ── -->
-      <article class="cjx-moment cjx-moment--1" role="listitem">
-        <div class="cjx-moment-icon" aria-hidden="true">💧</div>
-        <div class="cjx-moment-body">
-          <span class="cjx-moment-eyebrow">Vous avez un besoin.</span>
-          <h3 class="cjx-moment-headline">Une fuite.<br>Une panne.<br>Une urgence.</h3>
-          <p class="cjx-moment-sub">Décrivez-le en quelques mots.</p>
-        </div>
-      </article>
-
-      <!-- ── Moment 2 — La Compréhension ── -->
-      <article class="cjx-moment cjx-moment--2" role="listitem">
-        <div class="cjx-moment-icon" aria-hidden="true">⚙️</div>
-        <div class="cjx-moment-body">
-          <span class="cjx-moment-eyebrow">FIXEO comprend.</span>
-          <ul class="cjx-checks" aria-label="Capacités détectées">
-            <li class="cjx-check">
-              <span class="cjx-check-mark" aria-hidden="true">✓</span>
-              Métier identifié
-            </li>
-            <li class="cjx-check">
-              <span class="cjx-check-mark" aria-hidden="true">✓</span>
-              Urgence analysée
-            </li>
-            <li class="cjx-check">
-              <span class="cjx-check-mark" aria-hidden="true">✓</span>
-              Ville détectée
-            </li>
-            <li class="cjx-check">
-              <span class="cjx-check-mark" aria-hidden="true">✓</span>
-              Estimation préparée
-            </li>
-          </ul>
-        </div>
-      </article>
-
-      <!-- ── Moment 3 — Le Moteur ── -->
-      <article class="cjx-moment cjx-moment--3" role="listitem">
-        <div class="cjx-moment-icon" aria-hidden="true">🔮</div>
-        <div class="cjx-moment-body">
-          <span class="cjx-moment-eyebrow">Le moteur travaille.</span>
-          <div class="cjx-engine-words">
-            <div class="cjx-engine-row">
-              <span>Matching</span>
-              <span class="cjx-engine-dot" aria-hidden="true"></span>
-              <span>Sélection</span>
-            </div>
-            <div class="cjx-engine-row">
-              <span>Score</span>
-              <span class="cjx-engine-dot" aria-hidden="true"></span>
-              <span>Confiance</span>
-            </div>
-          </div>
-          <p class="cjx-engine-count">Parmi 1 134 artisans au Maroc.</p>
-        </div>
-      </article>
-
-      <!-- ── Moment 4 — Le Profil ── -->
-      <article class="cjx-moment cjx-moment--4" role="listitem">
-        <div class="cjx-moment-icon" aria-hidden="true">👤</div>
-        <div class="cjx-moment-body">
-          <span class="cjx-moment-eyebrow">Votre artisan.</span>
-          <h3 class="cjx-moment-headline">Les profils les&nbsp;plus adaptés vous sont proposés.</h3>
-          <p class="cjx-moment-sub">Pas imposé. Vous choisissez.</p>
-        </div>
-      </article>
-
-      <!-- ── Moment 5 — La Mise en Relation ── -->
-      <article class="cjx-moment cjx-moment--5" role="listitem">
-        <div class="cjx-moment-icon" aria-hidden="true">🤝</div>
-        <div class="cjx-moment-body">
-          <span class="cjx-moment-eyebrow">La mise en relation.</span>
-          <h3 class="cjx-moment-headline">La conversation commence.<br>La mission aussi.</h3>
-          <div class="cjx-final-trio" aria-label="Simple, Rapide, Humain">
-            <span>Simple</span>
-            <span>·</span>
-            <span>Rapide</span>
-            <span>·</span>
-            <span>Humain</span>
-          </div>
-        </div>
-      </article>
-
-    </div><!-- /.cjx-journey -->
-
-  </div><!-- /.container -->
-</section>
-
-<!-- ══════════════════════════════════════════════════════════
-     6. RÉALISATIONS V13 - 3×3 grid, lazy-load
-══════════════════════════════════════════════════════════ -->
-<!-- ══════════════════════════════════════════════════════════
-     POURQUOI CHOISIR FIXEO - Trust section
-     ══════════════════════════════════════════════════════════ -->
 <section class="section" id="why-fixeo-section" aria-labelledby="why-fixeo-title">
   <div class="container">
     <div class="section-header why-fixeo-header">
@@ -3249,12 +3276,9 @@ section#home.hero.hero-section {
     </div>
   </div>
 </section>
-
 <div class="section-divider" aria-hidden="true"></div>
-
-
 <!-- ══════════════════════════════════════════════════════════
-     8. VISION FIXEO - replaces fake testimonials
+     7. FIXEO VISION — manifesto + verified metrics (simplified)
 ══════════════════════════════════════════════════════════ -->
 <section class="section testimonial-section fxv-section" aria-labelledby="testimonials-title">
   <div class="container">
@@ -3272,58 +3296,28 @@ section#home.hero.hero-section {
     <!-- Platform signals - real metrics only -->
     <div class="fxv-signals">
       <div class="fxv-signal">
-        <span class="fxv-signal-value">12<span class="fxv-signal-plus">+</span></span>
+        <span class="fxv-signal-value">20</span>
         <span class="fxv-signal-label">Villes actives</span>
       </div>
       <div class="fxv-signal-sep" aria-hidden="true"></div>
       <div class="fxv-signal">
-        <span class="fxv-signal-value">861<span class="fxv-signal-plus">+</span></span>
-        <span class="fxv-signal-label">Artisans en r&eacute;seau</span>
+        <span class="fxv-signal-value">1&#8239;134</span>
+        <span class="fxv-signal-label">Artisans en réseau</span>
       </div>
       <div class="fxv-signal-sep" aria-hidden="true"></div>
       <div class="fxv-signal">
-        <span class="fxv-signal-value">13</span>
-        <span class="fxv-signal-label">Sp&eacute;cialit&eacute;s couvertes</span>
+        <span class="fxv-signal-value">12</span>
+        <span class="fxv-signal-label">Spécialités couvertes</span>
       </div>
       <div class="fxv-signal-sep" aria-hidden="true"></div>
       <div class="fxv-signal">
-        <span class="fxv-signal-value">&lt;30<span class="fxv-signal-plus">min</span></span>
-        <span class="fxv-signal-label">Temps de r&eacute;ponse</span>
-      </div>
-    </div>
-
-    <!-- Minimal flow -->
-    <div class="fxv-flow">
-      <div class="fxv-flow-step fxv-flow-step-1">
-        <span class="fxv-flow-num">1</span>
-        <span class="fxv-flow-label">Vous publiez</span>
-      </div>
-      <div class="fxv-flow-arrow" aria-hidden="true">
-        <svg viewBox="0 0 24 6" fill="none"><path d="M0 3h22M18 0l4 3-4 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </div>
-      <div class="fxv-flow-step fxv-flow-step-2">
-        <span class="fxv-flow-num">2</span>
-        <span class="fxv-flow-label">Fixeo analyse</span>
-      </div>
-      <div class="fxv-flow-arrow" aria-hidden="true">
-        <svg viewBox="0 0 24 6" fill="none"><path d="M0 3h22M18 0l4 3-4 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </div>
-      <div class="fxv-flow-step fxv-flow-step-3">
-        <span class="fxv-flow-num">3</span>
-        <span class="fxv-flow-label">Artisans alert&eacute;s</span>
-      </div>
-      <div class="fxv-flow-arrow" aria-hidden="true">
-        <svg viewBox="0 0 24 6" fill="none"><path d="M0 3h22M18 0l4 3-4 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </div>
-      <div class="fxv-flow-step fxv-flow-step-end">
-        <span class="fxv-flow-num">4</span>
-        <span class="fxv-flow-label">Intervention</span>
+        <span class="fxv-signal-value">100%</span>
+        <span class="fxv-signal-label">Gratuit à utiliser</span>
       </div>
     </div>
 
   </div>
 </section>
-
 <!-- FIXEO Blog — fxblog-v1b -->
 <section id="fxblog-section" class="fxblog-section" aria-labelledby="fxblog-title">
   <div class="container">
@@ -3390,12 +3384,10 @@ section#home.hero.hero-section {
     </div>
   </div>
 </section>
-
 <div class="section-divider" aria-hidden="true"></div>
-
-<!-- ═══════════════════════════════════════════════════════════
-     9. CTA FINAL - Conversion
-════════════════════════════════════════════════════════════ -->
+<!-- ══════════════════════════════════════════════════════════
+     9. FINAL CTA — Conversion
+══════════════════════════════════════════════════════════ -->
 <section class="section final-cta-section" aria-labelledby="final-cta-title">
   <div class="container">
     <div class="final-cta">
