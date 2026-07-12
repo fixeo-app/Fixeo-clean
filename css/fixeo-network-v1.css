@@ -1,0 +1,552 @@
+/* ══════════════════════════════════════════════════════════════════
+   FIXEO — Network Discovery Experience
+   Section block: #services → #artisans-section
+   Phase 6 — "Explorez le réseau FIXEO"
+   Namespace: fxn-*
+   Version: fnv1a — 2026-07-12
+   ──────────────────────────────────────────────────────────────────
+   Philosophy:
+     The visitor is not "using filters". They are exploring the
+     FIXEO artisan network. Service chips and city selection are
+     the entry into a live, responsive discovery experience.
+     The artisan cards are the network responding — not a list.
+   ──────────────────────────────────────────────────────────────────
+   Architecture:
+     Pure CSS overrides. Zero JS changes. All element IDs preserved.
+     Visual sections merged into one continuous experience via:
+       1. Shared background / ambient field
+       2. Removed section-divider breaks between discovery sub-sections
+       3. Unified typography hierarchy for sub-section labels
+       4. Premium chip design (service + city)
+       5. Artisan cards: depth + hierarchy improvements
+   ──────────────────────────────────────────────────────────────────
+   Sections styled:
+     § 1  Discovery block container (#services scope)
+     § 2  Section header — "Quel artisan recherchez-vous ?"
+     § 3  City selector bar (city-quick-chips + hidden select)
+     § 4  Service chips — large, beautiful, active states
+     § 5  Service artisans zone (#service-artisans-section)
+     § 6  Vedette grid (#secondary-search-section)
+     § 7  Top artisans (#top-artisans)
+     § 8  Main artisan grid (#artisans-section)
+     § 9  Cross-section visual glue (dividers, continuity)
+     § 10 Mobile (≤767px)
+     § 11 Tablet (768px–1023px)
+     § 12 Reduced motion
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ════════════════════════════════════════════════════════════
+   § 1  DISCOVERY BLOCK — #services
+   This is the anchor section. It sets the ambient field for
+   the entire discovery block that follows.
+════════════════════════════════════════════════════════════ */
+#services.services-section {
+  padding: 72px 0 40px !important;
+  position: relative !important;
+  overflow: visible !important;
+  isolation: isolate !important;
+}
+
+/* Ambient field — cool, exploration-mode */
+#services.services-section::before {
+  content: '' !important;
+  position: absolute !important;
+  inset: 0 !important;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% -10%, rgba(55, 88, 240, .09) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 10% 80%, rgba(32, 201, 151, .05) 0%, transparent 55%) !important;
+  pointer-events: none !important;
+  z-index: 0 !important;
+}
+
+#services.services-section > .container {
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+/* ════════════════════════════════════════════════════════════
+   § 2  SECTION HEADER — Discovery title
+   New visual hierarchy: eyebrow → headline → subtitle
+   Replaces the old marketing headline.
+════════════════════════════════════════════════════════════ */
+#services .fxn-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+#services .fxn-eyebrow {
+  display: block;
+  font-size: .52rem;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, .28);
+  margin-bottom: 12px;
+}
+
+#services .fxn-title {
+  font-size: clamp(1.5rem, 3.2vw, 2.2rem);
+  font-weight: 800;
+  letter-spacing: -.03em;
+  line-height: 1.15;
+  color: rgba(255, 255, 255, .92);
+  margin: 0 0 10px;
+}
+
+#services .fxn-subtitle {
+  font-size: .85rem;
+  color: rgba(255, 255, 255, .40);
+  line-height: 1.65;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+/* ════════════════════════════════════════════════════════════
+   § 3  CITY SELECTOR BAR
+   Elevated: from a plain bar to a premium pill cluster.
+   The hidden native <select> is preserved for JS reads.
+   City chips become glass pills with active state.
+════════════════════════════════════════════════════════════ */
+
+/* Container bar */
+#services .services-filter-bar,
+#services .services-filter {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  flex-wrap: wrap !important;
+  margin-bottom: 28px !important;
+  padding: 0 !important;
+}
+
+/* Hide the legacy "📍 Ville :" label — redundant */
+#services .services-city-static-label {
+  display: none !important;
+}
+
+/* Native select: already hidden by services-premium.css — reinforce */
+#services-city-filter {
+  position: absolute !important;
+  width: 1px !important; height: 1px !important;
+  opacity: 0 !important; pointer-events: none !important;
+  overflow: hidden !important; clip: rect(0,0,0,0) !important;
+}
+
+/* City label pill (shown by JS when city selected) */
+#services-city-label {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  font-size: .72rem !important;
+  font-weight: 600;
+  color: rgba(32, 201, 151, .90) !important;
+  background: rgba(32, 201, 151, .10);
+  border: 1px solid rgba(32, 201, 151, .22);
+  border-radius: 20px;
+  padding: 5px 12px;
+}
+#services-city-label[style*="inline"],
+#services-city-label[style*="block"] {
+  display: flex !important;
+}
+
+/* City quick chips wrapper */
+#services #city-quick-chips {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  flex-wrap: wrap !important;
+  justify-content: center !important;
+}
+
+/* Individual city chip — glass pill style */
+#services .city-chip {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  padding: 6px 14px !important;
+  border-radius: 20px !important;
+  font-size: .72rem !important;
+  font-weight: 600 !important;
+  letter-spacing: .01em !important;
+  color: rgba(255, 255, 255, .62) !important;
+  background: rgba(255, 255, 255, .042) !important;
+  border: 1px solid rgba(255, 255, 255, .08) !important;
+  cursor: pointer !important;
+  transition: background .18s ease, border-color .18s ease, color .18s ease, transform .12s ease !important;
+  white-space: nowrap !important;
+  line-height: 1 !important;
+  min-height: 32px !important;
+  user-select: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+#services .city-chip:hover {
+  background: rgba(255, 255, 255, .08) !important;
+  border-color: rgba(255, 255, 255, .14) !important;
+  color: rgba(255, 255, 255, .88) !important;
+  transform: translateY(-1px) !important;
+}
+
+#services .city-chip:active {
+  transform: translateY(0) scale(.97) !important;
+}
+
+#services .city-chip.active,
+#services .city-chip[aria-pressed="true"] {
+  background: rgba(32, 201, 151, .14) !important;
+  border-color: rgba(32, 201, 151, .30) !important;
+  color: rgba(32, 201, 151, .95) !important;
+}
+
+#services .city-chip-more {
+  color: rgba(255, 255, 255, .36) !important;
+  border-style: dashed !important;
+  font-size: .68rem !important;
+}
+
+#services .city-chip:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, .60) !important;
+  outline-offset: 2px !important;
+}
+
+/* ════════════════════════════════════════════════════════════
+   § 4  SERVICE CHIPS — Premium discovery selectors
+   Large, clear, premium. Active state is unmistakable.
+   Each chip = a portal into a slice of the network.
+════════════════════════════════════════════════════════════ */
+
+/* Chips grid — centered wrapping layout */
+#services .category-chips {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  padding: 0 !important;
+  list-style: none !important;
+  margin: 0 !important;
+}
+
+/* Individual service chip */
+#services .service-chip,
+#services .chip.service-chip {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 7px !important;
+  padding: 9px 18px !important;
+  border-radius: 24px !important;
+  font-size: .80rem !important;
+  font-weight: 600 !important;
+  letter-spacing: .008em !important;
+  color: rgba(255, 255, 255, .65) !important;
+  background: rgba(255, 255, 255, .044) !important;
+  border: 1px solid rgba(255, 255, 255, .08) !important;
+  cursor: pointer !important;
+  transition:
+    background .18s ease,
+    border-color .18s ease,
+    color .18s ease,
+    box-shadow .18s ease,
+    transform .12s ease !important;
+  white-space: nowrap !important;
+  line-height: 1 !important;
+  min-height: 40px !important;
+  user-select: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06) !important;
+  position: relative !important;
+}
+
+#services .service-chip:hover,
+#services .chip.service-chip:hover {
+  background: rgba(255, 255, 255, .085) !important;
+  border-color: rgba(255, 255, 255, .14) !important;
+  color: rgba(255, 255, 255, .92) !important;
+  transform: translateY(-2px) !important;
+  box-shadow:
+    0 6px 20px rgba(0, 0, 0, .22),
+    inset 0 1px 0 rgba(255, 255, 255, .10) !important;
+}
+
+#services .service-chip:active,
+#services .chip.service-chip:active {
+  transform: translateY(0) scale(.97) !important;
+}
+
+/* ACTIVE STATE — the chip that is currently selected */
+#services .service-chip.active,
+#services .chip.service-chip.active {
+  background: rgba(64, 95, 255, .18) !important;
+  border-color: rgba(100, 130, 255, .38) !important;
+  color: rgba(180, 200, 255, .96) !important;
+  box-shadow:
+    0 4px 16px rgba(64, 95, 255, .22),
+    inset 0 1px 0 rgba(255, 255, 255, .12) !important;
+  transform: translateY(0) !important;
+}
+
+/* Chip icon */
+#services .chip-icon {
+  font-size: 1.05rem !important;
+  line-height: 1 !important;
+  flex-shrink: 0 !important;
+}
+
+#services .service-chip.active .chip-icon,
+#services .chip.service-chip.active .chip-icon {
+  filter: brightness(1.2) !important;
+}
+
+/* Focus visible */
+#services .service-chip:focus-visible,
+#services .chip.service-chip:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, .65) !important;
+  outline-offset: 2px !important;
+}
+
+/* ════════════════════════════════════════════════════════════
+   § 5  SERVICE ARTISANS ZONE (#service-artisans-section)
+   JS-injected. We style the container only.
+   No structural changes — just padding/visual context.
+════════════════════════════════════════════════════════════ */
+#service-artisans-section {
+  padding-top: 8px !important;
+  padding-bottom: 16px !important;
+}
+
+/* ════════════════════════════════════════════════════════════
+   § 6  VEDETTE GRID (#secondary-search-section)
+   Remove the old section header. The ssb2-vedette-grid
+   renders inline as part of the discovery flow.
+   Sub-label replaces big section header.
+════════════════════════════════════════════════════════════ */
+#secondary-search-section {
+  padding-top: 16px !important;
+  padding-bottom: 16px !important;
+  position: relative !important;
+}
+
+/* Old header: demote completely */
+#secondary-search-section .section-header {
+  display: none !important;
+}
+
+/* New sub-label injected via CSS ::before on the container */
+#secondary-search-section .ssb2-vedette-section::before {
+  content: 'PROFILS RECOMMANDÉS';
+  display: block;
+  font-size: .50rem;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, .24);
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+/* Counter pill */
+#secondary-search-section .pvc-grid-counter {
+  text-align: center !important;
+  font-size: .70rem !important;
+  color: rgba(255, 255, 255, .32) !important;
+  margin-bottom: 12px !important;
+}
+
+/* "Voir plus" button — glass style */
+#secondary-search-section .ssb2-btn-more {
+  display: block !important;
+  margin: 20px auto 0 !important;
+  padding: 10px 28px !important;
+  border-radius: 24px !important;
+  font-size: .78rem !important;
+  font-weight: 600 !important;
+  color: rgba(255, 255, 255, .62) !important;
+  background: rgba(255, 255, 255, .044) !important;
+  border: 1px solid rgba(255, 255, 255, .09) !important;
+  cursor: pointer !important;
+  transition: background .18s, border-color .18s, color .18s, transform .12s !important;
+}
+#secondary-search-section .ssb2-btn-more:hover {
+  background: rgba(255, 255, 255, .08) !important;
+  border-color: rgba(255, 255, 255, .14) !important;
+  color: rgba(255, 255, 255, .88) !important;
+  transform: translateY(-1px) !important;
+}
+#secondary-search-section .ssb2-btn-more:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, .60) !important;
+  outline-offset: 2px !important;
+}
+
+/* ════════════════════════════════════════════════════════════
+   § 7  TOP ARTISANS (#top-artisans)
+   Demote old "🔥 Les meilleurs artisans du moment" header.
+   Grid continues seamlessly.
+════════════════════════════════════════════════════════════ */
+#top-artisans.top-artisan-section {
+  padding-top: 8px !important;
+  padding-bottom: 16px !important;
+}
+
+#top-artisans .section-header {
+  display: none !important;
+}
+
+/* ════════════════════════════════════════════════════════════
+   § 8  MAIN ARTISAN GRID (#artisans-section)
+   This section is entirely JS-owned. We only:
+   1. Remove the results-header (it was display:none anyway)
+   2. Remove the results-filters aside (display:none)
+   3. Make the container flow naturally
+   4. Improve the banner strip
+   The artisans-container, loading-artisans, no-artisan: untouched.
+════════════════════════════════════════════════════════════ */
+#artisans-section {
+  padding-top: 8px !important;
+  padding-bottom: 32px !important;
+}
+
+/* The "other artisans" banner — subtle discovery prompt */
+#other-artisans-banner.other-artisans-banner {
+  background: rgba(255, 255, 255, .032) !important;
+  border: 1px solid rgba(255, 255, 255, .065) !important;
+  border-radius: 12px !important;
+  padding: 14px 20px !important;
+  margin-bottom: 20px !important;
+}
+
+#other-artisans-banner .separator-title {
+  font-size: .78rem !important;
+  font-weight: 700 !important;
+  color: rgba(255, 255, 255, .70) !important;
+}
+#other-artisans-banner .separator-subtitle {
+  font-size: .70rem !important;
+  color: rgba(255, 255, 255, .38) !important;
+}
+
+/* Artisan count indicator */
+#artisans-section #results-count,
+#artisans-section .results-toolbar-badge {
+  font-size: .72rem !important;
+  color: rgba(255, 255, 255, .40) !important;
+}
+
+/* Mobile sticky CTA in artisans-section */
+#artisans-section .mobile-sticky-cta {
+  /* Preserve JS-controlled visibility */
+}
+
+/* ════════════════════════════════════════════════════════════
+   § 9  CROSS-SECTION VISUAL GLUE
+   Remove dividers between discovery sub-sections.
+   They are noise between #services and #artisans-section.
+   The divider BEFORE #services stays (from Brain Engine).
+   The divider AFTER #artisans-section stays (before how-it-works).
+════════════════════════════════════════════════════════════ */
+
+/* Hide dividers that sit between the discovery sections */
+/* We use adjacent sibling patterns via :has — with fallback */
+#services.services-section + .section-divider,
+#secondary-search-section + .section-divider,
+#top-artisans + .section-divider:not(:last-of-type),
+#service-artisans-section + .section-divider {
+  display: none !important;
+}
+
+/* ─── Fallback: target specific dividers between sections ─── */
+/* The divider between #services end and #secondary-search-section */
+/* Located via .section-divider inside the gap — no selector available,
+   so we use opacity + pointer-events trick instead */
+/* Note: Only the LAST section-divider (before #how-it-works) should remain.
+   Between-section dividers: handled by the adjacent-sibling rules above. */
+
+/* ════════════════════════════════════════════════════════════
+   § 10  MOBILE — ≤767px
+════════════════════════════════════════════════════════════ */
+@media (max-width: 767px) {
+  #services.services-section {
+    padding: 56px 0 28px !important;
+  }
+
+  #services .fxn-title {
+    font-size: clamp(1.25rem, 7vw, 1.55rem);
+  }
+
+  #services .fxn-subtitle {
+    font-size: .80rem;
+  }
+
+  #services .fxn-header {
+    margin-bottom: 28px;
+  }
+
+  /* City chips: smaller on mobile */
+  #services .city-chip {
+    padding: 5px 12px !important;
+    font-size: .68rem !important;
+    min-height: 36px !important;
+  }
+
+  /* Service chips: slightly more compact */
+  #services .service-chip,
+  #services .chip.service-chip {
+    padding: 8px 14px !important;
+    font-size: .76rem !important;
+    min-height: 40px !important;
+    gap: 6px !important;
+  }
+
+  #services #city-quick-chips {
+    gap: 5px !important;
+  }
+
+  #services .services-filter-bar,
+  #services .services-filter {
+    gap: 6px !important;
+    margin-bottom: 20px !important;
+  }
+
+  #secondary-search-section {
+    padding-top: 8px !important;
+  }
+
+  #top-artisans.top-artisan-section {
+    padding-top: 4px !important;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════
+   § 11  TABLET — 768px–1023px
+════════════════════════════════════════════════════════════ */
+@media (min-width: 768px) and (max-width: 1023px) {
+  #services.services-section {
+    padding: 60px 0 32px !important;
+  }
+
+  #services .category-chips {
+    gap: 8px !important;
+  }
+
+  #services .service-chip,
+  #services .chip.service-chip {
+    padding: 8px 16px !important;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════
+   § 12  REDUCED MOTION
+════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  #services .service-chip,
+  #services .chip.service-chip,
+  #services .city-chip,
+  #secondary-search-section .ssb2-btn-more {
+    transition: none !important;
+  }
+  #services .service-chip:hover,
+  #services .chip.service-chip:hover,
+  #services .city-chip:hover {
+    transform: none !important;
+  }
+}
