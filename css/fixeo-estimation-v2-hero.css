@@ -1,11 +1,11 @@
 /**
- * fixeo-estimation-v2-hero.css — faee-v2b
+ * fixeo-estimation-v2-hero.css — faee-v2c
  * FIXEO AI Estimation V2 — Homepage Unified Permanent Card
  *
  * Namespace: .faev2-* / #faee-v2-hero
  * Three states: idle / thinking / active
  * Zero interference with faee-v1 (.faee-*), fxhi, AIRE, or any other system.
- * Version: faee-v2b — 2026-07-12
+ * Version: faee-v2c — 2026-07-12
  */
 
 /* ═══════════════════════════════════════════════════════════
@@ -88,6 +88,7 @@
   animation: faev2-scan-line 1.8s ease-in-out infinite;
 }
 
+/* faev2-scan-line retained for compat — superseded by faev2-one-pass in v2c */
 @keyframes faev2-scan-line {
   0%   { left: -30%; right: 130%; opacity: .60; }
   50%  { left: 12%;  right: 12%;  opacity: 1;   }
@@ -250,52 +251,152 @@
 }
 
 /* ═══════════════════════════════════════════════════════════
-   STATE B — THINKING
-   Elegant: service badge + scan animation + skeleton values.
-   Never a spinner. Never a skeleton overload.
+   STATE B — THINKING  (faee-v2c — Premium Intelligence UX)
+
+   Six signals:
+     1. Price scan   — one-pass indigo sweep, opacity very low
+     2. Status line  — 3 phases cycling, fade between (JS-driven)
+     3. Service conf — ✓ [Service] détectée — immediate, teal
+     4. Stat breath  — real labels visible, opacity breathing
+     5. Card glow    — inner energy pulse, not outer
+     6. Reveal fade  — result fades in gently, no pop (Active state)
 ══════════════════════════════════════════════════════════ */
 
-/* Service detected immediately — shows before result */
-.faev2-detected-service {
+/* ── SIGNAL 5: Card ambience — inner glow pulse ── */
+.faev2-card-thinking {
+  animation: faev2-think-glow 2.2s ease-in-out infinite;
+}
+
+@keyframes faev2-think-glow {
+  0%, 100% {
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.05),
+      inset 0 0 0 rgba(72, 100, 255, 0),
+      0 4px 32px rgba(0,0,0,.30),
+      0 1px 4px  rgba(0,0,0,.16);
+  }
+  50% {
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.05),
+      inset 0 0 40px rgba(72, 100, 255, .055),
+      0 4px 32px rgba(0,0,0,.30),
+      0 1px 4px  rgba(0,0,0,.16);
+  }
+}
+
+/* ── SIGNAL 1: Price area — one-pass horizontal scan ──
+   Single pass: a faint indigo band sweeps left→right once per 2.4s.
+   Opacity cap at .18 — barely there, just enough to feel active.  */
+.faev2-card-thinking::before {
+  background: rgba(72, 100, 255, .09) !important;
+  animation: faev2-one-pass 2.4s ease-in-out infinite !important;
+  top: 0 !important;
+  height: 100% !important;
+  left: 0 !important;
+  right: 0 !important;
+}
+
+@keyframes faev2-one-pass {
+  0%   { background: linear-gradient(90deg, transparent 0%, transparent 100%); }
+  20%  { background: linear-gradient(90deg, transparent 0%, rgba(72,100,255,.05) 30%, rgba(72,100,255,.18) 50%, rgba(72,100,255,.05) 70%, transparent 100%);
+         transform: translateX(-30%); }
+  55%  { background: linear-gradient(90deg, transparent 0%, rgba(72,100,255,.05) 30%, rgba(72,100,255,.18) 50%, rgba(72,100,255,.05) 70%, transparent 100%);
+         transform: translateX(30%); }
+  80%, 100% { background: linear-gradient(90deg, transparent 0%, transparent 100%);
+              transform: translateX(0); }
+}
+
+/* ── SIGNAL 3: Service confirmed — ✓ [Service] détectée ── */
+.faev2-confirmed-service {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 14px;
+  margin-bottom: 10px;
   flex-wrap: wrap;
 }
 
-.faev2-detected-label {
-  font-size: .83rem;
-  font-weight: 700;
-  color: rgba(255, 255, 255, .88);
+.faev2-confirmed-check {
+  font-size: .85rem;
+  font-weight: 800;
+  color: rgba(32, 201, 151, .90);  /* teal — confirmed/positive */
+  line-height: 1;
+  flex-shrink: 0;
 }
 
-/* Price skeleton — scanning pulse */
+.faev2-confirmed-label {
+  font-size: .84rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, .90);
+  letter-spacing: -.01em;
+}
+
+/* ── SIGNAL 2: Status line — cycles 3 phases ──
+   JS toggles .faev2-status-visible → triggers CSS opacity transition.
+   120ms fade-out → text change → 120ms fade-in.               */
+.faev2-status-line {
+  font-size: .74rem;
+  font-weight: 500;
+  color: rgba(72, 100, 255, .65);
+  letter-spacing: .03em;
+  margin: 0 0 14px;
+  opacity: 0;
+  transform: translateY(2px);
+  transition: opacity .16s ease, transform .16s ease;
+  min-height: 1.1em;  /* reserve space — prevents layout shift */
+  line-height: 1.1;
+}
+
+.faev2-status-line.faev2-status-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Price area during thinking */
 .faev2-price-block.faev2-price-scanning {
   margin-bottom: 12px;
+  position: relative;
+  overflow: hidden;
 }
 
 .faev2-price-scan {
   display: block;
   font-size: 2.0rem;
   font-weight: 900;
-  letter-spacing: -.03em;
-  color: rgba(255, 255, 255, .15);
+  letter-spacing: -.04em;
+  color: rgba(255, 255, 255, .12);
   line-height: 1;
   margin-bottom: 4px;
-  animation: faev2-price-shimmer 1.4s ease-in-out infinite;
+  /* Gentle opacity breath — more restrained than shimmer */
+  animation: faev2-price-breath 1.8s ease-in-out infinite;
+  user-select: none;
 }
 
-@keyframes faev2-price-shimmer {
-  0%, 100% { opacity: .15; }
-  50%       { opacity: .40; }
+@keyframes faev2-price-breath {
+  0%, 100% { opacity: .12; }
+  50%       { opacity: .28; }
 }
 
-/* Stat skeleton bars */
-.faev2-stats-pending {
+/* ── SIGNAL 4: Stat values — breathing opacity (real labels, not bars) ── */
+.faev2-stats-breathing {
   margin-bottom: 10px;
 }
 
+.faev2-stat-breath {
+  animation: faev2-stat-breath 2.0s ease-in-out infinite;
+  /* Stagger via nth-child so they don't all pulse together */
+}
+
+.faev2-stat-breath:nth-child(1) { animation-delay:    0s; }
+.faev2-stat-breath:nth-child(2) { animation-delay:  .5s; }
+.faev2-stat-breath:nth-child(3) { animation-delay: 1.0s; }
+.faev2-stat-breath:nth-child(4) { animation-delay: 1.5s; }
+
+@keyframes faev2-stat-breath {
+  0%, 100% { opacity: .55; }
+  50%       { opacity: .88; }
+}
+
+/* ── Keep faev2-skel for backward compat — not used in v2c ── */
 .faev2-skel {
   display: inline-block;
   background: rgba(255, 255, 255, .07);
@@ -372,6 +473,22 @@
   min-width: 20px;
   font-weight: 700;
   color: rgba(255, 255, 255, .90);
+}
+
+/* ── SIGNAL 6: Result reveal — no pop, no jump ──
+   JS adds .faev2-reveal-hidden immediately, then removes it
+   and adds .faev2-reveal-in → triggers the fade transition.
+   Price fades in at t=0; stats row at t=80ms.             */
+.faev2-reveal-hidden {
+  opacity: 0;
+  transform: translateY(4px);
+  transition: none;
+}
+
+.faev2-reveal-in {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity .32s ease, transform .28s ease;
 }
 
 /* Surcharges */
@@ -561,16 +678,39 @@
 ══════════════════════════════════════════════════════════ */
 
 @media (prefers-reduced-motion: reduce) {
+  /* All thinking animations off */
   .faev2-logo-mark,
   .faev2-logo-pulse,
   .faev2-thinking-badge,
   .faev2-urgent-badge,
   .faev2-price-scan,
   .faev2-skel,
+  .faev2-stat-breath,
+  .faev2-card-thinking,
   .faev2-card-thinking::before {
     animation: none !important;
   }
 
+  /* Status line: immediately visible, no fade */
+  .faev2-status-line {
+    opacity: 0;
+    transition: none !important;
+  }
+  .faev2-status-line.faev2-status-visible {
+    opacity: 1;
+  }
+
+  /* Result reveal: no transition */
+  .faev2-reveal-hidden {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  .faev2-reveal-in {
+    transition: none !important;
+  }
+
+  /* State transitions */
   #faee-v2-hero.faev2-fading,
   #faee-v2-hero.faev2-fading-in {
     transition: none !important;
@@ -584,4 +724,4 @@
   }
 }
 
-/* version: faee-v2b */
+/* version: faee-v2c */

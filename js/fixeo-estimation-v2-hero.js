@@ -37,7 +37,7 @@
  *   - Any admin, dispatch, notification, Supabase, or analytics system
  *   - GA4, consent, routing
  *
- * Version: faee-v2b — 2026-07-12
+ * Version: faee-v2c — 2026-07-12
  */
 (function () {
   'use strict';
@@ -45,13 +45,24 @@
   if (window._faeeV2Loaded) return;
   window._faeeV2Loaded = true;
 
-  var VERSION       = 'faee-v2b';
+  var VERSION       = 'faee-v2c';
   var ROOT_ID       = 'faee-v2-hero';
   var STATE_IDLE     = 'idle';
   var STATE_THINKING = 'thinking';
   var STATE_ACTIVE   = 'active';
   var THINK_MIN_MS   = 400;
   var THINK_MAX_MS   = 900;
+
+  /* Status lines — cycling during thinking state.
+     3 phases. Each visible ~1/3 of the think window.
+     Fade managed by CSS .faev2-status-line + .faev2-status-visible.
+     Timer cleared immediately when active state renders. */
+  var STATUS_LINES = [
+    'Analyse du besoin\u2026',
+    'Recherche des profils\u2026',
+    'Pr\u00e9paration de l\u2019estimation\u2026'
+  ];
+  var _statusTimer = null;
 
   var _state   = STATE_IDLE;
   var _current = '';
@@ -324,36 +335,95 @@
   }
 
   /* ─────────────────────────────────────────────────────
-     RENDER — STATE B: THINKING
-     400–900ms. Subtle analysis pulse. Never a spinner.
+     RENDER — STATE B: THINKING  (faee-v2c)
+     400–900ms. Intelligence at work — not a page loading.
+     Six design signals:
+       1. Price area — soft one-pass indigo scan (CSS only)
+       2. Status line — cycles 3 phases, fade between each (JS + CSS)
+       3. Service confidence — "✓ Plomberie détectée" immediate
+       4. Stat values — breathing opacity, not dead skeletons
+       5. Card ambience — inner glow pulse (CSS only)
+       6. Result reveal — fade-in classes applied by _runActiveAnimations
   ───────────────────────────────────────────────────── */
 
-  function _renderThinking(slug, isUrgent) {
-    var label = SLUG_LABELS[slug] || 'Service détecté';
+  /* Cycling status line — called after render, clears itself or on state change */
+  function _startStatusCycle(thinkDuration) {
+    clearInterval(_statusTimer);
+    var phaseMs = Math.round(thinkDuration / STATUS_LINES.length);
+    var idx = 0;
+
+    function _setLine(i) {
+      var el = document.querySelector('.faev2-status-line');
+      if (!el) { clearInterval(_statusTimer); return; }
+      /* Fade out */
+      el.classList.remove('faev2-status-visible');
+      setTimeout(function() {
+        if (!el.parentNode) return;
+        el.textContent = STATUS_LINES[i];
+        /* Fade in */
+        el.classList.add('faev2-status-visible');
+      }, 120);
+    }
+
+    /* First line immediately visible */
+    var firstEl = document.querySelector('.faev2-status-line');
+    if (firstEl) {
+      firstEl.textContent = STATUS_LINES[0];
+      /* Trigger transition on next tick so CSS picks it up */
+      requestAnimationFrame(function() {
+        firstEl.classList.add('faev2-status-visible');
+      });
+    }
+
+    _statusTimer = setInterval(function() {
+      idx = (idx + 1) % STATUS_LINES.length;
+      _setLine(idx);
+    }, phaseMs);
+  }
+
+  function _stopStatusCycle() {
+    clearInterval(_statusTimer);
+    _statusTimer = null;
+  }
+
+  function _renderThinking(slug, isUrgent, thinkDuration) {
+    var label       = SLUG_LABELS[slug] || 'Service d\u00e9tect\u00e9';
+    var shortLabel  = label.replace(/^[^\s]+\s/, ''); /* strip emoji: "🔧 Plomberie" → "Plomberie" */
+
     return (
       '<div class="faev2-card faev2-card-thinking" role="complementary" aria-label="Estimation en cours" aria-busy="true">' +
+
+        /* ── HEADER ── */
         '<div class="faev2-header">' +
           '<span class="faev2-logo-mark faev2-logo-pulse" aria-hidden="true">\u2736</span>' +
           '<span class="faev2-title">ESTIMATION IA</span>' +
-          '<span class="faev2-thinking-badge" aria-hidden="true">Analyse\u2026</span>' +
         '</div>' +
-        /* Service detected immediately */
-        '<div class="faev2-detected-service">' +
-          '<span class="faev2-detected-label">' + label + '</span>' +
+
+        /* ── SIGNAL 3: Service confidence — immediate, prominent ── */
+        '<div class="faev2-confirmed-service">' +
+          '<span class="faev2-confirmed-check" aria-hidden="true">\u2713</span>' +
+          '<span class="faev2-confirmed-label">' + shortLabel + ' d\u00e9tect\u00e9e</span>' +
           (isUrgent ? '<span class="faev2-urgent-badge">\u26a1 URGENT</span>' : '') +
         '</div>' +
-        /* Price placeholder — scanning animation */
+
+        /* ── SIGNAL 2: Status line — 3 phases, fades between ── */
+        '<p class="faev2-status-line" aria-live="polite">' + STATUS_LINES[0] + '</p>' +
+
+        /* ── SIGNAL 1: Price area — one-pass scan (CSS keyframe) ── */
         '<div class="faev2-price-block faev2-price-scanning">' +
-          '<span class="faev2-price-scan">&#x2014;</span>' +
-          '<span class="faev2-price-note">calcul en cours\u2026</span>' +
+          '<span class="faev2-price-scan" aria-hidden="true">\u2014\u2014\u2014</span>' +
+          '<span class="faev2-price-note">\u00e9valuation en cours</span>' +
         '</div>' +
-        /* Skeleton stats */
-        '<div class="faev2-active-stats faev2-stats-pending">' +
-          '<span class="faev2-active-stat faev2-skel">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>' +
-          '<span class="faev2-active-stat faev2-skel">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>' +
-          '<span class="faev2-active-stat faev2-skel">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>' +
+
+        /* ── SIGNAL 4: Stat values — breathing opacity, real labels visible ── */
+        '<div class="faev2-active-stats faev2-stats-breathing">' +
+          '<span class="faev2-active-stat faev2-stat-breath faev2-active-stat-service">' + label + '</span>' +
+          '<span class="faev2-active-stat faev2-stat-breath">' + (isUrgent ? 'Urgence' : 'Standard') + '</span>' +
+          '<span class="faev2-active-stat faev2-stat-breath">\u23f1\ufe0f \u2014 min</span>' +
+          '<span class="faev2-active-stat faev2-stat-breath">\uD83D\uDC65 \u2014 artisans</span>' +
         '</div>' +
-        '<p class="faev2-disclaimer">Prix indicatif confirm\u00e9 sur place \u00b7 Aucun paiement</p>' +
+
+        '<p class="faev2-disclaimer">Prix confirm\u00e9 sur place \u00b7 Aucun paiement</p>' +
       '</div>'
     );
   }
@@ -452,13 +522,18 @@
 
   function _toIdle() {
     clearTimeout(_thinkTimer);
+    _stopStatusCycle();
     _current = '';
     _show(_renderIdle(), STATE_IDLE);
   }
 
-  function _toThinking(slug, isUrgent) {
+  function _toThinking(slug, isUrgent, thinkDur) {
     clearTimeout(_thinkTimer);
-    _show(_renderThinking(slug, isUrgent), STATE_THINKING);
+    _stopStatusCycle();
+    /* Pass thinkDur so status cycle phases match actual duration */
+    _show(_renderThinking(slug, isUrgent, thinkDur), STATE_THINKING, function() {
+      _startStatusCycle(thinkDur);
+    });
   }
 
   function _toActive(text, forcedSlug, forcedUrgent) {
@@ -471,19 +546,43 @@
     var skipThink = (_state === STATE_ACTIVE);
 
     if (skipThink) {
-      /* In-place update: just swap to new active HTML */
+      /* In-place update — no thinking state, stop any lingering cycle */
+      _stopStatusCycle();
       _show(_renderActive(slug, urgent, _getHeroCity(), text), STATE_ACTIVE, _runActiveAnimations);
     } else {
       /* Full thinking → active flow */
-      _toThinking(slug, urgent);
       var thinkDur = THINK_MIN_MS + Math.random() * (THINK_MAX_MS - THINK_MIN_MS);
+      _toThinking(slug, urgent, thinkDur);
       _thinkTimer = setTimeout(function() {
+        _stopStatusCycle();
         _show(_renderActive(slug, urgent, _getHeroCity(), text), STATE_ACTIVE, _runActiveAnimations);
       }, thinkDur);
     }
   }
 
   function _runActiveAnimations(root) {
+    /* ── SIGNAL 6: Reveal — price + stats fade in gently (no pop) ── */
+    /* Price block starts invisible (class faev2-reveal-hidden), fades in */
+    var priceBlock = root.querySelector('.faev2-price-block');
+    if (priceBlock) {
+      priceBlock.classList.add('faev2-reveal-hidden');
+      requestAnimationFrame(function() {
+        requestAnimationFrame(function() {
+          priceBlock.classList.remove('faev2-reveal-hidden');
+          priceBlock.classList.add('faev2-reveal-in');
+        });
+      });
+    }
+    /* Stats row fades in 80ms after price */
+    var statsRow = root.querySelector('.faev2-active-stats');
+    if (statsRow) {
+      statsRow.classList.add('faev2-reveal-hidden');
+      setTimeout(function() {
+        statsRow.classList.remove('faev2-reveal-hidden');
+        statsRow.classList.add('faev2-reveal-in');
+      }, 80);
+    }
+
     /* Animate price number */
     var priceEl = root.querySelector('.faev2-price-anim');
     if (priceEl) {
