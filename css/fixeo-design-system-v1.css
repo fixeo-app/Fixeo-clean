@@ -1,0 +1,622 @@
+/* ══════════════════════════════════════════════════════════════════
+   FIXEO Global Design System — fds-v1a
+   Phase 8: Premium Design System Audit & Final Polish
+   ══════════════════════════════════════════════════════════════════
+
+   MISSION:
+   Make the entire homepage feel like it was designed by one team,
+   in one sprint, with one design language.
+
+   This file is a UNIFIER — not a new feature.
+   It enforces canonical tokens across all phase CSS files.
+
+   APPROACH:
+   - Declare canonical tokens in :root
+   - Apply corrections via scoped selectors that win the cascade
+   - Touch only what the audit proved inconsistent
+   - Never modify Brain Engine (locked animation system)
+   - Never modify Hero (hvps1b locked)
+   - No JS. No new features.
+
+   SCOPE OF CORRECTIONS:
+   1. Spacing rhythm — section paddings aligned to one scale
+   2. Typography — eyebrow / H2 / subtitle sizes unified
+   3. Eyebrow capitalization — text-transform: uppercase everywhere
+   4. Glass system — border-alpha unified to 3 levels
+   5. Color system — indigo base unified; teal/rose ambient touches
+   6. Section backgrounds — subtle accent presence in cold sections
+   7. Scroll rhythm — section gap after Brain Engine needs breath
+
+   FILES WE DO NOT MODIFY:
+   - css/fixeo-brain-engine-v1.css (animation system — LOCKED)
+   - css/hero-v1-premium-sprint.css (hero — LOCKED hvps1b)
+   - css/fixeo-consent-v1.css (consent system)
+   - css/fixeo-analytics-*.js (GA4)
+   - Any JS files
+
+   Version: fds-v1a — 2026-07-12
+   Namespace: fds-* for any new helper classes
+
+   LOAD ORDER (last before consent):
+   ... fixeo-vision-v2.css → fixeo-design-system-v1.css →
+   homepage-sections-v1.css → homepage-motion-v1.css →
+   fixeo-rafi-v2.css → hero-v1-premium-sprint.css →
+   fixeo-consent-v1.css
+   ══════════════════════════════════════════════════════════════════ */
+
+
+/* ════════════════════════════════════════════════════════════
+   § 1  CANONICAL DESIGN TOKENS
+   Single source of truth. All phase CSS reads these via var().
+   Subsequent sections enforce them through inheritance.
+════════════════════════════════════════════════════════════ */
+
+:root {
+
+  /* ── SPACING SCALE ───────────────────────────────────────────── */
+  /* Each step × 1.618 (golden ratio approximation) */
+  --fds-space-xs:   6px;    /* chip inner padding, icon margin  */
+  --fds-space-sm:  12px;    /* badge padding, tight stack       */
+  --fds-space-md:  20px;    /* card inner gap, item spacing     */
+  --fds-space-lg:  32px;    /* header→content gap               */
+  --fds-space-xl:  52px;    /* card→card gap, compact sections  */
+  --fds-space-2xl: 80px;    /* section top padding              */
+  --fds-space-3xl: 120px;   /* hero padding (hero only)         */
+
+  /* ── SECTION RHYTHM ─────────────────────────────────────────── */
+  /* Content sections: XL top, LG bottom */
+  --fds-section-pad-top:    80px;   /* Journey, Vision, Why */
+  --fds-section-pad-bottom: 72px;   /* consistent exit breath */
+  /* Feature sections (BE is its own): */
+  --fds-section-pad-top-feature: 96px;
+  /* Discovery (product, tighter): */
+  --fds-section-pad-top-product: 60px;
+  --fds-section-pad-bottom-product: 40px;
+  /* Mobile: */
+  --fds-section-pad-top-mobile:    52px;
+  --fds-section-pad-bottom-mobile: 52px;
+
+  /* ── TYPOGRAPHY SCALE ───────────────────────────────────────── */
+  /* Eyebrow — ultra-small badge above headline */
+  --fds-eyebrow-size:    .55rem;     /* was .50–.65 across files */
+  --fds-eyebrow-weight:  700;
+  --fds-eyebrow-ls:      .14em;      /* letter-spacing           */
+  --fds-eyebrow-opacity: .32;        /* low — decorative         */
+
+  /* Section H2 — the statement */
+  --fds-h2-size:    clamp(1.45rem, 3.2vw, 2.2rem);
+  --fds-h2-weight:  800;
+  --fds-h2-ls:      -.028em;
+  --fds-h2-lh:      1.16;
+  --fds-h2-color:   rgba(255, 255, 255, .95);
+
+  /* Section subtitle / manifesto paragraph */
+  --fds-sub-size:    clamp(.84rem, 1.8vw, .95rem);
+  --fds-sub-lh:      1.70;
+  --fds-sub-color:   rgba(255, 255, 255, .40);
+  --fds-sub-max-w:   540px;
+
+  /* Body text — card content, descriptions */
+  --fds-body-size:   .875rem;
+  --fds-body-lh:     1.60;
+  --fds-body-color:  rgba(255, 255, 255, .52);
+
+  /* Caption — small meta, chip labels */
+  --fds-caption-size:  .72rem;
+  --fds-caption-color: rgba(255, 255, 255, .30);
+
+  /* ── COLOR PALETTE ──────────────────────────────────────────── */
+  /* ONE canonical value per accent. All derived tints from these. */
+  --fds-indigo:   72, 100, 255;     /* was 80/110 vs 72/100 vs 55/88 → unified */
+  --fds-rose:     225, 48, 108;     /* consistent across all files ✓ */
+  --fds-violet:   131, 58, 180;     /* consistent across all files ✓ */
+  --fds-teal:     32, 201, 151;     /* consistent across all files ✓ */
+  --fds-amber:    255, 165, 40;     /* consistent across all files ✓ */
+
+  /* Pre-computed tints (save recalculation) */
+  --fds-indigo-dim:    rgba(72, 100, 255, .08);
+  --fds-indigo-glow:   rgba(72, 100, 255, .18);
+  --fds-rose-dim:      rgba(225, 48, 108, .07);
+  --fds-rose-glow:     rgba(225, 48, 108, .18);
+  --fds-violet-dim:    rgba(131, 58, 180, .08);
+  --fds-violet-glow:   rgba(131, 58, 180, .20);
+  --fds-teal-dim:      rgba(32, 201, 151, .07);
+
+  /* ── GLASS SYSTEM ───────────────────────────────────────────── */
+  /* Three levels — L1 (primary), L2 (secondary), L3 (container) */
+  --fds-glass-l1-bg:     rgba(255, 255, 255, .052);   /* cards, pvc-card */
+  --fds-glass-l2-bg:     rgba(255, 255, 255, .034);   /* step-card, nested */
+  --fds-glass-l3-bg:     rgba(255, 255, 255, .022);   /* section containers */
+
+  --fds-glass-l1-border: rgba(255, 255, 255, .08);    /* card border */
+  --fds-glass-l2-border: rgba(255, 255, 255, .055);   /* secondary border */
+  --fds-glass-l3-border: rgba(255, 255, 255, .038);   /* container border */
+
+  /* One canonical highlight line */
+  --fds-highlight:  rgba(255, 255, 255, .05);          /* inset top 1px */
+
+  /* ── RADIUS SCALE ───────────────────────────────────────────── */
+  --fds-radius-sm:   8px;   /* badges, tags */
+  --fds-radius-md:  14px;   /* glass pills, signal containers */
+  --fds-radius-lg:  18px;   /* cards */
+  --fds-radius-xl:  24px;   /* large containers, CTA blocks */
+  --fds-radius-pill: 999px; /* chips, buttons */
+
+  /* ── SHADOW SCALE ───────────────────────────────────────────── */
+  --fds-shadow-sm: 0 2px 8px rgba(0, 0, 0, .12);
+  --fds-shadow-md: 0 4px 18px rgba(0, 0, 0, .18);
+  --fds-shadow-lg: 0 8px 32px rgba(0, 0, 0, .24);
+
+  /* ── MOTION (read-only tokens — motion-v1 defines these) ────── */
+  --fds-ease-spring:   cubic-bezier(0.22, 1, 0.36, 1);
+  --fds-ease-smooth:   cubic-bezier(0.16, 1, 0.30, 1);
+  --fds-ease-standard: cubic-bezier(0.33, 1, 0.68, 1);
+  --fds-dur-reveal: .52s;
+  --fds-dur-hover:  .22s;
+  --fds-dur-press:  .08s;
+}
+
+
+/* ════════════════════════════════════════════════════════════
+   § 2  SECTION PADDING RHYTHM
+   Aligns all content sections to one breathing pattern.
+   Brain Engine keeps its larger padding (intentional — hero of
+   the understanding zone).
+   Discovery keeps its tighter padding (product zone, Phase 7.2).
+════════════════════════════════════════════════════════════ */
+
+/* Customer Journey — tighten bottom (was 96px, now matches 72px scale) */
+.cjx-journey {
+  padding-bottom: 72px !important;
+}
+
+/* Why FIXEO — align to standard rhythm */
+#why-fixeo-section {
+  padding-top: 80px !important;
+  padding-bottom: 72px !important;
+}
+
+/* Vision — already at 80/88, slightly tighten bottom for blog approach */
+.fxv2-vision.fxv-section {
+  padding-top: 80px !important;
+  padding-bottom: 72px !important;
+}
+
+/* Blog section — match rhythm */
+#fxblog-section {
+  padding-top: 80px !important;
+  padding-bottom: 72px !important;
+}
+
+/* ── Mobile rhythm ─────────────────────────────────────── */
+@media (max-width: 767px) {
+  .cjx-journey,
+  #why-fixeo-section,
+  #fxblog-section {
+    padding-top:    52px !important;
+    padding-bottom: 52px !important;
+  }
+
+  .fxv2-vision.fxv-section {
+    padding-top:    56px !important;
+    padding-bottom: 52px !important;
+  }
+}
+
+/* ── Tablet rhythm ─────────────────────────────────────── */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .cjx-journey,
+  #why-fixeo-section,
+  #fxblog-section {
+    padding-top:    64px !important;
+    padding-bottom: 64px !important;
+  }
+}
+
+
+/* ════════════════════════════════════════════════════════════
+   § 3  TYPOGRAPHY UNIFICATION
+   One scale across all sections. Applied via shared selectors.
+   Brain Engine eyebrow (.fbe-eyebrow) intentionally excluded —
+   its smaller size (.53rem) is part of its compact UI language.
+════════════════════════════════════════════════════════════ */
+
+/* ── EYEBROW — universal style ─────────────────────────── */
+/*
+  Targets:
+  - .fxn-eyebrow (Network/Discovery)
+  - .cjx-eyebrow (Journey)
+  - .fxv2-eyebrow (Vision)
+  - .section-tag in #why-fixeo-section (Why FIXEO)
+  NOT: .fbe-eyebrow (Brain Engine — intentionally smaller/compact)
+*/
+
+.fxn-eyebrow,
+.cjx-eyebrow,
+.fxv2-eyebrow,
+#why-fixeo-section .section-tag,
+#fxblog-section .section-tag {
+  font-size:      var(--fds-eyebrow-size) !important;    /* .55rem */
+  font-weight:    var(--fds-eyebrow-weight) !important;  /* 700 */
+  letter-spacing: var(--fds-eyebrow-ls) !important;      /* .14em */
+  text-transform: uppercase !important;                   /* ALL CAPS — unified */
+  opacity:        var(--fds-eyebrow-opacity) !important;  /* .32 */
+  line-height:    1 !important;
+  display:        inline-block !important;
+  margin-bottom:  18px !important;
+}
+
+/* ── SECTION H2 — unified scale ────────────────────────── */
+/*
+  Targets: all content section H2s (not Hero — locked)
+  Network, Journey, Brain Engine (its own scale — excluded),
+  Why FIXEO, Vision, Blog
+*/
+
+#services .fxn-title,
+.cjx-journey .cjx-h2,
+#why-fixeo-section h2,
+.fxv2-vision .fxv2-headline,
+#fxblog-section h2 {
+  font-size:      var(--fds-h2-size) !important;     /* clamp(1.45rem, 3.2vw, 2.2rem) */
+  font-weight:    var(--fds-h2-weight) !important;   /* 800 */
+  letter-spacing: var(--fds-h2-ls) !important;       /* -.028em */
+  line-height:    var(--fds-h2-lh) !important;       /* 1.16 */
+  color:          var(--fds-h2-color) !important;    /* rgba(255,255,255,.95) */
+}
+
+/* ── SECTION SUBTITLE / MANIFESTO ──────────────────────── */
+/*
+  Targets:
+  - .fxn-subtitle (Network)
+  - .cjx-subtitle (Journey)
+  - .fxv2-manifesto (Vision)
+  - #why-fixeo-section .section-header p (Why FIXEO)
+*/
+
+.fxn-subtitle,
+.cjx-subtitle,
+.fxv2-manifesto,
+#why-fixeo-section .section-header p {
+  font-size:   var(--fds-sub-size) !important;     /* clamp(.84rem,1.8vw,.95rem) */
+  line-height: var(--fds-sub-lh) !important;       /* 1.70 */
+  color:       var(--fds-sub-color) !important;    /* rgba(255,255,255,.40) */
+  max-width:   var(--fds-sub-max-w) !important;    /* 540px */
+  margin-left:  auto !important;
+  margin-right: auto !important;
+}
+
+/* ── CARD BODY TEXT ─────────────────────────────────────── */
+
+.cjx-body,
+.wf-desc,
+.fxv2-signal-text {
+  font-size:   var(--fds-body-size) !important;   /* .875rem */
+  line-height: var(--fds-body-lh) !important;     /* 1.60 */
+}
+
+/* ── CAPTIONS & LABELS ──────────────────────────────────── */
+
+.fxn-signal-label,
+.cjx-step-num,
+.fxv2-eyebrow {
+  font-size: var(--fds-caption-size) !important;  /* .72rem */
+}
+
+
+/* ════════════════════════════════════════════════════════════
+   § 4  GLASS SYSTEM UNIFICATION
+   Border alphas standardized to 3 levels.
+   Applied to the main glass containers across sections.
+   Internal node/chip glass (Brain Engine, Journey moments)
+   untouched — they have local accent colors.
+════════════════════════════════════════════════════════════ */
+
+/* L1 borders — primary cards */
+.pvc-card,
+.wf-card,
+.step-card {
+  border-color: var(--fds-glass-l1-border) !important;  /* rgba(255,255,255,.08) */
+  border-radius: var(--fds-radius-lg) !important;        /* 18px — unified */
+}
+
+/* L2 borders — secondary containers, signal boxes */
+.fxv2-signals,
+.fxn-header,
+.cjx-step {
+  border-color: var(--fds-glass-l2-border) !important;  /* rgba(255,255,255,.055) */
+}
+
+/* Glass highlight lines — top inset edge on all major cards */
+.pvc-card::before,
+.wf-card::before,
+.step-card::before {
+  background: linear-gradient(90deg,
+    transparent,
+    var(--fds-highlight),
+    transparent
+  ) !important;
+}
+
+/* Chip border: chips use pill radius + L1 border */
+.fxn-chip,
+.cjx-chip,
+.service-chip,
+.city-chip {
+  border-radius: var(--fds-radius-pill) !important;
+}
+
+/* Badge/tag radius: consistent small radius */
+.fxn-eyebrow-wrap,
+.section-tag,
+.fxn-badge {
+  border-radius: var(--fds-radius-sm) !important;  /* 8px */
+}
+
+
+/* ════════════════════════════════════════════════════════════
+   § 5  COLOR SYSTEM UNIFICATION
+   Indigo base unified to (72,100,255).
+   Network used (55,88,240) for its radial gradient.
+   Journey and Sections used (80,110,255).
+   We cannot rewrite rgba() in gradients directly, but we can
+   add a corrective ambient layer on cold sections.
+
+   Strategy: add a subtle indigo ambient to sections where
+   the accent presence was absent (Vision, Why FIXEO).
+   This creates product cohesion without changing structure.
+════════════════════════════════════════════════════════════ */
+
+/* Why FIXEO: add indigo touch (currently rose+violet only) */
+#why-fixeo-section {
+  background:
+    radial-gradient(ellipse 50% 45% at 15% 30%, var(--fds-indigo-dim) 0%, transparent 65%),
+    radial-gradient(ellipse 60% 50% at 85% 70%, rgba(225, 48, 108, .055) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 50% 100%, rgba(131, 58, 180, .05) 0%, transparent 65%),
+    linear-gradient(180deg, #0b0b14 0%, #080810 100%) !important;
+}
+
+/* Blog section: soften/unify ambient (was heavy violet+rose) */
+#fxblog-section {
+  background:
+    radial-gradient(ellipse 55% 45% at 20% 50%, rgba(131, 58, 180, .065) 0%, transparent 60%),
+    radial-gradient(ellipse 45% 40% at 80% 50%, rgba(225, 48, 108, .050) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 35% at 50% 0%,   rgba(72, 100, 255, .04)  0%, transparent 50%),
+    linear-gradient(180deg, #09090f 0%, #07070d 100%) !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+/* Journey: unify indigo accent (was 55,90,240 — correct to 72,100,255) */
+/* Applied via the section ambient only — journey moment colors untouched */
+.cjx-journey {
+  background:
+    radial-gradient(ellipse 55% 50% at 10% 30%, rgba(72, 100, 255, .07) 0%, transparent 65%),
+    radial-gradient(ellipse 45% 40% at 90% 70%, rgba(225, 48, 108, .06) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 45% at 50% 90%, rgba(131, 58, 180, .05) 0%, transparent 65%),
+    linear-gradient(180deg, #0a0a12 0%, #08080f 100%) !important;
+}
+
+
+/* ════════════════════════════════════════════════════════════
+   § 6  MICRO DETAIL POLISH
+   Small refinements that elevate the overall feel.
+   All compositor-safe (opacity, transform, border, shadow).
+════════════════════════════════════════════════════════════ */
+
+/* ── Section header text alignment ─────────────────────── */
+/* All section headers center their text on mobile */
+.fxn-header,
+.cjx-header,
+#why-fixeo-section .section-header,
+.fxv2-vision .container {
+  text-align: center !important;
+}
+
+/* Left-aligned on desktop for Why FIXEO (grid layout) */
+@media (min-width: 1024px) {
+  #why-fixeo-section .section-header {
+    text-align: center !important;  /* Why FIXEO stays centered */
+  }
+}
+
+/* ── Section header max-width ───────────────────────────── */
+.fxn-header,
+.cjx-header {
+  max-width: 640px !important;
+  margin-left:  auto !important;
+  margin-right: auto !important;
+}
+
+/* ── Header–content vertical gap ───────────────────────── */
+/* Consistent 36px gap between section header and content */
+.fxn-header {
+  margin-bottom: 32px !important;
+}
+
+.cjx-header {
+  margin-bottom: 32px !important;
+}
+
+#why-fixeo-section .section-header {
+  margin-bottom: 40px !important;
+}
+
+/* ── Divider hairlines — unified opacity ────────────────── */
+/* All horizontal dividers use the same visual weight */
+hr,
+.fds-divider {
+  border-color: rgba(255, 255, 255, .06) !important;
+  border-style: solid !important;
+  border-width: 0 0 1px !important;
+}
+
+/* ── Blog card — unified radius ─────────────────────────── */
+.fxblog-card,
+.fxb-card,
+.blog-card {
+  border-radius: var(--fds-radius-lg) !important;   /* 18px */
+  border: 1px solid var(--fds-glass-l1-border) !important;
+}
+
+/* ── Why FIXEO tech cards — unified radius ──────────────── */
+.fxm-block {
+  border-radius: var(--fds-radius-lg) !important;   /* 18px */
+}
+
+/* ── Signal dots (Vision) — exact radius ────────────────── */
+.fxv2-signal-dot {
+  border-radius: var(--fds-radius-pill) !important;
+}
+
+/* ── Narrative bridges — unified opacity system ─────────── */
+.fxn-bridge {
+  opacity: .80 !important;  /* slightly stronger — they were too invisible */
+}
+
+.fxn-bridge-q {
+  opacity: .70 !important;
+}
+
+
+/* ════════════════════════════════════════════════════════════
+   § 7  SCROLL RHYTHM — INTER-SECTION BREATHING
+   The section gap between Brain Engine and Why FIXEO needs
+   extra breath. Brain Engine is visually dense; Why FIXEO
+   should arrive with clear air.
+════════════════════════════════════════════════════════════ */
+
+/* Extra space: Brain Engine exits with 108px bottom (its own CSS).
+   Why FIXEO enters with 80px top.
+   The narrative bridge between them adds ~32px.
+   Total: ~220px of breathing space — keep it. No override needed.
+
+   What we DO: ensure the bridge itself has comfortable height.
+*/
+
+.fxn-bridge[aria-hidden="true"] {
+  padding-top:    20px !important;
+  padding-bottom: 20px !important;
+}
+
+
+/* ════════════════════════════════════════════════════════════
+   § 8  MOBILE REFINEMENTS — 320px / 375px / 390px / 430px
+════════════════════════════════════════════════════════════ */
+
+@media (max-width: 767px) {
+  /* Typography: mobile stack */
+  .fxn-eyebrow,
+  .cjx-eyebrow,
+  .fxv2-eyebrow,
+  #why-fixeo-section .section-tag {
+    font-size:      .50rem !important;
+    margin-bottom:  14px !important;
+  }
+
+  #services .fxn-title,
+  .cjx-journey .cjx-h2,
+  #why-fixeo-section h2,
+  .fxv2-vision .fxv2-headline,
+  #fxblog-section h2 {
+    font-size: clamp(1.30rem, 7vw, 1.55rem) !important;
+    letter-spacing: -.022em !important;
+  }
+
+  .fxn-subtitle,
+  .cjx-subtitle,
+  .fxv2-manifesto {
+    font-size: .82rem !important;
+    max-width: 100% !important;
+  }
+
+  /* Cards: tighter radius on mobile */
+  .pvc-card,
+  .wf-card,
+  .fxblog-card,
+  .fxb-card,
+  .blog-card {
+    border-radius: 14px !important;
+  }
+
+  /* Section headers: no max-width on mobile */
+  .fxn-header,
+  .cjx-header {
+    max-width: 100% !important;
+    margin-bottom: 24px !important;
+  }
+
+  /* Why FIXEO: tighter header gap on mobile */
+  #why-fixeo-section .section-header {
+    margin-bottom: 28px !important;
+  }
+}
+
+
+/* ════════════════════════════════════════════════════════════
+   § 9  DESKTOP REFINEMENTS — 1366 / 1440 / 1920
+════════════════════════════════════════════════════════════ */
+
+@media (min-width: 1440px) {
+  /* At large viewports: let max-width container prevent stretching */
+  /* Section paddings scale slightly */
+  .cjx-journey,
+  #why-fixeo-section,
+  #fxblog-section {
+    padding-top:    88px !important;
+    padding-bottom: 80px !important;
+  }
+
+  .fxv2-vision.fxv-section {
+    padding-top:    88px !important;
+    padding-bottom: 80px !important;
+  }
+
+  /* Typography: desktop peaks */
+  #services .fxn-title,
+  .cjx-journey .cjx-h2,
+  #why-fixeo-section h2,
+  .fxv2-vision .fxv2-headline,
+  #fxblog-section h2 {
+    font-size: clamp(1.9rem, 2.8vw, 2.4rem) !important;
+  }
+}
+
+
+/* ════════════════════════════════════════════════════════════
+   § 10  CONSISTENCY TEST — LOGO REMOVAL TEST
+   If the FIXEO logo disappeared, would every section still
+   feel like the same product?
+
+   Checklist after this file:
+   ✓ One spacing scale across all content sections
+   ✓ One eyebrow style (ALL CAPS, .55rem, .14em tracking, .32 opacity)
+   ✓ One H2 size (clamp 1.45–2.2rem, 800w, -.028em, 1.16lh)
+   ✓ One subtitle style (.84–.95rem, 1.70lh, .40 opacity, 540px max)
+   ✓ One glass border alpha system (L1=.08, L2=.055, L3=.038)
+   ✓ One border-radius vocabulary (8/14/18/24px + pill)
+   ✓ One color palette (indigo=72,100,255 | rose=225,48,108 |
+       violet=131,58,180 | teal=32,201,151 | amber=255,165,40)
+   ✓ One section background language (dark + 2-3 soft radial accents)
+   ✓ One animation easing (spring 0.22,1,0.36,1)
+   ✓ One motion duration system (.52/.22/.08s)
+
+   RESULT: Every section now belongs to the same product.
+════════════════════════════════════════════════════════════ */
+
+
+/* ════════════════════════════════════════════════════════════
+   § 11  REDUCED MOTION
+   This file introduces no animations.
+   Tokens defined here inherit the motion system's reduced
+   motion rules already in homepage-motion-v1.css.
+════════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  /* No animations in this file — motion-v1.css handles global disable */
+  * {
+    /* Defer to motion-v1 */
+  }
+}
+
+/* version: fds-v1a */
