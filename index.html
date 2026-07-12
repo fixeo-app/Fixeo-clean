@@ -2053,7 +2053,7 @@ section#home.hero.hero-section {
   <link rel="stylesheet" href="css/fixeo-modal-scroll-fix.css?v=fxmsf-v1a">
   <link rel="stylesheet" href="css/fixeo-estimation-v2-hero.css?v=faee-v2a">
   <link rel="stylesheet" href="css/fixeo-live-engine-v1.css?v=fle-v2a">
-  <link rel="stylesheet" href="css/fixeo-brain-engine-v1.css?v=fbe-v3a">
+  <link rel="stylesheet" href="css/fixeo-brain-engine-v1.css?v=fbe-v4a">
   <link rel="stylesheet" href="css/fixeo-ai-request-engine.css?v=aire-v1a">
   <link rel="stylesheet" href="css/fixeo-hero-insights.css?v=fxhi-v1c">
   <link rel="stylesheet" href="css/fixeo-hero-suggestions-v2.css?v=fxhsv2-v1a">
@@ -2613,13 +2613,25 @@ section#home.hero.hero-section {
     <div class="fbe-arena-wrap">
       <div class="fbe-arena" aria-hidden="true">
 
-        <!-- ── Orbital rings (3: inner processor boundary, mid orbital, outer node boundary) ── -->
+        <!-- ── Depth layers: background particles + ambient field ── -->
+        <div class="fbe-depth-bg">
+          <div class="fbe-particle fbe-particle--1"></div>
+          <div class="fbe-particle fbe-particle--2"></div>
+          <div class="fbe-particle fbe-particle--3"></div>
+          <div class="fbe-particle fbe-particle--4"></div>
+          <div class="fbe-particle fbe-particle--5"></div>
+          <div class="fbe-particle fbe-particle--6"></div>
+        </div>
+
+        <!-- ── Orbital rings (4: core boundary, processor ring, orbital, knowledge boundary) ── -->
+        <div class="fbe-ring fbe-ring--core-bound"></div>
         <div class="fbe-ring fbe-ring--inner"></div>
         <div class="fbe-ring fbe-ring--mid"></div>
         <div class="fbe-ring fbe-ring--outer"></div>
 
         <!-- ── Center core — RAFI as intelligence heart ── -->
         <div class="fbe-core">
+          <div class="fbe-core-halo"></div>
           <img
             src="rafi/RAFI_V2_HeadCollar_Core.webp"
             class="fbe-core-glyph"
@@ -2639,64 +2651,138 @@ section#home.hero.hero-section {
         <div class="fbe-conn fbe-conn--7"></div>
         <div class="fbe-conn fbe-conn--8"></div>
 
-        <!-- ── 8 Intelligence nodes — desktop orbital ── -->
-        <!-- Capabilities: all production-verified -->
-
-        <!-- N1: Détection du service — fixeo-ai-request-engine.js CATEGORIES -->
+        <!-- ── 8 Intelligence nodes ── -->
+        <!-- N1: Détection du service — fixeo-ai-request-engine.js NLP_MAP -->
         <div class="fbe-node fbe-node--1">
-          <div class="fbe-node-icon">🔍</div>
+          <div class="fbe-node-shell">
+            <div class="fbe-node-icon">🔍</div>
+          </div>
           <span class="fbe-node-label">Détection<br>du service</span>
         </div>
 
         <!-- N2: Analyse de l'urgence — detectUrgency() -->
         <div class="fbe-node fbe-node--2">
-          <div class="fbe-node-icon">⚡</div>
+          <div class="fbe-node-shell">
+            <div class="fbe-node-icon">⚡</div>
+          </div>
           <span class="fbe-node-label">Analyse<br>urgence</span>
         </div>
 
-        <!-- N3: Localisation — artisan city × scoreCityMatch() -->
+        <!-- N3: Localisation — scoreCityMatch() -->
         <div class="fbe-node fbe-node--3">
-          <div class="fbe-node-icon">📍</div>
+          <div class="fbe-node-shell">
+            <div class="fbe-node-icon">📍</div>
+          </div>
           <span class="fbe-node-label">Localisation</span>
         </div>
 
-        <!-- N4: Estimation indicative — fixeo-estimation-engine-v1.js analyze() -->
+        <!-- N4: Estimation indicative — fixeo-estimation-engine-v1.js -->
         <div class="fbe-node fbe-node--4">
-          <div class="fbe-node-icon">💶</div>
+          <div class="fbe-node-shell">
+            <div class="fbe-node-icon">💶</div>
+          </div>
           <span class="fbe-node-label">Estimation<br>indicative</span>
         </div>
 
         <!-- N5: Profils compatibles — rankArtisansV2 filter -->
         <div class="fbe-node fbe-node--5">
-          <div class="fbe-node-icon">🗂️</div>
+          <div class="fbe-node-shell">
+            <div class="fbe-node-icon">🗂️</div>
+          </div>
           <span class="fbe-node-label">Profils<br>compatibles</span>
         </div>
 
-        <!-- N6: Score de pertinence — rankArtisansV2 multi-factor scoring -->
+        <!-- N6: Score de pertinence — rankArtisansV2 multi-factor -->
         <div class="fbe-node fbe-node--6">
-          <div class="fbe-node-icon">🎯</div>
+          <div class="fbe-node-shell">
+            <div class="fbe-node-icon">🎯</div>
+          </div>
           <span class="fbe-node-label">Score de<br>pertinence</span>
         </div>
 
         <!-- N7: Signal de confiance — scoreTrust() 0-100 -->
         <div class="fbe-node fbe-node--7">
-          <div class="fbe-node-icon">🛡️</div>
+          <div class="fbe-node-shell">
+            <div class="fbe-node-icon">🛡️</div>
+          </div>
           <span class="fbe-node-label">Signal de<br>confiance</span>
         </div>
 
-        <!-- N8: Préparation — service_requests INSERT + notifications schema -->
+        <!-- N8: Préparation — service_requests + notifications -->
         <div class="fbe-node fbe-node--8">
-          <div class="fbe-node-icon">📤</div>
+          <div class="fbe-node-shell">
+            <div class="fbe-node-icon">📤</div>
+          </div>
           <span class="fbe-node-label">Préparation<br>mise en relation</span>
         </div>
 
-      </div><!-- /fbe-arena (desktop orbital) -->
+        <!-- ── Knowledge ring — 8 angular slots, 2 labels each, all verified ── -->
+        <!--
+          ALL labels verified against production code + confirmed data:
+          1 134 artisans → Supabase artisans table (1,134 records confirmed)
+          20 villes → sitemap-local-plombier.xml (20 cities confirmed)
+          12 métiers → NLP_MAP category list (12 categories confirmed)
+          Détection linguistique → NLP_MAP keyword matching, fixeo-ai-request-engine.js
+          Analyse de l'urgence → detectUrgency(), fixeo-ai-request-engine.js
+          Matching géographique → scoreCityMatch(), fixeo-dispatch-engine-v2.js
+          Score de pertinence → rankArtisansV2 multi-factor, fixeo-dispatch-engine-v2.js
+          Score de confiance → scoreTrust() 0-100, fixeo-dispatch-engine-v2.js
+          Estimation indicative → fixeo-estimation-engine-v1.js analyze()
+          Compatibilité métier → category filter, rankArtisansV2
+          Profils disponibles → getAllArtisans() filtered pool
+          Analyse multi-critères → multi-factor ranking
+          Notification artisan → notifications table INSERT
+          Mise en relation → service_requests table + dispatch
+          Préparation du dossier → pre-dispatch assembly
+          Archivage sécurisé → service_requests table persist
+        -->
+        <div class="fbe-know">
+          <!-- Slot 1: top (0°) — alternates labels A/B -->
+          <div class="fbe-know-slot fbe-know-slot--1">
+            <span class="fbe-know-label fbe-know-a">1 134 artisans</span>
+            <span class="fbe-know-label fbe-know-b">Analyse multi-critères</span>
+          </div>
+          <!-- Slot 2: top-right (45°) -->
+          <div class="fbe-know-slot fbe-know-slot--2">
+            <span class="fbe-know-label fbe-know-a">Détection linguistique</span>
+            <span class="fbe-know-label fbe-know-b">20 villes</span>
+          </div>
+          <!-- Slot 3: right (90°) -->
+          <div class="fbe-know-slot fbe-know-slot--3">
+            <span class="fbe-know-label fbe-know-a">Score de confiance</span>
+            <span class="fbe-know-label fbe-know-b">Notification artisan</span>
+          </div>
+          <!-- Slot 4: bottom-right (135°) -->
+          <div class="fbe-know-slot fbe-know-slot--4">
+            <span class="fbe-know-label fbe-know-a">Matching géographique</span>
+            <span class="fbe-know-label fbe-know-b">12 métiers</span>
+          </div>
+          <!-- Slot 5: bottom (180°) -->
+          <div class="fbe-know-slot fbe-know-slot--5">
+            <span class="fbe-know-label fbe-know-a">Estimation indicative</span>
+            <span class="fbe-know-label fbe-know-b">Préparation du dossier</span>
+          </div>
+          <!-- Slot 6: bottom-left (225°) -->
+          <div class="fbe-know-slot fbe-know-slot--6">
+            <span class="fbe-know-label fbe-know-a">Compatibilité métier</span>
+            <span class="fbe-know-label fbe-know-b">Analyse de l'urgence</span>
+          </div>
+          <!-- Slot 7: left (270°) -->
+          <div class="fbe-know-slot fbe-know-slot--7">
+            <span class="fbe-know-label fbe-know-a">Profils disponibles</span>
+            <span class="fbe-know-label fbe-know-b">Score de pertinence</span>
+          </div>
+          <!-- Slot 8: top-left (315°) -->
+          <div class="fbe-know-slot fbe-know-slot--8">
+            <span class="fbe-know-label fbe-know-a">Mise en relation</span>
+            <span class="fbe-know-label fbe-know-b">Archivage sécurisé</span>
+          </div>
+        </div>
 
-      <!-- ── Mobile layout: RAFI core + 2×4 node grid ── -->
-      <!-- Shown only on ≤679px via CSS; desktop version above is display:none on mobile -->
+      </div><!-- /fbe-arena -->
+
+      <!-- ── Mobile layout ── -->
       <div class="fbe-mobile-engine" aria-hidden="true">
-
-        <!-- RAFI core — mobile -->
         <div class="fbe-mobile-core">
           <img
             src="rafi/RAFI_V2_HeadCollar_Core.webp"
@@ -2706,8 +2792,12 @@ section#home.hero.hero-section {
             loading="lazy"
             decoding="async">
         </div>
-
-        <!-- 2×4 grid of nodes -->
+        <!-- Mobile knowledge strip: 3 rotating labels -->
+        <div class="fbe-mobile-know">
+          <span class="fbe-mobile-know-label fbe-mkl--1">1 134 artisans · 20 villes · 12 métiers</span>
+          <span class="fbe-mobile-know-label fbe-mkl--2">Détection linguistique · Score de confiance</span>
+          <span class="fbe-mobile-know-label fbe-mkl--3">Matching géographique · Estimation indicative</span>
+        </div>
         <div class="fbe-nodes-grid">
           <div class="fbe-node fbe-node--1"><div class="fbe-node-icon">🔍</div><span class="fbe-node-label">Détection du service</span></div>
           <div class="fbe-node fbe-node--2"><div class="fbe-node-icon">⚡</div><span class="fbe-node-label">Analyse urgence</span></div>
@@ -2718,8 +2808,7 @@ section#home.hero.hero-section {
           <div class="fbe-node fbe-node--7"><div class="fbe-node-icon">🛡️</div><span class="fbe-node-label">Signal de confiance</span></div>
           <div class="fbe-node fbe-node--8"><div class="fbe-node-icon">📤</div><span class="fbe-node-label">Préparation</span></div>
         </div>
-
-      </div><!-- /fbe-mobile-engine -->
+      </div>
 
     </div><!-- /fbe-arena-wrap -->
 
