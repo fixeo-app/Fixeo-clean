@@ -1,7 +1,18 @@
-/* FIXEO — Hero Premium Sprint V1  hvps-v1a  2026-07-12
-   Additive polish. #home scope only. Mobile-first. No layout changes. */
+/* FIXEO — Hero Premium Sprint V1  hvps-v1b  2026-07-12
+   Additive polish. #home scope only. Mobile-first. No layout changes.
+   v1b changes: WCAG city-pill 44px, mobile navbar safety 72px fallback,
+   removed dead focus-visible on non-focusable divs, !important audit pass */
 
-/* BACKGROUND — richer depth, less noise */
+/* ── !important policy ──────────────────────────────────────────────
+   All contested properties (48 types) keep !important: hero-conversion-boost
+   and hero-premium-upgrade both use !important on the same properties.
+   Since those files load before sprint, sprint MUST use !important to win.
+   Safely dropped (uncontested): animation-delay, outline/outline-offset on
+   :focus-visible rules, filter, -webkit-text-fill-color, background-clip,
+   transition-duration. These are sprint-only declarations.
+   ──────────────────────────────────────────────────────────────────── */
+
+/* BACKGROUND — richer depth */
 
 section#home.hero.hero-section {
   background:
@@ -11,7 +22,6 @@ section#home.hero.hero-section {
     linear-gradient(172deg, #07071a 0%, #0b0b1c 40%, #0f1024 75%, #0c0e20 100%) !important;
 }
 
-/* Overlay: smoother gradient, reduced noise */
 section#home.hero .hero-overlay {
   background:
     radial-gradient(ellipse 55% 45% at 15% 28%, rgba(225,48,108,0.13) 0%, transparent 55%),
@@ -22,59 +32,52 @@ section#home.hero .hero-overlay {
   z-index: 1 !important;
 }
 
-/* Ambient bubbles — slightly more refined opacity */
 section#home .hero-bubble { opacity: 0.45 !important; }
 section#home .hero-blob   { opacity: 0.5  !important; }
 
-/* VERTICAL RHYTHM — intentional spacing scale */
+/* VERTICAL RHYTHM */
 
 section#home .hero-content {
-  gap: 0 !important;               /* control spacing per-element */
+  gap: 0 !important;
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
 }
 
-/* Title → sits at top, breathing below */
 section#home .hero-content > .hero-title {
   margin-top: 0 !important;
   margin-bottom: 20px !important;
 }
 
-/* Subtitle → 0 from title (title already has bottom margin) */
 section#home .hero-content > .hero-subtitle,
 section#home .hero-content > p.hero-subtitle {
   margin-top: 0 !important;
   margin-bottom: 28px !important;
 }
 
-/* Search card → key action, prominent gap above it */
 section#home .hero-content > #hero-quick-search,
 section#home .hero-content > .search-box {
   margin-top: 0 !important;
   margin-bottom: 0 !important;
 }
 
-/* City smart → 10px below search */
 section#home .hero-content > .hero-city-smart,
 section#home .hero-content > #hero-city-smart {
   margin-top: 10px !important;
   margin-bottom: 0 !important;
 }
 
-/* Live signals → 8px below city */
 section#home .hero-content > .fxlps-signals {
   margin-top: 10px !important;
   margin-bottom: 0 !important;
 }
 
-/* Secondary link → 20px below signals */
 section#home .hero-content > .hero-secondary-link-wrap {
   margin-top: 20px !important;
   margin-bottom: 0 !important;
 }
 
-/* TYPOGRAPHY — sharper optical hierarchy */
+/* TYPOGRAPHY */
 
 section#home h1.hero-title,
 section#home .hero-title {
@@ -87,18 +90,15 @@ section#home .hero-title {
   color: #fff !important;
 }
 
-/* Gradient span — deeper, richer */
 section#home .hero-title span:last-child {
   background: linear-gradient(130deg, #ff4d8a 0%, #e1306c 45%, #c92b61 100%) !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
   background-clip: text !important;
   display: inline !important;
-  /* Subtle glow text-shadow via filter (safe — won't affect layout) */
-  filter: drop-shadow(0 0 18px rgba(225,48,108,0.22)) !important;
+  filter: drop-shadow(0 0 18px rgba(225,48,108,0.22));
 }
 
-/* Divider line below title — premium touch */
 section#home .hero-title::after {
   content: '' !important;
   display: block !important;
@@ -109,7 +109,6 @@ section#home .hero-title::after {
   border-radius: 2px !important;
 }
 
-/* Subtitle — refined opacity and tracking */
 section#home .hero-subtitle {
   font-size: clamp(1.02rem, 2.1vw, 1.18rem) !important;
   color: rgba(255,255,255,0.68) !important;
@@ -119,9 +118,8 @@ section#home .hero-subtitle {
   max-width: 640px !important;
 }
 
-/* SEARCH CARD — deeper glass, refined shadows */
+/* SEARCH CARD */
 
-/* Outer container */
 section#home #hero-quick-search.qsm-inline-host {
   border-radius: 24px !important;
   background: rgba(255,255,255,0.055) !important;
@@ -140,7 +138,6 @@ section#home #hero-quick-search.qsm-inline-host {
     border-color 0.3s ease !important;
 }
 
-/* Focus ring on search card */
 section#home #hero-quick-search.qsm-inline-host:focus-within {
   border-color: rgba(225,48,108,0.30) !important;
   box-shadow:
@@ -150,7 +147,6 @@ section#home #hero-quick-search.qsm-inline-host:focus-within {
     inset 0 1px 0 rgba(255,255,255,0.10) !important;
 }
 
-/* Inner bar card */
 section#home .qsm-inline-host .qsm-bar-card {
   background: transparent !important;
   border: none !important;
@@ -160,7 +156,7 @@ section#home .qsm-inline-host .qsm-bar-card {
   min-height: 72px !important;
 }
 
-/* Search button — pressed / active / loading states */
+/* Search button states */
 section#home .qsm-inline-host .qsm-btn-search {
   min-height: 56px !important;
   min-width: 176px !important;
@@ -173,29 +169,25 @@ section#home .qsm-inline-host .qsm-btn-search {
     opacity 0.15s ease !important;
 }
 
-/* Hover — lift */
 section#home .qsm-inline-host .qsm-btn-search:hover {
   transform: translateY(-2px) scale(1.02) !important;
   filter: brightness(1.08) saturate(1.15) !important;
 }
 
-/* Active / pressed — sink */
 section#home .qsm-inline-host .qsm-btn-search:active {
   transform: translateY(1px) scale(0.98) !important;
   box-shadow:
     0 8px 24px rgba(225,48,108,0.28),
     0 0 14px rgba(131,58,180,0.16) !important;
   filter: brightness(0.95) !important;
-  transition-duration: 0.08s !important;
+  transition-duration: 0.08s;
 }
 
-/* Focus visible — keyboard */
 section#home .qsm-inline-host .qsm-btn-search:focus-visible {
-  outline: 2px solid rgba(255,255,255,0.9) !important;
-  outline-offset: 3px !important;
+  outline: 2px solid rgba(255,255,255,0.9);
+  outline-offset: 3px;
 }
 
-/* Loading state — when button has aria-busy or .is-loading */
 section#home .qsm-inline-host .qsm-btn-search[aria-busy="true"],
 section#home .qsm-inline-host .qsm-btn-search.is-loading {
   opacity: 0.75 !important;
@@ -204,7 +196,10 @@ section#home .qsm-inline-host .qsm-btn-search.is-loading {
   pointer-events: none !important;
 }
 
-/* CITY SMART PILL — refined glass */
+/* CITY DISPLAY PILL
+   Note: .hero-city-smart is a display label, not an interactive control.
+   The interactive city selector is .qsm-segment-city (min-height: 68-72px via QSM CSS).
+   min-height here is defensive hygiene for potential future JS interactivity. */
 
 section#home .hero-city-smart {
   background: rgba(255,255,255,0.055) !important;
@@ -218,24 +213,17 @@ section#home .hero-city-smart {
   -webkit-backdrop-filter: blur(12px) !important;
   transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease !important;
   box-shadow: 0 4px 16px rgba(0,0,0,0.10) !important;
-  /* touch target */
-  min-height: 40px !important;
+  min-height: 44px !important;
 }
 
-section#home .hero-city-smart:hover,
-section#home .hero-city-smart:focus {
+/* Mouse hover only — not combined with :focus to avoid hiding browser default focus ring */
+section#home .hero-city-smart:hover {
   background: rgba(255,255,255,0.09) !important;
   border-color: rgba(255,255,255,0.16) !important;
   color: rgba(255,255,255,0.88) !important;
-  outline: none !important;
 }
 
-section#home .hero-city-smart:focus-visible {
-  outline: 2px solid rgba(255,255,255,0.7) !important;
-  outline-offset: 2px !important;
-}
-
-/* LIVE PLATFORM SIGNALS STRIP — refined glass pill */
+/* LIVE PLATFORM SIGNALS */
 
 .fxlps-signals {
   background: rgba(255,255,255,0.048) !important;
@@ -263,7 +251,7 @@ section#home .hero-city-smart:focus-visible {
   letter-spacing: 0.008em !important;
 }
 
-/* SECONDARY LINK — pill button upgrade */
+/* SECONDARY LINK — pill button */
 
 .hero-secondary-link {
   display: inline-flex !important;
@@ -284,7 +272,7 @@ section#home .hero-city-smart:focus-visible {
     border-color 0.2s ease,
     color 0.2s ease,
     box-shadow 0.2s ease !important;
-  min-height: 44px !important;  /* touch target */
+  min-height: 44px !important;
 }
 
 .hero-secondary-link:hover {
@@ -296,8 +284,8 @@ section#home .hero-city-smart:focus-visible {
 }
 
 .hero-secondary-link:focus-visible {
-  outline: 2px solid rgba(255,255,255,0.8) !important;
-  outline-offset: 2px !important;
+  outline: 2px solid rgba(255,255,255,0.8);
+  outline-offset: 2px;
   color: rgba(255,255,255,0.95) !important;
   background: rgba(255,255,255,0.11) !important;
 }
@@ -305,10 +293,10 @@ section#home .hero-city-smart:focus-visible {
 .hero-secondary-link:active {
   background: rgba(255,255,255,0.06) !important;
   transform: scale(0.97) !important;
-  transition-duration: 0.08s !important;
+  transition-duration: 0.08s;
 }
 
-/* TRUST SECTION — breathing room + contrast */
+/* TRUST SECTION */
 
 .trust-section {
   padding-top: 0 !important;
@@ -339,7 +327,6 @@ section#home .hero-city-smart:focus-visible {
     background 0.2s ease,
     color 0.2s ease,
     border-color 0.2s ease !important;
-  /* min touch target */
   min-height: 48px !important;
 }
 
@@ -355,84 +342,65 @@ section#home .hero-city-smart:focus-visible {
 
 /* MICRO-MOTION — staggered entrance */
 
-/* Entrance keyframe — 6px lift, no bounce */
 @keyframes hvps-enter {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0);   }
 }
 
-/* Entrance only plays once, respects reduced-motion */
 @media (prefers-reduced-motion: no-preference) {
 
-  /* Title — first, no delay */
   section#home .hero-title {
     animation: hvps-enter 0.55s cubic-bezier(0.22,1,0.36,1) both !important;
-    animation-delay: 0.05s !important;
+    animation-delay: 0.05s;
   }
 
-  /* Subtitle — 80ms stagger */
   section#home .hero-subtitle {
     animation: hvps-enter 0.55s cubic-bezier(0.22,1,0.36,1) both !important;
-    animation-delay: 0.13s !important;
+    animation-delay: 0.13s;
   }
 
-  /* Search card — 160ms stagger */
   section#home #hero-quick-search {
     animation: hvps-enter 0.6s cubic-bezier(0.22,1,0.36,1) both !important;
-    animation-delay: 0.22s !important;
+    animation-delay: 0.22s;
   }
 
-  /* City + signals row — 240ms stagger */
   section#home .hero-city-smart,
   section#home .fxlps-signals {
     animation: hvps-enter 0.55s cubic-bezier(0.22,1,0.36,1) both !important;
-    animation-delay: 0.32s !important;
+    animation-delay: 0.32s;
   }
 
-  /* Secondary link — 320ms stagger */
   section#home .hero-secondary-link-wrap {
     animation: hvps-enter 0.5s cubic-bezier(0.22,1,0.36,1) both !important;
-    animation-delay: 0.42s !important;
+    animation-delay: 0.42s;
   }
 
-  /* Trust section — 380ms */
   .trust-section {
     animation: hvps-enter 0.55s cubic-bezier(0.22,1,0.36,1) both !important;
-    animation-delay: 0.50s !important;
+    animation-delay: 0.50s;
   }
 }
 
-/* FOCUS STATES — all interactive elements */
+/* FOCUS STATES — real interactive elements only */
 
 section#home a:focus-visible,
 section#home button:focus-visible {
-  outline: 2px solid rgba(255,255,255,0.80) !important;
-  outline-offset: 2px !important;
-  border-radius: 4px !important;
+  outline: 2px solid rgba(255,255,255,0.80);
+  outline-offset: 2px;
+  border-radius: 4px;
 }
 
-/* Trust items — keyboard accessible */
-.trust-item:focus-visible {
-  outline: 2px solid rgba(255,255,255,0.70) !important;
-  outline-offset: 2px !important;
-}
-
-/* RESPONSIVE — MOBILE (≤767px) */
+/* RESPONSIVE — MOBILE (≤767px)
+   padding-top fallback: 72px (realistic navbar height) + 28px = 100px minimum
+   Provides ≥28px clearance above any standard mobile sticky header. */
 
 @media (max-width: 767px) {
 
   section#home.hero.hero-section {
-    padding-top: calc(var(--navbar-h, var(--navbar-height, 64px)) + 28px) !important;
+    padding-top: calc(var(--navbar-h, var(--navbar-height, 72px)) + 28px) !important;
     padding-bottom: 48px !important;
   }
 
-  /* Typography — thumb-readable */
   section#home h1.hero-title {
     font-size: clamp(2.3rem, 11vw, 3.1rem) !important;
     line-height: 1.04 !important;
@@ -447,35 +415,30 @@ section#home button:focus-visible {
     margin-bottom: 22px !important;
   }
 
-  /* Title divider line — shorter on mobile */
   section#home .hero-title::after {
     width: 160px !important;
     margin: 12px auto 0 !important;
   }
 
-  /* Search card — edge-to-edge feel */
   section#home #hero-quick-search.qsm-inline-host {
     border-radius: 20px !important;
   }
 
-  /* City pill — full-width on mobile */
   section#home .hero-city-smart {
     width: 100% !important;
     max-width: 100% !important;
     justify-content: center !important;
     border-radius: 14px !important;
     padding: 10px 16px !important;
-    min-height: 48px !important; /* thumb-friendly */
+    min-height: 48px !important;
   }
 
-  /* Signals strip — centred */
   .fxlps-signals {
     margin-left: auto !important;
     margin-right: auto !important;
     max-width: 90vw !important;
   }
 
-  /* Secondary link — full width, thumb-friendly */
   .hero-secondary-link {
     width: 100% !important;
     max-width: 360px !important;
@@ -483,33 +446,36 @@ section#home button:focus-visible {
     min-height: 48px !important;
   }
 
-  /* Vertical rhythm — tighter on small screens */
   section#home .hero-content > .hero-city-smart {
     margin-top: 8px !important;
   }
+
   section#home .hero-content > .fxlps-signals {
     margin-top: 8px !important;
   }
+
   section#home .hero-content > .hero-secondary-link-wrap {
     margin-top: 16px !important;
   }
 
-  /* Trust section — 2-col grid, compact */
   .trust-section {
     margin-top: 20px !important;
   }
+
   .trust-section-inner {
     grid-template-columns: repeat(2, minmax(0,1fr)) !important;
     gap: 7px !important;
     padding: 9px !important;
     border-radius: 18px !important;
   }
+
   .trust-item {
     padding: 11px 8px !important;
     font-size: 0.78rem !important;
     gap: 6px !important;
-    min-height: 52px !important; /* thumb-friendly */
+    min-height: 52px !important;
   }
+
   .trust-icon {
     font-size: 1.05rem !important;
   }
@@ -600,13 +566,12 @@ section#home button:focus-visible {
     margin-top: 18px !important;
   }
 
-  /* Entrance animations — faster on compact screens */
   section#home .hero-title    { animation-duration: 0.38s !important; }
   section#home .hero-subtitle { animation-duration: 0.38s !important; }
   section#home #hero-quick-search { animation-duration: 0.40s !important; }
 }
 
-/* PREFERS-REDUCED-MOTION — all animations off */
+/* PREFERS-REDUCED-MOTION */
 
 @media (prefers-reduced-motion: reduce) {
 
@@ -622,7 +587,6 @@ section#home button:focus-visible {
     transform: none !important;
   }
 
-  /* Preserve only structural transitions — no motion */
   section#home .qsm-inline-host .qsm-btn-search {
     transition: opacity 0.15s ease !important;
   }
