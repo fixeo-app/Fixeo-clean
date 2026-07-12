@@ -1,6 +1,6 @@
 /**
  * FIXEO Brain Engine V4 — fixeo-brain-engine-v1.css
- * Version: fbe-v4a — 2026-07-12
+ * Version: fbe-v4.1 — 2026-07-12
  * Namespace: .fbe-* / .fbe-know-* / #fle-section
  * Zero overrides to any external stylesheet rules.
  *
@@ -87,7 +87,7 @@
   pointer-events: none;
   background:
     radial-gradient(ellipse 70% 70% at 50% 52%,
-      rgba(45,75,210,.14) 0%, transparent 58%),
+      rgba(45,75,210,.10) 0%, transparent 58%),
     radial-gradient(ellipse 40% 32% at 14% 18%,
       rgba(131,58,180,.09) 0%, transparent 52%),
     radial-gradient(ellipse 36% 30% at 86% 82%,
@@ -363,7 +363,7 @@
   /* 4-stop glass sphere: angled light at 33%/26% */
   background:
     radial-gradient(circle at 33% 26%,
-      rgba(255,255,255,.18) 0%,
+      rgba(255,255,255,.22) 0%,
       rgba(255,255,255,.07) 15%,
       rgba(55,90,240,.26)   34%,
       rgba(65,30,200,.18)   58%,
@@ -413,11 +413,21 @@
       transparent 66%);
   pointer-events: none;
   z-index: -1;
-  animation: fbe-aura-breathe 8s ease-in-out infinite;
+  animation:
+    fbe-aura-breathe  8s ease-in-out infinite,
+    fbe-aura-surge   11s ease-in-out -1s infinite;  /* offset from halo concentrate */
 }
 @keyframes fbe-aura-breathe {
   0%, 100% { transform: scale(1);    opacity: .65; }
   45%       { transform: scale(1.10); opacity: 1;   }
+}
+
+/* Surge: synchronized with halo concentrate for compound "decision moment" */
+@keyframes fbe-aura-surge {
+  0%,  35% { transform: scale(1);    opacity: .65; }
+  47%       { transform: scale(1.18); opacity: 1;   }  /* peak: aura blooms */
+  58%       { transform: scale(1.14); opacity: .90; }  /* hold */
+  72%, 100% { transform: scale(1);    opacity: .65; }
 }
 
 /* Breathing light shimmer — top highlight shifts subtly */
@@ -453,12 +463,26 @@
       rgba(255,255,255,.08) 40%,
       transparent 70%);
   pointer-events: none;
-  animation: fbe-halo-shift 9s ease-in-out infinite;
+  /* Two animations: position drift (9s) + concentration pulse (11s offset from breathe) */
+  animation:
+    fbe-halo-shift 9s ease-in-out infinite,
+    fbe-concentrate 11s ease-in-out -2s infinite;
 }
 @keyframes fbe-halo-shift {
   0%, 100% { transform: translate(0,0) scale(1);    opacity: .7; }
   33%       { transform: translate(4px,-3px) scale(1.2); opacity: 1;   }
   66%       { transform: translate(-3px,2px) scale(.85); opacity: .5;  }
+}
+
+/* Concentration pulse — simulates a "decision moment" every ~11s
+   The halo brightens strongly and expands, then subsides gracefully.
+   Combined with existing node pulses, visitor perceives "the engine just decided." */
+@keyframes fbe-concentrate {
+  0%,  38% { opacity: var(--fbe-halo-base, .7); transform: translate(0,0) scale(1);    }
+  48%       { opacity: 1;   transform: translate(2px,-2px) scale(1.5); }  /* peak concentration */
+  56%       { opacity: .9;  transform: translate(1px,-1px) scale(1.4); }  /* holding */
+  68%       { opacity: .6;  transform: translate(0,0)      scale(1.1); }  /* relaxing */
+  78%, 100% { opacity: var(--fbe-halo-base, .7); transform: translate(0,0) scale(1);    }
 }
 
 /* Core entrance keyframe */
@@ -502,12 +526,13 @@
   pointer-events: none;
   z-index: 3;
   border-radius: 1px;
-  /* Resting path: visible enough to see the network topology */
+  /* Resting path: ORIGINATES from core (left=strong) → fades to node (right=dim)
+     This makes every pathway visually read as emanating from RAFI */
   background: linear-gradient(
     90deg,
-    rgba(255,255,255,.02) 0%,
-    rgba(100,130,255,.22) 35%,
-    rgba(130,100,255,.28) 65%,
+    rgba(120,150,255,.38) 0%,
+    rgba(100,130,255,.26) 28%,
+    rgba(130,100,255,.16) 62%,
     rgba(255,255,255,.04) 100%
   );
   opacity: 0;
@@ -524,13 +549,15 @@
   width: 100%;
   height: 6px;
   border-radius: 3px;
+  /* Signal: originates at RAFI (left), head bright at leading edge (right)
+     Tail fades into the path. RAFI is the unmistakable source. */
   background: linear-gradient(
     90deg,
-    transparent            0%,
-    transparent            6%,
-    rgba(100,130,255,.95) 35%,
-    rgba(170,80,250,.88)  50%,
-    rgba(230,55,140,.65)  66%,
+    rgba(90,115,255,.30)  0%,
+    rgba(100,130,255,.72) 18%,
+    rgba(150,90,255,.95)  48%,
+    rgba(220,60,150,.98)  68%,
+    rgba(240,80,160,.85)  82%,
     transparent           100%
   );
   background-size: 260% 100%;
@@ -555,14 +582,16 @@
   width: 100%;
   height: 5px;
   border-radius: 3px;
+  /* Living signal: dim RAFI origin (left), bright head at destination (right)
+     The eye follows the head rightward — reads as RAFI → node */
   background: linear-gradient(
     90deg,
-    transparent           0%,
-    transparent          10%,
-    rgba(90,120,255,.82) 38%,
-    rgba(150,70,240,.70) 52%,
-    rgba(210,50,130,.45) 68%,
-    transparent          100%
+    rgba(80,110,255,.28)  0%,
+    rgba(100,130,255,.58) 22%,
+    rgba(150,80,250,.90)  52%,
+    rgba(210,55,140,.95)  70%,
+    rgba(235,70,155,.78)  84%,
+    transparent           100%
   );
   background-size: 280% 100%;
   background-position: 280% 0;
@@ -574,20 +603,13 @@
 }
 
 @keyframes fbe-signal-loop {
-  /* ── Outward: core → node ── */
+  /* RAFI → Node. Single direction. Clean causality. No return flicker. */
   0%   { background-position: 280% 0; opacity: 0; }
   2%   { opacity: 0; }
   4%   { opacity: 1; }
-  24%  { background-position: -14% 0; opacity: 1; }
-  30%  { background-position: -26% 0; opacity: 0; }
-  /* ── Processing pause ── */
-  31%  { opacity: 0; }
-  /* ── Return: node → core (inward; gradient reversed via background-position) ── */
+  26%  { background-position: -14% 0; opacity: 1; }
   34%  { background-position: -26% 0; opacity: 0; }
-  36%  { opacity: .55; }
-  55%  { background-position: 280% 0; opacity: .45; }
-  60%  { opacity: 0; }
-  /* ── Rest ── */
+  /* ── Rest: pathway stays quiet, RAFI prepares next dispatch ── */
   100% { background-position: 280% 0; opacity: 0; }
 }
 
@@ -661,14 +683,24 @@
 .fbe-node--8, .fbe-conn--8 { --fbe-delay: 2.10s; }
 
 /* Per-node accent colors */
-.fbe-node--1 { --fbe-node-color: rgba(72,100,255,.60);  --fbe-node-glow: rgba(72,100,255,.24); }
-.fbe-node--2 { --fbe-node-color: rgba(225,48,108,.60);  --fbe-node-glow: rgba(225,48,108,.22); }
-.fbe-node--3 { --fbe-node-color: rgba(131,58,180,.60);  --fbe-node-glow: rgba(131,58,180,.22); }
-.fbe-node--4 { --fbe-node-color: rgba(32,201,151,.60);  --fbe-node-glow: rgba(32,201,151,.20); }
-.fbe-node--5 { --fbe-node-color: rgba(80,110,255,.60);  --fbe-node-glow: rgba(80,110,255,.24); }
-.fbe-node--6 { --fbe-node-color: rgba(255,165,40,.60);  --fbe-node-glow: rgba(255,165,40,.20); }
-.fbe-node--7 { --fbe-node-color: rgba(131,58,180,.60);  --fbe-node-glow: rgba(131,58,180,.22); }
-.fbe-node--8 { --fbe-node-color: rgba(32,201,151,.60);  --fbe-node-glow: rgba(32,201,151,.20); }
+/* Per-node accent colors + thinking intensity (--fbe-think-peak)
+   Each node has a distinct personality expressed through its brightness ceiling:
+   N1 Détection: high-alert, first responder — peaks fully (1.0)
+   N2 Urgence:   most reactive — peaks at 1.0, very quick cycle
+   N3 Localisation: calm, geographic matching — low key (.60)
+   N4 Estimation: deliberate and slow — medium peak (.72), long cycle
+   N5 Profils:   frequent short bursts — peak .88, fast cycle
+   N6 Score:     analytical, moderate — peak .78
+   N7 Confiance: slow evaluator, rarely active but strong when it fires — peak .92
+   N8 Préparation: execution, finalizer — strong peak .95, long cycle */
+.fbe-node--1 { --fbe-node-color: rgba(72,100,255,.60);  --fbe-node-glow: rgba(72,100,255,.24); --fbe-think-peak: 1.00; }
+.fbe-node--2 { --fbe-node-color: rgba(225,48,108,.60);  --fbe-node-glow: rgba(225,48,108,.22); --fbe-think-peak: 1.00; }
+.fbe-node--3 { --fbe-node-color: rgba(131,58,180,.60);  --fbe-node-glow: rgba(131,58,180,.22); --fbe-think-peak: 0.60; }
+.fbe-node--4 { --fbe-node-color: rgba(32,201,151,.60);  --fbe-node-glow: rgba(32,201,151,.20); --fbe-think-peak: 0.72; }
+.fbe-node--5 { --fbe-node-color: rgba(80,110,255,.60);  --fbe-node-glow: rgba(80,110,255,.24); --fbe-think-peak: 0.88; }
+.fbe-node--6 { --fbe-node-color: rgba(255,165,40,.60);  --fbe-node-glow: rgba(255,165,40,.20); --fbe-think-peak: 0.78; }
+.fbe-node--7 { --fbe-node-color: rgba(131,58,180,.60);  --fbe-node-glow: rgba(131,58,180,.22); --fbe-think-peak: 0.92; }
+.fbe-node--8 { --fbe-node-color: rgba(32,201,151,.60);  --fbe-node-glow: rgba(32,201,151,.20); --fbe-think-peak: 0.95; }
 
 /* Per-node thinking cycle */
 .fbe-node--1 { --fbe-think-dur:  9s; --fbe-think-delay:  -0.0s; }
@@ -707,11 +739,12 @@
 }
 @keyframes fbe-shell-on { to { opacity: 1; } }
 @keyframes fbe-shell-pulse {
-  0%, 100% { opacity: .30; transform: scale(1);    }
-  25%       { opacity: .65; transform: scale(1.04); }  /* node "wakes" */
-  40%       { opacity: .85; transform: scale(1.07); }  /* processing */
-  60%       { opacity: .60; transform: scale(1.03); }  /* settling */
-  75%       { opacity: .30; transform: scale(1);    }  /* resting */
+  /* Shell ring pulses to node's personality (think-peak drives scale of ring energy) */
+  0%, 100% { opacity: .22; transform: scale(1);    }
+  25%       { opacity: calc(var(--fbe-think-peak, 1) * .60); transform: scale(1.04); }
+  40%       { opacity: calc(var(--fbe-think-peak, 1) * .82); transform: scale(1.07); }
+  58%       { opacity: calc(var(--fbe-think-peak, 1) * .55); transform: scale(1.03); }
+  75%       { opacity: .22; transform: scale(1);    }
 }
 
 /* Shell outer glow — fires during active window */
@@ -739,9 +772,9 @@
   border-radius: 50%;
   background:
     radial-gradient(circle at 36% 31%,
-      rgba(255,255,255,.10) 0%,
-      rgba(255,255,255,.03) 45%,
-      rgba(0,0,12,.22)      100%);
+      rgba(255,255,255,.08) 0%,
+      rgba(255,255,255,.02) 45%,
+      rgba(0,0,12,.28)      100%);
   border: 1px solid rgba(255,255,255,.09);
   display: flex;
   align-items: center;
@@ -784,13 +817,14 @@
     infinite;
 }
 @keyframes fbe-node-think {
+  /* Uses --fbe-think-peak for max brightness — each node has its own ceiling */
   0%   { opacity: 0; }
-  20%  { opacity: 0; }
-  30%  { opacity: .7; }
-  42%  { opacity: 1; }
-  55%  { opacity: .75; }
-  66%  { opacity: .2; }
-  72%  { opacity: 0; }
+  18%  { opacity: 0; }
+  30%  { opacity: calc(var(--fbe-think-peak, 1) * .70); }
+  44%  { opacity: var(--fbe-think-peak, 1); }          /* node at full intensity */
+  56%  { opacity: calc(var(--fbe-think-peak, 1) * .72); }
+  66%  { opacity: calc(var(--fbe-think-peak, 1) * .18); }
+  73%  { opacity: 0; }
   100% { opacity: 0; }
 }
 
@@ -1022,7 +1056,7 @@
     border-radius: 50%;
     background:
       radial-gradient(circle at 33% 26%,
-        rgba(255,255,255,.18) 0%,
+        rgba(255,255,255,.22) 0%,
         rgba(255,255,255,.07) 15%,
         rgba(55,90,240,.26)   34%,
         rgba(65,30,200,.18)   58%,
