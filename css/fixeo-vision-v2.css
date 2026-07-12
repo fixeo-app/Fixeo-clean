@@ -1,0 +1,380 @@
+/* ══════════════════════════════════════════════════════════════════
+   FIXEO Vision V2 — fxv-v2a
+   Phase 7.3: Vision Experience Rebuild
+   ══════════════════════════════════════════════════════════════════
+
+   MISSION:
+   Transform the FXV section from an information block into an
+   emotional conclusion to the homepage narrative.
+
+   One question answered: "Why does FIXEO exist?"
+
+   APPROACH:
+   - Full-width dark section with soft gradient ambient field
+   - Text-centred layout: eyebrow → headline → manifesto → signals → close
+   - Signals as a horizontal rail of verified facts (not a metric grid)
+   - Closing sentence as the emotional handoff to Blog + CTA
+   - No animations heavier than a fade — calm after Brain Engine
+
+   SCOPE: .fxv2-vision — new class added to the existing <section>
+   All legacy .fxv-* selectors are overridden via higher specificity.
+   The <section> keeps its original classes for compatibility.
+
+   Namespace: fxv2-*
+   Version:   fxv-v2a — 2026-07-12
+   ══════════════════════════════════════════════════════════════════ */
+
+
+/* ════════════════════════════════════════════════════════════
+   § 1  SECTION CONTAINER
+   Override all legacy fxv-section values.
+   Calm, dark, generous vertical space.
+════════════════════════════════════════════════════════════ */
+
+.fxv2-vision.fxv-section {
+  padding: 80px 0 88px !important;
+  background:
+    radial-gradient(ellipse 70% 60% at 30% 40%, rgba(100, 60, 200, .07) 0%, transparent 65%),
+    radial-gradient(ellipse 60% 50% at 75% 65%, rgba(225, 48, 108, .05) 0%, transparent 60%),
+    linear-gradient(180deg, #0c0c14 0%, #08080f 100%) !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+/* Hairline top edge — subtle visual anchor */
+.fxv2-vision.fxv-section::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 10% !important;
+  right: 10% !important;
+  height: 1px !important;
+  background: linear-gradient(90deg,
+    transparent,
+    rgba(130, 80, 220, .20),
+    rgba(225, 48, 108, .14),
+    transparent
+  ) !important;
+  pointer-events: none !important;
+}
+
+/* Container: max-width for readability */
+.fxv2-vision .container {
+  max-width: 720px !important;
+  text-align: center !important;
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+/* Reset legacy .section-header — no longer used */
+.fxv2-vision .section-header {
+  display: none !important;
+}
+
+/* Reset legacy fxv-story — replaced */
+.fxv2-vision .fxv-story {
+  display: none !important;
+}
+
+/* Reset legacy fxv-signals — replaced */
+.fxv2-vision .fxv-signals {
+  display: none !important;
+}
+
+/* Reset legacy fxv-flow — already removed from HTML, ensure hidden */
+.fxv2-vision .fxv-flow {
+  display: none !important;
+}
+
+
+/* ════════════════════════════════════════════════════════════
+   § 2  EYEBROW
+   Ultra-small, all-caps, minimal opacity.
+   Brand marker, not a headline.
+════════════════════════════════════════════════════════════ */
+
+.fxv2-eyebrow {
+  display: inline-block;
+  font-size: .52rem;
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, .22);
+  margin: 0 0 20px;
+  line-height: 1;
+}
+
+
+/* ════════════════════════════════════════════════════════════
+   § 3  HEADLINE
+   The core statement. Large, confident, unhurried.
+   Not a feature claim — a vision declaration.
+════════════════════════════════════════════════════════════ */
+
+.fxv2-headline {
+  font-size: clamp(1.55rem, 3.8vw, 2.4rem);
+  font-weight: 800;
+  letter-spacing: -.03em;
+  line-height: 1.15;
+  color: rgba(255, 255, 255, .95);
+  margin: 0 0 28px;
+}
+
+/* Desktop line break — controlled */
+.fxv2-br-desktop {
+  display: none; /* hide on mobile — text wraps naturally */
+}
+
+
+/* ════════════════════════════════════════════════════════════
+   § 4  MANIFESTO PARAGRAPH
+   One sentence. Honest. No exaggeration.
+   Warm grey — readable, not demanding.
+════════════════════════════════════════════════════════════ */
+
+.fxv2-manifesto {
+  font-size: clamp(.84rem, 1.8vw, .96rem);
+  color: rgba(255, 255, 255, .40);
+  line-height: 1.72;
+  max-width: 540px;
+  margin: 0 auto 44px;
+}
+
+
+/* ════════════════════════════════════════════════════════════
+   § 5  VERIFIED PLATFORM SIGNALS
+   A horizontal rail of four verified facts.
+   Presented as a reading list, not a metric dashboard.
+   Each signal: checkmark + text. Minimal chrome.
+════════════════════════════════════════════════════════════ */
+
+.fxv2-signals {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px 20px;
+  margin: 0 auto 48px;
+  max-width: 640px;
+
+  /* Glass card container */
+  background: rgba(255, 255, 255, .028);
+  border: 1px solid rgba(255, 255, 255, .06);
+  border-radius: 16px;
+  padding: 20px 28px;
+  position: relative;
+}
+
+/* Top accent line */
+.fxv2-signals::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 15%;
+  right: 15%;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent,
+    rgba(130, 80, 220, .18),
+    transparent
+  );
+}
+
+/* Individual signal item */
+.fxv2-signal {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+}
+
+/* Checkmark */
+.fxv2-signal-check {
+  font-size: .72rem;
+  color: rgba(100, 200, 160, .70);
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+/* Signal text */
+.fxv2-signal-text {
+  font-size: .80rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, .56);
+  letter-spacing: .005em;
+  line-height: 1;
+}
+
+/* Dot separator between signals */
+.fxv2-signal-dot {
+  display: inline-block;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .14);
+  flex-shrink: 0;
+  align-self: center;
+}
+
+
+/* ════════════════════════════════════════════════════════════
+   § 6  CLOSING SENTENCE
+   The emotional handoff. Two lines: a statement, then a rhythm.
+   "Le réseau continue de grandir."
+   "Une intervention à la fois."
+════════════════════════════════════════════════════════════ */
+
+.fxv2-closing {
+  font-size: clamp(.84rem, 1.6vw, .92rem);
+  color: rgba(255, 255, 255, .28);
+  line-height: 1.8;
+  margin: 0;
+  letter-spacing: .01em;
+}
+
+/* Emphasis on second line */
+.fxv2-closing-em {
+  display: inline-block;
+  font-size: clamp(.80rem, 1.5vw, .88rem);
+  font-style: italic;
+  color: rgba(255, 255, 255, .20);
+  letter-spacing: .02em;
+}
+
+
+/* ════════════════════════════════════════════════════════════
+   § 7  TABLET — 768px–1023px
+════════════════════════════════════════════════════════════ */
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .fxv2-vision.fxv-section {
+    padding: 72px 0 80px !important;
+  }
+
+  .fxv2-signals {
+    gap: 6px 16px;
+    padding: 18px 22px;
+  }
+}
+
+
+/* ════════════════════════════════════════════════════════════
+   § 8  DESKTOP — ≥1024px
+   Show controlled line break in headline.
+   Wider signals rail.
+════════════════════════════════════════════════════════════ */
+
+@media (min-width: 1024px) {
+  /* Show controlled <br> for headline rhythm */
+  .fxv2-br-desktop {
+    display: inline;
+  }
+
+  .fxv2-headline {
+    margin-bottom: 32px;
+  }
+
+  .fxv2-manifesto {
+    margin-bottom: 48px;
+    font-size: .95rem;
+  }
+
+  .fxv2-signals {
+    gap: 8px 24px;
+    padding: 22px 36px;
+  }
+
+  .fxv2-signal-text {
+    font-size: .82rem;
+  }
+
+  /* Dots: larger visual weight on desktop */
+  .fxv2-signal-dot {
+    width: 4px;
+    height: 4px;
+    background: rgba(255, 255, 255, .12);
+  }
+}
+
+
+/* ════════════════════════════════════════════════════════════
+   § 9  MOBILE — ≤767px
+════════════════════════════════════════════════════════════ */
+
+@media (max-width: 767px) {
+  .fxv2-vision.fxv-section {
+    padding: 56px 0 64px !important;
+  }
+
+  .fxv2-eyebrow {
+    margin-bottom: 16px;
+  }
+
+  .fxv2-headline {
+    font-size: clamp(1.35rem, 7vw, 1.7rem);
+    margin-bottom: 20px;
+  }
+
+  .fxv2-manifesto {
+    font-size: .83rem;
+    margin-bottom: 32px;
+  }
+
+  /* Signals: stack to 2-column on narrow screens */
+  .fxv2-signals {
+    padding: 16px 18px;
+    gap: 10px 14px;
+    border-radius: 14px;
+    margin-bottom: 36px;
+  }
+
+  .fxv2-signal-text {
+    font-size: .76rem;
+  }
+
+  /* Hide dots on mobile — signals stack and dots look orphaned */
+  .fxv2-signal-dot {
+    display: none;
+  }
+
+  .fxv2-signal {
+    flex: 0 0 calc(50% - 7px);  /* 2 per row */
+    white-space: normal;
+  }
+
+  .fxv2-closing {
+    font-size: .82rem;
+  }
+
+  .fxv2-closing-em {
+    font-size: .78rem;
+  }
+}
+
+
+/* ════════════════════════════════════════════════════════════
+   § 10  VERY SMALL — ≤374px
+   Single column signals
+════════════════════════════════════════════════════════════ */
+
+@media (max-width: 374px) {
+  .fxv2-signal {
+    flex: 0 0 100%;
+  }
+}
+
+
+/* ════════════════════════════════════════════════════════════
+   § 11  REDUCED MOTION
+   No animations in this file. Placeholder for policy compliance.
+════════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  /* No animations defined in this file */
+  .fxv2-vision * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* version: fxv-v2a */
