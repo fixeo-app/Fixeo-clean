@@ -1,0 +1,659 @@
+/* ══════════════════════════════════════════════════════════════════
+   FIXEO — Customer Journey Experience
+   Section: #how-it-works  →  Phase 5
+   Namespace: cjx-*
+   Version: fjv1a — 2026-07-12
+   ──────────────────────────────────────────────────────────────────
+   Architecture:
+     Desktop: 5 moments in a horizontal timeline. Eye travels L→R.
+     Mobile:  5 moments in a vertical flow. Eye travels top→bottom.
+     No cards. No boxes. No grid.
+     A single journey line connects every moment.
+     Every motion reinforces understanding. Nothing is decorative.
+   ──────────────────────────────────────────────────────────────────
+   Sections:
+     § 1  Section reset + ambient
+     § 2  Section header
+     § 3  Journey wrapper + horizontal line
+     § 4  Individual moments (common)
+     § 5  Moment 1 — Le Problème
+     § 6  Moment 2 — La Compréhension (checkmarks)
+     § 7  Moment 3 — Le Moteur (engine echo)
+     § 8  Moment 4 — Le Profil
+     § 9  Moment 5 — La Mise en Relation
+     § 10 Journey line reveal (scroll-driven)
+     § 11 Moment reveal animation
+     § 12 Mobile (≤767px) — vertical timeline
+     § 13 Tablet (768px–1023px)
+     § 14 Reduced motion
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ════════════════════════════════════════════════════════════
+   § 1  SECTION RESET + AMBIENT
+   Overrides how-it-works-premium.css with higher specificity.
+   The journey is a continuation of the Brain Engine palette —
+   slightly cooler, implementation-mode.
+════════════════════════════════════════════════════════════ */
+#how-it-works.how-it-works-section {
+  padding: 80px 0 96px !important;
+  overflow: visible !important;
+  position: relative !important;
+  background: transparent !important;
+  isolation: isolate !important;
+}
+
+/* Remove the premium CSS ambient blob (we replace it) */
+#how-it-works.how-it-works-section::before {
+  content: '' !important;
+  position: absolute !important;
+  inset: 0 !important;
+  background:
+    radial-gradient(ellipse 70% 60% at 15% 60%,  rgba(55, 90, 240, .07) 0%, transparent 65%),
+    radial-gradient(ellipse 50% 50% at 85% 40%,  rgba(131, 58, 180, .05) 0%, transparent 65%),
+    radial-gradient(ellipse 40% 40% at 50% 100%, rgba(225, 48, 108, .04) 0%, transparent 60%) !important;
+  pointer-events: none !important;
+  z-index: 0 !important;
+}
+
+#how-it-works.how-it-works-section > .container {
+  position: relative !important;
+  z-index: 1 !important;
+  max-width: 1100px !important;
+}
+
+/* ════════════════════════════════════════════════════════════
+   § 2  SECTION HEADER
+════════════════════════════════════════════════════════════ */
+#how-it-works .cjx-header {
+  text-align: center;
+  margin-bottom: 64px;
+}
+
+#how-it-works .cjx-eyebrow {
+  display: block;
+  font-size: .55rem;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, .32);
+  margin-bottom: 14px;
+}
+
+#how-it-works .cjx-title {
+  font-size: clamp(1.45rem, 3vw, 2.1rem);
+  font-weight: 800;
+  letter-spacing: -.025em;
+  line-height: 1.18;
+  color: rgba(255, 255, 255, .92);
+  margin: 0 0 12px;
+}
+
+#how-it-works .cjx-subtitle {
+  font-size: .85rem;
+  color: rgba(255, 255, 255, .44);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ════════════════════════════════════════════════════════════
+   § 3  JOURNEY WRAPPER + HORIZONTAL LINE
+   Desktop: flex row, the line runs behind all 5 moments
+   at the vertical midpoint of the moment icons.
+════════════════════════════════════════════════════════════ */
+#how-it-works .cjx-journey {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 0;
+  padding: 0;
+  /* The journey line sits at 22px from top — behind moment icons */
+}
+
+/* ── The Journey Line ──
+   A thin horizontal gradient thread.
+   Reveals left→right via transform: scaleX().
+   On mobile it becomes a vertical left-rail (see § 12).        */
+#how-it-works .cjx-line {
+  position: absolute;
+  top: 22px;            /* aligns with center of moment icons     */
+  left: calc(50% / 5);  /* starts at center of first moment      */
+  right: calc(50% / 5); /* ends at center of last moment         */
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    rgba(55, 90, 240, .22)  0%,
+    rgba(100, 130, 255, .45) 20%,
+    rgba(131, 58, 180, .50)  50%,
+    rgba(200, 50, 120, .45)  80%,
+    rgba(225, 48, 108, .20)  100%
+  );
+  transform-origin: left center;
+  transform: scaleX(0);
+  /* Reveal driven by scroll (§ 10) */
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ════════════════════════════════════════════════════════════
+   § 4  INDIVIDUAL MOMENTS — COMMON STYLES
+   Each moment is a flex column: icon · eyebrow · content.
+   No backgrounds. No borders. Pure typography + spacing.
+════════════════════════════════════════════════════════════ */
+#how-it-works .cjx-moment {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 0 12px;
+  position: relative;
+  z-index: 1;
+  opacity: 0;
+  /* Reveal: § 11 */
+}
+
+/* Moment icon node — sits ON the journey line */
+#how-it-works .cjx-moment-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  line-height: 1;
+  background: rgba(255, 255, 255, .048);
+  border: 1px solid rgba(255, 255, 255, .08);
+  box-shadow:
+    0 0 0 4px rgba(10, 8, 30, .85),  /* gap between icon and line */
+    inset 0 1px 0 rgba(255, 255, 255, .10);
+  margin-bottom: 20px;
+  flex-shrink: 0;
+  position: relative;
+  transition: box-shadow .4s ease, background .4s ease;
+}
+
+#how-it-works .cjx-moment:hover .cjx-moment-icon {
+  background: rgba(255, 255, 255, .08);
+  box-shadow:
+    0 0 0 4px rgba(10, 8, 30, .85),
+    0 0 20px var(--cjx-color, rgba(80, 110, 255, .25)),
+    inset 0 1px 0 rgba(255, 255, 255, .15);
+}
+
+/* Moment eyebrow */
+#how-it-works .cjx-moment-eyebrow {
+  display: block;
+  font-size: .50rem;
+  font-weight: 700;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+  color: var(--cjx-color-text, rgba(255, 255, 255, .30));
+  margin-bottom: 8px;
+  line-height: 1;
+}
+
+/* Moment headline */
+#how-it-works .cjx-moment-headline {
+  font-size: .95rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+  line-height: 1.35;
+  color: rgba(255, 255, 255, .88);
+  margin: 0 0 6px;
+}
+
+/* Moment subtext */
+#how-it-works .cjx-moment-sub {
+  font-size: .73rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, .42);
+  line-height: 1.55;
+  margin: 0;
+}
+
+/* Per-moment accent colors */
+#how-it-works .cjx-moment--1 {
+  --cjx-color: rgba(225, 90, 90, .45);
+  --cjx-color-text: rgba(255, 160, 140, .55);
+}
+#how-it-works .cjx-moment--2 {
+  --cjx-color: rgba(80, 120, 255, .45);
+  --cjx-color-text: rgba(130, 170, 255, .55);
+}
+#how-it-works .cjx-moment--3 {
+  --cjx-color: rgba(131, 58, 180, .45);
+  --cjx-color-text: rgba(180, 120, 255, .55);
+}
+#how-it-works .cjx-moment--4 {
+  --cjx-color: rgba(32, 201, 151, .45);
+  --cjx-color-text: rgba(80, 220, 180, .55);
+}
+#how-it-works .cjx-moment--5 {
+  --cjx-color: rgba(255, 165, 40, .45);
+  --cjx-color-text: rgba(255, 200, 100, .55);
+}
+
+/* ════════════════════════════════════════════════════════════
+   § 5  MOMENT 1 — LE PROBLÈME
+   The warm opening: visitor's reality.
+   Slightly warmer icon background.
+════════════════════════════════════════════════════════════ */
+#how-it-works .cjx-moment--1 .cjx-moment-icon {
+  background: rgba(225, 80, 80, .08);
+  border-color: rgba(225, 80, 80, .14);
+}
+
+#how-it-works .cjx-moment--1 .cjx-moment-headline {
+  color: rgba(255, 255, 255, .92);
+  font-size: 1.00rem;
+}
+
+/* ════════════════════════════════════════════════════════════
+   § 6  MOMENT 2 — LA COMPRÉHENSION
+   The 4 real capabilities appear as a staggered checklist.
+   Each check item is: opacity 0 → 1 + translateX(-6px → 0).
+   Trigger: when the section enters view (via scroll animation).
+   Since we use animation-timeline on the section wrapper,
+   we chain individual delays from the parent reveal.
+════════════════════════════════════════════════════════════ */
+#how-it-works .cjx-checks {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+  text-align: left;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+#how-it-works .cjx-check {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: .72rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, .78);
+  letter-spacing: .01em;
+  opacity: 0;
+  transform: translateX(-6px);
+  animation: cjx-check-in .45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Stagger: delay is ADDED to the parent moment's reveal delay */
+#how-it-works .cjx-check:nth-child(1) { animation-delay: calc(var(--cjx-moment-delay, .4s) + .08s); }
+#how-it-works .cjx-check:nth-child(2) { animation-delay: calc(var(--cjx-moment-delay, .4s) + .20s); }
+#how-it-works .cjx-check:nth-child(3) { animation-delay: calc(var(--cjx-moment-delay, .4s) + .32s); }
+#how-it-works .cjx-check:nth-child(4) { animation-delay: calc(var(--cjx-moment-delay, .4s) + .44s); }
+
+@keyframes cjx-check-in {
+  to { opacity: 1; transform: translateX(0); }
+}
+
+#how-it-works .cjx-check-mark {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: rgba(80, 120, 255, .15);
+  border: 1px solid rgba(80, 120, 255, .30);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .52rem;
+  color: rgba(120, 170, 255, .90);
+  flex-shrink: 0;
+}
+
+/* Center the checklist under the moment-2 icon */
+#how-it-works .cjx-moment--2 {
+  align-items: center;
+}
+#how-it-works .cjx-moment--2 .cjx-checks {
+  align-items: flex-start;
+}
+
+/* ════════════════════════════════════════════════════════════
+   § 7  MOMENT 3 — LE MOTEUR
+   A tiny pulsing orbital dot echoes the Brain Engine above.
+   The dot appears on the icon — a visual thread.
+════════════════════════════════════════════════════════════ */
+#how-it-works .cjx-moment--3 .cjx-moment-icon {
+  background: rgba(100, 60, 200, .10);
+  border-color: rgba(130, 60, 200, .18);
+}
+
+/* Orbital echo: tiny pulsing ring on icon */
+#how-it-works .cjx-moment--3 .cjx-moment-icon::after {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  border: 1px solid rgba(131, 58, 180, .20);
+  animation: cjx-orbit-ring 2.8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes cjx-orbit-ring {
+  0%, 100% { opacity: .20; transform: scale(1); }
+  50%       { opacity: .55; transform: scale(1.12); }
+}
+
+/* Engine keywords — displayed as a tight row */
+#how-it-works .cjx-engine-words {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+#how-it-works .cjx-engine-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: .82rem;
+  font-weight: 800;
+  color: rgba(255, 255, 255, .82);
+  letter-spacing: -.01em;
+}
+
+#how-it-works .cjx-engine-dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: rgba(131, 58, 180, .55);
+  flex-shrink: 0;
+}
+
+#how-it-works .cjx-engine-count {
+  font-size: .68rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, .38);
+  margin: 0;
+  margin-top: 4px;
+}
+
+/* ════════════════════════════════════════════════════════════
+   § 8  MOMENT 4 — LE PROFIL
+   Softer, teal — "ready to help" feel.
+════════════════════════════════════════════════════════════ */
+#how-it-works .cjx-moment--4 .cjx-moment-icon {
+  background: rgba(32, 201, 151, .08);
+  border-color: rgba(32, 201, 151, .14);
+}
+
+#how-it-works .cjx-moment--4 .cjx-moment-headline {
+  font-size: .90rem;
+  font-style: italic;
+  font-weight: 600;
+}
+
+/* ════════════════════════════════════════════════════════════
+   § 9  MOMENT 5 — LA MISE EN RELATION
+   Warm amber — human warmth, end of the machine, start of the relationship.
+   Final moment: slightly bolder headline.
+════════════════════════════════════════════════════════════ */
+#how-it-works .cjx-moment--5 .cjx-moment-icon {
+  background: rgba(255, 160, 40, .08);
+  border-color: rgba(255, 160, 40, .14);
+}
+
+#how-it-works .cjx-moment--5 .cjx-moment-headline {
+  font-size: .95rem;
+}
+
+/* The final tag line — 3 emphatic short words */
+#how-it-works .cjx-final-trio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  margin-top: 6px;
+}
+
+#how-it-works .cjx-final-trio span {
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: rgba(255, 200, 100, .50);
+  line-height: 1.2;
+}
+
+/* ════════════════════════════════════════════════════════════
+   § 10  JOURNEY LINE REVEAL — SCROLL DRIVEN
+   Line reveals scaleX(0 → 1) as section enters viewport.
+   Uses animation-timeline: view() for zero JS.
+   Fallback (§ 14): immediate full reveal.
+════════════════════════════════════════════════════════════ */
+@supports (animation-timeline: view()) {
+  #how-it-works .cjx-line {
+    animation: cjx-line-reveal linear both;
+    animation-timeline: view();
+    animation-range: entry 15% entry 70%;
+  }
+  @keyframes cjx-line-reveal {
+    from { transform: scaleX(0); }
+    to   { transform: scaleX(1); }
+  }
+}
+
+/* ════════════════════════════════════════════════════════════
+   § 11  MOMENT REVEAL — STAGGERED ON SCROLL
+   All 5 moments animate in as section enters view.
+   Without animation-timeline support: immediate fallback.
+════════════════════════════════════════════════════════════ */
+@supports (animation-timeline: view()) {
+  #how-it-works .cjx-journey {
+    animation: _cjx-noop linear both;
+    animation-timeline: view();
+    animation-range: entry 5% entry 30%;
+  }
+  @keyframes _cjx-noop { from { opacity: 0.9999; } to { opacity: 1; } }
+
+  #how-it-works .cjx-moment {
+    animation: cjx-moment-in .55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation-timeline: view(block);
+    animation-range: entry 10% entry 45%;
+  }
+  @keyframes cjx-moment-in {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Stagger: each moment gets a slightly later range start */
+  #how-it-works .cjx-moment--1 { animation-range: entry  8% entry 38%; }
+  #how-it-works .cjx-moment--2 { animation-range: entry 14% entry 44%; }
+  #how-it-works .cjx-moment--3 { animation-range: entry 20% entry 50%; }
+  #how-it-works .cjx-moment--4 { animation-range: entry 26% entry 56%; }
+  #how-it-works .cjx-moment--5 { animation-range: entry 32% entry 62%; }
+}
+
+/* Fallback: no scroll API — all immediately visible */
+@supports not (animation-timeline: view()) {
+  #how-it-works .cjx-moment { opacity: 1 !important; transform: none !important; }
+  #how-it-works .cjx-line   { transform: scaleX(1) !important; }
+  #how-it-works .cjx-check  { opacity: 1 !important; transform: none !important; }
+}
+
+/* Check items delay anchor for non-scroll-API context */
+#how-it-works .cjx-moment--2 { --cjx-moment-delay: .30s; }
+
+/* ════════════════════════════════════════════════════════════
+   § 12  MOBILE — ≤767px
+   Vertical timeline. Journey line becomes a left-side rail.
+   Each moment: icon on the left, content on the right.
+════════════════════════════════════════════════════════════ */
+@media (max-width: 767px) {
+  #how-it-works.how-it-works-section {
+    padding: 64px 0 72px !important;
+  }
+
+  #how-it-works .cjx-header {
+    margin-bottom: 44px;
+  }
+
+  #how-it-works .cjx-title {
+    font-size: clamp(1.25rem, 7vw, 1.55rem);
+  }
+
+  #how-it-works .cjx-journey {
+    flex-direction: column;
+    gap: 0;
+    padding-left: 20px;
+  }
+
+  /* Vertical rail — left edge */
+  #how-it-works .cjx-line {
+    top: calc(44px / 2);     /* half of icon height */
+    left: 20px;              /* aligns with icon center offset */
+    right: auto;
+    width: 1px;
+    height: calc(100% - 44px);
+    /* Becomes a vertical line */
+    background: linear-gradient(
+      180deg,
+      rgba(55, 90, 240, .22)   0%,
+      rgba(100, 130, 255, .45) 20%,
+      rgba(131, 58, 180, .50)  50%,
+      rgba(200, 50, 120, .45)  80%,
+      rgba(225, 48, 108, .20)  100%
+    );
+    transform-origin: top center;
+    transform: scaleY(0);
+  }
+
+  @supports (animation-timeline: view()) {
+    #how-it-works .cjx-line {
+      animation: cjx-line-reveal-v linear both;
+      animation-timeline: view();
+      animation-range: entry 10% entry 75%;
+    }
+    @keyframes cjx-line-reveal-v {
+      from { transform: scaleY(0); }
+      to   { transform: scaleY(1); }
+    }
+  }
+  @supports not (animation-timeline: view()) {
+    #how-it-works .cjx-line { transform: scaleY(1) !important; }
+  }
+
+  /* Each moment: row layout — icon left, text right */
+  #how-it-works .cjx-moment {
+    flex-direction: row;
+    align-items: flex-start;
+    text-align: left;
+    padding: 0 0 36px 0;
+    gap: 18px;
+  }
+
+  #how-it-works .cjx-moment:last-child {
+    padding-bottom: 0;
+  }
+
+  /* Icon: smaller, anchored to the rail */
+  #how-it-works .cjx-moment-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+    flex-shrink: 0;
+    margin-bottom: 0;
+    /* Sits ON the vertical line */
+    margin-left: -20px;
+    box-shadow:
+      0 0 0 4px rgba(10, 8, 30, .9),
+      inset 0 1px 0 rgba(255, 255, 255, .10);
+  }
+
+  /* Text block */
+  #how-it-works .cjx-moment-body {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+    padding-top: 8px;
+  }
+
+  #how-it-works .cjx-moment-eyebrow {
+    font-size: .52rem;
+  }
+
+  #how-it-works .cjx-moment-headline {
+    font-size: .95rem;
+  }
+
+  /* Checks: flow naturally */
+  #how-it-works .cjx-checks {
+    align-items: flex-start;
+  }
+
+  /* Engine words: row on mobile too */
+  #how-it-works .cjx-engine-words {
+    align-items: flex-start;
+  }
+
+  #how-it-works .cjx-engine-row {
+    font-size: .78rem;
+  }
+
+  /* Final trio: left aligned on mobile */
+  #how-it-works .cjx-final-trio {
+    align-items: flex-start;
+    flex-direction: row;
+    gap: 8px;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════
+   § 13  TABLET — 768px–1023px
+   4+1 layout: first row 3 moments, second row 2 centered.
+   Actually: wrap flex with 3-column first, 2-column second
+   Simpler: keep flex row but reduce max-width per moment.
+════════════════════════════════════════════════════════════ */
+@media (min-width: 768px) and (max-width: 1023px) {
+  #how-it-works .cjx-journey {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0;
+    row-gap: 48px;
+  }
+
+  #how-it-works .cjx-moment {
+    flex: 0 0 33.333%;
+    max-width: 200px;
+    padding: 0 16px;
+  }
+
+  /* Last 2 moments centered on second row */
+  #how-it-works .cjx-moment--4,
+  #how-it-works .cjx-moment--5 {
+    flex: 0 0 40%;
+    max-width: 220px;
+  }
+
+  /* Line: hide on tablet (too complex across wrapped rows) */
+  #how-it-works .cjx-line {
+    display: none;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════
+   § 14  REDUCED MOTION
+   All animations off. All elements immediately visible.
+   Journey line fully revealed (scaleX/Y = 1).
+════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  #how-it-works .cjx-moment,
+  #how-it-works .cjx-check,
+  #how-it-works .cjx-moment--3 .cjx-moment-icon::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  #how-it-works .cjx-moment         { opacity: 1 !important; transform: none !important; }
+  #how-it-works .cjx-check          { opacity: 1 !important; transform: none !important; }
+  #how-it-works .cjx-line           { transform: scaleX(1) !important; }
+  @media (max-width: 767px) {
+    #how-it-works .cjx-line         { transform: scaleY(1) !important; }
+  }
+}

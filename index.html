@@ -2054,6 +2054,7 @@ section#home.hero.hero-section {
   <link rel="stylesheet" href="css/fixeo-estimation-v2-hero.css?v=faee-v2a">
   <link rel="stylesheet" href="css/fixeo-live-engine-v1.css?v=fle-v2a">
   <link rel="stylesheet" href="css/fixeo-brain-engine-v1.css?v=fbe-v41">
+  <link rel="stylesheet" href="css/fixeo-journey-v1.css?v=fjv1a">
   <link rel="stylesheet" href="css/fixeo-ai-request-engine.css?v=aire-v1a">
   <link rel="stylesheet" href="css/fixeo-hero-insights.css?v=fxhi-v1c">
   <link rel="stylesheet" href="css/fixeo-hero-suggestions-v2.css?v=fxhsv2-v1a">
@@ -3057,38 +3058,110 @@ section#home.hero.hero-section {
 ══════════════════════════════════════════════════════════ -->
 <section id="how-it-works" class="section how-it-works-section" aria-labelledby="how-title">
   <div class="container">
-    <div class="section-header how-header">
-      <span class="section-tag hiw-tag">COMMENT ÇA MARCHE</span>
-      <h2 id="how-title" data-i18n="how_title">Simple. Rapide. Garanti.</h2>
-      <p class="how-subtitle" data-i18n="how_subtitle">De votre besoin à l'intervention — en quelques minutes</p>
-    </div>
-    <div class="steps-grid steps-container" role="list">
-      <div class="step-card step-highlight" role="listitem">
-        <div class="step-number" aria-hidden="true">1</div>
-        <div class="step-icon" aria-hidden="true">🔎</div>
-        <h3 data-i18n="how_step1_title">Décrivez votre besoin</h3>
-        <p data-i18n="how_step1_desc">Plomberie, électricité, peinture… Décrivez le problème en quelques mots.</p>
-      </div>
-      <div class="step-card" role="listitem">
-        <div class="step-number" aria-hidden="true">2</div>
-        <div class="step-icon" aria-hidden="true">&#x26A1;</div>
-        <h3 data-i18n="how_step2_title">Fixeo trouve votre artisan</h3>
-        <p data-i18n="how_step2_desc">Notre système identifie l'artisan qualifié le plus proche, disponible maintenant.</p>
-      </div>
-      <div class="step-card" role="listitem">
-        <div class="step-number" aria-hidden="true">3</div>
-        <div class="step-icon" aria-hidden="true">&#x1F4DE;</div>
-        <h3 data-i18n="how_step3_title">L'artisan vous contacte</h3>
-        <p data-i18n="how_step3_desc">Vous recevez un appel sous 30 min. Vous validez avant toute intervention.</p>
-      </div>
-      <div class="step-card step-highlight step-highlight-payment" role="listitem">
-        <div class="step-number" aria-hidden="true">4</div>
-        <div class="step-icon" aria-hidden="true">&#x1F6E1;&#xFE0F;</div>
-        <h3 data-i18n="how_step4_title">Vous payez après l'intervention</h3>
-        <p data-i18n="how_step4_desc">Aucun paiement avant que le travail soit fait. Vous êtes satisfait ou on règle ça.</p>
-      </div>
-    </div>
-  </div>
+
+    <!-- ── Section header ── -->
+    <header class="cjx-header">
+      <span class="cjx-eyebrow">Comment ça marche</span>
+      <h2 id="how-title" class="cjx-title">Votre besoin.<br>Notre réponse.</h2>
+      <p class="cjx-subtitle">Ce qui se passe dès que vous envoyez votre demande.</p>
+    </header>
+
+    <!-- ══════════════════════════════════════════════════════
+         CUSTOMER JOURNEY — 5 moments
+         Desktop: horizontal timeline, eye L → R
+         Mobile:  vertical timeline, eye top → bottom
+    ══════════════════════════════════════════════════════ -->
+    <div class="cjx-journey" role="list" aria-label="Les 5 étapes de votre mise en relation">
+
+      <!-- Journey line — reveals on scroll, connects all moments -->
+      <div class="cjx-line" aria-hidden="true"></div>
+
+      <!-- ── Moment 1 — Le Problème ── -->
+      <article class="cjx-moment cjx-moment--1" role="listitem">
+        <div class="cjx-moment-icon" aria-hidden="true">💧</div>
+        <div class="cjx-moment-body">
+          <span class="cjx-moment-eyebrow">Vous avez un besoin.</span>
+          <h3 class="cjx-moment-headline">Une fuite.<br>Une panne.<br>Une urgence.</h3>
+          <p class="cjx-moment-sub">Décrivez-le en quelques mots.</p>
+        </div>
+      </article>
+
+      <!-- ── Moment 2 — La Compréhension ── -->
+      <article class="cjx-moment cjx-moment--2" role="listitem">
+        <div class="cjx-moment-icon" aria-hidden="true">⚙️</div>
+        <div class="cjx-moment-body">
+          <span class="cjx-moment-eyebrow">FIXEO comprend.</span>
+          <ul class="cjx-checks" aria-label="Capacités détectées">
+            <li class="cjx-check">
+              <span class="cjx-check-mark" aria-hidden="true">✓</span>
+              Métier identifié
+            </li>
+            <li class="cjx-check">
+              <span class="cjx-check-mark" aria-hidden="true">✓</span>
+              Urgence analysée
+            </li>
+            <li class="cjx-check">
+              <span class="cjx-check-mark" aria-hidden="true">✓</span>
+              Ville détectée
+            </li>
+            <li class="cjx-check">
+              <span class="cjx-check-mark" aria-hidden="true">✓</span>
+              Estimation préparée
+            </li>
+          </ul>
+        </div>
+      </article>
+
+      <!-- ── Moment 3 — Le Moteur ── -->
+      <article class="cjx-moment cjx-moment--3" role="listitem">
+        <div class="cjx-moment-icon" aria-hidden="true">🔮</div>
+        <div class="cjx-moment-body">
+          <span class="cjx-moment-eyebrow">Le moteur travaille.</span>
+          <div class="cjx-engine-words">
+            <div class="cjx-engine-row">
+              <span>Matching</span>
+              <span class="cjx-engine-dot" aria-hidden="true"></span>
+              <span>Sélection</span>
+            </div>
+            <div class="cjx-engine-row">
+              <span>Score</span>
+              <span class="cjx-engine-dot" aria-hidden="true"></span>
+              <span>Confiance</span>
+            </div>
+          </div>
+          <p class="cjx-engine-count">Parmi 1 134 artisans au Maroc.</p>
+        </div>
+      </article>
+
+      <!-- ── Moment 4 — Le Profil ── -->
+      <article class="cjx-moment cjx-moment--4" role="listitem">
+        <div class="cjx-moment-icon" aria-hidden="true">👤</div>
+        <div class="cjx-moment-body">
+          <span class="cjx-moment-eyebrow">Votre artisan.</span>
+          <h3 class="cjx-moment-headline">Les profils les&nbsp;plus adaptés vous sont proposés.</h3>
+          <p class="cjx-moment-sub">Pas imposé. Vous choisissez.</p>
+        </div>
+      </article>
+
+      <!-- ── Moment 5 — La Mise en Relation ── -->
+      <article class="cjx-moment cjx-moment--5" role="listitem">
+        <div class="cjx-moment-icon" aria-hidden="true">🤝</div>
+        <div class="cjx-moment-body">
+          <span class="cjx-moment-eyebrow">La mise en relation.</span>
+          <h3 class="cjx-moment-headline">La conversation commence.<br>La mission aussi.</h3>
+          <div class="cjx-final-trio" aria-label="Simple, Rapide, Humain">
+            <span>Simple</span>
+            <span>·</span>
+            <span>Rapide</span>
+            <span>·</span>
+            <span>Humain</span>
+          </div>
+        </div>
+      </article>
+
+    </div><!-- /.cjx-journey -->
+
+  </div><!-- /.container -->
 </section>
 
 <!-- ══════════════════════════════════════════════════════════
