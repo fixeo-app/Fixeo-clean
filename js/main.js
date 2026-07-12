@@ -1271,9 +1271,13 @@ function buildOtherArtisanCard(a) {
           /* av-unity-1: consistent initials avatar — same ig-gradient as profile hero & modal */
           /* fxhv2a: inject Hero avatar when no real photo */
           var _ph = a.avatar || a.photo || a.image;
-          var _in = a.initials || 'FA';
+          /* facp-v2b D5: derive initials from artisan name (first letter of first + last word) */
+          var _nameParts = a.name ? a.name.trim().split(/\s+/).filter(Boolean) : [];
+          var _in = a.initials || (_nameParts.length >= 2 ? (_nameParts[0][0] + _nameParts[_nameParts.length-1][0]).toUpperCase() : _nameParts.length === 1 ? _nameParts[0][0].toUpperCase() : 'FA');
           if (_ph) {
-            return '<img class="artisan-avatar artisan-avatar-image" src="'+_ph+'" alt="'+a.name+'" loading="lazy" style="border:2px solid rgba(255,255,255,.14);box-shadow:0 10px 28px rgba(0,0,0,.18)">';
+            /* facp-v2b D4: real photo — onerror shows initials fallback if URL broken */
+            return '<img class="artisan-avatar artisan-avatar-image" src="'+_ph+'" alt="'+a.name+'" loading="lazy" style="border:2px solid rgba(255,255,255,.14);box-shadow:0 10px 28px rgba(0,0,0,.18)" onerror="this.style.display=\'none\';var _fb=this.nextElementSibling;if(_fb&&_fb.classList.contains(\'artisan-av-initials\')){_fb.style.display=\'flex\';}">'
+            + '<div class="artisan-avatar artisan-av-initials" style="display:none;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#E1306C 0%,#833AB4 60%,#405DE6 100%);border:2px solid rgba(255,255,255,.14);box-shadow:0 10px 28px rgba(0,0,0,.18);align-items:center;justify-content:center;font-weight:800;font-size:1.1rem;color:#fff;letter-spacing:-.01em;flex-shrink:0">'+_in+'</div>';
           }
           var _heroUrl = window.FixeoHeroes ? window.FixeoHeroes.getAvatar(a.category || a.service || '') : null;
           if (_heroUrl) {
@@ -1300,18 +1304,21 @@ function buildOtherArtisanCard(a) {
         </div>
       </div>
 
-      <!-- Change 7: 10px margin meta row -->
-      <div class="artisan-rating-row artisan-rating" style="display:flex;align-items:center;gap:.55rem;flex-wrap:wrap;margin-bottom:10px;padding:.8rem .95rem;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07)">
+      <!-- facp-v2b D2+D3: rating row — hidden when no real data; 'Nouveau sur FIXEO' when reviews===0 -->
+      ${(rating > 0 && reviews > 0) ? `<div class="artisan-rating-row artisan-rating" style="display:flex;align-items:center;gap:.55rem;flex-wrap:wrap;margin-bottom:10px;padding:.8rem .95rem;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07)">
         <span style="font-weight:800;color:#ffd166">⭐ ${rating.toFixed(1)}</span>
         <span style="color:rgba(255,255,255,.82);font-weight:700">(${reviews} avis)</span>
         <span style="margin-left:auto;color:rgba(255,255,255,.5);font-size:.78rem">⚡ ${responseLabel}</span>
-      </div>
+      </div>` : `<div class="artisan-rating-row artisan-rating facp-new-artisan" style="display:flex;align-items:center;gap:.5rem;margin-bottom:10px;padding:.65rem .95rem;border-radius:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06)">
+        <span style="font-size:.72rem;color:rgba(255,255,255,.40);font-weight:500">✨ Nouveau sur FIXEO</span>
+        <span style="margin-left:auto;color:rgba(255,255,255,.28);font-size:.70rem">⚡ ${responseLabel}</span>
+      </div>`}
 
       <!-- Step 1 — FOMO line -->
       <div class="pvc-fomo">🔥 23 réservations aujourd'hui dans votre zone</div>
 
-      <!-- Step 3 — Trust line -->
-      <div class="pvc-trust-line">✔️ Artisan vérifié • Paiement après intervention</div>
+      <!-- facp-v2b D1: trust line conditional on isVerified — never claims verification for unverified artisans -->
+      ${isVerified ? '<div class="pvc-trust-line">✔️ Artisan vérifié • Paiement après intervention</div>' : '<div class="pvc-trust-line pvc-trust-line--payment">Paiement après intervention</div>'}
 
       <!-- skills chips -->
       <div class="artisan-skills" style="margin-bottom:12px;gap:.5rem;margin-top:8px">

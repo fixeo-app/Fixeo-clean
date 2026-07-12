@@ -292,6 +292,28 @@
 }
 
 /* ═══════════════════════════════════════════════════════════
+   D1. TRUST LINE VARIANTS
+   Verified: teal accent (defined above)
+   Payment-only (unverified): neutral, no green color
+══════════════════════════════════════════════════════════ */
+
+.artisan-card.other-card.result-card .pvc-trust-line--payment {
+  color: rgba(255, 255, 255, .40) !important;
+  background: rgba(255, 255, 255, .03) !important;
+  border: 1px solid rgba(255, 255, 255, .06) !important;
+  border-left: 2px solid rgba(255, 255, 255, .12) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   D2+D3. NEW ARTISAN ROW — when no real rating/reviews
+══════════════════════════════════════════════════════════ */
+
+.artisan-card.other-card.result-card .artisan-rating-row.facp-new-artisan {
+  /* Keep it visually quiet — this is not a negative signal, just absence of data */
+  opacity: .85 !important;
+}
+
+/* ═══════════════════════════════════════════════════════════
    G. MOBILE SKILL CHIPS — secondary chips hidden ≤639px
    Primary category chip stays (profession context).
    Secondary skill chips: hidden on mobile (visual noise).
