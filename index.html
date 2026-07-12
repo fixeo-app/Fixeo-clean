@@ -2053,7 +2053,7 @@ section#home.hero.hero-section {
   <link rel="stylesheet" href="css/fixeo-modal-scroll-fix.css?v=fxmsf-v1a">
   <link rel="stylesheet" href="css/fixeo-estimation-v2-hero.css?v=faee-v2a">
   <link rel="stylesheet" href="css/fixeo-live-engine-v1.css?v=fle-v2a">
-  <link rel="stylesheet" href="css/fixeo-brain-engine-v1.css?v=fbe-v1a">
+  <link rel="stylesheet" href="css/fixeo-brain-engine-v1.css?v=fbe-v2a">
   <link rel="stylesheet" href="css/fixeo-ai-request-engine.css?v=aire-v1a">
   <link rel="stylesheet" href="css/fixeo-hero-insights.css?v=fxhi-v1c">
   <link rel="stylesheet" href="css/fixeo-hero-suggestions-v2.css?v=fxhsv2-v1a">
@@ -2598,35 +2598,37 @@ section#home.hero.hero-section {
 <section id="fle-section" aria-labelledby="fle-title">
   <div class="container">
 
-    <!-- ── Header ── -->
+    <!-- ── Section Header ── -->
     <header class="fbe-header">
-      <div class="fbe-eyebrow">Dans les coulisses de FIXEO</div>
+      <div class="fbe-eyebrow">Le moteur FIXEO</div>
       <h2 id="fle-title" class="fbe-title">
-        Le moteur de décision<br><em>FIXEO</em>
+        L'intelligence qui coordonne<br><em>chaque mise en relation</em>
       </h2>
       <p class="fbe-subtitle">
-        Chaque demande déclenche une analyse en plusieurs étapes — détection du service, localisation, estimation, sélection et scoring des profils.
+        Derrière chaque demande, un moteur de décision traite huit étapes réelles — simultanément, avec précision.
       </p>
     </header>
 
-    <!-- ── Orbital Arena wrapper (scroll-reveal trigger) ── -->
+    <!-- ── Orbital Arena (scroll-reveal wrapper) ── -->
     <div class="fbe-arena-wrap">
-
       <div class="fbe-arena" aria-hidden="true">
 
-        <!-- Center core — FIXEO Engine -->
+        <!-- ── Orbital rings ── -->
+        <div class="fbe-ring fbe-ring--inner"></div>
+        <div class="fbe-ring fbe-ring--outer"></div>
+
+        <!-- ── Center core — RAFI as intelligence heart ── -->
         <div class="fbe-core">
           <img
-            src="rafi/RAFI_V2_MicroGlyph.webp"
+            src="rafi/RAFI_V2_HeadCollar_Core.webp"
             class="fbe-core-glyph"
-            width="40" height="40"
+            width="92" height="92"
             alt=""
             loading="lazy"
             decoding="async">
-          <span class="fbe-core-label">FIXEO<br>ENGINE</span>
         </div>
 
-        <!-- ── 8 Connector lines (rotated toward each node) ── -->
+        <!-- ── 8 Connector lines ── -->
         <div class="fbe-conn fbe-conn--1"></div>
         <div class="fbe-conn fbe-conn--2"></div>
         <div class="fbe-conn fbe-conn--3"></div>
@@ -2636,7 +2638,9 @@ section#home.hero.hero-section {
         <div class="fbe-conn fbe-conn--7"></div>
         <div class="fbe-conn fbe-conn--8"></div>
 
-        <!-- ── Intelligence nodes — DESKTOP orbital positions ── -->
+        <!-- ── 8 Intelligence nodes — desktop orbital ── -->
+        <!-- Capabilities: all production-verified -->
+
         <!-- N1: Détection du service — fixeo-ai-request-engine.js CATEGORIES -->
         <div class="fbe-node fbe-node--1">
           <div class="fbe-node-icon">🔍</div>
@@ -2649,7 +2653,7 @@ section#home.hero.hero-section {
           <span class="fbe-node-label">Analyse<br>urgence</span>
         </div>
 
-        <!-- N3: Localisation — artisan city cross-ref -->
+        <!-- N3: Localisation — artisan city × scoreCityMatch() -->
         <div class="fbe-node fbe-node--3">
           <div class="fbe-node-icon">📍</div>
           <span class="fbe-node-label">Localisation</span>
@@ -2667,7 +2671,7 @@ section#home.hero.hero-section {
           <span class="fbe-node-label">Profils<br>compatibles</span>
         </div>
 
-        <!-- N6: Score de pertinence — rankArtisansV2 multi-factor -->
+        <!-- N6: Score de pertinence — rankArtisansV2 multi-factor scoring -->
         <div class="fbe-node fbe-node--6">
           <div class="fbe-node-icon">🎯</div>
           <span class="fbe-node-label">Score de<br>pertinence</span>
@@ -2679,21 +2683,46 @@ section#home.hero.hero-section {
           <span class="fbe-node-label">Signal de<br>confiance</span>
         </div>
 
-        <!-- N8: Préparation — service_requests + notifications schema -->
+        <!-- N8: Préparation — service_requests INSERT + notifications schema -->
         <div class="fbe-node fbe-node--8">
           <div class="fbe-node-icon">📤</div>
           <span class="fbe-node-label">Préparation<br>mise en relation</span>
         </div>
 
-        <!-- ── MOBILE GRID (same nodes, re-laid by CSS into 2×4) ── -->
-        <!-- On mobile (≤679px), .fbe-nodes-mobile-grid is shown instead.     -->
-        <!-- JS-free: CSS media query resets absolute positioning to in-flow.  -->
-        <!-- The nodes above reflow into the grid via positional reset.        -->
+      </div><!-- /fbe-arena (desktop orbital) -->
 
-      </div><!-- /fbe-arena -->
+      <!-- ── Mobile layout: RAFI core + 2×4 node grid ── -->
+      <!-- Shown only on ≤679px via CSS; desktop version above is display:none on mobile -->
+      <div class="fbe-mobile-engine" aria-hidden="true">
+
+        <!-- RAFI core — mobile -->
+        <div class="fbe-mobile-core">
+          <img
+            src="rafi/RAFI_V2_HeadCollar_Core.webp"
+            class="fbe-mobile-core-glyph"
+            width="92" height="92"
+            alt=""
+            loading="lazy"
+            decoding="async">
+        </div>
+
+        <!-- 2×4 grid of nodes -->
+        <div class="fbe-nodes-grid">
+          <div class="fbe-node fbe-node--1"><div class="fbe-node-icon">🔍</div><span class="fbe-node-label">Détection du service</span></div>
+          <div class="fbe-node fbe-node--2"><div class="fbe-node-icon">⚡</div><span class="fbe-node-label">Analyse urgence</span></div>
+          <div class="fbe-node fbe-node--3"><div class="fbe-node-icon">📍</div><span class="fbe-node-label">Localisation</span></div>
+          <div class="fbe-node fbe-node--4"><div class="fbe-node-icon">💶</div><span class="fbe-node-label">Estimation indicative</span></div>
+          <div class="fbe-node fbe-node--5"><div class="fbe-node-icon">🗂️</div><span class="fbe-node-label">Profils compatibles</span></div>
+          <div class="fbe-node fbe-node--6"><div class="fbe-node-icon">🎯</div><span class="fbe-node-label">Score de pertinence</span></div>
+          <div class="fbe-node fbe-node--7"><div class="fbe-node-icon">🛡️</div><span class="fbe-node-label">Signal de confiance</span></div>
+          <div class="fbe-node fbe-node--8"><div class="fbe-node-icon">📤</div><span class="fbe-node-label">Préparation</span></div>
+        </div>
+
+      </div><!-- /fbe-mobile-engine -->
+
     </div><!-- /fbe-arena-wrap -->
 
-    <!-- ── Transparency label ── -->
+    <!-- ── Transparency note ── -->
     <div class="fbe-label-panel" role="note">
       <p class="fbe-label-text">
         <strong>Fonctionnement réel du moteur FIXEO</strong> —
