@@ -19,11 +19,8 @@
 <link rel="stylesheet" href="css/pricing-premium-v1.css?v=pp1"/>
 <link rel="stylesheet" href="css/payment.css"/>
 <link rel="stylesheet" href="css/reservation.css">
-<link rel="stylesheet" href="css/header-unified.css"/>
-<link rel="stylesheet" href="css/fixeo-header-global.css"/>
 <link rel="stylesheet" href="css/auth-global.css"/>
   <link rel="stylesheet" href="css/slot-lock.css">
-  <link rel="stylesheet" href="css/header-logo-premium.css?v=hlp5">
   <!-- ══ LOGO OVERRIDE — image-only, no emoji, no text ══ -->
   <style id="fixeo-logo-override">
     /* Kill legacy logo-icon and logo-text */
@@ -100,6 +97,9 @@
 }
 </script>
   <link rel="stylesheet" href="css/fixeo-consent-v1.css?v=fcv1b">
+    <!-- FNS v1 — fixeo-navigation-v1 (Phase 11.1) -->
+    <link rel="stylesheet" href="css/fixeo-navigation-v1.css?v=fns-v1a">
+
   <script src="js/fixeo-consent-v1.js?v=fcv1c"></script>
   <script src="js/fixeo-analytics-config.js?v=fac1b" defer></script>
   <script src="js/fixeo-analytics-bootstrap.js?v=fab1c" defer></script>
@@ -118,71 +118,7 @@
 ════════════════════════════════════════════════════════════════════ -->
 <a href="#main-content" class="skip-link">Aller au contenu</a>
 
-<nav class="navbar" role="navigation" aria-label="Navigation principale">
 
-  <!-- ── Logo ── -->
-  <a href="index.html" class="navbar-brand logo-wrap" aria-label="Fixeo — Accueil">
-    <img src="img/logo.png" alt="Fixeo" class="fixeo-logo-img" height="38" loading="eager" onerror="this.onerror=null;this.alt='Fixeo';this.style.display='none';var t=document.createElement('span');t.className='fixeo-logo-text';t.textContent='Fixeo';this.parentNode.appendChild(t);">
-  </a>
-
-  <!-- ── Menu principal desktop ── -->
-  <nav class="navbar-nav" aria-label="Menu principal">
-    <a href="index.html"             class="nav-link" data-i18n="nav_home">Accueil</a>
-
-    <!-- Services avec dropdown -->
-    <div class="nav-has-dropdown">
-      <a href="index.html#services" class="nav-link" data-i18n="nav_services">
-        Services <span class="nav-arrow">▾</span>
-      </a>
-      <div class="nav-dropdown" role="menu" aria-label="Sous-menu Services">
-        <a href="index.html#services" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🔧</span>Tous les services</a>
-        <a href="index.html#services?cat=plomberie" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🚿</span>Plomberie</a>
-        <a href="index.html#services?cat=electricite" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">⚡</span>Électricité</a>
-        <a href="index.html#services?cat=peinture" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🎨</span>Peinture</a>
-        <a href="index.html#services?cat=climatisation" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">❄️</span>Climatisation</a>
-        <a href="index.html#services?cat=nettoyage" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🧹</span>Nettoyage</a>
-        <a href="index.html#services?cat=menuiserie" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🪚</span>Menuiserie</a>
-        <a href="index.html#services?cat=serrurerie" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🔑</span>Serrurerie</a>
-        <a href="index.html#services?cat=maconnerie" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🧱</span>Maçonnerie</a>
-        <a href="index.html#services?cat=jardinage" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🌿</span>Jardinage</a>
-        <a href="index.html#services?cat=bricolage" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🔩</span>Bricolage</a>
-        <a href="index.html#services?cat=demenagement" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🚛</span>Déménagement</a>
-        <a href="index.html#services?cat=carrelage" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🏁</span>Carrelage</a>
-        <a href="index.html#services?cat=toiture" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🏠</span>Toiture</a>
-        <a href="index.html#services?cat=vitrerie" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🪟</span>Vitrerie</a>
-        <a href="index.html#services?cat=chauffage" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🔥</span>Chauffage</a>
-      </div>
-    </div>
-
-    <!-- Artisans avec dropdown -->
-    <div class="nav-has-dropdown">
-      <a href="index.html#artisans-section" class="nav-link" data-i18n="nav_artisans">
-        Artisans <span class="nav-arrow">▾</span>
-      </a>
-      <div class="nav-dropdown" role="menu" aria-label="Sous-menu Artisans">
-        <a href="index.html#artisans-section" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">👷</span>Tous les artisans</a>
-        <a href="artisan.html"                class="nav-dropdown-item" role="menuitem"><span class="dd-icon">⭐</span>Profil artisan</a>
-        <div class="nav-dropdown-divider"></div>
-        <a href="index.html#artisans-section?filter=available" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🟢</span>Disponibles maintenant</a>
-        <a href="index.html#artisans-section?filter=top" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🏆</span>Top notés</a>
-      </div>
-    </div>
-    <a href="pricing.html"            class="nav-link">Tarifs</a>
-    <a href="presse-partenariats.html" class="nav-link">Presse</a>
-
-    <!-- Dashboard — visible uniquement si connecté -->
-    <a href="dashboard-client.html"
-       class="nav-link"
-       data-role="dashboard"
-       data-auth="logged-in"
-       data-i18n="nav_dashboard">📊 Dashboard</a>
-
-    <!-- Admin — visible uniquement si admin -->
-    <a href="admin.html"
-       class="nav-link"
-       data-role="admin"
-       data-auth="admin">🛡 Admin</a>
-  </nav>
 
   <!-- ── Actions à droite ── -->
   <div class="nav-actions">
@@ -243,26 +179,7 @@
 <!-- ═══════════════════════════════════════════════════════════════
      MOBILE NAV DRAWER
 ════════════════════════════════════════════════════════════════════ -->
-<div class="mobile-nav" role="navigation" aria-label="Menu mobile">
 
-  <a href="index.html"              class="nav-link" data-i18n="nav_home">🏠 Accueil</a>
-  <a href="index.html#services"     class="nav-link" data-i18n="nav_services">🔧 Services</a>
-  <a href="index.html#artisans-section" class="nav-link" data-i18n="nav_artisans">👷 Artisans</a>
-  <a href="pricing.html"            class="nav-link">💎 Tarifs</a>
-
-  <!-- Dashboard mobile — connectés uniquement -->
-  <a href="dashboard-client.html"
-     class="nav-link"
-     data-role="dashboard"
-     data-auth="logged-in">📊 Dashboard</a>
-
-  <!-- Admin mobile — admins uniquement -->
-  <a href="admin.html"
-     class="nav-link"
-     data-role="admin"
-     data-auth="admin">🛡 Admin</a>
-
-  <div class="mobile-nav-divider"></div>
 
   <!-- Recherche rapide mobile -->
   <button class="btn-quick-search"
@@ -273,10 +190,7 @@
   </button>
 
   <!-- Auth buttons mobile -->
-  <div class="mobile-nav-auth" data-auth="guest">
-    <a href="auth.html"        class="btn-nav btn-nav-outline" data-i18n="nav_login">Connexion</a>
-    <a href="auth.html#signup" class="btn-nav btn-nav-primary" data-i18n="nav_signup">Inscription</a>
-  </div>
+  
 
   <!-- Déconnexion mobile (connectés) -->
   <a href="#" class="nav-link" data-auth="logged-in"
@@ -602,7 +516,6 @@
 <!-- FOOTER: replaced by fixeo-footer-global.js injection (gf2) -->
 
 <script src="js/fixeo-session-mobile.js"></script>
-<script src="js/fixeo-header-global.js"></script>
 <script src="js/i18n.js"></script>
 <script src="js/notifications.js"></script>
 <script src="js/reservation.js?v=v1a"></script>
@@ -610,10 +523,15 @@
 <script src="js/payment.js"></script>
 <script src="js/pricing.js"></script>
 <script src="js/fixeo_v5_fixes.js"></script>
-<script src="js/header-unified.js"></script>
 <script src="js/auth-global.js"></script>
 <script src="js/fixeo-artisan-request-notifications.js"></script>
 <!-- gf1: Global footer injection -->
 <script src="js/fixeo-footer-global.js?v=gf3a" defer></script>
+
+    <!-- FNS v1 — fixeo-navigation-v1 (Phase 11.1) -->
+    <!-- FNS MUTUAL EXCLUSION: header-unified.js and fixeo-header-global.js
+         are NOT loaded on this page. window._FIXEO_NAVIGATION_INITIALIZED_
+         prevents any duplicate initialization. -->
+    <script src="js/fixeo-navigation-v1.js?v=fns-v1a"></script>
 </body>
 </html>

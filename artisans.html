@@ -12,8 +12,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/variables.css">
   <link rel="stylesheet" href="css/main.css">
-  <link rel="stylesheet" href="css/header-unified.css">
-  <link rel="stylesheet" href="css/fixeo-header-global.css">
   <link rel="stylesheet" href="css/auth-global.css">
   <link rel="stylesheet" href="css/fixeo-footer-global.css?v=gf3a">
   <style id="fixeo-logo-override">
@@ -110,27 +108,17 @@
 }
 </script>
   <link rel="stylesheet" href="css/fixeo-consent-v1.css?v=fcv1b">
+    <!-- FNS v1 — fixeo-navigation-v1 (Phase 11.1) -->
+    <link rel="stylesheet" href="css/fixeo-navigation-v1.css?v=fns-v1a">
+
   <script src="js/fixeo-consent-v1.js?v=fcv1c"></script>
   <script src="js/fixeo-analytics-config.js?v=fac1b" defer></script>
   <script src="js/fixeo-analytics-bootstrap.js?v=fab1c" defer></script>
 </head>
 
-<body class="fixeo-gh-enabled">
+<body class="">
 
-<nav class="navbar" role="navigation" aria-label="Navigation principale">
-  <a href="index.html" class="navbar-brand logo-wrap" aria-label="Fixeo - Accueil">
-    <img src="img/logo.png" alt="Fixeo" class="fixeo-logo-img" height="38" loading="eager"
-         onerror="this.onerror=null;this.alt='Fixeo';this.style.display='none'">
-  </a>
-  <nav class="navbar-nav" aria-label="Menu principal">
-    <a href="services.html" class="nav-link">Services</a>
-    <a href="artisans.html" class="nav-link active">Artisans</a>
-    <a href="comment-ca-marche.html" class="nav-link">Comment ça marche</a>
-    <a href="pricing.html" class="nav-link">Tarifs</a>
-    <a href="presse-partenariats.html" class="nav-link">Presse</a>
-    <a href="dashboard-client.html" class="nav-link" data-role="dashboard" data-auth="logged-in">📊 Dashboard</a>
-    <a href="admin.html" class="nav-link" data-role="admin" data-auth="admin">🛡 Admin</a>
-  </nav>
+
   <div class="nav-actions">
     <a href="auth.html" id="login-btn" class="btn-nav btn-nav-outline" data-auth="guest">Connexion</a>
     <a href="auth.html#signup" id="register-btn" class="btn-nav btn-nav-primary" data-auth="guest">Inscription</a>
@@ -288,13 +276,14 @@
     </div>
   </div>
 </div>
-
-
-
-<script src="js/fixeo-header-global.js?v=gfnav1"></script>
 <script src="js/i18n.js?v=50a38b9"></script>
-<script src="js/header-unified.js?v=modalfix3"></script>
 <script src="js/auth-global.js?v=50a38b9"></script>
   <script src="js/fixeo-footer-global.js?v=gf3a" defer></script>
+
+    <!-- FNS v1 — fixeo-navigation-v1 (Phase 11.1) -->
+    <!-- FNS MUTUAL EXCLUSION: header-unified.js and fixeo-header-global.js
+         are NOT loaded on this page. window._FIXEO_NAVIGATION_INITIALIZED_
+         prevents any duplicate initialization. -->
+    <script src="js/fixeo-navigation-v1.js?v=fns-v1a"></script>
 </body>
 </html>

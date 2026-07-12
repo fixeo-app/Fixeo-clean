@@ -47,7 +47,6 @@
 <link rel="stylesheet" href="css/hero-search-modal.css?v=50a38b9"/>
 <link rel="stylesheet" href="css/quick-search-modal.css?v=qsm9"/>
 <link rel="stylesheet" href="css/secondary-search.css?v=50a38b9"/>
-<link rel="stylesheet" href="css/header-unified.css?v=50a38b9"/>
 <link rel="stylesheet" href="css/auth-global.css?v=50a38b9"/>
 <link rel="stylesheet" href="css/slot-lock.css?v=50a38b9"/>
 <!-- ★ V13 HOMEPAGE REVAMP - Highest priority, loaded last -->
@@ -61,7 +60,6 @@
 <link rel="stylesheet" href="css/marketplace-secondary-entry.css?v=50a38b9"/>
 <link rel="stylesheet" href="css/homepage-conversion-optimizer.css?v=50a38b9" media="print" onload="this.media='all'"/><noscript><link rel="stylesheet" href="css/homepage-conversion-optimizer.css?v=50a38b9"/></noscript>
 <link rel="stylesheet" href="css/artisan-onboarding.css?v=50a38b9"/>
-<link rel="stylesheet" href="css/fixeo-header-global.css?v=fxgh5"/>
 <link rel="stylesheet" href="css/hero-premium-upgrade.css?v=50a38b9"/>
 <link rel="stylesheet" href="css/hero-ux-fixes.css?v=50a38b9"/>
   <link rel="stylesheet" href="css/hero-conversion-boost.css?v=hcb10"/>
@@ -2018,11 +2016,11 @@ section#home.hero.hero-section {
 
   /* E. HEADER FLASH SHIELD - hide old Urgent button in .nav-actions at ALL
      viewports before fixeo-header-global.js mount() tags it .fixeo-gh-original-node.
-     body.fixeo-gh-enabled is set at parse time (body class), so this rule
+     body. is set at parse time (body class), so this rule
      applies immediately at first paint on desktop AND mobile.
      Selector is scoped to .nav-actions > .btn-express - does NOT affect
      the floating FAB (#fixeo-urgent-fab) which is a separate element. */
-  html body.fixeo-gh-enabled .nav-actions > .btn-express {
+  html body. .nav-actions > .btn-express {
     display: none !important;
   }
 
@@ -2066,7 +2064,6 @@ section#home.hero.hero-section {
   <link rel="stylesheet" href="css/fixeo-trust-engine.css?v=fte-v1a">
   <link rel="stylesheet" href="css/fixeo-tracking-engine.css?v=ftrk-v1b">
   <link rel="stylesheet" href="css/homepage-bottom-v1.css?v=hbv7" media="print" onload="this.media='all'">
-  <link rel="stylesheet" href="css/header-logo-premium.css?v=hlp5">
   <!-- ══ LOGO OVERRIDE - image-only, no emoji, no text ══ -->
   <style id="fixeo-logo-override">
     /* Kill legacy logo-icon and logo-text */
@@ -2225,12 +2222,15 @@ section#home.hero.hero-section {
   <link rel="stylesheet" href="css/fixeo-rafi-v2.css?v=rfv2-r0a">
   <link rel="stylesheet" href="css/hero-v1-premium-sprint.css?v=hvps1b">
   <link rel="stylesheet" href="css/fixeo-consent-v1.css?v=fcv1b">
+    <!-- FNS v1 — fixeo-navigation-v1 (Phase 11.1) -->
+    <link rel="stylesheet" href="css/fixeo-navigation-v1.css?v=fns-v1a">
+
   <script src="js/fixeo-consent-v1.js?v=fcv1c"></script>
   <script src="js/fixeo-analytics-config.js?v=fac1b" defer></script>
   <script src="js/fixeo-analytics-bootstrap.js?v=fab1c" defer></script>
 </head>
 
-<body class="fixeo-homepage-mode fixeo-gh-enabled">
+<body class="fixeo-homepage-mode">
 <!-- ★ INLINE BOOT SCRIPT: runs synchronously at parse time, zero delay.
      Adds fixeo-sections-ready immediately so JS-gated sections are never
      invisible for more than 0ms. Also removes any stale body classes. -->
@@ -2317,42 +2317,7 @@ section#home.hero.hero-section {
 <!-- ═══════════════════════════════════════════════════════════
      NAVBAR V13 - STICKY + DEMANDE URGENTE
 ════════════════════════════════════════════════════════════ -->
-<nav class="navbar" role="navigation" aria-label="Navigation principale">
 
-  <!-- Logo -->
-  <a href="index.html" class="navbar-brand logo-wrap" aria-label="Fixeo - Accueil">
-    <img src="img/logo.png" alt="Fixeo" class="fixeo-logo-img" height="38" loading="eager" onerror="this.onerror=null;this.alt='Fixeo';this.style.display='none';var t=document.createElement('span');t.className='fixeo-logo-text';t.textContent='Fixeo';this.parentNode.appendChild(t);">
-  </a>
-
-  <!-- Desktop nav -->
-  <nav class="navbar-nav" aria-label="Menu principal">
-    <div class="nav-has-dropdown">
-      <a href="services.html" class="nav-link">
-        Services <span class="nav-arrow">▾</span>
-      </a>
-      <div class="nav-dropdown" role="menu" aria-label="Sous-menu Services">
-        <a href="index.html#services" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🔧</span>Tous les services</a>
-        <a href="index.html#services" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🚿</span>Plomberie</a>
-        <a href="index.html#services" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">⚡</span>Électricité</a>
-        <a href="index.html#services" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">❄️</span>Climatisation</a>
-      </div>
-    </div>
-
-    <div class="nav-has-dropdown">
-      <a href="artisans.html" class="nav-link">
-        Artisans <span class="nav-arrow">▾</span>
-      </a>
-      <div class="nav-dropdown" role="menu" aria-label="Sous-menu Artisans">
-        <a href="index.html#artisans-section" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">👷</span>Tous les artisans</a>
-      </div>
-    </div>
-
-    <a href="comment-ca-marche.html" class="nav-link">COMMENT ÇA MARCHE</a>
-    <a href="pricing.html" class="nav-link">Tarifs</a>
-    <a href="presse-partenariats.html" class="nav-link">Presse</a>
-    <a href="dashboard-client.html" class="nav-link" data-role="dashboard" data-auth="logged-in">📊 Dashboard</a>
-    <a href="admin.html" class="nav-link" data-role="admin" data-auth="admin">🛡 Admin</a>
-  </nav>
 
   <!-- Right actions -->
   <div class="nav-actions">
@@ -2416,9 +2381,7 @@ section#home.hero.hero-section {
 </nav>
 
 <!-- Mobile nav drawer -->
-<div class="mobile-nav" role="navigation" aria-label="Menu mobile" aria-hidden="true" inert>
-  <div class="mobile-nav-section mobile-nav-section-actions">
-    <div class="mobile-nav-label">Actions</div>
+
     <a href="#" class="nav-link mobile-nav-action-link mobile-nav-action-link-urgent"
        data-open-express-request="true"
        data-request-mode="express">⚡ Demande urgente</a>
@@ -2432,48 +2395,26 @@ section#home.hero.hero-section {
     <a href="rejoindre-fixeo.html" class="nav-link mobile-nav-action-link mobile-nav-action-link-artisan">🛠 Je suis artisan</a>
   </div>
 
-  <div class="mobile-nav-divider"></div>
+  
 
-  <div class="mobile-nav-section mobile-nav-section-main">
-    <div class="mobile-nav-label">Navigation</div>
+  
     <a href="index.html" class="nav-link">🏠 Accueil</a>
     <a href="index.html#services" class="nav-link">🔧 Services</a>
     <a href="index.html#artisans-section" class="nav-link">👷 Artisans</a>
     <a href="pricing.html" class="nav-link">💎 Tarifs</a>
   </div>
 
-  <div class="mobile-nav-divider"></div>
+  
 
-  <div class="mobile-nav-section mobile-nav-section-account">
-    <div class="mobile-nav-label">Compte</div>
+  
 
-    <div class="mobile-nav-account-summary" id="mobile-account-summary" hidden>
-      <div class="mobile-nav-account-avatar" id="mobile-account-avatar"
-           style="cursor:pointer" title="Accéder à mon espace"
-           onclick="window._fixeoAvatarNav()">U</div>
-      <div class="mobile-nav-account-copy">
-        <strong id="mobile-account-name">Mon compte</strong>
-        <span id="mobile-account-role">Client Fixeo</span>
-      </div>
+    
+      
     </div>
 
-    <div class="mobile-nav-auth" data-auth="guest">
-      <a href="auth.html" class="btn-nav btn-nav-outline">Connexion</a>
-      <a href="auth.html#signup" class="btn-nav btn-nav-primary">Inscription</a>
-    </div>
+    
 
-    <div class="mobile-nav-user" data-auth="logged-in">
-      <!-- ⚡ Primary CTA: My Fixeo Space — routes to correct dashboard by role -->
-      <a href="#" class="nav-link mobile-nav-fixeo-space" id="mobile-fixeo-space-link"
-         onclick="window._fixeoAvatarNav();return false;">
-        ⚡ Mon Espace Fixeo
-      </a>
-      <a href="dashboard-client.html" class="nav-link mobile-nav-account-link mobile-nav-requests-link">
-        📋 Mes demandes
-      </a>
-      <a href="admin.html" class="nav-link mobile-nav-account-link" data-role="admin" data-auth="admin">🛡 Admin</a>
-      <a href="#" class="nav-link mobile-nav-logout-link" onclick="window.fixeoLogout?.();return false;">🚪 Déconnexion</a>
-    </div>
+    
   </div>
 </div>
 
@@ -3747,7 +3688,6 @@ section#home.hero.hero-section {
 ════════════════════════════════════════════════════════════ -->
 <script src="js/fixeo-heroes.js?v=fxhv2a"></script>
 <script src="js/fixeo-session-mobile.js?v=50a38b9"></script>
-<script src="js/fixeo-header-global.js?v=gfnav4"></script>
 <script src="js/i18n.js?v=i18n3"></script>
 <script defer src="js/notifications.js?v=50a38b9"></script>
 <script src="js/fixeo-public-profile-links.js?v=50a38b9"></script>
@@ -3940,7 +3880,6 @@ function openContentModal(type) {
 <script src="js/hero-search-modal.js?v=50a38b9" defer></script>
 <script src="js/secondary-search.js?v=pf-nav1" defer></script>
 <script src="js/quick-search-modal.js?v=qsm10"></script>
-<script src="js/header-unified.js?v=modalfix3"></script>
 <script src="js/auth-global.js?v=50a38b9"></script>
 <script src="js/fixeo-auth-guard.js?v=guard-v2a"></script>
 <script src="js/fixeo-session-bridge.js?v=sb1"></script>
@@ -4636,5 +4575,11 @@ document.addEventListener('click', function(e) {
 </nav>
 <!-- /SEO-4.5 -->
 
+
+    <!-- FNS v1 — fixeo-navigation-v1 (Phase 11.1) -->
+    <!-- FNS MUTUAL EXCLUSION: header-unified.js and fixeo-header-global.js
+         are NOT loaded on this page. window._FIXEO_NAVIGATION_INITIALIZED_
+         prevents any duplicate initialization. -->
+    <script src="js/fixeo-navigation-v1.js?v=fns-v1a"></script>
 </body>
 </html>
