@@ -16,6 +16,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
   <noscript><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet"></noscript>
   <!-- V2 CSS only — no V1 CSS loaded -->
+  <link rel="stylesheet" href="css/variables.css">
   <link rel="stylesheet" href="css/fixeo-dashboard-v2.css?v=v2j">
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/fixeo-request-modal-v2.css?v=rmv2-v1a">
@@ -348,6 +349,27 @@
 <script src="js/fixeo-notification-center-v1.js?v=fnc-v1b" defer></script>
 <script src="js/fixeo-tracking-engine.js?v=ftrk-v1b" defer></script>
 <!-- Global request modal stack (request-form + rmv2 + fuv3 V3/V3.1 + faee) -->
+<script>
+  /* fix(client-dashboard): provide canonical window.openModal/closeModal
+     so request-form.js canonical path fires and modal-backdrop shows correctly. */
+  if (typeof window.openModal !== 'function') {
+    window.openModal = function(id) {
+      var modal = document.getElementById(id);
+      if (!modal) return;
+      modal.classList.add('open');
+      var bd = document.querySelector('.modal-backdrop');
+      if (bd) { bd.classList.add('open'); bd.setAttribute('aria-hidden','false'); }
+      document.body.style.overflow = 'hidden';
+    };
+    window.closeModal = function(id) {
+      var modal = id ? document.getElementById(id) : null;
+      if (modal) { modal.classList.remove('open'); modal.removeAttribute('data-mode'); }
+      var bd = document.querySelector('.modal-backdrop');
+      if (bd) { bd.classList.remove('open'); bd.setAttribute('aria-hidden','true'); }
+      document.body.style.overflow = '';
+    };
+  }
+</script>
 <script src="js/request-form.js?v=rmv2-v1a"></script>
 <script src="js/fixeo-request-modal-v2.js?v=rmv2-v1a" defer></script>
 <script src="js/fixeo-urgent-modal-v3.js?v=fuv3-v1a" defer></script>
