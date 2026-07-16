@@ -165,7 +165,14 @@ claaim sys<!DOCTYPE html>
     .fxfp-hero{animation:fxfp-in .22s ease-out both}
     @keyframes fxfp-in{from{opacity:.6;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
     @media(prefers-reduced-motion:reduce){.fxfp-hero{animation:none}}
-  </style>
+  
+    @media(max-width:768px){
+      /* fix(profile-mobile): safe-area-aware top spacing for fixed shared header */
+      body.fixeo-gh-enabled .public-artisan-wrap{
+        padding-top:calc(60px + env(safe-area-inset-top,0px) + 16px) !important;
+      }
+    }
+    </style>
   <link rel="stylesheet" href="css/header-logo-premium.css?v=hlp5">
   <!-- ══ LOGO OVERRIDE — image-only, no emoji, no text ══ -->
   <style id="fixeo-logo-override">
@@ -458,8 +465,8 @@ claaim sys<!DOCTYPE html>
 <!-- perf2: Batch 1 — header + auth sync (nav/auth state needed at first paint).
      fixeo-db, fixeo-repository, fixeo-auth-supabase, fixeo-supabase-loader
      promoted to defer here; they execute at DCL in order before the profile scripts. -->
-<!-- <script src="/js/header-unified.js?v=v2c3b"></script> -->
-<!-- <script src="/js/fixeo-header-global.js?v=v2c5a"></script> -->
+<script src="/js/header-unified.js?v=v2c3b"></script>
+<script src="/js/fixeo-header-global.js?v=v2c5a"></script>
 <!-- <script src="/js/auth-global.js?v=v2c3b"></script> -->
 <!-- perf2: defer chain — DB + loader + profile (DCL order preserved) -->
      <script src="/js/fixeo-db.js?v=db2" defer></script>
