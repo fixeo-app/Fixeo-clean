@@ -1619,3 +1619,29 @@ html {
 html {
   scroll-behavior: smooth;
 }
+
+/* ── City chips block — top-of-page placement (out-of-flow fallback) ──────────
+   Applies only when .blog-internal-links is a direct child of <body> (21 articles
+   where it was extracted from #ba-progress-wrap). The 100 articles that already
+   have it inside .blog-body are unaffected (body > selector does not match them).
+   z-index: drawer (1250) > z-index:auto → drawer always covers this block. ────── */
+body > .blog-internal-links {
+  margin-top: calc(60px + env(safe-area-inset-top, 0px) + 8px);
+  margin-bottom: 0;
+  padding-left: 14px;
+  padding-right: 14px;
+  border-radius: 0;
+  border-left: none;
+  border-right: none;
+}
+
+@media (min-width: 769px) {
+  body > .blog-internal-links {
+    margin-top: calc(var(--ba-navbar-h) + 12px);
+    padding-left: 0;
+    padding-right: 0;
+    border-radius: 8px;
+    border-left: 1px solid rgba(255,255,255,.09);
+    border-right: 1px solid rgba(255,255,255,.09);
+  }
+}
