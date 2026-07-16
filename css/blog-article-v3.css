@@ -731,7 +731,7 @@ main.blog-main {
 @media (max-width: 900px) {
   main.blog-main {
     grid-template-columns: 1fr;
-    padding: calc(var(--ba-navbar-h) + 20px) 20px 64px;
+    padding: calc(60px + env(safe-area-inset-top, 0px) + 20px) 20px 64px;
     gap: 0;
   }
 
@@ -746,7 +746,7 @@ main.blog-main {
    ───────────────────────────────────────────────────────────── */
 @media (max-width: 600px) {
   main.blog-main {
-    padding: calc(var(--ba-navbar-h) + 12px) 14px 48px;
+    padding: calc(60px + env(safe-area-inset-top, 0px) + 16px) 14px 48px;
   }
 
   .blog-article-header h1 {
