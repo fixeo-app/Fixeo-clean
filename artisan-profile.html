@@ -74,6 +74,8 @@ claaim sys<!DOCTYPE html>
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/artisan-profile-conversion.css">
   <link rel="stylesheet" href="css/fixeo_v5_fixes.css">
+  <link rel="stylesheet" href="css/header-unified.css?v=v2c3b">
+  <link rel="stylesheet" href="css/fixeo-header-global.css?v=v2c5a">
   <link rel="stylesheet" href="css/auth-global.css?v=v2c3b">
   <link rel="stylesheet" href="css/reservation.css">
   <link rel="stylesheet" href="css/reservation-v2.css?v=3" />
@@ -87,10 +89,7 @@ claaim sys<!DOCTYPE html>
   <link rel="stylesheet" href="css/fixeo-seo-profile-blocks.css?v=seo3">
   <!-- rf4: Preload artisan index for true cold SEO visitors. fetch-priority=low so it
        doesn't compete with CSS/fonts; crossorigin needed for fetch() CORS to reuse connection. -->
- <!-- <link rel="preload" href="/data/artisan-index.json?v=1" as="fetch" crossorigin="anonymous" fetchpriority="low">
-    <!-- FNS v1 — fixeo-navigation-v1 (Phase 11.1) -->
-    <link rel="stylesheet" href="css/fixeo-navigation-v1.css?v=fns-v1a">
- -->
+ <!-- <link rel="preload" href="/data/artisan-index.json?v=1" as="fetch" crossorigin="anonymous" fetchpriority="low"> -->
   <style>
     .notif-badge:empty{display:none!important}
     .notif-panel,.notification-panel{z-index:600!important}
@@ -167,6 +166,7 @@ claaim sys<!DOCTYPE html>
     @keyframes fxfp-in{from{opacity:.6;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
     @media(prefers-reduced-motion:reduce){.fxfp-hero{animation:none}}
   </style>
+  <link rel="stylesheet" href="css/header-logo-premium.css?v=hlp5">
   <!-- ══ LOGO OVERRIDE — image-only, no emoji, no text ══ -->
   <style id="fixeo-logo-override">
     /* Kill legacy logo-icon and logo-text */
@@ -218,7 +218,7 @@ claaim sys<!DOCTYPE html>
 <script id="fixeo-profile-jsonld" type="application/ld+json">{"@context":"https://schema.org","@type":"ProfessionalService","name":"Artisan Fixeo","url":"https://www.fixeo.ma/artisan-profile.html","provider":{"@type":"Organization","name":"Fixeo","url":"https://www.fixeo.ma/"}}</script>
 <script src="/js/fixeo-heroes.js?v=fxhv2a"></script>
 </head>
-<body data-theme="dark" class="public-artisan-page">
+<body data-theme="dark" class="public-artisan-page fixeo-gh-enabled">
 <!-- perf-profile-1: Instant preseed — runs synchronously at body-parse time (before any other script).
      Reads ?id from URL, finds artisan in localStorage marketplace pool,
      writes fixeo_profile_prefetch_{id} to sessionStorage so that
@@ -244,7 +244,46 @@ claaim sys<!DOCTYPE html>
 </script>
 <a href="#main-content" class="skip-link">Aller au contenu</a>
 
+<nav class="navbar" role="navigation" aria-label="Navigation principale">
+  <a href="/index.html" class="navbar-brand logo-wrap" aria-label="Fixeo — Accueil">
+    <img src="/img/logo.png" alt="Fixeo" class="fixeo-logo-img" height="38" loading="eager" onerror="this.onerror=null;this.alt='Fixeo';this.style.display='none';var t=document.createElement('span');t.className='fixeo-logo-text';t.textContent='Fixeo';this.parentNode.appendChild(t);">
+  </a>
 
+  <nav class="navbar-nav" aria-label="Menu principal">
+    <a href="/index.html" class="nav-link" data-i18n="nav_home">Accueil</a>
+    <div class="nav-has-dropdown">
+      <a href="/index.html#services" class="nav-link" data-i18n="nav_services">Services <span class="nav-arrow">▾</span></a>
+      <div class="nav-dropdown" role="menu" aria-label="Sous-menu Services">
+        <a href="/index.html#services" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🔧</span>Tous les services</a>
+        <a href="/index.html#services?cat=plomberie" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🚿</span>Plomberie</a>
+        <a href="/index.html#services?cat=electricite" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">⚡</span>Électricité</a>
+        <a href="/index.html#services?cat=peinture" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🎨</span>Peinture</a>
+        <a href="/index.html#services?cat=climatisation" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">❄️</span>Climatisation</a>
+        <a href="/index.html#services?cat=nettoyage" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🧹</span>Nettoyage</a>
+        <a href="/index.html#services?cat=menuiserie" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🪚</span>Menuiserie</a>
+        <a href="/index.html#services?cat=serrurerie" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🔑</span>Serrurerie</a>
+        <a href="/index.html#services?cat=maconnerie" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🧱</span>Maçonnerie</a>
+        <a href="/index.html#services?cat=jardinage" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🌿</span>Jardinage</a>
+        <a href="/index.html#services?cat=bricolage" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🔩</span>Bricolage</a>
+        <a href="/index.html#services?cat=demenagement" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🚛</span>Déménagement</a>
+        <a href="/index.html#services?cat=carrelage" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🏁</span>Carrelage</a>
+        <a href="/index.html#services?cat=toiture" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🏠</span>Toiture</a>
+        <a href="/index.html#services?cat=vitrerie" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🪟</span>Vitrerie</a>
+        <a href="/index.html#services?cat=chauffage" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">🔥</span>Chauffage</a>
+      </div>
+    </div>
+    <div class="nav-has-dropdown">
+      <a href="/index.html#artisans-section" class="nav-link" data-i18n="nav_artisans">Artisans <span class="nav-arrow">▾</span></a>
+      <div class="nav-dropdown" role="menu" aria-label="Sous-menu Artisans">
+        <a href="/index.html#artisans-section" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">👷</span>Tous les artisans</a>
+        <a href="/artisan-profile.html" class="nav-dropdown-item" role="menuitem"><span class="dd-icon">⭐</span>Profil public</a>
+      </div>
+    </div>
+    <a href="/pricing.html" class="nav-link">Tarifs</a>
+    <a href="/presse-partenariats.html" class="nav-link">Presse</a>
+    <a href="/dashboard-client.html" class="nav-link" data-role="dashboard" data-auth="logged-in" data-i18n="nav_dashboard">📊 Dashboard</a>
+    <a href="/admin.html" class="nav-link" data-role="admin" data-auth="admin">🛡 Admin</a>
+  </nav>
 
   <div class="nav-actions">
     <button class="btn-quick-search" onclick="window.QuickSearchModal && QuickSearchModal.open()" aria-label="Recherche rapide" title="Recherche rapide [ / ]">
@@ -286,8 +325,19 @@ claaim sys<!DOCTYPE html>
   </button>
 </nav>
 
-
-  
+<div class="mobile-nav" role="navigation" aria-label="Menu mobile">
+  <a href="/index.html" class="nav-link">🏠 Accueil</a>
+  <a href="/index.html#services" class="nav-link">🔧 Services</a>
+  <a href="/index.html#artisans-section" class="nav-link">👷 Artisans</a>
+  <a href="/pricing.html" class="nav-link">💎 Tarifs</a>
+  <a href="/presse-partenariats.html" class="nav-link">📰 Presse</a>
+  <a href="/dashboard-client.html" class="nav-link" data-role="dashboard" data-auth="logged-in">📊 Dashboard</a>
+  <a href="/admin.html" class="nav-link" data-role="admin" data-auth="admin">🛡 Admin</a>
+  <div class="mobile-nav-divider"></div>
+  <div class="mobile-nav-auth" data-auth="guest">
+    <a href="/auth.html" class="btn-nav btn-nav-outline">Connexion</a>
+    <a href="auth.html#signup" class="btn-nav btn-nav-primary">Inscription</a>
+  </div>
   <a href="#" class="nav-link" data-auth="logged-in" onclick="window.fixeoGlobalLogout && fixeoGlobalLogout(); return false;">🚪 Déconnexion</a>
 </div>
 
@@ -408,8 +458,8 @@ claaim sys<!DOCTYPE html>
 <!-- perf2: Batch 1 — header + auth sync (nav/auth state needed at first paint).
      fixeo-db, fixeo-repository, fixeo-auth-supabase, fixeo-supabase-loader
      promoted to defer here; they execute at DCL in order before the profile scripts. -->
-<!-- -->
-<!-- -->
+<!-- <script src="/js/header-unified.js?v=v2c3b"></script> -->
+<!-- <script src="/js/fixeo-header-global.js?v=v2c5a"></script> -->
 <!-- <script src="/js/auth-global.js?v=v2c3b"></script> -->
 <!-- perf2: defer chain — DB + loader + profile (DCL order preserved) -->
      <script src="/js/fixeo-db.js?v=db2" defer></script>
@@ -815,12 +865,6 @@ window.addEventListener('load', function () {
   }
 })();
 </script>
-
-    <!-- FNS v1 — fixeo-navigation-v1 (Phase 11.1) -->
-    <!-- FNS MUTUAL EXCLUSION: header-unified.js and fixeo-header-global.js
-         are NOT loaded on this page. window._FIXEO_NAVIGATION_INITIALIZED_
-         prevents any duplicate initialization. -->
-    <script src="js/fixeo-navigation-v1.js?v=fns-v1a"></script>
 </body>
 </html>
 

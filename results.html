@@ -21,7 +21,9 @@
   <link rel="stylesheet" href="css/artisan-cards-v13.css" />
   <link rel="stylesheet" href="css/artisan-card-premium-v2.css" />
   <link rel="stylesheet" href="css/artisan-card-mobile-v2.css" />
+  <link rel="stylesheet" href="css/fixeo-header-global.css" />
   <link rel="stylesheet" href="css/fixeo-footer-global.css?v=gf3a" />
+  <link rel="stylesheet" href="css/header-logo-premium.css?v=hlp5">
   <!-- reservation.css: async — modal styles, non-blocking -->
   <link rel="stylesheet" href="css/reservation.css" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="css/reservation.css"></noscript>
   <link rel="stylesheet" href="css/reservation-v2.css?v=3" />
@@ -215,15 +217,25 @@
     }
   </style>
   <link rel="stylesheet" href="css/fixeo-consent-v1.css?v=fcv1b">
-    <!-- FNS v1 — fixeo-navigation-v1 (Phase 11.1) -->
-    <link rel="stylesheet" href="css/fixeo-navigation-v1.css?v=fns-v1a">
-
   <script src="js/fixeo-consent-v1.js?v=fcv1c"></script>
   <script src="js/fixeo-analytics-config.js?v=fac1b" defer></script>
   <script src="js/fixeo-analytics-bootstrap.js?v=fab1c" defer></script>
 </head>
 <body>
-  
+  <header class="site-header">
+    <div class="container">
+      <a class="brand" href="index.html">
+        <span class="brand-badge">🔧</span>
+        <span>Fixeo</span>
+      </a>
+      <nav class="top-nav" aria-label="Navigation principale">
+        <a href="index.html">Accueil</a>
+        <a href="index.html#services">Services</a>
+        <a href="index.html#artisans-section">Artisans</a>
+      </nav>
+      <a class="header-cta" href="index.html#services">Nouvelle demande</a>
+    </div>
+  </header>
 
   <main>
     <section class="hero">
@@ -361,6 +373,7 @@
 
     <script src="js/fixeo-heroes.js?v=fxhv2a"></script>
     <script src="js/fixeo-session-mobile.js"></script>
+<script src="js/fixeo-header-global.js"></script>
 <script src="js/artisan-onboarding-store.js" defer></script>
   <script src="js/fixeo-public-profile-links.js" defer></script>
   <script src="js/main.js?v=v2c2a" defer></script>
@@ -373,11 +386,5 @@
 <script src="js/fixeo-marketplace-density.js?v=v2c2a" defer></script>
 <!-- gf1: Global footer injection -->
 <script src="js/fixeo-footer-global.js?v=gf3a" defer></script>
-
-    <!-- FNS v1 — fixeo-navigation-v1 (Phase 11.1) -->
-    <!-- FNS MUTUAL EXCLUSION: header-unified.js and fixeo-header-global.js
-         are NOT loaded on this page. window._FIXEO_NAVIGATION_INITIALIZED_
-         prevents any duplicate initialization. -->
-    <script src="js/fixeo-navigation-v1.js?v=fns-v1a"></script>
 </body>
 </html>
