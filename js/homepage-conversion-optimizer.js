@@ -193,15 +193,6 @@ if (existingMain) {
   existingMain = cleanMain;
 }
 
-    let actions = $('.final-cta-actions', finalCta);
-    if (!actions) {
-      actions = document.createElement('div');
-      actions.className = 'final-cta-actions';
-      if (existingMain) {
-        existingMain.insertAdjacentElement('beforebegin', actions);
-        actions.appendChild(existingMain);
-      }
-    }
 
     /* [patched] cta-secondary-alt injection disabled — .final-cta-urgent already in HTML */
 
