@@ -73,9 +73,17 @@
     {
       "src": "api/artisan-profile-fn/index.js",
       "use": "@vercel/node"
+    },
+    {
+      "src": "api/enterprise-contact-fn/index.js",
+      "use": "@vercel/node"
     }
   ],
   "routes": [
+    {
+      "src": "^/api/enterprise-contact$",
+      "dest": "/api/enterprise-contact-fn/index.js"
+    },
     {
       "src": "^/plombier-casablanca\\.html$",
       "headers": {

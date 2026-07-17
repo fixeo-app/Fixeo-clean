@@ -1,0 +1,385 @@
+/**
+ * FIXEO Enterprise Modal V1 — fixeo-enterprise-modal-v1.css
+ * Version: fem-v1a — 2026-07-17
+ * Namespace: .fem-* exclusively — zero overrides to existing classes
+ *
+ * Reuses from main.css / request-form.css:
+ *   .modal, .modal.open, .modal-backdrop, .modal-backdrop.open
+ *   .request-field, .request-label, .request-optional
+ *   --z-modal, --z-modal-backdrop, --radius-xl, --glass-border-strong
+ *   --neon-glow, --primary (rgb(225,48,108))
+ *
+ * All Enterprise-specific UI is in .fem-* namespace.
+ */
+
+/* ── Modal container override (wider than marketplace modal) ── */
+#fixeo-enterprise-modal.modal {
+  max-width: 600px;
+  width: calc(100% - 24px);
+  max-height: 90vh;
+  padding: 0;
+  overflow: hidden;
+  display: none;
+}
+
+#fixeo-enterprise-modal.modal.open {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Sticky header ── */
+.fem-header {
+  flex-shrink: 0;
+  padding: 24px 28px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  position: relative;
+}
+
+.fem-header-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgb(72, 100, 255);
+  margin-bottom: 10px;
+}
+
+.fem-header-eyebrow::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgb(72, 100, 255);
+  box-shadow: 0 0 8px rgba(72, 100, 255, 0.7);
+}
+
+.fem-header h2 {
+  margin: 0 0 6px;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.25;
+}
+
+.fem-header-subtitle {
+  margin: 0;
+  font-size: 0.88rem;
+  color: rgba(255, 255, 255, 0.58);
+  line-height: 1.5;
+}
+
+.fem-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.fem-close:hover,
+.fem-close:focus-visible {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.25);
+  outline: none;
+}
+
+/* ── Scrollable form body ── */
+.fem-body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 22px 28px;
+  display: grid;
+  gap: 18px;
+}
+
+/* Scrollbar */
+.fem-body::-webkit-scrollbar { width: 5px; }
+.fem-body::-webkit-scrollbar-track { background: transparent; }
+.fem-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 4px; }
+
+/* ── Two-column row ── */
+.fem-row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/* ── Section label (group heading) ── */
+.fem-section-label {
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.38);
+  margin: 0 0 2px;
+  padding-top: 4px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* ── Field reuse — override focus ring to enterprise indigo ── */
+#fixeo-enterprise-modal .request-field input:focus,
+#fixeo-enterprise-modal .request-field select:focus,
+#fixeo-enterprise-modal .request-field textarea:focus {
+  border-color: rgba(72, 100, 255, 0.5);
+  box-shadow: 0 0 0 4px rgba(72, 100, 255, 0.12), 0 12px 28px rgba(0, 0, 0, 0.22);
+}
+
+/* ── Textarea ── */
+.fem-textarea {
+  width: 100%;
+  min-height: 80px;
+  resize: vertical;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+  padding: 14px 16px;
+  font: inherit;
+  font-size: 0.92rem;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  box-sizing: border-box;
+}
+
+.fem-textarea::placeholder { color: rgba(255, 255, 255, 0.35); }
+.fem-textarea:focus {
+  border-color: rgba(72, 100, 255, 0.5);
+  box-shadow: 0 0 0 4px rgba(72, 100, 255, 0.12);
+  background: rgba(255, 255, 255, 0.085);
+}
+
+/* ── Organisation type select ── */
+#fixeo-enterprise-modal .request-field select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='rgba(255,255,255,0.4)' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  padding-right: 40px;
+}
+
+/* ── Need checkboxes ── */
+.fem-checks {
+  display: grid;
+  gap: 8px;
+}
+
+.fem-check-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  user-select: none;
+}
+
+.fem-check-item:hover {
+  background: rgba(72, 100, 255, 0.07);
+  border-color: rgba(72, 100, 255, 0.2);
+}
+
+.fem-check-item input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  accent-color: rgb(72, 100, 255);
+  cursor: pointer;
+}
+
+.fem-check-label {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.82);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.fem-check-item:has(input:checked) {
+  background: rgba(72, 100, 255, 0.1);
+  border-color: rgba(72, 100, 255, 0.35);
+}
+
+.fem-check-item:has(input:checked) .fem-check-label {
+  color: #fff;
+  font-weight: 700;
+}
+
+/* ── Sticky footer ── */
+.fem-footer {
+  flex-shrink: 0;
+  padding: 16px 28px 22px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(12, 12, 28, 0.6);
+}
+
+.fem-submit-btn {
+  width: 100%;
+  padding: 16px 24px;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgb(72, 100, 255), rgb(55, 80, 220));
+  color: #fff;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 800;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 20px rgba(72, 100, 255, 0.35);
+}
+
+.fem-submit-btn:hover:not(:disabled) {
+  opacity: 0.92;
+  box-shadow: 0 8px 28px rgba(72, 100, 255, 0.5);
+  transform: translateY(-1px);
+}
+
+.fem-submit-btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.fem-submit-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+
+@media (pointer: coarse) {
+  .fem-submit-btn:hover { transform: none; }
+  .fem-submit-btn:active:not(:disabled) { transform: scale(0.97); }
+}
+
+.fem-trust-line {
+  margin-top: 10px;
+  text-align: center;
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.38);
+}
+
+/* ── Success state ── */
+.fem-success {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 40px 32px 36px;
+  gap: 16px;
+}
+
+.fem-success.active {
+  display: flex;
+}
+
+.fem-success-icon {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.18), rgba(16, 185, 129, 0.06));
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  box-shadow: 0 0 24px rgba(16, 185, 129, 0.2);
+}
+
+.fem-success-title {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #fff;
+  margin: 0;
+}
+
+.fem-success-text {
+  font-size: 0.92rem;
+  color: rgba(255, 255, 255, 0.62);
+  line-height: 1.6;
+  margin: 0;
+  max-width: 380px;
+}
+
+.fem-success-close {
+  margin-top: 8px;
+  padding: 11px 28px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.7);
+  font: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.fem-success-close:hover {
+  background: rgba(255, 255, 255, 0.07);
+  color: #fff;
+}
+
+/* ── Error feedback ── */
+.fem-error-msg {
+  display: none;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  color: rgba(255, 120, 120, 0.95);
+  font-size: 0.84rem;
+  line-height: 1.4;
+}
+
+.fem-error-msg.visible {
+  display: block;
+}
+
+/* ── Validation: required field highlight ── */
+#fixeo-enterprise-modal .request-field input.fem-invalid,
+#fixeo-enterprise-modal .request-field select.fem-invalid,
+#fixeo-enterprise-modal .request-field textarea.fem-invalid {
+  border-color: rgba(239, 68, 68, 0.5) !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+}
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  #fixeo-enterprise-modal.modal {
+    max-height: 92vh;
+    width: calc(100% - 16px);
+  }
+  .fem-header { padding: 18px 18px 16px; }
+  .fem-header h2 { font-size: 1.1rem; }
+  .fem-body { padding: 16px 18px; gap: 14px; }
+  .fem-row-2 { grid-template-columns: 1fr; }
+  .fem-footer { padding: 12px 18px 18px; }
+  .fem-close { top: 14px; right: 14px; }
+}
+
+/* ── prefers-reduced-motion ── */
+@media (prefers-reduced-motion: reduce) {
+  #fixeo-enterprise-modal.modal,
+  .fem-submit-btn,
+  .fem-close,
+  .fem-check-item {
+    transition: none !important;
+  }
+}
