@@ -64,10 +64,56 @@
   <link rel="stylesheet" href="/css/fixeo-entreprises-v1.css?v=fxe-v1a">
   <!-- Consent -->
   <link rel="stylesheet" href="/css/fixeo-consent-v1.css?v=fcv1b">
+  <!-- Modal infrastructure CSS (reuse homepage canonical stack) -->
+  <link rel="stylesheet" href="/css/request-form.css?v=50a38b9">
+  <link rel="stylesheet" href="/css/fixeo-request-modal-v2.css?v=rmv2-v1a">
+  <link rel="stylesheet" href="/css/fixeo-request-v2.css?v=1">
+  <link rel="stylesheet" href="/css/fixeo-urgent-v2.css?v=1">
+  <link rel="stylesheet" href="/css/fixeo-urgent-modal-v3.css?v=fuv3-v1a">
+  <link rel="stylesheet" href="/css/fixeo-urgent-modal-v3-patch.css?v=fuv3-v1b">
+  <link rel="stylesheet" href="/css/fixeo-modal-scroll-fix.css?v=fxmsf-v1a">
 
   <!-- First-paint: body class for shared header -->
   <style>
     body { background: #080812; }
+  </style>
+
+  <style id="fixeo-logo-override">
+    /* Kill legacy logo-icon and logo-text */
+    .navbar-brand .logo-icon, .logo-wrap .logo-icon, .fixeo-gh-brand .logo-icon
+      { display:none !important; width:0 !important; height:0 !important; min-width:0 !important; flex:0 !important; }
+    .navbar-brand .logo-text, .logo-wrap .logo-text, .fixeo-gh-brand .logo-text
+      { display:none !important; width:0 !important; height:0 !important; }
+    /* Brand containers - no clipping */
+    .navbar-brand, .logo-wrap
+      { max-width:220px !important; overflow:visible !important; gap:0 !important; background:transparent !important; }
+    .fixeo-gh-brand
+      { max-width:180px !important; overflow:visible !important; gap:0 !important; background:transparent !important; }
+    /* Logo image - clean, no hacks */
+    img.fixeo-logo-img {
+      display:block !important;
+      height:32px !important;
+      width:auto !important;
+      object-fit:contain !important;
+      object-position:left center !important;
+      background:transparent !important;
+      mix-blend-mode:normal !important;
+      filter:none !important;
+      box-shadow:none !important;
+      border:none !important;
+      flex:0 0 auto !important;
+      overflow:visible !important;
+    }
+    /* Mobile bar logo */
+    .fixeo-gh-brand img.fixeo-logo-img,
+    .fixeo-gh-mobile-bar img.fixeo-logo-img {
+      height:26px !important;
+      width:auto !important;
+    }
+    @media (max-width:480px) {
+      img.fixeo-logo-img { height:24px !important; }
+      .fixeo-gh-brand img.fixeo-logo-img { height:22px !important; }
+    }
   </style>
 </head>
 <body class="fxe-page fixeo-gh-enabled">
@@ -75,7 +121,7 @@
   <!-- Shared mobile header (injected by fixeo-header-global.js) -->
   <nav class="navbar" role="navigation" aria-label="Navigation principale">
     <a href="/index.html" class="navbar-brand logo-wrap" aria-label="Fixeo - Accueil">
-      <img src="/img/logo.png" alt="Fixeo" class="fixeo-logo-img" height="38" loading="eager">
+      <img src="/img/logo.png" alt="Fixeo" class="fixeo-logo-img" height="32" loading="eager">
     </a>
     <nav class="navbar-nav" aria-label="Menu principal">
       <a href="/services.html" class="nav-link">Services</a>
@@ -86,7 +132,7 @@
       <a href="/auth.html" class="nav-link">Connexion</a>
     </nav>
     <div class="nav-actions">
-      <a href="/auth.html" class="btn btn-primary" style="padding:9px 20px;font-size:14px;border-radius:10px;background:rgb(72,100,255);color:white;text-decoration:none;font-weight:700;">Démo Enterprise</a>
+      <button type="button" class="btn btn-primary" style="padding:9px 20px;font-size:14px;border-radius:10px;background:rgb(72,100,255);color:white;font-weight:700;cursor:pointer;border:none;" onclick="window.FixeoClientRequest ? FixeoClientRequest.open(this, 'enterprise') : window.openModal && openModal('request-modal')" data-open-request-form="true" data-request-mode="enterprise">Démo Enterprise</button>
     </div>
   </nav>
 
@@ -127,12 +173,12 @@
           </p>
 
           <div class="fxe-hero-ctas">
-            <a href="#contact" class="fxe-btn fxe-btn-primary fxe-btn-lg">
+            <button type="button" class="fxe-btn fxe-btn-primary fxe-btn-lg" onclick="window.FixeoClientRequest ? FixeoClientRequest.open(this, 'enterprise') : window.openModal && openModal('request-modal')" data-open-request-form="true" data-request-mode="enterprise">
               🚀 Demander une démo
-            </a>
-            <a href="#contact" class="fxe-btn fxe-btn-ghost fxe-btn-lg">
+            </button>
+            <button type="button" class="fxe-btn fxe-btn-ghost fxe-btn-lg" onclick="window.FixeoClientRequest ? FixeoClientRequest.open(this, 'enterprise') : window.openModal && openModal('request-modal')" data-open-request-form="true" data-request-mode="enterprise">
               📞 Contacter l'équipe Enterprise
-            </a>
+            </button>
           </div>
 
           <div class="fxe-hero-proof">
@@ -1150,12 +1196,12 @@
         Rejoignez les entreprises qui ont transformé leur gestion de la maintenance avec FIXEO. Démarrez avec une démo gratuite de 30 minutes.
       </p>
       <div class="fxe-final-ctas">
-        <a href="mailto:enterprise@fixeo.ma?subject=Demande%20de%20d%C3%A9mo%20Enterprise&body=Bonjour%2C%0A%0AJe%20souhaite%20une%20d%C3%A9mo%20de%20FIXEO%20Enterprise%20pour%20mon%20organisation.%0A%0ANom%20de%20l%27entreprise%20%3A%0ANombre%20de%20b%C3%A2timents%20%3A%0AVille(s)%20%3A%0A%0AMerci" class="fxe-btn fxe-btn-primary fxe-btn-lg">
+        <button type="button" class="fxe-btn fxe-btn-primary fxe-btn-lg" onclick="window.FixeoClientRequest ? FixeoClientRequest.open(this, 'enterprise') : window.openModal && openModal('request-modal')" data-open-request-form="true" data-request-mode="enterprise">
           🚀 Demander une démo gratuite
-        </a>
-        <a href="mailto:enterprise@fixeo.ma" class="fxe-btn fxe-btn-ghost fxe-btn-lg">
+        </button>
+        <button type="button" class="fxe-btn fxe-btn-ghost fxe-btn-lg" onclick="window.FixeoClientRequest ? FixeoClientRequest.open(this, 'enterprise') : window.openModal && openModal('request-modal')" data-open-request-form="true" data-request-mode="enterprise">
           📧 Contacter l'équipe Enterprise
-        </a>
+        </button>
       </div>
       <p class="fxe-final-note">Sans engagement · Réponse sous 24h · Démo sur mesure</p>
     </div>
@@ -1183,7 +1229,7 @@
             <li><a href="/artisans.html">Artisans</a></li>
             <li><a href="/comment-ca-marche.html">Comment ça marche</a></li>
             <li><a href="/pricing.html">Tarifs</a></li>
-            <li><a href="/entreprises.html" style="color:rgb(72,100,255);font-weight:700;">⚡ Entreprises</a></li>
+            <li><a href="/entreprises.html" style="color:rgb(72,100,255);font-weight:700;">Entreprises</a></li>
           </ul>
         </div>
 
@@ -1313,5 +1359,223 @@
       }
     });
   </script>
+
+  <!-- ═══ Enterprise request modals (canonical homepage stack) ═══ -->
+<div class="modal request-modal" id="request-modal" role="dialog" aria-modal="true" aria-labelledby="request-modal-title" aria-describedby="request-modal-subtitle">
+  <div class="modal-header request-modal-header">
+    <div>
+      <h3 id="request-modal-title">Quel est le probl&#232;me&#160;?</h3>
+      <p id="request-modal-subtitle" class="request-modal-subtitle">Un artisan Fixeo vous rappelle sous 30&#160;min</p>
+    </div>
+    <button class="modal-close" type="button" onclick="window.FixeoClientRequest && window.FixeoClientRequest.closeStandard ? window.FixeoClientRequest.closeStandard('request-modal') : closeModal('request-modal')" aria-label="Fermer">✕</button>
+  </div>
+
+  <div class="request-modal-shell">
+    <form id="request-form" class="request-form" novalidate>
+      <div class="request-field">
+        <label for="request-problem">Votre besoin</label>
+        <input id="request-problem" name="problem" type="text" placeholder="Ex&#160;: fuite d&#8217;eau, panne &#233;lectrique, porte bloqu&#233;e&#8230;" maxlength="120" required />
+      </div>
+
+      <div class="request-field">
+        <label for="request-city">Ville</label>
+        <select id="request-city" name="ville" required>
+          <option value="">Choisir une ville</option>
+          <option value="Casablanca">Casablanca</option>
+          <option value="Rabat">Rabat</option>
+          <option value="Marrakech">Marrakech</option>
+          <option value="Fès">Fès</option>
+          <option value="Tanger">Tanger</option>
+          <option value="Agadir">Agadir</option>
+          <option value="Meknès">Meknès</option>
+          <option value="Oujda">Oujda</option>
+          <option value="Kénitra">Kénitra</option>
+          <option value="Tétouan">Tétouan</option>
+          <option value="Salé">Salé</option>
+          <option value="Temara">Temara</option>
+          <option value="El Jadida">El Jadida</option>
+          <option value="Béni Mellal">Béni Mellal</option>
+          <option value="Nador">Nador</option>
+          <option value="Khouribga">Khouribga</option>
+          <option value="Safi">Safi</option>
+          <option value="Taza">Taza</option>
+          <option value="Ouarzazate">Ouarzazate</option>
+          <option value="Mohammedia">Mohammedia</option>
+        </select>
+      </div>
+
+      <div class="request-field">
+        <span class="request-label">Urgence</span>
+        <div class="request-choice-grid" role="radiogroup" aria-label="Urgence">
+          <label class="request-choice-card">
+            <input type="radio" name="urgence" value="Urgent (moins de 30 min)" required />
+            <span class="request-choice-title">Urgent</span>
+            <span class="request-choice-meta">moins de 30 min</span>
+          </label>
+          <label class="request-choice-card">
+            <input type="radio" name="urgence" value="Normal" checked />
+            <span class="request-choice-title">Normal</span>
+            <span class="request-choice-meta">délai classique</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="request-field">
+        <label for="request-budget">Budget <span class="request-optional">(optionnel)</span></label>
+        <select id="request-budget" name="budget">
+          <option value="">Sélectionner un budget</option>
+          <option value="Moins de 100 MAD">Moins de 100 MAD</option>
+          <option value="100 - 300 MAD">100 - 300 MAD</option>
+          <option value="300 - 700 MAD">300 - 700 MAD</option>
+          <option value="+700 MAD">+700 MAD</option>
+        </select>
+      </div>
+
+      <div class="request-field">
+        <label for="request-phone">Téléphone</label>
+        <input id="request-phone" name="telephone" type="tel" inputmode="tel" placeholder="06 12 34 56 78" maxlength="20" required />
+      </div>
+
+      <button class="btn btn-primary request-submit-btn" type="submit">Envoyer ma demande</button>
+
+      <div class="request-trust-copy" aria-hidden="true">
+        <span>Gratuit &#183; Sans engagement</span>
+        <span>Paiement apr&#232;s intervention</span>
+      </div>
+    </form>
+
+    <!-- V2-B: Upgraded success state — operational coordination framing -->
+    <div id="request-success" class="request-success fxrva-success" hidden>
+
+      <!-- Status icon -->
+      <div class="request-success-icon fxrva-success-icon" aria-hidden="true">&#x2714;&#xFE0F;</div>
+
+      <!-- Title + sub — populated by showSuccess() from REQUEST_COPY -->
+      <h4 class="fxrva-success-title">Fixeo coordonne votre intervention</h4>
+      <p class="fxrva-success-sub">Votre demande est enregistr&#233;e. Un artisan disponible dans votre zone sera s&#233;lectionn&#233; et vous contactera pour confirmer.</p>
+
+      <!-- Coordination steps — visual process clarity -->
+      <div class="fxrva-coord-steps" aria-label="&#201;tapes de coordination">
+        <div class="fxrva-coord-step">
+          <span class="fxrva-coord-icon" aria-hidden="true">&#x2705;</span>
+          <span class="fxrva-coord-label">Demand&#x65; enregistr&#233;e</span>
+        </div>
+        <div class="fxrva-coord-sep" aria-hidden="true">&#x2192;</div>
+        <div class="fxrva-coord-step">
+          <span class="fxrva-coord-icon" aria-hidden="true">&#x1F50D;</span>
+          <span class="fxrva-coord-label">Artisan s&#233;lectionn&#233;</span>
+        </div>
+        <div class="fxrva-coord-sep" aria-hidden="true">&#x2192;</div>
+        <div class="fxrva-coord-step">
+          <span class="fxrva-coord-icon" aria-hidden="true">&#x1F4AC;</span>
+          <span class="fxrva-coord-label">Confirmation WhatsApp</span>
+        </div>
+      </div>
+
+      <!-- Notice — coordination guidance — populated by showSuccess() -->
+      <p class="fxrva-success-notice" hidden>
+        Restez joignable sur WhatsApp &#8212; c&#x2019;est l&#xE0; que se fait la coordination.
+      </p>
+
+      <!-- WhatsApp primary CTA -->
+      <a class="btn fxrva-wa-primary" id="request-whatsapp-link"
+         href="#" target="_blank" rel="noopener noreferrer"
+         aria-label="Rester joignable via WhatsApp">
+        <span class="fxrva-wa-ico" aria-hidden="true">&#x1F4AC;</span>
+        <span class="fxrva-wa-main-label">Rester joignable via WhatsApp</span>
+      </a>
+
+      <!-- Contextual sub-label — what to do on WA — populated by showSuccess() -->
+      <p class="fxrva-wa-sub-label" hidden>Partager une photo ou pr&#233;ciser l&#x2019;intervention</p>
+
+      <!-- Secondary action -->
+      <button class="btn fxrva-new-request" type="button" id="request-new-one">Publier une autre demande</button>
+
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="main-backdrop" aria-hidden="true"></div>
+
+<div id="request-success" class="request-success fxrva-success" hidden>
+
+      <!-- Status icon -->
+      <div class="request-success-icon fxrva-success-icon" aria-hidden="true">&#x2714;&#xFE0F;</div>
+
+      <!-- Title + sub — populated by showSuccess() from REQUEST_COPY -->
+      <h4 class="fxrva-success-title">Fixeo coordonne votre intervention</h4>
+      <p class="fxrva-success-sub">Votre demande est enregistr&#233;e. Un artisan disponible dans votre zone sera s&#233;lectionn&#233; et vous contactera pour confirmer.</p>
+
+      <!-- Coordination steps — visual process clarity -->
+      <div class="fxrva-coord-steps" aria-label="&#201;tapes de coordination">
+        <div class="fxrva-coord-step">
+          <span class="fxrva-coord-icon" aria-hidden="true">&#x2705;</span>
+          <span class="fxrva-coord-label">Demand&#x65; enregistr&#233;e</span>
+        </div>
+        <div class="fxrva-coord-sep" aria-hidden="true">&#x2192;</div>
+        <div class="fxrva-coord-step">
+          <span class="fxrva-coord-icon" aria-hidden="true">&#x1F50D;</span>
+          <span class="fxrva-coord-label">Artisan s&#233;lectionn&#233;</span>
+        </div>
+        <div class="fxrva-coord-sep" aria-hidden="true">&#x2192;</div>
+        <div class="fxrva-coord-step">
+          <span class="fxrva-coord-icon" aria-hidden="true">&#x1F4AC;</span>
+          <span class="fxrva-coord-label">Confirmation WhatsApp</span>
+        </div>
+      </div>
+
+      <!-- Notice — coordination guidance — populated by showSuccess() -->
+      <p class="fxrva-success-notice" hidden>
+        Restez joignable sur WhatsApp &#8212; c&#x2019;est l&#xE0; que se fait la coordination.
+      </p>
+
+      <!-- WhatsApp primary CTA -->
+      <a class="btn fxrva-wa-primary" id="request-whatsapp-link"
+         href="#" target="_blank" rel="noopener noreferrer"
+         aria-label="Rester joignable via WhatsApp">
+        <span class="fxrva-wa-ico" aria-hidden="true">&#x1F4AC;</span>
+        <span class="fxrva-wa-main-label">Rester joignable via WhatsApp</span>
+      </a>
+
+      <!-- Contextual sub-label — what to do on WA — populated by showSuccess() -->
+      <p class="fxrva-wa-sub-label" hidden>Partager une photo ou pr&#233;ciser l&#x2019;intervention</p>
+
+      <!-- Secondary action -->
+      <button class="btn fxrva-new-request" type="button" id="request-new-one">Publier une autre demande</button>
+
+    </div>
+
+  <!-- openModal inline guard (canonical) -->
+  <script>
+  /* fix(client-dashboard): provide canonical window.openModal/closeModal
+     so request-form.js canonical path fires and modal-backdrop shows correctly. */
+  if (typeof window.openModal !== 'function') {
+    window.openModal = function(id) {
+      var modal = document.getElementById(id);
+      if (!modal) return;
+      modal.classList.add('open');
+      var bd = document.querySelector('.modal-backdrop');
+      if (bd) { bd.classList.add('open'); bd.setAttribute('aria-hidden','false'); }
+      document.body.style.overflow = 'hidden';
+    };
+    window.closeModal = function(id) {
+      var modal = id ? document.getElementById(id) : null;
+      if (modal) { modal.classList.remove('open'); modal.removeAttribute('data-mode'); }
+      var bd = document.querySelector('.modal-backdrop');
+      if (bd) { bd.classList.remove('open'); bd.setAttribute('aria-hidden','true'); }
+      document.body.style.overflow = '';
+    };
+  }
+</script>
+
+  <!-- Modal JS stack (mirrors dashboard-client.html) -->
+  <script src="/js/request-form.js?v=rmv2-v1a"></script>
+  <script src="/js/fixeo-request-modal-v2.js?v=rmv2-v1a" defer></script>
+  <script src="/js/fixeo-urgent-modal-v3.js?v=fuv3-v1a" defer></script>
+  <script src="/js/fixeo-urgent-modal-v3-patch.js?v=fuv3-v1b" defer></script>
+  <script src="/js/fixeo-express-route-shim.js?v=fxrs-v1b" defer></script>
+  <script src="/js/fixeo-request-v2.js?v=1" defer></script>
+  <script src="/js/fixeo-urgent-v2.js?v=1" defer></script>
+
 </body>
 </html>
