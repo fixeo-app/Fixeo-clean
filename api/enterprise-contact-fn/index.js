@@ -1,27 +1,29 @@
 /**
  * FIXEO Enterprise Contact — api/enterprise-contact-fn/index.js
- * Version: fec-v1a — 2026-07-17
+ * Version: fec-v1b — 2026-07-17
  *
  * Receives Enterprise demo/contact form submissions from /entreprises.
  * Validates fields, stores lead in Supabase (enterprise_leads table),
  * returns JSON {ok, ref}.
  *
+ * SECURITY MODEL
+ * ──────────────
+ * This function uses the SERVICE ROLE key exclusively.
+ * The service role key:
+ *   - Lives ONLY in this Vercel serverless function (env var)
+ *   - Is NEVER exposed to frontend code, browser, or client JS
+ *   - Bypasses Supabase RLS → can INSERT and read RETURNING safely
+ *   - Is never included in any static asset, HTML, or client bundle
+ *
+ * The browser submits only to /api/enterprise-contact (this function).
+ * The anon key is NOT used by this function.
+ *
  * CORS: same-origin only (www.fixeo.ma).
  * Rate limit: 5 submissions per IP per hour (in-memory, per-instance).
  *
  * Environment variables required (set in Vercel dashboard):
- *   SUPABASE_URL      — e.g. https://ztwtbgoqanqzvwiibtuh.supabase.co
- *   SUPABASE_ANON_KEY — publishable anon key
- *
- * Table: enterprise_leads
- *   id uuid default gen_random_uuid() primary key,
- *   nom text, prenom text, entreprise text, fonction text,
- *   telephone text, email text, ville text, org_type text,
- *   needs text, batiments text, message text,
- *   source text default 'enterprise',
- *   page text,
- *   submitted_at timestamptz default now(),
- *   created_at   timestamptz default now()
+ *   SUPABASE_URL              — https://ztwtbgoqanqzvwiibtuh.supabase.co
+ *   SUPABASE_SERVICE_ROLE_KEY — service_role JWT (secret — never expose to client)
  */
 'use strict';
 
@@ -65,18 +67,32 @@ function _validEmail(e) {
   return /^[^\s@]{1,64}@[^\s@]{1,253}\.[^\s@]{2,}$/.test(String(e || '').trim());
 }
 
-/* ── Supabase insert ── */
+/* ── Supabase insert (service role — server-side only) ── */
 async function _insertLead(payload) {
   var url = process.env.SUPABASE_URL;
-  var key = process.env.SUPABASE_ANON_KEY;
-  if (!url || !key) throw new Error('Supabase env not configured');
+  var serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
+  if (!url)        throw new Error('SUPABASE_URL env var not configured');
+  if (!serviceKey) throw new Error('SUPABASE_SERVICE_ROLE_KEY env var not configured');
+
+  /*
+   * Service role key usage:
+   *   apikey header    — identifies the project
+   *   Authorization    — Bearer <service_role_key> bypasses RLS
+   *   Prefer: return=representation — Supabase returns the inserted row
+   *
+   * This is safe because:
+   *   - The key is only available inside this Vercel serverless function
+   *   - It is never included in any response body
+   *   - It is never logged
+   *   - RLS is still enabled on the table (defence-in-depth)
+   */
   var res = await fetch(url + '/rest/v1/enterprise_leads', {
     method:  'POST',
     headers: {
       'Content-Type':  'application/json',
-      'apikey':        key,
-      'Authorization': 'Bearer ' + key,
+      'apikey':        serviceKey,
+      'Authorization': 'Bearer ' + serviceKey,
       'Prefer':        'return=representation'
     },
     body: JSON.stringify([payload])
@@ -128,12 +144,12 @@ module.exports = async function handler(req, res) {
     }
   }
 
-  /* Validate email */
+  /* Validate email format */
   if (!_validEmail(body.email)) {
     return res.status(422).json({ ok: false, error: 'Invalid email format' });
   }
 
-  /* Build payload */
+  /* Build payload — all fields sanitized server-side regardless of client input */
   var payload = {
     nom:          _sanitize(body.nom),
     prenom:       _sanitize(body.prenom),
@@ -146,22 +162,22 @@ module.exports = async function handler(req, res) {
     needs:        _sanitize(body.needs),
     batiments:    _sanitize(body.batiments),
     message:      _sanitize(body.message).slice(0, 2000),
-    source:       'enterprise',
+    source:       'enterprise',                          /* hardcoded — never from client */
     page:         _sanitize(body.page).slice(0, 200),
     submitted_at: new Date().toISOString()
   };
 
-  /* Insert into Supabase */
+  /* Insert into Supabase via service role */
   var leadId = null;
   try {
     leadId = await _insertLead(payload);
   } catch (err) {
-    /* Log error but return 200 — client fallback (mailto:) handles it */
+    /* Log server-side only — never expose key or internal details to client */
     console.error('[enterprise-contact] Supabase insert failed:', err.message);
     return res.status(200).json({
-      ok: false,
+      ok:       false,
       fallback: true,
-      error: 'Storage unavailable — please use the email fallback'
+      error:    'Storage unavailable — please use the email fallback'
     });
   }
 
