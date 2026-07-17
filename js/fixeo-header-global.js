@@ -92,6 +92,7 @@
         <a class="fixeo-gh-drawer-link" href="comment-ca-marche.html">\u2139\uFE0F Comment \u00e7a marche</a>
         <a class="fixeo-gh-drawer-link" href="pricing.html">\uD83D\uDC8E Tarifs</a>
         <a class="fixeo-gh-drawer-link" href="presse-partenariats.html">\uD83D\uDCF0 Presse &amp; Partenariats</a>
+        <a class="fixeo-gh-drawer-link" href="entreprises.html" style="color:rgb(72,100,255);font-weight:700;">⚡ Entreprises</a>
       </div>`;
 
     /* ── Section 2 — Besoin d'un artisan ─────────────────────── */
