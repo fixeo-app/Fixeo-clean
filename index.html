@@ -520,8 +520,15 @@ button:hover {
   font-weight: 800;
   border-radius: 12px;
   cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
   transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
   box-shadow: 0 14px 34px rgba(255,77,141,0.28);
+}
+/* fix(home-final-cta): disable scale-hover on touch — prevents iOS Safari hit-test drift */
+@media (pointer: coarse) {
+  .cta-main:hover { transform: none !important; }
+  .cta-main:active { transform: scale(0.97) !important; transition-duration: 0.1s !important; }
 }
 .cta-main:hover,
 .cta-main:focus-visible {
@@ -3429,6 +3436,8 @@ section#home.hero.hero-section {
       <p class="final-cta-sub">Gratuit &nbsp;•&nbsp; Sans engagement &nbsp;•&nbsp; Réponse rapide</p>
       <!-- 3. Primary CTA -->
       <button class="cta-main final-cta-primary" type="button"
+              data-open-request-form="true"
+              data-request-mode="marketplace"
               onclick="if(window.FixeoClientRequest&&typeof FixeoClientRequest.open==='function'){FixeoClientRequest.open();}else if(window.QuickSearchModal&&typeof QuickSearchModal.focusInline==='function'){QuickSearchModal.focusInline();}else{document.getElementById('artisans-section')?.scrollIntoView({behavior:'smooth'});}">
         📝 Publier ma demande gratuitement
       </button>
