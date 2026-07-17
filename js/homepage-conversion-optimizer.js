@@ -162,17 +162,37 @@
     if (subtitle) subtitle.textContent = 'Gratuit • Sans engagement • Réponse rapide';
 
     const existingMain = $('.cta-main', finalCta);
-    if (existingMain) {
-      existingMain.textContent = 'Publier ma demande gratuitement';
-      existingMain.removeAttribute('onclick');
-      existingMain.addEventListener('click', function() {
-        if (window.FixeoClientRequest?.open) {
-          window.FixeoClientRequest.open(existingMain);
-        } else {
-          document.querySelector('[data-open-request-form="true"]')?.click();
-        }
-      });
-    }
+
+if (existingMain) {
+  existingMain.textContent = 'Publier ma demande gratuitement';
+  existingMain.setAttribute('type', 'button');
+
+  /*
+   * Final CTA owns one stable click route only.
+   * Remove legacy/canonical auto-binding attributes to prevent duplicate
+   * listeners and self-click fallback recursion.
+   */
+  existingMain.removeAttribute('onclick');
+  existingMain.removeAttribute('data-open-request-form');
+  existingMain.removeAttribute('data-request-mode');
+
+  if (existingMain.dataset.finalCtaBound !== 'true') {
+    existingMain.dataset.finalCtaBound = 'true';
+
+    existingMain.addEventListener('click', function(event) {
+      event.preventDefault();
+
+      const requestApi = window.FixeoClientRequest;
+
+      if (!requestApi || typeof requestApi.open !== 'function') {
+        console.warn('[FIXEO] Request modal API unavailable for final CTA.');
+        return;
+      }
+
+      requestApi.open(existingMain);
+    });
+  }
+}
 
     let actions = $('.final-cta-actions', finalCta);
     if (!actions) {
