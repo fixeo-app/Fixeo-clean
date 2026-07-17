@@ -161,37 +161,36 @@
     const subtitle = $('.subtitle', finalCta);
     if (subtitle) subtitle.textContent = 'Gratuit • Sans engagement • Réponse rapide';
 
-    const existingMain = $('.cta-main', finalCta);
+    let existingMain = $('.cta-main', finalCta);
 
 if (existingMain) {
-  existingMain.textContent = 'Publier ma demande gratuitement';
-  existingMain.setAttribute('type', 'button');
+  const cleanMain = existingMain.cloneNode(true);
 
-  /*
-   * Final CTA owns one stable click route only.
-   * Remove legacy/canonical auto-binding attributes to prevent duplicate
-   * listeners and self-click fallback recursion.
-   */
-  existingMain.removeAttribute('onclick');
-  existingMain.removeAttribute('data-open-request-form');
-  existingMain.removeAttribute('data-request-mode');
+  cleanMain.textContent = 'Publier ma demande gratuitement';
+  cleanMain.setAttribute('type', 'button');
 
-  if (existingMain.dataset.finalCtaBound !== 'true') {
-    existingMain.dataset.finalCtaBound = 'true';
+  cleanMain.removeAttribute('onclick');
+  cleanMain.removeAttribute('data-open-request-form');
+  cleanMain.removeAttribute('data-request-mode');
 
-    existingMain.addEventListener('click', function(event) {
-      event.preventDefault();
+  cleanMain.dataset.finalCtaBound = 'true';
 
-      const requestApi = window.FixeoClientRequest;
+  cleanMain.addEventListener('click', function(event) {
+    event.preventDefault();
+    event.stopPropagation();
 
-      if (!requestApi || typeof requestApi.open !== 'function') {
-        console.warn('[FIXEO] Request modal API unavailable for final CTA.');
-        return;
-      }
+    const requestApi = window.FixeoClientRequest;
 
-      requestApi.open(existingMain);
-    });
-  }
+    if (!requestApi || typeof requestApi.open !== 'function') {
+      console.warn('[FIXEO] Request modal API unavailable for final CTA.');
+      return;
+    }
+
+    requestApi.open(cleanMain);
+  });
+
+  existingMain.replaceWith(cleanMain);
+  existingMain = cleanMain;
 }
 
     let actions = $('.final-cta-actions', finalCta);
