@@ -775,3 +775,140 @@ body.fixeo-gh-enabled .fixeo-gh-avatar-link:active .fixeo-gh-avatar--espace {
   transform: scale(1.08);
   box-shadow: 0 0 16px rgba(225, 48, 108, 0.70), 0 0 28px rgba(131, 58, 180, 0.45);
 }
+
+/* ══════════════════════════════════════════════════════════════
+   FIXEO GH DRAWER — PREMIUM NAVIGATION V3 (fxgh-nav3)
+   Append-only. CSS namespace: fixeo-gh-di / fixeo-gh-drawer-link--*
+   Implements:
+     1. Icon normalization (fixeo-gh-di span)
+     2. Active state (fixeo-gh-drawer-link--active)
+     3. Enterprise premium entry (fixeo-gh-drawer-link--enterprise)
+     4. Section label refinement
+     5. Typography hierarchy improvement
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── 1. Icon normalization ─────────────────────────────────── */
+/* All drawer item icons are wrapped in .fixeo-gh-di for consistent
+   width, alignment and visual weight across all icon families.    */
+body.fixeo-gh-enabled .fixeo-gh-di {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  flex-shrink: 0;
+  font-size: 1rem;
+  line-height: 1;
+  text-align: center;
+  /* Prevent emoji font-size inheritance oddities */
+  font-style: normal;
+}
+
+/* ── 2. Active navigation state ───────────────────────────── */
+/* Current page link — subtle, premium, not aggressive */
+body.fixeo-gh-enabled .fixeo-gh-drawer-link--active {
+  background: rgba(255, 255, 255, 0.07) !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  position: relative;
+}
+
+/* Left accent bar on active item */
+body.fixeo-gh-enabled .fixeo-gh-drawer-link--active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 18px;
+  border-radius: 0 2px 2px 0;
+  background: linear-gradient(180deg, rgb(72, 100, 255), rgba(72, 100, 255, 0.60));
+}
+
+/* ── 3. Enterprise premium entry ──────────────────────────── */
+/* Subtle upgrade over a regular nav link — same destination,
+   higher perceived value. No glow, no animation.              */
+body.fixeo-gh-enabled .fixeo-gh-drawer-link--enterprise {
+  color: rgb(72, 100, 255) !important;
+  font-weight: 700 !important;
+  background: rgba(72, 100, 255, 0.08) !important;
+  border: 1px solid rgba(72, 100, 255, 0.18) !important;
+  border-radius: 12px !important;
+  margin-top: 4px !important;
+}
+
+body.fixeo-gh-enabled .fixeo-gh-drawer-link--enterprise:hover {
+  background: rgba(72, 100, 255, 0.14) !important;
+  color: rgb(110, 135, 255) !important;
+}
+
+/* Active enterprise link (when on entreprises.html) */
+body.fixeo-gh-enabled .fixeo-gh-drawer-link--enterprise.fixeo-gh-drawer-link--active {
+  background: rgba(72, 100, 255, 0.16) !important;
+  border-color: rgba(72, 100, 255, 0.32) !important;
+  color: rgb(130, 155, 255) !important;
+}
+
+/* Active state accent bar color for enterprise: indigo */
+body.fixeo-gh-enabled .fixeo-gh-drawer-link--enterprise.fixeo-gh-drawer-link--active::before {
+  background: linear-gradient(180deg, rgb(72, 100, 255), rgba(72, 100, 255, 0.50));
+}
+
+/* ── 4. Section label typography refinement ───────────────── */
+/* Slightly more refined label — tighter, more air above group  */
+@media (max-width: 768px) {
+  body.fixeo-gh-enabled .fixeo-gh-drawer-group {
+    padding-top: 2px !important;
+  }
+
+  body.fixeo-gh-enabled .fixeo-gh-drawer-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 2px 2px !important;
+    margin-bottom: 6px !important;
+    font-size: 0.65rem !important;
+    letter-spacing: 0.11em !important;
+    color: rgba(255, 255, 255, 0.30) !important;
+  }
+
+  /* Thin rule before label (replaces top border on group) */
+  body.fixeo-gh-enabled .fixeo-gh-drawer-group + .fixeo-gh-drawer-group > .fixeo-gh-drawer-label::before {
+    content: '';
+    display: block;
+    flex: 1;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.06);
+    display: none; /* keep it clean — border-top on group is enough */
+  }
+
+  /* ── 5. Typography hierarchy ────────────────────────────── */
+  /* Regular nav links: slightly lighter weight for inactive state */
+  body.fixeo-gh-enabled .fixeo-gh-drawer-link:not(.fixeo-gh-drawer-link--active):not(.fixeo-gh-drawer-cta):not(.fixeo-gh-drawer-link--enterprise):not(.fixeo-gh-drawer-compte-user):not(.fixeo-gh-drawer-espace) {
+    font-weight: 450 !important;
+    color: rgba(255, 255, 255, 0.72) !important;
+  }
+
+  body.fixeo-gh-enabled .fixeo-gh-drawer-link:not(.fixeo-gh-drawer-link--active):not(.fixeo-gh-drawer-cta):not(.fixeo-gh-drawer-link--enterprise):not(.fixeo-gh-drawer-compte-user):not(.fixeo-gh-drawer-espace):hover {
+    font-weight: 500 !important;
+    color: rgba(255, 255, 255, 0.92) !important;
+  }
+
+  /* ── 6. Touch target consistency ────────────────────────── */
+  /* All items exactly 44px — WCAG AA touch target             */
+  body.fixeo-gh-enabled .fixeo-gh-di {
+    width: 22px !important;
+    font-size: 0.94rem !important;
+    opacity: 0.80;
+  }
+
+  body.fixeo-gh-enabled .fixeo-gh-drawer-link--active .fixeo-gh-di,
+  body.fixeo-gh-enabled .fixeo-gh-drawer-link:hover .fixeo-gh-di {
+    opacity: 1;
+  }
+
+  body.fixeo-gh-enabled .fixeo-gh-drawer-link--enterprise .fixeo-gh-di {
+    opacity: 0.90;
+  }
+}
+/* END fxgh-nav3 */
