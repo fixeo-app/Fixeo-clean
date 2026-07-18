@@ -2309,16 +2309,3 @@ Append-only
         padding:9px 14px;
     }
 }
-
-/* FIXEO — Mobile Enterprise Pro grid alignment */
-@media (max-width: 768px) {
-  html body #services.services-section .fxe-enterprise-chip,
-  html body #services.services-section.homepage-conversion-priority .fxe-enterprise-chip {
-    grid-column: auto !important;
-    width: 100% !important;
-    max-width: none !important;
-    justify-self: stretch !important;
-    align-self: stretch !important;
-    margin: 0 !important;
-  }
-}
