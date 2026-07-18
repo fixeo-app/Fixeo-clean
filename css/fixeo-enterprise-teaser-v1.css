@@ -206,86 +206,192 @@
   letter-spacing: 0.04em;
 }
 
-/* KPI row */
-.fxet-dash-kpis {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  border-bottom: 1px solid var(--fxet-border);
-}
+/* ── Orchestration flow illustration ────────────────────────────────────── */
 
-.fxet-kpi {
+.fxet-orch-flow {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding: 20px 16px;
-  border-right: 1px solid var(--fxet-border);
-  gap: 4px;
+  align-items: stretch;
+  padding: 20px 20px 4px;
+  gap: 0;
 }
 
-.fxet-kpi:last-child {
-  border-right: none;
-}
-
-.fxet-kpi-value {
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--fxet-indigo);
-  line-height: 1;
-}
-
-.fxet-kpi-label {
-  font-size: 11px;
-  font-weight: 500;
-  color: var(--fxet-text-3);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
-
-/* Activity rows */
-.fxet-dash-rows {
-  padding: 8px 0;
-}
-
-.fxet-dash-row {
+/* Step card */
+.fxet-orch-step {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 10px 20px;
-  transition: background 0.15s ease;
+  padding: 11px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--fxet-border);
+  background: rgba(255,255,255,0.03);
 }
 
-.fxet-dash-row:hover {
-  background: var(--fxet-surface);
-}
+.fxet-orch-step--request  { border-color: rgba(72,100,255,0.20); }
+.fxet-orch-step--assigned { border-color: rgba(245,158,11,0.22); }
+.fxet-orch-step--done     { border-color: rgba(16,185,129,0.22); background: rgba(16,185,129,0.04); }
 
-.fxet-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
+.fxet-orch-icon {
+  font-size: 18px;
+  line-height: 1;
   flex-shrink: 0;
+  width: 32px;
+  text-align: center;
 }
 
-.fxet-dot--green  { background: var(--fxet-green); box-shadow: 0 0 6px var(--fxet-green); }
-.fxet-dot--indigo { background: var(--fxet-indigo); box-shadow: 0 0 6px var(--fxet-indigo); }
-.fxet-dot--amber  { background: var(--fxet-amber); }
+/* Done step: show as a circle check */
+.fxet-orch-step--done .fxet-orch-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(16,185,129,0.18);
+  color: var(--fxet-green);
+  font-size: 14px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-.fxet-row-text {
-  font-size: 13px;
-  color: var(--fxet-text-2);
+.fxet-orch-step-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
   flex: 1;
+  min-width: 0;
 }
 
-.fxet-row-status {
-  font-size: 11px;
+.fxet-orch-label {
+  font-size: 12px;
   font-weight: 600;
+  color: var(--fxet-text-1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fxet-orch-detail {
+  font-size: 11px;
+  color: var(--fxet-text-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Status tag */
+.fxet-orch-tag {
+  font-size: 10px;
+  font-weight: 700;
   padding: 3px 8px;
+  border-radius: 100px;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+  text-transform: uppercase;
+}
+
+.fxet-orch-tag--new    { background: rgba(72,100,255,0.15); color: var(--fxet-indigo); }
+.fxet-orch-tag--active { background: rgba(245,158,11,0.15); color: var(--fxet-amber); }
+.fxet-orch-tag--done   { background: rgba(16,185,129,0.15); color: var(--fxet-green); }
+
+/* Connector arrow */
+.fxet-orch-arrow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  padding: 2px 0;
+  position: relative;
+}
+
+.fxet-orch-arrow-line {
+  display: block;
+  width: 1px;
+  height: 12px;
+  background: linear-gradient(to bottom, rgba(72,100,255,0.30), rgba(72,100,255,0.50));
+  margin: 0 auto;
+}
+
+.fxet-orch-arrow-tip {
+  font-size: 11px;
+  color: rgba(72,100,255,0.55);
+  line-height: 1;
+  margin-top: -1px;
+}
+
+/* FIXEO Intelligence Engine (center node) */
+.fxet-orch-engine {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 0 10px;
+}
+
+.fxet-orch-engine-ring {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, rgba(72,100,255,0.22) 0%, rgba(72,100,255,0.08) 60%, transparent 100%);
+  border: 1px solid rgba(72,100,255,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+/* Subtle outer pulse ring — CSS only, no animation */
+.fxet-orch-engine-ring::before {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 1px solid rgba(72,100,255,0.14);
+}
+
+.fxet-orch-engine-ring::after {
+  content: '';
+  position: absolute;
+  inset: -12px;
+  border-radius: 50%;
+  border: 1px solid rgba(72,100,255,0.07);
+}
+
+.fxet-orch-engine-core {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+}
+
+.fxet-orch-engine-icon {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.fxet-orch-engine-name {
+  font-size: 8px;
+  font-weight: 800;
+  color: var(--fxet-indigo);
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+}
+
+.fxet-orch-engine-meta {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.fxet-orch-chip {
+  font-size: 10px;
+  font-weight: 600;
+  color: rgba(72,100,255,0.75);
+  background: rgba(72,100,255,0.10);
+  border: 1px solid rgba(72,100,255,0.18);
+  padding: 2px 7px;
   border-radius: 100px;
   letter-spacing: 0.03em;
 }
-
-.fxet-row-status--done    { background: rgba(16,185,129,0.15); color: var(--fxet-green); }
-.fxet-row-status--active  { background: rgba(72,100,255,0.15); color: var(--fxet-indigo); }
-.fxet-row-status--pending { background: rgba(245,158,11,0.15); color: var(--fxet-amber); }
 
 /* Illustration label */
 .fxet-dash-label {
@@ -356,7 +462,16 @@
     max-width: 100%;
   }
 
-  .fxet-kpi-value {
+  .fxet-orch-flow {
+    padding: 16px 16px 4px;
+  }
+
+  .fxet-orch-engine-ring {
+    width: 52px;
+    height: 52px;
+  }
+
+  .fxet-orch-engine-icon {
     font-size: 18px;
   }
 }
@@ -372,24 +487,26 @@
     gap: 28px;
   }
 
-  .fxet-dash-kpis {
-    grid-template-columns: repeat(3, 1fr);
+  .fxet-orch-flow {
+    padding: 14px 12px 4px;
   }
 
-  .fxet-kpi {
-    padding: 14px 8px;
+  .fxet-orch-step {
+    padding: 9px 10px;
+    gap: 8px;
   }
 
-  .fxet-kpi-value {
-    font-size: 16px;
+  .fxet-orch-label {
+    font-size: 11px;
   }
 
-  .fxet-kpi-label {
+  .fxet-orch-detail {
     font-size: 10px;
   }
 
-  .fxet-row-text {
-    font-size: 12px;
+  .fxet-orch-chip {
+    font-size: 9px;
+    padding: 2px 5px;
   }
 }
 

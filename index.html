@@ -2232,7 +2232,7 @@ section#home.hero.hero-section {
   <link rel="stylesheet" href="css/fixeo-rafi-v2.css?v=rfv2-r0a">
   <link rel="stylesheet" href="css/hero-v1-premium-sprint.css?v=hvps1b">
   <link rel="stylesheet" href="css/fixeo-consent-v1.css?v=fcv1b">
-  <link rel="stylesheet" href="css/fixeo-enterprise-teaser-v1.css?v=fxet-v1b">
+  <link rel="stylesheet" href="css/fixeo-enterprise-teaser-v1.css?v=fxet-v1c">
   <script src="js/fixeo-consent-v1.js?v=fcv1c"></script>
   <script src="js/fixeo-analytics-config.js?v=fac1b" defer></script>
   <script src="js/fixeo-analytics-bootstrap.js?v=fab1c" defer></script>
@@ -2728,49 +2728,87 @@ section#home.hero.hero-section {
       </a>
     </div>
 
-    <!-- Right: dashboard illustration -->
+    <!-- Right: workflow orchestration illustration -->
     <div class="fxet-visual" aria-hidden="true">
-      <div class="fxet-dash">
-        <!-- Top bar -->
+      <div class="fxet-dash fxet-orch">
+
+        <!-- Header bar -->
         <div class="fxet-dash-bar">
-          <span class="fxet-dash-brand">FIXEO Enterprise</span>
-          <span class="fxet-dash-badge">● Live</span>
+          <span class="fxet-dash-brand">FIXEO Intelligence</span>
+          <span class="fxet-dash-badge">● Actif</span>
         </div>
-        <!-- KPIs -->
-        <div class="fxet-dash-kpis">
-          <div class="fxet-kpi">
-            <span class="fxet-kpi-value">1 134</span>
-            <span class="fxet-kpi-label">Artisans</span>
+
+        <!-- Orchestration flow -->
+        <div class="fxet-orch-flow">
+
+          <!-- Step 1: Incoming request -->
+          <div class="fxet-orch-step fxet-orch-step--request">
+            <div class="fxet-orch-icon">📋</div>
+            <div class="fxet-orch-step-body">
+              <span class="fxet-orch-label">Demande reçue</span>
+              <span class="fxet-orch-detail">Fuite d'eau — Étage 3</span>
+            </div>
+            <span class="fxet-orch-tag fxet-orch-tag--new">Nouvelle</span>
           </div>
-          <div class="fxet-kpi">
-            <span class="fxet-kpi-value">20</span>
-            <span class="fxet-kpi-label">Villes</span>
+
+          <!-- Connector arrow -->
+          <div class="fxet-orch-arrow" aria-hidden="true">
+            <span class="fxet-orch-arrow-line"></span>
+            <span class="fxet-orch-arrow-tip">↓</span>
           </div>
-          <div class="fxet-kpi">
-            <span class="fxet-kpi-value">12</span>
-            <span class="fxet-kpi-label">Spécialités</span>
+
+          <!-- Step 2: FIXEO engine (center) -->
+          <div class="fxet-orch-engine">
+            <div class="fxet-orch-engine-ring">
+              <div class="fxet-orch-engine-core">
+                <span class="fxet-orch-engine-icon">⚡</span>
+                <span class="fxet-orch-engine-name">FIXEO</span>
+              </div>
+            </div>
+            <div class="fxet-orch-engine-meta">
+              <span class="fxet-orch-chip">Analyse</span>
+              <span class="fxet-orch-chip">Sélection</span>
+              <span class="fxet-orch-chip">Dispatch</span>
+            </div>
           </div>
-        </div>
-        <!-- Activity rows -->
-        <div class="fxet-dash-rows">
-          <div class="fxet-dash-row">
-            <span class="fxet-dot fxet-dot--green"></span>
-            <span class="fxet-row-text">Plomberie — Casablanca</span>
-            <span class="fxet-row-status fxet-row-status--done">Terminé</span>
+
+          <!-- Connector arrow -->
+          <div class="fxet-orch-arrow" aria-hidden="true">
+            <span class="fxet-orch-arrow-line"></span>
+            <span class="fxet-orch-arrow-tip">↓</span>
           </div>
-          <div class="fxet-dash-row">
-            <span class="fxet-dot fxet-dot--indigo"></span>
-            <span class="fxet-row-text">Électricité — Rabat</span>
-            <span class="fxet-row-status fxet-row-status--active">En cours</span>
+
+          <!-- Step 3: Assigned professional -->
+          <div class="fxet-orch-step fxet-orch-step--assigned">
+            <div class="fxet-orch-icon">🔧</div>
+            <div class="fxet-orch-step-body">
+              <span class="fxet-orch-label">Professionnel affecté</span>
+              <span class="fxet-orch-detail">Plombier vérifié · En route</span>
+            </div>
+            <span class="fxet-orch-tag fxet-orch-tag--active">En cours</span>
           </div>
-          <div class="fxet-dash-row">
-            <span class="fxet-dot fxet-dot--amber"></span>
-            <span class="fxet-row-text">Climatisation — Tanger</span>
-            <span class="fxet-row-status fxet-row-status--pending">Planifié</span>
+
+          <!-- Connector arrow -->
+          <div class="fxet-orch-arrow" aria-hidden="true">
+            <span class="fxet-orch-arrow-line"></span>
+            <span class="fxet-orch-arrow-tip">↓</span>
           </div>
-        </div>
-        <!-- Label -->
-        <p class="fxet-dash-label">Exemple de fonctionnement — données illustratives</p>
+
+          <!-- Step 4: Mission complete -->
+          <div class="fxet-orch-step fxet-orch-step--done">
+            <div class="fxet-orch-icon">✓</div>
+            <div class="fxet-orch-step-body">
+              <span class="fxet-orch-label">Mission accomplie</span>
+              <span class="fxet-orch-detail">Rapport · Validation · Archivé</span>
+            </div>
+            <span class="fxet-orch-tag fxet-orch-tag--done">Terminée</span>
+          </div>
+
+        </div><!-- /.fxet-orch-flow -->
+
+        <!-- Footer label -->
+        <p class="fxet-dash-label">Schéma de fonctionnement — illustration</p>
+
       </div>
     </div>
 
