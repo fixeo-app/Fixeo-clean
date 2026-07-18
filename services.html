@@ -774,6 +774,10 @@ a{text-decoration:none}
   ]
 }
 </script>
+  <!-- Request modal CSS -->
+  <link rel="stylesheet" href="css/request-form.css?v=50a38b9">
+  <link rel="stylesheet" href="css/fixeo-request-modal-v2.css?v=rmv2-v1a">
+  <link rel="stylesheet" href="css/fixeo-modal-scroll-fix.css?v=fxmsf-v1a">
   <link rel="stylesheet" href="css/fixeo-consent-v1.css?v=fcv1b">
   <script src="js/fixeo-consent-v1.js?v=fcv1c"></script>
   <script src="js/fixeo-analytics-config.js?v=fac1b" defer></script>
@@ -858,10 +862,10 @@ a{text-decoration:none}
     </div>
 
     <div class="cp-btn-row">
-      <a href="index.html#home" class="cp-btn cp-btn-primary" aria-label="Décrire mon besoin sur Fixeo">
+      <button type="button" class="cp-btn cp-btn-primary" data-open-request-form="true" aria-label="Décrire mon besoin sur Fixeo">
         Décrire mon besoin
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3 7h8M8 4l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </a>
+      </button>
       <a href="artisans.html" class="cp-btn cp-btn-outline">Voir les artisans</a>
     </div>
   </div>
@@ -886,9 +890,9 @@ a{text-decoration:none}
         <p class="cp-svc-name">Plomberie</p>
         <p class="cp-svc-desc">Fuites, canalisations, robinetterie, chauffe-eau, WC bloqué.</p>
         <p class="cp-svc-example">"J'ai une fuite sous l'évier"</p>
-        <a href="index.html#home" class="cp-svc-cta" aria-label="Demander un plombier">
+        <button type="button" class="cp-svc-cta" data-open-request-form="true" data-svc-prefill="Plomberie" aria-label="Demander un plombier">
           Demander ce service <span class="cp-svc-cta-arrow" aria-hidden="true">→</span>
-        </a>
+        </button>
       </article>
 
       <article class="cp-svc-card" role="listitem">
@@ -898,9 +902,9 @@ a{text-decoration:none}
         <p class="cp-svc-name">Électricité</p>
         <p class="cp-svc-desc">Panne de courant, tableau électrique, installation de prises, éclairage.</p>
         <p class="cp-svc-example">"Un disjoncteur saute souvent"</p>
-        <a href="index.html#home" class="cp-svc-cta" aria-label="Demander un électricien">
+        <button type="button" class="cp-svc-cta" data-open-request-form="true" data-svc-prefill="Électricité" aria-label="Demander un électricien">
           Demander ce service <span class="cp-svc-cta-arrow" aria-hidden="true">→</span>
-        </a>
+        </button>
       </article>
 
       <article class="cp-svc-card" role="listitem">
@@ -910,9 +914,9 @@ a{text-decoration:none}
         <p class="cp-svc-name">Climatisation</p>
         <p class="cp-svc-desc">Installation, maintenance, nettoyage, recharge de gaz.</p>
         <p class="cp-svc-example">"Mon clim ne refroidit plus"</p>
-        <a href="index.html#home" class="cp-svc-cta" aria-label="Demander un technicien climatisation">
+        <button type="button" class="cp-svc-cta" data-open-request-form="true" data-svc-prefill="Climatisation" aria-label="Demander un technicien climatisation">
           Demander ce service <span class="cp-svc-cta-arrow" aria-hidden="true">→</span>
-        </a>
+        </button>
       </article>
 
       <article class="cp-svc-card" role="listitem">
@@ -922,9 +926,9 @@ a{text-decoration:none}
         <p class="cp-svc-name">Peinture</p>
         <p class="cp-svc-desc">Peinture intérieure / extérieure, préparation des murs, ravalement.</p>
         <p class="cp-svc-example">"Je veux repeindre mon salon"</p>
-        <a href="index.html#home" class="cp-svc-cta" aria-label="Demander un peintre">
+        <button type="button" class="cp-svc-cta" data-open-request-form="true" data-svc-prefill="Peinture" aria-label="Demander un peintre">
           Demander ce service <span class="cp-svc-cta-arrow" aria-hidden="true">→</span>
-        </a>
+        </button>
       </article>
 
       <article class="cp-svc-card" role="listitem">
@@ -934,9 +938,9 @@ a{text-decoration:none}
         <p class="cp-svc-name">Nettoyage</p>
         <p class="cp-svc-desc">Grand ménage, fin de chantier, vitres, moquettes, canapés.</p>
         <p class="cp-svc-example">"Nettoyage complet après travaux"</p>
-        <a href="index.html#home" class="cp-svc-cta" aria-label="Demander un service de nettoyage">
+        <button type="button" class="cp-svc-cta" data-open-request-form="true" data-svc-prefill="Nettoyage" aria-label="Demander un service de nettoyage">
           Demander ce service <span class="cp-svc-cta-arrow" aria-hidden="true">→</span>
-        </a>
+        </button>
       </article>
 
       <article class="cp-svc-card" role="listitem">
@@ -946,9 +950,9 @@ a{text-decoration:none}
         <p class="cp-svc-name">Menuiserie</p>
         <p class="cp-svc-desc">Portes, fenêtres, parquet, placards sur mesure, meubles.</p>
         <p class="cp-svc-example">"Installer une porte de chambre"</p>
-        <a href="index.html#home" class="cp-svc-cta" aria-label="Demander un menuisier">
+        <button type="button" class="cp-svc-cta" data-open-request-form="true" data-svc-prefill="Menuiserie" aria-label="Demander un menuisier">
           Demander ce service <span class="cp-svc-cta-arrow" aria-hidden="true">→</span>
-        </a>
+        </button>
       </article>
 
       <article class="cp-svc-card" role="listitem">
@@ -958,9 +962,9 @@ a{text-decoration:none}
         <p class="cp-svc-name">Serrurerie</p>
         <p class="cp-svc-desc">Ouverture de porte, changement de serrure, blindage, dépannage urgent.</p>
         <p class="cp-svc-example">"Porte claquée, je suis bloqué"</p>
-        <a href="index.html#home" class="cp-svc-cta" aria-label="Demander un serrurier">
+        <button type="button" class="cp-svc-cta" data-open-request-form="true" data-svc-prefill="Serrurerie" aria-label="Demander un serrurier">
           Demander ce service <span class="cp-svc-cta-arrow" aria-hidden="true">→</span>
-        </a>
+        </button>
       </article>
 
       <article class="cp-svc-card" role="listitem">
@@ -970,9 +974,9 @@ a{text-decoration:none}
         <p class="cp-svc-name">Déménagement</p>
         <p class="cp-svc-desc">Transport de meubles, emballage, manutention, camion avec chauffeur.</p>
         <p class="cp-svc-example">"Déménager un appartement 3 pièces"</p>
-        <a href="index.html#home" class="cp-svc-cta" aria-label="Demander un déménageur">
+        <button type="button" class="cp-svc-cta" data-open-request-form="true" data-svc-prefill="Déménagement" aria-label="Demander un déménageur">
           Demander ce service <span class="cp-svc-cta-arrow" aria-hidden="true">→</span>
-        </a>
+        </button>
       </article>
 
     </div>
@@ -1005,10 +1009,10 @@ a{text-decoration:none}
           <li>Porte claquée ou serrure cassée</li>
           <li>Panne de chauffe-eau</li>
         </ul>
-        <a href="index.html#home" class="cp-btn cp-btn-primary cp-split-btn-urgent" style="font-size:0.9rem;padding:12px 24px" aria-label="Envoyer une demande urgente">
+        <button type="button" class="cp-btn cp-btn-primary cp-split-btn-urgent" style="font-size:0.9rem;padding:12px 24px" data-open-request-form="true" data-request-mode="express" aria-label="Envoyer une demande urgente">
           Demande urgente
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-        </a>
+        </button>
       </div>
 
       <!-- Planifié -->
@@ -1025,10 +1029,10 @@ a{text-decoration:none}
           <li>Peinture intérieure</li>
           <li>Déménagement programmé</li>
         </ul>
-        <a href="index.html#home" class="cp-btn cp-split-btn-planned" style="font-size:0.9rem;padding:12px 24px" aria-label="Publier une demande planifiée">
+        <button type="button" class="cp-btn cp-split-btn-planned" style="font-size:0.9rem;padding:12px 24px" data-open-request-form="true" aria-label="Publier une demande planifiée">
           Publier une demande
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-        </a>
+        </button>
       </div>
 
     </div>
@@ -1171,10 +1175,10 @@ a{text-decoration:none}
     <h2 id="cta-title">Quel est votre besoin ?</h2>
     <p>Décrivez-le en quelques mots.<br>Fixeo trouve le bon artisan pour vous.</p>
     <div class="cp-btn-row">
-      <a href="index.html#home" class="cp-btn cp-btn-primary" style="font-size:1rem;padding:16px 34px" aria-label="Décrire mon besoin sur Fixeo">
+      <button type="button" class="cp-btn cp-btn-primary" style="font-size:1rem;padding:16px 34px" data-open-request-form="true" aria-label="Décrire mon besoin sur Fixeo">
         Décrire mon besoin
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3 7h8M8 4l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </a>
+      </button>
       <a href="artisans.html" class="cp-btn cp-btn-outline" style="font-size:0.96rem">Parcourir les artisans</a>
     </div>
     <p class="cp-cta-band-guarantee" aria-label="Garanties">
@@ -1183,7 +1187,172 @@ a{text-decoration:none}
   </div>
 </section>
 
+<!-- ═══════════════════════════════════════════════════════════
+     REQUEST MODAL — same HTML as index.html
+     Loaded only on services.html; zero impact on other pages.
+══════════════════════════════════════════════════════════ -->
+<div class="modal request-modal" id="request-modal" role="dialog" aria-modal="true" aria-labelledby="request-modal-title" aria-describedby="request-modal-subtitle">
+  <div class="modal-header request-modal-header">
+    <div>
+      <h3 id="request-modal-title">Quel est le probl&#232;me&#160;?</h3>
+      <p id="request-modal-subtitle" class="request-modal-subtitle">Un artisan Fixeo vous rappelle sous 30&#160;min</p>
+    </div>
+    <button class="modal-close" type="button" onclick="window.FixeoClientRequest && window.FixeoClientRequest.closeStandard ? window.FixeoClientRequest.closeStandard('request-modal') : closeModal('request-modal')" aria-label="Fermer">&#x2715;</button>
+  </div>
+  <div class="request-modal-shell">
+    <form id="request-form" class="request-form" novalidate>
+      <div class="request-field">
+        <label for="request-problem">Votre besoin</label>
+        <input id="request-problem" name="problem" type="text" placeholder="Ex&#160;: fuite d&#8217;eau, panne &#233;lectrique, porte bloqu&#233;e&#8230;" maxlength="120" required />
+      </div>
+      <div class="request-field">
+        <label for="request-city">Ville</label>
+        <select id="request-city" name="ville" required>
+          <option value="">Choisir une ville</option>
+          <option value="Casablanca">Casablanca</option>
+          <option value="Rabat">Rabat</option>
+          <option value="Marrakech">Marrakech</option>
+          <option value="F&#232;s">F&#232;s</option>
+          <option value="Tanger">Tanger</option>
+          <option value="Agadir">Agadir</option>
+          <option value="Mekn&#232;s">Mekn&#232;s</option>
+          <option value="Oujda">Oujda</option>
+          <option value="K&#233;nitra">K&#233;nitra</option>
+          <option value="T&#233;touan">T&#233;touan</option>
+          <option value="Sal&#233;">Sal&#233;</option>
+          <option value="Temara">Temara</option>
+          <option value="El Jadida">El Jadida</option>
+          <option value="B&#233;ni Mellal">B&#233;ni Mellal</option>
+          <option value="Nador">Nador</option>
+          <option value="Khouribga">Khouribga</option>
+          <option value="Safi">Safi</option>
+          <option value="Taza">Taza</option>
+          <option value="Ouarzazate">Ouarzazate</option>
+          <option value="Mohammedia">Mohammedia</option>
+        </select>
+      </div>
+      <div class="request-field">
+        <span class="request-label">Urgence</span>
+        <div class="request-choice-grid" role="radiogroup" aria-label="Urgence">
+          <label class="request-choice-card">
+            <input type="radio" name="urgence" value="Urgent (moins de 30 min)" required />
+            <span class="request-choice-title">Urgent</span>
+            <span class="request-choice-meta">moins de 30 min</span>
+          </label>
+          <label class="request-choice-card">
+            <input type="radio" name="urgence" value="Normal" checked />
+            <span class="request-choice-title">Normal</span>
+            <span class="request-choice-meta">d&#233;lai classique</span>
+          </label>
+        </div>
+      </div>
+      <div class="request-field">
+        <label for="request-budget">Budget <span class="request-optional">(optionnel)</span></label>
+        <select id="request-budget" name="budget">
+          <option value="">S&#233;lectionner un budget</option>
+          <option value="Moins de 100 MAD">Moins de 100 MAD</option>
+          <option value="100 - 300 MAD">100 - 300 MAD</option>
+          <option value="300 - 700 MAD">300 - 700 MAD</option>
+          <option value="+700 MAD">+700 MAD</option>
+        </select>
+      </div>
+      <div class="request-field">
+        <label for="request-phone">T&#233;l&#233;phone</label>
+        <input id="request-phone" name="telephone" type="tel" inputmode="tel" placeholder="06 12 34 56 78" maxlength="20" required />
+      </div>
+      <button class="btn btn-primary request-submit-btn" type="submit">Envoyer ma demande</button>
+      <div class="request-trust-copy" aria-hidden="true">
+        <span>Gratuit &#183; Sans engagement</span>
+        <span>Paiement apr&#232;s intervention</span>
+      </div>
+    </form>
+    <div id="request-success" class="request-success fxrva-success" hidden>
+      <div class="request-success-icon fxrva-success-icon" aria-hidden="true">&#x2714;&#xFE0F;</div>
+      <h4 class="fxrva-success-title">Fixeo coordonne votre intervention</h4>
+      <p class="fxrva-success-sub">Votre demande est enregistr&#233;e. Un artisan disponible dans votre zone sera s&#233;lectionn&#233; et vous contactera pour confirmer.</p>
+      <div class="fxrva-coord-steps" aria-label="&#201;tapes de coordination">
+        <div class="fxrva-coord-step"><span class="fxrva-coord-icon" aria-hidden="true">&#x2705;</span><span class="fxrva-coord-label">Demande enregistr&#233;e</span></div>
+        <div class="fxrva-coord-sep" aria-hidden="true">&#x2192;</div>
+        <div class="fxrva-coord-step"><span class="fxrva-coord-icon" aria-hidden="true">&#x1F50D;</span><span class="fxrva-coord-label">Artisan s&#233;lectionn&#233;</span></div>
+        <div class="fxrva-coord-sep" aria-hidden="true">&#x2192;</div>
+        <div class="fxrva-coord-step"><span class="fxrva-coord-icon" aria-hidden="true">&#x1F4AC;</span><span class="fxrva-coord-label">Confirmation WhatsApp</span></div>
+      </div>
+      <p class="fxrva-success-notice" hidden>Restez joignable sur WhatsApp &#8212; c&#x2019;est l&#xE0; que se fait la coordination.</p>
+      <a class="btn fxrva-wa-primary" id="request-whatsapp-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="Rester joignable via WhatsApp">
+        <span class="fxrva-wa-ico" aria-hidden="true">&#x1F4AC;</span>
+        <span class="fxrva-wa-main-label">Rester joignable via WhatsApp</span>
+      </a>
+      <p class="fxrva-wa-sub-label" hidden>Partager une photo ou pr&#233;ciser l&#x2019;intervention</p>
+      <button class="btn fxrva-new-request" type="button" id="request-new-one">Publier une autre demande</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal backdrop -->
+<div class="modal-backdrop" id="main-backdrop" aria-hidden="true"></div>
+
 <!-- Scripts -->
+<script>
+/* openModal / closeModal — canonical implementation (mirrors main.js).
+   Defined here because main.js is not loaded on services.html. */
+function openModal(id) {
+  document.querySelector('#' + id)?.classList.add('open');
+  document.querySelector('.modal-backdrop')?.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(id) {
+  var m = document.querySelector('#' + id);
+  if (m) { m.classList.remove('open'); m.removeAttribute('data-mode'); }
+  document.querySelector('.modal-backdrop')?.classList.remove('open');
+  document.body.style.overflow = '';
+}
+window.openModal = openModal;
+window.closeModal = closeModal;
+</script>
+<script src="js/request-form.js?v=rmv2-v1a"></script>
+<script src="js/fixeo-express-route-shim.js?v=fxrs-v1b"></script>
+<script>
+/* Category prefill wiring — services.html only.
+   Opens the modal first, then sets #request-problem after the
+   modal's own applyContextPrefill() has run (requestAnimationFrame
+   fires after the synchronous open call completes). */
+(function() {
+  function _wirePrefill() {
+    document.querySelectorAll('[data-svc-prefill]').forEach(function(btn) {
+      if (btn.dataset.svcPrefillBound) return;
+      btn.dataset.svcPrefillBound = 'true';
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        var svc = btn.dataset.svcPrefill || '';
+        if (window.FixeoClientRequest && typeof window.FixeoClientRequest.open === 'function') {
+          window.FixeoClientRequest.open(btn);
+        } else {
+          openModal('request-modal');
+        }
+        /* Set prefill after modal open (post-applyContextPrefill) */
+        if (svc) {
+          window.requestAnimationFrame(function() {
+            var inp = document.getElementById('request-problem');
+            if (inp && !inp.value) inp.value = svc;
+            /* Also ensure modal title reflects the service */
+            var title = document.getElementById('request-modal-title');
+            if (title) title.textContent = svc + '\u00a0— votre demande';
+          });
+        }
+      });
+    });
+  }
+  /* Backdrop click → close modal */
+  document.getElementById('main-backdrop')?.addEventListener('click', function() {
+    closeModal('request-modal');
+  });
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', _wirePrefill, { once: true });
+  } else {
+    _wirePrefill();
+  }
+})();
+</script>
 <script src="js/fixeo-header-global.js?v=gfnav5"></script>
 <script src="js/i18n.js?v=50a38b9"></script>
 <script src="js/header-unified.js?v=modalfix3"></script>
