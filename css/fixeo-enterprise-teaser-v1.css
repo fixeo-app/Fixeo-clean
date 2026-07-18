@@ -439,7 +439,7 @@
 
 /* ── Inner content ──────────────────────────────────────────────────────── */
 .fxet-transition-inner {
-  padding: 48px 24px 44px;
+  padding: 52px 24px 44px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -486,7 +486,7 @@
 /* ── Responsive ─────────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
   .fxet-transition-inner {
-    padding: 40px 20px 36px;
+    padding: 44px 20px 36px;
     gap: 12px;
   }
 
@@ -501,7 +501,7 @@
 
 @media (max-width: 480px) {
   .fxet-transition-inner {
-    padding: 32px 16px 28px;
+    padding: 36px 16px 28px;
     gap: 10px;
   }
 }
