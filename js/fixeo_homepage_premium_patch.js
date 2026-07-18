@@ -935,8 +935,7 @@
     const newServices = [
       { category: 'energie-solaire', icon: '☀️', label: 'Énergie solaire' },
       { category: 'securite-surveillance', icon: '🛡️', label: 'Sécurité / Surveillance' },
-      { category: 'corporate-facilities', icon: '🏢', label: 'Corporate Facilities' },
-    ];
+     
 
     newServices.forEach(service => {
      if (container.querySelector('[data-category="' + service.category + '"]')) return;
