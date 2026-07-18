@@ -403,3 +403,105 @@
     transform: none;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+ * FIXEO Enterprise — Chapter Transition  (fxet-transition-v1a)
+ * Namespace: fxet-transition-* exclusively
+ * Inserted immediately before #enterprise-teaser.
+ * Zero animation. Pure CSS. No JS.
+ * ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Wrapper ──────────────────────────────────────────────────────────────── */
+.fxet-transition {
+  background: #0D0E14;          /* same dark surface as teaser */
+  text-align: center;
+  padding: 0;
+  contain: layout style;        /* no CLS */
+}
+
+/* ── Separators ─────────────────────────────────────────────────────────── */
+.fxet-transition-sep {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(72, 100, 255, 0.25) 30%,
+    rgba(72, 100, 255, 0.45) 50%,
+    rgba(72, 100, 255, 0.25) 70%,
+    transparent 100%
+  );
+  margin: 0 auto;
+  max-width: 960px;
+}
+
+.fxet-transition-sep--top  { margin-bottom: 0; }
+.fxet-transition-sep--bottom { margin-top: 0; }
+
+/* ── Inner content ──────────────────────────────────────────────────────── */
+.fxet-transition-inner {
+  padding: 48px 24px 44px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+/* ── Badge ──────────────────────────────────────────────────────────────── */
+.fxet-transition-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 14px;
+  border-radius: 100px;
+  border: 1px solid rgba(72, 100, 255, 0.35);
+  background: rgba(72, 100, 255, 0.10);
+  color: rgba(72, 100, 255, 0.90);
+  font-size: 0.70rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+/* ── Title ──────────────────────────────────────────────────────────────── */
+.fxet-transition-title {
+  margin: 0;
+  font-size: clamp(1.35rem, 3vw, 2rem);
+  font-weight: 700;
+  color: #FFFFFF;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  max-width: 540px;
+}
+
+/* ── Subtitle ───────────────────────────────────────────────────────────── */
+.fxet-transition-sub {
+  margin: 0;
+  font-size: clamp(0.875rem, 1.5vw, 1rem);
+  color: rgba(255, 255, 255, 0.48);
+  line-height: 1.55;
+  max-width: 480px;
+}
+
+/* ── Responsive ─────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .fxet-transition-inner {
+    padding: 40px 20px 36px;
+    gap: 12px;
+  }
+
+  .fxet-transition-title {
+    font-size: 1.35rem;
+  }
+
+  .fxet-transition-sub {
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .fxet-transition-inner {
+    padding: 32px 16px 28px;
+    gap: 10px;
+  }
+}
