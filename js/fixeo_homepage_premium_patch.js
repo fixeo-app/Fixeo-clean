@@ -932,9 +932,11 @@
     const container = document.querySelector('.category-chips');
     if (!container) return;
 
-    const newServices = [
-      { category: 'energie-solaire', icon: '☀️', label: 'Énergie solaire' },
-      { category: 'securite-surveillance', icon: '🛡️', label: 'Sécurité / Surveillance' },
+
+      const newServices = [
+  { category: 'energie-solaire', icon: '☀️', label: 'Énergie solaire' },
+  { category: 'securite-surveillance', icon: '🛡️', label: 'Sécurité / Surveillance' },
+  { category: 'corporate-facilities', icon: '🏢', label: 'Corporate Facilities'
      
 
     newServices.forEach(service => {
