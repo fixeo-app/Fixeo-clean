@@ -2309,3 +2309,17 @@ Append-only
         padding:9px 14px;
     }
 }
+
+/* FIXEO - Corporate Facilities chip mobile alignment
+   Atomic patch: center the dynamic chip in col 2 of the 3/2-col grid.
+   Targets only [data-category="corporate-facilities"]. No other chip affected. */
+@media (max-width: 768px) {
+    html body #services.services-section .category-chips [data-category="corporate-facilities"],
+    html body #services.services-section.homepage-conversion-priority .category-chips [data-category="corporate-facilities"] {
+        grid-column: 2 !important;
+        width: auto !important;
+        max-width: none !important;
+        justify-self: stretch !important;
+        margin: 0 !important;
+    }
+}
