@@ -25,70 +25,720 @@
     .fixeo-gh-brand img.fixeo-logo-img,.fixeo-gh-mobile-bar img.fixeo-logo-img{height:26px!important;width:auto!important}
     @media(max-width:480px){img.fixeo-logo-img{height:24px!important}.fixeo-gh-brand img.fixeo-logo-img{height:22px!important}}
   </style>
-  <style>
-    /* ── Reset & Base ── */
-    *,*::before,*::after{box-sizing:border-box}
-    body{margin:0;font-family:Cairo,Tajawal,Arial,sans-serif;background:linear-gradient(135deg,#0D0D1A 0%,#1a1a2e 60%,#16213e 100%);color:#e8eaf0;min-height:100vh;padding-top:70px}
-    :root{--cp-muted:rgba(232,234,240,0.58);--cp-card:rgba(255,255,255,0.055);--cp-border:rgba(255,255,255,0.09);--cp-grad:linear-gradient(135deg,#E1306C,#833AB4)}
-    .cp-container{max-width:1060px;margin:0 auto;padding:0 20px}
-    a{text-decoration:none}
-    /* ── Hero ── */
-    .cp-hero{padding:72px 20px 60px;text-align:center;position:relative;overflow:hidden}
-    .cp-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(225,48,108,0.12),transparent);pointer-events:none}
-    .cp-hero-label{display:inline-block;padding:5px 16px;border-radius:999px;border:1px solid rgba(225,48,108,0.35);color:rgba(225,48,108,0.9);font-size:0.78rem;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;margin-bottom:22px}
-    .cp-hero h1{font-size:clamp(1.7rem,4vw,2.8rem);font-weight:900;line-height:1.15;letter-spacing:-0.02em;margin:0 0 18px;color:#fff}
-    .cp-hero h1 .hl{background:var(--cp-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-    .cp-hero p{font-size:clamp(0.97rem,1.8vw,1.12rem);color:var(--cp-muted);max-width:580px;margin:0 auto 32px;line-height:1.65}
-    /* ── Buttons ── */
-    .cp-btn{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:14px;font-size:0.95rem;font-weight:800;cursor:pointer;border:none;text-decoration:none;transition:transform 0.15s,box-shadow 0.15s;color:#fff}
-    .cp-btn:hover{transform:translateY(-1px)}
-    .cp-btn-primary{background:var(--cp-grad);box-shadow:0 8px 24px rgba(225,48,108,0.25)}
-    .cp-btn-primary:hover{box-shadow:0 12px 32px rgba(225,48,108,0.38)}
-    .cp-btn-outline{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.14)}
-    .cp-btn-outline:hover{background:rgba(255,255,255,0.12)}
-    .cp-btn-row{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
-    /* ── Section ── */
-    .cp-section{padding:56px 0}
-    .cp-section-alt{background:rgba(255,255,255,0.022);margin:0 -20px;padding:56px 20px}
-    .cp-section-title{font-size:clamp(1.2rem,2.5vw,1.65rem);font-weight:800;color:#fff;margin:0 0 8px;letter-spacing:-0.01em}
-    .cp-section-sub{font-size:0.92rem;color:var(--cp-muted);margin:0 0 36px;line-height:1.6}
-    /* ── Service cards grid ── */
-    .cp-service-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
-    .cp-svc-card{background:var(--cp-card);border:1px solid var(--cp-border);border-radius:20px;padding:24px 20px;transition:transform 0.18s,border-color 0.18s,box-shadow 0.18s}
-    .cp-svc-card:hover{transform:translateY(-3px);border-color:rgba(225,48,108,0.28);box-shadow:0 12px 32px rgba(0,0,0,0.22)}
-    .cp-svc-icon{font-size:2rem;margin-bottom:12px;display:block}
-    .cp-svc-name{font-size:1rem;font-weight:800;color:#fff;margin:0 0 6px}
-    .cp-svc-desc{font-size:0.84rem;color:var(--cp-muted);margin:0 0 6px;line-height:1.55}
-    .cp-svc-example{font-size:0.77rem;color:rgba(255,255,255,0.33);font-style:italic;margin:0 0 14px}
-    .cp-svc-cta{display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-weight:700;color:rgba(225,48,108,0.9);padding:6px 14px;border-radius:10px;border:1px solid rgba(225,48,108,0.22);transition:background 0.15s;cursor:pointer;background:none}
-    .cp-svc-cta:hover{background:rgba(225,48,108,0.1)}
-    /* ── Feature grid ── */
-    .cp-feat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:16px}
-    .cp-feat-card{background:var(--cp-card);border:1px solid var(--cp-border);border-radius:18px;padding:22px 18px}
-    .cp-feat-icon{font-size:1.6rem;margin-bottom:10px;display:block}
-    .cp-feat-title{font-size:0.96rem;font-weight:800;color:#fff;margin:0 0 6px}
-    .cp-feat-text{font-size:0.84rem;color:var(--cp-muted);margin:0;line-height:1.55}
-    /* ── Price grid ── */
-    .cp-price-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px}
-    .cp-price-card{background:var(--cp-card);border:1px solid var(--cp-border);border-radius:16px;padding:18px 16px}
-    .cp-price-service{font-size:0.9rem;font-weight:700;color:#fff;margin:0 0 4px}
-    .cp-price-range{font-size:1rem;font-weight:800;color:rgba(225,48,108,0.9);margin:0 0 4px}
-    .cp-price-note{font-size:0.76rem;color:var(--cp-muted);margin:0}
-    /* ── CTA band ── */
-    .cp-cta-band{padding:64px 20px;text-align:center;background:linear-gradient(135deg,rgba(225,48,108,0.10),rgba(131,58,180,0.10));border-top:1px solid rgba(255,255,255,0.07);border-bottom:1px solid rgba(255,255,255,0.07)}
-    .cp-cta-band h2{font-size:clamp(1.3rem,3vw,2rem);font-weight:900;color:#fff;margin:0 0 12px}
-    .cp-cta-band p{font-size:0.96rem;color:var(--cp-muted);max-width:500px;margin:0 auto 28px;line-height:1.6}
-    /* ── Urgency/planning strip ── */
-    .cp-split{display:grid;grid-template-columns:1fr 1fr;gap:24px}
-    .cp-split-card{background:var(--cp-card);border:1px solid var(--cp-border);border-radius:20px;padding:26px 22px}
-    .cp-split-badge{display:inline-block;padding:3px 12px;border-radius:999px;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:12px}
-    .cp-split-badge-red{background:rgba(225,48,108,0.15);color:rgba(225,48,108,0.9);border:1px solid rgba(225,48,108,0.25)}
-    .cp-split-badge-blue{background:rgba(56,189,248,0.12);color:rgba(56,189,248,0.9);border:1px solid rgba(56,189,248,0.22)}
-    .cp-split-title{font-size:1.05rem;font-weight:800;color:#fff;margin:0 0 10px}
-    .cp-split-text{font-size:0.87rem;color:var(--cp-muted);margin:0 0 16px;line-height:1.6}
-    @media(max-width:640px){.cp-split{grid-template-columns:1fr}.cp-service-grid{grid-template-columns:1fr}.cp-hero{padding:48px 16px 40px}.cp-section{padding:40px 0}.cp-section-alt{padding:40px 16px}}
+  <style id="svc-premium-v2">
+/* ════════════════════════════════════════════════════════════
+   FIXEO SERVICES PAGE — Premium V2  (svc-v2)
+   Self-contained. All selectors prefixed cp-* or svc-*.
+   Zero impact on other pages.
+   ════════════════════════════════════════════════════════════ */
+
+/* ── Reset & Base ── */
+*,*::before,*::after{box-sizing:border-box}
+
+:root {
+  --svc-bg:        #09091a;
+  --svc-bg-alt:    rgba(255,255,255,0.024);
+  --svc-card:      rgba(255,255,255,0.045);
+  --svc-border:    rgba(255,255,255,0.08);
+  --svc-border-h:  rgba(255,255,255,0.15);
+  --svc-muted:     rgba(232,234,240,0.52);
+  --svc-muted-2:   rgba(232,234,240,0.34);
+  --svc-grad:      linear-gradient(135deg,#E1306C,#833AB4);
+  --svc-indigo:    rgb(72,100,255);
+  --svc-pink:      #E1306C;
+  --svc-purple:    #833AB4;
+  --svc-green:     rgba(32,201,151,0.9);
+  --svc-amber:     rgba(245,158,11,0.9);
+  --svc-sky:       rgba(56,189,248,0.9);
+  --svc-radius-lg: 22px;
+  --svc-radius-md: 16px;
+  --svc-radius-sm: 12px;
+}
+
+body {
+  margin:0;
+  font-family:Cairo,Tajawal,Arial,sans-serif;
+  background:linear-gradient(170deg,#07071a 0%,#0d0d20 50%,#0a0a1c 100%);
+  color:#e8eaf0;
+  min-height:100vh;
+  padding-top:70px;
+}
+
+a{text-decoration:none}
+
+/* ── Layout container ── */
+.cp-container{max-width:1080px;margin:0 auto;padding:0 24px}
+
+/* ── Section rhythm ── */
+.cp-section      { padding:72px 0 }
+.cp-section-alt  {
+  background: var(--svc-bg-alt);
+  border-top:  1px solid var(--svc-border);
+  border-bottom: 1px solid var(--svc-border);
+  padding: 72px 24px;
+}
+
+/* ── Section heading ── */
+.cp-section-header { text-align:center; margin-bottom:48px }
+.cp-section-eyebrow {
+  display:inline-block;
+  font-size:0.68rem;
+  font-weight:700;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:rgba(225,48,108,0.80);
+  margin-bottom:12px;
+}
+.cp-section-title {
+  font-size:clamp(1.4rem,2.8vw,2rem);
+  font-weight:800;
+  color:#fff;
+  margin:0 0 10px;
+  letter-spacing:-0.02em;
+  line-height:1.2;
+}
+.cp-section-sub {
+  font-size:0.94rem;
+  color:var(--svc-muted);
+  margin:0 auto;
+  max-width:540px;
+  line-height:1.65;
+}
+
+/* Text gradient */
+.hl {
+  background:var(--svc-grad);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+
+/* ════════════════════════════════════════════════════════════
+   HERO
+   ════════════════════════════════════════════════════════════ */
+.cp-hero {
+  padding: 88px 24px 80px;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+
+.cp-hero::before {
+  content:'';
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(ellipse 70% 55% at 50% -10%, rgba(225,48,108,0.14) 0%, transparent 65%),
+    radial-gradient(ellipse 40% 30% at 80% 30%, rgba(131,58,180,0.08) 0%, transparent 60%);
+  pointer-events:none;
+}
+
+.cp-hero-eyebrow {
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  padding:5px 16px;
+  border-radius:999px;
+  border:1px solid rgba(225,48,108,0.32);
+  background:rgba(225,48,108,0.07);
+  color:rgba(225,48,108,0.88);
+  font-size:0.73rem;
+  font-weight:700;
+  letter-spacing:0.09em;
+  text-transform:uppercase;
+  margin-bottom:24px;
+}
+
+.cp-hero h1 {
+  font-size:clamp(1.9rem,4.5vw,3.2rem);
+  font-weight:900;
+  line-height:1.1;
+  letter-spacing:-0.025em;
+  margin:0 0 20px;
+  color:#fff;
+}
+
+.cp-hero-sub {
+  font-size:clamp(1rem,1.8vw,1.15rem);
+  color:var(--svc-muted);
+  max-width:520px;
+  margin:0 auto 16px;
+  line-height:1.65;
+}
+
+/* Trust strip */
+.cp-hero-trust {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  flex-wrap:wrap;
+  margin:0 auto 36px;
+}
+
+.cp-trust-item {
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  font-size:0.78rem;
+  font-weight:600;
+  color:var(--svc-muted);
+  white-space:nowrap;
+}
+
+.cp-trust-dot {
+  width:3px;
+  height:3px;
+  border-radius:50%;
+  background:rgba(255,255,255,0.20);
+  flex-shrink:0;
+}
+
+.cp-trust-check {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:16px;
+  height:16px;
+  border-radius:50%;
+  background:rgba(32,201,151,0.18);
+  color:var(--svc-green);
+  font-size:0.62rem;
+  font-weight:800;
+  flex-shrink:0;
+}
+
+/* Buttons */
+.cp-btn-row { display:flex;flex-wrap:wrap;gap:12px;justify-content:center }
+
+.cp-btn {
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:14px 28px;
+  border-radius:var(--svc-radius-sm);
+  font-size:0.96rem;
+  font-weight:800;
+  cursor:pointer;
+  border:none;
+  text-decoration:none;
+  transition:transform 0.15s,box-shadow 0.15s,filter 0.15s;
+  color:#fff;
+  letter-spacing:0.01em;
+}
+.cp-btn:hover { transform:translateY(-2px) }
+
+.cp-btn-primary {
+  background:var(--svc-grad);
+  box-shadow:0 8px 24px rgba(225,48,108,0.26);
+}
+.cp-btn-primary:hover {
+  box-shadow:0 12px 32px rgba(225,48,108,0.38);
+  filter:brightness(1.06);
+}
+
+.cp-btn-outline {
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.13);
+}
+.cp-btn-outline:hover { background:rgba(255,255,255,0.11) }
+
+/* ════════════════════════════════════════════════════════════
+   SERVICE CARDS
+   ════════════════════════════════════════════════════════════ */
+.cp-service-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+  gap:18px;
+}
+
+.cp-svc-card {
+  background:var(--svc-card);
+  border:1px solid var(--svc-border);
+  border-radius:var(--svc-radius-lg);
+  padding:26px 22px 22px;
+  display:flex;
+  flex-direction:column;
+  transition:transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+  position:relative;
+  overflow:hidden;
+}
+
+.cp-svc-card::before {
+  content:'';
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  background:radial-gradient(ellipse 60% 40% at 50% 0%, rgba(225,48,108,0.06) 0%, transparent 70%);
+  opacity:0;
+  transition:opacity 0.22s ease;
+  pointer-events:none;
+}
+
+.cp-svc-card:hover {
+  transform:translateY(-4px);
+  border-color:rgba(225,48,108,0.30);
+  box-shadow:0 16px 40px rgba(0,0,0,0.26), 0 0 0 1px rgba(225,48,108,0.08);
+}
+.cp-svc-card:hover::before { opacity:1 }
+
+/* Icon box */
+.cp-svc-icon-box {
+  width:52px;
+  height:52px;
+  border-radius:16px;
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.09);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin-bottom:16px;
+  font-size:1.5rem;
+  flex-shrink:0;
+  transition:background 0.18s, border-color 0.18s;
+}
+.cp-svc-card:hover .cp-svc-icon-box {
+  background:rgba(225,48,108,0.12);
+  border-color:rgba(225,48,108,0.22);
+}
+
+.cp-svc-name {
+  font-size:1.05rem;
+  font-weight:800;
+  color:#fff;
+  margin:0 0 7px;
+  letter-spacing:-0.01em;
+}
+
+.cp-svc-desc {
+  font-size:0.84rem;
+  color:var(--svc-muted);
+  margin:0 0 8px;
+  line-height:1.58;
+  flex:1;
+}
+
+.cp-svc-example {
+  font-size:0.76rem;
+  color:var(--svc-muted-2);
+  font-style:italic;
+  margin:0 0 16px;
+  line-height:1.5;
+  padding-left:0;
+}
+
+.cp-svc-cta {
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  font-size:0.82rem;
+  font-weight:700;
+  color:rgba(225,48,108,0.88);
+  padding:8px 16px;
+  border-radius:10px;
+  border:1px solid rgba(225,48,108,0.20);
+  background:rgba(225,48,108,0.06);
+  transition:background 0.15s, color 0.15s, border-color 0.15s;
+  cursor:pointer;
+  align-self:flex-start;
+  min-height:40px;
+}
+.cp-svc-cta:hover {
+  background:rgba(225,48,108,0.14);
+  border-color:rgba(225,48,108,0.35);
+  color:#fff;
+}
+.cp-svc-cta-arrow {
+  font-size:0.9rem;
+  transition:transform 0.15s;
+  font-style:normal;
+}
+.cp-svc-cta:hover .cp-svc-cta-arrow { transform:translateX(3px) }
+
+/* ════════════════════════════════════════════════════════════
+   URGENCE / PLANIFIÉ SPLIT
+   ════════════════════════════════════════════════════════════ */
+.cp-split {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:24px;
+  align-items:stretch;
+}
+
+.cp-split-card {
+  border-radius:var(--svc-radius-lg);
+  padding:32px 28px;
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  position:relative;
+  overflow:hidden;
+}
+
+/* Urgence: warm glow */
+.cp-split-card--urgent {
+  background:linear-gradient(145deg, rgba(225,48,108,0.12) 0%, rgba(131,58,180,0.08) 100%);
+  border:1px solid rgba(225,48,108,0.28);
+  box-shadow:0 0 0 1px rgba(225,48,108,0.06), 0 8px 32px rgba(225,48,108,0.08);
+}
+.cp-split-card--urgent::before {
+  content:'';
+  position:absolute;
+  top:0;left:0;right:0;
+  height:2px;
+  background:linear-gradient(90deg, transparent, rgba(225,48,108,0.7), transparent);
+}
+
+/* Planifié: cool */
+.cp-split-card--planned {
+  background:linear-gradient(145deg, rgba(56,189,248,0.07) 0%, rgba(72,100,255,0.06) 100%);
+  border:1px solid rgba(56,189,248,0.22);
+  box-shadow:0 0 0 1px rgba(56,189,248,0.05), 0 8px 32px rgba(56,189,248,0.05);
+}
+.cp-split-card--planned::before {
+  content:'';
+  position:absolute;
+  top:0;left:0;right:0;
+  height:2px;
+  background:linear-gradient(90deg, transparent, rgba(56,189,248,0.55), transparent);
+}
+
+.cp-split-badge {
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  padding:4px 13px;
+  border-radius:999px;
+  font-size:0.71rem;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:0.07em;
+  margin-bottom:14px;
+  width:fit-content;
+}
+
+.cp-split-badge-urgent {
+  background:rgba(225,48,108,0.16);
+  color:rgba(255,100,150,0.95);
+  border:1px solid rgba(225,48,108,0.28);
+}
+
+.cp-split-badge-planned {
+  background:rgba(56,189,248,0.12);
+  color:rgba(56,189,248,0.92);
+  border:1px solid rgba(56,189,248,0.22);
+}
+
+.cp-split-icon {
+  font-size:2rem;
+  margin-bottom:8px;
+  display:block;
+  line-height:1;
+}
+
+.cp-split-title {
+  font-size:1.15rem;
+  font-weight:800;
+  color:#fff;
+  margin:0 0 10px;
+  letter-spacing:-0.01em;
+}
+
+.cp-split-text {
+  font-size:0.88rem;
+  color:var(--svc-muted);
+  margin:0 0 20px;
+  line-height:1.65;
+  flex:1;
+}
+
+.cp-split-bullets {
+  list-style:none;
+  padding:0;
+  margin:0 0 24px;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+.cp-split-bullets li {
+  font-size:0.83rem;
+  color:var(--svc-muted);
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.cp-split-bullets li::before {
+  content:'';
+  width:5px;
+  height:5px;
+  border-radius:50%;
+  flex-shrink:0;
+}
+
+.cp-split-card--urgent .cp-split-bullets li::before {
+  background:rgba(225,48,108,0.7);
+}
+.cp-split-card--planned .cp-split-bullets li::before {
+  background:rgba(56,189,248,0.7);
+}
+
+.cp-split-btn-urgent {
+  background:var(--svc-grad);
+  box-shadow:0 8px 20px rgba(225,48,108,0.24);
+  align-self:flex-start;
+}
+.cp-split-btn-urgent:hover {
+  box-shadow:0 12px 28px rgba(225,48,108,0.36);
+}
+
+.cp-split-btn-planned {
+  background:rgba(56,189,248,0.12);
+  border:1px solid rgba(56,189,248,0.28);
+  color:rgba(56,189,248,0.94);
+  align-self:flex-start;
+}
+.cp-split-btn-planned:hover {
+  background:rgba(56,189,248,0.20);
+}
+
+/* ════════════════════════════════════════════════════════════
+   PRICE ESTIMATE GRID
+   ════════════════════════════════════════════════════════════ */
+.cp-price-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+  gap:14px;
+  margin-bottom:20px;
+}
+
+.cp-price-card {
+  background:var(--svc-card);
+  border:1px solid var(--svc-border);
+  border-radius:var(--svc-radius-md);
+  padding:20px 18px;
+  transition:border-color 0.18s, transform 0.18s;
+}
+.cp-price-card:hover {
+  border-color:var(--svc-border-h);
+  transform:translateY(-2px);
+}
+
+.cp-price-service {
+  font-size:0.9rem;
+  font-weight:700;
+  color:rgba(255,255,255,0.82);
+  margin:0 0 8px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.cp-price-icon {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:28px;
+  height:28px;
+  border-radius:8px;
+  background:rgba(255,255,255,0.06);
+  font-size:0.9rem;
+  flex-shrink:0;
+}
+
+.cp-price-range {
+  font-size:1.25rem;
+  font-weight:800;
+  color:#fff;
+  letter-spacing:-0.02em;
+  margin:0 0 5px;
+}
+
+.cp-price-unit {
+  font-size:0.8rem;
+  font-weight:600;
+  color:rgba(225,48,108,0.8);
+  margin-left:4px;
+}
+
+.cp-price-note {
+  font-size:0.76rem;
+  color:var(--svc-muted-2);
+  margin:0;
+  line-height:1.4;
+}
+
+.cp-price-disclaimer {
+  margin:24px auto 0;
+  max-width:560px;
+  text-align:center;
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.07);
+  border-radius:12px;
+  padding:14px 20px;
+  font-size:0.81rem;
+  color:var(--svc-muted-2);
+  line-height:1.55;
+}
+
+.cp-price-disclaimer strong {
+  color:rgba(32,201,151,0.80);
+  font-weight:700;
+}
+
+/* ════════════════════════════════════════════════════════════
+   WHY FIXEO — FEATURE CARDS
+   ════════════════════════════════════════════════════════════ */
+.cp-feat-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  gap:16px;
+}
+
+.cp-feat-card {
+  background:var(--svc-card);
+  border:1px solid var(--svc-border);
+  border-radius:var(--svc-radius-lg);
+  padding:26px 22px;
+  transition:border-color 0.18s, transform 0.18s;
+  position:relative;
+  overflow:hidden;
+}
+.cp-feat-card:hover {
+  border-color:var(--svc-border-h);
+  transform:translateY(-2px);
+}
+
+.cp-feat-icon-box {
+  width:46px;
+  height:46px;
+  border-radius:14px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin-bottom:14px;
+  font-size:1.25rem;
+  font-style:normal;
+  flex-shrink:0;
+}
+
+/* Per-card icon accent colors */
+.cp-feat-icon-box--green  { background:rgba(32,201,151,0.14); border:1px solid rgba(32,201,151,0.20); }
+.cp-feat-icon-box--blue   { background:rgba(56,189,248,0.12); border:1px solid rgba(56,189,248,0.18); }
+.cp-feat-icon-box--purple { background:rgba(131,58,180,0.14); border:1px solid rgba(131,58,180,0.20); }
+.cp-feat-icon-box--pink   { background:rgba(225,48,108,0.12); border:1px solid rgba(225,48,108,0.18); }
+
+.cp-feat-title {
+  font-size:1rem;
+  font-weight:800;
+  color:#fff;
+  margin:0 0 8px;
+  letter-spacing:-0.01em;
+}
+
+.cp-feat-text {
+  font-size:0.84rem;
+  color:var(--svc-muted);
+  margin:0;
+  line-height:1.6;
+}
+
+/* ════════════════════════════════════════════════════════════
+   FINAL CTA BAND
+   ════════════════════════════════════════════════════════════ */
+.cp-cta-band {
+  padding:80px 24px 88px;
+  text-align:center;
+  background:
+    radial-gradient(ellipse 60% 50% at 30% 50%, rgba(225,48,108,0.10) 0%, transparent 65%),
+    radial-gradient(ellipse 50% 45% at 70% 50%, rgba(131,58,180,0.08) 0%, transparent 60%);
+  border-top:1px solid rgba(255,255,255,0.07);
+  position:relative;
+  overflow:hidden;
+}
+
+.cp-cta-band::before {
+  content:'';
+  position:absolute;
+  top:0;left:0;right:0;
+  height:1px;
+  background:linear-gradient(90deg,transparent,rgba(225,48,108,0.4),rgba(131,58,180,0.3),transparent);
+}
+
+.cp-cta-band-eyebrow {
+  display:inline-block;
+  font-size:0.70rem;
+  font-weight:700;
+  letter-spacing:0.11em;
+  text-transform:uppercase;
+  color:rgba(225,48,108,0.70);
+  margin-bottom:14px;
+}
+
+.cp-cta-band h2 {
+  font-size:clamp(1.5rem,3.5vw,2.4rem);
+  font-weight:900;
+  color:#fff;
+  margin:0 0 12px;
+  letter-spacing:-0.025em;
+  line-height:1.15;
+}
+
+.cp-cta-band p {
+  font-size:1rem;
+  color:var(--svc-muted);
+  max-width:460px;
+  margin:0 auto 32px;
+  line-height:1.65;
+}
+
+.cp-cta-band-guarantee {
+  margin-top:16px;
+  font-size:0.76rem;
+  color:var(--svc-muted-2);
+  letter-spacing:0.01em;
+}
+
+/* ════════════════════════════════════════════════════════════
+   RESPONSIVE
+   ════════════════════════════════════════════════════════════ */
+@media (max-width:768px) {
+  .cp-hero         { padding:60px 16px 56px }
+  .cp-section      { padding:52px 0 }
+  .cp-section-alt  { padding:52px 16px }
+  .cp-split        { grid-template-columns:1fr; gap:16px }
+  .cp-service-grid { grid-template-columns:repeat(auto-fill,minmax(200px,1fr)) }
+  .cp-feat-grid    { grid-template-columns:repeat(auto-fill,minmax(200px,1fr)) }
+  .cp-cta-band     { padding:60px 16px 68px }
+  .cp-section-header { margin-bottom:36px }
+}
+
+@media (max-width:480px) {
+  .cp-hero         { padding:48px 14px 48px }
+  .cp-section      { padding:44px 0 }
+  .cp-section-alt  { padding:44px 14px }
+  .cp-service-grid { grid-template-columns:1fr }
+  .cp-price-grid   { grid-template-columns:1fr 1fr }
+  .cp-feat-grid    { grid-template-columns:1fr }
+  .cp-split-card   { padding:24px 20px }
+  .cp-cta-band     { padding:48px 14px 56px }
+  .cp-svc-card     { padding:22px 16px 18px }
+}
+
+@media (max-width:360px) {
+  .cp-price-grid { grid-template-columns:1fr }
+  .cp-btn        { padding:12px 20px; font-size:0.88rem }
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion:reduce) {
+  .cp-svc-card, .cp-btn, .cp-split-card,
+  .cp-price-card, .cp-feat-card { transition:none }
+}
   </style>
-<!-- SEO-4 -->
+
+<!-- SEO -->
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://www.fixeo.ma/services.html">
 <meta property="og:type" content="website">
@@ -144,8 +794,8 @@
     <a href="comment-ca-marche.html" class="nav-link">Comment ça marche</a>
     <a href="pricing.html" class="nav-link">Tarifs</a>
     <a href="presse-partenariats.html" class="nav-link">Presse</a>
-    <a href="dashboard-client.html" class="nav-link" data-role="dashboard" data-auth="logged-in">📊 Dashboard</a>
-    <a href="admin.html" class="nav-link" data-role="admin" data-auth="admin">🛡 Admin</a>
+    <a href="dashboard-client.html" class="nav-link" data-role="dashboard" data-auth="logged-in">Dashboard</a>
+    <a href="admin.html" class="nav-link" data-role="admin" data-auth="admin">Admin</a>
   </nav>
   <div class="nav-actions">
     <a href="auth.html" id="login-btn" class="btn-nav btn-nav-outline" data-auth="guest">Connexion</a>
@@ -169,202 +819,375 @@
   </button>
 </nav>
 
-<!-- ── Hero ── -->
+<!-- ══════════════════════════════════════════════════════════
+     HERO
+════════════════════════════════════════════════════════════ -->
 <section class="cp-hero" aria-labelledby="svc-hero-title">
   <div class="cp-container">
-    <span class="cp-hero-label">Fixeo Services</span>
-    <h1 id="svc-hero-title">Tous les services à domicile,<br><span class="hl">centralisés dans Fixeo</span></h1>
-    <p>Décrivez votre besoin, Fixeo vous oriente vers le bon artisan. Intervention rapide, paiement après service, artisan vérifié.</p>
+    <div class="cp-hero-eyebrow" aria-hidden="true">
+      <span style="width:6px;height:6px;border-radius:50%;background:rgba(225,48,108,0.9);flex-shrink:0;display:inline-block"></span>
+      FIXEO SERVICES
+    </div>
+    <h1 id="svc-hero-title">
+      Décrivez votre besoin.<br>
+      <span class="hl">Fixeo trouve le bon artisan.</span>
+    </h1>
+    <p class="cp-hero-sub">Intervention rapide, artisans vérifiés, paiement uniquement après service.</p>
+
+    <!-- Trust strip -->
+    <div class="cp-hero-trust" role="list" aria-label="Garanties Fixeo">
+      <span class="cp-trust-item" role="listitem">
+        <span class="cp-trust-check" aria-hidden="true">✓</span>
+        1 134 artisans vérifiés
+      </span>
+      <span class="cp-trust-dot" aria-hidden="true"></span>
+      <span class="cp-trust-item" role="listitem">
+        <span class="cp-trust-check" aria-hidden="true">✓</span>
+        Paiement après intervention
+      </span>
+      <span class="cp-trust-dot" aria-hidden="true"></span>
+      <span class="cp-trust-item" role="listitem">
+        <span class="cp-trust-check" aria-hidden="true">✓</span>
+        20 villes au Maroc
+      </span>
+      <span class="cp-trust-dot" aria-hidden="true"></span>
+      <span class="cp-trust-item" role="listitem">
+        <span class="cp-trust-check" aria-hidden="true">✓</span>
+        Réponse rapide
+      </span>
+    </div>
+
     <div class="cp-btn-row">
-      <a href="index.html#home" class="cp-btn cp-btn-primary">🔍 Décrire mon besoin</a>
+      <a href="index.html#home" class="cp-btn cp-btn-primary" aria-label="Décrire mon besoin sur Fixeo">
+        Décrire mon besoin
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3 7h8M8 4l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
       <a href="artisans.html" class="cp-btn cp-btn-outline">Voir les artisans</a>
     </div>
   </div>
 </section>
 
-<!-- ── Services grid ── -->
-<section class="cp-section cp-container" aria-labelledby="svc-grid-title">
-  <h2 class="cp-section-title" id="svc-grid-title">Services disponibles</h2>
-  <p class="cp-section-sub">8 catégories principales couvrant les besoins courants à domicile et en entreprise.</p>
-  <div class="cp-service-grid">
-
-    <div class="cp-svc-card">
-      <span class="cp-svc-icon">🚿</span>
-      <p class="cp-svc-name">Plomberie</p>
-      <p class="cp-svc-desc">Fuites, canalisations, robinetterie, chauffe-eau, WC bloqué.</p>
-      <p class="cp-svc-example">Ex : "J'ai une fuite sous l'évier"</p>
-      <a href="index.html#home" class="cp-svc-cta">Demander ce service →</a>
+<!-- ══════════════════════════════════════════════════════════
+     SERVICES GRID
+════════════════════════════════════════════════════════════ -->
+<section class="cp-section" aria-labelledby="svc-grid-title">
+  <div class="cp-container">
+    <div class="cp-section-header">
+      <span class="cp-section-eyebrow">Catalogue</span>
+      <h2 class="cp-section-title" id="svc-grid-title">Tous les services disponibles</h2>
+      <p class="cp-section-sub">12 spécialités couvrant tous vos besoins à domicile et en entreprise.</p>
     </div>
+    <div class="cp-service-grid" role="list">
 
-    <div class="cp-svc-card">
-      <span class="cp-svc-icon">⚡</span>
-      <p class="cp-svc-name">Électricité</p>
-      <p class="cp-svc-desc">Panne de courant, tableau électrique, installation de prises, éclairage.</p>
-      <p class="cp-svc-example">Ex : "Un disjoncteur saute souvent"</p>
-      <a href="index.html#home" class="cp-svc-cta">Demander ce service →</a>
+      <article class="cp-svc-card" role="listitem">
+        <div class="cp-svc-icon-box" aria-hidden="true" style="font-size:1.4rem">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(56,189,248,0.85)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 18.5S4 16 4 10a8 8 0 0116 0c0 6-1.5 8.5-1.5 8.5"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42"/></svg>
+        </div>
+        <p class="cp-svc-name">Plomberie</p>
+        <p class="cp-svc-desc">Fuites, canalisations, robinetterie, chauffe-eau, WC bloqué.</p>
+        <p class="cp-svc-example">"J'ai une fuite sous l'évier"</p>
+        <a href="index.html#home" class="cp-svc-cta" aria-label="Demander un plombier">
+          Demander ce service <span class="cp-svc-cta-arrow" aria-hidden="true">→</span>
+        </a>
+      </article>
+
+      <article class="cp-svc-card" role="listitem">
+        <div class="cp-svc-icon-box" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(245,158,11,0.85)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        </div>
+        <p class="cp-svc-name">Électricité</p>
+        <p class="cp-svc-desc">Panne de courant, tableau électrique, installation de prises, éclairage.</p>
+        <p class="cp-svc-example">"Un disjoncteur saute souvent"</p>
+        <a href="index.html#home" class="cp-svc-cta" aria-label="Demander un électricien">
+          Demander ce service <span class="cp-svc-cta-arrow" aria-hidden="true">→</span>
+        </a>
+      </article>
+
+      <article class="cp-svc-card" role="listitem">
+        <div class="cp-svc-icon-box" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(56,189,248,0.85)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1010 10"/><path d="M12 6v6l4 2"/><circle cx="19" cy="5" r="3"/></svg>
+        </div>
+        <p class="cp-svc-name">Climatisation</p>
+        <p class="cp-svc-desc">Installation, maintenance, nettoyage, recharge de gaz.</p>
+        <p class="cp-svc-example">"Mon clim ne refroidit plus"</p>
+        <a href="index.html#home" class="cp-svc-cta" aria-label="Demander un technicien climatisation">
+          Demander ce service <span class="cp-svc-cta-arrow" aria-hidden="true">→</span>
+        </a>
+      </article>
+
+      <article class="cp-svc-card" role="listitem">
+        <div class="cp-svc-icon-box" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(225,48,108,0.85)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+        </div>
+        <p class="cp-svc-name">Peinture</p>
+        <p class="cp-svc-desc">Peinture intérieure / extérieure, préparation des murs, ravalement.</p>
+        <p class="cp-svc-example">"Je veux repeindre mon salon"</p>
+        <a href="index.html#home" class="cp-svc-cta" aria-label="Demander un peintre">
+          Demander ce service <span class="cp-svc-cta-arrow" aria-hidden="true">→</span>
+        </a>
+      </article>
+
+      <article class="cp-svc-card" role="listitem">
+        <div class="cp-svc-icon-box" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(32,201,151,0.85)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        </div>
+        <p class="cp-svc-name">Nettoyage</p>
+        <p class="cp-svc-desc">Grand ménage, fin de chantier, vitres, moquettes, canapés.</p>
+        <p class="cp-svc-example">"Nettoyage complet après travaux"</p>
+        <a href="index.html#home" class="cp-svc-cta" aria-label="Demander un service de nettoyage">
+          Demander ce service <span class="cp-svc-cta-arrow" aria-hidden="true">→</span>
+        </a>
+      </article>
+
+      <article class="cp-svc-card" role="listitem">
+        <div class="cp-svc-icon-box" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(131,58,180,0.85)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+        </div>
+        <p class="cp-svc-name">Menuiserie</p>
+        <p class="cp-svc-desc">Portes, fenêtres, parquet, placards sur mesure, meubles.</p>
+        <p class="cp-svc-example">"Installer une porte de chambre"</p>
+        <a href="index.html#home" class="cp-svc-cta" aria-label="Demander un menuisier">
+          Demander ce service <span class="cp-svc-cta-arrow" aria-hidden="true">→</span>
+        </a>
+      </article>
+
+      <article class="cp-svc-card" role="listitem">
+        <div class="cp-svc-icon-box" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(225,48,108,0.85)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="3"/><path d="M8 11V21"/><path d="M16 3l-4 5 4 5"/></svg>
+        </div>
+        <p class="cp-svc-name">Serrurerie</p>
+        <p class="cp-svc-desc">Ouverture de porte, changement de serrure, blindage, dépannage urgent.</p>
+        <p class="cp-svc-example">"Porte claquée, je suis bloqué"</p>
+        <a href="index.html#home" class="cp-svc-cta" aria-label="Demander un serrurier">
+          Demander ce service <span class="cp-svc-cta-arrow" aria-hidden="true">→</span>
+        </a>
+      </article>
+
+      <article class="cp-svc-card" role="listitem">
+        <div class="cp-svc-icon-box" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(245,158,11,0.85)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+        </div>
+        <p class="cp-svc-name">Déménagement</p>
+        <p class="cp-svc-desc">Transport de meubles, emballage, manutention, camion avec chauffeur.</p>
+        <p class="cp-svc-example">"Déménager un appartement 3 pièces"</p>
+        <a href="index.html#home" class="cp-svc-cta" aria-label="Demander un déménageur">
+          Demander ce service <span class="cp-svc-cta-arrow" aria-hidden="true">→</span>
+        </a>
+      </article>
+
     </div>
-
-    <div class="cp-svc-card">
-      <span class="cp-svc-icon">❄️</span>
-      <p class="cp-svc-name">Climatisation</p>
-      <p class="cp-svc-desc">Installation, maintenance, nettoyage de climatiseur, recharge de gaz.</p>
-      <p class="cp-svc-example">Ex : "Mon clim ne refroidit plus"</p>
-      <a href="index.html#home" class="cp-svc-cta">Demander ce service →</a>
-    </div>
-
-    <div class="cp-svc-card">
-      <span class="cp-svc-icon">🎨</span>
-      <p class="cp-svc-name">Peinture</p>
-      <p class="cp-svc-desc">Peinture intérieure / extérieure, préparation des murs, ravalement.</p>
-      <p class="cp-svc-example">Ex : "Je veux repeindre mon salon"</p>
-      <a href="index.html#home" class="cp-svc-cta">Demander ce service →</a>
-    </div>
-
-    <div class="cp-svc-card">
-      <span class="cp-svc-icon">🧹</span>
-      <p class="cp-svc-name">Nettoyage</p>
-      <p class="cp-svc-desc">Grand ménage, nettoyage de fin de chantier, vitres, moquettes, canapés.</p>
-      <p class="cp-svc-example">Ex : "Nettoyage après travaux"</p>
-      <a href="index.html#home" class="cp-svc-cta">Demander ce service →</a>
-    </div>
-
-    <div class="cp-svc-card">
-      <span class="cp-svc-icon">🪚</span>
-      <p class="cp-svc-name">Menuiserie</p>
-      <p class="cp-svc-desc">Portes, fenêtres, parquet, placards sur mesure, meubles.</p>
-      <p class="cp-svc-example">Ex : "Installer une porte de chambre"</p>
-      <a href="index.html#home" class="cp-svc-cta">Demander ce service →</a>
-    </div>
-
-    <div class="cp-svc-card">
-      <span class="cp-svc-icon">🔑</span>
-      <p class="cp-svc-name">Serrurerie</p>
-      <p class="cp-svc-desc">Ouverture de porte, changement de serrure, blindage, dépannage urgent.</p>
-      <p class="cp-svc-example">Ex : "Porte claquée, je suis bloqué"</p>
-      <a href="index.html#home" class="cp-svc-cta">Demander ce service →</a>
-    </div>
-
-    <div class="cp-svc-card">
-      <span class="cp-svc-icon">🚛</span>
-      <p class="cp-svc-name">Déménagement</p>
-      <p class="cp-svc-desc">Transport de meubles, emballage, manutention, camion avec chauffeur.</p>
-      <p class="cp-svc-example">Ex : "Déménager un appartement 3 pièces"</p>
-      <a href="index.html#home" class="cp-svc-cta">Demander ce service →</a>
-    </div>
-
   </div>
 </section>
 
-<!-- ── Urgence vs planifié ── -->
-<div class="cp-section-alt">
+<!-- ══════════════════════════════════════════════════════════
+     URGENCE / PLANIFIÉ
+════════════════════════════════════════════════════════════ -->
+<div class="cp-section-alt" role="region" aria-label="Type de demande">
   <div class="cp-container">
-    <h2 class="cp-section-title" id="urgence-title">Urgence ou demande planifiée</h2>
-    <p class="cp-section-sub">Fixeo gère les deux cas. Vous choisissez le mode adapté à votre situation.</p>
+    <div class="cp-section-header">
+      <span class="cp-section-eyebrow">Mode d'intervention</span>
+      <h2 class="cp-section-title">Urgence ou demande planifiée ?</h2>
+      <p class="cp-section-sub">Fixeo gère les deux. Vous choisissez le mode adapté à votre situation.</p>
+    </div>
     <div class="cp-split">
-      <div class="cp-split-card">
-        <span class="cp-split-badge cp-split-badge-red">⚡ Urgence</span>
+
+      <!-- Urgence -->
+      <div class="cp-split-card cp-split-card--urgent">
+        <span class="cp-split-badge cp-split-badge-urgent" aria-label="Mode urgence">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          URGENCE
+        </span>
         <p class="cp-split-title">Besoin immédiat</p>
-        <p class="cp-split-text">Fuite d'eau, panne électrique, porte bloquée — Fixeo identifie un artisan disponible rapidement. Vous décrivez, on oriente.</p>
-        <a href="index.html#home" class="cp-btn cp-btn-primary" style="font-size:0.88rem;padding:11px 22px">⚡ Demande urgente</a>
+        <p class="cp-split-text">Fuite d'eau, panne électrique, porte bloquée — Fixeo identifie immédiatement un artisan disponible dans votre zone.</p>
+        <ul class="cp-split-bullets" aria-label="Exemples d'urgences">
+          <li>Fuite d'eau active</li>
+          <li>Panne électrique totale</li>
+          <li>Porte claquée ou serrure cassée</li>
+          <li>Panne de chauffe-eau</li>
+        </ul>
+        <a href="index.html#home" class="cp-btn cp-btn-primary cp-split-btn-urgent" style="font-size:0.9rem;padding:12px 24px" aria-label="Envoyer une demande urgente">
+          Demande urgente
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        </a>
       </div>
-      <div class="cp-split-card">
-        <span class="cp-split-badge cp-split-badge-blue">📅 Planifié</span>
+
+      <!-- Planifié -->
+      <div class="cp-split-card cp-split-card--planned">
+        <span class="cp-split-badge cp-split-badge-planned" aria-label="Mode planifié">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          PLANIFIÉ
+        </span>
         <p class="cp-split-title">Travaux à programmer</p>
-        <p class="cp-split-text">Rénovation, peinture, installation — publiez votre demande, consultez les artisans disponibles et choisissez votre créneau.</p>
-        <a href="index.html#home" class="cp-btn cp-btn-outline" style="font-size:0.88rem;padding:11px 22px">📝 Publier une demande</a>
+        <p class="cp-split-text">Rénovation, peinture, installation — publiez votre demande, recevez des propositions et choisissez votre créneau.</p>
+        <ul class="cp-split-bullets" aria-label="Exemples de travaux planifiés">
+          <li>Rénovation d'appartement</li>
+          <li>Installation de climatiseur</li>
+          <li>Peinture intérieure</li>
+          <li>Déménagement programmé</li>
+        </ul>
+        <a href="index.html#home" class="cp-btn cp-split-btn-planned" style="font-size:0.9rem;padding:12px 24px" aria-label="Publier une demande planifiée">
+          Publier une demande
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </a>
       </div>
+
     </div>
   </div>
 </div>
 
-<!-- ── Estimation des prix ── -->
-<section class="cp-section cp-container" aria-labelledby="price-title">
-  <h2 class="cp-section-title" id="price-title">Estimation des prix</h2>
-  <p class="cp-section-sub">Fourchettes indicatives pour les interventions courantes. L'estimation finale dépend du détail de votre besoin et de votre ville.</p>
-  <div class="cp-price-grid">
-    <div class="cp-price-card">
-      <p class="cp-price-service">🚿 Plomberie</p>
-      <p class="cp-price-range">150 – 600 MAD</p>
-      <p class="cp-price-note">Dépannage courant</p>
+<!-- ══════════════════════════════════════════════════════════
+     PRICE ESTIMATES
+════════════════════════════════════════════════════════════ -->
+<section class="cp-section" aria-labelledby="price-title">
+  <div class="cp-container">
+    <div class="cp-section-header">
+      <span class="cp-section-eyebrow">Budget indicatif</span>
+      <h2 class="cp-section-title" id="price-title">Estimation des prix</h2>
+      <p class="cp-section-sub">Fourchettes indicatives pour les interventions courantes. Le devis final est communiqué par l'artisan avant intervention.</p>
     </div>
-    <div class="cp-price-card">
-      <p class="cp-price-service">⚡ Électricité</p>
-      <p class="cp-price-range">200 – 800 MAD</p>
-      <p class="cp-price-note">Diagnostic + intervention</p>
+    <div class="cp-price-grid">
+      <div class="cp-price-card">
+        <p class="cp-price-service">
+          <span class="cp-price-icon" aria-hidden="true" style="color:rgba(56,189,248,0.8)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5.5 18.5S4 16 4 10a8 8 0 0116 0c0 6-1.5 8.5-1.5 8.5"/></svg>
+          </span>
+          Plomberie
+        </p>
+        <p class="cp-price-range">150 – 600 <span class="cp-price-unit">MAD</span></p>
+        <p class="cp-price-note">Dépannage courant</p>
+      </div>
+      <div class="cp-price-card">
+        <p class="cp-price-service">
+          <span class="cp-price-icon" aria-hidden="true" style="color:rgba(245,158,11,0.8)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          </span>
+          Électricité
+        </p>
+        <p class="cp-price-range">200 – 800 <span class="cp-price-unit">MAD</span></p>
+        <p class="cp-price-note">Diagnostic + intervention</p>
+      </div>
+      <div class="cp-price-card">
+        <p class="cp-price-service">
+          <span class="cp-price-icon" aria-hidden="true" style="color:rgba(56,189,248,0.8)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+          </span>
+          Climatisation
+        </p>
+        <p class="cp-price-range">300 – 1 200 <span class="cp-price-unit">MAD</span></p>
+        <p class="cp-price-note">Maintenance / installation</p>
+      </div>
+      <div class="cp-price-card">
+        <p class="cp-price-service">
+          <span class="cp-price-icon" aria-hidden="true" style="color:rgba(225,48,108,0.8)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83"/></svg>
+          </span>
+          Peinture
+        </p>
+        <p class="cp-price-range">40 – 80 <span class="cp-price-unit">MAD/m²</span></p>
+        <p class="cp-price-note">Selon surface et préparation</p>
+      </div>
+      <div class="cp-price-card">
+        <p class="cp-price-service">
+          <span class="cp-price-icon" aria-hidden="true" style="color:rgba(32,201,151,0.8)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+          </span>
+          Nettoyage
+        </p>
+        <p class="cp-price-range">200 – 700 <span class="cp-price-unit">MAD</span></p>
+        <p class="cp-price-note">Selon surface</p>
+      </div>
+      <div class="cp-price-card">
+        <p class="cp-price-service">
+          <span class="cp-price-icon" aria-hidden="true" style="color:rgba(225,48,108,0.8)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="8" cy="8" r="3"/><path d="M8 11V21"/></svg>
+          </span>
+          Serrurerie
+        </p>
+        <p class="cp-price-range">150 – 500 <span class="cp-price-unit">MAD</span></p>
+        <p class="cp-price-note">Ouverture / remplacement</p>
+      </div>
     </div>
-    <div class="cp-price-card">
-      <p class="cp-price-service">❄️ Climatisation</p>
-      <p class="cp-price-range">300 – 1 200 MAD</p>
-      <p class="cp-price-note">Maintenance / installation</p>
-    </div>
-    <div class="cp-price-card">
-      <p class="cp-price-service">🎨 Peinture</p>
-      <p class="cp-price-range">40 – 80 MAD/m²</p>
-      <p class="cp-price-note">Selon surface et préparation</p>
-    </div>
-    <div class="cp-price-card">
-      <p class="cp-price-service">🧹 Nettoyage</p>
-      <p class="cp-price-range">200 – 700 MAD</p>
-      <p class="cp-price-note">Selon surface</p>
-    </div>
-    <div class="cp-price-card">
-      <p class="cp-price-service">🔑 Serrurerie</p>
-      <p class="cp-price-range">150 – 500 MAD</p>
-      <p class="cp-price-note">Ouverture / remplacement</p>
+    <div class="cp-price-disclaimer" role="note">
+      <strong>Paiement uniquement après intervention confirmée.</strong>
+      Aucun acompte exigé. Les tarifs ci-dessus sont indicatifs — le devis exact est fourni par l'artisan avant tout engagement.
     </div>
   </div>
-  <p style="margin-top:18px;font-size:0.82rem;color:rgba(255,255,255,0.35);text-align:center">
-    💡 Paiement uniquement après intervention confirmée. Aucun acompte exigé.
-  </p>
 </section>
 
-<!-- ── Pourquoi Fixeo ── -->
-<div class="cp-section-alt">
+<!-- ══════════════════════════════════════════════════════════
+     POURQUOI FIXEO
+════════════════════════════════════════════════════════════ -->
+<div class="cp-section-alt" role="region" aria-labelledby="why-title">
   <div class="cp-container">
-    <h2 class="cp-section-title">Pourquoi choisir Fixeo</h2>
-    <p class="cp-section-sub">Une approche différente des plateformes classiques.</p>
-    <div class="cp-feat-grid">
-      <div class="cp-feat-card">
-        <span class="cp-feat-icon">✔️</span>
+    <div class="cp-section-header">
+      <span class="cp-section-eyebrow">Notre promesse</span>
+      <h2 class="cp-section-title" id="why-title">Pourquoi choisir Fixeo</h2>
+      <p class="cp-section-sub">Une approche différente pour vous connecter aux bons artisans, sans friction.</p>
+    </div>
+    <div class="cp-feat-grid" role="list">
+
+      <div class="cp-feat-card" role="listitem">
+        <div class="cp-feat-icon-box cp-feat-icon-box--green" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(32,201,151,0.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+        </div>
         <p class="cp-feat-title">Artisans vérifiés</p>
-        <p class="cp-feat-text">Chaque profil indique la spécialité déclarée. Les profils actifs accumulent les évaluations clients au fil du temps.</p>
+        <p class="cp-feat-text">Chaque profil indique la spécialité déclarée. Les profils actifs accumulent les évaluations clients au fil du temps — transparence totale.</p>
       </div>
-      <div class="cp-feat-card">
-        <span class="cp-feat-icon">💳</span>
+
+      <div class="cp-feat-card" role="listitem">
+        <div class="cp-feat-icon-box cp-feat-icon-box--blue" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(56,189,248,0.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg>
+        </div>
         <p class="cp-feat-title">Paiement après intervention</p>
-        <p class="cp-feat-text">Vous ne payez qu'une fois l'intervention terminée et validée. Aucun acompte, aucune surprise.</p>
+        <p class="cp-feat-text">Vous payez uniquement une fois l'intervention terminée et validée. Aucun acompte. Aucune surprise sur la facture.</p>
       </div>
-      <div class="cp-feat-card">
-        <span class="cp-feat-icon">📍</span>
+
+      <div class="cp-feat-card" role="listitem">
+        <div class="cp-feat-icon-box cp-feat-icon-box--purple" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(131,58,180,0.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        </div>
         <p class="cp-feat-title">Couverture nationale</p>
-        <p class="cp-feat-text">Casablanca, Rabat, Marrakech, Fès, Agadir, Tanger et plus — artisans disponibles dans les principales villes du Maroc.</p>
+        <p class="cp-feat-text">Casablanca, Rabat, Marrakech, Fès, Agadir, Tanger et 14 autres villes — artisans disponibles partout au Maroc.</p>
       </div>
-      <div class="cp-feat-card">
-        <span class="cp-feat-icon">⚡</span>
+
+      <div class="cp-feat-card" role="listitem">
+        <div class="cp-feat-icon-box cp-feat-icon-box--pink" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="rgba(225,48,108,0.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        </div>
         <p class="cp-feat-title">Réponse rapide</p>
-        <p class="cp-feat-text">Décrivez votre besoin en 30 secondes. Fixeo oriente vers les artisans disponibles dans votre zone sans attendre.</p>
+        <p class="cp-feat-text">Décrivez votre besoin en quelques secondes. Fixeo vous oriente vers les artisans disponibles dans votre zone — sans attente inutile.</p>
       </div>
+
     </div>
   </div>
 </div>
 
-<!-- ── CTA final ── -->
-<div class="cp-cta-band">
+<!-- ══════════════════════════════════════════════════════════
+     FINAL CTA
+════════════════════════════════════════════════════════════ -->
+<section class="cp-cta-band" aria-labelledby="cta-title">
   <div class="cp-container">
-    <h2>Quel est votre besoin ?</h2>
-    <p>Décrivez-le en quelques mots. Fixeo fait le reste.</p>
-    <a href="index.html#home" class="cp-btn cp-btn-primary" style="font-size:1rem;padding:16px 34px">🔍 Décrire mon besoin</a>
+    <span class="cp-cta-band-eyebrow" aria-hidden="true">Prêt à commencer ?</span>
+    <h2 id="cta-title">Quel est votre besoin ?</h2>
+    <p>Décrivez-le en quelques mots.<br>Fixeo trouve le bon artisan pour vous.</p>
+    <div class="cp-btn-row">
+      <a href="index.html#home" class="cp-btn cp-btn-primary" style="font-size:1rem;padding:16px 34px" aria-label="Décrire mon besoin sur Fixeo">
+        Décrire mon besoin
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3 7h8M8 4l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <a href="artisans.html" class="cp-btn cp-btn-outline" style="font-size:0.96rem">Parcourir les artisans</a>
+    </div>
+    <p class="cp-cta-band-guarantee" aria-label="Garanties">
+      Paiement après intervention · Artisans vérifiés · Sans engagement
+    </p>
   </div>
-</div>
+</section>
 
-<!-- ── Footer ── -->
-
-
-<!-- ── Scripts (header + auth only) ── -->
+<!-- Scripts -->
 <script src="js/fixeo-header-global.js?v=gfnav5"></script>
 <script src="js/i18n.js?v=50a38b9"></script>
 <script src="js/header-unified.js?v=modalfix3"></script>
 <script src="js/auth-global.js?v=50a38b9"></script>
-  <script src="js/fixeo-footer-global.js?v=gf3a" defer></script>
+<script src="js/fixeo-footer-global.js?v=gf3a" defer></script>
 </body>
 </html>
