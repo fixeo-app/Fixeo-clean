@@ -1,0 +1,405 @@
+/*
+ * FIXEO Enterprise Teaser — fixeo-enterprise-teaser-v1.css
+ * Version: fxet-v1a — 2026-07-18
+ * Namespace: fxet-* exclusively
+ *
+ * Homepage-only block: #enterprise-teaser
+ * Inserted between #services and #service-artisans-section.
+ * Self-contained: no dependency on fixeo-entreprises-v1.css.
+ * Reuses Enterprise design identity (indigo palette, dark surface).
+ * Zero impact on artisan cards, hero, or any other homepage section.
+ */
+
+/* ── Design tokens (local — no dependency on enterprise page tokens) ── */
+.fxet-section {
+  --fxet-indigo:        rgb(72, 100, 255);
+  --fxet-indigo-20:     rgba(72, 100, 255, 0.20);
+  --fxet-indigo-10:     rgba(72, 100, 255, 0.10);
+  --fxet-indigo-06:     rgba(72, 100, 255, 0.06);
+  --fxet-pink:          #FF4D8D;
+  --fxet-green:         #10B981;
+  --fxet-amber:         #F59E0B;
+  --fxet-bg:            #0D0D1A;
+  --fxet-surface:       rgba(255,255,255,0.04);
+  --fxet-border:        rgba(255,255,255,0.08);
+  --fxet-text-1:        #FFFFFF;
+  --fxet-text-2:        rgba(255,255,255,0.72);
+  --fxet-text-3:        rgba(255,255,255,0.45);
+  --fxet-radius-sm:     8px;
+  --fxet-radius-md:     14px;
+  --fxet-radius-lg:     20px;
+  --fxet-radius-xl:     28px;
+}
+
+/* ── Section shell ──────────────────────────────────────────────────────── */
+.fxet-section {
+  background: var(--fxet-bg);
+  padding: 72px 0 80px;
+  position: relative;
+  overflow: hidden;
+  contain: layout style;
+}
+
+/* Subtle grid background (matches enterprise LP hero) */
+.fxet-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(72,100,255,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(72,100,255,0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Container ──────────────────────────────────────────────────────────── */
+.fxet-container {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 0 24px;
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: center;
+}
+
+/* ── Left: text content ─────────────────────────────────────────────────── */
+.fxet-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.fxet-eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fxet-indigo);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.fxet-title {
+  font-size: clamp(26px, 3vw, 40px);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--fxet-text-1);
+  margin: 0;
+  /* Gradient text on first line */
+  background: linear-gradient(135deg, #ffffff 0%, rgba(255,255,255,0.80) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.fxet-subtitle {
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--fxet-text-2);
+  margin: 0;
+  max-width: 480px;
+}
+
+/* ── Industry tags ──────────────────────────────────────────────────────── */
+.fxet-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.fxet-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  background: var(--fxet-indigo-10);
+  border: 1px solid var(--fxet-indigo-20);
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--fxet-text-2);
+  white-space: nowrap;
+}
+
+/* ── CTA ────────────────────────────────────────────────────────────────── */
+.fxet-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 28px;
+  background: var(--fxet-indigo);
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: var(--fxet-radius-md);
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  align-self: flex-start;
+  box-shadow: 0 4px 20px rgba(72,100,255,0.35);
+}
+
+.fxet-cta:hover {
+  opacity: 0.88;
+  transform: translateY(-1px);
+}
+
+.fxet-cta:active {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.fxet-cta-arrow {
+  font-size: 18px;
+  line-height: 1;
+  transition: transform 0.2s ease;
+}
+
+.fxet-cta:hover .fxet-cta-arrow {
+  transform: translateX(3px);
+}
+
+/* ── Right: dashboard illustration ─────────────────────────────────────── */
+.fxet-visual {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.fxet-dash {
+  width: 100%;
+  max-width: 460px;
+  background: var(--fxet-surface);
+  border: 1px solid var(--fxet-border);
+  border-radius: var(--fxet-radius-lg);
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.50), 0 0 0 1px rgba(72,100,255,0.12);
+}
+
+/* Top bar */
+.fxet-dash-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--fxet-border);
+  background: rgba(255,255,255,0.03);
+}
+
+.fxet-dash-brand {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--fxet-text-1);
+  letter-spacing: 0.02em;
+}
+
+.fxet-dash-badge {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--fxet-green);
+  letter-spacing: 0.04em;
+}
+
+/* KPI row */
+.fxet-dash-kpis {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-bottom: 1px solid var(--fxet-border);
+}
+
+.fxet-kpi {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 16px;
+  border-right: 1px solid var(--fxet-border);
+  gap: 4px;
+}
+
+.fxet-kpi:last-child {
+  border-right: none;
+}
+
+.fxet-kpi-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--fxet-indigo);
+  line-height: 1;
+}
+
+.fxet-kpi-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--fxet-text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* Activity rows */
+.fxet-dash-rows {
+  padding: 8px 0;
+}
+
+.fxet-dash-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 20px;
+  transition: background 0.15s ease;
+}
+
+.fxet-dash-row:hover {
+  background: var(--fxet-surface);
+}
+
+.fxet-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.fxet-dot--green  { background: var(--fxet-green); box-shadow: 0 0 6px var(--fxet-green); }
+.fxet-dot--indigo { background: var(--fxet-indigo); box-shadow: 0 0 6px var(--fxet-indigo); }
+.fxet-dot--amber  { background: var(--fxet-amber); }
+
+.fxet-row-text {
+  font-size: 13px;
+  color: var(--fxet-text-2);
+  flex: 1;
+}
+
+.fxet-row-status {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 100px;
+  letter-spacing: 0.03em;
+}
+
+.fxet-row-status--done    { background: rgba(16,185,129,0.15); color: var(--fxet-green); }
+.fxet-row-status--active  { background: rgba(72,100,255,0.15); color: var(--fxet-indigo); }
+.fxet-row-status--pending { background: rgba(245,158,11,0.15); color: var(--fxet-amber); }
+
+/* Illustration label */
+.fxet-dash-label {
+  font-size: 10px;
+  color: var(--fxet-text-3);
+  text-align: center;
+  padding: 10px 16px 14px;
+  border-top: 1px solid var(--fxet-border);
+  margin: 0;
+}
+
+/* ── Tablet (769px – 1024px): narrower gap ─────────────────────────────── */
+@media (max-width: 1024px) {
+  .fxet-container {
+    gap: 40px;
+  }
+
+  .fxet-title {
+    font-size: clamp(22px, 3vw, 34px);
+  }
+}
+
+/* ── Mobile (<= 768px): stack vertically ──────────────────────────────── */
+@media (max-width: 768px) {
+  .fxet-section {
+    padding: 56px 0 64px;
+  }
+
+  .fxet-container {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+
+  .fxet-content {
+    gap: 20px;
+  }
+
+  .fxet-title {
+    font-size: clamp(22px, 6vw, 30px);
+  }
+
+  .fxet-subtitle {
+    font-size: 15px;
+    max-width: none;
+  }
+
+  .fxet-tags {
+    gap: 6px;
+  }
+
+  .fxet-tag {
+    font-size: 12px;
+    padding: 5px 10px;
+  }
+
+  .fxet-cta {
+    align-self: stretch;
+    justify-content: center;
+    padding: 16px 24px;
+    font-size: 16px;
+  }
+
+  .fxet-visual {
+    order: -1; /* illustration above text on mobile */
+  }
+
+  .fxet-dash {
+    max-width: 100%;
+  }
+
+  .fxet-kpi-value {
+    font-size: 18px;
+  }
+}
+
+/* ── Small mobile (<= 480px) ───────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .fxet-section {
+    padding: 48px 0 56px;
+  }
+
+  .fxet-container {
+    padding: 0 16px;
+    gap: 28px;
+  }
+
+  .fxet-dash-kpis {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .fxet-kpi {
+    padding: 14px 8px;
+  }
+
+  .fxet-kpi-value {
+    font-size: 16px;
+  }
+
+  .fxet-kpi-label {
+    font-size: 10px;
+  }
+
+  .fxet-row-text {
+    font-size: 12px;
+  }
+}
+
+/* ── Reduced motion ─────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .fxet-cta,
+  .fxet-cta:hover,
+  .fxet-cta-arrow,
+  .fxet-cta:hover .fxet-cta-arrow {
+    transition: none;
+    transform: none;
+  }
+}

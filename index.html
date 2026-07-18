@@ -2232,6 +2232,7 @@ section#home.hero.hero-section {
   <link rel="stylesheet" href="css/fixeo-rafi-v2.css?v=rfv2-r0a">
   <link rel="stylesheet" href="css/hero-v1-premium-sprint.css?v=hvps1b">
   <link rel="stylesheet" href="css/fixeo-consent-v1.css?v=fcv1b">
+  <link rel="stylesheet" href="css/fixeo-enterprise-teaser-v1.css?v=fxet-v1a">
   <script src="js/fixeo-consent-v1.js?v=fcv1c"></script>
   <script src="js/fixeo-analytics-config.js?v=fac1b" defer></script>
   <script src="js/fixeo-analytics-bootstrap.js?v=fab1c" defer></script>
@@ -2673,11 +2674,94 @@ section#home.hero.hero-section {
       <div class="chip service-chip" role="listitem" data-category="toiture" tabindex="0"><span class="chip-icon">🏠</span>Toiture</div>
       <div class="chip service-chip" role="listitem" data-category="vitrerie" tabindex="0"><span class="chip-icon">🪟</span>Vitrerie</div>
       <div class="chip service-chip" role="listitem" data-category="chauffage" tabindex="0"><span class="chip-icon">🔥</span>Chauffage</div>
-      <a href="entreprises.html" class="chip service-chip fxe-enterprise-chip" role="listitem" tabindex="0" aria-label="FIXEO Entreprises - Facility Management" style="text-decoration:none;color:inherit;background:linear-gradient(135deg,rgba(72,100,255,0.18),rgba(72,100,255,0.08));border:1px solid rgba(72,100,255,0.35);"><span class="chip-icon">🏢</span>Entreprises</a>
     </div>
   </div>
 </section>
 
+<!-- ══════════════════════════════════════════════════════════
+     FIXEO ENTREPRISES — Homepage teaser block (fxet-v1a)
+     Insert: after #services, before #service-artisans-section
+     CSS: css/fixeo-enterprise-teaser-v1.css?v=fxet-v1a
+══════════════════════════════════════════════════════════ -->
+<section class="fxet-section" id="enterprise-teaser" aria-labelledby="fxet-title">
+  <div class="fxet-container">
+
+    <!-- Left: text content -->
+    <div class="fxet-content">
+      <div class="fxet-eyebrow">🏢 FIXEO ENTREPRISES</div>
+      <h2 class="fxet-title" id="fxet-title">
+        Une plateforme pour gérer tous vos bâtiments et leur maintenance
+      </h2>
+      <p class="fxet-subtitle">
+        Centralisez vos interventions, pilotez vos prestataires et gardez le contrôle — hôtels, bureaux, cliniques et bien plus.
+      </p>
+
+      <!-- Industry tags -->
+      <div class="fxet-tags" aria-label="Secteurs couverts">
+        <span class="fxet-tag">🏨 Hôtels</span>
+        <span class="fxet-tag">🏢 Bureaux</span>
+        <span class="fxet-tag">🏥 Cliniques</span>
+        <span class="fxet-tag">🍽️ Restaurants</span>
+        <span class="fxet-tag">🛒 Commerce</span>
+        <span class="fxet-tag">🏗️ Syndics</span>
+        <span class="fxet-tag">🏭 Industrie</span>
+      </div>
+
+      <!-- CTA -->
+      <a href="entreprises.html" class="fxet-cta" aria-label="Découvrir FIXEO Entreprises">
+        Découvrir FIXEO Entreprises
+        <span class="fxet-cta-arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+
+    <!-- Right: dashboard illustration -->
+    <div class="fxet-visual" aria-hidden="true">
+      <div class="fxet-dash">
+        <!-- Top bar -->
+        <div class="fxet-dash-bar">
+          <span class="fxet-dash-brand">FIXEO Enterprise</span>
+          <span class="fxet-dash-badge">● Live</span>
+        </div>
+        <!-- KPIs -->
+        <div class="fxet-dash-kpis">
+          <div class="fxet-kpi">
+            <span class="fxet-kpi-value">1 134</span>
+            <span class="fxet-kpi-label">Artisans</span>
+          </div>
+          <div class="fxet-kpi">
+            <span class="fxet-kpi-value">20</span>
+            <span class="fxet-kpi-label">Villes</span>
+          </div>
+          <div class="fxet-kpi">
+            <span class="fxet-kpi-value">12</span>
+            <span class="fxet-kpi-label">Spécialités</span>
+          </div>
+        </div>
+        <!-- Activity rows -->
+        <div class="fxet-dash-rows">
+          <div class="fxet-dash-row">
+            <span class="fxet-dot fxet-dot--green"></span>
+            <span class="fxet-row-text">Plomberie — Casablanca</span>
+            <span class="fxet-row-status fxet-row-status--done">Terminé</span>
+          </div>
+          <div class="fxet-dash-row">
+            <span class="fxet-dot fxet-dot--indigo"></span>
+            <span class="fxet-row-text">Électricité — Rabat</span>
+            <span class="fxet-row-status fxet-row-status--active">En cours</span>
+          </div>
+          <div class="fxet-dash-row">
+            <span class="fxet-dot fxet-dot--amber"></span>
+            <span class="fxet-row-text">Climatisation — Tanger</span>
+            <span class="fxet-row-status fxet-row-status--pending">Planifié</span>
+          </div>
+        </div>
+        <!-- Label -->
+        <p class="fxet-dash-label">Exemple de fonctionnement — données illustratives</p>
+      </div>
+    </div>
+
+  </div>
+</section>
 
 <!-- Service artisans (injected by JS) -->
 <div id="service-artisans-section" class="container services-grid" style="padding-bottom:24px"></div>
