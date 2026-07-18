@@ -16,7 +16,7 @@
 <link rel="stylesheet" href="css/fixeo_v5_fixes.css"/>
 <link rel="stylesheet" href="css/pricing.css"/>
 <link rel="stylesheet" href="css/fixeo-footer-global.css?v=gf3a"/>
-<link rel="stylesheet" href="css/pricing-premium-v1.css?v=pp1"/>
+<link rel="stylesheet" href="css/pricing-premium-v1.css?v=pp2"/>
 <link rel="stylesheet" href="css/payment.css"/>
 <link rel="stylesheet" href="css/reservation.css">
 <link rel="stylesheet" href="css/header-unified.css"/>
@@ -300,20 +300,20 @@
 <section class="pricing-hero">
   <div class="pricing-hero-inner">
     <span class="section-tag">ABONNEMENTS ARTISANS</span>
-    <h1>Développez votre activité<br>avec <span class="text-gradient">Fixeo</span></h1>
-    <p>Commencez gratuitement. Passez au niveau supérieur quand vous voulez recevoir plus de demandes et être mieux visible.</p>
+    <h1>Plus de clients.<br>Moins d'effort.<br><span class="text-gradient">Avec Fixeo.</span></h1>
+    <p>Des centaines d'artisans au Maroc développent leur activité grâce à Fixeo. Commencez gratuitement — sans carte bancaire.</p>
     <!-- Trust outcome pills -->
     <div class="pricing-trust-pills">
-      <span class="pricing-trust-pill pill-green">✓ Sans engagement</span>
-      <span class="pricing-trust-pill pill-pink">🔒 Paiement sécurisé</span>
-      <span class="pricing-trust-pill pill-purple">🇲🇦 Pensé pour les artisans marocains</span>
+      <span class="pricing-trust-pill pill-green">✓ Sans engagement ni carte bancaire</span>
+      <span class="pricing-trust-pill pill-pink">🔒 Paiement 100% sécurisé</span>
+      <span class="pricing-trust-pill pill-purple">🇲🇦 Remboursé si insatisfait — 14 jours</span>
     </div>
     <div class="billing-toggle">
       <span id="toggle-monthly" class="billing-label active" onclick="setBilling('monthly')">Mensuel</span>
       <div class="toggle-switch-wrap" onclick="toggleBilling()">
         <div class="toggle-pill" id="toggle-pill"></div>
       </div>
-      <span id="toggle-annual" class="billing-label" onclick="setBilling('annual')">Annuel <span class="save-badge">-20%</span></span>
+      <span id="toggle-annual" class="billing-label" onclick="setBilling('annual')">Annuel <span class="save-badge">Économisez 20%</span></span>
     </div>
   </div>
 </section>
@@ -333,105 +333,113 @@
             <span class="price-currency">MAD</span>
             <span class="price-period">/mois</span>
           </div>
-          <p class="plan-desc">Pour tester Fixeo et créer une première présence sans risque.</p>
+          <p class="plan-tagline">Créez votre présence en ligne. Zéro risque.</p>
+          <p class="plan-desc">Idéal pour découvrir la plateforme et recevoir vos premières demandes sans rien payer.</p>
         </div>
         <ul class="plan-features">
-          <li class="feat-ok"><span class="feat-icon">✅</span> Profil public de base</li>
-          <li class="feat-ok"><span class="feat-icon">✅</span> 3 demandes par mois</li>
-          <li class="feat-ok"><span class="feat-icon">✅</span> 1 photo de portfolio</li>
-          <li class="feat-ok"><span class="feat-icon">✅</span> Avis clients visibles</li>
-          <li class="feat-ok"><span class="feat-icon">✅</span> Accès mobile</li>
+          <li class="feat-ok"><span class="feat-icon feat-check">✓</span> Profil public visible par les clients</li>
+          <li class="feat-ok"><span class="feat-icon feat-check">✓</span> Jusqu'à 3 demandes par mois</li>
+          <li class="feat-ok"><span class="feat-icon feat-check">✓</span> 1 photo de portfolio</li>
+          <li class="feat-ok"><span class="feat-icon feat-check">✓</span> Avis clients affichés</li>
+          <li class="feat-ok"><span class="feat-icon feat-check">✓</span> Accès mobile complet</li>
           <li class="feat-no"><span class="feat-icon">—</span> Badge vérifié</li>
           <li class="feat-no"><span class="feat-icon">—</span> Mise en avant dans les résultats</li>
           <li class="feat-no"><span class="feat-icon">—</span> Support prioritaire</li>
         </ul>
-        <button class="btn btn-secondary btn-lg w-100 plan-btn" onclick="selectPlan('free')">Commencer gratuitement</button>
+        <div class="plan-cta-wrap">
+          <button class="btn btn-secondary btn-lg w-100 plan-btn" onclick="selectPlan('free')">Commencer gratuitement</button>
+          <p class="plan-cta-note">Aucune carte bancaire requise</p>
+        </div>
       </div>
 
       <!-- PRO -->
       <div class="pricing-card popular" data-plan="pro">
-        <div class="popular-badge">⭐ LE PLUS POPULAIRE</div>
+        <div class="popular-badge">⭐ CHOIX DES ARTISANS</div>
         <div class="plan-header">
-          <div class="plan-icon">🚀</div>
+          <div class="plan-icon plan-icon--pro">🚀</div>
           <h3 class="plan-name">Pro</h3>
           <div class="plan-price">
             <span class="price-amount" data-monthly="99" data-annual="79">99</span>
             <span class="price-currency">MAD</span>
             <span class="price-period">/mois</span>
           </div>
-          <p class="plan-desc">Pour recevoir plus de demandes et améliorer votre visibilité dans votre zone.</p>
+          <div class="plan-annual-saving" id="pro-saving" style="display:none">Économisez 240 MAD/an</div>
+          <p class="plan-tagline plan-tagline--pro">Recevez 5× plus de demandes. Dès le premier mois.</p>
+          <p class="plan-desc">Le plan préféré des artisans actifs qui veulent remplir leur agenda et construire leur réputation en ligne.</p>
         </div>
         <ul class="plan-features">
-          <li class="feat-ok"><span class="feat-icon">✅</span> Demandes illimitées</li>
-          <li class="feat-ok"><span class="feat-icon">✅</span> <strong>Badge "Pro Vérifié" 🏅</strong></li>
-          <li class="feat-ok"><span class="feat-icon">✅</span> Mise en avant dans les résultats</li>
-          <li class="feat-ok"><span class="feat-icon">✅</span> 10 photos de portfolio</li>
-          <li class="feat-ok"><span class="feat-icon">✅</span> Statistiques avancées</li>
-          <li class="feat-ok"><span class="feat-icon">✅</span> Accès aux missions urgentes</li>
-          <li class="feat-ok"><span class="feat-icon">✅</span> Support prioritaire (24h)</li>
+          <li class="feat-ok feat-highlight"><span class="feat-icon feat-check">✓</span> <strong>Demandes clients illimitées</strong></li>
+          <li class="feat-ok feat-highlight"><span class="feat-icon feat-check">✓</span> <strong>Badge "Pro Vérifié" — confiance immédiate</strong></li>
+          <li class="feat-ok"><span class="feat-icon feat-check">✓</span> Mis en avant dans les résultats de recherche</li>
+          <li class="feat-ok"><span class="feat-icon feat-check">✓</span> 10 photos de portfolio (showcase complet)</li>
+          <li class="feat-ok"><span class="feat-icon feat-check">✓</span> Statistiques avancées — suivez votre progression</li>
+          <li class="feat-ok"><span class="feat-icon feat-check">✓</span> Accès aux missions urgentes (marge plus élevée)</li>
+          <li class="feat-ok"><span class="feat-icon feat-check">✓</span> Support prioritaire — réponse sous 24h</li>
           <li class="feat-no"><span class="feat-icon">—</span> 1ère position dans les résultats</li>
         </ul>
-        <button class="btn btn-primary btn-lg w-100 plan-btn" onclick="selectPlan('pro')">
-          <span>🚀 Passer au Pro</span>
-        </button>
+        <div class="plan-cta-wrap">
+          <button class="btn btn-primary btn-lg w-100 plan-btn" onclick="selectPlan('pro')">Passer au Pro →</button>
+          <p class="plan-cta-note">Sans engagement · Annulable à tout moment</p>
+        </div>
       </div>
 
       <!-- PREMIUM -->
       <div class="pricing-card premium-card" data-plan="premium">
         <div class="premium-glow"></div>
         <div class="plan-header">
-          <div class="plan-icon">👑</div>
+          <div class="plan-icon plan-icon--premium">👑</div>
           <h3 class="plan-name">Premium</h3>
           <div class="plan-price">
             <span class="price-amount" data-monthly="199" data-annual="159">199</span>
             <span class="price-currency">MAD</span>
             <span class="price-period">/mois</span>
           </div>
-          <p class="plan-desc">Pour devenir prioritaire dans votre zone et accélérer votre croissance locale.</p>
+          <div class="plan-annual-saving" id="premium-saving" style="display:none">Économisez 480 MAD/an</div>
+          <p class="plan-tagline plan-tagline--premium">Devenez l'artisan numéro 1 de votre zone.</p>
+          <p class="plan-desc">Pour les artisans ambitieux qui veulent dominer leur marché local et bâtir une activité pérenne.</p>
         </div>
         <ul class="plan-features">
-          <li class="feat-ok"><span class="feat-icon">✅</span> <strong>1ère position dans les résultats</strong></li>
-          <li class="feat-ok"><span class="feat-icon">✅</span> <strong>Badge "Premium Elite" 👑</strong></li>
-          <li class="feat-ok"><span class="feat-icon">✅</span> Photos &amp; vidéos illimitées</li>
-          <li class="feat-ok"><span class="feat-icon">✅</span> Tableau de bord IA avancé</li>
-          <li class="feat-ok"><span class="feat-icon">✅</span> Devis automatiques IA</li>
-          <li class="feat-ok"><span class="feat-icon">✅</span> Support VIP (2h max)</li>
-          <li class="feat-ok"><span class="feat-icon">✅</span> Rapport mensuel de performance</li>
-          <li class="feat-ok"><span class="feat-icon">✅</span> Accès beta fonctionnalités</li>
+          <li class="feat-ok feat-highlight"><span class="feat-icon feat-check">✓</span> <strong>1ère position dans les résultats — toujours visible</strong></li>
+          <li class="feat-ok feat-highlight"><span class="feat-icon feat-check">✓</span> <strong>Badge "Premium Elite" — autorité maximale</strong></li>
+          <li class="feat-ok"><span class="feat-icon feat-check">✓</span> Photos &amp; vidéos illimitées</li>
+          <li class="feat-ok"><span class="feat-icon feat-check">✓</span> Devis automatiques assistés par IA</li>
+          <li class="feat-ok"><span class="feat-icon feat-check">✓</span> Tableau de bord IA — pilotez votre activité</li>
+          <li class="feat-ok"><span class="feat-icon feat-check">✓</span> Support VIP — réponse sous 2h</li>
+          <li class="feat-ok"><span class="feat-icon feat-check">✓</span> Rapport mensuel de performance détaillé</li>
+          <li class="feat-ok"><span class="feat-icon feat-check">✓</span> Accès prioritaire aux nouvelles fonctionnalités</li>
         </ul>
-        <button class="btn btn-premium btn-lg w-100 plan-btn" onclick="selectPlan('premium')">
-          <span>👑 Passer au Premium</span>
-        </button>
+        <div class="plan-cta-wrap">
+          <button class="btn btn-premium btn-lg w-100 plan-btn" onclick="selectPlan('premium')">Passer au Premium →</button>
+          <p class="plan-cta-note">Remboursé si insatisfait — garantie 14 jours</p>
+        </div>
       </div>
     </div>
 
     <!-- COMPARISON TABLE -->
     <div class="comparison-wrap">
-      <h2 style="text-align:center;margin-bottom:8px">Comparaison <span class="text-gradient">détaillée</span></h2>
-      <p style="text-align:center;color:var(--text-muted);margin-bottom:32px;font-size:.9rem">Toutes les fonctionnalités en un coup d'œil</p>
+      <h2 style="text-align:center;margin-bottom:8px">Tout comparer <span class="text-gradient">en un coup d'œil</span></h2>
+      <p style="text-align:center;color:var(--text-muted);margin-bottom:32px;font-size:.9rem">Choisissez le plan adapté à votre étape de développement</p>
       <div class="comparison-table-wrap">
         <table class="comparison-table">
           <thead>
             <tr>
-              <th>Fonctionnalité</th>
-              <th><span class="th-badge free">Free</span></th>
-              <th><span class="th-badge pro">Pro 🏅</span></th>
-              <th><span class="th-badge premium">Premium 👑</span></th>
+              <th class="ct-col-feat">Ce que vous obtenez</th>
+              <th class="ct-col-free"><span class="th-badge free">Free</span><div class="ct-price-hint">0 MAD</div></th>
+              <th class="ct-col-pro"><span class="th-badge pro">Pro ★</span><div class="ct-price-hint ct-price-hint--pro">99 MAD/mois</div></th>
+              <th class="ct-col-premium"><span class="th-badge premium">Premium ♛</span><div class="ct-price-hint ct-price-hint--premium">199 MAD/mois</div></th>
             </tr>
           </thead>
           <tbody>
-            <tr><td class="feat-name">Profil public</td><td>Basique</td><td>Enrichi</td><td>Premium boosté</td></tr>
-            <tr><td class="feat-name">Demandes/mois</td><td>3</td><td>Illimitées</td><td>Illimitées</td></tr>
-            <tr><td class="feat-name">Photos portfolio</td><td>1</td><td>10</td><td>Illimitées</td></tr>
-            <tr><td class="feat-name">Vidéos portfolio</td><td>❌</td><td>❌</td><td>✅</td></tr>
-            <tr><td class="feat-name">Badge vérifié</td><td>❌</td><td>🏅 Pro</td><td>👑 Premium</td></tr>
-            <tr><td class="feat-name">Position dans résultats</td><td>Standard</td><td>En avant</td><td>1ère position</td></tr>
-            <tr><td class="feat-name">Statistiques</td><td>Basiques</td><td>Avancées</td><td>IA + rapports</td></tr>
-            <tr><td class="feat-name">Support</td><td>Email 72h</td><td>Prioritaire 24h</td><td>VIP 2h</td></tr>
-            <tr><td class="feat-name">Missions urgentes</td><td>❌</td><td>✅</td><td>✅ prioritaire</td></tr>
-            <tr><td class="feat-name">Devis automatiques</td><td>❌</td><td>❌</td><td>✅ IA</td></tr>
-            <tr><td class="feat-name">Rapport mensuel</td><td>❌</td><td>❌</td><td>✅</td></tr>
-            <tr><td class="feat-name">Accès beta</td><td>❌</td><td>❌</td><td>✅</td></tr>
+            <tr><td class="feat-name">Visibilité du profil</td><td>Basique</td><td class="ct-pro-col">Enrichi + mis en avant</td><td class="ct-prem-col">Position numéro 1</td></tr>
+            <tr><td class="feat-name">Demandes reçues/mois</td><td>3 maximum</td><td class="ct-pro-col ct-key-diff">Illimitées</td><td class="ct-prem-col ct-key-diff">Illimitées prioritaires</td></tr>
+            <tr><td class="feat-name">Photos de portfolio</td><td>1</td><td class="ct-pro-col">10</td><td class="ct-prem-col">Illimitées</td></tr>
+            <tr><td class="feat-name">Vidéos portfolio</td><td class="ct-no">—</td><td class="ct-no ct-pro-col">—</td><td class="ct-prem-col ct-yes">Oui</td></tr>
+            <tr><td class="feat-name">Badge de confiance</td><td class="ct-no">—</td><td class="ct-pro-col ct-key-diff">★ Pro Vérifié</td><td class="ct-prem-col ct-key-diff">♛ Premium Elite</td></tr>
+            <tr><td class="feat-name">Missions urgentes</td><td class="ct-no">—</td><td class="ct-pro-col ct-yes">Oui</td><td class="ct-prem-col ct-yes">Oui — prioritaire</td></tr>
+            <tr><td class="feat-name">Statistiques</td><td>Basiques</td><td class="ct-pro-col">Avancées</td><td class="ct-prem-col">IA + rapports mensuels</td></tr>
+            <tr><td class="feat-name">Devis automatiques IA</td><td class="ct-no">—</td><td class="ct-no ct-pro-col">—</td><td class="ct-prem-col ct-yes">Oui</td></tr>
+            <tr><td class="feat-name">Support client</td><td>Email (72h)</td><td class="ct-pro-col">Prioritaire (24h)</td><td class="ct-prem-col ct-key-diff">VIP (2h max)</td></tr>
+            <tr><td class="feat-name">Garantie remboursement</td><td class="ct-no">—</td><td class="ct-pro-col ct-yes">14 jours</td><td class="ct-prem-col ct-yes">14 jours</td></tr>
           </tbody>
         </table>
       </div>
@@ -439,51 +447,77 @@
 
     <!-- FAQ -->
     <div class="faq-section">
-      <h2 style="text-align:center;margin-bottom:32px">Questions <span class="text-gradient">fréquentes</span></h2>
+      <h2 style="text-align:center;margin-bottom:8px">Questions <span class="text-gradient">fréquentes</span></h2>
+      <p style="text-align:center;color:var(--text-muted);margin-bottom:32px;font-size:.9rem">Tout ce que vous devez savoir avant de vous lancer</p>
       <div class="faq-grid">
         <div class="faq-item">
           <div class="faq-q" onclick="toggleFaq(this)">
-            <span>Puis-je changer de plan à tout moment ?</span>
+            <span>Est-ce que le plan Pro vaut vraiment l'investissement ?</span>
             <span class="faq-arrow">▼</span>
           </div>
-          <div class="faq-a">Oui, vous pouvez upgrader ou downgrader votre plan à tout moment. Le changement prend effet immédiatement, avec un ajustement au prorata.</div>
+          <div class="faq-a">Oui — et voici pourquoi : avec le plan Pro, vos demandes sont illimitées et votre profil est mis en avant dans les résultats. Un seul client supplémentaire par mois couvre largement l'abonnement. La plupart des artisans Pro constatent un retour positif dès la première semaine.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">
+            <span>Y a-t-il un engagement ? Puis-je annuler ?</span>
+            <span class="faq-arrow">▼</span>
+          </div>
+          <div class="faq-a">Aucun engagement. Vous êtes libre d'annuler à tout moment depuis votre dashboard en deux clics. L'annulation prend effet à la fin de la période en cours — vous gardez tous vos avantages jusqu'au bout.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">
+            <span>Le plan Free est-il vraiment gratuit ? Pour toujours ?</span>
+            <span class="faq-arrow">▼</span>
+          </div>
+          <div class="faq-a">Oui, le plan Free est 100% gratuit — sans carte bancaire, sans limite de durée. Il vous permet de créer votre profil, de recevoir jusqu'à 3 demandes par mois et de découvrir la plateforme sans aucun risque. Vous pouvez upgrader quand vous êtes prêt.</div>
         </div>
         <div class="faq-item">
           <div class="faq-q" onclick="toggleFaq(this)">
             <span>Quels moyens de paiement acceptez-vous ?</span>
             <span class="faq-arrow">▼</span>
           </div>
-          <div class="faq-a">Nous acceptons Stripe (cartes internationales), PayPal, et CMI (cartes bancaires marocaines Visa/Mastercard). Tous les paiements sont sécurisés et chiffrés.</div>
+          <div class="faq-a">Nous acceptons les cartes bancaires marocaines via CMI (Visa, Mastercard — CIH, Attijariwafa, BMCE…) ainsi que les cartes internationales via Stripe. Tous les paiements sont sécurisés et chiffrés (SSL 256-bit).</div>
         </div>
         <div class="faq-item">
           <div class="faq-q" onclick="toggleFaq(this)">
-            <span>Y a-t-il un engagement minimum ?</span>
+            <span>Puis-je être remboursé si je ne suis pas satisfait ?</span>
             <span class="faq-arrow">▼</span>
           </div>
-          <div class="faq-a">Non, les plans sont sans engagement. Vous pouvez annuler à tout moment depuis votre dashboard. L'annulation prend effet à la fin de la période de facturation.</div>
-        </div>
-        <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)">
-            <span>Le plan Free est-il vraiment gratuit ?</span>
-            <span class="faq-arrow">▼</span>
-          </div>
-          <div class="faq-a">Oui, le plan Free est 100% gratuit et sans carte bancaire requise. Il est conçu pour vous permettre de découvrir la plateforme avant de vous engager.</div>
+          <div class="faq-a">Oui. Les abonnements Pro et Premium bénéficient d'une garantie de remboursement de 14 jours — sans questions posées. Si Fixeo ne vous apporte pas de valeur, nous vous remboursons intégralement. C'est notre engagement.</div>
         </div>
         <div class="faq-item">
           <div class="faq-q" onclick="toggleFaq(this)">
             <span>Comment fonctionne la facturation annuelle ?</span>
             <span class="faq-arrow">▼</span>
           </div>
-          <div class="faq-a">La facturation annuelle vous permet d'économiser 20% sur le prix mensuel. Vous êtes facturé une fois par an et recevez une facture PDF par email.</div>
+          <div class="faq-a">En choisissant la facturation annuelle, vous économisez 20% — soit 240 MAD/an sur le Pro et 480 MAD/an sur le Premium. Vous êtes facturé une fois, recevez une facture PDF par email, et profitez de tous vos avantages sans interruption.</div>
         </div>
         <div class="faq-item">
           <div class="faq-q" onclick="toggleFaq(this)">
-            <span>Puis-je obtenir un remboursement ?</span>
+            <span>Puis-je changer de plan après m'être inscrit ?</span>
             <span class="faq-arrow">▼</span>
           </div>
-          <div class="faq-a">Nous proposons une garantie de remboursement de 14 jours sans questions posées pour les nouveaux abonnements Pro et Premium.</div>
+          <div class="faq-a">Oui, vous pouvez upgrader ou downgrader à tout moment. L'upgrade est immédiat — vous accédez tout de suite à vos nouveaux avantages. Le downgrade prend effet à la prochaine période de facturation.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">
+            <span>Quelle est la différence entre Pro et Premium ?</span>
+            <span class="faq-arrow">▼</span>
+          </div>
+          <div class="faq-a">Pro vous donne les demandes illimitées, le badge vérifié et la mise en avant dans les résultats — idéal pour la majorité des artisans actifs. Premium vous place en 1ère position, ajoute les devis IA automatiques, un support VIP 2h, et les rapports mensuels de performance. Premium est fait pour dominer votre zone.</div>
         </div>
       </div>
+    </div>
+
+    <!-- FINAL CTA ANCHOR -->
+    <div class="pricing-final-cta">
+      <p class="pricing-final-cta-text">Prêt à développer votre activité ?</p>
+      <p class="pricing-final-cta-sub">Rejoignez des centaines d'artisans qui font confiance à Fixeo au Maroc.</p>
+      <div class="pricing-final-cta-btns">
+        <button class="btn btn-secondary" onclick="selectPlan('free')">Commencer gratuitement</button>
+        <button class="btn btn-primary" onclick="selectPlan('pro')">Passer au Pro — 99 MAD/mois →</button>
+      </div>
+      <p class="pricing-final-cta-guarantee">Garantie 14 jours · Sans engagement · Annulable à tout moment</p>
     </div>
 
   </div>
@@ -601,6 +635,28 @@
 
 <!-- FOOTER: replaced by fixeo-footer-global.js injection (gf2) -->
 
+<script>
+/* pp2 — Annual savings visibility hook */
+(function() {
+  var _origSet = null;
+  function _hookSavings(mode) {
+    var proSav = document.getElementById('pro-saving');
+    var premSav = document.getElementById('premium-saving');
+    if (proSav) proSav.style.display = mode === 'annual' ? 'block' : 'none';
+    if (premSav) premSav.style.display = mode === 'annual' ? 'block' : 'none';
+  }
+  document.addEventListener('DOMContentLoaded', function() {
+    if (typeof setBilling === 'function') {
+      _origSet = setBilling;
+      window.setBilling = function(mode) {
+        _origSet(mode);
+        _hookSavings(mode);
+      };
+    }
+    _hookSavings('monthly');
+  });
+})();
+</script>
 <script src="js/fixeo-session-mobile.js"></script>
 <script src="js/fixeo-header-global.js"></script>
 <script src="js/i18n.js"></script>

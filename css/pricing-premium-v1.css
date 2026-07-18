@@ -626,3 +626,292 @@ footer.footer {
   margin-top: 0 !important;
   border-top: 1px solid rgba(255,255,255,0.05) !important;
 }
+
+/* ══════════════════════════════════════════════════════════
+   PRICING PREMIUM V2 — CONVERSION OPTIMIZATION (pp2)
+   Append-only. CSS namespace: plan-tagline / plan-cta-wrap /
+   plan-annual-saving / ct-* / pricing-final-cta / feat-check
+   ══════════════════════════════════════════════════════════ */
+
+/* ── Hero headline improvement ────────────────────────────── */
+.pricing-hero h1 br { display: block; }
+
+.pricing-hero .save-badge {
+  background: linear-gradient(135deg, rgba(32,201,151,0.25), rgba(32,201,151,0.12)) !important;
+  border: 1px solid rgba(32,201,151,0.28) !important;
+  color: rgba(32,201,151,0.92) !important;
+  font-size: 0.72rem !important;
+  font-weight: 700 !important;
+  padding: 3px 9px !important;
+  border-radius: 999px !important;
+  vertical-align: middle !important;
+  letter-spacing: 0.02em !important;
+}
+
+/* ── Plan tagline (outcome sentence above desc) ────────────── */
+.plan-tagline {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.65);
+  margin: 10px 0 4px;
+  line-height: 1.3;
+}
+
+.plan-tagline--pro {
+  color: rgba(255,180,200,0.85);
+}
+
+.plan-tagline--premium {
+  color: rgba(252,200,120,0.80);
+}
+
+/* ── Annual savings indicator ──────────────────────────────── */
+.plan-annual-saving {
+  display: none;
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: rgba(32,201,151,0.88);
+  background: rgba(32,201,151,0.09);
+  border: 1px solid rgba(32,201,151,0.20);
+  border-radius: 999px;
+  padding: 3px 10px;
+  margin: 4px 0 0;
+  width: fit-content;
+  letter-spacing: 0.02em;
+}
+
+/* ── Feature check mark — CSS-controlled, no emoji dependency ─ */
+.feat-check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: rgba(32,201,151,0.18);
+  color: rgba(32,201,151,0.90);
+  font-size: 0.70rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.pricing-card[data-plan="pro"] .feat-check {
+  background: rgba(225,48,108,0.18);
+  color: rgba(255,140,170,0.92);
+}
+
+.pricing-card[data-plan="premium"] .feat-check {
+  background: rgba(252,175,69,0.18);
+  color: rgba(252,200,120,0.92);
+}
+
+/* ── Highlighted feature rows ──────────────────────────────── */
+.feat-highlight {
+  background: rgba(255,255,255,0.025) !important;
+  border-radius: 8px !important;
+  margin: 2px -8px !important;
+  padding: 7px 8px !important;
+  border-bottom: none !important;
+}
+
+/* ── Plan icon visual scale ────────────────────────────────── */
+.plan-icon--pro {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(225,48,108,0.24), rgba(131,58,180,0.20));
+  border: 1px solid rgba(225,48,108,0.28);
+  font-size: 1.6rem !important;
+}
+
+.plan-icon--premium {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(252,175,69,0.22), rgba(225,48,108,0.12));
+  border: 1px solid rgba(252,175,69,0.28);
+  font-size: 1.5rem !important;
+}
+
+/* ── CTA wrap: button + reassurance note ──────────────────── */
+.plan-cta-wrap {
+  margin-top: auto;
+}
+
+.plan-cta-note {
+  text-align: center;
+  font-size: 0.73rem;
+  color: rgba(255,255,255,0.34);
+  margin: 8px 0 0;
+  line-height: 1.4;
+}
+
+.pricing-card[data-plan="pro"] .plan-cta-note {
+  color: rgba(255,180,200,0.42);
+}
+
+.pricing-card[data-plan="premium"] .plan-cta-note {
+  color: rgba(252,200,120,0.40);
+}
+
+/* ── Pro CTA: stronger visual weight ──────────────────────── */
+.pricing-card[data-plan="pro"] .plan-btn {
+  font-size: 1.05rem !important;
+  letter-spacing: 0.02em !important;
+}
+
+/* ── Comparison table — pp2 column styles ─────────────────── */
+.ct-col-feat { width: 34%; }
+.ct-col-free  { width: 17%; text-align: center; }
+.ct-col-pro   { width: 25%; text-align: center; }
+.ct-col-premium { width: 24%; text-align: center; }
+
+.ct-price-hint {
+  font-size: 0.68rem;
+  font-weight: 500;
+  color: rgba(255,255,255,0.30);
+  margin-top: 3px;
+  letter-spacing: 0.01em;
+}
+
+.ct-price-hint--pro {
+  color: rgba(225,48,108,0.55);
+}
+
+.ct-price-hint--premium {
+  color: rgba(252,175,69,0.55);
+}
+
+.ct-pro-col {
+  background: rgba(225,48,108,0.04) !important;
+  color: rgba(255,255,255,0.88) !important;
+}
+
+.ct-prem-col {
+  background: rgba(252,175,69,0.04) !important;
+  color: rgba(252,210,140,0.88) !important;
+}
+
+/* Key differentiator rows — slightly bolder */
+.ct-key-diff {
+  font-weight: 700 !important;
+}
+
+.ct-yes {
+  color: rgba(32,201,151,0.88) !important;
+  font-weight: 600 !important;
+}
+
+.ct-no {
+  color: rgba(255,255,255,0.20) !important;
+}
+
+/* Pro column header highlight */
+.comparison-table thead .ct-col-pro {
+  background: rgba(225,48,108,0.10) !important;
+  border-bottom: 2px solid rgba(225,48,108,0.35) !important;
+}
+
+/* Premium column header */
+.comparison-table thead .ct-col-premium {
+  background: rgba(252,175,69,0.08) !important;
+  border-bottom: 2px solid rgba(252,175,69,0.28) !important;
+}
+
+/* Center all non-feature cells */
+.comparison-table td:not(.feat-name):not(.ct-col-feat) {
+  text-align: center !important;
+}
+
+/* ── Final CTA section ─────────────────────────────────────── */
+.pricing-final-cta {
+  text-align: center;
+  padding: 60px 24px 72px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  margin-top: 16px;
+}
+
+.pricing-final-cta-text {
+  font-size: clamp(1.3rem, 3vw, 2rem);
+  font-weight: 800;
+  color: #fff;
+  margin: 0 0 8px;
+  letter-spacing: -0.02em;
+}
+
+.pricing-final-cta-sub {
+  font-size: 0.92rem;
+  color: rgba(255,255,255,0.44);
+  margin: 0 0 28px;
+}
+
+.pricing-final-cta-btns {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.pricing-final-cta-guarantee {
+  font-size: 0.74rem;
+  color: rgba(255,255,255,0.28);
+  margin: 0;
+  letter-spacing: 0.01em;
+}
+
+/* ── Mobile responsive pp2 ─────────────────────────────────── */
+@media (max-width: 768px) {
+  .plan-tagline {
+    font-size: 0.82rem;
+  }
+
+  .plan-cta-note {
+    font-size: 0.70rem;
+  }
+
+  .ct-price-hint {
+    display: none; /* too cramped on mobile — price is in cards above */
+  }
+
+  .pricing-final-cta {
+    padding: 44px 20px 60px;
+  }
+
+  .pricing-final-cta-btns {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .pricing-final-cta-btns .btn {
+    width: 100%;
+    max-width: 340px;
+  }
+
+  .feat-highlight {
+    margin: 2px -4px !important;
+    padding: 6px 4px !important;
+  }
+
+  .plan-icon--pro,
+  .plan-icon--premium {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    font-size: 1.4rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .pricing-final-cta-text {
+    font-size: 1.3rem;
+  }
+}
+/* END pp2 */
