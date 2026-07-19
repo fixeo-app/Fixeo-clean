@@ -774,10 +774,14 @@ a{text-decoration:none}
   ]
 }
 </script>
-  <!-- Request modal CSS -->
+  <!-- Request modal CSS — canonical homepage stack -->
   <link rel="stylesheet" href="css/request-form.css?v=50a38b9">
+  <link rel="stylesheet" href="css/fixeo-request-v2.css?v=1">
   <link rel="stylesheet" href="css/fixeo-request-modal-v2.css?v=rmv2-v1a">
+  <link rel="stylesheet" href="css/fixeo-urgent-modal-v3.css?v=fuv3-v1a">
+  <link rel="stylesheet" href="css/fixeo-urgent-modal-v3-patch.css?v=fuv3-v1b">
   <link rel="stylesheet" href="css/fixeo-modal-scroll-fix.css?v=fxmsf-v1a">
+  <link rel="stylesheet" href="css/fixeo-ai-request-engine.css?v=aire-v1a">
   <link rel="stylesheet" href="css/fixeo-consent-v1.css?v=fcv1b">
   <script src="js/fixeo-consent-v1.js?v=fcv1c"></script>
   <script src="js/fixeo-analytics-config.js?v=fac1b" defer></script>
@@ -1311,12 +1315,41 @@ window.closeModal = closeModal;
 </script>
 <script src="js/request-form.js?v=rmv2-v1a"></script>
 <script src="js/fixeo-express-route-shim.js?v=fxrs-v1b"></script>
+<script src="js/fixeo-request-modal-v2.js?v=rmv2-v1a" defer></script>
+<script src="js/fixeo-urgent-modal-v3.js?v=fuv3-v1a" defer></script>
+<script src="js/fixeo-urgent-modal-v3-patch.js?v=fuv3-v1b" defer></script>
+<script src="js/fixeo-ai-request-engine.js?v=aire-v1a" defer></script>
 <script>
 /* Category prefill wiring — services.html only.
-   Opens the modal first, then sets #request-problem after the
-   modal's own applyContextPrefill() has run (requestAnimationFrame
-   fires after the synchronous open call completes). */
+   Opens the modal first (which triggers fixeo-request-modal-v2.js
+   MutationObserver → chip grid injected after 30ms setTimeout).
+   We then wait for the chips to exist and programmatically activate
+   the matching chip by its data-text attribute. */
 (function() {
+  function _activateChip(slugOrText) {
+    if (!slugOrText) return;
+    var norm = slugOrText.toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+      .replace(/[^a-z0-9]/g,' ').trim();
+    var chips = document.querySelectorAll('#request-modal .fxrm2-chip');
+    var matched = null;
+    chips.forEach(function(c) {
+      var txt = (c.dataset.text || c.dataset.slug || c.querySelector('.fxrm2-chip-label-text')?.textContent || '')
+        .toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,' ').trim();
+      if (!matched && txt === norm) matched = c;
+    });
+    /* Fallback: partial match on slug */
+    if (!matched) {
+      var slug = slugOrText.toLowerCase()
+        .normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z]/g,'').trim();
+      chips.forEach(function(c) {
+        var cSlug = (c.dataset.slug || '').toLowerCase();
+        if (!matched && cSlug && cSlug === slug) matched = c;
+      });
+    }
+    if (matched) matched.click();
+  }
+
   function _wirePrefill() {
     document.querySelectorAll('[data-svc-prefill]').forEach(function(btn) {
       if (btn.dataset.svcPrefillBound) return;
@@ -1329,23 +1362,19 @@ window.closeModal = closeModal;
         } else {
           openModal('request-modal');
         }
-        /* Set prefill after modal open (post-applyContextPrefill) */
+        /* Wait for fixeo-request-modal-v2.js chip injection (30ms + margin) */
         if (svc) {
-          window.requestAnimationFrame(function() {
-            var inp = document.getElementById('request-problem');
-            if (inp && !inp.value) inp.value = svc;
-            /* Also ensure modal title reflects the service */
-            var title = document.getElementById('request-modal-title');
-            if (title) title.textContent = svc + '\u00a0— votre demande';
-          });
+          setTimeout(function() { _activateChip(svc); }, 80);
         }
       });
     });
   }
+
   /* Backdrop click → close modal */
   document.getElementById('main-backdrop')?.addEventListener('click', function() {
     closeModal('request-modal');
   });
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', _wirePrefill, { once: true });
   } else {
