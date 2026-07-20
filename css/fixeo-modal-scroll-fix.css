@@ -169,3 +169,42 @@ body.fxmsf-locked {
     }
 
 }
+
+/* ===== FIX MODAL CLOSE ALWAYS VISIBLE v1 ===== */
+
+#request-modal {
+  position: fixed !important;
+}
+
+#request-modal .modal-close {
+  position: absolute !important;
+  top: 14px !important;
+  right: 14px !important;
+  z-index: 9999 !important;
+
+  width: 44px !important;
+  height: 44px !important;
+  min-width: 44px !important;
+  min-height: 44px !important;
+
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  border-radius: 14px !important;
+  background: rgba(255, 255, 255, 0.10) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  color: #fff !important;
+
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+@media (max-width: 640px) {
+  #request-modal .modal-close {
+    position: fixed !important;
+    top: calc(96px + env(safe-area-inset-top, 0px)) !important;
+    right: 22px !important;
+  }
+}
