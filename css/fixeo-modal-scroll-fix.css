@@ -208,3 +208,33 @@ body.fxmsf-locked {
     right: 22px !important;
   }
 }
+
+/* ===== IOS MODAL HEADER STICKY v1 ===== */
+
+@supports (-webkit-touch-callout: none) {
+  @media (max-width: 640px) {
+
+    #request-modal .request-modal-header {
+      position: sticky !important;
+      top: 0 !important;
+      z-index: 9998 !important;
+      flex-shrink: 0 !important;
+
+      background: rgba(13, 14, 22, 0.98) !important;
+      backdrop-filter: blur(12px) !important;
+      -webkit-backdrop-filter: blur(12px) !important;
+
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    }
+
+    #request-modal .request-modal-shell {
+      overflow-y: auto !important;
+      -webkit-overflow-scrolling: touch !important;
+    }
+
+    #request-modal .modal-close {
+      top: calc(96px + env(safe-area-inset-top, 0px)) !important;
+      right: 22px !important;
+    }
+  }
+}
