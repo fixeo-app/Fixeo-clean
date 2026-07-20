@@ -238,3 +238,51 @@ body.fxmsf-locked {
     }
   }
 }
+
+/* ===== IOS STANDARD MODAL ALIGNMENT v1 ===== */
+
+@supports (-webkit-touch-callout: none) {
+  @media (max-width: 640px) {
+
+    /* Keep the standard modal below the global FIXEO header */
+    #request-modal.open {
+      top: calc(82px + env(safe-area-inset-top, 0px)) !important;
+      bottom: 8px !important;
+      left: 8px !important;
+      right: 8px !important;
+
+      width: auto !important;
+      max-width: none !important;
+      height: auto !important;
+      max-height: calc(
+        100dvh - 90px - env(safe-area-inset-top, 0px)
+      ) !important;
+
+      transform: none !important;
+      border-radius: 18px !important;
+    }
+
+    /* Match the urgent modal header spacing */
+    #request-modal .request-modal-header {
+      padding: 18px 56px 14px 18px !important;
+      margin: 0 !important;
+      border-radius: 18px 18px 0 0 !important;
+    }
+
+    /* Keep the close button aligned with the modal title */
+    #request-modal .modal-close {
+      position: absolute !important;
+      top: 14px !important;
+      right: 14px !important;
+      z-index: 9999 !important;
+    }
+
+    /* Keep the shell directly below the header */
+    #request-modal .request-modal-shell {
+      padding: 16px 18px
+        calc(22px + env(safe-area-inset-bottom, 0px))
+        !important;
+      border-radius: 0 0 18px 18px !important;
+    }
+  }
+}
