@@ -130,3 +130,42 @@ body.fxmsf-locked {
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
 }
+
+/* ===== FIX SERVICES MODAL MOBILE v1 ===== */
+
+#request-modal .request-success[hidden]{
+    display:none !important;
+}
+
+@media (max-width:640px){
+
+    #request-modal.open{
+        position:fixed !important;
+
+        top:calc(82px + env(safe-area-inset-top,0px)) !important;
+        left:8px !important;
+        right:8px !important;
+        bottom:8px !important;
+
+        width:auto !important;
+        max-width:none !important;
+
+        height:auto !important;
+        max-height:calc(100dvh - 90px - env(safe-area-inset-top,0px)) !important;
+
+        transform:none !important;
+
+        border-radius:18px !important;
+    }
+
+    #request-modal{
+        padding:0 !important;
+        overflow:hidden !important;
+    }
+
+    #request-modal .request-modal-shell{
+        overflow-y:auto !important;
+        overflow-x:hidden !important;
+    }
+
+}
