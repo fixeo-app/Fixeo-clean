@@ -1,0 +1,595 @@
+/*
+ * fixeo-rafi-os-v1.css — RAFI OS Sprint 1
+ * Namespace: .rfos-* exclusively
+ * Depends on: fixeo-rafi-v2.css (.rafi-img base)
+ * Load order: last in <head>
+ * No overrides to any existing namespace.
+ */
+
+/* ── Tokens ──────────────────────────────────────────────────── */
+:root {
+  --rfos-indigo:     rgb(72, 100, 255);
+  --rfos-pink:       #E1306C;
+  --rfos-green:      rgba(32, 201, 151, 0.9);
+  --rfos-amber:      rgba(245, 158, 11, 0.9);
+  --rfos-surface:    rgba(255, 255, 255, 0.04);
+  --rfos-border:     rgba(255, 255, 255, 0.09);
+  --rfos-muted:      rgba(232, 234, 240, 0.55);
+  --rfos-text:       rgba(232, 234, 240, 0.92);
+  --rfos-bg-dark:    rgba(9, 9, 26, 0.94);
+  --rfos-radius:     18px;
+  --rfos-radius-sm:  12px;
+  --rfos-shadow:     0 8px 32px rgba(0,0,0,0.28);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   RAFI ENTRY POINT — Hero companion
+══════════════════════════════════════════════════════════════ */
+.rfos-entry {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 20px;
+  margin-bottom: 4px;
+  opacity: 0;
+  transform: translateY(6px);
+  animation: rfos-fadein 0.32s ease-out 0.65s forwards;
+  /* Never in LCP path — 650ms delay */
+}
+
+.rfos-entry-avatar {
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: rgba(72, 100, 255, 0.12);
+  border: 1.5px solid rgba(72, 100, 255, 0.28);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: border-color 0.25s, box-shadow 0.25s;
+}
+
+.rfos-entry-avatar img {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  display: block;
+}
+
+/* Pulse ring when RAFI is "listening" */
+.rfos-entry--listening .rfos-entry-avatar {
+  border-color: rgba(72, 100, 255, 0.55);
+  box-shadow: 0 0 0 4px rgba(72, 100, 255, 0.12);
+}
+
+/* Urgency ring */
+.rfos-entry--urgent .rfos-entry-avatar {
+  border-color: rgba(225, 48, 108, 0.55);
+  box-shadow: 0 0 0 4px rgba(225, 48, 108, 0.12);
+  animation: rfos-urgency-pulse 1.6s ease-in-out infinite;
+}
+
+.rfos-entry-bubble {
+  flex: 1;
+  min-width: 0;
+  background: var(--rfos-bg-dark);
+  border: 1px solid var(--rfos-border);
+  border-radius: 0 var(--rfos-radius) var(--rfos-radius) var(--rfos-radius);
+  padding: 10px 14px;
+  position: relative;
+}
+
+/* Speech bubble tail */
+.rfos-entry-bubble::before {
+  content: '';
+  position: absolute;
+  left: -7px;
+  top: 14px;
+  width: 0;
+  height: 0;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  border-right: 7px solid var(--rfos-bg-dark);
+}
+
+.rfos-entry-bubble::after {
+  content: '';
+  position: absolute;
+  left: -9px;
+  top: 13px;
+  width: 0;
+  height: 0;
+  border-top: 7px solid transparent;
+  border-bottom: 7px solid transparent;
+  border-right: 8px solid rgba(255, 255, 255, 0.09);
+  z-index: -1;
+}
+
+.rfos-bubble-text {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--rfos-text);
+  line-height: 1.5;
+  transition: opacity 0.18s;
+}
+
+.rfos-bubble-text b, .rfos-bubble-text strong {
+  color: #fff;
+  font-weight: 700;
+}
+
+/* Rafi name label */
+.rfos-bubble-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(72, 100, 255, 0.70);
+  margin-bottom: 3px;
+  display: block;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   RAFI CONVERSATION HEADER — inside modal
+══════════════════════════════════════════════════════════════ */
+.rfos-conv-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px 20px 14px;
+  background: linear-gradient(135deg, rgba(72,100,255,0.07) 0%, rgba(9,9,26,0.0) 100%);
+  border-bottom: 1px solid var(--rfos-border);
+  position: relative;
+  /* Entrance */
+  opacity: 0;
+  transform: translateY(-4px);
+  animation: rfos-fadein 0.22s ease-out 0.05s forwards;
+}
+
+.rfos-conv-avatar {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(72, 100, 255, 0.10);
+  border: 1.5px solid rgba(72, 100, 255, 0.22);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.rfos-conv-avatar img {
+  width: 38px;
+  height: 38px;
+  object-fit: contain;
+  display: block;
+}
+
+.rfos-conv-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.rfos-conv-name {
+  font-size: 0.70rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: rgba(72, 100, 255, 0.75);
+  margin-bottom: 3px;
+}
+
+.rfos-conv-msg {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--rfos-text);
+  line-height: 1.5;
+  min-height: 1.3em; /* prevents layout shift on text change */
+  transition: opacity 0.18s;
+}
+
+.rfos-conv-msg b, .rfos-conv-msg strong {
+  color: #fff;
+  font-weight: 700;
+}
+
+/* ── Timeline ────────────────────────────────────────────────── */
+.rfos-timeline {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-top: 10px;
+}
+
+.rfos-tl-step {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+  position: relative;
+}
+
+.rfos-tl-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1.5px solid var(--rfos-border);
+  background: transparent;
+  flex-shrink: 0;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.rfos-tl-step.done .rfos-tl-dot {
+  background: var(--rfos-indigo);
+  border-color: var(--rfos-indigo);
+}
+
+.rfos-tl-step.active .rfos-tl-dot {
+  background: rgba(72, 100, 255, 0.35);
+  border-color: var(--rfos-indigo);
+}
+
+.rfos-tl-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--rfos-muted);
+  transition: color 0.2s;
+  white-space: nowrap;
+}
+
+.rfos-tl-step.done .rfos-tl-label,
+.rfos-tl-step.active .rfos-tl-label {
+  color: var(--rfos-text);
+}
+
+.rfos-tl-sep {
+  height: 1px;
+  flex: 1;
+  background: var(--rfos-border);
+  margin: 0 4px;
+  transition: background 0.2s;
+}
+
+.rfos-tl-step.done + .rfos-tl-sep {
+  background: var(--rfos-indigo);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   RAFI SUMMARY — pre-submit read-back
+══════════════════════════════════════════════════════════════ */
+.rfos-summary {
+  display: none; /* shown by JS */
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  margin: 12px 0 0;
+  background: rgba(72, 100, 255, 0.06);
+  border: 1px solid rgba(72, 100, 255, 0.18);
+  border-radius: var(--rfos-radius-sm);
+  animation: rfos-fadein 0.22s ease-out forwards;
+}
+
+.rfos-summary.visible {
+  display: flex;
+}
+
+.rfos-summary-avatar {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(72, 100, 255, 0.10);
+  border: 1px solid rgba(72, 100, 255, 0.22);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.rfos-summary-avatar img {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+}
+
+.rfos-summary-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.rfos-summary-text {
+  font-size: 0.84rem;
+  font-weight: 500;
+  color: var(--rfos-text);
+  line-height: 1.45;
+  margin-bottom: 8px;
+}
+
+.rfos-summary-text b, .rfos-summary-text strong {
+  color: #fff;
+  font-weight: 700;
+}
+
+.rfos-summary-confirm-btn {
+  display: block;
+  width: 100%;
+  padding: 11px 20px;
+  background: linear-gradient(135deg, #E1306C, #833AB4);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.92rem;
+  font-weight: 800;
+  cursor: pointer;
+  text-align: center;
+  box-shadow: 0 6px 20px rgba(225, 48, 108, 0.24);
+  transition: filter 0.15s, box-shadow 0.15s;
+  min-height: 44px;
+}
+
+.rfos-summary-confirm-btn:hover {
+  filter: brightness(1.07);
+  box-shadow: 0 8px 24px rgba(225, 48, 108, 0.34);
+}
+
+.rfos-summary-confirm-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* De-emphasise original submit when summary is showing */
+#request-modal.rfos-summary-active .request-submit-btn {
+  opacity: 0.38;
+  pointer-events: none;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   RAFI THINKING — submit transition overlay
+══════════════════════════════════════════════════════════════ */
+.rfos-thinking {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 40px 24px;
+  text-align: center;
+  min-height: 220px;
+}
+
+.rfos-thinking.visible {
+  display: flex;
+}
+
+.rfos-thinking-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(72, 100, 255, 0.10);
+  border: 1.5px solid rgba(72, 100, 255, 0.22);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  animation: rfos-thinking-breathe 1.8s ease-in-out infinite;
+}
+
+.rfos-thinking-avatar img {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+}
+
+.rfos-thinking-label {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--rfos-text);
+}
+
+.rfos-thinking-dots {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.rfos-thinking-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(72, 100, 255, 0.60);
+  animation: rfos-dot-bounce 1.0s ease-in-out infinite;
+}
+
+.rfos-thinking-dot:nth-child(2) { animation-delay: 0.18s; }
+.rfos-thinking-dot:nth-child(3) { animation-delay: 0.36s; }
+
+/* ══════════════════════════════════════════════════════════════
+   RAFI CONFIRMATION — post-submit premium header
+══════════════════════════════════════════════════════════════ */
+.rfos-confirmation {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 24px 20px 16px;
+  text-align: center;
+  border-bottom: 1px solid var(--rfos-border);
+  margin-bottom: 16px;
+  animation: rfos-fadein 0.28s ease-out forwards;
+}
+
+.rfos-confirmation.visible {
+  display: flex;
+}
+
+.rfos-confirmation-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(72,100,255,0.12), rgba(32,201,151,0.08));
+  border: 2px solid rgba(32, 201, 151, 0.28);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+
+.rfos-confirmation-avatar img {
+  width: 62px;
+  height: 62px;
+  object-fit: contain;
+}
+
+.rfos-confirmation-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.rfos-confirmation-sub {
+  font-size: 0.84rem;
+  color: var(--rfos-muted);
+  margin: 0;
+  line-height: 1.55;
+  max-width: 300px;
+}
+
+.rfos-confirmation-steps {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.rfos-conf-step {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--rfos-muted);
+}
+
+.rfos-conf-step-icon {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(32, 201, 151, 0.14);
+  border: 1px solid rgba(32, 201, 151, 0.25);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.62rem;
+  color: var(--rfos-green);
+  flex-shrink: 0;
+}
+
+.rfos-conf-sep {
+  font-size: 0.70rem;
+  color: var(--rfos-border);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   MODAL HEADER CONTINUITY — RAFI mode
+   Replaces the generic header text with RAFI presence
+══════════════════════════════════════════════════════════════ */
+/* When RAFI OS is active, dim the static modal header title
+   (RAFI conv header takes over that role visually) */
+#request-modal.rfos-active .modal-header {
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+#request-modal.rfos-active .request-modal-header {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   KEYFRAMES
+══════════════════════════════════════════════════════════════ */
+@keyframes rfos-fadein {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes rfos-urgency-pulse {
+  0%, 100% { box-shadow: 0 0 0 4px rgba(225, 48, 108, 0.10); }
+  50%       { box-shadow: 0 0 0 8px rgba(225, 48, 108, 0.04); }
+}
+
+@keyframes rfos-dot-bounce {
+  0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
+  40%           { transform: scale(1.2); opacity: 1.0; }
+}
+
+@keyframes rfos-thinking-breathe {
+  0%, 100% { transform: scale(1.0);  opacity: 0.9; }
+  50%      { transform: scale(1.06); opacity: 1.0; }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════════════════════════ */
+
+/* Tablet — slightly smaller entry */
+@media (max-width: 1023px) {
+  .rfos-entry-avatar { width: 46px; height: 46px; }
+  .rfos-entry-avatar img { width: 38px; height: 38px; }
+}
+
+/* Mobile — entry hidden (space too constrained in hero) */
+@media (max-width: 767px) {
+  .rfos-entry { display: none; }
+
+  .rfos-conv-header { padding: 12px 14px 12px; }
+  .rfos-conv-avatar { width: 36px; height: 36px; }
+  .rfos-conv-avatar img { width: 30px; height: 30px; }
+  .rfos-conv-msg { font-size: 0.82rem; }
+
+  .rfos-tl-label { display: none; } /* dots only on mobile */
+  .rfos-tl-dot { width: 6px; height: 6px; }
+
+  .rfos-confirmation-avatar { width: 56px; height: 56px; }
+  .rfos-confirmation-avatar img { width: 46px; height: 46px; }
+
+  .rfos-thinking { padding: 28px 16px; min-height: 180px; }
+
+  .rfos-summary { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .rfos-summary-text { font-size: 0.80rem; }
+}
+
+/* ── Reduced motion ────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .rfos-entry,
+  .rfos-conv-header,
+  .rfos-summary,
+  .rfos-confirmation {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .rfos-entry--urgent .rfos-entry-avatar,
+  .rfos-thinking-avatar,
+  .rfos-thinking-dot {
+    animation: none;
+  }
+
+  .rfos-thinking-dots::after {
+    content: '…';
+    color: rgba(72,100,255,0.6);
+    font-size: 1rem;
+  }
+
+  .rfos-thinking-dot { display: none; }
+}
