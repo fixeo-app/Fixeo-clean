@@ -416,6 +416,15 @@
   transform: translateX(-50%) rotate(45deg);
 }
 
+
+/* ── SUPPRESS services-premium.js CITY PICKER PILL ─────────── */
+/* services-premium.js always injects .svc-city-wrap into
+   .services-filter-bar. In Chapter 3 context we replace it with
+   our contextual city bar (.fc3-city-detected / city-quick-chips). */
+#services.fc3-chapter .svc-city-wrap {
+  display: none !important;
+}
+
 /* ── RESPONSIVE ──────────────────────────────────────────────── */
 
 /* Tablet: 2 columns */
