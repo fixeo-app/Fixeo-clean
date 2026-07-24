@@ -1,91 +1,160 @@
 /**
- * fx-request-flow-v4.js — fxrf4-v1a
- * Fixeo Request Flow V4 — completely isolated request component
+ * fx-request-flow-v4.js — fxrf4-v5a
+ * RAFI Request Flow V5 — Faithful implementation of the UX & Emotional Spec
  *
- * OWNS:
- *   DOM injection (#fxrf4-root — never in HTML)
- *   Backdrop, dialog, header, close button, progress bar
- *   All 3 form screens + review + success
- *   One open(), one close(), one submit()
- *   Scroll lock (position:fixed body, iOS-safe)
- *   State store (plain object, never shared)
+ * EMOTIONAL ARC: Problem → Relief → Confidence → Momentum → Trust
+ * DESIGN PRINCIPLES: One question per screen. Auto-advance. RAFI speaks first.
+ * MOBILE-FIRST: Bottom sheet. Touch-optimized. Keyboard-aware.
  *
- * REUSES (via public APIs, not DOM coupling):
- *   window.FixeoClientRequest.storageKey
- *   window.FixeoClientRequestsStore.appendRequest
- *   window.FixeoClientRequest.buildWhatsappLink
- *   _validatePayload, _saveRequest (inline copies, no legacy DOM needed)
- *   'fixeo:client-request-submit-success' CustomEvent (analytics/admin)
+ * ISOLATED: Zero dependency on .modal, MutationObservers, setTimeout injections.
+ * ROLLBACK: window.FIXEO_FLOW_V4 = false
  *
- * DOES NOT TOUCH:
- *   #request-modal, .modal, .fxrmv3-*, .rfos-*, .fuv3-*, .fxrm2-*
- *   window.openModal, window.closeModal (left alone)
- *   MutationObservers in RAFI OS, fuv3, rmv2 (never triggered)
- *   request-form.js, fixeo-rafi-os-v1.js, any legacy engine
- *
- * FEATURE FLAG: window.FIXEO_FLOW_V4 = false → return early (rollback)
- *
- * VERSION: fxrf4-v1a — 2026-07-24
+ * VERSION: fxrf4-v5a — 2026-07-24
  */
 
 (function () {
   'use strict';
 
-  /* ── Feature flag ─────────────────────────────────────────── */
+  /* ── Feature flag ──────────────────────────────────────────── */
   if (window.FIXEO_FLOW_V4 === false) return;
   if (window._fxrf4Loaded) return;
   window._fxrf4Loaded = true;
 
-  /* ═══════════════════════════════════════════════════════════
+  /* ══════════════════════════════════════════════════════════
      CONSTANTS
-  ═══════════════════════════════════════════════════════════ */
-  var WHATSAPP_NUMBER = '212660484415';
+  ══════════════════════════════════════════════════════════ */
+
+  var WHATSAPP = '212660484415';
   var STORAGE_KEY = 'fixeo_client_requests';
+  var CITY_STORAGE_KEY = 'fixeo_detected_city';
+  var PHONE_MEMORY_KEY = 'fxrf4_last_phone';
 
-  var CITIES = [
+  /* All 20 production cities — exact match with #request-city select */
+  var ALL_CITIES = [
     'Casablanca','Rabat','Marrakech','Fès','Tanger','Agadir',
-    'Meknès','Oujda','Kénitra','Tétouan','Safi','El Jadida',
-    'Nador','Settat','Khouribga','Béni Mellal','Larache','Ksar el-Kébir',
-    'Khémisset','Guelmim'
+    'Meknès','Oujda','Kénitra','Tétouan','Salé','Temara',
+    'El Jadida','Béni Mellal','Nador','Khouribga','Safi',
+    'Taza','Ouarzazate','Mohammedia'
   ];
 
-  var SERVICE_NORM = [
-    { slug:'plomberie',     words:['fuite','plomberie','plombier','robinet','tuyau','chauffe-eau','canalisation','débouchage','debouchage','wc'] },
-    { slug:'serrurerie',    words:['serrure','serrurier','serrurerie','porte bloqu','bloquée','bloquee','clé','clef','barillet'] },
-    { slug:'electricite',   words:['panne elec','panne élec','electricit','électricité','electricien','électricien','disjoncteur','court-circuit','tableau','interrupteur'] },
-    { slug:'climatisation', words:['clim','climatisation','climatiseur','pompe chaleur','ventilation'] },
-    { slug:'peinture',      words:['peinture','peintre','façade','facade','ravalement','enduit'] },
-    { slug:'menuiserie',    words:['menuiserie','menuisier','volet','parquet','fenetre','fenêtre','placard'] },
-    { slug:'maconnerie',    words:['maçonnerie','maconnerie','maçon','béton','carrelage','chape'] },
-    { slug:'nettoyage',     words:['nettoyage','ménage','menage','nettoyer','désinfection'] },
-    { slug:'jardinage',     words:['jardin','jardinage','tondeuse','taille','haie'] },
-    { slug:'demenagement',  words:['déménagement','demenagement','déménager','demenager'] },
+  /* Top 5 cities for the chip row — the ones most users tap */
+  var TOP_CITIES = ['Casablanca','Rabat','Marrakech','Tanger','Agadir'];
+
+  /* Service categories — spec: emoji + label + keyword trigger */
+  var SERVICES = [
+    { slug:'plomberie',     icon:'🔧', label:'Plomberie',
+      words:['fuite','plomb','robinet','tuyau','wc','canalisation','débouchage','debouchage','chauffe-eau'] },
+    { slug:'electricite',   icon:'⚡', label:'Électricité',
+      words:['elect','panne','disjoncteur','court-circuit','prise','lumière','lumiere','tableau'] },
+    { slug:'serrurerie',    icon:'🔐', label:'Serrurerie',
+      words:['serrure','serrurier','porte bloqu','bloquée','clé','clef','barillet','effraction'] },
+    { slug:'climatisation', icon:'❄️', label:'Climatisation',
+      words:['clim','climatis','froid','chaleur','ventil','pompe'] },
+    { slug:'menuiserie',    icon:'🪟', label:'Menuiserie',
+      words:['menuiserie','menuisier','porte','fenêtre','fenetre','volet','parquet','bois','placard'] },
+    { slug:'peinture',      icon:'🖌', label:'Peinture',
+      words:['peinture','peintre','façade','facade','mur','enduit','ravalement'] },
+    { slug:'maconnerie',    icon:'🧱', label:'Maçonnerie',
+      words:['maçon','beton','béton','carrelage','chape','dallage','mur porteur'] },
+    { slug:'nettoyage',     icon:'🧹', label:'Nettoyage',
+      words:['nettoyage','ménage','menage','nettoyer','désinfection','vitres'] },
+    { slug:'jardinage',     icon:'🌿', label:'Jardinage',
+      words:['jardin','taille','haie','pelouse','arrosage','tondeuse'] },
+    { slug:'demenagement',  icon:'📦', label:'Déménagement',
+      words:['déménag','demenag','transport meuble','carton','meuble'] },
   ];
 
-  /* ═══════════════════════════════════════════════════════════
-     STATE — single source of truth
-  ═══════════════════════════════════════════════════════════ */
-  var _state = null;  /* null when closed */
+  /* Urgency choices — spec: now / today / later */
+  var URGENCIES = [
+    { value:'Urgent (moins de 30 min)', icon:'⚡', label:'Maintenant',
+      meta:'Artisan disponible dès que possible', urgent:true },
+    { value:"Aujourd'hui", icon:'📅', label:"Aujourd'hui",
+      meta:'Dans la journée', urgent:false },
+    { value:'Normal', icon:'🗓', label:'Plus tard',
+      meta:'Planification flexible', urgent:false },
+  ];
 
-  function _freshState(mode, source) {
+  /* RAFI messages — exact copy from spec */
+  var MSG = {
+    step1:         'Dites-moi ce qui se passe.',
+    step1Urgent:   'Qu'est-ce qui se passe en ce moment\u00a0?',
+    step2:         function(s) { return s + '. Vous êtes où\u00a0?'; },
+    step2Urgent:   'Où êtes-vous maintenant\u00a0?',
+    step2DetCity:  function(s, city) { return s + '. Vous êtes à\u00a0' + city + '\u00a0?'; },
+    step3:         'Sur quel numéro vous rappelle-t-on\u00a0?',
+    step3Urgent:   'Un artisan va vous rappeler. Votre numéro\u00a0?',
+    step3Pre:      'C'est toujours ce numéro\u00a0?',
+    interstitial:  'Je cherche les meilleurs professionnels pour vous.',
+    interstitialLate: 'Ça prend un instant de plus…',
+    successDefault: 'C'est noté. RAFI est sur le coup.',
+    successUrgent:  'J'en ai déjà un pour vous.',
+    successMarket:  'Votre demande est visible par les artisans.',
+    step1Other:    'Décrivez-le en quelques mots.',
+  };
+
+  /* ══════════════════════════════════════════════════════════
+     STATE — single plain object, fresh on every open
+  ══════════════════════════════════════════════════════════ */
+
+  var _st = null;
+  var _isOpen = false;
+
+  function _fresh(mode, source) {
     return {
-      mode: mode || 'default',
-      source: source || 'unknown',
-      screen: 'step1',          /* step1 | step2 | step3 | review | success */
-      service: '',
-      city: '',
-      urgency: mode === 'express' ? 'Urgent (moins de 30 min)' : 'Normal',
-      description: '',
-      phone: '',
-      trackingRef: '',
+      mode:         mode || 'default',
+      source:       source || 'unknown',
+      screen:       'step1',
+      serviceSlug:  '',
+      serviceLabel: '',
+      city:         '',
+      urgency:      mode === 'express' ? URGENCIES[0].value : URGENCIES[2].value,
+      phone:        '',
+      description:  '',
+      ref:          '',
       submitLocked: false,
-      submitTs: 0
+      submitTs:     0,
+      // Prefills from context
+      prefillService: '',
+      prefillCity:    '',
+      prefillPhone:   '',
+      detectedCity:   '',
     };
   }
 
-  /* ═══════════════════════════════════════════════════════════
+  /* ══════════════════════════════════════════════════════════
+     CONTEXT PREFILL — reads what RAFI OS and hero know
+  ══════════════════════════════════════════════════════════ */
+
+  function _readContext(st) {
+    /* Detected city */
+    try {
+      var dc = localStorage.getItem(CITY_STORAGE_KEY) || '';
+      if (dc && ALL_CITIES.indexOf(dc) >= 0) st.detectedCity = dc;
+    } catch(_) {}
+
+    /* Remembered phone */
+    try {
+      var ph = localStorage.getItem(PHONE_MEMORY_KEY) || '';
+      if (ph && _validPhone(ph)) st.prefillPhone = ph;
+    } catch(_) {}
+
+    /* Service from hero input */
+    var srcEl = document.querySelector('#qsm-input-nlp, #smart-search-input, #secondary-search-input, #search-input');
+    if (srcEl && srcEl.value && srcEl.value.trim().length > 2) {
+      st.prefillService = srcEl.value.trim();
+    }
+
+    /* City from hero city picker */
+    var citySrc = document.querySelector('#qsm-select-city, #filter-city, #services-city-filter');
+    if (citySrc && citySrc.value && ALL_CITIES.indexOf(citySrc.value) >= 0) {
+      st.prefillCity = citySrc.value;
+    }
+  }
+
+  /* ══════════════════════════════════════════════════════════
      SCROLL LOCK — position:fixed body (iOS-safe)
-  ═══════════════════════════════════════════════════════════ */
+  ══════════════════════════════════════════════════════════ */
+
   var _scrollY = 0;
   var _locked  = false;
 
@@ -93,41 +162,30 @@
     if (_locked) return;
     _locked  = true;
     _scrollY = window.scrollY || window.pageYOffset || 0;
-    document.body.style.overflow = 'hidden';
-    document.body.style.position = 'fixed';
-    document.body.style.top      = '-' + _scrollY + 'px';
-    document.body.style.width    = '100%';
-    document.body.style.left     = '0';
-    document.body.style.right    = '0';
+    document.body.style.overflow  = 'hidden';
+    document.body.style.position  = 'fixed';
+    document.body.style.top       = '-' + _scrollY + 'px';
+    document.body.style.width     = '100%';
+    document.body.style.left      = '0';
+    document.body.style.right     = '0';
   }
 
   function _unlock() {
     if (!_locked) return;
     _locked = false;
-    document.body.style.overflow = '';
-    document.body.style.position = '';
-    document.body.style.top      = '';
-    document.body.style.width    = '';
-    document.body.style.left     = '';
-    document.body.style.right    = '';
+    document.body.style.overflow  = '';
+    document.body.style.position  = '';
+    document.body.style.top       = '';
+    document.body.style.width     = '';
+    document.body.style.left      = '';
+    document.body.style.right     = '';
     document.body.classList.remove('modal-open', 'fxmsf-locked');
     window.scrollTo(0, _scrollY);
   }
 
-  /* ═══════════════════════════════════════════════════════════
-     BUSINESS LOGIC (inline copies — no legacy DOM dependency)
-  ═══════════════════════════════════════════════════════════ */
-
-  function _normalizeService(raw) {
-    var s = String(raw || '').toLowerCase();
-    for (var i = 0; i < SERVICE_NORM.length; i++) {
-      var entry = SERVICE_NORM[i];
-      for (var j = 0; j < entry.words.length; j++) {
-        if (s.indexOf(entry.words[j]) >= 0) return entry.slug;
-      }
-    }
-    return raw;
-  }
+  /* ══════════════════════════════════════════════════════════
+     BUSINESS LOGIC — inline, no legacy DOM dependency
+  ══════════════════════════════════════════════════════════ */
 
   function _normPhone(raw) {
     var d = String(raw || '').replace(/\D/g, '');
@@ -143,41 +201,61 @@
     return true;
   }
 
-  function _validService(raw) {
-    var s = String(raw || '').trim();
-    if (s.length < 3) return false;
-    if (/^(.)\1+$/i.test(s.replace(/\s/g, ''))) return false;
-    if (/^\d+$/.test(s)) return false;
-    if (['test','aaa','aaaa','bbbb','xxx','xxxx','essai','demo'].indexOf(s.toLowerCase()) >= 0) return false;
-    return true;
+  function _formatPhoneDisplay(raw) {
+    /* Format for display: 06 12 34 56 78 */
+    var d = String(raw || '').replace(/\D/g, '');
+    if (d.startsWith('212')) d = '0' + d.slice(3);
+    return d.replace(/(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/, '$1 $2 $3 $4 $5');
+  }
+
+  function _maskPhone(raw) {
+    var fmt = _formatPhoneDisplay(raw);
+    var parts = fmt.split(' ');
+    if (parts.length >= 5) {
+      parts[1] = '••'; parts[2] = '••'; parts[3] = '••';
+      return parts.join(' ');
+    }
+    return fmt;
+  }
+
+  function _normalizeSlug(raw) {
+    var s = String(raw || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+    for (var i = 0; i < SERVICES.length; i++) {
+      var svc = SERVICES[i];
+      for (var j = 0; j < svc.words.length; j++) {
+        if (s.indexOf(svc.words[j]) >= 0) return { slug: svc.slug, label: svc.label };
+      }
+    }
+    return null;
   }
 
   function _genRef() {
-    return 'FX-' + Date.now().toString(36).toUpperCase().slice(-5) +
+    return 'FX-' + Date.now().toString(36).toUpperCase().slice(-4) +
            Math.random().toString(36).slice(2,5).toUpperCase();
   }
 
-  function _buildWALink(st) {
-    var lines = ['Bonjour, je viens de publier une demande sur Fixeo :'];
-    if (st.mode === 'express') lines[0] = 'Bonjour, je viens de lancer une demande urgente sur Fixeo :';
-    if (st.service)     lines.push('Service\u00a0: ' + st.service);
-    if (st.city)        lines.push('Ville\u00a0: ' + st.city);
-    if (st.urgency)     lines.push('Urgence\u00a0: ' + st.urgency);
-    if (st.description) lines.push('D\u00e9tail\u00a0: ' + st.description);
-    if (st.phone)       lines.push('T\u00e9l\u00e9phone\u00a0: ' + st.phone);
+  function _buildWAText(st) {
+    var lines = st.mode === 'express'
+      ? ['Bonjour, je lance une demande urgente via Fixeo :']
+      : ['Bonjour, je viens de publier une demande sur Fixeo :'];
+    if (st.serviceLabel) lines.push('Service\u00a0: ' + st.serviceLabel);
+    if (st.city)         lines.push('Ville\u00a0: ' + st.city);
+    if (st.urgency)      lines.push('Urgence\u00a0: ' + st.urgency);
+    if (st.description)  lines.push('Détail\u00a0: ' + st.description);
+    if (st.phone)        lines.push('Téléphone\u00a0: ' + st.phone);
+    if (st.ref)          lines.push('Réf\u00a0: ' + st.ref);
     lines.push('', 'Pouvez-vous me recontacter\u00a0?');
-    return 'https://wa.me/' + WHATSAPP_NUMBER + '?text=' + encodeURIComponent(lines.join('\n'));
+    return 'https://wa.me/' + WHATSAPP + '?text=' + encodeURIComponent(lines.join('\n'));
   }
 
   function _saveRequest(st) {
     try {
       var ref = _genRef();
-      st.trackingRef = ref;
-
+      st.ref = ref;
       var req = {
         id:           Date.now(),
-        service:      _normalizeService(st.service),
-        problem:      st.service,
+        service:      st.serviceSlug || st.serviceLabel,
+        problem:      st.serviceLabel,
         description:  st.description || '',
         city:         st.city,
         phone:        st.phone,
@@ -185,32 +263,33 @@
         tracking_ref: ref,
         status:       'nouvelle',
         created_at:   new Date().toISOString(),
-        source:       'fxrf4-v1a',
+        source:       'fxrf4-v5a',
+        mode:         st.mode,
         viewed:       false
       };
 
-      /* Try FixeoClientRequestsStore first */
+      /* Try FixeoClientRequestsStore (primary) */
       if (window.FixeoClientRequestsStore && window.FixeoClientRequestsStore.appendRequest) {
-        var result = window.FixeoClientRequestsStore.appendRequest(req);
-        return result || { request: req, duplicated: false };
+        var r = window.FixeoClientRequestsStore.appendRequest(req);
+        return r || { request: req, duplicated: false };
       }
 
-      /* Fallback: direct localStorage */
+      /* Fallback: localStorage */
       var key = (window.FixeoClientRequest && window.FixeoClientRequest.storageKey) || STORAGE_KEY;
       var list = [];
       try { list = JSON.parse(localStorage.getItem(key) || '[]'); } catch(_) {}
       if (!Array.isArray(list)) list = [];
 
-      /* Deduplicate: same service+city+phone within 2.5s */
+      /* Deduplicate within 2.5s */
       var last = list.length ? list[list.length - 1] : null;
       if (last) {
-        var sameContent = String(last.service||'').trim() === _normalizeService(st.service).trim() &&
-                          String(last.city||'').trim()    === st.city.trim() &&
-                          String(last.phone||'').trim()   === st.phone.trim();
-        var recentMs = Math.abs(Date.now() - Date.parse(last.created_at || 0));
-        if (sameContent && recentMs < 2500) return { request: last, duplicated: true };
+        var same = String(last.problem||'').trim() === st.serviceLabel.trim() &&
+                   String(last.city||'').trim()    === st.city.trim() &&
+                   String(last.phone||'').trim()   === st.phone.trim();
+        if (same && Math.abs(Date.now() - Date.parse(last.created_at || 0)) < 2500) {
+          return { request: last, duplicated: true };
+        }
       }
-
       list.push(req);
       localStorage.setItem(key, JSON.stringify(list));
       return { request: req, duplicated: false };
@@ -220,562 +299,1015 @@
     }
   }
 
-  /* ═══════════════════════════════════════════════════════════
-     DOM CONSTRUCTION — build once, reuse
-  ═══════════════════════════════════════════════════════════ */
+  function _fireAnalytics(req, mode, duplicated) {
+    try {
+      window.dispatchEvent(new CustomEvent('fixeo:client-request-submit-success', {
+        detail: { request: req, mode: mode, source: 'fxrf4-v5a',
+                  storageKey: STORAGE_KEY, duplicated: duplicated }
+      }));
+    } catch(_) {}
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     DOM HELPERS
+  ══════════════════════════════════════════════════════════ */
 
   function _h(tag, attrs, children) {
     var el = document.createElement(tag);
-    if (attrs) Object.keys(attrs).forEach(function(k) {
-      if (k === 'cls') { el.className = attrs[k]; }
-      else if (k === 'txt') { el.textContent = attrs[k]; }
-      else if (k === 'html') { el.innerHTML = attrs[k]; }
-      else el.setAttribute(k, attrs[k]);
-    });
+    if (attrs) {
+      Object.keys(attrs).forEach(function(k) {
+        if (k === 'cls')  el.className = attrs[k];
+        else if (k === 'txt')  el.textContent = attrs[k];
+        else if (k === 'html') el.innerHTML = attrs[k];
+        else el.setAttribute(k, attrs[k]);
+      });
+    }
     if (children) children.forEach(function(c) { if (c) el.appendChild(c); });
     return el;
   }
+
+  function _q(sel) { return _root ? _root.querySelector(sel) : null; }
+  function _qa(sel) { return _root ? Array.from(_root.querySelectorAll(sel)) : []; }
+
+  /* ══════════════════════════════════════════════════════════
+     DOM STRUCTURE — built once, reused
+  ══════════════════════════════════════════════════════════ */
 
   var _root = null;
 
   function _buildDOM() {
     if (_root) return;
 
-    _root = _h('div', { id: 'fxrf4-root' });
+    _root = _h('div', { id: 'fxrf4-root', 'aria-hidden': 'true' });
 
-    /* Backdrop */
+    /* Backdrop — tap to close */
     var bd = _h('div', { id: 'fxrf4-bd' });
     bd.addEventListener('click', function(e) { if (e.target === bd) close(); });
 
     /* Dialog */
-    var dialog = _h('div', { id: 'fxrf4-dialog', role: 'dialog', 'aria-modal': 'true',
-                              'aria-labelledby': 'fxrf4-title' });
+    var dialog = _h('div', {
+      id: 'fxrf4-dialog',
+      role: 'dialog',
+      'aria-modal': 'true',
+      'aria-labelledby': 'fxrf4-rafi-msg-text'
+    });
 
     /* Header */
     var head = _h('div', { id: 'fxrf4-head' });
-    var eyebrow = _h('span', { cls: 'fxrf4-eyebrow', txt: 'FIXEO' });
-    var title   = _h('span', { cls: 'fxrf4-title', id: 'fxrf4-title', txt: 'Votre demande' });
-    var closeBtn = _h('button', { id: 'fxrf4-close', type: 'button',
-                                   'aria-label': 'Fermer', html: '&#x2715;' });
-    closeBtn.addEventListener('click',    function(e) { e.preventDefault(); close(); });
-    closeBtn.addEventListener('touchend', function(e) { e.preventDefault(); close(); }, { passive: false });
-    head.appendChild(eyebrow);
-    head.appendChild(title);
+
+    var rafiRow = _h('div', { id: 'fxrf4-rafi-row' });
+
+    var avatar = _h('div', { id: 'fxrf4-avatar' });
+    /* Try to use the RAFI micro image if available */
+    var rafiImgSrc = window.RAFI_MICRO || '/rafi/RAFI_V2_MicroGlyph.webp';
+    var avImg = _h('img', { src: rafiImgSrc, alt: '', width: '36', height: '36',
+                             loading: 'eager', decoding: 'async' });
+    avImg.onerror = function() { this.style.display = 'none'; };
+    avatar.appendChild(avImg);
+
+    var rafiMsg = _h('div', { id: 'fxrf4-rafi-msg' });
+    var rafiName = _h('span', { cls: 'fxrf4-rafi-name', txt: 'RAFI', 'aria-hidden': 'true' });
+    var rafiText = _h('span', {
+      cls: 'fxrf4-rafi-text',
+      id: 'fxrf4-rafi-msg-text',
+      txt: MSG.step1
+    });
+    rafiMsg.appendChild(rafiName);
+    rafiMsg.appendChild(rafiText);
+
+    rafiRow.appendChild(avatar);
+    rafiRow.appendChild(rafiMsg);
+
+    var closeBtn = _h('button', {
+      id: 'fxrf4-close', type: 'button',
+      'aria-label': 'Fermer',
+      html: '&#x2715;'
+    });
+
+    function _doClose(e) { e.preventDefault(); e.stopPropagation(); close(); }
+    closeBtn.addEventListener('click',    _doClose);
+    closeBtn.addEventListener('touchend', _doClose, { passive: false });
+
+    head.appendChild(rafiRow);
     head.appendChild(closeBtn);
 
-    /* Progress bar */
+    /* Progress */
     var progress = _h('div', { id: 'fxrf4-progress' });
-    var progressFill = _h('div', { id: 'fxrf4-progress-fill' });
-    progress.appendChild(progressFill);
+    var fill = _h('div', { id: 'fxrf4-progress-fill' });
+    progress.appendChild(fill);
 
-    /* Body (swapped per screen) */
+    /* Body */
     var body = _h('div', { id: 'fxrf4-body' });
 
-    /* Footer (swapped per screen) */
+    /* Footer */
     var foot = _h('div', { id: 'fxrf4-foot' });
 
     dialog.appendChild(head);
     dialog.appendChild(progress);
     dialog.appendChild(body);
     dialog.appendChild(foot);
+
     _root.appendChild(bd);
     _root.appendChild(dialog);
     document.body.appendChild(_root);
+
+    /* Swipe-to-dismiss on mobile */
+    _wireSwipeDismiss(dialog);
+
+    /* Diagnostic (spec requirement) */
+    console.log('[fxrf4-v5a] DOM built. Header children:', head.childElementCount, '(expected 2: rafi-row, close)');
   }
 
-  /* ── helpers ── */
-  function _q(s) { return _root ? _root.querySelector(s) : null; }
-  function _setTitle(eyebrow, title, urgent) {
-    var ey = _q('.fxrf4-eyebrow');
-    var ti = _q('.fxrf4-title');
-    if (ey) { ey.textContent = eyebrow; ey.classList.toggle('is-urgent', !!urgent); }
-    if (ti)   ti.textContent  = title;
-  }
-  function _setProgress(step, total) {
-    var fill = _q('#fxrf4-progress-fill');
-    if (fill) fill.style.width = Math.round((step / total) * 100) + '%';
-  }
-  function _clearBody() {
-    var b = _q('#fxrf4-body'); if (b) b.innerHTML = '';
-  }
-  function _clearFoot() {
-    var f = _q('#fxrf4-foot'); if (f) f.innerHTML = '';
-  }
-  function _btn(label, cls, id, urgent) {
-    var b = _h('button', { cls: 'fxrf4-btn ' + cls, type: 'button', txt: label });
-    if (id) b.id = id;
-    if (urgent) b.classList.add('is-urgent');
-    return b;
-  }
-  function _field(labelTxt, inputEl, id) {
-    var wrap = _h('div', { cls: 'fxrf4-field' });
-    var lbl  = _h('label', { cls: 'fxrf4-label', txt: labelTxt, 'for': id });
-    if (id) inputEl.id = id;
-    wrap.appendChild(lbl);
-    wrap.appendChild(inputEl);
-    return wrap;
-  }
-  function _showError(msg) {
-    var e = _q('#fxrf4-error');
-    if (e) { e.textContent = msg; e.classList.add('is-visible'); }
-  }
-  function _clearError() {
-    var e = _q('#fxrf4-error'); if (e) e.classList.remove('is-visible');
-  }
+  /* ══════════════════════════════════════════════════════════
+     RAFI MESSAGE — typewriter effect
+  ══════════════════════════════════════════════════════════ */
 
-  /* ═══════════════════════════════════════════════════════════
-     SCREENS
-  ═══════════════════════════════════════════════════════════ */
+  var _typeTimer = null;
 
-  /* ── STEP 1: Service + City ──────────────────────────────── */
-  function _renderStep1() {
-    var st = _state;
-    var isUrgent = st.mode === 'express';
-    _setTitle(isUrgent ? 'URGENT' : 'FIXEO',
-              isUrgent ? 'Quel est le probl\u00e8me\u00a0?' : 'Quel service vous faut-il\u00a0?',
-              isUrgent);
-    _setProgress(1, 3);
-    _clearBody();
-    _clearFoot();
+  function _rafiSpeak(text, urgent, instant) {
+    var el = _q('#fxrf4-rafi-msg-text');
+    var name = _q('.fxrf4-rafi-name');
+    if (!el) return;
 
-    var body = _q('#fxrf4-body');
-    var foot = _q('#fxrf4-foot');
+    /* Update urgent styling */
+    if (name) name.classList.toggle('is-urgent', !!urgent);
 
-    /* Error placeholder */
-    var errEl = _h('div', { id: 'fxrf4-error' });
-    body.appendChild(errEl);
-
-    /* Service input */
-    var svcInput = _h('input', {
-      cls: 'fxrf4-input', type: 'text', name: 'service',
-      placeholder: 'Ex\u00a0: plomberie, panne \u00e9lectrique, serrure\u2026',
-      maxlength: '80', autocomplete: 'off'
-    });
-    svcInput.value = st.service;
-    body.appendChild(_field('Service demand\u00e9', svcInput, 'fxrf4-svc'));
-
-    /* City select */
-    var citySelect = _h('select', { cls: 'fxrf4-select', name: 'city' });
-    var defaultOpt = _h('option', { value: '', txt: 'Choisir une ville' });
-    citySelect.appendChild(defaultOpt);
-    CITIES.forEach(function(c) {
-      var opt = _h('option', { value: c, txt: c });
-      if (c === st.city) opt.selected = true;
-      citySelect.appendChild(opt);
-    });
-    var selectWrap = _h('div', { cls: 'fxrf4-select-wrap' });
-    selectWrap.appendChild(citySelect);
-    body.appendChild(_field('Ville', selectWrap, 'fxrf4-city'));
-    citySelect.id = 'fxrf4-city';
-
-    /* Pre-fill city from detected city */
-    if (!st.city) {
-      var detected = localStorage.getItem('fixeo_detected_city');
-      if (detected && CITIES.indexOf(detected) >= 0) {
-        citySelect.value = detected;
-      }
+    if (instant || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      el.textContent = text;
+      el.classList.remove('is-typing');
+      return;
     }
 
-    /* Next button */
-    var nextBtn = _btn('Continuer \u2192', 'fxrf4-btn-primary', 'fxrf4-next1', isUrgent);
-    nextBtn.addEventListener('click', function() {
-      _clearError();
-      var svc  = svcInput.value.trim();
-      var city = citySelect.value;
-      if (!svc || !_validService(svc)) {
-        svcInput.classList.add('is-error');
-        _showError('D\u00e9crivez votre besoin en quelques mots\u00a0(ex\u00a0: fuite d\u2019eau).');
-        svcInput.focus();
-        return;
+    /* Clear any in-progress type */
+    if (_typeTimer) { clearInterval(_typeTimer); _typeTimer = null; }
+    el.textContent = '';
+    el.classList.add('is-typing');
+
+    var i = 0;
+    var chars = Array.from(text); /* handles emoji correctly */
+    var delay = Math.max(22, Math.min(36, 1200 / chars.length)); /* 22–36ms per char, max ~1.2s total */
+
+    _typeTimer = setInterval(function() {
+      el.textContent += chars[i];
+      i++;
+      if (i >= chars.length) {
+        clearInterval(_typeTimer);
+        _typeTimer = null;
+        el.classList.remove('is-typing');
       }
-      if (!city) {
-        citySelect.classList.add('is-error');
-        _showError('Veuillez choisir une ville.');
-        citySelect.focus();
-        return;
-      }
-      st.service = svc;
-      st.city    = city;
-      _renderStep2();
-    });
-
-    /* Keyboard: enter on city → next */
-    citySelect.addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') nextBtn.click();
-    });
-
-    foot.appendChild(nextBtn);
-
-    /* Focus service input */
-    requestAnimationFrame(function() { svcInput.focus({ preventScroll: true }); });
+    }, delay);
   }
 
-  /* ── STEP 2: Urgency ─────────────────────────────────────── */
-  function _renderStep2() {
-    var st = _state;
-    var isUrgent = st.mode === 'express';
-    _setTitle(isUrgent ? 'URGENT' : 'FIXEO', "C'est pour quand\u00a0?", isUrgent);
-    _setProgress(2, 3);
-    _clearBody();
-    _clearFoot();
+  /* ══════════════════════════════════════════════════════════
+     PROGRESS
+  ══════════════════════════════════════════════════════════ */
+
+  function _setProgress(n, total) {
+    var fill = _q('#fxrf4-progress-fill');
+    if (fill) fill.style.width = Math.round((n / total) * 100) + '%';
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     SCREEN TRANSITIONS
+  ══════════════════════════════════════════════════════════ */
+
+  var _transitioning = false;
+
+  function _transition(renderFn, direction) {
+    /* direction: 'forward' | 'back' */
+    if (_transitioning) return;
+    _transitioning = true;
 
     var body = _q('#fxrf4-body');
+    if (!body) { renderFn(); _transitioning = false; return; }
+
+    var outClass = direction === 'back' ? 'is-leaving-back' : 'is-leaving';
+    var current = body.querySelector('.fxrf4-screen');
+
+    if (!current || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      body.innerHTML = '';
+      renderFn();
+      _transitioning = false;
+      return;
+    }
+
+    current.classList.add(outClass);
+    setTimeout(function() {
+      body.innerHTML = '';
+      renderFn();
+      _transitioning = false;
+    }, 180);
+  }
+
+  function _transitionFwd(renderFn) { _transition(renderFn, 'forward'); }
+  function _transitionBck(renderFn) { _transition(renderFn, 'back'); }
+
+  function _screen(children) {
+    /* Wrap content in .fxrf4-screen for transition animation */
+    var wrap = _h('div', { cls: 'fxrf4-screen' });
+    if (children) children.forEach(function(c) { if (c) wrap.appendChild(c); });
+    return wrap;
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     FOOTER MANAGEMENT
+  ══════════════════════════════════════════════════════════ */
+
+  function _setFoot() {
     var foot = _q('#fxrf4-foot');
+    if (foot) foot.innerHTML = '';
+    return foot;
+  }
 
-    var errEl = _h('div', { id: 'fxrf4-error' });
-    body.appendChild(errEl);
+  function _primaryBtn(label, urgent, onClick) {
+    var btn = _h('button', {
+      cls: 'fxrf4-btn fxrf4-btn-primary' + (urgent ? ' is-urgent' : ''),
+      type: 'button', txt: label
+    });
+    btn.addEventListener('click', function(e) { e.preventDefault(); onClick(btn); });
+    btn.addEventListener('touchend', function(e) { e.preventDefault(); onClick(btn); }, { passive: false });
+    return btn;
+  }
 
-    var choices = [
-      { value: 'Urgent (moins de 30 min)', icon: '\u26a1', label: 'Maintenant', meta: 'Artisan disponible \u00e0 la demande', urgent: true },
-      { value: 'Aujourd\u2019hui',          icon: '\ud83d\uddd3\ufe0f', label: 'Aujourd\u2019hui', meta: 'Dans la journ\u00e9e', urgent: false },
-      { value: 'Normal',                   icon: '\ud83d\udcc5', label: 'Plus tard',    meta: 'Planification flexible',    urgent: false },
-    ];
+  function _backBtn(onClick) {
+    var btn = _h('button', { cls: 'fxrf4-btn fxrf4-btn-back', type: 'button', txt: '← Retour' });
+    btn.addEventListener('click', function(e) { e.preventDefault(); onClick(); });
+    btn.addEventListener('touchend', function(e) { e.preventDefault(); onClick(); }, { passive: false });
+    return btn;
+  }
 
-    var grid = _h('div', { cls: 'fxrf4-choices' });
-    choices.forEach(function(c) {
-      var el = _h('div', { cls: 'fxrf4-choice' + (c.urgent ? ' is-urgent' : '') });
-      if (c.value === st.urgency) el.classList.add('is-selected');
-      var icon = _h('span', { cls: 'fxrf4-choice-icon', txt: c.icon });
-      var txt  = _h('span', { cls: 'fxrf4-choice-text' });
-      txt.appendChild(_h('span', { cls: 'fxrf4-choice-label', txt: c.label }));
-      txt.appendChild(_h('span', { cls: 'fxrf4-choice-meta',  txt: c.meta  }));
-      el.appendChild(icon);
-      el.appendChild(txt);
+  function _btnLoading(btn) {
+    btn.disabled = true;
+    btn.innerHTML = '';
+    var dots = _h('div', { cls: 'fxrf4-btn-dots' });
+    [1,2,3].forEach(function() { dots.appendChild(_h('span')); });
+    btn.appendChild(dots);
+  }
 
-      function _select() {
-        grid.querySelectorAll('.fxrf4-choice').forEach(function(x) { x.classList.remove('is-selected'); });
-        el.classList.add('is-selected');
-        st.urgency = c.value;
+  function _btnRestore(btn, label, urgent) {
+    btn.disabled = false;
+    btn.textContent = label;
+    btn.classList.toggle('is-urgent', !!urgent);
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     CHIP TAP — selection feedback + auto-advance
+  ══════════════════════════════════════════════════════════ */
+
+  function _chipTap(chip, allChips, onAdvance) {
+    /* Spec: tap → scale 1.04 (80ms) → dim others (100ms) → advance (200ms) */
+    chip.classList.add('is-tapping');
+    setTimeout(function() {
+      chip.classList.remove('is-tapping');
+      chip.classList.add('is-selected');
+      allChips.forEach(function(c) {
+        if (c !== chip) c.classList.add('is-dimmed');
+      });
+    }, 80);
+
+    /* Haptic feedback */
+    try { if (navigator.vibrate) navigator.vibrate(8); } catch(_) {}
+
+    /* Auto-advance after hold (spec: 200ms so user registers their choice) */
+    setTimeout(onAdvance, 260);
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     SCREEN 1 — SERVICE SELECTION
+     "Dites-moi ce qui se passe."
+     One chip tap auto-advances. RAFI speaks first.
+  ══════════════════════════════════════════════════════════ */
+
+  function _renderStep1() {
+    var st = _st;
+    var isUrgent = st.mode === 'express';
+
+    _setProgress(1, 3);
+    _rafiSpeak(isUrgent ? MSG.step1Urgent : MSG.step1, isUrgent);
+
+    var foot = _setFoot();
+
+    /* Grid of service chips */
+    var grid = _h('div', { cls: 'fxrf4-chips-grid' });
+    var chips = [];
+
+    SERVICES.forEach(function(svc) {
+      var chip = _h('div', {
+        cls: 'fxrf4-chip',
+        role: 'button',
+        tabindex: '0',
+        'aria-label': svc.label
+      });
+
+      var icon  = _h('span', { cls: 'fxrf4-chip-icon', txt: svc.icon });
+      var label = _h('span', { cls: 'fxrf4-chip-label', txt: svc.label });
+      chip.appendChild(icon);
+      chip.appendChild(label);
+
+      /* Pre-selected if RAFI detected service from hero */
+      if (st.prefillService) {
+        var match = _normalizeSlug(st.prefillService);
+        if (match && match.slug === svc.slug) {
+          chip.classList.add('is-selected');
+          st.serviceSlug  = svc.slug;
+          st.serviceLabel = svc.label;
+        }
       }
-      el.addEventListener('click',    _select);
-      el.addEventListener('touchend', function(e) { e.preventDefault(); _select(); }, { passive: false });
-      grid.appendChild(el);
-    });
-    body.appendChild(grid);
 
-    /* If express mode, pre-select urgent */
-    if (isUrgent) st.urgency = 'Urgent (moins de 30 min)';
+      function _onTap() {
+        if (chip.classList.contains('is-dimmed')) return;
+        st.serviceSlug  = svc.slug;
+        st.serviceLabel = svc.label;
+        _chipTap(chip, chips, function() { _transitionFwd(_renderStep2); });
+      }
 
-    /* Next */
-    var nextBtn = _btn('Continuer \u2192', 'fxrf4-btn-primary', 'fxrf4-next2', isUrgent);
-    nextBtn.addEventListener('click', function() {
-      _renderStep3();
+      chip.addEventListener('click',    _onTap);
+      chip.addEventListener('touchend', function(e) { e.preventDefault(); _onTap(); }, { passive: false });
+      chip.addEventListener('keydown',  function(e) { if (e.key === 'Enter' || e.key === ' ') _onTap(); });
+
+      chips.push(chip);
+      grid.appendChild(chip);
     });
+
+    /* "Autre chose" chip — full width */
+    var otherChip = _h('div', {
+      cls: 'fxrf4-chip is-other',
+      role: 'button', tabindex: '0', 'aria-label': 'Autre chose'
+    });
+    otherChip.appendChild(_h('span', { cls: 'fxrf4-chip-label', txt: '+ Autre chose' }));
+    chips.push(otherChip);
+    grid.appendChild(otherChip);
+
+    /* "Autre chose" → inline input */
+    var otherWrap = _h('div', { cls: 'fxrf4-other-input-wrap' });
+    var otherInput = _h('input', {
+      cls: 'fxrf4-phone-input', /* reuse phone input style */
+      type: 'text', placeholder: 'Ex\u00a0: fuite d\u2019eau, vitres cassées…',
+      maxlength: '80', autocomplete: 'off', autocorrect: 'off'
+    });
+    otherInput.style.fontSize = '0.96rem';
+    otherInput.style.paddingLeft = '16px';
+    otherWrap.appendChild(otherInput);
+    /* "Confirmer" chip appears inline when ≥3 chars */
+    var confirmOtherBtn = _h('button', {
+      cls: 'fxrf4-btn fxrf4-btn-primary',
+      type: 'button', txt: 'Confirmer →'
+    });
+    confirmOtherBtn.style.marginTop = '10px';
+    confirmOtherBtn.style.display = 'none';
+    otherWrap.appendChild(confirmOtherBtn);
+
+    otherInput.addEventListener('input', function() {
+      var val = otherInput.value.trim();
+      confirmOtherBtn.style.display = val.length >= 3 ? 'flex' : 'none';
+    });
+
+    function _confirmOther() {
+      var val = otherInput.value.trim();
+      if (val.length < 3) return;
+      st.serviceSlug  = 'autre';
+      st.serviceLabel = val;
+      _transitionFwd(_renderStep2);
+    }
+    confirmOtherBtn.addEventListener('click', _confirmOther);
+    confirmOtherBtn.addEventListener('touchend', function(e) { e.preventDefault(); _confirmOther(); }, { passive: false });
+
+    function _openOther() {
+      chips.forEach(function(c) {
+        if (c !== otherChip) c.classList.add('is-dimmed');
+      });
+      otherChip.classList.add('is-selected');
+      otherWrap.classList.add('is-visible');
+      _rafiSpeak(MSG.step1Other, isUrgent);
+      setTimeout(function() { otherInput.focus({ preventScroll: true }); }, 120);
+    }
+
+    otherChip.addEventListener('click', _openOther);
+    otherChip.addEventListener('touchend', function(e) { e.preventDefault(); _openOther(); }, { passive: false });
+
+    var body = _q('#fxrf4-body');
+    if (body) body.appendChild(_screen([grid, otherWrap]));
+
+    /* If hero pre-selected a service, auto-advance after brief pause */
+    if (st.serviceSlug && !foot.innerHTML) {
+      setTimeout(function() { _transitionFwd(_renderStep2); }, 600);
+    }
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     SCREEN 2 — CITY + URGENCY
+     "[Service]. Vous êtes où ?"
+     City chip → urgency cards appear → tap → auto-advance to Step 3
+  ══════════════════════════════════════════════════════════ */
+
+  function _renderStep2() {
+    var st = _st;
+    var isUrgent = st.mode === 'express';
+    var detected = st.detectedCity || st.prefillCity || '';
+
+    _setProgress(2, 3);
+
+    /* RAFI message — names the service (spec: "Plomberie. Vous êtes où ?") */
+    var msg;
+    if (isUrgent) {
+      msg = MSG.step2Urgent;
+    } else if (detected) {
+      msg = MSG.step2DetCity(st.serviceLabel, detected);
+    } else {
+      msg = MSG.step2(st.serviceLabel);
+    }
+    _rafiSpeak(msg, isUrgent);
+
+    var _setFoot2 = _setFoot;
+    _setFoot2();
+
+    var body = _q('#fxrf4-body');
+
+    /* ── City section ── */
+    var cityRow = _h('div', { cls: 'fxrf4-city-row', 'aria-label': 'Choisir une ville' });
+    var cityChips = [];
+    var selectedCity = st.city || detected || '';
+
+    /* Build top-city chips, detected city first if not in top 5 */
+    var displayCities = TOP_CITIES.slice();
+    if (detected && displayCities.indexOf(detected) < 0) {
+      displayCities.unshift(detected);
+      displayCities = displayCities.slice(0, 5);
+    }
+
+    displayCities.forEach(function(city) {
+      var chip = _h('div', {
+        cls: 'fxrf4-city-chip',
+        role: 'button', tabindex: '0', 'aria-label': city,
+        txt: city
+      });
+
+      if (city === detected) chip.classList.add('is-detected');
+      if (city === selectedCity) chip.classList.add('is-selected');
+
+      function _onCityTap() {
+        cityChips.forEach(function(c) { c.classList.remove('is-selected'); });
+        chip.classList.add('is-selected');
+        st.city = city;
+        /* If express, skip urgency → go straight to step 3 */
+        if (isUrgent) {
+          setTimeout(function() { _transitionFwd(_renderStep3); }, 200);
+        } else {
+          _showUrgencyCards();
+        }
+      }
+
+      chip.addEventListener('click',    _onCityTap);
+      chip.addEventListener('touchend', function(e) { e.preventDefault(); _onCityTap(); }, { passive: false });
+      chip.addEventListener('keydown',  function(e) { if (e.key === 'Enter' || e.key === ' ') _onCityTap(); });
+
+      cityChips.push(chip);
+      cityRow.appendChild(chip);
+    });
+
+    /* "Autre ville →" chip */
+    var moreChip = _h('div', { cls: 'fxrf4-city-chip is-more', role: 'button', tabindex: '0', txt: 'Autre ville →' });
+    cityRow.appendChild(moreChip);
+
+    /* City select (appears on "Autre ville" tap) */
+    var citySelectWrap = _h('div', { cls: 'fxrf4-select-wrap' });
+    citySelectWrap.style.display = 'none';
+    var citySelect = _h('select', { cls: 'fxrf4-select', 'aria-label': 'Choisir une ville' });
+    var defOpt = _h('option', { value: '', txt: 'Choisir une ville…' });
+    citySelect.appendChild(defOpt);
+    ALL_CITIES.forEach(function(c) {
+      var opt = _h('option', { value: c, txt: c });
+      if (c === selectedCity) opt.selected = true;
+      citySelect.appendChild(opt);
+    });
+    citySelectWrap.appendChild(citySelect);
+
+    citySelect.addEventListener('change', function() {
+      var city = citySelect.value;
+      if (!city) return;
+      st.city = city;
+      cityChips.forEach(function(c) { c.classList.remove('is-selected'); });
+      if (isUrgent) {
+        setTimeout(function() { _transitionFwd(_renderStep3); }, 200);
+      } else {
+        _showUrgencyCards();
+      }
+    });
+
+    moreChip.addEventListener('click', function() {
+      citySelectWrap.style.display = 'block';
+      setTimeout(function() { citySelect.focus(); }, 80);
+    });
+    moreChip.addEventListener('touchend', function(e) {
+      e.preventDefault();
+      citySelectWrap.style.display = 'block';
+      setTimeout(function() { citySelect.focus(); }, 80);
+    }, { passive: false });
+
+    /* ── Urgency section (appears after city selected) ── */
+    var urgencySection = _h('div');
+    urgencySection.style.display = 'none';
+
+    var urgCards = _h('div', { cls: 'fxrf4-urgency-cards', 'aria-label': 'Urgence' });
+
+    URGENCIES.forEach(function(u) {
+      var card = _h('div', {
+        cls: 'fxrf4-urgency-card' + (u.urgent ? ' is-urgent' : ''),
+        role: 'button', tabindex: '0', 'aria-label': u.label
+      });
+
+      card.appendChild(_h('span', { cls: 'fxrf4-urgency-icon', txt: u.icon }));
+      var textDiv = _h('div', { cls: 'fxrf4-urgency-text' });
+      textDiv.appendChild(_h('span', { cls: 'fxrf4-urgency-label', txt: u.label }));
+      textDiv.appendChild(_h('span', { cls: 'fxrf4-urgency-meta', txt: u.meta }));
+      card.appendChild(textDiv);
+
+      if (u.value === st.urgency) card.classList.add('is-selected');
+
+      function _onUrgTap() {
+        card.classList.add('is-tapping');
+        setTimeout(function() { card.classList.remove('is-tapping'); }, 120);
+        st.urgency = u.value;
+        urgCards.querySelectorAll('.fxrf4-urgency-card').forEach(function(c) {
+          c.classList.remove('is-selected');
+        });
+        card.classList.add('is-selected');
+        /* Auto-advance spec: single tap IS the confirmation */
+        setTimeout(function() { _transitionFwd(_renderStep3); }, 240);
+      }
+
+      card.addEventListener('click',    _onUrgTap);
+      card.addEventListener('touchend', function(e) { e.preventDefault(); _onUrgTap(); }, { passive: false });
+      card.addEventListener('keydown',  function(e) { if (e.key === 'Enter' || e.key === ' ') _onUrgTap(); });
+
+      urgCards.appendChild(card);
+    });
+
+    urgencySection.appendChild(urgCards);
+
+    function _showUrgencyCards() {
+      if (urgencySection.style.display !== 'none') return; /* already visible */
+      urgencySection.style.display = 'block';
+      /* Scroll to urgency on mobile */
+      setTimeout(function() {
+        urgencySection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 100);
+    }
+
+    /* Auto-show if city already set (returning user) */
+    if (selectedCity && !isUrgent) {
+      setTimeout(_showUrgencyCards, 300);
+    }
+
+    /* If express mode and city already detected — auto-advance */
+    if (isUrgent && detected) {
+      st.city = detected;
+      setTimeout(function() { _transitionFwd(_renderStep3); }, 600);
+      return; /* Don't render this screen */
+    }
 
     /* Back */
-    var backBtn = _btn('\u2190 Retour', 'fxrf4-btn-ghost', 'fxrf4-back2', false);
-    backBtn.addEventListener('click', function() { _renderStep1(); });
+    var foot2 = _q('#fxrf4-foot');
+    if (foot2) foot2.appendChild(_backBtn(function() { _transitionBck(_renderStep1); }));
 
-    foot.appendChild(nextBtn);
-    foot.appendChild(backBtn);
+    if (body) body.appendChild(_screen([cityRow, citySelectWrap, urgencySection]));
   }
 
-  /* ── STEP 3: Description + Phone ────────────────────────── */
+  /* ══════════════════════════════════════════════════════════
+     SCREEN 3 — PHONE NUMBER
+     "Sur quel numéro vous rappelle-t-on ?"
+     Large field. Auto-focused. Pre-fill if returning user.
+  ══════════════════════════════════════════════════════════ */
+
   function _renderStep3() {
-    var st = _state;
-    var isUrgent = st.urgency === 'Urgent (moins de 30 min)';
-    _setTitle(isUrgent ? 'URGENT' : 'FIXEO',
-              'D\u00e9tails de votre demande', isUrgent);
+    var st = _st;
+    var isUrgent = st.urgency === URGENCIES[0].value || st.mode === 'express';
+    var hasPrefill = !!st.prefillPhone;
+
     _setProgress(3, 3);
-    _clearBody();
-    _clearFoot();
+    _rafiSpeak(
+      hasPrefill ? MSG.step3Pre : (isUrgent ? MSG.step3Urgent : MSG.step3),
+      isUrgent
+    );
 
+    var foot = _setFoot();
     var body = _q('#fxrf4-body');
-    var foot = _q('#fxrf4-foot');
 
-    var errEl = _h('div', { id: 'fxrf4-error' });
-    body.appendChild(errEl);
+    var elements = [];
 
-    /* Description textarea */
-    var descTA = _h('textarea', {
-      cls: 'fxrf4-textarea', name: 'description',
-      placeholder: 'D\u00e9crivez bri\u00e8vement votre besoin\u2026',
-      maxlength: '180', rows: '3'
-    });
-    descTA.value = st.description;
-    body.appendChild(_field('Description (optionnelle)', descTA, 'fxrf4-desc'));
+    if (hasPrefill && !st._phoneUnlocked) {
+      /* Returning user — show masked number + "Ce n'est pas mon numéro" */
+      var prefillRow = _h('div', { cls: 'fxrf4-prefill-row' });
+      var masked = _h('span', { cls: 'fxrf4-prefill-number', txt: _maskPhone(st.prefillPhone) });
+      var changeLink = _h('a', { cls: 'fxrf4-prefill-change', txt: 'Changer', role: 'button', tabindex: '0' });
+      prefillRow.appendChild(masked);
+      prefillRow.appendChild(changeLink);
+      elements.push(prefillRow);
 
-    /* Phone input */
-    var phoneInput = _h('input', {
-      cls: 'fxrf4-input', type: 'tel', name: 'phone',
-      placeholder: '06 12 34 56 78', maxlength: '20',
-      inputmode: 'tel', autocomplete: 'tel'
-    });
-    phoneInput.value = st.phone;
-    body.appendChild(_field('T\u00e9l\u00e9phone', phoneInput, 'fxrf4-phone'));
+      st.phone = st.prefillPhone;
 
-    /* Submit / Review button */
-    var submitLabel = isUrgent ? '\u26a1 Envoyer ma demande' : 'V\u00e9rifier et envoyer';
-    var nextBtn = _btn(submitLabel, 'fxrf4-btn-primary', 'fxrf4-next3', isUrgent);
-    nextBtn.addEventListener('click', function() {
-      _clearError();
-      var desc  = descTA.value.trim();
-      var phone = phoneInput.value.trim();
-
-      if (!phone) {
-        phoneInput.classList.add('is-error');
-        _showError('Veuillez renseigner votre t\u00e9l\u00e9phone.');
-        phoneInput.focus();
-        return;
+      function _onChangePhone() {
+        st._phoneUnlocked = true;
+        st.phone = '';
+        _transitionBck(_renderStep3);
       }
-      if (!_validPhone(phone)) {
-        phoneInput.classList.add('is-error');
-        _showError('V\u00e9rifiez votre num\u00e9ro (format\u00a0: 06 ou 07 + 8 chiffres).');
-        phoneInput.focus();
-        return;
-      }
-      st.description = desc;
-      st.phone = phone;
+      changeLink.addEventListener('click', _onChangePhone);
+      changeLink.addEventListener('touchend', function(e) { e.preventDefault(); _onChangePhone(); }, { passive: false });
 
-      if (isUrgent) {
-        /* Urgent: skip review, submit directly */
-        _submitRequest();
-      } else {
-        _renderReview();
-      }
-    });
+      /* Primary: confirm with pre-filled number */
+      var confirmBtn = _primaryBtn(
+        isUrgent ? '\u26a1 Trouver un artisan maintenant' : 'Confirmer et envoyer \u2192',
+        isUrgent,
+        function(btn) { _submitRequest(btn); }
+      );
+      foot.appendChild(confirmBtn);
 
-    var backBtn = _btn('\u2190 Retour', 'fxrf4-btn-ghost', 'fxrf4-back3', false);
-    backBtn.addEventListener('click', function() { _renderStep2(); });
+    } else {
+      /* Fresh phone input */
+      var phoneWrap = _h('div', { cls: 'fxrf4-phone-wrap' });
 
-    foot.appendChild(nextBtn);
-    foot.appendChild(backBtn);
+      var prefix = _h('div', { cls: 'fxrf4-phone-prefix' });
+      prefix.innerHTML = '🇲🇦 +212';
 
-    requestAnimationFrame(function() { descTA.focus({ preventScroll: true }); });
+      var phoneInput = _h('input', {
+        cls: 'fxrf4-phone-input',
+        type: 'tel',
+        id: 'fxrf4-phone',
+        name: 'phone',
+        inputmode: 'tel',
+        autocomplete: 'tel',
+        placeholder: '06 12 34 56 78',
+        maxlength: '20',
+        'aria-label': 'Votre numéro de téléphone'
+      });
+
+      var validIcon = _h('span', { cls: 'fxrf4-phone-valid-icon', txt: '✓', 'aria-hidden': 'true' });
+      phoneWrap.appendChild(prefix);
+      phoneWrap.appendChild(phoneInput);
+      phoneWrap.appendChild(validIcon);
+      elements.push(phoneWrap);
+
+      var hint = _h('p', { cls: 'fxrf4-hint', 'aria-live': 'polite' });
+      elements.push(hint);
+
+      /* Real-time validation */
+      phoneInput.addEventListener('input', function() {
+        var val = phoneInput.value.trim();
+        phoneInput.classList.remove('is-error');
+        hint.classList.remove('is-visible');
+
+        if (_validPhone(val)) {
+          phoneInput.classList.add('is-valid');
+          validIcon.classList.add('is-visible');
+          submitBtn.disabled = false;
+        } else {
+          phoneInput.classList.remove('is-valid');
+          validIcon.classList.remove('is-visible');
+          submitBtn.disabled = true;
+        }
+      });
+
+      var submitLabel = isUrgent ? '\u26a1 Trouver un artisan maintenant' : 'Envoyer ma demande';
+      var submitBtn = _primaryBtn(submitLabel, isUrgent, function(btn) {
+        var val = phoneInput.value.trim();
+        if (!_validPhone(val)) {
+          phoneInput.classList.add('is-error');
+          hint.textContent = 'Un numéro marocain, s\u2019il vous plaît\u00a0(06 ou 07 + 8 chiffres).';
+          hint.classList.add('is-visible');
+          phoneInput.focus({ preventScroll: true });
+          return;
+        }
+        st.phone = val;
+        /* Remember for next time */
+        try { localStorage.setItem(PHONE_MEMORY_KEY, val); } catch(_) {}
+        _submitRequest(btn);
+      });
+      submitBtn.disabled = true; /* enabled when valid number entered */
+
+      foot.appendChild(submitBtn);
+
+      /* Auto-focus — keyboard opens during transition (spec requirement) */
+      setTimeout(function() {
+        phoneInput.focus({ preventScroll: true });
+      }, 40);
+    }
+
+    /* Back */
+    foot.appendChild(_backBtn(function() { _transitionBck(_renderStep2); }));
+
+    if (body) body.appendChild(_screen(elements));
   }
 
-  /* ── REVIEW ──────────────────────────────────────────────── */
-  function _renderReview() {
-    var st = _state;
-    _setTitle('FIXEO', 'Votre demande', false);
-    _setProgress(3, 3);
-    _clearBody();
-    _clearFoot();
+  /* ══════════════════════════════════════════════════════════
+     SUBMIT
+  ══════════════════════════════════════════════════════════ */
 
-    var body = _q('#fxrf4-body');
-    var foot = _q('#fxrf4-foot');
+  function _submitRequest(btn) {
+    var st = _st;
 
-    var rows = [
-      { key: 'Service',  val: st.service },
-      { key: 'Ville',    val: st.city },
-      { key: 'Urgence',  val: st.urgency },
-      { key: 'D\u00e9tail', val: st.description || '—' },
-      { key: 'T\u00e9l.',   val: st.phone },
-    ];
-
-    var table = _h('div', { cls: 'fxrf4-review-rows' });
-    rows.forEach(function(r) {
-      var row = _h('div', { cls: 'fxrf4-review-row' });
-      row.appendChild(_h('span', { cls: 'fxrf4-review-key', txt: r.key }));
-      row.appendChild(_h('span', { cls: 'fxrf4-review-val', txt: r.val }));
-      table.appendChild(row);
-    });
-    body.appendChild(table);
-
-    var errEl = _h('div', { id: 'fxrf4-error' });
-    body.appendChild(errEl);
-
-    var submitBtn = _btn('Envoyer ma demande', 'fxrf4-btn-primary', 'fxrf4-submit', false);
-    submitBtn.addEventListener('click', function() { _submitRequest(); });
-
-    var editBtn = _btn('\u270f\ufe0f Modifier', 'fxrf4-btn-ghost', 'fxrf4-edit', false);
-    editBtn.addEventListener('click', function() { _renderStep1(); });
-
-    foot.appendChild(submitBtn);
-    foot.appendChild(editBtn);
-  }
-
-  /* ── SUBMIT ──────────────────────────────────────────────── */
-  function _submitRequest() {
-    var st = _state;
-
-    /* Double-submit guard */
+    /* Double-submit guard (spec: 1600ms) */
     if (st.submitLocked) return;
     var now = Date.now();
     if (now - st.submitTs < 1600) return;
     st.submitLocked = true;
     st.submitTs = now;
 
-    /* Disable submit button */
-    var btn = _q('#fxrf4-submit') || _q('#fxrf4-next3');
-    if (btn) { btn.disabled = true; btn.textContent = 'Envoi en cours\u2026'; }
+    _btnLoading(btn);
 
-    /* Save */
+    /* Show interstitial after brief delay (feels intentional, not instant) */
+    setTimeout(function() {
+      _renderInterstitial();
+    }, 80);
+
+    /* Save (synchronous) */
     var result = _saveRequest(st);
     var saved = result && result.request;
 
     if (!saved) {
       st.submitLocked = false;
-      if (btn) { btn.disabled = false; btn.textContent = 'Envoyer ma demande'; }
-      _showError('Impossible d\u2019envoyer pour le moment. V\u00e9rifiez votre connexion.');
+      _btnRestore(btn, 'Envoyer ma demande', false);
+      _renderStep3(); /* back to phone, show error */
       return;
     }
 
-    /* Fire analytics event (non-blocking) */
-    try {
-      window.dispatchEvent(new CustomEvent('fixeo:client-request-submit-success', {
-        detail: {
-          request: saved,
-          mode: st.mode,
-          source: 'fxrf4-v1a',
-          storageKey: STORAGE_KEY,
-          duplicated: result.duplicated
-        }
-      }));
-    } catch (_) {}
+    _fireAnalytics(saved, st.mode, result.duplicated);
 
-    /* Show success */
-    st.submitLocked = false;
-    _renderSuccess(saved, result.duplicated);
+    /* Interstitial for at least 800ms for emotional effect */
+    setTimeout(function() {
+      st.submitLocked = false;
+      _renderSuccess(saved);
+    }, 820);
   }
 
-  /* ── SUCCESS ─────────────────────────────────────────────── */
-  function _renderSuccess(saved, duplicated) {
-    var st = _state;
-    _setTitle('RAFI', 'Demande envoy\u00e9e', false);
+  /* ══════════════════════════════════════════════════════════
+     INTERSTITIAL — RAFI is working
+  ══════════════════════════════════════════════════════════ */
+
+  function _renderInterstitial() {
+    var st = _st;
+    var isUrgent = st.mode === 'express';
+
     _setProgress(3, 3);
-    _clearBody();
-    _clearFoot();
+    _rafiSpeak(MSG.interstitial, isUrgent, true /* instant — no typing */);
 
+    _setFoot();
     var body = _q('#fxrf4-body');
-    var foot = _q('#fxrf4-foot');
+    if (!body) return;
 
-    /* ── Diagnostic: log header children count ── */
-    var headEl = _q('#fxrf4-head');
-    if (headEl) {
-      console.log('[fxrf4] Header children count:', headEl.childElementCount,
-                  '(expected: 3 — eyebrow, title, close)');
-    }
+    var inter = _h('div', { id: 'fxrf4-interstitial', 'aria-live': 'polite', 'aria-atomic': 'true' });
 
-    var succ = _h('div', { id: 'fxrf4-success' });
+    var dots = _h('div', { cls: 'fxrf4-inter-dots', 'aria-hidden': 'true' });
+    [1,2,3].forEach(function() { dots.appendChild(_h('span')); });
+    inter.appendChild(dots);
 
-    /* Check ring */
-    succ.appendChild(_h('div', { cls: 'fxrf4-check-ring', html: '\u2713' }));
+    var line2 = _h('p', { cls: 'fxrf4-inter-line2', txt: MSG.interstitialLate });
+    inter.appendChild(line2);
 
-    /* RAFI tag */
-    succ.appendChild(_h('p', { cls: 'fxrf4-success-tag', txt: 'RAFI' }));
+    /* Show "ça prend un instant" if it takes > 1.5s */
+    setTimeout(function() {
+      if (line2.parentNode) line2.classList.add('is-visible');
+    }, 1500);
+
+    body.innerHTML = '';
+    body.appendChild(_screen([inter]));
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     SUCCESS — The arrival. The delight. The emotional peak.
+  ══════════════════════════════════════════════════════════ */
+
+  function _renderSuccess(saved) {
+    var st = _st;
+    var isUrgent = st.mode === 'express';
+    var isMarketplace = st.mode === 'marketplace';
+
+    var successMsg = isUrgent ? MSG.successUrgent
+                   : isMarketplace ? MSG.successMarket
+                   : MSG.successDefault;
+    _rafiSpeak(successMsg, false, true);
+
+    _setProgress(3, 3);
+    var fill = _q('#fxrf4-progress-fill');
+    if (fill) fill.style.background = 'rgba(32, 201, 151, 0.75)';
+
+    var foot = _setFoot();
+    var body = _q('#fxrf4-body');
+    if (!body) return;
+
+    var succ = _h('div', { id: 'fxrf4-success', 'aria-live': 'polite' });
+
+    /* Check ring — spec: bloom from a point, ripple once */
+    var ringWrap = _h('div', { cls: 'fxrf4-check-ring' });
+    var ringInner = _h('div', { cls: 'fxrf4-check-ring-inner', txt: '✓', 'aria-hidden': 'true' });
+    var ringRipple = _h('div', { cls: 'fxrf4-check-ring-ripple', 'aria-hidden': 'true' });
+    ringWrap.appendChild(ringInner);
+    ringWrap.appendChild(ringRipple);
+    succ.appendChild(ringWrap);
+
+    /* RAFI attribution */
+    succ.appendChild(_h('p', { cls: 'fxrf4-success-tag', txt: 'RAFI', 'aria-hidden': 'true' }));
 
     /* Title */
-    succ.appendChild(_h('p', { cls: 'fxrf4-success-title',
-                                txt: 'Votre demande a bien \u00e9t\u00e9 envoy\u00e9e.' }));
+    succ.appendChild(_h('p', {
+      cls: 'fxrf4-success-title',
+      txt: 'Votre demande a bien été envoyée.'
+    }));
 
     /* Body */
-    succ.appendChild(_h('p', { cls: 'fxrf4-success-body',
-                                txt: 'RAFI recherche maintenant les professionnels les plus adapt\u00e9s \u00e0 votre projet.' }));
+    succ.appendChild(_h('p', {
+      cls: 'fxrf4-success-body',
+      txt: 'RAFI recherche maintenant les professionnels les plus adaptés à votre projet.'
+    }));
 
     /* Tracking ref */
     if (saved && saved.tracking_ref) {
-      succ.appendChild(_h('p', { cls: 'fxrf4-success-ref',
-                                  html: 'R\u00e9f.\u00a0: <strong>' + saved.tracking_ref + '</strong>' }));
+      var ref = _h('p', { cls: 'fxrf4-success-ref' });
+      ref.innerHTML = 'Réf.\u00a0: <strong>' + saved.tracking_ref + '</strong>';
+      succ.appendChild(ref);
     }
 
-    /* Steps */
-    var steps = _h('div', { cls: 'fxrf4-success-steps' });
-    [
-      { dot: '\u2705', lbl: 'Demande\nenregistr\u00e9e' },
-      { dot: '\ud83d\udd0d', lbl: 'RAFI\ns\u00e9lectionne' },
-      { dot: '\ud83d\udcac', lbl: 'Confirmation\nWhatsApp' }
-    ].forEach(function(s, i) {
-      if (i > 0) steps.appendChild(_h('div', { cls: 'fxrf4-success-step-sep' }));
+    /* Three-step visual — spec: done / active-pulse / waiting */
+    var stepsEl = _h('div', { cls: 'fxrf4-success-steps', 'aria-label': 'Étapes suivantes' });
+    var stepData = [
+      { dot: '✅', lbl: 'Demande\nenregistrée', state: 'done' },
+      { dot: '🔍', lbl: 'RAFI\nsélectionne',   state: 'active' },
+      { dot: '💬', lbl: 'Confirmation\nWhatsApp', state: 'waiting' }
+    ];
+
+    stepData.forEach(function(s, i) {
+      if (i > 0) stepsEl.appendChild(_h('div', { cls: 'fxrf4-success-step-sep', 'aria-hidden': 'true' }));
       var step = _h('div', { cls: 'fxrf4-success-step' });
-      step.appendChild(_h('div', { cls: 'fxrf4-success-step-dot', txt: s.dot }));
+      var dotEl = _h('div', {
+        cls: 'fxrf4-success-step-dot' + (s.state === 'active' ? ' is-active' : ''),
+        txt: s.dot,
+        'aria-hidden': 'true'
+      });
+      if (s.state === 'waiting') dotEl.style.opacity = '0.40';
       var lbl = _h('span', { cls: 'fxrf4-success-step-lbl' });
       lbl.style.whiteSpace = 'pre-line';
       lbl.textContent = s.lbl;
+      step.appendChild(dotEl);
       step.appendChild(lbl);
-      steps.appendChild(step);
+      stepsEl.appendChild(step);
     });
-    succ.appendChild(steps);
+    succ.appendChild(stepsEl);
 
-    body.appendChild(succ);
+    body.innerHTML = '';
+    body.appendChild(_screen([succ]));
 
-    /* Actions */
-    var waLink = _buildWALink(st);
-
-    var dashBtn = _h('a', { cls: 'fxrf4-btn fxrf4-btn-primary',
-                             href: '/client-dashboard.html',
-                             txt: 'Voir mes demandes' });
-    var homeBtn = _h('a', { cls: 'fxrf4-btn fxrf4-btn-ghost',
-                             href: '/index.html',
-                             txt: 'Retour \u00e0 l\u2019accueil' });
-
+    /* Actions in footer */
     var actions = _h('div', { cls: 'fxrf4-success-actions' });
-    actions.appendChild(dashBtn);
-    actions.appendChild(homeBtn);
+
+    var dashLink = _h('a', {
+      cls: 'fxrf4-btn-success-primary',
+      href: '/client-dashboard.html',
+      txt: 'Voir mes demandes'
+    });
+    dashLink.setAttribute('role', 'button');
+
+    var homeLink = _h('a', {
+      cls: 'fxrf4-btn-success-secondary',
+      href: '/index.html',
+      txt: 'Retour à l\u2019accueil'
+    });
+    homeLink.setAttribute('role', 'button');
+    homeLink.addEventListener('click', function() { close(); });
+
+    actions.appendChild(dashLink);
+    actions.appendChild(homeLink);
     foot.appendChild(actions);
+
+    /* Diagnostic — spec requirement */
+    var head = _q('#fxrf4-head');
+    if (head) {
+      console.log('[fxrf4-v5a] Success rendered. Header children:', head.childElementCount,
+                  '(expected 2 — rafi-row + close)');
+    }
   }
 
-  /* ═══════════════════════════════════════════════════════════
-     OPEN / CLOSE
-  ═══════════════════════════════════════════════════════════ */
+  /* ══════════════════════════════════════════════════════════
+     SWIPE TO DISMISS (mobile)
+  ══════════════════════════════════════════════════════════ */
 
-  var _isOpen = false;
+  function _wireSwipeDismiss(dialog) {
+    var startY = 0;
+    var swipeActive = false;
+
+    dialog.addEventListener('touchstart', function(e) {
+      startY = e.touches[0].clientY;
+      swipeActive = true;
+    }, { passive: true });
+
+    dialog.addEventListener('touchmove', function(e) {
+      if (!swipeActive) return;
+      var body = dialog.querySelector('#fxrf4-body');
+      if (body && body.scrollTop > 0) { swipeActive = false; return; }
+    }, { passive: true });
+
+    dialog.addEventListener('touchend', function(e) {
+      if (!swipeActive) return;
+      var dy = e.changedTouches[0].clientY - startY;
+      if (dy > 80) close();
+      swipeActive = false;
+    }, { passive: true });
+  }
+
+  /* ══════════════════════════════════════════════════════════
+     OPEN / CLOSE
+  ══════════════════════════════════════════════════════════ */
 
   function open(opts) {
     if (_isOpen) return;
     _buildDOM();
 
-    var mode   = (opts && opts.mode)   || 'default';
+    var mode   = (opts && opts.mode   && ['default','marketplace','express'].indexOf(opts.mode) >= 0)
+                 ? opts.mode : 'default';
     var source = (opts && opts.source) || 'unknown';
 
-    _state  = _freshState(mode, source);
+    _st = _fresh(mode, source);
+    _readContext(_st);
+
     _isOpen = true;
 
     _lock();
     _root.classList.add('fxrf4-active');
     _root.setAttribute('aria-hidden', 'false');
 
-    /* Render first screen */
+    /* Android: push history state for hardware back button */
+    try { history.pushState({ fxrf4: true }, ''); } catch(_) {}
+
     _renderStep1();
   }
 
   function close() {
     if (!_isOpen) return;
     _isOpen = false;
-    _state  = null;
 
-    if (_root) {
-      _root.classList.remove('fxrf4-active');
-      _root.setAttribute('aria-hidden', 'true');
-    }
+    /* Android: pop history state */
+    try { if (history.state && history.state.fxrf4) history.back(); } catch(_) {}
+
+    _root.classList.remove('fxrf4-active');
+    _root.setAttribute('aria-hidden', 'true');
+
+    /* Clear typing timer */
+    if (_typeTimer) { clearInterval(_typeTimer); _typeTimer = null; }
+
     _unlock();
+    _st = null;
   }
+
+  /* Android back button */
+  window.addEventListener('popstate', function(e) {
+    if (_isOpen) close();
+  });
 
   /* Escape key */
   document.addEventListener('keydown', function(e) {
     if ((e.key === 'Escape' || e.keyCode === 27) && _isOpen) close();
   });
 
-  /* ═══════════════════════════════════════════════════════════
+  /* ══════════════════════════════════════════════════════════
      TRIGGER MIGRATION
-     Route every CTA to FixeoRequestFlowV4.open()
-     Intercepts BEFORE request-form.js bindTriggers (loaded after this).
-  ═══════════════════════════════════════════════════════════ */
+     Routes every existing CTA through V5 open().
+     Capture-phase listener intercepts before request-form.js.
+  ══════════════════════════════════════════════════════════ */
 
   function _routeTrigger(trigger, forcedMode) {
-    var mode = forcedMode || (trigger && trigger.getAttribute('data-request-mode')) || 'default';
+    var mode = forcedMode
+      || (trigger && trigger.getAttribute && trigger.getAttribute('data-request-mode'))
+      || 'default';
     var source = 'unknown';
     if (trigger) {
-      if (trigger.classList.contains('final-cta-primary'))  source = 'final-cta';
-      else if (trigger.closest && trigger.closest('#home'))  source = 'hero';
-      else if (trigger.closest && trigger.closest('.mobile-nav')) source = 'mobile-nav';
-      else if (trigger.id === 'mobile-sticky-cta')          source = 'sticky';
-      else source = 'cta';
+      var c = trigger.classList;
+      var closest = trigger.closest ? trigger.closest.bind(trigger) : function() { return null; };
+      if (c && c.contains('final-cta-primary'))                source = 'final-cta';
+      else if (closest('#home'))                                source = 'hero';
+      else if (trigger.id === 'mobile-sticky-cta')             source = 'sticky';
+      else if (closest('.mobile-nav') || closest('.fxgh-nav'))  source = 'mobile-nav';
+      else                                                       source = 'cta';
     }
     open({ mode: mode, source: source });
   }
 
-  /* Override window.openModal for 'request-modal' calls */
+  /* Capture phase — fires before bubbling listeners in request-form.js */
+  document.addEventListener('click', function(e) {
+    var trigger = e.target.closest
+      ? e.target.closest('[data-open-request-form="true"]')
+      : null;
+    if (!trigger) return;
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    _routeTrigger(trigger, null);
+  }, true /* capture */);
+
+  /* window.openModal shim */
   var _origOpenModal = window.openModal;
   window.openModal = function(id) {
-    if (id === 'request-modal') {
-      _routeTrigger(null, null);
-      return;
-    }
+    if (id === 'request-modal') { _routeTrigger(null, null); return; }
     if (_origOpenModal) _origOpenModal.call(this, id);
   };
 
-  /* Override window.closeModal for 'request-modal' calls */
+  /* window.closeModal shim */
   var _origCloseModal = window.closeModal;
   window.closeModal = function(id) {
     if (id === 'request-modal') { close(); return; }
@@ -783,15 +1315,13 @@
   };
 
   /* forceOpenRequestModal (mobile nav inline script) */
-  window.forceOpenRequestModal = function() {
-    _routeTrigger(null, null);
-  };
+  window.forceOpenRequestModal = function() { _routeTrigger(null, null); };
 
-  /* Patch FixeoClientRequest after it's ready */
+  /* Patch FixeoClientRequest after request-form.js loads */
   function _patchFCR() {
     var fc = window.FixeoClientRequest;
     if (!fc || fc._fxrf4Patched) { setTimeout(_patchFCR, 60); return; }
-    if (!fc.open) { setTimeout(_patchFCR, 60); return; }
+    if (!fc.open)                 { setTimeout(_patchFCR, 60); return; }
     fc._fxrf4Patched = true;
 
     fc.open = function(trigger, forcedMode) {
@@ -805,20 +1335,10 @@
     fc.closeStandard = close;
   }
 
-  /* data-open-request-form triggers: intercept at capture phase
-     before request-form.js bubbling listener */
-  document.addEventListener('click', function(e) {
-    var trigger = e.target.closest('[data-open-request-form="true"]');
-    if (!trigger) return;
-    e.preventDefault();
-    e.stopImmediatePropagation();
-    _routeTrigger(trigger, null);
-  }, true /* capture */);
-
-  /* Run after DOM ready */
+  /* Boot */
   function _init() {
-    _buildDOM();
-    _patchFCR();
+    _buildDOM(); /* pre-build for faster first open */
+    setTimeout(_patchFCR, 0);
   }
 
   if (document.readyState === 'loading') {
@@ -827,11 +1347,12 @@
     _init();
   }
 
-  /* ═══════════════════════════════════════════════════════════
+  /* ══════════════════════════════════════════════════════════
      PUBLIC API
-  ═══════════════════════════════════════════════════════════ */
+  ══════════════════════════════════════════════════════════ */
+
   window.FixeoRequestFlowV4 = {
-    VERSION: 'fxrf4-v1a',
+    VERSION: 'fxrf4-v5a',
     open:    open,
     close:   close
   };
