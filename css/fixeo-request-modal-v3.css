@@ -1,5 +1,5 @@
 /**
- * fixeo-request-modal-v3.css — fxrmv3-v1b
+ * fixeo-request-modal-v3.css — fxrmv3-v1c
  * Request Modal — Definitive Clean Shell
  *
  * Namespace: fxrmv3-* (modal shell elements only)
@@ -17,7 +17,7 @@
 #fxrmv3-bd {
   position: fixed;
   inset: 0;
-  z-index: 5000;
+  z-index: 9150;  /* between legacy .modal-backdrop:9000 and #request-modal:9200 */
   background: rgba(0,0,0,0.58);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
@@ -39,13 +39,18 @@
   display: none !important;
   opacity: 0;
 
-  /* Positioning — always fixed, never relative */
+  /* Positioning — always fixed, never relative.
+     right:auto + bottom:auto undo fixeo_v5_fixes.css ".modal { inset:0 !important }"
+     which would otherwise make this a full-screen overlay instead of a dialog box.
+     z-index:9200 beats .modal { z-index:9100 } from fixeo_v5_fixes.css. */
   position: fixed !important;
-  z-index: 5100 !important;
+  z-index: 9200 !important;
 
   /* Desktop: centered dialog */
   top: 50% !important;
   left: 50% !important;
+  right: auto !important;
+  bottom: auto !important;
   transform: translate(-50%, -50%) !important;
 
   /* Size */
@@ -417,10 +422,25 @@
 
 /* ─────────────────────────────────────────────────────────────
    LEGACY SUPPRESSION
-   Disable old header/close classes that caused duplication.
-   The DOM nodes remain for rollback; they are invisible.
 ───────────────────────────────────────────────────────────── */
+
+/* Legacy header hidden — node preserved for rollback */
 #request-modal .modal-header.request-modal-header {
+  display: none !important;
+}
+
+/* fixeo_v5_fixes.css: .modal { display:none; align-items:center; justify-content:center }
+   .modal.open { display:flex }
+   These treat #request-modal as a full-screen flex overlay (inset:0).
+   Override: make #request-modal a self-contained dialog, not an overlay container. */
+#request-modal {
+  align-items: unset !important;
+  justify-content: unset !important;
+}
+
+/* .modal.open adds display:flex — V3 uses .is-open for display.
+   When V3 is active, .open alone must not show the modal. */
+#request-modal.open:not(.is-open) {
   display: none !important;
 }
 
