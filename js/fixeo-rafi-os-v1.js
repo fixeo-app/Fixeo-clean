@@ -97,13 +97,13 @@
   var _text = {
     /* Hero entry messages */
     heroIdle:      'Bonjour\u00a0! D\u00e9crivez votre probl\u00e8me et je m\u2019occupe du reste.',
-    heroListening: '\u00c9coute\u2026',
-    heroUrgent:    'Urgence d\u00e9tect\u00e9e\u00a0\u26a1 Je recherche un artisan disponible maintenant.',
+    heroListening: 'Je vous \u00e9coute\u2026',
+    heroUrgent:    'Urgence d\u00e9tect\u00e9e. Je recherche un artisan disponible maintenant.',
     heroUnderstood: function (label) {
-      return 'Je vois\u00a0\u2014 vous avez besoin d\u2019un\u00a0<strong>' + label + '</strong>. Dans quelle ville\u00a0?';
+      return 'Je vois \u2014 vous avez besoin d\u2019un\u00a0<strong>' + label + '</strong>. Dans quelle ville\u00a0?';
     },
     heroReady: function (label, city) {
-      return 'Pr\u00eat\u00a0\u2014 <strong>' + label + '</strong> \u00e0 <strong>' + city + '</strong>.';
+      return 'Pr\u00eat \u2014 <strong>' + label + '</strong> \u00e0 <strong>' + city + '</strong>. Tout est en ordre.';
     },
     /* Modal conversation messages */
     modalWelcome:    'Quel service vous faut-il\u00a0?',
@@ -131,51 +131,87 @@
     urgentModalWelcome: 'Quel est le probl\u00e8me urgent\u00a0?'
   };
 
-  /* ── RafiEntry — inline identity header inside .qsm-dialog ─── */
+  /* ── RafiEntry — flagship Hero 2.0 conversational header ────── */
   var RafiEntry = (function () {
-    var _node        = null;
-    var _bubbleText  = null;
+    var _node         = null;
+    var _bubbleText   = null;
+    var _badge        = null;
+    var _badgePill    = null;
+    var _cursor       = null;
     var _currentState = 'idle';
-    var _injected    = false;
+    var _injected     = false;
+    var _typed        = false; /* typewriter fires once only */
+
+    /* ── Typewriter ────────────────────────────────────────────
+       Renders one character at a time into the message span.
+       On completion: cursor fades out.
+       Only fires on the very first render of heroIdle. */
+    function _typewrite(text, el, cursor, onDone) {
+      var i = 0;
+      el.textContent = '';
+      var speed = 28; /* ms per char — quick but human */
+      function _tick() {
+        if (i < text.length) {
+          el.textContent += text.charAt(i++);
+          setTimeout(_tick, speed);
+        } else {
+          if (onDone) onDone();
+        }
+      }
+      setTimeout(_tick, 160); /* 160ms initial delay after element enters */
+    }
 
     function _build() {
-      /*
-       * Structure:
-       *   .rfos-entry  (flex row, inside .qsm-dialog before .qsm-search-section)
-       *     .rfos-entry-avatar  (avatar image)
-       *     .rfos-entry-inline  (label + message, no bubble tail — inline style)
-       */
       var wrap = document.createElement('div');
       wrap.className = 'rfos-entry';
-      /* Decorative layer — the actual form elements below are the interaction */
-      wrap.setAttribute('aria-hidden', 'true');
+      wrap.setAttribute('aria-hidden', 'true'); /* decorative — input is the real interaction */
 
-      /* Avatar */
+      /* ── Avatar ── */
       var av = document.createElement('div');
       av.className = 'rfos-entry-avatar';
-      /* Desktop: HeadCollar Core (296px source → displayed 56px) */
-      var avImg = _img(RAFI_HEAD_K, 56, '');
-      av.appendChild(avImg);
+      av.appendChild(_img(RAFI_HEAD_K, 54, ''));
 
-      /* Text block */
+      /* ── Text block ── */
       var textWrap = document.createElement('div');
       textWrap.className = 'rfos-entry-inline';
 
+      /* RAFI label + live dot (live dot is CSS ::after) */
       var label = document.createElement('span');
       label.className = 'rfos-bubble-label';
       label.textContent = 'RAFI';
 
+      /* Message line */
       var msg = document.createElement('span');
       msg.className = 'rfos-bubble-text';
-      msg.innerHTML = _text.heroIdle;
+
+      /* Cursor — typewriter phase only */
+      var cursor = document.createElement('span');
+      cursor.className = 'rfos-cursor';
+      cursor.setAttribute('aria-hidden', 'true');
+
+      /* Badge row — shown when category is detected */
+      var badge = document.createElement('div');
+      badge.className = 'rfos-entry-badge';
+      badge.setAttribute('aria-hidden', 'true');
+
+      var badgePill = document.createElement('span');
+      badgePill.className = 'rfos-badge-pill';
+      badge.appendChild(badgePill);
 
       textWrap.appendChild(label);
       textWrap.appendChild(msg);
+      textWrap.appendChild(badge);
       wrap.appendChild(av);
       wrap.appendChild(textWrap);
 
+      /* Append cursor inline after message (same DOM level for visual flow) */
+      msg.insertAdjacentElement('afterend', cursor);
+
       _node       = wrap;
       _bubbleText = msg;
+      _badge      = badge;
+      _badgePill  = badgePill;
+      _cursor     = cursor;
       return wrap;
     }
 
@@ -183,40 +219,75 @@
       if (_currentState === state) return;
       _currentState = state;
       if (!_node) return;
-      _node.classList.remove('rfos-entry--listening', 'rfos-entry--urgent');
+      _node.classList.remove(
+        'rfos-entry--listening',
+        'rfos-entry--urgent',
+        'rfos-entry--ready'
+      );
       if (state === 'listening') _node.classList.add('rfos-entry--listening');
       if (state === 'urgent')    _node.classList.add('rfos-entry--urgent');
+      if (state === 'ready')     _node.classList.add('rfos-entry--ready');
     }
 
-    function _setText(html) {
+    /* Fade out old text, swap, fade in */
+    function _setText(html, plain) {
       if (!_bubbleText) return;
       _bubbleText.style.opacity = '0';
       setTimeout(function () {
-        if (_bubbleText) { _bubbleText.innerHTML = html; _bubbleText.style.opacity = '1'; }
-      }, 130);
+        if (!_bubbleText) return;
+        _bubbleText.innerHTML = html;
+        _bubbleText.style.opacity = '1';
+      }, 150);
+      /* Hide cursor once we leave idle */
+      if (_cursor) {
+        _cursor.classList.add('rfos-cursor--done');
+      }
+    }
+
+    /* Show or update the category badge pill */
+    function _setBadge(icon, label, state) {
+      if (!_badgePill) return;
+      if (!icon && !label) {
+        _badge.style.display = 'none';
+        return;
+      }
+      _badgePill.textContent = (icon ? icon + '\u00a0' : '') + label;
+      _badge.style.display = 'flex';
     }
 
     function mount() {
       if (_mem.dismissed || _injected) return;
 
-      /* QSM renders #hero-quick-search → .qsm-dialog → .qsm-search-section.
-         We prepend RAFI inside .qsm-dialog, before .qsm-search-section.
-         Wait for QSM to finish rendering (poll up to 3s). */
+      /* Poll until QSM renders .qsm-dialog (async, ~100–300ms) */
       var attempts = 0;
       function _tryMount() {
         var dialog = _q('#hero-quick-search .qsm-dialog');
         if (!dialog) {
-          if (++attempts < 20) setTimeout(_tryMount, 150);
+          if (++attempts < 24) setTimeout(_tryMount, 130);
           return;
         }
         if (_injected) return;
         _injected = true;
         if (!_node) _build();
+
         var searchSection = _q('.qsm-search-section', dialog);
         if (searchSection) {
           dialog.insertBefore(_node, searchSection);
         } else {
           dialog.insertAdjacentElement('afterbegin', _node);
+        }
+
+        /* Typewriter on initial greeting — one time only */
+        if (!_typed) {
+          _typed = true;
+          var idleText = 'Bonjour\u00a0! D\u00e9crivez votre probl\u00e8me et je m\u2019occupe du reste.';
+          _typewrite(idleText, _bubbleText, _cursor, function () {
+            /* Cursor fades out via CSS transition after typewriter done */
+            if (_cursor) _cursor.classList.add('rfos-cursor--done');
+          });
+        } else {
+          _bubbleText.innerHTML = _text.heroIdle;
+          if (_cursor) _cursor.classList.add('rfos-cursor--done');
         }
       }
       _tryMount();
@@ -224,44 +295,54 @@
 
     function onInput(text) {
       if (!_node) return;
-      if (!text || text.length < 3) {
+      if (!text || text.length < 2) {
         _setState('idle');
-        _setText(_text.heroIdle);
+        /* Don't reset text on tiny backspace — keep last message visible */
         return;
       }
       _setState('listening');
       _setText(_text.heroListening);
+      _setBadge(null, null); /* clear badge until AIRE resolves */
     }
 
     function onAnalysis(category, isUrgent) {
       if (!_node) return;
       _mem.update({ category: category, isUrgent: isUrgent });
+
       if (isUrgent) {
         _setState('urgent');
         _setText(_text.heroUrgent);
+        _setBadge('\u26a1', 'Urgent');
         return;
       }
       if (category && category.label) {
         _setState('listening');
         _setText(_text.heroUnderstood(category.label));
+        _setBadge(category.icon || '\ud83d\udd27', category.label);
         return;
       }
       _setState('listening');
       _setText(_text.heroListening);
+      _setBadge(null, null);
     }
 
     function onCityKnown(city) {
       if (!_node) return;
       _mem.update({ city: city });
       if (_mem.category && _mem.category.label && city) {
-        _setState('listening');
+        _setState('ready');
         _setText(_text.heroReady(_mem.category.label, city));
+        /* Keep category badge but add city */
+        var cat = _mem.category;
+        _setBadge(cat.icon || '\ud83d\udd27', cat.label + ' \u00b7 ' + city, 'ready');
       }
     }
 
     function reset() {
       _setState('idle');
-      _setText(_text.heroIdle);
+      if (_bubbleText) { _bubbleText.innerHTML = _text.heroIdle; _bubbleText.style.opacity = '1'; }
+      if (_cursor) _cursor.classList.add('rfos-cursor--done');
+      _setBadge(null, null);
     }
 
     return { mount: mount, onInput: onInput, onAnalysis: onAnalysis, onCityKnown: onCityKnown, reset: reset };
@@ -968,7 +1049,7 @@
 
   /* ── Public API ─────────────────────────────────────────────── */
   window.FixeoRAFI = {
-    VERSION:  'rfos-v1',
+    VERSION:  'rfos-v1d',
     memory:   _mem,
     entry:    RafiEntry,
     conv:     RafiConversation,
