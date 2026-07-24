@@ -1014,7 +1014,7 @@
   .fbe-core::after       { animation: fbe-breathe 4.5s ease-in-out infinite; }
   .fbe-core::before      { animation: fbe-aura-breathe 8s ease-in-out infinite; }
   .fbe-core-halo         { animation: fbe-halo-shift 9s ease-in-out infinite; }
-  #fle-section::after    { animation: fbe-field-breathe 16s ease-in-out infinite; }
+  #fle-section::after, #fixeo-chapter-2 .fc2-orbital::after { animation: fbe-field-breathe 16s ease-in-out infinite; }
   .fbe-ring--core-bound  { animation: fbe-ring-cw  18s linear infinite; }
   .fbe-ring--inner       { animation: fbe-ring-ccw 32s linear infinite; }
   .fbe-ring--mid         { animation: fbe-ring-cw  55s linear infinite; }
@@ -1311,3 +1311,34 @@
     }
   }
 }
+
+/* ════════════════════════════════════════════════════════════
+   § 15  CHAPTER 2 — fc2-* context overrides
+   Elements inside #fixeo-chapter-2 are NOT revealed by scroll-reveal
+   (which is scoped to #fle-section). Force them visible immediately.
+════════════════════════════════════════════════════════════ */
+#fixeo-chapter-2 .fbe-core,
+#fixeo-chapter-2 .fbe-node,
+#fixeo-chapter-2 .fbe-conn,
+#fixeo-chapter-2 .fbe-ring,
+#fixeo-chapter-2 .fbe-particle {
+  opacity: 1 !important;
+  animation-name: none !important;
+}
+/* Restore living loops for chapter 2 context */
+#fixeo-chapter-2 .fbe-core::after      { animation: fbe-breathe 4.5s ease-in-out infinite !important; }
+#fixeo-chapter-2 .fbe-core::before     { animation: fbe-aura-breathe 8s ease-in-out infinite !important; }
+#fixeo-chapter-2 .fbe-core-halo        { animation: fbe-halo-shift 9s ease-in-out infinite !important; }
+#fixeo-chapter-2 .fbe-ring--core-bound { animation: fbe-ring-cw  18s linear infinite !important; }
+#fixeo-chapter-2 .fbe-ring--inner      { animation: fbe-ring-ccw 32s linear infinite !important; }
+#fixeo-chapter-2 .fbe-ring--mid        { animation: fbe-ring-cw  55s linear infinite !important; }
+#fixeo-chapter-2 .fbe-ring--outer      { animation: fbe-ring-ccw 120s linear infinite !important; }
+#fixeo-chapter-2 .fbe-conn::after      { animation: fbe-signal-loop var(--fbe-loop-dur,15s) ease-in-out var(--fbe-loop-delay,0s) infinite !important; }
+#fixeo-chapter-2 .fbe-node-shell::before { animation: fbe-shell-pulse var(--fbe-think-dur,12s) ease-in-out var(--fbe-think-delay,0s) infinite !important; opacity: 1 !important; }
+#fixeo-chapter-2 .fbe-node-shell::after  { animation: fbe-shell-glow var(--fbe-think-dur,12s) ease-in-out var(--fbe-think-delay,0s) infinite !important; }
+#fixeo-chapter-2 .fbe-node-icon::after   { animation: fbe-node-think var(--fbe-think-dur,12s) ease-in-out var(--fbe-think-delay,0s) infinite !important; }
+#fixeo-chapter-2 .fbe-node-icon::before  { opacity: 1 !important; }
+#fixeo-chapter-2 .fbe-know-a { animation: fbe-know-cycle var(--fbe-ka-dur,13s) ease-in-out var(--fbe-ka-delay,0s) infinite !important; }
+#fixeo-chapter-2 .fbe-know-b { animation: fbe-know-cycle var(--fbe-kb-dur,13s) ease-in-out var(--fbe-kb-delay,0s) infinite !important; }
+#fixeo-chapter-2 .fbe-particle { animation: fbe-particle-drift var(--fp-dur,18s) ease-in-out var(--fp-delay,0s) infinite !important; }
+
