@@ -95,67 +95,107 @@
 
   /* ── RAFI Text Engine — truthful, copy-only ─────────────────── */
   /* ── RAFI Text Engine — natural French ──────────────────────── */
+  /* ── Text — RAFI's voice ────────────────────────────────────── */
   var _text = {
-    heroIdle:      'Dites-moi ce qui se passe.',
+    /* The greeting. Types out. Once. Sacred. */
+    heroIdle: 'Dites-moi ce qui se passe.',
+
+    /* RAFI is listening — simple, present */
     heroListening: 'Je vous \u00e9coute\u2026',
-    heroUrgent:    'C\u2019est urgent ? Je recherche un artisan disponible maintenant.',
+
+    /* RAFI understood something */
     heroUnderstood: function (label) {
-      return 'Je crois avoir compris \u2014 vous avez besoin d\u2019un <strong>' + label + '</strong>.';
+      return 'Je crois avoir compris \u2014 vous avez besoin d\u2019un\u00a0<strong>' + label + '</strong>.';
     },
-    heroCity: function (label) {
-      return 'Il ne manque plus que votre ville.';
+
+    /* RAFI knows the city — speaks it naturally */
+    heroIdleWithCity: function (city) {
+      return 'Dites-moi ce qui se passe \u2014 je vous vois \u00e0\u00a0<strong>' + city + '</strong>.';
     },
+
+    /* RAFI is ready — everything in place */
     heroReady: function (label, city) {
-      return 'Parfait. Je peux maintenant rechercher les meilleurs artisans \u00e0 <strong>' + city + '</strong>.';
+      return 'Parfait. Je recherche les meilleurs artisans \u00e0\u00a0<strong>' + city + '</strong>.';
     },
-    modalWelcome:    'Quel service vous faut-il\u00a0?',
+
+    /* Urgent */
+    heroUrgent: 'C\u2019est urgent\u00a0? Je recherche un artisan disponible maintenant.',
+
+    /* Modal — continuation of the same conversation */
+    modalWelcome: 'Quel service vous faut-il\u00a0?',
     modalService: function (label) {
       return 'Parfait \u2014 <strong>' + label + '</strong>. Quelle est votre ville\u00a0?';
     },
     modalCity: function (label, city) {
       return '<strong>' + label + '</strong> \u00e0 <strong>' + city + '</strong>. Quelle est l\u2019urgence\u00a0?';
     },
-    modalTiming: function (label, city) {
-      return 'Tr\u00e8s bien. Entrez votre num\u00e9ro \u2014 l\u2019artisan vous contacte directement.';
+    modalTiming: function () {
+      return 'Entrez votre num\u00e9ro \u2014 l\u2019artisan vous contacte directement.';
     },
+
+    /* Pre-submit summary */
     summaryText: function (label, city, isUrgent) {
-      var urgStr = isUrgent ? ' \u2014 traitement <strong>urgent</strong>' : '';
-      return 'Je recherche un <strong>' + label + '</strong> \u00e0 <strong>' + city + '</strong>' + urgStr + '.';
+      var urg = isUrgent ? ' \u2014 traitement\u00a0<strong>urgent</strong>' : '';
+      return 'Je recherche un\u00a0<strong>' + label + '</strong> \u00e0\u00a0<strong>' + city + '</strong>' + urg + '.';
     },
     summaryFallback: 'V\u00e9rifiez votre demande et confirmez.',
-    thinking:  'Analyse de votre demande\u2026',
-    confTitle: 'C\u2019est not\u00e9\u00a0!',
+
+    thinking:  'Un instant\u2026',
+    confTitle: 'C\u2019est not\u00e9.',
     confSub:   'Fixeo recherche le meilleur artisan disponible dans votre zone.',
     urgentModalWelcome: 'Quel est le probl\u00e8me urgent\u00a0?'
   };
 
-  /* ── RafiEntry — flagship centered stage ─────────────────────── */
+  /* ── RafiEntry — RAFI is the homepage ────────────────────────── */
   var RafiEntry = (function () {
-    var _stage       = null;
-    var _msg         = null;
-    var _cursor      = null;
-    var _badge       = null;
-    var _badgePill   = null;
-    var _currentState = 'idle';
-    var _injected    = false;
-    var _typed       = false;
+    var _stage    = null;   /* .rfos-stage-wrap */
+    var _greeting = null;   /* .rfos-greeting paragraph */
+    var _cursor   = null;   /* .rfos-cursor */
+    var _badge    = null;   /* .rfos-badge wrapper */
+    var _badgePill = null;  /* .rfos-badge-pill span */
+    var _state    = 'idle';
+    var _injected = false;
+    var _typed    = false;  /* typewriter fires once per session */
+    var _cityKnownAtLoad = false;
 
+    /* ── Typewriter ─────────────────────────────────────────────
+       One character at a time. 26ms/char. Not fast, not slow.
+       The visitor watches RAFI speak. This is the magic second.
+       Nothing else moves during this. ── */
     function _typewrite(text, el, onDone) {
       var i = 0;
       el.textContent = '';
-      var speed = 26;
       function _tick() {
-        if (i < text.length) { el.textContent += text.charAt(i++); setTimeout(_tick, speed); }
-        else if (onDone) onDone();
+        if (i < text.length) {
+          el.textContent += text.charAt(i++);
+          setTimeout(_tick, 26);
+        } else {
+          if (onDone) onDone();
+        }
       }
-      setTimeout(_tick, 200);
+      /* 220ms initial pause — RAFI collects their thoughts */
+      setTimeout(_tick, 220);
     }
 
+    /* ── Build the stage ─────────────────────────────────────────
+       .rfos-stage-wrap
+         .rfos-avatar-wrap
+           .rfos-halo
+           .rfos-avatar > img
+         .rfos-identity
+           .rfos-identity-name ("RAFI")
+           .rfos-live-dot
+         .rfos-greeting (p)
+         .rfos-cursor (span)
+         .rfos-badge > .rfos-badge-pill
+         .rfos-divider
+    ── */
     function _build() {
       var wrap = document.createElement('div');
       wrap.className = 'rfos-stage-wrap';
       wrap.setAttribute('aria-hidden', 'true');
 
+      /* Avatar wrap */
       var avWrap = document.createElement('div');
       avWrap.className = 'rfos-avatar-wrap';
 
@@ -164,79 +204,145 @@
       halo.setAttribute('aria-hidden', 'true');
 
       var av = document.createElement('div');
-      av.className = 'rfos-stage-avatar';
+      av.className = 'rfos-avatar';
       av.appendChild(_img(RAFI_HEAD_K, 92, ''));
 
       avWrap.appendChild(halo);
       avWrap.appendChild(av);
 
-      var nameEl = document.createElement('div');
-      nameEl.className = 'rfos-stage-name';
+      /* Identity */
+      var identity = document.createElement('div');
+      identity.className = 'rfos-identity';
+
+      var nameEl = document.createElement('span');
+      nameEl.className = 'rfos-identity-name';
       nameEl.textContent = 'RAFI';
 
-      var msg = document.createElement('p');
-      msg.className = 'rfos-stage-msg';
+      var dot = document.createElement('span');
+      dot.className = 'rfos-live-dot';
+      dot.setAttribute('aria-hidden', 'true');
 
+      identity.appendChild(nameEl);
+      identity.appendChild(dot);
+
+      /* Greeting */
+      var greeting = document.createElement('p');
+      greeting.className = 'rfos-greeting';
+
+      /* Typewriter cursor */
       var cursor = document.createElement('span');
       cursor.className = 'rfos-cursor';
       cursor.setAttribute('aria-hidden', 'true');
 
+      /* Badge */
       var badge = document.createElement('div');
-      badge.className = 'rfos-stage-badge';
+      badge.className = 'rfos-badge';
       var pill = document.createElement('span');
       pill.className = 'rfos-badge-pill';
       badge.appendChild(pill);
 
+      /* Divider */
       var divider = document.createElement('div');
-      divider.className = 'rfos-stage-divider';
+      divider.className = 'rfos-divider';
       divider.setAttribute('aria-hidden', 'true');
 
       wrap.appendChild(avWrap);
-      wrap.appendChild(nameEl);
-      wrap.appendChild(msg);
+      wrap.appendChild(identity);
+      wrap.appendChild(greeting);
       wrap.appendChild(cursor);
       wrap.appendChild(badge);
       wrap.appendChild(divider);
 
-      _stage     = wrap;
-      _msg       = msg;
-      _cursor    = cursor;
-      _badge     = badge;
+      _stage    = wrap;
+      _greeting = greeting;
+      _cursor   = cursor;
+      _badge    = badge;
       _badgePill = pill;
       return wrap;
     }
 
+    /* ── Trust whisper ────────────────────────────────────────── */
+    function _buildTrustWhisper() {
+      var w = document.createElement('p');
+      w.className = 'rfos-trust-whisper';
+      w.textContent = 'Gratuit\u00a0\u00b7 Paiement apr\u00e8s intervention';
+      return w;
+    }
+
+    /* ── H1 transition band ───────────────────────────────────── */
+    function _buildH1Band(h1El) {
+      var band = document.createElement('div');
+      band.className = 'rfos-h1-band';
+      /* Move H1 element into band */
+      band.appendChild(h1El);
+      return band;
+    }
+
+    /* ── Fallback link band ───────────────────────────────────── */
+    function _buildFallbackBand(btn) {
+      var band = document.createElement('div');
+      band.className = 'rfos-fallback-band';
+      btn.className = 'rfos-fallback-link';
+      btn.setAttribute('aria-label', 'Publier une demande gratuitement');
+      band.appendChild(btn);
+      return band;
+    }
+
+    /* ── State management ─────────────────────────────────────── */
     function _setState(state) {
-      if (_currentState === state) return;
-      _currentState = state;
+      if (_state === state) return;
+      _state = state;
       if (!_stage) return;
-      _stage.classList.remove('rfos-stage--listening', 'rfos-stage--urgent', 'rfos-stage--ready');
+      _stage.classList.remove(
+        'rfos-stage--listening',
+        'rfos-stage--urgent',
+        'rfos-stage--ready'
+      );
       if (state === 'listening') _stage.classList.add('rfos-stage--listening');
       if (state === 'urgent')    _stage.classList.add('rfos-stage--urgent');
       if (state === 'ready')     _stage.classList.add('rfos-stage--ready');
     }
 
+    /* ── Text swap — fade out, swap, fade in ─────────────────── */
     function _setText(html) {
-      if (!_msg) return;
-      _msg.style.opacity = '0';
+      if (!_greeting) return;
       if (_cursor) _cursor.classList.add('rfos-cursor--done');
+      _greeting.style.opacity = '0';
       setTimeout(function () {
-        if (!_msg) return;
-        _msg.innerHTML = html;
-        _msg.style.opacity = '1';
-      }, 160);
+        if (!_greeting) return;
+        _greeting.innerHTML = html;
+        _greeting.style.opacity = '1';
+        _greeting.style.transition = 'opacity 0.20s ease';
+      }, 170);
     }
 
-    function _setBadge(text) {
+    /* ── Badge ─────────────────────────────────────────────────── */
+    function _setBadge(html) {
       if (!_badgePill) return;
-      if (!text) { _badge.style.display = 'none'; return; }
-      _badgePill.innerHTML = text;
-      _badge.style.display = 'flex';
+      if (!html) {
+        _badge.classList.remove('visible');
+        return;
+      }
+      _badgePill.innerHTML = html;
+      _badge.classList.add('visible');
     }
 
+    /* ── Single attention pulse on input ─────────────────────── */
+    function _inviteInput() {
+      var heroSection = _stage && _stage.closest('section#home');
+      if (!heroSection) return;
+      heroSection.classList.add('rfos-input-invite');
+      /* Class removed after animation completes — 1.2s */
+      setTimeout(function () {
+        heroSection.classList.remove('rfos-input-invite');
+      }, 1400);
+    }
+
+    /* ── Mount ─────────────────────────────────────────────────── */
     function mount() {
       if (_mem.dismissed || _injected) return;
       var attempts = 0;
+
       function _tryMount() {
         var heroContent = _q('.hero-content');
         var heroSearch  = _el('hero-quick-search');
@@ -248,33 +354,81 @@
         _injected = true;
         if (!_stage) _build();
 
-        /* Insert BEFORE #hero-quick-search inside .hero-content */
+        /* 1. Insert RAFI stage before #hero-quick-search */
         heroContent.insertBefore(_stage, heroSearch);
 
-        /* Recompose hero hierarchy */
-        var heroSection = _q('section#home') || _q('.hero-section');
+        /* 2. Move H1 and fallback link OUT of hero, insert after section */
+        var heroSection = _q('section#home');
+        var h1El = heroContent.querySelector('.hero-title');
+        var fallbackBtn = heroContent.querySelector('.hero-secondary-link');
+
+        if (heroSection && h1El) {
+          var h1Band = _buildH1Band(h1El);
+          heroSection.insertAdjacentElement('afterend', h1Band);
+
+          if (fallbackBtn) {
+            var fallBand = _buildFallbackBand(fallbackBtn.closest('.hero-secondary-link-wrap') || fallbackBtn);
+            h1Band.insertAdjacentElement('afterend', fallBand);
+          }
+        }
+
+        /* 3. Insert trust whisper after #hero-quick-search */
+        heroSearch.insertAdjacentElement('afterend', _buildTrustWhisper());
+
+        /* 4. Recompose: RAFI leads. H1 gone. Everything else hidden. */
         if (heroSection) heroSection.classList.add('rfos-hero-recomposed');
 
-        /* Typewriter — once per session */
+        /* 5. Typewriter — once per session */
         if (!_typed) {
           _typed = true;
-          _typewrite(_text.heroIdle, _msg, function () {
+
+          /* Check if city already known */
+          var knownCity = _mem.city;
+          var idleText = knownCity
+            ? _text.heroIdleWithCity(knownCity).replace(/<[^>]+>/g, '') + '\u00a0' + knownCity
+            : _text.heroIdle;
+
+          /* Use plain text for typewriter (no HTML during type) */
+          var plainText = knownCity
+            ? 'Dites-moi ce qui se passe \u2014 je vous vois \u00e0\u00a0' + knownCity + '.'
+            : _text.heroIdle;
+
+          _typewrite(plainText, _greeting, function () {
+            /* Cursor fades */
             if (_cursor) _cursor.classList.add('rfos-cursor--done');
+            /* If city known, now render with HTML bold */
+            if (knownCity) {
+              _greeting.innerHTML = _text.heroIdleWithCity(knownCity);
+            }
+            /* One invitation — then trust the visitor */
+            setTimeout(_inviteInput, 180);
           });
         } else {
-          _msg.innerHTML = _text.heroIdle;
+          var knownCity2 = _mem.city;
+          if (knownCity2) {
+            _greeting.innerHTML = _text.heroIdleWithCity(knownCity2);
+          } else {
+            _greeting.textContent = _text.heroIdle;
+          }
           if (_cursor) _cursor.classList.add('rfos-cursor--done');
         }
       }
+
       _tryMount();
     }
 
+    /* ── Input events ─────────────────────────────────────────── */
     function onInput(text) {
       if (!_stage) return;
       if (!text || text.length < 2) {
-        if (_currentState === 'listening') {
+        if (_state === 'listening') {
           _setState('idle');
-          _setText(_text.heroIdle);
+          var city = _mem.city;
+          if (city) {
+            _setText(_text.heroIdleWithCity(city));
+          } else {
+            _setText(_text.heroIdle);
+          }
           _setBadge(null);
         }
         return;
@@ -287,6 +441,7 @@
     function onAnalysis(category, isUrgent) {
       if (!_stage) return;
       _mem.update({ category: category, isUrgent: isUrgent });
+
       if (isUrgent) {
         _setState('urgent');
         _setText(_text.heroUrgent);
@@ -294,14 +449,15 @@
         return;
       }
       if (category && category.label) {
-        if (_mem.city) {
+        var city = _mem.city;
+        if (city) {
           _setState('ready');
-          _setText(_text.heroReady(category.label, _mem.city));
-          _setBadge('\u2713\u00a0' + category.label + '\u00a0\u00b7\u00a0' + _mem.city);
+          _setText(_text.heroReady(category.label, city));
+          _setBadge('\u2713\u00a0' + category.label + '\u00a0\u00b7\u00a0' + city);
         } else {
           _setState('listening');
           _setText(_text.heroUnderstood(category.label));
-          _setBadge('\ud83d\udd27\u00a0' + category.label);
+          _setBadge(category.icon ? category.icon + '\u00a0' + category.label : category.label);
         }
         return;
       }
@@ -313,7 +469,10 @@
     function onCityKnown(city) {
       if (!_stage) return;
       _mem.update({ city: city });
-      if (_mem.category && _mem.category.label) {
+      if (_state === 'idle') {
+        /* Quietly incorporate city into greeting */
+        _setText(_text.heroIdleWithCity(city));
+      } else if (_mem.category && _mem.category.label) {
         _setState('ready');
         _setText(_text.heroReady(_mem.category.label, city));
         _setBadge('\u2713\u00a0' + _mem.category.label + '\u00a0\u00b7\u00a0' + city);
@@ -322,7 +481,15 @@
 
     function reset() {
       _setState('idle');
-      if (_msg) { _msg.innerHTML = _text.heroIdle; _msg.style.opacity = '1'; }
+      if (_greeting) {
+        var city = _mem.city;
+        if (city) {
+          _greeting.innerHTML = _text.heroIdleWithCity(city);
+        } else {
+          _greeting.textContent = _text.heroIdle;
+        }
+        _greeting.style.opacity = '1';
+      }
       if (_cursor) _cursor.classList.add('rfos-cursor--done');
       _setBadge(null);
     }
