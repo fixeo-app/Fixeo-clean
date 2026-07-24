@@ -1,0 +1,316 @@
+/* ══════════════════════════════════════════════════════════════
+   FIXEO CHAPTER 3 — Vous vous reconnaissez ?
+   Namespace: fc3-*  (scoped to #services)
+   Version: fc3-v1a
+
+   Question answered: "Can FIXEO solve MY problem?"
+   Approach: situations, not professions.
+
+   Preserves all JS:
+   - .chip[data-category] → initCategoryChips() in main.js
+   - #services-city-filter → city filtering JS
+   - .service-chip.active → active state management
+   - .category-chips → JS mutation target
+
+   Dependencies: fixeo-network-v1.css (service-chip base styles)
+══════════════════════════════════════════════════════════════ */
+
+/* ── SECTION WRAPPER ─────────────────────────────────────────── */
+#services.fc3-chapter {
+  padding: clamp(64px, 8vw, 112px) 0 clamp(56px, 7vw, 96px);
+  background: var(--fds-surface-bg, #05070f);
+  position: relative;
+}
+
+/* ── PART 1 — HEADER ─────────────────────────────────────────── */
+.fc3-header {
+  text-align: center;
+  max-width: 640px;
+  margin: 0 auto clamp(36px, 5vw, 56px);
+  padding: 0 16px;
+}
+
+.fc3-eyebrow {
+  display: inline-block;
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(72, 100, 255, 0.72);
+  margin-bottom: 16px;
+}
+
+.fc3-title {
+  font-size: clamp(1.75rem, 3.8vw, 2.8rem);
+  font-weight: 700;
+  line-height: 1.22;
+  color: #f0f4ff;
+  letter-spacing: -0.022em;
+  margin: 0 0 16px;
+}
+
+.fc3-subtitle {
+  font-size: clamp(0.90rem, 1.5vw, 1.02rem);
+  color: rgba(200, 212, 255, 0.55);
+  line-height: 1.65;
+  margin: 0;
+}
+
+/* Hide <br> on mobile (subtitle wraps naturally) */
+.fc3-br-desktop { display: inline; }
+
+/* ── CITY BAR ────────────────────────────────────────────────── */
+.fc3-city-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: clamp(28px, 4vw, 44px);
+  flex-wrap: wrap;
+}
+
+.fc3-city-icon {
+  font-size: 0.95rem;
+  opacity: 0.65;
+}
+
+.fc3-city-select {
+  /* Inherits .city-filter-select base styles */
+  background: rgba(72, 100, 255, 0.06);
+  border: 1px solid rgba(72, 100, 255, 0.18);
+  border-radius: 8px;
+  color: rgba(200, 212, 255, 0.80);
+  font-size: 0.85rem;
+  padding: 8px 14px;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s ease;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.fc3-city-select:focus {
+  border-color: rgba(72, 100, 255, 0.50);
+}
+
+.fc3-city-confirmed {
+  font-size: 0.82rem;
+  color: #20c997;
+}
+
+/* ── SITUATION CARDS ─────────────────────────────────────────── */
+/* Grid: 3 columns desktop, 2 tablet, 2 mobile */
+.fc3-situations {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  max-width: 900px;
+  margin: 0 auto clamp(28px, 4vw, 44px);
+  /* Override .category-chips flex layout from fixeo-network-v1.css */
+  flex-wrap: unset !important;
+}
+
+/* Single card */
+.fc3-card {
+  /* Reset chip styles */
+  appearance: none;
+  -webkit-appearance: none;
+  border: 1px solid rgba(72, 100, 255, 0.12);
+  background: rgba(72, 100, 255, 0.04);
+  border-radius: 14px;
+  padding: 18px 16px 16px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  text-align: left;
+  position: relative;
+  transition:
+    background 0.22s ease,
+    border-color 0.22s ease,
+    transform 0.15s ease;
+  width: 100%;
+  min-height: 96px;
+  /* Override chip horizontal layout */
+  flex-direction: column !important;
+}
+
+.fc3-card:hover {
+  background: rgba(72, 100, 255, 0.09);
+  border-color: rgba(72, 100, 255, 0.30);
+  transform: translateY(-2px);
+}
+
+.fc3-card:active {
+  transform: translateY(0);
+}
+
+/* Active state — matches a selected situation */
+.fc3-card.active,
+.fc3-card[aria-pressed="true"] {
+  background: rgba(72, 100, 255, 0.12);
+  border-color: rgba(72, 100, 255, 0.55);
+  box-shadow: 0 0 0 3px rgba(72, 100, 255, 0.08);
+}
+
+.fc3-card:focus-visible {
+  outline: 2px solid rgba(72, 100, 255, 0.60);
+  outline-offset: 2px;
+}
+
+/* Situation icon */
+.fc3-card-icon {
+  font-size: 1.55rem;
+  line-height: 1;
+  display: block;
+  /* Prevent layout shift from emoji width variation */
+  width: 1.6rem;
+}
+
+/* Situation label — the human phrase */
+.fc3-card-label {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: rgba(220, 228, 255, 0.88);
+  line-height: 1.40;
+  display: block;
+  flex: 1;
+}
+
+/* Active state label */
+.fc3-card.active .fc3-card-label,
+.fc3-card[aria-pressed="true"] .fc3-card-label {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+/* Urgency badge — small pill, urgent situations only */
+.fc3-card-urgency {
+  display: inline-block;
+  font-size: 0.60rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(225, 48, 108, 0.90);
+  background: rgba(225, 48, 108, 0.08);
+  border: 1px solid rgba(225, 48, 108, 0.18);
+  border-radius: 999px;
+  padding: 3px 8px;
+  line-height: 1;
+  align-self: flex-start;
+}
+
+/* ── HINT ────────────────────────────────────────────────────── */
+.fc3-hint {
+  text-align: center;
+  font-size: 0.82rem;
+  color: rgba(200, 212, 255, 0.35);
+  font-style: italic;
+  margin: 0;
+  letter-spacing: 0.01em;
+}
+
+/* ── RESPONSIVE ──────────────────────────────────────────────── */
+
+/* Tablet: 2 columns */
+@media (max-width: 899px) {
+  .fc3-situations {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 640px;
+    gap: 12px;
+  }
+
+  .fc3-title {
+    font-size: clamp(1.60rem, 4.2vw, 2.2rem);
+  }
+}
+
+/* Mobile ≤679px */
+@media (max-width: 679px) {
+  #services.fc3-chapter {
+    padding: 52px 0 48px;
+  }
+
+  .fc3-header {
+    padding: 0 20px;
+    margin-bottom: 28px;
+  }
+
+  .fc3-title {
+    font-size: clamp(1.45rem, 6.2vw, 1.80rem);
+  }
+
+  .fc3-subtitle {
+    font-size: 0.88rem;
+  }
+
+  .fc3-br-desktop {
+    display: none; /* let subtitle wrap naturally on mobile */
+  }
+
+  .fc3-city-bar {
+    margin-bottom: 24px;
+    padding: 0 20px;
+  }
+
+  .fc3-situations {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    max-width: 100%;
+    padding: 0 20px;
+  }
+
+  .fc3-card {
+    padding: 14px 12px 12px;
+    border-radius: 12px;
+    min-height: 88px;
+    gap: 8px;
+  }
+
+  .fc3-card-icon {
+    font-size: 1.35rem;
+  }
+
+  .fc3-card-label {
+    font-size: 0.82rem;
+  }
+
+  .fc3-hint {
+    padding: 0 20px;
+    font-size: 0.78rem;
+  }
+}
+
+/* Very small ≤374px */
+@media (max-width: 374px) {
+  .fc3-situations {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    padding: 0 16px;
+  }
+
+  .fc3-card {
+    padding: 12px 10px 10px;
+    min-height: 80px;
+  }
+
+  .fc3-card-icon {
+    font-size: 1.20rem;
+  }
+
+  .fc3-card-label {
+    font-size: 0.78rem;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .fc3-card {
+    transition: background 0.1s ease, border-color 0.1s ease;
+    transform: none !important;
+  }
+  .fc3-card:hover {
+    transform: none;
+  }
+}

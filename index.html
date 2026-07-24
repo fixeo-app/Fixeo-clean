@@ -2060,6 +2060,7 @@ section#home.hero.hero-section {
   <link rel="stylesheet" href="css/fixeo-brain-engine-v1.css?v=fbe-v42">
   <link rel="stylesheet" href="css/fixeo-chapter-2-v1.css?v=fc2-v1c">
   <link rel="stylesheet" href="css/fixeo-network-v1.css?v=fnv1a">
+  <link rel="stylesheet" href="css/fixeo-chapter-3-v1.css?v=fc3-v1a">
   <link rel="stylesheet" href="css/fixeo-narrative-v1.css?v=fnrv1a">
   <link rel="stylesheet" href="css/fixeo-discovery-compression-v1.css?v=dc-v1a">
   <link rel="stylesheet" href="css/fixeo-vision-v2.css?v=fxv-v2a">
@@ -2803,19 +2804,20 @@ section#home.hero.hero-section {
      3. NETWORK DISCOVERY — service chips + city chips + artisan grids
         ONE coherent discovery zone (JS IDs fully preserved)
 ══════════════════════════════════════════════════════════ -->
-<section class="section section-sm services-section" id="services" aria-labelledby="services-title">
+<section class="section fc3-chapter" id="services" aria-labelledby="services-title">
   <div class="container">
-    <!-- ── Network Discovery Header ── -->
-    <header class="fxn-header">
-      <span class="fxn-eyebrow">RÉSEAU FIXEO</span>
-      <h2 id="services-title" class="fxn-title">Quel artisan recherchez-vous&nbsp;?</h2>
-      <p class="fxn-subtitle">Explorez le réseau et découvrez les professionnels disponibles près de chez vous.</p>
+
+    <!-- ── Chapter 3 Header ── -->
+    <header class="fc3-header">
+      <span class="fc3-eyebrow">VOTRE SITUATION</span>
+      <h2 id="services-title" class="fc3-title">Vous vous reconnaissez&nbsp;?</h2>
+      <p class="fc3-subtitle">Choisissez ce qui décrit le mieux votre problème.<br class="fc3-br-desktop"> FIXEO trouve les artisans adaptés à votre situation.</p>
     </header>
 
-    <!-- City filter -->
-    <div class="services-filter services-filter-bar">
-      <span class="services-city-static-label" style="font-size:0.85rem;color:rgba(255,255,255,0.58);font-weight:600">📍 Ville :</span>
-      <select id="services-city-filter" class="city-filter-select" aria-label="Filtrer les artisans par ville">
+    <!-- ── City context (functional — JS reads services-city-filter) ── -->
+    <div class="fc3-city-bar services-filter services-filter-bar">
+      <span class="fc3-city-icon" aria-hidden="true">📍</span>
+      <select id="services-city-filter" class="fc3-city-select city-filter-select" aria-label="Filtrer par ville">
         <option value="">Toutes les villes</option>
         <option value="Casablanca">Casablanca</option>
         <option value="Rabat">Rabat</option>
@@ -2830,42 +2832,103 @@ section#home.hero.hero-section {
         <option value="Safi">Safi</option>
         <option value="El Jadida">El Jadida</option>
       </select>
-      <span id="services-city-label" style="font-size:0.82rem;color:#20c997;display:none">
+      <span id="services-city-label" class="fc3-city-confirmed" style="display:none">
         ✅ <span id="services-city-name"></span>
       </span>
-        <div class="city-quick-chips" id="city-quick-chips">
-  <button class="city-chip" data-city="Casablanca">Casablanca</button>
-  <button class="city-chip" data-city="Rabat">Rabat</button>
-  <button class="city-chip" data-city="Fès">Fès</button>
-  <button class="city-chip" data-city="Tanger">Tanger</button>
-  <button class="city-chip" data-city="Marrakech">Marrakech</button>
-  <button class="city-chip city-chip-more">+ Plus</button>
-</div>
     </div>
-  
 
-    <!-- Service chips -->
-    <div class="category-chips" role="list" aria-label="Catégories de services">
-      <div class="chip service-chip" role="listitem" data-category="all" tabindex="0"><span class="chip-icon">🔍</span>Tout voir</div>
-      <div class="chip service-chip active" role="listitem" data-category="plomberie" tabindex="0"><span class="chip-icon">🚿</span>Plomberie</div>
-      <div class="chip service-chip" role="listitem" data-category="electricite" tabindex="0"><span class="chip-icon">⚡</span>Électricité</div>
-      <div class="chip service-chip" role="listitem" data-category="peinture" tabindex="0"><span class="chip-icon">🎨</span>Peinture</div>
-      <div class="chip service-chip" role="listitem" data-category="climatisation" tabindex="0"><span class="chip-icon">❄️</span>Climatisation</div>
-      <div class="chip service-chip" role="listitem" data-category="nettoyage" tabindex="0"><span class="chip-icon">🧹</span>Nettoyage</div>
-      <div class="chip service-chip" role="listitem" data-category="menuiserie" tabindex="0"><span class="chip-icon">🪚</span>Menuiserie</div>
-      <div class="chip service-chip" role="listitem" data-category="serrurerie" tabindex="0"><span class="chip-icon">🔑</span>Serrurerie</div>
-      <div class="chip service-chip" role="listitem" data-category="maconnerie" tabindex="0"><span class="chip-icon">🧱</span>Maçonnerie</div>
-      <div class="chip service-chip" role="listitem" data-category="jardinage" tabindex="0"><span class="chip-icon">🌿</span>Jardinage</div>
-      <div class="chip service-chip" role="listitem" data-category="bricolage" tabindex="0"><span class="chip-icon">🔨</span>Bricolage</div>
-      <div class="chip service-chip" role="listitem" data-category="demenagement" tabindex="0"><span class="chip-icon">📦</span>Déménagement</div>
-      <div class="chip service-chip" role="listitem" data-category="carrelage" tabindex="0"><span class="chip-icon">⬜</span>Carrelage</div>
-      <div class="chip service-chip" role="listitem" data-category="toiture" tabindex="0"><span class="chip-icon">🏠</span>Toiture</div>
-      <div class="chip service-chip" role="listitem" data-category="vitrerie" tabindex="0"><span class="chip-icon">🪟</span>Vitrerie</div>
-      <div class="chip service-chip" role="listitem" data-category="chauffage" tabindex="0"><span class="chip-icon">🔥</span>Chauffage</div>
-    </div>
-  </div>
+    <!-- ── Situation cards — data-category maps to existing JS filter ── -->
+    <div class="fc3-situations category-chips" role="list" aria-label="Choisissez votre situation">
+
+      <!-- All (show everything) -->
+      <button class="fc3-card chip service-chip" role="listitem" data-category="all" aria-pressed="false">
+        <span class="fc3-card-icon" aria-hidden="true">🔍</span>
+        <span class="fc3-card-label">Toutes les situations</span>
+      </button>
+
+      <!-- Plomberie situations -->
+      <button class="fc3-card chip service-chip active" role="listitem" data-category="plomberie" aria-pressed="true">
+        <span class="fc3-card-icon" aria-hidden="true">💧</span>
+        <span class="fc3-card-label">J'ai une fuite d'eau</span>
+        <span class="fc3-card-urgency" aria-label="Intervention urgente possible">Urgent</span>
+      </button>
+
+      <button class="fc3-card chip service-chip" role="listitem" data-category="plomberie" aria-pressed="false">
+        <span class="fc3-card-icon" aria-hidden="true">🚿</span>
+        <span class="fc3-card-label">Mon WC ou évier est bouché</span>
+      </button>
+
+      <!-- Électricité -->
+      <button class="fc3-card chip service-chip" role="listitem" data-category="electricite" aria-pressed="false">
+        <span class="fc3-card-icon" aria-hidden="true">⚡</span>
+        <span class="fc3-card-label">Plus de courant chez moi</span>
+        <span class="fc3-card-urgency" aria-label="Intervention urgente possible">Urgent</span>
+      </button>
+
+      <!-- Serrurerie -->
+      <button class="fc3-card chip service-chip" role="listitem" data-category="serrurerie" aria-pressed="false">
+        <span class="fc3-card-icon" aria-hidden="true">🚪</span>
+        <span class="fc3-card-label">Je suis bloqué dehors</span>
+        <span class="fc3-card-urgency" aria-label="Intervention urgente possible">Urgent</span>
+      </button>
+
+      <!-- Climatisation -->
+      <button class="fc3-card chip service-chip" role="listitem" data-category="climatisation" aria-pressed="false">
+        <span class="fc3-card-icon" aria-hidden="true">❄️</span>
+        <span class="fc3-card-label">Mon climatiseur ne fonctionne plus</span>
+      </button>
+
+      <!-- Menuiserie -->
+      <button class="fc3-card chip service-chip" role="listitem" data-category="menuiserie" aria-pressed="false">
+        <span class="fc3-card-icon" aria-hidden="true">🚪</span>
+        <span class="fc3-card-label">Une porte ou fenêtre à réparer</span>
+      </button>
+
+      <!-- Peinture -->
+      <button class="fc3-card chip service-chip" role="listitem" data-category="peinture" aria-pressed="false">
+        <span class="fc3-card-icon" aria-hidden="true">🎨</span>
+        <span class="fc3-card-label">Je veux repeindre une pièce</span>
+      </button>
+
+      <!-- Maçonnerie -->
+      <button class="fc3-card chip service-chip" role="listitem" data-category="maconnerie" aria-pressed="false">
+        <span class="fc3-card-icon" aria-hidden="true">🧱</span>
+        <span class="fc3-card-label">Un mur fissuré ou à réparer</span>
+      </button>
+
+      <!-- Nettoyage -->
+      <button class="fc3-card chip service-chip" role="listitem" data-category="nettoyage" aria-pressed="false">
+        <span class="fc3-card-icon" aria-hidden="true">🧹</span>
+        <span class="fc3-card-label">Nettoyage après travaux</span>
+      </button>
+
+      <!-- Carrelage -->
+      <button class="fc3-card chip service-chip" role="listitem" data-category="carrelage" aria-pressed="false">
+        <span class="fc3-card-icon" aria-hidden="true">⬜</span>
+        <span class="fc3-card-label">Du carrelage à poser ou réparer</span>
+      </button>
+
+      <!-- Jardinage -->
+      <button class="fc3-card chip service-chip" role="listitem" data-category="jardinage" aria-pressed="false">
+        <span class="fc3-card-icon" aria-hidden="true">🌿</span>
+        <span class="fc3-card-label">Mon jardin à entretenir</span>
+      </button>
+
+      <!-- Déménagement -->
+      <button class="fc3-card chip service-chip" role="listitem" data-category="demenagement" aria-pressed="false">
+        <span class="fc3-card-icon" aria-hidden="true">📦</span>
+        <span class="fc3-card-label">Je dois déménager</span>
+      </button>
+
+    </div><!-- /fc3-situations -->
+
+    <!-- Transition — leads naturally into artisan results below -->
+    <p class="fc3-hint">
+      Les artisans disponibles près de chez vous apparaissent juste en dessous.
+    </p>
+
+  </div><!-- /container -->
 </section>
-
 <!-- ══════════════════════════════════════════════════════════
      FIXEO ENTREPRISES — Chapter transition (fxet-transition-v1a)
      Inserted immediately before #enterprise-teaser.
