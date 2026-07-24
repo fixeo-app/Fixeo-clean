@@ -4350,6 +4350,8 @@ function openContentModal(type) {
 <script src="js/marketplace-premium-patch.js?v=50a38b9"></script>
 <script src="js/fixeo-client-requests-store.js?v=50a38b9"></script>
 <script src="js/fixeo-reservation-supabase-bridge.js?v=v3" defer></script>
+<!-- V3 modal lifecycle: sync, before request-form.js — owns window.openModal before bindTriggers() runs -->
+<script src="js/fixeo-request-modal-v3.js?v=fxrmv3-v1b"></script>
 <script src="js/request-form.js?v=rmv2-v1a"></script>
 <script src="js/fixeo-express-route-shim.js?v=fxrs-v1b"></script>
 <script defer src="js/homepage-conversion-optimizer.js?v=hco3"></script>
@@ -4465,7 +4467,7 @@ window._fixeoAvatarNav = function () {
 <script src="js/fixeo-urgent-modal-v3.js?v=fuv3-v1a" defer></script>
 <script src="js/fixeo-urgent-modal-v3-patch.js?v=fuv3-v1b" defer></script>
 <!-- V3 lifecycle: owns open/close/scroll-lock — loads after all modal engines -->
-<script src="js/fixeo-request-modal-v3.js?v=fxrmv3-v1b" defer></script>
+<!-- fxrmv3: moved to sync position before request-form.js — see above -->
 <!-- fixeo-live-engine-v1.js removed 2026-07-12: simulation replaced by static Truth Engine (fle-v2a) -->
 <script src="js/fixeo-ai-request-engine.js?v=aire-v1a" defer></script>
 <script src="js/fixeo-hero-insights.js?v=fxhi-v1c" defer></script>
