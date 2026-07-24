@@ -2050,15 +2050,7 @@ section#home.hero.hero-section {
   <link rel="stylesheet" href="css/fixeo-trust-v9.css?v=4">
   <link rel="stylesheet" href="css/fixeo-footer-global.css?v=gf3a">
   <link rel="stylesheet" href="css/fixeo-hero-lps-v10.css?v=6">
-  <link rel="stylesheet" href="css/fixeo-urgent-v2.css?v=1">
-  <link rel="stylesheet" href="css/fixeo-request-v2.css?v=1">
-  <link rel="stylesheet" href="css/fixeo-request-modal-v2.css?v=rmv2-v1a">
-  <link rel="stylesheet" href="css/fixeo-urgent-modal-v3.css?v=fuv3-v1a">
-  <link rel="stylesheet" href="css/fixeo-urgent-modal-v3-patch.css?v=fuv3-v1b">
-  <link rel="stylesheet" href="css/fixeo-modal-scroll-fix.css?v=fxmsf-v1b">
-  <!-- V3 shell: loads last, wins specificity over all legacy modal CSS -->
-  <link rel="stylesheet" href="css/fixeo-request-modal-v3.css?v=fxrmv3-v1c">
-  <!-- V4 request flow: isolated component, no .modal dependency -->
+  <!-- fxrf4-v5b: legacy modal CSS removed — V5 is the only request UI -->
   <link rel="stylesheet" href="css/fx-request-flow-v4.css?v=fxrf4-v5b">
   <link rel="stylesheet" href="css/fixeo-live-engine-v1.css?v=fle-v2a">
   <link rel="stylesheet" href="css/fixeo-brain-engine-v1.css?v=fbe-v42">
@@ -2122,44 +2114,7 @@ section#home.hero.hero-section {
 <link rel="stylesheet" href="css/fixeo-artisan-card-premium-v2.css?v=facp-v2c">
 
 
-<style id="fixeo-mobile-request-modal-hotfix">
-  @media (max-width: 768px) {
-    .mobile-nav {
-      z-index: 4000 !important;
-      pointer-events: auto !important;
-      overscroll-behavior: contain !important;
-      -webkit-overflow-scrolling: touch !important;
-    }
-
-    .mobile-nav.open {
-      display: block !important;
-      pointer-events: auto !important;
-    }
-
-    .mobile-nav-backdrop {
-      z-index: 3990 !important;
-    }
-
-    .mobile-nav .mobile-nav-action-link-request {
-      position: relative !important;
-      z-index: 4010 !important;
-      pointer-events: auto !important;
-      touch-action: manipulation !important;
-      -webkit-tap-highlight-color: transparent !important;
-    }
-
-    #request-modal,
-    .modal.request-modal {
-      z-index: 5002 !important;
-    }
-
-    #main-backdrop.open,
-    #main-backdrop.modal-backdrop.open,
-    .modal-backdrop.open {
-      z-index: 5001 !important;
-    }
-  }
-</style>
+<!-- fxrf4-v5b: legacy modal hotfix removed — V5 owns all request triggers at z-index:19000 -->
 
 <!-- SEO-1A: Structured Data Foundation -->
 <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
@@ -2263,51 +2218,30 @@ section#home.hero.hero-section {
 </script>
 
 <script id="fixeo-mobile-request-modal-fix">
+/* fxrf4-v5b: routes mobile nav request triggers directly to V5 flow */
 (function () {
   'use strict';
-
-  function closeMobileMenu() {
-    document.querySelector('.mobile-nav')?.classList.remove('open');
-    document.querySelector('.mobile-nav-backdrop')?.classList.remove('open');
-    document.querySelector('.hamburger')?.classList.remove('open');
-    document.querySelector('.hamburger')?.setAttribute('aria-expanded', 'false');
+  function _closeMobileMenu() {
+    var nav = document.querySelector('.mobile-nav');
+    var bd  = document.querySelector('.mobile-nav-backdrop');
+    var ham = document.querySelector('.hamburger');
+    if (nav) nav.classList.remove('open');
+    if (bd)  bd.classList.remove('open');
+    if (ham) { ham.classList.remove('open'); ham.setAttribute('aria-expanded', 'false'); }
     document.body.classList.remove('mobile-menu-open');
   }
-
-  function forceOpenRequestModal() {
-    /* V3 lifecycle — route through FixeoRequestModalV3 when available */
-    if (window.FixeoRequestModalV3 && typeof FixeoRequestModalV3.open === 'function') {
-      FixeoRequestModalV3.open(null, null);
-      return;
-    }
-    /* Fallback: legacy path (kept for safety during V3 load race) */
-    const modal = document.getElementById('request-modal');
-    const backdrop = document.getElementById('main-backdrop') || document.querySelector('.modal-backdrop');
-    if (!modal) return;
-    modal.classList.add('open');
-    backdrop?.classList.add('open');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function handleRequestClick(event) {
-    const trigger = event.target.closest(
-      '.mobile-nav [data-open-request-form="true"], .mobile-nav .mobile-nav-action-link-request'
-    );
+  document.addEventListener('click', function (e) {
+    var trigger = e.target.closest
+      ? e.target.closest('.mobile-nav [data-open-request-form="true"], .mobile-nav .mobile-nav-action-link-request')
+      : null;
     if (!trigger) return;
-
-    event.preventDefault();
-    event.stopPropagation();
-    if (event.stopImmediatePropagation) event.stopImmediatePropagation();
-
-    closeMobileMenu();
-
-    setTimeout(forceOpenRequestModal, 80);
-
-    return false;
-  }
-
-  document.addEventListener('click', handleRequestClick, true);
-  document.addEventListener('touchend', handleRequestClick, true);
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+    _closeMobileMenu();
+    /* V5 is the single entry point */
+    if (window.FixeoRequestFlowV4) window.FixeoRequestFlowV4.open({ mode: trigger.getAttribute('data-request-mode') || 'default', source: 'mobile-nav' });
+  }, true);
 })();
 </script>
 
@@ -2365,8 +2299,7 @@ section#home.hero.hero-section {
     <!-- Demande urgente - STICKY visible -->
     <button class="btn btn-express btn-sm"
             type="button"
-            onclick="window.FixeoClientRequest ? FixeoClientRequest.openExpress(this) : (window.FixeoReservation ? FixeoReservation.openExpress() : openModal('request-modal'))"
-            data-open-express-request="true"
+            data-open-request-form="true"
             data-request-mode="express"
             aria-label="Urgent" title="Urgent">
       ⚡ Urgent
@@ -2426,14 +2359,13 @@ section#home.hero.hero-section {
   <div class="mobile-nav-section mobile-nav-section-actions">
     <div class="mobile-nav-label">Actions</div>
     <a href="#" class="nav-link mobile-nav-action-link mobile-nav-action-link-urgent"
-       data-open-express-request="true"
+       data-open-request-form="true"
        data-request-mode="express">⚡ Demande urgente</a>
     <button type="button"
         id="mobile-nav-request-btn"
         class="nav-link mobile-nav-action-link mobile-nav-action-link-request"
         data-open-request-form="true"
         data-request-mode="marketplace"
-        aria-controls="request-modal"
         aria-haspopup="dialog">📝 Publier une demande</button>
     <a href="rejoindre-fixeo.html" class="nav-link mobile-nav-action-link mobile-nav-action-link-artisan">🛠 Je suis artisan</a>
   </div>
@@ -3626,9 +3558,8 @@ section#home.hero.hero-section {
       </button>
       <!-- 4. Secondary urgent CTA (one only) -->
       <button class="btn-express final-cta-urgent" type="button"
-              data-open-express-request="true"
-              data-request-mode="express"
-              onclick="window.FixeoClientRequest ? FixeoClientRequest.openExpress(this) : (window.FixeoReservation ? FixeoReservation.openExpress() : openModal('request-modal')); return false;">
+              data-open-request-form="true"
+              data-request-mode="express">
         Besoin urgent ⚡
       </button>
       <!-- 5. Proof line (no fake timing) -->
@@ -3770,7 +3701,8 @@ section#home.hero.hero-section {
 </div>
 
 <!-- Request modal - publication de demande client -->
-<div class="modal request-modal" id="request-modal" role="dialog" aria-modal="true" aria-labelledby="fxrmv3-title-el" aria-describedby="fxrmv3-subtitle-el">
+<!-- fxrf4-v5b: #request-modal permanently replaced by V5 flow. DOM preserved for JS compat only. -->
+<div class="modal request-modal" id="request-modal" role="dialog" aria-modal="true" aria-hidden="true" hidden style="display:none!important">
   <!-- V3 header — clean namespace, no shared classes -->
   <div class="fxrmv3-header">
     <span class="fxrmv3-mode" aria-hidden="true">FIXEO</span>
@@ -4352,11 +4284,8 @@ function openContentModal(type) {
 <script src="js/marketplace-premium-patch.js?v=50a38b9"></script>
 <script src="js/fixeo-client-requests-store.js?v=50a38b9"></script>
 <script src="js/fixeo-reservation-supabase-bridge.js?v=v3" defer></script>
-<!-- V4 request flow: sync, before request-form.js — capture-phase listener intercepts all triggers -->
+<!-- fxrf4-v5b: V5 is the only request flow — legacy modal JS removed -->
 <script src="js/fx-request-flow-v4.js?v=fxrf4-v5b"></script>
-<!-- V3 lifecycle (kept for reference/rollback — V4 owns all triggers) -->
-<script src="js/fixeo-request-modal-v3.js?v=fxrmv3-v1b"></script>
-<script src="js/request-form.js?v=rmv2-v1a"></script>
 <script src="js/fixeo-express-route-shim.js?v=fxrs-v1b"></script>
 <script defer src="js/homepage-conversion-optimizer.js?v=hco3"></script>
 <script src="js/hero-ux-fixes.js?v=50a38b9"></script>
@@ -4451,9 +4380,8 @@ window._fixeoAvatarNav = function () {
   id="fixeo-urgent-fab"
   type="button"
   class="btn-express"
-  data-open-express-request="true"
+  data-open-request-form="true"
   data-request-mode="express"
-  onclick="window.FixeoClientRequest ? FixeoClientRequest.openExpress(this) : (window.FixeoReservation ? FixeoReservation.openExpress() : openModal('request-modal')); return false;"
   aria-label="Demande urgente"
   title="Demande urgente"
 >
@@ -4465,13 +4393,7 @@ window._fixeoAvatarNav = function () {
 
 <script src="js/testimonials-premium.js?v=tp1" defer></script>
 <script src="js/fixeo-hero-lps-v10.js?v=lps2" defer></script>
-<script src="js/fixeo-urgent-v2.js?v=1" defer></script>
-<script src="js/fixeo-request-v2.js?v=1" defer></script>
-<script src="js/fixeo-request-modal-v2.js?v=rmv2-v1a" defer></script>
-<script src="js/fixeo-urgent-modal-v3.js?v=fuv3-v1a" defer></script>
-<script src="js/fixeo-urgent-modal-v3-patch.js?v=fuv3-v1b" defer></script>
-<!-- V3 lifecycle: owns open/close/scroll-lock — loads after all modal engines -->
-<!-- fxrmv3: moved to sync position before request-form.js — see above -->
+<!-- fxrf4-v5b: legacy modal JS removed — fixeo-urgent-v2, request-v2, modal-v2, urgent-modal-v3 all unloaded -->
 <!-- fixeo-live-engine-v1.js removed 2026-07-12: simulation replaced by static Truth Engine (fle-v2a) -->
 <script src="js/fixeo-ai-request-engine.js?v=aire-v1a" defer></script>
 <script src="js/fixeo-hero-insights.js?v=fxhi-v1c" defer></script>
@@ -4488,51 +4410,7 @@ window.addEventListener('load', function () {
 </script>
  <!-- SEO city/service pages accessible via direct URLs - inline block removed -->
 
-  <script>
-(function () {
-  document.addEventListener('click', function (e) {
-
-    const trigger = e.target.closest(
-      '[data-open-request-form], .mobile-nav-action-link-request'
-    );
-
-    if (!trigger) return;
-
-    // 🔥 STOP TOTAL
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.stopImmediatePropagation) e.stopImmediatePropagation();
-
-    // 🔥 ferme menu mobile
-    const mobileNav = document.querySelector('.mobile-nav');
-    if (mobileNav) mobileNav.classList.remove('open');
-    document.body.classList.remove('mobile-menu-open');
-
-    // 🔥 ouvre modal (chaine safe)
-    requestAnimationFrame(() => {
-
-      if (window.FixeoClientRequest && typeof window.FixeoClientRequest.open === 'function') {
-        window.FixeoClientRequest.open(trigger);
-        return;
-      }
-
-      if (typeof window.openModal === 'function') {
-        window.openModal('request-modal');
-        return;
-      }
-
-      const modal = document.getElementById('request-modal');
-      if (modal) {
-        modal.style.display = 'block';
-        modal.classList.add('open', 'active');
-        document.body.classList.add('modal-open');
-      }
-
-    });
-
-  }, true); // ⚠️ capture mode = PRIORITÉ MAX
-})();
-</script>
+  <!-- fxrf4-v5b: legacy capture-phase router removed — V5 fx-request-flow-v4.js is the sole capture-phase listener -->
 
 <script>
 /* ── Lazy loader for reservation stack (reservation.js, slot-lock.js, payment.js, cod-payment.js)
