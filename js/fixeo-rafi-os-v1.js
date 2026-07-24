@@ -198,15 +198,23 @@
     function mount() {
       if (_mem.dismissed) return;
 
-      /* Inject after hero-content div */
-      var heroContent = _q('.hero-content');
-      if (!heroContent) return;
-
       /* Build if not already */
       if (!_node) _build();
 
-      /* Insert after hero-content */
-      heroContent.insertAdjacentElement('afterend', _node);
+      /* Insert AFTER the hero section (outside overflow:hidden).
+         Target: section#home — insert between hero and #faee-v2-hero.
+         Fallback: before #faee-v2-hero, then before hero-post-strip. */
+      var heroSection = _q('section#home') || _q('.hero-section');
+      if (heroSection) {
+        heroSection.insertAdjacentElement('afterend', _node);
+        return;
+      }
+      /* Fallback: before estimation card */
+      var faee = _el('faee-v2-hero');
+      if (faee) { faee.insertAdjacentElement('beforebegin', _node); return; }
+      /* Final fallback: after hero-content (inside section — may be clipped) */
+      var heroContent = _q('.hero-content');
+      if (heroContent) heroContent.insertAdjacentElement('afterend', _node);
     }
 
     function onInput(text) {
