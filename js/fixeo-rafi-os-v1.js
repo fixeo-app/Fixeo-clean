@@ -35,6 +35,20 @@
   var RAFI_HEAD_K = 'rafi/RAFI_V2_HeadCollar_Core.webp';
   var RAFI_BUST   = 'rafi/RAFI_V2_Bust_Color.webp';
 
+  /* ── Hero subtitle update ─────────────────────────────────────
+     Replaces hero subtitle text with RAFI brand message.
+     Only runs for FR (default) locale. Reverts if i18n re-runs. */
+  function _updateHeroSubtitle() {
+    var sub = _q('.hero-subtitle[data-i18n="hero_subtitle"]');
+    if (!sub) return;
+    /* Only override if current text is the default FR string */
+    var current = sub.textContent.trim();
+    if (current.indexOf('Intervention rapide') !== -1 ||
+        current.indexOf('RAFI') !== -1) {
+      sub.textContent = 'Expliquez votre besoin \u00e0 RAFI.';
+    }
+  }
+
   /* ── DOM helpers ───────────────────────────────────────────── */
   function _el(id) { return document.getElementById(id); }
   function _q(sel, root) { return (root || document).querySelector(sel); }
@@ -117,61 +131,51 @@
     urgentModalWelcome: 'Quel est le probl\u00e8me urgent\u00a0?'
   };
 
-  /* ── RafiEntry — hero ambient companion ─────────────────────── */
+  /* ── RafiEntry — inline identity header inside .qsm-dialog ─── */
   var RafiEntry = (function () {
-    var _node = null;
-    var _bubbleText = null;
-    var _avatarWrap = null;
+    var _node        = null;
+    var _bubbleText  = null;
     var _currentState = 'idle';
+    var _injected    = false;
 
     function _build() {
-      /* Container */
+      /*
+       * Structure:
+       *   .rfos-entry  (flex row, inside .qsm-dialog before .qsm-search-section)
+       *     .rfos-entry-avatar  (avatar image)
+       *     .rfos-entry-inline  (label + message, no bubble tail — inline style)
+       */
       var wrap = document.createElement('div');
       wrap.className = 'rfos-entry';
-      wrap.setAttribute('aria-hidden', 'true'); /* decorative — screen readers get form */
+      /* Decorative layer — the actual form elements below are the interaction */
+      wrap.setAttribute('aria-hidden', 'true');
 
       /* Avatar */
       var av = document.createElement('div');
       av.className = 'rfos-entry-avatar';
-      var avImg = _img(RAFI_HEAD_K, 44, '');
+      /* Desktop: HeadCollar Core (296px source → displayed 56px) */
+      var avImg = _img(RAFI_HEAD_K, 56, '');
       av.appendChild(avImg);
 
-      /* Dismiss button */
-      var dismiss = document.createElement('button');
-      dismiss.type = 'button';
-      dismiss.className = 'rfos-entry-dismiss';
-      dismiss.setAttribute('aria-label', 'Fermer RAFI');
-      dismiss.style.cssText = 'position:absolute;top:6px;right:8px;background:none;border:none;color:rgba(255,255,255,0.30);font-size:0.7rem;cursor:pointer;padding:2px 4px;line-height:1';
-      dismiss.textContent = '\u2715';
-      dismiss.addEventListener('click', function (e) {
-        e.stopPropagation();
-        _mem.setDismissed();
-        wrap.style.display = 'none';
-      });
-
-      /* Bubble */
-      var bubble = document.createElement('div');
-      bubble.className = 'rfos-entry-bubble';
-      bubble.style.position = 'relative';
+      /* Text block */
+      var textWrap = document.createElement('div');
+      textWrap.className = 'rfos-entry-inline';
 
       var label = document.createElement('span');
       label.className = 'rfos-bubble-label';
       label.textContent = 'RAFI';
 
-      var text = document.createElement('span');
-      text.className = 'rfos-bubble-text';
-      text.innerHTML = _text.heroIdle;
+      var msg = document.createElement('span');
+      msg.className = 'rfos-bubble-text';
+      msg.innerHTML = _text.heroIdle;
 
-      bubble.appendChild(label);
-      bubble.appendChild(text);
-      bubble.appendChild(dismiss);
-
+      textWrap.appendChild(label);
+      textWrap.appendChild(msg);
       wrap.appendChild(av);
-      wrap.appendChild(bubble);
+      wrap.appendChild(textWrap);
 
-      _node = wrap;
-      _bubbleText = text;
-      _avatarWrap = av;
+      _node       = wrap;
+      _bubbleText = msg;
       return wrap;
     }
 
@@ -188,37 +192,38 @@
       if (!_bubbleText) return;
       _bubbleText.style.opacity = '0';
       setTimeout(function () {
-        if (_bubbleText) {
-          _bubbleText.innerHTML = html;
-          _bubbleText.style.opacity = '1';
-        }
-      }, 140);
+        if (_bubbleText) { _bubbleText.innerHTML = html; _bubbleText.style.opacity = '1'; }
+      }, 130);
     }
 
     function mount() {
-      if (_mem.dismissed) return;
+      if (_mem.dismissed || _injected) return;
 
-      /* Build if not already */
-      if (!_node) _build();
-
-      /* Insert AFTER the hero section (outside overflow:hidden).
-         Target: section#home — insert between hero and #faee-v2-hero.
-         Fallback: before #faee-v2-hero, then before hero-post-strip. */
-      var heroSection = _q('section#home') || _q('.hero-section');
-      if (heroSection) {
-        heroSection.insertAdjacentElement('afterend', _node);
-        return;
+      /* QSM renders #hero-quick-search → .qsm-dialog → .qsm-search-section.
+         We prepend RAFI inside .qsm-dialog, before .qsm-search-section.
+         Wait for QSM to finish rendering (poll up to 3s). */
+      var attempts = 0;
+      function _tryMount() {
+        var dialog = _q('#hero-quick-search .qsm-dialog');
+        if (!dialog) {
+          if (++attempts < 20) setTimeout(_tryMount, 150);
+          return;
+        }
+        if (_injected) return;
+        _injected = true;
+        if (!_node) _build();
+        var searchSection = _q('.qsm-search-section', dialog);
+        if (searchSection) {
+          dialog.insertBefore(_node, searchSection);
+        } else {
+          dialog.insertAdjacentElement('afterbegin', _node);
+        }
       }
-      /* Fallback: before estimation card */
-      var faee = _el('faee-v2-hero');
-      if (faee) { faee.insertAdjacentElement('beforebegin', _node); return; }
-      /* Final fallback: after hero-content (inside section — may be clipped) */
-      var heroContent = _q('.hero-content');
-      if (heroContent) heroContent.insertAdjacentElement('afterend', _node);
+      _tryMount();
     }
 
     function onInput(text) {
-      if (!_node || _mem.dismissed) return;
+      if (!_node) return;
       if (!text || text.length < 3) {
         _setState('idle');
         _setText(_text.heroIdle);
@@ -229,9 +234,8 @@
     }
 
     function onAnalysis(category, isUrgent) {
-      if (!_node || _mem.dismissed) return;
+      if (!_node) return;
       _mem.update({ category: category, isUrgent: isUrgent });
-
       if (isUrgent) {
         _setState('urgent');
         _setText(_text.heroUrgent);
@@ -247,7 +251,7 @@
     }
 
     function onCityKnown(city) {
-      if (!_node || _mem.dismissed) return;
+      if (!_node) return;
       _mem.update({ city: city });
       if (_mem.category && _mem.category.label && city) {
         _setState('listening');
@@ -947,6 +951,9 @@
   /* ── Init ───────────────────────────────────────────────────── */
   function _init() {
     _mem._init();
+    /* Update hero subtitle to RAFI voice */
+    _updateHeroSubtitle();
+    /* Mount RAFI inside QSM dialog (polls until QSM renders) */
     RafiEntry.mount();
     _watchHeroInput();
     _watchModal();

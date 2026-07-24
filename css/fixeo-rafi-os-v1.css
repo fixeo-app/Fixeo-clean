@@ -23,116 +23,92 @@
 }
 
 /* ══════════════════════════════════════════════════════════════
-   RAFI ENTRY POINT — Hero companion
+   RAFI ENTRY POINT — Inline header inside .qsm-dialog
+   Placed above .qsm-search-section, inside the existing search card.
+   Not a separate section — part of the Hero search container.
 ══════════════════════════════════════════════════════════════ */
 .rfos-entry {
   display: flex;
   align-items: center;
   gap: 14px;
-  /* Sits between hero section and estimation card */
-  max-width: 680px;
-  margin: 0 auto;
-  padding: 14px 24px 0;
+  padding: 16px 20px 12px;
+  /* Entrance animation — fires after QSM renders (no delay needed here,
+     delay is baked into the JS poll loop) */
   opacity: 0;
-  transform: translateY(6px);
-  animation: rfos-fadein 0.32s ease-out 0.65s forwards;
-  /* Never in LCP path — 650ms delay */
+  transform: translateY(4px);
+  animation: rfos-fadein 0.28s ease-out 0.1s forwards;
   box-sizing: border-box;
+  width: 100%;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
 }
 
+/* Avatar — desktop 56px, clearly visible */
 .rfos-entry-avatar {
   flex-shrink: 0;
-  width: 52px;
-  height: 52px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
   overflow: hidden;
-  background: rgba(72, 100, 255, 0.12);
-  border: 1.5px solid rgba(72, 100, 255, 0.28);
+  background: rgba(72, 100, 255, 0.10);
+  border: 1.5px solid rgba(72, 100, 255, 0.25);
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
-  transition: border-color 0.25s, box-shadow 0.25s;
+  transition: border-color 0.22s, box-shadow 0.22s;
 }
 
 .rfos-entry-avatar img {
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   object-fit: contain;
   display: block;
 }
 
-/* Pulse ring when RAFI is "listening" */
+/* Pulse ring — listening state */
 .rfos-entry--listening .rfos-entry-avatar {
-  border-color: rgba(72, 100, 255, 0.55);
-  box-shadow: 0 0 0 4px rgba(72, 100, 255, 0.12);
+  border-color: rgba(72, 100, 255, 0.52);
+  box-shadow: 0 0 0 4px rgba(72, 100, 255, 0.10);
 }
 
 /* Urgency ring */
 .rfos-entry--urgent .rfos-entry-avatar {
-  border-color: rgba(225, 48, 108, 0.55);
-  box-shadow: 0 0 0 4px rgba(225, 48, 108, 0.12);
+  border-color: rgba(225, 48, 108, 0.52);
+  box-shadow: 0 0 0 4px rgba(225, 48, 108, 0.10);
   animation: rfos-urgency-pulse 1.6s ease-in-out infinite;
 }
 
-.rfos-entry-bubble {
+/* Inline text block (no bubble tail) */
+.rfos-entry-inline {
   flex: 1;
   min-width: 0;
-  background: var(--rfos-bg-dark);
-  border: 1px solid var(--rfos-border);
-  border-radius: 0 var(--rfos-radius) var(--rfos-radius) var(--rfos-radius);
-  padding: 10px 14px;
-  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
-/* Speech bubble tail */
-.rfos-entry-bubble::before {
-  content: '';
-  position: absolute;
-  left: -7px;
-  top: 14px;
-  width: 0;
-  height: 0;
-  border-top: 6px solid transparent;
-  border-bottom: 6px solid transparent;
-  border-right: 7px solid var(--rfos-bg-dark);
-}
-
-.rfos-entry-bubble::after {
-  content: '';
-  position: absolute;
-  left: -9px;
-  top: 13px;
-  width: 0;
-  height: 0;
-  border-top: 7px solid transparent;
-  border-bottom: 7px solid transparent;
-  border-right: 8px solid rgba(255, 255, 255, 0.09);
-  z-index: -1;
+.rfos-bubble-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: rgba(72, 100, 255, 0.72);
+  display: block;
 }
 
 .rfos-bubble-text {
-  font-size: 0.88rem;
+  font-size: 0.90rem;
   font-weight: 500;
   color: var(--rfos-text);
-  line-height: 1.5;
-  transition: opacity 0.18s;
+  line-height: 1.45;
+  transition: opacity 0.15s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .rfos-bubble-text b, .rfos-bubble-text strong {
   color: #fff;
   font-weight: 700;
-}
-
-/* Rafi name label */
-.rfos-bubble-label {
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: rgba(72, 100, 255, 0.70);
-  margin-bottom: 3px;
-  display: block;
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -544,22 +520,34 @@
    RESPONSIVE
 ══════════════════════════════════════════════════════════════ */
 
-/* Tablet — slightly smaller entry */
+/* Tablet */
 @media (max-width: 1023px) {
-  .rfos-entry-avatar { width: 46px; height: 46px; }
-  .rfos-entry-avatar img { width: 38px; height: 38px; }
+  .rfos-entry-avatar { width: 50px; height: 50px; }
+  .rfos-entry-avatar img { width: 42px; height: 42px; }
 }
 
-/* Mobile — entry hidden (space too constrained in hero) */
+/* Mobile — entry remains visible but compact */
 @media (max-width: 767px) {
-  .rfos-entry { display: none; }
+  .rfos-entry {
+    padding: 12px 14px 10px;
+    gap: 10px;
+  }
+  .rfos-entry-avatar { width: 44px; height: 44px; }
+  .rfos-entry-avatar img { width: 36px; height: 36px; }
+  .rfos-bubble-text {
+    font-size: 0.82rem;
+    white-space: normal;        /* allow wrap on mobile */
+    overflow: visible;
+    text-overflow: clip;
+  }
+  .rfos-bubble-label { font-size: 0.62rem; }
 
   .rfos-conv-header { padding: 12px 14px 12px; }
   .rfos-conv-avatar { width: 36px; height: 36px; }
   .rfos-conv-avatar img { width: 30px; height: 30px; }
   .rfos-conv-msg { font-size: 0.82rem; }
 
-  .rfos-tl-label { display: none; } /* dots only on mobile */
+  .rfos-tl-label { display: none; }
   .rfos-tl-dot { width: 6px; height: 6px; }
 
   .rfos-confirmation-avatar { width: 56px; height: 56px; }
@@ -569,6 +557,13 @@
 
   .rfos-summary { flex-direction: column; align-items: flex-start; gap: 8px; }
   .rfos-summary-text { font-size: 0.80rem; }
+}
+
+/* Very small (360px) */
+@media (max-width: 380px) {
+  .rfos-entry-avatar { width: 40px; height: 40px; }
+  .rfos-entry-avatar img { width: 32px; height: 32px; }
+  .rfos-bubble-text { font-size: 0.78rem; }
 }
 
 /* ── Reduced motion ────────────────────────────────────────── */
