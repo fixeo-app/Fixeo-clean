@@ -1,10 +1,11 @@
 /* ══════════════════════════════════════════════════════════════
    FIXEO CHAPTER 3 — Mon problème, c'est ça.
    Namespace: fc3-*  (scoped to #services)
-   Version: fc3-v2a
+   Version: fc3-v3a
 
    Question answered: "Can FIXEO solve MY problem?"
    Approach: situations, not professions.
+   Philosophy: users should feel guided, never filtering.
 
    Preserves all JS:
    - .chip[data-category] → initCategoryChips() in main.js
@@ -22,9 +23,21 @@
   position: relative;
 }
 
-/* Entrance animation — cards fade in from below on load */
+/* Suppress svc-city-wrap pill injected by services-premium.js
+   (we replace it with our contextual fc3-city-bar) */
+#services.fc3-chapter .svc-city-wrap {
+  display: none !important;
+}
+
+/* Card entrance animation */
 @keyframes fc3-card-enter {
   from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Chip panel expand */
+@keyframes fc3-chips-reveal {
+  from { opacity: 0; transform: translateY(-6px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
@@ -55,7 +68,6 @@
   margin: 0 0 16px;
 }
 
-/* Mobile title line break */
 .fc3-br-title { display: none; }
 
 .fc3-subtitle {
@@ -67,62 +79,128 @@
 
 .fc3-br-desktop { display: inline; }
 
-/* ── CITY BAR — CONTEXTUAL ────────────────────────────────────── */
-/* The services-filter-bar is always present; JS switches between
-   city-detected (STATE A) and city-quick-chips (STATE B). */
+/* ── CITY CONTEXT BAR ────────────────────────────────────────── */
+/* Minimal, centered, almost invisible. Never looks like a filter. */
 
-/* Detected state pill */
-.fc3-city-detected {
-  display: none; /* shown by JS when city is known */
+.fc3-city-bar {
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  margin-bottom: clamp(28px, 4vw, 44px);
+}
+
+/* ── STATE A: city detected ──────────────────────────────────── */
+/* Hidden by default; CSS reveals when #services has data-fc3-city-known */
+.fc3-city-detected {
+  display: none;
+  align-items: center;
+  gap: 7px;
   font-size: 0.84rem;
-  color: rgba(200, 212, 255, 0.72);
-  animation: fc3-city-appear 0.35s ease both;
+  color: rgba(200, 212, 255, 0.65);
+}
+
+/* Revealed by JS via data attribute — beats fixeo-network-v1.css !important */
+#services.fc3-chapter[data-fc3-city-known] .fc3-city-detected {
+  display: flex !important;
+  animation: fc3-city-appear 0.30s ease both;
 }
 
 @keyframes fc3-city-appear {
-  from { opacity: 0; transform: scale(0.96); }
+  from { opacity: 0; transform: scale(0.97); }
   to   { opacity: 1; transform: scale(1); }
 }
 
 .fc3-city-pin {
-  font-size: 0.90rem;
+  font-size: 0.80rem;
+  opacity: 0.70;
 }
 
 .fc3-city-detected-name {
   font-weight: 600;
-  color: rgba(220, 228, 255, 0.90);
+  color: rgba(220, 228, 255, 0.88);
 }
 
 .fc3-city-detected-label {
-  color: rgba(200, 212, 255, 0.45);
-  font-size: 0.80rem;
+  color: rgba(200, 212, 255, 0.38);
+  font-size: 0.78rem;
 }
 
 .fc3-city-change-btn {
   background: none;
   border: none;
-  padding: 3px 8px;
-  font-size: 0.78rem;
+  padding: 2px 6px;
+  font-size: 0.76rem;
   font-weight: 600;
-  color: rgba(72, 100, 255, 0.75);
+  color: rgba(72, 100, 255, 0.65);
   cursor: pointer;
-  border-radius: 6px;
-  transition: color 0.15s ease, background 0.15s ease;
-  letter-spacing: 0.02em;
+  border-radius: 5px;
+  transition: color 0.15s ease;
   text-decoration: underline;
   text-underline-offset: 3px;
+  text-decoration-color: rgba(72, 100, 255, 0.30);
 }
 
 .fc3-city-change-btn:hover {
-  color: rgba(72, 100, 255, 1);
-  background: rgba(72, 100, 255, 0.06);
-  text-decoration: none;
+  color: rgba(72, 100, 255, 0.95);
+  text-decoration-color: rgba(72, 100, 255, 0.65);
+}
+
+/* ── STATE B: city unknown ───────────────────────────────────── */
+/* Hidden when city is known */
+#services.fc3-chapter[data-fc3-city-known] .fc3-city-unknown {
+  display: none !important;
+}
+
+.fc3-city-unknown {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+/* "📍 Choisir une ville" — the primary touch target */
+.fc3-city-choose-btn {
+  background: none;
+  border: none;
+  padding: 5px 10px;
+  font-size: 0.80rem;
+  font-weight: 500;
+  color: rgba(200, 212, 255, 0.38);
+  cursor: pointer;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: color 0.18s ease, background 0.18s ease;
+  letter-spacing: 0.01em;
+}
+
+.fc3-city-choose-btn:hover {
+  color: rgba(200, 212, 255, 0.70);
+  background: rgba(72, 100, 255, 0.04);
+}
+
+.fc3-city-choose-btn[aria-expanded="true"] {
+  color: rgba(200, 212, 255, 0.75);
+}
+
+/* City chips panel — hidden until choose-btn expands it */
+/* Override fixeo-network-v1.css: #services #city-quick-chips { display:flex !important } */
+#services.fc3-chapter #city-quick-chips {
+  display: none !important;
+}
+
+#services.fc3-chapter[data-fc3-chips-open] #city-quick-chips {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  animation: fc3-chips-reveal 0.22s ease both !important;
 }
 
 /* ── SITUATION CARDS GRID ────────────────────────────────────── */
-/* Higher specificity to beat fixeo-network-v1.css !important rules */
+/* Beats fixeo-network-v1.css !important rules via class+ID specificity */
 
 #services.fc3-chapter .fc3-situations {
   display: grid !important;
@@ -165,12 +243,10 @@
     border-color 0.22s ease,
     box-shadow 0.22s ease,
     transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
-
-  /* Entrance animation — staggered via nth-child */
   animation: fc3-card-enter 0.45s ease both !important;
 }
 
-/* Staggered entrance — 13 cards */
+/* Staggered entrance — 13 main + 3 specialized = 16 cards max */
 #services.fc3-chapter .fc3-card:nth-child(1)  { animation-delay: 0.00s !important; }
 #services.fc3-chapter .fc3-card:nth-child(2)  { animation-delay: 0.04s !important; }
 #services.fc3-chapter .fc3-card:nth-child(3)  { animation-delay: 0.08s !important; }
@@ -185,7 +261,7 @@
 #services.fc3-chapter .fc3-card:nth-child(12) { animation-delay: 0.44s !important; }
 #services.fc3-chapter .fc3-card:nth-child(13) { animation-delay: 0.48s !important; }
 
-/* Hover — gentle lift + soft glow */
+/* Hover — lift + soft indigo glow */
 #services.fc3-chapter .fc3-card:hover,
 #services.fc3-chapter .fc3-card.chip.service-chip:hover {
   background: rgba(72, 100, 255, 0.08) !important;
@@ -215,7 +291,7 @@
   color: #ffffff !important;
 }
 
-/* Active shimmer — ::before overlay stripe */
+/* Active shimmer overlay */
 #services.fc3-chapter .fc3-card.active::before,
 #services.fc3-chapter .fc3-card[aria-pressed="true"]::before {
   content: '';
@@ -237,23 +313,20 @@
 }
 
 /* ── CARD INTERNALS ──────────────────────────────────────────── */
-/* Icon — consistent visual weight across all 13 situations */
 .fc3-card-icon {
-  font-size: 1.45rem;   /* unified — all at 1.45rem, no variation */
+  font-size: 1.45rem;
   line-height: 1;
   display: block;
-  width: 1.6rem;        /* fixed width prevents layout shift on emoji variations */
+  width: 1.6rem;
   flex-shrink: 0;
 }
 
-/* "All" card — text star, not emoji — consistent visual weight */
+/* "All" star — slightly different weight */
 .fc3-card[data-category="all"] .fc3-card-icon {
   font-size: 1.10rem !important;
   color: rgba(72, 100, 255, 0.55);
-  font-style: normal;
 }
 
-/* Label — human phrase */
 .fc3-card-label {
   font-size: 0.88rem !important;
   font-weight: 500 !important;
@@ -263,7 +336,6 @@
   flex: 1;
 }
 
-/* Active label */
 #services.fc3-chapter .fc3-card.active .fc3-card-label,
 #services.fc3-chapter .fc3-card[aria-pressed="true"] .fc3-card-label {
   color: #ffffff !important;
@@ -287,14 +359,16 @@
   flex-shrink: 0;
 }
 
-/* ── SPECIALIZED SOLUTIONS BLOCK ─────────────────────────────── */
+/* ── ADDITIONAL NEEDS BLOCK ──────────────────────────────────── */
+/* Same card language as situation grid — one continuous experience */
+
 .fc3-specialized-block {
   max-width: 900px;
   margin: 0 auto clamp(28px, 4vw, 40px);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 14px;
+  gap: 18px;
 }
 
 .fc3-specialized-label {
@@ -302,74 +376,41 @@
   font-weight: 700;
   letter-spacing: 0.13em;
   text-transform: uppercase;
-  color: rgba(200, 212, 255, 0.28);
+  color: rgba(200, 212, 255, 0.22);
 }
 
-/* Specialized chips row — JS appends 3 chips here */
-#services.fc3-chapter .fc3-specialized-chips {
-  display: flex !important;
-  flex-wrap: wrap !important;
-  justify-content: center !important;
-  gap: 10px !important;
+/* Specialized grid — 3 cards, same grid as .fc3-situations */
+#services.fc3-chapter .fc3-specialized-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 14px !important;
+  width: 100% !important;
+  max-width: 900px !important;
+  flex-wrap: unset !important;
+  justify-content: unset !important;
   padding: 0 !important;
   margin: 0 !important;
 }
 
-/* Specialized chip — inherits fc3-card but horizontal pill style */
-#services.fc3-chapter .fc3-spec-chip,
-#services.fc3-chapter .fc3-spec-chip.chip.service-chip {
-  appearance: none;
-  -webkit-appearance: none;
-  display: inline-flex !important;
-  flex-direction: row !important;
-  align-items: center !important;
-  gap: 7px !important;
-  padding: 9px 16px !important;
-  border: 1px solid rgba(72, 100, 255, 0.12) !important;
-  background: rgba(72, 100, 255, 0.03) !important;
-  border-radius: 24px !important;
-  cursor: pointer !important;
-  font-size: 0.82rem !important;
-  font-weight: 500 !important;
-  color: rgba(200, 212, 255, 0.65) !important;
-  white-space: nowrap !important;
-  width: auto !important;
-  min-height: unset !important;
-  box-shadow: none !important;
-  transition:
-    background 0.18s ease,
-    border-color 0.18s ease,
-    color 0.18s ease !important;
+/* Specialized cards are visually dimmer — secondary narrative */
+#services.fc3-chapter .fc3-specialized-grid .fc3-card,
+#services.fc3-chapter .fc3-specialized-grid .fc3-card.chip.service-chip {
+  border-color: rgba(72, 100, 255, 0.07) !important;
+  background: rgba(72, 100, 255, 0.025) !important;
+  opacity: 0.82;
 }
 
-#services.fc3-chapter .fc3-spec-chip:hover,
-#services.fc3-chapter .fc3-spec-chip.chip.service-chip:hover {
-  background: rgba(72, 100, 255, 0.07) !important;
-  border-color: rgba(72, 100, 255, 0.25) !important;
-  color: rgba(220, 228, 255, 0.90) !important;
+#services.fc3-chapter .fc3-specialized-grid .fc3-card:hover,
+#services.fc3-chapter .fc3-specialized-grid .fc3-card.chip.service-chip:hover {
+  opacity: 1;
 }
 
-#services.fc3-chapter .fc3-spec-chip.active,
-#services.fc3-chapter .fc3-spec-chip[aria-pressed="true"] {
-  background: rgba(72, 100, 255, 0.10) !important;
-  border-color: rgba(72, 100, 255, 0.45) !important;
-  color: #ffffff !important;
-}
-
-/* Specialized chip icon — smaller than main cards */
-#services.fc3-chapter .fc3-spec-chip .fc3-card-icon {
-  font-size: 1.05rem !important;
-  width: auto !important;
-}
-
-#services.fc3-chapter .fc3-spec-chip .fc3-card-label {
-  font-size: 0.82rem !important;
-  color: inherit !important;
-  font-weight: 500 !important;
+#services.fc3-chapter .fc3-specialized-grid .fc3-card.active,
+#services.fc3-chapter .fc3-specialized-grid .fc3-card[aria-pressed="true"] {
+  opacity: 1;
 }
 
 /* ── CHAPTER TRANSITION ───────────────────────────────────────── */
-/* Narrative bridge: FIXEO is now searching. */
 .fc3-transition {
   text-align: center;
   padding-top: clamp(8px, 2vw, 16px);
@@ -389,7 +430,7 @@
   max-width: 420px;
 }
 
-/* Downward arrow — indicates artisan results below */
+/* Downward arrow */
 .fc3-transition-arrow {
   display: block;
   width: 1px;
@@ -408,7 +449,6 @@
   position: absolute;
   bottom: 0;
   left: 50%;
-  transform: translateX(-50%);
   width: 6px;
   height: 6px;
   border-right: 1px solid rgba(72, 100, 255, 0.30);
@@ -416,20 +456,11 @@
   transform: translateX(-50%) rotate(45deg);
 }
 
-
-/* ── SUPPRESS services-premium.js CITY PICKER PILL ─────────── */
-/* services-premium.js always injects .svc-city-wrap into
-   .services-filter-bar. In Chapter 3 context we replace it with
-   our contextual city bar (.fc3-city-detected / city-quick-chips). */
-#services.fc3-chapter .svc-city-wrap {
-  display: none !important;
-}
-
 /* ── RESPONSIVE ──────────────────────────────────────────────── */
 
-/* Tablet: 2 columns */
 @media (max-width: 899px) {
-  #services.fc3-chapter .fc3-situations {
+  #services.fc3-chapter .fc3-situations,
+  #services.fc3-chapter .fc3-specialized-grid {
     grid-template-columns: repeat(2, 1fr) !important;
     max-width: 640px !important;
     gap: 12px !important;
@@ -440,7 +471,6 @@
   }
 }
 
-/* Mobile ≤679px */
 @media (max-width: 679px) {
   #services.fc3-chapter {
     padding: 52px 0 48px;
@@ -455,22 +485,26 @@
     font-size: clamp(1.45rem, 6.2vw, 1.80rem);
   }
 
-  /* Break title on two lines on mobile for drama */
   .fc3-br-title { display: inline; }
 
   .fc3-subtitle {
     font-size: 0.88rem;
   }
 
-  .fc3-br-desktop {
-    display: none;
-  }
+  .fc3-br-desktop { display: none; }
 
-  #services.fc3-chapter .fc3-situations {
+  #services.fc3-chapter .fc3-situations,
+  #services.fc3-chapter .fc3-specialized-grid {
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 10px !important;
     max-width: 100% !important;
     padding: 0 20px !important;
+  }
+
+  .fc3-specialized-block {
+    padding: 0 20px;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   #services.fc3-chapter .fc3-card,
@@ -484,19 +518,15 @@
   .fc3-card-icon { font-size: 1.25rem !important; }
   .fc3-card-label { font-size: 0.82rem !important; }
 
-  .fc3-specialized-block {
-    padding: 0 20px;
-  }
-
   .fc3-transition-text {
     font-size: 0.82rem;
     padding: 0 20px;
   }
 }
 
-/* Very small ≤374px */
 @media (max-width: 374px) {
-  #services.fc3-chapter .fc3-situations {
+  #services.fc3-chapter .fc3-situations,
+  #services.fc3-chapter .fc3-specialized-grid {
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 8px !important;
     padding: 0 16px !important;
@@ -512,7 +542,7 @@
   .fc3-card-label { font-size: 0.78rem !important; }
 }
 
-/* Reduced motion — respect accessibility */
+/* Accessibility */
 @media (prefers-reduced-motion: reduce) {
   #services.fc3-chapter .fc3-card,
   #services.fc3-chapter .fc3-card.chip.service-chip {
@@ -524,19 +554,8 @@
   #services.fc3-chapter .fc3-card.chip.service-chip:hover {
     transform: none !important;
   }
-}
 
-/* ── CITY STATE MANAGEMENT ───────────────────────────────────── */
-/* When city is detected, JS sets chips display:none but
-   fixeo-network-v1.css has #services #city-quick-chips { display:flex !important }.
-   We beat it with an attribute override on the parent element. */
-
-/* STATE A: city detected — JS shows fc3-city-detected + sets chips display:none */
-/* The [data-fc3-city-known] attr is set by fc3InitCity when a city is found */
-#services.fc3-chapter[data-fc3-city-known] #city-quick-chips {
-  display: none !important;
-}
-
-#services.fc3-chapter[data-fc3-city-known] .fc3-city-detected {
-  display: flex !important;
+  #services.fc3-chapter[data-fc3-chips-open] #city-quick-chips {
+    animation: none !important;
+  }
 }

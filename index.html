@@ -2060,7 +2060,7 @@ section#home.hero.hero-section {
   <link rel="stylesheet" href="css/fixeo-brain-engine-v1.css?v=fbe-v42">
   <link rel="stylesheet" href="css/fixeo-chapter-2-v1.css?v=fc2-v1c">
   <link rel="stylesheet" href="css/fixeo-network-v1.css?v=fnv1a">
-  <link rel="stylesheet" href="css/fixeo-chapter-3-v1.css?v=fc3-v2c">
+  <link rel="stylesheet" href="css/fixeo-chapter-3-v1.css?v=fc3-v3a">
   <link rel="stylesheet" href="css/fixeo-narrative-v1.css?v=fnrv1a">
   <link rel="stylesheet" href="css/fixeo-discovery-compression-v1.css?v=dc-v1a">
   <link rel="stylesheet" href="css/fixeo-vision-v2.css?v=fxv-v2a">
@@ -2814,10 +2814,9 @@ section#home.hero.hero-section {
       <p class="fc3-subtitle">Choisissez ce qui vous correspond.<br class="fc3-br-desktop"> FIXEO trouve les artisans disponibles près de chez vous.</p>
     </header>
 
-    <!-- ── Contextual city bar ── -->
-    <!-- Default: chips (no city known). JS replaces with detected state when city is in localStorage. -->
-    <div class="services-filter services-filter-bar fc3-city-context" id="fc3-city-context">
-      <!-- Hidden native select — JS reads this for city value; visually replaced by city-quick-chips -->
+    <!-- ── Contextual city intelligence ── -->
+    <!-- Hidden native select — JS reads this for filtering; never visible -->
+    <div class="services-filter services-filter-bar" style="display:none" aria-hidden="true">
       <select id="services-city-filter" class="city-filter-select" aria-label="Filtrer les artisans par ville">
         <option value="">Toutes les villes</option>
         <option value="Casablanca">Casablanca</option>
@@ -2833,24 +2832,36 @@ section#home.hero.hero-section {
         <option value="Safi">Safi</option>
         <option value="El Jadida">El Jadida</option>
       </select>
+    </div>
 
-      <!-- STATE A: city detected — shown by JS when fixeo_detected_city is set -->
-      <div class="fc3-city-detected" id="fc3-city-detected" style="display:none" aria-live="polite">
+    <!-- City context bar — centered, minimal, always present -->
+    <div class="fc3-city-bar" id="fc3-city-bar" aria-live="polite">
+
+      <!-- STATE A: city detected — JS activates via data-fc3-city-known on #services -->
+      <div class="fc3-city-detected" id="fc3-city-detected">
         <span class="fc3-city-pin" aria-hidden="true">📍</span>
         <span class="fc3-city-detected-name" id="fc3-city-detected-name"></span>
         <span class="fc3-city-detected-label">détectée</span>
         <button class="fc3-city-change-btn" id="fc3-city-change-btn" type="button" aria-label="Changer de ville">Changer</button>
       </div>
 
-      <!-- STATE B: city unknown — chips always present; hidden by JS when city detected -->
-      <div class="city-quick-chips" id="city-quick-chips">
-        <button class="city-chip" data-city="Casablanca">Casablanca</button>
-        <button class="city-chip" data-city="Rabat">Rabat</button>
-        <button class="city-chip" data-city="Fès">Fès</button>
-        <button class="city-chip" data-city="Tanger">Tanger</button>
-        <button class="city-chip" data-city="Marrakech">Marrakech</button>
-        <button class="city-chip city-chip-more">+ Plus</button>
+      <!-- STATE B: city unknown — subtle link, expands to chip row on click -->
+      <div class="fc3-city-unknown" id="fc3-city-unknown">
+        <button class="fc3-city-choose-btn" id="fc3-city-choose-btn" type="button" aria-expanded="false" aria-controls="city-quick-chips">
+          <span class="fc3-city-pin" aria-hidden="true">📍</span>
+          Choisir une ville
+        </button>
+        <!-- Chips — collapsed by default, expand on btn click -->
+        <div class="city-quick-chips fc3-chips-collapsed" id="city-quick-chips" role="listbox" aria-label="Choisir une ville" hidden>
+          <button class="city-chip" data-city="Casablanca">Casablanca</button>
+          <button class="city-chip" data-city="Rabat">Rabat</button>
+          <button class="city-chip" data-city="Fès">Fès</button>
+          <button class="city-chip" data-city="Tanger">Tanger</button>
+          <button class="city-chip" data-city="Marrakech">Marrakech</button>
+          <button class="city-chip city-chip-more">+ Plus</button>
+        </div>
       </div>
+
     </div>
 
     <!-- ── Situation cards — data-category maps to existing JS filter ── -->
@@ -2938,11 +2949,29 @@ section#home.hero.hero-section {
 
     </div><!-- /fc3-situations -->
 
-    <!-- ── Specialized solutions — JS appends these; anchor them here ── -->
+    <!-- ── Additional needs — same card language as situation cards ── -->
     <div class="fc3-specialized-block">
-      <span class="fc3-specialized-label">Autres solutions</span>
-      <div class="fc3-specialized-chips category-chips" id="fc3-specialized-chips" role="list" aria-label="Solutions spécialisées">
-        <!-- JS (fixeo_homepage_premium_patch.js) appends energie-solaire / securite-surveillance / corporate-facilities here -->
+      <span class="fc3-specialized-label">Autres besoins</span>
+      <!-- Static cards — same visual language as situation grid above.
+           JS addFixeoNewServiceChips() still targets #fc3-specialized-chips as fallback
+           but these three are now in HTML directly for consistent layout. -->
+      <div class="fc3-situations fc3-specialized-grid category-chips" id="fc3-specialized-chips" role="list" aria-label="Autres besoins">
+
+        <button class="fc3-card chip service-chip" role="listitem" data-category="energie-solaire" aria-pressed="false">
+          <span class="fc3-card-icon" aria-hidden="true">☀️</span>
+          <span class="fc3-card-label">Je veux installer des panneaux solaires</span>
+        </button>
+
+        <button class="fc3-card chip service-chip" role="listitem" data-category="securite-surveillance" aria-pressed="false">
+          <span class="fc3-card-icon" aria-hidden="true">🛡️</span>
+          <span class="fc3-card-label">Je veux sécuriser mon domicile</span>
+        </button>
+
+        <button class="fc3-card chip service-chip" role="listitem" data-category="corporate-facilities" aria-pressed="false">
+          <span class="fc3-card-icon" aria-hidden="true">🏢</span>
+          <span class="fc3-card-label">Je représente une entreprise</span>
+        </button>
+
       </div>
     </div>
 
@@ -2957,53 +2986,119 @@ section#home.hero.hero-section {
 
   </div><!-- /container -->
 
-  <!-- ── Chapter 3 contextual city intelligence (fc3-v2a) ── -->
+  <!-- ── Chapter 3 contextual city intelligence (fc3-v3a) ── -->
   <script>
   (function () {
+    var VALID_CITIES = ['Casablanca','Rabat','Marrakech','Fès','Agadir','Tanger',
+                        'Meknès','Oujda','Kénitra','Tétouan','Safi','El Jadida'];
+
+    function _setSelectCity(city) {
+      var select = document.getElementById('services-city-filter');
+      if (!select) return;
+      var opts = select.options;
+      for (var i = 0; i < opts.length; i++) {
+        if (opts[i].value === city) { select.value = city; break; }
+      }
+      select.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+
+    function _clearSelectCity() {
+      var select = document.getElementById('services-city-filter');
+      if (!select) return;
+      select.value = '';
+      select.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+
+    function _activateCityChip(cityValue) {
+      // Mark the matching chip as active (visual feedback)
+      var chips = document.querySelectorAll('#city-quick-chips .city-chip');
+      chips.forEach(function(c) {
+        c.classList.toggle('active', c.dataset.city === cityValue);
+        if (c.dataset.city === cityValue) c.setAttribute('aria-pressed','true');
+        else c.removeAttribute('aria-pressed');
+      });
+    }
+
     function fc3InitCity() {
       try {
+        // ── STATE A: valid city detected ────────────────────────
         var city = localStorage.getItem('fixeo_detected_city');
-        if (!city) return;
-        // Validate: reject placeholders, emoji strings, or non-city values
-        // Known valid cities (must match select options)
-        var VALID = ['Casablanca','Rabat','Marrakech','Fès','Agadir','Tanger',
-                     'Meknès','Oujda','Kénitra','Tétouan','Safi','El Jadida'];
-        var isValid = VALID.some(function(c) {
-          return c.toLowerCase() === city.trim().toLowerCase();
+        var isValid = city && VALID_CITIES.some(function(c) {
+          return c.toLowerCase() === (city||'').trim().toLowerCase();
         });
-        if (!isValid) return; // Unknown/placeholder — fall through to chips
 
-        var detected = document.getElementById('fc3-city-detected');
-        var nameEl   = document.getElementById('fc3-city-detected-name');
-        var chips    = document.getElementById('city-quick-chips');
-        var select   = document.getElementById('services-city-filter');
-        var changeBtn= document.getElementById('fc3-city-change-btn');
+        var section   = document.getElementById('services');
+        var detected  = document.getElementById('fc3-city-detected');
+        var nameEl    = document.getElementById('fc3-city-detected-name');
+        var changeBtn = document.getElementById('fc3-city-change-btn');
+        var unknown   = document.getElementById('fc3-city-unknown');
 
-        if (!detected || !chips) return;
+        if (isValid) {
+          if (nameEl) nameEl.textContent = city;
+          if (section) section.setAttribute('data-fc3-city-known', '1');
+          _setSelectCity(city);
 
-        if (nameEl) nameEl.textContent = city;
-        // Use data attribute so CSS can override !important display rules
-        var section = document.getElementById('services');
-        if (section) section.setAttribute('data-fc3-city-known', '1');
-        // Also set inline for immediate render (CSS attr selector may lag one frame)
-        detected.style.display = 'flex';
-
-        if (select) {
-          var opts = select.options;
-          for (var i = 0; i < opts.length; i++) {
-            if (opts[i].value === city) { select.value = city; break; }
+          // "Changer" → collapse to STATE B (unknown, chips visible)
+          if (changeBtn && !changeBtn._fc3bound) {
+            changeBtn._fc3bound = true;
+            changeBtn.addEventListener('click', function () {
+              if (section) section.removeAttribute('data-fc3-city-known');
+              _clearSelectCity();
+              // Expand the chips immediately so user can pick
+              var bar  = document.getElementById('fc3-city-bar');
+              var btn  = document.getElementById('fc3-city-choose-btn');
+              var chipsDiv = document.getElementById('city-quick-chips');
+              if (bar)      bar.setAttribute('data-fc3-chips-open','1');
+              if (btn)      btn.setAttribute('aria-expanded','true');
+              if (chipsDiv) { chipsDiv.removeAttribute('hidden'); chipsDiv.removeAttribute('aria-hidden'); }
+            });
           }
-          select.dispatchEvent(new Event('change', { bubbles: true }));
         }
 
-        if (changeBtn) {
-          changeBtn.addEventListener('click', function () {
-            var section2 = document.getElementById('services');
-            if (section2) section2.removeAttribute('data-fc3-city-known');
-            detected.style.display = 'none';
-            if (select) { select.value = ''; select.dispatchEvent(new Event('change', { bubbles: true })); }
+        // ── STATE B: no city / unknown — wire choose-btn ────────
+        var chooseBtn = document.getElementById('fc3-city-choose-btn');
+        if (chooseBtn && !chooseBtn._fc3bound) {
+          chooseBtn._fc3bound = true;
+          chooseBtn.addEventListener('click', function () {
+            var bar      = document.getElementById('fc3-city-bar');
+            var chipsDiv = document.getElementById('city-quick-chips');
+            var isOpen   = bar && bar.hasAttribute('data-fc3-chips-open');
+            if (isOpen) {
+              if (bar)      bar.removeAttribute('data-fc3-chips-open');
+              this.setAttribute('aria-expanded','false');
+              if (chipsDiv) { chipsDiv.setAttribute('hidden',''); chipsDiv.setAttribute('aria-hidden','true'); }
+            } else {
+              if (bar)      bar.setAttribute('data-fc3-chips-open','1');
+              this.setAttribute('aria-expanded','true');
+              if (chipsDiv) { chipsDiv.removeAttribute('hidden'); chipsDiv.removeAttribute('aria-hidden'); }
+            }
           });
         }
+
+        // ── Wire city chips (STATE B) ────────────────────────────
+        var chips = document.querySelectorAll('#city-quick-chips .city-chip[data-city]');
+        chips.forEach(function(chip) {
+          if (chip._fc3bound) return;
+          chip._fc3bound = true;
+          chip.addEventListener('click', function () {
+            var picked = this.dataset.city;
+            if (!picked) return;
+            _setSelectCity(picked);
+            _activateCityChip(picked);
+            // Collapse chips after selection — city is now "known"
+            var bar      = document.getElementById('fc3-city-bar');
+            var btn      = document.getElementById('fc3-city-choose-btn');
+            var chipsDiv = document.getElementById('city-quick-chips');
+            var nameEl2  = document.getElementById('fc3-city-detected-name');
+            var sect     = document.getElementById('services');
+            if (nameEl2) nameEl2.textContent = picked;
+            if (sect)    sect.setAttribute('data-fc3-city-known','1');
+            if (bar)     bar.removeAttribute('data-fc3-chips-open');
+            if (btn)     btn.setAttribute('aria-expanded','false');
+            if (chipsDiv){ chipsDiv.setAttribute('hidden',''); chipsDiv.setAttribute('aria-hidden','true'); }
+          });
+        });
+
       } catch (e) {}
     }
 
@@ -3012,6 +3107,7 @@ section#home.hero.hero-section {
     } else {
       fc3InitCity();
     }
+    // Fire again after RAFI may set the city (1.2s) and after patch JS runs (0.9s)
     setTimeout(fc3InitCity, 1200);
   })();
   </script>
