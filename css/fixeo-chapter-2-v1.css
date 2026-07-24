@@ -22,7 +22,8 @@
   padding: clamp(64px, 9vw, 120px) 0 clamp(56px, 7vw, 96px);
   background: var(--fds-surface-bg, #05070f);
   position: relative;
-  overflow: hidden; /* contain orbital glow */
+  /* No overflow:hidden at chapter level — fbe-know labels must not clip.
+     The orbital glow is contained by fbe-arena-wrap internally. */
 }
 
 /* Hairline separator from hero */
@@ -88,6 +89,8 @@
 /* ── PART 2 — ENGINE BLOCK ───────────────────────────────────── */
 .fc2-engine-block {
   margin: 0 auto clamp(40px, 6vw, 72px);
+  /* Orbital is 620px wide — on smaller desktop this needs to be scrollable.
+     No explicit width limit; fbe-arena centers itself with margin:auto. */
 }
 
 /* ── Desktop orbital (hidden on mobile) ── */
@@ -135,6 +138,7 @@
   align-items: center;
   gap: 28px;
   padding: 0 0 8px;
+  /* mb set in context (fc2-engine-block margin handles spacing to consequences) */
 }
 
 /* Mobile core indicator */
