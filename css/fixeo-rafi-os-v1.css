@@ -1,219 +1,381 @@
 /*
- * fixeo-rafi-os-v1.css — RAFI OS
+ * fixeo-rafi-os-v1.css — RAFI OS v1f
  * Namespace: .rfos-* exclusively
  * Load order: last in <head>
- * No overrides to any existing namespace outside rfos-*.
  */
 
-/* ── Tokens ──────────────────────────────────────────────────── */
+/* ── Design tokens ───────────────────────────────────────────── */
 :root {
-  --rfos-indigo:      rgb(72, 100, 255);
-  --rfos-indigo-glow: rgba(72, 100, 255, 0.22);
-  --rfos-pink:        #E1306C;
-  --rfos-green:       rgba(32, 201, 151, 0.9);
-  --rfos-amber:       rgba(245, 158, 11, 0.9);
-  --rfos-surface:     rgba(255, 255, 255, 0.04);
-  --rfos-border:      rgba(255, 255, 255, 0.09);
-  --rfos-muted:       rgba(232, 234, 240, 0.55);
-  --rfos-text:        rgba(232, 234, 240, 0.94);
-  --rfos-bg-dark:     rgba(9, 9, 26, 0.96);
-  --rfos-radius:      18px;
-  --rfos-radius-sm:   12px;
-  --rfos-shadow:      0 8px 32px rgba(0,0,0,0.28);
+  --rfos-indigo:       rgb(72, 100, 255);
+  --rfos-indigo-mid:   rgba(72, 100, 255, 0.55);
+  --rfos-indigo-soft:  rgba(72, 100, 255, 0.14);
+  --rfos-pink:         #E1306C;
+  --rfos-pink-soft:    rgba(225, 48, 108, 0.14);
+  --rfos-green:        rgb(32, 201, 151);
+  --rfos-green-soft:   rgba(32, 201, 151, 0.14);
+  --rfos-amber:        rgb(245, 158, 11);
+  --rfos-text:         rgba(232, 234, 240, 0.95);
+  --rfos-muted:        rgba(232, 234, 240, 0.52);
+  --rfos-border:       rgba(255, 255, 255, 0.09);
+  --rfos-surface:      rgba(255, 255, 255, 0.04);
+  --rfos-bg-dark:      rgba(9, 9, 26, 0.96);
+  --rfos-radius:       20px;
+  --rfos-radius-sm:    12px;
 }
 
 /* ══════════════════════════════════════════════════════════════
-   RAFI HERO 2.0 — Conversational Entry
-   Lives inside .qsm-dialog, before .qsm-search-section.
-   RAFI is the protagonist. The input is RAFI's interface.
+   HERO HIERARCHY RECOMPOSITION
+   Applied to section#home when RAFI OS mounts.
+   RAFI stage comes first; H1 becomes a quiet promise below.
+══════════════════════════════════════════════════════════════ */
+section#home.rfos-hero-recomposed .hero-content {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 0 !important;
+}
+
+/* RAFI stage — first */
+section#home.rfos-hero-recomposed .rfos-stage-wrap {
+  order: 1 !important;
+  width: 100% !important;
+}
+
+/* Search bar — second */
+section#home.rfos-hero-recomposed #hero-quick-search {
+  order: 2 !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+/* H1 — third, demoted to quiet promise */
+section#home.rfos-hero-recomposed .hero-title {
+  order: 3 !important;
+  font-size: clamp(1.10rem, 2.8vw, 1.80rem) !important;
+  font-weight: 500 !important;
+  line-height: 1.35 !important;
+  letter-spacing: -0.01em !important;
+  color: rgba(255, 255, 255, 0.38) !important;
+  margin-top: 28px !important;
+  margin-bottom: 0 !important;
+  max-width: 540px !important;
+  text-wrap: balance !important;
+}
+/* Suppress gradient on demoted H1 */
+section#home.rfos-hero-recomposed .hero-title span:last-child {
+  background: none !important;
+  -webkit-text-fill-color: inherit !important;
+  color: inherit !important;
+  opacity: inherit !important;
+}
+section#home.rfos-hero-recomposed .hero-title::after {
+  display: none !important;
+}
+
+/* Subtitle — hidden */
+section#home.rfos-hero-recomposed .hero-subtitle {
+  order: 4 !important;
+  display: none !important;
+}
+
+/* Secondary elements — moved below */
+section#home.rfos-hero-recomposed .hero-city-smart,
+section#home.rfos-hero-recomposed .fxlps-signals,
+section#home.rfos-hero-recomposed .hero-secondary-link-wrap {
+  order: 5 !important;
+}
+section#home.rfos-hero-recomposed .hero-city-smart { margin-top: 10px !important; }
+section#home.rfos-hero-recomposed .fxlps-signals   { margin-top: 4px !important; }
+
+/* Mobile H1 */
+@media (max-width: 767px) {
+  section#home.rfos-hero-recomposed .hero-title {
+    font-size: clamp(0.92rem, 4.5vw, 1.20rem) !important;
+    margin-top: 20px !important;
+    color: rgba(255, 255, 255, 0.30) !important;
+    max-width: 320px !important;
+  }
+}
+@media (max-width: 380px) {
+  section#home.rfos-hero-recomposed .hero-title {
+    font-size: 0.88rem !important;
+    margin-top: 16px !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   RAFI STAGE — the flagship centered composition
+   Injected into .hero-content before #hero-quick-search.
+   Not inside the transparent .qsm-dialog — standalone block.
 ══════════════════════════════════════════════════════════════ */
 
-/* Outer wrapper — the full RAFI identity strip */
-.rfos-entry {
-  display: flex;
-  align-items: flex-start;
-  gap: 16px;
-  padding: 22px 22px 18px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-  box-sizing: border-box;
+.rfos-stage-wrap {
   width: 100%;
-  position: relative;
-  /* Entrance: slides up from 8px, fades in */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 0 28px;
+  /* Entrance: spring up */
   opacity: 0;
-  transform: translateY(8px);
-  animation: rfos-entry-in 0.38s cubic-bezier(0.22, 1, 0.36, 1) 0.08s forwards;
+  transform: translateY(16px);
+  animation: rfos-stage-in 0.52s cubic-bezier(0.22, 1, 0.36, 1) 0.12s forwards;
+}
+
+/* ── Halo ─────────────────────────────────────────────────────
+   Blurred radial glow behind the avatar.
+   Changes color per state. Pure CSS, no JS touch. */
+.rfos-halo {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(72, 100, 255, 0.30) 0%,
+    rgba(72, 100, 255, 0.06) 50%,
+    transparent 70%
+  );
+  filter: blur(28px);
+  pointer-events: none;
+  animation: rfos-halo-breathe 4.0s ease-in-out infinite;
+  transition: background 0.6s ease;
+}
+
+.rfos-avatar-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
 }
 
 /* ── Avatar ─────────────────────────────────────────────────── */
-.rfos-entry-avatar {
-  flex-shrink: 0;
-  width: 64px;
-  height: 64px;
+.rfos-stage-avatar {
+  position: relative;
+  z-index: 1;
+  width: 112px;
+  height: 112px;
   border-radius: 50%;
   background: rgba(72, 100, 255, 0.08);
-  /* Alive border: slow-breathing indigo ring */
-  border: 1.5px solid rgba(72, 100, 255, 0.32);
+  border: 2px solid rgba(72, 100, 255, 0.28);
   box-shadow:
     0 0 0 0px rgba(72, 100, 255, 0.0),
-    0 4px 16px rgba(72, 100, 255, 0.16);
+    0 8px 32px rgba(72, 100, 255, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  animation: rfos-avatar-breathe 3.6s ease-in-out 0.8s infinite;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  animation: rfos-avatar-idle 4.2s ease-in-out 0.8s infinite;
+  transition: border-color 0.35s ease, box-shadow 0.35s ease;
 }
 
-.rfos-entry-avatar img {
-  width: 54px;
-  height: 54px;
+.rfos-stage-avatar img {
+  width: 92px;
+  height: 92px;
   object-fit: contain;
   display: block;
 }
 
-/* Listening: indigo pulse */
-.rfos-entry--listening .rfos-entry-avatar {
-  border-color: rgba(72, 100, 255, 0.65);
+/* ── State: listening ── */
+.rfos-stage--listening .rfos-stage-avatar {
+  border-color: rgba(72, 100, 255, 0.70);
   box-shadow:
-    0 0 0 5px rgba(72, 100, 255, 0.10),
-    0 4px 20px rgba(72, 100, 255, 0.22);
-  animation: rfos-avatar-listen 1.4s ease-in-out infinite;
+    0 0 0 6px rgba(72, 100, 255, 0.10),
+    0 10px 40px rgba(72, 100, 255, 0.28);
+  animation: rfos-avatar-listen 1.6s ease-in-out infinite;
+}
+.rfos-stage--listening .rfos-halo {
+  background: radial-gradient(
+    circle,
+    rgba(72, 100, 255, 0.40) 0%,
+    rgba(72, 100, 255, 0.10) 50%,
+    transparent 70%
+  );
 }
 
-/* Urgent: pink pulse */
-.rfos-entry--urgent .rfos-entry-avatar {
-  border-color: rgba(225, 48, 108, 0.65);
+/* ── State: urgent ── */
+.rfos-stage--urgent .rfos-stage-avatar {
+  border-color: rgba(225, 48, 108, 0.72);
   box-shadow:
-    0 0 0 5px rgba(225, 48, 108, 0.10),
-    0 4px 20px rgba(225, 48, 108, 0.22);
+    0 0 0 6px rgba(225, 48, 108, 0.10),
+    0 10px 40px rgba(225, 48, 108, 0.28);
   animation: rfos-avatar-urgent 1.2s ease-in-out infinite;
 }
+.rfos-stage--urgent .rfos-halo {
+  background: radial-gradient(
+    circle,
+    rgba(225, 48, 108, 0.38) 0%,
+    rgba(225, 48, 108, 0.08) 50%,
+    transparent 70%
+  );
+}
 
-/* Ready: green signal */
-.rfos-entry--ready .rfos-entry-avatar {
-  border-color: rgba(32, 201, 151, 0.60);
+/* ── State: understood / ready ── */
+.rfos-stage--ready .rfos-stage-avatar {
+  border-color: rgba(32, 201, 151, 0.65);
   box-shadow:
-    0 0 0 5px rgba(32, 201, 151, 0.08),
-    0 4px 20px rgba(32, 201, 151, 0.18);
+    0 0 0 6px rgba(32, 201, 151, 0.09),
+    0 10px 40px rgba(32, 201, 151, 0.22);
+  animation: none;
+}
+.rfos-stage--ready .rfos-halo {
+  background: radial-gradient(
+    circle,
+    rgba(32, 201, 151, 0.30) 0%,
+    rgba(32, 201, 151, 0.06) 50%,
+    transparent 70%
+  );
 }
 
-/* ── Inline text block ─────────────────────────────────────── */
-.rfos-entry-inline {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding-top: 3px; /* optical alignment with avatar */
-}
-
-/* RAFI name — small, authoritative */
-.rfos-bubble-label {
+/* ── Name row ────────────────────────────────────────────────── */
+.rfos-stage-name {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 0.68rem;
+  gap: 7px;
+  font-size: 0.70rem;
   font-weight: 800;
-  letter-spacing: 0.10em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: rgba(72, 100, 255, 0.80);
+  margin-bottom: 10px;
 }
 
-/* Live indicator dot */
-.rfos-bubble-label::after {
+/* Live dot */
+.rfos-stage-name::after {
   content: '';
   display: inline-block;
-  width: 6px;
-  height: 6px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
-  background: rgba(32, 201, 151, 0.9);
-  box-shadow: 0 0 0 2px rgba(32, 201, 151, 0.20);
-  animation: rfos-live-dot 2.4s ease-in-out infinite;
+  background: var(--rfos-green);
+  box-shadow: 0 0 0 2px rgba(32, 201, 151, 0.22);
+  animation: rfos-live-dot 2.6s ease-in-out infinite;
   flex-shrink: 0;
 }
 
-/* Message — the conversational line */
-.rfos-bubble-text {
-  font-size: 1.04rem;
+/* ── Conversational message ──────────────────────────────────── */
+.rfos-stage-msg {
+  font-size: 1.22rem;
   font-weight: 500;
   color: var(--rfos-text);
-  line-height: 1.48;
-  letter-spacing: -0.01em;
+  line-height: 1.50;
+  letter-spacing: -0.015em;
+  text-align: center;
+  max-width: 500px;
+  padding: 0 16px;
+  /* Height transition for smooth state changes */
   transition: opacity 0.18s ease;
-  /* Clip long messages on desktop, allow wrap on mobile */
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  min-height: 1.8em; /* prevent layout shift on text swap */
 }
 
-.rfos-bubble-text b,
-.rfos-bubble-text strong {
+.rfos-stage-msg b,
+.rfos-stage-msg strong {
   color: #ffffff;
   font-weight: 700;
 }
 
-/* ── State: understood — show service category badge ───────── */
-.rfos-entry-badge {
-  display: none;
-  align-items: center;
-  gap: 6px;
-  margin-top: 4px;
+/* Typewriter cursor */
+.rfos-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1.1em;
+  background: rgba(72, 100, 255, 0.75);
+  border-radius: 1px;
+  vertical-align: middle;
+  margin-left: 1px;
+  animation: rfos-cursor-blink 0.9s step-end infinite;
+}
+.rfos-cursor.rfos-cursor--done {
+  animation: none;
+  opacity: 0;
+  transition: opacity 0.5s ease 0.4s;
 }
 
-.rfos-entry--listening .rfos-entry-badge,
-.rfos-entry--urgent .rfos-entry-badge,
-.rfos-entry--ready .rfos-entry-badge {
+/* ── Category badge ──────────────────────────────────────────── */
+.rfos-stage-badge {
+  display: none; /* shown by JS */
+  margin-top: 10px;
+}
+
+.rfos-stage--listening .rfos-stage-badge,
+.rfos-stage--urgent    .rfos-stage-badge,
+.rfos-stage--ready     .rfos-stage-badge {
   display: flex;
 }
 
 .rfos-badge-pill {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 3px 10px 3px 7px;
+  gap: 5px;
+  padding: 4px 12px 4px 9px;
   border-radius: 100px;
-  background: rgba(72, 100, 255, 0.10);
-  border: 1px solid rgba(72, 100, 255, 0.22);
-  font-size: 0.74rem;
-  font-weight: 600;
-  color: rgba(72, 100, 255, 0.88);
-  animation: rfos-fadein 0.2s ease-out forwards;
+  font-size: 0.78rem;
+  font-weight: 700;
+  animation: rfos-pill-in 0.22s ease-out forwards;
 }
 
-.rfos-entry--urgent .rfos-badge-pill {
-  background: rgba(225, 48, 108, 0.10);
-  border-color: rgba(225, 48, 108, 0.22);
-  color: rgba(225, 48, 108, 0.90);
+.rfos-stage--listening .rfos-badge-pill {
+  background: rgba(72, 100, 255, 0.12);
+  border: 1px solid rgba(72, 100, 255, 0.24);
+  color: rgba(120, 148, 255, 0.96);
 }
 
-.rfos-entry--ready .rfos-badge-pill {
-  background: rgba(32, 201, 151, 0.08);
-  border-color: rgba(32, 201, 151, 0.22);
-  color: rgba(32, 201, 151, 0.88);
+.rfos-stage--urgent .rfos-badge-pill {
+  background: rgba(225, 48, 108, 0.12);
+  border: 1px solid rgba(225, 48, 108, 0.24);
+  color: rgba(245, 100, 150, 0.96);
 }
 
-/* ── Typewriter cursor — only on initial idle state ─────────── */
-.rfos-cursor {
-  display: inline-block;
-  width: 2px;
-  height: 1.1em;
-  background: rgba(72, 100, 255, 0.70);
-  border-radius: 1px;
-  vertical-align: middle;
-  margin-left: 1px;
-  animation: rfos-cursor-blink 1.0s step-end infinite;
+.rfos-stage--ready .rfos-badge-pill {
+  background: rgba(32, 201, 151, 0.10);
+  border: 1px solid rgba(32, 201, 151, 0.24);
+  color: rgba(32, 201, 151, 0.96);
 }
 
-/* Cursor disappears after typewriter finishes */
-.rfos-cursor.rfos-cursor--done {
-  animation: none;
-  opacity: 0;
-  transition: opacity 0.4s ease 0.6s;
+/* ── Divider between stage and input ────────────────────────── */
+.rfos-stage-divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(255,255,255,0.08) 20%,
+    rgba(255,255,255,0.08) 80%,
+    transparent 100%
+  );
+  margin-bottom: 0;
 }
 
 /* ══════════════════════════════════════════════════════════════
-   RAFI CONVERSATION HEADER — inside modal
+   QSM INLINE OVERRIDE — make the search bar read as RAFI's input
+   The input area is RAFI's reply zone.
+   Only scoped to rfos-hero-recomposed to avoid affecting other pages.
+══════════════════════════════════════════════════════════════ */
+
+/* The emoji icon on the service segment becomes a RAFI mic icon */
+section#home.rfos-hero-recomposed .qsm-segment-service .qsm-seg-icon {
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
+  padding: 0;
+  margin: 0;
+}
+
+/* Placeholder becomes more conversational */
+section#home.rfos-hero-recomposed #qsm-input-nlp::placeholder {
+  color: rgba(255, 255, 255, 0.36) !important;
+  font-style: italic;
+  font-size: 0.92rem;
+}
+
+/* Focus-within on the bar: RAFI indigo instead of pink */
+section#home.rfos-hero-recomposed .qsm-bar-card:focus-within {
+  border-color: rgba(72, 100, 255, 0.50) !important;
+  box-shadow: 0 0 0 4px rgba(72, 100, 255, 0.10), 0 12px 30px rgba(0,0,0,0.14) !important;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   RAFI CONVERSATION HEADER — inside modal (unchanged)
 ══════════════════════════════════════════════════════════════ */
 .rfos-conv-header {
   display: flex;
@@ -222,7 +384,7 @@
   padding: 16px 20px 14px;
   background: linear-gradient(135deg,
     rgba(72, 100, 255, 0.07) 0%,
-    rgba(9, 9, 26, 0.00) 100%);
+    transparent 100%);
   border-bottom: 1px solid var(--rfos-border);
   position: relative;
   opacity: 0;
@@ -242,103 +404,40 @@
   justify-content: center;
   overflow: hidden;
 }
+.rfos-conv-avatar img { width: 38px; height: 38px; object-fit: contain; display: block; }
 
-.rfos-conv-avatar img {
-  width: 38px;
-  height: 38px;
-  object-fit: contain;
-  display: block;
-}
-
-.rfos-conv-body {
-  flex: 1;
-  min-width: 0;
-}
-
+.rfos-conv-body { flex: 1; min-width: 0; }
 .rfos-conv-name {
-  font-size: 0.70rem;
-  font-weight: 700;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
-  color: rgba(72, 100, 255, 0.75);
-  margin-bottom: 3px;
+  font-size: 0.70rem; font-weight: 700; letter-spacing: 0.09em;
+  text-transform: uppercase; color: rgba(72, 100, 255, 0.75); margin-bottom: 3px;
 }
-
 .rfos-conv-msg {
-  font-size: 0.88rem;
-  font-weight: 500;
-  color: var(--rfos-text);
-  line-height: 1.5;
-  min-height: 1.3em;
-  transition: opacity 0.18s;
+  font-size: 0.88rem; font-weight: 500; color: var(--rfos-text);
+  line-height: 1.5; min-height: 1.3em; transition: opacity 0.18s;
 }
+.rfos-conv-msg b, .rfos-conv-msg strong { color: #fff; font-weight: 700; }
 
-.rfos-conv-msg b,
-.rfos-conv-msg strong {
-  color: #fff;
-  font-weight: 700;
-}
-
-/* ── Timeline ────────────────────────────────────────────────── */
-.rfos-timeline {
-  display: flex;
-  align-items: center;
-  gap: 0;
-  margin-top: 10px;
-}
-
-.rfos-tl-step {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  flex: 1;
-  position: relative;
-}
-
+/* ── Timeline ── */
+.rfos-timeline { display: flex; align-items: center; gap: 0; margin-top: 10px; }
+.rfos-tl-step { display: flex; align-items: center; gap: 4px; flex: 1; }
 .rfos-tl-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  border: 1.5px solid var(--rfos-border);
-  background: transparent;
-  flex-shrink: 0;
-  transition: background 0.2s, border-color 0.2s;
+  width: 8px; height: 8px; border-radius: 50%;
+  border: 1.5px solid var(--rfos-border); background: transparent;
+  flex-shrink: 0; transition: background 0.2s, border-color 0.2s;
 }
-
-.rfos-tl-step.done .rfos-tl-dot {
-  background: var(--rfos-indigo);
-  border-color: var(--rfos-indigo);
-}
-
-.rfos-tl-step.active .rfos-tl-dot {
-  background: rgba(72, 100, 255, 0.35);
-  border-color: var(--rfos-indigo);
-}
-
+.rfos-tl-step.done .rfos-tl-dot  { background: var(--rfos-indigo); border-color: var(--rfos-indigo); }
+.rfos-tl-step.active .rfos-tl-dot { background: rgba(72,100,255,0.35); border-color: var(--rfos-indigo); }
 .rfos-tl-label {
-  font-size: 0.65rem;
-  font-weight: 600;
-  color: var(--rfos-muted);
-  transition: color 0.2s;
-  white-space: nowrap;
+  font-size: 0.65rem; font-weight: 600; color: var(--rfos-muted);
+  transition: color 0.2s; white-space: nowrap;
 }
-
 .rfos-tl-step.done .rfos-tl-label,
-.rfos-tl-step.active .rfos-tl-label {
-  color: var(--rfos-text);
-}
-
+.rfos-tl-step.active .rfos-tl-label { color: var(--rfos-text); }
 .rfos-tl-sep {
-  height: 1px;
-  flex: 1;
-  background: var(--rfos-border);
-  margin: 0 4px;
+  height: 1px; flex: 1; background: var(--rfos-border); margin: 0 4px;
   transition: background 0.2s;
 }
-
-.rfos-tl-step.done + .rfos-tl-sep {
-  background: var(--rfos-indigo);
-}
+.rfos-tl-step.done + .rfos-tl-sep { background: var(--rfos-indigo); }
 
 /* ══════════════════════════════════════════════════════════════
    RAFI SUMMARY — pre-submit read-back
@@ -354,137 +453,61 @@
   border-radius: var(--rfos-radius-sm);
   animation: rfos-fadein 0.22s ease-out forwards;
 }
-
-.rfos-summary.visible {
-  display: flex;
-}
-
+.rfos-summary.visible { display: flex; }
 .rfos-summary-avatar {
-  flex-shrink: 0;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: rgba(72, 100, 255, 0.10);
-  border: 1px solid rgba(72, 100, 255, 0.22);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
+  flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%;
+  background: rgba(72,100,255,0.10); border: 1px solid rgba(72,100,255,0.22);
+  display: flex; align-items: center; justify-content: center; overflow: hidden;
 }
-
-.rfos-summary-avatar img {
-  width: 30px;
-  height: 30px;
-  object-fit: contain;
-}
-
-.rfos-summary-content {
-  flex: 1;
-  min-width: 0;
-}
-
+.rfos-summary-avatar img { width: 30px; height: 30px; object-fit: contain; }
+.rfos-summary-content { flex: 1; min-width: 0; }
 .rfos-summary-text {
-  font-size: 0.84rem;
-  font-weight: 500;
-  color: var(--rfos-text);
-  line-height: 1.45;
-  margin-bottom: 8px;
+  font-size: 0.84rem; font-weight: 500; color: var(--rfos-text);
+  line-height: 1.45; margin-bottom: 8px;
 }
-
-.rfos-summary-text b,
-.rfos-summary-text strong {
-  color: #fff;
-  font-weight: 700;
-}
-
+.rfos-summary-text b, .rfos-summary-text strong { color: #fff; font-weight: 700; }
 .rfos-summary-confirm-btn {
-  display: block;
-  width: 100%;
-  padding: 11px 20px;
+  display: block; width: 100%; padding: 11px 20px;
   background: linear-gradient(135deg, #E1306C, #833AB4);
-  color: #fff;
-  border: none;
-  border-radius: 10px;
-  font-size: 0.92rem;
-  font-weight: 800;
-  cursor: pointer;
+  color: #fff; border: none; border-radius: 10px;
+  font-size: 0.92rem; font-weight: 800; cursor: pointer;
   text-align: center;
-  box-shadow: 0 6px 20px rgba(225, 48, 108, 0.24);
+  box-shadow: 0 6px 20px rgba(225,48,108,0.24);
   transition: filter 0.15s, box-shadow 0.15s;
   min-height: 44px;
 }
-
 .rfos-summary-confirm-btn:hover {
   filter: brightness(1.07);
-  box-shadow: 0 8px 24px rgba(225, 48, 108, 0.34);
+  box-shadow: 0 8px 24px rgba(225,48,108,0.34);
 }
-
-.rfos-summary-confirm-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-/* De-emphasise original submit when summary is visible */
+.rfos-summary-confirm-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 #request-modal.rfos-summary-active .request-submit-btn {
-  opacity: 0.38;
-  pointer-events: none;
+  opacity: 0.38; pointer-events: none;
 }
 
 /* ══════════════════════════════════════════════════════════════
    RAFI THINKING — submit transition
 ══════════════════════════════════════════════════════════════ */
 .rfos-thinking {
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
-  padding: 40px 24px;
-  text-align: center;
-  min-height: 220px;
+  display: none; flex-direction: column; align-items: center;
+  justify-content: center; gap: 14px; padding: 40px 24px;
+  text-align: center; min-height: 220px;
 }
-
 .rfos-thinking.visible { display: flex; }
-
 .rfos-thinking-avatar {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background: rgba(72, 100, 255, 0.10);
-  border: 1.5px solid rgba(72, 100, 255, 0.22);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
+  width: 56px; height: 56px; border-radius: 50%;
+  background: rgba(72,100,255,0.10); border: 1.5px solid rgba(72,100,255,0.22);
+  display: flex; align-items: center; justify-content: center; overflow: hidden;
   animation: rfos-thinking-breathe 1.8s ease-in-out infinite;
 }
-
-.rfos-thinking-avatar img {
-  width: 48px;
-  height: 48px;
-  object-fit: contain;
-}
-
-.rfos-thinking-label {
-  font-size: 0.88rem;
-  font-weight: 600;
-  color: var(--rfos-text);
-}
-
-.rfos-thinking-dots {
-  display: flex;
-  gap: 6px;
-  align-items: center;
-}
-
+.rfos-thinking-avatar img { width: 48px; height: 48px; object-fit: contain; }
+.rfos-thinking-label { font-size: 0.88rem; font-weight: 600; color: var(--rfos-text); }
+.rfos-thinking-dots { display: flex; gap: 6px; align-items: center; }
 .rfos-thinking-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: rgba(72, 100, 255, 0.60);
+  width: 6px; height: 6px; border-radius: 50%;
+  background: rgba(72,100,255,0.60);
   animation: rfos-dot-bounce 1.0s ease-in-out infinite;
 }
-
 .rfos-thinking-dot:nth-child(2) { animation-delay: 0.18s; }
 .rfos-thinking-dot:nth-child(3) { animation-delay: 0.36s; }
 
@@ -492,335 +515,111 @@
    RAFI CONFIRMATION — post-submit
 ══════════════════════════════════════════════════════════════ */
 .rfos-confirmation {
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  padding: 24px 20px 16px;
-  text-align: center;
-  border-bottom: 1px solid var(--rfos-border);
-  margin-bottom: 16px;
+  display: none; flex-direction: column; align-items: center; gap: 8px;
+  padding: 24px 20px 16px; text-align: center;
+  border-bottom: 1px solid var(--rfos-border); margin-bottom: 16px;
   animation: rfos-fadein 0.28s ease-out forwards;
 }
-
 .rfos-confirmation.visible { display: flex; }
-
 .rfos-confirmation-avatar {
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  background: linear-gradient(135deg,
-    rgba(72, 100, 255, 0.12),
-    rgba(32, 201, 151, 0.08));
-  border: 2px solid rgba(32, 201, 151, 0.28);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  margin-bottom: 4px;
+  width: 72px; height: 72px; border-radius: 50%;
+  background: linear-gradient(135deg, rgba(72,100,255,0.12), rgba(32,201,151,0.08));
+  border: 2px solid rgba(32,201,151,0.28);
+  display: flex; align-items: center; justify-content: center; overflow: hidden; margin-bottom: 4px;
 }
-
-.rfos-confirmation-avatar img {
-  width: 62px;
-  height: 62px;
-  object-fit: contain;
-}
-
-.rfos-confirmation-title {
-  font-size: 1.15rem;
-  font-weight: 800;
-  color: #fff;
-  letter-spacing: -0.01em;
-  margin: 0;
-}
-
-.rfos-confirmation-sub {
-  font-size: 0.84rem;
-  color: var(--rfos-muted);
-  margin: 0;
-  line-height: 1.55;
-  max-width: 300px;
-}
-
-.rfos-confirmation-steps {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 6px;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.rfos-conf-step {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 0.76rem;
-  font-weight: 600;
-  color: var(--rfos-muted);
-}
-
+.rfos-confirmation-avatar img { width: 62px; height: 62px; object-fit: contain; }
+.rfos-confirmation-title { font-size: 1.15rem; font-weight: 800; color: #fff; margin: 0; letter-spacing: -0.01em; }
+.rfos-confirmation-sub { font-size: 0.84rem; color: var(--rfos-muted); margin: 0; line-height: 1.55; max-width: 300px; }
+.rfos-confirmation-steps { display: flex; align-items: center; gap: 6px; margin-top: 6px; flex-wrap: wrap; justify-content: center; }
+.rfos-conf-step { display: flex; align-items: center; gap: 5px; font-size: 0.76rem; font-weight: 600; color: var(--rfos-muted); }
 .rfos-conf-step-icon {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: rgba(32, 201, 151, 0.14);
-  border: 1px solid rgba(32, 201, 151, 0.25);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.62rem;
-  color: var(--rfos-green);
-  flex-shrink: 0;
+  width: 20px; height: 20px; border-radius: 50%;
+  background: rgba(32,201,151,0.14); border: 1px solid rgba(32,201,151,0.25);
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 0.62rem; color: var(--rfos-green); flex-shrink: 0;
 }
-
-.rfos-conf-sep {
-  font-size: 0.70rem;
-  color: var(--rfos-border);
-}
-
-/* ══════════════════════════════════════════════════════════════
-   HERO HIERARCHY RECOMPOSITION — rfos-hero-recomposed
-   Applied to section#home by JS once RafiEntry mounts.
-   RAFI card (inside #hero-quick-search) becomes the first
-   visual element. H1 demotes to secondary promise below.
-   Pure CSS order — no DOM moves, no layout thrash.
-══════════════════════════════════════════════════════════════ */
-
-/* Ensure flex column with stable gap */
-section#home.rfos-hero-recomposed .hero-content {
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  gap: 0 !important;
-}
-
-/* ── 1. RAFI card — the star, comes first ── */
-section#home.rfos-hero-recomposed #hero-quick-search {
-  order: 1 !important;
-  margin-top: 0 !important;
-  margin-bottom: 0 !important;
-  width: 100% !important;
-}
-
-/* ── 2. H1 — secondary promise, demoted below RAFI ── */
-section#home.rfos-hero-recomposed .hero-title {
-  order: 2 !important;
-  /* Reduce ~35% from current max — reads as context, not headline */
-  font-size: clamp(1.55rem, 3.8vw, 3.0rem) !important;
-  font-weight: 700 !important;
-  line-height: 1.15 !important;
-  letter-spacing: -0.025em !important;
-  color: rgba(255, 255, 255, 0.70) !important;
-  margin-top: 20px !important;
-  margin-bottom: 0 !important;
-  /* Narrow — confirms RAFI is broader than the headline */
-  max-width: 640px !important;
-}
-
-/* Keep gradient on second span but more subtle */
-section#home.rfos-hero-recomposed .hero-title span:last-child {
-  background: linear-gradient(135deg, rgba(225,48,108,0.80) 0%, rgba(192,57,43,0.70) 40%, rgba(255,107,157,0.80) 100%) !important;
-  -webkit-background-clip: text !important;
-  background-clip: text !important;
-  -webkit-text-fill-color: transparent !important;
-  opacity: 0.85 !important;
-}
-
-/* Suppress the decorative underline rule from hero-premium-upgrade.css */
-section#home.rfos-hero-recomposed .hero-title::after {
-  display: none !important;
-}
-
-/* ── 3. Subtitle — tertiary, minimal ── */
-section#home.rfos-hero-recomposed .hero-subtitle {
-  order: 3 !important;
-  font-size: clamp(0.80rem, 1.6vw, 0.92rem) !important;
-  color: rgba(255, 255, 255, 0.42) !important;
-  font-weight: 400 !important;
-  margin-top: 6px !important;
-  margin-bottom: 0 !important;
-  letter-spacing: 0.01em !important;
-}
-
-/* ── 4. Supporting elements — below headline ── */
-section#home.rfos-hero-recomposed .hero-city-smart,
-section#home.rfos-hero-recomposed .fxlps-signals,
-section#home.rfos-hero-recomposed .hero-secondary-link-wrap {
-  order: 4 !important;
-}
-
-section#home.rfos-hero-recomposed .hero-city-smart {
-  margin-top: 10px !important;
-}
-
-section#home.rfos-hero-recomposed .fxlps-signals {
-  margin-top: 4px !important;
-}
-
-/* ── Mobile responsive — recomposed ── */
-@media (max-width: 767px) {
-  section#home.rfos-hero-recomposed .hero-title {
-    font-size: clamp(1.30rem, 6.5vw, 2.0rem) !important;
-    margin-top: 16px !important;
-    color: rgba(255, 255, 255, 0.65) !important;
-  }
-
-  section#home.rfos-hero-recomposed .hero-subtitle {
-    font-size: 0.78rem !important;
-    margin-top: 4px !important;
-  }
-}
-
-@media (max-width: 380px) {
-  section#home.rfos-hero-recomposed .hero-title {
-    font-size: clamp(1.15rem, 7vw, 1.7rem) !important;
-    margin-top: 14px !important;
-  }
-}
-
-/* ══════════════════════════════════════════════════════════════
-   RAFI AVATAR UPGRADE — larger in Hero 2.0
-   These rules supersede the base sizes when inside
-   .rfos-hero-recomposed — the recomposed hero gives RAFI
-   more presence since it leads the visual hierarchy.
-══════════════════════════════════════════════════════════════ */
-
-/* Desktop: 88px avatar */
-section#home.rfos-hero-recomposed .rfos-entry-avatar {
-  width: 88px !important;
-  height: 88px !important;
-}
-section#home.rfos-hero-recomposed .rfos-entry-avatar img {
-  width: 74px !important;
-  height: 74px !important;
-}
-
-/* Message font: larger when RAFI leads */
-section#home.rfos-hero-recomposed .rfos-bubble-text {
-  font-size: 1.12rem !important;
-  -webkit-line-clamp: 3 !important;
-}
-
-section#home.rfos-hero-recomposed .rfos-entry {
-  padding: 24px 24px 20px !important;
-  gap: 20px !important;
-  align-items: flex-start !important;
-}
-
-section#home.rfos-hero-recomposed .rfos-bubble-label {
-  font-size: 0.72rem !important;
-}
-
-/* Tablet: 76px */
-@media (max-width: 1023px) {
-  section#home.rfos-hero-recomposed .rfos-entry-avatar {
-    width: 76px !important;
-    height: 76px !important;
-  }
-  section#home.rfos-hero-recomposed .rfos-entry-avatar img {
-    width: 64px !important;
-    height: 64px !important;
-  }
-}
-
-/* Mobile: 72px */
-@media (max-width: 767px) {
-  section#home.rfos-hero-recomposed .rfos-entry {
-    padding: 18px 16px 15px !important;
-    gap: 14px !important;
-    align-items: center !important;
-  }
-  section#home.rfos-hero-recomposed .rfos-entry-avatar {
-    width: 72px !important;
-    height: 72px !important;
-    /* Reinstate breathing on mobile within recomposed hero */
-    animation-name: rfos-avatar-breathe-mobile !important;
-  }
-  section#home.rfos-hero-recomposed .rfos-entry-avatar img {
-    width: 60px !important;
-    height: 60px !important;
-  }
-  section#home.rfos-hero-recomposed .rfos-bubble-text {
-    font-size: 1.00rem !important;
-  }
-}
-
-@media (max-width: 380px) {
-  section#home.rfos-hero-recomposed .rfos-entry-avatar {
-    width: 62px !important;
-    height: 62px !important;
-  }
-  section#home.rfos-hero-recomposed .rfos-entry-avatar img {
-    width: 52px !important;
-    height: 52px !important;
-  }
-  section#home.rfos-hero-recomposed .rfos-bubble-text {
-    font-size: 0.93rem !important;
-  }
-}
+.rfos-conf-sep { font-size: 0.70rem; color: var(--rfos-border); }
 
 /* ══════════════════════════════════════════════════════════════
    MODAL CONTINUITY
 ══════════════════════════════════════════════════════════════ */
 #request-modal.rfos-active .modal-header,
 #request-modal.rfos-active .request-modal-header {
-  border-bottom: none;
-  padding-bottom: 0;
+  border-bottom: none; padding-bottom: 0;
 }
 
 /* ══════════════════════════════════════════════════════════════
    KEYFRAMES
 ══════════════════════════════════════════════════════════════ */
 
-/* Entry slide-up — spring easing */
-@keyframes rfos-entry-in {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0);    }
+/* Stage entrance — spring */
+@keyframes rfos-stage-in {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-/* Generic fade-in */
+/* Generic fadein */
 @keyframes rfos-fadein {
   from { opacity: 0; transform: translateY(4px); }
-  to   { opacity: 1; transform: translateY(0);   }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-/* Avatar breathing — idle presence signal */
-@keyframes rfos-avatar-breathe {
+/* Avatar idle — slow breath */
+@keyframes rfos-avatar-idle {
   0%, 100% {
     box-shadow:
-      0 0 0 0px rgba(72, 100, 255, 0.0),
-      0 4px 16px rgba(72, 100, 255, 0.14);
+      0 0 0 0px  rgba(72, 100, 255, 0.00),
+      0 8px 32px rgba(72, 100, 255, 0.16);
   }
   50% {
     box-shadow:
-      0 0 0 5px rgba(72, 100, 255, 0.07),
-      0 6px 22px rgba(72, 100, 255, 0.20);
+      0 0 0 8px  rgba(72, 100, 255, 0.07),
+      0 12px 42px rgba(72, 100, 255, 0.24);
   }
 }
 
-/* Listening pulse */
+/* Avatar listening — active pulse */
 @keyframes rfos-avatar-listen {
-  0%, 100% { box-shadow: 0 0 0 4px rgba(72, 100, 255, 0.08), 0 4px 18px rgba(72, 100, 255, 0.18); }
-  50%       { box-shadow: 0 0 0 8px rgba(72, 100, 255, 0.04), 0 6px 24px rgba(72, 100, 255, 0.28); }
+  0%, 100% {
+    box-shadow: 0 0 0 5px rgba(72,100,255,0.10), 0 10px 40px rgba(72,100,255,0.24);
+  }
+  50% {
+    box-shadow: 0 0 0 12px rgba(72,100,255,0.04), 0 14px 50px rgba(72,100,255,0.32);
+  }
 }
 
-/* Urgent pulse */
+/* Avatar urgent — fast urgent pulse */
 @keyframes rfos-avatar-urgent {
-  0%, 100% { box-shadow: 0 0 0 4px rgba(225, 48, 108, 0.10), 0 4px 18px rgba(225, 48, 108, 0.18); }
-  50%       { box-shadow: 0 0 0 8px rgba(225, 48, 108, 0.04), 0 6px 24px rgba(225, 48, 108, 0.28); }
+  0%, 100% {
+    box-shadow: 0 0 0 5px rgba(225,48,108,0.12), 0 10px 40px rgba(225,48,108,0.24);
+  }
+  50% {
+    box-shadow: 0 0 0 12px rgba(225,48,108,0.05), 0 14px 50px rgba(225,48,108,0.34);
+  }
 }
 
-/* Live dot pulse */
+/* Halo breathing */
+@keyframes rfos-halo-breathe {
+  0%, 100% { transform: scale(1.00); opacity: 0.85; }
+  50%       { transform: scale(1.15); opacity: 1.00; }
+}
+
+/* Live dot */
 @keyframes rfos-live-dot {
-  0%, 100% { opacity: 1;    transform: scale(1.0); }
-  50%       { opacity: 0.55; transform: scale(0.85); }
+  0%, 100% { opacity: 1.0; transform: scale(1.00); }
+  50%       { opacity: 0.5; transform: scale(0.80); }
 }
 
-/* Typewriter cursor blink */
+/* Typewriter cursor */
 @keyframes rfos-cursor-blink {
   0%, 100% { opacity: 1; }
   50%       { opacity: 0; }
+}
+
+/* Badge pill entrance */
+@keyframes rfos-pill-in {
+  from { opacity: 0; transform: translateY(3px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0)  scale(1.00); }
 }
 
 /* Thinking */
@@ -838,125 +637,80 @@ section#home.rfos-hero-recomposed .rfos-bubble-label {
    RESPONSIVE
 ══════════════════════════════════════════════════════════════ */
 
-/* Large desktop — avatar can breathe more */
-@media (min-width: 768px) {
-  .rfos-entry {
-    padding: 22px 24px 18px;
-  }
+/* Desktop large */
+@media (min-width: 1024px) {
+  .rfos-stage-wrap { padding-bottom: 32px; }
+  .rfos-stage-avatar { width: 120px; height: 120px; }
+  .rfos-stage-avatar img { width: 100px; height: 100px; }
+  .rfos-halo { width: 240px; height: 240px; }
+  .rfos-stage-msg { font-size: 1.30rem; max-width: 560px; }
 }
 
 /* Tablet */
 @media (max-width: 1023px) {
-  .rfos-entry-avatar { width: 56px; height: 56px; }
-  .rfos-entry-avatar img { width: 46px; height: 46px; }
-  .rfos-bubble-text { font-size: 0.96rem; }
+  .rfos-stage-avatar { width: 100px; height: 100px; }
+  .rfos-stage-avatar img { width: 84px; height: 84px; }
+  .rfos-halo { width: 200px; height: 200px; }
+  .rfos-stage-msg { font-size: 1.16rem; }
 }
 
-/* Mobile — hero-first: compact but fully readable */
+/* Mobile */
 @media (max-width: 767px) {
-  .rfos-entry {
-    padding: 16px 16px 13px;
-    gap: 13px;
-    align-items: center; /* vertically center avatar with first line on mobile */
+  .rfos-stage-wrap { padding: 0 0 22px; }
+  .rfos-stage-avatar { width: 92px; height: 92px; }
+  .rfos-stage-avatar img { width: 76px; height: 76px; }
+  .rfos-halo { width: 180px; height: 180px; filter: blur(22px); }
+  .rfos-stage-msg {
+    font-size: 1.08rem;
+    max-width: 100%;
+    padding: 0 8px;
   }
+  .rfos-stage-name { font-size: 0.65rem; margin-bottom: 8px; }
+  .rfos-avatar-wrap { margin-bottom: 16px; }
 
-  .rfos-entry-avatar {
-    width: 50px;
-    height: 50px;
-    /* Reduce breathing scale on mobile to avoid jank */
-    animation-name: rfos-avatar-breathe-mobile;
-  }
-
-  .rfos-entry-avatar img {
-    width: 42px;
-    height: 42px;
-  }
-
-  .rfos-bubble-text {
-    font-size: 0.92rem;
-    -webkit-line-clamp: 3; /* allow up to 3 lines on mobile */
-    line-height: 1.42;
-  }
-
-  .rfos-bubble-label {
-    font-size: 0.63rem;
-  }
-
-  /* Modal header compact on mobile */
+  /* Modal compact */
   .rfos-conv-header { padding: 12px 14px; }
   .rfos-conv-avatar { width: 36px; height: 36px; }
   .rfos-conv-avatar img { width: 30px; height: 30px; }
   .rfos-conv-msg { font-size: 0.82rem; }
-
   .rfos-tl-label { display: none; }
-  .rfos-tl-dot   { width: 6px; height: 6px; }
+  .rfos-tl-dot { width: 6px; height: 6px; }
 
   .rfos-confirmation-avatar { width: 56px; height: 56px; }
   .rfos-confirmation-avatar img { width: 46px; height: 46px; }
-
   .rfos-thinking { padding: 28px 16px; min-height: 180px; }
-
   .rfos-summary { flex-direction: column; align-items: flex-start; gap: 8px; }
   .rfos-summary-text { font-size: 0.80rem; }
 }
 
-/* Very small (360px) — ensure nothing overflows */
+/* Very small */
 @media (max-width: 380px) {
-  .rfos-entry {
-    padding: 13px 13px 11px;
-    gap: 11px;
-  }
-  .rfos-entry-avatar { width: 44px; height: 44px; }
-  .rfos-entry-avatar img { width: 36px; height: 36px; }
-  .rfos-bubble-text { font-size: 0.84rem; }
-  .rfos-bubble-label { letter-spacing: 0.06em; }
-}
-
-/* Mobile breathing — subtler (less GPU on low-end) */
-@keyframes rfos-avatar-breathe-mobile {
-  0%, 100% {
-    box-shadow:
-      0 0 0 0px rgba(72, 100, 255, 0.0),
-      0 3px 10px rgba(72, 100, 255, 0.12);
-  }
-  50% {
-    box-shadow:
-      0 0 0 3px rgba(72, 100, 255, 0.06),
-      0 4px 14px rgba(72, 100, 255, 0.16);
-  }
+  .rfos-stage-wrap { padding-bottom: 18px; }
+  .rfos-stage-avatar { width: 80px; height: 80px; }
+  .rfos-stage-avatar img { width: 66px; height: 66px; }
+  .rfos-halo { width: 160px; height: 160px; }
+  .rfos-stage-msg { font-size: 0.98rem; min-height: 1.6em; }
 }
 
 /* ── Reduced motion ────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
-  .rfos-entry,
+  .rfos-stage-wrap,
   .rfos-conv-header,
   .rfos-summary,
-  .rfos-confirmation {
-    animation: none;
-    opacity: 1;
-    transform: none;
-  }
+  .rfos-confirmation { animation: none; opacity: 1; transform: none; }
 
-  .rfos-entry-avatar,
-  .rfos-entry--listening .rfos-entry-avatar,
-  .rfos-entry--urgent .rfos-entry-avatar,
+  .rfos-stage-avatar,
+  .rfos-stage--listening .rfos-stage-avatar,
+  .rfos-stage--urgent    .rfos-stage-avatar,
+  .rfos-halo,
   .rfos-thinking-avatar,
-  .rfos-thinking-dot {
-    animation: none;
-  }
+  .rfos-thinking-dot    { animation: none; }
 
-  .rfos-bubble-label::after {
-    animation: none;
-    opacity: 0.8;
-  }
-
+  .rfos-stage-name::after { animation: none; opacity: 0.8; }
   .rfos-cursor { animation: none; opacity: 0; }
 
   .rfos-thinking-dots::after {
-    content: '\2026';
-    color: rgba(72, 100, 255, 0.6);
-    font-size: 1rem;
+    content: '\2026'; color: rgba(72,100,255,0.6); font-size: 1rem;
   }
-
   .rfos-thinking-dot { display: none; }
 }
