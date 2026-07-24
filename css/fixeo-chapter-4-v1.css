@@ -220,3 +220,46 @@
     height: 32px;
   }
 }
+
+/* ── Narrative bridge: Chapter 4 → FIXEO Entreprises ──────────
+   fc4-bridge — pure typography, generous whitespace.
+   aria-hidden: decorative/transitional, not essential content.
+──────────────────────────────────────────────────────────────── */
+.fc4-bridge {
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 72px 24px 64px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.fc4-bridge-line {
+  font-size: clamp(0.96rem, 2.2vw, 1.08rem);
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.55);
+  margin: 0;
+  line-height: 1.55;
+  letter-spacing: 0.005em;
+}
+
+.fc4-bridge-sub {
+  font-size: clamp(0.84rem, 1.8vw, 0.93rem);
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.28);
+  margin: 0;
+  line-height: 1.60;
+}
+
+@media (max-width: 679px) {
+  .fc4-bridge {
+    padding: 56px 20px 48px;
+  }
+}
+
+@media (max-width: 374px) {
+  .fc4-bridge {
+    padding: 44px 16px 36px;
+  }
+}
