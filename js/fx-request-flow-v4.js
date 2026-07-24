@@ -1,5 +1,5 @@
 /**
- * fx-request-flow-v4.js — fxrf4-v5a
+ * fx-request-flow-v4.js — fxrf4-v5b
  * RAFI Request Flow V5 — Faithful implementation of the UX & Emotional Spec
  *
  * EMOTIONAL ARC: Problem → Relief → Confidence → Momentum → Trust
@@ -9,7 +9,7 @@
  * ISOLATED: Zero dependency on .modal, MutationObservers, setTimeout injections.
  * ROLLBACK: window.FIXEO_FLOW_V4 = false
  *
- * VERSION: fxrf4-v5a — 2026-07-24
+ * VERSION: fxrf4-v5b — 2026-07-24
  */
 
 (function () {
@@ -204,7 +204,7 @@
   function _formatPhoneDisplay(raw) {
     /* Format for display: 06 12 34 56 78 */
     var d = String(raw || '').replace(/\D/g, '');
-    if (d.startsWith('212')) d = '0' + d.slice(3);
+    if (d.indexOf('212') === 0) d = '0' + d.slice(3);
     return d.replace(/(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/, '$1 $2 $3 $4 $5');
   }
 
@@ -234,20 +234,6 @@
            Math.random().toString(36).slice(2,5).toUpperCase();
   }
 
-  function _buildWAText(st) {
-    var lines = st.mode === 'express'
-      ? ['Bonjour, je lance une demande urgente via Fixeo :']
-      : ['Bonjour, je viens de publier une demande sur Fixeo :'];
-    if (st.serviceLabel) lines.push('Service\u00a0: ' + st.serviceLabel);
-    if (st.city)         lines.push('Ville\u00a0: ' + st.city);
-    if (st.urgency)      lines.push('Urgence\u00a0: ' + st.urgency);
-    if (st.description)  lines.push('Détail\u00a0: ' + st.description);
-    if (st.phone)        lines.push('Téléphone\u00a0: ' + st.phone);
-    if (st.ref)          lines.push('Réf\u00a0: ' + st.ref);
-    lines.push('', 'Pouvez-vous me recontacter\u00a0?');
-    return 'https://wa.me/' + WHATSAPP + '?text=' + encodeURIComponent(lines.join('\n'));
-  }
-
   function _saveRequest(st) {
     try {
       var ref = _genRef();
@@ -263,7 +249,7 @@
         tracking_ref: ref,
         status:       'nouvelle',
         created_at:   new Date().toISOString(),
-        source:       'fxrf4-v5a',
+        source:       'fxrf4-v5b',
         mode:         st.mode,
         viewed:       false
       };
@@ -302,7 +288,7 @@
   function _fireAnalytics(req, mode, duplicated) {
     try {
       window.dispatchEvent(new CustomEvent('fixeo:client-request-submit-success', {
-        detail: { request: req, mode: mode, source: 'fxrf4-v5a',
+        detail: { request: req, mode: mode, source: 'fxrf4-v5b',
                   storageKey: STORAGE_KEY, duplicated: duplicated }
       }));
     } catch(_) {}
@@ -327,7 +313,6 @@
   }
 
   function _q(sel) { return _root ? _root.querySelector(sel) : null; }
-  function _qa(sel) { return _root ? Array.from(_root.querySelectorAll(sel)) : []; }
 
   /* ══════════════════════════════════════════════════════════
      DOM STRUCTURE — built once, reused
@@ -415,7 +400,7 @@
     _wireSwipeDismiss(dialog);
 
     /* Diagnostic (spec requirement) */
-    console.log('[fxrf4-v5a] DOM built. Header children:', head.childElementCount, '(expected 2: rafi-row, close)');
+    console.log('[fxrf4-v5b] DOM built. Header children:', head.childElementCount, '(expected 2: rafi-row, close)');
   }
 
   /* ══════════════════════════════════════════════════════════
@@ -689,7 +674,7 @@
     if (body) body.appendChild(_screen([grid, otherWrap]));
 
     /* If hero pre-selected a service, auto-advance after brief pause */
-    if (st.serviceSlug && !foot.innerHTML) {
+    if (st.serviceSlug) {
       setTimeout(function() { _transitionFwd(_renderStep2); }, 600);
     }
   }
@@ -718,8 +703,7 @@
     }
     _rafiSpeak(msg, isUrgent);
 
-    var _setFoot2 = _setFoot;
-    _setFoot2();
+    _setFoot();
 
     var body = _q('#fxrf4-body');
 
@@ -1014,21 +998,22 @@
 
     _btnLoading(btn);
 
-    /* Show interstitial after brief delay (feels intentional, not instant) */
-    setTimeout(function() {
-      _renderInterstitial();
-    }, 80);
-
-    /* Save (synchronous) */
+    /* Save synchronously before interstitial */
     var result = _saveRequest(st);
     var saved = result && result.request;
 
     if (!saved) {
       st.submitLocked = false;
-      _btnRestore(btn, 'Envoyer ma demande', false);
-      _renderStep3(); /* back to phone, show error */
+      /* btn may still be in DOM — restore if so, otherwise just re-render step 3 */
+      if (btn.parentNode) _btnRestore(btn, 'Envoyer ma demande', false);
+      else _renderStep3();
       return;
     }
+
+    /* Show interstitial — save succeeded, transition is cosmetic */
+    setTimeout(function() {
+      _renderInterstitial();
+    }, 60);
 
     _fireAnalytics(saved, st.mode, result.duplicated);
 
@@ -1171,7 +1156,6 @@
       txt: 'Retour à l\u2019accueil'
     });
     homeLink.setAttribute('role', 'button');
-    homeLink.addEventListener('click', function() { close(); });
 
     actions.appendChild(dashLink);
     actions.appendChild(homeLink);
@@ -1180,7 +1164,7 @@
     /* Diagnostic — spec requirement */
     var head = _q('#fxrf4-head');
     if (head) {
-      console.log('[fxrf4-v5a] Success rendered. Header children:', head.childElementCount,
+      console.log('[fxrf4-v5b] Success rendered. Header children:', head.childElementCount,
                   '(expected 2 — rafi-row + close)');
     }
   }
@@ -1352,7 +1336,7 @@
   ══════════════════════════════════════════════════════════ */
 
   window.FixeoRequestFlowV4 = {
-    VERSION: 'fxrf4-v5a',
+    VERSION: 'fxrf4-v5b',
     open:    open,
     close:   close
   };

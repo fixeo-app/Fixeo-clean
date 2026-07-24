@@ -1,6 +1,6 @@
 /**
- * fx-request-flow-v4.css — fxrf4-v5a
- * RAFI Request Flow V5 — Emotional Experience Implementation
+ * fx-request-flow-v4.css — fxrf4-v5b
+ * RAFI Request Flow V5 — Craftsmanship pass
  *
  * NAMESPACE: fxrf4-* exclusively
  * ZERO dependency on .modal, main.css, fixeo_v5_fixes.css
@@ -20,8 +20,7 @@
 }
 
 /* ─── ROOT HOST ───────────────────────────────────────────────
-   Full-screen fixed host. Z-index owns its stacking layer.
-   Not visible until JS adds .fxrf4-active.
+   Full-screen fixed host. Invisible until JS adds .fxrf4-active.
 ────────────────────────────────────────────────────────────── */
 #fxrf4-root {
   display: none;
@@ -39,9 +38,7 @@
   display: block;
 }
 
-/* ─── BACKDROP ────────────────────────────────────────────────
-   Dims the page. Separate opacity animation from dialog.
-────────────────────────────────────────────────────────────── */
+/* ─── BACKDROP ───────────────────────────────────────────────── */
 #fxrf4-bd {
   position: absolute;
   inset: 0;
@@ -57,8 +54,8 @@
 }
 
 /* ─── DIALOG ─────────────────────────────────────────────────
-   Desktop: centered dialog.
-   Mobile (≤640px): bottom sheet (overridden below).
+   Desktop: centered card.
+   Mobile ≤640px: bottom sheet (overridden below).
 ────────────────────────────────────────────────────────────── */
 #fxrf4-dialog {
   position: absolute;
@@ -69,7 +66,6 @@
   flex-direction: column;
   overflow: hidden;
 
-  /* Desktop centered */
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -78,7 +74,6 @@
   max-height: min(88vh, 680px);
 
   box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.04),
     0 12px 40px rgba(0, 0, 0, 0.60),
     0 48px 120px rgba(0, 0, 0, 0.40);
 
@@ -117,7 +112,6 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  position: relative;
   overflow: hidden;
   animation: fxrf4-avatar-breathe 4.8s cubic-bezier(0.45, 0, 0.55, 1) infinite;
 }
@@ -129,20 +123,9 @@
   border-radius: 50%;
 }
 
-/* Breathing glow behind avatar */
-#fxrf4-avatar::after {
-  content: '';
-  position: absolute;
-  inset: -4px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(72, 100, 255, 0.18) 0%, transparent 70%);
-  animation: fxrf4-avatar-breathe 4.8s cubic-bezier(0.45, 0, 0.55, 1) infinite;
-  pointer-events: none;
-}
-
 @keyframes fxrf4-avatar-breathe {
-  0%, 100% { opacity: 0.5; transform: scale(1); }
-  50%       { opacity: 1;   transform: scale(1.06); }
+  0%, 100% { opacity: 0.6; }
+  50%       { opacity: 1;   }
 }
 
 /* RAFI message */
@@ -163,7 +146,7 @@
 }
 
 .fxrf4-rafi-name.is-urgent {
-  color: rgba(220, 60, 60, 0.80);
+  color: rgba(210, 60, 60, 0.80);
 }
 
 .fxrf4-rafi-text {
@@ -175,11 +158,11 @@
   letter-spacing: -0.01em;
 }
 
-/* Typing cursor — appears during type-in animation */
+/* Typing cursor */
 .fxrf4-rafi-text.is-typing::after {
   content: '|';
   display: inline-block;
-  color: rgba(72, 100, 255, 0.70);
+  color: rgba(72, 100, 255, 0.60);
   animation: fxrf4-cursor 0.8s step-start infinite;
   margin-left: 1px;
 }
@@ -189,9 +172,8 @@
   50%       { opacity: 0; }
 }
 
-/* ─── CLOSE BUTTON ────────────────────────────────────────────
-   44×44 touch target. Absolute inside header.
-   Top-right, vertically centered to header height.
+/* ─── CLOSE BUTTON ───────────────────────────────────────────
+   44×44 touch target. Vertically centred to header.
 ────────────────────────────────────────────────────────────── */
 #fxrf4-close {
   position: absolute;
@@ -203,33 +185,32 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.09);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 12px;
-  color: rgba(255, 255, 255, 0.55);
-  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 0.90rem;
   line-height: 1;
   cursor: pointer;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
   user-select: none;
   -webkit-user-select: none;
-  transition: background 0.15s, color 0.15s, transform 0.15s;
+  transition: background 0.15s, color 0.15s;
   z-index: 2;
 }
 
 #fxrf4-close:hover {
-  background: rgba(255, 255, 255, 0.11);
-  color: rgba(255, 255, 255, 0.80);
+  background: rgba(255, 255, 255, 0.10);
+  color: rgba(255, 255, 255, 0.70);
 }
 
 #fxrf4-close:active {
-  transform: translateY(-50%) scale(0.93);
-  background: rgba(255, 255, 255, 0.16);
+  transform: translateY(-50%) scale(0.92);
 }
 
 /* ─── PROGRESS LINE ───────────────────────────────────────────
-   2px line. No labels. No numbers. Pure momentum.
+   2px. No labels. No numbers. Pure momentum.
 ────────────────────────────────────────────────────────────── */
 #fxrf4-progress {
   flex-shrink: 0;
@@ -243,16 +224,12 @@
   top: 0;
   left: 0;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    rgba(72, 100, 255, 0.85) 0%,
-    rgba(110, 140, 255, 0.65) 100%
-  );
+  background: rgba(72, 100, 255, 0.75);
   border-radius: 0 2px 2px 0;
   transition: width 360ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* ─── BODY ────────────────────────────────────────────────────
+/* ─── BODY ───────────────────────────────────────────────────
    Isolated scroll. Never scrolls the page.
 ────────────────────────────────────────────────────────────── */
 #fxrf4-body {
@@ -266,7 +243,7 @@
   position: relative;
 }
 
-/* Screen content wrapper — transitions slide in/out */
+/* Screen content wrapper — slides in/out on transition */
 .fxrf4-screen {
   animation: fxrf4-screen-in 240ms cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
 }
@@ -279,12 +256,8 @@
   animation: fxrf4-screen-out-back 180ms ease-in both;
 }
 
-.fxrf4-screen.is-entering-back {
-  animation: fxrf4-screen-in-back 240ms cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
-}
-
 @keyframes fxrf4-screen-in {
-  from { opacity: 0; transform: translateX(28px); }
+  from { opacity: 0; transform: translateX(20px); }
   to   { opacity: 1; transform: translateX(0); }
 }
 
@@ -294,7 +267,7 @@
 }
 
 @keyframes fxrf4-screen-in-back {
-  from { opacity: 0; transform: translateX(-28px); }
+  from { opacity: 0; transform: translateX(-20px); }
   to   { opacity: 1; transform: translateX(0); }
 }
 
@@ -309,7 +282,7 @@
 #fxrf4-foot {
   flex-shrink: 0;
   padding: 16px 22px;
-  padding-bottom: max(16px, env(safe-area-inset-bottom, 16px));
+  padding-bottom: max(16px, env(safe-area-inset-bottom));
 }
 
 /* ─── SERVICE CHIPS ───────────────────────────────────────────
@@ -326,7 +299,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 14px 14px;
+  padding: 14px;
   background: rgba(255, 255, 255, 0.04);
   border: 1.5px solid rgba(255, 255, 255, 0.07);
   border-radius: 16px;
@@ -345,86 +318,90 @@
 }
 
 .fxrf4-chip-icon {
-  font-size: 1.45rem;
+  font-size: 1.40rem;
   line-height: 1;
   flex-shrink: 0;
-  transition: transform 0.2s cubic-bezier(0.34, 1.4, 0.64, 1);
+  transition: transform 0.18s cubic-bezier(0.34, 1.4, 0.64, 1);
 }
 
 .fxrf4-chip-label {
-  font-size: 0.90rem;
+  font-size: 0.88rem;
   font-weight: 700;
-  color: rgba(255, 255, 255, 0.88);
+  color: rgba(255, 255, 255, 0.84);
   line-height: 1.2;
   transition: color 0.16s;
 }
 
-/* Hover (desktop) */
-.fxrf4-chip:hover {
-  border-color: rgba(72, 100, 255, 0.35);
-  background: rgba(72, 100, 255, 0.05);
+/* Hover — desktop only */
+@media (hover: hover) {
+  .fxrf4-chip:hover {
+    border-color: rgba(72, 100, 255, 0.30);
+    background: rgba(72, 100, 255, 0.05);
+  }
 }
 
-/* Selected state */
+/* Selected */
 .fxrf4-chip.is-selected {
-  border-color: rgba(72, 100, 255, 0.65);
-  background: rgba(72, 100, 255, 0.11);
+  border-color: rgba(72, 100, 255, 0.60);
+  background: rgba(72, 100, 255, 0.10);
 }
 
 .fxrf4-chip.is-selected .fxrf4-chip-icon {
-  transform: scale(1.12);
+  transform: scale(1.10);
 }
 
 .fxrf4-chip.is-selected .fxrf4-chip-label {
   color: rgba(255, 255, 255, 0.97);
 }
 
-/* Selected checkmark */
+/* Selected checkmark — small, unobtrusive */
 .fxrf4-chip.is-selected::after {
   content: '✓';
   position: absolute;
   top: 8px;
   right: 10px;
-  font-size: 0.62rem;
+  font-size: 0.60rem;
   font-weight: 800;
-  color: rgba(72, 100, 255, 0.80);
+  color: rgba(72, 100, 255, 0.70);
   animation: fxrf4-check-appear 0.18s cubic-bezier(0.34, 1.4, 0.64, 1) both;
 }
 
 @keyframes fxrf4-check-appear {
-  from { opacity: 0; transform: scale(0.5); }
+  from { opacity: 0; transform: scale(0.4); }
   to   { opacity: 1; transform: scale(1); }
 }
 
-/* Dimmed state (when another chip is selected) */
+/* Dimmed — another chip selected */
 .fxrf4-chip.is-dimmed {
-  opacity: 0.32;
+  opacity: 0.28;
   pointer-events: none;
 }
 
-/* Tap animation */
+/* Tap press */
 .fxrf4-chip.is-tapping {
   transform: scale(1.04);
 }
 
-/* "Autre chose" — full width */
+/* "Autre chose" — full width, quieter */
 .fxrf4-chip.is-other {
   grid-column: 1 / -1;
-  min-height: 52px;
+  min-height: 50px;
   padding: 12px 14px;
   border-style: dashed;
-  border-color: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.10);
   justify-content: center;
 }
 
 .fxrf4-chip.is-other .fxrf4-chip-label {
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.50);
-  font-size: 0.84rem;
+  color: rgba(255, 255, 255, 0.42);
+  font-size: 0.82rem;
 }
 
-.fxrf4-chip.is-other:hover .fxrf4-chip-label {
-  color: rgba(255, 255, 255, 0.75);
+@media (hover: hover) {
+  .fxrf4-chip.is-other:hover .fxrf4-chip-label {
+    color: rgba(255, 255, 255, 0.65);
+  }
 }
 
 /* "Autre chose" inline input */
@@ -437,9 +414,8 @@
   display: block;
 }
 
-/* ─── CITY CHIPS ──────────────────────────────────────────────
-   Horizontal scrolling row of the most common cities.
-   Detected city gets a pulse.
+/* ─── CITY CHIPS ─────────────────────────────────────────────
+   Horizontal scroll. Detected city pulses once. Fade at right.
 ────────────────────────────────────────────────────────────── */
 .fxrf4-city-row {
   display: flex;
@@ -449,7 +425,6 @@
   scrollbar-width: none;
   padding-bottom: 4px;
   margin-bottom: 14px;
-  /* Fade at right edge to hint at more */
   -webkit-mask-image: linear-gradient(to right, black 80%, transparent 100%);
   mask-image: linear-gradient(to right, black 80%, transparent 100%);
 }
@@ -462,52 +437,53 @@
   flex-shrink: 0;
   display: flex;
   align-items: center;
-  gap: 6px;
   padding: 10px 16px;
   background: rgba(255, 255, 255, 0.05);
   border: 1.5px solid rgba(255, 255, 255, 0.09);
   border-radius: 100px;
   font-size: 0.88rem;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.82);
+  color: rgba(255, 255, 255, 0.78);
   cursor: pointer;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
   white-space: nowrap;
-  transition: border-color 0.16s, background 0.16s, transform 0.12s;
+  transition: border-color 0.16s, background 0.16s;
 }
 
-.fxrf4-city-chip:hover {
-  border-color: rgba(72, 100, 255, 0.40);
-  background: rgba(72, 100, 255, 0.07);
+@media (hover: hover) {
+  .fxrf4-city-chip:hover {
+    border-color: rgba(72, 100, 255, 0.35);
+    background: rgba(72, 100, 255, 0.06);
+  }
 }
 
 .fxrf4-city-chip.is-selected {
-  border-color: rgba(72, 100, 255, 0.65);
-  background: rgba(72, 100, 255, 0.12);
+  border-color: rgba(72, 100, 255, 0.60);
+  background: rgba(72, 100, 255, 0.11);
   color: rgba(255, 255, 255, 0.97);
 }
 
-/* Detected city: one heartbeat pulse */
+/* Detected city — one heartbeat, then settles */
 .fxrf4-city-chip.is-detected {
-  border-color: rgba(72, 100, 255, 0.50);
-  animation: fxrf4-city-pulse 1s cubic-bezier(0.4, 0, 0.6, 1) 400ms 1 both;
+  border-color: rgba(72, 100, 255, 0.45);
+  animation: fxrf4-city-pulse 900ms ease-out 350ms 1 both;
 }
 
 @keyframes fxrf4-city-pulse {
-  0%   { box-shadow: 0 0 0 0 rgba(72, 100, 255, 0.40); }
-  50%  { box-shadow: 0 0 0 6px rgba(72, 100, 255, 0); }
+  0%   { box-shadow: 0 0 0 0   rgba(72, 100, 255, 0.35); }
+  60%  { box-shadow: 0 0 0 7px rgba(72, 100, 255, 0); }
   100% { box-shadow: none; }
 }
 
-/* "Autre ville →" — always last */
+/* "Autre ville →" */
 .fxrf4-city-chip.is-more {
   border-style: dashed;
-  color: rgba(255, 255, 255, 0.44);
-  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.38);
+  font-size: 0.80rem;
 }
 
-/* City select (expanded "autre ville" state) */
+/* City select */
 .fxrf4-select-wrap {
   position: relative;
   margin-bottom: 14px;
@@ -519,8 +495,8 @@
   right: 16px;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 0.82rem;
-  color: rgba(255, 255, 255, 0.35);
+  font-size: 0.80rem;
+  color: rgba(255, 255, 255, 0.30);
   pointer-events: none;
 }
 
@@ -541,7 +517,7 @@
 }
 
 .fxrf4-select:focus {
-  border-color: rgba(72, 100, 255, 0.55);
+  border-color: rgba(72, 100, 255, 0.50);
 }
 
 .fxrf4-select option {
@@ -550,7 +526,7 @@
 }
 
 /* ─── URGENCY CARDS ───────────────────────────────────────────
-   Three choices. Large. One tap selects and auto-advances.
+   Three choices. One tap selects and auto-advances.
 ────────────────────────────────────────────────────────────── */
 .fxrf4-urgency-cards {
   display: flex;
@@ -572,72 +548,72 @@
   -webkit-tap-highlight-color: transparent;
   user-select: none;
   -webkit-user-select: none;
-  transition: border-color 0.16s, background 0.16s, transform 0.12s;
-  position: relative;
+  transition: border-color 0.16s, background 0.16s;
   min-height: 70px;
 }
 
-.fxrf4-urgency-card:hover {
-  border-color: rgba(72, 100, 255, 0.30);
-  background: rgba(72, 100, 255, 0.04);
+@media (hover: hover) {
+  .fxrf4-urgency-card:hover {
+    border-color: rgba(72, 100, 255, 0.25);
+    background: rgba(72, 100, 255, 0.04);
+  }
 }
 
 .fxrf4-urgency-card.is-selected {
-  border-color: rgba(72, 100, 255, 0.65);
-  background: rgba(72, 100, 255, 0.10);
+  border-color: rgba(72, 100, 255, 0.60);
+  background: rgba(72, 100, 255, 0.09);
 }
 
 .fxrf4-urgency-card.is-urgent.is-selected {
-  border-color: rgba(220, 60, 60, 0.65);
-  background: rgba(220, 60, 60, 0.08);
+  border-color: rgba(210, 60, 60, 0.60);
+  background: rgba(210, 60, 60, 0.07);
 }
 
 .fxrf4-urgency-card.is-tapping {
   transform: scale(0.98);
+  transition: transform 0.08s ease;
 }
 
 .fxrf4-urgency-icon {
-  font-size: 1.5rem;
+  font-size: 1.40rem;
   flex-shrink: 0;
   line-height: 1;
-  width: 36px;
+  width: 34px;
   text-align: center;
 }
 
-.fxrf4-urgency-text {}
-
 .fxrf4-urgency-label {
   display: block;
-  font-size: 0.96rem;
+  font-size: 0.94rem;
   font-weight: 700;
-  color: rgba(255, 255, 255, 0.92);
+  color: rgba(255, 255, 255, 0.90);
   line-height: 1.2;
 }
 
 .fxrf4-urgency-meta {
   display: block;
-  font-size: 0.75rem;
+  font-size: 0.74rem;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.38);
+  color: rgba(255, 255, 255, 0.36);
   margin-top: 3px;
 }
 
-/* Stagger drop-in animation */
-.fxrf4-urgency-card:nth-child(1) { animation-delay: 0ms; }
-.fxrf4-urgency-card:nth-child(2) { animation-delay: 60ms; }
-.fxrf4-urgency-card:nth-child(3) { animation-delay: 120ms; }
-
+/* Stagger drop-in */
 .fxrf4-urgency-cards .fxrf4-urgency-card {
-  animation: fxrf4-card-in 280ms cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  animation: fxrf4-card-in 260ms cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
 }
 
+.fxrf4-urgency-cards .fxrf4-urgency-card:nth-child(1) { animation-delay: 0ms; }
+.fxrf4-urgency-cards .fxrf4-urgency-card:nth-child(2) { animation-delay: 55ms; }
+.fxrf4-urgency-cards .fxrf4-urgency-card:nth-child(3) { animation-delay: 110ms; }
+
 @keyframes fxrf4-card-in {
-  from { opacity: 0; transform: translateY(12px); }
+  from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ─── PHONE INPUT ─────────────────────────────────────────────
-   One field. Dominant. Auto-focus. Large font.
+/* ─── PHONE INPUT ────────────────────────────────────────────
+   One field. Dominant. Auto-focused. Large font.
 ────────────────────────────────────────────────────────────── */
 .fxrf4-phone-wrap {
   position: relative;
@@ -649,12 +625,12 @@
   left: 16px;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 0.94rem;
+  font-size: 0.92rem;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.50);
+  color: rgba(255, 255, 255, 0.45);
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   pointer-events: none;
   z-index: 1;
 }
@@ -667,7 +643,7 @@
   color: rgba(255, 255, 255, 0.94);
   font-size: 1.30rem;
   font-weight: 500;
-  padding: 18px 52px 18px 90px; /* space for prefix */
+  padding: 18px 52px 18px 90px;
   outline: none;
   -webkit-appearance: none;
   appearance: none;
@@ -676,23 +652,23 @@
 }
 
 .fxrf4-phone-input::placeholder {
-  color: rgba(255, 255, 255, 0.22);
-  font-size: 1.10rem;
+  color: rgba(255, 255, 255, 0.20);
+  font-size: 1.05rem;
   letter-spacing: 0;
 }
 
 .fxrf4-phone-input:focus {
-  border-color: rgba(72, 100, 255, 0.55);
-  background: rgba(72, 100, 255, 0.06);
+  border-color: rgba(72, 100, 255, 0.50);
+  background: rgba(72, 100, 255, 0.05);
 }
 
 .fxrf4-phone-input.is-valid {
-  border-color: rgba(32, 201, 151, 0.55);
+  border-color: rgba(32, 201, 151, 0.50);
 }
 
 .fxrf4-phone-input.is-error {
-  border-color: rgba(220, 60, 60, 0.55);
-  animation: fxrf4-shake 0.35s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  border-color: rgba(210, 60, 60, 0.55);
+  animation: fxrf4-shake 0.32s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
 }
 
 /* Valid checkmark */
@@ -701,10 +677,10 @@
   right: 18px;
   top: 50%;
   transform: translateY(-50%);
-  color: rgba(32, 201, 151, 0.80);
-  font-size: 1.10rem;
+  color: rgba(32, 201, 151, 0.75);
+  font-size: 1.05rem;
   opacity: 0;
-  transition: opacity 0.20s ease;
+  transition: opacity 0.18s ease;
   pointer-events: none;
 }
 
@@ -714,22 +690,22 @@
 }
 
 @keyframes fxrf4-valid-in {
-  from { opacity: 0; transform: translateY(-50%) scale(0.6); }
+  from { opacity: 0; transform: translateY(-50%) scale(0.5); }
   to   { opacity: 1; transform: translateY(-50%) scale(1); }
 }
 
 @keyframes fxrf4-shake {
   0%, 100% { transform: translateX(0); }
-  20%       { transform: translateX(-6px); }
-  40%       { transform: translateX(5px); }
-  60%       { transform: translateX(-4px); }
-  80%       { transform: translateX(3px); }
+  20%       { transform: translateX(-5px); }
+  40%       { transform: translateX(4px); }
+  60%       { transform: translateX(-3px); }
+  80%       { transform: translateX(2px); }
 }
 
-/* Hint text below phone */
+/* Error hint */
 .fxrf4-hint {
-  font-size: 0.75rem;
-  color: rgba(220, 60, 60, 0.80);
+  font-size: 0.74rem;
+  color: rgba(210, 80, 80, 0.85);
   margin-top: 8px;
   padding-left: 4px;
   line-height: 1.4;
@@ -742,18 +718,18 @@
 }
 
 @keyframes fxrf4-hint-in {
-  from { opacity: 0; transform: translateY(-4px); }
+  from { opacity: 0; transform: translateY(-3px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* Pre-filled returning user state */
+/* Returning user — pre-filled number */
 .fxrf4-prefill-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 14px 16px;
   background: rgba(72, 100, 255, 0.07);
-  border: 1.5px solid rgba(72, 100, 255, 0.20);
+  border: 1.5px solid rgba(72, 100, 255, 0.18);
   border-radius: 14px;
   margin-bottom: 8px;
 }
@@ -766,26 +742,27 @@
 }
 
 .fxrf4-prefill-change {
-  font-size: 0.75rem;
+  font-size: 0.74rem;
   font-weight: 600;
-  color: rgba(72, 100, 255, 0.70);
+  color: rgba(72, 100, 255, 0.65);
   cursor: pointer;
-  text-decoration: none;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
   padding: 6px 10px;
   border-radius: 8px;
-  transition: color 0.15s, background 0.15s;
+  transition: color 0.14s, background 0.14s;
 }
 
-.fxrf4-prefill-change:hover {
-  color: rgba(72, 100, 255, 0.90);
-  background: rgba(72, 100, 255, 0.10);
+@media (hover: hover) {
+  .fxrf4-prefill-change:hover {
+    color: rgba(72, 100, 255, 0.88);
+    background: rgba(72, 100, 255, 0.09);
+  }
 }
 
-/* ─── BUTTONS ─────────────────────────────────────────────────
-   Primary: full-width, 54px, dominant.
-   Back: ghost, 44px, always below primary.
+/* ─── BUTTONS ────────────────────────────────────────────────
+   Primary: 54px, full-width, dominant.
+   Back: ghost, minimal presence.
 ────────────────────────────────────────────────────────────── */
 .fxrf4-btn {
   display: flex;
@@ -796,43 +773,48 @@
   border: none;
   border-radius: 16px;
   font-size: 0.96rem;
-  font-weight: 800;
+  font-weight: 700;
   cursor: pointer;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
   user-select: none;
   -webkit-user-select: none;
-  transition: background 0.16s ease, transform 0.10s ease, opacity 0.16s ease;
+  transition: background 0.16s ease, opacity 0.16s ease;
   text-decoration: none;
   line-height: 1.2;
 }
 
 .fxrf4-btn:active {
   transform: scale(0.975);
+  transition: transform 0.08s ease;
 }
 
 .fxrf4-btn:disabled {
-  opacity: 0.42;
+  opacity: 0.38;
   cursor: not-allowed;
   transform: none !important;
 }
 
 .fxrf4-btn-primary {
   height: 54px;
-  background: rgba(72, 100, 255, 0.95);
+  background: rgba(72, 100, 255, 0.92);
   color: #fff;
 }
 
-.fxrf4-btn-primary:hover:not(:disabled) {
-  background: rgba(72, 100, 255, 1);
+@media (hover: hover) {
+  .fxrf4-btn-primary:hover:not(:disabled) {
+    background: rgba(72, 100, 255, 1);
+  }
 }
 
 .fxrf4-btn-primary.is-urgent {
-  background: rgba(210, 48, 48, 0.92);
+  background: rgba(210, 48, 48, 0.90);
 }
 
-.fxrf4-btn-primary.is-urgent:hover:not(:disabled) {
-  background: rgba(210, 48, 48, 1);
+@media (hover: hover) {
+  .fxrf4-btn-primary.is-urgent:hover:not(:disabled) {
+    background: rgba(210, 48, 48, 1);
+  }
 }
 
 /* Loading dots inside button */
@@ -855,34 +837,35 @@
 .fxrf4-btn-dots span:nth-child(3) { animation-delay: 0.36s; }
 
 @keyframes fxrf4-dot-pulse {
-  0%, 100% { transform: scale(0.7); opacity: 0.45; }
-  50%       { transform: scale(1.0); opacity: 1; }
+  0%, 100% { transform: scale(0.82); opacity: 0.50; }
+  50%       { transform: scale(1.00); opacity: 1; }
 }
 
 .fxrf4-btn-back {
   height: 40px;
   background: transparent;
-  color: rgba(255, 255, 255, 0.36);
-  font-size: 0.84rem;
+  color: rgba(255, 255, 255, 0.32);
+  font-size: 0.82rem;
   font-weight: 600;
   margin-top: 8px;
   border-radius: 12px;
-  transition: color 0.15s, background 0.15s;
+  transition: color 0.15s;
 }
 
-.fxrf4-btn-back:hover {
-  color: rgba(255, 255, 255, 0.60);
-  background: rgba(255, 255, 255, 0.04);
+@media (hover: hover) {
+  .fxrf4-btn-back:hover {
+    color: rgba(255, 255, 255, 0.55);
+  }
 }
 
-/* ─── INTERSTITIAL ────────────────────────────────────────────
-   RAFI is working. Breathing animation. User waits calmly.
+/* ─── INTERSTITIAL ───────────────────────────────────────────
+   RAFI is working. User waits calmly. No noise.
 ────────────────────────────────────────────────────────────── */
 #fxrf4-interstitial {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 16px 0 8px;
+  padding: 20px 0 8px;
   text-align: center;
 }
 
@@ -894,10 +877,10 @@
 
 .fxrf4-inter-dots span {
   display: block;
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
-  background: rgba(72, 100, 255, 0.60);
+  background: rgba(72, 100, 255, 0.55);
   animation: fxrf4-inter-breathe 1.6s ease-in-out infinite;
 }
 
@@ -905,13 +888,13 @@
 .fxrf4-inter-dots span:nth-child(3) { animation-delay: 0.56s; }
 
 @keyframes fxrf4-inter-breathe {
-  0%, 100% { transform: scale(0.65); opacity: 0.35; }
-  50%       { transform: scale(1.10); opacity: 1; }
+  0%, 100% { transform: scale(0.70); opacity: 0.35; }
+  50%       { transform: scale(1.00); opacity: 1; }
 }
 
 .fxrf4-inter-line2 {
-  font-size: 0.78rem;
-  color: rgba(255, 255, 255, 0.28);
+  font-size: 0.76rem;
+  color: rgba(255, 255, 255, 0.25);
   margin-top: 12px;
   opacity: 0;
   transition: opacity 0.40s ease;
@@ -921,8 +904,8 @@
   opacity: 1;
 }
 
-/* ─── SUCCESS SCREEN ──────────────────────────────────────────
-   The arrival. The delight. The emotional peak.
+/* ─── SUCCESS SCREEN ─────────────────────────────────────────
+   The arrival. Calm. The user feels taken care of.
 ────────────────────────────────────────────────────────────── */
 #fxrf4-success {
   display: flex;
@@ -944,17 +927,17 @@
   width: 72px;
   height: 72px;
   border-radius: 50%;
-  background: rgba(32, 201, 151, 0.10);
-  border: 2px solid rgba(32, 201, 151, 0.32);
+  background: rgba(32, 201, 151, 0.09);
+  border: 1.5px solid rgba(32, 201, 151, 0.28);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.85rem;
-  animation: fxrf4-ring-in 380ms cubic-bezier(0.34, 1.45, 0.64, 1) 80ms both;
+  font-size: 1.75rem;
+  animation: fxrf4-ring-in 360ms cubic-bezier(0.34, 1.45, 0.64, 1) 80ms both;
 }
 
 @keyframes fxrf4-ring-in {
-  from { transform: scale(0.25); opacity: 0; }
+  from { transform: scale(0.20); opacity: 0; }
   to   { transform: scale(1);    opacity: 1; }
 }
 
@@ -963,67 +946,66 @@
   position: absolute;
   inset: -8px;
   border-radius: 50%;
-  border: 1.5px solid rgba(32, 201, 151, 0.30);
-  animation: fxrf4-ripple 600ms ease-out 360ms 1 both;
+  border: 1px solid rgba(32, 201, 151, 0.25);
+  animation: fxrf4-ripple 560ms ease-out 340ms 1 both;
   pointer-events: none;
 }
 
 @keyframes fxrf4-ripple {
-  from { transform: scale(0.9); opacity: 0.70; }
-  to   { transform: scale(1.4); opacity: 0; }
+  from { transform: scale(0.88); opacity: 0.65; }
+  to   { transform: scale(1.45); opacity: 0; }
 }
 
 /* RAFI attribution */
 .fxrf4-success-tag {
-  font-size: 0.58rem;
+  font-size: 0.56rem;
   font-weight: 800;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: rgba(72, 100, 255, 0.72);
+  color: rgba(72, 100, 255, 0.65);
   margin-bottom: 10px;
-  animation: fxrf4-fade-up 300ms ease 500ms both;
+  animation: fxrf4-fade-up 280ms ease 480ms both;
 }
 
 .fxrf4-success-title {
-  font-size: 1.10rem;
-  font-weight: 800;
-  color: rgba(255, 255, 255, 0.97);
-  line-height: 1.25;
+  font-size: 1.08rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.95);
+  line-height: 1.28;
   margin-bottom: 10px;
-  animation: fxrf4-fade-up 300ms ease 580ms both;
+  animation: fxrf4-fade-up 280ms ease 560ms both;
 }
 
 .fxrf4-success-body {
   font-size: 0.84rem;
-  color: rgba(255, 255, 255, 0.46);
+  color: rgba(255, 255, 255, 0.52);
   line-height: 1.55;
-  max-width: 300px;
+  max-width: 290px;
   margin: 0 auto 18px;
-  animation: fxrf4-fade-up 300ms ease 660ms both;
+  animation: fxrf4-fade-up 280ms ease 640ms both;
 }
 
 .fxrf4-success-ref {
   font-family: 'SF Mono', 'Fira Code', 'Courier New', monospace;
-  font-size: 0.70rem;
-  color: rgba(255, 255, 255, 0.26);
+  font-size: 0.68rem;
+  color: rgba(255, 255, 255, 0.24);
   margin-bottom: 22px;
-  animation: fxrf4-fade-up 300ms ease 720ms both;
+  animation: fxrf4-fade-up 280ms ease 700ms both;
 }
 
 .fxrf4-success-ref strong {
-  color: rgba(255, 255, 255, 0.55);
+  color: rgba(255, 255, 255, 0.50);
   letter-spacing: 0.06em;
 }
 
-/* Next-step visual */
+/* Three-step visual */
 .fxrf4-success-steps {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0;
   margin-bottom: 26px;
   width: 100%;
-  animation: fxrf4-fade-up 300ms ease 780ms both;
+  animation: fxrf4-fade-up 280ms ease 760ms both;
 }
 
 .fxrf4-success-step {
@@ -1039,39 +1021,39 @@
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  background: rgba(32, 201, 151, 0.08);
-  border: 1.5px solid rgba(32, 201, 151, 0.24);
+  background: rgba(32, 201, 151, 0.07);
+  border: 1.5px solid rgba(32, 201, 151, 0.20);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.90rem;
+  font-size: 0.88rem;
 }
 
 .fxrf4-success-step-dot.is-active {
-  border-color: rgba(32, 201, 151, 0.50);
-  background: rgba(32, 201, 151, 0.14);
+  border-color: rgba(32, 201, 151, 0.45);
+  background: rgba(32, 201, 151, 0.12);
   animation: fxrf4-step-pulse 2.4s ease-in-out 1s infinite;
 }
 
 @keyframes fxrf4-step-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(32, 201, 151, 0.30); }
+  0%, 100% { box-shadow: 0 0 0 0   rgba(32, 201, 151, 0.25); }
   50%       { box-shadow: 0 0 0 6px rgba(32, 201, 151, 0); }
 }
 
 .fxrf4-success-step-lbl {
-  font-size: 0.60rem;
+  font-size: 0.59rem;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.38);
+  color: rgba(255, 255, 255, 0.35);
   text-align: center;
-  line-height: 1.25;
+  line-height: 1.3;
   white-space: pre-line;
 }
 
 .fxrf4-success-step-sep {
-  flex: 0 0 22px;
-  height: 1.5px;
-  background: rgba(32, 201, 151, 0.16);
-  margin-top: 16px;
+  flex: 0 0 20px;
+  height: 1px;
+  background: rgba(32, 201, 151, 0.14);
+  margin-top: 17px;
 }
 
 /* Success actions */
@@ -1080,12 +1062,12 @@
   flex-direction: column;
   gap: 10px;
   width: 100%;
-  animation: fxrf4-fade-up 300ms ease 860ms both;
+  animation: fxrf4-fade-up 280ms ease 840ms both;
 }
 
 .fxrf4-btn-success-primary {
   height: 52px;
-  background: rgba(72, 100, 255, 0.92);
+  background: rgba(72, 100, 255, 0.90);
   color: #fff;
   border-radius: 16px;
   font-size: 0.94rem;
@@ -1094,41 +1076,49 @@
   align-items: center;
   justify-content: center;
   text-decoration: none;
+  cursor: pointer;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
   transition: background 0.15s;
 }
 
-.fxrf4-btn-success-primary:hover {
-  background: rgba(72, 100, 255, 1);
+@media (hover: hover) {
+  .fxrf4-btn-success-primary:hover {
+    background: rgba(72, 100, 255, 1);
+  }
 }
 
 .fxrf4-btn-success-secondary {
-  height: 42px;
+  height: 40px;
   background: transparent;
-  color: rgba(255, 255, 255, 0.36);
+  color: rgba(255, 255, 255, 0.32);
   border-radius: 12px;
-  font-size: 0.84rem;
+  font-size: 0.82rem;
   font-weight: 600;
   display: flex;
   align-items: center;
   justify-content: center;
   text-decoration: none;
+  cursor: pointer;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
-  transition: color 0.15s;
+  transition: color 0.14s;
 }
 
-.fxrf4-btn-success-secondary:hover {
-  color: rgba(255, 255, 255, 0.60);
+@media (hover: hover) {
+  .fxrf4-btn-success-secondary:hover {
+    color: rgba(255, 255, 255, 0.55);
+  }
 }
 
 @keyframes fxrf4-fade-up {
-  from { opacity: 0; transform: translateY(8px); }
+  from { opacity: 0; transform: translateY(7px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ─── MOBILE ≤640px — BOTTOM SHEET ────────────────────────── */
+/* ─── MOBILE ≤640px — BOTTOM SHEET ──────────────────────────
+   Slides up from bottom. Drag handle. Safe area aware.
+────────────────────────────────────────────────────────────── */
 @media (max-width: 640px) {
   #fxrf4-dialog {
     top: auto;
@@ -1141,29 +1131,32 @@
     max-height: min(94dvh, 720px);
     border-radius: 22px 22px 0 0;
     border-bottom: none;
+    /* Drag handle */
+    padding-top: 16px;
     animation: fxrf4-sheet-in 300ms cubic-bezier(0.32, 0.72, 0, 1) 80ms both;
   }
 
-  @keyframes fxrf4-sheet-in {
-    from { transform: translateY(100%); opacity: 0.75; }
-    to   { transform: translateY(0);    opacity: 1; }
-  }
-
-  /* Drag handle */
+  /* Drag handle — sits above overflow:hidden by using padding-top gap */
   #fxrf4-dialog::before {
     content: '';
     position: absolute;
-    top: 10px;
+    top: 8px;
     left: 50%;
     transform: translateX(-50%);
     width: 36px;
     height: 4px;
     border-radius: 2px;
-    background: rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.13);
+    z-index: 10;
+  }
+
+  @keyframes fxrf4-sheet-in {
+    from { transform: translateY(100%); opacity: 0.80; }
+    to   { transform: translateY(0);    opacity: 1; }
   }
 
   #fxrf4-head {
-    padding: 24px 60px 16px 20px;
+    padding: 8px 60px 16px 20px;
   }
 
   #fxrf4-body {
@@ -1172,7 +1165,7 @@
 
   #fxrf4-foot {
     padding: 14px 20px;
-    padding-bottom: max(20px, env(safe-area-inset-bottom, 20px));
+    padding-bottom: max(20px, env(safe-area-inset-bottom));
   }
 
   .fxrf4-btn-primary {
@@ -1185,24 +1178,15 @@
   }
 }
 
-/* ─── REDUCED MOTION ──────────────────────────────────────── */
+/* ─── REDUCED MOTION ─────────────────────────────────────────
+   Instant transitions. All animations off.
+────────────────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
-  #fxrf4-bd,
-  #fxrf4-dialog,
-  .fxrf4-screen,
-  .fxrf4-chip,
-  .fxrf4-urgency-card,
-  .fxrf4-check-ring-inner,
-  .fxrf4-check-ring-ripple,
-  .fxrf4-success-tag,
-  .fxrf4-success-title,
-  .fxrf4-success-body,
-  .fxrf4-success-ref,
-  .fxrf4-success-steps,
-  .fxrf4-success-actions,
-  #fxrf4-avatar,
-  #fxrf4-avatar::after {
-    animation: none !important;
-    transition: none !important;
+  #fxrf4-root *,
+  #fxrf4-root *::before,
+  #fxrf4-root *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }
