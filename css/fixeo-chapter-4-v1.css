@@ -263,3 +263,92 @@
     padding: 44px 16px 36px;
   }
 }
+
+/* ── Phase 2.2: Enterprise → Réseau FIXEO unification ────────
+   Namespace: fxp2-* (homepage Phase 2.2)
+   Approach: modifier classes + bridge — zero component rewrite
+──────────────────────────────────────────────────────────────── */
+
+/* Enterprise section: tighter bottom, fade toward vision */
+.fxet-section--flow {
+  padding-bottom: 56px !important; /* was 80px — closes the gap toward vision */
+}
+
+.fxet-section--flow::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: linear-gradient(to bottom, transparent, rgba(9, 11, 26, 0.60));
+  pointer-events: none;
+}
+
+/* Soft divider between enterprise and vision — almost invisible */
+.fxp2-divider--soft {
+  opacity: 0.25 !important;
+  margin: 0 !important;
+}
+
+/* Narrative bridge: Enterprise → Réseau FIXEO */
+.fxp2-bridge {
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 48px 24px 40px;
+  text-align: center;
+}
+
+.fxp2-bridge-line {
+  font-size: clamp(0.93rem, 2vw, 1.04rem);
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.42);
+  margin: 0;
+  line-height: 1.65;
+  font-style: italic;
+  letter-spacing: 0.01em;
+}
+
+/* Vision section as proof: tighter top, stronger connection to enterprise */
+.fxv2-vision--proof {
+  padding-top: 40px !important; /* was 64px — pulls section closer */
+}
+
+/* Reframe the vision eyebrow as evidence, not a new topic */
+.fxv2-vision--proof .fxv2-eyebrow {
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  color: rgba(255, 255, 255, 0.32); /* more muted — supporting role, not headline */
+}
+
+/* Vision headline: slightly softer weight to feel like supporting evidence */
+.fxv2-vision--proof .fxv2-headline {
+  font-size: clamp(1.30rem, 3.2vw, 1.85rem); /* slightly smaller than default */
+  color: rgba(255, 255, 255, 0.82);
+}
+
+/* Manifesto: same muted treatment */
+.fxv2-vision--proof .fxv2-manifesto {
+  color: rgba(255, 255, 255, 0.44);
+}
+
+/* ── Responsive ────────────────────────────────────────────── */
+@media (max-width: 679px) {
+  .fxp2-bridge {
+    padding: 36px 20px 28px;
+  }
+
+  .fxv2-vision--proof {
+    padding-top: 28px !important;
+  }
+
+  .fxet-section--flow {
+    padding-bottom: 44px !important;
+  }
+}
+
+@media (max-width: 374px) {
+  .fxp2-bridge {
+    padding: 28px 16px 22px;
+  }
+}
