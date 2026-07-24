@@ -449,3 +449,89 @@
     padding: 24px 16px 0;
   }
 }
+
+/* ── Phase 2.4: Final CTA as RAFI Conclusion ──────────────────
+   Namespace: fcta-* (final-cta conclusion modifiers)
+   The page opens with RAFI. It closes with RAFI.
+──────────────────────────────────────────────────────────────── */
+
+/* Generous breathing — last screen of the homepage */
+.final-cta-section--conclusion {
+  padding-top: 112px !important;
+  padding-bottom: 104px !important;
+}
+
+/* RAFI eyebrow — small typographic cue, not decorative */
+.fcta-rafi-eyebrow {
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(72, 100, 255, 0.70);
+  margin: 0 0 16px;
+  line-height: 1;
+}
+
+/* Title: confident and calm — not a feature headline */
+.final-cta-section--conclusion .final-cta-title {
+  font-size: clamp(1.65rem, 3.6vw, 2.55rem) !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.025em !important;
+  line-height: 1.18 !important;
+  max-width: 480px !important;
+  margin: 0 auto 14px !important;
+}
+
+/* Subtitle: the journey summary in one line */
+.final-cta-section--conclusion .final-cta-sub {
+  font-size: 0.92rem !important;
+  color: rgba(255, 255, 255, 0.48) !important;
+  margin-bottom: 36px !important;
+  line-height: 1.55 !important;
+}
+
+/* Primary CTA: give it room to breathe */
+.final-cta-section--conclusion .cta-main {
+  margin-bottom: 0 !important;
+}
+
+/* Secondary urgent CTA — suppressed for clean conclusion */
+.final-cta-section--conclusion .btn-express.final-cta-urgent {
+  display: none !important;
+}
+
+/* Proof line — suppressed (already quiet, but redundant after subtitle) */
+.final-cta-section--conclusion .final-cta-proof {
+  display: none !important;
+}
+
+/* RAFI bust copy: updated to match conclusion tone */
+.final-cta-section--conclusion .rafi-fcta-copy {
+  font-size: 0.84rem !important;
+  color: rgba(255, 255, 255, 0.42) !important;
+  line-height: 1.55 !important;
+  margin-top: 14px !important;
+}
+
+/* ── Responsive ────────────────────────────────────────────── */
+@media (max-width: 899px) {
+  .final-cta-section--conclusion {
+    padding-top: 88px !important;
+    padding-bottom: 80px !important;
+  }
+}
+
+@media (max-width: 679px) {
+  .final-cta-section--conclusion {
+    padding-top: 72px !important;
+    padding-bottom: 68px !important;
+  }
+
+  .final-cta-section--conclusion .final-cta-title {
+    font-size: clamp(1.45rem, 6vw, 1.85rem) !important;
+  }
+
+  .fcta-rafi-eyebrow {
+    font-size: 0.60rem;
+  }
+}
