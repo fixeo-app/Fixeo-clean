@@ -1301,11 +1301,20 @@
   /* forceOpenRequestModal (mobile nav inline script) */
   window.forceOpenRequestModal = function() { _routeTrigger(null, null); };
 
-  /* Patch FixeoClientRequest after request-form.js loads */
+  /* Patch FixeoClientRequest if it exists (request-form.js optional) */
+  var _patchAttempts = 0;
   function _patchFCR() {
     var fc = window.FixeoClientRequest;
-    if (!fc || fc._fxrf4Patched) { setTimeout(_patchFCR, 60); return; }
-    if (!fc.open)                 { setTimeout(_patchFCR, 60); return; }
+    /* If already patched or not present after 3s — stop */
+    if (!fc) {
+      if (_patchAttempts++ < 50) setTimeout(_patchFCR, 60);
+      return;
+    }
+    if (fc._fxrf4Patched) return;
+    if (!fc.open) {
+      if (_patchAttempts++ < 50) setTimeout(_patchFCR, 60);
+      return;
+    }
     fc._fxrf4Patched = true;
 
     fc.open = function(trigger, forcedMode) {
