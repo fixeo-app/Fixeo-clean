@@ -114,44 +114,92 @@ section#home.rfos-hero-recomposed .hero-blob {
 }
 
 /* The halo.
-   This is RAFI's emotional state made visible.
-   It is the only ambient element in the hero.
+   RAFI's presence made visible. The only moving element in the hero.
    It was there before the visitor arrived.
-   It will change when they speak. */
+   Everything breathes at the same rate — 4.8s. One organism. */
 .rfos-halo {
   position: absolute;
   inset: 0;
   border-radius: 50%;
   background: radial-gradient(
-    ellipse at center,
-    rgba(72, 100, 255, 0.22) 0%,
-    rgba(72, 100, 255, 0.08) 45%,
-    transparent 72%
+    ellipse at 48% 44%,
+    rgba(72, 100, 255, 0.28) 0%,
+    rgba(72, 100, 255, 0.12) 38%,
+    rgba(72, 100, 255, 0.04) 60%,
+    transparent 75%
   );
-  filter: blur(24px);
+  filter: blur(22px);
   pointer-events: none;
-  animation: rfos-halo-idle 4.4s ease-in-out infinite;
-  transition: background 0.7s ease;
-  border-radius: 50%;
+  animation: rfos-halo-breathe 4.8s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  transition: background 0.8s ease;
 }
 
-/* Avatar — the face of RAFI */
+/* Avatar — the face of RAFI.
+   A sphere with depth. Internal light. Material presence.
+   Not flat. Not a circle. An object that occupies space. */
 .rfos-avatar {
   position: relative;
   z-index: 1;
   width: 112px;
   height: 112px;
   border-radius: 50%;
-  background: rgba(72, 100, 255, 0.06);
-  border: 2px solid var(--rfos-indigo-ring);
+  background:
+    radial-gradient(
+      ellipse at 35% 30%,
+      rgba(110, 140, 255, 0.18) 0%,
+      rgba(72, 100, 255, 0.06) 50%,
+      transparent 70%
+    ),
+    rgba(12, 14, 40, 0.88);
+  border: 1.5px solid rgba(72, 100, 255, 0.28);
+  box-shadow:
+    inset 0 1px 0 rgba(140, 160, 255, 0.14),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.20),
+    0 8px 28px rgba(72, 100, 255, 0.14),
+    0 2px 8px rgba(0, 0, 0, 0.20);
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  /* Idle breath — slow, alive, not showy */
-  animation: rfos-avatar-idle 4.4s ease-in-out 0.6s infinite;
-  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+  animation:
+    rfos-avatar-breathe 4.8s cubic-bezier(0.45, 0, 0.55, 1) infinite,
+    rfos-float          9.6s ease-in-out 0.4s infinite;
+  transition: border-color 0.5s ease;
   flex-shrink: 0;
+}
+
+/* Specular highlight — top-left gleam.
+   Fixed. Not animated. Creates the light source illusion. */
+.rfos-avatar::before {
+  content: '';
+  position: absolute;
+  top: 14%;
+  left: 18%;
+  width: 26%;
+  height: 14%;
+  border-radius: 50%;
+  background: rgba(180, 200, 255, 0.11);
+  filter: blur(3px);
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Bottom rim light — subtle depth */
+.rfos-avatar::after {
+  content: '';
+  position: absolute;
+  bottom: 9%;
+  left: 22%;
+  right: 22%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(72, 100, 255, 0.18) 50%,
+    transparent 100%
+  );
+  pointer-events: none;
+  z-index: 2;
 }
 
 .rfos-avatar img {
@@ -159,8 +207,9 @@ section#home.rfos-hero-recomposed .hero-blob {
   height: 92px;
   object-fit: contain;
   display: block;
-  /* Tiny delay — img appears after ring, like a person stepping forward */
-  animation: rfos-img-arrive 0.3s ease 0.55s both;
+  position: relative;
+  z-index: 3;
+  animation: rfos-img-arrive 0.35s ease 0.55s both;
 }
 
 /* ── Identity — RAFI name + live dot ───────────────────────── */
@@ -169,9 +218,8 @@ section#home.rfos-hero-recomposed .hero-blob {
   align-items: center;
   gap: 6px;
   margin-bottom: 14px;
-  /* After arrival, fade in softly */
   opacity: 0;
-  animation: rfos-identity-in 0.4s ease 0.48s both;
+  animation: rfos-identity-in 0.4s ease 0.50s both;
 }
 
 .rfos-identity-name {
@@ -183,16 +231,16 @@ section#home.rfos-hero-recomposed .hero-blob {
   line-height: 1;
 }
 
-/* The live dot.
-   Green. Pulsing slowly.
-   Signals: I am here. I am active. I am waiting for you. */
+/* Live dot — breathes with RAFI but offset by half-cycle.
+   When avatar inhales (brightens), dot softens. Natural balance. */
 .rfos-live-dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
   background: var(--rfos-green);
+  box-shadow: 0 0 4px rgba(32, 201, 151, 0.35);
   flex-shrink: 0;
-  animation: rfos-dot-pulse 2.8s ease-in-out infinite;
+  animation: rfos-dot-breathe 4.8s cubic-bezier(0.45, 0, 0.55, 1) 2.4s infinite;
 }
 
 /* ── Greeting — the most important copy on the page ────────── */
@@ -206,12 +254,10 @@ section#home.rfos-hero-recomposed .hero-blob {
   max-width: 460px;
   padding: 0 12px;
   margin: 0 0 4px;
-  /* Transitions between states */
-  transition: opacity 0.18s ease;
-  /* Min-height prevents layout shift on text swap */
-  min-height: 2em;
+  transition: opacity 0.55s ease;
+  min-height: 2.2em;
   opacity: 0;
-  animation: rfos-greeting-in 0.4s ease 0.62s both;
+  animation: rfos-greeting-in 0.45s ease 0.65s both;
 }
 
 .rfos-greeting b,
@@ -220,22 +266,30 @@ section#home.rfos-hero-recomposed .hero-blob {
   font-weight: 700;
 }
 
-/* Typewriter cursor */
+/* Cursor — RAFI's open invitation.
+   Never disappears in idle state.
+   Slow blink: 1.4s. Patient. Comfortable. Not nervous. */
 .rfos-cursor {
   display: inline-block;
   width: 2px;
-  height: 1em;
-  background: rgba(72, 100, 255, 0.65);
+  height: 0.95em;
+  background: rgba(72, 100, 255, 0.55);
   border-radius: 1px;
-  vertical-align: middle;
-  margin-left: 1px;
+  vertical-align: text-bottom;
+  margin-left: 2px;
+  animation: rfos-cursor-wait 1.4s ease-in-out infinite;
+}
+
+/* During typewriter — faster, more energetic */
+.rfos-cursor.rfos-cursor--typing {
   animation: rfos-cursor-blink 0.9s step-end infinite;
 }
-.rfos-cursor.rfos-cursor--done {
-  animation: none;
+
+/* When RAFI is engaged (listening/understood/ready) — hidden */
+.rfos-cursor.rfos-cursor--hidden {
   opacity: 0;
-  /* Small delay before cursor disappears — feels natural */
-  transition: opacity 0.5s ease 0.3s;
+  animation: none;
+  transition: opacity 0.4s ease;
 }
 
 /* ── Category badge ─────────────────────────────────────────── */
@@ -317,63 +371,88 @@ section#home.rfos-hero-recomposed .rfos-divider {
 ══════════════════════════════════════════════════════════════ */
 
 /* ── Idle (default) ── */
-/* Avatar: slow breath animation — see @keyframes rfos-avatar-idle */
+/* Avatar breathing synchronized to 4.8s rfos-avatar-breathe + rfos-float */
 
-/* ── Listening ── */
+/* ── Listening — active, present, alive ── */
 .rfos-stage--listening .rfos-avatar {
-  border-color: rgba(72, 100, 255, 0.65);
-  box-shadow:
-    0 0 0 5px rgba(72, 100, 255, 0.08),
-    0 10px 36px rgba(72, 100, 255, 0.20);
-  animation: rfos-avatar-listen 1.8s ease-in-out infinite;
+  background:
+    radial-gradient(
+      ellipse at 35% 30%,
+      rgba(100, 132, 255, 0.24) 0%,
+      rgba(72, 100, 255, 0.08) 50%,
+      transparent 70%
+    ),
+    rgba(10, 12, 38, 0.88);
+  animation:
+    rfos-avatar-listen  1.8s cubic-bezier(0.45, 0, 0.55, 1) infinite,
+    rfos-float          9.6s ease-in-out 0.4s infinite;
 }
 .rfos-stage--listening .rfos-halo {
   background: radial-gradient(
-    ellipse at center,
-    rgba(72, 100, 255, 0.34) 0%,
-    rgba(72, 100, 255, 0.12) 42%,
-    transparent 70%
+    ellipse at 48% 44%,
+    rgba(72, 100, 255, 0.38) 0%,
+    rgba(72, 100, 255, 0.14) 38%,
+    rgba(72, 100, 255, 0.04) 60%,
+    transparent 75%
   );
-  animation: rfos-halo-listen 1.8s ease-in-out infinite;
+  animation: rfos-halo-listen 1.8s cubic-bezier(0.45, 0, 0.55, 1) infinite;
 }
 
-/* ── Urgent ── */
+/* ── Urgent — internal light shifts to warm pink ── */
 .rfos-stage--urgent .rfos-avatar {
-  border-color: rgba(225, 48, 108, 0.68);
-  box-shadow:
-    0 0 0 5px rgba(225, 48, 108, 0.09),
-    0 10px 36px rgba(225, 48, 108, 0.22);
-  animation: rfos-avatar-urgent 1.2s ease-in-out infinite;
+  background:
+    radial-gradient(
+      ellipse at 35% 30%,
+      rgba(255, 100, 150, 0.22) 0%,
+      rgba(225, 48, 108, 0.06) 50%,
+      transparent 70%
+    ),
+    rgba(28, 8, 18, 0.90);
+  animation:
+    rfos-avatar-urgent  1.2s cubic-bezier(0.45, 0, 0.55, 1) infinite,
+    rfos-float          9.6s ease-in-out 0.4s infinite;
 }
 .rfos-stage--urgent .rfos-halo {
   background: radial-gradient(
-    ellipse at center,
-    rgba(225, 48, 108, 0.32) 0%,
-    rgba(225, 48, 108, 0.10) 42%,
-    transparent 70%
+    ellipse at 48% 44%,
+    rgba(225, 48, 108, 0.36) 0%,
+    rgba(225, 48, 108, 0.12) 38%,
+    rgba(225, 48, 108, 0.04) 60%,
+    transparent 75%
   );
-  animation: rfos-halo-urgent 1.2s ease-in-out infinite;
+  animation: rfos-halo-urgent 1.2s cubic-bezier(0.45, 0, 0.55, 1) infinite;
 }
 
 /* ── Ready — the most important state.
-   Animation stops. Stillness signals confidence. ── */
+   Internal light shifts to green. Float continues — alive, not frozen.
+   Breathing slows to 8s. Almost imperceptible. RAFI is settled. ── */
 .rfos-stage--ready .rfos-avatar {
-  border-color: rgba(32, 201, 151, 0.60);
+  background:
+    radial-gradient(
+      ellipse at 35% 30%,
+      rgba(80, 220, 170, 0.20) 0%,
+      rgba(32, 201, 151, 0.06) 50%,
+      transparent 70%
+    ),
+    rgba(8, 22, 18, 0.88);
+  border-color: rgba(32, 201, 151, 0.42);
   box-shadow:
-    0 0 0 5px rgba(32, 201, 151, 0.08),
-    0 10px 36px rgba(32, 201, 151, 0.16);
-  /* No animation. RAFI is ready. */
-  animation: none;
+    inset 0 1px 0 rgba(100, 240, 190, 0.16),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.18),
+    0 8px 28px rgba(32, 201, 151, 0.14),
+    0 2px 8px rgba(0, 0, 0, 0.16);
+  /* Float only — no ring pulse. Confidence is quiet. */
+  animation: rfos-float 9.6s ease-in-out 0.4s infinite;
 }
 .rfos-stage--ready .rfos-halo {
   background: radial-gradient(
-    ellipse at center,
-    rgba(32, 201, 151, 0.20) 0%,
-    rgba(32, 201, 151, 0.06) 42%,
+    ellipse at 48% 44%,
+    rgba(32, 201, 151, 0.22) 0%,
+    rgba(32, 201, 151, 0.08) 42%,
     transparent 70%
   );
-  /* Barely moving. Settled. */
-  animation: rfos-halo-idle 6s ease-in-out infinite;
+  /* Very slow. Almost still. */
+  animation: rfos-halo-breathe 8s cubic-bezier(0.45, 0, 0.55, 1) infinite;
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -610,29 +689,31 @@ section#home.rfos-hero-recomposed.rfos-input-invite .qsm-bar-card {
 
 /* ══════════════════════════════════════════════════════════════
    KEYFRAMES
+   Core principle: everything breathes at 4.8s.
+   Same duration. No drift. One organism.
 ══════════════════════════════════════════════════════════════ */
 
-/* Stage arrival — spring, like a person stepping forward */
+/* Stage arrival — spring */
 @keyframes rfos-arrive {
   from { opacity: 0; transform: translateY(20px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* Avatar image arrives after ring */
+/* Image arrives after ring */
 @keyframes rfos-img-arrive {
-  from { opacity: 0; transform: scale(0.94); }
-  to   { opacity: 1; transform: scale(1); }
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1.00); }
 }
 
-/* Identity (name + dot) fades in */
+/* Identity fades in */
 @keyframes rfos-identity-in {
   from { opacity: 0; }
   to   { opacity: 1; }
 }
 
-/* Greeting fades in */
+/* Greeting arrives */
 @keyframes rfos-greeting-in {
-  from { opacity: 0; transform: translateY(4px); }
+  from { opacity: 0; transform: translateY(5px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
@@ -651,65 +732,133 @@ section#home.rfos-hero-recomposed.rfos-input-invite .qsm-bar-card {
 /* Badge spring in */
 @keyframes rfos-badge-in {
   from { opacity: 0; transform: translateY(3px) scale(0.95); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
+  to   { opacity: 1; transform: translateY(0) scale(1.00); }
 }
 
-/* Avatar — idle breath. Slow. Alive. */
-@keyframes rfos-avatar-idle {
+/* ── The breath — 4.8s. Everything synchronized to this. ──────
+   Not a scale animation. An internal expansion.
+   The sphere brightens and deepens as it inhales.
+   Like lungs filling with air. */
+
+/* Avatar breath — primary breathing element */
+@keyframes rfos-avatar-breathe {
   0%, 100% {
-    box-shadow: 0 0 0 0 rgba(72,100,255,0.0), 0 8px 28px rgba(72,100,255,0.14);
+    box-shadow:
+      inset 0 1px 0 rgba(140, 160, 255, 0.12),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.20),
+      0 6px 22px rgba(72, 100, 255, 0.12),
+      0 2px 8px rgba(0, 0, 0, 0.18);
+    border-color: rgba(72, 100, 255, 0.24);
+  }
+  /* Inhale — internal light warms */
+  50% {
+    box-shadow:
+      inset 0 1px 0 rgba(150, 172, 255, 0.22),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.16),
+      0 12px 38px rgba(72, 100, 255, 0.20),
+      0 3px 12px rgba(0, 0, 0, 0.14);
+    border-color: rgba(72, 100, 255, 0.40);
+  }
+}
+
+/* Halo breath — same 4.8s, expands as avatar inhales */
+@keyframes rfos-halo-breathe {
+  0%, 100% {
+    transform: scale(1.00);
+    opacity: 0.72;
   }
   50% {
-    box-shadow: 0 0 0 7px rgba(72,100,255,0.06), 0 12px 38px rgba(72,100,255,0.22);
+    transform: scale(1.14);
+    opacity: 1.00;
   }
 }
 
-/* Avatar — listening. Active. Present. */
-@keyframes rfos-avatar-listen {
-  0%, 100% { box-shadow: 0 0 0 4px rgba(72,100,255,0.09), 0 10px 36px rgba(72,100,255,0.18); }
-  50%       { box-shadow: 0 0 0 10px rgba(72,100,255,0.04), 0 14px 46px rgba(72,100,255,0.26); }
+/* Float — micro-movement. RAFI occupies space.
+   9.6s = 2 breath cycles. Misaligned intentionally
+   so float and breath are never in perfect sync — organic. */
+@keyframes rfos-float {
+  0%, 100% { transform: translateY(0px);   }
+  30%       { transform: translateY(-2px);  }
+  70%       { transform: translateY(1px);   }
 }
 
-/* Avatar — urgent. Fast. Alarming. */
-@keyframes rfos-avatar-urgent {
-  0%, 100% { box-shadow: 0 0 0 4px rgba(225,48,108,0.10), 0 10px 36px rgba(225,48,108,0.20); }
-  50%       { box-shadow: 0 0 0 10px rgba(225,48,108,0.04), 0 14px 46px rgba(225,48,108,0.30); }
+/* Live dot breath — phase-offset 2.4s (half-cycle).
+   When avatar inhales (brightens), dot softens.
+   When avatar exhales, dot brightens.
+   They balance each other. */
+@keyframes rfos-dot-breathe {
+  0%, 100% { opacity: 0.90; transform: scale(1.00); }
+  50%       { opacity: 0.45; transform: scale(0.82); }
 }
 
-/* Halo — idle */
-@keyframes rfos-halo-idle {
-  0%, 100% { transform: scale(1.00); opacity: 0.80; }
-  50%       { transform: scale(1.12); opacity: 1.00; }
+/* Cursor — slow blink while RAFI waits.
+   1.4s. Smooth ease-in-out. Comfortable. Patient. */
+@keyframes rfos-cursor-wait {
+  0%, 100% { opacity: 0.65; }
+  50%       { opacity: 0.08; }
 }
 
-/* Halo — listening */
-@keyframes rfos-halo-listen {
-  0%, 100% { transform: scale(1.02); opacity: 0.90; }
-  50%       { transform: scale(1.16); opacity: 1.00; }
-}
-
-/* Halo — urgent */
-@keyframes rfos-halo-urgent {
-  0%, 100% { transform: scale(1.04); opacity: 0.90; }
-  50%       { transform: scale(1.20); opacity: 1.00; }
-}
-
-/* Live dot — gentle pulse */
-@keyframes rfos-dot-pulse {
-  0%, 100% { opacity: 1.0; transform: scale(1.00); }
-  50%       { opacity: 0.4; transform: scale(0.75); }
-}
-
-/* Typewriter cursor */
+/* Cursor during typewrite — step-end gives classic terminal feel */
 @keyframes rfos-cursor-blink {
   0%, 100% { opacity: 1; }
   50%       { opacity: 0; }
 }
 
+/* ── State: listening ── */
+/* Avatar gets more active ring — same keyframe, different values via state class */
+@keyframes rfos-avatar-listen {
+  0%, 100% {
+    box-shadow:
+      inset 0 1px 0 rgba(140, 160, 255, 0.16),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.18),
+      0 0 0 4px rgba(72, 100, 255, 0.09),
+      0 10px 36px rgba(72, 100, 255, 0.18);
+    border-color: rgba(72, 100, 255, 0.55);
+  }
+  50% {
+    box-shadow:
+      inset 0 1px 0 rgba(150, 172, 255, 0.24),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.14),
+      0 0 0 9px rgba(72, 100, 255, 0.04),
+      0 14px 46px rgba(72, 100, 255, 0.26);
+    border-color: rgba(72, 100, 255, 0.72);
+  }
+}
+
+@keyframes rfos-halo-listen {
+  0%, 100% { transform: scale(1.05); opacity: 0.85; }
+  50%       { transform: scale(1.20); opacity: 1.00; }
+}
+
+/* ── State: urgent ── */
+@keyframes rfos-avatar-urgent {
+  0%, 100% {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 100, 150, 0.14),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.20),
+      0 0 0 4px rgba(225, 48, 108, 0.10),
+      0 10px 36px rgba(225, 48, 108, 0.20);
+    border-color: rgba(225, 48, 108, 0.55);
+  }
+  50% {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 120, 165, 0.22),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.16),
+      0 0 0 9px rgba(225, 48, 108, 0.04),
+      0 14px 46px rgba(225, 48, 108, 0.30);
+    border-color: rgba(225, 48, 108, 0.72);
+  }
+}
+
+@keyframes rfos-halo-urgent {
+  0%, 100% { transform: scale(1.06); opacity: 0.88; }
+  50%       { transform: scale(1.22); opacity: 1.00; }
+}
+
 /* Thinking */
 @keyframes rfos-thinking-breathe {
-  0%, 100% { transform: scale(1.00); opacity: 0.88; }
-  50%       { transform: scale(1.07); opacity: 1.00; }
+  0%, 100% { opacity: 0.86; }
+  50%       { opacity: 1.00; }
 }
 @keyframes rfos-dot-bounce {
   0%, 80%, 100% { transform: scale(0.75); opacity: 0.45; }
@@ -718,9 +867,9 @@ section#home.rfos-hero-recomposed.rfos-input-invite .qsm-bar-card {
 
 /* Input attention pulse — fires once. Never loops. */
 @keyframes rfos-input-invite {
-  0%   { box-shadow: 0 0 0 0 rgba(72,100,255,0.0); }
-  30%  { box-shadow: 0 0 0 6px rgba(72,100,255,0.12); }
-  100% { box-shadow: 0 0 0 0 rgba(72,100,255,0.0); }
+  0%   { box-shadow: 0 0 0 0   rgba(72, 100, 255, 0.00); }
+  35%  { box-shadow: 0 0 0 5px rgba(72, 100, 255, 0.10); }
+  100% { box-shadow: 0 0 0 0   rgba(72, 100, 255, 0.00); }
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -794,15 +943,18 @@ section#home.rfos-hero-recomposed.rfos-input-invite .qsm-bar-card {
 
   .rfos-avatar,
   .rfos-stage--listening .rfos-avatar,
-  .rfos-stage--urgent    .rfos-avatar  { animation: none; }
+  .rfos-stage--urgent    .rfos-avatar,
+  .rfos-stage--ready     .rfos-avatar  { animation: none; }
 
   .rfos-halo,
   .rfos-stage--listening .rfos-halo,
   .rfos-stage--urgent    .rfos-halo,
   .rfos-stage--ready     .rfos-halo   { animation: none; }
 
-  .rfos-live-dot         { animation: none; opacity: 0.9; }
-  .rfos-cursor           { animation: none; opacity: 0; }
+  .rfos-live-dot         { animation: none; opacity: 0.85; }
+  /* Cursor stays visible at rest — just no blink */
+  .rfos-cursor           { animation: none; opacity: 0.55; }
+  .rfos-cursor.rfos-cursor--hidden { opacity: 0; }
   .rfos-thinking-avatar  { animation: none; }
   .rfos-thinking-dot     { animation: none; }
   .rfos-avatar img       { animation: none; opacity: 1; }

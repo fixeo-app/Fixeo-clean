@@ -162,9 +162,69 @@
        One character at a time. 26ms/char. Not fast, not slow.
        The visitor watches RAFI speak. This is the magic second.
        Nothing else moves during this. ── */
+    /* ── Conversation loop messages ──
+       Quiet. Patient. RAFI waits.
+       Messages cycle every 5s with 2s silence between.
+       Pauses completely when visitor is typing or RAFI is in an active state. */
+    var _WAIT_MESSAGES = [
+      'Dites-moi ce qui se passe.',
+      'Je vous écoute.',
+      'Prenez votre temps.',
+      'Expliquez-moi votre problème.',
+      'Nous allons trouver une solution.',
+      'Je suis là pour vous aider.'
+    ];
+    var _waitIdx       = 0;
+    var _waitTimer     = null;
+    var _waitActive    = false;  /* true = loop running */
+    var _visitorActive = false;  /* true = visitor is typing */
+
+    function _startWaiting() {
+      if (_waitActive) return;
+      _waitActive = true;
+      _waitIdx = 0;
+      _scheduleNext();
+    }
+
+    function _stopWaiting() {
+      _waitActive = false;
+      if (_waitTimer) { clearTimeout(_waitTimer); _waitTimer = null; }
+    }
+
+    function _scheduleNext() {
+      if (!_waitActive || _visitorActive || _state !== 'idle') return;
+      /* 5s visible + 0.55s fade-out = 5.55s before swap */
+      _waitTimer = setTimeout(function () {
+        if (!_waitActive || _visitorActive || _state !== 'idle') return;
+        /* Fade out */
+        if (_greeting) _greeting.style.opacity = '0';
+        setTimeout(function () {
+          if (!_waitActive || _visitorActive || _state !== 'idle') {
+            if (_greeting) _greeting.style.opacity = '1';
+            return;
+          }
+          /* Advance message */
+          _waitIdx = (_waitIdx + 1) % _WAIT_MESSAGES.length;
+          if (_greeting) {
+            _greeting.textContent = _WAIT_MESSAGES[_waitIdx];
+            /* Brief silence (0.5s) then fade back in */
+            setTimeout(function () {
+              if (_greeting) _greeting.style.opacity = '1';
+              _scheduleNext();
+            }, 500);
+          }
+        }, 550);
+      }, 5000);
+    }
+
     function _typewrite(text, el, onDone) {
       var i = 0;
       el.textContent = '';
+      /* Mark cursor as typing mode (faster blink) */
+      if (_cursor) {
+        _cursor.classList.remove('rfos-cursor--hidden');
+        _cursor.classList.add('rfos-cursor--typing');
+      }
       function _tick() {
         if (i < text.length) {
           el.textContent += text.charAt(i++);
@@ -306,7 +366,7 @@
     /* ── Text swap — fade out, swap, fade in ─────────────────── */
     function _setText(html) {
       if (!_greeting) return;
-      if (_cursor) _cursor.classList.add('rfos-cursor--done');
+      if (_cursor) _cursor.classList.add('rfos-cursor--hidden');
       _greeting.style.opacity = '0';
       setTimeout(function () {
         if (!_greeting) return;
@@ -394,14 +454,19 @@
             : _text.heroIdle;
 
           _typewrite(plainText, _greeting, function () {
-            /* Cursor fades */
-            if (_cursor) _cursor.classList.add('rfos-cursor--done');
-            /* If city known, now render with HTML bold */
+            /* Typewriter done — cursor switches to slow patient blink */
+            if (_cursor) {
+              _cursor.classList.remove('rfos-cursor--typing');
+              /* Cursor stays visible — it is RAFI's open invitation */
+            }
+            /* If city known, render with HTML bold */
             if (knownCity) {
               _greeting.innerHTML = _text.heroIdleWithCity(knownCity);
             }
-            /* One invitation — then trust the visitor */
+            /* One quiet invitation — then trust the visitor */
             setTimeout(_inviteInput, 180);
+            /* Begin the waiting conversation — RAFI stays alive */
+            setTimeout(_startWaiting, 4800);
           });
         } else {
           var knownCity2 = _mem.city;
@@ -410,7 +475,7 @@
           } else {
             _greeting.textContent = _text.heroIdle;
           }
-          if (_cursor) _cursor.classList.add('rfos-cursor--done');
+          /* Cursor stays visible — RAFI's invitation is still open */
         }
       }
 
@@ -421,18 +486,25 @@
     function onInput(text) {
       if (!_stage) return;
       if (!text || text.length < 2) {
+        /* Visitor stopped — resume waiting state */
+        _visitorActive = false;
         if (_state === 'listening') {
           _setState('idle');
           var city = _mem.city;
-          if (city) {
-            _setText(_text.heroIdleWithCity(city));
-          } else {
-            _setText(_text.heroIdle);
-          }
+          var idleMsg = city ? _text.heroIdleWithCity(city) : _text.heroIdle;
+          _setText(idleMsg);
           _setBadge(null);
+          /* Resume loop after a short pause */
+          if (!_waitActive) setTimeout(_startWaiting, 3000);
         }
+        /* Cursor returns to patient blink */
+        if (_cursor) _cursor.classList.remove('rfos-cursor--hidden');
         return;
       }
+      /* Visitor is typing — pause the loop, hide cursor */
+      _visitorActive = true;
+      _stopWaiting();
+      if (_cursor) _cursor.classList.add('rfos-cursor--hidden');
       _setState('listening');
       _setText(_text.heroListening);
       _setBadge(null);
@@ -441,6 +513,8 @@
     function onAnalysis(category, isUrgent) {
       if (!_stage) return;
       _mem.update({ category: category, isUrgent: isUrgent });
+      /* Stop waiting loop — RAFI is now engaged */
+      _stopWaiting();
 
       if (isUrgent) {
         _setState('urgent');
@@ -481,6 +555,7 @@
 
     function reset() {
       _setState('idle');
+      _visitorActive = false;
       if (_greeting) {
         var city = _mem.city;
         if (city) {
@@ -490,8 +565,14 @@
         }
         _greeting.style.opacity = '1';
       }
-      if (_cursor) _cursor.classList.add('rfos-cursor--done');
+      /* Cursor returns to patient blink */
+      if (_cursor) {
+        _cursor.classList.remove('rfos-cursor--hidden', 'rfos-cursor--typing');
+      }
       _setBadge(null);
+      /* Resume loop after visitor finishes */
+      _stopWaiting();
+      setTimeout(_startWaiting, 3500);
     }
 
     return { mount: mount, onInput: onInput, onAnalysis: onAnalysis, onCityKnown: onCityKnown, reset: reset };
