@@ -539,7 +539,7 @@
         '<p class="fhp-subtitle">Disponibles dans votre ville \u00b7 Paiement apr\u00e8s intervention</p>'+
       '</div>'+
       '<a class="fhp-see-all" href="index.html#artisans-section" onclick="event.preventDefault();if(window.FixeoClientRequest&&typeof FixeoClientRequest.open===\'function\'){FixeoClientRequest.open();}else{var s=document.getElementById(\'artisans-section\');if(s)s.scrollIntoView({behavior:\'smooth\'});}">'+
-        '<span class="fhp-counter">+'+displayCount.toLocaleString('fr-FR')+' artisans actifs</span>'+
+        '<span class="fhp-counter">+'+displayCount.toLocaleString('fr-FR')+' artisans sur le réseau FIXEO</span>'+
         '<span class="fhp-see-all-arrow">\u2192</span>'+
       '</a>';
   }
