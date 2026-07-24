@@ -352,3 +352,100 @@
     padding: 28px 16px 22px;
   }
 }
+
+/* ── Phase 2.3: Blog as Epilogue ──────────────────────────────
+   Namespace: fxp23-* (homepage Phase 2.3)
+   Blog becomes a quiet resource, not a new chapter.
+──────────────────────────────────────────────────────────────── */
+
+/* Editorial bridge: Network → Blog */
+.fxp23-bridge {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 44px 24px 0;
+  text-align: center;
+}
+
+.fxp23-bridge-line {
+  font-size: clamp(0.88rem, 1.8vw, 0.97rem);
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.32);
+  margin: 0;
+  line-height: 1.60;
+  letter-spacing: 0.01em;
+}
+
+/* Blog section — epilogue modifier */
+.fxblog-section--epilogue {
+  padding: 3rem 0 3.5rem !important; /* was 5rem — quieter presence */
+}
+
+/* Heading: reduced prominence */
+.fxblog-section--epilogue .fxblog-title {
+  font-size: 1.45rem !important; /* was 2rem */
+  font-weight: 700 !important;   /* was 800 */
+  color: rgba(232, 234, 240, 0.78) !important; /* slightly muted */
+}
+
+/* Tag: same but softer */
+.fxblog-section--epilogue .fxblog-tag {
+  color: rgba(224, 64, 251, 0.65) !important; /* was full 0.8+ */
+}
+
+/* "Voir tous" link: proportionally quieter */
+.fxblog-section--epilogue .fxblog-see-all {
+  font-size: 0.84rem !important;
+  color: rgba(224, 64, 251, 0.60) !important;
+}
+
+/* Head row: tighter margin */
+.fxblog-section--epilogue .fxblog-head {
+  margin-bottom: 1.4rem !important; /* was 2rem */
+}
+
+/* Card grid: tighter gap */
+.fxblog-section--epilogue .fxblog-grid {
+  gap: 0.9rem !important; /* was 1.25rem */
+}
+
+/* Cards: slightly smaller body padding */
+.fxblog-section--epilogue .fxblog-card-body {
+  padding: 1rem !important; /* was 1.25rem */
+  gap: 0.45rem !important;
+}
+
+/* Card titles: one notch smaller */
+.fxblog-section--epilogue .fxblog-card-title {
+  font-size: 0.91rem !important; /* was 0.97rem */
+}
+
+/* Spacious divider before Final CTA */
+.section-divider--spacious {
+  margin-top: 48px !important;
+  margin-bottom: 0 !important;
+}
+
+/* ── Responsive ────────────────────────────────────────────── */
+@media (max-width: 679px) {
+  .fxp23-bridge {
+    padding: 32px 20px 0;
+  }
+
+  .fxblog-section--epilogue {
+    padding: 2.5rem 0 3rem !important;
+  }
+
+  .fxblog-section--epilogue .fxblog-title {
+    font-size: 1.25rem !important;
+  }
+
+  .section-divider--spacious {
+    margin-top: 32px !important;
+  }
+}
+
+@media (max-width: 374px) {
+  .fxp23-bridge {
+    padding: 24px 16px 0;
+  }
+}
