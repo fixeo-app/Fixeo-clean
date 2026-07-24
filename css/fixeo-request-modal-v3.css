@@ -1,60 +1,49 @@
 /**
- * fixeo-request-modal-v3.css — fxrmv3-v1a
- * Request Modal V3 — Clean shell replacement
+ * fixeo-request-modal-v3.css — fxrmv3-v1b
+ * Request Modal — Definitive Clean Shell
  *
- * REPLACES:
- *   fixeo-modal-scroll-fix.css  (all #request-modal overrides)
- *   fixeo-urgent-modal-v3.css   (#request-modal.open { position:relative })
+ * Namespace: fxrmv3-* (modal shell elements only)
+ * Zero overrides on form/chip/RAFI CSS.
+ * Loads last — beats all legacy specificity.
  *
- * PRESERVES:
- *   All form field CSS (.request-field, .request-submit-btn, etc.)
- *   All chip CSS (.fxrm2-*, .fuv3-*, .rfos-conv-header)
- *   All mode-scoped rules ([data-request-mode="express"])
- *
- * NAMESPACE: fxrmv3-* for new shell elements only.
- *   Legacy .request-modal-header, .modal-close classes replaced
- *   in DOM by .fxrmv3-header, .fxrmv3-close — no shared namespace.
- *
- * LOAD ORDER: must be the last CSS touching #request-modal.
- *   Placed after fixeo-urgent-modal-v3-patch.css in <head>.
- *
- * Version: fxrmv3-v1a — 2026-07-24
+ * REPLACES: fixeo-modal-scroll-fix.css concerns about #request-modal positioning
+ * PRESERVES: all .fxrm2-*, .fuv3-*, .rfos-conv-header, .request-field CSS
  */
 
-/* ══════════════════════════════════════════════════════════════
-   1. BACKDROP — replaces .modal-backdrop for request modal
-══════════════════════════════════════════════════════════════ */
-
-#fxrmv3-backdrop {
+/* ─────────────────────────────────────────────────────────────
+   BACKDROP
+   Dedicated element #fxrmv3-bd — never shared with other modals.
+───────────────────────────────────────────────────────────── */
+#fxrmv3-bd {
   position: fixed;
   inset: 0;
   z-index: 5000;
-  background: rgba(0, 0, 0, 0.62);
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
+  background: rgba(0,0,0,0.58);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.22s ease;
-  /* Isolate: never affects other modals */
+  transition: opacity 0.20s ease;
 }
-
-#fxrmv3-backdrop.fxrmv3-open {
+#fxrmv3-bd.is-open {
   opacity: 1;
   pointer-events: auto;
 }
 
-/* ══════════════════════════════════════════════════════════════
-   2. MODAL CONTAINER — #request-modal
-   Nuclear reset of all legacy positioning confusion.
-══════════════════════════════════════════════════════════════ */
-
-/* Hidden state — not open */
+/* ─────────────────────────────────────────────────────────────
+   MODAL CONTAINER
+   Nuclear reset. Beats fuv3 "position:relative" and every patch.
+───────────────────────────────────────────────────────────── */
 #request-modal {
-  /* Always fixed — fuv3 #request-modal.open{position:relative} is defeated here */
+  /* Hidden */
+  display: none !important;
+  opacity: 0;
+
+  /* Positioning — always fixed, never relative */
   position: fixed !important;
   z-index: 5100 !important;
 
-  /* Centered — overridden by mobile rules below */
+  /* Desktop: centered dialog */
   top: 50% !important;
   left: 50% !important;
   transform: translate(-50%, -50%) !important;
@@ -62,288 +51,387 @@
   /* Size */
   width: calc(100% - 32px) !important;
   max-width: 520px !important;
-  max-height: min(90dvh, 800px) !important;
+  max-height: min(90dvh, 820px) !important;
 
-  /* Flex column: header pinned, shell scrolls */
-  display: none !important;
+  /* Internal layout: flex column — header pinned, content scrolls */
   flex-direction: column !important;
   overflow: hidden !important;
   padding: 0 !important;
 
   /* Visual */
-  background: rgba(12, 13, 22, 0.98) !important;
-  border: 1px solid rgba(255, 255, 255, 0.09) !important;
+  background: rgb(11, 12, 20) !important;
+  border: 1px solid rgba(255,255,255,0.09) !important;
   border-radius: 22px !important;
   box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.04),
-    0 8px 32px rgba(0, 0, 0, 0.55),
-    0 32px 80px rgba(0, 0, 0, 0.35) !important;
-
-  /* Enter animation */
-  opacity: 0;
-  transition: opacity 0.20s ease !important;
+    0 2px 4px rgba(0,0,0,0.30),
+    0 12px 36px rgba(0,0,0,0.55),
+    0 40px 100px rgba(0,0,0,0.35) !important;
+  will-change: opacity, transform;
 }
 
 /* Open state */
-#request-modal.open {
-  display: flex !important;  /* flex column — header + shell */
-  opacity: 1 !important;
+#request-modal.is-open {
+  display: flex !important;
+  opacity: 1;
+  animation: fxrmv3-pop 0.22s cubic-bezier(0.34,1.18,0.64,1) both;
 }
 
-/* ══════════════════════════════════════════════════════════════
-   3. HEADER — .fxrmv3-header (replaces .request-modal-header)
-   Pinned. Never scrolls. Contains: mode indicator, title, close.
-══════════════════════════════════════════════════════════════ */
+/* Defeat fuv3 "position:relative on open" unconditionally */
+#request-modal.open,
+#request-modal.is-open {
+  position: fixed !important;
+}
 
+@keyframes fxrmv3-pop {
+  from { opacity: 0; transform: translate(-50%, -48%) scale(0.97); }
+  to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   HEADER — .fxrmv3-header
+   Pinned, never scrolls. Contains exactly:
+     .fxrmv3-mode   — eyebrow (one)
+     .fxrmv3-title  — title   (one)
+     .fxrmv3-sub    — subtitle(one)
+     .fxrmv3-close  — button  (one)
+───────────────────────────────────────────────────────────── */
 .fxrmv3-header {
   flex-shrink: 0 !important;
-  position: relative !important;  /* for close button absolute positioning */
-  padding: 18px 60px 14px 20px !important;  /* right: space for close button */
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07) !important;
-  background: transparent !important;
-
-  /* Exactly one of each element visible: eyebrow, title, subtitle */
-  display: block !important;
+  position: relative !important;    /* anchor for .fxrmv3-close */
+  padding: 20px 64px 16px 20px !important;
+  border-bottom: 1px solid rgba(255,255,255,0.07) !important;
+  min-height: 0;
 }
 
-/* Mode indicator (eyebrow) */
 .fxrmv3-mode {
   display: block;
-  font-size: 0.60rem;
+  font-size: 0.58rem;
   font-weight: 800;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: rgba(72, 100, 255, 0.72);
-  margin: 0 0 5px;
+  color: rgba(72,100,255,0.72);
+  margin: 0 0 6px;
   line-height: 1;
 }
 
-/* Title */
 .fxrmv3-title {
   display: block;
   font-size: 1.05rem;
   font-weight: 800;
-  color: rgba(255, 255, 255, 0.97);
-  margin: 0 0 3px;
+  color: rgba(255,255,255,0.97);
+  margin: 0 0 4px;
   line-height: 1.25;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.015em;
 }
 
-/* Subtitle */
 .fxrmv3-subtitle {
   display: block;
-  font-size: 0.76rem;
-  color: rgba(255, 255, 255, 0.36);
+  font-size: 0.74rem;
+  color: rgba(255,255,255,0.38);
   margin: 0;
-  line-height: 1.4;
+  line-height: 1.45;
 }
 
-/* Urgent mode: header tint */
+/* Express tint */
 #request-modal[data-request-mode="express"] .fxrmv3-header {
-  background: rgba(255, 60, 60, 0.03) !important;
-  border-bottom-color: rgba(255, 60, 60, 0.12) !important;
+  background: rgba(255,55,55,0.03) !important;
+  border-bottom-color: rgba(255,55,55,0.12) !important;
 }
 #request-modal[data-request-mode="express"] .fxrmv3-mode {
-  color: rgba(255, 71, 87, 0.80);
+  color: rgba(255,71,87,0.85);
 }
 
-/* ══════════════════════════════════════════════════════════════
-   4. CLOSE BUTTON — .fxrmv3-close
-   Absolute inside .fxrmv3-header. Guaranteed tappable.
-══════════════════════════════════════════════════════════════ */
-
+/* ─────────────────────────────────────────────────────────────
+   CLOSE BUTTON — .fxrmv3-close
+   Absolute inside .fxrmv3-header.
+   44×44px, touch-action:manipulation, z-index beats everything.
+───────────────────────────────────────────────────────────── */
 .fxrmv3-close {
-  /* Absolute to header (position:relative) */
   position: absolute !important;
   top: 50% !important;
-  right: 12px !important;
+  right: 14px !important;
   transform: translateY(-50%) !important;
-  z-index: 10 !important;  /* above any injected header content */
+  z-index: 20 !important;
 
-  /* 44×44px minimum tap target (WCAG 2.5.5) */
+  /* 44×44 touch target */
   width: 44px !important;
   height: 44px !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
+  flex-shrink: 0 !important;
 
-  /* Visual */
-  background: rgba(255, 255, 255, 0.07) !important;
-  border: 1px solid rgba(255, 255, 255, 0.11) !important;
+  background: rgba(255,255,255,0.07) !important;
+  border: 1px solid rgba(255,255,255,0.11) !important;
   border-radius: 12px !important;
-  color: rgba(255, 255, 255, 0.70) !important;
+  color: rgba(255,255,255,0.72) !important;
   font-size: 1rem !important;
   line-height: 1 !important;
   cursor: pointer !important;
 
-  /* Interaction */
-  pointer-events: auto !important;
+  /* No 300ms delay on iOS */
   touch-action: manipulation !important;
   -webkit-tap-highlight-color: transparent !important;
   user-select: none !important;
   -webkit-user-select: none !important;
 
-  /* Always visible */
+  pointer-events: auto !important;
   opacity: 1 !important;
   visibility: visible !important;
+  transition: background 0.15s, color 0.15s !important;
 }
+.fxrmv3-close:hover  { background: rgba(255,255,255,0.13) !important; color: #fff !important; }
+.fxrmv3-close:active { background: rgba(255,255,255,0.18) !important; transform: translateY(-50%) scale(0.94) !important; }
+.fxrmv3-close:focus-visible { outline: 2px solid rgba(72,100,255,0.6) !important; outline-offset: 2px !important; }
 
-.fxrmv3-close:hover,
-.fxrmv3-close:focus-visible {
-  background: rgba(255, 255, 255, 0.13) !important;
-  color: #fff !important;
-  outline: none !important;
-}
-
-.fxrmv3-close:active {
-  background: rgba(255, 255, 255, 0.18) !important;
-  transform: translateY(-50%) scale(0.95) !important;
-}
-
-/* ══════════════════════════════════════════════════════════════
-   5. CONTENT SHELL — .request-modal-shell
-   Isolated scroll container. Header stays pinned above it.
-   Preserves all form field CSS already applied by request-form.css.
-══════════════════════════════════════════════════════════════ */
-
-#request-modal .request-modal-shell {
-  flex: 1 !important;
-  overflow-y: auto !important;
-  overflow-x: hidden !important;
-  overscroll-behavior: contain !important;
-  -webkit-overflow-scrolling: touch !important;
-  padding: 16px 20px !important;
-  min-height: 0 !important;  /* flex child must allow shrink */
-}
-
-/* Bottom safe area on iPhone */
-#request-modal .request-modal-shell {
-  padding-bottom: max(16px, env(safe-area-inset-bottom, 16px)) !important;
-}
-
-/* ══════════════════════════════════════════════════════════════
-   6. RFOS CONV HEADER (RAFI companion)
-   Sits between .fxrmv3-header and .request-modal-shell in flex.
-   Must not intercept close button taps.
-══════════════════════════════════════════════════════════════ */
-
+/* ─────────────────────────────────────────────────────────────
+   RAFI COMPANION — .rfos-conv-header
+   Sits between header and shell in flex column.
+   Must NOT cover the close button.
+───────────────────────────────────────────────────────────── */
 #request-modal .rfos-conv-header {
   flex-shrink: 0 !important;
   position: relative !important;
-  z-index: 0 !important;      /* below close button */
-  pointer-events: auto !important;
+  z-index: 0 !important;
 }
 
-/* ══════════════════════════════════════════════════════════════
-   7. FUV3 ACCENT BAR
-   Positioned inside .fxrmv3-header (position:relative).
-══════════════════════════════════════════════════════════════ */
-
+/* FUV3 accent bar (express mode) — anchored to .fxrmv3-header */
 #request-modal .fuv3-accent-bar {
   position: absolute !important;
-  top: 0 !important;
-  left: 0 !important;
-  right: 0 !important;
+  top: 0 !important; left: 0 !important; right: 0 !important;
   border-radius: 22px 22px 0 0 !important;
   pointer-events: none !important;
   z-index: 0 !important;
 }
 
-/* ══════════════════════════════════════════════════════════════
-   8. MOBILE ≤640px
-   Bottom-anchored sheet on small phones.
-══════════════════════════════════════════════════════════════ */
+/* ─────────────────────────────────────────────────────────────
+   CONTENT SHELL — .request-modal-shell
+   Isolated scroll container. Never scrolls the header.
+───────────────────────────────────────────────────────────── */
+#request-modal .request-modal-shell {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  overscroll-behavior: contain !important;
+  -webkit-overflow-scrolling: touch !important;
+  padding: 16px 20px !important;
+  padding-bottom: max(20px, env(safe-area-inset-bottom, 20px)) !important;
+}
 
+/* ─────────────────────────────────────────────────────────────
+   SUCCESS STATE — #request-success
+   Shown inside .request-modal-shell after submission.
+   The new confirmation design lives here.
+───────────────────────────────────────────────────────────── */
+#request-success.fxrva-success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 8px 0 4px;
+  gap: 0;
+}
+
+/* Check icon */
+.fxrmv3-success-check {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(32,201,151,0.12);
+  border: 2px solid rgba(32,201,151,0.30);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+  margin: 0 auto 18px;
+  animation: fxrmv3-check-pop 0.35s cubic-bezier(0.34,1.4,0.64,1) 0.1s both;
+}
+
+@keyframes fxrmv3-check-pop {
+  from { transform: scale(0.4); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+/* Success title */
+.fxrmv3-success-title {
+  font-size: 1.10rem;
+  font-weight: 800;
+  color: rgba(255,255,255,0.97);
+  margin: 0 0 8px;
+  line-height: 1.25;
+}
+
+/* RAFI attribution line */
+.fxrmv3-success-rafi {
+  font-size: 0.70rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(72,100,255,0.72);
+  margin: 0 0 16px;
+}
+
+/* Subtitle */
+.fxrmv3-success-sub {
+  font-size: 0.88rem;
+  color: rgba(255,255,255,0.52);
+  margin: 0 0 24px;
+  line-height: 1.55;
+  max-width: 340px;
+}
+
+/* Steps */
+.fxrmv3-steps {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  margin: 0 0 28px;
+  width: 100%;
+  justify-content: center;
+}
+.fxrmv3-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  max-width: 100px;
+}
+.fxrmv3-step-dot {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(32,201,151,0.10);
+  border: 1.5px solid rgba(32,201,151,0.28);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+}
+.fxrmv3-step-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.48);
+  line-height: 1.3;
+  text-align: center;
+}
+.fxrmv3-step-sep {
+  height: 1.5px;
+  flex: 1;
+  background: rgba(32,201,151,0.18);
+  margin-top: 15px; /* align with dot center */
+  max-width: 28px;
+}
+
+/* CTA buttons */
+.fxrmv3-success-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  max-width: 340px;
+}
+.fxrmv3-btn-primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 20px;
+  border-radius: 14px;
+  background: rgba(72,100,255,0.90);
+  color: #fff;
+  font-size: 0.92rem;
+  font-weight: 700;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s;
+}
+.fxrmv3-btn-primary:hover  { background: rgba(72,100,255,1); }
+.fxrmv3-btn-primary:active { background: rgba(52,80,220,1); transform: scale(0.98); }
+
+.fxrmv3-btn-secondary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 20px;
+  border-radius: 14px;
+  background: transparent;
+  color: rgba(255,255,255,0.44);
+  font-size: 0.84rem;
+  font-weight: 600;
+  text-decoration: none;
+  border: 1px solid rgba(255,255,255,0.10);
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s, color 0.15s;
+}
+.fxrmv3-btn-secondary:hover  { background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.70); }
+
+/* ─────────────────────────────────────────────────────────────
+   MOBILE ≤640px — bottom sheet
+───────────────────────────────────────────────────────────── */
 @media (max-width: 640px) {
   #request-modal {
-    /* Sheet from bottom */
     top: auto !important;
     bottom: 0 !important;
     left: 0 !important;
     right: 0 !important;
     transform: none !important;
-
     width: 100% !important;
     max-width: 100% !important;
-    max-height: min(92dvh, 780px) !important;
-
+    max-height: min(93dvh, 780px) !important;
     border-radius: 20px 20px 0 0 !important;
   }
 
-  .fxrmv3-header {
-    padding: 16px 56px 12px 18px !important;
-  }
-
-  #request-modal .request-modal-shell {
-    padding: 12px 18px !important;
-    padding-bottom: max(20px, env(safe-area-inset-bottom, 20px)) !important;
-  }
-
-  /* Sheet enter from bottom */
-  #request-modal.open {
-    animation: fxrmv3-slide-up 0.26s cubic-bezier(0.32, 0.72, 0, 1) both !important;
+  #request-modal.is-open {
+    animation: fxrmv3-slide-up 0.28s cubic-bezier(0.32,0.72,0,1) both !important;
   }
 
   @keyframes fxrmv3-slide-up {
-    from { transform: translateY(100%); opacity: 0.6; }
-    to   { transform: translateY(0);    opacity: 1;   }
+    from { transform: translateY(100%); opacity: 0.7; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+
+  .fxrmv3-header {
+    padding: 16px 60px 14px 18px !important;
+    /* Drag handle visual */
+    border-top: 3px solid rgba(255,255,255,0.10);
+    border-radius: 20px 20px 0 0;
+  }
+
+  #request-modal .request-modal-shell {
+    padding: 14px 18px !important;
+    padding-bottom: max(24px, env(safe-area-inset-bottom, 24px)) !important;
+  }
+
+  /* Submit button safe-area */
+  #request-modal .request-submit-btn {
+    margin-bottom: env(safe-area-inset-bottom, 0px) !important;
   }
 }
 
-/* ══════════════════════════════════════════════════════════════
-   9. DESKTOP ≥641px
-   Centered dialog with entry animation.
-══════════════════════════════════════════════════════════════ */
-
-@media (min-width: 641px) {
-  #request-modal {
-    max-height: min(88vh, 760px) !important;
-  }
-
-  #request-modal.open {
-    animation: fxrmv3-pop-in 0.22s cubic-bezier(0.34, 1.20, 0.64, 1) both !important;
-  }
-
-  @keyframes fxrmv3-pop-in {
-    from { transform: translate(-50%, -46%); opacity: 0; }
-    to   { transform: translate(-50%, -50%); opacity: 1; }
-  }
-}
-
-/* ══════════════════════════════════════════════════════════════
-   10. LEGACY OVERRIDES — defeat remaining conflicts
-   These ensure no previously-loaded CSS wins over V3 shell.
-══════════════════════════════════════════════════════════════ */
-
-/* fuv3-v1a introduced this — defeat it permanently */
-#request-modal.open {
-  position: fixed !important;  /* never relative */
-}
-
-/* Prevent fixeo_v5_fixes.css button{position:relative} from
-   affecting the close button's absolute positioning */
-.fxrmv3-close {
-  position: absolute !important;  /* re-assert — already set above, belt+suspenders */
-}
-
-/* Suppress legacy header classes if they appear (defensive) */
+/* ─────────────────────────────────────────────────────────────
+   LEGACY SUPPRESSION
+   Disable old header/close classes that caused duplication.
+   The DOM nodes remain for rollback; they are invisible.
+───────────────────────────────────────────────────────────── */
 #request-modal .modal-header.request-modal-header {
   display: none !important;
 }
 
-/* Submit button: safe-area bottom margin */
-#request-modal .request-submit-btn {
-  margin-bottom: env(safe-area-inset-bottom, 0px) !important;
-}
-
-/* ══════════════════════════════════════════════════════════════
-   11. REDUCED MOTION
-══════════════════════════════════════════════════════════════ */
-
+/* ─────────────────────────────────────────────────────────────
+   REDUCED MOTION
+───────────────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   #request-modal,
-  #request-modal.open,
-  #fxrmv3-backdrop {
+  #request-modal.is-open,
+  #fxrmv3-bd,
+  .fxrmv3-success-check {
     animation: none !important;
     transition: none !important;
   }

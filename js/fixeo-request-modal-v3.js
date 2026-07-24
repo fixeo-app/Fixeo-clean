@@ -1,328 +1,407 @@
 /**
- * fixeo-request-modal-v3.js — fxrmv3-v1a
- * Request Modal V3 — Clean open/close lifecycle
+ * fixeo-request-modal-v3.js — fxrmv3-v1b
+ * Request Modal — Definitive clean lifecycle
  *
- * REPLACES the broken lifecycle in:
- *   forceOpenRequestModal()  (inline script in index.html)
- *   fixeo-header-global.js   (openModal('request-modal') path)
- *   header-unified.js        (modal-open class path)
+ * OWNS:
+ *   - One backdrop  (#fxrmv3-bd)
+ *   - One modal     (#request-modal)
+ *   - One open path
+ *   - One close path
+ *   - One scroll-lock/unlock pair
+ *   - One header render (exactly: mode + title + subtitle)
+ *   - One success confirmation (replaces silent close)
  *
- * PRESERVES all existing engines by keeping the same:
- *   #request-modal element          (observers still fire)
- *   .open class toggle              (MutationObserver hooks intact)
- *   data-request-mode attribute     (fuv3 / rmv2 / RAFI watchers intact)
- *   FixeoClientRequest public API   (open / openExpress / closeStandard)
- *   window.openModal('request-modal') global shim
+ * PRESERVES (untouched):
+ *   - request-form.js submit/validation/prefill/reset
+ *   - All MutationObserver hooks (RAFI, fuv3, rmv2, analytics, ai-engine)
+ *     They watch .open class + data-request-mode — both still toggled here.
+ *   - window.openModal / window.closeModal globals (shimmed)
+ *   - FixeoClientRequest.open / .closeStandard / .openExpress (patched)
+ *   - fixeo-express-route-shim.js routing
  *
- * SCROLL LOCK: Uses the position:fixed body technique (iOS-safe).
- *   Saves scrollY, fixes body, restores on close.
- *   Removes both body.modal-open AND body.fxmsf-locked on close.
+ * SCROLL LOCK: position:fixed body (iOS-safe).
+ *   Saves scrollY on lock, restores exactly on unlock.
+ *   Removes body.modal-open AND body.fxmsf-locked on every close.
  *
- * VERSION: fxrmv3-v1a — 2026-07-24
+ * RAFI GUARD: ejects stale rfos-conv-header before each open,
+ *   resets rfosInjected so RAFI OS re-injects exactly once.
+ *
+ * FEATURE FLAG: window.FIXEO_MODAL_V3 = false to fall back to legacy.
+ *
+ * VERSION: fxrmv3-v1b — 2026-07-24
  */
 
 (function () {
   'use strict';
 
+  /* ── Feature flag — set to false for instant rollback ─────── */
+  if (window.FIXEO_MODAL_V3 === false) return;
+
   if (window._fxRMV3Loaded) return;
   window._fxRMV3Loaded = true;
 
-  /* ── Private state ─────────────────────────────────────────── */
-  var _scrollY  = 0;
-  var _locked   = false;
-  var _modal    = null;
-  var _backdrop = null;
+  /* ═══════════════════════════════════════════════════════════
+     STATE
+  ═══════════════════════════════════════════════════════════ */
+  var _scrollY = 0;
+  var _locked  = false;
+  var _isOpen  = false;
 
-  /* ── Helpers ────────────────────────────────────────────────── */
-  function _q(sel, ctx) { return (ctx || document).querySelector(sel); }
-  function _el(id)      { return document.getElementById(id); }
+  /* ═══════════════════════════════════════════════════════════
+     DOM HELPERS
+  ═══════════════════════════════════════════════════════════ */
+  function _el(id)        { return document.getElementById(id); }
+  function _q(s, ctx)     { return (ctx || document).querySelector(s); }
 
-  /* ── Resolve open/close trigger mode ─────────────────────────
-     Reads data-request-mode from trigger element (button/link).
-     Falls back to 'default'. ──────────────────────────────── */
-  function _resolveMode(trigger, forced) {
-    if (forced) return forced;
-    if (trigger && typeof trigger.getAttribute === 'function') {
-      return trigger.getAttribute('data-request-mode') || 'default';
+  function _modal()       { return _el('request-modal'); }
+  function _backdrop()    {
+    var bd = _el('fxrmv3-bd');
+    if (!bd) {
+      bd = document.createElement('div');
+      bd.id = 'fxrmv3-bd';
+      document.body.insertBefore(bd, document.body.firstChild);
     }
-    return 'default';
+    return bd;
   }
 
-  /* ── Header content map ──────────────────────────────────────
-     Exactly one eyebrow, one title, one subtitle per mode.
-     These match what request-form.js REQUEST_COPY defines.
-  ──────────────────────────────────────────────────────────── */
-  var HEADER_COPY = {
+  /* ═══════════════════════════════════════════════════════════
+     HEADER COPY
+     Exactly one set of strings per mode.
+     Written directly into .fxrmv3-* elements — no innerHTML.
+  ═══════════════════════════════════════════════════════════ */
+  var COPY = {
     'default': {
-      eyebrow:  'FIXEO',
+      mode:     'FIXEO',
       title:    'Quel est le probl\u00e8me\u00a0?',
       subtitle: 'Un artisan Fixeo vous rappelle sous 30\u00a0min'
     },
     'marketplace': {
-      eyebrow:  'FIXEO',
+      mode:     'FIXEO',
       title:    'D\u00e9crivez votre besoin',
       subtitle: 'Un artisan disponible pr\u00e8s de chez vous vous r\u00e9pond rapidement'
     },
     'express': {
-      eyebrow:  'URGENT',
+      mode:     'URGENT',
       title:    'Intervention urgente \u26a1',
       subtitle: 'Fixeo trouve un artisan disponible maintenant dans votre ville'
     }
   };
 
-  /* ── Render header with exactly one set of copy ──────────────
-     Writes to .fxrmv3-mode, .fxrmv3-title, .fxrmv3-subtitle.
-     Safe to call on every open — no duplication possible.
-  ──────────────────────────────────────────────────────────── */
   function _renderHeader(modal, mode) {
-    var copy = HEADER_COPY[mode] || HEADER_COPY['default'];
-    var eyebrow  = _q('.fxrmv3-mode',     modal);
-    var title    = _q('.fxrmv3-title',    modal);
-    var subtitle = _q('.fxrmv3-subtitle', modal);
-    if (eyebrow)  eyebrow.textContent  = copy.eyebrow;
-    if (title)    title.textContent    = copy.title;
-    if (subtitle) subtitle.textContent = copy.subtitle;
+    var c = COPY[mode] || COPY['default'];
+    var modeEl = _q('.fxrmv3-mode',     modal);
+    var titleEl= _q('.fxrmv3-title',    modal);
+    var subEl  = _q('.fxrmv3-subtitle', modal);
+    /* Guard: only write if element exists and value differs (no flicker) */
+    if (modeEl  && modeEl.textContent  !== c.mode)     modeEl.textContent  = c.mode;
+    if (titleEl && titleEl.textContent !== c.title)    titleEl.textContent = c.title;
+    if (subEl   && subEl.textContent   !== c.subtitle) subEl.textContent   = c.subtitle;
+    /* Also update legacy IDs so request-form.js updateModalCopy() reads correctly */
+    var legacyTitle = _el('request-modal-title');
+    var legacySub   = _el('request-modal-subtitle');
+    if (legacyTitle) legacyTitle.textContent = c.title;
+    if (legacySub)   legacySub.textContent   = c.subtitle;
   }
 
-  /* ── Scroll lock (iOS-safe) ──────────────────────────────────
-     Saves scroll position, fixes body top to simulate lock.
-     Restored exactly on close.
-  ──────────────────────────────────────────────────────────── */
-  function _lockScroll() {
+  /* ═══════════════════════════════════════════════════════════
+     SCROLL LOCK — position:fixed body (works on iOS Safari)
+  ═══════════════════════════════════════════════════════════ */
+  function _lock() {
     if (_locked) return;
     _locked  = true;
     _scrollY = window.scrollY || window.pageYOffset || 0;
-    document.body.style.overflow = 'hidden';
-    document.body.style.position = 'fixed';
-    document.body.style.top      = '-' + _scrollY + 'px';
-    document.body.style.width    = '100%';
-    document.body.style.left     = '0';
+    var body = document.body;
+    body.style.overflow = 'hidden';
+    body.style.position = 'fixed';
+    body.style.top      = '-' + _scrollY + 'px';
+    body.style.width    = '100%';
+    body.style.left     = '0';
+    body.style.right    = '0';
   }
 
-  function _unlockScroll() {
+  function _unlock() {
     if (!_locked) return;
     _locked = false;
-    document.body.style.overflow = '';
-    document.body.style.position = '';
-    document.body.style.top      = '';
-    document.body.style.width    = '';
-    document.body.style.left     = '';
-    /* Remove ALL legacy scroll-lock classes */
-    document.body.classList.remove('modal-open', 'fxmsf-locked');
+    var body = document.body;
+    body.style.overflow = '';
+    body.style.position = '';
+    body.style.top      = '';
+    body.style.width    = '';
+    body.style.left     = '';
+    body.style.right    = '';
+    /* Remove every legacy scroll-lock class */
+    body.classList.remove('modal-open', 'fxmsf-locked');
     window.scrollTo(0, _scrollY);
   }
 
-  /* ── Backdrop ────────────────────────────────────────────────
-     #fxrmv3-backdrop is a dedicated element (not .modal-backdrop)
-     so it never conflicts with other modals.
-  ──────────────────────────────────────────────────────────── */
-  function _getBackdrop() {
-    if (_backdrop) return _backdrop;
-    _backdrop = _el('fxrmv3-backdrop');
-    if (!_backdrop) {
-      _backdrop = document.createElement('div');
-      _backdrop.id = 'fxrmv3-backdrop';
-      document.body.insertBefore(_backdrop, document.body.firstChild);
+  /* ═══════════════════════════════════════════════════════════
+     RAFI GUARD
+     Eject any stale RAFI injection before open.
+     Resets rfosInjected so RAFI OS injects exactly once at +70ms.
+  ═══════════════════════════════════════════════════════════ */
+  function _ejectedRafi(modal) {
+    modal.dataset.rfosInjected = '';
+    var old = _q('.rfos-conv-header', modal);
+    if (old) old.remove();
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     MODE RESOLVER
+  ═══════════════════════════════════════════════════════════ */
+  function _mode(trigger, forced) {
+    if (forced && COPY[forced]) return forced;
+    if (trigger && typeof trigger.getAttribute === 'function') {
+      var m = trigger.getAttribute('data-request-mode');
+      if (m && COPY[m]) return m;
     }
-    return _backdrop;
-  }
-
-  function _showBackdrop() {
-    var bd = _getBackdrop();
-    bd.classList.add('fxrmv3-open');
-    /* Tap backdrop to close */
-    if (!bd._fxrmv3Bound) {
-      bd._fxrmv3Bound = true;
-      bd.addEventListener('click',    close);
-      bd.addEventListener('touchend', close, { passive: true });
+    /* Read from modal attribute as fallback */
+    var modal = _modal();
+    if (modal) {
+      var attr = modal.getAttribute('data-request-mode');
+      if (attr && COPY[attr]) return attr;
     }
+    return 'default';
   }
 
-  function _hideBackdrop() {
-    var bd = _getBackdrop();
-    bd.classList.remove('fxrmv3-open');
-  }
+  /* ═══════════════════════════════════════════════════════════
+     OPEN
+     Single entry point for every trigger.
+  ═══════════════════════════════════════════════════════════ */
+  function open(trigger, forced) {
+    if (_isOpen) return;          /* prevent double-open */
 
-  /* Also dim the legacy .modal-backdrop so it doesn't double-show */
-  function _syncLegacyBackdrop(show) {
-    var legacy = _q('.modal-backdrop:not(#fxrmv3-backdrop)');
-    if (legacy) legacy.classList.toggle('open', show);
-  }
-
-  /* ── Open ────────────────────────────────────────────────────
-     Single entry point. Called by:
-       FixeoClientRequest.open(trigger, forcedMode)
-       window.openModal('request-modal')
-       forceOpenRequestModal() shim (mobile nav)
-  ──────────────────────────────────────────────────────────── */
-  function open(trigger, forcedMode) {
-    var modal = _el('request-modal');
+    var modal = _modal();
     if (!modal) return;
-    _modal = modal;
+    var mode = _mode(trigger, forced);
 
-    var mode = _resolveMode(trigger, forcedMode);
-
-    /* 1. Set mode attribute BEFORE adding .open — observers fire after */
-    modal.setAttribute('data-request-mode', mode);
-
-    /* 2. Render header copy exactly once */
+    /* 1. Render header — exactly one set of text nodes */
     _renderHeader(modal, mode);
 
-    /* 3. Remove stale RAFI injection so it re-injects fresh */
-    modal.dataset.rfosInjected = '';
-    var staleRafi = _q('.rfos-conv-header', modal);
-    if (staleRafi) staleRafi.remove();
+    /* 2. Set mode attribute FIRST (engines observe this) */
+    modal.setAttribute('data-request-mode', mode);
+
+    /* 3. Eject any stale RAFI from previous session */
+    _ejectedRafi(modal);
 
     /* 4. Show backdrop */
-    _showBackdrop();
-    _syncLegacyBackdrop(true);
+    _backdrop().classList.add('is-open');
 
     /* 5. Lock scroll */
-    _lockScroll();
+    _lock();
 
-    /* 6. Show modal — triggers MutationObserver on .open → engines fire */
+    /* 6. Add .is-open first (CSS shows modal), then .open (MutationObserver → engines) */
+    modal.classList.add('is-open');
     modal.classList.add('open');
+    modal.setAttribute('aria-hidden', 'false');
+    _isOpen = true;
 
-    /* 7. Focus management */
+    /* 7. Focus first interactive field */
     requestAnimationFrame(function () {
-      var first = _q('#request-problem, #express-request-problem, input, select', modal);
-      if (first && typeof first.focus === 'function') first.focus();
+      var first = _q('#request-problem, input:not([type=hidden]), select, textarea', modal);
+      if (first && typeof first.focus === 'function') first.focus({ preventScroll: true });
     });
   }
 
-  /* ── Close ───────────────────────────────────────────────────
-     Single exit point. Replaces closeCoreModal, closeModal, all.
-  ──────────────────────────────────────────────────────────── */
+  /* ═══════════════════════════════════════════════════════════
+     CLOSE
+     Single exit point. Called by: close button, backdrop tap,
+     ESC key, FixeoClientRequest.closeStandard, window.closeModal.
+  ═══════════════════════════════════════════════════════════ */
   function close() {
-    var modal = _modal || _el('request-modal');
+    if (!_isOpen) return;
+
+    var modal = _modal();
     if (!modal) return;
 
-    /* 1. Remove open class → MutationObserver fires → RAFI ejects */
-    modal.classList.remove('open');
-    modal.removeAttribute('aria-hidden');
+    /* 1. Remove classes — MutationObserver fires → RAFI ejects */
+    modal.classList.remove('open', 'is-open');
+    modal.setAttribute('aria-hidden', 'true');
+    _isOpen = false;
 
     /* 2. Hide backdrop */
-    _hideBackdrop();
-    _syncLegacyBackdrop(false);
+    _backdrop().classList.remove('is-open');
 
-    /* 3. Restore scroll (iOS-safe, also removes legacy classes) */
-    _unlockScroll();
+    /* 3. Restore scroll (iOS-safe) */
+    _unlock();
 
-    /* 4. Reset inline styles set by forceOpenRequestModal */
+    /* 4. Clear any inline display set by legacy forceOpenRequestModal */
     modal.style.display = '';
-    modal.removeAttribute('hidden');
   }
 
-  /* ── Close button wiring ─────────────────────────────────────
-     Attaches close() to .fxrmv3-close inside the modal.
-     Called once after DOM is ready.
-  ──────────────────────────────────────────────────────────── */
-  function _wireCloseButton() {
-    var modal = _el('request-modal');
+  /* ═══════════════════════════════════════════════════════════
+     SUCCESS CONFIRMATION
+     Replaces #request-success with the new confirmation UX.
+     Called after successful form submission.
+     Injects into the existing #request-success container.
+  ═══════════════════════════════════════════════════════════ */
+  function _buildSuccessHTML() {
+    return (
+      '<div class="fxrmv3-success-check" aria-hidden="true">&#x2713;</div>' +
+      '<p class="fxrmv3-success-rafi">RAFI</p>' +
+      '<h4 class="fxrmv3-success-title">Votre demande a bien \u00e9t\u00e9 envoy\u00e9e.</h4>' +
+      '<p class="fxrmv3-success-sub">RAFI recherche maintenant les meilleurs professionnels pour votre projet.</p>' +
+      '<div class="fxrmv3-steps" aria-label="\u00c9tapes suivantes">' +
+        '<div class="fxrmv3-step"><div class="fxrmv3-step-dot">&#x2705;</div><span class="fxrmv3-step-label">Demande enregistr\u00e9e</span></div>' +
+        '<div class="fxrmv3-step-sep" aria-hidden="true"></div>' +
+        '<div class="fxrmv3-step"><div class="fxrmv3-step-dot">&#x1F50D;</div><span class="fxrmv3-step-label">RAFI s\u00e9lectionne</span></div>' +
+        '<div class="fxrmv3-step-sep" aria-hidden="true"></div>' +
+        '<div class="fxrmv3-step"><div class="fxrmv3-step-dot">&#x1F4AC;</div><span class="fxrmv3-step-label">Confirmation WhatsApp</span></div>' +
+      '</div>' +
+      '<div class="fxrmv3-success-actions">' +
+        '<a href="/client-dashboard.html" class="fxrmv3-btn-primary">Voir mes demandes</a>' +
+        '<a href="/index.html" class="fxrmv3-btn-secondary">Retour \u00e0 l\u2019accueil</a>' +
+      '</div>'
+    );
+  }
+
+  function _hookSuccess() {
+    /* Watch for #request-success becoming visible (request-form.js calls showSuccess()) */
+    var modal = _modal();
+    if (!modal) return;
+    var successEl = _el('request-success');
+    if (!successEl) return;
+
+    /* MutationObserver: when hidden attr is removed → success shown → replace content */
+    var obs = new MutationObserver(function (muts) {
+      muts.forEach(function (m) {
+        if (m.attributeName !== 'hidden') return;
+        if (!successEl.hasAttribute('hidden') && !successEl.dataset.fxrmv3Success) {
+          successEl.dataset.fxrmv3Success = '1';
+
+          /* Update modal header to match success state */
+          var modeEl = _q('.fxrmv3-mode', modal);
+          var titleEl= _q('.fxrmv3-title', modal);
+          var subEl  = _q('.fxrmv3-subtitle', modal);
+          if (modeEl)  modeEl.textContent  = 'RAFI';
+          if (titleEl) titleEl.textContent  = 'Demande envoy\u00e9e';
+          if (subEl)   subEl.textContent    = '';
+
+          /* Replace success content with V3 confirmation */
+          successEl.innerHTML = _buildSuccessHTML();
+        }
+        /* Reset when hidden again (new request) */
+        if (successEl.hasAttribute('hidden')) {
+          delete successEl.dataset.fxrmv3Success;
+        }
+      });
+    });
+    obs.observe(successEl, { attributes: true, attributeFilter: ['hidden'] });
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     CLOSE BUTTON WIRING
+     Single listener. Guard prevents double-binding.
+  ═══════════════════════════════════════════════════════════ */
+  function _wireClose() {
+    var modal = _modal();
     if (!modal) return;
     var btn = _q('.fxrmv3-close', modal);
-    if (!btn) return;
-    if (btn._fxrmv3Bound) return;
-    btn._fxrmv3Bound = true;
+    if (!btn || btn._v3Bound) return;
+    btn._v3Bound = true;
 
-    function _doClose(e) {
+    function _tap(e) {
       e.preventDefault();
       e.stopPropagation();
       close();
     }
-    btn.addEventListener('click',    _doClose);
-    btn.addEventListener('touchend', _doClose, { passive: false });
+    btn.addEventListener('click',    _tap);
+    btn.addEventListener('touchend', _tap, { passive: false });
   }
 
-  /* ── Escape key ─────────────────────────────────────────────── */
-  function _wireEscape() {
+  /* ═══════════════════════════════════════════════════════════
+     BACKDROP TAP
+  ═══════════════════════════════════════════════════════════ */
+  function _wireBackdrop() {
+    var bd = _backdrop();
+    if (bd._v3Bound) return;
+    bd._v3Bound = true;
+
+    function _tap(e) {
+      if (e.target === bd) close();
+    }
+    bd.addEventListener('click',    _tap);
+    bd.addEventListener('touchend', _tap, { passive: true });
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     ESC KEY
+  ═══════════════════════════════════════════════════════════ */
+  function _wireEsc() {
     document.addEventListener('keydown', function (e) {
-      if ((e.key === 'Escape' || e.keyCode === 27)) {
-        var modal = _el('request-modal');
-        if (modal && modal.classList.contains('open')) close();
-      }
+      if ((e.key === 'Escape' || e.keyCode === 27) && _isOpen) close();
     });
   }
 
-  /* ── Patch FixeoClientRequest ────────────────────────────────
-     Replace closeStandard with V3 close.
-     Wrap open() to use V3 open.
-     Keep all other methods (reset, storageKey, etc.) untouched.
-  ──────────────────────────────────────────────────────────── */
-  function _patchClientRequest() {
-    var fc = window.FixeoClientRequest;
-    if (!fc) {
-      setTimeout(_patchClientRequest, 80);
-      return;
-    }
-    if (fc._fxrmv3Patched) return;
-    fc._fxrmv3Patched = true;
+  /* ═══════════════════════════════════════════════════════════
+     GLOBAL SHIMS
+     Intercept every existing call site without modifying them.
+  ═══════════════════════════════════════════════════════════ */
+  function _shimGlobals() {
+    /* window.openModal ─────────────────────────────────────── */
+    var _origOpen = window.openModal;
+    window.openModal = function (id) {
+      if (id === 'request-modal') { open(null, null); return; }
+      if (_origOpen) _origOpen.call(this, id);
+    };
 
-    /* Wrap open: call original (for form reset/prefill), then V3 lifecycle */
-    var _origOpen = fc.open;
+    /* window.closeModal ────────────────────────────────────── */
+    var _origClose = window.closeModal;
+    window.closeModal = function (id) {
+      if (id === 'request-modal') { close(); return; }
+      if (_origClose) _origClose.call(this, id);
+    };
+
+    /* forceOpenRequestModal (mobile nav inline script) ──────── */
+    window.forceOpenRequestModal = function () { open(null, null); };
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     PATCH FixeoClientRequest
+     Wraps open/closeStandard with V3 lifecycle.
+     All other methods (reset, storageKey, buildWhatsappLink) untouched.
+  ═══════════════════════════════════════════════════════════ */
+  function _patchFCR() {
+    var fc = window.FixeoClientRequest;
+    if (!fc || fc._v3Patched) { setTimeout(_patchFCR, 60); return; }
+    if (!fc.open) { setTimeout(_patchFCR, 60); return; }
+    fc._v3Patched = true;
+
+    /* Wrap open: request-form.js runs first (reset/prefill/copy),
+       then V3 handles lifecycle. */
+    var _origFCROpen = fc.open;
     fc.open = function (trigger, forcedMode) {
-      /* Let request-form.js do its reset/copy/prefill logic */
-      if (_origOpen) _origOpen.call(this, trigger, forcedMode);
-      /* V3 owns the lifecycle from here */
-      var mode = _resolveMode(trigger, forcedMode);
-      _renderHeader(_el('request-modal'), mode);
-      /* Scroll lock + backdrop already handled by open() above via openModal shim,
-         but if request-form.js called window.openModal directly, we need to
-         ensure backdrop/lock are set. */
-      var modal = _el('request-modal');
-      if (modal && modal.classList.contains('open')) {
-        _showBackdrop();
-        _syncLegacyBackdrop(true);
-        _lockScroll();
+      /* Block if already open — prevents double-fire */
+      if (_isOpen) return;
+
+      /* Let request-form.js do its reset / updateModalCopy / applyContextPrefill */
+      _origFCROpen.apply(this, arguments);
+
+      /* V3 lifecycle: ensure scroll lock, backdrop, header */
+      var mode = _mode(trigger, forcedMode);
+      var modal = _modal();
+      if (modal && modal.classList.contains('is-open')) {
+        /* openModal shim already ran → backdrop + lock may not be set yet */
+        _backdrop().classList.add('is-open');
+        _lock();
+        _renderHeader(modal, mode);
       }
     };
 
     /* closeStandard → V3 close */
     fc.closeStandard = close;
-
-    /* openExpress already patched by fixeo-express-route-shim.js
-       (it calls fc.open(trigger,'express') which now goes through V3) */
   }
 
-  /* ── Global shims ────────────────────────────────────────────
-     Keeps window.openModal('request-modal') and closeModal() working
-     for all callers: fixeo-header-global.js, estimation engine,
-     header-unified.js, etc.
-  ──────────────────────────────────────────────────────────── */
-  function _shimGlobals() {
-    /* openModal: intercept request-modal calls */
-    var _origOpenModal = window.openModal;
-    window.openModal = function (id) {
-      if (id === 'request-modal') {
-        open(null, null); /* mode from data-request-mode attr or 'default' */
-        return;
-      }
-      if (_origOpenModal) _origOpenModal.call(this, id);
-    };
-
-    /* closeModal: intercept request-modal calls */
-    var _origCloseModal = window.closeModal;
-    window.closeModal = function (id) {
-      if (id === 'request-modal') {
-        close();
-        return;
-      }
-      if (_origCloseModal) _origCloseModal.call(this, id);
-    };
-
-    /* forceOpenRequestModal: used by mobile nav inline script.
-       Reroute to V3 open. */
-    window.forceOpenRequestModal = function () {
-      open(null, null);
-    };
-  }
-
-  /* ── Boot ─────────────────────────────────────────────────── */
+  /* ═══════════════════════════════════════════════════════════
+     BOOT
+  ═══════════════════════════════════════════════════════════ */
   function _init() {
-    _wireCloseButton();
-    _wireEscape();
-    _patchClientRequest();
     _shimGlobals();
+    _wireClose();
+    _wireBackdrop();
+    _wireEsc();
+    _hookSuccess();
+    /* Patch FCR after a tick — request-form.js DOMContentLoaded fires first */
+    setTimeout(_patchFCR, 0);
   }
 
   if (document.readyState === 'loading') {
@@ -331,9 +410,11 @@
     _init();
   }
 
-  /* Expose public API */
+  /* ═══════════════════════════════════════════════════════════
+     PUBLIC API
+  ═══════════════════════════════════════════════════════════ */
   window.FixeoRequestModalV3 = {
-    VERSION: 'fxrmv3-v1a',
+    VERSION: 'fxrmv3-v1b',
     open:    open,
     close:   close
   };
