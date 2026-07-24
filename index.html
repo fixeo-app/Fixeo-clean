@@ -2060,7 +2060,7 @@ section#home.hero.hero-section {
   <link rel="stylesheet" href="css/fixeo-brain-engine-v1.css?v=fbe-v42">
   <link rel="stylesheet" href="css/fixeo-chapter-2-v1.css?v=fc2-v1c">
   <link rel="stylesheet" href="css/fixeo-network-v1.css?v=fnv1a">
-  <link rel="stylesheet" href="css/fixeo-chapter-3-v1.css?v=fc3-v1c">
+  <link rel="stylesheet" href="css/fixeo-chapter-3-v1.css?v=fc3-v2a">
   <link rel="stylesheet" href="css/fixeo-narrative-v1.css?v=fnrv1a">
   <link rel="stylesheet" href="css/fixeo-discovery-compression-v1.css?v=dc-v1a">
   <link rel="stylesheet" href="css/fixeo-vision-v2.css?v=fxv-v2a">
@@ -2810,12 +2810,14 @@ section#home.hero.hero-section {
     <!-- ── Chapter 3 Header ── -->
     <header class="fc3-header">
       <span class="fc3-eyebrow">VOTRE SITUATION</span>
-      <h2 id="services-title" class="fc3-title">Vous vous reconnaissez&nbsp;?</h2>
-      <p class="fc3-subtitle">Choisissez ce qui décrit le mieux votre problème.<br class="fc3-br-desktop"> FIXEO trouve les artisans adaptés à votre situation.</p>
+      <h2 id="services-title" class="fc3-title">Mon problème,<br class="fc3-br-title"> c'est ça.</h2>
+      <p class="fc3-subtitle">Choisissez ce qui vous correspond.<br class="fc3-br-desktop"> FIXEO trouve les artisans disponibles près de chez vous.</p>
     </header>
 
-    <!-- ── City filter — JS reads services-city-filter; city-quick-chips is the visible UI ── -->
-    <div class="services-filter services-filter-bar">
+    <!-- ── Contextual city bar ── -->
+    <!-- Default: chips (no city known). JS replaces with detected state when city is in localStorage. -->
+    <div class="services-filter services-filter-bar fc3-city-context" id="fc3-city-context">
+      <!-- Hidden native select — JS reads this for city value; visually replaced by city-quick-chips -->
       <select id="services-city-filter" class="city-filter-select" aria-label="Filtrer les artisans par ville">
         <option value="">Toutes les villes</option>
         <option value="Casablanca">Casablanca</option>
@@ -2831,9 +2833,16 @@ section#home.hero.hero-section {
         <option value="Safi">Safi</option>
         <option value="El Jadida">El Jadida</option>
       </select>
-      <span id="services-city-label" style="font-size:0.82rem;color:#20c997;display:none">
-        ✅ <span id="services-city-name"></span>
-      </span>
+
+      <!-- STATE A: city detected — shown by JS when fixeo_detected_city is set -->
+      <div class="fc3-city-detected" id="fc3-city-detected" style="display:none" aria-live="polite">
+        <span class="fc3-city-pin" aria-hidden="true">📍</span>
+        <span class="fc3-city-detected-name" id="fc3-city-detected-name"></span>
+        <span class="fc3-city-detected-label">détectée</span>
+        <button class="fc3-city-change-btn" id="fc3-city-change-btn" type="button" aria-label="Changer de ville">Changer</button>
+      </div>
+
+      <!-- STATE B: city unknown — chips always present; hidden by JS when city detected -->
       <div class="city-quick-chips" id="city-quick-chips">
         <button class="city-chip" data-city="Casablanca">Casablanca</button>
         <button class="city-chip" data-city="Rabat">Rabat</button>
@@ -2849,11 +2858,11 @@ section#home.hero.hero-section {
 
       <!-- All (show everything) -->
       <button class="fc3-card chip service-chip" role="listitem" data-category="all" aria-pressed="false">
-        <span class="fc3-card-icon" aria-hidden="true">🔍</span>
+        <span class="fc3-card-icon" aria-hidden="true">✦</span>
         <span class="fc3-card-label">Toutes les situations</span>
       </button>
 
-      <!-- Plomberie situations -->
+      <!-- Plomberie -->
       <button class="fc3-card chip service-chip active" role="listitem" data-category="plomberie" aria-pressed="true">
         <span class="fc3-card-icon" aria-hidden="true">💧</span>
         <span class="fc3-card-label">J'ai une fuite d'eau</span>
@@ -2872,9 +2881,9 @@ section#home.hero.hero-section {
         <span class="fc3-card-urgency" aria-label="Intervention urgente possible">Urgent</span>
       </button>
 
-      <!-- Serrurerie -->
+      <!-- Serrurerie — 🔑 not 🚪 (avoid clash with menuiserie) -->
       <button class="fc3-card chip service-chip" role="listitem" data-category="serrurerie" aria-pressed="false">
-        <span class="fc3-card-icon" aria-hidden="true">🚪</span>
+        <span class="fc3-card-icon" aria-hidden="true">🔑</span>
         <span class="fc3-card-label">Je suis bloqué dehors</span>
         <span class="fc3-card-urgency" aria-label="Intervention urgente possible">Urgent</span>
       </button>
@@ -2885,9 +2894,9 @@ section#home.hero.hero-section {
         <span class="fc3-card-label">Mon climatiseur ne fonctionne plus</span>
       </button>
 
-      <!-- Menuiserie -->
+      <!-- Menuiserie — 🪚 distinct from serrurerie -->
       <button class="fc3-card chip service-chip" role="listitem" data-category="menuiserie" aria-pressed="false">
-        <span class="fc3-card-icon" aria-hidden="true">🚪</span>
+        <span class="fc3-card-icon" aria-hidden="true">🪚</span>
         <span class="fc3-card-label">Une porte ou fenêtre à réparer</span>
       </button>
 
@@ -2909,9 +2918,9 @@ section#home.hero.hero-section {
         <span class="fc3-card-label">Nettoyage après travaux</span>
       </button>
 
-      <!-- Carrelage -->
+      <!-- Carrelage — 🪟 → distinct tile shape -->
       <button class="fc3-card chip service-chip" role="listitem" data-category="carrelage" aria-pressed="false">
-        <span class="fc3-card-icon" aria-hidden="true">⬜</span>
+        <span class="fc3-card-icon" aria-hidden="true">🪵</span>
         <span class="fc3-card-label">Du carrelage à poser ou réparer</span>
       </button>
 
@@ -2929,12 +2938,71 @@ section#home.hero.hero-section {
 
     </div><!-- /fc3-situations -->
 
-    <!-- Transition — leads naturally into artisan results below -->
-    <p class="fc3-hint">
-      Les artisans disponibles près de chez vous apparaissent juste en dessous.
-    </p>
+    <!-- ── Specialized solutions — JS appends these; anchor them here ── -->
+    <div class="fc3-specialized-block">
+      <span class="fc3-specialized-label">Autres solutions</span>
+      <div class="fc3-specialized-chips category-chips" id="fc3-specialized-chips" role="list" aria-label="Solutions spécialisées">
+        <!-- JS (fixeo_homepage_premium_patch.js) appends energie-solaire / securite-surveillance / corporate-facilities here -->
+      </div>
+    </div>
+
+    <!-- ── Chapter transition — narrative bridge to artisan results ── -->
+    <div class="fc3-transition">
+      <p class="fc3-transition-text">
+        FIXEO recherche maintenant les meilleurs artisans
+        disponibles pour votre situation.
+      </p>
+      <span class="fc3-transition-arrow" aria-hidden="true"></span>
+    </div>
 
   </div><!-- /container -->
+
+  <!-- ── Chapter 3 contextual city intelligence (fc3-v2a) ── -->
+  <script>
+  (function () {
+    function fc3InitCity() {
+      try {
+        var city = localStorage.getItem('fixeo_detected_city');
+        if (!city) return;
+
+        var detected = document.getElementById('fc3-city-detected');
+        var nameEl   = document.getElementById('fc3-city-detected-name');
+        var chips    = document.getElementById('city-quick-chips');
+        var select   = document.getElementById('services-city-filter');
+        var changeBtn= document.getElementById('fc3-city-change-btn');
+
+        if (!detected || !chips) return;
+
+        if (nameEl) nameEl.textContent = city;
+        detected.style.display = 'flex';
+        chips.style.display    = 'none';
+
+        if (select) {
+          var opts = select.options;
+          for (var i = 0; i < opts.length; i++) {
+            if (opts[i].value === city) { select.value = city; break; }
+          }
+          select.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+
+        if (changeBtn) {
+          changeBtn.addEventListener('click', function () {
+            detected.style.display = 'none';
+            chips.style.display    = '';
+            if (select) { select.value = ''; select.dispatchEvent(new Event('change', { bubbles: true })); }
+          });
+        }
+      } catch (e) {}
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', fc3InitCity);
+    } else {
+      fc3InitCity();
+    }
+    setTimeout(fc3InitCity, 1200);
+  })();
+  </script>
 </section>
 <!-- ══════════════════════════════════════════════════════════
      FIXEO ENTREPRISES — Chapter transition (fxet-transition-v1a)

@@ -929,7 +929,10 @@
 
 (function () {
   function addFixeoNewServiceChips() {
-    const container = document.querySelector('.category-chips');
+    // Prefer the dedicated specialized container (Chapter 3 fc3-v2a);
+    // fall back to first .category-chips for backward compatibility.
+    const container = document.getElementById('fc3-specialized-chips') ||
+                      document.querySelector('.category-chips');
     if (!container) return;
 
     const newServices = [
@@ -939,13 +942,15 @@
     ];
 
     newServices.forEach(service => {
-     if (container.querySelector('[data-category="' + service.category + '"]')) return;
+      // Check both the specialized container and the main grid to avoid duplicates
+      if (document.querySelector('[data-category="' + service.category + '"]')) return;
       const chip = document.createElement('div');
-      chip.className = 'chip service-chip v12-fade-in visible svc-visible';
+      chip.className = 'fc3-spec-chip chip service-chip';
       chip.setAttribute('role', 'listitem');
       chip.setAttribute('data-category', service.category);
       chip.setAttribute('tabindex', '0');
-      chip.innerHTML = '<span class="chip-icon">' + service.icon + '</span>' + service.label;
+      chip.innerHTML = '<span class="fc3-card-icon" aria-hidden="true">' + service.icon + '</span>' +
+                       '<span class="fc3-card-label">' + service.label + '</span>';
       container.appendChild(chip);
     });
   }

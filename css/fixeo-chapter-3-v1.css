@@ -1,7 +1,7 @@
 /* ══════════════════════════════════════════════════════════════
-   FIXEO CHAPTER 3 — Vous vous reconnaissez ?
+   FIXEO CHAPTER 3 — Mon problème, c'est ça.
    Namespace: fc3-*  (scoped to #services)
-   Version: fc3-v1a
+   Version: fc3-v2a
 
    Question answered: "Can FIXEO solve MY problem?"
    Approach: situations, not professions.
@@ -20,6 +20,12 @@
   padding: clamp(64px, 8vw, 112px) 0 clamp(56px, 7vw, 96px);
   background: var(--fds-surface-bg, #05070f);
   position: relative;
+}
+
+/* Entrance animation — cards fade in from below on load */
+@keyframes fc3-card-enter {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 /* ── PART 1 — HEADER ─────────────────────────────────────────── */
@@ -49,6 +55,9 @@
   margin: 0 0 16px;
 }
 
+/* Mobile title line break */
+.fc3-br-title { display: none; }
+
 .fc3-subtitle {
   font-size: clamp(0.90rem, 1.5vw, 1.02rem);
   color: rgba(200, 212, 255, 0.55);
@@ -56,56 +65,65 @@
   margin: 0;
 }
 
-/* Hide <br> on mobile (subtitle wraps naturally) */
 .fc3-br-desktop { display: inline; }
 
-/* ── CITY BAR ────────────────────────────────────────────────── */
-.fc3-city-bar {
-  display: flex;
+/* ── CITY BAR — CONTEXTUAL ────────────────────────────────────── */
+/* The services-filter-bar is always present; JS switches between
+   city-detected (STATE A) and city-quick-chips (STATE B). */
+
+/* Detected state pill */
+.fc3-city-detected {
+  display: none; /* shown by JS when city is known */
   align-items: center;
-  justify-content: center;
-  gap: 10px;
-  margin-bottom: clamp(28px, 4vw, 44px);
-  flex-wrap: wrap;
-  /* No background on the bar itself — just the centered select */
-  max-width: max-content;
-  margin-left: auto;
-  margin-right: auto;
+  gap: 8px;
+  font-size: 0.84rem;
+  color: rgba(200, 212, 255, 0.72);
+  animation: fc3-city-appear 0.35s ease both;
 }
 
-.fc3-city-icon {
-  font-size: 0.95rem;
-  opacity: 0.65;
+@keyframes fc3-city-appear {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
 }
 
-.fc3-city-select {
-  /* Inherits .city-filter-select base styles */
-  background: rgba(72, 100, 255, 0.06);
-  border: 1px solid rgba(72, 100, 255, 0.18);
-  border-radius: 8px;
-  color: rgba(200, 212, 255, 0.80);
-  font-size: 0.85rem;
-  padding: 8px 14px;
+.fc3-city-pin {
+  font-size: 0.90rem;
+}
+
+.fc3-city-detected-name {
+  font-weight: 600;
+  color: rgba(220, 228, 255, 0.90);
+}
+
+.fc3-city-detected-label {
+  color: rgba(200, 212, 255, 0.45);
+  font-size: 0.80rem;
+}
+
+.fc3-city-change-btn {
+  background: none;
+  border: none;
+  padding: 3px 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: rgba(72, 100, 255, 0.75);
   cursor: pointer;
-  outline: none;
-  transition: border-color 0.2s ease;
-  -webkit-appearance: none;
-  appearance: none;
+  border-radius: 6px;
+  transition: color 0.15s ease, background 0.15s ease;
+  letter-spacing: 0.02em;
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
-.fc3-city-select:focus {
-  border-color: rgba(72, 100, 255, 0.50);
+.fc3-city-change-btn:hover {
+  color: rgba(72, 100, 255, 1);
+  background: rgba(72, 100, 255, 0.06);
+  text-decoration: none;
 }
 
-.fc3-city-confirmed {
-  font-size: 0.82rem;
-  color: #20c997;
-}
-
-/* ── SITUATION CARDS ─────────────────────────────────────────── */
+/* ── SITUATION CARDS GRID ────────────────────────────────────── */
 /* Higher specificity to beat fixeo-network-v1.css !important rules */
 
-/* Grid — must override #services .category-chips { display:flex !important } */
 #services.fc3-chapter .fc3-situations {
   display: grid !important;
   grid-template-columns: repeat(3, 1fr) !important;
@@ -117,7 +135,7 @@
   padding: 0 !important;
 }
 
-/* Single card — must override #services .chip.service-chip { display:inline-flex !important } */
+/* Single card */
 #services.fc3-chapter .fc3-card,
 #services.fc3-chapter .fc3-card.chip.service-chip {
   appearance: none;
@@ -141,49 +159,101 @@
   font-size: inherit !important;
   font-weight: inherit !important;
   box-shadow: none !important;
+  overflow: hidden !important;
   transition:
     background 0.22s ease,
     border-color 0.22s ease,
-    transform 0.15s ease !important;
+    box-shadow 0.22s ease,
+    transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+
+  /* Entrance animation — staggered via nth-child */
+  animation: fc3-card-enter 0.45s ease both !important;
 }
 
+/* Staggered entrance — 13 cards */
+#services.fc3-chapter .fc3-card:nth-child(1)  { animation-delay: 0.00s !important; }
+#services.fc3-chapter .fc3-card:nth-child(2)  { animation-delay: 0.04s !important; }
+#services.fc3-chapter .fc3-card:nth-child(3)  { animation-delay: 0.08s !important; }
+#services.fc3-chapter .fc3-card:nth-child(4)  { animation-delay: 0.12s !important; }
+#services.fc3-chapter .fc3-card:nth-child(5)  { animation-delay: 0.16s !important; }
+#services.fc3-chapter .fc3-card:nth-child(6)  { animation-delay: 0.20s !important; }
+#services.fc3-chapter .fc3-card:nth-child(7)  { animation-delay: 0.24s !important; }
+#services.fc3-chapter .fc3-card:nth-child(8)  { animation-delay: 0.28s !important; }
+#services.fc3-chapter .fc3-card:nth-child(9)  { animation-delay: 0.32s !important; }
+#services.fc3-chapter .fc3-card:nth-child(10) { animation-delay: 0.36s !important; }
+#services.fc3-chapter .fc3-card:nth-child(11) { animation-delay: 0.40s !important; }
+#services.fc3-chapter .fc3-card:nth-child(12) { animation-delay: 0.44s !important; }
+#services.fc3-chapter .fc3-card:nth-child(13) { animation-delay: 0.48s !important; }
+
+/* Hover — gentle lift + soft glow */
 #services.fc3-chapter .fc3-card:hover,
 #services.fc3-chapter .fc3-card.chip.service-chip:hover {
-  background: rgba(72, 100, 255, 0.09) !important;
-  border-color: rgba(72, 100, 255, 0.30) !important;
-  transform: translateY(-2px) !important;
-  color: rgba(220, 228, 255, 0.95) !important;
+  background: rgba(72, 100, 255, 0.08) !important;
+  border-color: rgba(72, 100, 255, 0.28) !important;
+  box-shadow:
+    0 4px 20px rgba(72, 100, 255, 0.10),
+    0 1px 4px rgba(0, 0, 0, 0.18) !important;
+  transform: translateY(-3px) !important;
+  color: rgba(230, 236, 255, 0.96) !important;
 }
 
+/* Press */
 #services.fc3-chapter .fc3-card:active {
-  transform: translateY(0) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 2px 8px rgba(72, 100, 255, 0.08) !important;
 }
 
-/* Active state */
+/* Active (selected) */
 #services.fc3-chapter .fc3-card.active,
 #services.fc3-chapter .fc3-card[aria-pressed="true"],
 #services.fc3-chapter .fc3-card.chip.service-chip.active {
-  background: rgba(72, 100, 255, 0.12) !important;
-  border-color: rgba(72, 100, 255, 0.55) !important;
-  box-shadow: 0 0 0 3px rgba(72, 100, 255, 0.08) !important;
+  background: rgba(72, 100, 255, 0.11) !important;
+  border-color: rgba(72, 100, 255, 0.52) !important;
+  box-shadow:
+    0 0 0 3px rgba(72, 100, 255, 0.10),
+    0 4px 20px rgba(72, 100, 255, 0.12) !important;
   color: #ffffff !important;
 }
 
+/* Active shimmer — ::before overlay stripe */
+#services.fc3-chapter .fc3-card.active::before,
+#services.fc3-chapter .fc3-card[aria-pressed="true"]::before {
+  content: '';
+  position: absolute !important;
+  inset: 0 !important;
+  background: linear-gradient(
+    135deg,
+    rgba(72, 100, 255, 0.06) 0%,
+    transparent 60%
+  ) !important;
+  border-radius: inherit !important;
+  pointer-events: none !important;
+}
+
+/* Focus ring */
 #services.fc3-chapter .fc3-card:focus-visible {
   outline: 2px solid rgba(72, 100, 255, 0.60) !important;
   outline-offset: 2px !important;
 }
 
-/* Situation icon */
+/* ── CARD INTERNALS ──────────────────────────────────────────── */
+/* Icon — consistent visual weight across all 13 situations */
 .fc3-card-icon {
-  font-size: 1.55rem;
+  font-size: 1.45rem;   /* unified — all at 1.45rem, no variation */
   line-height: 1;
   display: block;
-  /* Prevent layout shift from emoji width variation */
-  width: 1.6rem;
+  width: 1.6rem;        /* fixed width prevents layout shift on emoji variations */
+  flex-shrink: 0;
 }
 
-/* Situation label — the human phrase */
+/* "All" card — text star, not emoji — consistent visual weight */
+.fc3-card[data-category="all"] .fc3-card-icon {
+  font-size: 1.10rem !important;
+  color: rgba(72, 100, 255, 0.55);
+  font-style: normal;
+}
+
+/* Label — human phrase */
 .fc3-card-label {
   font-size: 0.88rem !important;
   font-weight: 500 !important;
@@ -193,37 +263,157 @@
   flex: 1;
 }
 
-/* Active state label */
+/* Active label */
 #services.fc3-chapter .fc3-card.active .fc3-card-label,
 #services.fc3-chapter .fc3-card[aria-pressed="true"] .fc3-card-label {
   color: #ffffff !important;
   font-weight: 600 !important;
 }
 
-/* Urgency badge — small pill, urgent situations only */
+/* Urgency badge */
 .fc3-card-urgency {
   display: inline-block;
-  font-size: 0.60rem;
+  font-size: 0.58rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
   color: rgba(225, 48, 108, 0.90);
-  background: rgba(225, 48, 108, 0.08);
-  border: 1px solid rgba(225, 48, 108, 0.18);
+  background: rgba(225, 48, 108, 0.07);
+  border: 1px solid rgba(225, 48, 108, 0.16);
   border-radius: 999px;
   padding: 3px 8px;
   line-height: 1;
   align-self: flex-start;
+  flex-shrink: 0;
 }
 
-/* ── HINT ────────────────────────────────────────────────────── */
-.fc3-hint {
+/* ── SPECIALIZED SOLUTIONS BLOCK ─────────────────────────────── */
+.fc3-specialized-block {
+  max-width: 900px;
+  margin: 0 auto clamp(28px, 4vw, 40px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.fc3-specialized-label {
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: rgba(200, 212, 255, 0.28);
+}
+
+/* Specialized chips row — JS appends 3 chips here */
+#services.fc3-chapter .fc3-specialized-chips {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  justify-content: center !important;
+  gap: 10px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Specialized chip — inherits fc3-card but horizontal pill style */
+#services.fc3-chapter .fc3-spec-chip,
+#services.fc3-chapter .fc3-spec-chip.chip.service-chip {
+  appearance: none;
+  -webkit-appearance: none;
+  display: inline-flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 7px !important;
+  padding: 9px 16px !important;
+  border: 1px solid rgba(72, 100, 255, 0.12) !important;
+  background: rgba(72, 100, 255, 0.03) !important;
+  border-radius: 24px !important;
+  cursor: pointer !important;
+  font-size: 0.82rem !important;
+  font-weight: 500 !important;
+  color: rgba(200, 212, 255, 0.65) !important;
+  white-space: nowrap !important;
+  width: auto !important;
+  min-height: unset !important;
+  box-shadow: none !important;
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease !important;
+}
+
+#services.fc3-chapter .fc3-spec-chip:hover,
+#services.fc3-chapter .fc3-spec-chip.chip.service-chip:hover {
+  background: rgba(72, 100, 255, 0.07) !important;
+  border-color: rgba(72, 100, 255, 0.25) !important;
+  color: rgba(220, 228, 255, 0.90) !important;
+}
+
+#services.fc3-chapter .fc3-spec-chip.active,
+#services.fc3-chapter .fc3-spec-chip[aria-pressed="true"] {
+  background: rgba(72, 100, 255, 0.10) !important;
+  border-color: rgba(72, 100, 255, 0.45) !important;
+  color: #ffffff !important;
+}
+
+/* Specialized chip icon — smaller than main cards */
+#services.fc3-chapter .fc3-spec-chip .fc3-card-icon {
+  font-size: 1.05rem !important;
+  width: auto !important;
+}
+
+#services.fc3-chapter .fc3-spec-chip .fc3-card-label {
+  font-size: 0.82rem !important;
+  color: inherit !important;
+  font-weight: 500 !important;
+}
+
+/* ── CHAPTER TRANSITION ───────────────────────────────────────── */
+/* Narrative bridge: FIXEO is now searching. */
+.fc3-transition {
   text-align: center;
-  font-size: 0.82rem;
-  color: rgba(200, 212, 255, 0.35);
+  padding-top: clamp(8px, 2vw, 16px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.fc3-transition-text {
+  font-size: 0.86rem;
+  color: rgba(200, 212, 255, 0.38);
   font-style: italic;
-  margin: 0;
   letter-spacing: 0.01em;
+  line-height: 1.55;
+  margin: 0;
+  max-width: 420px;
+}
+
+/* Downward arrow — indicates artisan results below */
+.fc3-transition-arrow {
+  display: block;
+  width: 1px;
+  height: 32px;
+  background: linear-gradient(
+    to bottom,
+    rgba(72, 100, 255, 0.22),
+    transparent
+  );
+  margin: 0 auto;
+  position: relative;
+}
+
+.fc3-transition-arrow::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 6px;
+  height: 6px;
+  border-right: 1px solid rgba(72, 100, 255, 0.30);
+  border-bottom: 1px solid rgba(72, 100, 255, 0.30);
+  transform: translateX(-50%) rotate(45deg);
 }
 
 /* ── RESPONSIVE ──────────────────────────────────────────────── */
@@ -256,17 +446,15 @@
     font-size: clamp(1.45rem, 6.2vw, 1.80rem);
   }
 
+  /* Break title on two lines on mobile for drama */
+  .fc3-br-title { display: inline; }
+
   .fc3-subtitle {
     font-size: 0.88rem;
   }
 
   .fc3-br-desktop {
     display: none;
-  }
-
-  .fc3-city-bar {
-    margin-bottom: 24px;
-    padding: 0 20px;
   }
 
   #services.fc3-chapter .fc3-situations {
@@ -284,12 +472,16 @@
     gap: 8px !important;
   }
 
-  .fc3-card-icon { font-size: 1.35rem !important; }
+  .fc3-card-icon { font-size: 1.25rem !important; }
   .fc3-card-label { font-size: 0.82rem !important; }
 
-  .fc3-hint {
+  .fc3-specialized-block {
     padding: 0 20px;
-    font-size: 0.78rem;
+  }
+
+  .fc3-transition-text {
+    font-size: 0.82rem;
+    padding: 0 20px;
   }
 }
 
@@ -307,17 +499,20 @@
     min-height: 80px !important;
   }
 
-  .fc3-card-icon { font-size: 1.20rem !important; }
+  .fc3-card-icon { font-size: 1.15rem !important; }
   .fc3-card-label { font-size: 0.78rem !important; }
 }
 
-/* Reduced motion */
+/* Reduced motion — respect accessibility */
 @media (prefers-reduced-motion: reduce) {
-  .fc3-card {
-    transition: background 0.1s ease, border-color 0.1s ease;
-    transform: none !important;
+  #services.fc3-chapter .fc3-card,
+  #services.fc3-chapter .fc3-card.chip.service-chip {
+    animation: none !important;
+    transition: background 0.1s ease, border-color 0.1s ease !important;
   }
-  .fc3-card:hover {
-    transform: none;
+
+  #services.fc3-chapter .fc3-card:hover,
+  #services.fc3-chapter .fc3-card.chip.service-chip:hover {
+    transform: none !important;
   }
 }
