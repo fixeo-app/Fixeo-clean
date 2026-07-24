@@ -2056,6 +2056,8 @@ section#home.hero.hero-section {
   <link rel="stylesheet" href="css/fixeo-urgent-modal-v3.css?v=fuv3-v1a">
   <link rel="stylesheet" href="css/fixeo-urgent-modal-v3-patch.css?v=fuv3-v1b">
   <link rel="stylesheet" href="css/fixeo-modal-scroll-fix.css?v=fxmsf-v1b">
+  <!-- V3 shell: loads last, wins specificity over all legacy modal CSS -->
+  <link rel="stylesheet" href="css/fixeo-request-modal-v3.css?v=fxrmv3-v1a">
   <link rel="stylesheet" href="css/fixeo-live-engine-v1.css?v=fle-v2a">
   <link rel="stylesheet" href="css/fixeo-brain-engine-v1.css?v=fbe-v42">
   <link rel="stylesheet" href="css/fixeo-chapter-2-v1.css?v=fc2-v1c">
@@ -2271,25 +2273,18 @@ section#home.hero.hero-section {
   }
 
   function forceOpenRequestModal() {
+    /* V3 lifecycle — route through FixeoRequestModalV3 when available */
+    if (window.FixeoRequestModalV3 && typeof FixeoRequestModalV3.open === 'function') {
+      FixeoRequestModalV3.open(null, null);
+      return;
+    }
+    /* Fallback: legacy path (kept for safety during V3 load race) */
     const modal = document.getElementById('request-modal');
     const backdrop = document.getElementById('main-backdrop') || document.querySelector('.modal-backdrop');
     if (!modal) return;
-
-    modal.style.display = 'block';
-    modal.removeAttribute('hidden');
-    modal.setAttribute('aria-hidden', 'false');
-    modal.classList.add('open', 'active');
-
+    modal.classList.add('open');
     backdrop?.classList.add('open');
-    backdrop?.removeAttribute('hidden');
-    backdrop?.setAttribute('aria-hidden', 'false');
-
-    document.body.classList.add('modal-open');
     document.body.style.overflow = 'hidden';
-
-    requestAnimationFrame(() => {
-      modal.querySelector('input, select, textarea, button')?.focus?.();
-    });
   }
 
   function handleRequestClick(event) {
@@ -3773,13 +3768,21 @@ section#home.hero.hero-section {
 </div>
 
 <!-- Request modal - publication de demande client -->
-<div class="modal request-modal" id="request-modal" role="dialog" aria-modal="true" aria-labelledby="request-modal-title" aria-describedby="request-modal-subtitle">
-  <div class="modal-header request-modal-header">
+<div class="modal request-modal" id="request-modal" role="dialog" aria-modal="true" aria-labelledby="fxrmv3-title-el" aria-describedby="fxrmv3-subtitle-el">
+  <!-- V3 header — clean namespace, no shared classes -->
+  <div class="fxrmv3-header">
+    <span class="fxrmv3-mode" aria-hidden="true">FIXEO</span>
+    <span class="fxrmv3-title" id="fxrmv3-title-el">Quel est le probl&#232;me&#160;?</span>
+    <span class="fxrmv3-subtitle" id="fxrmv3-subtitle-el">Un artisan Fixeo vous rappelle sous 30&#160;min</span>
+    <button class="fxrmv3-close" type="button" aria-label="Fermer le formulaire">&#x2715;</button>
+  </div>
+  <!-- Legacy header preserved for rollback — hidden by V3 CSS -->
+  <div class="modal-header request-modal-header" aria-hidden="true" style="display:none">
     <div>
       <h3 id="request-modal-title">Quel est le probl&#232;me&#160;?</h3>
       <p id="request-modal-subtitle" class="request-modal-subtitle">Un artisan Fixeo vous rappelle sous 30&#160;min</p>
     </div>
-    <button class="modal-close" type="button" onclick="window.FixeoClientRequest && window.FixeoClientRequest.closeStandard ? window.FixeoClientRequest.closeStandard('request-modal') : closeModal('request-modal')" aria-label="Fermer">✕</button>
+    <button class="modal-close" type="button" aria-label="Fermer">&#x2715;</button>
   </div>
 
   <div class="request-modal-shell">
@@ -4461,6 +4464,8 @@ window._fixeoAvatarNav = function () {
 <script src="js/fixeo-request-modal-v2.js?v=rmv2-v1a" defer></script>
 <script src="js/fixeo-urgent-modal-v3.js?v=fuv3-v1a" defer></script>
 <script src="js/fixeo-urgent-modal-v3-patch.js?v=fuv3-v1b" defer></script>
+<!-- V3 lifecycle: owns open/close/scroll-lock — loads after all modal engines -->
+<script src="js/fixeo-request-modal-v3.js?v=fxrmv3-v1a" defer></script>
 <!-- fixeo-live-engine-v1.js removed 2026-07-12: simulation replaced by static Truth Engine (fle-v2a) -->
 <script src="js/fixeo-ai-request-engine.js?v=aire-v1a" defer></script>
 <script src="js/fixeo-hero-insights.js?v=fxhi-v1c" defer></script>
