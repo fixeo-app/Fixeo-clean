@@ -99,64 +99,75 @@
 }
 
 /* ── SITUATION CARDS ─────────────────────────────────────────── */
-/* Grid: 3 columns desktop, 2 tablet, 2 mobile */
-.fc3-situations {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 14px;
-  max-width: 900px;
-  margin: 0 auto clamp(28px, 4vw, 44px);
-  /* Override .category-chips flex layout from fixeo-network-v1.css */
+/* Higher specificity to beat fixeo-network-v1.css !important rules */
+
+/* Grid — must override #services .category-chips { display:flex !important } */
+#services.fc3-chapter .fc3-situations {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 14px !important;
+  max-width: 900px !important;
+  margin: 0 auto clamp(28px, 4vw, 44px) !important;
   flex-wrap: unset !important;
+  justify-content: unset !important;
+  padding: 0 !important;
 }
 
-/* Single card */
-.fc3-card {
-  /* Reset chip styles */
+/* Single card — must override #services .chip.service-chip { display:inline-flex !important } */
+#services.fc3-chapter .fc3-card,
+#services.fc3-chapter .fc3-card.chip.service-chip {
   appearance: none;
   -webkit-appearance: none;
-  border: 1px solid rgba(72, 100, 255, 0.12);
-  background: rgba(72, 100, 255, 0.04);
-  border-radius: 14px;
-  padding: 18px 16px 16px;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 10px;
-  text-align: left;
-  position: relative;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 10px !important;
+  border: 1px solid rgba(72, 100, 255, 0.12) !important;
+  background: rgba(72, 100, 255, 0.04) !important;
+  border-radius: 14px !important;
+  padding: 18px 16px 16px !important;
+  cursor: pointer !important;
+  text-align: left !important;
+  position: relative !important;
+  width: 100% !important;
+  min-height: 96px !important;
+  white-space: normal !important;
+  line-height: 1.4 !important;
+  color: rgba(220, 228, 255, 0.88) !important;
+  font-size: inherit !important;
+  font-weight: inherit !important;
+  box-shadow: none !important;
   transition:
     background 0.22s ease,
     border-color 0.22s ease,
-    transform 0.15s ease;
-  width: 100%;
-  min-height: 96px;
-  /* Override chip horizontal layout */
-  flex-direction: column !important;
+    transform 0.15s ease !important;
 }
 
-.fc3-card:hover {
-  background: rgba(72, 100, 255, 0.09);
-  border-color: rgba(72, 100, 255, 0.30);
-  transform: translateY(-2px);
+#services.fc3-chapter .fc3-card:hover,
+#services.fc3-chapter .fc3-card.chip.service-chip:hover {
+  background: rgba(72, 100, 255, 0.09) !important;
+  border-color: rgba(72, 100, 255, 0.30) !important;
+  transform: translateY(-2px) !important;
+  color: rgba(220, 228, 255, 0.95) !important;
 }
 
-.fc3-card:active {
-  transform: translateY(0);
+#services.fc3-chapter .fc3-card:active {
+  transform: translateY(0) !important;
 }
 
-/* Active state — matches a selected situation */
-.fc3-card.active,
-.fc3-card[aria-pressed="true"] {
-  background: rgba(72, 100, 255, 0.12);
-  border-color: rgba(72, 100, 255, 0.55);
-  box-shadow: 0 0 0 3px rgba(72, 100, 255, 0.08);
+/* Active state */
+#services.fc3-chapter .fc3-card.active,
+#services.fc3-chapter .fc3-card[aria-pressed="true"],
+#services.fc3-chapter .fc3-card.chip.service-chip.active {
+  background: rgba(72, 100, 255, 0.12) !important;
+  border-color: rgba(72, 100, 255, 0.55) !important;
+  box-shadow: 0 0 0 3px rgba(72, 100, 255, 0.08) !important;
+  color: #ffffff !important;
 }
 
-.fc3-card:focus-visible {
-  outline: 2px solid rgba(72, 100, 255, 0.60);
-  outline-offset: 2px;
+#services.fc3-chapter .fc3-card:focus-visible {
+  outline: 2px solid rgba(72, 100, 255, 0.60) !important;
+  outline-offset: 2px !important;
 }
 
 /* Situation icon */
@@ -170,19 +181,19 @@
 
 /* Situation label — the human phrase */
 .fc3-card-label {
-  font-size: 0.88rem;
-  font-weight: 500;
-  color: rgba(220, 228, 255, 0.88);
-  line-height: 1.40;
-  display: block;
+  font-size: 0.88rem !important;
+  font-weight: 500 !important;
+  color: rgba(220, 228, 255, 0.88) !important;
+  line-height: 1.40 !important;
+  display: block !important;
   flex: 1;
 }
 
 /* Active state label */
-.fc3-card.active .fc3-card-label,
-.fc3-card[aria-pressed="true"] .fc3-card-label {
-  color: #ffffff;
-  font-weight: 600;
+#services.fc3-chapter .fc3-card.active .fc3-card-label,
+#services.fc3-chapter .fc3-card[aria-pressed="true"] .fc3-card-label {
+  color: #ffffff !important;
+  font-weight: 600 !important;
 }
 
 /* Urgency badge — small pill, urgent situations only */
@@ -215,10 +226,10 @@
 
 /* Tablet: 2 columns */
 @media (max-width: 899px) {
-  .fc3-situations {
-    grid-template-columns: repeat(2, 1fr);
-    max-width: 640px;
-    gap: 12px;
+  #services.fc3-chapter .fc3-situations {
+    grid-template-columns: repeat(2, 1fr) !important;
+    max-width: 640px !important;
+    gap: 12px !important;
   }
 
   .fc3-title {
@@ -246,7 +257,7 @@
   }
 
   .fc3-br-desktop {
-    display: none; /* let subtitle wrap naturally on mobile */
+    display: none;
   }
 
   .fc3-city-bar {
@@ -254,27 +265,23 @@
     padding: 0 20px;
   }
 
-  .fc3-situations {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-    max-width: 100%;
-    padding: 0 20px;
+  #services.fc3-chapter .fc3-situations {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+    max-width: 100% !important;
+    padding: 0 20px !important;
   }
 
-  .fc3-card {
-    padding: 14px 12px 12px;
-    border-radius: 12px;
-    min-height: 88px;
-    gap: 8px;
+  #services.fc3-chapter .fc3-card,
+  #services.fc3-chapter .fc3-card.chip.service-chip {
+    padding: 14px 12px 12px !important;
+    border-radius: 12px !important;
+    min-height: 88px !important;
+    gap: 8px !important;
   }
 
-  .fc3-card-icon {
-    font-size: 1.35rem;
-  }
-
-  .fc3-card-label {
-    font-size: 0.82rem;
-  }
+  .fc3-card-icon { font-size: 1.35rem !important; }
+  .fc3-card-label { font-size: 0.82rem !important; }
 
   .fc3-hint {
     padding: 0 20px;
@@ -284,24 +291,20 @@
 
 /* Very small ≤374px */
 @media (max-width: 374px) {
-  .fc3-situations {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-    padding: 0 16px;
+  #services.fc3-chapter .fc3-situations {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+    padding: 0 16px !important;
   }
 
-  .fc3-card {
-    padding: 12px 10px 10px;
-    min-height: 80px;
+  #services.fc3-chapter .fc3-card,
+  #services.fc3-chapter .fc3-card.chip.service-chip {
+    padding: 12px 10px 10px !important;
+    min-height: 80px !important;
   }
 
-  .fc3-card-icon {
-    font-size: 1.20rem;
-  }
-
-  .fc3-card-label {
-    font-size: 0.78rem;
-  }
+  .fc3-card-icon { font-size: 1.20rem !important; }
+  .fc3-card-label { font-size: 0.78rem !important; }
 }
 
 /* Reduced motion */
