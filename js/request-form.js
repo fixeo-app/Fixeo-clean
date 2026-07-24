@@ -861,6 +861,13 @@
     const modal = id ? document.getElementById(id) : null;
     modal?.classList.remove('open');
     syncCoreModalBackdrop(false);
+    /* Remove body classes set by forceOpenRequestModal (mobile nav path)
+       and by any header-unified / fixeo-header-global open paths.
+       Without this, body.modal-open { height:100dvh; overflow:hidden }
+       persists after close on iOS/Android, making the page un-scrollable. */
+    document.body.classList.remove('modal-open');
+    /* Restore inline style overflow in case both paths were used */
+    document.body.style.overflow = '';
   }
 
   function $(selector, root = document) {

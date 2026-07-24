@@ -1539,6 +1539,8 @@ function closeModal(id) {
   }
   document.querySelector('.modal-backdrop')?.classList.remove('open');
   document.body.style.overflow = '';
+  /* Remove body classes that lock scroll on iOS/Android */
+  document.body.classList.remove('modal-open');
 }
 function findMarketplaceArtisanById(id) {
   return ARTISANS.find(x => String(x.id) === String(id)) || null;

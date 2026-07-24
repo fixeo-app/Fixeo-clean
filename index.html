@@ -2055,7 +2055,7 @@ section#home.hero.hero-section {
   <link rel="stylesheet" href="css/fixeo-request-modal-v2.css?v=rmv2-v1a">
   <link rel="stylesheet" href="css/fixeo-urgent-modal-v3.css?v=fuv3-v1a">
   <link rel="stylesheet" href="css/fixeo-urgent-modal-v3-patch.css?v=fuv3-v1b">
-  <link rel="stylesheet" href="css/fixeo-modal-scroll-fix.css?v=fxmsf-v1a">
+  <link rel="stylesheet" href="css/fixeo-modal-scroll-fix.css?v=fxmsf-v1b">
   <link rel="stylesheet" href="css/fixeo-live-engine-v1.css?v=fle-v2a">
   <link rel="stylesheet" href="css/fixeo-brain-engine-v1.css?v=fbe-v42">
   <link rel="stylesheet" href="css/fixeo-chapter-2-v1.css?v=fc2-v1c">
@@ -3624,7 +3624,7 @@ section#home.hero.hero-section {
       <!-- 3. Primary CTA -->
       <button class="cta-main final-cta-primary" type="button"
               data-request-mode="marketplace"
-              onclick="if(window.FixeoClientRequest&&typeof FixeoClientRequest.open==='function'){FixeoClientRequest.open();}else if(window.QuickSearchModal&&typeof QuickSearchModal.focusInline==='function'){QuickSearchModal.focusInline();}else{document.getElementById('artisans-section')?.scrollIntoView({behavior:'smooth'});}">
+              onclick="if(window.FixeoClientRequest&&typeof FixeoClientRequest.open==='function'){FixeoClientRequest.open(this);}else if(window.QuickSearchModal&&typeof QuickSearchModal.focusInline==='function'){QuickSearchModal.focusInline();}else{document.getElementById('artisans-section')?.scrollIntoView({behavior:'smooth'});}">
         📝 Publier ma demande gratuitement
       </button>
       <!-- 4. Secondary urgent CTA (one only) -->
