@@ -67,6 +67,10 @@
   gap: 10px;
   margin-bottom: clamp(28px, 4vw, 44px);
   flex-wrap: wrap;
+  /* No background on the bar itself — just the centered select */
+  max-width: max-content;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .fc3-city-icon {

@@ -2060,7 +2060,7 @@ section#home.hero.hero-section {
   <link rel="stylesheet" href="css/fixeo-brain-engine-v1.css?v=fbe-v42">
   <link rel="stylesheet" href="css/fixeo-chapter-2-v1.css?v=fc2-v1c">
   <link rel="stylesheet" href="css/fixeo-network-v1.css?v=fnv1a">
-  <link rel="stylesheet" href="css/fixeo-chapter-3-v1.css?v=fc3-v1b">
+  <link rel="stylesheet" href="css/fixeo-chapter-3-v1.css?v=fc3-v1c">
   <link rel="stylesheet" href="css/fixeo-narrative-v1.css?v=fnrv1a">
   <link rel="stylesheet" href="css/fixeo-discovery-compression-v1.css?v=dc-v1a">
   <link rel="stylesheet" href="css/fixeo-vision-v2.css?v=fxv-v2a">
@@ -2814,10 +2814,9 @@ section#home.hero.hero-section {
       <p class="fc3-subtitle">Choisissez ce qui décrit le mieux votre problème.<br class="fc3-br-desktop"> FIXEO trouve les artisans adaptés à votre situation.</p>
     </header>
 
-    <!-- ── City context (functional — JS reads services-city-filter) ── -->
-    <div class="fc3-city-bar services-filter services-filter-bar">
-      <span class="fc3-city-icon" aria-hidden="true">📍</span>
-      <select id="services-city-filter" class="fc3-city-select city-filter-select" aria-label="Filtrer par ville">
+    <!-- ── City filter — JS reads services-city-filter; city-quick-chips is the visible UI ── -->
+    <div class="services-filter services-filter-bar">
+      <select id="services-city-filter" class="city-filter-select" aria-label="Filtrer les artisans par ville">
         <option value="">Toutes les villes</option>
         <option value="Casablanca">Casablanca</option>
         <option value="Rabat">Rabat</option>
@@ -2832,9 +2831,17 @@ section#home.hero.hero-section {
         <option value="Safi">Safi</option>
         <option value="El Jadida">El Jadida</option>
       </select>
-      <span id="services-city-label" class="fc3-city-confirmed" style="display:none">
+      <span id="services-city-label" style="font-size:0.82rem;color:#20c997;display:none">
         ✅ <span id="services-city-name"></span>
       </span>
+      <div class="city-quick-chips" id="city-quick-chips">
+        <button class="city-chip" data-city="Casablanca">Casablanca</button>
+        <button class="city-chip" data-city="Rabat">Rabat</button>
+        <button class="city-chip" data-city="Fès">Fès</button>
+        <button class="city-chip" data-city="Tanger">Tanger</button>
+        <button class="city-chip" data-city="Marrakech">Marrakech</button>
+        <button class="city-chip city-chip-more">+ Plus</button>
+      </div>
     </div>
 
     <!-- ── Situation cards — data-category maps to existing JS filter ── -->
