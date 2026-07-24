@@ -65,7 +65,6 @@
 <link rel="stylesheet" href="css/hero-premium-upgrade.css?v=50a38b9"/>
 <link rel="stylesheet" href="css/hero-ux-fixes.css?v=50a38b9"/>
   <link rel="stylesheet" href="css/hero-conversion-boost.css?v=hcb10"/>
-<link rel="stylesheet" href="css/how-it-works-premium.css?v=hiw3"/>
 <link rel="stylesheet" href="css/services-premium.css?v=svcv7"/>
   <link rel="stylesheet" href="css/why-fixeo.css?v=wfx3b"/>
   <link rel="stylesheet" href="css/urgent-fab.css?v=fab2"/>
@@ -2035,7 +2034,6 @@ section#home.hero.hero-section {
 
   /* F. LEGACY SECTION PRE-HIDE - permanently hides duplicate/legacy blocks
      that overlap with current premium sections and must never appear.
-     .trust-section: duplicate of #why-fixeo-section content; stays in DOM
        as a layout anchor for moveHowItWorksAfterTrust() but renders nothing.
      .mobile-social-proof: old mobile strip below hero; duplicate of trust bar.
      #recommended-artisan-section: always hidden by hideSection() in optimizer. */
@@ -2061,7 +2059,7 @@ section#home.hero.hero-section {
   <link rel="stylesheet" href="css/fixeo-estimation-v2-hero.css?v=faee-v2c">
   <link rel="stylesheet" href="css/fixeo-live-engine-v1.css?v=fle-v2a">
   <link rel="stylesheet" href="css/fixeo-brain-engine-v1.css?v=fbe-v41">
-  <link rel="stylesheet" href="css/fixeo-journey-v1.css?v=fjv1a">
+  <link rel="stylesheet" href="css/fixeo-chapter-2-v1.css?v=fc2-v1a">
   <link rel="stylesheet" href="css/fixeo-network-v1.css?v=fnv1a">
   <link rel="stylesheet" href="css/fixeo-narrative-v1.css?v=fnrv1a">
   <link rel="stylesheet" href="css/fixeo-discovery-compression-v1.css?v=dc-v1a">
@@ -2959,156 +2957,25 @@ section#home.hero.hero-section {
   </div>
 </section>
 
-<!-- ═══ NARRATIVE BRIDGE ═══ -->
-<div class="fxn-bridge" aria-hidden="true">
-  <div class="container">
-    <p class="fxn-bridge-q">Comment FIXEO sélectionne-t-il les artisans que vous voyez ?</p>
-  </div>
-</div>
-
-<div class="section-divider" aria-hidden="true"></div>
 <!-- ══════════════════════════════════════════════════════════
-     4. CUSTOMER JOURNEY — 5-moment timeline
+     CHAPTER 2 — Ce qui se passe pendant que vous parlez
+     fc2-* namespace | LOCKED after merge
 ══════════════════════════════════════════════════════════ -->
-<section id="how-it-works" class="section how-it-works-section" aria-labelledby="how-title">
+<section id="fixeo-chapter-2" class="fc2-chapter" aria-labelledby="fc2-title">
   <div class="container">
 
-    <!-- ── Section header ── -->
-    <header class="cjx-header">
-      <span class="cjx-eyebrow">COMMENT ÇA MARCHE</span>
-      <h2 id="how-title" class="cjx-title">Votre besoin.<br>Notre réponse.</h2>
-      <p class="cjx-subtitle">Ce qui se passe dès que vous envoyez votre demande.</p>
+    <!-- ── PART 1 — The work has already started ─────────────── -->
+    <header class="fc2-header">
+      <span class="fc2-eyebrow">CE QUI SE PASSE MAINTENANT</span>
+      <h2 id="fc2-title" class="fc2-title">Pendant que vous décrivez.<br><em>FIXEO travaille déjà.</em></h2>
+      <p class="fc2-subtitle">Dès les premiers mots, l'analyse commence. Vous n'avez rien à faire d'autre qu'expliquer.</p>
     </header>
 
-    <!-- ══════════════════════════════════════════════════════
-         CUSTOMER JOURNEY — 5 moments
-         Desktop: horizontal timeline, eye L → R
-         Mobile:  vertical timeline, eye top → bottom
-    ══════════════════════════════════════════════════════ -->
-    <div class="cjx-journey" role="list" aria-label="Les 5 étapes de votre mise en relation">
+    <!-- ── PART 2 — The 8 analyses, felt not listed ─────────── -->
+    <!-- Brain Engine — 8 analyses, CSS-only orbital —
+    <div class="fc2-engine-wrap fbe-arena-wrap">
+      <div class="fc2-engine fbe-arena" aria-label="Les 8 analyses effectuées par FIXEO" aria-hidden="false">
 
-      <!-- Journey line — reveals on scroll, connects all moments -->
-      <div class="cjx-line" aria-hidden="true"></div>
-
-      <!-- ── Moment 1 — Le Problème ── -->
-      <article class="cjx-moment cjx-moment--1" role="listitem">
-        <div class="cjx-moment-icon" aria-hidden="true">💧</div>
-        <div class="cjx-moment-body">
-          <span class="cjx-moment-eyebrow">Vous avez un besoin.</span>
-          <h3 class="cjx-moment-headline">Une fuite.<br>Une panne.<br>Une urgence.</h3>
-          <p class="cjx-moment-sub">Décrivez-le en quelques mots.</p>
-        </div>
-      </article>
-
-      <!-- ── Moment 2 — La Compréhension ── -->
-      <article class="cjx-moment cjx-moment--2" role="listitem">
-        <div class="cjx-moment-icon" aria-hidden="true">⚙️</div>
-        <div class="cjx-moment-body">
-          <span class="cjx-moment-eyebrow">FIXEO comprend.</span>
-          <ul class="cjx-checks" aria-label="Capacités détectées">
-            <li class="cjx-check">
-              <span class="cjx-check-mark" aria-hidden="true">✓</span>
-              Métier identifié
-            </li>
-            <li class="cjx-check">
-              <span class="cjx-check-mark" aria-hidden="true">✓</span>
-              Urgence analysée
-            </li>
-            <li class="cjx-check">
-              <span class="cjx-check-mark" aria-hidden="true">✓</span>
-              Ville détectée
-            </li>
-            <li class="cjx-check">
-              <span class="cjx-check-mark" aria-hidden="true">✓</span>
-              Estimation préparée
-            </li>
-          </ul>
-        </div>
-      </article>
-
-      <!-- ── Moment 3 — Le Moteur ── -->
-      <article class="cjx-moment cjx-moment--3" role="listitem">
-        <div class="cjx-moment-icon" aria-hidden="true">🔮</div>
-        <div class="cjx-moment-body">
-          <span class="cjx-moment-eyebrow">Le moteur travaille.</span>
-          <div class="cjx-engine-words">
-            <div class="cjx-engine-row">
-              <span>Matching</span>
-              <span class="cjx-engine-dot" aria-hidden="true"></span>
-              <span>Sélection</span>
-            </div>
-            <div class="cjx-engine-row">
-              <span>Score</span>
-              <span class="cjx-engine-dot" aria-hidden="true"></span>
-              <span>Confiance</span>
-            </div>
-          </div>
-          <p class="cjx-engine-count">Parmi 1 134 artisans au Maroc.</p>
-        </div>
-      </article>
-
-      <!-- ── Moment 4 — Le Profil ── -->
-      <article class="cjx-moment cjx-moment--4" role="listitem">
-        <div class="cjx-moment-icon" aria-hidden="true">👤</div>
-        <div class="cjx-moment-body">
-          <span class="cjx-moment-eyebrow">Votre artisan.</span>
-          <h3 class="cjx-moment-headline">Les profils les&nbsp;plus adaptés vous sont proposés.</h3>
-          <p class="cjx-moment-sub">Pas imposé. Vous choisissez.</p>
-        </div>
-      </article>
-
-      <!-- ── Moment 5 — La Mise en Relation ── -->
-      <article class="cjx-moment cjx-moment--5" role="listitem">
-        <div class="cjx-moment-icon" aria-hidden="true">🤝</div>
-        <div class="cjx-moment-body">
-          <span class="cjx-moment-eyebrow">La mise en relation.</span>
-          <h3 class="cjx-moment-headline">La conversation commence.<br>La mission aussi.</h3>
-          <div class="cjx-final-trio" aria-label="Simple, Rapide, Humain">
-            <span>Simple</span>
-            <span>·</span>
-            <span>Rapide</span>
-            <span>·</span>
-            <span>Humain</span>
-          </div>
-        </div>
-      </article>
-
-    </div><!-- /.cjx-journey -->
-
-  </div><!-- /.container -->
-</section>
-
-<!-- ═══ NARRATIVE BRIDGE ═══ -->
-<div class="fxn-bridge" aria-hidden="true">
-  <div class="container">
-    <p class="fxn-bridge-q">Que se passe-t-il réellement derrière chaque mise en relation ?</p>
-  </div>
-</div>
-
-<div class="section-divider" aria-hidden="true"></div>
-<!-- FIXEO Truth Engine — fle-v2a (2026-07-12: simulation removed) -->
-<!-- ══════════════════════════════════════════════════════════
-     5. BRAIN ENGINE — orbital intelligence (MOVED from position 4)
-══════════════════════════════════════════════════════════ -->
-<section id="fle-section" aria-labelledby="fle-title">
-  <div class="container">
-
-    <!-- ── Section Header ── -->
-    <header class="fbe-header">
-      <div class="fbe-eyebrow">LE MOTEUR FIXEO</div>
-      <h2 id="fle-title" class="fbe-title">
-        L'intelligence qui coordonne<br><em>chaque mise en relation</em>
-      </h2>
-      <p class="fbe-subtitle">
-        Derrière chaque demande, un moteur de décision traite huit étapes réelles — simultanément, avec précision.
-      </p>
-    </header>
-
-    <!-- ── Orbital Arena (scroll-reveal wrapper) ── -->
-    <div class="fbe-arena-wrap">
-      <div class="fbe-arena" aria-hidden="true">
-
-        <!-- ── Depth layers: background particles + ambient field ── -->
         <div class="fbe-depth-bg">
           <div class="fbe-particle fbe-particle--1"></div>
           <div class="fbe-particle fbe-particle--2"></div>
@@ -3118,25 +2985,18 @@ section#home.hero.hero-section {
           <div class="fbe-particle fbe-particle--6"></div>
         </div>
 
-        <!-- ── Orbital rings (4: core boundary, processor ring, orbital, knowledge boundary) ── -->
         <div class="fbe-ring fbe-ring--core-bound"></div>
         <div class="fbe-ring fbe-ring--inner"></div>
         <div class="fbe-ring fbe-ring--mid"></div>
         <div class="fbe-ring fbe-ring--outer"></div>
 
-        <!-- ── Center core — RAFI as intelligence heart ── -->
-        <div class="fbe-core">
+        <!-- Center — the engine, not RAFI -->
+        <div class="fbe-core fc2-core">
           <div class="fbe-core-halo"></div>
-          <img
-            src="rafi/RAFI_V2_HeadCollar_Core.webp"
-            class="fbe-core-glyph"
-            width="92" height="92"
-            alt=""
-            loading="lazy"
-            decoding="async">
+          <div class="fc2-core-pulse" aria-hidden="true"></div>
+          <span class="fc2-core-label" aria-hidden="true">FIXEO</span>
         </div>
 
-        <!-- ── 8 Connector lines ── -->
         <div class="fbe-conn fbe-conn--1"></div>
         <div class="fbe-conn fbe-conn--2"></div>
         <div class="fbe-conn fbe-conn--3"></div>
@@ -3146,128 +3006,68 @@ section#home.hero.hero-section {
         <div class="fbe-conn fbe-conn--7"></div>
         <div class="fbe-conn fbe-conn--8"></div>
 
-        <!-- ── 8 Intelligence nodes ── -->
-        <!-- N1: Détection du service — fixeo-ai-request-engine.js NLP_MAP -->
         <div class="fbe-node fbe-node--1">
-          <div class="fbe-node-shell">
-            <div class="fbe-node-icon">🔍</div>
-          </div>
+          <div class="fbe-node-shell"><div class="fbe-node-icon">🔍</div></div>
           <span class="fbe-node-label">Détection<br>du service</span>
         </div>
-
-        <!-- N2: Analyse de l'urgence — detectUrgency() -->
         <div class="fbe-node fbe-node--2">
-          <div class="fbe-node-shell">
-            <div class="fbe-node-icon">⚡</div>
-          </div>
+          <div class="fbe-node-shell"><div class="fbe-node-icon">⚡</div></div>
           <span class="fbe-node-label">Analyse<br>urgence</span>
         </div>
-
-        <!-- N3: Localisation — scoreCityMatch() -->
         <div class="fbe-node fbe-node--3">
-          <div class="fbe-node-shell">
-            <div class="fbe-node-icon">📍</div>
-          </div>
+          <div class="fbe-node-shell"><div class="fbe-node-icon">📍</div></div>
           <span class="fbe-node-label">Localisation</span>
         </div>
-
-        <!-- N4: Estimation indicative — fixeo-estimation-engine-v1.js -->
         <div class="fbe-node fbe-node--4">
-          <div class="fbe-node-shell">
-            <div class="fbe-node-icon">💶</div>
-          </div>
+          <div class="fbe-node-shell"><div class="fbe-node-icon">💶</div></div>
           <span class="fbe-node-label">Estimation<br>indicative</span>
         </div>
-
-        <!-- N5: Profils compatibles — rankArtisansV2 filter -->
         <div class="fbe-node fbe-node--5">
-          <div class="fbe-node-shell">
-            <div class="fbe-node-icon">🗂️</div>
-          </div>
+          <div class="fbe-node-shell"><div class="fbe-node-icon">🗂️</div></div>
           <span class="fbe-node-label">Profils<br>compatibles</span>
         </div>
-
-        <!-- N6: Score de pertinence — rankArtisansV2 multi-factor -->
         <div class="fbe-node fbe-node--6">
-          <div class="fbe-node-shell">
-            <div class="fbe-node-icon">🎯</div>
-          </div>
+          <div class="fbe-node-shell"><div class="fbe-node-icon">🎯</div></div>
           <span class="fbe-node-label">Score de<br>pertinence</span>
         </div>
-
-        <!-- N7: Signal de confiance — scoreTrust() 0-100 -->
         <div class="fbe-node fbe-node--7">
-          <div class="fbe-node-shell">
-            <div class="fbe-node-icon">🛡️</div>
-          </div>
+          <div class="fbe-node-shell"><div class="fbe-node-icon">🛡️</div></div>
           <span class="fbe-node-label">Signal de<br>confiance</span>
         </div>
-
-        <!-- N8: Préparation — service_requests + notifications -->
         <div class="fbe-node fbe-node--8">
-          <div class="fbe-node-shell">
-            <div class="fbe-node-icon">📤</div>
-          </div>
+          <div class="fbe-node-shell"><div class="fbe-node-icon">📤</div></div>
           <span class="fbe-node-label">Préparation<br>mise en relation</span>
         </div>
 
-        <!-- ── Knowledge ring — 8 angular slots, 2 labels each, all verified ── -->
-        <!--
-          ALL labels verified against production code + confirmed data:
-          1 134 artisans → Supabase artisans table (1,134 records confirmed)
-          20 villes → sitemap-local-plombier.xml (20 cities confirmed)
-          12 métiers → NLP_MAP category list (12 categories confirmed)
-          Détection linguistique → NLP_MAP keyword matching, fixeo-ai-request-engine.js
-          Analyse de l'urgence → detectUrgency(), fixeo-ai-request-engine.js
-          Matching géographique → scoreCityMatch(), fixeo-dispatch-engine-v2.js
-          Score de pertinence → rankArtisansV2 multi-factor, fixeo-dispatch-engine-v2.js
-          Score de confiance → scoreTrust() 0-100, fixeo-dispatch-engine-v2.js
-          Estimation indicative → fixeo-estimation-engine-v1.js analyze()
-          Compatibilité métier → category filter, rankArtisansV2
-          Profils disponibles → getAllArtisans() filtered pool
-          Analyse multi-critères → multi-factor ranking
-          Notification artisan → notifications table INSERT
-          Mise en relation → service_requests table + dispatch
-          Préparation du dossier → pre-dispatch assembly
-          Archivage sécurisé → service_requests table persist
-        -->
         <div class="fbe-know">
-          <!-- Slot 1: top (0°) — alternates labels A/B -->
           <div class="fbe-know-slot fbe-know-slot--1">
             <span class="fbe-know-label fbe-know-a">1 134 artisans</span>
             <span class="fbe-know-label fbe-know-b">Analyse multi-critères</span>
           </div>
-          <!-- Slot 2: top-right (45°) -->
           <div class="fbe-know-slot fbe-know-slot--2">
             <span class="fbe-know-label fbe-know-a">Détection linguistique</span>
             <span class="fbe-know-label fbe-know-b">20 villes</span>
           </div>
-          <!-- Slot 3: right (90°) -->
           <div class="fbe-know-slot fbe-know-slot--3">
             <span class="fbe-know-label fbe-know-a">Score de confiance</span>
             <span class="fbe-know-label fbe-know-b">Notification artisan</span>
           </div>
-          <!-- Slot 4: bottom-right (135°) -->
           <div class="fbe-know-slot fbe-know-slot--4">
             <span class="fbe-know-label fbe-know-a">Matching géographique</span>
             <span class="fbe-know-label fbe-know-b">12 métiers</span>
           </div>
-          <!-- Slot 5: bottom (180°) -->
           <div class="fbe-know-slot fbe-know-slot--5">
             <span class="fbe-know-label fbe-know-a">Estimation indicative</span>
             <span class="fbe-know-label fbe-know-b">Préparation du dossier</span>
           </div>
-          <!-- Slot 6: bottom-left (225°) -->
           <div class="fbe-know-slot fbe-know-slot--6">
             <span class="fbe-know-label fbe-know-a">Compatibilité métier</span>
             <span class="fbe-know-label fbe-know-b">Analyse de l'urgence</span>
           </div>
-          <!-- Slot 7: left (270°) -->
           <div class="fbe-know-slot fbe-know-slot--7">
             <span class="fbe-know-label fbe-know-a">Profils disponibles</span>
             <span class="fbe-know-label fbe-know-b">Score de pertinence</span>
           </div>
-          <!-- Slot 8: top-left (315°) -->
           <div class="fbe-know-slot fbe-know-slot--8">
             <span class="fbe-know-label fbe-know-a">Mise en relation</span>
             <span class="fbe-know-label fbe-know-b">Archivage sécurisé</span>
@@ -3276,18 +3076,12 @@ section#home.hero.hero-section {
 
       </div><!-- /fbe-arena -->
 
-      <!-- ── Mobile layout ── -->
+      <!-- Mobile engine layout —
       <div class="fbe-mobile-engine" aria-hidden="true">
-        <div class="fbe-mobile-core">
-          <img
-            src="rafi/RAFI_V2_HeadCollar_Core.webp"
-            class="fbe-mobile-core-glyph"
-            width="92" height="92"
-            alt=""
-            loading="lazy"
-            decoding="async">
+        <div class="fbe-mobile-core fc2-mobile-core">
+          <div class="fc2-core-pulse"></div>
+          <span class="fc2-core-label">FIXEO</span>
         </div>
-        <!-- Mobile knowledge strip: 3 rotating labels -->
         <div class="fbe-mobile-know">
           <span class="fbe-mobile-know-label fbe-mkl--1">1 134 artisans · 20 villes · 12 métiers</span>
           <span class="fbe-mobile-know-label fbe-mkl--2">Détection linguistique · Score de confiance</span>
@@ -3305,107 +3099,65 @@ section#home.hero.hero-section {
         </div>
       </div>
 
-    </div><!-- /fbe-arena-wrap -->
+    </div><!-- /fc2-engine-wrap -->
 
-    <!-- ── Transparency note ── -->
-    <div class="fbe-label-panel" role="note">
-      <p class="fbe-label-text">
-        <strong>Fonctionnement réel du moteur FIXEO</strong> —
-        chaque nœud représente une étape effectivement traitée à chaque demande.
-      </p>
-    </div>
+    <!-- ── PART 3 — Why this produces better results ──────────
+         Not a new section. Not a new heading.
+         A natural continuation of the explanation above. -->
+    <div class="fc2-consequences">
+
+      <p class="fc2-because">Parce que FIXEO analyse tout cela,&nbsp;le résultat est différent.</p>
+
+      <div class="fc2-results" role="list">
+
+        <div class="fc2-result" role="listitem">
+          <div class="fc2-result-mark" aria-hidden="true">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 10 8 14 16 6"/></svg>
+          </div>
+          <div class="fc2-result-text">
+            <strong>L'artisan qui répond connaît déjà votre problème.</strong>
+            <span>Il n'arrive pas à l'aveugle. Il est sélectionné pour votre cas précis.</span>
+          </div>
+        </div>
+
+        <div class="fc2-result" role="listitem">
+          <div class="fc2-result-mark" aria-hidden="true">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 10 8 14 16 6"/></svg>
+          </div>
+          <div class="fc2-result-text">
+            <strong>Il est proche de chez vous.</strong>
+            <span>Les artisans de votre ville passent en premier. Toujours.</span>
+          </div>
+        </div>
+
+        <div class="fc2-result" role="listitem">
+          <div class="fc2-result-mark" aria-hidden="true">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 10 8 14 16 6"/></svg>
+          </div>
+          <div class="fc2-result-text">
+            <strong>Son profil a été vérifié.</strong>
+            <span>Identité, spécialité, références — contrôlés par notre équipe avant toute mise en relation.</span>
+          </div>
+        </div>
+
+        <div class="fc2-result" role="listitem">
+          <div class="fc2-result-mark" aria-hidden="true">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 10 8 14 16 6"/></svg>
+          </div>
+          <div class="fc2-result-text">
+            <strong>Vous payez après l'intervention.</strong>
+            <span>Pas avant. La mise en relation elle-même est gratuite.</span>
+          </div>
+        </div>
+
+      </div><!-- /fc2-results -->
+
+      <!-- Transition — creates the next question naturally -->
+      <p class="fc2-transition">Est-ce que FIXEO peut résoudre votre problème&nbsp;?</p>
+
+    </div><!-- /fc2-consequences -->
 
   </div><!-- /container -->
-</section>
-<div class="section-divider" aria-hidden="true"></div>
-
-<!-- ═══ NARRATIVE BRIDGE ═══ -->
-<div class="fxn-bridge" aria-hidden="true">
-  <div class="container">
-    <p class="fxn-bridge-q">Pourquoi ce moteur vous garantit-il le meilleur artisan ?</p>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════════════════════
-     6. WHY FIXEO — 6 rational benefits
-══════════════════════════════════════════════════════════ -->
-<section class="section" id="why-fixeo-section" aria-labelledby="why-fixeo-title">
-  <div class="container">
-    <div class="section-header why-fixeo-header">
-      <span class="section-tag wfx-tag">TECHNOLOGIE FIXEO</span>
-      <h2 id="why-fixeo-title">Le système intelligent derrière chaque intervention</h2>
-      <p>Derrière chaque mise en relation, une intelligence locale &mdash; rapide, pr&eacute;cise, humaine.</p>
-    </div>
-    <div class="why-fixeo-grid fxm-grid" id="why-fixeo-grid">
-
-      <div class="wf-card fxm-block why-card-1">
-        <div class="wf-icon-wrap fxm-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-        </div>
-        <div class="fxm-block-content">
-          <h3>Le bon artisan, au bon moment</h3>
-          <p>Fixeo croise disponibilit&eacute;, sp&eacute;cialit&eacute; et proximit&eacute; pour vous connecter au profil le plus pertinent.</p>
-        </div>
-        <div class="fxm-block-line" aria-hidden="true"></div>
-      </div>
-
-      <div class="wf-card fxm-block why-card-2">
-        <div class="wf-icon-wrap fxm-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-        </div>
-        <div class="fxm-block-content">
-          <h3>Priorit&eacute; aux artisans pr&egrave;s de vous</h3>
-          <p>Les artisans de votre ville passent toujours en premier. Plus vous &ecirc;tes proche, plus vite vous &ecirc;tes servi.</p>
-        </div>
-        <div class="fxm-block-line" aria-hidden="true"></div>
-      </div>
-
-      <div class="wf-card fxm-block why-card-3">
-        <div class="wf-icon-wrap fxm-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
-        </div>
-        <div class="fxm-block-content">
-          <h3>Chaque profil est valid&eacute;</h3>
-          <p>Identit&eacute;, sp&eacute;cialit&eacute;, r&eacute;f&eacute;rences &mdash; notre &eacute;quipe contr&ocirc;le chaque profil avant toute mise en relation.</p>
-        </div>
-        <div class="fxm-block-line" aria-hidden="true"></div>
-      </div>
-
-      <div class="wf-card fxm-block why-card-4">
-        <div class="wf-icon-wrap fxm-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2 11 13"/><path d="m22 2-7 20-4-9-9-4 20-7z"/></svg>
-        </div>
-        <div class="fxm-block-content">
-          <h3>Votre demande envoy&eacute;e en secondes</h3>
-          <p>D&egrave;s votre demande, les artisans disponibles et qualifi&eacute;s sont alert&eacute;s en temps r&eacute;el.</p>
-        </div>
-        <div class="fxm-block-line" aria-hidden="true"></div>
-      </div>
-
-      <div class="wf-card fxm-block why-card-5">
-        <div class="wf-icon-wrap fxm-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-        </div>
-        <div class="fxm-block-content">
-          <h3>Communication naturelle</h3>
-          <p>Les &eacute;changes se font via WhatsApp &mdash; le canal que les Marocains utilisent d&eacute;j&agrave; au quotidien.</p>
-        </div>
-        <div class="fxm-block-line" aria-hidden="true"></div>
-      </div>
-
-      <div class="wf-card fxm-block why-card-6">
-        <div class="wf-icon-wrap fxm-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-        </div>
-        <div class="fxm-block-content">
-          <h3>Fiabilit&eacute; qui se prouve</h3>
-          <p>Les artisans les mieux not&eacute;s remontent naturellement. Chaque intervention compte.</p>
-        </div>
-        <div class="fxm-block-line" aria-hidden="true"></div>
-      </div>
-
-    </div>
-  </div>
 </section>
 <div class="section-divider" aria-hidden="true"></div>
 <!-- ══════════════════════════════════════════════════════════
@@ -4284,7 +4036,6 @@ function openContentModal(type) {
 <script src="js/fixeo-express-route-shim.js?v=fxrs-v1b"></script>
 <script defer src="js/homepage-conversion-optimizer.js?v=hco3"></script>
 <script src="js/hero-ux-fixes.js?v=50a38b9"></script>
-<script src="js/how-it-works-premium.js?v=50a38b9" defer></script>
 <script src="js/services-premium.js?v=svcv8"></script>
 
 <script>

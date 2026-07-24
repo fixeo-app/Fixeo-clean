@@ -1,0 +1,306 @@
+/* ══════════════════════════════════════════════════════════════
+   FIXEO CHAPTER 2 — Ce qui se passe pendant que vous parlez
+   Namespace: fc2-*
+   Version: fc2-v1a
+   
+   Merges: #how-it-works (cjx-*) + #fle-section (fbe-*) + #why-fixeo-section
+   into ONE coherent narrative chapter.
+   
+   Dependencies:
+   - css/fixeo-brain-engine-v1.css  (fbe-* engine, nodes, rings, particles)
+   - css/fixeo-design-system-v1.css (fds-* tokens)
+   
+   Constraints:
+   - fc2-* namespace exclusively
+   - No JS — pure CSS
+   - Inherits fbe-* engine styles; only overrides center core
+   - Brain Engine exempt from design system overrides (per Phase 8 LOCK)
+══════════════════════════════════════════════════════════════ */
+
+/* ── CHAPTER WRAPPER ─────────────────────────────────────────── */
+.fc2-chapter {
+  padding: clamp(80px, 10vw, 140px) 0 clamp(60px, 8vw, 100px);
+  background: var(--fds-surface-bg, #05070f);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Ambient field — barely visible, tells the eye "this is one space" */
+.fc2-chapter::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 70%;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(72, 100, 255, 0.18) 50%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
+/* ── PART 1 — HEADER ─────────────────────────────────────────── */
+.fc2-header {
+  text-align: center;
+  max-width: 680px;
+  margin: 0 auto clamp(52px, 7vw, 88px);
+}
+
+.fc2-eyebrow {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(72, 100, 255, 0.75);
+  margin-bottom: 20px;
+}
+
+.fc2-title {
+  font-size: clamp(1.90rem, 4.0vw, 3.0rem);
+  font-weight: 700;
+  line-height: 1.20;
+  color: var(--fds-text-primary, #f0f4ff);
+  letter-spacing: -0.025em;
+  margin: 0 0 20px;
+}
+
+.fc2-title em {
+  font-style: normal;
+  /* Gradient: indigo → slightly lighter — engine is actively working */
+  background: linear-gradient(135deg, rgba(72,100,255,1) 0%, rgba(130,160,255,1) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.fc2-subtitle {
+  font-size: clamp(0.96rem, 1.6vw, 1.08rem);
+  color: var(--fds-text-secondary, rgba(200, 212, 255, 0.60));
+  line-height: 1.65;
+  margin: 0;
+}
+
+/* ── PART 2 — ENGINE WRAP ────────────────────────────────────── */
+/* Inherits fbe-arena-wrap sizing.
+   Only overrides: the center core (replaces RAFI image with engine glyph). */
+.fc2-engine-wrap {
+  margin: 0 auto clamp(48px, 7vw, 80px);
+}
+
+/* Center core override — remove RAFI, show engine identity */
+.fc2-core {
+  /* Override fbe-core to show engine label instead of image */
+  flex-direction: column;
+  gap: 0;
+}
+
+.fc2-core-pulse {
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at center,
+    rgba(72, 100, 255, 0.30) 0%,
+    rgba(72, 100, 255, 0.08) 55%,
+    transparent 75%
+  );
+  animation: fc2-pulse 2.8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.fc2-core-label {
+  font-size: 0.70rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(72, 100, 255, 0.85);
+  position: relative;
+  z-index: 2;
+  user-select: none;
+}
+
+/* Mobile core override */
+.fc2-mobile-core {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: rgba(72, 100, 255, 0.08);
+  border: 1.5px solid rgba(72, 100, 255, 0.28);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 0;
+  margin: 0 auto 20px;
+}
+
+/* ── PART 3 — CONSEQUENCES ───────────────────────────────────── */
+.fc2-consequences {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+/* Bridge sentence — flows from engine explanation */
+.fc2-because {
+  font-size: clamp(1.05rem, 1.8vw, 1.22rem);
+  font-weight: 600;
+  color: var(--fds-text-primary, #f0f4ff);
+  text-align: center;
+  margin: 0 0 clamp(32px, 5vw, 48px);
+  letter-spacing: -0.012em;
+  line-height: 1.45;
+}
+
+/* Results list — consequences, not features */
+.fc2-results {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-bottom: clamp(44px, 6vw, 64px);
+}
+
+.fc2-result {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 20px 0;
+  border-bottom: 1px solid rgba(72, 100, 255, 0.08);
+  transition: border-color 0.3s ease;
+}
+
+.fc2-result:first-child {
+  border-top: 1px solid rgba(72, 100, 255, 0.08);
+}
+
+/* Checkmark — minimal, confident */
+.fc2-result-mark {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  margin-top: 2px;
+  color: rgba(32, 201, 151, 0.85);
+}
+
+.fc2-result-mark svg {
+  width: 100%;
+  height: 100%;
+}
+
+.fc2-result-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.fc2-result-text strong {
+  font-size: 0.96rem;
+  font-weight: 600;
+  color: var(--fds-text-primary, #f0f4ff);
+  line-height: 1.4;
+  display: block;
+}
+
+.fc2-result-text span {
+  font-size: 0.88rem;
+  color: var(--fds-text-secondary, rgba(200, 212, 255, 0.55));
+  line-height: 1.55;
+  display: block;
+}
+
+/* Transition sentence — creates next question */
+.fc2-transition {
+  font-size: clamp(1.08rem, 1.9vw, 1.28rem);
+  font-weight: 500;
+  color: rgba(200, 212, 255, 0.55);
+  text-align: center;
+  margin: 0;
+  font-style: italic;
+  letter-spacing: -0.010em;
+  line-height: 1.45;
+  /* Soft emphasis on the question */
+  transition: color 0.3s ease;
+}
+
+/* ── KEYFRAMES ───────────────────────────────────────────────── */
+@keyframes fc2-pulse {
+  0%, 100% { opacity: 0.70; transform: scale(1.00); }
+  50%       { opacity: 1.00; transform: scale(1.10); }
+}
+
+/* ── RESPONSIVE ──────────────────────────────────────────────── */
+
+/* Tablet */
+@media (max-width: 1023px) {
+  .fc2-title {
+    font-size: clamp(1.70rem, 4.5vw, 2.4rem);
+  }
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+  .fc2-chapter {
+    padding: 64px 0 56px;
+  }
+
+  .fc2-header {
+    padding: 0 4px;
+    margin-bottom: 44px;
+  }
+
+  .fc2-title {
+    font-size: clamp(1.55rem, 6.5vw, 2.0rem);
+    line-height: 1.22;
+  }
+
+  .fc2-subtitle {
+    font-size: 0.93rem;
+  }
+
+  .fc2-because {
+    font-size: 1.02rem;
+    padding: 0 4px;
+  }
+
+  .fc2-result {
+    gap: 14px;
+    padding: 18px 0;
+  }
+
+  .fc2-result-text strong {
+    font-size: 0.93rem;
+  }
+
+  .fc2-result-text span {
+    font-size: 0.85rem;
+  }
+
+  .fc2-transition {
+    font-size: 1.02rem;
+    padding: 0 4px;
+  }
+}
+
+/* Small mobile */
+@media (max-width: 380px) {
+  .fc2-chapter {
+    padding: 52px 0 44px;
+  }
+
+  .fc2-title {
+    font-size: 1.45rem;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .fc2-core-pulse {
+    animation: none;
+    opacity: 0.5;
+  }
+}
