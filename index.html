@@ -2964,6 +2964,14 @@ section#home.hero.hero-section {
       try {
         var city = localStorage.getItem('fixeo_detected_city');
         if (!city) return;
+        // Validate: reject placeholders, emoji strings, or non-city values
+        // Known valid cities (must match select options)
+        var VALID = ['Casablanca','Rabat','Marrakech','Fès','Agadir','Tanger',
+                     'Meknès','Oujda','Kénitra','Tétouan','Safi','El Jadida'];
+        var isValid = VALID.some(function(c) {
+          return c.toLowerCase() === city.trim().toLowerCase();
+        });
+        if (!isValid) return; // Unknown/placeholder — fall through to chips
 
         var detected = document.getElementById('fc3-city-detected');
         var nameEl   = document.getElementById('fc3-city-detected-name');
