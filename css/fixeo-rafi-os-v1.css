@@ -580,6 +580,187 @@
 }
 
 /* ══════════════════════════════════════════════════════════════
+   HERO HIERARCHY RECOMPOSITION — rfos-hero-recomposed
+   Applied to section#home by JS once RafiEntry mounts.
+   RAFI card (inside #hero-quick-search) becomes the first
+   visual element. H1 demotes to secondary promise below.
+   Pure CSS order — no DOM moves, no layout thrash.
+══════════════════════════════════════════════════════════════ */
+
+/* Ensure flex column with stable gap */
+section#home.rfos-hero-recomposed .hero-content {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 0 !important;
+}
+
+/* ── 1. RAFI card — the star, comes first ── */
+section#home.rfos-hero-recomposed #hero-quick-search {
+  order: 1 !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  width: 100% !important;
+}
+
+/* ── 2. H1 — secondary promise, demoted below RAFI ── */
+section#home.rfos-hero-recomposed .hero-title {
+  order: 2 !important;
+  /* Reduce ~35% from current max — reads as context, not headline */
+  font-size: clamp(1.55rem, 3.8vw, 3.0rem) !important;
+  font-weight: 700 !important;
+  line-height: 1.15 !important;
+  letter-spacing: -0.025em !important;
+  color: rgba(255, 255, 255, 0.70) !important;
+  margin-top: 20px !important;
+  margin-bottom: 0 !important;
+  /* Narrow — confirms RAFI is broader than the headline */
+  max-width: 640px !important;
+}
+
+/* Keep gradient on second span but more subtle */
+section#home.rfos-hero-recomposed .hero-title span:last-child {
+  background: linear-gradient(135deg, rgba(225,48,108,0.80) 0%, rgba(192,57,43,0.70) 40%, rgba(255,107,157,0.80) 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  opacity: 0.85 !important;
+}
+
+/* Suppress the decorative underline rule from hero-premium-upgrade.css */
+section#home.rfos-hero-recomposed .hero-title::after {
+  display: none !important;
+}
+
+/* ── 3. Subtitle — tertiary, minimal ── */
+section#home.rfos-hero-recomposed .hero-subtitle {
+  order: 3 !important;
+  font-size: clamp(0.80rem, 1.6vw, 0.92rem) !important;
+  color: rgba(255, 255, 255, 0.42) !important;
+  font-weight: 400 !important;
+  margin-top: 6px !important;
+  margin-bottom: 0 !important;
+  letter-spacing: 0.01em !important;
+}
+
+/* ── 4. Supporting elements — below headline ── */
+section#home.rfos-hero-recomposed .hero-city-smart,
+section#home.rfos-hero-recomposed .fxlps-signals,
+section#home.rfos-hero-recomposed .hero-secondary-link-wrap {
+  order: 4 !important;
+}
+
+section#home.rfos-hero-recomposed .hero-city-smart {
+  margin-top: 10px !important;
+}
+
+section#home.rfos-hero-recomposed .fxlps-signals {
+  margin-top: 4px !important;
+}
+
+/* ── Mobile responsive — recomposed ── */
+@media (max-width: 767px) {
+  section#home.rfos-hero-recomposed .hero-title {
+    font-size: clamp(1.30rem, 6.5vw, 2.0rem) !important;
+    margin-top: 16px !important;
+    color: rgba(255, 255, 255, 0.65) !important;
+  }
+
+  section#home.rfos-hero-recomposed .hero-subtitle {
+    font-size: 0.78rem !important;
+    margin-top: 4px !important;
+  }
+}
+
+@media (max-width: 380px) {
+  section#home.rfos-hero-recomposed .hero-title {
+    font-size: clamp(1.15rem, 7vw, 1.7rem) !important;
+    margin-top: 14px !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   RAFI AVATAR UPGRADE — larger in Hero 2.0
+   These rules supersede the base sizes when inside
+   .rfos-hero-recomposed — the recomposed hero gives RAFI
+   more presence since it leads the visual hierarchy.
+══════════════════════════════════════════════════════════════ */
+
+/* Desktop: 88px avatar */
+section#home.rfos-hero-recomposed .rfos-entry-avatar {
+  width: 88px !important;
+  height: 88px !important;
+}
+section#home.rfos-hero-recomposed .rfos-entry-avatar img {
+  width: 74px !important;
+  height: 74px !important;
+}
+
+/* Message font: larger when RAFI leads */
+section#home.rfos-hero-recomposed .rfos-bubble-text {
+  font-size: 1.12rem !important;
+  -webkit-line-clamp: 3 !important;
+}
+
+section#home.rfos-hero-recomposed .rfos-entry {
+  padding: 24px 24px 20px !important;
+  gap: 20px !important;
+  align-items: flex-start !important;
+}
+
+section#home.rfos-hero-recomposed .rfos-bubble-label {
+  font-size: 0.72rem !important;
+}
+
+/* Tablet: 76px */
+@media (max-width: 1023px) {
+  section#home.rfos-hero-recomposed .rfos-entry-avatar {
+    width: 76px !important;
+    height: 76px !important;
+  }
+  section#home.rfos-hero-recomposed .rfos-entry-avatar img {
+    width: 64px !important;
+    height: 64px !important;
+  }
+}
+
+/* Mobile: 72px */
+@media (max-width: 767px) {
+  section#home.rfos-hero-recomposed .rfos-entry {
+    padding: 18px 16px 15px !important;
+    gap: 14px !important;
+    align-items: center !important;
+  }
+  section#home.rfos-hero-recomposed .rfos-entry-avatar {
+    width: 72px !important;
+    height: 72px !important;
+    /* Reinstate breathing on mobile within recomposed hero */
+    animation-name: rfos-avatar-breathe-mobile !important;
+  }
+  section#home.rfos-hero-recomposed .rfos-entry-avatar img {
+    width: 60px !important;
+    height: 60px !important;
+  }
+  section#home.rfos-hero-recomposed .rfos-bubble-text {
+    font-size: 1.00rem !important;
+  }
+}
+
+@media (max-width: 380px) {
+  section#home.rfos-hero-recomposed .rfos-entry-avatar {
+    width: 62px !important;
+    height: 62px !important;
+  }
+  section#home.rfos-hero-recomposed .rfos-entry-avatar img {
+    width: 52px !important;
+    height: 52px !important;
+  }
+  section#home.rfos-hero-recomposed .rfos-bubble-text {
+    font-size: 0.93rem !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════
    MODAL CONTINUITY
 ══════════════════════════════════════════════════════════════ */
 #request-modal.rfos-active .modal-header,

@@ -277,6 +277,10 @@
           dialog.insertAdjacentElement('afterbegin', _node);
         }
 
+        /* Recompose hero hierarchy — RAFI leads, H1 follows */
+        var heroSection = _q('section#home') || _q('.hero-section');
+        if (heroSection) heroSection.classList.add('rfos-hero-recomposed');
+
         /* Typewriter on initial greeting — one time only */
         if (!_typed) {
           _typed = true;
@@ -1049,7 +1053,7 @@
 
   /* ── Public API ─────────────────────────────────────────────── */
   window.FixeoRAFI = {
-    VERSION:  'rfos-v1d',
+    VERSION:  'rfos-v1e',
     memory:   _mem,
     entry:    RafiEntry,
     conv:     RafiConversation,
