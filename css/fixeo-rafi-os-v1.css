@@ -491,9 +491,17 @@ section#home.rfos-hero-recomposed.rfos-input-invite .qsm-bar-card {
    The promise the rest of the page keeps.
 ══════════════════════════════════════════════════════════════ */
 .rfos-h1-band {
-  width: 100%;
-  text-align: center;
-  padding: 36px 20px 0;
+  /* Homepage narrative v2: H1 remains in DOM for SEO crawlers
+     but is visually hidden — Chapter 2 replaces it immediately below hero */
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .rfos-h1-band h1,
@@ -511,9 +519,8 @@ section#home.rfos-hero-recomposed.rfos-input-invite .qsm-bar-card {
    Below hero. Honest secondary path.
 ══════════════════════════════════════════════════════════════ */
 .rfos-fallback-band {
-  width: 100%;
-  text-align: center;
-  padding: 12px 20px 0;
+  /* Removed from visual flow — secondary path lives in artisan onboarding section */
+  display: none;
 }
 
 .rfos-fallback-link {
