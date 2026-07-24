@@ -525,3 +525,18 @@
     transform: none !important;
   }
 }
+
+/* ── CITY STATE MANAGEMENT ───────────────────────────────────── */
+/* When city is detected, JS sets chips display:none but
+   fixeo-network-v1.css has #services #city-quick-chips { display:flex !important }.
+   We beat it with an attribute override on the parent element. */
+
+/* STATE A: city detected — JS shows fc3-city-detected + sets chips display:none */
+/* The [data-fc3-city-known] attr is set by fc3InitCity when a city is found */
+#services.fc3-chapter[data-fc3-city-known] #city-quick-chips {
+  display: none !important;
+}
+
+#services.fc3-chapter[data-fc3-city-known] .fc3-city-detected {
+  display: flex !important;
+}

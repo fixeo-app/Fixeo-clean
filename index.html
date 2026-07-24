@@ -2060,7 +2060,7 @@ section#home.hero.hero-section {
   <link rel="stylesheet" href="css/fixeo-brain-engine-v1.css?v=fbe-v42">
   <link rel="stylesheet" href="css/fixeo-chapter-2-v1.css?v=fc2-v1c">
   <link rel="stylesheet" href="css/fixeo-network-v1.css?v=fnv1a">
-  <link rel="stylesheet" href="css/fixeo-chapter-3-v1.css?v=fc3-v2b">
+  <link rel="stylesheet" href="css/fixeo-chapter-3-v1.css?v=fc3-v2c">
   <link rel="stylesheet" href="css/fixeo-narrative-v1.css?v=fnrv1a">
   <link rel="stylesheet" href="css/fixeo-discovery-compression-v1.css?v=dc-v1a">
   <link rel="stylesheet" href="css/fixeo-vision-v2.css?v=fxv-v2a">
@@ -2974,8 +2974,11 @@ section#home.hero.hero-section {
         if (!detected || !chips) return;
 
         if (nameEl) nameEl.textContent = city;
+        // Use data attribute so CSS can override !important display rules
+        var section = document.getElementById('services');
+        if (section) section.setAttribute('data-fc3-city-known', '1');
+        // Also set inline for immediate render (CSS attr selector may lag one frame)
         detected.style.display = 'flex';
-        chips.style.display    = 'none';
 
         if (select) {
           var opts = select.options;
@@ -2987,8 +2990,9 @@ section#home.hero.hero-section {
 
         if (changeBtn) {
           changeBtn.addEventListener('click', function () {
+            var section2 = document.getElementById('services');
+            if (section2) section2.removeAttribute('data-fc3-city-known');
             detected.style.display = 'none';
-            chips.style.display    = '';
             if (select) { select.value = ''; select.dispatchEvent(new Event('change', { bubbles: true })); }
           });
         }
