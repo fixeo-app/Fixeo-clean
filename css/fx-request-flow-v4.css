@@ -1,5 +1,5 @@
 /**
- * fx-request-flow-v4.css — fxrf4-v5k
+ * fx-request-flow-v4.css — fxrf4-v5l
  * RAFI Request Flow V5 — Premium Polish
  *
  * NAMESPACE: fxrf4-* exclusively
@@ -87,7 +87,7 @@
   flex-shrink: 0;
   position: relative;
   /* Right padding: close button is 44px wide + 14px from edge = 58px. 62px gives 4px buffer. */
-  padding: 20px 62px 18px 20px;
+  padding: 22px 62px 20px 22px;
 }
 
 #fxrf4-rafi-row {
@@ -245,7 +245,7 @@
   overflow-x: hidden;
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
-  padding: 22px 20px 14px;
+  padding: 24px 22px 16px;
   position: relative;
 }
 
@@ -287,8 +287,8 @@
 /* ─── FOOTER ─────────────────────────────────────────────────── */
 #fxrf4-foot {
   flex-shrink: 0;
-  padding: 16px 20px;
-  padding-bottom: max(16px, env(safe-area-inset-bottom));
+  padding: 20px 22px 20px;
+  padding-bottom: max(20px, env(safe-area-inset-bottom));
 }
 
 /* ─── SERVICE CHIPS ──────────────────────────────────────────── */
@@ -296,14 +296,14 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 .fxrf4-chip {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 14px 14px;
+  padding: 15px 14px;
   background: rgba(255, 255, 255, 0.04);
   border: 1.5px solid rgba(255, 255, 255, 0.07);
   border-radius: 16px;
@@ -318,7 +318,7 @@
     transform 0.12s ease,
     opacity 0.18s ease;
   position: relative;
-  min-height: 62px;
+  min-height: 64px;
 }
 
 .fxrf4-chip-icon {
@@ -390,7 +390,7 @@
 /* "Autre chose" — full width, quiet invitation */
 .fxrf4-chip.is-other {
   grid-column: 1 / -1;
-  min-height: 48px;
+  min-height: 50px;
   padding: 12px 16px;
   border-style: dashed;
   border-color: rgba(255, 255, 255, 0.09);
@@ -427,12 +427,12 @@
 /* ─── CITY CHIPS ─────────────────────────────────────────────── */
 .fxrf4-city-row {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
-  padding-bottom: 6px;
-  margin-bottom: 16px;
+  padding-bottom: 8px;
+  margin-bottom: 18px;
   /* Fade starts later so chips aren't clipped on narrow screens */
   -webkit-mask-image: linear-gradient(to right, black 88%, transparent 100%);
   mask-image: linear-gradient(to right, black 88%, transparent 100%);
@@ -446,7 +446,7 @@
   flex-shrink: 0;
   display: flex;
   align-items: center;
-  padding: 10px 18px;
+  padding: 11px 20px;
   background: rgba(255, 255, 255, 0.05);
   border: 1.5px solid rgba(255, 255, 255, 0.09);
   border-radius: 100px;
@@ -504,7 +504,7 @@
 /* City select */
 .fxrf4-select-wrap {
   position: relative;
-  margin-bottom: 16px;
+  margin-bottom: 18px;
 }
 
 .fxrf4-select-wrap::after {
@@ -547,15 +547,15 @@
 .fxrf4-urgency-cards {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-bottom: 4px;
+  gap: 10px;
+  margin-bottom: 6px;
 }
 
 .fxrf4-urgency-card {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 15px 18px;
+  gap: 14px;
+  padding: 16px 18px;
   background: rgba(255, 255, 255, 0.04);
   border: 1.5px solid rgba(255, 255, 255, 0.07);
   border-radius: 18px;
@@ -565,7 +565,7 @@
   user-select: none;
   -webkit-user-select: none;
   transition: border-color 0.15s, background 0.15s;
-  min-height: 64px;
+  min-height: 66px;
 }
 
 @media (hover: hover) {
@@ -632,7 +632,7 @@
 /* ─── PHONE INPUT ────────────────────────────────────────────── */
 .fxrf4-phone-wrap {
   position: relative;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 }
 
 .fxrf4-phone-prefix {
@@ -663,8 +663,8 @@
   font-size: 1.30rem;
   font-weight: 500;
   line-height: 1;
-  /* Left pad: 16px edge + ~74px prefix + 8px gap = 98px */
-  padding: 18px 52px 18px 100px;
+  /* Left pad: 16px edge + ~74px prefix + 10px gap = 100px */
+  padding: 20px 52px 20px 100px;
   outline: none;
   -webkit-appearance: none;
   appearance: none;
@@ -748,11 +748,11 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 15px 16px;
+  padding: 17px 18px;
   background: rgba(72, 100, 255, 0.07);
   border: 1.5px solid rgba(72, 100, 255, 0.16);
   border-radius: 16px;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 }
 
 .fxrf4-prefill-number {
@@ -866,7 +866,7 @@
   color: rgba(255, 255, 255, 0.28);
   font-size: 0.82rem;
   font-weight: 600;
-  margin-top: 6px;
+  margin-top: 8px;
   border-radius: 12px;
   transition: color 0.15s;
 }
@@ -882,14 +882,14 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 18px 0 8px;
+  padding: 28px 0 16px;
   text-align: center;
 }
 
 .fxrf4-inter-dots {
   display: flex;
   gap: 8px;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 .fxrf4-inter-dots span {
@@ -927,14 +927,14 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 10px 4px 8px;
+  padding: 16px 8px 10px;
 }
 
 .fxrf4-check-ring {
   position: relative;
   width: 72px;
   height: 72px;
-  margin: 0 auto 18px;
+  margin: 0 auto 22px;
 }
 
 .fxrf4-check-ring-inner {
@@ -984,7 +984,7 @@
   font-weight: 700;
   color: rgba(255, 255, 255, 0.96);
   line-height: 1.28;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   animation: fxrf4-fade-up 260ms ease 540ms both;
 }
 
@@ -993,7 +993,7 @@
   color: rgba(255, 255, 255, 0.48);
   line-height: 1.58;
   max-width: 288px;
-  margin: 0 auto 20px;
+  margin: 0 auto 24px;
   animation: fxrf4-fade-up 260ms ease 620ms both;
 }
 
@@ -1015,7 +1015,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 24px;
+  margin-bottom: 28px;
   width: 100%;
   animation: fxrf4-fade-up 260ms ease 740ms both;
 }
@@ -1074,6 +1074,7 @@
   flex-direction: column;
   gap: 10px;
   width: 100%;
+  padding: 0 2px;
   animation: fxrf4-fade-up 260ms ease 820ms both;
 }
 
@@ -1202,32 +1203,32 @@
   }
 
   #fxrf4-head {
-    padding: 12px 58px 14px 20px;
+    padding: 14px 58px 16px 20px;
   }
 
   #fxrf4-body {
-    padding: 18px 20px 10px;
+    padding: 20px 20px 12px;
   }
 
   #fxrf4-foot {
-    padding: 12px 20px;
-    padding-bottom: max(20px, env(safe-area-inset-bottom));
+    padding: 14px 20px;
+    padding-bottom: max(24px, env(safe-area-inset-bottom));
   }
 
   .fxrf4-btn-primary {
-    height: 56px;
+    height: 58px;
     font-size: 1.00rem;
   }
 
   .fxrf4-phone-input {
     font-size: 1.36rem;
-    padding: 20px 52px 20px 100px;
+    padding: 22px 52px 22px 100px;
   }
 
   /* Service chips — taller, thumb-friendly */
   .fxrf4-chip {
-    min-height: 64px;
-    padding: 14px 12px;
+    min-height: 66px;
+    padding: 15px 12px;
   }
 
   .fxrf4-chip-label {
@@ -1276,19 +1277,19 @@
 /* ─── CITY CHIPS — mobile refinements ───────────────────────── */
 @media (max-width: 640px) {
   .fxrf4-city-row {
-    gap: 10px;
-    padding-bottom: 8px;
-    margin-bottom: 14px;
+    gap: 8px;
+    padding-bottom: 10px;
+    margin-bottom: 16px;
   }
 
   .fxrf4-city-chip {
-    /* Taller, easier to tap accurately */
-    padding: 12px 20px;
+    /* Taller, thumb-safe */
+    padding: 13px 22px;
     font-size: 0.90rem;
-    min-height: 44px;
+    min-height: 46px;
   }
 
-  /* Detected city — more prominent glow on mobile */
+  /* Detected city — more prominent on mobile */
   .fxrf4-city-chip.is-detected {
     border-color: rgba(72, 100, 255, 0.50);
     font-weight: 700;
@@ -1320,14 +1321,14 @@
 .fxrf4-situation-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 
 .fxrf4-situation-item {
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 15px 16px;
+  padding: 16px 18px;
   background: rgba(255, 255, 255, 0.04);
   border: 1.5px solid rgba(255, 255, 255, 0.07);
   border-radius: 16px;
@@ -1336,7 +1337,7 @@
   -webkit-tap-highlight-color: transparent;
   user-select: none;
   -webkit-user-select: none;
-  min-height: 56px;
+  min-height: 60px;
   transition:
     border-color 0.15s ease,
     background 0.15s ease,
