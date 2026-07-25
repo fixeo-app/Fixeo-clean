@@ -1,5 +1,5 @@
 /**
- * fx-request-flow-v4.css — fxrf4-v5b
+ * fx-request-flow-v4.css — fxrf4-v5e
  * RAFI Request Flow V5 — Craftsmanship pass
  *
  * NAMESPACE: fxrf4-* exclusively
@@ -91,8 +91,8 @@
 #fxrf4-head {
   flex-shrink: 0;
   position: relative;
-  padding: 22px 64px 18px 22px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 22px 64px 20px 22px;
+  /* No border-bottom — progress bar is the separator */
 }
 
 /* RAFI avatar + message side by side */
@@ -138,10 +138,10 @@
   display: block;
   font-size: 0.58rem;
   font-weight: 800;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgba(72, 100, 255, 0.72);
-  margin-bottom: 4px;
+  color: rgba(72, 100, 255, 0.80);
+  margin-bottom: 5px;
   line-height: 1;
 }
 
@@ -151,9 +151,9 @@
 
 .fxrf4-rafi-text {
   display: block;
-  font-size: 1.05rem;
+  font-size: 1.08rem;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.94);
+  color: rgba(255, 255, 255, 0.96);
   line-height: 1.30;
   letter-spacing: -0.01em;
 }
@@ -281,8 +281,8 @@
 ────────────────────────────────────────────────────────────── */
 #fxrf4-foot {
   flex-shrink: 0;
-  padding: 16px 22px;
-  padding-bottom: max(16px, env(safe-area-inset-bottom));
+  padding: 18px 22px;
+  padding-bottom: max(18px, env(safe-area-inset-bottom));
 }
 
 /* ─── SERVICE CHIPS ───────────────────────────────────────────
@@ -291,8 +291,8 @@
 .fxrf4-chips-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-bottom: 8px;
+  gap: 9px;
+  margin-bottom: 10px;
 }
 
 .fxrf4-chip {
@@ -314,7 +314,7 @@
     transform 0.12s ease,
     opacity 0.16s ease;
   position: relative;
-  min-height: 66px;
+  min-height: 64px;
 }
 
 .fxrf4-chip-icon {
@@ -531,7 +531,7 @@
 .fxrf4-urgency-cards {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
   margin-bottom: 4px;
 }
 
@@ -549,7 +549,7 @@
   user-select: none;
   -webkit-user-select: none;
   transition: border-color 0.16s, background 0.16s;
-  min-height: 70px;
+  min-height: 66px;
 }
 
 @media (hover: hover) {
@@ -981,7 +981,7 @@
   color: rgba(255, 255, 255, 0.52);
   line-height: 1.55;
   max-width: 290px;
-  margin: 0 auto 18px;
+  margin: 0 auto 22px;
   animation: fxrf4-fade-up 280ms ease 640ms both;
 }
 
@@ -1060,7 +1060,7 @@
 .fxrf4-success-actions {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
   width: 100%;
   animation: fxrf4-fade-up 280ms ease 840ms both;
 }
@@ -1156,16 +1156,16 @@
   }
 
   #fxrf4-head {
-    padding: 8px 60px 16px 20px;
+    padding: 10px 60px 18px 20px;
   }
 
   #fxrf4-body {
-    padding: 20px 20px 8px;
+    padding: 22px 20px 8px;
   }
 
   #fxrf4-foot {
     padding: 14px 20px;
-    padding-bottom: max(20px, env(safe-area-inset-bottom));
+    padding-bottom: max(22px, env(safe-area-inset-bottom));
   }
 
   .fxrf4-btn-primary {
