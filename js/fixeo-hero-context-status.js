@@ -29,7 +29,7 @@
  *      Text is filled in, never causes layout shift.
  *
  * Namespace: fxhcs-*
- * Version: fxhcs-v1.3
+ * Version: fxhcs-v1.4
  */
 (function () {
   'use strict';
@@ -37,21 +37,73 @@
   if (window._fxhcsLoaded) return;
   window._fxhcsLoaded = true;
 
-  /* ── City reader — mirrors AIRE's _getCity() ──────────────── */
+  /* ── City name sanitizer ────────────────────────────────────── */
+  /*
+   * AIRE's _watchHeroCity() stores #hero-city-label's full textContent
+   * directly into localStorage['fixeo_detected_city'].
+   * _setLabel() writes decorated strings like:
+   *   "📍 Fès détectée · Modifier"
+   *   "📍 Fès — Agdal détecté · Modifier"
+   *   "📍 Choisir une ville"
+   *   "📍 Résultats autour de vous · Modifier"
+   *   "Détection de votre ville…"
+   *
+   * We must strip decoration to extract the bare city name before
+   * rendering it inside .fxhcs-city — otherwise the full label,
+   * including "· Modifier", bleeds into the rendered output and
+   * produces a duplicate "Modifier".
+   *
+   * Strategy: strip pin emoji prefix, cut at "·", cut at " —",
+   * strip known non-city suffixes, trim. Return null if not a
+   * recognisable Moroccan city name (prevents "Résultats autour…").
+   */
+  function _sanitizeCity(raw) {
+    if (!raw) return null;
+    var s = raw.trim();
+    /* Strip pin emoji prefix (📍 + optional space) */
+    s = s.replace(/^\uD83D\uDCCD\s*/u, '');
+    /* Cut everything from · onwards (strips "· Modifier", "· district") */
+    var dotIdx = s.indexOf('\u00b7');
+    if (dotIdx >= 0) s = s.slice(0, dotIdx);
+    /* Cut everything from " — " onwards (strips district suffix) */
+    var dashIdx = s.indexOf(' \u2014 ');
+    if (dashIdx >= 0) s = s.slice(0, dashIdx);
+    /* Strip known suffix words that appear without · separator */
+    s = s.replace(/\s+d\u00e9tect\u00e9e?\s*$/i, '');
+    s = s.trim();
+    /* Reject non-city values — detecting/placeholder/generic strings */
+    if (!s) return null;
+    if (s.indexOf('D\u00e9tect') === 0) return null;  /* "Détection de…" */
+    if (s.indexOf('Choisir') >= 0) return null;        /* "Choisir une ville" */
+    if (s.indexOf('Autour') >= 0) return null;         /* case-variant */
+    if (s.indexOf('autour') >= 0) return null;         /* "Résultats autour de vous" */
+    if (s.indexOf('R\u00e9sultats') >= 0) return null; /* "Résultats…" */
+    if (s.length < 2) return null;
+    return s;
+  }
+
+  /* ── City reader ─────────────────────────────────────────────── */
+  /*
+   * Reads from localStorage (path 1) and #hero-city-label (path 2).
+   * Both values may be AIRE's decorated labels — sanitized before return.
+   * Path 1 (localStorage) is tried first as the authoritative cache.
+   * Path 2 (#hero-city-label) is the live DOM element, always sanitized.
+   */
   function _readCity() {
     try {
-      /* 1. localStorage — authoritative cache (written by AIRE) */
+      /* 1. localStorage — written by AIRE's _watchHeroCity() */
       var ls = localStorage.getItem('fixeo_detected_city');
-      if (ls && ls.length > 1) return ls;
+      if (ls) {
+        var clean1 = _sanitizeCity(ls);
+        if (clean1) return clean1;
+      }
     } catch (_) {}
     try {
-      /* 2. #hero-city-label DOM element (AIRE-written, RAFI reads this) */
+      /* 2. #hero-city-label — live DOM, AIRE-written */
       var el = document.getElementById('hero-city-label');
       if (el) {
-        var txt = (el.textContent || '').trim();
-        if (txt && txt.indexOf('D\u00e9tect') < 0 && txt.indexOf('\u2026') < 0 && txt.length > 1) {
-          return txt;
-        }
+        var clean2 = _sanitizeCity(el.textContent);
+        if (clean2) return clean2;
       }
     } catch (_) {}
     return null;
