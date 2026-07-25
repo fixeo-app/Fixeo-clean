@@ -1,5 +1,5 @@
 /**
- * fx-request-flow-v4.js — fxrf4-v5b
+ * fx-request-flow-v4.js — fxrf4-v5c
  * RAFI Request Flow V5 — Faithful implementation of the UX & Emotional Spec
  *
  * EMOTIONAL ARC: Problem → Relief → Confidence → Momentum → Trust
@@ -9,7 +9,7 @@
  * ISOLATED: Zero dependency on .modal, MutationObservers, setTimeout injections.
  * ROLLBACK: window.FIXEO_FLOW_V4 = false
  *
- * VERSION: fxrf4-v5b — 2026-07-24
+ * VERSION: fxrf4-v5c — 2026-07-24
  */
 
 (function () {
@@ -162,23 +162,20 @@
     if (_locked) return;
     _locked  = true;
     _scrollY = window.scrollY || window.pageYOffset || 0;
-    document.body.style.overflow  = 'hidden';
-    document.body.style.position  = 'fixed';
-    document.body.style.top       = '-' + _scrollY + 'px';
-    document.body.style.width     = '100%';
-    document.body.style.left      = '0';
-    document.body.style.right     = '0';
+    /* Scroll lock: overflow:hidden on <html> only.
+       Do NOT set position:fixed on body — it creates a new stacking context
+       that offsets position:fixed children (#fxrf4-root) by -scrollY on iOS Safari.
+       Storing scrollY and blocking scroll on the root element is sufficient
+       and does not shift the viewport coordinate space. */
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
   }
 
   function _unlock() {
     if (!_locked) return;
     _locked = false;
+    document.documentElement.style.overflow = '';
     document.body.style.overflow  = '';
-    document.body.style.position  = '';
-    document.body.style.top       = '';
-    document.body.style.width     = '';
-    document.body.style.left      = '';
-    document.body.style.right     = '';
     document.body.classList.remove('modal-open', 'fxmsf-locked');
     window.scrollTo(0, _scrollY);
   }
@@ -249,7 +246,7 @@
         tracking_ref: ref,
         status:       'nouvelle',
         created_at:   new Date().toISOString(),
-        source:       'fxrf4-v5b',
+        source:       'fxrf4-v5c',
         mode:         st.mode,
         viewed:       false
       };
@@ -288,7 +285,7 @@
   function _fireAnalytics(req, mode, duplicated) {
     try {
       window.dispatchEvent(new CustomEvent('fixeo:client-request-submit-success', {
-        detail: { request: req, mode: mode, source: 'fxrf4-v5b',
+        detail: { request: req, mode: mode, source: 'fxrf4-v5c',
                   storageKey: STORAGE_KEY, duplicated: duplicated }
       }));
     } catch(_) {}
@@ -394,13 +391,14 @@
 
     _root.appendChild(bd);
     _root.appendChild(dialog);
-    document.body.appendChild(_root);
+    /* Append to <html> so body position/transform never affects #fxrf4-root */
+    document.documentElement.appendChild(_root);
 
     /* Swipe-to-dismiss on mobile */
     _wireSwipeDismiss(dialog);
 
     /* Diagnostic (spec requirement) */
-    console.log('[fxrf4-v5b] DOM built. Header children:', head.childElementCount, '(expected 2: rafi-row, close)');
+    console.log('[fxrf4-v5c] DOM built. Header children:', head.childElementCount, '(expected 2: rafi-row, close)');
   }
 
   /* ══════════════════════════════════════════════════════════
@@ -1164,7 +1162,7 @@
     /* Diagnostic — spec requirement */
     var head = _q('#fxrf4-head');
     if (head) {
-      console.log('[fxrf4-v5b] Success rendered. Header children:', head.childElementCount,
+      console.log('[fxrf4-v5c] Success rendered. Header children:', head.childElementCount,
                   '(expected 2 — rafi-row + close)');
     }
   }
@@ -1345,7 +1343,7 @@
   ══════════════════════════════════════════════════════════ */
 
   window.FixeoRequestFlowV4 = {
-    VERSION: 'fxrf4-v5b',
+    VERSION: 'fxrf4-v5c',
     open:    open,
     close:   close
   };
