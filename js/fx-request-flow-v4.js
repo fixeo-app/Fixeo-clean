@@ -1,5 +1,5 @@
 /**
- * fx-request-flow-v4.js — fxrf4-v5i
+ * fx-request-flow-v4.js — fxrf4-v5j
  * RAFI Request Flow V5 — Emergency Mode Adaptation
  *
  * EMOTIONAL ARC: Problem → Relief → Confidence → Momentum → Trust
@@ -14,7 +14,7 @@
  * ISOLATED: Zero dependency on .modal, MutationObservers, setTimeout injections.
  * ROLLBACK: window.FIXEO_FLOW_V4 = false
  *
- * VERSION: fxrf4-v5i — 2026-07-25
+ * VERSION: fxrf4-v5j — 2026-07-25
  */
 
 (function () {
@@ -298,7 +298,7 @@
         tracking_ref: ref,
         status:       'nouvelle',
         created_at:   new Date().toISOString(),
-        source:       'fxrf4-v5i',
+        source:       'fxrf4-v5j',
         mode:         st.mode,
         viewed:       false
       };
@@ -337,7 +337,7 @@
   function _fireAnalytics(req, mode, duplicated) {
     try {
       window.dispatchEvent(new CustomEvent('fixeo:client-request-submit-success', {
-        detail: { request: req, mode: mode, source: 'fxrf4-v5i',
+        detail: { request: req, mode: mode, source: 'fxrf4-v5j',
                   storageKey: STORAGE_KEY, duplicated: duplicated }
       }));
     } catch(_) {}
@@ -454,7 +454,7 @@
     _wireSwipeDismiss(dialog);
 
     /* Diagnostic */
-    console.log('[fxrf4-v5i] DOM built. Header children:', head.childElementCount, '(expected 2: rafi-row, close)');
+    console.log('[fxrf4-v5j] DOM built. Header children:', head.childElementCount, '(expected 2: rafi-row, close)');
   }
 
   /* ══════════════════════════════════════════════════════════
@@ -1052,6 +1052,19 @@
         }
       });
 
+      /* Belt-and-suspenders: re-check keyboard inset on focus/blur.
+         Some browsers (Samsung Internet) delay the visualViewport event;
+         responding to focus immediately gives instant sheet lift. */
+      phoneInput.addEventListener('focus', function() {
+        /* Small delay — let the system keyboard begin to appear */
+        setTimeout(_applyKeyboardInset, 100);
+        setTimeout(_applyKeyboardInset, 300);
+      });
+      phoneInput.addEventListener('blur', function() {
+        setTimeout(_applyKeyboardInset, 100);
+        setTimeout(_applyKeyboardInset, 300);
+      });
+
       var submitLabel = isEmergency ? 'Trouver un artisan maintenant' : 'Envoyer ma demande';
       var submitBtn = _primaryBtn(submitLabel, isEmergency, function(btn) {
         var val = phoneInput.value.trim();
@@ -1284,7 +1297,7 @@
 
     var head = _q('#fxrf4-head');
     if (head) {
-      console.log('[fxrf4-v5i] Success rendered. mode=' + (st.mode) +
+      console.log('[fxrf4-v5j] Success rendered. mode=' + (st.mode) +
                   ' Header children:', head.childElementCount);
     }
   }
@@ -1317,6 +1330,85 @@
   }
 
   /* ══════════════════════════════════════════════════════════
+     KEYBOARD-AWARE SHEET POSITIONING
+     Uses visualViewport (Safari, Chrome, Samsung) to detect
+     when the software keyboard opens and lifts the sheet.
+     CSS --fxrf4-kb-inset drives the `bottom` offset.
+     CSS --fxrf4-vvh drives the max-height recalc.
+  ══════════════════════════════════════════════════════════ */
+
+  var _kbRaf = null;
+  var _kbHandler = null;
+
+  function _onViewportChange() {
+    /* Cancel any pending RAF to coalesce rapid resize events */
+    if (_kbRaf) cancelAnimationFrame(_kbRaf);
+    _kbRaf = requestAnimationFrame(function() {
+      _kbRaf = null;
+      _applyKeyboardInset();
+    });
+  }
+
+  function _applyKeyboardInset() {
+    var dialog = _root ? _root.querySelector('#fxrf4-dialog') : null;
+    if (!dialog || !_isOpen) return;
+
+    var isMobile = window.matchMedia('(max-width: 640px)').matches;
+    if (!isMobile) return;
+
+    var vv = window.visualViewport;
+    if (!vv) return;
+
+    var windowH = window.innerHeight;
+    var vvH     = vv.height;
+    var vvTop   = vv.offsetTop || 0;  /* scroll offset on non-Safari */
+
+    /*
+     * kbInset = how many CSS px the keyboard rises above the bottom of the
+     * layout viewport.  On iOS Safari, vv.height shrinks when keyboard opens;
+     * on Android Chrome the same.
+     *
+     * We also account for visualViewport.offsetTop when the address bar
+     * is scrolled up (Samsung Internet, Android Chrome).
+     */
+    var kbInset = Math.max(0, windowH - vvH - vvTop);
+
+    /* Update CSS custom properties on the root element */
+    _root.style.setProperty('--fxrf4-kb-inset', kbInset + 'px');
+    _root.style.setProperty('--fxrf4-vvh',      vvH      + 'px');
+
+    var kbActive = kbInset > 60; /* 60px threshold — small resize ≠ keyboard */
+    dialog.classList.toggle('fxrf4-kb-active', kbActive);
+  }
+
+  function _wireKeyboard() {
+    if (!window.visualViewport) return;
+    if (_kbHandler) return;
+    _kbHandler = _onViewportChange;
+    window.visualViewport.addEventListener('resize', _kbHandler);
+    window.visualViewport.addEventListener('scroll', _kbHandler);
+    /* Also listen to window resize as a fallback */
+    window.addEventListener('resize', _kbHandler);
+    /* Prime the values immediately */
+    _applyKeyboardInset();
+  }
+
+  function _teardownKeyboard() {
+    if (_kbHandler) {
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener('resize', _kbHandler);
+        window.visualViewport.removeEventListener('scroll', _kbHandler);
+      }
+      window.removeEventListener('resize', _kbHandler);
+      _kbHandler = null;
+    }
+    if (_kbRaf) { cancelAnimationFrame(_kbRaf); _kbRaf = null; }
+    /* Remove kb state from dialog so next open starts clean */
+    var dialog = _root ? _root.querySelector('#fxrf4-dialog') : null;
+    if (dialog) dialog.classList.remove('fxrf4-kb-active');
+  }
+
+  /* ══════════════════════════════════════════════════════════
      OPEN / CLOSE
   ══════════════════════════════════════════════════════════ */
 
@@ -1339,6 +1431,9 @@
     _root.classList.add('fxrf4-active');
     _root.setAttribute('aria-hidden', 'false');
 
+    /* Start keyboard-aware positioning (mobile only) */
+    _wireKeyboard();
+
     /* Android: push history state for hardware back button */
     try { history.pushState({ fxrf4: true }, ''); } catch(_) {}
 
@@ -1356,6 +1451,9 @@
 
     /* Clear typing timer */
     if (_typeTimer) { clearInterval(_typeTimer); _typeTimer = null; }
+
+    /* Tear down keyboard listener */
+    _teardownKeyboard();
 
     /* Reset emergency label on RAFI name (persists across opens) */
     var nameEl = _root ? _root.querySelector('.fxrf4-rafi-name') : null;
@@ -1470,7 +1568,7 @@
   ══════════════════════════════════════════════════════════ */
 
   window.FixeoRequestFlowV4 = {
-    VERSION: 'fxrf4-v5i',
+    VERSION: 'fxrf4-v5j',
     open:    open,
     close:   close
   };

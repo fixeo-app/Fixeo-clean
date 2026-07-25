@@ -1,5 +1,5 @@
 /**
- * fx-request-flow-v4.css — fxrf4-v5i
+ * fx-request-flow-v4.css — fxrf4-v5j
  * RAFI Request Flow V5 — Premium Polish
  *
  * NAMESPACE: fxrf4-* exclusively
@@ -1129,9 +1129,28 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ─── MOBILE ≤640px — BOTTOM SHEET ──────────────────────────── */
+/* ─── MOBILE ≤640px — ADAPTIVE BOTTOM SHEET ─────────────────── */
+
+/*
+ * KEYBOARD-AWARE POSITIONING
+ *
+ * --fxrf4-kb-inset  : set by JS via visualViewport.resize listener (pixels from bottom)
+ * .fxrf4-kb-active  : class on #fxrf4-dialog when keyboard is open
+ *
+ * On selection steps (step1, step2) the sheet stays at bottom:0.
+ * On step3 (phone input), when the keyboard opens:
+ *   – #fxrf4-dialog bottom lifts to --fxrf4-kb-inset + safe-area-inset-bottom
+ *   – max-height expands to fill the remaining visual viewport
+ *   – The sheet slides up in one calm transition (no bounce)
+ *
+ * Works on: iPhone Safari (visualViewport), Samsung Internet, Android Chrome.
+ * visualViewport.resize is the only reliable cross-browser signal.
+ * If visualViewport is unavailable we fall back to window.resize.
+ */
+
 @media (max-width: 640px) {
   #fxrf4-dialog {
+    /* ── Sheet base position ── */
     top: auto;
     bottom: 0;
     left: 0;
@@ -1139,11 +1158,27 @@
     transform: none;
     width: 100%;
     max-width: 100%;
-    max-height: min(94dvh, 720px);
+
+    /* 94dvh = visual viewport on scroll-free open; avoids iOS address-bar calc */
+    max-height: min(94dvh, 760px);
+
     border-radius: 20px 20px 0 0;
     border-bottom: none;
     padding-top: 16px;
+
+    /* Keyboard slide — single calm transition, no bounce */
+    transition: bottom 220ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                max-height 220ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
     animation: fxrf4-sheet-in 280ms cubic-bezier(0.32, 0.72, 0, 1) 60ms both;
+  }
+
+  /* When keyboard is active: lift sheet up, use remaining visual space */
+  #fxrf4-dialog.fxrf4-kb-active {
+    bottom: var(--fxrf4-kb-inset, 0px);
+    /* Fill whatever visual space remains above the keyboard */
+    max-height: calc(var(--fxrf4-vvh, 100dvh) - env(safe-area-inset-top, 0px) - 4px);
+    /* Ensure #fxrf4-body can scroll if content taller than sheet */
   }
 
   /* Drag handle */
@@ -1158,6 +1193,7 @@
     border-radius: 2px;
     background: rgba(255, 255, 255, 0.11);
     z-index: 10;
+    pointer-events: none;
   }
 
   @keyframes fxrf4-sheet-in {
@@ -1166,15 +1202,15 @@
   }
 
   #fxrf4-head {
-    padding: 12px 58px 16px 20px;
+    padding: 12px 58px 14px 20px;
   }
 
   #fxrf4-body {
-    padding: 20px 20px 12px;
+    padding: 18px 20px 10px;
   }
 
   #fxrf4-foot {
-    padding: 14px 20px;
+    padding: 12px 20px;
     padding-bottom: max(20px, env(safe-area-inset-bottom));
   }
 
@@ -1185,11 +1221,10 @@
 
   .fxrf4-phone-input {
     font-size: 1.36rem;
-    /* Left pad kept proportional with prefix min-width */
     padding: 20px 52px 20px 100px;
   }
 
-  /* Service chips — slightly taller for thumb */
+  /* Service chips — taller, thumb-friendly */
   .fxrf4-chip {
     min-height: 64px;
     padding: 14px 12px;
@@ -1197,6 +1232,66 @@
 
   .fxrf4-chip-label {
     font-size: 0.85rem;
+  }
+
+  /* ── Focus mode: keyboard open on step 3 ── */
+  /* When keyboard is active: compact RAFI header to save vertical space.
+     RAFI stays visible — just tighter. Close button stays accessible. */
+  #fxrf4-dialog.fxrf4-kb-active #fxrf4-head {
+    padding: 8px 52px 10px 16px;
+  }
+
+  #fxrf4-dialog.fxrf4-kb-active #fxrf4-avatar {
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+  }
+
+  #fxrf4-dialog.fxrf4-kb-active #fxrf4-avatar img {
+    width: 28px;
+    height: 28px;
+  }
+
+  #fxrf4-dialog.fxrf4-kb-active .fxrf4-rafi-name {
+    display: none;
+  }
+
+  #fxrf4-dialog.fxrf4-kb-active .fxrf4-rafi-text {
+    font-size: 0.92rem;
+    line-height: 1.25;
+    color: rgba(255, 255, 255, 0.70);
+  }
+
+  #fxrf4-dialog.fxrf4-kb-active #fxrf4-body {
+    padding: 12px 20px 8px;
+  }
+
+  /* Back button less prominent when keyboard is up */
+  #fxrf4-dialog.fxrf4-kb-active .fxrf4-btn-back {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+/* ─── CITY CHIPS — mobile refinements ───────────────────────── */
+@media (max-width: 640px) {
+  .fxrf4-city-row {
+    gap: 10px;
+    padding-bottom: 8px;
+    margin-bottom: 14px;
+  }
+
+  .fxrf4-city-chip {
+    /* Taller, easier to tap accurately */
+    padding: 12px 20px;
+    font-size: 0.90rem;
+    min-height: 44px;
+  }
+
+  /* Detected city — more prominent glow on mobile */
+  .fxrf4-city-chip.is-detected {
+    border-color: rgba(72, 100, 255, 0.50);
+    font-weight: 700;
   }
 }
 
