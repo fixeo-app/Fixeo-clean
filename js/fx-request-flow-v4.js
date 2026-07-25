@@ -890,65 +890,68 @@
       setTimeout(function() { citySelect.focus(); }, 80);
     }, { passive: false });
 
-    /* ── Urgency section (appears after city selected) ── */
-    var urgencySection = _h('div');
-    urgencySection.style.display = 'none';
-
-    var urgCards = _h('div', { cls: 'fxrf4-urgency-cards', 'aria-label': 'Urgence' });
-
-    URGENCIES.forEach(function(u) {
-      var card = _h('div', {
-        cls: 'fxrf4-urgency-card' + (u.urgent ? ' is-urgent' : ''),
-        role: 'button', tabindex: '0', 'aria-label': u.label
-      });
-
-      card.appendChild(_h('span', { cls: 'fxrf4-urgency-icon', txt: u.icon }));
-      var textDiv = _h('div', { cls: 'fxrf4-urgency-text' });
-      textDiv.appendChild(_h('span', { cls: 'fxrf4-urgency-label', txt: u.label }));
-      textDiv.appendChild(_h('span', { cls: 'fxrf4-urgency-meta', txt: u.meta }));
-      card.appendChild(textDiv);
-
-      if (u.value === st.urgency) card.classList.add('is-selected');
-
-      function _onUrgTap() {
-        card.classList.add('is-tapping');
-        setTimeout(function() { card.classList.remove('is-tapping'); }, 120);
-        st.urgency = u.value;
-        urgCards.querySelectorAll('.fxrf4-urgency-card').forEach(function(c) {
-          c.classList.remove('is-selected');
-        });
-        card.classList.add('is-selected');
-        /* Auto-advance spec: single tap IS the confirmation */
-        setTimeout(function() { _transitionFwd(_renderStep3); }, 240);
-      }
-
-      card.addEventListener('click',    _onUrgTap);
-      card.addEventListener('touchend', function(e) { e.preventDefault(); _onUrgTap(); }, { passive: false });
-      card.addEventListener('keydown',  function(e) { if (e.key === 'Enter' || e.key === ' ') _onUrgTap(); });
-
-      urgCards.appendChild(card);
-    });
-
-    urgencySection.appendChild(urgCards);
+    /* ── Urgency section — standard mode only ── */
+    /* Emergency: city tap routes directly to step 3 (urgency is pre-locked to "now").
+       Don't build urgency DOM at all in emergency mode. */
+    var urgencySection = null;
 
     function _showUrgencyCards() {
-      if (urgencySection.style.display !== 'none') return; /* already visible */
+      if (!urgencySection) return;
+      if (urgencySection.style.display !== 'none') return;
       urgencySection.style.display = 'block';
-      /* Scroll to urgency on mobile */
       setTimeout(function() {
         urgencySection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       }, 100);
     }
 
-    /* Always render step 2 fully. Never auto-skip.
-       City tap reveals urgency. Express mode still shows city chips.
-       Returning-user state pre-selects the chip visually but waits for tap. */
+    if (!isEmergency) {
+      urgencySection = _h('div');
+      urgencySection.style.display = 'none';
+
+      var urgCards = _h('div', { cls: 'fxrf4-urgency-cards', 'aria-label': 'Urgence' });
+
+      URGENCIES.forEach(function(u) {
+        var card = _h('div', {
+          cls: 'fxrf4-urgency-card' + (u.urgent ? ' is-urgent' : ''),
+          role: 'button', tabindex: '0', 'aria-label': u.label
+        });
+
+        card.appendChild(_h('span', { cls: 'fxrf4-urgency-icon', txt: u.icon }));
+        var textDiv = _h('div', { cls: 'fxrf4-urgency-text' });
+        textDiv.appendChild(_h('span', { cls: 'fxrf4-urgency-label', txt: u.label }));
+        textDiv.appendChild(_h('span', { cls: 'fxrf4-urgency-meta', txt: u.meta }));
+        card.appendChild(textDiv);
+
+        if (u.value === st.urgency) card.classList.add('is-selected');
+
+        function _onUrgTap() {
+          card.classList.add('is-tapping');
+          setTimeout(function() { card.classList.remove('is-tapping'); }, 120);
+          st.urgency = u.value;
+          urgCards.querySelectorAll('.fxrf4-urgency-card').forEach(function(c) {
+            c.classList.remove('is-selected');
+          });
+          card.classList.add('is-selected');
+          setTimeout(function() { _transitionFwd(_renderStep3); }, 240);
+        }
+
+        card.addEventListener('click',    _onUrgTap);
+        card.addEventListener('touchend', function(e) { e.preventDefault(); _onUrgTap(); }, { passive: false });
+        card.addEventListener('keydown',  function(e) { if (e.key === 'Enter' || e.key === ' ') _onUrgTap(); });
+
+        urgCards.appendChild(card);
+      });
+
+      urgencySection.appendChild(urgCards);
+    }
 
     /* Back */
     var foot2 = _q('#fxrf4-foot');
     if (foot2) foot2.appendChild(_backBtn(function() { _transitionBck(_renderStep1); }));
 
-    if (body) body.appendChild(_screen([cityRow, citySelectWrap, urgencySection]));
+    var screenChildren = [cityRow, citySelectWrap];
+    if (urgencySection) screenChildren.push(urgencySection);
+    if (body) body.appendChild(_screen(screenChildren));
   }
 
   /* ══════════════════════════════════════════════════════════
