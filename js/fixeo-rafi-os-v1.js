@@ -105,21 +105,21 @@
 
     /* RAFI understood something */
     heroUnderstood: function (label) {
-      return 'Je crois avoir compris \u2014 vous avez besoin d\u2019un\u00a0<strong>' + label + '</strong>.';
+      return 'Compris \u2014 vous avez besoin d\u2019un\u00a0<strong>' + label + '</strong>.';
     },
 
     /* RAFI knows the city — speaks it naturally */
     heroIdleWithCity: function (city) {
-      return 'Dites-moi ce qui se passe \u2014 je vous vois \u00e0\u00a0<strong>' + city + '</strong>.';
+      return 'Dites-moi ce qui se passe \u2014 je suis \u00e0\u00a0<strong>' + city + '</strong>.';
     },
 
     /* RAFI is ready — everything in place */
     heroReady: function (label, city) {
-      return 'Parfait. Je recherche les meilleurs artisans \u00e0\u00a0<strong>' + city + '</strong>.';
+      return 'Je cherche les meilleurs artisans \u00e0\u00a0<strong>' + city + '</strong>.';
     },
 
     /* Urgent */
-    heroUrgent: 'C\u2019est urgent\u00a0? Je recherche un artisan disponible maintenant.',
+    heroUrgent: 'C\u2019est urgent \u2014 je cherche un artisan disponible maintenant.',
 
     /* Modal — continuation of the same conversation */
     modalWelcome: 'Quel service vous faut-il\u00a0?',
@@ -168,11 +168,17 @@
        Pauses completely when visitor is typing or RAFI is in an active state. */
     var _WAIT_MESSAGES = [
       'Dites-moi ce qui se passe.',
-      'Je vous écoute.',
+      'D\u00e9crivez simplement votre probl\u00e8me.',
+      'Je vous \u00e9coute.',
+      'M\u00eame quelques mots me suffisent.',
+      'Je peux identifier le bon m\u00e9tier.',
+      'Je peux vous donner une estimation.',
+      'Je cherche les artisans disponibles.',
+      'Pas besoin du nom exact du m\u00e9tier.',
+      'Expliquez avec vos propres mots.',
+      'Nous allons trouver la bonne solution.',
       'Prenez votre temps.',
-      'Expliquez-moi votre problème.',
-      'Nous allons trouver une solution.',
-      'Je suis là pour vous aider.'
+      'Je suis l\u00e0 pour vous guider.'
     ];
     var _waitIdx       = 0;
     var _waitTimer     = null;
@@ -193,7 +199,8 @@
 
     function _scheduleNext() {
       if (!_waitActive || _visitorActive || _state !== 'idle') return;
-      /* 5s visible + 0.55s fade-out = 5.55s before swap */
+      /* 3.4s visible + 0.48s fade-out + 0.44s silence = 4.32s/message
+         (was 5s + 0.55s + 0.5s = 6.05s — 29% faster, still calm) */
       _waitTimer = setTimeout(function () {
         if (!_waitActive || _visitorActive || _state !== 'idle') return;
         /* Fade out */
@@ -207,14 +214,14 @@
           _waitIdx = (_waitIdx + 1) % _WAIT_MESSAGES.length;
           if (_greeting) {
             _greeting.textContent = _WAIT_MESSAGES[_waitIdx];
-            /* Brief silence (0.5s) then fade back in */
+            /* Brief silence (0.44s) then fade back in */
             setTimeout(function () {
               if (_greeting) _greeting.style.opacity = '1';
               _scheduleNext();
-            }, 500);
+            }, 440);
           }
-        }, 550);
-      }, 5000);
+        }, 480);
+      }, 3400);
     }
 
     function _typewrite(text, el, onDone) {
@@ -450,7 +457,7 @@
 
           /* Use plain text for typewriter (no HTML during type) */
           var plainText = knownCity
-            ? 'Dites-moi ce qui se passe \u2014 je vous vois \u00e0\u00a0' + knownCity + '.'
+            ? 'Dites-moi ce qui se passe \u2014 je suis \u00e0\u00a0' + knownCity + '.'
             : _text.heroIdle;
 
           _typewrite(plainText, _greeting, function () {
@@ -1278,7 +1285,7 @@
 
   /* ── Public API ─────────────────────────────────────────────── */
   window.FixeoRAFI = {
-    VERSION:  'rfos-v1e',
+    VERSION:  'rfos-v1f',
     memory:   _mem,
     entry:    RafiEntry,
     conv:     RafiConversation,
