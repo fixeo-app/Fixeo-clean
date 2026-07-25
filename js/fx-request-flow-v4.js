@@ -1,5 +1,5 @@
 /**
- * fx-request-flow-v4.js — fxrf4-v5j
+ * fx-request-flow-v4.js — fxrf4-v5k
  * RAFI Request Flow V5 — Emergency Mode Adaptation
  *
  * EMOTIONAL ARC: Problem → Relief → Confidence → Momentum → Trust
@@ -14,7 +14,7 @@
  * ISOLATED: Zero dependency on .modal, MutationObservers, setTimeout injections.
  * ROLLBACK: window.FIXEO_FLOW_V4 = false
  *
- * VERSION: fxrf4-v5j — 2026-07-25
+ * VERSION: fxrf4-v5k — 2026-07-25
  */
 
 (function () {
@@ -298,7 +298,7 @@
         tracking_ref: ref,
         status:       'nouvelle',
         created_at:   new Date().toISOString(),
-        source:       'fxrf4-v5j',
+        source:       'fxrf4-v5k',
         mode:         st.mode,
         viewed:       false
       };
@@ -337,7 +337,7 @@
   function _fireAnalytics(req, mode, duplicated) {
     try {
       window.dispatchEvent(new CustomEvent('fixeo:client-request-submit-success', {
-        detail: { request: req, mode: mode, source: 'fxrf4-v5j',
+        detail: { request: req, mode: mode, source: 'fxrf4-v5k',
                   storageKey: STORAGE_KEY, duplicated: duplicated }
       }));
     } catch(_) {}
@@ -454,7 +454,7 @@
     _wireSwipeDismiss(dialog);
 
     /* Diagnostic */
-    console.log('[fxrf4-v5j] DOM built. Header children:', head.childElementCount, '(expected 2: rafi-row, close)');
+    console.log('[fxrf4-v5k] DOM built. Header children:', head.childElementCount, '(expected 2: rafi-row, close)');
   }
 
   /* ══════════════════════════════════════════════════════════
@@ -1297,7 +1297,7 @@
 
     var head = _q('#fxrf4-head');
     if (head) {
-      console.log('[fxrf4-v5j] Success rendered. mode=' + (st.mode) +
+      console.log('[fxrf4-v5k] Success rendered. mode=' + (st.mode) +
                   ' Header children:', head.childElementCount);
     }
   }
@@ -1427,6 +1427,16 @@
 
     _isOpen = true;
 
+    /* Reset transition lock and clear previous screen content.
+       open() calls _renderStep1() directly (not through _transition) so
+       body.innerHTML is not cleared automatically. Without this, re-opens
+       append a second .fxrf4-screen on top of the previous one. */
+    _transitioning = false;
+    var _bodyEl = _root.querySelector('#fxrf4-body');
+    var _footEl = _root.querySelector('#fxrf4-foot');
+    if (_bodyEl) _bodyEl.innerHTML = '';
+    if (_footEl) _footEl.innerHTML = '';
+
     _lock();
     _root.classList.add('fxrf4-active');
     _root.setAttribute('aria-hidden', 'false');
@@ -1451,6 +1461,9 @@
 
     /* Clear typing timer */
     if (_typeTimer) { clearInterval(_typeTimer); _typeTimer = null; }
+
+    /* Reset transition lock — prevents tap-blocked re-open if closed mid-transition */
+    _transitioning = false;
 
     /* Tear down keyboard listener */
     _teardownKeyboard();
@@ -1568,7 +1581,7 @@
   ══════════════════════════════════════════════════════════ */
 
   window.FixeoRequestFlowV4 = {
-    VERSION: 'fxrf4-v5j',
+    VERSION: 'fxrf4-v5k',
     open:    open,
     close:   close
   };
