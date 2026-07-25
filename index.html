@@ -1982,6 +1982,105 @@ section#home.hero.hero-section {
   }
 }
 
+/*
+ * 4. JOURNEY B PREMIUM BLOCK — fxjb-*
+ *    Transforms the secondary CTA from an isolated pill into a
+ *    narrative transition that sells the workflow, not just the button.
+ *    Renders inside .rfos-fallback-band (placed by RAFI OS after hero).
+ *    HTML lives in .hero-secondary-link-wrap — moved by RAFI OS on mount.
+ *    Zero JS. CSS-only composition.
+ */
+
+/* ── Band container — generous vertical breathing room ── */
+.rfos-fallback-band {
+  padding: 44px 20px 52px !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
+  justify-content: center !important;
+}
+
+/* ── Inner wrapper — column layout, centered, constrained width ── */
+.rfos-fallback-link {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 0 !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  border: none !important;
+  background: transparent !important;
+  white-space: normal !important;
+  cursor: default !important;
+  width: 100% !important;
+  max-width: 560px !important;
+  transition: none !important;
+  min-height: 0 !important;
+  text-decoration: none !important;
+  color: inherit !important;
+}
+
+.rfos-fallback-link:hover {
+  background: transparent !important;
+  border-color: transparent !important;
+  color: inherit !important;
+}
+
+/* ── Narrative block ── */
+.fxjb-context {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+/* Headline — main hook */
+.fxjb-headline {
+  margin: 0 0 10px;
+  padding: 0;
+  font-size: 1.04rem;
+  font-weight: 600;
+  line-height: 1.36;
+  color: rgba(255, 255, 255, 0.70);
+  letter-spacing: -0.01em;
+}
+
+/* Description — explains the workflow */
+.fxjb-desc {
+  margin: 0;
+  padding: 0;
+  font-size: 0.82rem;
+  font-weight: 400;
+  line-height: 1.60;
+  color: rgba(255, 255, 255, 0.36);
+  max-width: 420px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ── Mobile ── */
+@media (max-width: 640px) {
+  .rfos-fallback-band {
+    padding: 36px 20px 44px !important;
+  }
+
+  .fxjb-context {
+    margin-bottom: 24px;
+  }
+
+  .fxjb-headline {
+    font-size: 0.96rem;
+  }
+
+  .fxjb-desc {
+    font-size: 0.80rem;
+  }
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .rfos-fallback-link,
+  .rfos-fallback-link .hero-secondary-link {
+    transition: none !important;
+  }
+}
+
 </style>
 <!-- ★ Homepage premium mode: hide old results chrome + premium card styles -->
 <style id="fixeo-homepage-mode-css">
@@ -2639,8 +2738,15 @@ section#home.hero.hero-section {
     <!-- Reply field -->
     <div id="hero-quick-search" class="search-box" role="search" aria-label="Recherche rapide d'artisans"></div>
 
-    <!-- Fallback path — RAFI OS JS moves this below the hero on mount -->
+    <!-- Fallback path — RAFI OS JS moves this below the hero on mount.
+         fxjb-context narrative travels with the wrapper into .rfos-fallback-band. -->
     <div class="hero-secondary-link-wrap">
+      <!-- Journey B narrative — fxjb-* — rendered outside hero by RAFI OS -->
+      <div class="fxjb-context" aria-hidden="true">
+        <p class="fxjb-headline">Vous ne savez pas quel artisan choisir&nbsp;?</p>
+        <p class="fxjb-desc">Décrivez simplement votre problème.<br>
+          FIXEO identifie le bon métier et contacte les artisans adaptés.</p>
+      </div>
       <button class="hero-secondary-link"
               type="button"
               data-open-request-form="true"
