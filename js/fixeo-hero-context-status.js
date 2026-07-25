@@ -1,5 +1,5 @@
 /**
- * fixeo-hero-context-status.js — fxhcs-v1
+ * fixeo-hero-context-status.js — fxhcs-v1.3
  * RAFI Hero — Persistent context status line
  *
  * Shows what FIXEO currently knows about the user's location.
@@ -10,17 +10,26 @@
  *
  * Behaviour:
  *   1. At init: reads city from localStorage or #hero-city-label
- *   2. If city known → shows "📍 Vous semblez être à [City]. Artisans à proximité en priorité."
+ *   2. If city known → shows "📍 Vous semblez être à [City] · Modifier"
+ *                            "Artisans à proximité en priorité."
  *   3. If city unknown → shows "📍 Détection de votre position…" with gentle pulse
  *   4. Polls at 800ms intervals for up to 8s in case city resolves late
  *   5. Also watches #hero-city-label via MutationObserver (same as AIRE)
  *   6. If city never resolves → stays on neutral detecting message
  *
+ * "Modifier" action (v1.3):
+ *   - Scrolls #hero-quick-search into view (smooth)
+ *   - Focuses #qsm-select-city after 320ms (scroll landing time)
+ *   - Opens native city picker on mobile; dropdown on desktop
+ *   - Does NOT open the RAFI V5 modal
+ *   - Does NOT touch QSM, V5, or any frozen file
+ *   - Handled by a delegated listener on #fxhcs-line (data-fxhcs-action="modify-city")
+ *
  * CLS: element reserved with min-height at parse time (CSS).
  *      Text is filled in, never causes layout shift.
  *
  * Namespace: fxhcs-*
- * Version: fxhcs-v1
+ * Version: fxhcs-v1.3
  */
 (function () {
   'use strict';
@@ -76,8 +85,9 @@
        *   Primary:   📍 Vous semblez être à [City] · Modifier
        *   Secondary: Artisans à proximité en priorité.
        *
-       * "Modifier" opens V5 standard flow — picked up by the global
-       * capture handler (data-open-request-form). No new JS.
+       * "Modifier" uses data-fxhcs-action="modify-city" — handled by
+       * the delegated listener below. No data-open-request-form.
+       * No V5 modal. No QSM internals. One button, exactly once.
        */
       line.innerHTML =
         '<span class="fxhcs-primary">' +
@@ -86,7 +96,7 @@
           '<span class="fxhcs-city">' + _esc(city) + '</span>' +
           '<span class="fxhcs-sep" aria-hidden="true">\u00a0\u00b7\u00a0</span>' +
           '<button class="fxhcs-modifier" type="button"' +
-            ' data-open-request-form="true" data-request-mode="default"' +
+            ' data-fxhcs-action="modify-city"' +
             ' aria-label="Modifier ma ville">' +
             'Modifier' +
           '</button>' +
@@ -105,6 +115,36 @@
           'D\u00e9tection de votre position\u2026' +
         '</span>';
     }
+  }
+
+  /* ── "Modifier" action — scroll to city selector ────────────── */
+  /*
+   * Delegated listener on #fxhcs-line.
+   * Intercepts clicks on [data-fxhcs-action="modify-city"].
+   * Behaviour:
+   *   1. scrollIntoView on #hero-quick-search (smooth, center)
+   *   2. 320ms later: focus #qsm-select-city
+   *      → mobile: opens native system city picker
+   *      → desktop: opens <select> dropdown
+   *      → city already pre-selected (QSM seeds from localStorage on load)
+   * Does NOT open V5 modal. Does NOT call QuickSearchModal internals.
+   * Does NOT modify QSM, V5, RAFI OS, or any frozen file.
+   */
+  function _wireModifier(line) {
+    line.addEventListener('click', function (e) {
+      var btn = e.target.closest('[data-fxhcs-action="modify-city"]');
+      if (!btn) return;
+      e.preventDefault();
+      var searchBox = document.getElementById('hero-quick-search');
+      if (searchBox) {
+        searchBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      /* 320ms: scroll landing time before focus */
+      setTimeout(function () {
+        var citySelect = document.getElementById('qsm-select-city');
+        if (citySelect) citySelect.focus();
+      }, 320);
+    });
   }
 
   /* ── HTML escape (city name from localStorage — safe, but defensive) ── */
@@ -160,6 +200,9 @@
       /* Inserted — render initial state */
       var city = _readCity();
       _render(line, city);
+
+      /* Wire modifier action (once, delegated on the container) */
+      _wireModifier(line);
 
       /* Reveal with fade */
       requestAnimationFrame(function () {
