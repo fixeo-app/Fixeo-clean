@@ -1,5 +1,5 @@
 /**
- * fx-request-flow-v4.js — fxrf4-v5f
+ * fx-request-flow-v4.js — fxrf4-v5g
  * RAFI Request Flow V5 — Faithful implementation of the UX & Emotional Spec
  *
  * EMOTIONAL ARC: Problem → Relief → Confidence → Momentum → Trust
@@ -9,7 +9,7 @@
  * ISOLATED: Zero dependency on .modal, MutationObservers, setTimeout injections.
  * ROLLBACK: window.FIXEO_FLOW_V4 = false
  *
- * VERSION: fxrf4-v5f — 2026-07-25
+ * VERSION: fxrf4-v5g — 2026-07-25
  */
 
 (function () {
@@ -260,7 +260,7 @@
         tracking_ref: ref,
         status:       'nouvelle',
         created_at:   new Date().toISOString(),
-        source:       'fxrf4-v5f',
+        source:       'fxrf4-v5g',
         mode:         st.mode,
         viewed:       false
       };
@@ -299,7 +299,7 @@
   function _fireAnalytics(req, mode, duplicated) {
     try {
       window.dispatchEvent(new CustomEvent('fixeo:client-request-submit-success', {
-        detail: { request: req, mode: mode, source: 'fxrf4-v5f',
+        detail: { request: req, mode: mode, source: 'fxrf4-v5g',
                   storageKey: STORAGE_KEY, duplicated: duplicated }
       }));
     } catch(_) {}
@@ -412,7 +412,7 @@
     _wireSwipeDismiss(dialog);
 
     /* Diagnostic (spec requirement) */
-    console.log('[fxrf4-v5f] DOM built. Header children:', head.childElementCount, '(expected 2: rafi-row, close)');
+    console.log('[fxrf4-v5g] DOM built. Header children:', head.childElementCount, '(expected 2: rafi-row, close)');
   }
 
   /* ══════════════════════════════════════════════════════════
@@ -430,6 +430,8 @@
     if (name) name.classList.toggle('is-urgent', !!urgent);
 
     if (instant || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      /* Cancel any in-progress typewriter before instant set */
+      if (_typeTimer) { clearInterval(_typeTimer); _typeTimer = null; }
       el.textContent = text;
       el.classList.remove('is-typing');
       return;
@@ -1179,7 +1181,7 @@
     /* Diagnostic — spec requirement */
     var head = _q('#fxrf4-head');
     if (head) {
-      console.log('[fxrf4-v5f] Success rendered. Header children:', head.childElementCount,
+      console.log('[fxrf4-v5g] Success rendered. Header children:', head.childElementCount,
                   '(expected 2 — rafi-row + close)');
     }
   }
@@ -1360,7 +1362,7 @@
   ══════════════════════════════════════════════════════════ */
 
   window.FixeoRequestFlowV4 = {
-    VERSION: 'fxrf4-v5f',
+    VERSION: 'fxrf4-v5g',
     open:    open,
     close:   close
   };
