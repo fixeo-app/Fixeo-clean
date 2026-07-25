@@ -1,5 +1,5 @@
 /**
- * fx-request-flow-v4.js — fxrf4-v5g
+ * fx-request-flow-v4.js — fxrf4-v5h
  * RAFI Request Flow V5 — Faithful implementation of the UX & Emotional Spec
  *
  * EMOTIONAL ARC: Problem → Relief → Confidence → Momentum → Trust
@@ -9,7 +9,7 @@
  * ISOLATED: Zero dependency on .modal, MutationObservers, setTimeout injections.
  * ROLLBACK: window.FIXEO_FLOW_V4 = false
  *
- * VERSION: fxrf4-v5g — 2026-07-25
+ * VERSION: fxrf4-v5h — 2026-07-25
  */
 
 (function () {
@@ -260,7 +260,7 @@
         tracking_ref: ref,
         status:       'nouvelle',
         created_at:   new Date().toISOString(),
-        source:       'fxrf4-v5g',
+        source:       'fxrf4-v5h',
         mode:         st.mode,
         viewed:       false
       };
@@ -299,7 +299,7 @@
   function _fireAnalytics(req, mode, duplicated) {
     try {
       window.dispatchEvent(new CustomEvent('fixeo:client-request-submit-success', {
-        detail: { request: req, mode: mode, source: 'fxrf4-v5g',
+        detail: { request: req, mode: mode, source: 'fxrf4-v5h',
                   storageKey: STORAGE_KEY, duplicated: duplicated }
       }));
     } catch(_) {}
@@ -354,12 +354,16 @@
     var rafiRow = _h('div', { id: 'fxrf4-rafi-row' });
 
     var avatar = _h('div', { id: 'fxrf4-avatar' });
-    /* Try to use the RAFI micro image if available */
     var rafiImgSrc = window.RAFI_MICRO || '/rafi/RAFI_V2_MicroGlyph.webp';
     var avImg = _h('img', { src: rafiImgSrc, alt: '', width: '36', height: '36',
                              loading: 'eager', decoding: 'async' });
-    avImg.onerror = function() { this.style.display = 'none'; };
+    var avFallback = _h('span', { id: 'fxrf4-avatar-fallback', txt: 'R', 'aria-hidden': 'true' });
+    avImg.onerror = function() {
+      this.style.display = 'none';
+      avatar.classList.add('img-failed');
+    };
     avatar.appendChild(avImg);
+    avatar.appendChild(avFallback);
 
     var rafiMsg = _h('div', { id: 'fxrf4-rafi-msg' });
     var rafiName = _h('span', { cls: 'fxrf4-rafi-name', txt: 'RAFI', 'aria-hidden': 'true' });
@@ -412,7 +416,7 @@
     _wireSwipeDismiss(dialog);
 
     /* Diagnostic (spec requirement) */
-    console.log('[fxrf4-v5g] DOM built. Header children:', head.childElementCount, '(expected 2: rafi-row, close)');
+    console.log('[fxrf4-v5h] DOM built. Header children:', head.childElementCount, '(expected 2: rafi-row, close)');
   }
 
   /* ══════════════════════════════════════════════════════════
@@ -689,11 +693,8 @@
 
     var body = _q('#fxrf4-body');
     if (body) body.appendChild(_screen([grid, otherWrap]));
-
-    /* If hero pre-selected a service, auto-advance after brief pause */
-    if (st.serviceSlug) {
-      setTimeout(function() { _transitionFwd(_renderStep2); }, 600);
-    }
+    /* Always start on step 1. Prefill only highlights the chip.
+       User must tap to confirm — never auto-advance on open. */
   }
 
   /* ══════════════════════════════════════════════════════════
@@ -855,17 +856,9 @@
       }, 100);
     }
 
-    /* Auto-show if city already set (returning user) */
-    if (selectedCity && !isUrgent) {
-      setTimeout(_showUrgencyCards, 300);
-    }
-
-    /* If express mode and city already detected — auto-advance */
-    if (isUrgent && detected) {
-      st.city = detected;
-      setTimeout(function() { _transitionFwd(_renderStep3); }, 600);
-      return; /* Don't render this screen */
-    }
+    /* Always render step 2 fully. Never auto-skip.
+       City tap reveals urgency. Express mode still shows city chips.
+       Returning-user state pre-selects the chip visually but waits for tap. */
 
     /* Back */
     var foot2 = _q('#fxrf4-foot');
@@ -1181,7 +1174,7 @@
     /* Diagnostic — spec requirement */
     var head = _q('#fxrf4-head');
     if (head) {
-      console.log('[fxrf4-v5g] Success rendered. Header children:', head.childElementCount,
+      console.log('[fxrf4-v5h] Success rendered. Header children:', head.childElementCount,
                   '(expected 2 — rafi-row + close)');
     }
   }
@@ -1362,7 +1355,7 @@
   ══════════════════════════════════════════════════════════ */
 
   window.FixeoRequestFlowV4 = {
-    VERSION: 'fxrf4-v5g',
+    VERSION: 'fxrf4-v5h',
     open:    open,
     close:   close
   };

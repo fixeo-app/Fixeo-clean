@@ -1,6 +1,6 @@
 /**
- * fx-request-flow-v4.css — fxrf4-v5g
- * RAFI Request Flow V5 — Craftsmanship pass
+ * fx-request-flow-v4.css — fxrf4-v5h
+ * RAFI Request Flow V5 — Premium Polish
  *
  * NAMESPACE: fxrf4-* exclusively
  * ZERO dependency on .modal, main.css, fixeo_v5_fixes.css
@@ -19,9 +19,7 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ─── ROOT HOST ───────────────────────────────────────────────
-   Full-screen fixed host. Invisible until JS adds .fxrf4-active.
-────────────────────────────────────────────────────────────── */
+/* ─── ROOT HOST ─────────────────────────────────────────────── */
 #fxrf4-root {
   display: none;
   position: fixed;
@@ -42,10 +40,10 @@
 #fxrf4-bd {
   position: absolute;
   inset: 0;
-  background: rgba(4, 5, 12, 0.85);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  animation: fxrf4-bd-in 220ms ease both;
+  background: rgba(4, 5, 12, 0.82);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  animation: fxrf4-bd-in 200ms ease both;
 }
 
 @keyframes fxrf4-bd-in {
@@ -53,10 +51,7 @@
   to   { opacity: 1; }
 }
 
-/* ─── DIALOG ─────────────────────────────────────────────────
-   Desktop: centered card.
-   Mobile ≤640px: bottom sheet (overridden below).
-────────────────────────────────────────────────────────────── */
+/* ─── DIALOG ─────────────────────────────────────────────────── */
 #fxrf4-dialog {
   position: absolute;
   background: #090b16;
@@ -73,41 +68,41 @@
   max-width: 460px;
   max-height: min(88vh, 680px);
 
+  /* Calm, diffuse shadow — not heavy */
   box-shadow:
-    0 12px 40px rgba(0, 0, 0, 0.60),
-    0 48px 120px rgba(0, 0, 0, 0.40);
+    0 4px 16px rgba(0, 0, 0, 0.32),
+    0 20px 60px rgba(0, 0, 0, 0.44),
+    0 0 0 0.5px rgba(255, 255, 255, 0.04) inset;
 
-  animation: fxrf4-dialog-in 280ms cubic-bezier(0.34, 1.15, 0.64, 1) 100ms both;
+  animation: fxrf4-dialog-in 260ms cubic-bezier(0.34, 1.12, 0.64, 1) 80ms both;
 }
 
 @keyframes fxrf4-dialog-in {
-  from { opacity: 0; transform: translate(-50%, -47%) scale(0.96); }
+  from { opacity: 0; transform: translate(-50%, -46%) scale(0.96); }
   to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
 }
 
-/* ─── HEADER ─────────────────────────────────────────────────
-   Pinned. Never scrolls. RAFI speaks here.
-────────────────────────────────────────────────────────────── */
+/* ─── HEADER ─────────────────────────────────────────────────── */
 #fxrf4-head {
   flex-shrink: 0;
   position: relative;
-  padding: 22px 64px 20px 22px;
-  /* No border-bottom — progress bar is the separator */
+  /* Right padding: close button is 44px wide + 14px from edge = 58px. 62px gives 4px buffer. */
+  padding: 20px 62px 18px 20px;
 }
 
-/* RAFI avatar + message side by side */
 #fxrf4-rafi-row {
   display: flex;
   align-items: flex-start;
-  gap: 12px;
+  gap: 11px;
 }
 
+/* Avatar ring */
 #fxrf4-avatar {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: rgba(72, 100, 255, 0.12);
-  border: 1.5px solid rgba(72, 100, 255, 0.24);
+  background: rgba(72, 100, 255, 0.10);
+  border: 1.5px solid rgba(72, 100, 255, 0.22);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -123,12 +118,25 @@
   border-radius: 50%;
 }
 
-@keyframes fxrf4-avatar-breathe {
-  0%, 100% { opacity: 0.6; }
-  50%       { opacity: 1;   }
+/* Fallback glyph shown when image fails */
+#fxrf4-avatar-fallback {
+  font-size: 0.80rem;
+  font-weight: 800;
+  color: rgba(72, 100, 255, 0.70);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  display: none;
 }
 
-/* RAFI message */
+#fxrf4-avatar.img-failed #fxrf4-avatar-fallback {
+  display: block;
+}
+
+@keyframes fxrf4-avatar-breathe {
+  0%, 100% { opacity: 0.55; }
+  50%       { opacity: 1;    }
+}
+
 #fxrf4-rafi-msg {
   flex: 1;
   min-width: 0;
@@ -136,12 +144,12 @@
 
 .fxrf4-rafi-name {
   display: block;
-  font-size: 0.58rem;
+  font-size: 0.62rem;
   font-weight: 800;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.13em;
   text-transform: uppercase;
-  color: rgba(72, 100, 255, 0.80);
-  margin-bottom: 5px;
+  color: rgba(72, 100, 255, 0.75);
+  margin-bottom: 4px;
   line-height: 1;
 }
 
@@ -154,16 +162,16 @@
   font-size: 1.08rem;
   font-weight: 600;
   color: rgba(255, 255, 255, 0.96);
-  line-height: 1.30;
-  letter-spacing: -0.01em;
+  line-height: 1.28;
+  letter-spacing: -0.015em;
 }
 
-/* Typing cursor */
+/* Typing cursor — blinks only while typing */
 .fxrf4-rafi-text.is-typing::after {
   content: '|';
   display: inline-block;
-  color: rgba(72, 100, 255, 0.60);
-  animation: fxrf4-cursor 0.8s step-start infinite;
+  color: rgba(72, 100, 255, 0.55);
+  animation: fxrf4-cursor 0.9s step-start infinite;
   margin-left: 1px;
 }
 
@@ -172,9 +180,7 @@
   50%       { opacity: 0; }
 }
 
-/* ─── CLOSE BUTTON ───────────────────────────────────────────
-   44×44 touch target. Vertically centred to header.
-────────────────────────────────────────────────────────────── */
+/* ─── CLOSE BUTTON ───────────────────────────────────────────── */
 #fxrf4-close {
   position: absolute;
   top: 50%;
@@ -186,10 +192,10 @@
   align-items: center;
   justify-content: center;
   background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  color: rgba(255, 255, 255, 0.45);
-  font-size: 0.90rem;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 50%;
+  color: rgba(255, 255, 255, 0.38);
+  font-size: 0.82rem;
   line-height: 1;
   cursor: pointer;
   touch-action: manipulation;
@@ -200,22 +206,23 @@
   z-index: 2;
 }
 
-#fxrf4-close:hover {
-  background: rgba(255, 255, 255, 0.10);
-  color: rgba(255, 255, 255, 0.70);
+@media (hover: hover) {
+  #fxrf4-close:hover {
+    background: rgba(255, 255, 255, 0.09);
+    color: rgba(255, 255, 255, 0.60);
+  }
 }
 
 #fxrf4-close:active {
-  transform: translateY(-50%) scale(0.92);
+  transform: translateY(-50%) scale(0.90);
+  transition: transform 0.08s ease;
 }
 
-/* ─── PROGRESS LINE ───────────────────────────────────────────
-   2px. No labels. No numbers. Pure momentum.
-────────────────────────────────────────────────────────────── */
+/* ─── PROGRESS LINE ──────────────────────────────────────────── */
 #fxrf4-progress {
   flex-shrink: 0;
   height: 2px;
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.05);
   position: relative;
 }
 
@@ -224,14 +231,13 @@
   top: 0;
   left: 0;
   height: 100%;
-  background: rgba(72, 100, 255, 0.75);
+  /* Full opacity — softness reads as a bug */
+  background: rgba(72, 100, 255, 1);
   border-radius: 0 2px 2px 0;
-  transition: width 360ms cubic-bezier(0.4, 0, 0.2, 1);
+  transition: width 380ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* ─── BODY ───────────────────────────────────────────────────
-   Isolated scroll. Never scrolls the page.
-────────────────────────────────────────────────────────────── */
+/* ─── BODY ───────────────────────────────────────────────────── */
 #fxrf4-body {
   flex: 1 1 auto;
   min-height: 0;
@@ -239,59 +245,57 @@
   overflow-x: hidden;
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
-  padding: 24px 22px 8px;
+  padding: 22px 20px 14px;
   position: relative;
 }
 
-/* Screen content wrapper — slides in/out on transition */
+/* Screen content wrapper */
 .fxrf4-screen {
-  animation: fxrf4-screen-in 230ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  animation: fxrf4-screen-in 220ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
 }
 
 .fxrf4-screen.is-leaving {
-  animation: fxrf4-screen-out 170ms cubic-bezier(0.55, 0, 1, 0.45) both;
+  animation: fxrf4-screen-out 160ms cubic-bezier(0.55, 0, 1, 0.45) both;
+  pointer-events: none;
 }
 
 .fxrf4-screen.is-leaving-back {
-  animation: fxrf4-screen-out-back 170ms cubic-bezier(0.55, 0, 1, 0.45) both;
+  animation: fxrf4-screen-out-back 160ms cubic-bezier(0.55, 0, 1, 0.45) both;
+  pointer-events: none;
 }
 
 @keyframes fxrf4-screen-in {
-  from { opacity: 0; transform: translateX(16px); }
+  from { opacity: 0; transform: translateX(14px); }
   to   { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes fxrf4-screen-out {
   from { opacity: 1; transform: translateX(0); }
-  to   { opacity: 0; transform: translateX(-16px); }
+  to   { opacity: 0; transform: translateX(-14px); }
 }
 
 @keyframes fxrf4-screen-in-back {
-  from { opacity: 0; transform: translateX(-16px); }
+  from { opacity: 0; transform: translateX(-14px); }
   to   { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes fxrf4-screen-out-back {
   from { opacity: 1; transform: translateX(0); }
-  to   { opacity: 0; transform: translateX(16px); }
+  to   { opacity: 0; transform: translateX(14px); }
 }
 
-/* ─── FOOTER ─────────────────────────────────────────────────
-   Pinned actions. Never scrolls.
-────────────────────────────────────────────────────────────── */
+/* ─── FOOTER ─────────────────────────────────────────────────── */
 #fxrf4-foot {
   flex-shrink: 0;
-  padding: 18px 22px;
-  padding-bottom: max(18px, env(safe-area-inset-bottom));
+  padding: 16px 20px;
+  padding-bottom: max(16px, env(safe-area-inset-bottom));
 }
 
-/* ─── SERVICE CHIPS ───────────────────────────────────────────
-   2-column grid. Large tap targets. Auto-advance on selection.
-────────────────────────────────────────────────────────────── */
+/* ─── SERVICE CHIPS ──────────────────────────────────────────── */
 .fxrf4-chips-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 9px;
+  gap: 10px;
   margin-bottom: 10px;
 }
 
@@ -299,7 +303,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 14px;
+  padding: 14px 14px;
   background: rgba(255, 255, 255, 0.04);
   border: 1.5px solid rgba(255, 255, 255, 0.07);
   border-radius: 16px;
@@ -309,41 +313,42 @@
   user-select: none;
   -webkit-user-select: none;
   transition:
-    border-color 0.16s ease,
-    background 0.16s ease,
+    border-color 0.15s ease,
+    background 0.15s ease,
     transform 0.12s ease,
-    opacity 0.16s ease;
+    opacity 0.18s ease;
   position: relative;
-  min-height: 64px;
+  min-height: 62px;
 }
 
 .fxrf4-chip-icon {
-  font-size: 1.40rem;
+  font-size: 1.50rem;
   line-height: 1;
   flex-shrink: 0;
-  transition: transform 0.18s cubic-bezier(0.34, 1.4, 0.64, 1);
+  transition: transform 0.20s cubic-bezier(0.34, 1.4, 0.64, 1);
 }
 
 .fxrf4-chip-label {
   font-size: 0.88rem;
   font-weight: 700;
-  color: rgba(255, 255, 255, 0.84);
+  color: rgba(255, 255, 255, 0.80);
   line-height: 1.2;
-  transition: color 0.16s;
+  transition: color 0.15s;
 }
 
-/* Hover — desktop only */
 @media (hover: hover) {
   .fxrf4-chip:hover {
-    border-color: rgba(72, 100, 255, 0.30);
+    border-color: rgba(72, 100, 255, 0.28);
     background: rgba(72, 100, 255, 0.05);
+  }
+  .fxrf4-chip:hover .fxrf4-chip-label {
+    color: rgba(255, 255, 255, 0.92);
   }
 }
 
-/* Selected */
 .fxrf4-chip.is-selected {
-  border-color: rgba(72, 100, 255, 0.60);
-  background: rgba(72, 100, 255, 0.10);
+  border-color: rgba(72, 100, 255, 0.55);
+  background: rgba(72, 100, 255, 0.09);
 }
 
 .fxrf4-chip.is-selected .fxrf4-chip-icon {
@@ -354,80 +359,83 @@
   color: rgba(255, 255, 255, 0.97);
 }
 
-/* Selected checkmark — small, unobtrusive */
+/* Selected indicator — small, unobtrusive */
 .fxrf4-chip.is-selected::after {
   content: '✓';
   position: absolute;
   top: 8px;
-  right: 10px;
-  font-size: 0.60rem;
+  right: 9px;
+  font-size: 0.58rem;
   font-weight: 800;
-  color: rgba(72, 100, 255, 0.70);
-  animation: fxrf4-check-appear 0.18s cubic-bezier(0.34, 1.4, 0.64, 1) both;
+  color: rgba(72, 100, 255, 0.65);
+  animation: fxrf4-check-appear 0.20s cubic-bezier(0.34, 1.4, 0.64, 1) both;
 }
 
 @keyframes fxrf4-check-appear {
-  from { opacity: 0; transform: scale(0.4); }
+  from { opacity: 0; transform: scale(0.3); }
   to   { opacity: 1; transform: scale(1); }
 }
 
-/* Dimmed — another chip selected */
 .fxrf4-chip.is-dimmed {
-  opacity: 0.28;
+  opacity: 0.22;
   pointer-events: none;
+  transition: opacity 0.20s ease;
 }
 
-/* Tap press */
 .fxrf4-chip.is-tapping {
-  transform: scale(1.05);
+  transform: scale(1.04);
   transition: transform 0.10s ease;
 }
 
-/* "Autre chose" — full width, quieter */
+/* "Autre chose" — full width, quiet invitation */
 .fxrf4-chip.is-other {
   grid-column: 1 / -1;
-  min-height: 50px;
-  padding: 12px 14px;
+  min-height: 48px;
+  padding: 12px 16px;
   border-style: dashed;
-  border-color: rgba(255, 255, 255, 0.10);
+  border-color: rgba(255, 255, 255, 0.09);
   justify-content: center;
 }
 
 .fxrf4-chip.is-other .fxrf4-chip-label {
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.42);
+  color: rgba(255, 255, 255, 0.38);
   font-size: 0.82rem;
+  letter-spacing: 0.01em;
 }
 
 @media (hover: hover) {
   .fxrf4-chip.is-other:hover .fxrf4-chip-label {
-    color: rgba(255, 255, 255, 0.65);
+    color: rgba(255, 255, 255, 0.58);
+  }
+  .fxrf4-chip.is-other:hover {
+    border-color: rgba(255, 255, 255, 0.18);
   }
 }
 
 /* "Autre chose" inline input */
 .fxrf4-other-input-wrap {
   display: none;
-  margin-top: 12px;
+  margin-top: 10px;
 }
 
 .fxrf4-other-input-wrap.is-visible {
   display: block;
+  animation: fxrf4-screen-in 200ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
 }
 
-/* ─── CITY CHIPS ─────────────────────────────────────────────
-   Horizontal scroll. Detected city pulses once. Fade at right.
-────────────────────────────────────────────────────────────── */
+/* ─── CITY CHIPS ─────────────────────────────────────────────── */
 .fxrf4-city-row {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
-  padding-bottom: 4px;
-  margin-bottom: 14px;
-  -webkit-mask-image: linear-gradient(to right, black 80%, transparent 100%);
-  mask-image: linear-gradient(to right, black 80%, transparent 100%);
+  padding-bottom: 6px;
+  margin-bottom: 16px;
+  /* Fade starts later so chips aren't clipped on narrow screens */
+  -webkit-mask-image: linear-gradient(to right, black 88%, transparent 100%);
+  mask-image: linear-gradient(to right, black 88%, transparent 100%);
 }
 
 .fxrf4-city-row::-webkit-scrollbar {
@@ -438,24 +446,25 @@
   flex-shrink: 0;
   display: flex;
   align-items: center;
-  padding: 10px 16px;
+  padding: 10px 18px;
   background: rgba(255, 255, 255, 0.05);
   border: 1.5px solid rgba(255, 255, 255, 0.09);
   border-radius: 100px;
   font-size: 0.88rem;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.78);
+  color: rgba(255, 255, 255, 0.75);
   cursor: pointer;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
   white-space: nowrap;
-  transition: border-color 0.16s, background 0.16s;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
 }
 
 @media (hover: hover) {
   .fxrf4-city-chip:hover {
-    border-color: rgba(72, 100, 255, 0.35);
+    border-color: rgba(72, 100, 255, 0.32);
     background: rgba(72, 100, 255, 0.06);
+    color: rgba(255, 255, 255, 0.92);
   }
 }
 
@@ -465,29 +474,37 @@
   color: rgba(255, 255, 255, 0.97);
 }
 
-/* Detected city — one heartbeat, then settles */
+/* Detected city — one heartbeat */
 .fxrf4-city-chip.is-detected {
-  border-color: rgba(72, 100, 255, 0.45);
-  animation: fxrf4-city-pulse 900ms ease-out 350ms 1 both;
+  border-color: rgba(72, 100, 255, 0.40);
+  animation: fxrf4-city-pulse 800ms ease-out 400ms 1 both;
 }
 
 @keyframes fxrf4-city-pulse {
-  0%   { box-shadow: 0 0 0 0   rgba(72, 100, 255, 0.35); }
-  60%  { box-shadow: 0 0 0 7px rgba(72, 100, 255, 0); }
+  0%   { box-shadow: 0 0 0 0   rgba(72, 100, 255, 0.30); }
+  60%  { box-shadow: 0 0 0 6px rgba(72, 100, 255, 0); }
   100% { box-shadow: none; }
 }
 
-/* "Autre ville →" */
 .fxrf4-city-chip.is-more {
   border-style: dashed;
-  color: rgba(255, 255, 255, 0.38);
+  border-color: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.34);
   font-size: 0.80rem;
+}
+
+@media (hover: hover) {
+  .fxrf4-city-chip.is-more:hover {
+    color: rgba(255, 255, 255, 0.55);
+    border-color: rgba(255, 255, 255, 0.16);
+    background: transparent;
+  }
 }
 
 /* City select */
 .fxrf4-select-wrap {
   position: relative;
-  margin-bottom: 14px;
+  margin-bottom: 16px;
 }
 
 .fxrf4-select-wrap::after {
@@ -496,15 +513,15 @@
   right: 16px;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 0.80rem;
-  color: rgba(255, 255, 255, 0.30);
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.28);
   pointer-events: none;
 }
 
 .fxrf4-select {
   width: 100%;
   background: rgba(255, 255, 255, 0.05);
-  border: 1.5px solid rgba(255, 255, 255, 0.10);
+  border: 1.5px solid rgba(255, 255, 255, 0.09);
   border-radius: 14px;
   color: rgba(255, 255, 255, 0.90);
   font-size: 0.96rem;
@@ -526,9 +543,7 @@
   color: rgba(255, 255, 255, 0.92);
 }
 
-/* ─── URGENCY CARDS ───────────────────────────────────────────
-   Three choices. One tap selects and auto-advances.
-────────────────────────────────────────────────────────────── */
+/* ─── URGENCY CARDS ──────────────────────────────────────────── */
 .fxrf4-urgency-cards {
   display: flex;
   flex-direction: column;
@@ -539,8 +554,8 @@
 .fxrf4-urgency-card {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 16px 18px;
+  gap: 12px;
+  padding: 15px 18px;
   background: rgba(255, 255, 255, 0.04);
   border: 1.5px solid rgba(255, 255, 255, 0.07);
   border-radius: 18px;
@@ -549,8 +564,8 @@
   -webkit-tap-highlight-color: transparent;
   user-select: none;
   -webkit-user-select: none;
-  transition: border-color 0.16s, background 0.16s;
-  min-height: 66px;
+  transition: border-color 0.15s, background 0.15s;
+  min-height: 64px;
 }
 
 @media (hover: hover) {
@@ -561,12 +576,12 @@
 }
 
 .fxrf4-urgency-card.is-selected {
-  border-color: rgba(72, 100, 255, 0.60);
+  border-color: rgba(72, 100, 255, 0.55);
   background: rgba(72, 100, 255, 0.09);
 }
 
 .fxrf4-urgency-card.is-urgent.is-selected {
-  border-color: rgba(210, 60, 60, 0.60);
+  border-color: rgba(210, 60, 60, 0.55);
   background: rgba(210, 60, 60, 0.07);
 }
 
@@ -579,7 +594,7 @@
   font-size: 1.40rem;
   flex-shrink: 0;
   line-height: 1;
-  width: 34px;
+  width: 32px;
   text-align: center;
 }
 
@@ -595,27 +610,26 @@
   display: block;
   font-size: 0.74rem;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.36);
+  color: rgba(255, 255, 255, 0.34);
   margin-top: 3px;
+  line-height: 1.3;
 }
 
-/* Stagger drop-in */
+/* Stagger drop-in — purposeful, not decorative */
 .fxrf4-urgency-cards .fxrf4-urgency-card {
-  animation: fxrf4-card-in 260ms cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  animation: fxrf4-card-in 240ms cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
 }
 
 .fxrf4-urgency-cards .fxrf4-urgency-card:nth-child(1) { animation-delay: 0ms; }
-.fxrf4-urgency-cards .fxrf4-urgency-card:nth-child(2) { animation-delay: 55ms; }
-.fxrf4-urgency-cards .fxrf4-urgency-card:nth-child(3) { animation-delay: 110ms; }
+.fxrf4-urgency-cards .fxrf4-urgency-card:nth-child(2) { animation-delay: 50ms; }
+.fxrf4-urgency-cards .fxrf4-urgency-card:nth-child(3) { animation-delay: 100ms; }
 
 @keyframes fxrf4-card-in {
-  from { opacity: 0; transform: translateY(10px); }
+  from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ─── PHONE INPUT ────────────────────────────────────────────
-   One field. Dominant. Auto-focused. Large font.
-────────────────────────────────────────────────────────────── */
+/* ─── PHONE INPUT ────────────────────────────────────────────── */
 .fxrf4-phone-wrap {
   position: relative;
   margin-bottom: 8px;
@@ -628,23 +642,29 @@
   transform: translateY(-50%);
   font-size: 0.92rem;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.45);
+  color: rgba(255, 255, 255, 0.42);
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   pointer-events: none;
   z-index: 1;
+  line-height: 1;
+  /* Fixed width prevents emoji rendering variance from shifting the number */
+  min-width: 74px;
+  white-space: nowrap;
 }
 
 .fxrf4-phone-input {
   width: 100%;
   background: rgba(255, 255, 255, 0.05);
-  border: 1.5px solid rgba(255, 255, 255, 0.10);
+  border: 1.5px solid rgba(255, 255, 255, 0.09);
   border-radius: 16px;
   color: rgba(255, 255, 255, 0.94);
   font-size: 1.30rem;
   font-weight: 500;
-  padding: 18px 52px 18px 90px;
+  line-height: 1;
+  /* Left pad: 16px edge + ~74px prefix + 8px gap = 98px */
+  padding: 18px 52px 18px 100px;
   outline: none;
   -webkit-appearance: none;
   appearance: none;
@@ -653,23 +673,23 @@
 }
 
 .fxrf4-phone-input::placeholder {
-  color: rgba(255, 255, 255, 0.20);
+  color: rgba(255, 255, 255, 0.18);
   font-size: 1.05rem;
   letter-spacing: 0;
 }
 
 .fxrf4-phone-input:focus {
   border-color: rgba(72, 100, 255, 0.50);
-  background: rgba(72, 100, 255, 0.05);
+  background: rgba(72, 100, 255, 0.04);
 }
 
 .fxrf4-phone-input.is-valid {
-  border-color: rgba(32, 201, 151, 0.50);
+  border-color: rgba(32, 201, 151, 0.48);
 }
 
 .fxrf4-phone-input.is-error {
   border-color: rgba(210, 60, 60, 0.55);
-  animation: fxrf4-shake 0.32s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  animation: fxrf4-shake 0.30s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
 }
 
 /* Valid checkmark */
@@ -678,8 +698,8 @@
   right: 18px;
   top: 50%;
   transform: translateY(-50%);
-  color: rgba(32, 201, 151, 0.75);
-  font-size: 1.05rem;
+  color: rgba(32, 201, 151, 0.70);
+  font-size: 1.00rem;
   opacity: 0;
   transition: opacity 0.18s ease;
   pointer-events: none;
@@ -691,22 +711,22 @@
 }
 
 @keyframes fxrf4-valid-in {
-  from { opacity: 0; transform: translateY(-50%) scale(0.5); }
+  from { opacity: 0; transform: translateY(-50%) scale(0.4); }
   to   { opacity: 1; transform: translateY(-50%) scale(1); }
 }
 
 @keyframes fxrf4-shake {
   0%, 100% { transform: translateX(0); }
-  20%       { transform: translateX(-5px); }
-  40%       { transform: translateX(4px); }
+  20%       { transform: translateX(-6px); }
+  40%       { transform: translateX(5px); }
   60%       { transform: translateX(-3px); }
   80%       { transform: translateX(2px); }
 }
 
-/* Error hint */
+/* Error hint — soft fade in with delay */
 .fxrf4-hint {
   font-size: 0.74rem;
-  color: rgba(210, 80, 80, 0.85);
+  color: rgba(210, 80, 80, 0.80);
   margin-top: 8px;
   padding-left: 4px;
   line-height: 1.4;
@@ -715,11 +735,11 @@
 
 .fxrf4-hint.is-visible {
   display: block;
-  animation: fxrf4-hint-in 0.18s ease both;
+  animation: fxrf4-hint-in 0.20s ease 80ms both;
 }
 
 @keyframes fxrf4-hint-in {
-  from { opacity: 0; transform: translateY(-3px); }
+  from { opacity: 0; transform: translateY(-4px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
@@ -728,10 +748,10 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 16px;
+  padding: 15px 16px;
   background: rgba(72, 100, 255, 0.07);
-  border: 1.5px solid rgba(72, 100, 255, 0.18);
-  border-radius: 14px;
+  border: 1.5px solid rgba(72, 100, 255, 0.16);
+  border-radius: 16px;
   margin-bottom: 8px;
 }
 
@@ -745,7 +765,7 @@
 .fxrf4-prefill-change {
   font-size: 0.74rem;
   font-weight: 600;
-  color: rgba(72, 100, 255, 0.65);
+  color: rgba(72, 100, 255, 0.60);
   cursor: pointer;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
@@ -756,15 +776,12 @@
 
 @media (hover: hover) {
   .fxrf4-prefill-change:hover {
-    color: rgba(72, 100, 255, 0.88);
+    color: rgba(72, 100, 255, 0.85);
     background: rgba(72, 100, 255, 0.09);
   }
 }
 
-/* ─── BUTTONS ────────────────────────────────────────────────
-   Primary: 54px, full-width, dominant.
-   Back: ghost, minimal presence.
-────────────────────────────────────────────────────────────── */
+/* ─── BUTTONS ────────────────────────────────────────────────── */
 .fxrf4-btn {
   display: flex;
   align-items: center;
@@ -773,33 +790,34 @@
   width: 100%;
   border: none;
   border-radius: 16px;
-  font-size: 0.96rem;
+  font-size: 0.95rem;
   font-weight: 700;
   cursor: pointer;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
   user-select: none;
   -webkit-user-select: none;
-  transition: background 0.16s ease, opacity 0.16s ease;
+  transition: background 0.15s ease, opacity 0.15s ease;
   text-decoration: none;
   line-height: 1.2;
 }
 
 .fxrf4-btn:active {
-  transform: scale(0.975);
+  transform: scale(0.97);
   transition: transform 0.08s ease;
 }
 
 .fxrf4-btn:disabled {
-  opacity: 0.38;
+  opacity: 0.36;
   cursor: not-allowed;
   transform: none !important;
 }
 
 .fxrf4-btn-primary {
   height: 54px;
-  background: rgba(72, 100, 255, 0.92);
+  background: rgba(72, 100, 255, 0.94);
   color: #fff;
+  letter-spacing: 0.005em;
 }
 
 @media (hover: hover) {
@@ -809,7 +827,7 @@
 }
 
 .fxrf4-btn-primary.is-urgent {
-  background: rgba(210, 48, 48, 0.90);
+  background: rgba(210, 48, 48, 0.92);
 }
 
 @media (hover: hover) {
@@ -818,7 +836,7 @@
   }
 }
 
-/* Loading dots inside button */
+/* Loading dots */
 .fxrf4-btn-dots {
   display: flex;
   align-items: center;
@@ -838,35 +856,33 @@
 .fxrf4-btn-dots span:nth-child(3) { animation-delay: 0.36s; }
 
 @keyframes fxrf4-dot-pulse {
-  0%, 100% { transform: scale(0.82); opacity: 0.50; }
+  0%, 100% { transform: scale(0.80); opacity: 0.45; }
   50%       { transform: scale(1.00); opacity: 1; }
 }
 
 .fxrf4-btn-back {
   height: 40px;
   background: transparent;
-  color: rgba(255, 255, 255, 0.32);
+  color: rgba(255, 255, 255, 0.28);
   font-size: 0.82rem;
   font-weight: 600;
-  margin-top: 8px;
+  margin-top: 6px;
   border-radius: 12px;
   transition: color 0.15s;
 }
 
 @media (hover: hover) {
   .fxrf4-btn-back:hover {
-    color: rgba(255, 255, 255, 0.55);
+    color: rgba(255, 255, 255, 0.52);
   }
 }
 
-/* ─── INTERSTITIAL ───────────────────────────────────────────
-   RAFI is working. User waits calmly. No noise.
-────────────────────────────────────────────────────────────── */
+/* ─── INTERSTITIAL ───────────────────────────────────────────── */
 #fxrf4-interstitial {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px 0 8px;
+  padding: 18px 0 8px;
   text-align: center;
 }
 
@@ -878,10 +894,10 @@
 
 .fxrf4-inter-dots span {
   display: block;
-  width: 6px;
-  height: 6px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
-  background: rgba(72, 100, 255, 0.55);
+  background: rgba(72, 100, 255, 0.50);
   animation: fxrf4-inter-breathe 1.8s ease-in-out infinite;
 }
 
@@ -889,13 +905,13 @@
 .fxrf4-inter-dots span:nth-child(3) { animation-delay: 0.64s; }
 
 @keyframes fxrf4-inter-breathe {
-  0%, 100% { transform: scale(0.68); opacity: 0.30; }
+  0%, 100% { transform: scale(0.68); opacity: 0.28; }
   50%       { transform: scale(1.00); opacity: 1; }
 }
 
 .fxrf4-inter-line2 {
   font-size: 0.76rem;
-  color: rgba(255, 255, 255, 0.25);
+  color: rgba(255, 255, 255, 0.22);
   margin-top: 12px;
   opacity: 0;
   transition: opacity 0.40s ease;
@@ -905,97 +921,92 @@
   opacity: 1;
 }
 
-/* ─── SUCCESS SCREEN ─────────────────────────────────────────
-   The arrival. Calm. The user feels taken care of.
-────────────────────────────────────────────────────────────── */
+/* ─── SUCCESS SCREEN ─────────────────────────────────────────── */
 #fxrf4-success {
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 12px 4px 8px;
+  padding: 10px 4px 8px;
 }
 
-/* Check ring */
 .fxrf4-check-ring {
   position: relative;
   width: 72px;
   height: 72px;
-  margin: 0 auto 20px;
+  margin: 0 auto 18px;
 }
 
 .fxrf4-check-ring-inner {
   width: 72px;
   height: 72px;
   border-radius: 50%;
-  background: rgba(32, 201, 151, 0.09);
-  border: 1.5px solid rgba(32, 201, 151, 0.28);
+  background: rgba(32, 201, 151, 0.08);
+  border: 1.5px solid rgba(32, 201, 151, 0.26);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.75rem;
-  animation: fxrf4-ring-in 360ms cubic-bezier(0.34, 1.45, 0.64, 1) 80ms both;
+  font-size: 1.80rem;
+  animation: fxrf4-ring-in 340ms cubic-bezier(0.34, 1.40, 0.64, 1) 80ms both;
 }
 
 @keyframes fxrf4-ring-in {
-  from { transform: scale(0.20); opacity: 0; }
+  from { transform: scale(0.18); opacity: 0; }
   to   { transform: scale(1);    opacity: 1; }
 }
 
-/* Ripple — one pulse, never loops */
 .fxrf4-check-ring-ripple {
   position: absolute;
   inset: -8px;
   border-radius: 50%;
-  border: 1px solid rgba(32, 201, 151, 0.25);
-  animation: fxrf4-ripple 560ms ease-out 340ms 1 both;
+  border: 1px solid rgba(32, 201, 151, 0.22);
+  animation: fxrf4-ripple 520ms ease-out 320ms 1 both;
   pointer-events: none;
 }
 
 @keyframes fxrf4-ripple {
-  from { transform: scale(0.88); opacity: 0.65; }
-  to   { transform: scale(1.45); opacity: 0; }
+  from { transform: scale(0.88); opacity: 0.60; }
+  to   { transform: scale(1.50); opacity: 0; }
 }
 
-/* RAFI attribution */
 .fxrf4-success-tag {
   font-size: 0.56rem;
   font-weight: 800;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: rgba(72, 100, 255, 0.65);
-  margin-bottom: 10px;
-  animation: fxrf4-fade-up 280ms ease 480ms both;
+  color: rgba(72, 100, 255, 0.60);
+  margin-bottom: 8px;
+  animation: fxrf4-fade-up 260ms ease 460ms both;
 }
 
 .fxrf4-success-title {
-  font-size: 1.08rem;
+  font-size: 1.12rem;
   font-weight: 700;
-  color: rgba(255, 255, 255, 0.95);
+  color: rgba(255, 255, 255, 0.96);
   line-height: 1.28;
   margin-bottom: 10px;
-  animation: fxrf4-fade-up 280ms ease 560ms both;
+  animation: fxrf4-fade-up 260ms ease 540ms both;
 }
 
 .fxrf4-success-body {
   font-size: 0.84rem;
-  color: rgba(255, 255, 255, 0.52);
-  line-height: 1.55;
-  max-width: 290px;
-  margin: 0 auto 22px;
-  animation: fxrf4-fade-up 280ms ease 640ms both;
+  color: rgba(255, 255, 255, 0.48);
+  line-height: 1.58;
+  max-width: 288px;
+  margin: 0 auto 20px;
+  animation: fxrf4-fade-up 260ms ease 620ms both;
 }
 
 .fxrf4-success-ref {
   font-family: 'SF Mono', 'Fira Code', 'Courier New', monospace;
   font-size: 0.68rem;
-  color: rgba(255, 255, 255, 0.24);
-  margin-bottom: 22px;
-  animation: fxrf4-fade-up 280ms ease 700ms both;
+  color: rgba(255, 255, 255, 0.22);
+  margin-bottom: 20px;
+  animation: fxrf4-fade-up 260ms ease 680ms both;
 }
 
 .fxrf4-success-ref strong {
-  color: rgba(255, 255, 255, 0.50);
+  color: rgba(255, 255, 255, 0.48);
   letter-spacing: 0.06em;
 }
 
@@ -1004,9 +1015,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 26px;
+  margin-bottom: 24px;
   width: 100%;
-  animation: fxrf4-fade-up 280ms ease 760ms both;
+  animation: fxrf4-fade-up 260ms ease 740ms both;
 }
 
 .fxrf4-success-step {
@@ -1022,8 +1033,8 @@
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  background: rgba(32, 201, 151, 0.07);
-  border: 1.5px solid rgba(32, 201, 151, 0.20);
+  background: rgba(32, 201, 151, 0.06);
+  border: 1.5px solid rgba(32, 201, 151, 0.18);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1031,29 +1042,29 @@
 }
 
 .fxrf4-success-step-dot.is-active {
-  border-color: rgba(32, 201, 151, 0.45);
-  background: rgba(32, 201, 151, 0.12);
-  animation: fxrf4-step-pulse 2.4s ease-in-out 1s infinite;
+  border-color: rgba(32, 201, 151, 0.42);
+  background: rgba(32, 201, 151, 0.10);
+  animation: fxrf4-step-pulse 2.6s ease-in-out 1s infinite;
 }
 
 @keyframes fxrf4-step-pulse {
-  0%, 100% { box-shadow: 0 0 0 0   rgba(32, 201, 151, 0.25); }
-  50%       { box-shadow: 0 0 0 6px rgba(32, 201, 151, 0); }
+  0%, 100% { box-shadow: 0 0 0 0   rgba(32, 201, 151, 0.22); }
+  50%       { box-shadow: 0 0 0 5px rgba(32, 201, 151, 0); }
 }
 
 .fxrf4-success-step-lbl {
   font-size: 0.59rem;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.35);
+  color: rgba(255, 255, 255, 0.32);
   text-align: center;
   line-height: 1.3;
   white-space: pre-line;
 }
 
 .fxrf4-success-step-sep {
-  flex: 0 0 20px;
+  flex: 0 0 24px;
   height: 1px;
-  background: rgba(32, 201, 151, 0.14);
+  background: rgba(32, 201, 151, 0.12);
   margin-top: 17px;
 }
 
@@ -1061,14 +1072,14 @@
 .fxrf4-success-actions {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
   width: 100%;
-  animation: fxrf4-fade-up 280ms ease 840ms both;
+  animation: fxrf4-fade-up 260ms ease 820ms both;
 }
 
 .fxrf4-btn-success-primary {
   height: 52px;
-  background: rgba(72, 100, 255, 0.90);
+  background: rgba(72, 100, 255, 0.92);
   color: #fff;
   border-radius: 16px;
   font-size: 0.94rem;
@@ -1081,6 +1092,7 @@
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
   transition: background 0.15s;
+  letter-spacing: 0.005em;
 }
 
 @media (hover: hover) {
@@ -1092,7 +1104,7 @@
 .fxrf4-btn-success-secondary {
   height: 40px;
   background: transparent;
-  color: rgba(255, 255, 255, 0.32);
+  color: rgba(255, 255, 255, 0.28);
   border-radius: 12px;
   font-size: 0.82rem;
   font-weight: 600;
@@ -1108,18 +1120,16 @@
 
 @media (hover: hover) {
   .fxrf4-btn-success-secondary:hover {
-    color: rgba(255, 255, 255, 0.55);
+    color: rgba(255, 255, 255, 0.52);
   }
 }
 
 @keyframes fxrf4-fade-up {
-  from { opacity: 0; transform: translateY(7px); }
+  from { opacity: 0; transform: translateY(6px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ─── MOBILE ≤640px — BOTTOM SHEET ──────────────────────────
-   Slides up from bottom. Drag handle. Safe area aware.
-────────────────────────────────────────────────────────────── */
+/* ─── MOBILE ≤640px — BOTTOM SHEET ──────────────────────────── */
 @media (max-width: 640px) {
   #fxrf4-dialog {
     top: auto;
@@ -1130,58 +1140,67 @@
     width: 100%;
     max-width: 100%;
     max-height: min(94dvh, 720px);
-    border-radius: 22px 22px 0 0;
+    border-radius: 20px 20px 0 0;
     border-bottom: none;
-    /* Drag handle */
     padding-top: 16px;
-    animation: fxrf4-sheet-in 300ms cubic-bezier(0.32, 0.72, 0, 1) 80ms both;
+    animation: fxrf4-sheet-in 280ms cubic-bezier(0.32, 0.72, 0, 1) 60ms both;
   }
 
-  /* Drag handle — sits above overflow:hidden by using padding-top gap */
+  /* Drag handle */
   #fxrf4-dialog::before {
     content: '';
     position: absolute;
     top: 8px;
     left: 50%;
     transform: translateX(-50%);
-    width: 36px;
+    width: 34px;
     height: 4px;
     border-radius: 2px;
-    background: rgba(255, 255, 255, 0.13);
+    background: rgba(255, 255, 255, 0.11);
     z-index: 10;
   }
 
   @keyframes fxrf4-sheet-in {
-    from { transform: translateY(100%); opacity: 0.80; }
+    from { transform: translateY(100%); opacity: 0.85; }
     to   { transform: translateY(0);    opacity: 1; }
   }
 
   #fxrf4-head {
-    padding: 10px 60px 18px 20px;
+    padding: 12px 58px 16px 20px;
   }
 
   #fxrf4-body {
-    padding: 22px 20px 8px;
+    padding: 20px 20px 12px;
   }
 
   #fxrf4-foot {
     padding: 14px 20px;
-    padding-bottom: max(22px, env(safe-area-inset-bottom));
+    padding-bottom: max(20px, env(safe-area-inset-bottom));
   }
 
   .fxrf4-btn-primary {
     height: 56px;
+    font-size: 1.00rem;
   }
 
   .fxrf4-phone-input {
-    font-size: 1.40rem;
-    padding: 20px 52px 20px 92px;
+    font-size: 1.36rem;
+    /* Left pad kept proportional with prefix min-width */
+    padding: 20px 52px 20px 100px;
+  }
+
+  /* Service chips — slightly taller for thumb */
+  .fxrf4-chip {
+    min-height: 64px;
+    padding: 14px 12px;
+  }
+
+  .fxrf4-chip-label {
+    font-size: 0.85rem;
   }
 }
 
-/* ─── REDUCED MOTION ─────────────────────────────────────────
-   Instant transitions. All animations off.
-────────────────────────────────────────────────────────────── */
+/* ─── REDUCED MOTION ─────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   #fxrf4-root *,
   #fxrf4-root *::before,
