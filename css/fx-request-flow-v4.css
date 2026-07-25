@@ -1,5 +1,5 @@
 /**
- * fx-request-flow-v4.css — fxrf4-v5m
+ * fx-request-flow-v4.css — fxrf4-v5n
  * RAFI Request Flow V5 — Premium Polish
  *
  * NAMESPACE: fxrf4-* exclusively
@@ -108,7 +108,12 @@
   justify-content: center;
   flex-shrink: 0;
   overflow: hidden;
-  animation: fxrf4-avatar-breathe 4.8s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  /*
+   * Presence breathing — 4.8s period matches RAFI OS (LOCKED).
+   * Opacity range tightened: 0.55→1 was perceptible; 0.72→0.94 is felt, not seen.
+   * Easing: slightly earlier inflection (0.37,0,0.63,1) → feels organic, not mechanical.
+   */
+  animation: fxrf4-avatar-breathe 4.8s cubic-bezier(0.37, 0, 0.63, 1) infinite;
 }
 
 #fxrf4-avatar img {
@@ -133,8 +138,9 @@
 }
 
 @keyframes fxrf4-avatar-breathe {
-  0%, 100% { opacity: 0.55; }
-  50%       { opacity: 1;    }
+  /* Narrower range: felt subconsciously, never consciously noticed */
+  0%, 100% { opacity: 0.72; }
+  50%       { opacity: 0.94; }
 }
 
 #fxrf4-rafi-msg {
