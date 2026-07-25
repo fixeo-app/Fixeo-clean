@@ -71,17 +71,36 @@
 
     if (city) {
       line.classList.add('fxhcs-known');
+      /*
+       * Two-line composition:
+       *   Primary:   📍 Vous semblez être à [City] · Modifier
+       *   Secondary: Artisans à proximité en priorité.
+       *
+       * "Modifier" opens V5 standard flow — picked up by the global
+       * capture handler (data-open-request-form). No new JS.
+       */
       line.innerHTML =
-        '<span class="fxhcs-text">' +
+        '<span class="fxhcs-primary">' +
           '<span class="fxhcs-icon" aria-hidden="true">\uD83D\uDCCD</span>' +
           'Vous semblez \u00eatre \u00e0\u00a0' +
           '<span class="fxhcs-city">' + _esc(city) + '</span>' +
-          '.\u00a0Artisans \u00e0 proximit\u00e9 en priorit\u00e9.' +
+          '<span class="fxhcs-sep" aria-hidden="true">\u00a0\u00b7\u00a0</span>' +
+          '<button class="fxhcs-modifier" type="button"' +
+            ' data-open-request-form="true" data-request-mode="default"' +
+            ' aria-label="Modifier ma ville">' +
+            'Modifier' +
+          '</button>' +
+        '</span>' +
+        '<span class="fxhcs-secondary">' +
+          'Artisans \u00e0 proximit\u00e9 en priorit\u00e9.' +
         '</span>';
     } else {
       line.classList.add('fxhcs-detecting');
+      /*
+       * Single line: detecting state — no city, no modifier.
+       */
       line.innerHTML =
-        '<span class="fxhcs-text">' +
+        '<span class="fxhcs-primary">' +
           '<span class="fxhcs-icon" aria-hidden="true">\uD83D\uDCCD</span>' +
           'D\u00e9tection de votre position\u2026' +
         '</span>';

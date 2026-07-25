@@ -1,28 +1,39 @@
 /**
- * fixeo-hero-context-status.css — fxhcs-v1
+ * fixeo-hero-context-status.css — fxhcs-v1.2
  * RAFI Hero — Persistent context status line
  *
- * Shows what FIXEO currently knows about the user's location.
- * Calm, subtle, informational. Never competes with RAFI message.
+ * Typography & composition pass (Sprint 1.2).
+ *
+ * Two-line composition (known state):
+ *   Primary:   📍 Vous semblez être à [City] · Modifier
+ *   Secondary: Artisans à proximité en priorité.
+ *
+ * Single line (detecting state):
+ *   📍 Détection de votre position…
+ *
+ * Principles:
+ *   – One icon, one reading direction.
+ *   – City name is the visual anchor.
+ *   – Secondary line is a whisper consequence, not a peer.
+ *   – "Modifier" is a ghost action — present, never loud.
+ *   – No height increase vs v1.
  *
  * Namespace: fxhcs-*
- * Insertion: #fxhcs-line, placed after .rfos-stage-wrap inside .hero-content
  * Zero animation changes. Zero layout changes. Zero JS behaviour changes.
  */
 
 /* ── Container ──────────────────────────────────────────────── */
 #fxhcs-line {
-  /* Reserve height at parse time → zero CLS when text fills in */
-  min-height: 22px;
+  /* Reserve vertical space at parse time → zero CLS */
+  min-height: 36px;
   width: 100%;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  /* Sits between .rfos-stage-wrap (padding-bottom:32px) and #hero-quick-search.
-     We don't need additional margin — stage padding handles the gap above.
-     A small gap below before the search box. */
+  justify-content: center;
+  gap: 2px;
   margin-bottom: 10px;
-  /* Prevent FOUC: start invisible, fade in after text is set */
+  /* Start invisible — JS fades in after RAFI OS has mounted */
   opacity: 0;
   transition: opacity 0.30s ease;
 }
@@ -31,54 +42,130 @@
   opacity: 1;
 }
 
-/* ── Text pill ──────────────────────────────────────────────── */
-.fxhcs-text {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
+/* ── Primary line ────────────────────────────────────────────── */
+/*
+ * Natural prose flow — NOT inline-flex with gap.
+ * Icon + text + city + separator + modifier all flow as one sentence.
+ * font-size governs the whole line; city and modifier are inline within it.
+ */
+.fxhcs-primary {
+  display: block;
+  text-align: center;
   font-size: 0.72rem;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.40);
+  color: rgba(255, 255, 255, 0.45);
+  letter-spacing: 0.005em;
+  line-height: 1.5;
+  /* Prevent wrapping between icon and first word */
+  white-space: nowrap;
+}
+
+/* Pin icon — inline, matches text baseline */
+.fxhcs-icon {
+  display: inline;
+  font-size: 0.70rem;
+  margin-right: 3px;
+  vertical-align: baseline;
+  opacity: 0.65;
+}
+
+/* City name — the visual anchor of the primary line */
+.fxhcs-city {
+  color: rgba(255, 255, 255, 0.78);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+/* Separator · between city and Modifier */
+.fxhcs-sep {
+  color: rgba(255, 255, 255, 0.20);
+  font-weight: 400;
+}
+
+/* ── "Modifier" — ghost action ───────────────────────────────── */
+/*
+ * Reset all button defaults.
+ * Visually: a whisper link, not a button.
+ * Functionally: opens V5 standard flow via global capture handler.
+ */
+.fxhcs-modifier {
+  display: inline;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.28);
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  /* Minimum touch target — padding without affecting inline layout */
+  position: relative;
+}
+
+/* Touch target expansion — invisible padding, doesn't shift layout */
+.fxhcs-modifier::before {
+  content: '';
+  position: absolute;
+  inset: -8px -6px;
+}
+
+.fxhcs-modifier:hover,
+.fxhcs-modifier:focus-visible {
+  color: rgba(255, 255, 255, 0.52);
+  outline: none;
+}
+
+.fxhcs-modifier:focus-visible {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* ── Secondary line — consequence whisper ───────────────────── */
+.fxhcs-secondary {
+  display: block;
+  text-align: center;
+  font-size: 0.66rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.24);
   letter-spacing: 0.01em;
   line-height: 1.4;
-  text-align: center;
-  /* No border, no background — pure text, whisper weight */
-  padding: 0 4px;
-  max-width: 340px;
 }
 
-/* City name — slightly more visible than surrounding text */
-.fxhcs-city {
-  color: rgba(255, 255, 255, 0.62);
-  font-weight: 600;
-}
-
-/* Detecting state — gentle pulse on the pin icon */
+/* ── Detecting state ─────────────────────────────────────────── */
+/* Single primary line, no secondary. Icon pulses gently. */
 #fxhcs-line.fxhcs-detecting .fxhcs-icon {
   animation: fxhcs-blink 1.6s ease-in-out infinite;
 }
 
 @keyframes fxhcs-blink {
-  0%, 100% { opacity: 0.35; }
-  50%       { opacity: 0.70; }
+  0%, 100% { opacity: 0.30; }
+  50%       { opacity: 0.65; }
 }
 
-/* Detected/known state — no animation */
+/* ── Known state ─────────────────────────────────────────────── */
 #fxhcs-line.fxhcs-known .fxhcs-icon {
   animation: none;
-  opacity: 0.55;
+  opacity: 0.60;
 }
 
 /* ── Mobile ─────────────────────────────────────────────────── */
 @media (max-width: 640px) {
   #fxhcs-line {
-    min-height: 20px;
+    min-height: 34px;
     margin-bottom: 8px;
   }
 
-  .fxhcs-text {
+  .fxhcs-primary {
     font-size: 0.70rem;
-    max-width: 280px;
+  }
+
+  .fxhcs-secondary {
+    font-size: 0.64rem;
   }
 }
 
@@ -86,6 +173,6 @@
 @media (prefers-reduced-motion: reduce) {
   #fxhcs-line.fxhcs-detecting .fxhcs-icon {
     animation: none;
-    opacity: 0.50;
+    opacity: 0.45;
   }
 }
