@@ -1,15 +1,20 @@
 /**
- * fx-request-flow-v4.js — fxrf4-v5h
- * RAFI Request Flow V5 — Faithful implementation of the UX & Emotional Spec
+ * fx-request-flow-v4.js — fxrf4-v5i
+ * RAFI Request Flow V5 — Emergency Mode Adaptation
  *
  * EMOTIONAL ARC: Problem → Relief → Confidence → Momentum → Trust
  * DESIGN PRINCIPLES: One question per screen. Auto-advance. RAFI speaks first.
  * MOBILE-FIRST: Bottom sheet. Touch-optimized. Keyboard-aware.
  *
+ * MODES:
+ *   standard / marketplace — normal service request (3-step with urgency)
+ *   emergency              — urgent situation (situation chips → city → phone)
+ *   express                — alias for emergency (legacy CTA compat)
+ *
  * ISOLATED: Zero dependency on .modal, MutationObservers, setTimeout injections.
  * ROLLBACK: window.FIXEO_FLOW_V4 = false
  *
- * VERSION: fxrf4-v5h — 2026-07-25
+ * VERSION: fxrf4-v5i — 2026-07-25
  */
 
 (function () {
@@ -74,23 +79,55 @@
       meta:'Planification flexible', urgent:false },
   ];
 
-  /* RAFI messages — v5f presence pass */
+  /* ══════════════════════════════════════════════════════════
+     EMERGENCY SITUATIONS — situation labels → service slug map
+     Used only in emergency mode step 1.
+  ══════════════════════════════════════════════════════════ */
+  var EMERGENCY_SITUATIONS = [
+    { icon: '💧', label: "J\u2019ai une fuite d\u2019eau",              slug: 'plomberie',     serviceLabel: 'Plomberie'    },
+    { icon: '⚡', label: 'Plus de courant chez moi',                    slug: 'electricite',   serviceLabel: '\u00c9lectricit\u00e9' },
+    { icon: '🔐', label: 'Je suis bloqu\u00e9 dehors',                  slug: 'serrurerie',    serviceLabel: 'Serrurerie'   },
+    { icon: '🚿', label: 'Mon WC ou \u00e9vier est bouch\u00e9',         slug: 'plomberie',     serviceLabel: 'Plomberie'    },
+    { icon: '❄️', label: 'Mon climatiseur ne fonctionne plus',           slug: 'climatisation', serviceLabel: 'Climatisation'},
+    { icon: '🚪', label: 'Une porte ou fen\u00eatre est bloqu\u00e9e',   slug: 'menuiserie',    serviceLabel: 'Menuiserie'   },
+    { icon: '⚠️', label: 'Autre urgence',                                slug: 'autre',         serviceLabel: 'Autre urgence'},
+  ];
+
+  /* RAFI messages — v5i (standard + emergency) */
   var MSG = {
+    /* ── Standard mode ── */
     step1:         'De quoi avez-vous besoin\u00a0?',
-    step1Urgent:   "Qu\u2019est-ce qui se passe en ce moment\u00a0?",
     step2:         function() { return 'Parfait.\u00a0Vous \u00eates o\u00f9\u00a0?'; },
-    step2Urgent:   'Tr\u00e8s bien.\u00a0Vous \u00eates o\u00f9 en ce moment\u00a0?',
     step2DetCity:  function(s, city) { return 'Parfait.\u00a0Vous \u00eates \u00e0\u00a0' + city + '\u00a0?'; },
     step3:         'Sur quel num\u00e9ro peut-on vous joindre\u00a0?',
-    step3Urgent:   'Un artisan peut vous appeler maintenant.\u00a0Votre num\u00e9ro\u00a0?',
     step3Pre:      "C\u2019est toujours ce num\u00e9ro\u00a0?",
     interstitial:  'Je trouve les meilleurs pour vous.',
     interstitialLate: '\u00c7a prend un instant de plus\u2026',
     successDefault: "C\u2019est not\u00e9.",
-    successUrgent:  "J\u2019en ai trouv\u00e9 un pour vous.",
     successMarket:  'Votre demande est entre de bonnes mains.',
     step1Other:    'D\u00e9crivez-le en quelques mots, je m\u2019en occupe.',
-    /* Per-service acknowledgements — non-repetitive, calm */
+
+    /* ── Emergency mode ── */
+    step1Emergency:  'Que se passe-t-il\u00a0?',
+    step2Emergency:  'Vous \u00eates o\u00f9\u00a0?',
+    step2EmergencyCity: function(city) { return 'Vous \u00eates \u00e0\u00a0' + city + '\u00a0?'; },
+    step3Emergency:  'Sur quel num\u00e9ro peut-on vous rappeler\u00a0?',
+    step3EmergencyPre: "C\u2019est bien ce num\u00e9ro\u00a0?",
+    interstitialEmergency: 'Je m\u2019en occupe.',
+    successEmergency: 'Je m\u2019en occupe imm\u00e9diatement.',
+
+    /* ── Per-situation ack (emergency) — calm, decisive ── */
+    ackEmergency: {
+      plomberie:     'Compris.',
+      electricite:   'Je comprends.',
+      serrurerie:    'D\u2019accord.',
+      climatisation: 'Compris.',
+      menuiserie:    'D\u2019accord.',
+      autre:         'Compris.',
+      _default:      'Compris.',
+    },
+
+    /* ── Per-service acknowledgements (standard) — non-repetitive, calm ── */
     ack: {
       plomberie:     'Tr\u00e8s bien.',
       electricite:   'Je comprends.',
@@ -114,6 +151,7 @@
   var _isOpen = false;
 
   function _fresh(mode, source) {
+    var isEmergency = mode === 'emergency';
     return {
       mode:         mode || 'default',
       source:       source || 'unknown',
@@ -121,13 +159,13 @@
       serviceSlug:  '',
       serviceLabel: '',
       city:         '',
-      urgency:      mode === 'express' ? URGENCIES[0].value : URGENCIES[2].value,
+      /* Emergency always means "now" — pre-lock urgency */
+      urgency:      isEmergency ? URGENCIES[0].value : URGENCIES[2].value,
       phone:        '',
       description:  '',
       ref:          '',
       submitLocked: false,
       submitTs:     0,
-      // Prefills from context
       prefillService: '',
       prefillCity:    '',
       prefillPhone:   '',
@@ -260,7 +298,7 @@
         tracking_ref: ref,
         status:       'nouvelle',
         created_at:   new Date().toISOString(),
-        source:       'fxrf4-v5h',
+        source:       'fxrf4-v5i',
         mode:         st.mode,
         viewed:       false
       };
@@ -299,7 +337,7 @@
   function _fireAnalytics(req, mode, duplicated) {
     try {
       window.dispatchEvent(new CustomEvent('fixeo:client-request-submit-success', {
-        detail: { request: req, mode: mode, source: 'fxrf4-v5h',
+        detail: { request: req, mode: mode, source: 'fxrf4-v5i',
                   storageKey: STORAGE_KEY, duplicated: duplicated }
       }));
     } catch(_) {}
@@ -415,8 +453,8 @@
     /* Swipe-to-dismiss on mobile */
     _wireSwipeDismiss(dialog);
 
-    /* Diagnostic (spec requirement) */
-    console.log('[fxrf4-v5h] DOM built. Header children:', head.childElementCount, '(expected 2: rafi-row, close)');
+    /* Diagnostic */
+    console.log('[fxrf4-v5i] DOM built. Header children:', head.childElementCount, '(expected 2: rafi-row, close)');
   }
 
   /* ══════════════════════════════════════════════════════════
@@ -578,38 +616,86 @@
   }
 
   /* ══════════════════════════════════════════════════════════
-     SCREEN 1 — SERVICE SELECTION
-     "Dites-moi ce qui se passe."
-     One chip tap auto-advances. RAFI speaks first.
+     SCREEN 1 — SERVICE / SITUATION SELECTION
+     Standard: 2-col service grid with "Autre chose"
+     Emergency: single-column situation list, auto-advance on tap
   ══════════════════════════════════════════════════════════ */
 
   function _renderStep1() {
     var st = _st;
-    var isUrgent = st.mode === 'express';
+    var isEmergency = st.mode === 'emergency';
 
     _setProgress(1, 3);
-    _rafiSpeak(isUrgent ? MSG.step1Urgent : MSG.step1, isUrgent);
+    _setFoot();
 
-    var foot = _setFoot();
+    if (isEmergency) {
+      _renderEmergencyStep1();
+    } else {
+      _renderStandardStep1();
+    }
+  }
 
-    /* Grid of service chips */
+  /* ── Emergency step 1 — situation list ─────────────────── */
+  function _renderEmergencyStep1() {
+    var st = _st;
+
+    _rafiSpeak(MSG.step1Emergency, false /* not urgent-red — calm */);
+
+    /* Emergency mode label on RAFI name */
+    var nameEl = _q('.fxrf4-rafi-name');
+    if (nameEl) nameEl.classList.add('is-emergency');
+
+    var list = _h('div', { cls: 'fxrf4-situation-list', role: 'list' });
+    var chips = [];
+
+    EMERGENCY_SITUATIONS.forEach(function(sit) {
+      var chip = _h('div', {
+        cls: 'fxrf4-situation-item',
+        role: 'listitem button', tabindex: '0',
+        'aria-label': sit.label
+      });
+      var icon  = _h('span', { cls: 'fxrf4-situation-icon', txt: sit.icon });
+      var label = _h('span', { cls: 'fxrf4-situation-label', txt: sit.label });
+      chip.appendChild(icon);
+      chip.appendChild(label);
+      chips.push(chip);
+      list.appendChild(chip);
+
+      function _onSitTap() {
+        if (chip.classList.contains('is-dimmed')) return;
+        st.serviceSlug  = sit.slug;
+        st.serviceLabel = sit.serviceLabel;
+        var ack = MSG.ackEmergency[sit.slug] || MSG.ackEmergency._default;
+        _chipTap(chip, chips, function() { _transitionFwd(_renderStep2); }, ack);
+      }
+
+      chip.addEventListener('click',    _onSitTap);
+      chip.addEventListener('touchend', function(e) { e.preventDefault(); _onSitTap(); }, { passive: false });
+      chip.addEventListener('keydown',  function(e) { if (e.key === 'Enter' || e.key === ' ') _onSitTap(); });
+    });
+
+    var body = _q('#fxrf4-body');
+    if (body) body.appendChild(_screen([list]));
+  }
+
+  /* ── Standard step 1 — 2-col service grid ──────────────── */
+  function _renderStandardStep1() {
+    var st = _st;
+
+    _rafiSpeak(MSG.step1, false);
+
     var grid = _h('div', { cls: 'fxrf4-chips-grid' });
     var chips = [];
 
     SERVICES.forEach(function(svc) {
       var chip = _h('div', {
         cls: 'fxrf4-chip',
-        role: 'button',
-        tabindex: '0',
-        'aria-label': svc.label
+        role: 'button', tabindex: '0', 'aria-label': svc.label
       });
+      chip.appendChild(_h('span', { cls: 'fxrf4-chip-icon', txt: svc.icon }));
+      chip.appendChild(_h('span', { cls: 'fxrf4-chip-label', txt: svc.label }));
 
-      var icon  = _h('span', { cls: 'fxrf4-chip-icon', txt: svc.icon });
-      var label = _h('span', { cls: 'fxrf4-chip-label', txt: svc.label });
-      chip.appendChild(icon);
-      chip.appendChild(label);
-
-      /* Pre-selected if RAFI detected service from hero */
+      /* Pre-select from hero input — visual only, user must tap */
       if (st.prefillService) {
         var match = _normalizeSlug(st.prefillService);
         if (match && match.slug === svc.slug) {
@@ -635,7 +721,7 @@
       grid.appendChild(chip);
     });
 
-    /* "Autre chose" chip — full width */
+    /* "Autre chose" chip — full width, quiet */
     var otherChip = _h('div', {
       cls: 'fxrf4-chip is-other',
       role: 'button', tabindex: '0', 'aria-label': 'Autre chose'
@@ -644,28 +730,25 @@
     chips.push(otherChip);
     grid.appendChild(otherChip);
 
-    /* "Autre chose" → inline input */
     var otherWrap = _h('div', { cls: 'fxrf4-other-input-wrap' });
     var otherInput = _h('input', {
-      cls: 'fxrf4-phone-input', /* reuse phone input style */
-      type: 'text', placeholder: 'Ex\u00a0: fuite d\u2019eau, vitres cassées…',
+      cls: 'fxrf4-phone-input',
+      type: 'text', placeholder: 'Ex\u00a0: fuite d\u2019eau, vitres cass\u00e9es\u2026',
       maxlength: '80', autocomplete: 'off', autocorrect: 'off'
     });
     otherInput.style.fontSize = '0.96rem';
     otherInput.style.paddingLeft = '16px';
     otherWrap.appendChild(otherInput);
-    /* "Confirmer" chip appears inline when ≥3 chars */
+
     var confirmOtherBtn = _h('button', {
-      cls: 'fxrf4-btn fxrf4-btn-primary',
-      type: 'button', txt: 'Confirmer →'
+      cls: 'fxrf4-btn fxrf4-btn-primary', type: 'button', txt: 'Confirmer \u2192'
     });
     confirmOtherBtn.style.marginTop = '10px';
     confirmOtherBtn.style.display = 'none';
     otherWrap.appendChild(confirmOtherBtn);
 
     otherInput.addEventListener('input', function() {
-      var val = otherInput.value.trim();
-      confirmOtherBtn.style.display = val.length >= 3 ? 'flex' : 'none';
+      confirmOtherBtn.style.display = otherInput.value.trim().length >= 3 ? 'flex' : 'none';
     });
 
     function _confirmOther() {
@@ -679,12 +762,10 @@
     confirmOtherBtn.addEventListener('touchend', function(e) { e.preventDefault(); _confirmOther(); }, { passive: false });
 
     function _openOther() {
-      chips.forEach(function(c) {
-        if (c !== otherChip) c.classList.add('is-dimmed');
-      });
+      chips.forEach(function(c) { if (c !== otherChip) c.classList.add('is-dimmed'); });
       otherChip.classList.add('is-selected');
       otherWrap.classList.add('is-visible');
-      _rafiSpeak(MSG.step1Other, isUrgent);
+      _rafiSpeak(MSG.step1Other, false);
       setTimeout(function() { otherInput.focus({ preventScroll: true }); }, 120);
     }
 
@@ -693,8 +774,7 @@
 
     var body = _q('#fxrf4-body');
     if (body) body.appendChild(_screen([grid, otherWrap]));
-    /* Always start on step 1. Prefill only highlights the chip.
-       User must tap to confirm — never auto-advance on open. */
+    /* Never auto-advance. User must tap to confirm. */
   }
 
   /* ══════════════════════════════════════════════════════════
@@ -705,21 +785,25 @@
 
   function _renderStep2() {
     var st = _st;
-    var isUrgent = st.mode === 'express';
+    var isEmergency = st.mode === 'emergency';
+    /* Emergency mode acts like urgent for city tap (skip urgency section) */
+    var isUrgent = isEmergency;
     var detected = st.detectedCity || st.prefillCity || '';
 
     _setProgress(2, 3);
 
-    /* RAFI message — names the service (spec: "Plomberie. Vous êtes où ?") */
+    /* RAFI message */
     var msg;
-    if (isUrgent) {
-      msg = MSG.step2Urgent;
+    if (isEmergency && detected) {
+      msg = MSG.step2EmergencyCity(detected);
+    } else if (isEmergency) {
+      msg = MSG.step2Emergency;
     } else if (detected) {
       msg = MSG.step2DetCity(st.serviceLabel, detected);
     } else {
       msg = MSG.step2(st.serviceLabel);
     }
-    _rafiSpeak(msg, isUrgent);
+    _rafiSpeak(msg, false /* never red — calm */);
 
     _setFoot();
 
@@ -875,14 +959,18 @@
 
   function _renderStep3() {
     var st = _st;
-    var isUrgent = st.urgency === URGENCIES[0].value || st.mode === 'express';
+    var isEmergency = st.mode === 'emergency';
     var hasPrefill = !!st.prefillPhone;
 
     _setProgress(3, 3);
-    _rafiSpeak(
-      hasPrefill ? MSG.step3Pre : (isUrgent ? MSG.step3Urgent : MSG.step3),
-      isUrgent
-    );
+
+    var rafiMsg3;
+    if (hasPrefill) {
+      rafiMsg3 = isEmergency ? MSG.step3EmergencyPre : MSG.step3Pre;
+    } else {
+      rafiMsg3 = isEmergency ? MSG.step3Emergency : MSG.step3;
+    }
+    _rafiSpeak(rafiMsg3, false /* calm */);
 
     var foot = _setFoot();
     var body = _q('#fxrf4-body');
@@ -910,8 +998,8 @@
 
       /* Primary: confirm with pre-filled number */
       var confirmBtn = _primaryBtn(
-        isUrgent ? '\u26a1 Trouver un artisan maintenant' : 'Confirmer et envoyer \u2192',
-        isUrgent,
+        isEmergency ? 'Trouver un artisan maintenant' : 'Confirmer et envoyer \u2192',
+        isEmergency,
         function(btn) { _submitRequest(btn); }
       );
       foot.appendChild(confirmBtn);
@@ -961,22 +1049,21 @@
         }
       });
 
-      var submitLabel = isUrgent ? '\u26a1 Trouver un artisan maintenant' : 'Envoyer ma demande';
-      var submitBtn = _primaryBtn(submitLabel, isUrgent, function(btn) {
+      var submitLabel = isEmergency ? 'Trouver un artisan maintenant' : 'Envoyer ma demande';
+      var submitBtn = _primaryBtn(submitLabel, isEmergency, function(btn) {
         var val = phoneInput.value.trim();
         if (!_validPhone(val)) {
           phoneInput.classList.add('is-error');
-          hint.textContent = 'Un numéro marocain, s\u2019il vous plaît\u00a0(06 ou 07 + 8 chiffres).';
+          hint.textContent = 'Un num\u00e9ro marocain, s\u2019il vous pla\u00eet\u00a0(06 ou 07 + 8 chiffres).';
           hint.classList.add('is-visible');
           phoneInput.focus({ preventScroll: true });
           return;
         }
         st.phone = val;
-        /* Remember for next time */
         try { localStorage.setItem(PHONE_MEMORY_KEY, val); } catch(_) {}
         _submitRequest(btn);
       });
-      submitBtn.disabled = true; /* enabled when valid number entered */
+      submitBtn.disabled = true;
 
       foot.appendChild(submitBtn);
 
@@ -1040,10 +1127,13 @@
 
   function _renderInterstitial() {
     var st = _st;
-    var isUrgent = st.mode === 'express';
+    var isEmergency = st.mode === 'emergency';
 
     _setProgress(3, 3);
-    _rafiSpeak(MSG.interstitial, isUrgent, true /* instant — no typing */);
+    _rafiSpeak(
+      isEmergency ? MSG.interstitialEmergency : MSG.interstitial,
+      false, true /* instant */
+    );
 
     _setFoot();
     var body = _q('#fxrf4-body');
@@ -1073,17 +1163,20 @@
 
   function _renderSuccess(saved) {
     var st = _st;
-    var isUrgent = st.mode === 'express';
+    var isEmergency = st.mode === 'emergency';
     var isMarketplace = st.mode === 'marketplace';
 
-    var successMsg = isUrgent ? MSG.successUrgent
-                   : isMarketplace ? MSG.successMarket
-                   : MSG.successDefault;
+    /* RAFI success message — emergency is decisive and instant */
+    var successMsg = isEmergency ? MSG.successEmergency : MSG.successMarket;
     _rafiSpeak(successMsg, false, true);
 
     _setProgress(3, 3);
     var fill = _q('#fxrf4-progress-fill');
-    if (fill) fill.style.background = 'rgba(32, 201, 151, 0.75)';
+    if (fill) {
+      fill.style.background = isEmergency
+        ? 'rgba(234, 137, 54, 0.90)'   /* warm amber for emergency */
+        : 'rgba(32, 201, 151, 0.80)';   /* teal for standard */
+    }
 
     var foot = _setFoot();
     var body = _q('#fxrf4-body');
@@ -1091,10 +1184,16 @@
 
     var succ = _h('div', { id: 'fxrf4-success', 'aria-live': 'polite' });
 
-    /* Check ring — spec: bloom from a point, ripple once */
+    /* Check ring */
     var ringWrap = _h('div', { cls: 'fxrf4-check-ring' });
-    var ringInner = _h('div', { cls: 'fxrf4-check-ring-inner', txt: '✓', 'aria-hidden': 'true' });
-    var ringRipple = _h('div', { cls: 'fxrf4-check-ring-ripple', 'aria-hidden': 'true' });
+    var ringInner = _h('div', {
+      cls: 'fxrf4-check-ring-inner' + (isEmergency ? ' is-emergency' : ''),
+      txt: '\u2713', 'aria-hidden': 'true'
+    });
+    var ringRipple = _h('div', {
+      cls: 'fxrf4-check-ring-ripple' + (isEmergency ? ' is-emergency' : ''),
+      'aria-hidden': 'true'
+    });
     ringWrap.appendChild(ringInner);
     ringWrap.appendChild(ringRipple);
     succ.appendChild(ringWrap);
@@ -1102,41 +1201,50 @@
     /* RAFI attribution */
     succ.appendChild(_h('p', { cls: 'fxrf4-success-tag', txt: 'RAFI', 'aria-hidden': 'true' }));
 
-    /* Title */
+    /* Title — mode-specific */
     succ.appendChild(_h('p', {
       cls: 'fxrf4-success-title',
-      txt: 'Votre demande est entre de bonnes mains.'
+      txt: isEmergency
+        ? 'Votre urgence est prise en charge.'
+        : 'Votre demande est entre de bonnes mains.'
     }));
 
-    /* Body */
+    /* Body — mode-specific */
     succ.appendChild(_h('p', {
       cls: 'fxrf4-success-body',
-      txt: 'Les artisans concern\u00e9s peuvent d\u00e9sormais consulter votre demande. Vous serez inform\u00e9 d\u00e8s que les premi\u00e8res r\u00e9ponses arrivent.'
+      txt: isEmergency
+        ? 'RAFI s\u00e9lectionne maintenant les artisans disponibles pr\u00e8s de chez vous.'
+        : 'Les artisans concern\u00e9s peuvent d\u00e9sormais consulter votre demande. Vous serez inform\u00e9 d\u00e8s que les premi\u00e8res r\u00e9ponses arrivent.'
     }));
 
     /* Tracking ref */
     if (saved && saved.tracking_ref) {
       var ref = _h('p', { cls: 'fxrf4-success-ref' });
-      ref.innerHTML = 'Réf.\u00a0: <strong>' + saved.tracking_ref + '</strong>';
+      ref.innerHTML = 'R\u00e9f.\u00a0: <strong>' + saved.tracking_ref + '</strong>';
       succ.appendChild(ref);
     }
 
-    /* Three-step visual — spec: done / active-pulse / waiting */
-    var stepsEl = _h('div', { cls: 'fxrf4-success-steps', 'aria-label': 'Étapes suivantes' });
-    var stepData = [
-      { dot: '✅', lbl: 'Demande\nenregistrée', state: 'done' },
-      { dot: '🔍', lbl: 'RAFI\nsélectionne',   state: 'active' },
-      { dot: '💬', lbl: 'Confirmation\nWhatsApp', state: 'waiting' }
-    ];
+    /* Three-step visual — mode-specific labels */
+    var stepsEl = _h('div', { cls: 'fxrf4-success-steps', 'aria-label': '\u00c9tapes suivantes' });
+    var stepData = isEmergency
+      ? [
+          { dot: '\u2705', lbl: 'Demande urgente\nenregistr\u00e9e', state: 'done' },
+          { dot: '\ud83d\udcf2', lbl: 'Artisans disponibles\ncontact\u00e9s',     state: 'active' },
+          { dot: '\ud83d\udcac', lbl: 'Confirmation\npar t\u00e9l. ou WhatsApp', state: 'waiting' }
+        ]
+      : [
+          { dot: '\u2705', lbl: 'Demande\nenregistr\u00e9e', state: 'done' },
+          { dot: '\ud83d\udd0d', lbl: 'RAFI\ns\u00e9lectionne', state: 'active' },
+          { dot: '\ud83d\udcac', lbl: 'Confirmation\nWhatsApp', state: 'waiting' }
+        ];
 
     stepData.forEach(function(s, i) {
       if (i > 0) stepsEl.appendChild(_h('div', { cls: 'fxrf4-success-step-sep', 'aria-hidden': 'true' }));
       var step = _h('div', { cls: 'fxrf4-success-step' });
-      var dotEl = _h('div', {
-        cls: 'fxrf4-success-step-dot' + (s.state === 'active' ? ' is-active' : ''),
-        txt: s.dot,
-        'aria-hidden': 'true'
-      });
+      var dotCls = 'fxrf4-success-step-dot'
+        + (s.state === 'active' ? ' is-active' : '')
+        + (s.state === 'active' && isEmergency ? ' is-emergency' : '');
+      var dotEl = _h('div', { cls: dotCls, txt: s.dot, 'aria-hidden': 'true' });
       if (s.state === 'waiting') dotEl.style.opacity = '0.40';
       var lbl = _h('span', { cls: 'fxrf4-success-step-lbl' });
       lbl.style.whiteSpace = 'pre-line';
@@ -1171,11 +1279,10 @@
     actions.appendChild(homeLink);
     foot.appendChild(actions);
 
-    /* Diagnostic — spec requirement */
     var head = _q('#fxrf4-head');
     if (head) {
-      console.log('[fxrf4-v5h] Success rendered. Header children:', head.childElementCount,
-                  '(expected 2 — rafi-row + close)');
+      console.log('[fxrf4-v5i] Success rendered. mode=' + (st.mode) +
+                  ' Header children:', head.childElementCount);
     }
   }
 
@@ -1214,8 +1321,10 @@
     if (_isOpen) return;
     _buildDOM();
 
-    var mode   = (opts && opts.mode   && ['default','marketplace','express'].indexOf(opts.mode) >= 0)
-                 ? opts.mode : 'default';
+    var rawMode = (opts && opts.mode) || 'default';
+    /* 'express' is a legacy alias for 'emergency' — urgent CTAs use data-request-mode="express" */
+    if (rawMode === 'express') rawMode = 'emergency';
+    var mode = (['default','marketplace','emergency'].indexOf(rawMode) >= 0) ? rawMode : 'default';
     var source = (opts && opts.source) || 'unknown';
 
     _st = _fresh(mode, source);
@@ -1237,7 +1346,6 @@
     if (!_isOpen) return;
     _isOpen = false;
 
-    /* Android: pop history state */
     try { if (history.state && history.state.fxrf4) history.back(); } catch(_) {}
 
     _root.classList.remove('fxrf4-active');
@@ -1245,6 +1353,10 @@
 
     /* Clear typing timer */
     if (_typeTimer) { clearInterval(_typeTimer); _typeTimer = null; }
+
+    /* Reset emergency label on RAFI name (persists across opens) */
+    var nameEl = _root ? _root.querySelector('.fxrf4-rafi-name') : null;
+    if (nameEl) nameEl.classList.remove('is-emergency');
 
     _unlock();
     _st = null;
@@ -1355,7 +1467,7 @@
   ══════════════════════════════════════════════════════════ */
 
   window.FixeoRequestFlowV4 = {
-    VERSION: 'fxrf4-v5h',
+    VERSION: 'fxrf4-v5i',
     open:    open,
     close:   close
   };
