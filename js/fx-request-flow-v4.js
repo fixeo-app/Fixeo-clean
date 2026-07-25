@@ -1,5 +1,5 @@
 /**
- * fx-request-flow-v4.js — fxrf4-v5c
+ * fx-request-flow-v4.js — fxrf4-v5d
  * RAFI Request Flow V5 — Faithful implementation of the UX & Emotional Spec
  *
  * EMOTIONAL ARC: Problem → Relief → Confidence → Momentum → Trust
@@ -9,7 +9,7 @@
  * ISOLATED: Zero dependency on .modal, MutationObservers, setTimeout injections.
  * ROLLBACK: window.FIXEO_FLOW_V4 = false
  *
- * VERSION: fxrf4-v5c — 2026-07-24
+ * VERSION: fxrf4-v5d — 2026-07-24
  */
 
 (function () {
@@ -77,17 +77,17 @@
   /* RAFI messages — exact copy from spec */
   var MSG = {
     step1:         'Dites-moi ce qui se passe.',
-    step1Urgent:   'Qu'est-ce qui se passe en ce moment\u00a0?',
+    step1Urgent:   "Qu\u2019est-ce qui se passe en ce moment\u00a0?",
     step2:         function(s) { return s + '. Vous êtes où\u00a0?'; },
     step2Urgent:   'Où êtes-vous maintenant\u00a0?',
     step2DetCity:  function(s, city) { return s + '. Vous êtes à\u00a0' + city + '\u00a0?'; },
     step3:         'Sur quel numéro vous rappelle-t-on\u00a0?',
     step3Urgent:   'Un artisan va vous rappeler. Votre numéro\u00a0?',
-    step3Pre:      'C'est toujours ce numéro\u00a0?',
+    step3Pre:      "C\u2019est toujours ce num\u00e9ro\u00a0?",
     interstitial:  'Je cherche les meilleurs professionnels pour vous.',
     interstitialLate: 'Ça prend un instant de plus…',
-    successDefault: 'C'est noté. RAFI est sur le coup.',
-    successUrgent:  'J'en ai déjà un pour vous.',
+    successDefault: "C\u2019est not\u00e9. RAFI est sur le coup.",
+    successUrgent:  "J\u2019en ai d\u00e9j\u00e0 un pour vous.",
     successMarket:  'Votre demande est visible par les artisans.',
     step1Other:    'Décrivez-le en quelques mots.',
   };
@@ -246,7 +246,7 @@
         tracking_ref: ref,
         status:       'nouvelle',
         created_at:   new Date().toISOString(),
-        source:       'fxrf4-v5c',
+        source:       'fxrf4-v5d',
         mode:         st.mode,
         viewed:       false
       };
@@ -285,7 +285,7 @@
   function _fireAnalytics(req, mode, duplicated) {
     try {
       window.dispatchEvent(new CustomEvent('fixeo:client-request-submit-success', {
-        detail: { request: req, mode: mode, source: 'fxrf4-v5c',
+        detail: { request: req, mode: mode, source: 'fxrf4-v5d',
                   storageKey: STORAGE_KEY, duplicated: duplicated }
       }));
     } catch(_) {}
@@ -398,7 +398,7 @@
     _wireSwipeDismiss(dialog);
 
     /* Diagnostic (spec requirement) */
-    console.log('[fxrf4-v5c] DOM built. Header children:', head.childElementCount, '(expected 2: rafi-row, close)');
+    console.log('[fxrf4-v5d] DOM built. Header children:', head.childElementCount, '(expected 2: rafi-row, close)');
   }
 
   /* ══════════════════════════════════════════════════════════
@@ -1162,7 +1162,7 @@
     /* Diagnostic — spec requirement */
     var head = _q('#fxrf4-head');
     if (head) {
-      console.log('[fxrf4-v5c] Success rendered. Header children:', head.childElementCount,
+      console.log('[fxrf4-v5d] Success rendered. Header children:', head.childElementCount,
                   '(expected 2 — rafi-row + close)');
     }
   }
@@ -1343,7 +1343,7 @@
   ══════════════════════════════════════════════════════════ */
 
   window.FixeoRequestFlowV4 = {
-    VERSION: 'fxrf4-v5c',
+    VERSION: 'fxrf4-v5d',
     open:    open,
     close:   close
   };
