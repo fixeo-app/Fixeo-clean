@@ -68,6 +68,7 @@
 <link rel="stylesheet" href="css/services-premium.css?v=svcv7"/>
   <link rel="stylesheet" href="css/why-fixeo.css?v=wfx3b"/>
   <link rel="stylesheet" href="css/urgent-fab.css?v=fab2"/>
+  <link rel="stylesheet" href="css/fixeo-hero-context-status.css?v=fxhcs-v1"/>
 
 <style>
 /* ══════════════════════════════════════════════════════════
@@ -2630,6 +2631,11 @@ section#home.hero.hero-section {
       <span data-i18n="hero_title_2">en quelques minutes</span>
     </h1>
 
+    <!-- RAFI context status line — fxhcs-v1
+         Reserved min-height prevents CLS. JS fills text after RAFI OS mounts.
+         Sits between .rfos-stage-wrap (injected before this) and #hero-quick-search. -->
+    <div id="fxhcs-line" aria-live="polite" aria-label="Contexte de localisation"></div>
+
     <!-- Reply field -->
     <div id="hero-quick-search" class="search-box" role="search" aria-label="Recherche rapide d'artisans"></div>
 
@@ -4620,6 +4626,7 @@ window._fixeoAvatarNav = function () {
 <script src="js/fixeo-ai-request-engine.js?v=aire-v1a" defer></script>
 <script src="js/fixeo-hero-insights.js?v=fxhi-v1c" defer></script>
 <script src="js/fixeo-hero-suggestions-v2.js?v=fxhsv2-v1a" defer></script>
+<script src="js/fixeo-hero-context-status.js?v=fxhcs-v1" defer></script>
 <script src="js/fixeo-trust-engine.js?v=fte-v1a" defer></script>
 <script src="js/fixeo-trust-score.js?v=fts-v2a" defer></script>
 <script src="js/fixeo-tracking-engine.js?v=ftrk-v1b" defer></script>

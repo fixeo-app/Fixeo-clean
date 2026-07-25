@@ -1,0 +1,91 @@
+/**
+ * fixeo-hero-context-status.css — fxhcs-v1
+ * RAFI Hero — Persistent context status line
+ *
+ * Shows what FIXEO currently knows about the user's location.
+ * Calm, subtle, informational. Never competes with RAFI message.
+ *
+ * Namespace: fxhcs-*
+ * Insertion: #fxhcs-line, placed after .rfos-stage-wrap inside .hero-content
+ * Zero animation changes. Zero layout changes. Zero JS behaviour changes.
+ */
+
+/* ── Container ──────────────────────────────────────────────── */
+#fxhcs-line {
+  /* Reserve height at parse time → zero CLS when text fills in */
+  min-height: 22px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* Sits between .rfos-stage-wrap (padding-bottom:32px) and #hero-quick-search.
+     We don't need additional margin — stage padding handles the gap above.
+     A small gap below before the search box. */
+  margin-bottom: 10px;
+  /* Prevent FOUC: start invisible, fade in after text is set */
+  opacity: 0;
+  transition: opacity 0.30s ease;
+}
+
+#fxhcs-line.fxhcs-ready {
+  opacity: 1;
+}
+
+/* ── Text pill ──────────────────────────────────────────────── */
+.fxhcs-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.40);
+  letter-spacing: 0.01em;
+  line-height: 1.4;
+  text-align: center;
+  /* No border, no background — pure text, whisper weight */
+  padding: 0 4px;
+  max-width: 340px;
+}
+
+/* City name — slightly more visible than surrounding text */
+.fxhcs-city {
+  color: rgba(255, 255, 255, 0.62);
+  font-weight: 600;
+}
+
+/* Detecting state — gentle pulse on the pin icon */
+#fxhcs-line.fxhcs-detecting .fxhcs-icon {
+  animation: fxhcs-blink 1.6s ease-in-out infinite;
+}
+
+@keyframes fxhcs-blink {
+  0%, 100% { opacity: 0.35; }
+  50%       { opacity: 0.70; }
+}
+
+/* Detected/known state — no animation */
+#fxhcs-line.fxhcs-known .fxhcs-icon {
+  animation: none;
+  opacity: 0.55;
+}
+
+/* ── Mobile ─────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  #fxhcs-line {
+    min-height: 20px;
+    margin-bottom: 8px;
+  }
+
+  .fxhcs-text {
+    font-size: 0.70rem;
+    max-width: 280px;
+  }
+}
+
+/* ── Reduced motion ─────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  #fxhcs-line.fxhcs-detecting .fxhcs-icon {
+    animation: none;
+    opacity: 0.50;
+  }
+}
