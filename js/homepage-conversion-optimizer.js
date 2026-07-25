@@ -133,16 +133,8 @@
 
     const row = document.createElement('div');
     row.className = 'results-header-cta-row';
-    row.innerHTML = '<button type="button" class="results-primary-request-btn">Publier ma demande</button>';
-
-    const requestBtn = row.querySelector('button');
-    requestBtn?.addEventListener('click', function() {
-      if (window.FixeoClientRequest?.open) {
-        window.FixeoClientRequest.open(requestBtn);
-      } else {
-        document.getElementById('mobile-sticky-cta')?.click();
-      }
-    });
+    /* fxrf4-v5b: data-open-request-form lets V5 capture listener intercept */
+    row.innerHTML = '<button type="button" class="results-primary-request-btn" data-open-request-form="true" data-request-mode="marketplace">Publier ma demande</button>';
 
     headerCopy.appendChild(row);
   }
@@ -164,33 +156,13 @@
     let existingMain = $('.cta-main', finalCta);
 
 if (existingMain) {
-  const cleanMain = existingMain.cloneNode(true);
-
-  cleanMain.textContent = 'Publier ma demande gratuitement';
-  cleanMain.setAttribute('type', 'button');
-
-  cleanMain.removeAttribute('onclick');
-  cleanMain.removeAttribute('data-open-request-form');
-  cleanMain.removeAttribute('data-request-mode');
-
-  cleanMain.dataset.finalCtaBound = 'true';
-
-  cleanMain.addEventListener('click', function(event) {
-    event.preventDefault();
-    event.stopPropagation();
-
-    const requestApi = window.FixeoClientRequest;
-
-    if (!requestApi || typeof requestApi.open !== 'function') {
-      console.warn('[FIXEO] Request modal API unavailable for final CTA.');
-      return;
-    }
-
-    requestApi.open(cleanMain);
-  });
-
-  existingMain.replaceWith(cleanMain);
-  existingMain = cleanMain;
+  /* fxrf4-v5b: preserve data-open-request-form so V5 capture listener intercepts.
+     Do NOT strip this attribute — V4/V5 owns all triggers via capture phase. */
+  existingMain.setAttribute('data-open-request-form', 'true');
+  existingMain.setAttribute('data-request-mode', 'marketplace');
+  existingMain.removeAttribute('onclick');
+  existingMain.dataset.finalCtaBound = 'true';
+  /* No clone, no replacement — V5 capture listener handles the click. */
 }
 
 
@@ -211,13 +183,10 @@ if (existingMain) {
 
       /* [patched] wa.me footer link disabled — whatsapp.html now in footer */
 
+      /* fxrf4-v5b: route via V5 */
       requestItem.querySelector('a').addEventListener('click', function(event) {
         event.preventDefault();
-        if (window.FixeoClientRequest?.open) {
-          window.FixeoClientRequest.open(event.currentTarget);
-        } else {
-          document.querySelector('[data-open-request-form="true"]')?.click();
-        }
+        if (window.FixeoRequestFlowV4) window.FixeoRequestFlowV4.open({ mode: 'marketplace', source: 'footer' });
       });
     }
 
@@ -230,13 +199,10 @@ if (existingMain) {
         ''
       ].join('');
       brand.appendChild(quickActions);
+      /* fxrf4-v5b: route via V5 */
       quickActions.querySelector('[data-footer-quick-request="true"]').addEventListener('click', function(event) {
         event.preventDefault();
-        if (window.FixeoClientRequest?.open) {
-          window.FixeoClientRequest.open(event.currentTarget);
-        } else {
-          document.querySelector('[data-open-request-form="true"]')?.click();
-        }
+        if (window.FixeoRequestFlowV4) window.FixeoRequestFlowV4.open({ mode: 'marketplace', source: 'footer' });
       });
     }
   }
