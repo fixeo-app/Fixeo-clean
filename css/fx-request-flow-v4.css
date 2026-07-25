@@ -1,5 +1,5 @@
 /**
- * fx-request-flow-v4.css — fxrf4-v5l
+ * fx-request-flow-v4.css — fxrf4-v5m
  * RAFI Request Flow V5 — Premium Polish
  *
  * NAMESPACE: fxrf4-* exclusively
@@ -234,7 +234,8 @@
   /* Full opacity — softness reads as a bug */
   background: rgba(72, 100, 255, 1);
   border-radius: 0 2px 2px 0;
-  transition: width 380ms cubic-bezier(0.4, 0, 0.2, 1);
+  /* Faster — completes while new screen is still entering, feels synchronised */
+  transition: width 260ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* ─── BODY ───────────────────────────────────────────────────── */
@@ -251,37 +252,40 @@
 
 /* Screen content wrapper */
 .fxrf4-screen {
-  animation: fxrf4-screen-in 220ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  /* Shorter + smaller offset — feels native, not theatrical */
+  animation: fxrf4-screen-in 200ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
 }
 
 .fxrf4-screen.is-leaving {
-  animation: fxrf4-screen-out 160ms cubic-bezier(0.55, 0, 1, 0.45) both;
+  /* Smoother exit curve — content slides out, doesn't snap */
+  animation: fxrf4-screen-out 160ms cubic-bezier(0.4, 0, 1, 0.6) both;
   pointer-events: none;
 }
 
 .fxrf4-screen.is-leaving-back {
-  animation: fxrf4-screen-out-back 160ms cubic-bezier(0.55, 0, 1, 0.45) both;
+  animation: fxrf4-screen-out-back 160ms cubic-bezier(0.4, 0, 1, 0.6) both;
   pointer-events: none;
 }
 
 @keyframes fxrf4-screen-in {
-  from { opacity: 0; transform: translateX(14px); }
+  /* 8px offset: just enough to show directionality without being showy */
+  from { opacity: 0; transform: translateX(8px); }
   to   { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes fxrf4-screen-out {
   from { opacity: 1; transform: translateX(0); }
-  to   { opacity: 0; transform: translateX(-14px); }
+  to   { opacity: 0; transform: translateX(-8px); }
 }
 
 @keyframes fxrf4-screen-in-back {
-  from { opacity: 0; transform: translateX(-14px); }
+  from { opacity: 0; transform: translateX(-8px); }
   to   { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes fxrf4-screen-out-back {
   from { opacity: 1; transform: translateX(0); }
-  to   { opacity: 0; transform: translateX(14px); }
+  to   { opacity: 0; transform: translateX(8px); }
 }
 
 /* ─── FOOTER ─────────────────────────────────────────────────── */
@@ -325,7 +329,8 @@
   font-size: 1.50rem;
   line-height: 1;
   flex-shrink: 0;
-  transition: transform 0.20s cubic-bezier(0.34, 1.4, 0.64, 1);
+  /* Calm deceleration — no spring on icon selection */
+  transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .fxrf4-chip-label {
@@ -352,7 +357,8 @@
 }
 
 .fxrf4-chip.is-selected .fxrf4-chip-icon {
-  transform: scale(1.10);
+  /* Subtle — confirms selection without being decorative */
+  transform: scale(1.05);
 }
 
 .fxrf4-chip.is-selected .fxrf4-chip-label {
@@ -368,11 +374,12 @@
   font-size: 0.58rem;
   font-weight: 800;
   color: rgba(72, 100, 255, 0.65);
-  animation: fxrf4-check-appear 0.20s cubic-bezier(0.34, 1.4, 0.64, 1) both;
+  /* No spring — arrives with quiet confidence */
+  animation: fxrf4-check-appear 0.18s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 @keyframes fxrf4-check-appear {
-  from { opacity: 0; transform: scale(0.3); }
+  from { opacity: 0; transform: scale(0.4); }
   to   { opacity: 1; transform: scale(1); }
 }
 
@@ -383,7 +390,8 @@
 }
 
 .fxrf4-chip.is-tapping {
-  transform: scale(1.04);
+  /* Barely perceptible — acknowledges touch without performing */
+  transform: scale(1.015);
   transition: transform 0.10s ease;
 }
 
@@ -617,7 +625,8 @@
 
 /* Stagger drop-in — purposeful, not decorative */
 .fxrf4-urgency-cards .fxrf4-urgency-card {
-  animation: fxrf4-card-in 240ms cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  /* Smooth deceleration — arrives without overshooting */
+  animation: fxrf4-card-in 220ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .fxrf4-urgency-cards .fxrf4-urgency-card:nth-child(1) { animation-delay: 0ms; }
@@ -625,7 +634,7 @@
 .fxrf4-urgency-cards .fxrf4-urgency-card:nth-child(3) { animation-delay: 100ms; }
 
 @keyframes fxrf4-card-in {
-  from { opacity: 0; transform: translateY(8px); }
+  from { opacity: 0; transform: translateY(6px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
@@ -707,11 +716,12 @@
 
 .fxrf4-phone-valid-icon.is-visible {
   opacity: 1;
-  animation: fxrf4-valid-in 0.22s cubic-bezier(0.34, 1.4, 0.64, 1) both;
+  /* Arrives decisively — no spring bounce; validation feels earned, not flashy */
+  animation: fxrf4-valid-in 0.22s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 @keyframes fxrf4-valid-in {
-  from { opacity: 0; transform: translateY(-50%) scale(0.4); }
+  from { opacity: 0; transform: translateY(-50%) scale(0.5); }
   to   { opacity: 1; transform: translateY(-50%) scale(1); }
 }
 
@@ -947,11 +957,12 @@
   align-items: center;
   justify-content: center;
   font-size: 1.80rem;
-  animation: fxrf4-ring-in 340ms cubic-bezier(0.34, 1.40, 0.64, 1) 80ms both;
+  /* Smooth deceleration — arrives with quiet confidence, no bounce */
+  animation: fxrf4-ring-in 320ms cubic-bezier(0.22, 1, 0.36, 1) 60ms both;
 }
 
 @keyframes fxrf4-ring-in {
-  from { transform: scale(0.18); opacity: 0; }
+  from { transform: scale(0.20); opacity: 0; }
   to   { transform: scale(1);    opacity: 1; }
 }
 
@@ -960,13 +971,14 @@
   inset: -8px;
   border-radius: 50%;
   border: 1px solid rgba(32, 201, 151, 0.22);
-  animation: fxrf4-ripple 520ms ease-out 320ms 1 both;
+  /* Smaller expansion — one quiet exhale, not a burst */
+  animation: fxrf4-ripple 480ms ease-out 280ms 1 both;
   pointer-events: none;
 }
 
 @keyframes fxrf4-ripple {
-  from { transform: scale(0.88); opacity: 0.60; }
-  to   { transform: scale(1.50); opacity: 0; }
+  from { transform: scale(0.90); opacity: 0.42; }
+  to   { transform: scale(1.28); opacity: 0; }
 }
 
 .fxrf4-success-tag {
@@ -976,7 +988,8 @@
   text-transform: uppercase;
   color: rgba(72, 100, 255, 0.60);
   margin-bottom: 8px;
-  animation: fxrf4-fade-up 260ms ease 460ms both;
+  /* Tighter cascade — elements arrive as a cohesive group, not a parade */
+  animation: fxrf4-fade-up 240ms ease 300ms both;
 }
 
 .fxrf4-success-title {
@@ -985,7 +998,7 @@
   color: rgba(255, 255, 255, 0.96);
   line-height: 1.28;
   margin-bottom: 12px;
-  animation: fxrf4-fade-up 260ms ease 540ms both;
+  animation: fxrf4-fade-up 240ms ease 360ms both;
 }
 
 .fxrf4-success-body {
@@ -994,7 +1007,7 @@
   line-height: 1.58;
   max-width: 288px;
   margin: 0 auto 24px;
-  animation: fxrf4-fade-up 260ms ease 620ms both;
+  animation: fxrf4-fade-up 240ms ease 420ms both;
 }
 
 .fxrf4-success-ref {
@@ -1002,7 +1015,7 @@
   font-size: 0.68rem;
   color: rgba(255, 255, 255, 0.22);
   margin-bottom: 20px;
-  animation: fxrf4-fade-up 260ms ease 680ms both;
+  animation: fxrf4-fade-up 240ms ease 480ms both;
 }
 
 .fxrf4-success-ref strong {
@@ -1017,7 +1030,7 @@
   justify-content: center;
   margin-bottom: 28px;
   width: 100%;
-  animation: fxrf4-fade-up 260ms ease 740ms both;
+  animation: fxrf4-fade-up 240ms ease 540ms both;
 }
 
 .fxrf4-success-step {
@@ -1075,7 +1088,7 @@
   gap: 10px;
   width: 100%;
   padding: 0 2px;
-  animation: fxrf4-fade-up 260ms ease 820ms both;
+  animation: fxrf4-fade-up 240ms ease 600ms both;
 }
 
 .fxrf4-btn-success-primary {
@@ -1365,7 +1378,8 @@
 }
 
 .fxrf4-situation-item.is-tapping {
-  transform: scale(1.02);
+  /* Lighter than service chips — full-width items need less movement */
+  transform: scale(1.01);
   transition: transform 0.10s ease;
 }
 
@@ -1399,12 +1413,13 @@
   font-size: 0.70rem;
   font-weight: 800;
   color: rgba(234, 137, 54, 0.70);
-  animation: fxrf4-check-appear 0.20s cubic-bezier(0.34, 1.4, 0.64, 1) both;
+  /* Inherits same calm check-appear as service chips */
+  animation: fxrf4-check-appear 0.18s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-/* Stagger drop-in — same as urgency cards */
+/* Stagger drop-in — smooth deceleration, consistent with urgency cards */
 .fxrf4-situation-list .fxrf4-situation-item {
-  animation: fxrf4-card-in 240ms cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  animation: fxrf4-card-in 220ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .fxrf4-situation-list .fxrf4-situation-item:nth-child(1) { animation-delay: 0ms; }

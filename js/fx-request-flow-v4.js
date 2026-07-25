@@ -1,5 +1,5 @@
 /**
- * fx-request-flow-v4.js — fxrf4-v5l
+ * fx-request-flow-v4.js — fxrf4-v5m
  * RAFI Request Flow V5 — Emergency Mode Adaptation
  *
  * EMOTIONAL ARC: Problem → Relief → Confidence → Momentum → Trust
@@ -14,7 +14,7 @@
  * ISOLATED: Zero dependency on .modal, MutationObservers, setTimeout injections.
  * ROLLBACK: window.FIXEO_FLOW_V4 = false
  *
- * VERSION: fxrf4-v5l — 2026-07-25
+ * VERSION: fxrf4-v5m — 2026-07-25
  */
 
 (function () {
@@ -298,7 +298,7 @@
         tracking_ref: ref,
         status:       'nouvelle',
         created_at:   new Date().toISOString(),
-        source:       'fxrf4-v5l',
+        source:       'fxrf4-v5m',
         mode:         st.mode,
         viewed:       false
       };
@@ -337,7 +337,7 @@
   function _fireAnalytics(req, mode, duplicated) {
     try {
       window.dispatchEvent(new CustomEvent('fixeo:client-request-submit-success', {
-        detail: { request: req, mode: mode, source: 'fxrf4-v5l',
+        detail: { request: req, mode: mode, source: 'fxrf4-v5m',
                   storageKey: STORAGE_KEY, duplicated: duplicated }
       }));
     } catch(_) {}
@@ -454,7 +454,7 @@
     _wireSwipeDismiss(dialog);
 
     /* Diagnostic */
-    console.log('[fxrf4-v5l] DOM built. Header children:', head.childElementCount, '(expected 2: rafi-row, close)');
+    console.log('[fxrf4-v5m] DOM built. Header children:', head.childElementCount, '(expected 2: rafi-row, close)');
   }
 
   /* ══════════════════════════════════════════════════════════
@@ -1297,7 +1297,7 @@
 
     var head = _q('#fxrf4-head');
     if (head) {
-      console.log('[fxrf4-v5l] Success rendered. mode=' + (st.mode) +
+      console.log('[fxrf4-v5m] Success rendered. mode=' + (st.mode) +
                   ' Header children:', head.childElementCount);
     }
   }
@@ -1581,7 +1581,7 @@
   ══════════════════════════════════════════════════════════ */
 
   window.FixeoRequestFlowV4 = {
-    VERSION: 'fxrf4-v5l',
+    VERSION: 'fxrf4-v5m',
     open:    open,
     close:   close
   };
