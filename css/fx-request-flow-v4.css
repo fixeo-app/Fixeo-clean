@@ -1,5 +1,5 @@
 /**
- * fx-request-flow-v4.css — fxrf4-v5e
+ * fx-request-flow-v4.css — fxrf4-v5f
  * RAFI Request Flow V5 — Craftsmanship pass
  *
  * NAMESPACE: fxrf4-* exclusively
@@ -245,35 +245,35 @@
 
 /* Screen content wrapper — slides in/out on transition */
 .fxrf4-screen {
-  animation: fxrf4-screen-in 240ms cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  animation: fxrf4-screen-in 230ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
 }
 
 .fxrf4-screen.is-leaving {
-  animation: fxrf4-screen-out 180ms ease-in both;
+  animation: fxrf4-screen-out 170ms cubic-bezier(0.55, 0, 1, 0.45) both;
 }
 
 .fxrf4-screen.is-leaving-back {
-  animation: fxrf4-screen-out-back 180ms ease-in both;
+  animation: fxrf4-screen-out-back 170ms cubic-bezier(0.55, 0, 1, 0.45) both;
 }
 
 @keyframes fxrf4-screen-in {
-  from { opacity: 0; transform: translateX(20px); }
+  from { opacity: 0; transform: translateX(16px); }
   to   { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes fxrf4-screen-out {
   from { opacity: 1; transform: translateX(0); }
-  to   { opacity: 0; transform: translateX(-20px); }
+  to   { opacity: 0; transform: translateX(-16px); }
 }
 
 @keyframes fxrf4-screen-in-back {
-  from { opacity: 0; transform: translateX(-20px); }
+  from { opacity: 0; transform: translateX(-16px); }
   to   { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes fxrf4-screen-out-back {
   from { opacity: 1; transform: translateX(0); }
-  to   { opacity: 0; transform: translateX(20px); }
+  to   { opacity: 0; transform: translateX(16px); }
 }
 
 /* ─── FOOTER ─────────────────────────────────────────────────
@@ -379,7 +379,8 @@
 
 /* Tap press */
 .fxrf4-chip.is-tapping {
-  transform: scale(1.04);
+  transform: scale(1.05);
+  transition: transform 0.10s ease;
 }
 
 /* "Autre chose" — full width, quieter */
@@ -881,14 +882,14 @@
   height: 6px;
   border-radius: 50%;
   background: rgba(72, 100, 255, 0.55);
-  animation: fxrf4-inter-breathe 1.6s ease-in-out infinite;
+  animation: fxrf4-inter-breathe 1.8s ease-in-out infinite;
 }
 
-.fxrf4-inter-dots span:nth-child(2) { animation-delay: 0.28s; }
-.fxrf4-inter-dots span:nth-child(3) { animation-delay: 0.56s; }
+.fxrf4-inter-dots span:nth-child(2) { animation-delay: 0.32s; }
+.fxrf4-inter-dots span:nth-child(3) { animation-delay: 0.64s; }
 
 @keyframes fxrf4-inter-breathe {
-  0%, 100% { transform: scale(0.70); opacity: 0.35; }
+  0%, 100% { transform: scale(0.68); opacity: 0.30; }
   50%       { transform: scale(1.00); opacity: 1; }
 }
 

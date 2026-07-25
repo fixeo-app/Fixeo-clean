@@ -1,5 +1,5 @@
 /**
- * fx-request-flow-v4.js — fxrf4-v5e
+ * fx-request-flow-v4.js — fxrf4-v5f
  * RAFI Request Flow V5 — Faithful implementation of the UX & Emotional Spec
  *
  * EMOTIONAL ARC: Problem → Relief → Confidence → Momentum → Trust
@@ -9,7 +9,7 @@
  * ISOLATED: Zero dependency on .modal, MutationObservers, setTimeout injections.
  * ROLLBACK: window.FIXEO_FLOW_V4 = false
  *
- * VERSION: fxrf4-v5e — 2026-07-24
+ * VERSION: fxrf4-v5f — 2026-07-25
  */
 
 (function () {
@@ -74,22 +74,36 @@
       meta:'Planification flexible', urgent:false },
   ];
 
-  /* RAFI messages — exact copy from spec */
+  /* RAFI messages — v5f presence pass */
   var MSG = {
-    step1:         'Dites-moi ce qui se passe.',
+    step1:         'De quoi avez-vous besoin\u00a0?',
     step1Urgent:   "Qu\u2019est-ce qui se passe en ce moment\u00a0?",
-    step2:         function(s) { return s + '. Vous êtes où\u00a0?'; },
-    step2Urgent:   'Où êtes-vous maintenant\u00a0?',
-    step2DetCity:  function(s, city) { return s + '. Vous êtes à\u00a0' + city + '\u00a0?'; },
-    step3:         'Sur quel numéro vous rappelle-t-on\u00a0?',
-    step3Urgent:   'Un artisan va vous rappeler. Votre numéro\u00a0?',
+    step2:         function() { return 'Parfait.\u00a0Vous \u00eates o\u00f9\u00a0?'; },
+    step2Urgent:   'Tr\u00e8s bien.\u00a0Vous \u00eates o\u00f9 en ce moment\u00a0?',
+    step2DetCity:  function(s, city) { return 'Parfait.\u00a0Vous \u00eates \u00e0\u00a0' + city + '\u00a0?'; },
+    step3:         'Sur quel num\u00e9ro peut-on vous joindre\u00a0?',
+    step3Urgent:   'Un artisan peut vous appeler maintenant.\u00a0Votre num\u00e9ro\u00a0?',
     step3Pre:      "C\u2019est toujours ce num\u00e9ro\u00a0?",
-    interstitial:  'Je cherche les meilleurs professionnels pour vous.',
-    interstitialLate: 'Ça prend un instant de plus…',
-    successDefault: "C\u2019est not\u00e9. RAFI est sur le coup.",
-    successUrgent:  "J\u2019en ai d\u00e9j\u00e0 un pour vous.",
-    successMarket:  'Votre demande est visible par les artisans.',
-    step1Other:    'Décrivez-le en quelques mots.',
+    interstitial:  'Je trouve les meilleurs pour vous.',
+    interstitialLate: '\u00c7a prend un instant de plus\u2026',
+    successDefault: "C\u2019est not\u00e9.",
+    successUrgent:  "J\u2019en ai trouv\u00e9 un pour vous.",
+    successMarket:  'Votre demande est entre de bonnes mains.',
+    step1Other:    'D\u00e9crivez-le en quelques mots, je m\u2019en occupe.',
+    /* Per-service acknowledgements — non-repetitive, calm */
+    ack: {
+      plomberie:     'Tr\u00e8s bien.',
+      electricite:   'Je comprends.',
+      serrurerie:    'D\u2019accord.',
+      climatisation: 'Parfait.',
+      menuiserie:    'Bien not\u00e9.',
+      peinture:      'Parfait.',
+      maconnerie:    'Je comprends.',
+      nettoyage:     'Tr\u00e8s bien.',
+      jardinage:     'D\u2019accord.',
+      demenagement:  'Bien not\u00e9.',
+      _default:      'Parfait.',
+    },
   };
 
   /* ══════════════════════════════════════════════════════════
@@ -246,7 +260,7 @@
         tracking_ref: ref,
         status:       'nouvelle',
         created_at:   new Date().toISOString(),
-        source:       'fxrf4-v5e',
+        source:       'fxrf4-v5f',
         mode:         st.mode,
         viewed:       false
       };
@@ -285,7 +299,7 @@
   function _fireAnalytics(req, mode, duplicated) {
     try {
       window.dispatchEvent(new CustomEvent('fixeo:client-request-submit-success', {
-        detail: { request: req, mode: mode, source: 'fxrf4-v5e',
+        detail: { request: req, mode: mode, source: 'fxrf4-v5f',
                   storageKey: STORAGE_KEY, duplicated: duplicated }
       }));
     } catch(_) {}
@@ -398,7 +412,7 @@
     _wireSwipeDismiss(dialog);
 
     /* Diagnostic (spec requirement) */
-    console.log('[fxrf4-v5e] DOM built. Header children:', head.childElementCount, '(expected 2: rafi-row, close)');
+    console.log('[fxrf4-v5f] DOM built. Header children:', head.childElementCount, '(expected 2: rafi-row, close)');
   }
 
   /* ══════════════════════════════════════════════════════════
@@ -537,8 +551,8 @@
      CHIP TAP — selection feedback + auto-advance
   ══════════════════════════════════════════════════════════ */
 
-  function _chipTap(chip, allChips, onAdvance) {
-    /* Spec: tap → scale 1.04 (80ms) → dim others (100ms) → advance (200ms) */
+  function _chipTap(chip, allChips, onAdvance, ackMsg) {
+    /* Spec: tap → scale (80ms) → dim others → advance (260ms total) */
     chip.classList.add('is-tapping');
     setTimeout(function() {
       chip.classList.remove('is-tapping');
@@ -546,12 +560,14 @@
       allChips.forEach(function(c) {
         if (c !== chip) c.classList.add('is-dimmed');
       });
+      /* RAFI acknowledges the choice instantly — shows during the dim beat */
+      if (ackMsg) _rafiSpeak(ackMsg, false, true /* instant — no typewriter here */);
     }, 80);
 
     /* Haptic feedback */
     try { if (navigator.vibrate) navigator.vibrate(8); } catch(_) {}
 
-    /* Auto-advance after hold (spec: 200ms so user registers their choice) */
+    /* Auto-advance after brief breathing room (unchanged timing) */
     setTimeout(onAdvance, 260);
   }
 
@@ -601,7 +617,8 @@
         if (chip.classList.contains('is-dimmed')) return;
         st.serviceSlug  = svc.slug;
         st.serviceLabel = svc.label;
-        _chipTap(chip, chips, function() { _transitionFwd(_renderStep2); });
+        var ack = MSG.ack[svc.slug] || MSG.ack._default;
+        _chipTap(chip, chips, function() { _transitionFwd(_renderStep2); }, ack);
       }
 
       chip.addEventListener('click',    _onTap);
@@ -1093,13 +1110,13 @@
     /* Title */
     succ.appendChild(_h('p', {
       cls: 'fxrf4-success-title',
-      txt: 'Votre demande a bien été envoyée.'
+      txt: 'Votre demande est entre de bonnes mains.'
     }));
 
     /* Body */
     succ.appendChild(_h('p', {
       cls: 'fxrf4-success-body',
-      txt: 'RAFI recherche maintenant les professionnels les plus adaptés à votre projet.'
+      txt: 'Les artisans concern\u00e9s peuvent d\u00e9sormais consulter votre demande. Vous serez inform\u00e9 d\u00e8s que les premi\u00e8res r\u00e9ponses arrivent.'
     }));
 
     /* Tracking ref */
@@ -1162,7 +1179,7 @@
     /* Diagnostic — spec requirement */
     var head = _q('#fxrf4-head');
     if (head) {
-      console.log('[fxrf4-v5e] Success rendered. Header children:', head.childElementCount,
+      console.log('[fxrf4-v5f] Success rendered. Header children:', head.childElementCount,
                   '(expected 2 — rafi-row + close)');
     }
   }
@@ -1343,7 +1360,7 @@
   ══════════════════════════════════════════════════════════ */
 
   window.FixeoRequestFlowV4 = {
-    VERSION: 'fxrf4-v5e',
+    VERSION: 'fxrf4-v5f',
     open:    open,
     close:   close
   };
