@@ -1760,3 +1760,142 @@
  * Grid renders same DOM order — stagger still applies correctly.
  * No change needed; confirmed by existing rules in v5o/v5p.
  */
+
+/* ══════════════════════════════════════════════════════════════
+   CITY SCREEN FINAL POLISH — fxrf4-v5r
+   CSS-only. Zero JS. Zero logic. Zero dimension changes.
+   Refinement-only: depth, rhythm, select integration, iOS.
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── 1. PREMIUM CHIP DEPTH — softer, more tactile ──────────── */
+/*
+ * Slightly brighter inner highlight (0.07→0.09 — still felt, not seen).
+ * Drop kept at 8px but reduced opacity for less visual weight.
+ * will-change: transform enables GPU compositing on iOS Safari
+ * so the pressed translateY(1px) is perfectly smooth.
+ */
+.fxrf4-city-chip {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.09),
+    0 2px 6px rgba(0, 0, 0, 0.16);
+  will-change: transform;
+  /* Include box-shadow in base transition so depth responds to state */
+  transition:
+    border-color 0.15s ease,
+    background   0.15s ease,
+    box-shadow   0.18s ease,
+    color        0.15s ease;
+}
+
+/*
+ * Detected city — fix: fxrf4-city-pulse ends at box-shadow:none,
+ * which wipes the v5q depth shadow after the pulse completes.
+ * Override the animation to land on the correct final depth state.
+ */
+@keyframes fxrf4-city-pulse {
+  0%   { box-shadow: 0 0 0 0   rgba(72, 100, 255, 0.28); }
+  60%  { box-shadow: 0 0 0 8px rgba(72, 100, 255, 0);    }
+  100% {
+    box-shadow:
+      inset 0 1px 0 rgba(72, 100, 255, 0.10),
+      0 3px 10px rgba(72, 100, 255, 0.08);
+  }
+}
+
+/* Detected — resting depth (after pulse lands) */
+.fxrf4-city-chip.is-detected {
+  box-shadow:
+    inset 0 1px 0 rgba(72, 100, 255, 0.10),
+    0 3px 10px rgba(72, 100, 255, 0.08);
+}
+
+/* Selected — consistent with detected but slightly more present */
+.fxrf4-city-chip.is-selected {
+  box-shadow:
+    inset 0 1px 0 rgba(72, 100, 255, 0.12),
+    0 3px 10px rgba(72, 100, 255, 0.09);
+}
+
+/* Pressed — collapses shadow toward surface, translateY already in v5q */
+.fxrf4-city-chip:active {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 1px 3px rgba(0, 0, 0, 0.12);
+  transition:
+    transform    0.08s ease,
+    box-shadow   0.08s ease;
+}
+
+/* ── 2. "AUTRE VILLE" — better integration ──────────────────── */
+/*
+ * Slightly more visible dashed border (0.08→0.11) so it reads as
+ * part of the composition rather than an afterthought.
+ * Still clearly secondary — dashed + muted text.
+ */
+.fxrf4-city-chip.is-more {
+  border-color: rgba(255, 255, 255, 0.11);
+}
+
+@media (hover: hover) {
+  .fxrf4-city-chip.is-more:hover {
+    border-color: rgba(255, 255, 255, 0.20);
+  }
+}
+
+/* ── 3. SELECT — softer border, better integration ──────────── */
+/*
+ * Resting border slightly lighter than chips (0.07 vs chip 0.09)
+ * so the field reads as a different type of element — an invitation,
+ * not a competitor to the chip grid.
+ * Focus ring kept but slightly less aggressive.
+ */
+.fxrf4-select {
+  border-color: rgba(255, 255, 255, 0.07);
+  border-radius: 16px;   /* harmonise with detected city card radius */
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.fxrf4-select:focus {
+  border-color: rgba(72, 100, 255, 0.40);
+  box-shadow: 0 0 0 3px rgba(72, 100, 255, 0.10);
+  outline: none;
+}
+
+/* ── 4. VERTICAL RHYTHM — unified 20px beat ─────────────────── */
+/*
+ * City row bottom margin: 18px → 20px (base + mobile).
+ * Select wrap bottom margin: 18px → 20px.
+ * Creates a consistent 20px gap between all vertical sections:
+ *   [detected card] 8px [chip grid] 20px [Autre ville] 20px [select]
+ */
+.fxrf4-city-row {
+  margin-bottom: 20px;
+}
+
+.fxrf4-select-wrap {
+  margin-bottom: 20px;
+}
+
+/* Mobile overrides — tighten slightly on narrow screens */
+@media (max-width: 480px) {
+  .fxrf4-city-row {
+    margin-bottom: 16px;
+  }
+
+  .fxrf4-select-wrap {
+    margin-top: 12px;
+    margin-bottom: 16px;
+  }
+}
+
+/* ── 5. iOS SAFARI — GPU compositing + tap highlight ────────── */
+/*
+ * -webkit-tap-highlight-color: transparent is already on .fxrf4-city-chip.
+ * will-change: transform declared above for GPU layer promotion.
+ * Explicit -webkit-transform ensures translateY composites correctly
+ * on older iOS WebKit (pre-16) that may not honour transform alone.
+ */
+.fxrf4-city-chip:active {
+  -webkit-transform: translateY(1px);
+  transform: translateY(1px);
+}
