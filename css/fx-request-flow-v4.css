@@ -2049,3 +2049,118 @@
   opacity: 0;
   transition: opacity 0.20s ease;
 }
+
+/* ══════════════════════════════════════════════════════════════
+   PHONE PREFIX OVERLAP ROOT FIX — fxrf4-v5t
+   Structural grid layout replaces position:absolute + padding-left hack.
+   Root cause: 10px clearance (100px padding − 90px prefix) is insufficient
+   at 1.30rem text on narrow viewports — cursor touches prefix visually.
+   Fix: CSS grid column boundary makes overlap structurally impossible.
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Grid container ─────────────────────────────────────────── */
+/*
+ * Three columns:
+ *   auto  → prefix div (measured from its natural content + padding)
+ *   1fr   → phone input (fills all remaining space)
+ *   auto  → valid-icon (measured from its content + padding)
+ *
+ * align-items:stretch so the input sets row height and prefix/icon fill it.
+ * position:relative kept — needed by any future absolute children.
+ */
+.fxrf4-phone-wrap {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: stretch;
+}
+
+/* ── Prefix — static grid item, no longer absolute ──────────── */
+/*
+ * Left padding: 18px (matches original border-to-content gap).
+ * Right padding: 14px (gap between "+212" and the editable number).
+ * The grid column boundary is the hard wall — text cannot cross it.
+ * min-width removed: grid auto sizing measures real rendered content.
+ * display:flex kept so internal gap/align still apply if needed.
+ */
+.fxrf4-phone-prefix {
+  position: static;
+  top: auto;
+  left: auto;
+  transform: none;
+  min-width: 0;
+  padding: 0 14px 0 18px;
+  align-self: center;   /* vertically centre inside the row */
+  z-index: auto;
+}
+
+/* ── Input — occupies 1fr, no padding-left hack ─────────────── */
+/*
+ * padding-left resets to a small natural value (0 — prefix provides gap).
+ * padding-right: 0 — valid icon sits in its own column.
+ * width: auto — grid controls sizing, not width:100%.
+ * The !important overrides the base rule and the mobile 640px override.
+ */
+.fxrf4-phone-input {
+  width: auto !important;
+  padding: 20px 0 20px 0 !important;  /* vertical padding only */
+  /* Remove any inherited box-sizing issues */
+  box-sizing: border-box;
+}
+
+/* ── Valid-icon — static grid item, no longer absolute ──────── */
+/*
+ * Right padding: 18px (matches original right:18px).
+ * Left padding: 8px (gap between text and checkmark).
+ * align-self:center handles vertical position.
+ * transform: none — was translateY(-50%) only needed for absolute positioning.
+ */
+.fxrf4-phone-valid-icon {
+  position: static;
+  right: auto;
+  top: auto;
+  transform: none;
+  align-self: center;
+  padding: 0 18px 0 8px;
+}
+
+/* ── Fix valid-icon animation — remove translateY from keyframe ── */
+/*
+ * The original fxrf4-valid-in used translateY(-50%) because the icon
+ * was absolutely positioned and translateY(-50%) was its resting state.
+ * Now it's a static grid item — translateY must be 0 at rest.
+ */
+@keyframes fxrf4-valid-in {
+  from { opacity: 0; transform: scale(0.6); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ── Mobile 640px override — reset conflicting padding ──────── */
+/*
+ * The base mobile rule at line ~1352 sets padding: 22px 52px 22px 100px.
+ * That 100px padding-left is the old hack — override it to match grid layout.
+ * Font-size override kept.
+ */
+@media (max-width: 640px) {
+  .fxrf4-phone-input {
+    padding: 22px 0 22px 0 !important;
+    font-size: 1.36rem;
+  }
+}
+
+/* ── Neutralize v5s separator (structurally obsolete) ───────── */
+/*
+ * The ::before separator was added in v5s to visually mark the boundary.
+ * The grid makes that boundary structurally guaranteed — separator is
+ * now redundant. Set display:none to remove it cleanly.
+ */
+.fxrf4-phone-wrap::before {
+  display: none !important;
+}
+
+/* ── Error state — shake animation resets correctly ────────── */
+/*
+ * fxrf4-shake uses translateX only — compatible with grid layout.
+ * The shake is applied to .fxrf4-phone-input, not .fxrf4-phone-wrap.
+ * No change needed to shake animation.
+ * is-error :has() rule that hid ::before is now harmless (::before hidden).
+ */
