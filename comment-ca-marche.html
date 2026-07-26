@@ -16,8 +16,11 @@
   <link rel="stylesheet" href="css/fixeo-header-global.css">
   <link rel="stylesheet" href="css/auth-global.css">
   <link rel="stylesheet" href="css/fixeo-footer-global.css?v=gf3a">
-  <!-- fixeo-rafi-v2.css retained per fxhow-v2a scope — removal deferred to fxhow-v2b -->
-  <link rel="stylesheet" href="css/fixeo-rafi-v2.css?v=rfv2a">
+  <!-- RAFI OS visual layer — canonical sphere styles only (rfos-v2c).
+       fixeo-rafi-os-v1.js is NOT loaded here; rfos-stage-wrap DOM never injected;
+       all section#home.rfos-hero-recomposed rules are inert on this page.
+       fixeo-rafi-v2.css removed — no remaining DOM consumers (fxhow-v2b). -->
+  <link rel="stylesheet" href="css/fixeo-rafi-os-v1.css?v=rfos-v2c">
   <!-- RAFI V5 — canonical conversion engine (fxrf4-v5a1 / frozen) -->
   <link rel="stylesheet" href="css/fx-request-flow-v4.css?v=fxrf4-v5z">
   <style id="fixeo-logo-override">
@@ -42,8 +45,44 @@
     .cp-hero h1{font-size:clamp(1.7rem,4vw,2.8rem);font-weight:900;line-height:1.15;letter-spacing:-0.02em;margin:0 0 18px;color:#fff}
     .cp-hero h1 .hl{background:var(--cp-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
     .cp-hero p{font-size:clamp(0.97rem,1.8vw,1.12rem);color:var(--cp-muted);max-width:560px;margin:0 auto 32px;line-height:1.65}
-    /* RAFI avatar — CSS-only gradient circle (no external asset) */
-    .ccm-rafi-avatar{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#E1306C,#833AB4);display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 24px;box-shadow:0 0 0 6px rgba(225,48,108,0.12),0 8px 28px rgba(225,48,108,0.22);flex-shrink:0}
+    /* ── fxhow-v2b: Canonical RAFI sphere sizing for this hero ──────────
+       The canonical rfos-avatar is 112px. We display it at 88px on desktop
+       and 76px on mobile — contained entirely within the page hero context.
+       All animations (rfos-avatar-breathe, rfos-float, rfos-halo-breathe)
+       are defined in fixeo-rafi-os-v1.css (already loaded).
+       The rfos-stage-wrap/rfos-hero-recomposed layout is NOT active here —
+       only the sphere sub-components are used. ──────────────────────────── */
+    .ccm-sphere-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 0 auto 24px;
+      /* Natural sizing: halo padding (20px each side) + avatar 88px */
+      width: fit-content;
+      /* Prevent layout shift: reserve space before img loads */
+      min-height: calc(88px + 40px);
+    }
+    .ccm-sphere-wrap .rfos-avatar-wrap {
+      /* Override canonical 112px → 88px for hero context */
+      margin-bottom: 0;
+      padding: 18px;
+    }
+    .ccm-sphere-wrap .rfos-avatar {
+      width: 88px;
+      height: 88px;
+    }
+    .ccm-sphere-wrap .rfos-avatar img {
+      width: 72px;
+      height: 72px;
+    }
+    /* Hide RAFI identity (name + live dot) — purely visual on this page */
+    .ccm-sphere-wrap .rfos-identity { display: none; }
+    @media (max-width: 480px) {
+      .ccm-sphere-wrap .rfos-avatar-wrap { padding: 14px; }
+      .ccm-sphere-wrap .rfos-avatar { width: 76px; height: 76px; }
+      .ccm-sphere-wrap .rfos-avatar img { width: 62px; height: 62px; }
+      .ccm-sphere-wrap { min-height: calc(76px + 28px); margin-bottom: 20px; }
+    }
     /* Buttons */
     .cp-btn{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:14px;font-size:0.95rem;font-weight:800;cursor:pointer;border:none;text-decoration:none;transition:transform 0.15s,box-shadow 0.15s;color:#fff}
     .cp-btn:hover{transform:translateY(-1px)}
@@ -201,8 +240,24 @@
 <section class="cp-hero" aria-labelledby="ccm-hero-title">
   <div class="cp-container">
     <span class="cp-hero-label">Comment ça marche</span>
-    <!-- RAFI avatar: CSS gradient circle replaces broken img (fxhow-v2a); rafi-v2.css cleanup → fxhow-v2b -->
-    <div class="ccm-rafi-avatar" aria-hidden="true">✨</div>
+    <!-- Canonical RAFI sphere — visual identity only (fxhow-v2b).
+         rfos-avatar-wrap/rfos-halo/rfos-avatar from fixeo-rafi-os-v1.css.
+         rafi/RAFI_V2_HeadCollar_Core.webp — served from rafi/ static dir.
+         No click, no modal, no event listener. aria-hidden=true throughout. -->
+    <div class="ccm-sphere-wrap" aria-hidden="true">
+      <div class="rfos-avatar-wrap">
+        <div class="rfos-halo" aria-hidden="true"></div>
+        <div class="rfos-avatar">
+          <img src="rafi/RAFI_V2_HeadCollar_Core.webp"
+               alt=""
+               width="72"
+               height="72"
+               loading="eager"
+               decoding="async"
+               aria-hidden="true">
+        </div>
+      </div>
+    </div>
     <h1 id="ccm-hero-title">Décrivez votre besoin.<br><span class="hl">RAFI organise votre demande.</span></h1>
     <p>Choisissez votre besoin, indiquez votre ville et laissez votre numéro.<br>Votre demande est enregistrée en quelques étapes.</p>
     <div class="cp-btn-row">
