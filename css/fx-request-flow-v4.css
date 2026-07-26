@@ -2443,3 +2443,51 @@
 .fxrf4-btn-success-secondary {
   color: rgba(255, 255, 255, 0.44);
 }
+
+/* ══════════════════════════════════════════════════════════════
+   SUCCESS SCREEN FINAL MICRO POLISH — fxrf4-v5x
+   Typography breathing + timeline breathing.
+   CSS-only in this block. Copy changes in JS.
+   Zero layout, color, icon, animation, size, or structure changes.
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Task 1 — Typography breathing ─────────────────────────── */
+
+/* RAFI badge → title: was 6px, needs a breath before the headline */
+.fxrf4-success-tag {
+  margin-bottom: 10px;
+}
+
+/* Title → body: was 12px — the headline needs more silence after it */
+.fxrf4-success-title {
+  margin-bottom: 16px;
+  line-height: 1.32;   /* fractional tightening — title is short, needs no extra spread */
+}
+
+/* Body: line-height 1.58→1.68 — calmer, more readable on narrow screens */
+/* margin-bottom 24px→28px — more air before the timeline */
+/* white-space: pre-line — allows \n in textContent to render as a line break */
+.fxrf4-success-body {
+  line-height: 1.68;
+  margin: 0 auto 28px;
+  white-space: pre-line;
+}
+
+/* ── Task 3 — Timeline breathing ───────────────────────────── */
+
+/* Step icon → label gap: 6px→8px — label doesn't crowd the dot */
+.fxrf4-success-step {
+  gap: 8px;
+}
+
+/* Label line-height: 1.3→1.42 — two-line labels read more calmly */
+.fxrf4-success-step-lbl {
+  line-height: 1.42;
+}
+
+/* Connector: 28px→32px — slightly more air between the three steps */
+/* height stays 1px — a line, not a band */
+.fxrf4-success-step-sep {
+  flex: 0 0 32px;
+  margin-top: 19px;   /* recentre for active dot 38px: 38/2=19px */
+}

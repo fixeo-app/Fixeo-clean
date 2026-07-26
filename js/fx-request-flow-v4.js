@@ -1221,16 +1221,16 @@
     succ.appendChild(_h('p', {
       cls: 'fxrf4-success-title',
       txt: isEmergency
-        ? 'Votre urgence est prise en charge.'
-        : 'Votre demande est entre de bonnes mains.'
+        ? "Votre urgence est d\u00e9j\u00e0 prise en charge."
+        : "Votre demande est d\u00e9j\u00e0 entre de bonnes mains."
     }));
 
     /* Body — mode-specific */
     succ.appendChild(_h('p', {
       cls: 'fxrf4-success-body',
       txt: isEmergency
-        ? 'RAFI s\u00e9lectionne maintenant les artisans disponibles pr\u00e8s de chez vous.'
-        : 'Les artisans concern\u00e9s peuvent d\u00e9sormais consulter votre demande. Vous serez inform\u00e9 d\u00e8s que les premi\u00e8res r\u00e9ponses arrivent.'
+        ? "RAFI contacte d\u00e9j\u00e0 les artisans disponibles pr\u00e8s de chez vous.\nVous recevrez tr\u00e8s bient\u00f4t une confirmation par t\u00e9l\u00e9phone ou WhatsApp."
+        : "RAFI s\u00e9lectionne d\u00e9j\u00e0 les artisans disponibles pour vous.\nVous recevrez une confirmation d\u00e8s les premi\u00e8res r\u00e9ponses."
     }));
 
     /* Tracking ref */
