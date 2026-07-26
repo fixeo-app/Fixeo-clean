@@ -3894,40 +3894,40 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
 
     <!-- ── Additional situations — collapsed by default ── -->
     <div id="fxsit-additional" class="category-chips" role="list"
-         aria-label="Situations supplémentaires" aria-hidden="true">
+         aria-label="Situations supplémentaires" aria-hidden="true" inert>
 
       <button class="fc3-card chip service-chip" role="listitem"
-              data-category="peinture" aria-pressed="false">
+              data-category="peinture" aria-pressed="false" tabindex="-1">
         <span class="fc3-card-icon" aria-hidden="true">🎨</span>
         <span class="fc3-card-label">Je veux repeindre une pièce</span>
       </button>
 
       <button class="fc3-card chip service-chip" role="listitem"
-              data-category="maconnerie" aria-pressed="false">
+              data-category="maconnerie" aria-pressed="false" tabindex="-1">
         <span class="fc3-card-icon" aria-hidden="true">🧱</span>
         <span class="fc3-card-label">Un mur fissuré ou à réparer</span>
       </button>
 
       <button class="fc3-card chip service-chip" role="listitem"
-              data-category="nettoyage" aria-pressed="false">
+              data-category="nettoyage" aria-pressed="false" tabindex="-1">
         <span class="fc3-card-icon" aria-hidden="true">🧹</span>
         <span class="fc3-card-label">Nettoyage après travaux</span>
       </button>
 
       <button class="fc3-card chip service-chip" role="listitem"
-              data-category="carrelage" aria-pressed="false">
+              data-category="carrelage" aria-pressed="false" tabindex="-1">
         <span class="fc3-card-icon" aria-hidden="true">🔲</span>
         <span class="fc3-card-label">Du carrelage à poser ou réparer</span>
       </button>
 
       <button class="fc3-card chip service-chip" role="listitem"
-              data-category="jardinage" aria-pressed="false">
+              data-category="jardinage" aria-pressed="false" tabindex="-1">
         <span class="fc3-card-icon" aria-hidden="true">🌿</span>
         <span class="fc3-card-label">Mon jardin à entretenir</span>
       </button>
 
       <button class="fc3-card chip service-chip" role="listitem"
-              data-category="demenagement" aria-pressed="false">
+              data-category="demenagement" aria-pressed="false" tabindex="-1">
         <span class="fc3-card-icon" aria-hidden="true">📦</span>
         <span class="fc3-card-label">Je dois déménager</span>
       </button>
@@ -4080,94 +4080,157 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
   (function () {
     'use strict';
 
-    /* ── Helpers ──────────────────────────────────────────────────── */
-    var NEUTRAL_TEXT   = 'S\u00e9lectionnez une situation pour filtrer les artisans affich\u00e9s plus bas.';
-    var ALL_TEXT       = 'Tous les artisans correspondant \u00e0 votre ville sont affich\u00e9s plus bas.';
-    var SELECTED_TEXT  = 'Les artisans correspondant \u00e0 votre choix sont affich\u00e9s plus bas.';
+    /* ════════════════════════════════════════════════════════════════
+       fxhome-situations-v2.1 — accessibility + state-copy micro-patch
+       1. setAdditionalPanelState(): inert + tabindex lifecycle
+       2. getSelectedCity(): reads #services-city-filter truthfully
+       3. getVisibleCardLabel(): .fc3-card-label text extraction
+       4. updateSelectedHint(): human-readable label (not category key)
+       5. updateTransitionForChip(): city-aware ALL_TEXT branching
+       6. city-select change listener: transition update when reset active
+       Invariants: no filter writes, no scroll, no matching, no globals,
+         no setInterval, no rAF, no localStorage writes, no RAFI calls.
+    ════════════════════════════════════════════════════════════════ */
+
+    var discBtn   = document.getElementById('fxsit-disclosure-btn');
+    var discPanel = document.getElementById('fxsit-additional');
+
+    var NEUTRAL_TEXT      = 'Sélectionnez une situation pour filtrer les artisans affichés plus bas.';
+    var ALL_NO_CITY_TEXT  = 'Tous les artisans sont affichés plus bas.';
+    var ALL_CITY_TEXT     = 'Tous les artisans correspondant à votre ville sont affichés plus bas.';
+    var SELECTED_TEXT     = 'Les artisans correspondant à votre choix sont affichés plus bas.';
+
+    function getSelectedCity() {
+      var sel = document.getElementById('services-city-filter');
+      return (sel && sel.value) ? sel.value.trim() : '';
+    }
 
     function setTransition(text) {
       var el = document.getElementById('fxsit-transition-text');
       if (el && el.textContent !== text) el.textContent = text;
     }
 
-    function syncAriaPressed(activeChip) {
-      /* Only synchronizes aria-pressed — never calls matching functions */
-      document.querySelectorAll('#services .chip[data-category]').forEach(function (c) {
-        var pressed = (c === activeChip) ? 'true' : 'false';
-        c.setAttribute('aria-pressed', pressed);
-      });
-    }
-
-    function updateSelectedHint(activeCategory) {
-      /* Show hint near disclosure button when selected card is in collapsed group */
-      var btn   = document.getElementById('fxsit-disclosure-btn');
-      var hint  = document.getElementById('fxsit-selected-hint');
-      if (!btn || !hint) return;
-      var isExpanded = btn.getAttribute('aria-expanded') === 'true';
-      var additionalCats = ['peinture','maconnerie','nettoyage','carrelage','jardinage','demenagement'];
-      var isInAdditional = additionalCats.indexOf(activeCategory) !== -1;
-      if (!isExpanded && isInAdditional && activeCategory !== 'all') {
-        hint.textContent = 'Filtre actif\u00a0: ' + activeCategory;
-        hint.classList.add('fxsit-hint-visible');
+    function updateTransitionForChip(chip) {
+      if (!chip) { setTransition(NEUTRAL_TEXT); return; }
+      var cat = (chip.dataset && chip.dataset.category) ? chip.dataset.category : 'all';
+      if (cat === 'all') {
+        setTransition(getSelectedCity() ? ALL_CITY_TEXT : ALL_NO_CITY_TEXT);
       } else {
-        hint.textContent = '';
-        hint.classList.remove('fxsit-hint-visible');
+        setTransition(SELECTED_TEXT);
       }
     }
 
-    /* ── Disclosure toggle ────────────────────────────────────────── */
-    var discBtn       = document.getElementById('fxsit-disclosure-btn');
-    var discPanel     = document.getElementById('fxsit-additional');
+    function syncAriaPressed(activeChip) {
+      document.querySelectorAll('#services .chip[data-category]').forEach(function (c) {
+        c.setAttribute('aria-pressed', (c === activeChip) ? 'true' : 'false');
+      });
+    }
+
+    function getVisibleCardLabel(card) {
+      if (!card) return '';
+      var labelEl = card.querySelector('.fc3-card-label');
+      if (labelEl) return labelEl.textContent.trim();
+      var text = '';
+      card.childNodes.forEach(function (node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+          text += node.textContent;
+        } else if (node.nodeType === Node.ELEMENT_NODE) {
+          var cls = node.className || '';
+          if (cls.indexOf('fc3-card-icon') === -1 && cls.indexOf('fc3-card-urgency') === -1) {
+            text += node.textContent;
+          }
+        }
+      });
+      return text.trim();
+    }
+
+    function setAdditionalPanelState(isOpen) {
+      if (!discPanel) return;
+      var btns = discPanel.querySelectorAll('button');
+      if (isOpen) {
+        discPanel.removeAttribute('aria-hidden');
+        discPanel.removeAttribute('inert');
+        btns.forEach(function (b) { b.removeAttribute('tabindex'); });
+      } else {
+        discPanel.setAttribute('aria-hidden', 'true');
+        discPanel.setAttribute('inert', '');
+        btns.forEach(function (b) { b.setAttribute('tabindex', '-1'); });
+      }
+    }
+
+    function updateSelectedHint() {
+      var btn  = document.getElementById('fxsit-disclosure-btn');
+      var hint = document.getElementById('fxsit-selected-hint');
+      if (!btn || !hint || !discPanel) return;
+      var isExpanded = btn.getAttribute('aria-expanded') === 'true';
+      if (isExpanded) {
+        hint.textContent = '';
+        hint.classList.remove('fxsit-hint-visible');
+        return;
+      }
+      var activeEl = discPanel.querySelector('.fc3-card.active[data-category]');
+      if (activeEl) {
+        var label = getVisibleCardLabel(activeEl);
+        if (label) {
+          hint.textContent = 'Filtre actif : ' + label;
+          hint.classList.add('fxsit-hint-visible');
+          return;
+        }
+      }
+      hint.textContent = '';
+      hint.classList.remove('fxsit-hint-visible');
+    }
 
     if (discBtn && discPanel) {
       discBtn.addEventListener('click', function () {
         var isExpanded = this.getAttribute('aria-expanded') === 'true';
         if (isExpanded) {
-          /* Collapse */
-          this.setAttribute('aria-expanded', 'false');
+          var focusInPanel = discPanel.contains(document.activeElement);
           discPanel.classList.remove('fxsit-expanded');
-          discPanel.setAttribute('aria-hidden', 'true');
-          this.innerHTML = 'Voir toutes les situations <span class="fxsit-disclosure-chevron" aria-hidden="true">\u25be</span>';
-          /* Show hint if a disclosed card is currently active */
-          var activeEl = discPanel.querySelector('.fc3-card.active[data-category]');
-          if (activeEl) {
-            updateSelectedHint(activeEl.dataset.category);
-          }
+          setAdditionalPanelState(false);
+          this.setAttribute('aria-expanded', 'false');
+          this.innerHTML = 'Voir toutes les situations <span class="fxsit-disclosure-chevron" aria-hidden="true">▾</span>';
+          if (focusInPanel) { this.focus(); }
+          updateSelectedHint();
         } else {
-          /* Expand */
-          this.setAttribute('aria-expanded', 'true');
+          setAdditionalPanelState(true);
           discPanel.classList.add('fxsit-expanded');
-          discPanel.removeAttribute('aria-hidden');
-          this.innerHTML = 'R\u00e9duire les situations <span class="fxsit-disclosure-chevron" aria-hidden="true">\u25be</span>';
-          /* Clear hint — panel is now visible */
+          this.setAttribute('aria-expanded', 'true');
+          this.innerHTML = 'Réduire les situations <span class="fxsit-disclosure-chevron" aria-hidden="true">▾</span>';
           var hint = document.getElementById('fxsit-selected-hint');
           if (hint) { hint.textContent = ''; hint.classList.remove('fxsit-hint-visible'); }
         }
       });
     }
 
-    /* ── aria-pressed synchronizer — delegated on #services ─────── */
-    /* Fires AFTER main.js initCategoryChips() because delegated listeners
-       run in registration order (both on the chip click bubble chain).
-       This listener ONLY updates aria-pressed — never writes filters. */
     var section = document.getElementById('services');
     if (section) {
       section.addEventListener('click', function (e) {
         var chip = e.target.closest('.chip[data-category]');
         if (!chip) return;
-        /* Defer by one microtask so main.js completes .active update first */
         Promise.resolve().then(function () {
           syncAriaPressed(chip);
-          var cat = chip.dataset.category || 'all';
-          if (cat === 'all') {
-            setTransition(ALL_TEXT);
-          } else {
-            setTransition(SELECTED_TEXT);
-          }
-          updateSelectedHint(cat);
+          updateTransitionForChip(chip);
+          updateSelectedHint();
         });
       });
     }
+
+    /* City-select change listener: update transition when reset-btn is active.
+       #services-city-filter dispatches 'change' when fc3InitCity picks/clears a city.
+       Reads only — never writes city, never calls matching. */
+    (function () {
+      var sel = document.getElementById('services-city-filter');
+      if (!sel) return;
+      sel.addEventListener('change', function () {
+        var activeChip = document.querySelector('#services .chip[data-category].active');
+        if (!activeChip) return;
+        var cat = (activeChip.dataset && activeChip.dataset.category) ? activeChip.dataset.category : 'all';
+        if (cat === 'all') {
+          setTransition(this.value ? ALL_CITY_TEXT : ALL_NO_CITY_TEXT);
+        }
+      });
+    }());
 
   }());
   </script>
