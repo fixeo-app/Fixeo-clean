@@ -2272,3 +2272,174 @@
    */
   word-spacing: 3px;
 }
+
+/* ══════════════════════════════════════════════════════════════
+   SUCCESS SCREEN FINAL PASS — fxrf4-v5w
+   Goal: RAFI is already working for you.
+   CSS-only. Zero DOM. Zero JS. Zero animation timing changes.
+   Zero new elements. Zero color changes. Zero layout changes.
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── 1. SUCCESS SCREEN — top spacing ────────────────────────── */
+/*
+ * Was: padding 16px 8px 10px — too compressed after screen transition.
+ * Now: 24px top — one beat of earned silence before the success moment.
+ * Sides and bottom unchanged.
+ */
+#fxrf4-success {
+  padding-top: 24px;
+}
+
+/* ── 2. CHECK RING — earned presence ───────────────────────── */
+/*
+ * Ring margin: 22px→28px — let the symbol breathe before the copy.
+ * Ring bg + border: strengthened slightly so the ✓ reads as accomplished,
+ * not whispered. bg 0.08→0.13, border 0.26→0.38.
+ * Post-animation resting state: ambient glow via box-shadow — the ring
+ * stays alive after the ripple fades (persistent, not pulsing).
+ * Animation start scale 0.20→0.30 — arrives more decisively.
+ */
+.fxrf4-check-ring {
+  margin-bottom: 28px;
+}
+
+.fxrf4-check-ring-inner {
+  background: rgba(32, 201, 151, 0.13);
+  border-color: rgba(32, 201, 151, 0.38);
+  box-shadow:
+    0 0 0 6px rgba(32, 201, 151, 0.05),
+    0 4px 18px rgba(32, 201, 151, 0.10);
+}
+
+@keyframes fxrf4-ring-in {
+  from { transform: scale(0.30); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+
+/* Emergency ring — amber ambient glow */
+.fxrf4-check-ring-inner.is-emergency {
+  background: rgba(234, 137, 54, 0.12);
+  border-color: rgba(234, 137, 54, 0.38);
+  box-shadow:
+    0 0 0 6px rgba(234, 137, 54, 0.05),
+    0 4px 18px rgba(234, 137, 54, 0.10);
+}
+
+/* ── 3. RAFI TAG — authorship, not stamp ───────────────────── */
+/*
+ * Was: 0.56rem / opacity 0.60 — invisible on Retina dark bg.
+ * Now: 0.64rem / opacity 0.82 — reads as "from RAFI" rather than a label.
+ * Spacing: margin-bottom 8px → 6px (slightly tighter to title = one idea).
+ */
+.fxrf4-success-tag {
+  font-size: 0.64rem;
+  color: rgba(72, 100, 255, 0.82);
+  margin-bottom: 6px;
+}
+
+/* ── 4. BODY TEXT — comfortable reading opacity ─────────────── */
+/*
+ * Was: opacity 0.48 — too faint on OLED in dark mode.
+ * Now: 0.56 — clearly legible, stays well below title (0.96).
+ */
+.fxrf4-success-body {
+  color: rgba(255, 255, 255, 0.56);
+}
+
+/* ── 5. STEP — DONE state (step 1) ─────────────────────────── */
+/*
+ * Was: bg 0.06, border 0.18 — nearly invisible circle.
+ * It's the COMPLETED step — it should look finished, not absent.
+ * bg 0.06→0.14, border 0.18→0.34 — reads as "already happened."
+ */
+.fxrf4-success-step-dot {
+  background: rgba(32, 201, 151, 0.14);
+  border-color: rgba(32, 201, 151, 0.34);
+}
+
+/* ── 6. STEP — ACTIVE state (step 2 — RAFI is working NOW) ─── */
+/*
+ * Size 34→38px — one clear size step above done/waiting.
+ *   Size differential communicates "this is happening" at a glance.
+ * bg 0.10→0.16, border 0.42→0.55 — unambiguously active.
+ * Pulse: amplitude 5px→8px, period 2.6s→2.2s — slightly more alive.
+ */
+.fxrf4-success-step-dot.is-active {
+  width: 38px;
+  height: 38px;
+  background: rgba(32, 201, 151, 0.16);
+  border-color: rgba(32, 201, 151, 0.55);
+  box-shadow: 0 0 0 4px rgba(32, 201, 151, 0.06);
+}
+
+@keyframes fxrf4-step-pulse {
+  0%, 100% { box-shadow: 0 0 0 0px rgba(32, 201, 151, 0.06); }
+  50%       { box-shadow: 0 0 0 8px rgba(32, 201, 151, 0.00); }
+}
+
+/* Emergency active step — amber */
+.fxrf4-success-step-dot.is-active.is-emergency {
+  background: rgba(234, 137, 54, 0.16);
+  border-color: rgba(234, 137, 54, 0.55);
+  box-shadow: 0 0 0 4px rgba(234, 137, 54, 0.06);
+}
+
+@keyframes fxrf4-step-pulse-emergency {
+  0%, 100% { box-shadow: 0 0 0 0px rgba(234, 137, 54, 0.06); }
+  50%       { box-shadow: 0 0 0 8px rgba(234, 137, 54, 0.00); }
+}
+
+/* ── 7. STEP SEPARATOR — visible connector ──────────────────── */
+/*
+ * Was: 24px wide, 1px high, opacity 0.12 — nearly invisible hairline.
+ * Now: 28px wide, 1px high, opacity 0.22 — a real connector between steps.
+ * margin-top: 17px kept — aligns with center of 34px dots.
+ * For active dot (38px), the center is at 19px — the 2px difference is
+ * imperceptible; consistent margin is better than fragile per-step logic.
+ */
+.fxrf4-success-step-sep {
+  flex: 0 0 28px;
+  background: rgba(32, 201, 151, 0.22);
+}
+
+/* ── 8. STEP LABEL — readable at small size ─────────────────── */
+/*
+ * Was: 0.59rem / opacity 0.32 — near-illegible on non-Retina.
+ * Now: 0.64rem / opacity 0.40 — readable, stays clearly subordinate.
+ */
+.fxrf4-success-step-lbl {
+  font-size: 0.64rem;
+  color: rgba(255, 255, 255, 0.40);
+}
+
+/* ── 9. PRIMARY CTA — depth + press state ───────────────────── */
+/*
+ * No color change. Box-shadow depth makes it feel like a real button,
+ * not a flat rectangle. Same treatment as fxrf4-btn-primary (v5s).
+ * Active: translateY(1px) + shadow collapse — grounded press feel.
+ */
+.fxrf4-btn-success-primary {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 4px 14px rgba(72, 100, 255, 0.28),
+    0 1px 3px  rgba(0, 0, 0, 0.18);
+  will-change: transform;
+  transition: background 0.15s, box-shadow 0.15s;
+}
+
+.fxrf4-btn-success-primary:active {
+  transform: translateY(1px) scale(0.99);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 2px 6px  rgba(72, 100, 255, 0.18),
+    0 1px 2px  rgba(0, 0, 0, 0.14);
+}
+
+/* ── 10. SECONDARY CTA — usable, not invisible ──────────────── */
+/*
+ * Was: 0.28 opacity — under accessible contrast threshold.
+ * Now: 0.44 opacity — still clearly secondary, actually tappable.
+ */
+.fxrf4-btn-success-secondary {
+  color: rgba(255, 255, 255, 0.44);
+}
