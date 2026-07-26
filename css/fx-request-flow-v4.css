@@ -2239,3 +2239,36 @@
 .fxrf4-phone-wrap:has(.fxrf4-phone-input.is-error) {
   border-color: rgba(210, 60, 60, 0.55);
 }
+
+/* ══════════════════════════════════════════════════════════════
+   PHONE SCREEN FINAL OPTICAL MICRO POLISH — fxrf4-v5v
+   Three one-line calibrations. Zero architecture changes.
+   Zero grid, DOM, JS, validation, layout, or dimension changes.
+   ═══════════════════════════════════════════════════════════ */
+
+.fxrf4-phone-prefix {
+  /*
+   * Task 1 — Prefix readability
+   * Was: rgba(255,255,255,0.42) — too muted against dark bg on Retina
+   * Now: rgba(255,255,255,0.58) — clearly legible, still secondary to number
+   * Delta: +16 opacity points. Phone number (0.94) remains dominant.
+   */
+  color: rgba(255, 255, 255, 0.58);
+
+  /*
+   * Task 2 — Breathing room between +212 and first digit
+   * Was: padding-right 12px — slight visual collision feel
+   * Now: padding-right 15px — 3px wider; almost imperceptible, removes tension
+   * Still a structural grid gap — overlap remains impossible.
+   */
+  padding: 0 15px 0 18px;
+
+  /*
+   * Task 3 — Flag → +212 internal rhythm
+   * "🇲🇦 +212" is one text node; space char = ~4px at 0.92rem.
+   * word-spacing: 3px adds 3px to that space → ~7px total.
+   * Flag, prefix, and number now read with a smooth left-to-right rhythm.
+   * No JS change. No DOM change.
+   */
+  word-spacing: 3px;
+}
