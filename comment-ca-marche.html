@@ -5,7 +5,7 @@
   <link rel="apple-touch-icon" href="img/favicon.png">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <meta name="description" content="Comment Fixeo trouve le bon artisan en quelques minutes : décrivez votre besoin, Fixeo identifie le service, vous consultez et réservez. Paiement après intervention.">
+  <meta name="description" content="Comment Fixeo fonctionne : décrivez votre besoin avec RAFI, choisissez votre ville, laissez votre numéro. Votre demande est enregistrée en quelques étapes.">
   <title>Comment ça marche | Fixeo</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,7 +16,10 @@
   <link rel="stylesheet" href="css/fixeo-header-global.css">
   <link rel="stylesheet" href="css/auth-global.css">
   <link rel="stylesheet" href="css/fixeo-footer-global.css?v=gf3a">
+  <!-- fixeo-rafi-v2.css retained per fxhow-v2a scope — removal deferred to fxhow-v2b -->
   <link rel="stylesheet" href="css/fixeo-rafi-v2.css?v=rfv2a">
+  <!-- RAFI V5 — canonical conversion engine (fxrf4-v5a1 / frozen) -->
+  <link rel="stylesheet" href="css/fx-request-flow-v4.css?v=fxrf4-v5z">
   <style id="fixeo-logo-override">
     .navbar-brand .logo-icon,.logo-wrap .logo-icon,.fixeo-gh-brand .logo-icon{display:none!important;width:0!important;height:0!important;min-width:0!important;flex:0!important}
     .navbar-brand .logo-text,.logo-wrap .logo-text,.fixeo-gh-brand .logo-text{display:none!important;width:0!important;height:0!important}
@@ -39,12 +42,20 @@
     .cp-hero h1{font-size:clamp(1.7rem,4vw,2.8rem);font-weight:900;line-height:1.15;letter-spacing:-0.02em;margin:0 0 18px;color:#fff}
     .cp-hero h1 .hl{background:var(--cp-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
     .cp-hero p{font-size:clamp(0.97rem,1.8vw,1.12rem);color:var(--cp-muted);max-width:560px;margin:0 auto 32px;line-height:1.65}
+    /* RAFI avatar — CSS-only gradient circle (no external asset) */
+    .ccm-rafi-avatar{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#E1306C,#833AB4);display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 24px;box-shadow:0 0 0 6px rgba(225,48,108,0.12),0 8px 28px rgba(225,48,108,0.22);flex-shrink:0}
     /* Buttons */
     .cp-btn{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:14px;font-size:0.95rem;font-weight:800;cursor:pointer;border:none;text-decoration:none;transition:transform 0.15s,box-shadow 0.15s;color:#fff}
     .cp-btn:hover{transform:translateY(-1px)}
     .cp-btn-primary{background:var(--cp-grad);box-shadow:0 8px 24px rgba(225,48,108,0.25)}
     .cp-btn-primary:hover{box-shadow:0 12px 32px rgba(225,48,108,0.38)}
-    .cp-btn-row{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+    .cp-btn-primary:active{transform:translateY(1px) scale(0.99)}
+    .cp-btn-primary:focus-visible{outline:2px solid rgba(225,48,108,0.70);outline-offset:3px}
+    .cp-btn-secondary{background:transparent;border:1.5px solid rgba(255,255,255,0.18);color:rgba(232,234,240,0.88)}
+    .cp-btn-secondary:hover{background:rgba(255,255,255,0.07);border-color:rgba(255,255,255,0.28)}
+    .cp-btn-secondary:active{transform:translateY(1px) scale(0.99)}
+    .cp-btn-secondary:focus-visible{outline:2px solid rgba(255,255,255,0.40);outline-offset:3px}
+    .cp-btn-row{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;align-items:center}
     /* Sections */
     .cp-section{padding:56px 0}
     .cp-section-alt{background:rgba(255,255,255,0.022);margin:0 -20px;padding:56px 20px}
@@ -76,26 +87,32 @@
     .cp-cta-band h2{font-size:clamp(1.3rem,3vw,2rem);font-weight:900;color:#fff;margin:0 0 12px}
     .cp-cta-band p{font-size:0.96rem;color:var(--cp-muted);max-width:500px;margin:0 auto 28px;line-height:1.6}
     @media(max-width:640px){.cp-hero{padding:48px 16px 40px}.cp-section{padding:40px 0}.cp-section-alt{padding:40px 16px}.cp-step-num{flex:0 0 40px;height:40px;border-radius:12px;font-size:1rem}.cp-tech-grid{grid-template-columns:1fr 1fr}}
+    /* ── fxhow-v2a: tech grid 1-column at ≤480px ───────────────────── */
+    @media(max-width:480px){.cp-tech-grid{grid-template-columns:1fr}}
     @media(max-width:400px){.cp-tech-grid{grid-template-columns:1fr}}
+    /* ── reduced-motion ─────────────────────────────────────────────── */
+    @media(prefers-reduced-motion:reduce){.cp-btn,.cp-btn-primary,.cp-btn-secondary{transition:none}}
+    /* ── 320px floor ────────────────────────────────────────────────── */
+    @media(max-width:360px){.cp-btn{padding-left:18px;padding-right:18px;font-size:0.87rem}}
   </style>
 <!-- SEO-1A -->
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://www.fixeo.ma/comment-ca-marche.html">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Comment ça marche | Fixeo — Trouver un artisan au Maroc">
-<meta property="og:description" content="Découvrez comment Fixeo trouve le bon artisan en quelques minutes : publiez votre besoin, choisissez l'artisan, intervention rapide.">
+<meta property="og:description" content="Décrivez votre besoin avec RAFI, choisissez votre ville, laissez votre numéro. Votre demande est enregistrée en quelques étapes.">
 <meta property="og:url" content="https://www.fixeo.ma/comment-ca-marche.html">
 <meta property="og:image" content="https://www.fixeo.ma/img/logo.png">
 <meta property="og:site_name" content="Fixeo">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Comment ça marche — Fixeo Maroc">
-<meta name="twitter:description" content="Comment Fixeo trouve le bon artisan en quelques minutes.">
+<meta name="twitter:description" content="Comment décrire votre besoin avec RAFI et enregistrer une demande d'artisan en quelques étapes.">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "HowTo",
-  "name": "Comment trouver un artisan avec Fixeo",
-  "description": "Guide pour trouver et réserver un artisan vérifié au Maroc via Fixeo.",
+  "name": "Comment décrire votre besoin avec RAFI sur Fixeo",
+  "description": "Guide pour enregistrer une demande d'artisan via RAFI sur Fixeo au Maroc.",
   "totalTime": "PT2M",
   "estimatedCost": {
     "@type": "MonetaryAmount",
@@ -106,26 +123,32 @@
     {
       "@type": "HowToStep",
       "position": 1,
-      "name": "Publiez votre besoin",
-      "text": "Décrivez votre problème ou service nécessaire et votre ville."
+      "name": "Choisissez votre besoin",
+      "text": "Sélectionnez le type de service parmi les catégories proposées par RAFI."
     },
     {
       "@type": "HowToStep",
       "position": 2,
-      "name": "Recevez des propositions",
-      "text": "Fixeo vous présente les artisans vérifiés disponibles dans votre zone."
+      "name": "Indiquez la ville d'intervention",
+      "text": "Choisissez votre ville parmi les villes disponibles sur FIXEO."
     },
     {
       "@type": "HowToStep",
       "position": 3,
-      "name": "Choisissez votre artisan",
-      "text": "Consultez les profils, spécialités et disponibilités avant de contacter."
+      "name": "Choisissez le délai",
+      "text": "Indiquez si vous avez besoin d'un artisan maintenant, aujourd'hui ou plus tard."
     },
     {
       "@type": "HowToStep",
       "position": 4,
+      "name": "Laissez votre numéro",
+      "text": "Votre numéro permet à FIXEO de vous recontacter par téléphone ou WhatsApp."
+    },
+    {
+      "@type": "HowToStep",
+      "position": 5,
       "name": "Intervention et paiement",
-      "text": "L'artisan intervient chez vous et vous payez après service rendu."
+      "text": "Une fois l'intervention réalisée, vous réglez directement l'artisan. Aucun prépaiement n'est demandé par FIXEO."
     }
   ]
 }
@@ -178,71 +201,65 @@
 <section class="cp-hero" aria-labelledby="ccm-hero-title">
   <div class="cp-container">
     <span class="cp-hero-label">Comment ça marche</span>
-    <!-- rafi-v2: Bust_Color — decorative brand character, below label, above h1. Phase 1. -->
-    <div style="display:flex;justify-content:center;margin:16px 0 8px">
-      <img class="rafi-img rafi-img--bust"
-           src="/rafi/RAFI_V2_Bust_Color.png"
-           alt=""
-           loading="lazy"
-           decoding="async"
-           width="200" height="200">
-    </div>
-    <h1 id="ccm-hero-title">Comment Fixeo trouve<br><span class="hl">le bon artisan</span></h1>
-    <p>Un parcours simple : besoin, ville, artisan, intervention. Pas de comparaisons interminables, pas d'offres à trier.</p>
+    <!-- RAFI avatar: CSS gradient circle replaces broken img (fxhow-v2a); rafi-v2.css cleanup → fxhow-v2b -->
+    <div class="ccm-rafi-avatar" aria-hidden="true">✨</div>
+    <h1 id="ccm-hero-title">Décrivez votre besoin.<br><span class="hl">RAFI organise votre demande.</span></h1>
+    <p>Choisissez votre besoin, indiquez votre ville et laissez votre numéro.<br>Votre demande est enregistrée en quelques étapes.</p>
     <div class="cp-btn-row">
-      <a href="index.html#home" class="cp-btn cp-btn-primary">🔍 Trouver mon artisan maintenant</a>
+      <button type="button" class="cp-btn cp-btn-primary" data-open-request-form="true" aria-label="Décrire mon besoin à RAFI">✨ Décrire mon besoin à RAFI</button>
+      <a href="index.html#artisans-section" class="cp-btn cp-btn-secondary">👷 Voir les artisans</a>
     </div>
   </div>
 </section>
 
 <!-- ── Les 5 étapes ── -->
 <section class="cp-section cp-container" aria-labelledby="steps-title">
-  <h2 class="cp-section-title" id="steps-title">Le parcours Fixeo en 5 étapes</h2>
-  <p class="cp-section-sub">De votre besoin à l'intervention, voici exactement ce qui se passe.</p>
+  <h2 class="cp-section-title" id="steps-title">Le parcours RAFI en 5 étapes</h2>
+  <p class="cp-section-sub">De votre besoin à l'enregistrement de la demande, voici ce qui se passe.</p>
   <div class="cp-steps">
 
     <div class="cp-step">
       <div class="cp-step-num">1</div>
       <div class="cp-step-body">
-        <p class="cp-step-title">Décrivez votre besoin</p>
-        <p class="cp-step-desc">En quelques mots : "fuite sous l'évier", "prise qui ne fonctionne plus", "repeindre le salon". Pas besoin d'être technique — Fixeo comprend le langage courant.</p>
-        <span class="cp-step-tag">⏱ 30 secondes</span>
+        <p class="cp-step-title">Choisissez votre besoin</p>
+        <p class="cp-step-desc">Sélectionnez le métier ou la situation qui correspond le mieux à votre demande parmi les catégories proposées. Vous pouvez aussi la décrire en quelques mots avec « Autre chose ».</p>
+        <span class="cp-step-tag">⏱ Quelques secondes</span>
       </div>
     </div>
 
     <div class="cp-step">
       <div class="cp-step-num">2</div>
       <div class="cp-step-body">
-        <p class="cp-step-title">Fixeo identifie le service et la ville</p>
-        <p class="cp-step-desc">Le moteur de matching Fixeo catégorise automatiquement votre besoin (plomberie, électricité, etc.) et utilise votre ville pour filtrer les artisans disponibles à proximité.</p>
-        <span class="cp-step-tag">📍 Géolocalisation intelligente</span>
+        <p class="cp-step-title">Indiquez la ville d'intervention</p>
+        <p class="cp-step-desc">Choisissez votre ville parmi les propositions ou sélectionnez une autre ville. RAFI conserve cette information dans votre demande.</p>
+        <span class="cp-step-tag">📍 Ville au choix</span>
       </div>
     </div>
 
     <div class="cp-step">
       <div class="cp-step-num">3</div>
       <div class="cp-step-body">
-        <p class="cp-step-title">Vous consultez les artisans pertinents</p>
-        <p class="cp-step-desc">Fixeo affiche les profils correspondant à votre besoin et votre ville. Chaque profil indique la spécialité, la ville et une estimation de prix. Pas de liste de 50 profils — seulement les pertinents.</p>
-        <span class="cp-step-tag">💡 Estimation de prix incluse</span>
+        <p class="cp-step-title">Choisissez le délai</p>
+        <p class="cp-step-desc">Indiquez si vous avez besoin d'un artisan maintenant, aujourd'hui ou plus tard. En cas d'urgence, sélectionnez le mode urgent.</p>
+        <span class="cp-step-tag">⚡ Maintenant ou planifié</span>
       </div>
     </div>
 
     <div class="cp-step">
       <div class="cp-step-num">4</div>
       <div class="cp-step-body">
-        <p class="cp-step-title">Vous réservez ou publiez une demande</p>
-        <p class="cp-step-desc">Deux options : réserver directement un artisan qui vous convient, ou publier une demande ouverte pour être contacté. Dans les deux cas, c'est gratuit et sans engagement.</p>
-        <span class="cp-step-tag">0 MAD d'acompte</span>
+        <p class="cp-step-title">Laissez votre numéro</p>
+        <p class="cp-step-desc">Votre numéro permet à FIXEO de vous recontacter par téléphone ou WhatsApp au sujet de votre demande. Aucun compte n'est requis pour cette étape.</p>
+        <span class="cp-step-tag">📱 Téléphone ou WhatsApp</span>
       </div>
     </div>
 
     <div class="cp-step">
       <div class="cp-step-num">5</div>
       <div class="cp-step-body">
-        <p class="cp-step-title">Paiement après intervention</p>
-        <p class="cp-step-desc">L'artisan intervient, vous validez le travail, vous payez. Simple. Aucun prépaiement, aucune carte bancaire requise à la réservation. Le paiement est sécurisé par la plateforme.</p>
-        <span class="cp-step-tag">💳 Paiement après validation</span>
+        <p class="cp-step-title">Intervention et paiement</p>
+        <p class="cp-step-desc">Une fois l'intervention réalisée, vous réglez directement l'artisan. Aucun prépaiement n'est demandé par FIXEO.</p>
+        <span class="cp-step-tag">💰 Paiement après intervention</span>
       </div>
     </div>
 
@@ -253,37 +270,27 @@
 <div class="cp-section-alt">
   <div class="cp-container">
     <h2 class="cp-section-title">La technologie Fixeo</h2>
-    <p class="cp-section-sub">Ce qui se passe en arrière-plan quand vous décrivez votre besoin.</p>
+    <p class="cp-section-sub">Ce que RAFI organise pour vous à chaque étape.</p>
     <div class="cp-tech-grid">
       <div class="cp-tech-card">
-        <span class="cp-tech-icon">🔀</span>
-        <p class="cp-tech-title">Matching service / ville</p>
-        <p class="cp-tech-text">Votre description est analysée pour identifier la catégorie de service et associer les artisans disponibles dans votre zone géographique.</p>
+        <span class="cp-tech-icon">📋</span>
+        <p class="cp-tech-title">Demande structurée</p>
+        <p class="cp-tech-text">RAFI organise les informations essentielles : votre besoin, votre ville, le délai souhaité et votre numéro de contact.</p>
       </div>
       <div class="cp-tech-card">
         <span class="cp-tech-icon">📍</span>
-        <p class="cp-tech-title">Géolocalisation intelligente</p>
-        <p class="cp-tech-text">Fixeo détecte automatiquement votre ville via la géolocalisation. Vous pouvez toujours la modifier pour rechercher ailleurs.</p>
-      </div>
-      <div class="cp-tech-card">
-        <span class="cp-tech-icon">💡</span>
-        <p class="cp-tech-title">Estimation de prix</p>
-        <p class="cp-tech-text">Chaque catégorie de service dispose de fourchettes tarifaires basées sur les interventions courantes au Maroc. Vous savez à quoi vous attendre avant de contacter.</p>
+        <p class="cp-tech-title">Ville d'intervention</p>
+        <p class="cp-tech-text">Vous sélectionnez directement la ville concernée parmi les villes disponibles. Vous pouvez la modifier à chaque nouvelle demande.</p>
       </div>
       <div class="cp-tech-card">
         <span class="cp-tech-icon">👷</span>
         <p class="cp-tech-title">Profils artisans structurés</p>
-        <p class="cp-tech-text">Chaque artisan renseigne sa spécialité principale, ses zones d'intervention et ses disponibilités. Les profils évoluent avec les évaluations réelles.</p>
+        <p class="cp-tech-text">Les profils publics présentent le métier, la ville, les informations disponibles et les éléments renseignés par l'artisan.</p>
       </div>
       <div class="cp-tech-card">
-        <span class="cp-tech-icon">⚡</span>
-        <p class="cp-tech-title">Réservation rapide</p>
-        <p class="cp-tech-text">Pas de formulaire long. Un besoin, une ville, un créneau — Fixeo gère la coordination entre vous et l'artisan.</p>
-      </div>
-      <div class="cp-tech-card">
-        <span class="cp-tech-icon">🔒</span>
-        <p class="cp-tech-title">Paiement sécurisé</p>
-        <p class="cp-tech-text">Le paiement n'est déclenché qu'après validation de l'intervention. La plateforme protège à la fois le client et l'artisan.</p>
+        <span class="cp-tech-icon">📲</span>
+        <p class="cp-tech-title">Suivi par téléphone ou WhatsApp</p>
+        <p class="cp-tech-text">Le numéro transmis permet à FIXEO de poursuivre le traitement de la demande et de vous communiquer les prochaines informations.</p>
       </div>
     </div>
   </div>
@@ -296,8 +303,8 @@
   <div class="cp-faq">
 
     <div class="cp-faq-item">
-      <p class="cp-faq-q">Faut-il créer un compte pour chercher un artisan ?</p>
-      <p class="cp-faq-a">Non. Vous pouvez consulter les artisans disponibles sans compte. Un compte est nécessaire uniquement pour réserver ou publier une demande.</p>
+      <p class="cp-faq-q">Faut-il créer un compte pour décrire son besoin ?</p>
+      <p class="cp-faq-a">Aucun compte n'est nécessaire pour décrire votre besoin avec RAFI. Un compte peut être utile pour accéder à certaines fonctions personnelles, comme votre tableau de bord.</p>
     </div>
 
     <div class="cp-faq-item">
@@ -306,23 +313,23 @@
     </div>
 
     <div class="cp-faq-item">
-      <p class="cp-faq-q">Comment sont sélectionnés les artisans ?</p>
-      <p class="cp-faq-a">Les artisans déclarent leur spécialité et leur zone lors de l'inscription. Leur profil est progressivement enrichi par les évaluations des clients après chaque intervention.</p>
+      <p class="cp-faq-q">Comment sont présentés les artisans ?</p>
+      <p class="cp-faq-a">Les profils présentent les informations disponibles sur le métier, la ville et l'activité de l'artisan. FIXEO organise progressivement son réseau et améliore les profils au fil des informations et des interventions disponibles.</p>
     </div>
 
     <div class="cp-faq-item">
-      <p class="cp-faq-q">Que se passe-t-il si le travail n'est pas satisfaisant ?</p>
-      <p class="cp-faq-a">Le paiement n'est validé qu'après votre confirmation. En cas de litige, Fixeo offre un support client pour traiter la situation.</p>
+      <p class="cp-faq-q">Comment se passe le paiement ?</p>
+      <p class="cp-faq-a">Vous réglez directement l'artisan après l'intervention, une fois le travail terminé. FIXEO ne demande aucun prépaiement pour enregistrer votre demande.</p>
     </div>
 
     <div class="cp-faq-item">
       <p class="cp-faq-q">Puis-je demander une intervention urgente ?</p>
-      <p class="cp-faq-a">Oui. Le mode urgence Fixeo oriente vers les artisans disponibles immédiatement dans votre ville. Décrivez votre urgence et Fixeo priorise les réponses rapides.</p>
+      <p class="cp-faq-a">Oui. RAFI propose un mode urgent qui indique que vous avez besoin d'un artisan dans les plus brefs délais. Votre demande est enregistrée avec cette priorité.</p>
     </div>
 
     <div class="cp-faq-item">
       <p class="cp-faq-q">Je suis artisan — comment rejoindre Fixeo ?</p>
-      <p class="cp-faq-a">Créez votre profil via la page dédiée. Indiquez vos spécialités, votre ville et vos disponibilités. Votre profil sera visible dès validation.</p>
+      <p class="cp-faq-a">Créez votre profil via la page dédiée. Indiquez vos spécialités, votre ville et vos disponibilités. Votre profil sera visible sur la plateforme.</p>
     </div>
 
   </div>
@@ -331,9 +338,12 @@
 <!-- ── CTA final ── -->
 <div class="cp-cta-band">
   <div class="cp-container">
-    <h2>Prêt à trouver votre artisan ?</h2>
-    <p>Décrivez votre besoin. Fixeo fait le matching. Vous choisissez.</p>
-    <a href="index.html#home" class="cp-btn cp-btn-primary" style="font-size:1rem;padding:16px 34px">🔍 Trouver mon artisan maintenant</a>
+    <h2>Prêt à décrire votre besoin ?</h2>
+    <p>Quelques étapes suffisent. Votre demande est enregistrée, votre numéro est transmis.</p>
+    <div class="cp-btn-row">
+      <button type="button" class="cp-btn cp-btn-primary" data-open-request-form="true" style="font-size:1rem;padding:16px 34px" aria-label="Décrire mon besoin à RAFI">✨ Décrire mon besoin à RAFI</button>
+      <a href="index.html#artisans-section" class="cp-btn cp-btn-secondary" style="font-size:0.95rem;padding:14px 28px">👷 Voir les artisans</a>
+    </div>
   </div>
 </div>
 
@@ -344,6 +354,8 @@
 <script src="js/header-unified.js?v=modalfix3"></script>
 <script src="js/auth-global.js?v=50a38b9"></script>
   <script src="js/fixeo-footer-global.js?v=gf3a" defer></script>
+<!-- RAFI V5 — canonical conversion engine (fxrf4-v5a1 / frozen) -->
+<script src="js/fx-request-flow-v4.js?v=fxrf4-v5a1" defer></script>
 
 <!-- Editorial attribution (Phase 4.1 EEAT) -->
 <p style="text-align:center;font-size:0.8rem;color:#aaa;padding:1rem 0 0.5rem;">Contenu produit par <a href="/equipe" style="color:#888;">l'équipe Fixeo</a> &middot; <a href="/blog" style="color:#888;">Tous nos guides</a></p>
