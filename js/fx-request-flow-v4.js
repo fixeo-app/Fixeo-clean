@@ -1,5 +1,5 @@
 /**
- * fx-request-flow-v4.js — fxrf4-v5p
+ * fx-request-flow-v4.js — fxrf4-v5a1
  * RAFI Request Flow V5 — Emergency Mode Adaptation
  *
  * EMOTIONAL ARC: Problem → Relief → Confidence → Momentum → Trust
@@ -14,7 +14,7 @@
  * ISOLATED: Zero dependency on .modal, MutationObservers, setTimeout injections.
  * ROLLBACK: window.FIXEO_FLOW_V4 = false
  *
- * VERSION: fxrf4-v5p — 2026-07-25
+ * VERSION: fxrf4-v5a1 — 2026-07-26
  */
 
 (function () {
@@ -300,7 +300,7 @@
         tracking_ref: ref,
         status:       'nouvelle',
         created_at:   new Date().toISOString(),
-        source:       'fxrf4-v5p',
+        source:       'fxrf4-v5a1',
         mode:         st.mode,
         viewed:       false
       };
@@ -339,8 +339,8 @@
   function _fireAnalytics(req, mode, duplicated) {
     try {
       window.dispatchEvent(new CustomEvent('fixeo:client-request-submit-success', {
-        detail: { request: req, mode: mode, source: 'fxrf4-v5p',
-                  storageKey: STORAGE_KEY, duplicated: duplicated }
+        detail: { request: req, mode: mode, source: 'fxrf4-v5a1',
+                  storageKey: STORAGE_KEY, duplicated: duplicated, version: 'fxrf4-v5a1' }
       }));
     } catch(_) {}
   }
@@ -456,7 +456,7 @@
     _wireSwipeDismiss(dialog);
 
     /* Diagnostic */
-    console.log('[fxrf4-v5p] DOM built. Header children:', head.childElementCount, '(expected 2: rafi-row, close)');
+    console.log('[fxrf4-v5a1] DOM built. Header children:', head.childElementCount, '(expected 2: rafi-row, close)');
   }
 
   /* ══════════════════════════════════════════════════════════
@@ -720,6 +720,7 @@
           if (val.length < 3) return;
           st.serviceSlug  = 'autre';
           st.serviceLabel = val;
+          st.description  = val; /* F1: duplicate into description for downstream consumers */
           _transitionFwd(_renderStep2);
         }
 
@@ -855,6 +856,7 @@
       if (val.length < 3) return;
       st.serviceSlug  = 'autre';
       st.serviceLabel = val;
+      st.description  = val; /* F1: duplicate into description for downstream consumers */
       _transitionFwd(_renderStep2);
     }
     confirmOtherBtn.addEventListener('click', _confirmOther);
@@ -1051,6 +1053,13 @@
     var screenChildren = [cityRow, citySelectWrap];
     if (urgencySection) screenChildren.push(urgencySection);
     if (body) body.appendChild(_screen(screenChildren));
+
+    /* F2: Back from step 3 — if city + urgency already set in standard mode,
+       reveal urgency section immediately (no re-tap of city required).
+       Uses setTimeout(0) so the screen is in the DOM before style change. */
+    if (!isEmergency && st.city && urgencySection) {
+      setTimeout(_showUrgencyCards, 0);
+    }
   }
 
   /* ══════════════════════════════════════════════════════════
@@ -1216,8 +1225,12 @@
 
     if (!saved) {
       st.submitLocked = false;
-      /* btn may still be in DOM — restore if so, otherwise just re-render step 3 */
-      if (btn.parentNode) _btnRestore(btn, 'Envoyer ma demande', false);
+      /* F3: mode-aware label restore — emergency has different CTA text */
+      var _failIsEmergency = st && st.mode === 'emergency';
+      if (btn.parentNode) _btnRestore(btn,
+        _failIsEmergency ? 'Trouver un artisan maintenant' : 'Envoyer ma demande',
+        _failIsEmergency
+      );
       else _renderStep3();
       return;
     }
@@ -1396,7 +1409,7 @@
 
     var head = _q('#fxrf4-head');
     if (head) {
-      console.log('[fxrf4-v5p] Success rendered. mode=' + (st.mode) +
+      console.log('[fxrf4-v5a1] Success rendered. mode=' + (st.mode) +
                   ' Header children:', head.childElementCount);
     }
   }
@@ -1680,7 +1693,7 @@
   ══════════════════════════════════════════════════════════ */
 
   window.FixeoRequestFlowV4 = {
-    VERSION: 'fxrf4-v5p',
+    VERSION: 'fxrf4-v5a1',
     open:    open,
     close:   close
   };
