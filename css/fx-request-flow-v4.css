@@ -1579,3 +1579,184 @@
   0%, 100% { box-shadow: 0 0 0 0   rgba(234, 137, 54, 0.22); }
   50%       { box-shadow: 0 0 0 5px rgba(234, 137, 54, 0); }
 }
+
+/* ══════════════════════════════════════════════════════════════
+   CITY SCREEN PREMIUM REFINEMENT — fxrf4-v5q
+   CSS-only. No JS. No logic changes. No auto-advance changes.
+
+   Three improvement axes:
+     1. Mobile grid layout — 2-column balanced grid below 480px
+     2. Premium chip depth — inner highlight + lower shadow
+     3. Select integration — clear spacing, taller height, centred text
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── 1. PREMIUM DEPTH — all city chips ─────────────────────── */
+/*
+ * Subtle inner highlight (top-left) + soft lower shadow.
+ * Values kept calm — RAFI visual identity, not neon.
+ */
+.fxrf4-city-chip {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),   /* inner highlight */
+    0 2px 8px rgba(0, 0, 0, 0.18);              /* gentle drop */
+}
+
+.fxrf4-city-chip.is-detected {
+  box-shadow:
+    inset 0 1px 0 rgba(72, 100, 255, 0.12),
+    0 3px 12px rgba(72, 100, 255, 0.10);
+}
+
+.fxrf4-city-chip.is-selected {
+  box-shadow:
+    inset 0 1px 0 rgba(72, 100, 255, 0.14),
+    0 3px 12px rgba(72, 100, 255, 0.10);
+}
+
+/* ── Pressed state — grounded, no bounce ──────────────────── */
+.fxrf4-city-chip:active {
+  transform: translateY(1px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 1px 4px rgba(0, 0, 0, 0.14);
+  transition:
+    transform 0.08s ease,
+    box-shadow 0.08s ease;
+}
+
+/* ── 2. MOBILE GRID — narrow screens ≤ 480px ──────────────── */
+/*
+ * Both detected and non-detected cases:
+ * Convert all non-detected chips from horizontal scroll
+ * to a balanced 2-column grid with equal widths and heights.
+ *
+ * Detected case: .is-detected stays full-width (zone 1).
+ *   The remaining chips + "Autre ville" form a 2-column grid below.
+ *
+ * No-detect case: all chips (including "Autre ville") form
+ *   a 2-column grid. "Autre ville" spans full width at bottom.
+ *
+ * :has() is already used by fxrf4-v5p so this is safe to extend.
+ */
+@media (max-width: 480px) {
+
+  /* ── Base city-row → grid layout ── */
+  .fxrf4-city-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    overflow-x: visible;
+    -webkit-mask-image: none;
+    mask-image: none;
+    padding-bottom: 0;
+    margin-bottom: 14px;
+  }
+
+  /* Each chip fills its grid cell with equal height */
+  .fxrf4-city-chip {
+    flex-shrink: unset;
+    white-space: normal;             /* allow label to wrap if needed */
+    text-align: center;
+    justify-content: center;         /* centre label in pill */
+    min-height: 52px;                /* generous touch target */
+    padding: 12px 10px;
+  }
+
+  /* Detected city — always full-width card, spans both columns */
+  .fxrf4-city-chip.is-detected {
+    grid-column: 1 / -1;
+    padding: 18px 20px;
+    min-height: 60px;
+    text-align: center;
+    justify-content: center;
+  }
+
+  /* "Autre ville →" — full-width at bottom, spans both columns */
+  .fxrf4-city-chip.is-more {
+    grid-column: 1 / -1;
+    min-height: 48px;
+    padding: 11px 16px;
+    justify-content: center;
+  }
+
+  /* ── Override v5p horizontal-scroll rules for detected layout ── */
+  /*
+   * fxrf4-v5p uses :has(.is-detected) to add flex-wrap + margin rules.
+   * In the grid context those rules interfere — reset them cleanly.
+   */
+  .fxrf4-city-row:has(.fxrf4-city-chip.is-detected) {
+    display: grid;
+    overflow-x: visible;
+    -webkit-mask-image: none;
+    mask-image: none;
+    flex-wrap: unset;
+    row-gap: unset;
+    gap: 8px;
+  }
+
+  .fxrf4-city-row:has(.fxrf4-city-chip.is-detected) .fxrf4-city-chip:not(.is-detected) {
+    flex: unset;
+    margin-left: 0 !important; /* reset v5p nth-child margin */
+  }
+
+  .fxrf4-city-row:has(.fxrf4-city-chip.is-detected) .fxrf4-city-chip:nth-child(2) {
+    margin-left: 0 !important;
+  }
+
+  .fxrf4-city-row:has(.fxrf4-city-chip.is-detected)
+    .fxrf4-city-chip:not(.is-detected) + .fxrf4-city-chip:not(.is-detected) {
+    margin-left: 0 !important;
+  }
+
+}
+
+/* ── Slightly larger gap on 390px+ — avoid compression ─────── */
+@media (min-width: 390px) and (max-width: 480px) {
+  .fxrf4-city-row {
+    gap: 9px;
+  }
+  .fxrf4-city-chip {
+    min-height: 54px;
+  }
+}
+
+/* ── 3. SELECT INTEGRATION ─────────────────────────────────── */
+/*
+ * When "Autre ville" is tapped, the select appears via JS (display:block).
+ * Add vertical breathing room + taller field + centred text.
+ * Native select behaviour preserved — no replacement, no custom dropdown.
+ */
+.fxrf4-select-wrap {
+  margin-top: 6px; /* base: slight extra space above */
+}
+
+.fxrf4-select {
+  min-height: 52px;
+  padding: 15px 40px 15px 18px;
+  /* Vertical centring achieved via equal top/bottom padding */
+}
+
+/* Shift chevron down to match taller field */
+.fxrf4-select-wrap::after {
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+@media (max-width: 480px) {
+  .fxrf4-select-wrap {
+    margin-top: 10px;  /* generous separation from chips on mobile */
+    margin-bottom: 14px;
+  }
+
+  .fxrf4-select {
+    min-height: 54px;
+    font-size: 0.96rem;
+  }
+}
+
+/* ── Stagger delays — extend to cover 6 chips in grid ──────── */
+/*
+ * Existing delays cover :nth-child(1–6).
+ * Grid renders same DOM order — stagger still applies correctly.
+ * No change needed; confirmed by existing rules in v5o/v5p.
+ */
