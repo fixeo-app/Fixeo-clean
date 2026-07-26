@@ -134,6 +134,328 @@
     /* ── 320px floor ────────────────────────────────────────────────── */
     @media(max-width:360px){.cp-btn{padding-left:18px;padding-right:18px;font-size:0.87rem}}
   </style>
+<!-- ── FXHOW-V3: Premium visual polish ──────────────────────────────
+     Page-scoped only. No global selectors. No shared file modifications.
+     Preserves all CTA routing, all copy, all RAFI V5 behaviour.
+     Sections: steps timeline, tech cards, FAQ accordion, section rhythm.
+  ──────────────────────────────────────────────────────────────────── -->
+<style id="fxhow-v3-polish">
+
+  /* ════════════════════════════════════════════════════════════════════
+     §1  SECTION RHYTHM — consistent spacing system
+     ════════════════════════════════════════════════════════════════════ */
+
+  /* Tighter section header → subtitle relationship */
+  .cp-section-title { margin-bottom: 6px; }
+  .cp-section-sub   { margin-bottom: 32px; }
+
+  /* Step and FAQ sections: constrain line length for readability */
+  .cp-section.cp-container { max-width: 720px; }
+
+  /* Hero — add a touch more bottom breathing room before steps */
+  .cp-hero { padding-bottom: 68px; }
+
+  /* Section transitions: faint divider line already exists in alt sections;
+     add a very subtle top-border to the steps section for clean entry */
+  .cp-section:first-of-type { border-top: none; }
+
+
+  /* ════════════════════════════════════════════════════════════════════
+     §2  STEPS JOURNEY — connected timeline
+     ════════════════════════════════════════════════════════════════════ */
+
+  /* The container becomes a positioned parent for the connector line */
+  .cp-steps {
+    position: relative;
+    /* Slight left indent to align content with max-width system */
+    padding-left: 0;
+  }
+
+  /* Continuous connector line running down through all step numbers.
+     Positioned at the horizontal centre of the 48px (desktop) marker.
+     Starts at the vertical centre of step 1's marker, ends at step 5's. */
+  .cp-steps::before {
+    content: '';
+    position: absolute;
+    /* Marker is 48px wide; line runs down centre: left = 24px */
+    left: 23px;
+    /* Start below centre of first marker, end above centre of last */
+    top: 48px;
+    bottom: 48px;
+    width: 2px;
+    background: linear-gradient(
+      to bottom,
+      rgba(225,48,108,0.00) 0%,
+      rgba(225,48,108,0.22) 12%,
+      rgba(131,58,180,0.18) 50%,
+      rgba(72,100,255,0.14) 88%,
+      rgba(72,100,255,0.00) 100%
+    );
+    border-radius: 1px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Step row: reduce vertical padding, ensure marker sits above the line */
+  .cp-step {
+    padding: 20px 0;
+    position: relative;
+    z-index: 1;
+    align-items: flex-start;
+  }
+
+  /* Number marker: full circle, slightly smaller at 44px, no box-shadow change */
+  .cp-step-num {
+    flex: 0 0 46px;
+    height: 46px;
+    border-radius: 50%;           /* full circle — cleaner as timeline node */
+    font-size: 1.05rem;
+    position: relative;
+    z-index: 2;
+    /* Micro ring to reinforce node-on-line visual */
+    box-shadow:
+      0 0 0 3px rgba(13,13,26,1),   /* page background colour — cuts through line */
+      0 4px 16px rgba(225,48,108,0.20);
+  }
+
+  /* Body: slight additional left gap from marker */
+  .cp-step-body { padding-top: 2px; }
+
+  /* Title: tighter margin */
+  .cp-step-title {
+    font-size: 1rem;
+    font-weight: 800;
+    margin-bottom: 5px;
+    letter-spacing: -0.01em;
+  }
+
+  /* Description: slightly smaller, better line height */
+  .cp-step-desc {
+    font-size: 0.865rem;
+    line-height: 1.62;
+    max-width: 560px;             /* prevents very long lines on desktop */
+  }
+
+  /* Badge: refined pill */
+  .cp-step-tag {
+    margin-top: 9px;
+    padding: 3px 11px;
+    border-radius: 999px;         /* pill shape */
+    font-size: 0.71rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    background: rgba(72,100,255,0.08);
+    border: 1px solid rgba(72,100,255,0.18);
+    color: rgba(130,160,255,0.78);
+  }
+
+  /* Mobile step connector: 40px marker → centre at 20px */
+  @media (max-width: 640px) {
+    .cp-steps::before {
+      left: 19px;
+      top: 40px;
+      bottom: 40px;
+    }
+    .cp-step-num {
+      flex: 0 0 40px;
+      height: 40px;
+      border-radius: 50%;
+      font-size: 0.95rem;
+    }
+    .cp-step { padding: 16px 0; }
+    .cp-step-desc { font-size: 0.84rem; }
+  }
+
+
+  /* ════════════════════════════════════════════════════════════════════
+     §3  TECHNOLOGY CARDS — refined grid
+     ════════════════════════════════════════════════════════════════════ */
+
+  /* Override: slightly tighter card internal padding */
+  .cp-tech-card {
+    padding: 20px 18px 18px;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    /* Subtle left accent — gives each card a minimal identity marker */
+    border-left: 2px solid rgba(72,100,255,0.22);
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .cp-tech-card:hover {
+    background: rgba(255,255,255,0.072);
+    border-left-color: rgba(72,100,255,0.40);
+  }
+
+  /* Icon: smaller, less dominant */
+  .cp-tech-icon {
+    font-size: 1.35rem;
+    margin-bottom: 8px;
+    display: block;
+    opacity: 0.88;
+  }
+
+  /* Title: tighter, slightly smaller */
+  .cp-tech-title {
+    font-size: 0.92rem;
+    font-weight: 800;
+    margin-bottom: 7px;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+  }
+
+  /* Body text */
+  .cp-tech-text {
+    font-size: 0.83rem;
+    line-height: 1.58;
+    color: var(--cp-muted);
+  }
+
+  /* Grid gap slightly wider for breathing room */
+  .cp-tech-grid { gap: 14px; }
+
+  /* Section background: slightly more pronounced distinction */
+  .cp-section-alt {
+    background: rgba(255,255,255,0.028);
+  }
+
+  /* On mobile: cards are full-width already; remove left accent to
+     avoid visual noise at narrow widths — keep top accent instead */
+  @media (max-width: 480px) {
+    .cp-tech-card {
+      border-left: none;
+      border-top: 2px solid rgba(72,100,255,0.18);
+      padding: 18px 16px 16px;
+    }
+    .cp-tech-card:hover { border-top-color: rgba(72,100,255,0.36); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cp-tech-card { transition: none; }
+  }
+
+
+  /* ════════════════════════════════════════════════════════════════════
+     §4  FAQ — refined accordion rows
+     ════════════════════════════════════════════════════════════════════ */
+
+  /* Item: card-like row with hover state */
+  .cp-faq-item {
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+    padding: 0;
+    border-radius: 12px;
+    margin-bottom: 2px;
+    overflow: hidden;
+  }
+  .cp-faq-item:last-child { border-bottom: none; }
+
+  /* Question row — header for each FAQ card, minimum 48px height */
+  .cp-faq-q {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 16px 18px;
+    margin: 0;
+    font-size: 0.94rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.95);
+    border-radius: 12px 12px 0 0;
+    min-height: 48px;
+  }
+
+  /* Chevron via ::after pseudo — rotates when answer is visible */
+  .cp-faq-q::after {
+    content: '';
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    border-right: 2px solid rgba(255,255,255,0.30);
+    border-bottom: 2px solid rgba(255,255,255,0.30);
+    border-radius: 2px;
+    transform: rotate(45deg) translateY(-3px);
+    transition: transform 0.22s cubic-bezier(0.4,0,0.2,1), border-color 0.15s;
+    margin-right: 2px;
+  }
+
+  /* Answers are permanently visible — chevron always points open (upward).
+     The visual refinement is in the card row structure, not collapse behaviour. */
+  .cp-faq-q::after {
+    /* Point upward: answer is always shown */
+    transform: rotate(-135deg) translateY(-3px);
+    border-color: rgba(100,180,255,0.40);
+  }
+  .cp-faq-q {
+    color: rgba(255,255,255,0.95);
+    background: rgba(72,100,255,0.04);
+    border-radius: 12px 12px 0 0;
+  }
+  .cp-faq-q:hover {
+    background: rgba(72,100,255,0.08);
+  }
+
+  /* Answer: indented, padded panel — always visible */
+  .cp-faq-a {
+    font-size: 0.86rem;
+    line-height: 1.65;
+    color: var(--cp-muted);
+    margin: 0;
+    padding: 0 18px 16px 18px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cp-faq-q::after { transition: none; }
+  }
+
+  /* Mobile FAQ: slightly less padding */
+  @media (max-width: 480px) {
+    .cp-faq-q { padding: 14px 14px; font-size: 0.91rem; }
+    .cp-faq-a { padding: 0 14px 14px 14px; font-size: 0.84rem; }
+  }
+
+
+  /* ════════════════════════════════════════════════════════════════════
+     §5  FINAL CTA BAND — spacing harmonisation
+     ════════════════════════════════════════════════════════════════════ */
+
+  .cp-cta-band {
+    padding: 60px 20px;
+    /* Slightly more saturated gradient for better separation from FAQ */
+    background: linear-gradient(
+      135deg,
+      rgba(56,189,248,0.07) 0%,
+      rgba(225,48,108,0.11) 100%
+    );
+  }
+
+  .cp-cta-band h2 { margin-bottom: 10px; }
+  .cp-cta-band p  { margin-bottom: 26px; }
+
+  @media (max-width: 640px) {
+    .cp-cta-band { padding: 44px 20px; }
+  }
+
+
+  /* ════════════════════════════════════════════════════════════════════
+     §6  HERO — minimal breathing adjustment
+     ════════════════════════════════════════════════════════════════════ */
+
+  /* Sphere: tighten the gap between sphere and the eyebrow label */
+  .ccm-sphere-wrap { margin-top: 4px; margin-bottom: 20px; }
+
+  /* Subtitle paragraph: slightly tighter margin above CTA */
+  .cp-hero p { margin-bottom: 28px; }
+
+
+  /* ════════════════════════════════════════════════════════════════════
+     §7  REDUCED MOTION — global polish animations
+     ════════════════════════════════════════════════════════════════════ */
+  @media (prefers-reduced-motion: reduce) {
+    .cp-steps::before { animation: none; }
+  }
+
+</style>
+
 <!-- SEO-1A -->
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://www.fixeo.ma/comment-ca-marche.html">
