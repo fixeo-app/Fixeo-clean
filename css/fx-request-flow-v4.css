@@ -2164,3 +2164,78 @@
  * No change needed to shake animation.
  * is-error :has() rule that hid ::before is now harmless (::before hidden).
  */
+
+/* ══════════════════════════════════════════════════════════════
+   PHONE SCREEN MICRO POLISH — fxrf4-v5u
+   Visual integration: prefix + input + icon read as ONE control.
+   Zero grid changes. Zero DOM. Zero JS. Zero spacing logic changes.
+
+   Strategy: move border/background/radius from input → wrap.
+   The entire three-column grid becomes the visual container.
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Wrap becomes the visual container ──────────────────────── */
+.fxrf4-phone-wrap {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1.5px solid rgba(255, 255, 255, 0.09);
+  border-radius: 16px;
+  /* Overflow hidden clips prefix/icon to the rounded corners */
+  overflow: hidden;
+  /* Inherit depth from v5s */
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    0 2px 8px rgba(0, 0, 0, 0.16);
+  transition:
+    border-color 0.22s ease,
+    background   0.22s ease,
+    box-shadow   0.22s ease;
+}
+
+/* ── Input: transparent, borderless — wrap owns the border ──── */
+.fxrf4-phone-input {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  /* Inherit transition for state changes via wrap */
+  transition: none !important;
+}
+
+/* ── Optical balance — tighten prefix-to-digit gap slightly ─── */
+/*
+ * Was: padding 0 14px 0 18px → gap between +212 and first digit = 14px
+ * Now: padding 0 12px 0 18px → 12px gap (slightly more unified feel)
+ * Symmetry: 18px left-border-to-flag ≈ 16px right-border-to-checkmark
+ */
+.fxrf4-phone-prefix {
+  padding: 0 12px 0 18px;
+}
+
+/* Valid-icon: balance with prefix left padding */
+.fxrf4-phone-valid-icon {
+  padding: 0 16px 0 10px;
+}
+
+/* ── State changes on wrap via :has() ───────────────────────── */
+/* Focus */
+.fxrf4-phone-wrap:has(.fxrf4-phone-input:focus) {
+  border-color: rgba(72, 100, 255, 0.50);
+  background: rgba(72, 100, 255, 0.04);
+  box-shadow:
+    inset 0 1px 0 rgba(72, 100, 255, 0.10),
+    0 3px 12px rgba(72, 100, 255, 0.10),
+    0 0 0 3px rgba(72, 100, 255, 0.06);
+}
+
+/* Valid */
+.fxrf4-phone-wrap:has(.fxrf4-phone-input.is-valid) {
+  border-color: rgba(32, 201, 151, 0.44);
+  box-shadow:
+    inset 0 1px 0 rgba(32, 201, 151, 0.08),
+    0 0 0 3px rgba(32, 201, 151, 0.07);
+}
+
+/* Error */
+.fxrf4-phone-wrap:has(.fxrf4-phone-input.is-error) {
+  border-color: rgba(210, 60, 60, 0.55);
+}
