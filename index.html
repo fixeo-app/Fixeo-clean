@@ -2885,6 +2885,36 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
   70%      { opacity: 0.10; transform: scale(1.20); }
 }
 
+/* ════════════════════════════════════════════════════════════════════
+   §2b ANIMATION LIFECYCLE — pause / resume
+   fc2-org-visible = set once on first entry (entrance stagger, never removed).
+   fc2-org-active  = set/removed as section enters/leaves viewport or tab hides.
+   Default state: paused (no off-screen GPU or compositor resources consumed).
+   ════════════════════════════════════════════════════════════════════ */
+
+/* PAUSED by default — sphere and halo */
+#fixeo-chapter-2 .fxrorg-sphere,
+#fixeo-chapter-2 .fxrorg-halo,
+#fixeo-chapter-2 .fxrorg-sphere::after {
+  animation-play-state: paused;
+}
+
+/* PAUSED by default — card pulse */
+#fixeo-chapter-2 .fxrorg-signal {
+  animation-play-state: paused;
+}
+
+/* RUNNING — only when section is currently active (viewport + tab visible) */
+#fixeo-chapter-2.fc2-org-active .fxrorg-sphere,
+#fixeo-chapter-2.fc2-org-active .fxrorg-halo,
+#fixeo-chapter-2.fc2-org-active .fxrorg-sphere::after {
+  animation-play-state: running;
+}
+
+#fixeo-chapter-2.fc2-org-active .fxrorg-signal {
+  animation-play-state: running;
+}
+
 
 /* ════════════════════════════════════════════════════════════════════
    §3  SIGNAL CARDS — 2x2 grid, responsive
@@ -2997,15 +3027,30 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
 
 
 /* ════════════════════════════════════════════════════════════════════
-   §6  REDUCED MOTION
+   §6  REDUCED MOTION — all animation removed; static presentation only
    ════════════════════════════════════════════════════════════════════ */
 
 @media (prefers-reduced-motion: reduce) {
-  .fxrorg-sphere,
-  .fxrorg-halo,
-  .fxrorg-sphere::after { animation: none; }
-  .fxrorg-signal { opacity: 1; transform: none; transition: none; }
-  #fixeo-chapter-2.fc2-org-visible .fxrorg-signal { animation: none; }
+  /* Override animation-play-state paused/running — keep fully inert */
+  #fixeo-chapter-2 .fxrorg-sphere,
+  #fixeo-chapter-2 .fxrorg-halo,
+  #fixeo-chapter-2 .fxrorg-sphere::after {
+    animation: none !important;
+  }
+  #fixeo-chapter-2 .fxrorg-signal,
+  #fixeo-chapter-2.fc2-org-visible .fxrorg-signal {
+    animation: none !important;
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  /* Ensure fc2-org-active cannot re-enable animation under reduced-motion */
+  #fixeo-chapter-2.fc2-org-active .fxrorg-sphere,
+  #fixeo-chapter-2.fc2-org-active .fxrorg-halo,
+  #fixeo-chapter-2.fc2-org-active .fxrorg-sphere::after,
+  #fixeo-chapter-2.fc2-org-active .fxrorg-signal {
+    animation-play-state: paused !important;
+  }
 }
 
 
@@ -3109,13 +3154,13 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
           </div>
         </div>
 
-        <div class="fc2-result" role="listitem">
+                <div class="fc2-result" role="listitem">
           <div class="fc2-result-mark" aria-hidden="true">
             <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 10 8 14 16 6"/></svg>
           </div>
           <div class="fc2-result-text">
-            <strong>Les profils artisans sont vérifiés par notre équipe.</strong>
-            <span>Spécialité et références — contrôlés avant toute mise en relation.</span>
+            <strong>Des profils mieux structurés.</strong>
+            <span>Les informations disponibles sont organisées et enrichies progressivement.</span>
           </div>
         </div>
 
@@ -3142,26 +3187,64 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
      Private IIFE. One observer. No permanent rAF. No global listeners.
      No RAFI APIs. No localStorage. Falls back if IO unavailable. -->
 <script>
+/* fxhome-vnext.1: Animation lifecycle — pause/resume on viewport + tab visibility.
+   fc2-org-visible = set exactly once on first entry (one-time entrance stagger).
+   fc2-org-active  = set/removed as section enters/leaves viewport or tab hides.
+   Private IIFE: no globals, no setInterval, no rAF loops, no scroll listeners. */
 (function () {
   'use strict';
   var sec = document.getElementById('fixeo-chapter-2');
+
+  /* ── Fallback: no IntersectionObserver ──────────────────────────────────── */
   if (!sec || !window.IntersectionObserver) {
+    /* Reveal content; omit fc2-org-active to prefer calm static state */
     if (sec) sec.classList.add('fc2-org-visible');
     return;
   }
+
+  /* ── Reduced motion: reveal immediately, never animate ────────────────── */
   var reducedMotion = window.matchMedia &&
     window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (reducedMotion) {
     sec.classList.add('fc2-org-visible');
+    /* fc2-org-active intentionally omitted — CSS §6 keeps animation: none */
     return;
   }
+
+  /* ── State ───────────────────────────────────────────────────────────── */
+  var isSectionVisible = false;
+
+  /* ── Helpers ──────────────────────────────────────────────────────────── */
+  function activate() {
+    if (!document.hidden) sec.classList.add('fc2-org-active');
+  }
+  function deactivate() {
+    sec.classList.remove('fc2-org-active');
+  }
+
+  /* ── IntersectionObserver — persistent (never disconnects) ───────────────── */
   var io = new IntersectionObserver(function (entries) {
-    if (entries[0].isIntersecting) {
-      sec.classList.add('fc2-org-visible');
-      io.disconnect();
+    var entry = entries[0];
+    if (entry.isIntersecting) {
+      isSectionVisible = true;
+      sec.classList.add('fc2-org-visible'); /* no-op after first time */
+      activate();
+    } else {
+      isSectionVisible = false;
+      deactivate();
     }
   }, { threshold: 0.15 });
+
   io.observe(sec);
+
+  /* ── visibilitychange — registered exactly once ─────────────────────────── */
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) {
+      deactivate();
+    } else if (isSectionVisible) {
+      activate();
+    }
+  });
 }());
 </script>
 
