@@ -2625,3 +2625,58 @@
   cursor: default;
   box-shadow: none !important;
 }
+
+/* ══════════════════════════════════════════════════════════════
+   "AUTRE URGENCE" CONVERSATION MICRO POLISH — fxrf4-v5z
+   Five precise adjustments. Zero behaviour changes. Zero flow changes.
+   Goal: the interaction disappears. Only the conversation remains.
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── 1. Breathing — title → RAFI line → input ───────────────── */
+/*
+ * Was: padding-top 12px, gap 10px
+ * Now: padding-top 20px, gap 8px
+ * Title → expand panel: 20px of air (was 12px — felt attached)
+ * Input → Continuer gap: 8px (was 10px — tighter action unit)
+ */
+.fxrf4-autre-expand {
+  padding-top: 20px;
+  gap: 8px;
+}
+
+/* ── 2. RAFI listening line ─────────────────────────────────── */
+/*
+ * Visual echo of the spoken question inside the card.
+ * Not instructional UI — RAFI speaking, low visual priority.
+ * Fades in slightly after the expand (delay 60ms to trail the panel).
+ * Margin-bottom 10px creates clear air between RAFI's line and the input.
+ */
+.fxrf4-autre-rafi-line {
+  font-size: 0.74rem;
+  font-weight: 400;
+  color: rgba(72, 100, 255, 0.70);
+  line-height: 1.4;
+  margin: 0 0 10px 0;
+  animation: fxrf4-fade-up 200ms ease 60ms both;
+}
+
+/* ── 3. Input — clearly ready ────────────────────────────────── */
+/*
+ * border 0.12 → 0.20: visible but not aggressive
+ * background 0.06 → 0.09: separates from the card surface
+ * These are not color changes — same hue, higher clarity.
+ */
+.fxrf4-autre-input {
+  border-color: rgba(255, 255, 255, 0.20);
+  background: rgba(255, 255, 255, 0.09);
+}
+
+/* ── 4. Placeholder — readable, not dominant ────────────────── */
+/*
+ * Was: 0.26 — too faint to communicate 'you can type here'
+ * Now: 0.38 — visible invitation without competing with typed text
+ * Shorter placeholder text set in JS: "Ex. : Odeur de gaz, fuite d'eau…"
+ */
+.fxrf4-autre-input::placeholder {
+  color: rgba(255, 255, 255, 0.38);
+}

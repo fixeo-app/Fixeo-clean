@@ -688,10 +688,14 @@
         /* Expand panel — built once, hidden initially */
         var expandWrap = _h('div', { cls: 'fxrf4-autre-expand' });
 
+        /* RAFI listening line — visual echo of the spoken question inside the card */
+        var rafiLine = _h('p', { cls: 'fxrf4-autre-rafi-line', txt: MSG.step1EmergencyAutre });
+        expandWrap.appendChild(rafiLine);
+
         var autreInput = _h('input', {
           cls: 'fxrf4-autre-input',
           type: 'text',
-          placeholder: "Ex.\u00a0: Une forte odeur de gaz dans la cuisine\u2026",
+          placeholder: "Ex.\u00a0: Odeur de gaz, fuite d\u2019eau\u2026",
           maxlength: '100',
           autocomplete: 'off',
           autocorrect: 'off',
