@@ -336,65 +336,106 @@
 
 
   /* ════════════════════════════════════════════════════════════════════
-     §4  FAQ — refined accordion rows
+     §4  FAQ — premium accessible accordion (fxhow-v3.1)
+     Progressive enhancement: without body.ccm-faq-ready (JS not init),
+     .cp-faq-panel has no height constraint — all answers visible.
+     With body.ccm-faq-ready: closed panels collapse; single-open behaviour.
      ════════════════════════════════════════════════════════════════════ */
 
-  /* Item: card-like row with hover state */
+  /* ── Base item card ─────────────────────────────────────────────── */
   .cp-faq-item {
     border-bottom: 1px solid rgba(255,255,255,0.07);
     padding: 0;
     border-radius: 12px;
     margin-bottom: 2px;
-    overflow: hidden;
+    overflow: hidden;        /* clips panel during collapse animation */
   }
   .cp-faq-item:last-child { border-bottom: none; }
 
-  /* Question row — header for each FAQ card, minimum 48px height */
+  /* ── Question button ─────────────────────────────────────────────
+     Resets UA button styles; inherits page font; flex row for chevron. */
   .cp-faq-q {
+    /* Reset */
+    appearance: none;
+    -webkit-appearance: none;
+    border: none;
+    background: rgba(72,100,255,0.04);
+    cursor: pointer;
+    text-align: left;
+    font-family: inherit;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    /* Layout */
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
+    width: 100%;
     padding: 16px 18px;
     margin: 0;
+    /* Typography */
     font-size: 0.94rem;
     font-weight: 700;
-    color: rgba(255,255,255,0.95);
+    color: rgba(255,255,255,0.90);
+    line-height: 1.4;
+    /* Shape */
     border-radius: 12px 12px 0 0;
     min-height: 48px;
+    /* Transition */
+    transition: background 0.15s, color 0.15s;
+  }
+  .cp-faq-q:hover {
+    background: rgba(72,100,255,0.09);
+    color: rgba(255,255,255,0.98);
+  }
+  /* When item is open (aria-expanded="true") — stronger emphasis */
+  .cp-faq-q[aria-expanded="true"] {
+    background: rgba(72,100,255,0.10);
+    color: #fff;
+    border-radius: 12px 12px 0 0;
+  }
+  /* Closed: bottom radius collapses with panel */
+  .cp-faq-q[aria-expanded="false"] {
+    border-radius: 12px;
+  }
+  /* Focus-visible ring */
+  .cp-faq-q:focus-visible {
+    outline: 2px solid rgba(100,180,255,0.60);
+    outline-offset: -2px;
+    border-radius: 12px;
   }
 
-  /* Chevron via ::after pseudo — rotates when answer is visible */
-  .cp-faq-q::after {
-    content: '';
+  /* ── Chevron icon ────────────────────────────────────────────────
+     aria-hidden span; CSS-drawn rotated square-corner chevron. */
+  .cp-faq-chevron {
+    display: block;
     flex-shrink: 0;
     width: 16px;
     height: 16px;
-    border-right: 2px solid rgba(255,255,255,0.30);
-    border-bottom: 2px solid rgba(255,255,255,0.30);
+    border-right: 2px solid rgba(255,255,255,0.28);
+    border-bottom: 2px solid rgba(255,255,255,0.28);
     border-radius: 2px;
+    /* Default: closed → downward (45deg) */
     transform: rotate(45deg) translateY(-3px);
-    transition: transform 0.22s cubic-bezier(0.4,0,0.2,1), border-color 0.15s;
+    transition: transform 0.24s cubic-bezier(0.4,0,0.2,1),
+                border-color 0.16s;
     margin-right: 2px;
+    will-change: transform;
   }
-
-  /* Answers are permanently visible — chevron always points open (upward).
-     The visual refinement is in the card row structure, not collapse behaviour. */
-  .cp-faq-q::after {
-    /* Point upward: answer is always shown */
+  /* Open: chevron rotates upward */
+  .cp-faq-q[aria-expanded="true"] .cp-faq-chevron {
     transform: rotate(-135deg) translateY(-3px);
-    border-color: rgba(100,180,255,0.40);
-  }
-  .cp-faq-q {
-    color: rgba(255,255,255,0.95);
-    background: rgba(72,100,255,0.04);
-    border-radius: 12px 12px 0 0;
-  }
-  .cp-faq-q:hover {
-    background: rgba(72,100,255,0.08);
+    border-color: rgba(100,180,255,0.55);
   }
 
-  /* Answer: indented, padded panel — always visible */
+  /* ── Answer panel ────────────────────────────────────────────────
+     Without JS (body.ccm-faq-ready absent): panel is visible, no height
+     constraint, no transition. Progressive enhancement only.
+     With JS init: closed panels get max-height:0; open panels animate. */
+  .cp-faq-panel {
+    /* Always: comfortable panel padding and typography */
+    overflow: hidden;
+  }
   .cp-faq-a {
     font-size: 0.86rem;
     line-height: 1.65;
@@ -403,14 +444,30 @@
     padding: 0 18px 16px 18px;
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .cp-faq-q::after { transition: none; }
+  /* ── Accordion collapse — only active when JS successfully inited ── */
+  body.ccm-faq-ready .cp-faq-panel {
+    max-height: 0;
+    transition: max-height 0.26s cubic-bezier(0.4,0,0.2,1);
+  }
+  /* Open panel — generous ceiling: longest answer safely renders below 220px
+     at 320px width. 400px ceiling leaves ample buffer for font scaling. */
+  body.ccm-faq-ready .cp-faq-panel.cp-faq-panel--open {
+    max-height: 400px;
   }
 
-  /* Mobile FAQ: slightly less padding */
+  /* ── Reduced-motion overrides ──────────────────────────────────── */
+  @media (prefers-reduced-motion: reduce) {
+    .cp-faq-q            { transition: none; }
+    .cp-faq-chevron      { transition: none; }
+    .cp-faq-panel,
+    body.ccm-faq-ready .cp-faq-panel { transition: none; }
+    body.ccm-faq-ready .cp-faq-panel.cp-faq-panel--open { max-height: 400px; }
+  }
+
+  /* ── Mobile: slightly tighter padding ──────────────────────────── */
   @media (max-width: 480px) {
-    .cp-faq-q { padding: 14px 14px; font-size: 0.91rem; }
-    .cp-faq-a { padding: 0 14px 14px 14px; font-size: 0.84rem; }
+    .cp-faq-q  { padding: 14px 14px; font-size: 0.91rem; }
+    .cp-faq-a  { padding: 0 14px 14px 14px; font-size: 0.84rem; }
   }
 
 
@@ -673,40 +730,103 @@
   </div>
 </div>
 
-<!-- ── FAQ ── -->
+<!-- ── FAQ ── fxhow-v3.1: accessible premium accordion
+     Progressive enhancement: without JS all answers visible (noscript-safe).
+     With JS: body.ccm-faq-ready applied → panels collapse; single-open accordion.
+     Keyboard: Enter/Space native on <button>. aria-expanded mirrors visual state. -->
 <section class="cp-section cp-container" aria-labelledby="faq-title">
   <h2 class="cp-section-title" id="faq-title">Questions fréquentes</h2>
   <p class="cp-section-sub">Ce que les utilisateurs demandent le plus souvent.</p>
-  <div class="cp-faq">
+  <div class="cp-faq" id="ccm-faq-list">
 
-    <div class="cp-faq-item">
-      <p class="cp-faq-q">Faut-il créer un compte pour décrire son besoin ?</p>
-      <p class="cp-faq-a">Aucun compte n'est nécessaire pour décrire votre besoin avec RAFI. Un compte peut être utile pour accéder à certaines fonctions personnelles, comme votre tableau de bord.</p>
+    <div class="cp-faq-item" data-faq-item>
+      <button type="button" class="cp-faq-q"
+              aria-expanded="true"
+              aria-controls="ccm-faq-panel-1"
+              id="ccm-faq-btn-1">
+        Faut-il créer un compte pour décrire son besoin ?
+        <span class="cp-faq-chevron" aria-hidden="true"></span>
+      </button>
+      <div class="cp-faq-panel" role="region"
+           id="ccm-faq-panel-1"
+           aria-labelledby="ccm-faq-btn-1">
+        <p class="cp-faq-a">Aucun compte n'est nécessaire pour décrire votre besoin avec RAFI. Un compte peut être utile pour accéder à certaines fonctions personnelles, comme votre tableau de bord.</p>
+      </div>
     </div>
 
-    <div class="cp-faq-item">
-      <p class="cp-faq-q">Combien coûte l'utilisation de Fixeo ?</p>
-      <p class="cp-faq-a">Gratuit pour les clients. Vous ne payez que l'intervention de l'artisan, après qu'elle soit réalisée. Aucun frais de service caché.</p>
+    <div class="cp-faq-item" data-faq-item>
+      <button type="button" class="cp-faq-q"
+              aria-expanded="false"
+              aria-controls="ccm-faq-panel-2"
+              id="ccm-faq-btn-2">
+        Combien coûte l'utilisation de Fixeo ?
+        <span class="cp-faq-chevron" aria-hidden="true"></span>
+      </button>
+      <div class="cp-faq-panel" role="region"
+           id="ccm-faq-panel-2"
+           aria-labelledby="ccm-faq-btn-2">
+        <p class="cp-faq-a">Gratuit pour les clients. Vous ne payez que l'intervention de l'artisan, après qu'elle soit réalisée. Aucun frais de service caché.</p>
+      </div>
     </div>
 
-    <div class="cp-faq-item">
-      <p class="cp-faq-q">Comment sont présentés les artisans ?</p>
-      <p class="cp-faq-a">Les profils présentent les informations disponibles sur le métier, la ville et l'activité de l'artisan. FIXEO organise progressivement son réseau et améliore les profils au fil des informations et des interventions disponibles.</p>
+    <div class="cp-faq-item" data-faq-item>
+      <button type="button" class="cp-faq-q"
+              aria-expanded="false"
+              aria-controls="ccm-faq-panel-3"
+              id="ccm-faq-btn-3">
+        Comment sont présentés les artisans ?
+        <span class="cp-faq-chevron" aria-hidden="true"></span>
+      </button>
+      <div class="cp-faq-panel" role="region"
+           id="ccm-faq-panel-3"
+           aria-labelledby="ccm-faq-btn-3">
+        <p class="cp-faq-a">Les profils présentent les informations disponibles sur le métier, la ville et l'activité de l'artisan. FIXEO organise progressivement son réseau et améliore les profils au fil des informations et des interventions disponibles.</p>
+      </div>
     </div>
 
-    <div class="cp-faq-item">
-      <p class="cp-faq-q">Comment se passe le paiement ?</p>
-      <p class="cp-faq-a">Vous réglez directement l'artisan après l'intervention, une fois le travail terminé. FIXEO ne demande aucun prépaiement pour enregistrer votre demande.</p>
+    <div class="cp-faq-item" data-faq-item>
+      <button type="button" class="cp-faq-q"
+              aria-expanded="false"
+              aria-controls="ccm-faq-panel-4"
+              id="ccm-faq-btn-4">
+        Comment se passe le paiement ?
+        <span class="cp-faq-chevron" aria-hidden="true"></span>
+      </button>
+      <div class="cp-faq-panel" role="region"
+           id="ccm-faq-panel-4"
+           aria-labelledby="ccm-faq-btn-4">
+        <p class="cp-faq-a">Vous réglez directement l'artisan après l'intervention, une fois le travail terminé. FIXEO ne demande aucun prépaiement pour enregistrer votre demande.</p>
+      </div>
     </div>
 
-    <div class="cp-faq-item">
-      <p class="cp-faq-q">Puis-je demander une intervention urgente ?</p>
-      <p class="cp-faq-a">Oui. RAFI propose un mode urgent qui indique que vous avez besoin d'un artisan dans les plus brefs délais. Votre demande est enregistrée avec cette priorité.</p>
+    <div class="cp-faq-item" data-faq-item>
+      <button type="button" class="cp-faq-q"
+              aria-expanded="false"
+              aria-controls="ccm-faq-panel-5"
+              id="ccm-faq-btn-5">
+        Puis-je demander une intervention urgente ?
+        <span class="cp-faq-chevron" aria-hidden="true"></span>
+      </button>
+      <div class="cp-faq-panel" role="region"
+           id="ccm-faq-panel-5"
+           aria-labelledby="ccm-faq-btn-5">
+        <p class="cp-faq-a">Oui. RAFI propose un mode urgent qui indique que vous avez besoin d'un artisan dans les plus brefs délais. Votre demande est enregistrée avec cette priorité.</p>
+      </div>
     </div>
 
-    <div class="cp-faq-item">
-      <p class="cp-faq-q">Je suis artisan — comment rejoindre Fixeo ?</p>
-      <p class="cp-faq-a">Créez votre profil via la page dédiée. Indiquez vos spécialités, votre ville et vos disponibilités. Votre profil sera visible sur la plateforme.</p>
+    <div class="cp-faq-item" data-faq-item>
+      <button type="button" class="cp-faq-q"
+              aria-expanded="false"
+              aria-controls="ccm-faq-panel-6"
+              id="ccm-faq-btn-6">
+        Je suis artisan — comment rejoindre Fixeo ?
+        <span class="cp-faq-chevron" aria-hidden="true"></span>
+      </button>
+      <div class="cp-faq-panel" role="region"
+           id="ccm-faq-panel-6"
+           aria-labelledby="ccm-faq-btn-6">
+        <p class="cp-faq-a">Créez votre profil via la page dédiée. Indiquez vos spécialités, votre ville et vos disponibilités. Votre profil sera visible sur la plateforme.</p>
+      </div>
     </div>
 
   </div>
@@ -733,6 +853,104 @@
   <script src="js/fixeo-footer-global.js?v=gf3a" defer></script>
 <!-- RAFI V5 — canonical conversion engine (fxrf4-v5a1 / frozen) -->
 <script src="js/fx-request-flow-v4.js?v=fxrf4-v5a1" defer></script>
+
+<!-- ── FXHOW-V3.1: FAQ accordion — private IIFE, no globals ───────────
+     Progressive enhancement: adds body.ccm-faq-ready ONLY after successful
+     init. Without JS or on error, all answers remain permanently visible.
+     Single-open behaviour: opening one item closes any previously open item.
+     Delegated listener on #ccm-faq-list — registered exactly once.
+     No capture, no MutationObserver, no setInterval, no history, no RAFI APIs.
+  ──────────────────────────────────────────────────────────────────────── -->
+<script>
+(function () {
+  'use strict';
+
+  /* ── Selectors ────────────────────────────────────────────────── */
+  var LIST_ID  = 'ccm-faq-list';
+  var ITEM_SEL = '[data-faq-item]';
+  var BTN_SEL  = '.cp-faq-q';
+  var PNL_CLS  = 'cp-faq-panel';
+  var PNL_OPEN = 'cp-faq-panel--open';
+  var READY_CLS = 'ccm-faq-ready';
+
+  /* ── Open one item, close all others ─────────────────────────── */
+  function openItem(targetItem, items) {
+    items.forEach(function (item) {
+      var btn = item.querySelector(BTN_SEL);
+      var pnl = item.querySelector('.' + PNL_CLS);
+      if (!btn || !pnl) return;
+      if (item === targetItem) {
+        var isOpen = btn.getAttribute('aria-expanded') === 'true';
+        /* Toggle: clicking an open item closes it */
+        if (isOpen) {
+          btn.setAttribute('aria-expanded', 'false');
+          pnl.classList.remove(PNL_OPEN);
+        } else {
+          btn.setAttribute('aria-expanded', 'true');
+          pnl.classList.add(PNL_OPEN);
+        }
+      } else {
+        /* Close every other item */
+        btn.setAttribute('aria-expanded', 'false');
+        pnl.classList.remove(PNL_OPEN);
+      }
+    });
+  }
+
+  /* ── Init ─────────────────────────────────────────────────────── */
+  function init() {
+    var list = document.getElementById(LIST_ID);
+    if (!list) return;                                   /* guard: DOM must exist */
+
+    var items = Array.prototype.slice.call(
+      list.querySelectorAll(ITEM_SEL)
+    );
+    if (items.length === 0) return;
+
+    /* Apply collapsed state to all panels before marking ready,
+       so the visual switch is atomic with body class addition. */
+    items.forEach(function (item) {
+      var btn = item.querySelector(BTN_SEL);
+      var pnl = item.querySelector('.' + PNL_CLS);
+      if (!btn || !pnl) return;
+      /* Collapse closed items; keep first item open per spec */
+      if (btn.getAttribute('aria-expanded') !== 'true') {
+        pnl.classList.remove(PNL_OPEN);
+      } else {
+        pnl.classList.add(PNL_OPEN);
+      }
+    });
+
+    /* Mark ready — this is the moment CSS collapses closed panels */
+    document.body.classList.add(READY_CLS);
+
+    /* One delegated click listener on the list container */
+    list.addEventListener('click', function (e) {
+      /* Walk up from event target to find a .cp-faq-q button */
+      var btn = e.target;
+      while (btn && btn !== list) {
+        if (btn.matches && btn.matches(BTN_SEL)) break;
+        btn = btn.parentElement;
+      }
+      if (!btn || !btn.matches(BTN_SEL)) return;
+
+      /* Find the item that owns this button */
+      var item = btn.closest(ITEM_SEL);
+      if (!item) return;
+
+      openItem(item, items);
+    });
+  }
+
+  /* ── Bootstrap — run after DOM is ready ─────────────────────── */
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    /* DOM already parsed (script is deferred or injected late) */
+    init();
+  }
+}());
+</script>
 
 <!-- Editorial attribution (Phase 4.1 EEAT) -->
 <p style="text-align:center;font-size:0.8rem;color:#aaa;padding:1rem 0 0.5rem;">Contenu produit par <a href="/equipe" style="color:#888;">l'équipe Fixeo</a> &middot; <a href="/blog" style="color:#888;">Tous nos guides</a></p>
