@@ -88,8 +88,8 @@
     { icon: '⚡', label: 'Plus de courant chez moi',                    slug: 'electricite',   serviceLabel: '\u00c9lectricit\u00e9' },
     { icon: '🔐', label: 'Je suis bloqu\u00e9 dehors',                  slug: 'serrurerie',    serviceLabel: 'Serrurerie'   },
     { icon: '🚿', label: 'Mon WC ou \u00e9vier est bouch\u00e9',         slug: 'plomberie',     serviceLabel: 'Plomberie'    },
-    { icon: '❄️', label: 'Mon climatiseur ne fonctionne plus',           slug: 'climatisation', serviceLabel: 'Climatisation'},
-    { icon: '🚪', label: 'Une porte ou fen\u00eatre est bloqu\u00e9e',   slug: 'menuiserie',    serviceLabel: 'Menuiserie'   },
+    { icon: '❄️', label: 'Climatiseur en panne',                          slug: 'climatisation', serviceLabel: 'Climatisation'},
+    { icon: '🚪', label: 'Porte ou fen\u00eatre bloqu\u00e9e',           slug: 'menuiserie',    serviceLabel: 'Menuiserie'   },
     { icon: '⚠️', label: 'Autre urgence',                                slug: 'autre',         serviceLabel: 'Autre urgence'},
   ];
 
@@ -108,7 +108,9 @@
     step1Other:    'D\u00e9crivez-le en quelques mots, je m\u2019en occupe.',
 
     /* ── Emergency mode ── */
-    step1Emergency:  'Que se passe-t-il\u00a0?',
+    step1Emergency:     'Que se passe-t-il\u00a0?',
+    step1EmergencySub:  'Je vais trouver les bons artisans en fonction de votre situation.',
+    step1EmergencyAutre: 'D\u00e9crivez-moi rapidement ce qu\u2019il se passe.',
     step2Emergency:  'Vous \u00eates o\u00f9\u00a0?',
     step2EmergencyCity: function(city) { return 'Vous \u00eates \u00e0\u00a0' + city + '\u00a0?'; },
     step3Emergency:  'Sur quel num\u00e9ro peut-on vous rappeler\u00a0?',
@@ -645,12 +647,17 @@
     var nameEl = _q('.fxrf4-rafi-name');
     if (nameEl) nameEl.classList.add('is-emergency');
 
+    /* Helper sentence — low visual priority, appears below the RAFI question */
+    var sub = _h('p', { cls: 'fxrf4-step1-sub', txt: MSG.step1EmergencySub });
+
     var list = _h('div', { cls: 'fxrf4-situation-list', role: 'list' });
     var chips = [];
 
     EMERGENCY_SITUATIONS.forEach(function(sit) {
+      var isAutre = sit.slug === 'autre';
+
       var chip = _h('div', {
-        cls: 'fxrf4-situation-item',
+        cls: 'fxrf4-situation-item' + (isAutre ? ' is-autre' : ''),
         role: 'listitem button', tabindex: '0',
         'aria-label': sit.label
       });
@@ -661,21 +668,91 @@
       chips.push(chip);
       list.appendChild(chip);
 
-      function _onSitTap() {
-        if (chip.classList.contains('is-dimmed')) return;
-        st.serviceSlug  = sit.slug;
-        st.serviceLabel = sit.serviceLabel;
-        var ack = MSG.ackEmergency[sit.slug] || MSG.ackEmergency._default;
-        _chipTap(chip, chips, function() { _transitionFwd(_renderStep2); }, ack);
-      }
+      if (!isAutre) {
+        /* Standard tap → select → advance */
+        function _onSitTap() {
+          if (chip.classList.contains('is-dimmed')) return;
+          st.serviceSlug  = sit.slug;
+          st.serviceLabel = sit.serviceLabel;
+          var ack = MSG.ackEmergency[sit.slug] || MSG.ackEmergency._default;
+          _chipTap(chip, chips, function() { _transitionFwd(_renderStep2); }, ack);
+        }
+        chip.addEventListener('click',    _onSitTap);
+        chip.addEventListener('touchend', function(e) { e.preventDefault(); _onSitTap(); }, { passive: false });
+        chip.addEventListener('keydown',  function(e) { if (e.key === 'Enter' || e.key === ' ') _onSitTap(); });
 
-      chip.addEventListener('click',    _onSitTap);
-      chip.addEventListener('touchend', function(e) { e.preventDefault(); _onSitTap(); }, { passive: false });
-      chip.addEventListener('keydown',  function(e) { if (e.key === 'Enter' || e.key === ' ') _onSitTap(); });
+      } else {
+        /* "Autre urgence" — inline expand into description field */
+        var expanded = false;
+
+        /* Expand panel — built once, hidden initially */
+        var expandWrap = _h('div', { cls: 'fxrf4-autre-expand' });
+
+        var autreInput = _h('input', {
+          cls: 'fxrf4-autre-input',
+          type: 'text',
+          placeholder: "Ex.\u00a0: Une forte odeur de gaz dans la cuisine\u2026",
+          maxlength: '100',
+          autocomplete: 'off',
+          autocorrect: 'off',
+          autocapitalize: 'sentences',
+          'aria-label': "D\u00e9crire l\u2019urgence"
+        });
+
+        var confirmBtn = _h('button', {
+          cls: 'fxrf4-btn fxrf4-btn-primary fxrf4-autre-confirm',
+          type: 'button',
+          txt: 'Continuer \u2192',
+          disabled: 'true'
+        });
+
+        autreInput.addEventListener('input', function() {
+          var hasVal = autreInput.value.trim().length >= 3;
+          confirmBtn.disabled = !hasVal;
+        });
+
+        function _confirmAutre() {
+          var val = autreInput.value.trim();
+          if (val.length < 3) return;
+          st.serviceSlug  = 'autre';
+          st.serviceLabel = val;
+          _transitionFwd(_renderStep2);
+        }
+
+        confirmBtn.addEventListener('click',    _confirmAutre);
+        confirmBtn.addEventListener('touchend', function(e) { e.preventDefault(); _confirmAutre(); }, { passive: false });
+        autreInput.addEventListener('keydown',  function(e) { if (e.key === 'Enter') _confirmAutre(); });
+
+        expandWrap.appendChild(autreInput);
+        expandWrap.appendChild(confirmBtn);
+        chip.appendChild(expandWrap);
+
+        function _onAutreTap() {
+          if (expanded) return;
+          expanded = true;
+
+          /* Dim all other chips */
+          chips.forEach(function(c) { if (c !== chip) c.classList.add('is-dimmed'); });
+
+          /* Expand the card */
+          chip.classList.add('is-autre-expanded');
+          expandWrap.classList.add('is-visible');
+
+          /* RAFI speaks the follow-up question */
+          _rafiSpeak(MSG.step1EmergencyAutre, false, true);
+
+          /* Focus the input after expand animation */
+          setTimeout(function() { autreInput.focus(); }, 200);
+        }
+
+        chip.addEventListener('click',    _onAutreTap);
+        chip.addEventListener('touchend', function(e) { e.preventDefault(); _onAutreTap(); }, { passive: false });
+        chip.addEventListener('keydown',  function(e) { if (e.key === 'Enter' || e.key === ' ') _onAutreTap(); });
+      }
     });
 
     var body = _q('#fxrf4-body');
-    if (body) body.appendChild(_screen([list]));
+    if (body) body.appendChild(_screen([sub, list]));
   }
 
   /* ── Standard step 1 — 2-col service grid ──────────────── */
