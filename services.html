@@ -987,6 +987,121 @@ a{text-decoration:none}
 
   </style>
 
+  <!-- ── Page Rhythm — fxsvc-v3 ───────────────────────────────────────────
+       Vertical spacing corrections only. No component restyling.
+       No CTA dimensions, colours or shadows touched.
+       Selectors: cp-hero, cp-section, cp-section-alt, cp-cta-band,
+                  cp-section-header, cp-hero-eyebrow, cp-hero-trust,
+                  cp-split-text.
+  ──────────────────────────────────────────────────────────────────────── -->
+  <style id="svc-rhythm-v3">
+
+/* ── Spacing scale reference (informational)
+   8   micro   · 12  related  · 16  normal
+   24  group   · 32  block    · 40–48  section-mobile
+   56–72  major transition (desktop only)
+───────────────────────────────────────────────────────────────── */
+
+/* ── Desktop: tighten sections just enough ─────────────────────── */
+/* Current: 72px uniform. Target: 64px top — preserves breathing room,
+   removes the "oversized slide" feel on mid-size laptops. */
+.cp-section {
+  padding-top:    64px;
+  padding-bottom: 64px;
+}
+
+.cp-section-alt {
+  padding-top:    64px;
+  padding-bottom: 64px;
+}
+
+/* Hero bottom: 80 → 72px desktop — keeps spacious but less stretched */
+.cp-hero {
+  padding-bottom: 72px;
+}
+
+/* Final CTA band: 80/88 → 72/80px desktop — stays emphatic */
+.cp-cta-band {
+  padding-top:    72px;
+  padding-bottom: 80px;
+}
+
+/* Section header bottom margin: 48 → 40px desktop
+   Heading stays clearly above content without floating */
+.cp-section-header {
+  margin-bottom: 40px;
+}
+
+/* ── ≤768px: keep existing values (already reduced in svc-premium-v2) ─ */
+/* The existing 52px rules are correct for mid-tablet.
+   We only patch ≤480px below. */
+@media (max-width: 768px) {
+  .cp-section     { padding-top: 48px; padding-bottom: 48px; }
+  .cp-section-alt { padding-top: 48px; padding-bottom: 48px; }
+  .cp-hero        { padding-bottom: 48px; }
+  .cp-cta-band    { padding-top: 56px; padding-bottom: 60px; }
+  .cp-section-header { margin-bottom: 32px; }
+}
+
+/* ── ≤480px: mobile — the primary problem zone ─────────────────── */
+@media (max-width: 480px) {
+  /* Sections: 44 → 36px — removes the 88-92px dead zones */
+  .cp-section {
+    padding-top:    36px;
+    padding-bottom: 36px;
+  }
+
+  .cp-section-alt {
+    padding-top:    36px;
+    padding-bottom: 36px;
+  }
+
+  /* Hero: top stays generous; bottom tightened 48 → 36px
+     Hero→Catalogue gap: 36+36 = 72px (was 92px) */
+  .cp-hero {
+    padding-top:    44px;
+    padding-bottom: 36px;
+  }
+
+  /* Final CTA band: 48/56 → 40/40px on mobile
+     Removes the dead zone after the guarantee line */
+  .cp-cta-band {
+    padding-top:    40px;
+    padding-bottom: 40px;
+  }
+
+  /* Section header: heading → first content 36 → 28px on small screens */
+  .cp-section-header {
+    margin-bottom: 28px;
+  }
+
+  /* Hero internal rhythm on small screens */
+  .cp-hero-eyebrow {
+    margin-bottom: 16px;   /* was 24px — badge is a label, not a section */
+  }
+
+  .cp-hero-trust {
+    margin-bottom: 24px;   /* was 36px — brings proof points closer to CTAs */
+  }
+
+  /* Urgence/planned card text: 20 → 14px bottom margin on mobile
+     content stays readable, CTA stays closer to its context */
+  .cp-split-text {
+    margin-bottom: 14px;
+  }
+}
+
+/* ── ≤360px: floor — no content compression ────────────────────── */
+@media (max-width: 360px) {
+  .cp-section     { padding-top: 32px; padding-bottom: 32px; }
+  .cp-section-alt { padding-top: 32px; padding-bottom: 32px; }
+  .cp-hero        { padding-top: 36px; padding-bottom: 28px; }
+  .cp-cta-band    { padding-top: 32px; padding-bottom: 32px; }
+  .cp-section-header { margin-bottom: 24px; }
+}
+
+  </style>
+
 <!-- SEO -->
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://www.fixeo.ma/services.html">
