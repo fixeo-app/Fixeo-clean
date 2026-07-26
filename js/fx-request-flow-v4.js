@@ -750,8 +750,26 @@
         }
 
         chip.addEventListener('click',    _onAutreTap);
-        chip.addEventListener('touchend', function(e) { e.preventDefault(); _onAutreTap(); }, { passive: false });
+        chip.addEventListener('touchend', function(e) {
+          /* CRITICAL: check expanded BEFORE preventDefault.
+           * If expanded, the event target is a child (autreInput, confirmBtn).
+           * Calling preventDefault() here would cancel iOS focus synthesis on the input.
+           * When not yet expanded, preventDefault() prevents the 300ms click delay. */
+          if (expanded) return;
+          e.preventDefault();
+          _onAutreTap();
+        }, { passive: false });
         chip.addEventListener('keydown',  function(e) { if (e.key === 'Enter' || e.key === ' ') _onAutreTap(); });
+
+        /* Belt-and-suspenders: stop child touch events from bubbling to chip
+         * when expanded. Ensures autreInput and confirmBtn events never reach
+         * the chip handler regardless of iOS touch event routing. */
+        expandWrap.addEventListener('touchstart', function(e) {
+          if (expanded) e.stopPropagation();
+        }, { passive: true });
+        expandWrap.addEventListener('touchend', function(e) {
+          if (expanded) e.stopPropagation();
+        }, { passive: true });
       }
     });
 
