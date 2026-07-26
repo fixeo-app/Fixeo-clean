@@ -2768,181 +2768,324 @@ section#home.hero.hero-section {
 
 
 
-<!-- ══════════════════════════════════════════════════════════
-     CHAPTER 2 — Ce qui se passe pendant que vous parlez
-     fc2-v1b — DOM position: immediately after hero
-     Namespace: fc2-*  (engine reuses fbe-* CSS)
-══════════════════════════════════════════════════════════ -->
+<!-- ════════════════════════════════════════════════════════
+CHAPTER 2 — Ce que RAFI organise
+fxhome-vnext — Refactored 2026-07-26 for product truth + premium visual
+Namespace: fxrorg-* (page-scoped, index.html only)
+Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
+════════════════════════════════════════════════════════ -->
+
+<!-- ── fxhome-vnext CSS — page-scoped, no shared files modified ── -->
+<style id="fxhome-vnext">
+
+/* ════════════════════════════════════════════════════════════════════
+   §1  SECTION SHELL
+   Reuses existing fc2-chapter class for outer spacing (fc2-v1c CSS).
+   New inner system uses fxrorg-* namespace exclusively.
+   ════════════════════════════════════════════════════════════════════ */
+
+/* Override the inherited fc2-header to match new compact design */
+#fixeo-chapter-2 .fc2-header {
+  margin-bottom: 0;
+  text-align: center;
+}
+#fixeo-chapter-2 .fc2-eyebrow {
+  letter-spacing: 0.12em;
+  font-size: 0.68rem;
+  opacity: 0.42;
+}
+#fixeo-chapter-2 .fc2-title {
+  font-size: clamp(1.55rem, 4vw, 2.1rem);
+  margin-bottom: 10px;
+}
+#fixeo-chapter-2 .fc2-subtitle {
+  font-size: 0.92rem;
+  opacity: 0.58;
+  max-width: 480px;
+  margin: 0 auto 44px;
+  line-height: 1.55;
+}
+
+
+/* ════════════════════════════════════════════════════════════════════
+   §2  CORE SPHERE
+   ════════════════════════════════════════════════════════════════════ */
+
+.fxrorg-sphere-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 40px;
+  position: relative;
+}
+
+.fxrorg-sphere {
+  position: relative;
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 38% 36%,
+    rgba(72,100,255,0.28) 0%,
+    rgba(36,50,140,0.22) 50%,
+    rgba(10,12,36,0.70) 100%
+  );
+  border: 1.5px solid rgba(72,100,255,0.28);
+  box-shadow:
+    0 0 0 8px rgba(72,100,255,0.06),
+    0 0 0 18px rgba(72,100,255,0.03),
+    0 8px 32px rgba(72,100,255,0.18),
+    inset 0 1px 0 rgba(255,255,255,0.09);
+  animation: fxrorg-breathe 4.8s ease-in-out infinite;
+}
+
+.fxrorg-sphere-label {
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  color: rgba(255,255,255,0.72);
+  user-select: none;
+}
+
+.fxrorg-halo {
+  position: absolute;
+  inset: -14px;
+  border-radius: 50%;
+  border: 1px solid rgba(72,100,255,0.14);
+  animation: fxrorg-halo 4.8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.fxrorg-sphere::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 50%,
+    rgba(100,180,255,0.22) 0%,
+    transparent 70%
+  );
+  opacity: 0;
+  animation: fxrorg-pulse-sweep 4.8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes fxrorg-breathe {
+  0%, 100% { opacity: 0.84; transform: scale(1); }
+  50%       { opacity: 0.96; transform: scale(1.035); }
+}
+@keyframes fxrorg-halo {
+  0%, 100% { opacity: 0.40; transform: scale(1); }
+  50%       { opacity: 0.12; transform: scale(1.12); }
+}
+@keyframes fxrorg-pulse-sweep {
+  0%, 100% { opacity: 0; transform: scale(0.85); }
+  40%      { opacity: 0.60; transform: scale(1.05); }
+  70%      { opacity: 0.10; transform: scale(1.20); }
+}
+
+
+/* ════════════════════════════════════════════════════════════════════
+   §3  SIGNAL CARDS — 2x2 grid, responsive
+   ════════════════════════════════════════════════════════════════════ */
+
+.fxrorg-signals {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  max-width: 520px;
+  margin: 0 auto 32px;
+}
+
+.fxrorg-signal {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 18px 16px 16px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.035);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-top: 1.5px solid rgba(72,100,255,0.16);
+  opacity: 0.60;
+  transform: translateY(4px);
+  transition:
+    opacity 0.40s cubic-bezier(0.4,0,0.2,1),
+    transform 0.40s cubic-bezier(0.4,0,0.2,1),
+    border-color 0.28s,
+    background 0.28s;
+  will-change: opacity, transform;
+}
+
+#fixeo-chapter-2.fc2-org-visible .fxrorg-signal:nth-child(1) {
+  opacity: 1; transform: none; transition-delay: 0.10s;
+}
+#fixeo-chapter-2.fc2-org-visible .fxrorg-signal:nth-child(2) {
+  opacity: 1; transform: none; transition-delay: 0.28s;
+}
+#fixeo-chapter-2.fc2-org-visible .fxrorg-signal:nth-child(3) {
+  opacity: 1; transform: none; transition-delay: 0.46s;
+}
+#fixeo-chapter-2.fc2-org-visible .fxrorg-signal:nth-child(4) {
+  opacity: 1; transform: none; transition-delay: 0.64s;
+}
+
+#fixeo-chapter-2.fc2-org-visible .fxrorg-signal:nth-child(1) { animation: fxrorg-card-pulse 10s 0.6s infinite; }
+#fixeo-chapter-2.fc2-org-visible .fxrorg-signal:nth-child(2) { animation: fxrorg-card-pulse 10s 3.1s infinite; }
+#fixeo-chapter-2.fc2-org-visible .fxrorg-signal:nth-child(3) { animation: fxrorg-card-pulse 10s 5.6s infinite; }
+#fixeo-chapter-2.fc2-org-visible .fxrorg-signal:nth-child(4) { animation: fxrorg-card-pulse 10s 8.1s infinite; }
+
+@keyframes fxrorg-card-pulse {
+  0%, 18%, 100% {
+    background: rgba(255,255,255,0.035);
+    border-top-color: rgba(72,100,255,0.16);
+    box-shadow: none;
+  }
+  6%, 12% {
+    background: rgba(72,100,255,0.08);
+    border-top-color: rgba(100,160,255,0.44);
+    box-shadow: 0 4px 18px rgba(72,100,255,0.14);
+  }
+}
+
+.fxrorg-signal-icon {
+  font-size: 1.2rem;
+  line-height: 1;
+  display: block;
+  opacity: 0.80;
+  user-select: none;
+}
+
+.fxrorg-signal-label {
+  font-size: 0.80rem;
+  font-weight: 800;
+  color: rgba(255,255,255,0.92);
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+}
+
+.fxrorg-signal-desc {
+  font-size: 0.73rem;
+  color: rgba(255,255,255,0.40);
+  line-height: 1.50;
+}
+
+@media (max-width: 320px) {
+  .fxrorg-signals { grid-template-columns: 1fr; }
+}
+
+
+/* ════════════════════════════════════════════════════════════════════
+   §4  OUTCOME LINE
+   ════════════════════════════════════════════════════════════════════ */
+
+.fxrorg-outcome {
+  text-align: center;
+  font-size: 0.84rem;
+  color: rgba(255,255,255,0.36);
+  letter-spacing: 0.01em;
+  margin-bottom: 0;
+}
+
+
+/* ════════════════════════════════════════════════════════════════════
+   §5  CONSEQUENCES — honest rewrite, reuses fc2-* classes
+   ════════════════════════════════════════════════════════════════════ */
+
+#fixeo-chapter-2 .fc2-consequences { margin-top: 44px; }
+#fixeo-chapter-2 .fc2-because { font-size: 1.0rem; opacity: 0.72; }
+
+
+/* ════════════════════════════════════════════════════════════════════
+   §6  REDUCED MOTION
+   ════════════════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  .fxrorg-sphere,
+  .fxrorg-halo,
+  .fxrorg-sphere::after { animation: none; }
+  .fxrorg-signal { opacity: 1; transform: none; transition: none; }
+  #fixeo-chapter-2.fc2-org-visible .fxrorg-signal { animation: none; }
+}
+
+
+/* ════════════════════════════════════════════════════════════════════
+   §7  MOBILE
+   ════════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 480px) {
+  .fxrorg-sphere { width: 76px; height: 76px; }
+  .fxrorg-sphere-label { font-size: 0.62rem; }
+  .fxrorg-signals { gap: 10px; }
+  .fxrorg-signal { padding: 14px 12px 12px; border-radius: 12px; }
+  .fxrorg-signal-icon { font-size: 1.1rem; }
+  .fxrorg-signal-label { font-size: 0.77rem; }
+  .fxrorg-signal-desc { font-size: 0.70rem; }
+  .fxrorg-sphere-wrap { margin-bottom: 28px; }
+  #fixeo-chapter-2 .fc2-subtitle { margin-bottom: 28px; }
+}
+
+</style>
+
+<!-- ════════════════════════════════════════════════════════
+     CHAPTER 2 — Ce que RAFI organise (fxhome-vnext)
+     Product-truth: RAFI V5 collects 4 explicit user choices.
+     No AI matching, no geolocation, no artisan notification claims.
+     Floating controls (#fixeo-urgent-fab, .chat-widget) untouched.
+     ════════════════════════════════════════════════════════ -->
 <section id="fixeo-chapter-2" class="fc2-chapter" aria-labelledby="fc2-title">
   <div class="container">
 
-    <!-- ── PART 1 — Introduction ─────────────────────────────── -->
+    <!-- ── PART 1 — Header ── -->
     <header class="fc2-header">
-      <span class="fc2-eyebrow">CE QUI SE PASSE MAINTENANT</span>
-      <h2 id="fc2-title" class="fc2-title">Pendant que vous décrivez,<br><em>FIXEO travaille déjà.</em></h2>
-      <p class="fc2-subtitle">Dès les premiers mots, l'analyse commence. Vous n'avez rien d'autre à faire qu'expliquer.</p>
+      <span class="fc2-eyebrow">CE QUE RAFI ORGANISE</span>
+      <h2 id="fc2-title" class="fc2-title">Pendant que vous avancez,<br><em>RAFI organise déjà l’essentiel.</em></h2>
+      <p class="fc2-subtitle">Besoin, ville, délai et contact.<br>Votre demande devient claire en quelques étapes.</p>
     </header>
 
-    <!-- ── PART 2 — The Engine ───────────────────────────────── -->
-    <div class="fc2-engine-block">
+    <!-- ── PART 2 — Sphere + 4 signals ── -->
+    <div class="fxrorg-sphere-wrap">
+      <div class="fxrorg-sphere" aria-hidden="true">
+        <div class="fxrorg-halo" aria-hidden="true"></div>
+        <span class="fxrorg-sphere-label">RAFI</span>
+      </div>
+    </div>
 
-      <!-- DESKTOP: orbital visualization (hidden ≤679px via CSS) -->
-      <div class="fc2-orbital fbe-arena-wrap" aria-hidden="true">
-        <div class="fbe-arena">
+    <!-- Four honest signals — what RAFI V5 actually collects -->
+    <div class="fxrorg-signals" role="list" aria-label="Les quatre informations organisées par RAFI">
 
-          <div class="fbe-depth-bg">
-            <div class="fbe-particle fbe-particle--1"></div>
-            <div class="fbe-particle fbe-particle--2"></div>
-            <div class="fbe-particle fbe-particle--3"></div>
-            <div class="fbe-particle fbe-particle--4"></div>
-            <div class="fbe-particle fbe-particle--5"></div>
-            <div class="fbe-particle fbe-particle--6"></div>
-          </div>
+      <div class="fxrorg-signal" role="listitem">
+        <span class="fxrorg-signal-icon" aria-hidden="true">📋</span>
+        <span class="fxrorg-signal-label">Besoin structuré</span>
+        <span class="fxrorg-signal-desc">Vous choisissez le type d’intervention parmi les services disponibles.</span>
+      </div>
 
-          <div class="fbe-ring fbe-ring--core-bound"></div>
-          <div class="fbe-ring fbe-ring--inner"></div>
-          <div class="fbe-ring fbe-ring--mid"></div>
-          <div class="fbe-ring fbe-ring--outer"></div>
+      <div class="fxrorg-signal" role="listitem">
+        <span class="fxrorg-signal-icon" aria-hidden="true">📍</span>
+        <span class="fxrorg-signal-label">Ville indiquée</span>
+        <span class="fxrorg-signal-desc">La zone d’intervention est confirmée parmi les 20 villes couvertes.</span>
+      </div>
 
-          <div class="fbe-core fc2-core">
-            <div class="fbe-core-halo"></div>
-            <div class="fc2-core-pulse" aria-hidden="true"></div>
-            <span class="fc2-core-label">FIXEO</span>
-          </div>
+      <div class="fxrorg-signal" role="listitem">
+        <span class="fxrorg-signal-icon" aria-hidden="true">⏱</span>
+        <span class="fxrorg-signal-label">Délai choisi</span>
+        <span class="fxrorg-signal-desc">Urgent, aujourd’hui, ou planifié — la priorité est enregistrée.</span>
+      </div>
 
-          <div class="fbe-conn fbe-conn--1"></div>
-          <div class="fbe-conn fbe-conn--2"></div>
-          <div class="fbe-conn fbe-conn--3"></div>
-          <div class="fbe-conn fbe-conn--4"></div>
-          <div class="fbe-conn fbe-conn--5"></div>
-          <div class="fbe-conn fbe-conn--6"></div>
-          <div class="fbe-conn fbe-conn--7"></div>
-          <div class="fbe-conn fbe-conn--8"></div>
+      <div class="fxrorg-signal" role="listitem">
+        <span class="fxrorg-signal-icon" aria-hidden="true">📞</span>
+        <span class="fxrorg-signal-label">Contact transmis</span>
+        <span class="fxrorg-signal-desc">Votre numéro est conservé pour assurer le suivi de votre demande.</span>
+      </div>
 
-          <div class="fbe-node fbe-node--1">
-            <div class="fbe-node-shell"><div class="fbe-node-icon">🔍</div></div>
-            <span class="fbe-node-label">Détection<br>du service</span>
-          </div>
-          <div class="fbe-node fbe-node--2">
-            <div class="fbe-node-shell"><div class="fbe-node-icon">⚡</div></div>
-            <span class="fbe-node-label">Analyse<br>urgence</span>
-          </div>
-          <div class="fbe-node fbe-node--3">
-            <div class="fbe-node-shell"><div class="fbe-node-icon">📍</div></div>
-            <span class="fbe-node-label">Localisation</span>
-          </div>
-          <div class="fbe-node fbe-node--4">
-            <div class="fbe-node-shell"><div class="fbe-node-icon">💶</div></div>
-            <span class="fbe-node-label">Estimation<br>indicative</span>
-          </div>
-          <div class="fbe-node fbe-node--5">
-            <div class="fbe-node-shell"><div class="fbe-node-icon">🗂️</div></div>
-            <span class="fbe-node-label">Profils<br>compatibles</span>
-          </div>
-          <div class="fbe-node fbe-node--6">
-            <div class="fbe-node-shell"><div class="fbe-node-icon">🎯</div></div>
-            <span class="fbe-node-label">Score de<br>pertinence</span>
-          </div>
-          <div class="fbe-node fbe-node--7">
-            <div class="fbe-node-shell"><div class="fbe-node-icon">🛡️</div></div>
-            <span class="fbe-node-label">Signal de<br>confiance</span>
-          </div>
-          <div class="fbe-node fbe-node--8">
-            <div class="fbe-node-shell"><div class="fbe-node-icon">📤</div></div>
-            <span class="fbe-node-label">Préparation<br>mise en relation</span>
-          </div>
+    </div><!-- /fxrorg-signals -->
 
-          <div class="fbe-know">
-            <div class="fbe-know-slot fbe-know-slot--1">
-              <span class="fbe-know-label fbe-know-a">1 134 artisans</span>
-              <span class="fbe-know-label fbe-know-b">Analyse multi-critères</span>
-            </div>
-            <div class="fbe-know-slot fbe-know-slot--2">
-              <span class="fbe-know-label fbe-know-a">Détection linguistique</span>
-              <span class="fbe-know-label fbe-know-b">20 villes</span>
-            </div>
-            <div class="fbe-know-slot fbe-know-slot--3">
-              <span class="fbe-know-label fbe-know-a">Score de confiance</span>
-              <span class="fbe-know-label fbe-know-b">Notification artisan</span>
-            </div>
-            <div class="fbe-know-slot fbe-know-slot--4">
-              <span class="fbe-know-label fbe-know-a">Matching géographique</span>
-              <span class="fbe-know-label fbe-know-b">12 métiers</span>
-            </div>
-            <div class="fbe-know-slot fbe-know-slot--5">
-              <span class="fbe-know-label fbe-know-a">Estimation indicative</span>
-              <span class="fbe-know-label fbe-know-b">Préparation du dossier</span>
-            </div>
-            <div class="fbe-know-slot fbe-know-slot--6">
-              <span class="fbe-know-label fbe-know-a">Compatibilité métier</span>
-              <span class="fbe-know-label fbe-know-b">Analyse de l'urgence</span>
-            </div>
-            <div class="fbe-know-slot fbe-know-slot--7">
-              <span class="fbe-know-label fbe-know-a">Profils disponibles</span>
-              <span class="fbe-know-label fbe-know-b">Score de pertinence</span>
-            </div>
-            <div class="fbe-know-slot fbe-know-slot--8">
-              <span class="fbe-know-label fbe-know-a">Mise en relation</span>
-              <span class="fbe-know-label fbe-know-b">Archivage sécurisé</span>
-            </div>
-          </div>
+    <p class="fxrorg-outcome" aria-hidden="true">Une demande plus claire. Un suivi plus simple.</p>
 
-        </div><!-- /fbe-arena -->
-      </div><!-- /fc2-orbital -->
-
-      <!-- MOBILE: clean 2-column grid (shown ≤679px) -->
-      <div class="fc2-mobile-engine" aria-label="Les 8 analyses effectuées par FIXEO">
-
-        <!-- Core indicator -->
-        <div class="fc2-mob-core" aria-hidden="true">
-          <div class="fc2-core-pulse"></div>
-          <span class="fc2-core-label">FIXEO</span>
-        </div>
-
-        <!-- 8 analysis nodes in 2-column grid — normal flow, no absolute -->
-        <div class="fc2-mob-grid" role="list">
-          <div class="fc2-mob-node" role="listitem">
-            <span class="fc2-mob-icon" aria-hidden="true">🔍</span>
-            <span class="fc2-mob-label">Détection du service</span>
-          </div>
-          <div class="fc2-mob-node" role="listitem">
-            <span class="fc2-mob-icon" aria-hidden="true">⚡</span>
-            <span class="fc2-mob-label">Analyse urgence</span>
-          </div>
-          <div class="fc2-mob-node" role="listitem">
-            <span class="fc2-mob-icon" aria-hidden="true">📍</span>
-            <span class="fc2-mob-label">Localisation</span>
-          </div>
-          <div class="fc2-mob-node" role="listitem">
-            <span class="fc2-mob-icon" aria-hidden="true">💶</span>
-            <span class="fc2-mob-label">Estimation indicative</span>
-          </div>
-          <div class="fc2-mob-node" role="listitem">
-            <span class="fc2-mob-icon" aria-hidden="true">🗂️</span>
-            <span class="fc2-mob-label">Profils compatibles</span>
-          </div>
-          <div class="fc2-mob-node" role="listitem">
-            <span class="fc2-mob-icon" aria-hidden="true">🎯</span>
-            <span class="fc2-mob-label">Score de pertinence</span>
-          </div>
-          <div class="fc2-mob-node" role="listitem">
-            <span class="fc2-mob-icon" aria-hidden="true">🛡️</span>
-            <span class="fc2-mob-label">Signal de confiance</span>
-          </div>
-          <div class="fc2-mob-node" role="listitem">
-            <span class="fc2-mob-icon" aria-hidden="true">📤</span>
-            <span class="fc2-mob-label">Préparation du dossier</span>
-          </div>
-        </div><!-- /fc2-mob-grid -->
-
-      </div><!-- /fc2-mobile-engine -->
-
-    </div><!-- /fc2-engine-block -->
-
-    <!-- ── PART 3 — Consequences ─────────────────────────────── -->
+    <!-- ── PART 3 — Consequences (honest rewrite) ── -->
     <div class="fc2-consequences">
 
-      <p class="fc2-because">Parce que FIXEO analyse tout cela,<br class="fc2-br-mobile"> le résultat est différent.</p>
+      <p class="fc2-because">Ce que cela change pour vous.</p>
 
       <div class="fc2-results" role="list">
 
@@ -2951,8 +3094,8 @@ section#home.hero.hero-section {
             <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 10 8 14 16 6"/></svg>
           </div>
           <div class="fc2-result-text">
-            <strong>L'artisan qui répond connaît déjà votre problème.</strong>
-            <span>Il n'arrive pas à l'aveugle. Il est sélectionné pour votre cas précis.</span>
+            <strong>Votre demande est complète dès la première étape.</strong>
+            <span>Besoin, ville, délai et contact — rien à compléter après.</span>
           </div>
         </div>
 
@@ -2961,8 +3104,8 @@ section#home.hero.hero-section {
             <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 10 8 14 16 6"/></svg>
           </div>
           <div class="fc2-result-text">
-            <strong>Il est proche de chez vous.</strong>
-            <span>Les artisans de votre ville passent en premier. Toujours.</span>
+            <strong>Les artisans de votre ville en premier.</strong>
+            <span>La zone d’intervention est enregistrée. Toujours.</span>
           </div>
         </div>
 
@@ -2971,8 +3114,8 @@ section#home.hero.hero-section {
             <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 10 8 14 16 6"/></svg>
           </div>
           <div class="fc2-result-text">
-            <strong>Son profil a été vérifié.</strong>
-            <span>Identité, spécialité, références — contrôlés par notre équipe avant toute mise en relation.</span>
+            <strong>Les profils artisans sont vérifiés par notre équipe.</strong>
+            <span>Spécialité et références — contrôlés avant toute mise en relation.</span>
           </div>
         </div>
 
@@ -2981,20 +3124,46 @@ section#home.hero.hero-section {
             <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 10 8 14 16 6"/></svg>
           </div>
           <div class="fc2-result-text">
-            <strong>Vous payez après l'intervention.</strong>
+            <strong>Vous payez après l’intervention.</strong>
             <span>Pas avant. La mise en relation elle-même est gratuite.</span>
           </div>
         </div>
 
       </div><!-- /fc2-results -->
 
-      <!-- Transition — natural lead into Services -->
       <p class="fc2-transition">Est-ce que FIXEO peut résoudre votre probl&egrave;me&nbsp;?</p>
 
     </div><!-- /fc2-consequences -->
 
   </div><!-- /container -->
 </section>
+
+<!-- ── fxhome-vnext: IntersectionObserver — triggers .fc2-org-visible ──
+     Private IIFE. One observer. No permanent rAF. No global listeners.
+     No RAFI APIs. No localStorage. Falls back if IO unavailable. -->
+<script>
+(function () {
+  'use strict';
+  var sec = document.getElementById('fixeo-chapter-2');
+  if (!sec || !window.IntersectionObserver) {
+    if (sec) sec.classList.add('fc2-org-visible');
+    return;
+  }
+  var reducedMotion = window.matchMedia &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reducedMotion) {
+    sec.classList.add('fc2-org-visible');
+    return;
+  }
+  var io = new IntersectionObserver(function (entries) {
+    if (entries[0].isIntersecting) {
+      sec.classList.add('fc2-org-visible');
+      io.disconnect();
+    }
+  }, { threshold: 0.15 });
+  io.observe(sec);
+}());
+</script>
 
 <div class="section-divider" aria-hidden="true"></div>
 
