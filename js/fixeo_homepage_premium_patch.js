@@ -1,12 +1,23 @@
 /**
- * fixeo_homepage_premium_patch.js  v4 (fhp13 — Phase J-1)
+ * fixeo_homepage_premium_patch.js  v4 (fhp13 — fxhome-artisans-v2a)
  * ─────────────────────────────────────────────────────────────────────────────
  * Replaces old results-layout with premium 2-col pvc-card vedette grid.
  * v3 adds: event delegation for clicks, section header + counter, fade-in anim.
- * v4 (J-1): marketplace energy pass —
- *   - Header: active title, trust subtitle, platform-total counter, "voir tous" link
- *   - Rating state: tier-based credible text (no "Évaluation en cours")
- *   - Signals (v14): id-seed variation — fast-tier 3 variants, sig2 city/quality alt
+ * v4 (J-1): marketplace energy pass.
+ * fxhome-artisans-v2a: product-truth hardening —
+ *   - Canonical renderer: _buildCard() is the ONLY homepage artisan card renderer.
+ *   - Dead SecondarySearch.renderVedetteCard branch permanently bypassed.
+ *   - Header: truthful state-aware title/subtitle/count (no "disponibles" framing).
+ *   - Availability badge only for availability_today; suppressed for defaulted "available".
+ *   - "Actif cette semaine" removed; live signal tier restricted to fast/rdv only.
+ *   - Trust line: "Vérifié par FIXEO" gated on verified===true only.
+ *   - Payment claim separated from verification.
+ *   - Rating fallback: "Nouveau sur Fixeo" → "Profil référencé sur FIXEO".
+ *   - Pricing: midpoint "Estimation Fixeo" removed; single price message only.
+ *   - Location: "Intervient à" → "Basé à".
+ *   - "Voir profil" span → semantic <a href> anchor.
+ *   - Reserve button: artisan-specific aria-label.
+ *   - _renderPremiumGrid: explicit result-mode tracking passed to _buildHeader.
  * ─────────────────────────────────────────────────────────────────────────────
  */
 (function (window) {
@@ -145,18 +156,33 @@
     informatique: { from: 100, to: 350,  label: '100–350 MAD' }
   };
 
+  /* _getPricing (v2a): one price message. Midpoint "Estimation Fixeo" removed.
+   * Returns { main, hint, type }. Never two competing prices. */
   function _getPricing(a) {
     var cat  = (a.category || a.service || '').toLowerCase().trim();
     var info = MAR_PRICES[cat];
-    /* priceFrom > 100: real artisan-specific price set by admin or Supabase.
-     * priceFrom <= 100: main.js normalizer default (null → 100) — treat as absent,
-     * fall through to category-level MAR_PRICES so cards show market rate. */
     if (a.price_from || a.priceFrom) {
       var pf = parseInt(a.price_from || a.priceFrom, 10);
-      if (!isNaN(pf) && pf > 100) return { from: pf, label: '\u00c0 partir de ' + pf + ' MAD' };
+      if (!isNaN(pf) && pf > 100) {
+        return {
+          main: '\u00c0 partir de ' + new Intl.NumberFormat('fr-FR').format(pf) + '\u00a0MAD',
+          hint: 'Tarif renseign\u00e9',
+          type: 'artisan'
+        };
+      }
     }
-    if (info) return { from: info.from, label: '\u00c0 partir de ' + info.from + ' MAD', range: info.label };
-    return { from: 150, label: '\u00c0 partir de 150 MAD' };
+    if (info && info.label) {
+      return {
+        main: 'Budget indicatif\u00a0: ' + info.label,
+        hint: 'Fourchette g\u00e9n\u00e9rale du service',
+        type: 'range'
+      };
+    }
+    return {
+      main: 'Tarif \u00e0 confirmer',
+      hint: "Selon l\u2019intervention",
+      type: 'unknown'
+    };
   }
 
   function _responseTimeLabel(rt) {
@@ -206,35 +232,21 @@
     var idSeed = 0;
     for (var _ci = 0; _ci < _idStr.length; _ci++) { idSeed += _idStr.charCodeAt(_ci); }
 
-    /* ── V1-D: Sig1 activity tier ──
-     * For self-registered artisans (sq=0, reviews=0): use real availability field
-     * to determine tier. Avoids showing 'Disponible sur RDV' for artisans who
-     * explicitly set themselves as 'available' via the V1-C dashboard bridge. */
-    var availField = (a.availability || '').toLowerCase();
-    var isAvailNow = availField === 'available' || availField === 'available_today' || availField === 'disponible';
+    /* ── v2a: Sig1 activity tier ──
+     * "Actif cette semaine" removed — sq=0 for all Supabase artisans;
+     * the 'active' tier fired via isAvailNow for virtually every imported profile.
+     * Two truthful tiers: fast (sq≥90 or reviews≥100) and rdv (everyone else). */
     var activityLevel;
-    if (sq >= 90) {
+    if (sq >= 90 || reviews >= 100) {
       activityLevel = 'fast';
-    } else if (sq >= 80) {
-      activityLevel = 'active';
-    } else if (sq > 0) {
-      activityLevel = 'rdv';
-    } else if (reviews >= 100) {
-      activityLevel = 'fast';
-    } else if (reviews >= 50) {
-      activityLevel = 'active';
-    } else if (isAvailNow) {
-      /* V1-D: newly-registered artisan, availability confirmed via dashboard */
-      activityLevel = 'active';
     } else {
       activityLevel = 'rdv';
     }
 
-    /* Fast-tier: 3 variants rotated by id — "Répond rapidement", "Actif aujourd'hui",
-     * "Intervention rapide". All same visual tier (green pulse dot), different words. */
+    /* Fast-tier: 3 variants rotated by id. */
     var FAST_LABELS = [
-      'R\u00e9pond rapidement',
-      'Actif aujourd\u2019hui',
+      'Répond rapidement',
+      'Actif aujourd’hui',
       'Intervention rapide'
     ];
 
@@ -243,9 +255,6 @@
       var fastLabel = FAST_LABELS[idSeed % FAST_LABELS.length];
       sig1Html = '<span class="pvc-live-signal pvc-live-signal--fast">' +
                  '<span class="pvc-live-dot"></span>' + fastLabel + '</span>';
-    } else if (activityLevel === 'active') {
-      sig1Html = '<span class="pvc-live-signal pvc-live-signal--active">' +
-                 '<span class="pvc-live-dot"></span>Actif cette semaine</span>';
     } else {
       sig1Html = '<span class="pvc-live-signal pvc-live-signal--rdv">' +
                  'Disponible sur RDV</span>';
@@ -267,12 +276,12 @@
       /* Even id → quality label; odd id → city (prevents all cards showing same text) */
       sig2Text = (idSeed % 2 === 0)
         ? '\u2b50 Tr\u00e8s bien not\u00e9'
-        : '\ud83d\udccd Intervient \u00e0 ' + city;
+        : '\ud83d\udccd Bas\u00e9 \u00e0 ' + city;
     } else if (_hasVerifiedReputation && rating >= 4.5) {
       sig2Text = '\ud83d\udc4d Artisan confirm\u00e9';
     } else {
       /* Honest city anchor — always available, never fabricated */
-      sig2Text = '\ud83d\udccd Intervient \u00e0 ' + city;
+      sig2Text = '\ud83d\udccd Bas\u00e9 \u00e0 ' + city;
     }
     var sig2Html = '<span class="pvc-live-signal pvc-live-signal--context">' + sig2Text + '</span>';
 
@@ -307,17 +316,14 @@
         + '<span class="pvc-avatar-silhouette" style="display:none"></span>'
       : '<span class="pvc-avatar-silhouette"></span>';
 
-    /* Availability badge — v13: use available_today for precision */
-    var isAvailToday = !!(a.available_today);
+    /* Availability badge — v2a: only show for explicit available_today.
+     * "available" cannot be trusted: loader defaults NULL→"available".
+     * Suppress badge for all non-explicit states. */
     var availHtml;
-    if (isAvailToday) {
-      availHtml = '<span class="pvc-avail-badge pvc-avail-badge--on">\ud83d\udfe2 Disponible</span>';
-    } else if (isAvail) {
-      availHtml = '<span class="pvc-avail-badge pvc-avail-badge--on">\ud83d\udfe2 Disponible</span>';
-    } else if (isToday) {
+    if (isToday || avail === 'available_today') {
       availHtml = '<span class="pvc-avail-badge pvc-avail-badge--today">\ud83d\udfe1 Disponible aujourd\u2019hui</span>';
     } else {
-      availHtml = '<span class="pvc-avail-badge pvc-avail-badge--off">Sur RDV</span>';
+      availHtml = '';
     }
 
     /* Rating — J1: tier-based credible state (no fake numbers, no "Évaluation en cours")
@@ -338,7 +344,8 @@
     } else if (_sq >= 70 || reviews >= 10) {
       _ratingStateText = 'S\u00e9lectionn\u00e9 Fixeo';
     } else {
-      _ratingStateText = 'Nouveau sur Fixeo';
+      /* v2a: no reliable onboarding date — neutral truthful fallback */
+      _ratingStateText = 'Profil r\u00e9f\u00e9renc\u00e9 sur FIXEO';
     }
     /* V1-H Phase 6: Remove static ★★★★★ for artisans without real data.
      * Master artisans (sq≥70 or reviews≥10) earned the label — show it cleanly.
@@ -376,7 +383,7 @@
   '<div class="pvc-avatar ' + (isVer ? ' pvc-avatar--verified' : '') + '" data-category="' + cat + '">' + avatarHtml + '<span class="pvc-avatar-badge">' + catIcon + '</span></div>' +
   '<div class="pvc-identity pvc-identity-final">' +
     '<h3 class="pvc-name">' + _esc(a.name || '-') + '</h3>' +
-    '<div class="pvc-line pvc-line-city">📍 ' + _esc(a.city || 'Maroc') + '</div>' +
+    '<div class="pvc-line pvc-line-city">📍 Bas\u00e9 \u00e0 ' + _esc(a.city || 'Maroc') + '</div>' +
     '<div class="pvc-line pvc-line-cat">' + catIcon + ' ' + catLbl + '</div>' +
     '<div class="pvc-line pvc-line-available">' + availHtml + '</div>' +
   '</div>' +
@@ -398,28 +405,27 @@
       /* Step 1 — Live marketplace signals (v13: replaces static fomo) */
       _liveSignalsHtml(a) +
 
-      /* Step 3 — Trust line after stats */
-      '<div class="pvc-trust-line">\u2714\ufe0f Artisan v\u00e9rifi\u00e9 \u2022 Paiement apr\u00e8s intervention</div>' +
+      /* Step 3 — Trust line (v2a): "Vérifié par FIXEO" gated on verified===true only.
+       * "Paiement après intervention" is a platform-level truth, always shown. */
+      (isVer ? '<div class="pvc-trust-line pvc-trust-line--verified">\u2714\ufe0f V\u00e9rifi\u00e9 par FIXEO \u00b7 Paiement apr\u00e8s intervention</div>'
+             : '<div class="pvc-trust-line pvc-trust-line--payment">Paiement apr\u00e8s intervention</div>') +
 
       /* ── Footer: price + CTAs ── */
       /* Step 2: clean vertical structure — label, amount, hint all in column */
       '<div class="pvc-footer">' +
+        /* v2a: single price message — no midpoint, no two competing prices */
         '<div class="pvc-price-block">' +
-          
-          '<div class="pvc-price-amount">Dès ' + pricing.from + '<span class="price-currency">MAD</span></div>' +
-          (function() {
-            var _cat = (a.category || a.service || '').toLowerCase().trim();
-            var _info = MAR_PRICES[_cat];
-            if (!_info || !_info.to) return '';
-            var _rec = Math.round((_info.from + _info.to) / 2);
-            /* T5: removed 'Marché' row — only Fixeo recommended price */
-            return '<span class="pvc-price-from">💡 Estimation Fixeo : ~' + _rec + ' MAD</span>';
-          })() +
+          '<div class="pvc-price-amount">' + _esc(pricing.main) + '</div>' +
+          '<span class="pvc-price-from">' + _esc(pricing.hint) + '</span>' +
         '</div>' +
         '<div class="pvc-cta-col">' +
           '<div class="pvc-cta-row">' +
-            '<button class="pvc-btn-reserve-v2 fhp-btn-reserve" type="button">Réserver maintenant</button>' +
-            '<span class="pvc-profile-link fhp-btn-profile">Voir profil →</span>' +
+            '<button class="pvc-btn-reserve-v2 fhp-btn-reserve" type="button"' +
+              ' aria-label="R\u00e9server ' + _esc(a.name) + ', ' + _esc(catLbl) + '">R\u00e9server maintenant</button>' +
+            /* v2a: semantic anchor — href valid without JS; modified clicks open new tab */
+            '<a class="pvc-profile-link fhp-btn-profile"' +
+              ' href="artisan-profile.html?id=' + encodeURIComponent(String(a.id)) + '">' +
+              'Voir son profil</a>' +
           '</div>' +
           /* under-CTA removed — paiement covered by trust-line above (T2) */
         '</div>' +
@@ -477,8 +483,11 @@
         e.preventDefault();
         _doReserve(a);
       } else if (e.target.closest('.fhp-btn-profile')) {
-        e.preventDefault();
-        _doProfile(a);
+        /* v2a: <a> — modified clicks (Ctrl/Cmd/Shift/middle) open new tab naturally */
+        if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
+          e.preventDefault();
+          _doProfile(a);
+        }
       } else {
         /* pf-nav: Whole-card click → public profile (reserve button handles booking) */
         e.preventDefault();
@@ -500,17 +509,41 @@
     });
   }
 
-  /* ── Section header + counter ── */
-  function _buildHeader(total, filteredCount) {
-    var artisans = window.ARTISANS || [];
-    // Count available + available_today (both = actively available)
-    var avail = artisans.filter(function(a){
-      return a.availability === 'available' || a.availability === 'available_today';
-    }).length;
-    // Use filtered count if filters are active
-    var ctx = _getFilterContext ? _getFilterContext() : {};
-    var hasFilters = !!(ctx.city || ctx.service || ctx.query);
-    var count = hasFilters && filteredCount > 0 ? filteredCount : (avail > 0 ? avail : total);
+  /* _buildHeader (v2a) — truthful state-aware section header.
+   * resultMode: 'unfiltered'|'exact'|'city_only'|'category_fallback'|'network_fallback'
+   * Counter = window.ARTISANS.length (total profiles, never availability count). */
+  function _buildHeader(total, filteredCount, resultMode) {
+    var artisans      = window.ARTISANS || [];
+    var totalProfiles = artisans.length || total || 0;
+    var ctx           = _getFilterContext ? _getFilterContext() : {};
+    var _cityName     = ctx.city || (typeof window.FIXEO_DETECTED_CITY === 'string' ? window.FIXEO_DETECTED_CITY : '') || '';
+    var _catLabel     = ctx.service ? (CAT_LABELS[ctx.service.toLowerCase()] || ctx.service) : '';
+    var mode          = resultMode || 'unfiltered';
+
+    var _titleText;
+    if (_cityName && _catLabel) {
+      _titleText = _catLabel + ' \u00e0 ' + _cityName;
+    } else if (_cityName) {
+      _titleText = 'Artisans \u00e0 ' + _cityName;
+    } else {
+      _titleText = 'Artisans du r\u00e9seau FIXEO';
+    }
+
+    var _subtitleText;
+    if (mode === 'exact') {
+      _subtitleText = 'Profils correspondant \u00e0 votre s\u00e9lection \u00b7 Paiement apr\u00e8s intervention';
+    } else if (mode === 'city_only') {
+      _subtitleText = 'Profils artisans r\u00e9f\u00e9renc\u00e9s dans la ville s\u00e9lectionn\u00e9e \u00b7 Paiement apr\u00e8s intervention';
+    } else if (mode === 'category_fallback') {
+      _subtitleText = 'Aucun profil exact dans cette ville. Voici des artisans du m\u00eame m\u00e9tier dans d\u2019autres villes.';
+    } else if (mode === 'network_fallback') {
+      _subtitleText = 'Aucun profil exact trouv\u00e9. D\u00e9couvrez d\u2019autres profils du r\u00e9seau FIXEO.';
+    } else {
+      _subtitleText = 'D\u00e9couvrez les profils artisans r\u00e9f\u00e9renc\u00e9s sur FIXEO.';
+    }
+
+    var countLabel = new Intl.NumberFormat('fr-FR').format(totalProfiles)
+      + '\u00a0profils artisans r\u00e9f\u00e9renc\u00e9s sur FIXEO';
 
     var el = _$(HEADER_ID);
     if (!el) {
@@ -520,26 +553,14 @@
       var pg = _$(GRID_ID);
       if (pg && pg.parentNode) pg.parentNode.insertBefore(el, pg);
     }
-    /* J1: platform total — never show a low filtered count as the marketplace signal.
-     * If filters are active, count still shows platform depth (avail > 0 ? avail : total).
-     * Filtered results count is a search-results concept, not a section header trust signal. */
-    var displayCount = avail > 0 ? avail : total;
-
-    /* K-1: dynamic title — city-aware when geo or manual city is known.
-     * Counter always stays national (displayCount = platform total).
-     * cityName is the explicit user pick or geo city — never a raw filter value. */
-    var _cityName = ctx.city || (typeof window.FIXEO_DETECTED_CITY === 'string' ? window.FIXEO_DETECTED_CITY : '') || '';
-    var _titleText = _cityName
-      ? 'Artisans disponibles \u00e0 ' + _cityName
-      : 'Artisans disponibles pr\u00e8s de vous';
 
     el.innerHTML =
       '<div class="fhp-header-copy">'+
         '<h2 class="fhp-title">' + _titleText + '</h2>'+
-        '<p class="fhp-subtitle">Disponibles dans votre ville \u00b7 Paiement apr\u00e8s intervention</p>'+
+        '<p class="fhp-subtitle">' + _subtitleText + '</p>'+
       '</div>'+
-      '<a class="fhp-see-all" href="index.html#artisans-section" onclick="event.preventDefault();if(window.FixeoClientRequest&&typeof FixeoClientRequest.open===\'function\'){FixeoClientRequest.open();}else{var s=document.getElementById(\'artisans-section\');if(s)s.scrollIntoView({behavior:\'smooth\'});}">'+
-        '<span class="fhp-counter">+'+displayCount.toLocaleString('fr-FR')+' artisans sur le réseau FIXEO</span>'+
+      '<a class="fhp-see-all" href="index.html#artisans-section" onclick="event.preventDefault();if(window.FixeoClientRequest&&typeof FixeoClientRequest.open===\'function\'){FixeoClientRequest.open();}else{var s=document.getElementById(\'artisans-section\');if(s)s.scrollIntoView({behavior:\'smooth\'});}">'+ 
+        '<span class="fhp-counter">' + countLabel + '</span>'+
         '<span class="fhp-see-all-arrow">\u2192</span>'+
       '</a>';
   }
@@ -660,47 +681,44 @@
     } else {
       list = fullList;
     }
-    /* V1-D: sparse-market fallback hierarchy:
-     * 1. Filtered results (exact city + category match)
-     * 2. Category-only match (drop city) — artisans in other cities
-     * 3. Full list (no filters)
-     * This gives "honest density" — client sees real artisans but understands city context. */
-    if (!list.length && hasFilters) {
-      /* Try: same category, any city */
+    /* v2a: Fallback hierarchy + explicit result-mode tracking for truthful subtitle */
+    var resultMode;
+    if (!hasFilters) {
+      resultMode = 'unfiltered';
+    } else if (list.length) {
       if (ctx.city && ctx.service) {
-        var catOnly = { city: '', service: ctx.service, query: ctx.query };
+        resultMode = 'exact';
+      } else if (ctx.city) {
+        resultMode = 'city_only';
+      } else {
+        resultMode = 'exact';
+      }
+    }
+
+    if (!list.length && hasFilters) {
+      if (ctx.city && ctx.service) {
         var seStateCat = { query: ctx.query, category: ctx.service, city: '', sortBy: 'rating', availability: '', minRating: 0, maxPrice: 0, verifiedOnly: false };
         var catResults = window.searchEngine ? window.searchEngine.filter(seStateCat) : [];
-        list = catResults.length ? catResults : fullList;
-        if (catResults.length) window._fxDensityMode = 'category-fallback';
+        if (catResults.length) {
+          list = catResults;
+          resultMode = 'category_fallback';
+        } else {
+          list = fullList;
+          resultMode = 'network_fallback';
+        }
       } else {
         list = fullList;
+        resultMode = 'network_fallback';
       }
-    } else {
-      window._fxDensityMode = null;
     }
 
     var pg = _getOrCreateGrid();
 
-    /* Use SecondarySearch renderer if available, else local _buildCard */
-    var renderCard;
-    if (window.SecondarySearch && typeof window.SecondarySearch.renderVedetteCard === 'function') {
-      var _orig = window.SecondarySearch.renderVedetteCard.bind(window.SecondarySearch);
-      /* Wrap to add delegation classes + data-artisan */
-      renderCard = function(a, i) {
-        var html = _orig(a);
-        /* Inject data-artisan and fhp-card class into the article tag */
-        var dataStr = ' data-artisan=\''+JSON.stringify(a).replace(/'/g,'&#39;')+'\'';
-        html = html.replace(/^<article /, '<article class="fhp-card" '+dataStr+' ');
-        html = html.replace('<article class="fhp-card" ', '<article class="fhp-card" style="--anim-delay:'+i+';" ');
-        return html;
-      };
-    } else {
-      renderCard = _buildCard;
-    }
-
+    /* v2a: _buildCard() is the CANONICAL homepage artisan card renderer.
+     * SecondarySearch.renderVedetteCard is dead code (not exported at runtime).
+     * Permanently bypassed. Do not re-introduce without a full markup audit. */
     var sorted = _sortList(list, ctx).slice(0, MAX_CARDS);
-    pg.innerHTML = sorted.map(renderCard).join('');
+    pg.innerHTML = sorted.map(_buildCard).join('');
     /* Signal sections-ready immediately after innerHTML so anti-FOUC CSS resolves
        in the same paint frame — do NOT defer this to rAF. */
     document.body.classList.add('fixeo-sections-ready');
@@ -712,18 +730,9 @@
       pg.removeEventListener('click', pg._fhpDelegate);
       _bindGridDelegation(pg);
 
-      if (window.SecondarySearch && typeof window.SecondarySearch.renderVedetteCard === 'function') {
-        pg.querySelectorAll('.pvc-btn-primary, .ssb2-btn-reserve').forEach(function(btn){
-          btn.onclick = null;
-          btn.classList.add('fhp-btn-reserve');
-        });
-        pg.querySelectorAll('.pvc-btn-secondary, .ssb2-btn-profile').forEach(function(btn){
-          btn.onclick = null;
-          btn.classList.add('fhp-btn-profile');
-        });
-      }
+      /* v2a: SecondarySearch post-render class reassignment removed (dead code). */
 
-      _buildHeader(list.length, sorted.length);
+      _buildHeader(list.length, sorted.length, resultMode);
       _buildExploreStrip(ctx);   /* K-2: city exploration strip below carousel */
       _triggerFadeIn(pg);
     });
