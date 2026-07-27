@@ -26,6 +26,14 @@
  *   - PNG/WebP both fail → silhouette, no broken-image icon visible.
  *   - Unknown category → silhouette (never defaults to Plomberie).
  *   - FixeoHeroes.getCardAvatar() used for all métier resolution.
+ * fxhome-artisans-v2b1.1: deterministic staged fallback —
+ *   - Single <img> with explicit staged onerror; no hidden <picture> with live src/srcset.
+ *   - Tier 1 (real photo): only real photo URL assigned; zero métier requests until onerror.
+ *   - Tier 2 (métier WebP): assigned by onerror handler; img src set to WebP explicitly.
+ *   - Tier 3 (métier PNG): WebP onerror assigns PNG src directly; no <picture> format guessing.
+ *   - Tier 4 (silhouette): PNG onerror hides img, shows silhouette, clears alt.
+ *   - alt and data-avatar-type updated at each stage transition.
+ *   - _avatarSetStage() page-local helper; no new global API.
  * ─────────────────────────────────────────────────────────────────────────────
  */
 (function (window) {
@@ -283,71 +291,56 @@
     var rtLabel  = null;
     var misLabel = null;
 
-    /* Avatar — three-tier fallback (fxhome-artisans-v2b1):
-     *   Tier 1: real artisan photo  (data-avatar-type="real-photo")
-     *   Tier 2: illustrative métier <picture>  (data-avatar-type="illustrative-metier")
-     *   Tier 3: neutral CSS silhouette
+    /* Avatar — deterministic staged fallback (fxhome-artisans-v2b1.1):
      *
-     * Real photo onerror drops to Tier 2 when a métier avatar exists, or Tier 3.
-     * Métier <picture> PNG img onerror drops to Tier 3.
-     * Unknown category goes directly to Tier 3 — never defaults to Plomberie.
+     *   Stage 1 — real photo         src=photo   data-avatar-type="real-photo"
+     *   Stage 2 — métier WebP        src=webp    data-avatar-type="illustrative-metier"
+     *   Stage 3 — métier PNG         src=png     data-avatar-type="illustrative-metier"
+     *   Stage 4 — CSS silhouette     img hidden  silhouette span shown
+     *
+     * A single <img> carries all stages via sequential onerror assignments.
+     * No hidden <picture> with live src/srcset — zero speculative requests.
+     * Stage transitions update alt and data-avatar-type in place.
+     * _avatarSetStage() is a page-local helper (not a global).
      */
     var avatarSrc  = a.avatar || a.photo || a.photo_url || '';
     var cardAvatar = (window.FixeoHeroes && window.FixeoHeroes.getCardAvatar)
       ? window.FixeoHeroes.getCardAvatar(cat)
       : null;
 
-    var _metierPicHtml = cardAvatar
-      ? '<picture class="pvc-avatar-metier" aria-hidden="false">'
-          + '<source type="image/webp" srcset="' + cardAvatar.webp + '">'
-          + '<img class="pvc-avatar-img" src="' + cardAvatar.png + '"'
-              + ' alt="' + _esc(cardAvatar.alt) + '"'
-              + ' data-avatar-type="illustrative-metier"'
-              + ' width="72" height="72" loading="lazy" decoding="async"'
-              + ' onerror="this.onerror=null;'
-                + 'var p=this.closest(\'picture\')||this.parentNode;'
-                + 'if(p&&p.tagName===\'PICTURE\'){p.style.display=\'none\';}else{this.style.display=\'none\';}'
-                + 'var sb=this.closest(\'.pvc-avatar\')&&this.closest(\'.pvc-avatar\').querySelector(\'.pvc-avatar-silhouette\');'
-                + 'if(sb)sb.style.display=\'block\';">'
-          + '</picture>'
-          + '<span class="pvc-avatar-silhouette" style="display:none"></span>'
-      : '<span class="pvc-avatar-silhouette"></span>';
-
+    /* Encode fallback URLs as data-attributes so the onerror handler can read
+     * them without closing over mutable JS variables from the card loop. */
     var avatarHtml;
     if (avatarSrc) {
-      /* Tier 1: real photo. onerror cascades to Tier 2 (métier) or Tier 3 (silhouette). */
-      var _metierOnError = cardAvatar
-        ? 'this.onerror=null;this.style.display=\'none\';'
-            + 'var mp=this.parentNode&&this.parentNode.querySelector(\'.pvc-avatar-metier\');'
-            + 'if(mp){mp.style.display=\'\';}else{'
-            + 'var sb=this.parentNode&&this.parentNode.querySelector(\'.pvc-avatar-silhouette\');'
-            + 'if(sb)sb.style.display=\'block\';}'
-        : 'this.onerror=null;this.style.display=\'none\';'
-            + 'var sb=this.parentNode&&this.parentNode.querySelector(\'.pvc-avatar-silhouette\');'
-            + 'if(sb)sb.style.display=\'block\';';
-      avatarHtml = '<img class="pvc-avatar-img" src="' + _esc(avatarSrc) + '"'
-        + ' alt="' + _esc(a.name) + '"'
+      /* Stage 1: real photo. Métier URLs stored in data attrs — NOT assigned to
+       * src/srcset yet, so no browser request is issued until onerror fires. */
+      avatarHtml =
+        '<img class="pvc-avatar-img"'
+        + ' src="'                   + _esc(avatarSrc)                          + '"'
+        + ' alt="'                   + _esc(a.name)                             + '"'
         + ' data-avatar-type="real-photo"'
-        + ' loading="lazy" width="72" height="72"'
-        + ' onerror="' + _metierOnError + '">'
-        + (cardAvatar
-            ? '<picture class="pvc-avatar-metier" style="display:none" aria-hidden="false">'
-                + '<source type="image/webp" srcset="' + cardAvatar.webp + '">'
-                + '<img class="pvc-avatar-img" src="' + cardAvatar.png + '"'
-                    + ' alt="' + _esc(cardAvatar.alt) + '"'
-                    + ' data-avatar-type="illustrative-metier"'
-                    + ' width="72" height="72" loading="lazy" decoding="async"'
-                    + ' onerror="this.onerror=null;'
-                      + 'var p=this.closest(\'picture\')||this.parentNode;'
-                      + 'if(p&&p.tagName===\'PICTURE\'){p.style.display=\'none\';}else{this.style.display=\'none\';}'
-                      + 'var sb=this.closest(\'.pvc-avatar\')&&this.closest(\'.pvc-avatar\').querySelector(\'.pvc-avatar-silhouette\');'
-                      + 'if(sb)sb.style.display=\'block\';">'
-                + '</picture>'
-            : '')
+        + ' data-webp="'             + (cardAvatar ? _esc(cardAvatar.webp) : '') + '"'
+        + ' data-png="'              + (cardAvatar ? _esc(cardAvatar.png)  : '') + '"'
+        + ' data-alt-metier="'       + (cardAvatar ? _esc(cardAvatar.alt)  : '') + '"'
+        + ' width="72" height="72" loading="lazy" decoding="async"'
+        + ' onerror="_fxAvStage(this)">'
+        + '<span class="pvc-avatar-silhouette" style="display:none"></span>';
+    } else if (cardAvatar) {
+      /* Stage 2 start: no real photo, load WebP immediately. PNG stored in data attr. */
+      avatarHtml =
+        '<img class="pvc-avatar-img"'
+        + ' src="'                   + _esc(cardAvatar.webp)                    + '"'
+        + ' alt="'                   + _esc(cardAvatar.alt)                     + '"'
+        + ' data-avatar-type="illustrative-metier"'
+        + ' data-webp=""'
+        + ' data-png="'              + _esc(cardAvatar.png)                     + '"'
+        + ' data-alt-metier="'       + _esc(cardAvatar.alt)                     + '"'
+        + ' width="72" height="72" loading="lazy" decoding="async"'
+        + ' onerror="_fxAvStage(this)">'
         + '<span class="pvc-avatar-silhouette" style="display:none"></span>';
     } else {
-      /* No real photo: go directly to Tier 2 or Tier 3. */
-      avatarHtml = _metierPicHtml;
+      /* Stage 4 direct: unknown category — silhouette only, no requests. */
+      avatarHtml = '<span class="pvc-avatar-silhouette"></span>';
     }
 
     /* Availability badge — v2a: only show for explicit available_today.
@@ -476,6 +469,69 @@
       return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
     });
   }
+
+  /* ── Avatar staged fallback helper (fxhome-artisans-v2b1.1) ──────────────
+   * Called by inline onerror="_fxAvStage(this)" on every avatar <img>.
+   *
+   * Stage machine driven by data-avatar-type + data-webp + data-png:
+   *
+   *   "real-photo"  + data-webp present  → load WebP  (stage 2)
+   *   "real-photo"  + data-webp empty    → silhouette (stage 4)
+   *   "illustrative-metier" + current src is data-webp (or data-webp empty)
+   *                          + data-png present        → load PNG (stage 3)
+   *   "illustrative-metier" + PNG already tried        → silhouette (stage 4)
+   *
+   * Exposed on window so inline onerror attributes can reach it.
+   * Name is intentionally short and collision-resistant (_fxAvStage).
+   * ──────────────────────────────────────────────────────────────────────── */
+  function _avatarSetStage(img) {
+    if (!img) return;
+    /* Prevent any future onerror re-entry before we reassign src */
+    img.onerror = null;
+
+    var type = img.getAttribute('data-avatar-type') || '';
+    var webp = img.getAttribute('data-webp') || '';
+    var png  = img.getAttribute('data-png')  || '';
+    var altM = img.getAttribute('data-alt-metier') || '';
+
+    var sb = img.parentNode && img.parentNode.querySelector('.pvc-avatar-silhouette');
+
+    function _showSilhouette() {
+      img.style.display = 'none';
+      img.removeAttribute('alt');
+      if (sb) sb.style.display = 'block';
+    }
+
+    if (type === 'real-photo') {
+      /* Stage 1 failed → try WebP (stage 2) */
+      if (webp) {
+        img.setAttribute('data-avatar-type', 'illustrative-metier');
+        img.setAttribute('alt', altM);
+        img.onerror = function() { _avatarSetStage(img); };
+        img.src = webp;
+        /* Clear data-webp so next onerror knows WebP already tried */
+        img.setAttribute('data-webp', '');
+      } else {
+        _showSilhouette();
+      }
+    } else if (type === 'illustrative-metier') {
+      /* Stage 2 (WebP) failed → try PNG (stage 3) */
+      if (png && img.src.indexOf(png) === -1) {
+        img.onerror = function() { _avatarSetStage(img); };
+        img.src = png;
+        /* Clear data-png so next onerror knows PNG already tried */
+        img.setAttribute('data-png', '');
+      } else {
+        /* Stage 3 (PNG) failed → silhouette (stage 4) */
+        _showSilhouette();
+      }
+    } else {
+      _showSilhouette();
+    }
+  }
+
+  /* Expose on window for inline onerror access */
+  window._fxAvStage = _avatarSetStage;
 
   /* ── Actions ── */
   function _doReserve(a) {
