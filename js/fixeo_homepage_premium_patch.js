@@ -219,56 +219,39 @@
    *   rating >= 4.5 → "Artisan recommandé"
    *   else          → "Intervient à {city}"
    * ─────────────────────────────────────────────────────────── */
+  /* _liveSignalsHtml (v2a.2) — factual reputation only.
+   *
+   * Rules:
+   *   - No qualitative labels: no "Très bien noté", "Artisan confirmé",
+   *     "recommandé", "populaire", "expérimenté", "réputé",
+   *     "de confiance", "très demandé", "meilleur".
+   *   - Reputation signal only when BOTH rating > 0 AND reviews > 0 from real data.
+   *   - score_qualification never converted to stars or review labels.
+   *   - City shown ONCE: the dedicated location line is canonical.
+   *     This function never emits a city signal.
+   *   - When no signal: return '' (no empty container). */
   function _liveSignalsHtml(a) {
-    var sq      = parseInt(a.score_qualification || 0, 10);
-    var reviews = parseInt(a.reviewCount || a.reviews || 0, 10);
+    var reviews = parseInt(a.reviewCount || a.reviews || a.review_count || 0, 10);
     var rating  = parseFloat(a.rating || 0);
-    var city    = _esc(a.city || '');  /* v2a.1: empty string — sig2 guards below */
-    /* Use artisan id as deterministic variation seed — same artisan = same signals
-     * on every render; different artisans = natural variation across the grid.
-     * IDs may be UUIDs (Supabase) or numeric ints (master artisans).
-     * For UUIDs: derive seed from character code sum of the id string. */
-    var _idStr = String(a.id || '0');
-    var idSeed = 0;
-    for (var _ci = 0; _ci < _idStr.length; _ci++) { idSeed += _idStr.charCodeAt(_ci); }
 
-    /* v2a.1: No sig1 activity tier — all removed.
-     * No 'Disponible sur RDV', no fast-tier labels, no activity claims.
-     * sig2 (city/rating-backed reputation) is the only signal displayed. */
-    var sig1Html = '';
+    /* Genuine factual data required: both values must be present and > 0. */
+    var hasFactualRating = (rating > 0 && reviews > 0);
 
-
-    /* ── Sig2 context signal ──
-     * High-rating artisans: alternate between quality signal and city signal
-     * by id parity → prevents all 6 cards from showing "Très bien noté". */
-    /* V1-TC Trust Cleanup: rating signals only when backed by real review depth.
-     * Same gate as profile page: (rating >= 4.5 AND reviews >= 10) OR sq >= 70.
-     * Without review floor, "★ Très bien noté" is as fabricated as 5 static stars.
-     * For artisans below threshold: always show city anchoring — which is honest. */
-    var _sig2ReviewFloor = parseInt(a.reviewCount || a.reviews || a.review_count || 0, 10);
-    var _sig2SqVal = parseInt(a.score_qualification || 0, 10);
-    var _hasVerifiedReputation = (_sig2ReviewFloor >= 10 && rating >= 4.5) || _sig2SqVal >= 70;
-
-    /* v2a.1: sig2 city guard — never emit "Basé à" with empty or fallback city.
-     * When no verified reputation AND no city: emit nothing (sig2 becomes empty). */
-    var sig2Text;
-    if (_hasVerifiedReputation && rating >= 4.8) {
-      sig2Text = (idSeed % 2 === 0 || !city)
-        ? '\u2b50 Tr\u00e8s bien not\u00e9'
-        : '\ud83d\udccd Bas\u00e9 \u00e0 ' + city;
-    } else if (_hasVerifiedReputation && rating >= 4.5) {
-      sig2Text = '\ud83d\udc4d Artisan confirm\u00e9';
-    } else if (city) {
-      /* Honest city anchor — only when city is genuinely known */
-      sig2Text = '\ud83d\udccd Bas\u00e9 \u00e0 ' + city;
-    } else {
-      sig2Text = '';  /* no city, no verified rep — no fabricated signal */
+    if (!hasFactualRating) {
+      return '';  /* no signal at all — no empty container */
     }
-    var sig2Html = sig2Text
-      ? '<span class="pvc-live-signal pvc-live-signal--context">' + sig2Text + '</span>'
-      : '';
 
-    return '<div class="pvc-live-signals">' + sig2Html + '</div>';
+    /* Format: "⭐ 4,8 · 24 avis" using fr-FR locale for decimal separator. */
+    var ratingFormatted = rating.toLocaleString('fr-FR', {
+      minimumFractionDigits: 1,
+      maximumFractionDigits: 1
+    });
+    var avisLabel = reviews === 1 ? '1 avis' : reviews + ' avis';
+    var sigText = '\u2b50 ' + ratingFormatted + ' \u00b7 ' + avisLabel;
+
+    return '<div class="pvc-live-signals">' +
+      '<span class="pvc-live-signal pvc-live-signal--rating">' + sigText + '</span>' +
+    '</div>';
   }
 
   /* ─── Premium card builder v2 ───────────────────────────────── */
