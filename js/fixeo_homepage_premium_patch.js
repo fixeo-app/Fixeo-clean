@@ -309,11 +309,18 @@
       : null;
 
     /* Encode fallback URLs as data-attributes so the onerror handler can read
-     * them without closing over mutable JS variables from the card loop. */
+     * them without closing over mutable JS variables from the card loop.
+     *
+     * data-avatar-state on the .pvc-avatar container (fxhome-artisans-v2b1.2):
+     * CSS rules gate exactly one child visible per state.
+     * JS sets it at render time; _avatarSetStage updates it on every transition.
+     */
+    var avatarInitialState; /* "real-photo" | "illustrative-metier" | "silhouette" */
     var avatarHtml;
     if (avatarSrc) {
       /* Stage 1: real photo. Métier URLs stored in data attrs — NOT assigned to
        * src/srcset yet, so no browser request is issued until onerror fires. */
+      avatarInitialState = 'real-photo';
       avatarHtml =
         '<img class="pvc-avatar-img"'
         + ' src="'                   + _esc(avatarSrc)                          + '"'
@@ -324,9 +331,10 @@
         + ' data-alt-metier="'       + (cardAvatar ? _esc(cardAvatar.alt)  : '') + '"'
         + ' width="72" height="72" loading="lazy" decoding="async"'
         + ' onerror="_fxAvStage(this)">'
-        + '<span class="pvc-avatar-silhouette" style="display:none"></span>';
+        + '<span class="pvc-avatar-silhouette"></span>';
     } else if (cardAvatar) {
       /* Stage 2 start: no real photo, load WebP immediately. PNG stored in data attr. */
+      avatarInitialState = 'illustrative-metier';
       avatarHtml =
         '<img class="pvc-avatar-img"'
         + ' src="'                   + _esc(cardAvatar.webp)                    + '"'
@@ -337,9 +345,10 @@
         + ' data-alt-metier="'       + _esc(cardAvatar.alt)                     + '"'
         + ' width="72" height="72" loading="lazy" decoding="async"'
         + ' onerror="_fxAvStage(this)">'
-        + '<span class="pvc-avatar-silhouette" style="display:none"></span>';
+        + '<span class="pvc-avatar-silhouette"></span>';
     } else {
       /* Stage 4 direct: unknown category — silhouette only, no requests. */
+      avatarInitialState = 'silhouette';
       avatarHtml = '<span class="pvc-avatar-silhouette"></span>';
     }
 
@@ -407,7 +416,7 @@
 
       /* — Header — */
 '<div class="pvc-card-header pvc-card-header-final">' +
-  '<div class="pvc-avatar ' + (isVer ? ' pvc-avatar--verified' : '') + '" data-category="' + cat + '">' + avatarHtml + '<span class="pvc-avatar-badge">' + catIcon + '</span></div>' +
+  '<div class="pvc-avatar ' + (isVer ? ' pvc-avatar--verified' : '') + '" data-category="' + cat + '" data-avatar-state="' + avatarInitialState + '">' + avatarHtml + '<span class="pvc-avatar-badge">' + catIcon + '</span></div>' +
   '<div class="pvc-identity pvc-identity-final">' +
     '<h3 class="pvc-name">' + _esc(a.name || '-') + '</h3>' +
     /* v2a.1: "Basé à Maroc" forbidden — use "Profil au Maroc" for missing city */
@@ -494,12 +503,21 @@
     var png  = img.getAttribute('data-png')  || '';
     var altM = img.getAttribute('data-alt-metier') || '';
 
-    var sb = img.parentNode && img.parentNode.querySelector('.pvc-avatar-silhouette');
+    var container = img.parentNode;
+    var sb = container && container.querySelector('.pvc-avatar-silhouette');
+
+    /* Update data-avatar-state on container — CSS gates visibility per state. */
+    function _setState(state) {
+      if (container && container.setAttribute) {
+        container.setAttribute('data-avatar-state', state);
+      }
+    }
 
     function _showSilhouette() {
+      _setState('silhouette');
       img.style.display = 'none';
       img.removeAttribute('alt');
-      if (sb) sb.style.display = 'block';
+      /* Silhouette span needs no explicit show — CSS state gate handles it. */
     }
 
     if (type === 'real-photo') {
@@ -507,6 +525,7 @@
       if (webp) {
         img.setAttribute('data-avatar-type', 'illustrative-metier');
         img.setAttribute('alt', altM);
+        _setState('illustrative-metier');
         img.onerror = function() { _avatarSetStage(img); };
         img.src = webp;
         /* Clear data-webp so next onerror knows WebP already tried */
@@ -517,6 +536,7 @@
     } else if (type === 'illustrative-metier') {
       /* Stage 2 (WebP) failed → try PNG (stage 3) */
       if (png && img.src.indexOf(png) === -1) {
+        /* State stays "illustrative-metier" — still showing métier avatar */
         img.onerror = function() { _avatarSetStage(img); };
         img.src = png;
         /* Clear data-png so next onerror knows PNG already tried */
