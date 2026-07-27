@@ -223,7 +223,7 @@
     var sq      = parseInt(a.score_qualification || 0, 10);
     var reviews = parseInt(a.reviewCount || a.reviews || 0, 10);
     var rating  = parseFloat(a.rating || 0);
-    var city    = _esc(a.city || 'Maroc');
+    var city    = _esc(a.city || '');  /* v2a.1: empty string — sig2 guards below */
     /* Use artisan id as deterministic variation seed — same artisan = same signals
      * on every render; different artisans = natural variation across the grid.
      * IDs may be UUIDs (Supabase) or numeric ints (master artisans).
@@ -232,33 +232,11 @@
     var idSeed = 0;
     for (var _ci = 0; _ci < _idStr.length; _ci++) { idSeed += _idStr.charCodeAt(_ci); }
 
-    /* ── v2a: Sig1 activity tier ──
-     * "Actif cette semaine" removed — sq=0 for all Supabase artisans;
-     * the 'active' tier fired via isAvailNow for virtually every imported profile.
-     * Two truthful tiers: fast (sq≥90 or reviews≥100) and rdv (everyone else). */
-    var activityLevel;
-    if (sq >= 90 || reviews >= 100) {
-      activityLevel = 'fast';
-    } else {
-      activityLevel = 'rdv';
-    }
+    /* v2a.1: No sig1 activity tier — all removed.
+     * No 'Disponible sur RDV', no fast-tier labels, no activity claims.
+     * sig2 (city/rating-backed reputation) is the only signal displayed. */
+    var sig1Html = '';
 
-    /* Fast-tier: 3 variants rotated by id. */
-    var FAST_LABELS = [
-      'Répond rapidement',
-      'Actif aujourd’hui',
-      'Intervention rapide'
-    ];
-
-    var sig1Html;
-    if (activityLevel === 'fast') {
-      var fastLabel = FAST_LABELS[idSeed % FAST_LABELS.length];
-      sig1Html = '<span class="pvc-live-signal pvc-live-signal--fast">' +
-                 '<span class="pvc-live-dot"></span>' + fastLabel + '</span>';
-    } else {
-      sig1Html = '<span class="pvc-live-signal pvc-live-signal--rdv">' +
-                 'Disponible sur RDV</span>';
-    }
 
     /* ── Sig2 context signal ──
      * High-rating artisans: alternate between quality signal and city signal
@@ -271,21 +249,26 @@
     var _sig2SqVal = parseInt(a.score_qualification || 0, 10);
     var _hasVerifiedReputation = (_sig2ReviewFloor >= 10 && rating >= 4.5) || _sig2SqVal >= 70;
 
+    /* v2a.1: sig2 city guard — never emit "Basé à" with empty or fallback city.
+     * When no verified reputation AND no city: emit nothing (sig2 becomes empty). */
     var sig2Text;
     if (_hasVerifiedReputation && rating >= 4.8) {
-      /* Even id → quality label; odd id → city (prevents all cards showing same text) */
-      sig2Text = (idSeed % 2 === 0)
+      sig2Text = (idSeed % 2 === 0 || !city)
         ? '\u2b50 Tr\u00e8s bien not\u00e9'
         : '\ud83d\udccd Bas\u00e9 \u00e0 ' + city;
     } else if (_hasVerifiedReputation && rating >= 4.5) {
       sig2Text = '\ud83d\udc4d Artisan confirm\u00e9';
-    } else {
-      /* Honest city anchor — always available, never fabricated */
+    } else if (city) {
+      /* Honest city anchor — only when city is genuinely known */
       sig2Text = '\ud83d\udccd Bas\u00e9 \u00e0 ' + city;
+    } else {
+      sig2Text = '';  /* no city, no verified rep — no fabricated signal */
     }
-    var sig2Html = '<span class="pvc-live-signal pvc-live-signal--context">' + sig2Text + '</span>';
+    var sig2Html = sig2Text
+      ? '<span class="pvc-live-signal pvc-live-signal--context">' + sig2Text + '</span>'
+      : '';
 
-    return '<div class="pvc-live-signals">' + sig1Html + sig2Html + '</div>';
+    return '<div class="pvc-live-signals">' + sig2Html + '</div>';
   }
 
   /* ─── Premium card builder v2 ───────────────────────────────── */
@@ -298,7 +281,8 @@
     var reviews  = parseInt(a.reviewCount || a.reviews || a.review_count || 0, 10);
     var trust    = parseInt(a.trustScore || 0, 10);
     var rt       = parseInt(a.responseTime || 999, 10);
-    var isVer    = !!(a.verified || a.certified || trust >= 85);
+    /* v2a.1: strict gate — verified===true ONLY; certified and trustScore removed */
+    var isVer    = (a.verified === true);
     var isClaimed= !!(a.claimed);
     var avail    = (a.availability || '').toLowerCase();
     var isAvail  = avail === 'available' || a.available;
@@ -383,7 +367,10 @@
   '<div class="pvc-avatar ' + (isVer ? ' pvc-avatar--verified' : '') + '" data-category="' + cat + '">' + avatarHtml + '<span class="pvc-avatar-badge">' + catIcon + '</span></div>' +
   '<div class="pvc-identity pvc-identity-final">' +
     '<h3 class="pvc-name">' + _esc(a.name || '-') + '</h3>' +
-    '<div class="pvc-line pvc-line-city">📍 Bas\u00e9 \u00e0 ' + _esc(a.city || 'Maroc') + '</div>' +
+    /* v2a.1: "Basé à Maroc" forbidden — use "Profil au Maroc" for missing city */
+        (a.city
+          ? '<div class="pvc-line pvc-line-city">📍 Bas\u00e9 \u00e0 ' + _esc(a.city) + '</div>'
+          : '<div class="pvc-line pvc-line-city">Profil au Maroc</div>') +
     '<div class="pvc-line pvc-line-cat">' + catIcon + ' ' + catLbl + '</div>' +
     '<div class="pvc-line pvc-line-available">' + availHtml + '</div>' +
   '</div>' +
@@ -520,10 +507,13 @@
     var _catLabel     = ctx.service ? (CAT_LABELS[ctx.service.toLowerCase()] || ctx.service) : '';
     var mode          = resultMode || 'unfiltered';
 
+    /* v2a.1: title matrix
+     * city + category  → "Artisans à [CITY]"          (city always wins for clarity)
+     * city only        → "Artisans à [CITY]"
+     * category only    → "Artisans du réseau FIXEO"   (never "[CAT] à [none]")
+     * no filter        → "Artisans du réseau FIXEO" */
     var _titleText;
-    if (_cityName && _catLabel) {
-      _titleText = _catLabel + ' \u00e0 ' + _cityName;
-    } else if (_cityName) {
+    if (_cityName) {
       _titleText = 'Artisans \u00e0 ' + _cityName;
     } else {
       _titleText = 'Artisans du r\u00e9seau FIXEO';
