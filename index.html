@@ -3307,12 +3307,41 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
 <style id="fxhome-sit-v2">
 
 /* ════════════════════════════════════════════════════════════════════
-   §1  SECTION SHELL OVERRIDES
-   Preserves fc3-chapter padding/bg; adjusts header copy rhythm only.
+   fxhome-situations-v2.2 — consolidated mobile polish
+   Namespace: fxsit-* (page-scoped to this <style> block + index.html)
+   10 sections:
+     §1  shell
+     §2  reset control
+     §3  shared card system (primary + additional unified)
+     §4  primary grid container
+     §5  additional grid container (class: fxsit-additional-grid)
+     §6  disclosure control
+     §7  compact city row
+     §8  "Voir tous les services" link
+     §9  reduced-motion
+     §10 responsive
+   Specialized pill suppression: §0 (guard rule, highest priority in block)
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ════════════════════════════════════════════════════════════════════
+   §0  SPECIALIZED PILL SUPPRESSION
+   Hides the 3 injected pills from fixeo_homepage_premium_patch.js.
+   Scoped exclusively to #services. Does not affect services.html.
+   ════════════════════════════════════════════════════════════════════ */
+
+#services [data-category="energie-solaire"],
+#services [data-category="securite-surveillance"],
+#services [data-category="corporate-facilities"] {
+  display: none !important;
+}
+
+
+/* ════════════════════════════════════════════════════════════════════
+   §1  SECTION SHELL
    ════════════════════════════════════════════════════════════════════ */
 
 #services.fc3-chapter .fc3-header {
-  margin-bottom: clamp(20px, 3vw, 32px);
+  margin-bottom: clamp(16px, 2.5vw, 28px);
 }
 
 #services.fc3-chapter .fc3-eyebrow {
@@ -3336,18 +3365,16 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
 
 /* ════════════════════════════════════════════════════════════════════
    §2  RESET CONTROL — "Tous les artisans"
-   Compact, full-width, above the grid. Not a service-chip.
    ════════════════════════════════════════════════════════════════════ */
 
 .fxsit-reset-wrap {
   display: flex;
   justify-content: center;
-  margin: 0 auto clamp(20px, 3vw, 28px);
+  margin: 0 auto clamp(16px, 2.5vw, 24px);
   max-width: 900px;
 }
 
 .fxsit-reset-btn {
-  /* Preserved: .chip.service-chip[data-category="all"] semantics */
   appearance: none;
   -webkit-appearance: none;
   display: inline-flex;
@@ -3374,7 +3401,6 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
   color: rgba(230,236,255,0.90);
 }
 
-/* Active state — when "all" is selected */
 .fxsit-reset-btn.active,
 .fxsit-reset-btn[aria-pressed="true"] {
   background: rgba(72,100,255,0.12);
@@ -3388,7 +3414,6 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
   outline-offset: 3px;
 }
 
-/* Star icon */
 .fxsit-reset-icon {
   font-size: 0.92rem;
   opacity: 0.70;
@@ -3398,41 +3423,55 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
 
 
 /* ════════════════════════════════════════════════════════════════════
-   §3  SITUATION CARD GRID — primary (6 cards, always visible)
-   Overrides fc3-chapter's 3-col to force 2-col for even rows.
+   §3  SHARED CARD SYSTEM
+   One unified rule for all 12 situation cards (primary + additional).
+   Min-height: 96px — accommodates longest 2-line titles at 375px.
+   Active state, urgency badge, icon, label: all shared.
    ════════════════════════════════════════════════════════════════════ */
 
-#services.fc3-chapter .fxsit-primary-grid {
-  display: grid !important;
-  grid-template-columns: repeat(2, 1fr) !important;
-  gap: 12px !important;
-  max-width: 680px !important;
-  margin: 0 auto clamp(14px, 2vw, 20px) !important;
-  padding: 0 !important;
-  flex-wrap: unset !important;
-  justify-content: unset !important;
-}
-
-/* Override fc3-card base (fixeo-chapter-3-v1.css) for our grid context */
-#services.fc3-chapter .fxsit-primary-grid .fc3-card,
-#services.fc3-chapter .fxsit-primary-grid .fc3-card.chip.service-chip {
-  min-height: 92px !important;
-  padding: 16px 14px 14px !important;
+/* — Base card — */
+#services.fc3-chapter .fxsit-card {
+  /* Layout */
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 6px !important;
+  min-height: 96px !important;
+  padding: 14px 12px 12px !important;
   border-radius: 14px !important;
-  gap: 8px !important;
-  /* Initial state: calm, no preselection glow */
+  /* Geometry */
+  width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+  /* Visual — calm default */
   background: rgba(255,255,255,0.030) !important;
   border: 1px solid rgba(72,100,255,0.10) !important;
   border-top: 1.5px solid rgba(72,100,255,0.14) !important;
   box-shadow: none !important;
-  /* Entrance animation */
-  animation: fxsit-card-enter 0.38s ease both;
+  /* Interaction */
+  cursor: pointer !important;
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.15s ease !important;
+  /* Reset button defaults */
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  text-align: left !important;
+  position: relative !important;
+  overflow: hidden !important;
 }
 
-/* Active — only after real selection, no initial glow */
-#services.fc3-chapter .fxsit-primary-grid .fc3-card.active,
-#services.fc3-chapter .fxsit-primary-grid .fc3-card[aria-pressed="true"],
-#services.fc3-chapter .fxsit-primary-grid .fc3-card.chip.service-chip.active {
+/* — Hover — */
+#services.fc3-chapter .fxsit-card:hover {
+  background: rgba(72,100,255,0.07) !important;
+  border-color: rgba(72,100,255,0.22) !important;
+}
+
+/* — Active (real user selection only — no hardcoded default) — */
+#services.fc3-chapter .fxsit-card.active,
+#services.fc3-chapter .fxsit-card[aria-pressed="true"] {
   background: rgba(72,100,255,0.10) !important;
   border-color: rgba(72,100,255,0.44) !important;
   border-top-color: rgba(100,140,255,0.52) !important;
@@ -3443,14 +3482,59 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
   transform: translateY(-1px) !important;
 }
 
-/* Entrance stagger — 6 primary cards */
-#services.fc3-chapter .fxsit-primary-grid .fc3-card:nth-child(1) { animation-delay: 0.00s; }
-#services.fc3-chapter .fxsit-primary-grid .fc3-card:nth-child(2) { animation-delay: 0.05s; }
-#services.fc3-chapter .fxsit-primary-grid .fc3-card:nth-child(3) { animation-delay: 0.10s; }
-#services.fc3-chapter .fxsit-primary-grid .fc3-card:nth-child(4) { animation-delay: 0.15s; }
-#services.fc3-chapter .fxsit-primary-grid .fc3-card:nth-child(5) { animation-delay: 0.20s; }
-#services.fc3-chapter .fxsit-primary-grid .fc3-card:nth-child(6) { animation-delay: 0.25s; }
+/* — Focus — */
+#services.fc3-chapter .fxsit-card:focus-visible {
+  outline: 2px solid rgba(72,100,255,0.60) !important;
+  outline-offset: 3px !important;
+}
 
+/* — Icon zone — */
+#services.fc3-chapter .fxsit-card .fc3-card-icon {
+  font-size: 1.30rem !important;
+  line-height: 1 !important;
+  display: block !important;
+  flex-shrink: 0 !important;
+  width: 1.5rem !important;
+}
+
+/* — Label — */
+#services.fc3-chapter .fxsit-card .fc3-card-label {
+  font-size: 0.84rem !important;
+  font-weight: 500 !important;
+  color: rgba(220,228,255,0.88) !important;
+  line-height: 1.38 !important;
+  display: block !important;
+  flex: 1 !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+  hyphens: auto !important;
+}
+
+#services.fc3-chapter .fxsit-card.active .fc3-card-label,
+#services.fc3-chapter .fxsit-card[aria-pressed="true"] .fc3-card-label {
+  color: #ffffff !important;
+  font-weight: 600 !important;
+}
+
+/* — Urgency badge — pinned to bottom of flex column — */
+#services.fc3-chapter .fxsit-card .fc3-card-urgency {
+  font-size: 0.54rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.10em !important;
+  text-transform: uppercase !important;
+  padding: 2px 7px !important;
+  border-radius: 999px !important;
+  color: rgba(220,50,90,0.92) !important;
+  background: rgba(220,50,90,0.07) !important;
+  border: 1px solid rgba(220,50,90,0.16) !important;
+  box-shadow: none !important;
+  align-self: flex-start !important;
+  flex-shrink: 0 !important;
+  line-height: 1 !important;
+  margin-top: auto !important;
+}
+
+/* — Card entrance animation — */
 @keyframes fxsit-card-enter {
   from { opacity: 0; transform: translateY(4px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -3458,7 +3542,74 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
 
 
 /* ════════════════════════════════════════════════════════════════════
-   §4  DISCLOSURE CONTROL — "Voir toutes les situations"
+   §4  PRIMARY GRID CONTAINER
+   ════════════════════════════════════════════════════════════════════ */
+
+#services.fc3-chapter .fxsit-primary-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  grid-auto-rows: 1fr !important;
+  gap: 12px !important;
+  max-width: 680px !important;
+  margin: 0 auto clamp(12px, 2vw, 18px) !important;
+  padding: 0 !important;
+}
+
+/* Primary card entrance stagger */
+#services.fc3-chapter .fxsit-primary-grid .fxsit-card:nth-child(1) { animation: fxsit-card-enter 0.34s 0.00s ease both; }
+#services.fc3-chapter .fxsit-primary-grid .fxsit-card:nth-child(2) { animation: fxsit-card-enter 0.34s 0.05s ease both; }
+#services.fc3-chapter .fxsit-primary-grid .fxsit-card:nth-child(3) { animation: fxsit-card-enter 0.34s 0.10s ease both; }
+#services.fc3-chapter .fxsit-primary-grid .fxsit-card:nth-child(4) { animation: fxsit-card-enter 0.34s 0.15s ease both; }
+#services.fc3-chapter .fxsit-primary-grid .fxsit-card:nth-child(5) { animation: fxsit-card-enter 0.34s 0.20s ease both; }
+#services.fc3-chapter .fxsit-primary-grid .fxsit-card:nth-child(6) { animation: fxsit-card-enter 0.34s 0.25s ease both; }
+
+
+/* ════════════════════════════════════════════════════════════════════
+   §5  ADDITIONAL GRID CONTAINER — class fxsit-additional-grid
+   Isolated from external .category-chips flex rules.
+   Grid layout enforced by ID (#fxsit-additional) for maximum specificity.
+   ════════════════════════════════════════════════════════════════════ */
+
+#fxsit-additional {
+  /* Grid layout — ID specificity beats all external .category-chips rules */
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  grid-auto-rows: 1fr !important;
+  gap: 12px !important;
+  /* Geometry */
+  max-width: 680px !important;
+  margin: 0 auto clamp(12px, 2vw, 18px) !important;
+  padding: 0 !important;
+  min-width: 0 !important;
+  /* Collapsed state */
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    max-height 0.34s cubic-bezier(0.4,0,0.2,1),
+    opacity 0.28s ease;
+}
+
+#fxsit-additional.fxsit-expanded {
+  /* 3 rows × 96px card + 3 gaps × 12px + breathing room = ~332px min.
+     800px is a safe generous ceiling at all viewports. */
+  max-height: 800px;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Additional card reveal stagger */
+#fxsit-additional.fxsit-expanded .fxsit-card:nth-child(1) { animation: fxsit-card-enter 0.26s 0.04s ease both; }
+#fxsit-additional.fxsit-expanded .fxsit-card:nth-child(2) { animation: fxsit-card-enter 0.26s 0.09s ease both; }
+#fxsit-additional.fxsit-expanded .fxsit-card:nth-child(3) { animation: fxsit-card-enter 0.26s 0.14s ease both; }
+#fxsit-additional.fxsit-expanded .fxsit-card:nth-child(4) { animation: fxsit-card-enter 0.26s 0.19s ease both; }
+#fxsit-additional.fxsit-expanded .fxsit-card:nth-child(5) { animation: fxsit-card-enter 0.26s 0.24s ease both; }
+#fxsit-additional.fxsit-expanded .fxsit-card:nth-child(6) { animation: fxsit-card-enter 0.26s 0.29s ease both; }
+
+
+/* ════════════════════════════════════════════════════════════════════
+   §6  DISCLOSURE CONTROL
    ════════════════════════════════════════════════════════════════════ */
 
 .fxsit-disclosure-wrap {
@@ -3466,7 +3617,7 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
   flex-direction: column;
   align-items: center;
   gap: 8px;
-  margin: 0 auto clamp(20px, 3vw, 28px);
+  margin: 0 auto clamp(16px, 2.5vw, 24px);
 }
 
 .fxsit-disclosure-btn {
@@ -3499,7 +3650,6 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
   outline-offset: 3px;
 }
 
-/* Chevron icon */
 .fxsit-disclosure-chevron {
   display: inline-block;
   font-size: 0.68rem;
@@ -3511,7 +3661,6 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
   transform: rotate(180deg);
 }
 
-/* Selected-in-collapsed indicator */
 .fxsit-selected-hint {
   font-size: 0.72rem;
   color: rgba(100,140,255,0.70);
@@ -3529,80 +3678,140 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
 
 
 /* ════════════════════════════════════════════════════════════════════
-   §5  ADDITIONAL CARDS — collapsed by default
+   §7  COMPACT CITY ROW
    ════════════════════════════════════════════════════════════════════ */
 
-#fxsit-additional {
+.fxsit-city-row {
   max-width: 680px;
-  margin: 0 auto clamp(14px, 2vw, 20px);
-  /* Hidden by default */
-  display: grid !important;
-  grid-template-columns: repeat(2, 1fr) !important;
-  gap: 12px !important;
+  margin: 0 auto clamp(14px, 2.2vw, 22px);
+  position: relative;
+}
+
+/* State A: city known */
+.fxsit-city-known {
+  display: none; /* hidden by default; JS shows via #services[data-fc3-city-known] */
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 8px 16px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.025);
+  border: 1px solid rgba(72,100,255,0.12);
+  border-top-color: rgba(72,100,255,0.18);
+}
+
+#services[data-fc3-city-known] .fxsit-city-known {
+  display: flex;
+}
+
+#services[data-fc3-city-known] .fxsit-city-unknown {
+  display: none;
+}
+
+.fxsit-city-pin {
+  font-size: 0.96rem;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.fxsit-city-name {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: rgba(220,228,255,0.92);
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
   overflow: hidden;
-  max-height: 0;
-  opacity: 0;
-  transition:
-    max-height 0.32s cubic-bezier(0.4,0,0.2,1),
-    opacity 0.26s ease;
-  pointer-events: none;
-  padding: 0 !important;
-  flex-wrap: unset !important;
-  justify-content: unset !important;
+  text-overflow: ellipsis;
 }
 
-#fxsit-additional.fxsit-expanded {
-  max-height: 600px; /* generous ceiling — 3 rows × 2 col at ~100px each */
-  opacity: 1;
-  pointer-events: auto;
+.fxsit-city-modify-btn {
+  appearance: none;
+  -webkit-appearance: none;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: rgba(120,150,255,0.80);
+  background: transparent;
+  border: 1px solid rgba(72,100,255,0.18);
+  border-radius: 8px;
+  padding: 4px 10px;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  min-height: 32px;
+  transition: background 0.15s ease, color 0.15s ease;
 }
 
-/* Card styles inside additional — same as primary */
-#services.fc3-chapter #fxsit-additional .fc3-card,
-#services.fc3-chapter #fxsit-additional .fc3-card.chip.service-chip {
-  min-height: 92px !important;
-  padding: 16px 14px 14px !important;
-  border-radius: 14px !important;
-  gap: 8px !important;
-  background: rgba(255,255,255,0.025) !important;
-  border: 1px solid rgba(72,100,255,0.08) !important;
-  border-top: 1.5px solid rgba(72,100,255,0.10) !important;
-  box-shadow: none !important;
-  animation: none; /* no entrance stagger for disclosed cards */
-  opacity: 1;
-  transform: none;
+.fxsit-city-modify-btn:hover {
+  background: rgba(72,100,255,0.08);
+  color: rgba(180,210,255,0.92);
 }
 
-/* Additional card reveal stagger (CSS-only, triggered by .fxsit-expanded) */
-#fxsit-additional.fxsit-expanded .fc3-card:nth-child(1) { animation: fxsit-card-enter 0.28s 0.04s ease both; }
-#fxsit-additional.fxsit-expanded .fc3-card:nth-child(2) { animation: fxsit-card-enter 0.28s 0.09s ease both; }
-#fxsit-additional.fxsit-expanded .fc3-card:nth-child(3) { animation: fxsit-card-enter 0.28s 0.14s ease both; }
-#fxsit-additional.fxsit-expanded .fc3-card:nth-child(4) { animation: fxsit-card-enter 0.28s 0.19s ease both; }
-#fxsit-additional.fxsit-expanded .fc3-card:nth-child(5) { animation: fxsit-card-enter 0.28s 0.24s ease both; }
-#fxsit-additional.fxsit-expanded .fc3-card:nth-child(6) { animation: fxsit-card-enter 0.28s 0.29s ease both; }
+.fxsit-city-modify-btn:focus-visible {
+  outline: 2px solid rgba(72,100,255,0.55);
+  outline-offset: 2px;
+}
 
-/* Active state — additional cards */
-#services.fc3-chapter #fxsit-additional .fc3-card.active,
-#services.fc3-chapter #fxsit-additional .fc3-card[aria-pressed="true"],
-#services.fc3-chapter #fxsit-additional .fc3-card.chip.service-chip.active {
-  background: rgba(72,100,255,0.10) !important;
-  border-color: rgba(72,100,255,0.44) !important;
-  border-top-color: rgba(100,140,255,0.52) !important;
-  box-shadow:
-    0 0 0 3px rgba(72,100,255,0.08),
-    0 3px 14px rgba(72,100,255,0.10) !important;
-  color: #ffffff !important;
-  transform: translateY(-1px) !important;
+/* State B: no city */
+.fxsit-city-unknown {
+  display: flex;
+  justify-content: center;
+}
+
+.fxsit-city-choose-btn {
+  appearance: none;
+  -webkit-appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 10px 20px;
+  border-radius: 12px;
+  border: 1px solid rgba(72,100,255,0.12);
+  background: rgba(72,100,255,0.03);
+  color: rgba(200,212,255,0.58);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.fxsit-city-choose-btn:hover {
+  background: rgba(72,100,255,0.07);
+  border-color: rgba(72,100,255,0.22);
+  color: rgba(200,212,255,0.82);
+}
+
+.fxsit-city-choose-btn:focus-visible {
+  outline: 2px solid rgba(72,100,255,0.55);
+  outline-offset: 3px;
+}
+
+/* City chip picker */
+.fxsit-city-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px 0 4px;
+  justify-content: center;
+}
+
+.fxsit-city-chips[hidden] {
+  display: none;
 }
 
 
 /* ════════════════════════════════════════════════════════════════════
-   §6  SECONDARY LINK — "Voir tous les services"
+   §8  "VOIR TOUS LES SERVICES" LINK
    ════════════════════════════════════════════════════════════════════ */
 
 .fxsit-services-link-wrap {
   text-align: center;
-  margin: 0 auto clamp(24px, 3vw, 36px);
+  margin: 0 auto clamp(20px, 3vw, 32px);
+  /* Bottom safe spacing — keeps link above floating controls */
+  padding-bottom: max(env(safe-area-inset-bottom, 0px), 8px);
 }
 
 .fxsit-services-link {
@@ -3630,80 +3839,12 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
 
 
 /* ════════════════════════════════════════════════════════════════════
-   §7  TRANSITION TEXT
-   Live region for truthful matching state description.
-   ════════════════════════════════════════════════════════════════════ */
-
-.fxsit-transition {
-  text-align: center;
-  padding-top: clamp(8px, 1.5vw, 14px);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-}
-
-.fxsit-transition-text {
-  font-size: 0.84rem;
-  color: rgba(200,212,255,0.36);
-  font-style: italic;
-  line-height: 1.55;
-  margin: 0;
-  max-width: 400px;
-  transition: color 0.22s ease;
-}
-
-/* Arrow connector */
-.fxsit-transition-arrow {
-  display: block;
-  width: 1px;
-  height: 28px;
-  background: linear-gradient(to bottom, rgba(72,100,255,0.20), transparent);
-  margin: 0 auto;
-  position: relative;
-}
-
-.fxsit-transition-arrow::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  width: 5px;
-  height: 5px;
-  border-right: 1px solid rgba(72,100,255,0.26);
-  border-bottom: 1px solid rgba(72,100,255,0.26);
-  transform: translateX(-50%) rotate(45deg);
-}
-
-
-/* ════════════════════════════════════════════════════════════════════
-   §8  URGENT BADGE REFINEMENT
-   Restrained, consistent pill. No glow, no flashing.
-   ════════════════════════════════════════════════════════════════════ */
-
-#services.fc3-chapter .fc3-card-urgency {
-  font-size: 0.55rem !important;
-  font-weight: 700 !important;
-  letter-spacing: 0.10em !important;
-  padding: 2px 7px !important;
-  border-radius: 999px !important;
-  color: rgba(220,50,90,0.92) !important;
-  background: rgba(220,50,90,0.07) !important;
-  border: 1px solid rgba(220,50,90,0.16) !important;
-  box-shadow: none !important;
-  align-self: flex-start !important;
-  flex-shrink: 0 !important;
-  line-height: 1 !important;
-}
-
-
-/* ════════════════════════════════════════════════════════════════════
    §9  REDUCED MOTION
    ════════════════════════════════════════════════════════════════════ */
 
 @media (prefers-reduced-motion: reduce) {
-  #services.fc3-chapter .fxsit-primary-grid .fc3-card,
-  #services.fc3-chapter #fxsit-additional .fc3-card {
+  #services.fc3-chapter .fxsit-primary-grid .fxsit-card,
+  #services.fc3-chapter #fxsit-additional .fxsit-card {
     animation: none !important;
     opacity: 1 !important;
     transform: none !important;
@@ -3714,9 +3855,6 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
   #fxsit-additional {
     transition: none !important;
   }
-  .fxsit-transition-text {
-    transition: none !important;
-  }
 }
 
 
@@ -3724,6 +3862,7 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
    §10  RESPONSIVE
    ════════════════════════════════════════════════════════════════════ */
 
+/* ≤ 679px — mobile padding */
 @media (max-width: 679px) {
   #services.fc3-chapter .fxsit-primary-grid,
   #fxsit-additional {
@@ -3734,11 +3873,23 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
 
   .fxsit-reset-wrap,
   .fxsit-disclosure-wrap,
-  .fxsit-services-link-wrap {
-    padding: 0 20px;
+  .fxsit-services-link-wrap,
+  .fxsit-city-row {
+    padding-left: 20px;
+    padding-right: 20px;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .fxsit-city-row {
+    max-width: 100%;
   }
 }
 
+/* ≤ 374px — tighter padding, "Modifier" label shortened in CSS
+   Note: "Modifier la ville" button label shortening handled by JS
+   (aria-label preserved). At this width the btn text is truncated
+   by ellipsis on the container — no layout jump. */
 @media (max-width: 374px) {
   #services.fc3-chapter .fxsit-primary-grid,
   #fxsit-additional {
@@ -3746,21 +3897,32 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
     padding: 0 16px !important;
   }
 
-  #services.fc3-chapter .fxsit-primary-grid .fc3-card,
-  #services.fc3-chapter .fxsit-primary-grid .fc3-card.chip.service-chip,
-  #services.fc3-chapter #fxsit-additional .fc3-card,
-  #services.fc3-chapter #fxsit-additional .fc3-card.chip.service-chip {
+  #services.fc3-chapter .fxsit-card {
+    min-height: 88px !important;
     padding: 12px 10px 10px !important;
-    min-height: 80px !important;
     border-radius: 12px !important;
+  }
+
+  #services.fc3-chapter .fxsit-card .fc3-card-icon {
+    font-size: 1.15rem !important;
+  }
+
+  #services.fc3-chapter .fxsit-card .fc3-card-label {
+    font-size: 0.80rem !important;
+  }
+
+  .fxsit-city-modify-btn {
+    font-size: 0.68rem;
+    padding: 4px 8px;
   }
 }
 
-/* 320px: keep 2 columns — 6 cards = 3 even rows, no orphan */
+/* ≤ 319px — 1-col fallback only at very narrow viewports */
 @media (max-width: 319px) {
   #services.fc3-chapter .fxsit-primary-grid,
   #fxsit-additional {
     grid-template-columns: 1fr !important;
+    grid-auto-rows: unset !important;
   }
 }
 
@@ -3796,30 +3958,35 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
     </div>
 
     <!-- ── City context bar ── -->
-    <div class="fc3-city-bar" id="fc3-city-bar" aria-live="polite">
+    <!-- ── Compact city row (fxhome-situations-v2.2) ── -->
+    <div class="fxsit-city-row" id="fxsit-city-row" aria-live="polite">
 
-      <!-- STATE A: city known — JS activates via data-fc3-city-known on #services -->
-      <div class="fc3-city-detected" id="fc3-city-detected">
-        <span class="fc3-city-pin" aria-hidden="true">📍</span>
-        <span class="fc3-city-detected-name" id="fc3-city-detected-name"></span>
-        <span class="fc3-city-detected-label">sélectionnée</span>
-        <button class="fc3-city-change-btn" id="fc3-city-change-btn" type="button" aria-label="Changer de ville">Changer</button>
+      <!-- STATE A: city known — shown when #services[data-fc3-city-known] is set -->
+      <div class="fxsit-city-known" id="fxsit-city-known" aria-hidden="true">
+        <span class="fxsit-city-pin" aria-hidden="true">📍</span>
+        <span class="fxsit-city-name" id="fxsit-city-name"></span>
+        <button class="fxsit-city-modify-btn" id="fxsit-city-modify-btn" type="button"
+                aria-label="Modifier la ville sélectionnée">Modifier la ville</button>
       </div>
 
-      <!-- STATE B: city unknown -->
-      <div class="fc3-city-unknown" id="fc3-city-unknown">
-        <button class="fc3-city-choose-btn" id="fc3-city-choose-btn" type="button" aria-expanded="false" aria-controls="city-quick-chips">
-          <span class="fc3-city-pin" aria-hidden="true">📍</span>
-          Dans quelle ville avez-vous besoin d'un artisan&nbsp;?
+      <!-- STATE B: no city — shown by default -->
+      <div class="fxsit-city-unknown" id="fxsit-city-unknown">
+        <button class="fxsit-city-choose-btn" id="fxsit-city-choose-btn" type="button"
+                aria-expanded="false" aria-controls="city-quick-chips">
+          <span class="fxsit-city-pin" aria-hidden="true">📍</span>
+          Choisir ma ville
         </button>
-        <div class="city-quick-chips fc3-chips-collapsed" id="city-quick-chips" role="listbox" aria-label="Choisir une ville" hidden>
-          <button class="city-chip" data-city="Casablanca">Casablanca</button>
-          <button class="city-chip" data-city="Rabat">Rabat</button>
-          <button class="city-chip" data-city="Fès">Fès</button>
-          <button class="city-chip" data-city="Tanger">Tanger</button>
-          <button class="city-chip" data-city="Marrakech">Marrakech</button>
-          <button class="city-chip city-chip-more">+ Plus</button>
-        </div>
+      </div>
+
+      <!-- Shared chip picker — revealed by both states when needed -->
+      <div class="fxsit-city-chips" id="city-quick-chips"
+           role="listbox" aria-label="Choisir une ville" hidden>
+        <button class="city-chip" data-city="Casablanca">Casablanca</button>
+        <button class="city-chip" data-city="Rabat">Rabat</button>
+        <button class="city-chip" data-city="Fès">Fès</button>
+        <button class="city-chip" data-city="Tanger">Tanger</button>
+        <button class="city-chip" data-city="Marrakech">Marrakech</button>
+        <button class="city-chip city-chip-more">+ Plus</button>
       </div>
 
     </div>
@@ -3839,40 +4006,40 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
     <div class="fxsit-primary-grid fc3-situations category-chips"
          role="list" aria-label="Choisissez votre situation">
 
-      <button class="fc3-card chip service-chip" role="listitem"
+      <button class="fxsit-card chip service-chip" role="listitem"
               data-category="plomberie" aria-pressed="false">
         <span class="fc3-card-icon" aria-hidden="true">💧</span>
         <span class="fc3-card-label">J'ai une fuite d'eau</span>
         <span class="fc3-card-urgency" aria-label="Situation souvent urgente">Urgent</span>
       </button>
 
-      <button class="fc3-card chip service-chip" role="listitem"
+      <button class="fxsit-card chip service-chip" role="listitem"
               data-category="plomberie" aria-pressed="false">
         <span class="fc3-card-icon" aria-hidden="true">🚿</span>
         <span class="fc3-card-label">Mon WC ou évier est bouché</span>
       </button>
 
-      <button class="fc3-card chip service-chip" role="listitem"
+      <button class="fxsit-card chip service-chip" role="listitem"
               data-category="electricite" aria-pressed="false">
         <span class="fc3-card-icon" aria-hidden="true">⚡</span>
         <span class="fc3-card-label">Plus de courant chez moi</span>
         <span class="fc3-card-urgency" aria-label="Situation souvent urgente">Urgent</span>
       </button>
 
-      <button class="fc3-card chip service-chip" role="listitem"
+      <button class="fxsit-card chip service-chip" role="listitem"
               data-category="serrurerie" aria-pressed="false">
         <span class="fc3-card-icon" aria-hidden="true">🔑</span>
         <span class="fc3-card-label">Je suis bloqué dehors</span>
         <span class="fc3-card-urgency" aria-label="Situation souvent urgente">Urgent</span>
       </button>
 
-      <button class="fc3-card chip service-chip" role="listitem"
+      <button class="fxsit-card chip service-chip" role="listitem"
               data-category="climatisation" aria-pressed="false">
         <span class="fc3-card-icon" aria-hidden="true">❄️</span>
         <span class="fc3-card-label">Mon climatiseur ne fonctionne plus</span>
       </button>
 
-      <button class="fc3-card chip service-chip" role="listitem"
+      <button class="fxsit-card chip service-chip" role="listitem"
               data-category="menuiserie" aria-pressed="false">
         <span class="fc3-card-icon" aria-hidden="true">🪚</span>
         <span class="fc3-card-label">Une porte ou fenêtre à réparer</span>
@@ -3893,40 +4060,40 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
     </div>
 
     <!-- ── Additional situations — collapsed by default ── -->
-    <div id="fxsit-additional" class="category-chips" role="list"
+    <div id="fxsit-additional" class="fxsit-additional-grid" role="list"
          aria-label="Situations supplémentaires" aria-hidden="true" inert>
 
-      <button class="fc3-card chip service-chip" role="listitem"
+      <button class="fxsit-card chip service-chip" role="listitem"
               data-category="peinture" aria-pressed="false" tabindex="-1">
         <span class="fc3-card-icon" aria-hidden="true">🎨</span>
         <span class="fc3-card-label">Je veux repeindre une pièce</span>
       </button>
 
-      <button class="fc3-card chip service-chip" role="listitem"
+      <button class="fxsit-card chip service-chip" role="listitem"
               data-category="maconnerie" aria-pressed="false" tabindex="-1">
         <span class="fc3-card-icon" aria-hidden="true">🧱</span>
         <span class="fc3-card-label">Un mur fissuré ou à réparer</span>
       </button>
 
-      <button class="fc3-card chip service-chip" role="listitem"
+      <button class="fxsit-card chip service-chip" role="listitem"
               data-category="nettoyage" aria-pressed="false" tabindex="-1">
         <span class="fc3-card-icon" aria-hidden="true">🧹</span>
         <span class="fc3-card-label">Nettoyage après travaux</span>
       </button>
 
-      <button class="fc3-card chip service-chip" role="listitem"
+      <button class="fxsit-card chip service-chip" role="listitem"
               data-category="carrelage" aria-pressed="false" tabindex="-1">
         <span class="fc3-card-icon" aria-hidden="true">🔲</span>
         <span class="fc3-card-label">Du carrelage à poser ou réparer</span>
       </button>
 
-      <button class="fc3-card chip service-chip" role="listitem"
+      <button class="fxsit-card chip service-chip" role="listitem"
               data-category="jardinage" aria-pressed="false" tabindex="-1">
         <span class="fc3-card-icon" aria-hidden="true">🌿</span>
         <span class="fc3-card-label">Mon jardin à entretenir</span>
       </button>
 
-      <button class="fc3-card chip service-chip" role="listitem"
+      <button class="fxsit-card chip service-chip" role="listitem"
               data-category="demenagement" aria-pressed="false" tabindex="-1">
         <span class="fc3-card-icon" aria-hidden="true">📦</span>
         <span class="fc3-card-label">Je dois déménager</span>
@@ -3942,19 +4109,15 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
       </a>
     </div>
 
-    <!-- ── Transition ── -->
-    <div class="fxsit-transition">
-      <p class="fxsit-transition-text" id="fxsit-transition-text"
-         aria-live="polite" aria-atomic="true">
-        Sélectionnez une situation pour filtrer les artisans affichés plus bas.
-      </p>
-      <span class="fxsit-transition-arrow" aria-hidden="true"></span>
-    </div>
-
   </div><!-- /container -->
 
   <!-- ── fc3-city: contextual city intelligence (unchanged from previous) ── -->
   <script>
+  /* City IIFE — fxhome-situations-v2.2
+     Updated for compact city row (fxsit-* IDs).
+     Reads/writes localStorage['fixeo_detected_city'] via existing mechanism.
+     Controls: #fxsit-city-name, #fxsit-city-known, data-fc3-city-known on #services.
+     Never calls matching. Never scrolls. */
   (function () {
     var VALID_CITIES = ['Casablanca','Rabat','Marrakech','Fès','Agadir','Tanger',
                         'Meknès','Oujda','Kénitra','Tétouan','Safi','El Jadida'];
@@ -3985,6 +4148,44 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
       });
     }
 
+    function _showCityKnown(city) {
+      var section  = document.getElementById('services');
+      var nameEl   = document.getElementById('fxsit-city-name');
+      var knownDiv = document.getElementById('fxsit-city-known');
+      var unkDiv   = document.getElementById('fxsit-city-unknown');
+      if (nameEl) nameEl.textContent = city;
+      if (section) section.setAttribute('data-fc3-city-known', '1');
+      if (knownDiv) knownDiv.setAttribute('aria-hidden', 'false');
+      if (unkDiv)   unkDiv.setAttribute('aria-hidden', 'true');
+    }
+
+    function _hideCityKnown() {
+      var section  = document.getElementById('services');
+      var knownDiv = document.getElementById('fxsit-city-known');
+      var unkDiv   = document.getElementById('fxsit-city-unknown');
+      if (section) section.removeAttribute('data-fc3-city-known');
+      if (knownDiv) knownDiv.setAttribute('aria-hidden', 'true');
+      if (unkDiv)   unkDiv.removeAttribute('aria-hidden');
+    }
+
+    function _openCityChips() {
+      var chipsDiv = document.getElementById('city-quick-chips');
+      var chooseBtn = document.getElementById('fxsit-city-choose-btn');
+      var modifyBtn = document.getElementById('fxsit-city-modify-btn');
+      if (chipsDiv) { chipsDiv.removeAttribute('hidden'); }
+      if (chooseBtn) chooseBtn.setAttribute('aria-expanded','true');
+      if (modifyBtn) modifyBtn.setAttribute('aria-expanded','true');
+    }
+
+    function _closeCityChips() {
+      var chipsDiv = document.getElementById('city-quick-chips');
+      var chooseBtn = document.getElementById('fxsit-city-choose-btn');
+      var modifyBtn = document.getElementById('fxsit-city-modify-btn');
+      if (chipsDiv) { chipsDiv.setAttribute('hidden',''); }
+      if (chooseBtn) chooseBtn.setAttribute('aria-expanded','false');
+      if (modifyBtn) modifyBtn.setAttribute('aria-expanded','false');
+    }
+
     function fc3InitCity() {
       try {
         var city = localStorage.getItem('fixeo_detected_city');
@@ -3992,51 +4193,33 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
           return c.toLowerCase() === (city||'').trim().toLowerCase();
         });
 
-        var section   = document.getElementById('services');
-        var detected  = document.getElementById('fc3-city-detected');
-        var nameEl    = document.getElementById('fc3-city-detected-name');
-        var changeBtn = document.getElementById('fc3-city-change-btn');
-        var unknown   = document.getElementById('fc3-city-unknown');
-
         if (isValid) {
-          if (nameEl) nameEl.textContent = city;
-          if (section) section.setAttribute('data-fc3-city-known', '1');
+          _showCityKnown(city);
           _setSelectCity(city);
-
-          if (changeBtn && !changeBtn._fc3bound) {
-            changeBtn._fc3bound = true;
-            changeBtn.addEventListener('click', function () {
-              if (section) section.removeAttribute('data-fc3-city-known');
-              _clearSelectCity();
-              var bar  = document.getElementById('fc3-city-bar');
-              var btn  = document.getElementById('fc3-city-choose-btn');
-              var chipsDiv = document.getElementById('city-quick-chips');
-              if (bar)      bar.setAttribute('data-fc3-chips-open','1');
-              if (btn)      btn.setAttribute('aria-expanded','true');
-              if (chipsDiv) { chipsDiv.removeAttribute('hidden'); chipsDiv.removeAttribute('aria-hidden'); }
-            });
-          }
         }
 
-        var chooseBtn = document.getElementById('fc3-city-choose-btn');
-        if (chooseBtn && !chooseBtn._fc3bound) {
-          chooseBtn._fc3bound = true;
-          chooseBtn.addEventListener('click', function () {
-            var bar      = document.getElementById('fc3-city-bar');
-            var chipsDiv = document.getElementById('city-quick-chips');
-            var isOpen   = bar && bar.hasAttribute('data-fc3-chips-open');
-            if (isOpen) {
-              if (bar)      bar.removeAttribute('data-fc3-chips-open');
-              this.setAttribute('aria-expanded','false');
-              if (chipsDiv) { chipsDiv.setAttribute('hidden',''); chipsDiv.setAttribute('aria-hidden','true'); }
-            } else {
-              if (bar)      bar.setAttribute('data-fc3-chips-open','1');
-              this.setAttribute('aria-expanded','true');
-              if (chipsDiv) { chipsDiv.removeAttribute('hidden'); chipsDiv.removeAttribute('aria-hidden'); }
-            }
+        /* "Modifier la ville" button */
+        var modifyBtn = document.getElementById('fxsit-city-modify-btn');
+        if (modifyBtn && !modifyBtn._fc3bound) {
+          modifyBtn._fc3bound = true;
+          modifyBtn.addEventListener('click', function () {
+            _openCityChips();
           });
         }
 
+        /* "Choisir ma ville" button */
+        var chooseBtn = document.getElementById('fxsit-city-choose-btn');
+        if (chooseBtn && !chooseBtn._fc3bound) {
+          chooseBtn._fc3bound = true;
+          chooseBtn.addEventListener('click', function () {
+            var chipsDiv = document.getElementById('city-quick-chips');
+            var isOpen = chipsDiv && !chipsDiv.hasAttribute('hidden');
+            if (isOpen) { _closeCityChips(); }
+            else        { _openCityChips(); }
+          });
+        }
+
+        /* City chip clicks */
         var chips = document.querySelectorAll('#city-quick-chips .city-chip[data-city]');
         chips.forEach(function(chip) {
           if (chip._fc3bound) return;
@@ -4046,16 +4229,8 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
             if (!picked) return;
             _setSelectCity(picked);
             _activateCityChip(picked);
-            var bar      = document.getElementById('fc3-city-bar');
-            var btn      = document.getElementById('fc3-city-choose-btn');
-            var chipsDiv = document.getElementById('city-quick-chips');
-            var nameEl2  = document.getElementById('fc3-city-detected-name');
-            var sect     = document.getElementById('services');
-            if (nameEl2) nameEl2.textContent = picked;
-            if (sect)    sect.setAttribute('data-fc3-city-known','1');
-            if (bar)     bar.removeAttribute('data-fc3-chips-open');
-            if (btn)     btn.setAttribute('aria-expanded','false');
-            if (chipsDiv){ chipsDiv.setAttribute('hidden',''); chipsDiv.setAttribute('aria-hidden','true'); }
+            _showCityKnown(picked);
+            _closeCityChips();
           });
         });
 
@@ -4081,13 +4256,14 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
     'use strict';
 
     /* ════════════════════════════════════════════════════════════════
-       fxhome-situations-v2.1 — accessibility + state-copy micro-patch
-       1. setAdditionalPanelState(): inert + tabindex lifecycle
-       2. getSelectedCity(): reads #services-city-filter truthfully
-       3. getVisibleCardLabel(): .fc3-card-label text extraction
-       4. updateSelectedHint(): human-readable label (not category key)
-       5. updateTransitionForChip(): city-aware ALL_TEXT branching
-       6. city-select change listener: transition update when reset active
+       fxhome-situations-v2.2 — page-local situations IIFE
+       Changes vs v2.1:
+         - Removed: setTransition / updateTransitionForChip / ALL_*_TEXT
+           (transition element removed from DOM in v2.2)
+         - Added: removeSpecializedPills() — page-local guard, runs once at T900ms
+         - Updated: syncAriaPressed targets .chip[data-category] (includes fxsit-card)
+         - Updated: getVisibleCardLabel for fxsit-card class
+         - Hint, disclosure, focus-management, city-select listener: preserved
        Invariants: no filter writes, no scroll, no matching, no globals,
          no setInterval, no rAF, no localStorage writes, no RAFI calls.
     ════════════════════════════════════════════════════════════════ */
@@ -4095,37 +4271,47 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
     var discBtn   = document.getElementById('fxsit-disclosure-btn');
     var discPanel = document.getElementById('fxsit-additional');
 
-    var NEUTRAL_TEXT      = 'Sélectionnez une situation pour filtrer les artisans affichés plus bas.';
-    var ALL_NO_CITY_TEXT  = 'Tous les artisans sont affichés plus bas.';
-    var ALL_CITY_TEXT     = 'Tous les artisans correspondant à votre ville sont affichés plus bas.';
-    var SELECTED_TEXT     = 'Les artisans correspondant à votre choix sont affichés plus bas.';
-
-    function getSelectedCity() {
-      var sel = document.getElementById('services-city-filter');
-      return (sel && sel.value) ? sel.value.trim() : '';
-    }
-
-    function setTransition(text) {
-      var el = document.getElementById('fxsit-transition-text');
-      if (el && el.textContent !== text) el.textContent = text;
-    }
-
-    function updateTransitionForChip(chip) {
-      if (!chip) { setTransition(NEUTRAL_TEXT); return; }
-      var cat = (chip.dataset && chip.dataset.category) ? chip.dataset.category : 'all';
-      if (cat === 'all') {
-        setTransition(getSelectedCity() ? ALL_CITY_TEXT : ALL_NO_CITY_TEXT);
-      } else {
-        setTransition(SELECTED_TEXT);
+    /* ────────────────────────────────────────────────────────────────
+       removeSpecializedPills()
+       One-shot guard run at T900ms (after fixeo_homepage_premium_patch.js T800ms).
+       Removes the 3 injected pills from #services if they were appended.
+       CSS §0 hides them visually; this removes them from the DOM entirely
+       so they cannot receive focus or affect matching.
+       No MutationObserver. No setInterval.
+    ──────────────────────────────────────────────────────────────── */
+    (function () {
+      var OBSOLETE = ['energie-solaire','securite-surveillance','corporate-facilities'];
+      function remove() {
+        OBSOLETE.forEach(function (cat) {
+          var el = document.querySelector('#services [data-category="' + cat + '"]');
+          if (el && el.parentNode) { el.parentNode.removeChild(el); }
+        });
       }
-    }
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', remove);
+      } else {
+        remove();
+      }
+      setTimeout(remove, 900);
+    }());
 
+    /* ────────────────────────────────────────────────────────────────
+       syncAriaPressed(activeChip)
+       Updates aria-pressed on all situation chips in #services.
+       Works for both .fxsit-card and legacy .fc3-card chips.
+       Never calls matching functions.
+    ──────────────────────────────────────────────────────────────── */
     function syncAriaPressed(activeChip) {
       document.querySelectorAll('#services .chip[data-category]').forEach(function (c) {
         c.setAttribute('aria-pressed', (c === activeChip) ? 'true' : 'false');
       });
     }
 
+    /* ────────────────────────────────────────────────────────────────
+       getVisibleCardLabel(card)
+       Reads .fc3-card-label text from a situation card.
+       Never returns data-category key.
+    ──────────────────────────────────────────────────────────────── */
     function getVisibleCardLabel(card) {
       if (!card) return '';
       var labelEl = card.querySelector('.fc3-card-label');
@@ -4144,6 +4330,10 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
       return text.trim();
     }
 
+    /* ────────────────────────────────────────────────────────────────
+       setAdditionalPanelState(isOpen)
+       Single source of truth for #fxsit-additional accessibility state.
+    ──────────────────────────────────────────────────────────────── */
     function setAdditionalPanelState(isOpen) {
       if (!discPanel) return;
       var btns = discPanel.querySelectorAll('button');
@@ -4158,6 +4348,10 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
       }
     }
 
+    /* ────────────────────────────────────────────────────────────────
+       updateSelectedHint()
+       Human-readable label when an additional card is active + panel collapsed.
+    ──────────────────────────────────────────────────────────────── */
     function updateSelectedHint() {
       var btn  = document.getElementById('fxsit-disclosure-btn');
       var hint = document.getElementById('fxsit-selected-hint');
@@ -4168,7 +4362,7 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
         hint.classList.remove('fxsit-hint-visible');
         return;
       }
-      var activeEl = discPanel.querySelector('.fc3-card.active[data-category]');
+      var activeEl = discPanel.querySelector('.chip.active[data-category]');
       if (activeEl) {
         var label = getVisibleCardLabel(activeEl);
         if (label) {
@@ -4181,6 +4375,9 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
       hint.classList.remove('fxsit-hint-visible');
     }
 
+    /* ────────────────────────────────────────────────────────────────
+       Disclosure button listener
+    ──────────────────────────────────────────────────────────────── */
     if (discBtn && discPanel) {
       discBtn.addEventListener('click', function () {
         var isExpanded = this.getAttribute('aria-expanded') === 'true';
@@ -4203,6 +4400,11 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
       });
     }
 
+    /* ────────────────────────────────────────────────────────────────
+       Delegated chip click listener on #services
+       Fires AFTER main.js initCategoryChips() (registration order).
+       Only updates aria-pressed and hint. Never calls matching.
+    ──────────────────────────────────────────────────────────────── */
     var section = document.getElementById('services');
     if (section) {
       section.addEventListener('click', function (e) {
@@ -4210,25 +4412,20 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
         if (!chip) return;
         Promise.resolve().then(function () {
           syncAriaPressed(chip);
-          updateTransitionForChip(chip);
           updateSelectedHint();
         });
       });
     }
 
-    /* City-select change listener: update transition when reset-btn is active.
-       #services-city-filter dispatches 'change' when fc3InitCity picks/clears a city.
-       Reads only — never writes city, never calls matching. */
+    /* ────────────────────────────────────────────────────────────────
+       City-select change listener (reads only — never writes)
+       No-op in v2.2 (transition element removed), kept for future use.
+    ──────────────────────────────────────────────────────────────── */
     (function () {
       var sel = document.getElementById('services-city-filter');
       if (!sel) return;
       sel.addEventListener('change', function () {
-        var activeChip = document.querySelector('#services .chip[data-category].active');
-        if (!activeChip) return;
-        var cat = (activeChip.dataset && activeChip.dataset.category) ? activeChip.dataset.category : 'all';
-        if (cat === 'all') {
-          setTransition(this.value ? ALL_CITY_TEXT : ALL_NO_CITY_TEXT);
-        }
+        /* transition element removed in v2.2 — nothing to update here */
       });
     }());
 
