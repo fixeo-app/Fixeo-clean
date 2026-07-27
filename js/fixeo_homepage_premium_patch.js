@@ -331,7 +331,7 @@
     /* Trust badges — verified/premium only (T2) */
     var badges = '';
     if (isVer)       badges += '<span class="pvc-badge-v2 pvc-badge-v2--verified">✔ Vérifié Fixeo</span>';
-    if (trust >= 90) badges += '<span class="pvc-badge-v2 pvc-badge-v2--premium">🏅 Premium</span>';
+    /* v2a.3: "Premium" badge removed — trust score is not a verifiable product claim. */
 
     /* Data attribute (for click delegation) */
     var dataAttr;
@@ -631,7 +631,7 @@
     pg = document.createElement('div');
     pg.id = GRID_ID;
     pg.className = 'ssb2-vedette-grid fhp-grid';
-    pg.setAttribute('aria-label','Artisans recommandés — sélection premium');
+    pg.setAttribute('aria-label','Profils artisans référencés sur FIXEO');
     var mainCol = _q('#'+SECTION_ID+' .results-main-column');
     var shell   = _q('#'+SECTION_ID+' .results-page-shell');
     var anchor  = mainCol || shell;
