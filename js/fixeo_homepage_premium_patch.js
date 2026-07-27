@@ -1,5 +1,5 @@
 /**
- * fixeo_homepage_premium_patch.js  v4 (fhp13 — fxhome-artisans-v2a)
+ * fixeo_homepage_premium_patch.js  v4 (fhp13 — fxhome-artisans-v2b1)
  * ─────────────────────────────────────────────────────────────────────────────
  * Replaces old results-layout with premium 2-col pvc-card vedette grid.
  * v3 adds: event delegation for clicks, section header + counter, fade-in anim.
@@ -18,6 +18,14 @@
  *   - "Voir profil" span → semantic <a href> anchor.
  *   - Reserve button: artisan-specific aria-label.
  *   - _renderPremiumGrid: explicit result-mode tracking passed to _buildHeader.
+ * fxhome-artisans-v2b1: illustrative métier avatar integration —
+ *   - Three-tier fallback: real photo → métier <picture> → CSS silhouette.
+ *   - Métier avatar uses <picture> (WebP source + PNG img fallback).
+ *   - Real photo: data-avatar-type="real-photo", alt=artisan name, onerror→métier.
+ *   - Métier avatar: data-avatar-type="illustrative-metier", illustrative alt text.
+ *   - PNG/WebP both fail → silhouette, no broken-image icon visible.
+ *   - Unknown category → silhouette (never defaults to Plomberie).
+ *   - FixeoHeroes.getCardAvatar() used for all métier resolution.
  * ─────────────────────────────────────────────────────────────────────────────
  */
 (function (window) {
@@ -275,13 +283,72 @@
     var rtLabel  = null;
     var misLabel = null;
 
-    /* Avatar — branded silhouette (T1/T3: no initials, no emoji) */
-    var avatarSrc = a.avatar || a.photo || a.photo_url || '';
-    var avatarHtml = avatarSrc
-      ? '<img class="pvc-avatar-img" src="' + avatarSrc + '" alt="' + _esc(a.name) + '" loading="lazy"'
-        + ' onerror="this.onerror=null;this.style.display=\'none\';var sb=this.parentNode.querySelector(\'.pvc-avatar-silhouette\');if(sb)sb.style.display=\'block\';">' 
-        + '<span class="pvc-avatar-silhouette" style="display:none"></span>'
+    /* Avatar — three-tier fallback (fxhome-artisans-v2b1):
+     *   Tier 1: real artisan photo  (data-avatar-type="real-photo")
+     *   Tier 2: illustrative métier <picture>  (data-avatar-type="illustrative-metier")
+     *   Tier 3: neutral CSS silhouette
+     *
+     * Real photo onerror drops to Tier 2 when a métier avatar exists, or Tier 3.
+     * Métier <picture> PNG img onerror drops to Tier 3.
+     * Unknown category goes directly to Tier 3 — never defaults to Plomberie.
+     */
+    var avatarSrc  = a.avatar || a.photo || a.photo_url || '';
+    var cardAvatar = (window.FixeoHeroes && window.FixeoHeroes.getCardAvatar)
+      ? window.FixeoHeroes.getCardAvatar(cat)
+      : null;
+
+    var _metierPicHtml = cardAvatar
+      ? '<picture class="pvc-avatar-metier" aria-hidden="false">'
+          + '<source type="image/webp" srcset="' + cardAvatar.webp + '">'
+          + '<img class="pvc-avatar-img" src="' + cardAvatar.png + '"'
+              + ' alt="' + _esc(cardAvatar.alt) + '"'
+              + ' data-avatar-type="illustrative-metier"'
+              + ' width="72" height="72" loading="lazy" decoding="async"'
+              + ' onerror="this.onerror=null;'
+                + 'var p=this.closest(\'picture\')||this.parentNode;'
+                + 'if(p&&p.tagName===\'PICTURE\'){p.style.display=\'none\';}else{this.style.display=\'none\';}'
+                + 'var sb=this.closest(\'.pvc-avatar\')&&this.closest(\'.pvc-avatar\').querySelector(\'.pvc-avatar-silhouette\');'
+                + 'if(sb)sb.style.display=\'block\';">'
+          + '</picture>'
+          + '<span class="pvc-avatar-silhouette" style="display:none"></span>'
       : '<span class="pvc-avatar-silhouette"></span>';
+
+    var avatarHtml;
+    if (avatarSrc) {
+      /* Tier 1: real photo. onerror cascades to Tier 2 (métier) or Tier 3 (silhouette). */
+      var _metierOnError = cardAvatar
+        ? 'this.onerror=null;this.style.display=\'none\';'
+            + 'var mp=this.parentNode&&this.parentNode.querySelector(\'.pvc-avatar-metier\');'
+            + 'if(mp){mp.style.display=\'\';}else{'
+            + 'var sb=this.parentNode&&this.parentNode.querySelector(\'.pvc-avatar-silhouette\');'
+            + 'if(sb)sb.style.display=\'block\';}'
+        : 'this.onerror=null;this.style.display=\'none\';'
+            + 'var sb=this.parentNode&&this.parentNode.querySelector(\'.pvc-avatar-silhouette\');'
+            + 'if(sb)sb.style.display=\'block\';';
+      avatarHtml = '<img class="pvc-avatar-img" src="' + _esc(avatarSrc) + '"'
+        + ' alt="' + _esc(a.name) + '"'
+        + ' data-avatar-type="real-photo"'
+        + ' loading="lazy" width="72" height="72"'
+        + ' onerror="' + _metierOnError + '">'
+        + (cardAvatar
+            ? '<picture class="pvc-avatar-metier" style="display:none" aria-hidden="false">'
+                + '<source type="image/webp" srcset="' + cardAvatar.webp + '">'
+                + '<img class="pvc-avatar-img" src="' + cardAvatar.png + '"'
+                    + ' alt="' + _esc(cardAvatar.alt) + '"'
+                    + ' data-avatar-type="illustrative-metier"'
+                    + ' width="72" height="72" loading="lazy" decoding="async"'
+                    + ' onerror="this.onerror=null;'
+                      + 'var p=this.closest(\'picture\')||this.parentNode;'
+                      + 'if(p&&p.tagName===\'PICTURE\'){p.style.display=\'none\';}else{this.style.display=\'none\';}'
+                      + 'var sb=this.closest(\'.pvc-avatar\')&&this.closest(\'.pvc-avatar\').querySelector(\'.pvc-avatar-silhouette\');'
+                      + 'if(sb)sb.style.display=\'block\';">'
+                + '</picture>'
+            : '')
+        + '<span class="pvc-avatar-silhouette" style="display:none"></span>';
+    } else {
+      /* No real photo: go directly to Tier 2 or Tier 3. */
+      avatarHtml = _metierPicHtml;
+    }
 
     /* Availability badge — v2a: only show for explicit available_today.
      * "available" cannot be trusted: loader defaults NULL→"available".
