@@ -3307,26 +3307,27 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
 <style id="fxhome-sit-v2">
 
 /* ════════════════════════════════════════════════════════════════════
-   fxhome-situations-v2.2 — consolidated mobile polish
+   fxhome-situations-v2.3 — corrective mobile polish
    Namespace: fxsit-* (page-scoped to this <style> block + index.html)
    10 sections:
-     §1  shell
-     §2  reset control
-     §3  shared card system (primary + additional unified)
-     §4  primary grid container
-     §5  additional grid container (class: fxsit-additional-grid)
-     §6  disclosure control
-     §7  compact city row
+     §0  Specialized pill suppression (defense-in-depth)
+     §1  Shell
+     §2  Reset control
+     §3  Shared card system (primary + additional unified)
+     §4  Primary grid container
+     §5  Additional grid container (class: fxsit-additional-grid)
+     §6  Disclosure control
+     §7  Compact city row + external city-quick-chips override
      §8  "Voir tous les services" link
-     §9  reduced-motion
-     §10 responsive
-   Specialized pill suppression: §0 (guard rule, highest priority in block)
+     §9  Reduced-motion
+     §10 Responsive
    ════════════════════════════════════════════════════════════════════ */
 
 /* ════════════════════════════════════════════════════════════════════
-   §0  SPECIALIZED PILL SUPPRESSION
-   Hides the 3 injected pills from fixeo_homepage_premium_patch.js.
-   Scoped exclusively to #services. Does not affect services.html.
+   §0  SPECIALIZED PILL SUPPRESSION (defense-in-depth)
+   Primary mechanism: "category-chips" class removed from primary grid →
+   addFixeoNewServiceChips() finds no valid container, exits early.
+   This CSS layer is a fallback for any other injection path.
    ════════════════════════════════════════════════════════════════════ */
 
 #services [data-category="energie-solaire"],
@@ -3425,13 +3426,9 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
 /* ════════════════════════════════════════════════════════════════════
    §3  SHARED CARD SYSTEM
    One unified rule for all 12 situation cards (primary + additional).
-   Min-height: 96px — accommodates longest 2-line titles at 375px.
-   Active state, urgency badge, icon, label: all shared.
    ════════════════════════════════════════════════════════════════════ */
 
-/* — Base card — */
 #services.fc3-chapter .fxsit-card {
-  /* Layout */
   display: flex !important;
   flex-direction: column !important;
   align-items: flex-start !important;
@@ -3439,23 +3436,19 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
   min-height: 96px !important;
   padding: 14px 12px 12px !important;
   border-radius: 14px !important;
-  /* Geometry */
   width: 100% !important;
   min-width: 0 !important;
   box-sizing: border-box !important;
-  /* Visual — calm default */
   background: rgba(255,255,255,0.030) !important;
   border: 1px solid rgba(72,100,255,0.10) !important;
   border-top: 1.5px solid rgba(72,100,255,0.14) !important;
   box-shadow: none !important;
-  /* Interaction */
   cursor: pointer !important;
   transition:
     background 0.18s ease,
     border-color 0.18s ease,
     box-shadow 0.18s ease,
     transform 0.15s ease !important;
-  /* Reset button defaults */
   appearance: none !important;
   -webkit-appearance: none !important;
   text-align: left !important;
@@ -3463,13 +3456,11 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
   overflow: hidden !important;
 }
 
-/* — Hover — */
 #services.fc3-chapter .fxsit-card:hover {
   background: rgba(72,100,255,0.07) !important;
   border-color: rgba(72,100,255,0.22) !important;
 }
 
-/* — Active (real user selection only — no hardcoded default) — */
 #services.fc3-chapter .fxsit-card.active,
 #services.fc3-chapter .fxsit-card[aria-pressed="true"] {
   background: rgba(72,100,255,0.10) !important;
@@ -3482,13 +3473,11 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
   transform: translateY(-1px) !important;
 }
 
-/* — Focus — */
 #services.fc3-chapter .fxsit-card:focus-visible {
   outline: 2px solid rgba(72,100,255,0.60) !important;
   outline-offset: 3px !important;
 }
 
-/* — Icon zone — */
 #services.fc3-chapter .fxsit-card .fc3-card-icon {
   font-size: 1.30rem !important;
   line-height: 1 !important;
@@ -3497,7 +3486,6 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
   width: 1.5rem !important;
 }
 
-/* — Label — */
 #services.fc3-chapter .fxsit-card .fc3-card-label {
   font-size: 0.84rem !important;
   font-weight: 500 !important;
@@ -3516,7 +3504,6 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
   font-weight: 600 !important;
 }
 
-/* — Urgency badge — pinned to bottom of flex column — */
 #services.fc3-chapter .fxsit-card .fc3-card-urgency {
   font-size: 0.54rem !important;
   font-weight: 700 !important;
@@ -3534,7 +3521,6 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
   margin-top: auto !important;
 }
 
-/* — Card entrance animation — */
 @keyframes fxsit-card-enter {
   from { opacity: 0; transform: translateY(4px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -3543,6 +3529,8 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
 
 /* ════════════════════════════════════════════════════════════════════
    §4  PRIMARY GRID CONTAINER
+   Note: "category-chips" class REMOVED in v2.3 to prevent pill injection.
+   fc3-situations class retained for matching engine compatibility.
    ════════════════════════════════════════════════════════════════════ */
 
 #services.fc3-chapter .fxsit-primary-grid {
@@ -3555,7 +3543,6 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
   padding: 0 !important;
 }
 
-/* Primary card entrance stagger */
 #services.fc3-chapter .fxsit-primary-grid .fxsit-card:nth-child(1) { animation: fxsit-card-enter 0.34s 0.00s ease both; }
 #services.fc3-chapter .fxsit-primary-grid .fxsit-card:nth-child(2) { animation: fxsit-card-enter 0.34s 0.05s ease both; }
 #services.fc3-chapter .fxsit-primary-grid .fxsit-card:nth-child(3) { animation: fxsit-card-enter 0.34s 0.10s ease both; }
@@ -3565,41 +3552,45 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
 
 
 /* ════════════════════════════════════════════════════════════════════
-   §5  ADDITIONAL GRID CONTAINER — class fxsit-additional-grid
-   Isolated from external .category-chips flex rules.
-   Grid layout enforced by ID (#fxsit-additional) for maximum specificity.
+   §5  ADDITIONAL GRID CONTAINER (fxsit-additional-grid)
+   CLOSED STATE: height:0 + margin:0 → ZERO layout contribution.
+   OPEN STATE (.fxsit-expanded): height restored via max-height.
+   Using height:0 explicitly alongside max-height:0 for maximum
+   cross-browser reliability (belt + suspenders).
    ════════════════════════════════════════════════════════════════════ */
 
 #fxsit-additional {
-  /* Grid layout — ID specificity beats all external .category-chips rules */
+  /* Grid layout — ID specificity beats all external rules */
   display: grid !important;
   grid-template-columns: repeat(2, 1fr) !important;
   grid-auto-rows: 1fr !important;
   gap: 12px !important;
   /* Geometry */
   max-width: 680px !important;
-  margin: 0 auto clamp(12px, 2vw, 18px) !important;
   padding: 0 !important;
   min-width: 0 !important;
-  /* Collapsed state */
+  /* CLOSED state: zero layout contribution */
   overflow: hidden;
   max-height: 0;
+  height: 0;           /* explicit height:0 for cross-browser reliability */
+  margin: 0 !important; /* no margin when closed */
   opacity: 0;
   pointer-events: none;
   transition:
     max-height 0.34s cubic-bezier(0.4,0,0.2,1),
-    opacity 0.28s ease;
+    opacity 0.28s ease,
+    margin 0.20s ease;
 }
 
 #fxsit-additional.fxsit-expanded {
-  /* 3 rows × 96px card + 3 gaps × 12px + breathing room = ~332px min.
-     800px is a safe generous ceiling at all viewports. */
   max-height: 800px;
+  height: auto;        /* restore auto height when expanded */
+  /* Restore spacing between disclosure-btn and services-link when open */
+  margin: 0 auto clamp(12px, 2vw, 18px) !important;
   opacity: 1;
   pointer-events: auto;
 }
 
-/* Additional card reveal stagger */
 #fxsit-additional.fxsit-expanded .fxsit-card:nth-child(1) { animation: fxsit-card-enter 0.26s 0.04s ease both; }
 #fxsit-additional.fxsit-expanded .fxsit-card:nth-child(2) { animation: fxsit-card-enter 0.26s 0.09s ease both; }
 #fxsit-additional.fxsit-expanded .fxsit-card:nth-child(3) { animation: fxsit-card-enter 0.26s 0.14s ease both; }
@@ -3678,9 +3669,39 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
 
 
 /* ════════════════════════════════════════════════════════════════════
-   §7  COMPACT CITY ROW
+   §7  COMPACT CITY ROW + EXTERNAL CITY-QUICK-CHIPS OVERRIDE
+   
+   ROOT CAUSE FIX: css/fixeo-chapter-3-v1.css (frozen) forces:
+     #services.fc3-chapter #city-quick-chips { display:none !important }
+   And only reveals it via:
+     #services.fc3-chapter[data-fc3-chips-open] #city-quick-chips { display:flex !important }
+   
+   Fix A — Page-local CSS: Override the forced-none with a higher-specificity rule:
+     #services.fc3-chapter #city-quick-chips { display:flex!important }     ← cancel freeze
+     #services.fc3-chapter #city-quick-chips[hidden] { display:none!important } ← restore [hidden]
+   This ensures our hidden attribute mechanism takes priority.
+   
+   Fix B — City IIFE: Also toggle data-fc3-chips-open on #services to satisfy
+   the external reveal rule as a belt-and-suspenders backup.
    ════════════════════════════════════════════════════════════════════ */
 
+/* ── Override: cancel frozen display:none on city-quick-chips ── */
+#services.fc3-chapter #city-quick-chips {
+  /* Cancel fixeo-chapter-3-v1.css forced: #services.fc3-chapter #city-quick-chips { display:none!important }
+     Specificity match: same (1,1,0) → our rule wins via source order (we come later in cascade) */
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+  padding: 12px 0 4px !important;
+  justify-content: center !important;
+}
+
+#services.fc3-chapter #city-quick-chips[hidden] {
+  /* Restore [hidden] behaviour — our page-local rule beats the ch3 override above */
+  display: none !important;
+}
+
+/* ── City row shell ── */
 .fxsit-city-row {
   max-width: 680px;
   margin: 0 auto clamp(14px, 2.2vw, 22px);
@@ -3689,7 +3710,7 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
 
 /* State A: city known */
 .fxsit-city-known {
-  display: none; /* hidden by default; JS shows via #services[data-fc3-city-known] */
+  display: none; /* hidden by default; shown via #services[data-fc3-city-known] */
   align-items: center;
   gap: 10px;
   min-height: 44px;
@@ -3789,19 +3810,6 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
   outline-offset: 3px;
 }
 
-/* City chip picker */
-.fxsit-city-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  padding: 12px 0 4px;
-  justify-content: center;
-}
-
-.fxsit-city-chips[hidden] {
-  display: none;
-}
-
 
 /* ════════════════════════════════════════════════════════════════════
    §8  "VOIR TOUS LES SERVICES" LINK
@@ -3810,7 +3818,6 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
 .fxsit-services-link-wrap {
   text-align: center;
   margin: 0 auto clamp(20px, 3vw, 32px);
-  /* Bottom safe spacing — keeps link above floating controls */
   padding-bottom: max(env(safe-area-inset-bottom, 0px), 8px);
 }
 
@@ -3886,10 +3893,7 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
   }
 }
 
-/* ≤ 374px — tighter padding, "Modifier" label shortened in CSS
-   Note: "Modifier la ville" button label shortening handled by JS
-   (aria-label preserved). At this width the btn text is truncated
-   by ellipsis on the container — no layout jump. */
+/* ≤ 374px — tighter padding */
 @media (max-width: 374px) {
   #services.fc3-chapter .fxsit-primary-grid,
   #fxsit-additional {
@@ -3928,7 +3932,7 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
 
 </style>
 
-<section class="section fc3-chapter" id="services" aria-labelledby="services-title">
+<section class="section fc3-chapter" id="services" aria-labelledby="services-title" data-fxsit-version="v2.3">
   <div class="container">
 
     <!-- ── Header ── -->
@@ -4003,7 +4007,7 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
     </div>
 
     <!-- ── Primary situations — 6 cards, always visible ── -->
-    <div class="fxsit-primary-grid fc3-situations category-chips"
+    <div class="fxsit-primary-grid fc3-situations"
          role="list" aria-label="Choisissez votre situation">
 
       <button class="fxsit-card chip service-chip" role="listitem"
@@ -4113,10 +4117,11 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
 
   <!-- ── fc3-city: contextual city intelligence (unchanged from previous) ── -->
   <script>
-  /* City IIFE — fxhome-situations-v2.2
-     Updated for compact city row (fxsit-* IDs).
-     Reads/writes localStorage['fixeo_detected_city'] via existing mechanism.
-     Controls: #fxsit-city-name, #fxsit-city-known, data-fc3-city-known on #services.
+  /* City IIFE — fxhome-situations-v2.3
+     ROOT CAUSE FIX: Added data-fc3-chips-open toggling alongside hidden attribute.
+     css/fixeo-chapter-3-v1.css (frozen external) requires data-fc3-chips-open attr
+     on #services to reveal #city-quick-chips. Our page-local CSS §7 overrides the
+     forced display:none, but we also sync data-fc3-chips-open as belt-and-suspenders.
      Never calls matching. Never scrolls. */
   (function () {
     var VALID_CITIES = ['Casablanca','Rabat','Marrakech','Fès','Agadir','Tanger',
@@ -4129,13 +4134,6 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
       for (var i = 0; i < opts.length; i++) {
         if (opts[i].value === city) { select.value = city; break; }
       }
-      select.dispatchEvent(new Event('change', { bubbles: true }));
-    }
-
-    function _clearSelectCity() {
-      var select = document.getElementById('services-city-filter');
-      if (!select) return;
-      select.value = '';
       select.dispatchEvent(new Event('change', { bubbles: true }));
     }
 
@@ -4153,7 +4151,7 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
       var nameEl   = document.getElementById('fxsit-city-name');
       var knownDiv = document.getElementById('fxsit-city-known');
       var unkDiv   = document.getElementById('fxsit-city-unknown');
-      if (nameEl) nameEl.textContent = city;
+      if (nameEl)  nameEl.textContent = city;
       if (section) section.setAttribute('data-fc3-city-known', '1');
       if (knownDiv) knownDiv.setAttribute('aria-hidden', 'false');
       if (unkDiv)   unkDiv.setAttribute('aria-hidden', 'true');
@@ -4163,25 +4161,31 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
       var section  = document.getElementById('services');
       var knownDiv = document.getElementById('fxsit-city-known');
       var unkDiv   = document.getElementById('fxsit-city-unknown');
-      if (section) section.removeAttribute('data-fc3-city-known');
+      if (section)  section.removeAttribute('data-fc3-city-known');
       if (knownDiv) knownDiv.setAttribute('aria-hidden', 'true');
       if (unkDiv)   unkDiv.removeAttribute('aria-hidden');
     }
 
     function _openCityChips() {
-      var chipsDiv = document.getElementById('city-quick-chips');
+      var chipsDiv  = document.getElementById('city-quick-chips');
+      var section   = document.getElementById('services');
       var chooseBtn = document.getElementById('fxsit-city-choose-btn');
       var modifyBtn = document.getElementById('fxsit-city-modify-btn');
+      /* FIX v2.3: remove [hidden] attr AND set data-fc3-chips-open on section.
+         Both mechanisms used simultaneously to defeat frozen external CSS cascade. */
       if (chipsDiv) { chipsDiv.removeAttribute('hidden'); }
+      if (section)  { section.setAttribute('data-fc3-chips-open', '1'); }
       if (chooseBtn) chooseBtn.setAttribute('aria-expanded','true');
       if (modifyBtn) modifyBtn.setAttribute('aria-expanded','true');
     }
 
     function _closeCityChips() {
-      var chipsDiv = document.getElementById('city-quick-chips');
+      var chipsDiv  = document.getElementById('city-quick-chips');
+      var section   = document.getElementById('services');
       var chooseBtn = document.getElementById('fxsit-city-choose-btn');
       var modifyBtn = document.getElementById('fxsit-city-modify-btn');
       if (chipsDiv) { chipsDiv.setAttribute('hidden',''); }
+      if (section)  { section.removeAttribute('data-fc3-chips-open'); }
       if (chooseBtn) chooseBtn.setAttribute('aria-expanded','false');
       if (modifyBtn) modifyBtn.setAttribute('aria-expanded','false');
     }
@@ -4282,17 +4286,26 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
     (function () {
       var OBSOLETE = ['energie-solaire','securite-surveillance','corporate-facilities'];
       function remove() {
+        /* Primary mechanism: remove by data-category (deterministic, no timing dependency).
+           v2.3: also removes any fc3-spec-chip elements (injected class by patch.js).
+           "category-chips" class removed from primary grid in v2.3 HTML —
+           so addFixeoNewServiceChips() finds no container and returns early.
+           This guard is defense-in-depth for any legacy cached HTML edge cases. */
         OBSOLETE.forEach(function (cat) {
-          var el = document.querySelector('#services [data-category="' + cat + '"]');
-          if (el && el.parentNode) { el.parentNode.removeChild(el); }
+          document.querySelectorAll('#services [data-category="' + cat + '"]')
+            .forEach(function(el) { if (el.parentNode) el.parentNode.removeChild(el); });
         });
+        /* Also remove any injected fc3-spec-chip elements not yet categorized */
+        document.querySelectorAll('#services .fc3-spec-chip')
+          .forEach(function(el) { if (el.parentNode) el.parentNode.removeChild(el); });
       }
       if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', remove);
       } else {
         remove();
       }
-      setTimeout(remove, 900);
+      /* One deferred run for async injectors. Not a polling loop — fires exactly once. */
+      setTimeout(remove, 950);
     }());
 
     /* ────────────────────────────────────────────────────────────────
