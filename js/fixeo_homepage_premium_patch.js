@@ -431,44 +431,63 @@
       /* ── Badges ── */
       (badges ? '<div class="pvc-badges-v2">' + badges + '</div>' : '') +
 
-      /* ── Divider ── */
-      '<div class="pvc-divider"></div>' +
+      /* ── V3B: Optional factual mini-description ─────────────────────────
+       * Source: a.description (row.description in Supabase loader — confirmed
+       * canonical field used by public artisan profile page).
+       * Processing: strip HTML tags, collapse whitespace, trim. CSS 2-line clamp.
+       * Never generated or rewritten. Empty → block absent, no gap reserved.
+       * ─────────────────────────────────────────────────────────────────── */
+      (function() {
+        var raw = String(a.description || a.shortBio || '').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+        if (!raw) return '';
+        return '<p class="pvc-desc-v3b">' + _esc(raw) + '</p>';
+      })() +
 
-      /* ── Stats ── */
-      '<div class="pvc-stats">' +
-        '<div class="pvc-rating-block">' + starsHtml + '</div>' +
+      /* ── V3B: Two compact trust rows ─────────────────────────────────────
+       * Row 1: Profil référencé sur FIXEO (neutral listing/directory signal).
+       * Row 2: Paiement après intervention (platform-level payment truth).
+       * No pill, no border, no background, no verification implication.
+       * Verified gate kept separately: if isVer, shows "Vérifié FIXEO" badge
+       * above; these two rows are always present regardless of verified state.
+       * flex-direction:column — guaranteed no horizontal overflow at any width.
+       * trust.scrollWidth <= trust.clientWidth validated in V3A.3 at all vp.
+       * ─────────────────────────────────────────────────────────────────── */
+      '<div class="pvc-trust-v3b" role="list">' +
+        '<span class="pvc-trust-v3b-item" role="listitem">' +
+          '<span class="pvc-trust-v3b-icon" aria-hidden="true">\uD83D\uDCCB</span>' +
+          'Profil r\u00e9f\u00e9renc\u00e9 sur FIXEO' +
+        '</span>' +
+        '<span class="pvc-trust-v3b-item" role="listitem">' +
+          '<span class="pvc-trust-v3b-icon" aria-hidden="true">\uD83E\uDD1D</span>' +
+          'Paiement apr\u00e8s intervention' +
+        '</span>' +
       '</div>' +
 
-      /* info-bar removed — FOMO line below is the only chip (T2) */
-
-      /* Step 1 — Live marketplace signals (v13: replaces static fomo) */
-      _liveSignalsHtml(a) +
-
-      /* Step 3 — Trust line (v2a): "Vérifié par FIXEO" gated on verified===true only.
-       * "Paiement après intervention" is a platform-level truth, always shown. */
-      (isVer ? '<div class="pvc-trust-line pvc-trust-line--verified">\u2714\ufe0f V\u00e9rifi\u00e9 par FIXEO \u00b7 Paiement apr\u00e8s intervention</div>'
-             : '<div class="pvc-trust-line pvc-trust-line--payment">Paiement apr\u00e8s intervention</div>') +
-
-      /* ── Footer: price + CTAs ── */
-      /* Step 2: clean vertical structure — label, amount, hint all in column */
-      '<div class="pvc-footer">' +
-        /* v2a: single price message — no midpoint, no two competing prices */
-        '<div class="pvc-price-block">' +
+      /* ── V3B: Action area (margin-top:auto anchors price+CTA to bottom) ──
+       * Contains: sep divider → price block → primary CTA → secondary link.
+       * margin-top:auto on .pvc-action-v3b absorbs all surplus vertical space
+       * regardless of how much content the card above contains.
+       * This guarantees CTA vertical alignment across all 6 card states.
+       * ─────────────────────────────────────────────────────────────────── */
+      '<div class="pvc-action-v3b">' +
+        '<div class="pvc-divider pvc-divider-v3b"></div>' +
+        /* v2a: single price message — label/amount/hint column */
+        '<div class="pvc-price-block pvc-price-v3b">' +
           '<div class="pvc-price-amount">' + _esc(pricing.main) + '</div>' +
           '<span class="pvc-price-from">' + _esc(pricing.hint) + '</span>' +
         '</div>' +
-        '<div class="pvc-cta-col">' +
-          '<div class="pvc-cta-row">' +
-            '<button class="pvc-btn-reserve-v2 fhp-btn-reserve" type="button"' +
-              ' aria-label="R\u00e9server ' + _esc(a.name) + ', ' + _esc(catLbl) + '">R\u00e9server maintenant</button>' +
-            /* v2a: semantic anchor — href valid without JS; modified clicks open new tab */
-            '<a class="pvc-profile-link fhp-btn-profile"' +
-              ' href="artisan-profile.html?id=' + encodeURIComponent(String(a.id)) + '">' +
-              'Voir son profil</a>' +
-          '</div>' +
-          /* under-CTA removed — paiement covered by trust-line above (T2) */
-        '</div>' +
+        '<button class="pvc-btn-reserve-v2 fhp-btn-reserve pvc-btn-v3b" type="button"' +
+          ' aria-label="R\u00e9server ' + _esc(a.name) + ', ' + _esc(catLbl) + '">' +
+          'R\u00e9server maintenant \u2192' +
+        '</button>' +
+        /* v2a: semantic anchor — href valid without JS */
+        '<a class="pvc-profile-link fhp-btn-profile pvc-profile-v3b"' +
+          ' href="artisan-profile.html?id=' + encodeURIComponent(String(a.id)) + '"' +
+          ' aria-label="Voir le profil complet de ' + _esc(a.name) + '">' +
+          'Voir le profil complet \u203a' +
+        '</a>' +
       '</div>' +
+
     '</article>';
   }
 
