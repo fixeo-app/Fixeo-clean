@@ -4,10 +4,11 @@ claaim sys<!DOCTYPE html>
 <head>
   <!-- perf2: Only truly parse-time required scripts remain sync.
        supabase-client MUST be sync (FixeoSupabaseClient used by auth-global via closure).
-       fixeo-logout-global MUST be sync (onclick=fixeoGlobalLogout in nav HTML).
-       Everything else → defer (executes at DCL in document order, same guarantees). -->
+       fxprofile-perf-v1: fixeo-logout-global deferred — all nav onclick handlers use
+       the guard pattern (window.fixeoGlobalLogout && fixeoGlobalLogout()) so deferring
+       is safe; the script is available well before any user interaction. -->
   <script src="/js/supabase-client.js?v=sc2"></script>
-  <script src="/js/fixeo-logout-global.js?v=v2c4a"></script>
+  <script src="/js/fixeo-logout-global.js?v=v2c4a" defer></script>
 
   <link rel="icon" type="image/png" href="img/favicon.png" sizes="32x32">
   <link rel="apple-touch-icon" href="img/favicon.png">
@@ -223,7 +224,11 @@ claaim sys<!DOCTYPE html>
 <meta name="twitter:site" content="@FixeoMaroc">
 <!-- Dynamic LD+JSON injected at render time by fixeo-seo-profile.js -->
 <script id="fixeo-profile-jsonld" type="application/ld+json">{"@context":"https://schema.org","@type":"ProfessionalService","name":"Artisan Fixeo","url":"https://www.fixeo.ma/artisan-profile.html","provider":{"@type":"Organization","name":"Fixeo","url":"https://www.fixeo.ma/"}}</script>
-<script src="/js/fixeo-heroes.js?v=fxhv2a"></script>
+<!-- fxprofile-perf-v1: defer fixeo-heroes.js — pure data provider, zero DOM
+     access at parse time. Deferred scripts run at DCL in document order; all
+     callers (fixeo-public-artisan-profile.js, fixeo-profile-v2a.js) also defer,
+     so FixeoHeroes is always available before they execute. -->
+<script src="/js/fixeo-heroes.js?v=fxhv2a" defer></script>
 </head>
 <body data-theme="dark" class="public-artisan-page fixeo-gh-enabled">
 <!-- perf-profile-1: Instant preseed — runs synchronously at body-parse time (before any other script).
@@ -771,17 +776,33 @@ claaim sys<!DOCTYPE html>
     }
   })(document);
 </script>
-<!-- V2-C5F: BFCache guard — forces a clean reload when page is restored from
-     the browser back-forward cache (iOS Safari / Android Chrome). Without this,
-     navigating Back to the profile can restore a stale JS execution context that
-     pre-dates the v2c5d sentinel, causing the old V1 profile to reappear briefly.
-     e.persisted === true ONLY on bfcache restore; never fires on normal page load.
-     No reload loop: a reloaded page is fetched fresh and e.persisted = false. -->
+<!-- fxprofile-perf-v1: BFCache-friendly back-navigation.
+     Replaces the forced location.reload() that was preventing BFCache.
+     On BFCache restore (e.persisted): re-run the hero fast-path from
+     sessionStorage so the profile content is instantly accurate without a
+     network round-trip. Falls back to reload() only if sessionStorage is
+     unavailable or the artisan data is missing (e.g. direct URL visited in
+     a session that never came from the homepage). -->
 <script>
   (function() {
     'use strict';
     window.addEventListener('pageshow', function(e) {
-      if (e.persisted) {
+      if (!e.persisted) return; /* normal load — nothing to do */
+      try {
+        var id = new URLSearchParams(window.location.search).get('id');
+        if (!id) { window.location.reload(); return; }
+        var raw = sessionStorage.getItem('fixeo_profile_prefetch_' + id);
+        if (!raw) { window.location.reload(); return; }
+        /* Data available — re-run the inline fast-path logic without a reload */
+        var a = JSON.parse(raw);
+        if (!a || !a.name) { window.location.reload(); return; }
+        /* Profile content is already in the DOM from BFCache; just ensure
+           the hero sentinel matches so deferred scripts don't re-render. */
+        if (!window.__fxHeroRendered) window.__fxHeroRendered = id;
+        /* Ensure comparison bar stays hidden on back-navigation */
+        var bar = document.querySelector('.comparator-bar');
+        if (bar) bar.classList.remove('visible');
+      } catch(err) {
         window.location.reload();
       }
     });
@@ -821,16 +842,14 @@ claaim sys<!DOCTYPE html>
 <script src="js/fixeo-seo-profile-blocks.js?v=seo3c" defer></script>
 <link rel="stylesheet" href="css/fixeo-profile-v3.css?v=fxpv3-v1a">
 <!-- <script src="js/fixeo-profile-v3.js?v=fxpv3-v1a" defer></script> -->
-  <script>
-window.addEventListener('load', function () {
-  setTimeout(function () {
-    var s = document.createElement('script');
-    s.src = '/js/fixeo-profile-v2a.js?v=fxpv3-v1b';
-    s.defer = true;
-    document.body.appendChild(s);
-  }, 1500);
-});
-</script>
+<!-- fxprofile-perf-v1: Load fixeo-profile-v2a.js as a deferred script instead
+     of via window.load + 1500ms timeout. This moves the V2-A enhancement
+     (bio, badge, WhatsApp CTA, pricing) from T+load+1500ms to T+DCL order.
+     fixeo-heroes.js is now also deferred (document order) so FixeoHeroes is
+     available when fixeo-profile-v2a.js executes. The 1500ms lazy-load was
+     originally used to avoid competing with the main Supabase fetch; the
+     window.__fixeoArtisanFetch deduplication guard makes this unnecessary. -->
+<script src="/js/fixeo-profile-v2a.js?v=fxpv3-v1b" defer></script>
   <script>
 (function () {
   function loadPortfolio() {

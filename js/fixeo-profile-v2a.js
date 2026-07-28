@@ -1815,9 +1815,22 @@ function isLowEndDesktop() {
         return; /* offline / not configured — graceful noop */
       }
 
-      var fetchKey = 'v2a:' + artisanId;
-      if (!window.__fixeoArtisanFetch[fetchKey]) {
-        window.__fixeoArtisanFetch[fetchKey] = (async function() {
+      /* fxprofile-perf-v1: Reuse the in-flight or settled Promise already stored
+       * by fixeo-public-artisan-profile.js under window.__fixeoArtisanFetch[artisanId].
+       * Both scripts now run at DCL order (both deferred), so the main-renderer
+       * Promise is always present when v2a executes. The 'v2a:' key is kept as
+       * a fallback for direct URL visits where the main renderer may not have
+       * stored its Promise yet (FixeoSupabaseLoader.getArtisanForProfile runs
+       * asynchronously inside init() and may not have stored a dedup entry).
+       * Priority: shared key first → v2a own key → own fresh fetch. */
+      var sharedKey = artisanId;
+      var ownKey    = 'v2a:' + artisanId;
+
+      if (window.__fixeoArtisanFetch[sharedKey]) {
+        /* Reuse main-renderer's in-flight/settled SELECT — zero extra Supabase requests */
+        artisan = await window.__fixeoArtisanFetch[sharedKey];
+      } else if (!window.__fixeoArtisanFetch[ownKey]) {
+        window.__fixeoArtisanFetch[ownKey] = (async function() {
           /* V2-B2A Patch 1: score_qualification column removed (does not exist in this project).
            * Any code that reads artisan.score_qualification receives undefined → || 0 fallback.
            * Patch 2: Two-step Population A + B resolution (mirrors getArtisanForProfile).
@@ -1847,9 +1860,10 @@ function isLowEndDesktop() {
           /* Not found in either path — graceful noop */
           return null;
         })();
+        artisan = await window.__fixeoArtisanFetch[ownKey];
+      } else {
+        artisan = await window.__fixeoArtisanFetch[ownKey];
       }
-
-      artisan = await window.__fixeoArtisanFetch[fetchKey];
       if (!artisan) return; /* Not in Supabase (legacy ID / seed) — graceful noop */
 
       /* V2-B2A Patch 3: Expose complete Supabase artisan data globally.
