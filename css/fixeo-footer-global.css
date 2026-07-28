@@ -1,17 +1,16 @@
 /*
- * fixeo-footer-global.css — v gf3a
- * Global Footer Authority System
+ * fixeo-footer-global.css — v gf4a
+ * Canonical Public Footer Authority
  *
- * Single source of truth for the Fixeo premium footer.
- * Applied via fixeo-footer-global.js (HTML injection) on pages without
- * a native footer (artisan-profile, results, auth, etc.).
- * Homepage loads this too — its native footer gains .fixeo-footer-v1 class.
+ * Single source of truth for the Fixeo public footer.
+ * All public pages use class .fxf-canonical on <footer>.
+ * Legacy selectors (.seo-footer, .seo-footer-card, etc.) are replaced by JS.
  *
- * DO NOT duplicate these rules in page-specific CSS files.
- * Append-only: add rules below existing ones, never modify above.
+ * DO NOT duplicate these rules in page-specific CSS.
+ * Append-only: add new rules below existing ones, never modify above.
  */
 
-/* ── BASE FOOTER SHELL ─────────────────────────────────────── */
+/* ── BASE SHELL ────────────────────────────────────────────── */
 footer.fixeo-footer-v1,
 .fixeo-footer-inject {
   background: rgba(13,13,26,0.97);
@@ -26,7 +25,34 @@ footer.fixeo-footer-v1,
   box-sizing: border-box;
 }
 
-/* ── PARTNER / TRUST BADGES ROW ───────────────────────────── */
+/* ── TRUST SIGNALS ROW (factual — 2 signals only) ─────────── */
+.fxf-trust-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 40px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.fxf-trust-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 18px;
+  border-radius: 9999px;
+  background: rgba(255,255,255,0.055);
+  border: 1px solid rgba(255,255,255,0.10);
+  color: rgba(255,255,255,0.68);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+/* Legacy badge class — kept for any residual CSS references */
 .fixeo-footer-v1 .v13-partners-row,
 .fixeo-footer-inject .v13-partners-row {
   display: flex;
@@ -65,7 +91,8 @@ footer.fixeo-footer-v1,
 
 /* ── FOOTER GRID ───────────────────────────────────────────── */
 .fixeo-footer-v1 .footer-grid,
-.fixeo-footer-inject .footer-grid {
+.fixeo-footer-inject .footer-grid,
+.fxf-grid {
   display: grid;
   grid-template-columns: 2fr 1fr 1fr 1fr;
   gap: 40px;
@@ -74,21 +101,68 @@ footer.fixeo-footer-v1,
 
 /* ── BRAND COLUMN ──────────────────────────────────────────── */
 .fixeo-footer-v1 .footer-brand,
-.fixeo-footer-inject .footer-brand {
+.fixeo-footer-inject .footer-brand,
+.fxf-brand {
   display: flex;
   flex-direction: column;
   gap: 0;
 }
 
+.fxf-logo-wrap {
+  margin-bottom: 14px;
+}
+
+.fxf-logo {
+  height: 38px;
+  width: auto;
+  object-fit: contain;
+  background: transparent;
+}
+
 .fixeo-footer-v1 .footer-desc,
-.fixeo-footer-inject .footer-desc {
+.fixeo-footer-inject .footer-desc,
+.fxf-desc {
   color: rgba(255,255,255,0.44);
   font-size: 0.85rem;
   line-height: 1.65;
-  margin: 0 0 14px;
+  margin: 0 0 16px;
   max-width: 280px;
 }
 
+/* Primary CTA — opens RAFI V5 request form */
+.fxf-primary-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border-radius: 12px;
+  background: rgba(225,48,108,0.12);
+  border: 1px solid rgba(225,48,108,0.28);
+  color: rgba(255,160,180,0.92);
+  font-size: 0.88rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+  width: fit-content;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.fxf-primary-cta:hover,
+.fxf-primary-cta:focus {
+  background: rgba(225,48,108,0.22);
+  border-color: rgba(225,48,108,0.44);
+  color: rgba(255,200,215,0.98);
+  outline: 2px solid rgba(225,48,108,0.4);
+  outline-offset: 2px;
+}
+
+/* Legacy artisan CTA — preserved for old static footers not yet replaced */
 .fixeo-footer-v1 .footer-artisan-cta,
 .fixeo-footer-inject .footer-artisan-cta {
   display: inline-flex;
@@ -117,11 +191,43 @@ footer.fixeo-footer-v1,
 
 /* ── LINK COLUMNS ──────────────────────────────────────────── */
 .fixeo-footer-v1 .footer-links,
-.fixeo-footer-inject .footer-links {
+.fixeo-footer-inject .footer-links,
+.fxf-links {
   display: flex;
   flex-direction: column;
 }
 
+/* details/summary accordion (mobile) — reset native browser chrome */
+.fxf-group {
+  border: none;
+  background: none;
+  padding: 0;
+  margin: 0;
+}
+
+.fxf-group-heading {
+  list-style: none;
+  cursor: default;
+  pointer-events: none; /* desktop: always open */
+}
+
+.fxf-group-heading::-webkit-details-marker,
+.fxf-group-heading::marker {
+  display: none;
+}
+
+.fxf-group-heading h4 {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.85);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin: 0 0 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+/* Legacy h4 selector — for injected footers that still use old structure */
 .fixeo-footer-v1 .footer-links h4,
 .fixeo-footer-inject .footer-links h4 {
   font-size: 0.88rem;
@@ -135,19 +241,22 @@ footer.fixeo-footer-v1,
 }
 
 .fixeo-footer-v1 .footer-links ul,
-.fixeo-footer-inject .footer-links ul {
+.fixeo-footer-inject .footer-links ul,
+.fxf-links ul {
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
 .fixeo-footer-v1 .footer-links li,
-.fixeo-footer-inject .footer-links li {
+.fixeo-footer-inject .footer-links li,
+.fxf-links li {
   margin: 0;
 }
 
 .fixeo-footer-v1 .footer-links a,
-.fixeo-footer-inject .footer-links a {
+.fixeo-footer-inject .footer-links a,
+.fxf-links a {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -161,13 +270,15 @@ footer.fixeo-footer-v1,
 }
 
 .fixeo-footer-v1 .footer-links li:last-child a,
-.fixeo-footer-inject .footer-links li:last-child a {
+.fixeo-footer-inject .footer-links li:last-child a,
+.fxf-links li:last-child a {
   border-bottom: none;
 }
 
 .fixeo-footer-v1 .footer-links a::before,
-.fixeo-footer-inject .footer-links a::before {
-  content: '›';
+.fixeo-footer-inject .footer-links a::before,
+.fxf-links a::before {
+  content: '\u203a';
   font-size: 0.90rem;
   color: rgba(255,255,255,0.20);
   transition: color 0.18s ease, transform 0.18s ease;
@@ -176,20 +287,23 @@ footer.fixeo-footer-v1,
 }
 
 .fixeo-footer-v1 .footer-links a:hover,
-.fixeo-footer-inject .footer-links a:hover {
+.fixeo-footer-inject .footer-links a:hover,
+.fxf-links a:hover {
   color: rgba(255,255,255,0.82);
   padding-left: 4px;
 }
 
 .fixeo-footer-v1 .footer-links a:hover::before,
-.fixeo-footer-inject .footer-links a:hover::before {
+.fixeo-footer-inject .footer-links a:hover::before,
+.fxf-links a:hover::before {
   color: rgba(225,48,108,0.72);
   transform: translateX(2px);
 }
 
-/* ── FOOTER BOTTOM ─────────────────────────────────────────── */
+/* ── FOOTER BOTTOM (legal row) ─────────────────────────────── */
 .fixeo-footer-v1 .footer-bottom,
-.fixeo-footer-inject .footer-bottom {
+.fixeo-footer-inject .footer-bottom,
+.fxf-bottom {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -202,38 +316,58 @@ footer.fixeo-footer-v1,
   margin-top: 8px;
 }
 
+.fxf-legal-links {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
 .fixeo-footer-v1 .footer-bottom a,
-.fixeo-footer-inject .footer-bottom a {
+.fixeo-footer-inject .footer-bottom a,
+.fxf-bottom a,
+.fxf-legal-links a {
   color: rgba(255,255,255,0.32);
   text-decoration: none;
   transition: color 0.15s ease;
 }
 
 .fixeo-footer-v1 .footer-bottom a:hover,
-.fixeo-footer-inject .footer-bottom a:hover {
+.fixeo-footer-inject .footer-bottom a:hover,
+.fxf-bottom a:hover,
+.fxf-legal-links a:hover {
   color: rgba(255,255,255,0.62);
+}
+
+.fxf-legal-links [aria-hidden="true"] {
+  color: rgba(255,255,255,0.18);
 }
 
 /* ── TABLET (≤ 900px) — 2-col grid ────────────────────────── */
 @media (max-width: 900px) {
   .fixeo-footer-v1 .footer-grid,
-  .fixeo-footer-inject .footer-grid {
+  .fixeo-footer-inject .footer-grid,
+  .fxf-grid {
     grid-template-columns: 1fr 1fr;
     gap: 24px;
   }
+
   .fixeo-footer-v1 .footer-brand,
-  .fixeo-footer-inject .footer-brand {
+  .fixeo-footer-inject .footer-brand,
+  .fxf-brand {
     grid-column: 1 / -1;
   }
+
   .fixeo-footer-v1 .footer-desc,
-  .fixeo-footer-inject .footer-desc {
+  .fixeo-footer-inject .footer-desc,
+  .fxf-desc {
     max-width: none;
   }
 }
 
-/* ── MOBILE (≤ 768px) — single column, horizontal badge scroll ─ */
+/* ── MOBILE (≤ 768px) ──────────────────────────────────────── */
 @media (max-width: 768px) {
-  .fixeo-footer-v1,
+  footer.fixeo-footer-v1,
   .fixeo-footer-inject {
     padding-top: 32px;
     overflow-x: hidden;
@@ -248,6 +382,21 @@ footer.fixeo-footer-v1,
     overflow-x: hidden;
   }
 
+  /* Trust row — single column on mobile */
+  .fxf-trust-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+  }
+
+  .fxf-trust-badge {
+    font-size: 0.76rem;
+    padding: 5px 12px;
+  }
+
+  /* Legacy badge row horizontal scroll */
   .fixeo-footer-v1 .v13-partners-row,
   .fixeo-footer-inject .v13-partners-row {
     flex-wrap: nowrap;
@@ -274,53 +423,108 @@ footer.fixeo-footer-v1,
   }
 
   .fixeo-footer-v1 .footer-grid,
-  .fixeo-footer-inject .footer-grid {
+  .fixeo-footer-inject .footer-grid,
+  .fxf-grid {
     grid-template-columns: 1fr;
-    gap: 22px;
-    margin-bottom: 22px;
+    gap: 0;
+    margin-bottom: 16px;
   }
 
   .fixeo-footer-v1 .footer-brand,
-  .fixeo-footer-inject .footer-brand {
+  .fixeo-footer-inject .footer-brand,
+  .fxf-brand {
     grid-column: auto;
-    margin-bottom: 2px;
+    margin-bottom: 16px;
   }
 
   .fixeo-footer-v1 .footer-desc,
-  .fixeo-footer-inject .footer-desc {
+  .fixeo-footer-inject .footer-desc,
+  .fxf-desc {
     max-width: none;
     font-size: 0.82rem;
     margin-bottom: 12px;
   }
 
-  .fixeo-footer-v1 .footer-artisan-cta,
-  .fixeo-footer-inject .footer-artisan-cta {
-    font-size: 0.78rem;
-    padding: 9px 14px;
+  /* Primary CTA mobile */
+  .fxf-primary-cta {
+    font-size: 0.84rem;
+    padding: 11px 18px;
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Mobile accordion — enable interactive summary */
+  .fxf-group-heading {
+    pointer-events: auto;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    margin-bottom: 0;
+  }
+
+  .fxf-group-heading h4 {
+    margin: 0;
+    padding: 0;
+    border-bottom: none;
+    font-size: 0.80rem;
+  }
+
+  /* Chevron indicator */
+  .fxf-group-heading::after {
+    content: '\u203a';
+    font-size: 1.1rem;
+    color: rgba(255,255,255,0.28);
+    transition: transform 0.2s ease;
+    transform: rotate(90deg);
+    flex-shrink: 0;
+    margin-left: 8px;
+  }
+
+  details[open] .fxf-group-heading::after {
+    transform: rotate(-90deg);
+  }
+
+  /* Close all by default on mobile — JS-free via HTML attribute */
+  .fxf-group {
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    margin-bottom: 0;
+  }
+
+  .fxf-group ul {
+    padding: 8px 0 12px;
   }
 
   .fixeo-footer-v1 .footer-links h4,
   .fixeo-footer-inject .footer-links h4 {
-    font-size: 0.72rem;
+    font-size: 0.80rem;
     margin-bottom: 12px;
   }
 
   .fixeo-footer-v1 .footer-links a,
-  .fixeo-footer-inject .footer-links a {
+  .fixeo-footer-inject .footer-links a,
+  .fxf-links a {
     font-size: 0.82rem;
     padding: 6px 0;
   }
 
+  /* Legal / bottom row */
   .fixeo-footer-v1 .footer-bottom,
-  .fixeo-footer-inject .footer-bottom {
-    padding: 14px 0 16px;
+  .fixeo-footer-inject .footer-bottom,
+  .fxf-bottom {
+    padding: 14px 0;
     gap: 8px;
     font-size: 0.76rem;
     flex-direction: column;
     align-items: flex-start;
+    /* Safe-area clearance for frozen Urgence + WhatsApp FABs */
+    padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px));
   }
 
-  .fixeo-footer-v1 .footer-bottom > div {
+  .fixeo-footer-v1 .footer-bottom > div,
+  .fxf-legal-links {
     gap: 0.55rem;
   }
 }
@@ -328,19 +532,20 @@ footer.fixeo-footer-v1,
 /* ── VERY NARROW (≤ 380px) ─────────────────────────────────── */
 @media (max-width: 380px) {
   .fixeo-footer-v1 .v13-partner-badge,
-  .fixeo-footer-inject .v13-partner-badge {
+  .fixeo-footer-inject .v13-partner-badge,
+  .fxf-trust-badge {
     font-size: 0.70rem;
     padding: 5px 10px;
   }
 
   .fixeo-footer-v1 .footer-links a,
-  .fixeo-footer-inject .footer-links a {
+  .fixeo-footer-inject .footer-links a,
+  .fxf-links a {
     font-size: 0.80rem;
   }
 }
 
 /* ── AUTH MINIMAL FOOTER ───────────────────────────────────── */
-/* Used on auth.html — copyright only, no full grid */
 footer.fixeo-footer-auth {
   background: rgba(13,13,26,0.85);
   border-top: 1px solid rgba(255,255,255,0.055);
@@ -364,7 +569,6 @@ footer.fixeo-footer-auth a:hover {
 }
 
 /* ── CONSENT PREFERENCES BUTTON ───────────────────────────── */
-/* Matches footer link visual — inline-block, no browser chrome */
 .footer-cookie-btn {
   background: none;
   border: none;

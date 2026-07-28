@@ -2407,7 +2407,7 @@ section#home.hero.hero-section {
   <link rel="stylesheet" href="css/testimonials-cta-premium.css?v=tcp2">
   <link rel="stylesheet" href="css/homepage-flow-v1.css?v=4">
   <link rel="stylesheet" href="css/fixeo-trust-v9.css?v=4">
-  <link rel="stylesheet" href="css/fixeo-footer-global.css?v=gf3a">
+  <link rel="stylesheet" href="css/fixeo-footer-global.css?v=gf4a">
   <link rel="stylesheet" href="css/fixeo-hero-lps-v10.css?v=6">
   <!-- fxrf4-v5b: legacy modal CSS removed - V5 is the only request UI -->
   <link rel="stylesheet" href="css/fx-request-flow-v4.css?v=fxrf4-v5z">
@@ -5045,86 +5045,10 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
 </main>
 
 <!-- ═══════════════════════════════════════════════════════════
-     9. FOOTER V13
+     9. FOOTER — canonical mount (fixeo-footer-global.js v gf4a)
 ════════════════════════════════════════════════════════════ -->
-<footer class="fixeo-footer-v1" role="contentinfo">
-  <div class="container">
-
-    <!-- Partners / trust badges -->
-    <div class="v13-partners-row" aria-label="Partenaires et certifications">
-      <span class="v13-partner-badge fpb-verified">&#10003;&#65039; Artisans qualifi&eacute;s</span>
-      <span class="v13-partner-badge fpb-payment">&#128179; Paiement apr&egrave;s intervention</span>
-      <span class="v13-partner-badge fpb-available">&#9889; Disponible maintenant</span>
-      <span class="v13-partner-badge fpb-coverage">&#128205; Actif dans tout le Maroc</span>
-      <span class="v13-partner-badge fpb-secure">&#128274; Donn&eacute;es prot&eacute;g&eacute;es</span>
-    </div>
-
-    <div class="footer-grid">
-      <!-- Brand -->
-      <div class="footer-brand">
-        <div class="logo-wrap" style="margin-bottom:14px">
-          <img src="img/logo.png" alt="Fixeo" style="height:38px;width:auto;object-fit:contain;background:transparent" onerror="this.onerror=null;this.alt='Fixeo';">
-        </div>
-        <p class="footer-desc" data-i18n="footer_tagline">
-          La plateforme de référence pour trouver des artisans qualifiés au Maroc. Rapide, sécurisé, vérifié.
-        </p>
-        <a href="rejoindre-fixeo.html" class="footer-artisan-cta">&#128736; Rejoindre Fixeo en tant qu&rsquo;artisan</a>
-      </div>
-
-      <!-- Navigation -->
-      <div class="footer-links">
-        <h4>Navigation</h4>
-        <ul>
-          <li><a href="index.html">Accueil</a></li>
-          <li><a href="services.html">Services</a></li>
-          <li><a href="artisans.html">Artisans</a></li>
-          <li><a href="comment-ca-marche.html">COMMENT ÇA MARCHE</a></li>
-          <li><a href="pricing.html">Tarifs</a></li>
-          <li><a href="entreprises.html" style="color:rgb(72,100,255);font-weight:700;">Entreprises</a></li>
-        </ul>
-      </div>
-
-      <!-- Artisans -->
-      <div class="footer-links">
-        <h4>Artisans</h4>
-        <ul>
-          <li><a href="rejoindre-fixeo.html">Rejoindre Fixeo</a></li>
-          <li><a href="rejoindre-fixeo.html#revendiquer">Revendiquer mon profil</a></li>
-          <li><a href="dashboard-artisan-v2.html">Espace artisan</a></li>
-        </ul>
-      </div>
-
-      <!-- Support -->
-      <div class="footer-links">
-        <h4>Support</h4>
-        <ul>
-          <li><a href="contact.html">Contact</a>
-          <a href="equipe.html">Équipe éditoriale</a></li>
-          <li><a href="faq.html">FAQ</a></li>
-          <li><a href="cgu.html">CGU</a></li>
-          <li><a href="confidentialite.html">Confidentialité</a></li>
-          <li><a href="whatsapp.html">WhatsApp Fixeo</a></li>
-          <li><a href="presse-partenariats.html">Presse &amp; Partenariats</a></li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- Footer bottom -->
-    <div class="footer-bottom">
-      <span data-i18n="footer_copyright">&copy; 2026 Fixeo. Tous droits r&eacute;serv&eacute;s.</span>
-      <div style="display:flex;gap:.75rem;flex-wrap:wrap;align-items:center">
-        <a href="auth.html" style="color:rgba(255,255,255,.35)">Connexion</a>
-        <span style="color:rgba(255,255,255,.18)">·</span>
-        <a href="rejoindre-fixeo.html" style="color:rgba(255,255,255,.35)">Je suis artisan</a>
-        <span style="color:rgba(255,255,255,.18)">·</span>
-        <a href="dashboard-client.html" style="color:rgba(255,255,255,.35)">Dashboard</a>
-        <span style="color:rgba(255,255,255,.18)">·</span>
-        <button type="button" class="footer-cookie-btn" onclick="window.FixeoConsent && window.FixeoConsent.open()" aria-label="Gérer vos préférences cookies">🍪 Préférences cookies</button>
-      </div>
-    </div>
-
-  </div>
-</footer>
+<!-- Canonical public footer is rendered by fixeo-footer-global.js -->
+<div id="fxf-mount"></div>
 
 <!-- ═══════════════════════════════════════════════════════════
      MODALS - preserved from v11/v12 (backend intact)
@@ -5536,6 +5460,7 @@ function openContentModal(type) {
 <script src="js/quick-search-modal.js?v=qsm10"></script>
 <script src="js/header-unified.js?v=modalfix3"></script>
 <script src="js/auth-global.js?v=50a38b9"></script>
+<script src="js/fixeo-footer-global.js?v=gf4a" defer></script>
 <script src="js/fixeo-auth-guard.js?v=guard-v2a"></script>
 <script src="js/fixeo-session-bridge.js?v=sb1"></script>
 <script src="js/homepage-v13.js?v=50a38b9"></script>

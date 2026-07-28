@@ -643,6 +643,7 @@ function buildPage(svcKey, cityKey) {
 
   <link rel="stylesheet" href="/css/seo-lp-v1.css">
   <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/fixeo-footer-global.css?v=gf4a">
   <link rel="icon" href="/img/favicon.ico" type="image/x-icon">
 
   <!-- Logo CSS override (production consistent) -->
@@ -812,7 +813,7 @@ function buildPage(svcKey, cityKey) {
 
   <!-- Deferred non-critical scripts -->
   <script src="/js/fixeo-header-global.js" defer></script>
-  <script src="/js/fixeo-footer-global.js?v=gf3a" defer></script>
+  <script src="/js/fixeo-footer-global.js?v=gf4a" defer></script>
   <script src="/js/auth-global.js" defer></script>
   <script src="/js/fixeo-seo-local.js?v=seo2b" defer></script>
   <script src="/js/fixeo-schema-rating.js?v=rating-v1a" defer></script>

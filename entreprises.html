@@ -62,6 +62,8 @@
   <link rel="stylesheet" href="/css/fixeo-header-global.css">
   <!-- Page CSS -->
   <link rel="stylesheet" href="/css/fixeo-entreprises-v1.css?v=fxe-v1a">
+  <!-- Canonical footer -->
+  <link rel="stylesheet" href="/css/fixeo-footer-global.css?v=gf4a">
   <!-- Consent -->
   <link rel="stylesheet" href="/css/fixeo-consent-v1.css?v=fcv1b">
   <!-- Enterprise modal CSS -->
@@ -1202,69 +1204,10 @@
   </section>
 
   <!-- ══════════════════════════════════════════════════════════════
-       FOOTER
+       FOOTER — canonical mount (fixeo-footer-global.js v gf4a)
   ══════════════════════════════════════════════════════════════ -->
-  <footer class="fixeo-footer-v1" role="contentinfo">
-    <div class="container">
-      <div class="footer-grid">
-        <div class="footer-brand">
-          <div class="logo-wrap" style="margin-bottom:14px">
-            <img src="/img/logo.png" alt="Fixeo" style="height:38px;width:auto;object-fit:contain;background:transparent">
-          </div>
-          <p class="footer-desc">La plateforme de Facility Management de référence au Maroc. Artisans vérifiés, dispatch intelligent, suivi en temps réel.</p>
-          <a href="/rejoindre-fixeo.html" class="footer-artisan-cta">🔧 Rejoindre FIXEO en tant qu'artisan</a>
-        </div>
-
-        <div class="footer-links">
-          <h4>Navigation</h4>
-          <ul>
-            <li><a href="/index.html">Accueil</a></li>
-            <li><a href="/services.html">Services</a></li>
-            <li><a href="/artisans.html">Artisans</a></li>
-            <li><a href="/comment-ca-marche.html">Comment ça marche</a></li>
-            <li><a href="/pricing.html">Tarifs</a></li>
-            <li><a href="/entreprises.html" style="color:rgb(72,100,255);font-weight:700;">Entreprises</a></li>
-          </ul>
-        </div>
-
-        <div class="footer-links">
-          <h4>Enterprise</h4>
-          <ul>
-            <li><a href="/entreprises.html#fonctionnalites">Fonctionnalités</a></li>
-            <li><a href="/entreprises.html#secteurs">Secteurs d'activité</a></li>
-            <li><a href="/entreprises.html#contrats">Formules de contrat</a></li>
-            <li><a href="/entreprises.html#comparaison">Comparatif</a></li>
-            <li><a href="/entreprises.html#faq">FAQ Enterprise</a></li>
-            <li><a href="/entreprises.html#contact">Demander une démo</a></li>
-          </ul>
-        </div>
-
-        <div class="footer-links">
-          <h4>Support</h4>
-          <ul>
-            <li><a href="/contact.html">Contact</a></li>
-            <li><a href="/faq.html">FAQ</a></li>
-            <li><a href="/cgu.html">CGU</a></li>
-            <li><a href="/confidentialite.html">Confidentialité</a></li>
-            <li><a href="/presse-partenariats.html">Presse &amp; Partenariats</a></li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="footer-bottom">
-        <span>&copy; 2026 FIXEO. Tous droits réservés.</span>
-        <div style="display:flex;gap:.75rem;flex-wrap:wrap;align-items:center">
-          <a href="/auth.html" style="color:rgba(255,255,255,.35)">Connexion</a>
-          <span style="color:rgba(255,255,255,.18)">·</span>
-          <a href="/rejoindre-fixeo.html" style="color:rgba(255,255,255,.35)">Je suis artisan</a>
-          <span style="color:rgba(255,255,255,.18)">·</span>
-          <a href="/entreprises.html" style="color:rgb(72,100,255);font-weight:600;">⚡ Enterprise</a>
-          <span style="color:rgba(255,255,255,.18)">·</span>
-          <button type="button" class="footer-cookie-btn" onclick="window.FixeoConsent && window.FixeoConsent.open()" aria-label="Gérer vos préférences cookies">🍪 Cookies</button>
-        </div>
-      </div>
-    </div>
-  </footer>
+  <!-- Canonical public footer is rendered by fixeo-footer-global.js -->
+  <div id="fxf-mount"></div>
 
   <!-- ══════════════════════════════════════════════════════════════
        SCRIPTS
@@ -1275,6 +1218,8 @@
 
   <!-- Shared header JS -->
   <script src="/js/fixeo-header-global.js?v=gfnav5" defer></script>
+  <!-- Canonical footer -->
+  <script src="/js/fixeo-footer-global.js?v=gf4a" defer></script>
 
   <!-- Consent -->
   <script src="/js/fixeo-analytics-config.js?v=fac1b" defer></script>
