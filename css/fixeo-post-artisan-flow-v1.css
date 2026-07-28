@@ -205,9 +205,85 @@
   opacity: 0.35;
 }
 
-/* ── 4. REDUCED MOTION ────────────────────────────────────────────────── */
+/* ── 4. ORPHAN PANEL SAFETY ──────────────────────────────────────────────
+   #fxf-mini-trust is suppressed via display:none !important in
+   fixeo-chapter-4-v1.css. This rule eliminates any residual padding/margin/
+   pseudo-element that could create a visible gap or rounded panel between
+   #artisans-section and #fixeo-chapter-4 regardless of CSS load order.
+   ─────────────────────────────────────────────────────────────────────── */
+#fxf-mini-trust {
+  display: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+#fxf-mini-trust::before,
+#fxf-mini-trust::after {
+  display: none !important;
+}
+
+/* ── 5. ENTERPRISE VISUAL ORDER — mobile ─────────────────────────────────
+   At ≤768px, fixeo-enterprise-teaser-v1.css sets .fxet-visual { order:-1 }
+   which places the dashboard ABOVE the intro copy.
+   Override: restore natural DOM order (text first, visual second).
+   ─────────────────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .fxet-visual {
+    order: 0 !important;
+  }
+  /* Reduce visual top margin so dashboard doesn't feel detached after intro */
+  #enterprise-teaser .fxet-visual {
+    margin-top: 24px;
+  }
+}
+
+/* ── 6. FLOATING-ACTION FADE — post-artisan flow zone ───────────────────
+   JS (fixeo_homepage_premium_patch.js — fxpaf-v1) manages aria-hidden +
+   data-fxpaf-hidden attr on #fixeo-urgent-fab and the WA FAB.
+   This CSS handles the opacity/pointer-events transition only.
+   Desktop (≥769px): no change — controls always visible.
+   ─────────────────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  #fixeo-urgent-fab,
+  .fixeo-whatsapp-fab,
+  [class*="whatsapp"][class*="fab"],
+  [class*="wa-fab"],
+  #fixeo-wa-fab {
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+  }
+
+  #fixeo-urgent-fab[data-fxpaf-hidden="true"],
+  .fixeo-whatsapp-fab[data-fxpaf-hidden="true"],
+  [class*="whatsapp"][class*="fab"][data-fxpaf-hidden="true"],
+  [class*="wa-fab"][data-fxpaf-hidden="true"],
+  #fixeo-wa-fab[data-fxpaf-hidden="true"] {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    visibility: hidden !important;
+  }
+}
+
+/* ── 7. NETWORK PROOF — two-item balance ────────────────────────────────
+   After removing the third signal ("Le réseau continue de grandir" item),
+   the two remaining signals are: dynamic count + paiement après intervention.
+   Ensure they render balanced on mobile without the dot separator between them.
+   ─────────────────────────────────────────────────────────────────────── */
+/* No additional CSS needed — the two fxv2-signal items inherit existing layout.
+   The fxv2-signal-dot separators in the HTML are removed with the signal item. */
+
+/* ── 8. REDUCED MOTION ────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   .fxpaf-step {
     transition: none;
+  }
+  /* Floating-action transition respects reduced-motion */
+  #fixeo-urgent-fab,
+  .fixeo-whatsapp-fab,
+  [class*="whatsapp"][class*="fab"],
+  [class*="wa-fab"],
+  #fixeo-wa-fab {
+    transition: none !important;
   }
 }

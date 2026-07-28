@@ -1182,6 +1182,85 @@
 
 }(window));
 
+/* ── fxpaf-v1: Floating-action fade while post-artisan flow is visible ──
+ * Mobile only (≤768px). One IntersectionObserver watches three sentinel
+ * sections: #fixeo-chapter-4 (RAFI), #enterprise-teaser, .fxv2-vision--proof.
+ * While any of them intersects the viewport, both FABs get data-fxpaf-hidden="true"
+ * (opacity:0 + pointer-events:none via CSS). Outside the zone: attribute removed.
+ * No scroll handlers. No RAFI modification. No WA/Urgence handler modification.
+ * Reduced-motion: transitions suppressed via CSS; hide/show logic unchanged.
+ * Desktop: observer registered but attribute has no CSS effect above 768px.
+ */
+(function () {
+  var SENTINELS = ['fixeo-chapter-4', 'enterprise-teaser'];
+  /* Also observe the proof section by class */
+  var PROOF_SELECTOR = '.fxv2-vision--proof';
+  var FAB_SELECTORS  = [
+    '#fixeo-urgent-fab',
+    '.fixeo-whatsapp-fab',
+    '#fixeo-wa-fab',
+    '[class*="whatsapp"][class*="fab"]',
+    '[class*="wa-fab"]'
+  ];
+  var _intersecting = {}; /* sentinel-id → boolean */
+
+  function _setFabsHidden(hidden) {
+    FAB_SELECTORS.forEach(function (sel) {
+      try {
+        document.querySelectorAll(sel).forEach(function (el) {
+          if (hidden) {
+            el.setAttribute('data-fxpaf-hidden', 'true');
+            el.setAttribute('aria-hidden', 'true');
+          } else {
+            el.removeAttribute('data-fxpaf-hidden');
+            el.removeAttribute('aria-hidden');
+          }
+        });
+      } catch (e) {}
+    });
+  }
+
+  function _update() {
+    /* Only apply on mobile */
+    if (window.innerWidth > 768) {
+      _setFabsHidden(false);
+      return;
+    }
+    var anyVisible = Object.keys(_intersecting).some(function (k) {
+      return _intersecting[k];
+    });
+    _setFabsHidden(anyVisible);
+  }
+
+  function _initObserver() {
+    if (!window.IntersectionObserver) return; /* no-op in very old iOS */
+    var obs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        var key = entry.target.id || entry.target.className.split(' ')[0];
+        _intersecting[key] = entry.isIntersecting;
+      });
+      _update();
+    }, { threshold: 0.01 });
+
+    SENTINELS.forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) obs.observe(el);
+    });
+
+    var proofEl = document.querySelector(PROOF_SELECTOR);
+    if (proofEl) obs.observe(proofEl);
+  }
+
+  /* Re-apply on resize (desktop ↔ mobile crossing) */
+  window.addEventListener('resize', _update, { passive: true });
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', _initObserver);
+  } else {
+    _initObserver();
+  }
+})();
+
 (function () {
   function addFixeoNewServiceChips() {
     // Prefer the dedicated specialized container (Chapter 3 fc3-v2a);
