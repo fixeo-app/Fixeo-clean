@@ -254,3 +254,16 @@
     transition: none;
   }
 }
+
+/* ── 8. COMPARISON BAR — ensure hidden unless explicitly activated ───────
+   fxhome-profile-link-compare-bug-v1:
+   The comparator-bar uses transform:translateY(100%) from main.css/homepage-v13.css
+   but NOT display:none. On BFCache restore (iOS Safari back-swipe) or
+   during page-load the transition can flash the bar into view.
+   Force display:none as the canonical hidden state; .visible overrides. */
+.comparator-bar {
+  display: none !important;
+}
+.comparator-bar.visible {
+  display: flex !important;
+}

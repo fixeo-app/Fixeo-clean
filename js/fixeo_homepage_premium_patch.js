@@ -625,8 +625,24 @@
     }
   }
 
+  /* fxhome-profile-link-compare-bug-v1: ensure comparator-bar is hidden
+     when navigating to a profile. Guards against BFCache restore on iOS Safari
+     and any accidental addToCompare call that might have fired before navigation. */
+  function _guardComparatorBar() {
+    var bar = document.querySelector('.comparator-bar');
+    if (!bar) return;
+    /* Only hide if comparison is genuinely empty (no user-selected artisans) */
+    var list = window.searchEngine && Array.isArray(window.searchEngine.compareList)
+      ? window.searchEngine.compareList : [];
+    if (list.length === 0) {
+      bar.classList.remove('visible');
+    }
+  }
+
   function _doProfile(a) {
     if (!a) return;
+    /* Guard: ensure comparison bar stays hidden during profile navigation */
+    _guardComparatorBar();
     if (window.FixeoPublicProfileLinks && typeof window.FixeoPublicProfileLinks.openBySourceId === 'function') {
       window.FixeoPublicProfileLinks.openBySourceId(String(a.id));
     } else {
@@ -1162,6 +1178,15 @@
     setTimeout(function() {
       document.body.classList.add('fixeo-sections-ready');
     }, 1200);
+    /* fxhome-profile-link-compare-bug-v1: initialize comparator bar as hidden.
+       Guards against BFCache restore (iOS Safari) that may replay a .visible state
+       from a previous session. The comparison list starts empty on every page load.
+       The CSS rule in fixeo-post-artisan-flow-v1.css is the primary guard;
+       this JS guard handles BFCache restore where CSS alone is insufficient. */
+    (function _initComparatorBarHidden() {
+      var bar = document.querySelector('.comparator-bar');
+      if (bar) bar.classList.remove('visible');
+    })();
     console.log('✅ Fixeo Homepage Premium Patch v4 (fhp13) ready');
   }
 
