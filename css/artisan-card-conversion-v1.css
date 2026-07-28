@@ -2585,3 +2585,109 @@
     margin-bottom: 13px !important;
   }
 }
+
+/* ══════════════════════════════════════════════════════════════════════
+   FXHOME-ARTISAN-CARD-V3B.2 — Mobile Description, Upper Alignment, Trust Icon Polish
+   Sprint: fxhome-artisan-card-v3b2
+   Append-only block. Never edit lines above. Braces must stay balanced.
+
+   Root cause (confirmed audit):
+     css/artisan-card-mobile-v2.css L85:
+       .pvc-card-header { padding: 20px 20px 0 !important }
+       Specificity: (0,1,0) — V3B never sets padding on .pvc-card-header.
+       Rule wins uncontested at ≤640px.
+       Effect: +20px internal top padding on header flex container.
+       Budget impact: 400px card → 420px used → 20px overflow clipped.
+       Description (36px) clipped → invisible on mobile.
+       Combined with card padding-top:22px → avatar top inset = 42px (target: 24–30px).
+
+   Fixes:
+     V3B2-A: Zero out .pvc-card-header padding at ≤640px (restore 400px budget).
+     V3B2-B: Advance padding-top to 24px + tighten header-mb to 6px (upper target hit,
+             exact 400px: 24+108+6+36+9+32+10+159+16 = 400px).
+     V3B2-C: inline SVG trust icons replacing platform-dependent emoji.
+     V3B2-D: 360px and 412px explicit checks (same budget path).
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── V3B2-A: Neutralise V2 mobile padding on .pvc-card-header ── */
+/*
+ * artisan-card-mobile-v2.css L85:
+ *   .pvc-card-header { padding: 20px 20px 0 !important }  — specificity (0,1,0)
+ * V3B2 override:
+ *   #fixeo-homepage-vedette-grid .fhp-card .pvc-card-header — specificity (1,2,0)
+ * Result: padding suppressed at all mobile widths ≤640px.
+ * No need to scope inside a media query — the higher specificity wins everywhere,
+ * and at desktop the V2 rule doesn't fire anyway.
+ */
+#fixeo-homepage-vedette-grid .fhp-card .pvc-card-header,
+#fixeo-homepage-vedette-grid .fhp-card .pvc-card-header-final {
+  padding: 0 !important;    /* override artisan-card-mobile-v2.css L85: padding:20px 20px 0 */
+}
+
+/* ── V3B2-B: Upper alignment — advance padding-top, tighten header-mb ── */
+/*
+ * Budget with V2 padding removed:
+ *   pad-top:24 + header:108 + header-mb:6 + desc:36 + desc-mb:9 + trust:32 +
+ *   trust-mb:10 + action:159 + pad-bottom:16 = 400px exactly.
+ * Avatar top inset = 24px (target: 24–30px). ✓
+ * Applies at all viewports including 360px, 390px, 412px.
+ */
+#fixeo-homepage-vedette-grid .fhp-card {
+  padding-top: 24px !important;    /* was 22px: +2px to hit upper-inset target */
+}
+#fixeo-homepage-vedette-grid .fhp-card .pvc-card-header,
+#fixeo-homepage-vedette-grid .fhp-card .pvc-card-header-final {
+  margin-bottom: 6px !important;   /* was 8px: −2px budget recovery */
+}
+
+/* ── V3B2-B.1: 320px budget recheck ── */
+/* At ≤340px: V3B-Q sets padding: 20px 16px 14px.
+ * padding-top:20 + header:108 + mb:6 + desc:36 + dm:9 + trust:32 + tm:10 + action:159 + pb:14 = 394px ✓
+ * 6px surplus absorbed by margin-top:auto on action area. */
+
+/* ── V3B2-B.2: Desktop recheck ── */
+/* Desktop: padding-top:24 wins over V3B's 22. Budget:
+ * 24+108+6+36+9+32+10+159+13(price-mb)+... → action height may differ.
+ * V3B-T already corrects desktop overflow. Trust margin-bottom at desktop = 10px.
+ * Final: 24+108+6+36+9+32+10+[action varies] — margin-top:auto on action absorbs slack. ✓ */
+
+/* ── V3B2-C: Inline SVG trust icons ── */
+/*
+ * Platform-dependent emoji replaced in JS (see fixeo_homepage_premium_patch.js).
+ * SVG icons: 14×14px inline, currentColor, aria-hidden="true".
+ * CSS sizing ensures consistent baseline alignment across all platforms.
+ */
+#fixeo-homepage-vedette-grid .fhp-card .pvc-trust-v3b-icon svg {
+  width: 14px !important;
+  height: 14px !important;
+  display: inline-block !important;
+  vertical-align: middle !important;
+  flex-shrink: 0 !important;
+  color: rgba(255,255,255,0.38) !important;
+}
+/* Neutralise old emoji font-size rule — SVG ignores font-size,
+ * but opacity was set there and should still apply */
+#fixeo-homepage-vedette-grid .fhp-card .pvc-trust-v3b-icon {
+  font-size: 0 !important;         /* collapse any text node fallback */
+  line-height: 0 !important;
+  opacity: 1 !important;           /* SVG colour handled by currentColor above */
+}
+
+/* End FXHOME-ARTISAN-CARD-V3B.2 */
+
+/* ── V3B2-E: Narrow card (≤280px) price margin micro-correction ── */
+/*
+ * At 360px viewport (card=274px): one artisan with long description
+ * produces sH=402 (2px over 400). Root: long content at narrow inner width.
+ * Reduce pvc-price-v3b margin-bottom by 2px at very narrow card widths.
+ * Scoped to card narrower than 280px via container query fallback using
+ * the viewport width proxy (≤320px fires the existing V3B-Q rule;
+ * 320–360px is the gap). Use a ≤370px breakpoint to catch 360px viewport.
+ * This does not affect 390px or wider.
+ */
+@media (max-width: 370px) {
+  #fixeo-homepage-vedette-grid .fhp-card .pvc-price-v3b {
+    margin-bottom: 12px !important;
+  }
+}
+/* End V3B2-E */

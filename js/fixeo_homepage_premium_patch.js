@@ -452,13 +452,33 @@
        * flex-direction:column — guaranteed no horizontal overflow at any width.
        * trust.scrollWidth <= trust.clientWidth validated in V3A.3 at all vp.
        * ─────────────────────────────────────────────────────────────────── */
+      /* V3B2: Inline SVG icons replace platform-dependent emoji.
+       * SVG: 14×14px, currentColor, aria-hidden="true".
+       * Icon 1 (list/directory): neutral listing/profile signal — no shield, no checkmark.
+       * Icon 2 (payment): abstract coin+arrow — no handshake (colour emoji inconsistency).
+       * No external library. No network request. Stable across iPhone/Samsung/Windows. */
       '<div class="pvc-trust-v3b" role="list">' +
         '<span class="pvc-trust-v3b-item" role="listitem">' +
-          '<span class="pvc-trust-v3b-icon" aria-hidden="true">\uD83D\uDCCB</span>' +
+          /* Directory/listing icon — neutral document lines */
+          '<span class="pvc-trust-v3b-icon">' +
+            '<svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14" fill="none">' +
+              '<rect x="2" y="1" width="10" height="12" rx="1.5" stroke="currentColor" stroke-width="1.3" fill="none"/>' +
+              '<line x1="4.5" y1="4.5" x2="9.5" y2="4.5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/>' +
+              '<line x1="4.5" y1="7" x2="9.5" y2="7" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/>' +
+              '<line x1="4.5" y1="9.5" x2="7.5" y2="9.5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/>' +
+            '</svg>' +
+          '</span>' +
           'Profil r\u00e9f\u00e9renc\u00e9 sur FIXEO' +
         '</span>' +
         '<span class="pvc-trust-v3b-item" role="listitem">' +
-          '<span class="pvc-trust-v3b-icon" aria-hidden="true">\uD83E\uDD1D</span>' +
+          /* Payment icon — coin with upward arrow */
+          '<span class="pvc-trust-v3b-icon">' +
+            '<svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14" fill="none">' +
+              '<circle cx="7" cy="7.5" r="4.5" stroke="currentColor" stroke-width="1.3" fill="none"/>' +
+              '<path d="M7 4.5 L7 2 M7 2 L5.5 3.5 M7 2 L8.5 3.5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>' +
+              '<line x1="5.5" y1="7.5" x2="8.5" y2="7.5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/>' +
+            '</svg>' +
+          '</span>' +
           'Paiement apr\u00e8s intervention' +
         '</span>' +
       '</div>' +
