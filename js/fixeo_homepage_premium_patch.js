@@ -438,7 +438,25 @@
        * Never generated or rewritten. Empty → block absent, no gap reserved.
        * ─────────────────────────────────────────────────────────────────── */
       (function() {
-        var raw = String(a.description || a.shortBio || '').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+        /* V3B2-1: normalizeMarketplaceArtisanRecord (main.js) drops .description and .shortBio,
+         * remapping the text to a.bio.fr. Add bio.fr fallback to cover Supabase-normalised records.
+         * Guard: (1) typeof === 'string' prevents coercion of bio objects.
+         * (2) _descSanitize rejects stringified object artefacts ('[object Object]' etc.)
+         *     that can appear when normalizeMarketplaceArtisanRecord falls back to raw.bio
+         *     as a last resort (truthy object) and it later gets JSON-stringified or .toString()'d. */
+        function _descSanitize(s) {
+          if (typeof s !== 'string') return '';
+          var t = s.trim();
+          if (!t) return '';
+          // Reject JSON array/object artefacts and Object.prototype.toString artefacts
+          if (t === '[object Object]' || t.charAt(0) === '[' || t.charAt(0) === '{') return '';
+          return t;
+        }
+        var _descStr = _descSanitize(a.description)
+                    || _descSanitize(a.shortBio)
+                    || _descSanitize(a.bio && a.bio.fr)
+                    || '';
+        var raw = _descStr.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
         if (!raw) return '';
         return '<p class="pvc-desc-v3b">' + _esc(raw) + '</p>';
       })() +
