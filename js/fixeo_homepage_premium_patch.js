@@ -43,6 +43,7 @@
   var GRID_ID     = 'fixeo-homepage-vedette-grid';
   var HEADER_ID   = 'fixeo-homepage-header';
   var EXPLORE_ID  = 'fixeo-homepage-explore';   /* K-2: city explore strip */
+  var ACTIONS_ID  = 'fxas-section-actions';     /* V1A.2: continuation actions */
   var SECTION_ID  = 'artisans-section';
 
   var _searchActive = false;
@@ -679,9 +680,12 @@
     });
   }
 
-  /* _buildHeader (v2a) — truthful state-aware section header.
+  /* _buildHeader (v1a2-int1) — V1A.2 section header.
    * resultMode: 'unfiltered'|'exact'|'city_only'|'category_fallback'|'network_fallback'
-   * Counter = window.ARTISANS.length (total profiles, never availability count). */
+   * Counter = window.ARTISANS.length (total profiles, never availability count).
+   * HTML structure: fxas-* — styled by css/fixeo-artisan-section-v1.css.
+   * City source: _getFilterContext().city || window.FIXEO_DETECTED_CITY (unchanged).
+   * Count source: window.ARTISANS.length (unchanged). */
   function _buildHeader(total, filteredCount, resultMode) {
     var artisans      = window.ARTISANS || [];
     var totalProfiles = artisans.length || total || 0;
@@ -690,33 +694,32 @@
     var _catLabel     = ctx.service ? (CAT_LABELS[ctx.service.toLowerCase()] || ctx.service) : '';
     var mode          = resultMode || 'unfiltered';
 
-    /* v2a.1: title matrix
-     * city + category  → "Artisans à [CITY]"          (city always wins for clarity)
-     * city only        → "Artisans à [CITY]"
-     * category only    → "Artisans du réseau FIXEO"   (never "[CAT] à [none]")
-     * no filter        → "Artisans du réseau FIXEO" */
+    /* v2a.1: title matrix (unchanged logic)
+     * city + category  → "Des artisans référencés à [CITY]"
+     * city only        → "Des artisans référencés à [CITY]"
+     * category only    → "Des artisans référencés sur FIXEO"
+     * no filter        → "Des artisans référencés sur FIXEO" */
     var _titleText;
+    var _cityEmText; /* city portion for <em> highlight */
     if (_cityName) {
-      _titleText = 'Artisans \u00e0 ' + _cityName;
+      _titleText   = 'Des artisans r\u00e9f\u00e9renc\u00e9s \u00e0\u00a0';
+      _cityEmText  = _cityName;
     } else {
-      _titleText = 'Artisans du r\u00e9seau FIXEO';
+      _titleText   = 'Des artisans r\u00e9f\u00e9renc\u00e9s sur FIXEO';
+      _cityEmText  = '';
     }
 
-    var _subtitleText;
-    if (mode === 'exact') {
-      _subtitleText = 'Profils correspondant \u00e0 votre s\u00e9lection \u00b7 Paiement apr\u00e8s intervention';
-    } else if (mode === 'city_only') {
-      _subtitleText = 'Profils artisans r\u00e9f\u00e9renc\u00e9s dans la ville s\u00e9lectionn\u00e9e \u00b7 Paiement apr\u00e8s intervention';
-    } else if (mode === 'category_fallback') {
-      _subtitleText = 'Aucun profil exact dans cette ville. Voici des artisans du m\u00eame m\u00e9tier dans d\u2019autres villes.';
-    } else if (mode === 'network_fallback') {
-      _subtitleText = 'Aucun profil exact trouv\u00e9. D\u00e9couvrez d\u2019autres profils du r\u00e9seau FIXEO.';
-    } else {
-      _subtitleText = 'D\u00e9couvrez les profils artisans r\u00e9f\u00e9renc\u00e9s sur FIXEO.';
-    }
+    /* Subtitle — approved V1A.2 fixed copy (honest, no availability implication) */
+    var _subtitleText = 'Explorez les profils r\u00e9f\u00e9renc\u00e9s dans votre ville et r\u00e9servez directement.';
 
-    var countLabel = new Intl.NumberFormat('fr-FR').format(totalProfiles)
-      + '\u00a0profils artisans r\u00e9f\u00e9renc\u00e9s sur FIXEO';
+    /* Count — real network total (window.ARTISANS.length), fr-FR formatted */
+    var _countNumber = new Intl.NumberFormat('fr-FR').format(totalProfiles);
+    var _countLabel  = 'profils artisans r\u00e9f\u00e9renc\u00e9s sur FIXEO';
+
+    /* Title HTML — city in <em> for gradient highlight when city is known */
+    var _titleHtml = _cityEmText
+      ? _esc(_titleText) + '<em>' + _esc(_cityEmText) + '</em>'
+      : _esc(_titleText);
 
     var el = _$(HEADER_ID);
     if (!el) {
@@ -727,14 +730,23 @@
       if (pg && pg.parentNode) pg.parentNode.insertBefore(el, pg);
     }
 
+    /* V1A.2 header structure:
+     * Left column (fhp-header-copy): eyebrow + h2 + subtitle
+     * Right column (fhp-see-all > fhp-counter): stacked proof block
+     * CSS: fixeo-artisan-section-v1.css overrides old fhp-* styles */
     el.innerHTML =
-      '<div class="fhp-header-copy">'+
-        '<h2 class="fhp-title">' + _titleText + '</h2>'+
-        '<p class="fhp-subtitle">' + _subtitleText + '</p>'+
-      '</div>'+
-      '<a class="fhp-see-all" href="index.html#artisans-section" onclick="event.preventDefault();if(window.FixeoClientRequest&&typeof FixeoClientRequest.open===\'function\'){FixeoClientRequest.open();}else{var s=document.getElementById(\'artisans-section\');if(s)s.scrollIntoView({behavior:\'smooth\'});}">'+ 
-        '<span class="fhp-counter">' + countLabel + '</span>'+
-        '<span class="fhp-see-all-arrow">\u2192</span>'+
+      '<div class="fhp-header-copy">' +
+        '<span class="fhp-eyebrow" aria-hidden="true">LE R\u00c9SEAU FIXEO</span>' +
+        '<h2 class="fhp-title" id="fxas-title">' + _titleHtml + '</h2>' +
+        '<p class="fhp-subtitle">' + _esc(_subtitleText) + '</p>' +
+      '</div>' +
+      /* fhp-see-all retained as counter wrapper (CSS removes arrow, reshapes to block) */
+      '<a class="fhp-see-all" href="artisans.html" aria-label="' + _esc(_countNumber + '\u00a0' + _countLabel) + '">' +
+        '<span class="fhp-counter" aria-hidden="true">' +
+          '<span class="fhp-counter-number">' + _esc(_countNumber) + '</span>' +
+          '<span class="fhp-counter-label">' + _esc(_countLabel) + '</span>' +
+        '</span>' +
+        '<span class="fhp-see-all-arrow" aria-hidden="true">\u2192</span>' +
       '</a>';
   }
 
@@ -770,6 +782,53 @@
   var _ALL_CITIES = (window.FIXEO_CITIES && window.FIXEO_CITIES.length)
     ? window.FIXEO_CITIES
     : ['Casablanca','Rabat','Marrakech','F\u00e8s','Agadir','Tanger','Mekn\u00e8s','Oujda','K\u00e9nitra','T\u00e9touan','Safi','El Jadida'];
+
+  /* ── V1A.2: Section continuation actions ──────────────────────────────
+   * Injected below the carousel/grid. Two actions:
+   * 1. Primary ghost button: "Voir plus d'artisans à [Ville] →"
+   *    → href="artisans.html" (canonical artisans directory)
+   * 2. Secondary: "Publier une demande →"
+   *    → data-open-request-form="true" (canonical RAFI V5 handler, unchanged)
+   * Idempotent: element replaced each render.
+   * CSS: .fxas-actions in fixeo-artisan-section-v1.css.
+   * City source: same as _buildHeader — ctx.city || FIXEO_DETECTED_CITY.
+   * ─────────────────────────────────────────────────────────────────── */
+  function _buildSectionActions(ctx) {
+    var cityName = (ctx && ctx.city) || (typeof window.FIXEO_DETECTED_CITY === 'string' ? window.FIXEO_DETECTED_CITY : '') || '';
+
+    /* Primary label */
+    var moreLabel = cityName
+      ? 'Voir plus d\u2019artisans \u00e0\u00a0' + _esc(cityName) + '\u00a0\u2192'
+      : 'Voir plus d\u2019artisans \u2192';
+
+    /* Anchor element — href to artisans.html (existing canonical directory) */
+    var actionsHtml =
+      '<a class="fxas-btn-more" href="artisans.html" aria-label="' +
+        (cityName ? 'Voir plus d\u2019artisans \u00e0 ' + _esc(cityName) : 'Voir plus d\u2019artisans') +
+      '">' +
+        moreLabel +
+      '</a>' +
+      '<p class="fxas-secondary-action">' +
+        'Vous ne trouvez pas le bon profil\u00a0?<br>' +
+        '<button type="button" data-open-request-form="true"' +
+          ' aria-label="Publier une demande via RAFI">' +
+          'Publier une demande \u2192' +
+        '</button>' +
+      '</p>';
+
+    /* Create or reuse element — appended after the grid's parent node children */
+    var el = _$(ACTIONS_ID);
+    if (!el) {
+      el = document.createElement('div');
+      el.id = ACTIONS_ID;
+      el.className = 'fxas-actions';
+      /* Insert after the explore strip or grid — into the section shell */
+      var shell = document.querySelector('#' + SECTION_ID + ' .results-main-column') ||
+                  document.querySelector('#' + SECTION_ID + ' .results-page-shell');
+      if (shell) shell.appendChild(el);
+    }
+    el.innerHTML = actionsHtml;
+  }
 
   function _buildExploreStrip(ctx) {
     var pg = _$(GRID_ID);
@@ -906,7 +965,8 @@
       /* v2a: SecondarySearch post-render class reassignment removed (dead code). */
 
       _buildHeader(list.length, sorted.length, resultMode);
-      _buildExploreStrip(ctx);   /* K-2: city exploration strip below carousel */
+      _buildExploreStrip(ctx);        /* K-2: city exploration strip below carousel */
+      _buildSectionActions(ctx);      /* V1A.2: continuation actions below grid */
       _triggerFadeIn(pg);
     });
   }

@@ -2105,6 +2105,7 @@ section#home.hero.hero-section {
     max-width: 100% !important;
   }
   /* Premium vedette grid inside artisans-section - ID specificity beats all !important class rules */
+  /* V1A.2-int1: overridden by @media rules below — kept for reference only */
   #fixeo-homepage-vedette-grid {
     display: grid !important;
     grid-template-columns: repeat(2, 1fr) !important;
@@ -2116,6 +2117,70 @@ section#home.hero.hero-section {
     #fixeo-homepage-vedette-grid {
       grid-template-columns: 1fr !important;
       gap: 14px !important;
+    }
+  }
+  /* V1A.2-int1: Desktop 3-column grid
+     Compound selector (0,2,0) beats services-uber-premium.css (0,2,0)
+     via source order (inline <style> loads after external <link> CSS). */
+  @media (min-width: 1024px) {
+    #fixeo-homepage-vedette-grid.ssb2-vedette-grid,
+    #fixeo-homepage-vedette-grid.fhp-grid,
+    html body #fixeo-homepage-vedette-grid {
+      display: grid !important;
+      grid-template-columns: repeat(3, 320px) !important;
+      gap: 26px !important;
+      justify-content: center !important;
+      overflow-x: visible !important;
+      width: auto !important;
+      max-width: none !important;
+      padding: 0 0 28px !important;
+      flex-direction: unset !important;
+      flex-wrap: unset !important;
+      scroll-snap-type: unset !important;
+    }
+    #fixeo-homepage-vedette-grid.ssb2-vedette-grid .pvc-card,
+    #fixeo-homepage-vedette-grid.ssb2-vedette-grid .fhp-card,
+    #fixeo-homepage-vedette-grid.fhp-grid .pvc-card,
+    #fixeo-homepage-vedette-grid.fhp-grid .fhp-card,
+    html body #fixeo-homepage-vedette-grid .pvc-card,
+    html body #fixeo-homepage-vedette-grid .fhp-card {
+      min-width: unset !important;
+      max-width: unset !important;
+      width: auto !important;
+      flex-shrink: unset !important;
+      scroll-snap-align: unset !important;
+    }
+  }
+  /* V1A.2-int1: Tablet carousel 641–1023px */
+  @media (min-width: 641px) and (max-width: 1023px) {
+    #fixeo-homepage-vedette-grid.ssb2-vedette-grid,
+    #fixeo-homepage-vedette-grid.fhp-grid,
+    html body #fixeo-homepage-vedette-grid {
+      display: flex !important;
+      grid-template-columns: none !important;
+      flex-direction: row !important;
+      flex-wrap: nowrap !important;
+      overflow-x: auto !important;
+      scroll-snap-type: x mandatory !important;
+      -webkit-overflow-scrolling: touch !important;
+      scrollbar-width: none !important;
+      gap: 20px !important;
+      padding: 8px 24px 24px !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      justify-content: unset !important;
+    }
+    #fixeo-homepage-vedette-grid.ssb2-vedette-grid .pvc-card,
+    #fixeo-homepage-vedette-grid.ssb2-vedette-grid .fhp-card,
+    #fixeo-homepage-vedette-grid.fhp-grid .pvc-card,
+    #fixeo-homepage-vedette-grid.fhp-grid .fhp-card,
+    html body #fixeo-homepage-vedette-grid .pvc-card,
+    html body #fixeo-homepage-vedette-grid .fhp-card {
+      min-width: 320px !important;
+      max-width: 320px !important;
+      width: 320px !important;
+      flex-shrink: 0 !important;
+      scroll-snap-align: start !important;
     }
   }
   /* ── MOBILE: switch to horizontal snap carousel ── */
@@ -2406,6 +2471,7 @@ section#home.hero.hero-section {
   <link rel="stylesheet" href="css/artisan-card-conversion-v1.css?v=fxhome-artisan-card-v3b2">
   <link rel="stylesheet" href="css/fixeo-artisan-card-premium-v1.css?v=facp-v1b"/>
 <link rel="stylesheet" href="css/fixeo-artisan-card-premium-v2.css?v=facp-v2c">
+<!-- fixeo-artisan-section-v1.css: see link element near </head> —>
 
 
 <!-- fxrf4-v5b: legacy modal hotfix removed — V5 owns all request triggers at z-index:19000 -->
@@ -2489,6 +2555,8 @@ section#home.hero.hero-section {
   <script src="js/fixeo-consent-v1.js?v=fcv1c"></script>
   <script src="js/fixeo-analytics-config.js?v=fac1b" defer></script>
   <script src="js/fixeo-analytics-bootstrap.js?v=fab1c" defer></script>
+<!-- V1A.2-int1: Section CSS loads last to guarantee source-order win over all external CSS -->
+<link rel="stylesheet" href="css/fixeo-artisan-section-v1.css?v=fxhome-artisan-section-v1a2-int11">
 </head>
 
 <body class="fixeo-homepage-mode fixeo-gh-enabled">
@@ -4524,7 +4592,7 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
      4. DÉCOUVRIR PLUS D'ARTISANS V13
 ══════════════════════════════════════════════════════════ -->
 
-<section class="section" id="artisans-section" aria-labelledby="results-main-title" data-fxhome-artisans-version="v2a3">
+<section class="section" id="artisans-section" aria-labelledby="fxas-title" data-fxhome-artisans-version="v2a3">
   <div class="container results-page-shell">
     <!-- Hidden inputs for search engine compatibility -->
     <select id="filter-category" style="display:none" aria-hidden="true"></select>
@@ -5532,7 +5600,7 @@ function openContentModal(type) {
 <script src="js/fixeo-session-bridge.js?v=sb1"></script>
 <script src="js/homepage-v13.js?v=50a38b9"></script>
 <script src="js/hero-performance.js?v=50a38b9" defer></script>
-<script src="js/fixeo_homepage_premium_patch.js?v=fxhome-artisan-card-v3b2-1"></script>
+<script src="js/fixeo_homepage_premium_patch.js?v=fxhome-artisan-section-v1a2-int1"></script>
 
 <script>
 /* ================================================================

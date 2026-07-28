@@ -1,0 +1,685 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   FIXEO Artisan Section V1 — fxhome-artisan-section-v1a2-int1.1
+   Section-level styling ONLY.
+   Scope: #artisans-section + .fxas-* namespace.
+   Card CSS: artisan-card-conversion-v1.css (FROZEN — do not touch).
+   Frozen cards: _buildCard / _getPricing / _descSanitize (FROZEN).
+
+   Grid layout selectors use #artisans-section #fixeo-homepage-vedette-grid
+   (specificity 2,0,0) to beat compound (1,1,0) selectors in competing
+   frozen files. Only the properties strictly necessary to override are set.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Box-sizing reset scoped to this section only ── */
+#artisans-section *,
+#artisans-section *::before,
+#artisans-section *::after { box-sizing: border-box; }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   1. SECTION WRAPPER — atmosphere + spacing
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* Override .section { padding: 80px 0 } from main.css.
+   !important required: main.css uses .section class with value 80px 0. */
+#artisans-section.section {
+  position: relative;
+  overflow: hidden;
+  padding: 88px 0 80px !important;
+  background: linear-gradient(180deg,
+    #07091a 0%,
+    #0c1030 40%,
+    #0c1030 60%,
+    #07091a 100%
+  );
+}
+
+/* Indigo stage glow — purely decorative, behind card grid */
+#artisans-section.section::before {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 900px; height: 560px;
+  background: radial-gradient(ellipse at 50% 50%,
+    rgba(72, 52, 212, 0.08) 0%,
+    transparent 70%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Orange/magenta brand atmosphere — top-right, restrained */
+#artisans-section.section::after {
+  content: '';
+  position: absolute;
+  top: -60px; right: 0;
+  width: 380px; height: 380px;
+  max-width: 40%;
+  background: radial-gradient(ellipse at 70% 30%,
+    rgba(225, 48, 108, 0.04) 0%,
+    transparent 70%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Soft fade transitions at section edges */
+#artisans-section .fxas-fade-top,
+#artisans-section .fxas-fade-bot {
+  position: absolute;
+  left: 0; right: 0;
+  height: 56px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+#artisans-section .fxas-fade-top {
+  top: 0;
+  background: linear-gradient(to bottom, #07091a 0%, transparent 100%);
+}
+
+#artisans-section .fxas-fade-bot {
+  bottom: 0;
+  background: linear-gradient(to top, #07091a 0%, transparent 100%);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   2. SECTION HEADER — V1A.2 layout
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* z-index: above decorative pseudo-elements */
+#artisans-section .results-page-shell {
+  position: relative;
+  z-index: 2;
+}
+
+/* Override old .fhp-section-header (display:flex; border-bottom).
+   V1A.2: Desktop = two-column grid; Mobile = single column stack.
+   !important on display and grid-template-columns: inline CSS in index.html
+   sets these properties on .fhp-section-header without !important — this file
+   loads after all inline <style> blocks in document order, so !important
+   guarantees the win here. */
+#artisans-section .fhp-section-header {
+  display: grid !important;
+  grid-template-columns: minmax(0, 700px) minmax(220px, 280px) !important;
+  align-items: start !important;
+  gap: 40px !important;
+  margin-bottom: 44px !important;
+  padding-bottom: 0 !important;
+  border-bottom: none !important;
+  max-width: 1080px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Copy sub-wrapper — holds eyebrow + h2 + subtitle */
+#artisans-section .fhp-header-copy {
+  min-width: 0;
+}
+
+/* Eyebrow — decorative label, aria-hidden in markup */
+#artisans-section .fhp-eyebrow {
+  display: block;
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.28);
+  margin: 0 0 10px;
+}
+
+/* Title — real h2, dynamic city
+   !important: inline CSS in index.html sets font-size on .fhp-title */
+#artisans-section .fhp-title {
+  font-size: clamp(1.8rem, 2.4vw, 2.2rem) !important;
+  font-weight: 800 !important;
+  color: #fff !important;
+  letter-spacing: -0.025em !important;
+  line-height: 1.10 !important;
+  margin: 0 0 12px !important;
+}
+
+/* Highlighted city name within title */
+#artisans-section .fhp-title em {
+  font-style: normal;
+  background: linear-gradient(135deg, #fff 0%, rgba(255, 180, 120, 0.90) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Subtitle */
+#artisans-section .fhp-subtitle {
+  font-size: 0.90rem !important;
+  color: rgba(255, 255, 255, 0.46) !important;
+  line-height: 1.55 !important;
+  margin: 0 !important;
+  max-width: 480px;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   3. COUNTER — V1A.2 stacked proof block
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* Override old .fhp-counter (single inline pill with 🟢 pseudo).
+   !important on display/flex-direction: artisan-card-conversion-v1.css
+   J2-A block sets display/color/background on #fixeo-homepage-header .fhp-counter
+   using ID selector (1,1,0) — scoping to #artisans-section gives (2,0,0) which beats it. */
+#artisans-section .fhp-counter {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 4px !important;
+  padding: 16px 20px !important;
+  border-radius: 14px !important;
+  background: rgba(32, 201, 151, 0.07) !important;
+  border: 1px solid rgba(32, 201, 151, 0.20) !important;
+  color: #20c997 !important;
+  white-space: normal !important;
+  font-size: inherit !important;
+  font-weight: inherit !important;
+  width: 100% !important;
+  max-width: 280px !important;
+  min-width: 0 !important;
+}
+
+/* Suppress 🟢 pseudo-element from old counter
+   !important: artisan-card-conversion-v1.css J2-A uses content on .fhp-see-all-arrow */
+#artisans-section .fhp-counter::before {
+  content: none !important;
+  display: none !important;
+}
+
+/* Counter number */
+#artisans-section .fhp-counter-number {
+  font-size: 1.55rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  display: block;
+}
+
+/* Counter label — hard requirement: no overflow, no ellipsis */
+#artisans-section .fhp-counter-label {
+  font-size: 0.67rem;
+  font-weight: 600;
+  color: rgba(32, 201, 151, 0.85);
+  letter-spacing: 0.02em;
+  line-height: 1.35;
+  display: block;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
+}
+
+/* Old .fhp-see-all wraps counter — adapt for new design */
+#artisans-section .fhp-see-all {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  text-decoration: none !important;
+  align-self: start !important;
+  margin-top: 22px !important;
+}
+
+/* Hide directional arrow in new design */
+#artisans-section .fhp-see-all-arrow {
+  display: none !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   4. GRID STAGE — layout overrides
+   Specificity note: bare #fixeo-homepage-vedette-grid = (1,0,0).
+   Compound #fixeo-homepage-vedette-grid.ssb2-vedette-grid = (1,1,0).
+   #artisans-section #fixeo-homepage-vedette-grid = (2,0,0) — beats both.
+   This is the sole authority for section-level grid layout.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+#artisans-section .results-main-column {
+  position: relative;
+  z-index: 2;
+}
+
+/* ── Desktop 3-column grid (≥1108px) ──
+   Breakpoint calculation:
+     3 cards × 320px = 960px
+     2 gaps × 26px  =  52px
+     Total card+gap  = 1012px
+     Safe padding each side = 48px total
+     Minimum viewport = 1012 + 48 = 1060px
+   To ensure 1099px stays as tablet carousel (per spec):
+     Breakpoint = 1108px (1108 - 48 = 1060px available ≥ 1012px)
+   At 1024px: 1024 < 1108 → horizontal carousel ✅
+   At 1099px: 1099 < 1108 → horizontal carousel ✅
+   At 1108px: 1108 ≥ 1108 → 3-column grid ✅ (1108-48=1060px available)
+   At 1120px: 1120 ≥ 1108 → 3-column grid ✅
+   At 1280px: 3-column grid ✅
+   At 1440px: 3-column grid ✅
+
+   !important on grid-template-columns: services-uber-premium.css L46-52 uses
+   compound selector (1,1,0) with !important. #artisans-section prefix gives
+   (2,0,0) — beats (1,1,0) by specificity. Loading last ensures source-order
+   tie-breaking also favours this file.
+   !important on display, overflow-x, width: same competing rules in same files.
+*/
+@media (min-width: 1108px) {
+  #artisans-section #fixeo-homepage-vedette-grid {
+    display: grid !important;
+    grid-template-columns: repeat(3, 320px) !important;
+    gap: 26px !important;
+    justify-content: center !important;
+    overflow-x: visible !important;
+    width: auto !important;
+    padding: 0 !important;
+    margin-left: 0 !important;
+  }
+  #artisans-section #fixeo-homepage-vedette-grid .fhp-card {
+    min-width: unset !important;
+    max-width: unset !important;
+    width: auto !important;
+    flex-shrink: unset !important;
+    scroll-snap-align: unset !important;
+  }
+}
+
+/* ── Tablet/mid horizontal carousel (641px – 1107px) ──
+   Includes 1024px which is NOT wide enough for 3-column (1024-48=976px < 1012px).
+   Cards remain exactly 320×400px, horizontal scroll, no orphan.
+   !important on display/flex properties: overrides services-uber-premium.css
+   @media(769px–1024px) compound rule (1,1,0) setting display:grid.
+*/
+@media (min-width: 641px) and (max-width: 1107px) {
+  #artisans-section #fixeo-homepage-vedette-grid {
+    display: flex !important;
+    grid-template-columns: none !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    scroll-snap-type: x mandatory !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    gap: 20px !important;
+    padding: 8px 24px 24px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    justify-content: unset !important;
+    margin-left: 0 !important;
+  }
+  #artisans-section #fixeo-homepage-vedette-grid::-webkit-scrollbar {
+    display: none !important;
+  }
+  #artisans-section #fixeo-homepage-vedette-grid .fhp-card {
+    min-width: 320px !important;
+    max-width: 320px !important;
+    width: 320px !important;
+    flex-shrink: 0 !important;
+    scroll-snap-align: start !important;
+  }
+}
+
+/* ── 320px next-card preview fix (≤340px only) ──
+   Problem: at 320px viewport, .results-main-column has 8px padL, placing
+   the grid at x=29 from the viewport. With 100vw grid width and 276px card,
+   card2 starts at x=339 — 19px past the viewport edge (no peek visible).
+
+   Fix: use negative margin-left to shift the grid left, aligning it closer
+   to the viewport left edge. Combined with reduced padL, card2 peeks 18-24px.
+
+   Calculation at 320px:
+     grid.left (before fix) = 29px
+     target grid.left       = 8px (shift -21px via margin-left)
+     grid padL              = 4px (reduced from 20px via override)
+     card1.left = 8 + 4     = 12px
+     card1.right = 12 + 276 = 288px
+     gap = 14px
+     card2.left = 288 + 14  = 302px
+     peek = 320 - 302       = 18px ✅
+
+   .results-main-column padL zeroed so it doesn't add to grid's offset.
+   overflow-x:visible on the ancestor chain already set by artisan-card-conversion-v1.css J2-D.
+
+   !important on padding-left: inline CSS and conversion CSS both set padL=20px
+   with lower specificity selectors; #artisans-section scoped (2,0,0) beats them.
+   !important on margin-left: no existing rule sets margin-left on grid with
+   higher specificity; !important added for cascade safety.
+*/
+@media (max-width: 340px) {
+  #artisans-section .results-main-column {
+    padding-left: 0 !important;
+  }
+  #artisans-section #fixeo-homepage-vedette-grid {
+    margin-left: -21px !important;
+    padding-left: 4px !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   5. CONTINUATION ACTIONS — V1A.2 layout
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.fxas-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  margin-top: 36px;
+  position: relative;
+  z-index: 2;
+  max-width: 1160px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 24px;
+}
+
+/* Primary action — ghost button */
+.fxas-btn-more {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 28px;
+  min-height: 52px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.92rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.18s, border-color 0.18s, color 0.18s;
+  white-space: nowrap;
+}
+
+.fxas-btn-more:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.26);
+  color: #fff;
+}
+
+.fxas-btn-more:focus-visible {
+  outline: 2px solid rgba(32, 201, 151, 0.55);
+  outline-offset: 3px;
+}
+
+.fxas-btn-more-arrow {
+  font-size: 1.0em;
+  transition: transform 0.18s;
+}
+
+.fxas-btn-more:hover .fxas-btn-more-arrow {
+  transform: translateX(3px);
+}
+
+/* Secondary action */
+.fxas-secondary-action {
+  margin-top: 22px;
+  font-size: 0.83rem;
+  color: rgba(255, 255, 255, 0.36);
+  text-align: center;
+  line-height: 1.5;
+}
+
+.fxas-secondary-action button {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  font-size: 0.83rem;
+  color: rgba(255, 255, 255, 0.56);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.fxas-secondary-action button:hover {
+  color: rgba(255, 255, 255, 0.80);
+}
+
+.fxas-secondary-action button:focus-visible {
+  outline: 2px solid rgba(32, 201, 151, 0.55);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   6. RESPONSIVE — MOBILE (≤640px)
+   ══════════════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 640px) {
+
+  /* Section padding override.
+     !important: artisan-card-conversion-v1.css J2-B sets
+     #artisans-section { padding-top:48px !important } with bare ID selector (1,0,0).
+     This file's #artisans-section.section is (1,1,0) and loads later — wins. */
+  #artisans-section.section {
+    padding: 52px 0 56px !important;
+  }
+
+  /* Header: collapse to single column
+     !important on display/flex-direction: inline CSS sets these on .fhp-section-header */
+  #artisans-section .fhp-section-header {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0 !important;
+    margin-bottom: 0 !important;
+    max-width: none !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  #artisans-section .fhp-eyebrow {
+    margin-bottom: 8px;
+  }
+
+  /* Title sizes
+     !important: artisan-card-conversion-v1.css J2-C sets .fhp-title font-size 1.05rem !important
+     Using #artisans-section scope (1,1,0) vs J2-C bare .fhp-title (0,1,0) — wins without !important.
+     Adding !important for robustness against other rules. */
+  #artisans-section .fhp-title {
+    font-size: 30px !important;
+    line-height: 1.08 !important;
+    margin-bottom: 10px !important;
+  }
+
+  #artisans-section .fhp-subtitle {
+    font-size: 0.86rem !important;
+    max-width: none !important;
+    margin-bottom: 16px !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: unset !important;
+  }
+
+  #artisans-section .fhp-counter {
+    margin-top: 0 !important;
+    width: auto !important;
+    max-width: none !important;
+    display: inline-flex !important;
+    padding: 12px 16px !important;
+    border-radius: 12px !important;
+    align-self: flex-start !important;
+  }
+
+  #artisans-section .fhp-counter-number {
+    font-size: 1.45rem;
+  }
+
+  #artisans-section .fhp-counter-label {
+    font-size: 0.66rem !important;
+  }
+
+  #artisans-section .fhp-see-all {
+    margin-top: 0 !important;
+    margin-bottom: 22px !important;
+  }
+
+  .fxas-actions {
+    margin-top: 24px;
+    flex-direction: column;
+    align-items: stretch;
+    padding: 0 20px;
+  }
+
+  .fxas-btn-more {
+    width: 100%;
+    white-space: normal;
+    text-align: center;
+    font-size: 0.88rem;
+    min-height: 52px;
+  }
+
+  .fxas-secondary-action {
+    text-align: left;
+    margin-top: 20px;
+  }
+}
+
+/* Very small: 320–374px */
+@media (max-width: 374px) {
+  #artisans-section .fhp-title {
+    font-size: 26px !important;
+  }
+  #artisans-section .fhp-counter-number {
+    font-size: 1.35rem !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   7. RESPONSIVE — TABLET (641px – 1107px)
+   ══════════════════════════════════════════════════════════════════════════ */
+
+@media (min-width: 641px) and (max-width: 1107px) {
+
+  #artisans-section.section {
+    padding: 64px 0 !important;
+  }
+
+  #artisans-section .fhp-section-header {
+    grid-template-columns: minmax(0, 480px) minmax(180px, 240px) !important;
+    gap: 24px !important;
+    margin-bottom: 36px !important;
+    max-width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  #artisans-section .fhp-see-all {
+    margin-top: 0 !important;
+  }
+
+  #artisans-section .fhp-counter {
+    max-width: none !important;
+    width: 100% !important;
+  }
+
+  .fxas-actions {
+    margin-top: 28px;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0 24px;
+  }
+
+  .fxas-btn-more {
+    white-space: nowrap;
+  }
+
+  .fxas-secondary-action {
+    text-align: left;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   8. RESPONSIVE — DESKTOP (≥1108px)
+   ══════════════════════════════════════════════════════════════════════════ */
+
+@media (min-width: 1108px) {
+
+  #artisans-section.section {
+    padding: 88px 0 80px !important;
+  }
+
+  #artisans-section .fhp-section-header {
+    margin-bottom: 48px !important;
+  }
+
+  .fxas-actions {
+    flex-direction: row !important;
+    justify-content: center;
+    align-items: center;
+    gap: 32px;
+    margin-top: 44px;
+  }
+
+  .fxas-secondary-action {
+    margin-top: 0;
+    text-align: left;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   9. ACCESSIBILITY
+   ══════════════════════════════════════════════════════════════════════════ */
+
+#artisans-section .fxas-sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   10. REDUCED MOTION
+   ══════════════════════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  #artisans-section.section::before,
+  #artisans-section.section::after,
+  #artisans-section .fxas-fade-top,
+  #artisans-section .fxas-fade-bot {
+    animation: none !important;
+  }
+  .fxas-btn-more,
+  .fxas-btn-more-arrow {
+    transition: none !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   !important audit — all uses justified:
+   1.  #artisans-section.section { padding } — overrides main.css .section
+   2.  #artisans-section .fhp-section-header { display, grid-template-columns,
+       align-items, gap, margin-bottom, padding-bottom, border-bottom } —
+       overrides index.html inline CSS on .fhp-section-header
+   3.  #artisans-section .fhp-title { font-size, font-weight, color,
+       letter-spacing, line-height, margin } — overrides inline CSS + J2-C
+   4.  #artisans-section .fhp-subtitle { font-size, color, line-height, margin } —
+       overrides inline CSS
+   5.  #artisans-section .fhp-counter { display, flex-direction, align-items, gap,
+       padding, border-radius, background, border, color, white-space, font-size,
+       font-weight, width, max-width, min-width } — overrides J2-A + inline CSS
+   6.  #artisans-section .fhp-counter::before { content, display } — suppresses emoji
+   7.  #artisans-section .fhp-see-all { display, flex-direction, align-items,
+       text-decoration, align-self, margin-top } — overrides inline CSS
+   8.  #artisans-section .fhp-see-all-arrow { display } — hides old arrow element
+   9.  Desktop+tablet grid: #artisans-section #fixeo-homepage-vedette-grid
+       { display, grid-template-columns, gap, justify-content, overflow-x, width,
+         padding, margin-left } — overrides services-uber-premium.css compound (1,1,0)
+   10. Desktop+tablet card: { min-width, max-width, width, flex-shrink,
+       scroll-snap-align } — overrides carousel fixed-width rules
+   11. Mobile section padding — overrides J2-B (1,0,0) bare ID selector
+   12. Mobile header flex overrides — inline CSS
+   13. Mobile title font-size, subtitle — inline + J2-C
+   14. Mobile counter overrides — inline CSS
+   15. 320px peek: .results-main-column padding-left, grid margin-left,
+       grid padding-left — inline CSS + conversion CSS (1,0,0) selectors
+   ══════════════════════════════════════════════════════════════════════════ */
