@@ -211,6 +211,15 @@ footer.fixeo-footer-v1,
   pointer-events: none; /* desktop: always open */
 }
 
+/* Desktop: force nav links always visible regardless of [open] state.
+   <details> ships without [open]; JS re-adds it on desktop but this
+   CSS rule is the layout guarantee. */
+@media (min-width: 769px) {
+  .fxf-group > ul {
+    display: block !important;
+  }
+}
+
 .fxf-group-heading::-webkit-details-marker,
 .fxf-group-heading::marker {
   display: none;
@@ -278,7 +287,7 @@ footer.fixeo-footer-v1,
 .fixeo-footer-v1 .footer-links a::before,
 .fixeo-footer-inject .footer-links a::before,
 .fxf-links a::before {
-  content: '\u203a';
+  content: '›';
   font-size: 0.90rem;
   color: rgba(255,255,255,0.20);
   transition: color 0.18s ease, transform 0.18s ease;
@@ -348,8 +357,8 @@ footer.fixeo-footer-v1,
   .fixeo-footer-v1 .footer-grid,
   .fixeo-footer-inject .footer-grid,
   .fxf-grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 24px !important;
   }
 
   .fixeo-footer-v1 .footer-brand,
@@ -422,18 +431,19 @@ footer.fixeo-footer-v1,
     padding: 5px 12px;
   }
 
+  /* Use !important to override any homepage CSS that also targets .footer-grid */
   .fixeo-footer-v1 .footer-grid,
   .fixeo-footer-inject .footer-grid,
   .fxf-grid {
-    grid-template-columns: 1fr;
-    gap: 0;
-    margin-bottom: 16px;
+    grid-template-columns: 1fr !important;
+    gap: 0 !important;
+    margin-bottom: 16px !important;
   }
 
   .fixeo-footer-v1 .footer-brand,
   .fixeo-footer-inject .footer-brand,
   .fxf-brand {
-    grid-column: auto;
+    grid-column: auto !important;
     margin-bottom: 16px;
   }
 
@@ -445,12 +455,11 @@ footer.fixeo-footer-v1,
     margin-bottom: 12px;
   }
 
-  /* Primary CTA mobile */
+  /* Primary CTA mobile — hidden: page already has an in-page CTA;
+     Urgence FAB serves as the primary mobile action trigger.
+     Preserved in DOM with data-open-request-form="true" intact. */
   .fxf-primary-cta {
-    font-size: 0.84rem;
-    padding: 11px 18px;
-    width: 100%;
-    justify-content: center;
+    display: none !important;
   }
 
   /* Mobile accordion — enable interactive summary */
@@ -474,7 +483,7 @@ footer.fixeo-footer-v1,
 
   /* Chevron indicator */
   .fxf-group-heading::after {
-    content: '\u203a';
+    content: '›';
     font-size: 1.1rem;
     color: rgba(255,255,255,0.28);
     transition: transform 0.2s ease;
@@ -526,6 +535,12 @@ footer.fixeo-footer-v1,
   .fixeo-footer-v1 .footer-bottom > div,
   .fxf-legal-links {
     gap: 0.55rem;
+  }
+
+  /* SEO authority links strip — rendered after #fxf-mount in index.html.
+     Ensure it scrolls fully above Urgence + WhatsApp FABs + Safari bar. */
+  nav.seo-authority-links {
+    padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px));
   }
 }
 

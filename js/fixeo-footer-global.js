@@ -88,7 +88,7 @@
 
       /* Navigation group */
       '<div class="footer-links fxf-links">' +
-        '<details class="fxf-group" open>' +
+        '<details class="fxf-group">' +
           '<summary class="fxf-group-heading"><h4>Navigation</h4></summary>' +
           '<ul>' +
             '<li><a href="/index.html">Accueil</a></li>' +
@@ -103,7 +103,7 @@
 
       /* Artisans group */
       '<div class="footer-links fxf-links">' +
-        '<details class="fxf-group" open>' +
+        '<details class="fxf-group">' +
           '<summary class="fxf-group-heading"><h4>Artisans</h4></summary>' +
           '<ul>' +
             '<li><a href="/rejoindre-fixeo.html">Rejoindre Fixeo</a></li>' +
@@ -115,7 +115,7 @@
 
       /* Support group */
       '<div class="footer-links fxf-links">' +
-        '<details class="fxf-group" open>' +
+        '<details class="fxf-group">' +
           '<summary class="fxf-group-heading"><h4>Support</h4></summary>' +
           '<ul>' +
             '<li><a href="/contact.html">Contact</a></li>' +
@@ -198,6 +198,17 @@
       /* Fallback: dispatch a custom event that V5 flow listens for */
       document.dispatchEvent(new CustomEvent('fixeo:openRequestFlow'));
     });
+  }
+
+  /* ── Desktop: force all groups open (CSS-free fallback) ── */
+  /* <details> ships without [open] so mobile starts collapsed. */
+  /* On desktop (>768px) add [open] so all nav links are visible */
+  /* without depending on CSS display overrides alone.          */
+  if (window.innerWidth > 768) {
+    var groups = document.querySelectorAll('.fxf-group');
+    for (var k = 0; k < groups.length; k++) {
+      groups[k].setAttribute('open', '');
+    }
   }
 
 }());
