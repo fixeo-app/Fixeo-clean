@@ -1,0 +1,213 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   FIXEO Post-Artisan Flow V1 — fxpaf-v1
+   Scoped changes immediately after the artisan flagship section:
+   1. Compact RAFI section  (#fixeo-chapter-4 .fxpaf-* namespace)
+   2. Enterprise transition (.fxet-* eyebrow override, .fxpaf-ent-* scope)
+   3. Network proof update  (.fxv2-headline, #fxpaf-network-count)
+
+   Does NOT touch:
+   - artisan cards or carousel (.fhp-card, .pvc-*)
+   - RAFI modal  (#fxrf4-root)
+   - avatar system (.pvc-avatar)
+   - Supabase loader
+   - analytics
+   - Vercel config
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* ── 1. COMPACT RAFI SECTION ─────────────────────────────────────────────
+   Replaces the old 5-step vertical timeline.
+   Namespace: fxpaf-* scoped inside #fixeo-chapter-4.section.fxpaf-rafi
+   ─────────────────────────────────────────────────────────────────────── */
+
+#fixeo-chapter-4.fxpaf-rafi {
+  padding: 64px 0 56px;
+  background: linear-gradient(180deg, #07091a 0%, #0c1030 100%);
+}
+
+.fxpaf-rafi-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 36px;
+  max-width: 680px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* Eyebrow */
+.fxpaf-eyebrow {
+  display: block;
+  font-size: 0.63rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.28);
+  margin-bottom: 10px;
+}
+
+/* Title */
+.fxpaf-rafi-title {
+  font-size: clamp(1.55rem, 3vw, 2rem);
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.18;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+/* Subtitle */
+.fxpaf-rafi-subtitle {
+  font-size: 0.92rem;
+  color: rgba(255, 255, 255, 0.48);
+  line-height: 1.6;
+  margin: 8px 0 0;
+  max-width: 480px;
+}
+
+/* Steps — horizontal row on tablet+, stacked on mobile */
+.fxpaf-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 0;
+  width: 100%;
+}
+
+.fxpaf-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  padding: 20px 16px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  transition: background 0.2s;
+  position: relative;
+}
+
+/* Connector line between steps */
+.fxpaf-step + .fxpaf-step::before {
+  content: '';
+  position: absolute;
+  left: -1px;
+  top: 24px;
+  width: 1px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.fxpaf-step-num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(32, 201, 151, 0.12);
+  border: 1px solid rgba(32, 201, 151, 0.25);
+  color: #20c997;
+  font-size: 0.78rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.fxpaf-step-label {
+  font-size: 0.83rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.72);
+  line-height: 1.35;
+  text-align: center;
+}
+
+/* Closing reassurance */
+.fxpaf-rafi-closing {
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  width: 100%;
+}
+
+.fxpaf-rafi-closing-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.80);
+  margin: 0 0 4px;
+}
+
+.fxpaf-rafi-closing-sub {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.38);
+  margin: 0;
+}
+
+/* Mobile: stack steps vertically */
+@media (max-width: 560px) {
+  #fixeo-chapter-4.fxpaf-rafi {
+    padding: 48px 0 40px;
+  }
+
+  .fxpaf-steps {
+    flex-direction: column;
+    gap: 8px;
+    max-width: 320px;
+    margin: 0 auto;
+  }
+
+  .fxpaf-step {
+    flex-direction: row;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    text-align: left;
+  }
+
+  .fxpaf-step + .fxpaf-step::before {
+    display: none;
+  }
+
+  .fxpaf-step-label {
+    text-align: left;
+  }
+}
+
+/* ── 2. ENTERPRISE TRANSITION ────────────────────────────────────────────
+   Eyebrow override: remove emoji, more institutional tone.
+   Left-align content on tablet+.
+   Slightly cooler/cyan atmosphere to signal context shift.
+   ─────────────────────────────────────────────────────────────────────── */
+
+/* Eyebrow override — institutional, no emoji */
+.fxpaf-ent-eyebrow {
+  font-size: 0.63rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.14em !important;
+  text-transform: uppercase !important;
+  color: rgba(100, 180, 240, 0.65) !important;
+  background: none !important;
+  padding: 0 !important;
+  border: none !important;
+}
+
+/* ── 3. NETWORK PROOF — headline + dynamic count ─────────────────────────
+   Updates .fxv2-headline to remove "meilleurs" wording.
+   #fxpaf-network-count: dynamic span updated by _updateNetworkCount().
+   ─────────────────────────────────────────────────────────────────────── */
+
+/* Dynamic count span — inherit fxv2-signal-text styles, no extra override needed.
+   _updateNetworkCount() writes e.g. "1 302 profils référencés" into this element.
+   Show a soft placeholder shimmer until JS fires. */
+#fxpaf-network-count:empty::before {
+  content: '… profils référencés';
+  opacity: 0.35;
+}
+
+/* ── 4. REDUCED MOTION ────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .fxpaf-step {
+    transition: none;
+  }
+}

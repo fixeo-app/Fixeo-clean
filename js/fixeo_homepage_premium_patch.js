@@ -967,8 +967,21 @@
       _buildHeader(list.length, sorted.length, resultMode);
       _buildExploreStrip(ctx);        /* K-2: city exploration strip below carousel */
       _buildSectionActions(ctx);      /* V1A.2: continuation actions below grid */
+      _updateNetworkCount();          /* fxpaf-v1: live network count in proof section */
       _triggerFadeIn(pg);
     });
+  }
+
+  /* ── fxpaf-v1: Network count update ──
+   * Updates #fxpaf-network-count with total window.ARTISANS.length.
+   * Fires on every _renderPremiumGrid call (initial load + filter changes).
+   * No new globals. No DOM creation. Read-only except the one span. */
+  function _updateNetworkCount() {
+    var el = document.getElementById('fxpaf-network-count');
+    if (!el) return;
+    var total = (window.ARTISANS || []).length;
+    if (!total) return;
+    el.textContent = new Intl.NumberFormat('fr-FR').format(total) + '\u00a0profils r\u00e9f\u00e9renc\u00e9s';
   }
 
   /* ── Fade-in animation ── */

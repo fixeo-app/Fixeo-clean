@@ -116,25 +116,25 @@
 }
 
 /* ═══════════════════════════════════════════════════
-   CONVERSION SPRINT — fxconv-v1
+   CONVERSION SPRINT - fxconv-v1
    Namespace: fxconv-*
    Scope: homepage dual-journey clarity
-   Frozen files: rfos, fc2, fc3, fc4, fxrf4 — not touched
+   Frozen files: rfos, fc2, fc3, fc4, fxrf4 - not touched
 ═══════════════════════════════════════════════════ */
 
 /*
- * 1. TRUST RAIL — suppressed.
+ * 1. TRUST RAIL - suppressed.
  *    It repeats the same 4 facts already in Chapter 2 consequences:
  *    "1 134 artisans", "profils vérifiés", "20 villes", "paiement après intervention".
  *    Removing it gets users to Chapter 3 (highest-intent zone) faster.
- *    The DOM is preserved — JS that reads trust-section still works.
+ *    The DOM is preserved - JS that reads trust-section still works.
  */
 .trust-section {
   display: none !important;
 }
 
 /*
- * 2. HERO JOURNEY B — rfos-fallback-band override.
+ * 2. HERO JOURNEY B - rfos-fallback-band override.
  *    RAFI OS hides this band (display:none in fixeo-rafi-os-v1.css, frozen).
  *    This override restores it as a real pill button below the RAFI stage,
  *    giving Journey B visible presence in the hero for 100% of visitors.
@@ -184,12 +184,12 @@
 }
 
 /*
- * 3. MID-PAGE CONVERSION STRIP — fxconv-strip
+ * 3. MID-PAGE CONVERSION STRIP - fxconv-strip
  *    A thin horizontal band between the artisan results and Chapter 4.
  *    Presents both journeys at the moment the user has seen the artisan grid
  *    but hasn't yet committed to a specific artisan.
  *    Desktop: two buttons side by side.
- *    Mobile: stacked (Journey A first — dominant intent at this scroll depth).
+ *    Mobile: stacked (Journey A first - dominant intent at this scroll depth).
  */
 .fxconv-strip {
   padding: 32px 0;
@@ -230,7 +230,7 @@
   flex: 1;
 }
 
-/* Journey A button — transparent, secondary weight */
+/* Journey A button - transparent, secondary weight */
 .fxconv-btn-a {
   display: inline-flex;
   align-items: center;
@@ -256,7 +256,7 @@
   background: rgba(255, 255, 255, 0.04);
 }
 
-/* Journey B button — filled, primary weight */
+/* Journey B button - filled, primary weight */
 .fxconv-btn-b {
   display: inline-flex;
   align-items: center;
@@ -719,7 +719,7 @@ button:hover {
   transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
   box-shadow: 0 14px 34px rgba(255,77,141,0.28);
 }
-/* fix(home-final-cta): disable scale-hover on touch — prevents iOS Safari hit-test drift */
+/* fix(home-final-cta): disable scale-hover on touch - prevents iOS Safari hit-test drift */
 @media (pointer: coarse) {
   .cta-main:hover { transform: none !important; }
   .cta-main:active { transform: scale(0.97) !important; transition-duration: 0.1s !important; }
@@ -1404,7 +1404,7 @@ section#home.hero.hero-section {
     margin-top: 0 !important;
   }
 
-  /* ── ⚡ Mon Espace Fixeo — premium CTA link ── */
+  /* ── ⚡ Mon Espace Fixeo - premium CTA link ── */
   .mobile-nav-fixeo-space {
     display: flex !important;
     align-items: center;
@@ -1983,22 +1983,22 @@ section#home.hero.hero-section {
 }
 
 /*
- * 4. JOURNEY B PREMIUM BLOCK — fxjb-*
+ * 4. JOURNEY B PREMIUM BLOCK - fxjb-*
  *    Transforms the secondary CTA from an isolated pill into a
  *    narrative transition that sells the workflow, not just the button.
  *    Renders inside .rfos-fallback-band (placed by RAFI OS after hero).
- *    HTML lives in .hero-secondary-link-wrap — moved by RAFI OS on mount.
+ *    HTML lives in .hero-secondary-link-wrap - moved by RAFI OS on mount.
  *    Zero JS. CSS-only composition.
  */
 
-/* ── Band container — generous vertical breathing room ── */
+/* ── Band container - generous vertical breathing room ── */
 .rfos-fallback-band {
   padding: 44px 20px 52px !important;
   border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
   justify-content: center !important;
 }
 
-/* ── Inner wrapper — column layout, centered, constrained width ── */
+/* ── Inner wrapper - column layout, centered, constrained width ── */
 .rfos-fallback-link {
   display: flex !important;
   flex-direction: column !important;
@@ -2030,7 +2030,7 @@ section#home.hero.hero-section {
   margin-bottom: 28px;
 }
 
-/* Headline — main hook */
+/* Headline - main hook */
 .fxjb-headline {
   margin: 0 0 10px;
   padding: 0;
@@ -2041,7 +2041,7 @@ section#home.hero.hero-section {
   letter-spacing: -0.01em;
 }
 
-/* Description — explains the workflow */
+/* Description - explains the workflow */
 .fxjb-desc {
   margin: 0;
   padding: 0;
@@ -2105,7 +2105,7 @@ section#home.hero.hero-section {
     max-width: 100% !important;
   }
   /* Premium vedette grid inside artisans-section - ID specificity beats all !important class rules */
-  /* V1A.2-int1: overridden by @media rules below — kept for reference only */
+  /* V1A.2-int1: overridden by @media rules below - kept for reference only */
   #fixeo-homepage-vedette-grid {
     display: grid !important;
     grid-template-columns: repeat(2, 1fr) !important;
@@ -2151,7 +2151,7 @@ section#home.hero.hero-section {
       scroll-snap-align: unset !important;
     }
   }
-  /* V1A.2-int1: Tablet carousel 641–1023px */
+  /* V1A.2-int1: Tablet carousel 641-1023px */
   @media (min-width: 641px) and (max-width: 1023px) {
     #fixeo-homepage-vedette-grid.ssb2-vedette-grid,
     #fixeo-homepage-vedette-grid.fhp-grid,
@@ -2409,7 +2409,7 @@ section#home.hero.hero-section {
   <link rel="stylesheet" href="css/fixeo-trust-v9.css?v=4">
   <link rel="stylesheet" href="css/fixeo-footer-global.css?v=gf3a">
   <link rel="stylesheet" href="css/fixeo-hero-lps-v10.css?v=6">
-  <!-- fxrf4-v5b: legacy modal CSS removed — V5 is the only request UI -->
+  <!-- fxrf4-v5b: legacy modal CSS removed - V5 is the only request UI -->
   <link rel="stylesheet" href="css/fx-request-flow-v4.css?v=fxrf4-v5z">
   <link rel="stylesheet" href="css/fixeo-live-engine-v1.css?v=fle-v2a">
   <link rel="stylesheet" href="css/fixeo-brain-engine-v1.css?v=fbe-v42">
@@ -2471,10 +2471,10 @@ section#home.hero.hero-section {
   <link rel="stylesheet" href="css/artisan-card-conversion-v1.css?v=fxhome-artisan-card-v3b2">
   <link rel="stylesheet" href="css/fixeo-artisan-card-premium-v1.css?v=facp-v1b"/>
 <link rel="stylesheet" href="css/fixeo-artisan-card-premium-v2.css?v=facp-v2c">
-<!-- fixeo-artisan-section-v1.css: see link element near </head> —>
+<!-- fixeo-artisan-section-v1.css: see link element near </head> ->
 
 
-<!-- fxrf4-v5b: legacy modal hotfix removed — V5 owns all request triggers at z-index:19000 -->
+<!-- fxrf4-v5b: legacy modal hotfix removed - V5 owns all request triggers at z-index:19000 -->
 
 <!-- SEO-1A: Structured Data Foundation -->
 <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
@@ -2485,8 +2485,8 @@ section#home.hero.hero-section {
 <meta property="og:locale" content="fr_MA">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:site" content="@FixeoMaroc">
-<meta name="twitter:title" content="Fixeo — Artisans vérifiés au Maroc">
-<meta name="twitter:description" content="Trouvez des artisans vérifiés, notés et disponibles près de chez vous au Maroc. Plombiers, électriciens, serruriers, peintres — intervention rapide.">
+<meta name="twitter:title" content="Fixeo - Artisans vérifiés au Maroc">
+<meta name="twitter:description" content="Trouvez des artisans vérifiés, notés et disponibles près de chez vous au Maroc. Plombiers, électriciens, serruriers, peintres - intervention rapide.">
 <meta name="twitter:image" content="https://www.fixeo.ma/img/logo.png">
 <link rel="canonical" href="https://www.fixeo.ma/">
 <script type="application/ld+json">
@@ -2557,6 +2557,7 @@ section#home.hero.hero-section {
   <script src="js/fixeo-analytics-bootstrap.js?v=fab1c" defer></script>
 <!-- V1A.2-int1: Section CSS loads last to guarantee source-order win over all external CSS -->
 <link rel="stylesheet" href="css/fixeo-artisan-section-v1.css?v=fxhome-artisan-section-v1a2-int11">
+<link rel="stylesheet" href="css/fixeo-post-artisan-flow-v1.css?v=fxpaf-v1">
 </head>
 
 <body class="fixeo-homepage-mode fixeo-gh-enabled">
@@ -2763,7 +2764,7 @@ section#home.hero.hero-section {
     </div>
 
     <div class="mobile-nav-user" data-auth="logged-in">
-      <!-- ⚡ Primary CTA: My Fixeo Space — routes to correct dashboard by role -->
+      <!-- ⚡ Primary CTA: My Fixeo Space - routes to correct dashboard by role -->
       <a href="#" class="nav-link mobile-nav-fixeo-space" id="mobile-fixeo-space-link"
          onclick="window._fixeoAvatarNav();return false;">
         ⚡ Mon Espace Fixeo
@@ -2789,16 +2790,16 @@ section#home.hero.hero-section {
   <!-- Gradient overlay -->
   <div class="hero-overlay" aria-hidden="true"></div>
 
-  <!-- Hero content — RAFI stage injected here by fixeo-rafi-os-v1.js -->
+  <!-- Hero content - RAFI stage injected here by fixeo-rafi-os-v1.js -->
   <div class="hero-content">
 
-    <!-- H1 (SEO) — RAFI OS JS moves this below the hero on mount -->
+    <!-- H1 (SEO) - RAFI OS JS moves this below the hero on mount -->
     <h1 class="hero-title">
       <span data-i18n="hero_title_1">Un artisan chez vous</span><br/>
       <span data-i18n="hero_title_2">en quelques minutes</span>
     </h1>
 
-    <!-- RAFI context status line — fxhcs-v1
+    <!-- RAFI context status line - fxhcs-v1
          Reserved min-height prevents CLS. JS fills text after RAFI OS mounts.
          Sits between .rfos-stage-wrap (injected before this) and #hero-quick-search. -->
     <div id="fxhcs-line" aria-live="polite" aria-label="Contexte de localisation"></div>
@@ -2806,10 +2807,10 @@ section#home.hero.hero-section {
     <!-- Reply field -->
     <div id="hero-quick-search" class="search-box" role="search" aria-label="Recherche rapide d'artisans"></div>
 
-    <!-- Fallback path — RAFI OS JS moves this below the hero on mount.
+    <!-- Fallback path - RAFI OS JS moves this below the hero on mount.
          fxjb-context narrative travels with the wrapper into .rfos-fallback-band. -->
     <div class="hero-secondary-link-wrap">
-      <!-- Journey B narrative — fxjb-* — rendered outside hero by RAFI OS -->
+      <!-- Journey B narrative - fxjb-* - rendered outside hero by RAFI OS -->
       <div class="fxjb-context" aria-hidden="true">
         <p class="fxjb-headline">Vous ne savez pas quel artisan choisir&nbsp;?</p>
         <p class="fxjb-desc">Décrivez simplement votre problème.<br>
@@ -2824,9 +2825,9 @@ section#home.hero.hero-section {
       </button>
     </div>
 
-    <!-- city-label: kept for AIRE/JS reads — visually hidden -->
+    <!-- city-label: kept for AIRE/JS reads - visually hidden -->
     <span id="hero-city-label" aria-hidden="true" style="display:none"></span>
-    <!-- fxlps-text: kept for lps-v10 JS — visually hidden -->
+    <!-- fxlps-text: kept for lps-v10 JS - visually hidden -->
     <span id="fxlps-text" aria-hidden="true" style="display:none"></span>
 
   </div><!-- /hero-content -->
@@ -2837,13 +2838,13 @@ section#home.hero.hero-section {
 
 
 <!-- ════════════════════════════════════════════════════════
-CHAPTER 2 — Ce que RAFI organise
-fxhome-vnext — Refactored 2026-07-26 for product truth + premium visual
+CHAPTER 2 - Ce que RAFI organise
+fxhome-vnext - Refactored 2026-07-26 for product truth + premium visual
 Namespace: fxrorg-* (page-scoped, index.html only)
 Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
 ════════════════════════════════════════════════════════ -->
 
-<!-- ── fxhome-vnext CSS — page-scoped, no shared files modified ── -->
+<!-- ── fxhome-vnext CSS - page-scoped, no shared files modified ── -->
 <style id="fxhome-vnext">
 
 /* ════════════════════════════════════════════════════════════════════
@@ -2954,25 +2955,25 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
 }
 
 /* ════════════════════════════════════════════════════════════════════
-   §2b ANIMATION LIFECYCLE — pause / resume
+   §2b ANIMATION LIFECYCLE - pause / resume
    fc2-org-visible = set once on first entry (entrance stagger, never removed).
    fc2-org-active  = set/removed as section enters/leaves viewport or tab hides.
    Default state: paused (no off-screen GPU or compositor resources consumed).
    ════════════════════════════════════════════════════════════════════ */
 
-/* PAUSED by default — sphere and halo */
+/* PAUSED by default - sphere and halo */
 #fixeo-chapter-2 .fxrorg-sphere,
 #fixeo-chapter-2 .fxrorg-halo,
 #fixeo-chapter-2 .fxrorg-sphere::after {
   animation-play-state: paused;
 }
 
-/* PAUSED by default — card pulse */
+/* PAUSED by default - card pulse */
 #fixeo-chapter-2 .fxrorg-signal {
   animation-play-state: paused;
 }
 
-/* RUNNING — only when section is currently active (viewport + tab visible) */
+/* RUNNING - only when section is currently active (viewport + tab visible) */
 #fixeo-chapter-2.fc2-org-active .fxrorg-sphere,
 #fixeo-chapter-2.fc2-org-active .fxrorg-halo,
 #fixeo-chapter-2.fc2-org-active .fxrorg-sphere::after {
@@ -2985,7 +2986,7 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
 
 
 /* ════════════════════════════════════════════════════════════════════
-   §3  SIGNAL CARDS — 2x2 grid, responsive
+   §3  SIGNAL CARDS - 2x2 grid, responsive
    ════════════════════════════════════════════════════════════════════ */
 
 .fxrorg-signals {
@@ -3087,7 +3088,7 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
 
 
 /* ════════════════════════════════════════════════════════════════════
-   §5  CONSEQUENCES — honest rewrite, reuses fc2-* classes
+   §5  CONSEQUENCES - honest rewrite, reuses fc2-* classes
    ════════════════════════════════════════════════════════════════════ */
 
 #fixeo-chapter-2 .fc2-consequences { margin-top: 44px; }
@@ -3095,11 +3096,11 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
 
 
 /* ════════════════════════════════════════════════════════════════════
-   §6  REDUCED MOTION — all animation removed; static presentation only
+   §6  REDUCED MOTION - all animation removed; static presentation only
    ════════════════════════════════════════════════════════════════════ */
 
 @media (prefers-reduced-motion: reduce) {
-  /* Override animation-play-state paused/running — keep fully inert */
+  /* Override animation-play-state paused/running - keep fully inert */
   #fixeo-chapter-2 .fxrorg-sphere,
   #fixeo-chapter-2 .fxrorg-halo,
   #fixeo-chapter-2 .fxrorg-sphere::after {
@@ -3141,7 +3142,7 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
 </style>
 
 <!-- ════════════════════════════════════════════════════════
-     CHAPTER 2 — Ce que RAFI organise (fxhome-vnext)
+     CHAPTER 2 - Ce que RAFI organise (fxhome-vnext)
      Product-truth: RAFI V5 collects 4 explicit user choices.
      No AI matching, no geolocation, no artisan notification claims.
      Floating controls (#fixeo-urgent-fab, .chat-widget) untouched.
@@ -3149,14 +3150,14 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
 <section id="fixeo-chapter-2" class="fc2-chapter" aria-labelledby="fc2-title">
   <div class="container">
 
-    <!-- ── PART 1 — Header ── -->
+    <!-- ── PART 1 - Header ── -->
     <header class="fc2-header">
       <span class="fc2-eyebrow">CE QUE RAFI ORGANISE</span>
-      <h2 id="fc2-title" class="fc2-title">Pendant que vous avancez,<br><em>RAFI organise déjà l’essentiel.</em></h2>
+      <h2 id="fc2-title" class="fc2-title">Pendant que vous avancez,<br><em>RAFI organise déjà l'essentiel.</em></h2>
       <p class="fc2-subtitle">Besoin, ville, délai et contact.<br>Votre demande devient claire en quelques étapes.</p>
     </header>
 
-    <!-- ── PART 2 — Sphere + 4 signals ── -->
+    <!-- ── PART 2 - Sphere + 4 signals ── -->
     <div class="fxrorg-sphere-wrap">
       <div class="fxrorg-sphere" aria-hidden="true">
         <div class="fxrorg-halo" aria-hidden="true"></div>
@@ -3164,25 +3165,25 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
       </div>
     </div>
 
-    <!-- Four honest signals — what RAFI V5 actually collects -->
+    <!-- Four honest signals - what RAFI V5 actually collects -->
     <div class="fxrorg-signals" role="list" aria-label="Les quatre informations organisées par RAFI">
 
       <div class="fxrorg-signal" role="listitem">
         <span class="fxrorg-signal-icon" aria-hidden="true">📋</span>
         <span class="fxrorg-signal-label">Besoin structuré</span>
-        <span class="fxrorg-signal-desc">Vous choisissez le type d’intervention parmi les services disponibles.</span>
+        <span class="fxrorg-signal-desc">Vous choisissez le type d'intervention parmi les services disponibles.</span>
       </div>
 
       <div class="fxrorg-signal" role="listitem">
         <span class="fxrorg-signal-icon" aria-hidden="true">📍</span>
         <span class="fxrorg-signal-label">Ville indiquée</span>
-        <span class="fxrorg-signal-desc">La zone d’intervention est confirmée parmi les 20 villes couvertes.</span>
+        <span class="fxrorg-signal-desc">La zone d'intervention est confirmée parmi les villes desservies.</span>
       </div>
 
       <div class="fxrorg-signal" role="listitem">
         <span class="fxrorg-signal-icon" aria-hidden="true">⏱</span>
         <span class="fxrorg-signal-label">Délai choisi</span>
-        <span class="fxrorg-signal-desc">Urgent, aujourd’hui, ou planifié — la priorité est enregistrée.</span>
+        <span class="fxrorg-signal-desc">Urgent, aujourd'hui, ou planifié - la priorité est enregistrée.</span>
       </div>
 
       <div class="fxrorg-signal" role="listitem">
@@ -3195,7 +3196,7 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
 
     <p class="fxrorg-outcome" aria-hidden="true">Une demande plus claire. Un suivi plus simple.</p>
 
-    <!-- ── PART 3 — Consequences (honest rewrite) ── -->
+    <!-- ── PART 3 - Consequences (honest rewrite) ── -->
     <div class="fc2-consequences">
 
       <p class="fc2-because">Ce que cela change pour vous.</p>
@@ -3208,7 +3209,7 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
           </div>
           <div class="fc2-result-text">
             <strong>Votre demande est complète dès la première étape.</strong>
-            <span>Besoin, ville, délai et contact — rien à compléter après.</span>
+            <span>Besoin, ville, délai et contact - rien à compléter après.</span>
           </div>
         </div>
 
@@ -3218,7 +3219,7 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
           </div>
           <div class="fc2-result-text">
             <strong>Les artisans de votre ville en premier.</strong>
-            <span>La zone d’intervention est enregistrée. Toujours.</span>
+            <span>La zone d'intervention est enregistrée. Toujours.</span>
           </div>
         </div>
 
@@ -3237,7 +3238,7 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
             <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 10 8 14 16 6"/></svg>
           </div>
           <div class="fc2-result-text">
-            <strong>Vous payez après l’intervention.</strong>
+            <strong>Vous payez après l'intervention.</strong>
             <span>Pas avant. La mise en relation elle-même est gratuite.</span>
           </div>
         </div>
@@ -3251,11 +3252,11 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
   </div><!-- /container -->
 </section>
 
-<!-- ── fxhome-vnext: IntersectionObserver — triggers .fc2-org-visible ──
+<!-- ── fxhome-vnext: IntersectionObserver - triggers .fc2-org-visible ──
      Private IIFE. One observer. No permanent rAF. No global listeners.
      No RAFI APIs. No localStorage. Falls back if IO unavailable. -->
 <script>
-/* fxhome-vnext.1: Animation lifecycle — pause/resume on viewport + tab visibility.
+/* fxhome-vnext.1: Animation lifecycle - pause/resume on viewport + tab visibility.
    fc2-org-visible = set exactly once on first entry (one-time entrance stagger).
    fc2-org-active  = set/removed as section enters/leaves viewport or tab hides.
    Private IIFE: no globals, no setInterval, no rAF loops, no scroll listeners. */
@@ -3275,7 +3276,7 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
     window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (reducedMotion) {
     sec.classList.add('fc2-org-visible');
-    /* fc2-org-active intentionally omitted — CSS §6 keeps animation: none */
+    /* fc2-org-active intentionally omitted - CSS §6 keeps animation: none */
     return;
   }
 
@@ -3290,7 +3291,7 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
     sec.classList.remove('fc2-org-active');
   }
 
-  /* ── IntersectionObserver — persistent (never disconnects) ───────────────── */
+  /* ── IntersectionObserver - persistent (never disconnects) ───────────────── */
   var io = new IntersectionObserver(function (entries) {
     var entry = entries[0];
     if (entry.isIntersecting) {
@@ -3305,7 +3306,7 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
 
   io.observe(sec);
 
-  /* ── visibilitychange — registered exactly once ─────────────────────────── */
+  /* ── visibilitychange - registered exactly once ─────────────────────────── */
   document.addEventListener('visibilitychange', function () {
     if (document.hidden) {
       deactivate();
@@ -3319,7 +3320,7 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
 <div class="section-divider" aria-hidden="true"></div>
 
 <!-- ══════════════════════════════════════════════════════════
-     2. TRUST RAIL — verified production data only
+     2. TRUST RAIL - verified production data only
 ══════════════════════════════════════════════════════════ -->
 <section class="section section-sm trust-section" aria-label="Confiance Fixeo">
   <div class="container">
@@ -3331,7 +3332,7 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
     </div>
   </div>
 </section>
-<!-- Recommended artisan — hidden by default, JS-revealed -->
+<!-- Recommended artisan - hidden by default, JS-revealed -->
 <section class="section section-sm recommended-artisan" id="recommended-artisan-section" aria-labelledby="recommended-artisan-title" hidden>
   <div class="container">
     <div class="recommended-artisan-shell">
@@ -3357,12 +3358,12 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
 </section>
 <div class="section-divider" aria-hidden="true"></div>
 <!-- ══════════════════════════════════════════════════════════
-     3. NETWORK DISCOVERY — service chips + city chips + artisan grids
+     3. NETWORK DISCOVERY - service chips + city chips + artisan grids
         ONE coherent discovery zone (JS IDs fully preserved)
 ══════════════════════════════════════════════════════════ -->
 <!-- ══════════════════════════════════════════════════════════
-     CHAPTER 3 — Quel problème faut-il résoudre ?
-     fxhome-situations-v2 — 2026-07-27
+     CHAPTER 3 - Quel problème faut-il résoudre ?
+     fxhome-situations-v2 - 2026-07-27
      Namespace: fc3-* (preserved), fxsit-* (new page-local additions)
      Functional chain: unchanged (initCategoryChips → applyMarketplaceFilters
        → renderArtisans → #artisans-section smooth scroll)
@@ -3371,11 +3372,11 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
      Frozen: floating controls, RAFI V5, matching engine, main.js.
      ══════════════════════════════════════════════════════════ -->
 
-<!-- ── fxhome-situations-v2 CSS — page-scoped, no shared files modified ── -->
+<!-- ── fxhome-situations-v2 CSS - page-scoped, no shared files modified ── -->
 <style id="fxhome-sit-v2">
 
 /* ════════════════════════════════════════════════════════════════════
-   fxhome-situations-v2.3 — corrective mobile polish
+   fxhome-situations-v2.3 - corrective mobile polish
    Namespace: fxsit-* (page-scoped to this <style> block + index.html)
    10 sections:
      §0  Specialized pill suppression (defense-in-depth)
@@ -3433,7 +3434,7 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
 
 
 /* ════════════════════════════════════════════════════════════════════
-   §2  RESET CONTROL — "Tous les artisans"
+   §2  RESET CONTROL - "Tous les artisans"
    ════════════════════════════════════════════════════════════════════ */
 
 .fxsit-reset-wrap {
@@ -3524,7 +3525,7 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
   text-align: left !important;
   position: relative !important;
   /* Keep overflow:hidden for border-radius containment.
-     Content now fits within min-height:104px — no clipping occurs. */
+     Content now fits within min-height:104px - no clipping occurs. */
   overflow: hidden !important;
 }
 
@@ -3571,7 +3572,7 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
      overflow-wrap:break-word retained as last-resort for genuinely unbreakable strings */
   word-break: normal !important;
   overflow-wrap: break-word !important;
-  /* v2.4: hyphens:auto removed — French hyphenation was splitting words unnaturally
+  /* v2.4: hyphens:auto removed - French hyphenation was splitting words unnaturally
      e.g. "fonctionne" → "fonc-tionne" at narrow widths */
   hyphens: none !important;
   white-space: normal !important;     /* explicit: no nowrap from external cascade */
@@ -3641,7 +3642,7 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
    ════════════════════════════════════════════════════════════════════ */
 
 #fxsit-additional {
-  /* Grid layout — ID specificity beats all external rules */
+  /* Grid layout - ID specificity beats all external rules */
   display: grid !important;
   grid-template-columns: repeat(2, 1fr) !important;
   grid-auto-rows: 1fr !important;
@@ -3751,18 +3752,18 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
 
 /* ════════════════════════════════════════════════════════════════════
    §7  COMPACT CITY ROW + EXTERNAL CITY-QUICK-CHIPS OVERRIDE
-   
+
    ROOT CAUSE FIX: css/fixeo-chapter-3-v1.css (frozen) forces:
      #services.fc3-chapter #city-quick-chips { display:none !important }
    And only reveals it via:
      #services.fc3-chapter[data-fc3-chips-open] #city-quick-chips { display:flex !important }
-   
-   Fix A — Page-local CSS: Override the forced-none with a higher-specificity rule:
+
+   Fix A - Page-local CSS: Override the forced-none with a higher-specificity rule:
      #services.fc3-chapter #city-quick-chips { display:flex!important }     ← cancel freeze
      #services.fc3-chapter #city-quick-chips[hidden] { display:none!important } ← restore [hidden]
    This ensures our hidden attribute mechanism takes priority.
-   
-   Fix B — City IIFE: Also toggle data-fc3-chips-open on #services to satisfy
+
+   Fix B - City IIFE: Also toggle data-fc3-chips-open on #services to satisfy
    the external reveal rule as a belt-and-suspenders backup.
    ════════════════════════════════════════════════════════════════════ */
 
@@ -3778,7 +3779,7 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
 }
 
 #services.fc3-chapter #city-quick-chips[hidden] {
-  /* Restore [hidden] behaviour — our page-local rule beats the ch3 override above */
+  /* Restore [hidden] behaviour - our page-local rule beats the ch3 override above */
   display: none !important;
 }
 
@@ -3950,7 +3951,7 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
    §10  RESPONSIVE
    ════════════════════════════════════════════════════════════════════ */
 
-/* ≤ 679px — mobile padding */
+/* ≤ 679px - mobile padding */
 @media (max-width: 679px) {
   #services.fc3-chapter .fxsit-primary-grid,
   #fxsit-additional {
@@ -3974,7 +3975,7 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
   }
 }
 
-/* ≤ 374px — tighter padding */
+/* ≤ 374px - tighter padding */
 @media (max-width: 374px) {
   #services.fc3-chapter .fxsit-primary-grid,
   #fxsit-additional {
@@ -3997,7 +3998,7 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
 
   #services.fc3-chapter .fxsit-card .fc3-card-label {
     /* v2.4: 0.80rem → 0.78rem at narrowest mobile. At 360-374px the card content
-       width is ~117-121px. 0.78rem (~12.5px) gives ~16 chars/line — sufficient for
+       width is ~117-121px. 0.78rem (~12.5px) gives ~16 chars/line - sufficient for
        all titles in 2 lines. Preserves readability. */
     font-size: 0.78rem !important;
     line-height: 1.40 !important;
@@ -4009,7 +4010,7 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
   }
 }
 
-/* ≤ 319px — 1-col fallback only at very narrow viewports */
+/* ≤ 319px - 1-col fallback only at very narrow viewports */
 @media (max-width: 319px) {
   #services.fc3-chapter .fxsit-primary-grid,
   #fxsit-additional {
@@ -4030,7 +4031,7 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
       <p class="fc3-subtitle">Choisissez une situation pour afficher les artisans correspondants.</p>
     </header>
 
-    <!-- ── Hidden inputs — JS reads these for filtering; never visible ── -->
+    <!-- ── Hidden inputs - JS reads these for filtering; never visible ── -->
     <div class="services-filter services-filter-bar" style="display:none" aria-hidden="true">
       <select id="services-city-filter" class="city-filter-select" aria-label="Filtrer les artisans par ville">
         <option value="">Toutes les villes</option>
@@ -4053,7 +4054,7 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
     <!-- ── Compact city row (fxhome-situations-v2.2) ── -->
     <div class="fxsit-city-row" id="fxsit-city-row" aria-live="polite">
 
-      <!-- STATE A: city known — shown when #services[data-fc3-city-known] is set -->
+      <!-- STATE A: city known - shown when #services[data-fc3-city-known] is set -->
       <div class="fxsit-city-known" id="fxsit-city-known" aria-hidden="true">
         <span class="fxsit-city-pin" aria-hidden="true">📍</span>
         <span class="fxsit-city-name" id="fxsit-city-name"></span>
@@ -4061,7 +4062,7 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
                 aria-label="Modifier la ville sélectionnée">Modifier la ville</button>
       </div>
 
-      <!-- STATE B: no city — shown by default -->
+      <!-- STATE B: no city - shown by default -->
       <div class="fxsit-city-unknown" id="fxsit-city-unknown">
         <button class="fxsit-city-choose-btn" id="fxsit-city-choose-btn" type="button"
                 aria-expanded="false" aria-controls="city-quick-chips">
@@ -4070,7 +4071,7 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
         </button>
       </div>
 
-      <!-- Shared chip picker — revealed by both states when needed -->
+      <!-- Shared chip picker - revealed by both states when needed -->
       <div class="fxsit-city-chips" id="city-quick-chips"
            role="listbox" aria-label="Choisir une ville" hidden>
         <button class="city-chip" data-city="Casablanca">Casablanca</button>
@@ -4083,7 +4084,7 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
 
     </div>
 
-    <!-- ── Reset control — "Tous les artisans" ── -->
+    <!-- ── Reset control - "Tous les artisans" ── -->
     <!-- Preserved: data-category="all", .chip, .service-chip for initCategoryChips() -->
     <div class="fxsit-reset-wrap">
       <button class="fxsit-reset-btn chip service-chip active" type="button"
@@ -4094,7 +4095,7 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
       </button>
     </div>
 
-    <!-- ── Primary situations — 6 cards, always visible ── -->
+    <!-- ── Primary situations - 6 cards, always visible ── -->
     <div class="fxsit-primary-grid fc3-situations"
          role="list" aria-label="Choisissez votre situation">
 
@@ -4151,7 +4152,7 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
       <span class="fxsit-selected-hint" id="fxsit-selected-hint" aria-live="polite"></span>
     </div>
 
-    <!-- ── Additional situations — collapsed by default ── -->
+    <!-- ── Additional situations - collapsed by default ── -->
     <div id="fxsit-additional" class="fxsit-additional-grid" role="list"
          aria-label="Situations supplémentaires" aria-hidden="true" inert>
 
@@ -4193,7 +4194,7 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
 
     </div><!-- /fxsit-additional -->
 
-    <!-- ── Secondary link — services page (replaces dead-end specialized block) ── -->
+    <!-- ── Secondary link - services page (replaces dead-end specialized block) ── -->
     <div class="fxsit-services-link-wrap">
       <a class="fxsit-services-link" href="services.html">
         Voir tous les services
@@ -4205,7 +4206,7 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
 
   <!-- ── fc3-city: contextual city intelligence (unchanged from previous) ── -->
   <script>
-  /* City IIFE — fxhome-situations-v2.3
+  /* City IIFE - fxhome-situations-v2.3
      ROOT CAUSE FIX: Added data-fc3-chips-open toggling alongside hidden attribute.
      css/fixeo-chapter-3-v1.css (frozen external) requires data-fc3-chips-open attr
      on #services to reveal #city-quick-chips. Our page-local CSS §7 overrides the
@@ -4340,7 +4341,7 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
 
   <!-- ── fxhome-situations-v2 page-local IIFE ──
        1. Disclosure toggle (#fxsit-disclosure-btn)
-       2. aria-pressed synchronizer (accessibility only — no filter calls)
+       2. aria-pressed synchronizer (accessibility only - no filter calls)
        3. Transition text updater (aria-live, no filter calls)
        Private IIFE: no globals, no setInterval, no rAF loops. -->
   <script>
@@ -4348,11 +4349,11 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
     'use strict';
 
     /* ════════════════════════════════════════════════════════════════
-       fxhome-situations-v2.2 — page-local situations IIFE
+       fxhome-situations-v2.2 - page-local situations IIFE
        Changes vs v2.1:
          - Removed: setTransition / updateTransitionForChip / ALL_*_TEXT
            (transition element removed from DOM in v2.2)
-         - Added: removeSpecializedPills() — page-local guard, runs once at T900ms
+         - Added: removeSpecializedPills() - page-local guard, runs once at T900ms
          - Updated: syncAriaPressed targets .chip[data-category] (includes fxsit-card)
          - Updated: getVisibleCardLabel for fxsit-card class
          - Hint, disclosure, focus-management, city-select listener: preserved
@@ -4376,7 +4377,7 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
       function remove() {
         /* Primary mechanism: remove by data-category (deterministic, no timing dependency).
            v2.3: also removes any fc3-spec-chip elements (injected class by patch.js).
-           "category-chips" class removed from primary grid in v2.3 HTML —
+           "category-chips" class removed from primary grid in v2.3 HTML -
            so addFixeoNewServiceChips() finds no container and returns early.
            This guard is defense-in-depth for any legacy cached HTML edge cases. */
         OBSOLETE.forEach(function (cat) {
@@ -4392,7 +4393,7 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
       } else {
         remove();
       }
-      /* One deferred run for async injectors. Not a polling loop — fires exactly once. */
+      /* One deferred run for async injectors. Not a polling loop - fires exactly once. */
       setTimeout(remove, 950);
     }());
 
@@ -4467,7 +4468,7 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
       if (activeEl) {
         var label = getVisibleCardLabel(activeEl);
         if (label) {
-          hint.textContent = 'Filtre actif : ' + label;
+          hint.textContent = 'Filtre actif : ' + label;
           hint.classList.add('fxsit-hint-visible');
           return;
         }
@@ -4519,14 +4520,14 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
     }
 
     /* ────────────────────────────────────────────────────────────────
-       City-select change listener (reads only — never writes)
+       City-select change listener (reads only - never writes)
        No-op in v2.2 (transition element removed), kept for future use.
     ──────────────────────────────────────────────────────────────── */
     (function () {
       var sel = document.getElementById('services-city-filter');
       if (!sel) return;
       sel.addEventListener('change', function () {
-        /* transition element removed in v2.2 — nothing to update here */
+        /* transition element removed in v2.2 - nothing to update here */
       });
     }());
 
@@ -4700,99 +4701,51 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
 
 
 <!-- ══════════════════════════════════════════════════════════
-     CONVERSION STRIP — fxconv-v1
-     Two-journey prompt at the exact moment the visitor has seen artisan
-     results but hasn't committed. Desktop: side by side. Mobile: stacked.
-══════════════════════════════════════════════════════════ -->
-<div class="fxconv-strip" role="complementary" aria-label="Comment voulez-vous avancer ?">
-  <div class="fxconv-strip-inner">
-    <span class="fxconv-label" aria-hidden="true">Je veux</span>
-    <div class="fxconv-divider" aria-hidden="true"></div>
-    <div class="fxconv-actions">
-      <button class="fxconv-btn-a"
-              type="button"
-              data-open-request-form="true"
-              data-request-mode="default"
-              aria-label="Trouver un artisan maintenant">
-        🔍 Trouver un artisan
-      </button>
-      <button class="fxconv-btn-b"
-              type="button"
-              data-open-request-form="true"
-              data-request-mode="marketplace"
-              aria-label="Publier une demande et recevoir plusieurs offres">
-        📝 Publier ma demande
-      </button>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════════════════════
-     CHAPTER 4 — RAFI Intelligence (Trust)
-     fc4-v1a — Namespace: fc4-*
+     CHAPTER 4 - RAFI Intelligence (Trust)
+     fc4-v1a - Namespace: fc4-*
      Answers: "Pourquoi ces artisans ?"
 ══════════════════════════════════════════════════════════ -->
-<section class="section fc4-chapter" id="fixeo-chapter-4" aria-labelledby="fc4-title">
-  <div class="container fc4-container">
+<!-- ── fxpaf-v1: Compact RAFI section - fxhome-post-artisan-flow-v1 ── -->
+<section class="section fxpaf-rafi" id="fixeo-chapter-4" aria-labelledby="fc4-title">
+  <div class="container fxpaf-rafi-inner">
 
-    <!-- Header -->
-    <div class="fc4-header">
-      <span class="fc4-badge">RAFI Intelligence</span>
-      <h2 class="fc4-title" id="fc4-title">Comment RAFI choisit vos artisans</h2>
-      <p class="fc4-intro">
-        RAFI analyse chaque demande avant de recommander les professionnels les plus adaptés à votre situation.
+    <div class="fxpaf-rafi-copy">
+      <span class="fxpaf-eyebrow" aria-hidden="true">RAFI INTELLIGENCE</span>
+      <h2 class="fxpaf-rafi-title" id="fc4-title">
+        Une demande mieux comprise.<br>Des profils plus pertinents.
+      </h2>
+      <p class="fxpaf-rafi-subtitle">
+        RAFI analyse votre besoin et vous aide à identifier les profils les plus adaptés.
       </p>
     </div>
 
-    <!-- Spacer: header → steps (Task 4 — breathing room) -->
-    <div class="fc4-gap" aria-hidden="true"></div>
-
-    <!-- Process steps — each step is an independent block (Task 5 — animation-ready) -->
-    <ol class="fc4-steps" aria-label="Processus de sélection RAFI">
-      <li class="fc4-step" data-fc4-step="1">
-        <span class="fc4-check" aria-hidden="true">✓</span>
-        <span class="fc4-step-label">Analyse votre demande</span>
+    <ol class="fxpaf-steps" aria-label="Comment RAFI fonctionne">
+      <li class="fxpaf-step">
+        <span class="fxpaf-step-num" aria-hidden="true">1</span>
+        <span class="fxpaf-step-label">Analyse votre demande</span>
       </li>
-      <li class="fc4-step" data-fc4-step="2">
-        <span class="fc4-check" aria-hidden="true">✓</span>
-        <span class="fc4-step-label">Vérifie les profils</span>
+      <li class="fxpaf-step">
+        <span class="fxpaf-step-num" aria-hidden="true">2</span>
+        <span class="fxpaf-step-label">Identifie les profils pertinents</span>
       </li>
-      <li class="fc4-step" data-fc4-step="3">
-        <span class="fc4-check" aria-hidden="true">✓</span>
-        <span class="fc4-step-label">Compare les disponibilités</span>
-      </li>
-      <li class="fc4-step" data-fc4-step="4">
-        <span class="fc4-check" aria-hidden="true">✓</span>
-        <span class="fc4-step-label">Estime le juste prix</span>
-      </li>
-      <li class="fc4-step" data-fc4-step="5">
-        <span class="fc4-check" aria-hidden="true">✓</span>
-        <span class="fc4-step-label">Sélectionne les meilleurs professionnels</span>
+      <li class="fxpaf-step">
+        <span class="fxpaf-step-num" aria-hidden="true">3</span>
+        <span class="fxpaf-step-label">Vous laisse choisir librement</span>
       </li>
     </ol>
 
-    <!-- Spacer: steps → closing (Task 4 — breathing room) -->
-    <div class="fc4-gap-closing" aria-hidden="true"></div>
-
-    <!-- Closing statement -->
-    <div class="fc4-closing">
-      <p class="fc4-closing-title">Vous gardez toujours le dernier mot.</p>
-      <p class="fc4-closing-sub">Vous choisissez librement le professionnel qui vous convient.</p>
+    <div class="fxpaf-rafi-closing">
+      <p class="fxpaf-rafi-closing-title">Vous gardez toujours le dernier mot.</p>
+      <p class="fxpaf-rafi-closing-sub">Vous choisissez librement le professionnel qui vous convient.</p>
     </div>
 
   </div>
 </section>
 
-<!-- ── fc4 → Enterprise narrative bridge (fc4-bridge) ── -->
-<div class="fc4-bridge" aria-hidden="true">
-  <p class="fc4-bridge-line">Cette même intelligence s'applique aussi aux bâtiments professionnels.</p>
-  <p class="fc4-bridge-sub">Hôtels, bureaux, cliniques, syndics — RAFI accompagne également les équipes qui gèrent plusieurs sites.</p>
-</div>
-
 <div class="section-divider" aria-hidden="true"></div>
 
 <!-- ══════════════════════════════════════════════════════════
-     FIXEO ENTREPRISES — Homepage teaser block (fxet-v1a)
+     FIXEO ENTREPRISES - Homepage teaser block (fxet-v1a)
      Insert: after #services, before #service-artisans-section
      CSS: css/fixeo-enterprise-teaser-v1.css?v=fxet-v1a
 ══════════════════════════════════════════════════════════ -->
@@ -4801,12 +4754,12 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
 
     <!-- Left: text content -->
     <div class="fxet-content">
-      <div class="fxet-eyebrow">🏢 FIXEO ENTREPRISES</div>
+      <div class="fxet-eyebrow fxpaf-ent-eyebrow">FIXEO POUR LES PROFESSIONNELS</div>
       <h2 class="fxet-title" id="fxet-title">
-        Une plateforme pour gérer tous vos bâtiments et leur maintenance
+        Vous gérez plusieurs bâtiments ou plusieurs sites&nbsp;?
       </h2>
       <p class="fxet-subtitle">
-        Centralisez vos interventions, pilotez vos prestataires et gardez le contrôle — hôtels, bureaux, cliniques et bien plus.
+        Centralisez vos demandes d'intervention, suivez les prestataires et gardez une vision claire de chaque mission.
       </p>
 
       <!-- Industry tags -->
@@ -4845,7 +4798,7 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
             <div class="fxet-orch-icon">📋</div>
             <div class="fxet-orch-step-body">
               <span class="fxet-orch-label">Demande reçue</span>
-              <span class="fxet-orch-detail">Fuite d'eau — Étage 3</span>
+              <span class="fxet-orch-detail">Fuite d'eau - Étage 3</span>
             </div>
             <span class="fxet-orch-tag fxet-orch-tag--new">Nouvelle</span>
           </div>
@@ -4919,7 +4872,7 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
 <!-- ══════════════════════════════════════════════════════════
 <div class="section-divider fxp2-divider--soft" aria-hidden="true"></div>
 <!-- ══════════════════════════════════════════════════════════
-     7. FIXEO VISION — manifesto + verified metrics (simplified)
+     7. FIXEO VISION - manifesto + verified metrics (simplified)
 ══════════════════════════════════════════════════════════ -->
 <section class="section testimonial-section fxv-section fxv2-vision fxv2-vision--proof" aria-labelledby="testimonials-title">
   <div class="container">
@@ -4927,9 +4880,10 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
     <!-- Eyebrow -->
     <p class="fxv2-eyebrow" aria-hidden="true">LE RÉSEAU FIXEO</p>
 
-    <!-- Headline -->
+    <!-- Headline - fxpaf-v1: removed "meilleurs", updated scope -->
     <h2 id="testimonials-title" class="fxv2-headline">
-      Une infrastructure qui connecte<br class="fxv2-br-desktop"> les meilleurs artisans du Maroc.
+      Une infrastructure qui connecte<br class="fxv2-br-desktop">
+      les particuliers, les professionnels et les artisans au Maroc.
     </h2>
 
     <!-- Short manifesto -->
@@ -4937,26 +4891,12 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
       Chaque jour, FIXEO rapproche des particuliers et des professionnels grâce à une technologie pensée pour être simple, rapide et humaine.
     </p>
 
-    <!-- Verified platform signals — horizontal rail -->
+    <!-- Factual platform signals - fxpaf-v1: dynamic count, removed static 20 villes / 12 métiers -->
     <div class="fxv2-signals" role="list" aria-label="Indicateurs de la plateforme FIXEO">
 
       <div class="fxv2-signal" role="listitem">
         <span class="fxv2-signal-check" aria-hidden="true">✔</span>
-        <span class="fxv2-signal-text">1&#8239;134 artisans référencés</span>
-      </div>
-
-      <span class="fxv2-signal-dot" aria-hidden="true"></span>
-
-      <div class="fxv2-signal" role="listitem">
-        <span class="fxv2-signal-check" aria-hidden="true">✔</span>
-        <span class="fxv2-signal-text">20 villes couvertes</span>
-      </div>
-
-      <span class="fxv2-signal-dot" aria-hidden="true"></span>
-
-      <div class="fxv2-signal" role="listitem">
-        <span class="fxv2-signal-check" aria-hidden="true">✔</span>
-        <span class="fxv2-signal-text">12 métiers disponibles</span>
+        <span class="fxv2-signal-text" id="fxpaf-network-count">...</span>
       </div>
 
       <span class="fxv2-signal-dot" aria-hidden="true"></span>
@@ -4964,6 +4904,13 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
       <div class="fxv2-signal" role="listitem">
         <span class="fxv2-signal-check" aria-hidden="true">✔</span>
         <span class="fxv2-signal-text">Paiement après intervention</span>
+      </div>
+
+      <span class="fxv2-signal-dot" aria-hidden="true"></span>
+
+      <div class="fxv2-signal" role="listitem">
+        <span class="fxv2-signal-check" aria-hidden="true">✔</span>
+        <span class="fxv2-signal-text">Le réseau continue de grandir</span>
       </div>
 
     </div>
@@ -4982,7 +4929,7 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
   <p class="fxp23-bridge-line">Pour aller plus loin, retrouvez nos guides et conseils pratiques.</p>
 </div>
 
-<!-- FIXEO Blog — fxblog-v1b -->
+<!-- FIXEO Blog - fxblog-v1b -->
 <section id="fxblog-section" class="fxblog-section fxblog-section--epilogue" aria-labelledby="fxblog-title">
   <div class="container">
     <div class="fxblog-head">
@@ -4998,7 +4945,7 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
           <div class="fxblog-card-body">
             <span class="fxblog-card-cat">🚨 Urgences</span>
             <h3 class="fxblog-card-title">Plombier urgence Casablanca 24h/7</h3>
-            <p class="fxblog-card-excerpt">Fuite d'eau, WC bouché, tuyau éclaté — intervention en 30 à 60 min dans tous les quartiers de Casablanca.</p>
+            <p class="fxblog-card-excerpt">Fuite d'eau, WC bouché, tuyau éclaté - intervention en 30 à 60 min dans tous les quartiers de Casablanca.</p>
             <div class="fxblog-card-meta">
               <span class="fxblog-card-time">⏱ 4 min</span>
               <span class="fxblog-card-arrow">→</span>
@@ -5011,7 +4958,7 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
           <div class="fxblog-card-body">
             <span class="fxblog-card-cat">💰 Tarifs &amp; Prix</span>
             <h3 class="fxblog-card-title">Prix plombier au Maroc 2025 : tarifs et devis</h3>
-            <p class="fxblog-card-excerpt">Tarifs horaires 150–500 MAD, frais de déplacement, comparatif par ville. Tout pour éviter les mauvaises surprises.</p>
+            <p class="fxblog-card-excerpt">Tarifs horaires 150-500 MAD, frais de déplacement, comparatif par ville. Tout pour éviter les mauvaises surprises.</p>
             <div class="fxblog-card-meta">
               <span class="fxblog-card-time">⏱ 6 min</span>
               <span class="fxblog-card-arrow">→</span>
@@ -5024,7 +4971,7 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
           <div class="fxblog-card-body">
             <span class="fxblog-card-cat">⚡ Électricité</span>
             <h3 class="fxblog-card-title">Prix électricien au Maroc : grille tarifaire 2025</h3>
-            <p class="fxblog-card-excerpt">Coût d'un tableau électrique, mise aux normes, prise de courant — tarifs par type d'intervention et par ville.</p>
+            <p class="fxblog-card-excerpt">Coût d'un tableau électrique, mise aux normes, prise de courant - tarifs par type d'intervention et par ville.</p>
             <div class="fxblog-card-meta">
               <span class="fxblog-card-time">⏱ 5 min</span>
               <span class="fxblog-card-arrow">→</span>
@@ -5037,7 +4984,7 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
           <div class="fxblog-card-body">
             <span class="fxblog-card-cat">🛡️ Confiance &amp; Garanties</span>
             <h3 class="fxblog-card-title">Pourquoi choisir un artisan vérifié Fixeo</h3>
-            <p class="fxblog-card-excerpt">Processus de vérification, badge artisan, avis authentiques — pourquoi c'est plus sûr qu'un contact direct.</p>
+            <p class="fxblog-card-excerpt">Processus de vérification, badge artisan, avis authentiques - pourquoi c'est plus sûr qu'un contact direct.</p>
             <div class="fxblog-card-meta">
               <span class="fxblog-card-time">⏱ 4 min</span>
               <span class="fxblog-card-arrow">→</span>
@@ -5050,12 +4997,12 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
 </section>
 <div class="section-divider section-divider--spacious" aria-hidden="true"></div>
 <!-- ══════════════════════════════════════════════════════════
-     9. FINAL CTA — Conversion
+     9. FINAL CTA - Conversion
 ══════════════════════════════════════════════════════════ -->
 <section class="section final-cta-section final-cta-section--conclusion" aria-labelledby="final-cta-title">
   <div class="container">
     <div class="final-cta">
-      <!-- RAFI R0 — Mobile head: visible <900px, above title, in column flow -->
+      <!-- RAFI R0 - Mobile head: visible <900px, above title, in column flow -->
       <div class="rafi-fcta-mobile" aria-hidden="true">
         <img
           src="rafi/RAFI_V2_HeadCollar_Color.webp"
@@ -5086,7 +5033,7 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
       <!-- 5. Proof line (no fake timing) -->
       <p class="final-cta-proof">⚡ Demande traitée en priorité</p>
     </div>
-    <!-- RAFI R0 — Desktop bust: visible ≥900px, flex sibling to .final-cta -->
+    <!-- RAFI R0 - Desktop bust: visible ≥900px, flex sibling to .final-cta -->
     <div class="rafi-fcta-side" aria-hidden="true">
       <div>
         <img
@@ -5224,14 +5171,14 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
 <!-- Request modal - publication de demande client -->
 <!-- fxrf4-v5b: #request-modal permanently replaced by V5 flow. DOM preserved for JS compat only. -->
 <div class="modal request-modal" id="request-modal" role="dialog" aria-modal="true" aria-hidden="true" hidden style="display:none!important">
-  <!-- V3 header — clean namespace, no shared classes -->
+  <!-- V3 header - clean namespace, no shared classes -->
   <div class="fxrmv3-header">
     <span class="fxrmv3-mode" aria-hidden="true">FIXEO</span>
     <span class="fxrmv3-title" id="fxrmv3-title-el">Quel est le probl&#232;me&#160;?</span>
     <span class="fxrmv3-subtitle" id="fxrmv3-subtitle-el">Un artisan Fixeo vous rappelle sous 30&#160;min</span>
     <button class="fxrmv3-close" type="button" aria-label="Fermer le formulaire">&#x2715;</button>
   </div>
-  <!-- Legacy header preserved for rollback — hidden by V3 CSS -->
+  <!-- Legacy header preserved for rollback - hidden by V3 CSS -->
   <div class="modal-header request-modal-header" aria-hidden="true" style="display:none">
     <div>
       <h3 id="request-modal-title">Quel est le probl&#232;me&#160;?</h3>
@@ -5314,17 +5261,17 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
       </div>
     </form>
 
-    <!-- V2-B: Upgraded success state — operational coordination framing -->
+    <!-- V2-B: Upgraded success state - operational coordination framing -->
     <div id="request-success" class="request-success fxrva-success" hidden>
 
       <!-- Status icon -->
       <div class="request-success-icon fxrva-success-icon" aria-hidden="true">&#x2714;&#xFE0F;</div>
 
-      <!-- Title + sub — populated by showSuccess() from REQUEST_COPY -->
+      <!-- Title + sub - populated by showSuccess() from REQUEST_COPY -->
       <h4 class="fxrva-success-title">Fixeo coordonne votre intervention</h4>
       <p class="fxrva-success-sub">Votre demande est enregistr&#233;e. Un artisan disponible dans votre zone sera s&#233;lectionn&#233; et vous contactera pour confirmer.</p>
 
-      <!-- Coordination steps — visual process clarity -->
+      <!-- Coordination steps - visual process clarity -->
       <div class="fxrva-coord-steps" aria-label="&#201;tapes de coordination">
         <div class="fxrva-coord-step">
           <span class="fxrva-coord-icon" aria-hidden="true">&#x2705;</span>
@@ -5342,7 +5289,7 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
         </div>
       </div>
 
-      <!-- Notice — coordination guidance — populated by showSuccess() -->
+      <!-- Notice - coordination guidance - populated by showSuccess() -->
       <p class="fxrva-success-notice" hidden>
         Restez joignable sur WhatsApp &#8212; c&#x2019;est l&#xE0; que se fait la coordination.
       </p>
@@ -5355,7 +5302,7 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
         <span class="fxrva-wa-main-label">Rester joignable via WhatsApp</span>
       </a>
 
-      <!-- Contextual sub-label — what to do on WA — populated by showSuccess() -->
+      <!-- Contextual sub-label - what to do on WA - populated by showSuccess() -->
       <p class="fxrva-wa-sub-label" hidden>Partager une photo ou pr&#233;ciser l&#x2019;intervention</p>
 
       <!-- Secondary action -->
@@ -5805,7 +5752,7 @@ function openContentModal(type) {
 <script src="js/marketplace-premium-patch.js?v=50a38b9"></script>
 <script src="js/fixeo-client-requests-store.js?v=50a38b9"></script>
 <script src="js/fixeo-reservation-supabase-bridge.js?v=v3" defer></script>
-<!-- fxrf4-v5b: V5 is the only request flow — legacy modal JS removed -->
+<!-- fxrf4-v5b: V5 is the only request flow - legacy modal JS removed -->
 <script src="js/fx-request-flow-v4.js?v=fxrf4-v5a1"></script>
 <script src="js/fixeo-express-route-shim.js?v=fxrs-v1b"></script>
 <script defer src="js/homepage-conversion-optimizer.js?v=hco3"></script>
@@ -5914,7 +5861,7 @@ window._fixeoAvatarNav = function () {
 
 <script src="js/testimonials-premium.js?v=tp1" defer></script>
 <script src="js/fixeo-hero-lps-v10.js?v=lps2" defer></script>
-<!-- fxrf4-v5b: legacy modal JS removed — fixeo-urgent-v2, request-v2, modal-v2, urgent-modal-v3 all unloaded -->
+<!-- fxrf4-v5b: legacy modal JS removed - fixeo-urgent-v2, request-v2, modal-v2, urgent-modal-v3 all unloaded -->
 <!-- fixeo-live-engine-v1.js removed 2026-07-12: simulation replaced by static Truth Engine (fle-v2a) -->
 <script src="js/fixeo-ai-request-engine.js?v=aire-v1a" defer></script>
 <script src="js/fixeo-hero-insights.js?v=fxhi-v1c" defer></script>
@@ -5932,7 +5879,7 @@ window.addEventListener('load', function () {
 </script>
  <!-- SEO city/service pages accessible via direct URLs - inline block removed -->
 
-  <!-- fxrf4-v5b: legacy capture-phase router removed — V5 fx-request-flow-v4.js is the sole capture-phase listener -->
+  <!-- fxrf4-v5b: legacy capture-phase router removed - V5 fx-request-flow-v4.js is the sole capture-phase listener -->
 
 <script>
 /* ── Lazy loader for reservation stack (reservation.js, slot-lock.js, payment.js, cod-payment.js)
@@ -6197,7 +6144,7 @@ window.addEventListener('load', function () {
 
   });
 })();
-  
+
 </script>
 <!-- V1-D: Marketplace density layer (availability badge refresh, adjacent-city logic) -->
 <script src="js/fixeo-marketplace-density.js?v=v2c2a" defer></script>
@@ -6227,7 +6174,7 @@ document.addEventListener('click', function(e) {
   chip.classList.add('active');
 }, true);
 </script>
-  
+
 
 <!-- SEO-4.5: internal authority links -->
 <nav class="seo-authority-links" aria-label="Services par ville">
