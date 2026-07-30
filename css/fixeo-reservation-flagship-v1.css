@@ -1,0 +1,1036 @@
+/* ============================================================
+   FIXEO Reservation Flagship V1 — fxresf-v11a
+   Namespace: fxresf-* ONLY
+   Scope: body.fixeo-booking-modal-open #fixeo-reservation-modal
+   Sprint: FXRESERVE-FLAGSHIP-V1.1A
+
+   Architecture:
+   - Pure presentation overlay — zero engine changes
+   - All selectors scoped to #fixeo-reservation-modal
+   - No !important on layout or business logic selectors
+   - Business logic selectors (pricing, validation, routing): untouched
+   - V3 fxrv3-* elements: restyled but never removed or disabled
+   - Tokens match Artisan Profile Flagship V1.3.1 exactly
+   ============================================================ */
+
+/* ─── Design tokens (match fxpf-v131) ─── */
+#fixeo-reservation-modal {
+  --fxresf-bg:          #07070d;
+  --fxresf-bg-card:     #0d1019;
+  --fxresf-bg-raised:   #131826;
+  --fxresf-bg-inset:    rgba(255,255,255,0.022);
+  --fxresf-border:      rgba(255,255,255,0.072);
+  --fxresf-border-sub:  rgba(255,255,255,0.038);
+  --fxresf-text:        #eef0f8;
+  --fxresf-text-sub:    #8690a6;
+  --fxresf-text-muted:  #48516a;
+  --fxresf-accent:      #ff7a00;
+  --fxresf-accent-hi:   #ff9240;
+  --fxresf-accent-dim:  rgba(255,122,0,0.11);
+  --fxresf-cyan:        #0ba5c4;
+  --fxresf-cyan-dim:    rgba(11,165,196,0.08);
+  --fxresf-cyan-border: rgba(11,165,196,0.22);
+  --fxresf-green:       #22c97c;
+  --fxresf-green-dim:   rgba(34,201,124,0.08);
+  --fxresf-green-bdr:   rgba(34,201,124,0.22);
+  --fxresf-r:     12px;
+  --fxresf-r-lg:  16px;
+  --fxresf-ease:  cubic-bezier(.4,0,.2,1);
+  --fxresf-spring:cubic-bezier(.175,.885,.32,1.275);
+}
+
+/* ════════════════════════════════════════════════════════════
+   MODAL CHROME
+   ════════════════════════════════════════════════════════════ */
+#fixeo-reservation-modal.fixeo-res-modal {
+  background: transparent !important;
+  border: none !important;
+}
+
+#fixeo-reservation-modal .fixeo-res-dialog {
+  background: var(--fxresf-bg-card) !important;
+  border: 1px solid var(--fxresf-border) !important;
+  border-radius: var(--fxresf-r-lg) var(--fxresf-r-lg) 0 0 !important;
+  box-shadow: 0 -24px 60px rgba(0,0,0,0.70), 0 -1px 0 rgba(255,255,255,0.05) inset !important;
+  max-height: 92dvh !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
+  -webkit-overflow-scrolling: touch !important;
+  padding-bottom: env(safe-area-inset-bottom, 0px) !important;
+}
+@media (min-width: 600px) {
+  #fixeo-reservation-modal .fixeo-res-dialog {
+    border-radius: var(--fxresf-r-lg) !important;
+    max-height: 88vh !important;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.70) !important;
+  }
+}
+#fixeo-reservation-modal .fixeo-res-dialog::-webkit-scrollbar { width: 3px; }
+#fixeo-reservation-modal .fixeo-res-dialog::-webkit-scrollbar-track { background: transparent; }
+#fixeo-reservation-modal .fixeo-res-dialog::-webkit-scrollbar-thumb { background: rgba(255,122,0,0.24); border-radius: 4px; }
+
+#fixeo-reservation-backdrop.fixeo-res-backdrop {
+  background: rgba(4,5,10,0.92) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+}
+
+/* ════════════════════════════════════════════════════════════
+   ARTISAN IDENTITY HEADER — fxresf-header-strip
+   Injected by JS enhancer. Replaces legacy catIcon layout.
+   ════════════════════════════════════════════════════════════ */
+.fxresf-header-strip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+.fxresf-hav-wrap {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  overflow: hidden;
+  border: 1.5px solid rgba(255,122,0,0.34);
+  box-shadow: 0 0 0 3px rgba(255,122,0,0.07);
+  background: linear-gradient(135deg, #1e2640, #0f1526);
+  position: relative;
+}
+.fxresf-hav-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+  border-radius: 50%;
+}
+.fxresf-hav-fallback {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #1e2640, #0f1526);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  border: 1.5px solid rgba(255,122,0,0.34);
+}
+
+.fxresf-hinfo {
+  flex: 1;
+  min-width: 0;
+}
+.fxresf-hname {
+  font-size: .84rem;
+  font-weight: 700;
+  color: var(--fxresf-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+  margin-bottom: 2px;
+}
+.fxresf-hmeta {
+  font-size: .68rem;
+  color: var(--fxresf-text-sub);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.fxresf-hstatus {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--fxresf-cyan-dim);
+  border: 1px solid var(--fxresf-cyan-border);
+  color: #38bcd4;
+  border-radius: 20px;
+  font-size: .58rem;
+  font-weight: 600;
+  padding: 2px 7px;
+  margin-top: 3px;
+  white-space: nowrap;
+  letter-spacing: .02em;
+}
+.fxresf-hstatus-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--fxresf-cyan);
+  flex-shrink: 0;
+}
+
+/* Step label in header (injected) */
+.fxresf-header-step {
+  text-align: right;
+  flex-shrink: 0;
+  margin-left: 8px;
+}
+.fxresf-header-step-label {
+  font-size: .58rem;
+  color: var(--fxresf-text-muted);
+  line-height: 1.2;
+}
+.fxresf-header-step-num {
+  font-size: .76rem;
+  font-weight: 700;
+  color: var(--fxresf-text);
+  margin-top: 1px;
+}
+
+/* Hide the legacy catIcon + title when our strip is present */
+#fixeo-reservation-modal .fixeo-res-header.fxresf-enhanced .fixeo-res-header-left {
+  display: none !important;
+}
+
+/* Header layout upgrade when strip is present */
+#fixeo-reservation-modal .fixeo-res-header {
+  background: var(--fxresf-bg-card) !important;
+  border-bottom: 1px solid var(--fxresf-border-sub) !important;
+  padding: 14px 52px 12px 16px !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 10 !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 0 !important;
+}
+
+/* Close button */
+#fixeo-reservation-modal .fixeo-res-close {
+  background: rgba(255,255,255,0.06) !important;
+  border: 1px solid var(--fxresf-border) !important;
+  color: var(--fxresf-text-sub) !important;
+  border-radius: 50% !important;
+  width: 30px !important;
+  height: 30px !important;
+  font-size: .82rem !important;
+  position: absolute !important;
+  top: 14px !important;
+  right: 14px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: background .12s, color .12s !important;
+}
+#fixeo-reservation-modal .fixeo-res-close:hover {
+  background: rgba(255,122,0,0.14) !important;
+  color: var(--fxresf-accent) !important;
+}
+#fixeo-reservation-modal .fixeo-res-close:focus-visible {
+  outline: 2px solid var(--fxresf-accent) !important;
+  outline-offset: 2px !important;
+}
+
+/* ════════════════════════════════════════════════════════════
+   STEP PROGRESS BAR
+   ════════════════════════════════════════════════════════════ */
+#fixeo-reservation-modal .fixeo-res-steps {
+  display: flex !important;
+  align-items: center !important;
+  padding: 10px 16px 0 !important;
+  background: var(--fxresf-bg-card) !important;
+}
+#fixeo-reservation-modal .fixeo-res-step {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  font-size: .70rem !important;
+  font-weight: 600 !important;
+  color: var(--fxresf-text-muted) !important;
+}
+#fixeo-reservation-modal .fixeo-res-step.active,
+#fixeo-reservation-modal .fixeo-res-step.completed {
+  color: var(--fxresf-text) !important;
+}
+#fixeo-reservation-modal .fixeo-res-step-dot {
+  width: 22px !important;
+  height: 22px !important;
+  border-radius: 50% !important;
+  background: rgba(255,255,255,0.046) !important;
+  border: 1px solid var(--fxresf-border) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: .65rem !important;
+  font-weight: 700 !important;
+  color: var(--fxresf-text-muted) !important;
+  flex-shrink: 0 !important;
+}
+#fixeo-reservation-modal .fixeo-res-step-dot.active {
+  background: var(--fxresf-accent-dim) !important;
+  border-color: rgba(255,122,0,0.40) !important;
+  color: var(--fxresf-accent) !important;
+}
+#fixeo-reservation-modal .fixeo-res-step-dot.completed {
+  background: var(--fxresf-green-dim) !important;
+  border-color: var(--fxresf-green-bdr) !important;
+  color: var(--fxresf-green) !important;
+}
+#fixeo-reservation-modal .fixeo-res-step-line {
+  flex: 1 !important;
+  height: 1px !important;
+  background: var(--fxresf-border-sub) !important;
+  margin: 0 8px !important;
+}
+#fixeo-reservation-modal .fixeo-res-step-line.active {
+  background: rgba(34,201,124,0.30) !important;
+}
+#fixeo-reservation-modal .fixeo-res-step-label {
+  font-size: .68rem !important;
+  color: inherit !important;
+}
+
+/* ════════════════════════════════════════════════════════════
+   ARTISAN CARD (Step 1 body)
+   ════════════════════════════════════════════════════════════ */
+#fixeo-reservation-modal .fixeo-res-artisan-card {
+  background: rgba(255,255,255,0.018) !important;
+  border: 1px solid var(--fxresf-border-sub) !important;
+  border-radius: var(--fxresf-r) !important;
+  padding: 12px 13px !important;
+  margin-bottom: 12px !important;
+  display: flex !important;
+  gap: 10px !important;
+  align-items: flex-start !important;
+}
+#fixeo-reservation-modal .fixeo-res-artisan-avatar.fxrva-avatar {
+  width: 44px !important;
+  height: 44px !important;
+  flex-shrink: 0 !important;
+  border-radius: 50% !important;
+  overflow: hidden !important;
+  border: 1.5px solid rgba(255,122,0,0.28) !important;
+  box-shadow: 0 0 0 3px rgba(255,122,0,0.07) !important;
+}
+#fixeo-reservation-modal .fixeo-res-artisan-name {
+  font-size: .88rem !important;
+  font-weight: 700 !important;
+  color: var(--fxresf-text) !important;
+  margin-bottom: 2px !important;
+}
+#fixeo-reservation-modal .fixeo-res-artisan-meta {
+  font-size: .70rem !important;
+  color: var(--fxresf-text-sub) !important;
+}
+
+/* Coord chips — restyle "Tarification encadrée" chip (text replaced by JS) */
+#fixeo-reservation-modal .fxrva-coord-chips {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 4px !important;
+  margin-top: 5px !important;
+}
+#fixeo-reservation-modal .fxrva-coord-chip {
+  font-size: .60rem !important;
+  font-weight: 600 !important;
+  padding: 2px 7px !important;
+  border-radius: 20px !important;
+  background: var(--fxresf-cyan-dim) !important;
+  border: 1px solid var(--fxresf-cyan-border) !important;
+  color: #38bcd4 !important;
+  letter-spacing: .02em !important;
+}
+#fixeo-reservation-modal .fxrva-coord-chip:first-child {
+  background: rgba(34,201,124,0.07) !important;
+  border-color: rgba(34,201,124,0.22) !important;
+  color: rgba(34,201,124,0.85) !important;
+}
+
+/* Availability chip — neutral (no "Disponible" guarantee) */
+#fixeo-reservation-modal .fixeo-res-avail {
+  font-size: .64rem !important;
+  font-weight: 600 !important;
+  color: var(--fxresf-text-muted) !important;
+  padding: 2px 0 !important;
+}
+#fixeo-reservation-modal .fixeo-res-avail.available {
+  color: rgba(34,201,124,0.65) !important;
+}
+#fixeo-reservation-modal .fixeo-res-avail.busy {
+  color: rgba(255,165,0,0.65) !important;
+}
+
+/* Price display */
+#fixeo-reservation-modal .fixeo-res-artisan-price {
+  margin-left: auto !important;
+  text-align: right !important;
+  flex-shrink: 0 !important;
+}
+#fixeo-reservation-modal #res-price-display {
+  font-size: 1.1rem !important;
+  font-weight: 800 !important;
+  color: var(--fxresf-accent) !important;
+  letter-spacing: -.02em !important;
+}
+#fixeo-reservation-modal #res-price-unit {
+  font-size: .62rem !important;
+  color: var(--fxresf-text-muted) !important;
+}
+
+/* fxrva-artisan-coord strip */
+#fixeo-reservation-modal .fxrva-artisan-coord {
+  font-size: .64rem !important;
+  color: var(--fxresf-text-muted) !important;
+  text-align: center !important;
+  padding: 4px 0 8px !important;
+  border-bottom: 1px solid var(--fxresf-border-sub) !important;
+  margin-bottom: 10px !important;
+}
+
+/* ════════════════════════════════════════════════════════════
+   BODY / FORM
+   ════════════════════════════════════════════════════════════ */
+#fixeo-reservation-modal .fixeo-res-body {
+  padding: 14px 16px !important;
+}
+
+/* Field labels */
+#fixeo-reservation-modal .fixeo-res-label {
+  font-size: .70rem !important;
+  font-weight: 600 !important;
+  color: var(--fxresf-text-sub) !important;
+  margin-bottom: 6px !important;
+  display: block !important;
+}
+
+/* Inputs */
+#fixeo-reservation-modal .fixeo-res-input,
+#fixeo-reservation-modal .fixeo-res-textarea {
+  background: var(--fxresf-bg-inset) !important;
+  border: 1.5px solid var(--fxresf-border) !important;
+  border-radius: var(--fxresf-r) !important;
+  color: var(--fxresf-text) !important;
+  font-size: 1rem !important; /* 16px prevents iOS auto-zoom */
+  padding: 11px 13px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  transition: border-color .14s !important;
+  -webkit-appearance: none !important;
+  font-family: inherit !important;
+}
+#fixeo-reservation-modal .fixeo-res-input::placeholder,
+#fixeo-reservation-modal .fixeo-res-textarea::placeholder {
+  color: var(--fxresf-text-muted) !important;
+}
+#fixeo-reservation-modal .fixeo-res-input:focus,
+#fixeo-reservation-modal .fixeo-res-textarea:focus {
+  outline: none !important;
+  border-color: rgba(255,122,0,0.50) !important;
+  box-shadow: 0 0 0 3px rgba(255,122,0,0.08) !important;
+}
+#fixeo-reservation-modal .fixeo-res-input[type="date"] {
+  color-scheme: dark !important;
+}
+#fixeo-reservation-modal .fixeo-res-textarea {
+  min-height: 68px !important;
+  resize: none !important;
+  line-height: 1.5 !important;
+}
+#fixeo-reservation-modal .fixeo-res-input:focus-visible,
+#fixeo-reservation-modal .fixeo-res-textarea:focus-visible {
+  outline: 2px solid var(--fxresf-accent) !important;
+  outline-offset: 2px !important;
+}
+
+/* Field spacing */
+#fixeo-reservation-modal .fixeo-res-field {
+  margin-bottom: 12px !important;
+}
+
+/* ════════════════════════════════════════════════════════════
+   SERVICE PILLS (Step 1)
+   ════════════════════════════════════════════════════════════ */
+#fixeo-reservation-modal #res-svc-pills.fixeo-res-slot-grid {
+  grid-template-columns: 1fr 1fr !important;
+  gap: 7px !important;
+  margin-bottom: 4px !important;
+}
+@media (max-width: 360px) {
+  #fixeo-reservation-modal #res-svc-pills.fixeo-res-slot-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+#fixeo-reservation-modal #res-svc-pills .fixeo-res-slot {
+  background: var(--fxresf-bg-inset) !important;
+  border: 1.5px solid var(--fxresf-border-sub) !important;
+  border-radius: 11px !important;
+  padding: 11px 12px !important;
+  text-align: left !important;
+  cursor: pointer !important;
+  transition: border-color .14s, background .14s, transform .14s var(--fxresf-spring) !important;
+  line-height: 1.35 !important;
+  -webkit-tap-highlight-color: transparent !important;
+  outline: none !important;
+  /* ensure box-sizing */
+  box-sizing: border-box !important;
+}
+#fixeo-reservation-modal #res-svc-pills .fixeo-res-slot:hover {
+  background: rgba(255,255,255,0.03) !important;
+  border-color: rgba(255,122,0,0.20) !important;
+}
+#fixeo-reservation-modal #res-svc-pills .fixeo-res-slot.active {
+  background: var(--fxresf-accent-dim) !important;
+  border-color: rgba(255,122,0,0.45) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 14px rgba(255,122,0,0.10) !important;
+}
+#fixeo-reservation-modal #res-svc-pills .fixeo-res-slot:focus-visible {
+  outline: 2px solid var(--fxresf-accent) !important;
+  outline-offset: 2px !important;
+}
+/* Service pill inner text */
+#fixeo-reservation-modal #res-svc-pills .fixeo-res-slot > div:first-child {
+  font-size: .78rem !important;
+  font-weight: 700 !important;
+  color: var(--fxresf-text) !important;
+  margin-bottom: 3px !important;
+}
+#fixeo-reservation-modal #res-svc-pills .fixeo-res-slot > div:nth-child(2) {
+  font-size: .68rem !important;
+  color: var(--fxresf-text-sub) !important;
+  font-weight: 500 !important;
+}
+#fixeo-reservation-modal #res-svc-pills .fixeo-res-slot.active > div:nth-child(2) {
+  color: var(--fxresf-accent-hi) !important;
+}
+/* "⚡ Rapide" badge */
+#fixeo-reservation-modal #res-svc-pills .fixeo-res-slot > span {
+  display: inline-block !important;
+  margin-top: 5px !important;
+  font-size: .58rem !important;
+  font-weight: 600 !important;
+  letter-spacing: .04em !important;
+  padding: 2px 6px !important;
+  border-radius: 6px !important;
+  background: rgba(255,80,120,.08) !important;
+  color: rgba(255,160,140,.90) !important;
+  border: 1px solid rgba(255,80,120,.25) !important;
+}
+
+/* ════════════════════════════════════════════════════════════
+   DYNAMIC PRICE HINT
+   ════════════════════════════════════════════════════════════ */
+#fixeo-reservation-modal [data-res-svc-hint] {
+  margin-top: 4px !important;
+  padding: 9px 12px !important;
+  background: rgba(255,122,0,0.044) !important;
+  border: 1px solid rgba(255,122,0,0.12) !important;
+  border-radius: 10px !important;
+  margin-bottom: 12px !important;
+  transition: background .18s !important;
+}
+#fixeo-reservation-modal #res-svc-pills.fixeo-res-slot-grid:has(.fixeo-res-slot.active) ~ [data-res-svc-hint] {
+  background: rgba(255,122,0,0.07) !important;
+  border-color: rgba(255,122,0,0.22) !important;
+}
+#fixeo-reservation-modal [data-res-svc-marche] {
+  font-size: .68rem !important;
+  color: var(--fxresf-text-muted) !important;
+  line-height: 1.4 !important;
+}
+#fixeo-reservation-modal [data-res-svc-rec] {
+  font-size: .72rem !important;
+  color: var(--fxresf-text-sub) !important;
+  min-height: 1.1em !important;
+  margin-top: 2px !important;
+}
+#fixeo-reservation-modal [data-res-svc-rec] strong {
+  color: var(--fxresf-text) !important;
+}
+
+/* ════════════════════════════════════════════════════════════
+   DATE & TIME SLOTS
+   ════════════════════════════════════════════════════════════ */
+#fixeo-reservation-modal #res-slot-grid.fixeo-res-slot-grid {
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 7px !important;
+}
+@media (max-width: 320px) {
+  #fixeo-reservation-modal #res-slot-grid.fixeo-res-slot-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+#fixeo-reservation-modal #res-slot-grid .fixeo-res-slot {
+  min-height: 44px !important;
+  background: var(--fxresf-bg-inset) !important;
+  border: 1.5px solid var(--fxresf-border-sub) !important;
+  border-radius: 10px !important;
+  font-size: .72rem !important;
+  font-weight: 600 !important;
+  color: var(--fxresf-text-sub) !important;
+  cursor: pointer !important;
+  text-align: center !important;
+  padding: 8px 4px !important;
+  transition: border-color .14s, background .14s, color .14s !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  -webkit-tap-highlight-color: transparent !important;
+  box-sizing: border-box !important;
+  line-height: 1.3 !important;
+}
+#fixeo-reservation-modal #res-slot-grid .fixeo-res-slot:hover {
+  border-color: rgba(255,122,0,0.22) !important;
+  color: var(--fxresf-text) !important;
+}
+#fixeo-reservation-modal #res-slot-grid .fixeo-res-slot.active {
+  background: var(--fxresf-accent-dim) !important;
+  border-color: rgba(255,122,0,0.45) !important;
+  color: var(--fxresf-accent) !important;
+  font-weight: 700 !important;
+}
+#fixeo-reservation-modal #res-slot-grid .fixeo-res-slot.slot-booked {
+  opacity: 0.40 !important;
+  cursor: not-allowed !important;
+  color: var(--fxresf-text-muted) !important;
+}
+#fixeo-reservation-modal #res-slot-grid .fixeo-res-slot:focus-visible {
+  outline: 2px solid var(--fxresf-accent) !important;
+  outline-offset: 2px !important;
+}
+
+/* ════════════════════════════════════════════════════════════
+   PRICE / TARIF ESTIMATION STRIP
+   ════════════════════════════════════════════════════════════ */
+#fixeo-reservation-modal #res-tarif-estime.fixeo-res-price-info {
+  background: rgba(255,122,0,0.04) !important;
+  border: 1px solid rgba(255,122,0,0.10) !important;
+  border-radius: 10px !important;
+  padding: 9px 12px !important;
+  font-size: .72rem !important;
+  color: var(--fxresf-text-sub) !important;
+  margin-bottom: 12px !important;
+  line-height: 1.55 !important;
+}
+#fixeo-reservation-modal #res-tarif-estime em,
+#fixeo-reservation-modal #res-tarif-estime strong {
+  color: var(--fxresf-text) !important;
+  font-style: normal !important;
+}
+
+/* ════════════════════════════════════════════════════════════
+   ERROR STATE
+   ════════════════════════════════════════════════════════════ */
+#fixeo-reservation-modal #res-error.fixeo-res-error {
+  background: rgba(255,65,108,0.09) !important;
+  border: 1px solid rgba(255,65,108,0.26) !important;
+  border-radius: 10px !important;
+  color: #ff6b8a !important;
+  font-size: .78rem !important;
+  padding: 9px 13px !important;
+  margin-bottom: 12px !important;
+  line-height: 1.45 !important;
+}
+
+/* ════════════════════════════════════════════════════════════
+   PRIMARY CTA
+   ════════════════════════════════════════════════════════════ */
+#fixeo-reservation-modal .fixeo-res-btn-primary {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  padding: 15px 20px !important;
+  background: linear-gradient(132deg, #ff8220 0%, #d45800 100%) !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 12px !important;
+  font-size: .94rem !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  box-shadow: 0 4px 22px rgba(255,120,0,0.26), 0 1px 0 rgba(255,255,255,0.12) inset !important;
+  transition: opacity .12s, transform .12s, box-shadow .12s !important;
+  position: relative !important;
+  overflow: hidden !important;
+  -webkit-tap-highlight-color: transparent !important;
+  box-sizing: border-box !important;
+}
+#fixeo-reservation-modal .fixeo-res-btn-primary:hover {
+  opacity: .93 !important;
+  box-shadow: 0 6px 28px rgba(255,120,0,0.36) !important;
+}
+#fixeo-reservation-modal .fixeo-res-btn-primary:active {
+  transform: scale(.984) !important;
+  opacity: .84 !important;
+}
+#fixeo-reservation-modal .fixeo-res-btn-primary:focus-visible {
+  outline: 2px solid var(--fxresf-accent) !important;
+  outline-offset: 3px !important;
+}
+/* Shimmer */
+#fixeo-reservation-modal .fixeo-res-btn-primary::before {
+  content: '' !important;
+  position: absolute !important;
+  inset: 0 !important;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent) !important;
+  transform: translateX(-100%) !important;
+  transition: transform .5s !important;
+}
+#fixeo-reservation-modal .fixeo-res-btn-primary:hover::before {
+  transform: translateX(100%) !important;
+}
+
+/* Back button */
+#fixeo-reservation-modal .fixeo-res-btn-secondary {
+  flex-shrink: 0 !important;
+  padding: 13px 16px !important;
+  background: var(--fxresf-bg-inset) !important;
+  border: 1.5px solid var(--fxresf-border) !important;
+  border-radius: 12px !important;
+  color: var(--fxresf-text-sub) !important;
+  font-size: .84rem !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: border-color .14s, color .14s !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+#fixeo-reservation-modal .fixeo-res-btn-secondary:hover {
+  border-color: rgba(255,122,0,0.28) !important;
+  color: var(--fxresf-text) !important;
+}
+#fixeo-reservation-modal .fixeo-res-actions {
+  display: flex !important;
+  gap: 9px !important;
+  align-items: center !important;
+}
+#fixeo-reservation-modal .fixeo-res-actions .fixeo-res-btn-primary {
+  flex: 1 !important;
+  padding: 13px 16px !important;
+}
+
+/* ════════════════════════════════════════════════════════════
+   STEP 1 FOOTER — operational strips
+   ════════════════════════════════════════════════════════════ */
+#fixeo-reservation-modal .fixeo-res-footer {
+  padding: 10px 16px !important;
+  border-top: 1px solid var(--fxresf-border-sub) !important;
+  background: var(--fxresf-bg-card) !important;
+}
+/* Safe-area clearance on mobile */
+@media (max-width: 768px) {
+  #fixeo-reservation-modal .fixeo-res-footer {
+    padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+}
+
+/* ══ HIDE: SSL / 3D Secure / PCI-DSS / Remboursement 14j ══
+   Step 2 footer has class "fixeo-res-footer" ONLY (no fxrva-footer-step1)
+   Step 1 footer already hides via existing .fxrva-footer-step1 rule in reservation-v2a.css */
+#fixeo-reservation-modal .fixeo-res-footer:not(.fxrva-footer-step1) .fixeo-res-security {
+  display: none !important;
+}
+
+/* ════════════════════════════════════════════════════════════
+   STEP 2 — SUMMARY TABLE
+   ════════════════════════════════════════════════════════════ */
+#fixeo-reservation-modal .fixeo-res-summary {
+  background: var(--fxresf-bg-raised) !important;
+  border: 1px solid var(--fxresf-border-sub) !important;
+  border-radius: 14px !important;
+  padding: 14px !important;
+  margin-bottom: 14px !important;
+}
+#fixeo-reservation-modal .fixeo-res-summary-row {
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+  padding: 5px 0 !important;
+  border-bottom: 1px solid var(--fxresf-border-sub) !important;
+}
+#fixeo-reservation-modal .fixeo-res-summary-row:last-of-type {
+  border-bottom: none !important;
+}
+#fixeo-reservation-modal .fixeo-res-summary-label {
+  font-size: .70rem !important;
+  color: var(--fxresf-text-muted) !important;
+  flex-shrink: 0 !important;
+  padding-top: 1px !important;
+  min-width: 80px !important;
+}
+#fixeo-reservation-modal .fixeo-res-summary-val {
+  font-size: .76rem !important;
+  color: var(--fxresf-text) !important;
+  text-align: right !important;
+  font-weight: 500 !important;
+}
+#fixeo-reservation-modal .fixeo-res-summary-total {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 10px 0 4px !important;
+  margin-top: 6px !important;
+  border-top: 1px solid var(--fxresf-border) !important;
+}
+#fixeo-reservation-modal .fixeo-res-summary-total > span:first-child {
+  font-size: .82rem !important;
+  font-weight: 700 !important;
+  color: var(--fxresf-text) !important;
+}
+#fixeo-reservation-modal .fixeo-res-total-amount {
+  font-size: 1.14rem !important;
+  font-weight: 800 !important;
+  color: var(--fxresf-accent) !important;
+}
+
+/* ══ HIDE: "Votre prix est fixé" green div (inline-style green hint) ══
+   Targets the inline-styled div between summary rows and total
+   that contains rgba(32,201,151 green tint with the false guarantee claim */
+#fixeo-reservation-modal .fixeo-res-summary > div[style*="rgba(32,201,151"] {
+  display: none !important;
+}
+/* Also add our honest tariff disclaimer — via JS ::after not possible on non-pseudo
+   JS enhancer adds .fxresf-tariff-disclaimer element after summary total */
+#fixeo-reservation-modal .fxresf-tariff-disclaimer {
+  font-size: .64rem !important;
+  color: var(--fxresf-text-muted) !important;
+  line-height: 1.55 !important;
+  padding-top: 8px !important;
+  border-top: 1px solid var(--fxresf-border-sub) !important;
+  margin-top: 6px !important;
+}
+
+/* ══ HIDE: "Aucune surprise sur le prix" inline muted div ══ */
+#fixeo-reservation-modal .fixeo-res-summary > div[style*="rgba(255,255,255,.38)"] {
+  display: none !important;
+}
+
+/* ════════════════════════════════════════════════════════════
+   TRUST ROW (Step 2)
+   ════════════════════════════════════════════════════════════ */
+#fixeo-reservation-modal .fxrva-trust-row.fixeo-res-trust-row {
+  display: flex !important;
+  justify-content: center !important;
+  gap: 16px !important;
+  flex-wrap: wrap !important;
+  padding: 8px 0 !important;
+  margin-bottom: 12px !important;
+}
+#fixeo-reservation-modal .fixeo-res-trust-item {
+  display: flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  font-size: .66rem !important;
+  color: var(--fxresf-text-muted) !important;
+}
+#fixeo-reservation-modal .fixeo-res-trust-icon {
+  font-size: .8rem !important;
+  opacity: 0.75 !important;
+}
+
+/* ════════════════════════════════════════════════════════════
+   PAYMENT OPTIONS (Step 2)
+   ════════════════════════════════════════════════════════════ */
+#fixeo-reservation-modal .fixeo-res-payment-section {
+  margin-bottom: 14px !important;
+}
+#fixeo-reservation-modal .fixeo-res-payment-title {
+  font-size: .70rem !important;
+  font-weight: 700 !important;
+  color: var(--fxresf-text-sub) !important;
+  margin-bottom: 8px !important;
+  text-transform: uppercase !important;
+  letter-spacing: .07em !important;
+}
+#fixeo-reservation-modal .fixeo-pay-option {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  background: var(--fxresf-bg-inset) !important;
+  border: 1.5px solid var(--fxresf-border) !important;
+  border-radius: 12px !important;
+  padding: 13px 14px !important;
+  margin-bottom: 8px !important;
+  cursor: pointer !important;
+  transition: border-color .14s, background .14s !important;
+  -webkit-tap-highlight-color: transparent !important;
+  box-sizing: border-box !important;
+}
+#fixeo-reservation-modal .fixeo-pay-option.selected {
+  background: var(--fxresf-green-dim) !important;
+  border-color: var(--fxresf-green-bdr) !important;
+}
+/* CMI: visually and semantically disabled */
+#fixeo-reservation-modal label[for="pay-method-cmi"] {
+  opacity: 0.50 !important;
+  cursor: default !important;
+  pointer-events: none !important;
+}
+
+/* COD label text (restyling only — text replaced by JS) */
+#fixeo-reservation-modal .fixeo-pay-option > div > div:first-child {
+  font-size: .85rem !important;
+  font-weight: 700 !important;
+  color: var(--fxresf-text) !important;
+  margin-bottom: 2px !important;
+}
+#fixeo-reservation-modal .fixeo-pay-option > div > div:nth-child(2) {
+  font-size: .70rem !important;
+  color: var(--fxresf-text-sub) !important;
+}
+
+/* Payment method icon */
+#fixeo-reservation-modal .fixeo-pay-option > span:first-of-type {
+  font-size: 1.3rem !important;
+  flex-shrink: 0 !important;
+}
+
+/* ══ HIDE: "✅ Sécurisé" badge on COD ══
+   COD label structure: label > input + span(icon) + div(text) + span(badge)
+   span:last-child is the "✅ Sécurisé" badge */
+#fixeo-reservation-modal label[for="pay-method-cod"] > span:last-child {
+  display: none !important;
+}
+
+/* Payment status badges (Disponible / Bientôt) — restyle only */
+#fixeo-reservation-modal .fixeo-pay-option > span:last-child {
+  font-size: .60rem !important;
+  font-weight: 700 !important;
+  padding: 2px 8px !important;
+  border-radius: 20px !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+}
+
+/* ═══ COD supporting copy disclaimer ═══
+   JS enhancer inserts .fxresf-cod-note after payment section */
+#fixeo-reservation-modal .fxresf-cod-note {
+  font-size: .68rem !important;
+  color: var(--fxresf-text-muted) !important;
+  text-align: center !important;
+  margin: -4px 0 12px !important;
+  line-height: 1.5 !important;
+}
+
+/* ════════════════════════════════════════════════════════════
+   V3 LAYER COMPATIBILITY
+   All fxrv3-* elements restyled, never removed
+   ════════════════════════════════════════════════════════════ */
+/* Chip grid */
+#fixeo-reservation-modal .fxrv3-chip-grid {
+  gap: 6px !important;
+  margin-bottom: 10px !important;
+}
+#fixeo-reservation-modal .fxrv3-chip {
+  background: var(--fxresf-bg-inset) !important;
+  border: 1px solid var(--fxresf-border-sub) !important;
+  border-radius: 20px !important;
+  color: var(--fxresf-text-sub) !important;
+  font-size: .70rem !important;
+  transition: border-color .14s, background .14s !important;
+}
+#fixeo-reservation-modal .fxrv3-chip:hover,
+#fixeo-reservation-modal .fxrv3-chip.fxrv3-chip-active {
+  background: var(--fxresf-accent-dim) !important;
+  border-color: rgba(255,122,0,0.35) !important;
+  color: var(--fxresf-accent) !important;
+}
+/* Urgency segment */
+#fixeo-reservation-modal .fxrv3-urgency-segment {
+  border: 1px solid var(--fxresf-border-sub) !important;
+  border-radius: var(--fxresf-r) !important;
+  background: var(--fxresf-bg-inset) !important;
+  padding: 6px !important;
+  margin-bottom: 10px !important;
+}
+#fixeo-reservation-modal .fxrv3-urgency-btn {
+  border-radius: 8px !important;
+  font-size: .72rem !important;
+  transition: background .14s, color .14s !important;
+  min-height: 36px !important;
+}
+/* Sticky CTA override — match flagship button */
+#fixeo-reservation-modal .fxrv3-sticky-cta {
+  background: var(--fxresf-bg-card) !important;
+  border-top: 1px solid var(--fxresf-border-sub) !important;
+  padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px)) !important;
+}
+#fixeo-reservation-modal .fxrv3-sticky-btn {
+  background: linear-gradient(132deg, #ff8220 0%, #d45800 100%) !important;
+  border-radius: 12px !important;
+  font-weight: 700 !important;
+  box-shadow: 0 4px 16px rgba(255,120,0,0.24) !important;
+}
+/* AI card */
+#fixeo-reservation-modal .fxrv3-ai-card {
+  border-radius: var(--fxresf-r) !important;
+  margin-bottom: 10px !important;
+}
+/* Timing chips */
+#fixeo-reservation-modal .fxrv3-timing-chip {
+  border-radius: 8px !important;
+  font-size: .70rem !important;
+}
+#fixeo-reservation-modal .fxrv3-timing-chip.fxrv3-timing-active {
+  background: var(--fxresf-accent-dim) !important;
+  border-color: rgba(255,122,0,0.35) !important;
+  color: var(--fxresf-accent) !important;
+}
+
+/* ════════════════════════════════════════════════════════════
+   EXPRESS / URGENT BANNERS
+   ════════════════════════════════════════════════════════════ */
+#fixeo-reservation-modal .fixeo-res-express-banner {
+  border-radius: var(--fxresf-r) !important;
+  margin-bottom: 10px !important;
+}
+
+/* ════════════════════════════════════════════════════════════
+   ACCESSIBLE FOCUS STATES
+   ════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  #fixeo-reservation-modal *,
+  #fixeo-reservation-modal *::before,
+  #fixeo-reservation-modal *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+#fixeo-reservation-modal :focus-visible {
+  outline: 2px solid var(--fxresf-accent) !important;
+  outline-offset: 2px !important;
+  border-radius: 4px !important;
+}
+
+/* ════════════════════════════════════════════════════════════
+   MOBILE SAFE AREAS
+   ════════════════════════════════════════════════════════════ */
+@media (max-width: 430px) {
+  #fixeo-reservation-modal .fixeo-res-dialog {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  #fixeo-reservation-modal .fixeo-res-body {
+    padding: 12px 14px !important;
+  }
+  #fixeo-reservation-modal .fixeo-res-header {
+    padding: 12px 50px 10px 14px !important;
+  }
+  /* Ensure no horizontal overflow */
+  #fixeo-reservation-modal .fixeo-res-artisan-card {
+    flex-wrap: nowrap !important;
+  }
+  #fixeo-reservation-modal .fixeo-res-artisan-info {
+    min-width: 0 !important;
+    flex: 1 !important;
+  }
+  #fixeo-reservation-modal .fixeo-res-artisan-price {
+    display: none !important;
+  }
+}
+@media (max-width: 320px) {
+  #fixeo-reservation-modal #res-svc-pills.fixeo-res-slot-grid {
+    grid-template-columns: 1fr !important;
+  }
+  #fixeo-reservation-modal #res-slot-grid.fixeo-res-slot-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  #fixeo-reservation-modal .fixeo-res-body {
+    padding: 10px 12px !important;
+  }
+}
