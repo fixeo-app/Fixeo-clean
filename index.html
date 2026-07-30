@@ -41,6 +41,8 @@
 <link rel="stylesheet" href="css/fixeo-estimation-engine-v1.css?v=faee-v1d" />
 <link rel="stylesheet" href="css/fixeo-review-engine-v1.css?v=frev-v1b" />
 <link rel="stylesheet" href="css/reservation-v2a.css?v=v2c" />
+<!-- fxresf-v11a: Flagship reservation presentation — same sheet as artisan-profile.html -->
+<link rel="stylesheet" href="css/fixeo-reservation-flagship-v1.css?v=fxresf-v11a" />
 <link rel="stylesheet" href="css/smart-search.css?v=50a38b9"/>
 <link rel="stylesheet" href="css/smart-search-map.css?v=50a38b9"/>
 <link rel="stylesheet" href="css/artisan_cards_v8.css?v=50a38b9"/>
@@ -5834,6 +5836,9 @@ window.addEventListener('load', function () {
       .then(function () { return loadScriptOnce('js/payment.js?v=50a38b9'); })
       .then(function () { return loadScriptOnce('js/cod-payment.js?v=50a38b9'); })
       .then(function () { return loadScriptOnce('js/reservation-v2.js?v=v2c5a'); })
+      /* fxresf-v11a: Flagship presentation enhancer — loads after reservation-v2.js so
+         MutationObserver fires after V2 upgrade; same JS as artisan-profile.html */
+      .then(function () { return loadScriptOnce('js/fixeo-reservation-flagship-v1.js?v=fxresf-v11a'); })
       .then(function () { return loadScriptOnce('js/fixeo-estimation-engine-v1.js?v=faee-v1e'); })
       .then(function () { return loadScriptOnce('js/fixeo-review-engine-v1.js?v=frev-v1b'); })
       .then(function () {
