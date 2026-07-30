@@ -1118,3 +1118,24 @@
 /* ════════════════════════════════════════════════════════════
    END FXRESF-LEGACY-UI-CLEANUP
    ════════════════════════════════════════════════════════════ */
+
+/* ════════════════════════════════════════════════════════════
+   FXRESF-FINAL-SUBMISSION-HOTFIX — v11a-hotfix-2
+   Hides the three legacy trust pills injected by reservation-v2.js.
+   Container: .fxrv2-trust-mini (parent of .fxrv2-trust-pill items)
+   Source: reservation-v2.js injectTrustPills() — hardcoded fake claims.
+   All .fxrv2-trust-pill DOM nodes remain queryable (no engine reads them).
+   ════════════════════════════════════════════════════════════ */
+
+/* ── Legacy trust pill group ────────────────────────────────
+   Hides the entire .fxrv2-trust-mini wrapper (3 pills):
+   "Fixeo aide à éviter les prix excessifs"
+   "Estimation basée sur le marché local"
+   "Aucun paiement avant intervention"                         */
+#fixeo-reservation-modal .fxrv2-trust-mini {
+  display: none !important;
+}
+
+/* ════════════════════════════════════════════════════════════
+   END FXRESF-FINAL-SUBMISSION-HOTFIX
+   ════════════════════════════════════════════════════════════ */
