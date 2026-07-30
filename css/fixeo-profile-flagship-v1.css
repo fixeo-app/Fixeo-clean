@@ -596,6 +596,10 @@ body.fxpf-active #fpv2-seo-links { display: none !important; }
 /* 5. SEO breadcrumb injected as a sibling of #public-artisan-root (beforebegin) */
 body.fxpf-active #fpv2-seo-breadcrumb { display: none !important; }
 
+/* 6. Review engine section injected by fixeo-review-engine-v1.js */
+body.fxpf-active #frev-profile-section,
+body.fxpf-active .frev-profile-section { display: none !important; }
+
 /* ─── Hidden action button preservation (reservation engine needs it) ─── */
 .fxpf-action-hidden {
   position: absolute !important;
