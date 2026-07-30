@@ -104,9 +104,10 @@
     if (window.FixeoHeroes && typeof window.FixeoHeroes.getCardAvatar === 'function') {
       var cat = artisan && (artisan.category || artisan.service || '');
       var hero = window.FixeoHeroes.getCardAvatar(cat);
-      if (hero) return { src: hero, isHero: true };
+      /* getCardAvatar returns {slug,webp,png,label} — extract the URL */
+      if (hero && (hero.webp || hero.png)) return { src: hero.webp || hero.png, isHero: true };
     }
-    /* Priority 3: generic Hero.getAvatar */
+    /* Priority 3: generic Hero.getAvatar (returns URL string directly) */
     if (window.FixeoHeroes && typeof window.FixeoHeroes.getAvatar === 'function') {
       var cat2 = artisan && (artisan.category || artisan.service || '');
       var hero2 = window.FixeoHeroes.getAvatar(cat2);

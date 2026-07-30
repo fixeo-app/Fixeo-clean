@@ -561,11 +561,40 @@ body.public-artisan-page .public-artisan-page {
 /* ─── Hide existing floating btn when flagship is active ─── */
 body.fxpf-active #fixeo-floating-reserve { display: none !important; }
 
-/* ─── Suppress old sections when flagship is active ─── */
-body.fxpf-active #public-artisan-root > .public-profile-hero:not(.fxpf-preserved),
-body.fxpf-active #public-artisan-root > .public-section-grid:not(.fxpf-preserved) {
+/* ─── Suppress ALL legacy profile content when flagship is active ─── */
+
+/* 1. Static sections rendered by fixeo-public-artisan-profile.js */
+body.fxpf-active #public-artisan-root > .public-profile-hero,
+body.fxpf-active #public-artisan-root > .public-section-grid {
   display: none !important;
 }
+
+/* 2. V2A / V2B async section injections (ppui-section namespace) */
+body.fxpf-active .ppui-section { display: none !important; }
+
+/* 3. V2A hero-inline blocks injected into .public-hero-main */
+body.fxpf-active .fpv2h-estimation,
+body.fxpf-active .fpv2h-platform-trust,
+body.fxpf-active .fpv2pi-block,
+body.fxpf-active .fpv2a-trust-strip,
+body.fxpf-active .fpv2b-zone-strip,
+body.fxpf-active .fpv2b-specialty-chips,
+body.fxpf-active .fpv2a-wa-cta,
+body.fxpf-active .fpv2b-wa-sub,
+body.fxpf-active .fpv1h-longevity,
+body.fxpf-active .fpv1h-avail-consistent,
+body.fxpf-active .fpv1j-activity-strip,
+body.fxpf-active .fpv1j-confirm-signal,
+body.fxpf-active .fpv1j-local-note,
+body.fxpf-active .fpv1j-booking-confidence { display: none !important; }
+
+/* 4. SEO blocks: FAQ + "Services liés / Voir aussi" (injected inside root) */
+body.fxpf-active .fpv2-seo-section,
+body.fxpf-active #fpv2-seo-faq,
+body.fxpf-active #fpv2-seo-links { display: none !important; }
+
+/* 5. SEO breadcrumb injected as a sibling of #public-artisan-root (beforebegin) */
+body.fxpf-active #fpv2-seo-breadcrumb { display: none !important; }
 
 /* ─── Hidden action button preservation (reservation engine needs it) ─── */
 .fxpf-action-hidden {
