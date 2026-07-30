@@ -1034,3 +1034,87 @@
     padding: 10px 12px !important;
   }
 }
+
+/* ════════════════════════════════════════════════════════════
+   FXRESF-LEGACY-UI-CLEANUP — v11a-hotfix-1
+   Hides duplicate / unsupported UI exposed on real-device test.
+   All hidden elements remain in DOM so reservation.js can still
+   read/write them by ID.  No engine modifications.
+   ════════════════════════════════════════════════════════════ */
+
+/* ── 1. DUPLICATE ARTISAN CARD ──────────────────────────────
+   .fxresf-enhanced class is set on #fixeo-reservation-modal by
+   the JS enhancer once the header-strip has been injected.
+   Hide the visual card wrapper; DOM nodes (incl. #res-price-display,
+   .fixeo-res-artisan-name, .fixeo-res-artisan-meta, .fxrva-coord-chips,
+   .fixeo-res-artisan-avatar[data-category]) remain queryable.        */
+#fixeo-reservation-modal.fxresf-enhanced .fixeo-res-artisan-card {
+  display: none !important;
+}
+
+/* ── 2. AVAILABILITY BADGE ──────────────────────────────────
+   No real-time availability engine in scope.
+   Hide "Disponible" / "Occupé" / "Hors ligne" on artisan row.        */
+#fixeo-reservation-modal .fixeo-res-artisan-row,
+#fixeo-reservation-modal .fixeo-res-avail {
+  display: none !important;
+}
+
+/* ── 3. DUPLICATE COORD STRIP ───────────────────────────────
+   "✔ Coordonné par Fixeo · Paiement après intervention"
+   Already shown in header strip — hide the legacy standalone strip.  */
+#fixeo-reservation-modal .fxrva-artisan-coord {
+  display: none !important;
+}
+
+/* ── 4. FAKE TIME-SLOT AVAILABILITY HINTS ───────────────────
+   "Plus disponibles le matin" / "Bon équilibre disponibilité" /
+   "Disponibilité variable" — injected by reservation-v2.js.
+   No availability engine backs these claims.                          */
+#fixeo-reservation-modal .fxrv2-slot-hint {
+  display: none !important;
+}
+
+/* ── 5. INLINE SUB-NOTE BELOW CTA ──────────────────────────
+   "✔ Sans engagement — paiement après intervention"
+   Redundant with footer trust line. Targeted by its inline style.    */
+#fixeo-reservation-modal .fixeo-res-form > div[style*="text-align:center"][style*="font-size:.65rem"] {
+  display: none !important;
+}
+
+/* ── 6. STEP 1 FOOTER — REDUCE REPETITION ──────────────────
+   .fxrva-op-strip currently shows three spans:
+     ✔ Gratuit & sans engagement
+     💳 Paiement après intervention
+     💬 Coordination Fixeo
+   Keep only the two factual ones; hide the redundant middle span.
+   Remove "Coordination Fixeo" (operational detail, not user-facing). */
+#fixeo-reservation-modal .fxrva-op-strip {
+  display: flex !important;
+  justify-content: center !important;
+  gap: 14px !important;
+  flex-wrap: wrap !important;
+  font-size: .63rem !important;
+  color: var(--fxresf-text-muted) !important;
+  padding: 6px 0 !important;
+}
+/* Keep only the first two spans */
+#fixeo-reservation-modal .fxrva-op-strip > span:nth-child(3) {
+  display: none !important;
+}
+
+/* ── 7. #res-tarif-estime — hide payment claim duplicate ────
+   reservation.js re-injects innerHTML here on service-select
+   as: "Estimation basée sur les prix du marché.<br>
+        Aucun paiement maintenant — vous payez après intervention."
+   The second sentence is redundant with the footer.
+   Hide the inner span carrying the payment note;
+   keep the outer estimation sentence visible.
+   Targeted by its inline colour style.                                */
+#fixeo-reservation-modal #res-tarif-estime span[style*="rgba(255,255,255,.5)"] {
+  display: none !important;
+}
+
+/* ════════════════════════════════════════════════════════════
+   END FXRESF-LEGACY-UI-CLEANUP
+   ════════════════════════════════════════════════════════════ */

@@ -222,6 +222,9 @@
 
     /* Mark header as enhanced (CSS uses this to hide legacy left content) */
     header.classList.add('fxresf-enhanced');
+    /* Mark modal root as enhanced (CSS uses this to hide duplicate artisan card) */
+    var modalRoot = header.closest('#fixeo-reservation-modal');
+    if (modalRoot) modalRoot.classList.add('fxresf-enhanced');
   }
 
   /* ════════════════════════════════════════════════════════
@@ -412,6 +415,8 @@
       if (strip) strip.remove();
       var hdr = modal.querySelector('.fixeo-res-header.fxresf-enhanced');
       if (hdr) hdr.classList.remove('fxresf-enhanced');
+      /* Also clear modal-root enhanced flag — re-set after strip injected */
+      modal.classList.remove('fxresf-enhanced');
     });
 
     var step = _detectStep(modal);
@@ -496,6 +501,7 @@
           if (strip) strip.remove();
           var hdr = modal.querySelector('.fixeo-res-header.fxresf-enhanced');
           if (hdr) hdr.classList.remove('fxresf-enhanced');
+          modal.classList.remove('fxresf-enhanced');
         });
       }
     });
