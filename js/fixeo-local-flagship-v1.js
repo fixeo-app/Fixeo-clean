@@ -30,9 +30,32 @@
 
   /* ── Constants ─────────────────────────────────────────────── */
   var GRID_ID      = 'fxlp-artisan-grid';
-  var QUERY_CITY   = 'oujda';
-  var QUERY_CAT    = 'plomber';
   var MAX_CARDS    = 3;
+
+  var _SVC_CATS = {
+    plomberie:'plomber', electricite:'electr', serrurerie:'serr',
+    climatisation:'clima', peinture:'peint', menuiserie:'menuis'
+  };
+  function _readCtx() {
+    var grid = document.getElementById(GRID_ID);
+    var city = (grid && grid.getAttribute('data-fxlp-city')) || '';
+    if (!city) { var sel = document.getElementById('qsm-select-city'); if (sel) city = sel.value || ''; }
+    city = city.toLowerCase().trim() || 'oujda';
+    var svcSlug = (grid && grid.getAttribute('data-fxlp-service')) || 'plomberie';
+    var cat = (grid && grid.getAttribute('data-fxlp-category')) || _SVC_CATS[svcSlug] || svcSlug.slice(0,6);
+    return { city: city, cat: cat.toLowerCase().trim(), svcSlug: svcSlug };
+  }
+  var _SVC_LABELS = { plomberie:'Plomberie', electricite:'\u00c9lectricit\u00e9',
+    serrurerie:'Serrurerie', climatisation:'Climatisation', peinture:'Peinture', menuiserie:'Menuiserie' };
+  var _SVC_ICONS  = { plomberie:'\uD83D\uDD27', electricite:'\u26A1',
+    serrurerie:'\uD83D\uDD10', climatisation:'\u2744\uFE0F',
+    peinture:'\uD83C\uDFA8', menuiserie:'\uD83E\uDEB5' };
+  function _svcLabel(slug) { return _SVC_LABELS[slug] || (slug.charAt(0).toUpperCase()+slug.slice(1)); }
+  function _svcIcon(slug)  { return _SVC_ICONS[slug]  || '\uD83D\uDD27'; }
+  function _getHeroObj(svcSlug) {
+    if (!window.FixeoHeroes || typeof window.FixeoHeroes.getCardAvatar !== 'function') return null;
+    return window.FixeoHeroes.getCardAvatar(svcSlug) || window.FixeoHeroes.getCardAvatar('plomberie');
+  }
   var RETRY_MS     = 600;
   var MAX_RETRIES  = 8;
   var RES_READY_RETRIES = 20;   /* ~12s wait for reservation.js deferred load */
@@ -94,11 +117,8 @@
     + '}'
     + '})(this)}';
 
-  function _buildAvatarHtml(artisan) {
-    var heroObj = null;
-    if (window.FixeoHeroes && typeof window.FixeoHeroes.getCardAvatar === 'function') {
-      heroObj = window.FixeoHeroes.getCardAvatar('plomberie');
-    }
+  function _buildAvatarHtml(artisan, svcSlug) {
+    var heroObj = _getHeroObj(svcSlug || 'plomberie');
     var webp = heroObj ? _esc(heroObj.webp || '') : '';
     var png  = heroObj ? _esc(heroObj.png  || '') : '';
     var alt  = heroObj ? _esc(heroObj.alt  || 'Illustration métier : Plomberie') : 'Illustration métier : Plomberie';
@@ -163,13 +183,14 @@
     '</div>';
 
   /* ── Build one canonical pvc-card article ──────────────────── */
-  function _buildCard(artisan) {
-    var avatar  = _buildAvatarHtml(artisan);
+  function _buildCard(artisan, ctx) {
+    ctx = ctx || {city:'oujda',cat:'plomber',svcSlug:'plomberie'};
+    var avatar  = _buildAvatarHtml(artisan, ctx.svcSlug);
     var id      = _esc(String(artisan.id || ''));
     var name    = _esc(artisan.name || 'Artisan FIXEO');
     var city    = _esc(artisan.city || 'Oujda');
-    var catLbl  = 'Plomberie';
-    var catIcon = '\uD83D\uDD27'; /* 🔧 */
+    var catLbl  = _svcLabel(ctx.svcSlug);
+    var catIcon = _svcIcon(ctx.svcSlug);
 
     var desc    = _sanitizeDesc(artisan.description);
     var descHtml = desc ? '<p class="pvc-desc-v3b">' + _esc(desc) + '</p>' : '';
@@ -184,7 +205,7 @@
       + ' aria-label="' + name + ', ' + catLbl + '">'
 
       + '<div class="pvc-card-header pvc-card-header-final">'
-        + '<div class="pvc-avatar" data-category="plomberie" data-avatar-state="' + avatar.state + '">'
+        + '<div class="pvc-avatar" data-category="' + _esc(ctx.svcSlug) + '" data-avatar-state="' + avatar.state + '">'
           + avatar.html
           + '<span class="pvc-avatar-badge">' + catIcon + '</span>'
         + '</div>'
@@ -251,7 +272,8 @@
     _artisanMap = {};
     cards.forEach(function (a) { _artisanMap[String(a.id)] = a; });
 
-    grid.innerHTML = cards.map(_buildCard).join('');
+    var ctx = _readCtx();
+    grid.innerHTML = cards.map(function(a){return _buildCard(a,ctx);}).join('');
 
     /* Delegated listener — ONE listener for all cards, forever */
     _attachDelegatedListener(grid, cards);
@@ -365,12 +387,13 @@
     }
 
     var fsc = window.FixeoSupabaseClient;
+    var ctx = _readCtx();
     fsc.query(function (client) {
       return client
         .from('artisans')
         .select('id, legacy_id, name, city, category, verified, description, photo_url, price_from, price_label')
-        .ilike('city', QUERY_CITY)
-        .ilike('category', QUERY_CAT + '%')
+        .ilike('city', '%' + ctx.city + '%')
+        .ilike('category', ctx.cat + '%')
         .order('rating', { ascending: false })
         .limit(MAX_CARDS);
     }).then(function (res) {
@@ -386,8 +409,8 @@
           _supabase_id:row.id,
           name:        row.name || 'Artisan FIXEO',
           city:        row.city || 'Oujda',
-          category:    (row.category || 'plomberie').toLowerCase(),
-          service:     (row.category || 'plomberie').toLowerCase(),
+          category:    (row.category || ctx.svcSlug).toLowerCase(),
+          service:     (row.category || ctx.svcSlug).toLowerCase(),
           verified:    !!row.verified,
           description: row.description || '',
           photo_url:   row.photo_url || null,

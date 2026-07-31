@@ -160,6 +160,14 @@ const PRICE_SERVICES = {
     icon: '🔧',
     slug: 'plomberie',
     service_link: 'plombier',
+    metier_label: 'plombier', article_genre: 'un', article_genre_long: 'un',
+    factors: [
+      { icon: '\u23F1\uFE0F', title: 'Type d\'intervention', desc: 'Un d\u00e9pannage simple est moins co\u00fbteux qu\'un remplacement de chauffe-eau.' },
+      { icon: '\uD83C\uDF05', title: 'Horaire (urgence, nuit, week-end)', desc: 'Les interventions hors horaires normaux entra\u00eenent une majoration de 30 \u00e0 60\u00a0%.' },
+      { icon: '\uD83D\uDCCD', title: 'Distance et secteur', desc: 'Le d\u00e9placement est souvent inclus pour les artisans locaux.' },
+      { icon: '\u2699\uFE0F', title: 'Complexit\u00e9 technique', desc: 'L\'acc\u00e8s difficile ou les anciens conduits augmentent le co\u00fbt.' },
+      { icon: '\uD83E\uDDF0', title: 'Fournitures', desc: 'Certains tiers incluent la fourniture\u00a0; d\'autres non.' },
+    ],
     tiers: [
       { label: 'Déplacement + diagnostic', range: '150 – 250 MAD' },
       { label: 'Intervention simple (joint, robinet)', range: '300 – 600 MAD' },
@@ -179,6 +187,14 @@ const PRICE_SERVICES = {
     icon: '⚡',
     slug: 'electricite',
     service_link: 'electricien',
+    metier_label: '\u00e9lectricien', article_genre: 'un', article_genre_long: 'un',
+    factors: [
+      { icon: '\uD83D\uDD0C', title: 'Type de travaux', desc: 'Un remplacement de prise co\u00fbte bien moins qu\'une mise \u00e0 niveau du tableau \u00e9lectrique.' },
+      { icon: '\uD83C\uDF05', title: 'Urgence et horaire', desc: 'Les pannes nocturnes ou en week-end entra\u00eenent une majoration de 40 \u00e0 60\u00a0%.' },
+      { icon: '\uD83D\uDCCD', title: 'Complexit\u00e9 de l\'installation', desc: 'Un logement ancien n\u00e9cessite souvent plus de travail et de mat\u00e9riel.' },
+      { icon: '\u2699\uFE0F', title: 'Fournitures', desc: 'Prises, disjoncteurs et c\u00e2bles sont souvent factur\u00e9s en sus.' },
+      { icon: '\uD83D\uDCCB', title: 'Diagnostic pr\u00e9alable', desc: 'Le co\u00fbt du diagnostic est g\u00e9n\u00e9ralement d\u00e9ductible si les travaux sont confi\u00e9s.' },
+    ],
     tiers: [
       { label: 'Déplacement + diagnostic', range: '200 – 300 MAD' },
       { label: 'Installation prise électrique', range: '250 – 450 MAD' },
@@ -188,7 +204,7 @@ const PRICE_SERVICES = {
     ],
     faq: (city) => [
       { q: `Combien coûte un électricien à ${city.label} ?`, a: `Le coût d'un électricien à ${city.label} dépend du type d'intervention. Le déplacement et diagnostic commence à 200–300 MAD. L'installation d'une prise ou d'un interrupteur varie entre 150 et 450 MAD. Pour un tableau électrique complet, prévoyez 800 à 2 000 MAD selon la complexité. Les urgences nocturnes appliquent une majoration de 40 à 60%.` },
-      { q: 'Faut-il un permis pour des travaux électriques au Maroc ?', a: 'Pour les travaux courants (remplacement de prises, installation d\'éclairage), aucun permis n\'est nécessaire. Mais pour des travaux importants (nouveau tableau, modification du réseau principal), un devis signé par un électricien agréé est recommandé, surtout en copropriété. Fixeo vérifie les qualifications de tous ses artisans.' },
+      { q: 'Faut-il un permis pour des travaux électriques au Maroc ?', a: 'Pour les travaux courants (remplacement de prises, installation d\'éclairage), aucun permis n\'est nécessaire. Mais pour des travaux importants (nouveau tableau, modification du réseau principal), un devis signé par un électricien agréé est recommandé, surtout en copropriété. Avec FIXEO, les artisans sont référencés et peuvent vous remettre un devis avant de commencer.' },
       { q: 'Comment savoir si mon installation électrique est aux normes ?', a: 'Un électricien qualifié peut effectuer un diagnostic complet de votre installation en 1 à 2 heures. Il vérifie les protections différentielles, la mise à la terre, l\'état des câbles et la conformité du tableau. Ce type d\'audit coûte généralement 300 à 500 MAD à Casablanca et dans les grandes villes.' },
     ],
   },
@@ -198,6 +214,14 @@ const PRICE_SERVICES = {
     icon: '🔐',
     slug: 'serrurerie',
     service_link: 'serrurier',
+    metier_label: 'serrurier', article_genre: 'un', article_genre_long: 'un',
+    factors: [
+      { icon: '\uD83D\uDD11', title: 'Type d\'intervention', desc: 'L\'ouverture sans casse est moins on\u00e9reuse que le remplacement d\'une serrure multipoints.' },
+      { icon: '\u23F0', title: 'Urgence', desc: 'Une porte claqu\u00e9e en urgence nocturne entra\u00eene une majoration significative.' },
+      { icon: '\uD83D\uDEAA', title: 'Type de serrure', desc: 'Une serrure 3 points ou blind\u00e9e est plus co\u00fbteuse \u00e0 installer.' },
+      { icon: '\uD83D\uDCCD', title: 'D\u00e9placement', desc: 'Les serruriers proches facturent moins de frais de d\u00e9placement.' },
+      { icon: '\uD83D\uDCB0', title: 'Fourniture', desc: 'Le cylindre ou la serrure remplac\u00e9(e) est souvent factur\u00e9(e) en plus.' },
+    ],
     tiers: [
       { label: 'Ouverture de porte (sans casse)', range: '300 – 600 MAD' },
       { label: 'Ouverture de porte (avec perçage)', range: '500 – 900 MAD' },
@@ -207,7 +231,7 @@ const PRICE_SERVICES = {
     ],
     faq: (city) => [
       { q: `Quel est le prix d'un serrurier à ${city.label} ?`, a: `À ${city.label}, le prix d'un serrurier dépend du type d'intervention. Une ouverture de porte sans casse coûte 300 à 600 MAD. Avec perçage, comptez 500 à 900 MAD. Le remplacement d'un cylindre simple revient à 400 à 800 MAD. Pour une serrure multipoints ou blindée, les tarifs vont de 800 à 2 000 MAD et plus selon le modèle choisi.` },
-      { q: 'Comment éviter les serruriers abusifs lors d\'une urgence ?', a: 'Passez par Fixeo : nos artisans sont vérifiés et évaluent votre situation pour vous communiquer un devis avant d\'intervenir. Refusez toute intervention sans devis préalable. Méfiez-vous des prix annoncés par téléphone qui doublent à l\'arrivée — c\'est une pratique courante chez les serruriers non référencés.' },
+      { q: 'Comment éviter les serruriers abusifs lors d\'une urgence ?', a: 'Passez par Fixeo : nos artisans référencés évaluent votre situation et vous communiquent un devis avant d\'intervenir. Refusez toute intervention sans devis préalable. Méfiez-vous des prix annoncés par téléphone qui doublent à l\'arrivée — c\'est une pratique courante chez les serruriers non référencés.' },
       { q: 'Vaut-il mieux réparer ou remplacer une vieille serrure ?', a: 'Si votre serrure a plus de 10 ans, si elle a subi une tentative d\'effraction, ou si vous venez d\'emménager, le remplacement est généralement recommandé. Le coût d\'un nouveau cylindre de qualité (200–500 MAD) est faible comparé au risque sécuritaire. Un serrurier Fixeo peut vous conseiller sur le niveau de sécurité adapté à votre porte.' },
     ],
   },
@@ -217,6 +241,14 @@ const PRICE_SERVICES = {
     icon: '❄️',
     slug: 'climatisation',
     service_link: 'climatisation',
+    metier_label: 'technicien climatisation', article_genre: 'un', article_genre_long: 'un',
+    factors: [
+      { icon: '\uD83D\uDCE6', title: 'Puissance de l\'appareil', desc: 'Un split 9\u202F000 BTU co\u00fbte moins \u00e0 installer qu\'un 24\u202F000 BTU.' },
+      { icon: '\uD83C\uDFE0', title: 'Type d\'installation', desc: 'La longueur de la liaison frigorifique et la difficult\u00e9 de passage influencent le co\u00fbt.' },
+      { icon: '\uD83E\uDDFB', title: 'Gaz r\u00e9frig\u00e9rant', desc: 'Le gaz R32 est plus courant que le R410A. Le prix varie selon la r\u00e9serve disponible.' },
+      { icon: '\uD83D\uDCC5', title: 'Entretien vs remplacement', desc: 'Un entretien annuel est bien moins on\u00e9reux qu\'un remplacement de compresseur.' },
+      { icon: '\uD83C\uDF05', title: 'Saisonnalit\u00e9', desc: 'La demande en \u00e9t\u00e9 peut allonger les d\u00e9lais et augmenter les tarifs.' },
+    ],
     tiers: [
       { label: 'Installation split (1 unité)', range: '2 000 – 6 000 MAD' },
       { label: 'Entretien annuel (nettoyage + vérification)', range: '400 – 800 MAD' },
@@ -236,6 +268,14 @@ const PRICE_SERVICES = {
     icon: '🎨',
     slug: 'peinture',
     service_link: 'peinture',
+    metier_label: 'peintre', article_genre: 'un', article_genre_long: 'un',
+    factors: [
+      { icon: '\uD83D\uDCCF', title: 'Surface (m\u00b2)', desc: 'Le co\u00fbt total est proportionnel \u00e0 la surface. Le prix au m\u00b2 peut diminuer sur les grands chantiers.' },
+      { icon: '\uD83D\uDEE0\uFE0F', title: 'Pr\u00e9paration des surfaces', desc: 'Rebouchage, pon\u00e7age et sous-couche augmentent le temps et le co\u00fbt.' },
+      { icon: '\uD83C\uDFA8', title: 'Type de peinture', desc: 'Standard, lessivable, anti-humidit\u00e9, d\u00e9corative\u00a0: chaque type a un co\u00fbt diff\u00e9rent.' },
+      { icon: '\uD83C\uDFE1', title: 'Fa\u00e7ade ou int\u00e9rieur', desc: 'La peinture ext\u00e9rieure (\u00e9chafaudage, UV) co\u00fbte plus cher au m\u00b2.' },
+      { icon: '\uD83D\uDCC5', title: 'Saisonnalit\u00e9 et d\u00e9lais', desc: 'En haute saison, les d\u00e9lais peuvent \u00eatre plus longs.' },
+    ],
     tiers: [
       { label: 'Mur intérieur (par m²)', range: '35 – 70 MAD/m²' },
       { label: 'Façade extérieure (par m²)', range: '50 – 100 MAD/m²' },
@@ -255,6 +295,14 @@ const PRICE_SERVICES = {
     icon: '🪵',
     slug: 'menuiserie',
     service_link: null,
+    metier_label: 'menuisier', article_genre: 'un', article_genre_long: 'un',
+    factors: [
+      { icon: '\uD83E\uDEB5', title: 'Mat\u00e9riau', desc: 'Aluminium, bois massif et MDF ont des co\u00fbts tr\u00e8s diff\u00e9rents.' },
+      { icon: '\uD83D\uDCCF', title: 'Dimensions et sur-mesure', desc: 'Un \u00e9l\u00e9ment sur mesure co\u00fbte plus qu\'un standard.' },
+      { icon: '\uD83D\uDD12', title: 'Type de fermeture', desc: 'Serrure simple, multipoints ou \u00e9lectrique\u00a0: le niveau de s\u00e9curit\u00e9 influe sur le prix.' },
+      { icon: '\uD83D\uDEE0\uFE0F', title: 'Complexit\u00e9 de pose', desc: 'D\u00e9montage, ajustement, reprise de peinture augmentent le co\u00fbt.' },
+      { icon: '\uD83D\uDCB0', title: 'Fourniture incluse', desc: 'Certains menuisiers fournissent le mat\u00e9riau\u00a0; d\'autres posent uniquement.' },
+    ],
     tiers: [
       { label: 'Porte intérieure (pose)', range: '800 – 2 500 MAD' },
       { label: 'Fenêtre aluminium (pose + fourniture)', range: '1 500 – 4 000 MAD' },
@@ -269,6 +317,8 @@ const PRICE_SERVICES = {
     ],
   },
 };
+const _SVC_CATS = { plomberie:'plomber', electricite:'electr', serrurerie:'serr', climatisation:'clima', peinture:'peint', menuiserie:'menuis' };
+
 
 /* ═══════════════════════════════════════════════════════════
    QUARTIERS (1C)
@@ -564,7 +614,8 @@ function generateProblemPages() {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   1B — PRICE PAGES
+   1B — PRICE PAGES (FLAGSHIP — fxprice-v1)
+   Template: prix-plomberie-oujda.html (canonical golden reference)
 ══════════════════════════════════════════════════════════ */
 function generatePricePages() {
   let count = 0;
@@ -572,59 +623,67 @@ function generatePricePages() {
 
   for (const [svcKey, svc] of Object.entries(PRICE_SERVICES)) {
     for (const [cityKey, city] of Object.entries(CITIES)) {
-      const filename = `prix-${svcKey}-${city.slug}.html`;
+      const filename      = `prix-${svcKey}-${city.slug}.html`;
       const canonicalPath = `/prix/${svcKey}/${city.slug}`;
-      const canonicalUrl = `https://www.fixeo.ma${canonicalPath}`;
-      const title = esc(`Prix ${svc.label} à ${city.label} 2026 : tarifs et devis | Fixeo`);
-      const metaDesc = esc(`Tarifs ${svc.label_adj} à ${city.label} en 2026 : fourchettes de prix et devis gratuit via Fixeo. Artisans référencés disponibles maintenant.`);
-      const h1 = esc(`Prix ${svc.label} à ${city.label} 2026`);
+      const canonicalUrl  = `https://www.fixeo.ma${canonicalPath}`;
+      const title    = esc(`Combien co\u00fbte un ${svc.metier_label} \u00e0 ${city.label} ? Tarifs 2026 | Fixeo`);
+      const metaDesc = esc(`Tarifs ${svc.label_adj} \u00e0 ${city.label} en 2026 : fourchettes indicatives et facteurs de co\u00fbt. Paiement apr\u00e8s intervention. Tarif confirm\u00e9 avec l'artisan.`);
+      const h1       = esc(`Combien co\u00fbte un ${svc.metier_label} \u00e0 ${city.label}\u00a0?`);
       const faqItems = svc.faq(city);
+      const svcCat   = _SVC_CATS[svcKey] || svcKey.slice(0,6);
 
-      const pricingRows = svc.tiers.map(t =>
-        `<tr><td>${esc(t.label)}</td><td class="price-cell"><strong>${esc(t.range)}</strong></td></tr>`
-      ).join('\n              ');
+      const priceCardsHtml = svc.tiers.map((t, i) => {
+        const isUrgent = !!t.urgent;
+        const isWide   = !isUrgent && svc.tiers.length % 2 !== 0 && i === svc.tiers.length - 1;
+        return `
+          <div class="fxlp-price-card${isUrgent ? ' fxlp-price-card--urgent' : ''}${isWide ? ' fxlp-price-card--wide' : ''}">
+            ${isUrgent ? '<span class="fxlp-urgent-chip">\u26a1 Urgence</span>' : ''}
+            <span class="fxlp-pc-icon" aria-hidden="true">${t.icon || svc.icon}</span>
+            <div class="fxlp-pc-name">${esc(t.label)}</div>
+            <div class="fxlp-pc-price">${esc(t.range)}</div>
+            ${t.note ? `<div class="fxlp-pc-note">${esc(t.note)}</div>` : ''}
+          </div>`;
+      }).join('\n');
 
-      const faqHtml = faqItems.map(f =>
-        `<details class="seo-faq-item">
-              <summary><strong>${esc(f.q)}</strong></summary>
-              <p style="padding:1rem">${esc(f.a)}</p>
-            </details>`
-      ).join('\n            ');
+      const factorsHtml = svc.factors.map(f => `
+          <div class="fxlp-factor-row">
+            <span class="fxlp-factor-icon" aria-hidden="true">${f.icon}</span>
+            <div>
+              <span class="fxlp-factor-title">${esc(f.title)}</span>
+              <p class="fxlp-factor-desc">${esc(f.desc)}</p>
+            </div>
+          </div>`).join('\n');
 
-      const localBusinessLD = {
-        "@context": "https://schema.org",
-        "@type": "LocalBusiness",
-        "name": "Fixeo",
-        "url": "https://www.fixeo.ma",
-        "description": `Tarifs ${svc.label} à ${city.label}`,
-        "areaServed": { "@type": "City", "name": city.label },
-        "address": { "@type": "PostalAddress", "addressLocality": city.label, "addressCountry": "MA" },
-        "geo": { "@type": "GeoCoordinates", "latitude": city.lat, "longitude": city.lng }
-      };
+      const faqHtml = faqItems.map(f => `
+          <details class="fxlp-faq-item">
+            <summary class="fxlp-faq-summary">
+              ${esc(f.q)}
+              <span class="fxlp-faq-chevron" aria-hidden="true">\u203a</span>
+            </summary>
+            <div class="fxlp-faq-answer">${esc(f.a)}</div>
+          </details>`).join('\n');
 
-      const faqLD = {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        "mainEntity": faqItems.map(f => ({
-          "@type": "Question",
-          "name": f.q,
-          "acceptedAnswer": { "@type": "Answer", "text": f.a }
-        }))
-      };
-
-      const breadcrumbLD = {
-        "@context": "https://schema.org",
-        "@type": "BreadcrumbList",
-        "itemListElement": [
-          { "@type": "ListItem", "position": 1, "name": "Fixeo", "item": "https://www.fixeo.ma" },
-          { "@type": "ListItem", "position": 2, "name": "Prix", "item": "https://www.fixeo.ma/prix" },
-          { "@type": "ListItem", "position": 3, "name": svc.label, "item": `https://www.fixeo.ma/prix/${svcKey}` },
-          { "@type": "ListItem", "position": 4, "name": city.label, "item": canonicalUrl }
-        ]
-      };
+      const faqLD = { "@context":"https://schema.org","@type":"FAQPage",
+        "mainEntity": faqItems.map(f=>({ "@type":"Question","name":f.q,"acceptedAnswer":{"@type":"Answer","text":f.a} })) };
+      const breadcrumbLD = { "@context":"https://schema.org","@type":"BreadcrumbList",
+        "itemListElement":[
+          {"@type":"ListItem","position":1,"name":"Accueil","item":"https://www.fixeo.ma/"},
+          {"@type":"ListItem","position":2,"name":"Tarifs","item":"https://www.fixeo.ma/prix"},
+          {"@type":"ListItem","position":3,"name":svc.label,"item":`https://www.fixeo.ma/prix/${svcKey}`},
+          {"@type":"ListItem","position":4,"name":city.label,"item":canonicalUrl}
+        ] };
+      const localBusinessLD = { "@context":"https://schema.org","@type":"LocalBusiness",
+        "@id":`${canonicalUrl}#localbusiness`,
+        "name":`Fixeo \u2014 ${svc.label} \u00e0 ${city.label}`,
+        "description":`Tarifs ${svc.label_adj} \u00e0 ${city.label}. Paiement apr\u00e8s intervention.`,
+        "url":canonicalUrl,"image":"https://www.fixeo.ma/img/logo.png",
+        "areaServed":{"@type":"City","name":city.label,"containedInPlace":{"@type":"Country","name":"Maroc"}},
+        "address":{"@type":"PostalAddress","addressLocality":city.label,"addressCountry":"MA"},
+        "geo":{"@type":"GeoCoordinates","latitude":city.lat,"longitude":city.lng},
+        "provider":{"@type":"Organization","name":"Fixeo","url":"https://www.fixeo.ma/"} };
 
       const serviceLinkHtml = svc.service_link
-        ? `<p>→ Voir notre page dédiée : <a href="/${svc.service_link}/${city.slug}">${esc(svc.label)} à ${esc(city.label)}</a></p>`
+        ? `<a href="/${svc.service_link}/${city.slug}">${esc(svc.metier_label)} \u00e0 ${esc(city.label)}</a><span aria-hidden="true">\u00b7</span>`
         : '';
 
       const html = `<!DOCTYPE html>
@@ -632,10 +691,11 @@ function generatePricePages() {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="generator" content="fixeo-pseo-v2a">
+  <meta name="generator" content="fixeo-pseo-v2b-flagship">
   <title>${title}</title>
   <meta name="description" content="${metaDesc}">
   <link rel="canonical" href="${canonicalUrl}">
+  <meta name="robots" content="index,follow">
   <meta property="og:type" content="website">
   <meta property="og:title" content="${title}">
   <meta property="og:description" content="${metaDesc}">
@@ -646,84 +706,179 @@ function generatePricePages() {
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="${title}">
   <meta name="twitter:description" content="${metaDesc}">
+  <script type="application/ld+json">${JSON.stringify(breadcrumbLD)}</script>
   <script type="application/ld+json">${JSON.stringify(localBusinessLD)}</script>
   <script type="application/ld+json">${JSON.stringify(faqLD)}</script>
-  <script type="application/ld+json">${JSON.stringify(breadcrumbLD)}</script>
   <link rel="stylesheet" href="/css/variables.css">
-  <link rel="stylesheet" href="/css/seo-lp-v1.css">
-  <link rel="stylesheet" href="/css/seo-pages-fixeo-ui.css">
+  <link rel="stylesheet" href="/css/header-unified.css">
+  <link rel="stylesheet" href="/css/fixeo-header-global.css">
+  <link rel="stylesheet" href="/css/fixeo-footer-global.css?v=gf4a">
+  <link rel="stylesheet" href="/css/artisan-card-conversion-v1.css?v=fxhome-artisan-card-v3b2">
+  <link rel="stylesheet" href="/css/fixeo-artisan-card-premium-v2.css?v=facp-v2c">
+  <link rel="stylesheet" href="/css/fixeo-artisan-section-v1.css?v=fxhome-artisan-section-v1a2-int11">
+  <link rel="stylesheet" href="/css/fixeo-consent-v1.css?v=fcv1b">
+  <link rel="stylesheet" href="/css/reservation.css?v=fxlp-res-v1">
+  <link rel="stylesheet" href="/css/reservation-v2.css?v=fxlp-res-v1">
+  <link rel="stylesheet" href="/css/reservation-v2a.css?v=fxlp-res-v1">
+  <link rel="stylesheet" href="/css/fixeo-local-flagship-v1.css?v=fxlp-v14">
+  <link rel="stylesheet" href="/css/fixeo-reservation-flagship-v1.css?v=fxresf-v11a">
+  <link rel="stylesheet" href="/css/fx-request-flow-v4.css?v=fxrf4-v5z">
   <link rel="icon" href="/img/favicon.png" type="image/png">
-  <style>
-    .price-table{width:100%;border-collapse:collapse;margin:1.5rem 0;border-radius:10px;overflow:hidden}
-    .price-table th{background:rgba(245,158,11,.15);color:#f59e0b;padding:.85rem 1rem;text-align:left;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em}
-    .price-table td{padding:.85rem 1rem;border-bottom:1px solid rgba(255,255,255,.07);color:#e2e8f0}
-    .price-table tr:last-child td{border-bottom:none}
-    .price-table tr:hover td{background:rgba(255,255,255,.04)}
-    .price-cell{color:#4ade80;font-weight:600}
-    .surcharge-table{width:100%;border-collapse:collapse;margin:1rem 0}
-    .surcharge-table th{background:rgba(239,68,68,.12);color:#f87171;padding:.75rem 1rem;text-align:left;font-size:.85rem}
-    .surcharge-table td{padding:.75rem 1rem;border-bottom:1px solid rgba(255,255,255,.06);color:#cbd5e1}
-    .disclaimer-note{font-size:.82rem;color:#64748b;margin-top:.75rem;font-style:italic}
-  </style>
 </head>
-<body class="seo-service-page" data-theme="dark">
-  <div class="bg-animated seo-bg"></div>
-  <a href="#main-content" class="skip-link">Aller au contenu</a>
-  ${navHTML()}
-  <main id="main-content">
-    <div class="seo-page-wrap">
-      <section class="seo-hero seo-city-hero">
-        <nav class="seo-breadcrumbs" aria-label="Fil d'Ariane">
-          <a href="/">Accueil</a> <span>›</span>
-          <a href="/prix">Prix</a> <span>›</span>
-          <a href="/prix/${svcKey}">${esc(svc.label)}</a> <span>›</span>
-          <span>${esc(city.label)}</span>
-        </nav>
-        <span style="font-size:3rem;display:block;margin-bottom:1rem">${svc.icon}</span>
-        <h1>${h1}</h1>
-        <p class="seo-lead">Découvrez les fourchettes de prix réelles pour les interventions ${esc(svc.label_adj)} à ${esc(city.label)} en 2026. Fourchettes indicatives proposées à titre de référence pour la région de ${esc(city.region)}.</p>
-      </section>
-
-      <section class="seo-section">
-        <h2>Tableau des tarifs — ${esc(svc.label)} à ${esc(city.label)}</h2>
-        <table class="price-table">
-          <thead><tr><th>Type d'intervention</th><th>Fourchette de prix</th></tr></thead>
-          <tbody>${pricingRows}</tbody>
-        </table>
-        <p class="disclaimer-note">* Fourchettes indicatives proposées à titre de référence. Prix fourniture non incluse sauf mention contraire. Devis gratuit avant engagement.</p>
-        ${serviceLinkHtml}
-      </section>
-
-      <section class="seo-section">
-        <h2>Majorations applicables</h2>
-        <table class="surcharge-table">
-          <thead><tr><th>Condition</th><th>Majoration</th></tr></thead>
-          <tbody>
-            <tr><td>Urgence (intervention dans l'heure)</td><td style="color:#f87171;font-weight:600">+30 à 50%</td></tr>
-            <tr><td>Nuit (20h–7h) et week-end</td><td style="color:#f87171;font-weight:600">+40 à 60%</td></tr>
-            <tr><td>Jours fériés</td><td style="color:#f87171;font-weight:600">+50 à 70%</td></tr>
-          </tbody>
-        </table>
-        <p class="disclaimer-note">Le tarif définitif et les éventuelles majorations sont à confirmer avec l'artisan avant l'intervention.</p>
-      </section>
-
-      <section class="seo-section">
-        <h2>Obtenez un devis gratuit à ${esc(city.label)}</h2>
-        <p>Décrivez votre projet ou problème en quelques mots — Fixeo vous met en contact avec un artisan ${esc(svc.label_adj)} disponible à ${esc(city.label)} qui vous communique un devis avant de commencer. Le tarif définitif est à confirmer avec l'artisan avant l'intervention.</p>
-        <div style="margin:1.5rem 0">
-          <a class="seo-btn-link primary" href="/index.html#services" onclick="window.localStorage.setItem('fixeo_open_modal','1')">
-            Demander un devis gratuit →
-          </a>
+<body class="seo-service-page" data-theme="dark" data-svc="${svcKey}" data-city="${city.slug}">
+  <div class="bg-animated seo-bg" aria-hidden="true"></div>
+  <a href="#main-content" class="fxlp-skip-link" style="position:absolute;left:-9999px;top:4px;z-index:9999;background:#ff6b3d;color:#fff;padding:6px 14px;border-radius:8px;font-size:.85rem;text-decoration:none">Aller au contenu</a>
+  <nav class="navbar" role="navigation" aria-label="Navigation principale"></nav>
+  <select id="qsm-select-city" style="display:none" aria-hidden="true">
+    <option value="${esc(city.label)}" selected>${esc(city.label)}</option>
+  </select>
+  <input id="qsm-input-nlp" type="hidden" value="${esc(svc.label)}">
+  <main id="main-content" role="main">
+    <div class="fxlp-wrap">
+      <nav class="fxlp-breadcrumbs" aria-label="Fil d'Ariane">
+        <a href="/index.html">Accueil</a>
+        <span aria-hidden="true">\u203a</span>
+        <a href="/services.html">Services</a>
+        <span aria-hidden="true">\u203a</span>
+        <span>${esc(svc.label)}</span>
+        <span aria-hidden="true">\u203a</span>
+        <span aria-current="page">${esc(city.label)}</span>
+      </nav>
+    </div>
+    <section class="fxlp-hero" aria-labelledby="fxlp-h1">
+      <div class="fxlp-wrap">
+        <div class="fxlp-hero-copy">
+          <div class="fxlp-eyebrow"><span class="fxlp-eyebrow-dot" aria-hidden="true"></span>
+            TARIFS ${svc.label.toUpperCase()} \u00b7 ${city.label.toUpperCase()} \u00b7 2026
+          </div>
+          <h1 id="fxlp-h1" class="fxlp-h1">${h1}</h1>
+          <p class="fxlp-lead">Fourchettes indicatives pour les interventions ${esc(svc.label_adj)} \u00e0 ${esc(city.label)} en 2026. Le tarif d\u00e9finitif est confirm\u00e9 avec l'artisan avant l'intervention.</p>
+          <div class="fxlp-chips" role="list">
+            <span class="fxlp-chip fxlp-chip--city" role="listitem">\uD83D\uDCCD ${esc(city.label)}</span>
+            <span class="fxlp-chip fxlp-chip--svc"  role="listitem">${svc.icon} ${esc(svc.label)}</span>
+            <span class="fxlp-chip fxlp-chip--pay"  role="listitem">\u2713 Paiement apr\u00e8s intervention</span>
+          </div>
+          <p class="fxlp-note-price">Le tarif d\u00e9finitif est confirm\u00e9 avec l'artisan avant l'intervention.</p>
+          <div class="fxlp-cta-group">
+            <button class="fxlp-btn-primary" type="button" data-open-request-form="true" data-request-mode="default">
+              D\u00e9crire mon besoin \u00e0 ${esc(city.label)}
+            </button>
+            <a href="#fxlp-artisans" id="fxlp-scroll-artisans" class="fxlp-btn-secondary">
+              Voir les artisans \u00e0 ${esc(city.label)} \u2193
+            </a>
+          </div>
         </div>
-      </section>
-
-      <section class="seo-section">
-        <h2>Questions fréquentes — Prix ${esc(svc.label)} à ${esc(city.label)}</h2>
-        ${faqHtml}
-      </section>
+      </div>
+    </section>
+    <hr class="fxlp-divider">
+    <section class="fxlp-section fxlp-section--tinted" aria-labelledby="fxlp-price-title">
+      <div class="fxlp-wrap">
+        <span class="fxlp-section-label">TARIFS INDICATIFS 2026</span>
+        <h2 id="fxlp-price-title" class="fxlp-section-title">Fourchettes de prix \u2014 ${esc(svc.label)} \u00e0 ${esc(city.label)}</h2>
+        <p class="fxlp-section-sub">R\u00e9gion de ${esc(city.region)}. Tarifs fourniture non incluse sauf mention contraire.</p>
+        <div class="fxlp-price-grid" role="list">${priceCardsHtml}
+        </div>
+        <p class="fxlp-price-disclaimer">Fourchettes indicatives \u2014 le tarif d\u00e9finitif est \u00e9tabli par l'artisan selon l'\u00e9tat des lieux. <a href="#fxlp-faq" class="fxlp-inline-link">En savoir plus</a></p>
+      </div>
+    </section>
+    <hr class="fxlp-divider">
+    <section class="fxlp-section" aria-labelledby="fxlp-factors-title">
+      <div class="fxlp-wrap">
+        <span class="fxlp-section-label">CE QUI INFLUENCE LE PRIX</span>
+        <h2 id="fxlp-factors-title" class="fxlp-section-title">Facteurs qui influencent le co\u00fbt</h2>
+        <div class="fxlp-factors-list">${factorsHtml}
+        </div>
+      </div>
+    </section>
+    <hr class="fxlp-divider">
+    <section id="fxlp-artisans" class="fxlp-section" aria-labelledby="fxlp-art-title">
+      <div class="fxlp-wrap">
+        <span class="fxlp-section-label">ARTISANS R\u00c9F\u00c9RENC\u00c9S</span>
+        <h2 id="fxlp-art-title" class="fxlp-section-title">Artisans ${esc(svc.label_adj)} r\u00e9f\u00e9renc\u00e9s \u00e0 ${esc(city.label)}</h2>
+        <p class="fxlp-section-sub">Profils r\u00e9f\u00e9renc\u00e9s sur FIXEO. Paiement apr\u00e8s intervention.</p>
+        <div class="fxlp-artisan-grid">
+          <div id="fxlp-artisan-grid" class="fxlp-artisan-loading" role="list"
+               data-fxlp-city="${esc(city.label)}"
+               data-fxlp-service="${svcKey}"
+               data-fxlp-category="${esc(svcCat)}">
+            <div class="fxlp-skeleton" aria-hidden="true"></div>
+            <div class="fxlp-skeleton" aria-hidden="true"></div>
+            <div class="fxlp-skeleton" aria-hidden="true"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <hr class="fxlp-divider">
+    <section class="fxlp-how" aria-labelledby="fxlp-steps-title">
+      <div class="fxlp-wrap">
+        <span class="fxlp-section-label">EN 3 \u00c9TAPES</span>
+        <h2 id="fxlp-steps-title" class="fxlp-section-title">Trouver un artisan \u00e0 ${esc(city.label)} en 3 \u00e9tapes</h2>
+        <div class="fxlp-steps" role="list">
+          <div class="fxlp-step" role="listitem">
+            <div class="fxlp-step-num" aria-hidden="true">1</div>
+            <h3 class="fxlp-step-title">D\u00e9crivez votre besoin</h3>
+            <p class="fxlp-step-desc">Votre ville et le service sont d\u00e9j\u00e0 s\u00e9lectionn\u00e9s \u2014 d\u00e9crivez simplement votre situation.</p>
+          </div>
+          <div class="fxlp-step" role="listitem">
+            <div class="fxlp-step-num" aria-hidden="true">2</div>
+            <h3 class="fxlp-step-title">FIXEO recherche la solution adapt\u00e9e</h3>
+            <p class="fxlp-step-desc">Votre demande est enregistr\u00e9e et transmise aux artisans r\u00e9f\u00e9renc\u00e9s correspondant \u00e0 votre secteur.</p>
+          </div>
+          <div class="fxlp-step" role="listitem">
+            <div class="fxlp-step-num" aria-hidden="true">3</div>
+            <h3 class="fxlp-step-title">Confirmez le tarif avec l'artisan</h3>
+            <p class="fxlp-step-desc">L'artisan vous communique le tarif d\u00e9finitif avant de commencer. Paiement apr\u00e8s intervention.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <div class="fxlp-wrap">
+      <div class="fxlp-cta-banner" role="complementary">
+        <p class="fxlp-cta-eyebrow">BESOIN D'UN ARTISAN\u00a0?</p>
+        <h2 class="fxlp-cta-title">Votre demande \u00e0 ${esc(city.label)}, en quelques secondes.</h2>
+        <p class="fxlp-cta-lead">Votre ville et le service sont d\u00e9j\u00e0 s\u00e9lectionn\u00e9s. D\u00e9crivez votre probl\u00e8me \u2014 c'est tout.</p>
+        <button class="fxlp-btn-primary" type="button" data-open-request-form="true" data-request-mode="default">
+          Continuer avec ${esc(svc.label)} \u00b7 ${esc(city.label)}
+        </button>
+        <p class="fxlp-cta-note">Aucun paiement maintenant \u00b7 Tarif confirm\u00e9 avant l'intervention</p>
+      </div>
+    </div>
+    <section id="fxlp-faq" class="fxlp-faq-section" aria-labelledby="fxlp-faq-title">
+      <div class="fxlp-wrap">
+        <span class="fxlp-section-label">FAQ</span>
+        <h2 id="fxlp-faq-title" class="fxlp-section-title">Questions fr\u00e9quentes \u2014 ${esc(svc.label)} \u00e0 ${esc(city.label)}</h2>
+        <div class="fxlp-faq-list" role="list">${faqHtml}
+        </div>
+      </div>
+    </section>
+    <div class="fxlp-wrap">
+      <nav class="seo-authority-links" aria-label="Pages li\u00e9es">
+        ${serviceLinkHtml}
+        <a href="/prix/${svcKey}/casablanca">Prix ${esc(svc.label)} Casablanca</a>
+        <span aria-hidden="true">\u00b7</span>
+        <a href="/prix/${svcKey}/marrakech">Prix ${esc(svc.label)} Marrakech</a>
+        <span aria-hidden="true">\u00b7</span>
+        <a href="/prix/${svcKey}/fes">Prix ${esc(svc.label)} F\u00e8s</a>
+      </nav>
     </div>
   </main>
-  ${footerHTML()}
+  <div id="fxf-mount"></div>
+  <script src="/js/fixeo-consent-v1.js?v=fcv1c"></script>
+  <script src="/js/fixeo-analytics-config.js?v=fac1b" defer></script>
+  <script src="/js/fixeo-analytics-bootstrap.js?v=fab1c" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="/js/supabase-client.js?v=sc2"></script>
+  <script src="/js/fixeo-heroes.js?v=fh3" defer></script>
+  <script src="/js/reservation.js?v=fxlp-res-v1" defer></script>
+  <script src="/js/cod-payment.js?v=fxlp-cod-v1" defer></script>
+  <script src="/js/reservation-v2.js?v=fxlp-res-v1" defer></script>
+  <script src="/js/fixeo-reservation-flagship-v1.js?v=fxresf-v11a" defer></script>
+  <script src="/js/fixeo-reservation-supabase-bridge.js?v=fxlp-sb-v1" defer></script>
+  <script src="/js/fx-request-flow-v4.js?v=fxrf4-v5a1" defer></script>
+  <script src="/js/fixeo-header-global.js?v=gfnav5"></script>
+  <script src="/js/header-unified.js?v=modalfix3"></script>
+  <script src="/js/fixeo-footer-global.js?v=gf4a" defer></script>
+  <script src="/js/fixeo-local-flagship-v1.js?v=fxlp-v12" defer></script>
 </body>
 </html>`;
 
@@ -733,7 +888,7 @@ function generatePricePages() {
       count++;
     }
   }
-  console.log(`✅ 1B Price pages: ${count} generated`);
+  console.log(`\u2705 1B Price pages: ${count} generated`);
   return urls;
 }
 
