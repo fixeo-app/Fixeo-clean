@@ -1,13 +1,97 @@
 /**
- * fixeo-local-flagship-v1.css — fxlp-v1
+ * fixeo-local-flagship-v1.css — fxlp-v1.1 (Safari Mobile P0 repair)
  * Local SEO price page flagship layout.
  * Namespace: fxlp-*
  * Pilot page: prix-plomberie-oujda.html
- * Does NOT override homepage, profile, RAFI, footer or reservation styles.
+ *
+ * P0 REPAIR NOTES (fxlp-v1.1):
+ *  BUG-1: html/body had no dark background — main.css not loaded on this page;
+ *          seo-pages-fixeo-ui.css (which styles body.seo-service-page) not linked.
+ *          FIX: explicit dark bg on html + body.seo-service-page + body below.
+ *  BUG-2: --fxlp-* tokens were scoped to .fxlp-wrap only; body/html had no tokens.
+ *          FIX: promote page-level tokens to html.fxlp-page context + hard values on html/body.
+ *  BUG-3: .seo-bg div has no CSS — its rules are in seo-pages-fixeo-ui.css (not loaded).
+ *          FIX: style .seo-bg inline here so the ambient overlay works.
+ *  BUG-4: pvc-card V3B rules scoped to #fixeo-homepage-vedette-grid .fhp-card —
+ *          our cards in #fxlp-artisan-grid get no V3B layout.
+ *          FIX: re-declare minimal pvc-* V3B layout scoped to #fxlp-artisan-grid.
+ *  BUG-5: .fxlp-price-disclaimer display:flex caused the inline link to appear
+ *          as a detached second column at narrow widths.
+ *          FIX: convert to block with inline ℹ icon.
+ *
+ * Does NOT override homepage, profile, RAFI, footer, or reservation styles.
+ * Does NOT modify any frozen engine file.
  */
 
-/* ── Design tokens (local scope — do not redeclare in :root to avoid bleed) */
-.fxlp-wrap {
+/* ══════════════════════════════════════════════════════════════
+   LAYER 0 — PAGE-LEVEL DARK CANVAS (BUG-1 + BUG-2 fix)
+   Explicit dark background on html + body so the page never renders white.
+   Mirrors the gradient from main.css + seo-pages-fixeo-ui.css
+   but scoped to the classes present on this page only.
+══════════════════════════════════════════════════════════════ */
+
+html {
+  scroll-behavior: smooth;
+  background: #080b12;            /* failsafe dark fill */
+  min-height: 100%;
+}
+
+/* body.seo-service-page is the class on this page's <body>.
+   This rule mirrors what seo-pages-fixeo-ui.css would have set.
+   Specificity: 0,1,1 — overrides any browser default. */
+body.seo-service-page,
+body {
+  min-height: 100vh;
+  font-family: 'Cairo', 'Tajawal', 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #eaeff8;
+  background:
+    radial-gradient(circle at 15% 10%, rgba(131,58,180,.18), transparent 32%),
+    radial-gradient(circle at 85% 8%,  rgba(255,107,61,.12), transparent 28%),
+    linear-gradient(180deg, #080b12 0%, #0d1220 52%, #080f1a 100%);
+  overflow-x: hidden;
+}
+
+/* Reset any browser-default margin/padding that could create white gutters */
+body.seo-service-page {
+  margin: 0;
+  padding: 0;
+}
+
+/* BUG-3 fix: .seo-bg ambient overlay (was styled only in seo-pages-fixeo-ui.css) */
+.seo-bg,
+.bg-animated {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: .55;
+  z-index: 0;
+  background:
+    radial-gradient(circle at 14% 18%, rgba(131,58,180,.18), transparent 28%),
+    radial-gradient(circle at 86% 9%,  rgba(255,107,61,.13), transparent 22%);
+}
+
+/* Ensure main content sits above fixed overlay */
+body.seo-service-page > nav,
+body.seo-service-page > main,
+body.seo-service-page > div#fxf-mount,
+body.seo-service-page > div[id="fxlp-rafi-context"] {
+  position: relative;
+  z-index: 1;
+}
+
+/* Global resets inherited from main.css — prevent serif fallback on Safari */
+a  { color: inherit; text-decoration: none; }
+img { max-width: 100%; height: auto; display: block; }
+button { cursor: pointer; border: none; background: none; font-family: inherit; }
+ul, ol { list-style: none; }
+input, textarea, select { font-family: inherit; }
+*, *::before, *::after { box-sizing: border-box; }
+
+/* ── Design tokens (promoted to html scope for full cascade coverage) ─ */
+html {
   --fxlp-bg:         #080b12;
   --fxlp-surface:    #0f1520;
   --fxlp-surface-2:  #141c2e;
@@ -44,6 +128,14 @@
   z-index: 1;
 }
 @media (min-width: 640px) { .fxlp-wrap { padding: 0 20px; } }
+
+/* main must not collapse or add white bg */
+main#main-content {
+  display: block;
+  background: transparent;
+  position: relative;
+  z-index: 1;
+}
 
 /* ── Breadcrumbs ────────────────────────────────────────────── */
 .fxlp-breadcrumbs {
@@ -93,11 +185,13 @@
   font-size: clamp(1.7rem, 5.5vw, 2.6rem);
   font-weight: 900; letter-spacing: -.035em; line-height: 1.10;
   color: var(--fxlp-text); margin: 0 0 16px;
+  font-family: 'Cairo', 'Tajawal', 'Inter', system-ui, -apple-system, sans-serif;
 }
 .fxlp-h1-em {
   font-style: normal;
   background: var(--fxlp-grad);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
@@ -138,10 +232,12 @@
   border-radius: var(--fxlp-r-xl); border: none; cursor: pointer;
   box-shadow: 0 4px 24px rgba(255,107,61,.28);
   transition: transform .22s var(--fxlp-spring), box-shadow .22s;
-  white-space: nowrap; font-family: inherit;
+  white-space: nowrap; font-family: 'Cairo', 'Tajawal', 'Inter', system-ui, sans-serif;
   min-height: 48px;
+  -webkit-appearance: none;
 }
 .fxlp-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(255,107,61,.38); }
+
 .fxlp-btn-secondary {
   display: inline-flex; align-items: center; gap: 6px;
   border: 1.5px solid var(--fxlp-border-glow); color: var(--fxlp-orange);
@@ -150,6 +246,7 @@
   transition: background .2s, transform .2s;
   white-space: nowrap; text-decoration: none;
   min-height: 48px;
+  background: transparent;
 }
 .fxlp-btn-secondary:hover { background: var(--fxlp-orange-g); transform: translateY(-1px); }
 
@@ -158,7 +255,7 @@
   position: relative;
   border-radius: var(--fxlp-r-xl);
   border: 1.5px solid rgba(255,107,61,.18);
-  background: linear-gradient(155deg, var(--fxlp-surface-2) 0%, var(--fxlp-surface-3) 100%);
+  background: linear-gradient(155deg, #141c2e 0%, #1a2240 100%);
   min-height: 240px;
   display: flex; flex-direction: column;
   align-items: center; justify-content: flex-end;
@@ -174,6 +271,7 @@
   position: absolute; top: 12px; left: 12px; z-index: 2;
   display: flex; align-items: center; gap: 4px;
   background: rgba(8,11,18,.8); border: 1px solid rgba(45,212,191,.25);
+  -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
   border-radius: 99px; padding: 4px 10px;
   font-size: .7rem; font-weight: 700; color: var(--fxlp-teal-s);
@@ -182,6 +280,7 @@
   position: absolute; top: 12px; right: 12px; z-index: 2;
   display: flex; align-items: center; gap: 4px;
   background: rgba(8,11,18,.8); border: 1px solid rgba(255,107,61,.22);
+  -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
   border-radius: 99px; padding: 4px 10px;
   font-size: .7rem; font-weight: 700; color: var(--fxlp-orange-s);
@@ -201,6 +300,7 @@
 .fxlp-hero-badge {
   position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%);
   background: rgba(8,11,18,.88); border: 1px solid var(--fxlp-border-h);
+  -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
   border-radius: 99px; padding: 5px 13px;
   display: flex; align-items: center; gap: 5px;
@@ -211,13 +311,14 @@
   width: 6px; height: 6px; border-radius: 50%; background: var(--fxlp-teal);
   animation: fxlp-pulse 2.4s ease-in-out infinite;
 }
-/* No hero image overflow on mobile */
 @media (max-width: 799px) { .fxlp-hero-avatar { min-height: 200px; } }
 
 /* ══════════════════════════════════════════════════════════════
    SECTION SHARED
+   Explicit color on every heading/paragraph to survive Safari
+   style inheritance without main.css.
 ══════════════════════════════════════════════════════════════ */
-.fxlp-section { padding: 32px 0; }
+.fxlp-section { padding: 32px 0; background: transparent; }
 .fxlp-section--tinted {
   background: linear-gradient(180deg, transparent 0%, rgba(255,107,61,.02) 50%, transparent 100%);
 }
@@ -227,9 +328,12 @@
 }
 .fxlp-section-title {
   font-size: 1.28rem; font-weight: 800; letter-spacing: -.025em;
-  color: var(--fxlp-text); margin-bottom: 4px;
+  color: var(--fxlp-text); margin: 0 0 4px;
+  font-family: 'Cairo', 'Tajawal', 'Inter', system-ui, -apple-system, sans-serif;
 }
-.fxlp-section-sub { font-size: .87rem; color: var(--fxlp-muted); margin-bottom: 20px; }
+.fxlp-section-sub {
+  font-size: .87rem; color: var(--fxlp-muted); margin: 0 0 20px;
+}
 
 /* ══════════════════════════════════════════════════════════════
    §2 — PRICE CARDS
@@ -241,7 +345,7 @@
 @media (min-width: 900px) { .fxlp-price-grid { grid-template-columns: repeat(5, 1fr); } }
 
 .fxlp-price-card {
-  background: var(--fxlp-surface); border: 1px solid var(--fxlp-border);
+  background: #0f1520; border: 1px solid rgba(255,255,255,.07);
   border-radius: var(--fxlp-r-md); padding: 16px;
   display: flex; flex-direction: column; gap: 5px;
   position: relative; overflow: hidden;
@@ -251,19 +355,22 @@
   content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
   background: var(--fxlp-grad); opacity: 0; transition: opacity .2s;
 }
-.fxlp-price-card:hover { border-color: var(--fxlp-border-h); transform: translateY(-2px); }
+.fxlp-price-card:hover { border-color: rgba(255,255,255,.13); transform: translateY(-2px); }
 .fxlp-price-card:hover::after { opacity: 1; }
 
 .fxlp-price-card--urgent {
   border-color: rgba(245,83,166,.25);
-  background: linear-gradient(155deg, var(--fxlp-surface) 60%, rgba(245,83,166,.06) 100%);
+  background: linear-gradient(155deg, #0f1520 60%, rgba(245,83,166,.06) 100%);
 }
-.fxlp-price-card--urgent::after { opacity: 1; background: linear-gradient(90deg, var(--fxlp-pink), var(--fxlp-orange)); }
+.fxlp-price-card--urgent::after {
+  opacity: 1;
+  background: linear-gradient(90deg, var(--fxlp-pink), var(--fxlp-orange));
+}
 .fxlp-urgent-chip {
   display: inline-flex; align-items: center; gap: 3px;
   font-size: .63rem; font-weight: 700; padding: 2px 7px;
   background: rgba(245,83,166,.15); border: 1px solid rgba(245,83,166,.3);
-  border-radius: 99px; color: var(--fxlp-pink);
+  border-radius: 99px; color: #f553a6;
   text-transform: uppercase; letter-spacing: .07em;
   align-self: flex-start; margin-bottom: 2px;
 }
@@ -271,15 +378,20 @@
 @media (min-width: 900px) { .fxlp-price-card--wide { grid-column: span 1; } }
 
 .fxlp-pc-icon { font-size: 1.35rem; }
-.fxlp-pc-name { font-size: .85rem; font-weight: 700; color: var(--fxlp-text); line-height: 1.35; }
-.fxlp-pc-price { font-size: 1rem; font-weight: 800; color: var(--fxlp-green); margin-top: auto; padding-top: 5px; }
-.fxlp-pc-note { font-size: .7rem; color: var(--fxlp-dim); line-height: 1.4; }
+.fxlp-pc-name  { font-size: .85rem; font-weight: 700; color: #eaeff8; line-height: 1.35; }
+.fxlp-pc-price { font-size: 1rem; font-weight: 800; color: #4ade80; margin-top: auto; padding-top: 5px; }
+.fxlp-pc-note  { font-size: .7rem; color: #4a5a72; line-height: 1.4; }
 
+/* BUG-5 fix: was display:flex which broke narrow-mobile link layout.
+   Now block with clear visual structure. */
 .fxlp-price-disclaimer {
   margin-top: 13px; padding: 10px 13px;
-  background: rgba(255,255,255,.03); border: 1px solid var(--fxlp-border);
-  border-radius: var(--fxlp-r-sm); font-size: .75rem; color: var(--fxlp-muted);
-  display: flex; gap: 6px; align-items: flex-start; line-height: 1.55;
+  background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.07);
+  border-radius: var(--fxlp-r-sm); font-size: .75rem; color: #8896b0;
+  display: block; line-height: 1.65;
+}
+.fxlp-price-disclaimer > span[aria-hidden] {
+  margin-right: 4px;
 }
 .fxlp-inline-link { color: var(--fxlp-orange); text-decoration: none; }
 .fxlp-inline-link:hover { text-decoration: underline; }
@@ -288,64 +400,255 @@
    §3 — PRICE FACTORS (list)
 ══════════════════════════════════════════════════════════════ */
 .fxlp-factors-list {
-  border: 1px solid var(--fxlp-border); border-radius: var(--fxlp-r-lg); overflow: hidden;
+  border: 1px solid rgba(255,255,255,.07); border-radius: var(--fxlp-r-lg); overflow: hidden;
+  background: transparent;
 }
 .fxlp-factor-row {
   display: flex; gap: 14px; align-items: flex-start;
-  padding: 15px 18px; border-bottom: 1px solid var(--fxlp-border);
+  padding: 15px 18px; border-bottom: 1px solid rgba(255,255,255,.07);
   transition: background .18s;
 }
 .fxlp-factor-row:last-child { border-bottom: none; }
 .fxlp-factor-row:hover { background: rgba(255,255,255,.02); }
-.fxlp-factor-icon { font-size: 1.25rem; flex-shrink: 0; margin-top: 1px; width: 26px; text-align: center; }
-.fxlp-factor-title { font-size: .87rem; font-weight: 700; color: var(--fxlp-text); display: block; margin-bottom: 2px; }
-.fxlp-factor-desc { font-size: .79rem; color: var(--fxlp-muted); line-height: 1.55; margin: 0; }
+.fxlp-factor-icon {
+  font-size: 1.25rem; flex-shrink: 0; margin-top: 1px; width: 26px; text-align: center;
+}
+.fxlp-factor-title {
+  font-size: .87rem; font-weight: 700; color: #eaeff8; display: block; margin-bottom: 2px;
+}
+.fxlp-factor-desc { font-size: .79rem; color: #8896b0; line-height: 1.55; margin: 0; }
 
 /* ══════════════════════════════════════════════════════════════
    §4 — ARTISAN SECTION
-   Card container + skeleton + empty state
-   Real cards use canonical pvc-* DOM from fixeo-local-flagship-v1.js
-   — styled by existing artisan-card-conversion-v1.css + fixeo-artisan-card-premium-v2.css
+   BUG-4 fix: pvc-* V3B layout was scoped to #fixeo-homepage-vedette-grid.
+   We re-declare the critical layout rules scoped to #fxlp-artisan-grid.
+   This does NOT modify artisan-card-conversion-v1.css.
 ══════════════════════════════════════════════════════════════ */
 .fxlp-artisan-grid {
   display: grid; gap: 12px;
   grid-template-columns: 1fr;
-  /* mobile carousel behaviour */
-  overflow-x: auto; -webkit-overflow-scrolling: touch;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   scroll-snap-type: x mandatory;
-  padding-bottom: 4px; /* space for scrollbar */
+  padding-bottom: 4px;
 }
 @media (min-width: 580px) {
   .fxlp-artisan-grid {
     grid-template-columns: repeat(2, 1fr);
-    overflow-x: unset; scroll-snap-type: unset;
+    overflow-x: unset;
+    -webkit-overflow-scrolling: auto;
+    scroll-snap-type: none;
   }
 }
 @media (min-width: 900px) {
   .fxlp-artisan-grid { grid-template-columns: repeat(3, 1fr); }
 }
 
-/* Carousel snap on mobile */
 .fxlp-artisan-grid > * { scroll-snap-align: start; }
+
+/* ── pvc-card base in our grid context ──────────────────────── */
+#fxlp-artisan-grid .pvc-card,
+#fxlp-artisan-grid .fhp-card,
+#fxlp-artisan-grid .fxlp-art-card {
+  width: 100%;
+  min-width: 0;
+  display: flex !important;
+  flex-direction: column !important;
+  /* Explicit dark background — the pvc-card base uses rgba overlay which renders
+     as near-white on a white body. We force solid dark. */
+  background: #0f1520 !important;
+  border: 1px solid rgba(255,255,255,.09) !important;
+  border-radius: 16px !important;
+  overflow: hidden;
+  font-family: 'Cairo', 'Tajawal', 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+#fxlp-artisan-grid .pvc-card-header,
+#fxlp-artisan-grid .pvc-card-header-final {
+  display: flex !important;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 16px 16px 10px;
+}
+
+/* Avatar container */
+#fxlp-artisan-grid .pvc-avatar {
+  position: relative;
+  flex-shrink: 0;
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #141c2e;
+  border: 2px solid rgba(255,255,255,.1);
+}
+#fxlp-artisan-grid .pvc-avatar-img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+/* Avatar badge (emoji overlay) */
+#fxlp-artisan-grid .pvc-avatar-badge {
+  position: absolute;
+  bottom: -2px; right: -2px;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: #141c2e;
+  border: 1.5px solid rgba(255,255,255,.15);
+  display: flex; align-items: center; justify-content: center;
+  font-size: .7rem; line-height: 1;
+}
+/* Silhouette fallback */
+#fxlp-artisan-grid .pvc-avatar-silhouette {
+  display: block;
+  width: 100%; height: 100%;
+  background: linear-gradient(135deg, rgba(255,107,61,.25), rgba(245,83,166,.15));
+}
+
+/* Identity block */
+#fxlp-artisan-grid .pvc-identity,
+#fxlp-artisan-grid .pvc-identity-final {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+#fxlp-artisan-grid .pvc-name {
+  font-size: .93rem;
+  font-weight: 700;
+  color: #eaeff8 !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+}
+#fxlp-artisan-grid .pvc-line {
+  font-size: .75rem;
+  color: #8896b0 !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Description */
+#fxlp-artisan-grid .pvc-desc-v3b {
+  font-size: .80rem;
+  color: #8896b0 !important;
+  line-height: 1.55;
+  padding: 0 16px 10px;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Trust rows — V3B layout re-declared for our grid context */
+#fxlp-artisan-grid .pvc-trust-v3b {
+  display: flex !important;
+  flex-direction: column;
+  gap: 5px;
+  padding: 8px 16px;
+  border-top: 1px solid rgba(255,255,255,.06);
+}
+#fxlp-artisan-grid .pvc-trust-v3b-item {
+  display: flex !important;
+  align-items: center;
+  gap: 6px;
+  font-size: .72rem;
+  color: #8896b0 !important;
+  line-height: 1.3;
+}
+#fxlp-artisan-grid .pvc-trust-v3b-icon {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  color: #4ade80;
+  width: 14px; height: 14px;
+}
+#fxlp-artisan-grid .pvc-trust-v3b-icon svg { width: 14px; height: 14px; }
+
+/* Action area */
+#fxlp-artisan-grid .pvc-action-v3b {
+  display: flex !important;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 16px 16px;
+  margin-top: auto;
+}
+#fxlp-artisan-grid .pvc-divider,
+#fxlp-artisan-grid .pvc-divider-v3b {
+  border: none;
+  border-top: 1px solid rgba(255,255,255,.07);
+  margin: 0 0 2px;
+}
+#fxlp-artisan-grid .pvc-price-block,
+#fxlp-artisan-grid .pvc-price-v3b {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+#fxlp-artisan-grid .pvc-price-amount {
+  font-size: .92rem;
+  font-weight: 700;
+  color: #4ade80 !important;
+}
+#fxlp-artisan-grid .pvc-price-from {
+  font-size: .68rem;
+  color: #4a5a72 !important;
+}
+
+/* Reserve button */
+#fxlp-artisan-grid .pvc-btn-reserve-v2,
+#fxlp-artisan-grid .fhp-btn-reserve,
+#fxlp-artisan-grid .pvc-btn-v3b,
+#fxlp-artisan-grid .fxlp-btn-reserve {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 11px 16px;
+  min-height: 44px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  font-size: .84rem;
+  font-weight: 700;
+  color: #fff !important;
+  background: linear-gradient(135deg, #ff6b3d 0%, #f553a6 100%) !important;
+  font-family: 'Cairo', 'Tajawal', 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-appearance: none;
+  transition: opacity .18s, transform .18s;
+  box-shadow: 0 3px 14px rgba(255,107,61,.24);
+}
+#fxlp-artisan-grid .fxlp-btn-reserve:hover { opacity: .88; transform: translateY(-1px); }
+
+/* Profile link */
+#fxlp-artisan-grid .pvc-profile-link,
+#fxlp-artisan-grid .fhp-btn-profile,
+#fxlp-artisan-grid .pvc-profile-v3b {
+  display: block !important;
+  text-align: center;
+  font-size: .76rem;
+  color: rgba(255,255,255,.55) !important;
+  text-decoration: none;
+  padding: 4px 0;
+  transition: color .18s;
+  min-height: 32px;
+  line-height: 32px;
+}
+#fxlp-artisan-grid .pvc-profile-link:hover { color: var(--fxlp-orange) !important; }
 
 /* Skeleton loaders */
 .fxlp-artisan-loading .fxlp-skeleton {
-  background: var(--fxlp-surface);
-  border: 1px solid var(--fxlp-border);
+  background: #0f1520;
+  border: 1px solid rgba(255,255,255,.07);
   border-radius: var(--fxlp-r-md);
   height: 220px;
   animation: fxlp-shimmer 1.4s infinite linear;
 }
-@keyframes fxlp-shimmer {
-  0%   { opacity: .4; }
-  50%  { opacity: .7; }
-  100% { opacity: .4; }
-}
+@keyframes fxlp-shimmer { 0%,100%{opacity:.4} 50%{opacity:.7} }
 @media (prefers-reduced-motion: reduce) { .fxlp-skeleton { animation: none; opacity: .5; } }
-
-/* Ensure canonical pvc-card width in grid */
-.fxlp-artisan-grid .pvc-card,
-.fxlp-artisan-grid .fhp-card { width: 100%; min-width: 0; }
 
 /* Empty state */
 .fxlp-empty-state {
@@ -353,12 +656,12 @@
   padding: 36px 20px; text-align: center;
   border: 1.5px dashed rgba(255,255,255,.1);
   border-radius: var(--fxlp-r-lg);
-  background: var(--fxlp-surface);
+  background: #0f1520;
 }
 .fxlp-empty-icon { font-size: 2rem; opacity: .35; margin-bottom: 10px; display: block; }
-.fxlp-empty-title { font-size: .95rem; font-weight: 700; margin-bottom: 6px; color: var(--fxlp-text); }
+.fxlp-empty-title { font-size: .95rem; font-weight: 700; margin-bottom: 6px; color: #eaeff8; }
 .fxlp-empty-desc {
-  font-size: .83rem; color: var(--fxlp-muted); max-width: 320px;
+  font-size: .83rem; color: #8896b0; max-width: 320px;
   margin: 0 auto 16px; line-height: 1.55;
 }
 
@@ -367,7 +670,8 @@
 ══════════════════════════════════════════════════════════════ */
 .fxlp-how {
   padding: 32px 0;
-  border-top: 1px solid var(--fxlp-border);
+  border-top: 1px solid rgba(255,255,255,.07);
+  background: transparent;
 }
 .fxlp-steps {
   display: grid; gap: 0;
@@ -375,23 +679,24 @@
 }
 @media (min-width: 640px) {
   .fxlp-steps { grid-template-columns: repeat(3, 1fr); }
-  .fxlp-step { border-right: 1px solid var(--fxlp-border); }
+  .fxlp-step { border-right: 1px solid rgba(255,255,255,.07); }
   .fxlp-step:last-child { border-right: none; }
 }
 .fxlp-step {
   padding: 22px 18px; display: flex; flex-direction: column; gap: 8px;
-  border-bottom: 1px solid var(--fxlp-border);
+  border-bottom: 1px solid rgba(255,255,255,.07);
+  background: transparent;
 }
 @media (min-width: 640px) { .fxlp-step { border-bottom: none; } }
 .fxlp-step:last-child { border-bottom: none; }
 .fxlp-step-num {
   width: 32px; height: 32px; border-radius: 50%;
-  background: var(--fxlp-grad);
+  background: linear-gradient(135deg,#ff6b3d 0%,#f553a6 100%);
   display: flex; align-items: center; justify-content: center;
   font-size: .8rem; font-weight: 800; color: #fff; flex-shrink: 0;
 }
-.fxlp-step-title { font-size: .90rem; font-weight: 700; color: var(--fxlp-text); }
-.fxlp-step-desc  { font-size: .79rem; color: var(--fxlp-muted); line-height: 1.55; margin: 0; }
+.fxlp-step-title { font-size: .90rem; font-weight: 700; color: #eaeff8; }
+.fxlp-step-desc  { font-size: .79rem; color: #8896b0; line-height: 1.55; margin: 0; }
 
 /* ══════════════════════════════════════════════════════════════
    §6 — FINAL CTA BANNER
@@ -400,7 +705,7 @@
   margin: 8px 0 36px;
   position: relative; border-radius: var(--fxlp-r-xl); overflow: hidden;
   padding: 40px 24px;
-  background: linear-gradient(145deg, var(--fxlp-surface-2) 0%, var(--fxlp-surface-3) 100%);
+  background: linear-gradient(145deg, #141c2e 0%, #1a2240 100%);
   border: 1.5px solid rgba(255,107,61,.18);
   text-align: center;
 }
@@ -410,37 +715,36 @@
 }
 .fxlp-cta-eyebrow {
   font-size: .67rem; font-weight: 700; letter-spacing: .13em; text-transform: uppercase;
-  color: var(--fxlp-orange); margin-bottom: 8px;
+  color: #ff6b3d; margin-bottom: 8px;
 }
 .fxlp-cta-title {
   font-size: clamp(1.25rem, 4vw, 1.8rem);
-  font-weight: 900; letter-spacing: -.03em; color: var(--fxlp-text); margin-bottom: 9px;
+  font-weight: 900; letter-spacing: -.03em; color: #eaeff8; margin-bottom: 9px;
+  font-family: 'Cairo', 'Tajawal', 'Inter', system-ui, -apple-system, sans-serif;
 }
 .fxlp-cta-lead {
-  font-size: .90rem; color: var(--fxlp-muted); max-width: 360px;
+  font-size: .90rem; color: #8896b0; max-width: 360px;
   margin: 0 auto 22px; line-height: 1.6;
 }
 .fxlp-cta-banner .fxlp-btn-primary { display: inline-flex; margin: 0 auto; }
-.fxlp-cta-note {
-  margin-top: 12px; font-size: .73rem; color: var(--fxlp-dim);
-}
+.fxlp-cta-note { margin-top: 12px; font-size: .73rem; color: #4a5a72; }
 
 /* ══════════════════════════════════════════════════════════════
    §7 — FAQ
 ══════════════════════════════════════════════════════════════ */
-.fxlp-faq-section { padding: 32px 0 16px; }
+.fxlp-faq-section { padding: 32px 0 16px; background: transparent; }
 .fxlp-faq-list { display: flex; flex-direction: column; gap: 7px; }
 .fxlp-faq-item {
-  border: 1px solid var(--fxlp-border); border-radius: var(--fxlp-r-md);
-  background: var(--fxlp-surface); overflow: hidden;
+  border: 1px solid rgba(255,255,255,.07); border-radius: var(--fxlp-r-md);
+  background: #0f1520; overflow: hidden;
   transition: border-color .2s;
 }
 .fxlp-faq-item[open] { border-color: rgba(255,107,61,.2); }
 .fxlp-faq-summary {
   display: flex; align-items: center; justify-content: space-between; gap: 12px;
   padding: 14px 17px; cursor: pointer; list-style: none;
-  font-size: .88rem; font-weight: 600; color: var(--fxlp-text);
-  user-select: none; -webkit-user-select: none;
+  font-size: .88rem; font-weight: 600; color: #eaeff8;
+  -webkit-user-select: none; user-select: none;
   min-height: 52px;
 }
 .fxlp-faq-summary::-webkit-details-marker { display: none; }
@@ -448,13 +752,16 @@
   flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%;
   background: rgba(255,255,255,.06);
   display: flex; align-items: center; justify-content: center;
-  font-size: .65rem; color: var(--fxlp-orange);
-  transition: transform .28s var(--fxlp-spring), background .2s;
+  font-size: .65rem; color: #ff6b3d;
+  transition: transform .28s cubic-bezier(.22,1,.36,1), background .2s;
 }
-details.fxlp-faq-item[open] .fxlp-faq-chevron { transform: rotate(90deg); background: var(--fxlp-orange-g); }
+details.fxlp-faq-item[open] .fxlp-faq-chevron {
+  transform: rotate(90deg);
+  background: rgba(255,107,61,.16);
+}
 .fxlp-faq-answer {
   padding: 0 17px 14px; font-size: .84rem;
-  color: var(--fxlp-muted); line-height: 1.65;
+  color: #8896b0; line-height: 1.65;
 }
 
 /* ── SEO authority links ────────────────────────────────────── */
@@ -462,12 +769,53 @@ details.fxlp-faq-item[open] .fxlp-faq-chevron { transform: rotate(90deg); backgr
   display: flex; flex-wrap: wrap; gap: 8px;
   padding: 24px 0 32px; font-size: .8rem;
 }
-.seo-authority-links a { color: var(--fxlp-dim); transition: color .18s; }
-.seo-authority-links a:hover { color: var(--fxlp-orange); }
+.seo-authority-links a { color: #4a5a72; transition: color .18s; }
+.seo-authority-links a:hover { color: #ff6b3d; }
 
-/* Safe area for mobile FABs (reserved from fixeo-footer-global) */
+/* Safe area for mobile FABs */
 @media (max-width: 768px) {
   .seo-authority-links {
     padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px));
   }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   SAFARI / WEBKIT EXPLICIT OVERRIDES
+   WebKit sometimes ignores CSS custom properties via var() when
+   the property is first encountered inside a deeply nested shadow
+   or before :root is fully parsed. Hard-coded values prevent this.
+══════════════════════════════════════════════════════════════ */
+
+/* Ensure no element on this page ever gets a white background unless we set it */
+body.seo-service-page *:not(.fxlp-btn-primary):not(.fxlp-btn-secondary):not(img):not(svg):not(picture):not(source) {
+  /* Do not set background here — too broad. Use targeted rules above instead. */
+}
+
+/* Safari: -webkit-text-fill-color from gradient clips must be balanced */
+.fxlp-h1-em {
+  display: inline;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent; /* fallback for non-supporting engines */
+}
+
+/* Safari: ensure scroll-snap on mobile doesn't cause blank-card bug */
+@media (max-width: 579px) {
+  .fxlp-artisan-grid {
+    grid-template-columns: calc(100vw - 56px);
+    padding-right: 16px;
+  }
+  .fxlp-artisan-grid > * {
+    min-width: 0;
+    max-width: 100%;
+  }
+}
+
+/* Safari: backdrop-filter needs -webkit- prefix for iOS <15 */
+.fxlp-hero-city-tag,
+.fxlp-hero-svc-tag,
+.fxlp-hero-badge {
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
 }
