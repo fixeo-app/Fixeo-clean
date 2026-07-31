@@ -311,3 +311,125 @@ body.seo-service-page {
   .seo-actions { flex-direction: column; }
   .seo-btn-link { width: 100%; }
 }
+
+/* ══════════════════════════════════════════════════════════
+   FXLOCAL-SEO-PAGES-SHARED-RECOVERY — Missing structural classes
+   Added: 2026-07-31 | fxlocal-seo-v1
+   All classes below were used by generated pages but defined nowhere.
+   ══════════════════════════════════════════════════════════ */
+
+/* ── Outer page shell ── */
+.seo-page-wrap {
+  position: relative;
+  z-index: 1;
+  width: min(1180px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 28px 0 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ── Accessibility skip link ── */
+.skip-link {
+  position: absolute;
+  top: -100vh;
+  left: 0;
+  z-index: 9999;
+  background: #E1306C;
+  color: #fff;
+  font-weight: 700;
+  font-size: .9rem;
+  padding: 10px 20px;
+  border-radius: 0 0 8px 0;
+  text-decoration: none;
+  transition: top .12s ease;
+}
+.skip-link:focus {
+  top: 0;
+  outline: 3px solid #fff;
+  outline-offset: 2px;
+}
+
+/* ── City hero variant ── */
+.seo-city-hero {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ── City hero media column ── */
+.seo-city-media {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.seo-city-media .hero-card {
+  width: 100%;
+  max-width: 320px;
+  aspect-ratio: 4/3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.09);
+  border-radius: 18px;
+  overflow: hidden;
+  position: relative;
+}
+/* When no image is available, show service icon */
+.seo-city-media .hero-card::after {
+  content: attr(data-icon);
+  font-size: 4rem;
+  opacity: .6;
+}
+.seo-city-media .hero-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+/* Hide broken img elements — fallback handled by onerror in template */
+.seo-city-media .hero-card img[data-broken="1"] {
+  display: none;
+}
+
+/* ── City stats row (3-col grid below hero) ── */
+.seo-city-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin-top: 8px;
+}
+
+/* ── Responsive: mobile-first adjustments ── */
+@media (max-width: 480px) {
+  .seo-page-wrap {
+    width: calc(100% - 24px);
+    padding: 16px 0 48px;
+    gap: 14px;
+  }
+  .seo-city-stats {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .seo-city-media .hero-card {
+    max-width: 100%;
+  }
+}
+
+/* ── 320px overflow safeguard ── */
+@media (max-width: 340px) {
+  .seo-page-wrap {
+    width: calc(100% - 16px);
+  }
+  .seo-city-stats {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .skip-link { transition: none; }
+}
+/* end fxlocal-seo-v1 */

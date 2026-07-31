@@ -328,7 +328,7 @@ const QUARTIER_SERVICES = {
 function navHTML() {
   return `<nav class="navbar" role="navigation" aria-label="Navigation principale">
     <a href="/index.html" class="navbar-brand logo-wrap" aria-label="Fixeo — Accueil">
-      <img src="/img/fixeo-logo.webp" alt="Fixeo" class="fixeo-logo-img" width="120" height="32">
+      <img src="/img/logo.png" alt="Fixeo" class="fixeo-logo-img" width="120" height="32">
     </a>
     <div class="nav-links">
       <a href="/index.html" class="nav-link">Accueil</a>
@@ -343,7 +343,7 @@ function footerHTML() {
   return `<footer class="seo-footer">
     <div class="seo-footer-inner">
       <div class="footer-brand">
-        <a href="/index.html"><img src="/img/fixeo-logo.webp" alt="Fixeo" height="28"></a>
+        <a href="/index.html"><img src="/img/logo.png" alt="Fixeo" height="28"></a>
         <p>La plateforme de mise en relation avec des artisans vérifiés au Maroc.</p>
       </div>
       <div class="footer-links">
@@ -370,7 +370,7 @@ function footerHTML() {
       </div>
     </div>
     <div class="footer-bottom">
-      <p>© 2025 Fixeo — Tous droits réservés · <a href="https://fixeo.ma">fixeo.ma</a></p>
+      <p>© 2026 Fixeo — Tous droits réservés · <a href="https://fixeo.ma">fixeo.ma</a></p>
     </div>
   </footer>`;
 }
@@ -410,7 +410,7 @@ function generateProblemPages() {
         "@type": "LocalBusiness",
         "name": "Fixeo",
         "url": "https://www.fixeo.ma",
-        "logo": "https://www.fixeo.ma/img/fixeo-logo.webp",
+        "logo": "https://www.fixeo.ma/img/logo.png",
         "description": `Artisans disponibles pour ${prob.label} à ${city.label}`,
         "areaServed": { "@type": "City", "name": city.label },
         "address": { "@type": "PostalAddress", "addressLocality": city.label, "addressCountry": "MA" },
@@ -451,8 +451,10 @@ function generateProblemPages() {
   <!-- Schema.org -->
   <script type="application/ld+json">${JSON.stringify(localBusinessLD)}</script>
   <script type="application/ld+json">${JSON.stringify(breadcrumbLD)}</script>
+  <link rel="stylesheet" href="/css/variables.css">
   <link rel="stylesheet" href="/css/seo-lp-v1.css">
-  <link rel="icon" href="/img/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="/css/seo-pages-fixeo-ui.css">
+  <link rel="icon" href="/img/favicon.png" type="image/png">
   <style>
     .problem-steps{display:flex;gap:1.5rem;flex-wrap:wrap;margin:2rem 0}
     .problem-step{flex:1;min-width:180px;background:rgba(255,255,255,.06);border-radius:12px;padding:1.5rem;text-align:center}
@@ -509,7 +511,7 @@ function generateProblemPages() {
       <section class="seo-section">
         <div class="urgency-box">
           <h2>🕐 Disponible 24h/7 à ${esc(city.label)}</h2>
-          <p>Nos artisans couvrent ${esc(city.label)} et ses environs 7 jours sur 7, 24 heures sur 24, y compris les jours fériés. Les urgences sont prises en charge en priorité avec un temps de réponse moyen inférieur à 60 minutes dans les zones centrales.</p>
+          <p>Nos artisans couvrent ${esc(city.label)} et ses environs 7 jours sur 7, 24 heures sur 24, y compris les jours fériés. Le délai d'intervention dépend de la disponibilité de l'artisan et du secteur.</p>
           <a class="seo-btn-link primary" href="/index.html#services" onclick="window.localStorage.setItem('fixeo_open_modal','1')">
             Demander une intervention maintenant →
           </a>
@@ -531,7 +533,7 @@ function generateProblemPages() {
           <div class="problem-step">
             <div class="step-num">✅</div>
             <h3>Artisans vérifiés</h3>
-            <p>Chaque artisan est vérifié : identité, qualifications, références clients. Aucun inconnu.</p>
+            <p>Les artisans sont référencés et évalués sur FIXEO.</p>
           </div>
           <div class="problem-step">
             <div class="step-num">💰</div>
@@ -541,7 +543,7 @@ function generateProblemPages() {
           <div class="problem-step">
             <div class="step-num">🛡️</div>
             <h3>Paiement sécurisé</h3>
-            <p>Paiement uniquement après intervention réalisée. Votre argent n'est débité qu'en cas de satisfaction.</p>
+            <p>Paiement après intervention.</p>
           </div>
         </div>
       </section>
@@ -573,9 +575,9 @@ function generatePricePages() {
       const filename = `prix-${svcKey}-${city.slug}.html`;
       const canonicalPath = `/prix/${svcKey}/${city.slug}`;
       const canonicalUrl = `https://www.fixeo.ma${canonicalPath}`;
-      const title = esc(`Prix ${svc.label} à ${city.label} 2025 : tarifs et devis | Fixeo`);
-      const metaDesc = esc(`Tarifs ${svc.label_adj} à ${city.label} en 2025 : fourchettes de prix réelles, tableau comparatif et devis gratuit via Fixeo. Artisans vérifiés disponibles maintenant.`);
-      const h1 = esc(`Prix ${svc.label} à ${city.label} 2025`);
+      const title = esc(`Prix ${svc.label} à ${city.label} 2026 : tarifs et devis | Fixeo`);
+      const metaDesc = esc(`Tarifs ${svc.label_adj} à ${city.label} en 2026 : fourchettes de prix et devis gratuit via Fixeo. Artisans référencés disponibles maintenant.`);
+      const h1 = esc(`Prix ${svc.label} à ${city.label} 2026`);
       const faqItems = svc.faq(city);
 
       const pricingRows = svc.tiers.map(t =>
@@ -647,8 +649,10 @@ function generatePricePages() {
   <script type="application/ld+json">${JSON.stringify(localBusinessLD)}</script>
   <script type="application/ld+json">${JSON.stringify(faqLD)}</script>
   <script type="application/ld+json">${JSON.stringify(breadcrumbLD)}</script>
+  <link rel="stylesheet" href="/css/variables.css">
   <link rel="stylesheet" href="/css/seo-lp-v1.css">
-  <link rel="icon" href="/img/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="/css/seo-pages-fixeo-ui.css">
+  <link rel="icon" href="/img/favicon.png" type="image/png">
   <style>
     .price-table{width:100%;border-collapse:collapse;margin:1.5rem 0;border-radius:10px;overflow:hidden}
     .price-table th{background:rgba(245,158,11,.15);color:#f59e0b;padding:.85rem 1rem;text-align:left;font-size:.9rem;text-transform:uppercase;letter-spacing:.05em}
@@ -677,7 +681,7 @@ function generatePricePages() {
         </nav>
         <span style="font-size:3rem;display:block;margin-bottom:1rem">${svc.icon}</span>
         <h1>${h1}</h1>
-        <p class="seo-lead">Découvrez les fourchettes de prix réelles pour les interventions ${esc(svc.label_adj)} à ${esc(city.label)} en 2025. Tarifs indicatifs basés sur les missions Fixeo dans la région de ${esc(city.region)}.</p>
+        <p class="seo-lead">Découvrez les fourchettes de prix réelles pour les interventions ${esc(svc.label_adj)} à ${esc(city.label)} en 2026. Fourchettes indicatives proposées à titre de référence pour la région de ${esc(city.region)}.</p>
       </section>
 
       <section class="seo-section">
@@ -686,7 +690,7 @@ function generatePricePages() {
           <thead><tr><th>Type d'intervention</th><th>Fourchette de prix</th></tr></thead>
           <tbody>${pricingRows}</tbody>
         </table>
-        <p class="disclaimer-note">* Tarifs indicatifs basés sur les missions Fixeo à ${esc(city.label)}. Prix fourniture non incluse sauf mention contraire. Devis gratuit avant engagement.</p>
+        <p class="disclaimer-note">* Fourchettes indicatives proposées à titre de référence. Prix fourniture non incluse sauf mention contraire. Devis gratuit avant engagement.</p>
         ${serviceLinkHtml}
       </section>
 
@@ -700,12 +704,12 @@ function generatePricePages() {
             <tr><td>Jours fériés</td><td style="color:#f87171;font-weight:600">+50 à 70%</td></tr>
           </tbody>
         </table>
-        <p class="disclaimer-note">Ces majorations doivent être annoncées dans le devis initial. Avec Fixeo, les artisans sont tenus de mentionner les majorations avant toute intervention.</p>
+        <p class="disclaimer-note">Le tarif définitif et les éventuelles majorations sont à confirmer avec l'artisan avant l'intervention.</p>
       </section>
 
       <section class="seo-section">
         <h2>Obtenez un devis gratuit à ${esc(city.label)}</h2>
-        <p>Décrivez votre projet ou problème en quelques mots — Fixeo vous met en contact avec un artisan ${esc(svc.label_adj)} disponible à ${esc(city.label)} qui vous communique un devis avant de commencer. Pas de mauvaise surprise.</p>
+        <p>Décrivez votre projet ou problème en quelques mots — Fixeo vous met en contact avec un artisan ${esc(svc.label_adj)} disponible à ${esc(city.label)} qui vous communique un devis avant de commencer. Le tarif définitif est à confirmer avec l'artisan avant l'intervention.</p>
         <div style="margin:1.5rem 0">
           <a class="seo-btn-link primary" href="/index.html#services" onclick="window.localStorage.setItem('fixeo_open_modal','1')">
             Demander un devis gratuit →
@@ -797,8 +801,10 @@ function generateQuartierPages() {
   <meta name="twitter:card" content="summary">
   <script type="application/ld+json">${JSON.stringify(localBusinessLD)}</script>
   <script type="application/ld+json">${JSON.stringify(breadcrumbLD)}</script>
+  <link rel="stylesheet" href="/css/variables.css">
   <link rel="stylesheet" href="/css/seo-lp-v1.css">
-  <link rel="icon" href="/img/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="/css/seo-pages-fixeo-ui.css">
+  <link rel="icon" href="/img/favicon.png" type="image/png">
   <style>
     .quartier-hero{padding:3rem 0 2rem}
     .quartier-cta-box{background:rgba(255,255,255,.05);border:1px solid rgba(245,158,11,.3);border-radius:12px;padding:2rem;margin:2rem 0;text-align:center}
@@ -817,7 +823,7 @@ function generateQuartierPages() {
           <span>${esc(quartierLabel)}</span>
         </nav>
         <h1>${esc(h1Label)} — Intervention rapide</h1>
-        <p class="seo-lead">Vous cherchez un ${esc(svc.label_lower)} dans le quartier ${esc(quartierLabel)} à ${esc(city.label)} ? Fixeo vous connecte en quelques secondes avec un artisan disponible pour ${svc.desc(quartierLabel, city.label)}. Nos artisans vérifiés interviennent dans tous les secteurs de ${esc(city.label)}, y compris ${esc(quartierLabel)}, avec un temps de réponse optimal.</p>
+        <p class="seo-lead">Vous cherchez un ${esc(svc.label_lower)} dans le quartier ${esc(quartierLabel)} à ${esc(city.label)} ? Fixeo vous connecte en quelques secondes avec un artisan disponible pour ${svc.desc(quartierLabel, city.label)}. Les artisans référencés sur FIXEO couvrent tous les secteurs de ${esc(city.label)}, y compris ${esc(quartierLabel)}.</p>
         <div class="seo-actions">
           <a class="seo-btn-link primary" href="/index.html#services" onclick="window.localStorage.setItem('fixeo_open_modal','1')">
             Trouver un ${esc(svc.label_lower)} à ${esc(quartierLabel)} →

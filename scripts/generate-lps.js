@@ -641,10 +641,12 @@ function buildPage(svcKey, cityKey) {
   <!-- Structured Data: BreadcrumbList -->
   <script type="application/ld+json">${JSON.stringify(breadcrumbJsonLD)}</script>
 
+  <link rel="stylesheet" href="/css/variables.css">
   <link rel="stylesheet" href="/css/seo-lp-v1.css">
+  <link rel="stylesheet" href="/css/seo-pages-fixeo-ui.css">
   <link rel="stylesheet" href="/css/main.css">
   <link rel="stylesheet" href="/css/fixeo-footer-global.css?v=gf4a">
-  <link rel="icon" href="/img/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="/img/favicon.png" type="image/png">
 
   <!-- Logo CSS override (production consistent) -->
   <style id="fixeo-logo-override">
@@ -664,7 +666,7 @@ function buildPage(svcKey, cityKey) {
 
   <nav class="navbar" role="navigation" aria-label="Navigation principale">
     <a href="/index.html" class="navbar-brand logo-wrap" aria-label="Fixeo — Accueil">
-      <img src="/img/fixeo-logo.webp" alt="Fixeo" class="fixeo-logo-img" width="120" height="32">
+      <img src="/img/logo.png" alt="Fixeo" class="fixeo-logo-img" width="120" height="32">
     </a>
     <div class="nav-links">
       <a href="/index.html" class="nav-link">Accueil</a>
@@ -697,11 +699,8 @@ function buildPage(svcKey, cityKey) {
             </div>
           </div>
           <div class="seo-hero-media seo-city-media">
-            <div class="hero-card seo-hero-card">
-              <img src="/img/seo/${svcKey}-${cityKey}.webp"
-                   onerror="this.onerror=null;this.src='/img/seo/${svcKey}-placeholder.webp'"
-                   alt="${esc(h1)} intervention rapide"
-                   loading="lazy" decoding="async" width="400" height="280">
+            <div class="hero-card seo-hero-card" style="display:flex;align-items:center;justify-content:center;min-height:200px;font-size:5rem;opacity:.75;" aria-hidden="true">
+              ${svc.icon}
             </div>
           </div>
         </div>
@@ -751,7 +750,7 @@ function buildPage(svcKey, cityKey) {
           </tbody>
         </table>
         <p class="seo-pricing-note"><small>Tarifs indicatifs — le devis final est établi par l'artisan selon l'état des lieux. Paiement après intervention sur Fixeo.</small></p>
-        <div class="lp-rating-badge">⭐ 4.9/5 · 247 avis vérifiés <span class="lp-rating-note">basé sur les missions Fixeo</span></div>
+        <div class="lp-rating-badge">Artisans référencés sur FIXEO</div>
       </section>
 
       <!-- EMERGENCY SECTION -->
