@@ -276,6 +276,23 @@ const SERVICES = {
     label: 'Plombier', label_adj: 'plomberie',
     icon: '🚿', service_schema: 'Plumbing',
     sub_services: ['Dépannage fuite d\'eau', 'Débouchage canalisation', 'Installation sanitaire', 'Entretien chauffe-eau', 'Robinetterie'],
+    profession: 'plombier', profession_pl: 'plombiers',
+    article: 'un', supabase_category: 'Plomberie',
+    situations: [
+      { icon: '\uD83D\uDCA7', label: "Fuite d'eau" },
+      { icon: '\uD83D\uDEBF', label: "Robinet ou chasse d'eau" },
+      { icon: '\uD83D\uDD29', label: 'Canalisation boucHée' },
+      { icon: '\uD83C\uDFE0', label: 'Installation sanitaire' },
+      { icon: '\uD83D\uDD25', label: 'Chauffe-eau' },
+      { icon: '\uD83D\uDD0D', label: 'Recherche et diagnostic de panne' },
+    ],
+    faq_flagship: (city) => [
+      { q: 'Comment trouver un plombier à ' + city.label + ' ?', a: "Décrivez votre problème sur FIXEO. Votre demande est enregistrée et transmise aux artisans plombiers référencés correspondant à votre secteur à " + city.label + ". L'artisan vous contacte et confirme le tarif définitif avant d'intervenir." },
+      { q: 'Quels types de problèmes de plomberie peuvent être pris en charge ?', a: "Les artisans référencés sur FIXEO peuvent intervenir pour des fuites d'eau, des robinets ou chasses d'eau défectueux, des canalisations boucHées, des installations sanitaires, des chauffe-eau et des diagnostics de panne. Les prestations dépendent du diagnostic et des compétences de l'artisan sélectionné." },
+      { q: 'Comment le tarif définitif est-il confirmé ?', a: "Après évaluation de votre situation, l'artisan vous communique le tarif définitif avant de commencer. Vous n'êtes pas obligé d'accepter. En cas d'accord, le paiement s'effectue après la fin de l'intervention." },
+      { q: 'Le déplacement est-il inclus dans le prix ?', a: "Le déplacement peut être inclus ou facturé séparément selon l'artisan, la distance et le secteur. Le détail est précisé dans le devis communiqué avant l'intervention." },
+      { q: 'Quand le paiement est-il effectué ?', a: "Le paiement s'effectue après l'intervention, jamais en avance complète. Aucun paiement anticipé n'est demandé." },
+    ],
     h1_prefix: 'Plombier à',
     title_suffix: 'Dépannage, fuite et urgence | Fixeo',
     meta_desc: (city) => `Trouvez rapidement un plombier à ${city} avec Fixeo. Fuite d'eau, débouchage, chauffe-eau, robinetterie, installation sanitaire et intervention urgente.`,
@@ -298,6 +315,23 @@ const SERVICES = {
     label: 'Électricien', label_adj: 'électricité',
     icon: '⚡', service_schema: 'Electrical',
     sub_services: ['Dépannage panne électrique', 'Remplacement tableau électrique', 'Installation prises et éclairage', 'Mise aux normes', 'Court-circuit'],
+    profession: 'électricien', profession_pl: 'électriciens',
+    article: 'un', supabase_category: 'Électricité',
+    situations: [
+      { icon: '⚡', label: 'Panne électrique' },
+      { icon: '\uD83D\uDD0C', label: 'Prise ou interrupteur' },
+      { icon: '\uD83D\uDCA1', label: 'Éclairage' },
+      { icon: '\uD83D\uDD27', label: 'Tableau électrique' },
+      { icon: '\uD83D\uDCE6', label: 'Câblage et installation' },
+      { icon: '\uD83D\uDD0D', label: 'Diagnostic et mise aux normes' },
+    ],
+    faq_flagship: (city) => [
+      { q: 'Comment trouver un électricien à ' + city.label + ' ?', a: "Décrivez votre problème sur FIXEO. Votre demande est enregistrée et transmise aux artisans électriciens référencés correspondant à votre secteur à " + city.label + ". L'artisan vous contacte et confirme le tarif définitif avant d'intervenir." },
+      { q: 'Quels types de travaux électriques peuvent être pris en charge ?', a: "Les artisans référencés sur FIXEO peuvent intervenir pour des pannes électriques, des prises ou interrupteurs, de l'éclairage, des tableaux électriques et du câblage. Les prestations dépendent du diagnostic et des compétences de l'artisan sélectionné." },
+      { q: 'Comment le tarif définitif est-il confirmé ?', a: "Après évaluation de votre situation, l'artisan vous communique le tarif définitif avant de commencer. Vous n'êtes pas obligé d'accepter. En cas d'accord, le paiement s'effectue après la fin de l'intervention." },
+      { q: 'Le déplacement est-il inclus dans le prix ?', a: "Le déplacement peut être inclus ou facturé séparément selon l'artisan, la distance et le secteur. Le détail est précisé dans le devis communiqué avant l'intervention." },
+      { q: 'Quand le paiement est-il effectué ?', a: "Le paiement s'effectue après l'intervention, jamais en avance complète. Aucun paiement anticipé n'est demandé." },
+    ],
     h1_prefix: 'Électricien à',
     title_suffix: 'Dépannage, installation et urgence | Fixeo',
     meta_desc: (city) => `Trouvez un électricien à ${city} avec Fixeo. Panne électrique, disjoncteur, installation, mise aux normes et intervention urgente.`,
@@ -320,6 +354,23 @@ const SERVICES = {
     label: 'Serrurier', label_adj: 'serrurerie',
     icon: '🔑', service_schema: 'LocksmithService',
     sub_services: ['Ouverture de porte claquée', 'Remplacement de serrure', 'Pose cylindre blindé', 'Sécurisation après effraction', 'Porte blindée'],
+    profession: 'serrurier', profession_pl: 'serruriers',
+    article: 'un', supabase_category: 'Serrurerie',
+    situations: [
+      { icon: '\uD83D\uDEAA', label: 'Porte claquée ou bloquée' },
+      { icon: '\uD83D\uDD11', label: 'Remplacement de serrure' },
+      { icon: '\uD83D\uDD10', label: 'Clé cassée ou perdue' },
+      { icon: '\uD83D\uDEE1\uFE0F', label: 'Sécurisation après effraction' },
+      { icon: '\uD83D\uDEAA', label: 'Cylindre blindé' },
+      { icon: '\uD83D\uDD0D', label: 'Diagnostic et conseil sécurité' },
+    ],
+    faq_flagship: (city) => [
+      { q: 'Comment trouver un serrurier à ' + city.label + ' ?', a: "Décrivez votre problème sur FIXEO. Votre demande est enregistrée et transmise aux artisans serruriers référencés correspondant à votre secteur à " + city.label + ". L'artisan vous contacte et confirme le tarif définitif avant d'intervenir." },
+      { q: 'Quels types de problèmes de serrurerie peuvent être pris en charge ?', a: "Les artisans référencés sur FIXEO peuvent intervenir pour des portes claquées ou bloquées, des remplacements de serrure, des clés cassées ou perdues, des sécurisations après effraction et des diagnostics. Les prestations dépendent du diagnostic et des compétences de l'artisan sélectionné." },
+      { q: 'Comment le tarif définitif est-il confirmé ?', a: "Après évaluation de votre situation, l'artisan vous communique le tarif définitif avant de commencer. Vous n'êtes pas obligé d'accepter. En cas d'accord, le paiement s'effectue après la fin de l'intervention." },
+      { q: 'Le déplacement est-il inclus dans le prix ?', a: "Le déplacement peut être inclus ou facturé séparément selon l'artisan, la distance et le secteur. Le détail est précisé dans le devis communiqué avant l'intervention." },
+      { q: 'Quand le paiement est-il effectué ?', a: "Le paiement s'effectue après l'intervention, jamais en avance complète. Aucun paiement anticipé n'est demandé." },
+    ],
     h1_prefix: 'Serrurier à',
     title_suffix: 'Urgence, ouverture de porte | Fixeo',
     meta_desc: (city) => `Besoin d'un serrurier à ${city} ? Fixeo vous met en contact rapidement pour ouverture de porte, remplacement de serrure ou urgence.`,
@@ -342,6 +393,23 @@ const SERVICES = {
     label: 'Climatisation', label_adj: 'climatisation',
     icon: '❄️', service_schema: 'HVACBusiness',
     sub_services: ['Installation climatiseur', 'Entretien et nettoyage', 'Recharge gaz réfrigérant', 'Dépannage panne', 'Nettoyage filtres'],
+    profession: 'technicien climatisation', profession_pl: 'techniciens climatisation',
+    article: 'un', supabase_category: 'Climatisation',
+    situations: [
+      { icon: '❄️', label: 'Climatiseur en panne' },
+      { icon: '\uD83C\uDFE0', label: 'Installation climatiseur' },
+      { icon: '\uD83E\uDDF9', label: 'Nettoyage et entretien' },
+      { icon: '\uD83E\uDDFB', label: 'Recharge gaz réfrigérant' },
+      { icon: '\uD83D\uDD0A', label: 'Bruit anormal ou fuite' },
+      { icon: '\uD83D\uDD0D', label: 'Diagnostic de panne' },
+    ],
+    faq_flagship: (city) => [
+      { q: 'Comment trouver un technicien climatisation à ' + city.label + ' ?', a: "Décrivez votre problème sur FIXEO. Votre demande est enregistrée et transmise aux artisans spécialisés correspondant à votre secteur à " + city.label + ". L'artisan vous contacte et confirme le tarif définitif avant d'intervenir." },
+      { q: "Quels types d'interventions climatisation peuvent être pris en charge ?", a: "Les artisans référencés sur FIXEO peuvent intervenir pour des pannes, des installations, le nettoyage, la recharge de gaz réfrigérant, les bruits anormaux et les diagnostics. Les prestations dépendent du diagnostic et des compétences de l'artisan sélectionné." },
+      { q: 'Comment le tarif définitif est-il confirmé ?', a: "Après évaluation de votre situation, l'artisan vous communique le tarif définitif avant de commencer. Vous n'êtes pas obligé d'accepter. En cas d'accord, le paiement s'effectue après la fin de l'intervention." },
+      { q: 'Le déplacement est-il inclus dans le prix ?', a: "Le déplacement peut être inclus ou facturé séparément selon l'artisan, la distance et le secteur. Le détail est précisé dans le devis communiqué avant l'intervention." },
+      { q: 'Quand le paiement est-il effectué ?', a: "Le paiement s'effectue après l'intervention, jamais en avance complète. Aucun paiement anticipé n'est demandé." },
+    ],
     h1_prefix: 'Technicien Climatisation à',
     title_suffix: 'Installation, entretien, panne | Fixeo',
     meta_desc: (city) => `Trouvez un technicien en climatisation à ${city} avec Fixeo. Installation, entretien, recharge gaz, réparation et dépannage rapide.`,
@@ -364,6 +432,23 @@ const SERVICES = {
     label: 'Peintre', label_adj: 'peinture',
     icon: '🎨', service_schema: 'ProfessionalService',
     sub_services: ['Peinture intérieure', 'Enduit et plâtre', 'Revêtement mural', 'Remise en état', 'Peinture extérieure façade'],
+    profession: 'peintre', profession_pl: 'peintres',
+    article: 'un', supabase_category: 'Peinture',
+    situations: [
+      { icon: '\uD83C\uDFA8', label: 'Peinture int\u00e9rieure' },
+      { icon: '\uD83C\uDFE0', label: 'R\u00e9novation compl\u00e8te' },
+      { icon: '\uD83D\uDCCF', label: 'Enduit et pl\u00e2tre' },
+      { icon: '\uD83D\uDD28', label: 'Rev\u00eatement mural' },
+      { icon: '\uD83C\uDFD7\uFE0F', label: 'Peinture fa\u00e7ade' },
+      { icon: '\uD83D\uDD0D', label: 'Diagnostic et conseil' },
+    ],
+    faq_flagship: (city) => [
+      { q: 'Comment trouver un peintre \u00e0 ' + city.label + '\u00a0?', a: "D\u00e9crivez votre projet sur FIXEO. Votre demande est enregistr\u00e9e et transmise aux artisans peintres r\u00e9f\u00e9renc\u00e9s correspondant \u00e0 votre secteur \u00e0 " + city.label + ". L\'artisan vous contacte et confirme le tarif d\u00e9finitif avant de commencer." },
+      { q: 'Quels types de travaux de peinture peuvent \u00eatre pris en charge\u00a0?', a: "Les artisans r\u00e9f\u00e9renc\u00e9s sur FIXEO peuvent intervenir pour la peinture int\u00e9rieure, les enduits, les rev\u00eatements muraux, la peinture de fa\u00e7ade et les remises en \u00e9tat. Les prestations d\u00e9pendent du diagnostic et des comp\u00e9tences de l\'artisan s\u00e9lectionn\u00e9." },
+      { q: 'Comment le tarif d\u00e9finitif est-il confirm\u00e9\u00a0?', a: "Apr\u00e8s \u00e9valuation de votre situation, l\'artisan vous communique le tarif d\u00e9finitif avant de commencer. Vous n\'\u00eates pas oblig\u00e9 d\'accepter. En cas d\'accord, le paiement s\'effectue apr\u00e8s la fin de l\'intervention." },
+      { q: 'Le d\u00e9placement est-il inclus dans le prix\u00a0?', a: "Le d\u00e9placement peut \u00eatre inclus ou factur\u00e9 s\u00e9par\u00e9ment selon l\'artisan, la distance et le secteur. Le d\u00e9tail est pr\u00e9cis\u00e9 dans le devis communiqu\u00e9 avant l\'intervention." },
+      { q: 'Quand le paiement est-il effectu\u00e9\u00a0?', a: "Le paiement s\'effectue apr\u00e8s l\'intervention, jamais en avance compl\u00e8te. Aucun paiement anticip\u00e9 n\'est demand\u00e9." },
+    ],
     h1_prefix: 'Peintre à',
     title_suffix: 'Travaux intérieurs, finitions | Fixeo',
     meta_desc: (city) => `Trouvez un peintre à ${city} avec Fixeo. Peinture intérieure, enduit, revêtement et travaux de finition par des artisans locaux vérifiés.`,
@@ -555,270 +640,302 @@ function buildPage(svcKey, cityKey) {
   const city = CITIES[cityKey];
   if (!svc || !city) return null;
 
-  const filename    = `${svcKey}-${cityKey}.html`;
-  const canonicalUrl = CLEAN
-    ? `https://www.fixeo.ma/${svcKey}/${cityKey}`
-    : `https://www.fixeo.ma/${filename}`;
+  const filename     = `${svcKey}-${cityKey}.html`;
+  const canonicalUrl = `https://www.fixeo.ma/${filename}`;
 
-  const h1         = `${svc.h1_prefix} ${city.label}`;
-  const title      = `${h1} | ${svc.title_suffix}`;
-  const metaDesc   = svc.meta_desc(city.label);
-  const intro      = svc.intro_template(city);
-  const faqItems   = svc.faq(city);
-  const relLinks   = buildRelatedLinks(svcKey, cityKey, svc);
-  const blogLinks  = buildBlogLinks(svcKey);
+  const h1        = `${esc(svc.h1_prefix + ' ' + city.label)}`;
+  const title     = `${svc.h1_prefix} ${city.label} | ${svc.title_suffix}`;
+  const metaDesc  = svc.meta_desc(city.label);
+  const faqItems  = svc.faq_flagship(city);
+  const profession  = svc.profession;
+  const professionU = profession.charAt(0).toUpperCase() + profession.slice(1);
+  const profPl    = svc.profession_pl;
+  const svcCat    = svc.supabase_category;
 
-  const serviceJsonLD    = buildServiceJsonLD(svcKey, cityKey, svc, city, canonicalUrl);
-  const faqJsonLD        = buildFAQJsonLD(faqItems);
-  const breadcrumbJsonLD = buildBreadcrumbJsonLD(svcKey, cityKey, svc, city, canonicalUrl);
+  const breadcrumbLD = {
+    '@context': 'https://schema.org', '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://www.fixeo.ma/' },
+      { '@type': 'ListItem', position: 2, name: 'Services', item: 'https://www.fixeo.ma/services.html' },
+      { '@type': 'ListItem', position: 3, name: svc.label, item: `https://www.fixeo.ma/${svcKey}` },
+      { '@type': 'ListItem', position: 4, name: city.label, item: canonicalUrl },
+    ]
+  };
+  const localBizLD = {
+    '@context': 'https://schema.org', '@type': 'LocalBusiness',
+    '@id': canonicalUrl + '#localbusiness',
+    name: `Fixeo — ${svc.label} à ${city.label}`,
+    description: `${svc.label} à ${city.label}. Paiement après intervention.`,
+    url: canonicalUrl, image: 'https://www.fixeo.ma/img/logo.png',
+    areaServed: { '@type': 'City', name: city.label, containedInPlace: { '@type': 'Country', name: 'Maroc' } },
+    address: { '@type': 'PostalAddress', addressLocality: city.label, addressCountry: 'MA' },
+    geo: { '@type': 'GeoCoordinates', latitude: city.lat, longitude: city.lng },
+    provider: { '@type': 'Organization', name: 'Fixeo', url: 'https://www.fixeo.ma/' }
+  };
+  const article = svc.article;
+    const faqLD = {
+    '@context': 'https://schema.org', '@type': 'FAQPage',
+    mainEntity: faqItems.map(f => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } }))
+  };
 
-  const pricingRows = svc.pricing_tiers.map(t =>
-    `<tr><td>${esc(t.label)}</td><td><strong>${esc(t.range)}</strong></td></tr>`
-  ).join('\n              ');
-
-  const urgencyList = svc.urgency_services.map(u =>
-    `<li>${esc(u)}</li>`
-  ).join('\n                ');
+  const situationsHtml = svc.situations.map(s =>
+    `<li class="fxlp-sit-item" role="listitem">
+            <span class="fxlp-sit-icon" aria-hidden="true">${s.icon}</span>
+            <span class="fxlp-sit-label">${esc(s.label)}</span>
+          </li>`
+  ).join('\n          ');
 
   const faqHtml = faqItems.map(f =>
-    `<details class="seo-faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
-              <summary itemprop="name"><strong>${esc(f.q)}</strong></summary>
-              <div class="seo-faq-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-                <p itemprop="text">${esc(f.a)}</p>
-              </div>
-            </details>`
-  ).join('\n            ');
-
-  const subServices = svc.sub_services.map((s, i) => {
-    const chips = i === 0
-      ? `<span class="chip">Urgence</span><span class="chip">${esc(city.label)}</span>`
-      : `<span class="chip">${esc(city.label)}</span>`;
-    return `<article class="artisan-card result-card seo-static-artisan-card">
-            <div class="artisan-card-body seo-static-artisan-card-body">
-              <div class="artisan-card-top">
-                <div class="artisan-card-heading">
-                  <h3>${esc(s)}</h3>
-                  <div class="meta">${chips}</div>
-                </div>
-              </div>
-              <p>Intervention ${esc(svc.label_adj)} par un artisan Fixeo disponible à ${esc(city.label)}.</p>
+    `<details class="fxlp-faq-item" role="listitem">
+            <summary class="fxlp-faq-summary">
+              ${esc(f.q)}
+              <span class="fxlp-faq-chevron" aria-hidden="true">›</span>
+            </summary>
+            <div class="fxlp-faq-answer">
+              ${esc(f.a)}
             </div>
-          </article>`;
-  }).join('\n          ');
+          </details>`
+  ).join('\n\n          ');
 
-  return {
-    filename,
-    canonicalUrl,
-    wordCount: (intro + faqItems.map(f => f.q + f.a).join(' ')).split(/\s+/).length,
-    html: `<!DOCTYPE html>
+  const relLinks = buildRelatedLinks(svcKey, cityKey, svc);
+
+  const html = `<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="generator" content="fixeo-lpgen-v1a">
+  <meta name="generator" content="fixeo-lpgen-flagship-v1">
   <title>${esc(title)}</title>
   <meta name="description" content="${esc(metaDesc)}">
   <link rel="canonical" href="${canonicalUrl}">
-
-  <!-- Open Graph -->
+  <meta name="robots" content="index,follow">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="${esc(h1)} | Fixeo">
+  <meta property="og:title" content="${esc(title)}">
   <meta property="og:description" content="${esc(metaDesc)}">
   <meta property="og:url" content="${canonicalUrl}">
   <meta property="og:image" content="https://www.fixeo.ma/img/logo.png">
   <meta property="og:site_name" content="Fixeo">
   <meta property="og:locale" content="fr_MA">
-
-  <!-- Twitter -->
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="${esc(h1)} | Fixeo">
+  <meta name="twitter:title" content="${esc(title)}">
   <meta name="twitter:description" content="${esc(metaDesc)}">
-
-  <!-- Structured Data: LocalBusiness -->
-  <script type="application/ld+json">${JSON.stringify(serviceJsonLD)}</script>
-  <!-- Structured Data: FAQPage -->
-  <script type="application/ld+json">${JSON.stringify(faqJsonLD)}</script>
-  <!-- Structured Data: BreadcrumbList -->
-  <script type="application/ld+json">${JSON.stringify(breadcrumbJsonLD)}</script>
-
+  <script type="application/ld+json">${JSON.stringify(breadcrumbLD)}</script>
+  <script type="application/ld+json">${JSON.stringify(localBizLD)}</script>
+  <script type="application/ld+json">${JSON.stringify(faqLD)}</script>
   <link rel="stylesheet" href="/css/variables.css">
-  <link rel="stylesheet" href="/css/seo-lp-v1.css">
-  <link rel="stylesheet" href="/css/seo-pages-fixeo-ui.css">
-  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/header-unified.css">
+  <link rel="stylesheet" href="/css/fixeo-header-global.css">
   <link rel="stylesheet" href="/css/fixeo-footer-global.css?v=gf4a">
+  <link rel="stylesheet" href="/css/artisan-card-conversion-v1.css?v=fxhome-artisan-card-v3b2">
+  <link rel="stylesheet" href="/css/fixeo-artisan-card-premium-v2.css?v=facp-v2c">
+  <link rel="stylesheet" href="/css/fixeo-artisan-section-v1.css?v=fxhome-artisan-section-v1a2-int11">
+  <link rel="stylesheet" href="/css/fixeo-consent-v1.css?v=fcv1b">
+  <link rel="stylesheet" href="/css/reservation.css?v=fxlp-res-v1">
+  <link rel="stylesheet" href="/css/reservation-v2.css?v=fxlp-res-v1">
+  <link rel="stylesheet" href="/css/reservation-v2a.css?v=fxlp-res-v1">
+  <link rel="stylesheet" href="/css/fixeo-local-flagship-v1.css?v=fxlp-v14">
+  <link rel="stylesheet" href="/css/fixeo-reservation-flagship-v1.css?v=fxresf-v11a">
+  <link rel="stylesheet" href="/css/fx-request-flow-v4.css?v=fxrf4-v5z">
   <link rel="icon" href="/img/favicon.png" type="image/png">
-
-  <!-- Logo CSS override (production consistent) -->
-  <style id="fixeo-logo-override">
-    .navbar-brand .logo-icon, .logo-wrap .logo-icon, .fixeo-gh-brand .logo-icon
-      { display:none !important; width:0 !important; height:0 !important; min-width:0 !important; flex:0 !important; }
-    .navbar-brand .logo-text, .logo-wrap .logo-text, .fixeo-gh-brand .logo-text
-      { display:none !important; }
-    img.fixeo-logo-img { display:block !important; height:32px !important; width:auto !important; }
-    .lp-rating-badge { text-align:center; margin: 12px 0 4px; font-size:0.82rem; color:rgba(232,234,240,0.65); padding:6px 12px; background:rgba(255,255,255,0.04); border-radius:8px; border:1px solid rgba(255,255,255,0.07); display:inline-block; }
-    .lp-rating-note { font-size:0.75rem; opacity:0.7; margin-left:4px; }
-  </style>
 </head>
-<body class="seo-service-page seo-static-city-page" data-theme="dark" data-fixeo-seo-static="true"
-      data-svc="${svcKey}" data-city="${cityKey}">
-  <div class="bg-animated seo-bg"></div>
-  <a href="#main-content" class="skip-link">Aller au contenu</a>
-
-  <nav class="navbar" role="navigation" aria-label="Navigation principale">
-    <a href="/index.html" class="navbar-brand logo-wrap" aria-label="Fixeo — Accueil">
-      <img src="/img/logo.png" alt="Fixeo" class="fixeo-logo-img" width="120" height="32">
-    </a>
-    <div class="nav-links">
-      <a href="/index.html" class="nav-link">Accueil</a>
-      <a href="/services.html" class="nav-link">Services</a>
-      <a href="/pricing.html" class="nav-link">Tarifs</a>
-      <a href="/auth.html" class="btn-nav btn-nav-outline" data-auth="guest">Connexion</a>
-    </div>
-  </nav>
-
+<body class="seo-service-page" data-theme="dark" data-svc="${svcKey}" data-city="${cityKey}">
+  <div class="bg-animated seo-bg" aria-hidden="true"></div>
+  <a href="#main-content" class="fxlp-skip-link" style="position:absolute;left:-9999px;top:4px;z-index:9999;background:#ff6b3d;color:#fff;padding:6px 14px;border-radius:8px;font-size:.85rem;text-decoration:none">Aller au contenu</a>
+  <nav class="navbar" role="navigation" aria-label="Navigation principale"></nav>
+  <select id="qsm-select-city" style="display:none" aria-hidden="true">
+    <option value="${esc(city.label)}" selected>${esc(city.label)}</option>
+  </select>
+  <input id="qsm-input-nlp" type="hidden" value="${esc(svc.label)}">
   <main id="main-content" role="main">
-    <div class="seo-page-wrap">
+    <div class="fxlp-wrap">
 
-      <section class="seo-hero seo-city-hero" aria-labelledby="seo-city-title">
-        <nav class="seo-breadcrumbs" aria-label="Fil d'Ariane">
-          <a href="/index.html">Accueil</a>
-          <span aria-hidden="true">›</span>
-          <a href="/services.html">Services</a>
-          <span aria-hidden="true">›</span>
-          <span>${esc(h1)}</span>
-        </nav>
+      <!-- §§0 BREADCRUMBS -->
+      <nav class="fxlp-breadcrumbs" aria-label="Fil d'Ariane">
+        <a href="/index.html">Accueil</a>
+        <span aria-hidden="true">›</span>
+        <a href="/services.html">Services</a>
+        <span aria-hidden="true">›</span>
+        <span>${esc(svc.label)}</span>
+        <span aria-hidden="true">›</span>
+        <span aria-current="page">${esc(city.label)}</span>
+      </nav>
+    </div>
 
-        <div class="seo-hero-grid">
-          <div class="seo-copy">
-            <span class="seo-kicker">${esc(svc.icon)} ${esc(svc.label)} · ${esc(city.label)}</span>
-            <h1 id="seo-city-title">${esc(h1)}</h1>
-            <p class="seo-lead">${esc(intro)}</p>
-            <div class="seo-actions">
-              <a class="seo-btn-link primary" href="/index.html#services">Trouver un ${esc(svc.label.toLowerCase())} maintenant</a>
-              <a class="seo-btn-link secondary" href="/services.html">Tous les services</a>
-            </div>
+    <!-- §§1 HERO -->
+    <section class="fxlp-hero" aria-labelledby="fxlp-h1">
+      <div class="fxlp-wrap">
+        <div class="fxlp-hero-copy">
+          <div class="fxlp-eyebrow">
+            <span class="fxlp-eyebrow-dot" aria-hidden="true"></span>
+            ${esc(svc.label.toUpperCase())} · ${esc(city.label.toUpperCase())} · 2026
           </div>
-          <div class="seo-hero-media seo-city-media">
-            <div class="hero-card seo-hero-card" style="display:flex;align-items:center;justify-content:center;min-height:200px;font-size:5rem;opacity:.75;" aria-hidden="true">
-              ${svc.icon}
-            </div>
+          <h1 id="fxlp-h1" class="fxlp-h1">${esc(svc.h1_prefix)}&nbsp;<em class="fxlp-h1-em">${esc(city.label)}</em></h1>
+          <p class="fxlp-lead">${esc(svc.meta_desc(city.label))}</p>
+          <div class="fxlp-chips" role="list">
+            <span class="fxlp-chip fxlp-chip--city" role="listitem">📍 ${esc(city.label)}</span>
+            <span class="fxlp-chip fxlp-chip--svc"  role="listitem">${svc.icon} ${esc(svc.label)}</span>
+            <span class="fxlp-chip fxlp-chip--pay"  role="listitem">✓ Paiement après intervention</span>
           </div>
-        </div>
-
-        <div class="seo-hero-stats seo-city-stats">
-          <article class="seo-stat">
-            <strong>Quartiers couverts</strong>
-            <span>${esc(city.neighborhoods)}</span>
-          </article>
-          <article class="seo-stat">
-            <strong>Tarifs indicatifs</strong>
-            <span>${esc(city.pricing_low)}–${esc(city.pricing_high)} DH · ${esc(city.pricing_note.split('.')[0])}.</span>
-          </article>
-          <article class="seo-stat">
-            <strong>Contexte local</strong>
-            <span>${esc(city.context)}</span>
-          </article>
-        </div>
-      </section>
-
-      <!-- SERVICES SECTION -->
-      <section id="artisans-section" class="seo-panel" aria-labelledby="seo-artisans-title">
-        <div class="seo-toolbar">
-          <div>
-            <div class="seo-section-heading">Prestations disponibles</div>
-            <h2 id="seo-artisans-title">Services ${esc(svc.label_adj)} à ${esc(city.label)}</h2>
-          </div>
-        </div>
-        <p class="seo-section-intro">${esc(city.demand)}</p>
-        <div id="artisans-container" class="artisans-grid results-list seo-artisans-grid" aria-live="polite">
-          ${subServices}
-        </div>
-        <div class="seo-actions" style="margin-top:20px">
-          <a class="seo-btn-link primary" href="/index.html#services">Demander un ${esc(svc.label.toLowerCase())} à ${esc(city.label)}</a>
-        </div>
-      </section>
-
-      <!-- PRICING SECTION -->
-      <section class="seo-panel seo-pricing-section" aria-labelledby="seo-pricing-title">
-        <div class="seo-section-heading">Tarifs</div>
-        <h2 id="seo-pricing-title">Tarifs ${esc(svc.label_adj)} à ${esc(city.label)}</h2>
-        <p class="seo-section-intro">${esc(city.pricing_note)}</p>
-        <table class="seo-pricing-table" role="table" aria-label="Grille tarifaire ${esc(svc.label_adj)}">
-          <thead><tr><th scope="col">Prestation</th><th scope="col">Tarif indicatif</th></tr></thead>
-          <tbody>
-              ${pricingRows}
-          </tbody>
-        </table>
-        <p class="seo-pricing-note"><small>Tarifs indicatifs — le devis final est établi par l'artisan selon l'état des lieux. Paiement après intervention sur Fixeo.</small></p>
-        <div class="lp-rating-badge">Artisans référencés sur FIXEO</div>
-      </section>
-
-      <!-- EMERGENCY SECTION -->
-      <section class="seo-panel seo-emergency-section" aria-labelledby="seo-emergency-title">
-        <div class="seo-section-heading">Urgences</div>
-        <h2 id="seo-emergency-title">${esc(svc.label)} urgence à ${esc(city.label)}</h2>
-        <p class="seo-section-intro">${esc(city.emergency)}</p>
-        <ul class="seo-urgency-list" aria-label="Cas d'urgence fréquents">
-                ${urgencyList}
-        </ul>
-        <div class="seo-actions" style="margin-top:16px">
-          <a class="seo-btn-link primary" href="/index.html#services">Déclarer une urgence maintenant</a>
-        </div>
-      </section>
-
-      <!-- FAQ SECTION -->
-      <section class="seo-panel seo-faq-section" aria-labelledby="seo-faq-title"
-               itemscope itemtype="https://schema.org/FAQPage">
-        <div class="seo-section-heading">FAQ</div>
-        <h2 id="seo-faq-title">Questions fréquentes — ${esc(svc.label)} à ${esc(city.label)}</h2>
-        <div class="seo-faq-list">
-            ${faqHtml}
-        </div>
-      </section>
-
-      <!-- INTERNAL LINKS -->
-      <section class="seo-panel" aria-labelledby="seo-related-title">
-        <div class="seo-section-heading">Voir aussi</div>
-        <h2 id="seo-related-title">Services liés à ${esc(city.label)} et alentours</h2>
-        <div class="links-grid seo-links-grid">
-          ${relLinks}
-        </div>
-      </section>
-
-      <!-- ARTICLES CONNEXES — fxblog-v1a -->
-      <section class="seo-panel seo-blog-panel" aria-labelledby="seo-blog-title">
-        <div class="seo-section-heading">Blog Fixeo</div>
-        <h2 id="seo-blog-title">Articles connexes sur la ${esc(svc.label.toLowerCase())}</h2>
-        <div class="seo-blog-links">
-          ${blogLinks}
-        </div>
-      </section>
-
-      <!-- FOOTER CTA -->
-      <div class="footer seo-footer-card">
-        <div class="footer-row">
-          <div>
-            <strong>Fixeo Maroc</strong>
-            <p>Plateforme de mise en relation avec des artisans vérifiés à ${esc(city.label)} et dans toute la région.</p>
-          </div>
-          <div class="seo-actions">
-            <a class="seo-btn-link primary" href="/index.html#services">Trouver un ${esc(svc.label.toLowerCase())} à ${esc(city.label)}</a>
+          <p class="fxlp-note-price">Le tarif définitif est confirmé avec l’artisan avant l’intervention.</p>
+          <div class="fxlp-cta-group">
+            <button class="fxlp-btn-primary" type="button" data-open-request-form="true" data-request-mode="default">
+              Décrire mon besoin à ${esc(city.label)}
+            </button>
+            <a href="#fxlp-artisans" id="fxlp-scroll-artisans" class="fxlp-btn-secondary">
+              Voir les artisans à ${esc(city.label)} ↓
+            </a>
           </div>
         </div>
       </div>
+    </section>
 
+    <hr class="fxlp-divider">
+
+    <!-- §§2 SITUATIONS -->
+    <section class="fxlp-section fxlp-section--tinted" aria-labelledby="fxlp-sit-title">
+      <div class="fxlp-wrap">
+        <span class="fxlp-section-label">BESOINS FRÉQUENTS</span>
+        <h2 id="fxlp-sit-title" class="fxlp-section-title">Pour quels besoins contacter ${esc(article + ' ' + profession)} à ${esc(city.label)} ?</h2>
+        <p class="fxlp-section-sub">Les prestations proposées dépendent du diagnostic et des compétences de l’artisan sélectionné.</p>
+        <ul class="fxlp-sit-grid" role="list">
+          ${situationsHtml}
+        </ul>
+      </div>
+    </section>
+
+    <hr class="fxlp-divider">
+
+    <!-- §§3 LOCAL SERVICE EXPLANATION -->
+    <section class="fxlp-section" aria-labelledby="fxlp-how-local-title">
+      <div class="fxlp-wrap">
+        <span class="fxlp-section-label">COMMENT ÇA MARCHE</span>
+        <h2 id="fxlp-how-local-title" class="fxlp-section-title">Trouver une solution ${esc(svc.label_adj)} à ${esc(city.label)}</h2>
+        <div class="fxlp-expl-grid">
+          <div class="fxlp-expl-item">
+            <span class="fxlp-expl-icon" aria-hidden="true">✏️</span>
+            <p class="fxlp-expl-text">Vous décrivez votre problème — panne, installation ou diagnostic.</p>
+          </div>
+          <div class="fxlp-expl-item">
+            <span class="fxlp-expl-icon" aria-hidden="true">📋</span>
+            <p class="fxlp-expl-text">FIXEO enregistre votre demande et la transmet aux artisans référencés correspondant à votre secteur à ${esc(city.label)}.</p>
+          </div>
+          <div class="fxlp-expl-item">
+            <span class="fxlp-expl-icon" aria-hidden="true">📞</span>
+            <p class="fxlp-expl-text">Un artisan vous contacte et confirme le tarif définitif et le créneau avant de commencer. Paiement après intervention.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="fxlp-divider">
+
+    <!-- §§4 REAL ARTISAN SECTION -->
+    <section id="fxlp-artisans" class="fxlp-section" aria-labelledby="fxlp-art-title">
+      <div class="fxlp-wrap">
+        <span class="fxlp-section-label">ARTISANS RÉFÉRENCÉS</span>
+        <h2 id="fxlp-art-title" class="fxlp-section-title">${esc(professionU + 's')} référencés à ${esc(city.label)}</h2>
+        <p class="fxlp-section-sub">Profils référencés sur FIXEO. Paiement après intervention.</p>
+        <div class="fxlp-artisan-grid" role="list" aria-label="${esc(professionU + 's référencés à ' + city.label)}" aria-live="polite">
+          <div id="fxlp-artisan-grid" class="fxlp-artisan-loading" role="list"
+               aria-label="${esc(professionU + 's à ' + city.label)}"
+               data-fxlp-city="${esc(city.label)}"
+               data-fxlp-service="${svcKey}"
+               data-fxlp-category="${esc(svcCat)}">
+            <div class="fxlp-skeleton" aria-hidden="true"></div>
+            <div class="fxlp-skeleton" aria-hidden="true"></div>
+            <div class="fxlp-skeleton" aria-hidden="true"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="fxlp-divider">
+
+    <!-- §§5 HOW-IT-WORKS STEPS -->
+    <section class="fxlp-how" aria-labelledby="fxlp-steps-title">
+      <div class="fxlp-wrap">
+        <span class="fxlp-section-label">EN 3 ÉTAPES</span>
+        <h2 id="fxlp-steps-title" class="fxlp-section-title">Trouver ${esc(article + ' ' + profession)} à ${esc(city.label)} en 3 étapes</h2>
+        <div class="fxlp-steps" role="list">
+          <div class="fxlp-step" role="listitem">
+            <div class="fxlp-step-num" aria-hidden="true">1</div>
+            <h3 class="fxlp-step-title">Décrivez votre besoin</h3>
+            <p class="fxlp-step-desc">Votre ville et le service sont déjà sélectionnés — décrivez simplement votre situation.</p>
+          </div>
+          <div class="fxlp-step" role="listitem">
+            <div class="fxlp-step-num" aria-hidden="true">2</div>
+            <h3 class="fxlp-step-title">FIXEO recherche la solution adaptée</h3>
+            <p class="fxlp-step-desc">Votre demande est enregistrée et transmise aux artisans référencés correspondant à votre secteur.</p>
+          </div>
+          <div class="fxlp-step" role="listitem">
+            <div class="fxlp-step-num" aria-hidden="true">3</div>
+            <h3 class="fxlp-step-title">Confirmez le tarif avec l’artisan</h3>
+            <p class="fxlp-step-desc">L’artisan vous communique le tarif définitif avant de commencer. Paiement après intervention.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- §§6 FINAL CTA BANNER -->
+    <div class="fxlp-wrap">
+      <div class="fxlp-cta-banner" role="complementary">
+        <p class="fxlp-cta-eyebrow">BESOIN D’UN ARTISAN ?</p>
+        <h2 class="fxlp-cta-title">Votre demande à ${esc(city.label)}, en quelques secondes.</h2>
+        <p class="fxlp-cta-lead">Votre ville et le service sont déjà sélectionnés. Décrivez votre problème — c’est tout.</p>
+        <button class="fxlp-btn-primary" type="button" data-open-request-form="true" data-request-mode="default">
+          Continuer avec ${esc(svc.label)} · ${esc(city.label)}
+        </button>
+        <p class="fxlp-cta-note">Aucun paiement maintenant · Tarif confirmé avant l’intervention</p>
+      </div>
     </div>
+
+    <!-- §§7 FAQ -->
+    <section id="fxlp-faq" class="fxlp-faq-section" aria-labelledby="fxlp-faq-title">
+      <div class="fxlp-wrap">
+        <span class="fxlp-section-label">FAQ</span>
+        <h2 id="fxlp-faq-title" class="fxlp-section-title">Questions fréquentes — ${esc(professionU)} à ${esc(city.label)}</h2>
+        <div class="fxlp-faq-list" role="list">
+
+          ${faqHtml}
+
+        </div>
+      </div>
+    </section>
+
+    <!-- §§8 INTERNAL LINKS -->
+    <div class="fxlp-wrap">
+      <nav class="seo-authority-links" aria-label="Pages liées">
+        ${relLinks}
+      </nav>
+    </div>
+
   </main>
+  <div id="fxf-mount"></div>
 
-  <!-- Deferred non-critical scripts -->
-  <script src="/js/fixeo-header-global.js" defer></script>
+  <script src="/js/fixeo-consent-v1.js?v=fcv1c"></script>
+  <script src="/js/fixeo-analytics-config.js?v=fac1b" defer></script>
+  <script src="/js/fixeo-analytics-bootstrap.js?v=fab1c" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="/js/supabase-client.js?v=sc2"></script>
+  <script src="/js/fixeo-heroes.js?v=fh3" defer></script>
+  <script src="/js/reservation.js?v=fxlp-res-v1" defer></script>
+  <script src="/js/cod-payment.js?v=fxlp-cod-v1" defer></script>
+  <script src="/js/reservation-v2.js?v=fxlp-res-v1" defer></script>
+  <script src="/js/fixeo-reservation-flagship-v1.js?v=fxresf-v11a" defer></script>
+  <script src="/js/fixeo-reservation-supabase-bridge.js?v=fxlp-sb-v1" defer></script>
+  <script src="/js/fx-request-flow-v4.js?v=fxrf4-v5a1" defer></script>
+  <script src="/js/fixeo-header-global.js?v=gfnav5"></script>
+  <script src="/js/header-unified.js?v=modalfix3"></script>
   <script src="/js/fixeo-footer-global.js?v=gf4a" defer></script>
-  <script src="/js/auth-global.js" defer></script>
-  <script src="/js/fixeo-seo-local.js?v=seo2b" defer></script>
-  <script src="/js/fixeo-schema-rating.js?v=rating-v1a" defer></script>
-
+  <script src="/js/fixeo-local-flagship-v1.js?v=fxlp-v12" defer></script>
 </body>
-</html>`
+</html>`;
+
+  return {
+    filename,
+    canonicalUrl,
+    wordCount: (metaDesc + faqItems.map(f => f.q + f.a).join(' ')).split(/\s+/).length,
+    html,
   };
 }
 
