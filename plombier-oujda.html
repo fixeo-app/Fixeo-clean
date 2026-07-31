@@ -32,14 +32,23 @@
   <!-- Structured Data: FAQPage -->
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Comment trouver un plombier à Oujda ?","acceptedAnswer":{"@type":"Answer","text":"Décrivez votre problème sur FIXEO. Votre demande est enregistrée et transmise aux artisans plombiers référencés correspondant à votre secteur à Oujda. L\'artisan vous contacte et confirme le tarif définitif avant d\'intervenir."}},{"@type":"Question","name":"Quels types de problèmes de plomberie peuvent être pris en charge ?","acceptedAnswer":{"@type":"Answer","text":"Les artisans plombiers référencés sur FIXEO peuvent intervenir pour des fuites d\'eau, des robinets ou chasses d\'eau défectueux, des canalisations bouchées, des installations sanitaires, des chauffe-eau et des diagnostics de panne. Les prestations dépendent du diagnostic et des compétences de l\'artisan sélectionné."}},{"@type":"Question","name":"Comment le tarif définitif est-il confirmé ?","acceptedAnswer":{"@type":"Answer","text":"Le tarif définitif est confirmé directement entre vous et l\'artisan avant le début de l\'intervention. FIXEO ne fixe pas les tarifs — ils sont établis par l\'artisan selon l\'état des lieux."}},{"@type":"Question","name":"Le déplacement est-il inclus dans le prix ?","acceptedAnswer":{"@type":"Answer","text":"Les modalités de déplacement sont définies par l\'artisan et confirmées avant l\'intervention. Certains artisans incluent le déplacement dans leur tarif, d\'autres le facturent séparément. Ces détails vous sont communiqués par l\'artisan avant toute intervention."}},{"@type":"Question","name":"Quand le paiement est-il effectué ?","acceptedAnswer":{"@type":"Answer","text":"Le paiement est effectué après l\'intervention, une fois les travaux réalisés à votre satisfaction. C\'est l\'un des engagements fondamentaux de FIXEO : vous ne payez pas avant d\'avoir été servi."}}]}</script>
 
-  <!-- Flagship CSS — same self-contained system as prix-plomberie-oujda -->
-  <link rel="stylesheet" href="/css/fixeo-local-flagship-v1.css?v=fxlp-v13">
+  <!-- Canonical shared CSS — exact parity with prix-plomberie-oujda.html -->
+  <link rel="stylesheet" href="/css/variables.css">
+  <link rel="stylesheet" href="/css/header-unified.css">
+  <link rel="stylesheet" href="/css/fixeo-header-global.css">
+  <link rel="stylesheet" href="/css/fixeo-footer-global.css?v=gf4a">
+  <link rel="stylesheet" href="/css/artisan-card-conversion-v1.css?v=fxhome-artisan-card-v3b2">
+  <link rel="stylesheet" href="/css/fixeo-artisan-card-premium-v2.css?v=facp-v2c">
+  <link rel="stylesheet" href="/css/fixeo-artisan-section-v1.css?v=fxhome-artisan-section-v1a2-int11">
+  <link rel="stylesheet" href="/css/fixeo-consent-v1.css?v=fcv1b">
   <!-- Reservation CSS stack -->
   <link rel="stylesheet" href="/css/reservation.css?v=fxlp-res-v1">
   <link rel="stylesheet" href="/css/reservation-v2.css?v=fxlp-res-v1">
   <link rel="stylesheet" href="/css/reservation-v2a.css?v=fxlp-res-v1">
+  <!-- Flagship CSS (local pilot — self-contained dark canvas) -->
+  <link rel="stylesheet" href="/css/fixeo-local-flagship-v1.css?v=fxlp-v14">
   <link rel="stylesheet" href="/css/fixeo-reservation-flagship-v1.css?v=fxresf-v11a">
-  <link rel="stylesheet" href="/css/fixeo-footer-global.css?v=gf4a">
+  <link rel="stylesheet" href="/css/fx-request-flow-v4.css?v=fxrf4-v5z">
   <link rel="icon" href="/img/favicon.png" type="image/png">
 </head>
 <body class="seo-service-page" data-theme="dark" data-svc="plombier" data-city="oujda">
@@ -342,17 +351,22 @@
   <!-- ══ Footer mount ══════════════════════════════════════════ -->
   <div id="fxf-mount"></div>
 
-  <!-- ══ Scripts — same dependency order as prix-plomberie-oujda ══ -->
-  <script src="/js/fixeo-header-global.js" defer></script>
-  <script src="/js/fixeo-footer-global.js?v=gf4a" defer></script>
-  <script src="/js/fixeo-supabase-loader.js" defer></script>
-  <script src="/js/fx-request-flow-v4.js?v=fxrf4-v5a1" defer></script>
-  <script src="/js/fixeo-rafi-os-v1.js?v=rfos-v2c" defer></script>
+  <!-- ══ Scripts — exact canonical parity with prix-plomberie-oujda.html ══ -->
+  <script src="/js/fixeo-consent-v1.js?v=fcv1c"></script>
+  <script src="/js/fixeo-analytics-config.js?v=fac1b" defer></script>
+  <script src="/js/fixeo-analytics-bootstrap.js?v=fab1c" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="/js/supabase-client.js?v=sc2"></script>
+  <script src="/js/fixeo-heroes.js?v=fh3" defer></script>
   <script src="/js/reservation.js?v=fxlp-res-v1" defer></script>
   <script src="/js/cod-payment.js?v=fxlp-cod-v1" defer></script>
   <script src="/js/reservation-v2.js?v=fxlp-res-v1" defer></script>
   <script src="/js/fixeo-reservation-flagship-v1.js?v=fxresf-v11a" defer></script>
   <script src="/js/fixeo-reservation-supabase-bridge.js?v=fxlp-sb-v1" defer></script>
+  <script src="/js/fx-request-flow-v4.js?v=fxrf4-v5a1" defer></script>
+  <script src="/js/fixeo-header-global.js?v=gfnav5"></script>
+  <script src="/js/header-unified.js?v=modalfix3"></script>
+  <script src="/js/fixeo-footer-global.js?v=gf4a" defer></script>
   <script src="/js/fixeo-local-flagship-v1.js?v=fxlp-v12" defer></script>
 
 </body>

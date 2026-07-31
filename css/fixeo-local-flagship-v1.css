@@ -1,5 +1,5 @@
 /**
- * fixeo-local-flagship-v1.css — fxlp-v13
+ * fixeo-local-flagship-v1.css — fxlp-v14
  * Local SEO flagship layout.
  * Namespace: fxlp-*
  * Pages: prix-plomberie-oujda.html, plombier-oujda.html (and future family pilots)
@@ -11,6 +11,8 @@
  *               reservation CTA glow reduction, description sanitisation
  *  fxlp-v13  — V1.3 (FXLOCAL-SERVICE-CITY-PILOT-V1): additive selectors for
  *               service-city pages: .fxlp-sit-* situations grid, .fxlp-expl-* explanation grid
+ *  fxlp-v14  — V1.4 (FXLOCAL-OUJDA-SHARED-MICROPATCH-V1): CTA text readability,
+ *               step-number visibility, fxlp-v13→v14 version string
  *
  * Does NOT override homepage, profile, RAFI, footer, or reservation styles.
  * Does NOT modify any frozen engine file.
@@ -218,18 +220,23 @@ main#main-content {
 .fxlp-btn-primary {
   display: inline-flex; align-items: center; gap: 8px;
   background: linear-gradient(135deg,#ff6b3d 0%,#f553a6 100%);
-  color: #fff;
+  /* V1.4: explicit color declarations with !important to block any gradient-text inheritance */
+  color: #fff !important;
   font-size: .92rem; font-weight: 700; padding: 13px 24px;
   border-radius: var(--fxlp-r-xl); border: none; cursor: pointer;
-  /* REDUCED GLOW: was rgba(255,107,61,.28) — now .14 to fix Safari bloom */
-  box-shadow: 0 3px 14px rgba(255,107,61,.14);
+  /* Glow kept minimal for Safari label readability */
+  box-shadow: 0 3px 12px rgba(255,107,61,.12);
   transition: transform .22s var(--fxlp-spring), box-shadow .22s;
   white-space: nowrap;
   font-family: 'Cairo', 'Tajawal', 'Inter', system-ui, -apple-system, sans-serif;
-  min-height: 48px;
+  min-height: 48px; min-width: 44px;
   -webkit-appearance: none;
-  /* Prevent -webkit-text-fill-color conflict from gradient parent text rules */
-  -webkit-text-fill-color: #fff;
+  /* V1.4: force opaque white text — blocks -webkit-text-fill-color:transparent from parents */
+  -webkit-text-fill-color: #fff !important;
+  opacity: 1;
+  filter: none;
+  text-shadow: none;
+  letter-spacing: -.005em;
 }
 .fxlp-btn-primary:hover {
   transform: translateY(-2px);
@@ -242,13 +249,15 @@ main#main-content {
 
 .fxlp-btn-secondary {
   display: inline-flex; align-items: center; gap: 6px;
-  border: 1.5px solid rgba(255,107,61,.22); color: #ff6b3d;
+  border: 1.5px solid rgba(255,107,61,.22);
+  color: #ff6b3d !important;
   font-size: .88rem; font-weight: 600; padding: 12px 20px;
   border-radius: var(--fxlp-r-xl);
   transition: background .2s, transform .2s;
   white-space: nowrap; text-decoration: none;
   min-height: 48px; background: transparent;
-  -webkit-text-fill-color: #ff6b3d;
+  -webkit-text-fill-color: #ff6b3d !important;
+  opacity: 1; filter: none; text-shadow: none;
 }
 .fxlp-btn-secondary:hover { background: rgba(255,107,61,.16); transform: translateY(-1px); }
 
@@ -527,8 +536,8 @@ main#main-content {
   font-family: 'Cairo', 'Tajawal', 'Inter', system-ui, -apple-system, sans-serif;
   -webkit-appearance: none;
   transition: opacity .18s, transform .18s;
-  /* Reduced glow */
-  box-shadow: 0 2px 10px rgba(255,107,61,.16);
+  box-shadow: 0 2px 8px rgba(255,107,61,.12);
+  opacity: 1; filter: none; text-shadow: none;
 }
 #fxlp-artisan-grid .fxlp-btn-reserve:hover { opacity: .88; transform: translateY(-1px); }
 #fxlp-artisan-grid .fxlp-btn-reserve:focus-visible { outline: 2px solid #ff8c5a; outline-offset: 3px; }
@@ -598,7 +607,12 @@ main#main-content {
   width: 32px; height: 32px; border-radius: 50%;
   background: linear-gradient(135deg,#ff6b3d 0%,#f553a6 100%);
   display: flex; align-items: center; justify-content: center;
-  font-size: .8rem; font-weight: 800; color: #fff; flex-shrink: 0;
+  font-size: .8rem; font-weight: 800; flex-shrink: 0;
+  /* V1.4: explicit white text — blocks gradient-text inheritance from html scope */
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  opacity: 1;
+  text-shadow: none;
 }
 .fxlp-step-title { font-size: .90rem; font-weight: 700; color: #eaeff8; }
 .fxlp-step-desc  { font-size: .79rem; color: #8896b0; line-height: 1.55; margin: 0; }
