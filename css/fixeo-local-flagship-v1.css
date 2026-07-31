@@ -1,14 +1,16 @@
 /**
- * fixeo-local-flagship-v1.css — fxlp-v12
- * Local SEO price page flagship layout.
+ * fixeo-local-flagship-v1.css — fxlp-v13
+ * Local SEO flagship layout.
  * Namespace: fxlp-*
- * Pilot page: prix-plomberie-oujda.html
+ * Pages: prix-plomberie-oujda.html, plombier-oujda.html (and future family pilots)
  *
  * CHANGE LOG:
  *  fxlp-v1   — initial pilot
  *  fxlp-v11  — Safari P0: dark canvas, card layout, token scope repair
  *  fxlp-v12  — V1.2: header logo fix, hero avatar removal, artisan carousel,
  *               reservation CTA glow reduction, description sanitisation
+ *  fxlp-v13  — V1.3 (FXLOCAL-SERVICE-CITY-PILOT-V1): additive selectors for
+ *               service-city pages: .fxlp-sit-* situations grid, .fxlp-expl-* explanation grid
  *
  * Does NOT override homepage, profile, RAFI, footer, or reservation styles.
  * Does NOT modify any frozen engine file.
@@ -680,4 +682,73 @@ details.fxlp-faq-item[open] .fxlp-faq-chevron {
 .fxlp-hero-badge {
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   SERVICE-CITY PAGE ADDITIVE SELECTORS (fxlp-v13)
+   Used by: plombier-oujda.html and future Métier × Ville pilots.
+   Additive only — no existing rule overridden.
+══════════════════════════════════════════════════════════════ */
+
+/* ── §2 — Situations grid ────────────────────────────────────── */
+.fxlp-sit-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  padding: 0; margin: 0;
+  list-style: none;
+}
+@media (min-width: 640px) {
+  .fxlp-sit-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (min-width: 900px) {
+  .fxlp-sit-grid { grid-template-columns: repeat(6, 1fr); gap: 12px; }
+}
+
+.fxlp-sit-item {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 8px; padding: 16px 12px;
+  background: #0f1520;
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: var(--fxlp-r-md);
+  text-align: center;
+  transition: border-color .2s, transform .2s;
+}
+.fxlp-sit-item:hover {
+  border-color: rgba(255,107,61,.22);
+  transform: translateY(-2px);
+}
+.fxlp-sit-icon {
+  font-size: 1.6rem; line-height: 1;
+}
+.fxlp-sit-label {
+  font-size: .79rem; font-weight: 600;
+  color: #eaeff8;
+  line-height: 1.35;
+}
+
+/* ── §3 — Local explanation grid ─────────────────────────────── */
+.fxlp-expl-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  margin-top: 4px;
+}
+@media (min-width: 640px) {
+  .fxlp-expl-grid { grid-template-columns: repeat(3, 1fr); gap: 16px; }
+}
+
+.fxlp-expl-item {
+  display: flex; flex-direction: column; gap: 10px;
+  padding: 20px 18px;
+  background: #0f1520;
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: var(--fxlp-r-md);
+}
+.fxlp-expl-icon {
+  font-size: 1.5rem; line-height: 1;
+}
+.fxlp-expl-text {
+  font-size: .84rem; color: #8896b0;
+  line-height: 1.6; margin: 0;
 }
