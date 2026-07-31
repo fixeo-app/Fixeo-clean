@@ -37,8 +37,13 @@
   <!-- Consent + Analytics -->
   <link rel="stylesheet" href="/css/fixeo-consent-v1.css?v=fcv1b">
 
+  <!-- ══ Reservation CSS stack (must be loaded for FixeoReservation UI) ══ -->
+  <link rel="stylesheet" href="/css/reservation.css?v=fxlp-res-v1">
+  <link rel="stylesheet" href="/css/reservation-v2.css?v=fxlp-res-v1">
+  <link rel="stylesheet" href="/css/reservation-v2a.css?v=fxlp-res-v1">
+
   <!-- ══ Local flagship CSS (pilot page only) ═════════════════════ -->
-  <link rel="stylesheet" href="/css/fixeo-local-flagship-v1.css?v=fxlp-v11">
+  <link rel="stylesheet" href="/css/fixeo-local-flagship-v1.css?v=fxlp-v12">
 
 </head>
 <body class="seo-service-page" data-theme="dark">
@@ -57,11 +62,7 @@
     ══════════════════════════════════════════════════════════════
   -->
   <nav class="navbar" role="navigation" aria-label="Navigation principale">
-    <div class="container">
-      <a class="logo-wrap navbar-brand" href="/index.html" aria-label="Fixeo — Accueil">
-        <img src="/img/logo.png" alt="Fixeo" class="fixeo-logo-img" height="34" width="auto" loading="eager">
-      </a>
-    </div>
+    <!-- fixeo-header-global.js injects .fixeo-gh-mobile (logo h=26 + actions) via insertAdjacentHTML -->
   </nav>
 
   <!--
@@ -148,30 +149,7 @@
         </div>
       </div>
 
-      <!-- Right: canonical Tech Hero avatar -->
-      <div class="fxlp-hero-avatar" aria-hidden="true">
-        <span class="fxlp-hero-city-tag">📍 Oujda</span>
-        <span class="fxlp-hero-svc-tag">🔧 Plomberie</span>
-        <!--
-          Canonical avatar: FixeoHeroes.getCardAvatar('plomberie')
-          → /heroes/plomberie/avatar-card.webp (confirmed 200)
-          Fallback chain: webp → png → emoji
-        -->
-        <picture>
-          <source srcset="/heroes/plomberie/avatar-card.webp" type="image/webp">
-          <img src="/heroes/plomberie/avatar-card.png"
-               alt="Artisan plombier FIXEO"
-               class="fxlp-hero-img"
-               width="260" height="300"
-               loading="eager" decoding="async"
-               onerror="this.style.display='none';document.getElementById('fxlp-hero-emoji').style.display='flex'">
-        </picture>
-        <span id="fxlp-hero-emoji" class="fxlp-hero-emoji" style="display:none" aria-hidden="true">🔧</span>
-        <div class="fxlp-hero-badge">
-          <span class="fxlp-badge-dot" aria-hidden="true"></span>
-          Artisans référencés à Oujda
-        </div>
-      </div>
+
 
     </section>
 
@@ -430,8 +408,11 @@
 
   <!-- ══ Reservation flagship modal (targeted artisan CTA) ═════ -->
   <link rel="stylesheet" href="/css/fixeo-reservation-flagship-v1.css?v=fxresf-v11a">
+  <script src="/js/reservation.js?v=fxlp-res-v1" defer></script>
   <script src="/js/cod-payment.js?v=fxlp-cod-v1" defer></script>
+  <script src="/js/reservation-v2.js?v=fxlp-res-v1" defer></script>
   <script src="/js/fixeo-reservation-flagship-v1.js?v=fxresf-v11a" defer></script>
+  <script src="/js/fixeo-reservation-supabase-bridge.js?v=fxlp-sb-v1" defer></script>
 
   <!-- ══ RAFI V5 (canonical — captures data-open-request-form) ═ -->
   <link rel="stylesheet" href="/css/fx-request-flow-v4.css?v=fxrf4-v5z">
@@ -445,7 +426,7 @@
   <script src="/js/fixeo-footer-global.js?v=gf4a" defer></script>
 
   <!-- ══ Local flagship artisan loader ════════════════════════ -->
-  <script src="/js/fixeo-local-flagship-v1.js?v=fxlp-v1" defer></script>
+  <script src="/js/fixeo-local-flagship-v1.js?v=fxlp-v12" defer></script>
 
 </body>
 </html>
