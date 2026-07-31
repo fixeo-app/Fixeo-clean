@@ -163,10 +163,10 @@ const PRICE_SERVICES = {
     metier_label: 'plombier', article_genre: 'un', article_genre_long: 'un',
     factors: [
       { icon: '\u23F1\uFE0F', title: 'Type d\'intervention', desc: 'Un d\u00e9pannage simple est moins co\u00fbteux qu\'un remplacement de chauffe-eau.' },
-      { icon: '\uD83C\uDF05', title: 'Horaire (urgence, nuit, week-end)', desc: 'Les interventions hors horaires normaux entra\u00eenent une majoration de 30 \u00e0 60\u00a0%.' },
-      { icon: '\uD83D\uDCCD', title: 'Distance et secteur', desc: 'Le d\u00e9placement est souvent inclus pour les artisans locaux.' },
+      { icon: '\uD83C\uDF05', title: 'Horaire (urgence, nuit, week-end)', desc: 'Les interventions hors horaires normaux peuvent entra\u00eener une majoration. Son montant est communiqu\u00e9 par l\'artisan avant l\'intervention.' },
+      { icon: '\uD83D\uDCCD', title: 'Distance et secteur', desc: 'Le d\u00e9placement peut \u00eatre inclus ou factur\u00e9 s\u00e9par\u00e9ment selon l\'artisan, la distance et le secteur. Le d\u00e9tail est confirm\u00e9 avant l\'intervention.' },
       { icon: '\u2699\uFE0F', title: 'Complexit\u00e9 technique', desc: 'L\'acc\u00e8s difficile ou les anciens conduits augmentent le co\u00fbt.' },
-      { icon: '\uD83E\uDDF0', title: 'Fournitures', desc: 'Certains tiers incluent la fourniture\u00a0; d\'autres non.' },
+      { icon: '\uD83E\uDDF0', title: 'Fournitures', desc: 'Certaines interventions incluent les fournitures, d\'autres non. Le d\u00e9tail est confirm\u00e9 avant l\'intervention.' },
     ],
     tiers: [
       { label: 'Déplacement + diagnostic', range: '150 – 250 MAD' },
@@ -176,10 +176,12 @@ const PRICE_SERVICES = {
       { label: 'Remplacement chauffe-eau', range: '600 – 1 500 MAD (main-d\'œuvre)' },
     ],
     faq: (city) => [
-      { q: `Quel est le tarif moyen d'un plombier à ${city.label} ?`, a: `Le tarif moyen d'un plombier à ${city.label} varie entre 150 et 900 MAD selon la nature de l'intervention. Le déplacement seul coûte 150 à 250 MAD. Une réparation simple (joint, robinet) se situe entre 300 et 600 MAD. Pour une urgence (fuite active), comptez 500 à 900 MAD. Ces tarifs peuvent varier la nuit ou le week-end.` },
-      { q: 'Comment éviter les mauvaises surprises sur la facture ?', a: 'Avec Fixeo, vous recevez un devis avant le début des travaux. L\'artisan évalue le problème et vous communique le coût estimé. Vous n\'êtes pas obligé d\'accepter. En cas d\'accord, le paiement s\'effectue après la fin de l\'intervention — jamais en avance complète.' },
-      { q: 'Les tarifs sont-ils plus élevés le week-end ou la nuit ?', a: 'Oui, comme dans la plupart des pays, les interventions d\'urgence hors horaires normaux (nuit, week-end, jours fériés) appliquent une majoration de 30 à 60%. Les artisans Fixeo sont tenus d\'annoncer ces majorations dans leur devis initial.' },
-    ],
+      { q: `Quel est le tarif indicatif d\'un plombier à ${city.label} ?`, a: `Le tarif d\'un plombier à ${city.label} varie selon la nature de l\'intervention. Une réparation courante (joint, robinet) se situe entre 300 et 600 MAD. Pour une urgence (fuite active), les tarifs sont généralement plus élevés. Le tarif définitif est confirmé par l\'artisan avant toute intervention.` },
+      { q: `Comment est confirmé le tarif définitif à ${city.label} ?`, a: `Le tarif définitif est établi par l\'artisan après évaluation de votre situation. Il vous est communiqué avant toute intervention. Vous n\'avez aucune obligation d\'accepter. En cas d\'accord, le paiement s\'effectue après la fin de l\'intervention.` },
+      { q: 'Le déplacement est-il facturé en plus ?', a: 'Le déplacement peut être inclus ou facturé séparément selon l\'artisan, la distance et le secteur. Le détail est confirmé avant l\'intervention dans le devis communiqué par l\'artisan.' },
+      { q: 'Y a-t-il une majoration pour une intervention urgente, de nuit ou le week-end ?', a: 'Une intervention urgente, de nuit ou le week-end peut entraîner une majoration. Son montant est communiqué par l\'artisan avant l\'intervention.' },
+      { q: 'Quand s\'effectue le paiement ?', a: 'Le paiement s\'effectue après l\'intervention, jamais en avance complète. Aucun paiement anticipé n\'est demandé. Le montant définitif est confirmé par l\'artisan avant le début des travaux.' },
+    ]
   },
   electricite: {
     label: 'Électricité',
@@ -190,7 +192,7 @@ const PRICE_SERVICES = {
     metier_label: '\u00e9lectricien', article_genre: 'un', article_genre_long: 'un',
     factors: [
       { icon: '\uD83D\uDD0C', title: 'Type de travaux', desc: 'Un remplacement de prise co\u00fbte bien moins qu\'une mise \u00e0 niveau du tableau \u00e9lectrique.' },
-      { icon: '\uD83C\uDF05', title: 'Urgence et horaire', desc: 'Les pannes nocturnes ou en week-end entra\u00eenent une majoration de 40 \u00e0 60\u00a0%.' },
+      { icon: '\uD83C\uDF05', title: 'Urgence et horaire', desc: 'Les pannes nocturnes ou en week-end peuvent entra\u00eener une majoration. Son montant est communiqu\u00e9 par l\'artisan avant l\'intervention.' },
       { icon: '\uD83D\uDCCD', title: 'Complexit\u00e9 de l\'installation', desc: 'Un logement ancien n\u00e9cessite souvent plus de travail et de mat\u00e9riel.' },
       { icon: '\u2699\uFE0F', title: 'Fournitures', desc: 'Prises, disjoncteurs et c\u00e2bles sont souvent factur\u00e9s en sus.' },
       { icon: '\uD83D\uDCCB', title: 'Diagnostic pr\u00e9alable', desc: 'Le co\u00fbt du diagnostic est g\u00e9n\u00e9ralement d\u00e9ductible si les travaux sont confi\u00e9s.' },
@@ -203,10 +205,12 @@ const PRICE_SERVICES = {
       { label: 'Mise à niveau tableau (câblage)', range: '800 – 2 000 MAD' },
     ],
     faq: (city) => [
-      { q: `Combien coûte un électricien à ${city.label} ?`, a: `Le coût d'un électricien à ${city.label} dépend du type d'intervention. Le déplacement et diagnostic commence à 200–300 MAD. L'installation d'une prise ou d'un interrupteur varie entre 150 et 450 MAD. Pour un tableau électrique complet, prévoyez 800 à 2 000 MAD selon la complexité. Les urgences nocturnes appliquent une majoration de 40 à 60%.` },
-      { q: 'Faut-il un permis pour des travaux électriques au Maroc ?', a: 'Pour les travaux courants (remplacement de prises, installation d\'éclairage), aucun permis n\'est nécessaire. Mais pour des travaux importants (nouveau tableau, modification du réseau principal), un devis signé par un électricien agréé est recommandé, surtout en copropriété. Avec FIXEO, les artisans sont référencés et peuvent vous remettre un devis avant de commencer.' },
-      { q: 'Comment savoir si mon installation électrique est aux normes ?', a: 'Un électricien qualifié peut effectuer un diagnostic complet de votre installation en 1 à 2 heures. Il vérifie les protections différentielles, la mise à la terre, l\'état des câbles et la conformité du tableau. Ce type d\'audit coûte généralement 300 à 500 MAD à Casablanca et dans les grandes villes.' },
-    ],
+      { q: `Quel est le tarif indicatif d\'un électricien à ${city.label} ?`, a: `Le tarif d\'un électricien à ${city.label} varie selon la nature des travaux. Le remplacement d\'une prise ou d\'un interrupteur est généralement moins coûteux qu\'une mise à niveau du tableau électrique. Le tarif définitif est confirmé par l\'artisan avant toute intervention.` },
+      { q: `Comment est confirmé le tarif définitif à ${city.label} ?`, a: `Le tarif définitif est établi par l\'artisan après évaluation de votre situation. Il vous est communiqué avant toute intervention. Vous n\'avez aucune obligation d\'accepter. En cas d\'accord, le paiement s\'effectue après la fin de l\'intervention.` },
+      { q: 'Le déplacement est-il facturé en plus ?', a: 'Le déplacement peut être inclus ou facturé séparément selon l\'artisan, la distance et le secteur. Le détail est confirmé avant l\'intervention dans le devis communiqué par l\'artisan.' },
+      { q: 'Y a-t-il une majoration pour une intervention urgente, de nuit ou le week-end ?', a: 'Une intervention urgente, de nuit ou le week-end peut entraîner une majoration. Son montant est communiqué par l\'artisan avant l\'intervention.' },
+      { q: 'Quand s\'effectue le paiement ?', a: 'Le paiement s\'effectue après l\'intervention, jamais en avance complète. Aucun paiement anticipé n\'est demandé. Le montant définitif est confirmé par l\'artisan avant le début des travaux.' },
+    ]
   },
   serrurerie: {
     label: 'Serrurerie',
@@ -230,10 +234,12 @@ const PRICE_SERVICES = {
       { label: 'Blindage / sécurisation porte', range: '1 500 – 5 000 MAD' },
     ],
     faq: (city) => [
-      { q: `Quel est le prix d'un serrurier à ${city.label} ?`, a: `À ${city.label}, le prix d'un serrurier dépend du type d'intervention. Une ouverture de porte sans casse coûte 300 à 600 MAD. Avec perçage, comptez 500 à 900 MAD. Le remplacement d'un cylindre simple revient à 400 à 800 MAD. Pour une serrure multipoints ou blindée, les tarifs vont de 800 à 2 000 MAD et plus selon le modèle choisi.` },
-      { q: 'Comment éviter les serruriers abusifs lors d\'une urgence ?', a: 'Passez par Fixeo : nos artisans référencés évaluent votre situation et vous communiquent un devis avant d\'intervenir. Refusez toute intervention sans devis préalable. Méfiez-vous des prix annoncés par téléphone qui doublent à l\'arrivée — c\'est une pratique courante chez les serruriers non référencés.' },
-      { q: 'Vaut-il mieux réparer ou remplacer une vieille serrure ?', a: 'Si votre serrure a plus de 10 ans, si elle a subi une tentative d\'effraction, ou si vous venez d\'emménager, le remplacement est généralement recommandé. Le coût d\'un nouveau cylindre de qualité (200–500 MAD) est faible comparé au risque sécuritaire. Un serrurier Fixeo peut vous conseiller sur le niveau de sécurité adapté à votre porte.' },
-    ],
+      { q: `Quel est le tarif indicatif d\'un serrurier à ${city.label} ?`, a: `Le tarif d\'un serrurier à ${city.label} dépend du type d\'intervention. Une ouverture de porte sans casse coûte généralement entre 300 et 600 MAD. Le remplacement d\'un cylindre ou d\'une serrure multipoints est plus onéreux. Le tarif définitif est confirmé par l\'artisan avant toute intervention.` },
+      { q: `Comment est confirmé le tarif définitif à ${city.label} ?`, a: `Le tarif définitif est établi par l\'artisan après évaluation de votre situation. Il vous est communiqué avant toute intervention. Vous n\'avez aucune obligation d\'accepter. En cas d\'accord, le paiement s\'effectue après la fin de l\'intervention.` },
+      { q: 'Le déplacement est-il facturé en plus ?', a: 'Le déplacement peut être inclus ou facturé séparément selon l\'artisan, la distance et le secteur. Le détail est confirmé avant l\'intervention dans le devis communiqué par l\'artisan.' },
+      { q: 'Y a-t-il une majoration pour une intervention urgente, de nuit ou le week-end ?', a: 'Une intervention urgente, de nuit ou le week-end peut entraîner une majoration. Son montant est communiqué par l\'artisan avant l\'intervention.' },
+      { q: 'Quand s\'effectue le paiement ?', a: 'Le paiement s\'effectue après l\'intervention, jamais en avance complète. Aucun paiement anticipé n\'est demandé. Le montant définitif est confirmé par l\'artisan avant le début des travaux.' },
+    ]
   },
   climatisation: {
     label: 'Climatisation',
@@ -257,10 +263,12 @@ const PRICE_SERVICES = {
       { label: 'Remplacement compresseur', range: '1 500 – 4 000 MAD' },
     ],
     faq: (city) => [
-      { q: `Combien coûte l'installation d'une climatisation à ${city.label} ?`, a: `L'installation d'un split (unité intérieure + extérieure) à ${city.label} coûte entre 2 000 et 6 000 MAD selon la puissance (9 000 à 24 000 BTU), la marque et la complexité de pose. Cette somme inclut la fourniture de l'appareil et la main-d'œuvre. Un entretien annuel revient à 400–800 MAD. Les techniciens Fixeo installent toutes les marques courantes au Maroc.` },
-      { q: 'Quand faut-il recharger le gaz de sa climatisation ?', a: 'La recharge en gaz (R32 ou R410A) est nécessaire quand votre climatiseur refroidit mal malgré des filtres propres. Ce n\'est pas un entretien annuel automatique — c\'est symptomatique d\'une fuite. Un technicien doit d\'abord localiser et réparer la fuite avant de recharger. Comptez 600 à 1 200 MAD pour la recharge à Casablanca.' },
-      { q: 'Quelle est la durée de vie d\'une climatisation au Maroc ?', a: 'Avec un entretien annuel régulier, un climatiseur de qualité dure 10 à 15 ans au Maroc. La chaleur intense en été et la poussière sont les principaux facteurs d\'usure. Les filtres doivent être nettoyés tous les 1 à 2 mois en période d\'utilisation intensive. Un contrat d\'entretien Fixeo peut prolonger significativement la durée de vie de votre appareil.' },
-    ],
+      { q: `Quel est le tarif indicatif d\'un technicien climatisation à ${city.label} ?`, a: `Le coût d\'une installation ou d\'un entretien de climatisation à ${city.label} dépend de la puissance de l\'appareil et de la complexité de l\'installation. Un entretien courant est généralement moins coûteux qu\'une installation complète. Le tarif définitif est confirmé par l\'artisan avant toute intervention.` },
+      { q: `Comment est confirmé le tarif définitif à ${city.label} ?`, a: `Le tarif définitif est établi par l\'artisan après évaluation de votre situation. Il vous est communiqué avant toute intervention. Vous n\'avez aucune obligation d\'accepter. En cas d\'accord, le paiement s\'effectue après la fin de l\'intervention.` },
+      { q: 'Le déplacement est-il facturé en plus ?', a: 'Le déplacement peut être inclus ou facturé séparément selon l\'artisan, la distance et le secteur. Le détail est confirmé avant l\'intervention dans le devis communiqué par l\'artisan.' },
+      { q: 'Y a-t-il une majoration pour une intervention urgente, de nuit ou le week-end ?', a: 'Une intervention urgente, de nuit ou le week-end peut entraîner une majoration. Son montant est communiqué par l\'artisan avant l\'intervention.' },
+      { q: 'Quand s\'effectue le paiement ?', a: 'Le paiement s\'effectue après l\'intervention, jamais en avance complète. Aucun paiement anticipé n\'est demandé. Le montant définitif est confirmé par l\'artisan avant le début des travaux.' },
+    ]
   },
   peinture: {
     label: 'Peinture',
@@ -284,10 +292,12 @@ const PRICE_SERVICES = {
       { label: 'Pièce complète (20 m²)', range: '1 400 – 2 800 MAD' },
     ],
     faq: (city) => [
-      { q: `Quel est le prix de la peinture au m² à ${city.label} ?`, a: `À ${city.label}, le prix de la peinture intérieure se situe entre 35 et 70 MAD par m² de mur (peinture fournie incluse pour les travaux standard). La peinture de façade revient plus cher : 50 à 100 MAD/m² en raison des contraintes d'accès et de la résistance aux UV requise. Ces tarifs incluent la main-d'œuvre et les deux couches standard.` },
-      { q: 'Combien de temps prend la peinture d\'une pièce ?', a: 'Un peintre professionnel met généralement 1 à 2 jours pour peindre une pièce de 15 à 20 m² (préparation des surfaces, protection des meubles, deux couches). Les grandes rénovations avec préparation approfondie (rebouchage, ponçage, sous-couche) peuvent prendre 3 à 5 jours. Fixeo vous connecte avec des peintres qui respectent les délais annoncés.' },
-      { q: 'Quelle peinture choisir pour les murs intérieurs au Maroc ?', a: 'Pour les pièces à vivre, une peinture acrylique mate ou satinée est idéale. Dans les salles de bain et cuisines, optez pour une peinture lessivable résistante à l\'humidité (satin ou semi-brillant). Les peintres Fixeo travaillent avec des marques disponibles localement : Zolpan, Valentine, Tollens, ou les marques locales comme Mapei Maroc.' },
-    ],
+      { q: `Quel est le tarif indicatif d\'un peintre à ${city.label} ?`, a: `Le tarif d\'un peintre à ${city.label} varie selon la surface, le type de peinture et l\'état des murs. La préparation des surfaces (rebouchage, ponçage) peut augmenter le coût. Le tarif définitif au m² est confirmé par l\'artisan avant toute intervention.` },
+      { q: `Comment est confirmé le tarif définitif à ${city.label} ?`, a: `Le tarif définitif est établi par l\'artisan après évaluation de votre situation. Il vous est communiqué avant toute intervention. Vous n\'avez aucune obligation d\'accepter. En cas d\'accord, le paiement s\'effectue après la fin de l\'intervention.` },
+      { q: 'Le déplacement est-il facturé en plus ?', a: 'Le déplacement peut être inclus ou facturé séparément selon l\'artisan, la distance et le secteur. Le détail est confirmé avant l\'intervention dans le devis communiqué par l\'artisan.' },
+      { q: 'Y a-t-il une majoration pour une intervention urgente, de nuit ou le week-end ?', a: 'Une intervention urgente, de nuit ou le week-end peut entraîner une majoration. Son montant est communiqué par l\'artisan avant l\'intervention.' },
+      { q: 'Quand s\'effectue le paiement ?', a: 'Le paiement s\'effectue après l\'intervention, jamais en avance complète. Aucun paiement anticipé n\'est demandé. Le montant définitif est confirmé par l\'artisan avant le début des travaux.' },
+    ]
   },
   menuiserie: {
     label: 'Menuiserie',
@@ -311,13 +321,15 @@ const PRICE_SERVICES = {
       { label: 'Réparation porte/fenêtre', range: '300 – 800 MAD' },
     ],
     faq: (city) => [
-      { q: `Quel est le prix d'un menuisier à ${city.label} ?`, a: `À ${city.label}, le prix d'une intervention menuiserie varie selon la nature des travaux. La pose d'une porte intérieure (main-d'œuvre seule) coûte 800 à 2 500 MAD. Une fenêtre aluminium fourniture incluse revient à 1 500 à 4 000 MAD. Pour une cuisine sur mesure, prévoyez 8 000 à 25 000 MAD selon le nombre de modules et les matériaux choisis.` },
-      { q: 'Bois ou aluminium pour les menuiseries au Maroc ?', a: 'L\'aluminium domine le marché marocain pour les fenêtres et portes extérieures grâce à sa résistance à la chaleur, à l\'humidité et sa faible maintenance. Pour l\'intérieur (portes, placards), le bois reste très répandu, en médium (MDF) ou en bois massif selon le budget. Les menuisiers Fixeo travaillent les deux matériaux.' },
-      { q: 'Comment obtenir un devis menuiserie fiable ?', a: 'Pour un devis précis, le menuisier doit se déplacer pour prendre les mesures exactes. Méfiez-vous des devis téléphoniques approximatifs. Avec Fixeo, l\'artisan vient mesurer et vous remet un devis détaillé avant tout engagement. La visite de mesure est généralement gratuite chez nos artisans référencés.' },
-    ],
+      { q: `Quel est le tarif indicatif d\'un menuisier à ${city.label} ?`, a: `Le tarif d\'un menuisier à ${city.label} varie selon le matériau (aluminium, bois, MDF), les dimensions et la complexité de la pose. Le sur-mesure est plus onéreux qu\'un élément standard. Le tarif définitif est confirmé par l\'artisan avant toute intervention.` },
+      { q: `Comment est confirmé le tarif définitif à ${city.label} ?`, a: `Le tarif définitif est établi par l\'artisan après évaluation de votre situation. Il vous est communiqué avant toute intervention. Vous n\'avez aucune obligation d\'accepter. En cas d\'accord, le paiement s\'effectue après la fin de l\'intervention.` },
+      { q: 'Le déplacement est-il facturé en plus ?', a: 'Le déplacement peut être inclus ou facturé séparément selon l\'artisan, la distance et le secteur. Le détail est confirmé avant l\'intervention dans le devis communiqué par l\'artisan.' },
+      { q: 'Y a-t-il une majoration pour une intervention urgente, de nuit ou le week-end ?', a: 'Une intervention urgente, de nuit ou le week-end peut entraîner une majoration. Son montant est communiqué par l\'artisan avant l\'intervention.' },
+      { q: 'Quand s\'effectue le paiement ?', a: 'Le paiement s\'effectue après l\'intervention, jamais en avance complète. Aucun paiement anticipé n\'est demandé. Le montant définitif est confirmé par l\'artisan avant le début des travaux.' },
+    ]
   },
 };
-const _SVC_CATS = { plomberie:'plomber', electricite:'electr', serrurerie:'serr', climatisation:'clima', peinture:'peint', menuiserie:'menuis' };
+const _SVC_CATS = { plomberie:'Plomberie', electricite:'\u00c9lectricit\u00e9', serrurerie:'Serrurerie', climatisation:'Climatisation', peinture:'Peinture', menuiserie:'Menuiserie' };
 
 
 /* ═══════════════════════════════════════════════════════════
@@ -738,7 +750,7 @@ function generatePricePages() {
       <nav class="fxlp-breadcrumbs" aria-label="Fil d'Ariane">
         <a href="/index.html">Accueil</a>
         <span aria-hidden="true">\u203a</span>
-        <a href="/services.html">Services</a>
+        <a href="/prix">Prix</a>
         <span aria-hidden="true">\u203a</span>
         <span>${esc(svc.label)}</span>
         <span aria-hidden="true">\u203a</span>
@@ -775,7 +787,7 @@ function generatePricePages() {
       <div class="fxlp-wrap">
         <span class="fxlp-section-label">TARIFS INDICATIFS 2026</span>
         <h2 id="fxlp-price-title" class="fxlp-section-title">Fourchettes de prix \u2014 ${esc(svc.label)} \u00e0 ${esc(city.label)}</h2>
-        <p class="fxlp-section-sub">R\u00e9gion de ${esc(city.region)}. Tarifs fourniture non incluse sauf mention contraire.</p>
+        <p class="fxlp-section-sub">R\u00e9gion de ${esc(city.region)}. Fournitures non incluses, sauf mention contraire.</p>
         <div class="fxlp-price-grid" role="list">${priceCardsHtml}
         </div>
         <p class="fxlp-price-disclaimer">Fourchettes indicatives \u2014 le tarif d\u00e9finitif est \u00e9tabli par l'artisan selon l'\u00e9tat des lieux. <a href="#fxlp-faq" class="fxlp-inline-link">En savoir plus</a></p>

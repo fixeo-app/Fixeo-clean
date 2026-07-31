@@ -33,8 +33,8 @@
   var MAX_CARDS    = 3;
 
   var _SVC_CATS = {
-    plomberie:'plomber', electricite:'electr', serrurerie:'serr',
-    climatisation:'clima', peinture:'peint', menuiserie:'menuis'
+    plomberie:'Plomberie', electricite:'\u00c9lectricit\u00e9', serrurerie:'Serrurerie',
+    climatisation:'Climatisation', peinture:'Peinture', menuiserie:'Menuiserie'
   };
   function _readCtx() {
     var grid = document.getElementById(GRID_ID);
@@ -184,7 +184,7 @@
 
   /* ── Build one canonical pvc-card article ──────────────────── */
   function _buildCard(artisan, ctx) {
-    ctx = ctx || {city:'oujda',cat:'plomber',svcSlug:'plomberie'};
+    ctx = ctx || {city:'oujda',cat:'Plomberie',svcSlug:'plomberie'};
     var avatar  = _buildAvatarHtml(artisan, ctx.svcSlug);
     var id      = _esc(String(artisan.id || ''));
     var name    = _esc(artisan.name || 'Artisan FIXEO');
@@ -242,15 +242,21 @@
   }
 
   /* ── Empty state ───────────────────────────────────────────── */
-  function _renderEmpty(grid) {
+  function _renderEmpty(grid, ctx) {
+    var svcLbl  = (ctx && _SVC_LABELS[ctx.svcSlug]) || 'artisan';
+    var cityLbl = (ctx && ctx.city) || '';
+    var metier  = svcLbl.toLowerCase();
+    var desc1 = cityLbl
+      ? 'Aucun profil de\u00a0' + metier + '\u00a0n\u2019est affich\u00e9 pour\u00a0' + cityLbl + '\u00a0pour le moment.'
+      : 'Aucun profil de\u00a0' + metier + '\u00a0n\u2019est affich\u00e9 pour le moment.';
+    var desc2 = cityLbl
+      ? 'D\u00e9crivez votre besoin pour que FIXEO recherche une solution adapt\u00e9e \u00e0\u00a0' + cityLbl + '.'
+      : 'D\u00e9crivez votre besoin pour que FIXEO recherche une solution adapt\u00e9e.';
     grid.innerHTML =
       '<div class="fxlp-empty-state" role="listitem">'
         + '<span class="fxlp-empty-icon" aria-hidden="true">\uD83D\uDD0D</span>'
         + '<strong class="fxlp-empty-title">Aucun profil correspondant actuellement</strong>'
-        + '<p class="fxlp-empty-desc">'
-          + "Aucun profil de plombier n'est affich\u00e9 pour Oujda en ce moment. "
-          + 'D\u00e9crivez votre besoin pour que FIXEO recherche une solution adapt\u00e9e \u00e0 Oujda.'
-        + '</p>'
+        + '<p class="fxlp-empty-desc">' + desc1 + ' ' + desc2 + '</p>'
         + '<button class="fxlp-btn-primary" type="button"'
           + ' data-open-request-form="true" data-request-mode="default"'
           + ' style="margin:0 auto;font-size:.85rem;padding:10px 20px;box-shadow:none">'
@@ -260,11 +266,11 @@
   }
 
   /* ── Render real artisan cards ─────────────────────────────── */
-  function _render(artisans, grid) {
+  function _render(artisans, grid, ctx) {
     grid.classList.remove('fxlp-artisan-loading');
     grid.innerHTML = '';
 
-    if (!artisans || artisans.length === 0) { _renderEmpty(grid); return; }
+    if (!artisans || artisans.length === 0) { _renderEmpty(grid, ctx); return; }
 
     var cards = artisans.slice(0, MAX_CARDS);
 
@@ -381,7 +387,7 @@
         setTimeout(function () { _query(retries + 1); }, RETRY_MS);
       } else {
         var g = document.getElementById(GRID_ID);
-        if (g) _renderEmpty(g);
+        if (g) _renderEmpty(g, _readCtx());
       }
       return;
     }
@@ -401,14 +407,14 @@
       if (!grid) return;
       var data = res && res.data;
       var err  = res && res.error;
-      if (err) { console.warn('[fxlp] query error:', err.message); _renderEmpty(grid); return; }
+      if (err) { console.warn('[fxlp] query error:', err.message); _renderEmpty(grid, ctx); return; }
 
       var artisans = (data || []).map(function (row) {
         return {
           id:          row.legacy_id || row.id,
           _supabase_id:row.id,
           name:        row.name || 'Artisan FIXEO',
-          city:        row.city || 'Oujda',
+          city:        row.city || ctx.city || '',
           category:    (row.category || ctx.svcSlug).toLowerCase(),
           service:     (row.category || ctx.svcSlug).toLowerCase(),
           verified:    !!row.verified,
@@ -423,11 +429,11 @@
         };
       });
 
-      _render(artisans, grid);
+      _render(artisans, grid, ctx);
     }).catch(function (ex) {
       console.warn('[fxlp] query exception:', ex);
       var grid = document.getElementById(GRID_ID);
-      if (grid) _renderEmpty(grid);
+      if (grid) _renderEmpty(grid, _readCtx());
     });
   }
 
@@ -454,7 +460,7 @@
         setTimeout(_tryQuery, RETRY_MS);
       } else {
         var grid = document.getElementById(GRID_ID);
-        if (grid) _renderEmpty(grid);
+        if (grid) _renderEmpty(grid, _readCtx());
       }
     }
     _tryQuery();
