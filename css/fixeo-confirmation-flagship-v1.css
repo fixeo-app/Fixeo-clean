@@ -1,0 +1,272 @@
+/* ═══════════════════════════════════════════════════════════════════
+   FIXEO — FXCONFIRM-FLAGSHIP-V1
+   Additive presentation layer for confirmation.html
+   Namespace: fxcf-*
+   Version  : ?v=fxcf-v1
+   Strategy : CSS-only suppression of product-truth violations +
+              new fxcf-* component styles.
+              Zero DOM removal. All existing IDs/classes untouched.
+              Operational scripts unaffected.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── Design tokens (scoped) ─────────────────────────────────────── */
+.fxcf-scope {
+  --fxcf-bg         : #07070d;
+  --fxcf-accent     : #ff7a00;
+  --fxcf-cyan       : #0ba5c4;
+  --fxcf-cyan-dim   : rgba(11,165,196,.12);
+  --fxcf-cyan-border: rgba(11,165,196,.28);
+  --fxcf-green      : #20c997;
+  --fxcf-text       : #f0f2f8;
+  --fxcf-text-sub   : rgba(255,255,255,.65);
+  --fxcf-text-muted : rgba(255,255,255,.38);
+  --fxcf-border     : rgba(255,255,255,.09);
+  --fxcf-border-sub : rgba(255,255,255,.055);
+  --fxcf-bg-card    : #0d1019;
+  --fxcf-bg-inset   : rgba(255,255,255,.035);
+  --fxcf-r          : 14px;
+  --fxcf-r-lg       : 18px;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   1. PRODUCT-TRUTH SUPPRESSIONS (display:none only — never remove)
+   ════════════════════════════════════════════════════════════════════ */
+
+/* Confetti animation — premature celebration */
+#confetti-wrap { display: none !important; }
+
+/* RAFI image — inappropriate on client confirmation page */
+.rafi-img { display: none !important; }
+
+/* Legacy logo text — replaced by flagship topbar brand */
+.conf-logo { display: none !important; }
+
+/* Unverifiable security badges: SSL / Données protégées / Créneau verrouillé */
+.conf-security { display: none !important; }
+
+/* ════════════════════════════════════════════════════════════════════
+   2. TITLE CORRECTIONS
+   ════════════════════════════════════════════════════════════════════ */
+
+/* Override green gradient title with white/teal split (applied via JS span injection) */
+.conf-title {
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  -webkit-text-fill-color: unset !important;
+  background-clip: unset !important;
+  color: #f0f2f8 !important;
+}
+/* The .fxcf-title-accent span is injected by JS to colour the key word */
+.conf-title .fxcf-title-accent {
+  color: #0ba5c4;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   3. ICON CORRECTIONS
+   Hero icon: green ✅ → teal 📡 (coordination-in-progress framing)
+   ════════════════════════════════════════════════════════════════════ */
+.conf-icon-wrap {
+  background: linear-gradient(135deg, rgba(11,165,196,.18), rgba(11,165,196,.07)) !important;
+  border-color: rgba(11,165,196,.5) !important;
+  box-shadow: 0 0 32px rgba(11,165,196,.20) !important;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   4. PAYMENT METHOD BADGE CORRECTIONS
+   ════════════════════════════════════════════════════════════════════ */
+
+/* Hide the original static badge — JS injects a corrected replacement */
+.conf-method-badge { display: none !important; }
+
+/* Replacement badge injected by JS (.fxcf-payment-pill) */
+.fxcf-payment-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 14px;
+  background: rgba(255,122,0,.10);
+  border: 1px solid rgba(255,122,0,.28);
+  border-radius: 20px;
+  font-size: .72rem;
+  font-weight: 700;
+  color: rgba(255,160,100,.92);
+  letter-spacing: .02em;
+  margin-bottom: 18px;
+}
+.fxcf-payment-pill::before {
+  content: '💵';
+  font-size: .85rem;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   5. TOTAL ROW CORRECTION
+   JS rewrites the innerHTML so we style the label class directly.
+   .fxcf-total-label is injected by flagship JS in place of conf-total-label.
+   ════════════════════════════════════════════════════════════════════ */
+.fxcf-total-label-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.fxcf-total-label {
+  font-size: .78rem;
+  font-weight: 700;
+  color: rgba(255,255,255,.65);
+}
+.fxcf-total-note {
+  font-size: .62rem;
+  color: rgba(255,255,255,.38);
+  font-style: italic;
+  line-height: 1.4;
+}
+/* Preserve the existing green amount value — no change needed */
+
+/* ════════════════════════════════════════════════════════════════════
+   6. PHONE MASKING IN GRID
+   The JS patches .conf-info-val[data-fxcf-masked] after injection.
+   ════════════════════════════════════════════════════════════════════ */
+.conf-info-val[data-fxcf-masked] {
+  font-family: 'SF Mono', 'Fira Code', 'Courier New', monospace;
+  letter-spacing: .04em;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   7. TOPBAR — sticky brand + status pill
+   ════════════════════════════════════════════════════════════════════ */
+.fxcf-topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 13px 20px;
+  background: rgba(7,7,13,.92);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(255,255,255,.07);
+}
+.fxcf-brand {
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: #ff7a00;
+  letter-spacing: -.03em;
+  line-height: 1;
+  text-decoration: none;
+}
+.fxcf-brand em {
+  color: #f0f2f8;
+  font-style: normal;
+}
+.fxcf-brand-sub {
+  font-size: .58rem;
+  font-weight: 600;
+  color: rgba(255,255,255,.38);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  margin-top: 1px;
+}
+.fxcf-status-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: .68rem;
+  font-weight: 700;
+  color: #0ba5c4;
+  padding: 4px 10px;
+  background: rgba(11,165,196,.12);
+  border: 1px solid rgba(11,165,196,.28);
+  border-radius: 20px;
+  letter-spacing: .03em;
+}
+.fxcf-status-pill::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #0ba5c4;
+  animation: fxcf-pulse 2s ease-in-out infinite;
+}
+@keyframes fxcf-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: .5; transform: scale(.8); }
+}
+
+/* Push body content below fixed topbar */
+body.fxcf-active {
+  padding-top: 60px !important;
+  justify-content: flex-start !important;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   8. TRUST FOOTER (injected by JS inside .conf-card after .conf-security)
+   ════════════════════════════════════════════════════════════════════ */
+.fxcf-trust-footer {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  padding: 14px 0 0;
+  border-top: 1px solid rgba(255,255,255,.07);
+  margin-top: 4px;
+}
+.fxcf-trust-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: .65rem;
+  color: rgba(255,255,255,.38);
+  font-weight: 600;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   9. REVIEW — FUTURE STATE NOTICE
+   ════════════════════════════════════════════════════════════════════ */
+.fxcf-review-notice {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 11px 15px;
+  margin: 0 0 16px;
+  background: rgba(255,255,255,.025);
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: 11px;
+  opacity: .55;
+}
+.fxcf-review-icon {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+.fxcf-review-text {
+  font-size: .7rem;
+  color: rgba(255,255,255,.45);
+  line-height: 1.45;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   10. REDUCED MOTION
+   ════════════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  .fxcf-status-pill::before,
+  .fxcf-status-pill {
+    animation: none !important;
+  }
+  .fxcf-topbar {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   11. SAFE AREA (iOS)
+   ════════════════════════════════════════════════════════════════════ */
+@supports (padding-top: env(safe-area-inset-top)) {
+  .fxcf-topbar {
+    padding-top: calc(13px + env(safe-area-inset-top, 0px));
+  }
+  body.fxcf-active {
+    padding-top: calc(60px + env(safe-area-inset-top, 0px)) !important;
+  }
+}
