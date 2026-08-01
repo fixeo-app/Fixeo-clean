@@ -34,7 +34,8 @@
 
   var _SVC_CATS = {
     plomberie:'Plomberie', electricite:'\u00c9lectricit\u00e9', serrurerie:'Serrurerie',
-    climatisation:'Climatisation', peinture:'Peinture', menuiserie:'Menuiserie'
+    climatisation:'Climatisation', peinture:'Peinture', menuiserie:'Menuiserie',
+    maconnerie:'Ma\u00e7onnerie'
   };
   function _readCtx() {
     var grid = document.getElementById(GRID_ID);
@@ -47,10 +48,11 @@
     return { city: city, cityDisplay: cityDisplay, cat: cat.toLowerCase().trim(), svcSlug: svcSlug };
   }
   var _SVC_LABELS = { plomberie:'Plomberie', electricite:'\u00c9lectricit\u00e9',
-    serrurerie:'Serrurerie', climatisation:'Climatisation', peinture:'Peinture', menuiserie:'Menuiserie' };
+    serrurerie:'Serrurerie', climatisation:'Climatisation', peinture:'Peinture', menuiserie:'Menuiserie',
+    maconnerie:'Ma\u00e7onnerie' };
   var _SVC_ICONS  = { plomberie:'\uD83D\uDD27', electricite:'\u26A1',
     serrurerie:'\uD83D\uDD10', climatisation:'\u2744\uFE0F',
-    peinture:'\uD83C\uDFA8', menuiserie:'\uD83E\uDEB5' };
+    peinture:'\uD83C\uDFA8', menuiserie:'\uD83E\uDEB5', maconnerie:'\uD83E\uDDF1' };
   function _svcLabel(slug) { return _SVC_LABELS[slug] || (slug.charAt(0).toUpperCase()+slug.slice(1)); }
   function _svcIcon(slug)  { return _SVC_ICONS[slug]  || '\uD83D\uDD27'; }
   function _getHeroObj(svcSlug) {
