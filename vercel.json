@@ -99,6 +99,10 @@
       "status": 301
     },
     {
+      "src": "^/peintre/casablanca$",
+      "dest": "/peintre-casablanca.html"
+    },
+    {
       "src": "^/menuisier/(casablanca|rabat|fes|tanger|marrakech|agadir)$",
       "dest": "/menuisier-$1.html"
     },
@@ -147,13 +151,23 @@
     {
       "src": "^/peinture-casablanca\\.html$",
       "headers": {
-        "Location": "/peintre-casablanca"
+        "Location": "/peintre/casablanca"
       },
       "status": 301
     },
     {
       "src": "^/peintre-casablanca$",
-      "dest": "/api/lp-fn?slug=peintre-casablanca"
+      "headers": {
+        "Location": "/peintre/casablanca"
+      },
+      "status": 301
+    },
+    {
+      "src": "^/peintre-casablanca\\.html$",
+      "headers": {
+        "Location": "/peintre/casablanca"
+      },
+      "status": 301
     },
     {
       "src": "^/macon-casablanca$",
@@ -364,6 +378,13 @@
     {
       "src": "^/climatisation/([a-z][a-z-]*)$",
       "dest": "/climatisation-$1.html"
+    },
+    {
+      "src": "^/peinture/casablanca$",
+      "headers": {
+        "Location": "/peintre/casablanca"
+      },
+      "status": 301
     },
     {
       "src": "^/peinture/([a-z][a-z-]*)$",
