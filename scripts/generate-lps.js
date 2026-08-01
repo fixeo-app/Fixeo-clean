@@ -440,6 +440,12 @@ const SERVICES = {
     howlocal_adj: 'de peinture',
     step1_desc: "Vous précisez les surfaces, l'état des murs et le résultat recherché.",
     cta_lead: "Votre ville et le service sont déjà sélectionnés. Décrivez les travaux souhaités — c'est tout.",
+    chip_label: 'Peinture',
+    cta_primary_text: 'Décrire mon projet à',
+    cta_secondary_text: 'Voir les peintres à',
+    cta_title_noun: 'projet',
+    cta_service_label: 'Peinture',
+    step1_title: 'Décrivez votre projet',
     cities_allowlist: ['casablanca','rabat','fes','tanger','marrakech','agadir','kenitra','meknes','sale','temara','mohammedia','oujda','el-jadida','beni-mellal','khouribga','safi','nador','taza','ouarzazate','tetouan'],
     situations: [
       { icon: '🚪', label: 'Peinture intérieure' },
@@ -881,16 +887,16 @@ function buildPage(svcKey, cityKey) {
           <p class="fxlp-lead">${esc(svc.meta_desc(city.label))}</p>
           <div class="fxlp-chips" role="list">
             <span class="fxlp-chip fxlp-chip--city" role="listitem">📍 ${esc(city.label)}</span>
-            <span class="fxlp-chip fxlp-chip--svc"  role="listitem">${svc.icon} ${esc(svc.label)}</span>
+            <span class="fxlp-chip fxlp-chip--svc"  role="listitem">${svc.icon} ${esc(svc.chip_label || svc.label)}</span>
             <span class="fxlp-chip fxlp-chip--pay"  role="listitem">✓ Paiement après intervention</span>
           </div>
           <p class="fxlp-note-price">Le tarif définitif est confirmé avec l’artisan avant l’intervention.</p>
           <div class="fxlp-cta-group">
             <button class="fxlp-btn-primary" type="button" data-open-request-form="true" data-request-mode="default">
-              Décrire mon besoin à ${esc(city.label)}
+              ${svc.cta_primary_text || 'Décrire mon besoin à'} ${esc(city.label)}
             </button>
             <a href="#fxlp-artisans" id="fxlp-scroll-artisans" class="fxlp-btn-secondary">
-              Voir les artisans à ${esc(city.label)} ↓
+              ${svc.cta_secondary_text || 'Voir les artisans à'} ${esc(city.label)} ↓
             </a>
           </div>
         </div>
@@ -921,7 +927,7 @@ function buildPage(svcKey, cityKey) {
         <div class="fxlp-expl-grid">
           <div class="fxlp-expl-item">
             <span class="fxlp-expl-icon" aria-hidden="true">✏️</span>
-            <p class="fxlp-expl-text">Vous décrivez votre problème — panne, installation ou diagnostic.</p>
+            <p class="fxlp-expl-text">${svc.step1_desc || 'Vous décrivez votre problème — panne, installation ou diagnostic.'}</p>
           </div>
           <div class="fxlp-expl-item">
             <span class="fxlp-expl-icon" aria-hidden="true">📋</span>
@@ -967,7 +973,7 @@ function buildPage(svcKey, cityKey) {
         <div class="fxlp-steps" role="list">
           <div class="fxlp-step" role="listitem">
             <div class="fxlp-step-num" aria-hidden="true">1</div>
-            <h3 class="fxlp-step-title">Décrivez votre besoin</h3>
+            <h3 class="fxlp-step-title">${svc.step1_title || 'Décrivez votre besoin'}</h3>
             <p class="fxlp-step-desc">${svc.step1_desc || 'Votre ville et le service sont déjà sélectionnés — décrivez simplement votre situation.'}</p>
           </div>
           <div class="fxlp-step" role="listitem">
@@ -988,10 +994,10 @@ function buildPage(svcKey, cityKey) {
     <div class="fxlp-wrap">
       <div class="fxlp-cta-banner" role="complementary">
         <p class="fxlp-cta-eyebrow">BESOIN D’UN ARTISAN ?</p>
-        <h2 class="fxlp-cta-title">Votre demande à ${esc(city.label)}, en quelques secondes.</h2>
+        <h2 class="fxlp-cta-title">Votre ${svc.cta_title_noun || 'demande'} à ${esc(city.label)}, en quelques secondes.</h2>
         <p class="fxlp-cta-lead">${svc.cta_lead || 'Votre ville et le service sont déjà sélectionnés. Décrivez votre problème — c’est tout.'}</p>
         <button class="fxlp-btn-primary" type="button" data-open-request-form="true" data-request-mode="default">
-          Continuer avec ${esc(svc.label)} · ${esc(city.label)}
+          Continuer avec ${esc(svc.cta_service_label || svc.label)} · ${esc(city.label)}
         </button>
         <p class="fxlp-cta-note">Aucun paiement maintenant · Tarif confirmé avant l’intervention</p>
       </div>
