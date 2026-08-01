@@ -99,13 +99,48 @@
       "status": 301
     },
     {
-      "src": "^/menuisier/casablanca$",
-      "dest": "/menuisier-casablanca.html"
+      "src": "^/menuisier/(casablanca|rabat|fes|tanger|marrakech|agadir)$",
+      "dest": "/menuisier-$1.html"
     },
     {
       "src": "^/menuisier-casablanca\\.html$",
       "headers": {
         "Location": "/menuisier/casablanca"
+      },
+      "status": 301
+    },
+    {
+      "src": "^/menuisier-rabat\\.html$",
+      "headers": {
+        "Location": "/menuisier/rabat"
+      },
+      "status": 301
+    },
+    {
+      "src": "^/menuisier-fes\\.html$",
+      "headers": {
+        "Location": "/menuisier/fes"
+      },
+      "status": 301
+    },
+    {
+      "src": "^/menuisier-tanger\\.html$",
+      "headers": {
+        "Location": "/menuisier/tanger"
+      },
+      "status": 301
+    },
+    {
+      "src": "^/menuisier-marrakech\\.html$",
+      "headers": {
+        "Location": "/menuisier/marrakech"
+      },
+      "status": 301
+    },
+    {
+      "src": "^/menuisier-agadir\\.html$",
+      "headers": {
+        "Location": "/menuisier/agadir"
       },
       "status": 301
     },
@@ -133,23 +168,38 @@
     },
     {
       "src": "^/menuisier-rabat$",
-      "dest": "/api/lp-fn?slug=menuisier-rabat"
+      "headers": {
+        "Location": "/menuisier/rabat"
+      },
+      "status": 301
     },
     {
       "src": "^/menuisier-fes$",
-      "dest": "/api/lp-fn?slug=menuisier-fes"
+      "headers": {
+        "Location": "/menuisier/fes"
+      },
+      "status": 301
     },
     {
       "src": "^/menuisier-tanger$",
-      "dest": "/api/lp-fn?slug=menuisier-tanger"
+      "headers": {
+        "Location": "/menuisier/tanger"
+      },
+      "status": 301
     },
     {
       "src": "^/menuisier-marrakech$",
-      "dest": "/api/lp-fn?slug=menuisier-marrakech"
+      "headers": {
+        "Location": "/menuisier/marrakech"
+      },
+      "status": 301
     },
     {
       "src": "^/menuisier-agadir$",
-      "dest": "/api/lp-fn?slug=menuisier-agadir"
+      "headers": {
+        "Location": "/menuisier/agadir"
+      },
+      "status": 301
     },
     {
       "src": "^/peintre-rabat$",

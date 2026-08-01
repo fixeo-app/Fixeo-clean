@@ -273,7 +273,7 @@ const CITIES = {
 ══════════════════════════════════════════════════════════ */
 const SERVICES = {
   plombier: {
-    label: 'Plombier', label_adj: 'plomberie',
+    label: 'Plombier', label_adj: 'plomberie', canonicalRouteKey: 'plombier',
     icon: '🚿', service_schema: 'Plumbing',
     sub_services: ['Dépannage fuite d\'eau', 'Débouchage canalisation', 'Installation sanitaire', 'Entretien chauffe-eau', 'Robinetterie'],
     profession: 'plombier', profession_pl: 'plombiers',
@@ -312,7 +312,7 @@ const SERVICES = {
     ]
   },
   electricien: {
-    label: 'Électricien', label_adj: 'électricité',
+    label: 'Électricien', label_adj: 'électricité', canonicalRouteKey: 'electricien',
     icon: '⚡', service_schema: 'Electrical',
     sub_services: ['Dépannage panne électrique', 'Remplacement tableau électrique', 'Installation prises et éclairage', 'Mise aux normes', 'Court-circuit'],
     profession: 'électricien', profession_pl: 'électriciens',
@@ -351,7 +351,7 @@ const SERVICES = {
     ]
   },
   serrurier: {
-    label: 'Serrurier', label_adj: 'serrurerie',
+    label: 'Serrurier', label_adj: 'serrurerie', canonicalRouteKey: 'serrurier',
     icon: '🔑', service_schema: 'LocksmithService',
     sub_services: ['Ouverture de porte claquée', 'Remplacement de serrure', 'Pose cylindre blindé', 'Sécurisation après effraction', 'Porte blindée'],
     profession: 'serrurier', profession_pl: 'serruriers',
@@ -390,7 +390,7 @@ const SERVICES = {
     ]
   },
   climatisation: {
-    label: 'Climatisation', label_adj: 'climatisation',
+    label: 'Climatisation', label_adj: 'climatisation', canonicalRouteKey: 'climatisation',
     icon: '❄️', service_schema: 'HVACBusiness',
     sub_services: ['Installation climatiseur', 'Entretien et nettoyage', 'Recharge gaz réfrigérant', 'Dépannage panne', 'Nettoyage filtres'],
     profession: 'technicien climatisation', profession_pl: 'techniciens climatisation',
@@ -465,6 +465,51 @@ const SERVICES = {
       { label: 'Appartement 3 pièces complet', range: '1 200–3 500 DH' },
       { label: 'Enduit + peinture (par m²)', range: '25–60 DH/m²' },
       { label: 'Peinture façade extérieure', range: '35–80 DH/m²' }
+    ]
+  },
+  menuisier: {
+    label: 'Menuisier', label_adj: 'menuiserie',
+    icon: '🪵', service_schema: 'HomeAndConstructionBusiness',
+    sub_services: ['Pose de portes et fenêtres', 'Meubles sur mesure', 'Boiseries et habillages', 'Cuisine et placard', 'Réparation menuiserie'],
+    profession: 'menuisier', profession_pl: 'menuisiers',
+    article: 'un', supabase_category: 'Menuiserie',
+    cities_allowlist: ['casablanca','rabat','fes','tanger','marrakech','agadir'],
+    canonicalRouteKey: 'menuisier',
+    rafi_nlp: 'Menuiserie',
+    howlocal_adj: 'de menuiserie',
+    step1_desc: 'Vous décrivez votre besoin ou votre projet — réparation, fabrication sur mesure ou installation.',
+    cta_lead: 'Votre ville et le service sont déjà sélectionnés. Décrivez votre besoin ou votre projet — c’est tout.',
+    situations: [
+      { icon: '🚪', label: 'Portes et fenêtres' },
+      { icon: '🪑', label: 'Meubles sur mesure' },
+      { icon: '🪵', label: 'Boiseries et habillages' },
+      { icon: '🍽️', label: 'Cuisine et placard' },
+      { icon: '🔧', label: 'Réparation et remise en état' },
+      { icon: '🔍', label: 'Conseil et diagnostic' },
+    ],
+    faq_flagship: (city) => [
+      { q: 'Comment trouver un menuisier à ' + city.label + '\u00a0?', a: "Décrivez votre besoin ou votre projet sur FIXEO. Votre demande est enregistrée et transmise aux artisans menuisiers référencés correspondant à votre secteur à " + city.label + ". L'artisan vous contacte et confirme le tarif définitif avant de commencer." },
+      { q: 'Quels types de travaux de menuiserie peut-on demander\u00a0?', a: "Les artisans référencés sur FIXEO peuvent intervenir pour la pose et réparation de portes et fenêtres, la fabrication de meubles sur mesure, les boiseries et habillages muraux, les cuisines et placards, et les remises en état de menuiserie existante. Les prestations dépendent du diagnostic et des compétences de l'artisan sélectionné." },
+      { q: 'Comment le tarif définitif est-il confirmé\u00a0?', a: "Après évaluation de votre projet, l'artisan vous communique le tarif définitif avant de commencer. Vous n'êtes pas obligé d'accepter. En cas d'accord, le paiement s'effectue après la fin des travaux." },
+      { q: 'Le déplacement est-il inclus dans le prix\u00a0?', a: "Le déplacement peut être inclus ou facturé séparément selon l'artisan, la distance et le secteur. Le détail est précisé dans le devis communiqué avant l'intervention." },
+      { q: 'Quand le paiement est-il effectué\u00a0?', a: "Le paiement s'effectue après la fin des travaux, jamais en avance complète. Aucun paiement anticipé n'est demandé." },
+    ],
+    h1_prefix: 'Menuisier à',
+    title_suffix: 'Portes, meubles sur mesure, boiseries | Fixeo',
+    meta_desc: (city) => `Trouvez un menuisier à ${city} avec Fixeo. Portes, fenêtres, meubles sur mesure, boiseries et travaux de menuiserie par des artisans locaux référencés.`,
+    intro_template: (c) => `Trouvez un menuisier à ${c.label} via FIXEO. Portes, fenêtres, meubles sur mesure, boiseries et travaux de menuiserie — notre réseau d'artisans référencés couvre l'ensemble de ${c.label} et ses quartiers : ${c.neighborhoods}. Le tarif définitif est confirmé avec l'artisan avant le début des travaux.`,
+    faq: (c) => [
+      { q: `Quel est le tarif d'un menuisier à ${c.label} ?`, a: `Le tarif d'un menuisier à ${c.label} varie selon la nature des travaux (portes, meubles sur mesure, boiseries). ${c.pricing_note}` },
+      { q: `Comment trouver un menuisier disponible à ${c.label} ?`, a: `Via Fixeo, décrivez votre besoin en quelques secondes. Notre système identifie les menuisiers référencés à ${c.label} et vous met en relation directe.` },
+      { q: `Un menuisier Fixeo intervient-il dans toute la ville ${c.label_de} ?`, a: `Les artisans Fixeo couvrent l'ensemble ${c.label_de}, notamment les quartiers de ${c.neighborhoods}.` }
+    ],
+    urgency_services: ['Réparation porte endommagée', 'Remplacement vitre cassée', 'Finitions avant emménagement', 'Remise en état urgente'],
+    related_services: ['serrurier', 'electricien'],
+    pricing_tiers: [
+      { label: 'Pose / remplacement porte intérieure', range: '300–800 DH' },
+      { label: 'Meuble sur mesure (petite pièce)', range: '800–3 000 DH' },
+      { label: 'Cuisine sur mesure (par mètre linéaire)', range: '600–1 500 DH/ml' },
+      { label: 'Boiseries et habillage mural', range: '200–600 DH/m²' }
     ]
   }
 };
@@ -572,9 +617,21 @@ function buildBlogLinks(svcKey) {
 
 function buildRelatedLinks(svcKey, cityKey, svc) {
   const relSvcs = svc.related_services || [];
-  const nearbyCities = (NEARBY[cityKey] || []).slice(0, 2);
+  const rawNearby = NEARBY[cityKey] || [];
+  let nearbyCities;
+  if (svc.cities_allowlist) {
+    // For allowlisted services: prefer NEARBY cities that are in allowlist,
+    // then pad from allowlist (excluding self) to get up to 2 nearby cities.
+    const fromNearby = rawNearby.filter(nc => svc.cities_allowlist.includes(nc));
+    const fromAllowlist = svc.cities_allowlist.filter(nc => nc !== cityKey && !fromNearby.includes(nc));
+    nearbyCities = [...fromNearby, ...fromAllowlist].slice(0, 2);
+  } else {
+    nearbyCities = rawNearby.slice(0, 2);
+  }
   const seen = new Set();
-  const selfHref = `${svcKey}-${cityKey}.html`;
+  const selfHref = svc.canonicalRouteKey
+    ? `/${svc.canonicalRouteKey}/${cityKey}`
+    : `${svcKey}-${cityKey}.html`;
   seen.add(selfHref);
   const cards = [];
 
@@ -583,7 +640,10 @@ function buildRelatedLinks(svcKey, cityKey, svc) {
     const s2 = SERVICES[rs];
     if (!s2) return;
     const city = CITIES[cityKey];
-    const href = `${rs}-${cityKey}.html`;
+    const s2href = (SERVICES[rs] && SERVICES[rs].canonicalRouteKey)
+      ? `/${SERVICES[rs].canonicalRouteKey}/${cityKey}`
+      : `${rs}-${cityKey}.html`;
+    const href = s2href;
     if (seen.has(href)) return;
     seen.add(href);
     cards.push({ href, city: city.label, title: `${esc(s2.label)} à ${esc(city.label)}`, icon: s2.icon || '🔧' });
@@ -593,7 +653,10 @@ function buildRelatedLinks(svcKey, cityKey, svc) {
   nearbyCities.forEach(nc => {
     const city2 = CITIES[nc];
     if (!city2) return;
-    const href = `${svcKey}-${nc}.html`;
+    const nearbyHref = svc.canonicalRouteKey
+      ? `/${svc.canonicalRouteKey}/${nc}`
+      : `${svcKey}-${nc}.html`;
+    const href = nearbyHref;
     if (seen.has(href)) return;
     seen.add(href);
     cards.push({ href, city: city2.label, title: `${esc(svc.label)} à ${esc(city2.label)}`, icon: svc.icon || '🔧' });
@@ -770,7 +833,7 @@ function buildPage(svcKey, cityKey) {
   <select id="qsm-select-city" style="display:none" aria-hidden="true">
     <option value="${esc(city.label)}" selected>${esc(city.label)}</option>
   </select>
-  <input id="qsm-input-nlp" type="hidden" value="${esc(svc.label)}">
+  <input id="qsm-input-nlp" type="hidden" value="${esc(svc.rafi_nlp || svc.label)}">
   <main id="main-content" role="main">
     <div class="fxlp-wrap">
 
@@ -834,7 +897,7 @@ function buildPage(svcKey, cityKey) {
     <section class="fxlp-section" aria-labelledby="fxlp-how-local-title">
       <div class="fxlp-wrap">
         <span class="fxlp-section-label">COMMENT ÇA MARCHE</span>
-        <h2 id="fxlp-how-local-title" class="fxlp-section-title">Trouver une solution ${esc(svc.label_adj)} à ${esc(city.label)}</h2>
+        <h2 id="fxlp-how-local-title" class="fxlp-section-title">Trouver une solution ${esc(svc.howlocal_adj || svc.label_adj)} à ${esc(city.label)}</h2>
         <div class="fxlp-expl-grid">
           <div class="fxlp-expl-item">
             <span class="fxlp-expl-icon" aria-hidden="true">✏️</span>
@@ -885,7 +948,7 @@ function buildPage(svcKey, cityKey) {
           <div class="fxlp-step" role="listitem">
             <div class="fxlp-step-num" aria-hidden="true">1</div>
             <h3 class="fxlp-step-title">Décrivez votre besoin</h3>
-            <p class="fxlp-step-desc">Votre ville et le service sont déjà sélectionnés — décrivez simplement votre situation.</p>
+            <p class="fxlp-step-desc">${svc.step1_desc || 'Votre ville et le service sont déjà sélectionnés — décrivez simplement votre situation.'}</p>
           </div>
           <div class="fxlp-step" role="listitem">
             <div class="fxlp-step-num" aria-hidden="true">2</div>
@@ -906,7 +969,7 @@ function buildPage(svcKey, cityKey) {
       <div class="fxlp-cta-banner" role="complementary">
         <p class="fxlp-cta-eyebrow">BESOIN D’UN ARTISAN ?</p>
         <h2 class="fxlp-cta-title">Votre demande à ${esc(city.label)}, en quelques secondes.</h2>
-        <p class="fxlp-cta-lead">Votre ville et le service sont déjà sélectionnés. Décrivez votre problème — c’est tout.</p>
+        <p class="fxlp-cta-lead">${svc.cta_lead || 'Votre ville et le service sont déjà sélectionnés. Décrivez votre problème — c’est tout.'}</p>
         <button class="fxlp-btn-primary" type="button" data-open-request-form="true" data-request-mode="default">
           Continuer avec ${esc(svc.label)} · ${esc(city.label)}
         </button>
@@ -978,7 +1041,11 @@ let generated = 0, skipped = 0, errors = 0;
 
 services.forEach(svcKey => {
   if (!SERVICES[svcKey]) { console.error(`Unknown service: ${svcKey}`); return; }
-  cities.forEach(cityKey => {
+  const _svcDef = SERVICES[svcKey];
+  const _allowedCities = _svcDef.cities_allowlist
+    ? cities.filter(c => _svcDef.cities_allowlist.includes(c))
+    : cities;
+  _allowedCities.forEach(cityKey => {
     if (!CITIES[cityKey]) { console.error(`Unknown city: ${cityKey}`); return; }
 
     const page = buildPage(svcKey, cityKey);
