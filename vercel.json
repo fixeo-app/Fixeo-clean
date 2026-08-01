@@ -184,8 +184,22 @@
       "status": 301
     },
     {
+      "src": "^/macon/casablanca$",
+      "dest": "/macon-casablanca.html"
+    },
+    {
       "src": "^/macon-casablanca$",
-      "dest": "/api/lp-fn?slug=macon-casablanca"
+      "headers": {
+        "Location": "/macon/casablanca"
+      },
+      "status": 301
+    },
+    {
+      "src": "^/macon-casablanca\\.html$",
+      "headers": {
+        "Location": "/macon/casablanca"
+      },
+      "status": 301
     },
     {
       "src": "^/menuisier-casablanca$",
