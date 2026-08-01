@@ -99,6 +99,17 @@
       "status": 301
     },
     {
+      "src": "^/menuisier/casablanca$",
+      "dest": "/menuisier-casablanca.html"
+    },
+    {
+      "src": "^/menuisier-casablanca\\.html$",
+      "headers": {
+        "Location": "/menuisier/casablanca"
+      },
+      "status": 301
+    },
+    {
       "src": "^/peinture-casablanca\\.html$",
       "headers": {
         "Location": "/peintre-casablanca"
@@ -115,7 +126,10 @@
     },
     {
       "src": "^/menuisier-casablanca$",
-      "dest": "/api/lp-fn?slug=menuisier-casablanca"
+      "headers": {
+        "Location": "/menuisier/casablanca"
+      },
+      "status": 301
     },
     {
       "src": "^/menuisier-rabat$",

@@ -23,9 +23,9 @@
 
   <!-- ═══ plombier (6/6) ═══ -->
     <url>
-    <loc>https://www.fixeo.ma/menuisier-casablanca</loc>
+    <loc>https://www.fixeo.ma/menuisier/casablanca</loc>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.fixeo.ma/menuisier-rabat</loc>
