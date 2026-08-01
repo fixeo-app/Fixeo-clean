@@ -553,34 +553,39 @@ function buildBlogLinks(svcKey) {
 function buildRelatedLinks(svcKey, cityKey, svc) {
   const relSvcs = svc.related_services || [];
   const nearbyCities = (NEARBY[cityKey] || []).slice(0, 2);
-  const links = [];
+  const seen = new Set();
+  const selfHref = `${svcKey}-${cityKey}.html`;
+  seen.add(selfHref);
+  const cards = [];
 
-  // Sibling services same city
+  // Sibling services same city (up to 2)
   relSvcs.slice(0, 2).forEach(rs => {
     const s2 = SERVICES[rs];
     if (!s2) return;
     const city = CITIES[cityKey];
-    const href = CLEAN ? `/${rs}/${cityKey}` : `${rs}-${cityKey}.html`;
-    links.push(`<a class="service-link seo-link-card" href="${href}">
-            <span>${esc(city.label)}</span>
-            <h3>${esc(s2.label)} à ${esc(city.label)}</h3>
-            <p>${esc(s2.sub_services[0])} et ${esc(s2.sub_services[1]).toLowerCase()} à ${esc(city.label)}.</p>
-          </a>`);
+    const href = `${rs}-${cityKey}.html`;
+    if (seen.has(href)) return;
+    seen.add(href);
+    cards.push({ href, city: city.label, title: `${esc(s2.label)} à ${esc(city.label)}`, icon: s2.icon || '🔧' });
   });
 
-  // Same service, nearby cities
+  // Same service, nearby cities (up to 2)
   nearbyCities.forEach(nc => {
     const city2 = CITIES[nc];
     if (!city2) return;
-    const href = CLEAN ? `/${svcKey}/${nc}` : `${svcKey}-${nc}.html`;
-    links.push(`<a class="service-link seo-link-card" href="${href}">
-            <span>${esc(city2.label)}</span>
-            <h3>${esc(svc.label)} à ${esc(city2.label)}</h3>
-            <p>${esc(svc.sub_services[0])} et interventions ${esc(svc.label_adj)} à ${esc(city2.label)}.</p>
-          </a>`);
+    const href = `${svcKey}-${nc}.html`;
+    if (seen.has(href)) return;
+    seen.add(href);
+    cards.push({ href, city: city2.label, title: `${esc(svc.label)} à ${esc(city2.label)}`, icon: svc.icon || '🔧' });
   });
 
-  return links.slice(0, 4).join('\n          ');
+  return cards.slice(0, 4).map(card =>
+    `<a class="fxlp-explorer-card" href="${card.href}">
+            <span class="fxlp-explorer-icon" aria-hidden="true">${card.icon}</span>
+            <span class="fxlp-explorer-city">${esc(card.city)}</span>
+            <span class="fxlp-explorer-title">${card.title}</span>
+          </a>`
+  ).join('\n          ');
 }
 
 function buildFAQJsonLD(faqItems) {
@@ -733,7 +738,7 @@ function buildPage(svcKey, cityKey) {
   <link rel="stylesheet" href="/css/reservation.css?v=fxlp-res-v1">
   <link rel="stylesheet" href="/css/reservation-v2.css?v=fxlp-res-v1">
   <link rel="stylesheet" href="/css/reservation-v2a.css?v=fxlp-res-v1">
-  <link rel="stylesheet" href="/css/fixeo-local-flagship-v1.css?v=fxlp-v14">
+  <link rel="stylesheet" href="/css/fixeo-local-flagship-v1.css?v=fxlp-v15">
   <link rel="stylesheet" href="/css/fixeo-reservation-flagship-v1.css?v=fxresf-v11a">
   <link rel="stylesheet" href="/css/fx-request-flow-v4.css?v=fxrf4-v5z">
   <link rel="icon" href="/img/favicon.png" type="image/png">
@@ -902,12 +907,16 @@ function buildPage(svcKey, cityKey) {
       </div>
     </section>
 
-    <!-- §§8 INTERNAL LINKS -->
-    <div class="fxlp-wrap">
-      <nav class="seo-authority-links" aria-label="Pages liées">
-        ${relLinks}
-      </nav>
-    </div>
+    <!-- §§8 EXPLORER AUSSI -->
+    <section class="fxlp-explorer" aria-labelledby="fxlp-explorer-title">
+      <div class="fxlp-wrap">
+        <span class="fxlp-section-label">EXPLORER AUSSI</span>
+        <h2 id="fxlp-explorer-title" class="fxlp-explorer-heading">Explorer aussi</h2>
+        <nav class="fxlp-explorer-grid" aria-label="Pages liées">
+          ${relLinks}
+        </nav>
+      </div>
+    </section>
 
   </main>
   <div id="fxf-mount"></div>

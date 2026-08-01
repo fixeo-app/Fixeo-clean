@@ -690,6 +690,77 @@ details.fxlp-faq-item[open] .fxlp-faq-chevron {
   }
 }
 
+/* ── Explorer aussi section ─────────────────────────────────── */
+.fxlp-explorer {
+  padding: 32px 0 24px;
+}
+.fxlp-explorer-heading {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #c8d4e8;
+  margin: 4px 0 16px;
+  letter-spacing: .01em;
+}
+.fxlp-explorer-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+.fxlp-explorer-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 52px;
+  padding: 10px 14px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: 10px;
+  text-decoration: none;
+  color: #c8d4e8;
+  transition: background .18s, border-color .18s, color .18s;
+  -webkit-tap-highlight-color: transparent;
+}
+.fxlp-explorer-card:hover,
+.fxlp-explorer-card:focus-visible {
+  background: rgba(255,107,61,.08);
+  border-color: rgba(255,107,61,.28);
+  color: #ff6b3d;
+  outline: none;
+}
+.fxlp-explorer-icon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+  width: 28px;
+  text-align: center;
+}
+.fxlp-explorer-city {
+  font-size: .72rem;
+  font-weight: 600;
+  color: #4a5a72;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  flex-shrink: 0;
+  min-width: 60px;
+}
+.fxlp-explorer-title {
+  font-size: .85rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+@media (min-width: 600px) {
+  .fxlp-explorer-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (min-width: 1024px) {
+  .fxlp-explorer-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .fxlp-explorer {
+    padding: 24px 0 32px;
+  }
+}
+
 /* ── Safari/WebKit compat ───────────────────────────────────── */
 .fxlp-hero-city-tag,
 .fxlp-hero-svc-tag,
