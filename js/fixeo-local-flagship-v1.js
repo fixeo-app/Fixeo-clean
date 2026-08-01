@@ -40,10 +40,11 @@
     var grid = document.getElementById(GRID_ID);
     var city = (grid && grid.getAttribute('data-fxlp-city')) || '';
     if (!city) { var sel = document.getElementById('qsm-select-city'); if (sel) city = sel.value || ''; }
+    var cityDisplay = city.trim() || 'Oujda';
     city = city.toLowerCase().trim() || 'oujda';
     var svcSlug = (grid && grid.getAttribute('data-fxlp-service')) || 'plomberie';
     var cat = (grid && grid.getAttribute('data-fxlp-category')) || _SVC_CATS[svcSlug] || svcSlug.slice(0,6);
-    return { city: city, cat: cat.toLowerCase().trim(), svcSlug: svcSlug };
+    return { city: city, cityDisplay: cityDisplay, cat: cat.toLowerCase().trim(), svcSlug: svcSlug };
   }
   var _SVC_LABELS = { plomberie:'Plomberie', electricite:'\u00c9lectricit\u00e9',
     serrurerie:'Serrurerie', climatisation:'Climatisation', peinture:'Peinture', menuiserie:'Menuiserie' };
@@ -244,7 +245,7 @@
   /* ── Empty state ───────────────────────────────────────────── */
   function _renderEmpty(grid, ctx) {
     var svcLbl  = (ctx && _SVC_LABELS[ctx.svcSlug]) || 'artisan';
-    var cityLbl = (ctx && ctx.city) || '';
+    var cityLbl = (ctx && ctx.cityDisplay) || (ctx && ctx.city) || '';
     var metier  = svcLbl.toLowerCase();
     var desc1 = cityLbl
       ? 'Aucun profil de\u00a0' + metier + '\u00a0n\u2019est affich\u00e9 pour\u00a0' + cityLbl + '\u00a0pour le moment.'
