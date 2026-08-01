@@ -99,8 +99,43 @@
       "status": 301
     },
     {
-      "src": "^/peintre/casablanca$",
-      "dest": "/peintre-casablanca.html"
+      "src": "^/peintre/(casablanca|rabat|fes|tanger|marrakech|agadir|kenitra|meknes|sale|temara|mohammedia|oujda|el-jadida|beni-mellal|khouribga|safi|nador|taza|ouarzazate|tetouan)$",
+      "dest": "/peintre-$1.html"
+    },
+    {
+      "src": "^/peintre-(casablanca|rabat|fes|tanger|marrakech|agadir|kenitra|meknes|sale|temara|mohammedia|oujda|el-jadida|beni-mellal|khouribga|safi|nador|taza|ouarzazate|tetouan)\\.html$",
+      "status": 301,
+      "headers": {
+        "Location": "/peintre/$1"
+      }
+    },
+    {
+      "src": "^/peintre-(casablanca|rabat|fes|tanger|marrakech|agadir|kenitra|meknes|sale|temara|mohammedia|oujda|el-jadida|beni-mellal|khouribga|safi|nador|taza|ouarzazate|tetouan)$",
+      "status": 301,
+      "headers": {
+        "Location": "/peintre/$1"
+      }
+    },
+    {
+      "src": "^/peinture/(casablanca|rabat|fes|tanger|marrakech|agadir|kenitra|meknes|sale|temara|mohammedia|oujda|el-jadida|beni-mellal|khouribga|safi|nador|taza|ouarzazate|tetouan)$",
+      "status": 301,
+      "headers": {
+        "Location": "/peintre/$1"
+      }
+    },
+    {
+      "src": "^/peinture-(casablanca|rabat|fes|tanger|marrakech|agadir|kenitra|meknes|sale|temara|mohammedia|oujda|el-jadida|beni-mellal|khouribga|safi|nador|taza|ouarzazate|tetouan)\\.html$",
+      "status": 301,
+      "headers": {
+        "Location": "/peintre/$1"
+      }
+    },
+    {
+      "src": "^/peinture-(casablanca|rabat|fes|tanger|marrakech|agadir|kenitra|meknes|sale|temara|mohammedia|oujda|el-jadida|beni-mellal|khouribga|safi|nador|taza|ouarzazate|tetouan)$",
+      "status": 301,
+      "headers": {
+        "Location": "/peintre/$1"
+      }
     },
     {
       "src": "^/menuisier/(casablanca|rabat|fes|tanger|marrakech|agadir)$",
@@ -149,27 +184,6 @@
       "status": 301
     },
     {
-      "src": "^/peinture-casablanca\\.html$",
-      "headers": {
-        "Location": "/peintre/casablanca"
-      },
-      "status": 301
-    },
-    {
-      "src": "^/peintre-casablanca$",
-      "headers": {
-        "Location": "/peintre/casablanca"
-      },
-      "status": 301
-    },
-    {
-      "src": "^/peintre-casablanca\\.html$",
-      "headers": {
-        "Location": "/peintre/casablanca"
-      },
-      "status": 301
-    },
-    {
       "src": "^/macon-casablanca$",
       "dest": "/api/lp-fn?slug=macon-casablanca"
     },
@@ -214,26 +228,6 @@
         "Location": "/menuisier/agadir"
       },
       "status": 301
-    },
-    {
-      "src": "^/peintre-rabat$",
-      "dest": "/api/lp-fn?slug=peintre-rabat"
-    },
-    {
-      "src": "^/peintre-fes$",
-      "dest": "/api/lp-fn?slug=peintre-fes"
-    },
-    {
-      "src": "^/peintre-tanger$",
-      "dest": "/api/lp-fn?slug=peintre-tanger"
-    },
-    {
-      "src": "^/peintre-marrakech$",
-      "dest": "/api/lp-fn?slug=peintre-marrakech"
-    },
-    {
-      "src": "^/peintre-agadir$",
-      "dest": "/api/lp-fn?slug=peintre-agadir"
     },
     {
       "src": "^/macon-rabat$",
@@ -378,17 +372,6 @@
     {
       "src": "^/climatisation/([a-z][a-z-]*)$",
       "dest": "/climatisation-$1.html"
-    },
-    {
-      "src": "^/peinture/casablanca$",
-      "headers": {
-        "Location": "/peintre/casablanca"
-      },
-      "status": 301
-    },
-    {
-      "src": "^/peinture/([a-z][a-z-]*)$",
-      "dest": "/peinture-$1.html"
     },
     {
       "src": "^/villes/([a-z][a-z-]*)$",

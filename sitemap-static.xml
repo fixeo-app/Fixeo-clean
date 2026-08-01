@@ -64,12 +64,6 @@
   </url>
 
   <!-- Peinture standalone page (only existing page of this service type) -->
-  <url>
-    <loc>https://www.fixeo.ma/peinture-fes.html</loc>
-    <lastmod>2026-05-12</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
 
   <!-- Press & Partners page -->
   <url>

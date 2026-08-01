@@ -428,40 +428,48 @@ const SERVICES = {
       { label: 'Dépannage panne électronique', range: '250–700 DH' }
     ]
   },
-  peinture: {
+  peintre: {
     label: 'Peintre', label_adj: 'peinture',
     icon: '🎨', service_schema: 'ProfessionalService',
-    sub_services: ['Peinture intérieure', 'Enduit et plâtre', 'Revêtement mural', 'Remise en état', 'Peinture extérieure façade'],
+    sub_services: ['Peinture intérieure', 'Préparation des murs', 'Enduit et rebouchage', 'Peinture extérieure', 'Plafonds et boiseries'],
     profession: 'peintre', profession_pl: 'peintres',
     article: 'un', supabase_category: 'Peinture',
+    canonicalRouteKey: 'peintre',
+    runtimeServiceKey: 'peinture',
+    rafi_nlp: 'Peinture',
+    howlocal_adj: 'de peinture',
+    step1_desc: "Vous précisez les surfaces, l'état des murs et le résultat recherché.",
+    cta_lead: "Votre ville et le service sont déjà sélectionnés. Décrivez les travaux souhaités — c'est tout.",
+    cities_allowlist: ['casablanca','rabat','fes','tanger','marrakech','agadir','kenitra','meknes','sale','temara','mohammedia','oujda','el-jadida','beni-mellal','khouribga','safi','nador','taza','ouarzazate','tetouan'],
     situations: [
-      { icon: '\uD83C\uDFA8', label: 'Peinture int\u00e9rieure' },
-      { icon: '\uD83C\uDFE0', label: 'R\u00e9novation compl\u00e8te' },
-      { icon: '\uD83D\uDCCF', label: 'Enduit et pl\u00e2tre' },
-      { icon: '\uD83D\uDD28', label: 'Rev\u00eatement mural' },
-      { icon: '\uD83C\uDFD7\uFE0F', label: 'Peinture fa\u00e7ade' },
-      { icon: '\uD83D\uDD0D', label: 'Diagnostic et conseil' },
+      { icon: '🚪', label: 'Peinture intérieure' },
+      { icon: '🪑', label: 'Peinture extérieure' },
+      { icon: '🪵', label: 'Préparation des murs' },
+      { icon: '🍽️', label: 'Enduit et rebouchage' },
+      { icon: '🔧', label: 'Plafonds et boiseries' },
+      { icon: '🔍', label: 'Conseil couleur et diagnostic' },
     ],
     faq_flagship: (city) => [
-      { q: 'Comment trouver un peintre \u00e0 ' + city.label + '\u00a0?', a: "D\u00e9crivez votre projet sur FIXEO. Votre demande est enregistr\u00e9e et transmise aux artisans peintres r\u00e9f\u00e9renc\u00e9s correspondant \u00e0 votre secteur \u00e0 " + city.label + ". L\'artisan vous contacte et confirme le tarif d\u00e9finitif avant de commencer." },
-      { q: 'Quels types de travaux de peinture peuvent \u00eatre pris en charge\u00a0?', a: "Les artisans r\u00e9f\u00e9renc\u00e9s sur FIXEO peuvent intervenir pour la peinture int\u00e9rieure, les enduits, les rev\u00eatements muraux, la peinture de fa\u00e7ade et les remises en \u00e9tat. Les prestations d\u00e9pendent du diagnostic et des comp\u00e9tences de l\'artisan s\u00e9lectionn\u00e9." },
-      { q: 'Comment le tarif d\u00e9finitif est-il confirm\u00e9\u00a0?', a: "Apr\u00e8s \u00e9valuation de votre situation, l\'artisan vous communique le tarif d\u00e9finitif avant de commencer. Vous n\'\u00eates pas oblig\u00e9 d\'accepter. En cas d\'accord, le paiement s\'effectue apr\u00e8s la fin de l\'intervention." },
-      { q: 'Le d\u00e9placement est-il inclus dans le prix\u00a0?', a: "Le d\u00e9placement peut \u00eatre inclus ou factur\u00e9 s\u00e9par\u00e9ment selon l\'artisan, la distance et le secteur. Le d\u00e9tail est pr\u00e9cis\u00e9 dans le devis communiqu\u00e9 avant l\'intervention." },
-      { q: 'Quand le paiement est-il effectu\u00e9\u00a0?', a: "Le paiement s\'effectue apr\u00e8s l\'intervention, jamais en avance compl\u00e8te. Aucun paiement anticip\u00e9 n\'est demand\u00e9." },
+      { q: 'Comment demander un peintre à ' + city.label + '\u00a0?', a: "Décrivez votre besoin ou votre projet sur FIXEO. Votre demande est enregistrée et transmise aux artisans peintres référencés correspondant à votre secteur à " + city.label + ". L'artisan vous contacte et confirme le tarif définitif avant de commencer." },
+      { q: 'Quels types de travaux de peinture peut-on demander\u00a0?', a: "Les artisans référencés sur FIXEO peuvent intervenir pour la peinture intérieure, la peinture extérieure, la préparation des murs, les enduits et rebouchages, les plafonds et boiseries. Les prestations dépendent du diagnostic et des compétences de l'artisan sélectionné." },
+      { q: 'Comment le tarif définitif est-il confirmé\u00a0?', a: "Après évaluation de votre projet, l'artisan vous communique le tarif définitif avant de commencer. Vous n'êtes pas obligé d'accepter. En cas d'accord, le paiement s'effectue après la fin des travaux." },
+      { q: 'Le déplacement et les fournitures sont-ils inclus\u00a0?', a: "Le déplacement peut être inclus ou facturé séparément selon l'artisan, la distance et le secteur. Le détail est précisé dans le devis communiqué avant l'intervention." },
+      { q: 'Quand le paiement est-il effectué\u00a0?', a: "Le paiement s'effectue après la fin des travaux, jamais en avance complète. Aucun paiement anticipé n'est demandé." },
     ],
     h1_prefix: 'Peintre à',
     title_suffix: 'Travaux intérieurs, finitions | Fixeo',
-    meta_desc: (city) => `Trouvez un peintre à ${city} avec Fixeo. Peinture intérieure, enduit, revêtement et travaux de finition par des artisans locaux vérifiés.`,
-    intro_template: (c) => `Pour vos travaux de peinture à ${c.label}, Fixeo vous met en relation avec des artisans peintres locaux qualifiés. Que ce soit pour une rénovation complète, une remise en état ou de simples finitions, les peintres Fixeo interviennent dans tous les quartiers ${c.label_de} — ${c.neighborhoods}. ${c.context}`,
+    meta_desc: (city) => `Trouvez un peintre à ${city} avec Fixeo. Peinture intérieure, extérieure, préparation des murs, enduit ou rénovation. Tarif confirmé avant intervention.`,
+    intro_template: (c) => `Décrivez votre projet de peinture à ${c.label}. FIXEO enregistre votre demande et recherche une solution correspondant à votre secteur. Le tarif définitif est confirmé avec l'artisan avant l'intervention.`,
     faq: (c) => [
-      { q: `Quel est le tarif d'un peintre à ${c.label} ?`, a: `Le tarif d'un peintre à ${c.label} varie entre ${c.pricing_low} et ${c.pricing_high} DH pour une pièce standard (15–20 m²), selon la préparation nécessaire (rebouchage, enduit) et le type de peinture utilisé. ${c.pricing_note}` },
-      { q: `Combien de temps durent des travaux de peinture à ${c.label} ?`, a: `Une pièce standard prend généralement 1 à 2 jours selon l'état des murs et le nombre de couches. Un appartement complet peut nécessiter 3 à 5 jours. Via Fixeo, l'artisan évalue les délais lors du premier contact.` },
-      { q: `Peut-on trouver un peintre disponible rapidement à ${c.label} ?`, a: `Oui. Via Fixeo, signalez vos besoins de peinture et notre système identifie les peintres disponibles à ${c.label}. Les artisans libres pour une intervention rapide sont mis en avant.` }
+      { q: `Quel est le tarif d'un peintre à ${c.label} ?`, a: `Le tarif d'un peintre à ${c.label} varie selon la surface, la préparation nécessaire et le type de peinture. Le tarif définitif est confirmé avec l'artisan avant le début des travaux. ${c.pricing_note}` },
+      { q: `Comment trouver un peintre à ${c.label} ?`, a: `Via Fixeo, décrivez votre besoin en quelques secondes. Votre demande est enregistrée et transmise aux artisans référencés à ${c.label}.` },
+      { q: `Un peintre Fixeo intervient-il dans toute la ville ${c.label_de} ?`, a: `Les artisans référencés sur FIXEO couvrent l'ensemble ${c.label_de}, notamment les quartiers de ${c.neighborhoods}.` }
     ],
     urgency_services: ['Remise en état rapide', 'Réparation dégât des eaux (peinture)', 'Finitions avant emménagement', 'Ravalement façade urgent'],
-    related_services: ['electricien', 'plombier'],
+    related_services: ['serrurier'],
+    prix_explorer: { slug: 'peinture', icon: '💰', title_prefix: 'Prix peinture à' },
     pricing_tiers: [
-      { label: 'Peinture 1 pièce (préparation incluse)', range: `${(parseInt('130')+20)}–${(parseInt('500')+100)} DH` },
+      { label: 'Peinture 1 pièce (préparation incluse)', range: '150–600 DH' },
       { label: 'Appartement 3 pièces complet', range: '1 200–3 500 DH' },
       { label: 'Enduit + peinture (par m²)', range: '25–60 DH/m²' },
       { label: 'Peinture façade extérieure', range: '35–80 DH/m²' }
@@ -662,6 +670,16 @@ function buildRelatedLinks(svcKey, cityKey, svc) {
     cards.push({ href, city: city2.label, title: `${esc(svc.label)} à ${esc(city2.label)}`, icon: svc.icon || '🔧' });
   });
 
+  // Prix explorer slot: inject /prix/{slug}/{city} card when service defines prix_explorer
+  if (svc.prix_explorer && cards.length < 4) {
+    const city = CITIES[cityKey];
+    const prixHref = `/prix/${svc.prix_explorer.slug}/${cityKey}`;
+    if (!seen.has(prixHref)) {
+      seen.add(prixHref);
+      cards.push({ href: prixHref, city: city.label, title: `${svc.prix_explorer.title_prefix} ${esc(city.label)}`, icon: svc.prix_explorer.icon });
+    }
+  }
+
   return cards.slice(0, 4).map(card =>
     `<a class="fxlp-explorer-card" href="${card.href}">
             <span class="fxlp-explorer-icon" aria-hidden="true">${card.icon}</span>
@@ -728,8 +746,10 @@ function buildPage(svcKey, cityKey) {
   const city = CITIES[cityKey];
   if (!svc || !city) return null;
 
-  const filename     = `${svcKey}-${cityKey}.html`;
-  const canonicalUrl = `https://www.fixeo.ma/${svcKey}/${cityKey}`;
+  const routeKey     = svc.canonicalRouteKey || svcKey;
+  const runtimeSvcKey = svc.runtimeServiceKey || svcKey;
+  const filename     = `${routeKey}-${cityKey}.html`;
+  const canonicalUrl = `https://www.fixeo.ma/${routeKey}/${cityKey}`;
 
   const h1        = `${esc(svc.h1_prefix + ' ' + city.label)}`;
   const title     = `${svc.h1_prefix} ${city.label} | ${svc.title_suffix}`;
@@ -745,7 +765,7 @@ function buildPage(svcKey, cityKey) {
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://www.fixeo.ma/' },
       { '@type': 'ListItem', position: 2, name: 'Services', item: 'https://www.fixeo.ma/services.html' },
-      { '@type': 'ListItem', position: 3, name: svc.label, item: `https://www.fixeo.ma/${svcKey}` },
+      { '@type': 'ListItem', position: 3, name: svc.label, item: `https://www.fixeo.ma/${routeKey}` },
       { '@type': 'ListItem', position: 4, name: city.label, item: canonicalUrl },
     ]
   };
@@ -927,7 +947,7 @@ function buildPage(svcKey, cityKey) {
           <div id="fxlp-artisan-grid" class="fxlp-artisan-loading" role="list"
                aria-label="${esc(professionU + 's à ' + city.label)}"
                data-fxlp-city="${esc(city.label)}"
-               data-fxlp-service="${svcKey}"
+               data-fxlp-service="${runtimeSvcKey}"
                data-fxlp-category="${esc(svcCat)}">
             <div class="fxlp-skeleton" aria-hidden="true"></div>
             <div class="fxlp-skeleton" aria-hidden="true"></div>
