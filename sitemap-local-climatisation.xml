@@ -10,113 +10,104 @@
         xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
           http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
 
-  <url>
-    <loc>https://www.fixeo.ma/climatisation-casablanca</loc>
-    <lastmod>2026-07-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://www.fixeo.ma/climatisation-marrakech</loc>
-    <lastmod>2026-07-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://www.fixeo.ma/climatisation-rabat</loc>
-    <lastmod>2026-07-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://www.fixeo.ma/climatisation-tanger</loc>
-    <lastmod>2026-07-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://www.fixeo.ma/climatisation-kenitra.html</loc>
-    <lastmod>2026-07-11</lastmod>
+    <url>
+    <loc>https://www.fixeo.ma/climatisation/casablanca</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.fixeo.ma/climatisation-meknes.html</loc>
-    <lastmod>2026-07-11</lastmod>
+    <loc>https://www.fixeo.ma/climatisation/rabat</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.fixeo.ma/climatisation-mohammedia.html</loc>
-    <lastmod>2026-07-11</lastmod>
+    <loc>https://www.fixeo.ma/climatisation/marrakech</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.fixeo.ma/climatisation-oujda.html</loc>
-    <lastmod>2026-07-11</lastmod>
+    <loc>https://www.fixeo.ma/climatisation/fes</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.fixeo.ma/climatisation-sale.html</loc>
-    <lastmod>2026-07-11</lastmod>
+    <loc>https://www.fixeo.ma/climatisation/tanger</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.fixeo.ma/climatisation-temara.html</loc>
-    <lastmod>2026-07-11</lastmod>
+    <loc>https://www.fixeo.ma/climatisation/agadir</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.fixeo.ma/climatisation-beni-mellal.html</loc>
-    <lastmod>2026-07-11</lastmod>
+    <loc>https://www.fixeo.ma/climatisation/meknes</loc>
     <changefreq>weekly</changefreq>
-    <priority>0.75</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.fixeo.ma/climatisation-el-jadida.html</loc>
-    <lastmod>2026-07-11</lastmod>
+    <loc>https://www.fixeo.ma/climatisation/oujda</loc>
     <changefreq>weekly</changefreq>
-    <priority>0.75</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.fixeo.ma/climatisation-khouribga.html</loc>
-    <lastmod>2026-07-11</lastmod>
+    <loc>https://www.fixeo.ma/climatisation/kenitra</loc>
     <changefreq>weekly</changefreq>
-    <priority>0.75</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.fixeo.ma/climatisation-nador.html</loc>
-    <lastmod>2026-07-11</lastmod>
+    <loc>https://www.fixeo.ma/climatisation/temara</loc>
     <changefreq>weekly</changefreq>
-    <priority>0.75</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.fixeo.ma/climatisation-ouarzazate.html</loc>
-    <lastmod>2026-07-11</lastmod>
+    <loc>https://www.fixeo.ma/climatisation/sale</loc>
     <changefreq>weekly</changefreq>
-    <priority>0.75</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.fixeo.ma/climatisation-safi.html</loc>
-    <lastmod>2026-07-11</lastmod>
+    <loc>https://www.fixeo.ma/climatisation/mohammedia</loc>
     <changefreq>weekly</changefreq>
-    <priority>0.75</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.fixeo.ma/climatisation-taza.html</loc>
-    <lastmod>2026-07-11</lastmod>
+    <loc>https://www.fixeo.ma/climatisation/khouribga</loc>
     <changefreq>weekly</changefreq>
-    <priority>0.75</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.fixeo.ma/climatisation-tetouan.html</loc>
-    <lastmod>2026-07-11</lastmod>
+    <loc>https://www.fixeo.ma/climatisation/safi</loc>
     <changefreq>weekly</changefreq>
-    <priority>0.75</priority>
+    <priority>0.8</priority>
   </url>
-
+  <url>
+    <loc>https://www.fixeo.ma/climatisation/nador</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.fixeo.ma/climatisation/taza</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.fixeo.ma/climatisation/ouarzazate</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.fixeo.ma/climatisation/tetouan</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.fixeo.ma/climatisation/beni-mellal</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.fixeo.ma/climatisation/el-jadida</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
 </urlset>

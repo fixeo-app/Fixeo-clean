@@ -85,30 +85,16 @@
       "dest": "/api/enterprise-contact-fn/index.js"
     },
     {
-      "src": "^/plombier-casablanca\\.html$",
+      "src": "^/(plombier|electricien|serrurier|climatisation)-([a-z][a-z-]*)\\.html$",
       "headers": {
-        "Location": "/plombier-casablanca"
+        "Location": "/$1/$2"
       },
       "status": 301
     },
     {
-      "src": "^/plombier-rabat\\.html$",
+      "src": "^/(plombier|electricien|serrurier|climatisation)-([a-z][a-z-]*)$",
       "headers": {
-        "Location": "/plombier-rabat"
-      },
-      "status": 301
-    },
-    {
-      "src": "^/electricien-casablanca\\.html$",
-      "headers": {
-        "Location": "/electricien-casablanca"
-      },
-      "status": 301
-    },
-    {
-      "src": "^/electricien-rabat\\.html$",
-      "headers": {
-        "Location": "/electricien-rabat"
+        "Location": "/$1/$2"
       },
       "status": 301
     },
@@ -120,108 +106,12 @@
       "status": 301
     },
     {
-      "src": "^/plombier-casablanca$",
-      "dest": "/api/lp-fn?slug=plombier-casablanca"
-    },
-    {
-      "src": "^/plombier-rabat$",
-      "dest": "/api/lp-fn?slug=plombier-rabat"
-    },
-    {
-      "src": "^/electricien-casablanca$",
-      "dest": "/api/lp-fn?slug=electricien-casablanca"
-    },
-    {
-      "src": "^/electricien-rabat$",
-      "dest": "/api/lp-fn?slug=electricien-rabat"
-    },
-    {
       "src": "^/peintre-casablanca$",
       "dest": "/api/lp-fn?slug=peintre-casablanca"
     },
     {
       "src": "^/macon-casablanca$",
       "dest": "/api/lp-fn?slug=macon-casablanca"
-    },
-    {
-      "src": "^/plombier-fes$",
-      "dest": "/api/lp-fn?slug=plombier-fes"
-    },
-    {
-      "src": "^/plombier-tanger$",
-      "dest": "/api/lp-fn?slug=plombier-tanger"
-    },
-    {
-      "src": "^/plombier-marrakech$",
-      "dest": "/api/lp-fn?slug=plombier-marrakech"
-    },
-    {
-      "src": "^/plombier-agadir$",
-      "dest": "/api/lp-fn?slug=plombier-agadir"
-    },
-    {
-      "src": "^/electricien-fes$",
-      "dest": "/api/lp-fn?slug=electricien-fes"
-    },
-    {
-      "src": "^/electricien-tanger$",
-      "dest": "/api/lp-fn?slug=electricien-tanger"
-    },
-    {
-      "src": "^/electricien-marrakech$",
-      "dest": "/api/lp-fn?slug=electricien-marrakech"
-    },
-    {
-      "src": "^/electricien-agadir$",
-      "dest": "/api/lp-fn?slug=electricien-agadir"
-    },
-    {
-      "src": "^/serrurier-casablanca$",
-      "dest": "/api/lp-fn?slug=serrurier-casablanca"
-    },
-    {
-      "src": "^/serrurier-rabat$",
-      "dest": "/api/lp-fn?slug=serrurier-rabat"
-    },
-    {
-      "src": "^/serrurier-fes$",
-      "dest": "/api/lp-fn?slug=serrurier-fes"
-    },
-    {
-      "src": "^/serrurier-tanger$",
-      "dest": "/api/lp-fn?slug=serrurier-tanger"
-    },
-    {
-      "src": "^/serrurier-marrakech$",
-      "dest": "/api/lp-fn?slug=serrurier-marrakech"
-    },
-    {
-      "src": "^/serrurier-agadir$",
-      "dest": "/api/lp-fn?slug=serrurier-agadir"
-    },
-    {
-      "src": "^/climatisation-casablanca$",
-      "dest": "/api/lp-fn?slug=climatisation-casablanca"
-    },
-    {
-      "src": "^/climatisation-rabat$",
-      "dest": "/api/lp-fn?slug=climatisation-rabat"
-    },
-    {
-      "src": "^/climatisation-fes$",
-      "dest": "/api/lp-fn?slug=climatisation-fes"
-    },
-    {
-      "src": "^/climatisation-tanger$",
-      "dest": "/api/lp-fn?slug=climatisation-tanger"
-    },
-    {
-      "src": "^/climatisation-marrakech$",
-      "dest": "/api/lp-fn?slug=climatisation-marrakech"
-    },
-    {
-      "src": "^/climatisation-agadir$",
-      "dest": "/api/lp-fn?slug=climatisation-agadir"
     },
     {
       "src": "^/menuisier-casablanca$",

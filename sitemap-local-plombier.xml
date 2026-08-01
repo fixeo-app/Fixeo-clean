@@ -9,125 +9,104 @@
         xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
           http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
 
-  <url>
-    <loc>https://www.fixeo.ma/plombier-agadir</loc>
-    <lastmod>2026-07-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://www.fixeo.ma/plombier-casablanca</loc>
-    <lastmod>2026-07-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://www.fixeo.ma/plombier-fes</loc>
-    <lastmod>2026-07-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://www.fixeo.ma/plombier-marrakech</loc>
-    <lastmod>2026-07-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://www.fixeo.ma/plombier-rabat</loc>
-    <lastmod>2026-07-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://www.fixeo.ma/plombier-tanger</loc>
-    <lastmod>2026-07-11</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://www.fixeo.ma/plombier-kenitra.html</loc>
-    <lastmod>2026-07-11</lastmod>
+    <url>
+    <loc>https://www.fixeo.ma/plombier/casablanca</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.fixeo.ma/plombier-meknes.html</loc>
-    <lastmod>2026-07-11</lastmod>
+    <loc>https://www.fixeo.ma/plombier/rabat</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.fixeo.ma/plombier-mohammedia.html</loc>
-    <lastmod>2026-07-11</lastmod>
+    <loc>https://www.fixeo.ma/plombier/marrakech</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.fixeo.ma/plombier-oujda.html</loc>
-    <lastmod>2026-07-11</lastmod>
+    <loc>https://www.fixeo.ma/plombier/fes</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.fixeo.ma/plombier-sale.html</loc>
-    <lastmod>2026-07-11</lastmod>
+    <loc>https://www.fixeo.ma/plombier/tanger</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.fixeo.ma/plombier-temara.html</loc>
-    <lastmod>2026-07-11</lastmod>
+    <loc>https://www.fixeo.ma/plombier/agadir</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.fixeo.ma/plombier-beni-mellal.html</loc>
-    <lastmod>2026-07-11</lastmod>
+    <loc>https://www.fixeo.ma/plombier/meknes</loc>
     <changefreq>weekly</changefreq>
-    <priority>0.75</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.fixeo.ma/plombier-el-jadida.html</loc>
-    <lastmod>2026-07-11</lastmod>
+    <loc>https://www.fixeo.ma/plombier/oujda</loc>
     <changefreq>weekly</changefreq>
-    <priority>0.75</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.fixeo.ma/plombier-khouribga.html</loc>
-    <lastmod>2026-07-11</lastmod>
+    <loc>https://www.fixeo.ma/plombier/kenitra</loc>
     <changefreq>weekly</changefreq>
-    <priority>0.75</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.fixeo.ma/plombier-nador.html</loc>
-    <lastmod>2026-07-11</lastmod>
+    <loc>https://www.fixeo.ma/plombier/temara</loc>
     <changefreq>weekly</changefreq>
-    <priority>0.75</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.fixeo.ma/plombier-ouarzazate.html</loc>
-    <lastmod>2026-07-11</lastmod>
+    <loc>https://www.fixeo.ma/plombier/sale</loc>
     <changefreq>weekly</changefreq>
-    <priority>0.75</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.fixeo.ma/plombier-safi.html</loc>
-    <lastmod>2026-07-11</lastmod>
+    <loc>https://www.fixeo.ma/plombier/mohammedia</loc>
     <changefreq>weekly</changefreq>
-    <priority>0.75</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.fixeo.ma/plombier-taza.html</loc>
-    <lastmod>2026-07-11</lastmod>
+    <loc>https://www.fixeo.ma/plombier/khouribga</loc>
     <changefreq>weekly</changefreq>
-    <priority>0.75</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.fixeo.ma/plombier-tetouan.html</loc>
-    <lastmod>2026-07-11</lastmod>
+    <loc>https://www.fixeo.ma/plombier/safi</loc>
     <changefreq>weekly</changefreq>
-    <priority>0.75</priority>
+    <priority>0.8</priority>
   </url>
-
+  <url>
+    <loc>https://www.fixeo.ma/plombier/nador</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.fixeo.ma/plombier/taza</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.fixeo.ma/plombier/ouarzazate</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.fixeo.ma/plombier/tetouan</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.fixeo.ma/plombier/beni-mellal</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.fixeo.ma/plombier/el-jadida</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
 </urlset>

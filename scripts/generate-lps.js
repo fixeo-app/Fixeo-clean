@@ -492,7 +492,27 @@ const NEARBY = {
   nador: ['oujda', 'taza', 'fes'],
   taza: ['fes', 'oujda', 'meknes'],
   ouarzazate: ['agadir', 'marrakech', 'safi'],
-  tetouan: ['tanger', 'kenitra', 'rabat']
+  tetouan: ['tanger', 'kenitra', 'rabat'],
+  'beni-mellal': {
+    label: 'Béni Mellal', label_de: 'de Béni Mellal',
+    neighborhoods: 'Centre-ville, Hay Al Massira, Hay Chemi, Hay El Majd',
+    context: 'Ville agricole en expansion au cœur de la région Béni Mellal-Khénifra, avec un tissu résidentiel dense et croissant.',
+    demand: 'Demandes en plomberie et électricité portées par les nouvelles constructions et le parc résidentiel existant.',
+    pricing_low: '100', pricing_high: '380',
+    pricing_note: 'Marché local avec tarifs adaptés à la région.',
+    nearby: ['khouribga', 'marrakech', 'fes']
+  },
+  'el-jadida': {
+    label: 'El Jadida', label_de: "d'El Jadida",
+    neighborhoods: 'Centre-ville, Hay Hassani, Cité Portugaise, Plateau',
+    context: 'Ville côtière de la région Casablanca-Settat, El Jadida combine un habitat résidentiel dense et un tourisme balnéaire soutenu.',
+    demand: 'Demandes régulières en plomberie et électricité dans les immeubles résidentiels et maisons individuelles.',
+    pricing_low: '100', pricing_high: '380',
+    pricing_note: 'Marché local avec tarifs adaptés à la région côtière.',
+    nearby: ['casablanca', 'safi', 'casablanca']
+  },
+  'beni-mellal': ['khouribga', 'marrakech', 'fes'],
+  'el-jadida': ['casablanca', 'safi', 'marrakech']
 };
 
 /* ═══════════════════════════════════════════════════════════
@@ -646,7 +666,7 @@ function buildPage(svcKey, cityKey) {
   if (!svc || !city) return null;
 
   const filename     = `${svcKey}-${cityKey}.html`;
-  const canonicalUrl = `https://www.fixeo.ma/${filename}`;
+  const canonicalUrl = `https://www.fixeo.ma/${svcKey}/${cityKey}`;
 
   const h1        = `${esc(svc.h1_prefix + ' ' + city.label)}`;
   const title     = `${svc.h1_prefix} ${city.label} | ${svc.title_suffix}`;
