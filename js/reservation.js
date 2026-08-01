@@ -490,11 +490,11 @@
                   const _sp   = SERVICE_PRICING[s];
                   const _lbl  = _sp ? (_sp.from + '\u2013' + _sp.to + ' MAD') : (a.priceLabel || (a.priceFrom + ' MAD'));
                   const _act  = state.selectedService === s ? ' active' : '';
-                  const _badge = idx === 0 ? '<span style="display:inline-block;margin-top:5px;font-size:.6rem;font-weight:600;letter-spacing:.03em;padding:2px 7px;border-radius:6px;background:rgba(255,80,120,.12);color:rgba(255,160,140,.95);border:1px solid rgba(255,80,120,.35)">\u26a1 Rapide</span>' : '';
+                  const _badge = '';
                   return `<div class="fixeo-res-slot${_act}" data-svc="${sanitize(s)}" style="text-align:left;padding:12px 13px;line-height:1.35;cursor:pointer;transition:all .2s ease;background:${_act ? '' : 'linear-gradient(135deg,rgba(255,255,255,.04),rgba(255,255,255,.02))'};"><div style="font-size:.8rem;font-weight:700;color:#fff">${sanitize(s)}</div><div style="font-size:.7rem;color:rgba(255,255,255,.55);margin-top:3px;font-weight:500">${_lbl}</div>${_badge}</div>`;
                 }).join('')}
               </div>
-              <div style="margin-top:7px;font-size:.68rem;color:rgba(255,255,255,.35);padding-left:2px">Choisissez un service pour obtenir votre devis instant\u00e9.</div>
+              <div style="margin-top:7px;font-size:.68rem;color:rgba(255,255,255,.35);padding-left:2px">Choisissez un service pour afficher une estimation indicative.</div>
             </div>
             ${(function(){
               /* Dynamic per-service hint — updates via _onServiceChange without re-render */
