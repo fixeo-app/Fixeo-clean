@@ -275,7 +275,7 @@ const PRICE_SERVICES = {
     label_adj: 'de peinture',
     icon: '🎨',
     slug: 'peinture',
-    service_link: 'peinture',
+    service_link: 'peintre',
     metier_label: 'peintre', article_genre: 'un', article_genre_long: 'un',
     factors: [
       { icon: '\uD83D\uDCCF', title: 'Surface (m\u00b2)', desc: 'Le co\u00fbt total est proportionnel \u00e0 la surface. Le prix au m\u00b2 peut diminuer sur les grands chantiers.' },
