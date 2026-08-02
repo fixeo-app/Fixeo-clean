@@ -244,24 +244,94 @@
       "status": 301
     },
     {
+      "src": "^/macon/rabat$",
+      "dest": "/macon-rabat.html"
+    },
+    {
       "src": "^/macon-rabat$",
-      "dest": "/api/lp-fn?slug=macon-rabat"
+      "headers": {
+        "Location": "/macon/rabat"
+      },
+      "status": 301
+    },
+    {
+      "src": "^/macon-rabat\\.html$",
+      "headers": {
+        "Location": "/macon/rabat"
+      },
+      "status": 301
+    },
+    {
+      "src": "^/macon/fes$",
+      "dest": "/macon-fes.html"
     },
     {
       "src": "^/macon-fes$",
-      "dest": "/api/lp-fn?slug=macon-fes"
+      "headers": {
+        "Location": "/macon/fes"
+      },
+      "status": 301
+    },
+    {
+      "src": "^/macon-fes\\.html$",
+      "headers": {
+        "Location": "/macon/fes"
+      },
+      "status": 301
+    },
+    {
+      "src": "^/macon/tanger$",
+      "dest": "/macon-tanger.html"
     },
     {
       "src": "^/macon-tanger$",
-      "dest": "/api/lp-fn?slug=macon-tanger"
+      "headers": {
+        "Location": "/macon/tanger"
+      },
+      "status": 301
+    },
+    {
+      "src": "^/macon-tanger\\.html$",
+      "headers": {
+        "Location": "/macon/tanger"
+      },
+      "status": 301
+    },
+    {
+      "src": "^/macon/marrakech$",
+      "dest": "/macon-marrakech.html"
     },
     {
       "src": "^/macon-marrakech$",
-      "dest": "/api/lp-fn?slug=macon-marrakech"
+      "headers": {
+        "Location": "/macon/marrakech"
+      },
+      "status": 301
+    },
+    {
+      "src": "^/macon-marrakech\\.html$",
+      "headers": {
+        "Location": "/macon/marrakech"
+      },
+      "status": 301
+    },
+    {
+      "src": "^/macon/agadir$",
+      "dest": "/macon-agadir.html"
     },
     {
       "src": "^/macon-agadir$",
-      "dest": "/api/lp-fn?slug=macon-agadir"
+      "headers": {
+        "Location": "/macon/agadir"
+      },
+      "status": 301
+    },
+    {
+      "src": "^/macon-agadir\\.html$",
+      "headers": {
+        "Location": "/macon/agadir"
+      },
+      "status": 301
     },
     {
       "src": "^/nettoyage-casablanca$",

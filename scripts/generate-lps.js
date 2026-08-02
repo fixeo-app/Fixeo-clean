@@ -525,6 +525,60 @@ const SERVICES = {
       { label: 'Cuisine sur mesure (par mètre linéaire)', range: '600–1 500 DH/ml' },
       { label: 'Boiseries et habillage mural', range: '200–600 DH/m²' }
     ]
+  },
+  macon: {
+    label: 'Maçon', label_adj: 'maçonnerie',
+    icon: '🧱', service_schema: 'HomeAndConstructionBusiness',
+    sub_services: ['Maçonnerie générale', 'Ravalement de façade', 'Carrelage et dallage', 'Chape et béton', 'Reprise et renforcement'],
+    profession: 'maçon', profession_pl: 'maçons',
+    article: 'un', supabase_category: 'Maçonnerie',
+    cities_allowlist: ['casablanca','rabat','fes','tanger','marrakech','agadir'],
+    canonicalRouteKey: 'macon',
+    outputFileKey: 'macon',
+    runtimeServiceKey: 'maconnerie',
+    rafi_nlp: 'Maçonnerie',
+    howlocal_adj: 'de maçonnerie',
+    step1_desc: "Vous précisez le type d'ouvrage, les dimensions, l'état du support et le résultat recherché.",
+    cta_lead: "Votre ville et le service sont déjà sélectionnés. Décrivez votre projet — c'est tout.",
+    chip_label: 'Maçonnerie',
+    cta_primary_text: 'Décrire mon projet à',
+    cta_secondary_text: 'Voir les maçons à',
+    cta_title_noun: 'projet',
+    cta_service_label: 'Maçonnerie',
+    step1_title: 'Décrivez votre projet',
+    eyebrow_label: 'Maçonnerie',
+    situations: [
+      { icon: '🧱', label: 'Maçonnerie générale' },
+      { icon: '🏗️', label: 'Ravalement de façade' },
+      { icon: '🪨', label: 'Carrelage et dallage' },
+      { icon: '📐', label: 'Chape et béton' },
+      { icon: '🧰', label: 'Murs, cloisons et ouvertures' },
+      { icon: '🔍', label: 'Reprise, renforcement et diagnostic' },
+    ],
+    faq_flagship: (city) => [
+      { q: 'Comment trouver un maçon à ' + city.label + '\u00a0?', a: "Décrivez votre projet sur FIXEO. Votre demande est enregistrée et transmise aux artisans maçons référencés correspondant à votre secteur à " + city.label + ". L'artisan vous contacte et confirme le tarif définitif avant de commencer." },
+      { q: 'Quels types de travaux de maçonnerie peut-on demander\u00a0?', a: "Les artisans référencés sur FIXEO peuvent intervenir pour la maçonnerie générale, le ravalement de façade, la pose de carrelage et dallage, la réalisation de chapes, les murs et cloisons, et les travaux de reprise et renforcement. Les prestations dépendent du diagnostic et des compétences de l'artisan sélectionné." },
+      { q: 'Comment le tarif définitif est-il confirmé\u00a0?', a: "Après évaluation de votre projet, l'artisan vous communique le tarif définitif avant de commencer. Vous n'êtes pas obligé d'accepter. En cas d'accord, le paiement s'effectue après la fin des travaux." },
+      { q: 'Le déplacement est-il inclus dans le prix\u00a0?', a: "Le déplacement peut être inclus ou facturé séparément selon l'artisan, la distance et le secteur. Le détail est précisé dans le devis communiqué avant l'intervention." },
+      { q: 'Quand le paiement est-il effectué\u00a0?', a: "Le paiement s'effectue après la fin des travaux, jamais en avance complète. Aucun paiement anticipé n'est demandé." },
+    ],
+    h1_prefix: 'Maçon à',
+    title_suffix: 'Maçonnerie, ravalement, carrelage | Fixeo',
+    meta_desc: (city) => `Trouvez un maçon à ${city} avec Fixeo. Maçonnerie générale, ravalement de façade, carrelage, chape et travaux de gros œuvre par des artisans locaux référencés.`,
+    intro_template: (c) => `Décrivez votre projet de maçonnerie à ${c.label}. FIXEO enregistre votre demande et recherche une solution correspondant à votre secteur. Le tarif définitif est confirmé avec l'artisan avant l'intervention.`,
+    faq: (c) => [
+      { q: `Quel est le tarif d'un maçon à ${c.label} ?`, a: `Le tarif d'un maçon à ${c.label} varie selon la nature et le volume des travaux (maçonnerie, ravalement, carrelage). Le tarif définitif est confirmé avec l'artisan avant le début des travaux. ${c.pricing_note}` },
+      { q: `Comment trouver un maçon à ${c.label} ?`, a: `Via Fixeo, décrivez votre projet en quelques secondes. Votre demande est enregistrée et transmise aux artisans référencés à ${c.label}.` },
+      { q: `Un maçon Fixeo intervient-il dans toute la ville ${c.label_de} ?`, a: `Les artisans référencés sur FIXEO couvrent l'ensemble ${c.label_de}, notamment les quartiers de ${c.neighborhoods}.` }
+    ],
+    urgency_services: ['Réparation mur fissuré', 'Reprise de fuite en sous-œuvre', 'Consolidation urgente', 'Remise en état après sinistre'],
+    related_services: ['peintre', 'menuisier'],
+    pricing_tiers: [
+      { label: 'Maçonnerie générale (au m²)', range: '200–800 DH' },
+      { label: 'Ravalement de façade (au m²)', range: '150–400 DH/m²' },
+      { label: 'Pose carrelage (au m²)', range: '100–250 DH/m²' },
+      { label: 'Chape ou dallage (au m²)', range: '80–200 DH/m²' }
+    ]
   }
 };
 
@@ -881,7 +935,7 @@ function buildPage(svcKey, cityKey) {
         <div class="fxlp-hero-copy">
           <div class="fxlp-eyebrow">
             <span class="fxlp-eyebrow-dot" aria-hidden="true"></span>
-            ${esc(svc.label.toUpperCase())} · ${esc(city.label.toUpperCase())} · 2026
+            ${esc((svc.eyebrow_label || svc.label).toUpperCase())} · ${esc(city.label.toUpperCase())} · 2026
           </div>
           <h1 id="fxlp-h1" class="fxlp-h1">${esc(svc.h1_prefix)}&nbsp;<em class="fxlp-h1-em">${esc(city.label)}</em></h1>
           <p class="fxlp-lead">${esc(svc.meta_desc(city.label))}</p>
