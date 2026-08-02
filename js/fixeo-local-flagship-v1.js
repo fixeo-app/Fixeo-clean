@@ -49,7 +49,7 @@
   }
   var _SVC_LABELS = { plomberie:'Plomberie', electricite:'\u00c9lectricit\u00e9',
     serrurerie:'Serrurerie', climatisation:'Climatisation', peinture:'Peinture', menuiserie:'Menuiserie',
-    maconnerie:'Ma\u00e7onnerie' };
+    maconnerie:'Ma\u00e7onnerie', nettoyage:'prestataire de nettoyage' };
   var _SVC_ICONS  = { plomberie:'\uD83D\uDD27', electricite:'\u26A1',
     serrurerie:'\uD83D\uDD10', climatisation:'\u2744\uFE0F',
     peinture:'\uD83C\uDFA8', menuiserie:'\uD83E\uDEB5', maconnerie:'\uD83E\uDDF1' };
