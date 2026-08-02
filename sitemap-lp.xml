@@ -84,31 +84,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.fixeo.ma/nettoyage-casablanca</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://www.fixeo.ma/nettoyage-rabat</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://www.fixeo.ma/nettoyage-tanger</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://www.fixeo.ma/nettoyage-marrakech</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://www.fixeo.ma/nettoyage-agadir</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://www.fixeo.ma/peintre/casablanca</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -205,6 +180,37 @@
   </url>
   <url>
     <loc>https://www.fixeo.ma/peintre/tetouan</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.fixeo.ma/nettoyage/casablanca</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.fixeo.ma/nettoyage/rabat</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.fixeo.ma/nettoyage/fes</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.fixeo.ma/nettoyage/tanger</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.fixeo.ma/nettoyage/marrakech</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.fixeo.ma/nettoyage/agadir</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>

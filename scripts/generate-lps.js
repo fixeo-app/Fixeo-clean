@@ -579,6 +579,69 @@ const SERVICES = {
       { label: 'Pose carrelage (au m²)', range: '100–250 DH/m²' },
       { label: 'Chape ou dallage (au m²)', range: '80–200 DH/m²' }
     ]
+  },
+  nettoyage: {
+    label: 'Service de nettoyage', label_adj: 'de nettoyage',
+    icon: '🧹', service_schema: 'HomeAndConstructionBusiness',
+    sub_services: ['Nettoyage maison / appartement', 'Nettoyage bureaux et locaux', 'Nettoyage après travaux', 'Nettoyage après déménagement', 'Nettoyage vitres et surfaces'],
+    profession: 'prestataire de nettoyage', profession_pl: 'prestataires de nettoyage',
+    profession_pl_u: 'Prestataires de nettoyage',
+    article: 'un', supabase_category: 'Nettoyage',
+    cities_allowlist: ['casablanca','rabat','fes','tanger','marrakech','agadir'],
+    canonicalRouteKey: 'nettoyage',
+    outputFileKey: 'nettoyage',
+    runtimeServiceKey: 'nettoyage',
+    rafi_nlp: 'Nettoyage',
+    howlocal_adj: 'de nettoyage',
+    step1_desc: "Vous précisez le type de lieu, la surface, l’état général et le nettoyage recherché.",
+    step1_title: 'Décrivez votre besoin',
+    step2_desc: 'Votre demande est enregistrée et transmise aux prestataires référencés correspondant à votre secteur.',
+    step3_title: 'Confirmez le tarif avec le prestataire',
+    step3_desc: 'Le prestataire vous communique le tarif définitif avant de commencer. Paiement après intervention.',
+    expl_card2: 'FIXEO enregistre votre demande et la transmet aux prestataires référencés correspondant à votre secteur à ${city}.',
+    expl_card3: 'Un prestataire vous contacte et confirme le tarif définitif et le créneau avant de commencer. Paiement après intervention.',
+    section_sit_sub: "Les prestations proposées dépendent du type de lieu, de sa surface et des besoins précisés au prestataire sélectionné.",
+    cta_eyebrow: "BESOIN D’UN PRESTATAIRE ?",
+    cta_lead: "Votre ville et le service sont déjà sélectionnés. Décrivez votre besoin — c’est tout.",
+    chip_label: 'Nettoyage',
+    eyebrow_label: 'Nettoyage',
+    cta_primary_text: 'Décrire mon besoin à',
+    cta_secondary_text: 'Voir les prestataires à',
+    cta_title_noun: 'besoin de nettoyage',
+    cta_service_label: 'Nettoyage',
+    note_price_agent: 'Le tarif définitif est confirmé avec le prestataire avant l’intervention.',
+    h1_prefix: 'Service de nettoyage à',
+    title_suffix: 'Nettoyage maison, bureaux, après travaux | Fixeo',
+    meta_desc: (city) => `Trouvez un service de nettoyage à ${city} avec Fixeo. Maison, appartement, bureaux, locaux et nettoyage après travaux. Tarif définitif confirmé avec le prestataire avant l’intervention.`,
+    intro_template: (c) => `Décrivez votre besoin de nettoyage à ${c.label}. FIXEO enregistre votre demande et recherche une solution correspondant à votre secteur. Le tarif définitif est confirmé avec le prestataire avant l’intervention.`,
+    faq_flagship: (city) => [
+      { q: 'Comment demander un service de nettoyage à ' + city.label + ' ?', a: "Décrivez votre besoin sur FIXEO. Votre demande est enregistrée et transmise aux prestataires référencés correspondant à votre secteur à " + city.label + ". Le prestataire vous contacte et confirme le tarif définitif avant de commencer." },
+      { q: 'Quels types de nettoyage peut-on demander ?', a: "Les prestataires référencés sur FIXEO peuvent intervenir pour le nettoyage de maisons et appartements, de bureaux et locaux commerciaux, le nettoyage après travaux, le nettoyage après déménagement et le nettoyage de vitres et surfaces. Les prestations dépendent du type de lieu et des besoins précisés au prestataire sélectionné." },
+      { q: 'Comment le tarif définitif est-il confirmé ?', a: "Après analyse de votre besoin, le prestataire vous communique le tarif définitif avant de commencer. Vous n’êtes pas obligé d’accepter. En cas d’accord, le paiement s’effectue après la prestation." },
+      { q: 'Les produits et le matériel sont-ils inclus ?', a: "L’inclusion des produits et du matériel dépend du prestataire sélectionné. Ce point doit être confirmé avec le prestataire avant le début de la prestation." },
+      { q: 'Quand le paiement est-il effectué ?', a: "Le paiement s’effectue après la fin de la prestation, jamais en avance complète. Aucun paiement anticipé n’est demandé." },
+    ],
+    situations: [
+      { icon: '🏠', label: 'Maison ou appartement' },
+      { icon: '🏢', label: 'Bureaux et locaux' },
+      { icon: '🧱', label: 'Nettoyage après travaux' },
+      { icon: '📦', label: 'Après déménagement' },
+      { icon: '🪟', label: 'Vitres et surfaces' },
+      { icon: '🔍', label: 'Grand nettoyage ou besoin spécifique' },
+    ],
+    faq: (c) => [
+      { q: `Quel est le tarif d’un service de nettoyage à ${c.label} ?`, a: `Le tarif d’un service de nettoyage à ${c.label} varie selon le type de lieu, la surface et la prestation souhaitée. Le tarif définitif est confirmé avec le prestataire avant le début. ${c.pricing_note}` },
+      { q: `Comment trouver un prestataire de nettoyage à ${c.label} ?`, a: `Via Fixeo, décrivez votre besoin en quelques secondes. Votre demande est enregistrée et transmise aux prestataires référencés à ${c.label}.` },
+      { q: `Un prestataire Fixeo intervient-il dans toute la ville ${c.label_de} ?`, a: `Les prestataires référencés sur FIXEO couvrent l’ensemble ${c.label_de}, notamment les quartiers de ${c.neighborhoods}.` }
+    ],
+    urgency_services: ['Nettoyage urgent après sinistre', 'Nettoyage après dégât des eaux', 'Remise en état après travaux', 'Nettoyage avant événement'],
+    related_services: ['peintre', 'menuisier'],
+    pricing_tiers: [
+      { label: 'Nettoyage appartement (par session)', range: '200–500 DH' },
+      { label: 'Nettoyage bureaux (au m²)', range: '15–40 DH/m²' },
+      { label: 'Nettoyage après travaux (au m²)', range: '30–70 DH/m²' },
+      { label: 'Nettoyage vitres (par vitre)', range: '10–30 DH' }
+    ]
   }
 };
 
@@ -944,7 +1007,7 @@ function buildPage(svcKey, cityKey) {
             <span class="fxlp-chip fxlp-chip--svc"  role="listitem">${svc.icon} ${esc(svc.chip_label || svc.label)}</span>
             <span class="fxlp-chip fxlp-chip--pay"  role="listitem">✓ Paiement après intervention</span>
           </div>
-          <p class="fxlp-note-price">Le tarif définitif est confirmé avec l’artisan avant l’intervention.</p>
+          <p class="fxlp-note-price">${svc.note_price_agent || 'Le tarif définitif est confirmé avec l’artisan avant l’intervention.'}</p>
           <div class="fxlp-cta-group">
             <button class="fxlp-btn-primary" type="button" data-open-request-form="true" data-request-mode="default">
               ${svc.cta_primary_text || 'Décrire mon besoin à'} ${esc(city.label)}
@@ -964,7 +1027,7 @@ function buildPage(svcKey, cityKey) {
       <div class="fxlp-wrap">
         <span class="fxlp-section-label">BESOINS FRÉQUENTS</span>
         <h2 id="fxlp-sit-title" class="fxlp-section-title">Pour quels besoins contacter ${esc(article + ' ' + profession)} à ${esc(city.label)} ?</h2>
-        <p class="fxlp-section-sub">Les prestations proposées dépendent du diagnostic et des compétences de l’artisan sélectionné.</p>
+        <p class="fxlp-section-sub">${svc.section_sit_sub || 'Les prestations proposées dépendent du diagnostic et des compétences de l’artisan sélectionné.'}</p>
         <ul class="fxlp-sit-grid" role="list">
           ${situationsHtml}
         </ul>
@@ -985,11 +1048,11 @@ function buildPage(svcKey, cityKey) {
           </div>
           <div class="fxlp-expl-item">
             <span class="fxlp-expl-icon" aria-hidden="true">📋</span>
-            <p class="fxlp-expl-text">FIXEO enregistre votre demande et la transmet aux artisans référencés correspondant à votre secteur à ${esc(city.label)}.</p>
+            <p class="fxlp-expl-text">${svc.expl_card2 ? svc.expl_card2.replace('${city}', esc(city.label)) : 'FIXEO enregistre votre demande et la transmet aux artisans référencés correspondant à votre secteur à ' + esc(city.label) + '.'}</p>
           </div>
           <div class="fxlp-expl-item">
             <span class="fxlp-expl-icon" aria-hidden="true">📞</span>
-            <p class="fxlp-expl-text">Un artisan vous contacte et confirme le tarif définitif et le créneau avant de commencer. Paiement après intervention.</p>
+            <p class="fxlp-expl-text">${svc.expl_card3 || 'Un artisan vous contacte et confirme le tarif définitif et le créneau avant de commencer. Paiement après intervention.'}</p>
           </div>
         </div>
       </div>
@@ -1001,11 +1064,11 @@ function buildPage(svcKey, cityKey) {
     <section id="fxlp-artisans" class="fxlp-section" aria-labelledby="fxlp-art-title">
       <div class="fxlp-wrap">
         <span class="fxlp-section-label">ARTISANS RÉFÉRENCÉS</span>
-        <h2 id="fxlp-art-title" class="fxlp-section-title">${esc(professionU + 's')} référencés à ${esc(city.label)}</h2>
+        <h2 id="fxlp-art-title" class="fxlp-section-title">${esc(svc.profession_pl_u || (professionU + 's'))} référencés à ${esc(city.label)}</h2>
         <p class="fxlp-section-sub">Profils référencés sur FIXEO. Paiement après intervention.</p>
-        <div class="fxlp-artisan-grid" role="list" aria-label="${esc(professionU + 's référencés à ' + city.label)}" aria-live="polite">
+        <div class="fxlp-artisan-grid" role="list" aria-label="${esc((svc.profession_pl_u || (professionU + 's')) + ' référencés à ' + city.label)}" aria-live="polite">
           <div id="fxlp-artisan-grid" class="fxlp-artisan-loading" role="list"
-               aria-label="${esc(professionU + 's à ' + city.label)}"
+               aria-label="${esc((svc.profession_pl_u || (professionU + 's')) + ' à ' + city.label)}"
                data-fxlp-city="${esc(city.label)}"
                data-fxlp-service="${runtimeSvcKey}"
                data-fxlp-category="${esc(svcCat)}">
@@ -1033,12 +1096,12 @@ function buildPage(svcKey, cityKey) {
           <div class="fxlp-step" role="listitem">
             <div class="fxlp-step-num" aria-hidden="true">2</div>
             <h3 class="fxlp-step-title">FIXEO recherche la solution adaptée</h3>
-            <p class="fxlp-step-desc">Votre demande est enregistrée et transmise aux artisans référencés correspondant à votre secteur.</p>
+            <p class="fxlp-step-desc">${svc.step2_desc || 'Votre demande est enregistrée et transmise aux artisans référencés correspondant à votre secteur.'}</p>
           </div>
           <div class="fxlp-step" role="listitem">
             <div class="fxlp-step-num" aria-hidden="true">3</div>
-            <h3 class="fxlp-step-title">Confirmez le tarif avec l’artisan</h3>
-            <p class="fxlp-step-desc">L’artisan vous communique le tarif définitif avant de commencer. Paiement après intervention.</p>
+            <h3 class="fxlp-step-title">${svc.step3_title || "Confirmez le tarif avec l’artisan"}</h3>
+            <p class="fxlp-step-desc">${svc.step3_desc || "L’artisan vous communique le tarif définitif avant de commencer. Paiement après intervention."}</p>
           </div>
         </div>
       </div>
@@ -1047,7 +1110,7 @@ function buildPage(svcKey, cityKey) {
     <!-- §§6 FINAL CTA BANNER -->
     <div class="fxlp-wrap">
       <div class="fxlp-cta-banner" role="complementary">
-        <p class="fxlp-cta-eyebrow">BESOIN D’UN ARTISAN ?</p>
+        <p class="fxlp-cta-eyebrow">${svc.cta_eyebrow || 'BESOIN D’UN ARTISAN ?'}</p>
         <h2 class="fxlp-cta-title">Votre ${svc.cta_title_noun || 'demande'} à ${esc(city.label)}, en quelques secondes.</h2>
         <p class="fxlp-cta-lead">${svc.cta_lead || 'Votre ville et le service sont déjà sélectionnés. Décrivez votre problème — c’est tout.'}</p>
         <button class="fxlp-btn-primary" type="button" data-open-request-form="true" data-request-mode="default">

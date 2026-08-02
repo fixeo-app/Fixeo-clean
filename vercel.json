@@ -334,28 +334,112 @@
       "status": 301
     },
     {
+      "src": "^/nettoyage/casablanca$",
+      "dest": "/nettoyage-casablanca.html"
+    },
+    {
       "src": "^/nettoyage-casablanca$",
-      "dest": "/api/lp-fn?slug=nettoyage-casablanca"
+      "headers": {
+        "Location": "/nettoyage/casablanca"
+      },
+      "status": 301
+    },
+    {
+      "src": "^/nettoyage-casablanca\\.html$",
+      "headers": {
+        "Location": "/nettoyage/casablanca"
+      },
+      "status": 301
+    },
+    {
+      "src": "^/nettoyage/rabat$",
+      "dest": "/nettoyage-rabat.html"
     },
     {
       "src": "^/nettoyage-rabat$",
-      "dest": "/api/lp-fn?slug=nettoyage-rabat"
+      "headers": {
+        "Location": "/nettoyage/rabat"
+      },
+      "status": 301
+    },
+    {
+      "src": "^/nettoyage-rabat\\.html$",
+      "headers": {
+        "Location": "/nettoyage/rabat"
+      },
+      "status": 301
+    },
+    {
+      "src": "^/nettoyage/fes$",
+      "dest": "/nettoyage-fes.html"
     },
     {
       "src": "^/nettoyage-fes$",
-      "dest": "/api/lp-fn?slug=nettoyage-fes"
+      "headers": {
+        "Location": "/nettoyage/fes"
+      },
+      "status": 301
+    },
+    {
+      "src": "^/nettoyage-fes\\.html$",
+      "headers": {
+        "Location": "/nettoyage/fes"
+      },
+      "status": 301
+    },
+    {
+      "src": "^/nettoyage/tanger$",
+      "dest": "/nettoyage-tanger.html"
     },
     {
       "src": "^/nettoyage-tanger$",
-      "dest": "/api/lp-fn?slug=nettoyage-tanger"
+      "headers": {
+        "Location": "/nettoyage/tanger"
+      },
+      "status": 301
+    },
+    {
+      "src": "^/nettoyage-tanger\\.html$",
+      "headers": {
+        "Location": "/nettoyage/tanger"
+      },
+      "status": 301
+    },
+    {
+      "src": "^/nettoyage/marrakech$",
+      "dest": "/nettoyage-marrakech.html"
     },
     {
       "src": "^/nettoyage-marrakech$",
-      "dest": "/api/lp-fn?slug=nettoyage-marrakech"
+      "headers": {
+        "Location": "/nettoyage/marrakech"
+      },
+      "status": 301
+    },
+    {
+      "src": "^/nettoyage-marrakech\\.html$",
+      "headers": {
+        "Location": "/nettoyage/marrakech"
+      },
+      "status": 301
+    },
+    {
+      "src": "^/nettoyage/agadir$",
+      "dest": "/nettoyage-agadir.html"
     },
     {
       "src": "^/nettoyage-agadir$",
-      "dest": "/api/lp-fn?slug=nettoyage-agadir"
+      "headers": {
+        "Location": "/nettoyage/agadir"
+      },
+      "status": 301
+    },
+    {
+      "src": "^/nettoyage-agadir\\.html$",
+      "headers": {
+        "Location": "/nettoyage/agadir"
+      },
+      "status": 301
     },
     {
       "src": "^/artisan/([a-z0-9][a-z0-9-]{3,118}[a-z0-9])$",
