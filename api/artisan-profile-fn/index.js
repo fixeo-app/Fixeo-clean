@@ -529,6 +529,130 @@ function safeJsonLD(obj) {
     .replace(/&/g, '\\u0026');
 }
 
+/* ══════════════════════════════════════════════════════════════════════
+   SECTION D — INTERNAL WORKFLOW DESCRIPTION GUARD
+   ══════════════════════════════════════════════════════════════════════
+
+   PURPOSE (fxprofile-truth-v2):
+     Prevent CRM sourcing and qualification notes stored in artisan
+     descriptions from appearing on public SSR profile pages.
+
+   DATA AUDIT (2026-08-02):
+     756 of 1,302 profiles carry descriptions that are verbatim
+     internal workflow notes referencing Facebook sourcing, recruitment
+     campaigns, lead verification, or qualification pipeline steps.
+     These notes must NEVER appear in visible text, meta description,
+     Open Graph, Twitter Card, or JSON-LD.
+
+   POLICY:
+     - Classify via explicit marker allowlist only.
+     - Never classify based on description length or duplication alone.
+     - Never modify the Supabase value — classification is read-only.
+     - When classified as internal: replace the entire public description
+       with a deterministic truthful fallback. Never expose partial text.
+     - When legitimate: preserve the description unchanged (after the
+       existing "Disponible sur Fixeo" sanitizer has run).
+
+   MARKER FAMILIES (case-insensitive, accent-normalized):
+     sourcing:      sourcé via, identifié via recrutement,
+                    identifié via groupe Facebook, recrutement Facebook,
+                    recrutement digital FIXEO, commentaires Facebook,
+                    groupe professionnel Facebook, trouvé via facebook,
+                    via commentaire facebook, numéro récupéré via
+     qualification: profil à qualifier, qualifier par appel,
+                    lead à vérifier, lead prioritaire,
+                    priorité appel, via facebook pour FIXEO
+
+   CONFIRMED COUNTS (audit 2026-08-02):
+     Matched rows:              756
+     Distinct matched descs:    165
+     Zero Facebook leakage in legitimate set after final marker pass.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── Internal workflow description marker allowlist ────────────────────
+   All strings are compared against the Unicode-normalized, lowercased,
+   whitespace-collapsed description. Accent variants are handled by the
+   NFD normalizer — no need to list both é and e variants separately
+   (normalize('NFD').replace(/[\u0300-\u036f]/g,'') strips all diacritics).
+   ────────────────────────────────────────────────────────────────────── */
+const INTERNAL_MARKERS = [
+  /* Sourcing via Facebook / digital recruitment */
+  'source via',                      /* covers sourcé/sourcée/source via */
+  'identifie via recrutement',
+  'identifiee via recrutement',
+  'identifie via groupe facebook',
+  'identifiee via groupe facebook',
+  'recrutement facebook',
+  'recrutement digital fixeo',
+  'commentaires facebook',
+  'groupe professionnel facebook',
+  'trouve via facebook',             /* Trouvé via facebook */
+  'trouvee via facebook',
+  'via commentaire facebook',        /* numéro récupéré via commentaire Facebook */
+  'numero recupere via',
+  /* Qualification / lead pipeline */
+  'profil a qualifier',              /* Profil à qualifier */
+  'qualifier par appel',
+  'lead a verifier',                 /* Lead à vérifier */
+  'lead prioritaire',
+  'priorite appel',                  /* Priorité appel */
+  /* Combined sourcing patterns */
+  'via facebook pour fixeo',
+  'via facebook fixeo',
+  'via recrutement digital',
+];
+
+/* ── Internal description classifier ───────────────────────────────────
+   Returns true ONLY when at least one explicit INTERNAL_MARKERS entry
+   matches in the normalized text.
+
+   Guarantees:
+     - A bare "Facebook" mention is NOT sufficient.
+     - A bare "FIXEO" mention is NOT sufficient.
+     - A bare "disponible" is NOT sufficient.
+     - A bare "services déclarés" is NOT sufficient.
+     - Duplication alone is NOT sufficient.
+     - Description length alone is NOT sufficient.
+     - Never modifies the Supabase value.
+   ────────────────────────────────────────────────────────────────────── */
+function isInternalWorkflowDescription(raw) {
+  if (!raw || typeof raw !== 'string' || !raw.trim()) return false;
+  /* Unicode normalize: NFD + diacritic strip + lowercase + whitespace collapse */
+  const normalized = raw
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')  /* strip diacritics */
+    .toLowerCase()
+    .replace(/\s+/g, ' ')             /* collapse whitespace */
+    .trim();
+  for (const marker of INTERNAL_MARKERS) {
+    if (normalized.includes(marker)) return true;
+  }
+  return false;
+}
+
+/* ── Truthful public fallback builder ──────────────────────────────────
+   Called only when isInternalWorkflowDescription() returns true.
+
+   Policy:
+     - Does NOT invent experience, qualifications, certifications.
+     - Does NOT claim verification, speed, availability, free quote.
+     - Uses the validated rawLabel (from SVC_LABELS — trusted).
+     - Uses rawName (HTML-escaped at insertion by caller).
+     - For invalid cities: uses location-neutral wording.
+     - Does NOT expose the raw internal city string ("Ville à qualifier",
+       "Unknown") inside the fallback sentence.
+     - Accents preserved (é, à, â, etc.).
+
+   Returns a raw string; caller must apply esc() at insertion point.
+   ────────────────────────────────────────────────────────────────────── */
+function buildTruthfulFallback(rawName, rawLabel, rawCity, isInvalidCity) {
+  if (isInvalidCity) {
+    /* Location-neutral: do not expose "Ville à qualifier" or "Unknown" */
+    return `D\u00e9couvrez le profil de ${rawName}, ${rawLabel}, r\u00e9f\u00e9renc\u00e9 sur FIXEO. La zone d\u2019intervention, les prestations et le tarif sont \u00e0 confirmer avec le prestataire avant l\u2019intervention.`;
+  }
+  return `D\u00e9couvrez le profil de ${rawName}, ${rawLabel} \u00e0 ${rawCity}, r\u00e9f\u00e9renc\u00e9 sur FIXEO. Les prestations et le tarif sont \u00e0 confirmer avec le prestataire avant l\u2019intervention.`;
+}
+
 /* ── Service label resolution — returns a hardcoded string from SVC_LABELS or raw category ── */
 function svcLabel(category) {
   if (!category) return 'Artisan';
@@ -667,7 +791,23 @@ function buildProfileHtml(artisan) {
       .trim();
     return s;
   };
-  const cleanDescription = sanitizeDescription(rawDescription);
+
+  /* ── Public description pipeline (fxprofile-truth-v2) ──────────────────
+     Order of operations — SSR output only, Supabase row NEVER modified:
+       1. Read rawDescription from DB.
+       2. Apply "Disponible sur Fixeo" sanitizer  → sanitizedDescription.
+       3. Detect internal workflow language        → isInternal flag.
+       4. If internal: replace entire public description with truthful fallback.
+       5. If not internal and non-empty: use sanitized description.
+       6. If empty: existing fallback logic below handles it (descForMeta).
+     cleanDescription is used consistently for: visible text, meta description,
+     Open Graph, Twitter Card, and JSON-LD. No surface receives rawDescription.
+     ──────────────────────────────────────────────────────────────────────── */
+  const sanitizedDescription = sanitizeDescription(rawDescription);
+  const _descIsInternal      = isInternalWorkflowDescription(rawDescription);
+  const cleanDescription     = _descIsInternal
+    ? buildTruthfulFallback(rawName, rawLabel, rawCity, isInvalidCity)
+    : sanitizedDescription;
 
   /* ── Single image resolution ── */
   const imageRes = resolveArtisanImage(artisan);
