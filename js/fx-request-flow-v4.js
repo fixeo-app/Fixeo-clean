@@ -60,7 +60,7 @@
     { slug:'peinture',      icon:'🖌', label:'Peinture',
       words:['peinture','peintre','façade','facade','mur','enduit','ravalement'] },
     { slug:'maconnerie',    icon:'🧱', label:'Maçonnerie',
-      words:['maçon','beton','béton','carrelage','chape','dallage','mur porteur'] },
+      words:['maconnerie','maçon','beton','béton','carrelage','chape','dallage','mur porteur'] },
     { slug:'nettoyage',     icon:'🧹', label:'Nettoyage',
       words:['nettoyage','ménage','menage','nettoyer','désinfection','vitres'] },
     { slug:'jardinage',     icon:'🌿', label:'Jardinage',

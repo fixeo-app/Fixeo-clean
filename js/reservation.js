@@ -29,6 +29,7 @@
     climatisation:['Panne climatiseur', 'Urgence climatisation', 'Installation climatiseur', 'Entretien climatiseur', 'R\u00e9paration climatiseur'],
     menuiserie:   ['Porte ou fen\u00eatre bloqu\u00e9e', 'R\u00e9paration menuiserie', 'Fabrication sur mesure', 'Am\u00e9nagement bois', 'Intervention rapide menuiserie'],
     maconnerie:   ['R\u00e9paration mur', 'Travaux pl\u00e2trerie', 'Construction petit ouvrage', 'R\u00e9novation fa\u00e7ade'],
+    'ma\u00e7onnerie': ['R\u00e9paration mur', 'Travaux pl\u00e2trerie', 'Construction petit ouvrage', 'R\u00e9novation fa\u00e7ade'],
     serrurerie:   ['Porte bloqu\u00e9e', 'Ouverture de porte', 'Changement serrure', 'S\u00e9curisation porte', 'Urgence serrurerie'],
     carrelage:    ['Pose carrelage', 'R\u00e9paration joints', 'Carrelage salle de bain', 'R\u00e9novation carrelage'],
     toiture:      ['Fuite toiture', '\u00c9tanch\u00e9it\u00e9 terrasse', 'R\u00e9paration tuiles', 'Nettoyage toiture'],
@@ -128,6 +129,7 @@
     nettoyage: 'Nettoyage', jardinage: 'Jardinage', demenagement: 'Déménagement',
     bricolage: 'Bricolage', climatisation: 'Climatisation', menuiserie: 'Menuiserie',
     maconnerie: 'Maçonnerie',
+    'maçonnerie': 'Maçonnerie',
   };
 
   const CATEGORY_ICONS = {
