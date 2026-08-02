@@ -67,10 +67,6 @@
       "use": "@vercel/static"
     },
     {
-      "src": "api/lp-fn/index.js",
-      "use": "@vercel/node"
-    },
-    {
       "src": "api/artisan-profile-fn/index.js",
       "use": "@vercel/node"
     },
