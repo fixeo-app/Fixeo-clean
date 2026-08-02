@@ -332,12 +332,78 @@ async function main() {
   console.log(`\nsitemap-index profiles lastmod: ${idxLastmod}`);
 
   if (CHECK && !WRITE) {
-    const synced = toAdd.length === 0 && toRem.length === 0;
-    if (synced) {
-      console.log('\n✅ SYNCHRONIZED — sitemap-profiles.xml matches eligible corpus. No changes needed.');
+    /* ── Classify drift ──────────────────────────────────────────────────
+     * Four mutually-exclusive states, in priority order:
+     *
+     *   A. SYNCHRONIZED              — byte match = true,  URL set = identical
+     *      → exit 0
+     *
+     *   B. LASTMOD_ONLY_DRIFT        — byte match = false, URL additions = 0,
+     *                                  URL removals = 0, only lastmod values differ
+     *      → exit 1
+     *
+     *   C. URL_OR_ELIGIBILITY_DRIFT  — additions or removals exist
+     *      → exit 1
+     *
+     *   D. UNEXPECTED_FORMAT_OR_METADATA_DRIFT
+     *                                — byte mismatch not explained by lastmod alone
+     *      → exit 1
+     *
+     * Exit 0 is ONLY allowed when byte-for-byte === true AND URL set matches.
+     * Byte mismatch alone (e.g. lastmod changes) is always exit 1.
+     * ─────────────────────────────────────────────────────────────────── */
+
+    const urlSetIdentical = toAdd.length === 0 && toRem.length === 0;
+
+    if (byteMatch && urlSetIdentical) {
+      /* State A — perfect synchronization */
+      console.log('\n✅ SYNCHRONIZED — byte-for-byte match confirmed. No changes needed.');
       process.exit(0);
+    }
+
+    /* Any byte mismatch beyond here → exit 1 */
+    if (urlSetIdentical) {
+      /* URL set is identical — determine whether drift is lastmod-only or deeper */
+
+      /* Count lastmod differences by comparing per-slug lastmod in generated vs current */
+      const currentLastmods  = new Map(
+        [...currentXml.matchAll(/<loc>https:\/\/www\.fixeo\.ma\/artisan\/([^<\s]+)<\/loc>\s*<lastmod>([^<]+)<\/lastmod>/g)]
+          .map(m => [m[1], m[2]])
+      );
+      const generatedLastmods = new Map(
+        [...generated.matchAll(/<loc>https:\/\/www\.fixeo\.ma\/artisan\/([^<\s]+)<\/loc>\s*<lastmod>([^<]+)<\/lastmod>/g)]
+          .map(m => [m[1], m[2]])
+      );
+      let lastmodChanges = 0;
+      for (const [slug, genLm] of generatedLastmods) {
+        if (currentLastmods.get(slug) !== genLm) lastmodChanges++;
+      }
+
+      /* Strip lastmod values and Generated/date comment for structural comparison */
+      const stripVolatile = xml =>
+        xml
+          .replace(/<lastmod>[^<]+<\/lastmod>/g, '<lastmod>__LM__</lastmod>')
+          .replace(/Generated: \d{4}-\d{2}-\d{2}/, 'Generated: __DATE__');
+
+      const structuralMatch = (stripVolatile(generated) === stripVolatile(currentXml));
+
+      if (structuralMatch) {
+        /* State B — lastmod-only drift */
+        console.log(`\n⚠️  LASTMOD_ONLY_DRIFT — ${lastmodChanges} lastmod value(s) changed (updated_at drift).`);
+        console.log('   URL set is identical. Run with --write to update lastmod values.');
+        process.exit(1);
+      } else {
+        /* State D — byte mismatch not explained by lastmod alone */
+        console.log('\n❌ UNEXPECTED_FORMAT_OR_METADATA_DRIFT — structural mismatch beyond lastmod.');
+        console.log('   Inspect generated output before writing.');
+        process.exit(1);
+      }
     } else {
-      console.log('\n⚠️  DRIFT DETECTED — run with --write to update sitemap-profiles.xml.');
+      /* State C — URL or eligibility drift */
+      console.log('\n⚠️  URL_OR_ELIGIBILITY_DRIFT — eligible corpus has changed.');
+      console.log(`   To add:    ${toAdd.length}${toAdd.length ? '  ' + toAdd.slice(0, 3).join(', ') : ''}`);
+      console.log(`   To remove: ${toRem.length}${toRem.length ? '  ' + toRem.slice(0, 3).join(', ') : ''}`);
+      console.log('   Run with --write to update sitemap-profiles.xml.');
       process.exit(1);
     }
   }
