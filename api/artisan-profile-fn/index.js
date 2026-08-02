@@ -618,11 +618,9 @@ function buildRelatedLinks(artisan) {
 }
 
 /* ── Status badge ── */
-function availBadge(artisan) {
-  if (artisan.availability === 'available') {
-    return `<span class="ssp-badge ssp-badge--avail">✓ Disponible</span>`;
-  }
-  return `<span class="ssp-badge ssp-badge--unavail">Indisponible actuellement</span>`;
+/* availBadge: public availability signal removed — field retained in DB only */
+function availBadge(_artisan) {
+  return '';
 }
 
 /* ── Services list HTML ── */
@@ -644,15 +642,28 @@ function buildProfileHtml(artisan) {
   const rawServices    = Array.isArray(artisan.services) ? artisan.services : [];
   const rawPriceLabel  = String(artisan.price_label || '');
   const rawWorkZone    = String(artisan.work_zone || '');
-  const rawBadgeLabel  = String(artisan.badge_label || '');
+  /* badge_label kept in allowlist for data completeness; suppressed from public output */
   const rawAvail       = artisan.availability;
   /* Numeric fields: cast via Number() — only digits, no injection */
-  const rawRespTime    = Number(artisan.response_time_min) > 0
-                         ? Number(artisan.response_time_min) : 30;
   const rawPriceFrom   = Number(artisan.price_from) > 0
                          ? Number(artisan.price_from) : null;
   const isClaimed      = artisan.claimed === true;
   const rawDescription = String(artisan.description || '');
+
+  /* ── Description sanitizer — SSR output only, Supabase row untouched ── */
+  /* Strips "Disponible sur Fixeo[.ma]" (case-insensitive) and cleans residual punctuation */
+  const sanitizeDescription = (raw) => {
+    if (!raw) return '';
+    let s = raw
+      .replace(/[Dd]isponible\s+sur\s+[Ff]ixeo(?:\.ma)?/gi, '')
+      .replace(/\s{2,}/g, ' ')        /* collapse extra spaces */
+      .replace(/\s+\./g, '.')         /* space before period */
+      .replace(/\.\s*\./g, '.')       /* double period */
+      .replace(/,\s*\./g, '.')        /* comma-period */
+      .trim();
+    return s;
+  };
+  const cleanDescription = sanitizeDescription(rawDescription);
 
   /* ── Single image resolution ── */
   const imageRes = resolveArtisanImage(artisan);
@@ -667,8 +678,9 @@ function buildProfileHtml(artisan) {
   /* ── Computed strings — use raw* values; esc() applied at insertion point ── */
   /* <title> text content: esc() applied once here for the title string itself */
   const titleRaw   = `${rawName} — ${rawLabel} à ${rawCity} | Fixeo`;
-  /* meta description: raw, esc() at insertion point */
-  const metaDescRaw = `${rawLabel} à ${rawCity} — ${rawName}. ${rawDescription.replace(/\.$/, '')}. Profil sur Fixeo.ma.`;
+  /* meta description: sanitized description, esc() at insertion point */
+  const descForMeta = cleanDescription || `Découvrez le profil de ${rawName}, ${rawLabel} à ${rawCity}, référencé sur FIXEO.`;
+  const metaDescRaw = `${rawLabel} à ${rawCity} — ${rawName}. ${descForMeta.replace(/\.$/, '')}. Profil sur Fixeo.ma.`;
 
   /* ── LP link for breadcrumb ── */
   const lpHref = lpUrl(rawCategory, rawCity) || 'https://www.fixeo.ma/services.html';
@@ -688,7 +700,7 @@ function buildProfileHtml(artisan) {
         '@type': 'ProfessionalService',
         '@id': `${canonicalUrl}#service`,
         'name': rawName,
-        'description': rawDescription,
+        'description': cleanDescription || descForMeta,
         'url': canonicalUrl,
         'image': absoluteImageUrl,
         'areaServed': { '@type': 'City', 'name': rawCity },
@@ -705,10 +717,7 @@ function buildProfileHtml(artisan) {
           'offers': {
             '@type': 'Offer',
             'priceCurrency': 'MAD',
-            'price': String(rawPriceFrom),
-            'availability': rawAvail === 'available'
-              ? 'https://schema.org/InStock'
-              : 'https://schema.org/OutOfStock'
+            'price': String(rawPriceFrom)
           }
         } : {}),
         ...(rawServices.length ? {
@@ -812,11 +821,7 @@ function buildProfileHtml(artisan) {
       </div>`
     : '';
 
-  /* Response time — numeric, safe */
-  const respSection = `<div class="ssp-resp">
-    <span class="ssp-resp-icon">⏱</span>
-    <span>Réponse estimée : ${rawRespTime} min</span>
-  </div>`;
+  /* Response time: response_time_min retained in DB; not rendered publicly */
 
   /* Claim CTA — rawName is esc()d at insertion */
   const claimSection = !isClaimed
@@ -1194,22 +1199,19 @@ ${safeJsonLD(jsonLdObj)}
       ${esc(rawLabel)} à <span itemprop="areaServed">${esc(rawCity)}</span>
     </p>
 
-    <!-- Status badges -->
+    <!-- Status badges: availability and workflow labels suppressed from public output -->
     <div class="ssp-badges">
-      ${availBadge(artisan)}
-      ${rawBadgeLabel ? `<span class="ssp-badge ssp-badge--new">${esc(rawBadgeLabel)}</span>` : ''}
     </div>
 
-    <!-- Public description; rawDescription esc()d -->
-    ${rawDescription
-      ? `<p class="ssp-description" itemprop="description">${esc(rawDescription)}</p>`
+    <!-- Public description; sanitized, esc()d -->
+    ${cleanDescription
+      ? `<p class="ssp-description" itemprop="description">${esc(cleanDescription)}</p>`
       : ''}
 
-    <!-- Info rows: price, zone, response time -->
+    <!-- Info rows: price, zone -->
     <div class="ssp-info-rows">
       ${priceSection}
       ${zoneSection}
-      ${respSection}
     </div>
 
     <!-- Services offered -->
@@ -1235,7 +1237,7 @@ ${safeJsonLD(jsonLdObj)}
     <p>
       Profil publié sur
       <a href="https://www.fixeo.ma/" itemprop="url">Fixeo.ma</a>
-      — Annuaire d'artisans vérifiés au Maroc.
+      — Annuaire d'artisans référencés au Maroc.
     </p>
     <p style="margin-top:6px">
       <a href="https://www.fixeo.ma/nos-garanties">Nos garanties</a> ·
