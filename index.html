@@ -3094,7 +3094,7 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
    ════════════════════════════════════════════════════════════════════ */
 
 #fixeo-chapter-2 .fc2-consequences { margin-top: 44px; }
-#fixeo-chapter-2 .fc2-because { font-size: 1.0rem; opacity: 0.72; }
+/* fc2-rf-wrap reuses fc2-consequences spacing; no extra override needed */
 
 
 /* ════════════════════════════════════════════════════════════════════
@@ -3121,6 +3121,17 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
   #fixeo-chapter-2.fc2-org-active .fxrorg-sphere::after,
   #fixeo-chapter-2.fc2-org-active .fxrorg-signal {
     animation-play-state: paused !important;
+  }
+  /* Processing flow: immediate reveal, no motion */
+  #fixeo-chapter-2 .fc2-rf-module,
+  #fixeo-chapter-2 .fc2-rf-chip {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  #fixeo-chapter-2 .fc2-rf-line-fill {
+    height: 100% !important;
+    transition: none !important;
   }
 }
 
@@ -3198,55 +3209,98 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
 
     <p class="fxrorg-outcome" aria-hidden="true">Une demande plus claire. Un suivi plus simple.</p>
 
-    <!-- ── PART 3 - Consequences (honest rewrite) ── -->
-    <div class="fc2-consequences">
+    <!-- ── PART 3 — RAFI Processing Flow ──────────────────────────────
+     Replaces the flat checklist. Four connected system modules on a
+     vertical luminous rail. No fake data, no AI claims, no counters.
+     Namespace: fc2-rf-* (processing flow)
+     ───────────────────────────────────────────────────────────────── -->
+    <div class="fc2-consequences fc2-rf-wrap" aria-label="Traitement RAFI — les quatre étapes">
 
-      <p class="fc2-because">Ce que cela change pour vous.</p>
+      <!-- ── Flow header ── -->
+      <header class="fc2-rf-header">
+        <span class="fc2-rf-eyebrow" aria-hidden="true">TRAITEMENT RAFI</span>
+        <h3 class="fc2-rf-title">Votre demande devient un signal exploitable.</h3>
+        <p class="fc2-rf-lead">RAFI structure les informations nécessaires avant la mise en relation.</p>
+      </header>
 
-      <div class="fc2-results" role="list">
+      <!-- ── Rail + modules ── -->
+      <div class="fc2-rf-rail-wrap" role="list" aria-label="Étapes du traitement RAFI">
 
-        <div class="fc2-result" role="listitem">
-          <div class="fc2-result-mark" aria-hidden="true">
-            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 10 8 14 16 6"/></svg>
+        <!-- Vertical connecting line (decorative) -->
+        <div class="fc2-rf-line" aria-hidden="true">
+          <div class="fc2-rf-line-fill"></div>
+        </div>
+
+        <!-- ── MODULE 01 ── -->
+        <div class="fc2-rf-module" role="listitem" data-rf-idx="0">
+          <div class="fc2-rf-node" aria-hidden="true">
+            <span class="fc2-rf-node-idx">01</span>
+            <div class="fc2-rf-node-dot"></div>
           </div>
-          <div class="fc2-result-text">
-            <strong>Votre demande est complète dès la première étape.</strong>
-            <span>Besoin, ville, délai et contact - rien à compléter après.</span>
+          <div class="fc2-rf-body">
+            <h4 class="fc2-rf-mod-title">Demande structurée</h4>
+            <div class="fc2-rf-chips" aria-label="Statuts">
+              <span class="fc2-rf-chip fc2-rf-chip--ok">Besoin détecté</span>
+              <span class="fc2-rf-chip fc2-rf-chip--ok">Informations organisées</span>
+            </div>
+            <p class="fc2-rf-mod-text">Besoin, ville, délai et contact sont réunis dès la première étape.</p>
           </div>
         </div>
 
-        <div class="fc2-result" role="listitem">
-          <div class="fc2-result-mark" aria-hidden="true">
-            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 10 8 14 16 6"/></svg>
+        <!-- ── MODULE 02 ── -->
+        <div class="fc2-rf-module" role="listitem" data-rf-idx="1">
+          <div class="fc2-rf-node" aria-hidden="true">
+            <span class="fc2-rf-node-idx">02</span>
+            <div class="fc2-rf-node-dot"></div>
           </div>
-          <div class="fc2-result-text">
-            <strong>Les artisans de votre ville en premier.</strong>
-            <span>La zone d'intervention est enregistrée. Toujours.</span>
-          </div>
-        </div>
-
-                <div class="fc2-result" role="listitem">
-          <div class="fc2-result-mark" aria-hidden="true">
-            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 10 8 14 16 6"/></svg>
-          </div>
-          <div class="fc2-result-text">
-            <strong>Des profils mieux structurés.</strong>
-            <span>Les informations disponibles sont organisées et enrichies progressivement.</span>
+          <div class="fc2-rf-body">
+            <h4 class="fc2-rf-mod-title">Zone d'intervention</h4>
+            <div class="fc2-rf-chips" aria-label="Statuts">
+              <span class="fc2-rf-chip fc2-rf-chip--ok">Ville confirmée</span>
+              <span class="fc2-rf-chip fc2-rf-chip--ok">Périmètre enregistré</span>
+            </div>
+            <p class="fc2-rf-mod-text">La zone d'intervention reste associée à votre demande.</p>
           </div>
         </div>
 
-        <div class="fc2-result" role="listitem">
-          <div class="fc2-result-mark" aria-hidden="true">
-            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 10 8 14 16 6"/></svg>
+        <!-- ── MODULE 03 ── -->
+        <div class="fc2-rf-module" role="listitem" data-rf-idx="2">
+          <div class="fc2-rf-node" aria-hidden="true">
+            <span class="fc2-rf-node-idx">03</span>
+            <div class="fc2-rf-node-dot"></div>
           </div>
-          <div class="fc2-result-text">
-            <strong>Vous payez après l'intervention.</strong>
-            <span>Pas avant. La mise en relation elle-même est gratuite.</span>
+          <div class="fc2-rf-body">
+            <h4 class="fc2-rf-mod-title">Priorité de traitement</h4>
+            <div class="fc2-rf-chips" aria-label="Statuts">
+              <span class="fc2-rf-chip fc2-rf-chip--blue">Délai enregistré</span>
+              <span class="fc2-rf-chip fc2-rf-chip--blue">Critères appliqués</span>
+            </div>
+            <p class="fc2-rf-mod-text">Les informations disponibles sont organisées pour faciliter la coordination.</p>
           </div>
         </div>
 
-      </div><!-- /fc2-results -->
+        <!-- ── MODULE 04 ── -->
+        <div class="fc2-rf-module" role="listitem" data-rf-idx="3">
+          <div class="fc2-rf-node" aria-hidden="true">
+            <span class="fc2-rf-node-idx">04</span>
+            <div class="fc2-rf-node-dot fc2-rf-node-dot--last"></div>
+          </div>
+          <div class="fc2-rf-body">
+            <h4 class="fc2-rf-mod-title">Règle de paiement</h4>
+            <div class="fc2-rf-chips" aria-label="Statuts">
+              <span class="fc2-rf-chip fc2-rf-chip--ok">Mise en relation gratuite</span>
+              <span class="fc2-rf-chip fc2-rf-chip--ok">Paiement après intervention</span>
+            </div>
+            <p class="fc2-rf-mod-text">Vous ne payez pas avant l'intervention.</p>
+          </div>
+        </div>
 
+      </div><!-- /fc2-rf-rail-wrap -->
+
+      <!-- ── Closing copy ── -->
+      <p class="fc2-rf-closing">Un processus clair. Des informations mieux organisées.<br class="fc2-rf-br"> Une intervention plus simple à coordonner.</p>
+
+      <!-- ── Leading question (preserved) ── -->
       <p class="fc2-transition">Est-ce que FIXEO peut résoudre votre probl&egrave;me&nbsp;?</p>
 
     </div><!-- /fc2-consequences -->

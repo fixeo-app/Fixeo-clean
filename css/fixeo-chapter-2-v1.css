@@ -210,79 +210,274 @@
   hyphens: auto;
 }
 
-/* ── PART 3 — CONSEQUENCES ───────────────────────────────────── */
-.fc2-consequences {
-  max-width: 600px;
+/* ══════════════════════════════════════════════════════════════
+   §3  RAFI PROCESSING FLOW  (fc2-rf-*)
+   Replaces the flat checklist with a vertical connected rail.
+   Mobile-first: one column, rail on left, modules expand right.
+   Desktop: same layout, centered, max 560px.
+   Namespace: fc2-rf-* — no collision with fc2-*, fxrorg-*, fbe-*
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── Outer wrapper (reuses .fc2-consequences for spacing) ── */
+.fc2-rf-wrap {
+  max-width: 560px;
   margin: 0 auto;
-  padding: 0 16px;
+  padding: 0 20px;
 }
 
-.fc2-because {
-  font-size: clamp(1.00rem, 1.8vw, 1.18rem);
-  font-weight: 600;
-  color: #f0f4ff;
+/* ── Flow header ── */
+.fc2-rf-header {
   text-align: center;
-  margin: 0 0 clamp(28px, 4vw, 44px);
-  letter-spacing: -0.010em;
-  line-height: 1.45;
+  margin-bottom: clamp(32px, 5vw, 52px);
 }
 
-/* Hide <br> inside fc2-because on desktop */
-.fc2-br-mobile { display: none; }
+.fc2-rf-eyebrow {
+  display: inline-block;
+  font-size: 0.63rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(72, 100, 255, 0.65);
+  margin-bottom: 10px;
+}
 
-.fc2-results {
+.fc2-rf-title {
+  font-size: clamp(1.15rem, 3vw, 1.45rem);
+  font-weight: 700;
+  color: #e8eeff;
+  line-height: 1.30;
+  letter-spacing: -0.018em;
+  margin: 0 0 10px;
+}
+
+.fc2-rf-lead {
+  font-size: 0.87rem;
+  color: rgba(180, 200, 255, 0.50);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ── Rail container ── */
+.fc2-rf-rail-wrap {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 0;
-  margin-bottom: clamp(36px, 5vw, 56px);
+  margin-bottom: clamp(28px, 4vw, 44px);
 }
 
-.fc2-result {
-  display: flex;
-  align-items: flex-start;
-  gap: 14px;
-  padding: 18px 0;
-  border-bottom: 1px solid rgba(72, 100, 255, 0.09);
+/* ── Vertical connecting line ── */
+.fc2-rf-line {
+  position: absolute;
+  /* Align with center of .fc2-rf-node-dot (left offset = node column width / 2) */
+  left: 23px;           /* half of node column (46px) */
+  top: 24px;            /* start below first dot */
+  bottom: 24px;         /* end above last dot */
+  width: 1px;
+  background: rgba(72, 100, 255, 0.12);
+  pointer-events: none;
+  overflow: hidden;
 }
 
-.fc2-result:first-child {
-  border-top: 1px solid rgba(72, 100, 255, 0.09);
-}
-
-.fc2-result-mark {
-  flex-shrink: 0;
-  width: 20px;
-  height: 20px;
-  margin-top: 2px;
-  color: rgba(32, 201, 151, 0.82);
-}
-
-.fc2-result-mark svg {
+.fc2-rf-line-fill {
+  position: absolute;
+  left: 0; top: 0;
   width: 100%;
+  height: 0%;           /* animated to 100% on viewport entry */
+  background: linear-gradient(
+    to bottom,
+    rgba(72, 100, 255, 0.55) 0%,
+    rgba(100, 140, 255, 0.35) 60%,
+    rgba(72, 100, 255, 0.20) 100%
+  );
+  transition: height 1.0s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Activated when .fc2-org-visible is added to #fixeo-chapter-2 */
+#fixeo-chapter-2.fc2-org-visible .fc2-rf-line-fill {
   height: 100%;
 }
 
-.fc2-result-text {
+/* ── Single module ── */
+.fc2-rf-module {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  padding: 20px 0;
+  border-bottom: 1px solid rgba(72, 100, 255, 0.07);
+  /* Entrance: modules stagger in from slight bottom offset */
+  opacity: 0;
+  transform: translateY(12px);
+  transition:
+    opacity  0.50s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.50s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.fc2-rf-module:first-child  { border-top: 1px solid rgba(72, 100, 255, 0.07); }
+
+/* Stagger delays: 0.1s between each module */
+.fc2-rf-module[data-rf-idx="0"] { transition-delay: 0.05s; }
+.fc2-rf-module[data-rf-idx="1"] { transition-delay: 0.20s; }
+.fc2-rf-module[data-rf-idx="2"] { transition-delay: 0.35s; }
+.fc2-rf-module[data-rf-idx="3"] { transition-delay: 0.50s; }
+
+/* Chips stagger inside each module (slight extra delay after module) */
+.fc2-rf-module[data-rf-idx="0"] .fc2-rf-chip { transition-delay: 0.30s; }
+.fc2-rf-module[data-rf-idx="1"] .fc2-rf-chip { transition-delay: 0.45s; }
+.fc2-rf-module[data-rf-idx="2"] .fc2-rf-chip { transition-delay: 0.60s; }
+.fc2-rf-module[data-rf-idx="3"] .fc2-rf-chip { transition-delay: 0.75s; }
+
+/* Reveal on section visible */
+#fixeo-chapter-2.fc2-org-visible .fc2-rf-module {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Node column (index + dot) ── */
+.fc2-rf-node {
+  flex-shrink: 0;
+  width: 46px;
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  align-items: center;
+  padding-top: 2px;
+  gap: 6px;
+}
+
+.fc2-rf-node-idx {
+  font-size: 0.60rem;
+  font-weight: 800;
+  letter-spacing: 0.10em;
+  color: rgba(72, 100, 255, 0.55);
+  line-height: 1;
+  user-select: none;
+}
+
+.fc2-rf-node-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(72, 100, 255, 0.25);
+  border: 1.5px solid rgba(72, 100, 255, 0.45);
+  box-shadow: 0 0 6px rgba(72, 100, 255, 0.18);
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;           /* sit on top of the rail line */
+  transition: background 0.4s, border-color 0.4s, box-shadow 0.4s;
+}
+
+.fc2-rf-node-dot--last {
+  background: rgba(32, 201, 151, 0.20);
+  border-color: rgba(32, 201, 151, 0.50);
+  box-shadow: 0 0 8px rgba(32, 201, 151, 0.20);
+}
+
+/* Dot brightens when module is revealed */
+#fixeo-chapter-2.fc2-org-visible .fc2-rf-node-dot {
+  background: rgba(72, 100, 255, 0.45);
+  border-color: rgba(100, 140, 255, 0.75);
+  box-shadow: 0 0 10px rgba(72, 100, 255, 0.30);
+}
+
+#fixeo-chapter-2.fc2-org-visible .fc2-rf-node-dot--last {
+  background: rgba(32, 201, 151, 0.40);
+  border-color: rgba(32, 201, 151, 0.80);
+  box-shadow: 0 0 12px rgba(32, 201, 151, 0.28);
+}
+
+/* ── Body column ── */
+.fc2-rf-body {
+  flex: 1;
   min-width: 0;
+  padding-left: 16px;
 }
 
-.fc2-result-text strong {
+.fc2-rf-mod-title {
   font-size: 0.94rem;
-  font-weight: 600;
-  color: #f0f4ff;
-  line-height: 1.4;
-  display: block;
+  font-weight: 700;
+  color: #e8eeff;
+  margin: 0 0 10px;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
 }
 
-.fc2-result-text span {
-  font-size: 0.85rem;
-  color: rgba(200, 212, 255, 0.52);
-  line-height: 1.55;
-  display: block;
+/* ── Status chips ── */
+.fc2-rf-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
 }
+
+.fc2-rf-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.67rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 3px 9px;
+  border-radius: 999px;
+  white-space: nowrap;
+  /* Chip entrance: fade in slightly after module */
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+#fixeo-chapter-2.fc2-org-visible .fc2-rf-chip {
+  opacity: 1;
+}
+
+/* Green — validated / confirmed states */
+.fc2-rf-chip--ok {
+  background: rgba(32, 201, 151, 0.10);
+  border: 1px solid rgba(32, 201, 151, 0.28);
+  color: rgba(32, 201, 151, 0.90);
+}
+.fc2-rf-chip--ok::before {
+  content: '';
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(32, 201, 151, 0.80);
+  flex-shrink: 0;
+}
+
+/* Blue — processing / applied states */
+.fc2-rf-chip--blue {
+  background: rgba(72, 100, 255, 0.09);
+  border: 1px solid rgba(72, 100, 255, 0.25);
+  color: rgba(120, 155, 255, 0.90);
+}
+.fc2-rf-chip--blue::before {
+  content: '';
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(100, 140, 255, 0.75);
+  flex-shrink: 0;
+}
+
+/* ── Supporting text ── */
+.fc2-rf-mod-text {
+  font-size: 0.83rem;
+  color: rgba(180, 200, 255, 0.45);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ── Closing copy ── */
+.fc2-rf-closing {
+  font-size: clamp(0.88rem, 1.6vw, 1.00rem);
+  color: rgba(200, 212, 255, 0.42);
+  text-align: center;
+  line-height: 1.7;
+  margin: 0 0 clamp(20px, 3vw, 32px);
+  letter-spacing: -0.005em;
+}
+
+.fc2-rf-br { display: inline; }
 
 /* Transition — whispered question leading into Services */
 .fc2-transition {
@@ -295,6 +490,9 @@
   letter-spacing: -0.008em;
   line-height: 1.45;
 }
+
+/* Hide <br> inside fc2-because on desktop (legacy compat) */
+.fc2-br-mobile { display: none; }
 
 /* ── KEYFRAMES ───────────────────────────────────────────────── */
 @keyframes fc2-pulse {
@@ -367,32 +565,54 @@
     font-size: 0.73rem;
   }
 
-  /* Consequences */
-  .fc2-consequences {
-    padding: 0 20px;
+  /* ── Mobile: processing flow ── */
+  .fc2-rf-wrap {
+    padding: 0 16px;
   }
 
-  .fc2-because {
-    font-size: 0.98rem;
-    margin-bottom: 24px;
+  .fc2-rf-header {
+    margin-bottom: 28px;
   }
 
-  .fc2-br-mobile {
-    display: inline; /* show line break in fc2-because on mobile */
+  .fc2-rf-title {
+    font-size: 1.08rem;
   }
 
-  .fc2-result {
-    gap: 12px;
+  .fc2-rf-lead {
+    font-size: 0.83rem;
+  }
+
+  .fc2-rf-line {
+    left: 20px; /* re-center for slightly narrower node column */
+  }
+
+  .fc2-rf-node {
+    width: 40px;
+  }
+
+  .fc2-rf-mod-title {
+    font-size: 0.88rem;
+  }
+
+  .fc2-rf-chip {
+    font-size: 0.63rem;
+    padding: 3px 7px;
+  }
+
+  .fc2-rf-mod-text {
+    font-size: 0.80rem;
+  }
+
+  .fc2-rf-module {
     padding: 16px 0;
   }
 
-  .fc2-result-text strong {
-    font-size: 0.90rem;
+  .fc2-rf-closing {
+    font-size: 0.85rem;
   }
 
-  .fc2-result-text span {
-    font-size: 0.82rem;
-  }
+  /* Preserve line break on mobile, suppress on desktop via .fc2-rf-br rule */
+  .fc2-rf-br { display: inline; }
 
   .fc2-transition {
     font-size: 0.95rem;
@@ -443,10 +663,29 @@
 }
 
 /* Reduced motion */
+/* On desktop: suppress the closing-copy line break */
+@media (min-width: 480px) {
+  .fc2-rf-br { display: none; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .fc2-core-pulse {
     animation: none;
     opacity: 0.45;
+  }
+  /* Processing flow: reveal immediately at full opacity, no transitions */
+  .fc2-rf-module,
+  .fc2-rf-chip {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  .fc2-rf-line-fill {
+    height: 100% !important;
+    transition: none !important;
+  }
+  .fc2-rf-node-dot {
+    transition: none !important;
   }
 }
 
