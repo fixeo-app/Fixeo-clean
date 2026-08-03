@@ -2,16 +2,16 @@
 <html lang="fr" dir="ltr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FIXEO Entreprises — Plateforme de Facility Management au Maroc</title>
-  <meta name="description" content="FIXEO Enterprise : la plateforme technologique de Facility Management pour hôtels, bureaux, cliniques et syndics au Maroc. Dispatch intelligent, suivi en temps réel, artisans vérifiés.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>FIXEO Entreprises — Centralisez votre maintenance au Maroc</title>
+  <meta name="description" content="FIXEO Entreprise : coordonnez vos interventions techniques, rationalisez votre réseau de prestataires et gardez une visibilité sur vos bâtiments au Maroc. Hôtels, bureaux, cliniques, syndics.">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://www.fixeo.ma/entreprises">
 
   <!-- Open Graph -->
   <meta property="og:type" content="website">
-  <meta property="og:title" content="FIXEO Entreprises — Facility Management Intelligent au Maroc">
-  <meta property="og:description" content="Une seule plateforme. Tous vos bâtiments. Toutes vos interventions. Artisans vérifiés, dispatch automatique, rapports en temps réel.">
+  <meta property="og:title" content="FIXEO Entreprises — Centralisez votre maintenance au Maroc">
+  <meta property="og:description" content="Une plateforme. Tous vos bâtiments. Toutes vos interventions. Coordination, suivi et historique centralisés pour organisations multi-sites au Maroc.">
   <meta property="og:url" content="https://www.fixeo.ma/entreprises">
   <meta property="og:site_name" content="FIXEO">
   <meta property="og:image" content="https://www.fixeo.ma/img/fixeo-og-enterprise.jpg">
@@ -19,8 +19,8 @@
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="FIXEO Entreprises — Facility Management Intelligent au Maroc">
-  <meta name="twitter:description" content="Une seule plateforme. Tous vos bâtiments. Toutes vos interventions.">
+  <meta name="twitter:title" content="FIXEO Entreprises — Centralisez votre maintenance au Maroc">
+  <meta name="twitter:description" content="Une plateforme. Tous vos bâtiments. Toutes vos interventions.">
   <meta name="twitter:image" content="https://www.fixeo.ma/img/fixeo-og-enterprise.jpg">
 
   <!-- Schema.org -->
@@ -28,9 +28,9 @@
   {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    "name": "FIXEO Entreprises — Facility Management",
+    "name": "FIXEO Entreprises — Centralisez votre maintenance",
     "url": "https://www.fixeo.ma/entreprises",
-    "description": "Plateforme de Facility Management pour entreprises au Maroc. Artisans vérifiés, dispatch intelligent, suivi en temps réel.",
+    "description": "Coordination des interventions techniques et facility management pour entreprises au Maroc.",
     "publisher": {
       "@type": "Organization",
       "name": "FIXEO",
@@ -44,79 +44,63 @@
   {
     "@context": "https://schema.org",
     "@type": "Service",
-    "name": "FIXEO Enterprise Facility Management",
+    "name": "FIXEO Entreprise",
     "provider": { "@type": "Organization", "name": "FIXEO", "@id": "https://www.fixeo.ma/#organization" },
     "areaServed": { "@type": "Country", "name": "Maroc" },
-    "serviceType": "Facility Management",
-    "description": "Plateforme B2B de gestion de la maintenance et des interventions techniques pour entreprises, hôtels, cliniques et syndics.",
-    "audience": { "@type": "BusinessAudience", "audienceType": "Facility Manager, Property Manager, Directeur Technique" }
+    "serviceType": "Coordination des interventions et facility management",
+    "description": "Service B2B de coordination des interventions techniques pour hôtels, bureaux, cliniques et syndics au Maroc.",
+    "audience": { "@type": "BusinessAudience", "audienceType": "Directeur Technique, Facility Manager, Responsable Infrastructure" }
   }
   </script>
 
   <!-- Favicon -->
   <link rel="icon" href="/img/logo.png" type="image/png">
 
-  <!-- Shared header CSS -->
+  <!-- Shared CSS -->
   <link rel="stylesheet" href="/css/variables.css">
   <link rel="stylesheet" href="/css/main.css">
   <link rel="stylesheet" href="/css/fixeo-header-global.css">
-  <!-- Page CSS -->
-  <link rel="stylesheet" href="/css/fixeo-entreprises-v1.css?v=fxe-v1a">
+  <!-- V2 Page CSS -->
+  <link rel="stylesheet" href="/css/fixeo-entreprises-v2.css?v=fxe-v2a">
   <!-- Canonical footer -->
   <link rel="stylesheet" href="/css/fixeo-footer-global.css?v=gf4a">
   <!-- Consent -->
   <link rel="stylesheet" href="/css/fixeo-consent-v1.css?v=fcv1b">
-  <!-- Enterprise modal CSS -->
-  <link rel="stylesheet" href="/css/fixeo-enterprise-modal-v1.css?v=fem-v1a">
 
-  <!-- First-paint: body class for shared header -->
+  <!-- First-paint body bg -->
   <style>
     body { background: #080812; }
   </style>
 
   <style id="fixeo-logo-override">
-    /* Kill legacy logo-icon and logo-text */
     .navbar-brand .logo-icon, .logo-wrap .logo-icon, .fixeo-gh-brand .logo-icon
       { display:none !important; width:0 !important; height:0 !important; min-width:0 !important; flex:0 !important; }
     .navbar-brand .logo-text, .logo-wrap .logo-text, .fixeo-gh-brand .logo-text
       { display:none !important; width:0 !important; height:0 !important; }
-    /* Brand containers - no clipping */
     .navbar-brand, .logo-wrap
       { max-width:220px !important; overflow:visible !important; gap:0 !important; background:transparent !important; }
     .fixeo-gh-brand
       { max-width:180px !important; overflow:visible !important; gap:0 !important; background:transparent !important; }
-    /* Logo image - clean, no hacks */
     img.fixeo-logo-img {
-      display:block !important;
-      height:32px !important;
-      width:auto !important;
-      object-fit:contain !important;
-      object-position:left center !important;
-      background:transparent !important;
-      mix-blend-mode:normal !important;
-      filter:none !important;
-      box-shadow:none !important;
-      border:none !important;
-      flex:0 0 auto !important;
-      overflow:visible !important;
+      display:block !important; height:32px !important; width:auto !important;
+      object-fit:contain !important; object-position:left center !important;
+      background:transparent !important; mix-blend-mode:normal !important;
+      filter:none !important; box-shadow:none !important; border:none !important;
+      flex:0 0 auto !important; overflow:visible !important;
     }
-    /* Mobile bar logo */
     .fixeo-gh-brand img.fixeo-logo-img,
-    .fixeo-gh-mobile-bar img.fixeo-logo-img {
-      height:26px !important;
-      width:auto !important;
-    }
+    .fixeo-gh-mobile-bar img.fixeo-logo-img { height:26px !important; width:auto !important; }
     @media (max-width:480px) {
       img.fixeo-logo-img { height:24px !important; }
       .fixeo-gh-brand img.fixeo-logo-img { height:22px !important; }
     }
   </style>
 </head>
-<body class="fxe-page fixeo-gh-enabled">
+<body class="fxe2-page fixeo-gh-enabled">
 
   <!-- Shared mobile header (injected by fixeo-header-global.js) -->
   <nav class="navbar" role="navigation" aria-label="Navigation principale">
-    <a href="/index.html" class="navbar-brand logo-wrap" aria-label="Fixeo - Accueil">
+    <a href="/index.html" class="navbar-brand logo-wrap" aria-label="Fixeo — Accueil">
       <img src="/img/logo.png" alt="Fixeo" class="fixeo-logo-img" height="32" loading="eager">
     </a>
     <nav class="navbar-nav" aria-label="Menu principal">
@@ -124,1048 +108,724 @@
       <a href="/artisans.html" class="nav-link">Artisans</a>
       <a href="/comment-ca-marche.html" class="nav-link">Comment ça marche</a>
       <a href="/pricing.html" class="nav-link">Tarifs</a>
-      <a href="/entreprises.html" class="nav-link" style="color:rgb(72,100,255);font-weight:700;">Entreprises</a>
+      <a href="/entreprises.html" class="nav-link" style="color:rgb(72,100,255);font-weight:700;" aria-current="page">Entreprises</a>
       <a href="/auth.html" class="nav-link">Connexion</a>
     </nav>
     <div class="nav-actions">
-      <button type="button" class="btn btn-primary" style="padding:9px 20px;font-size:14px;border-radius:10px;background:rgb(72,100,255);color:white;font-weight:700;cursor:pointer;border:none;" onclick="window.FixeoEnterpriseModal ? FixeoEnterpriseModal.open() : (window.FixeoClientRequest && FixeoClientRequest.open(this, 'enterprise'))" data-open-request-form="true" data-request-mode="enterprise">Démo Enterprise</button>
+      <button
+        type="button"
+        class="btn btn-primary"
+        style="padding:9px 20px;font-size:14px;border-radius:10px;background:rgb(72,100,255);color:white;font-weight:700;cursor:pointer;border:none;"
+        data-lead-intent="demo"
+        data-source-cta="navbar-demo">
+        Démo Entreprise
+      </button>
     </div>
   </nav>
 
   <!-- ══════════════════════════════════════════════════════════════
        SECTION 1 — HERO
   ══════════════════════════════════════════════════════════════ -->
-  <section class="fxe-hero" id="hero" aria-label="Hero Enterprise">
+  <section class="fxe2-hero" id="hero" aria-label="FIXEO Entreprise — Présentation">
     <!-- Background -->
-    <div class="fxe-hero-bg" aria-hidden="true">
-      <div class="fxe-hero-grid"></div>
-      <div class="fxe-hero-glow-1"></div>
-      <div class="fxe-hero-glow-2"></div>
-      <div class="fxe-hero-glow-3"></div>
-      <div class="fxe-hero-orb fxe-hero-orb-1"></div>
-      <div class="fxe-hero-orb fxe-hero-orb-2"></div>
-      <div class="fxe-hero-orb fxe-hero-orb-3"></div>
+    <div class="fxe2-hero-bg" aria-hidden="true">
+      <div class="fxe2-hero-grid"></div>
+      <div class="fxe2-hero-glow-a"></div>
+      <div class="fxe2-hero-glow-b"></div>
     </div>
 
-    <div class="fxe-container">
-      <div class="fxe-hero-inner">
+    <div class="fxe2-container">
+      <div class="fxe2-hero-inner">
+
         <!-- Content -->
-        <div class="fxe-hero-content">
-          <div class="fxe-hero-badge">
-            <span class="fxe-hero-badge-dot"></span>
-            Plateforme Enterprise — Maroc
+        <div class="fxe2-hero-content">
+          <div class="fxe2-hero-badge">
+            <span class="fxe2-hero-badge-dot"></span>
+            Plateforme Entreprise — Maroc
           </div>
 
-          <h1 class="fxe-hero-h1">
-            <span class="fxe-gradient-text">Une plateforme.</span><br>
+          <h1 class="fxe2-hero-h1">
+            <span class="fxe2-gradient-text">Une plateforme.</span><br>
             Tous vos bâtiments.<br>
             Toutes vos interventions.
           </h1>
 
-          <p class="fxe-hero-lead">
-            FIXEO transforme la gestion de la maintenance en avantage stratégique. 
-            Dispatch automatique, artisans vérifiés, suivi en temps réel et reporting 
-            centralisé pour hôtels, bureaux, cliniques et syndics au Maroc.
+          <p class="fxe2-hero-lead">
+            FIXEO centralise la coordination de vos interventions techniques.
+            Un point de contact unique pour tous vos sites, tous vos corps de métier,
+            avec un suivi opérationnel et un historique structuré.
           </p>
 
-          <div class="fxe-hero-ctas">
-            <button type="button" class="fxe-btn fxe-btn-primary fxe-btn-lg" onclick="window.FixeoEnterpriseModal ? FixeoEnterpriseModal.open() : (window.FixeoClientRequest && FixeoClientRequest.open(this, 'enterprise'))" data-open-request-form="true" data-request-mode="enterprise">
-              🚀 Demander une démo
+          <div class="fxe2-hero-ctas">
+            <button
+              type="button"
+              class="fxe2-btn fxe2-btn-primary fxe2-btn-lg"
+              data-lead-intent="demo"
+              data-source-cta="hero-demo">
+              Demander une démonstration
             </button>
-            <button type="button" class="fxe-btn fxe-btn-ghost fxe-btn-lg" onclick="window.FixeoEnterpriseModal ? FixeoEnterpriseModal.open() : (window.FixeoClientRequest && FixeoClientRequest.open(this, 'enterprise'))" data-open-request-form="true" data-request-mode="enterprise">
-              📞 Contacter l'équipe Enterprise
+            <button
+              type="button"
+              class="fxe2-btn fxe2-btn-ghost fxe2-btn-lg"
+              data-lead-intent="contact"
+              data-source-cta="hero-contact">
+              Contacter l'équipe Entreprise
             </button>
           </div>
 
-          <div class="fxe-hero-proof">
-            <div class="fxe-hero-proof-item">
-              <span class="fxe-hero-proof-icon">✓</span>
+          <div class="fxe2-hero-proof" aria-label="Indicateurs du réseau FIXEO">
+            <div class="fxe2-hero-proof-item">
+              <span class="fxe2-hero-proof-check" aria-hidden="true">✓</span>
               1 134 artisans vérifiés
             </div>
-            <div class="fxe-hero-proof-item">
-              <span class="fxe-hero-proof-icon">✓</span>
+            <div class="fxe2-hero-proof-item">
+              <span class="fxe2-hero-proof-check" aria-hidden="true">✓</span>
               20 villes au Maroc
             </div>
-            <div class="fxe-hero-proof-item">
-              <span class="fxe-hero-proof-icon">✓</span>
+            <div class="fxe2-hero-proof-item">
+              <span class="fxe2-hero-proof-check" aria-hidden="true">✓</span>
               12 corps de métier
             </div>
           </div>
         </div>
 
-        <!-- Visual — Mini Dashboard Preview -->
-        <div class="fxe-hero-visual">
-          <!-- Floating badges -->
-          <div class="fxe-hero-card-float fxe-hero-card-float-1" aria-hidden="true">
-            <div class="fxe-float-label">Interventions ce mois</div>
-            <div class="fxe-float-value green">247</div>
+        <!-- Dashboard visual -->
+        <div class="fxe2-hero-visual" aria-hidden="true">
+          <!-- Floating stat badges -->
+          <div class="fxe2-hero-float-badge fxe2-hero-float-badge-1">
+            <div class="fxe2-fb-label">Interventions ce mois</div>
+            <div class="fxe2-fb-value green">247</div>
           </div>
-          <div class="fxe-hero-card-float fxe-hero-card-float-2" aria-hidden="true">
-            <div class="fxe-float-label">Taux de résolution</div>
-            <div class="fxe-float-value">96%</div>
+          <div class="fxe2-hero-float-badge fxe2-hero-float-badge-2">
+            <div class="fxe2-fb-label">Taux de résolution</div>
+            <div class="fxe2-fb-value">96%</div>
           </div>
 
-          <!-- Dashboard preview -->
-          <div class="fxe-hero-dashboard" aria-hidden="true">
-            <div class="fxe-hd-topbar">
-              <div class="fxe-hd-dots">
-                <div class="fxe-hd-dot fxe-hd-dot-r"></div>
-                <div class="fxe-hd-dot fxe-hd-dot-y"></div>
-                <div class="fxe-hd-dot fxe-hd-dot-g"></div>
+          <!-- Mini dashboard -->
+          <div class="fxe2-hero-dashboard" role="img" aria-label="Aperçu illustratif du tableau de bord FIXEO Entreprise">
+            <div class="fxe2-hd-topbar">
+              <div class="fxe2-hd-dots">
+                <div class="fxe2-hd-dot fxe2-hd-dot-r"></div>
+                <div class="fxe2-hd-dot fxe2-hd-dot-y"></div>
+                <div class="fxe2-hd-dot fxe2-hd-dot-g"></div>
               </div>
-              <div class="fxe-hd-title">FIXEO Enterprise Dashboard</div>
+              <div class="fxe2-hd-title">FIXEO Entreprise — Dashboard</div>
             </div>
-            <div class="fxe-hd-body">
-              <div class="fxe-hd-kpi-row">
-                <div class="fxe-hd-kpi">
-                  <div class="fxe-hd-kpi-label">En cours</div>
-                  <div class="fxe-hd-kpi-value green">12</div>
+            <div class="fxe2-hd-body">
+              <div class="fxe2-hd-kpi-row">
+                <div class="fxe2-hd-kpi">
+                  <div class="fxe2-hd-kpi-label">En cours</div>
+                  <div class="fxe2-hd-kpi-value green">12</div>
                 </div>
-                <div class="fxe-hd-kpi">
-                  <div class="fxe-hd-kpi-label">Urgences</div>
-                  <div class="fxe-hd-kpi-value pink">3</div>
+                <div class="fxe2-hd-kpi">
+                  <div class="fxe2-hd-kpi-label">Urgences</div>
+                  <div class="fxe2-hd-kpi-value pink">3</div>
                 </div>
-                <div class="fxe-hd-kpi">
-                  <div class="fxe-hd-kpi-label">Bâtiments</div>
-                  <div class="fxe-hd-kpi-value indigo">8</div>
+                <div class="fxe2-hd-kpi">
+                  <div class="fxe2-hd-kpi-label">Bâtiments</div>
+                  <div class="fxe2-hd-kpi-value indigo">8</div>
                 </div>
               </div>
-              <div class="fxe-hd-activity">
-                <div class="fxe-hd-activity-row">
-                  <div class="fxe-hd-activity-dot active"></div>
+              <div class="fxe2-hd-activity">
+                <div class="fxe2-hd-activity-row">
+                  <div class="fxe2-hd-act-dot active"></div>
                   <span>Plomberie · Hôtel Atlas · Casablanca</span>
                 </div>
-                <div class="fxe-hd-activity-row">
-                  <div class="fxe-hd-activity-dot pending"></div>
+                <div class="fxe2-hd-activity-row">
+                  <div class="fxe2-hd-act-dot pending"></div>
                   <span>Climatisation · Tour Zénith · Rabat</span>
                 </div>
-                <div class="fxe-hd-activity-row">
-                  <div class="fxe-hd-activity-dot done"></div>
+                <div class="fxe2-hd-activity-row">
+                  <div class="fxe2-hd-act-dot done"></div>
                   <span>Électricité · Clinique Santé · Marrakech</span>
                 </div>
-                <div class="fxe-hd-activity-row">
-                  <div class="fxe-hd-activity-dot active"></div>
+                <div class="fxe2-hd-activity-row">
+                  <div class="fxe2-hd-act-dot active"></div>
                   <span>Serrurerie · Centre Commercial · Tanger</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <div class="fxe-divider"></div>
-
-  <!-- ══════════════════════════════════════════════════════════════
-       SECTION 2 — PAIN POINTS → SOLUTION
-  ══════════════════════════════════════════════════════════════ -->
-  <section class="fxe-section fxe-pain-section" id="problemes" aria-labelledby="pain-title">
-    <div class="fxe-container">
-      <div class="fxe-pain-header">
-        <div class="fxe-eyebrow">Le défi Enterprise</div>
-        <h2 id="pain-title" class="fxe-h2">La gestion de la maintenance est <span class="fxe-gradient-text">un problème non résolu</span></h2>
-        <p class="fxe-lead" style="margin-top:16px;">Les entreprises perdent du temps, de l'argent et de la visibilité à cause d'un système fragmenté. FIXEO change la donne.</p>
-      </div>
-
-      <div class="fxe-pain-grid">
-        <!-- Pain side -->
-        <div>
-          <div class="fxe-pain-side-title pain">❌ Situation actuelle</div>
-          <div class="fxe-pain-list">
-            <div class="fxe-pain-item">
-              <div class="fxe-pain-item-icon">📋</div>
-              <div class="fxe-pain-item-text"><strong>Multiples prestataires</strong>Des dizaines de contacts différents, aucune cohérence, aucun suivi centralisé.</div>
-            </div>
-            <div class="fxe-pain-item">
-              <div class="fxe-pain-item-icon">👁️</div>
-              <div class="fxe-pain-item-text"><strong>Zéro visibilité</strong>Impossible de savoir où en est une intervention, qui s'en occupe, quand elle sera terminée.</div>
-            </div>
-            <div class="fxe-pain-item">
-              <div class="fxe-pain-item-icon">🚨</div>
-              <div class="fxe-pain-item-text"><strong>Urgences non maîtrisées</strong>Une panne la nuit ou le week-end devient une crise sans prestataire disponible.</div>
-            </div>
-            <div class="fxe-pain-item">
-              <div class="fxe-pain-item-icon">🧾</div>
-              <div class="fxe-pain-item-text"><strong>Facturation chaotique</strong>Devis, bons d'intervention, factures éparpillées. La comptabilité perd des heures chaque mois.</div>
-            </div>
-            <div class="fxe-pain-item">
-              <div class="fxe-pain-item-icon">🗂️</div>
-              <div class="fxe-pain-item-text"><strong>Aucun historique</strong>Pas de trace des interventions passées. Impossible d'anticiper les pannes récurrentes.</div>
-            </div>
-            <div class="fxe-pain-item">
-              <div class="fxe-pain-item-icon">❓</div>
-              <div class="fxe-pain-item-text"><strong>Qualité non contrôlée</strong>Impossible de mesurer la qualité des prestataires sans données fiables.</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Fix side -->
-        <div>
-          <div class="fxe-pain-side-title fix">✅ Avec FIXEO Enterprise</div>
-          <div class="fxe-pain-list">
-            <div class="fxe-pain-item fxe-fix-item">
-              <div class="fxe-pain-item-icon">🏢</div>
-              <div class="fxe-pain-item-text"><strong>Un seul point d'accès</strong>Tous vos bâtiments, tous vos corps de métier, tous vos artisans sur une seule plateforme.</div>
-            </div>
-            <div class="fxe-pain-item fxe-fix-item">
-              <div class="fxe-pain-item-icon">📍</div>
-              <div class="fxe-pain-item-text"><strong>Suivi en temps réel</strong>Statut de chaque intervention, localisation de l'artisan, chronomètre de réponse visible.</div>
-            </div>
-            <div class="fxe-pain-item fxe-fix-item">
-              <div class="fxe-pain-item-icon">⚡</div>
-              <div class="fxe-pain-item-text"><strong>Urgences sous contrôle</strong>Dispatch automatique 24h/24 aux artisans disponibles dans votre zone. Réponse prioritaire garantie.</div>
-            </div>
-            <div class="fxe-pain-item fxe-fix-item">
-              <div class="fxe-pain-item-icon">📊</div>
-              <div class="fxe-pain-item-text"><strong>Reporting automatique</strong>Rapports mensuels par bâtiment, par corps de métier, par coût. Exportables en un clic.</div>
-            </div>
-            <div class="fxe-pain-item fxe-fix-item">
-              <div class="fxe-pain-item-icon">📁</div>
-              <div class="fxe-pain-item-text"><strong>Historique complet</strong>Chaque intervention est archivée avec date, artisan, photos et compte-rendu. Retrouvez tout en secondes.</div>
-            </div>
-            <div class="fxe-pain-item fxe-fix-item">
-              <div class="fxe-pain-item-icon">⭐</div>
-              <div class="fxe-pain-item-text"><strong>Qualité mesurée</strong>Note, délai d'intervention, taux de succès : les données objectives guident vos décisions.</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <div class="fxe-divider"></div>
-
-  <!-- ══════════════════════════════════════════════════════════════
-       SECTION 3 — FEATURES / WHY FIXEO ENTERPRISE
-  ══════════════════════════════════════════════════════════════ -->
-  <section class="fxe-section" id="fonctionnalites" aria-labelledby="features-title">
-    <div class="fxe-container">
-      <div class="fxe-features-header">
-        <div class="fxe-eyebrow">Fonctionnalités Enterprise</div>
-        <h2 id="features-title" class="fxe-h2">Pourquoi FIXEO Enterprise ?</h2>
-        <p class="fxe-lead" style="margin-top:16px;">Une infrastructure technique pensée pour la complexité des organisations multi-sites.</p>
-      </div>
-
-      <div class="fxe-features-grid">
-
-        <div class="fxe-feature-card">
-          <div class="fxe-feature-icon">🏗️</div>
-          <div class="fxe-feature-title">Plateforme centralisée</div>
-          <div class="fxe-feature-desc">Un tableau de bord unique pour gérer l'ensemble de votre parc immobilier, quel que soit le nombre de sites ou de corps de métier.</div>
-          <span class="fxe-feature-tag">Disponible</span>
-        </div>
-
-        <div class="fxe-feature-card">
-          <div class="fxe-feature-icon">⚡</div>
-          <div class="fxe-feature-title">Smart Dispatch</div>
-          <div class="fxe-feature-desc">Allocation automatique de l'artisan le plus proche et le plus qualifié. Réduction du temps de réponse et optimisation des coûts de déplacement.</div>
-          <span class="fxe-feature-tag">Disponible</span>
-        </div>
-
-        <div class="fxe-feature-card">
-          <div class="fxe-feature-icon">✅</div>
-          <div class="fxe-feature-title">Artisans vérifiés</div>
-          <div class="fxe-feature-desc">1 134 professionnels vérifiés par notre équipe. Identité, compétences et réputation contrôlées. Zéro prestataire inconnu.</div>
-          <span class="fxe-feature-tag">Disponible</span>
-        </div>
-
-        <div class="fxe-feature-card">
-          <div class="fxe-feature-icon">📍</div>
-          <div class="fxe-feature-title">Tracking en temps réel</div>
-          <div class="fxe-feature-desc">Suivez chaque intervention de la demande à la validation. Statut, chronomètre et historique accessibles depuis votre dashboard.</div>
-          <span class="fxe-feature-tag">Disponible</span>
-        </div>
-
-        <div class="fxe-feature-card">
-          <div class="fxe-feature-icon">🏢</div>
-          <div class="fxe-feature-title">Gestion multi-sites</div>
-          <div class="fxe-feature-desc">Configurez plusieurs bâtiments, affectez des responsables par site, consultez les données consolidées ou par établissement.</div>
-          <span class="fxe-feature-tag">Disponible</span>
-        </div>
-
-        <div class="fxe-feature-card">
-          <div class="fxe-feature-icon">📊</div>
-          <div class="fxe-feature-title">Rapports & Analytics</div>
-          <div class="fxe-feature-desc">Tableaux de bord de performance, coûts par catégorie, temps moyen de résolution, tendances mensuelles. Données exportables.</div>
-          <span class="fxe-feature-tag">Disponible</span>
-        </div>
-
-        <div class="fxe-feature-card">
-          <div class="fxe-feature-icon">🔍</div>
-          <div class="fxe-feature-title">Contrôle qualité</div>
-          <div class="fxe-feature-desc">Notation systématique des interventions, alertes sur les prestataires sous-performants, validation avant paiement.</div>
-          <span class="fxe-feature-tag">Disponible</span>
-        </div>
-
-        <div class="fxe-feature-card">
-          <div class="fxe-feature-icon">🎯</div>
-          <div class="fxe-feature-title">Support prioritaire</div>
-          <div class="fxe-feature-desc">Ligne dédiée, gestionnaire de compte, SLA personnalisé. L'équipe FIXEO Enterprise répond en priorité à vos demandes critiques.</div>
-          <span class="fxe-feature-tag">Disponible</span>
-        </div>
-
-        <div class="fxe-feature-card">
-          <div class="fxe-feature-icon">🤖</div>
-          <div class="fxe-feature-title">Maintenance prédictive</div>
-          <div class="fxe-feature-desc">La plateforme est conçue pour intégrer des capacités de détection anticipée des pannes à partir des données d'intervention historiques.</div>
-          <span class="fxe-feature-tag soon">Roadmap</span>
-        </div>
 
       </div>
     </div>
   </section>
 
-  <div class="fxe-divider"></div>
+  <div class="fxe2-divider"></div>
 
   <!-- ══════════════════════════════════════════════════════════════
-       SECTION 4 — HOW IT WORKS
+       SECTION 2 — PROBLÈMES OPÉRATIONNELS
   ══════════════════════════════════════════════════════════════ -->
-  <section class="fxe-section fxe-flow-section" id="fonctionnement" aria-labelledby="flow-title">
-    <div class="fxe-container">
-      <div class="fxe-flow-header">
-        <div class="fxe-eyebrow">Workflow Enterprise</div>
-        <h2 id="flow-title" class="fxe-h2">Du signalement à la validation en quelques minutes</h2>
-        <p class="fxe-lead" style="margin-top:16px;">Un processus entièrement orchestré par la plateforme, sans intervention manuelle.</p>
+  <section class="fxe2-section fxe2-section-alt" id="problemes" aria-labelledby="problemes-title">
+    <div class="fxe2-container">
+      <div class="fxe2-section-header">
+        <div class="fxe2-eyebrow">Le défi Entreprise</div>
+        <h2 id="problemes-title" class="fxe2-h2">Ce que vous vivez probablement aujourd'hui</h2>
+        <p class="fxe2-lead">
+          La maintenance est souvent le maillon le plus dispersé d'une organisation multi-sites.
+          Ces problèmes ont des solutions concrètes.
+        </p>
       </div>
 
-      <div class="fxe-flow-track" role="list">
-        <div class="fxe-flow-step" role="listitem">
-          <div class="fxe-flow-node">🏢</div>
-          <div class="fxe-flow-label">Votre entreprise</div>
-          <div class="fxe-flow-sub">Signalement</div>
+      <div class="fxe2-problems-grid">
+        <div class="fxe2-problem-card">
+          <span class="fxe2-problem-icon" aria-hidden="true">📋</span>
+          <div class="fxe2-problem-title">Prestataires dispersés</div>
+          <p class="fxe2-problem-desc">Des dizaines de contacts, chacun pour un corps de métier différent. Pas de vue d'ensemble, pas de cohérence.</p>
         </div>
-        <div class="fxe-flow-connector animated" aria-hidden="true"></div>
-        <div class="fxe-flow-step" role="listitem">
-          <div class="fxe-flow-node">📝</div>
-          <div class="fxe-flow-label">Demande créée</div>
-          <div class="fxe-flow-sub">Qualification</div>
+        <div class="fxe2-problem-card">
+          <span class="fxe2-problem-icon" aria-hidden="true">👁️‍🗨️</span>
+          <div class="fxe2-problem-title">Aucune visibilité sur les interventions</div>
+          <p class="fxe2-problem-desc">Impossible de savoir où en est une demande, qui s'en occupe, ni quand elle sera résolue.</p>
         </div>
-        <div class="fxe-flow-connector animated" aria-hidden="true"></div>
-        <div class="fxe-flow-step" role="listitem">
-          <div class="fxe-flow-node fxe-flow-center">⚡</div>
-          <div class="fxe-flow-label">FIXEO Dispatch</div>
-          <div class="fxe-flow-sub">Moteur IA</div>
+        <div class="fxe2-problem-card">
+          <span class="fxe2-problem-icon" aria-hidden="true">🚨</span>
+          <div class="fxe2-problem-title">Urgences non maîtrisées</div>
+          <p class="fxe2-problem-desc">Une panne la nuit ou le week-end devient une crise si aucun prestataire disponible ne peut répondre rapidement.</p>
         </div>
-        <div class="fxe-flow-connector animated" aria-hidden="true"></div>
-        <div class="fxe-flow-step" role="listitem">
-          <div class="fxe-flow-node">👷</div>
-          <div class="fxe-flow-label">Artisan vérifié</div>
-          <div class="fxe-flow-sub">Assigné &amp; notifié</div>
+        <div class="fxe2-problem-card">
+          <span class="fxe2-problem-icon" aria-hidden="true">🗂️</span>
+          <div class="fxe2-problem-title">Historique inexistant</div>
+          <p class="fxe2-problem-desc">Pas de trace structurée des interventions passées. Difficile d'anticiper, de comparer ou de rendre compte.</p>
         </div>
-        <div class="fxe-flow-connector animated" aria-hidden="true"></div>
-        <div class="fxe-flow-step" role="listitem">
-          <div class="fxe-flow-node">🔧</div>
-          <div class="fxe-flow-label">Intervention</div>
-          <div class="fxe-flow-sub">Suivi live</div>
+        <div class="fxe2-problem-card">
+          <span class="fxe2-problem-icon" aria-hidden="true">🏢</span>
+          <div class="fxe2-problem-title">Multi-sites ingérable</div>
+          <p class="fxe2-problem-desc">Plus vous avez de sites, plus la coordination se fragmente. Chaque bâtiment fonctionne en silo.</p>
         </div>
-        <div class="fxe-flow-connector animated" aria-hidden="true"></div>
-        <div class="fxe-flow-step" role="listitem">
-          <div class="fxe-flow-node">✅</div>
-          <div class="fxe-flow-label">Validation</div>
-          <div class="fxe-flow-sub">Contrôle qualité</div>
-        </div>
-        <div class="fxe-flow-connector animated" aria-hidden="true"></div>
-        <div class="fxe-flow-step" role="listitem">
-          <div class="fxe-flow-node">📊</div>
-          <div class="fxe-flow-label">Rapport</div>
-          <div class="fxe-flow-sub">Automatique</div>
-        </div>
-        <div class="fxe-flow-connector animated" aria-hidden="true"></div>
-        <div class="fxe-flow-step" role="listitem">
-          <div class="fxe-flow-node">🗂️</div>
-          <div class="fxe-flow-label">Historique</div>
-          <div class="fxe-flow-sub">Archivé</div>
+        <div class="fxe2-problem-card">
+          <span class="fxe2-problem-icon" aria-hidden="true">❓</span>
+          <div class="fxe2-problem-title">Qualité difficile à contrôler</div>
+          <p class="fxe2-problem-desc">Sans données fiables sur les prestataires, il est impossible d'évaluer leur performance de façon objective.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <div class="fxe-divider"></div>
+  <div class="fxe2-divider"></div>
 
   <!-- ══════════════════════════════════════════════════════════════
-       SECTION 5 — DASHBOARD PREVIEW
+       SECTION 3 — CE QUE FIXEO CENTRALISE
   ══════════════════════════════════════════════════════════════ -->
-  <section class="fxe-section fxe-dash-section" id="dashboard" aria-labelledby="dash-title">
-    <div class="fxe-container">
-      <div class="fxe-dash-header">
-        <div class="fxe-eyebrow">Tableau de bord</div>
-        <h2 id="dash-title" class="fxe-h2">Une visibilité totale sur vos opérations</h2>
-        <p class="fxe-lead" style="margin-top:16px;">Conçu pour que des données réelles puissent remplacer cette démo en temps réel.</p>
+  <section class="fxe2-section" id="centralisation" aria-labelledby="centralisation-title">
+    <div class="fxe2-container">
+      <div class="fxe2-section-header">
+        <div class="fxe2-eyebrow">Ce que FIXEO apporte</div>
+        <h2 id="centralisation-title" class="fxe2-h2">Ce que votre organisation peut centraliser avec FIXEO</h2>
+        <p class="fxe2-lead">Un point d'accès unique pour vos demandes, vos prestataires et votre historique.</p>
       </div>
 
-      <div class="fxe-dash-preview" aria-label="Aperçu du dashboard Enterprise FIXEO (exemple de fonctionnement)" role="img">
-        <!-- Browser chrome -->
-        <div class="fxe-dash-topbar">
-          <div class="fxe-dash-topbar-left">
-            <div class="fxe-dash-topbar-dots">
-              <div class="fxe-dash-topbar-dot" style="background:#FF5F57"></div>
-              <div class="fxe-dash-topbar-dot" style="background:#FFBD2E"></div>
-              <div class="fxe-dash-topbar-dot" style="background:#28C840"></div>
-            </div>
-            <div class="fxe-dash-topbar-title">fixeo.ma/enterprise/dashboard</div>
+      <div class="fxe2-centralise-grid">
+        <div class="fxe2-centralise-item">
+          <div class="fxe2-centralise-icon" aria-hidden="true">📝</div>
+          <div>
+            <div class="fxe2-centralise-title">Demandes d'intervention</div>
+            <p class="fxe2-centralise-desc">Centralisez toutes vos demandes — courantes, urgentes ou planifiées — en un seul endroit.</p>
+            <span class="fxe2-centralise-tag service">Via FIXEO</span>
           </div>
-          <div class="fxe-dash-topbar-badge">⚡ Enterprise</div>
         </div>
-
-        <!-- App body -->
-        <div class="fxe-dash-body">
-          <!-- Sidebar -->
-          <aside class="fxe-dash-sidebar" aria-label="Navigation dashboard">
-            <div class="fxe-dash-sidebar-logo">
-              <span>FIXEO</span> <small style="color:rgba(255,255,255,0.4);font-size:11px;font-weight:400;">Enterprise</small>
-            </div>
-            <nav>
-              <div class="fxe-dash-nav-item active">📊 Vue d'ensemble<span class="fxe-dash-nav-badge">3</span></div>
-              <div class="fxe-dash-nav-item">🏢 Bâtiments</div>
-              <div class="fxe-dash-nav-item">🔧 Interventions<span class="fxe-dash-nav-badge">12</span></div>
-              <div class="fxe-dash-nav-item">🚨 Urgences</div>
-              <div class="fxe-dash-nav-item">👷 Artisans</div>
-              <div class="fxe-dash-nav-item">📋 Rapports</div>
-              <div class="fxe-dash-nav-item">⚙️ Paramètres</div>
-            </nav>
-          </aside>
-
-          <!-- Main area -->
-          <main class="fxe-dash-main">
-            <div class="fxe-dash-main-header">
-              <div class="fxe-dash-main-title">Vue d'ensemble — Juillet 2026</div>
-              <div class="fxe-dash-period">30 derniers jours ▾</div>
-            </div>
-
-            <!-- KPIs -->
-            <div class="fxe-kpi-row">
-              <div class="fxe-kpi-card">
-                <div class="fxe-kpi-label">Demandes ouvertes</div>
-                <div class="fxe-kpi-value" style="color:rgb(72,100,255)">12</div>
-                <div class="fxe-kpi-trend up">↑ 3 vs mois dernier</div>
-              </div>
-              <div class="fxe-kpi-card">
-                <div class="fxe-kpi-label">Urgences actives</div>
-                <div class="fxe-kpi-value" style="color:#FF5F57">3</div>
-                <div class="fxe-kpi-trend down">↓ 1 vs hier</div>
-              </div>
-              <div class="fxe-kpi-card">
-                <div class="fxe-kpi-label">Terminées ce mois</div>
-                <div class="fxe-kpi-value" style="color:#10B981">247</div>
-                <div class="fxe-kpi-trend up">↑ 18% vs M-1</div>
-              </div>
-              <div class="fxe-kpi-card">
-                <div class="fxe-kpi-label">Coût mensuel</div>
-                <div class="fxe-kpi-value" style="color:#F59E0B">84K</div>
-                <div class="fxe-kpi-trend down">↓ 12% optimisé</div>
-              </div>
-            </div>
-
-            <!-- Charts -->
-            <div class="fxe-dash-chart-row">
-              <div class="fxe-dash-chart-card">
-                <div class="fxe-dash-chart-title">INTERVENTIONS PAR SEMAINE</div>
-                <div class="fxe-chart-bars" aria-hidden="true">
-                  <div class="fxe-chart-bar" style="height:35%"></div>
-                  <div class="fxe-chart-bar" style="height:55%"></div>
-                  <div class="fxe-chart-bar" style="height:45%"></div>
-                  <div class="fxe-chart-bar" style="height:70%"></div>
-                  <div class="fxe-chart-bar active" style="height:88%"></div>
-                  <div class="fxe-chart-bar" style="height:60%"></div>
-                  <div class="fxe-chart-bar" style="height:75%"></div>
-                  <div class="fxe-chart-bar active" style="height:92%"></div>
-                </div>
-              </div>
-              <div class="fxe-dash-chart-card">
-                <div class="fxe-dash-chart-title">PERFORMANCE PAR CORPS DE MÉTIER</div>
-                <div style="display:flex;flex-direction:column;gap:7px;margin-top:6px;">
-                  <div style="display:flex;align-items:center;gap:8px;font-size:11px;">
-                    <div style="flex:1;color:rgba(255,255,255,0.5)">Plomberie</div>
-                    <div style="flex:2;height:6px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden"><div style="height:100%;width:82%;background:rgb(72,100,255);border-radius:3px"></div></div>
-                    <div style="width:28px;text-align:right;color:#10B981;font-weight:700">82%</div>
-                  </div>
-                  <div style="display:flex;align-items:center;gap:8px;font-size:11px;">
-                    <div style="flex:1;color:rgba(255,255,255,0.5)">Électricité</div>
-                    <div style="flex:2;height:6px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden"><div style="height:100%;width:96%;background:rgb(72,100,255);border-radius:3px"></div></div>
-                    <div style="width:28px;text-align:right;color:#10B981;font-weight:700">96%</div>
-                  </div>
-                  <div style="display:flex;align-items:center;gap:8px;font-size:11px;">
-                    <div style="flex:1;color:rgba(255,255,255,0.5)">Climatisation</div>
-                    <div style="flex:2;height:6px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden"><div style="height:100%;width:74%;background:rgba(245,158,11,0.8);border-radius:3px"></div></div>
-                    <div style="width:28px;text-align:right;color:#F59E0B;font-weight:700">74%</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Activity -->
-            <div class="fxe-dash-activity">
-              <div class="fxe-dash-act-item">
-                <div class="fxe-act-dot" style="background:#10B981;box-shadow:0 0 6px #10B981"></div>
-                <div><div class="fxe-act-name">Réparation chaudière</div><div class="fxe-act-loc">Hôtel Atlas · Casablanca</div></div>
-                <div class="fxe-act-time">Il y a 8 min</div>
-                <div class="fxe-act-status live">En cours</div>
-              </div>
-              <div class="fxe-dash-act-item">
-                <div class="fxe-act-dot" style="background:#FF5F57;box-shadow:0 0 6px #FF5F57"></div>
-                <div><div class="fxe-act-name">Panne électrique urgente</div><div class="fxe-act-loc">Tour Zénith · Rabat</div></div>
-                <div class="fxe-act-time">Il y a 22 min</div>
-                <div class="fxe-act-status urgent">Urgence</div>
-              </div>
-              <div class="fxe-dash-act-item">
-                <div class="fxe-act-dot" style="background:#F59E0B"></div>
-                <div><div class="fxe-act-name">Maintenance préventive HVAC</div><div class="fxe-act-loc">Clinique Santé · Marrakech</div></div>
-                <div class="fxe-act-time">Il y a 1h</div>
-                <div class="fxe-act-status pending">En attente</div>
-              </div>
-              <div class="fxe-dash-act-item">
-                <div class="fxe-act-dot" style="background:rgb(72,100,255)"></div>
-                <div><div class="fxe-act-name">Remplacement serrure</div><div class="fxe-act-loc">Centre Commercial · Tanger</div></div>
-                <div class="fxe-act-time">Hier 16h32</div>
-                <div class="fxe-act-status done">Terminé</div>
-              </div>
-            </div>
-          </main>
+        <div class="fxe2-centralise-item">
+          <div class="fxe2-centralise-icon" aria-hidden="true">👷</div>
+          <div>
+            <div class="fxe2-centralise-title">Coordination des prestataires</div>
+            <p class="fxe2-centralise-desc">FIXEO identifie et mobilise l'artisan adapté à votre besoin, dans votre ville, selon votre calendrier.</p>
+            <span class="fxe2-centralise-tag service">Via FIXEO</span>
+          </div>
         </div>
-      </div>
-
-      <p style="text-align:center;margin-top:16px;font-size:12px;color:rgba(255,255,255,0.35)">
-        Exemple de fonctionnement — données illustratives
-      </p>
-    </div>
-  </section>
-
-  <div class="fxe-divider"></div>
-
-  <!-- ══════════════════════════════════════════════════════════════
-       SECTION 6 — TECHNOLOGY
-  ══════════════════════════════════════════════════════════════ -->
-  <section class="fxe-section fxe-tech-section" id="technologie" aria-labelledby="tech-title">
-    <div class="fxe-container">
-      <div class="fxe-tech-header">
-        <div class="fxe-eyebrow">Infrastructure</div>
-        <h2 id="tech-title" class="fxe-h2">Une plateforme <span class="fxe-gradient-text">intelligente</span></h2>
-        <p class="fxe-lead" style="margin-top:16px;">FIXEO n'est pas un annuaire. C'est une infrastructure opérationnelle conçue pour orchestrer la maintenance à grande échelle.</p>
-      </div>
-
-      <div class="fxe-tech-grid">
-        <!-- Diagram -->
-        <div class="fxe-tech-diagram" aria-hidden="true">
-          <div class="fxe-tech-ring fxe-tech-ring-1"></div>
-          <div class="fxe-tech-ring fxe-tech-ring-2"></div>
-          <div class="fxe-tech-ring fxe-tech-ring-3"></div>
-          <div class="fxe-tech-center">⚡</div>
-          <!-- Orbiting nodes (positioned via JS-free CSS) -->
-          <div class="fxe-tech-node" style="top:calc(50% - 100px - 23px);left:calc(50% - 23px)">📍</div>
-          <div class="fxe-tech-node" style="top:calc(50% - 23px);right:calc(50% - 100px - 23px)">🔔</div>
-          <div class="fxe-tech-node" style="bottom:calc(50% - 100px - 23px);left:calc(50% - 23px)">📊</div>
-          <div class="fxe-tech-node" style="top:calc(50% - 23px);left:calc(50% - 100px - 23px)">👷</div>
-          <div class="fxe-tech-node" style="top:calc(50% - 150px * 0.707 - 23px);left:calc(50% + 150px * 0.707 - 23px)">🏢</div>
-          <div class="fxe-tech-node" style="bottom:calc(50% - 150px * 0.707 - 23px);right:calc(50% + 150px * 0.707 - 23px)">✅</div>
+        <div class="fxe2-centralise-item">
+          <div class="fxe2-centralise-icon" aria-hidden="true">📍</div>
+          <div>
+            <div class="fxe2-centralise-title">Suivi opérationnel</div>
+            <p class="fxe2-centralise-desc">Statut de chaque intervention : créée, assignée, en cours, terminée. Disponible depuis votre tableau de bord.</p>
+            <span class="fxe2-centralise-tag live">Disponible</span>
+          </div>
         </div>
-
-        <!-- Tech features -->
-        <div class="fxe-tech-features">
-          <div class="fxe-tech-item">
-            <div class="fxe-tech-item-icon">⚡</div>
-            <div>
-              <div class="fxe-tech-item-title">Smart Dispatch Engine</div>
-              <div class="fxe-tech-item-desc">Algorithme de matching qui sélectionne l'artisan optimal selon la disponibilité, la proximité géographique et la spécialité.</div>
-            </div>
+        <div class="fxe2-centralise-item">
+          <div class="fxe2-centralise-icon" aria-hidden="true">📁</div>
+          <div>
+            <div class="fxe2-centralise-title">Historique des interventions</div>
+            <p class="fxe2-centralise-desc">Chaque intervention archivée avec date, artisan, nature et compte-rendu. Accessible à tout moment.</p>
+            <span class="fxe2-centralise-tag live">Disponible</span>
           </div>
-          <div class="fxe-tech-item">
-            <div class="fxe-tech-item-icon">📍</div>
-            <div>
-              <div class="fxe-tech-item-title">Tracking opérationnel</div>
-              <div class="fxe-tech-item-desc">Chaque intervention est tracée de la création à la clôture. Statuts en temps réel pour vous et pour l'artisan.</div>
-            </div>
+        </div>
+        <div class="fxe2-centralise-item">
+          <div class="fxe2-centralise-icon" aria-hidden="true">🏢</div>
+          <div>
+            <div class="fxe2-centralise-title">Vue multi-sites</div>
+            <p class="fxe2-centralise-desc">Configurez plusieurs bâtiments, consultez les données par site ou de façon consolidée.</p>
+            <span class="fxe2-centralise-tag live">Disponible</span>
           </div>
-          <div class="fxe-tech-item">
-            <div class="fxe-tech-item-icon">🔔</div>
-            <div>
-              <div class="fxe-tech-item-title">Notifications intelligentes</div>
-              <div class="fxe-tech-item-desc">Alertes automatiques à chaque étape : assignation, départ, arrivée, fin d'intervention, validation. Aucune information perdue.</div>
-            </div>
+        </div>
+        <div class="fxe2-centralise-item">
+          <div class="fxe2-centralise-icon" aria-hidden="true">💬</div>
+          <div>
+            <div class="fxe2-centralise-title">Communication centralisée</div>
+            <p class="fxe2-centralise-desc">Échanges, validations et alertes accessibles depuis un seul canal. Plus de WhatsApp ni d'emails éparpillés.</p>
+            <span class="fxe2-centralise-tag service">Via FIXEO</span>
           </div>
-          <div class="fxe-tech-item">
-            <div class="fxe-tech-item-icon">📊</div>
-            <div>
-              <div class="fxe-tech-item-title">Monitoring de la qualité</div>
-              <div class="fxe-tech-item-desc">Score de performance par artisan, par catégorie, par bâtiment. La plateforme est architecturée pour accueillir des capacités analytiques avancées.</div>
-            </div>
+        </div>
+        <div class="fxe2-centralise-item">
+          <div class="fxe2-centralise-icon" aria-hidden="true">📊</div>
+          <div>
+            <div class="fxe2-centralise-title">Rapports et données d'activité</div>
+            <p class="fxe2-centralise-desc">Tableau de bord de vos interventions par site et par période. Exportable.</p>
+            <span class="fxe2-centralise-tag live">Disponible</span>
           </div>
-          <div class="fxe-tech-item">
-            <div class="fxe-tech-item-icon">🤖</div>
-            <div>
-              <div class="fxe-tech-item-title">Prête pour l'IA</div>
-              <div class="fxe-tech-item-desc">L'architecture de FIXEO est conçue pour intégrer à terme des fonctionnalités de maintenance prédictive et d'optimisation automatique des coûts.</div>
-            </div>
+        </div>
+        <div class="fxe2-centralise-item">
+          <div class="fxe2-centralise-icon" aria-hidden="true">🔮</div>
+          <div>
+            <div class="fxe2-centralise-title">Analyse prédictive</div>
+            <p class="fxe2-centralise-desc">L'architecture est conçue pour intégrer des capacités de détection anticipée des pannes à partir des données d'intervention.</p>
+            <span class="fxe2-centralise-tag soon">Roadmap</span>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <div class="fxe-divider"></div>
+  <div class="fxe2-divider"></div>
 
   <!-- ══════════════════════════════════════════════════════════════
-       SECTION 7 — COVERAGE MAP
+       SECTION 4 — COMMENT ÇA MARCHE (4 étapes)
   ══════════════════════════════════════════════════════════════ -->
-  <section class="fxe-section fxe-map-section" id="couverture" aria-labelledby="map-title">
-    <div class="fxe-container">
-      <div class="fxe-map-header">
-        <div class="fxe-eyebrow">Couverture nationale</div>
-        <h2 id="map-title" class="fxe-h2">20 villes. 1 134 artisans.</h2>
-        <p class="fxe-lead" style="margin-top:16px;">Un réseau opérationnel qui couvre les principaux centres économiques du Maroc.</p>
+  <section class="fxe2-section fxe2-section-alt" id="fonctionnement" aria-labelledby="fonctionnement-title">
+    <div class="fxe2-container">
+      <div class="fxe2-section-header">
+        <div class="fxe2-eyebrow">Comment ça marche</div>
+        <h2 id="fonctionnement-title" class="fxe2-h2">Du signalement au résultat en quatre étapes</h2>
+        <p class="fxe2-lead">Un processus simple, tracé du début à la fin.</p>
       </div>
 
-      <div class="fxe-map-container">
-        <!-- Visual map -->
-        <div class="fxe-map-visual" aria-label="Carte de couverture FIXEO au Maroc">
-          <div style="width:100%;max-width:500px;position:relative;">
-            <!-- Morocco country outline as SVG -->
-            <svg viewBox="0 0 400 380" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;opacity:0.5;">
-              <!-- Simplified Morocco outline -->
-              <path d="M 60 40 L 200 20 L 320 30 L 350 80 L 340 140 L 320 200 L 300 280 L 250 340 L 200 360 L 150 340 L 80 280 L 40 200 L 30 130 L 60 40 Z" 
-                    stroke="rgba(72,100,255,0.4)" stroke-width="2" fill="rgba(72,100,255,0.05)"/>
+      <div class="fxe2-steps-grid" role="list">
+        <div class="fxe2-step" role="listitem">
+          <div class="fxe2-step-num">📝</div>
+          <div class="fxe2-step-title">Votre organisation signale ou planifie</div>
+          <p class="fxe2-step-desc">Demande urgente, ponctuelle ou planifiée — depuis votre tableau de bord ou directement auprès de votre contact FIXEO.</p>
+        </div>
+        <div class="fxe2-step" role="listitem">
+          <div class="fxe2-step-num highlight">⚡</div>
+          <div class="fxe2-step-title">FIXEO qualifie et coordonne</div>
+          <p class="fxe2-step-desc">Notre équipe analyse le besoin, identifie l'artisan vérifié le plus adapté dans votre zone et organise l'intervention.</p>
+        </div>
+        <div class="fxe2-step" role="listitem">
+          <div class="fxe2-step-num">🔧</div>
+          <div class="fxe2-step-title">L'intervention est suivie</div>
+          <p class="fxe2-step-desc">Statut mis à jour à chaque étape. Vous êtes informé de l'avancement sans avoir à relancer quiconque.</p>
+        </div>
+        <div class="fxe2-step" role="listitem">
+          <div class="fxe2-step-num">📁</div>
+          <div class="fxe2-step-title">Le compte-rendu est archivé</div>
+          <p class="fxe2-step-desc">Résultat, artisan, date et nature de l'intervention conservés dans votre historique. Consultable à tout moment.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="fxe2-divider"></div>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SECTION 5 — CAPACITÉS ET MODULES
+  ══════════════════════════════════════════════════════════════ -->
+  <section class="fxe2-section" id="fonctionnalites" aria-labelledby="fonctionnalites-title">
+    <div class="fxe2-container">
+      <div class="fxe2-section-header">
+        <div class="fxe2-eyebrow">Fonctionnalités</div>
+        <h2 id="fonctionnalites-title" class="fxe2-h2">Ce que la plateforme apporte à votre équipe</h2>
+        <p class="fxe2-lead">Des outils pensés pour les organisations qui gèrent plusieurs sites ou plusieurs corps de métier.</p>
+      </div>
+
+      <div class="fxe2-caps-grid">
+
+        <div class="fxe2-cap-card">
+          <div class="fxe2-cap-icon" aria-hidden="true">🏗️</div>
+          <div class="fxe2-cap-title">Tableau de bord centralisé</div>
+          <p class="fxe2-cap-desc">Toutes vos demandes, tous vos sites, tous vos corps de métier depuis une vue consolidée.</p>
+          <span class="fxe2-cap-tag available">Disponible</span>
+        </div>
+
+        <div class="fxe2-cap-card">
+          <div class="fxe2-cap-icon" aria-hidden="true">✅</div>
+          <div class="fxe2-cap-title">Artisans vérifiés</div>
+          <p class="fxe2-cap-desc">1 134 professionnels contrôlés par notre équipe. Identité, compétences et réputation vérifiées.</p>
+          <span class="fxe2-cap-tag available">Disponible</span>
+        </div>
+
+        <div class="fxe2-cap-card">
+          <div class="fxe2-cap-icon" aria-hidden="true">⚡</div>
+          <div class="fxe2-cap-title">Dispatch intelligent</div>
+          <p class="fxe2-cap-desc">Sélection de l'artisan selon la disponibilité, la proximité et la spécialité. Coordination prise en charge par FIXEO.</p>
+          <span class="fxe2-cap-tag service">Coordonné par FIXEO</span>
+        </div>
+
+        <div class="fxe2-cap-card">
+          <div class="fxe2-cap-icon" aria-hidden="true">📍</div>
+          <div class="fxe2-cap-title">Suivi d'intervention</div>
+          <p class="fxe2-cap-desc">Statut en temps réel de la demande à la clôture. Historique archivé avec compte-rendu.</p>
+          <span class="fxe2-cap-tag available">Disponible</span>
+        </div>
+
+        <div class="fxe2-cap-card">
+          <div class="fxe2-cap-icon" aria-hidden="true">🎯</div>
+          <div class="fxe2-cap-title">Support dédié</div>
+          <p class="fxe2-cap-desc">Un interlocuteur FIXEO attribué à votre organisation. Traitement prioritaire de vos demandes critiques.</p>
+          <span class="fxe2-cap-tag service">Selon contrat</span>
+        </div>
+
+        <div class="fxe2-cap-card">
+          <div class="fxe2-cap-icon" aria-hidden="true">📊</div>
+          <div class="fxe2-cap-title">Rapports d'activité</div>
+          <p class="fxe2-cap-desc">Vue mensuelle par site et par corps de métier. Données exportables pour vos équipes et votre direction.</p>
+          <span class="fxe2-cap-tag available">Disponible</span>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <div class="fxe2-divider"></div>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SECTION 6 — SECTEURS ET CAS D'USAGE
+  ══════════════════════════════════════════════════════════════ -->
+  <section class="fxe2-section fxe2-section-alt" id="secteurs" aria-labelledby="secteurs-title">
+    <div class="fxe2-container">
+      <div class="fxe2-section-header">
+        <div class="fxe2-eyebrow">Secteurs d'activité</div>
+        <h2 id="secteurs-title" class="fxe2-h2">Adapté aux organisations qui gèrent…</h2>
+        <p class="fxe2-lead">FIXEO Entreprise est conçu pour des structures qui ont plusieurs sites ou plusieurs corps de métier à coordonner.</p>
+      </div>
+
+      <div class="fxe2-sectors-grid">
+        <div class="fxe2-sector-card">
+          <div class="fxe2-sector-icon" aria-hidden="true">🏨</div>
+          <div>
+            <div class="fxe2-sector-name">Hôtellerie</div>
+            <p class="fxe2-sector-desc">Maintenance continue, gestion multi-étages, urgences nuit et week-end.</p>
+          </div>
+        </div>
+        <div class="fxe2-sector-card">
+          <div class="fxe2-sector-icon" aria-hidden="true">🏢</div>
+          <div>
+            <div class="fxe2-sector-name">Bureaux et sièges</div>
+            <p class="fxe2-sector-desc">Interventions planifiées autour de vos horaires. Vision consolidée si plusieurs sites.</p>
+          </div>
+        </div>
+        <div class="fxe2-sector-card">
+          <div class="fxe2-sector-icon" aria-hidden="true">🏥</div>
+          <div>
+            <div class="fxe2-sector-name">Cliniques et santé</div>
+            <p class="fxe2-sector-desc">Environnements sensibles, urgences critiques, disponibilité étendue.</p>
+          </div>
+        </div>
+        <div class="fxe2-sector-card">
+          <div class="fxe2-sector-icon" aria-hidden="true">🛍️</div>
+          <div>
+            <div class="fxe2-sector-name">Commerce et retail</div>
+            <p class="fxe2-sector-desc">Interventions hors heures d'ouverture, coordination sur chaînes multi-points de vente.</p>
+          </div>
+        </div>
+        <div class="fxe2-sector-card">
+          <div class="fxe2-sector-icon" aria-hidden="true">🔑</div>
+          <div>
+            <div class="fxe2-sector-name">Syndics et gérants</div>
+            <p class="fxe2-sector-desc">Centralisation des prestataires, suivi par immeuble, reporting consolidé.</p>
+          </div>
+        </div>
+        <div class="fxe2-sector-card">
+          <div class="fxe2-sector-icon" aria-hidden="true">🏭</div>
+          <div>
+            <div class="fxe2-sector-name">Industrie et logistique</div>
+            <p class="fxe2-sector-desc">Maintenance corrective et préventive, réduction du temps d'immobilisation.</p>
+          </div>
+        </div>
+        <div class="fxe2-sector-card">
+          <div class="fxe2-sector-icon" aria-hidden="true">🏫</div>
+          <div>
+            <div class="fxe2-sector-name">Éducation</div>
+            <p class="fxe2-sector-desc">Interventions planifiées pendant les vacances, sécurité des occupants.</p>
+          </div>
+        </div>
+        <div class="fxe2-sector-card">
+          <div class="fxe2-sector-icon" aria-hidden="true">🏦</div>
+          <div>
+            <div class="fxe2-sector-name">Banque et finance</div>
+            <p class="fxe2-sector-desc">Artisans sélectionnés, traçabilité des accès, conformité interne.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="fxe2-divider"></div>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SECTION 7 — COUVERTURE
+  ══════════════════════════════════════════════════════════════ -->
+  <section class="fxe2-section" id="couverture" aria-labelledby="couverture-title">
+    <div class="fxe2-container">
+      <div class="fxe2-section-header">
+        <div class="fxe2-eyebrow">Réseau FIXEO</div>
+        <h2 id="couverture-title" class="fxe2-h2">20 villes. 1 134 artisans vérifiés.</h2>
+        <p class="fxe2-lead">Un réseau opérationnel couvrant les principaux centres économiques du Maroc.</p>
+      </div>
+
+      <div class="fxe2-coverage-inner">
+        <!-- Map -->
+        <div class="fxe2-coverage-map" role="img" aria-label="Carte de couverture FIXEO — principales villes du Maroc">
+          <div style="width:100%;max-width:460px;position:relative;">
+            <svg viewBox="0 0 400 380" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;opacity:0.45;" aria-hidden="true">
+              <path d="M 60 40 L 200 20 L 320 30 L 350 80 L 340 140 L 320 200 L 300 280 L 250 340 L 200 360 L 150 340 L 80 280 L 40 200 L 30 130 L 60 40 Z"
+                    stroke="rgba(72,100,255,0.4)" stroke-width="2" fill="rgba(72,100,255,0.04)"/>
             </svg>
-            <!-- City dots overlay -->
-            <div class="fxe-map-city-dot" style="top:38%;left:42%">
-              <div class="fxe-map-city-name">Casablanca</div>
-            </div>
-            <div class="fxe-map-city-dot" style="top:28%;left:38%">
-              <div class="fxe-map-city-name">Rabat</div>
-            </div>
-            <div class="fxe-map-city-dot" style="top:55%;left:40%">
-              <div class="fxe-map-city-name">Marrakech</div>
-            </div>
-            <div class="fxe-map-city-dot" style="top:18%;left:60%">
-              <div class="fxe-map-city-name">Fès</div>
-            </div>
-            <div class="fxe-map-city-dot" style="top:14%;left:44%">
-              <div class="fxe-map-city-name">Tanger</div>
-            </div>
-            <div class="fxe-map-city-dot" style="top:22%;left:65%">
-              <div class="fxe-map-city-name">Meknès</div>
-            </div>
-            <div class="fxe-map-city-dot" style="top:32%;left:65%">
-              <div class="fxe-map-city-name">Kénitra</div>
-            </div>
-            <div class="fxe-map-city-dot" style="top:42%;left:55%">
-              <div class="fxe-map-city-name">Beni Mellal</div>
-            </div>
+            <div class="fxe2-city-dot" style="top:38%;left:42%"><div class="fxe2-city-name">Casablanca</div></div>
+            <div class="fxe2-city-dot" style="top:28%;left:38%"><div class="fxe2-city-name">Rabat</div></div>
+            <div class="fxe2-city-dot" style="top:55%;left:40%"><div class="fxe2-city-name">Marrakech</div></div>
+            <div class="fxe2-city-dot" style="top:18%;left:60%"><div class="fxe2-city-name">Fès</div></div>
+            <div class="fxe2-city-dot" style="top:13%;left:44%"><div class="fxe2-city-name">Tanger</div></div>
+            <div class="fxe2-city-dot" style="top:22%;left:65%"><div class="fxe2-city-name">Meknès</div></div>
+            <div class="fxe2-city-dot" style="top:32%;left:65%"><div class="fxe2-city-name">Kénitra</div></div>
+            <div class="fxe2-city-dot" style="top:42%;left:55%"><div class="fxe2-city-name">Béni Mellal</div></div>
           </div>
         </div>
 
         <!-- Stats -->
-        <div class="fxe-map-stats">
-          <div class="fxe-map-stat">
-            <div class="fxe-map-stat-icon">🏙️</div>
+        <div class="fxe2-coverage-stats">
+          <div class="fxe2-coverage-stat">
+            <div class="fxe2-coverage-stat-icon" aria-hidden="true">🏙️</div>
             <div>
-              <div class="fxe-map-stat-value">20</div>
-              <div class="fxe-map-stat-label">Villes couvertes</div>
+              <div class="fxe2-coverage-stat-value">20</div>
+              <div class="fxe2-coverage-stat-label">Villes couvertes</div>
             </div>
           </div>
-          <div class="fxe-map-stat">
-            <div class="fxe-map-stat-icon">👷</div>
+          <div class="fxe2-coverage-stat">
+            <div class="fxe2-coverage-stat-icon" aria-hidden="true">👷</div>
             <div>
-              <div class="fxe-map-stat-value">1 134</div>
-              <div class="fxe-map-stat-label">Artisans vérifiés</div>
+              <div class="fxe2-coverage-stat-value">1 134</div>
+              <div class="fxe2-coverage-stat-label">Artisans vérifiés</div>
             </div>
           </div>
-          <div class="fxe-map-stat">
-            <div class="fxe-map-stat-icon">🔧</div>
+          <div class="fxe2-coverage-stat">
+            <div class="fxe2-coverage-stat-icon" aria-hidden="true">🔧</div>
             <div>
-              <div class="fxe-map-stat-value">12</div>
-              <div class="fxe-map-stat-label">Corps de métier</div>
+              <div class="fxe2-coverage-stat-value">12</div>
+              <div class="fxe2-coverage-stat-label">Corps de métier</div>
             </div>
           </div>
-          <div class="fxe-map-stat">
-            <div class="fxe-map-stat-icon">🆓</div>
+          <div class="fxe2-coverage-stat">
+            <div class="fxe2-coverage-stat-icon" aria-hidden="true">📍</div>
             <div>
-              <div class="fxe-map-stat-value">100%</div>
-              <div class="fxe-map-stat-label">Gratuit à l'utilisation</div>
+              <div class="fxe2-coverage-stat-value">Maroc</div>
+              <div class="fxe2-coverage-stat-label">Couverture principale</div>
             </div>
           </div>
-          <div class="fxe-map-stat">
-            <div class="fxe-map-stat-icon">📍</div>
-            <div>
-              <div class="fxe-map-stat-value">Maroc</div>
-              <div class="fxe-map-stat-label">Couverture nationale</div>
-            </div>
-          </div>
+        </div>
+      </div>
+      <p class="fxe2-coverage-note">Données issues du réseau FIXEO actif. La couverture évolue régulièrement.</p>
+    </div>
+  </section>
+
+  <div class="fxe2-divider"></div>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       SECTION 8 — POURQUOI FIXEO ENTREPRISE
+  ══════════════════════════════════════════════════════════════ -->
+  <section class="fxe2-section fxe2-section-alt" id="pourquoi" aria-labelledby="pourquoi-title">
+    <div class="fxe2-container">
+      <div class="fxe2-section-header">
+        <div class="fxe2-eyebrow">Ce qui nous différencie</div>
+        <h2 id="pourquoi-title" class="fxe2-h2">Pourquoi FIXEO Entreprise</h2>
+        <p class="fxe2-lead">FIXEO n'est pas un annuaire. C'est un service de coordination opérationnelle taillé pour le marché marocain.</p>
+      </div>
+
+      <div class="fxe2-why-grid">
+        <div class="fxe2-why-card">
+          <div class="fxe2-why-icon" aria-hidden="true">🎯</div>
+          <div class="fxe2-why-title">Un seul point de coordination</div>
+          <p class="fxe2-why-desc">Finies les dizaines de contacts séparés. Une seule relation, tous vos corps de métier, tous vos sites.</p>
+        </div>
+        <div class="fxe2-why-card">
+          <div class="fxe2-why-icon" aria-hidden="true">✅</div>
+          <div class="fxe2-why-title">Artisans qualifiés et contrôlés</div>
+          <p class="fxe2-why-desc">Chaque artisan du réseau FIXEO est contrôlé : identité, compétences et historique de réputation vérifiés par notre équipe.</p>
+        </div>
+        <div class="fxe2-why-card">
+          <div class="fxe2-why-icon" aria-hidden="true">🗺️</div>
+          <div class="fxe2-why-title">Réseau local au Maroc</div>
+          <p class="fxe2-why-desc">20 villes, 1 134 artisans actifs sur le territoire. Intervention locale, pas de délai de déplacement excessif.</p>
+        </div>
+        <div class="fxe2-why-card">
+          <div class="fxe2-why-icon" aria-hidden="true">📁</div>
+          <div class="fxe2-why-title">Traçabilité et historique</div>
+          <p class="fxe2-why-desc">Chaque intervention archivée. Vous pouvez retrouver ce qui a été fait, par qui, quand et dans quel bâtiment.</p>
+        </div>
+        <div class="fxe2-why-card">
+          <div class="fxe2-why-icon" aria-hidden="true">💬</div>
+          <div class="fxe2-why-title">Qualification structurée</div>
+          <p class="fxe2-why-desc">Chaque demande est analysée avant d'être traitée. Le bon artisan, la bonne spécialité, le bon timing.</p>
+        </div>
+        <div class="fxe2-why-card">
+          <div class="fxe2-why-icon" aria-hidden="true">🇲🇦</div>
+          <div class="fxe2-why-title">Ancré dans le contexte marocain</div>
+          <p class="fxe2-why-desc">Nous connaissons le tissu économique, les contraintes locales et les attentes des organisations au Maroc.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <div class="fxe-divider"></div>
+  <div class="fxe2-divider"></div>
 
   <!-- ══════════════════════════════════════════════════════════════
-       SECTION 8 — SERVICES
+       SECTION 9 — DÉMO vs CONTACT (bloc de conversion)
   ══════════════════════════════════════════════════════════════ -->
-  <section class="fxe-section fxe-services-section" id="services" aria-labelledby="services-title">
-    <div class="fxe-container">
-      <div class="fxe-services-header">
-        <div class="fxe-eyebrow">Corps de métier</div>
-        <h2 id="services-title" class="fxe-h2">Tous vos besoins couverts</h2>
-        <p class="fxe-lead" style="margin-top:16px;">12 spécialités disponibles sur l'ensemble de notre réseau national.</p>
+  <section class="fxe2-section fxe2-conversion-section" id="conversion" aria-labelledby="conversion-title">
+    <div class="fxe2-conversion-bg" aria-hidden="true"></div>
+    <div class="fxe2-container" style="position:relative;z-index:1;">
+      <div class="fxe2-section-header">
+        <div class="fxe2-eyebrow">Prochaine étape</div>
+        <h2 id="conversion-title" class="fxe2-h2">Comment souhaitez-vous continuer ?</h2>
+        <p class="fxe2-lead">Choisissez selon votre situation actuelle.</p>
       </div>
 
-      <div class="fxe-services-grid">
-        <div class="fxe-service-pill"><div class="fxe-service-pill-icon">🚿</div><div class="fxe-service-pill-name">Plomberie</div></div>
-        <div class="fxe-service-pill"><div class="fxe-service-pill-icon">⚡</div><div class="fxe-service-pill-name">Électricité</div></div>
-        <div class="fxe-service-pill"><div class="fxe-service-pill-icon">❄️</div><div class="fxe-service-pill-name">Climatisation</div></div>
-        <div class="fxe-service-pill"><div class="fxe-service-pill-icon">🔐</div><div class="fxe-service-pill-name">Serrurerie</div></div>
-        <div class="fxe-service-pill"><div class="fxe-service-pill-icon">🎨</div><div class="fxe-service-pill-name">Peinture</div></div>
-        <div class="fxe-service-pill"><div class="fxe-service-pill-icon">✨</div><div class="fxe-service-pill-name">Nettoyage</div></div>
-        <div class="fxe-service-pill"><div class="fxe-service-pill-icon">🌿</div><div class="fxe-service-pill-name">Jardinage</div></div>
-        <div class="fxe-service-pill"><div class="fxe-service-pill-icon">🧱</div><div class="fxe-service-pill-name">Maçonnerie</div></div>
-        <div class="fxe-service-pill"><div class="fxe-service-pill-icon">🪟</div><div class="fxe-service-pill-name">Menuiserie</div></div>
-        <div class="fxe-service-pill"><div class="fxe-service-pill-icon">🔧</div><div class="fxe-service-pill-name">Bricolage</div></div>
-        <div class="fxe-service-pill"><div class="fxe-service-pill-icon">🚚</div><div class="fxe-service-pill-name">Déménagement</div></div>
-        <div class="fxe-service-pill"><div class="fxe-service-pill-icon">🏠</div><div class="fxe-service-pill-name">Carrelage</div></div>
-        <div class="fxe-service-pill"><div class="fxe-service-pill-icon">🛡️</div><div class="fxe-service-pill-name">Maintenance préventive</div></div>
-        <div class="fxe-service-pill"><div class="fxe-service-pill-icon">🔩</div><div class="fxe-service-pill-name">Maintenance corrective</div></div>
-        <div class="fxe-service-pill"><div class="fxe-service-pill-icon">🏗️</div><div class="fxe-service-pill-name">Facility Management</div></div>
+      <div class="fxe2-conversion-grid">
+
+        <!-- Demo card — primary -->
+        <div class="fxe2-conversion-card primary">
+          <div class="fxe2-conversion-card-eyebrow">Option recommandée</div>
+          <div class="fxe2-conversion-card-title">Planifier une démonstration</div>
+          <p class="fxe2-conversion-card-desc">
+            Vous souhaitez voir la plateforme en action et comprendre comment elle s'adapte
+            à votre organisation spécifique.
+          </p>
+          <div class="fxe2-conversion-list">
+            <div class="fxe2-conversion-list-item">Présentation adaptée à votre secteur</div>
+            <div class="fxe2-conversion-list-item">Questions traitées en temps réel</div>
+            <div class="fxe2-conversion-list-item">30 minutes, sans engagement</div>
+            <div class="fxe2-conversion-list-item">Notre équipe prépare la session à l'avance</div>
+          </div>
+          <div class="fxe2-conversion-cta">
+            <button
+              type="button"
+              class="fxe2-btn fxe2-btn-primary fxe2-btn-lg"
+              style="width:100%;"
+              data-lead-intent="demo"
+              data-source-cta="conversion-demo">
+              Demander une démonstration
+            </button>
+          </div>
+        </div>
+
+        <!-- Contact card -->
+        <div class="fxe2-conversion-card">
+          <div class="fxe2-conversion-card-eyebrow">Contact direct</div>
+          <div class="fxe2-conversion-card-title">Échanger avec notre équipe</div>
+          <p class="fxe2-conversion-card-desc">
+            Vous avez des questions spécifiques, un projet en cours ou souhaitez discuter
+            d'un contrat ou d'une configuration particulière.
+          </p>
+          <div class="fxe2-conversion-list">
+            <div class="fxe2-conversion-list-item">Réponse sous 24h ouvrées</div>
+            <div class="fxe2-conversion-list-item">Discussion libre sur votre besoin</div>
+            <div class="fxe2-conversion-list-item">Proposition adaptée à votre organisation</div>
+          </div>
+          <div class="fxe2-conversion-cta">
+            <button
+              type="button"
+              class="fxe2-btn fxe2-btn-ghost fxe2-btn-lg"
+              style="width:100%;"
+              data-lead-intent="contact"
+              data-source-cta="conversion-contact">
+              Contacter l'équipe Entreprise
+            </button>
+          </div>
+        </div>
+
       </div>
     </div>
   </section>
 
-  <div class="fxe-divider"></div>
+  <div class="fxe2-divider"></div>
 
   <!-- ══════════════════════════════════════════════════════════════
-       SECTION 9 — INDUSTRIES
+       SECTION 10 — FAQ
   ══════════════════════════════════════════════════════════════ -->
-  <section class="fxe-section" id="secteurs" aria-labelledby="industries-title">
-    <div class="fxe-container">
-      <div class="fxe-industries-header">
-        <div class="fxe-eyebrow">Secteurs d'activité</div>
-        <h2 id="industries-title" class="fxe-h2">Pensé pour votre secteur</h2>
-        <p class="fxe-lead" style="margin-top:16px;">FIXEO Enterprise s'adapte aux contraintes spécifiques de chaque type d'organisation.</p>
+  <section class="fxe2-section fxe2-section-alt" id="faq" aria-labelledby="faq-title">
+    <div class="fxe2-container">
+      <div class="fxe2-section-header">
+        <div class="fxe2-eyebrow">Questions fréquentes</div>
+        <h2 id="faq-title" class="fxe2-h2">Ce que l'on nous demande souvent</h2>
       </div>
 
-      <div class="fxe-industries-grid">
-        <div class="fxe-industry-card">
-          <div class="fxe-industry-icon">🏨</div>
-          <div>
-            <div class="fxe-industry-name">Hôtellerie</div>
-            <div class="fxe-industry-desc">Maintenance 24h/24, gestion multi-étages, priorité client garantie.</div>
-          </div>
-        </div>
-        <div class="fxe-industry-card">
-          <div class="fxe-industry-icon">🍽️</div>
-          <div>
-            <div class="fxe-industry-name">Restauration</div>
-            <div class="fxe-industry-desc">Interventions rapides sur équipements cuisine, conformité sanitaire.</div>
-          </div>
-        </div>
-        <div class="fxe-industry-card">
-          <div class="fxe-industry-icon">🏬</div>
-          <div>
-            <div class="fxe-industry-name">Commerce &amp; Retail</div>
-            <div class="fxe-industry-desc">Interventions hors heures d'ouverture, chaînes multi-points de vente.</div>
-          </div>
-        </div>
-        <div class="fxe-industry-card">
-          <div class="fxe-industry-icon">🛍️</div>
-          <div>
-            <div class="fxe-industry-name">Centres commerciaux</div>
-            <div class="fxe-industry-desc">Gestion multi-zones, coordination de corps de métier multiples.</div>
-          </div>
-        </div>
-        <div class="fxe-industry-card">
-          <div class="fxe-industry-icon">🏢</div>
-          <div>
-            <div class="fxe-industry-name">Bureaux &amp; Sièges</div>
-            <div class="fxe-industry-desc">Maintenance discrète, planifiée autour de vos horaires de travail.</div>
-          </div>
-        </div>
-        <div class="fxe-industry-card">
-          <div class="fxe-industry-icon">🏦</div>
-          <div>
-            <div class="fxe-industry-name">Banques &amp; Finance</div>
-            <div class="fxe-industry-desc">Sécurité maximale, artisans sélectionnés, conformité réglementaire.</div>
-          </div>
-        </div>
-        <div class="fxe-industry-card">
-          <div class="fxe-industry-icon">🏫</div>
-          <div>
-            <div class="fxe-industry-name">Éducation</div>
-            <div class="fxe-industry-desc">Interventions planifiées pendant les vacances scolaires, sécurité enfants.</div>
-          </div>
-        </div>
-        <div class="fxe-industry-card">
-          <div class="fxe-industry-icon">🏥</div>
-          <div>
-            <div class="fxe-industry-name">Cliniques &amp; Santé</div>
-            <div class="fxe-industry-desc">Urgences critiques, environnement stérile respecté, disponibilité H24.</div>
-          </div>
-        </div>
-        <div class="fxe-industry-card">
-          <div class="fxe-industry-icon">🏭</div>
-          <div>
-            <div class="fxe-industry-name">Industrie &amp; Usines</div>
-            <div class="fxe-industry-desc">Maintenance corrective et préventive, réduction du temps d'arrêt machine.</div>
-          </div>
-        </div>
-        <div class="fxe-industry-card">
-          <div class="fxe-industry-icon">🏘️</div>
-          <div>
-            <div class="fxe-industry-name">Immobilier résidentiel</div>
-            <div class="fxe-industry-desc">Gestion de copropriétés, résidences, parcs immobiliers multi-sites.</div>
-          </div>
-        </div>
-        <div class="fxe-industry-card">
-          <div class="fxe-industry-icon">🔑</div>
-          <div>
-            <div class="fxe-industry-name">Syndics &amp; Gérants</div>
-            <div class="fxe-industry-desc">Centralisation de tous les prestataires, reporting par immeuble.</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+      <div class="fxe2-faq-list" role="list">
 
-  <div class="fxe-divider"></div>
-
-  <!-- ══════════════════════════════════════════════════════════════
-       SECTION 10 — CONTRACTS
-  ══════════════════════════════════════════════════════════════ -->
-  <section class="fxe-section fxe-contracts-section" id="contrats" aria-labelledby="contracts-title">
-    <div class="fxe-container">
-      <div class="fxe-contracts-header">
-        <div class="fxe-eyebrow">Formules de contrat</div>
-        <h2 id="contracts-title" class="fxe-h2">Un contrat adapté à vos besoins</h2>
-        <p class="fxe-lead" style="margin-top:16px;">De la maintenance ponctuelle à l'infogérance complète de votre parc immobilier.</p>
-      </div>
-
-      <div class="fxe-contracts-grid">
-        <div class="fxe-contract-card">
-          <div class="fxe-contract-icon">🔧</div>
-          <div class="fxe-contract-type">Correctif</div>
-          <div class="fxe-contract-name">Maintenance corrective</div>
-          <div class="fxe-contract-desc">Intervention rapide sur signalement. Idéal pour les organisations qui souhaitent réagir aux pannes sans engagement de maintenance planifiée.</div>
-          <div class="fxe-contract-features">
-            <div class="fxe-contract-feature">Dispatch automatique</div>
-            <div class="fxe-contract-feature">Artisans vérifiés</div>
-            <div class="fxe-contract-feature">Suivi en temps réel</div>
-            <div class="fxe-contract-feature">Rapport d'intervention</div>
-            <div class="fxe-contract-feature">Historique centralisé</div>
-          </div>
-        </div>
-
-        <div class="fxe-contract-card featured">
-          <div class="fxe-contract-icon">🛡️</div>
-          <div class="fxe-contract-type">Préventif</div>
-          <div class="fxe-contract-name">Maintenance préventive</div>
-          <div class="fxe-contract-desc">Visites planifiées régulières, anticipation des défaillances, réduction des coûts globaux de maintenance de 30 à 50% sur la durée.</div>
-          <div class="fxe-contract-features">
-            <div class="fxe-contract-feature">Planning de visites automatique</div>
-            <div class="fxe-contract-feature">Checklist par équipement</div>
-            <div class="fxe-contract-feature">Rapports mensuels détaillés</div>
-            <div class="fxe-contract-feature">Alertes d'usure anticipées</div>
-            <div class="fxe-contract-feature">Compte dédié FIXEO</div>
-          </div>
-        </div>
-
-        <div class="fxe-contract-card">
-          <div class="fxe-contract-icon">🏗️</div>
-          <div class="fxe-contract-type">Infogérance</div>
-          <div class="fxe-contract-name">Facility Management complet</div>
-          <div class="fxe-contract-desc">Externalisation totale de la gestion de vos installations. FIXEO devient votre opérateur de maintenance avec SLA personnalisé.</div>
-          <div class="fxe-contract-features">
-            <div class="fxe-contract-feature">Gestionnaire de compte dédié</div>
-            <div class="fxe-contract-feature">SLA sur-mesure (temps de réponse)</div>
-            <div class="fxe-contract-feature">Urgences H24 / 7j</div>
-            <div class="fxe-contract-feature">Dashboard multi-sites</div>
-            <div class="fxe-contract-feature">Reporting exécutif mensuel</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <div class="fxe-divider"></div>
-
-  <!-- ══════════════════════════════════════════════════════════════
-       SECTION 11 — COMPARISON TABLE
-  ══════════════════════════════════════════════════════════════ -->
-  <section class="fxe-section" id="comparaison" aria-labelledby="comparison-title">
-    <div class="fxe-container">
-      <div class="fxe-comparison-header">
-        <div class="fxe-eyebrow">Comparaison</div>
-        <h2 id="comparison-title" class="fxe-h2">FIXEO vs Prestataire traditionnel</h2>
-        <p class="fxe-lead" style="margin-top:16px;">La différence entre la gestion artisanale et une infrastructure technologique.</p>
-      </div>
-
-      <div class="fxe-comparison-table" role="table" aria-label="Comparaison FIXEO Enterprise vs Prestataire traditionnel">
-        <div class="fxe-cmp-header-row" role="row">
-          <div class="fxe-cmp-header-cell traditional" role="columnheader">Critère</div>
-          <div class="fxe-cmp-header-cell traditional" role="columnheader">Prestataire traditionnel</div>
-          <div class="fxe-cmp-header-cell fixeo" role="columnheader">⚡ FIXEO Enterprise</div>
-        </div>
-        <div class="fxe-cmp-row" role="row">
-          <div class="fxe-cmp-cell feature" role="cell">Suivi en temps réel</div>
-          <div class="fxe-cmp-cell no" role="cell">❌ Non</div>
-          <div class="fxe-cmp-cell fixeo" role="cell"><span class="fxe-cmp-check">✓</span> Statut live</div>
-        </div>
-        <div class="fxe-cmp-row" role="row">
-          <div class="fxe-cmp-cell feature" role="cell">Dispatch automatique</div>
-          <div class="fxe-cmp-cell no" role="cell">❌ Manuel</div>
-          <div class="fxe-cmp-cell fixeo" role="cell"><span class="fxe-cmp-check">✓</span> Algorithme smart</div>
-        </div>
-        <div class="fxe-cmp-row" role="row">
-          <div class="fxe-cmp-cell feature" role="cell">Artisans vérifiés</div>
-          <div class="fxe-cmp-cell no" role="cell">⚠️ Partiel</div>
-          <div class="fxe-cmp-cell fixeo" role="cell"><span class="fxe-cmp-check">✓</span> 100% contrôlés</div>
-        </div>
-        <div class="fxe-cmp-row" role="row">
-          <div class="fxe-cmp-cell feature" role="cell">Dashboard multi-sites</div>
-          <div class="fxe-cmp-cell no" role="cell">❌ Non</div>
-          <div class="fxe-cmp-cell fixeo" role="cell"><span class="fxe-cmp-check">✓</span> Centralisé</div>
-        </div>
-        <div class="fxe-cmp-row" role="row">
-          <div class="fxe-cmp-cell feature" role="cell">Rapports automatiques</div>
-          <div class="fxe-cmp-cell no" role="cell">❌ Manuels</div>
-          <div class="fxe-cmp-cell fixeo" role="cell"><span class="fxe-cmp-check">✓</span> Générés auto</div>
-        </div>
-        <div class="fxe-cmp-row" role="row">
-          <div class="fxe-cmp-cell feature" role="cell">Disponibilité urgences</div>
-          <div class="fxe-cmp-cell no" role="cell">⚠️ Limitée</div>
-          <div class="fxe-cmp-cell fixeo" role="cell"><span class="fxe-cmp-check">✓</span> H24 / 7j</div>
-        </div>
-        <div class="fxe-cmp-row" role="row">
-          <div class="fxe-cmp-cell feature" role="cell">Historique des interventions</div>
-          <div class="fxe-cmp-cell no" role="cell">❌ Non structuré</div>
-          <div class="fxe-cmp-cell fixeo" role="cell"><span class="fxe-cmp-check">✓</span> Archive complète</div>
-        </div>
-        <div class="fxe-cmp-row" role="row">
-          <div class="fxe-cmp-cell feature" role="cell">Contrôle qualité</div>
-          <div class="fxe-cmp-cell no" role="cell">⚠️ Subjectif</div>
-          <div class="fxe-cmp-cell fixeo" role="cell"><span class="fxe-cmp-check">✓</span> Noté & mesuré</div>
-        </div>
-        <div class="fxe-cmp-row" role="row">
-          <div class="fxe-cmp-cell feature" role="cell">Coût de déplacement optimisé</div>
-          <div class="fxe-cmp-cell no" role="cell">❌ Non maîtrisé</div>
-          <div class="fxe-cmp-cell fixeo" role="cell"><span class="fxe-cmp-check">✓</span> Géolocalisation</div>
-        </div>
-        <div class="fxe-cmp-row" role="row">
-          <div class="fxe-cmp-cell feature" role="cell">Intégration multi-corps de métier</div>
-          <div class="fxe-cmp-cell no" role="cell">❌ Prestataires séparés</div>
-          <div class="fxe-cmp-cell fixeo" role="cell"><span class="fxe-cmp-check">✓</span> Plateforme unique</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <div class="fxe-divider"></div>
-
-  <!-- ══════════════════════════════════════════════════════════════
-       SECTION 12 — FAQ
-  ══════════════════════════════════════════════════════════════ -->
-  <section class="fxe-section fxe-faq-section" id="faq" aria-labelledby="faq-title">
-    <div class="fxe-container">
-      <div class="fxe-faq-header">
-        <div class="fxe-eyebrow">FAQ Enterprise</div>
-        <h2 id="faq-title" class="fxe-h2">Questions fréquentes</h2>
-      </div>
-
-      <div class="fxe-faq-list" role="list">
-
-        <div class="fxe-faq-item" role="listitem">
-          <button class="fxe-faq-q" aria-expanded="false">
+        <div class="fxe2-faq-item" role="listitem">
+          <button class="fxe2-faq-q" aria-expanded="false">
             Comment FIXEO gère-t-il les demandes urgentes en dehors des heures de bureau ?
-            <span class="fxe-faq-chevron" aria-hidden="true">▾</span>
+            <span class="fxe2-faq-chevron" aria-hidden="true">▾</span>
           </button>
-          <div class="fxe-faq-a">
-            Notre réseau d'artisans vérifiés inclut des professionnels disponibles 24h/24 et 7j/7 selon les villes. Dès qu'une demande urgente est créée, le moteur de dispatch identifie et contacte automatiquement les artisans disponibles dans votre zone. Vous êtes notifié en temps réel à chaque étape.
+          <div class="fxe2-faq-a">
+            Notre réseau inclut des artisans disponibles en dehors des heures standard, selon les villes et les corps de métier. Dès qu'une demande urgente est transmise, FIXEO identifie et contacte les artisans disponibles dans votre zone. Le traitement des urgences est inclus dans les formules Facility Management.
           </div>
         </div>
 
-        <div class="fxe-faq-item" role="listitem">
-          <button class="fxe-faq-q" aria-expanded="false">
-            Comment est assurée la qualité des artisans intervenants dans nos locaux ?
-            <span class="fxe-faq-chevron" aria-hidden="true">▾</span>
+        <div class="fxe2-faq-item" role="listitem">
+          <button class="fxe2-faq-q" aria-expanded="false">
+            Comment la qualité des artisans intervenants est-elle garantie ?
+            <span class="fxe2-faq-chevron" aria-hidden="true">▾</span>
           </button>
-          <div class="fxe-faq-a">
-            Chaque artisan du réseau FIXEO passe par un processus de vérification : contrôle d'identité, validation des compétences, historique de réputation. Les performances sont notées après chaque intervention. Les artisans sous-performants sont exclus du réseau.
+          <div class="fxe2-faq-a">
+            Chaque artisan du réseau FIXEO est vérifié individuellement : contrôle d'identité, validation des compétences déclarées, analyse de l'historique de réputation. Après chaque intervention, des données de performance sont collectées. Les artisans dont la qualité est insuffisante sont retirés du réseau.
           </div>
         </div>
 
-        <div class="fxe-faq-item" role="listitem">
-          <button class="fxe-faq-q" aria-expanded="false">
-            Peut-on gérer plusieurs bâtiments sur des villes différentes ?
-            <span class="fxe-faq-chevron" aria-hidden="true">▾</span>
+        <div class="fxe2-faq-item" role="listitem">
+          <button class="fxe2-faq-q" aria-expanded="false">
+            Peut-on gérer plusieurs bâtiments dans des villes différentes ?
+            <span class="fxe2-faq-chevron" aria-hidden="true">▾</span>
           </button>
-          <div class="fxe-faq-a">
-            Oui. La plateforme est conçue pour la gestion multi-sites. Vous pouvez configurer autant de bâtiments que nécessaire, dans n'importe laquelle de nos 20 villes de couverture, et consulter les données de manière consolidée ou par établissement.
+          <div class="fxe2-faq-a">
+            Oui. La plateforme est conçue pour la gestion multi-sites. Vous configurez autant de bâtiments que nécessaire, dans n'importe laquelle de nos villes couvertes, et consultez les données de façon consolidée ou par établissement.
           </div>
         </div>
 
-        <div class="fxe-faq-item" role="listitem">
-          <button class="fxe-faq-q" aria-expanded="false">
-            Quels types de rapports sont disponibles ?
-            <span class="fxe-faq-chevron" aria-hidden="true">▾</span>
+        <div class="fxe2-faq-item" role="listitem">
+          <button class="fxe2-faq-q" aria-expanded="false">
+            Quelles informations sont disponibles dans le tableau de bord ?
+            <span class="fxe2-faq-chevron" aria-hidden="true">▾</span>
           </button>
-          <div class="fxe-faq-a">
-            FIXEO génère automatiquement des rapports d'activité mensuels incluant : nombre d'interventions par site, coûts par catégorie, temps moyen de résolution, score qualité par artisan, et évolution mois par mois. Tous les rapports sont exportables.
+          <div class="fxe2-faq-a">
+            Vous accédez au statut de vos demandes en cours, à l'historique des interventions passées (date, nature, artisan, compte-rendu), et à un résumé d'activité par période et par site. Des données exportables sont disponibles pour vos équipes.
           </div>
         </div>
 
-        <div class="fxe-faq-item" role="listitem">
-          <button class="fxe-faq-q" aria-expanded="false">
-            Comment fonctionne la tarification Enterprise ?
-            <span class="fxe-faq-chevron" aria-hidden="true">▾</span>
+        <div class="fxe2-faq-item" role="listitem">
+          <button class="fxe2-faq-q" aria-expanded="false">
+            Comment fonctionne la tarification Entreprise ?
+            <span class="fxe2-faq-chevron" aria-hidden="true">▾</span>
           </button>
-          <div class="fxe-faq-a">
-            FIXEO Enterprise propose des formules adaptées à vos volumes et besoins. La tarification est établie lors d'un appel de découverte avec notre équipe. Contactez-nous pour recevoir une proposition personnalisée.
+          <div class="fxe2-faq-a">
+            FIXEO Entreprise propose des formules adaptées à votre volume d'interventions et à vos besoins. La tarification est établie lors d'un échange avec notre équipe. Nous vous proposons une configuration sur mesure, pas un prix catalogue générique.
           </div>
         </div>
 
-        <div class="fxe-faq-item" role="listitem">
-          <button class="fxe-faq-q" aria-expanded="false">
-            Existe-t-il un SLA (Service Level Agreement) garanti ?
-            <span class="fxe-faq-chevron" aria-hidden="true">▾</span>
+        <div class="fxe2-faq-item" role="listitem">
+          <button class="fxe2-faq-q" aria-expanded="false">
+            Nos données sont-elles confidentielles ?
+            <span class="fxe2-faq-chevron" aria-hidden="true">▾</span>
           </button>
-          <div class="fxe-faq-a">
-            Dans le cadre d'un contrat Facility Management complet, un SLA personnalisé peut être établi selon vos exigences : temps de réponse garanti, disponibilité H24, gestionnaire de compte dédié. Les conditions sont définies contractuellement.
+          <div class="fxe2-faq-a">
+            FIXEO applique la loi marocaine 09-08 relative à la protection des données personnelles. Vos données opérationnelles sont traitées de façon confidentielle et ne sont jamais partagées avec des tiers sans votre consentement explicite.
           </div>
         </div>
 
-        <div class="fxe-faq-item" role="listitem">
-          <button class="fxe-faq-q" aria-expanded="false">
-            Nos données et interventions sont-elles confidentielles ?
-            <span class="fxe-faq-chevron" aria-hidden="true">▾</span>
+        <div class="fxe2-faq-item" role="listitem">
+          <button class="fxe2-faq-q" aria-expanded="false">
+            Comment se déroule l'intégration de notre organisation sur la plateforme ?
+            <span class="fxe2-faq-chevron" aria-hidden="true">▾</span>
           </button>
-          <div class="fxe-faq-a">
-            FIXEO respecte la loi marocaine 09-08 relative à la protection des données personnelles. Vos données opérationnelles sont traitées de manière confidentielle et ne sont jamais partagées avec des tiers sans votre consentement explicite.
-          </div>
-        </div>
-
-        <div class="fxe-faq-item" role="listitem">
-          <button class="fxe-faq-q" aria-expanded="false">
-            Comment se déroule l'onboarding Enterprise ?
-            <span class="fxe-faq-chevron" aria-hidden="true">▾</span>
-          </button>
-          <div class="fxe-faq-a">
-            Un chargé de compte FIXEO vous accompagne de A à Z : configuration de vos bâtiments, paramétrage des alertes, formation de vos équipes, et premier mois de suivi actif. L'objectif est que vos équipes soient autonomes en moins de 48h.
-          </div>
-        </div>
-
-        <div class="fxe-faq-item" role="listitem">
-          <button class="fxe-faq-q" aria-expanded="false">
-            La plateforme est-elle disponible en arabe ?
-            <span class="fxe-faq-chevron" aria-hidden="true">▾</span>
-          </button>
-          <div class="fxe-faq-a">
-            La plateforme est actuellement disponible en français et arabe pour les interfaces principales. Notre support client est disponible en français, arabe et darija.
-          </div>
-        </div>
-
-        <div class="fxe-faq-item" role="listitem">
-          <button class="fxe-faq-q" aria-expanded="false">
-            Est-il possible d'intégrer FIXEO à nos outils internes (ERP, GMAO) ?
-            <span class="fxe-faq-chevron" aria-hidden="true">▾</span>
-          </button>
-          <div class="fxe-faq-a">
-            FIXEO est en cours de développement d'une API Enterprise qui permettra l'intégration avec les principales solutions ERP et GMAO du marché. Cette fonctionnalité est prévue dans la roadmap produit. Contactez notre équipe pour être informé en priorité.
+          <div class="fxe2-faq-a">
+            Un chargé de compte FIXEO vous accompagne : configuration de vos bâtiments, paramétrage des alertes, formation de vos équipes et suivi actif pendant le premier mois. L'objectif est que vos équipes soient autonomes rapidement, avec un appui disponible si nécessaire.
           </div>
         </div>
 
@@ -1173,40 +833,49 @@
     </div>
   </section>
 
-  <div class="fxe-divider"></div>
+  <div class="fxe2-divider"></div>
 
   <!-- ══════════════════════════════════════════════════════════════
-       SECTION 13 — FINAL CTA
+       SECTION 11 — FINAL CTA
   ══════════════════════════════════════════════════════════════ -->
-  <section class="fxe-section fxe-final-section" id="contact" aria-labelledby="final-title">
-    <div class="fxe-final-bg" aria-hidden="true"></div>
-    <div class="fxe-final-grid-bg" aria-hidden="true"></div>
-    <div class="fxe-container fxe-final-content">
-      <div class="fxe-eyebrow fxe-final-eyebrow" style="display:inline-flex;margin:0 auto 24px;">Passez à l'Enterprise</div>
-      <h2 id="final-title" class="fxe-final-h2">
+  <section class="fxe2-section" id="contact" aria-labelledby="final-cta-title" style="text-align:center;position:relative;overflow:hidden;">
+    <div style="position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 100%,rgba(72,100,255,0.14) 0%,transparent 70%);pointer-events:none;" aria-hidden="true"></div>
+    <div class="fxe2-container" style="position:relative;z-index:1;">
+      <div class="fxe2-eyebrow" style="margin-left:auto;margin-right:auto;">Passez à l'Entreprise</div>
+      <h2 id="final-cta-title" class="fxe2-h2" style="margin-bottom:16px;">
         Une plateforme.<br>
-        <span class="fxe-gradient-text">Tous vos bâtiments.</span><br>
+        <span class="fxe2-gradient-text">Tous vos bâtiments.</span><br>
         Toutes vos interventions.
       </h2>
-      <p class="fxe-final-lead">
-        Rejoignez les entreprises qui ont transformé leur gestion de la maintenance avec FIXEO. Démarrez avec une démo gratuite de 30 minutes.
+      <p class="fxe2-lead" style="max-width:520px;margin:0 auto 44px;">
+        Découvrez comment FIXEO peut simplifier la coordination de votre maintenance.
+        Une démonstration de 30 minutes suffit.
       </p>
-      <div class="fxe-final-ctas">
-        <button type="button" class="fxe-btn fxe-btn-primary fxe-btn-lg" onclick="window.FixeoEnterpriseModal ? FixeoEnterpriseModal.open() : (window.FixeoClientRequest && FixeoClientRequest.open(this, 'enterprise'))" data-open-request-form="true" data-request-mode="enterprise">
-          🚀 Demander une démo gratuite
+      <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+        <button
+          type="button"
+          class="fxe2-btn fxe2-btn-primary fxe2-btn-lg"
+          data-lead-intent="demo"
+          data-source-cta="final-demo">
+          Demander une démonstration
         </button>
-        <button type="button" class="fxe-btn fxe-btn-ghost fxe-btn-lg" onclick="window.FixeoEnterpriseModal ? FixeoEnterpriseModal.open() : (window.FixeoClientRequest && FixeoClientRequest.open(this, 'enterprise'))" data-open-request-form="true" data-request-mode="enterprise">
-          📧 Contacter l'équipe Enterprise
+        <button
+          type="button"
+          class="fxe2-btn fxe2-btn-ghost fxe2-btn-lg"
+          data-lead-intent="contact"
+          data-source-cta="final-contact">
+          Contacter l'équipe Entreprise
         </button>
       </div>
-      <p class="fxe-final-note">Sans engagement · Réponse sous 24h · Démo sur mesure</p>
+      <p style="margin-top:22px;font-size:13px;color:rgba(255,255,255,0.35);">
+        Sans engagement · Réponse sous 24h ouvrées · Démonstration sur mesure
+      </p>
     </div>
   </section>
 
   <!-- ══════════════════════════════════════════════════════════════
-       FOOTER — canonical mount (fixeo-footer-global.js v gf4a)
+       FOOTER — canonical mount
   ══════════════════════════════════════════════════════════════ -->
-  <!-- Canonical public footer is rendered by fixeo-footer-global.js -->
   <div id="fxf-mount"></div>
 
   <!-- ══════════════════════════════════════════════════════════════
@@ -1221,23 +890,30 @@
   <!-- Canonical footer -->
   <script src="/js/fixeo-footer-global.js?v=gf4a" defer></script>
 
-  <!-- Consent -->
+  <!-- Consent / Analytics -->
   <script src="/js/fixeo-analytics-config.js?v=fac1b" defer></script>
   <script src="/js/fixeo-analytics-bootstrap.js?v=fab1c" defer></script>
   <script src="/js/fixeo-consent-v1.js?v=fcv1c" defer></script>
 
+  <!-- V2 Lead Flow Engine (replaces modal for all V2 triggers) -->
+  <script src="/js/fixeo-enterprise-lead-v2.js?v=fxlf-v2a" defer></script>
+
+  <!-- V1 Enterprise Modal (left intact for any V1 data-request-mode="enterprise" buttons on other pages) -->
+  <script src="/js/fixeo-enterprise-modal-v1.js?v=fem-v1a" defer></script>
+
   <!-- Page-specific interactions -->
   <script>
-    /* ── FAQ Accordion ──────────────────────────────────────────────── */
     document.addEventListener('DOMContentLoaded', function () {
-      document.querySelectorAll('.fxe-faq-q').forEach(function (btn) {
+
+      /* ── FAQ Accordion ───────────────────────────────────────── */
+      document.querySelectorAll('.fxe2-faq-q').forEach(function (btn) {
         btn.addEventListener('click', function () {
-          var item = btn.closest('.fxe-faq-item');
+          var item = btn.closest('.fxe2-faq-item');
           var isOpen = item.classList.contains('open');
           /* Close all */
-          document.querySelectorAll('.fxe-faq-item.open').forEach(function (el) {
+          document.querySelectorAll('.fxe2-faq-item.open').forEach(function (el) {
             el.classList.remove('open');
-            el.querySelector('.fxe-faq-q').setAttribute('aria-expanded', 'false');
+            el.querySelector('.fxe2-faq-q').setAttribute('aria-expanded', 'false');
           });
           /* Toggle current */
           if (!isOpen) {
@@ -1247,61 +923,58 @@
         });
       });
 
-      /* ── Smooth scroll for anchor links ──────────────────────────── */
+      /* ── Smooth scroll for anchor links ──────────────────────── */
       document.querySelectorAll('a[href^="#"]').forEach(function (anchor) {
         anchor.addEventListener('click', function (e) {
           var id = anchor.getAttribute('href').slice(1);
           var target = document.getElementById(id);
           if (target) {
             e.preventDefault();
-            var offset = 80; /* navbar height */
+            var offset = 80;
             var top = target.getBoundingClientRect().top + window.pageYOffset - offset;
             window.scrollTo({ top: top, behavior: 'smooth' });
           }
         });
       });
 
-      /* ── Intersection Observer for subtle entrance animations ──────── */
+      /* ── Entrance animations ─────────────────────────────────── */
       if ('IntersectionObserver' in window) {
         var style = document.createElement('style');
-        style.textContent = [
-          '.fxe-anim{opacity:0;transform:translateY(20px);transition:opacity 0.5s ease,transform 0.5s ease}',
-          '.fxe-anim.fxe-visible{opacity:1;transform:none}'
-        ].join('');
+        style.textContent =
+          '.fxe2-anim{opacity:0;transform:translateY(18px);transition:opacity 0.5s ease,transform 0.5s ease}' +
+          '.fxe2-anim.fxe2-visible{opacity:1;transform:none}';
         document.head.appendChild(style);
 
         var io = new IntersectionObserver(function (entries) {
           entries.forEach(function (entry) {
             if (entry.isIntersecting) {
-              entry.target.classList.add('fxe-visible');
+              entry.target.classList.add('fxe2-visible');
               io.unobserve(entry.target);
             }
           });
-        }, { threshold: 0.12 });
+        }, { threshold: 0.1 });
 
-        var animTargets = [
-          '.fxe-feature-card',
-          '.fxe-pain-item',
-          '.fxe-industry-card',
-          '.fxe-contract-card',
-          '.fxe-map-stat',
-          '.fxe-service-pill',
-          '.fxe-tech-item',
-          '.fxe-faq-item'
+        var animSelectors = [
+          '.fxe2-problem-card',
+          '.fxe2-centralise-item',
+          '.fxe2-step',
+          '.fxe2-cap-card',
+          '.fxe2-sector-card',
+          '.fxe2-coverage-stat',
+          '.fxe2-why-card',
+          '.fxe2-conversion-card',
+          '.fxe2-faq-item'
         ].join(',');
 
-        document.querySelectorAll(animTargets).forEach(function (el, i) {
-          el.classList.add('fxe-anim');
-          el.style.transitionDelay = Math.min(i % 6 * 0.06, 0.3) + 's';
+        document.querySelectorAll(animSelectors).forEach(function (el, i) {
+          el.classList.add('fxe2-anim');
+          el.style.transitionDelay = Math.min(i % 6 * 0.055, 0.28) + 's';
           io.observe(el);
         });
       }
+
     });
   </script>
-
-
-  <!-- Enterprise modal JS (standalone IIFE) -->
-  <script src="/js/fixeo-enterprise-modal-v1.js?v=fem-v1a" defer></script>
 
 </body>
 </html>
