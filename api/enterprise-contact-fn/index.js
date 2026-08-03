@@ -1,6 +1,6 @@
 /**
  * FIXEO Enterprise Contact — api/enterprise-contact-fn/index.js
- * Version: fec-v2b — 2026-08-03
+ * Version: fec-v2c — 2026-08-03
  *
  * Receives Enterprise lead submissions from /entreprises (V1 + V2 form).
  * Validates fields, stores lead in Supabase (enterprise_leads table),
@@ -73,30 +73,52 @@ function _normalizePhone(p) {
 }
 
 /* ── Supabase insert (service role — server-side only) ── */
+/* Returns the inserted row id (uuid string) on success.
+ * Throws a structured Error with a machine-readable .code property:
+ *   ENV_MISSING   — SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY not set in Vercel
+ *   SUPABASE_4xx  — Supabase rejected the insert (constraint, schema, auth)
+ *   SUPABASE_5xx  — Supabase server-side error
+ *   NETWORK       — fetch failed (DNS, timeout, TLS)
+ */
 async function _insertLead(payload) {
-  var url = process.env.SUPABASE_URL;
+  var url        = process.env.SUPABASE_URL;
   var serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-  if (!url)        throw new Error('SUPABASE_URL env var not configured');
-  if (!serviceKey) throw new Error('SUPABASE_SERVICE_ROLE_KEY env var not configured');
-
-  var res = await fetch(url + '/rest/v1/enterprise_leads', {
-    method:  'POST',
-    headers: {
-      'Content-Type':  'application/json',
-      'apikey':        serviceKey,
-      'Authorization': 'Bearer ' + serviceKey,
-      'Prefer':        'return=representation'
-    },
-    body: JSON.stringify([payload])
-  });
-
-  if (!res.ok) {
-    var errText = await res.text().catch(function () { return ''; });
-    throw new Error('Supabase error ' + res.status + ': ' + errText.slice(0, 200));
+  if (!url || !serviceKey) {
+    var missing = !url ? 'SUPABASE_URL' : 'SUPABASE_SERVICE_ROLE_KEY';
+    var err = new Error('Vercel env var not configured: ' + missing);
+    err.code = 'ENV_MISSING';
+    throw err;
   }
 
-  var rows = await res.json().catch(function () { return []; });
+  var res;
+  try {
+    res = await fetch(url + '/rest/v1/enterprise_leads', {
+      method:  'POST',
+      headers: {
+        'Content-Type':  'application/json',
+        'apikey':        serviceKey,
+        'Authorization': 'Bearer ' + serviceKey,
+        'Prefer':        'return=representation'
+      },
+      body: JSON.stringify([payload])
+    });
+  } catch (fetchErr) {
+    var netErr = new Error('Supabase network error: ' + fetchErr.message);
+    netErr.code = 'NETWORK';
+    throw netErr;
+  }
+
+  if (!res.ok) {
+    var errText = await res.text().catch(function() { return ''; });
+    var sbErr = new Error('Supabase HTTP ' + res.status + ': ' + errText.slice(0, 300));
+    sbErr.code = res.status >= 500 ? 'SUPABASE_5xx' : 'SUPABASE_4xx';
+    sbErr.httpStatus = res.status;
+    sbErr.detail = errText.slice(0, 300);
+    throw sbErr;
+  }
+
+  var rows = await res.json().catch(function() { return []; });
   return (rows[0] && rows[0].id) ? rows[0].id : null;
 }
 
@@ -176,8 +198,9 @@ module.exports = async function handler(req, res) {
   /* batiments: accept V2 canonical (building_or_site_count) or V1 alias */
   var batiments = _sanitize(body.building_or_site_count, 50) || _sanitize(body.batiments, 50);
 
-  /* needs: accept V2 canonical (selected_needs) or V1 alias (needs) */
-  var needsRaw = _sanitize(body.selected_needs, 1000) || _sanitize(body.needs, 1000);
+  /* needs: accept V2 canonical (selected_needs) or V1 alias (needs).
+   * Table CHECK constraint: char_length(needs) <= 500 — enforce here. */
+  var needsRaw = _sanitize(body.selected_needs, 500) || _sanitize(body.needs, 500);
 
   /* Entry intent (V2 only, fallback to 'demo') */
   var entryIntent = ['demo','contact'].includes(String(body.entry_intent || 'demo').toLowerCase())
@@ -218,16 +241,41 @@ module.exports = async function handler(req, res) {
   try {
     leadId = await _insertLead(payload);
   } catch (err) {
-    console.error('[enterprise-contact-v2] Supabase insert failed:', err.message);
+    /* Log full detail server-side (visible in Vercel function logs, never to browser) */
+    console.error('[enterprise-contact-v2c] insert failed | code:', err.code,
+      '| status:', err.httpStatus || 'n/a',
+      '| msg:', err.message,
+      '| detail:', err.detail || '');
+    /* Return safe machine code to frontend — no secret values, no internal paths */
     return res.status(200).json({
       ok:       false,
       fallback: true,
+      code:     err.code || 'UNKNOWN',
       error:    'Storage unavailable — please use the email fallback'
     });
   }
 
   return res.status(200).json({
-    ok:  true,
-    ref: leadId || 'submitted'
+    ok:      true,
+    lead_id: leadId || null,
+    ref:     leadId || 'submitted'   /* backward compat — JS reads result.data.ref */
+  });
+};
+
+/* ── GET /api/enterprise-contact — env health probe ──────────────────────────
+ * Returns only YES/NO for each required env var.
+ * No secret values, no keys, no internal state exposed.
+ * Used by the developer to verify Vercel env configuration without a real POST.
+ * ─────────────────────────────────────────────────────────────────────────── */
+module.exports.get = async function healthHandler(req, res) {
+  Object.entries(CORS_HEADERS).forEach(function(kv) { res.setHeader(kv[0], kv[1]); });
+  res.setHeader('Content-Type', 'application/json');
+  return res.status(200).json({
+    ok:                   true,
+    version:              'fec-v2c',
+    env: {
+      SUPABASE_URL:              !!process.env.SUPABASE_URL,
+      SUPABASE_SERVICE_ROLE_KEY: !!process.env.SUPABASE_SERVICE_ROLE_KEY
+    }
   });
 };
