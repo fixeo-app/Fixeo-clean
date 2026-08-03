@@ -370,3 +370,60 @@ html body #services.services-section .service-chip.svc-visible {
   display: none !important;
   content: none !important;
 }
+
+/* ══════════════════════════════════════════════════════════
+   MOBILE CITY PICKER — bottom sheet (≤ 640px)
+   On narrow viewports the dropdown repositions as a bottom
+   sheet so it is never hidden behind the Safari toolbar and
+   doesn't appear detached from a visually unclear anchor.
+   JS position:fixed top/left values are overridden.
+   ══════════════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+  .svc-city-dropdown.svc-open {
+    /* Override JS-set position to bottom-sheet */
+    top: auto !important;
+    left: 8px !important;
+    right: 8px !important;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 16px) !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    max-height: 55vh !important;
+    border-radius: 20px !important;
+    padding: 12px 6px 10px !important;
+    animation: svcSheetUp 0.24s cubic-bezier(0.22, 1, 0.36, 1) both !important;
+  }
+
+  @keyframes svcSheetUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Slightly larger touch targets on mobile */
+  .svc-city-option {
+    padding: 11px 14px !important;
+    font-size: 0.84rem !important;
+    min-height: 44px !important;
+  }
+
+  /* Sheet header hint */
+  .svc-city-dropdown::before {
+    content: '';
+    display: block;
+    width: 36px;
+    height: 4px;
+    background: rgba(255,255,255,0.14);
+    border-radius: 99px;
+    margin: 0 auto 10px;
+    flex-shrink: 0;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+   REDUCED MOTION — svc-city-dropdown
+   ══════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  .svc-city-dropdown.svc-open {
+    animation: none !important;
+  }
+}

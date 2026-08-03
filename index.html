@@ -4260,17 +4260,26 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
 
   </div><!-- /container -->
 
-  <!-- ── fc3-city: contextual city intelligence (unchanged from previous) ── -->
+  <!-- ── fc3-city: contextual city intelligence — fxhome-situations-v2.4 ── -->
   <script>
-  /* City IIFE - fxhome-situations-v2.3
-     ROOT CAUSE FIX: Added data-fc3-chips-open toggling alongside hidden attribute.
-     css/fixeo-chapter-3-v1.css (frozen external) requires data-fc3-chips-open attr
-     on #services to reveal #city-quick-chips. Our page-local CSS §7 overrides the
-     forced display:none, but we also sync data-fc3-chips-open as belt-and-suspenders.
-     Never calls matching. Never scrolls. */
+  /* City IIFE - fxhome-situations-v2.4
+     Changes vs v2.3:
+       - VALID_CITIES derived from window.FIXEO_CITIES (fixeo-cities.js) when available,
+         falls back to inline list for resilience.
+       - "+ Plus" chip: no longer opens native white iOS select.
+         Instead opens the existing svc-city-pill dropdown (services-premium.js)
+         which shows a FIXEO-dark popover with all 12 canonical cities.
+         Fallback: opens the city-quick-chips row if svc-city-pill not yet initialised.
+       - Added: #services-city-filter 'change' listener so that selections made via
+         the svc-city-pill also sync the fxsit-city-row display state.
+     Invariants preserved: no filter writes, no scroll, no matching, no globals,
+       no setInterval, no rAF, no localStorage writes, no RAFI calls. */
   (function () {
-    var VALID_CITIES = ['Casablanca','Rabat','Marrakech','Fès','Agadir','Tanger',
-                        'Meknès','Oujda','Kénitra','Tétouan','Safi','El Jadida'];
+    /* Derived from fixeo-cities.js canonical list when available */
+    var VALID_CITIES = (window.FIXEO_CITIES && window.FIXEO_CITIES.length)
+      ? window.FIXEO_CITIES.slice()
+      : ['Casablanca','Rabat','Marrakech','Fès','Agadir','Tanger',
+         'Meknès','Oujda','Kénitra','Tétouan','Safi','El Jadida'];
 
     function _setSelectCity(city) {
       var select = document.getElementById('services-city-filter');
@@ -4383,8 +4392,52 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
           });
         });
 
+        /* ── "City chip more" (+ Plus) — opens svc-city-pill dark picker.
+           Avoids the native white iOS full-screen option list.
+           Preferred path: call _svcPickerOpen() exposed by services-premium.js on the select.
+           Fallback: if svc-city-pill not yet initialised, open local chip row. */
+        var moreBtn = document.querySelector('#city-quick-chips .city-chip-more');
+        if (moreBtn && !moreBtn._fc3bound) {
+          moreBtn._fc3bound = true;
+          moreBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var sel = document.getElementById('services-city-filter');
+            if (sel && typeof sel._svcPickerOpen === 'function') {
+              /* Open the FIXEO-dark svc-city-dropdown directly */
+              sel._svcPickerOpen();
+            } else {
+              /* Fallback: open the local quick-chips row */
+              _openCityChips();
+            }
+          });
+        }
+
+        /* ── #services-city-filter change listener ──
+           Syncs fxsit-city-row when any external writer (svc-city-pill,
+           main.js, or keyboard) changes the select value.
+           Runs once per fc3InitCity call; guarded by _fc3selectbound. */
+        var sel = document.getElementById('services-city-filter');
+        if (sel && !sel._fc3selectbound) {
+          sel._fc3selectbound = true;
+          sel.addEventListener('change', function () {
+            var v = this.value || '';
+            if (v && VALID_CITIES.indexOf(v) !== -1) {
+              _showCityKnown(v);
+              _activateCityChip(v);
+              _closeCityChips();
+            } else if (!v) {
+              _hideCityKnown();
+              _activateCityChip('');
+            }
+          });
+        }
+
       } catch (e) {}
     }
+
+    /* Expose for _initPriorityChips rebind after chip re-render */
+    window._fc3InitCity = fc3InitCity;
 
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', fc3InitCity);
@@ -4392,6 +4445,48 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
       fc3InitCity();
     }
     setTimeout(fc3InitCity, 1200);
+  })();
+  </script>
+
+  <!-- ── fxsit-city-chips-init: populate chips from FIXEO_PRIORITY_CITIES ──
+       Runs after DOM ready. Re-renders #city-quick-chips from the canonical
+       FIXEO_CITIES_MAP priority list so there is a single source of truth.
+       Preserves the "+ Plus" button. Rebinds no events (fc3InitCity handles that). -->
+  <script>
+  (function () {
+    'use strict';
+    function _initPriorityChips() {
+      var map  = window.FIXEO_CITIES_MAP;
+      var wrap = document.getElementById('city-quick-chips');
+      if (!map || !map.length || !wrap) return;
+      /* Collect priority cities in order */
+      var priority = map.filter(function(c){ return c.priority; });
+      if (!priority.length) return;
+      /* Remove existing named city chips (keep the + Plus button) */
+      var existing = Array.from(wrap.querySelectorAll('.city-chip[data-city]'));
+      existing.forEach(function(el){ el.parentNode.removeChild(el); });
+      /* Re-insert from canonical priority list, before the + Plus button */
+      var moreBtn = wrap.querySelector('.city-chip-more');
+      priority.forEach(function(city) {
+        var btn = document.createElement('button');
+        btn.className = 'city-chip';
+        btn.setAttribute('data-city', city.value);
+        btn.setAttribute('type', 'button');
+        btn.setAttribute('role', 'option');
+        btn.setAttribute('aria-selected', 'false');
+        btn.textContent = city.label;
+        wrap.insertBefore(btn, moreBtn);
+      });
+      /* Re-init fc3 city bindings for the freshly created chip elements */
+      if (typeof window._fc3InitCity === 'function') { try { window._fc3InitCity(); } catch(e){} }
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', _initPriorityChips);
+    } else {
+      _initPriorityChips();
+    }
+    /* Retry at 800ms in case FIXEO_CITIES_MAP loads asynchronously */
+    setTimeout(_initPriorityChips, 800);
   })();
   </script>
 
@@ -6127,6 +6222,9 @@ window.addEventListener('load', function () {
 <script src="js/fixeo-marketplace-density.js?v=v2c2a" defer></script>
 <script src="js/fixeo-schema-rating.js?v=rating-v1a" defer></script>
   <script>
+/* Global city-chip delegated handler.
+   fxhome-city-global-v2: "+ Plus" now opens svc-city-pill dark picker.
+   Never opens native <select> — avoids the white iOS full-screen option list. */
 document.addEventListener('click', function(e) {
   const chip = e.target.closest('.city-chip');
   if (!chip) return;
@@ -6135,10 +6233,13 @@ document.addEventListener('click', function(e) {
   const city = chip.dataset.city;
 
   if (chip.classList.contains('city-chip-more')) {
-    if (select) {
-      select.focus();
-      select.click();
+    /* Open the FIXEO-dark city picker via _svcPickerOpen() hook.
+       Never opens native <select>. */
+    const sel = document.getElementById('services-city-filter');
+    if (sel && typeof sel._svcPickerOpen === 'function') {
+      sel._svcPickerOpen();
     }
+    /* fc3InitCity moreBtn handler also covers this as belt-and-suspenders */
     return;
   }
 
