@@ -156,21 +156,34 @@
    Hidden by default, revealed when need is identified.
    ══════════════════════════════════════════════════════════════ */
 #services .fxnb-result {
+  /* ── Hidden state: ZERO layout height ──────────────────────────
+     display:none removes the element from flow entirely.
+     No reserved space, no margin/padding contribution.
+     JS sets display:block before the opacity transition so the
+     entrance animation still runs after layout reflow.
+     ──────────────────────────────────────────────────────────── */
+  display: none;
   margin-top: 16px;
   background: rgba(12, 20, 60, 0.70);
   border: 1.5px solid rgba(72, 100, 255, 0.18);
   border-radius: 18px;
   padding: clamp(16px, 3vw, 22px) clamp(16px, 4vw, 24px);
-  /* Hidden by default — revealed by JS */
+  /* Start invisible for entrance animation (set by JS after display:block) */
   opacity: 0;
   transform: translateY(8px);
   pointer-events: none;
-  /* Smooth entrance */
   transition:
     opacity   0.32s cubic-bezier(0.22, 1, 0.36, 1),
     transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+/* ── In-flow: element is visible and interactive ── */
+#services .fxnb-result.fxnb-result-in-flow {
+  /* display:block applied first (zero-cost class toggle) */
+  display: block;
+}
+
+/* ── Fully revealed: opacity + position animate in ── */
 #services .fxnb-result.fxnb-result-visible {
   opacity: 1;
   transform: translateY(0);
@@ -422,7 +435,8 @@
     padding: 12px 14px;
   }
 
-  #services .fxnb-result {
+  /* display:none is already set in base — mobile overrides only spacing */
+  #services .fxnb-result.fxnb-result-in-flow {
     padding: 14px 16px;
   }
 
@@ -472,10 +486,16 @@
    §6  REDUCED MOTION
    ══════════════════════════════════════════════════════════════ */
 @media (prefers-reduced-motion: reduce) {
+  /* Reduced-motion: skip entrance animation; show immediately when in-flow */
   #services .fxnb-result {
     transition: none !important;
-    opacity: 1;
-    transform: none;
+    /* display:none preserved — zero layout until JS reveals it */
+  }
+  #services .fxnb-result.fxnb-result-in-flow {
+    /* Skip the RAF delay — go directly to visible state */
+    opacity: 1 !important;
+    transform: none !important;
+    pointer-events: auto !important;
   }
   #services .fxnb-result.fxnb-result-visible {
     opacity: 1;

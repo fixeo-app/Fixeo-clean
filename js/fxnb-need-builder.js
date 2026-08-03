@@ -189,6 +189,11 @@
     var desc       = state.text     ? _truncate(state.text, 64) : null;
     var city       = state.city;
 
+    /* ── Step 1: put element into flow (display:block, zero opacity)
+          so it takes up space before the transition fires.
+          If already in flow (city/urgency refresh), skip DOM reflow dance. ── */
+    var alreadyInFlow = wrap.classList.contains('fxnb-result-in-flow');
+
     /* ── Fallback class toggle ── */
     wrap.classList.toggle('fxnb-result-fallback', isFallback);
 
@@ -253,16 +258,46 @@
         + (state.isUrgent ? ' Urgence signalée.' : '');
     }
 
-    /* ── Reveal ── */
-    wrap.classList.add('fxnb-result-visible');
-    wrap.removeAttribute('hidden');
-    wrap.setAttribute('aria-hidden', 'false');
+    /* ── Step 2: two-phase reveal ───────────────────────────────────
+          Phase A: add fxnb-result-in-flow → display:block, opacity:0
+          Phase B: rAF → add fxnb-result-visible → opacity:1 transition
+          This ensures the browser reflows layout before animating,
+          so the element has zero height BEFORE the transition begins
+          and expands in-place without ever reserving space invisibly.
+          If already in flow (city update), skip phase A. ── */
+    if (!alreadyInFlow) {
+      wrap.classList.add('fxnb-result-in-flow');
+      wrap.removeAttribute('hidden');
+      wrap.setAttribute('aria-hidden', 'false');
+
+      /* Check for reduced-motion — CSS already handles this via
+         fxnb-result-in-flow { opacity:1 !important } but we still
+         need to set the visible class for pointer-events */
+      var reducedMotion = window.matchMedia &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      if (reducedMotion) {
+        wrap.classList.add('fxnb-result-visible');
+      } else {
+        /* Two rAF to guarantee a paint cycle between display:block and transition start */
+        requestAnimationFrame(function() {
+          requestAnimationFrame(function() {
+            wrap.classList.add('fxnb-result-visible');
+          });
+        });
+      }
+    }
+    /* else: already in flow — classes already set, content was just refreshed */
   }
 
   function _hideResult() {
     var wrap = _resultWrap();
     if (!wrap) return;
+    /* Remove both reveal classes → display:none (zero layout height) */
     wrap.classList.remove('fxnb-result-visible');
+    wrap.classList.remove('fxnb-result-in-flow');
+    /* Restore hidden attribute for belt-and-suspenders zero-height guarantee */
+    wrap.setAttribute('hidden', '');
     wrap.setAttribute('aria-hidden', 'true');
     var srEl = _resultSR();
     if (srEl) srEl.textContent = '';
@@ -337,39 +372,76 @@
      No changes to request-form.js.
   ══════════════════════════════════════════════════════════════ */
   function _openRafi() {
-    var text   = _state.text || (_textarea() ? (_textarea().value || '').trim() : '');
+    var text = _state.text || (_textarea() ? (_textarea().value || '').trim() : '');
     if (!text) return;
 
-    /* Write problem text to the relay input */
+    /* ── V5 CATEGORY PRE-SELECTION ─────────────────────────────────────
+       fx-request-flow-v4.js reads #search-input via _readContext() at open
+       time, then normalizes it via _normalizeSlug() to pre-select the
+       matching service chip (adds is-selected class + sets st.serviceSlug).
+
+       Strategy: if we have a resolved category, write its canonical LABEL
+       (e.g. "Plomberie") to #search-input. _normalizeSlug() normalizes it
+       to "plomberie" which is present in SERVICES[0].words → match found.
+       The chip is visually pre-selected; user taps once to confirm.
+
+       If no category (fallback), write the original description text so the
+       free-text "Autre chose" path is pre-populated.
+    ──────────────────────────────────────────────────────────────────── */
     var relay = _el('search-input');
     if (relay) {
-      relay.value = text;
-      /* Do NOT dispatch 'input' event — would trigger artisan text search */
+      /* Write label for slug pre-selection, or description for fallback */
+      relay.value = (_state.category && _state.category.label) ? _state.category.label : text;
+      /* No 'input' event dispatch — prevents artisan text filter */
     }
 
-    /* Also pre-seed category into RAFI memory if RAFI OS is loaded */
+    /* ── RAFI OS MEMORY UPDATE ─────────────────────────────────────────
+       FixeoRAFI.memory (rfos-v1f) reads _mem.category in RafiConversation.inject():
+       - if _mem.category is set → stepDone('service') + advance to city step
+       - if _mem.city is set → stepDone('ville')
+       These drive the RAFI OS timeline header (not the V5 chip grid).
+       Update memory with full context before opening.
+    ──────────────────────────────────────────────────────────────────── */
     try {
-      if (window.FixeoRAFI && window.FixeoRAFI.memory && _state.category) {
-        window.FixeoRAFI.memory.update({ category: _state.category, isUrgent: _state.isUrgent });
+      if (window.FixeoRAFI && window.FixeoRAFI.memory) {
+        var patch = { isUrgent: _state.isUrgent };
+        if (_state.category) patch.category = _state.category;
+        if (_state.city)     patch.city     = _state.city;
+        window.FixeoRAFI.memory.update(patch);
       }
     } catch(e) {}
 
-    /* Open the request modal */
+    /* ── OPEN V5 FLOW ────────────────────────────────────────────────
+       Use FixeoRequestFlowV4.open() directly if available — this is
+       the canonical V5 API. Falls back to FixeoClientRequest.open()
+       (patched by V5 to route through open()) then window.openModal().
+       Mode:
+         - 'emergency' if urgency confirmed AND city known (skip both steps)
+         - 'default' otherwise (shows service chip grid with pre-selection)
+    ──────────────────────────────────────────────────────────────────── */
     try {
-      if (window.FixeoClientRequest && typeof window.FixeoClientRequest.open === 'function') {
-        /* Pass a synthetic trigger so request-form.js resolves mode correctly */
+      var mode = (_state.isUrgent && _state.category) ? 'emergency' : 'default';
+
+      if (window.FixeoRequestFlowV4 && typeof window.FixeoRequestFlowV4.open === 'function') {
+        window.FixeoRequestFlowV4.open({ mode: mode, source: 'need-builder' });
+      } else if (window.FixeoClientRequest && typeof window.FixeoClientRequest.open === 'function') {
         var syntheticTrigger = document.createElement('button');
-        syntheticTrigger.setAttribute('data-request-mode', 'default');
-        window.FixeoClientRequest.open(syntheticTrigger, 'default');
+        syntheticTrigger.setAttribute('data-request-mode', mode);
+        syntheticTrigger.setAttribute('data-open-request-form', 'true');
+        window.FixeoClientRequest.open(syntheticTrigger, mode);
       } else if (window.openModal) {
         window.openModal('request-modal');
       }
     } catch(e) {}
 
-    /* Clear the relay input shortly after modal is open so artisan search is clean */
+    /* ── RELAY CLEANUP ───────────────────────────────────────────────
+       Clear #search-input after V5 has read it (in _readContext at open
+       time, synchronously before _renderStep1). 400ms > open animation
+       start but well before any artisan filter could trigger.
+    ──────────────────────────────────────────────────────────────────── */
     setTimeout(function() {
       if (relay) relay.value = '';
-    }, 800);
+    }, 400);
   }
 
   /* ══════════════════════════════════════════════════════════════
@@ -421,6 +493,11 @@
      EDIT / RESET
   ══════════════════════════════════════════════════════════════ */
   function _handleEdit() {
+    /* Clear stale classification immediately on edit intent */
+    _state.category = null;
+    _state.isUrgent = false;
+    _state.source   = null;
+    /* _state.text and _state.city preserved — useful for UX context */
     _hideResult();
     var area = _textarea();
     if (area) {
@@ -441,12 +518,17 @@
     /* Update submit button on each keypress */
     area.addEventListener('input', function() {
       _updateSubmitState();
-      /* Hide stale result if user is editing */
+      /* Clear stale classification if user edits text meaningfully */
       var wrap = _resultWrap();
-      if (wrap && wrap.classList.contains('fxnb-result-visible')) {
-        /* Hide only if text changed meaningfully (>3 chars difference) */
+      if (wrap && wrap.classList.contains('fxnb-result-in-flow')) {
         var diff = Math.abs((area.value || '').length - (_state.text || '').length);
-        if (diff > 3) _hideResult();
+        if (diff > 3) {
+          /* Clear stale category/urgency — text has changed enough to invalidate them */
+          _state.category = null;
+          _state.isUrgent = false;
+          _state.source   = null;
+          _hideResult();
+        }
       }
     });
 
