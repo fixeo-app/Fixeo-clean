@@ -976,6 +976,7 @@
   line-height: 1.5;
 }
 .fxlf-close {
+  /* Desktop: absolute within header */
   position: absolute;
   top: 18px; right: 18px;
   width: 36px; height: 36px;
@@ -986,7 +987,10 @@
   font-size: 18px;
   display: flex; align-items: center; justify-content: center;
   cursor: pointer;
+  touch-action: manipulation;      /* prevent iOS double-tap zoom */
   transition: background 0.15s, color 0.15s, border-color 0.15s;
+  /* Prevent duplicate when JS also adds a close button */
+  flex-shrink: 0;
 }
 .fxlf-close:hover,
 .fxlf-close:focus-visible {
@@ -994,6 +998,51 @@
   color: #fff;
   border-color: var(--fxe2-border-h);
   outline: none;
+}
+.fxlf-close:focus-visible {
+  box-shadow: 0 0 0 3px rgba(72,100,255,0.5);
+}
+
+/* ── Mobile: persistent fixed close control ──────────────────────────────────
+ * On mobile the panel is full-screen (inset:0). The close button must stay
+ * pinned to the top-right of the viewport at ALL times:
+ *   - while the user scrolls .fxlf-body
+ *   - while a native <select> overlay is open
+ *   - while the soft keyboard is raised (viewport shrinks)
+ *   - on any of the 3 steps
+ *
+ * Strategy: on ≤640px, take .fxlf-close OUT of the header flow and fix it
+ * to the viewport. z-index 500 keeps it above the panel (490) and overlay (480).
+ * Minimum touch target 44×44px per Apple HIG.
+ * Safe-area-inset-top handles iPhone notch / Dynamic Island.
+ * ─────────────────────────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .fxlf-close {
+    position: fixed;
+    /* Pin to top-right; respect notch / Dynamic Island */
+    top: calc(env(safe-area-inset-top, 0px) + 14px);
+    right: 14px;
+    /* 44×44px minimum touch target */
+    width: 44px;
+    height: 44px;
+    font-size: 20px;
+    /* Sit above panel (490) and overlay (480) */
+    z-index: 500;
+    /* Slightly stronger background so it reads against any panel content */
+    background: rgba(18, 20, 35, 0.92);
+    border-color: rgba(255,255,255,0.18);
+    /* Hardware-accelerate to avoid repaint lag on scroll */
+    will-change: transform;
+    transform: translateZ(0);
+  }
+  .fxlf-close:focus-visible {
+    box-shadow: 0 0 0 3px rgba(72,100,255,0.6);
+  }
+  /* Header right-padding: prevent title text from sliding under the fixed button */
+  .fxlf-header {
+    padding-right: calc(44px + 22px);
+    padding-top: calc(env(safe-area-inset-top, 0px) + 22px);
+  }
 }
 
 /* ── Progress bar ── */

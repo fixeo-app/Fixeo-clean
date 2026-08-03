@@ -394,6 +394,9 @@
     /* Pre-select demo need if intent=demo */
     _preselectNeeds(panel, _state.intent);
 
+    /* Save page scroll position — restores on close (prevents iOS Safari scroll-to-top) */
+    _state.savedScrollY = window.scrollY || window.pageYOffset || 0;
+
     /* Show panel + overlay */
     panel.classList.add('open');
     panel.setAttribute('aria-hidden', 'false');
@@ -428,6 +431,10 @@
       overlay.setAttribute('aria-hidden', 'true');
     }
     document.body.style.overflow = '';
+    /* Restore page scroll position (iOS Safari sets it to 0 when body overflow is hidden) */
+    if (typeof _state.savedScrollY === 'number') {
+      window.scrollTo(0, _state.savedScrollY);
+    }
     document.removeEventListener('keydown', _onKeydown);
 
     /* Return focus */
