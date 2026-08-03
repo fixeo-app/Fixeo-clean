@@ -1003,45 +1003,95 @@
   box-shadow: 0 0 0 3px rgba(72,100,255,0.5);
 }
 
-/* ── Mobile: persistent fixed close control ──────────────────────────────────
- * On mobile the panel is full-screen (inset:0). The close button must stay
- * pinned to the top-right of the viewport at ALL times:
- *   - while the user scrolls .fxlf-body
- *   - while a native <select> overlay is open
- *   - while the soft keyboard is raised (viewport shrinks)
- *   - on any of the 3 steps
+/* ── Mobile close: BODY-LEVEL button ─────────────────────────────────────────
  *
- * Strategy: on ≤640px, take .fxlf-close OUT of the header flow and fix it
- * to the viewport. z-index 500 keeps it above the panel (490) and overlay (480).
- * Minimum touch target 44×44px per Apple HIG.
- * Safe-area-inset-top handles iPhone notch / Dynamic Island.
+ * PROBLEM: The in-panel #fxlf-close sits inside #fxlf-panel (z-index:490).
+ * A positioned parent with an explicit z-index creates a stacking context.
+ * Child elements cannot escape that context: even z-index:9999 on a child
+ * will lose to any sibling context at a higher root z-index.
+ * The FIXEO global navbar has position:fixed + z-index:1200, which is a
+ * separate root-level stacking context. Any child of the panel (z:490) is
+ * painted below the navbar (z:1200) — including the close button.
+ *
+ * SOLUTION: JS injects #fxlf-mobile-close as a DIRECT CHILD of <body>
+ * (outside all panel/overlay stacking contexts). Here it is a root-level
+ * stacking context with z-index:1300 — above the navbar (1200).
+ *
+ * Placement: top = navbar_bottom + 8px = ~70px + 8px = 78px.
+ *   On iPhones with a Dynamic Island / notch, add safe-area-inset-top first
+ *   then 78px, because the navbar itself accounts for safe-area internally.
+ *   Using env(safe-area-inset-top, 0px) + 78px is safe for all models.
+ *
+ * The in-panel .fxlf-close is HIDDEN on mobile (display:none) to prevent
+ * a phantom duplicate behind the navbar.
  * ─────────────────────────────────────────────────────────────────────────── */
+
+/* ── Body-level mobile close button (appended to <body> by JS) ── */
+#fxlf-mobile-close {
+  /* Hidden by default; JS sets display:'' when panel opens */
+  display: none;
+  /* Position: fixed at root viewport, outside ALL stacking contexts */
+  position: fixed;
+  /* Below the FIXEO navbar (70px) + 8px breathing room + safe-area */
+  top: calc(env(safe-area-inset-top, 0px) + 78px);
+  right: 16px;
+  /* 44×44px Apple HIG minimum touch target */
+  width: 44px;
+  height: 44px;
+  /* Above navbar (1200) */
+  z-index: 1300;
+  /* Visuals */
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
+  background: rgba(14, 16, 30, 0.95);
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 22px;
+  line-height: 1;
+  display: none;           /* overridden by JS; keep here as extra guard */
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  touch-action: manipulation;
+  /* GPU layer — no repaint lag while panel body scrolls */
+  will-change: transform;
+  transform: translateZ(0);
+  /* Smooth appearance */
+  transition: background 0.15s, border-color 0.15s, opacity 0.15s;
+  /* Ensure it is never clipped */
+  overflow: visible;
+  /* Box shadow for depth */
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+}
+/* JS adds this class when the panel is open */
+#fxlf-mobile-close.fxlf-mobile-close-open {
+  display: flex;
+}
+#fxlf-mobile-close:hover,
+#fxlf-mobile-close:active {
+  background: rgba(40, 45, 80, 0.98);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+#fxlf-mobile-close:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(72, 100, 255, 0.6), 0 2px 12px rgba(0, 0, 0, 0.5);
+}
+
+/* ── On mobile: hide the in-panel .fxlf-close (it is behind the navbar) ── */
 @media (max-width: 640px) {
   .fxlf-close {
-    position: fixed;
-    /* Pin to top-right; respect notch / Dynamic Island */
-    top: calc(env(safe-area-inset-top, 0px) + 14px);
-    right: 14px;
-    /* 44×44px minimum touch target */
-    width: 44px;
-    height: 44px;
-    font-size: 20px;
-    /* Sit above panel (490) and overlay (480) */
-    z-index: 500;
-    /* Slightly stronger background so it reads against any panel content */
-    background: rgba(18, 20, 35, 0.92);
-    border-color: rgba(255,255,255,0.18);
-    /* Hardware-accelerate to avoid repaint lag on scroll */
-    will-change: transform;
-    transform: translateZ(0);
+    display: none !important;
   }
-  .fxlf-close:focus-visible {
-    box-shadow: 0 0 0 3px rgba(72,100,255,0.6);
-  }
-  /* Header right-padding: prevent title text from sliding under the fixed button */
+  /* Restore header padding to normal (no longer reserved for in-panel button) */
   .fxlf-header {
-    padding-right: calc(44px + 22px);
+    padding-right: 26px;
     padding-top: calc(env(safe-area-inset-top, 0px) + 22px);
+  }
+}
+
+/* ── On desktop: hide the body-level button (panel close handles it) ── */
+@media (min-width: 641px) {
+  #fxlf-mobile-close {
+    display: none !important;
   }
 }
 

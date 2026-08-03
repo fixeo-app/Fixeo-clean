@@ -53,6 +53,7 @@
   var VERSION = 'fxlf-v2a';
   var PANEL_ID = 'fxlf-panel';
   var OVERLAY_ID = 'fxlf-overlay';
+  var MOBILE_CLOSE_ID = 'fxlf-mobile-close';
   var API_ENDPOINT = '/api/enterprise-contact';
   var TOTAL_STEPS = 3;
 
@@ -125,6 +126,7 @@
   function uid() { return Math.random().toString(36).slice(2,10) + Date.now().toString(36); }
   function getPanel() { return document.getElementById(PANEL_ID); }
   function getOverlay() { return document.getElementById(OVERLAY_ID); }
+  function getMobileClose() { return document.getElementById(MOBILE_CLOSE_ID); }
 
   /* ── Analytics (safe, no PII) ── */
   function _track(event, props) {
@@ -144,6 +146,47 @@
     ov.setAttribute('aria-hidden', 'true');
     document.body.appendChild(ov);
     ov.addEventListener('click', closePanel);
+  }
+
+  /* ── Build the mobile-level close button ──────────────────────────────────
+   * On mobile the global FIXEO navbar has z-index:1200 and occupies the top
+   * ~70px of the viewport. The close button inside #fxlf-panel (z-index:490)
+   * cannot escape that parent stacking context, so even z-index:999 on the
+   * button loses to the navbar. Solution: inject the mobile close button as a
+   * DIRECT CHILD OF document.body — outside any stacking context — and give
+   * it z-index:1300. It is hidden by default and shown/hidden by JS when the
+   * panel opens/closes. The in-panel #fxlf-close is hidden on mobile via CSS.
+   * ─────────────────────────────────────────────────────────────────────── */
+  function _buildMobileClose() {
+    if (document.getElementById(MOBILE_CLOSE_ID)) return;
+    var btn = document.createElement('button');
+    btn.id = MOBILE_CLOSE_ID;
+    btn.type = 'button';
+    btn.setAttribute('aria-label', 'Fermer le formulaire');
+    btn.textContent = '×';
+    // Hidden initially; shown by _showMobileClose when panel opens
+    btn.style.display = 'none';
+    document.body.appendChild(btn);
+    btn.addEventListener('click', closePanel);
+  }
+
+  function _showMobileClose() {
+    // Only activate on mobile-width viewports (≤640px)
+    if (window.innerWidth > 640) return;
+    _buildMobileClose();
+    var btn = getMobileClose();
+    if (btn) {
+      btn.style.display = '';  // CSS class controls actual display/position
+      btn.classList.add('fxlf-mobile-close-open');
+    }
+  }
+
+  function _hideMobileClose() {
+    var btn = getMobileClose();
+    if (btn) {
+      btn.style.display = 'none';
+      btn.classList.remove('fxlf-mobile-close-open');
+    }
   }
 
   /* ── Build the panel ── */
@@ -404,6 +447,9 @@
     overlay.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
 
+    /* Show the body-level mobile close button (outside panel stacking context) */
+    _showMobileClose();
+
     /* Focus first field */
     setTimeout(function () {
       var first = panel.querySelector('.fxlf-input, .fxlf-select');
@@ -435,6 +481,8 @@
     if (typeof _state.savedScrollY === 'number') {
       window.scrollTo(0, _state.savedScrollY);
     }
+    /* Hide the body-level mobile close button */
+    _hideMobileClose();
     document.removeEventListener('keydown', _onKeydown);
 
     /* Return focus */
