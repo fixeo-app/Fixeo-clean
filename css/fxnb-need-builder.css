@@ -1,0 +1,493 @@
+/**
+ * fxnb-need-builder.css — FIXEO Need Builder v1 (fxnb-v1)
+ * ─────────────────────────────────────────────────────────────────────────────
+ * Styles the free-text need-entry + identification-result module inside
+ * the "Quel problème faut-il résoudre ?" homepage section (#services).
+ *
+ * Namespace: fxnb-* (no collision with fc3-*, fxsit-*, svc-*, city-*, rfos-*)
+ * Scoped to: #services .fxnb-wrap (never leaks outside)
+ * Design language: deep navy / blue-violet / green accents — FIXEO homepage dark
+ * No animations that loop infinitely. prefers-reduced-motion respected throughout.
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
+
+/* ══════════════════════════════════════════════════════════════
+   §1  OUTER WRAP
+   Max width matches the fxsit section card grid (~680px),
+   inserted above the city row and situation cards.
+   ══════════════════════════════════════════════════════════════ */
+#services .fxnb-wrap {
+  max-width: 600px;
+  margin: 0 auto clamp(20px, 3vw, 32px);
+  padding: 0 16px;
+  position: relative;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   §2  TEXT INPUT FIELD
+   ══════════════════════════════════════════════════════════════ */
+#services .fxnb-field-wrap {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+#services .fxnb-label {
+  font-size: 0.70rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: rgba(160, 185, 255, 0.55);
+  display: block;
+  user-select: none;
+}
+
+#services .fxnb-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 72px;
+  max-height: 140px;
+  resize: none;
+  background: rgba(16, 24, 64, 0.60);
+  border: 1.5px solid rgba(72, 100, 255, 0.22);
+  border-radius: 14px;
+  color: rgba(230, 236, 255, 0.92);
+  font-size: 16px; /* ≥16px prevents iOS zoom */
+  font-family: inherit;
+  line-height: 1.55;
+  padding: 13px 16px;
+  outline: none;
+  transition:
+    border-color 0.20s ease,
+    background   0.20s ease,
+    box-shadow   0.20s ease;
+  -webkit-appearance: none;
+  appearance: none;
+  /* Prevent horizontal overflow on iOS */
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+#services .fxnb-textarea::placeholder {
+  color: rgba(160, 185, 255, 0.32);
+}
+
+#services .fxnb-textarea:focus {
+  border-color: rgba(72, 100, 255, 0.55);
+  background:   rgba(16, 24, 72, 0.75);
+  box-shadow:   0 0 0 3px rgba(72, 100, 255, 0.12),
+                0 2px 12px rgba(0, 0, 16, 0.30);
+}
+
+/* Row: submit button */
+#services .fxnb-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+/* ── Submit button ── */
+#services .fxnb-submit-btn {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 20px;
+  border-radius: 999px;
+  border: none;
+  background: rgba(72, 100, 255, 0.85);
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition:
+    background  0.18s ease,
+    opacity     0.18s ease,
+    transform   0.12s ease;
+  -webkit-tap-highlight-color: transparent;
+  min-height: 40px;
+  user-select: none;
+}
+
+#services .fxnb-submit-btn:hover:not(:disabled) {
+  background: rgba(90, 118, 255, 0.95);
+  transform: translateY(-1px);
+}
+
+#services .fxnb-submit-btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+#services .fxnb-submit-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  transform: none;
+}
+
+#services .fxnb-submit-btn:focus-visible {
+  outline: 2px solid rgba(72, 100, 255, 0.70);
+  outline-offset: 2px;
+}
+
+/* ── Submit icon/arrow ── */
+#services .fxnb-submit-arrow {
+  font-style: normal;
+  transition: transform 0.15s ease;
+}
+#services .fxnb-submit-btn:not(:disabled):hover .fxnb-submit-arrow {
+  transform: translateX(2px);
+}
+
+/* ── Scanning state ── */
+#services .fxnb-submit-btn.fxnb-scanning {
+  pointer-events: none;
+  opacity: 0.70;
+}
+#services .fxnb-submit-btn.fxnb-scanning .fxnb-submit-label {
+  opacity: 0.5;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   §3  IDENTIFICATION RESULT MODULE  (.fxnb-result)
+   Hidden by default, revealed when need is identified.
+   ══════════════════════════════════════════════════════════════ */
+#services .fxnb-result {
+  margin-top: 16px;
+  background: rgba(12, 20, 60, 0.70);
+  border: 1.5px solid rgba(72, 100, 255, 0.18);
+  border-radius: 18px;
+  padding: clamp(16px, 3vw, 22px) clamp(16px, 4vw, 24px);
+  /* Hidden by default — revealed by JS */
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+  /* Smooth entrance */
+  transition:
+    opacity   0.32s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+#services .fxnb-result.fxnb-result-visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* ── Result eyebrow ── */
+#services .fxnb-result-eyebrow {
+  font-size: 0.60rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(72, 100, 255, 0.60);
+  display: block;
+  margin-bottom: 12px;
+  user-select: none;
+}
+
+/* ── Main result row ── */
+#services .fxnb-result-main {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+/* Luminous node */
+#services .fxnb-result-node {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(72, 100, 255, 0.12);
+  border: 1.5px solid rgba(72, 100, 255, 0.35);
+  box-shadow: 0 0 14px rgba(72, 100, 255, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+#services .fxnb-result-node.fxnb-node-urgent {
+  border-color: rgba(255, 140, 0, 0.50);
+  box-shadow: 0 0 14px rgba(255, 140, 0, 0.20);
+}
+
+/* Category name */
+#services .fxnb-result-category {
+  font-size: clamp(1.02rem, 2.2vw, 1.20rem);
+  font-weight: 700;
+  color: #e8eeff;
+  line-height: 1.25;
+  letter-spacing: -0.012em;
+  margin: 0 0 3px;
+}
+
+/* Description summary */
+#services .fxnb-result-desc {
+  font-size: 0.80rem;
+  color: rgba(180, 200, 255, 0.48);
+  line-height: 1.55;
+  margin: 0;
+  /* Truncate to 2 lines to avoid overflow */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ── Status chips row ── */
+#services .fxnb-result-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+#services .fxnb-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 3px 9px;
+  border-radius: 999px;
+  white-space: nowrap;
+  user-select: none;
+}
+
+#services .fxnb-chip--green {
+  background: rgba(32, 201, 151, 0.10);
+  border: 1px solid rgba(32, 201, 151, 0.28);
+  color: rgba(32, 201, 151, 0.92);
+}
+#services .fxnb-chip--green::before {
+  content: '';
+  display: inline-block;
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: rgba(32, 201, 151, 0.82);
+  flex-shrink: 0;
+}
+
+#services .fxnb-chip--blue {
+  background: rgba(72, 100, 255, 0.09);
+  border: 1px solid rgba(72, 100, 255, 0.25);
+  color: rgba(120, 155, 255, 0.92);
+}
+#services .fxnb-chip--blue::before {
+  content: '';
+  display: inline-block;
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: rgba(100, 140, 255, 0.80);
+  flex-shrink: 0;
+}
+
+#services .fxnb-chip--orange {
+  background: rgba(255, 140, 0, 0.09);
+  border: 1px solid rgba(255, 140, 0, 0.25);
+  color: rgba(255, 170, 60, 0.92);
+}
+#services .fxnb-chip--orange::before {
+  content: '';
+  display: inline-block;
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: rgba(255, 160, 20, 0.80);
+  flex-shrink: 0;
+}
+
+/* ── CTA area ── */
+#services .fxnb-result-cta-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Primary: Continuer avec RAFI */
+#services .fxnb-cta-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 11px 22px;
+  border-radius: 999px;
+  border: none;
+  background: rgba(72, 100, 255, 0.85);
+  color: #fff;
+  font-size: 0.84rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: background 0.18s, transform 0.12s;
+  -webkit-tap-highlight-color: transparent;
+  min-height: 44px;
+  user-select: none;
+}
+#services .fxnb-cta-primary:hover {
+  background: rgba(90, 118, 255, 0.95);
+  transform: translateY(-1px);
+}
+#services .fxnb-cta-primary:active { transform: scale(0.97); }
+#services .fxnb-cta-primary:focus-visible {
+  outline: 2px solid rgba(72, 100, 255, 0.70);
+  outline-offset: 2px;
+}
+
+/* Secondary: Modifier / Edit link */
+#services .fxnb-cta-edit {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: rgba(160, 185, 255, 0.50);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 2px;
+  text-decoration: underline;
+  text-decoration-color: rgba(160, 185, 255, 0.22);
+  -webkit-tap-highlight-color: transparent;
+  min-height: 32px;
+}
+#services .fxnb-cta-edit:hover { color: rgba(160, 185, 255, 0.75); }
+#services .fxnb-cta-edit:focus-visible {
+  outline: 2px solid rgba(72, 100, 255, 0.50);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ── Fallback state (besoin à préciser) ── */
+#services .fxnb-result.fxnb-result-fallback .fxnb-result-node {
+  border-color: rgba(160, 185, 255, 0.28);
+  box-shadow: none;
+}
+
+/* ── Live region for screen readers ── */
+#services .fxnb-sr-live {
+  position: absolute;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   §4  SECTION HEADER REFINEMENT
+   Eyebrow/title override scoped to the MOTEUR DE BESOIN header.
+   Keeps existing fc3-* classes intact.
+   ══════════════════════════════════════════════════════════════ */
+#services .fxnb-section-eyebrow {
+  display: inline-block;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(72, 100, 255, 0.60);
+  margin-bottom: 8px;
+}
+
+#services .fxnb-section-title {
+  font-size: clamp(1.25rem, 3.5vw, 1.65rem);
+  font-weight: 700;
+  color: #e8eeff;
+  line-height: 1.25;
+  letter-spacing: -0.020em;
+  margin: 0 0 8px;
+}
+
+#services .fxnb-section-subtitle {
+  font-size: 0.85rem;
+  color: rgba(180, 200, 255, 0.48);
+  line-height: 1.6;
+  margin: 0 0 clamp(20px, 3vw, 30px);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   §5  MOBILE OVERRIDES  (≤ 640px)
+   ══════════════════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+  #services .fxnb-wrap {
+    padding: 0 14px;
+  }
+
+  #services .fxnb-textarea {
+    /* 16px already set globally — no change needed */
+    min-height: 68px;
+    padding: 12px 14px;
+  }
+
+  #services .fxnb-result {
+    padding: 14px 16px;
+  }
+
+  #services .fxnb-result-category {
+    font-size: 1.05rem;
+  }
+
+  #services .fxnb-result-main {
+    gap: 12px;
+  }
+
+  #services .fxnb-result-node {
+    width: 36px;
+    height: 36px;
+    font-size: 1.0rem;
+  }
+
+  #services .fxnb-cta-primary {
+    width: 100%;
+    justify-content: center;
+  }
+
+  #services .fxnb-result-cta-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  #services .fxnb-section-title {
+    font-size: 1.18rem;
+  }
+
+  #services .fxnb-submit-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  #services .fxnb-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    margin-top: 8px;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   §6  REDUCED MOTION
+   ══════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  #services .fxnb-result {
+    transition: none !important;
+    opacity: 1;
+    transform: none;
+  }
+  #services .fxnb-result.fxnb-result-visible {
+    opacity: 1;
+    transform: none;
+  }
+  #services .fxnb-textarea,
+  #services .fxnb-submit-btn,
+  #services .fxnb-cta-primary {
+    transition: none !important;
+  }
+  #services .fxnb-submit-btn:not(:disabled):hover,
+  #services .fxnb-cta-primary:hover {
+    transform: none !important;
+  }
+}
