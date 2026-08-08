@@ -1581,64 +1581,61 @@ a{text-decoration:none}
   background: rgba(255,255,255,0.018);
 }
 
+/* ── Context bar inner layout — Phase 4C.1 ────────────────── */
 .fxsvc-ctx-inner {
-  gap: 5px;
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .fxsvc-ctx-eyebrow {
-  width: 100%;
   font-size: 0.56rem;
-  letter-spacing: 0.15em;
-  color: rgba(255,255,255,0.20);
-  margin-bottom: 4px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.18);
+  margin-bottom: 2px;
 }
 
-.fxsvc-ctx-row {
-  gap: 6px;
+/* Single status row: dot + label + inline detail */
+.fxsvc-ctx-status-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
 }
 
 .fxsvc-ctx-dot {
-  background: rgba(100,160,255,0.60);
   width: 6px;
   height: 6px;
+  border-radius: 50%;
+  background: rgba(100,160,255,0.58);
+  flex-shrink: 0;
 }
 
 .fxsvc-ctx-label {
   font-size: 0.72rem;
-  color: rgba(180,195,230,0.50);
+  color: rgba(180,195,230,0.46);
+  font-weight: 500;
+  white-space: nowrap;
 }
 
-.fxsvc-ctx-metier-row {
-  padding-left: 0;
-  gap: 6px;
-  margin-left: 6px;
-}
-
-.fxsvc-ctx-metier-name {
-  font-size: 0.84rem;
-  font-weight: 700;
-  color: rgba(220,232,255,0.90);
-}
-
-.fxsvc-ctx-city-row {
-  padding-left: 0;
-  margin-left: 4px;
-}
-
-.fxsvc-ctx-city-name {
+/* Inline detail: "🔧 Plomberie · 📍 Casablanca" — rendered by JS textContent */
+.fxsvc-ctx-detail {
   font-size: 0.76rem;
-  color: rgba(165,180,215,0.58);
+  font-weight: 600;
+  color: rgba(215,228,255,0.80);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 260px;
 }
 
 .fxsvc-ctx-hint {
-  width: 100%;
-  font-size: 0.68rem;
-  color: rgba(140,160,210,0.36);
-  padding-left: 0;
-  margin-top: 4px;
+  font-size: 0.67rem;
+  color: rgba(140,160,210,0.34);
+  margin: 0;
+  padding: 0;
 }
 
 /* ── Hero → catalogue: tighten vertical space ───────────────── */
@@ -1681,13 +1678,7 @@ a{text-decoration:none}
     font-size:  0.76rem;
   }
 
-  .fxsvc-ctx-inner {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 4px;
-  }
-  .fxsvc-ctx-metier-row,
-  .fxsvc-ctx-city-row { margin-left: 12px; }
+  .fxsvc-ctx-detail { max-width: 200px; }
 }
 
 /* 640–1023: 2-col grid */
@@ -1759,116 +1750,35 @@ a{text-decoration:none}
   margin-bottom: clamp(20px, 3vw, 32px);
 }
 
-.fxsvc-ctx-inner {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  max-width: 680px;
-}
+/* fxsvc-ctx-v1 — styles now consolidated in fxsvc-wow-v1 above.
+   Only card match state remains here as Phase 4B anchor. */
 
-.fxsvc-ctx-eyebrow {
-  font-size: 0.58rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  color: rgba(120,140,200,0.38);
-  text-transform: uppercase;
-  margin-bottom: 2px;
-}
-
-.fxsvc-ctx-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.fxsvc-ctx-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: rgba(72,100,255,0.55);
-  flex-shrink: 0;
-}
-
-.fxsvc-ctx-label {
-  font-size: 0.70rem;
-  color: rgba(160,175,220,0.52);
-  font-weight: 500;
-}
-
-.fxsvc-ctx-metier-row {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  padding-left: 15px; /* aligned with dot */
-}
-
-.fxsvc-ctx-metier-icon {
-  font-size: 1rem;
-  line-height: 1;
-}
-
-.fxsvc-ctx-metier-name {
-  font-size: 0.88rem;
-  font-weight: 600;
-  color: rgba(210,220,255,0.88);
-}
-
-.fxsvc-ctx-city-row {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding-left: 15px;
-}
-
-.fxsvc-ctx-city-pin {
-  font-size: 0.80rem;
-  line-height: 1;
-}
-
-.fxsvc-ctx-city-name {
-  font-size: 0.78rem;
-  color: rgba(160,175,220,0.58);
-  font-weight: 500;
-}
-
-.fxsvc-ctx-hint {
-  margin: 2px 0 0;
-  font-size: 0.70rem;
-  color: rgba(140,160,220,0.40);
-  padding-left: 15px;
-}
-
-/* ── Matching card highlight — purely additive ── */
+/* ── Matching card highlight — Phase 4C.1 refined ── */
 .cp-svc-card.fxsvc-match {
-  border-color: rgba(72,100,255,0.35);
-  box-shadow: 0 0 0 1px rgba(72,100,255,0.18),
-              0 4px 18px rgba(72,100,255,0.10);
+  border-color: rgba(255,255,255,0.16);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.10) inset,
+    0 0 0 1px rgba(255,255,255,0.08),
+    0 12px 36px rgba(0,0,0,0.30);
 }
 
 .cp-svc-card.fxsvc-match .cp-svc-name {
-  color: rgba(180,200,255,0.95);
+  color: rgba(248,250,255,1.0);
 }
 
-/* Restrained match badge */
+/* Match badge */
 .fxsvc-match-badge {
   display: inline-block;
   font-size: 0.58rem;
-  font-weight: 600;
-  letter-spacing: 0.07em;
+  font-weight: 700;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: rgba(100,130,255,0.80);
-  background: rgba(72,100,255,0.09);
-  border: 1px solid rgba(72,100,255,0.18);
-  border-radius: 4px;
-  padding: 2px 6px;
-  margin-top: 5px;
-  margin-bottom: 2px;
-}
-
-/* Mobile */
-@media (max-width: 480px) {
-  #fxsvc-ctx-bar { padding: 10px 0 14px; }
-  .fxsvc-ctx-metier-name { font-size: 0.84rem; }
+  color: rgba(160,185,255,0.82);
+  background: rgba(100,130,255,0.08);
+  border: 1px solid rgba(100,130,255,0.18);
+  border-radius: 5px;
+  padding: 2px 7px;
+  margin: 4px 0 6px;
 }
 
 /* Reduced motion */
@@ -2025,17 +1935,12 @@ a{text-decoration:none}
   <div class="cp-container">
     <div class="fxsvc-ctx-inner">
       <span class="fxsvc-ctx-eyebrow" aria-hidden="true">VOTRE RECHERCHE</span>
-      <div class="fxsvc-ctx-row">
+      <!-- Status row: dot + "Besoin identifié" + inline métier · city -->
+      <div class="fxsvc-ctx-status-row">
         <span class="fxsvc-ctx-dot" aria-hidden="true"></span>
         <span class="fxsvc-ctx-label">Besoin identifié</span>
-      </div>
-      <div class="fxsvc-ctx-metier-row" id="fxsvc-ctx-metier-row" aria-hidden="true" style="display:none">
-        <span class="fxsvc-ctx-metier-icon" id="fxsvc-ctx-icon" aria-hidden="true"></span>
-        <span class="fxsvc-ctx-metier-name" id="fxsvc-ctx-metier"></span>
-      </div>
-      <div class="fxsvc-ctx-city-row" id="fxsvc-ctx-city-row" aria-hidden="true" style="display:none">
-        <span class="fxsvc-ctx-city-pin" aria-hidden="true">📍</span>
-        <span class="fxsvc-ctx-city-name" id="fxsvc-ctx-city"></span>
+        <!-- Inline detail: rendered by JS — textContent only -->
+        <span class="fxsvc-ctx-detail" id="fxsvc-ctx-detail" aria-hidden="true"></span>
       </div>
       <p class="fxsvc-ctx-hint" id="fxsvc-ctx-hint"></p>
     </div>
@@ -2482,11 +2387,37 @@ a{text-decoration:none}
     bricolage:     { label: 'Bricolage',     icon: '\uD83D\uDD27', cardPrefill: 'Bricolage'     }
   };
 
-  /* Max safe city length guard */
-  var CITY_MAX = 40;
-
-  function _safeText(str) {
-    return String(str || '').trim().slice(0, CITY_MAX);
+  /* ── City sanitiser — mirrors fixeo-hero-context-status.js _sanitizeCity()
+     Root cause: AIRE's _watchHeroCity() stores #hero-city-label textContent
+     verbatim, which may include decoration like:
+       "📍 Casablanca — des Roches noires détecté"
+       "📍 Casablanca · Modifier"
+       "Casablanca détectée"
+     We strip all decoration and return only the bare city name. ── */
+  function _sanitizeCity(raw) {
+    if (!raw) return null;
+    var s = String(raw).trim();
+    /* Strip leading pin emoji (📍 U+1F4CD = \uD83D\uDCCD) + optional space */
+    s = s.replace(/^\uD83D\uDCCD\s*/u, '');
+    /* Cut at middle-dot · (U+00B7) — strips "· Modifier", "· district" */
+    var dotIdx = s.indexOf('\u00b7');
+    if (dotIdx >= 0) s = s.slice(0, dotIdx);
+    /* Cut at em-dash — (U+2014) — strips " — district suffix" */
+    var dashIdx = s.indexOf('\u2014');
+    if (dashIdx >= 0) s = s.slice(0, dashIdx);
+    /* Strip trailing "détectée?" / "détecté" */
+    s = s.replace(/\s+d\u00e9tect\u00e9e?\s*$/i, '');
+    s = s.trim();
+    /* Reject placeholder / detection / generic strings */
+    if (!s || s.length < 2)                     return null;
+    if (/^D\u00e9tect/i.test(s))               return null;
+    if (s.indexOf('Choisir') >= 0)              return null;
+    if (/autour/i.test(s))                      return null;
+    if (/R\u00e9sultats/i.test(s))              return null;
+    /* Final safety: only plain text, no emoji, max 30 chars */
+    s = s.replace(/[\uD800-\uDFFF]/g, '').trim(); /* strip any remaining surrogates */
+    if (s.length > 30) s = s.slice(0, 30).trim();
+    return s || null;
   }
 
   function _initContextBar() {
@@ -2495,7 +2426,7 @@ a{text-decoration:none}
       if (params.get('from') !== 'journey') return; /* Entry B — do nothing */
 
       var catSlug = (params.get('cat') || '').toLowerCase().trim();
-      var meta    = ALLOWED_CATS[catSlug] || null; /* null if invalid/unknown */
+      var meta    = ALLOWED_CATS[catSlug] || null; /* null if invalid/unknown slug */
 
       var bar = document.getElementById('fxsvc-ctx-bar');
       if (!bar) return;
@@ -2504,53 +2435,44 @@ a{text-decoration:none}
       bar.style.display = '';
       bar.removeAttribute('aria-hidden');
 
-      /* Métier row */
-      if (meta) {
-        var metierRow  = document.getElementById('fxsvc-ctx-metier-row');
-        var iconEl     = document.getElementById('fxsvc-ctx-icon');
-        var metierEl   = document.getElementById('fxsvc-ctx-metier');
-        if (metierRow && iconEl && metierEl) {
-          iconEl.textContent   = meta.icon;
-          metierEl.textContent = meta.label;
-          metierRow.style.display = '';
-          metierRow.removeAttribute('aria-hidden');
-        }
-        /* Hint text when category known */
-        var hint = document.getElementById('fxsvc-ctx-hint');
-        if (hint) hint.textContent = 'Explorer les services li\u00e9s ci-dessous.';
-      } else {
-        /* No category or unknown — generic hint */
-        var hint2 = document.getElementById('fxsvc-ctx-hint');
-        if (hint2) hint2.textContent = 'Continuez votre recherche parmi tous les services.';
-      }
+      /* ── Sanitise city ── */
+      var city = null;
+      try { city = _sanitizeCity(localStorage.getItem('fixeo_detected_city')); } catch(_) {}
 
-      /* City row — read from localStorage only, validated */
-      var storedCity = '';
-      try { storedCity = _safeText(localStorage.getItem('fixeo_detected_city') || ''); } catch(_) {}
-      if (storedCity && storedCity.length > 1) {
-        var cityRow  = document.getElementById('fxsvc-ctx-city-row');
-        var cityName = document.getElementById('fxsvc-ctx-city');
-        if (cityRow && cityName) {
-          cityName.textContent = storedCity;
-          cityRow.style.display = '';
-          cityRow.removeAttribute('aria-hidden');
+      /* ── Build inline detail string: "[icon] Métier · 📍 Ville" ── */
+      var detailEl = document.getElementById('fxsvc-ctx-detail');
+      if (detailEl) {
+        var parts = [];
+        if (meta)  parts.push(meta.icon + '\u00a0' + meta.label); /* icon + NBSP + label */
+        if (city)  parts.push('\uD83D\uDCCD\u00a0' + city);       /* single 📍 + NBSP + city */
+        if (parts.length > 0) {
+          detailEl.textContent = parts.join('\u00a0\u00b7\u00a0'); /* · separator */
+          detailEl.style.display = '';
+          detailEl.removeAttribute('aria-hidden');
         }
       }
 
-      /* Highlight matching card — add class + badge, do not remove any other card */
+      /* ── Hint text ── */
+      var hint = document.getElementById('fxsvc-ctx-hint');
+      if (hint) {
+        hint.textContent = meta
+          ? 'Continuez avec le service identifi\u00e9 ou explorez les autres sp\u00e9cialit\u00e9s.'
+          : 'Continuez votre recherche parmi tous les services.';
+      }
+
+      /* ── Highlight matching card — class + non-color badge ── */
       if (meta) {
         var cards = document.querySelectorAll('.cp-svc-card');
         for (var i = 0; i < cards.length; i++) {
           var cta = cards[i].querySelector('[data-svc-prefill]');
           if (cta && cta.dataset.svcPrefill === meta.cardPrefill) {
             cards[i].classList.add('fxsvc-match');
-            /* Add visible non-color marker */
             var badge = document.createElement('span');
             badge.className = 'fxsvc-match-badge';
             badge.setAttribute('aria-label', 'Correspond \u00e0 votre recherche');
             badge.textContent = 'Correspond \u00e0 votre recherche';
-            /* Insert after header row (icon+name) if present, else after name */
-            var hdrEl = cards[i].querySelector('.cp-svc-card-header');
+            /* Insert after header row (Phase 4C) or name — badge runs before desc */
+            var hdrEl    = cards[i].querySelector('.cp-svc-card-header');
             var anchorEl = hdrEl || cards[i].querySelector('.cp-svc-name');
             if (anchorEl && anchorEl.nextSibling) {
               anchorEl.parentNode.insertBefore(badge, anchorEl.nextSibling);
@@ -2563,7 +2485,7 @@ a{text-decoration:none}
       }
 
     } catch (err) {
-      /* Silent fail — context bar is decorative, never blocks page function */
+      /* Silent fail — context bar is decorative; never blocks page function */
     }
   }
 
