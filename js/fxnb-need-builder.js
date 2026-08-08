@@ -376,23 +376,36 @@
     if (!text) return;
 
     /* ── V5 CATEGORY PRE-SELECTION ─────────────────────────────────────
-       fx-request-flow-v4.js reads #search-input via _readContext() at open
-       time, then normalizes it via _normalizeSlug() to pre-select the
-       matching service chip (adds is-selected class + sets st.serviceSlug).
+       fx-request-flow-v4.js _readContext() reads the service context using:
+         document.querySelector('#qsm-input-nlp, #smart-search-input,
+                                  #secondary-search-input, #search-input')
+       This returns the FIRST element that exists in the DOM. #qsm-input-nlp
+       is injected by quick-search-modal.js and comes first — it is always
+       present with an empty value, so _readContext() reads it and gets '',
+       causing prefillService to stay empty and NO chip to be pre-selected.
 
-       Strategy: if we have a resolved category, write its canonical LABEL
-       (e.g. "Plomberie") to #search-input. _normalizeSlug() normalizes it
-       to "plomberie" which is present in SERVICES[0].words → match found.
-       The chip is visually pre-selected; user taps once to confirm.
+       Fix: write the canonical category label to the element _readContext()
+       ACTUALLY reads (the first existing selector). We discover this element
+       dynamically so the fix is robust against any future DOM change.
+
+       The canonical label (e.g. "Plomberie") normalizes via _normalizeSlug()
+       to "plomberie" which is in SERVICES[0].words → match found → chip
+       gets is-selected class.
 
        If no category (fallback), write the original description text so the
-       free-text "Autre chose" path is pre-populated.
+       "Autre chose" path is pre-populated.
+
+       Cleanup: clear the relay immediately after open() returns (V5 reads
+       synchronously in _readContext before _renderStep1). No timeout needed.
+       A 1s fallback clear is added as belt-and-suspenders.
     ──────────────────────────────────────────────────────────────────── */
-    var relay = _el('search-input');
+    /* Discover which element _readContext() will actually read */
+    var relay = document.querySelector('#qsm-input-nlp, #smart-search-input, #secondary-search-input, #search-input');
+    var relayValue = (_state.category && _state.category.label) ? _state.category.label : text;
+
     if (relay) {
-      /* Write label for slug pre-selection, or description for fallback */
-      relay.value = (_state.category && _state.category.label) ? _state.category.label : text;
-      /* No 'input' event dispatch — prevents artisan text filter */
+      relay.value = relayValue;
+      /* No 'input' event dispatch — prevents artisan/hero text filter */
     }
 
     /* ── RAFI OS MEMORY UPDATE ─────────────────────────────────────────
@@ -415,12 +428,17 @@
        Use FixeoRequestFlowV4.open() directly if available — this is
        the canonical V5 API. Falls back to FixeoClientRequest.open()
        (patched by V5 to route through open()) then window.openModal().
-       Mode:
-         - 'emergency' if urgency confirmed AND city known (skip both steps)
-         - 'default' otherwise (shows service chip grid with pre-selection)
+
+       Mode: always 'default'.
+         'emergency' routes to _renderEmergencyStep1() which renders
+         situation-list cards (not service chips). Service chips only
+         appear in _renderStandardStep1() which runs on 'default' mode.
+         Pre-selection via prefillService only works in standard mode.
+         Urgency is preserved in the RAFI OS memory header (rfos-v1f)
+         and in the user's chosen urgency step — not in the mode flag.
     ──────────────────────────────────────────────────────────────────── */
     try {
-      var mode = (_state.isUrgent && _state.category) ? 'emergency' : 'default';
+      var mode = 'default'; /* always default — emergency breaks chip pre-selection */
 
       if (window.FixeoRequestFlowV4 && typeof window.FixeoRequestFlowV4.open === 'function') {
         window.FixeoRequestFlowV4.open({ mode: mode, source: 'need-builder' });
@@ -435,13 +453,17 @@
     } catch(e) {}
 
     /* ── RELAY CLEANUP ───────────────────────────────────────────────
-       Clear #search-input after V5 has read it (in _readContext at open
-       time, synchronously before _renderStep1). 400ms > open animation
-       start but well before any artisan filter could trigger.
+       V5 open() calls _readContext() synchronously at the start of open(),
+       BEFORE _renderStep1() or any animation. So by the time open() returns,
+       _readContext() has already captured relayValue. We can clear immediately.
+       A 1s fallback clear defends against any unforeseen async re-read.
     ──────────────────────────────────────────────────────────────────── */
+    if (relay) relay.value = '';          /* synchronous clear — safe */
     setTimeout(function() {
-      if (relay) relay.value = '';
-    }, 400);
+      /* Belt-and-suspenders: ensure cleared even if open() was async somehow */
+      var r2 = document.querySelector('#qsm-input-nlp, #smart-search-input, #secondary-search-input, #search-input');
+      if (r2) r2.value = '';
+    }, 1000);
   }
 
   /* ══════════════════════════════════════════════════════════════
