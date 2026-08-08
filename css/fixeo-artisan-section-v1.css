@@ -683,3 +683,62 @@
    15. 320px peek: .results-main-column padding-left, grid margin-left,
        grid padding-left — inline CSS + conversion CSS (1,0,0) selectors
    ══════════════════════════════════════════════════════════════════════════ */
+
+/* ═══════════════════════════════════════════════════════════════════
+   PHASE 5B — Artisan Results State Unification
+   data-results-state: "discovery" | "loading" | "targeted"
+   Set by fixeo_homepage_premium_patch.js _setResultsState().
+   CSS reacts; JS owns semantic state.
+   Frozen: artisan card layout, reservation modal, FABs, RAFI.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── TARGETED state: suppress the generic discovery header ──────────
+   The discovery header (eyebrow + title + counter block) is informational
+   for browsing, not for targeted results. In targeted mode the bridge
+   context header (fxasb-*) already identifies trade/city. */
+#artisans-section[data-results-state="targeted"] #fixeo-homepage-header,
+#artisans-section[data-results-state="loading"]  #fixeo-homepage-header {
+  display: none !important;
+}
+
+/* ── TARGETED state: also suppress the explore strip ────────────────
+   City explore chips are discovery-mode UI; irrelevant during targeted results. */
+#artisans-section[data-results-state="targeted"] #fixeo-homepage-explore,
+#artisans-section[data-results-state="loading"]  #fixeo-homepage-explore {
+  display: none !important;
+}
+
+/* ── LOADING state: suppress pagination (never show stale pages) ────
+   v12-pagination is injected by homepage-v13.js MutationObserver.
+   In loading state it must never be visible. */
+#artisans-section[data-results-state="loading"] #v12-pagination,
+#artisans-section[data-results-state="loading"] .v12-pagination {
+  display: none !important;
+}
+
+/* ── LOADING state: ensure loading indicator shows ──────────────────
+   (loading-artisans is display:none by default; JS reveals it.
+    This rule ensures it is not suppressed by homepage-mode overrides.) */
+#artisans-section[data-results-state="loading"] #loading-artisans {
+  display: block !important;
+}
+
+/* ── DISCOVERY state: section actions always visible ────────────────
+   In discovery mode the "Voir plus d'artisans" CTA should be visible. */
+#artisans-section[data-results-state="discovery"] #fxas-section-actions {
+  display: block;
+}
+
+/* ── TARGETED state: actions remain (may have different CTA) ────────
+   Actions rendered fresh each _renderPremiumGrid call; no suppression needed. */
+
+/* ── DISCOVERY state: restore pagination if present ────────────────
+   (Legacy pagination should also hide in discovery since vedette grid
+   doesn't use artisans-container. CSS guard.) */
+#artisans-section[data-results-state="discovery"] #v12-pagination,
+#artisans-section[data-results-state="discovery"] .v12-pagination {
+  display: none !important;
+}
+
+/* ── Reduced motion: no impact (state changes are display:none/block) */
+

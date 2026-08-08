@@ -728,8 +728,12 @@
     /* Subtitle — approved V1A.2 fixed copy (honest, no availability implication) */
     var _subtitleText = 'Explorez les profils r\u00e9f\u00e9renc\u00e9s dans votre ville et r\u00e9servez directement.';
 
-    /* Count — real network total (window.ARTISANS.length), fr-FR formatted */
-    var _countNumber = new Intl.NumberFormat('fr-FR').format(totalProfiles);
+    /* Count — 5B: durable rounded-count doctrine (mirrors 4D.1 + 5A.2).
+     * Was: Intl.NumberFormat('fr-FR').format(totalProfiles) → "1 302"
+     * Now: "+1 300" — stable across data updates; applied in ALL resultModes.
+     * _updateNetworkCount() is a no-op (targets static span that no longer exists);
+     * this is the sole authoritative counter writer for the discovery section. */
+    var _countNumber = '+1\u202f300';
     var _countLabel  = 'profils artisans r\u00e9f\u00e9renc\u00e9s sur FIXEO';
 
     /* Title HTML — city in <em> for gradient highlight when city is known */
@@ -1078,10 +1082,19 @@
   function _stopObserver() { if (_containerObserver) { _containerObserver.disconnect(); _containerObserver=null; } }
 
   /* ── Mode switches ── */
+  /* 5B: set data-results-state on #artisans-section root.
+   * CSS reacts to this attribute to suppress/restore UI zones per state.
+   * States: 'discovery' | 'loading' | 'targeted' */
+  function _setResultsState(state) {
+    var sec = document.getElementById(SECTION_ID);
+    if (sec) sec.setAttribute('data-results-state', state);
+  }
+
   function _enterHomepageMode() {
     _searchActive = false;
     document.body.classList.remove('fixeo-search-mode');
     document.body.classList.remove('fixeo-hero-search-mode'); /* clear hero-search suppression */
+    _setResultsState('discovery'); /* 5B: restore discovery visuals */
     // Restore any hero-mode JS-hidden elements
     (function _restoreHeroHidden() {
       var toRestore = [
@@ -1103,9 +1116,13 @@
     _stopObserver();
     document.body.classList.add('fixeo-search-mode');
     document.body.classList.add('fixeo-sections-ready'); /* keep sections visible */
+    _setResultsState('loading'); /* 5B: loading before results arrive */
     _showResultsChrome();
     // Refresh vedette with current filter context
-    setTimeout(_renderPremiumGrid, 50);
+    setTimeout(function() {
+      _renderPremiumGrid();
+      _setResultsState('targeted'); /* 5B: targeted after render cycle */
+    }, 50);
   }
 
   /* ── Patch renderArtisans ── */
@@ -1170,6 +1187,20 @@
         setTimeout(function(){ if(!_isSearchActive()) _enterHomepageMode(); },150);
       });
     }
+    /* 5B: situation chip clicks → targeted state.
+     * Bridge handles card display; we set the state attribute so CSS can
+     * suppress the discovery header while targeted results are shown. */
+    document.addEventListener('click', function(e) {
+      var chip = e.target.closest('.chip[data-category]');
+      if (!chip) return;
+      var cat = chip.dataset.category || '';
+      if (cat && cat !== 'all') {
+        _setResultsState('loading');
+        requestAnimationFrame(function() { _setResultsState('targeted'); });
+      } else if (cat === 'all') {
+        _setResultsState('discovery');
+      }
+    }, { passive: true });
     /* fixeo:marketplace-artisans-updated handled in _bindEvents above */
   }
 
