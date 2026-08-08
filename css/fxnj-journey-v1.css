@@ -1,0 +1,228 @@
+/**
+ * fxnj-journey-v1.css
+ * Phase 3C — Need Journey Continuity
+ * ─────────────────────────────────────────────────────────────────────────────
+ * Adds a subtle vertical spine that visually connects the three journey stages:
+ *   BESOIN (Need Builder result) → ZONE (City) → SITUATION (Cards)
+ *
+ * Invariants:
+ *   - NEVER modifies Need Builder logic (fxnb-*)
+ *   - NEVER modifies city state logic (fxsit-city-*)
+ *   - NEVER modifies card click / filter / scroll (Phase 3A, 3B)
+ *   - NEVER modifies RAFI (fx-request-flow-v4.js, fixeo-rafi-os-v1.js)
+ *   - Purely additive: one wrapper (#fxnj-spine), three node markers
+ *   - No looping animation, no continuous transform
+ *
+ * Namespace: fxnj-* (FIXEO Need Journey)
+ * Scoped to: #services #fxnj-spine
+ */
+
+/* ─────────────────────────────────────────────────────────────────────────
+   §1  LAYOUT WRAPPER
+   #fxnj-spine wraps the three journey blocks. Inserted by JS around:
+     .fxnb-wrap + .fxsit-city-row + .fxsit-reset-wrap + .fxsit-primary-grid
+   The wrapper adds the relative context for the spine line.
+───────────────────────────────────────────────────────────────────────── */
+#fxnj-spine {
+  position: relative;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   §2  VERTICAL SPINE LINE
+   Runs from top of BESOIN node to bottom of SITUATION node.
+   Drawn as a pseudo-element on #fxnj-spine so it never affects layout.
+───────────────────────────────────────────────────────────────────────── */
+#fxnj-spine::before {
+  content: '';
+  position: absolute;
+  left: 15px;          /* aligned with node dot centres */
+  top: 28px;           /* starts below first node */
+  bottom: 40px;        /* stops above last node */
+  width: 1px;
+  background: linear-gradient(
+    to bottom,
+    rgba(72, 100, 255, 0.0)  0%,
+    rgba(72, 100, 255, 0.14) 15%,
+    rgba(72, 100, 255, 0.14) 85%,
+    rgba(72, 100, 255, 0.0)  100%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   §3  STAGE LABELS (micro-labels above each block)
+   .fxnj-label — injected once per stage by JS.
+   Default: dim / inactive.
+   When stage is confirmed: brighten.
+───────────────────────────────────────────────────────────────────────── */
+.fxnj-stage {
+  position: relative;
+  z-index: 1;
+}
+
+.fxnj-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 0 8px 0;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Node dot */
+.fxnj-label-dot {
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(72, 100, 255, 0.28);
+  background: transparent;
+  position: relative;
+  z-index: 1;
+  transition: background 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+}
+
+/* Label text */
+.fxnj-label-text {
+  font-size: 0.635rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(140, 155, 200, 0.38);
+  transition: color 220ms ease;
+  line-height: 1;
+}
+
+/* ── Confirmed state — triggered by JS adding .fxnj-confirmed to stage ── */
+.fxnj-stage.fxnj-confirmed .fxnj-label-dot {
+  background: rgba(72, 100, 255, 0.55);
+  border-color: rgba(72, 100, 255, 0.7);
+  box-shadow: 0 0 0 3px rgba(72, 100, 255, 0.1);
+}
+
+.fxnj-stage.fxnj-confirmed .fxnj-label-text {
+  color: rgba(160, 175, 255, 0.72);
+}
+
+/* ── Active (current focus) — when stage is confirmed AND is the last confirmed ── */
+.fxnj-stage.fxnj-active .fxnj-label-dot {
+  background: rgba(100, 130, 255, 0.72);
+  border-color: rgba(100, 130, 255, 0.9);
+  box-shadow: 0 0 0 4px rgba(72, 100, 255, 0.14),
+              0 0 8px rgba(72, 100, 255, 0.18);
+}
+
+.fxnj-stage.fxnj-active .fxnj-label-text {
+  color: rgba(180, 195, 255, 0.88);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   §4  SPINE LINE PROGRESSIVE FILL
+   A second pseudo-element on the spine that grows as stages confirm.
+   Implemented via CSS custom properties set by JS on #fxnj-spine.
+───────────────────────────────────────────────────────────────────────── */
+#fxnj-spine::after {
+  content: '';
+  position: absolute;
+  left: 15px;
+  top: 28px;
+  width: 1px;
+  height: var(--fxnj-fill, 0%);
+  max-height: calc(100% - 68px);
+  background: linear-gradient(
+    to bottom,
+    rgba(100, 130, 255, 0.0)  0%,
+    rgba(100, 130, 255, 0.45) 40%,
+    rgba(100, 130, 255, 0.45) 100%
+  );
+  pointer-events: none;
+  z-index: 0;
+  transition: height 280ms ease;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   §5  SITUATION STAGE — CARD AREA SUBTLE CONTEXT FRAME
+   When a card is selected, add a very subtle left accent to the grid area.
+   Uses .fxnj-stage-situation wrapper added by JS.
+───────────────────────────────────────────────────────────────────────── */
+.fxnj-stage-situation {
+  transition: padding-left 220ms ease;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   §6  MOBILE OVERRIDES
+   On narrow screens: spine line shifts to avoid card grid columns.
+   Labels stay readable but never compress card width.
+───────────────────────────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  #fxnj-spine::before,
+  #fxnj-spine::after {
+    left: 11px;
+  }
+
+  .fxnj-label {
+    padding-left: 0;
+    gap: 7px;
+  }
+
+  .fxnj-label-dot {
+    width: 7px;
+    height: 7px;
+  }
+
+  .fxnj-label-text {
+    font-size: 0.60rem;
+    letter-spacing: 0.08em;
+  }
+}
+
+/* Very small screens */
+@media (max-width: 374px) {
+  #fxnj-spine::before,
+  #fxnj-spine::after {
+    display: none; /* remove spine line entirely — too cramped */
+  }
+
+  .fxnj-label-dot {
+    width: 6px;
+    height: 6px;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   §7  DESKTOP OVERRIDES
+   On wide screens, shift spine to a bit more left padding.
+───────────────────────────────────────────────────────────────────────── */
+@media (min-width: 900px) {
+  #fxnj-spine::before,
+  #fxnj-spine::after {
+    left: 0;
+  }
+
+  .fxnj-label {
+    padding-left: 14px;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   §8  REDUCED MOTION
+   All decorative transitions removed.
+   State changes remain instant — no animation at all.
+───────────────────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .fxnj-label-dot,
+  .fxnj-label-text,
+  #fxnj-spine::after {
+    transition: none !important;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   §9  ACCESSIBILITY
+   All .fxnj-label elements are aria-hidden — purely decorative.
+   No color-only state communication for meaningful content.
+───────────────────────────────────────────────────────────────────────── */
+/* (aria-hidden set in HTML/JS — no CSS needed here) */
