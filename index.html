@@ -3826,6 +3826,437 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
 
 </style>
 
+<!-- ── fxsit-wow-v1: Phase 3A premium surface, category light, tap feedback ── -->
+<!-- Scope: primary grid cards only. Additional/expanded cards untouched.       -->
+<!-- All rules use .fxsit-primary-grid specificity to avoid bleeding.           -->
+<style id="fxsit-wow-v1">
+
+/* ════════════════════════════════════════════════════════════════════
+   fxsit-wow-v1 — Phase 3A Premium Card Refinement
+   Strategy:
+     §W1  Category color tokens (CSS custom properties per data-category)
+     §W2  Primary card surface upgrade (idle)
+     §W3  Icon presence
+     §W4  Tap compression (::active)
+     §W5  Selected / active state — category-aware glow
+     §W6  Urgent badge warm accent
+     §W7  Checkmark decoration (::after on active primary cards)
+     §W8  One-time reveal animation upgrade (primary grid only)
+     §W9  Reduced-motion overrides
+     §W10 Responsive clip guard
+   ════════════════════════════════════════════════════════════════════ */
+
+
+/* ════════════════════════════════════════════════════════════════════
+   §W1  CATEGORY COLOR TOKENS
+   Each card's ambient light source. Set per data-category on the card
+   element itself so child selectors can inherit without extra queries.
+   Values: restrained — never saturated to 100%.
+   ════════════════════════════════════════════════════════════════════ */
+
+/* Plomberie — cyan / aqua */
+#services .fxsit-primary-grid .fxsit-card[data-category="plomberie"] {
+  --fxw-h: 186;
+  --fxw-s: 80%;
+  --fxw-l: 56%;
+  --fxw-c: hsl(186 80% 56%);       /* #1dcfea */
+  --fxw-c-dim: hsla(186,80%,56%,0.13);
+  --fxw-c-glow: hsla(186,80%,56%,0.22);
+  --fxw-c-ring: hsla(186,80%,62%,0.48);
+  --fxw-c-icon: hsla(186,80%,70%,0.90);
+}
+
+/* Électricité — warm amber / electric yellow */
+#services .fxsit-primary-grid .fxsit-card[data-category="electricite"] {
+  --fxw-h: 44;
+  --fxw-s: 95%;
+  --fxw-l: 58%;
+  --fxw-c: hsl(44 95% 58%);        /* #f5c518 area */
+  --fxw-c-dim: hsla(44,95%,58%,0.11);
+  --fxw-c-glow: hsla(44,95%,58%,0.20);
+  --fxw-c-ring: hsla(44,95%,65%,0.46);
+  --fxw-c-icon: hsla(44,95%,72%,0.90);
+}
+
+/* Serrurerie — warm gold */
+#services .fxsit-primary-grid .fxsit-card[data-category="serrurerie"] {
+  --fxw-h: 38;
+  --fxw-s: 85%;
+  --fxw-l: 60%;
+  --fxw-c: hsl(38 85% 60%);        /* warm gold */
+  --fxw-c-dim: hsla(38,85%,60%,0.11);
+  --fxw-c-glow: hsla(38,85%,60%,0.19);
+  --fxw-c-ring: hsla(38,85%,66%,0.44);
+  --fxw-c-icon: hsla(38,85%,72%,0.90);
+}
+
+/* Climatisation — icy blue */
+#services .fxsit-primary-grid .fxsit-card[data-category="climatisation"] {
+  --fxw-h: 210;
+  --fxw-s: 80%;
+  --fxw-l: 68%;
+  --fxw-c: hsl(210 80% 68%);       /* ice blue */
+  --fxw-c-dim: hsla(210,80%,68%,0.10);
+  --fxw-c-glow: hsla(210,80%,68%,0.18);
+  --fxw-c-ring: hsla(210,80%,72%,0.42);
+  --fxw-c-icon: hsla(210,80%,78%,0.90);
+}
+
+/* Menuiserie — warm neutral / wood */
+#services .fxsit-primary-grid .fxsit-card[data-category="menuiserie"] {
+  --fxw-h: 28;
+  --fxw-s: 55%;
+  --fxw-l: 58%;
+  --fxw-c: hsl(28 55% 58%);        /* warm timber */
+  --fxw-c-dim: hsla(28,55%,58%,0.10);
+  --fxw-c-glow: hsla(28,55%,58%,0.17);
+  --fxw-c-ring: hsla(28,55%,64%,0.40);
+  --fxw-c-icon: hsla(28,55%,72%,0.88);
+}
+
+
+/* ════════════════════════════════════════════════════════════════════
+   §W2  PRIMARY CARD SURFACE — IDLE UPGRADE
+   Strategy: richer dark translucent base, depth gradient,
+   top-edge inset highlight, fine category-tinted border.
+   Overrides the flat rgba(255,255,255,0.030) from §3.
+   ════════════════════════════════════════════════════════════════════ */
+
+#services .fxsit-primary-grid .fxsit-card {
+  /* Dark navy-translucent gradient — depth illusion */
+  background:
+    linear-gradient(
+      160deg,
+      rgba(14,22,46,0.82) 0%,
+      rgba(8,14,32,0.90) 100%
+    ) !important;
+
+  /* Fine border: category-tinted or neutral blue-white */
+  border: 1px solid rgba(120,148,255,0.13) !important;
+
+  /* Top-edge inset highlight: mimics a glass/bevel rim */
+  border-top: 1px solid rgba(180,200,255,0.16) !important;
+
+  /* Inner top-left light refraction via inset shadow */
+  box-shadow:
+    inset 0 1px 0 rgba(210,220,255,0.07),
+    0 2px 8px rgba(0,0,8,0.30) !important;
+
+  /* Smooth transition for all animated properties */
+  transition:
+    background 0.20s ease,
+    border-color 0.18s ease,
+    box-shadow 0.22s ease,
+    transform 0.14s cubic-bezier(0.34,1.56,0.64,1) !important;
+}
+
+/* Hover — desktop only: slight surface brightening + category border hint */
+@media (hover: hover) {
+  #services .fxsit-primary-grid .fxsit-card:hover {
+    background:
+      linear-gradient(
+        160deg,
+        rgba(22,34,64,0.88) 0%,
+        rgba(12,20,44,0.92) 100%
+      ) !important;
+    border-color: var(--fxw-c-ring, rgba(120,148,255,0.26)) !important;
+    border-top-color: var(--fxw-c-ring, rgba(180,200,255,0.28)) !important;
+    box-shadow:
+      inset 0 1px 0 rgba(210,220,255,0.10),
+      0 4px 16px rgba(0,0,0,0.28),
+      0 0 0 1px var(--fxw-c-dim, rgba(72,100,255,0.08)) !important;
+  }
+}
+
+
+/* ════════════════════════════════════════════════════════════════════
+   §W3  ICON PRESENCE
+   Slightly larger, category-color tinted, soft radial glow behind icon.
+   The glow is a drop-shadow on the emoji span itself — no new elements.
+   ════════════════════════════════════════════════════════════════════ */
+
+#services .fxsit-primary-grid .fxsit-card .fc3-card-icon {
+  font-size: 1.42rem !important;
+  /* Soft category-colored halo via filter drop-shadow on emoji */
+  filter: drop-shadow(0 0 5px var(--fxw-c-icon, rgba(140,160,255,0.55))) !important;
+  transition: filter 0.20s ease, transform 0.16s ease !important;
+}
+
+/* Hover: icon breathes slightly */
+@media (hover: hover) {
+  #services .fxsit-primary-grid .fxsit-card:hover .fc3-card-icon {
+    filter: drop-shadow(0 0 8px var(--fxw-c-icon, rgba(140,160,255,0.70))) !important;
+    transform: scale(1.06) !important;
+  }
+}
+
+
+/* ════════════════════════════════════════════════════════════════════
+   §W4  TAP COMPRESSION — :active
+   Immediate tactile response: scale(0.990) in 80ms, no delay.
+   Uses :active pseudo-class — fires at pointer-down, zero JS needed.
+   ════════════════════════════════════════════════════════════════════ */
+
+#services .fxsit-primary-grid .fxsit-card:active:not(.active) {
+  transform: scale(0.990) !important;
+  transition:
+    transform 0.08s cubic-bezier(0.4,0,1,1),
+    box-shadow 0.08s ease !important;
+  box-shadow:
+    inset 0 1px 0 rgba(210,220,255,0.05),
+    0 1px 4px rgba(0,0,8,0.34),
+    inset 0 0 0 1px var(--fxw-c-dim, rgba(72,100,255,0.12)) !important;
+}
+
+
+/* ════════════════════════════════════════════════════════════════════
+   §W5  SELECTED / ACTIVE STATE — CATEGORY-AWARE
+   Significantly upgraded from the generic blue outline.
+   Uses the card's own --fxw-c-* tokens for ambient glow.
+   ════════════════════════════════════════════════════════════════════ */
+
+#services .fxsit-primary-grid .fxsit-card.active,
+#services .fxsit-primary-grid .fxsit-card[aria-pressed="true"] {
+  /* Surface: luminous dark with category radial at top-left */
+  background:
+    radial-gradient(
+      ellipse 80% 60% at 20% 0%,
+      var(--fxw-c-dim, rgba(72,100,255,0.13)) 0%,
+      transparent 70%
+    ),
+    linear-gradient(
+      160deg,
+      rgba(18,28,60,0.92) 0%,
+      rgba(10,18,42,0.95) 100%
+    ) !important;
+
+  /* Category-tinted ring: thin outer glow + inset top highlight */
+  border: 1px solid var(--fxw-c-ring, rgba(100,140,255,0.52)) !important;
+  border-top: 1px solid var(--fxw-c-ring, rgba(140,180,255,0.60)) !important;
+
+  /* Outer ambient: category glow + elevation shadow */
+  box-shadow:
+    0 0 0 2px var(--fxw-c-dim, rgba(72,100,255,0.10)),
+    0 0 14px 2px var(--fxw-c-glow, rgba(72,100,255,0.14)),
+    inset 0 1px 0 var(--fxw-c-ring, rgba(140,180,255,0.16)),
+    0 4px 18px rgba(0,0,12,0.34) !important;
+
+  /* Slight lift instead of translateY(-1) — keeps grid stable */
+  transform: translateY(-1px) scale(1.008) !important;
+  color: #ffffff !important;
+}
+
+/* Active icon: stronger glow */
+#services .fxsit-primary-grid .fxsit-card.active .fc3-card-icon,
+#services .fxsit-primary-grid .fxsit-card[aria-pressed="true"] .fc3-card-icon {
+  filter: drop-shadow(0 0 10px var(--fxw-c-icon, rgba(140,160,255,0.80))) !important;
+  transform: scale(1.06) !important;
+}
+
+/* Active label */
+#services .fxsit-primary-grid .fxsit-card.active .fc3-card-label,
+#services .fxsit-primary-grid .fxsit-card[aria-pressed="true"] .fc3-card-label {
+  color: #ffffff !important;
+  font-weight: 600 !important;
+}
+
+
+/* ════════════════════════════════════════════════════════════════════
+   §W5b  CHECKMARK DECORATION
+   A tiny ✓ in the top-right corner on active primary cards.
+   Purely decorative — implemented as ::after pseudo-element.
+   No layout shift: position:absolute, contained within card.
+   Not a state machine. Not announced to AT (aria-hidden via content trick).
+   ════════════════════════════════════════════════════════════════════ */
+
+#services .fxsit-primary-grid .fxsit-card.active::after,
+#services .fxsit-primary-grid .fxsit-card[aria-pressed="true"]::after {
+  content: '';
+  position: absolute !important;
+  top: 8px !important;
+  right: 8px !important;
+  width: 14px !important;
+  height: 14px !important;
+  border-radius: 50% !important;
+  /* SVG checkmark as inline background — no image file, no new request */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Ccircle cx='7' cy='7' r='6.5' fill='none' stroke='rgba(140%2C180%2C255%2C0.40)' stroke-width='1'/%3E%3Cpath d='M4 7l2 2 4-4' fill='none' stroke='rgba(200%2C220%2C255%2C0.85)' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") !important;
+  background-size: contain !important;
+  background-repeat: no-repeat !important;
+  opacity: 0;
+  animation: fxw-check-in 0.22s 0.08s cubic-bezier(0.34,1.56,0.64,1) forwards !important;
+  pointer-events: none !important;
+}
+
+@keyframes fxw-check-in {
+  from { opacity: 0; transform: scale(0.5); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+
+/* ════════════════════════════════════════════════════════════════════
+   §W6  URGENT BADGE — WARM CORAL ACCENT
+   Preserves existing Urgent badge exactly. Upgrades color palette
+   to orange→coral. Adds faint warm ambient behind badge via card
+   bottom-edge gradient when card has .fc3-card-urgency child.
+   Selector: target cards that contain urgency (no new classes needed —
+   use :has() with graceful fallback via box-shadow on badge itself).
+   ════════════════════════════════════════════════════════════════════ */
+
+/* Upgraded urgency badge: coral / warm red replacing cold magenta */
+#services .fxsit-primary-grid .fxsit-card .fc3-card-urgency {
+  color: rgba(255, 100, 70, 0.92) !important;
+  background: rgba(255, 90, 50, 0.07) !important;
+  border: 1px solid rgba(255, 100, 70, 0.22) !important;
+  /* Faint warm halo around the badge */
+  box-shadow: 0 0 8px rgba(255, 90, 50, 0.12) !important;
+}
+
+/* Warm lower-edge on urgent cards via :has() — progressively enhanced */
+@supports selector(:has(.fc3-card-urgency)) {
+  #services .fxsit-primary-grid .fxsit-card:has(.fc3-card-urgency) {
+    /* Subtle warm lower gradient — doesn't tint the whole card */
+    background:
+      linear-gradient(
+        to top,
+        rgba(255,80,40,0.04) 0%,
+        transparent 32%
+      ),
+      linear-gradient(
+        160deg,
+        rgba(14,22,46,0.82) 0%,
+        rgba(8,14,32,0.90) 100%
+      ) !important;
+  }
+
+  #services .fxsit-primary-grid .fxsit-card:has(.fc3-card-urgency).active,
+  #services .fxsit-primary-grid .fxsit-card:has(.fc3-card-urgency)[aria-pressed="true"] {
+    background:
+      linear-gradient(
+        to top,
+        rgba(255,80,40,0.05) 0%,
+        transparent 28%
+      ),
+      radial-gradient(
+        ellipse 80% 60% at 20% 0%,
+        var(--fxw-c-dim, rgba(72,100,255,0.13)) 0%,
+        transparent 70%
+      ),
+      linear-gradient(
+        160deg,
+        rgba(18,28,60,0.92) 0%,
+        rgba(10,18,42,0.95) 100%
+      ) !important;
+  }
+}
+
+/* Active urgent badge: coral brightens */
+#services .fxsit-primary-grid .fxsit-card.active .fc3-card-urgency,
+#services .fxsit-primary-grid .fxsit-card[aria-pressed="true"] .fc3-card-urgency {
+  color: rgba(255, 120, 85, 1) !important;
+  background: rgba(255, 90, 50, 0.10) !important;
+  border-color: rgba(255, 110, 80, 0.32) !important;
+  box-shadow: 0 0 10px rgba(255, 90, 50, 0.18) !important;
+}
+
+
+/* ════════════════════════════════════════════════════════════════════
+   §W7  MICRO STATUS — DECISION: REJECTED
+   "Plomberie identifiée" text during selected state.
+   Reason: card height is tightly managed (min-height:104px at 390px).
+   Adding a text line causes layout shift and label crowding on urgent
+   cards (icon + label + urgency + status = 4 stacked items in ~104px).
+   The checkmark (§W5b) provides sufficient non-color confirmation.
+   Decision: NOT implemented.
+   ════════════════════════════════════════════════════════════════════ */
+
+
+/* ════════════════════════════════════════════════════════════════════
+   §W8  ONE-TIME REVEAL — UPGRADED PRIMARY GRID ENTRANCE
+   Replaces the existing fxsit-card-enter keyframe with a richer
+   translateY(6px)→0 + opacity variant, stagger 50ms between cards.
+   Only applies to primary grid. Additional/expanded cards keep the
+   existing lighter animation from §5 in fxhome-sit-v2.
+   ════════════════════════════════════════════════════════════════════ */
+
+@keyframes fxw-card-enter {
+  0%   { opacity: 0; transform: translateY(6px); }
+  60%  { opacity: 1; }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Override §4 animation on primary cards only */
+#services .fxsit-primary-grid .fxsit-card:nth-child(1) {
+  animation: fxw-card-enter 0.38s 0.00s cubic-bezier(0.22,1,0.36,1) both !important;
+}
+#services .fxsit-primary-grid .fxsit-card:nth-child(2) {
+  animation: fxw-card-enter 0.38s 0.05s cubic-bezier(0.22,1,0.36,1) both !important;
+}
+#services .fxsit-primary-grid .fxsit-card:nth-child(3) {
+  animation: fxw-card-enter 0.38s 0.10s cubic-bezier(0.22,1,0.36,1) both !important;
+}
+#services .fxsit-primary-grid .fxsit-card:nth-child(4) {
+  animation: fxw-card-enter 0.38s 0.15s cubic-bezier(0.22,1,0.36,1) both !important;
+}
+#services .fxsit-primary-grid .fxsit-card:nth-child(5) {
+  animation: fxw-card-enter 0.38s 0.20s cubic-bezier(0.22,1,0.36,1) both !important;
+}
+#services .fxsit-primary-grid .fxsit-card:nth-child(6) {
+  animation: fxw-card-enter 0.38s 0.25s cubic-bezier(0.22,1,0.36,1) both !important;
+}
+
+/* §W10 SHEEN — DECISION: REJECTED
+   A single-pass shine (::before pseudo + translateX animation) was prototyped.
+   At 390px card width (~153px per card) the sheen reads as gaming/decorative.
+   The card surface gradient already provides implicit light directionality.
+   Decision: NOT implemented. */
+
+
+/* ════════════════════════════════════════════════════════════════════
+   §W9  REDUCED MOTION
+   All animation and transform overridden to static equivalents.
+   Selected state remains clearly visible via border + background alone.
+   ════════════════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  #services .fxsit-primary-grid .fxsit-card {
+    animation: none !important;
+    opacity: 1 !important;
+    transition: none !important;
+  }
+  #services .fxsit-primary-grid .fxsit-card .fc3-card-icon {
+    filter: none !important;
+    transition: none !important;
+  }
+  #services .fxsit-primary-grid .fxsit-card.active,
+  #services .fxsit-primary-grid .fxsit-card[aria-pressed="true"] {
+    transform: none !important;
+    /* Border and background remain for color indication */
+  }
+  #services .fxsit-primary-grid .fxsit-card.active::after,
+  #services .fxsit-primary-grid .fxsit-card[aria-pressed="true"]::after {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+}
+
+
+/* ════════════════════════════════════════════════════════════════════
+   §W10  RESPONSIVE GUARD
+   No new overflow. transform: scale(1.008) on active cards adds ~1px
+   on each side per column gap; max-width:680px + overflow:hidden on grid
+   parent prevents any horizontal spill.
+   ════════════════════════════════════════════════════════════════════ */
+
+/* At narrow breakpoints: reduce active lift to preserve grid stability */
+@media (max-width: 374px) {
+  #services .fxsit-primary-grid .fxsit-card.active,
+  #services .fxsit-primary-grid .fxsit-card[aria-pressed="true"] {
+    transform: translateY(-1px) scale(1.004) !important;
+  }
+}
+
+</style>
+
 <section class="section fc3-chapter" id="services" aria-labelledby="services-title" data-fxsit-version="v2.3">
   <div class="container">
 
