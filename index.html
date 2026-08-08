@@ -3705,8 +3705,23 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
 
 .fxsit-services-link-wrap {
   text-align: center;
-  margin: 0 auto clamp(20px, 3vw, 32px);
+  /* 3D: reduced top margin; was clamp(20px,3vw,32px) → tighter before RAFI */
+  margin: 0 auto clamp(12px, 2vw, 20px);
   padding-bottom: max(env(safe-area-inset-bottom, 0px), 8px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+/* 3D: supporting microcopy line above the services link */
+.fxsit-services-microcopy {
+  margin: 0;
+  font-size: 0.72rem;
+  color: rgba(160,175,220,0.30);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  line-height: 1.3;
 }
 
 .fxsit-services-link {
@@ -3822,6 +3837,21 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
   #fxsit-additional {
     grid-template-columns: 1fr !important;
     grid-auto-rows: unset !important;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   Phase 3D — Section exit spacing correction
+   Override fc3-chapter bottom padding to close dead space before
+   #fixeo-chapter-2. Higher specificity via html selector.
+   ════════════════════════════════════════════════════════════════════ */
+html #services.fc3-chapter {
+  padding-bottom: clamp(32px, 4vw, 52px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fxsit-services-microcopy {
+    transition: none !important;
   }
 }
 
@@ -4459,18 +4489,6 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
 
     </div><!-- /fxsit-primary-grid -->
 
-    <!-- ── Disclosure control ── -->
-    <div class="fxsit-disclosure-wrap">
-      <button class="fxsit-disclosure-btn" type="button"
-              id="fxsit-disclosure-btn"
-              aria-expanded="false" aria-controls="fxsit-additional">
-        Voir toutes les situations
-        <span class="fxsit-disclosure-chevron" aria-hidden="true">▾</span>
-      </button>
-      <!-- Shown only when a disclosed card is active and the panel is collapsed -->
-      <span class="fxsit-selected-hint" id="fxsit-selected-hint" aria-live="polite"></span>
-    </div>
-
     <!-- ── Additional situations - collapsed by default ── -->
     <div id="fxsit-additional" class="fxsit-additional-grid" role="list"
          aria-label="Situations supplémentaires" aria-hidden="true" inert>
@@ -4513,10 +4531,23 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
 
     </div><!-- /fxsit-additional -->
 
-    <!-- ── Secondary link - services page (replaces dead-end specialized block) ── -->
+    <!-- ── Disclosure control — placed AFTER additional grid so "Réduire" appears below all 12 cards ── -->
+    <div class="fxsit-disclosure-wrap">
+      <button class="fxsit-disclosure-btn" type="button"
+              id="fxsit-disclosure-btn"
+              aria-expanded="false" aria-controls="fxsit-additional">
+        Voir toutes les situations
+        <span class="fxsit-disclosure-chevron" aria-hidden="true">▾</span>
+      </button>
+      <!-- Shown only when a disclosed card is active and the panel is collapsed -->
+      <span class="fxsit-selected-hint" id="fxsit-selected-hint" aria-live="polite"></span>
+    </div>
+
+    <!-- ── Services fallback — compact, secondary ── -->
     <div class="fxsit-services-link-wrap">
+      <p class="fxsit-services-microcopy">Vous ne trouvez pas votre situation ?</p>
       <a class="fxsit-services-link" href="services.html">
-        Voir tous les services
+        Explorer tous les services
         <span aria-hidden="true">→</span>
       </a>
     </div>
