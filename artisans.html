@@ -27,296 +27,155 @@
     .fixeo-gh-brand img.fixeo-logo-img,.fixeo-gh-mobile-bar img.fixeo-logo-img{height:26px!important;width:auto!important}
     @media(max-width:480px){img.fixeo-logo-img{height:24px!important}.fixeo-gh-brand img.fixeo-logo-img{height:22px!important}}
   </style>
+
+  <!-- ── Phase 6B.3: directory-specific lower-page styles ───────────────
+       Scope: artdir-after, artdir-explore, artdir-step-*
+       No shared selectors. No homepage overrides.
+       Replaces cp-hero, cp-two-col, cp-cta-band blocks removed in 6B.3.
+       Retained from pre-6B.3: cp-trust-grid, cp-metier-grid, cp-city-grid
+       (compacted), cp-section/cp-container/cp-section-alt utilities.
+  ──────────────────────────────────────────────────────────────────── -->
   <style>
     *,*::before,*::after{box-sizing:border-box}
     body{margin:0;font-family:Cairo,Tajawal,Arial,sans-serif;background:linear-gradient(135deg,#0D0D1A 0%,#1a1a2e 60%,#16213e 100%);color:#e8eaf0;min-height:100vh;padding-top:70px}
     :root{--cp-muted:rgba(232,234,240,0.58);--cp-card:rgba(255,255,255,0.055);--cp-border:rgba(255,255,255,0.09);--cp-grad:linear-gradient(135deg,#E1306C,#833AB4)}
     .cp-container{max-width:1060px;margin:0 auto;padding:0 20px}
     a{text-decoration:none}
-    /* Hero */
-    .cp-hero{padding:72px 20px 60px;text-align:center;position:relative;overflow:hidden}
-    .cp-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(131,58,180,0.14),transparent);pointer-events:none}
-    .cp-hero-label{display:inline-block;padding:5px 16px;border-radius:999px;border:1px solid rgba(131,58,180,0.4);color:rgba(167,110,255,0.9);font-size:0.78rem;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;margin-bottom:22px}
-    .cp-hero h1{font-size:clamp(1.7rem,4vw,2.8rem);font-weight:900;line-height:1.15;letter-spacing:-0.02em;margin:0 0 18px;color:#fff}
-    .cp-hero h1 .hl{background:var(--cp-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-    .cp-hero p{font-size:clamp(0.97rem,1.8vw,1.12rem);color:var(--cp-muted);max-width:580px;margin:0 auto 32px;line-height:1.65}
-    /* Buttons */
-    .cp-btn{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:14px;font-size:0.95rem;font-weight:800;cursor:pointer;border:none;text-decoration:none;transition:transform 0.15s,box-shadow 0.15s;color:#fff}
-    .cp-btn:hover{transform:translateY(-1px)}
-    .cp-btn-primary{background:var(--cp-grad);box-shadow:0 8px 24px rgba(225,48,108,0.25)}
-    .cp-btn-primary:hover{box-shadow:0 12px 32px rgba(225,48,108,0.38)}
-    .cp-btn-outline{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.14)}
-    .cp-btn-outline:hover{background:rgba(255,255,255,0.12)}
-    .cp-btn-row{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
-    /* Sections */
-    .cp-section{padding:56px 0}
-    .cp-section-alt{background:rgba(255,255,255,0.022);margin:0 -20px;padding:56px 20px}
-    .cp-section-title{font-size:clamp(1.2rem,2.5vw,1.65rem);font-weight:800;color:#fff;margin:0 0 8px;letter-spacing:-0.01em}
-    .cp-section-sub{font-size:0.92rem;color:var(--cp-muted);margin:0 0 36px;line-height:1.6}
-    /* Trust cards */
-    .cp-trust-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
-    .cp-trust-card{background:var(--cp-card);border:1px solid var(--cp-border);border-radius:18px;padding:22px 20px;display:flex;flex-direction:column;gap:10px}
-    .cp-trust-icon{font-size:1.7rem}
-    .cp-trust-title{font-size:0.97rem;font-weight:800;color:#fff;margin:0}
-    .cp-trust-text{font-size:0.84rem;color:var(--cp-muted);margin:0;line-height:1.55}
-    /* Two columns */
-    .cp-two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
-    .cp-col-card{background:var(--cp-card);border:1px solid var(--cp-border);border-radius:20px;padding:28px 22px}
-    .cp-col-label{display:inline-block;padding:3px 12px;border-radius:999px;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:14px}
-    .cp-label-pink{background:rgba(225,48,108,0.13);color:rgba(225,48,108,0.9);border:1px solid rgba(225,48,108,0.22)}
-    .cp-label-purple{background:rgba(131,58,180,0.15);color:rgba(167,110,255,0.9);border:1px solid rgba(131,58,180,0.25)}
-    .cp-col-title{font-size:1.05rem;font-weight:800;color:#fff;margin:0 0 14px}
-    .cp-col-list{list-style:none;padding:0;margin:0 0 20px;display:flex;flex-direction:column;gap:10px}
-    .cp-col-list li{display:flex;align-items:flex-start;gap:10px;font-size:0.88rem;color:var(--cp-muted);line-height:1.55}
-    .cp-col-list li::before{content:'';flex:0 0 6px;height:6px;border-radius:50%;background:var(--cp-grad);margin-top:7px}
-    /* City grid */
-    .cp-city-grid{display:flex;flex-wrap:wrap;gap:10px}
-    .cp-city-pill{padding:7px 16px;border-radius:999px;border:1px solid var(--cp-border);background:var(--cp-card);font-size:0.85rem;font-weight:600;color:rgba(255,255,255,0.75)}
-    /* Métier grid */
-    .cp-metier-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
-    .cp-metier-item{background:var(--cp-card);border:1px solid var(--cp-border);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:10px;font-size:0.88rem;font-weight:700;color:rgba(255,255,255,0.82)}
-    /* CTA band */
-    .cp-cta-band{padding:64px 20px;text-align:center;background:linear-gradient(135deg,rgba(131,58,180,0.10),rgba(225,48,108,0.10));border-top:1px solid rgba(255,255,255,0.07);border-bottom:1px solid rgba(255,255,255,0.07)}
-    .cp-cta-band h2{font-size:clamp(1.3rem,3vw,2rem);font-weight:900;color:#fff;margin:0 0 12px}
-    .cp-cta-band p{font-size:0.96rem;color:var(--cp-muted);max-width:500px;margin:0 auto 28px;line-height:1.6}
-    @media(max-width:640px){.cp-two-col{grid-template-columns:1fr}.cp-trust-grid{grid-template-columns:1fr 1fr}.cp-hero{padding:48px 16px 40px}.cp-section{padding:40px 0}.cp-section-alt{padding:40px 16px}}
-    @media(max-width:480px){.cp-trust-grid{grid-template-columns:1fr}}
-    @media(max-width:400px){.cp-trust-grid{grid-template-columns:1fr}}
-  </style>
 
-  <!-- ── fxart-v2: CTA hierarchy + non-interactive label treatment ────────
-       Page-local only. No RAFI V5 selectors. No shared component overrides.
-  ──────────────────────────────────────────────────────────────────────── -->
-  <style id="art-cta-v2">
-    /* ── Primary action button (RAFI open) ───────────────────────────── */
-    .art-btn-rafi {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 14px 28px;
-      min-height: 52px;
-      border-radius: 16px;
-      font-size: 0.95rem;
-      font-weight: 800;
-      cursor: pointer;
-      border: none;
-      background: linear-gradient(135deg, #E1306C, #833AB4);
-      color: #fff;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.14),
-                  0 2px 6px  rgba(0,0,0,0.22),
-                  0 5px 16px rgba(225,48,108,0.18);
-      text-decoration: none;
-      transition: transform 0.15s, box-shadow 0.15s;
+    /* ── Layout utilities (retained) ────────────────────────────── */
+    .cp-section{padding:36px 0}
+    .cp-section-title{font-size:clamp(1.1rem,2.2vw,1.45rem);font-weight:800;color:#fff;margin:0 0 6px;letter-spacing:-0.01em}
+    .cp-section-sub{font-size:0.88rem;color:var(--cp-muted);margin:0 0 20px;line-height:1.55}
+
+    /* ── Trust grid (compacted from pre-6B.3 values) ────────────── */
+    .cp-trust-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+    .cp-trust-card{background:var(--cp-card);border:1px solid var(--cp-border);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:7px}
+    .cp-trust-icon{font-size:1.3rem}
+    .cp-trust-title{font-size:0.9rem;font-weight:800;color:#fff;margin:0}
+    .cp-trust-text{font-size:0.8rem;color:var(--cp-muted);margin:0;line-height:1.5}
+
+    /* ── Chip grids (retained classes, pointer-events restored) ─── */
+    .cp-metier-grid{display:flex;flex-wrap:wrap;gap:8px}
+    .cp-metier-item{
+      background:var(--cp-card);border:1px solid var(--cp-border);border-radius:999px;
+      padding:7px 14px;font-size:0.82rem;font-weight:700;color:rgba(255,255,255,0.80);
+      cursor:pointer;pointer-events:auto;user-select:none;
+      transition:background 0.12s,border-color 0.12s;
     }
-    .art-btn-rafi:hover {
-      transform: translateY(-2px);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.16),
-                  0 3px 8px  rgba(0,0,0,0.24),
-                  0 8px 22px rgba(225,48,108,0.24);
+    .cp-metier-item:hover{background:rgba(255,255,255,0.09);border-color:rgba(255,255,255,0.18)}
+    .cp-metier-item:focus-visible{outline:2px solid rgba(225,48,108,0.65);outline-offset:2px}
+
+    .cp-city-grid{display:flex;flex-wrap:wrap;gap:8px}
+    .cp-city-pill{
+      padding:6px 14px;border-radius:999px;border:1px solid var(--cp-border);
+      background:var(--cp-card);font-size:0.82rem;font-weight:600;color:rgba(255,255,255,0.72);
+      cursor:pointer;pointer-events:auto;user-select:none;
+      transition:background 0.12s,border-color 0.12s;
     }
-    .art-btn-rafi:active { transform: translateY(1px) scale(0.99); }
-    .art-btn-rafi:focus-visible {
-      outline: 2px solid rgba(225,48,108,0.70);
-      outline-offset: 3px;
+    .cp-city-pill:hover{background:rgba(255,255,255,0.09);border-color:rgba(255,255,255,0.18)}
+    .cp-city-pill:focus-visible{outline:2px solid rgba(131,58,180,0.65);outline-offset:2px}
+
+    /* ── Post-results reassurance block ─────────────────────────── */
+    .artdir-after{
+      max-width:1060px;margin:0 auto;padding:20px 20px 0;
+    }
+    .artdir-after-inner{
+      background:rgba(255,255,255,0.035);
+      border:1px solid rgba(255,255,255,0.08);
+      border-radius:20px;
+      padding:28px 28px 24px;
+      position:relative;
+      overflow:hidden;
+    }
+    .artdir-after-inner::before{
+      content:'';position:absolute;inset:0;
+      background:radial-gradient(ellipse 70% 50% at 50% 0%,rgba(131,58,180,0.07),transparent);
+      pointer-events:none;
+    }
+    .artdir-after-eyebrow{
+      display:inline-block;
+      font-size:0.7rem;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;
+      color:rgba(167,110,255,0.75);
+      margin-bottom:10px;
+    }
+    .artdir-after-heading{
+      font-size:clamp(1rem,2vw,1.25rem);font-weight:800;color:#fff;
+      margin:0 0 22px;letter-spacing:-0.01em;
     }
 
-    /* ── Secondary navigation button (href, no modal) ────────────────── */
-    .art-btn-browse {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 13px 26px;
-      min-height: 48px;
-      border-radius: 16px;
-      font-size: 0.91rem;
-      font-weight: 700;
-      cursor: pointer;
-      border: 1.5px solid rgba(255,255,255,0.18);
-      background: transparent;
-      color: rgba(232,234,240,0.88);
-      text-decoration: none;
-      transition: transform 0.15s, background 0.15s, border-color 0.15s;
+    /* 3-step layout */
+    .artdir-steps{
+      display:grid;grid-template-columns:repeat(3,1fr);gap:16px;
+      margin-bottom:24px;
     }
-    .art-btn-browse:hover {
-      transform: translateY(-1px);
-      background: rgba(255,255,255,0.07);
-      border-color: rgba(255,255,255,0.28);
+    .artdir-step{display:flex;flex-direction:column;gap:7px}
+    .artdir-step-num{
+      display:inline-flex;align-items:center;justify-content:center;
+      width:24px;height:24px;border-radius:50%;
+      background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.10);
+      font-size:0.72rem;font-weight:800;color:rgba(255,255,255,0.55);
+      flex-shrink:0;
     }
-    .art-btn-browse:active { transform: translateY(1px) scale(0.99); }
-    .art-btn-browse:focus-visible {
-      outline: 2px solid rgba(255,255,255,0.40);
-      outline-offset: 3px;
+    .artdir-step-title{
+      font-size:0.88rem;font-weight:800;color:#fff;margin:0;line-height:1.3;
+    }
+    .artdir-step-desc{
+      font-size:0.77rem;color:var(--cp-muted);margin:0;line-height:1.5;
     }
 
-    /* ── Tertiary text link ───────────────────────────────────────────── */
-    .art-link-tertiary {
-      display: inline-block;
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: rgba(232,234,240,0.52);
-      text-decoration: underline;
-      text-underline-offset: 3px;
-      text-decoration-color: rgba(232,234,240,0.22);
-      transition: color 0.15s;
-      padding: 4px 0;
+    /* RAFI action row */
+    .artdir-after-action{
+      border-top:1px solid rgba(255,255,255,0.06);
+      padding-top:20px;
+      display:flex;align-items:center;gap:14px;flex-wrap:wrap;
     }
-    .art-link-tertiary:hover { color: rgba(232,234,240,0.78); }
+    .artdir-after-btn-rafi{
+      display:inline-flex;align-items:center;gap:7px;
+      padding:11px 22px;min-height:42px;border-radius:13px;
+      font-size:0.88rem;font-weight:800;cursor:pointer;border:none;
+      background:linear-gradient(135deg,#E1306C,#833AB4);color:#fff;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,0.12),0 4px 14px rgba(225,48,108,0.20);
+      text-decoration:none;transition:transform 0.13s,box-shadow 0.13s;
+    }
+    .artdir-after-btn-rafi:hover{
+      transform:translateY(-1px);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,0.14),0 6px 18px rgba(225,48,108,0.28);
+    }
+    .artdir-after-btn-rafi:active{transform:translateY(1px) scale(0.99)}
+    .artdir-after-btn-rafi:focus-visible{outline:2px solid rgba(225,48,108,0.70);outline-offset:3px}
 
-    /* ── Hero: three-action row ──────────────────────────────────────── */
-    .art-hero-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      justify-content: center;
-      align-items: center;
+    /* ── Explore block (métiers + villes merged) ─────────────────── */
+    .artdir-explore{
+      max-width:1060px;margin:0 auto;padding:24px 20px 32px;
     }
-
-    /* ── Card-level RAFI CTA (inside client card) ─────────────────────
-       Keeps card-sized proportions; still opens RAFI V5 */
-    .art-card-rafi {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      padding: 12px 22px;
-      min-height: 44px;
-      border-radius: 13px;
-      font-size: 0.88rem;
-      font-weight: 800;
-      cursor: pointer;
-      border: none;
-      background: linear-gradient(135deg, #E1306C, #833AB4);
-      color: #fff;
-      box-shadow: 0 4px 14px rgba(225,48,108,0.20);
-      text-decoration: none;
-      transition: transform 0.15s, box-shadow 0.15s;
+    .artdir-explore-inner{
+      display:grid;grid-template-columns:1fr 1fr;gap:24px;
     }
-    .art-card-rafi:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 18px rgba(225,48,108,0.28);
+    .artdir-explore-group{}
+    .artdir-explore-heading{
+      font-size:0.95rem;font-weight:800;color:#fff;margin:0 0 4px;
     }
-    .art-card-rafi:active { transform: translateY(1px) scale(0.99); }
-    .art-card-rafi:focus-visible {
-      outline: 2px solid rgba(225,48,108,0.70);
-      outline-offset: 3px;
+    .artdir-explore-sub{
+      font-size:0.78rem;color:var(--cp-muted);margin:0 0 12px;line-height:1.5;
     }
 
-    /* ── Artisan-card secondary style (subdued outline) ─────────────── */
-    .art-card-artisan {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      padding: 12px 22px;
-      min-height: 44px;
-      border-radius: 13px;
-      font-size: 0.88rem;
-      font-weight: 700;
-      cursor: pointer;
-      border: 1.5px solid rgba(131,58,180,0.32);
-      background: rgba(131,58,180,0.07);
-      color: rgba(167,110,255,0.85);
-      text-decoration: none;
-      transition: transform 0.15s, background 0.15s;
+    /* ── Responsive ──────────────────────────────────────────────── */
+    @media(max-width:680px){
+      .artdir-steps{grid-template-columns:1fr;gap:14px}
+      .artdir-after-inner{padding:20px 18px 18px}
+      .artdir-explore-inner{grid-template-columns:1fr;gap:20px}
     }
-    .art-card-artisan:hover {
-      transform: translateY(-1px);
-      background: rgba(131,58,180,0.14);
+    @media(max-width:640px){
+      .cp-section{padding:28px 0}
+      .cp-trust-grid{grid-template-columns:1fr 1fr}
     }
-    .art-card-artisan:active { transform: translateY(1px) scale(0.99); }
-    .art-card-artisan:focus-visible {
-      outline: 2px solid rgba(131,58,180,0.55);
-      outline-offset: 3px;
+    @media(max-width:480px){
+      .cp-trust-grid{grid-template-columns:1fr}
+      .artdir-after{padding:16px 14px 0}
+      .artdir-explore{padding:20px 14px 28px}
     }
-
-    /* ── Final CTA band: primary = browse, secondary = RAFI ─────────── */
-    .art-cta-band-primary {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 16px 34px;
-      min-height: 52px;
-      border-radius: 16px;
-      font-size: 1rem;
-      font-weight: 800;
-      cursor: pointer;
-      border: none;
-      background: linear-gradient(135deg, #E1306C, #833AB4);
-      color: #fff;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.14),
-                  0 2px 6px  rgba(0,0,0,0.22),
-                  0 5px 16px rgba(225,48,108,0.18);
-      text-decoration: none;
-      transition: transform 0.15s, box-shadow 0.15s;
-    }
-    .art-cta-band-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.16),
-                  0 3px 8px  rgba(0,0,0,0.24),
-                  0 8px 22px rgba(225,48,108,0.24);
-    }
-    .art-cta-band-primary:active { transform: translateY(1px) scale(0.99); }
-    .art-cta-band-primary:focus-visible {
-      outline: 2px solid rgba(225,48,108,0.70);
-      outline-offset: 3px;
-    }
-
-    .art-cta-band-secondary {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 14px 28px;
-      min-height: 48px;
-      border-radius: 16px;
-      font-size: 0.94rem;
-      font-weight: 700;
-      cursor: pointer;
-      border: 1.5px solid rgba(255,255,255,0.18);
-      background: transparent;
-      color: rgba(232,234,240,0.88);
-      text-decoration: none;
-      transition: transform 0.15s, background 0.15s;
-    }
-    .art-cta-band-secondary:hover {
-      transform: translateY(-1px);
-      background: rgba(255,255,255,0.07);
-    }
-    .art-cta-band-secondary:active { transform: translateY(1px) scale(0.99); }
-    .art-cta-band-secondary:focus-visible {
-      outline: 2px solid rgba(255,255,255,0.40);
-      outline-offset: 3px;
-    }
-
-    /* ── Non-interactive label treatment: profession + city chips ─────
-       Removes pointer cursor, hover affordance and any button-like state.
-       Preserves visual identity. */
-    .cp-metier-item {
-      cursor: default;
-      pointer-events: none;
-      user-select: none;
-    }
-    .cp-city-pill {
-      cursor: default;
-      pointer-events: none;
-      user-select: none;
-    }
-
-    /* ── Reduced-motion ───────────────────────────────────────────────── */
-    @media (prefers-reduced-motion: reduce) {
-      .art-btn-rafi, .art-btn-browse, .art-link-tertiary,
-      .art-card-rafi, .art-card-artisan,
-      .art-cta-band-primary, .art-cta-band-secondary {
-        transition: none;
-      }
-    }
-
-    /* ── 320px floor ──────────────────────────────────────────────────── */
-    @media (max-width: 360px) {
-      .art-btn-rafi, .art-btn-browse,
-      .art-cta-band-primary, .art-cta-band-secondary {
-        padding-left: 18px;
-        padding-right: 18px;
-        font-size: 0.87rem;
-        min-height: 44px;
-      }
+    @media(prefers-reduced-motion:reduce){
+      .artdir-after-btn-rafi,.cp-metier-item,.cp-city-pill{transition:none}
     }
   </style>
 
@@ -470,25 +329,48 @@
 </section>
 <!-- ── END DIRECTORY ── -->
 
-<!-- ── Hero (network/trust introduction — h2 to preserve heading hierarchy) ── -->
-<section class="cp-hero" aria-labelledby="art-hero-title">
-  <div class="cp-container">
-    <span class="cp-hero-label">Comment ça marche</span>
-    <h2 id="art-hero-title" style="font-size:clamp(1.4rem,3.5vw,2.2rem);font-weight:900;line-height:1.15;letter-spacing:-0.02em;margin:0 0 18px;color:#fff">Des artisans sélectionnés pour intervenir<br><span class="hl">près de chez vous</span></h2>
-    <p>Fixeo organise les profils par métier, ville, disponibilité et qualité. Vous trouvez rapidement, vous réservez simplement.</p>
-    <div class="art-hero-actions">
-      <button type="button" class="art-btn-rafi" data-open-request-form="true" aria-label="Décrire mon besoin à RAFI">✨ Décrire mon besoin à RAFI</button>
-      <a href="#artisan-directory" class="art-btn-browse" onclick="document.getElementById('artisan-directory').scrollIntoView({behavior:'smooth'});return false;">👷 Voir les artisans</a>
+<!-- ── PHASE 6B.3 — Compact post-results reassurance ───────────────────
+     Replaces the previous cp-hero + cp-two-col + cp-cta-band blocks.
+     One RAFI trigger. No second hero. No artisan recruitment copy.
+     ──────────────────────────────────────────────────────────────────── -->
+<div class="artdir-after" role="region" aria-labelledby="artdir-after-heading">
+  <div class="artdir-after-inner">
+    <span class="artdir-after-eyebrow" aria-hidden="true">Comment ça marche</span>
+    <h2 class="artdir-after-heading" id="artdir-after-heading">Choisissez. Consultez. Réservez.</h2>
+
+    <div class="artdir-steps">
+      <div class="artdir-step">
+        <span class="artdir-step-num" aria-hidden="true">01</span>
+        <strong class="artdir-step-title">Choisissez un artisan</strong>
+        <p class="artdir-step-desc">Comparez les profils référencés adaptés à votre ville et votre métier.</p>
+      </div>
+      <div class="artdir-step">
+        <span class="artdir-step-num" aria-hidden="true">02</span>
+        <strong class="artdir-step-title">Consultez son profil</strong>
+        <p class="artdir-step-desc">Vérifiez sa spécialité, sa ville et son tarif indicatif avant tout contact.</p>
+      </div>
+      <div class="artdir-step">
+        <span class="artdir-step-num" aria-hidden="true">03</span>
+        <strong class="artdir-step-title">Réservez avec FIXEO</strong>
+        <p class="artdir-step-desc">Paiement après intervention. Aucun acompte. Aucun engagement préalable.</p>
+      </div>
     </div>
-    <div style="margin-top:14px;text-align:center">
-      <a href="onboarding-artisan.html" class="art-link-tertiary">🧰 Je suis artisan →</a>
+
+    <div class="artdir-after-action">
+      <button type="button" class="artdir-after-btn-rafi"
+              data-open-request-form="true"
+              aria-label="Décrire mon besoin à RAFI">
+        ✨ Décrire mon besoin à RAFI
+      </button>
     </div>
   </div>
-</section>
+</div>
 
-<!-- ── Comment Fixeo construit la confiance ── -->
-<section class="cp-section cp-container" aria-labelledby="trust-title">
-  <h2 class="cp-section-title" id="trust-title">Comment Fixeo construit la confiance</h2>
+<!-- ── PHASE 6B.3 — Compact trust block (compacted from former cp-section) ──
+     All 4 factual claims retained. Padding reduced. No section heading removed.
+     ──────────────────────────────────────────────────────────────────────── -->
+<section class="cp-section cp-container" aria-labelledby="artdir-trust-heading">
+  <h2 class="cp-section-title" id="artdir-trust-heading">Comment Fixeo construit la confiance</h2>
   <p class="cp-section-sub">Chaque profil artisan sur Fixeo repose sur des critères clairs et vérifiables.</p>
   <div class="cp-trust-grid">
     <div class="cp-trust-card">
@@ -514,102 +396,59 @@
   </div>
 </section>
 
-<!-- ── Pour les clients / Pour les artisans ── -->
-<div class="cp-section-alt">
-  <div class="cp-container">
-    <h2 class="cp-section-title">Deux côtés de la plateforme</h2>
-    <p class="cp-section-sub">Fixeo sert à la fois les clients qui cherchent et les artisans qui interviennent.</p>
-    <div class="cp-two-col">
+<!-- ── PHASE 6B.3 — Merged explore block: métiers + villes ─────────────────
+     Replaces two large independent cp-section-alt sections.
+     All 13 métier + 12 city labels retained for SEO.
+     cp-metier-item / cp-city-pill classes and data-* attrs preserved
+     so existing frozen JS click handlers continue to work.
+     pointer-events: auto (restoring intended interactivity — bug fix).
+     ──────────────────────────────────────────────────────────────────────── -->
+<div class="artdir-explore" role="region" aria-labelledby="artdir-explore-heading">
+  <div class="artdir-explore-inner">
 
-      <div class="cp-col-card">
-        <span class="cp-col-label cp-label-pink">🏠 Pour les clients</span>
-        <p class="cp-col-title">Trouvez rapidement, réservez simplement</p>
-        <ul class="cp-col-list">
-          <li>Décrivez votre besoin en 30 secondes</li>
-          <li>Fixeo identifie les artisans disponibles dans votre ville</li>
-          <li>Consultez les profils et les estimations de prix</li>
-          <li>Réservez ou publiez une demande ouverte</li>
-          <li>Payez après l'intervention, sans engagement préalable</li>
-        </ul>
-        <button type="button" class="art-card-rafi" data-open-request-form="true" aria-label="Décrire mon besoin à RAFI">✨ Décrire mon besoin à RAFI</button>
+    <!-- Métiers -->
+    <div class="artdir-explore-group">
+      <h2 class="artdir-explore-heading" id="artdir-explore-heading">Métiers disponibles sur FIXEO</h2>
+      <p class="artdir-explore-sub">Trouvez des artisans pour les besoins courants à domicile et en entreprise.</p>
+      <div class="cp-metier-grid" aria-label="Filtrer par métier">
+        <div class="cp-metier-item" data-metier="plomberie" role="button" tabindex="0" title="Filtrer : Plomberie">🚿 Plomberie</div>
+        <div class="cp-metier-item" data-metier="electricite" role="button" tabindex="0" title="Filtrer : Électricité">⚡ Électricité</div>
+        <div class="cp-metier-item" data-metier="climatisation" role="button" tabindex="0" title="Filtrer : Climatisation">❄️ Climatisation</div>
+        <div class="cp-metier-item" data-metier="peinture" role="button" tabindex="0" title="Filtrer : Peinture">🎨 Peinture</div>
+        <div class="cp-metier-item" data-metier="nettoyage" role="button" tabindex="0" title="Filtrer : Nettoyage">🧹 Nettoyage</div>
+        <div class="cp-metier-item" data-metier="menuiserie" role="button" tabindex="0" title="Filtrer : Menuiserie">🪚 Menuiserie</div>
+        <div class="cp-metier-item" data-metier="serrurerie" role="button" tabindex="0" title="Filtrer : Serrurerie">🔑 Serrurerie</div>
+        <div class="cp-metier-item" data-metier="maconnerie" role="button" tabindex="0" title="Filtrer : Maçonnerie">🧱 Maçonnerie</div>
+        <div class="cp-metier-item" data-metier="jardinage" role="button" tabindex="0" title="Filtrer : Jardinage">🌿 Jardinage</div>
+        <div class="cp-metier-item" data-metier="bricolage" role="button" tabindex="0" title="Filtrer : Bricolage">🔩 Bricolage</div>
+        <div class="cp-metier-item" data-metier="demenagement" role="button" tabindex="0" title="Filtrer : Déménagement">🚛 Déménagement</div>
+        <div class="cp-metier-item" data-metier="carrelage" role="button" tabindex="0" title="Filtrer : Carrelage">🪟 Carrelage</div>
+        <div class="cp-metier-item" data-metier="toiture" role="button" tabindex="0" title="Filtrer : Toiture">🏠 Toiture</div>
       </div>
+    </div>
 
-      <div class="cp-col-card">
-        <span class="cp-col-label cp-label-purple">🔧 Pour les artisans</span>
-        <p class="cp-col-title">Rejoignez le réseau Fixeo</p>
-        <ul class="cp-col-list">
-          <li>Créez ou revendiquez votre profil artisan</li>
-          <li>Indiquez vos spécialités et votre zone d'intervention</li>
-          <li>Recevez des demandes qualifiées dans votre métier</li>
-          <li>Gérez vos missions depuis votre espace artisan</li>
-          <li>Construisez votre réputation avec les avis clients</li>
-        </ul>
-        <div style="display:flex;flex-wrap:wrap;gap:10px">
-          <a href="onboarding-artisan.html" class="art-card-artisan">🧰 Je suis artisan</a>
-          <a href="onboarding-artisan.html" class="art-link-tertiary" style="display:inline-flex;align-items:center;padding:12px 0">Revendiquer mon profil →</a>
-        </div>
+    <!-- Villes -->
+    <div class="artdir-explore-group">
+      <h2 class="artdir-explore-heading" id="artdir-villes-heading">Villes couvertes</h2>
+      <p class="artdir-explore-sub">Explorez les artisans disponibles dans les principales villes du Maroc.</p>
+      <div class="cp-city-grid" aria-label="Filtrer par ville">
+        <span class="cp-city-pill" data-city="Casablanca" role="button" tabindex="0" title="Filtrer : Casablanca">📍 Casablanca</span>
+        <span class="cp-city-pill" data-city="Rabat" role="button" tabindex="0" title="Filtrer : Rabat">📍 Rabat</span>
+        <span class="cp-city-pill" data-city="Marrakech" role="button" tabindex="0" title="Filtrer : Marrakech">📍 Marrakech</span>
+        <span class="cp-city-pill" data-city="Fès" role="button" tabindex="0" title="Filtrer : Fès">📍 Fès</span>
+        <span class="cp-city-pill" data-city="Tanger" role="button" tabindex="0" title="Filtrer : Tanger">📍 Tanger</span>
+        <span class="cp-city-pill" data-city="Agadir" role="button" tabindex="0" title="Filtrer : Agadir">📍 Agadir</span>
+        <span class="cp-city-pill" data-city="Meknès" role="button" tabindex="0" title="Filtrer : Meknès">📍 Meknès</span>
+        <span class="cp-city-pill" data-city="Oujda" role="button" tabindex="0" title="Filtrer : Oujda">📍 Oujda</span>
+        <span class="cp-city-pill" data-city="Kénitra" role="button" tabindex="0" title="Filtrer : Kénitra">📍 Kénitra</span>
+        <span class="cp-city-pill" data-city="Tétouan" role="button" tabindex="0" title="Filtrer : Tétouan">📍 Tétouan</span>
+        <span class="cp-city-pill" data-city="Salé" role="button" tabindex="0" title="Filtrer : Salé">📍 Salé</span>
+        <span class="cp-city-pill" data-city="Laâyoune" role="button" tabindex="0" title="Filtrer : Laâyoune">📍 Laâyoune</span>
       </div>
-
     </div>
+
   </div>
 </div>
-
-<!-- ── Métiers disponibles ── -->
-<section class="cp-section cp-container" aria-labelledby="metiers-title">
-  <h2 class="cp-section-title" id="metiers-title">Métiers disponibles sur Fixeo</h2>
-  <p class="cp-section-sub">13 catégories de services couvrant les besoins courants à domicile et en entreprise.</p>
-  <div class="cp-metier-grid">
-    <div class="cp-metier-item" data-metier="plomberie" role="button" tabindex="0" title="Filtrer : Plomberie" style="cursor:pointer">🚿 Plomberie</div>
-    <div class="cp-metier-item" data-metier="electricite" role="button" tabindex="0" title="Filtrer : Électricité" style="cursor:pointer">⚡ Électricité</div>
-    <div class="cp-metier-item" data-metier="climatisation" role="button" tabindex="0" title="Filtrer : Climatisation" style="cursor:pointer">❄️ Climatisation</div>
-    <div class="cp-metier-item" data-metier="peinture" role="button" tabindex="0" title="Filtrer : Peinture" style="cursor:pointer">🎨 Peinture</div>
-    <div class="cp-metier-item" data-metier="nettoyage" role="button" tabindex="0" title="Filtrer : Nettoyage" style="cursor:pointer">🧹 Nettoyage</div>
-    <div class="cp-metier-item" data-metier="menuiserie" role="button" tabindex="0" title="Filtrer : Menuiserie" style="cursor:pointer">🪚 Menuiserie</div>
-    <div class="cp-metier-item" data-metier="serrurerie" role="button" tabindex="0" title="Filtrer : Serrurerie" style="cursor:pointer">🔑 Serrurerie</div>
-    <div class="cp-metier-item" data-metier="maconnerie" role="button" tabindex="0" title="Filtrer : Maçonnerie" style="cursor:pointer">🧱 Maçonnerie</div>
-    <div class="cp-metier-item" data-metier="jardinage" role="button" tabindex="0" title="Filtrer : Jardinage" style="cursor:pointer">🌿 Jardinage</div>
-    <div class="cp-metier-item" data-metier="bricolage" role="button" tabindex="0" title="Filtrer : Bricolage" style="cursor:pointer">🔩 Bricolage</div>
-    <div class="cp-metier-item" data-metier="demenagement" role="button" tabindex="0" title="Filtrer : Déménagement" style="cursor:pointer">🚛 Déménagement</div>
-    <div class="cp-metier-item" data-metier="carrelage" role="button" tabindex="0" title="Filtrer : Carrelage" style="cursor:pointer">🪟 Carrelage</div>
-    <div class="cp-metier-item" data-metier="toiture" role="button" tabindex="0" title="Filtrer : Toiture" style="cursor:pointer">🏠 Toiture</div>
-  </div>
-</section>
-
-<!-- ── Villes couvertes ── -->
-<div class="cp-section-alt">
-  <div class="cp-container">
-    <h2 class="cp-section-title">Villes couvertes</h2>
-    <p class="cp-section-sub">Artisans disponibles dans les principales villes du Maroc.</p>
-    <div class="cp-city-grid">
-      <span class="cp-city-pill" data-city="Casablanca" role="button" tabindex="0" title="Filtrer : Casablanca" style="cursor:pointer">📍 Casablanca</span>
-      <span class="cp-city-pill" data-city="Rabat" role="button" tabindex="0" title="Filtrer : Rabat" style="cursor:pointer">📍 Rabat</span>
-      <span class="cp-city-pill" data-city="Marrakech" role="button" tabindex="0" title="Filtrer : Marrakech" style="cursor:pointer">📍 Marrakech</span>
-      <span class="cp-city-pill" data-city="Fès" role="button" tabindex="0" title="Filtrer : Fès" style="cursor:pointer">📍 Fès</span>
-      <span class="cp-city-pill" data-city="Tanger" role="button" tabindex="0" title="Filtrer : Tanger" style="cursor:pointer">📍 Tanger</span>
-      <span class="cp-city-pill" data-city="Agadir" role="button" tabindex="0" title="Filtrer : Agadir" style="cursor:pointer">📍 Agadir</span>
-      <span class="cp-city-pill" data-city="Meknès" role="button" tabindex="0" title="Filtrer : Meknès" style="cursor:pointer">📍 Meknès</span>
-      <span class="cp-city-pill" data-city="Oujda" role="button" tabindex="0" title="Filtrer : Oujda" style="cursor:pointer">📍 Oujda</span>
-      <span class="cp-city-pill" data-city="Kénitra" role="button" tabindex="0" title="Filtrer : Kénitra" style="cursor:pointer">📍 Kénitra</span>
-      <span class="cp-city-pill" data-city="Tétouan" role="button" tabindex="0" title="Filtrer : Tétouan" style="cursor:pointer">📍 Tétouan</span>
-      <span class="cp-city-pill" data-city="Salé" role="button" tabindex="0" title="Filtrer : Salé" style="cursor:pointer">📍 Salé</span>
-      <span class="cp-city-pill" data-city="Laâyoune" role="button" tabindex="0" title="Filtrer : Laâyoune" style="cursor:pointer">📍 Laâyoune</span>
-    </div>
-  </div>
-</div>
-
-<!-- ── CTA final ── -->
-<div class="cp-cta-band">
-  <div class="cp-container">
-    <h2>Trouvez votre artisan maintenant</h2>
-    <p>Décrivez votre besoin, indiquez votre ville. Fixeo identifie les profils adaptés.</p>
-    <div class="cp-btn-row">
-      <a href="#artisan-directory" class="art-cta-band-primary" onclick="document.getElementById('artisan-directory').scrollIntoView({behavior:'smooth'});return false;">👷 Voir les artisans</a>
-      <button type="button" class="art-cta-band-secondary" data-open-request-form="true" aria-label="Décrire mon besoin à RAFI">✨ Décrire mon besoin à RAFI</button>
-    </div>
-  </div>
-</div>
-
-
 
 <script src="js/fixeo-header-global.js?v=gfnav5"></script>
 <script src="js/i18n.js?v=50a38b9"></script>
