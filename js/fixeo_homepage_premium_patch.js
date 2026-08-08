@@ -1090,11 +1090,120 @@
     if (sec) sec.setAttribute('data-results-state', state);
   }
 
+  /* ── 5B.2: City display sanitiser (display-only, never writes localStorage)
+   * Mirrors Phase 4C.1 _sanitizeCity() doctrine from fxsvc-4c-v1.js.
+   * Input: raw value from localStorage / filter element (may contain emoji,
+   *   neighbourhood suffix, "· Modifier", "détecté/e").
+   * Output: clean city name for display in #fxasb-city, e.g. "Casablanca".
+   */
+  function _sanitizeCityDisplay(raw) {
+    if (!raw) return '';
+    var s = String(raw).trim();
+    /* Strip leading pin emoji (📍) */
+    s = s.replace(/^📍\s*/u, '');
+    /* Remove "· Modifier" suffix (raw · or &middot;) */
+    s = s.replace(/\s*[·•]\s*Modifier\b.*/i, '');
+    /* Remove neighbourhood suffix: "— something détecté/e" or " — something" */
+    s = s.replace(/\s*—\s*.+$/u, '');
+    /* Remove trailing "détecté" / "détectée" words */
+    s = s.replace(/\s+d[ée]tect[ée]e?\b/gi, '');
+    /* Reject placeholder/status strings */
+    var REJECT = ['votre ville', 'ville', 'localisation', 'détectée', 'détecté', 'en cours'];
+    var low = s.toLowerCase();
+    for (var i = 0; i < REJECT.length; i++) {
+      if (low === REJECT[i]) return '';
+    }
+    /* Final trim */
+    return s.trim();
+  }
+
+  /* ── 5B.2: Canonical targeted-header activator.
+   * Populates and shows #fxasb-header (built by fx-situation-results-bridge-v1.js).
+   * Called by: _enterSearchMode (search-button path) + situation-chip path.
+   * cat: category slug (e.g. 'plomberie'); city: raw display string.
+   * Bridge is frozen — this function manipulates its already-built DOM directly.
+   */
+  function _fxasbActivate(cat, city) {
+    var header  = document.getElementById('fxasb-header');
+    var secTitle = document.getElementById('fxasb-section-title');
+    if (!header) return; /* bridge not yet initialised — safe no-op */
+
+    /* Resolve category metadata; fall back to generic if unknown */
+    var meta = (CAT_LABELS[cat] && CAT_ICONS[cat])
+      ? { icon: CAT_ICONS[cat], label: CAT_LABELS[cat] }
+      : null;
+
+    if (!meta && (!cat || cat === 'all')) {
+      /* No specific category — hide targeted header */
+      _fxasbHide();
+      return;
+    }
+
+    /* Clean city for display */
+    var cleanCity = _sanitizeCityDisplay(city);
+
+    /* Update content slots */
+    var iconEl = document.getElementById('fxasb-icon');
+    var nameEl = document.getElementById('fxasb-name');
+    var cityEl = document.getElementById('fxasb-city');
+
+    if (iconEl) iconEl.textContent = meta ? meta.icon : '';
+    if (nameEl) nameEl.textContent = meta ? meta.label : (cat || '');
+    if (cityEl) {
+      cityEl.textContent = cleanCity || '';
+      cityEl.style.display = cleanCity ? '' : 'none';
+    }
+
+    /* Accessible label */
+    if (meta) {
+      header.setAttribute('aria-label',
+        'Besoin identifié\u202f: ' + meta.label + (cleanCity ? ' à ' + cleanCity : ''));
+    }
+
+    /* Show — two-step for CSS transition */
+    header.style.display = 'flex';
+    header.offsetHeight; /* force reflow */
+    header.classList.add('fxasb-visible');
+    if (secTitle) secTitle.classList.add('fxasb-shown');
+  }
+
+  /* ── 5B.2: Hide targeted header (called on return to discovery) */
+  function _fxasbHide() {
+    var header   = document.getElementById('fxasb-header');
+    var secTitle = document.getElementById('fxasb-section-title');
+    if (!header) return;
+    header.classList.remove('fxasb-visible');
+    if (secTitle) secTitle.classList.remove('fxasb-shown');
+    /* Delay display:none until transition completes */
+    setTimeout(function() {
+      if (!header.classList.contains('fxasb-visible')) {
+        header.style.display = 'none';
+      }
+    }, 260);
+  }
+
+  /* ── 5B.2: Read active category from filter elements */
+  function _getActiveCat() {
+    var catEl = document.getElementById('filter-category')
+             || document.getElementById('ssb2-select-cat');
+    return (catEl && catEl.value) ? catEl.value : '';
+  }
+
+  /* ── 5B.2: Read city from filter elements + localStorage fallback */
+  function _getActiveCity() {
+    var cityEl = document.getElementById('filter-city')
+              || document.getElementById('ssb2-select-city')
+              || document.getElementById('services-city-filter');
+    if (cityEl && cityEl.value && cityEl.value.trim()) return cityEl.value.trim();
+    try { return localStorage.getItem('fixeo_detected_city') || ''; } catch(e) { return ''; }
+  }
+
   function _enterHomepageMode() {
     _searchActive = false;
     document.body.classList.remove('fixeo-search-mode');
     document.body.classList.remove('fixeo-hero-search-mode'); /* clear hero-search suppression */
     _setResultsState('discovery'); /* 5B: restore discovery visuals */
+    _fxasbHide(); /* 5B.2: clear targeted header on return to discovery */
     // Restore any hero-mode JS-hidden elements
     (function _restoreHeroHidden() {
       var toRestore = [
@@ -1118,10 +1227,14 @@
     document.body.classList.add('fixeo-sections-ready'); /* keep sections visible */
     _setResultsState('loading'); /* 5B: loading before results arrive */
     _showResultsChrome();
-    // Refresh vedette with current filter context
+    // Refresh vedette with current filter context, then activate targeted header
     setTimeout(function() {
       _renderPremiumGrid();
       _setResultsState('targeted'); /* 5B: targeted after render cycle */
+      /* 5B.2: populate bridge targeted header with current category + city.
+       * Reads filter-category (set by secondary-search _syncBackground before
+       * _enterSearchMode fires) and city from filter-city / localStorage. */
+      _fxasbActivate(_getActiveCat(), _getActiveCity());
     }, 50);
   }
 
@@ -1187,18 +1300,29 @@
         setTimeout(function(){ if(!_isSearchActive()) _enterHomepageMode(); },150);
       });
     }
-    /* 5B: situation chip clicks → targeted state.
-     * Bridge handles card display; we set the state attribute so CSS can
-     * suppress the discovery header while targeted results are shown. */
+    /* 5B / 5B.2: situation chip clicks → targeted state + targeted header.
+     * Bridge's _updateHeader fires first (rAF, registered earlier).
+     * Our rAF fires second — overwrites #fxasb-city with sanitised display value,
+     * ensuring "Casablanca" not "📍 Casablanca — des Roches noires détecté · Modifier". */
     document.addEventListener('click', function(e) {
       var chip = e.target.closest('.chip[data-category]');
       if (!chip) return;
       var cat = chip.dataset.category || '';
       if (cat && cat !== 'all') {
         _setResultsState('loading');
-        requestAnimationFrame(function() { _setResultsState('targeted'); });
+        requestAnimationFrame(function() {
+          _setResultsState('targeted');
+          /* Overwrite city in bridge header with sanitised display value */
+          var cityEl = document.getElementById('fxasb-city');
+          if (cityEl) {
+            var cleanCity = _sanitizeCityDisplay(_getActiveCity());
+            cityEl.textContent = cleanCity || '';
+            cityEl.style.display = cleanCity ? '' : 'none';
+          }
+        });
       } else if (cat === 'all') {
         _setResultsState('discovery');
+        _fxasbHide();
       }
     }, { passive: true });
     /* fixeo:marketplace-artisans-updated handled in _bindEvents above */
