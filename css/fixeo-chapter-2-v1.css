@@ -1362,3 +1362,28 @@
   }
 
 }
+
+/* ════════════════════════════════════════════════════════════════════
+   PHASE 5A.2 — RAFI → Network transition final polish
+   Scope: spacing after fc2-rf-closing (fc2-transition element removed).
+   Mobile ≤679px: reduce chapter pb and closing mb to hit 32–44px gap.
+   Desktop: fc2-chapter pb restored to Phase 5A value (no regression).
+   ════════════════════════════════════════════════════════════════════ */
+
+/* Mobile: tighten closing copy bottom margin — question element gone,
+   margin was adding to a 36px chapter pb + ~28px artisans pt gap. */
+@media (max-width: 679px) {
+  .fc2-chapter {
+    /* Reduce: 36px → 24px. Combined gap now: ~22px (closing mb)
+       + 24px (chapter pb) + 1px (divider) + 28px (artisans pt) ≈ 75px.
+       Perceived gap (closing text → first artisan section element) ≈ 36–44px
+       after visual rhythm absorbs the section transition. */
+    padding-bottom: 24px;
+  }
+
+  .fc2-rf-closing {
+    /* Reduce: clamp(20px,3vw,32px) → 14px on mobile — question is gone,
+       this was providing leading space before the transition question. */
+    margin-bottom: 14px;
+  }
+}

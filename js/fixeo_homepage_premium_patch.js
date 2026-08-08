@@ -993,11 +993,16 @@
    * Fires on every _renderPremiumGrid call (initial load + filter changes).
    * No new globals. No DOM creation. Read-only except the one span. */
   function _updateNetworkCount() {
+    /* 5A.2: durable rounded-count doctrine — mirrors services.html 4D.1.
+     * Was: Intl.NumberFormat(ARTISANS.length) → "1 302 profils référencés"
+     * Now: "+1 300 profils artisans référencés sur FIXEO" (stable rounded figure).
+     * Rationale: exact count changes as profiles are added; rounded "+1 300"
+     * remains accurate and consistent across all page surfaces. */
     var el = document.getElementById('fxpaf-network-count');
     if (!el) return;
     var total = (window.ARTISANS || []).length;
     if (!total) return;
-    el.textContent = new Intl.NumberFormat('fr-FR').format(total) + '\u00a0profils r\u00e9f\u00e9renc\u00e9s';
+    el.textContent = '+1\u202f300\u00a0profils artisans r\u00e9f\u00e9renc\u00e9s sur FIXEO';
   }
 
   /* ── Fade-in animation ── */
