@@ -821,9 +821,32 @@
       ? 'Voir plus d\u2019artisans \u00e0\u00a0' + _esc(cityName) + '\u00a0\u2192'
       : 'Voir plus d\u2019artisans \u2192';
 
-    /* Anchor element — href to artisans.html (existing canonical directory) */
+    /* ── PHASE 6B.1: Build context-aware directory URL ──────────────────
+     * Serialize available city + trade into ?ville=&metier= query params.
+     * City: _sanitizeCityDisplay() strips emoji/suffixes → slug via NFD.
+     * Trade: ctx.service (already a clean lowercase slug, e.g. 'plomberie').
+     * Both values are URL-encoded. Falls back to plain artisans.html if none.
+     * 0 changes to search/RAFI/booking logic — only the href is updated. */
+    var _dirCity  = _sanitizeCityDisplay(cityName);
+    var _dirTrade = ctx && ctx.service ? ctx.service.toLowerCase().trim() : '';
+    var _dirHref  = 'artisans.html';
+    if (_dirCity || _dirTrade) {
+      var _dirParams = [];
+      if (_dirCity) {
+        /* Slugify: NFD decompose + strip diacritics + lowercase + spaces→hyphens */
+        var _slug = _dirCity;
+        if (_slug.normalize) _slug = _slug.normalize('NFD');
+        _slug = _slug.replace(/[\u0300-\u036f]/g, '').toLowerCase()
+                     .replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '').trim();
+        if (_slug) _dirParams.push('ville=' + encodeURIComponent(_slug));
+      }
+      if (_dirTrade) _dirParams.push('metier=' + encodeURIComponent(_dirTrade));
+      if (_dirParams.length) _dirHref = 'artisans.html?' + _dirParams.join('&');
+    }
+
+    /* Anchor element — href to artisans.html with context params */
     var actionsHtml =
-      '<a class="fxas-btn-more" href="artisans.html" aria-label="' +
+      '<a class="fxas-btn-more" href="' + _dirHref + '" aria-label="' +
         (cityName ? 'Voir plus d\u2019artisans \u00e0 ' + _esc(cityName) : 'Voir plus d\u2019artisans') +
       '">' +
         moreLabel +

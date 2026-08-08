@@ -353,6 +353,14 @@
   <script src="js/fixeo-consent-v1.js?v=fcv1c"></script>
   <script src="js/fixeo-analytics-config.js?v=fac1b" defer></script>
   <script src="js/fixeo-analytics-bootstrap.js?v=fab1c" defer></script>
+  <!-- PHASE 6B.1 — Artisan Directory Foundation V1 -->
+  <link rel="stylesheet" href="css/fixeo-artisan-directory-v1.css?v=fxdir-v1">
+  <!-- Data pipeline: cities → supabase client → loader → matching engine -->
+  <script src="js/fixeo-cities.js?v=fxc-v2" defer></script>
+  <script src="js/supabase-client.js?v=sc1" defer></script>
+  <script src="js/fixeo-supabase-loader.js?v=sl2" defer></script>
+  <script src="js/fixeo-matching-engine.js?v=me1" defer></script>
+  <script src="js/fixeo-artisan-directory-v1.js?v=fxdir-v1" defer></script>
 </head>
 
 <body class="fixeo-gh-enabled">
@@ -393,15 +401,83 @@
   </button>
 </nav>
 
-<!-- ── Hero ── -->
+<!-- ══════════════════════════════════════════════════════════════════
+     PHASE 6B.1 — ARTISAN DIRECTORY SECTION
+     Appears first: directory results before institutional content.
+     All IDs prefixed artdir-* — zero overlap with homepage.
+     Populated by js/fixeo-artisan-directory-v1.js
+     ══════════════════════════════════════════════════════════════════ -->
+<section id="artisan-directory" class="artdir" aria-label="Répertoire des artisans Fixeo">
+  <div class="artdir-inner">
+
+    <!-- Directory header -->
+    <div class="artdir-header">
+      <span class="artdir-eyebrow" aria-hidden="true">Réseau Fixeo</span>
+      <!-- artdir-h1 text is updated dynamically by JS based on URL params -->
+      <h1 class="artdir-h1">Le réseau d'artisans FIXEO</h1>
+      <p class="artdir-subtitle">Explorez les profils référencés dans votre ville et choisissez l'artisan adapté à votre besoin.</p>
+    </div>
+
+    <!-- Filters -->
+    <div class="artdir-controls" role="group" aria-label="Filtres du répertoire">
+      <div class="artdir-control-group">
+        <label class="artdir-control-label" for="artdir-city-select">Ville</label>
+        <select id="artdir-city-select" class="artdir-select" aria-label="Filtrer par ville">
+          <option value="">Toutes les villes</option>
+        </select>
+      </div>
+      <div class="artdir-control-group">
+        <label class="artdir-control-label" for="artdir-trade-select">Métier</label>
+        <select id="artdir-trade-select" class="artdir-select" aria-label="Filtrer par métier">
+          <option value="">Tous les métiers</option>
+        </select>
+      </div>
+      <button id="artdir-reset" class="artdir-controls-reset" type="button" aria-label="Réinitialiser les filtres">Effacer</button>
+    </div>
+
+    <!-- Context pills (shown by JS when URL params active) -->
+    <div id="artdir-ctx" class="artdir-context" aria-live="polite" aria-atomic="true"></div>
+
+    <!-- Result summary -->
+    <p id="artdir-summary" class="artdir-summary" aria-live="polite" aria-atomic="true"></p>
+
+    <!-- Loading state -->
+    <div id="artdir-loading" role="status" aria-label="Chargement des artisans en cours">
+      <div class="artdir-spinner" aria-hidden="true"></div>
+      <span>Chargement des profils…</span>
+    </div>
+
+    <!-- Artisan cards grid -->
+    <div id="artdir-grid" role="list" aria-label="Profils artisans"></div>
+
+    <!-- Empty state -->
+    <div id="artdir-empty" role="status" aria-live="polite">
+      <p class="artdir-empty-title">Aucun profil exact trouvé pour ce besoin.</p>
+      <p class="artdir-empty-text">Vous pouvez élargir la recherche ou publier votre demande — RAFI identifiera les artisans disponibles.</p>
+      <div class="artdir-empty-actions">
+        <button class="artdir-empty-btn-widen" type="button">Voir tous les artisans</button>
+        <button class="artdir-empty-btn-rafi" type="button" data-open-request-form="true" aria-label="Publier une demande via RAFI">✨ Publier une demande</button>
+      </div>
+    </div>
+
+    <!-- Load more -->
+    <div class="artdir-load-more-wrap">
+      <button id="artdir-load-more" class="artdir-btn-load-more" type="button" hidden aria-label="Voir plus de profils artisans">Voir plus d'artisans</button>
+    </div>
+
+  </div>
+</section>
+<!-- ── END DIRECTORY ── -->
+
+<!-- ── Hero (network/trust introduction — h2 to preserve heading hierarchy) ── -->
 <section class="cp-hero" aria-labelledby="art-hero-title">
   <div class="cp-container">
-    <span class="cp-hero-label">Réseau Fixeo</span>
-    <h1 id="art-hero-title">Des artisans sélectionnés pour intervenir<br><span class="hl">près de chez vous</span></h1>
+    <span class="cp-hero-label">Comment ça marche</span>
+    <h2 id="art-hero-title" style="font-size:clamp(1.4rem,3.5vw,2.2rem);font-weight:900;line-height:1.15;letter-spacing:-0.02em;margin:0 0 18px;color:#fff">Des artisans sélectionnés pour intervenir<br><span class="hl">près de chez vous</span></h2>
     <p>Fixeo organise les profils par métier, ville, disponibilité et qualité. Vous trouvez rapidement, vous réservez simplement.</p>
     <div class="art-hero-actions">
       <button type="button" class="art-btn-rafi" data-open-request-form="true" aria-label="Décrire mon besoin à RAFI">✨ Décrire mon besoin à RAFI</button>
-      <a href="index.html#artisans-section" class="art-btn-browse">👷 Voir les artisans</a>
+      <a href="#artisan-directory" class="art-btn-browse" onclick="document.getElementById('artisan-directory').scrollIntoView({behavior:'smooth'});return false;">👷 Voir les artisans</a>
     </div>
     <div style="margin-top:14px;text-align:center">
       <a href="onboarding-artisan.html" class="art-link-tertiary">🧰 Je suis artisan →</a>
@@ -482,19 +558,19 @@
   <h2 class="cp-section-title" id="metiers-title">Métiers disponibles sur Fixeo</h2>
   <p class="cp-section-sub">13 catégories de services couvrant les besoins courants à domicile et en entreprise.</p>
   <div class="cp-metier-grid">
-    <div class="cp-metier-item">🚿 Plomberie</div>
-    <div class="cp-metier-item">⚡ Électricité</div>
-    <div class="cp-metier-item">❄️ Climatisation</div>
-    <div class="cp-metier-item">🎨 Peinture</div>
-    <div class="cp-metier-item">🧹 Nettoyage</div>
-    <div class="cp-metier-item">🪚 Menuiserie</div>
-    <div class="cp-metier-item">🔑 Serrurerie</div>
-    <div class="cp-metier-item">🧱 Maçonnerie</div>
-    <div class="cp-metier-item">🌿 Jardinage</div>
-    <div class="cp-metier-item">🔩 Bricolage</div>
-    <div class="cp-metier-item">🚛 Déménagement</div>
-    <div class="cp-metier-item">🪟 Carrelage</div>
-    <div class="cp-metier-item">🏠 Toiture</div>
+    <div class="cp-metier-item" data-metier="plomberie" role="button" tabindex="0" title="Filtrer : Plomberie" style="cursor:pointer">🚿 Plomberie</div>
+    <div class="cp-metier-item" data-metier="electricite" role="button" tabindex="0" title="Filtrer : Électricité" style="cursor:pointer">⚡ Électricité</div>
+    <div class="cp-metier-item" data-metier="climatisation" role="button" tabindex="0" title="Filtrer : Climatisation" style="cursor:pointer">❄️ Climatisation</div>
+    <div class="cp-metier-item" data-metier="peinture" role="button" tabindex="0" title="Filtrer : Peinture" style="cursor:pointer">🎨 Peinture</div>
+    <div class="cp-metier-item" data-metier="nettoyage" role="button" tabindex="0" title="Filtrer : Nettoyage" style="cursor:pointer">🧹 Nettoyage</div>
+    <div class="cp-metier-item" data-metier="menuiserie" role="button" tabindex="0" title="Filtrer : Menuiserie" style="cursor:pointer">🪚 Menuiserie</div>
+    <div class="cp-metier-item" data-metier="serrurerie" role="button" tabindex="0" title="Filtrer : Serrurerie" style="cursor:pointer">🔑 Serrurerie</div>
+    <div class="cp-metier-item" data-metier="maconnerie" role="button" tabindex="0" title="Filtrer : Maçonnerie" style="cursor:pointer">🧱 Maçonnerie</div>
+    <div class="cp-metier-item" data-metier="jardinage" role="button" tabindex="0" title="Filtrer : Jardinage" style="cursor:pointer">🌿 Jardinage</div>
+    <div class="cp-metier-item" data-metier="bricolage" role="button" tabindex="0" title="Filtrer : Bricolage" style="cursor:pointer">🔩 Bricolage</div>
+    <div class="cp-metier-item" data-metier="demenagement" role="button" tabindex="0" title="Filtrer : Déménagement" style="cursor:pointer">🚛 Déménagement</div>
+    <div class="cp-metier-item" data-metier="carrelage" role="button" tabindex="0" title="Filtrer : Carrelage" style="cursor:pointer">🪟 Carrelage</div>
+    <div class="cp-metier-item" data-metier="toiture" role="button" tabindex="0" title="Filtrer : Toiture" style="cursor:pointer">🏠 Toiture</div>
   </div>
 </section>
 
@@ -504,18 +580,18 @@
     <h2 class="cp-section-title">Villes couvertes</h2>
     <p class="cp-section-sub">Artisans disponibles dans les principales villes du Maroc.</p>
     <div class="cp-city-grid">
-      <span class="cp-city-pill">📍 Casablanca</span>
-      <span class="cp-city-pill">📍 Rabat</span>
-      <span class="cp-city-pill">📍 Marrakech</span>
-      <span class="cp-city-pill">📍 Fès</span>
-      <span class="cp-city-pill">📍 Tanger</span>
-      <span class="cp-city-pill">📍 Agadir</span>
-      <span class="cp-city-pill">📍 Meknès</span>
-      <span class="cp-city-pill">📍 Oujda</span>
-      <span class="cp-city-pill">📍 Kénitra</span>
-      <span class="cp-city-pill">📍 Tétouan</span>
-      <span class="cp-city-pill">📍 Salé</span>
-      <span class="cp-city-pill">📍 Laâyoune</span>
+      <span class="cp-city-pill" data-city="Casablanca" role="button" tabindex="0" title="Filtrer : Casablanca" style="cursor:pointer">📍 Casablanca</span>
+      <span class="cp-city-pill" data-city="Rabat" role="button" tabindex="0" title="Filtrer : Rabat" style="cursor:pointer">📍 Rabat</span>
+      <span class="cp-city-pill" data-city="Marrakech" role="button" tabindex="0" title="Filtrer : Marrakech" style="cursor:pointer">📍 Marrakech</span>
+      <span class="cp-city-pill" data-city="Fès" role="button" tabindex="0" title="Filtrer : Fès" style="cursor:pointer">📍 Fès</span>
+      <span class="cp-city-pill" data-city="Tanger" role="button" tabindex="0" title="Filtrer : Tanger" style="cursor:pointer">📍 Tanger</span>
+      <span class="cp-city-pill" data-city="Agadir" role="button" tabindex="0" title="Filtrer : Agadir" style="cursor:pointer">📍 Agadir</span>
+      <span class="cp-city-pill" data-city="Meknès" role="button" tabindex="0" title="Filtrer : Meknès" style="cursor:pointer">📍 Meknès</span>
+      <span class="cp-city-pill" data-city="Oujda" role="button" tabindex="0" title="Filtrer : Oujda" style="cursor:pointer">📍 Oujda</span>
+      <span class="cp-city-pill" data-city="Kénitra" role="button" tabindex="0" title="Filtrer : Kénitra" style="cursor:pointer">📍 Kénitra</span>
+      <span class="cp-city-pill" data-city="Tétouan" role="button" tabindex="0" title="Filtrer : Tétouan" style="cursor:pointer">📍 Tétouan</span>
+      <span class="cp-city-pill" data-city="Salé" role="button" tabindex="0" title="Filtrer : Salé" style="cursor:pointer">📍 Salé</span>
+      <span class="cp-city-pill" data-city="Laâyoune" role="button" tabindex="0" title="Filtrer : Laâyoune" style="cursor:pointer">📍 Laâyoune</span>
     </div>
   </div>
 </div>
@@ -526,7 +602,7 @@
     <h2>Trouvez votre artisan maintenant</h2>
     <p>Décrivez votre besoin, indiquez votre ville. Fixeo identifie les profils adaptés.</p>
     <div class="cp-btn-row">
-      <a href="index.html#artisans-section" class="art-cta-band-primary">👷 Voir les artisans</a>
+      <a href="#artisan-directory" class="art-cta-band-primary" onclick="document.getElementById('artisan-directory').scrollIntoView({behavior:'smooth'});return false;">👷 Voir les artisans</a>
       <button type="button" class="art-cta-band-secondary" data-open-request-form="true" aria-label="Décrire mon besoin à RAFI">✨ Décrire mon besoin à RAFI</button>
     </div>
   </div>
