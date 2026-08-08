@@ -3705,9 +3705,11 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
 
 .fxsit-services-link-wrap {
   text-align: center;
-  /* 3D: reduced top margin; was clamp(20px,3vw,32px) → tighter before RAFI */
-  margin: 0 auto clamp(12px, 2vw, 20px);
-  padding-bottom: max(env(safe-area-inset-bottom, 0px), 8px);
+  /* 5A: safe-area removed — was adding 34px on iPhone creating a dead gap.
+     Safe-area belongs on the viewport bottom, not on an intermediate element.
+     Bottom margin reduced: gap before fc2-chapter now ~36–44px total. */
+  margin: 0 auto 10px;
+  padding-bottom: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -5243,7 +5245,7 @@ html #services.fc3-chapter {
 <section class="section section-sm trust-section" aria-label="Confiance Fixeo">
   <div class="container">
     <div class="trust-section-inner">
-      <div class="trust-item"><span class="trust-icon">✔</span><span>1&#8239;134 artisans vérifiés</span></div>
+      <div class="trust-item"><span class="trust-icon">✔</span><span>+1&#8239;300 profils référencés</span></div>
       <div class="trust-item"><span class="trust-icon">🛡️</span><span>Profils validés par notre équipe</span></div>
       <div class="trust-item"><span class="trust-icon">📍</span><span>20 villes au Maroc</span></div>
       <div class="trust-item"><span class="trust-icon">💰</span><span>Paiement après intervention</span></div>

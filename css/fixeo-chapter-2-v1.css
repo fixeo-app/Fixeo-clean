@@ -706,3 +706,591 @@
   animation: fbe-field-breathe 16s ease-in-out infinite;
   z-index: 0;
 }
+
+/* ════════════════════════════════════════════════════════════════════
+   PHASE 5A — Homepage RAFI Continuity (fxhome-5a-v1)
+   Goal: seamless SITUATIONS → RAFI → PROCESSING → ARTISANS flow
+   Mobile-first: all changes target ≤679px first, scale up cleanly.
+   Architecture: additive append only. No frozen selectors removed.
+   Frozen: fxrorg-* animation logic, fc2-rf-* entrance animations,
+           IntersectionObserver JS, RAFI V5 logic, Phase 3A/3B/3C/3D.
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ── A. INTER-SECTION GAP: fc2-chapter top padding reduction ──────── */
+/* Root cause fix: safe-area was removed from fxsit-services-link-wrap (index.html).
+   Combined gap now: ~10px (link wrap mb) + 1px (divider) + fc2 top padding.
+   Mobile override: reduce from 52px to 28px. */
+@media (max-width: 679px) {
+  .fc2-chapter {
+    padding-top:    28px;
+    padding-bottom: 36px;
+  }
+}
+
+/* ── B. FC2 INTRO: reduce subtitle bottom margin ────────────────────
+   Was: margin: 0 auto 44px  (mobile override was 36px) → 24px.
+   Sphere wraps visually closer to text. */
+@media (max-width: 679px) {
+  #fixeo-chapter-2 .fc2-subtitle {
+    margin-bottom: 20px;
+    font-size: 0.88rem;
+    line-height: 1.52;
+  }
+}
+
+/* ── C. SPHERE: less breathing room below ──────────────────────────── */
+@media (max-width: 679px) {
+  .fxrorg-sphere-wrap {
+    margin-bottom: 24px;
+  }
+}
+
+/* ── D. FOUR SIGNAL CARDS: compact ────────────────────────────────── */
+/* Target: 110–130px per card. Current: ~165px.
+   Tighten padding, icon, label, desc. */
+.fxrorg-signals {
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.fxrorg-signal {
+  padding: 14px 13px 12px;
+  border-radius: 13px;
+  gap: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.fxrorg-signal-icon {
+  font-size: 1.10rem;
+  margin-bottom: 6px;
+  line-height: 1;
+}
+
+.fxrorg-signal-label {
+  font-size: 0.76rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+  line-height: 1.3;
+}
+
+.fxrorg-signal-desc {
+  font-size: 0.69rem;
+  line-height: 1.50;
+  /* 3-line soft clamp — full text in DOM for screen readers */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* fxrorg-outcome: tighter */
+.fxrorg-outcome {
+  margin-top: 0;
+  margin-bottom: 24px;
+  font-size: 0.78rem;
+}
+
+/* ── E. TREATMENT RAIL: COMPACT 2×2 PROCESSING GRID ─────────────── */
+/* Replaces the long vertical timeline with a compact system grid.
+   The fc2-rf-rail-wrap (vertical timeline) becomes a 2×2 grid.
+   fc2-rf-line (decorative connecting line) hidden on mobile grid.
+   fc2-rf-module reflows to grid cells.
+   Desktop: original single-column timeline retained via ≥680px override. */
+
+/* Grid layout on mobile */
+@media (max-width: 679px) {
+  .fc2-rf-wrap {
+    padding: 0 12px;
+    max-width: 100%;
+  }
+
+  .fc2-rf-header {
+    margin-bottom: 18px;
+    text-align: left;
+  }
+
+  .fc2-rf-eyebrow {
+    margin-bottom: 6px;
+  }
+
+  .fc2-rf-title {
+    font-size: 1.00rem;
+    margin-bottom: 6px;
+  }
+
+  .fc2-rf-lead {
+    font-size: 0.79rem;
+    line-height: 1.52;
+  }
+
+  /* Convert rail to 2×2 grid */
+  .fc2-rf-rail-wrap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 16px;
+    position: relative; /* keep for line positioning (line hidden below) */
+  }
+
+  /* Hide decorative vertical line — not applicable in grid layout */
+  .fc2-rf-line {
+    display: none;
+  }
+
+  /* Grid cells: compact system module feel */
+  .fc2-rf-module {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+    padding: 13px 12px 11px;
+    border-radius: 12px;
+    border-bottom: none;
+    border-top: none;
+    /* Keep entrance animation — opacity/transform preserved */
+    background:
+      linear-gradient(145deg,
+        rgba(72, 100, 255, 0.06) 0%,
+        rgba(72, 100, 255, 0.02) 100%);
+    border: 1px solid rgba(72, 100, 255, 0.10);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.04) inset;
+  }
+  .fc2-rf-module:first-child {
+    border-top: 1px solid rgba(72, 100, 255, 0.10);
+    border-bottom: none;
+  }
+
+  /* Node: horizontal — idx + dot inline */
+  .fc2-rf-node {
+    flex-direction: row;
+    align-items: center;
+    width: auto;
+    gap: 5px;
+    margin-bottom: 7px;
+    padding-top: 0;
+  }
+
+  .fc2-rf-node-idx {
+    font-size: 0.58rem;
+    color: rgba(72, 100, 255, 0.70);
+    letter-spacing: 0.08em;
+  }
+
+  .fc2-rf-node-dot {
+    width: 5px;
+    height: 5px;
+    margin-top: 0;
+  }
+
+  /* Body: full width */
+  .fc2-rf-body {
+    width: 100%;
+  }
+
+  .fc2-rf-mod-title {
+    font-size: 0.80rem;
+    margin: 0 0 6px;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+  }
+
+  /* Chips: 1-per-row, smaller */
+  .fc2-rf-chips {
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 6px;
+    align-items: flex-start;
+  }
+
+  .fc2-rf-chip {
+    font-size: 0.60rem;
+    padding: 2px 7px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+
+  /* Descriptive text: 2-line max */
+  .fc2-rf-mod-text {
+    font-size: 0.72rem;
+    line-height: 1.48;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Closing copy: compact */
+  .fc2-rf-closing {
+    font-size: 0.78rem;
+    line-height: 1.55;
+    margin-bottom: 14px;
+    text-align: left;
+  }
+
+  /* Transition question: tighter */
+  .fc2-transition {
+    font-size: 0.88rem;
+    text-align: left;
+    padding: 0 2px;
+  }
+}
+
+/* ── F. ARTISAN-RESULT TRANSITION: tighten gap ────────────────────── */
+/* The section-divider after fc2-chapter and before artisan section
+   is only 1px — the gap comes from section padding on #artisans-section.
+   Reduce top padding of artisan discovery section to connect the flow. */
+#artisans-section {
+  padding-top: clamp(24px, 4vw, 48px);
+}
+
+/* Also tighten the contextual result header when visible */
+.premium-results-header {
+  margin-bottom: clamp(16px, 2.5vw, 28px);
+}
+
+/* ── G. REDUCED MOTION ────────────────────────────────────────────── */
+/* Grid cells: no hover lift if motion-reduced */
+@media (prefers-reduced-motion: reduce) {
+  .fxrorg-sphere,
+  .fxrorg-halo,
+  .fxrorg-sphere::after,
+  .fc2-rf-module,
+  .fc2-rf-chip {
+    transition: none !important;
+    animation:  none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .fc2-rf-line-fill {
+    height: 100% !important;
+    transition: none !important;
+  }
+}
+
+/* ── H. DESKTOP: preserve original single-column rail layout ─────── */
+/* Undo all mobile grid overrides at ≥680px. */
+@media (min-width: 680px) {
+  .fc2-rf-rail-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .fc2-rf-line {
+    display: block;
+  }
+
+  .fc2-rf-module {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    padding: 20px 0;
+    border-radius: 0;
+    background: transparent;
+    border-bottom: 1px solid rgba(72, 100, 255, 0.07);
+    border: none;
+    border-bottom: 1px solid rgba(72, 100, 255, 0.07);
+    box-shadow: none;
+  }
+  .fc2-rf-module:first-child {
+    border-top: 1px solid rgba(72, 100, 255, 0.07);
+  }
+
+  .fc2-rf-node {
+    flex-direction: column;
+    align-items: center;
+    width: 46px;
+    padding-top: 2px;
+    gap: 6px;
+    margin-bottom: 0;
+  }
+
+  .fc2-rf-chips {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .fc2-rf-mod-text {
+    display: block;
+    -webkit-line-clamp: unset;
+    -webkit-box-orient: unset;
+    overflow: visible;
+  }
+
+  .fxrorg-signals {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+}
+
+
+/* ════════════════════════════════════════════════════════════════════
+   PHASE 5A — Homepage RAFI Continuity (fxhome-5a-v1)
+   Goal: seamless SITUATIONS → RAFI → PROCESSING → ARTISANS flow
+   Mobile-first: all changes target ≤679px first, scale up cleanly.
+   Architecture: additive append only. No frozen selectors removed.
+   Frozen: fxrorg-* animation logic, fc2-rf-* entrance animations,
+           IntersectionObserver JS, RAFI V5 logic, Phase 3A/3B/3C/3D.
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ── A. INTER-SECTION GAP: fc2-chapter top padding reduction ──────── */
+@media (max-width: 679px) {
+  .fc2-chapter {
+    padding-top:    28px;
+    padding-bottom: 36px;
+  }
+}
+
+/* ── B. FC2 INTRO: subtitle bottom margin + size ──────────────────── */
+@media (max-width: 679px) {
+  #fixeo-chapter-2 .fc2-subtitle {
+    margin-bottom: 20px;
+    font-size: 0.88rem;
+    line-height: 1.52;
+  }
+}
+
+/* ── C. SPHERE: less breathing room below ──────────────────────────── */
+@media (max-width: 679px) {
+  .fxrorg-sphere-wrap {
+    margin-bottom: 24px;
+  }
+}
+
+/* ── D. FOUR SIGNAL CARDS: compact ──────────────────────────────────── */
+.fxrorg-signals {
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.fxrorg-signal {
+  padding: 14px 13px 12px;
+  border-radius: 13px;
+  gap: 0;
+}
+
+.fxrorg-signal-icon {
+  font-size: 1.10rem;
+  margin-bottom: 6px;
+  line-height: 1;
+}
+
+.fxrorg-signal-label {
+  font-size: 0.76rem;
+  margin-bottom: 4px;
+  line-height: 1.3;
+}
+
+.fxrorg-signal-desc {
+  font-size: 0.69rem;
+  line-height: 1.50;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.fxrorg-outcome {
+  margin-top: 0;
+  margin-bottom: 24px;
+  font-size: 0.78rem;
+}
+
+/* ── E. TREATMENT RAIL: COMPACT 2×2 PROCESSING GRID — mobile only ── */
+
+@media (max-width: 679px) {
+  .fc2-rf-wrap {
+    padding: 0 12px;
+    max-width: 100%;
+  }
+
+  .fc2-rf-header {
+    margin-bottom: 18px;
+    text-align: left;
+  }
+
+  .fc2-rf-eyebrow {
+    margin-bottom: 6px;
+  }
+
+  .fc2-rf-title {
+    font-size: 1.00rem;
+    margin-bottom: 6px;
+  }
+
+  .fc2-rf-lead {
+    font-size: 0.79rem;
+    line-height: 1.52;
+  }
+
+  .fc2-rf-rail-wrap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .fc2-rf-line {
+    display: none;
+  }
+
+  .fc2-rf-module {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+    padding: 13px 12px 11px;
+    border-radius: 12px;
+    border-bottom: none !important;
+    border-top: none !important;
+    background:
+      linear-gradient(145deg,
+        rgba(72, 100, 255, 0.06) 0%,
+        rgba(72, 100, 255, 0.02) 100%);
+    border: 1px solid rgba(72, 100, 255, 0.10) !important;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.04) inset;
+  }
+
+  .fc2-rf-node {
+    flex-direction: row;
+    align-items: center;
+    width: auto;
+    gap: 5px;
+    margin-bottom: 7px;
+    padding-top: 0;
+  }
+
+  .fc2-rf-node-idx {
+    font-size: 0.58rem;
+    letter-spacing: 0.08em;
+  }
+
+  .fc2-rf-node-dot {
+    width: 5px;
+    height: 5px;
+    margin-top: 0;
+  }
+
+  .fc2-rf-body {
+    width: 100%;
+  }
+
+  .fc2-rf-mod-title {
+    font-size: 0.80rem;
+    margin: 0 0 6px;
+    line-height: 1.25;
+  }
+
+  .fc2-rf-chips {
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 6px;
+    align-items: flex-start;
+  }
+
+  .fc2-rf-chip {
+    font-size: 0.60rem;
+    padding: 2px 7px;
+  }
+
+  .fc2-rf-mod-text {
+    font-size: 0.72rem;
+    line-height: 1.48;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .fc2-rf-closing {
+    font-size: 0.78rem;
+    line-height: 1.55;
+    margin-bottom: 14px;
+    text-align: left;
+  }
+
+  .fc2-transition {
+    font-size: 0.88rem;
+    text-align: left;
+    padding: 0 2px;
+  }
+}
+
+/* ── F. DESKTOP: restore original single-column rail layout ────────── */
+@media (min-width: 680px) {
+  .fc2-rf-rail-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .fc2-rf-line {
+    display: block;
+  }
+
+  .fc2-rf-module {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: flex-start !important;
+    padding: 20px 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    border-bottom: 1px solid rgba(72, 100, 255, 0.07) !important;
+    box-shadow: none !important;
+  }
+  .fc2-rf-module:first-child {
+    border-top: 1px solid rgba(72, 100, 255, 0.07) !important;
+  }
+
+  .fc2-rf-node {
+    flex-direction: column;
+    align-items: center;
+    width: 46px;
+    padding-top: 2px;
+    gap: 6px;
+    margin-bottom: 0;
+  }
+
+  .fc2-rf-chips {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .fc2-rf-mod-text {
+    display: block;
+    -webkit-line-clamp: unset;
+    overflow: visible;
+  }
+
+  .fxrorg-signals {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+}
+
+/* ── G. ARTISAN-RESULT TRANSITION ────────────────────────────────── */
+#artisans-section {
+  padding-top: clamp(24px, 4vw, 48px);
+}
+
+.premium-results-header {
+  margin-bottom: clamp(16px, 2.5vw, 28px);
+}
+
+/* ── H. REDUCED MOTION ────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .fc2-rf-module,
+  .fc2-rf-chip {
+    transition: none !important;
+    animation:  none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
