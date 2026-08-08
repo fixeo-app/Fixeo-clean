@@ -1102,6 +1102,647 @@ a{text-decoration:none}
 
   </style>
 
+  <!-- Phase 4C — fxsvc-wow-v1: premium card system + category accent tokens -->
+  <style id="fxsvc-wow-v1">
+/* ════════════════════════════════════════════════════════════
+   fxsvc-wow-v1 — Service Explorer WOW layer
+   Philosophy: Apple × Stripe × OpenAI dark system.
+   Depth, hierarchy, precision. No decoration.
+   All overrides additive — no frozen code touched.
+   ════════════════════════════════════════════════════════════ */
+
+/* ── Category accent tokens ──────────────────────────────── */
+:root {
+  /* Plomberie: cyan */
+  --acc-plomberie:    56,189,248;
+  /* Électricité: amber */
+  --acc-electricite:  245,158,11;
+  /* Climatisation: ice blue */
+  --acc-climatisation:100,210,255;
+  /* Peinture: coral */
+  --acc-peinture:     251,113,133;
+  /* Nettoyage: mint */
+  --acc-nettoyage:    52,211,153;
+  /* Menuiserie: warm timber */
+  --acc-menuiserie:   234,179,8;
+  /* Serrurerie: gold */
+  --acc-serrurerie:   251,191,36;
+  /* Déménagement: orange */
+  --acc-demenagement: 251,146,60;
+  /* Carrelage: mineral blue */
+  --acc-carrelage:    99,179,237;
+  /* Maçonnerie: terracotta */
+  --acc-maconnerie:   251,113,73;
+  /* Jardinage: green */
+  --acc-jardinage:    134,239,172;
+  /* Bricolage: violet-blue */
+  --acc-bricolage:    167,139,250;
+}
+
+/* ── Grid: tighter gap, allow 2-col at ≥640px ──────────────── */
+.cp-service-grid {
+  grid-template-columns: repeat(auto-fill, minmax(260px,1fr));
+  gap: 14px;
+}
+
+/* ── Card reset — compact, deep, precise ───────────────────── */
+.cp-svc-card {
+  padding: 18px 18px 16px;
+  border-radius: 18px;
+  background:
+    linear-gradient(160deg,
+      rgba(255,255,255,0.055) 0%,
+      rgba(255,255,255,0.028) 60%,
+      rgba(255,255,255,0.018) 100%);
+  border: 1px solid rgba(255,255,255,0.09);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.07) inset,
+    0 8px 24px rgba(0,0,0,0.22);
+  transition:
+    transform    0.14s ease,
+    border-color 0.14s ease,
+    box-shadow   0.14s ease;
+  gap: 0; /* children spaced via margin */
+}
+
+/* Top-light gradient on hover — per-card via ::before */
+.cp-svc-card::before {
+  opacity: 0;
+  transition: opacity 0.20s ease;
+}
+
+.cp-svc-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(255,255,255,0.15);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.09) inset,
+    0 16px 40px rgba(0,0,0,0.30);
+}
+.cp-svc-card:hover::before { opacity: 0.7; }
+
+/* Press state — mobile-primary */
+.cp-svc-card:active {
+  transform: translateY(0) scale(0.99);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.06) inset,
+    0 4px 12px rgba(0,0,0,0.20);
+}
+
+/* ── Header row: icon + name side by side ───────────────────── */
+.cp-svc-card-header {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin-bottom: 10px;
+}
+
+/* ── Icon box: smaller, accent-aware ───────────────────────── */
+.cp-svc-icon-box {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.09);
+  flex-shrink: 0;
+  margin-bottom: 0; /* overrides old 16px */
+  transition: background 0.14s, border-color 0.14s;
+}
+
+/* ── Service name: strong, inline with icon ─────────────────── */
+.cp-svc-name {
+  font-size: 0.96rem;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  color: rgba(240,245,255,0.96);
+  margin: 0;
+  line-height: 1.25;
+}
+
+/* ── Description: compact, one visual line ──────────────────── */
+.cp-svc-desc {
+  font-size: 0.78rem;
+  color: rgba(210,218,235,0.50);
+  margin: 0 0 7px;
+  line-height: 1.50;
+  /* Visual clamp: 2 lines max — full text stays in DOM for SEO/SR */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ── Example: tertiary, italic, user-voice ──────────────────── */
+.cp-svc-example {
+  font-size: 0.72rem;
+  color: rgba(190,200,225,0.32);
+  font-style: italic;
+  margin: 0 0 12px;
+  line-height: 1.45;
+}
+
+/* ── CTA: compact, accent-colored ──────────────────────────── */
+.cp-svc-cta {
+  min-height: 38px;
+  padding: 0 14px;
+  border-radius: 10px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  gap: 5px;
+  align-self: flex-start;
+  letter-spacing: 0.005em;
+}
+
+/* ── Per-service accent coloring via data-svc-prefill ───────── */
+/* Pattern: icon border + icon bg on hover + CTA color + hover glow */
+
+/* Plomberie */
+.cp-svc-card:has([data-svc-prefill="Plomberie"]) .cp-svc-icon-box {
+  border-color: rgba(var(--acc-plomberie), 0.28);
+}
+.cp-svc-card:has([data-svc-prefill="Plomberie"]):hover .cp-svc-icon-box {
+  background: rgba(var(--acc-plomberie), 0.10);
+  border-color: rgba(var(--acc-plomberie), 0.35);
+}
+.cp-svc-card:has([data-svc-prefill="Plomberie"]) .cp-svc-cta {
+  color: rgba(var(--acc-plomberie), 0.88);
+  background: rgba(var(--acc-plomberie), 0.06);
+  border-color: rgba(var(--acc-plomberie), 0.20);
+}
+.cp-svc-card:has([data-svc-prefill="Plomberie"]) .cp-svc-cta:hover {
+  background: rgba(var(--acc-plomberie), 0.12);
+  border-color: rgba(var(--acc-plomberie), 0.34);
+  color: rgba(220,245,255,0.95);
+}
+.cp-svc-card:has([data-svc-prefill="Plomberie"])::before {
+  background: radial-gradient(ellipse 70% 50% at 50% 0%,
+    rgba(var(--acc-plomberie), 0.07) 0%, transparent 70%);
+}
+
+/* Électricité */
+.cp-svc-card:has([data-svc-prefill="Électricité"]) .cp-svc-icon-box {
+  border-color: rgba(var(--acc-electricite), 0.28);
+}
+.cp-svc-card:has([data-svc-prefill="Électricité"]):hover .cp-svc-icon-box {
+  background: rgba(var(--acc-electricite), 0.10);
+  border-color: rgba(var(--acc-electricite), 0.35);
+}
+.cp-svc-card:has([data-svc-prefill="Électricité"]) .cp-svc-cta {
+  color: rgba(var(--acc-electricite), 0.88);
+  background: rgba(var(--acc-electricite), 0.06);
+  border-color: rgba(var(--acc-electricite), 0.20);
+}
+.cp-svc-card:has([data-svc-prefill="Électricité"]) .cp-svc-cta:hover {
+  background: rgba(var(--acc-electricite), 0.12);
+  border-color: rgba(var(--acc-electricite), 0.34);
+  color: rgba(255,248,220,0.95);
+}
+.cp-svc-card:has([data-svc-prefill="Électricité"])::before {
+  background: radial-gradient(ellipse 70% 50% at 50% 0%,
+    rgba(var(--acc-electricite), 0.07) 0%, transparent 70%);
+}
+
+/* Climatisation */
+.cp-svc-card:has([data-svc-prefill="Climatisation"]) .cp-svc-icon-box {
+  border-color: rgba(var(--acc-climatisation), 0.28);
+}
+.cp-svc-card:has([data-svc-prefill="Climatisation"]):hover .cp-svc-icon-box {
+  background: rgba(var(--acc-climatisation), 0.10);
+  border-color: rgba(var(--acc-climatisation), 0.35);
+}
+.cp-svc-card:has([data-svc-prefill="Climatisation"]) .cp-svc-cta {
+  color: rgba(var(--acc-climatisation), 0.88);
+  background: rgba(var(--acc-climatisation), 0.06);
+  border-color: rgba(var(--acc-climatisation), 0.20);
+}
+.cp-svc-card:has([data-svc-prefill="Climatisation"]) .cp-svc-cta:hover {
+  background: rgba(var(--acc-climatisation), 0.12);
+  border-color: rgba(var(--acc-climatisation), 0.34);
+  color: rgba(220,248,255,0.95);
+}
+.cp-svc-card:has([data-svc-prefill="Climatisation"])::before {
+  background: radial-gradient(ellipse 70% 50% at 50% 0%,
+    rgba(var(--acc-climatisation), 0.07) 0%, transparent 70%);
+}
+
+/* Peinture */
+.cp-svc-card:has([data-svc-prefill="Peinture"]) .cp-svc-icon-box {
+  border-color: rgba(var(--acc-peinture), 0.28);
+}
+.cp-svc-card:has([data-svc-prefill="Peinture"]):hover .cp-svc-icon-box {
+  background: rgba(var(--acc-peinture), 0.10);
+  border-color: rgba(var(--acc-peinture), 0.35);
+}
+.cp-svc-card:has([data-svc-prefill="Peinture"]) .cp-svc-cta {
+  color: rgba(var(--acc-peinture), 0.88);
+  background: rgba(var(--acc-peinture), 0.06);
+  border-color: rgba(var(--acc-peinture), 0.20);
+}
+.cp-svc-card:has([data-svc-prefill="Peinture"]) .cp-svc-cta:hover {
+  background: rgba(var(--acc-peinture), 0.12);
+  border-color: rgba(var(--acc-peinture), 0.34);
+  color: rgba(255,230,235,0.95);
+}
+.cp-svc-card:has([data-svc-prefill="Peinture"])::before {
+  background: radial-gradient(ellipse 70% 50% at 50% 0%,
+    rgba(var(--acc-peinture), 0.07) 0%, transparent 70%);
+}
+
+/* Nettoyage */
+.cp-svc-card:has([data-svc-prefill="Nettoyage"]) .cp-svc-icon-box {
+  border-color: rgba(var(--acc-nettoyage), 0.28);
+}
+.cp-svc-card:has([data-svc-prefill="Nettoyage"]):hover .cp-svc-icon-box {
+  background: rgba(var(--acc-nettoyage), 0.10);
+  border-color: rgba(var(--acc-nettoyage), 0.35);
+}
+.cp-svc-card:has([data-svc-prefill="Nettoyage"]) .cp-svc-cta {
+  color: rgba(var(--acc-nettoyage), 0.88);
+  background: rgba(var(--acc-nettoyage), 0.06);
+  border-color: rgba(var(--acc-nettoyage), 0.20);
+}
+.cp-svc-card:has([data-svc-prefill="Nettoyage"]) .cp-svc-cta:hover {
+  background: rgba(var(--acc-nettoyage), 0.12);
+  border-color: rgba(var(--acc-nettoyage), 0.34);
+  color: rgba(220,255,240,0.95);
+}
+.cp-svc-card:has([data-svc-prefill="Nettoyage"])::before {
+  background: radial-gradient(ellipse 70% 50% at 50% 0%,
+    rgba(var(--acc-nettoyage), 0.07) 0%, transparent 70%);
+}
+
+/* Menuiserie */
+.cp-svc-card:has([data-svc-prefill="Menuiserie"]) .cp-svc-icon-box {
+  border-color: rgba(var(--acc-menuiserie), 0.28);
+}
+.cp-svc-card:has([data-svc-prefill="Menuiserie"]):hover .cp-svc-icon-box {
+  background: rgba(var(--acc-menuiserie), 0.10);
+  border-color: rgba(var(--acc-menuiserie), 0.35);
+}
+.cp-svc-card:has([data-svc-prefill="Menuiserie"]) .cp-svc-cta {
+  color: rgba(var(--acc-menuiserie), 0.88);
+  background: rgba(var(--acc-menuiserie), 0.06);
+  border-color: rgba(var(--acc-menuiserie), 0.20);
+}
+.cp-svc-card:has([data-svc-prefill="Menuiserie"]) .cp-svc-cta:hover {
+  background: rgba(var(--acc-menuiserie), 0.12);
+  border-color: rgba(var(--acc-menuiserie), 0.34);
+  color: rgba(255,250,220,0.95);
+}
+.cp-svc-card:has([data-svc-prefill="Menuiserie"])::before {
+  background: radial-gradient(ellipse 70% 50% at 50% 0%,
+    rgba(var(--acc-menuiserie), 0.07) 0%, transparent 70%);
+}
+
+/* Serrurerie */
+.cp-svc-card:has([data-svc-prefill="Serrurerie"]) .cp-svc-icon-box {
+  border-color: rgba(var(--acc-serrurerie), 0.28);
+}
+.cp-svc-card:has([data-svc-prefill="Serrurerie"]):hover .cp-svc-icon-box {
+  background: rgba(var(--acc-serrurerie), 0.10);
+  border-color: rgba(var(--acc-serrurerie), 0.35);
+}
+.cp-svc-card:has([data-svc-prefill="Serrurerie"]) .cp-svc-cta {
+  color: rgba(var(--acc-serrurerie), 0.88);
+  background: rgba(var(--acc-serrurerie), 0.06);
+  border-color: rgba(var(--acc-serrurerie), 0.20);
+}
+.cp-svc-card:has([data-svc-prefill="Serrurerie"]) .cp-svc-cta:hover {
+  background: rgba(var(--acc-serrurerie), 0.12);
+  border-color: rgba(var(--acc-serrurerie), 0.34);
+  color: rgba(255,252,230,0.95);
+}
+.cp-svc-card:has([data-svc-prefill="Serrurerie"])::before {
+  background: radial-gradient(ellipse 70% 50% at 50% 0%,
+    rgba(var(--acc-serrurerie), 0.07) 0%, transparent 70%);
+}
+
+/* Déménagement */
+.cp-svc-card:has([data-svc-prefill="Déménagement"]) .cp-svc-icon-box {
+  border-color: rgba(var(--acc-demenagement), 0.28);
+}
+.cp-svc-card:has([data-svc-prefill="Déménagement"]):hover .cp-svc-icon-box {
+  background: rgba(var(--acc-demenagement), 0.10);
+  border-color: rgba(var(--acc-demenagement), 0.35);
+}
+.cp-svc-card:has([data-svc-prefill="Déménagement"]) .cp-svc-cta {
+  color: rgba(var(--acc-demenagement), 0.88);
+  background: rgba(var(--acc-demenagement), 0.06);
+  border-color: rgba(var(--acc-demenagement), 0.20);
+}
+.cp-svc-card:has([data-svc-prefill="Déménagement"]) .cp-svc-cta:hover {
+  background: rgba(var(--acc-demenagement), 0.12);
+  border-color: rgba(var(--acc-demenagement), 0.34);
+  color: rgba(255,245,230,0.95);
+}
+.cp-svc-card:has([data-svc-prefill="Déménagement"])::before {
+  background: radial-gradient(ellipse 70% 50% at 50% 0%,
+    rgba(var(--acc-demenagement), 0.07) 0%, transparent 70%);
+}
+
+/* Carrelage */
+.cp-svc-card:has([data-svc-prefill="Carrelage"]) .cp-svc-icon-box {
+  border-color: rgba(var(--acc-carrelage), 0.28);
+}
+.cp-svc-card:has([data-svc-prefill="Carrelage"]):hover .cp-svc-icon-box {
+  background: rgba(var(--acc-carrelage), 0.10);
+  border-color: rgba(var(--acc-carrelage), 0.35);
+}
+.cp-svc-card:has([data-svc-prefill="Carrelage"]) .cp-svc-cta {
+  color: rgba(var(--acc-carrelage), 0.88);
+  background: rgba(var(--acc-carrelage), 0.06);
+  border-color: rgba(var(--acc-carrelage), 0.20);
+}
+.cp-svc-card:has([data-svc-prefill="Carrelage"]) .cp-svc-cta:hover {
+  background: rgba(var(--acc-carrelage), 0.12);
+  border-color: rgba(var(--acc-carrelage), 0.34);
+  color: rgba(225,240,255,0.95);
+}
+.cp-svc-card:has([data-svc-prefill="Carrelage"])::before {
+  background: radial-gradient(ellipse 70% 50% at 50% 0%,
+    rgba(var(--acc-carrelage), 0.07) 0%, transparent 70%);
+}
+
+/* Maçonnerie */
+.cp-svc-card:has([data-svc-prefill="Maçonnerie"]) .cp-svc-icon-box {
+  border-color: rgba(var(--acc-maconnerie), 0.28);
+}
+.cp-svc-card:has([data-svc-prefill="Maçonnerie"]):hover .cp-svc-icon-box {
+  background: rgba(var(--acc-maconnerie), 0.10);
+  border-color: rgba(var(--acc-maconnerie), 0.35);
+}
+.cp-svc-card:has([data-svc-prefill="Maçonnerie"]) .cp-svc-cta {
+  color: rgba(var(--acc-maconnerie), 0.88);
+  background: rgba(var(--acc-maconnerie), 0.06);
+  border-color: rgba(var(--acc-maconnerie), 0.20);
+}
+.cp-svc-card:has([data-svc-prefill="Maçonnerie"]) .cp-svc-cta:hover {
+  background: rgba(var(--acc-maconnerie), 0.12);
+  border-color: rgba(var(--acc-maconnerie), 0.34);
+  color: rgba(255,235,225,0.95);
+}
+.cp-svc-card:has([data-svc-prefill="Maçonnerie"])::before {
+  background: radial-gradient(ellipse 70% 50% at 50% 0%,
+    rgba(var(--acc-maconnerie), 0.07) 0%, transparent 70%);
+}
+
+/* Jardinage */
+.cp-svc-card:has([data-svc-prefill="Jardinage"]) .cp-svc-icon-box {
+  border-color: rgba(var(--acc-jardinage), 0.28);
+}
+.cp-svc-card:has([data-svc-prefill="Jardinage"]):hover .cp-svc-icon-box {
+  background: rgba(var(--acc-jardinage), 0.10);
+  border-color: rgba(var(--acc-jardinage), 0.35);
+}
+.cp-svc-card:has([data-svc-prefill="Jardinage"]) .cp-svc-cta {
+  color: rgba(var(--acc-jardinage), 0.88);
+  background: rgba(var(--acc-jardinage), 0.06);
+  border-color: rgba(var(--acc-jardinage), 0.20);
+}
+.cp-svc-card:has([data-svc-prefill="Jardinage"]) .cp-svc-cta:hover {
+  background: rgba(var(--acc-jardinage), 0.12);
+  border-color: rgba(var(--acc-jardinage), 0.34);
+  color: rgba(230,255,240,0.95);
+}
+.cp-svc-card:has([data-svc-prefill="Jardinage"])::before {
+  background: radial-gradient(ellipse 70% 50% at 50% 0%,
+    rgba(var(--acc-jardinage), 0.07) 0%, transparent 70%);
+}
+
+/* Bricolage */
+.cp-svc-card:has([data-svc-prefill="Bricolage"]) .cp-svc-icon-box {
+  border-color: rgba(var(--acc-bricolage), 0.28);
+}
+.cp-svc-card:has([data-svc-prefill="Bricolage"]):hover .cp-svc-icon-box {
+  background: rgba(var(--acc-bricolage), 0.10);
+  border-color: rgba(var(--acc-bricolage), 0.35);
+}
+.cp-svc-card:has([data-svc-prefill="Bricolage"]) .cp-svc-cta {
+  color: rgba(var(--acc-bricolage), 0.88);
+  background: rgba(var(--acc-bricolage), 0.06);
+  border-color: rgba(var(--acc-bricolage), 0.20);
+}
+.cp-svc-card:has([data-svc-prefill="Bricolage"]) .cp-svc-cta:hover {
+  background: rgba(var(--acc-bricolage), 0.12);
+  border-color: rgba(var(--acc-bricolage), 0.34);
+  color: rgba(240,235,255,0.95);
+}
+.cp-svc-card:has([data-svc-prefill="Bricolage"])::before {
+  background: radial-gradient(ellipse 70% 50% at 50% 0%,
+    rgba(var(--acc-bricolage), 0.07) 0%, transparent 70%);
+}
+
+/* ── Matched card WOW state — Phase 4B .fxsvc-match refinement ── */
+/* Override Phase 4B generic match state with accent-aware version */
+.cp-svc-card.fxsvc-match {
+  border-color: rgba(255,255,255,0.16);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.10) inset,
+    0 0 0 1px rgba(255,255,255,0.08),
+    0 12px 36px rgba(0,0,0,0.30),
+    /* per-accent light set via JS class on outer card */
+    var(--fxsvc-match-glow, 0 0 0 transparent);
+  background:
+    linear-gradient(160deg,
+      rgba(255,255,255,0.075) 0%,
+      rgba(255,255,255,0.040) 60%,
+      rgba(255,255,255,0.025) 100%);
+}
+
+.cp-svc-card.fxsvc-match .cp-svc-name {
+  color: rgba(248,250,255,1.0);
+}
+
+/* Match badge — refined */
+.fxsvc-match-badge {
+  font-size: 0.60rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 5px;
+  margin: 4px 0 6px;
+}
+
+/* ── Card header layout — icon + name row ───────────────────── */
+/* Wrap existing icon + name in a flex row via adjacent sibling */
+/* We handle this via CSS flex on the card itself with modified structure */
+/* Phase 4C: flex layout — children grow/shrink via margin, desc gets flex:1 */
+/* display:flex already set in base CSS — no override needed here */
+
+/* The header row: icon + name flex container (injected by _buildCardHeaders) */
+/* Definition already declared above — see .cp-svc-card-header near top of block */
+/* Fallback when JS hasn't run: icon + name stack vertically — still usable */
+
+/* ── Context bar refinement ─────────────────────────────────── */
+#fxsvc-ctx-bar {
+  padding: clamp(14px,2.2vw,22px) 0;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  margin-bottom: clamp(24px,3.5vw,40px);
+  background: rgba(255,255,255,0.018);
+}
+
+.fxsvc-ctx-inner {
+  gap: 5px;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.fxsvc-ctx-eyebrow {
+  width: 100%;
+  font-size: 0.56rem;
+  letter-spacing: 0.15em;
+  color: rgba(255,255,255,0.20);
+  margin-bottom: 4px;
+}
+
+.fxsvc-ctx-row {
+  gap: 6px;
+}
+
+.fxsvc-ctx-dot {
+  background: rgba(100,160,255,0.60);
+  width: 6px;
+  height: 6px;
+}
+
+.fxsvc-ctx-label {
+  font-size: 0.72rem;
+  color: rgba(180,195,230,0.50);
+}
+
+.fxsvc-ctx-metier-row {
+  padding-left: 0;
+  gap: 6px;
+  margin-left: 6px;
+}
+
+.fxsvc-ctx-metier-name {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: rgba(220,232,255,0.90);
+}
+
+.fxsvc-ctx-city-row {
+  padding-left: 0;
+  margin-left: 4px;
+}
+
+.fxsvc-ctx-city-name {
+  font-size: 0.76rem;
+  color: rgba(165,180,215,0.58);
+}
+
+.fxsvc-ctx-hint {
+  width: 100%;
+  font-size: 0.68rem;
+  color: rgba(140,160,210,0.36);
+  padding-left: 0;
+  margin-top: 4px;
+}
+
+/* ── Hero → catalogue: tighten vertical space ───────────────── */
+.cp-hero {
+  padding-top:    clamp(44px, 6vw, 72px);
+  padding-bottom: clamp(36px, 5vw, 60px);
+}
+
+/* Section above catalogue: tighter top */
+.cp-section:has(#svc-grid-title) {
+  padding-top: clamp(24px, 3.5vw, 40px);
+}
+
+/* ── Responsive: mobile adjustments ────────────────────────── */
+@media (max-width: 639px) {
+  .cp-service-grid {
+    grid-template-columns: 1fr;  /* 1-column — descriptions preserved readable */
+    gap: 10px;
+  }
+
+  .cp-svc-card {
+    padding: 15px 16px 13px;
+    border-radius: 16px;
+  }
+
+  .cp-svc-icon-box {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    font-size: 1.1rem;
+  }
+
+  .cp-svc-name  { font-size: 0.91rem; }
+  .cp-svc-desc  { font-size: 0.75rem; margin-bottom: 5px; }
+  .cp-svc-example { font-size: 0.70rem; margin-bottom: 10px; }
+
+  .cp-svc-cta {
+    min-height: 36px;
+    padding:    0 13px;
+    font-size:  0.76rem;
+  }
+
+  .fxsvc-ctx-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  .fxsvc-ctx-metier-row,
+  .fxsvc-ctx-city-row { margin-left: 12px; }
+}
+
+/* 640–1023: 2-col grid */
+@media (min-width: 640px) and (max-width: 1023px) {
+  .cp-service-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 13px;
+  }
+}
+
+/* ≥1024: 3–4 col auto */
+@media (min-width: 1024px) {
+  .cp-service-grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px,1fr));
+    gap: 16px;
+  }
+}
+
+/* ── micro-interactions: viewport reveal ────────────────────── */
+@supports (animation-timeline: scroll()) {
+  /* CSS-only: cards animate in as they enter view — only if motion OK */
+  @media (prefers-reduced-motion: no-preference) {
+    .cp-svc-card {
+      animation: fxsvc-fadein 0.35s ease both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 25%;
+    }
+    @keyframes fxsvc-fadein {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  }
+}
+
+/* ── Reduced motion — disable all movement ──────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .cp-svc-card,
+  .cp-svc-card:hover,
+  .cp-svc-card:active,
+  .cp-svc-icon-box {
+    transition: none !important;
+    transform: none !important;
+    animation: none !important;
+  }
+  .cp-svc-cta,
+  .cp-svc-cta:hover,
+  .cp-svc-cta:active {
+    transform: none !important;
+    transition: none !important;
+  }
+  .cp-svc-cta-arrow { transform: none !important; }
+}
+
+  </style>
+
   <!-- Phase 4B — fxsvc-ctx-v1: context bar + card highlight styles -->
   <style id="fxsvc-ctx-v1">
 /* ════════════════════════════════════════════════════════════
@@ -1908,9 +2549,13 @@ a{text-decoration:none}
             badge.className = 'fxsvc-match-badge';
             badge.setAttribute('aria-label', 'Correspond \u00e0 votre recherche');
             badge.textContent = 'Correspond \u00e0 votre recherche';
-            var nameEl = cards[i].querySelector('.cp-svc-name');
-            if (nameEl && nameEl.nextSibling) {
-              nameEl.parentNode.insertBefore(badge, nameEl.nextSibling);
+            /* Insert after header row (icon+name) if present, else after name */
+            var hdrEl = cards[i].querySelector('.cp-svc-card-header');
+            var anchorEl = hdrEl || cards[i].querySelector('.cp-svc-name');
+            if (anchorEl && anchorEl.nextSibling) {
+              anchorEl.parentNode.insertBefore(badge, anchorEl.nextSibling);
+            } else if (anchorEl) {
+              anchorEl.parentNode.appendChild(badge);
             }
             break;
           }
@@ -1922,10 +2567,38 @@ a{text-decoration:none}
     }
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', _initContextBar);
-  } else {
+  /* ── Phase 4C: card header restructuring ─────────────────── */
+  /* Wrap icon + name inside .cp-svc-card-header for flex row layout.
+     Runs once after DOM ready. No MutationObserver. Pure DOM surgery. */
+  function _buildCardHeaders() {
+    try {
+      var cards = document.querySelectorAll('.cp-svc-card');
+      for (var i = 0; i < cards.length; i++) {
+        var card = cards[i];
+        /* Skip if already wrapped */
+        if (card.querySelector('.cp-svc-card-header')) continue;
+        var icon = card.querySelector('.cp-svc-icon-box');
+        var name = card.querySelector('.cp-svc-name');
+        if (!icon || !name) continue;
+        var hdr = document.createElement('div');
+        hdr.className = 'cp-svc-card-header';
+        /* Insert header before icon's position */
+        card.insertBefore(hdr, icon);
+        hdr.appendChild(icon);
+        hdr.appendChild(name);
+      }
+    } catch (e) { /* silent */ }
+  }
+
+  function _initAll() {
+    _buildCardHeaders();
     _initContextBar();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', _initAll);
+  } else {
+    _initAll();
   }
 
 })();
