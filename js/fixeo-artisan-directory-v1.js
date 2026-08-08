@@ -1,18 +1,42 @@
 /**
  * fixeo-artisan-directory-v1.js
- * PHASE 6B.1 — Artisan Directory Foundation V1
+ * PHASE 6B.2 — Artisan Card Visual Continuity
+ * (replaces Phase 6B.1 version — engine architecture unchanged)
  *
- * Transforms artisans.html into a functional artisan directory:
- *   - Reads ?ville= and ?metier= URL params
- *   - Waits for window.ARTISANS (populated by fixeo-supabase-loader.js)
- *   - Filters + sorts using FixeoMatchingEngine where available
- *   - Renders directory cards (new artdir-* component, no homepage deps)
- *   - Manages load-more (batch 12, no numbered pagination)
- *   - Updates URL via history.replaceState on filter change
- *   - Populates context pills when params are present
- *   - Handles empty state with fallback actions
+ * Changes vs 6B.1:
+ *   _buildCard()  — new V3B-aligned card structure:
+ *                   artdir-card-header / artdir-avatar / artdir-identity /
+ *                   artdir-card-desc / artdir-trust / artdir-action
+ *   _buildAvatar() — 3-stage fallback (real photo → métier WebP/PNG → silhouette)
+ *                    using FixeoHeroes.getCardAvatar() when available
+ *   _buildPricing() — fixed: "Tarif renseigné" hint replaces raw priceLabel
+ *                     (was causing price duplication bug)
+ *   Avatar badge    — métier emoji bottom-right corner (mirrors pvc-avatar-badge)
+ *   Trust block     — inline SVG icons (mirrors V3B2-C pvc-trust-v3b)
+ *   CTA hierarchy   — primary full-width "Réserver maintenant →",
+ *                     secondary quiet "Voir le profil complet ›"
+ *   data-category   — on .artdir-avatar for CSS gradient selection
  *
- * Dependencies loaded on artisans.html:
+ * Engine unchanged:
+ *   URL params, city normalization, trade normalization, filtering,
+ *   FixeoMatchingEngine.sortByMatch(), load-more batch 12,
+ *   history.replaceState, empty state, localStorage city fallback.
+ *
+ * Avatar source priority:
+ *   1. Real artisan photo (a.photo_url / a.avatar)
+ *   2. Métier hero WebP via FixeoHeroes.getCardAvatar() (same as homepage)
+ *   3. Métier hero PNG fallback
+ *   4. CSS silhouette (no network request, always works)
+ *
+ * Pricing fix:
+ *   priceLabel in Supabase = pre-formatted "À partir de 120 DH" string.
+ *   Old code: hint = priceLabel → showed "À partir de 120 DH" AFTER
+ *   the main line "À partir de 120 MAD" → visual duplication on device.
+ *   Fix: when price_from is present, always hint = "Tarif renseigné"
+ *   (mirrors _getPricing() in fixeo_homepage_premium_patch.js).
+ *
+ * Dependencies loaded on artisans.html (added Phase 6B.1 + 6B.2):
+ *   js/fixeo-heroes.js          → window.FixeoHeroes (métier card avatars)
  *   js/fixeo-cities.js          → window.FIXEO_CITIES_MAP (slug↔name)
  *   js/supabase-client.js       → window.FixeoSupabaseClient
  *   js/fixeo-supabase-loader.js → window.ARTISANS + 'fixeo:artisans:loaded' event
@@ -20,14 +44,10 @@
  *
  * ZERO dependency on:
  *   - main.js, homepage-v13.js, secondary-search.js
- *   - renderArtisans(), _renderPremiumGrid()
+ *   - renderArtisans(), _renderPremiumGrid(), _buildCard() (homepage)
  *   - homepage DOM IDs (#artisans-container, #fixeo-homepage-vedette-grid)
- *   - artisan-card-conversion-v1.css card classes (fhp-card, pvc-*)
- *
- * State model:
- *   _state = { city, trade, allResults, visibleCount, loading }
- *
- * Geolocation: NEVER called. City from URL or localStorage only.
+ *   - _fxAvStage() (homepage-only inline onerror helper)
+ *   - artisan-card-conversion-v1.css classes (pvc-card, fhp-card, pvc-*)
  */
 ;(function (window, document) {
   'use strict';
@@ -36,8 +56,8 @@
      CONSTANTS
   ══════════════════════════════════════════════════════════════ */
 
-  var VERSION      = '1.0';
-  var BATCH        = 12;   /* initial + each load-more batch */
+  var VERSION      = '2.0';
+  var BATCH        = 12;
   var PAGE_ID      = 'artisan-directory';
   var GRID_ID      = 'artdir-grid';
   var LOADING_ID   = 'artdir-loading';
@@ -49,13 +69,13 @@
   var TRADE_SEL_ID = 'artdir-trade-select';
   var RESET_ID     = 'artdir-reset';
 
-  /* Category maps — mirrors fixeo_homepage_premium_patch.js (not imported to avoid dep) */
+  /* Category maps — mirrors fixeo_homepage_premium_patch.js */
   var CAT_ICONS = {
     plomberie:'🔧',electricite:'⚡',peinture:'🎨',nettoyage:'🧹',
     jardinage:'🌿',demenagement:'📦',bricolage:'🔨',climatisation:'❄️',
     menuiserie:'🪚',maconnerie:'🧱',serrurerie:'🔑',carrelage:'🏠',
     etancheite:'🛡',vitrerie:'🪟',soudure:'🔥',informatique:'💻',
-    toiture:'🏠'
+    toiture:'🏠',chauffage:'🔥'
   };
   var CAT_LABELS = {
     plomberie:'Plomberie',electricite:'Électricité',peinture:'Peinture',
@@ -63,60 +83,63 @@
     bricolage:'Bricolage',climatisation:'Climatisation',menuiserie:'Menuiserie',
     maconnerie:'Maçonnerie',serrurerie:'Serrurerie',carrelage:'Carrelage',
     etancheite:'Étanchéité',vitrerie:'Vitrerie',soudure:'Soudure',
-    informatique:'Informatique',toiture:'Toiture'
+    informatique:'Informatique',toiture:'Toiture',chauffage:'Chauffage'
   };
+
+  /* Inline SVG icons for trust rows (platform-independent; mirrors V3B2-C) */
+  var SVG_DIRECTORY =
+    '<svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14" fill="none">' +
+      '<rect x="2" y="1" width="10" height="12" rx="1.5" stroke="currentColor" stroke-width="1.3" fill="none"/>' +
+      '<line x1="4.5" y1="4.5" x2="9.5" y2="4.5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/>' +
+      '<line x1="4.5" y1="7" x2="9.5" y2="7" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/>' +
+      '<line x1="4.5" y1="9.5" x2="7.5" y2="9.5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/>' +
+    '</svg>';
+
+  var SVG_PAYMENT =
+    '<svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14" fill="none">' +
+      '<circle cx="7" cy="7.5" r="4.5" stroke="currentColor" stroke-width="1.3" fill="none"/>' +
+      '<path d="M7 4.5 L7 2 M7 2 L5.5 3.5 M7 2 L8.5 3.5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>' +
+      '<line x1="5.5" y1="7.5" x2="8.5" y2="7.5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/>' +
+    '</svg>';
 
   /* ══════════════════════════════════════════════════════════════
      STATE
   ══════════════════════════════════════════════════════════════ */
 
   var _state = {
-    city:         '',   /* canonical display name, e.g. "Casablanca" */
-    trade:        '',   /* slug, e.g. "plomberie" */
-    allResults:   [],   /* filtered + sorted artisan list */
+    city:         '',
+    trade:        '',
+    allResults:   [],
     visibleCount: BATCH,
     loading:      false
   };
 
   /* ══════════════════════════════════════════════════════════════
      CITY NORMALIZATION
-     Slug → canonical display name using FIXEO_CITIES_MAP aliases.
-     Fallback: title-case the slug.
   ══════════════════════════════════════════════════════════════ */
 
-  /** Slugify a city display name for URL params.
-   *  "Casablanca" → "casablanca", "Fès" → "fes", "El Jadida" → "el-jadida"
-   */
   function _cityToSlug(name) {
     if (!name) return '';
-    /* NFD decompose + strip combining diacritics */
     var s = name.normalize ? name.normalize('NFD') : name;
     s = s.replace(/[\u0300-\u036f]/g, '');
     return s.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '').trim();
   }
 
-  /** Slug → canonical display name.
-   *  Checks FIXEO_CITIES_MAP aliases first, then title-cases the slug.
-   */
   function _slugToCity(slug) {
     if (!slug) return '';
     var normalized = slug.toLowerCase().replace(/-/g, ' ');
     var map = window.FIXEO_CITIES_MAP || [];
     for (var i = 0; i < map.length; i++) {
       var entry = map[i];
-      /* Check value (canonical) */
       if (entry.value.toLowerCase() === normalized) return entry.value;
-      /* Check aliases */
       var aliases = entry.aliases || [];
       for (var j = 0; j < aliases.length; j++) {
         if (aliases[j].toLowerCase() === normalized) return entry.value;
       }
     }
-    /* Fallback: title-case */
     return normalized.replace(/\b\w/g, function(c){ return c.toUpperCase(); });
   }
 
-  /** Sanitize raw city from localStorage (strip emoji, suffixes). */
   function _sanitizeCity(raw) {
     if (!raw) return '';
     var s = String(raw).trim();
@@ -144,7 +167,6 @@
     var villeSlug  = (params.get('ville')  || '').toLowerCase().trim();
     var metierSlug = (params.get('metier') || '').toLowerCase().trim();
 
-    /* City: URL → localStorage fallback */
     var city = '';
     if (villeSlug) {
       city = _slugToCity(villeSlug);
@@ -155,7 +177,6 @@
       } catch(_) {}
     }
 
-    /* Trade: URL only, validate against known slugs */
     var trade = '';
     if (metierSlug && CAT_LABELS[metierSlug]) {
       trade = metierSlug;
@@ -205,20 +226,16 @@
   }
 
   function _sort(list, city, trade) {
-    /* Use FixeoMatchingEngine if available */
     if (
       window.FixeoMatchingEngine &&
       typeof window.FixeoMatchingEngine.sortByMatch === 'function' &&
       (city || trade)
     ) {
-      var catSlug = trade || '';
-      /* MatchingEngine expects service in its own slug format */
       return window.FixeoMatchingEngine.sortByMatch(list.slice(), {
         city:    city    || '',
-        service: catSlug || ''
+        service: trade   || ''
       });
     }
-    /* Simple fallback: verified first, then by rating */
     return list.slice().sort(function(a, b) {
       var av = a.verified ? 1 : 0;
       var bv = b.verified ? 1 : 0;
@@ -228,7 +245,7 @@
   }
 
   /* ══════════════════════════════════════════════════════════════
-     CARD RENDERER
+     CARD BUILDER — V3B visual contract
   ══════════════════════════════════════════════════════════════ */
 
   function _esc(s) {
@@ -245,100 +262,233 @@
     return ((p[0]||'?')[0] + ((p[1]||p[0]||'?')[0])).toUpperCase();
   }
 
+  /* ── Pricing ──────────────────────────────────────────────────────
+   * FIX (6B.2): Mirrors _getPricing() in fixeo_homepage_premium_patch.js.
+   * When price_from is present and valid → main = "À partir de N MAD",
+   *   hint = "Tarif renseigné" (ALWAYS — never priceLabel).
+   * Why: priceLabel from Supabase = "À partir de 120 DH" (pre-formatted).
+   *   Showing it as hint next to main "À partir de 120 MAD" = duplication.
+   * When price_from absent → return null (no price block rendered).
+   * No MAR_PRICES range fallback — directory shows artisan-specific only. */
   function _buildPricing(a) {
     var from = a.price_from || a.priceFrom;
     if (!from) return null;
     var amount = parseFloat(from);
-    if (!amount || isNaN(amount)) return null;
-    var label = a.priceLabel || a.price_label || '';
+    if (!amount || isNaN(amount) || amount <= 0) return null;
     return {
-      main: '\u00c0 partir de\u00a0' + Math.round(amount).toLocaleString('fr-FR') + '\u00a0MAD',
-      hint: label || 'Tarif indicatif'
+      main: '\u00c0 partir de ' + Math.round(amount).toLocaleString('fr-FR') + '\u00a0MAD',
+      hint: 'Tarif renseign\u00e9'   /* always fixed — never priceLabel */
     };
   }
 
-  function _buildCard(a) {
-    var name    = _esc(a.name || a.full_name || 'Artisan Fixeo');
-    var city    = _esc(a.city || a.ville || '');
-    var cat     = (a.category || a.service || '').toLowerCase();
-    var catIcon = CAT_ICONS[cat] || '🔧';
-    var catLabel = CAT_LABELS[cat] || _esc(a.category || a.service || '');
-    var desc    = (a.description || a.shortBio || '').trim();
-    var photo   = a.photo || a.photo_url || a.avatar || '';
-    var slug    = a.public_slug || '';
-    var aid     = a.id || a._supabase_id || '';
-    var pricing = _buildPricing(a);
+  /* ── Description sanitizer ────────────────────────────────────────
+   * Mirrors V3B2-1 _descSanitize in homepage patch.
+   * Rejects object artefacts ('[object Object]', etc.). */
+  function _sanitizeDesc(s) {
+    if (typeof s !== 'string') return '';
+    var t = s.trim();
+    if (!t) return '';
+    if (t === '[object Object]' || t.charAt(0) === '[' || t.charAt(0) === '{') return '';
+    return t;
+  }
 
-    /* Profile href */
-    var profileHref = 'artisan-profile.html?id=' + encodeURIComponent(String(aid));
-
-    /* Avatar HTML */
-    var avatarInner;
-    if (photo) {
-      avatarInner = '<img class="artdir-avatar-img" src="' + _esc(photo) + '"'
-        + ' alt="' + name + '" loading="lazy"'
-        + ' onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'">'
-        + '<span class="artdir-avatar-initials" style="display:none">' + _esc(_initials(a.name||'')) + '</span>';
-    } else {
-      avatarInner = '<span class="artdir-avatar-initials">' + _esc(_initials(a.name||'')) + '</span>';
+  /* ── Avatar builder — 3-stage fallback ───────────────────────────
+   * Stage 1: real artisan photo (a.photo_url / a.avatar)
+   * Stage 2: métier hero WebP via FixeoHeroes.getCardAvatar()
+   * Stage 3: métier hero PNG (data-attr fallback in onerror)
+   * Stage 4: CSS artdir-avatar-silhouette (no request)
+   *
+   * IMPORTANT: does NOT use _fxAvStage() — that is a homepage-only
+   * inline onerror helper not available on artisans.html.
+   * Uses _artdirAvStage() exposed on window (see below). */
+  function _buildAvatar(a, cat) {
+    var photoSrc = a.photo_url || a.avatar || a.photo || '';
+    var cardHero = null;
+    if (window.FixeoHeroes && typeof window.FixeoHeroes.getCardAvatar === 'function') {
+      cardHero = window.FixeoHeroes.getCardAvatar(cat) || null;
     }
 
-    /* Meta items */
-    var metaItems = '';
-    if (city)     metaItems += '<span class="artdir-card-meta-item">\uD83D\uDCCD\u00a0' + city + '</span>';
-    if (catLabel) metaItems += '<span class="artdir-card-meta-item">' + _esc(catIcon) + '\u00a0' + _esc(catLabel) + '</span>';
+    var initStr = _esc(_initials(a.name || ''));
+    var nameStr = _esc(a.name || 'Artisan');
 
-    /* Description */
+    if (photoSrc) {
+      /* Stage 1: real photo. Métier URLs stored as data attrs, no request yet. */
+      return (
+        '<img class="artdir-avatar-img"' +
+          ' src="'            + _esc(photoSrc)                       + '"' +
+          ' alt="'            + nameStr                               + '"' +
+          ' data-stage="real-photo"' +
+          ' data-webp="'      + (cardHero ? _esc(cardHero.webp) : '') + '"' +
+          ' data-png="'       + (cardHero ? _esc(cardHero.png)  : '') + '"' +
+          ' data-initials="'  + initStr                               + '"' +
+          ' width="76" height="76" loading="lazy" decoding="async"' +
+          ' onerror="_artdirAvStage(this)">' +
+        '<div class="artdir-avatar-silhouette" style="display:none"></div>'
+      );
+    } else if (cardHero) {
+      /* Stage 2: métier WebP. PNG stored as data attr. */
+      return (
+        '<img class="artdir-avatar-img"' +
+          ' src="'            + _esc(cardHero.webp)                  + '"' +
+          ' alt="'            + _esc(cardHero.alt)                    + '"' +
+          ' data-stage="metier-webp"' +
+          ' data-webp=""' +
+          ' data-png="'       + _esc(cardHero.png)                    + '"' +
+          ' data-initials="'  + initStr                               + '"' +
+          ' width="76" height="76" loading="lazy" decoding="async"' +
+          ' onerror="_artdirAvStage(this)">' +
+        '<div class="artdir-avatar-silhouette" style="display:none"></div>'
+      );
+    } else {
+      /* Stage 4 direct: unknown category — silhouette, zero requests. */
+      return '<div class="artdir-avatar-silhouette"></div>';
+    }
+  }
+
+  /* ── Card builder ─────────────────────────────────────────────────
+   * Output HTML matches artdir-* CSS selectors defined in 6B.2 CSS.
+   * All fields are truthful; every field guards against missing data. */
+  function _buildCard(a) {
+    var cat      = (a.category || a.service || '').toLowerCase();
+    var catIcon  = CAT_ICONS[cat] || '🔧';
+    var catLabel = CAT_LABELS[cat] || (a.category || a.service || '');
+    var name     = a.name || a.full_name || 'Artisan Fixeo';
+    var city     = a.city || a.ville || '';
+    var aid      = a.id || a._supabase_id || '';
+    var pricing  = _buildPricing(a);
+    var profileHref = 'artisan-profile.html?id=' + encodeURIComponent(String(aid));
+
+    /* Description — same sanitize chain as homepage V3B2-1 */
+    var descRaw = _sanitizeDesc(a.description)
+               || _sanitizeDesc(a.shortBio)
+               || _sanitizeDesc(a.bio && a.bio.fr)
+               || '';
+    var desc = descRaw.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+
+    /* Avatar HTML */
+    var avatarHtml = _buildAvatar(a, cat);
+
+    /* Header: avatar block + identity block */
+    var headerHtml =
+      '<div class="artdir-card-header">' +
+
+        /* Avatar container — data-category drives CSS gradient */
+        '<div class="artdir-avatar" data-category="' + _esc(cat) + '" aria-hidden="true">' +
+          avatarHtml +
+          '<span class="artdir-avatar-badge" aria-hidden="true">' + catIcon + '</span>' +
+        '</div>' +
+
+        /* Identity column */
+        '<div class="artdir-identity">' +
+          '<h3 class="artdir-card-name" title="' + _esc(name) + '">' + _esc(name) + '</h3>' +
+          (city
+            ? '<div class="artdir-meta-line">\uD83D\uDCCD Bas\u00e9\u00a0\u00e0\u00a0' + _esc(city) + '</div>'
+            : '<div class="artdir-meta-line">Profil au Maroc</div>') +
+          '<div class="artdir-meta-line">' + catIcon + '\u00a0' + _esc(catLabel) + '</div>' +
+        '</div>' +
+
+      '</div>';
+
+    /* Description — absent when empty (no gap reserved) */
     var descHtml = desc
       ? '<p class="artdir-card-desc">' + _esc(desc) + '</p>'
       : '';
 
-    /* Trust */
+    /* Trust rows — inline SVG icons (platform-independent) */
     var trustHtml =
-      '<div class="artdir-card-trust">' +
-        '<span class="artdir-card-trust-item">✓\u00a0Profil r\u00e9f\u00e9renc\u00e9 sur FIXEO</span>' +
-        '<span class="artdir-card-trust-item">💳\u00a0Paiement apr\u00e8s intervention</span>' +
+      '<div class="artdir-trust" role="list">' +
+        '<span class="artdir-trust-item" role="listitem">' +
+          '<span class="artdir-trust-icon">' + SVG_DIRECTORY + '</span>' +
+          'Profil r\u00e9f\u00e9renc\u00e9 sur FIXEO' +
+        '</span>' +
+        '<span class="artdir-trust-item" role="listitem">' +
+          '<span class="artdir-trust-icon">' + SVG_PAYMENT + '</span>' +
+          'Paiement apr\u00e8s intervention' +
+        '</span>' +
       '</div>';
 
-    /* Price */
-    var priceHtml = '';
-    if (pricing) {
-      priceHtml =
-        '<div class="artdir-card-price">' +
-          '<span class="artdir-card-price-amount">' + _esc(pricing.main) + '</span>' +
-          '<span class="artdir-card-price-hint">' + _esc(pricing.hint) + '</span>' +
-        '</div>';
-    }
+    /* Price block — absent when not present in data */
+    var priceHtml = pricing
+      ? '<div class="artdir-price">' +
+          '<span class="artdir-price-amount">' + _esc(pricing.main) + '</span>' +
+          '<span class="artdir-price-hint">' + _esc(pricing.hint) + '</span>' +
+        '</div>'
+      : '';
 
-    /* CTAs */
-    var ctaHtml =
-      '<div class="artdir-card-actions">' +
-        '<button class="artdir-btn-reserve" type="button"'
-          + ' data-artisan-id="' + _esc(String(aid)) + '"'
-          + ' data-artisan-name="' + name + '"'
-          + ' aria-label="R\u00e9server avec ' + name + '">'
-          + 'R\u00e9server maintenant' +
+    /* Action area: divider → price → primary CTA → secondary profile link */
+    var actionHtml =
+      '<div class="artdir-action">' +
+        '<div class="artdir-divider" aria-hidden="true"></div>' +
+        priceHtml +
+        /* Primary: full-width orange→magenta */
+        '<button class="artdir-btn-reserve" type="button"' +
+          ' data-artisan-id="' + _esc(String(aid)) + '"' +
+          ' data-artisan-name="' + _esc(name) + '"' +
+          ' aria-label="R\u00e9server avec ' + _esc(name) + '">' +
+          'R\u00e9server maintenant \u2192' +
         '</button>' +
-        '<a class="artdir-btn-profile" href="' + _esc(profileHref) + '"'
-          + ' aria-label="Voir le profil de ' + name + '">'
-          + 'Voir le profil \u2192' +
+        /* Secondary: quiet text link below */
+        '<a class="artdir-btn-profile" href="' + _esc(profileHref) + '"' +
+          ' aria-label="Voir le profil complet de ' + _esc(name) + '">' +
+          'Voir le profil complet \u203a' +
         '</a>' +
       '</div>';
 
-    return '<article class="artdir-card" data-artisan-id="' + _esc(String(aid)) + '">' +
-      '<div class="artdir-avatar" aria-hidden="true">' + avatarInner + '</div>' +
-      '<div class="artdir-card-body">' +
-        '<div class="artdir-card-top">' +
-          '<h3 class="artdir-card-name" title="' + name + '">' + name + '</h3>' +
-        '</div>' +
-        (metaItems ? '<div class="artdir-card-meta">' + metaItems + '</div>' : '') +
+    return (
+      '<article class="artdir-card" data-artisan-id="' + _esc(String(aid)) + '">' +
+        headerHtml +
         descHtml +
         trustHtml +
-        priceHtml +
-        ctaHtml +
-      '</div>' +
-    '</article>';
+        actionHtml +
+      '</article>'
+    );
   }
+
+  /* ══════════════════════════════════════════════════════════════
+     AVATAR STAGED FALLBACK — artisans.html context
+     Exposed on window so inline onerror="_artdirAvStage(this)" works.
+     Self-contained: no dependency on homepage _fxAvStage().
+
+     Stage machine:
+       "real-photo"  + data-webp present → try WebP  (metier-webp)
+       "real-photo"  + data-webp empty   → silhouette (stage 4)
+       "metier-webp" + data-png present  → try PNG    (metier-png)
+       "metier-webp" + data-png empty    → silhouette (stage 4)
+       "metier-png"                      → silhouette (stage 4)
+  ══════════════════════════════════════════════════════════════ */
+  function _artdirAvStage(img) {
+    if (!img) return;
+    img.onerror = null; /* prevent re-entry */
+
+    var stage    = img.getAttribute('data-stage') || '';
+    var webp     = img.getAttribute('data-webp')  || '';
+    var png      = img.getAttribute('data-png')   || '';
+
+    /* Stage 1 (real-photo) failed → try métier WebP */
+    if (stage === 'real-photo' && webp) {
+      img.setAttribute('data-stage', 'metier-webp');
+      img.onerror = function() { _artdirAvStage(img); };
+      img.src = webp;
+      return;
+    }
+
+    /* Stage 2 (metier-webp) failed → try métier PNG */
+    if (stage === 'metier-webp' && png) {
+      img.setAttribute('data-stage', 'metier-png');
+      img.onerror = function() { _artdirAvStage(img); };
+      img.src = png;
+      return;
+    }
+
+    /* Stage 4: silhouette — hide img, show sibling silhouette div */
+    img.style.display = 'none';
+    var sib = img.nextElementSibling;
+    if (sib && sib.classList.contains('artdir-avatar-silhouette')) {
+      sib.style.display = '';
+    }
+  }
+  /* Expose for inline onerror usage */
+  window._artdirAvStage = _artdirAvStage;
 
   /* ══════════════════════════════════════════════════════════════
      HEADER / CONTEXT UI
@@ -352,10 +502,8 @@
     var catLabel = trade ? (CAT_LABELS[trade] || trade) : '';
     var catIcon  = trade ? (CAT_ICONS[trade] || '🔧') : '';
 
-    /* h1 text */
     var h1Text, h1Em;
     if (trade && city) {
-      /* "Plombiers référencés à [Casablanca]" */
       h1Text = _catPlural(trade) + ' r\u00e9f\u00e9renc\u00e9s \u00e0\u00a0';
       h1Em   = city;
     } else if (city) {
@@ -375,7 +523,6 @@
       h1.textContent = h1Text;
     }
 
-    /* Context pills */
     if (!ctxEl) return;
     if (!city && !trade) {
       ctxEl.classList.remove('artdir-context--visible');
@@ -384,7 +531,7 @@
     }
     var pills = '';
     if (city)  pills += '<span class="artdir-ctx-pill">\uD83D\uDCCD\u00a0' + _esc(city) + '</span>';
-    if (trade) pills += '<span class="artdir-ctx-pill">' + _esc(catIcon) + '\u00a0' + _esc(catLabel) + '</span>';
+    if (trade) pills += '<span class="artdir-ctx-pill">' + catIcon + '\u00a0' + _esc(catLabel) + '</span>';
     ctxEl.innerHTML = pills;
     ctxEl.classList.add('artdir-context--visible');
   }
@@ -397,7 +544,8 @@
       climatisation:'Techniciens climatisation',menuiserie:'Menuisiers',
       maconnerie:'Maçons',serrurerie:'Serruriers',carrelage:'Carreleurs',
       toiture:'Couvreurs',etancheite:'Étancheurs',vitrerie:'Vitriers',
-      soudure:'Soudeurs',informatique:'Techniciens informatique'
+      soudure:'Soudeurs',informatique:'Techniciens informatique',
+      chauffage:'Chauffagistes'
     };
     return map[slug] || (CAT_LABELS[slug] || slug);
   }
@@ -497,23 +645,16 @@
   }
 
   function _updateEmptyActions(city, trade) {
-    /* "Voir tous les artisans à [ville]" button in empty state */
     var widenBtn = document.querySelector('.artdir-empty-btn-widen');
     if (!widenBtn) return;
     if (city && trade) {
       widenBtn.textContent = 'Voir tous les artisans \u00e0 ' + city;
       widenBtn.style.display = '';
-      widenBtn.onclick = function() {
-        _applyFilters(city, '');
-        _syncSelects();
-      };
+      widenBtn.onclick = function() { _applyFilters(city, ''); _syncSelects(); };
     } else if (city) {
       widenBtn.textContent = 'Voir tous les artisans';
       widenBtn.style.display = '';
-      widenBtn.onclick = function() {
-        _applyFilters('', '');
-        _syncSelects();
-      };
+      widenBtn.onclick = function() { _applyFilters('', ''); _syncSelects(); };
     } else {
       widenBtn.style.display = 'none';
     }
@@ -566,7 +707,6 @@
   ══════════════════════════════════════════════════════════════ */
 
   function _bindEvents() {
-    /* City select change */
     var cityEl = document.getElementById(CITY_SEL_ID);
     if (cityEl) {
       cityEl.addEventListener('change', function() {
@@ -576,7 +716,6 @@
       });
     }
 
-    /* Trade select change */
     var tradeEl = document.getElementById(TRADE_SEL_ID);
     if (tradeEl) {
       tradeEl.addEventListener('change', function() {
@@ -584,7 +723,6 @@
       });
     }
 
-    /* Reset */
     var resetEl = document.getElementById(RESET_ID);
     if (resetEl) {
       resetEl.addEventListener('click', function() {
@@ -593,7 +731,6 @@
       });
     }
 
-    /* Load more */
     var loadMoreEl = document.getElementById(LOAD_MORE_ID);
     if (loadMoreEl) {
       loadMoreEl.addEventListener('click', function() {
@@ -608,28 +745,32 @@
       section.addEventListener('click', function(e) {
         var btn = e.target.closest('.artdir-btn-reserve');
         if (!btn) return;
-        var aid  = btn.getAttribute('data-artisan-id');
+        var aid   = btn.getAttribute('data-artisan-id');
         var aname = btn.getAttribute('data-artisan-name');
 
-        /* Open RAFI/request form with prefilled artisan context if available */
         if (window.FixeoClientRequest && typeof window.FixeoClientRequest.open === 'function') {
           window.FixeoClientRequest.open({ artisanId: aid, artisanName: aname });
           return;
         }
-        /* Fallback: trigger existing data-open-request-form handler */
         var trigger = document.querySelector('[data-open-request-form]');
         if (trigger) {
           trigger.click();
           return;
         }
-        /* Last resort: profile page */
         if (aid) {
           window.location.href = 'artisan-profile.html?id=' + encodeURIComponent(aid);
         }
       });
+
+      /* Keyboard: Enter on .artdir-btn-reserve (role=button already covered natively) */
+      section.addEventListener('keydown', function(e) {
+        if (e.key !== 'Enter' && e.key !== ' ') return;
+        var btn = e.target.closest('.artdir-btn-reserve');
+        if (btn) { e.preventDefault(); btn.click(); }
+      });
     }
 
-    /* Métier pills in existing page sections → filter directory */
+    /* Métier items in page sections → filter + scroll */
     var metierItems = document.querySelectorAll('.cp-metier-item[data-metier]');
     metierItems.forEach(function(item) {
       item.addEventListener('click', function() {
@@ -638,13 +779,15 @@
         var tradeEl2 = document.getElementById(TRADE_SEL_ID);
         if (tradeEl2) tradeEl2.value = slug;
         _applyFilters(_state.city, slug);
-        /* Scroll to directory */
         var dir = document.getElementById(PAGE_ID);
         if (dir) dir.scrollIntoView({ behavior: 'smooth' });
       });
+      item.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); item.click(); }
+      });
     });
 
-    /* City pills in existing page sections → filter directory */
+    /* City pills in page sections → filter + scroll */
     var cityPills = document.querySelectorAll('.cp-city-pill[data-city]');
     cityPills.forEach(function(pill) {
       pill.addEventListener('click', function() {
@@ -657,6 +800,9 @@
         var dir = document.getElementById(PAGE_ID);
         if (dir) dir.scrollIntoView({ behavior: 'smooth' });
       });
+      pill.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pill.click(); }
+      });
     });
   }
 
@@ -665,41 +811,37 @@
   ══════════════════════════════════════════════════════════════ */
 
   function _init() {
-    /* Only run on artisans.html */
     if (!document.getElementById(PAGE_ID)) return;
 
-    var params = _readParams();
-    var city   = params.city;
-    var trade  = params.trade;
+    var params    = _readParams();
+    var city      = params.city;
+    var trade     = params.trade;
     var citySlug  = _cityToSlug(city);
     var tradeSlug = trade;
 
-    /* Populate selects */
     _populateCitySelect(citySlug);
     _populateTradeSelect(tradeSlug);
 
-    /* Show loading */
     _showLoading(true);
     _updateHeader(city, trade);
 
-    /* Bind UI events */
     _bindEvents();
 
-    /* If ARTISANS already populated (cached) — render immediately */
+    /* Immediate render if ARTISANS already cached */
     if (window.ARTISANS && window.ARTISANS.length > 0) {
       _showLoading(false);
       _applyFilters(city, trade);
       return;
     }
 
-    /* Wait for supabase-loader to dispatch 'fixeo:artisans:loaded' */
+    /* Wait for supabase-loader event */
     window.addEventListener('fixeo:artisans:loaded', function _onLoaded() {
       window.removeEventListener('fixeo:artisans:loaded', _onLoaded);
       _showLoading(false);
       _applyFilters(city, trade);
     });
 
-    /* Fallback polling if event never fires (localStorage offline data) */
+    /* Polling fallback — 15s max */
     var _poll = 0;
     var _pollId = setInterval(function() {
       _poll++;
@@ -709,10 +851,9 @@
         _applyFilters(city, trade);
         return;
       }
-      if (_poll > 30) { /* 15s max */
+      if (_poll > 30) {
         clearInterval(_pollId);
         _showLoading(false);
-        /* Show empty state with helpful fallback */
         _state.allResults = [];
         _renderCards();
       }
@@ -726,11 +867,11 @@
     _init();
   }
 
-  /* Public API (minimal) */
+  /* Public API */
   window.FixeoArtisanDirectory = {
-    version:       VERSION,
-    applyFilters:  _applyFilters,
-    state:         _state,
+    version:      VERSION,
+    applyFilters: _applyFilters,
+    state:        _state,
   };
 
 }(window, document));

@@ -1,23 +1,41 @@
 /**
  * fixeo-artisan-directory-v1.css
- * PHASE 6B.1 — Artisan Directory Foundation V1
+ * PHASE 6B.2 — Artisan Card Visual Continuity
+ * (replaces Phase 6B.1 version of this file — engine unchanged)
  *
  * Scope: artisans.html directory layer only.
  * Naming: artdir-* prefix for all directory-specific selectors.
- * No dependency on homepage artisan card CSS.
- * Dark premium aesthetic consistent with FIXEO design system.
+ *
+ * Visual contract: reproduces the approved FIXEO homepage card language
+ * (pvc-card V3B, Phase 5D) under the artdir-* namespace.
+ * Zero dependency on #fixeo-homepage-vedette-grid or #artisans-section.
+ * Zero `!important` wars with artisan-card-conversion-v1.css.
+ * Homepage Phase 5D remains pixel-stable — no shared selectors touched.
+ *
+ * Architecture decision (6B.2):
+ *   Reproduction (not extraction) of homepage card visual primitives.
+ *   Shared CSS extraction would require touching artisan-card-conversion-v1.css
+ *   selectors scoped to #fixeo-homepage-vedette-grid — regression risk too high.
+ *   Directory cards use natural/min-content height (no 360px lock).
  *
  * Structure:
  *   1. Section shell
- *   2. Header (eyebrow / h1 / subtitle)
+ *   2. Directory header
  *   3. Filter controls (Ville + Métier selects)
  *   4. Context bar (city/trade pill strip)
  *   5. Result summary
  *   6. Loading state
- *   7. Artisan card
+ *   7. Artisan card — V3B visual contract
+ *      7a. Card shell
+ *      7b. Card header (avatar + identity)
+ *      7c. Avatar — staged fallback, category gradient, badge
+ *      7d. Identity (name, city, métier)
+ *      7e. Description
+ *      7f. Trust rows (inline SVG icons)
+ *      7g. Action area (divider + price + CTA + profile link)
  *   8. Empty state
  *   9. Load-more
- *  10. Responsive overrides
+ *  10. Responsive overrides (mobile / tablet / desktop)
  *  11. Accessibility / motion
  */
 
@@ -168,19 +186,16 @@
 .artdir-controls-reset:focus-visible {
   outline: 2px solid rgba(167, 110, 255, 0.55);
   outline-offset: 2px;
-  border-radius: 12px;
 }
 
-/* ── 4. Context bar (pill strip) ────────────────────────────────────
-   Shown below filters when URL params are active. */
+/* ── 4. Context bar (pill strip) ─────────────────────────────────── */
 .artdir-context {
-  display: none; /* shown via JS when context exists */
+  display: none;
   align-items: center;
   flex-wrap: wrap;
   gap: 8px;
   justify-content: center;
   margin-bottom: 20px;
-  min-height: 0;
 }
 
 .artdir-context.artdir-context--visible {
@@ -241,7 +256,9 @@
   to { transform: rotate(360deg); }
 }
 
-/* ── 7. Artisan card ─────────────────────────────────────────────── */
+/* ── 7. Artisan card — V3B visual contract ───────────────────────── */
+
+/* ── 7a. Card shell ─────────────────────────────────────────────── */
 #artdir-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -249,191 +266,320 @@
 }
 
 .artdir-card {
-  background: linear-gradient(145deg, rgba(255,255,255,0.055) 0%, rgba(255,255,255,0.028) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 18px;
-  padding: 18px;
+  /* Glass card — mirrors homepage V3B pvc-card */
+  background:
+    radial-gradient(circle at 18% 0%, rgba(255,255,255,0.055), transparent 34%),
+    linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.018));
+  border: 1px solid rgba(255, 255, 255, 0.095);
+  border-radius: 20px;
+  padding: 22px 18px 16px;
   display: flex;
-  gap: 14px;
-  align-items: flex-start;
-  transition: border-color 0.18s, background 0.18s;
-  cursor: default;
+  flex-direction: column;
+  gap: 0;
   position: relative;
-  overflow: hidden;
+  overflow: visible; /* allow avatar badge to bleed */
+  transition: border-color 0.25s ease, background 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.artdir-card:hover {
-  border-color: rgba(255, 255, 255, 0.16);
-  background: linear-gradient(145deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.038) 100%);
+.artdir-card:active {
+  transform: scale(0.99);
 }
 
-/* Avatar */
+/* ── 7b. Card header: avatar + identity side by side ─────────────── */
+.artdir-card-header {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  margin-bottom: 8px;
+  flex-shrink: 0;
+}
+
+/* ── 7c. Avatar — staged fallback, category gradient, badge ─────── */
 .artdir-avatar {
   flex-shrink: 0;
-  width: 60px;
-  height: 60px;
-  min-width: 60px;
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.10);
+  width: 76px;
+  height: 76px;
+  min-width: 76px;
+  border-radius: 18px;
+  overflow: visible; /* badge bleeds */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  /* Default gradient: plomberie blue (overridden by data-category rules) */
+  background: linear-gradient(135deg, #0ea5e9, #2563eb);
+  box-shadow:
+    0 0 0 2px rgba(255,255,255,0.05),
+    0 8px 24px rgba(0,0,0,0.46),
+    0 0 20px rgba(255,255,255,0.04);
+}
+
+/* Inner content clips to rounded square */
+.artdir-avatar-img,
+.artdir-avatar-initials-wrap {
+  width: 76px;
+  height: 76px;
+  border-radius: 18px;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.4rem;
   position: relative;
 }
 
 .artdir-avatar-img {
-  width: 100%;
-  height: 100%;
   object-fit: cover;
   object-position: center top;
-  border-radius: 14px;
   display: block;
 }
 
 .artdir-avatar-initials {
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   font-weight: 800;
-  color: rgba(255, 255, 255, 0.55);
+  color: rgba(255, 255, 255, 0.80);
   letter-spacing: -0.02em;
   line-height: 1;
 }
 
-/* Card body */
-.artdir-card-body {
-  flex: 1;
+/* Avatar silhouette fallback — CSS-drawn figure (no network request) */
+.artdir-avatar-silhouette {
+  width: 76px;
+  height: 76px;
+  border-radius: 18px;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.artdir-avatar-silhouette::before {
+  content: '';
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.30);
+}
+.artdir-avatar-silhouette::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 52px;
+  height: 36px;
+  border-radius: 26px 26px 0 0;
+  background: rgba(255, 255, 255, 0.22);
+}
+
+/* Category-specific avatar ring gradient — mirrors T3 in artisan-card-conversion-v1.css */
+.artdir-avatar[data-category="plomberie"]     { background: linear-gradient(135deg, #0ea5e9, #2563eb); }
+.artdir-avatar[data-category="electricite"]   { background: linear-gradient(135deg, #facc15, #f97316); }
+.artdir-avatar[data-category="climatisation"] { background: linear-gradient(135deg, #22d3ee, #06b6d4); }
+.artdir-avatar[data-category="peinture"]      { background: linear-gradient(135deg, #f472b6, #ec4899); }
+.artdir-avatar[data-category="nettoyage"]     { background: linear-gradient(135deg, #34d399, #10b981); }
+.artdir-avatar[data-category="menuiserie"]    { background: linear-gradient(135deg, #a16207, #78350f); }
+.artdir-avatar[data-category="serrurerie"]    { background: linear-gradient(135deg, #f59e0b, #d97706); }
+.artdir-avatar[data-category="maconnerie"]    { background: linear-gradient(135deg, #6b7280, #374151); }
+.artdir-avatar[data-category="jardinage"]     { background: linear-gradient(135deg, #84cc16, #16a34a); }
+.artdir-avatar[data-category="bricolage"]     { background: linear-gradient(135deg, #f97316, #ea580c); }
+.artdir-avatar[data-category="demenagement"]  { background: linear-gradient(135deg, #c084fc, #7c3aed); }
+.artdir-avatar[data-category="carrelage"]     { background: linear-gradient(135deg, #94a3b8, #475569); }
+.artdir-avatar[data-category="toiture"]       { background: linear-gradient(135deg, #ef4444, #991b1b); }
+.artdir-avatar[data-category="vitrerie"]      { background: linear-gradient(135deg, #38bdf8, #0369a1); }
+.artdir-avatar[data-category="chauffage"]     { background: linear-gradient(135deg, #fb923c, #dc2626); }
+.artdir-avatar[data-category="demenagement"]  { background: linear-gradient(135deg, #c084fc, #7c3aed); }
+
+/* Service badge: métier emoji in bottom-right corner */
+.artdir-avatar-badge {
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.88);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  border: 1.5px solid rgba(255, 255, 255, 0.16);
+  z-index: 4;
+  pointer-events: none;
+  box-shadow:
+    0 4px 10px rgba(0, 0, 0, 0.50),
+    0 0 8px rgba(255, 255, 255, 0.06);
+  line-height: 1;
+}
+
+/* ── 7d. Identity column ─────────────────────────────────────────── */
+.artdir-identity {
+  flex: 1 1 0;
   min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 0;
 }
 
-.artdir-card-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 8px;
-  margin-bottom: 4px;
-}
-
 .artdir-card-name {
-  font-size: 0.97rem;
+  font-size: 0.96rem;
   font-weight: 700;
-  color: #fff;
   line-height: 1.22;
-  letter-spacing: -0.01em;
-  margin: 0;
-  flex: 1;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* Meta row: city · trade */
-.artdir-card-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 10px;
-  margin-bottom: 6px;
-}
-
-.artdir-card-meta-item {
-  font-size: 0.72rem;
-  color: rgba(232, 234, 240, 0.48);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 180px;
-}
-
-/* Description */
-.artdir-card-desc {
-  font-size: 0.76rem;
-  color: rgba(232, 234, 240, 0.52);
-  line-height: 1.50;
-  margin-bottom: 8px;
+  letter-spacing: -0.015em;
+  color: #fff;
+  margin: 0 0 2px;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
-/* Trust row */
-.artdir-card-trust {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 10px;
-  margin-bottom: 10px;
+.artdir-meta-line {
+  font-size: 0.70rem;
+  color: rgba(255, 255, 255, 0.50);
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0 0 2px;
 }
 
-.artdir-card-trust-item {
-  font-size: 0.68rem;
-  color: rgba(232, 234, 240, 0.36);
+/* ── 7e. Description ─────────────────────────────────────────────── */
+.artdir-card-desc {
+  font-size: 0.76rem;
+  color: rgba(255, 255, 255, 0.58);
+  line-height: 1.50;
+  margin: 0 0 9px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+/* ── 7f. Trust two-row block — inline SVG icons ─────────────────── */
+.artdir-trust {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 10px;
+  flex-shrink: 0;
+  width: 100%;
+  min-width: 0;
+}
+
+.artdir-trust-item {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
+  font-size: 0.68rem;
+  color: rgba(255, 255, 255, 0.38);
+  line-height: 1.2;
   white-space: nowrap;
+  min-width: 0;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.artdir-trust-icon {
+  flex-shrink: 0;
+  line-height: 0;
+  font-size: 0;
+}
+
+.artdir-trust-icon svg {
+  width: 14px;
+  height: 14px;
+  display: inline-block;
+  vertical-align: middle;
+  flex-shrink: 0;
+  color: rgba(255, 255, 255, 0.32);
+}
+
+/* ── 7g. Action area: divider + price + CTA + profile link ────────── */
+.artdir-action {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  flex-shrink: 0;
+  margin-top: auto;
+}
+
+.artdir-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.07);
+  margin-bottom: 13px;
+  flex-shrink: 0;
 }
 
 /* Price */
-.artdir-card-price {
-  margin-bottom: 10px;
+.artdir-price {
+  margin-bottom: 14px;
+  flex-shrink: 0;
 }
 
-.artdir-card-price-amount {
-  font-size: 0.95rem;
+.artdir-price-amount {
+  font-size: 1.05rem;
   font-weight: 700;
   color: #fff;
   letter-spacing: -0.01em;
   line-height: 1.2;
-}
-
-.artdir-card-price-hint {
-  font-size: 0.63rem;
-  color: rgba(255, 212, 100, 0.60);
-  font-weight: 500;
   display: block;
-  margin-top: 1px;
+  margin-bottom: 3px;
 }
 
-/* CTA row */
-.artdir-card-actions {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
+.artdir-price-hint {
+  font-size: 0.63rem;
+  color: rgba(255, 212, 100, 0.65);
+  font-weight: 500;
+  line-height: 1.2;
+  display: block;
 }
 
+/* Primary CTA — orange→magenta, controlled glow (mirrors pvc-btn-v3b) */
 .artdir-btn-reserve {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  padding: 10px 18px;
-  min-height: 40px;
-  border-radius: 11px;
+  width: 100%;
+  min-height: 42px;
+  padding: 11px 18px;
+  border-radius: 12px;
   border: none;
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+  letter-spacing: 0.015em;
   background-image: linear-gradient(135deg, #ff5a1f 0%, #d42b69 100%);
   background-color: #d42b69;
-  color: #fff;
-  font-family: inherit;
-  font-size: 0.82rem;
-  font-weight: 700;
-  cursor: pointer;
-  letter-spacing: 0.01em;
-  transition: transform 0.16s ease, box-shadow 0.16s ease;
-  box-shadow: 0 2px 10px rgba(225, 48, 108, 0.18), 0 1px 4px rgba(0,0,0,0.22);
-  text-decoration: none;
-  white-space: nowrap;
+  box-shadow:
+    0 3px 12px rgba(225, 48, 108, 0.22),
+    0 1px 4px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.09);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
   -webkit-tap-highlight-color: transparent;
+  margin-bottom: 6px;
+  position: relative;
+  overflow: hidden;
   flex-shrink: 0;
+  text-decoration: none;
 }
 
 .artdir-btn-reserve:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 14px rgba(225, 48, 108, 0.26), 0 2px 6px rgba(0,0,0,0.26);
+  transform: scale(1.02);
+  box-shadow:
+    0 5px 18px rgba(225, 48, 108, 0.30),
+    0 2px 6px rgba(0, 0, 0, 0.30),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 
 .artdir-btn-reserve:active {
@@ -445,35 +591,38 @@
   outline-offset: 2px;
 }
 
+/* Secondary profile link — quiet text link below primary (mirrors pvc-profile-v3b) */
 .artdir-btn-profile {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
   gap: 5px;
-  padding: 10px 14px;
-  min-height: 40px;
-  border-radius: 11px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: none;
-  color: rgba(232, 234, 240, 0.60);
-  font-family: inherit;
-  font-size: 0.80rem;
+  font-size: 0.78rem;
   font-weight: 500;
-  cursor: pointer;
+  color: rgba(255, 255, 255, 0.55);
   text-decoration: none;
-  transition: border-color 0.16s, color 0.16s;
-  white-space: nowrap;
+  min-height: 40px;
+  padding: 0 8px;
+  border: none;
+  border-bottom: 1px solid transparent;
+  background: none;
+  cursor: pointer;
+  font-family: inherit;
+  transition: color 0.18s, border-color 0.18s;
   -webkit-tap-highlight-color: transparent;
+  letter-spacing: 0.01em;
+  border-radius: 8px;
   flex-shrink: 0;
+  text-align: center;
 }
 
 .artdir-btn-profile:hover {
-  border-color: rgba(255, 255, 255, 0.26);
-  color: rgba(232, 234, 240, 0.88);
+  color: rgba(255, 255, 255, 0.85);
+  border-bottom-color: rgba(255, 255, 255, 0.22);
 }
 
 .artdir-btn-profile:focus-visible {
-  outline: 2px solid rgba(255, 255, 255, 0.40);
+  outline: 2px solid rgba(255, 90, 31, 0.55);
   outline-offset: 2px;
 }
 
@@ -534,11 +683,6 @@
   border-color: rgba(255, 255, 255, 0.24);
 }
 
-.artdir-empty-btn-widen:focus-visible {
-  outline: 2px solid rgba(255, 255, 255, 0.40);
-  outline-offset: 2px;
-}
-
 .artdir-empty-btn-rafi {
   display: inline-flex;
   align-items: center;
@@ -562,11 +706,6 @@
 .artdir-empty-btn-rafi:hover {
   transform: translateY(-1px);
   box-shadow: 0 6px 20px rgba(225, 48, 108, 0.30);
-}
-
-.artdir-empty-btn-rafi:focus-visible {
-  outline: 2px solid rgba(225, 48, 108, 0.70);
-  outline-offset: 2px;
 }
 
 /* ── 9. Load more ────────────────────────────────────────────────── */
@@ -603,7 +742,6 @@
 .artdir-btn-load-more:focus-visible {
   outline: 2px solid rgba(167, 110, 255, 0.55);
   outline-offset: 2px;
-  border-radius: 14px;
 }
 
 .artdir-btn-load-more[hidden] {
@@ -631,6 +769,15 @@
     flex: 1 1 200px;
     max-width: 260px;
   }
+
+  /* Desktop card hover */
+  .artdir-card:hover {
+    transform: translateY(-6px) scale(1.008);
+    border-color: rgba(255, 255, 255, 0.16);
+    box-shadow:
+      0 28px 64px rgba(0, 0, 0, 0.50),
+      0 0 36px rgba(225, 48, 108, 0.10);
+  }
 }
 
 /* Desktop: 3-column ≥1060px */
@@ -643,19 +790,20 @@
 /* Mobile: tighten card layout ≤430px */
 @media (max-width: 430px) {
   .artdir-card {
-    padding: 14px;
-    gap: 12px;
+    padding: 18px 16px 14px;
   }
 
   .artdir-avatar {
-    width: 52px;
-    height: 52px;
-    min-width: 52px;
-    border-radius: 12px;
+    width: 68px;
+    height: 68px;
+    min-width: 68px;
   }
 
-  .artdir-card-name {
-    font-size: 0.91rem;
+  .artdir-avatar-img,
+  .artdir-avatar-initials-wrap,
+  .artdir-avatar-silhouette {
+    width: 68px;
+    height: 68px;
   }
 
   .artdir-control-group {
@@ -666,6 +814,34 @@
   .artdir-controls-reset {
     flex: 1 1 100%;
     justify-content: center;
+  }
+}
+
+/* Very narrow — 320px */
+@media (max-width: 340px) {
+  .artdir-avatar {
+    width: 60px;
+    height: 60px;
+    min-width: 60px;
+  }
+
+  .artdir-avatar-img,
+  .artdir-avatar-initials-wrap,
+  .artdir-avatar-silhouette {
+    width: 60px;
+    height: 60px;
+  }
+
+  .artdir-card-name {
+    font-size: 0.88rem;
+  }
+
+  .artdir-card-desc {
+    font-size: 0.72rem;
+  }
+
+  .artdir-price-amount {
+    font-size: 0.96rem;
   }
 }
 
@@ -680,7 +856,9 @@
   .artdir-btn-reserve,
   .artdir-btn-profile,
   .artdir-btn-load-more,
-  .artdir-controls-reset {
+  .artdir-controls-reset,
+  .artdir-empty-btn-widen,
+  .artdir-empty-btn-rafi {
     transition: none;
   }
 }
