@@ -1084,10 +1084,24 @@
   /* ── Mode switches ── */
   /* 5B: set data-results-state on #artisans-section root.
    * CSS reacts to this attribute to suppress/restore UI zones per state.
-   * States: 'discovery' | 'loading' | 'targeted' */
+   * States: 'discovery' | 'loading' | 'targeted'
+   *
+   * 5B.3: JS-level loader guard added.
+   * Root cause: body.fixeo-search-mode CSS rule re-shows #loading-artisans
+   * (display:revert !important) AFTER renderArtisans() hides it.
+   * When state transitions to 'targeted' or 'discovery', we explicitly force
+   * #loading-artisans display:none via inline style — this wins over all CSS
+   * regardless of specificity because inline style beats any class/attr rule
+   * (unless overridden by another !important inline, which nothing does here).
+   */
   function _setResultsState(state) {
     var sec = document.getElementById(SECTION_ID);
     if (sec) sec.setAttribute('data-results-state', state);
+    /* 5B.3: deterministic loader hide on final states */
+    if (state === 'targeted' || state === 'discovery') {
+      var loader = document.getElementById('loading-artisans');
+      if (loader) loader.style.setProperty('display', 'none', 'important');
+    }
   }
 
   /* ── 5B.2: City display sanitiser (display-only, never writes localStorage)

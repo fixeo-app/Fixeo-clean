@@ -768,3 +768,39 @@
 #artisans-section .other-see-more-wrap {
   display: none !important;
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   PHASE 5B.3 — Artisan Results Loader Lifecycle Hotfix
+   
+   ROOT CAUSE:
+   _enterSearchMode() adds body class fixeo-search-mode, which triggers:
+     html body.fixeo-search-mode #loading-artisans { display: revert !important }
+     specificity: (0,2,1,1)
+   This re-shows #loading-artisans AFTER renderArtisans() already hid it via
+   loadingEl.style.display = 'none', creating the impossible mixed state:
+     targeted results visible + loader visible simultaneously.
+
+   FIX STRATEGY:
+   1. CSS: override with higher or equal specificity using
+      html body prefix to match the opposing rule's element count.
+      (0,2,1,2) beats (0,2,1,1) — wins the !important cascade.
+   2. JS: _setResultsState('targeted') explicitly sets display:none
+      via inline style (wins regardless of specificity when applied after CSS class).
+
+   Both discovery and targeted states must deterministically hide the loader.
+   Only loading state leaves the loader display-unblocked (JS may show it).
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* TARGETED state: loader must be hidden.
+   Specificity (0,2,1,2) — beats fixeo-search-mode rule at (0,2,1,1). */
+html body #artisans-section[data-results-state="targeted"] #loading-artisans {
+  display: none !important;
+}
+
+/* DISCOVERY state: loader must be hidden.
+   Applies when body does NOT have fixeo-search-mode (discovery mode).
+   Guards against any async callback that might show loader after reset. */
+html body #artisans-section[data-results-state="discovery"] #loading-artisans {
+  display: none !important;
+}
+
