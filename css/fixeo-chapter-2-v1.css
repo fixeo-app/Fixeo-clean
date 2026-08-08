@@ -1294,3 +1294,71 @@
     transform: none !important;
   }
 }
+
+/* ════════════════════════════════════════════════════════════════════
+   PHASE 5A.1 — RAFI Processing Grid mobile polish
+   Scope: mobile ≤679px only. Surgical patch over Phase 5A.
+   Changes: remove line-clamp on mod-text, 1-chip layout, card breathing.
+   Desktop ≥680px: 0 changes.
+   Frozen: FABs, RAFI V5, Phase 3/4 systems, sphere, intro, signals.
+   ════════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 679px) {
+
+  /* ── 1. Remove line-clamp from explanatory text ────────────────────
+     Phase 5A introduced -webkit-line-clamp:2 which caused ellipsis.
+     Copy has been shortened in HTML (1-sentence each) — full text fits. */
+  .fc2-rf-mod-text {
+    display: block !important;
+    -webkit-line-clamp: unset !important;
+    -webkit-box-orient: unset !important;
+    overflow: visible !important;
+    font-size: 0.73rem;
+    line-height: 1.50;
+    color: rgba(180, 200, 255, 0.42);
+    margin: 0;
+  }
+
+  /* ── 2. Single-chip layout: no flex-direction override needed ───────
+     Chips are now 1 per card in HTML. Reset column stack → natural inline. */
+  .fc2-rf-chips {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 0;
+    margin-bottom: 7px;
+    align-items: center;
+  }
+
+  /* ── 3. Card padding: slightly more breathing room ──────────────────
+     Phase 5A: 13px 12px 11px → 14px 12px 13px (more bottom air).
+     One chip per card means more vertical room. */
+  .fc2-rf-module {
+    padding: 13px 11px 12px !important;
+  }
+
+  /* ── 4. Node: tighten bottom margin — 1 chip needs less separation ── */
+  .fc2-rf-node {
+    margin-bottom: 6px;
+  }
+
+  /* ── 5. Title: ensure it breathes above chip ─────────────────────── */
+  .fc2-rf-mod-title {
+    margin: 0 0 5px;
+    font-size: 0.80rem;
+    line-height: 1.22;
+    letter-spacing: -0.01em;
+    color: rgba(230, 238, 255, 0.88);
+  }
+
+  /* ── 6. Chip: single chip — keep as compact pill ─────────────────── */
+  .fc2-rf-chip {
+    font-size: 0.60rem;
+    padding: 2px 7px;
+    border-radius: 20px;
+    white-space: nowrap;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: clip;
+  }
+
+}
