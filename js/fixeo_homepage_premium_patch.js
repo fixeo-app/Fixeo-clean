@@ -1097,10 +1097,18 @@
   function _setResultsState(state) {
     var sec = document.getElementById(SECTION_ID);
     if (sec) sec.setAttribute('data-results-state', state);
-    /* 5B.3: deterministic loader hide on final states */
-    if (state === 'targeted' || state === 'discovery') {
-      var loader = document.getElementById('loading-artisans');
-      if (loader) loader.style.setProperty('display', 'none', 'important');
+    /* 5B.3: deterministic loader lifecycle per state.
+     * targeted/discovery → force hide via inline !important (beats CSS class rules).
+     * loading → remove inline override so CSS loading rule + Supabase _setLoading
+     *   can control visibility normally. Without this clear, a repeat search would
+     *   leave the loader permanently hidden from the previous targeted inline override. */
+    var loader = document.getElementById('loading-artisans');
+    if (loader) {
+      if (state === 'targeted' || state === 'discovery') {
+        loader.style.setProperty('display', 'none', 'important');
+      } else if (state === 'loading') {
+        loader.style.removeProperty('display'); /* restore CSS control */
+      }
     }
   }
 
