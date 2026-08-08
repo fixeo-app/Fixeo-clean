@@ -742,3 +742,29 @@
 
 /* ── Reduced motion: no impact (state changes are display:none/block) */
 
+
+/* ═══════════════════════════════════════════════════════════════════
+   PHASE 5B.1 — Targeted results cleanup
+   Two surgical rules:
+   1. Suppress pagination in ALL artisan-section states
+      (homepage-v13.js MutationObserver injects #v12-pagination after
+      #artisans-container; it must never be visible on the homepage.)
+   2. Suppress legacy #other-see-more-wrap in ALL homepage artisan states
+      (main.js renderArtisans injects "Voir plus d'artisans" button;
+      fixeo-search-mode's display:revert un-hides it in targeted mode.
+      This rule overrides that revert with maximum specificity.)
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Rule 1 — Pagination: hide in ALL states (absolute — no state condition) */
+#artisans-section #v12-pagination,
+#artisans-section .v12-pagination {
+  display: none !important;
+}
+
+/* Rule 2 — Legacy CTA: hide in ALL states.
+   Override the fixeo-search-mode display:revert !important at index.html:2341.
+   #fxas-section-actions (canonical CTA) is the only CTA owner. */
+#artisans-section #other-see-more-wrap,
+#artisans-section .other-see-more-wrap {
+  display: none !important;
+}
