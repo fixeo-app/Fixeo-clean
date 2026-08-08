@@ -804,3 +804,95 @@ html body #artisans-section[data-results-state="discovery"] #loading-artisans {
   display: none !important;
 }
 
+
+/* ═══════════════════════════════════════════════════════════════════
+   PHASE 5C.1 — Artisan section vertical rhythm & next-chapter transition
+   
+   ROOT CAUSE OF OVERSIZED GAP
+   On mobile (375–430px):
+     #artisans-section.section padding-bottom: 56px  (this file, ≤640px block)
+     #fixeo-chapter-4.fxpaf-rafi padding-top: 48px   (fixeo-post-artisan-flow-v1.css, ≤560px)
+     Total transition whitespace: 104px
+   Target: 56–88px controlled chapter-transition breathing room.
+   Fix: reduce artisans-section padding-bottom 56px→24px at ≤640px.
+   New total: 24 + 48 = 72px (within target range).
+   
+   fxpaf-rafi is frozen (RAFI freeze). Artisans-section adjusted only.
+   fxas-actions internal rhythm: marginal compaction for mobile density.
+   Desktop (≥1108px): unchanged — gap there is intentional design space.
+   Tablet (641–1107px): 64px pb remains adequate; minor bottom trim applied.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── MOBILE ≤640px: reduce section bottom padding ───────────────────
+   Was: padding: 52px 0 56px → New: padding: 52px 0 24px
+   Specificity (1,1,0) + !important — same block as existing mobile override. */
+@media (max-width: 640px) {
+  #artisans-section.section {
+    padding-bottom: 24px !important;
+  }
+
+  /* Compact fxas-actions top margin: 24px→18px — maintains breathing room
+     between last artisan card and CTA without wasting vertical space. */
+  .fxas-actions {
+    margin-top: 18px;
+  }
+
+  /* Compact secondary-action top margin: 20px→14px — "Publier" stays
+     visually grouped with "Voir plus" without crowding. */
+  .fxas-secondary-action {
+    margin-top: 14px;
+  }
+}
+
+/* ── TABLET 641–1107px: minor bottom trim ───────────────────────────
+   No overflow concern; just tighten slightly for proportionality. */
+@media (min-width: 641px) and (max-width: 1107px) {
+  #artisans-section.section {
+    padding-bottom: 48px !important;
+  }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════
+   PHASE 5C.1 — Artisan section vertical rhythm & next-chapter transition
+   
+   ROOT CAUSE OF OVERSIZED GAP
+   On mobile (375–430px):
+     #artisans-section.section padding-bottom: 56px  (this file, ≤640px block)
+     #fixeo-chapter-4.fxpaf-rafi padding-top: 48px   (fixeo-post-artisan-flow-v1.css, ≤560px)
+     Total transition whitespace: 104px
+   Target: 56–88px controlled chapter-transition breathing room.
+   Fix: reduce artisans-section padding-bottom 56px->24px at ≤640px.
+   New total: 24 + 48 = 72px (within target range).
+   
+   fxpaf-rafi is frozen (RAFI freeze). Artisans-section adjusted only.
+   fxas-actions internal rhythm: marginal compaction for mobile density.
+   Desktop (>=1108px): unchanged — gap there is intentional design space.
+   Tablet (641–1107px): 64px pb remains adequate; minor bottom trim applied.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* MOBILE ≤640px: reduce section bottom padding
+   Was: padding: 52px 0 56px → New bottom: 24px
+   Specificity (1,1,0) + !important — same as existing mobile override block. */
+@media (max-width: 640px) {
+  #artisans-section.section {
+    padding-bottom: 24px !important;
+  }
+
+  /* Compact fxas-actions top margin: 24px→18px */
+  .fxas-actions {
+    margin-top: 18px;
+  }
+
+  /* Compact secondary-action top margin: 20px→14px */
+  .fxas-secondary-action {
+    margin-top: 14px;
+  }
+}
+
+/* TABLET 641–1107px: minor bottom trim */
+@media (min-width: 641px) and (max-width: 1107px) {
+  #artisans-section.section {
+    padding-bottom: 48px !important;
+  }
+}
