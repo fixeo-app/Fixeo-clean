@@ -3846,7 +3846,10 @@ Floating controls (#fixeo-urgent-fab, .chat-widget) NOT touched.
    #fixeo-chapter-2. Higher specificity via html selector.
    ════════════════════════════════════════════════════════════════════ */
 html #services.fc3-chapter {
-  padding-bottom: clamp(32px, 4vw, 52px);
+  /* 3D.1: reduced further — fc2-chapter already contributes clamp(64px,9vw,120px)
+     top padding. Combined target: ~80-90px total gap on mobile, ~100px desktop.
+     Services section contributes only ~12-20px of that. */
+  padding-bottom: clamp(12px, 2vw, 20px);
 }
 
 @media (prefers-reduced-motion: reduce) {
