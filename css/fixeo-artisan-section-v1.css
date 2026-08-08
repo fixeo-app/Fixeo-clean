@@ -960,3 +960,160 @@ html body #artisans-section[data-results-state="discovery"] #loading-artisans {
     padding-bottom: 0 !important;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   PHASE 5D — Artisan Section Mobile UX Polish & Conversion Hierarchy
+   
+   Scope: mobile ≤640px only unless noted. Desktop/tablet: 0 change.
+   File: fixeo-artisan-section-v1.css (loads at index.html:2563 — LAST).
+   All selectors in this file load after artisan-card-conversion-v1.css
+   (line 2475) so equal-specificity rules here WIN the cascade.
+   0 JS changes. 0 business logic. Pure spacing/visual refinement.
+
+   COMPUTED OWNERS AUDITED (see inline comments per rule):
+
+   A. DISCOVERY HEADER → CAROUSEL GAP
+   Owner: .fhp-see-all { margin-bottom: 22px }
+   Source: fixeo-artisan-section-v1.css:518 (this file, mobile block)
+   Treatment: reduce 22px→14px to compress header→grid gap.
+   The grid has no explicit margin-top; the carousel starts 22px after
+   the counter block. 14px preserves visual grouping without over-spacing.
+
+   B. CARD HEIGHT / INTERNAL DENSITY
+   Owner: #fixeo-homepage-vedette-grid .fhp-card { height:400px }
+   Source: artisan-card-conversion-v1.css V3B-A (line ~2209), frozen file.
+   Treatment: reduce card height 400px→360px at ≤640px mobile.
+   Internal budget reductions to fit 40px savings:
+     - .pvc-card-header-final margin-bottom: 6px→4px (saves 2px)
+     - .pvc-desc-v3b margin-bottom: 9px→7px (saves 2px)
+     - .pvc-trust-v3b margin-bottom: 10px→8px (saves 2px)
+     - .pvc-divider-v3b margin-bottom: 13px→10px (saves 3px)
+     - .pvc-price-v3b margin-bottom: 14px→11px (saves 3px)
+     - .pvc-btn-v3b min-height: 42px→40px, margin-bottom: 6px→4px (saves 4px)
+     - .pvc-profile-v3b min-height: 40px→36px (saves 4px)
+     - card padding: 24px 18px 16px → 20px 18px 14px (saves 6px top+bottom)
+   Total saved: 2+2+2+3+3+4+4+6 = 26px accounted in budget.
+   Remaining 14px absorbed by margin-top:auto on pvc-action-v3b (slack).
+   Budget check: 20+88+4+36+7+32+8+[action:10+11+40+4+36]+14 = 310px fixed
+   + 50px action+slack = 360px. ✓
+
+   C. PRIMARY CTA GLOW
+   Owner: .pvc-btn-v3b box-shadow (artisan-card-conversion-v1.css V3B-I)
+   Current: 0 3px 12px rgba(225,48,108,0.22), 0 1px 4px rgba(0,0,0,0.28)
+   Treatment: reduce outer glow opacity 0.22→0.14; soften inset highlight.
+   Gradient + colour unchanged. Touch target preserved (≥40px).
+
+   D. TRUST METADATA HIERARCHY
+   Owner: .pvc-trust-v3b-item (artisan-card-conversion-v1.css V3B-F)
+   Current: color rgba(255,255,255,0.44), font-size 0.68rem, gap 4px
+   Treatment: reduce to 0.38 opacity on mobile; gap 4px→3px.
+   Still fully readable; now clearly secondary to price and CTA.
+
+   E. CARD→ACTIONS RHYTHM
+   Owner: .fxas-actions { margin-top: 18px } (this file, Phase 5C.1/5B1)
+   Treatment: no change needed — 18px is correct post-5C.2.
+   fxas-btn-more and secondary-action spacing already at 14px — preserved.
+
+   F. "VOIR PLUS" GHOST BUTTON
+   Owner: .fxas-btn-more (this file, section 5)
+   Current: border-radius:14px, min-height:52px, border 0.16 opacity
+   Treatment: min-height 52px→48px (slightly more compact, still accessible).
+   No gradient. Remains clearly secondary.
+
+   G. SECTION TOP PADDING (header→section entry)
+   Owner: #artisans-section.section { padding:52px 0 } (this file, ≤640px)
+   Treatment: reduce padding-top 52px→40px. Entry feels less padded.
+   Improves perceived connectivity between site header and artisan content.
+   ═══════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 640px) {
+
+  /* ── A. Header → carousel gap ───────────────────────────────────────
+     .fhp-see-all margin-bottom: 22px→14px
+     Specificity: #artisans-section .fhp-see-all (1,1,0) same as existing rule
+     at fixeo-artisan-section-v1.css:518; this block loads LATER → wins. */
+  #artisans-section .fhp-see-all {
+    margin-bottom: 14px !important;
+  }
+
+  /* ── B. Card height & internal density ──────────────────────────────
+     Reduce 400px→360px. All overrides at same or higher specificity as
+     V3B rules in artisan-card-conversion-v1.css (loaded before this file). */
+
+  /* Card container: 400→360px, padding-top 24→20px, padding-bottom 16→14px */
+  #artisans-section #fixeo-homepage-vedette-grid .fhp-card {
+    height: 360px !important;
+    min-height: 360px !important;
+    max-height: 360px !important;
+    padding-top: 20px !important;
+    padding-bottom: 14px !important;
+  }
+
+  /* Header block margin: 6→4px */
+  #artisans-section #fixeo-homepage-vedette-grid .fhp-card .pvc-card-header,
+  #artisans-section #fixeo-homepage-vedette-grid .fhp-card .pvc-card-header-final {
+    margin-bottom: 4px !important;
+  }
+
+  /* Description margin: 9→7px */
+  #artisans-section #fixeo-homepage-vedette-grid .fhp-card .pvc-desc-v3b {
+    margin-bottom: 7px !important;
+  }
+
+  /* Trust block margin: 10→8px */
+  #artisans-section #fixeo-homepage-vedette-grid .fhp-card .pvc-trust-v3b {
+    margin-bottom: 8px !important;
+  }
+
+  /* Divider margin: 13→10px */
+  #artisans-section #fixeo-homepage-vedette-grid .fhp-card .pvc-divider-v3b {
+    margin-bottom: 10px !important;
+  }
+
+  /* Price block margin: 14→11px */
+  #artisans-section #fixeo-homepage-vedette-grid .fhp-card .pvc-price-v3b {
+    margin-bottom: 11px !important;
+  }
+
+  /* Primary CTA: min-height 42→40px (accessible), margin-bottom 6→4px */
+  #artisans-section #fixeo-homepage-vedette-grid .fhp-card .pvc-btn-v3b {
+    min-height: 40px !important;
+    margin-bottom: 4px !important;
+    /* ── C. CTA glow reduction ────────────────────────────────────────
+       Outer glow 0.22→0.14 opacity — premium but not dominant.
+       Gradient identity preserved. Inset highlight slightly reduced. */
+    box-shadow:
+      0 3px 10px rgba(225,48,108,0.14),
+      0 1px 4px rgba(0,0,0,0.24),
+      inset 0 1px 0 rgba(255,255,255,0.07) !important;
+  }
+
+  /* Secondary link: min-height 40→36px */
+  #artisans-section #fixeo-homepage-vedette-grid .fhp-card .pvc-profile-v3b {
+    min-height: 36px !important;
+  }
+
+  /* ── D. Trust metadata hierarchy ────────────────────────────────────
+     Reduce color opacity 0.44→0.38 on mobile. Still readable, clearly
+     secondary to name/price/CTA. Gap 4→3px. */
+  #artisans-section #fixeo-homepage-vedette-grid .fhp-card .pvc-trust-v3b-item {
+    color: rgba(255,255,255,0.38) !important;
+    gap: 3px !important;
+  }
+
+  /* ── F. "Voir plus" ghost button height ─────────────────────────────
+     min-height 52→48px. Still a comfortable tap target. */
+  .fxas-btn-more {
+    min-height: 48px !important;
+  }
+
+  /* ── G. Section top padding ──────────────────────────────────────────
+     52→40px. Tighter entry without feeling cramped.
+     Specificity: #artisans-section.section (1,1,0) + !important
+     Same spec as existing 52px rule at fixeo-artisan-section-v1.css:461;
+     this block loads later → wins. */
+  #artisans-section.section {
+    padding-top: 40px !important;
+  }
+
+}
