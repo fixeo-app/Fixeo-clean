@@ -896,3 +896,67 @@ html body #artisans-section[data-results-state="discovery"] #loading-artisans {
     padding-bottom: 48px !important;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   PHASE 5C.2 — Remove residual artisan section height gap
+
+   ROOT CAUSE (true owner of the blank area)
+   homepage-conversion-optimizer.css, @media (max-width:768px), line 5869:
+     #artisans-section .container,
+     #artisans-section .results-main-column,
+     #artisans-section .results-list,
+     #artisans-section #artisans-container.artisans-grid {
+       padding-bottom: calc(136px + env(safe-area-inset-bottom, 0px)) !important;
+     }
+   Also earlier blocks at 132px and 168px (last wins = 136px).
+   Specificity: (1,1,0) + !important.
+
+   These rules were designed for the RESULTS PAGE layout where a position:fixed
+   sticky CTA floats at viewport bottom and needs clearance. On the HOMEPAGE:
+   - mobile-sticky-cta is position:fixed (no layout flow contribution)
+   - the premium patch uses #fixeo-homepage-vedette-grid (not #artisans-container)
+   - #fxas-section-actions provides the CTA at normal document flow
+
+   Effect on iPhone (375px, safe-area ~34px):
+     #artisans-section .container padding-bottom = 136 + 34 = 170px
+     Applied to the wrapper of ALL content INCLUDING #fxas-section-actions
+     → 170px empty space BELOW "Publier une demande →" inside the container
+   Combined with:
+     artisans-section padding-bottom: 24px (Phase 5C.1, outside container)
+     #fixeo-chapter-4.fxpaf-rafi padding-top: 48px (frozen)
+   Total observable gap: ~170 + 24 + 48 = ~242px
+   Phase 5C.1 only addressed the 24px outer padding (reduced from 56px) —
+   insufficient because the 170px inner container padding dominated.
+
+   FIX
+   Override padding-bottom to 0 on .container and .results-main-column
+   at ≤768px within #artisans-section context.
+   This file (fixeo-artisan-section-v1.css) loads at index.html:2563,
+   after homepage-conversion-optimizer.css at index.html:64 — loads LATER,
+   so (1,1,0)+!important in this file wins the cascade.
+
+   Also zero out results-main-column padding (it also receives the 136px rule).
+   results-list and #artisans-container.artisans-grid are hidden on homepage
+   by the premium patch, but zeroed here for defence-in-depth.
+
+   After fix (iPhone 375px):
+     container pb: 0 (was ~170px)
+     section pb: 24px (Phase 5C.1)
+     RAFI pt: 48px (frozen)
+     Total chapter transition: 24 + 48 = 72px ✓
+   ═══════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+  /* Remove sticky-CTA clearance padding — not needed on homepage.
+     The 136px + safe-area was for position:fixed CTA on results.html.
+     On homepage: CTA is in document flow (#fxas-section-actions). */
+  #artisans-section .container {
+    padding-bottom: 0 !important;
+  }
+
+  #artisans-section .results-main-column,
+  #artisans-section .results-list,
+  #artisans-section #artisans-container.artisans-grid {
+    padding-bottom: 0 !important;
+  }
+}
