@@ -1102,6 +1102,140 @@ a{text-decoration:none}
 
   </style>
 
+  <!-- Phase 4B — fxsvc-ctx-v1: context bar + card highlight styles -->
+  <style id="fxsvc-ctx-v1">
+/* ════════════════════════════════════════════════════════════
+   fxsvc-ctx-v1 — Services Explorer Context Bar
+   Shown only when ?from=journey via JS class toggle.
+   Namespace: fxsvc-ctx-*
+   Scoped to: #fxsvc-ctx-bar
+   ════════════════════════════════════════════════════════════ */
+
+/* Container — hidden by default; shown by JS */
+#fxsvc-ctx-bar {
+  padding: clamp(12px, 2vw, 18px) 0;
+  border-bottom: 1px solid rgba(72,100,255,0.10);
+  margin-bottom: clamp(20px, 3vw, 32px);
+}
+
+.fxsvc-ctx-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-width: 680px;
+}
+
+.fxsvc-ctx-eyebrow {
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: rgba(120,140,200,0.38);
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.fxsvc-ctx-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.fxsvc-ctx-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(72,100,255,0.55);
+  flex-shrink: 0;
+}
+
+.fxsvc-ctx-label {
+  font-size: 0.70rem;
+  color: rgba(160,175,220,0.52);
+  font-weight: 500;
+}
+
+.fxsvc-ctx-metier-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding-left: 15px; /* aligned with dot */
+}
+
+.fxsvc-ctx-metier-icon {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.fxsvc-ctx-metier-name {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: rgba(210,220,255,0.88);
+}
+
+.fxsvc-ctx-city-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-left: 15px;
+}
+
+.fxsvc-ctx-city-pin {
+  font-size: 0.80rem;
+  line-height: 1;
+}
+
+.fxsvc-ctx-city-name {
+  font-size: 0.78rem;
+  color: rgba(160,175,220,0.58);
+  font-weight: 500;
+}
+
+.fxsvc-ctx-hint {
+  margin: 2px 0 0;
+  font-size: 0.70rem;
+  color: rgba(140,160,220,0.40);
+  padding-left: 15px;
+}
+
+/* ── Matching card highlight — purely additive ── */
+.cp-svc-card.fxsvc-match {
+  border-color: rgba(72,100,255,0.35);
+  box-shadow: 0 0 0 1px rgba(72,100,255,0.18),
+              0 4px 18px rgba(72,100,255,0.10);
+}
+
+.cp-svc-card.fxsvc-match .cp-svc-name {
+  color: rgba(180,200,255,0.95);
+}
+
+/* Restrained match badge */
+.fxsvc-match-badge {
+  display: inline-block;
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: rgba(100,130,255,0.80);
+  background: rgba(72,100,255,0.09);
+  border: 1px solid rgba(72,100,255,0.18);
+  border-radius: 4px;
+  padding: 2px 6px;
+  margin-top: 5px;
+  margin-bottom: 2px;
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  #fxsvc-ctx-bar { padding: 10px 0 14px; }
+  .fxsvc-ctx-metier-name { font-size: 0.84rem; }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .cp-svc-card.fxsvc-match { transition: none !important; }
+}
+  </style>
+
 <!-- SEO -->
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://www.fixeo.ma/services.html">
@@ -1130,11 +1264,18 @@ a{text-decoration:none}
     ]
   },
   "hasPart": [
-    { "@type": "Service", "name": "Plomberie", "url": "https://www.fixeo.ma/plombier-casablanca.html" },
-    { "@type": "Service", "name": "Électricité", "url": "https://www.fixeo.ma/electricien-casablanca.html" },
-    { "@type": "Service", "name": "Serrurerie", "url": "https://www.fixeo.ma/serrurier-casablanca.html" },
+    { "@type": "Service", "name": "Plomberie",     "url": "https://www.fixeo.ma/plombier-casablanca.html" },
+    { "@type": "Service", "name": "Électricité",   "url": "https://www.fixeo.ma/electricien-casablanca.html" },
+    { "@type": "Service", "name": "Serrurerie",    "url": "https://www.fixeo.ma/serrurier-casablanca.html" },
     { "@type": "Service", "name": "Climatisation", "url": "https://www.fixeo.ma/climatisation-casablanca.html" },
-    { "@type": "Service", "name": "Peinture", "url": "https://www.fixeo.ma/peinture-fes.html" }
+    { "@type": "Service", "name": "Peinture",      "url": "https://www.fixeo.ma/peinture-fes.html" },
+    { "@type": "Service", "name": "Menuiserie",    "url": "https://www.fixeo.ma/services.html" },
+    { "@type": "Service", "name": "Nettoyage",     "url": "https://www.fixeo.ma/services.html" },
+    { "@type": "Service", "name": "Déménagement",  "url": "https://www.fixeo.ma/services.html" },
+    { "@type": "Service", "name": "Carrelage",     "url": "https://www.fixeo.ma/services.html" },
+    { "@type": "Service", "name": "Maçonnerie",    "url": "https://www.fixeo.ma/services.html" },
+    { "@type": "Service", "name": "Jardinage",     "url": "https://www.fixeo.ma/services.html" },
+    { "@type": "Service", "name": "Bricolage",     "url": "https://www.fixeo.ma/services.html" }
   ]
 }
 </script>
@@ -1234,6 +1375,33 @@ a{text-decoration:none}
 </section>
 
 <!-- ══════════════════════════════════════════════════════════
+     CONTEXT BAR — Phase 4B — fxsvc-ctx-v1
+     Shown ONLY when ?from=journey. Hidden by default (display:none).
+     Injected content is textContent-only — no innerHTML from URL.
+     Fully inert and invisible when Entry B (direct / menu).
+════════════════════════════════════════════════════════════ -->
+<div id="fxsvc-ctx-bar" aria-hidden="true" style="display:none" role="region" aria-label="Contexte de votre recherche">
+  <div class="cp-container">
+    <div class="fxsvc-ctx-inner">
+      <span class="fxsvc-ctx-eyebrow" aria-hidden="true">VOTRE RECHERCHE</span>
+      <div class="fxsvc-ctx-row">
+        <span class="fxsvc-ctx-dot" aria-hidden="true"></span>
+        <span class="fxsvc-ctx-label">Besoin identifié</span>
+      </div>
+      <div class="fxsvc-ctx-metier-row" id="fxsvc-ctx-metier-row" aria-hidden="true" style="display:none">
+        <span class="fxsvc-ctx-metier-icon" id="fxsvc-ctx-icon" aria-hidden="true"></span>
+        <span class="fxsvc-ctx-metier-name" id="fxsvc-ctx-metier"></span>
+      </div>
+      <div class="fxsvc-ctx-city-row" id="fxsvc-ctx-city-row" aria-hidden="true" style="display:none">
+        <span class="fxsvc-ctx-city-pin" aria-hidden="true">📍</span>
+        <span class="fxsvc-ctx-city-name" id="fxsvc-ctx-city"></span>
+      </div>
+      <p class="fxsvc-ctx-hint" id="fxsvc-ctx-hint"></p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
      SERVICES GRID
 ════════════════════════════════════════════════════════════ -->
 <section class="cp-section" aria-labelledby="svc-grid-title">
@@ -1241,7 +1409,7 @@ a{text-decoration:none}
     <div class="cp-section-header">
       <span class="cp-section-eyebrow">Catalogue</span>
       <h2 class="cp-section-title" id="svc-grid-title">Tous les services disponibles</h2>
-      <p class="cp-section-sub">12 spécialités couvrant tous vos besoins à domicile et en entreprise.</p>
+      <p class="cp-section-sub">12 spécialités pour tous vos besoins à domicile et en entreprise.</p>
     </div>
     <div class="cp-service-grid" role="list">
 
@@ -1337,6 +1505,54 @@ a{text-decoration:none}
         <p class="cp-svc-desc">Transport de meubles, emballage, manutention, camion avec chauffeur.</p>
         <p class="cp-svc-example">"Déménager un appartement 3 pièces"</p>
         <button type="button" class="cp-svc-cta" data-open-request-form="true" data-svc-prefill="Déménagement" aria-label="Demander un déménageur">
+          Demander ce service <span class="cp-svc-cta-arrow" aria-hidden="true">→</span>
+        </button>
+      </article>
+
+      <article class="cp-svc-card" role="listitem">
+        <div class="cp-svc-icon-box" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(245,158,11,0.85)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        </div>
+        <p class="cp-svc-name">Carrelage</p>
+        <p class="cp-svc-desc">Pose de carrelage, remplacement de carreaux, joints, sols et murs.</p>
+        <p class="cp-svc-example">"Je dois remplacer plusieurs carreaux cassés"</p>
+        <button type="button" class="cp-svc-cta" data-open-request-form="true" data-svc-prefill="Carrelage" aria-label="Demander un carreleur">
+          Demander ce service <span class="cp-svc-cta-arrow" aria-hidden="true">→</span>
+        </button>
+      </article>
+
+      <article class="cp-svc-card" role="listitem">
+        <div class="cp-svc-icon-box" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(131,58,180,0.85)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20h20"/><path d="M4 20V8l8-6 8 6v12"/><path d="M10 14v6M14 14v6"/></svg>
+        </div>
+        <p class="cp-svc-name">Maçonnerie</p>
+        <p class="cp-svc-desc">Petites réparations, murs, fissures, enduits et travaux de maçonnerie générale.</p>
+        <p class="cp-svc-example">"J'ai un mur fissuré à réparer"</p>
+        <button type="button" class="cp-svc-cta" data-open-request-form="true" data-svc-prefill="Maçonnerie" aria-label="Demander un maçon">
+          Demander ce service <span class="cp-svc-cta-arrow" aria-hidden="true">→</span>
+        </button>
+      </article>
+
+      <article class="cp-svc-card" role="listitem">
+        <div class="cp-svc-icon-box" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(32,201,151,0.85)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="4"/><path d="M12 11v10"/><path d="M8 17c1.5 1 4.5 1 6 0"/><path d="M5 21c2-3 10-3 14 0" opacity=".4"/></svg>
+        </div>
+        <p class="cp-svc-name">Jardinage</p>
+        <p class="cp-svc-desc">Entretien de jardin, taille de haies, tonte, nettoyage extérieur et plantation.</p>
+        <p class="cp-svc-example">"Mon jardin a besoin d'un entretien complet"</p>
+        <button type="button" class="cp-svc-cta" data-open-request-form="true" data-svc-prefill="Jardinage" aria-label="Demander un jardinier">
+          Demander ce service <span class="cp-svc-cta-arrow" aria-hidden="true">→</span>
+        </button>
+      </article>
+
+      <article class="cp-svc-card" role="listitem">
+        <div class="cp-svc-icon-box" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(56,189,248,0.85)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2.5l7 7-10 10-7-7 10-10z"/><path d="M7 7l-5 5 7 7"/><path d="M12 22h6"/></svg>
+        </div>
+        <p class="cp-svc-name">Bricolage</p>
+        <p class="cp-svc-desc">Montage de meubles, fixations, petites réparations et installations du quotidien.</p>
+        <p class="cp-svc-example">"J'ai plusieurs petites réparations à faire"</p>
+        <button type="button" class="cp-svc-cta" data-open-request-form="true" data-svc-prefill="Bricolage" aria-label="Demander un bricoleur">
           Demander ce service <span class="cp-svc-cta-arrow" aria-hidden="true">→</span>
         </button>
       </article>
@@ -1555,41 +1771,163 @@ a{text-decoration:none}
      never calls stopPropagation(). RAFI V5 receives the original click naturally. -->
 <input type="hidden" id="qsm-input-nlp" value="" aria-hidden="true">
 <script>
-/* fxsvc-v1 — Services page RAFI V5 context bridge */
+/* fxsvc-v1b — Services page RAFI V5 context bridge + Phase 4B dual-entry context
+   ─────────────────────────────────────────────────────────────────────────────────
+   Part 1: PREFILL_MAP — maps data-svc-prefill → RAFI V5 _normalizeSlug-safe value.
+   Part 2: CONTEXT BAR — reads ?from=journey&cat= and renders compact continuity block.
+
+   RAFI prefill proof (all 12):
+     Plomberie      → 'Plomberie'       → _normalizeSlug matches 'plomberie' via 'plomb' ✓
+     Électricité    → 'Électricité'     → matches 'electricite' via 'elect' ✓
+     Climatisation  → 'Climatisation'   → matches 'climatisation' via 'clim' ✓
+     Peinture       → 'Peinture'        → matches 'peinture' via 'peinture' ✓
+     Nettoyage      → 'Nettoyage'       → matches 'nettoyage' via 'nettoyage' ✓
+     Menuiserie     → 'Menuiserie'      → matches 'menuiserie' via 'menuiserie' ✓
+     Serrurerie     → 'Serrurerie'      → matches 'serrurerie' via 'serrure' ✓
+     Déménagement   → 'demenag'         → matches 'demenagement' via 'demenag' ✓
+     Carrelage      → 'carrelage'       → matches 'maconnerie' via 'carrelage' word ✓
+     Maçonnerie     → 'maconnerie'      → matches 'maconnerie' via 'maconnerie' ✓
+     Jardinage      → 'Jardinage'       → matches 'jardinage' via 'jardin' ✓
+     Bricolage      → ''                → no RAFI slug — opens modal, user picks manually ✓
+*/
 (function () {
   'use strict';
-  /* Maps data-svc-prefill values to RAFI V5 _normalizeSlug-safe context values.
-     "D\u00e9m\u00e9nagement" must use "demenag" to avoid the nettoyage collision:
-     "d\u00e9m\u00e9nagement" normalised → "demenagement" which contains "menage",
-     matching nettoyage before demenagement in the SERVICES array iteration. */
+
+  /* ── Part 1: RAFI prefill map ─────────────────────────────────────── */
   var PREFILL_MAP = {
-    'Plomberie':    'Plomberie',
+    'Plomberie':     'Plomberie',
     '\u00c9lectricit\u00e9': '\u00c9lectricit\u00e9',
     'Climatisation': 'Climatisation',
-    'Peinture':     'Peinture',
-    'Nettoyage':    'Nettoyage',
-    'Menuiserie':   'Menuiserie',
-    'Serrurerie':   'Serrurerie',
-    'D\u00e9m\u00e9nagement': 'demenag'
+    'Peinture':      'Peinture',
+    'Nettoyage':     'Nettoyage',
+    'Menuiserie':    'Menuiserie',
+    'Serrurerie':    'Serrurerie',
+    'D\u00e9m\u00e9nagement': 'demenag',
+    'Carrelage':     'carrelage',
+    'Ma\u00e7onnerie': 'maconnerie',
+    'Jardinage':     'Jardinage',
+    'Bricolage':     ''   /* no RAFI slug — modal opens with no pre-selection */
   };
 
   document.addEventListener('click', function (e) {
     var btn = e.target.closest('[data-open-request-form="true"]');
     if (!btn) return;
-
     var input = document.getElementById('qsm-input-nlp');
     if (!input) return;
-
     var svc = btn.dataset.svcPrefill || '';
     if (svc) {
-      /* Service-card CTA: write context value before RAFI V5 reads it */
-      input.value = PREFILL_MAP[svc] || svc;
+      /* Service-card CTA: write mapped value (empty string for Bricolage is intentional) */
+      input.value = (svc in PREFILL_MAP) ? PREFILL_MAP[svc] : svc;
     } else {
-      /* Generic or urgent CTA: clear to prevent stale context leaking */
       input.value = '';
     }
-    /* Original click continues naturally to RAFI V5 capture listener */
   }, true /* capture phase — runs before RAFI V5 */);
+
+  /* ── Part 2: Dual-entry context bar ──────────────────────────────── */
+
+  /* Strict category allowlist — must match homepage data-category slugs */
+  var ALLOWED_CATS = {
+    plomberie:     { label: 'Plomberie',     icon: '🔧', cardPrefill: 'Plomberie'     },
+    electricite:   { label: '\u00c9lectricit\u00e9', icon: '\u26a1', cardPrefill: '\u00c9lectricit\u00e9' },
+    climatisation: { label: 'Climatisation', icon: '\u2744\ufe0f', cardPrefill: 'Climatisation' },
+    serrurerie:    { label: 'Serrurerie',    icon: '\uD83D\uDD10', cardPrefill: 'Serrurerie'    },
+    menuiserie:    { label: 'Menuiserie',    icon: '\uD83E\uDE9F', cardPrefill: 'Menuiserie'    },
+    peinture:      { label: 'Peinture',      icon: '\uD83D\uDD8C', cardPrefill: 'Peinture'      },
+    maconnerie:    { label: 'Ma\u00e7onnerie', icon: '\uD83E\uDDF1', cardPrefill: 'Ma\u00e7onnerie' },
+    nettoyage:     { label: 'Nettoyage',     icon: '\uD83E\uDDF9', cardPrefill: 'Nettoyage'     },
+    jardinage:     { label: 'Jardinage',     icon: '\uD83C\uDF3F', cardPrefill: 'Jardinage'     },
+    demenagement:  { label: 'D\u00e9m\u00e9nagement', icon: '\uD83D\uDCE6', cardPrefill: 'D\u00e9m\u00e9nagement' },
+    carrelage:     { label: 'Carrelage',     icon: '\uD83D\uDD32', cardPrefill: 'Carrelage'     },
+    bricolage:     { label: 'Bricolage',     icon: '\uD83D\uDD27', cardPrefill: 'Bricolage'     }
+  };
+
+  /* Max safe city length guard */
+  var CITY_MAX = 40;
+
+  function _safeText(str) {
+    return String(str || '').trim().slice(0, CITY_MAX);
+  }
+
+  function _initContextBar() {
+    try {
+      var params = new URLSearchParams(window.location.search);
+      if (params.get('from') !== 'journey') return; /* Entry B — do nothing */
+
+      var catSlug = (params.get('cat') || '').toLowerCase().trim();
+      var meta    = ALLOWED_CATS[catSlug] || null; /* null if invalid/unknown */
+
+      var bar = document.getElementById('fxsvc-ctx-bar');
+      if (!bar) return;
+
+      /* Show bar */
+      bar.style.display = '';
+      bar.removeAttribute('aria-hidden');
+
+      /* Métier row */
+      if (meta) {
+        var metierRow  = document.getElementById('fxsvc-ctx-metier-row');
+        var iconEl     = document.getElementById('fxsvc-ctx-icon');
+        var metierEl   = document.getElementById('fxsvc-ctx-metier');
+        if (metierRow && iconEl && metierEl) {
+          iconEl.textContent   = meta.icon;
+          metierEl.textContent = meta.label;
+          metierRow.style.display = '';
+          metierRow.removeAttribute('aria-hidden');
+        }
+        /* Hint text when category known */
+        var hint = document.getElementById('fxsvc-ctx-hint');
+        if (hint) hint.textContent = 'Explorer les services li\u00e9s ci-dessous.';
+      } else {
+        /* No category or unknown — generic hint */
+        var hint2 = document.getElementById('fxsvc-ctx-hint');
+        if (hint2) hint2.textContent = 'Continuez votre recherche parmi tous les services.';
+      }
+
+      /* City row — read from localStorage only, validated */
+      var storedCity = '';
+      try { storedCity = _safeText(localStorage.getItem('fixeo_detected_city') || ''); } catch(_) {}
+      if (storedCity && storedCity.length > 1) {
+        var cityRow  = document.getElementById('fxsvc-ctx-city-row');
+        var cityName = document.getElementById('fxsvc-ctx-city');
+        if (cityRow && cityName) {
+          cityName.textContent = storedCity;
+          cityRow.style.display = '';
+          cityRow.removeAttribute('aria-hidden');
+        }
+      }
+
+      /* Highlight matching card — add class + badge, do not remove any other card */
+      if (meta) {
+        var cards = document.querySelectorAll('.cp-svc-card');
+        for (var i = 0; i < cards.length; i++) {
+          var cta = cards[i].querySelector('[data-svc-prefill]');
+          if (cta && cta.dataset.svcPrefill === meta.cardPrefill) {
+            cards[i].classList.add('fxsvc-match');
+            /* Add visible non-color marker */
+            var badge = document.createElement('span');
+            badge.className = 'fxsvc-match-badge';
+            badge.setAttribute('aria-label', 'Correspond \u00e0 votre recherche');
+            badge.textContent = 'Correspond \u00e0 votre recherche';
+            var nameEl = cards[i].querySelector('.cp-svc-name');
+            if (nameEl && nameEl.nextSibling) {
+              nameEl.parentNode.insertBefore(badge, nameEl.nextSibling);
+            }
+            break;
+          }
+        }
+      }
+
+    } catch (err) {
+      /* Silent fail — context bar is decorative, never blocks page function */
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', _initContextBar);
+  } else {
+    _initContextBar();
+  }
+
 })();
 </script>
 <!-- RAFI V5 — canonical conversion engine (fxrf4-v5a1) -->

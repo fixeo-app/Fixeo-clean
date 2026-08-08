@@ -4549,11 +4549,49 @@ html #services.fc3-chapter {
     <!-- ── Services fallback — compact, secondary ── -->
     <div class="fxsit-services-link-wrap">
       <p class="fxsit-services-microcopy">Vous ne trouvez pas votre situation ?</p>
-      <a class="fxsit-services-link" href="services.html">
+      <a class="fxsit-services-link" id="fxsit-services-exit-link" href="services.html">
         Explorer tous les services
         <span aria-hidden="true">→</span>
       </a>
     </div>
+    <!-- Phase 4B: dynamically append ?from=journey&cat= to the services exit link.
+         Reads the currently active situation card's data-category (if any).
+         Never modifies the mobile-menu link. Falls back to plain services.html.
+         No localStorage writes. No globals. -->
+    <script>
+    (function () {
+      'use strict';
+      var ALLOWED = ['plomberie','electricite','climatisation','serrurerie','menuiserie',
+                     'peinture','maconnerie','nettoyage','jardinage','demenagement',
+                     'carrelage','bricolage'];
+      function _updateExitLink() {
+        var link = document.getElementById('fxsit-services-exit-link');
+        if (!link) return;
+        var active = document.querySelector('#services .fxsit-card[aria-pressed="true"][data-category]');
+        var cat = active ? (active.dataset.category || '').toLowerCase().trim() : '';
+        if (cat && ALLOWED.indexOf(cat) >= 0) {
+          link.href = 'services.html?from=journey&cat=' + encodeURIComponent(cat);
+        } else {
+          link.href = 'services.html?from=journey';
+        }
+      }
+      /* Run once on load, then re-run on any card click via delegation */
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', _updateExitLink);
+      } else {
+        _updateExitLink();
+      }
+      var section = document.getElementById('services');
+      if (section) {
+        section.addEventListener('click', function (e) {
+          if (e.target.closest('.chip[data-category]')) {
+            /* Defer until after main.js has updated aria-pressed */
+            setTimeout(_updateExitLink, 0);
+          }
+        });
+      }
+    }());
+    </script>
 
   </div><!-- /container -->
 
