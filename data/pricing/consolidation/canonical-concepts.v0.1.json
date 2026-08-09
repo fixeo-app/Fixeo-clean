@@ -1,0 +1,348 @@
+{
+  "_meta": {
+    "phase": "7C.1.1",
+    "title": "FIXEO Canonical Concepts — Doctrine Correction Layer",
+    "version": "0.1",
+    "date": "2026-08-09",
+    "status": "FROZEN_DOCTRINE",
+    "production_ready": false,
+    "supersedes_section": "Phase 7C.1 Section 6 (Architecture Inventory) — partially corrected",
+    "note": "This file corrects conceptual errors in Phase 7C.1 and freezes canonical concepts for the future canonical registry. It does NOT replace any frozen métier V0.3 artifact."
+  },
+
+  "correction_1_minimum_floor_vs_diagnostic_fee": {
+    "status": "CONFIRMED_CORRECTION",
+    "error_in_7c1": "Section 7 incorrectly stated that all 8 métiers apply a minimum/floor doctrine. Diagnostic services in plomberie, electricite, climatisation were incorrectly grouped with billing floors.",
+    "correction": "MINIMUM_FLOOR and DIAGNOSTIC_FEE are fundamentally different concepts with different schemas, formulas, and policies. They must never be conflated."
+  },
+
+  "correction_2_serrurerie_no_floor": {
+    "status": "CONFIRMED_CORRECTION",
+    "error_in_7c1": "Section 7 stated 'Serrurerie 220 MAD (porte claquée) implicit floor'. This was incorrect.",
+    "correction": "220 MAD is the approved price of serrurerie.porte_claquee_ouverture — a standardized service price. It is NOT a métier-wide minimum billing policy. serrurerie.minimum_floor = null. No minimum floor policy exists for serrurerie unless explicitly approved in a future human decision."
+  },
+
+  "correction_3_architecture_separation": {
+    "status": "CONFIRMED_CORRECTION",
+    "error_in_7c1": "Phase 7C.1 used a single architecture enum to represent both HOW the price is computed and WHAT FIXEO communicates to the client.",
+    "correction": "These are two separate conceptual layers. The canonical registry must implement both: calculation_model and commercial_output_type as distinct fields."
+  },
+
+  "minimum_floor_concept": {
+    "canonical_name": "MINIMUM_FLOOR",
+    "definition": "A billing floor that ensures the final price never falls below a policy-defined minimum, regardless of calculated service price. It is NOT a standalone service. It is NOT additive.",
+    "formula": "FINAL_PRICE = max(MINIMUM_FLOOR_MAD, CALCULATED_SERVICE_PRICE)",
+    "anti_additive_rule": "MINIMUM_IS_FLOOR_NOT_ADDITIVE — the floor is never added to the service price; it is only applied when CALCULATED_SERVICE_PRICE < MINIMUM_FLOOR_MAD",
+    "schema": {
+      "minimum_floor_mad": "integer — the floor value in MAD",
+      "minimum_floor_policy_ref": "string — canonical policy ID that establishes this floor",
+      "minimum_floor_embedded": "boolean — true if the floor is embedded in the service logic (not a standalone service code)",
+      "minimum_floor_standalone_service": "string|null — service code if there is a standalone minimum-visit service (e.g. BRIC-001, NET-001)"
+    },
+    "metier_floors": {
+      "bricolage": {
+        "minimum_floor_mad": 200,
+        "source": "BRIC-001 (standalone minimum-visit service) + embedded in all BRIC-002+ calculations",
+        "formula_note": "FINAL_PRICE = max(200, calculated). BRIC-001 is itself the standardized service for a minimum visit. Anti-additive: if booking BRIC-002 and calculating 200+ MAD, BRIC-001 does NOT stack."
+      },
+      "nettoyage": {
+        "minimum_floor_mad": 200,
+        "source": "NET-001 (standalone minimum-visit service) + NET-002 formula",
+        "formula_note": "NET-002 formula: FINAL_PRICE = max(200, 65 × workers × hours). NET-001 is the minimum-visit anchor."
+      },
+      "peinture": {
+        "minimum_floor_mad": 800,
+        "source": "PEIN-001 (policy anchor) + all PEIN-002/003/004/005 formulas",
+        "formula_note": "FINAL_PRICE = max(800, rate × m²). PEIN-001 is the minimum project anchor, not a separate additive service."
+      },
+      "menuiserie": {
+        "minimum_floor_mad": 300,
+        "source": "Embedded policy — no standalone service code",
+        "formula_note": "FINAL_PRICE = max(300, service_price). All 7 approved services satisfy floor without special treatment. The 300 MAD floor is never a separate line item."
+      },
+      "plomberie": {
+        "minimum_floor_mad": null,
+        "note": "Plomberie does NOT have a MINIMUM_FLOOR. plomberie.diagnostic (180 MAD) is a DIAGNOSTIC_FEE, not a billing floor. See diagnostic_fee_concept below."
+      },
+      "electricite": {
+        "minimum_floor_mad": null,
+        "note": "Electricite does NOT have a MINIMUM_FLOOR. electricite.diagnostic (200 MAD) is a DIAGNOSTIC_FEE. See diagnostic_fee_concept below."
+      },
+      "climatisation": {
+        "minimum_floor_mad": null,
+        "note": "Climatisation does NOT have a MINIMUM_FLOOR. CLIM-002 (250 MAD diagnostic) is a DIAGNOSTIC_FEE. See diagnostic_fee_concept below."
+      },
+      "serrurerie": {
+        "minimum_floor_mad": null,
+        "note": "Serrurerie has NO minimum floor policy. 220 MAD (serrurerie.porte_claquee_ouverture) is an approved service price, not a métier-wide billing floor. Future human decision required to establish any floor."
+      }
+    }
+  },
+
+  "diagnostic_fee_concept": {
+    "canonical_name": "DIAGNOSTIC_FEE",
+    "definition": "A priced FIXEO service for a structured diagnostic visit. It is a complete service in its own right, with its own FIXEO price. It may be absorbed — offset against a qualifying same-visit repair — only under explicitly frozen métier-specific conditions.",
+    "key_distinction_from_minimum_floor": "A DIAGNOSTIC_FEE is a real priced service. A MINIMUM_FLOOR is a billing policy constraint. A diagnostic can be absorbed (credit against repair). A minimum floor cannot be credited, deducted, or absorbed — it is merely a price floor.",
+    "schema": {
+      "calculation_model": "DIAGNOSTIC",
+      "commercial_output_type": "FIXEO_DIAGNOSTIC",
+      "diagnostic_price_mad": "integer",
+      "diagnostic_mode": "STANDALONE_OR_ABSORBED",
+      "absorption_policy": {
+        "absorption_eligible": "boolean",
+        "same_visit_required": "boolean",
+        "qualifying_service_codes": "array of service codes that trigger absorption",
+        "absorption_conditions": "array of prose conditions from frozen métier artifact — not to be extended beyond frozen source",
+        "absorption_mechanism": "CREDIT_AGAINST_REPAIR_PRICE | ZERO_STANDALONE_CHARGE | WAIVED"
+      }
+    },
+    "metier_diagnostics": {
+      "plomberie.diagnostic": {
+        "diagnostic_price_mad": 180,
+        "diagnostic_mode": "STANDALONE_OR_ABSORBED",
+        "same_visit_required": true,
+        "qualifying_service_codes": ["plomberie.fuite_simple", "plomberie.debouchage_evier", "plomberie.debouchage_wc_simple", "plomberie.robinet_remplacement", "plomberie.chasse_eau"],
+        "absorption_source": "Frozen in plomberie/registry.v0.3.json — not extended beyond frozen text",
+        "is_minimum_floor": false
+      },
+      "electricite.diagnostic": {
+        "diagnostic_price_mad": 200,
+        "diagnostic_mode": "STANDALONE_OR_ABSORBED",
+        "same_visit_required": true,
+        "qualifying_service_codes": ["electricite.prise_remplacement", "electricite.interrupteur_remplacement.simple", "electricite.interrupteur_remplacement.va_et_vient", "electricite.luminaire_installation", "electricite.disjoncteur_remplacement"],
+        "absorption_conditions_source": "D3 rule in electricite/registry.v0.3.json — standardized qualifying services only",
+        "is_minimum_floor": false
+      },
+      "CLIM-002": {
+        "diagnostic_price_mad": 250,
+        "diagnostic_mode": "STANDALONE_OR_ABSORBED",
+        "same_visit_required": true,
+        "qualifying_service_codes": ["CLIM-003", "CLIM-004", "CLIM-013"],
+        "absorption_source": "Frozen in climatisation/registry.v0.3.json",
+        "is_minimum_floor": false
+      }
+    },
+    "critical_rule": "DO NOT infer or extend absorption beyond what is already frozen in the métier V0.3 artifact. Absorption rules are métier-specific and must remain distinct."
+  },
+
+  "calculation_model_enum": {
+    "status": "PROPOSED_CANONICAL",
+    "description": "Represents HOW the FIXEO price is computed. Does not describe what the client sees. Separate from commercial_output_type.",
+    "values": {
+      "FIXED": {
+        "formula": "FINAL_PRICE = fixed_amount_mad",
+        "examples": ["plomberie.fuite_simple", "CLIM-009", "serrurerie.porte_claquee_ouverture", "bricolage.BRIC-003"]
+      },
+      "CONDITIONAL_FIXED": {
+        "formula": "if eligible_scope: FINAL_PRICE = fixed_amount_mad; else: route to QUOTE or different service",
+        "examples": ["electricite.disjoncteur_remplacement", "serrurerie.porte_verrouillee_ouverture", "CLIM-013", "MENU_001", "MENU_006"]
+      },
+      "UNIT_MULTIPLICATION": {
+        "formula": "FINAL_PRICE = unit_rate_mad × quantity",
+        "examples": ["CLIM-003 (per AC unit)", "CLIM-004 (per AC unit)", "NET-030 (per m²) before floor", "PEIN-002/003/004/005 (per painted/ceiling m²) before floor"]
+      },
+      "UNIT_MULTIPLICATION_WITH_FLOOR": {
+        "formula": "FINAL_PRICE = max(minimum_floor_mad, unit_rate_mad × quantity)",
+        "examples": ["PEIN-002", "PEIN-003", "PEIN-004", "PEIN-005", "NET-030"],
+        "note": "Distinct from UNIT_MULTIPLICATION — floor applies"
+      },
+      "TIME_BASED_SINGLE": {
+        "formula": "FINAL_PRICE = max(minimum_payable_mad, rate_per_hour_mad × hours)",
+        "examples": ["BRIC-002 (single worker hourly)"],
+        "note": "Single artisan. hours × rate. Never multiply by worker_count."
+      },
+      "TIME_BASED_TEAM": {
+        "formula": "FINAL_PRICE = max(minimum_floor_mad, rate_per_cleaner_hour_mad × worker_count × hours)",
+        "examples": ["NET-002 (nettoyage ménage standard)"],
+        "note": "MUST NOT be collapsed with TIME_BASED_SINGLE. worker_count is an explicit client input. Semantically different."
+      },
+      "MINIMUM_FLOOR": {
+        "formula": "FINAL_PRICE = minimum_floor_mad (this IS the service price when no other calculation applies)",
+        "examples": ["BRIC-001 (minimum visit)", "NET-001 (minimum visit)"],
+        "note": "Used when the service IS the minimum floor itself — e.g. a minimum-visit standalone service. Different from embedding a floor in another formula."
+      },
+      "LABOUR_FIXED_PART_SEPARATE": {
+        "formula": "FIXEO_PRICE = fixed_labour_mad; HARDWARE = quoted separately, artisan-disclosed, client-approved before installation",
+        "examples": ["serrurerie.cylindre_remplacement_standard", "serrurerie.serrure_remplacement_standard", "MENU_002", "MENU_003", "electricite.prise_remplacement (client supplies part)", "plomberie.robinet_remplacement (client supplies part)"]
+      },
+      "ADD_ON": {
+        "formula": "PRICE = primary_service_price + (add_on_rate_mad × add_on_quantity). Must not be booked standalone.",
+        "examples": ["PEIN-008 (preparation add-on per painted m²)"]
+      },
+      "DIAGNOSTIC": {
+        "formula": "FIXEO_DIAGNOSTIC_PRICE = diagnostic_price_mad. May be absorbed against qualifying same-visit repair.",
+        "examples": ["plomberie.diagnostic (180)", "electricite.diagnostic (200)", "CLIM-002 (250)"]
+      },
+      "QUOTE_ONLY": {
+        "formula": "No standardized calculation. Requires artisan quotation.",
+        "examples": ["All DEFERRED services", "Custom fabrication"]
+      }
+    },
+    "deprecated_from_7c1": {
+      "FIXEO_FIXED_PRICE": "Replaced by FIXED — FIXEO prefix belongs in commercial layer, not calculation layer",
+      "FIXED_PER_AC_UNIT": "Replaced by UNIT_MULTIPLICATION with unit=PER_AC_UNIT",
+      "HOURLY (bricolage)": "Replaced by TIME_BASED_SINGLE",
+      "PER_CLEANER_HOUR (nettoyage)": "Replaced by TIME_BASED_TEAM — never collapses with TIME_BASED_SINGLE",
+      "MINIMUM_VISIT_PRICE / FORFAIT_MINIMUM / MINIMUM_PROJECT_FLOOR": "All replaced by MINIMUM_FLOOR (when service IS the floor) or UNIT_MULTIPLICATION_WITH_FLOOR (when floor applies to a calculation)",
+      "LABOUR_ONLY_PER_PAINTED_M2 / ALL_IN_STANDARD_PER_PAINTED_M2 / ALL_IN_WITH_MINOR_PREP_PER_PAINTED_M2": "All replaced by UNIT_MULTIPLICATION_WITH_FLOOR with unit=PER_PAINTED_M2; distinction moves to materials_policy",
+      "CONDITIONAL_PER_M2_WITH_MINIMUM": "Replaced by UNIT_MULTIPLICATION_WITH_FLOOR",
+      "HALF_DAY (bricolage)": "Replaced by FIXED with unit=PER_HALF_DAY — it is a fixed-price package, not a time-based calculation",
+      "PER_ITEM_FORFAIT": "Replaced by FIXED with unit=PER_ITEM and quantity_input=true"
+    }
+  },
+
+  "commercial_output_type_enum": {
+    "status": "FROZEN_HUMAN_DECISION",
+    "decision": "HYBRID_MODEL_C",
+    "description": "Represents WHAT FIXEO communicates to the client. Separate from calculation_model.",
+    "values": {
+      "FIXEO_PRICE": {
+        "definition": "A standardized fixed contractual FIXEO price for the declared eligible scope. Not indicative. Not artisan-discretionary within the declared scope.",
+        "client_facing_principle": "The FIXEO price applies to the declared and eligible scope.",
+        "applies_to_calculation_models": ["FIXED", "CONDITIONAL_FIXED", "MINIMUM_FLOOR"],
+        "examples": ["plomberie.fuite_simple (250 MAD)", "serrurerie.porte_claquee_ouverture (220 MAD)", "CLIM-009 (250 MAD)", "BRIC-001 (200 MAD)", "MENU_001 (300 MAD)"]
+      },
+      "FIXEO_CALCULATED_PRICE": {
+        "definition": "A deterministic FIXEO price calculated from approved inputs and formula. Once required inputs are known and eligibility is satisfied, the resulting amount is the FIXEO price for that declared scope. Not indicative. Not artisan-discretionary within the declared scope.",
+        "client_facing_principle": "The FIXEO price is calculated from your declared inputs. It applies to the declared and eligible scope.",
+        "applies_to_calculation_models": ["UNIT_MULTIPLICATION", "UNIT_MULTIPLICATION_WITH_FLOOR", "TIME_BASED_SINGLE", "TIME_BASED_TEAM"],
+        "examples": ["NET-002 (65 × workers × hours)", "PEIN-002 (35 × painted m²)", "PEIN-003 (65 × painted m²)", "PEIN-004 (45 × ceiling m²)", "PEIN-005 (75 × painted m²)", "NET-030 (18 × m², floor 1000)", "CLIM-003 (300 × AC units)", "CLIM-004 (450 × AC units)", "BRIC-002 (150/h, minimum 2h)"]
+      },
+      "FIXEO_LABOUR_PRICE_PLUS_PART": {
+        "definition": "FIXEO labour component is fixed or calculated. Variable hardware/material component is separately identified, disclosed with price range, and requires client approval before installation. Neither component is indicative on its own — the labour is contractual, the part price must be agreed before work.",
+        "client_facing_principle": "Main-d'œuvre FIXEO au prix indiqué. Toute pièce variable est chiffrée séparément et soumise à votre accord avant installation.",
+        "applies_to_calculation_models": ["LABOUR_FIXED_PART_SEPARATE"],
+        "examples": ["serrurerie.cylindre_remplacement_standard (280 MAD labour + cylinder)", "serrurerie.serrure_remplacement_standard (400 MAD labour + lock)", "MENU_002 (300 MAD base labour + hinges)", "MENU_003 (300 MAD base labour + runners)"]
+      },
+      "FIXEO_DIAGNOSTIC": {
+        "definition": "A FIXEO diagnostic service with a standardized price. May be absorbed against a qualifying same-visit repair only under frozen métier-specific conditions.",
+        "client_facing_principle": "Diagnostic FIXEO au prix indiqué. Son éventuelle déduction d'une réparation dépend des conditions précisées pour ce service.",
+        "applies_to_calculation_models": ["DIAGNOSTIC"],
+        "examples": ["plomberie.diagnostic (180 MAD)", "electricite.diagnostic (200 MAD)", "CLIM-002 (250 MAD)"]
+      },
+      "FIXEO_ADD_ON": {
+        "definition": "A calculated add-on price that applies to a qualifying primary service. Cannot be booked standalone. Calculated from approved rate × quantity.",
+        "applies_to_calculation_models": ["ADD_ON"],
+        "examples": ["PEIN-008 (25 MAD/m² preparation add-on)"]
+      },
+      "FIXEO_ESTIMATE": {
+        "definition": "A genuinely non-binding estimate where evidence or scope is not sufficient for a contractual standardized price. RESERVED for intentionally classified estimates only. Must NOT be used as a generic disclaimer for all approved standardized services.",
+        "applies_to_calculation_models": ["UNIT_MULTIPLICATION_WITH_FLOOR — only where measurement uncertainty is high and explicitly documented"],
+        "usage_constraint": "Do NOT apply to any service with FIXEO_PRICE or FIXEO_CALCULATED_PRICE classification. Only apply where human decision explicitly chose ESTIMATE over CALCULATED.",
+        "current_applications": []
+      },
+      "QUOTE_REQUIRED": {
+        "definition": "No standardized FIXEO price. Scope requires artisan or project quotation. Booking can proceed but price is deferred to artisan assessment.",
+        "applies_to_calculation_models": ["QUOTE_ONLY"],
+        "examples": ["Custom menuiserie fabrication (MENU_007-012 deferred)", "Bricolage complex multi-trade (BRIC-030 conditional boundary)"]
+      }
+    }
+  },
+
+  "hybrid_model_c_freeze": {
+    "status": "HUMAN_DECISION_FROZEN",
+    "decision_id": "FIXEO_PRICING_COMMERCIAL_MODEL",
+    "decision_value": "HYBRID_MODEL_C",
+    "decision_date": "2026-08-09",
+    "decision_phase": "7C.1.1",
+    "mapping": {
+      "standardized_eligible_scope": "FIXEO_PRICE",
+      "deterministically_calculable_standardized_scope": "FIXEO_CALCULATED_PRICE",
+      "standardized_labour_with_variable_hardware": "FIXEO_LABOUR_PRICE_PLUS_PART",
+      "diagnostic_first_service": "FIXEO_DIAGNOSTIC",
+      "add_on_service": "FIXEO_ADD_ON",
+      "insufficiently_standardized_or_custom": "QUOTE_REQUIRED",
+      "intentionally_classified_estimate": "FIXEO_ESTIMATE"
+    },
+    "critical_rule": "FIXEO_ESTIMATE is NOT the default status for approved standardized services. Standardized services with FIXEO_PRICE or FIXEO_CALCULATED_PRICE are contractual, not indicative."
+  },
+
+  "contractual_price_doctrine": {
+    "status": "FROZEN",
+    "principle": "The FIXEO price applies to the declared and eligible scope.",
+    "artisan_constraint": "An artisan must NOT silently change the standardized price while the actual intervention remains within the declared FIXEO scope.",
+    "scope_change_protocol": {
+      "trigger": "Reality of the intervention differs from the declared scope",
+      "steps": [
+        "STOP",
+        "IDENTIFY the scope difference",
+        "EXPLAIN to the client what changed",
+        "DECLARE_SCOPE_CHANGE",
+        "CALCULATE_NEW_FIXEO_PRICE_OR_QUOTE — the new price must be a new FIXEO standard or an explicit quote",
+        "OBTAIN_CLIENT_APPROVAL",
+        "CONTINUE only after explicit approval"
+      ],
+      "prohibitions": [
+        "No silent surcharge",
+        "No retroactive surcharge",
+        "No artisan-only discretionary multiplier",
+        "No modification merely because the artisan considers the job 'more difficult' unless an objective frozen escape trigger applies"
+      ]
+    }
+  },
+
+  "legacy_disclaimer_status": {
+    "existing_disclaimer": "Prix indicatif FIXEO — tarif réel confirmé avec l'artisan avant intervention.",
+    "status": "LEGACY_RESEARCH_DISCLAIMER",
+    "canonical_status": "NOT_CANONICAL_FOR_STANDARDIZED_FIXEO_PRICE",
+    "reason": "This disclaimer incorrectly implies that the artisan has final unilateral pricing authority even for standardized FIXEO-price services. It is suitable only for FIXEO_ESTIMATE or QUOTE_REQUIRED output types.",
+    "deployment_status": "NOT_DEPLOYED — documentation only in frozen research artifacts",
+    "proposed_future_disclaimers": {
+      "FIXEO_PRICE": "Prix FIXEO applicable au périmètre indiqué. Toute prestation hors périmètre doit être expliquée et approuvée avant intervention.",
+      "FIXEO_CALCULATED_PRICE": "Prix FIXEO calculé selon les informations déclarées. Toute modification du périmètre doit être expliquée et approuvée avant intervention.",
+      "FIXEO_LABOUR_PRICE_PLUS_PART": "Main-d'œuvre FIXEO au prix indiqué. Toute pièce ou fourniture variable est chiffrée séparément et soumise à votre accord avant installation.",
+      "FIXEO_DIAGNOSTIC": "Diagnostic FIXEO au prix indiqué. Son éventuelle déduction d'une réparation dépend des conditions précisées pour ce service.",
+      "FIXEO_ADD_ON": "Supplément FIXEO calculé selon les informations déclarées. S'ajoute au prix du service principal.",
+      "QUOTE_REQUIRED": "Prix sur devis après qualification du besoin. Aucun travail supplémentaire ne commence sans votre accord.",
+      "FIXEO_ESTIMATE": "Estimation indicative — le tarif réel sera confirmé avec l'artisan avant toute intervention."
+    },
+    "note": "Proposed disclaimers are documentation candidates only. DO NOT deploy."
+  },
+
+  "canonical_schema_fields_required": {
+    "note": "Minimum field set the future canonical registry must support per service entry.",
+    "fields": {
+      "legacy_code": "string — frozen métier code (e.g. CLIM-003, MENU_001, plomberie.diagnostic)",
+      "canonical_code": "string — proposed canonical dot-notation (e.g. climatisation.nettoyage_annuel)",
+      "metier": "string enum — one of 8 métiers",
+      "label_fr": "string",
+      "calculation_model": "enum — see calculation_model_enum above",
+      "commercial_output_type": "enum — see commercial_output_type_enum above",
+      "unit": "enum — canonical unit (PER_INTERVENTION / PER_ITEM / PER_AC_UNIT / PER_DOOR / PER_HOUR / PER_CLEANER_HOUR / PER_HALF_DAY / PER_M2 / PER_PAINTED_M2 / PER_CEILING_M2 / QUOTE_ONLY)",
+      "measurement_basis": "string|null — null for most; 'floor_m2'|'painted_m2'|'ceiling_m2' for peinture",
+      "fixed_amount_mad": "integer|null",
+      "unit_rate_mad": "integer|null",
+      "minimum_floor_mad": "integer|null",
+      "diagnostic_price_mad": "integer|null",
+      "diagnostic_absorption_policy": "object|null — see diagnostic_fee_concept schema",
+      "parts_policy": "enum|null — NA / CLIENT_SUPPLIED / ARTISAN_DISCLOSED_SEPARATE / ARTISAN_SUPPLIED_INCLUDED",
+      "materials_policy": "object|null — consumables_included, paint_model, etc.",
+      "eligibility": "object|null — structured conditions and hard_exclusions",
+      "hard_exclusions": "array|null — escape triggers with route_to",
+      "escape_policy_ref": "string|null — POL-HORS-PERIMETRE or métier-specific variant",
+      "batch_policy": "object|null — EXPERIMENTAL status must be preserved for menuiserie",
+      "worker_count_required": "boolean",
+      "worker_count_semantics": "null|SINGLE_IMPLICIT|EXPLICIT_TEAM",
+      "price_provenance": "string — FIXEO_HUMAN_CALIBRATED_PILOT",
+      "maturity": "string — LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
+      "confidence": "enum — HIGH|MEDIUM|LOW|INSUFFICIENT",
+      "human_decision": "enum — APPROVED|DEFERRED|REJECTED|PENDING",
+      "availability": "enum — STANDARDIZED|QUOTE_REQUIRED|SPECIALIST|UNAVAILABLE",
+      "production_ready": "boolean — always false at this stage",
+      "city_adjustment": "null — always null, all métiers",
+      "urgency_modifier": "null — always null, all métiers",
+      "night_modifier": "null — always null, all métiers",
+      "weekend_modifier": "null — always null, all métiers",
+      "holiday_modifier": "null — always null, all métiers",
+      "express_modifier": "null — always null, all métiers"
+    }
+  },
+
+  "special_case_preservations": {
+    "nettoyage_worker_count": "PER_CLEANER_HOUR semantics are unique. calculation_model = TIME_BASED_TEAM. Never collapse into TIME_BASED_SINGLE or generic PER_HOUR.",
+    "peinture_measurement_basis": "PER_PAINTED_M2, PER_CEILING_M2, and floor area are distinct measurement bases. No automated floor-area to painted-area conversion is approved for production. Estimator V1 must request painted_m2 directly.",
+    "menuiserie_batch_experimental": "MENU_002 (+50 MAD/hinge same door/visit) and MENU_003 (+100 MAD/drawer same cabinet/visit) batch rules remain EXPERIMENTAL_BATCH_RULE. Not promoted to universal canonical batch policy.",
+    "bricolage_single_worker": "BRIC-002 is TIME_BASED_SINGLE — single artisan, never team. Distinct from NET-002 TIME_BASED_TEAM.",
+    "diagnostic_absorption_metier_specific": "Plomberie/Electricite/Climatisation absorption rules are each independently frozen in their respective V0.3 artifacts. Do not generalize or merge them."
+  }
+}

@@ -1,0 +1,175 @@
+{
+  "_meta": {
+    "phase": "7C.1.1",
+    "title": "FIXEO Commercial Output Policy — Hybrid Model C Freeze",
+    "version": "0.1",
+    "date": "2026-08-09",
+    "status": "FROZEN_HUMAN_DECISION",
+    "production_ready": false,
+    "note": "Freezes the commercial output doctrine (Hybrid Model C) and contractual price protocol for all 8 métiers. Documentation only — no production deployment."
+  },
+
+  "frozen_commercial_model": {
+    "decision_id": "FIXEO_PRICING_COMMERCIAL_MODEL",
+    "value": "HYBRID_MODEL_C",
+    "date": "2026-08-09",
+    "phase": "7C.1.1"
+  },
+
+  "commercial_output_types": [
+    {
+      "type": "FIXEO_PRICE",
+      "label_fr": "Prix FIXEO",
+      "definition": "A standardized fixed contractual FIXEO price for the declared eligible scope.",
+      "is_contractual": true,
+      "is_indicative": false,
+      "artisan_can_override": false,
+      "client_disclaimer": "Prix FIXEO applicable au périmètre indiqué. Toute prestation hors périmètre doit être expliquée et approuvée avant intervention.",
+      "applies_to_calculation_models": ["FIXED", "CONDITIONAL_FIXED", "MINIMUM_FLOOR"],
+      "deployed": false
+    },
+    {
+      "type": "FIXEO_CALCULATED_PRICE",
+      "label_fr": "Prix FIXEO calculé",
+      "definition": "A deterministic FIXEO price calculated from approved inputs and formula. Once inputs are known and eligibility is satisfied, the result is the FIXEO price for that declared scope.",
+      "is_contractual": true,
+      "is_indicative": false,
+      "artisan_can_override": false,
+      "client_disclaimer": "Prix FIXEO calculé selon les informations déclarées. Toute modification du périmètre doit être expliquée et approuvée avant intervention.",
+      "applies_to_calculation_models": ["UNIT_MULTIPLICATION", "UNIT_MULTIPLICATION_WITH_FLOOR", "TIME_BASED_SINGLE", "TIME_BASED_TEAM"],
+      "deployed": false
+    },
+    {
+      "type": "FIXEO_LABOUR_PRICE_PLUS_PART",
+      "label_fr": "Main-d'œuvre FIXEO + pièce variable",
+      "definition": "FIXEO labour component is fixed or calculated. Variable hardware/material component is separately disclosed with a price range and requires client approval before installation.",
+      "is_contractual": true,
+      "is_indicative": false,
+      "artisan_can_override": false,
+      "client_disclaimer": "Main-d'œuvre FIXEO au prix indiqué. Toute pièce ou fourniture variable est chiffrée séparément et soumise à votre accord avant installation.",
+      "applies_to_calculation_models": ["LABOUR_FIXED_PART_SEPARATE"],
+      "hardware_disclosure_required": true,
+      "hardware_approval_required_before_installation": true,
+      "deployed": false
+    },
+    {
+      "type": "FIXEO_DIAGNOSTIC",
+      "label_fr": "Diagnostic FIXEO",
+      "definition": "A FIXEO diagnostic service with a standardized price. May be absorbed against a qualifying same-visit repair under frozen métier-specific conditions only.",
+      "is_contractual": true,
+      "is_indicative": false,
+      "artisan_can_override": false,
+      "client_disclaimer": "Diagnostic FIXEO au prix indiqué. Son éventuelle déduction d'une réparation dépend des conditions précisées pour ce service.",
+      "applies_to_calculation_models": ["DIAGNOSTIC"],
+      "absorption_is_metier_specific": true,
+      "absorption_must_not_be_generalized": true,
+      "deployed": false
+    },
+    {
+      "type": "FIXEO_ADD_ON",
+      "label_fr": "Supplément FIXEO",
+      "definition": "A calculated add-on price that applies to a qualifying primary service. Cannot be booked standalone.",
+      "is_contractual": true,
+      "is_indicative": false,
+      "standalone_booking_allowed": false,
+      "client_disclaimer": "Supplément FIXEO calculé selon les informations déclarées. S'ajoute au prix du service principal.",
+      "applies_to_calculation_models": ["ADD_ON"],
+      "deployed": false
+    },
+    {
+      "type": "FIXEO_ESTIMATE",
+      "label_fr": "Estimation FIXEO",
+      "definition": "A genuinely non-binding estimate. RESERVED only for services explicitly classified as estimates where evidence or scope is insufficient for a contractual price.",
+      "is_contractual": false,
+      "is_indicative": true,
+      "artisan_can_override": true,
+      "client_disclaimer": "Estimation indicative — le tarif réel sera confirmé avec l'artisan avant toute intervention.",
+      "applies_to_calculation_models": ["UNIT_MULTIPLICATION_WITH_FLOOR — only when measurement uncertainty is explicitly documented"],
+      "usage_constraint": "MUST NOT be applied to any service classified as FIXEO_PRICE or FIXEO_CALCULATED_PRICE. Only for intentionally estimated services.",
+      "current_service_count": 0,
+      "deployed": false
+    },
+    {
+      "type": "QUOTE_REQUIRED",
+      "label_fr": "Sur devis",
+      "definition": "No standardized FIXEO price. Scope requires artisan or project quotation.",
+      "is_contractual": false,
+      "is_indicative": false,
+      "client_disclaimer": "Prix sur devis après qualification du besoin. Aucun travail supplémentaire ne commence sans votre accord.",
+      "applies_to_calculation_models": ["QUOTE_ONLY"],
+      "deployed": false
+    }
+  ],
+
+  "contractual_price_doctrine": {
+    "core_principle": "The FIXEO price applies to the declared and eligible scope.",
+    "scope_change_protocol": {
+      "trigger": "Reality of the intervention differs from the declared scope",
+      "ordered_steps": ["STOP", "IDENTIFY", "EXPLAIN", "DECLARE_SCOPE_CHANGE", "CALCULATE_NEW_FIXEO_PRICE_OR_QUOTE", "OBTAIN_CLIENT_APPROVAL", "CONTINUE"],
+      "prohibitions": [
+        "No silent surcharge",
+        "No retroactive surcharge",
+        "No artisan-only discretionary multiplier",
+        "No price modification merely because artisan considers work harder, unless an objective frozen escape trigger applies"
+      ]
+    }
+  },
+
+  "legacy_disclaimer_correction": {
+    "legacy_text": "Prix indicatif FIXEO — tarif réel confirmé avec l'artisan avant intervention.",
+    "canonical_status": "LEGACY_RESEARCH_DISCLAIMER — NOT_CANONICAL_FOR_STANDARDIZED_FIXEO_PRICE",
+    "applicable_to": ["FIXEO_ESTIMATE", "QUOTE_REQUIRED"],
+    "not_applicable_to": ["FIXEO_PRICE", "FIXEO_CALCULATED_PRICE", "FIXEO_LABOUR_PRICE_PLUS_PART", "FIXEO_DIAGNOSTIC", "FIXEO_ADD_ON"],
+    "reason": "Incorrectly implies artisan has final unilateral pricing authority even for standardized FIXEO-price services.",
+    "action": "Do not use for standardized approved services. Retire when production estimator is deployed."
+  },
+
+  "metier_output_type_summary": {
+    "plomberie": {
+      "diagnostic": "FIXEO_DIAGNOSTIC",
+      "repair_services": "FIXEO_PRICE",
+      "hardware_services": "FIXEO_LABOUR_PRICE_PLUS_PART"
+    },
+    "electricite": {
+      "diagnostic": "FIXEO_DIAGNOSTIC",
+      "standard_replacements": "FIXEO_PRICE",
+      "conditional_panel_work": "FIXEO_PRICE (conditional eligibility)"
+    },
+    "serrurerie": {
+      "standard_opening": "FIXEO_PRICE",
+      "conditional_opening": "FIXEO_PRICE (conditional eligibility)",
+      "cylinder_lock_replacement": "FIXEO_LABOUR_PRICE_PLUS_PART"
+    },
+    "climatisation": {
+      "diagnostic": "FIXEO_DIAGNOSTIC",
+      "per_ac_unit_services": "FIXEO_CALCULATED_PRICE",
+      "per_intervention_services": "FIXEO_PRICE",
+      "conditional_installation": "FIXEO_PRICE (conditional eligibility)"
+    },
+    "bricolage": {
+      "minimum_visit": "FIXEO_PRICE",
+      "hourly_service": "FIXEO_CALCULATED_PRICE",
+      "half_day": "FIXEO_PRICE",
+      "per_item": "FIXEO_CALCULATED_PRICE",
+      "conditional_fixed": "FIXEO_PRICE (conditional eligibility)"
+    },
+    "nettoyage": {
+      "minimum_visit": "FIXEO_PRICE",
+      "hourly_per_cleaner": "FIXEO_CALCULATED_PRICE",
+      "per_item_upholstery": "FIXEO_PRICE",
+      "per_m2_post_construction": "FIXEO_CALCULATED_PRICE"
+    },
+    "peinture": {
+      "minimum_project_floor": "FIXEO_PRICE",
+      "labour_only_per_painted_m2": "FIXEO_CALCULATED_PRICE",
+      "all_in_per_painted_m2": "FIXEO_CALCULATED_PRICE",
+      "per_ceiling_m2": "FIXEO_CALCULATED_PRICE",
+      "preparation_add_on": "FIXEO_ADD_ON"
+    },
+    "menuiserie": {
+      "door_adjustment": "FIXEO_PRICE (conditional eligibility)",
+      "hinge_runner_replacement": "FIXEO_LABOUR_PRICE_PLUS_PART",
+      "door_installation": "FIXEO_PRICE (conditional eligibility)"
+    }
+  }
+}
