@@ -1,0 +1,184 @@
+{
+  "_meta": {
+    "phase": "7B.9.2",
+    "title": "FIXEO Peinture Human Price Decision Freeze — Economic Summary",
+    "date": "2026-08-09",
+    "based_on_commit": "173ebc3",
+    "status": "HUMAN_PRICE_DECISION_FREEZE",
+    "change_from_v02": "PEIN-003 raised from 60 to 65 MAD/m². PEIN-006 deferred (was 1800 MAD candidate). All others confirmed as recommended."
+  },
+
+  "approved_price_summary": [
+    {
+      "service_code": "PEIN-001",
+      "service": "Minimum project",
+      "approved_price_mad": 800,
+      "unit": "flat minimum",
+      "v02_recommendation": 800,
+      "human_adjustment": "NONE"
+    },
+    {
+      "service_code": "PEIN-002",
+      "service": "Interior wall — labour only",
+      "approved_price_mad": 35,
+      "unit": "MAD/painted m²",
+      "v02_recommendation": 35,
+      "human_adjustment": "NONE"
+    },
+    {
+      "service_code": "PEIN-003",
+      "service": "Interior wall — labour + standard paint",
+      "approved_price_mad": 65,
+      "unit": "MAD/painted m²",
+      "v02_recommendation": 60,
+      "human_adjustment": "+5 MAD/m² to improve artisan economics"
+    },
+    {
+      "service_code": "PEIN-004",
+      "service": "Ceiling — standard repaint",
+      "approved_price_mad": 45,
+      "unit": "MAD/ceiling m²",
+      "v02_recommendation": 45,
+      "human_adjustment": "NONE"
+    },
+    {
+      "service_code": "PEIN-005",
+      "service": "Interior wall + minor preparation",
+      "approved_price_mad": 75,
+      "unit": "MAD/painted m²",
+      "v02_recommendation": 75,
+      "human_adjustment": "NONE"
+    },
+    {
+      "service_code": "PEIN-008",
+      "service": "Enduit de lissage (add-on)",
+      "approved_price_mad": 25,
+      "unit": "MAD/painted m²",
+      "v02_recommendation": 25,
+      "human_adjustment": "NONE"
+    }
+  ],
+
+  "deferred_price_summary": [
+    {
+      "service_code": "PEIN-006",
+      "service": "Full standard room",
+      "human_decision": "DEFERRED",
+      "approved_price_mad": null,
+      "v02_recommendation": 1800,
+      "reason": "Economic inconsistency with per-m² approved contracts. Use painted-surface model instead."
+    }
+  ],
+
+  "small_project_examples_frozen": {
+    "pein_002_at_35": [
+      { "painted_m2": 5,  "m2_calc": 175, "minimum_applies": true,  "final_price_mad": 800  },
+      { "painted_m2": 10, "m2_calc": 350, "minimum_applies": true,  "final_price_mad": 800  },
+      { "painted_m2": 15, "m2_calc": 525, "minimum_applies": true,  "final_price_mad": 800  },
+      { "painted_m2": 20, "m2_calc": 700, "minimum_applies": true,  "final_price_mad": 800  },
+      { "painted_m2": 25, "m2_calc": 875, "minimum_applies": false, "final_price_mad": 875  },
+      { "painted_m2": 30, "m2_calc": 1050,"minimum_applies": false, "final_price_mad": 1050 },
+      { "painted_m2": 50, "m2_calc": 1750,"minimum_applies": false, "final_price_mad": 1750 }
+    ],
+    "pein_003_at_65": [
+      { "painted_m2": 5,  "m2_calc": 325, "minimum_applies": true,  "final_price_mad": 800  },
+      { "painted_m2": 10, "m2_calc": 650, "minimum_applies": true,  "final_price_mad": 800  },
+      { "painted_m2": 13, "m2_calc": 845, "minimum_applies": false, "final_price_mad": 845  },
+      { "painted_m2": 15, "m2_calc": 975, "minimum_applies": false, "final_price_mad": 975  },
+      { "painted_m2": 20, "m2_calc": 1300,"minimum_applies": false, "final_price_mad": 1300 },
+      { "painted_m2": 30, "m2_calc": 1950,"minimum_applies": false, "final_price_mad": 1950 },
+      { "painted_m2": 50, "m2_calc": 3250,"minimum_applies": false, "final_price_mad": 3250 }
+    ],
+    "note": "PEIN-003 minimum crossover at ~12.3m². PEIN-002 minimum crossover at ~22.9m²."
+  },
+
+  "apartment_simulations_frozen": [
+    {
+      "case": "Studio ~40m² floor",
+      "floor_area_m2": 40,
+      "painted_walls_m2": 65.5,
+      "ceiling_m2": 40,
+      "pein002_walls_mad": 2293,
+      "pein002_walls_final": 2293,
+      "pein004_ceiling_mad": 1800,
+      "total_labour_only": 4093,
+      "pein003_walls_mad": 4258,
+      "pein004_ceiling_mad_2": 1800,
+      "total_all_in": 6058,
+      "market_range_check": "Phase 7B.9: F2 range 7,425–13,200 (60m²). Studio smaller — 4,000–6,000 aligns well.",
+      "alignment": "ALIGNED"
+    },
+    {
+      "case": "F2 ~60m² floor",
+      "floor_area_m2": 60,
+      "painted_walls_m2": 153,
+      "ceiling_m2": 60,
+      "pein002_walls_mad": 5355,
+      "pein004_ceiling_mad": 2700,
+      "total_labour_only": 8055,
+      "pein003_walls_mad": 9945,
+      "pein004_ceiling_mad_2": 2700,
+      "total_all_in": 12645,
+      "market_range_check": "Phase 7B.9: F2 MO 4,125–8,250 / all-in 7,425–13,200. Calibrated: 8,055 / 12,645. ALIGNED.",
+      "alignment": "ALIGNED"
+    },
+    {
+      "case": "F3 ~80m² floor",
+      "floor_area_m2": 80,
+      "painted_walls_m2": 204,
+      "ceiling_m2": 80,
+      "pein002_walls_mad": 7140,
+      "pein004_ceiling_mad": 3600,
+      "total_labour_only": 10740,
+      "pein003_walls_mad": 13260,
+      "pein004_ceiling_mad_2": 3600,
+      "total_all_in": 16860,
+      "market_range_check": "Phase 7B.9: F3 MO 5,500–11,000 / all-in 9,900–17,600. Calibrated: 10,740 / 16,860. ALIGNED.",
+      "alignment": "ALIGNED"
+    },
+    {
+      "case": "F4 ~110m² floor",
+      "floor_area_m2": 110,
+      "painted_walls_m2": 267.5,
+      "ceiling_m2": 110,
+      "pein002_walls_mad": 9363,
+      "pein004_ceiling_mad": 4950,
+      "total_labour_only": 14313,
+      "pein003_walls_mad": 17388,
+      "pein004_ceiling_mad_2": 4950,
+      "total_all_in": 22338,
+      "market_range_check": "Phase 7B.9: F4 MO 7,500–15,000 / all-in 13,500–24,000. Calibrated: 14,313 / 22,338. ALIGNED.",
+      "alignment": "ALIGNED"
+    }
+  ],
+
+  "pein003_economic_recheck": {
+    "v02_candidate_mad": 60,
+    "human_approved_mad": 65,
+    "material_cost_per_m2_mad": 15.2,
+    "at_60": {
+      "gross_margin_per_m2": 44.8,
+      "gross_margin_pct": "74.7%",
+      "day_gross_60m2": 3600,
+      "day_net_after_15pct": 3060,
+      "artisan_net_labour_per_day": 2148,
+      "assessment": "V0.2 concern: weak gross margin of ~9.8 MAD/m² before commission"
+    },
+    "at_65": {
+      "gross_margin_per_m2": 49.8,
+      "gross_margin_pct": "76.6%",
+      "day_gross_60m2": 3900,
+      "day_net_after_15pct": 3315,
+      "artisan_net_labour_per_day": 2403,
+      "improvement_vs_60_mad_per_day": 255,
+      "assessment": "RESOLVED. Artisan net labour per day at 65 MAD/m² is 2403 MAD — comfortably above 800–900 MAD FIXEO_POLICY target. The +5 MAD/m² human adjustment materially improves economics."
+    },
+    "commission_stress_test": [
+      { "pct": 0,  "day_gross": 3900, "artisan_net_labour_day": 2988 },
+      { "pct": 10, "day_gross": 3900, "artisan_net_labour_day": 2598 },
+      { "pct": 15, "day_gross": 3900, "artisan_net_labour_day": 2403 },
+      { "pct": 20, "day_gross": 3900, "artisan_net_labour_day": 2208 }
+    ],
+    "label": "FIXEO_POLICY_ESTIMATE"
+  }
+}

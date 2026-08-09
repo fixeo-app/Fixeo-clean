@@ -1,0 +1,536 @@
+{
+  "_meta": {
+    "phase": "7B.9.2",
+    "title": "FIXEO Peinture Human Price Decision Freeze",
+    "date": "2026-08-09",
+    "based_on_commit": "173ebc3",
+    "research_commit": "db7fe39",
+    "calibration_commit": "173ebc3",
+    "status": "HUMAN_PRICE_DECISION_FREEZE",
+    "total_approved": 6,
+    "total_deferred": 1,
+    "production_ready_any": false,
+    "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+    "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
+    "disclaimer": "Prix indicatif FIXEO — tarif réel confirmé avec l'artisan avant intervention.",
+    "not_official_tariff": true,
+    "not_regulated": true,
+    "not_statistical_median": true
+  },
+
+  "approved_services": [
+    {
+      "service_code": "PEIN-001",
+      "label": "Minimum Painting Project",
+      "label_fr": "Intervention peinture minimale",
+      "category": "DIAGNOSTIC",
+      "human_decision": "APPROVED",
+      "approved_price_mad": 800,
+      "approved_price_unit": "MINIMUM_PROJECT",
+      "pricing_architecture": "MINIMUM_PROJECT_FLOOR",
+      "pricing_formula": "FINAL_PRICE = max(800, PAINTED_SURFACE_M2 × 35)",
+      "anti_double_charge_rule": "The 800 MAD minimum is a FLOOR, not additive. It applies only when the m²-based result falls below 800 MAD. It must never be added ON TOP of a price that already exceeds 800 MAD.",
+      "pricing_unit": "MINIMUM_PROJECT",
+      "measurement_basis": "NOT_APPLICABLE",
+      "scope_inclusions": [
+        "Travel to site",
+        "Standard labour",
+        "Floor and furniture protection (bâches)",
+        "Masking of adjacent surfaces",
+        "Small touch-up up to approximately 10m² painted surface",
+        "Standard tools",
+        "Cleanup"
+      ],
+      "scope_exclusions": [
+        "Paint material (client supplies)",
+        "Primer (client supplies unless separately agreed)",
+        "Preparation beyond READY_TO_PAINT allowance",
+        "Enduit de lissage",
+        "Full room or apartment scope"
+      ],
+      "escape_rule": "If painted surface exceeds approximately 10m², convert to PEIN-002 or PEIN-003 per-m² pricing",
+      "labour_policy": "LABOUR_PLUS_BASIC_CONSUMABLES",
+      "paint_policy": "CLIENT_SUPPLIED",
+      "number_of_coats": "AS_REQUIRED_FOR_RETOUCHE",
+      "surface_condition": "READY_TO_PAINT",
+      "city_adjustment": null,
+      "urgency_modifier": null,
+      "night_modifier": null,
+      "weekend_modifier": null,
+      "holiday_modifier": null,
+      "express_modifier": null,
+      "production_ready": false,
+      "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+      "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
+      "v02_recommended_price": 800,
+      "human_adjustment": "NONE — confirmed as recommended"
+    },
+    {
+      "service_code": "PEIN-002",
+      "label": "Interior Wall — Labour Only (client supplies paint)",
+      "label_fr": "Peinture mur intérieur — main d'œuvre seule (peinture client)",
+      "category": "INTERIOR_WALL",
+      "human_decision": "APPROVED",
+      "approved_price_mad": 35,
+      "approved_price_unit": "MAD_PER_PAINTED_M2",
+      "pricing_architecture": "LABOUR_ONLY_PER_PAINTED_M2",
+      "pricing_formula": "FINAL_PRICE = max(800, 35 × PAINTED_SURFACE_M2)",
+      "minimum_project_integration": "800 MAD minimum applies (PEIN-001 floor). Formula: max(800, 35 × m²). Anti-double-charge: minimum is not additive.",
+      "pricing_unit": "PER_PAINTED_M2",
+      "measurement_basis": "PAINTED_SURFACE_M2",
+      "labour_policy": "LABOUR_ONLY",
+      "paint_policy": "CLIENT_SUPPLIED",
+      "consumables_policy": "INCLUDED",
+      "number_of_coats": "2_FINISH_COATS",
+      "primer_policy": "APPLIED_WHERE_OBJECTIVELY_REQUIRED. Material: client-supplied or separately agreed and disclosed.",
+      "coat_doctrine": "2 finish coats standard. Primer applied where objectively required by substrate, product, or significant colour coverage requirement. Dark-to-light transition may require 3rd coat — artisan identifies before starting, explains scope consequence, obtains client approval before proceeding.",
+      "ready_to_paint_contract": {
+        "eligibility_criteria": [
+          "Surface dry",
+          "Stable existing coating",
+          "No active moisture",
+          "No mold requiring remediation",
+          "No unstable plaster",
+          "No structural crack",
+          "No major peeling",
+          "Normal residential access",
+          "Standard ceiling height"
+        ],
+        "included_minor_prep_at_no_extra_charge": [
+          "Small nail holes (up to 5 per wall)",
+          "Very fine non-structural cracks (≤2mm width)",
+          "Tiny localized filler application",
+          "Light surface sanding"
+        ],
+        "objective_escape_threshold": "Preparation time materially exceeding the READY_TO_PAINT allowance → escape to PEIN-005 or declare HORS PÉRIMÈTRE. No subjective artisan-only surcharge permitted.",
+        "escape_triggers": [
+          "Cracks >2mm width or >20cm length",
+          "Peeling area >0.25m²",
+          "Active moisture or mold",
+          "Unstable/flaking/chalking coating"
+        ]
+      },
+      "scope_inclusions": [
+        "Travel",
+        "Standard labour",
+        "Basic masking and protection",
+        "Standard tools",
+        "Light sanding",
+        "Very small nail-hole filling / fine crack touch-up within READY_TO_PAINT contract",
+        "Application of 2 finish coats of client-supplied paint",
+        "Cleanup"
+      ],
+      "scope_exclusions": [
+        "Paint material",
+        "Primer (client supplies unless separately agreed)",
+        "Enduit de lissage",
+        "Major crack repair",
+        "Moisture or mold treatment",
+        "Scaffolding for heights >3m"
+      ],
+      "complexity_escape_rules": [
+        "Significant preparation required → PEIN-005",
+        "Active moisture/mold → HORS PÉRIMÈTRE",
+        "Structural cracks → HORS PÉRIMÈTRE Maçonnerie",
+        "Height >3m → scaffolding surcharge or quote",
+        "Dark-to-light colour change → 3rd coat discussion before work starts"
+      ],
+      "surface_condition": "READY_TO_PAINT",
+      "city_adjustment": null,
+      "urgency_modifier": null,
+      "night_modifier": null,
+      "weekend_modifier": null,
+      "holiday_modifier": null,
+      "express_modifier": null,
+      "production_ready": false,
+      "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+      "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
+      "v02_recommended_price": 35,
+      "human_adjustment": "NONE — confirmed as recommended",
+      "economic_validation": {
+        "productivity_m2_per_day": 60,
+        "day_gross_mad": 2100,
+        "day_net_after_15pct_commission_mad": 1785,
+        "assessment": "SUSTAINABLE",
+        "label": "FIXEO_POLICY_ESTIMATE"
+      }
+    },
+    {
+      "service_code": "PEIN-003",
+      "label": "Interior Wall — Labour + Standard Paint Included",
+      "label_fr": "Peinture mur intérieur — main d'œuvre + peinture standard incluse",
+      "category": "INTERIOR_WALL",
+      "human_decision": "APPROVED",
+      "approved_price_mad": 65,
+      "approved_price_unit": "MAD_PER_PAINTED_M2",
+      "human_adjustment_reason": "V0.2 recommended 60 MAD/m² but its own material-economic model showed only ~9.8 MAD/m² gross margin before commission. Human raised to 65 MAD/m² to protect artisan economics while remaining inside the external 45–80 MAD/m² market range.",
+      "pricing_architecture": "ALL_IN_STANDARD_PER_PAINTED_M2",
+      "pricing_formula": "FINAL_PRICE = max(800, 65 × PAINTED_SURFACE_M2)",
+      "minimum_project_integration": "800 MAD minimum applies. Formula: max(800, 65 × m²).",
+      "pricing_unit": "PER_PAINTED_M2",
+      "measurement_basis": "PAINTED_SURFACE_M2",
+      "labour_policy": "ALL_IN_MATERIAL_AND_LABOUR",
+      "paint_policy": "ARTISAN_SUPPLIED_STANDARD",
+      "paint_specification": {
+        "class": "STANDARD residential acrylic vinyl lavable (washable)",
+        "eligible_brands_example": ["Colorado", "Astral", "Atlas", "Zolux or equivalent standard"],
+        "excluded": ["Generic unlabelled paint", "Economy non-washable grade", "Expired stock"],
+        "finish": "Mate or satiné — client chooses within standard range",
+        "colour": "Standard palette. Specialty tinting/mixing: disclosed separately if additional cost.",
+        "premium_or_specialty_paint": "MATERIAL_UPGRADE_SEPARATE_WITH_DISCLOSURE — not silently substituted"
+      },
+      "consumables_policy": "INCLUDED",
+      "number_of_coats": "2_FINISH_COATS",
+      "primer_policy": "INCLUDED_WHERE_OBJECTIVELY_REQUIRED",
+      "coat_doctrine": "Same as PEIN-002. 2 finish coats standard. Dark-to-light → 3 coats, client approval before proceeding.",
+      "ready_to_paint_contract": "SAME AS PEIN-002",
+      "scope_inclusions": [
+        "Travel",
+        "Standard labour",
+        "Basic protection and masking",
+        "Standard preparation under READY_TO_PAINT contract",
+        "Standard paint (artisan-supplied, named brand class)",
+        "Normal primer when required",
+        "2 finish coats",
+        "Basic consumables (rollers, tape, etc.)",
+        "Cleanup"
+      ],
+      "scope_exclusions": [
+        "Enduit de lissage (quoted separately via PEIN-008 if needed)",
+        "Premium or specialty paint upgrade",
+        "Major crack repair",
+        "Moisture or mold treatment",
+        "Scaffolding >3m"
+      ],
+      "complexity_escape_rules": "SAME AS PEIN-002",
+      "surface_condition": "READY_TO_PAINT",
+      "city_adjustment": null,
+      "urgency_modifier": null,
+      "night_modifier": null,
+      "weekend_modifier": null,
+      "holiday_modifier": null,
+      "express_modifier": null,
+      "production_ready": false,
+      "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+      "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
+      "v02_recommended_price": 60,
+      "economic_validation_at_65": {
+        "material_cost_per_m2_mad": 15.2,
+        "gross_margin_per_m2_mad": 49.8,
+        "gross_margin_pct": "76.6%",
+        "productivity_m2_per_day": 60,
+        "day_gross_mad": 3900,
+        "day_net_after_15pct_commission_mad": 3315,
+        "minus_material_60m2_mad": 912,
+        "artisan_net_labour_component_per_day_mad": 2403,
+        "improvement_vs_60mad_candidate_mad_per_day": 255,
+        "vs_pein002_labour_only_net_day": 1785,
+        "assessment": "IMPROVED. At 65 MAD/m², artisan effective daily net-labour (after commission and material) = 2403 MAD/day vs 1785 MAD/day for PEIN-002 labour-only. The 255 MAD/day improvement at 65 vs 60 resolves the weak margin identified in V0.2.",
+        "label": "FIXEO_POLICY_ESTIMATE"
+      }
+    },
+    {
+      "service_code": "PEIN-004",
+      "label": "Ceiling — Standard Repaint",
+      "label_fr": "Peinture plafond standard",
+      "category": "CEILING",
+      "human_decision": "APPROVED",
+      "approved_price_mad": 45,
+      "approved_price_unit": "MAD_PER_CEILING_M2",
+      "pricing_architecture": "CONDITIONAL_PER_CEILING_M2",
+      "pricing_formula": "FINAL_PRICE = max(800, 45 × CEILING_M2). Ceiling m² = room floor area.",
+      "minimum_project_integration": "800 MAD minimum applies (PEIN-001 floor).",
+      "pricing_unit": "PER_CEILING_M2",
+      "measurement_basis": "CEILING_M2",
+      "measurement_note": "CEILING_M2 equals the floor area of the room. Ceiling m² ≠ floor area of apartment. Painter measures room by room.",
+      "labour_policy": "ALL_IN_MATERIAL_AND_LABOUR",
+      "paint_policy": "ARTISAN_SUPPLIED_STANDARD",
+      "consumables_policy": "INCLUDED",
+      "number_of_coats": "2_FINISH_COATS",
+      "primer_policy": "INCLUDED_WHERE_REQUIRED",
+      "scope_inclusions": [
+        "Standard residential ceiling",
+        "Floor protection",
+        "Local minor preparation",
+        "Light sanding",
+        "Local enduit where minor and required",
+        "Primer where required",
+        "2 finish coats standard paint",
+        "Basic protection and cleanup"
+      ],
+      "scope_exclusions": [
+        "Active moisture stains (source not resolved)",
+        "Large cracks",
+        "Unstable plaster",
+        "Major enduit de lissage (more than minor local application)",
+        "Faux plafond modifications"
+      ],
+      "complexity_escape_rules": [
+        "Active moisture → HORS PÉRIMÈTRE — resolve source first (Plomberie/Toiture)",
+        "Large cracks → HORS PÉRIMÈTRE Maçonnerie",
+        "Unstable plaster → QUOTE_REQUIRED",
+        "Ceiling height >3m → scaffolding surcharge or quote",
+        "Extensive enduit required → PEIN-008 add-on + reassessment"
+      ],
+      "surface_condition": "READY_TO_PAINT",
+      "city_adjustment": null,
+      "urgency_modifier": null,
+      "night_modifier": null,
+      "weekend_modifier": null,
+      "holiday_modifier": null,
+      "express_modifier": null,
+      "production_ready": false,
+      "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+      "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
+      "v02_recommended_price": 45,
+      "human_adjustment": "NONE — confirmed as recommended",
+      "economic_validation": {
+        "productivity_m2_per_day": 50,
+        "day_gross_mad": 2250,
+        "day_net_after_15pct_commission_mad": 1912,
+        "assessment": "SUSTAINABLE",
+        "label": "FIXEO_POLICY_ESTIMATE"
+      }
+    },
+    {
+      "service_code": "PEIN-005",
+      "label": "Interior Wall — Labour + Standard Paint + Minor Preparation",
+      "label_fr": "Peinture mur intérieur avec préparation légère",
+      "category": "INTERIOR_WALL",
+      "human_decision": "APPROVED",
+      "approved_price_mad": 75,
+      "approved_price_unit": "MAD_PER_PAINTED_M2",
+      "pricing_architecture": "ALL_IN_WITH_MINOR_PREP_PER_PAINTED_M2",
+      "pricing_formula": "FINAL_PRICE = max(800, 75 × PAINTED_SURFACE_M2)",
+      "minimum_project_integration": "800 MAD minimum applies.",
+      "pricing_unit": "PER_PAINTED_M2",
+      "measurement_basis": "PAINTED_SURFACE_M2",
+      "labour_policy": "ALL_IN_MATERIAL_AND_LABOUR",
+      "paint_policy": "ARTISAN_SUPPLIED_STANDARD",
+      "consumables_policy": "INCLUDED",
+      "number_of_coats": "2_FINISH_COATS",
+      "primer_policy": "INCLUDED",
+      "minor_preparation_contract": {
+        "included_at_no_extra_charge": [
+          "Rebouchage of holes up to approximately 3cm diameter",
+          "Local filler on cracks up to 3mm width, ≤50cm length",
+          "Light-to-moderate sanding of entire surface",
+          "Local enduit application on up to approximately 20% of wall surface",
+          "Local peeling treatment (up to minor threshold)",
+          "Primer coat",
+          "2 finish coats standard paint"
+        ],
+        "excluded_escape_to_quote_or_hors_perimetre": [
+          "More than approximately 20% of surface requires enduit",
+          "Cracks requiring V-cut or structural filler",
+          "Peeling over approximately 25% of surface",
+          "Active moisture",
+          "Mold",
+          "Structural damage"
+        ],
+        "objective_note": "The approximately 20% enduit threshold is objective. If artisan assesses that more than 20% of the surface requires enduit during preparation, artisan must STOP, notify FIXEO, and request updated scope/quote before proceeding."
+      },
+      "surface_condition": "MINOR_PREPARATION",
+      "city_adjustment": null,
+      "urgency_modifier": null,
+      "night_modifier": null,
+      "weekend_modifier": null,
+      "holiday_modifier": null,
+      "express_modifier": null,
+      "production_ready": false,
+      "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+      "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
+      "v02_recommended_price_labour": 45,
+      "v02_recommended_price_allin": 75,
+      "human_adjustment": "NONE — confirmed all-in 75 MAD as recommended",
+      "economic_validation": {
+        "productivity_m2_per_day": 40,
+        "day_gross_mad": 3000,
+        "day_net_after_15pct_commission_mad": 2550,
+        "material_cost_per_m2_mad": 15.2,
+        "material_total_40m2": 608,
+        "artisan_net_labour_per_day": 1942,
+        "assessment": "SUSTAINABLE",
+        "label": "FIXEO_POLICY_ESTIMATE"
+      }
+    },
+    {
+      "service_code": "PEIN-008",
+      "label": "Enduit de Lissage — Preparation Add-On",
+      "label_fr": "Enduit de lissage (service d'appoint préparation)",
+      "category": "INTERIOR_WALL",
+      "human_decision": "APPROVED",
+      "approved_price_mad": 25,
+      "approved_price_unit": "MAD_PER_PAINTED_M2",
+      "canonical_role": "PREPARATION_ADD_ON",
+      "estimator_guidance": "NOT recommended as a standalone headline service in the estimator. To be offered as an add-on when PEIN-002, PEIN-003, or PEIN-004 surfaces require preparation beyond their included scope.",
+      "pricing_architecture": "PREPARATION_ADD_ON_PER_PAINTED_M2",
+      "pricing_formula": "ADD_ON_PRICE = 25 × PAINTED_SURFACE_M2. Subject to PEIN-001 minimum only if used as a standalone booking (not typical use).",
+      "pricing_unit": "PER_PAINTED_M2",
+      "measurement_basis": "PAINTED_SURFACE_M2",
+      "labour_policy": "LABOUR_PLUS_BASIC_CONSUMABLES",
+      "paint_policy": "NOT_APPLICABLE",
+      "material_policy": "ENDUIT_MATERIAL_INCLUDED",
+      "consumables_policy": "INCLUDED",
+      "scope_inclusions": [
+        "Enduit de lissage material",
+        "Up to 2 standard passes of enduit de lissage",
+        "Sanding between passes",
+        "Surface left smooth and ready for primer and paint"
+      ],
+      "scope_exclusions": [
+        "Paint application (separate service)",
+        "Primer",
+        "Structural repair",
+        "Deep plaster repair (>5mm depth)",
+        "Moisture damage treatment"
+      ],
+      "maximum_repair_depth_mm": 5,
+      "escape_rule": "Substrate requires >5mm fill or structural repair → HORS PÉRIMÈTRE Maçonnerie",
+      "surface_condition": "MINOR_PREPARATION",
+      "city_adjustment": null,
+      "urgency_modifier": null,
+      "night_modifier": null,
+      "weekend_modifier": null,
+      "holiday_modifier": null,
+      "express_modifier": null,
+      "production_ready": false,
+      "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+      "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
+      "v02_recommended_price": 25,
+      "human_adjustment": "NONE — confirmed as recommended",
+      "economic_note": "Standalone: 25 MAD/m² × 35m²/day = 875 MAD/day gross → below target threshold as standalone. Confirmed as add-on only."
+    }
+  ],
+
+  "deferred_services": [
+    {
+      "service_code": "PEIN-006",
+      "label": "Full Standard Room (walls + ceiling)",
+      "human_decision": "DEFERRED",
+      "approved_price_mad": null,
+      "deferred_reason": "The V0.2 room-package recommendation at 1,800 MAD creates a material economic inconsistency. A standard room package at 1,800 MAD can be far below the equivalent price generated by the approved painted-surface contracts (equivalent at 60 MAD/m² all-in for ~75m² painted = ~4,500 MAD). The room architecture risks: underpricing large rooms, hidden surface assumptions, client confusion, and arbitrage between room and m² pricing. For V1: use painted-surface calculation model instead. A future room package may be reopened only after: explicit room-size taxonomy, measured FIXEO missions, clear surface ceiling, minimum transaction sample.",
+      "production_ready": false,
+      "city_adjustment": null,
+      "urgency_modifier": null
+    },
+    {
+      "service_code": "PEIN-007",
+      "label": "Full Apartment Repaint Package",
+      "human_decision": "DEFERRED",
+      "approved_price_mad": null,
+      "deferred_reason": "Too many variables (condition, size, paint quality). Use per-m² services instead.",
+      "production_ready": false,
+      "city_adjustment": null,
+      "urgency_modifier": null
+    },
+    {
+      "service_code": "PEIN-009",
+      "label": "Interior Door Painting",
+      "human_decision": "DEFERRED",
+      "approved_price_mad": null,
+      "deferred_reason": "Insufficient Moroccan evidence. Defer to V2.",
+      "production_ready": false,
+      "city_adjustment": null,
+      "urgency_modifier": null
+    },
+    {
+      "service_code": "PEIN-010",
+      "label": "Decorative Finishes (tadelakt, stucco, béton ciré)",
+      "human_decision": "QUOTE_REQUIRED",
+      "approved_price_mad": null,
+      "deferred_reason": "Artisan-skill dependent. 80–600 DH/m² range not standardizable.",
+      "production_ready": false,
+      "city_adjustment": null,
+      "urgency_modifier": null
+    },
+    {
+      "service_code": "PEIN-011",
+      "label": "Exterior Facade",
+      "human_decision": "QUOTE_REQUIRED",
+      "approved_price_mad": null,
+      "deferred_reason": "Scaffolding, height, access variables. Cannot be standardized.",
+      "production_ready": false,
+      "city_adjustment": null,
+      "urgency_modifier": null
+    },
+    {
+      "service_code": "PEIN-012",
+      "label": "Heavy Wall Repair / Moisture / Structural",
+      "human_decision": "QUOTE_REQUIRED",
+      "approved_price_mad": null,
+      "deferred_reason": "Always requires site assessment. May route to Maçonnerie.",
+      "production_ready": false,
+      "city_adjustment": null,
+      "urgency_modifier": null
+    }
+  ],
+
+  "frozen_policies": {
+    "painted_surface_doctrine": {
+      "canonical_unit": "PAINTED_SURFACE_M2",
+      "frozen": true,
+      "definition": "Wall pricing = actual painted wall surface (perimeter × height − openings). Ceiling pricing = ceiling area = room floor area. NEVER floor area of property."
+    },
+    "measurement_basis_per_service": {
+      "PEIN-001": "NOT_APPLICABLE",
+      "PEIN-002": "PAINTED_SURFACE_M2",
+      "PEIN-003": "PAINTED_SURFACE_M2",
+      "PEIN-004": "CEILING_M2",
+      "PEIN-005": "PAINTED_SURFACE_M2",
+      "PEIN-008": "PAINTED_SURFACE_M2"
+    },
+    "floor_area_conversion": {
+      "status": "RESEARCH_ESTIMATION_ONLY",
+      "no_fixed_production_multiplier": true,
+      "note": "No formula such as painted_surface = floor_area × fixed_multiplier may become canonical in this phase."
+    },
+    "coat_doctrine": "2 finish coats standard. Primer where objectively required. Dark-to-light → possible 3rd coat — identify before work, explain, obtain client approval before proceeding.",
+    "paint_supply": {
+      "PRIMARY_TRANSPARENCY": "PEIN-002 CLIENT_SUPPLIED_PAINT",
+      "SECONDARY_FULL_SERVICE": "PEIN-003/004/005 ARTISAN_SUPPLIED_STANDARD_PAINT",
+      "premium_paint": "SEPARATE_DISCLOSED_UPGRADE_ONLY"
+    },
+    "minimum_anti_double_charge": "FINAL = max(800, m² × rate). Never: 800 + (m² × rate).",
+    "moisture_mold_doctrine": {
+      "rule": "HORS PÉRIMÈTRE PEINTURE if active moisture detected",
+      "workflow": ["STOP", "identify active moisture", "DECLARE HORS PÉRIMÈTRE", "route to Plomberie/Toiture/Maçonnerie", "confirm resolved + dry ≥2 weeks", "return to Peinture"],
+      "anti_humidity_paint": "Preventive only on resolved moisture. Not a substitute for source treatment."
+    },
+    "complexity_model": {
+      "READY_TO_PAINT": "PEIN-002/003/004 eligible",
+      "MINOR_PREPARATION": "PEIN-005 eligible",
+      "MODERATE_REPAIR": "PEIN-008 add-on + reassessment or QUOTE_REQUIRED",
+      "HEAVY_REPAIR": "QUOTE_REQUIRED",
+      "MOISTURE_OR_MOLD": "HORS PÉRIMÈTRE",
+      "STRUCTURAL_DAMAGE": "HORS PÉRIMÈTRE Maçonnerie",
+      "no_arbitrary_multiplier": true
+    },
+    "occupied_property": {
+      "EMPTY": "STANDARD_ELIGIBLE",
+      "OCCUPIED_LIGHT": "STANDARD_ELIGIBLE_CONDITIONAL",
+      "OCCUPIED_HEAVY": "QUOTE_REQUIRED or additional scope",
+      "approved_surcharge": null
+    },
+    "geographic": {
+      "market_scope": "NATIONAL_MOROCCO",
+      "city_adjustment": null
+    },
+    "time_modifiers": {
+      "urgency_modifier": null,
+      "night_modifier": null,
+      "weekend_modifier": null,
+      "holiday_modifier": null,
+      "express_modifier": null
+    },
+    "artisan_economic_policy": {
+      "target_net_painter_day_mad": "800–900",
+      "label": "FIXEO_POLICY",
+      "not_moroccan_legal_wage": true,
+      "not_statistical": true
+    },
+    "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+    "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
+    "disclaimer": "Prix indicatif FIXEO — tarif réel confirmé avec l'artisan avant intervention."
+  }
+}

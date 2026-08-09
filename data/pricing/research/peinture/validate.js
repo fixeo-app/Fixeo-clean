@@ -280,6 +280,168 @@ if (fs.existsSync(calibrationPath)) {
   console.log('\n[14–20] calibration.v0.2.json not found — V0.2 checks skipped');
 }
 
+// ---- V0.3 FREEZE CHECKS ----
+const v03Path = path.join(DIR, 'registry.v0.3.json');
+if (fs.existsSync(v03Path)) {
+  console.log('\n--- V0.3 Human Price Freeze Checks ---');
+  let v03;
+  try {
+    v03 = JSON.parse(fs.readFileSync(v03Path, 'utf8'));
+  } catch(e) {
+    fail(`registry.v0.3.json parse failed: ${e.message}`);
+    v03 = null;
+  }
+
+  if (v03) {
+    const approved = v03.approved_services || [];
+    const deferred = v03.deferred_services || [];
+
+    // Check 22: Exactly 6 approved services
+    console.log('\n[22] Checking exactly 6 approved services...');
+    check(approved.length === 6, `Expected 6 approved services, found ${approved.length}`);
+    if (approved.length === 6) console.log('    OK — 6 approved services');
+
+    // Check 23: Exact approved prices
+    console.log('\n[23] Checking exact approved prices...');
+    const EXPECTED = {
+      'PEIN-001': 800,
+      'PEIN-002': 35,
+      'PEIN-003': 65,
+      'PEIN-004': 45,
+      'PEIN-005': 75,
+      'PEIN-008': 25
+    };
+    let priceErrors = 0;
+    for (const [code, expectedPrice] of Object.entries(EXPECTED)) {
+      const svc = approved.find(s => s.service_code === code);
+      if (!svc) {
+        fail(`Missing approved service: ${code}`);
+        priceErrors++;
+      } else if (svc.approved_price_mad !== expectedPrice) {
+        fail(`${code}: expected price ${expectedPrice} MAD, found ${svc.approved_price_mad}`);
+        priceErrors++;
+      }
+    }
+    if (priceErrors === 0) console.log('    OK — all 6 prices exact: PEIN-001=800, PEIN-002=35, PEIN-003=65, PEIN-004=45, PEIN-005=75, PEIN-008=25');
+
+    // Check 24: All approved have human_decision = APPROVED
+    console.log('\n[24] Checking all approved services have human_decision = APPROVED...');
+    let hdErrors = 0;
+    for (const svc of approved) {
+      if (svc.human_decision !== 'APPROVED') {
+        fail(`${svc.service_code}: human_decision = ${svc.human_decision} (expected APPROVED)`);
+        hdErrors++;
+      }
+    }
+    if (hdErrors === 0) console.log('    OK — all 6 have human_decision = APPROVED');
+
+    // Check 25: All approved have production_ready = false
+    console.log('\n[25] Checking all approved production_ready = false...');
+    const prodReady = approved.filter(s => s.production_ready !== false);
+    check(prodReady.length === 0, `Services with production_ready != false: ${prodReady.map(s=>s.service_code).join(', ')}`);
+    if (prodReady.length === 0) console.log('    OK — all approved have production_ready = false');
+
+    // Check 26: PEIN-006 is DEFERRED with null approved price
+    console.log('\n[26] Checking PEIN-006 is DEFERRED with null approved price...');
+    const pein006 = deferred.find(s => s.service_code === 'PEIN-006');
+    check(pein006 !== undefined, 'PEIN-006 not found in deferred services');
+    if (pein006) {
+      check(pein006.human_decision === 'DEFERRED', `PEIN-006 human_decision = ${pein006.human_decision} (expected DEFERRED)`);
+      check(pein006.approved_price_mad === null, `PEIN-006 approved_price_mad = ${pein006.approved_price_mad} (must be null)`);
+      if (pein006.human_decision === 'DEFERRED' && pein006.approved_price_mad === null) {
+        console.log('    OK — PEIN-006 DEFERRED with null approved price');
+      }
+    }
+
+    // Check 27: PEIN-008 is flagged as PREPARATION_ADD_ON
+    console.log('\n[27] Checking PEIN-008 canonical role = PREPARATION_ADD_ON...');
+    const pein008 = approved.find(s => s.service_code === 'PEIN-008');
+    check(pein008 && pein008.canonical_role === 'PREPARATION_ADD_ON',
+      `PEIN-008 canonical_role = ${pein008 ? pein008.canonical_role : 'NOT_FOUND'} (expected PREPARATION_ADD_ON)`);
+    if (pein008 && pein008.canonical_role === 'PREPARATION_ADD_ON') console.log('    OK — PEIN-008 role = PREPARATION_ADD_ON');
+
+    // Check 28: Painted surface doctrine exact
+    console.log('\n[28] Checking measurement_basis frozen correctly...');
+    const policies = v03.frozen_policies && v03.frozen_policies.measurement_basis_per_service;
+    if (policies) {
+      const EXPECTED_BASIS = {
+        'PEIN-001': 'NOT_APPLICABLE',
+        'PEIN-002': 'PAINTED_SURFACE_M2',
+        'PEIN-003': 'PAINTED_SURFACE_M2',
+        'PEIN-004': 'CEILING_M2',
+        'PEIN-005': 'PAINTED_SURFACE_M2',
+        'PEIN-008': 'PAINTED_SURFACE_M2'
+      };
+      let basisErrors = 0;
+      for (const [code, expectedBasis] of Object.entries(EXPECTED_BASIS)) {
+        if (policies[code] !== expectedBasis) {
+          fail(`${code}: measurement_basis = ${policies[code]} (expected ${expectedBasis})`);
+          basisErrors++;
+        }
+      }
+      if (basisErrors === 0) console.log('    OK — measurement basis exact per service (PAINTED_SURFACE_M2/CEILING_M2/NOT_APPLICABLE)');
+    } else {
+      fail('frozen_policies.measurement_basis_per_service missing from registry.v0.3.json');
+    }
+
+    // Check 29: All approved modifiers = null
+    console.log('\n[29] Checking approved services have null modifiers...');
+    let v03ModErrors = 0;
+    const V03_MOD_FIELDS = ['city_adjustment', 'urgency_modifier', 'night_modifier', 'weekend_modifier', 'holiday_modifier', 'express_modifier'];
+    for (const svc of approved) {
+      for (const field of V03_MOD_FIELDS) {
+        if (svc[field] !== null && svc[field] !== undefined) {
+          fail(`Approved service ${svc.service_code} has non-null ${field}`);
+          v03ModErrors++;
+        }
+      }
+    }
+    if (v03ModErrors === 0) console.log('    OK — all approved modifiers are null');
+
+    // Check 30: PEIN-003 price is 65 (not 60 from V0.2)
+    console.log('\n[30] Checking PEIN-003 human adjustment to 65 MAD (not 60)...');
+    const pein003 = approved.find(s => s.service_code === 'PEIN-003');
+    check(pein003 && pein003.approved_price_mad === 65, `PEIN-003 price = ${pein003 ? pein003.approved_price_mad : 'NOT_FOUND'} (must be 65, not 60)`);
+    check(pein003 && pein003.v02_recommended_price === 60, `PEIN-003 v02_recommended_price = ${pein003 ? pein003.v02_recommended_price : 'NOT_FOUND'} (must be 60 to preserve V0.2 history)`);
+    if (pein003 && pein003.approved_price_mad === 65 && pein003.v02_recommended_price === 60) {
+      console.log('    OK — PEIN-003 = 65 MAD (human adjusted from V0.2 recommendation of 60)');
+    }
+
+    // Check 31: PEIN-002 has CLIENT_SUPPLIED paint_policy
+    console.log('\n[31] Checking PEIN-002 paint_policy = CLIENT_SUPPLIED...');
+    const pein002 = approved.find(s => s.service_code === 'PEIN-002');
+    check(pein002 && pein002.paint_policy === 'CLIENT_SUPPLIED',
+      `PEIN-002 paint_policy = ${pein002 ? pein002.paint_policy : 'NOT_FOUND'} (expected CLIENT_SUPPLIED)`);
+    if (pein002 && pein002.paint_policy === 'CLIENT_SUPPLIED') console.log('    OK — PEIN-002 paint_policy = CLIENT_SUPPLIED');
+
+    // Check 32: Provenance and maturity exact
+    console.log('\n[32] Checking price_provenance and maturity...');
+    let provErrors = 0;
+    for (const svc of approved) {
+      if (svc.price_provenance !== 'FIXEO_HUMAN_CALIBRATED_PILOT') {
+        fail(`${svc.service_code} price_provenance = ${svc.price_provenance}`);
+        provErrors++;
+      }
+      if (svc.maturity !== 'LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION') {
+        fail(`${svc.service_code} maturity = ${svc.maturity}`);
+        provErrors++;
+      }
+    }
+    if (provErrors === 0) console.log('    OK — price_provenance and maturity exact on all approved services');
+
+    // Check 33: Anti-double-charge formula present in PEIN-002
+    console.log('\n[33] Checking anti-double-charge rule present...');
+    const pein001 = approved.find(s => s.service_code === 'PEIN-001');
+    check(pein001 && pein001.anti_double_charge_rule && pein001.anti_double_charge_rule.length > 20,
+      'PEIN-001 anti_double_charge_rule missing or too short');
+    if (pein001 && pein001.anti_double_charge_rule && pein001.anti_double_charge_rule.length > 20) {
+      console.log('    OK — anti-double-charge rule documented');
+    }
+  }
+} else {
+  console.log('\n[22–33] registry.v0.3.json not found — V0.3 checks skipped');
+}
+
 // ---- V0.1 INTEGRITY CHECK ----
 console.log('\n[21] Verifying V0.1 artifacts not modified (checking file existence)...');
 const V01_FILES = ['sources.v0.1.json', 'evidence.v0.1.json', 'registry.v0.1.json', 'exclusions.v0.1.json'];
