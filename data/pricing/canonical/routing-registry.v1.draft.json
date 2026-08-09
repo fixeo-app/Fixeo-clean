@@ -1,0 +1,201 @@
+{
+  "_meta": {
+    "phase": "7C.2",
+    "title": "FIXEO Canonical Routing Registry V1 Draft",
+    "version": "1.0.0-draft",
+    "status": "DRAFT_NON_PRODUCTION",
+    "production_ready": false,
+    "note": "NOT imported by any runtime. Design artifact only."
+  },
+
+  "routes": {
+    "ROUTE-MENU-LOCK-001": {
+      "route_id": "ROUTE-MENU-LOCK-001",
+      "source_metier": "menuiserie",
+      "trigger": "lock_cylinder_present OR security_mechanism_involved",
+      "target": "serrurerie",
+      "target_is_priced": true,
+      "routing_type": "METIER_ROUTE",
+      "hardness": "HARD",
+      "client_message_key": "route.menuiserie.to_serrurerie.lock",
+      "description": "When menuiserie intervention reveals a security lock/cylinder mechanism, route to serrurerie. Menuiserie scope excludes lock mechanisms."
+    },
+    "ROUTE-MENU-FRAME-001": {
+      "route_id": "ROUTE-MENU-FRAME-001",
+      "source_metier": "menuiserie",
+      "trigger": "door_frame_structural_damage OR masonry_work_required",
+      "target": "UNPRICED_SPECIALIST:maçonnerie",
+      "target_is_priced": false,
+      "routing_type": "SPECIALIST_ROUTE",
+      "hardness": "HARD",
+      "client_message_key": "route.menuiserie.to_maconnerie.frame",
+      "description": "Structural door frame damage requiring masonry work — outside menuiserie scope."
+    },
+    "ROUTE-MENU-PAINT-001": {
+      "route_id": "ROUTE-MENU-PAINT-001",
+      "source_metier": "menuiserie",
+      "trigger": "client_requests_painting_or_finishing",
+      "target": "peinture",
+      "target_is_priced": true,
+      "routing_type": "METIER_ROUTE",
+      "hardness": "SOFT",
+      "client_message_key": "route.menuiserie.to_peinture.finish",
+      "description": "Paint/finish work on door surfaces — soft route, separate peinture booking."
+    },
+    "ROUTE-MENU-GLASS-001": {
+      "route_id": "ROUTE-MENU-GLASS-001",
+      "source_metier": "menuiserie",
+      "trigger": "glass_panel_or_mirror_replacement_required",
+      "target": "UNPRICED_SPECIALIST:vitrerie",
+      "target_is_priced": false,
+      "routing_type": "SPECIALIST_ROUTE",
+      "hardness": "HARD",
+      "client_message_key": "route.menuiserie.to_vitrerie",
+      "description": "Glass/mirror panel work — specialist vitrerie not in FIXEO scope."
+    },
+    "ROUTE-MENU-ALUMINIUM-001": {
+      "route_id": "ROUTE-MENU-ALUMINIUM-001",
+      "source_metier": "menuiserie",
+      "trigger": "aluminium_fabrication_or_aluminium_door_work",
+      "target": "DEFERRED_SPECIALIST:menuiserie_aluminium",
+      "target_is_priced": false,
+      "routing_type": "SPECIALIST_ROUTE",
+      "hardness": "HARD",
+      "client_message_key": "route.menuiserie.aluminium_deferred",
+      "description": "Aluminium fabrication is a deferred specialist métier — different tools, skills, suppliers. Not in MENUISERIE BOIS scope."
+    },
+    "ROUTE-PEIN-MOISTURE-001": {
+      "route_id": "ROUTE-PEIN-MOISTURE-001",
+      "source_metier": "peinture",
+      "trigger": "active_moisture_or_water_damage_on_surface",
+      "target": "plomberie",
+      "target_is_priced": true,
+      "routing_type": "METIER_ROUTE",
+      "hardness": "HARD",
+      "client_message_key": "route.peinture.to_plomberie.moisture",
+      "description": "Active moisture source must be resolved before painting. Route to plomberie first."
+    },
+    "ROUTE-PEIN-STRUCTURAL-001": {
+      "route_id": "ROUTE-PEIN-STRUCTURAL-001",
+      "source_metier": "peinture",
+      "trigger": "structural_crack_or_fissure_in_wall",
+      "target": "UNPRICED_SPECIALIST:maçonnerie",
+      "target_is_priced": false,
+      "routing_type": "SPECIALIST_ROUTE",
+      "hardness": "HARD",
+      "client_message_key": "route.peinture.to_maconnerie.structural",
+      "description": "Structural cracks require masonry treatment before painting."
+    },
+    "ROUTE-BRIC-ELEC-001": {
+      "route_id": "ROUTE-BRIC-ELEC-001",
+      "source_metier": "bricolage",
+      "trigger": "electrical_wiring_or_circuit_modification_required",
+      "target": "electricite",
+      "target_is_priced": true,
+      "routing_type": "METIER_ROUTE",
+      "hardness": "HARD",
+      "client_message_key": "route.bricolage.to_electricite.wiring",
+      "description": "Any electrical modification is outside bricolage scope — route to electricite."
+    },
+    "ROUTE-BRIC-PLOMB-001": {
+      "route_id": "ROUTE-BRIC-PLOMB-001",
+      "source_metier": "bricolage",
+      "trigger": "plumbing_connection_or_pipe_work_required",
+      "target": "plomberie",
+      "target_is_priced": true,
+      "routing_type": "METIER_ROUTE",
+      "hardness": "HARD",
+      "client_message_key": "route.bricolage.to_plomberie",
+      "description": "Plumbing work is outside bricolage scope."
+    },
+    "ROUTE-BRIC-SERR-001": {
+      "route_id": "ROUTE-BRIC-SERR-001",
+      "source_metier": "bricolage",
+      "trigger": "lock_mechanism_or_security_fitting_required",
+      "target": "serrurerie",
+      "target_is_priced": true,
+      "routing_type": "METIER_ROUTE",
+      "hardness": "HARD",
+      "client_message_key": "route.bricolage.to_serrurerie",
+      "description": "Security fittings and lock mechanisms are outside bricolage scope."
+    },
+    "ROUTE-CLIM-ELEC-001": {
+      "route_id": "ROUTE-CLIM-ELEC-001",
+      "source_metier": "climatisation",
+      "trigger": "electrical_panel_work_or_dedicated_circuit_required",
+      "target": "electricite",
+      "target_is_priced": true,
+      "routing_type": "METIER_ROUTE",
+      "hardness": "HARD",
+      "client_message_key": "route.climatisation.to_electricite.panel",
+      "description": "Electrical panel modifications for AC installation route to electricite."
+    },
+    "ROUTE-CLIM-R32-001": {
+      "route_id": "ROUTE-CLIM-R32-001",
+      "source_metier": "climatisation",
+      "trigger": "refrigerant_type_is_r32_and_artisan_not_r32_certified",
+      "target": "UNPRICED_SPECIALIST:r32_certified_climatisation",
+      "target_is_priced": false,
+      "routing_type": "SPECIALIST_ROUTE",
+      "hardness": "HARD",
+      "client_message_key": "route.climatisation.to_r32_specialist",
+      "description": "R32 refrigerant requires specialist certification. Non-certified artisan must not proceed."
+    },
+    "ROUTE-ELEC-ONEE-001": {
+      "route_id": "ROUTE-ELEC-ONEE-001",
+      "source_metier": "electricite",
+      "trigger": "is_onee_equipment_or_utility_infrastructure",
+      "target": "EXTERNAL:ONEE_0801_00_20_20",
+      "target_is_priced": false,
+      "routing_type": "EXTERNAL_ROUTE",
+      "hardness": "HARD",
+      "client_message_key": "route.electricite.to_onee",
+      "description": "ONEE limiteur de puissance, compteur, and réseau ONEE infrastructure are outside FIXEO scope. Redirect to ONEE service line: 0801 00 20 20."
+    },
+    "ROUTE-NET-BIOHAZARD-001": {
+      "route_id": "ROUTE-NET-BIOHAZARD-001",
+      "source_metier": "nettoyage",
+      "trigger": "biohazard_or_severe_mold_detected",
+      "target": "UNPRICED_SPECIALIST:biohazard_cleaning",
+      "target_is_priced": false,
+      "routing_type": "SPECIALIST_ROUTE",
+      "hardness": "HARD",
+      "client_message_key": "route.nettoyage.biohazard",
+      "description": "Biohazard contamination or severe mold requires specialist treatment outside standard nettoyage scope."
+    },
+    "ROUTE-NET-GLASS-001": {
+      "route_id": "ROUTE-NET-GLASS-001",
+      "source_metier": "nettoyage",
+      "trigger": "broken_glass_found_during_cleaning",
+      "target": "UNPRICED_SPECIALIST:vitrerie",
+      "target_is_priced": false,
+      "routing_type": "SPECIALIST_ROUTE",
+      "hardness": "HARD",
+      "client_message_key": "route.nettoyage.to_vitrerie.broken_glass",
+      "description": "Broken glass found during cleaning — stop, document, route to vitrerie."
+    },
+    "ROUTE-SERR-MENU-001": {
+      "route_id": "ROUTE-SERR-MENU-001",
+      "source_metier": "serrurerie",
+      "trigger": "door_frame_structural_damage_discovered_after_opening",
+      "target": "menuiserie",
+      "target_is_priced": true,
+      "routing_type": "METIER_ROUTE",
+      "hardness": "SOFT",
+      "client_message_key": "route.serrurerie.to_menuiserie.frame",
+      "description": "If door frame structural damage is found after opening intervention, soft route to menuiserie. Gap identified in V0.3 — documented here for first time.",
+      "note": "GAP_DOCUMENTED — this route was missing from serrurerie V0.3. First documented in Phase 7C.2."
+    },
+    "ROUTE-ALL-PERMIT-001": {
+      "route_id": "ROUTE-ALL-PERMIT-001",
+      "source_metier": "ALL",
+      "trigger": "work_requires_permis_de_construire_or_regulatory_licence",
+      "target": "UNPRICED_SPECIALIST:licensed_contractor",
+      "target_is_priced": false,
+      "routing_type": "SPECIALIST_ROUTE",
+      "hardness": "HARD",
+      "client_message_key": "route.all.permit_required",
+      "description": "Any work requiring a building permit or regulatory licence is outside FIXEO scope — must route to a licensed contractor."
+    }
+  }
+}

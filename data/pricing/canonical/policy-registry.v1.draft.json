@@ -1,0 +1,291 @@
+{
+  "_meta": {
+    "phase": "7C.2",
+    "title": "FIXEO Canonical Policy Registry V1 Draft",
+    "version": "1.0.0-draft",
+    "status": "DRAFT_NON_PRODUCTION",
+    "production_ready": false,
+    "note": "NOT imported by any runtime. Design artifact only."
+  },
+
+  "policies": {
+    "POL-HORS-PERIMETRE-V1": {
+      "policy_id": "POL-HORS-PERIMETRE-V1",
+      "policy_version": "1",
+      "title": "FIXEO Universal Scope-Change Protocol",
+      "scope": "ALL métiers — applies whenever actual intervention differs from declared scope",
+      "applies_to_metiers": ["plomberie","electricite","serrurerie","climatisation","bricolage","nettoyage","peinture","menuiserie"],
+      "safety_critical": true,
+      "content": {
+        "base_protocol": {
+          "ordered_steps": ["STOP","IDENTIFY","EXPLAIN","DECLARE_SCOPE_CHANGE","CALCULATE_NEW_FIXEO_PRICE_OR_QUOTE","OBTAIN_CLIENT_APPROVAL","CONTINUE"],
+          "description": "Universal workflow when reality differs from declared booking scope. No work beyond declared scope may begin without client approval."
+        },
+        "prohibitions": [
+          "No silent surcharge",
+          "No retroactive surcharge",
+          "No artisan-only discretionary multiplier",
+          "No price modification because artisan considers work harder, unless objective frozen escape trigger applies"
+        ],
+        "metier_safety_pre_steps": {
+          "electricite": {
+            "pre_steps": ["MAKE_SAFE — isolate circuit before any investigation"],
+            "safety_policy_ref": "POL-ELECTRICAL-SAFETY-V1"
+          },
+          "serrurerie": {
+            "pre_steps": ["AUTHORIZATION_CHECK — verify occupancy right before proceeding"],
+            "safety_policy_ref": "POL-SERRURERIE-AUTHORIZATION-V1"
+          },
+          "climatisation": {
+            "pre_steps": ["REFRIGERATION_INTEGRITY — if leak found, halt recharge until leak repaired"],
+            "safety_policy_ref": "POL-REFRIGERATION-INTEGRITY-V1"
+          },
+          "peinture": {
+            "pre_steps": ["MOISTURE_SOURCE_RESOLUTION — if active moisture present, stop and identify plumbing/structural source first"],
+            "note": "Painting over active moisture is a HARD exclusion"
+          }
+        }
+      }
+    },
+
+    "POL-MINIMUM-NON-ADDITIVE-V1": {
+      "policy_id": "POL-MINIMUM-NON-ADDITIVE-V1",
+      "policy_version": "1",
+      "title": "FIXEO Minimum Floor Non-Additive Rule",
+      "scope": "Métiers with explicit minimum floor: bricolage (200), nettoyage (200), peinture (800), menuiserie (300)",
+      "applies_to_metiers": ["bricolage","nettoyage","peinture","menuiserie"],
+      "safety_critical": false,
+      "content": {
+        "rule": "FINAL_PRICE = max(MINIMUM_FLOOR_MAD, CALCULATED_SERVICE_PRICE)",
+        "anti_additive": "MINIMUM FLOOR IS NEVER ADDITIVE. It is a price floor. The floor is never added to the service price.",
+        "metier_floors": {
+          "bricolage": 200,
+          "nettoyage": 200,
+          "peinture": 800,
+          "menuiserie": 300
+        },
+        "metiers_without_floor": ["plomberie","electricite","serrurerie","climatisation"],
+        "serrurerie_clarification": "220 MAD (porte_claquee_ouverture) is an approved service price, NOT a métier floor. serrurerie.minimum_floor = null.",
+        "formula_ref": "FORMULA-MINIMUM-FLOOR-V1"
+      }
+    },
+
+    "POL-PART-DISCLOSURE-V1": {
+      "policy_id": "POL-PART-DISCLOSURE-V1",
+      "policy_version": "1",
+      "title": "FIXEO Hardware / Parts Disclosure Protocol",
+      "scope": "All FIXEO_LABOUR_PRICE_PLUS_PART services",
+      "applies_to_metiers": ["serrurerie","menuiserie","plomberie","electricite"],
+      "safety_critical": false,
+      "content": {
+        "disclosure_sequence": [
+          "1. IDENTIFY — determine required hardware during assessment",
+          "2. DISCLOSE — name the part and provide reference price range",
+          "3. EXPLAIN — clarify that this is separate from the FIXEO labour price",
+          "4. QUOTE — state the actual price to be charged for this part",
+          "5. OBTAIN_APPROVAL — client must explicitly agree before ordering/installing",
+          "6. INSTALL — proceed only after approval",
+          "7. DOCUMENT — record part name, price, and approval"
+        ],
+        "prohibited_practices": [
+          "Silently bundling hardware into labour price",
+          "Retroactive hardware charge after installation",
+          "Charging premium markup on client-supplied parts",
+          "Refusing to service client-supplied compatible parts without stating technical reason"
+        ],
+        "cap_rules": {
+          "plomberie_consumables": "≤50 MAD included (seals, thread tape). Exceeding this triggers disclosure.",
+          "electricite_consumables": "≤15 MAD included (connectors, wire). Exceeding triggers disclosure.",
+          "menuiserie_consumables": "Minor screws/lubricant included. Hardware (hinges, runners) always separate."
+        }
+      }
+    },
+
+    "POL-DIAGNOSTIC-ABSORPTION-PLOMBERIE-V1": {
+      "policy_id": "POL-DIAGNOSTIC-ABSORPTION-PLOMBERIE-V1",
+      "policy_version": "1",
+      "title": "Plomberie Diagnostic Absorption Rule",
+      "scope": "plomberie.diagnostic (180 MAD) — absorption against same-visit qualifying repairs",
+      "applies_to_metiers": ["plomberie"],
+      "safety_critical": false,
+      "content": {
+        "diagnostic_price_mad": 180,
+        "absorption_conditions": {
+          "same_visit_required": true,
+          "qualifying_repair_must_follow": true,
+          "qualifying_service_codes": ["plomberie.fuite_simple","plomberie.debouchage_evier","plomberie.debouchage_wc_simple","plomberie.robinet_remplacement","plomberie.chasse_eau"],
+          "absorption_mechanism": "Diagnostic fee credited against repair price for that same visit"
+        },
+        "is_minimum_floor": false,
+        "source": "plomberie/registry.v0.3.json — frozen, not extended"
+      }
+    },
+
+    "POL-DIAGNOSTIC-ABSORPTION-ELECTRICITE-V1": {
+      "policy_id": "POL-DIAGNOSTIC-ABSORPTION-ELECTRICITE-V1",
+      "policy_version": "1",
+      "title": "Electricite Diagnostic Absorption Rule (D3)",
+      "scope": "electricite.diagnostic (200 MAD) — D3 absorption rule",
+      "applies_to_metiers": ["electricite"],
+      "safety_critical": false,
+      "content": {
+        "diagnostic_price_mad": 200,
+        "absorption_conditions": {
+          "same_visit_required": true,
+          "qualifying_repair_must_follow": true,
+          "qualifying_service_codes": ["electricite.prise_remplacement","electricite.interrupteur_remplacement.simple","electricite.interrupteur_remplacement.va_et_vient","electricite.luminaire_installation","electricite.disjoncteur_remplacement"],
+          "rule_name": "D3 — standardized qualifying services only",
+          "absorption_mechanism": "Diagnostic fee credited against standardized repair price for that same visit"
+        },
+        "is_minimum_floor": false,
+        "source": "electricite/registry.v0.3.json D3 rule — frozen, not extended"
+      }
+    },
+
+    "POL-DIAGNOSTIC-ABSORPTION-CLIM-V1": {
+      "policy_id": "POL-DIAGNOSTIC-ABSORPTION-CLIM-V1",
+      "policy_version": "1",
+      "title": "Climatisation Diagnostic Absorption Rule",
+      "scope": "CLIM-002 (250 MAD) — absorption against same-visit qualifying interventions",
+      "applies_to_metiers": ["climatisation"],
+      "safety_critical": false,
+      "content": {
+        "diagnostic_price_mad": 250,
+        "absorption_conditions": {
+          "same_visit_required": true,
+          "qualifying_service_codes": ["CLIM-003","CLIM-004","CLIM-013"],
+          "absorption_mechanism": "Diagnostic fee credited against qualifying intervention price same visit"
+        },
+        "is_minimum_floor": false,
+        "source": "climatisation/registry.v0.3.json — frozen, not extended"
+      }
+    },
+
+    "POL-ELECTRICAL-SAFETY-V1": {
+      "policy_id": "POL-ELECTRICAL-SAFETY-V1",
+      "policy_version": "1",
+      "title": "Electricite Safety Pre-Step Protocol",
+      "scope": "ALL electricite interventions",
+      "applies_to_metiers": ["electricite"],
+      "safety_critical": true,
+      "content": {
+        "mandatory_pre_step": "MAKE_SAFE — isolate circuit (cut power at disjoncteur or fusible) before any investigation, removal, or replacement",
+        "onee_boundary": "ONEE limiteur de puissance and réseau ONEE infrastructure are HARD exclusions — redirect to ONEE (0801 00 20 20)",
+        "earth_ground_verification": "Required before certifying any new installation",
+        "hard_exclusion_trigger": "is_onee_equipment = true → ROUTE to ONEE, no further intervention"
+      }
+    },
+
+    "POL-SERRURERIE-AUTHORIZATION-V1": {
+      "policy_id": "POL-SERRURERIE-AUTHORIZATION-V1",
+      "policy_version": "1",
+      "title": "Serrurerie Occupancy Authorization Protocol",
+      "scope": "ALL serrurerie opening and replacement services",
+      "applies_to_metiers": ["serrurerie"],
+      "safety_critical": true,
+      "content": {
+        "mandatory_pre_step": "AUTHORIZATION_CHECK — verify occupancy right before any intervention",
+        "acceptable_proofs": ["National ID matching building address","Lease contract","Building management authorization letter","Vehicle registration for vehicle lockout"],
+        "hard_exclusion": "Cannot proceed without verifiable occupancy right. Ambiguous cases: STOP and EXPLAIN.",
+        "no_minimum_floor": "This policy does not establish a minimum floor. serrurerie.minimum_floor = null."
+      }
+    },
+
+    "POL-REFRIGERATION-INTEGRITY-V1": {
+      "policy_id": "POL-REFRIGERATION-INTEGRITY-V1",
+      "policy_version": "1",
+      "title": "Climatisation Refrigeration Integrity Protocol",
+      "scope": "All climatisation refrigerant-related services (CLIM-013 primarily)",
+      "applies_to_metiers": ["climatisation"],
+      "safety_critical": true,
+      "content": {
+        "no_blind_top_up": "PROHIBITED to top up refrigerant without first diagnosing and repairing any leak",
+        "mandatory_pre_step": "If leak suspected: STOP recharge, diagnose source, repair or declare hors périmètre",
+        "r32_boundary": "R32 refrigerant requires specialist certification. Non-certified artisan must ROUTE to R32 specialist.",
+        "r22_phase_out": "R22 is phased out. Document if R22 system found; advise client of replacement options."
+      }
+    },
+
+    "POL-CLEANER-HOUR-V1": {
+      "policy_id": "POL-CLEANER-HOUR-V1",
+      "policy_version": "1",
+      "title": "Nettoyage Per-Cleaner-Hour Semantics",
+      "scope": "NET-002 and all nettoyage hourly calculations",
+      "applies_to_metiers": ["nettoyage"],
+      "safety_critical": false,
+      "content": {
+        "canonical_unit": "PER_CLEANER_HOUR",
+        "formula": "TOTAL_CLEANER_HOURS = number_of_cleaners × hours_per_cleaner; PRICE = 65 × TOTAL_CLEANER_HOURS",
+        "floor": "FINAL_PRICE = max(200, PRICE)",
+        "must_not_collapse_with": "PER_HOUR (bricolage single-worker) — semantically different",
+        "worker_count_is_client_input": true,
+        "worker_count_range": [1, 2, 3],
+        "formula_ref": "FORMULA-TIME-TEAM-V1"
+      }
+    },
+
+    "POL-PAINTED-SURFACE-V1": {
+      "policy_id": "POL-PAINTED-SURFACE-V1",
+      "policy_version": "1",
+      "title": "Peinture Measurement Basis Policy",
+      "scope": "ALL peinture painted/ceiling m² services",
+      "applies_to_metiers": ["peinture"],
+      "safety_critical": false,
+      "content": {
+        "three_distinct_bases": {
+          "painted_m2": "Wall painted area — used for PEIN-002/003/005. Not equal to floor area.",
+          "ceiling_m2": "Ceiling area — used for PEIN-004. Measured directly.",
+          "floor_m2": "Floor area — NOT used as pricing basis for any peinture service."
+        },
+        "conversion_status": "RESEARCH_ESTIMATION_ONLY — floor-to-painted conversion factor (~1.6-2.0×) is not validated for production",
+        "estimator_rule": "Estimator V1 must request painted_m2 directly. Do NOT implement automatic floor→painted conversion until factor is human-validated.",
+        "active_moisture_exclusion": "HARD EXCLUSION — if active moisture source detected on wall to be painted: STOP, identify source (plomberie/structural), complete moisture resolution first",
+        "minimum_floor_mad": 800
+      }
+    },
+
+    "POL-MENUISERIE-HARDWARE-V1": {
+      "policy_id": "POL-MENUISERIE-HARDWARE-V1",
+      "policy_version": "1",
+      "title": "Menuiserie Hardware Disclosure Policy (Model B)",
+      "scope": "MENU_002 (hinges), MENU_003 (drawer runners)",
+      "applies_to_metiers": ["menuiserie"],
+      "safety_critical": false,
+      "content": {
+        "model": "MODEL_B — artisan-supplied at disclosed price",
+        "hardware_categories": {
+          "hinges_MENU_002": {"standard_range_mad": [20, 40], "soft_close_range_mad": [80, 120], "source": "Mr.Bricolage SRC_MENU_013"},
+          "runners_MENU_003": {"standard_range_mad": [20, 26], "soft_close_range_mad": [40, 99], "source": "Mr.Bricolage SRC_MENU_014"}
+        },
+        "disclosure_policy_ref": "POL-PART-DISCLOSURE-V1",
+        "aluminium_excluded": "Aluminium fabrication is a DEFERRED specialist métier — not in menuiserie scope",
+        "batch_rules": {
+          "MENU_002": {"status": "EXPERIMENTAL_BATCH_RULE", "increment_per_hinge_same_door_same_visit": 50},
+          "MENU_003": {"status": "EXPERIMENTAL_BATCH_RULE", "increment_per_drawer_same_cabinet_same_visit": 100}
+        }
+      }
+    },
+
+    "POL-BRICOLAGE-BOUNDARY-V1": {
+      "policy_id": "POL-BRICOLAGE-BOUNDARY-V1",
+      "policy_version": "1",
+      "title": "Bricolage Métier Boundary Policy",
+      "scope": "All bricolage services — defines what is and is not in scope",
+      "applies_to_metiers": ["bricolage"],
+      "safety_critical": false,
+      "content": {
+        "in_scope": ["furniture assembly","TV/mirror/shelf mounting","standard fixing and hanging","minor carpentry adjustments","non-electrical mounting work"],
+        "hard_exclusions": {
+          "electrical_wiring": "ROUTE to electricite",
+          "plumbing_work": "ROUTE to plomberie",
+          "lock_mechanism": "ROUTE to serrurerie",
+          "structural_work": "QUOTE or ROUTE to maçonnerie",
+          "gas_appliances": "ROUTE to specialist"
+        },
+        "worker_semantics": "Single artisan (1 worker). MUST NOT be confused with nettoyage team semantics.",
+        "minimum_floor_mad": 200,
+        "formula_ref_hourly": "FORMULA-TIME-SINGLE-V1"
+      }
+    }
+  }
+}

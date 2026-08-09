@@ -1,0 +1,430 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "fixeo:canonical-registry:v1",
+  "title": "FIXEO Canonical Pricing Registry Schema V1",
+  "description": "Machine-readable validation contract for the FIXEO canonical pricing registry. Enforces doctrine corrections from Phase 7C.1.1. NON-PRODUCTION DESIGN ARTIFACT.",
+  "type": "object",
+  "required": ["meta","services","policies","formulas","routing","enums","governance"],
+  "additionalProperties": false,
+
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": ["schema_version","registry_version","status","production_ready","total_approved_services","metiers_covered"],
+      "properties": {
+        "schema_version": {"type": "string"},
+        "registry_version": {"type": "string"},
+        "status": {"type": "string", "enum": ["DRAFT","FROZEN","PRODUCTION"]},
+        "production_ready": {"type": "boolean", "enum": [false]},
+        "total_approved_services": {"type": "integer", "minimum": 53, "maximum": 53},
+        "metiers_covered": {"type": "array", "items": {"type": "string"}, "minItems": 8, "maxItems": 8},
+        "commercial_model": {"type": "string", "enum": ["HYBRID_MODEL_C"]},
+        "currency": {"type": "string", "enum": ["MAD"]},
+        "effective_from": {"type": ["string","null"]},
+        "phase": {"type": "string"},
+        "note": {"type": "string"}
+      }
+    },
+
+    "enums": {
+      "type": "object",
+      "required": ["calculation_models","commercial_output_types","pricing_units","human_decisions","availability_statuses","parts_policies","measurement_bases","maturity_levels","confidence_levels"],
+      "properties": {
+        "calculation_models": {
+          "type": "array",
+          "items": {"type": "string", "enum": ["FIXED","CONDITIONAL_FIXED","UNIT_MULTIPLICATION","UNIT_MULTIPLICATION_WITH_FLOOR","TIME_BASED_SINGLE","TIME_BASED_TEAM","MINIMUM_FLOOR","LABOUR_FIXED_PART_SEPARATE","ADD_ON","DIAGNOSTIC","QUOTE_ONLY"]}
+        },
+        "commercial_output_types": {
+          "type": "array",
+          "items": {"type": "string", "enum": ["FIXEO_PRICE","FIXEO_CALCULATED_PRICE","FIXEO_LABOUR_PRICE_PLUS_PART","FIXEO_DIAGNOSTIC","FIXEO_ADD_ON","FIXEO_ESTIMATE","QUOTE_REQUIRED"]}
+        },
+        "pricing_units": {
+          "type": "array",
+          "items": {"type": "string", "enum": ["FLAT_INTERVENTION","PER_ITEM","PER_DOOR","PER_AC_UNIT","PER_INSTALLATION","PER_HOUR","PER_CLEANER_HOUR","PER_HALF_DAY","PER_M2","PER_PAINTED_M2","PER_CEILING_M2","QUOTE_ONLY"]}
+        },
+        "human_decisions": {
+          "type": "array",
+          "items": {"type": "string", "enum": ["APPROVED","DEFERRED","REJECTED","PENDING"]}
+        },
+        "availability_statuses": {
+          "type": "array",
+          "items": {"type": "string", "enum": ["STANDARDIZED","QUOTE_REQUIRED","SPECIALIST_ROUTE","DEFERRED","UNAVAILABLE"]}
+        },
+        "parts_policies": {
+          "type": "array",
+          "items": {"type": "string", "enum": ["INCLUDED","CLIENT_SUPPLIED","ARTISAN_SUPPLIED_INCLUDED","ARTISAN_DISCLOSED_SEPARATE","NOT_APPLICABLE","QUOTE_REQUIRED"]}
+        },
+        "measurement_bases": {
+          "type": "array",
+          "items": {"type": "string", "enum": ["NONE","floor_m2","painted_m2","ceiling_m2","cleaner_hours","hours","workers","item_count","door_count","ac_count","quantity"]}
+        },
+        "maturity_levels": {
+          "type": "array",
+          "items": {"type": "string", "enum": ["LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION","LEVEL_1_TRANSACTION_BACKED"]}
+        },
+        "confidence_levels": {
+          "type": "array",
+          "items": {"type": "string", "enum": ["HIGH","MEDIUM","LOW","INSUFFICIENT"]}
+        }
+      }
+    },
+
+    "services": {
+      "type": "object",
+      "description": "Map of canonical_service_code → service entry. All services.",
+      "additionalProperties": {
+        "$ref": "#/definitions/service_entry"
+      }
+    },
+
+    "policies": {
+      "type": "object",
+      "description": "Map of policy_id → policy entry.",
+      "additionalProperties": {
+        "$ref": "#/definitions/policy_entry"
+      }
+    },
+
+    "formulas": {
+      "type": "object",
+      "description": "Map of formula_id → formula entry.",
+      "additionalProperties": {
+        "$ref": "#/definitions/formula_entry"
+      }
+    },
+
+    "routing": {
+      "type": "object",
+      "description": "Map of route_id → routing rule.",
+      "additionalProperties": {
+        "$ref": "#/definitions/routing_entry"
+      }
+    },
+
+    "governance": {
+      "type": "object",
+      "required": ["versioning","promotion_gate","rounding_policy"],
+      "properties": {
+        "versioning": {"type": "object"},
+        "promotion_gate": {"type": "object"},
+        "rounding_policy": {"type": "object"}
+      }
+    }
+  },
+
+  "definitions": {
+    "service_entry": {
+      "type": "object",
+      "required": [
+        "canonical_service_code","legacy_codes","metier","service_family","label_fr","short_label_fr",
+        "human_decision","availability_status","production_ready","active_in_estimator",
+        "active_in_reservation","active_in_pseo","active_in_profiles",
+        "price_model","minimum_floor","diagnostic","materials","measurement","eligibility",
+        "provenance","status_flags"
+      ],
+      "properties": {
+        "canonical_service_code": {"type": "string", "pattern": "^[a-z_]+\\.[a-z_]+(\\.[a-z_]+)?$"},
+        "legacy_codes": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+        "metier": {"type": "string", "enum": ["plomberie","electricite","serrurerie","climatisation","bricolage","nettoyage","peinture","menuiserie"]},
+        "service_family": {"type": "string"},
+        "label_fr": {"type": "string"},
+        "label_ar_darija": {"type": ["string","null"]},
+        "short_label_fr": {"type": "string"},
+        "variant": {"type": ["string","null"]},
+        "human_decision": {"type": "string", "enum": ["APPROVED","DEFERRED","REJECTED","PENDING"]},
+        "availability_status": {"type": "string", "enum": ["STANDARDIZED","QUOTE_REQUIRED","SPECIALIST_ROUTE","DEFERRED","UNAVAILABLE"]},
+        "production_ready": {"type": "boolean", "enum": [false], "description": "MUST be false in this draft"},
+        "active_in_estimator": {"type": "boolean", "enum": [false]},
+        "active_in_reservation": {"type": "boolean", "enum": [false]},
+        "active_in_pseo": {"type": "boolean", "enum": [false]},
+        "active_in_profiles": {"type": "boolean", "enum": [false]},
+        "service_version": {"type": "string"},
+        "effective_from": {"type": ["string","null"]},
+        "effective_to": {"type": ["string","null"]},
+        "price_model": {"$ref": "#/definitions/price_model"},
+        "minimum_floor": {"$ref": "#/definitions/minimum_floor_model"},
+        "diagnostic": {"$ref": "#/definitions/diagnostic_model"},
+        "materials": {"$ref": "#/definitions/materials_model"},
+        "measurement": {"$ref": "#/definitions/measurement_model"},
+        "eligibility": {"$ref": "#/definitions/eligibility_model"},
+        "policy_refs": {"type": "array", "items": {"type": "string"}},
+        "safety_policy_refs": {"type": "array", "items": {"type": "string"}},
+        "provenance": {"$ref": "#/definitions/provenance_model"},
+        "confidence": {"$ref": "#/definitions/confidence_model"},
+        "batch_policy": {"$ref": "#/definitions/batch_policy_model"},
+        "copy_keys": {"$ref": "#/definitions/copy_keys_model"},
+        "status_flags": {"$ref": "#/definitions/status_flags_model"},
+        "human_review_flags": {"type": "array", "items": {"type": "string"}},
+        "semantic_corrections": {"type": "array", "items": {"type": "string"}}
+      },
+      "allOf": [
+        {
+          "description": "DIAGNOSTIC services must not have minimum_floor enabled",
+          "if": {"properties": {"price_model": {"properties": {"calculation_model": {"const": "DIAGNOSTIC"}}}}},
+          "then": {"properties": {"minimum_floor": {"properties": {"enabled": {"enum": [false]}}}}}
+        },
+        {
+          "description": "LABOUR_FIXED_PART_SEPARATE must have parts policy declared",
+          "if": {"properties": {"price_model": {"properties": {"calculation_model": {"const": "LABOUR_FIXED_PART_SEPARATE"}}}}},
+          "then": {"required": ["materials"], "properties": {"materials": {"required": ["major_parts"]}}}
+        },
+        {
+          "description": "QUOTE_ONLY must not have fixed_amount_mad",
+          "if": {"properties": {"price_model": {"properties": {"calculation_model": {"const": "QUOTE_ONLY"}}}}},
+          "then": {"properties": {"price_model": {"properties": {"fixed_amount_mad": {"enum": [null]}}}}}
+        },
+        {
+          "description": "FIXEO_ESTIMATE must not appear on approved standardized services (current count = 0)",
+          "if": {"properties": {"human_decision": {"const": "APPROVED"}, "availability_status": {"const": "STANDARDIZED"}}},
+          "then": {"properties": {"price_model": {"properties": {"commercial_output_type": {"not": {"const": "FIXEO_ESTIMATE"}}}}}}
+        },
+        {
+          "description": "TIME_BASED_TEAM requires worker_count_required = true",
+          "if": {"properties": {"price_model": {"properties": {"calculation_model": {"const": "TIME_BASED_TEAM"}}}}},
+          "then": {"properties": {"measurement": {"properties": {"worker_count_required": {"const": true}}}}}
+        },
+        {
+          "description": "TIME_BASED_SINGLE forbids worker_count_required = true",
+          "if": {"properties": {"price_model": {"properties": {"calculation_model": {"const": "TIME_BASED_SINGLE"}}}}},
+          "then": {"properties": {"measurement": {"properties": {"worker_count_required": {"enum": [false, null]}}}}}
+        }
+      ]
+    },
+
+    "price_model": {
+      "type": "object",
+      "required": ["calculation_model","commercial_output_type","currency","formula_id"],
+      "properties": {
+        "calculation_model": {"type": "string", "enum": ["FIXED","CONDITIONAL_FIXED","UNIT_MULTIPLICATION","UNIT_MULTIPLICATION_WITH_FLOOR","TIME_BASED_SINGLE","TIME_BASED_TEAM","MINIMUM_FLOOR","LABOUR_FIXED_PART_SEPARATE","ADD_ON","DIAGNOSTIC","QUOTE_ONLY"]},
+        "commercial_output_type": {"type": "string", "enum": ["FIXEO_PRICE","FIXEO_CALCULATED_PRICE","FIXEO_LABOUR_PRICE_PLUS_PART","FIXEO_DIAGNOSTIC","FIXEO_ADD_ON","FIXEO_ESTIMATE","QUOTE_REQUIRED"]},
+        "currency": {"type": "string", "enum": ["MAD"]},
+        "fixed_amount_mad": {"type": ["integer","null"]},
+        "labour_amount_mad": {"type": ["integer","null"]},
+        "unit_rate_mad": {"type": ["integer","null"]},
+        "unit": {"type": ["string","null"], "enum": ["FLAT_INTERVENTION","PER_ITEM","PER_DOOR","PER_AC_UNIT","PER_INSTALLATION","PER_HOUR","PER_CLEANER_HOUR","PER_HALF_DAY","PER_M2","PER_PAINTED_M2","PER_CEILING_M2","QUOTE_ONLY",null]},
+        "minimum_billing_hours": {"type": ["number","null"]},
+        "minimum_payable_mad": {"type": ["integer","null"]},
+        "formula_id": {"type": ["string","null"]},
+        "formula_params": {"type": "object"}
+      }
+    },
+
+    "minimum_floor_model": {
+      "type": "object",
+      "required": ["enabled"],
+      "properties": {
+        "enabled": {"type": "boolean"},
+        "amount_mad": {"type": ["integer","null"]},
+        "mode": {"type": ["string","null"], "enum": ["NON_ADDITIVE",null]},
+        "scope": {"type": ["string","null"]},
+        "policy_ref": {"type": ["string","null"]},
+        "standalone_service_code": {"type": ["string","null"]}
+      },
+      "if": {"properties": {"enabled": {"const": true}}},
+      "then": {"required": ["amount_mad","mode"], "properties": {"amount_mad": {"type": "integer", "minimum": 1}, "mode": {"const": "NON_ADDITIVE"}}}
+    },
+
+    "diagnostic_model": {
+      "type": "object",
+      "required": ["enabled"],
+      "properties": {
+        "enabled": {"type": "boolean"},
+        "price_mad": {"type": ["integer","null"]},
+        "mode": {"type": ["string","null"], "enum": ["STANDALONE_OR_ABSORBED","STANDALONE_ONLY",null]},
+        "same_visit_absorption": {"type": ["boolean","null"]},
+        "qualifying_service_codes": {"type": "array", "items": {"type": "string"}},
+        "conditions": {"type": "array", "items": {"type": "string"}},
+        "policy_ref": {"type": ["string","null"]}
+      }
+    },
+
+    "materials_model": {
+      "type": "object",
+      "properties": {
+        "consumables": {"type": "string", "enum": ["INCLUDED","CLIENT_SUPPLIED","ARTISAN_SUPPLIED_INCLUDED","ARTISAN_DISCLOSED_SEPARATE","NOT_APPLICABLE","QUOTE_REQUIRED"]},
+        "consumables_cap_mad": {"type": ["integer","null"]},
+        "major_parts": {"type": "string", "enum": ["INCLUDED","CLIENT_SUPPLIED","ARTISAN_SUPPLIED_INCLUDED","ARTISAN_DISCLOSED_SEPARATE","NOT_APPLICABLE","QUOTE_REQUIRED"]},
+        "hardware": {"type": ["string","null"], "enum": ["INCLUDED","CLIENT_SUPPLIED","ARTISAN_SUPPLIED_INCLUDED","ARTISAN_DISCLOSED_SEPARATE","NOT_APPLICABLE","QUOTE_REQUIRED",null]},
+        "hardware_price_reference_mad": {"type": ["object","null"]},
+        "paint": {"type": ["string","null"], "enum": ["INCLUDED","CLIENT_SUPPLIED","NOT_APPLICABLE",null]},
+        "refrigerant": {"type": ["string","null"], "enum": ["INCLUDED","NOT_APPLICABLE","SPECIALIST_REQUIRED",null]},
+        "equipment": {"type": "string", "enum": ["ARTISAN_SUPPLIED_INCLUDED","CLIENT_SUPPLIED","NOT_APPLICABLE"]},
+        "parts_disclosure": {"$ref": "#/definitions/parts_disclosure_model"}
+      }
+    },
+
+    "parts_disclosure_model": {
+      "type": ["object","null"],
+      "properties": {
+        "policy": {"type": "string", "enum": ["ARTISAN_DISCLOSED_SEPARATE","CLIENT_SUPPLIED","NOT_APPLICABLE"]},
+        "client_may_supply": {"type": "boolean"},
+        "approval_required_before_installation": {"type": "boolean"},
+        "return_old_part": {"type": ["boolean","null"]},
+        "price_disclosure_required": {"type": "boolean"},
+        "policy_ref": {"type": ["string","null"]}
+      }
+    },
+
+    "measurement_model": {
+      "type": "object",
+      "properties": {
+        "basis": {"type": "string", "enum": ["NONE","floor_m2","painted_m2","ceiling_m2","cleaner_hours","hours","workers","item_count","door_count","ac_count","quantity"]},
+        "quantity_field": {"type": ["string","null"]},
+        "quantity_required": {"type": "boolean"},
+        "worker_count_required": {"type": ["boolean","null"]},
+        "worker_count_default": {"type": ["integer","null"]},
+        "worker_count_semantics": {"type": ["string","null"], "enum": ["SINGLE_IMPLICIT","EXPLICIT_TEAM",null]},
+        "hours_required": {"type": ["boolean","null"]},
+        "minimum_billing_hours": {"type": ["number","null"]},
+        "derived": {"type": "boolean"},
+        "conversion_model_id": {"type": ["string","null"]},
+        "conversion_status": {"type": ["string","null"], "enum": ["APPROVED","RESEARCH_ESTIMATION_ONLY","NOT_APPLICABLE",null]}
+      }
+    },
+
+    "eligibility_model": {
+      "type": "object",
+      "properties": {
+        "qualification_status": {"type": "string", "enum": ["OPEN","CONDITIONAL","QUOTE_REQUIRED","SPECIALIST_ROUTE"]},
+        "required_conditions": {"type": "array", "items": {"$ref": "#/definitions/condition_entry"}},
+        "hard_exclusions": {"type": "array", "items": {"$ref": "#/definitions/exclusion_entry"}},
+        "prebooking_questions": {"type": "array", "items": {"type": "object"}},
+        "supporting_prose": {"type": ["string","null"]}
+      }
+    },
+
+    "condition_entry": {
+      "type": "object",
+      "required": ["id","description"],
+      "properties": {
+        "id": {"type": "string"},
+        "field": {"type": ["string","null"]},
+        "operator": {"type": ["string","null"], "enum": ["IN","NOT_IN","EQUALS","NOT_EQUALS","LESS_THAN","GREATER_THAN","EXISTS","NOT_EXISTS","PROSE",null]},
+        "value": {},
+        "description": {"type": "string"}
+      }
+    },
+
+    "exclusion_entry": {
+      "type": "object",
+      "required": ["id","trigger","action","description"],
+      "properties": {
+        "id": {"type": "string"},
+        "trigger": {"type": "string"},
+        "action": {"type": "string", "enum": ["ROUTE","QUOTE","STOP","AUTHORIZE"]},
+        "target_metier": {"type": ["string","null"]},
+        "target_external": {"type": ["string","null"]},
+        "description": {"type": "string"},
+        "route_ref": {"type": ["string","null"]}
+      }
+    },
+
+    "provenance_model": {
+      "type": "object",
+      "required": ["price_provenance","maturity","transaction_backed","production_ready"],
+      "properties": {
+        "price_provenance": {"type": "string"},
+        "maturity": {"type": "string", "enum": ["LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION","LEVEL_1_TRANSACTION_BACKED"]},
+        "research_phase": {"type": "string"},
+        "human_decision_phase": {"type": "string"},
+        "source_registry_refs": {"type": "array", "items": {"type": "string"}},
+        "transaction_backed": {"type": "boolean", "enum": [false]},
+        "production_ready": {"type": "boolean", "enum": [false]},
+        "batch_rule_experimental": {"type": ["boolean","null"]}
+      }
+    },
+
+    "confidence_model": {
+      "type": "object",
+      "properties": {
+        "price_confidence": {"type": "string", "enum": ["HIGH","MEDIUM","LOW","INSUFFICIENT"]},
+        "scope_confidence": {"type": "string", "enum": ["HIGH","MEDIUM","LOW","INSUFFICIENT"]},
+        "evidence_confidence": {"type": "string", "enum": ["HIGH","MEDIUM","LOW","INSUFFICIENT"]},
+        "conversion_confidence": {"type": ["string","null"], "enum": ["HIGH","MEDIUM","LOW","INSUFFICIENT",null]},
+        "batch_confidence": {"type": ["string","null"], "enum": ["HIGH","MEDIUM","LOW","INSUFFICIENT",null]}
+      }
+    },
+
+    "batch_policy_model": {
+      "type": ["object","null"],
+      "properties": {
+        "status": {"type": "string", "enum": ["APPROVED","EXPERIMENTAL_BATCH_RULE","NOT_APPLICABLE"]},
+        "type": {"type": "string", "enum": ["UNIT_MULTIPLICATION","TEAM_SCALING","TIME_SCALING","EXPERIMENTAL_BATCH_INCREMENT"]},
+        "base_amount_mad": {"type": ["integer","null"]},
+        "increment_mad": {"type": ["integer","null"]},
+        "increment_trigger": {"type": ["string","null"]},
+        "scope": {"type": ["string","null"]},
+        "promotion_status": {"type": "string"}
+      }
+    },
+
+    "copy_keys_model": {
+      "type": ["object","null"],
+      "properties": {
+        "copy_key_price": {"type": ["string","null"]},
+        "copy_key_scope": {"type": ["string","null"]},
+        "copy_key_materials": {"type": ["string","null"]},
+        "copy_key_parts": {"type": ["string","null"]},
+        "copy_key_escape": {"type": ["string","null"]},
+        "copy_key_disclaimer": {"type": ["string","null"]}
+      }
+    },
+
+    "status_flags_model": {
+      "type": "object",
+      "required": ["production_ready","active_in_estimator","active_in_reservation","active_in_pseo","active_in_profiles"],
+      "properties": {
+        "production_ready": {"type": "boolean", "enum": [false]},
+        "active_in_estimator": {"type": "boolean", "enum": [false]},
+        "active_in_reservation": {"type": "boolean", "enum": [false]},
+        "active_in_pseo": {"type": "boolean", "enum": [false]},
+        "active_in_profiles": {"type": "boolean", "enum": [false]}
+      }
+    },
+
+    "policy_entry": {
+      "type": "object",
+      "required": ["policy_id","policy_version","title","scope","content"],
+      "properties": {
+        "policy_id": {"type": "string"},
+        "policy_version": {"type": "string"},
+        "title": {"type": "string"},
+        "scope": {"type": "string"},
+        "content": {"type": "object"},
+        "applies_to_metiers": {"type": "array", "items": {"type": "string"}},
+        "safety_critical": {"type": "boolean"}
+      }
+    },
+
+    "formula_entry": {
+      "type": "object",
+      "required": ["formula_id","calculation_model","expression","inputs","rounding"],
+      "properties": {
+        "formula_id": {"type": "string"},
+        "calculation_model": {"type": "string"},
+        "expression": {"type": "string"},
+        "inputs": {"type": "array", "items": {"type": "string"}},
+        "constants": {"type": "object"},
+        "validation": {"type": "array", "items": {"type": "string"}},
+        "rounding": {"type": "string"},
+        "examples": {"type": "array"}
+      }
+    },
+
+    "routing_entry": {
+      "type": "object",
+      "required": ["route_id","source_metier","trigger","target","routing_type","hardness"],
+      "properties": {
+        "route_id": {"type": "string"},
+        "source_metier": {"type": "string"},
+        "trigger": {"type": "string"},
+        "target": {"type": "string"},
+        "target_is_priced": {"type": "boolean"},
+        "routing_type": {"type": "string", "enum": ["METIER_ROUTE","EXTERNAL_ROUTE","SPECIALIST_ROUTE","QUOTE_ROUTE","AUTHORIZE"]},
+        "hardness": {"type": "string", "enum": ["HARD","SOFT"]},
+        "client_message_key": {"type": ["string","null"]},
+        "description": {"type": "string"}
+      }
+    }
+  }
+}

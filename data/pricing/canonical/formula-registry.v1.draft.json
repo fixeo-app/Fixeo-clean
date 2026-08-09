@@ -1,0 +1,221 @@
+{
+  "_meta": {
+    "phase": "7C.2",
+    "title": "FIXEO Canonical Formula Registry V1 Draft",
+    "version": "1.0.0-draft",
+    "status": "DRAFT_NON_PRODUCTION",
+    "production_ready": false,
+    "currency": "MAD",
+    "rounding_decision": "PENDING_HUMAN_APPROVAL",
+    "rounding_interim_rule": "ROUND_TO_NEAREST_INTEGER_MAD",
+    "note": "NOT imported by any runtime. Design artifact only."
+  },
+
+  "rounding_analysis": {
+    "status": "PENDING_HUMAN_APPROVAL",
+    "analysis": {
+      "fixed_services": "All 31 fixed/conditional-fixed services have integer MAD approved prices. No rounding needed.",
+      "time_based_single_bric002": "150 MAD/h × hours. With 2h minimum → 300 MAD. Possible fractional hours (e.g. 2.5h → 375 MAD). Integer result.",
+      "time_based_team_net002": "65 MAD/cleaner-hour × workers × hours. With workers ∈ {1,2,3} and hours ∈ {1..8}: 65, 130, 195 MAD — always integer.",
+      "unit_multiplication_clim": "300 × ac_count, 450 × ac_count — always integer.",
+      "unit_multiplication_with_floor_peinture": "35/65/75 × painted_m2 or 45 × ceiling_m2. If m² is integer → integer result. If decimal m² → decimal MAD.",
+      "unit_multiplication_with_floor_net030": "18 × m². If m² is integer → integer. If decimal → may be non-integer.",
+      "add_on_pein008": "25 × painted_m2. Same as above.",
+      "options": {
+        "A_exact_integer": {"description": "Compute exact, round to nearest integer MAD.", "example": "35 × 22.5m² = 787.5 → 788 MAD (but floor applies: max(800,788) = 800)", "pros": ["Exact"], "cons": ["Fractional intermediate"]},
+        "B_nearest_5": {"description": "Round final price to nearest 5 MAD.", "example": "35 × 22m² = 770 → 770 (already multiple of 5)", "pros": ["Clean for client"], "cons": ["Small systematic deviation"]},
+        "C_nearest_10": {"description": "Round final price to nearest 10 MAD.", "example": "65 × 14m² = 910 → 910", "pros": ["Very clean"], "cons": ["Up to 9 MAD deviation"]}
+      },
+      "recommendation": "Option A (nearest integer MAD) as interim rule pending human decision. For peinture and nettoyage, minimum floors (800/200/1000) often dominate for typical small jobs, making rounding moot. For large jobs, integer MAD is accurate enough.",
+      "human_decision_required": true
+    }
+  },
+
+  "formulas": {
+    "FORMULA-FIXED-V1": {
+      "formula_id": "FORMULA-FIXED-V1",
+      "calculation_model": "FIXED",
+      "expression": "FINAL_PRICE = fixed_amount_mad",
+      "inputs": ["fixed_amount_mad"],
+      "constants": {},
+      "validation": ["fixed_amount_mad must be positive integer", "No quantity input required"],
+      "rounding": "NONE — fixed price is integer by definition",
+      "examples": [
+        {"fixed_amount_mad": 250, "result": 250},
+        {"fixed_amount_mad": 300, "result": 300}
+      ]
+    },
+
+    "FORMULA-CONDITIONAL-FIXED-V1": {
+      "formula_id": "FORMULA-CONDITIONAL-FIXED-V1",
+      "calculation_model": "CONDITIONAL_FIXED",
+      "expression": "if (eligibility_check = PASS) FINAL_PRICE = fixed_amount_mad; else ROUTE_TO_QUOTE_OR_SCOPE_CHANGE",
+      "inputs": ["fixed_amount_mad", "eligibility_result"],
+      "constants": {},
+      "validation": ["eligibility_result must be PASS before applying price", "On FAIL: scope-change protocol POL-HORS-PERIMETRE-V1 applies"],
+      "rounding": "NONE",
+      "examples": [
+        {"fixed_amount_mad": 350, "eligibility_result": "PASS", "result": 350},
+        {"fixed_amount_mad": 350, "eligibility_result": "FAIL", "result": "SCOPE_CHANGE_REQUIRED"}
+      ]
+    },
+
+    "FORMULA-UNIT-V1": {
+      "formula_id": "FORMULA-UNIT-V1",
+      "calculation_model": "UNIT_MULTIPLICATION",
+      "expression": "FINAL_PRICE = unit_rate_mad × quantity",
+      "inputs": ["unit_rate_mad", "quantity"],
+      "constants": {},
+      "validation": ["quantity must be positive integer", "unit_rate_mad must be positive integer"],
+      "rounding": "ROUND_TO_NEAREST_INTEGER_MAD (pending human decision)",
+      "examples": [
+        {"unit_rate_mad": 300, "quantity": 2, "result": 600},
+        {"unit_rate_mad": 450, "quantity": 1, "result": 450}
+      ]
+    },
+
+    "FORMULA-UNIT-WITH-FLOOR-V1": {
+      "formula_id": "FORMULA-UNIT-WITH-FLOOR-V1",
+      "calculation_model": "UNIT_MULTIPLICATION_WITH_FLOOR",
+      "expression": "CALCULATED = unit_rate_mad × quantity; FINAL_PRICE = max(minimum_floor_mad, CALCULATED)",
+      "inputs": ["unit_rate_mad", "quantity", "minimum_floor_mad"],
+      "constants": {},
+      "validation": [
+        "minimum_floor_mad is NON_ADDITIVE — never add to CALCULATED",
+        "quantity may be decimal (m²) — rounding applied to CALCULATED before floor comparison",
+        "minimum_floor_mad must match frozen métier floor policy"
+      ],
+      "rounding": "ROUND_TO_NEAREST_INTEGER_MAD after multiplication, before floor comparison (pending human decision)",
+      "examples": [
+        {"unit_rate_mad": 35, "quantity": 20, "minimum_floor_mad": 800, "calculated": 700, "result": 800, "note": "Floor applies"},
+        {"unit_rate_mad": 65, "quantity": 20, "minimum_floor_mad": 800, "calculated": 1300, "result": 1300, "note": "Floor not reached"},
+        {"unit_rate_mad": 18, "quantity": 40, "minimum_floor_mad": 1000, "calculated": 720, "result": 1000, "note": "NET-030 floor applies"}
+      ]
+    },
+
+    "FORMULA-TIME-SINGLE-V1": {
+      "formula_id": "FORMULA-TIME-SINGLE-V1",
+      "calculation_model": "TIME_BASED_SINGLE",
+      "expression": "CALCULATED = rate_per_hour_mad × hours; MINIMUM_PAYABLE = rate_per_hour_mad × minimum_billing_hours; FINAL_PRICE = max(minimum_payable_mad OR metier_floor_mad, CALCULATED)",
+      "inputs": ["rate_per_hour_mad", "hours", "minimum_billing_hours", "minimum_payable_mad"],
+      "constants": {"worker_count": 1, "note": "Always 1 artisan. MUST NOT multiply by worker_count."},
+      "validation": [
+        "worker_count is always 1 — forbidden to parameterize",
+        "hours must be >= minimum_billing_hours",
+        "MUST NOT be used with PER_CLEANER_HOUR unit",
+        "minimum_payable_mad = rate × minimum_billing_hours"
+      ],
+      "rounding": "ROUND_TO_NEAREST_INTEGER_MAD (pending human decision)",
+      "examples": [
+        {"rate_per_hour_mad": 150, "hours": 1, "minimum_billing_hours": 2, "minimum_payable_mad": 300, "calculated": 150, "result": 300, "note": "Minimum billing applies"},
+        {"rate_per_hour_mad": 150, "hours": 3, "minimum_billing_hours": 2, "minimum_payable_mad": 300, "calculated": 450, "result": 450}
+      ]
+    },
+
+    "FORMULA-TIME-TEAM-V1": {
+      "formula_id": "FORMULA-TIME-TEAM-V1",
+      "calculation_model": "TIME_BASED_TEAM",
+      "expression": "TOTAL_CLEANER_HOURS = worker_count × hours; CALCULATED = rate_per_cleaner_hour_mad × TOTAL_CLEANER_HOURS; FINAL_PRICE = max(minimum_floor_mad, CALCULATED)",
+      "inputs": ["rate_per_cleaner_hour_mad", "worker_count", "hours", "minimum_floor_mad"],
+      "constants": {},
+      "validation": [
+        "worker_count is explicit client input — MUST NOT be hardcoded to 1",
+        "MUST use PER_CLEANER_HOUR unit — MUST NOT use PER_HOUR",
+        "minimum_floor is NON_ADDITIVE",
+        "MUST NOT be used for bricolage or any single-worker service"
+      ],
+      "rounding": "ROUND_TO_NEAREST_INTEGER_MAD (pending human decision)",
+      "examples": [
+        {"rate": 65, "workers": 2, "hours": 3, "floor": 200, "total_cleaner_hours": 6, "calculated": 390, "result": 390},
+        {"rate": 65, "workers": 1, "hours": 2, "floor": 200, "total_cleaner_hours": 2, "calculated": 130, "result": 200, "note": "Floor applies"}
+      ]
+    },
+
+    "FORMULA-MINIMUM-FLOOR-V1": {
+      "formula_id": "FORMULA-MINIMUM-FLOOR-V1",
+      "calculation_model": "MINIMUM_FLOOR",
+      "expression": "FINAL_PRICE = minimum_floor_mad (service IS the floor — no other variable calculation)",
+      "inputs": ["minimum_floor_mad"],
+      "constants": {},
+      "validation": [
+        "This formula applies when the service itself is the minimum-visit anchor (BRIC-001, NET-001, PEIN-001)",
+        "MUST NOT add to other service prices",
+        "Anti-additive: if booking another service that already exceeds floor, this service does not stack"
+      ],
+      "rounding": "NONE — fixed floor amount is integer by definition",
+      "examples": [
+        {"service": "BRIC-001", "minimum_floor_mad": 200, "result": 200},
+        {"service": "NET-001", "minimum_floor_mad": 200, "result": 200},
+        {"service": "PEIN-001", "minimum_floor_mad": 800, "result": 800}
+      ]
+    },
+
+    "FORMULA-LABOUR-PART-SEPARATE-V1": {
+      "formula_id": "FORMULA-LABOUR-PART-SEPARATE-V1",
+      "calculation_model": "LABOUR_FIXED_PART_SEPARATE",
+      "expression": "FIXEO_LABOUR_PRICE = labour_amount_mad (fixed); HARDWARE_PRICE = artisan_disclosed_and_client_approved; TOTAL = labour_amount_mad + HARDWARE_PRICE",
+      "inputs": ["labour_amount_mad"],
+      "constants": {},
+      "validation": [
+        "labour_amount_mad is the FIXEO contractual component",
+        "HARDWARE_PRICE is NOT part of the FIXEO price — it is variable and separately disclosed",
+        "Client must approve hardware price before installation",
+        "TOTAL is informational only — FIXEO guarantees only the labour component"
+      ],
+      "rounding": "NONE for labour component (fixed integer). Hardware disclosed at actual cost.",
+      "examples": [
+        {"service": "serrurerie.cylindre_remplacement_standard", "labour_amount_mad": 280, "hardware": "cylinder — client-supplied or artisan-disclosed at disclosed price"},
+        {"service": "MENU_002", "labour_amount_mad": 300, "hardware": "hinge 20-120 MAD/unit — disclosed, approved before installation"}
+      ]
+    },
+
+    "FORMULA-ADDON-V1": {
+      "formula_id": "FORMULA-ADDON-V1",
+      "calculation_model": "ADD_ON",
+      "expression": "ADD_ON_PRICE = add_on_rate_mad × quantity; must be attached to primary service",
+      "inputs": ["add_on_rate_mad", "quantity", "primary_service_price"],
+      "constants": {},
+      "validation": [
+        "Cannot be booked standalone",
+        "Primary service must be active in same booking",
+        "Total = primary_service_price + add_on_rate × quantity"
+      ],
+      "rounding": "ROUND_TO_NEAREST_INTEGER_MAD (pending human decision)",
+      "examples": [
+        {"service": "PEIN-008", "add_on_rate_mad": 25, "quantity": 20, "add_on_price": 500, "note": "25 MAD/painted m² preparation add-on"}
+      ]
+    },
+
+    "FORMULA-DIAGNOSTIC-V1": {
+      "formula_id": "FORMULA-DIAGNOSTIC-V1",
+      "calculation_model": "DIAGNOSTIC",
+      "expression": "STANDALONE: FINAL_PRICE = diagnostic_price_mad; ABSORBED: CREDIT = diagnostic_price_mad applied against qualifying repair per métier absorption policy",
+      "inputs": ["diagnostic_price_mad", "same_visit_repair_follows", "qualifying_service_code"],
+      "constants": {},
+      "validation": [
+        "diagnostic_price_mad is NOT a minimum floor — it does not constrain other service prices",
+        "Absorption only under explicitly frozen per-métier conditions",
+        "Absorption rules are independently defined per métier — MUST NOT be generalized",
+        "same_visit_required = true for all three métier diagnostics"
+      ],
+      "rounding": "NONE — diagnostic price is fixed integer",
+      "examples": [
+        {"service": "plomberie.diagnostic", "price": 180, "repair_follows": false, "result": 180},
+        {"service": "plomberie.diagnostic", "price": 180, "repair_follows": true, "qualifying_repair": "plomberie.fuite_simple", "result": "0 (absorbed)", "repair_price": 250}
+      ]
+    },
+
+    "FORMULA-QUOTE-V1": {
+      "formula_id": "FORMULA-QUOTE-V1",
+      "calculation_model": "QUOTE_ONLY",
+      "expression": "PRICE = artisan_quotation (no standardized calculation)",
+      "inputs": [],
+      "constants": {},
+      "validation": ["fixed_amount_mad must be null", "unit_rate_mad must be null"],
+      "rounding": "NOT_APPLICABLE",
+      "examples": [
+        {"service": "menuiserie.fabrication_cuisine_sur_mesure", "result": "QUOTE_REQUIRED"}
+      ]
+    }
+  }
+}
