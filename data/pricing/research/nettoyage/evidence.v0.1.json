@@ -1,0 +1,225 @@
+{
+  "_meta": {
+    "phase": "7B.8",
+    "metier": "NETTOYAGE",
+    "scope": "NATIONAL_MOROCCO",
+    "research_date": "2026-08-09",
+    "status": "RESEARCH_ONLY — NO HUMAN APPROVAL — NO PRODUCTION"
+  },
+
+  "labour_economics": {
+    "standard_hourly_cleaner_rate": {
+      "description": "Hourly rate per cleaner (not per team) — residential ponctuel market",
+      "national_range_mad": "25–80",
+      "casablanca_observed": "45–80",
+      "national_centre": "40–60",
+      "note_on_60dh": "Adom.ma states Casablanca tarif moyen = 60 DH/h for verified providers. National average ~50 DH/h.",
+      "informal_floor": "25–30",
+      "professional_provider_range": "45–80",
+      "mano_ma_range": "25–45",
+      "nettoyage_casablanca_range": "60–120",
+      "unit_semantics": "PER_CLEANER_HOUR — not per team",
+      "minimum_duration": "3–4 hours per visit (market norm for professional interventions)",
+      "source_ids": ["SRC-NET-001", "SRC-NET-002", "SRC-NET-004"]
+    },
+    "worker_count_semantics": {
+      "residential_standard": "Typically 1 cleaner for standard residential (studio to F3). 2 cleaners for large properties or time-constrained deep cleans.",
+      "professional_post_construction": "Teams of 2–4 depending on project size.",
+      "critical_ambiguity_detected": "Some providers quote '150 MAD/h' without stating per-cleaner vs per-team. FIXEO must clarify this for artisan onboarding.",
+      "recommended_fixeo_unit": "PER_CLEANER_HOUR — artisan invoices for each cleaner present"
+    }
+  },
+
+  "standard_cleaning_by_property_type": {
+    "description": "Standard ponctuel residential cleaning — surface cleaned, standard soiling, single cleaner",
+    "studio_30_50m2": {
+      "market_range_mad": "150–280",
+      "casablanca_specific": "200–280",
+      "rabat_specific": "180–250",
+      "other_cities": "150–220",
+      "time_estimate_hours": "2–3",
+      "source_ids": ["SRC-NET-001", "SRC-NET-002", "SRC-NET-005", "SRC-NET-006"]
+    },
+    "apartment_f2_f3_60_100m2": {
+      "market_range_mad": "250–500",
+      "casablanca_specific": "300–450",
+      "rabat_specific": "250–400",
+      "other_cities": "220–350",
+      "time_estimate_hours": "3–4",
+      "source_ids": ["SRC-NET-001", "SRC-NET-002", "SRC-NET-005", "SRC-NET-006"]
+    },
+    "apartment_f4_f5_110_150m2": {
+      "market_range_mad": "400–650",
+      "casablanca_specific": "450–600",
+      "rabat_specific": "400–550",
+      "time_estimate_hours": "4–6",
+      "source_ids": ["SRC-NET-002", "SRC-NET-005"]
+    },
+    "villa_large_200m2_plus": {
+      "market_range_mad": "500–900",
+      "casablanca_specific": "500–700",
+      "time_estimate_hours": "6–8 (full day)",
+      "source_ids": ["SRC-NET-001", "SRC-NET-002"]
+    }
+  },
+
+  "daily_format_pricing": {
+    "half_day_demi_journee": {
+      "description": "Approximately 4h intervention by 1 cleaner",
+      "market_range_mad": "150–280",
+      "mano_ma_daily_range": "150–250",
+      "source_ids": ["SRC-NET-001"]
+    },
+    "full_day_journee_complete": {
+      "description": "Full 8h day (9h–17h) by 1 cleaner",
+      "casablanca_range_mad": "200–280",
+      "national_range_mad": "150–250",
+      "source_ids": ["SRC-NET-001"]
+    },
+    "note": "Daily format commonly used for weekly recurring residential cleaning. Consistent cleaner knows property."
+  },
+
+  "deep_cleaning_grand_menage": {
+    "description": "Grand ménage complet, nettoyage en profondeur — includes vitres, placards, murs, dégraissage, désinfection",
+    "price_vs_standard_uplift": "Approx 2x–3x standard cleaning",
+    "market_range_mad": {
+      "studio": "300–600",
+      "apartment_60_100m2": "500–900",
+      "large_apartment_120m2_plus": "700–1500",
+      "note": "Rabat provider quotes 700–1500 MAD for deep clean by property size"
+    },
+    "inclusions": ["vitres", "placards intérieurs", "cuisine dégraissage", "SDB désinfection", "murs", "plinthes", "meubles intérieur"],
+    "source_ids": ["SRC-NET-004", "SRC-NET-005", "SRC-NET-006"]
+  },
+
+  "post_construction_cleaning": {
+    "description": "Nettoyage après travaux — construction dust, paint/cement residue, specialist equipment required",
+    "pricing_unit": "PER_M2_OR_FORFAIT",
+    "market_range_per_m2": {
+      "simple_tasks": "12–25 MAD/m²",
+      "heavy_tasks": "devis required",
+      "note": "nettoyage-casablanca.com: ≈12 MAD/m² for simple. casablanca-nettoyage.com: 12–25 MAD/m²"
+    },
+    "forfait_ranges": {
+      "small_apartment_rabat_example": "800–2000 MAD depending on soiling",
+      "200m2_example": "devis"
+    },
+    "equipment_required": ["aspirateurs industriels", "monobrosses", "nettoyeurs haute pression", "nettoyeurs vapeur"],
+    "inclusions_typical": ["évacuation déchets légers", "dépoussiérage", "dégraissage", "lavage sols", "désinfection sanitaires", "vitres"],
+    "exclusions_typical": ["évacuation gravats lourds", "nettoyage façade hauteur", "traitement biohazard"],
+    "worker_count": "teams of 2–4 for meaningful projects",
+    "source_ids": ["SRC-NET-004", "SRC-NET-005", "SRC-NET-007", "SRC-NET-012"]
+  },
+
+  "move_in_move_out_cleaning": {
+    "description": "Nettoyage avant/après déménagement — logement vide, remise en état, état des lieux",
+    "pricing_model": "Typically forfait or deep-clean pricing applied to empty property",
+    "market_notes": "Products and equipment always supplied by provider for this service type. Includes vitres, placards, cuisine, SDB.",
+    "market_range_mad": "See deep_cleaning + 10–20% for empty-property access premium",
+    "providers_identified": ["O2 Maroc", "NettoyageMaroc.com", "Nettoyage-Rabat.com"],
+    "source_ids": ["SRC-NET-005", "SRC-NET-006", "SRC-NET-011"]
+  },
+
+  "upholstery_sofa_cleaning": {
+    "pricing_unit": "PER_SEAT_OR_PER_ITEM",
+    "method": "injection-extraction, vapeur, nettoyage à sec",
+    "market_data": {
+      "fauteuil_1_place": {"range_mad": "100–180", "o2maroc_listed": 150},
+      "canape_2_places": {"range_mad": "250–400", "o2maroc_listed": 300, "hany_ma": "250–400"},
+      "canape_3_places": {"range_mad": "350–550", "o2maroc_listed": 450, "hany_ma": "350–550"},
+      "canape_angle_5_6_places": {"range_mad": "500–800", "o2maroc_listed": 750, "hany_ma": "500–800"},
+      "salon_marocain_sedari": {"range_mad": "600–1100", "o2maroc_listed": "120–150 MAD/ml", "hany_ma": "600–1100"},
+      "canape_base_doulle": "à partir de 300 MAD"
+    },
+    "inclusions": ["détachage", "désodorisation", "désinfection", "déplacement inclus (major providers)"],
+    "note_on_bait_price": "experts-doulle-clean.ma quotes canapé from 300 MAD as 'à partir de'. Final may exceed for large/soiled items.",
+    "source_ids": ["SRC-NET-008", "SRC-NET-009", "SRC-NET-010"]
+  },
+
+  "mattress_cleaning": {
+    "pricing_unit": "PER_FACE_OR_PER_ITEM",
+    "market_data": {
+      "matelas_1_face_simple": {"range_mad": "150–300", "o2maroc_listed": 200, "hany_ma_1_place": "200–300"},
+      "matelas_2_faces": {"o2maroc_listed": 400},
+      "matelas_2_places": {"hany_ma": "250–350"},
+      "matelas_base_doulle": "à partir de 150 MAD"
+    },
+    "source_ids": ["SRC-NET-008", "SRC-NET-009", "SRC-NET-010"]
+  },
+
+  "rug_tapis_cleaning": {
+    "pricing_unit": "PER_M2_OR_PER_SIZE_TIER",
+    "market_data": {
+      "tapis_per_m2_range": "50–80 MAD/m²",
+      "moquette_per_m2_range": "20–50 MAD/m²",
+      "o2_size_tiers": {
+        "petit_1.5x2m": 180,
+        "moyen_2x3m": 300,
+        "grand_2.5x3.5m": 450,
+        "tres_grand_over_2.5x3.5m": "50 MAD/m²"
+      },
+      "hany_per_m2": "50–80 MAD/m²",
+      "shampooing_casablanca_nettoyage": "20–40 MAD/m² (carpet/moquette)",
+      "casablanca_nettoyage_element": "70–250 MAD per sofa item"
+    },
+    "source_ids": ["SRC-NET-008", "SRC-NET-009", "SRC-NET-012"]
+  },
+
+  "window_cleaning": {
+    "residential_standard": {
+      "market_range_mad": "200–800 MAD per intervention (apartment)",
+      "per_m2_vitrerie": "3–15 MAD/m² depending on access",
+      "note": "Highly variable by number of windows, access, height. Commercial facades = devis."
+    },
+    "included_in_deep_clean": true,
+    "standalone_service": "Yes — residential window cleaning is offered as standalone by major providers",
+    "specialist_boundary": "Access requiring nacelle/rope = SPECIALIST or QUOTE_REQUIRED",
+    "source_ids": ["SRC-NET-004", "SRC-NET-005", "SRC-NET-012"]
+  },
+
+  "geographic_price_variations": {
+    "note": "city_adjustment = null in this phase",
+    "casablanca": "Premium +15–25% vs national average",
+    "rabat": "+10–15% vs national",
+    "marrakech": "Tourism-driven, variable — comparable to Rabat",
+    "tanger": "Rising due to economic development",
+    "agadir_fes_meknes": "–10–20% vs Casablanca",
+    "villes_secondaires": "–25–40% vs Casablanca",
+    "source_ids": ["SRC-NET-001", "SRC-NET-002"]
+  },
+
+  "materials_equipment_policy_findings": {
+    "professional_provider_model": "Major providers (O2 Maroc, NettoyageMaroc, Nettoyage-Rabat) supply ALL equipment and products for post-construction and deep-clean services.",
+    "standard_residential_ménage": {
+      "common_practice": "Products (cleaning agents, liquids) often supplied by CLIENT. Basic equipment (mop, bucket) varies.",
+      "o2_maroc_explicit": "Les produits ménagers et le matériel (balai, aspirateur, serpillière) sont généralement à fournir par le client, sauf formule (premium packages supply equipment).",
+      "implication_for_fixeo": "FIXEO must define whether the standard ménage includes or excludes client-supplied products. This is a KEY consumer clarity issue."
+    },
+    "upholstery_post_construction_equipment": "Always provider-supplied (injection-extraction machines, industrial vacuums, steam cleaners)",
+    "consumables_for_standard_ménage": "CLIENT_SUPPLIED or ARTISAN_SUPPLIED depending on service tier — must be defined per service"
+  },
+
+  "minimum_booking_findings": {
+    "market_norm_minimum_duration": "3–4 hours (professional provider standard)",
+    "informal_freelance_minimum": "Variable — some accept 2h but 3h more common",
+    "minimum_visit_charge_implied": "150–200 MAD (3h × 50 MAD/h national average)",
+    "travel_fee": "Major providers include déplacement. Informal workers may request transport fee.",
+    "note": "No fixed minimum found equivalent to Bricolage — but 3h minimum duration is market norm"
+  },
+
+  "recurring_service_findings": {
+    "discount_evidence": "Recurring (hebdomadaire, mensuel) bénéficient of tarif préférentiel — consistent across providers",
+    "discount_magnitude": "~10–20% vs ponctuel rate implied",
+    "monthly_salary_model": "Direct employment model: 2500–4500 MAD/month full-time Casablanca",
+    "fixeo_relevance": "Contract/employment model is outside FIXEO estimator scope. Recurring discount = modifier null in this phase."
+  },
+
+  "soiling_complexity_levels": {
+    "NORMAL": "Recently maintained property, light soiling",
+    "MODERATE": "Not maintained for several weeks, moderate grease/dust",
+    "HEAVY": "Post-event, neglected, visible grease buildup, pet hair",
+    "EXTREME": "Long vacant, post-construction dust, severe grease, nicotine",
+    "SPECIALIST_REQUIRED": ["mold remediation", "biohazard", "sewage contamination", "pest infestation", "severe fire/smoke"],
+    "price_escalation_factor": "Heavy vs Normal: 1.5x–2x. Extreme without construction: 2x–3x."
+  }
+}

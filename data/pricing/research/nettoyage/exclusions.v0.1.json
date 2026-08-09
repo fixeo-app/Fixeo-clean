@@ -1,0 +1,148 @@
+{
+  "_meta": {
+    "phase": "7B.8",
+    "metier": "NETTOYAGE",
+    "version": "0.1",
+    "status": "RESEARCH — EXCLUSIONS ONLY — NO PRODUCTION"
+  },
+
+  "metier_boundary_definitions": {
+
+    "HORS_PERIMETRE_ROUTE_TO_OTHER_METIER": [
+      {
+        "trigger": "Remplacement vitre cassée",
+        "route_to": "VITRERIE",
+        "reason": "Repair / glass replacement is not cleaning"
+      },
+      {
+        "trigger": "Peinture mur taché / repeindre surface",
+        "route_to": "PEINTURE",
+        "reason": "Painting over stains is not cleaning"
+      },
+      {
+        "trigger": "Fuite d'eau / humidité structurelle",
+        "route_to": "PLOMBERIE",
+        "reason": "Source repair is not cleaning"
+      },
+      {
+        "trigger": "Déménagement / transport mobilier",
+        "route_to": "DEMENAGEMENT",
+        "reason": "FIXEO Déménagement handles this. Nettoyage handles the property cleaning before/after."
+      },
+      {
+        "trigger": "Jardinage / extérieur végétation",
+        "route_to": "JARDINAGE",
+        "reason": "Garden maintenance is a separate métier"
+      },
+      {
+        "trigger": "Maçonnerie / carrelage / réparations structurelles",
+        "route_to": "MAÇONNERIE or CARRELAGE",
+        "reason": "Structural repair is not cleaning"
+      }
+    ],
+
+    "QUOTE_REQUIRED": [
+      {
+        "service": "Nettoyage après travaux lourds (> 200m² ou résidus sévères)",
+        "code": "NET-QUOTE-001",
+        "reason": "Complexity and scale unpredictable. Equipment, worker count, duration highly variable."
+      },
+      {
+        "service": "Nettoyage façade / mur extérieur",
+        "code": "NET-QUOTE-002",
+        "reason": "Requires evaluation of height, access, material, pressure washing. Safety risk."
+      },
+      {
+        "service": "Nettoyage industriel / local commercial grand",
+        "code": "NET-QUOTE-003",
+        "reason": "Commercial contracts priced per-month/m². Estimator not appropriate."
+      },
+      {
+        "service": "Nettoyage vitres en hauteur / nacelle",
+        "code": "NET-QUOTE-004",
+        "reason": "Access equipment required. Safety and insurance implications."
+      },
+      {
+        "service": "Salon marocain sedari complet",
+        "code": "NET-QUOTE-005",
+        "reason": "Linear meter pricing requires physical measurement. Complex configurations."
+      }
+    ],
+
+    "ROUTE_TO_SPECIALIST": [
+      {
+        "service": "Traitement moisissures / mold remediation",
+        "code": "NET-SPEC-001",
+        "reason": "Mold is a health hazard requiring biocide products and specialist protocol. Outside standard cleaning scope.",
+        "route_note": "Recommend specialist treatment, then standard cleaning of residue"
+      },
+      {
+        "service": "Contamination biologique / biohazard",
+        "code": "NET-SPEC-002",
+        "reason": "Blood, sewage, decomposition — specialist regulatory environment, PPE, disposal"
+      },
+      {
+        "service": "Désinfection post-infestation (punaises, cafards sévères)",
+        "code": "NET-SPEC-003",
+        "reason": "Pest control + decontamination requires licensed operator"
+      },
+      {
+        "service": "Nettoyage dégâts incendie / fumée",
+        "code": "NET-SPEC-004",
+        "reason": "Smoke penetration into walls/structure; specialist ozone treatment; insurance claims process"
+      },
+      {
+        "service": "Désencombrement extrême / hoarding",
+        "code": "NET-SPEC-005",
+        "reason": "Physical/psychological complexity; potential biohazard; logistics"
+      },
+      {
+        "service": "Nettoyage terrasse haute / toit / façade haute",
+        "code": "NET-SPEC-006",
+        "reason": "Safety regulation; height access equipment; rope access or nacelle"
+      }
+    ],
+
+    "EXCLUDED_PERMANENTLY": [
+      {
+        "service": "Nettoyage industriel / zones HACCP / agroalimentaire",
+        "reason": "Regulatory certification required beyond residential artisan scope"
+      },
+      {
+        "service": "Nettoyage piscine (traitement eau)",
+        "reason": "Chemical water treatment is a separate specialist service"
+      },
+      {
+        "service": "Décontamination amiante / plomb",
+        "reason": "Hazardous materials — regulated specialist only"
+      }
+    ],
+
+    "DEFERRED_PENDING_MORE_EVIDENCE": [
+      {
+        "service": "Nettoyage vitres standard appartement — standalone service",
+        "code": "NET-DEF-001",
+        "reason": "Included in deep-clean. Standalone pricing range (200–800 MAD) too wide for anchor. Single cleaner with basic squeegee vs professional window cleaning team are conflated.",
+        "needed": "More evidence on standalone residential window cleaning pricing architecture"
+      },
+      {
+        "service": "Moquette (fitted carpet) per m²",
+        "code": "NET-DEF-002",
+        "reason": "Only one clear source (20–40 MAD/m²). Conflation with tapis pricing. Morocco has limited fitted carpet prevalence vs tapis. Defer separate service.",
+        "needed": "More evidence on prevalence and pricing"
+      },
+      {
+        "service": "Rideaux / curtain cleaning",
+        "code": "NET-DEF-003",
+        "reason": "No specific Moroccan provider pricing found. Pressing/laundry model unclear.",
+        "needed": "Evidence on in-situ vs pressing model"
+      },
+      {
+        "service": "Fauteuil / pouf (single seat)",
+        "code": "NET-DEF-004",
+        "reason": "Only 1–2 sources cite 100–180 MAD. Viable but evidence thin. Consider including in upholstery bundle or requesting clearer artisan economics.",
+        "needed": "Artisan economic floor validation for short interventions"
+      }
+    ]
+  }
+}
