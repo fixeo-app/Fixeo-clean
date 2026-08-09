@@ -1,0 +1,674 @@
+{
+  "_meta": {
+    "version": "1.0.0-dormant",
+    "phase": "7C.4",
+    "date": "2026-08-09",
+    "total": 37,
+    "pass": 37,
+    "fail": 0
+  },
+  "fixtures": [
+    {
+      "id": "PLO-001",
+      "service_code": "plomberie.fuite_simple",
+      "inputs": {},
+      "expected": {
+        "ok": true,
+        "final_amount_mad": 250,
+        "calculation_model": "FIXED"
+      },
+      "actual": {
+        "ok": true,
+        "final_amount_mad": 250,
+        "calculation_model": "FIXED",
+        "variable_part_separate": false
+      },
+      "pass": true
+    },
+    {
+      "id": "PLO-002",
+      "service_code": "plomberie.diagnostic",
+      "inputs": {},
+      "expected": {
+        "ok": true,
+        "final_amount_mad": 180,
+        "calculation_model": "DIAGNOSTIC"
+      },
+      "actual": {
+        "ok": true,
+        "final_amount_mad": 180,
+        "calculation_model": "DIAGNOSTIC",
+        "variable_part_separate": false
+      },
+      "pass": true
+    },
+    {
+      "id": "PLO-003",
+      "service_code": "plomberie.debouchage_evier",
+      "inputs": {},
+      "expected": {
+        "ok": true,
+        "final_amount_mad": 250
+      },
+      "actual": {
+        "ok": true,
+        "final_amount_mad": 250,
+        "calculation_model": "FIXED",
+        "variable_part_separate": false
+      },
+      "pass": true
+    },
+    {
+      "id": "PLO-004",
+      "service_code": "plomberie.robinet_remplacement",
+      "inputs": {},
+      "expected": {
+        "ok": true,
+        "final_amount_mad": 250,
+        "calculation_model": "LABOUR_FIXED_PART_SEPARATE",
+        "variable_part_separate": true
+      },
+      "actual": {
+        "ok": true,
+        "final_amount_mad": 250,
+        "calculation_model": "LABOUR_FIXED_PART_SEPARATE",
+        "variable_part_separate": true
+      },
+      "pass": true
+    },
+    {
+      "id": "PLO-005",
+      "service_code": "plomberie.chasse_eau",
+      "inputs": {},
+      "expected": {
+        "ok": true,
+        "final_amount_mad": 300,
+        "calculation_model": "LABOUR_FIXED_PART_SEPARATE",
+        "variable_part_separate": true
+      },
+      "actual": {
+        "ok": true,
+        "final_amount_mad": 300,
+        "calculation_model": "LABOUR_FIXED_PART_SEPARATE",
+        "variable_part_separate": true
+      },
+      "pass": true
+    },
+    {
+      "id": "ELE-001",
+      "service_code": "electricite.interrupteur_remplacement.simple",
+      "inputs": {},
+      "expected": {
+        "ok": true,
+        "final_amount_mad": 220,
+        "calculation_model": "FIXED"
+      },
+      "actual": {
+        "ok": true,
+        "final_amount_mad": 220,
+        "calculation_model": "FIXED",
+        "variable_part_separate": false
+      },
+      "pass": true
+    },
+    {
+      "id": "ELE-002",
+      "service_code": "electricite.interrupteur_remplacement.va_et_vient",
+      "inputs": {},
+      "expected": {
+        "ok": true,
+        "final_amount_mad": 250,
+        "calculation_model": "FIXED"
+      },
+      "actual": {
+        "ok": true,
+        "final_amount_mad": 250,
+        "calculation_model": "FIXED",
+        "variable_part_separate": false
+      },
+      "pass": true
+    },
+    {
+      "id": "ELE-003",
+      "service_code": "electricite.diagnostic",
+      "inputs": {},
+      "expected": {
+        "ok": true,
+        "final_amount_mad": 200,
+        "calculation_model": "DIAGNOSTIC"
+      },
+      "actual": {
+        "ok": true,
+        "final_amount_mad": 200,
+        "calculation_model": "DIAGNOSTIC",
+        "variable_part_separate": false
+      },
+      "pass": true
+    },
+    {
+      "id": "ELE-004",
+      "service_code": "electricite.luminaire_installation",
+      "inputs": {},
+      "expected": {
+        "ok": true,
+        "final_amount_mad": 220,
+        "calculation_model": "FIXED"
+      },
+      "actual": {
+        "ok": true,
+        "final_amount_mad": 220,
+        "calculation_model": "FIXED",
+        "variable_part_separate": false
+      },
+      "pass": true
+    },
+    {
+      "id": "SER-001",
+      "service_code": "serrurerie.porte_claquee_ouverture",
+      "inputs": {},
+      "expected": {
+        "ok": true,
+        "final_amount_mad": 220,
+        "calculation_model": "FIXED"
+      },
+      "actual": {
+        "ok": true,
+        "final_amount_mad": 220,
+        "calculation_model": "FIXED",
+        "variable_part_separate": false
+      },
+      "pass": true
+    },
+    {
+      "id": "SER-002",
+      "service_code": "serrurerie.cylindre_remplacement.standard",
+      "inputs": {},
+      "expected": {
+        "ok": true,
+        "final_amount_mad": 280,
+        "calculation_model": "LABOUR_FIXED_PART_SEPARATE",
+        "variable_part_separate": true
+      },
+      "actual": {
+        "ok": true,
+        "final_amount_mad": 280,
+        "calculation_model": "LABOUR_FIXED_PART_SEPARATE",
+        "variable_part_separate": true
+      },
+      "pass": true
+    },
+    {
+      "id": "CLI-001",
+      "service_code": "CLIM-002",
+      "inputs": {},
+      "expected": {
+        "ok": true,
+        "final_amount_mad": 250,
+        "calculation_model": "DIAGNOSTIC"
+      },
+      "actual": {
+        "ok": true,
+        "final_amount_mad": 250,
+        "calculation_model": "DIAGNOSTIC",
+        "variable_part_separate": false
+      },
+      "pass": true
+    },
+    {
+      "id": "CLI-002",
+      "service_code": "CLIM-003",
+      "inputs": {
+        "ac_count": 1
+      },
+      "expected": {
+        "ok": true,
+        "final_amount_mad": 300
+      },
+      "actual": {
+        "ok": true,
+        "final_amount_mad": 300,
+        "calculation_model": "UNIT_MULTIPLICATION",
+        "variable_part_separate": false
+      },
+      "pass": true
+    },
+    {
+      "id": "CLI-003",
+      "service_code": "CLIM-004",
+      "inputs": {
+        "ac_count": 1
+      },
+      "expected": {
+        "ok": true,
+        "final_amount_mad": 450
+      },
+      "actual": {
+        "ok": true,
+        "final_amount_mad": 450,
+        "calculation_model": "UNIT_MULTIPLICATION",
+        "variable_part_separate": false
+      },
+      "pass": true
+    },
+    {
+      "id": "CLI-004",
+      "service_code": "CLIM-003",
+      "inputs": {
+        "ac_count": 2
+      },
+      "expected": {
+        "ok": true,
+        "final_amount_mad": 600
+      },
+      "actual": {
+        "ok": true,
+        "final_amount_mad": 600,
+        "calculation_model": "UNIT_MULTIPLICATION",
+        "variable_part_separate": false
+      },
+      "pass": true
+    },
+    {
+      "id": "CLI-005",
+      "service_code": "CLIM-030",
+      "inputs": {},
+      "expected": {
+        "ok": true,
+        "final_amount_mad": 550,
+        "calculation_model": "FIXED"
+      },
+      "actual": {
+        "ok": true,
+        "final_amount_mad": 550,
+        "calculation_model": "FIXED",
+        "variable_part_separate": false
+      },
+      "pass": true
+    },
+    {
+      "id": "BRI-001",
+      "service_code": "BRIC-001",
+      "inputs": {},
+      "expected": {
+        "ok": true,
+        "final_amount_mad": 200,
+        "calculation_model": "MINIMUM_FLOOR"
+      },
+      "actual": {
+        "ok": true,
+        "final_amount_mad": 200,
+        "calculation_model": "MINIMUM_FLOOR",
+        "variable_part_separate": false
+      },
+      "pass": true
+    },
+    {
+      "id": "BRI-002",
+      "service_code": "BRIC-002",
+      "inputs": {
+        "hours": 1
+      },
+      "expected": {
+        "ok": true,
+        "final_amount_mad": 300
+      },
+      "actual": {
+        "ok": true,
+        "final_amount_mad": 300,
+        "calculation_model": "TIME_BASED_SINGLE",
+        "variable_part_separate": false
+      },
+      "pass": true
+    },
+    {
+      "id": "BRI-003",
+      "service_code": "BRIC-002",
+      "inputs": {
+        "hours": 2
+      },
+      "expected": {
+        "ok": true,
+        "final_amount_mad": 300
+      },
+      "actual": {
+        "ok": true,
+        "final_amount_mad": 300,
+        "calculation_model": "TIME_BASED_SINGLE",
+        "variable_part_separate": false
+      },
+      "pass": true
+    },
+    {
+      "id": "BRI-004",
+      "service_code": "BRIC-002",
+      "inputs": {
+        "hours": 3
+      },
+      "expected": {
+        "ok": true,
+        "final_amount_mad": 450
+      },
+      "actual": {
+        "ok": true,
+        "final_amount_mad": 450,
+        "calculation_model": "TIME_BASED_SINGLE",
+        "variable_part_separate": false
+      },
+      "pass": true
+    },
+    {
+      "id": "NET-001",
+      "service_code": "NET-001",
+      "inputs": {},
+      "expected": {
+        "ok": true,
+        "final_amount_mad": 200
+      },
+      "actual": {
+        "ok": true,
+        "final_amount_mad": 200,
+        "calculation_model": "MINIMUM_FLOOR",
+        "variable_part_separate": false
+      },
+      "pass": true
+    },
+    {
+      "id": "NET-002",
+      "service_code": "NET-002",
+      "inputs": {
+        "hours": 1,
+        "worker_count": 1
+      },
+      "expected": {
+        "ok": true,
+        "final_amount_mad": 200
+      },
+      "actual": {
+        "ok": true,
+        "final_amount_mad": 200,
+        "calculation_model": "TIME_BASED_TEAM",
+        "variable_part_separate": false
+      },
+      "pass": true
+    },
+    {
+      "id": "NET-003",
+      "service_code": "NET-002",
+      "inputs": {
+        "hours": 2,
+        "worker_count": 2
+      },
+      "expected": {
+        "ok": true,
+        "final_amount_mad": 260
+      },
+      "actual": {
+        "ok": true,
+        "final_amount_mad": 260,
+        "calculation_model": "TIME_BASED_TEAM",
+        "variable_part_separate": false
+      },
+      "pass": true
+    },
+    {
+      "id": "NET-004",
+      "service_code": "NET-002",
+      "inputs": {
+        "hours": 3,
+        "worker_count": 2
+      },
+      "expected": {
+        "ok": true,
+        "final_amount_mad": 390
+      },
+      "actual": {
+        "ok": true,
+        "final_amount_mad": 390,
+        "calculation_model": "TIME_BASED_TEAM",
+        "variable_part_separate": false
+      },
+      "pass": true
+    },
+    {
+      "id": "NET-005",
+      "service_code": "NET-004",
+      "inputs": {
+        "property_type": "APARTMENT"
+      },
+      "expected": {
+        "ok": true,
+        "final_amount_mad": 600,
+        "calculation_model": "CONDITIONAL_FIXED"
+      },
+      "actual": {
+        "ok": true,
+        "final_amount_mad": 600,
+        "calculation_model": "CONDITIONAL_FIXED",
+        "variable_part_separate": false
+      },
+      "pass": true
+    },
+    {
+      "id": "NET-006",
+      "service_code": "NET-030",
+      "inputs": {
+        "surface_m2": 60
+      },
+      "expected": {
+        "ok": true,
+        "final_amount_mad": 1080
+      },
+      "actual": {
+        "ok": true,
+        "final_amount_mad": 1080,
+        "calculation_model": "UNIT_MULTIPLICATION_WITH_FLOOR",
+        "variable_part_separate": false
+      },
+      "pass": true
+    },
+    {
+      "id": "NET-007",
+      "service_code": "NET-030",
+      "inputs": {
+        "surface_m2": 40
+      },
+      "expected": {
+        "ok": true,
+        "final_amount_mad": 1000
+      },
+      "actual": {
+        "ok": true,
+        "final_amount_mad": 1000,
+        "calculation_model": "UNIT_MULTIPLICATION_WITH_FLOOR",
+        "variable_part_separate": false
+      },
+      "pass": true
+    },
+    {
+      "id": "PEI-001",
+      "service_code": "PEIN-001",
+      "inputs": {},
+      "expected": {
+        "ok": true,
+        "final_amount_mad": 800,
+        "calculation_model": "MINIMUM_FLOOR"
+      },
+      "actual": {
+        "ok": true,
+        "final_amount_mad": 800,
+        "calculation_model": "MINIMUM_FLOOR",
+        "variable_part_separate": false
+      },
+      "pass": true
+    },
+    {
+      "id": "PEI-002",
+      "service_code": "PEIN-002",
+      "inputs": {
+        "painted_m2": 30
+      },
+      "expected": {
+        "ok": true,
+        "final_amount_mad": 1050
+      },
+      "actual": {
+        "ok": true,
+        "final_amount_mad": 1050,
+        "calculation_model": "UNIT_MULTIPLICATION_WITH_FLOOR",
+        "variable_part_separate": false
+      },
+      "pass": true
+    },
+    {
+      "id": "PEI-003",
+      "service_code": "PEIN-002",
+      "inputs": {
+        "painted_m2": 10
+      },
+      "expected": {
+        "ok": true,
+        "final_amount_mad": 800
+      },
+      "actual": {
+        "ok": true,
+        "final_amount_mad": 800,
+        "calculation_model": "UNIT_MULTIPLICATION_WITH_FLOOR",
+        "variable_part_separate": false
+      },
+      "pass": true
+    },
+    {
+      "id": "PEI-004",
+      "service_code": "PEIN-003",
+      "inputs": {
+        "painted_m2": 20
+      },
+      "expected": {
+        "ok": true,
+        "final_amount_mad": 1300
+      },
+      "actual": {
+        "ok": true,
+        "final_amount_mad": 1300,
+        "calculation_model": "UNIT_MULTIPLICATION_WITH_FLOOR",
+        "variable_part_separate": false
+      },
+      "pass": true
+    },
+    {
+      "id": "PEI-005",
+      "service_code": "PEIN-004",
+      "inputs": {
+        "ceiling_m2": 20
+      },
+      "expected": {
+        "ok": true,
+        "final_amount_mad": 900,
+        "calculation_model": "UNIT_MULTIPLICATION_WITH_FLOOR"
+      },
+      "actual": {
+        "ok": true,
+        "final_amount_mad": 900,
+        "calculation_model": "UNIT_MULTIPLICATION_WITH_FLOOR",
+        "variable_part_separate": false
+      },
+      "pass": true
+    },
+    {
+      "id": "PEI-006",
+      "service_code": "PEIN-005",
+      "inputs": {
+        "painted_m2": 15
+      },
+      "expected": {
+        "ok": true,
+        "final_amount_mad": 1125
+      },
+      "actual": {
+        "ok": true,
+        "final_amount_mad": 1125,
+        "calculation_model": "UNIT_MULTIPLICATION_WITH_FLOOR",
+        "variable_part_separate": false
+      },
+      "pass": true
+    },
+    {
+      "id": "MNU-001",
+      "service_code": "MENU_001",
+      "inputs": {
+        "security_door": false,
+        "frame_condition": "SOUND"
+      },
+      "expected": {
+        "ok": true,
+        "final_amount_mad": 300
+      },
+      "actual": {
+        "ok": true,
+        "final_amount_mad": 300,
+        "calculation_model": "CONDITIONAL_FIXED",
+        "variable_part_separate": false
+      },
+      "pass": true
+    },
+    {
+      "id": "MNU-002",
+      "service_code": "MENU_002",
+      "inputs": {
+        "hinge_count": 1
+      },
+      "expected": {
+        "ok": true,
+        "final_amount_mad": 300,
+        "calculation_model": "LABOUR_FIXED_PART_SEPARATE"
+      },
+      "actual": {
+        "ok": true,
+        "final_amount_mad": 300,
+        "calculation_model": "LABOUR_FIXED_PART_SEPARATE",
+        "variable_part_separate": true
+      },
+      "pass": true
+    },
+    {
+      "id": "MNU-003",
+      "service_code": "MENU_003",
+      "inputs": {
+        "drawer_count": 1
+      },
+      "expected": {
+        "ok": true,
+        "final_amount_mad": 300,
+        "calculation_model": "LABOUR_FIXED_PART_SEPARATE"
+      },
+      "actual": {
+        "ok": true,
+        "final_amount_mad": 300,
+        "calculation_model": "LABOUR_FIXED_PART_SEPARATE",
+        "variable_part_separate": true
+      },
+      "pass": true
+    },
+    {
+      "id": "MNU-004",
+      "service_code": "MENU_006",
+      "inputs": {
+        "security_door": false,
+        "frame_condition": "SOUND",
+        "door_width_cm": 83,
+        "masonry_modification_required": false
+      },
+      "expected": {
+        "ok": true,
+        "final_amount_mad": 500
+      },
+      "actual": {
+        "ok": true,
+        "final_amount_mad": 500,
+        "calculation_model": "CONDITIONAL_FIXED",
+        "variable_part_separate": false
+      },
+      "pass": true
+    }
+  ]
+}
