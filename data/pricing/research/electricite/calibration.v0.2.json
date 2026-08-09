@@ -1,0 +1,794 @@
+{
+  "_meta": {
+    "document_type": "FIXEO_ELECTRICITE_PRICE_CALIBRATION",
+    "calibration_version": "0.2.0",
+    "status": "HUMAN_CALIBRATION_CANDIDATE_NOT_PRODUCTION",
+    "phase": "Phase 7B.4.1 — FIXEO Electricity Human Calibration & Fair-Price Policy",
+    "date": "2026-08-09",
+    "based_on_registry_version": "0.1.0",
+    "production_ready": false,
+    "currency": "MAD",
+    "geographic_scope": "NATIONAL_MOROCCO",
+    "geographic_reference_city": "Casablanca",
+    "city_adjustment": null,
+    "urgency_modifier": null,
+    "night_modifier": null,
+    "weekend_modifier": null,
+    "ai_claim": null,
+    "ai_claim_note": "RULE_BASED_LOOKUP only. LEVEL_0 maturity. 'FIXEO AI Price' and equivalent claims PROHIBITED.",
+    "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+    "services_evaluated": 5,
+    "commission_scenarios_tested": [0, 10, 15, 20],
+    "fuel_scenarios": {
+      "LOW":  25,
+      "MID":  40,
+      "HIGH": 60
+    },
+    "artisan_economic_floor_MAD": 100,
+    "artisan_economic_target_MAD": 150,
+    "artisan_economic_floor_note": "100 MAD = absolute minimum viability guard, NOT the target. Strong economics should target ≥150 MAD net at 15% commission. Electricians carry specialized tools with associated capital cost — economics must be materially healthier than the 100 MAD floor.",
+    "external_market_anchors": {
+      "afous_urgency_hourly": {"from": 150, "to": 180, "unit": "DH/h", "relevés": 480, "grade": "B"},
+      "afous_prise_interrupteur_per_unit": {"from": 70, "to": 80, "unit": "DH/unit", "relevés": 480, "grade": "B"},
+      "afous_disjoncteur_forfait": {"from": 170, "to": 200, "unit": "DH forfait", "relevés": 480, "grade": "B"},
+      "mano_petite_reparation": {"from": 200, "to": 400, "unit": "forfait", "grade": "C+"},
+      "mano_diagnostic_panne": {"from": 200, "to": 500, "unit": "forfait", "grade": "C+"},
+      "mano_prise_reparation": {"from": 150, "to": 300, "unit": "forfait", "grade": "C+"},
+      "mano_plafonnier_simple": {"from": 150, "to": 300, "unit": "forfait", "grade": "C+"},
+      "mano_disjoncteur_remplacement": {"from": 400, "to": 800, "unit": "forfait", "grade": "C+"}
+    },
+    "artisan_economics_model_note": "ART_NET_BEFORE_LABOUR = G_ART - T_FUEL - MAT. G_ART = FIXEO_PRICE × (1 − commission_rate). MAT = small consumables included in FIXEO price (≤30 MAD). Electricity tools carry capital cost not modelled here — treated as absorbed into artisan margin.",
+    "all_human_decisions": "PENDING",
+    "production_runtime_diff": "ZERO"
+  },
+
+  "services": [
+
+    {
+      "service_code": "electricite.diagnostic",
+      "label_fr": "Déplacement et diagnostic électrique",
+      "description": "Artisan travel to site + initial electrical inspection + fault identification attempt + verbal findings + verbal repair quote if applicable.",
+      "pricing_architecture": "FLAT_DIAGNOSTIC",
+      "candidate_for_fixeo_price": true,
+      "human_decision": "PENDING",
+      "production_ready": false,
+
+      "external_market_evidence": {
+        "afous_urgency_hourly": {"from": 150, "to": 180, "unit": "DH/h", "note": "Urgency call-out hourly — includes travel component. P30-P70 from 480 relevés."},
+        "mano_diagnostic_panne": {"from": 200, "to": 500, "unit": "forfait", "note": "Research+diagnosis — includes likely initial repair for simple cases."},
+        "effective_range_derivation": "1h effective intervention (travel + inspection) at 150-180 DH/h = 150-180 DH labour. Add Casablanca urban travel: 50-100 DH. Market forfait: 200-500 DH. Lower end (200 DH) reflects simple cases. Upper end (500 DH) includes repair. Diagnostic-only anchor: 200-300 DH."
+      },
+
+      "scope_contract": {
+        "included": [
+          "Standard artisan travel within normal urban intervention zone",
+          "Initial on-site electrical inspection (visual + basic measurement)",
+          "Basic electrical measurements: voltage verification, continuity check at outlet/switch, circuit identification with appropriate tool",
+          "Identification attempt of fault cause where possible without invasive work",
+          "Verbal explanation of findings to client",
+          "Verbal repair quote if applicable",
+          "Safety observation: ground wire status noted and communicated"
+        ],
+        "excluded": [
+          "Any repair work — diagnostic only",
+          "Invasive wall opening or dismantling",
+          "Extensive circuit tracing beyond accessible components",
+          "Specialist test equipment: thermal camera, insulation resistance tester (megohmmeter), power quality analyser",
+          "Full tableau audit or compliance assessment",
+          "Written diagnostic report or electrical certification",
+          "Second visit",
+          "Any replacement part",
+          "Work on ONEE-controlled equipment"
+        ]
+      },
+
+      "diagnostic_policy": {
+        "mode": "IS_THE_SERVICE",
+        "absorption_rule": "ACTIVE",
+        "absorption_condition": "If client immediately accepts a qualifying standardized FIXEO electrical repair completable during the SAME visit, this diagnostic fee is ABSORBED into the intervention price. Client must NOT pay diagnostic fee + full FIXEO intervention price for a simple same-visit repair.",
+        "qualifying_absorption_services": [
+          "electricite.prise_remplacement",
+          "electricite.interrupteur_remplacement",
+          "electricite.luminaire_installation",
+          "electricite.disjoncteur_remplacement (if cause confirmed as single defective MCB)"
+        ],
+        "payable_when": "No repair performed; OR intervention scope requires new quote; OR fault is inconclusive; OR ONEE equipment involved; OR specialist equipment required; OR safety override triggered."
+      },
+
+      "safety_policy": {
+        "safety_classification": "STANDARD",
+        "note": "Diagnostic itself is low-risk but findings may reveal DANGEROUS installation conditions requiring SAFETY_OVERRIDE, referral, or immediate client notification. Discovery of any safety hazard (missing earth on earthed zone, burnt conductors, illegal wiring) must be communicated."
+      },
+
+      "onee_policy": {
+        "note": "If diagnostic reveals the fault is in ONEE-controlled equipment (disjoncteur de branchement, meter, supply cables), the 200 MAD diagnostic is still charged. FIXEO cannot resolve the fault. Client must open ONEE service request."
+      },
+
+      "pilot_price_candidates": {
+        "option_A_fixed": 200,
+        "option_B_fixed": 220,
+        "option_C_fixed": 250,
+        "recommended": 200,
+        "recommended_rationale": "200 MAD is the artisan economic floor for any viable Casablanca intervention (derived from afous.ma P30-P70 hourly × 1h + MID travel). It is the defensible minimum for diagnostic-only. Unlike plumbing (180 MAD diagnostic) electricity diagnostic takes slightly longer on average — basic multimeter readings, circuit identification, safety observations. 200 MAD is clean, round, below market midpoint (250 DH), and passes artisan economics at all commission rates.",
+        "difference_from_plumbing_diagnostic": "Plumbing diagnostic = 180 MAD (approved 7B.3.3). Electricity diagnostic = 200 MAD proposed. Justification: electrician requires more tools (multimeter, testeur, potentially clamp meter), electrical measurements take marginally longer than plumbing visual inspection, safety verification protocol adds time."
+      },
+
+      "commission_sensitivity": {
+        "pilot_price_MAD": 200,
+        "fuel_scenario_notes": "Diagnostic = IS_THE_SERVICE; travel is the core of the service. All fuel scenarios apply.",
+        "consumables_MAD": 0,
+        "scenarios": [
+          {
+            "commission_pct": 0,
+            "fuel": "LOW_25",
+            "fixeo_takes": 0,
+            "artisan_gross": 200,
+            "less_fuel": 175,
+            "artisan_net_pre_labour": 175,
+            "above_floor": true,
+            "rating": "STRONG"
+          },
+          {
+            "commission_pct": 0,
+            "fuel": "MID_40",
+            "fixeo_takes": 0,
+            "artisan_gross": 200,
+            "less_fuel": 160,
+            "artisan_net_pre_labour": 160,
+            "above_floor": true,
+            "rating": "STRONG"
+          },
+          {
+            "commission_pct": 0,
+            "fuel": "HIGH_60",
+            "fixeo_takes": 0,
+            "artisan_gross": 200,
+            "less_fuel": 140,
+            "artisan_net_pre_labour": 140,
+            "above_floor": true,
+            "rating": "ACCEPTABLE"
+          },
+          {
+            "commission_pct": 10,
+            "fuel": "LOW_25",
+            "fixeo_takes": 20,
+            "artisan_gross": 180,
+            "less_fuel": 155,
+            "artisan_net_pre_labour": 155,
+            "above_floor": true,
+            "rating": "STRONG"
+          },
+          {
+            "commission_pct": 10,
+            "fuel": "MID_40",
+            "fixeo_takes": 20,
+            "artisan_gross": 180,
+            "less_fuel": 140,
+            "artisan_net_pre_labour": 140,
+            "above_floor": true,
+            "rating": "ACCEPTABLE"
+          },
+          {
+            "commission_pct": 10,
+            "fuel": "HIGH_60",
+            "fixeo_takes": 20,
+            "artisan_gross": 180,
+            "less_fuel": 120,
+            "artisan_net_pre_labour": 120,
+            "above_floor": true,
+            "rating": "ACCEPTABLE"
+          },
+          {
+            "commission_pct": 15,
+            "fuel": "LOW_25",
+            "fixeo_takes": 30,
+            "artisan_gross": 170,
+            "less_fuel": 145,
+            "artisan_net_pre_labour": 145,
+            "above_floor": true,
+            "rating": "ACCEPTABLE"
+          },
+          {
+            "commission_pct": 15,
+            "fuel": "MID_40",
+            "fixeo_takes": 30,
+            "artisan_gross": 170,
+            "less_fuel": 130,
+            "artisan_net_pre_labour": 130,
+            "above_floor": true,
+            "rating": "ACCEPTABLE"
+          },
+          {
+            "commission_pct": 15,
+            "fuel": "HIGH_60",
+            "fixeo_takes": 30,
+            "artisan_gross": 170,
+            "less_fuel": 110,
+            "artisan_net_pre_labour": 110,
+            "above_floor": true,
+            "rating": "ACCEPTABLE"
+          },
+          {
+            "commission_pct": 20,
+            "fuel": "LOW_25",
+            "fixeo_takes": 40,
+            "artisan_gross": 160,
+            "less_fuel": 135,
+            "artisan_net_pre_labour": 135,
+            "above_floor": true,
+            "rating": "ACCEPTABLE"
+          },
+          {
+            "commission_pct": 20,
+            "fuel": "MID_40",
+            "fixeo_takes": 40,
+            "artisan_gross": 160,
+            "less_fuel": 120,
+            "artisan_net_pre_labour": 120,
+            "above_floor": true,
+            "rating": "ACCEPTABLE"
+          },
+          {
+            "commission_pct": 20,
+            "fuel": "HIGH_60",
+            "fixeo_takes": 40,
+            "artisan_gross": 160,
+            "less_fuel": 100,
+            "artisan_net_pre_labour": 100,
+            "above_floor": true,
+            "rating": "WEAK",
+            "note": "AT FLOOR exactly at 20% commission + HIGH fuel. Long urban travel at maximum commission rate marginal. Acceptable at MID scenario."
+          }
+        ],
+        "floor_breach": false,
+        "worst_case": "20% commission + HIGH fuel = 100 MAD net — at floor. Acceptable given diagnostic-only scope (artisan travels, inspects, leaves; no tools/materials consumed)."
+      },
+
+      "client_fairness": "ACCEPTABLE",
+      "artisan_fairness": "ACCEPTABLE",
+      "confidence": "LOW",
+      "complexity_escape_rules": [
+        "Address outside normal urban intervention zone → quote travel supplement",
+        "Fault requires specialist detection equipment (thermal camera, megohmmeter) → HORS PÉRIMÈTRE → specialist diagnostic",
+        "ONEE-controlled equipment found to be the fault source → HORS PÉRIMÈTRE → refer to ONEE",
+        "Fault is intermittent and cannot be reproduced during visit → diagnostic inconclusive — 200 MAD charged, no repair possible",
+        "Safety override triggered (dangerous installation discovered) → make safe → declare HORS PÉRIMÈTRE → separate safety remediation quote"
+      ]
+    },
+
+    {
+      "service_code": "electricite.prise_remplacement",
+      "label_fr": "Remplacement / réparation prise électrique standard — main-d'œuvre seule",
+      "description": "Replacement or repair of ONE standard accessible residential electrical outlet. Labour + travel. Outlet hardware client-supplied.",
+      "pricing_architecture": "FLAT_INTERVENTION",
+      "candidate_for_fixeo_price": true,
+      "human_decision": "PENDING",
+      "production_ready": false,
+
+      "external_market_evidence": {
+        "afous_per_unit": {"from": 70, "to": 80, "unit": "DH/unit labour only", "relevés": 480, "note": "Labour per unit only — no travel. Add 50-100 DH travel = 120-180 DH effective."},
+        "mano_forfait": {"from": 150, "to": 300, "unit": "forfait", "note": "Complete intervention including travel. Mid 225 DH."},
+        "reconciliation": "afous.ma labour 70-80 DH + travel 50-100 DH = 120-180 DH floor. Part (prise 20-60 DH) excluded → client-supplied model. mano.ma 150-300 DH forfait (likely includes basic part or part-free). Market consensus: 150-300 DH for single-prise intervention incl travel, labour only."
+      },
+
+      "scope_contract": {
+        "included": [
+          "Standard artisan travel within normal urban intervention zone",
+          "Labour: removal of existing outlet from wall box",
+          "Labour: preparation of conductors (stripping, connector fitting if needed)",
+          "Labour: installation of replacement outlet supplied by client",
+          "Domino / Wago connector if required — ≤20 MAD included",
+          "Basic functional test: voltage at outlet, polarity verification",
+          "Earth conductor presence noted and communicated to client"
+        ],
+        "excluded": [
+          "The outlet hardware itself — client-supplied by default",
+          "New wall box installation",
+          "Wall repair or plastering after outlet",
+          "Cable replacement or extension",
+          "New circuit from tableau",
+          "Multiple outlets on different circuits",
+          "Outdoor/weatherproof outlet (different complexity)",
+          "Specialized outlets: 32A industrial, CEE, USB-integrated (different scope)",
+          "Any prise spécialisée (four, climatisation, machine à laver) — different dedicated-circuit service",
+          "Work if live parts discovered burnt, melted, or carbonized",
+          "Ground wire repair if earth absent from circuit"
+        ]
+      },
+
+      "earth_ground_policy": {
+        "earth_present_connected": "Proceed normally. Verify continuity at outlet.",
+        "earth_present_disconnected_at_terminal": "Reconnect at terminal. Inform client. Proceed.",
+        "earth_absent_from_cable_run": "SAFETY_OVERRIDE. Cannot install earthed outlet where no earth circuit exists. Declare HORS PÉRIMÈTRE. Provide diagnostic/installation quote. Cannot represent as compliant.",
+        "earth_conductor_damaged": "SAFETY_OVERRIDE. Stop. Make safe. Quote cable replacement.",
+        "legacy_two_wire_no_earth": "SAFETY_OVERRIDE. Mandatory. Inform client. Provide remediation quote. Do not install earthed socket on two-wire circuit without earth."
+      },
+
+      "safety_policy": {
+        "safety_classification": "STANDARD",
+        "pre_work_requirement": "Isolate circuit at tableau before removing outlet. Verify dead with testeur before touching conductors. Do not work live on standard outlet replacement.",
+        "escape_if": [
+          "Conductors are burnt, melted, or discoloured from overheating",
+          "Wall box cracked or incompatible",
+          "Wiring found to be brittle, undersized, or aluminium in a modern context",
+          "Hidden fault discovered upstream causing abnormal conditions",
+          "Earth absent from circuit run (see earth_ground_policy)"
+        ]
+      },
+
+      "materials_policy": {
+        "labour": "included",
+        "travel": "included",
+        "basic_consumables": "Domino / Wago connector if needed — ≤20 MAD total included",
+        "outlet_hardware": "EXCLUDED — client-supplied by default",
+        "client_label": "Main-d'œuvre + déplacement — prise fournie par le client",
+        "client_guidance": "Achetez votre prise électrique avant l'intervention (droguerie, Bricoma, grossiste électricité). Modèles courants: 10/16A 2P+T. Si vous avez des doutes sur le type, l'artisan peut vous conseiller par téléphone.",
+        "if_artisan_supplies": "Part disclosed separately, price stated, client approves before installation. Must be certified brand (Schneider, Legrand, Ingelec, or equivalent)."
+      },
+
+      "diagnostic_policy": {
+        "mode": "INCLUDED_IN_INTERVENTION",
+        "note": "Symptom clear before arrival (prise ne fonctionne plus, prise brûlée). Standard intervention — visual identification on arrival. No separate diagnostic fee."
+      },
+
+      "pilot_price_candidates": {
+        "option_A_fixed": 200,
+        "option_B_fixed": 220,
+        "option_C_fixed": 250,
+        "recommended": 220,
+        "recommended_rationale": "Market range 150-300 DH (mano.ma forfait). afous.ma per-unit 70-80 DH + MID travel = 110-120 DH floor (absolute minimum). 220 MAD: (a) comfortably above artisan economic floor at all commission rates tested; (b) below market median (225 DH); (c) round, credible number; (d) absorbs the small domino/connector consumable; (e) leaves healthy margin at 15% commission + MID fuel (140 MAD net — ACCEPTABLE). Lower option 200 MAD also passes floor but leaves thin margin at 20%+HIGH fuel scenario. 220 MAD chosen for sustainability."
+      },
+
+      "commission_sensitivity": {
+        "pilot_price_MAD": 220,
+        "consumables_MAD": 15,
+        "scenarios": [
+          {"commission_pct": 0,  "fuel": "LOW_25",  "fixeo_takes": 0,  "artisan_gross": 220, "less_fuel": 195, "less_consumables": 180, "artisan_net_pre_labour": 180, "above_floor": true, "rating": "STRONG"},
+          {"commission_pct": 0,  "fuel": "MID_40",  "fixeo_takes": 0,  "artisan_gross": 220, "less_fuel": 180, "less_consumables": 165, "artisan_net_pre_labour": 165, "above_floor": true, "rating": "STRONG"},
+          {"commission_pct": 0,  "fuel": "HIGH_60", "fixeo_takes": 0,  "artisan_gross": 220, "less_fuel": 160, "less_consumables": 145, "artisan_net_pre_labour": 145, "above_floor": true, "rating": "ACCEPTABLE"},
+          {"commission_pct": 10, "fuel": "LOW_25",  "fixeo_takes": 22, "artisan_gross": 198, "less_fuel": 173, "less_consumables": 158, "artisan_net_pre_labour": 158, "above_floor": true, "rating": "STRONG"},
+          {"commission_pct": 10, "fuel": "MID_40",  "fixeo_takes": 22, "artisan_gross": 198, "less_fuel": 158, "less_consumables": 143, "artisan_net_pre_labour": 143, "above_floor": true, "rating": "ACCEPTABLE"},
+          {"commission_pct": 10, "fuel": "HIGH_60", "fixeo_takes": 22, "artisan_gross": 198, "less_fuel": 138, "less_consumables": 123, "artisan_net_pre_labour": 123, "above_floor": true, "rating": "ACCEPTABLE"},
+          {"commission_pct": 15, "fuel": "LOW_25",  "fixeo_takes": 33, "artisan_gross": 187, "less_fuel": 162, "less_consumables": 147, "artisan_net_pre_labour": 147, "above_floor": true, "rating": "ACCEPTABLE"},
+          {"commission_pct": 15, "fuel": "MID_40",  "fixeo_takes": 33, "artisan_gross": 187, "less_fuel": 147, "less_consumables": 132, "artisan_net_pre_labour": 132, "above_floor": true, "rating": "ACCEPTABLE"},
+          {"commission_pct": 15, "fuel": "HIGH_60", "fixeo_takes": 33, "artisan_gross": 187, "less_fuel": 127, "less_consumables": 112, "artisan_net_pre_labour": 112, "above_floor": true, "rating": "ACCEPTABLE"},
+          {"commission_pct": 20, "fuel": "LOW_25",  "fixeo_takes": 44, "artisan_gross": 176, "less_fuel": 151, "less_consumables": 136, "artisan_net_pre_labour": 136, "above_floor": true, "rating": "ACCEPTABLE"},
+          {"commission_pct": 20, "fuel": "MID_40",  "fixeo_takes": 44, "artisan_gross": 176, "less_fuel": 136, "less_consumables": 121, "artisan_net_pre_labour": 121, "above_floor": true, "rating": "ACCEPTABLE"},
+          {"commission_pct": 20, "fuel": "HIGH_60", "fixeo_takes": 44, "artisan_gross": 176, "less_fuel": 116, "less_consumables": 101, "artisan_net_pre_labour": 101, "above_floor": true, "rating": "ACCEPTABLE", "note": "101 MAD net at worst case — barely above floor. Acceptable: 20% commission + HIGH fuel is an extreme scenario."}
+        ],
+        "floor_breach": false,
+        "worst_case_net": 101,
+        "key_scenario": {"commission_pct": 15, "fuel": "MID_40", "net": 132, "rating": "ACCEPTABLE"}
+      },
+
+      "client_fairness": "ACCEPTABLE",
+      "artisan_fairness": "ACCEPTABLE",
+      "confidence": "MEDIUM",
+      "complexity_escape_rules": [
+        "Conductors burnt, melted, or discoloured on discovery → SAFETY_OVERRIDE → HORS PÉRIMÈTRE",
+        "Earth circuit absent from cable run → SAFETY_OVERRIDE → HORS PÉRIMÈTRE",
+        "Wall box cracked, incompatible, or absent → HORS PÉRIMÈTRE → quote new box installation",
+        "Wiring brittle, undersized, or aluminium → HORS PÉRIMÈTRE → cable quote",
+        "Multiple outlets requested on different circuits → quote batch or additional",
+        "Prise spécialisée (32A, CEE, four, clim) → HORS PÉRIMÈTRE → separate dedicated-circuit service",
+        "Abnormal voltage or upstream fault detected → HORS PÉRIMÈTRE → diagnostic service",
+        "Outdoor or weatherproof outlet → HORS PÉRIMÈTRE → quote",
+        "New cable run required → HORS PÉRIMÈTRE → circuit addition service"
+      ]
+    },
+
+    {
+      "service_code": "electricite.interrupteur_remplacement",
+      "label_fr": "Remplacement / réparation interrupteur standard — main-d'œuvre seule",
+      "description": "Replacement of ONE standard accessible residential wall switch (simple or two-way/va-et-vient). Labour + travel. Switch hardware client-supplied.",
+      "pricing_architecture": "FLAT_INTERVENTION",
+      "candidate_for_fixeo_price": true,
+      "human_decision": "PENDING",
+      "production_ready": false,
+
+      "external_market_evidence": {
+        "afous_per_unit": {"from": 70, "to": 80, "unit": "DH/unit labour only", "relevés": 480, "note": "Same tariff table as prise — per-unit labour only."},
+        "mano_pose_interrupteur": {"from": 80, "to": 150, "unit": "per unit", "note": "Per-unit only — no travel."},
+        "mano_va_et_vient": {"from": 150, "to": 250, "unit": "forfait", "note": "Va-et-vient slightly more complex — two switching points."},
+        "reconciliation": "Identical complexity profile to prise_remplacement. Labour per unit 70-80 DH (afous) + travel 50-100 DH = 120-180 DH effective. Va-et-vient adds time (2 switching points). Market: simple switch 150-250 DH forfait; va-et-vient 200-300 DH forfait."
+      },
+
+      "scope_contract": {
+        "standard_simple_interrupteur": {
+          "included": [
+            "Standard artisan travel within normal urban intervention zone",
+            "Isolation of circuit at tableau before work",
+            "Labour: removal of existing simple switch from wall box",
+            "Labour: conductor identification and reconnection",
+            "Labour: installation of replacement simple switch (client-supplied)",
+            "Minor connectors if needed — ≤10 MAD included",
+            "Functional test: switch operation verified"
+          ],
+          "excluded": [
+            "Switch hardware — client-supplied by default",
+            "Dimmer switch installation (different complexity)",
+            "Smart/connected switch installation (programming required)",
+            "Va-et-vient — separate scope (two switching points, longer)",
+            "Multiple switches on different circuits",
+            "Wall box replacement",
+            "Wall repair",
+            "New circuit",
+            "Burnt/damaged wiring",
+            "Any circuit modification"
+          ]
+        },
+        "va_et_vient_variant": {
+          "scope": "Two-way switching (va-et-vient) — two accessible switch positions for one light circuit",
+          "included": ["Same as simple interrupteur × 2 positions", "Minor connectors ≤15 MAD"],
+          "excluded": ["3-way or more complex multi-switch systems", "Dimmer", "Smart switches"],
+          "recommended_price_uplift": "+30 to +50 MAD vs simple interrupteur",
+          "note": "Va-et-vient requires replacing 2 switch units and verifying correct conductor assignment — 45-60 min vs 20-30 min for simple interrupteur."
+        }
+      },
+
+      "earth_ground_policy": {
+        "note": "Standard interrupteurs in Morocco are not earthed (phase + neutral only for switch leg). Earth policy less critical than for prises. However if wiring behind switch appears damaged, apply SAFETY_OVERRIDE.",
+        "burnt_conductors_in_back_box": "SAFETY_OVERRIDE — stop, make safe, declare HORS PÉRIMÈTRE."
+      },
+
+      "safety_policy": {
+        "safety_classification": "STANDARD",
+        "pre_work_requirement": "Isolate circuit at tableau. Verify dead with testeur before touching switch conductors."
+      },
+
+      "materials_policy": {
+        "labour": "included",
+        "travel": "included",
+        "basic_consumables": "Minor connectors ≤10–15 MAD included",
+        "switch_hardware": "EXCLUDED — client-supplied by default",
+        "client_label": "Main-d'œuvre + déplacement — interrupteur fourni par le client",
+        "client_guidance": "Achetez votre interrupteur (simple ou va-et-vient) avant l'intervention. Pour un va-et-vient, achetez 2 unités. Si vous n'êtes pas sûr du type, l'artisan peut vous conseiller.",
+        "if_artisan_supplies": "Part disclosed separately, price stated, client approves before installation."
+      },
+
+      "diagnostic_policy": {
+        "mode": "INCLUDED_IN_INTERVENTION",
+        "note": "Symptom clear before arrival. No separate diagnostic fee."
+      },
+
+      "pilot_price_candidates": {
+        "option_A_simple": 200,
+        "option_B_simple": 220,
+        "option_C_simple": 200,
+        "recommended_simple": 200,
+        "recommended_va_et_vient": 250,
+        "recommended_rationale": "Simple interrupteur is slightly easier/faster than prise (no earth connection to worry about, simpler wiring). 200 MAD: clean floor, passes all economic checks at all scenarios. Va-et-vient 250 MAD: two positions, ~2× labour time, materials ×2 — 25% uplift reasonable. Market va-et-vient 150-250 DH supports this. Alternative: price both at 220 MAD and handle va-et-vient as a complexity escape. Recommendation: simple = 200 MAD, va-et-vient = 250 MAD. Human decision required on whether to split or unify.",
+        "architecture_note": "Consider whether to offer: (A) single price covering both simple and va-et-vient at 220 MAD, or (B) split pricing simple 200 / va-et-vient 250. Split is more precise but adds complexity. Recommend (B) — the price difference is real and scope-justified."
+      },
+
+      "commission_sensitivity": {
+        "pilot_price_simple_MAD": 200,
+        "pilot_price_va_et_vient_MAD": 250,
+        "consumables_simple_MAD": 10,
+        "consumables_vav_MAD": 15,
+        "scenarios_simple": [
+          {"commission_pct": 0,  "fuel": "MID_40",  "fixeo_takes": 0,  "artisan_gross": 200, "less_fuel": 160, "less_consumables": 150, "artisan_net_pre_labour": 150, "above_floor": true, "rating": "STRONG"},
+          {"commission_pct": 10, "fuel": "MID_40",  "fixeo_takes": 20, "artisan_gross": 180, "less_fuel": 140, "less_consumables": 130, "artisan_net_pre_labour": 130, "above_floor": true, "rating": "ACCEPTABLE"},
+          {"commission_pct": 15, "fuel": "MID_40",  "fixeo_takes": 30, "artisan_gross": 170, "less_fuel": 130, "less_consumables": 120, "artisan_net_pre_labour": 120, "above_floor": true, "rating": "ACCEPTABLE"},
+          {"commission_pct": 20, "fuel": "MID_40",  "fixeo_takes": 40, "artisan_gross": 160, "less_fuel": 120, "less_consumables": 110, "artisan_net_pre_labour": 110, "above_floor": true, "rating": "ACCEPTABLE"},
+          {"commission_pct": 20, "fuel": "HIGH_60", "fixeo_takes": 40, "artisan_gross": 160, "less_fuel": 100, "less_consumables": 90,  "artisan_net_pre_labour": 90,  "above_floor": false, "rating": "UNACCEPTABLE", "note": "FLOOR BREACH at 20% commission + HIGH fuel. 90 MAD < 100 MAD floor. This is the only breach across all scenarios."}
+        ],
+        "scenarios_va_et_vient": [
+          {"commission_pct": 0,  "fuel": "MID_40",  "fixeo_takes": 0,  "artisan_gross": 250, "less_fuel": 210, "less_consumables": 195, "artisan_net_pre_labour": 195, "above_floor": true, "rating": "STRONG"},
+          {"commission_pct": 10, "fuel": "MID_40",  "fixeo_takes": 25, "artisan_gross": 225, "less_fuel": 185, "less_consumables": 170, "artisan_net_pre_labour": 170, "above_floor": true, "rating": "STRONG"},
+          {"commission_pct": 15, "fuel": "MID_40",  "fixeo_takes": 37.5, "artisan_gross": 212.5, "less_fuel": 172.5, "less_consumables": 157.5, "artisan_net_pre_labour": 157.5, "above_floor": true, "rating": "STRONG"},
+          {"commission_pct": 20, "fuel": "MID_40",  "fixeo_takes": 50, "artisan_gross": 200, "less_fuel": 160, "less_consumables": 145, "artisan_net_pre_labour": 145, "above_floor": true, "rating": "ACCEPTABLE"},
+          {"commission_pct": 20, "fuel": "HIGH_60", "fixeo_takes": 50, "artisan_gross": 200, "less_fuel": 140, "less_consumables": 125, "artisan_net_pre_labour": 125, "above_floor": true, "rating": "ACCEPTABLE"}
+        ],
+        "floor_breach_simple": true,
+        "floor_breach_simple_note": "Simple interrupteur 200 MAD breaches floor at 20% commission + HIGH_60 fuel (90 MAD net). This is a warning. If FIXEO commission ≤15%, all scenarios pass. If 20% commission adopted, simple interrupteur price should be raised to 220 MAD to eliminate the breach.",
+        "floor_breach_va_et_vient": false
+      },
+
+      "client_fairness": "STRONG",
+      "artisan_fairness": "ACCEPTABLE (conditional: no floor breach if commission ≤15% or price raised to 220 MAD)",
+      "confidence": "MEDIUM",
+      "complexity_escape_rules": [
+        "Burnt, discoloured, or damaged conductors behind back box → SAFETY_OVERRIDE → HORS PÉRIMÈTRE",
+        "Switch controls more than one circuit (non-standard wiring) → HORS PÉRIMÈTRE",
+        "Dimmer or smart-switch installation requested → HORS PÉRIMÈTRE → quote",
+        "3-way or more complex multi-switch system → HORS PÉRIMÈTRE → quote",
+        "Switch controls exterior lighting requiring weatherproof back-box → HORS PÉRIMÈTRE",
+        "Multiple switches on separate circuits in one visit → quote batch"
+      ],
+      "commission_warning": "At 200 MAD simple price: 20% commission + HIGH fuel breaches the 100 MAD artisan economic floor. Recommend either: (a) raise simple interrupteur to 220 MAD, or (b) ensure FIXEO commission ≤15% for this service. Human decision required."
+    },
+
+    {
+      "service_code": "electricite.luminaire_installation",
+      "label_fr": "Installation luminaire / plafonnier — main-d'œuvre seule",
+      "description": "Installation of ONE client-supplied simple luminaire (plafonnier, applique) on an existing electrical point with functional wiring. Labour + travel only.",
+      "pricing_architecture": "FLAT_INTERVENTION",
+      "candidate_for_fixeo_price": true,
+      "human_decision": "PENDING",
+      "production_ready": false,
+
+      "external_market_evidence": {
+        "mano_plafonnier_simple": {"from": 150, "to": 300, "unit": "forfait", "note": "Simple ceiling fixture — mid 225 DH."},
+        "mano_lustre_decoratif": {"from": 300, "to": 600, "unit": "forfait", "note": "Decorative chandelier — clearly a different scope. EXCLUDED from standard."},
+        "reconciliation": "Standard plafonnier or applique installation on existing point: 150-300 DH. This is consistent with: 1h labour at 165 DH/h + MID travel 40 DH = 205 DH. Market anchor for standard scope: 200-250 DH."
+      },
+
+      "scope_contract": {
+        "standard_scope_included": [
+          "Standard artisan travel within normal urban intervention zone",
+          "Verification that existing wiring point has power (voltage check)",
+          "Labour: disconnect and remove existing fixture if present",
+          "Labour: prepare conductors (strip if needed, connect to fixture terminal block or domino)",
+          "Labour: mount client-supplied fixture on existing ceiling rose or wall back-box",
+          "Wire connectors/domino if needed — ≤15 MAD included",
+          "Functional test: fixture powers on, switch operation verified",
+          "Earth connection verified if fixture has earth terminal"
+        ],
+        "standard_scope_excluded": [
+          "The luminaire/fixture itself — client-supplied",
+          "New wiring circuit from tableau",
+          "New ceiling rose or wall back-box installation",
+          "Concrete drilling or heavy ceiling work",
+          "Heavy fixture (>10 kg) requiring structural hook or ceiling reinforcement",
+          "Chandelier/lustre with complex wiring, canopy drops, multiple arms",
+          "High ceiling work requiring ladder above 2.5m (standard artisan ladder limit)",
+          "Multiple fixtures on same visit (unless individually quoted within batch)",
+          "LED driver troubleshooting for defective LED panel",
+          "Smart lighting with hub programming",
+          "Outdoor/waterproof fixture installation",
+          "Recessed spotlight installation (different scope — holes, housing, connection per spot)",
+          "Existing wiring found defective or absent"
+        ]
+      },
+
+      "scope_variants": {
+        "standard_ceiling_plafonnier": {
+          "description": "Circular ceiling fixture, standard mounting, existing rose, accessible ceiling, normal height",
+          "recommended_price": 220,
+          "typical_duration_min": 30
+        },
+        "applique_murale": {
+          "description": "Wall-mounted fixture on existing back-box",
+          "recommended_price": 220,
+          "typical_duration_min": 25
+        },
+        "lustre_lourd_or_complexe": {
+          "status": "HORS_PERIMETRE_STANDARD",
+          "note": "Any chandelier or heavy fixture requiring structural mount, >10 kg, complex wiring — declare HORS PÉRIMÈTRE and quote separately."
+        }
+      },
+
+      "earth_ground_policy": {
+        "fixture_has_earth_terminal": "Connect earth from wiring to fixture earth terminal. Verify continuity.",
+        "earth_absent_in_circuit": "Inform client that fixture cannot be earthed at this point. If fixture is Class I (requires earth), client must decide whether to proceed with non-earthed installation or address circuit earth first. Cannot represent as compliant if earthing is absent.",
+        "class_ii_fixture": "Double-insulated (Class II) fixtures do not require earth connection — proceed normally."
+      },
+
+      "safety_policy": {
+        "safety_classification": "STANDARD",
+        "pre_work_requirement": "Turn off circuit at tableau. Verify dead at wiring point before touching conductors.",
+        "escape_if": [
+          "Existing wiring found absent or severed (no live point exists)",
+          "Conductors burnt or overheated",
+          "Ceiling junction box absent or incompatible",
+          "Fixture weight exceeds structural capacity of existing rose",
+          "High-ceiling work beyond standard ladder reach"
+        ]
+      },
+
+      "materials_policy": {
+        "labour": "included",
+        "travel": "included",
+        "basic_consumables": "Wire connectors / domino ≤15 MAD included",
+        "fixture": "EXCLUDED — client-supplied",
+        "client_label": "Main-d'œuvre + déplacement — luminaire fourni par le client",
+        "client_guidance": "Achetez votre plafonnier ou applique avant l'intervention. Vérifiez que le montage est compatible avec votre plafond. Pour un luminaire lourd, contactez-nous d'abord pour confirmer la faisabilité.",
+        "if_artisan_supplies": "Fixture cost disclosed and approved before installation."
+      },
+
+      "diagnostic_policy": {
+        "mode": "INCLUDED_IN_INTERVENTION",
+        "note": "Existing wiring point assumed functional — symptom declared by client. Brief voltage check on arrival confirms working point. No separate diagnostic."
+      },
+
+      "pilot_price_candidates": {
+        "option_A_fixed": 200,
+        "option_B_fixed": 220,
+        "option_C_fixed": 250,
+        "recommended": 220,
+        "recommended_rationale": "Market anchor 200-250 DH for standard plafonnier. 220 MAD: (a) consistent with prise_remplacement at same price for same complexity level (30 min each); (b) passes artisan economics at all normal commission scenarios; (c) credible client-facing price for simple fixture installation; (d) avoids race-to-bottom at 200 MAD which leaves very thin margin at high commission."
+      },
+
+      "commission_sensitivity": {
+        "pilot_price_MAD": 220,
+        "consumables_MAD": 15,
+        "scenarios": [
+          {"commission_pct": 0,  "fuel": "MID_40",  "fixeo_takes": 0,  "artisan_gross": 220, "less_fuel": 180, "less_consumables": 165, "artisan_net_pre_labour": 165, "above_floor": true, "rating": "STRONG"},
+          {"commission_pct": 10, "fuel": "MID_40",  "fixeo_takes": 22, "artisan_gross": 198, "less_fuel": 158, "less_consumables": 143, "artisan_net_pre_labour": 143, "above_floor": true, "rating": "ACCEPTABLE"},
+          {"commission_pct": 15, "fuel": "MID_40",  "fixeo_takes": 33, "artisan_gross": 187, "less_fuel": 147, "less_consumables": 132, "artisan_net_pre_labour": 132, "above_floor": true, "rating": "ACCEPTABLE"},
+          {"commission_pct": 20, "fuel": "MID_40",  "fixeo_takes": 44, "artisan_gross": 176, "less_fuel": 136, "less_consumables": 121, "artisan_net_pre_labour": 121, "above_floor": true, "rating": "ACCEPTABLE"},
+          {"commission_pct": 20, "fuel": "HIGH_60", "fixeo_takes": 44, "artisan_gross": 176, "less_fuel": 116, "less_consumables": 101, "artisan_net_pre_labour": 101, "above_floor": true, "rating": "ACCEPTABLE", "note": "101 MAD net at worst case — barely above floor. Acceptable."}
+        ],
+        "floor_breach": false,
+        "key_scenario": {"commission_pct": 15, "fuel": "MID_40", "net": 132, "rating": "ACCEPTABLE"}
+      },
+
+      "client_fairness": "STRONG",
+      "artisan_fairness": "ACCEPTABLE",
+      "confidence": "MEDIUM",
+      "complexity_escape_rules": [
+        "Existing wiring absent or severed at ceiling point → HORS PÉRIMÈTRE → new circuit required → quote",
+        "Conductors burnt or damaged → SAFETY_OVERRIDE → HORS PÉRIMÈTRE",
+        "Fixture weight >10 kg requiring structural mount → HORS PÉRIMÈTRE → quote with structural assessment",
+        "High ceiling >2.5m requiring special equipment → HORS PÉRIMÈTRE → quote",
+        "Chandelier with complex wiring/multiple drops → HORS PÉRIMÈTRE → quote",
+        "Recessed spot installation (requires drilling, housing) → HORS PÉRIMÈTRE → per-spot pricing model",
+        "LED panel with defective driver → HORS PÉRIMÈTRE → troubleshooting/replacement quote",
+        "Smart/connected fixture requiring hub programming → HORS PÉRIMÈTRE → quote"
+      ]
+    },
+
+    {
+      "service_code": "electricite.disjoncteur_remplacement",
+      "label_fr": "Remplacement disjoncteur simple (MCB) — main-d'œuvre seule",
+      "description": "Replacement of ONE defective standard modular circuit breaker (MCB) in an accessible private residential distribution board. Cause must be confirmed as defective breaker before proceeding. Part client-supplied. Labour + travel.",
+      "pricing_architecture": "FLAT_INTERVENTION",
+      "candidate_for_fixeo_price": true,
+      "human_decision": "PENDING",
+      "production_ready": false,
+      "safety_sensitivity": "HIGHEST_OF_THE_FIVE",
+
+      "external_market_evidence": {
+        "afous_remplacement_disjoncteur": {"from": 170, "to": 200, "unit": "DH forfait", "relevés": 480, "note": "National P30-P70 including likely basic part. Casablanca ×1.00 reference."},
+        "mano_remplacement_disjoncteur": {"from": 400, "to": 800, "unit": "forfait", "note": "Likely includes brand-name part (Schneider, Legrand). Urban Casablanca."},
+        "reconciliation": "Large gap explained by: (a) afous.ma is national average (Fès ×0.85 pull-down effect) vs mano.ma Casablanca; (b) afous.ma may be labour+basic part while mano.ma includes premium brand part; (c) mano.ma editorial may overstate. For FIXEO standard scope (labour + travel, client-supplied basic MCB): evidence points to 200-350 MAD range in Casablanca.",
+        "part_cost_note": "MCB retail: generic 40-80 DH; Schneider iC60/Legrand DX3: 80-200 DH. Part is EXCLUDED from FIXEO labour price. Client supplies or artisan declares separately."
+      },
+
+      "scope_contract": {
+        "included": [
+          "Standard artisan travel within normal urban intervention zone",
+          "Visual inspection of distribution board on arrival",
+          "Confirmation that the replacement is warranted (defective MCB verified)",
+          "Labour: isolation procedure (turn off relevant circuits, verify dead)",
+          "Labour: removal of defective MCB from DIN rail",
+          "Labour: installation of client-supplied replacement MCB of correct specification",
+          "Labour: reconnection of load conductors",
+          "Minor consumables: none (no consumables required for MCB swap)",
+          "Functional test: reset and verify circuit restored, MCB holds",
+          "Post-installation check: confirm no other obvious tableau anomalies visible"
+        ],
+        "excluded": [
+          "The MCB itself — client-supplied by default",
+          "Multiple MCBs (more than one replacement)",
+          "Interrupteur différentiel (DDR/RCD) — different part, higher cost, different procedure",
+          "ONEE disjoncteur de branchement — utility property, NEVER included",
+          "Any ONEE-controlled or utility-sealed component",
+          "Tableau replacement or repair",
+          "Busbar work",
+          "Cable/wiring work behind tableau",
+          "Investigation of why the MCB trips — this is a separate diagnostic service",
+          "Any work on burnt, overheated, or damaged busbars",
+          "Three-phase circuits",
+          "Industrial or commercial tableau",
+          "Grounding system verification or repair"
+        ]
+      },
+
+      "onee_boundary_enforcement": {
+        "disjoncteur_de_branchement": "ABSOLUTELY EXCLUDED. Never touch, open, or modify the utility service entrance breaker under any FIXEO scope. This requires ONEE authorization. If the client believes this is the faulty component, redirect immediately to ONEE (0801 00 20 20).",
+        "identification_tip": "The disjoncteur de branchement (limiteur de puissance) is typically: (a) a separate larger unit, often in its own sealed enclosure below or adjacent to the meter; (b) branded ONEE/LYDEC/RADEEF; (c) sealed with a utility seal that must NOT be broken. Standard residential MCBs in the distribution board are the artisan's scope — these are typically DIN-rail mounted, 1P/2P, within the client-owned tableau."
+      },
+
+      "critical_safety_gate": {
+        "rule": "FIXEO standardized disjoncteur_remplacement is ONLY appropriate when the cause of the problem is CONFIRMED to be a defective MCB — not a tripping breaker due to an unresolved downstream overload or fault.",
+        "diagnostic_first_required_when": [
+          "Breaker trips immediately on reset",
+          "Breaker trips repeatedly without explanation",
+          "Burning smell, scorch marks, or melting visible in tableau",
+          "Multiple breakers tripping simultaneously",
+          "Breaker trips only under certain load conditions (suggests overloaded circuit)",
+          "Client does not know which circuit the breaker controls",
+          "Age/condition of installation is poor or unknown"
+        ],
+        "proceed_with_replacement_only_when": [
+          "MCB is physically damaged (broken toggle, cracked housing, burnt internal)",
+          "MCB does not reset after confirmed load disconnection",
+          "MCB no longer mechanically latches",
+          "Artisan has verified no downstream fault on the circuit",
+          "Replacement MCB specification (current rating, breaking capacity, trip curve) is technically appropriate for the circuit"
+        ]
+      },
+
+      "earth_ground_policy": {
+        "note": "MCB replacement does not directly involve earth conductors. However if earth bonding at the distribution board is found to be defective or absent, this must be noted and communicated to the client. Do not represent the installation as safe if earthing is compromised."
+      },
+
+      "safety_policy": {
+        "safety_classification": "SAFETY_SENSITIVE",
+        "mandatory_pre_checks": [
+          "Turn off all downstream circuit breakers before working on the panel",
+          "Verify the main incoming supply cannot be inadvertently energized during work",
+          "Do not work on live busbars",
+          "Verify replacement MCB specification matches original (voltage rating, current rating, breaking capacity) — never substitute a lower-rated breaker",
+          "After installation: test before closing tableau, verify no other anomalies"
+        ],
+        "escape_if": [
+          "Tableau shows signs of overheating (discolouration, burnt smell, plastic deformation)",
+          "Busbar is damaged, corroded, or improperly seated",
+          "Wiring behind MCB is burnt or oversized/undersized",
+          "Multiple MCBs appear defective",
+          "The problematic circuit is unidentified",
+          "The replacement MCB specification cannot be verified",
+          "The disjoncteur de branchement appears to be the issue (→ ONEE)",
+          "Any three-phase component is involved"
+        ]
+      },
+
+      "materials_policy": {
+        "labour": "included",
+        "travel": "included",
+        "basic_consumables": "None (MCB swap requires no consumables)",
+        "mcb_part": "EXCLUDED — client-supplied by default",
+        "client_label": "Main-d'œuvre + déplacement — disjoncteur fourni par le client",
+        "client_guidance": "Avant l'intervention, identifiez le calibre du disjoncteur à remplacer (ex: 16A, 20A, 32A) et la marque si possible. Achetez un disjoncteur de remplacement de même calibre chez un grossiste en matériel électrique. Si vous n'êtes pas sûr, l'artisan peut vérifier par téléphone avant l'achat.",
+        "safety_part_note": "If artisan supplies MCB: must be a certified brand (Schneider, Legrand, ABB, Hager, or equivalent certified). Never supply or install an uncertified generic breaker. Part disclosed, priced, and approved before installation.",
+        "if_artisan_supplies": "Part disclosed separately, client approves, must be certified brand."
+      },
+
+      "diagnostic_policy": {
+        "mode": "CONDITIONAL",
+        "when_included": "When artisan arrives and confirms on visual inspection that MCB is physically defective (broken, non-latching, burnt) — no separate diagnostic charge.",
+        "when_diagnostic_first": "When cause is not immediately confirmable on arrival (repeated tripping, unknown downstream fault) → switch to diagnostic service (200 MAD) → investigate → quote repair if needed.",
+        "absorption_of_diagnostic": "If diagnostic visit reveals single defective MCB and client accepts immediate replacement: diagnostic fee absorbed into disjoncteur_remplacement price."
+      },
+
+      "pilot_price_candidates": {
+        "option_A_fixed": 200,
+        "option_B_fixed": 250,
+        "option_C_fixed": 300,
+        "recommended": 250,
+        "recommended_rationale": "This service carries the highest safety complexity of the five candidates. afous.ma 170-200 DH forfait is national average likely including basic part. For labour-only + travel, 200 DH is a viable floor. However: (a) electrician must spend time on safety checks pre and post (circuit isolation, specification verification, functional testing) that add ~15-20 min to the physical swap; (b) any error in this intervention can cause fire or electrocution; (c) 200 DH at 15% commission + MID fuel = 120 DH net — acceptable but thin for what is a safety-critical task. 250 MAD: clearly above market lower-end, passes all economic checks, provides sustainable compensation for safety-critical work without being client-facing expensive. Strongly preferred over 200 MAD for safety-economic reasons."
+      },
+
+      "commission_sensitivity": {
+        "pilot_price_MAD": 250,
+        "consumables_MAD": 0,
+        "scenarios": [
+          {"commission_pct": 0,  "fuel": "LOW_25",  "fixeo_takes": 0,  "artisan_gross": 250, "less_fuel": 225, "artisan_net_pre_labour": 225, "above_floor": true, "rating": "STRONG"},
+          {"commission_pct": 0,  "fuel": "MID_40",  "fixeo_takes": 0,  "artisan_gross": 250, "less_fuel": 210, "artisan_net_pre_labour": 210, "above_floor": true, "rating": "STRONG"},
+          {"commission_pct": 0,  "fuel": "HIGH_60", "fixeo_takes": 0,  "artisan_gross": 250, "less_fuel": 190, "artisan_net_pre_labour": 190, "above_floor": true, "rating": "STRONG"},
+          {"commission_pct": 10, "fuel": "LOW_25",  "fixeo_takes": 25, "artisan_gross": 225, "less_fuel": 200, "artisan_net_pre_labour": 200, "above_floor": true, "rating": "STRONG"},
+          {"commission_pct": 10, "fuel": "MID_40",  "fixeo_takes": 25, "artisan_gross": 225, "less_fuel": 185, "artisan_net_pre_labour": 185, "above_floor": true, "rating": "STRONG"},
+          {"commission_pct": 10, "fuel": "HIGH_60", "fixeo_takes": 25, "artisan_gross": 225, "less_fuel": 165, "artisan_net_pre_labour": 165, "above_floor": true, "rating": "STRONG"},
+          {"commission_pct": 15, "fuel": "LOW_25",  "fixeo_takes": 37.5, "artisan_gross": 212.5, "less_fuel": 187.5, "artisan_net_pre_labour": 187.5, "above_floor": true, "rating": "STRONG"},
+          {"commission_pct": 15, "fuel": "MID_40",  "fixeo_takes": 37.5, "artisan_gross": 212.5, "less_fuel": 172.5, "artisan_net_pre_labour": 172.5, "above_floor": true, "rating": "STRONG"},
+          {"commission_pct": 15, "fuel": "HIGH_60", "fixeo_takes": 37.5, "artisan_gross": 212.5, "less_fuel": 152.5, "artisan_net_pre_labour": 152.5, "above_floor": true, "rating": "STRONG"},
+          {"commission_pct": 20, "fuel": "LOW_25",  "fixeo_takes": 50, "artisan_gross": 200, "less_fuel": 175, "artisan_net_pre_labour": 175, "above_floor": true, "rating": "STRONG"},
+          {"commission_pct": 20, "fuel": "MID_40",  "fixeo_takes": 50, "artisan_gross": 200, "less_fuel": 160, "artisan_net_pre_labour": 160, "above_floor": true, "rating": "STRONG"},
+          {"commission_pct": 20, "fuel": "HIGH_60", "fixeo_takes": 50, "artisan_gross": 200, "less_fuel": 140, "artisan_net_pre_labour": 140, "above_floor": true, "rating": "ACCEPTABLE"}
+        ],
+        "floor_breach": false,
+        "best_economics": "Strongest of the five services — no consumables, no part cost, clean economics at all scenarios.",
+        "key_scenario": {"commission_pct": 15, "fuel": "MID_40", "net": 172.5, "rating": "STRONG"}
+      },
+
+      "client_fairness": "ACCEPTABLE",
+      "artisan_fairness": "STRONG",
+      "confidence": "MEDIUM",
+      "complexity_escape_rules": [
+        "Breaker trips immediately on reset → DIAGNOSTIC_FIRST → investigate downstream fault",
+        "Burning smell or scorch marks in tableau → SAFETY_OVERRIDE → HORS PÉRIMÈTRE",
+        "Busbar damaged or overheated → SAFETY_OVERRIDE → HORS PÉRIMÈTRE → quote tableau assessment",
+        "Multiple MCBs require replacement → HORS PÉRIMÈTRE → quote full tableau assessment",
+        "Interrupteur différentiel (DDR/RCD) is the component needing replacement → HORS PÉRIMÈTRE → quote DDR installation",
+        "Three-phase circuit → HORS PÉRIMÈTRE → specialist quote",
+        "ONEE disjoncteur de branchement identified as the issue → REDIRECT TO ONEE",
+        "Specification of replacement MCB cannot be verified → pause → consult before proceeding",
+        "Wiring behind MCB is burnt, oversized, or undersized → SAFETY_OVERRIDE → HORS PÉRIMÈTRE"
+      ]
+    }
+
+  ]
+}
