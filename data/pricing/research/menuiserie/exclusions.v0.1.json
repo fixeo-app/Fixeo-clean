@@ -1,0 +1,98 @@
+{
+  "schema_version": "v0.1",
+  "metier": "menuiserie",
+  "phase": "7B.10",
+  "generated_at": "2026-08-09",
+  "exclusions": [
+    {
+      "service": "Fabrication meuble sur mesure (table, lit, bureau, mobilier personnalisé)",
+      "reason": "QUOTE_REQUIRED",
+      "notes": "Custom furniture fabrication has extreme price variability by material, design complexity, dimensions, and finish. Bois massif vs MDF vs mélaminé creates 3-5x price difference. No standardization possible without full brief. Market evidence (allo-maison.ma): lit sur mesure 3,000-12,000 MAD.",
+      "routed_to": null
+    },
+    {
+      "service": "Cuisine sur mesure — all-in (matériaux + fabrication + installation + plan de travail + électroménager)",
+      "reason": "QUOTE_REQUIRED",
+      "notes": "Confirmed by CuisinAffaires: 'annoncer un prix au mètre serait malhonnête'. Scope variability (7 cabinets vs 20, worktop material, appliances, island) makes any fixed price misleading. Range documented in MENU_010 for reference only.",
+      "routed_to": null
+    },
+    {
+      "service": "Dressing avec miroirs, éclairage LED, tiroirs spéciaux",
+      "reason": "QUOTE_REQUIRED",
+      "notes": "Accessory additions (mirrors, LED lighting, pull-out shoe racks, tie drawers) create 20-40% budget variation on top of base dressing price. Must quote.",
+      "routed_to": null
+    },
+    {
+      "service": "Pose porte intérieure avec dormant neuf (frame replacement)",
+      "reason": "QUOTE_REQUIRED",
+      "notes": "Frame replacement requires wall work assessment. May require MACONNERIE pre-work. Cannot be standardized without site visit.",
+      "routed_to": null
+    },
+    {
+      "service": "Fabrication armoire/placard bois massif",
+      "reason": "QUOTE_REQUIRED",
+      "notes": "Bois massif custom fabrication: 5,000-9,000+ MAD/ml (allo-maison). Scope, species, finish create extreme variability. Always quote.",
+      "routed_to": null
+    },
+    {
+      "service": "Escalier bois sur mesure",
+      "reason": "ROUTE_TO_SPECIALIST",
+      "notes": "Allo-maison explicitly states: 'spécialité distincte de l'ameublement — un menuisier qui n'en a jamais fait ne doit pas s'en charger.' Range 12,000-40,000 MAD. Distinct specialist skill.",
+      "routed_to": "SPECIALIST_STAIRCASE"
+    },
+    {
+      "service": "Menuiserie aluminium fabrication (fenêtres, baies, portes extérieures)",
+      "reason": "DEFERRED",
+      "notes": "Aluminium is confirmed as distinct specialist trade. BTP labour table (SRC_MENU_001) lists it separately. Tool set, skills, and suppliers are entirely different from wood menuiserie. Recommend creating separate ALUMINIUM specialist métier. Excluded from MENUISERIE scope for estimator V1.",
+      "routed_to": "FUTURE_ALUMINIUM_METIER"
+    },
+    {
+      "service": "Parquet / revêtement de sol bois",
+      "reason": "DEFERRED",
+      "notes": "Flooring/parquet is a distinct service category. BTP table (SRC_MENU_001) lists it separately: pose parquet stratifié 80-140 MAD/m², pose parquet massif 150-250 MAD/m². Should be treated as separate métier (CARRELAGE_PARQUET or SOLS). Not within menuiserie bois scope.",
+      "routed_to": "FUTURE_CARRELAGE_PARQUET_METIER"
+    },
+    {
+      "service": "Porte de sécurité / blindée",
+      "reason": "ROUTE_TO_SPECIALIST",
+      "notes": "Security doors involve lock/cylinder work (SERRURERIE) and structural installation. Not within standard menuiserie scope.",
+      "routed_to": "SERRURERIE"
+    },
+    {
+      "service": "Moucharabieh / plafond sculpté / cèdre artisanal",
+      "reason": "ROUTE_TO_SPECIALIST",
+      "notes": "Traditional carved cedar work (Fès/Marrakech maâlems) is a distinct artisan category. Price range: 12,000-80,000 MAD depending on complexity. Separate specialist network, cannot standardize.",
+      "routed_to": "SPECIALIST_ARTISAN"
+    },
+    {
+      "service": "Réparation meuble en bois gravement endommagé (structurellement cassé, pourriture)",
+      "reason": "QUOTE_REQUIRED",
+      "notes": "Structural wood damage requires assessment before any price can be given. Scope includes potential reconstruction, which cannot be standardized.",
+      "routed_to": null
+    },
+    {
+      "service": "Panneautage mural / bardage bois intérieur",
+      "reason": "INSUFFICIENT_EVIDENCE",
+      "notes": "Wall wood cladding exists as a service but no Moroccan pricing evidence found. Cannot anchor. Likely QUOTE_REQUIRED anyway due to m² variability.",
+      "routed_to": null
+    },
+    {
+      "service": "Vernissage / finition bois",
+      "reason": "METIER_BOUNDARY",
+      "notes": "Finishing/varnishing after wood repair overlaps with PEINTURE. If separate from carpentry work, routes to PEINTURE. If in-situ as part of door adjustment, too minor to price separately.",
+      "routed_to": "PEINTURE"
+    },
+    {
+      "service": "Réparation vitre / miroir dans meuble",
+      "reason": "METIER_BOUNDARY",
+      "notes": "Glass panel or mirror replacement in furniture routes to VITRERIE.",
+      "routed_to": "VITRERIE"
+    },
+    {
+      "service": "Pose et raccordement électrique système motorisé placard",
+      "reason": "METIER_BOUNDARY",
+      "notes": "Motorized door/cabinet electrical systems route to ELECTRICITE.",
+      "routed_to": "ELECTRICITE"
+    }
+  ]
+}

@@ -1,0 +1,170 @@
+{
+  "schema_version": "v0.1",
+  "metier": "menuiserie",
+  "phase": "7B.10",
+  "generated_at": "2026-08-09",
+  "sources": [
+    {
+      "source_id": "SRC_MENU_001",
+      "grade": "B",
+      "name": "lechantier.ma — Prix main-d'œuvre BTP Maroc 2026",
+      "url": "https://lechantier.ma/blog/prix-main-oeuvre-btp-maroc-2026",
+      "access_date": "2026-08-09",
+      "description": "Structured BTP labour rate database updated April 2026. Covers daily rates by trade and qualification, m² rates, and flat-fee forfaits. Includes Menuisier rates and geographic variation table.",
+      "reliability_notes": "Strong construction database with monthly updates. Named reviewer (Karim Tazi). Reviewed methodology. Grade B — not institutional but consistently structured and internally coherent."
+    },
+    {
+      "source_id": "SRC_MENU_002",
+      "grade": "B",
+      "name": "lechantier.ma — Prix porte isoplane Maroc 2026",
+      "url": "https://lechantier.ma/en/prix/porte-isoplane",
+      "access_date": "2026-08-09",
+      "description": "Material price database for flush doors (isoplane) in Morocco. Covers product variants, price by unit, supplier sourcing notes. Updated June 2026.",
+      "reliability_notes": "Product/material pricing only — no installation labour pricing. Useful for material cost context."
+    },
+    {
+      "source_id": "SRC_MENU_003",
+      "grade": "B",
+      "name": "lechantier.ma — Prix porte bois massif Maroc 2026",
+      "url": "https://lechantier.ma/en/prix/porte-bois",
+      "access_date": "2026-08-09",
+      "description": "Material price database for solid wood doors in Morocco. Covers species, product variants, price ranges. Updated June 2026.",
+      "reliability_notes": "Material pricing only. No labour. Supports material-type differentiation."
+    },
+    {
+      "source_id": "SRC_MENU_004",
+      "grade": "C+",
+      "name": "allo-maison.ma — Menuisier Maroc 2026 (prix par ville)",
+      "url": "https://allo-maison.ma/menuisier",
+      "access_date": "2026-08-09",
+      "description": "Moroccan home services platform with structured menuiserie pricing by city. Covers placard, dressing, cuisine, porte intérieure pricing per linear metre and per unit. July 2026 update. Includes city-by-city variation, material comparison, and linear-metre scope explanation.",
+      "reliability_notes": "Operational platform with vetted artisan network. Pricing stated as constatées sur le réseau — based on observed quotes. Good scope transparency. Grade C+ — commercial platform but with methodology stated and multi-city coverage."
+    },
+    {
+      "source_id": "SRC_MENU_005",
+      "grade": "C+",
+      "name": "fixeo.ma — Prix menuisier Maroc 2025",
+      "url": "https://www.fixeo.ma/blog/prix-menuisier-maroc",
+      "access_date": "2026-08-09",
+      "description": "FIXEO platform blog post (own platform — C+ for structured published pricing, classified separately from legacy internal pricing). Covers porte intérieure, fenêtres aluminium, cuisine sur mesure, placards. Published June 2026.",
+      "reliability_notes": "IMPORTANT: This is FIXEO's own public blog post. Treated as C+ external published source, NOT as T0 internal legacy. T0 legacy values are sourced from production JS files separately. The blog post cites 2025 market rates and is referenced alongside external sources. Use with awareness of potential self-interest in published ranges."
+    },
+    {
+      "source_id": "SRC_MENU_006",
+      "grade": "C",
+      "name": "homedeco.ma — Cuisine MDF sur mesure prix mètre linéaire",
+      "url": "https://homedeco.ma/products/cuisine-mdf-sur-mesure-2024",
+      "access_date": "2026-08-09",
+      "description": "Moroccan e-commerce furniture platform. Lists cuisine MDF price at 1,799 DH/ml (pose incluse). Also lists material variants: MDF 2,000 DH/ml, Latter 2,500 DH/ml. Marble worktop +1,000 DH/ml.",
+      "reliability_notes": "Direct retail platform with explicit pricing. Scope includes material + fabrication + installation. Grade C — retailer/manufacturer with stated prices but limited independent verification."
+    },
+    {
+      "source_id": "SRC_MENU_007",
+      "grade": "C",
+      "name": "homedeco.ma — Dressing sur mesure prix m²",
+      "url": "https://homedeco.ma/products/vital-dressing-sur-mesure-prix-a-partir-de",
+      "access_date": "2026-08-09",
+      "description": "Moroccan e-commerce platform. Dressing priced at 1,699 MAD/m² (material + fabrication + installation). Scope: MDF bois, penderie basse/haute, tiroirs coulissants, fermeture douce. Calculated as height × width × 1,699 MAD.",
+      "reliability_notes": "Per-m² pricing (not per linear metre). Scope explicit and includes installation. Note: this is a specific retailer product, not a market average."
+    },
+    {
+      "source_id": "SRC_MENU_008",
+      "grade": "C",
+      "name": "artmood.ma — Prix cuisine sur mesure Maroc 2026",
+      "url": "https://artmood.ma/blog/prix-cuisine-sur-mesure-maroc-2026-budget-guide",
+      "access_date": "2026-08-09",
+      "description": "Moroccan kitchen manufacturer blog. Price table by gamme: Essentielle 4,000-6,000 DH/ml (MDF mélaminé), Confort 6,000-10,000 DH/ml (MDF laqué), Premium 10,000-18,000 DH/ml, Luxe 18,000+ DH/ml. Worktop separate.",
+      "reliability_notes": "Manufacturer-published pricing with some methodology. Scope stated: meubles hauts et bas, hors électroménager, hors plan de travail. Grade C — commercial source with transparent scope."
+    },
+    {
+      "source_id": "SRC_MENU_009",
+      "grade": "C",
+      "name": "cuisinaffaires.ma — Prix cuisines équipées Maroc",
+      "url": "https://cuisinaffaires.ma/prix-des-cuisines/",
+      "access_date": "2026-08-09",
+      "description": "Established Moroccan kitchen company (1997, 25,000+ kitchens delivered). Explicitly states they do not publish a prix au mètre because scope varies. Entry price 17,900 DH for 2.40 ml implantation (pose incluse, garantie 25 ans). Mid-range 30,000-55,000 DH for 3.60 ml. Premium from 65,000 DH.",
+      "reliability_notes": "Credible operational company with long track record. Explicitly warns against per-ml comparisons due to scope ambiguity. Important methodological note for research."
+    },
+    {
+      "source_id": "SRC_MENU_010",
+      "grade": "D",
+      "name": "avito.ma — Placard dressing cuisine sur mesure annonces",
+      "url": "https://www.avito.ma/sp/misc/placards-sur-mesure",
+      "access_date": "2026-08-09",
+      "description": "Classifieds platform. Observed listing: 1,200 DH (Casablanca) for placard/dressing/cuisine sur mesure — fabrication et installation.",
+      "reliability_notes": "Grade D — classifieds. Single data point, no scope definition, cannot validate. Include as lower-bound floor observation only."
+    },
+    {
+      "source_id": "SRC_MENU_011",
+      "grade": "B",
+      "name": "lechantier.ma — Pose menuiserie aluminium m² (labour table)",
+      "url": "https://lechantier.ma/blog/prix-main-oeuvre-btp-maroc-2026",
+      "access_date": "2026-08-09",
+      "description": "Same source as SRC_MENU_001. Labour-only table includes 'Pose menuiserie alu' at 120-240 MAD/m². Confirms aluminium is treated as a separate installation skill in BTP context.",
+      "reliability_notes": "See SRC_MENU_001. Aluminium labour rate confirms specialization."
+    },
+    {
+      "source_id": "SRC_MENU_012",
+      "grade": "B",
+      "name": "lechantier.ma — Prix menuiserie aluminium fenêtres portes 2026",
+      "url": "https://lechantier.ma/blog/prix-menuiserie-aluminium-maroc",
+      "access_date": "2026-08-09",
+      "description": "Structured aluminium menuiserie price database. Fenêtres coulissantes 700-2,500 MAD/m², battantes, portes, baies vitrées. March 2026.",
+      "reliability_notes": "Aluminium product/install all-in pricing. Confirms aluminium is distinct specialist domain."
+    },
+    {
+      "source_id": "SRC_MENU_013",
+      "grade": "C",
+      "name": "Mr. Bricolage Maroc — Charnières meubles (retail hardware pricing)",
+      "url": "https://mrbricolage.ma/categorie-produit/bricoler/quincaillerie/quincaillerie-de-meuble/charnieres-de-meubles/",
+      "access_date": "2026-08-09",
+      "description": "Retail chain hardware pricing for furniture hinges in Morocco. Observed: charnière inox 79.90 MAD. Soft-close hinges (via Jumia search) 59-120 MAD each.",
+      "reliability_notes": "Hardware retail pricing. Critical for labour-fixed-part-separate architecture modelling. Grade C — established retail chain with stable pricing."
+    },
+    {
+      "source_id": "SRC_MENU_014",
+      "grade": "C",
+      "name": "Mr. Bricolage / Jumia Maroc — Coulisses tiroir hardware pricing",
+      "url": "https://mrbricolage.ma/categorie-produit/bricoler/quincaillerie/quincaillerie-de-meuble/coulisse-et-compas/",
+      "access_date": "2026-08-09",
+      "description": "Retail hardware pricing for drawer runners/slides in Morocco. Standard coulisse tiroir from 19.90-25.90 MAD (Mr. Bricolage). Jumia range 54.99-99 MAD. Soft-close telescopic runners (Bricop/Cledor) 20 DH+.",
+      "reliability_notes": "Hardware retail pricing. Important for drawer runner replacement labour-fixed-part-separate model."
+    },
+    {
+      "source_id": "SRC_MENU_015",
+      "grade": "C+",
+      "name": "allohrayfi.ma — Petits travaux Menuiserie",
+      "url": "https://allohrayfi.ma/petit-travaux/",
+      "access_date": "2026-08-09",
+      "description": "Moroccan home repair platform listing menuiserie small repairs including: réparation porte de placard/tiroir, réparation meuble. Platform states prices communicated before intervention, same price evening/weekend. Does not list fixed prices publicly.",
+      "reliability_notes": "Grade C+ — operational Moroccan repair platform. Confirms market exists for standardized small menuiserie repairs. No fixed prices published."
+    },
+    {
+      "source_id": "SRC_MENU_016",
+      "grade": "C",
+      "name": "MDF price — Instagram/market observation 115 DH/m²",
+      "url": "https://www.instagram.com/p/DRUJ6hyjCC9/",
+      "access_date": "2026-08-09",
+      "description": "Market observation: MDF 18mm quality premier choix at 115 DH/m².",
+      "reliability_notes": "Grade D-to-C Instagram post. Single data point for material costing. Include as material reference only."
+    },
+    {
+      "source_id": "SRC_MENU_017",
+      "grade": "C",
+      "name": "menuiserieafoulki.ma — Prix Menuiserie Maroc 2026",
+      "url": "https://menuiserieafoulki.ma/prix-menuiserie-maroc-2026/",
+      "access_date": "2026-08-09",
+      "description": "Moroccan menuiserie company blog. Mentions Gamme Luxe: à partir de 12,000 DH/m² for rare woods (Thuya, Cèdre). Context for premium custom pricing.",
+      "reliability_notes": "Grade C — company blog. Single luxury-segment reference."
+    },
+    {
+      "source_id": "SRC_MENU_018",
+      "grade": "C+",
+      "name": "bricolat.co.ma — Menuisier Marrakech tarifs 2026",
+      "url": "https://www.bricolat.co.ma/blog/menuisier-marrakech-prix",
+      "access_date": "2026-08-09",
+      "description": "Moroccan services platform for Marrakech menuiserie. Confirms distinction between bois massif, MDF, placage. May 2026.",
+      "reliability_notes": "Grade C+ — regional platform with stated methodology."
+    }
+  ]
+}
