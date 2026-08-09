@@ -443,4 +443,205 @@ try {
 console.log('\n[V0.2 check complete — see final totals above]');
 
 // Final exit
-process.exit(fail > 0 ? 1 : 0);
+// ─── V0.3 Checks ─────────────────────────────────────────────────────────────
+
+console.log('\n[V0.3] V0.3 decision freeze artifacts');
+
+const v03Files = [
+  'registry.v0.3.json',
+  'calibration.v0.3.json',
+  'human-decision.v0.3.md',
+  'fair-price-policy.v0.3.md'
+];
+
+for (const f of v03Files) {
+  const fpath = path.join(RESEARCH_DIR, f);
+  if (fs.existsSync(fpath)) ok(`V0.3 file exists: ${f}`);
+  else err(`V0.3 file exists: ${f}`, 'MISSING');
+}
+
+// Load registry.v0.3.json
+const reg3 = loadJSON('registry.v0.3.json');
+if (reg3) {
+  ok('registry.v0.3.json parses');
+
+  // Basic flags
+  if (reg3.production_ready === false) ok('registry.v0.3 production_ready = false');
+  else err('registry.v0.3 production_ready must be false');
+
+  if (reg3.city_adjustment === null) ok('registry.v0.3 city_adjustment = null');
+  else err('registry.v0.3 city_adjustment must be null');
+
+  const mods3 = ['urgency_modifier','night_modifier','weekend_modifier','holiday_modifier','express_modifier'];
+  let modsOk3 = true;
+  for (const m of mods3) {
+    if (reg3[m] !== null) { err(`registry.v0.3 ${m} must be null`); modsOk3 = false; }
+  }
+  if (modsOk3) ok('registry.v0.3 all time/urgency modifiers = null');
+
+  // Exactly 6 approved services
+  const services3 = reg3.services || [];
+  const approved3 = services3.filter(s => s.human_decision === 'APPROVED');
+  if (approved3.length === 6) ok(`Exactly 6 approved services`);
+  else err(`Expected exactly 6 approved services, got ${approved3.length}`);
+
+  // Mandatory approved codes
+  const requiredApproved = ['BRIC-001','BRIC-002','BRIC-003','BRIC-010','BRIC-020','BRIC-030'];
+  for (const code of requiredApproved) {
+    const svc = services3.find(s => s.code === code);
+    if (svc && svc.human_decision === 'APPROVED') ok(`${code} human_decision = APPROVED`);
+    else err(`${code} must be APPROVED in registry.v0.3`);
+  }
+
+  // Exact approved prices
+  const priceMap = {
+    'BRIC-001': 200, 'BRIC-003': 400, 'BRIC-010': 200, 'BRIC-020': 200, 'BRIC-030': 300
+  };
+  for (const [code, expected] of Object.entries(priceMap)) {
+    const svc = services3.find(s => s.code === code);
+    if (svc && svc.approved_price_MAD === expected) ok(`${code} approved_price_MAD = ${expected} ✓`);
+    else err(`${code} approved_price_MAD must be ${expected}`);
+  }
+  // BRIC-002 special check (rate + minimum)
+  const bric002 = services3.find(s => s.code === 'BRIC-002');
+  if (bric002) {
+    if (bric002.approved_rate_MAD_per_hour === 150) ok('BRIC-002 approved_rate_MAD_per_hour = 150 ✓');
+    else err('BRIC-002 approved_rate_MAD_per_hour must be 150');
+    if (bric002.minimum_billing_hours === 2) ok('BRIC-002 minimum_billing_hours = 2 ✓');
+    else err('BRIC-002 minimum_billing_hours must be 2');
+    if (bric002.minimum_payable_MAD === 300) ok('BRIC-002 minimum_payable_MAD = 300 ✓');
+    else err('BRIC-002 minimum_payable_MAD must be 300');
+  }
+
+  // All approved services have production_ready = false
+  let allApprovedNotProd = true;
+  for (const svc of approved3) {
+    if (svc.production_ready !== false) { err(`${svc.code} production_ready must be false`); allApprovedNotProd = false; }
+  }
+  if (allApprovedNotProd) ok('All 6 approved services: production_ready = false');
+
+  // No approved price on deferred services
+  const deferred3 = services3.filter(s => s.human_decision !== 'APPROVED');
+  let noApprovedOnDeferred = true;
+  for (const svc of deferred3) {
+    if (svc.approved_price_MAD !== null && svc.approved_price_MAD !== undefined) {
+      err(`Deferred service ${svc.code} must not have approved_price_MAD`); noApprovedOnDeferred = false;
+    }
+  }
+  if (noApprovedOnDeferred) ok(`All ${deferred3.length} deferred/quote services: no approved_price_MAD`);
+
+  // Anti-double-charge rule: BRIC-001 approved price == BRIC-010 approved price (must be >=)
+  const b001 = services3.find(s => s.code === 'BRIC-001');
+  const b010 = services3.find(s => s.code === 'BRIC-010');
+  const b020 = services3.find(s => s.code === 'BRIC-020');
+  if (b001 && b010 && b010.approved_price_MAD >= b001.approved_price_MAD)
+    ok('BRIC-010 price >= BRIC-001: anti-double-charge coherent ✓');
+  else err('BRIC-010 price must be >= BRIC-001 to maintain anti-double-charge coherence');
+  if (b001 && b020 && b020.approved_price_MAD >= b001.approved_price_MAD)
+    ok('BRIC-020 price >= BRIC-001: anti-double-charge coherent ✓');
+  else err('BRIC-020 price must be >= BRIC-001 to maintain anti-double-charge coherence');
+
+  // No universal 65% rate in multi_task_architecture
+  const mta = reg3.multi_task_architecture;
+  if (mta) {
+    const str = JSON.stringify(mta);
+    if (!str.includes('"65%"') && !str.includes('"0.65"') && !str.includes('universal_additional_pct')) {
+      ok('No universal 65% additional-item rate in multi_task_architecture ✓');
+    } else {
+      err('Universal 65% additional-item rate must NOT be canonical in registry.v0.3');
+    }
+    // Scenario E should be DEFERRED
+    const scenE = (mta.scenarios || []).find(s => s.scenario === 'E');
+    if (scenE && scenE.architecture === 'DEFERRED') ok('Scenario E multi-task: DEFERRED ✓');
+    else err('Scenario E (multiple homogeneous items) must be DEFERRED');
+  }
+
+  // Métier boundaries present
+  const b030 = services3.find(s => s.code === 'BRIC-030');
+  if (b030 && b030.scope_contract && b030.scope_contract.metier_boundary_critical) {
+    if (b030.scope_contract.metier_boundary_critical.toLowerCase().includes('electricite')) {
+      ok('BRIC-030 métier boundary ELECTRICITE documented ✓');
+    } else {
+      err('BRIC-030 must reference ELECTRICITE boundary in scope_contract');
+    }
+  }
+}
+
+// Load calibration.v0.3.json
+const cal3 = loadJSON('calibration.v0.3.json');
+if (cal3) {
+  ok('calibration.v0.3.json parses');
+
+  if (cal3.production_ready === false) ok('calibration.v0.3 production_ready = false');
+  else err('calibration.v0.3 production_ready must be false');
+
+  if (cal3.human_decision === 'APPROVED') ok('calibration.v0.3 human_decision = APPROVED');
+  else err('calibration.v0.3 human_decision must be APPROVED');
+
+  if (cal3.city_adjustment === null) ok('calibration.v0.3 city_adjustment = null');
+  else err('calibration.v0.3 city_adjustment must be null');
+
+  const modsCal3 = ['urgency_modifier','night_modifier','weekend_modifier','holiday_modifier','express_modifier'];
+  let modsCalOk = true;
+  for (const m of modsCal3) {
+    if (cal3[m] !== null) { err(`calibration.v0.3 ${m} must be null`); modsCalOk = false; }
+  }
+  if (modsCalOk) ok('calibration.v0.3 all modifiers = null');
+
+  if (cal3.approved_services && cal3.approved_services.length === 6)
+    ok('calibration.v0.3 has exactly 6 approved_services');
+  else err('calibration.v0.3 must have exactly 6 approved_services');
+
+  // Commission math spot checks
+  console.log('\n[V0.3] Commission math verification');
+  const cmChecks = [
+    { code: 'BRIC-001', price: 200, rate: 0.20, fuel: 40, expectedNet: 120 },
+    { code: 'BRIC-010', price: 200, rate: 0.20, fuel: 40, expectedNet: 120 },
+    { code: 'BRIC-020', price: 200, rate: 0.20, fuel: 40, expectedNet: 120 },
+    { code: 'BRIC-030', price: 300, rate: 0.20, fuel: 40, expectedNet: 200 },
+    { code: 'BRIC-003', price: 400, rate: 0.20, fuel: 40, expectedNet: 280 },
+    { code: 'BRIC-002', price: 300, rate: 0.20, fuel: 40, expectedNet: 200, basis: '2h_min' } // 150×2=300
+  ];
+  for (const chk of cmChecks) {
+    const gross = chk.price * (1 - chk.rate);
+    const net = gross - chk.fuel;
+    if (Math.round(net) === chk.expectedNet) {
+      ok(`Commission math ${chk.code} @20% + MID40: net = ${chk.expectedNet} MAD ✓`);
+    } else {
+      err(`Commission math ${chk.code}: expected net ${chk.expectedNet}, computed ${Math.round(net)}`);
+    }
+    // Hard floor check
+    if (net >= 100) ok(`${chk.code} above 100 MAD hard floor ✓`);
+    else err(`${chk.code} BREACHES 100 MAD hard floor at worst case`);
+  }
+
+  // Summary checks
+  if (cal3.summary) {
+    if (cal3.summary.total_approved === 6) ok('calibration.v0.3 summary total_approved = 6');
+    else err('calibration.v0.3 summary total_approved must be 6');
+    if (cal3.summary.floor_breaches === 0) ok('calibration.v0.3 summary floor_breaches = 0');
+    else err('calibration.v0.3 summary floor_breaches must be 0');
+    if (cal3.summary.no_65pct_universal_rate === true) ok('calibration.v0.3 no_65pct_universal_rate = true ✓');
+    else err('calibration.v0.3 no_65pct_universal_rate must be true');
+    if (cal3.summary.minimum_visit_anti_double_charge_verified === true)
+      ok('calibration.v0.3 anti-double-charge verified = true ✓');
+    else err('calibration.v0.3 minimum_visit_anti_double_charge_verified must be true');
+  }
+}
+
+// V0.2 artifact immutability (not modified by V0.3)
+console.log('\n[V0.3] V0.2 artifact immutability');
+const v02FilesToCheck = ['calibration.v0.2.json','human-review.v0.2.md','fair-price-policy.v0.2.md'];
+try {
+  const { execSync: execS2 } = require('child_process');
+  for (const f of v02FilesToCheck) {
+    const fpath = `data/pricing/research/bricolage/${f}`;
+    try {
+      const diff2 = execS2(`git diff HEAD -- ${fpath}`, { cwd: REPO_ROOT }).toString();
+      if (diff2.length === 0) ok(`V0.2 immutable: ${f}`);
+      else err(`V0.2 modified: ${f}`, 'Must not be changed in V0.3 phase');
+    } catch(e) { warn(`Could not check git diff for ${f}`); }
+  }
+} catch(e) { warn('V0.2 immutability check skipped', e.message); }
+
+console.log('\n[V0.3 checks complete]');

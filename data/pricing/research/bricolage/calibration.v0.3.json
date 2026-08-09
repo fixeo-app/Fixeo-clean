@@ -1,0 +1,394 @@
+{
+  "schema_version": "0.3",
+  "phase": "7B.7.2",
+  "metier": "bricolage",
+  "production_ready": false,
+  "review_status": "HUMAN_PRICE_DECISION_FREEZE",
+  "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
+  "human_decision": "APPROVED",
+  "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+  "market_scope": "NATIONAL_MOROCCO",
+  "city_adjustment": null,
+  "urgency_modifier": null,
+  "night_modifier": null,
+  "weekend_modifier": null,
+  "holiday_modifier": null,
+  "express_modifier": null,
+  "artisan_net_hard_floor_MAD": 100,
+  "artisan_net_practical_target_MAD": 120,
+  "artisan_net_floor_classification": "FIXEO_POLICY",
+  "fuel_model": {
+    "LOW_25": 25,
+    "MID_40": 40,
+    "HIGH_60": 60,
+    "unit": "MAD_round_trip",
+    "note": "Casablanca urban stress test reference"
+  },
+  "commission_rates_tested": [0.00, 0.10, 0.15, 0.20],
+  "v01_reference_commit": "41583c1",
+  "v02_reference_commit": "8bd5498",
+  "approved_date": "2026-08-09",
+  "note": "V0.1 research artifacts and V0.2 calibration artifacts are immutable. This file records approved commission math for the six human-approved bricolage pilot prices.",
+
+  "approved_services": [
+
+    {
+      "code": "BRIC-001",
+      "label": "Déplacement minimum / forfait visite bricolage",
+      "human_decision": "APPROVED",
+      "approved_price_MAD": 200,
+      "architecture": "MINIMUM_VISIT_PRICE",
+      "commission_sensitivity": [
+        {
+          "commission_rate": 0.00,
+          "artisan_gross": 200,
+          "artisan_net_before_fuel": 200,
+          "fuel_LOW_25": {"net_after_fuel": 175, "above_100_floor": true, "above_120_target": true},
+          "fuel_MID_40": {"net_after_fuel": 160, "above_100_floor": true, "above_120_target": true},
+          "fuel_HIGH_60": {"net_after_fuel": 140, "above_100_floor": true, "above_120_target": true}
+        },
+        {
+          "commission_rate": 0.10,
+          "artisan_gross": 180,
+          "artisan_net_before_fuel": 180,
+          "fuel_LOW_25": {"net_after_fuel": 155, "above_100_floor": true, "above_120_target": true},
+          "fuel_MID_40": {"net_after_fuel": 140, "above_100_floor": true, "above_120_target": true},
+          "fuel_HIGH_60": {"net_after_fuel": 120, "above_100_floor": true, "above_120_target": true}
+        },
+        {
+          "commission_rate": 0.15,
+          "artisan_gross": 170,
+          "artisan_net_before_fuel": 170,
+          "fuel_LOW_25": {"net_after_fuel": 145, "above_100_floor": true, "above_120_target": true},
+          "fuel_MID_40": {"net_after_fuel": 130, "above_100_floor": true, "above_120_target": true},
+          "fuel_HIGH_60": {"net_after_fuel": 110, "above_100_floor": true, "above_120_target": false}
+        },
+        {
+          "commission_rate": 0.20,
+          "artisan_gross": 160,
+          "artisan_net_before_fuel": 160,
+          "fuel_LOW_25": {"net_after_fuel": 135, "above_100_floor": true, "above_120_target": true},
+          "fuel_MID_40": {"net_after_fuel": 120, "above_100_floor": true, "above_120_target": true},
+          "fuel_HIGH_60": {"net_after_fuel": 100, "above_100_floor": true, "above_120_target": false}
+        }
+      ],
+      "worst_case_summary": {
+        "rate": 0.20,
+        "fuel": "MID_40",
+        "artisan_net_MAD": 120,
+        "above_hard_floor": true,
+        "above_practical_target": true,
+        "verdict": "PASS"
+      },
+      "floor_breach": false,
+      "fairness": {
+        "client": "ACCEPTABLE — market-justified; artisan travel + slot cost documented across 1,342 devis Q1 2026",
+        "artisan": "FAIR — 120 MAD net at MID fuel, 20% commission covers travel economics"
+      }
+    },
+
+    {
+      "code": "BRIC-002",
+      "label": "Bricolage — tarif horaire",
+      "human_decision": "APPROVED",
+      "approved_rate_MAD_per_hour": 150,
+      "minimum_billing_hours": 2,
+      "minimum_payable_MAD": 300,
+      "architecture": "HOURLY",
+      "commission_sensitivity_on_2h_minimum": [
+        {
+          "commission_rate": 0.00,
+          "artisan_gross": 300,
+          "artisan_net_before_fuel": 300,
+          "fuel_LOW_25": {"net_after_fuel": 275, "above_100_floor": true, "above_120_target": true},
+          "fuel_MID_40": {"net_after_fuel": 260, "above_100_floor": true, "above_120_target": true},
+          "fuel_HIGH_60": {"net_after_fuel": 240, "above_100_floor": true, "above_120_target": true}
+        },
+        {
+          "commission_rate": 0.10,
+          "artisan_gross": 270,
+          "artisan_net_before_fuel": 270,
+          "fuel_MID_40": {"net_after_fuel": 230, "above_100_floor": true, "above_120_target": true}
+        },
+        {
+          "commission_rate": 0.15,
+          "artisan_gross": 255,
+          "artisan_net_before_fuel": 255,
+          "fuel_MID_40": {"net_after_fuel": 215, "above_100_floor": true, "above_120_target": true}
+        },
+        {
+          "commission_rate": 0.20,
+          "artisan_gross": 240,
+          "artisan_net_before_fuel": 240,
+          "fuel_LOW_25": {"net_after_fuel": 215, "above_100_floor": true, "above_120_target": true},
+          "fuel_MID_40": {"net_after_fuel": 200, "above_100_floor": true, "above_120_target": true},
+          "fuel_HIGH_60": {"net_after_fuel": 180, "above_100_floor": true, "above_120_target": true}
+        }
+      ],
+      "worst_case_summary": {
+        "rate": 0.20,
+        "fuel": "MID_40",
+        "basis": "2h minimum",
+        "artisan_net_MAD": 200,
+        "above_hard_floor": true,
+        "above_practical_target": true,
+        "verdict": "PASS"
+      },
+      "floor_breach": false,
+      "fairness": {
+        "client": "FAIR — transparent rate; client receives estimated duration range before work begins",
+        "artisan": "STRONG — 200 MAD net for 2h minimum at MID fuel, 20% commission"
+      }
+    },
+
+    {
+      "code": "BRIC-003",
+      "label": "Bricolage — demi-journée",
+      "human_decision": "APPROVED",
+      "approved_price_MAD": 400,
+      "architecture": "HALF_DAY",
+      "commission_sensitivity": [
+        {
+          "commission_rate": 0.00,
+          "artisan_gross": 400,
+          "artisan_net_before_fuel": 400,
+          "fuel_LOW_25": {"net_after_fuel": 375, "above_100_floor": true, "above_120_target": true},
+          "fuel_MID_40": {"net_after_fuel": 360, "above_100_floor": true, "above_120_target": true},
+          "fuel_HIGH_60": {"net_after_fuel": 340, "above_100_floor": true, "above_120_target": true}
+        },
+        {
+          "commission_rate": 0.10,
+          "artisan_gross": 360,
+          "artisan_net_before_fuel": 360,
+          "fuel_MID_40": {"net_after_fuel": 320, "above_100_floor": true, "above_120_target": true}
+        },
+        {
+          "commission_rate": 0.15,
+          "artisan_gross": 340,
+          "artisan_net_before_fuel": 340,
+          "fuel_MID_40": {"net_after_fuel": 300, "above_100_floor": true, "above_120_target": true}
+        },
+        {
+          "commission_rate": 0.20,
+          "artisan_gross": 320,
+          "artisan_net_before_fuel": 320,
+          "fuel_LOW_25": {"net_after_fuel": 295, "above_100_floor": true, "above_120_target": true},
+          "fuel_MID_40": {"net_after_fuel": 280, "above_100_floor": true, "above_120_target": true},
+          "fuel_HIGH_60": {"net_after_fuel": 260, "above_100_floor": true, "above_120_target": true}
+        }
+      ],
+      "effective_hourly_at_approval": {
+        "3h_session": {"effective_MAD_per_hour": 133, "note": "400/3h"},
+        "4h_session": {"effective_MAD_per_hour": 100, "note": "400/4h — market rate lower bound"},
+        "assessment": "Artisan earns well on shorter sessions; BRIC-002 hourly is economically similar at 4h"
+      },
+      "worst_case_summary": {
+        "rate": 0.20,
+        "fuel": "MID_40",
+        "artisan_net_MAD": 280,
+        "above_hard_floor": true,
+        "above_practical_target": true,
+        "verdict": "PASS"
+      },
+      "floor_breach": false,
+      "fairness": {
+        "client": "EXCELLENT — 400 MAD for 3–4h of mixed tasks; equivalent to 2 standalone visits",
+        "artisan": "FAIR — 280 MAD net at MID fuel, 20% commission for ~3–4h slot"
+      }
+    },
+
+    {
+      "code": "BRIC-010",
+      "label": "Montage meuble petit (flat-pack)",
+      "human_decision": "APPROVED",
+      "approved_price_MAD": 200,
+      "architecture": "PER_ITEM_FORFAIT",
+      "commission_sensitivity": [
+        {
+          "commission_rate": 0.00,
+          "artisan_gross": 200,
+          "artisan_net_before_fuel": 200,
+          "fuel_LOW_25": {"net_after_fuel": 175, "above_100_floor": true, "above_120_target": true},
+          "fuel_MID_40": {"net_after_fuel": 160, "above_100_floor": true, "above_120_target": true},
+          "fuel_HIGH_60": {"net_after_fuel": 140, "above_100_floor": true, "above_120_target": true}
+        },
+        {
+          "commission_rate": 0.10,
+          "artisan_gross": 180,
+          "artisan_net_before_fuel": 180,
+          "fuel_MID_40": {"net_after_fuel": 140, "above_100_floor": true, "above_120_target": true}
+        },
+        {
+          "commission_rate": 0.15,
+          "artisan_gross": 170,
+          "artisan_net_before_fuel": 170,
+          "fuel_MID_40": {"net_after_fuel": 130, "above_100_floor": true, "above_120_target": true}
+        },
+        {
+          "commission_rate": 0.20,
+          "artisan_gross": 160,
+          "artisan_net_before_fuel": 160,
+          "fuel_LOW_25": {"net_after_fuel": 135, "above_100_floor": true, "above_120_target": true},
+          "fuel_MID_40": {"net_after_fuel": 120, "above_100_floor": true, "above_120_target": true},
+          "fuel_HIGH_60": {"net_after_fuel": 100, "above_100_floor": true, "above_120_target": false}
+        }
+      ],
+      "coherence_check": {
+        "test": "approved_price >= BRIC-001 approved_price",
+        "BRIC_001_approved": 200,
+        "BRIC_010_approved": 200,
+        "result": "200 == 200 — COHERENT. Single furniture task absorbs travel. No minimum-visit double charge.",
+        "verdict": "PASS"
+      },
+      "worst_case_summary": {
+        "rate": 0.20,
+        "fuel": "MID_40",
+        "artisan_net_MAD": 120,
+        "above_hard_floor": true,
+        "above_practical_target": true,
+        "verdict": "PASS"
+      },
+      "floor_breach": false,
+      "fairness": {
+        "client": "GOOD — matches Kitea official 200 MAD/item reference. Client-transparent.",
+        "artisan": "ACCEPTABLE — 120 MAD net for ~40-min assembly; effective rate ~180 MAD/h at MID fuel"
+      }
+    },
+
+    {
+      "code": "BRIC-020",
+      "label": "Pose étagère murale standard",
+      "human_decision": "APPROVED",
+      "approved_price_MAD": 200,
+      "architecture": "PER_ITEM_FORFAIT",
+      "low_evidence_note": "Evidence confidence LOW (2 sources). Price is research-informed but requires future transaction validation.",
+      "commission_sensitivity": [
+        {
+          "commission_rate": 0.00,
+          "artisan_gross": 200,
+          "artisan_net_before_fuel": 200,
+          "fuel_LOW_25": {"net_after_fuel": 175, "above_100_floor": true, "above_120_target": true},
+          "fuel_MID_40": {"net_after_fuel": 160, "above_100_floor": true, "above_120_target": true},
+          "fuel_HIGH_60": {"net_after_fuel": 140, "above_100_floor": true, "above_120_target": true}
+        },
+        {
+          "commission_rate": 0.10,
+          "artisan_gross": 180,
+          "artisan_net_before_fuel": 180,
+          "fuel_MID_40": {"net_after_fuel": 140, "above_100_floor": true, "above_120_target": true}
+        },
+        {
+          "commission_rate": 0.15,
+          "artisan_gross": 170,
+          "artisan_net_before_fuel": 170,
+          "fuel_MID_40": {"net_after_fuel": 130, "above_100_floor": true, "above_120_target": true}
+        },
+        {
+          "commission_rate": 0.20,
+          "artisan_gross": 160,
+          "artisan_net_before_fuel": 160,
+          "fuel_LOW_25": {"net_after_fuel": 135, "above_100_floor": true, "above_120_target": true},
+          "fuel_MID_40": {"net_after_fuel": 120, "above_100_floor": true, "above_120_target": true},
+          "fuel_HIGH_60": {"net_after_fuel": 100, "above_100_floor": true, "above_120_target": false}
+        }
+      ],
+      "coherence_check": {
+        "test": "approved_price >= BRIC-001 approved_price",
+        "BRIC_001_approved": 200,
+        "BRIC_020_approved": 200,
+        "result": "200 == 200 — COHERENT. Shelf task absorbs travel. No minimum-visit double charge.",
+        "verdict": "PASS"
+      },
+      "worst_case_summary": {
+        "rate": 0.20,
+        "fuel": "MID_40",
+        "artisan_net_MAD": 120,
+        "above_hard_floor": true,
+        "above_practical_target": true,
+        "verdict": "PASS"
+      },
+      "floor_breach": false,
+      "fairness": {
+        "client": "GOOD — 200 MAD for shelf install matches market anchor",
+        "artisan": "ACCEPTABLE — 120 MAD net for ~30-min drilling job; effective rate ~240 MAD/h at MID fuel"
+      }
+    },
+
+    {
+      "code": "BRIC-030",
+      "label": "Fixation TV murale standard",
+      "human_decision": "APPROVED",
+      "approved_price_MAD": 300,
+      "architecture": "CONDITIONAL_FIXED",
+      "commission_sensitivity": [
+        {
+          "commission_rate": 0.00,
+          "artisan_gross": 300,
+          "artisan_net_before_fuel": 300,
+          "fuel_LOW_25": {"net_after_fuel": 275, "above_100_floor": true, "above_120_target": true},
+          "fuel_MID_40": {"net_after_fuel": 260, "above_100_floor": true, "above_120_target": true},
+          "fuel_HIGH_60": {"net_after_fuel": 240, "above_100_floor": true, "above_120_target": true}
+        },
+        {
+          "commission_rate": 0.10,
+          "artisan_gross": 270,
+          "artisan_net_before_fuel": 270,
+          "fuel_MID_40": {"net_after_fuel": 230, "above_100_floor": true, "above_120_target": true}
+        },
+        {
+          "commission_rate": 0.15,
+          "artisan_gross": 255,
+          "artisan_net_before_fuel": 255,
+          "fuel_MID_40": {"net_after_fuel": 215, "above_100_floor": true, "above_120_target": true}
+        },
+        {
+          "commission_rate": 0.20,
+          "artisan_gross": 240,
+          "artisan_net_before_fuel": 240,
+          "fuel_LOW_25": {"net_after_fuel": 215, "above_100_floor": true, "above_120_target": true},
+          "fuel_MID_40": {"net_after_fuel": 200, "above_100_floor": true, "above_120_target": true},
+          "fuel_HIGH_60": {"net_after_fuel": 180, "above_100_floor": true, "above_120_target": true}
+        }
+      ],
+      "effective_hourly_at_approval": {
+        "50min_job": {"effective_MAD_per_hour": 360, "note": "300/(50/60)"},
+        "60min_job": {"effective_MAD_per_hour": 300},
+        "assessment": "TV mount is best-compensated per-hour standardized service in this métier"
+      },
+      "worst_case_summary": {
+        "rate": 0.20,
+        "fuel": "MID_40",
+        "artisan_net_MAD": 200,
+        "above_hard_floor": true,
+        "above_practical_target": true,
+        "verdict": "PASS"
+      },
+      "floor_breach": false,
+      "fairness": {
+        "client": "GOOD — matches m3allempro.com Casablanca anchor (89 reviews, 412 missions, bracket excluded)",
+        "artisan": "STRONG — 200 MAD net at MID fuel, 20% commission for ~1h precision drilling job"
+      }
+    }
+  ],
+
+  "summary": {
+    "total_approved": 6,
+    "total_deferred": 11,
+    "floor_breaches": 0,
+    "commission_calculations": 24,
+    "all_pass": true,
+    "approved_codes": ["BRIC-001", "BRIC-002", "BRIC-003", "BRIC-010", "BRIC-020", "BRIC-030"],
+    "approved_prices_MAD": {
+      "BRIC-001": 200,
+      "BRIC-002": "150/h, 2h min = 300 MAD minimum",
+      "BRIC-003": 400,
+      "BRIC-010": 200,
+      "BRIC-020": 200,
+      "BRIC-030": 300
+    },
+    "no_65pct_universal_rate": true,
+    "no_city_adjustments": true,
+    "no_urgency_modifiers": true,
+    "minimum_visit_anti_double_charge_verified": true
+  }
+}

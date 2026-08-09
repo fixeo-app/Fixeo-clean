@@ -1,0 +1,451 @@
+{
+  "schema_version": "0.3",
+  "registry_version": "0.3.0",
+  "phase": "7B.7.2",
+  "metier": "bricolage",
+  "production_ready": false,
+  "review_status": "HUMAN_PRICE_DECISION_FREEZE",
+  "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
+  "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+  "market_scope": "NATIONAL_MOROCCO",
+  "city_adjustment": null,
+  "urgency_modifier": null,
+  "night_modifier": null,
+  "weekend_modifier": null,
+  "holiday_modifier": null,
+  "express_modifier": null,
+  "artisan_net_hard_floor_MAD": 100,
+  "artisan_net_practical_target_MAD": 120,
+  "artisan_net_floor_classification": "FIXEO_POLICY",
+  "required_disclaimer": "Prix indicatif FIXEO — tarif réel confirmé avec l'artisan avant intervention.",
+  "v01_reference_commit": "41583c1",
+  "v02_reference_commit": "8bd5498",
+  "human_decision_date": "2026-08-09",
+  "note": "V0.1 research artifacts and V0.2 calibration artifacts are immutable. This file records six human-approved pilot prices only. No production change.",
+
+  "multi_task_architecture": {
+    "canonical": true,
+    "human_decision": "APPROVED",
+    "note": "65% universal additional-item rate from V0.2 is RESEARCH_EXPERIMENTAL_ONLY and NOT canonical FIXEO pricing.",
+    "scenarios": [
+      {
+        "scenario": "A",
+        "label": "Micro-task only",
+        "description": "No standardized service price applies. Single small task or minor adjustment.",
+        "architecture": "MINIMUM_VISIT_PRICE",
+        "service_code": "BRIC-001",
+        "price_MAD": 200
+      },
+      {
+        "scenario": "B",
+        "label": "One standardized task",
+        "description": "A single identifiable standardized FIXEO service is booked.",
+        "architecture": "PER_ITEM_FORFAIT",
+        "service_codes": ["BRIC-010", "BRIC-020", "BRIC-030"],
+        "rule": "Use the standardized service price. Do NOT add BRIC-001 minimum-visit charge."
+      },
+      {
+        "scenario": "C",
+        "label": "Open-ended or variable scope",
+        "description": "Task list uncertain, duration unclear, or medium/large furniture.",
+        "architecture": "HOURLY",
+        "service_code": "BRIC-002",
+        "rate_MAD_per_hour": 150,
+        "minimum_hours": 2,
+        "minimum_payable_MAD": 300
+      },
+      {
+        "scenario": "D",
+        "label": "Multiple mixed tasks, approximately 3–4 hours",
+        "description": "Multiple heterogeneous handyman tasks in one visit.",
+        "architecture": "HALF_DAY",
+        "service_code": "BRIC-003",
+        "price_MAD": 400
+      },
+      {
+        "scenario": "E",
+        "label": "Multiple homogeneous items",
+        "description": "Batch of same task type (e.g. multiple shelves).",
+        "architecture": "DEFERRED",
+        "note": "No universal additional-item percentage approved. Requires FIXEO transaction data or dedicated batch-calibration phase. Interim: use HALF_DAY (BRIC-003) or HOURLY (BRIC-002) as appropriate."
+      }
+    ]
+  },
+
+  "services": [
+
+    {
+      "code": "BRIC-001",
+      "label": "Déplacement minimum / forfait visite bricolage",
+      "human_decision": "APPROVED",
+      "production_ready": false,
+      "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+      "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
+      "architecture": "MINIMUM_VISIT_PRICE",
+      "approved_price_MAD": 200,
+      "price_unit": "UNIT_FLAT_INTERVENTION",
+      "approved_date": "2026-08-09",
+      "research_range_MAD": [150, 250],
+      "market_anchor_MAD": 200,
+      "evidence_confidence": "MEDIUM",
+      "city_adjustment": null,
+      "urgency_modifier": null,
+      "night_modifier": null,
+      "weekend_modifier": null,
+      "holiday_modifier": null,
+      "scope_contract": {
+        "travel": "INCLUDED — one round trip",
+        "on_site_time": "Up to 30 minutes",
+        "tasks_included": "One micro-task or a small group of micro-tasks fitting inside included duration",
+        "standard_consumables": "INCLUDED — normal screws and wall plugs for compatible standard fixing",
+        "hardware": "CLIENT_SUPPLIED or PART_SEPARATE_WITH_DISCLOSURE",
+        "anti_double_charge_rule": "IF a standardized FIXEO task (BRIC-010, BRIC-020, BRIC-030) is booked in the same visit, BRIC-001 is NOT additionally charged. Standardized task price embeds travel.",
+        "after_30_min": "Transition to BRIC-002 hourly rate. Client notified and approves before time extension."
+      },
+      "complexity_escape": {
+        "trigger": "Any on-site condition that materially exceeds the defined scope",
+        "protocol": ["STOP", "IDENTIFY objective scope escape", "EXPLAIN to client", "DECLARE: Cette intervention est HORS PÉRIMÈTRE PRIX FIXEO", "STATE revised scope and price", "OBTAIN explicit client approval", "CONTINUE only after approval"],
+        "original_price_protection": "Standardized price never silently increases"
+      },
+      "metier_boundaries": {
+        "ELECTRICITE": "Any wiring, circuit, socket modification → route to ELECTRICITE",
+        "PLOMBERIE": "Any pipe, drain, water-system modification → route to PLOMBERIE",
+        "SERRURERIE": "Lock cylinder, security door → route to SERRURERIE",
+        "MACONNERIE": "Structural wall or load-bearing uncertainty → STOP, route to MAÇONNERIE"
+      }
+    },
+
+    {
+      "code": "BRIC-002",
+      "label": "Bricolage — tarif horaire",
+      "human_decision": "APPROVED",
+      "production_ready": false,
+      "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+      "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
+      "architecture": "HOURLY",
+      "approved_rate_MAD_per_hour": 150,
+      "minimum_billing_hours": 2,
+      "minimum_payable_MAD": 300,
+      "price_unit": "UNIT_PER_HOUR",
+      "approved_date": "2026-08-09",
+      "research_range_MAD_per_hour": [100, 180],
+      "market_anchor_MAD_per_hour": 130,
+      "evidence_confidence": "MEDIUM",
+      "city_adjustment": null,
+      "urgency_modifier": null,
+      "night_modifier": null,
+      "weekend_modifier": null,
+      "holiday_modifier": null,
+      "scope_contract": {
+        "travel": "INCLUDED in 2-hour minimum",
+        "minimum_billing": "2 hours = 300 MAD minimum payable",
+        "billing_after_minimum": "Actual time rounded to nearest 30 minutes",
+        "standard_consumables": "INCLUDED — normal screws and plugs",
+        "hardware": "CLIENT_SUPPLIED or PART_SEPARATE_WITH_DISCLOSURE",
+        "duration_estimate": "Artisan provides estimated duration range before work begins. No silent time extension.",
+        "use_cases": [
+          "Open-ended task list where duration is uncertain",
+          "Heterogeneous tasks not fitting a single standardized service",
+          "Medium or large furniture assembly where fixed scope is not reliable",
+          "Work expected to materially exceed the BRIC-001 minimum-visit contract"
+        ]
+      }
+    },
+
+    {
+      "code": "BRIC-003",
+      "label": "Bricolage — demi-journée",
+      "human_decision": "APPROVED",
+      "production_ready": false,
+      "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+      "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
+      "architecture": "HALF_DAY",
+      "approved_price_MAD": 400,
+      "price_unit": "UNIT_FLAT_HALF_DAY",
+      "approved_date": "2026-08-09",
+      "research_range_MAD": [300, 550],
+      "market_anchor_MAD": 400,
+      "evidence_confidence": "MEDIUM",
+      "city_adjustment": null,
+      "urgency_modifier": null,
+      "night_modifier": null,
+      "weekend_modifier": null,
+      "holiday_modifier": null,
+      "scope_contract": {
+        "duration": "Approximately 3–4 hours on-site",
+        "travel": "INCLUDED — one journey",
+        "task_types": "Mixed small handyman jobs",
+        "hardware": "Major hardware CLIENT_SUPPLIED",
+        "specialist_tasks": "EXCLUDED — specialist métier tasks route to specialist (ELECTRICITE, PLOMBERIE, etc.)",
+        "overtime_protocol": {
+          "trigger": "Expected work exceeds 4 hours",
+          "steps": ["STOP", "Explain scope overrun to client", "Provide continuation estimate", "Obtain client approval", "Continue only after approval"]
+        },
+        "primary_use": "Multiple heterogeneous tasks where individual task pricing would create unreasonable repeated travel-inclusive charges"
+      }
+    },
+
+    {
+      "code": "BRIC-010",
+      "label": "Montage meuble petit (flat-pack)",
+      "human_decision": "APPROVED",
+      "production_ready": false,
+      "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+      "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
+      "architecture": "PER_ITEM_FORFAIT",
+      "approved_price_MAD": 200,
+      "price_unit": "UNIT_PER_ITEM",
+      "approved_date": "2026-08-09",
+      "research_range_MAD": [150, 300],
+      "market_anchor_MAD": 200,
+      "kitea_reference_MAD": 200,
+      "evidence_confidence": "MEDIUM",
+      "city_adjustment": null,
+      "urgency_modifier": null,
+      "night_modifier": null,
+      "weekend_modifier": null,
+      "holiday_modifier": null,
+      "scope_contract": {
+        "standard_scope": "One small flat-pack furniture item. Typically one package. No complex wardrobe system. No structural or custom carpentry. Expected assembly duration approximately 45 minutes or less.",
+        "furniture": "CLIENT_SUPPLIED",
+        "travel": "INCLUDED",
+        "hardware_supply": "CLIENT_SUPPLIED — furniture included in package",
+        "anti_double_charge_rule": "BRIC-001 minimum visit is NOT additionally charged. Task price embeds travel.",
+        "escape_conditions": [
+          "Actual complexity materially exceeds this contract → escape to BRIC-002 HOURLY or DEVIS",
+          "Multiple packages for single item → re-assess as medium or large furniture",
+          "Missing parts or damaged flat-pack → STOP → notify client → document"
+        ]
+      }
+    },
+
+    {
+      "code": "BRIC-020",
+      "label": "Pose étagère murale standard",
+      "human_decision": "APPROVED",
+      "production_ready": false,
+      "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+      "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
+      "architecture": "PER_ITEM_FORFAIT",
+      "approved_price_MAD": 200,
+      "price_unit": "UNIT_PER_ITEM",
+      "approved_date": "2026-08-09",
+      "research_range_MAD": [150, 300],
+      "market_anchor_MAD": 200,
+      "evidence_confidence": "LOW",
+      "city_adjustment": null,
+      "urgency_modifier": null,
+      "night_modifier": null,
+      "weekend_modifier": null,
+      "holiday_modifier": null,
+      "scope_contract": {
+        "standard_scope": "One shelf. Standard eligible substrate. Normal accessible working height. Drilling, levelling, fixing.",
+        "shelf_and_brackets": "CLIENT_SUPPLIED",
+        "travel": "INCLUDED",
+        "consumables": "Standard compatible wall anchors and screws INCLUDED for normal masonry fixing",
+        "anti_double_charge_rule": "BRIC-001 minimum visit is NOT additionally charged. Task price embeds travel.",
+        "standard_eligible_substrates": [
+          "Standard masonry (parpaing, brique pleine)",
+          "Ordinary compatible concrete where normal drilling is safe",
+          "Standard brick"
+        ],
+        "conditional_substrates": {
+          "substrates": ["Reinforced concrete", "Hollow brick", "Plasterboard / drywall", "Tile"],
+          "action": "HORS PÉRIMÈTRE workflow: STOP → IDENTIFY → EXPLAIN → DECLARE → STATE revised scope → OBTAIN approval → CONTINUE"
+        },
+        "escape_substrates": {
+          "substrates": ["Marble", "Stone", "Tadelakt / pisé where reliable fixing is uncertain"],
+          "action": "QUOTE_REQUIRED — reliable standard fixing not possible"
+        },
+        "specialist_required": {
+          "substrates": ["Unknown structural wall", "Load-bearing uncertainty", "Any structural safety risk"],
+          "action": "STOP — route to MAÇONNERIE or structural specialist"
+        },
+        "specialty_hardware": {
+          "items": ["Molly / toggle anchors", "Chemical anchors", "Specialty heavy-load anchors"],
+          "policy": "PART_SEPARATE_WITH_DISCLOSURE — must be disclosed when required. No silent markup."
+        }
+      }
+    },
+
+    {
+      "code": "BRIC-030",
+      "label": "Fixation TV murale standard",
+      "human_decision": "APPROVED",
+      "production_ready": false,
+      "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+      "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
+      "architecture": "CONDITIONAL_FIXED",
+      "approved_price_MAD": 300,
+      "price_unit": "UNIT_FLAT_INTERVENTION",
+      "approved_date": "2026-08-09",
+      "research_range_MAD": [200, 400],
+      "market_anchor_MAD": 300,
+      "strongest_evidence": "m3allempro.com Casablanca: 300 MAD, 89 reviews, 412 missions, bracket excluded",
+      "evidence_confidence": "MEDIUM",
+      "city_adjustment": null,
+      "urgency_modifier": null,
+      "night_modifier": null,
+      "weekend_modifier": null,
+      "holiday_modifier": null,
+      "scope_contract": {
+        "client_supplies": ["TV", "Compatible wall bracket (support mural)"],
+        "fixeo_price_includes": [
+          "Travel",
+          "Drilling",
+          "Standard compatible fixing hardware",
+          "Bracket mounting on wall",
+          "TV installation on bracket",
+          "Levelling",
+          "Basic stability check",
+          "Simple surface cable tidy only"
+        ],
+        "standard_eligibility": {
+          "tv_max_inches": 65,
+          "tv_max_kg": 40,
+          "bracket_type": "Fixed or simple tilt — NOT full-motion complex bracket when substantially more work is required",
+          "wall": "Compatible standard substrate at normal safe working height",
+          "installation_context": "Residential"
+        },
+        "explicit_exclusions": [
+          "Electrical socket relocation → routes to ELECTRICITE",
+          "Electrical wiring modification → routes to ELECTRICITE",
+          "In-wall cable concealment",
+          "Full-motion or complex bracket when substantially more work required",
+          "Oversized or very heavy TV requiring second worker",
+          "Marble or fragile stone substrate",
+          "Uncertain structural wall",
+          "Specialist chemical anchoring unless separately disclosed",
+          "Bracket supply — client-supplied"
+        ],
+        "escape_conditions": [
+          {"condition": "Reinforced concrete wall", "action": "HORS PÉRIMÈTRE → specialty anchors → disclose + approve"},
+          {"condition": "Plasterboard without confirmed stud", "action": "HORS PÉRIMÈTRE → stud confirmation required → conditional"},
+          {"condition": "Tile or fragile stone substrate", "action": "HORS PÉRIMÈTRE → diamond bit, crack risk disclosure + approve"},
+          {"condition": "Full-motion articulating bracket adding substantial complexity", "action": "HORS PÉRIMÈTRE → revised quote"},
+          {"condition": "TV > 65 inches or > 40 kg", "action": "HORS PÉRIMÈTRE → second worker required → quote"},
+          {"condition": "Any cable concealment requiring socket or wiring work", "action": "STOP → route to ELECTRICITE — NOT bricolage scope"},
+          {"condition": "Marble, fragile stone, or uncertain structural wall", "action": "HORS PÉRIMÈTRE → quote required"}
+        ],
+        "metier_boundary_critical": "ANY electrical modification routes to ELECTRICITE. This boundary is absolute."
+      }
+    },
+
+    {
+      "code": "BRIC-011",
+      "label": "Montage meuble moyen",
+      "human_decision": "DEFERRED",
+      "deferred_status": "DEFERRED_FOR_MORE_EVIDENCE",
+      "production_ready": false,
+      "approved_price_MAD": null,
+      "interim_architecture": "HOURLY (BRIC-002) when appropriate",
+      "evidence_confidence": "LOW",
+      "city_adjustment": null,
+      "urgency_modifier": null
+    },
+    {
+      "code": "BRIC-012",
+      "label": "Montage armoire / grand meuble",
+      "human_decision": "DEFERRED",
+      "deferred_status": "DEFERRED",
+      "production_ready": false,
+      "approved_price_MAD": null,
+      "interim_architecture": "HOURLY (BRIC-002) or QUOTE_REQUIRED depending on scope",
+      "evidence_confidence": "LOW",
+      "city_adjustment": null,
+      "urgency_modifier": null
+    },
+    {
+      "code": "BRIC-021",
+      "label": "Pose tringle à rideaux",
+      "human_decision": "DEFERRED",
+      "deferred_status": "DEFERRED_INSUFFICIENT_EVIDENCE",
+      "production_ready": false,
+      "approved_price_MAD": null,
+      "city_adjustment": null,
+      "urgency_modifier": null
+    },
+    {
+      "code": "BRIC-022",
+      "label": "Fixation miroir mural",
+      "human_decision": "DEFERRED",
+      "deferred_status": "DEFERRED_INSUFFICIENT_EVIDENCE_AND_SUBSTRATE_RISK",
+      "production_ready": false,
+      "approved_price_MAD": null,
+      "city_adjustment": null,
+      "urgency_modifier": null
+    },
+    {
+      "code": "BRIC-023",
+      "label": "Pose cadre / tableau",
+      "human_decision": "DEFERRED",
+      "deferred_status": "NO_STANDALONE_PRICE",
+      "note": "Small frame or hook tasks may fall under BRIC-001 minimum visit. No standalone standardized price to be created.",
+      "production_ready": false,
+      "approved_price_MAD": null,
+      "city_adjustment": null,
+      "urgency_modifier": null
+    },
+    {
+      "code": "BRIC-031",
+      "label": "Fixation TV murale complexe",
+      "human_decision": "QUOTE_REQUIRED",
+      "deferred_status": "QUOTE_REQUIRED_PERMANENTLY",
+      "production_ready": false,
+      "approved_price_MAD": null,
+      "city_adjustment": null,
+      "urgency_modifier": null
+    },
+    {
+      "code": "BRIC-040",
+      "label": "Pose accessoire salle de bain",
+      "human_decision": "DEFERRED",
+      "deferred_status": "DEFERRED",
+      "production_ready": false,
+      "approved_price_MAD": null,
+      "city_adjustment": null,
+      "urgency_modifier": null
+    },
+    {
+      "code": "BRIC-050",
+      "label": "Réglage porte / fenêtre",
+      "human_decision": "DEFERRED",
+      "deferred_status": "DEFERRED",
+      "production_ready": false,
+      "approved_price_MAD": null,
+      "city_adjustment": null,
+      "urgency_modifier": null
+    },
+    {
+      "code": "BRIC-051",
+      "label": "Remplacement poignée intérieure",
+      "human_decision": "DEFERRED",
+      "deferred_status": "DEFERRED",
+      "production_ready": false,
+      "approved_price_MAD": null,
+      "city_adjustment": null,
+      "urgency_modifier": null
+    },
+    {
+      "code": "BRIC-060",
+      "label": "Petites finitions / silicone",
+      "human_decision": "DEFERRED",
+      "deferred_status": "DEFERRED",
+      "production_ready": false,
+      "approved_price_MAD": null,
+      "city_adjustment": null,
+      "urgency_modifier": null
+    },
+    {
+      "code": "BRIC-070",
+      "label": "Visite multi-tâches",
+      "human_decision": "DEFERRED",
+      "deferred_status": "DEFERRED_NO_UNIVERSAL_PERCENTAGE",
+      "note": "Multi-task architecture defined in multi_task_architecture field above. No universal 65% additional-item rate is canonical. Scenarios A–E apply instead.",
+      "production_ready": false,
+      "approved_price_MAD": null,
+      "city_adjustment": null,
+      "urgency_modifier": null
+    }
+  ]
+}
