@@ -1,0 +1,51 @@
+{
+  "manifest_version": "7C.5.1-v1",
+  "phase": "PHASE_7C5_SHADOW_FREEZE",
+  "created": "2026-08-09T21:06:56.472Z",
+  "engine_name": "FIXEO_PRICING_ENGINE_CORE",
+  "engine_version": "1.0.0-dormant",
+  "production_active": false,
+  "production_ready": false,
+  "shadow_validation_ready": true,
+  "git_commit": "b715bec1ad853af02eb70a5e25c4621f98f63061",
+  "service_count": 53,
+  "shadow_scenario_count": 195,
+  "pass_exact": 176,
+  "pass_semantic": 19,
+  "fail_count": 0,
+  "critical_failures": 0,
+  "hashes": {
+    "algorithm": "SHA-256",
+    "canonical_registry_hash": "c32515f8174d7a7fd77472bfac1f529d22f12ae294f7cbcbc194f75d1f07ca98",
+    "canonical_inputs_hash": "ecf688fee36c20152dfcf0be65575f8edc74f17f23d0fb52c9e09d8012f47fad",
+    "formula_registry_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "policy_registry_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "routing_registry_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "shadow_scenarios_hash": "3f13a3bf58c8f49eb14689827eaa163c26afcc8b9aa85478c3586aab13659252",
+    "golden_fixtures_hash": "7caeb1048d744c0297e3c2685c6a773c717caedb5a4131cc7c0ecf3937cc06aa"
+  },
+  "regression_tests": {
+    "bric_010_protected": true,
+    "bric_020_protected": true,
+    "hard_exclusion_trigger_protected": true,
+    "zero_quantity_protected": true,
+    "mcb_defect_confirmed_type_protected": true,
+    "regression_file": "data/pricing/engine/tests/regression-7c5-v1.js",
+    "regression_pass_count": 49,
+    "regression_fail_count": 0
+  },
+  "doctrine": {
+    "source_of_truth": "CANONICAL_REGISTRY_HUMAN_APPROVED_PRICES",
+    "legacy_status": "COMPARISON_ONLY_DO_NOT_USE_AS_PRICING_SOURCE",
+    "no_dual_authority": true,
+    "no_legacy_fallback_in_engine": true,
+    "city_adjustment": null,
+    "urgency_modifier": null,
+    "night_modifier": null,
+    "weekend_modifier": null,
+    "holiday_modifier": null,
+    "express_modifier": null,
+    "rounding_policy": "EXACT_INTEGER_MAD"
+  },
+  "purpose": "Future estimator orchestration phases must prove which exact pricing contract they were designed against. This manifest identifies the frozen state as of Phase 7C.5.1."
+}

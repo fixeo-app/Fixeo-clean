@@ -1,0 +1,332 @@
+{
+  "meta": {
+    "schema_version": "7C.5.1-v1",
+    "phase": "PHASE_7C51_POST_SHADOW_AUDIT",
+    "created": "2026-08-09T21:08:35.898Z",
+    "production_ready": false,
+    "purpose": "Audit of legacy pricing runtime files — classification, load relationships, conflicts, migration priorities.",
+    "safety": "DO_NOT_REMOVE_ANY_FILE_IN_THIS_PHASE. AUDIT_ONLY."
+  },
+  "peinture_contradiction": {
+    "reservation_js_value": {
+      "key": "Peinture intérieure",
+      "from": 800,
+      "to": 1500,
+      "semantic": "ABSOLUTE_PROJECT_RANGE_MAD"
+    },
+    "reservation_v2_js_value": {
+      "key": "Peinture intérieure",
+      "from": 20,
+      "to": 60,
+      "semantic": "PER_M2_RANGE_MAD_UNCONFIRMED"
+    },
+    "canonical_approved_models": [
+      {
+        "service": "peinture.mur_interieur.labour_only",
+        "rate_mad": 35,
+        "unit": "PER_PAINTED_M2",
+        "floor": 800
+      },
+      {
+        "service": "peinture.mur_interieur.all_in",
+        "rate_mad": 65,
+        "unit": "PER_PAINTED_M2",
+        "floor": 800
+      },
+      {
+        "service": "peinture.mur_interieur.all_in_avec_prep",
+        "rate_mad": 75,
+        "unit": "PER_PAINTED_M2",
+        "floor": 800
+      },
+      {
+        "service": "peinture.plafond.labour_only",
+        "rate_mad": 45,
+        "unit": "PER_CEILING_M2",
+        "floor": 800
+      },
+      {
+        "service": "peinture.forfait_minimum",
+        "fixed": 800,
+        "floor": 800
+      }
+    ],
+    "contradiction_analysis": {
+      "reservation_js_semantics": "ABSOLUTE_RANGE: \"Peinture intérieure\" = 800–1500 MAD flat (room/project estimate)",
+      "reservation_v2_js_semantics": "AMBIGUOUS: 20–60 MAD — could be per-m² OR a severely wrong absolute range. Given context (similar pattern: Dépannage électrique from:150/to:350, Prise/interrupteur from:80), this appears to be PER_M2_ESTIMATION. However this is UNCONFIRMED — no source comment in reservation-v2.js confirms per-m² intent.",
+      "client_reachability": {
+        "reservation_js_SERVICE_PRICING": "ACTIVE_EXECUTED — used in renderStep1() and renderStep2() within window.FixeoReservation.open(). Displayed as \"800–1500 MAD\" range on service selection pills.",
+        "reservation_v2_js_SVC_PRICING_FB": "ACTIVE_LOADED_NOT_CALLED_DIRECTLY — reservation-v2.js._getSvcPrice() tries window.SERVICE_PRICING first. Since reservation.js keeps SERVICE_PRICING in IIFE local scope (not window), window.SERVICE_PRICING is undefined. reservation-v2.js then falls through to SVC_PRICING_FB which contains 20–60 MAD.",
+        "which_wins": "reservation-v2.js reads window.SERVICE_PRICING (undefined, since reservation.js does not expose it). Falls to SVC_PRICING_FB. So reservation-v2.js shows 20–60 MAD in its estimation block.",
+        "both_on_same_pages": true,
+        "load_order": "reservation.js loads first (line 314), then reservation-v2.js (line 316). Both defer. No explicit dependency.",
+        "concurrent_display": "YES — Both render separate UI blocks on same page. reservation.js pill labels show 800–1500 MAD. reservation-v2.js estimation block shows 20–60 MAD. Client sees both simultaneously."
+      },
+      "severity": "P0_ACTIVE_CLIENT_FACING",
+      "p0_reason": "Client simultaneously sees 800–1500 MAD (from reservation.js) and 20–60 MAD (from reservation-v2.js fallback) for the same Peinture intérieure service on 353+ production pages. A 40× price discrepancy in the booking flow damages pricing trust. Not safe to activate canonical engine until this is resolved.",
+      "migration_warning": "BEFORE canonical activation: (1) Remove or nullify reservation.js and reservation-v2.js Peinture ranges. (2) Replace with canonical per-m² pricing with minimum floor. (3) Ensure estimator UX collects painted_m2 from client. (4) Audit all other service ranges in both files for similar semantic mismatches."
+    }
+  },
+  "legacy_sources": [
+    {
+      "file": "js/fixeo-estimation-engine-v1.js",
+      "classification": "ACTIVE_EXECUTED",
+      "loaded_by": [
+        "dashboard-client.html",
+        "artisan-profile.html",
+        "index.html (via loadScriptOnce)"
+      ],
+      "called_by": [
+        "js/fixeo-estimation-v2-hero.js (skips _attachToHero when loaded)",
+        "js/fixeo-urgent-modal-v3.js",
+        "js/fixeo-urgent-modal-v3-patch.js"
+      ],
+      "globals_defined": [
+        "window.FixeoEstimationEngine (likely)",
+        "modal estimation UI"
+      ],
+      "pricing_domains": [
+        "Estimation modal — urgency/express flow",
+        "Hero section estimation widget (index.html)"
+      ],
+      "known_conflicts": [
+        "Contains city multiplier logic (×1.15 Casablanca, ×1.05 Tanger) — canonical city_adjustment=null",
+        "Contains urgency/night/weekend surcharges — canonical all modifiers=null",
+        "electricite floor = 100 MAD — canonical ELEC diagnostic = 200 MAD",
+        "plomberie floor = 120 MAD — canonical PLOMB diagnostic = 180 MAD",
+        "Uses métier-level ranges not per-service approved prices",
+        "All prices classified T0_INTERNAL_LEGACY — not canonical"
+      ],
+      "canonical_replacement_target": "FIXEO_PRICING_ENGINE_CORE_V1 (dormant) + Estimator V1 UX (future)",
+      "migration_priority": "P1",
+      "migration_priority_reason": "Active in estimation modal — not known to produce contradictory booking price for peinture, but applies legacy modifiers and wrong floors. Must be replaced before canonical activation.",
+      "safe_to_remove_now": false
+    },
+    {
+      "file": "js/fixeo-pricing-marocain.js",
+      "classification": "ACTIVE_EXECUTED",
+      "loaded_by": [
+        "index.html",
+        "results.html"
+      ],
+      "called_by": [
+        "js/fixeo-ai-request-engine.js (duplicated locally, no dependency)",
+        "js/reservation.js (reads window.FixeoPricing.getPricing)",
+        "js/fixeo_homepage_premium_patch.js"
+      ],
+      "globals_defined": [
+        "window.FixeoPricing (getPricing, patchArtisan, patchAll, patchRendered, SERVICE_PRICING)"
+      ],
+      "pricing_domains": [
+        "Artisan card price labels (patchAllArtisans)",
+        "Rendered card patches (patchRenderedCards)",
+        "reservation.js reads window.FixeoPricing.getPricing() for category range display",
+        "Métier-level ranges: plomberie 150–350, electricite 100–400, peinture 800–2500, etc."
+      ],
+      "known_conflicts": [
+        "peinture: 800–2500 MAD (métier level range) — canonical uses per-m² model",
+        "electricite: from=100 — canonical diagnostic = 200 MAD",
+        "menuiserie: from=150 — canonical minimum_floor = 300 MAD",
+        "All ranges are métier-level only — no per-service granularity",
+        "Exposed as window.FixeoPricing.SERVICE_PRICING — may be read by other scripts"
+      ],
+      "canonical_replacement_target": "FIXEO_PRICING_ENGINE_CORE_V1 with per-service canonical amounts",
+      "migration_priority": "P1",
+      "migration_priority_reason": "Active on index.html and results.html, patches artisan card labels. Not a direct booking price but influences displayed ranges.",
+      "safe_to_remove_now": false
+    },
+    {
+      "file": "js/reservation.js",
+      "classification": "ACTIVE_EXECUTED",
+      "loaded_by_count": 356,
+      "loaded_by_sample": [
+        "climatisation-casablanca.html",
+        "prix-peinture-casablanca.html",
+        "artisan-profile.html",
+        "index.html (indirect via FixeoPricing)",
+        "+ 352 more"
+      ],
+      "called_by": [
+        "All Reserve CTAs — onClick triggers window.FixeoReservation.open()"
+      ],
+      "globals_defined": [
+        "window.FixeoReservation (open, openExpress, close, _* handlers)"
+      ],
+      "local_scope": {
+        "SERVICE_PRICING": "IIFE-local — NOT exposed on window.SERVICE_PRICING",
+        "note": "reservation-v2.js._getSvcPrice() tries window.SERVICE_PRICING but gets undefined because reservation.js keeps it local"
+      },
+      "pricing_domains": [
+        "Step 1 service selection pills: displays \"800–1500 MAD\" for Peinture intérieure",
+        "Step 2 summary: uses SERVICE_PRICING[service].from as serviceTotal base",
+        "EXPRESS surcharge: +30% on urgence services if isExpress",
+        "Platform fee: +5% of serviceTotal",
+        "Urgent fee: +50 MAD if isUrgent",
+        "Express fee: +50 MAD if isExpress"
+      ],
+      "known_conflicts": [
+        "P0: Peinture intérieure: 800–1500 MAD (absolute) vs reservation-v2.js 20–60 MAD (per-m²?) — both shown simultaneously",
+        "Electricite services: from=100–200 MAD ranges (legacy) vs canonical 200 MAD diagnostic",
+        "Menuiserie: from=200 MAD ranges vs canonical 300 MAD floor",
+        "Applies +5% platform fee and +50 MAD urgency/express fees — not in canonical doctrine (all modifiers=null)",
+        "City-neutral (no multiplier in reservation.js) — consistent with canonical city_adjustment=null",
+        "SERVICE_PRICING is local-scoped IIFE — cannot be patched externally without modifying this file"
+      ],
+      "canonical_replacement_target": "Future Estimator V1 booking flow backed by FIXEO_PRICING_ENGINE_CORE_V1",
+      "migration_priority": "P0",
+      "migration_priority_reason": "Direct booking flow used by all Reserve CTAs on 356 pages. Contains wrong Peinture ranges alongside P0 contradiction with reservation-v2.js. Pricing feeds Step 2 summary total. Must be updated as part of canonical cutover.",
+      "safe_to_remove_now": false
+    },
+    {
+      "file": "js/reservation-v2.js",
+      "classification": "ACTIVE_EXECUTED",
+      "loaded_by_count": 353,
+      "loaded_by_sample": [
+        "Same 353 pages as reservation.js",
+        "artisan-profile.html (line 606, after reservation.js)"
+      ],
+      "called_by": [
+        "Hooks window.FixeoReservation._rv2Hooked — wraps existing FixeoReservation methods",
+        "Updates estimation block DOM (#fxrv2-price-range, #fxrv2-price-row)"
+      ],
+      "globals_defined": [
+        "Patches window.FixeoReservation (adds _rv2Hooked, _origOpen, _origGoStep1, _origSubmitStep1)"
+      ],
+      "pricing_function": "_getSvcPrice(svcName): tries window.SERVICE_PRICING (undefined) → falls to SVC_PRICING_FB",
+      "SVC_PRICING_FB_peinture": {
+        "key": "Peinture intérieure",
+        "from": 20,
+        "to": 60,
+        "semantic": "AMBIGUOUS_PER_M2_OR_WRONG_ABSOLUTE"
+      },
+      "pricing_domains": [
+        "Estimation block (#fxrv2-price-range): shows \"20–60 MAD — estimation indicative\" for Peinture intérieure",
+        "Wraps reservation.js Step 1 service selection changes (_onServiceChange hook)",
+        "Does NOT override Step 2 booking total — that is still reservation.js SERVICE_PRICING"
+      ],
+      "known_conflicts": [
+        "P0: Peinture intérieure SVC_PRICING_FB from=20, to=60 vs reservation.js 800–1500 — both shown simultaneously on same pages",
+        "Electricite \"Dépannage électrique\" from=150, to=350 vs canonical 200 MAD (absolute)",
+        "All values in SVC_PRICING_FB are legacy ranges — no correspondence to canonical per-service prices",
+        "Legacy comment says \"mirrors reservation.js SERVICE_PRICING map\" but actual values diverge (e.g. peinture)",
+        "Loads window.SERVICE_PRICING → undefined → falls to SVC_PRICING_FB: creates silent fallback dependency on load order"
+      ],
+      "canonical_replacement_target": "Future Estimator V1 booking estimation block backed by FIXEO_PRICING_ENGINE_CORE_V1",
+      "migration_priority": "P0",
+      "migration_priority_reason": "Shows wrong Peinture price range simultaneously with reservation.js on 353 client-facing pages. Must be updated alongside reservation.js in canonical cutover.",
+      "safe_to_remove_now": false
+    }
+  ],
+  "migration_priorities": {
+    "P0": [
+      {
+        "domain": "Peinture reservation display contradiction",
+        "files": [
+          "js/reservation.js (SERVICE_PRICING peinture 800–1500)",
+          "js/reservation-v2.js (SVC_PRICING_FB peinture 20–60)"
+        ],
+        "risk": "Client sees 40× price discrepancy on 353+ production pages simultaneously",
+        "blocker_for": "canonical_production_activation"
+      },
+      {
+        "domain": "reservation.js booking total feeds actual booking",
+        "files": [
+          "js/reservation.js"
+        ],
+        "risk": "Step 2 uses SERVICE_PRICING[service].from as serviceTotal. Must be replaced with canonical price before engine activation.",
+        "blocker_for": "canonical_production_activation"
+      }
+    ],
+    "P1": [
+      {
+        "domain": "Legacy city multipliers",
+        "files": [
+          "js/fixeo-estimation-engine-v1.js"
+        ],
+        "risk": "Applies ×1.15 Casablanca multiplier in estimation modal. Canonical city_adjustment=null. Active divergence.",
+        "blocker_for": "estimator_v1_activation"
+      },
+      {
+        "domain": "Legacy urgency/night/weekend modifiers",
+        "files": [
+          "js/fixeo-estimation-engine-v1.js"
+        ],
+        "risk": "Applies +25% night, +20% weekend surcharges. Canonical all modifiers=null.",
+        "blocker_for": "estimator_v1_activation"
+      },
+      {
+        "domain": "Legacy diagnostic amounts",
+        "files": [
+          "js/fixeo-estimation-engine-v1.js (electricite from=100)",
+          "js/fixeo-pricing-marocain.js (electricite from=100)"
+        ],
+        "risk": "Legacy electricite starting price 100 MAD vs canonical ELEC diagnostic 200 MAD. Visible in artisan cards.",
+        "blocker_for": "estimator_v1_activation"
+      },
+      {
+        "domain": "Labour-only vs all-in ambiguity",
+        "files": [
+          "js/reservation.js",
+          "js/reservation-v2.js"
+        ],
+        "risk": "Legacy ranges may include parts. Canonical LABOUR_FIXED_PART_SEPARATE is explicit. Booking semantics differ.",
+        "blocker_for": "estimator_v1_activation"
+      }
+    ],
+    "P2": [
+      {
+        "domain": "fixeo-pricing-marocain.js métier-level ranges",
+        "files": [
+          "js/fixeo-pricing-marocain.js"
+        ],
+        "risk": "Historical métier ranges on artisan cards. Not directly in booking flow. Lower urgency.",
+        "blocker_for": "eventual_cleanup"
+      },
+      {
+        "domain": "Minimum floor additive risk (legacy)",
+        "files": [
+          "js/reservation.js"
+        ],
+        "risk": "Legacy did not enforce non-additive floor doctrine. Canonical POL-MINIMUM-NON-ADDITIVE-V1 explicit. Cleanup debt.",
+        "blocker_for": "eventual_cleanup"
+      }
+    ]
+  },
+  "estimator_design_preconditions": {
+    "estimator_design_blocked": false,
+    "estimator_design_blocked_reason": null,
+    "dormant_orchestration_blocked": false,
+    "dormant_orchestration_blocked_reason": null,
+    "production_activation_blocked": true,
+    "production_activation_blocked_reason": [
+      "P0: Peinture reservation.js (800-1500 MAD) vs reservation-v2.js (20-60 MAD) — client-facing contradiction on 353 pages",
+      "P0: reservation.js Step 2 booking total must be replaced with canonical engine price before activation",
+      "HRQ-002: UX measurement experience for painted_m2 not designed yet",
+      "HRQ-004: NET-030 field validation (LOW evidence)",
+      "HRQ-005: Low/medium confidence services pilot missions not completed",
+      "HRQ-006: CLIM-025 copper add-on calibration unresolved",
+      "HRQ-008: Legal + Darija native copy review pending"
+    ],
+    "doctrine": "Legacy conflicts DO NOT block estimator design or dormant implementation. They MUST be resolved before production activation. No dual-authority pricing."
+  },
+  "canonical_source_of_truth_doctrine": {
+    "source_of_truth": "CANONICAL_REGISTRY + FIXEO_PRICING_ENGINE_CORE_V1",
+    "legacy_status": "T0_INTERNAL_LEGACY — COMPARISON_ONLY",
+    "forbidden_in_future_estimator": [
+      "Call legacy pricing as fallback",
+      "Merge or average legacy ranges with canonical prices",
+      "Apply old city multipliers (x1.15 Casablanca etc.)",
+      "Apply old urgency/night/weekend surcharges",
+      "Choose whichever legacy result looks better",
+      "Dual-authority pricing (two systems returning prices for same service)"
+    ],
+    "required_in_future_estimator": [
+      "Single call to evaluateFixeoPrice() per service",
+      "Return exact canonical approved price",
+      "city_adjustment = null (no city adjustment)",
+      "All modifiers = null (no urgency/night/weekend/holiday/express adjustment)",
+      "EXACT_INTEGER_MAD rounding",
+      "production_ready=false gate enforced before any activation"
+    ]
+  }
+}
