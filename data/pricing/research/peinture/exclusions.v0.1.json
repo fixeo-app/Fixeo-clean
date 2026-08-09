@@ -1,0 +1,86 @@
+[
+  {
+    "service_description": "Peinture sur mur humide actif (source d'infiltration non traitée)",
+    "classification": "NOT_PEINTURE_SCOPE",
+    "reason": "Active moisture source (roof leak, pipe leak, rising damp) must be resolved before any paint is applied. Painting over active moisture provides no lasting result and creates artisan/client dispute risk. FIXEO must route to Plomberie, Toiture, or Maçonnerie first.",
+    "cross_metier_boundary": "PLOMBERIE"
+  },
+  {
+    "service_description": "Traitement moisissure (cause biologique active)",
+    "classification": "NOT_PEINTURE_SCOPE",
+    "reason": "Active mold requires specialist remediation. Anti-mold paint alone is insufficient for active biological growth. Moisture source must be identified and treated. Cosmetic repainting after mold treatment is in-scope, but mold remediation itself is not.",
+    "cross_metier_boundary": "MACONNERIE"
+  },
+  {
+    "service_description": "Fissures structurelles (fissures de structure, mouvements de bâtiment)",
+    "classification": "NOT_PEINTURE_SCOPE",
+    "reason": "Structural cracks require engineering assessment and masonry repair before painting. Painting over structural cracks provides no repair and creates liability. FIXEO must route to Maçonnerie.",
+    "cross_metier_boundary": "MACONNERIE"
+  },
+  {
+    "service_description": "Réparation bois avant peinture (bois pourri, assemblage cassé, charpente)",
+    "classification": "NOT_PEINTURE_SCOPE",
+    "reason": "Wood repair, rot treatment, or carpentry fabrication must precede painting. Wood repair is Menuiserie scope.",
+    "cross_metier_boundary": "MENUISERIE"
+  },
+  {
+    "service_description": "Infiltration toiture (peinture plafond après dégât des eaux par toiture)",
+    "classification": "NOT_PEINTURE_SCOPE",
+    "reason": "Roof infiltration causing ceiling stains must be treated at source (Toiture) before ceiling repaint. FIXEO must not create a service that encourages masking active water damage.",
+    "cross_metier_boundary": "TOITURE"
+  },
+  {
+    "service_description": "Peinture tadelakt (hammam, salle de bain, piscine)",
+    "classification": "QUOTE_REQUIRED",
+    "reason": "Tadelakt requires specialized artisan skills, multi-day application, specific lime materials, polishing and waterproofing soap finish. Price range 300–600 MAD/m² is evidence-supported but artisan evaluation is mandatory. Cannot be standardized without site inspection.",
+    "cross_metier_boundary": null
+  },
+  {
+    "service_description": "Peinture façade avec échafaudage (>1 étage)",
+    "classification": "QUOTE_REQUIRED",
+    "reason": "Scaffolding for multi-story facades significantly increases cost and requires safety assessment. Scaffolding rental adds 15–40% to total project cost. Cannot be standardized without site measurement.",
+    "cross_metier_boundary": null
+  },
+  {
+    "service_description": "Stucco vénitien, badigeons, béton ciré, effets spéciaux",
+    "classification": "QUOTE_REQUIRED",
+    "reason": "Decorative finishes (80–200+ DH/m²) depend heavily on artisan skill and specific technique. Cannot be standardized without artisan assessment.",
+    "cross_metier_boundary": null
+  },
+  {
+    "service_description": "Peinture immeuble / promotion immobilière / commercial",
+    "classification": "DEFERRED",
+    "reason": "Large-scale commercial/promoter painting requires negotiated volume rates, project management, and scheduling coordination. Not appropriate for FIXEO residential artisan model in V1.",
+    "cross_metier_boundary": null
+  },
+  {
+    "service_description": "Peinture epoxy sol (garages, parkings, locaux industriels)",
+    "classification": "NOT_PEINTURE_SCOPE",
+    "reason": "Floor epoxy paint is a different specialty from residential wall painting. Different surface preparation, materials, and artisan profile.",
+    "cross_metier_boundary": null
+  },
+  {
+    "service_description": "Peinture volets bois (persiennes)",
+    "classification": "DEFERRED",
+    "reason": "Insufficient specific Moroccan evidence for shutter painting pricing. Likely in-scope for Peinture V2 but evidence base is too thin for V1.",
+    "cross_metier_boundary": null
+  },
+  {
+    "service_description": "Peinture porte fer / rampe métallique",
+    "classification": "DEFERRED",
+    "reason": "Metal surface preparation (sanding, anti-rust primer, finish coat) requires different materials and process from wood. Insufficient specific Moroccan evidence for V1 standardized price.",
+    "cross_metier_boundary": null
+  },
+  {
+    "service_description": "Ravalement façade avec enduit (enduit + peinture)",
+    "classification": "QUOTE_REQUIRED",
+    "reason": "Facade render + paint is a complex construction task requiring mason skills, material assessment, and surface preparation that goes beyond painting scope. Combines Maçonnerie (enduit) and Peinture.",
+    "cross_metier_boundary": "MACONNERIE"
+  },
+  {
+    "service_description": "Modification installations électriques avant peinture",
+    "classification": "NOT_PEINTURE_SCOPE",
+    "reason": "Any electrical modifications, fixture changes, or circuit work must be completed before painting. Routes to Electricité.",
+    "cross_metier_boundary": "ELECTRICITE"
+  }
+]

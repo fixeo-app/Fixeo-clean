@@ -1,0 +1,114 @@
+[
+  {
+    "source_id": "SRC-001",
+    "grade": "A",
+    "url": "https://www.equipement.gov.ma/Ingenierie/pages/revision-des-prix-baremes-indexation.aspx",
+    "title": "Barèmes d'indexation BTP — Ministère de l'Équipement du Maroc",
+    "date_accessed": "2026-08-09",
+    "description": "Official Moroccan Ministry of Equipment monthly BTP construction price indices (2022–2026). Tracks evolution of construction cost indices for public procurement. Does not publish absolute labour rates per métier, but confirms upward material and labour cost trend in Moroccan construction sector."
+  },
+  {
+    "source_id": "SRC-002",
+    "grade": "B",
+    "url": "https://maroc.prix-construction.info/construction_neuve/Amenagements_et_finitions/Peintures/Peintures_anticarbonatation/Peinture_anticarbonatation_0_1_5_0_0_0_0_0_0_0_0.html",
+    "title": "Générateur de Prix — Maroc Prix Construction — Peinture anticarbonatation",
+    "date_accessed": "2026-08-09",
+    "description": "Moroccan structured construction price database (prix-construction.info) with detailed unit-price breakdowns per work item. Includes labour rates, material costs, and overhead. Methodology-documented. Value extracted: 42.45 DH/m² for two-coat elastomeric anti-carbonation paint (specialty exterior). Not a standard residential interior paint price."
+  },
+  {
+    "source_id": "SRC-003",
+    "grade": "B",
+    "url": "https://maroc.prix-construction.info/renovation/Enveloppe_et_finition_exterieure/Peintures/Peintures_plastiques/EPP010_Peinture_plastique_sur_parement_ext.html",
+    "title": "Générateur de Prix — Maroc Prix Construction — Peinture plastique extérieure",
+    "date_accessed": "2026-08-09",
+    "description": "Moroccan structured construction price database. Unit price for two-coat plastic paint on exterior cement render: 68.02 DH/m². Includes primer coat + 2 finish coats. Labour + material all-in. Measured on actual painted surface area."
+  },
+  {
+    "source_id": "SRC-004",
+    "grade": "C+",
+    "url": "https://mano.ma/prix-peinture-maison-au-m%C2%B2-au-maroc/",
+    "title": "Mano.ma — Prix Peinture Maison au m² au Maroc",
+    "date_accessed": "2026-08-09",
+    "description": "Moroccan home services platform (mano.ma). Publishes structured pricing guides derived from artisan quotes across Morocco. Covers labour-only and all-in rates by surface type and city. Includes paint brand pricing from Moroccan retailers. Methodology: aggregated from platform quotes. Grade C+ due to platform position and structured methodology, though exact sample size not published."
+  },
+  {
+    "source_id": "SRC-005",
+    "grade": "C+",
+    "url": "https://mano.ma/prix-peinture-plafond-au-m%C2%B2-au-maroc/",
+    "title": "Mano.ma — Prix Peinture Plafond au m² au Maroc",
+    "date_accessed": "2026-08-09",
+    "description": "Mano.ma structured guide for ceiling painting prices in Morocco. Covers labour-only, all-in, with/without enduit de lissage. Includes city-level variation data."
+  },
+  {
+    "source_id": "SRC-006",
+    "grade": "C+",
+    "url": "https://www.bnidari.ma/conseils/prix-m2-peinture-maroc",
+    "title": "Bnidari.ma — Prix de la Peinture au m² au Maroc en 2026",
+    "date_accessed": "2026-08-09",
+    "description": "Bnidari.ma is a Moroccan home renovation platform with a calculateur de devis. Publishes structured price guides by paint quality tier. Covers standard vinyl/acrylic, washable satin, and decorative finishes. Includes brand references (Astral, Colorado, Atlas)."
+  },
+  {
+    "source_id": "SRC-007",
+    "grade": "C+",
+    "url": "https://www.bnidari.ma/tarifs/peintre",
+    "title": "Bnidari.ma — Tarif Peintre au Maroc",
+    "date_accessed": "2026-08-09",
+    "description": "Bnidari.ma tariff guide for painters. States average constaté price of 30–80 DH/m². Clarifies scope inclusions: floor/furniture protection, enduit lissage, primer, 2 finish coats, site cleanup. Structured service platform."
+  },
+  {
+    "source_id": "SRC-008",
+    "grade": "C",
+    "url": "https://travauxpeinture.ma/",
+    "title": "TravauPeinture.ma — Artisan Peintre Professionnel Maroc",
+    "date_accessed": "2026-08-09",
+    "description": "Established Moroccan painting contractor operating in Casablanca, Rabat, Marrakech, Fès since 2010. 500+ completed projects, 127 Google reviews. FAQ publishes price ranges: 25–60 DH/m² interior standard; tadelakt 300–600 DH/m². Mentions paint brands: Valentine, Tollens, Caparol. Operates as an ARTISAN_SUPPLIED_PAINT model by default."
+  },
+  {
+    "source_id": "SRC-009",
+    "grade": "C",
+    "url": "https://www.mondevis.ma/prix-construction-59-peinture-casablanca.html",
+    "title": "MonDevis.ma — Devis Peinture Casablanca n°59",
+    "date_accessed": "2026-08-09",
+    "description": "Real Moroccan quote comparison platform. Devis from 2015 for 150m² painted wall surface (apartment, all rooms + ceiling). Multiple competing quotes: 26–45 DH/m² for vinyl interior walls; 20–32 DH/m² for ceilings. Older data (2015) — useful for trend calibration but not current pricing anchor."
+  },
+  {
+    "source_id": "SRC-010",
+    "grade": "C",
+    "url": "https://www.bricoma.ma/droguerie-peinture/peinture-vinylique.html",
+    "title": "Bricoma.ma — Peinture Vinylique (matériau retail)",
+    "date_accessed": "2026-08-09",
+    "description": "Bricoma is a major Moroccan DIY/building materials retailer. Published retail paint prices: Colorado Colovinyl 900 (standard vinyl) 439 MAD/bidon (approx 15–20L). Astral Zenit, Coloflex, Matex also available. Useful for material cost calibration only."
+  },
+  {
+    "source_id": "SRC-011",
+    "grade": "D",
+    "url": "https://www.reddit.com/r/Morocco/comments/1mtienh/average_price_for_a_paint_job_in_casablanca/?tl=fr",
+    "title": "Reddit r/Morocco — Prix moyen peinture appartement Casablanca (2025)",
+    "date_accessed": "2026-08-09",
+    "description": "User discussion thread (August 2025) about painting prices for 100m² Casablanca apartment (2 bedrooms, kitchen, salon, 2 balconies, ceilings). Community-reported: 17,000 DH all-in for 100m² apartment (full scope). Multiple users citing price ranges. Grade D — informal, small sample, anecdotal."
+  },
+  {
+    "source_id": "SRC-012",
+    "grade": "T0",
+    "url": "internal://fixeo-clean/js/fixeo-pricing-marocain.js",
+    "title": "FIXEO Internal Legacy — fixeo-pricing-marocain.js",
+    "date_accessed": "2026-08-09",
+    "description": "FIXEO internal pricing registry. Contains: peinture from 800 MAD to 2500 MAD (chambre/salon). Unit unclear — appears to be PER_ROOM or PER_PROJECT. T0 internal legacy only."
+  },
+  {
+    "source_id": "SRC-013",
+    "grade": "T0",
+    "url": "internal://fixeo-clean/js/fixeo-estimation-engine-v1.js",
+    "title": "FIXEO Internal Legacy — fixeo-estimation-engine-v1.js",
+    "date_accessed": "2026-08-09",
+    "description": "FIXEO estimation engine V1. Peinture ranges: simple 150–350 MAD, medium 300–800 MAD, heavy 700–2000 MAD, urgent 250–600 MAD. Unit: per complexity tier (undefined unit). T0 internal legacy only."
+  },
+  {
+    "source_id": "SRC-014",
+    "grade": "T0",
+    "url": "internal://fixeo-clean/js/fixeo-estimation-v2-hero.js",
+    "title": "FIXEO Internal Legacy — fixeo-estimation-v2-hero.js",
+    "date_accessed": "2026-08-09",
+    "description": "FIXEO estimation hero V2. Peinture: simple 150–350, medium 300–800, heavy 700–2000, urgent 250–600. Category weight: 12 (moderate complexity vs electricite:16). T0 internal legacy only."
+  }
+]
