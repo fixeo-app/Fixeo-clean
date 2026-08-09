@@ -1,0 +1,656 @@
+{
+  "_meta": {
+    "file": "calibration.v0.2.json",
+    "registry": "fixeo_serrurerie_pricing",
+    "version": "0.2.0",
+    "status": "HUMAN_CALIBRATION_PREPARATION_NOT_PRODUCTION",
+    "description": "Phase 7B.5.1 — Human calibration preparation for 7 locksmith service candidates. All prices daytime base only. Night/weekend modifiers remain null. No price is active. Human decision still PENDING.",
+    "production_ready": false,
+    "human_decision": "PENDING",
+    "last_updated": "2026-08-09",
+    "phase": "7B.5.1",
+    "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
+    "provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+    "night_modifier": null,
+    "weekend_modifier": null,
+    "holiday_modifier": null,
+    "urgency_modifier": null,
+    "city_multiplier": null,
+    "daytime_window_reference": "08h00–20h00 (analysis only — no production time rule created)",
+    "canonical_disclaimer": "Prix indicatif FIXEO — tarif réel confirmé avec l'artisan avant intervention.",
+    "commission_reference": 0.15,
+    "commission_sensitivity": [0, 0.10, 0.15, 0.20],
+    "fuel_scenarios_MAD": {"LOW": 25, "MID": 40, "HIGH": 60},
+    "artisan_floor_MAD": 100,
+    "floor_grade_thresholds": {
+      "STRONG": 150,
+      "ACCEPTABLE": 100,
+      "MARGINAL": 70,
+      "FAIL": 0
+    }
+  },
+  "candidates": [
+    {
+      "service_key": "serrurerie.porte_claquee_ouverture",
+      "label_fr": "Ouverture de porte claquée",
+      "architecture": "FIXED",
+      "architecture_rationale": "Intervention is precisely defined, reproducible, and requires no parts. Duration is predictable (5–20 min). Client situation (pêne rentré, non verrouillée) is fully describable by phone before artisan travel. Ideal FIXED architecture.",
+
+      "scope_contract": {
+        "definition": "Porte résidentielle ou commerciale fermée sans avoir tourné la clé (le pêne est simplement rentré). Ouverture par crochetage, carte, ou décodage non destructif.",
+        "conditions_required": [
+          "Cylindre européen standard ou serrure à gorge standard",
+          "Porte non verrouillée à clé (pêne libre, non condamné)",
+          "Aucun dommage préalable au barillet ou au mécanisme"
+        ],
+        "included_labour": "Déplacement + ouverture non destructive (crochetage, carte, décodage)",
+        "included_travel": true,
+        "included_consumables": "Néant",
+        "included_hardware": "Aucun",
+        "excluded_hardware": "Tout remplacement de pièce",
+        "explicit_exclusions": [
+          "Porte blindée ou à serrure multipoints",
+          "Porte verrouillée à clé",
+          "Cylindre endommagé ou bloqué nécessitant perçage",
+          "Clé cassée dans la serrure",
+          "Dommages à la porte ou au cadre préexistants"
+        ],
+        "escape_triggers": [
+          "Constat que la porte est verrouillée à clé → déclarer HORS PÉRIMÈTRE → citer porte_verrouillee_ouverture ou devis",
+          "Porte blindée identifiée → déclarer HORS PÉRIMÈTRE → citer porte_claquee_blindee ou porte_blindee_ouverture",
+          "Barillet endommagé nécessitant perçage → déclarer HORS PÉRIMÈTRE → devis avec perçage + remplacement cylindre",
+          "Clé cassée dans le barillet → déclarer HORS PÉRIMÈTRE → citer cle_cassee_extraction",
+          "Ouverture non destructive impossible après tentative → déclarer HORS PÉRIMÈTRE → devis perçage"
+        ],
+        "typical_duration_min": "5–20",
+        "authorization_requirement": "STANDARD — voir authorization_matrix scenario_A"
+      },
+
+      "price_comparison": {
+        "market_range_day_MAD": {"low": 150, "high": 300},
+        "source_quality": "HIGH — 2 independent C+ sources",
+        "options_tested": [
+          {
+            "price_MAD": 200,
+            "net_15pct_mid": 130,  "grade_15pct_mid": "ACCEPTABLE",
+            "net_15pct_high": 110, "grade_15pct_high": "ACCEPTABLE",
+            "net_20pct_mid": 120,  "grade_20pct_mid": "ACCEPTABLE",
+            "net_20pct_high": 100, "grade_20pct_high": "ACCEPTABLE",
+            "worst_case_net": 100,
+            "client_position": "Bottom third of market range — client-protective",
+            "artisan_position": "Worst case exactly at floor. Sustainable only at standard conditions.",
+            "verdict": "VIABLE but no margin for error at 20% commission + high fuel"
+          },
+          {
+            "price_MAD": 220,
+            "net_15pct_mid": 147,  "grade_15pct_mid": "ACCEPTABLE",
+            "net_15pct_high": 127, "grade_15pct_high": "ACCEPTABLE",
+            "net_20pct_mid": 136,  "grade_20pct_mid": "ACCEPTABLE",
+            "net_20pct_high": 116, "grade_20pct_high": "ACCEPTABLE",
+            "worst_case_net": 116,
+            "client_position": "Still bottom third of market range",
+            "artisan_position": "Comfortable buffer above floor in all scenarios",
+            "verdict": "PREFERRED — clean buffer, still client-protective, easy to communicate"
+          },
+          {
+            "price_MAD": 250,
+            "net_15pct_mid": 172,  "grade_15pct_mid": "STRONG",
+            "net_15pct_high": 152, "grade_15pct_high": "STRONG",
+            "net_20pct_mid": 160,  "grade_20pct_mid": "STRONG",
+            "net_20pct_high": 140, "grade_20pct_high": "ACCEPTABLE",
+            "worst_case_net": 140,
+            "client_position": "Mid-market — still below the 300 MAD upper bound",
+            "artisan_position": "STRONG in all scenarios",
+            "verdict": "ALSO VIABLE — stronger artisan protection, still fair to client"
+          }
+        ]
+      },
+
+      "proposed_fixeo_daytime_price_MAD": 220,
+      "proposed_fixeo_price_rationale": "200 MAD hits the floor exactly in the worst commission+fuel scenario. 220 MAD provides a clean buffer (116 MAD net worst case) while remaining in the lower third of the honest Moroccan market range (150–300 MAD). 250 MAD is also defensible but moves closer to the market midpoint. 220 MAD is the optimal dual-fairness point: client-protective and artisan-sustainable in all realistic scenarios.",
+      "alternative_price_MAD": 250,
+      "alternative_rationale": "If human calibrator judges artisan risk to be higher than expected (fuel/time), 250 MAD is the next defensible price.",
+      "hardware_policy": "NONE_APPLICABLE",
+      "confidence": "HIGH",
+      "human_decision": "PENDING"
+    },
+
+    {
+      "service_key": "serrurerie.porte_claquee_blindee_ouverture",
+      "label_fr": "Ouverture de porte blindée claquée",
+      "architecture": "CONDITIONAL_FIXED",
+      "architecture_rationale": "Intervention is more complex than standard porte claquée (specialist tooling, longer time) but still reproducible and non-destructive in standard case. CONDITIONAL because the 'claquée' vs 'verrouillée' distinction must be confirmed on-site. If condition not met → escape to DIAGNOSIS_FIRST.",
+
+      "scope_contract": {
+        "definition": "Porte blindée ou renforcée fermée sans avoir tourné la clé (pêne rentré). Ouverture non destructive avec outillage spécialisé.",
+        "conditions_required": [
+          "Porte blindée confirmée (blindage certifié ou apparent)",
+          "Non verrouillée à clé (pêne libre)",
+          "Mécanisme sans dommage préalable"
+        ],
+        "included_labour": "Déplacement + ouverture non destructive blindée",
+        "included_travel": true,
+        "included_consumables": "Néant",
+        "included_hardware": "Aucun",
+        "excluded_hardware": "Tout remplacement de pièce ou mécanisme",
+        "explicit_exclusions": [
+          "Porte blindée verrouillée à clé",
+          "Mécanisme multipoints endommagé",
+          "Serrure haute sécurité antibump nécessitant perçage",
+          "Dommages préexistants à la porte blindée"
+        ],
+        "escape_triggers": [
+          "Porte verrouillée à clé → déclarer HORS PÉRIMÈTRE → DIAGNOSIS_FIRST porte_blindee_ouverture",
+          "Ouverture non destructive impossible → déclarer HORS PÉRIMÈTRE → devis perçage + remplacement mécanisme",
+          "Mécanisme endommagé détecté → déclarer HORS PÉRIMÈTRE → devis"
+        ],
+        "typical_duration_min": "15–45",
+        "authorization_requirement": "STANDARD — voir authorization_matrix scenario_A"
+      },
+
+      "price_comparison": {
+        "market_range_day_MAD": {"low": 250, "high": 400},
+        "source_quality": "MEDIUM — 2 C+ sources, one range diverges",
+        "options_tested": [
+          {
+            "price_MAD": 300,
+            "net_15pct_mid": 215, "grade": "STRONG",
+            "net_20pct_high": 180, "grade_worst": "STRONG",
+            "client_position": "Lower market bound",
+            "verdict": "Viable — slightly close to mano.ma lower bound of 250 MAD"
+          },
+          {
+            "price_MAD": 350,
+            "net_15pct_mid": 258, "grade": "STRONG",
+            "net_20pct_high": 220, "grade_worst": "STRONG",
+            "client_position": "Market midpoint",
+            "verdict": "PREFERRED — strong artisan economics, mid-market client price"
+          },
+          {
+            "price_MAD": 400,
+            "net_15pct_mid": 300, "grade": "STRONG",
+            "net_20pct_high": 260, "grade_worst": "STRONG",
+            "client_position": "Upper market bound",
+            "verdict": "Conservative for client — acceptable but upper end"
+          }
+        ]
+      },
+
+      "proposed_fixeo_daytime_price_MAD": 350,
+      "proposed_fixeo_price_rationale": "350 MAD is the mid-market value for blindée claquée. STRONG economics in all scenarios (min net 220 MAD). Client pays 60% more than standard porte claquée — appropriate given specialist tooling and longer duration. Consistent with market evidence.",
+      "hardware_policy": "NONE_APPLICABLE",
+      "confidence": "MEDIUM",
+      "human_decision": "PENDING"
+    },
+
+    {
+      "service_key": "serrurerie.porte_verrouillee_ouverture",
+      "label_fr": "Ouverture de porte verrouillée (clés perdues ou enfermées)",
+      "architecture": "CONDITIONAL_FIXED",
+      "architecture_rationale": "The labour of opening a locked door (picking, decoding, or controlled drilling) is a distinct and reproducible intervention. Cylinder replacement, if required, is a SEPARATE service event and must be quoted and approved separately. Bundling creates opacity and violates the parts doctrine.",
+
+      "scope_contract": {
+        "definition": "Porte résidentielle standard verrouillée à clé (clés perdues, volées, ou enfermées). Ouverture par crochetage ou perçage contrôlé du barillet. Si le barillet est percé et doit être remplacé, le remplacement est facturé séparément avec accord préalable du client.",
+        "conditions_required": [
+          "Porte standard non-blindée",
+          "Cylindre européen ou serrure à gorge standard",
+          "Situation clairement décrite (perte de clés, clés enfermées)"
+        ],
+        "included_labour": "Déplacement + ouverture (crochetage ou perçage barillet si nécessaire)",
+        "included_travel": true,
+        "included_consumables": "Néant",
+        "included_hardware": "AUCUN — remplacement cylindre facturé séparément si nécessaire, après accord client explicite",
+        "excluded_hardware": "Cylindre de remplacement",
+        "explicit_exclusions": [
+          "Porte blindée ou multipoints (→ porte_blindee_ouverture)",
+          "Remplacement cylindre (→ cylindre_remplacement_standard, accord séparé requis)",
+          "Dommages préexistants au cadre ou à la porte"
+        ],
+        "escape_triggers": [
+          "Porte blindée identifiée → déclarer HORS PÉRIMÈTRE → porte_blindee_ouverture",
+          "Serrure multipoints → déclarer HORS PÉRIMÈTRE → DIAGNOSIS_FIRST",
+          "Perçage impossible ou mécanisme non-standard → déclarer HORS PÉRIMÈTRE → devis",
+          "Clé cassée dans le barillet → clé_cassée_extraction peut précéder"
+        ],
+        "note_on_cylinder": "L'artisan doit informer le client AVANT perçage si le barillet sera détruit et devra être remplacé. Le client approuve explicitement. Le prix du cylindre de remplacement est annoncé avant installation.",
+        "typical_duration_min": "20–45",
+        "authorization_requirement": "ELEVATED — voir authorization_matrix scenario_B"
+      },
+
+      "price_comparison": {
+        "market_range_day_MAD": {"low": 300, "high": 450},
+        "source_quality": "HIGH",
+        "options_tested": [
+          {
+            "price_MAD": 350,
+            "net_15pct_mid": 258, "grade": "STRONG",
+            "net_20pct_high": 220, "grade_worst": "STRONG",
+            "client_position": "Lower market bound",
+            "verdict": "Viable and client-protective"
+          },
+          {
+            "price_MAD": 380,
+            "net_15pct_mid": 283, "grade": "STRONG",
+            "net_20pct_high": 244, "grade_worst": "STRONG",
+            "client_position": "Just below midpoint",
+            "verdict": "PREFERRED — consistent with Phase 7B.5 research anchor"
+          },
+          {
+            "price_MAD": 400,
+            "net_15pct_mid": 300, "grade": "STRONG",
+            "net_20pct_high": 260, "grade_worst": "STRONG",
+            "client_position": "Market midpoint",
+            "verdict": "Also viable — round number, easier to communicate"
+          }
+        ]
+      },
+
+      "proposed_fixeo_daytime_price_MAD": 380,
+      "proposed_fixeo_price_rationale": "380 MAD is consistently STRONG across all economic scenarios. Positioned below midmarket (300–450 range), protective of client, while rewarding artisan appropriately for a longer, more skilled intervention than porte claquée. Clean separation from porte_claquee (220 MAD) signals clear value differentiation to both client and artisan.",
+      "alternative_price_MAD": 400,
+      "alternative_rationale": "400 MAD is a rounder number (easier for client communication) and adds a small artisan buffer. Acceptable if human calibrator values simplicity.",
+      "hardware_policy": "EXCLUDED — cylinder always billed separately with full disclosure protocol",
+      "hardware_protocol": [
+        "1. Artisan identifies that barillet must be percé/replaced",
+        "2. Artisan states cylinder specification (brand, security grade)",
+        "3. Artisan states cylinder price before installation",
+        "4. Client explicitly approves",
+        "5. Artisan installs",
+        "6. Total invoice = porte_verrouillee_ouverture price + cylinder price (pre-approved)"
+      ],
+      "confidence": "HIGH",
+      "human_decision": "PENDING"
+    },
+
+    {
+      "service_key": "serrurerie.cle_cassee_extraction",
+      "label_fr": "Extraction de clé cassée",
+      "architecture": "CONDITIONAL_FIXED",
+      "architecture_rationale": "Key extraction is a well-defined specialist intervention with reproducible scope. Labour is the primary cost. The conditional is: if extraction destroys the cylinder, cylinder replacement is a separate event. This keeps the base price clean and the parts doctrine intact.",
+
+      "scope_contract": {
+        "definition": "Fragment de clé coincé dans le barillet. Extraction par outils spécialisés (extracteurs, pince fine, magnétique selon profondeur). Si le barillet reste intact après extraction, intervention terminée. Si le barillet est endommagé, remplacement facturé séparément avec accord client.",
+        "conditions_required": [
+          "Fragment de clé dans le barillet standard (cylindre européen)",
+          "Barillet non préalablement endommagé par tentative maison"
+        ],
+        "included_labour": "Déplacement + extraction du fragment de clé",
+        "included_travel": true,
+        "included_consumables": "Néant",
+        "included_hardware": "AUCUN — si cylindre à remplacer, accord séparé requis",
+        "excluded_hardware": "Cylindre de remplacement",
+        "explicit_exclusions": [
+          "Cylindre endommagé → cylindre_remplacement_standard (accord séparé)",
+          "Clé cassée dans porte blindée (complexité supérieure → devis)",
+          "Tentative maison ayant bloqué le fragment profondément → HORS PÉRIMÈTRE potentiel"
+        ],
+        "escape_triggers": [
+          "Fragment impossible à extraire sans perçage barillet → déclarer HORS PÉRIMÈTRE → devis perçage + cylindre",
+          "Porte blindée identifiée → tarif différent → porte_claquee_blindee ou devis",
+          "Barillet déjà endommagé par tentative maison → HORS PÉRIMÈTRE potentiel, évaluation avant engagement"
+        ],
+        "typical_duration_min": "10–30",
+        "authorization_requirement": "STANDARD — voir authorization_matrix scenario_A"
+      },
+
+      "price_comparison": {
+        "market_range_day_MAD": {"low": 150, "high": 300},
+        "source_quality": "HIGH",
+        "options_tested": [
+          {
+            "price_MAD": 200,
+            "net_15pct_mid": 130, "grade": "ACCEPTABLE",
+            "net_20pct_high": 100, "grade_worst": "ACCEPTABLE",
+            "client_position": "Lower third of market range",
+            "verdict": "Viable but thin worst-case margin"
+          },
+          {
+            "price_MAD": 220,
+            "net_15pct_mid": 147, "grade": "ACCEPTABLE",
+            "net_20pct_high": 116, "grade_worst": "ACCEPTABLE",
+            "client_position": "Still lower third",
+            "verdict": "PREFERRED — mirrors porte_claquee logic. Consistent pricing signal."
+          },
+          {
+            "price_MAD": 250,
+            "net_15pct_mid": 172, "grade": "STRONG",
+            "net_20pct_high": 140, "grade_worst": "ACCEPTABLE",
+            "client_position": "Market midpoint",
+            "verdict": "Also viable — better artisan protection"
+          }
+        ]
+      },
+
+      "proposed_fixeo_daytime_price_MAD": 220,
+      "proposed_fixeo_price_rationale": "220 MAD mirrors the porte_claquee_ouverture proposed price, which is appropriate since both interventions are similar in duration (~15–20 min), specialist skill, and economic profile. Market range 150–300 supports 220 as a client-protective lower-third price with adequate artisan margin. Consistency between the two 220 MAD services simplifies client communication.",
+      "alternative_price_MAD": 250,
+      "alternative_rationale": "250 MAD if human calibrator judges extraction to require meaningfully more skill or risk than claquée opening.",
+      "hardware_policy": "EXCLUDED — cylinder billed separately only if damaged during extraction, with disclosure protocol",
+      "confidence": "HIGH",
+      "human_decision": "PENDING"
+    },
+
+    {
+      "service_key": "serrurerie.cylindre_remplacement_standard",
+      "label_fr": "Remplacement de cylindre standard",
+      "architecture": "LABOUR_FIXED_PART_SEPARATE",
+      "architecture_rationale": "Three architectures tested. Architecture A (labour+travel fixed, cylinder excluded) is recommended. Architecture B (all-in) creates pricing opacity and fails the floor at 350 MAD. Architecture C (narrow range) adds consumer confusion. A is most transparent and operationally robust.",
+
+      "architecture_comparison": {
+        "option_A": {
+          "name": "LABOUR_FIXED_PART_SEPARATE",
+          "description": "FIXEO fixed price covers only labour + travel. Cylinder is a disclosed, client-approved extra. Artisan presents cylinder spec + price before installation.",
+          "labour_price_options_tested": [250, 280, 300],
+          "economics_at_250": {
+            "net_15pct_mid": 172, "net_20pct_high": 140, "grade": "STRONG / ACCEPTABLE",
+            "client_total_with_80_cylinder": "330 MAD",
+            "client_total_with_200_cylinder": "450 MAD"
+          },
+          "economics_at_280": {
+            "net_15pct_mid": 198, "net_20pct_high": 164, "grade": "STRONG",
+            "client_total_with_80_cylinder": "360 MAD",
+            "client_total_with_200_cylinder": "480 MAD"
+          },
+          "verdict": "PREFERRED. Labour economics STRONG. Client sees true hardware cost. No silent markup. Artisan cannot hide 80 DH cylinder inside 350 MAD all-in price.",
+          "transparency_score": "MAXIMUM"
+        },
+        "option_B": {
+          "name": "ALL_IN_FIXED",
+          "description": "FIXEO fixed price covers labour + travel + basic cylinder. Artisan supplies standard entry-level cylinder.",
+          "economics_at_350": {
+            "note": "Assumes 150 MAD cylinder cost",
+            "net_15pct_mid": 108, "net_20pct_high": 70, "grade": "ACCEPTABLE / MARGINAL",
+            "problem": "At 350 MAD, 20% commission + HIGH fuel produces MARGINAL net (70 MAD). Below floor in worst case."
+          },
+          "economics_at_400": {
+            "note": "Assumes 150 MAD cylinder cost",
+            "net_15pct_mid": 150, "net_20pct_high": 110, "grade": "STRONG / ACCEPTABLE",
+            "client_total": "400 MAD total — no surprises"
+          },
+          "verdict": "Viable only at 400+ MAD. Creates risk that artisan uses cheapest possible cylinder to maximize net. Client cannot verify cylinder quality. Creates moral hazard.",
+          "transparency_score": "LOW"
+        },
+        "option_C": {
+          "name": "NARROW_RANGE",
+          "description": "FIXEO displays a price range (e.g. 250–400 MAD) covering labour + cylinder, without fixing the unit.",
+          "verdict": "REJECTED. Ranges defeat the purpose of FIXEO standardized pricing. Allows artisan to anchor client at top of range without justification.",
+          "transparency_score": "NONE"
+        },
+        "recommended": "OPTION_A"
+      },
+
+      "scope_contract": {
+        "definition": "Remplacement du barillet (cylindre européen) d'une porte résidentielle ou commerciale standard. Main d'oeuvre + déplacement. Le cylindre de remplacement est fourni par le client ou par l'artisan après information et accord explicite du client.",
+        "conditions_required": [
+          "Cylindre européen standard (non haute sécurité breveté)",
+          "Porte standard accessible (non blindée hors périmètre cylndre)"
+        ],
+        "included_labour": "Déplacement + retrait ancien cylindre + pose nouveau cylindre + test",
+        "included_travel": true,
+        "included_consumables": "Vis standard si nécessaire",
+        "included_hardware": "AUCUN — cylindre fourni par client OU artisan avec accord explicite",
+        "excluded_hardware": "Cylindre (facturé séparément avec accord)",
+        "cylinder_protocol": [
+          "1. Artisan évalue le cylindre nécessaire (dimensions, type)",
+          "2. Artisan propose cylindre : marque + classe de sécurité + prix",
+          "3. Client approuve ou demande à fournir son propre cylindre",
+          "4. Si client fournit : FIXEO price = labour only",
+          "5. Si artisan fournit : FIXEO price = labour + prix cylindre approuvé",
+          "6. Artisan remet l'ancien cylindre au client systématiquement"
+        ],
+        "escape_triggers": [
+          "Cylindre haute sécurité breveté → cylindre_haute_securite (QUOTE_REQUIRED)",
+          "Porte blindée avec mécanisme intégré → HORS PÉRIMÈTRE → devis",
+          "Cylindre endommagé nécessitant travaux supplémentaires → HORS PÉRIMÈTRE → devis"
+        ],
+        "typical_duration_min": "15–30",
+        "authorization_requirement": "ELEVATED — remplacement après perte de clés → voir authorization_matrix scenario_B"
+      },
+
+      "proposed_fixeo_daytime_price_MAD": 280,
+      "proposed_fixeo_price_note": "Labour + travel only. Cylinder billed separately.",
+      "proposed_fixeo_price_rationale": "280 MAD for labour+travel produces STRONG economics in all scenarios (min net 164 MAD at 20%+HIGH). With a basic 80 MAD cylinder, client total is 360 MAD — below market lower bound of 400 MAD for combined cylinder+labour. With a quality 200 MAD cylinder, total is 480 MAD — well within the 200–500 MAD market range. Price separation is transparent and protects both parties.",
+      "alternative_price_MAD": 250,
+      "alternative_rationale": "250 MAD if human calibrator wants a lower labour entry point. Still STRONG at 15%+MID (net 172 MAD).",
+      "hardware_policy": "EXCLUDED — cylinder always separate with explicit disclosure and approval",
+      "confidence": "HIGH",
+      "human_decision": "PENDING"
+    },
+
+    {
+      "service_key": "serrurerie.serrure_remplacement_standard",
+      "label_fr": "Remplacement de serrure complète standard",
+      "architecture": "LABOUR_FIXED_PART_SEPARATE",
+      "architecture_rationale": "Same reasoning as cylindre: separating labour from hardware maximizes transparency, eliminates moral hazard, and keeps artisan economics clean. Architecture B (all-in at 500 MAD with 200 MAD lock) is viable but creates same opacity risk as cylindre B option.",
+
+      "architecture_comparison": {
+        "option_A": {
+          "name": "LABOUR_FIXED_PART_SEPARATE",
+          "labour_prices_tested": [350, 400, 450],
+          "economics_at_350": {
+            "net_15pct_mid": 258, "net_20pct_high": 220, "grade": "STRONG",
+            "client_total_with_200_lock": "550 MAD",
+            "client_total_with_350_lock": "700 MAD"
+          },
+          "economics_at_400": {
+            "net_15pct_mid": 300, "net_20pct_high": 260, "grade": "STRONG",
+            "client_total_with_200_lock": "600 MAD",
+            "client_total_with_350_lock": "750 MAD"
+          },
+          "verdict": "PREFERRED. Labour economics consistently STRONG. Lock hardware is transparent."
+        },
+        "option_B": {
+          "name": "ALL_IN_FIXED",
+          "economics_at_500": {
+            "note": "Assumes 200 MAD lock cost",
+            "net_15pct_mid": 185, "net_20pct_high": 140, "grade": "STRONG / ACCEPTABLE",
+            "verdict": "Viable, but same moral hazard as cylindre option B. Artisan may install cheapest lock."
+          },
+          "verdict": "Not recommended for same transparency reasons as cylindre option B."
+        },
+        "recommended": "OPTION_A"
+      },
+
+      "scope_contract": {
+        "definition": "Remplacement du mécanisme complet de serrure monopoint sur porte standard. Main d'oeuvre + déplacement. La serrure de remplacement est fournie par le client ou par l'artisan après information et accord explicite.",
+        "conditions_required": [
+          "Serrure monopoint (1 point de fermeture)",
+          "Porte standard (bois, métal) accessible",
+          "Mécanisme de porte intact (pas de dommages au châssis)"
+        ],
+        "included_labour": "Déplacement + démontage ancienne serrure + pose nouvelle serrure + test + réglage pêne",
+        "included_travel": true,
+        "included_consumables": "Vis standard",
+        "included_hardware": "AUCUN — serrure fournie par client OU artisan avec accord explicite",
+        "excluded_hardware": "Corps de serrure, barillet, poignées",
+        "lock_protocol": [
+          "1. Artisan identifie le type de serrure requis (dimensions, entraxe, type de pêne)",
+          "2. Propose serrure : marque + niveau sécurité + prix",
+          "3. Client approuve ou fournit sa propre serrure",
+          "4. Installation uniquement après accord",
+          "5. Artisan remet l'ancienne serrure au client"
+        ],
+        "escape_triggers": [
+          "Serrure multipoints détectée → HORS PÉRIMÈTRE → serrure_multipoints (QUOTE_REQUIRED)",
+          "Porte blindée → HORS PÉRIMÈTRE → devis",
+          "Dommages au bâti ou au châssis → HORS PÉRIMÈTRE → devis menuiserie/serrurerie combiné",
+          "Serrure de sécurité haute gamme demandée → QUOTE_REQUIRED"
+        ],
+        "typical_duration_min": "30–60",
+        "authorization_requirement": "ELEVATED — voir authorization_matrix scenario_B"
+      },
+
+      "proposed_fixeo_daytime_price_MAD": 400,
+      "proposed_fixeo_price_note": "Labour + travel only. Lock hardware billed separately.",
+      "proposed_fixeo_price_rationale": "400 MAD for labour+travel is STRONG in all scenarios (min net 260 MAD). With a standard 200 MAD lock, client total = 600 MAD — well within the 400–700 MAD market range. With a quality 350 MAD lock, total = 750 MAD — still honest market price. The labour premium over cylindre_remplacement (280 MAD) reflects the longer, more complex installation of a full lock body.",
+      "alternative_price_MAD": 350,
+      "alternative_rationale": "350 MAD if human calibrator wants tighter client-protectiveness. Still STRONG at 15%+MID.",
+      "hardware_policy": "EXCLUDED — full lock hardware always separate with disclosure protocol",
+      "confidence": "MEDIUM",
+      "human_decision": "PENDING"
+    },
+
+    {
+      "service_key": "serrurerie.serrure_grippee_deblocage",
+      "label_fr": "Déblocage de serrure grippée",
+      "architecture": "CONDITIONAL_FIXED",
+      "architecture_rationale": "A well-defined, fast intervention (lubrication, adjustment, cleaning). No parts. However: LOW evidence confidence (single source mention). The 150 MAD market mention fails the artisan floor at 20%+HIGH. Minimum viable price is 200 MAD, not 170 MAD.",
+
+      "scope_contract": {
+        "definition": "Serrure qui tourne difficilement ou refuse de tourner. Nettoyage, graissage, réalignement du pêne. Aucun remplacement de pièce si mécanisme intact.",
+        "conditions_required": [
+          "Mécanisme intact — serrure grippée seulement, pas cassée",
+          "Cylindre européen standard ou serrure à gorge standard"
+        ],
+        "included_labour": "Déplacement + diagnostic sur place + graissage/nettoyage/réalignement",
+        "included_travel": true,
+        "included_consumables": "Spray lubrifiant graphite ou spécial serrure (faible coût — inclus)",
+        "included_hardware": "Aucun",
+        "excluded_hardware": "Tout remplacement de pièce",
+        "explicit_exclusions": [
+          "Mécanisme cassé ou endommagé → remplacement (accord séparé)",
+          "Cylindre dégradé → cylindre_remplacement (accord séparé)",
+          "Porte blindée → tarification différente",
+          "Dommages par tentative d'effraction → apres_effraction workflow"
+        ],
+        "escape_triggers": [
+          "Mécanisme ne peut être libéré par graissage → déclarer HORS PÉRIMÈTRE → cylindre_remplacement ou serrure_remplacement",
+          "Dommages d'effraction identifiés → déclarer HORS PÉRIMÈTRE → DIAGNOSIS_FIRST"
+        ],
+        "typical_duration_min": "10–25",
+        "authorization_requirement": "STANDARD — voir authorization_matrix scenario_A",
+        "note": "Particulièrement fréquent à Tanger et Agadir (humidité, air salin). Serrures souvent déclarées cassées alors qu'elles sont seulement encrassées."
+      },
+
+      "floor_analysis": {
+        "price_170_MAD": {
+          "net_15pct_mid": 104, "net_15pct_high": 84,
+          "net_20pct_mid": 96, "net_20pct_high": 76,
+          "grade_worst": "MARGINAL",
+          "verdict": "FAILS at 20%+HIGH. Unacceptable."
+        },
+        "price_200_MAD": {
+          "net_15pct_mid": 130, "net_15pct_high": 110,
+          "net_20pct_mid": 120, "net_20pct_high": 100,
+          "grade_worst": "ACCEPTABLE",
+          "verdict": "Passes floor in all scenarios. Worst case exactly at 100 MAD floor."
+        },
+        "price_250_MAD": {
+          "net_15pct_mid": 172, "net_15pct_high": 152,
+          "net_20pct_mid": 160, "net_20pct_high": 140,
+          "grade_worst": "ACCEPTABLE",
+          "verdict": "STRONG economics. Mid-market for simple intervention."
+        }
+      },
+
+      "proposed_fixeo_daytime_price_MAD": 200,
+      "proposed_fixeo_price_rationale": "170 MAD from Phase 7B.5 is the minimum viable by formula but fails at 20%+HIGH fuel. 200 MAD is the correct minimum for FIXEO — it passes all scenarios (worst case: exactly 100 MAD floor). It is also a clean, round price. Market evidence cites this as the representative 'dégrippage 150–200 DH' range from allo-maison — 200 MAD is the honest top of that floor range. Note LOW confidence: human calibrator may choose to skip this service as a pilot if evidence is deemed insufficient.",
+      "alternative_price_MAD": null,
+      "alternative_rationale": "No alternative needed — if 200 MAD is rejected, this service should be classified as QUOTE_REQUIRED or deferred pending better evidence.",
+      "pilot_decision_note": "LOW evidence confidence. Human calibrator should decide: (a) include at 200 MAD, or (b) defer to a later phase when FIXEO has transaction data from this service.",
+      "hardware_policy": "CONSUMABLES_ONLY_INCLUDED — lubricant spray (negligible cost, included in labour price)",
+      "confidence": "LOW",
+      "human_decision": "PENDING"
+    }
+  ],
+
+  "full_commission_sensitivity_matrix": {
+    "description": "All 7 proposed prices tested at all commission/fuel combinations",
+    "legend": "S=STRONG(≥150), A=ACCEPTABLE(≥100), M=MARGINAL(≥70), F=FAIL(<70)",
+    "matrix": [
+      {
+        "service": "porte_claquee_ouverture",
+        "price": 220,
+        "hw": 0,
+        "results": {
+          "0pct_LOW": {"net": 195, "g": "S"},
+          "0pct_MID": {"net": 180, "g": "S"},
+          "0pct_HIGH": {"net": 160, "g": "S"},
+          "10pct_LOW": {"net": 173, "g": "S"},
+          "10pct_MID": {"net": 158, "g": "S"},
+          "10pct_HIGH": {"net": 138, "g": "A"},
+          "15pct_LOW": {"net": 162, "g": "S"},
+          "15pct_MID": {"net": 147, "g": "A"},
+          "15pct_HIGH": {"net": 127, "g": "A"},
+          "20pct_LOW": {"net": 151, "g": "S"},
+          "20pct_MID": {"net": 136, "g": "A"},
+          "20pct_HIGH": {"net": 116, "g": "A"}
+        },
+        "min_net": 116, "min_grade": "A"
+      },
+      {
+        "service": "porte_claquee_blindee",
+        "price": 350,
+        "hw": 0,
+        "results": {
+          "15pct_MID": {"net": 258, "g": "S"},
+          "15pct_HIGH": {"net": 238, "g": "S"},
+          "20pct_MID": {"net": 240, "g": "S"},
+          "20pct_HIGH": {"net": 220, "g": "S"}
+        },
+        "min_net": 220, "min_grade": "S"
+      },
+      {
+        "service": "porte_verrouillee",
+        "price": 380,
+        "hw": 0,
+        "results": {
+          "15pct_MID": {"net": 283, "g": "S"},
+          "15pct_HIGH": {"net": 263, "g": "S"},
+          "20pct_MID": {"net": 264, "g": "S"},
+          "20pct_HIGH": {"net": 244, "g": "S"}
+        },
+        "min_net": 244, "min_grade": "S"
+      },
+      {
+        "service": "cle_cassee_extraction",
+        "price": 220,
+        "hw": 0,
+        "results": {
+          "15pct_MID": {"net": 147, "g": "A"},
+          "15pct_HIGH": {"net": 127, "g": "A"},
+          "20pct_MID": {"net": 136, "g": "A"},
+          "20pct_HIGH": {"net": 116, "g": "A"}
+        },
+        "min_net": 116, "min_grade": "A"
+      },
+      {
+        "service": "cylindre_remplacement_labour_only",
+        "price": 280,
+        "hw": 0,
+        "results": {
+          "15pct_MID": {"net": 198, "g": "S"},
+          "15pct_HIGH": {"net": 178, "g": "S"},
+          "20pct_MID": {"net": 184, "g": "S"},
+          "20pct_HIGH": {"net": 164, "g": "S"}
+        },
+        "min_net": 164, "min_grade": "S"
+      },
+      {
+        "service": "serrure_remplacement_labour_only",
+        "price": 400,
+        "hw": 0,
+        "results": {
+          "15pct_MID": {"net": 300, "g": "S"},
+          "15pct_HIGH": {"net": 280, "g": "S"},
+          "20pct_MID": {"net": 280, "g": "S"},
+          "20pct_HIGH": {"net": 260, "g": "S"}
+        },
+        "min_net": 260, "min_grade": "S"
+      },
+      {
+        "service": "serrure_grippee_deblocage",
+        "price": 200,
+        "hw": 0,
+        "results": {
+          "15pct_MID": {"net": 130, "g": "A"},
+          "15pct_HIGH": {"net": 110, "g": "A"},
+          "20pct_MID": {"net": 120, "g": "A"},
+          "20pct_HIGH": {"net": 100, "g": "A"}
+        },
+        "min_net": 100, "min_grade": "A",
+        "note": "Worst case exactly at floor. Minimum viable price."
+      }
+    ]
+  }
+}
