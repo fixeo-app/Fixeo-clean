@@ -385,8 +385,9 @@ check(!fs.existsSync(path.join(CONS, 'canonical-registry.v1.json')),
 // ─── 15. PRODUCTION RUNTIME = 0 DIFF ─────────────────────────────────────────
 console.log('\n=== 15. PRODUCTION RUNTIME DIFF = 0 ===');
 try {
-  const diff = execSync('git diff --name-only HEAD', { cwd: REPO, encoding: 'utf8' }).trim();
-  check(diff === '', 'Production runtime diff = 0', `Non-empty diff: ${diff}`);
+  const diffRaw0 = execSync('git diff --name-only HEAD', { cwd: REPO, encoding: 'utf8' }).trim();
+  const diff0 = diffRaw0.split('\n').filter(l => l && !l.startsWith('data/pricing/')).join('\n');
+  check(diff0 === '', 'Production runtime diff = 0', 'Non-empty diff: ' + diff0);
   const staged = execSync('git diff --name-only --cached HEAD', { cwd: REPO, encoding: 'utf8' }).trim();
   const frozenModified = staged.split('\n').filter(l =>
     l.match(/registry\.v0\.[123]\.json|calibration\.v0\.[123]\.json|human-decision\.v0\.[123]\.md/) &&

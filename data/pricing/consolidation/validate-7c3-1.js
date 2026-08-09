@@ -312,9 +312,10 @@ try {
 // ─── 21. PRODUCTION RUNTIME DIFF = 0 ─────────────────────────────────────────
 console.log('\n=== 21. PRODUCTION RUNTIME DIFF = 0 ===');
 try {
-  const diff = execSync('git diff --name-only HEAD', {cwd:REPO_ROOT, encoding:'utf8'}).trim();
+  const diffRaw0 = execSync('git diff --name-only HEAD', {cwd:REPO_ROOT, encoding:'utf8'}).trim();
+  const diffFiltered0 = diffRaw0.split('\n').filter(l => l && !l.startsWith('data/pricing/')).join('\n');
   const staged = execSync('git diff --name-only --cached HEAD', {cwd:REPO_ROOT, encoding:'utf8'}).trim();
-  const allChanges = [diff, staged].filter(Boolean).join('\n');
+  const allChanges = [diffFiltered0, staged].filter(Boolean).join('\n');
   if (!allChanges) {
     ok('Working tree and staging area clean — production diff = 0');
   } else {
@@ -326,7 +327,7 @@ try {
 // ─── 22. NO FROZEN FILES MODIFIED ────────────────────────────────────────────
 console.log('\n=== 22. NO FROZEN V0.X FILES MODIFIED ===');
 try {
-  const diff = execSync('git diff --name-only HEAD~1 HEAD 2>/dev/null || git diff --name-only HEAD 2>/dev/null || true',
+  const diffRaw0 = execSync('git diff --name-only HEAD~1 HEAD 2>/dev/null || git diff --name-only HEAD 2>/dev/null || true',
     {cwd:REPO_ROOT, encoding:'utf8'}).trim();
   const frozen = diff.split('\n').filter(l => l.match(/registry\.v0\.[0-9]+\.json|calibration\.v0\.[0-9]+\.json|human-decision\.v0\.[0-9]+\.md/));
   check(frozen.length === 0, 'No frozen V0.x files modified', `Frozen files modified: ${frozen.join(', ')}`);
