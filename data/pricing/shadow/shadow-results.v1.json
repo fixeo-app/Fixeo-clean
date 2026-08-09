@@ -2,7 +2,7 @@
   "meta": {
     "schema_version": "7C.5-v1",
     "phase": "PHASE_7C5_SHADOW_VALIDATION",
-    "run_timestamp": "2026-08-09T20:51:25.183Z",
+    "run_timestamp": "2026-08-09T20:52:04.105Z",
     "total_scenarios": 195,
     "production_ready": false,
     "dormant": true
