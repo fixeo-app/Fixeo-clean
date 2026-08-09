@@ -1,0 +1,203 @@
+{
+  "_meta": {
+    "artifact": "estimator-component-map.v1.draft",
+    "phase": "7C.8A",
+    "status": "DRAFT — NOT FOR PRODUCTION",
+    "production_allowed": false
+  },
+
+  "components": [
+    {
+      "id": "EstimatorLauncher",
+      "type": "entry_trigger",
+      "description": "Button / CTA that opens the estimator. Adapts label and entry mode based on context.",
+      "entry_modes": ["DIRECT_CTA", "SERVICE_CARD", "ARTISAN_PROFILE", "RAFI", "RESERVATION_FLOW", "DEEP_LINK"],
+      "output": "opens EstimatorModal or navigates to /estimation based on orchestrator recommendation",
+      "never_calculates_price": true
+    },
+    {
+      "id": "EstimatorModal",
+      "type": "container_desktop",
+      "description": "Centered overlay modal. Hosts header, progress, question flow, and result for MODAL_OK sessions.",
+      "width_px": 600,
+      "surface": "warm-white",
+      "contains": ["EstimatorHeader", "EstimatorProgress", "EstimatorContext", "EstimatorQuestion", "EstimatorFooter", "ResultComponents"]
+    },
+    {
+      "id": "EstimatorSheet",
+      "type": "container_mobile",
+      "description": "Bottom sheet. Mobile equivalent of EstimatorModal.",
+      "fill": "65–80% collapsed / near-full expanded",
+      "contains": ["EstimatorHeader", "EstimatorProgress", "EstimatorContext", "EstimatorQuestion", "EstimatorFooter", "ResultComponents"]
+    },
+    {
+      "id": "EstimatorHeader",
+      "type": "layout",
+      "description": "Minimal top bar. RAFI glyph + 'Estimation FIXEO' label + Close ×.",
+      "optional_subline": "Identifions l'intervention et son prix.",
+      "close_always_visible": true,
+      "no_large_illustration": true,
+      "no_marketing_banner": true,
+      "no_trust_badge_wall": true
+    },
+    {
+      "id": "EstimatorProgress",
+      "type": "progress_indicator",
+      "description": "3-stage macro progress bar.",
+      "stages": ["Besoin", "Précisions", "Résultat FIXEO"],
+      "forbidden": ["question_n_of_total", "percentage_counter"],
+      "style": "subtle — small dots or minimal step bar"
+    },
+    {
+      "id": "EstimatorContext",
+      "type": "context_strip",
+      "description": "Shows resolved métier and service if known. Contains RAFIIndicator when RAFI has resolved context.",
+      "hidden_when": "no_context_known"
+    },
+    {
+      "id": "RAFIIndicator",
+      "type": "intelligence_indicator",
+      "description": "Subtle display of RAFI's resolved intent. Not a chat bubble. Not alternating messages.",
+      "display_patterns": [
+        "RAFI a identifié : [Métier] — [Service]",
+        "RAFI vérifie quelques détails avant d'afficher le prix."
+      ],
+      "forbidden": ["chat_bubbles", "alternating_messages", "excessive_animation"]
+    },
+    {
+      "id": "EstimatorQuestion",
+      "type": "question_container",
+      "description": "Renders one primary question at a time. Semantic heading for accessibility.",
+      "one_question_per_screen": true,
+      "contains_one_of": ["AnswerCard", "YesNoChoice", "QuantityInput", "MeasurementInput"]
+    },
+    {
+      "id": "AnswerCard",
+      "type": "selection_input",
+      "description": "Large tap-target card for discrete choice questions.",
+      "min_height_px": 52,
+      "max_height_px": 64,
+      "min_touch_target_px": 44,
+      "selected_state": "accent gradient border + visible check mark",
+      "no_color_only_state": true,
+      "labels": "short, non-technical"
+    },
+    {
+      "id": "YesNoChoice",
+      "type": "selection_input",
+      "description": "Specialized 2–3 card set for boolean questions.",
+      "options": ["Oui", "Non", "Je ne sais pas"],
+      "je_ne_sais_pas_shown_when": "uncertainty is semantically valid",
+      "no_forced_false_certainty": true
+    },
+    {
+      "id": "QuantityInput",
+      "type": "numeric_input",
+      "description": "Integer quantity input with +/- stepper. Used for cleaners, units.",
+      "integer_only": true,
+      "no_half_increments": true
+    },
+    {
+      "id": "MeasurementInput",
+      "type": "measurement_input",
+      "description": "Painted m² direct input. Includes option to request guided measurement assistant.",
+      "canonical_field": "painted_m2",
+      "no_floor_area_multiplier": true,
+      "options": ["Je connais la surface", "Aidez-moi à la calculer"],
+      "guided_assistant_status": "FUTURE_DEPENDENCY"
+    },
+    {
+      "id": "EstimatorFooter",
+      "type": "action_area",
+      "description": "Sticky footer with primary CTA and optional back/secondary action.",
+      "cta_enabled_when": "valid answer collected",
+      "cta_disabled_when": "no answer",
+      "close_never_covered": true,
+      "keyboard_safe": true
+    },
+    {
+      "id": "PriceResult",
+      "type": "result",
+      "maps_to_outcome": "PRICE_READY",
+      "commercial_output_types": ["FIXEO_PRICE", "FIXEO_ADD_ON"],
+      "price_dominates": true,
+      "elements": ["service_name", "price_amount_mad", "PRIX_FIXEO_label", "ScopeList", "primary_cta_with_price", "secondary_modify"]
+    },
+    {
+      "id": "CalculatedPriceResult",
+      "type": "result",
+      "maps_to_outcome": "PRICE_READY",
+      "commercial_output_types": ["FIXEO_CALCULATED_PRICE"],
+      "elements": ["service_name", "calculation_basis_line", "price_amount_mad", "Prix_FIXEO_calculé_label", "ScopeList", "primary_cta_with_price", "secondary_modify"],
+      "calculation_basis_example": "2 prestataires × 3 heures × 65 MAD",
+      "hide_basis": false
+    },
+    {
+      "id": "LabourPartResult",
+      "type": "result",
+      "maps_to_outcome": "LABOUR_PLUS_PART_READY",
+      "commercial_output_types": ["FIXEO_LABOUR_PRICE_PLUS_PART"],
+      "elements": ["service_name", "labour_amount_card", "variable_part_separate_card", "part_disclosure_copy", "primary_cta_labour_only", "secondary_modify"],
+      "forbidden": ["sum_labour_and_part", "hide_part_disclosure"]
+    },
+    {
+      "id": "DiagnosticResult",
+      "type": "result",
+      "maps_to_outcome": "DIAGNOSTIC_READY",
+      "commercial_output_types": ["FIXEO_DIAGNOSTIC"],
+      "elements": ["intro_copy", "diagnostic_amount_mad", "Diagnostic_FIXEO_label", "metier_specific_absorption_copy", "cta_reserver_diagnostic"],
+      "no_environ_qualifier": true,
+      "absorption_per_metier": true
+    },
+    {
+      "id": "QuoteResult",
+      "type": "result",
+      "maps_to_outcome": "QUOTE_REQUIRED",
+      "commercial_output_types": ["QUOTE_REQUIRED"],
+      "elements": ["intro_copy", "reason_copy", "cta_demander_devis", "secondary_modify"],
+      "no_fake_price": true,
+      "quote_is_valid_outcome": true
+    },
+    {
+      "id": "RouteResult",
+      "type": "result",
+      "maps_to_outcome": "ROUTE_REQUIRED",
+      "elements": ["redirect_explanation", "cta_continue_in_correct_metier", "secondary_modify_besoin"],
+      "no_price": true,
+      "route_is_not_error": true
+    },
+    {
+      "id": "SafetyResult",
+      "type": "result",
+      "maps_to_outcome": "SAFETY_STOP",
+      "elements": ["factual_explanation", "next_action_from_orchestrator"],
+      "no_price": true,
+      "visual_treatment": "serious, calm, factual — NOT fear-heavy red",
+      "surface": "safety_surface (#FFF8F0)"
+    },
+    {
+      "id": "ScopeList",
+      "type": "scope_component",
+      "description": "Displays compris / non compris items. Includes canonical scope doctrine copy.",
+      "doctrine_copy": "Ce prix s'applique au périmètre indiqué. Si l'intervention réelle est différente, l'artisan doit vous l'expliquer et obtenir votre accord avant de continuer.",
+      "scope_is_service_specific": true
+    },
+    {
+      "id": "EstimatorPage",
+      "type": "page_container",
+      "route": "/estimation",
+      "description": "Full-page estimator for PAGE_RECOMMENDED / PAGE_REQUIRED flows.",
+      "desktop_layout": "two-column",
+      "mobile_layout": "single-column",
+      "session_preserved": true
+    },
+    {
+      "id": "EstimatorSummary",
+      "type": "sidebar_summary",
+      "description": "Right-column sticky summary on /estimation desktop. Shows métier, service, known answers, progress.",
+      "no_price_before_engine_result": true,
+      "no_fake_running_estimate": true,
+      "mobile_shown": false
+    }
+  ]
+}

@@ -1,0 +1,130 @@
+{
+  "_meta": {
+    "artifact": "estimator-visual-contract.v1.draft",
+    "phase": "7C.8A",
+    "status": "DRAFT — NOT FOR PRODUCTION",
+    "production_allowed": false,
+    "engine_active": false,
+    "orchestrator_active": false,
+    "created_at": "2026-08-09"
+  },
+
+  "surface_targets": {
+    "modal": {
+      "trigger_condition": "orchestrator.ux_recommendation === 'MODAL_OK'",
+      "desktop": {
+        "layout": "centered_overlay",
+        "ideal_width_px": 600,
+        "acceptable_range_px": [560, 620],
+        "max_height": "adaptive — max 80vh with internal scroll",
+        "border_radius_px": 20,
+        "shadow": "0 8px 48px rgba(0,0,0,0.14)",
+        "backdrop": "rgba(0,0,0,0.40) blur(2px)",
+        "surface_color": "warm-white (#FAFAF9)"
+      },
+      "mobile": {
+        "layout": "bottom_sheet",
+        "viewport_fill_collapsed": "65–80% when content allows",
+        "viewport_fill_expanded": "near-full (leave ~40px safe area top)",
+        "border_radius_top_px": 16,
+        "handle_indicator": true,
+        "scroll": "independent body scroll",
+        "header_behavior": "sticky",
+        "footer_behavior": "sticky",
+        "close_always_visible": true,
+        "keyboard_aware": true,
+        "safe_area_aware": true
+      }
+    },
+    "page": {
+      "trigger_condition": "orchestrator.ux_recommendation === 'PAGE_RECOMMENDED' || orchestrator.ux_recommendation === 'PAGE_REQUIRED'",
+      "route": "/estimation",
+      "desktop_layout": "two-column (main flow + right sticky summary)",
+      "mobile_layout": "single column",
+      "session_preserved": true,
+      "no_restart_on_transition": true
+    }
+  },
+
+  "visual_language": {
+    "palette": {
+      "background": "#FAFAF9",
+      "surface": "#FFFFFF",
+      "near_black": "#1A1A1A",
+      "soft_gray": "#F0EFED",
+      "border_default": "#E5E4E0",
+      "accent_gradient_start": "#FF6B2B",
+      "accent_gradient_end": "#C8238B",
+      "accent_gradient_direction": "135deg",
+      "text_primary": "#1A1A1A",
+      "text_secondary": "#6B6B6B",
+      "text_muted": "#A0A0A0",
+      "safety_surface": "#FFF8F0",
+      "safety_border": "#D4831A"
+    },
+    "gradient_usage_policy": {
+      "primary_cta_background": true,
+      "answer_card_selected_state": true,
+      "rafi_accent_glyph": true,
+      "price_emphasis_optional": true,
+      "full_screen_cover": false,
+      "section_backgrounds": false,
+      "excessive_decorative": false
+    },
+    "typography_hierarchy": [
+      { "level": 1, "role": "result_price", "size_desktop": "48px", "size_mobile": "40px", "weight": 700 },
+      { "level": 2, "role": "primary_question", "size_desktop": "22px", "size_mobile": "20px", "weight": 600 },
+      { "level": 3, "role": "service_context", "size_desktop": "16px", "size_mobile": "15px", "weight": 500 },
+      { "level": 4, "role": "body_doctrine", "size_desktop": "14px", "size_mobile": "14px", "weight": 400 },
+      { "level": 5, "role": "label_muted", "size_desktop": "12px", "size_mobile": "12px", "weight": 400 }
+    ],
+    "no_tiny_pseudo_legal_text": true
+  },
+
+  "motion_policy": {
+    "question_transition_ms": [180, 240],
+    "selection_feedback_ms": [120, 180],
+    "modal_open_desktop": "fade + scale (0.96→1.0)",
+    "modal_open_mobile": "sheet slide up",
+    "result_entrance": "subtle fade-in",
+    "forbidden": [
+      "confetti",
+      "fake_ai_thinking_spinner_over_1s",
+      "excessive_rafi_animation",
+      "bouncing_elements"
+    ]
+  },
+
+  "loading_policy": {
+    "engine_is_local": true,
+    "fake_multi_second_ai_processing": false,
+    "allowed_loading_copy": "Vérification du périmètre…",
+    "max_loading_display_ms": 400
+  },
+
+  "pricing_doctrine": {
+    "city_affects_price": false,
+    "urgency_affects_price": false,
+    "no_casablanca_multiplier": true,
+    "no_night_surcharge": true,
+    "no_weekend_surcharge": true,
+    "no_urgency_surcharge": true,
+    "rounding_policy": "EXACT_INTEGER_MAD",
+    "no_nearest_5_rounding": true,
+    "no_nearest_10_rounding": true
+  },
+
+  "ui_data_boundary": {
+    "ui_consumes_only": ["session", "next_step", "outcome"],
+    "ui_may": ["render", "collect_answer", "submit_answer", "request_next_step"],
+    "ui_must_not": [
+      "calculate_price",
+      "apply_multiplier",
+      "apply_surcharge",
+      "derive_painted_m2_from_floor",
+      "execute_dormant_batch_rules",
+      "read_legacy_pricing_tables",
+      "reproduce_monetary_calculation"
+    ]
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "_meta": {
+    "artifact": "estimator-modal-page-handoff.v1.draft",
+    "phase": "7C.8A",
+    "status": "DRAFT — NOT FOR PRODUCTION",
+    "production_allowed": false
+  },
+
+  "threshold_rules": {
+    "source": "orchestrator.ux_recommendation",
+    "MODAL_OK": {
+      "condition": "remaining_questions <= 3 AND no_measurement_dependency",
+      "surface": "modal (desktop) / sheet (mobile)"
+    },
+    "PAGE_RECOMMENDED": {
+      "condition": "remaining_questions >= 4",
+      "surface": "page (/estimation)"
+    },
+    "PAGE_REQUIRED": {
+      "condition": "measurement_dependency === true (e.g. painted_m2 needed)",
+      "surface": "page (/estimation)"
+    }
+  },
+
+  "transition_behavior": {
+    "trigger": "orchestrator returns PAGE_RECOMMENDED or PAGE_REQUIRED mid-session",
+    "ui_action": "show transition screen inside current modal/sheet, then navigate to /estimation",
+    "session_transfer": {
+      "method": "session object passed via navigation state or sessionStorage key",
+      "session_restarted": false,
+      "progress_lost": false,
+      "known_answers_preserved": true
+    },
+    "transition_screen": {
+      "copy": "Cette intervention demande quelques précisions supplémentaires.",
+      "cta": "Continuer l'estimation",
+      "no_failure_framing": true,
+      "duration_visible_ms": 0,
+      "note": "Transition screen is shown immediately before nav. No artificial delay."
+    },
+    "destination": "/estimation",
+    "destination_entry_state": "resumes at next_step from orchestrator session"
+  },
+
+  "back_behavior_matrix": {
+    "estimator_back_button": "previous question in orchestrator session",
+    "close_button": "exits estimator entirely (confirm if mid-flow)",
+    "browser_back_on_page": "restores prior step where feasible via history state",
+    "these_are_separate_behaviors": true
+  },
+
+  "session_preservation_rules": [
+    "service_code",
+    "metier",
+    "known_answers",
+    "orchestrator_session_id",
+    "question_plan_position",
+    "entry_mode",
+    "entry_context"
+  ],
+
+  "page_layout_on_arrival": {
+    "desktop": "two-column (main flow + EstimatorSummary sticky right)",
+    "mobile": "single-column",
+    "summary_content": ["métier", "service", "known_selections", "progress"],
+    "no_price_in_summary_before_engine_result": true
+  },
+
+  "painting_page_required_rules": {
+    "trigger": "service requires painted_m2 input",
+    "always_page": true,
+    "never_modal": true,
+    "no_floor_area_conversion": true
+  }
+}

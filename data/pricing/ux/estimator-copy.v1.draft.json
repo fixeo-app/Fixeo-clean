@@ -1,0 +1,144 @@
+{
+  "_meta": {
+    "artifact": "estimator-copy.v1.draft",
+    "phase": "7C.8A",
+    "status": "DRAFT — NOT FOR PRODUCTION — LEGAL_REVIEW_REQUIRED",
+    "production_allowed": false,
+    "language_primary": "fr",
+    "darija_status": "FUTURE — DARIJA_NATIVE_REVIEW_REQUIRED"
+  },
+
+  "global": {
+    "brand_label": "Estimation FIXEO",
+    "header_subline": "Identifions l'intervention et son prix.",
+    "progress_stages": ["Besoin", "Précisions", "Résultat FIXEO"],
+    "loading_copy": "Vérification du périmètre…",
+    "back_label": "Retour",
+    "close_label": "Fermer",
+    "modify_label": "Modifier mon besoin"
+  },
+
+  "entry": {
+    "direct_headline": "Que faut-il réparer, installer ou entretenir ?",
+    "input_placeholder": "Ex. Ma porte frotte au sol et ferme mal",
+    "cta_continue": "Continuer",
+    "metier_shortcuts_label": "Ou choisissez directement :"
+  },
+
+  "rafi": {
+    "identified_pattern": "RAFI a identifié : {metier} — {service}",
+    "verifying_pattern": "RAFI vérifie quelques détails avant d'afficher le prix.",
+    "review_required": "LEGAL_REVIEW_REQUIRED"
+  },
+
+  "questions": {
+    "yes": "Oui",
+    "no": "Non",
+    "dont_know": "Je ne sais pas",
+    "continue": "Continuer",
+    "safety_preamble": null,
+    "notes": "Question copy is service-specific and driven by orchestrator question plans. Generic question copy is not frozen here."
+  },
+
+  "safety_stop": {
+    "title": "Une vérification est nécessaire avant de continuer.",
+    "no_price": true,
+    "tone": "serious, calm, factual",
+    "review_required": "LEGAL_REVIEW_REQUIRED"
+  },
+
+  "routing": {
+    "redirect_pattern": "Cette intervention relève plutôt de la {target_metier}.",
+    "redirect_subline": "FIXEO vous redirige vers le bon type d'artisan.",
+    "cta_pattern": "Continuer en {target_metier}",
+    "secondary": "Modifier mon besoin"
+  },
+
+  "price_result": {
+    "identified_header": "Votre intervention est identifiée ✓",
+    "price_label": "PRIX FIXEO",
+    "cta_pattern": "Continuer avec ce prix — {amount} MAD",
+    "secondary": "Modifier mon besoin",
+    "scope_doctrine": "Ce prix s'applique au périmètre indiqué. Si l'intervention réelle est différente, l'artisan doit vous l'expliquer et obtenir votre accord avant de continuer.",
+    "scope_included_heading": "Compris :",
+    "scope_excluded_heading": "Non compris :",
+    "review_required": "LEGAL_REVIEW_REQUIRED"
+  },
+
+  "calculated_price_result": {
+    "identified_header": "Votre intervention est identifiée ✓",
+    "price_label": "Prix FIXEO calculé",
+    "basis_pattern": "{worker_count} prestataire(s) × {hours} heure(s) × {rate} MAD",
+    "cta_pattern": "Continuer avec ce prix — {amount} MAD",
+    "secondary": "Modifier mon besoin"
+  },
+
+  "labour_part_result": {
+    "identified_header": "Votre intervention est identifiée ✓",
+    "labour_card_label": "Main-d'œuvre FIXEO",
+    "labour_cta_pattern": "Continuer — Main-d'œuvre {labour_amount} MAD",
+    "part_card_label": "Pièce / matériel",
+    "part_card_subline_pattern": "Non compris dans les {labour_amount} MAD",
+    "disclosure": "Si l'artisan fournit la pièce, son prix doit être communiqué et approuvé avant installation.",
+    "secondary": "Modifier mon besoin",
+    "review_required": "LEGAL_REVIEW_REQUIRED"
+  },
+
+  "diagnostic_result": {
+    "intro": "Votre intervention nécessite d'abord un diagnostic.",
+    "price_label": "Diagnostic FIXEO",
+    "cta_pattern": "Réserver le diagnostic — {amount} MAD",
+    "no_environ_qualifier": true,
+    "absorption_copy": {
+      "plomberie": "Si un travail est réalisé suite au diagnostic, les {amount} MAD sont déduits de la prestation.",
+      "electricite": "Si un travail est réalisé suite au diagnostic, les {amount} MAD sont déduits de la prestation.",
+      "climatisation": "Si un travail est réalisé suite au diagnostic, les {amount} MAD sont déduits de la prestation.",
+      "notes": "Absorption copy is metier-specific. Universal rule is forbidden. Review required.",
+      "review_required": "LEGAL_REVIEW_REQUIRED"
+    }
+  },
+
+  "quote_result": {
+    "intro": "Cette intervention nécessite un devis.",
+    "reason_note": "Brief service-specific reason. Not generic.",
+    "cta": "Demander un devis",
+    "secondary": "Modifier mon besoin",
+    "no_fake_price": true,
+    "no_apology_tone": true,
+    "review_required": "LEGAL_REVIEW_REQUIRED"
+  },
+
+  "modal_to_page": {
+    "copy": "Cette intervention demande quelques précisions supplémentaires.",
+    "cta": "Continuer l'estimation",
+    "no_failure_framing": true
+  },
+
+  "painting_measurement": {
+    "intro": "Pour calculer correctement votre prix, nous avons besoin de la surface à peindre.",
+    "option_known": "Je connais la surface",
+    "option_unknown": "Aidez-moi à la calculer",
+    "option_unknown_status": "FUTURE_DEPENDENCY"
+  },
+
+  "requalification": {
+    "client_copy": "Votre besoin dépasse le périmètre du prix standard.",
+    "forbidden_word": "REQUALIFY",
+    "note": "Reason and CTA are outcome-specific."
+  },
+
+  "future_entry_points": {
+    "homepage_cta": "Estimer mon intervention",
+    "service_card_cta": "Estimer",
+    "rafi_cta": "Voir le prix FIXEO",
+    "artisan_profile_cta_option_a": "Estimer cette intervention",
+    "artisan_profile_cta_option_b": "Voir le prix FIXEO",
+    "status": "DESIGN_ONLY — DO NOT IMPLEMENT NOW"
+  },
+
+  "darija_future": {
+    "status": "NOT_DRAFTED",
+    "review_required": "DARIJA_NATIVE_REVIEW_REQUIRED",
+    "note": "All Darija copy requires native speaker review before production use."
+  }
+}

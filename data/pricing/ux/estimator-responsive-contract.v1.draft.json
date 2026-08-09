@@ -1,0 +1,107 @@
+{
+  "_meta": {
+    "artifact": "estimator-responsive-contract.v1.draft",
+    "phase": "7C.8A",
+    "status": "DRAFT — NOT FOR PRODUCTION",
+    "production_allowed": false
+  },
+
+  "breakpoints": {
+    "mobile": { "max_px": 767, "surface": "bottom_sheet" },
+    "tablet": { "min_px": 768, "max_px": 1023, "surface": "modal_or_sheet_adaptive" },
+    "desktop": { "min_px": 1024, "surface": "centered_modal" }
+  },
+
+  "modal_desktop": {
+    "width_px": 600,
+    "acceptable_range_px": [560, 620],
+    "position": "centered viewport",
+    "max_height": "80vh",
+    "overflow": "internal body scroll",
+    "backdrop": "rgba(0,0,0,0.40) blur(2px)",
+    "z_index_strategy": "above nav, below critical alerts",
+    "open_animation": "fade + scale 0.96→1.0, 200ms ease-out",
+    "close_animation": "fade + scale 1.0→0.96, 150ms ease-in"
+  },
+
+  "sheet_mobile": {
+    "position": "bottom of viewport",
+    "initial_height": "65–80% viewport",
+    "expanded_height": "calc(100% - 40px)",
+    "border_radius_top_px": 16,
+    "handle_indicator": { "width_px": 36, "height_px": 4, "color": "#D0CFC8" },
+    "open_animation": "slide up, 280ms cubic-bezier(0.22,1,0.36,1)",
+    "close_animation": "slide down, 220ms ease-in",
+    "drag_to_dismiss": true,
+    "safe_area_bottom": "env(safe-area-inset-bottom)",
+    "keyboard_behavior": "sheet resizes upward when keyboard appears",
+    "scroll_body": "independent IntersectionObserver-safe scroll"
+  },
+
+  "header": {
+    "height_px": 56,
+    "position": "sticky top",
+    "elements": ["rafi_glyph", "title_label", "close_button"],
+    "close_button": { "size_px": 44, "always_visible": true, "icon": "×" },
+    "border_bottom": "1px solid #E5E4E0"
+  },
+
+  "footer": {
+    "position_desktop": "sticky bottom of modal",
+    "position_mobile": "sticky bottom of sheet",
+    "padding_bottom": "env(safe-area-inset-bottom, 16px)",
+    "cta_height_px": 52,
+    "cta_min_width": "full width of footer",
+    "must_not_cover_content": true,
+    "close_reachable_above_footer": true
+  },
+
+  "touch_targets": {
+    "minimum_px": 44,
+    "answer_card_height_px": [52, 64],
+    "yes_no_card_height_px": 56,
+    "quantity_stepper_px": 44,
+    "close_button_px": 44,
+    "back_button_px": 44
+  },
+
+  "page_estimation": {
+    "route": "/estimation",
+    "desktop": {
+      "layout": "two-column grid",
+      "main_column_width": "60%",
+      "summary_column_width": "40%",
+      "summary_position": "sticky top 24px",
+      "gap_px": 32
+    },
+    "tablet": {
+      "layout": "single-column",
+      "summary": "collapsed strip above questions"
+    },
+    "mobile": {
+      "layout": "single-column",
+      "summary": "small strip above questions, not expandable by default"
+    }
+  },
+
+  "keyboard_behavior": {
+    "modal_desktop": "modal maintains position; internal scroll adjusts",
+    "sheet_mobile": "sheet pushes up to remain above keyboard",
+    "input_always_visible": true,
+    "cta_accessible_when_keyboard_open": true,
+    "close_accessible_when_keyboard_open": true
+  },
+
+  "accessibility": {
+    "focus_trap": "active while modal/sheet open",
+    "focus_return": "to trigger element on close",
+    "esc_closes_desktop": true,
+    "aria_labelledby": "EstimatorHeader title",
+    "aria_live_results": "polite",
+    "question_heading": "semantic h2 or h3",
+    "error_announcements": "aria-live assertive",
+    "min_contrast_ratio": 4.5,
+    "no_color_only_states": true,
+    "visible_focus_indicator": true
+  }
+}
