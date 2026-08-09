@@ -1,0 +1,88 @@
+{
+  "_meta": {
+    "file": "exclusions.v0.1.json",
+    "registry": "fixeo_climatisation_pricing",
+    "version": "0.1.0",
+    "status": "RESEARCH_V0_NOT_PRODUCTION",
+    "description": "Services considered and explicitly excluded from or restructured in the Phase 7B.6 climatisation registry. Documents rationale for every scope, merge, split, or rejection decision.",
+    "production_ready": false,
+    "last_updated": "2026-08-09",
+    "phase": "7B.6"
+  },
+  "exclusions": [
+    {
+      "exclusion_id": "EXC-CLIM-001",
+      "original_label": "Recharge gaz clim — prix fixe générique",
+      "decision": "REJECTED_AND_SPLIT",
+      "rationale": "A single generic 'recharge gaz clim' fixed price is technically incoherent and commercially dishonest. Refrigerant type (R22 / R410A / R32) determines cost. Partial vs complete recharge determines scope. Whether a leak exists determines the correct intervention sequence. Blind top-up without leak diagnosis is documented as unsafe market practice. Replaced by CLIM-007 (pressure check), CLIM-008 (leak detection), CLIM-010 (R410A partial), CLIM-011 (R32 partial), CLIM-012 (R22), CLIM-013 (leak repair), CLIM-014 (vacuum), CLIM-015 (complete recharge after repair).",
+      "unsafe_practice_flag": true,
+      "unsafe_practice_description": "The generic 'recharge gaz' offering in the informal Moroccan market frequently means: artisan connects refrigerant cylinder, adds gas without vacuum, without leak detection, without pressure test. This is: (1) technically wrong — moisture ingress damages compressor; (2) commercially dishonest — cooling returns temporarily but leak persists; (3) financially harmful to client — repeat calls every season; (4) environmentally harmful — refrigerant is eventually vented to atmosphere.",
+      "replaced_by": ["CLIM-007", "CLIM-008", "CLIM-010", "CLIM-011", "CLIM-012", "CLIM-013", "CLIM-014", "CLIM-015"]
+    },
+    {
+      "exclusion_id": "EXC-CLIM-002",
+      "original_label": "Installation climatiseur complète (fourniture incluse)",
+      "decision": "REJECTED",
+      "rationale": "AC unit price varies by brand, BTU capacity, inverter/non-inverter, and model (entry-level Aux/Gree: 2000–3500 MAD; mid-range Midea/Samsung: 3500–6000 MAD; premium Daikin/Mitsubishi: 6000–15000 MAD+). Bundling hardware with installation produces a range so wide (2600–17000 MAD) that it has no market anchor utility and creates deceptive pricing. FIXEO must price installation labour separately from equipment. Replaced by CLIM-020/021 (labour only, client-supplied unit).",
+      "unsafe_practice_flag": false,
+      "replaced_by": ["CLIM-020", "CLIM-021"]
+    },
+    {
+      "exclusion_id": "EXC-CLIM-003",
+      "original_label": "Remplacement compresseur — prix fixe",
+      "decision": "REJECTED_QUOTE_REQUIRED",
+      "rationale": "Compressor cost varies from ~1500 MAD (small 7000 BTU replacement) to 6000+ MAD (large capacity or inverter compressor). Labour is 600–1500 MAD additional. Total range 2500–8000+ MAD. Fixed pricing is impossible. Additionally, compressor failure on an old R22 unit should prompt replacement advisory rather than expensive repair. DIAGNOSIS_FIRST + QUOTE_REQUIRED is the only commercially honest mode.",
+      "unsafe_practice_flag": false,
+      "replaced_by": ["CLIM-019"]
+    },
+    {
+      "exclusion_id": "EXC-CLIM-004",
+      "original_label": "Entretien climatiseur + recharge gaz — forfait combiné",
+      "decision": "REJECTED",
+      "rationale": "Combining annual maintenance with refrigerant top-up into a single fixed price creates incentive to recharge unnecessarily (or not at all) depending on which direction is more profitable for the artisan. Maintenance (CLIM-003/004) and refrigerant services (CLIM-007 onwards) must remain separate. A technician who discovers low refrigerant during entretien should diagnose the leak (CLIM-008) separately, then repair and recharge separately. The 'forfait entretien+gaz' found in the informal Moroccan market is a vector for blind recharge abuse.",
+      "unsafe_practice_flag": true,
+      "unsafe_practice_description": "Some informal artisans in Morocco offer 'entretien complet avec recharge gaz' as a bundle. This incentivizes automatic gas top-up as perceived added value without leak diagnosis. FIXEO must prohibit this bundle.",
+      "replaced_by": ["CLIM-003", "CLIM-008", "CLIM-010"]
+    },
+    {
+      "exclusion_id": "EXC-CLIM-005",
+      "original_label": "Installation gainable — prix fixe",
+      "decision": "REJECTED_QUOTE_REQUIRED",
+      "rationale": "Gainable (ducted) installation scope varies entirely based on number of outlets, duct length, ceiling structure, condensate routing, and building constraints. Moroccan market evidence range of 1500–4000 MAD labour only is too wide and scope-undefined for any standardized price. Requires pre-installation site visit and quote.",
+      "unsafe_practice_flag": false,
+      "replaced_by": ["CLIM-023"]
+    },
+    {
+      "exclusion_id": "EXC-CLIM-006",
+      "original_label": "Urgence climatisation — supplément prix",
+      "decision": "FROZEN_PER_POLICY",
+      "rationale": "Phase 7B.6 policy freeze: urgency_modifier = null. Evidence of 100–300 MAD urgency surcharges documented in Moroccan informal market (EV-CLIM-032, SRC-CLIM-002) but not activated. Human calibration required to decide urgency policy for climatisation.",
+      "unsafe_practice_flag": false,
+      "replaced_by": ["CLIM-033"]
+    },
+    {
+      "exclusion_id": "EXC-CLIM-007",
+      "original_label": "Installation commerciale — prix fixe",
+      "decision": "OUT_OF_SCOPE",
+      "rationale": "Phase 7B.6 scope is residential. Light commercial installations (small shop single split) may overlap but commercial HVAC (VRF, cassette arrays, rooftop units) requires separate métier scope. No Morocco residential market evidence for commercial installation at FIXEO residential artisan level. Excluded from registry.",
+      "unsafe_practice_flag": false,
+      "replaced_by": []
+    },
+    {
+      "exclusion_id": "EXC-CLIM-008",
+      "original_label": "Réparation climatiseur (générique)",
+      "decision": "REJECTED_AND_SPLIT",
+      "rationale": "Generic 'réparation climatiseur' 250–600 MAD (FIXEO legacy, SRC-CLIM-T04) has no scope definition. Could mean: capacitor replacement (CLIM-016, 250 MAD labour), PCB replacement (CLIM-017, 400 MAD labour), fan motor (CLIM-018, 400 MAD labour), or complete compressor (CLIM-019, QUOTE_REQUIRED). The range 250–600 MAD is only valid for minor electrical component repair (capacitor at low end) and completely fails for any major repair. Replaced by component-specific services.",
+      "unsafe_practice_flag": false,
+      "replaced_by": ["CLIM-016", "CLIM-017", "CLIM-018", "CLIM-019", "CLIM-006"]
+    },
+    {
+      "exclusion_id": "EXC-CLIM-009",
+      "original_label": "Mètre cuivre par mètre — prix incluant la main d'œuvre installation",
+      "decision": "RESTRUCTURED",
+      "rationale": "Some sources quote copper per metre including labour for that metre as part of overall installation. CLIM-025 correctly separates the 'additional metre' cost including tube + insulation + labour for that additional metre. However, CLIM-025 is only an add-on to CLIM-020/021 and should not be used as standalone installation pricing.",
+      "unsafe_practice_flag": false,
+      "replaced_by": ["CLIM-025"]
+    }
+  ]
+}

@@ -1,0 +1,388 @@
+{
+  "_meta": {
+    "file": "sources.v0.1.json",
+    "registry": "fixeo_climatisation_pricing",
+    "version": "0.1.0",
+    "status": "RESEARCH_V0_NOT_PRODUCTION",
+    "description": "Source registry for Phase 7B.6 climatisation market research. All sources collected before reviewing legacy FIXEO prices. No source may be used in reference calculations without complete metadata.",
+    "production_ready": false,
+    "last_updated": "2026-08-09",
+    "phase": "7B.6"
+  },
+  "sources": [
+    {
+      "source_id": "SRC-CLIM-001",
+      "publisher": "mano.ma",
+      "url": "https://mano.ma/prix-climatiseur-maroc/",
+      "source_type": "PLATFORM_EDITORIAL",
+      "geographic_scope": "NATIONAL_MOROCCO_WITH_CITY_COMMENTARY",
+      "cities_mentioned": ["Casablanca", "Rabat", "Marrakech", "Tanger", "Agadir", "Fès"],
+      "publication_date": "2025-2026",
+      "research_access_date": "2026-08-09",
+      "quality_grade": "C+",
+      "methodology_summary": "Editorial price guide from a Moroccan home-services marketplace. Provides per-intervention price ranges with scope commentary. Platform also aggregates artisan profiles with displayed rates. Evidence of active listings in clim category. No declared statistical sample.",
+      "services_covered": [
+        "entretien_nettoyage_annuel",
+        "panne_diagnostic",
+        "installation_split",
+        "recharge_gaz",
+        "remplacement_composant"
+      ],
+      "price_ranges_captured": {
+        "entretien_standard": "200–400 MAD",
+        "nettoyage_profond": "300–600 MAD",
+        "diagnostic_deplacement": "150–300 MAD",
+        "installation_split_standard": "600–1200 MAD",
+        "recharge_gaz_partielle": "250–500 MAD"
+      },
+      "parts_policy": "PARTS_EXTRA_UNLESS_STATED — editorial position that labour and travel included, parts always separate",
+      "limitations": "No declared sample size. Some prices may reflect listing aspirations rather than transaction data. Editorial content; duplication risk with other Moroccan guides that copy each other.",
+      "duplication_risk": "MEDIUM",
+      "usable_in_reference_calc": true
+    },
+    {
+      "source_id": "SRC-CLIM-002",
+      "publisher": "avito.ma",
+      "url": "https://www.avito.ma/maroc/services/climatiseur",
+      "source_type": "CLASSIFIEDS_MARKETPLACE",
+      "geographic_scope": "NATIONAL_MOROCCO_MULTI_CITY",
+      "cities_mentioned": ["Casablanca", "Rabat", "Marrakech", "Tanger", "Fès", "Agadir", "Meknès"],
+      "publication_date": "ROLLING_LIVE_LISTINGS",
+      "research_access_date": "2026-08-09",
+      "quality_grade": "C",
+      "methodology_summary": "Live classified listings from artisans and small businesses advertising clim services. Prices reflect asking prices, not necessarily transaction prices. High geographic spread. Useful for floor/ceiling estimates. Individual listings vary widely in scope definition.",
+      "services_covered": [
+        "entretien_nettoyage",
+        "installation_split",
+        "panne_reparation",
+        "recharge_gaz",
+        "diagnostic"
+      ],
+      "price_ranges_captured": {
+        "entretien_1_unite": "150–400 MAD",
+        "installation_split_client_ac": "500–1200 MAD",
+        "recharge_gaz": "200–600 MAD",
+        "diagnostic": "100–250 MAD",
+        "nettoyage_filtre": "100–250 MAD per unit"
+      },
+      "limitations": "Asking prices not transaction prices. Scope rarely defined in listings. Geographic mixing. Strong downward bias from informal artisans under-declaring scope. Duplication risk if same artisan lists multiple ads.",
+      "duplication_risk": "HIGH",
+      "usable_in_reference_calc": true,
+      "notes": "Useful for floor detection and geographic spread. Not for anchor derivation alone."
+    },
+    {
+      "source_id": "SRC-CLIM-003",
+      "publisher": "jumia.ma",
+      "url": "https://www.jumia.ma/climatiseurs/",
+      "source_type": "ECOMMERCE",
+      "geographic_scope": "NATIONAL_MOROCCO",
+      "cities_mentioned": [],
+      "publication_date": "ROLLING",
+      "research_access_date": "2026-08-09",
+      "quality_grade": "C+",
+      "methodology_summary": "E-commerce platform. Used ONLY for hardware/parts price context: condensateurs, modules PCB, refrigerants, copper fittings sold separately. NOT used for labour pricing.",
+      "services_covered": [],
+      "part_prices_captured": {
+        "condensateur_5uf_450v": "80–200 MAD",
+        "module_pcb_generique": "400–2000 MAD",
+        "moteur_ventilateur_generique": "300–900 MAD",
+        "fluide_R410A_1kg_bouteille": "200–350 MAD retail",
+        "fluide_R32_1kg_bouteille": "180–300 MAD retail",
+        "kit_fixation_support_mural": "100–250 MAD",
+        "gaine_cuivre_1_4_3_8_3m_kit": "180–400 MAD"
+      },
+      "limitations": "Parts prices only. Not representative of artisan wholesale cost. Retail markup over artisan procurement. Cannot be used for labour pricing.",
+      "duplication_risk": "LOW",
+      "usable_in_reference_calc": false,
+      "usable_for_parts_context": true
+    },
+    {
+      "source_id": "SRC-CLIM-004",
+      "publisher": "fixandgo.ma (Moroccan home-service platform)",
+      "url": "https://www.fixandgo.ma/climatisation",
+      "source_type": "PLATFORM_MARKETPLACE",
+      "geographic_scope": "CASABLANCA_AND_MAJOR_CITIES",
+      "cities_mentioned": ["Casablanca", "Rabat"],
+      "publication_date": "2025",
+      "research_access_date": "2026-08-09",
+      "quality_grade": "C+",
+      "methodology_summary": "Moroccan on-demand home services platform. Published standardized price grid for clim services with clear scope definitions per service. Higher confidence than classifieds because platform sets the pricing frame. Urban bias towards Casablanca.",
+      "services_covered": [
+        "entretien_standard",
+        "nettoyage_profond",
+        "diagnostic",
+        "installation_split_standard",
+        "recharge_gaz",
+        "desinfection_filtres"
+      ],
+      "price_ranges_captured": {
+        "entretien_standard_1_unite": "250–350 MAD",
+        "nettoyage_profond_1_unite": "350–550 MAD",
+        "diagnostic_clim": "200–300 MAD",
+        "installation_split_7000_12000_btu": "700–1100 MAD labour",
+        "recharge_gaz_R410A_partielle": "300–450 MAD + gaz",
+        "desinfection_filtres": "150–250 MAD"
+      },
+      "parts_policy": "LABOUR_FIXED_PARTS_SEPARATE — platform explicitly separates labour from refrigerant cost",
+      "limitations": "Urban bias. Platform may set aspirational prices to attract clients. Some scope definitions still vague on copper included/excluded.",
+      "duplication_risk": "LOW",
+      "usable_in_reference_calc": true
+    },
+    {
+      "source_id": "SRC-CLIM-005",
+      "publisher": "maison.ma editorial / service guides",
+      "url": "https://www.maison.ma/guide-prix/climatisation-maroc/",
+      "source_type": "EDITORIAL_HOME_GUIDE",
+      "geographic_scope": "NATIONAL_MOROCCO",
+      "cities_mentioned": ["Casablanca", "Rabat", "Marrakech"],
+      "publication_date": "2024-2025",
+      "research_access_date": "2026-08-09",
+      "quality_grade": "C",
+      "methodology_summary": "Editorial home-services price guide from a Moroccan real estate and home content publisher. Covers installation, maintenance and repair ranges. No declared methodology or sample. Likely editorially aggregated.",
+      "services_covered": [
+        "installation_split_standard",
+        "installation_multi_split",
+        "entretien_annuel",
+        "reparation_panne"
+      ],
+      "price_ranges_captured": {
+        "installation_mono_split_7000_12000_btu": "600–1000 MAD labour",
+        "installation_mono_split_18000_24000_btu": "800–1400 MAD labour",
+        "installation_multi_split_2_unites": "1500–2500 MAD labour",
+        "entretien_annuel_1_unite": "200–350 MAD",
+        "reparation_panne_simple": "200–500 MAD"
+      },
+      "limitations": "No methodology declared. Probable editorial aggregation. May copy other Moroccan guides. Copper length included in installation not always specified.",
+      "duplication_risk": "MEDIUM",
+      "usable_in_reference_calc": true
+    },
+    {
+      "source_id": "SRC-CLIM-006",
+      "publisher": "Moroccan BTP / construction cost indices (DEPF / Ministère de l'Equipement)",
+      "url": "https://www.equipement.gov.ma/ (bordereau des prix)",
+      "source_type": "GOVERNMENT_OBSERVATORY",
+      "geographic_scope": "NATIONAL_MOROCCO",
+      "cities_mentioned": [],
+      "publication_date": "2023-2024",
+      "research_access_date": "2026-08-09",
+      "quality_grade": "B",
+      "methodology_summary": "Official Moroccan government construction and equipment labour cost schedule (bordereau de prix). Covers technician day rates and installation forfaits for HVAC and climatisation in public/commercial contracts. More relevant to commercial installation than residential repair, but provides labour floor benchmarks.",
+      "services_covered": [
+        "installation_climatisation_hvac",
+        "maintenance_contrat_annuel",
+        "technicien_hvac_journalier"
+      ],
+      "price_ranges_captured": {
+        "journee_technicien_clim": "400–800 MAD/day",
+        "installation_split_residential_forfait": "500–1000 MAD (labour only, standard scope)",
+        "contrat_entretien_annuel_1_unite": "800–1500 MAD/year"
+      },
+      "limitations": "Commercial/public sector orientation. Day rates not directly comparable to residential flat-rate interventions. Not disaggregated by refrigerant type.",
+      "duplication_risk": "LOW",
+      "usable_in_reference_calc": true,
+      "notes": "Used for artisan economic floor validation, not market anchor."
+    },
+    {
+      "source_id": "SRC-CLIM-007",
+      "publisher": "Facebook Marketplace Morocco / informal artisan communities",
+      "url": "https://www.facebook.com/marketplace/morocco/",
+      "source_type": "SOCIAL_INFORMAL",
+      "geographic_scope": "MULTI_CITY_MOROCCO",
+      "cities_mentioned": ["Casablanca", "Rabat", "Marrakech", "Fès", "Meknès", "Oujda"],
+      "publication_date": "ROLLING",
+      "research_access_date": "2026-08-09",
+      "quality_grade": "D",
+      "methodology_summary": "Informal price signals from Facebook marketplace listings and Moroccan artisan WhatsApp/Facebook groups. Extreme variability. Strong downward bias as informal workers undercut formal platforms. Useful only for identifying absolute floor prices and detecting market practices.",
+      "services_covered": [
+        "recharge_gaz_informelle",
+        "entretien_bas_de_gamme",
+        "installation_economique"
+      ],
+      "price_ranges_captured": {
+        "recharge_gaz_informelle": "100–300 MAD (blind refill, no vacuum, no leak check)",
+        "entretien_simple": "80–200 MAD",
+        "installation_economique": "300–600 MAD (often incomplete scope)"
+      },
+      "limitations": "No verification. Widespread unsafe practice of blind recharges without leak diagnosis. Scope undisclosed. Cannot be used for market anchor. Useful only for identifying unsafe market practices and absolute floor.",
+      "duplication_risk": "HIGH",
+      "usable_in_reference_calc": false,
+      "usable_for_floor_detection": true,
+      "unsafe_practice_flag": "BLIND_RECHARGE_DOCUMENTED — informal market regularly offers recharge without vacuum, without leak test, without refrigerant type verification"
+    },
+    {
+      "source_id": "SRC-CLIM-008",
+      "publisher": "Moroccan HVAC contractor websites (aggregate of publicly published price grids)",
+      "url": "MULTIPLE — e.g. climatech.ma, froid-clim.ma, climatmaroc.com",
+      "source_type": "CONTRACTOR_PUBLISHED",
+      "geographic_scope": "URBAN_MOROCCO_CASABLANCA_RABAT_DOMINANT",
+      "cities_mentioned": ["Casablanca", "Rabat", "Tanger"],
+      "publication_date": "2024-2025",
+      "research_access_date": "2026-08-09",
+      "quality_grade": "C+",
+      "methodology_summary": "Published price grids from Moroccan HVAC installation and maintenance companies. More scope-defined than classifieds. Oriented towards residential split AC (mono and multi). Prices tend to be mid-to-high market as formal companies compete on quality, not just price.",
+      "services_covered": [
+        "installation_split_mono",
+        "installation_split_multi",
+        "contrat_entretien_annuel",
+        "recharge_fluide_R410A",
+        "recharge_fluide_R32",
+        "diagnostic_technique",
+        "remplacement_condensateur",
+        "remplacement_carte_PCB",
+        "remplacement_moteur_ventilateur"
+      ],
+      "price_ranges_captured": {
+        "installation_mono_split_inclus_3m_cuivre_support_percage": "900–1500 MAD",
+        "installation_multi_split_2_unites": "2000–3500 MAD",
+        "contrat_entretien_annuel_2_visites": "1200–2000 MAD/year",
+        "recharge_R410A_inclus_detection_vide_charge": "500–900 MAD (labour+vacuum) + gaz séparé",
+        "recharge_R32_inclus_detection_vide_charge": "450–800 MAD (labour+vacuum) + gaz séparé",
+        "remplacement_condensateur_labour": "200–350 MAD labour",
+        "remplacement_PCB_labour": "300–500 MAD labour",
+        "remplacement_moteur_ventilateur_labour": "300–500 MAD labour"
+      },
+      "parts_policy": "LABOUR_FIXED_PARTS_ALWAYS_SEPARATE — all contractor sites separate labour from part cost",
+      "limitations": "Urban bias. Companies may display aspirational prices. Multi-company aggregate introduces variance. Some quoted prices are 'à partir de' (starting from).",
+      "duplication_risk": "LOW",
+      "usable_in_reference_calc": true
+    },
+    {
+      "source_id": "SRC-CLIM-009",
+      "publisher": "Prix-Travaux.ma / Travauxprix.ma (Moroccan renovation price guides)",
+      "url": "https://www.prix-travaux.ma/prix-installation-climatiseur/",
+      "source_type": "EDITORIAL_RENOVATION",
+      "geographic_scope": "NATIONAL_MOROCCO",
+      "cities_mentioned": ["Casablanca", "Rabat", "Marrakech"],
+      "publication_date": "2024-2025",
+      "research_access_date": "2026-08-09",
+      "quality_grade": "C",
+      "methodology_summary": "Moroccan renovation cost editorial site. Covers installation pricing with scope detail. Cross-references French renovation guides methodology without specific Moroccan sample declaration. Useful for installation scope benchmark.",
+      "services_covered": [
+        "installation_split_mono",
+        "installation_gainable",
+        "installation_cassette",
+        "depose_ancienne_unite"
+      ],
+      "price_ranges_captured": {
+        "installation_mono_split_labour_only": "600–1200 MAD",
+        "installation_gainable_labour_only": "1500–3500 MAD",
+        "installation_cassette_labour_only": "1200–2500 MAD",
+        "rallonge_cuivre_par_metre": "80–150 MAD/m",
+        "percage_beton": "100–200 MAD/perçage",
+        "support_mural": "80–200 MAD (fourniture+pose)"
+      },
+      "limitations": "No sample size. Possibly adapted from French sources. Installation scope details vary. Not disaggregated by BTU range.",
+      "duplication_risk": "MEDIUM",
+      "usable_in_reference_calc": true
+    },
+    {
+      "source_id": "SRC-CLIM-010",
+      "publisher": "Moroccan consumer forum / Marocannonces / community threads",
+      "url": "https://www.marocannonces.com / community forums",
+      "source_type": "FORUM_CONSUMER",
+      "geographic_scope": "MULTI_CITY_MOROCCO",
+      "cities_mentioned": ["Casablanca", "Rabat", "Marrakech", "Fès", "Agadir"],
+      "publication_date": "2023-2026",
+      "research_access_date": "2026-08-09",
+      "quality_grade": "D",
+      "methodology_summary": "Consumer experience reports from Moroccan forums and online communities. Real transaction prices reported anecdotally. High variability. Useful for cross-checking outlier prices and detecting consumer complaints about overpricing.",
+      "services_covered": [
+        "installation_split",
+        "recharge_gaz",
+        "entretien",
+        "panne_reparation"
+      ],
+      "price_ranges_captured": {
+        "recharge_gaz_R410A_consumer_reported": "200–800 MAD (huge variance, scope undefined)",
+        "installation_split_consumer_reported": "500–1800 MAD (scope undefined)",
+        "entretien_consumer_reported": "150–500 MAD",
+        "reparation_panne_consumer_reported": "200–800 MAD"
+      },
+      "limitations": "Anecdotal. Scope undefined. Selection bias (users report extreme prices — both too cheap and too expensive). Cannot anchor market reference.",
+      "duplication_risk": "MEDIUM",
+      "usable_in_reference_calc": false,
+      "usable_for_outlier_detection": true
+    },
+    {
+      "source_id": "SRC-CLIM-T01",
+      "publisher": "FIXEO internal — fixeo-estimation-engine-v1.js",
+      "url": "INTERNAL — js/fixeo-estimation-engine-v1.js",
+      "source_type": "FIXEO_LEGACY_INTERNAL",
+      "geographic_scope": "NATIONAL_MOROCCO",
+      "publication_date": "UNKNOWN_LEGACY",
+      "research_access_date": "2026-08-09",
+      "quality_grade": "T0",
+      "methodology_summary": "FIXEO internal estimation engine. Category-level price buckets (simple/medium/heavy/urgent) for climatisation. Not service-level granularity. Origin of values unknown — no external source documentation. Must not be used to calibrate market truth.",
+      "services_covered": ["climatisation_simple", "climatisation_medium", "climatisation_heavy", "climatisation_urgent"],
+      "price_ranges_captured": {
+        "simple": "200–400 MAD",
+        "medium": "300–700 MAD",
+        "heavy": "500–1200 MAD",
+        "urgent": "350–750 MAD"
+      },
+      "limitations": "Category-level only. No service granularity. No source documentation. T0 — never use for market calibration.",
+      "duplication_risk": "LOW",
+      "usable_in_reference_calc": false
+    },
+    {
+      "source_id": "SRC-CLIM-T02",
+      "publisher": "FIXEO internal — fixeo-estimation-v2-hero.js",
+      "url": "INTERNAL — js/fixeo-estimation-v2-hero.js",
+      "source_type": "FIXEO_LEGACY_INTERNAL",
+      "geographic_scope": "NATIONAL_MOROCCO",
+      "publication_date": "UNKNOWN_LEGACY",
+      "research_access_date": "2026-08-09",
+      "quality_grade": "T0",
+      "methodology_summary": "FIXEO hero estimation v2. Identical category structure to v1. Climatisation bucket identical: simple 200–400, medium 300–700, heavy 500–1200, urgent 350–750. No service-level granularity. T0.",
+      "services_covered": ["climatisation_simple", "climatisation_medium", "climatisation_heavy", "climatisation_urgent"],
+      "price_ranges_captured": {
+        "simple": "200–400 MAD",
+        "medium": "300–700 MAD",
+        "heavy": "500–1200 MAD",
+        "urgent": "350–750 MAD"
+      },
+      "limitations": "Identical to T01. Likely copy of same internal table. T0 — never use for market calibration.",
+      "duplication_risk": "HIGH",
+      "usable_in_reference_calc": false
+    },
+    {
+      "source_id": "SRC-CLIM-T03",
+      "publisher": "FIXEO internal — fixeo-pricing-marocain.js",
+      "url": "INTERNAL — js/fixeo-pricing-marocain.js",
+      "source_type": "FIXEO_LEGACY_INTERNAL",
+      "geographic_scope": "NATIONAL_MOROCCO",
+      "publication_date": "UNKNOWN_LEGACY",
+      "research_access_date": "2026-08-09",
+      "quality_grade": "T0",
+      "methodology_summary": "FIXEO marocain pricing file. Single category bucket for climatisation: 200–900 MAD range with label 'À partir de 200 MAD'. Extremely coarse. No service breakdown. T0.",
+      "services_covered": ["climatisation_generic"],
+      "price_ranges_captured": {
+        "climatisation_generic": "200–900 MAD"
+      },
+      "limitations": "Single range for entire métier. Useless for service-level calibration. T0 — never use for market calibration.",
+      "duplication_risk": "MEDIUM",
+      "usable_in_reference_calc": false
+    },
+    {
+      "source_id": "SRC-CLIM-T04",
+      "publisher": "FIXEO internal — fixeo-profile-v2a.js (PRICE_MAP climatisation)",
+      "url": "INTERNAL — js/fixeo-profile-v2a.js",
+      "source_type": "FIXEO_LEGACY_INTERNAL",
+      "geographic_scope": "NATIONAL_MOROCCO",
+      "publication_date": "UNKNOWN_LEGACY",
+      "research_access_date": "2026-08-09",
+      "quality_grade": "T0",
+      "methodology_summary": "FIXEO artisan profile price map. Four service-level entries for climatisation with MAD ranges: Panne 200–500, Entretien 200–350, Installation 500–900, Réparation 250–600. More granular than estimation engines but still vague (e.g. 'installation 500–900' without scope definition).",
+      "services_covered": ["panne_climatiseur", "entretien_climatiseur", "installation_climatiseur", "reparation_climatiseur"],
+      "price_ranges_captured": {
+        "panne_climatiseur": "200–500 MAD",
+        "entretien_climatiseur": "200–350 MAD",
+        "installation_climatiseur": "500–900 MAD",
+        "reparation_climatiseur": "250–600 MAD"
+      },
+      "limitations": "Four broad buckets only. No refrigerant type, no BTU range, no copper length scope. T0 — never use for market calibration.",
+      "duplication_risk": "MEDIUM",
+      "usable_in_reference_calc": false
+    }
+  ]
+}
