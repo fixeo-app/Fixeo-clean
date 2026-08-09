@@ -1,0 +1,240 @@
+{
+  "_meta": {
+    "file": "sources.v0.json",
+    "registry": "fixeo_plumbing_pricing",
+    "version": "0.1.0",
+    "status": "RESEARCH_V0_NOT_PRODUCTION",
+    "description": "Source registry for Phase 7B.3 plumbing market research. Each source referenced by service evidence rows. No source may be added without complete metadata.",
+    "production_ready": false,
+    "last_updated": "2026-08-09"
+  },
+  "sources": [
+    {
+      "source_id": "SRC_PLUMBING_001",
+      "publisher": "mano.ma",
+      "url": "https://mano.ma/prix-plombier-au-maroc/",
+      "source_type": "PLATFORM_EDITORIAL",
+      "geographic_scope": "NATIONAL_MOROCCO_WITH_CITY_BREAKDOWN",
+      "cities_mentioned": ["Casablanca", "Rabat", "Marrakech", "Tanger", "Fès", "Agadir", "Meknès"],
+      "publication_date": "2025-2026",
+      "research_access_date": "2026-08-09",
+      "quality_grade": "C+",
+      "methodology_summary": "Editorial price guide. No declared sampling method. Provides per-intervention ranges and per-city hourly rates. Scope notes generally present. Materials distinction not always explicit.",
+      "services_covered": ["diagnostic", "fuite_simple", "fuite_cachee", "debouchage_evier", "debouchage_wc", "robinet_remplacement", "chauffe_eau_reparation", "chauffe_eau_installation", "canalisation"],
+      "limitations": [
+        "Single editorial source — no declared sample methodology",
+        "City hourly rates are editorial estimates, not observed transaction data",
+        "Material inclusion not always explicit per service",
+        "Upper ceiling values appear to include complex scope not separated from standard scope"
+      ],
+      "duplication_risk": "LOW — inworky.com shows partial overlap but not verbatim copy",
+      "notes": "Most detailed single source found for city-level pricing and per-intervention breakdown. Treated as C+ quality. Consistent scope notes on materials improve usability."
+    },
+    {
+      "source_id": "SRC_PLUMBING_002",
+      "publisher": "mano.ma",
+      "url": "https://mano.ma/prix-debouchage-toilette-au-maroc/",
+      "source_type": "PLATFORM_EDITORIAL",
+      "geographic_scope": "NATIONAL_MOROCCO_WITH_5_CITY_BREAKDOWN",
+      "cities_mentioned": ["Casablanca", "Rabat", "Tanger", "Marrakech", "Fès"],
+      "publication_date": "2026",
+      "research_access_date": "2026-08-09",
+      "quality_grade": "C+",
+      "methodology_summary": "Dedicated débouchage WC price guide from same publisher as SRC_PLUMBING_001. More granular on débouchage sub-methods (manual, professional, hydrocurage, camion). City-level breakdowns available.",
+      "services_covered": ["debouchage_wc_simple", "debouchage_wc_pro", "debouchage_colonne"],
+      "limitations": [
+        "Same publisher as SRC_PLUMBING_001 — not fully independent",
+        "Method sub-categories not always clearly scoped",
+        "City breakdown data extracted from partial fetch — may be incomplete"
+      ],
+      "duplication_risk": "SAME_PUBLISHER — counted separately for débouchage specialisation only",
+      "notes": "Counted as half-weight independent source given same publisher. Only used where it provides additional scope detail not present in SRC_PLUMBING_001."
+    },
+    {
+      "source_id": "SRC_PLUMBING_003",
+      "publisher": "allo-maison.ma",
+      "url": "https://allo-maison.ma/plombier-casablanca",
+      "source_type": "PLATFORM_MARKETPLACE_EDITORIAL",
+      "geographic_scope": "CASABLANCA",
+      "cities_mentioned": ["Casablanca"],
+      "publication_date": "2026",
+      "research_access_date": "2026-08-09",
+      "quality_grade": "C",
+      "methodology_summary": "Artisan marketplace. States 119 plumbers listed in Casablanca. Provides a 'prix moyen honnête' statement for débouchage WC specifically, with explicit note that it includes 'matériel + déplacement'. This specific data point is the most reliable single-service Casablanca estimate found.",
+      "services_covered": ["debouchage_wc_simple"],
+      "limitations": [
+        "Casablanca only — no other city data",
+        "Most pages lack explicit pricing — only one service priced",
+        "Travel and materials included — requires normalization"
+      ],
+      "duplication_risk": "LOW",
+      "notes": "Débouchage WC 300–450 DH Casablanca estimate is particularly credible as it comes from a marketplace with 119 listed artisans. Explicitly states travel included. Materials inclusion stated — must normalize to labour-only equivalent (roughly subtract 20–30 DH for consumables)."
+    },
+    {
+      "source_id": "SRC_PLUMBING_004",
+      "publisher": "allo-maison.ma",
+      "url": "https://allo-maison.ma/plombier-marrakech",
+      "source_type": "PLATFORM_MARKETPLACE_EDITORIAL",
+      "geographic_scope": "MARRAKECH",
+      "cities_mentioned": ["Marrakech"],
+      "publication_date": "2026",
+      "research_access_date": "2026-08-09",
+      "quality_grade": "C-",
+      "methodology_summary": "Artisan marketplace. States 34 plumbers listed in Marrakech. Provides price ranges for fuite and débouchage — materially lower than Casablanca equivalent from SRC_PLUMBING_003.",
+      "services_covered": ["fuite_simple", "debouchage_evier"],
+      "limitations": [
+        "Marrakech only",
+        "Price ranges are editorial, not observed transaction data",
+        "34 artisans is smaller sample than Casablanca — less statistically grounded"
+      ],
+      "duplication_risk": "LOW",
+      "notes": "Used for geographic comparison only — confirms Marrakech is 10–20% below Casablanca for equivalent services."
+    },
+    {
+      "source_id": "SRC_PLUMBING_005",
+      "publisher": "bnidari.ma",
+      "url": "https://bnidari.ma/tarifs/plombier",
+      "source_type": "PLATFORM_EDITORIAL",
+      "geographic_scope": "NATIONAL_MOROCCO",
+      "cities_mentioned": ["Casablanca", "Rabat (noted as higher)"],
+      "publication_date": "2026",
+      "research_access_date": "2026-08-09",
+      "quality_grade": "C+",
+      "methodology_summary": "States 'prix moyen constaté' — implies observation-based pricing. Provides three services: fuite robinet/mitigeur, débouchage canalisation, remplacement chauffe-eau (pose seule). All forfait. Explicit note: materials excluded from 'pose seule' category.",
+      "services_covered": ["fuite_simple", "debouchage_evier", "chauffe_eau_installation_electrique"],
+      "limitations": [
+        "Only 3 services with explicit pricing",
+        "Methodology not fully described despite 'prix constaté' claim",
+        "Not clear if 'canalisation' débouchage = évier or WC"
+      ],
+      "duplication_risk": "LOW — ranges differ from other sources",
+      "notes": "Treated as C+ because 'prix constaté' implies actual observation rather than pure editorial. Cross-checks favorably with afous.ma for the same 3 services."
+    },
+    {
+      "source_id": "SRC_PLUMBING_006",
+      "publisher": "bnidari.ma",
+      "url": "https://bnidari.ma/conseils/tarifs-plomberie-maroc",
+      "source_type": "PLATFORM_EDITORIAL_GUIDE",
+      "geographic_scope": "NATIONAL_MOROCCO",
+      "cities_mentioned": ["Casablanca", "Rabat (noted as higher)"],
+      "publication_date": "2026",
+      "research_access_date": "2026-08-09",
+      "quality_grade": "C",
+      "methodology_summary": "Detailed editorial guide from same publisher as SRC_PLUMBING_005. Covers 12 intervention types with duration estimates. Explicitly states prices exclude materials. Contains FAQ confirming diagnostic fee charged even if client does not proceed.",
+      "services_covered": ["diagnostic", "debouchage_evier", "debouchage_wc_simple", "fuite_simple", "robinet_remplacement", "chasse_eau", "chauffe_eau_installation_electrique", "chauffe_eau_installation_gaz", "sanitaire_lavabo", "sanitaire_wc_standard", "sanitaire_wc_suspendu"],
+      "limitations": [
+        "Same publisher as SRC_PLUMBING_005 — not fully independent",
+        "Purely editorial — no methodology statement",
+        "Casablanca/Rabat higher noted but no specific city values given"
+      ],
+      "duplication_risk": "SAME_PUBLISHER — weighted accordingly",
+      "notes": "Most important contribution: explicit duration estimates per service (enabling economic floor validation), FAQ on diagnostic fee practice, and materials doctrine confirmation. Sanitaire prices are single-source — LOW weight."
+    },
+    {
+      "source_id": "SRC_PLUMBING_007",
+      "publisher": "inworky.com",
+      "url": "https://inworky.com/blog/prix-plombier-maroc/",
+      "source_type": "PLATFORM_EDITORIAL",
+      "geographic_scope": "NATIONAL_MOROCCO",
+      "cities_mentioned": ["Casablanca", "Rabat", "Marrakech"],
+      "publication_date": "2026",
+      "research_access_date": "2026-08-09",
+      "quality_grade": "C",
+      "methodology_summary": "Platform editorial price guide. Provides 5 service categories with ranges. Partially overlaps mano.ma ranges — possible editorial cross-referencing. Not verbatim copy — values differ enough to suggest independent research.",
+      "services_covered": ["diagnostic", "fuite_simple", "debouchage_evier", "chauffe_eau_installation"],
+      "limitations": [
+        "No methodology declared",
+        "Partial overlap with SRC_PLUMBING_001 ranges — reduced independence weight",
+        "Chauffe-eau installation likely includes equipment component based on upper range"
+      ],
+      "duplication_risk": "MODERATE — counted at 0.5x weight where ranges overlap mano.ma",
+      "notes": "Used as corroborating source when it independently confirms other sources. Not used as primary source where ranges match SRC_PLUMBING_001 exactly."
+    },
+    {
+      "source_id": "SRC_PLUMBING_008",
+      "publisher": "afous.ma",
+      "url": "https://afous.ma/prix/plombier",
+      "source_type": "PRICE_OBSERVATORY",
+      "geographic_scope": "NATIONAL_MOROCCO",
+      "cities_mentioned": ["National aggregate"],
+      "publication_date": "2026",
+      "research_access_date": "2026-08-09",
+      "quality_grade": "B+",
+      "methodology_summary": "Declared price observatory methodology: 2,475 'relevés terrain' total. P30–P70 trimming (30th–70th percentile band) excludes extreme values. 12-month trend tracking. Approximately 480 observations per service for the 3 services shown. 0% price change noted over 12 months (price stability indicator). Observations described as from clients and artisans.",
+      "services_covered": ["fuite_simple", "debouchage_evier", "chauffe_eau_installation_electrique"],
+      "limitations": [
+        "Methodology declared but not independently auditable",
+        "'Relevés terrain' = self-reported by clients/artisans — potential response bias",
+        "Only 3 services covered",
+        "National aggregate — no city breakdown",
+        "Does not separate labour from materials — unclear if forfait includes consumables",
+        "480 observations per service: sufficient if distributed, insufficient if from few highly-active respondents"
+      ],
+      "duplication_risk": "LOW — independent methodology and distinct values",
+      "notes": "Highest-quality external source found. P30–P70 method is correct for excluding outliers. 12-month stability (0% trend) is an important product finding. Weighted 0.50 in fair_price calculation where available. Used as the anchor for fuite_simple, debouchage, and chauffe-eau installation MO ranges."
+    },
+    {
+      "source_id": "SRC_PLUMBING_009",
+      "publisher": "leplombier.ma",
+      "url": "https://leplombier.ma/",
+      "source_type": "ARTISAN_SELF_PUBLISHED_BLOG",
+      "geographic_scope": "CASABLANCA_GENERAL",
+      "cities_mentioned": ["Casablanca"],
+      "publication_date": "Undated (estimated 2024–2025)",
+      "research_access_date": "2026-08-09",
+      "quality_grade": "D",
+      "methodology_summary": "Artisan or artisan cooperative self-published blog/site. Narrative format. Provides broad salary ranges for experienced plumbers and very broad service price ranges. No scope separation. No materials distinction.",
+      "services_covered": [],
+      "limitations": [
+        "No scope separation between service types",
+        "No materials/labour distinction",
+        "Self-published by a trade participant with potential price-setting motivation",
+        "Undated — recency unknown",
+        "Ranges too broad to be useful (200–500 DH simple repair, 3,000–10,000 DH installation)"
+      ],
+      "duplication_risk": "N/A — excluded from all numeric evidence",
+      "notes": "Excluded from all price calculations. Retained only for artisan salary reference (5,000–8,000 DH/month for experienced plumber — used in economic floor analysis only)."
+    },
+    {
+      "source_id": "SRC_PLUMBING_010",
+      "publisher": "marocbtp.com",
+      "url": "https://marocbtp.com/conseils/fiche-plombier.html",
+      "source_type": "CONSTRUCTION_SECTOR_GUIDE",
+      "geographic_scope": "CASABLANCA_NEW_CONSTRUCTION",
+      "cities_mentioned": ["Casablanca"],
+      "publication_date": "2025",
+      "research_access_date": "2026-08-09",
+      "quality_grade": "D (scope-limited for this research)",
+      "methodology_summary": "Professional construction sector guide. Provides new-build plumbing cost reference (25,000–45,000 DH for 100m² house, all trades, all materials). Also provides material quality guidance and regulatory context (ONEE certification requirements for water connection).",
+      "services_covered": [],
+      "limitations": [
+        "New construction scope only — incompatible with maintenance/repair pricing",
+        "Includes all materials and all trades — cannot isolate labour",
+        "Not comparable to FIXEO service scope"
+      ],
+      "duplication_risk": "N/A — excluded from all numeric evidence",
+      "notes": "Excluded from all price calculations. Retained for: (1) regulatory context (RADEEMA/ONEE agrément required for water connection), (2) material quality guidance (PVC forbidden in encastré; multicouche or cuivre required). These inform the materials doctrine."
+    },
+    {
+      "source_id": "SRC_PLUMBING_011",
+      "publisher": "bricoleapp.com",
+      "url": "https://bricoleapp.com/fr/ma/casablanca/plombier/",
+      "source_type": "APP_MARKETPLACE_SNIPPET",
+      "geographic_scope": "CASABLANCA",
+      "cities_mentioned": ["Casablanca"],
+      "publication_date": "Live (accessed 2026-08-09)",
+      "research_access_date": "2026-08-09",
+      "quality_grade": "D",
+      "methodology_summary": "App marketplace platform. Only snippet-level data retrieved: '120–240 DH' for general dépannage plomberie. No service breakdown. No scope information.",
+      "services_covered": [],
+      "limitations": [
+        "Snippet only — no full page content",
+        "No service scope definition",
+        "Very low range may reflect artisan self-pricing to attract volume (platform competitive pressure)",
+        "No materials/labour distinction"
+      ],
+      "duplication_risk": "N/A",
+      "notes": "Used only as an artisan economic floor signal. 120–240 DH as an absolute floor for any Casablanca plumbing call-out. Values below this threshold in any source should be flagged as suspicious. Not used in any service price calculation."
+    }
+  ]
+}

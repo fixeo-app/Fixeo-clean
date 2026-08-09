@@ -1,0 +1,173 @@
+{
+  "_meta": {
+    "file": "exclusions.v0.json",
+    "registry": "fixeo_plumbing_pricing",
+    "version": "0.1.0",
+    "status": "RESEARCH_V0_NOT_PRODUCTION",
+    "description": "Complete log of pricing observations discarded from the canonical reference registry. Nothing is silently dropped. Every excluded datapoint has an explicit reason. This file is the audit trail of what was rejected and why.",
+    "production_ready": false,
+    "last_updated": "2026-08-09"
+  },
+  "exclusion_categories": {
+    "SCOPE_TOO_BROAD": "Observation covers multiple incompatible services in a single price range",
+    "LABOUR_MATERIALS_BUNDLED": "Cannot separate labour from materials cost — price is not labour-only",
+    "INCOMPATIBLE_SCOPE": "Service scope is not comparable to FIXEO maintenance/repair market (e.g., new construction)",
+    "SINGLE_SOURCE_INSUFFICIENT": "Only one source, no cross-validation possible, and confidence would be misleading if numeric price shown",
+    "SCOPE_AMBIGUOUS": "Service label in source is ambiguous — cannot confidently map to a canonical service code",
+    "CITY_SPECIFIC": "Observation is city-specific and excluded from national aggregate (retained in evidence.v0.json for geographic analysis)",
+    "SAME_PUBLISHER_REDUNDANT": "Second observation from same publisher providing same data — not a truly independent data point",
+    "PROBABLE_COPY": "Range structure matches another source too closely — likely editorial cross-referencing, not independent observation",
+    "WRONG_SERVICE": "Observation initially classified under wrong service code — corrected and re-filed or excluded",
+    "OUTDATED": "Source undated or >36 months old — pricing reliability unknown",
+    "LEGACY_FIXEO": "Internal FIXEO pricing data (T0/T1) — not used as external market evidence",
+    "SNIPPET_ONLY": "Only a headline price snippet retrieved — no scope, method, or materials context available",
+    "ARTISAN_SELF_PUBLISHED": "Artisan or artisan-affiliated source with potential pricing motivation",
+    "UPPER_BOUND_SCOPE_CREEP": "Upper bound of a range appears to include a materially different (more complex) service scope"
+  },
+  "excluded_observations": [
+    {
+      "excl_id": "EXCL_001",
+      "source_id": "SRC_PLUMBING_010",
+      "service_attempted": "plomberie.sanitaire_installation",
+      "raw_label": "Plomberie complète maison 100m² (fournitures comprises)",
+      "raw_value": "25000–45000 MAD",
+      "exclusion_reason": "INCOMPATIBLE_SCOPE",
+      "explanation": "This is new-build complete plumbing installation including all trades and all materials for a 100m² house. Not comparable to FIXEO single-intervention maintenance scope. Cannot isolate labour. Cannot normalize to per-service equivalent."
+    },
+    {
+      "excl_id": "EXCL_002",
+      "source_id": "SRC_PLUMBING_009",
+      "service_attempted": "plomberie (general)",
+      "raw_label": "Simple repairs (narrative)",
+      "raw_value": "200–500 MAD",
+      "exclusion_reason": "SCOPE_TOO_BROAD + ARTISAN_SELF_PUBLISHED + OUTDATED",
+      "explanation": "Artisan self-published blog. Undated. Range covers simple repair to complex repair without distinction. Self-published by trade participant — potential pricing motivation. Retained only for artisan salary data in economic floor analysis."
+    },
+    {
+      "excl_id": "EXCL_003",
+      "source_id": "SRC_PLUMBING_009",
+      "service_attempted": "plomberie.sanitaire_installation",
+      "raw_label": "Installation plomberie (general)",
+      "raw_value": "3000–10000 MAD",
+      "exclusion_reason": "SCOPE_TOO_BROAD + ARTISAN_SELF_PUBLISHED + LABOUR_MATERIALS_BUNDLED",
+      "explanation": "Range does not specify whether labour-only or includes materials. Could mean a single bathroom install or a multi-bathroom renovation. Too broad and ambiguous to use."
+    },
+    {
+      "excl_id": "EXCL_004",
+      "source_id": "SRC_PLUMBING_001",
+      "service_attempted": "plomberie (general, rural)",
+      "raw_label": "Tarif horaire zones rurales",
+      "raw_value": "80–180 MAD/h",
+      "exclusion_reason": "SCOPE_TOO_BROAD + INCOMPATIBLE_SCOPE",
+      "explanation": "Rural hourly rate. FIXEO operates in urban markets only (Phase 7B.2 cluster model excludes rural). Not applicable to any canonical service price calculation."
+    },
+    {
+      "excl_id": "EXCL_005",
+      "source_id": "SRC_PLUMBING_011",
+      "service_attempted": "plomberie (general, Casablanca)",
+      "raw_label": "Dépannage plomberie Casablanca",
+      "raw_value": "120–240 MAD",
+      "exclusion_reason": "SNIPPET_ONLY + SCOPE_TOO_BROAD",
+      "explanation": "Snippet-level data only. No service breakdown. No materials/labour distinction. May reflect artisan race-to-the-bottom pricing on zero-commission platform. Retained only as an artisan economic floor signal (120 DH = absolute minimum any Casablanca artisan will accept for any call-out)."
+    },
+    {
+      "excl_id": "EXCL_006",
+      "source_id": "SRC_PLUMBING_001",
+      "service_attempted": "plomberie.chauffe_eau_installation",
+      "raw_label": "Installation chauffe-eau à gaz (pose)",
+      "raw_value": "1000–2500 MAD",
+      "exclusion_reason": "LABOUR_MATERIALS_BUNDLED",
+      "explanation": "mano.ma chauffe-eau à gaz range appears to bundle equipment cost. Gas chauffe-eau units (1,500–3,000 DH) are more expensive than electric units — the MO-only cost should be ~400–700 DH based on bnidari.ma evidence. The 1,000–2,500 MAD range cannot be reliably decomposed. Chauffe-eau gaz installation uses bnidari.ma figure instead."
+    },
+    {
+      "excl_id": "EXCL_007",
+      "source_id": "SRC_PLUMBING_007",
+      "service_attempted": "plomberie.chauffe_eau_installation",
+      "raw_label": "Installation chauffe-eau",
+      "raw_value": "400–1200 MAD",
+      "exclusion_reason": "LABOUR_MATERIALS_BUNDLED + PROBABLE_COPY",
+      "explanation": "Upper bound 1,200 DH likely includes equipment component. inworky.com chauffe-eau range (400–1,200) overlaps significantly with mano.ma — possible editorial sourcing. Cannot confirm MO-only at upper bound. Excluded to avoid double-counting."
+    },
+    {
+      "excl_id": "EXCL_008",
+      "source_id": "SRC_PLUMBING_001",
+      "service_attempted": "plomberie.chauffe_eau_installation",
+      "raw_label": "Installation chauffe-eau électrique MO",
+      "raw_value": "800–2000 MAD",
+      "exclusion_reason": "SCOPE_CONFLICT",
+      "explanation": "mano.ma MO-only figure of 800–2,000 DH for electric chauffe-eau installation conflicts significantly with afous.ma P30–P70 (340–390 DH) and bnidari.ma (300–500 DH). The mano.ma figure likely includes complex scenarios (electrical circuit work, repositioning, new bracket installation). Without scope clarification, this range cannot be used as a standard reference. Noted in research_notes of the registry entry."
+    },
+    {
+      "excl_id": "EXCL_009",
+      "source_id": "SRC_PLUMBING_002",
+      "service_attempted": "plomberie.debouchage_colonne",
+      "raw_label": "Hydrocurage — camion grande capacité",
+      "raw_value": "2000–3500 MAD",
+      "exclusion_reason": "INCOMPATIBLE_SCOPE",
+      "explanation": "Industrial truck hydrocurage is a B2B service (immeuble collectif, résidence, voirie). Not a FIXEO individual client service scope. Different market segment, different artisan profile, different billing model."
+    },
+    {
+      "excl_id": "EXCL_010",
+      "service_attempted": "plomberie.urgence",
+      "source_ids": ["ALL"],
+      "raw_label": "Urgence/nuit/weekend surcharges",
+      "raw_value": "Various: +20% to +150% editorial claims",
+      "exclusion_reason": "NO_STANDARDIZED_MARKET_RATE",
+      "explanation": "No Moroccan plumbing source provides a standardized urgency surcharge that can be attributed to market consensus. mano.ma's surcharge percentages (+30–50% evening, +80–100% night, +50–150% weekend) are the most detailed but represent a single editorial source without declared methodology. Multiple sources confirm 'certains plombiers n'appliquent aucune majoration' — the practice is not universal. V0 records the qualitative finding only: emergency/night work costs more; the amount is artisan-discretion. No numeric urgency modifier is encoded in the registry."
+    },
+    {
+      "excl_id": "EXCL_011",
+      "service_attempted": "plomberie.fuite_simple",
+      "source_ids": ["LEGACY_FIXEO_faee_v1", "LEGACY_FIXEO_pricing_marocain", "LEGACY_FIXEO_reservation_js", "LEGACY_FIXEO_pseo"],
+      "raw_label": "Internal FIXEO T0/T1 pricing maps",
+      "raw_value": "Various: 120–350 MAD ranges",
+      "exclusion_reason": "LEGACY_FIXEO",
+      "explanation": "Internal FIXEO pricing data is T0 (collected without controlled process) or T1 (editorial). These are NOT market observations. They must not be used as external evidence to calibrate canonical prices — that would create circular validation. All FIXEO legacy values are documented in legacy-comparison.md for diagnostic purposes only."
+    },
+    {
+      "excl_id": "EXCL_012",
+      "service_attempted": "plomberie.flexible_remplacement",
+      "source_ids": ["ALL"],
+      "raw_label": "Remplacement flexible robinetterie",
+      "raw_value": null,
+      "exclusion_reason": "SINGLE_SOURCE_INSUFFICIENT — effectively zero sources",
+      "explanation": "No external Moroccan source provides a standalone price for flexible hose replacement. In practice, this intervention is systematically absorbed into 'réparation fuite simple' (a leaking flexible = fuite visible = same forfait). The service cannot be separately priced at V0. Merged into plomberie.fuite_simple scope."
+    },
+    {
+      "excl_id": "EXCL_013",
+      "service_attempted": "plomberie.siphon_remplacement",
+      "source_ids": ["ALL"],
+      "raw_label": "Remplacement siphon",
+      "raw_value": null,
+      "exclusion_reason": "SINGLE_SOURCE_INSUFFICIENT — effectively zero sources",
+      "explanation": "No external Moroccan source prices siphon replacement as a standalone service. In practice, siphon replacement is absorbed into débouchage (if cause of blockage) or réparation fuite (if leaking). Cannot be separately priced at V0. Absorbed into debouchage_evier scope when cause-related."
+    },
+    {
+      "excl_id": "EXCL_014",
+      "service_attempted": "plomberie.salle_de_bain",
+      "source_ids": ["SRC_PLUMBING_001", "SRC_PLUMBING_009"],
+      "raw_label": "Rénovation salle de bain complète",
+      "raw_value": "5000–15000+ MAD (mano.ma); 3000–10000 MAD (leplombier.ma)",
+      "exclusion_reason": "SCOPE_TOO_BROAD + SINGLE_SOURCE_INSUFFICIENT",
+      "explanation": "Complete bathroom renovation scope is too variable for a reference price: size, current state, material choices, number of elements, waterproofing requirements, and wall/floor condition all drive the cost. mano.ma provides 5,000–15,000+ DH (MO only) — the '+' acknowledges no upper bound. leplombier.ma is too broad. The correct classification is QUOTE_REQUIRED. No reference price is set."
+    },
+    {
+      "excl_id": "EXCL_015",
+      "service_attempted": "plomberie.canalisation_reparation",
+      "source_ids": ["SRC_PLUMBING_001"],
+      "raw_label": "Réparation canalisation (general)",
+      "raw_value": "300–700 MAD (tuyau accessible) to 800–2500 MAD (sous dalle)",
+      "exclusion_reason": "SCOPE_TOO_BROAD",
+      "explanation": "Canalisation réparation is not a single service. It spans: (1) accessible pipe repair 300–600 DH, (2) pipe repair requiring cassage 800–2,500 DH, (3) colonne débouchage 500–1,500 DH. These are three distinct operations with incompatible price ranges. The service cannot be given a single reference price. The repair-with-cassage scope is covered by plomberie.fuite_encastree. The débouchage colonne scope is covered by plomberie.debouchage_colonne."
+    },
+    {
+      "excl_id": "EXCL_016",
+      "service_attempted": "plomberie (geographic multipliers)",
+      "source_ids": ["SRC_PLUMBING_001"],
+      "raw_label": "Per-city hourly rate ratios",
+      "raw_value": "Casablanca 200–400/h; Rabat 180–350/h; Marrakech 200–380/h; Tanger 150–300/h; Fès 120–280/h; Agadir 150–320/h; Meknès 100–250/h",
+      "exclusion_reason": "SINGLE_SOURCE_INSUFFICIENT — not used as multipliers, retained as cluster evidence only",
+      "explanation": "Geographic hourly rate data is from a single editorial source (SRC_PLUMBING_001). It supports the existence of geographic price variation and the 4-cluster model but is insufficient to establish precise percentage multipliers. V0 does not encode numeric city multipliers. Market scope = NATIONAL_MOROCCO with city_adjustment = null. The ratios are retained in README.md as qualitative evidence for future validation."
+    }
+  ]
+}
