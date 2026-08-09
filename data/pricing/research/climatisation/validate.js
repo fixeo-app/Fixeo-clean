@@ -239,8 +239,78 @@ check('Prior research artifacts untouched', priorTouched.length === 0,
   `Modified: ${priorTouched.join(', ')}`);
 console.log();
 
+// ─── V0.2 Calibration artifact checks ────────────────────────────────────────
+console.log('── Test 14: Calibration V0.2 artifact checks ──');
+const calPath = path.join(RESEARCH_DIR, 'calibration.v0.2.json');
+let cal = null;
+if (fs.existsSync(calPath)) {
+  try {
+    cal = JSON.parse(fs.readFileSync(calPath, 'utf8'));
+  } catch(e) {
+    check('calibration.v0.2.json parseable', false, e.message);
+  }
+}
+if (cal) {
+  const calMeta = cal._meta || {};
+  const calCandidates = cal.candidates || [];
+
+  check('calibration.v0.2 production_ready = false', calMeta.production_ready === false,
+    `production_ready = ${calMeta.production_ready}`);
+  check('calibration.v0.2 human_decision = PENDING', calMeta.human_decision === 'PENDING',
+    `human_decision = ${calMeta.human_decision}`);
+  check('calibration.v0.2 city_adjustment = null', calMeta.city_adjustment === null,
+    `city_adjustment = ${calMeta.city_adjustment}`);
+  check('calibration.v0.2 urgency_modifier = null', calMeta.urgency_modifier === null,
+    `urgency_modifier = ${calMeta.urgency_modifier}`);
+  check('calibration.v0.2 exactly 8 candidates', calCandidates.length === 8,
+    `candidate count = ${calCandidates.length}`);
+
+  const EXPECTED_CODES = ['CLIM-002','CLIM-003','CLIM-004','CLIM-009','CLIM-013','CLIM-020','CLIM-021','CLIM-030'];
+  const actualCodes = calCandidates.map(c => c.service_code).sort();
+  check('calibration.v0.2 correct 8 candidate codes',
+    JSON.stringify(actualCodes.sort()) === JSON.stringify(EXPECTED_CODES.sort()),
+    `Got: ${actualCodes.join(', ')}`);
+
+  const notPending = calCandidates.filter(c => c.human_decision !== 'PENDING');
+  check('All calibration candidates have human_decision = PENDING', notPending.length === 0,
+    `Non-pending: ${notPending.map(c=>c.service_code).join(', ')}`);
+
+  const REFRIGERANT_SERVICES = ['CLIM-010','CLIM-011','CLIM-012','CLIM-015'];
+  const refInCalibration = calCandidates.filter(c => REFRIGERANT_SERVICES.includes(c.service_code));
+  check('No refrigerant fixed-price service in calibration candidates', refInCalibration.length === 0,
+    `Found: ${refInCalibration.map(c=>c.service_code).join(', ')}`);
+
+  const clim013 = calCandidates.find(c => c.service_code === 'CLIM-013');
+  if (clim013) {
+    const refStatus = clim013.scope_contract && clim013.scope_contract.refrigerant_status || '';
+    check('CLIM-013 explicitly excludes refrigerant', refStatus.includes('EXCLU') || refStatus.includes('exclu'),
+      'refrigerant_status does not contain EXCLU');
+  }
+
+  const clim020 = calCandidates.find(c => c.service_code === 'CLIM-020');
+  if (clim020) {
+    const excl = clim020.scope_contract && clim020.scope_contract.explicit_exclusions || [];
+    const hasACExclusion = Array.isArray(excl) && excl.some(e => e.includes('FOURNITURE') || e.includes('climatiseur'));
+    check('CLIM-020 explicitly excludes AC unit (fourniture)', hasACExclusion,
+      'explicit_exclusions does not mention fourniture/climatiseur');
+  }
+
+  const price3m = (calCandidates.find(c => c.service_code === 'CLIM-020') || {}).proposed_fixeo_price_MAD;
+  const price5m = (calCandidates.find(c => c.service_code === 'CLIM-021') || {}).proposed_fixeo_price_MAD;
+  check('CLIM-021 price > CLIM-020 price (5m > 3m scope)', price5m > price3m,
+    `CLIM-020: ${price3m}, CLIM-021: ${price5m}`);
+
+  const blindRechargeProhibited = calMeta.blind_recharge_prohibition || '';
+  check('Blind recharge prohibition stated in calibration meta', blindRechargeProhibited.includes('ABSOLUTE') || blindRechargeProhibited.length > 10,
+    'blind_recharge_prohibition missing or empty');
+
+} else {
+  warn('calibration.v0.2.json', 'File does not exist yet — skipping V0.2 checks');
+}
+console.log();
+
 // ─── Additional: Evidence usable flag on unsafe practices ───────────────────
-console.log('── Test 14: Unsafe practice evidence is marked usable=false ──');
+console.log('── Test 15: Unsafe practice evidence is marked usable=false ──');
 const unsafeUsable = evidenceList.filter(e =>
   e.unsafe_practice_flag && e.usable === true
 ).map(e => e.evidence_id);

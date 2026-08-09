@@ -1,0 +1,872 @@
+{
+  "_meta": {
+    "file": "calibration.v0.2.json",
+    "registry": "fixeo_climatisation_pricing",
+    "version": "0.2.0",
+    "status": "HUMAN_CALIBRATION_PREPARATION_NOT_PRODUCTION",
+    "description": "Phase 7B.6.1 — Human calibration preparation for 8 climatisation service candidates. Daytime base only. No modifiers active. No price approved. All human_decision = PENDING.",
+    "production_ready": false,
+    "human_decision": "PENDING",
+    "last_updated": "2026-08-09",
+    "phase": "7B.6.1",
+    "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
+    "provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+    "night_modifier": null,
+    "weekend_modifier": null,
+    "holiday_modifier": null,
+    "urgency_modifier": null,
+    "city_multiplier": null,
+    "city_adjustment": null,
+    "daytime_window_reference": "08h00–20h00 (analysis reference only — no production time rule created)",
+    "canonical_disclaimer": "Prix indicatif FIXEO — tarif réel confirmé avec l'artisan avant intervention.",
+    "commission_reference": 0.15,
+    "commission_sensitivity": [0, 0.10, 0.15, 0.20],
+    "fuel_scenarios_MAD": { "LOW": 25, "MID": 40, "HIGH": 60 },
+    "artisan_floor_MAD": 100,
+    "climatisation_practical_floor_MAD": 150,
+    "climatisation_floor_rationale": "Climatisation requires specialized equipment (manifold gauge set, vacuum pump, pressure washer for nettoyage profond, brazing torch for CLIM-013). Equipment amortization, transport burden, and R32/A2L certification costs mean the practical minimum for any clim call-out is 150 MAD, not the canonical 100 MAD. The 100 MAD canonical floor is preserved as the hard minimum; 150 MAD is documented as the métier-specific practical floor for this analysis. Human calibrator must decide whether to formalize this.",
+    "floor_grade_thresholds": {
+      "STRONG": 200,
+      "ACCEPTABLE": 150,
+      "MARGINAL": 100,
+      "FAIL": 0
+    },
+    "candidate_count": 8,
+    "deferred_services_note": "27 services deferred from this calibration. See Phase 7B.6.1 spec for deferred list. Refrigerant, component, multi-split, contract, and urgency services require separate doctrine before calibration.",
+    "refrigerant_integrity_doctrine_frozen": true,
+    "blind_recharge_prohibition": "ABSOLUTE — No FIXEO-endorsed artisan may offer blind refrigerant top-up without prior leak diagnosis. Any refrigerant service must follow the canonical sequence: diagnose → detect leak → repair → vacuum → recharge correct type/quantity → test.",
+    "r22_phase_out_advisory": "R22 systems are subject to Morocco's phase-out obligations under the Montreal Protocol. R22 recharge should be treated as a temporary measure only. FIXEO artisans must inform clients of this. Repeated R22 top-up without replacement advisory is commercially inappropriate. Note: FIXEO makes no specific legal claims about R22 handling certification requirements in Morocco without verified regulatory source.",
+    "r32_safety_note": "R32 is an A2L mildly flammable refrigerant. Proper handling requires appropriate equipment and awareness. FIXEO makes no unsupported certification claims but documents that artisans handling R32 should use appropriate tools and practices."
+  },
+
+  "candidates": [
+
+    {
+      "service_code": "CLIM-002",
+      "service_key": "climatisation.diagnostic",
+      "label_fr": "Diagnostic climatiseur — déplacement + diagnostic inclus",
+      "label_ar_darija": "تشخيص ديال الكليما مع التنقل",
+
+      "architecture": "FIXED",
+      "architecture_rationale": "Diagnostic is a well-defined, reproducible labour intervention requiring no parts. Duration is predictable (45–60 min on-site). Client problem is always 'AC not working correctly' — the artisan travels, inspects, and delivers a verdict. Travel is always included. FIXED is the correct architecture.",
+
+      "scope_contract": {
+        "definition": "Déplacement du technicien climatisation à domicile. Examen complet du système : test des composants électriques (condensateur, relais, fusibles, câblage), inspection visuelle des liaisons frigorifiques et raccords, test cycle de refroidissement, lecture basique de la pression réfrigérant au manomètre si équipement disponible. Compte-rendu oral au client avec identification probable de la panne et recommandation.",
+        "conditions_required": [
+          "Climatiseur résidentiel split standard (mono-split)",
+          "Accès aux deux unités (intérieure et extérieure) possible sans démontage spécial"
+        ],
+        "included_labour": "Déplacement + diagnostic complet + compte-rendu oral",
+        "included_travel": true,
+        "included_consumables": "Aucun consommable",
+        "included_hardware": "Aucun",
+        "diagnostic_absorption_policy": "Le forfait diagnostic (250 MAD) est DÉDUCTIBLE du prix de la réparation si le client accepte une intervention FIXEO standardisée sur le même déplacement. Si aucune réparation n'est acceptée, le diagnostic est facturé en totalité.",
+        "explicit_exclusions": [
+          "Toute réparation ou remplacement de pièce",
+          "Recharge de fluide frigorigène",
+          "Détection de fuite avec détecteur électronique (service séparé CLIM-008)",
+          "Rapport écrit ou PV de diagnostic",
+          "Nettoyage ou entretien",
+          "Démontage nécessaire pour accès au diagnostic"
+        ],
+        "escape_triggers": [
+          "Système nécessite démontage complet pour diagnostic → HORS PÉRIMÈTRE PRIX FIXE → devis spécifique",
+          "Multi-split (plusieurs unités intérieures) → facturer CLIM-002 × nombre d'unités ou devis",
+          "Système gainable ou cassette inaccessible → HORS PÉRIMÈTRE → devis"
+        ],
+        "typical_duration_min": "45–60"
+      },
+
+      "price_comparison": {
+        "market_range_MAD": { "low": 150, "high": 350 },
+        "research_anchor_MAD": 250,
+        "source_quality": "MEDIUM — 4 sources (mano.ma C+, fixandgo.ma C+, HVAC contractors C+, avito.ma C)",
+        "options_tested": [
+          {
+            "price_MAD": 200,
+            "commission_0pct_LOW": 175, "commission_0pct_HIGH": 140,
+            "commission_15pct_LOW": 145, "commission_15pct_MID": 130, "commission_15pct_HIGH": 110,
+            "commission_20pct_LOW": 135, "commission_20pct_MID": 120, "commission_20pct_HIGH": 100,
+            "worst_case_net_MAD": 100,
+            "grade_worst": "MARGINAL",
+            "client_position": "Bottom third of market — strongly client-protective",
+            "artisan_position": "Worst case exactly at canonical floor. Zero buffer. Any fuel variation = below floor.",
+            "verdict": "VIABLE but fragile. Too tight at 20% commission + high fuel for a specialist call-out."
+          },
+          {
+            "price_MAD": 220,
+            "commission_0pct_LOW": 195, "commission_0pct_HIGH": 160,
+            "commission_15pct_LOW": 162, "commission_15pct_MID": 147, "commission_15pct_HIGH": 127,
+            "commission_20pct_LOW": 151, "commission_20pct_MID": 136, "commission_20pct_HIGH": 116,
+            "worst_case_net_MAD": 116,
+            "grade_worst": "ACCEPTABLE",
+            "client_position": "Lower third of market range",
+            "artisan_position": "All scenarios above practical clim floor (150 MAD). Comfortable at standard conditions.",
+            "verdict": "VIABLE — clean buffer above practical floor in all scenarios."
+          },
+          {
+            "price_MAD": 250,
+            "commission_0pct_LOW": 225, "commission_0pct_HIGH": 190,
+            "commission_15pct_LOW": 188, "commission_15pct_MID": 173, "commission_15pct_HIGH": 153,
+            "commission_20pct_LOW": 175, "commission_20pct_MID": 160, "commission_20pct_HIGH": 140,
+            "worst_case_net_MAD": 140,
+            "grade_worst": "ACCEPTABLE",
+            "client_position": "Market midpoint (150–350 range). Still within honest range.",
+            "artisan_position": "STRONG in all scenarios. Matches research anchor exactly.",
+            "verdict": "PREFERRED — matches research anchor, strong economics, mid-market position justified by specialist nature of clim diagnostic vs. e.g. plumbing visual check."
+          },
+          {
+            "price_MAD": 280,
+            "commission_0pct_LOW": 255, "commission_0pct_HIGH": 220,
+            "commission_15pct_LOW": 213, "commission_15pct_MID": 198, "commission_15pct_HIGH": 178,
+            "commission_20pct_LOW": 199, "commission_20pct_MID": 184, "commission_20pct_HIGH": 164,
+            "worst_case_net_MAD": 164,
+            "grade_worst": "ACCEPTABLE",
+            "client_position": "Upper-mid market. Still inside 150–350 range.",
+            "artisan_position": "STRONG in all scenarios. Good buffer for equipment-carrying technicians.",
+            "verdict": "ALSO DEFENSIBLE — stronger artisan protection, moves toward upper third of market."
+          }
+        ]
+      },
+
+      "proposed_fixeo_price_MAD": 250,
+      "proposed_fixeo_price_rationale": "250 MAD matches the research anchor exactly and delivers ACCEPTABLE-to-STRONG economics across all commission/fuel scenarios (minimum net 140 MAD). Climatisation diagnostic is a specialist intervention requiring manifold gauges and technical knowledge materially exceeding a plumbing visual check — the 250 MAD anchor is justified over the 220 MAD serrurerie-equivalent. 220 MAD is viable but undersells artisan expertise and equipment burden. The diagnostic absorption policy (deductible from same-visit repair) makes the 250 MAD per-visit cost transparent and client-fair.",
+      "alternative_price_MAD": 220,
+      "alternative_rationale": "If FIXEO entry strategy prioritises aggressive client-protective positioning, 220 MAD keeps diagnostic in the lower third of market range. Still above practical clim floor in all scenarios.",
+      "diagnostic_absorption_recommendation": "ADOPT — diagnostic deductible from same-visit standardized repair. This mirrors the formal Moroccan platform practice (fixandgo.ma) and protects clients from double-paying for diagnosis + repair.",
+      "hardware_policy": "NOT_APPLICABLE",
+      "materials_policy": "NOT_APPLICABLE",
+      "confidence": "MEDIUM",
+      "human_decision": "PENDING"
+    },
+
+    {
+      "service_code": "CLIM-003",
+      "service_key": "climatisation.entretien_standard",
+      "label_fr": "Entretien annuel standard climatiseur — par unité intérieure",
+      "label_ar_darija": "صيانة سنوية للكليما — للوحدة الواحدة",
+
+      "architecture": "FIXED_PER_UNIT",
+      "architecture_rationale": "Annual maintenance is a well-defined, reproducible service per indoor unit. Artisan time is predictable (45–60 min per unit). No parts involved in standard execution. PER_AC_UNIT pricing is the correct architecture — clients understand 'price per unit' naturally and it scales fairly for multi-unit homes.",
+
+      "scope_contract": {
+        "definition": "Entretien annuel standard d'un climatiseur split résidentiel. Unité intérieure uniquement dans le cadre standard. Inclut le nettoyage du filtre, le nettoyage accessible du serpentin évaporateur, la vérification du circuit de condensats, et un test de fonctionnement complet post-nettoyage.",
+        "conditions_required": [
+          "Climatiseur split résidentiel standard",
+          "Unité intérieure accessible depuis le sol ou une chaise (hauteur standard < 2,5m)",
+          "Le client met à disposition un accès à l'eau et une prise électrique"
+        ],
+        "per_unit_pricing": true,
+        "included_labour": "Déplacement inclus pour la première unité. Unités supplémentaires au même logement : même tarif par unité, frais de déplacement déjà couverts.",
+        "included_travel": true,
+        "included_consumables": "Produit nettoyant filtre et serpentin, bac de protection contre les éclaboussures. Filtres : nettoyés, non remplacés.",
+        "included_hardware": "Aucun",
+        "scope_detail": {
+          "filtre": "Dépose, nettoyage à l'eau + produit désinfectant, séchage, réinstallation",
+          "serpentin_evaporateur": "Nettoyage accessible sans démontage du capot complet. Projection de mousse nettoyante, rinçage contrôlé.",
+          "condensats": "Vérification visuelle de l'écoulement. Débouchage simple si léger encrassement constaté.",
+          "test_fonctionnement": "Cycle froid 5 min post-nettoyage, vérification soufflage et température.",
+          "unite_exterieure": "EXCLUE du forfait standard — voir CLIM-004 pour nettoyage profond incluant le condenseur."
+        },
+        "explicit_exclusions": [
+          "Unité extérieure (condenseur) — incluse uniquement dans CLIM-004 nettoyage profond",
+          "Remplacement filtre (pièce facturée séparément si nécessaire)",
+          "Recharge fluide frigorigène",
+          "Toute réparation mécanique ou électrique",
+          "Désinfection antibactérienne profonde avec produit spécifique (optionnel séparé)",
+          "Nettoyage haute pression (CLIM-004)",
+          "Unité intérieure en hauteur > 2,5m nécessitant escabeau"
+        ],
+        "escape_triggers": [
+          "Filtre abîmé nécessitant remplacement → informer client, facturer pièce séparément, poursuivre entretien",
+          "Obstruction condensats non résoluble sans outillage → escalader vers CLIM-009 ou DEVIS",
+          "Unité inaccessible (> 2,5m sans escabeau standard) → supplément accès difficile ou DEVIS",
+          "Problème frigorifique détecté pendant entretien → diagnostic séparé CLIM-002 ou CLIM-006 recommandé, sans impact sur prix entretien"
+        ],
+        "typical_duration_per_unit_min": "45–60"
+      },
+
+      "price_comparison": {
+        "market_range_MAD": { "low": 200, "high": 400 },
+        "research_anchor_MAD": 300,
+        "source_quality": "MEDIUM — 4 sources (mano.ma C+, fixandgo.ma C+, maison.ma C, avito.ma C). Platform evidence converges at 250–350 MAD.",
+        "note_multi_unit": "For 2+ units at same address on same visit, travel cost is already amortized. Artisan economics improve significantly from second unit onwards. Price per unit remains the same for client clarity; artisan margin improves.",
+        "options_tested": [
+          {
+            "price_MAD": 250,
+            "commission_0pct_LOW": 225, "commission_0pct_HIGH": 190,
+            "commission_15pct_MID": 173, "commission_15pct_HIGH": 153,
+            "commission_20pct_MID": 160, "commission_20pct_HIGH": 140,
+            "worst_case_net_MAD": 140,
+            "grade_worst": "ACCEPTABLE",
+            "client_position": "Lower third of market. Well below 350 MAD platform norm.",
+            "artisan_position": "ACCEPTABLE in all scenarios. Good for 2nd+ unit same visit.",
+            "verdict": "VIABLE for single-unit. Stronger for multi-unit. Floor pressure at 20% + high fuel single call-out."
+          },
+          {
+            "price_MAD": 280,
+            "commission_0pct_LOW": 255, "commission_0pct_HIGH": 220,
+            "commission_15pct_MID": 198, "commission_15pct_HIGH": 178,
+            "commission_20pct_MID": 184, "commission_20pct_HIGH": 164,
+            "worst_case_net_MAD": 164,
+            "grade_worst": "ACCEPTABLE",
+            "client_position": "Lower-mid market. 7% below anchor.",
+            "artisan_position": "ACCEPTABLE all scenarios. Good for single-unit call-out.",
+            "verdict": "SOLID — good balance. Slightly below anchor but provides real artisan buffer."
+          },
+          {
+            "price_MAD": 300,
+            "commission_0pct_LOW": 275, "commission_0pct_HIGH": 240,
+            "commission_15pct_MID": 215, "commission_15pct_HIGH": 195,
+            "commission_20pct_MID": 200, "commission_20pct_HIGH": 180,
+            "worst_case_net_MAD": 180,
+            "grade_worst": "ACCEPTABLE",
+            "client_position": "Market midpoint. Research anchor. Transparent justification.",
+            "artisan_position": "STRONG in all standard scenarios. Very good for multi-unit.",
+            "verdict": "PREFERRED — exact research anchor. Strong economics. Easy to justify. Best dual-fairness point for single-unit call-out."
+          },
+          {
+            "price_MAD": 350,
+            "commission_0pct_LOW": 325, "commission_0pct_HIGH": 290,
+            "commission_15pct_MID": 258, "commission_15pct_HIGH": 238,
+            "commission_20pct_MID": 240, "commission_20pct_HIGH": 220,
+            "worst_case_net_MAD": 220,
+            "grade_worst": "STRONG",
+            "client_position": "Upper platform range. Still within honest market.",
+            "artisan_position": "STRONG in all scenarios.",
+            "verdict": "ALSO DEFENSIBLE for a single call-out covering one unit with full travel cost. Approaches platform upper bound."
+          }
+        ]
+      },
+
+      "proposed_fixeo_price_MAD": 300,
+      "proposed_fixeo_price_rationale": "300 MAD is the research anchor, sits at the market midpoint, and delivers ACCEPTABLE economics in all scenarios (minimum net 180 MAD at 20% commission + 60 MAD fuel). For multi-unit visits (2 units at same address), artisan net at 300 MAD per unit with one shared travel cost is 480–540 MAD for 90–120 min work — economically strong. 280 MAD is viable but introduces pressure at 20% + high fuel for single-unit rural call-outs. 300 MAD is the cleanest dual-fairness anchor.",
+      "alternative_price_MAD": 280,
+      "alternative_rationale": "If human calibrator judges FIXEO entry positioning should undercut the market, 280 MAD is the floor of the defensible range for single-unit economics.",
+      "multi_unit_note": "When 2+ units at same address are serviced in same visit, travel cost is already recovered in the first unit. Second unit net to artisan at 300 MAD (0% commission, 0 additional fuel): 300 MAD. At 20% commission: 240 MAD. Economics strongly improve with multi-unit. FIXEO may choose to offer a modest multi-unit discount (e.g. 280 MAD from 2nd unit) as a client incentive without harming artisan economics.",
+      "hardware_policy": "NOT_APPLICABLE",
+      "materials_policy": "CONSUMABLES_INCLUDED",
+      "confidence": "MEDIUM",
+      "human_decision": "PENDING"
+    },
+
+    {
+      "service_code": "CLIM-004",
+      "service_key": "climatisation.nettoyage_profond",
+      "label_fr": "Nettoyage profond climatiseur — unité intérieure et extérieure — par unité",
+      "label_ar_darija": "تنظيف عميق للكليما — وحدتين — بالضغط",
+
+      "architecture": "FIXED_PER_UNIT",
+      "architecture_rationale": "Deep cleaning is a reproducible specialist service covering both indoor and outdoor units. Duration 90–120 min. Requires high-pressure washing equipment. PER_AC_UNIT (where unit = one indoor + associated outdoor unit) is correct. Distinctly different from CLIM-003 in scope, equipment, time, and market pricing.",
+
+      "scope_contract": {
+        "definition": "Nettoyage profond d'un système split résidentiel complet : unité intérieure et unité extérieure associée. Utilisation d'équipement haute pression ou de mousse technique de lavage. Inclut la turbine/ventilateur intérieur, le serpentin évaporateur complet, le bac de condensation et tuyau de drainage, et le condenseur de l'unité extérieure.",
+        "conditions_required": [
+          "Climatiseur split résidentiel (mono-split standard)",
+          "Unité intérieure accessible (hauteur standard < 2,5m)",
+          "Unité extérieure accessible (balcon, terrasse, sol) sans démontage de façade",
+          "Accès à eau courante et prise électrique fournis par le client",
+          "Client accepte protection préalable des surfaces adjacentes"
+        ],
+        "per_unit_pricing": true,
+        "unit_definition": "1 unité = 1 unité intérieure + 1 unité extérieure associée",
+        "included_labour": "Déplacement inclus pour première unité.",
+        "included_travel": true,
+        "included_consumables": "Mousse nettoyante technique haute performance, produit désinfectant, matériel de protection des surfaces (bâche), eau.",
+        "included_hardware": "Aucun",
+        "scope_detail": {
+          "unite_interieure": "Dépose partielle capot, nettoyage turbine/ventilateur, nettoyage haute pression serpentin évaporateur, traitement désinfectant, nettoyage bac condensats, réinstallation capot.",
+          "unite_exterieure": "Nettoyage haute pression condenseur (ailettes + ventilateur extérieur), vérification espace de ventilation.",
+          "test_final": "Cycle froid 10 min minimum post-nettoyage, vérification débit d'air et température de soufflage."
+        },
+        "explicit_exclusions": [
+          "Remplacement filtre (pièce séparée)",
+          "Recharge fluide frigorigène",
+          "Toute réparation mécanique ou électrique",
+          "Nettoyage chimique profond de serpentin avec acide (traitement spécialisé, devis spécifique)",
+          "Unité extérieure en hauteur inaccessible sans équipement de levage",
+          "Unité cassette ou gainable (architecture différente)",
+          "Unité intérieure nécessitant démontage complet pour accès turbine encastrée"
+        ],
+        "escape_triggers": [
+          "Condenseur inaccessible (balcon fermé, cage d'escalier inaccessible) → HORS PÉRIMÈTRE nettoyage profond → proposer CLIM-003 (intérieur seul) + DEVIS accès condenseur",
+          "Unité intérieure > 2,5m → supplément accès ou DEVIS",
+          "Serpentin très corrodé ou gravement endommagé → informer client, documenter, ne pas nettoyer sous pression (risque aggravation) → DEVIS réparation",
+          "Cassette ou gainable → DEVIS (architecture différente)"
+        ],
+        "typical_duration_per_unit_min": "90–120"
+      },
+
+      "price_comparison": {
+        "market_range_MAD": { "low": 350, "high": 600 },
+        "research_anchor_MAD": 450,
+        "source_quality": "MEDIUM — 3 sources (mano.ma C+, fixandgo.ma C+, HVAC contractors C+). Platform evidence converges at 350–550 MAD.",
+        "options_tested": [
+          {
+            "price_MAD": 380,
+            "commission_0pct_LOW": 355, "commission_0pct_HIGH": 320,
+            "commission_15pct_MID": 283, "commission_15pct_HIGH": 263,
+            "commission_20pct_MID": 264, "commission_20pct_HIGH": 244,
+            "worst_case_net_MAD": 244,
+            "grade_worst": "STRONG",
+            "client_position": "Lower third of market. Well below 450 anchor.",
+            "artisan_position": "STRONG in all scenarios. Good for 90–120 min specialist work + equipment.",
+            "verdict": "VIABLE but undersells the service. 90–120 min + pressure equipment + chemical products + outdoor unit access."
+          },
+          {
+            "price_MAD": 420,
+            "commission_0pct_LOW": 395, "commission_0pct_HIGH": 360,
+            "commission_15pct_MID": 317, "commission_15pct_HIGH": 297,
+            "commission_20pct_MID": 296, "commission_20pct_HIGH": 276,
+            "worst_case_net_MAD": 276,
+            "grade_worst": "STRONG",
+            "client_position": "Lower-mid market. Below anchor.",
+            "artisan_position": "STRONG all scenarios.",
+            "verdict": "SOLID — strong economics, client-protective price."
+          },
+          {
+            "price_MAD": 450,
+            "commission_0pct_LOW": 425, "commission_0pct_HIGH": 390,
+            "commission_15pct_MID": 343, "commission_15pct_HIGH": 323,
+            "commission_20pct_MID": 320, "commission_20pct_HIGH": 300,
+            "worst_case_net_MAD": 300,
+            "grade_worst": "STRONG",
+            "client_position": "Market midpoint — exact research anchor. Fully justified.",
+            "artisan_position": "STRONG in all scenarios. Well above practical floor.",
+            "verdict": "PREFERRED — exact anchor. Strong economics across all scenarios. 120 min skilled work + equipment. Justified."
+          },
+          {
+            "price_MAD": 500,
+            "commission_0pct_LOW": 475, "commission_0pct_HIGH": 440,
+            "commission_15pct_MID": 385, "commission_15pct_HIGH": 365,
+            "commission_20pct_MID": 360, "commission_20pct_HIGH": 340,
+            "worst_case_net_MAD": 340,
+            "grade_worst": "STRONG",
+            "client_position": "Upper market range. Within honest range (350–600).",
+            "artisan_position": "STRONG in all scenarios. Very good for 2h specialist work.",
+            "verdict": "ALSO DEFENSIBLE if human calibrator judges equipment amortization and product cost warrant it."
+          }
+        ]
+      },
+
+      "proposed_fixeo_price_MAD": 450,
+      "proposed_fixeo_price_rationale": "450 MAD is the research anchor and represents STRONG economics in all scenarios (minimum net 300 MAD at 20% commission + 60 MAD fuel). This reflects 90–120 min specialist work with pressure-washing equipment, cleaning chemicals, and full outdoor unit coverage. The 150 MAD differential over CLIM-003 (300 MAD) is justified: extra 45–60 min work, pressure equipment, outdoor unit access, and chemical products. 420 MAD is also viable but the artisan economics of CLIM-004 support the 450 MAD anchor given equipment burden.",
+      "alternative_price_MAD": 420,
+      "alternative_rationale": "If FIXEO needs to position below the 450 MAD market anchor for early market entry, 420 MAD still delivers STRONG economics.",
+      "relationship_with_clim_003": "CLIM-004 must be clearly differentiated from CLIM-003 in client-facing communication. The key differentiators: (1) outdoor unit condenseur included, (2) pressure equipment, (3) turbine/blower cleaning, (4) 2× the duration. This justifies the 150 MAD premium (300 → 450).",
+      "hardware_policy": "NOT_APPLICABLE",
+      "materials_policy": "CONSUMABLES_INCLUDED",
+      "confidence": "MEDIUM",
+      "human_decision": "PENDING"
+    },
+
+    {
+      "service_code": "CLIM-009",
+      "service_key": "climatisation.debouchage_condensats",
+      "label_fr": "Débouchage évacuation condensats",
+      "label_ar_darija": "تسليك تصريف المياه من الكليما",
+
+      "architecture": "FIXED",
+      "architecture_rationale": "Condensate drain unblocking is a precise, reproducible intervention with a clear client symptom (water dripping from indoor unit). Duration predictable at 20–35 min. No parts required in standard case. FIXED is correct.",
+
+      "scope_contract": {
+        "definition": "Débouchage du circuit d'évacuation des condensats d'un climatiseur split résidentiel. Inclut l'inspection du bac de condensation, le nettoyage du tuyau d'évacuation, et la vérification du bon écoulement post-débouchage.",
+        "conditions_required": [
+          "Tuyau d'évacuation accessible (pas encastré derrière dalle ou mur)",
+          "Pompe de relevage absente ou fonctionnelle (si présente)",
+          "Cause identifiée comme obstruction (encrassement, dépôt, moisissure, cintrage de tuyau)"
+        ],
+        "included_labour": "Déplacement + débouchage + test d'écoulement",
+        "included_travel": true,
+        "included_consumables": "Produit nettoyant pour tuyau condensats, air comprimé si nécessaire.",
+        "included_hardware": "Aucun",
+        "explicit_exclusions": [
+          "Remplacement pompe de relevage de condensats (pièce + main d'œuvre séparés)",
+          "Travaux de plomberie associés (refection tuyau encastré)",
+          "Tuyau de condensats encastré dans mur ou dalle (accès impossible sans démolition)",
+          "Dommages au plafond ou mur causés par la fuite — non traités par ce service"
+        ],
+        "escape_triggers": [
+          "Pompe de relevage défaillante → HORS PÉRIMÈTRE simple débouchage → escalader vers CLIM-006 (diagnostic panne) + pièce séparée",
+          "Tuyau encastré nécessitant démolition → HORS PÉRIMÈTRE → DEVIS",
+          "Fuite provenant de la liaison frigorifique ou du serpentin (pas du condensat) → HORS PÉRIMÈTRE → CLIM-006 diagnostic"
+        ],
+        "typical_duration_min": "20–35"
+      },
+
+      "price_comparison": {
+        "market_range_MAD": { "low": 150, "high": 300 },
+        "research_anchor_MAD": 200,
+        "note_on_evidence": "LOW confidence. Derived evidence from entretien sub-service analysis. No direct primary source. Human calibrator should apply conservative reasoning.",
+        "source_quality": "LOW — derived from scope exclusion analysis of CLIM-003/004 evidence. No direct standalone pricing evidence.",
+        "floor_concern": "200 MAD is the research anchor but at 20% commission + 60 MAD fuel, artisan net = 100 MAD — exactly at the canonical floor, zero buffer. For a 20–35 min service with minimal equipment, 100 MAD net is technically above floor but offers no margin for error. Practical clim floor is 150 MAD.",
+        "options_tested": [
+          {
+            "price_MAD": 200,
+            "commission_0pct_LOW": 175, "commission_0pct_HIGH": 140,
+            "commission_15pct_MID": 130, "commission_15pct_HIGH": 110,
+            "commission_20pct_MID": 120, "commission_20pct_HIGH": 100,
+            "worst_case_net_MAD": 100,
+            "grade_worst": "MARGINAL",
+            "client_position": "Research anchor. Market low bound.",
+            "artisan_position": "Exactly at canonical floor in worst case. Zero buffer.",
+            "verdict": "TECHNICALLY VIABLE but economically fragile for clim specialist. This price may attract underqualified artisans who skip vacuum/proper tools to save time."
+          },
+          {
+            "price_MAD": 220,
+            "commission_0pct_LOW": 195, "commission_0pct_HIGH": 160,
+            "commission_15pct_MID": 147, "commission_15pct_HIGH": 127,
+            "commission_20pct_MID": 136, "commission_20pct_HIGH": 116,
+            "worst_case_net_MAD": 116,
+            "grade_worst": "ACCEPTABLE",
+            "client_position": "Slightly above anchor. Still lower third of 150–300 range.",
+            "artisan_position": "Acceptable in all scenarios. Modest buffer above practical floor.",
+            "verdict": "PREFERRED — 20 MAD over anchor eliminates worst-case floor touch. Still firmly client-protective."
+          },
+          {
+            "price_MAD": 250,
+            "commission_0pct_LOW": 225, "commission_0pct_HIGH": 190,
+            "commission_15pct_MID": 173, "commission_15pct_HIGH": 153,
+            "commission_20pct_MID": 160, "commission_20pct_HIGH": 140,
+            "worst_case_net_MAD": 140,
+            "grade_worst": "ACCEPTABLE",
+            "client_position": "Market midpoint. Reasonable for a specialist call-out.",
+            "artisan_position": "ACCEPTABLE all scenarios. Good buffer.",
+            "verdict": "ALSO VIABLE. Appropriate if FIXEO values the specialist call-out cost (travel + equipment) over the raw simplicity of the task."
+          },
+          {
+            "price_MAD": 280,
+            "commission_0pct_LOW": 255, "commission_0pct_HIGH": 220,
+            "commission_15pct_MID": 198, "commission_15pct_HIGH": 178,
+            "commission_20pct_MID": 184, "commission_20pct_HIGH": 164,
+            "worst_case_net_MAD": 164,
+            "grade_worst": "ACCEPTABLE",
+            "client_position": "Upper third. Possibly too high for a simple drain unblock.",
+            "artisan_position": "STRONG. Possibly over-priced for the task difficulty.",
+            "verdict": "LESS SUITABLE — the task is genuinely simple. Charging 280 MAD for 25 min of drain clearing may invite client pushback."
+          }
+        ]
+      },
+
+      "proposed_fixeo_price_MAD": 220,
+      "proposed_fixeo_price_rationale": "220 MAD eliminates the floor-touch risk of 200 MAD while remaining firmly in the lower third of the market range (150–300 MAD). The 20 MAD delta from the research anchor is the smallest defensible buffer above the practical clim floor in the worst scenario (116 MAD net). This service is genuinely simple (20–35 min, no specialist equipment beyond basic tools) and the client-protective 220 MAD anchor is appropriate. 250 MAD is also viable but begins to feel high for a drain unblock to a price-conscious Moroccan client.",
+      "alternative_price_MAD": 250,
+      "alternative_rationale": "If FIXEO diagnostic absorption policy means this service is often performed as a follow-on from CLIM-003 entretien (no second travel cost), 250 MAD becomes more defensible as a standalone call-out price.",
+      "hardware_policy": "NOT_APPLICABLE",
+      "materials_policy": "CONSUMABLES_INCLUDED",
+      "confidence": "LOW",
+      "human_decision": "PENDING"
+    },
+
+    {
+      "service_code": "CLIM-013",
+      "service_key": "climatisation.reparation_fuite_accessible",
+      "label_fr": "Réparation fuite frigorifique — brasure cuivre liaisons accessibles — main d'œuvre seule",
+      "label_ar_darija": "إصلاح تسرب الغاز — لحام نحاس — اليد العاملة فقط",
+
+      "architecture": "CONDITIONAL_FIXED",
+      "architecture_rationale": "A labour-fixed price for accessible leak repair is viable when the scope is tightly conditioned on accessibility. The 'accessible' condition is critical — inaccessible leaks must escape to DEVIS. Refrigerant recharge after repair must always remain a separate service (CLIM-010/011/012 + CLIM-014 vacuum). CONDITIONAL_FIXED is correct because the fixed price applies only when the leak location is confirmed accessible before work commences.",
+
+      "scope_contract": {
+        "definition": "Réparation d'une fuite frigorifique sur liaisons cuivre extérieures accessibles d'un climatiseur split résidentiel. Méthode : brasure acétylène ou brasure argent sur raccord ou joint de liaison cuivre accessible. Inclut test de pression à l'azote post-réparation. Ne comprend PAS la recharge de fluide frigorigène ni le tirage au vide.",
+        "conditions_required_before_commencing": [
+          "Localisation précise de la fuite confirmée avant démarrage du forfait (résultat de CLIM-008 ou observation directe)",
+          "Fuite sur liaison cuivre extérieure visible et accessible : raccord flairé ou brasé, joint de raccordement, départ/arrivée de l'unité intérieure ou extérieure",
+          "Pas de fuite dans l'évaporateur, le condenseur, ou le compresseur",
+          "Pas de fuite dans une dalle, un mur, ou un faux-plafond"
+        ],
+        "included_labour": "Brasure ou sertissage du joint accessible + test pression azote post-réparation",
+        "included_travel": true,
+        "included_consumables": "Baguettes de brasure, flux, gaz azote pour test de pression, protection anti-chaleur.",
+        "included_hardware": "Aucun — pas de remplacement de cuivre. Si un remplacement de tronçon de cuivre est nécessaire → HORS PÉRIMÈTRE",
+        "refrigerant_status": "EXCLU — Le fluide frigorigène n'est PAS inclus. Après réparation confirmée, une recharge doit faire l'objet d'un service séparé (CLIM-010 R410A / CLIM-011 R32 / CLIM-012 R22) avec tirage au vide préalable (CLIM-014). L'artisan ne peut pas silencieusement inclure la recharge dans ce prix.",
+        "explicit_exclusions": [
+          "Fluide frigorigène (TOUJOURS séparé — voir CLIM-010/011/012)",
+          "Tirage au vide (CLIM-014 — service séparé obligatoire avant recharge)",
+          "Fuite dans l'évaporateur ou le condenseur (intérieur des échangeurs)",
+          "Fuite dans le compresseur (DEVIS compresseur)",
+          "Fuite encastrée dans mur, dalle, ou faux-plafond",
+          "Remplacement tronçon de cuivre (DEVIS)",
+          "Remplacement raccord flairé complet sur distance > 50cm"
+        ],
+        "escape_triggers": [
+          "Fuite confirmée inaccessible (encastrée, dans dalle, derrière mur) → HORS PÉRIMÈTRE prix fixe → DEVIS immédiat avec description de l'accès requis",
+          "Fuite dans l'évaporateur ou le condenseur → HORS PÉRIMÈTRE → DEVIS remplacement échangeur",
+          "Fuite dans le compresseur → HORS PÉRIMÈTRE → CLIM-019 ou DEVIS compresseur",
+          "Tronçon cuivre trop dégradé pour brasure seule (oxydation sévère, micro-fissures multiples) → HORS PÉRIMÈTRE → DEVIS remplacement tronçon",
+          "Système R32 : artisan doit posséder l'équipement A2L adapté — si non, HORS PÉRIMÈTRE"
+        ],
+        "typical_duration_min": "60–90",
+        "post_repair_protocol": "Après réparation et test pression azote réussi, l'artisan DOIT informer le client que : (1) le système est à nouveau étanche, (2) un tirage au vide puis recharge de fluide est nécessaire pour remettre le système en service, (3) ces étapes constituent des services séparés facturés séparément. L'artisan ne peut pas décider unilatéralement de recharger sans approbation client explicite et facturation séparée."
+      },
+
+      "price_comparison": {
+        "market_range_MAD": { "low": 400, "high": 800 },
+        "research_anchor_MAD": 600,
+        "note_on_evidence": "MEDIUM confidence — 1 primary contractor source (SRC-CLIM-008). Range 400–800 MAD. Wide range reflects variability in leak complexity within 'accessible' category. This is a skilled intervention (brazing, nitrogen test) taking 60–90 min including diagnosis confirmation.",
+        "source_quality": "MEDIUM — 1 contractor source (C+). Range plausible for 60–90 min skilled technical work.",
+        "note_on_floor": "This is a highly skilled service (brazing torch, nitrogen, pressure gauge). 100 MAD canonical floor is irrelevant — a brazing technician with proper tools costs far more. Practical floor for this skill level is 300+ MAD net.",
+        "options_tested": [
+          {
+            "price_MAD": 450,
+            "commission_0pct_LOW": 425, "commission_0pct_HIGH": 390,
+            "commission_15pct_MID": 343, "commission_15pct_HIGH": 323,
+            "commission_20pct_MID": 320, "commission_20pct_HIGH": 300,
+            "worst_case_net_MAD": 300,
+            "grade_worst": "STRONG",
+            "client_position": "Well below anchor. Lower third of 400–800 range.",
+            "artisan_position": "STRONG but underprices a 60–90 min specialist brazing intervention.",
+            "verdict": "VIABLE but undersells skilled work. Brazing is not a commodity task."
+          },
+          {
+            "price_MAD": 550,
+            "commission_0pct_LOW": 525, "commission_0pct_HIGH": 490,
+            "commission_15pct_MID": 428, "commission_15pct_HIGH": 408,
+            "commission_20pct_MID": 400, "commission_20pct_HIGH": 380,
+            "worst_case_net_MAD": 380,
+            "grade_worst": "STRONG",
+            "client_position": "Below research anchor. Client-protective.",
+            "artisan_position": "STRONG all scenarios.",
+            "verdict": "SOLID — clear client-protective pricing, strong artisan economics for skilled work."
+          },
+          {
+            "price_MAD": 600,
+            "commission_0pct_LOW": 575, "commission_0pct_HIGH": 540,
+            "commission_15pct_MID": 470, "commission_15pct_HIGH": 450,
+            "commission_20pct_MID": 440, "commission_20pct_HIGH": 420,
+            "worst_case_net_MAD": 420,
+            "grade_worst": "STRONG",
+            "client_position": "Research anchor. Market midpoint. Fully justified.",
+            "artisan_position": "STRONG in all scenarios. Reflects true skill and equipment cost.",
+            "verdict": "PREFERRED — research anchor. Strong economics. Appropriate for 60–90 min brazing intervention with nitrogen test."
+          },
+          {
+            "price_MAD": 700,
+            "commission_0pct_LOW": 675, "commission_0pct_HIGH": 640,
+            "commission_15pct_MID": 555, "commission_15pct_HIGH": 535,
+            "commission_20pct_MID": 520, "commission_20pct_HIGH": 500,
+            "worst_case_net_MAD": 500,
+            "grade_worst": "STRONG",
+            "client_position": "Upper market range. Still inside honest range.",
+            "artisan_position": "STRONG. Reflects 90 min specialist work.",
+            "verdict": "DEFENSIBLE for difficult accessible repairs near upper complexity bound."
+          }
+        ]
+      },
+
+      "proposed_fixeo_price_MAD": 600,
+      "proposed_fixeo_price_rationale": "600 MAD is the research anchor and delivers STRONG economics across all scenarios (minimum net 420 MAD at 20% commission + 60 MAD fuel). This is a skilled technical intervention (brazing torch, nitrogen, 60–90 min) that requires a higher economic floor than simple maintenance. The CONDITIONAL_FIXED architecture critically limits scope to accessible repairs — inaccessible leaks always escape to DEVIS. The explicit exclusion of refrigerant makes the 600 MAD a pure labour price, transparent to the client. After repair, vacuum + recharge are separately quoted and approved.",
+      "alternative_price_MAD": 550,
+      "alternative_rationale": "550 MAD is client-protective while still delivering STRONG economics. If FIXEO wants to anchor below the market midpoint for entry-market trust-building, 550 MAD is the alternative.",
+      "refrigerant_exclusion_critical": "ABSOLUTE — Refrigerant must never be silently bundled into CLIM-013. The labour-fixed price covers brazing only. Any recharge is a separate, client-approved service. This is the core integrity rule for this service.",
+      "hardware_policy": "NOT_APPLICABLE — brazing rods and nitrogen are consumables, not parts",
+      "materials_policy": "CONSUMABLES_INCLUDED",
+      "confidence": "MEDIUM",
+      "human_decision": "PENDING"
+    },
+
+    {
+      "service_code": "CLIM-020",
+      "service_key": "climatisation.installation_mono_split_3m",
+      "label_fr": "Installation climatiseur mono-split — client fournit le climatiseur — liaison ≤3m incluse",
+      "label_ar_darija": "تركيب سبليت — العميل يجيب الكليما — 3م نحاس مشمول",
+
+      "architecture": "CONDITIONAL_FIXED",
+      "architecture_rationale": "Installation is a definable service when scope is precisely fixed. The conditions that must be true for the fixed price to apply are: standard access (no ladder beyond a step, no scaffolding), client-supplied AC unit, and copper run ≤3m. Any deviation triggers an explicit escape to add-ons or DEVIS. CONDITIONAL_FIXED is the correct architecture. FIXEO prices labour + standard materials only — the AC unit is always client-supplied and excluded.",
+
+      "scope_contract": {
+        "definition": "Installation complète d'un climatiseur split mono résidentiel fourni par le client. Comprend la pose de l'unité intérieure, la pose de l'unité extérieure sur support mural standard, la liaison frigorifique cuivre jusqu'à 3m, le câble électrique inter-unités, le tuyau de condensats, un perçage de traversée standard, le tirage au vide et la mise en service.",
+        "copper_run_definition": "Liaison frigorifique comprise = tube cuivre 1/4\" + 3/8\" ou 3/8\" + 5/8\" selon capacité, gaine isolante armaflex standard, jusqu'à 3 mètres linéaires de la sortie mur côté intérieur jusqu'à l'entrée de l'unité extérieure.",
+        "conditions_required": [
+          "Climatiseur mono-split résidentiel standard 7000–24000 BTU fourni par le client",
+          "Unité intérieure installée à hauteur standard ≤2,5m depuis sol",
+          "Unité extérieure posée sur support mural standard accessible depuis le balcon, terrasse, ou sol",
+          "Distance entre unités ≤3 mètres de liaison cuivre",
+          "Un seul perçage de traversée béton/brique standard (≤25cm épaisseur)",
+          "Pas d'accès par échelle ou échafaudage requis",
+          "Alimentation électrique dédiée disponible à proximité (≤2m) — raccordement disjoncteur exclu",
+          "Appartement/villa standard — pas de passage en faux plafond ni gaine technique"
+        ],
+        "included_in_scope": {
+          "indoor_unit": "Fixation murale unité intérieure sur platine fournie avec le climatiseur",
+          "outdoor_unit": "Pose sur support mural galvanisé standard (support inclus dans forfait)",
+          "copper_run": "Liaisons cuivre jusqu'à 3m linéaires (tube + isolant)",
+          "electrical_cable": "Câble inter-unités standard (H05RN-F ou équivalent) jusqu'à 3m",
+          "condensate_drain": "Tuyau condensats jusqu'à 3m raccordé à l'évacuation accessible",
+          "wall_drilling": "1 perçage de traversée béton/brique standard (diamètre standard climatisation)",
+          "vacuum": "Tirage au vide complet (minimum 30 min à -1 bar) avant mise en service",
+          "commissioning": "Mise en service, test cycle froid, vérification températures aspiré/soufflé",
+          "wall_bracket": "1 support mural standard unité extérieure (console galvanisée standard) inclus",
+          "consumables": "Visserie, bouchon traversée, colliers de fixation, mastics d'étanchéité"
+        },
+        "explicit_exclusions": [
+          "FOURNITURE DU CLIMATISEUR (toujours client) — mention explicite obligatoire",
+          "Mètres cuivre supplémentaires au-delà de 3m (facturer CLIM-025 par mètre supplémentaire)",
+          "Perçage supplémentaire au-delà du premier inclus",
+          "Béton armé épais > 25cm nécessitant carotteuse spéciale (DEVIS)",
+          "Raccordement tableau électrique / disjoncteur dédié (non inclus — voir CLIM-029 ou électricien)",
+          "Unité extérieure sur façade nécessitant échelle ou échafaudage (DEVIS accès difficile)",
+          "Hauteur unité intérieure > 2,5m depuis sol (DEVIS accès difficile)",
+          "Passage en faux plafond, gaine technique, ou chemin de câbles dissimulé",
+          "Goulotte décorative (trunking) — non incluse sauf accord préalable",
+          "Pompe de relevage condensats (pièce séparée si nécessaire)",
+          "Dépose/évacuation ancien climatiseur (service séparé CLIM-030)",
+          "Multi-split ou second circuit",
+          "Cassette ou gainable"
+        ],
+        "escape_triggers": [
+          "Liaison > 3m → ajouter CLIM-025 (110 MAD/m) pour chaque mètre au-delà des 3m inclus",
+          "Unité extérieure en façade nécessitant échelle → HORS PÉRIMÈTRE prix fixe → DEVIS supplément accès",
+          "Béton armé très épais → HORS PÉRIMÈTRE prix fixe → DEVIS perçage spécialisé",
+          "Tableau électrique trop éloigné → HORS PÉRIMÈTRE → recommander électricien pour disjoncteur dédié",
+          "Multi-split demandé → HORS PÉRIMÈTRE → CLIM-024",
+          "Client demande à acheter le climatiseur via artisan → HORS PÉRIMÈTRE → devis équipement séparé"
+        ],
+        "typical_duration_h": "3–5"
+      },
+
+      "price_comparison": {
+        "market_range_MAD": { "low": 600, "high": 1200 },
+        "research_anchor_MAD": 900,
+        "source_quality": "MEDIUM — 3 external sources (mano.ma C+, maison.ma C, HVAC contractors C+). Range 600–1200 with platform evidence around 700–1100. Anchor at 900 for 3m scope.",
+        "note_on_scope": "The wide market range (600–1200) is a direct consequence of undefined scope. FIXEO's 900 MAD price is only comparable to market prices that include support, drilling, vacuum, and commissioning. Informal artisans advertising 600 MAD typically exclude support and do not vacuum.",
+        "note_on_legacy": "FIXEO profile legacy price 500–900 MAD (SRC-CLIM-T04) has its ceiling at 900 MAD. The FIXEO 900 MAD proposal replaces a vague 500–900 range with a defined scope at a single honest price — this is an improvement, not an increase.",
+        "options_tested": [
+          {
+            "price_MAD": 800,
+            "commission_0pct_LOW": 775, "commission_0pct_HIGH": 740,
+            "commission_15pct_MID": 640, "commission_15pct_HIGH": 620,
+            "commission_20pct_MID": 600, "commission_20pct_HIGH": 580,
+            "worst_case_net_MAD": 580,
+            "grade_worst": "STRONG",
+            "client_position": "Lower market. Below most formal platforms.",
+            "artisan_position": "STRONG but underwrites a 3–5h installation including equipment.",
+            "verdict": "Viable but undersells 3–5h skilled work + materials. Pressure to cut scope (skip vacuum, skip proper support)."
+          },
+          {
+            "price_MAD": 900,
+            "commission_0pct_LOW": 875, "commission_0pct_HIGH": 840,
+            "commission_15pct_MID": 725, "commission_15pct_HIGH": 705,
+            "commission_20pct_MID": 680, "commission_20pct_HIGH": 660,
+            "worst_case_net_MAD": 660,
+            "grade_worst": "STRONG",
+            "client_position": "Research anchor. Lower third of formal market range.",
+            "artisan_position": "STRONG all scenarios. Reflects 3–5h of work + copper + support + vacuum.",
+            "verdict": "PREFERRED — research anchor, STRONG economics, includes all standard materials. Leaves no incentive to skip vacuum or support."
+          },
+          {
+            "price_MAD": 1000,
+            "commission_0pct_LOW": 975, "commission_0pct_HIGH": 940,
+            "commission_15pct_MID": 810, "commission_15pct_HIGH": 790,
+            "commission_20pct_MID": 760, "commission_20pct_HIGH": 740,
+            "worst_case_net_MAD": 740,
+            "grade_worst": "STRONG",
+            "client_position": "Mid market. Within honest range (600–1200).",
+            "artisan_position": "STRONG. Very good for 3–5h specialist work + materials.",
+            "verdict": "ALSO DEFENSIBLE. If human calibrator judges standard copper (3m) + support + drilling + vacuum fully justified at 1000 MAD."
+          }
+        ]
+      },
+
+      "proposed_fixeo_price_MAD": 900,
+      "proposed_fixeo_price_rationale": "900 MAD is the research anchor and delivers STRONG economics in all scenarios (minimum net 660 MAD at 20% commission + 60 MAD fuel, for a 3–5h intervention with copper, support, drilling, vacuum, and commissioning). This is a transparent all-in installation price for a standard mono-split with client-supplied unit. The well-defined scope prevents the scope ambiguity that is the primary driver of installation price disputes in the Moroccan market. The 900 MAD position is below most formal platform mid-range (900–1100 MAD) — client-protective while fully sustainable.",
+      "alternative_price_MAD": 1000,
+      "alternative_rationale": "If FIXEO artisan analysis shows materials cost (copper kit ~200–300 MAD, support ~100 MAD) leaves insufficient margin at 900 MAD with 20% commission, 1000 MAD is the next defensible anchor. Human calibrator should model material cost explicitly.",
+      "material_cost_note": "Estimated standard material cost for CLIM-020: support mural 80–100 MAD, copper kit 3m ~200–250 MAD, cable inter-unités ~30–50 MAD, condensate pipe ~20–30 MAD, miscellaneous consumables ~20–30 MAD = total ~350–460 MAD material cost. At 900 MAD price, 20% commission, 40 MAD fuel: artisan net = 680 MAD - 350-460 MAD materials = 220–330 MAD net labour. For 3–5h work this is 44–110 MAD/hour. The lower bound (44 MAD/h) is marginal for skilled HVAC labour. Human calibrator must validate this material estimate.",
+      "hardware_policy": "CONSUMABLES_AND_STANDARD_MATERIALS_INCLUDED — support, copper run ≤3m, cable, drain pipe, consumables included in price. AC unit ALWAYS client-supplied.",
+      "materials_policy": "CONSUMABLES_INCLUDED",
+      "confidence": "MEDIUM",
+      "human_decision": "PENDING"
+    },
+
+    {
+      "service_code": "CLIM-021",
+      "service_key": "climatisation.installation_mono_split_5m",
+      "label_fr": "Installation climatiseur mono-split — client fournit le climatiseur — liaison ≤5m incluse",
+      "label_ar_darija": "تركيب سبليت — العميل يجيب الكليما — 5م نحاس مشمول",
+
+      "architecture": "CONDITIONAL_FIXED",
+      "architecture_rationale": "Identical to CLIM-020 in all architectural respects, with extended copper scope to 5m. The 5m version covers the majority of Moroccan residential installations (bedroom, salon, or room separated from exterior wall by a corridor). Distinct service from CLIM-020 because material cost increases materially (2 extra metres copper + insulation ≈ 120–160 MAD additional) and installation time increases by 20–30 min.",
+
+      "scope_contract": {
+        "definition": "Identique à CLIM-020 (installation mono-split complète, client fournit le climatiseur) mais avec liaison frigorifique cuivre jusqu'à 5 mètres incluse.",
+        "copper_run_definition": "Liaison frigorifique comprise = même spécification que CLIM-020 mais jusqu'à 5 mètres linéaires.",
+        "conditions_required": "Identiques à CLIM-020. Les mêmes conditions de standard access, BTU range, single drilling, no scaffold apply.",
+        "material_difference_vs_clim020": "2 mètres cuivre supplémentaires inclus vs CLIM-020 (tube + isolant × 2m = ~120–160 MAD matière additional).",
+        "included_in_scope": "Tout de CLIM-020, plus liaison cuivre jusqu'à 5m.",
+        "explicit_exclusions": "Identiques à CLIM-020. Mètres cuivre au-delà de 5m facturés CLIM-025.",
+        "escape_triggers": [
+          "Liaison > 5m → ajouter CLIM-025 par mètre au-delà de 5m",
+          "Mêmes triggers que CLIM-020 pour accès difficile, béton armé, tableau électrique, multi-split"
+        ],
+        "material_differentiation_note": "CLIM-020 and CLIM-021 must be materially different in scope. A 3m installation priced at 900 MAD and a 5m installation also priced at 900 MAD would be incoherent — the 2 extra metres of copper + insulation + labour represent a real additional cost. The 100–200 MAD price delta between CLIM-020 and CLIM-021 reflects this real material and time difference.",
+        "typical_duration_h": "3.5–5.5"
+      },
+
+      "price_comparison": {
+        "market_range_MAD": { "low": 800, "high": 1500 },
+        "research_anchor_MAD": 1100,
+        "source_quality": "MEDIUM — 1 primary source (HVAC contractors C+, 900–1500 MAD for 5m scope). 1 editorial source corroborating.",
+        "delta_vs_clim020_analysis": "CLIM-021 vs CLIM-020 delta: 2 extra metres copper (material ~120–160 MAD) + 20–30 min extra installation time (labour ~50–80 MAD at artisan hourly rate). Justified total delta: 170–240 MAD. This supports a CLIM-021 price of CLIM-020 + 150–200 MAD = 1050–1100 MAD.",
+        "options_tested": [
+          {
+            "price_MAD": 1000,
+            "commission_0pct_LOW": 975, "commission_0pct_HIGH": 940,
+            "commission_15pct_MID": 810, "commission_15pct_HIGH": 790,
+            "commission_20pct_MID": 760, "commission_20pct_HIGH": 740,
+            "worst_case_net_MAD": 740,
+            "grade_worst": "STRONG",
+            "delta_vs_clim020_at_900": 100,
+            "delta_justified": "BELOW MATERIAL COST — 100 MAD delta does not cover the 120–160 MAD material cost of 2 extra copper metres. Artisan net from additional scope is negative.",
+            "verdict": "NOT RECOMMENDED — delta below material cost."
+          },
+          {
+            "price_MAD": 1050,
+            "commission_0pct_LOW": 1025, "commission_0pct_HIGH": 990,
+            "commission_15pct_MID": 851, "commission_15pct_HIGH": 831,
+            "commission_20pct_MID": 800, "commission_20pct_HIGH": 780,
+            "worst_case_net_MAD": 780,
+            "grade_worst": "STRONG",
+            "delta_vs_clim020_at_900": 150,
+            "delta_justified": "AT LOWER BOUND of justified range (170–240 MAD). Covers material cost, slight labour deficit.",
+            "verdict": "MARGINAL — barely covers material delta."
+          },
+          {
+            "price_MAD": 1100,
+            "commission_0pct_LOW": 1075, "commission_0pct_HIGH": 1040,
+            "commission_15pct_MID": 895, "commission_15pct_HIGH": 875,
+            "commission_20pct_MID": 840, "commission_20pct_HIGH": 820,
+            "worst_case_net_MAD": 820,
+            "grade_worst": "STRONG",
+            "delta_vs_clim020_at_900": 200,
+            "delta_justified": "WITHIN justified range (170–240 MAD). Covers material + partial labour for extra 30 min.",
+            "verdict": "PREFERRED — research anchor. Justified delta. STRONG economics."
+          },
+          {
+            "price_MAD": 1200,
+            "commission_0pct_LOW": 1175, "commission_0pct_HIGH": 1140,
+            "commission_15pct_MID": 980, "commission_15pct_HIGH": 960,
+            "commission_20pct_MID": 920, "commission_20pct_HIGH": 900,
+            "worst_case_net_MAD": 900,
+            "grade_worst": "STRONG",
+            "delta_vs_clim020_at_900": 300,
+            "delta_justified": "ABOVE justified range. Possible but positions CLIM-021 at upper market bound.",
+            "verdict": "DEFENSIBLE but delta may appear arbitrary to clients who compare with CLIM-020."
+          }
+        ]
+      },
+
+      "proposed_fixeo_price_MAD": 1100,
+      "proposed_fixeo_price_rationale": "1100 MAD is the research anchor and provides a justified 200 MAD delta over CLIM-020 (900 MAD). The delta corresponds to real additional material cost (2 extra metres copper + insulation ≈ 120–160 MAD) plus additional labour time (~30 min ≈ 50–80 MAD). STRONG economics in all scenarios (minimum net 820 MAD at 20% + 60 MAD fuel). The 1100 MAD price is well within the honest Moroccan market range (800–1500 MAD for 5m scope). The delta is explainable to the client: 'the 200 MAD extra covers 2 additional metres of copper piping and fittings included in your installation'.",
+      "alternative_price_MAD": 1050,
+      "alternative_rationale": "1050 MAD is viable if FIXEO wants minimal delta over CLIM-020, though it slightly underpays the material delta. Only recommended if human calibrator confirms actual material costs are closer to 80–100 MAD for 2 extra metres.",
+      "delta_policy": "The CLIM-020 / CLIM-021 price relationship must be internally consistent: CLIM-021 > CLIM-020 by an amount that reflects real material cost difference. If CLIM-020 is set to 1000 MAD, CLIM-021 should be ~1150–1200 MAD. The delta must not be arbitrary.",
+      "hardware_policy": "CONSUMABLES_AND_STANDARD_MATERIALS_INCLUDED — support, copper run ≤5m, cable, drain pipe, consumables included in price. AC unit ALWAYS client-supplied.",
+      "materials_policy": "CONSUMABLES_INCLUDED",
+      "confidence": "MEDIUM",
+      "human_decision": "PENDING"
+    },
+
+    {
+      "service_code": "CLIM-030",
+      "service_key": "climatisation.demontage_split",
+      "label_fr": "Démontage climatiseur split — récupération fluide (pump-down) + dépose complète",
+      "label_ar_darija": "فك الكليما — استرجاع الغاز وفك الوحدتين",
+
+      "architecture": "FIXED",
+      "architecture_rationale": "Dismantling is a well-defined, reproducible service. The scope is always: pump-down → disconnect copper → remove both units → seal the wall opening. Duration predictable at 45–90 min. No parts involved. Transport and reinstallation explicitly excluded. FIXED is the correct architecture. Note: FIXEO adopts pump-down as a mandatory practice — venting refrigerant is prohibited.",
+
+      "scope_contract": {
+        "definition": "Démontage professionnel d'un climatiseur split résidentiel. Inclut la procédure de pump-down (récupération du réfrigérant dans l'unité extérieure), la déconnexion des liaisons frigorifiques, la dépose des deux unités, et l'obturation de la traversée murale.",
+        "conditions_required": [
+          "Climatiseur split résidentiel standard (mono-split ou chaque tête de multi-split facturée séparément)",
+          "Accès aux deux unités sans équipement de levage spécial",
+          "Système fonctionnel pour pump-down (si compresseur mort → procédure de récupération adaptée, même tarif)"
+        ],
+        "pump_down_protocol_mandatory": "Le pump-down est la procédure obligatoire FIXEO. Elle consiste à faire fonctionner le compresseur en mode refroidissement tout en fermant manuellement le robinet gaz liquide, forçant le réfrigérant à se concentrer dans l'unité extérieure, puis en fermant le robinet gaz vapeur et en arrêtant le compresseur. Le réfrigérant reste ainsi emprisonné dans l'unité extérieure sans être relâché dans l'atmosphère.",
+        "included_labour": "Déplacement + pump-down + déconnexion cuivre + dépose unité intérieure + dépose unité extérieure + dépose support mural (si applicable) + obturation traversée",
+        "included_travel": true,
+        "included_consumables": "Bouchons de traversée, matériau d'obturation basique.",
+        "included_hardware": "Aucun",
+        "explicit_exclusions": [
+          "Transport et évacuation des unités vers déchetterie (service séparé si demandé)",
+          "Réinstallation à un autre emplacement (service séparé CLIM-031)",
+          "Réparation de la traversée murale ou de l'enduit mural",
+          "Dépose de goulotte ou de caissons décoratifs",
+          "Multi-split : facturer CLIM-030 par tête intérieure + partage proportionnel du démontage extérieur (DEVIS multi-split démontage)"
+        ],
+        "gas_venting_prohibition": "Il est STRICTEMENT INTERDIT pour un artisan FIXEO de laisser s'échapper le réfrigérant dans l'atmosphère lors du démontage. L'évent intentionnel du réfrigérant est une pratique non conforme aux engagements du Maroc au titre du Protocole de Montréal et est incompatible avec les standards professionnels FIXEO. Si le compresseur est hors service et qu'un pump-down normal est impossible, l'artisan doit utiliser la méthode de récupération passive ou informer le client de la situation spécifique.",
+        "escape_triggers": [
+          "Unité extérieure en hauteur inaccessible sans échelle → HORS PÉRIMÈTRE → supplément ou DEVIS",
+          "Multi-split avec plusieurs intérieures → DEVIS spécifique démontage multi-split",
+          "Client demande également l'évacuation des unités → facturer service supplémentaire"
+        ],
+        "typical_duration_min": "45–90"
+      },
+
+      "price_comparison": {
+        "market_range_MAD": { "low": 400, "high": 700 },
+        "research_anchor_MAD": 550,
+        "source_quality": "MEDIUM — 1 platform source (mano.ma C+). Range 400–700 MAD. Consistent with inverse installation labour.",
+        "note_on_complexity": "Dismantling is less complex than installation (no vacuum, no commissioning, no materials to manage) but requires the pump-down procedure and secure handling of both units. Duration 45–90 min for a standard split.",
+        "options_tested": [
+          {
+            "price_MAD": 450,
+            "commission_0pct_LOW": 425, "commission_0pct_HIGH": 390,
+            "commission_15pct_MID": 343, "commission_15pct_HIGH": 323,
+            "commission_20pct_MID": 320, "commission_20pct_HIGH": 300,
+            "worst_case_net_MAD": 300,
+            "grade_worst": "STRONG",
+            "client_position": "Lower market bound. Well below 550 anchor.",
+            "artisan_position": "STRONG. But possibly undersells 45–90 min work + safe pump-down handling.",
+            "verdict": "VIABLE but positioned at market floor. Risk that informal artisans simply skip pump-down at this price."
+          },
+          {
+            "price_MAD": 500,
+            "commission_0pct_LOW": 475, "commission_0pct_HIGH": 440,
+            "commission_15pct_MID": 385, "commission_15pct_HIGH": 365,
+            "commission_20pct_MID": 360, "commission_20pct_HIGH": 340,
+            "worst_case_net_MAD": 340,
+            "grade_worst": "STRONG",
+            "client_position": "Below anchor. Client-protective.",
+            "artisan_position": "STRONG all scenarios.",
+            "verdict": "SOLID — strong economics. Clean below-anchor position."
+          },
+          {
+            "price_MAD": 550,
+            "commission_0pct_LOW": 525, "commission_0pct_HIGH": 490,
+            "commission_15pct_MID": 428, "commission_15pct_HIGH": 408,
+            "commission_20pct_MID": 400, "commission_20pct_HIGH": 380,
+            "worst_case_net_MAD": 380,
+            "grade_worst": "STRONG",
+            "client_position": "Research anchor. Market midpoint (400–700).",
+            "artisan_position": "STRONG all scenarios.",
+            "verdict": "PREFERRED — research anchor. Justified for professional pump-down dismantling. Strong economics."
+          },
+          {
+            "price_MAD": 600,
+            "commission_0pct_LOW": 575, "commission_0pct_HIGH": 540,
+            "commission_15pct_MID": 470, "commission_15pct_HIGH": 450,
+            "commission_20pct_MID": 440, "commission_20pct_HIGH": 420,
+            "worst_case_net_MAD": 420,
+            "grade_worst": "STRONG",
+            "client_position": "Upper market range. Still within 400–700.",
+            "artisan_position": "STRONG.",
+            "verdict": "DEFENSIBLE. Appropriate for longer or more complex dismantling scenarios."
+          }
+        ]
+      },
+
+      "proposed_fixeo_price_MAD": 550,
+      "proposed_fixeo_price_rationale": "550 MAD is the research anchor and delivers STRONG economics in all scenarios (minimum net 380 MAD at 20% + 60 MAD fuel). This price appropriately rewards professional pump-down practice — at 450 MAD there is economic pressure to skip pump-down to reduce time, at 550 MAD the artisan is compensated for doing it correctly. The pump-down protocol is a non-negotiable FIXEO standard, so the price must support it economically.",
+      "alternative_price_MAD": 500,
+      "alternative_rationale": "500 MAD is client-protective and still STRONG. Valid if FIXEO wants to position below anchor.",
+      "pump_down_economics_note": "The pump-down procedure adds 10–15 min to the job but is ethically and professionally required. At 450 MAD there is an informal market pressure to skip it. At 550 MAD the artisan is not incentivized to cut this corner. This is a FIXEO quality enforcement mechanism embedded in the price.",
+      "hardware_policy": "NOT_APPLICABLE",
+      "materials_policy": "NOT_APPLICABLE",
+      "confidence": "MEDIUM",
+      "human_decision": "PENDING"
+    }
+
+  ]
+}
