@@ -1,0 +1,653 @@
+{
+  "_meta": {
+    "phase": "7B.8.1",
+    "metier": "NETTOYAGE",
+    "version": "0.2",
+    "status": "HUMAN CALIBRATION PREPARATION — ALL DECISIONS PENDING",
+    "created": "2026-08-09",
+    "production_ready": false,
+    "research_basis": "858d27ad3cfe2be79a0056ab916528633ebbcf86",
+    "note": "V0.1 artifacts are immutable. This file contains calibration analysis only. No human approval granted."
+  },
+
+  "worker_count_doctrine": {
+    "canonical_unit": "PER_CLEANER_HOUR",
+    "definition": "1 cleaner working 1 hour = 1 cleaner-hour. If 2 cleaners work 3 hours, that is 6 cleaner-hours, not 3.",
+    "estimator_rule": "CLIENT PRICE = NUMBER_OF_CLEANERS × HOURS_PER_CLEANER × RATE_PER_CLEANER_HOUR",
+    "no_ambiguity_rule": "Any hourly price in FIXEO must explicitly state PER CLEANER. The word 'heure' alone is insufficient.",
+    "multi_cleaner_transparency": "If a job is quoted with 2 cleaners, the client must see this before booking.",
+    "artisan_rule": "Artisan is paid per cleaner-hour they actually deliver. Team of 2 is paid for 2 cleaner-hours per hour of work.",
+    "human_decision": "PENDING",
+    "production_ready": false
+  },
+
+  "anti_double_charge_doctrine": {
+    "problem": "A minimum visit fee MUST NOT be stacked on top of hourly charges for the same hours.",
+    "recommended_architecture": "OPTION B — minimum payable = max(NET-001_minimum, NET-002_hourly × cleaner-hours)",
+    "formulation": "CLIENT PAYS: max(minimum_visit_price, hourly_rate × total_cleaner_hours)",
+    "example_correct": "3 cleaner-hours at 60 MAD/ch = 180 MAD. If minimum = 200 MAD, client pays 200 MAD.",
+    "example_correct_2": "4 cleaner-hours at 60 MAD/ch = 240 MAD. Client pays 240 MAD (exceeds minimum).",
+    "example_wrong": "Client does NOT pay 200 MAD minimum PLUS 180 MAD hourly for 3h = 380 MAD.",
+    "rejected_options": {
+      "OPTION A": "200 MAD covers exactly 3 cleaner-hours — rejected because this creates artificial hour-bucket confusion with NET-002",
+      "OPTION C": "Fixed minimum independent of hourly rate — creates incoherence if rates differ"
+    },
+    "implementation_note": "The minimum visit functions as a floor on the total invoice, not an additional charge.",
+    "human_decision": "PENDING",
+    "production_ready": false
+  },
+
+  "products_equipment_model": {
+    "market_finding": "Standard residential ménage: products typically CLIENT_SUPPLIED (confirmed O2 Maroc). Professional deep-clean and specialist services: ARTISAN_SUPPLIED.",
+    "candidates": {
+      "MODEL_A": {
+        "label": "Client supplies everything",
+        "products": "CLIENT_SUPPLIED",
+        "equipment_basic": "CLIENT_SUPPLIED (mop, bucket, broom, vacuum)",
+        "equipment_specialist": "N/A",
+        "artisan_cost_impact": "Zero — cleanest economics",
+        "client_experience": "Client must have supplies ready. Risk of wrong products for surface type.",
+        "market_alignment": "HIGH — matches Moroccan residential market norm",
+        "recommended_for": "NET-001, NET-002 standard cleaning"
+      },
+      "MODEL_B": {
+        "label": "Cleaner supplies basic products, client supplies equipment",
+        "products": "ARTISAN_SUPPLIED_INCLUDED (standard détergent, vinaigre, javel, etc.)",
+        "equipment_basic": "CLIENT_SUPPLIED (mop, vacuum, bucket)",
+        "equipment_specialist": "N/A",
+        "artisan_cost_impact": "~15–25 MAD consumables per visit",
+        "client_experience": "Better — cleaner arrives with correct products. Client still needs vacuum/mop.",
+        "market_alignment": "MEDIUM",
+        "recommended_for": "Optional upgrade or premium tier"
+      },
+      "MODEL_C": {
+        "label": "Cleaner supplies everything",
+        "products": "ARTISAN_SUPPLIED_INCLUDED",
+        "equipment_basic": "ARTISAN_SUPPLIED_INCLUDED (mop, bucket, cleaning cloths)",
+        "equipment_specialist": "ARTISAN_SUPPLIED for upholstery, post-construction",
+        "artisan_cost_impact": "~40–80 MAD per visit (equipment amortization + consumables)",
+        "client_experience": "Best — zero client preparation",
+        "market_alignment": "LOW for residential standard; HIGH for deep-clean and specialist services",
+        "recommended_for": "NET-004 deep-clean, NET-010/011 sofa, NET-013 mattress, NET-030 post-construction"
+      }
+    },
+    "recommended_fixeo_split": {
+      "NET_001_NET_002_standard": "MODEL_A — client supplies. Must be disclosed prominently before booking.",
+      "NET_004_deep_clean": "MODEL_C — provider supplies all. Include ~50 MAD consumables in economics.",
+      "NET_010_011_013_014_textile": "MODEL_C — injection-extraction machine + specialist products always artisan-supplied.",
+      "NET_030_post_construction": "MODEL_C — industrial equipment always artisan-supplied."
+    },
+    "human_decision": "PENDING",
+    "production_ready": false
+  },
+
+  "standard_cleaning_scope_contract": {
+    "label": "Contrat de nettoyage standard FIXEO",
+    "included": [
+      "Dépoussiérage des surfaces accessibles (meubles, rebords, prises, interrupteurs)",
+      "Aspiration des sols (tapis, moquette, carrelage, parquet)",
+      "Lavage/serpillière des sols durs",
+      "Nettoyage standard de la salle de bain (lavabo, douche/baignoire, WC, miroir)",
+      "Nettoyage standard de la cuisine (surfaces plans de travail, intérieur micro-ondes si accessible, extérieur appareils)",
+      "Façades extérieures des meubles",
+      "Vidage des poubelles",
+      "Nettoyage de la table et des chaises"
+    ],
+    "excluded_explicit": [
+      "Vitres et fenêtres (sauf offre grand nettoyage)",
+      "Intérieur des placards et tiroirs",
+      "Intérieur du four",
+      "Intérieur du réfrigérateur",
+      "Dégraissage profond de la hotte/four",
+      "Lavage des murs",
+      "Nettoyage de la terrasse (sauf surfaces balayables)",
+      "Détartrage fort (calcaire sévère)",
+      "Nettoyage tapis/canapé par extraction",
+      "Résidus de construction/travaux",
+      "Moisissures",
+      "Désencombrement"
+    ],
+    "scope_dispute_rule": "Any additional scope must be agreed before the intervention. Artisan cannot add charges on-site without client agreement.",
+    "human_decision": "PENDING",
+    "production_ready": false
+  },
+
+  "deep_clean_scope_contract": {
+    "label": "Contrat grand nettoyage FIXEO",
+    "included": [
+      "Tout le contrat standard +",
+      "Vitres intérieures accessibles (sans nacelle/escabeau spécial)",
+      "Intérieur des placards/armoires accessibles",
+      "Dégraissage cuisine (four intérieur, hotte, plans de travail)",
+      "Désinfection/détartrage salle de bain approfondie",
+      "Lavage des plinthes",
+      "Dépoussiérage approfondi (dessus placards, angles hauts)",
+      "Nettoyage portes et encadrements",
+      "Produits professionnels fournis par l'artisan",
+      "Équipement professionnel fourni (monobrosses, aspirateur professionnel)"
+    ],
+    "excluded_explicit": [
+      "Vitres en hauteur (> 2m sans accès direct)",
+      "Nettoyage tapis/canapé par injection-extraction (service séparé)",
+      "Résidus de construction/chantier",
+      "Moisissures structurelles",
+      "Débarras/déménagement",
+      "Façade extérieure"
+    ],
+    "normal_property_limit": "Appartement jusqu'à F4 (150m²). Au-delà: devis ou multiple sessions.",
+    "human_decision": "PENDING",
+    "production_ready": false
+  },
+
+  "post_construction_scope_contract": {
+    "label": "Contrat nettoyage après travaux FIXEO",
+    "included": [
+      "Élimination poussières fines de chantier (sols, surfaces, rebords)",
+      "Lavage et nettoyage des sols (carrelage, parquet, marbre)",
+      "Nettoyage des vitres standard (traces de peinture légères, colle légère)",
+      "Nettoyage des sanitaires neufs",
+      "Nettoyage des interrupteurs, prises, plinthes",
+      "Désinfection globale",
+      "Produits et équipements industriels fournis par l'artisan"
+    ],
+    "excluded_explicit": [
+      "Évacuation de gravats/déchets lourds",
+      "Décapage de peinture dure ou ciment épais",
+      "Nettoyage de façade extérieure",
+      "Accès en hauteur (nacelle)",
+      "Contamination chimique ou biologique",
+      "Résidus industriels ou dangereux",
+      "Débarras"
+    ],
+    "complexity_escape": "Résidus sévères (ciment épais, grande quantité peinture) → DEVIS_REQUIS. Client doit déclarer le niveau de saleté avant booking.",
+    "human_decision": "PENDING",
+    "production_ready": false
+  },
+
+  "candidates": {
+
+    "NET-001": {
+      "label_fr": "Visite minimum nettoyage",
+      "category": "STANDARD_RESIDENTIAL",
+      "pricing_architecture": "MINIMUM_VISIT",
+      "pricing_unit": "FORFAIT_MINIMUM",
+      "market_range_mad": "150–280",
+      "research_anchor_mad": 200,
+      "candidate_prices_mad": [180, 200, 220, 250],
+      "economic_analysis": {
+        "assumptions": {
+          "minimum_cleaner_hours": 3,
+          "travel_mad": 25,
+          "equipment_client_supplied": true,
+          "consumables_client_supplied": true
+        },
+        "by_candidate": {
+          "180": {"net_10pct": 137, "net_20pct": 119, "implied_hourly": 60.0, "viability_20pct": "MARGINAL — 119 MAD net / 3h = 39.7 MAD/ch net"},
+          "200": {"net_10pct": 155, "net_20pct": 135, "implied_hourly": 66.7, "viability_20pct": "OK — 135 MAD net / 3h = 45 MAD/ch net"},
+          "220": {"net_10pct": 173, "net_20pct": 151, "implied_hourly": 73.3, "viability_20pct": "GOOD — 151 MAD net / 3h = 50.3 MAD/ch net"},
+          "250": {"net_10pct": 200, "net_20pct": 175, "implied_hourly": 83.3, "viability_20pct": "GOOD — 175 MAD net / 3h = 58.3 MAD/ch net"}
+        }
+      },
+      "architecture_analysis": {
+        "recommended": "OPTION B — minimum payable = max(minimum_price, hourly_rate × cleaner-hours). See anti_double_charge_doctrine.",
+        "minimum_cleaner_hours_included": 3,
+        "interaction_with_NET_002": "NET-001 is the floor; NET-002 rate applies from hour 1. If 3h × rate < minimum, client pays minimum.",
+        "travel_policy": "INCLUDED in price — artisan does not invoice separately",
+        "products_equipment": "CLIENT_SUPPLIED for standard cleaning",
+        "standard_scope": "See standard_cleaning_scope_contract"
+      },
+      "preferred_candidate_for_human_review": 200,
+      "rationale": "200 MAD is market mid-point. At 20% commission = 135 MAD net / 3h = 45 MAD/ch net — above proposed 40 MAD floor. Below 250 MAD market ceiling. Coherent with 60–65 MAD/ch rate: 3h × 66.7 MAD = 200 MAD.",
+      "city_adjustment": null,
+      "urgency_modifier": null,
+      "night_modifier": null,
+      "weekend_modifier": null,
+      "holiday_modifier": null,
+      "human_decision": "PENDING",
+      "production_ready": false
+    },
+
+    "NET-002": {
+      "label_fr": "Tarif horaire nettoyage (par agent)",
+      "category": "STANDARD_RESIDENTIAL",
+      "pricing_architecture": "HOURLY",
+      "pricing_unit": "PER_CLEANER_HOUR",
+      "market_range_mad": "40–80 MAD/cleaner-hour",
+      "professional_segment_range": "50–80 MAD/cleaner-hour",
+      "research_anchor_mad": 55,
+      "candidate_prices_mad_per_cleaner_hour": [50, 55, 60, 65, 70],
+      "economic_analysis": {
+        "assumptions": {
+          "travel_mad": 25,
+          "commission_stress_pct": [0, 10, 15, 20],
+          "client_supplies_products_equipment": true
+        },
+        "by_rate": {
+          "50": {
+            "3ch_gross": 150, "3ch_net_20pct": 95, "3ch_nph_20pct": 31.7,
+            "4ch_gross": 200, "4ch_net_20pct": 135, "4ch_nph_20pct": 33.8,
+            "6ch_gross": 300, "6ch_net_20pct": 215, "6ch_nph_20pct": 35.8,
+            "verdict": "BELOW_FLOOR at 3ch/20%. Falls below 35 MAD/ch net floor for short jobs. Viable for longer assignments."
+          },
+          "55": {
+            "3ch_gross": 165, "3ch_net_20pct": 107, "3ch_nph_20pct": 35.7,
+            "4ch_gross": 220, "4ch_net_20pct": 151, "4ch_nph_20pct": 37.8,
+            "6ch_gross": 330, "6ch_net_20pct": 239, "6ch_nph_20pct": 39.8,
+            "verdict": "MARGINALLY_VIABLE — 35.7 MAD/ch net at 3h just clears 35 MAD floor. Better at 4h+."
+          },
+          "60": {
+            "3ch_gross": 180, "3ch_net_20pct": 119, "3ch_nph_20pct": 39.7,
+            "4ch_gross": 240, "4ch_net_20pct": 167, "4ch_nph_20pct": 41.8,
+            "6ch_gross": 360, "6ch_net_20pct": 263, "6ch_nph_20pct": 43.8,
+            "verdict": "VIABLE — comfortably above 40 MAD/ch net floor at all durations. Falls within Casablanca market (60 DH/h Adom.ma average). Recommended."
+          },
+          "65": {
+            "3ch_gross": 195, "3ch_net_20pct": 131, "3ch_nph_20pct": 43.7,
+            "4ch_gross": 260, "4ch_net_20pct": 183, "4ch_nph_20pct": 45.8,
+            "verdict": "GOOD — strong economics. Slightly above Casablanca average but defensible for verified professional segment."
+          },
+          "70": {
+            "3ch_gross": 210, "3ch_net_20pct": 143, "3ch_nph_20pct": 47.7,
+            "verdict": "PREMIUM — valid but risks price resistance in secondary cities."
+          }
+        }
+      },
+      "worker_count_semantics": "PER CLEANER. Two cleaners working 3h = 6 cleaner-hours billed = 360 MAD at 60 MAD/ch. Client must see cleaner count before booking.",
+      "preferred_candidate_for_human_review": 60,
+      "rationale": "60 MAD/cleaner-hour aligns with Adom.ma Casablanca average (60 DH/h). Achieves 40 MAD/ch net at 3h/20% commission. Consistent with minimum visit: 200 MAD ÷ 3h = 66.7 MAD/ch (minimum slightly above standard rate, which is correct for floor economics). Nationally the 60 MAD rate is at the upper end — appropriate for the FIXEO verified-professional segment.",
+      "market_note": "Informal/direct market is 25–45 MAD/h. FIXEO does not compete here. Professional platform segment is 50–80 MAD/h. 60 MAD is the national mid of this segment.",
+      "property_size_alignment_note": "At 60 MAD/ch, pure hourly underprices vs market for F2/F3+ (210 MAD vs market 250–500 MAD). Resolution: minimum visit floor (200 MAD) and realistic duration estimates produce market-aligned totals. 3.5h × 60 MAD = 210 MAD: slightly below market minimum of 250 MAD for F2/F3. Recommend 65 MAD/ch or verify duration estimates upward.",
+      "city_adjustment": null,
+      "urgency_modifier": null,
+      "night_modifier": null,
+      "weekend_modifier": null,
+      "holiday_modifier": null,
+      "human_decision": "PENDING",
+      "production_ready": false
+    },
+
+    "NET-004": {
+      "label_fr": "Grand nettoyage / nettoyage en profondeur",
+      "category": "DEEP_CLEAN",
+      "pricing_architecture": "CONDITIONAL_FIXED",
+      "pricing_unit": "PER_INTERVENTION",
+      "property_reference": "F2/F3 appartement (60–100m²)",
+      "market_range_mad": "500–900 MAD (F2/F3)",
+      "research_anchor_mad": 600,
+      "candidate_prices_mad": [550, 600, 650, 700],
+      "economic_analysis": {
+        "assumptions": {
+          "workers": 2,
+          "hours_per_worker": 3.5,
+          "total_cleaner_hours": 7,
+          "travel_mad": 25,
+          "consumables_products_mad": 50,
+          "equipment_artisan_supplied": true
+        },
+        "by_candidate": {
+          "550": {"net_pool_15pct": 392, "net_pool_20pct": 365, "nph_15pct": 56.1, "nph_20pct": 52.1, "verdict": "VIABLE but tight market position — below research anchor"},
+          "600": {"net_pool_15pct": 435, "net_pool_20pct": 405, "nph_15pct": 62.1, "nph_20pct": 57.9, "verdict": "GOOD — matches research anchor, strong worker economics, mid-market positioning"},
+          "650": {"net_pool_15pct": 478, "net_pool_20pct": 445, "nph_15pct": 68.2, "nph_20pct": 63.6, "verdict": "STRONG — excellent economics, slightly above anchor, fully justified for professional segment"},
+          "700": {"net_pool_15pct": 520, "net_pool_20pct": 485, "nph_15pct": 74.3, "nph_20pct": 69.3, "verdict": "PREMIUM — upper market range. Client may resist vs direct booking."}
+        }
+      },
+      "size_architecture_comparison": {
+        "OPTION_A_fixed_F2F3_package": {
+          "description": "Single fixed price for standard F2/F3 reference. Other sizes = explicit adjustment.",
+          "client_clarity": "HIGH — one price to communicate",
+          "limitation": "Penalizes small apartments, undercharges villas",
+          "recommended_base_price": 600
+        },
+        "OPTION_B_size_tiers": {
+          "description": "Studio / F2–F3 / F4–F5 / Villa fixed packages",
+          "client_clarity": "HIGH",
+          "tiers": {
+            "studio": "350–450 MAD",
+            "f2_f3": "550–650 MAD",
+            "f4_f5": "750–950 MAD",
+            "villa": "1000+ MAD (devis)"
+          },
+          "limitation": "More complexity in estimator",
+          "recommended": true
+        },
+        "OPTION_C_hourly_multiplier": {
+          "description": "Deep-clean = standard hourly × 1.5 multiplier for complexity",
+          "client_clarity": "LOW — multiplication is confusing",
+          "recommended": false
+        },
+        "OPTION_D_per_m2": {
+          "description": "Deep-clean priced per m²",
+          "client_clarity": "MEDIUM",
+          "not_market_norm": true,
+          "recommended": false
+        }
+      },
+      "preferred_architecture": "OPTION_B — size tiers with F2/F3 = 600 MAD anchor",
+      "preferred_candidate_for_human_review": 600,
+      "worker_count_semantics": "2 cleaners standard for F2/F3 deep-clean. Artisan pool shared between 2 workers.",
+      "products_equipment": "ARTISAN_SUPPLIED_INCLUDED — professional products and equipment included in price",
+      "city_adjustment": null,
+      "urgency_modifier": null,
+      "night_modifier": null,
+      "weekend_modifier": null,
+      "holiday_modifier": null,
+      "human_decision": "PENDING",
+      "production_ready": false
+    },
+
+    "NET-010": {
+      "label_fr": "Nettoyage canapé 2 places",
+      "category": "TEXTILE_UPHOLSTERY",
+      "pricing_architecture": "FIXED",
+      "pricing_unit": "PER_ITEM",
+      "pricing_unit_note": "Per sofa — 2-seat configuration regardless of exact dimensions",
+      "market_range_mad": "250–400",
+      "research_anchor_mad": 300,
+      "candidate_prices_mad": [250, 280, 300, 320, 350],
+      "source_convergence": "3 sources converge at 300 MAD (O2: 300, Hany: 250–400 midpoint, Doulle: from 300). HIGH confidence.",
+      "economic_analysis": {
+        "assumptions": {
+          "duration_minutes": 45,
+          "travel_included_in_price": true,
+          "consumables_specialist_products_mad": 20,
+          "equipment_injection_extraction_amortization_mad": 15
+        },
+        "by_candidate": {
+          "250": {"net_20pct": 155, "hourly_equiv": 207, "verdict": "VIABLE — but slightly below anchor and market lower bound"},
+          "280": {"net_20pct": 179, "hourly_equiv": 239, "verdict": "VIABLE — reasonable"},
+          "300": {"net_20pct": 195, "hourly_equiv": 260, "verdict": "RECOMMENDED — market anchor, strong convergence, excellent economics"},
+          "320": {"net_20pct": 211, "hourly_equiv": 281, "verdict": "GOOD — justified for premium positioning"},
+          "350": {"net_20pct": 235, "hourly_equiv": 313, "verdict": "PREMIUM — upper range, low market resistance risk given all 3 sources"}
+        }
+      },
+      "scope_contract": {
+        "included": ["Injection-extraction", "Détachage standard", "Désodorisation", "Désinfection", "Séchage rapide", "Déplacement inclus", "Produits bio/professionnels fournis"],
+        "excluded": ["Taches incrustées sévères (surcharge possible sur accord préalable)", "Cuir (tarif ajusté)", "Velours/daim/alcantara (tarif ajusté)", "Réparation structurelle", "Biohazard/infestation", "Tissu gravement dégradé"]
+      },
+      "seat_count_architecture": {
+        "verdict": "SEAT COUNT is the correct pricing unit — validated by all 3 sources. 2/3/5+ seats are distinct market-recognized categories.",
+        "alternative_per_m2": "Not used by Moroccan market for sofas — rejected"
+      },
+      "preferred_candidate_for_human_review": 300,
+      "city_adjustment": null,
+      "human_decision": "PENDING",
+      "production_ready": false
+    },
+
+    "NET-011": {
+      "label_fr": "Nettoyage canapé 3 places",
+      "category": "TEXTILE_UPHOLSTERY",
+      "pricing_architecture": "FIXED",
+      "pricing_unit": "PER_ITEM",
+      "market_range_mad": "350–550",
+      "research_anchor_mad": 450,
+      "candidate_prices_mad": [400, 420, 450, 480, 500],
+      "source_convergence": "2 sources converge: O2 Maroc = 450, Hany = 350–550 (midpoint 450). HIGH confidence.",
+      "economic_analysis": {
+        "assumptions": {"duration_minutes": 60, "consumables_mad": 25, "travel_included": true},
+        "by_candidate": {
+          "400": {"net_20pct": 270, "hourly_equiv": 270, "verdict": "VIABLE — below anchor"},
+          "420": {"net_20pct": 286, "hourly_equiv": 286, "verdict": "VIABLE"},
+          "450": {"net_20pct": 310, "hourly_equiv": 310, "verdict": "RECOMMENDED — anchor with strong convergence"},
+          "480": {"net_20pct": 334, "hourly_equiv": 334, "verdict": "GOOD"},
+          "500": {"net_20pct": 350, "hourly_equiv": 350, "verdict": "PREMIUM — upper range limit"}
+        }
+      },
+      "scope_contract": {
+        "included": ["Injection-extraction", "Détachage standard", "Désodorisation", "Désinfection", "Déplacement inclus", "Produits fournis"],
+        "excluded": ["Taches sévères incrustées", "Cuir, velours, daim", "Biohazard"]
+      },
+      "preferred_candidate_for_human_review": 450,
+      "city_adjustment": null,
+      "human_decision": "PENDING",
+      "production_ready": false
+    },
+
+    "NET-013": {
+      "label_fr": "Nettoyage matelas simple (1 place)",
+      "category": "TEXTILE_UPHOLSTERY",
+      "pricing_architecture": "FIXED",
+      "pricing_unit": "PER_MATTRESS_BOTH_FACES",
+      "face_semantics": {
+        "market_finding": "O2 Maroc prices per-face (200 MAD/face, 400 MAD both). Hany.ma prices per mattress (200–300 MAD for single). Doulle from 150 MAD.",
+        "consumer_facing_recommendation": "Price as FULL MATTRESS CLEANING (both faces) for simplicity and client clarity. Internal economics: 2 × face rate.",
+        "rationale": "Consumers think of 'cleaning the mattress', not 'cleaning one side'. Per-face pricing creates confusion about what was actually done.",
+        "fixeo_unit": "PER_MATTRESS (both faces cleaned as standard)",
+        "if_one_face_requested": "DEFERRED — complexity creates booking ambiguity. If needed, apply 60% of full price."
+      },
+      "market_range_mad": "150–300 (per face) / 200–400 (full mattress)",
+      "research_anchor_mad": 200,
+      "candidate_prices_mad_full_mattress": [180, 200, 220, 250],
+      "economic_analysis": {
+        "assumptions": {"duration_minutes": 40, "consumables_mad": 15, "travel_included": true, "both_faces": true},
+        "by_candidate": {
+          "180": {"net_20pct": 104, "hourly_equiv": 156, "verdict": "MARGINAL — 104 MAD net / 40min = acceptable but limited room for error"},
+          "200": {"net_20pct": 120, "hourly_equiv": 180, "verdict": "RECOMMENDED — market anchor, 3 sources, strong economics per time"},
+          "220": {"net_20pct": 136, "hourly_equiv": 204, "verdict": "GOOD"},
+          "250": {"net_20pct": 160, "hourly_equiv": 240, "verdict": "PREMIUM — upper range, justified for premium positioning"}
+        }
+      },
+      "scope_contract": {
+        "included": ["Aspiration profonde acariens", "Injection-extraction ou vapeur selon tissu", "Désinfection", "Désodorisation", "Les 2 faces du matelas", "Déplacement inclus", "Produits fournis"],
+        "excluded": ["Taches biologiques sévères (surcharge)", "Matelas très dégradé (tissu déchiré)", "Biohazard"]
+      },
+      "preferred_candidate_for_human_review": 200,
+      "city_adjustment": null,
+      "human_decision": "PENDING",
+      "production_ready": false
+    },
+
+    "NET-014": {
+      "label_fr": "Nettoyage matelas double (2 places)",
+      "category": "TEXTILE_UPHOLSTERY",
+      "pricing_architecture": "FIXED",
+      "pricing_unit": "PER_MATTRESS_BOTH_FACES",
+      "face_semantics": "Same as NET-013 — both faces as standard consumer-facing unit",
+      "market_range_mad": "250–400 (full mattress)",
+      "research_anchor_mad": 280,
+      "candidate_prices_mad": [250, 280, 300, 320],
+      "source_convergence": "Hany.ma: 250–350. O2 Maroc: 400 MAD for 2 faces. Midpoint: 280–300. MEDIUM confidence (2 sources).",
+      "economic_analysis": {
+        "assumptions": {"duration_minutes": 50, "consumables_mad": 15, "travel_included": true},
+        "by_candidate": {
+          "250": {"net_20pct": 160, "hourly_equiv": 192, "verdict": "VIABLE"},
+          "280": {"net_20pct": 184, "hourly_equiv": 221, "verdict": "RECOMMENDED — market midpoint"},
+          "300": {"net_20pct": 200, "hourly_equiv": 240, "verdict": "GOOD"},
+          "320": {"net_20pct": 216, "hourly_equiv": 259, "verdict": "PREMIUM"}
+        }
+      },
+      "scope_contract": "Same as NET-013 — both faces",
+      "preferred_candidate_for_human_review": 280,
+      "city_adjustment": null,
+      "human_decision": "PENDING",
+      "production_ready": false
+    },
+
+    "NET-030": {
+      "label_fr": "Nettoyage après travaux (par m²)",
+      "category": "POST_CONSTRUCTION",
+      "pricing_architecture": "PER_M2_WITH_MINIMUM",
+      "pricing_unit": "PER_M2",
+      "minimum_project_architecture": "FINAL_PRICE = max(minimum_project_price, area_m2 × rate)",
+      "market_range_m2": "12–25 MAD/m²",
+      "research_anchor_m2": 15,
+      "candidate_rates_m2": [15, 18, 20, 22],
+      "minimum_project_candidates_mad": [800, 900, 1000, 1200],
+      "confidence": "LOW — 2 sources only. Human must validate against artisan field data.",
+      "economic_analysis": {
+        "assumptions": {
+          "workers": 2,
+          "duration_formula": "max(area/10, 3) hours per worker",
+          "travel_mad": 50,
+          "consumables_industrial_mad": 100,
+          "equipment_amortization_mad": 200,
+          "total_fixed_costs_per_job": 350
+        },
+        "scenarios": {
+          "40m2_rate15_min1000": {
+            "raw_price": 600, "final_price": 1000, "net_20pct": 450,
+            "total_ch": 8, "nph": 56.2, "verdict": "VIABLE — minimum floor kicks in"
+          },
+          "60m2_rate15_min1000": {
+            "raw_price": 900, "final_price": 1000, "net_20pct": 450,
+            "total_ch": 12, "nph": 37.5, "verdict": "MARGINAL at 15/m² — barely above 35 floor"
+          },
+          "60m2_rate20_min1000": {
+            "raw_price": 1200, "final_price": 1200, "net_20pct": 610,
+            "total_ch": 12, "nph": 50.8, "verdict": "VIABLE at 20/m²"
+          },
+          "80m2_rate15_min1000": {
+            "raw_price": 1200, "final_price": 1200, "net_20pct": 610,
+            "total_ch": 16, "nph": 38.1, "verdict": "MARGINAL"
+          },
+          "80m2_rate20_min1000": {
+            "raw_price": 1600, "final_price": 1600, "net_20pct": 930,
+            "total_ch": 16, "nph": 58.1, "verdict": "GOOD"
+          },
+          "100m2_rate18_min1000": {
+            "raw_price": 1800, "final_price": 1800, "net_20pct": 1090,
+            "total_ch": 20, "nph": 54.5, "verdict": "VIABLE"
+          }
+        },
+        "verdict_summary": "15 MAD/m² is too low for medium-size projects (60–80m²) at 20% commission. 18–20 MAD/m² is more defensible. Minimum project of 1000 MAD is critical to protect artisan economics on small jobs."
+      },
+      "preferred_candidates_for_human_review": {
+        "rate_per_m2": 18,
+        "minimum_project_mad": 1000,
+        "rationale": "18 MAD/m² achieves viable economics (40+ MAD/ch net) across most scenarios. 1000 MAD minimum protects artisans on small 40–60m² projects. Within evidence range of 12–25 MAD/m²."
+      },
+      "scope_contract": "See post_construction_scope_contract",
+      "worker_count_semantics": "2 workers standard. Price is total team price per m² — not per worker.",
+      "city_adjustment": null,
+      "urgency_modifier": null,
+      "night_modifier": null,
+      "weekend_modifier": null,
+      "holiday_modifier": null,
+      "human_decision": "PENDING",
+      "production_ready": false
+    }
+  },
+
+  "deferred_services": [
+    {
+      "code": "NET-003",
+      "label": "Journée complète",
+      "status": "DEFERRED",
+      "reason": "Addressed by NET-002 hourly (8h × 60 MAD = 480 MAD). Separate 'full-day' architecture adds complexity without clear client benefit. If needed, define as 8-cleaner-hour package. Human may reconsider."
+    },
+    {
+      "code": "NET-005",
+      "label": "Avant/après déménagement",
+      "status": "DEFERRED",
+      "reason": "LOW confidence. Market is devis-required. Extrapolated anchor insufficient. Needs field artisan data."
+    },
+    {
+      "code": "NET-012",
+      "label": "Canapé angle 5–6 places",
+      "status": "CALIBRATE_LATER",
+      "reason": "MEDIUM confidence. Anchor 700 MAD. Defer to Phase 7B.8.2 to keep pilot manageable."
+    },
+    {
+      "code": "NET-020",
+      "label": "Tapis petit",
+      "status": "CALIBRATE_LATER",
+      "reason": "LOW confidence (1 source). 180 MAD anchor. Defer."
+    },
+    {
+      "code": "NET-021",
+      "label": "Tapis grand m²",
+      "status": "CALIBRATE_LATER",
+      "reason": "MEDIUM confidence. 55 MAD/m². Defer to keep calibration focused."
+    },
+    {
+      "code": "NET-031",
+      "label": "Post-construction forfait",
+      "status": "MERGED_INTO_NET_030",
+      "reason": "NET-030 per-m² with minimum project handles this. Redundant as separate service code."
+    }
+  ],
+
+  "complexity_policy": {
+    "approved_levels": ["STANDARD", "HEAVY", "POST_CONSTRUCTION", "SPECIALIST"],
+    "NOT_approved": "Arbitrary artisan-controlled multipliers (1.2x, 1.5x) without pre-qualification",
+    "routing": {
+      "STANDARD": "Normal soiling — NET-001/002/004 apply",
+      "HEAVY": "Visible soiling beyond normal — artisan must declare before intervention, not after. Handled by scope escape rule or upfront quote.",
+      "POST_CONSTRUCTION": "Always NET-030 — never merged with standard cleaning",
+      "SPECIALIST": "Mold, biohazard, sewage, infestation → ROUTE_TO_SPECIALIST. Never within standard nettoyage artisan scope."
+    },
+    "objectivity_rule": "Heavy classification must be based on specific observable triggers stated before booking, not artisan discretion on-site.",
+    "human_decision": "PENDING",
+    "production_ready": false
+  },
+
+  "proposed_net_cleaner_hour_floor": {
+    "recommended_floor_mad_per_ch": 40,
+    "classification": "FIXEO_POLICY — not a Moroccan statistical fact",
+    "rationale": "40 MAD/ch net is achievable at 60 MAD/ch gross with 20% commission over 4+ cleaner-hours. Below 35 MAD/ch net, intervention economics are unviable for artisans supplying their own transport in Moroccan urban context.",
+    "floor_by_commission": {
+      "gross_rate_required_for_40_floor_20pct_commission_3h": "60.4 MAD/ch",
+      "gross_rate_required_for_40_floor_15pct_commission_3h": "56.9 MAD/ch"
+    },
+    "implication": "If FIXEO commission is 20%, minimum rate must be 60–65 MAD/ch to achieve 40 MAD/ch net floor over 3h minimum.",
+    "human_decision": "PENDING",
+    "production_ready": false
+  },
+
+  "client_prescreening_questions": {
+    "NET_001_002_standard_cleaning": [
+      "Type de bien (studio, F2, F3, F4+, villa)",
+      "Surface approximative (m²) ou nombre de pièces",
+      "Nombre de salles de bain",
+      "État général (entretenu régulièrement / pas nettoyé depuis >1 mois / très sale)",
+      "Produits ménagers disponibles chez vous ? (oui/non)",
+      "Aspirateur et serpillière disponibles ? (oui/non)",
+      "Durée souhaitée ou flexibilité ?",
+      "Nombre de personnes de ménage souhaité (si préférence) ?"
+    ],
+    "NET_004_deep_clean": [
+      "Type de bien et surface",
+      "Meublé ou vide ?",
+      "Niveau de graisse cuisine (normal / fort / très fort)",
+      "Nombre de fenêtres accessibles de l'intérieur",
+      "Logement inoccupé depuis longtemps ? (oui/non)",
+      "Résidus de travaux/chantier ? (si oui → NET-030 ou devis)"
+    ],
+    "NET_010_011_sofas": [
+      "Nombre de places (2 / 3 / 4+ / angle)",
+      "Type de tissu (tissu standard / microfibre / velours / cuir / daim — si connu)",
+      "Taches visibles ? (oui/non, nature si possible)",
+      "Animaux de compagnie ? (oui/non)"
+    ],
+    "NET_013_014_mattress": [
+      "Taille (simple 1 place / double 2 places)",
+      "Nettoyage des 2 faces ? (oui — standard / une face seulement)",
+      "Taches particulières ? (oui/non)",
+      "Usage bébé/allergie ? (oui — vapeur recommandée)"
+    ],
+    "NET_030_post_construction": [
+      "Surface totale à nettoyer (m²)",
+      "Type de travaux (peinture / carrelage / maçonnerie / rénovation complète)",
+      "Niveau de résidus (poussière légère / traces peinture / ciment — préciser)",
+      "Gravats/déchets présents ? (si oui → hors périmètre nettoyage)",
+      "Accès difficile ou hauteur > 2m ? (si oui → devis)",
+      "Logement meublé ou vide ?"
+    ]
+  },
+
+  "metier_boundary_policy": {
+    "vitrerie": "Remplacement ou réparation de vitre cassée → VITRERIE. Nettoyage des vitres intactes → NETTOYAGE.",
+    "peinture": "Repeindre un mur taché → PEINTURE. Nettoyer une tache superficielle → NETTOYAGE si standard scope.",
+    "plomberie": "Fuite, humidité structurelle, source d'eau → PLOMBERIE. Nettoyer la salle de bain → NETTOYAGE.",
+    "demenagement": "Transport de meubles → DEMENAGEMENT. Nettoyage du logement avant/après → NETTOYAGE.",
+    "jardinage": "Végétation, extérieur vert → JARDINAGE. Balcon/terrasse nettoyage → NETTOYAGE si standard.",
+    "maconnerie_carrelage": "Réparation structurelle → hors nettoyage.",
+    "specialist_mold": "Moisissures > surface superficielle → SPECIALIST. Nettoyage moisissure légère (< 0.1m²) surface uniquement → NETTOYAGE avec disclosure.",
+    "specialist_biohazard": "Sang, décomposition, contamination sévère → SPECIALIST. Aucune exception.",
+    "specialist_pest": "Infestation active → SPECIALIST PEST CONTROL avant nettoyage.",
+    "specialist_fire_smoke": "Dégâts incendie/fumée → SPECIALIST.",
+    "specialist_hazmat": "Tout déchet dangereux → EXCLU FIXEO.",
+    "human_decision": "PENDING",
+    "production_ready": false
+  }
+}

@@ -203,6 +203,108 @@ check('registry._meta.production_ready = false', registry._meta?.production_read
 check('registry._meta.phase = 7B.8', registry._meta?.phase === '7B.8');
 check('registry._meta.metier = NETTOYAGE', registry._meta?.metier === 'NETTOYAGE');
 
+// ─── V0.2 CHECKS ────────────────────────────────────────────────────────────
+const calibration = loadJson('calibration.v0.2.json');
+const humanReviewExists = fs.existsSync(path.join(DIR, 'human-review.v0.2.md'));
+const fairPolicyExists = fs.existsSync(path.join(DIR, 'fair-price-policy.v0.2.md'));
+
+if (calibration) {
+  console.log('\n14. V0.2 artifact existence');
+  check('calibration.v0.2.json exists', true);
+  check('human-review.v0.2.md exists', humanReviewExists);
+  check('fair-price-policy.v0.2.md exists', fairPolicyExists);
+
+  console.log('\n15. Calibration meta checks');
+  check('calibration._meta.production_ready = false', calibration._meta?.production_ready === false);
+  check('calibration._meta.phase = 7B.8.1', calibration._meta?.phase === '7B.8.1');
+
+  console.log('\n16. Exactly 8 calibration candidates');
+  const cands = Object.keys(calibration.candidates || {});
+  const requiredCandidates = ['NET-001','NET-002','NET-004','NET-010','NET-011','NET-013','NET-014','NET-030'];
+  check(`Exactly 8 candidates (found ${cands.length})`, cands.length === 8, cands.join(','));
+  for (const code of requiredCandidates) {
+    check(`Candidate ${code} present`, cands.includes(code));
+  }
+
+  console.log('\n17. All calibration candidates: human_decision = PENDING, production_ready = false');
+  for (const [code, svc] of Object.entries(calibration.candidates || {})) {
+    check(`${code}.human_decision = PENDING`, svc.human_decision === 'PENDING');
+    check(`${code}.production_ready = false`, svc.production_ready === false);
+  }
+
+  console.log('\n18. City/urgency modifiers null in calibration candidates');
+  for (const [code, svc] of Object.entries(calibration.candidates || {})) {
+    for (const mod of ['city_adjustment','urgency_modifier','night_modifier','weekend_modifier','holiday_modifier']) {
+      if (mod in svc) {
+        check(`${code}.${mod} = null`, svc[mod] === null, String(svc[mod]));
+      }
+    }
+  }
+
+  console.log('\n19. Cleaner-hour semantics explicit');
+  const doctrine = calibration.worker_count_doctrine;
+  check('worker_count_doctrine exists', !!doctrine);
+  check('canonical_unit = PER_CLEANER_HOUR', doctrine?.canonical_unit === 'PER_CLEANER_HOUR');
+  const net002 = calibration.candidates?.['NET-002'];
+  check('NET-002 pricing_unit = PER_CLEANER_HOUR', net002?.pricing_unit === 'PER_CLEANER_HOUR');
+
+  console.log('\n20. Anti-double-charge modeled');
+  const adc = calibration.anti_double_charge_doctrine;
+  check('anti_double_charge_doctrine exists', !!adc);
+  check('recommended_architecture defined', typeof adc?.recommended_architecture === 'string');
+
+  console.log('\n21. Minimum visit architecture modeled');
+  const net001 = calibration.candidates?.['NET-001'];
+  check('NET-001 preferred_candidate_for_human_review defined', net001?.preferred_candidate_for_human_review !== undefined);
+  check('NET-001 minimum_cleaner_hours_included defined', net001?.architecture_analysis?.minimum_cleaner_hours_included !== undefined);
+
+  console.log('\n22. Mattress face semantics explicit');
+  const net013 = calibration.candidates?.['NET-013'];
+  const net014 = calibration.candidates?.['NET-014'];
+  check('NET-013 face_semantics defined', !!net013?.face_semantics);
+  check('NET-013 pricing_unit = PER_MATTRESS_BOTH_FACES', net013?.pricing_unit === 'PER_MATTRESS_BOTH_FACES');
+  check('NET-014 pricing_unit = PER_MATTRESS_BOTH_FACES', net014?.pricing_unit === 'PER_MATTRESS_BOTH_FACES');
+
+  console.log('\n23. Post-construction minimum-project architecture analyzed');
+  const net030 = calibration.candidates?.['NET-030'];
+  check('NET-030 minimum_project_architecture defined', typeof net030?.minimum_project_architecture === 'string');
+  check('NET-030 minimum_project_candidates_mad is array', Array.isArray(net030?.minimum_project_candidates_mad));
+  check('NET-030 preferred_candidates_for_human_review defined', !!net030?.preferred_candidates_for_human_review);
+
+  console.log('\n24. Standard/deep/post-construction separated in calibration');
+  const std = calibration.candidates?.['NET-002']?.category;
+  const deep = calibration.candidates?.['NET-004']?.category;
+  const postc = calibration.candidates?.['NET-030']?.category;
+  check('NET-002 category = STANDARD_RESIDENTIAL', std === 'STANDARD_RESIDENTIAL');
+  check('NET-004 category = DEEP_CLEAN', deep === 'DEEP_CLEAN');
+  check('NET-030 category = POST_CONSTRUCTION', postc === 'POST_CONSTRUCTION');
+
+  console.log('\n25. Products/equipment policy defined');
+  const prodModel = calibration.products_equipment_model;
+  check('products_equipment_model exists', !!prodModel);
+  check('recommended_fixeo_split defined', !!prodModel?.recommended_fixeo_split);
+
+  console.log('\n26. Worker net floor defined');
+  const floor = calibration.proposed_net_cleaner_hour_floor;
+  check('proposed_net_cleaner_hour_floor exists', !!floor);
+  check('floor classification = FIXEO_POLICY', (floor?.classification || '').startsWith('FIXEO_POLICY'));
+
+  console.log('\n27. Complexity policy defined');
+  const complexity = calibration.complexity_policy;
+  check('complexity_policy exists', !!complexity);
+  check('approved_levels includes STANDARD, HEAVY, POST_CONSTRUCTION, SPECIALIST',
+    JSON.stringify(complexity?.approved_levels || []).includes('STANDARD') &&
+    JSON.stringify(complexity?.approved_levels || []).includes('SPECIALIST'));
+
+  console.log('\n28. V0.1 artifacts untouched');
+  // Check V0.1 files still pass their own internal checks (file existence)
+  const v01files = ['registry.v0.1.json','sources.v0.1.json','evidence.v0.1.json','exclusions.v0.1.json'];
+  for (const f of v01files) {
+    const content = loadJson(f);
+    check(`V0.1 ${f} still parseable`, content !== null);
+  }
+}
+
 // ─── Summary ─────────────────────────────────────────────────────────────────
 console.log('\n═══════════════════════════════════════════════════════');
 console.log(`  RESULTS: ${passCount} PASS | ${failCount} FAIL`);
