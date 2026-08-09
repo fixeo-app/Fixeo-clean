@@ -909,6 +909,44 @@
       "engine_v1_use": true,
       "added_in_phase": "7C.6",
       "note": "Added in 7C.6 — referenced in question planner as safety input for peinture services. Complements active_moisture (active ingress) with visible staining."
+    },
+    "cylinder_count": {
+      "input_id": "cylinder_count",
+      "data_type": "integer",
+      "unit": "units",
+      "allowed_values": null,
+      "min": 1,
+      "max": null,
+      "required_when": "serrurerie.cylindre_remplacement.standard",
+      "semantic_definition": "Number of lock cylinders to replace.",
+      "client_question_fr": "Combien de cylindres devez-vous remplacer ?",
+      "client_question_ar_darija": null,
+      "validation_behavior": "integer >= 1",
+      "safety_critical": false,
+      "privacy_classification": "NON_PERSONAL",
+      "category": "QUANTITY_MEASUREMENT",
+      "engine_v1_use": false,
+      "added_in_phase": "7C.7",
+      "note": "Used by orchestrator question planner only. Engine does not require it (LABOUR_FIXED price is flat regardless of count in V0.3)."
+    },
+    "lock_count": {
+      "input_id": "lock_count",
+      "data_type": "integer",
+      "unit": "units",
+      "allowed_values": null,
+      "min": 1,
+      "max": null,
+      "required_when": "serrurerie.serrure_remplacement.standard",
+      "semantic_definition": "Number of door locks to replace.",
+      "client_question_fr": "Combien de serrures devez-vous remplacer ?",
+      "client_question_ar_darija": null,
+      "validation_behavior": "integer >= 1",
+      "safety_critical": false,
+      "privacy_classification": "NON_PERSONAL",
+      "category": "QUANTITY_MEASUREMENT",
+      "engine_v1_use": false,
+      "added_in_phase": "7C.7",
+      "note": "Used by orchestrator question planner only. Engine does not require it in V0.3."
     }
   }
 }

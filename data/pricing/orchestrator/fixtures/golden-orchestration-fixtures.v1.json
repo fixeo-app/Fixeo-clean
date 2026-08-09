@@ -1,0 +1,519 @@
+{
+  "meta": {
+    "version": "1.0.0-dormant",
+    "phase": "7C.7",
+    "created": "2026-08-09",
+    "total_fixtures": 24,
+    "description": "Golden orchestration fixtures — validate FLOW + QUESTIONS + OUTCOME. Distinct from engine golden fixtures which validate price calculation only.",
+    "fixture_schema": {
+      "id": "unique fixture id",
+      "description": "what this tests",
+      "metier": "canonical metier",
+      "entry_context": "startEstimator input",
+      "known_inputs": "pre-known inputs (skip those questions)",
+      "question_answers": "ordered question answers if any remain",
+      "expected_state": "final session state",
+      "expected_outcome_type": "PRICE_READY | DIAGNOSTIC_READY | ...",
+      "expected_final_amount_mad": "null or number",
+      "expected_labour_amount_mad": "null or number",
+      "expected_next_action": "from VALID_NEXT_ACTIONS enum",
+      "expected_questions_asked": "count of questions required from zero knowledge",
+      "expected_ui_recommendation": "MODAL_OK | PAGE_RECOMMENDED | PAGE_REQUIRED"
+    }
+  },
+  "fixtures": [
+    {
+      "id": "GF-PLO-001",
+      "description": "Plomberie diagnostic — no questions needed, direct DIAGNOSTIC_READY",
+      "metier": "plomberie",
+      "entry_context": {
+        "service_hint": "plomberie.diagnostic"
+      },
+      "known_inputs": {},
+      "question_answers": [],
+      "expected_state": "DIAGNOSTIC_READY",
+      "expected_outcome_type": "DIAGNOSTIC_READY",
+      "expected_final_amount_mad": 180,
+      "expected_labour_amount_mad": null,
+      "expected_next_action": "BOOK_DIAGNOSTIC",
+      "expected_questions_asked": 0,
+      "expected_ui_recommendation": "MODAL_OK"
+    },
+    {
+      "id": "GF-PLO-002",
+      "description": "Plomberie debouchage_evier — no questions, direct PRICE_READY",
+      "metier": "plomberie",
+      "entry_context": {
+        "service_hint": "plomberie.debouchage_evier"
+      },
+      "known_inputs": {},
+      "question_answers": [],
+      "expected_state": "PRICE_READY",
+      "expected_outcome_type": "PRICE_READY",
+      "expected_final_amount_mad": 250,
+      "expected_labour_amount_mad": null,
+      "expected_next_action": "CONTINUE_TO_RESERVATION",
+      "expected_questions_asked": 0,
+      "expected_ui_recommendation": "MODAL_OK"
+    },
+    {
+      "id": "GF-PLO-003",
+      "description": "Plomberie robinet remplacement — labour+part, no standalone price",
+      "metier": "plomberie",
+      "entry_context": {
+        "service_hint": "plomberie.robinet_remplacement"
+      },
+      "known_inputs": {
+        "part_replacement_required": true
+      },
+      "question_answers": [],
+      "expected_state": "LABOUR_PLUS_PART_READY",
+      "expected_outcome_type": "LABOUR_PLUS_PART_READY",
+      "expected_final_amount_mad": null,
+      "expected_labour_amount_mad": 250,
+      "expected_next_action": "CONTINUE_TO_RESERVATION",
+      "expected_questions_asked": 0,
+      "expected_ui_recommendation": "MODAL_OK"
+    },
+    {
+      "id": "GF-ELE-001",
+      "description": "Electricite prise_remplacement — 1 safety question, PRICE_READY",
+      "metier": "electricite",
+      "entry_context": {
+        "service_hint": "electricite.prise_remplacement"
+      },
+      "known_inputs": {},
+      "question_answers": [
+        {
+          "input_id": "burning_smell",
+          "answer": false
+        }
+      ],
+      "expected_state": "PRICE_READY",
+      "expected_outcome_type": "PRICE_READY",
+      "expected_final_amount_mad": 220,
+      "expected_labour_amount_mad": null,
+      "expected_next_action": "CONTINUE_TO_RESERVATION",
+      "expected_questions_asked": 1,
+      "expected_ui_recommendation": "MODAL_OK"
+    },
+    {
+      "id": "GF-ELE-002",
+      "description": "Electricite disjoncteur — burning_smell=true → SAFETY_STOP (no price)",
+      "metier": "electricite",
+      "entry_context": {
+        "service_hint": "electricite.disjoncteur_remplacement"
+      },
+      "known_inputs": {},
+      "question_answers": [
+        {
+          "input_id": "burning_smell",
+          "answer": true
+        }
+      ],
+      "expected_state": "SAFETY_STOP",
+      "expected_outcome_type": "SAFETY_STOP",
+      "expected_final_amount_mad": null,
+      "expected_labour_amount_mad": null,
+      "expected_next_action": "STOP_FOR_SAFETY",
+      "expected_questions_asked": 1,
+      "expected_ui_recommendation": null
+    },
+    {
+      "id": "GF-ELE-003",
+      "description": "Electricite disjoncteur — distributor=true → ROUTE_REQUIRED",
+      "metier": "electricite",
+      "entry_context": {
+        "service_hint": "electricite.disjoncteur_remplacement"
+      },
+      "known_inputs": {
+        "burning_smell": false,
+        "scorch_marks": false
+      },
+      "question_answers": [
+        {
+          "input_id": "distributor_equipment_involved",
+          "answer": true
+        }
+      ],
+      "expected_state": "ROUTE_REQUIRED",
+      "expected_outcome_type": "ROUTE_REQUIRED",
+      "expected_final_amount_mad": null,
+      "expected_labour_amount_mad": null,
+      "expected_next_action": "CHANGE_SERVICE",
+      "expected_questions_asked": 1,
+      "expected_ui_recommendation": null
+    },
+    {
+      "id": "GF-SERR-001",
+      "description": "Serrurerie porte claquee standard — security_door=false, PRICE_READY",
+      "metier": "serrurerie",
+      "entry_context": {
+        "service_hint": "serrurerie.porte_claquee_ouverture"
+      },
+      "known_inputs": {
+        "security_door": false
+      },
+      "question_answers": [],
+      "expected_state": "PRICE_READY",
+      "expected_outcome_type": "PRICE_READY",
+      "expected_final_amount_mad": 220,
+      "expected_labour_amount_mad": null,
+      "expected_next_action": "CONTINUE_TO_RESERVATION",
+      "expected_questions_asked": 0,
+      "expected_ui_recommendation": "MODAL_OK"
+    },
+    {
+      "id": "GF-SERR-002",
+      "description": "Serrurerie cylindre remplacement — labour+part",
+      "metier": "serrurerie",
+      "entry_context": {
+        "service_hint": "serrurerie.cylindre_remplacement.standard"
+      },
+      "known_inputs": {},
+      "question_answers": [
+        {
+          "input_id": "security_door",
+          "answer": false
+        },
+        {
+          "input_id": "cylinder_count",
+          "answer": 1
+        }
+      ],
+      "expected_state": "LABOUR_PLUS_PART_READY",
+      "expected_outcome_type": "LABOUR_PLUS_PART_READY",
+      "expected_final_amount_mad": null,
+      "expected_labour_amount_mad": 280,
+      "expected_next_action": "CONTINUE_TO_RESERVATION",
+      "expected_questions_asked": 2,
+      "expected_ui_recommendation": "MODAL_OK"
+    },
+    {
+      "id": "GF-SERR-003",
+      "description": "Serrurerie cle cassee extraction — no damage, PRICE_READY",
+      "metier": "serrurerie",
+      "entry_context": {
+        "service_hint": "serrurerie.cle_cassee_extraction"
+      },
+      "known_inputs": {
+        "security_door": false,
+        "barrel_previously_damaged": false
+      },
+      "question_answers": [],
+      "expected_state": "PRICE_READY",
+      "expected_outcome_type": "PRICE_READY",
+      "expected_final_amount_mad": 220,
+      "expected_labour_amount_mad": null,
+      "expected_next_action": "CONTINUE_TO_RESERVATION",
+      "expected_questions_asked": 0,
+      "expected_ui_recommendation": "MODAL_OK"
+    },
+    {
+      "id": "GF-CLIM-001",
+      "description": "Climatisation diagnostic — 0 questions, DIAGNOSTIC_READY",
+      "metier": "climatisation",
+      "entry_context": {
+        "service_hint": "climatisation.diagnostic"
+      },
+      "known_inputs": {},
+      "question_answers": [],
+      "expected_state": "DIAGNOSTIC_READY",
+      "expected_outcome_type": "DIAGNOSTIC_READY",
+      "expected_final_amount_mad": 250,
+      "expected_labour_amount_mad": null,
+      "expected_next_action": "BOOK_DIAGNOSTIC",
+      "expected_questions_asked": 0,
+      "expected_ui_recommendation": "MODAL_OK"
+    },
+    {
+      "id": "GF-CLIM-002",
+      "description": "Climatisation installation standard — all known, PRICE_READY",
+      "metier": "climatisation",
+      "entry_context": {
+        "service_hint": "climatisation.installation.standard"
+      },
+      "known_inputs": {
+        "multi_split": false,
+        "cassette_or_ducted": false,
+        "ac_capacity_btu": 12000,
+        "installation_height_m": 2.5,
+        "facade_inaccessible": false
+      },
+      "question_answers": [],
+      "expected_state": "PRICE_READY",
+      "expected_outcome_type": "PRICE_READY",
+      "expected_final_amount_mad": 1000,
+      "expected_labour_amount_mad": null,
+      "expected_next_action": "CONTINUE_TO_RESERVATION",
+      "expected_questions_asked": 0,
+      "expected_ui_recommendation": "MODAL_OK"
+    },
+    {
+      "id": "GF-CLIM-003",
+      "description": "Climatisation installation — multi_split=true → ROUTE_REQUIRED",
+      "metier": "climatisation",
+      "entry_context": {
+        "service_hint": "climatisation.installation.standard"
+      },
+      "known_inputs": {},
+      "question_answers": [
+        {
+          "input_id": "multi_split",
+          "answer": true
+        }
+      ],
+      "expected_state": "ROUTE_REQUIRED",
+      "expected_outcome_type": "ROUTE_REQUIRED",
+      "expected_final_amount_mad": null,
+      "expected_labour_amount_mad": null,
+      "expected_next_action": "CHANGE_SERVICE",
+      "expected_questions_asked": 1,
+      "expected_ui_recommendation": null
+    },
+    {
+      "id": "GF-BRIC-001",
+      "description": "Bricolage visite minimum — 0 questions, PRICE_READY=200",
+      "metier": "bricolage",
+      "entry_context": {
+        "service_hint": "bricolage.visite_minimum"
+      },
+      "known_inputs": {},
+      "question_answers": [],
+      "expected_state": "PRICE_READY",
+      "expected_outcome_type": "PRICE_READY",
+      "expected_final_amount_mad": 200,
+      "expected_labour_amount_mad": null,
+      "expected_next_action": "CONTINUE_TO_RESERVATION",
+      "expected_questions_asked": 0,
+      "expected_ui_recommendation": "MODAL_OK"
+    },
+    {
+      "id": "GF-BRIC-002",
+      "description": "Bricolage horaire 3h — PRICE_READY=450",
+      "metier": "bricolage",
+      "entry_context": {
+        "service_hint": "bricolage.horaire"
+      },
+      "known_inputs": {
+        "hours": 3
+      },
+      "question_answers": [],
+      "expected_state": "PRICE_READY",
+      "expected_outcome_type": "PRICE_READY",
+      "expected_final_amount_mad": 450,
+      "expected_labour_amount_mad": null,
+      "expected_next_action": "CONTINUE_TO_RESERVATION",
+      "expected_questions_asked": 0,
+      "expected_ui_recommendation": "MODAL_OK"
+    },
+    {
+      "id": "GF-BRIC-003",
+      "description": "Bricolage montage_meuble ×2 — PRICE_READY=400",
+      "metier": "bricolage",
+      "entry_context": {
+        "service_hint": "bricolage.montage_meuble"
+      },
+      "known_inputs": {
+        "item_count": 2
+      },
+      "question_answers": [],
+      "expected_state": "PRICE_READY",
+      "expected_outcome_type": "PRICE_READY",
+      "expected_final_amount_mad": 400,
+      "expected_labour_amount_mad": null,
+      "expected_next_action": "CONTINUE_TO_RESERVATION",
+      "expected_questions_asked": 0,
+      "expected_ui_recommendation": "MODAL_OK"
+    },
+    {
+      "id": "GF-NET-001",
+      "description": "Nettoyage 1 worker × 2h — PRICE_READY=200 (floor applies)",
+      "metier": "nettoyage",
+      "entry_context": {
+        "service_hint": "nettoyage.menage_standard"
+      },
+      "known_inputs": {
+        "worker_count": 1,
+        "hours": 2
+      },
+      "question_answers": [],
+      "expected_state": "PRICE_READY",
+      "expected_outcome_type": "PRICE_READY",
+      "expected_final_amount_mad": 200,
+      "expected_labour_amount_mad": null,
+      "expected_next_action": "CONTINUE_TO_RESERVATION",
+      "expected_questions_asked": 0,
+      "expected_ui_recommendation": "MODAL_OK"
+    },
+    {
+      "id": "GF-NET-002",
+      "description": "Nettoyage 2 workers × 3h — PRICE_READY=390",
+      "metier": "nettoyage",
+      "entry_context": {
+        "service_hint": "nettoyage.menage_standard"
+      },
+      "known_inputs": {
+        "worker_count": 2,
+        "hours": 3
+      },
+      "question_answers": [],
+      "expected_state": "PRICE_READY",
+      "expected_outcome_type": "PRICE_READY",
+      "expected_final_amount_mad": 390,
+      "expected_labour_amount_mad": null,
+      "expected_next_action": "CONTINUE_TO_RESERVATION",
+      "expected_questions_asked": 0,
+      "expected_ui_recommendation": "MODAL_OK"
+    },
+    {
+      "id": "GF-NET-003",
+      "description": "Nettoyage grand_menage VILLA — QUOTE_REQUIRED",
+      "metier": "nettoyage",
+      "entry_context": {
+        "service_hint": "nettoyage.grand_menage"
+      },
+      "known_inputs": {
+        "property_type": "VILLA"
+      },
+      "question_answers": [],
+      "expected_state": "QUOTE_REQUIRED",
+      "expected_outcome_type": "QUOTE_REQUIRED",
+      "expected_final_amount_mad": null,
+      "expected_labour_amount_mad": null,
+      "expected_next_action": "REQUEST_QUOTE",
+      "expected_questions_asked": 0,
+      "expected_ui_recommendation": "MODAL_OK"
+    },
+    {
+      "id": "GF-PEIN-001",
+      "description": "Peinture mur interieur all_in 15m² — PRICE_READY=975",
+      "metier": "peinture",
+      "entry_context": {
+        "service_hint": "peinture.mur_interieur.all_in"
+      },
+      "known_inputs": {
+        "active_moisture": false,
+        "surface_condition": "GOOD",
+        "painted_m2": 15
+      },
+      "question_answers": [],
+      "expected_state": "PRICE_READY",
+      "expected_outcome_type": "PRICE_READY",
+      "expected_final_amount_mad": 975,
+      "expected_labour_amount_mad": null,
+      "expected_next_action": "CONTINUE_TO_RESERVATION",
+      "expected_questions_asked": 0,
+      "expected_ui_recommendation": "MODAL_OK"
+    },
+    {
+      "id": "GF-PEIN-002",
+      "description": "Peinture active_moisture=true — SAFETY_STOP",
+      "metier": "peinture",
+      "entry_context": {
+        "service_hint": "peinture.mur_interieur.all_in"
+      },
+      "known_inputs": {},
+      "question_answers": [
+        {
+          "input_id": "active_moisture",
+          "answer": true
+        }
+      ],
+      "expected_state": "SAFETY_STOP",
+      "expected_outcome_type": "SAFETY_STOP",
+      "expected_final_amount_mad": null,
+      "expected_labour_amount_mad": null,
+      "expected_next_action": "STOP_FOR_SAFETY",
+      "expected_questions_asked": 1,
+      "expected_ui_recommendation": null
+    },
+    {
+      "id": "GF-PEIN-003",
+      "description": "Peinture preparation_surface add-on — ADD_ON_READY=250",
+      "metier": "peinture",
+      "entry_context": {
+        "service_hint": "peinture.preparation_surface"
+      },
+      "known_inputs": {
+        "active_moisture": false,
+        "primary_service_code": "peinture.mur_interieur.all_in",
+        "painted_m2": 10
+      },
+      "question_answers": [],
+      "expected_state": "ADD_ON_READY",
+      "expected_outcome_type": "ADD_ON_READY",
+      "expected_final_amount_mad": 250,
+      "expected_labour_amount_mad": null,
+      "expected_next_action": "CONTINUE_TO_RESERVATION",
+      "expected_questions_asked": 0,
+      "expected_ui_recommendation": "MODAL_OK"
+    },
+    {
+      "id": "GF-MENU-001",
+      "description": "Menuiserie remplacement_charniere hinge=1 — LABOUR_PLUS_PART_READY=300",
+      "metier": "menuiserie",
+      "entry_context": {
+        "service_hint": "menuiserie.remplacement_charniere"
+      },
+      "known_inputs": {
+        "security_door": false,
+        "hinge_count": 1
+      },
+      "question_answers": [],
+      "expected_state": "LABOUR_PLUS_PART_READY",
+      "expected_outcome_type": "LABOUR_PLUS_PART_READY",
+      "expected_final_amount_mad": null,
+      "expected_labour_amount_mad": 300,
+      "expected_next_action": "CONTINUE_TO_RESERVATION",
+      "expected_questions_asked": 0,
+      "expected_ui_recommendation": "MODAL_OK"
+    },
+    {
+      "id": "GF-MENU-002",
+      "description": "Menuiserie remplacement_charniere hinge=3 — QUOTE_REQUIRED (batch dormant)",
+      "metier": "menuiserie",
+      "entry_context": {
+        "service_hint": "menuiserie.remplacement_charniere"
+      },
+      "known_inputs": {
+        "security_door": false
+      },
+      "question_answers": [
+        {
+          "input_id": "hinge_count",
+          "answer": 3
+        }
+      ],
+      "expected_state": "QUOTE_REQUIRED",
+      "expected_outcome_type": "QUOTE_REQUIRED",
+      "expected_final_amount_mad": null,
+      "expected_labour_amount_mad": null,
+      "expected_next_action": "REQUEST_QUOTE",
+      "expected_questions_asked": 1,
+      "expected_ui_recommendation": null
+    },
+    {
+      "id": "GF-MENU-003",
+      "description": "Menuiserie installation_porte standard — PRICE_READY=500",
+      "metier": "menuiserie",
+      "entry_context": {
+        "service_hint": "menuiserie.installation_porte"
+      },
+      "known_inputs": {
+        "security_door": false,
+        "masonry_modification_required": false,
+        "door_width_cm": 83,
+        "frame_condition": "SOUND"
+      },
+      "question_answers": [],
+      "expected_state": "PRICE_READY",
+      "expected_outcome_type": "PRICE_READY",
+      "expected_final_amount_mad": 500,
+      "expected_labour_amount_mad": null,
+      "expected_next_action": "CONTINUE_TO_RESERVATION",
+      "expected_questions_asked": 0,
+      "expected_ui_recommendation": "MODAL_OK"
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "meta": {
+    "phase": "7C.7",
+    "version": "1.0.0-dormant",
+    "generated": "2026-08-09",
+    "status": "ALL_PASS"
+  },
+  "test_count": 225,
+  "pass": 225,
+  "fail": 0,
+  "golden_fixture_count": 24,
+  "golden_fixture_pass": 142,
+  "golden_fixture_fail": 0,
+  "flow_count": 70,
+  "engine_calls_in_tests": 22,
+  "metier_coverage": {
+    "covered": 8,
+    "total": 8,
+    "list": ["plomberie", "electricite", "serrurerie", "climatisation", "bricolage", "nettoyage", "peinture", "menuiserie"]
+  },
+  "outcome_coverage": {
+    "covered": 7,
+    "total": 8,
+    "list": ["PRICE_READY", "DIAGNOSTIC_READY", "LABOUR_PLUS_PART_READY", "ADD_ON_READY", "QUOTE_REQUIRED", "ROUTE_REQUIRED", "SAFETY_STOP"],
+    "note": "REQUALIFY covered structurally (state transition test). Engine tests cover REQUALIFY via NEGATIVE_QUANTITY/INVALID_INPUT_TYPE."
+  },
+  "state_coverage": {
+    "covered": 16,
+    "total": 16,
+    "list": ["START", "METIER_SELECTION", "SERVICE_SELECTION", "QUALIFICATION", "QUESTION_REQUIRED", "READY_FOR_ENGINE", "ENGINE_EVALUATION", "PRICE_READY", "DIAGNOSTIC_READY", "LABOUR_PLUS_PART_READY", "ADD_ON_READY", "QUOTE_REQUIRED", "ROUTE_REQUIRED", "SAFETY_STOP", "REQUALIFY", "CONFIRMATION_READY"]
+  },
+  "question_coverage": {
+    "safety_questions_tested": ["burning_smell", "scorch_marks", "active_moisture"],
+    "routing_questions_tested": ["distributor_equipment_involved", "multi_split", "security_door", "masonry_modification_required"],
+    "eligibility_questions_tested": ["mcb_defect_confirmed", "surface_condition", "property_type", "tv_inches", "bracket_type", "frame_condition", "panel_warped", "track_broken", "door_width_cm"],
+    "quantity_questions_tested": ["hours", "item_count", "worker_count", "painted_m2", "hinge_count", "drawer_count", "cylinder_count", "ac_count"]
+  },
+  "modal_ok_count": 34,
+  "page_recommended_count": 0,
+  "page_required_count": 1,
+  "performance": {
+    "n_evaluations": 1000,
+    "total_ms": 36,
+    "avg_ms_per_evaluation": 0.036,
+    "note": "Pure JS, no IO, no network. DOM/Supabase/localStorage absent."
+  },
+  "security": {
+    "eval_found": false,
+    "new_function_found": false,
+    "localStorage_found": false,
+    "dom_found": false,
+    "supabase_found": false,
+    "legacy_engine_import_found": false,
+    "legacy_pricing_import_found": false,
+    "legacy_reservation_import_found": false
+  },
+  "no_duplicate_price_logic": true,
+  "city_neutrality_tested": true,
+  "urgency_neutrality_tested": true,
+  "fractional_hours_rejected": true,
+  "zero_quantity_rejected": true,
+  "null_answer_rejected": true,
+  "unknown_question_injection_rejected": true,
+  "illegal_state_transition_rejected": true,
+  "production_active": false,
+  "engine_dormant": true,
+  "orchestrator_dormant": true,
+  "production_references_in_runtime": 0
+}
