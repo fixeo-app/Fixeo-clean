@@ -1,0 +1,416 @@
+{
+  "_meta": {
+    "phase": "7B.8.2",
+    "metier": "NETTOYAGE",
+    "version": "0.3",
+    "status": "HUMAN PRICE DECISION FREEZE — CANONICAL",
+    "created": "2026-08-09",
+    "production_ready": false,
+    "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+    "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
+    "market_scope": "NATIONAL_MOROCCO",
+    "note": "V0.1 and V0.2 artifacts are immutable. This file contains the frozen human-approved calibration only."
+  },
+
+  "approved_prices": {
+    "NET-001": {"approved_mad": 200, "unit": "FORFAIT_MINIMUM"},
+    "NET-002": {"approved_mad_per_cleaner_hour": 65, "unit": "PER_CLEANER_HOUR"},
+    "NET-004": {"approved_mad": 600, "unit": "PER_INTERVENTION", "reference": "F2/F3 60–100m²"},
+    "NET-010": {"approved_mad": 300, "unit": "PER_SOFA_2_SEAT"},
+    "NET-011": {"approved_mad": 450, "unit": "PER_SOFA_3_SEAT"},
+    "NET-013": {"approved_mad": 250, "unit": "PER_MATTRESS_BOTH_FACES"},
+    "NET-014": {"approved_mad": 300, "unit": "PER_MATTRESS_BOTH_FACES"},
+    "NET-030": {"approved_mad_per_m2": 18, "approved_minimum_mad": 1000, "unit": "PER_M2_WITH_MINIMUM"}
+  },
+
+  "v0_2_to_v0_3_delta": {
+    "NET-001": {"v0_2_recommended": 200, "v0_3_approved": 200, "changed": false},
+    "NET-002": {"v0_2_recommended": 60, "v0_3_approved": 65, "changed": true, "human_note": "Raised to 65 MAD/ch for better F2/F3 market alignment and stronger artisan economics"},
+    "NET-004": {"v0_2_recommended": 600, "v0_3_approved": 600, "changed": false},
+    "NET-010": {"v0_2_recommended": 300, "v0_3_approved": 300, "changed": false},
+    "NET-011": {"v0_2_recommended": 450, "v0_3_approved": 450, "changed": false},
+    "NET-013": {"v0_2_recommended": 200, "v0_3_approved": 250, "changed": true, "human_note": "Raised to 250 MAD to fully reflect both-faces scope and stronger market positioning"},
+    "NET-014": {"v0_2_recommended": 280, "v0_3_approved": 300, "changed": true, "human_note": "Raised to 300 MAD — consistent with both-faces scope and cleaner market positioning"},
+    "NET-030": {"v0_2_recommended_rate": 18, "v0_3_approved_rate": 18, "changed": false, "v0_2_recommended_min": 1000, "v0_3_approved_min": 1000}
+  },
+
+  "doctrines": {
+
+    "worker_count": {
+      "canonical_unit": "PER_CLEANER_HOUR",
+      "definition": "1 individual cleaner working 1 hour = 1 cleaner-hour. Two cleaners working 3 hours = 6 cleaner-hours.",
+      "formula_total_ch": "TOTAL_CLEANER_HOURS = number_of_cleaners × hours_per_cleaner",
+      "formula_price": "CALCULATED_PRICE = TOTAL_CLEANER_HOURS × 65",
+      "formula_final": "FINAL_PRICE = max(200, CALCULATED_PRICE)",
+      "disclosure_requirement": "Future estimator UI must display: number of cleaners, estimated duration, total cleaner-hours, calculated price, minimum-floor note if applicable.",
+      "ambiguous_wording_forbidden": "65 MAD/heure without per-cleaner qualifier is FORBIDDEN in any FIXEO surface."
+    },
+
+    "anti_double_charge": {
+      "rule": "NET-001 minimum visit is a FLOOR, never an additive fee",
+      "formula": "FINAL_STANDARD_CLEANING_PRICE = max(200, 65 × total_cleaner_hours)",
+      "canonical_examples": [
+        {"total_ch": 3, "calculated": 195, "final": 200, "minimum_applies": true},
+        {"total_ch": 4, "calculated": 260, "final": 260, "minimum_applies": false},
+        {"total_ch": 6, "calculated": 390, "final": 390, "minimum_applies": false},
+        {"total_ch": 8, "calculated": 520, "final": 520, "minimum_applies": false}
+      ],
+      "multi_cleaner_examples": [
+        {"cleaners": 2, "hours": 3, "total_ch": 6, "calculated": 390, "final": 390},
+        {"cleaners": 2, "hours": 4, "total_ch": 8, "calculated": 520, "final": 520}
+      ],
+      "explicitly_forbidden": "200 MAD + (65 × cleaner-hours) — NEVER additive"
+    },
+
+    "products_equipment": {
+      "MODEL_A": {
+        "label": "Standard Residential Cleaning",
+        "applies_to": ["NET-001", "NET-002"],
+        "products": "CLIENT_SUPPLIED",
+        "equipment": "CLIENT_SUPPLIED",
+        "travel": "INCLUDED",
+        "disclosure": "Must be disclosed to client before booking — cleaner arrives without products or equipment."
+      },
+      "MODEL_C": {
+        "label": "Professional / Specialist Cleaning",
+        "applies_to": ["NET-004", "NET-010", "NET-011", "NET-013", "NET-014", "NET-030"],
+        "products": "ARTISAN_SUPPLIED_INCLUDED",
+        "equipment": "ARTISAN_SUPPLIED_INCLUDED",
+        "travel": "INCLUDED",
+        "note": "Professional products and specialist equipment included in price. No separate billing for consumables or equipment."
+      }
+    },
+
+    "mattress_face_semantics": {
+      "canonical_unit": "PER_MATTRESS_BOTH_FACES",
+      "consumer_facing_rule": "FIXEO canonical price = one mattress cleaned on both faces. Per-face pricing is NOT exposed to the client.",
+      "source_ambiguity_note": "V0.1/V0.2 evidence documented that sources used differing per-face vs per-mattress conventions. The human decision freeze resolves this: NET-013 = 250 MAD (both faces), NET-014 = 300 MAD (both faces). Historical evidence is preserved as-is in v0.1.json.",
+      "historical_integrity": "Do not rewrite V0.1 evidence sources to pretend they all used the same convention."
+    },
+
+    "complexity_policy": {
+      "levels": {
+        "STANDARD": "Normal residential soiling — standard price applies",
+        "HEAVY": "Materially abnormal soiling declared at booking — requires pre-agreed scope and price",
+        "POST_CONSTRUCTION": "Construction residue — NET-030 scope and pricing",
+        "SPECIALIST": "Mold (structural), biohazard, sewage, infestation, fire/smoke — ROUTE_TO_SPECIALIST"
+      },
+      "on_site_discovery_protocol": [
+        "1. STOP work at standard scope",
+        "2. IDENTIFY the objective condition with specificity",
+        "3. EXPLAIN the condition to the client",
+        "4. DECLARE it is outside the standardized FIXEO price",
+        "5. STATE revised scope and/or quote requirement",
+        "6. OBTAIN explicit client approval",
+        "7. CONTINUE only after client approval"
+      ],
+      "forbidden": "Artisan-controlled multipliers (1.2×, 1.5×, 2×, etc.) without separately researched, calibrated, and human-approved rates.",
+      "no_silent_price_increase": "No standardized price may silently increase at point of delivery."
+    },
+
+    "geographic_policy": {
+      "market_scope": "NATIONAL_MOROCCO",
+      "city_adjustment": null,
+      "city_evidence_status": "Casablanca-specific evidence exists in sources.v0.1.json and evidence.v0.1.json as evidence only — it does NOT produce city multipliers.",
+      "approved_city_multipliers": "NONE"
+    },
+
+    "modifier_policy": {
+      "urgency_modifier": null,
+      "night_modifier": null,
+      "weekend_modifier": null,
+      "holiday_modifier": null,
+      "express_modifier": null,
+      "recurring_modifier": null,
+      "status": "ALL NULL — none approved in this phase"
+    },
+
+    "worker_economic_floor": {
+      "target_net_cleaner_hour_floor_mad": 40,
+      "classification": "FIXEO_POLICY — not a Moroccan legal minimum wage, not a statistically established market floor",
+      "rationale": "40 MAD/ch net reflects the minimum economically viable rate for a Moroccan urban cleaner covering their own transport. Below 35 MAD/ch net, intervention economics are unviable.",
+      "floor_verification_at_approved_rate": {
+        "rate": 65,
+        "commission": 0.20,
+        "travel_mad": 25,
+        "at_3ch": {"gross": 195, "after_commission": 156, "net_after_travel": 131, "net_per_ch": 43.7, "floor_pass": true},
+        "at_4ch": {"gross": 260, "after_commission": 208, "net_after_travel": 183, "net_per_ch": 45.8, "floor_pass": true},
+        "at_6ch": {"gross": 390, "after_commission": 312, "net_after_travel": 287, "net_per_ch": 47.8, "floor_pass": true},
+        "note": "At 65 MAD/ch × 3h = 195 MAD, minimum floor of 200 applies. Net at minimum: (200 × 0.80) - 25 = 135 MAD / 3ch = 45 MAD/ch — above floor."
+      }
+    }
+  },
+
+  "scope_contracts": {
+
+    "standard_cleaning_scope": {
+      "label": "Contrat nettoyage standard FIXEO — NET-001 / NET-002",
+      "included": [
+        "Dépoussiérage des surfaces accessibles (meubles, rebords, prises, interrupteurs)",
+        "Aspiration des sols (tapis, moquette, carrelage, parquet)",
+        "Lavage/serpillière des sols durs",
+        "Nettoyage standard de la salle de bain: lavabo, douche/baignoire, WC, miroir",
+        "Nettoyage standard de la cuisine: surfaces plans de travail, extérieur appareils, extérieur micro-ondes",
+        "Façades extérieures des meubles",
+        "Vidage des poubelles",
+        "Nettoyage de la table et des chaises",
+        "Saleté résidentielle normale entretenue"
+      ],
+      "excluded": [
+        "Nettoyage de vitres standalone",
+        "Intérieur des placards et tiroirs",
+        "Intérieur du four",
+        "Intérieur du réfrigérateur",
+        "Dégraissage profond (hotte, four)",
+        "Lavage des murs",
+        "Nettoyage approfondi de terrasse",
+        "Détartrage fort (calcaire sévère)",
+        "Nettoyage canapé par extraction (NET-010/011)",
+        "Nettoyage tapis par extraction (NET-020/021)",
+        "Nettoyage matelas par extraction (NET-013/014)",
+        "Résidus de construction/chantier (NET-030)",
+        "Remédiation moisissures",
+        "Déversements biologiques / biohazard",
+        "Infestation",
+        "Désencombrement",
+        "Déchets dangereux"
+      ],
+      "scope_note": "Excluded specialist services must NEVER be silently absorbed into NET-001/002 billing."
+    },
+
+    "deep_clean_scope": {
+      "label": "Contrat grand nettoyage FIXEO — NET-004",
+      "reference_property": "F2/F3 (60–100m²)",
+      "included": [
+        "Tout le contrat standard +",
+        "Vitres intérieures accessibles (dans les limites contractuelles définies)",
+        "Extérieur des placards/armoires accessibles",
+        "Dégraissage cuisine approfondi (four intérieur, hotte, plans de travail)",
+        "Désinfection/détartrage salle de bain approfondie",
+        "Lavage des plinthes",
+        "Dépoussiérage approfondi (dessus placards, angles hauts)",
+        "Nettoyage portes et encadrements",
+        "Produits professionnels fournis par l'artisan",
+        "Équipement professionnel fourni par l'artisan"
+      ],
+      "excluded": [
+        "Vitres en hauteur (> 2m sans accès direct)",
+        "Nettoyage tapis/canapé/matelas par injection-extraction",
+        "Résidus de construction/chantier",
+        "Moisissures structurelles",
+        "Débarras/désencombrement",
+        "Façade extérieure",
+        "Villas (devis requis)"
+      ],
+      "operating_model": "Typically 2 cleaners. Professional deep-clean scope. Products and specialist equipment artisan-supplied."
+    },
+
+    "sofa_cleaning_scope": {
+      "label": "Contrat nettoyage canapé FIXEO — NET-010 / NET-011",
+      "included": [
+        "Injection-extraction ou procédé professionnel de nettoyage textile équivalent",
+        "Détachage standard",
+        "Désodorisation",
+        "Désinfection",
+        "Déplacement inclus",
+        "Produits et équipement professionnel fournis par l'artisan"
+      ],
+      "excluded": [
+        "Taches incrustées sévères (surcharge requiert accord préalable du client)",
+        "Cuir, velours, daim, alcantara (tarif ajusté — accord préalable requis)",
+        "Biohazard / contamination",
+        "Réparation structurelle du tissu",
+        "Tissu gravement dégradé"
+      ]
+    },
+
+    "mattress_cleaning_scope": {
+      "label": "Contrat nettoyage matelas FIXEO — NET-013 / NET-014",
+      "canonical_unit": "Un matelas complet — les 2 faces nettoyées",
+      "included": [
+        "Aspiration profonde (acariens, particules fines)",
+        "Injection-extraction ou vapeur selon type de tissu",
+        "Désinfection",
+        "Désodorisation",
+        "Nettoyage des 2 faces du matelas",
+        "Déplacement inclus",
+        "Produits et équipement professionnel fournis par l'artisan"
+      ],
+      "excluded": [
+        "Taches biologiques sévères (surcharge requiert accord préalable)",
+        "Matelas très dégradé (tissu déchiré ou en fin de vie)",
+        "Biohazard"
+      ]
+    },
+
+    "post_construction_scope": {
+      "label": "Contrat nettoyage après travaux FIXEO — NET-030",
+      "applies_to": "Standard/light post-construction cleaning only",
+      "included": [
+        "Élimination poussières fines de chantier (sols, surfaces, rebords)",
+        "Lavage et nettoyage des sols (carrelage, parquet, marbre)",
+        "Nettoyage des vitres standards (traces de peinture légères, colle légère)",
+        "Nettoyage des sanitaires neufs",
+        "Nettoyage des interrupteurs, prises, plinthes",
+        "Désinfection globale",
+        "Produits et équipements industriels fournis par l'artisan"
+      ],
+      "excluded_and_escape_conditions": [
+        "Évacuation de gravats/déchets lourds",
+        "Ciment dur épais ou béton",
+        "Décapage de peinture dure",
+        "Nettoyage de façade extérieure",
+        "Accès en hauteur > 2m sans accès direct",
+        "Contamination chimique ou industrielle",
+        "Eaux usées / égouts",
+        "Moisissures nécessitant remédiation",
+        "Biohazard",
+        "Déchets dangereux",
+        "Conditions extrêmes de chantier"
+      ],
+      "escape_routing": "QUOTE_REQUIRED or ROUTE_TO_SPECIALIST",
+      "escape_rule": "Escape conditions MUST NOT silently increase the 18 MAD/m² rate. Artisan must STOP, declare, and obtain client approval before proceeding."
+    }
+  },
+
+  "economic_validation": {
+
+    "standard_cleaning_matrix": {
+      "rate_per_ch_mad": 65,
+      "minimum_mad": 200,
+      "commission_scenarios": [0, 0.10, 0.15, 0.20],
+      "travel_mad": 25,
+      "equipment_products": "CLIENT_SUPPLIED (0 MAD artisan cost)",
+      "results": {
+        "1_cleaner_3h": {
+          "total_ch": 3, "gross": 195, "minimum_applies": true, "final_billed": 200,
+          "net_0pct": 175, "net_10pct": 155, "net_15pct": 145, "net_20pct": 135,
+          "net_per_ch_0pct": 58.3, "net_per_ch_10pct": 51.7, "net_per_ch_15pct": 48.3, "net_per_ch_20pct": 45.0,
+          "floor_pass_20pct": true
+        },
+        "1_cleaner_4h": {
+          "total_ch": 4, "gross": 260, "minimum_applies": false, "final_billed": 260,
+          "net_0pct": 235, "net_10pct": 209, "net_15pct": 196, "net_20pct": 183,
+          "net_per_ch_0pct": 58.8, "net_per_ch_10pct": 52.3, "net_per_ch_15pct": 49.0, "net_per_ch_20pct": 45.8,
+          "floor_pass_20pct": true
+        },
+        "1_cleaner_6h": {
+          "total_ch": 6, "gross": 390, "minimum_applies": false, "final_billed": 390,
+          "net_0pct": 365, "net_10pct": 326, "net_15pct": 307, "net_20pct": 287,
+          "net_per_ch_0pct": 60.8, "net_per_ch_10pct": 54.3, "net_per_ch_15pct": 51.2, "net_per_ch_20pct": 47.8,
+          "floor_pass_20pct": true
+        },
+        "2_cleaners_3h": {
+          "total_ch": 6, "gross": 390, "minimum_applies": false, "final_billed": 390,
+          "net_0pct": 365, "net_10pct": 326, "net_15pct": 307, "net_20pct": 287,
+          "net_per_ch_20pct": 47.8,
+          "floor_pass_20pct": true
+        },
+        "2_cleaners_4h": {
+          "total_ch": 8, "gross": 520, "minimum_applies": false, "final_billed": 520,
+          "net_0pct": 495, "net_10pct": 443, "net_15pct": 417, "net_20pct": 391,
+          "net_per_ch_20pct": 48.9,
+          "floor_pass_20pct": true
+        },
+        "2_cleaners_6h": {
+          "total_ch": 12, "gross": 780, "minimum_applies": false, "final_billed": 780,
+          "net_0pct": 755, "net_10pct": 677, "net_15pct": 638, "net_20pct": 599,
+          "net_per_ch_20pct": 49.9,
+          "floor_pass_20pct": true
+        }
+      }
+    },
+
+    "deep_clean_economics": {
+      "approved_price_mad": 600,
+      "reference": "F2/F3, 2 cleaners × 3.5h = 7 cleaner-hours",
+      "total_cleaner_hours": 7,
+      "artisan_consumables_mad": 50,
+      "travel_mad": 25,
+      "net_pool_20pct": {"gross": 600, "after_commission": 480, "after_fixed_costs": 405, "net_per_ch": 57.9, "floor_pass": true},
+      "net_pool_15pct": {"gross": 600, "after_commission": 510, "after_fixed_costs": 435, "net_per_ch": 62.1, "floor_pass": true}
+    },
+
+    "sofa_economics": {
+      "NET-010": {
+        "approved_mad": 300, "duration_min": 45, "consumables_mad": 20, "travel_included": true,
+        "net_20pct": 195, "hourly_equiv_20pct": 260, "floor_pass": true
+      },
+      "NET-011": {
+        "approved_mad": 450, "duration_min": 60, "consumables_mad": 25, "travel_included": true,
+        "net_20pct": 295, "hourly_equiv_20pct": 295, "floor_pass": true
+      }
+    },
+
+    "mattress_economics": {
+      "NET-013": {
+        "approved_mad": 250, "duration_min": 40, "consumables_mad": 15, "travel_included": true,
+        "net_20pct": 170, "hourly_equiv_20pct": 255, "floor_pass": true
+      },
+      "NET-014": {
+        "approved_mad": 300, "duration_min": 50, "consumables_mad": 15, "travel_included": true,
+        "net_20pct": 215, "hourly_equiv_20pct": 258, "floor_pass": true
+      }
+    },
+
+    "post_construction_stress_test": {
+      "approved_rate_per_m2": 18,
+      "approved_minimum_mad": 1000,
+      "commission": 0.20,
+      "fixed_costs_per_job_mad": 350,
+      "duration_formula": "max(area/10, 3) hours per worker, 2 workers standard",
+      "scenarios": {
+        "40m2": {
+          "calculated": 720, "final_billed": 1000, "minimum_applies": true,
+          "workers": 2, "hours_each": 4, "total_ch": 8,
+          "net_pool": 450, "net_per_ch": 56.3, "floor_pass": true
+        },
+        "60m2": {
+          "calculated": 1080, "final_billed": 1080, "minimum_applies": false,
+          "workers": 2, "hours_each": 6, "total_ch": 12,
+          "net_pool": 514, "net_per_ch": 42.8, "floor_pass": true
+        },
+        "80m2": {
+          "calculated": 1440, "final_billed": 1440, "minimum_applies": false,
+          "workers": 2, "hours_each": 8, "total_ch": 16,
+          "net_pool": 802, "net_per_ch": 50.1, "floor_pass": true
+        },
+        "100m2": {
+          "calculated": 1800, "final_billed": 1800, "minimum_applies": false,
+          "workers": 2, "hours_each": 10, "total_ch": 20,
+          "net_pool": 1090, "net_per_ch": 54.5, "floor_pass": true
+        },
+        "150m2": {
+          "calculated": 2700, "final_billed": 2700, "minimum_applies": false,
+          "workers": 3, "hours_each": 10, "total_ch": 30,
+          "net_pool": 1810, "net_per_ch": 60.3, "floor_pass": true
+        }
+      },
+      "confidence_note": "LOW confidence evidence (2 external sources). Human field verification with artisans strongly recommended before production launch."
+    }
+  },
+
+  "client_facing_disclaimer": "Prix indicatif FIXEO — tarif réel confirmé avec l'artisan avant intervention.",
+  "disclaimer_deployment_status": "DOCUMENT_ONLY — NOT DEPLOYED",
+
+  "non_approved_services": [
+    "standalone window cleaning",
+    "villa deep-clean canonical price",
+    "studio deep-clean canonical price",
+    "F4/F5 deep-clean canonical price",
+    "recurring cleaning discount",
+    "move-in/move-out cleaning",
+    "small carpet (NET-020)",
+    "large carpet per m² (NET-021)",
+    "angle sofa / salon marocain (NET-012)",
+    "armchair cleaning",
+    "commercial office cleaning",
+    "façade cleaning",
+    "mold remediation",
+    "biohazard cleanup",
+    "sewage cleanup",
+    "infestation cleanup",
+    "hazardous cleaning",
+    "extreme-height work"
+  ]
+}
