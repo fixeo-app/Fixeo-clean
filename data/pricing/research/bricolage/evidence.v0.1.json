@@ -1,0 +1,284 @@
+{
+  "schema_version": "0.1",
+  "phase": "7B.7",
+  "metier": "bricolage",
+  "production_ready": false,
+  "review_status": "RESEARCH_ONLY",
+  "note": "All price observations from external Moroccan market research. No approved prices. All values in MAD.",
+  "evidence_observations": [
+
+    {
+      "obs_id": "OBS-BRIC-001",
+      "service_family": "MINIMUM_VISIT",
+      "service_description": "Minimum billable intervention / call-out floor",
+      "source_ids": ["SRC-BRIC-001","SRC-BRIC-002","SRC-BRIC-003","SRC-BRIC-005","SRC-BRIC-006","SRC-BRIC-013"],
+      "observed_values": [
+        {"value": 100, "unit": "MAD/h_floor", "source": "SRC-BRIC-001", "notes": "100 MAD stated as minimum start price on platform"},
+        {"value": 150, "unit": "MAD_per_visit_floor", "source": "SRC-BRIC-006", "notes": "Adom.ma 'from 150 DH per visit' for assembly/fixings"},
+        {"value": 150, "unit": "MAD_minimum_task", "source": "SRC-BRIC-003", "notes": "20-min task = 150–200 DH minimum; artisan economics explanation"},
+        {"value": 200, "unit": "MAD_minimum_task", "source": "SRC-BRIC-003", "notes": "Upper bound of minimum billing for very short task"},
+        {"value": 120, "unit": "MAD_2h_minimum", "source": "SRC-BRIC-005", "notes": "Allo-Maison states 2h minimum billing"}
+      ],
+      "consensus_low": 150,
+      "market_anchor": 200,
+      "consensus_high": 250,
+      "confidence": "MEDIUM",
+      "notes": "Strong convergence: minimum standalone task price is ~150–200 MAD. Artisan economics explanation is compelling: 3–4 slots per day, each slot consumed by travel. A minimum visit fee of 150–200 MAD is market-justified. Critical for FIXEO minimum-visit doctrine."
+    },
+
+    {
+      "obs_id": "OBS-BRIC-002",
+      "service_family": "HOURLY_RATE",
+      "service_description": "Labour rate per hour (main d'oeuvre)",
+      "source_ids": ["SRC-BRIC-001","SRC-BRIC-002","SRC-BRIC-003","SRC-BRIC-005","SRC-BRIC-006"],
+      "observed_values": [
+        {"value": 100, "unit": "MAD/h", "source": "SRC-BRIC-005", "notes": "Floor from Allo-Maison tarif page"},
+        {"value": 120, "unit": "MAD/h", "source": "SRC-BRIC-006", "notes": "Adom.ma typical hourly for handyman"},
+        {"value": 150, "unit": "MAD/h", "source": "SRC-BRIC-001", "notes": "Allo-Maison Casablanca typical"},
+        {"value": 180, "unit": "MAD/h", "source": "SRC-BRIC-001", "notes": "Allo-Maison upper hourly Casablanca"},
+        {"value": 80, "unit": "MAD/h", "source": "SRC-BRIC-006", "notes": "Adom.ma lower bound hourly"}
+      ],
+      "consensus_low": 100,
+      "market_anchor": 130,
+      "consensus_high": 180,
+      "confidence": "MEDIUM",
+      "notes": "Hourly rate range 100–180 MAD/h with 130 as central market anchor. 2-hour minimum billing observed on Allo-Maison. Hourly model suits open-ended multi-task visits."
+    },
+
+    {
+      "obs_id": "OBS-BRIC-003",
+      "service_family": "DEMI_JOURNEE",
+      "service_description": "Half-day rate (3–4 hours on-site)",
+      "source_ids": ["SRC-BRIC-001","SRC-BRIC-002","SRC-BRIC-003"],
+      "observed_values": [
+        {"value": 300, "unit": "MAD/demi-journée", "source": "SRC-BRIC-003", "notes": "Tanger lower bound"},
+        {"value": 320, "unit": "MAD/demi-journée", "source": "SRC-BRIC-001", "notes": "Casablanca lower bound"},
+        {"value": 400, "unit": "MAD/demi-journée", "source": "SRC-BRIC-002", "notes": "Rabat mid"},
+        {"value": 550, "unit": "MAD/demi-journée", "source": "SRC-BRIC-001", "notes": "Casablanca upper"},
+        {"value": 550, "unit": "MAD/demi-journée", "source": "SRC-BRIC-002", "notes": "Rabat upper"},
+        {"value": 550, "unit": "MAD/demi-journée", "source": "SRC-BRIC-003", "notes": "Tanger upper"}
+      ],
+      "consensus_low": 300,
+      "market_anchor": 400,
+      "consensus_high": 550,
+      "confidence": "MEDIUM",
+      "notes": "Half-day 3–4h range 300–550 MAD across cities. Described by multiple sources as the 'most economical formula' for mixed task lists. Enables grouping multiple small tasks. Key architecture candidate for FIXEO multi-task visits."
+    },
+
+    {
+      "obs_id": "OBS-BRIC-004",
+      "service_family": "MEUBLE_MONTAGE_PETIT",
+      "service_description": "Assembly of small furniture (chair, small shelf unit, bedside table)",
+      "source_ids": ["SRC-BRIC-011","SRC-BRIC-006","SRC-BRIC-001","SRC-BRIC-010"],
+      "observed_values": [
+        {"value": 200, "unit": "MAD/item", "source": "SRC-BRIC-011", "notes": "Kitea official service: 200 MAD/item flat"},
+        {"value": 150, "unit": "MAD_floor", "source": "SRC-BRIC-006", "notes": "Adom.ma floor for any assembly"},
+        {"value": 440, "unit": "MAD/item", "source": "SRC-BRIC-010", "notes": "Manofix €40 → ~440 MAD international premium — HIGH OUTLIER"},
+        {"value": 250, "unit": "MAD/item", "source": "SRC-BRIC-001", "notes": "Profile pricing: montage meubles 100–250 MAD per item range"}
+      ],
+      "consensus_low": 150,
+      "market_anchor": 200,
+      "consensus_high": 300,
+      "confidence": "MEDIUM",
+      "notes": "Kitea 200 MAD/item is the strongest Moroccan anchor. Floor at 150 MAD per visit/item. Independent artisans likely price similarly or slightly cheaper to compete. Manofix EUR prices excluded as international outlier."
+    },
+
+    {
+      "obs_id": "OBS-BRIC-005",
+      "service_family": "MEUBLE_MONTAGE_MOYEN",
+      "service_description": "Assembly of medium furniture (desk, chest of drawers, bookcase, simple wardrobe)",
+      "source_ids": ["SRC-BRIC-011","SRC-BRIC-010","SRC-BRIC-001"],
+      "observed_values": [
+        {"value": 200, "unit": "MAD/item", "source": "SRC-BRIC-011", "notes": "Kitea flat rate (does not tier by complexity — market reference)"},
+        {"value": 770, "unit": "MAD/item", "source": "SRC-BRIC-010", "notes": "Manofix €70 → ~770 MAD — international premium outlier"},
+        {"value": 300, "unit": "MAD/item", "source": "SRC-BRIC-001", "notes": "Allo-Maison Casablanca: medium range estimate"}
+      ],
+      "consensus_low": 200,
+      "market_anchor": 300,
+      "consensus_high": 450,
+      "confidence": "LOW",
+      "notes": "Limited independent Moroccan data for medium tier separately from small. Kitea does not distinguish by size. Evidence is thin — MEDIUM confidence possible only with more observations."
+    },
+
+    {
+      "obs_id": "OBS-BRIC-006",
+      "service_family": "MEUBLE_MONTAGE_GRAND",
+      "service_description": "Assembly of large furniture — wardrobe, armoire, bed frame",
+      "source_ids": ["SRC-BRIC-001","SRC-BRIC-010","SRC-BRIC-011"],
+      "observed_values": [
+        {"value": 200, "unit": "MAD/item", "source": "SRC-BRIC-011", "notes": "Kitea flat rate regardless of size — anchor"},
+        {"value": 1320, "unit": "MAD/item", "source": "SRC-BRIC-010", "notes": "Manofix €120 → ~1,320 MAD — international outlier"},
+        {"value": 500, "unit": "MAD/chambre_ikea", "source": "SRC-BRIC-001", "notes": "IKEA MALM/HEMNES bedroom (lit + 2 chevets + PAX armoire): 500–900 MAD total"},
+        {"value": 900, "unit": "MAD/chambre_ikea", "source": "SRC-BRIC-001", "notes": "Upper bound for full IKEA bedroom set"}
+      ],
+      "consensus_low": 300,
+      "market_anchor": 500,
+      "consensus_high": 700,
+      "confidence": "LOW",
+      "notes": "Full IKEA bedroom = 500–900 MAD for 3–4 items (lit + chevets + PAX). Per large wardrobe alone probably 300–500 MAD range independently. Kitea flat 200 DH/item is likely loss-leading for retailer. Confidence low due to limited item-level data."
+    },
+
+    {
+      "obs_id": "OBS-BRIC-007",
+      "service_family": "TELEVISION_MURALE_POSE",
+      "service_description": "TV wall mounting (bracket client-supplied)",
+      "source_ids": ["SRC-BRIC-007","SRC-BRIC-012","SRC-BRIC-008"],
+      "observed_values": [
+        {"value": 300, "unit": "MAD/installation", "source": "SRC-BRIC-007", "notes": "Standard fixed bracket, concrete wall, 55\" screen, labour only"},
+        {"value": 200, "unit": "MAD_low", "source": "SRC-BRIC-012", "notes": "Stepone.ma lower estimate"},
+        {"value": 400, "unit": "MAD_high", "source": "SRC-BRIC-012", "notes": "Stepone.ma upper estimate"},
+        {"value": 1100, "unit": "MAD/installation", "source": "SRC-BRIC-008", "notes": "Manofix medium TV (40–60\") €100 → 1,100 MAD — international premium outlier"}
+      ],
+      "consensus_low": 200,
+      "market_anchor": 300,
+      "consensus_high": 450,
+      "confidence": "MEDIUM",
+      "notes": "Clear Moroccan market evidence: standard TV mount (fixed bracket, client-supplied, normal masonry wall) = 200–400 MAD. 300 MAD is the strongest single reference (m3allempro, Casablanca, 89 reviews, 412 missions). Bracket is explicitly EXCLUDED — client supplies. Manofix EUR prices confirm higher price possible but not market norm."
+    },
+
+    {
+      "obs_id": "OBS-BRIC-008",
+      "service_family": "TELEVISION_MURALE_COMPLEXE",
+      "service_description": "TV wall mounting complex (full-motion bracket, cable concealment, heavy TV, reinforced concrete)",
+      "source_ids": ["SRC-BRIC-007"],
+      "observed_values": [
+        {"value": 1000, "unit": "MAD_low", "source": "SRC-BRIC-007", "notes": "Full-motion orientable bracket + cables in wall, 85\" screen"},
+        {"value": 1500, "unit": "MAD_high", "source": "SRC-BRIC-007", "notes": "Upper range for complex install"}
+      ],
+      "consensus_low": null,
+      "market_anchor": null,
+      "consensus_high": null,
+      "confidence": "INSUFFICIENT",
+      "notes": "Only one source. Complex TV install should be QUOTE_REQUIRED or CONDITIONAL_FIXED. Cable concealment in wall may require electrician for electrical socket relocation."
+    },
+
+    {
+      "obs_id": "OBS-BRIC-009",
+      "service_family": "ETAGERE_POSE",
+      "service_description": "Shelf installation on wall (bracket client-supplied or shelf kit client-supplied)",
+      "source_ids": ["SRC-BRIC-001","SRC-BRIC-003"],
+      "observed_values": [
+        {"value": 150, "unit": "MAD_floor_pose", "source": "SRC-BRIC-001", "notes": "If client has shelf: 150–300 MAD pose seule"},
+        {"value": 300, "unit": "MAD_high_pose", "source": "SRC-BRIC-001", "notes": "Upper for shelf mounting labour"}
+      ],
+      "consensus_low": 150,
+      "market_anchor": 200,
+      "consensus_high": 300,
+      "confidence": "LOW",
+      "notes": "Range 150–300 MAD for shelf pose. Wall type matters: concrete vs plasterboard. Anchors/fixings policy needs determining. Low confidence — minimal dedicated evidence."
+    },
+
+    {
+      "obs_id": "OBS-BRIC-010",
+      "service_family": "TRINGLE_RIDEAU_POSE",
+      "service_description": "Curtain rod installation (rod client-supplied)",
+      "source_ids": ["SRC-BRIC-009"],
+      "observed_values": [
+        {"value": 495, "unit": "MAD/window", "source": "SRC-BRIC-009", "notes": "Manofix €45 → ~495 MAD — international premium outlier"},
+        {"value": 825, "unit": "MAD/2-3windows", "source": "SRC-BRIC-009", "notes": "Manofix €75 → ~825 MAD — international"},
+        {"value": 1353, "unit": "MAD/4+windows", "source": "SRC-BRIC-009", "notes": "Manofix €123 — international"}
+      ],
+      "consensus_low": null,
+      "market_anchor": null,
+      "consensus_high": null,
+      "confidence": "INSUFFICIENT",
+      "notes": "No reliable Moroccan-market-priced source for curtain rod installation specifically. Manofix EUR prices are international outliers. Would expect similar to shelf mounting (100–200 MAD/rod). Needs additional research. Current evidence = INSUFFICIENT."
+    },
+
+    {
+      "obs_id": "OBS-BRIC-011",
+      "service_family": "MIROIR_POSE",
+      "service_description": "Mirror wall mounting",
+      "source_ids": [],
+      "observed_values": [],
+      "consensus_low": null,
+      "market_anchor": null,
+      "consensus_high": null,
+      "confidence": "INSUFFICIENT",
+      "notes": "No independent Moroccan price evidence found. Would expect 100–200 MAD for standard mirror. Heavy/large mirror: complexity escape likely needed."
+    },
+
+    {
+      "obs_id": "OBS-BRIC-012",
+      "service_family": "DEPLACEMENT_MINIMUM",
+      "service_description": "Travel fee / déplacement",
+      "source_ids": ["SRC-BRIC-002","SRC-BRIC-003","SRC-BRIC-007"],
+      "observed_values": [
+        {"value": 80, "unit": "MAD_travel_low", "source": "SRC-BRIC-003", "notes": "Tanger travel minimum"},
+        {"value": 100, "unit": "MAD_travel", "source": "SRC-BRIC-002", "notes": "Rabat travel from Salé/Témara"},
+        {"value": 150, "unit": "MAD_travel_high", "source": "SRC-BRIC-002", "notes": "Upper Rabat travel fee"},
+        {"value": 180, "unit": "MAD_travel_max", "source": "SRC-BRIC-003", "notes": "Upper Tanger travel"},
+        {"value": 80, "unit": "MAD_peripheral_surcharge", "source": "SRC-BRIC-007", "notes": "m3allempro: +80 MAD beyond 15km from Casablanca center"}
+      ],
+      "consensus_low": 80,
+      "market_anchor": 100,
+      "consensus_high": 150,
+      "confidence": "MEDIUM",
+      "notes": "Travel fee is market reality. 80–150 MAD commonly cited. Often waived or included if intervention exceeds 2 hours. Market documents this as legitimate artisan cost recovery. FIXEO may include in minimum visit pricing rather than as explicit separate line."
+    },
+
+    {
+      "obs_id": "OBS-BRIC-013",
+      "service_family": "PERCAGE_BETON",
+      "service_description": "Drilling in reinforced concrete/masonry — as standalone or part of fixing work",
+      "source_ids": ["SRC-BRIC-001","SRC-BRIC-007"],
+      "observed_values": [
+        {"value": null, "unit": null, "source": "SRC-BRIC-001", "notes": "No standalone drilling price — included in overall fixation/mounting prices"},
+        {"value": null, "unit": null, "source": "SRC-BRIC-007", "notes": "Concrete drilling noted as skill/tool requirement; chemical anchors cited for heavy installs"}
+      ],
+      "consensus_low": null,
+      "market_anchor": null,
+      "consensus_high": null,
+      "confidence": "INSUFFICIENT",
+      "notes": "No standalone drilling price found in Moroccan market. Drilling is typically included in shelf/TV/curtain rod service price. Standalone drilling per hole is not standard Moroccan market service."
+    },
+
+    {
+      "obs_id": "OBS-BRIC-014",
+      "service_family": "URGENCE_MODIFIER",
+      "service_description": "Urgency / evening / weekend surcharges — market evidence",
+      "source_ids": ["SRC-BRIC-003","SRC-BRIC-005","SRC-BRIC-007"],
+      "observed_values": [
+        {"value": 30, "unit": "percent_supplement", "source": "SRC-BRIC-003", "notes": "Tanger: evening/Sunday/holiday +30–50%"},
+        {"value": 50, "unit": "percent_supplement", "source": "SRC-BRIC-003", "notes": "Upper bound"},
+        {"value": 50, "unit": "percent_supplement", "source": "SRC-BRIC-007", "notes": "m3allempro: +50% weekend/holiday"},
+        {"value": 30, "unit": "percent_supplement", "source": "SRC-BRIC-005", "notes": "Allo-Maison tarif page: +30–50% for urgency"}
+      ],
+      "consensus_low": null,
+      "market_anchor": null,
+      "consensus_high": null,
+      "confidence": "MEDIUM",
+      "notes": "Market EVIDENCE of urgency surcharges: 30–50% is widely documented. FIXEO POLICY remains urgency_modifier=null. This evidence confirms market awareness but FIXEO chooses not to activate modifiers at this stage."
+    },
+
+    {
+      "obs_id": "OBS-BRIC-015",
+      "service_family": "SILICONE_SALLE_DE_BAIN",
+      "service_description": "Bathroom silicone sealing / joint application",
+      "source_ids": [],
+      "observed_values": [],
+      "consensus_low": null,
+      "market_anchor": null,
+      "consensus_high": null,
+      "confidence": "INSUFFICIENT",
+      "notes": "No dedicated Moroccan price evidence found. Silicone sealing typically appears as minor add-on during plumbing or tiling. May need more research or classification as PLOMBERIE boundary task."
+    },
+
+    {
+      "obs_id": "OBS-BRIC-016",
+      "service_family": "BATCH_VISIT",
+      "service_description": "Multi-task visit economics — first-item plus additional items",
+      "source_ids": ["SRC-BRIC-001","SRC-BRIC-003","SRC-BRIC-005"],
+      "observed_values": [
+        {"value": 400, "unit": "MAD/demi-journée", "source": "SRC-BRIC-003", "notes": "Half-day covers: 1 TV fixed + 3 shelves + 2 door adjustments + 1 silicone joint — described explicitly as example"},
+        {"value": 320, "unit": "MAD_batch_floor", "source": "SRC-BRIC-001", "notes": "Casablanca demi-journée floor"},
+        {"value": 550, "unit": "MAD_batch_high", "source": "SRC-BRIC-001", "notes": "Casablanca demi-journée upper"}
+      ],
+      "consensus_low": null,
+      "market_anchor": null,
+      "consensus_high": null,
+      "confidence": "MEDIUM",
+      "notes": "Multiple sources explicitly recommend batching tasks into a demi-journée as 'most economical formula'. Separate per-task billing for multi-task visit would be 'almost double' per SRC-BRIC-003. Architecture: HALF_DAY model or FIRST_ITEM + ADDITIONAL is fairer for batch. Not yet quantified at individual-item level."
+    }
+  ]
+}

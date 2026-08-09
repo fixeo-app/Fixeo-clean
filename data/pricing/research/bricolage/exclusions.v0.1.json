@@ -1,0 +1,296 @@
+{
+  "schema_version": "0.1",
+  "phase": "7B.7",
+  "metier": "bricolage",
+  "production_ready": false,
+  "review_status": "RESEARCH_ONLY",
+  "note": "Métier boundary doctrine. Defines what BRICOLAGE is NOT. Every exclusion must route to a specific métier or disposition.",
+
+  "metier_boundary_doctrine": {
+    "principle": "Bricolage covers low-risk, light household tasks that do not require specialist licensing, safety certification, structural engineering, or access to regulated systems (electrical circuits, plumbing networks, gas, security mechanisms).",
+    "core_rule": "If a task requires diagnosis of a safety-critical system, modification of a regulated installation, or specialist certification — it is NOT bricolage.",
+    "anti-pattern": "Bricolage must NEVER become a catch-all category that gives unqualified artisans access to electrical, plumbing, or security work at cheap task prices.",
+    "handoff_protocol": "STOP → IDENTIFY escape → EXPLAIN to client → DECLARE HORS PÉRIMÈTRE BRICOLAGE → ROUTE to specialist → OBTAIN client approval"
+  },
+
+  "exclusions": [
+
+    {
+      "exclusion_id": "EXC-BRIC-001",
+      "category": "ELECTRICITE",
+      "tasks_excluded": [
+        "Any replacement of electrical outlet (prise) or switch (interrupteur)",
+        "Any luminaire/light fixture installation requiring wire connection",
+        "Electrical socket relocation (for TV mounting or any other reason)",
+        "Circuit breaker (disjoncteur) work",
+        "New circuit creation",
+        "Tableau électrique modification",
+        "Air conditioning electrical connection",
+        "Any work on live wires or circuit conductors"
+      ],
+      "borderline_analysis": {
+        "description": "Swapping a pendant light on an existing intact cable connector — purely mechanical, no wire splicing",
+        "verdict": "CONDITIONAL — depends on whether wire connection is involved. FIXEO should default to ELECTRICITE for any fixture change.",
+        "reason": "Risk of incorrect assessment by non-electrician. Safety and insurance implications."
+      },
+      "escapes_to": "ELECTRICITE",
+      "safety_reason": "Electrical work on circuits carries electrocution risk, fire risk, and requires compliance with Moroccan NFC 15-100 norms. Incorrect work creates insurance liability. FIXEO frozen electrical doctrine covers this.",
+      "client_explanation": "Pour votre sécurité et la conformité de votre installation, ce travail nécessite un électricien certifié FIXEO."
+    },
+
+    {
+      "exclusion_id": "EXC-BRIC-002",
+      "category": "PLOMBERIE",
+      "tasks_excluded": [
+        "Any pipe replacement or modification",
+        "Work on hot water systems (chauffe-eau, thermostats)",
+        "Leak repair in walls or under floor",
+        "Column pipe (colonne montante) work",
+        "Bathroom installation or modification",
+        "Toilet installation or removal",
+        "Drainage system (évacuation) modification"
+      ],
+      "borderline_analysis": {
+        "description": "Tap washer replacement (joint de robinet), shower hose (flexible de douche), siphon cleaning/replacement, toilet cistern float (flotteur) — market classifies these as handyman tasks",
+        "verdict": "CONDITIONAL — FIXEO must decide boundary. Recommended: allow joint de robinet and flexible de douche as bricolage ONLY if water is already off at robinet d'arrêt. Any issue finding the robinet d'arrêt → PLOMBERIE.",
+        "reason": "Consumer-grade maintenance vs plumbing modification. Risk of water damage is contained if stopcock is accessible."
+      },
+      "escapes_to": "PLOMBERIE",
+      "safety_reason": "Incorrect plumbing work causes water damage, mould, structural damage, and insurance claim disputes in copropriété contexts.",
+      "client_explanation": "Ce travail dépasse le périmètre bricolage. Un plombier FIXEO est nécessaire."
+    },
+
+    {
+      "exclusion_id": "EXC-BRIC-003",
+      "category": "SERRURERIE",
+      "tasks_excluded": [
+        "Lock cylinder replacement (cylindre)",
+        "Security door lock modification",
+        "Emergency opening when locked out",
+        "Multipoint lock (serrure multipoints) work",
+        "Any work on a porte de sécurité / porte blindée mechanism"
+      ],
+      "borderline_analysis": {
+        "description": "Interior door handle (poignée intérieure non-sécurisée) replacement, gâche (strike plate) adjustment on interior door",
+        "verdict": "BRICOLAGE_ALLOWED for non-security interior hardware only. Anything on entrance door or porte palière → SERRURERIE.",
+        "reason": "Security risk from unqualified work on security-grade mechanisms."
+      },
+      "escapes_to": "SERRURERIE",
+      "safety_reason": "Security mechanisms require specialist tools and training. FIXEO frozen serrurerie doctrine covers this."
+    },
+
+    {
+      "exclusion_id": "EXC-BRIC-004",
+      "category": "MENUISERIE",
+      "tasks_excluded": [
+        "Custom wood fabrication",
+        "Built-in wardrobe / placard intégré construction",
+        "Structural door or window installation/replacement",
+        "Custom kitchen cabinet fabrication",
+        "Staircase repair or modification",
+        "Load-bearing wood structure work"
+      ],
+      "borderline_analysis": {
+        "description": "Adjusting an interior door that sticks (sans fabrication), replacing a standard hinge on an interior door",
+        "verdict": "BRICOLAGE_ALLOWED for adjustment/minor repair. Structural replacement or fabrication → MENUISERIE.",
+        "reason": "Assembly ≠ fabrication. Bricolage can adjust, not build."
+      },
+      "escapes_to": "MENUISERIE"
+    },
+
+    {
+      "exclusion_id": "EXC-BRIC-005",
+      "category": "MACONNERIE",
+      "tasks_excluded": [
+        "Drilling/cutting load-bearing walls",
+        "Creating or enlarging wall openings",
+        "Structural wall repair",
+        "Foundation work",
+        "Lintel installation"
+      ],
+      "borderline_analysis": {
+        "description": "Drilling 8mm holes in standard masonry for anchors (shelf, curtain rod, TV bracket)",
+        "verdict": "BRICOLAGE_ALLOWED for standard anchor-size drilling in non-structural walls. Any uncertainty about wall being load-bearing → STOP → quote.",
+        "reason": "Standard anchor drilling is core bricolage competency. Load-bearing work requires structural engineer."
+      },
+      "escapes_to": "MACONNERIE"
+    },
+
+    {
+      "exclusion_id": "EXC-BRIC-006",
+      "category": "PEINTURE",
+      "tasks_excluded": [
+        "Wall painting (any scope)",
+        "Surface preparation",
+        "Plaster repair"
+      ],
+      "borderline_analysis": {
+        "description": "Touch-up paint on a small wall scratch",
+        "verdict": "Out of FIXEO standardization scope for now. Very small touch-ups may be possible as add-on, but no standard price.",
+        "reason": "Paint matching is complex. Better in dedicated PEINTURE métier."
+      },
+      "escapes_to": "PEINTURE"
+    },
+
+    {
+      "exclusion_id": "EXC-BRIC-007",
+      "category": "CARRELAGE",
+      "tasks_excluded": [
+        "Tile laying",
+        "Tile replacement",
+        "Re-grouting (rejointement)",
+        "Adhesive tile work"
+      ],
+      "borderline_analysis": {
+        "description": "Replacing one broken tile",
+        "verdict": "CARRELAGE scope — colour matching, adhesive mixing, and finish require specialist.",
+        "reason": "Material matching and technique. Wrong adhesive in wet areas causes structural failure."
+      },
+      "escapes_to": "CARRELAGE"
+    },
+
+    {
+      "exclusion_id": "EXC-BRIC-008",
+      "category": "HEIGHT_SAFETY",
+      "tasks_excluded": [
+        "Work above 2.5m height (above standard step-ladder reach)",
+        "Ceiling-mounted installations >2.5m",
+        "Facade or balcony work",
+        "Roof work"
+      ],
+      "borderline_analysis": {
+        "description": "Ceiling-mounted curtain rail (rail plafond) at standard 2.7m ceiling",
+        "verdict": "CONDITIONAL — standard step ladder sufficient for 2.7m with care. Document as client-visible condition. Higher ceilings or inaccessible locations → complexity escape → surcharge or quote.",
+        "reason": "Fall risk above standard step-ladder height. Scaffolding requirement changes economics."
+      },
+      "escapes_to": "QUOTE_REQUIRED"
+    },
+
+    {
+      "exclusion_id": "EXC-BRIC-009",
+      "category": "GAS",
+      "tasks_excluded": [
+        "Any gas appliance work",
+        "Gas hose connections",
+        "Gas valve work"
+      ],
+      "escapes_to": "SPECIALIST_GAS_CERTIFIED",
+      "safety_reason": "Gas work requires certification. No ambiguity — always specialist."
+    },
+
+    {
+      "exclusion_id": "EXC-BRIC-010",
+      "category": "STRUCTURAL_WALL_ASSESSMENT",
+      "tasks_excluded": [
+        "Any drilling or anchoring where artisan cannot confirm wall is non-load-bearing",
+        "Wall mounting where substrate is unknown/unidentified"
+      ],
+      "borderline_analysis": {
+        "description": "Standard Moroccan apartment masonry — artisan must identify: béton armé, parpaing creux, cloison légère, placo",
+        "verdict": "STOP → identify substrate → confirm non-load-bearing → continue standard price OR escape to conditional/quote if structural concern exists.",
+        "reason": "Reinforced concrete requires specialist tools (SDS-Max, chemical anchors). Hollow block may not support heavy loads. Plasterboard requires stud finder for heavy items."
+      },
+      "escapes_to": "CONDITIONAL_PRICE or QUOTE_REQUIRED"
+    }
+  ],
+
+  "substrate_complexity_matrix": {
+    "description": "Wall/substrate type affects drilling difficulty, anchor choice, and price eligibility",
+    "substrates": [
+      {
+        "type": "Parpaing / maçonnerie standard",
+        "arabic_term": "حجر",
+        "prevalence": "VERY_COMMON",
+        "standard_fixings": "Standard expansion plugs 6–10mm",
+        "bricolage_eligible": true,
+        "notes": "Standard Moroccan construction. Most apartments."
+      },
+      {
+        "type": "Béton armé",
+        "prevalence": "COMMON in modern buildings",
+        "standard_fixings": "Carbide drill bits, expansion anchors or chemical anchors for heavy loads",
+        "bricolage_eligible": "CONDITIONAL — light shelves OK; heavy loads may need quote",
+        "notes": "Casablanca 80% of modern buildings per SRC-BRIC-007. Requires percussion drill (marteau-piqueur or SDS)."
+      },
+      {
+        "type": "Brique creuse (hollow block)",
+        "prevalence": "COMMON",
+        "standard_fixings": "Hollow-wall anchors (cheville Molly, toggle bolt)",
+        "bricolage_eligible": "CONDITIONAL — correct anchor type essential",
+        "notes": "Standard expansion plugs fail in hollow block — must use Molly anchors."
+      },
+      {
+        "type": "Placo / cloison légère (plasterboard/drywall)",
+        "prevalence": "MEDIUM — more in modern apartments",
+        "standard_fixings": "Stud finder required; anchor between studs or into studs",
+        "bricolage_eligible": "CONDITIONAL — stud finder required; heavy items need stud anchor",
+        "notes": "Heavy TV (>20kg) on placo without stud → REFUSE or structural assessment."
+      },
+      {
+        "type": "Carrelage / faïence (tile wall)",
+        "prevalence": "COMMON in bathrooms/kitchens",
+        "standard_fixings": "Diamond drill bit, patience",
+        "bricolage_eligible": "CONDITIONAL — tile crack risk; surcharge justified",
+        "notes": "Risk of tile cracking if bit dulls or angle wrong. Must inform client."
+      },
+      {
+        "type": "Marbre / pierre",
+        "prevalence": "MEDIUM — Marrakech riads, luxury apartments",
+        "standard_fixings": "Diamond drill bit, very slow speed",
+        "bricolage_eligible": "CONDITIONAL — high breakage risk; quote recommended",
+        "notes": "High-value substrate. Damage costs significant. Quote preferred."
+      },
+      {
+        "type": "Pisé / tadelakt (riad traditional)",
+        "prevalence": "SPECIFIC — Marrakech medina",
+        "standard_fixings": "Molly anchors / friction-based systems",
+        "bricolage_eligible": "CONDITIONAL — standard expansion plugs fail; specialist knowledge needed",
+        "notes": "Standard anchors pull out of friable pisé. Riad context is specialty."
+      }
+    ]
+  },
+
+  "client_prescreening_questions": {
+    "description": "Minimum questions before price confirmation per service family",
+    "by_service_family": {
+      "furniture_assembly": [
+        "Type of furniture? (chair / small / wardrobe / bed / kitchen)",
+        "Approximate number of packages?",
+        "New flat-pack or existing disassembled piece?",
+        "Number of items in total visit?"
+      ],
+      "tv_mounting": [
+        "TV screen size (pouces)?",
+        "TV weight approximately?",
+        "Wall material? (béton / parpaing / placo / carrelage)",
+        "Fixed bracket or articulating full-motion?",
+        "Bracket supplied by client or needed?",
+        "Cable concealment in wall required?"
+      ],
+      "shelf_mounting": [
+        "Number of shelves?",
+        "Shelf type/material (wood, glass, metal)?",
+        "Approximate weight load?",
+        "Wall material?",
+        "Client has brackets or integrated bracket shelf?"
+      ],
+      "curtain_rod": [
+        "Number of windows/rods?",
+        "Wall or ceiling mounted?",
+        "Wall material?",
+        "Client has rod and all fixings?"
+      ],
+      "door_adjustment": [
+        "Interior or exterior/entrance door?",
+        "Problem: sticking, not closing, gap?",
+        "Does the problem involve the lock or just the frame/hinges?"
+      ],
+      "multi_task_visit": [
+        "Provide list of all tasks",
+        "For each: what hardware is client-supplied?",
+        "Total estimated time acceptable?",
+        "Any electrical or plumbing tasks on the list? (route to specialist)"
+      ]
+    }
+  }
+}

@@ -1,0 +1,328 @@
+{
+  "schema_version": "0.1",
+  "phase": "7B.7",
+  "metier": "bricolage",
+  "production_ready": false,
+  "review_status": "RESEARCH_ONLY",
+  "note": "External Moroccan market sources only. Legacy FIXEO data is classified separately as T0 in legacy-comparison.md.",
+  "sources": [
+    {
+      "source_id": "SRC-BRIC-001",
+      "publisher": "Allo-Maison",
+      "url": "https://allo-maison.ma/bricoleur-casablanca",
+      "access_date": "2026-08-09",
+      "geographic_scope": "Casablanca, Morocco",
+      "service_scope": "Bricolage / handyman — full service guide with pricing",
+      "quality_grade": "C+",
+      "methodology": "Platform editorial. States tariffs are cross-checked from actual platform requests and revised quarterly. Basis: stated 1,342+ devis Q1 2026.",
+      "price_evidence": [
+        "Hourly rate: 100–180 DH/h (Casablanca)",
+        "Half-day (demi-journée, 3–4h): 320–550 DH (Casablanca)",
+        "Minimum intervention: 100 MAD stated as price floor",
+        "TV fixation avec support (client supplied): 150–300 DH pose seule",
+        "IKEA bedroom (lit double + 2 chevets + armoire PAX): 500–900 DH",
+        "Short task (20 min effective): 150–200 DH minimum billable"
+      ],
+      "pricing_unit": "Hourly + demi-journée + per-item forfait",
+      "material_semantics": "Main d'oeuvre + matriel standard. Hardware/brackets client-supplied unless stated.",
+      "limitations": "Platform-disclosed data; no raw transaction access; methodology not fully auditable. Non-zero SEO motive.",
+      "duplication_risk": "LOW — platform data, independently maintained",
+      "notes": "States no commission taken from transactions. Artisan subscription-based model. Strong local expertise signal."
+    },
+    {
+      "source_id": "SRC-BRIC-002",
+      "publisher": "Allo-Maison",
+      "url": "https://allo-maison.ma/bricoleur-rabat",
+      "access_date": "2026-08-09",
+      "geographic_scope": "Rabat/Salé/Témara, Morocco",
+      "service_scope": "Bricolage / handyman — Rabat city guide",
+      "quality_grade": "C+",
+      "methodology": "Same platform as SRC-BRIC-001. City-specific version.",
+      "price_evidence": [
+        "Hourly rate: 100–180 DH/h (Rabat)",
+        "Half-day: 320–550 DH (Rabat)",
+        "Travel fee from Salé/Témara across Bouregreg: 100–150 DH stated as legitimate",
+        "Salé/Témara artisans 10–15% cheaper than Rabat",
+        "Same-day first slot or 14h slot recommended"
+      ],
+      "pricing_unit": "Hourly + demi-journée",
+      "material_semantics": "Labour + standard materials",
+      "limitations": "Same platform limitations as SRC-BRIC-001",
+      "duplication_risk": "LOW",
+      "notes": "Notes cross-city commuting economics of Rabat–Salé market"
+    },
+    {
+      "source_id": "SRC-BRIC-003",
+      "publisher": "Allo-Maison",
+      "url": "https://allo-maison.ma/bricoleur-tanger",
+      "access_date": "2026-08-09",
+      "geographic_scope": "Tanger, Morocco",
+      "service_scope": "Bricolage / handyman — Tanger city guide",
+      "quality_grade": "C+",
+      "methodology": "Same platform. Tanger-specific.",
+      "price_evidence": [
+        "Hourly rate: 100–180 DH/h (Tanger)",
+        "Half-day: 300–550 DH (Tanger)",
+        "Travel fee: 80–180 DH, often included if intervention > 2h",
+        "A 20-minute effective task costs 150–200 DH minimum (travel/slot economics explained)",
+        "Evening/Sunday/holiday surcharge: 30–50% mentioned by market (not FIXEO-approved)",
+        "Urgent same-day surcharge mentioned"
+      ],
+      "pricing_unit": "Hourly + demi-journée + forfait",
+      "material_semantics": "Labour + standard materials. Tanger corrosion context (salt air): stainless/marine-grade fixings noted",
+      "limitations": "Same platform limitations",
+      "duplication_risk": "LOW",
+      "notes": "Explicitly documents minimum task economics: artisan does 3–4 slots/day; 20min task consumes full slot. Very useful for minimum-visit analysis."
+    },
+    {
+      "source_id": "SRC-BRIC-004",
+      "publisher": "Allo-Maison",
+      "url": "https://allo-maison.ma/bricoleur-marrakech",
+      "access_date": "2026-08-09",
+      "geographic_scope": "Marrakech, Morocco",
+      "service_scope": "Bricolage / handyman — Marrakech city guide",
+      "quality_grade": "C+",
+      "methodology": "Same platform.",
+      "price_evidence": [
+        "Half-day: ranges for 3–4h work, confirmed by Marrakech requests",
+        "Riad specifics: narrow stairs, traditional materials (pisé, tadelakt), special fixings needed",
+        "Monthly maintenance contract recommended for guesthouses",
+        "Premium finish work: marble, precious wood — quote required"
+      ],
+      "pricing_unit": "Hourly + demi-journée",
+      "material_semantics": "Riad context: non-standard materials common. Special anchors for friable substrates.",
+      "limitations": "Marrakech riad market is not representative of national scope",
+      "duplication_risk": "LOW",
+      "notes": "Documents unique riad access constraints. Useful for complexity escape doctrine."
+    },
+    {
+      "source_id": "SRC-BRIC-005",
+      "publisher": "Allo-Maison",
+      "url": "https://allo-maison.ma/tarifs",
+      "access_date": "2026-08-09",
+      "geographic_scope": "Morocco national",
+      "service_scope": "All home services price guide",
+      "quality_grade": "C+",
+      "methodology": "Platform states: real prices based on thousands of actual transactions, updated monthly. Basis Q1 2026 1,342 devis.",
+      "price_evidence": [
+        "Bricolage: 100–200–500 MAD/h (min/typical/max per hour)",
+        "Bricolage 2h minimum stated",
+        "From 150 DH la demi-journée (homepage overview)",
+        "Casablanca and Rabat highest tariffs; other cities 15–25% lower",
+        "Urgency supplement: 30–50% (evening/weekend/holiday)",
+        "Upscale quartiers (Anfa, Maarif, Agdal): +15–20% noted"
+      ],
+      "pricing_unit": "Per hour, with 2h minimum",
+      "material_semantics": "Labour-focused; materials separate",
+      "limitations": "Urgency/city supplements noted but not FIXEO-policy-relevant; documented only",
+      "duplication_risk": "MEDIUM — same platform as SRC-BRIC-001 through 004",
+      "notes": "Confirms 2-hour minimum billing is market practice"
+    },
+    {
+      "source_id": "SRC-BRIC-006",
+      "publisher": "Adom.ma",
+      "url": "https://www.adom.ma/en/mag-adom/combien-coute-bricolage-plomberie/",
+      "access_date": "2026-08-09",
+      "geographic_scope": "Morocco national — Casablanca, Rabat, Agadir",
+      "service_scope": "Handyman and plumbing pricing guide",
+      "quality_grade": "C+",
+      "methodology": "Platform editorial. States tariffs from verified tradespeople profiles. National reference approach.",
+      "price_evidence": [
+        "Furniture assembly / small fixings: FROM 150 DH per visit",
+        "Everyday plumbing: 80–120 DH/h",
+        "Everyday electrical: 80–120 DH/h",
+        "Per-visit model for assembly; hourly for plumbing/electrical"
+      ],
+      "pricing_unit": "Per visit (forfait) for assembly; hourly for specialist trades",
+      "material_semantics": "Labour only; parts separate",
+      "limitations": "Per-visit price 'from 150 DH' is a floor, not a typical price. No upper bound stated for assembly.",
+      "duplication_risk": "LOW — distinct platform",
+      "notes": "Confirms the assembly-per-visit vs hourly-for-specialist architecture split. Important structural finding."
+    },
+    {
+      "source_id": "SRC-BRIC-007",
+      "publisher": "M3alempro.com",
+      "url": "https://m3allempro.com/casablanca/installation-support-mural-tv",
+      "access_date": "2026-08-09",
+      "geographic_scope": "Casablanca",
+      "service_scope": "TV wall mounting — specialist installer directory",
+      "quality_grade": "C",
+      "methodology": "Commercial installer directory. One certified installer (Said Benjelloun, 89 reviews, 4.7 stars, 412 missions listed). Pricing presented by type/complexity.",
+      "price_evidence": [
+        "TV wall mount standard (bracket client-supplied, concrete wall, 55\"): 300 MAD",
+        "TV wall mount full-motion + cable concealment in wall, 85\" large screen: 1,000–1,500 MAD",
+        "Overall range stated: 300–1,500 MAD hors support",
+        "Emergency weekend/holiday surcharge: +50%",
+        "Casablanca premium vs national: +15–20% noted"
+      ],
+      "pricing_unit": "Per installation — varies by size, bracket type, complexity",
+      "material_semantics": "Bracket NOT included in stated prices (hors support). Chemical anchors M10 used for heavy installs.",
+      "limitations": "Single installer profile. Self-promotional. Methodology not fully auditable. Casablanca urban premium noted.",
+      "duplication_risk": "LOW",
+      "notes": "Provides clearest evidence for TV mounting scope ladder (simple vs complex). Wall type: reinforced concrete with SDS-Max noted."
+    },
+    {
+      "source_id": "SRC-BRIC-008",
+      "publisher": "Manofix.com",
+      "url": "https://manofix.com/fr/services/tv-wall-mounting/country/handyman-morocco",
+      "access_date": "2026-08-09",
+      "geographic_scope": "Morocco national",
+      "service_scope": "TV wall mounting — international handyman marketplace",
+      "quality_grade": "C",
+      "methodology": "International marketplace operating in Morocco. Prices in EUR (EUR/MAD conversion needed). Platform-generated price guidance.",
+      "price_evidence": [
+        "Small TV (up to 40\"): €65",
+        "Medium TV (40–60\"): €100",
+        "Large TV (60\"+): €150",
+        "Overall range: €65–€150 per installation"
+      ],
+      "pricing_unit": "Per installation by TV size",
+      "material_semantics": "Unclear — likely labour only given international context",
+      "limitations": "EUR pricing — must convert. International platform; local Moroccan artisan economics not guaranteed. Price guidance may reflect international norms more than Moroccan market.",
+      "duplication_risk": "LOW",
+      "notes": "EUR conversion at ~11 MAD/€: 65€≈715 DH, 100€≈1,100 DH, 150€≈1,650 DH. These are significantly higher than local Moroccan provider pricing (SRC-BRIC-007). Likely reflects international platform premium.",
+      "eur_to_mad_note": "1 EUR ≈ 11 MAD as of 2026"
+    },
+    {
+      "source_id": "SRC-BRIC-009",
+      "publisher": "Manofix.com",
+      "url": "https://manofix.com/fr/services/curtain-rod-installation/country/handyman-morocco",
+      "access_date": "2026-08-09",
+      "geographic_scope": "Morocco national",
+      "service_scope": "Curtain rod installation",
+      "quality_grade": "C",
+      "methodology": "Same international marketplace.",
+      "price_evidence": [
+        "Single window: €45",
+        "2–3 windows: €75",
+        "4+ windows: €123",
+        "Range: €45–€123"
+      ],
+      "pricing_unit": "Per window / batch",
+      "material_semantics": "Unclear",
+      "limitations": "EUR pricing. Same international premium concern. Single window €45 ≈ 495 DH — higher than Moroccan local evidence.",
+      "duplication_risk": "LOW",
+      "notes": "Confirms per-item pricing and batch pricing for curtain rods. Architecture is useful even if exact EUR amounts may not reflect Moroccan market."
+    },
+    {
+      "source_id": "SRC-BRIC-010",
+      "publisher": "Manofix.com",
+      "url": "https://manofix.com/en/services/furniture-assembly/country/handyman-morocco/handyman-rabat",
+      "access_date": "2026-08-09",
+      "geographic_scope": "Rabat, Morocco",
+      "service_scope": "Furniture assembly",
+      "quality_grade": "C",
+      "methodology": "Same international marketplace.",
+      "price_evidence": [
+        "Simple item (chair, small shelf): €40",
+        "Medium item (desk, bookcase): €70",
+        "Complex item (wardrobe, bed frame): €120",
+        "Multiple items (IKEA haul): €225",
+        "Range: €40–€225"
+      ],
+      "pricing_unit": "Per furniture item by complexity tier",
+      "material_semantics": "Labour only — assembly of client-supplied furniture",
+      "limitations": "EUR pricing. International platform premium. Simple item €40 ≈ 440 DH. Multiple items €225 ≈ 2,475 DH — far above Moroccan market evidence for IKEA bedroom (500–900 DH per SRC-BRIC-001).",
+      "duplication_risk": "LOW",
+      "notes": "Confirms complexity-tier architecture (simple/medium/complex/batch). Absolute EUR prices should NOT be used as Moroccan market reference."
+    },
+    {
+      "source_id": "SRC-BRIC-011",
+      "publisher": "Kitea.com",
+      "url": "https://www.kitea.com/services",
+      "access_date": "2026-08-09",
+      "geographic_scope": "Morocco national",
+      "service_scope": "Furniture assembly service by leading Moroccan furniture retailer",
+      "quality_grade": "C+",
+      "methodology": "Official Moroccan furniture retailer (Kitea) published assembly service pricing.",
+      "price_evidence": [
+        "Assembly service: 200 MAD TTC per item for standard furniture",
+        "Free delivery + assembly from 2,500 DH purchase",
+        "Under 2,500 DH: separate assembly fee applies"
+      ],
+      "pricing_unit": "Per item — flat 200 MAD",
+      "material_semantics": "Labour only (retailer installs client's purchased furniture)",
+      "limitations": "Retailer context — artisan is Kitea employee/contractor, not independent. Promotional pricing may apply. Does not reflect independent artisan economics.",
+      "duplication_risk": "LOW",
+      "notes": "Key reference: Kitea 200 MAD/item is the established market anchor for flat-pack assembly in Morocco. Independent artisans must compete with or beat this. Confirms per-item architecture is commercially understood."
+    },
+    {
+      "source_id": "SRC-BRIC-012",
+      "publisher": "Stepone.ma",
+      "url": "https://stepone.ma/support-tv-maroc-guide/",
+      "access_date": "2026-08-09",
+      "geographic_scope": "Morocco",
+      "service_scope": "TV wall mount support guide",
+      "quality_grade": "C",
+      "methodology": "Editorial guide for Moroccan consumers.",
+      "price_evidence": [
+        "Professional TV wall mount installation: 200–400 DH (labour only)"
+      ],
+      "pricing_unit": "Per installation",
+      "material_semantics": "Labour only; bracket not included",
+      "limitations": "No methodology stated. Lower bound than SRC-BRIC-007.",
+      "duplication_risk": "LOW",
+      "notes": "Corroborates 200–400 DH range for basic TV installation. Suggests accessible market segment exists below the 300–1,500 range in SRC-BRIC-007."
+    },
+    {
+      "source_id": "SRC-BRIC-013",
+      "publisher": "Mumtaz.ma",
+      "url": "https://mumtaz.ma/prix-services-domicile-maroc-2026/",
+      "access_date": "2026-08-09",
+      "geographic_scope": "Morocco national",
+      "service_scope": "General home services pricing guide 2026",
+      "quality_grade": "C",
+      "methodology": "Independent editorial. Uses Avito listings, platform data, and market observation as sources. No formal survey methodology.",
+      "price_evidence": [
+        "General small handyman intervention: 150–300 DH (small/simple task)",
+        "Standard at-home intervention with travel: 200–500 DH",
+        "Urgent complex: 400–900+ DH",
+        "Notes high price dispersion across Morocco",
+        "Many listings say 'Demander le prix' — confirms non-standardized market"
+      ],
+      "pricing_unit": "Per intervention",
+      "material_semantics": "Labour and travel; parts separate",
+      "limitations": "Aggregated across all handyman/plumbing. Not exclusively bricolage.",
+      "duplication_risk": "LOW",
+      "notes": "Confirms wide price dispersion. Non-standardized market reality. Strong signal for why FIXEO standardization has value."
+    },
+    {
+      "source_id": "SRC-BRIC-014",
+      "publisher": "Avito.ma",
+      "url": "https://www.avito.ma/fr/maroc/montage_meuble--à_vendre",
+      "access_date": "2026-08-09",
+      "geographic_scope": "Morocco national (Rabat, Casablanca)",
+      "service_scope": "Furniture assembly classifieds",
+      "quality_grade": "D",
+      "methodology": "Classified listings — individual artisan self-reported prices. Not transaction-verified.",
+      "price_evidence": [
+        "One listing: IKEA/KITEA montage 10 DH (Rabat) — bait/unrealistic",
+        "Most listings: 'Demander le prix'",
+        "Very few with disclosed prices; no reliable cluster"
+      ],
+      "pricing_unit": "Variable — per item or per visit",
+      "material_semantics": "Unclear",
+      "limitations": "Classifieds are unreliable. Bait pricing (10 DH) detected. Majority non-disclosed. Grade D evidence only.",
+      "duplication_risk": "MEDIUM — aggregated from many sources",
+      "notes": "10 DH listing is clearly a bait/lead generation price. Classifieds confirm market fragmentation. Do not use as pricing reference."
+    },
+    {
+      "source_id": "SRC-BRIC-015",
+      "publisher": "Tawadoo.ma",
+      "url": "https://www.tawadoo.ma/fr/p/montage_et_demontage_de_meuble_ikea_et_kitea",
+      "access_date": "2026-08-09",
+      "geographic_scope": "Rabat-Salé-Kénitra",
+      "service_scope": "IKEA/KITEA assembly and disassembly",
+      "quality_grade": "D",
+      "methodology": "Single artisan listing on classified platform. No price disclosed ('Négociable' / listing now unavailable).",
+      "price_evidence": [
+        "No price disclosed"
+      ],
+      "pricing_unit": "Negotiable",
+      "material_semantics": "Unknown",
+      "limitations": "Listing unavailable. No price evidence.",
+      "duplication_risk": "LOW",
+      "notes": "Documents market fragmentation. Confirms negotiated pricing is still common for IKEA/KITEA assembly."
+    }
+  ]
+}

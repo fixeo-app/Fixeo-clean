@@ -1,0 +1,527 @@
+{
+  "schema_version": "0.1",
+  "phase": "7B.7",
+  "metier": "bricolage",
+  "production_ready": false,
+  "review_status": "RESEARCH_ONLY",
+  "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
+  "human_decision": "PENDING",
+  "price_provenance": "RESEARCH_EVIDENCE_ONLY",
+  "market_scope": "NATIONAL_MOROCCO",
+  "city_adjustment": null,
+  "urgency_modifier": null,
+  "night_modifier": null,
+  "weekend_modifier": null,
+  "holiday_modifier": null,
+  "express_modifier": null,
+  "note": "These are research candidates only. No price is approved. No price is production-ready.",
+
+  "pricing_architecture_findings": {
+    "summary": "Bricolage cannot share a single pricing architecture. Evidence identifies multiple distinct price families.",
+    "recommended_architectures": [
+      {
+        "architecture": "MINIMUM_VISIT_PRICE",
+        "rationale": "A 20-minute task still consumes a full artisan slot (travel + setup + work + return). Market minimum ~150–200 MAD per intervention regardless of task duration. Essential floor.",
+        "evidence_support": "MEDIUM"
+      },
+      {
+        "architecture": "PER_ITEM_FORFAIT",
+        "rationale": "For predictable, bounded tasks (shelf install, curtain rod, mirror, small furniture). Kitea 200 MAD/item is market anchor. Client understands price before arrival.",
+        "evidence_support": "MEDIUM"
+      },
+      {
+        "architecture": "FIRST_ITEM_PLUS_ADDITIONAL",
+        "rationale": "Multi-task visits: first item includes travel cost; additional items priced lower (no incremental travel). Fairer than multiplying unit price × quantity.",
+        "evidence_support": "MEDIUM",
+        "proposed_concept": "first_item = full_price; additional_same_visit = 60–70% of first_item"
+      },
+      {
+        "architecture": "HALF_DAY",
+        "rationale": "300–550 MAD for 3–4 hours on-site. Economically optimal for 5+ small tasks. Avoids per-task billing overhead. Best for heterogeneous task lists.",
+        "evidence_support": "MEDIUM"
+      },
+      {
+        "architecture": "HOURLY",
+        "rationale": "100–180 MAD/h. Suitable for open-ended work, unknown scope, or complex repairs. 2h minimum billing is market practice. Risk: client uncertainty.",
+        "evidence_support": "MEDIUM"
+      },
+      {
+        "architecture": "CONDITIONAL_FIXED",
+        "rationale": "For tasks with predictable base + conditional complexity escape (TV mounting: fixed for standard wall/bracket; escape for reinforced concrete or cable concealment).",
+        "evidence_support": "MEDIUM"
+      },
+      {
+        "architecture": "LABOUR_FIXED_PART_SEPARATE",
+        "rationale": "Labour standardized; hardware (bracket, shelf, rod, hinge) client-supplied or disclosed separately.",
+        "evidence_support": "HIGH"
+      },
+      {
+        "architecture": "QUOTE_REQUIRED",
+        "rationale": "For structurally variable tasks: complex custom furniture, riad access, heavy wall-mounted items, full cable concealment, structural drilling.",
+        "evidence_support": "HIGH"
+      }
+    ]
+  },
+
+  "services": [
+
+    {
+      "code": "BRIC-001",
+      "label": "Déplacement minimum / forfait visite",
+      "label_fr": "Déplacement minimum — forfait visite de base",
+      "architecture": "MINIMUM_VISIT_PRICE",
+      "pricing_unit": "FLAT_INTERVENTION",
+      "scope": "Minimum charge for any standalone handyman visit, covering travel time and call-out cost regardless of task duration",
+      "inclusions": ["Travel to site", "Up to 30 minutes on-site work", "Standard consumables for one fixing point"],
+      "exclusions": ["Hardware (shelf, bracket, rod, hinge)", "Extended time beyond ~30 min", "Multiple tasks beyond scope"],
+      "material_policy": "LABOUR_AND_TRAVEL_INCLUDED",
+      "complexity_escape": "If task requires >30 min or becomes multi-task: transition to hourly or per-item pricing",
+      "research_range_low": 150,
+      "research_range_high": 250,
+      "research_anchor": 200,
+      "confidence": "MEDIUM",
+      "human_decision": "PENDING",
+      "production_ready": false,
+      "calibration_candidate": true,
+      "notes": "Key architectural decision: whether FIXEO adopts a minimum visit and how individual task prices interact with it."
+    },
+
+    {
+      "code": "BRIC-002",
+      "label": "Heure main d'oeuvre",
+      "label_fr": "Tarif horaire bricolage",
+      "architecture": "HOURLY",
+      "pricing_unit": "PER_HOUR",
+      "minimum_billing": "2 heures",
+      "scope": "Open-ended or heterogeneous handyman work billed by the hour. Minimum 2h billing.",
+      "inclusions": ["Labour", "Standard hand tools", "Small consumables (screws, plugs for standard walls)"],
+      "exclusions": ["Hardware (brackets, rods, mirrors, furniture)", "Specialist materials", "Power tools hire"],
+      "material_policy": "LABOUR_FIXED_CONSUMABLES_INCLUDED",
+      "complexity_escape": "Specialist trade work escapes to Electricité / Plomberie / Serrurerie",
+      "research_range_low": 100,
+      "research_range_high": 180,
+      "research_anchor": 130,
+      "confidence": "MEDIUM",
+      "human_decision": "PENDING",
+      "production_ready": false,
+      "calibration_candidate": true,
+      "notes": "Well-evidenced. Market practice = 2h minimum. Preferred for open-ended lists. Client uncertainty risk."
+    },
+
+    {
+      "code": "BRIC-003",
+      "label": "Demi-journée bricolage",
+      "label_fr": "Demi-journée bricolage (3–4 heures)",
+      "architecture": "HALF_DAY",
+      "pricing_unit": "HALF_DAY",
+      "scope": "Artisan on-site for ~3–4 hours. Suitable for batched mixed task lists (5+ small tasks). Most economical architecture for multi-task visits.",
+      "inclusions": ["Labour 3–4 hours on-site", "Travel included (single journey)", "Standard consumables"],
+      "exclusions": ["Hardware", "Specialist trades", "Jobs requiring 2nd person"],
+      "material_policy": "LABOUR_AND_TRAVEL_INCLUDED",
+      "complexity_escape": "Structural, safety-critical, or specialist-trade tasks escape to relevant métier",
+      "research_range_low": 300,
+      "research_range_high": 550,
+      "research_anchor": 400,
+      "confidence": "MEDIUM",
+      "human_decision": "PENDING",
+      "production_ready": false,
+      "calibration_candidate": true,
+      "notes": "Explicitly documented as 'most economical formula' for batched work by multiple sources. Prevents unfair multiply-of-unit-price for multi-task visits."
+    },
+
+    {
+      "code": "BRIC-010",
+      "label": "Montage meuble petit",
+      "label_fr": "Montage meuble petit (chaise, table basse, table de nuit, petite étagère en kit)",
+      "architecture": "PER_ITEM_FORFAIT",
+      "pricing_unit": "PER_FURNITURE",
+      "scope": "Assembly of small flat-pack furniture: chair, small table, bedside table, small cabinet. Estimated assembly time: 30–60 min.",
+      "inclusions": ["Assembly labour", "Standard tools"],
+      "exclusions": ["Furniture itself (client-supplied)", "Wall anchoring (add-on)", "Delivery/unpacking beyond standard"],
+      "material_policy": "CLIENT_SUPPLIED_ITEM",
+      "complexity_escape": "Missing parts, damaged item, instructions missing: HORS PÉRIMÈTRE — stop and notify client before proceeding",
+      "research_range_low": 150,
+      "research_range_high": 300,
+      "research_anchor": 200,
+      "confidence": "MEDIUM",
+      "human_decision": "PENDING",
+      "production_ready": false,
+      "calibration_candidate": true,
+      "notes": "Kitea 200 MAD/item is the primary anchor. Independent artisans should price similarly."
+    },
+
+    {
+      "code": "BRIC-011",
+      "label": "Montage meuble moyen",
+      "label_fr": "Montage meuble moyen (bureau, bibliothèque, commode, armoire simple 1 porte)",
+      "architecture": "PER_ITEM_FORFAIT",
+      "pricing_unit": "PER_FURNITURE",
+      "scope": "Assembly of medium flat-pack furniture. Estimated assembly time: 1–2 hours.",
+      "inclusions": ["Assembly labour", "Standard tools"],
+      "exclusions": ["Furniture itself", "Wall anchoring (client decides, add-on)", "Multi-package logistics"],
+      "material_policy": "CLIENT_SUPPLIED_ITEM",
+      "complexity_escape": "Multiple packages, structural issues, missing instructions → quote",
+      "research_range_low": 200,
+      "research_range_high": 450,
+      "research_anchor": 300,
+      "confidence": "LOW",
+      "human_decision": "PENDING",
+      "production_ready": false,
+      "calibration_candidate": true,
+      "notes": "Limited size-specific Moroccan evidence. Range interpolated from small and large tiers."
+    },
+
+    {
+      "code": "BRIC-012",
+      "label": "Montage armoire / grand meuble",
+      "label_fr": "Montage armoire ou grand meuble (PAX, armoire 2–3 portes, lit double, dressing)",
+      "architecture": "CONDITIONAL_FIXED",
+      "pricing_unit": "PER_FURNITURE",
+      "scope": "Assembly of large flat-pack furniture. Estimated assembly time: 2–3+ hours. May require wall anchoring for safety.",
+      "inclusions": ["Assembly labour", "Standard tools", "Wall anti-tip anchoring if required"],
+      "exclusions": ["Furniture itself", "Structural issues", "Missing parts"],
+      "material_policy": "CLIENT_SUPPLIED_ITEM",
+      "complexity_escape": "IKEA PAX with sliding doors complex interior → quote; furniture requiring 2 persons → quote",
+      "research_range_low": 300,
+      "research_range_high": 700,
+      "research_anchor": 450,
+      "confidence": "LOW",
+      "human_decision": "PENDING",
+      "production_ready": false,
+      "calibration_candidate": false,
+      "notes": "Full IKEA bedroom (lit + 2 chevets + PAX) = 500–900 MAD total. Per-armoire-only estimate 300–600 MAD. Low confidence — more evidence needed."
+    },
+
+    {
+      "code": "BRIC-020",
+      "label": "Pose étagère murale",
+      "label_fr": "Pose étagère murale (étagère client-fournie, mur standard)",
+      "architecture": "PER_ITEM_FORFAIT",
+      "pricing_unit": "PER_ITEM",
+      "scope": "Install one wall shelf. Client supplies shelf and brackets (or integrated kit). Wall: standard masonry/brick. Max load per indication: up to 20kg.",
+      "inclusions": ["Drilling", "Standard plugs/anchors for normal masonry", "Level alignment", "Up to 4 fixing points"],
+      "exclusions": ["Shelf or brackets (client-supplied)", "Specialty anchors for concrete/tile", "Shelf over 20kg (escape to conditional)"],
+      "material_policy": "SMALL_CONSUMABLES_INCLUDED_HARDWARE_CLIENT_SUPPLIED",
+      "complexity_escape": "Reinforced concrete wall → surcharge or quote; tile wall → surcharge or quote; heavy shelf (>20kg) → conditional assessment",
+      "research_range_low": 150,
+      "research_range_high": 300,
+      "research_anchor": 200,
+      "confidence": "LOW",
+      "human_decision": "PENDING",
+      "production_ready": false,
+      "calibration_candidate": true,
+      "notes": "150–300 MAD range from Allo-Maison. Limited dedicated evidence. Good candidate if scope is tightly defined."
+    },
+
+    {
+      "code": "BRIC-021",
+      "label": "Pose tringle à rideaux",
+      "label_fr": "Pose tringle à rideaux (tringle client-fournie)",
+      "architecture": "PER_ITEM_FORFAIT",
+      "pricing_unit": "PER_ITEM",
+      "scope": "Install one curtain rod (tringle droite). Client supplies rod and fixings. Standard wall.",
+      "inclusions": ["Drilling", "Standard anchors for masonry", "Level alignment"],
+      "exclusions": ["Curtain rod itself", "Specialty fixings for concrete/tile"],
+      "material_policy": "SMALL_CONSUMABLES_INCLUDED_HARDWARE_CLIENT_SUPPLIED",
+      "complexity_escape": "Ceiling-mounted (plafond) → surcharge; specialty wall → conditional",
+      "research_range_low": null,
+      "research_range_high": null,
+      "research_anchor": null,
+      "confidence": "INSUFFICIENT",
+      "human_decision": "PENDING",
+      "production_ready": false,
+      "calibration_candidate": false,
+      "notes": "No reliable Moroccan price evidence found. Manofix EUR data is international outlier. Would logically price similarly to shelf pose (150–200 MAD). Requires additional market research before calibration."
+    },
+
+    {
+      "code": "BRIC-022",
+      "label": "Fixation miroir mural",
+      "label_fr": "Fixation miroir mural (miroir client-fourni, mur standard)",
+      "architecture": "CONDITIONAL_FIXED",
+      "pricing_unit": "PER_ITEM",
+      "scope": "Install wall mirror. Client supplies mirror. Weight determines complexity.",
+      "inclusions": ["Drilling", "Anchors for standard masonry", "Level alignment"],
+      "exclusions": ["Mirror itself", "Heavy mirrors >5kg without structural assessment"],
+      "material_policy": "SMALL_CONSUMABLES_INCLUDED_HARDWARE_CLIENT_SUPPLIED",
+      "complexity_escape": "Mirror >15kg → quote; tile or marble wall → surcharge; decorative frame requiring specialist attachment → quote",
+      "research_range_low": null,
+      "research_range_high": null,
+      "research_anchor": null,
+      "confidence": "INSUFFICIENT",
+      "human_decision": "PENDING",
+      "production_ready": false,
+      "calibration_candidate": false,
+      "notes": "No specific Moroccan price found. Would logically price 100–200 MAD for standard small mirror. Safety: heavy mirrors require structural assessment."
+    },
+
+    {
+      "code": "BRIC-023",
+      "label": "Fixation cadre / tableau",
+      "label_fr": "Accrochage cadre ou tableau mural",
+      "architecture": "PER_ITEM_FORFAIT",
+      "pricing_unit": "PER_ITEM",
+      "scope": "Hang one framed picture or decorative item. Client-supplied item. Light to medium weight.",
+      "inclusions": ["Hook/anchor installation", "Level alignment"],
+      "exclusions": ["Frame itself", "Heavy artwork >10kg"],
+      "material_policy": "SMALL_CONSUMABLES_INCLUDED",
+      "complexity_escape": "Heavy artwork → assess; multiple frames → batch pricing applies",
+      "research_range_low": null,
+      "research_range_high": null,
+      "research_anchor": null,
+      "confidence": "INSUFFICIENT",
+      "human_decision": "PENDING",
+      "production_ready": false,
+      "calibration_candidate": false,
+      "notes": "No specific Moroccan evidence. Single small frame hanging is typically too small to be standalone FIXEO service — better as add-on within multi-task visit."
+    },
+
+    {
+      "code": "BRIC-030",
+      "label": "Fixation TV murale standard",
+      "label_fr": "Fixation TV murale — support fixe, mur standard, support client-fourni",
+      "architecture": "CONDITIONAL_FIXED",
+      "pricing_unit": "FLAT_INTERVENTION",
+      "scope": "Mount TV on wall using fixed bracket. Client supplies bracket. Wall: standard masonry or hollow brick. TV up to 55\". Cables not concealed.",
+      "inclusions": ["Drilling", "Standard anchors/fixings for masonry", "Bracket installation (client bracket)", "Level alignment", "Basic cable management (surface)"],
+      "exclusions": ["TV bracket (client-supplied)", "Cable concealment in wall", "Electrical socket relocation", "Structural engineering for very heavy screens"],
+      "material_policy": "SMALL_CONSUMABLES_INCLUDED_HARDWARE_CLIENT_SUPPLIED",
+      "complexity_escape": [
+        "Reinforced concrete wall → surcharge or quote",
+        "Full-motion/articulating bracket → increased complexity surcharge",
+        "Cable concealment in wall → escapes to ELECTRICITÉ if socket relocation needed",
+        "TV >65\" and >40kg → quote required",
+        "Plasterboard/drywall → must confirm stud/structure → conditional"
+      ],
+      "research_range_low": 200,
+      "research_range_high": 400,
+      "research_anchor": 300,
+      "confidence": "MEDIUM",
+      "human_decision": "PENDING",
+      "production_ready": false,
+      "calibration_candidate": true,
+      "notes": "Best-evidenced task in this métier. 300 MAD (m3allempro, 89 reviews, Casablanca) is the strongest anchor. 200–400 DH range corroborated by Stepone.ma. Client supplies bracket is market standard."
+    },
+
+    {
+      "code": "BRIC-031",
+      "label": "Fixation TV murale complexe",
+      "label_fr": "Fixation TV murale — full-motion, câbles dissimulés, béton armé",
+      "architecture": "QUOTE_REQUIRED",
+      "pricing_unit": "QUOTE_REQUIRED",
+      "scope": "Complex TV wall mounting: full-motion bracket, cable concealment in wall, reinforced concrete, heavy/large screen (65\"+).",
+      "inclusions": ["To be defined in quote"],
+      "exclusions": ["Always excludes electrical socket relocation (ELECTRICITÉ)"],
+      "material_policy": "QUOTE_SCOPE_DEFINES",
+      "complexity_escape": "This IS the complex escape — upstream from BRIC-030",
+      "research_range_low": 1000,
+      "research_range_high": 1500,
+      "research_anchor": null,
+      "confidence": "INSUFFICIENT",
+      "human_decision": "PENDING",
+      "production_ready": false,
+      "calibration_candidate": false,
+      "notes": "Only one source. Should remain QUOTE_REQUIRED. Cable concealment in wall may require licensed electrician."
+    },
+
+    {
+      "code": "BRIC-040",
+      "label": "Accessoire salle de bain pose",
+      "label_fr": "Pose accessoire salle de bain (porte-serviettes, patère, porte-papier, barre d'appui)",
+      "architecture": "PER_ITEM_FORFAIT",
+      "pricing_unit": "PER_ITEM",
+      "scope": "Install one bathroom accessory on tile or standard wall. Client supplies accessory.",
+      "inclusions": ["Drilling", "Appropriate anchors (tile/masonry)", "Alignment"],
+      "exclusions": ["Accessory itself", "Tile crack repair"],
+      "material_policy": "SMALL_CONSUMABLES_INCLUDED_HARDWARE_CLIENT_SUPPLIED",
+      "complexity_escape": "Tile cracking risk → inform client; porcelain/marble tile → surcharge",
+      "research_range_low": null,
+      "research_range_high": null,
+      "research_anchor": null,
+      "confidence": "INSUFFICIENT",
+      "human_decision": "PENDING",
+      "production_ready": false,
+      "calibration_candidate": false,
+      "notes": "No dedicated Moroccan pricing found. Tile drilling is skill-intensive. Would logically be 100–200 MAD for one accessory."
+    },
+
+    {
+      "code": "BRIC-050",
+      "label": "Porte réglage / charnière réglage",
+      "label_fr": "Réglage porte qui frotte ou ferme mal — charnières et paumelles",
+      "architecture": "CONDITIONAL_FIXED",
+      "pricing_unit": "FLAT_INTERVENTION",
+      "scope": "Adjust door that sticks, rubs, or doesn't close properly. Adjust hinges (charnières/paumelles). Does NOT include structural door issues.",
+      "inclusions": ["Hinge adjustment", "Minor planing if accessible", "Latch/strike plate adjustment"],
+      "exclusions": ["New hinges (client supplies or separate)", "Structural door frame issues (MENUISERIE/MAÇONNERIE)", "Lock mechanism (SERRURERIE)"],
+      "material_policy": "LABOUR_ONLY",
+      "complexity_escape": "Structural frame damage → MAÇONNERIE; lock problem → SERRURERIE; custom door → MENUISERIE",
+      "research_range_low": 100,
+      "research_range_high": 300,
+      "research_anchor": 200,
+      "confidence": "LOW",
+      "human_decision": "PENDING",
+      "production_ready": false,
+      "calibration_candidate": true,
+      "notes": "Range inferred from hourly rates and task duration (~30–60 min). No dedicated Moroccan source found."
+    },
+
+    {
+      "code": "BRIC-051",
+      "label": "Poignée porte remplacement simple",
+      "label_fr": "Remplacement poignée ou serrure de meuble",
+      "architecture": "CONDITIONAL_FIXED",
+      "pricing_unit": "FLAT_INTERVENTION",
+      "scope": "Replace door handle (poignée) on interior door or furniture. Does NOT include door lock cylinder.",
+      "inclusions": ["Labour for handle replacement"],
+      "exclusions": ["New handle (client supplies or separate)", "Lock cylinder (SERRURERIE)", "Structural damage"],
+      "material_policy": "LABOUR_FIXED_PART_SEPARATE",
+      "complexity_escape": "Lock cylinder → SERRURERIE",
+      "research_range_low": 100,
+      "research_range_high": 200,
+      "research_anchor": 150,
+      "confidence": "LOW",
+      "human_decision": "PENDING",
+      "production_ready": false,
+      "calibration_candidate": false,
+      "notes": "Quick task, 15–30 min. Low confidence — no dedicated source."
+    },
+
+    {
+      "code": "BRIC-060",
+      "label": "Petites finitions / silicone",
+      "label_fr": "Application silicone / joint d'étanchéité (hors plomberie)",
+      "architecture": "CONDITIONAL_FIXED",
+      "pricing_unit": "FLAT_INTERVENTION",
+      "scope": "Apply silicone sealant for decorative/light sealing (not plumbing leaks). Max 2–3 linear meters.",
+      "inclusions": ["Labour", "Silicone tube (standard)"],
+      "exclusions": ["Plumbing leak sealing (PLOMBERIE)", "Large areas (>3 linear meters)"],
+      "material_policy": "CONSUMABLES_INCLUDED_FOR_STANDARD_QUANTITY",
+      "complexity_escape": "Water leak context → PLOMBERIE; tile re-grouting → CARRELAGE",
+      "research_range_low": 100,
+      "research_range_high": 250,
+      "research_anchor": 150,
+      "confidence": "LOW",
+      "human_decision": "PENDING",
+      "production_ready": false,
+      "calibration_candidate": false,
+      "notes": "Typically appears as add-on task in multi-task visits. Standalone silicone job may be too cheap to justify separate FIXEO trip."
+    },
+
+    {
+      "code": "BRIC-070",
+      "label": "Visite multi-tâches",
+      "label_fr": "Visite multi-tâches — liste de petits travaux",
+      "architecture": "FIRST_ITEM_PLUS_ADDITIONAL",
+      "pricing_unit": "MINIMUM_VISIT_PLUS_INCREMENTAL",
+      "scope": "Client provides list of multiple small tasks (shelves, TV, curtain rods, adjustments) to be done in one visit.",
+      "inclusions": ["Travel (single journey)", "All listed tasks up to demi-journée"],
+      "exclusions": ["Specialist trade tasks (escape)", "Hardware for all tasks (client supplies)"],
+      "material_policy": "SMALL_CONSUMABLES_INCLUDED",
+      "complexity_escape": "Any task requiring specialist → escape that task; rest continue",
+      "research_range_low": 300,
+      "research_range_high": 550,
+      "research_anchor": 400,
+      "confidence": "MEDIUM",
+      "human_decision": "PENDING",
+      "production_ready": false,
+      "calibration_candidate": true,
+      "notes": "Half-day model (BRIC-003) is the practical implementation. Alternatively: first item price includes travel; additional items at reduced incremental rate. Architecture decision for human calibration."
+    }
+  ],
+
+  "services_deferred_or_excluded": [
+    {
+      "code": "BRIC-X001",
+      "label": "Luminaire installation",
+      "decision": "SPECIALIST_REQUIRED",
+      "reason": "Replacing a light fixture involves working with live electrical circuits or requires isolating the circuit at the tableau. This is ELECTRICITÉ scope per frozen doctrine. Exception: purely mechanical swap of a pendant on existing intact cable, no wiring work — borderline, needs doctrine clarification.",
+      "escapes_to": "ELECTRICITE"
+    },
+    {
+      "code": "BRIC-X002",
+      "label": "Prise / interrupteur remplacement",
+      "decision": "SPECIALIST_REQUIRED",
+      "reason": "Replacing electrical outlets or switches requires work on live circuits. Frozen ELECTRICITÉ doctrine covers this. Bricolage scope explicitly excludes this.",
+      "escapes_to": "ELECTRICITE"
+    },
+    {
+      "code": "BRIC-X003",
+      "label": "Déplacement TV cable électrique",
+      "decision": "SPECIALIST_REQUIRED",
+      "reason": "Electrical socket relocation for TV installation is ELECTRICITÉ. Explicitly excluded from TV mounting scope.",
+      "escapes_to": "ELECTRICITE"
+    },
+    {
+      "code": "BRIC-X004",
+      "label": "Robinetterie / fuite plomberie",
+      "decision": "SPECIALIST_REQUIRED",
+      "reason": "Any plumbing modification, pipe work, or leak repair escapes to PLOMBERIE. Market evidence notes handymen often do minor plumbing (joint de robinet, siphon) — but FIXEO doctrine should require PLOMBERIE for anything beyond truly superficial consumer-grade maintenance.",
+      "escapes_to": "PLOMBERIE",
+      "borderline_note": "Joint de robinet (washer), flexible de douche, siphon — market classifies as handyman. FIXEO should decide based on risk tolerance."
+    },
+    {
+      "code": "BRIC-X005",
+      "label": "Cylindre / serrure remplacement",
+      "decision": "SPECIALIST_REQUIRED",
+      "reason": "Lock cylinder and security lock replacement is frozen SERRURERIE scope.",
+      "escapes_to": "SERRURERIE"
+    },
+    {
+      "code": "BRIC-X006",
+      "label": "Menuiserie sur mesure / travaux bois structurels",
+      "decision": "SPECIALIST_REQUIRED",
+      "reason": "Custom woodwork, built-in wardrobes, structural carpentry is MENUISERIE.",
+      "escapes_to": "MENUISERIE"
+    },
+    {
+      "code": "BRIC-X007",
+      "label": "Mur porteur / percement structurel",
+      "decision": "SPECIALIST_REQUIRED",
+      "reason": "Any structural wall drilling or modification requires MAÇONNERIE or structural engineer assessment.",
+      "escapes_to": "MACONNERIE"
+    },
+    {
+      "code": "BRIC-X008",
+      "label": "Carrelage pose / remplacement",
+      "decision": "SPECIALIST_REQUIRED",
+      "reason": "Tile laying, replacement, and re-grouting is CARRELAGE scope.",
+      "escapes_to": "CARRELAGE"
+    },
+    {
+      "code": "BRIC-X009",
+      "label": "Peinture murale",
+      "decision": "SPECIALIST_REQUIRED",
+      "reason": "Wall painting is PEINTURE scope.",
+      "escapes_to": "PEINTURE"
+    },
+    {
+      "code": "BRIC-X010",
+      "label": "Perçage simple standalone",
+      "decision": "NOT_STANDALONE_SERVICE",
+      "reason": "Standalone drilling without a fixing goal is not a commercially viable separate FIXEO service. Drilling is included within shelf/TV/curtain rod services.",
+      "recommendation": "Include in parent service pricing"
+    },
+    {
+      "code": "BRIC-X011",
+      "label": "Serrure grippée / porte grippée",
+      "decision": "BOUNDARY_CONDITIONAL",
+      "reason": "Simple door adjustment (sticking due to humidity) = BRICOLAGE. Lock mechanism issue = SERRURERIE. Must triage on arrival.",
+      "escapes_to": "SERRURERIE if lock mechanism involved"
+    },
+    {
+      "code": "BRIC-X012",
+      "label": "Cuisine IKEA montage complet",
+      "decision": "QUOTE_REQUIRED",
+      "reason": "Full IKEA kitchen assembly (8–12 cabinets, worktop, appliance installation) takes 2–4 days. Price is highly variable. Should be DEVIS.",
+      "recommendation": "QUOTE_REQUIRED — not standardizable as fixed FIXEO price"
+    },
+    {
+      "code": "BRIC-X013",
+      "label": "Hauteur / travaux en hauteur (>2.5m)",
+      "decision": "BOUNDARY_CONDITIONAL",
+      "reason": "Work above standard step ladder height (>2.5m) requires proper scaffolding equipment. This is a complexity escape condition, not a separate service category.",
+      "recommendation": "Add as escape condition to relevant services"
+    }
+  ]
+}
