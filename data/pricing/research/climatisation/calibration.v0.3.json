@@ -1,0 +1,426 @@
+{
+  "_meta": {
+    "file": "calibration.v0.3.json",
+    "registry": "fixeo_climatisation_pricing",
+    "version": "0.3.0",
+    "status": "HUMAN_PRICE_DECISION_FREEZE_NOT_PRODUCTION",
+    "description": "Phase 7B.6.2 — Human price decision freeze. 8 pilot services APPROVED by human. production_ready = false on all. No deployment. This file records approved prices, economic justification, and commission/fuel sensitivity recalculated at approved prices.",
+    "production_ready": false,
+    "human_decision": "APPROVED",
+    "last_updated": "2026-08-09",
+    "phase": "7B.6.2",
+    "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
+    "provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+    "provenance_description": "Human-calibrated FIXEO pilot price derived from Moroccan market research, standardized scope definition, technical integrity review, and client/artisan dual-fairness analysis.",
+    "price_is_not": [
+      "AI_GENERATED",
+      "ML_PREDICTION",
+      "OFFICIAL_MOROCCAN_TARIFF",
+      "REGULATED_TARIFF",
+      "ARTISAN_DECLARED",
+      "FIXEO_TRANSACTION_MEDIAN",
+      "STATISTICALLY_PROVEN_NATIONAL_MEDIAN"
+    ],
+    "canonical_disclaimer": "Prix indicatif FIXEO — tarif réel confirmé avec l'artisan avant intervention.",
+    "commission_reference": 0.15,
+    "commission_scenarios_tested": [0, 0.10, 0.15, 0.20],
+    "fuel_scenarios_MAD": { "LOW": 25, "MID": 40, "HIGH": 60 },
+    "universal_hard_floor_MAD": 100,
+    "universal_hard_floor_description": "Absolute FIXEO viability hard floor. No FIXEO artisan net may fall below 100 MAD under any combination of commission and standard fuel scenario.",
+    "climatisation_target_floor_MAD": 150,
+    "climatisation_target_floor_description": "FIXEO human-calibrated economic policy target for technical climatisation work. Reflects specialist equipment burden, tool transport, technical skill level, longer average intervention duration, refrigeration procedure requirements, and safety/environmental responsibility. This is a FIXEO_TECHNICAL_POLICY target — NOT a statistically established Moroccan artisan cost floor.",
+    "floor_grade_thresholds": {
+      "STRONG": 200,
+      "ACCEPTABLE": 150,
+      "MARGINAL": 100,
+      "FAIL": 0
+    },
+    "city_adjustment": null,
+    "night_modifier": null,
+    "weekend_modifier": null,
+    "holiday_modifier": null,
+    "urgency_modifier": null,
+    "express_modifier": null,
+    "market_scope": "NATIONAL_MOROCCO",
+
+    "diagnostic_absorption_policy": {
+      "classification": "FIXEO_POLICY",
+      "not_universal_moroccan_market_practice": true,
+      "policy": "Le forfait diagnostic CLIM-002 (250 MAD) est déductible du prix de l'intervention standardisée si le client accepte une intervention FIXEO standardisée réalisée lors du MÊME déplacement.",
+      "when_250_MAD_remains_payable": [
+        "Aucune réparation n'est effectuée",
+        "Le client refuse la réparation proposée",
+        "L'intervention est hors périmètre standardisé",
+        "Une investigation spécialisée est requise",
+        "Le diagnostic est inconclusif",
+        "Une seconde visite est nécessaire",
+        "Les pièces ou le réfrigérant requis ne sont pas disponibles et aucune réparation standardisée qualifiante ne peut être complétée lors de la même visite"
+      ],
+      "client_protection": "Un client ne doit JAMAIS se voir facturer 250 MAD diagnostic + prix total de la réparation standardisée quand la règle d'absorption même-visite s'applique.",
+      "examples": {
+        "diagnostic_absorbed_entretien": "Diagnostic 250 MAD → client accepte CLIM-003 entretien 300 MAD → total dû : 300 MAD",
+        "diagnostic_absorbed_repair": "Diagnostic 250 MAD → client accepte CLIM-013 réparation fuite 600 MAD → total dû : 600 MAD",
+        "diagnostic_charged_no_repair": "Diagnostic 250 MAD → aucune réparation acceptée → total dû : 250 MAD",
+        "diagnostic_charged_declined": "Diagnostic 250 MAD → devis fourni mais refusé par client → total dû : 250 MAD"
+      }
+    },
+
+    "refrigeration_integrity_doctrine": {
+      "classification": "FIXEO_TECHNICAL_POLICY",
+      "sequence": [
+        "1. DIAGNOSE — Diagnostic général CLIM-002/006",
+        "2. PRESSURE CHECK — Contrôle pression CLIM-007",
+        "3. LEAK DETECTION — Détection fuite CLIM-008 si pression basse",
+        "4. REPAIR LEAK — Réparation fuite accessible CLIM-013 ou DEVIS si inaccessible",
+        "5. VACUUM — Tirage au vide CLIM-014 (OBLIGATOIRE avant toute recharge)",
+        "6. CORRECT REFRIGERANT CHARGE — Recharge gaz correct CLIM-010/011/012 (approbation client + facturation séparée)",
+        "7. FUNCTIONAL TEST — Vérification températures et fonctionnement"
+      ],
+      "prohibited_practices": [
+        "Recharge aveugle sans diagnostic ni recherche de fuite (blind top-up)",
+        "Recharges répétées sans traitement de la fuite connue",
+        "Recharge sans tirage au vide préalable",
+        "Mélange de réfrigérants incompatibles (ex. R32 + R410A)",
+        "Venting intentionnel du réfrigérant comme pratique normale",
+        "Recharge R22 répétée sans conseil de remplacement système et advisory phase-out"
+      ],
+      "r22_advisory_mandatory": "Informer le client : R22 est un réfrigérant en cours de suppression progressive au titre du Protocole de Montréal. La recharge R22 est une solution temporaire uniquement. Recommander le remplacement du système lors de la prochaine décision d'investissement.",
+      "r22_regulatory_note": "FIXEO ne formule pas de revendications légales spécifiques sur les exigences de certification R22 au Maroc sans source réglementaire vérifiée. L'advisory ci-dessus est basé sur le calendrier de phase-out, pas sur des données d'application réglementaire spécifiques.",
+      "r32_safety_note": "R32 est classifié A2L (légèrement inflammable). Les travaux doivent être réalisés avec équipement adapté, loin de sources d'ignition. FIXEO ne formule pas de revendications sur des exigences de certification Marocaines spécifiques sans source vérifiée.",
+      "pump_down_doctrine": "Le venting du réfrigérant est INTERDIT comme pratique FIXEO normale. Tout démontage doit utiliser le pump-down (réfrigérant récupéré dans l'unité extérieure). Si le pump-down standard est impossible (compresseur hors service), la situation doit être divulguée au client et traitée par procédure distincte — non comme venting normal."
+    },
+
+    "refrigerant_pricing_not_approved": "Les prix pour R410A, R32, R22, recharge complète, recharge partielle, tirage au vide en service standalone, et détection de fuite restent NON APPROUVÉS et constituent des sujets de calibration futurs. Aucun prix réfrigérant ne peut être silencieusement inclus dans les huit prix pilotes approuvés.",
+    "hardware_component_pricing_not_approved": "Les prix pour condensateur, PCB, moteur ventilateur, compresseur, pompe de relevage, filtre de remplacement, protection électrique, et cuivre supplémentaire au-delà des portées d'installation approuvées restent PART_SEPARATE ou QUOTE_REQUIRED jusqu'à calibration séparée.",
+
+    "hors_perimetre_workflow": [
+      "1. STOP",
+      "2. IDENTIFIER la condition objective de sortie de périmètre",
+      "3. EXPLIQUER clairement au client",
+      "4. DÉCLARER : Cette intervention est HORS PÉRIMÈTRE PRIX FIXEO",
+      "5. PRÉCISER le scope ou coût additionnel nécessaire",
+      "6. OBTENIR l'approbation explicite du client",
+      "7. CONTINUER seulement après approbation — le prix standardisé FIXEO original ne doit jamais augmenter silencieusement"
+    ]
+  },
+
+  "approved_services": [
+
+    {
+      "service_code": "CLIM-002",
+      "label_fr": "Diagnostic climatiseur + déplacement",
+      "architecture": "FIXED",
+      "approved_price_MAD": 250,
+      "human_decision": "APPROVED",
+      "production_ready": false,
+      "market_range_MAD": { "low": 150, "high": 350 },
+      "market_anchor_MAD": 250,
+      "client_position": "Midpoint du marché — ancre de recherche exacte",
+      "artisan_position_summary": "ACCEPTABLE–STRONG sur tous les scénarios",
+      "commission_sensitivity": {
+        "methodology": "net = price × (1 - commission_rate) - fuel_MAD",
+        "at_0pct_fuel_LOW": 225,
+        "at_0pct_fuel_HIGH": 190,
+        "at_15pct_fuel_LOW": 188,
+        "at_15pct_fuel_MID": 173,
+        "at_15pct_fuel_HIGH": 153,
+        "at_20pct_fuel_LOW": 175,
+        "at_20pct_fuel_MID": 160,
+        "at_20pct_fuel_HIGH": 140,
+        "worst_case_net_MAD": 140,
+        "worst_case_grade": "ACCEPTABLE"
+      },
+      "approval_rationale": "250 MAD est l'ancre de recherche. Diagnostic spécialisé nécessitant jauges manométriques et expertise technique. Pire cas net 140 MAD — ACCEPTABLE, au-dessus du plancher cible climatisation 150 MAD. Diagnostic absorption policy adoptée : 250 MAD déductible de la réparation standardisée même visite.",
+      "confidence": "MEDIUM"
+    },
+
+    {
+      "service_code": "CLIM-003",
+      "label_fr": "Entretien annuel standard / unité intérieure",
+      "architecture": "FIXED_PER_AC_UNIT",
+      "approved_price_MAD": 300,
+      "human_decision": "APPROVED",
+      "production_ready": false,
+      "market_range_MAD": { "low": 200, "high": 400 },
+      "market_anchor_MAD": 300,
+      "client_position": "Midpoint du marché — ancre de recherche exacte",
+      "artisan_position_summary": "ACCEPTABLE–STRONG. Excellent sur visites multi-unités.",
+      "commission_sensitivity": {
+        "methodology": "net = price × (1 - commission_rate) - fuel_MAD (première unité, déplacement inclus)",
+        "at_0pct_fuel_LOW": 275,
+        "at_0pct_fuel_HIGH": 240,
+        "at_15pct_fuel_LOW": 230,
+        "at_15pct_fuel_MID": 215,
+        "at_15pct_fuel_HIGH": 195,
+        "at_20pct_fuel_LOW": 215,
+        "at_20pct_fuel_MID": 200,
+        "at_20pct_fuel_HIGH": 180,
+        "worst_case_net_MAD": 180,
+        "worst_case_grade": "ACCEPTABLE",
+        "multi_unit_note": "Deuxième unité même adresse même visite : net 20% commission = 240 MAD (0 fuel additionnel). Très favorable pour 45–60 min de travail supplémentaire."
+      },
+      "approval_rationale": "300 MAD est l'ancre de recherche. Pire cas net 180 MAD — ACCEPTABLE bien au-dessus du plancher cible. Inclut l'unité intérieure uniquement — distinction explicite avec CLIM-004 (unité extérieure incluse dans CLIM-004 seulement).",
+      "confidence": "MEDIUM"
+    },
+
+    {
+      "service_code": "CLIM-004",
+      "label_fr": "Nettoyage profond int+ext / unité",
+      "architecture": "FIXED_PER_AC_UNIT",
+      "approved_price_MAD": 450,
+      "human_decision": "APPROVED",
+      "production_ready": false,
+      "market_range_MAD": { "low": 350, "high": 600 },
+      "market_anchor_MAD": 450,
+      "client_position": "Midpoint du marché — ancre de recherche exacte",
+      "artisan_position_summary": "STRONG sur tous les scénarios",
+      "commission_sensitivity": {
+        "methodology": "net = price × (1 - commission_rate) - fuel_MAD",
+        "at_0pct_fuel_LOW": 425,
+        "at_0pct_fuel_HIGH": 390,
+        "at_15pct_fuel_LOW": 358,
+        "at_15pct_fuel_MID": 343,
+        "at_15pct_fuel_HIGH": 323,
+        "at_20pct_fuel_LOW": 335,
+        "at_20pct_fuel_MID": 320,
+        "at_20pct_fuel_HIGH": 300,
+        "worst_case_net_MAD": 300,
+        "worst_case_grade": "STRONG"
+      },
+      "approval_rationale": "450 MAD est l'ancre de recherche. Pire cas net 300 MAD — STRONG. 90–120 min de travail spécialisé avec équipement haute pression, produits chimiques, accès unité extérieure. Premium 150 MAD vs CLIM-003 entièrement justifié.",
+      "confidence": "MEDIUM"
+    },
+
+    {
+      "service_code": "CLIM-009",
+      "label_fr": "Débouchage condensats",
+      "architecture": "FIXED",
+      "approved_price_MAD": 250,
+      "human_decision_vs_v02_note": "Approuvé à 250 MAD (V0.2 proposait 220 MAD). Décision humaine de préserver une meilleure viabilité économique technicien tout en restant dans la fourchette de marché Marocain recherchée (150–300 MAD).",
+      "human_decision": "APPROVED",
+      "production_ready": false,
+      "market_range_MAD": { "low": 150, "high": 300 },
+      "market_anchor_MAD": 200,
+      "evidence_confidence": "LOW",
+      "client_position": "Tiers supérieur de la fourchette de marché — dans la fourchette honnête",
+      "artisan_position_summary": "ACCEPTABLE sur tous les scénarios",
+      "commission_sensitivity": {
+        "methodology": "net = price × (1 - commission_rate) - fuel_MAD",
+        "at_0pct_fuel_LOW": 225,
+        "at_0pct_fuel_HIGH": 190,
+        "at_15pct_fuel_LOW": 188,
+        "at_15pct_fuel_MID": 173,
+        "at_15pct_fuel_HIGH": 153,
+        "at_20pct_fuel_LOW": 175,
+        "at_20pct_fuel_MID": 160,
+        "at_20pct_fuel_HIGH": 140,
+        "worst_case_net_MAD": 140,
+        "worst_case_grade": "ACCEPTABLE"
+      },
+      "approval_rationale": "250 MAD approuvé par décision humaine (V0.2 proposait 220 MAD). Pire cas net 140 MAD — ACCEPTABLE, au-dessus du plancher canonique 100 MAD et du plancher cible climatisation 150 MAD. Confiance faible sur l'évidence de prix — 250 MAD reste dans la fourchette honnête (150–300 MAD).",
+      "confidence": "LOW"
+    },
+
+    {
+      "service_code": "CLIM-013",
+      "label_fr": "Réparation fuite frigorifique accessible — main d'œuvre uniquement",
+      "architecture": "CONDITIONAL_FIXED",
+      "approved_price_MAD": 600,
+      "price_semantics": "LABOUR_ONLY",
+      "refrigerant_included": false,
+      "refrigerant_note": "Le réfrigérant N'EST JAMAIS inclus dans les 600 MAD. Ce prix ne doit JAMAIS être présenté comme réparation + recharge gaz tout compris. Après réparation, vacuum + recharge = services séparés avec approbation client préalable.",
+      "human_decision": "APPROVED",
+      "production_ready": false,
+      "market_range_MAD": { "low": 400, "high": 800 },
+      "market_anchor_MAD": 600,
+      "client_position": "Midpoint du marché — ancre de recherche exacte",
+      "artisan_position_summary": "STRONG sur tous les scénarios",
+      "commission_sensitivity": {
+        "methodology": "net = price × (1 - commission_rate) - fuel_MAD",
+        "at_0pct_fuel_LOW": 575,
+        "at_0pct_fuel_HIGH": 540,
+        "at_15pct_fuel_LOW": 485,
+        "at_15pct_fuel_MID": 470,
+        "at_15pct_fuel_HIGH": 450,
+        "at_20pct_fuel_LOW": 455,
+        "at_20pct_fuel_MID": 440,
+        "at_20pct_fuel_HIGH": 420,
+        "worst_case_net_MAD": 420,
+        "worst_case_grade": "STRONG"
+      },
+      "approval_rationale": "600 MAD est l'ancre de recherche. Intervention spécialisée (brasure chalumeau, azote, 60–90 min). Pire cas net 420 MAD — STRONG. Réfrigérant toujours exclu — facturation séparée obligatoire après réparation.",
+      "confidence": "MEDIUM"
+    },
+
+    {
+      "service_code": "CLIM-020",
+      "label_fr": "Installation mono-split ≤3m — client fournit le climatiseur",
+      "architecture": "CONDITIONAL_FIXED",
+      "approved_price_MAD": 1000,
+      "human_decision_vs_v02_note": "Approuvé à 1 000 MAD (V0.2 proposait 900 MAD). Décision humaine incluant un buffer économique pour les matériaux inclus significatifs et la procédure technique (vacuum, mise en service).",
+      "ac_unit_supply": "CLIENT_SUPPLIED_ALWAYS_EXCLUDED",
+      "copper_scope_metres": 3,
+      "human_decision": "APPROVED",
+      "production_ready": false,
+      "market_range_MAD": { "low": 600, "high": 1200 },
+      "market_anchor_MAD": 900,
+      "client_position": "Tiers inférieur du marché formel — protecteur pour le client",
+      "artisan_position_summary": "STRONG avant déduction matériaux. ACCEPTABLE après déduction matériaux dans la plupart des scénarios.",
+      "commission_sensitivity": {
+        "methodology": "net = price × (1 - commission_rate) - fuel_MAD. ATTENTION: valeurs avant déduction coût matériaux inclus.",
+        "at_0pct_fuel_LOW": 975,
+        "at_0pct_fuel_HIGH": 940,
+        "at_15pct_fuel_LOW": 825,
+        "at_15pct_fuel_MID": 810,
+        "at_15pct_fuel_HIGH": 790,
+        "at_20pct_fuel_LOW": 775,
+        "at_20pct_fuel_MID": 760,
+        "at_20pct_fuel_HIGH": 740,
+        "worst_case_net_before_materials_MAD": 740,
+        "worst_case_grade_before_materials": "STRONG"
+      },
+      "material_cost_stress_test": {
+        "note": "CLIM-020 inclut des matériaux significatifs. Le vrai bénéfice artisan = net(commission+fuel) - coût matériaux. La viabilité ne peut PAS être évaluée sans déduction matériaux.",
+        "material_cost_estimate_LOW_MAD": 320,
+        "material_cost_estimate_HIGH_MAD": 460,
+        "material_breakdown_estimate": {
+          "support_mural_console_MAD": "80–100",
+          "copper_kit_3m_tube_isolant_MAD": "200–250",
+          "cable_inter_unites_MAD": "30–50",
+          "condensate_drain_pipe_MAD": "20–30",
+          "consumables_MAD": "20–30"
+        },
+        "scenarios": [
+          {
+            "label": "15% commission / MID fuel 40 MAD / LOW mat 320 MAD",
+            "net_before_materials": 810,
+            "net_after_materials": 490,
+            "grade": "STRONG"
+          },
+          {
+            "label": "15% commission / MID fuel 40 MAD / HIGH mat 460 MAD",
+            "net_before_materials": 810,
+            "net_after_materials": 350,
+            "grade": "STRONG"
+          },
+          {
+            "label": "20% commission / HIGH fuel 60 MAD / LOW mat 320 MAD",
+            "net_before_materials": 740,
+            "net_after_materials": 420,
+            "grade": "STRONG"
+          },
+          {
+            "label": "20% commission / HIGH fuel 60 MAD / HIGH mat 460 MAD",
+            "net_before_materials": 740,
+            "net_after_materials": 280,
+            "grade": "STRONG"
+          }
+        ],
+        "worst_case_net_after_materials_MAD": 280,
+        "worst_case_grade_after_materials": "STRONG",
+        "vs_v02_900_MAD_comparison": "Au prix V0.2 de 900 MAD (20% commission, 60 MAD fuel, 460 MAD matériaux) : net main d'œuvre = 720 - 60 - 460 = 200 MAD — STRONG floor but very tight. La décision humaine à 1 000 MAD améliore le pire cas à 280 MAD — confortablement STRONG.",
+        "material_validation_note": "Le calibrateur humain doit valider les hypothèses de coût matériaux avec les entrées réelles des artisans. Ces estimations sont des fourchettes de recherche, non des coûts réels vérifiés."
+      },
+      "approval_rationale": "1 000 MAD approuvé (V0.2 proposait 900 MAD). La décision humaine inclut un buffer économique pour les matériaux inclus significatifs. Pire cas net après matériaux 280 MAD — STRONG. Bien dans la fourchette de marché honnête (600–1 200 MAD).",
+      "confidence": "MEDIUM"
+    },
+
+    {
+      "service_code": "CLIM-021",
+      "label_fr": "Installation mono-split ≤5m — client fournit le climatiseur",
+      "architecture": "CONDITIONAL_FIXED",
+      "approved_price_MAD": 1200,
+      "human_decision_vs_v02_note": "Approuvé à 1 200 MAD (V0.2 proposait 1 100 MAD). Maintient exactement 200 MAD de différence vs CLIM-020 (1 000 MAD).",
+      "delta_vs_clim020_MAD": 200,
+      "delta_check": "1200 - 1000 = 200 MAD EXACT",
+      "ac_unit_supply": "CLIENT_SUPPLIED_ALWAYS_EXCLUDED",
+      "copper_scope_metres": 5,
+      "human_decision": "APPROVED",
+      "production_ready": false,
+      "market_range_MAD": { "low": 800, "high": 1500 },
+      "market_anchor_MAD": 1100,
+      "client_position": "Tiers inférieur du marché formel — protecteur pour le client",
+      "artisan_position_summary": "STRONG avant déduction matériaux. STRONG après déduction matériaux dans tous les scénarios testés.",
+      "commission_sensitivity": {
+        "methodology": "net = price × (1 - commission_rate) - fuel_MAD. ATTENTION: valeurs avant déduction coût matériaux inclus.",
+        "at_0pct_fuel_LOW": 1175,
+        "at_0pct_fuel_HIGH": 1140,
+        "at_15pct_fuel_LOW": 995,
+        "at_15pct_fuel_MID": 980,
+        "at_15pct_fuel_HIGH": 960,
+        "at_20pct_fuel_LOW": 935,
+        "at_20pct_fuel_MID": 920,
+        "at_20pct_fuel_HIGH": 900,
+        "worst_case_net_before_materials_MAD": 900,
+        "worst_case_grade_before_materials": "STRONG"
+      },
+      "material_cost_stress_test": {
+        "note": "CLIM-021 inclut les mêmes matériaux que CLIM-020 plus 2 mètres de cuivre supplémentaires.",
+        "material_cost_estimate_LOW_MAD": 440,
+        "material_cost_estimate_HIGH_MAD": 620,
+        "material_delta_vs_clim020_note": "2 mètres cuivre supplémentaires + isolant ≈ 120–160 MAD matériaux additionnels vs CLIM-020",
+        "scenarios": [
+          {
+            "label": "15% commission / MID fuel 40 MAD / LOW mat 440 MAD",
+            "net_before_materials": 980,
+            "net_after_materials": 540,
+            "grade": "STRONG"
+          },
+          {
+            "label": "15% commission / MID fuel 40 MAD / HIGH mat 620 MAD",
+            "net_before_materials": 980,
+            "net_after_materials": 360,
+            "grade": "STRONG"
+          },
+          {
+            "label": "20% commission / HIGH fuel 60 MAD / LOW mat 440 MAD",
+            "net_before_materials": 900,
+            "net_after_materials": 460,
+            "grade": "STRONG"
+          },
+          {
+            "label": "20% commission / HIGH fuel 60 MAD / HIGH mat 620 MAD",
+            "net_before_materials": 900,
+            "net_after_materials": 280,
+            "grade": "STRONG"
+          }
+        ],
+        "worst_case_net_after_materials_MAD": 280,
+        "worst_case_grade_after_materials": "STRONG",
+        "delta_policy": "CLIM-021 doit toujours être tarifé strictement au-dessus de CLIM-020 d'un delta reflétant le coût réel des matériaux supplémentaires. Delta approuvé = 200 MAD. Si CLIM-020 est révisé, CLIM-021 doit être révisé en conséquence pour maintenir un delta minimum de 150 MAD."
+      },
+      "approval_rationale": "1 200 MAD approuvé. Maintient exactement 200 MAD de différence vs CLIM-020 (1 000 MAD). Pire cas net après matériaux 280 MAD — STRONG. Dans la fourchette de marché honnête (800–1 500 MAD).",
+      "confidence": "MEDIUM"
+    },
+
+    {
+      "service_code": "CLIM-030",
+      "label_fr": "Démontage split — pump-down + dépose complète",
+      "architecture": "FIXED",
+      "approved_price_MAD": 550,
+      "human_decision": "APPROVED",
+      "production_ready": false,
+      "market_range_MAD": { "low": 400, "high": 700 },
+      "market_anchor_MAD": 550,
+      "client_position": "Midpoint du marché — ancre de recherche exacte",
+      "artisan_position_summary": "STRONG sur tous les scénarios",
+      "pump_down_economics_note": "550 MAD vs 450 MAD : le supplément de 100 MAD compense la procédure de pump-down (10–15 min supplémentaires). À 450 MAD il y a une pression économique informelle pour sauter le pump-down. À 550 MAD l'artisan est rémunéré pour la bonne pratique — mécanisme d'assurance qualité intégré au prix.",
+      "commission_sensitivity": {
+        "methodology": "net = price × (1 - commission_rate) - fuel_MAD",
+        "at_0pct_fuel_LOW": 525,
+        "at_0pct_fuel_HIGH": 490,
+        "at_15pct_fuel_LOW": 443,
+        "at_15pct_fuel_MID": 428,
+        "at_15pct_fuel_HIGH": 408,
+        "at_20pct_fuel_LOW": 415,
+        "at_20pct_fuel_MID": 400,
+        "at_20pct_fuel_HIGH": 380,
+        "worst_case_net_MAD": 380,
+        "worst_case_grade": "STRONG"
+      },
+      "approval_rationale": "550 MAD est l'ancre de recherche. Pire cas net 380 MAD — STRONG. Pump-down obligatoire FIXEO — le prix de 550 MAD soutient économiquement cette bonne pratique vs venting non professionnel.",
+      "confidence": "MEDIUM"
+    }
+
+  ]
+}

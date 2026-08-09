@@ -309,8 +309,116 @@ if (cal) {
 }
 console.log();
 
+// ─── V0.3 Human Decision Freeze checks ───────────────────────────────────────
+console.log('── Test 15: V0.3 Human Decision Freeze checks ──');
+const reg3Path = path.join(RESEARCH_DIR, 'registry.v0.3.json');
+const cal3Path = path.join(RESEARCH_DIR, 'calibration.v0.3.json');
+let reg3 = null, cal3 = null;
+
+if (fs.existsSync(reg3Path)) {
+  try { reg3 = JSON.parse(fs.readFileSync(reg3Path, 'utf8')); } catch(e) {
+    check('registry.v0.3.json parseable', false, e.message); }
+}
+if (fs.existsSync(cal3Path)) {
+  try { cal3 = JSON.parse(fs.readFileSync(cal3Path, 'utf8')); } catch(e) {
+    check('calibration.v0.3.json parseable', false, e.message); }
+}
+
+if (reg3 && cal3) {
+  const APPROVED_PRICES = { 'CLIM-002':250,'CLIM-003':300,'CLIM-004':450,'CLIM-009':250,'CLIM-013':600,'CLIM-020':1000,'CLIM-021':1200,'CLIM-030':550 };
+  const EXPECTED_ARCHITECTURES = { 'CLIM-002':'FIXED','CLIM-003':'FIXED_PER_AC_UNIT','CLIM-004':'FIXED_PER_AC_UNIT','CLIM-009':'FIXED','CLIM-013':'CONDITIONAL_FIXED','CLIM-020':'CONDITIONAL_FIXED','CLIM-021':'CONDITIONAL_FIXED','CLIM-030':'FIXED' };
+
+  // Registry checks
+  check('registry.v0.3 production_ready = false', reg3._meta.production_ready === false, `production_ready = ${reg3._meta.production_ready}`);
+  check('registry.v0.3 city_adjustment = null', reg3._meta.city_adjustment === null, 'city_adjustment not null');
+  check('registry.v0.3 urgency_modifier = null', reg3._meta.urgency_modifier === null, 'urgency_modifier not null');
+  check('registry.v0.3 has 8 approved services', (reg3.approved_services||[]).length === 8, `count = ${(reg3.approved_services||[]).length}`);
+
+  const reg3codes = (reg3.approved_services||[]);
+  reg3codes.forEach(svc => {
+    const expected = APPROVED_PRICES[svc.service_code];
+    check(`registry.v0.3 ${svc.service_code} approved_price = ${expected}`, svc.approved_price_MAD === expected, `got ${svc.approved_price_MAD}`);
+    check(`registry.v0.3 ${svc.service_code} human_decision = APPROVED`, svc.human_decision === 'APPROVED', `got ${svc.human_decision}`);
+    check(`registry.v0.3 ${svc.service_code} production_ready = false`, svc.production_ready === false, `got ${svc.production_ready}`);
+    const expArch = EXPECTED_ARCHITECTURES[svc.service_code];
+    check(`registry.v0.3 ${svc.service_code} architecture = ${expArch}`, svc.architecture === expArch, `got ${svc.architecture}`);
+  });
+
+  // Calibration checks
+  check('calibration.v0.3 production_ready = false', cal3._meta.production_ready === false, 'production_ready not false');
+  check('calibration.v0.3 human_decision = APPROVED', cal3._meta.human_decision === 'APPROVED', `got ${cal3._meta.human_decision}`);
+  check('calibration.v0.3 city_adjustment = null', cal3._meta.city_adjustment === null, 'city_adjustment not null');
+  check('calibration.v0.3 urgency_modifier = null', cal3._meta.urgency_modifier === null, 'urgency_modifier not null');
+  check('calibration.v0.3 universal_hard_floor = 100', cal3._meta.universal_hard_floor_MAD === 100, `got ${cal3._meta.universal_hard_floor_MAD}`);
+  check('calibration.v0.3 climatisation_target_floor = 150', cal3._meta.climatisation_target_floor_MAD === 150, `got ${cal3._meta.climatisation_target_floor_MAD}`);
+
+  const cal3svcs = cal3.approved_services || [];
+  check('calibration.v0.3 has 8 approved services', cal3svcs.length === 8, `count = ${cal3svcs.length}`);
+
+  cal3svcs.forEach(svc => {
+    const expectedPrice = APPROVED_PRICES[svc.service_code];
+    check(`calibration.v0.3 ${svc.service_code} price = ${expectedPrice}`, svc.approved_price_MAD === expectedPrice, `got ${svc.approved_price_MAD}`);
+    check(`calibration.v0.3 ${svc.service_code} human_decision = APPROVED`, svc.human_decision === 'APPROVED', `got ${svc.human_decision}`);
+    check(`calibration.v0.3 ${svc.service_code} production_ready = false`, svc.production_ready === false, `got ${svc.production_ready}`);
+  });
+
+  // CLIM-013 refrigerant exclusion
+  const c13v3 = cal3svcs.find(s => s.service_code === 'CLIM-013');
+  check('calibration.v0.3 CLIM-013 refrigerant_included = false', c13v3 && c13v3.refrigerant_included === false, 'refrigerant_included not false');
+  check('calibration.v0.3 CLIM-013 price_semantics = LABOUR_ONLY', c13v3 && c13v3.price_semantics === 'LABOUR_ONLY', `got ${c13v3 && c13v3.price_semantics}`);
+
+  // CLIM-020/021 AC unit exclusion
+  const c20v3 = (reg3.approved_services||[]).find(s => s.service_code === 'CLIM-020');
+  const c21v3 = (reg3.approved_services||[]).find(s => s.service_code === 'CLIM-021');
+  check('registry.v0.3 CLIM-020 ac_unit_supply = CLIENT_SUPPLIED_ALWAYS_EXCLUDED', c20v3 && c20v3.ac_unit_supply === 'CLIENT_SUPPLIED_ALWAYS_EXCLUDED', `got ${c20v3 && c20v3.ac_unit_supply}`);
+  check('registry.v0.3 CLIM-021 ac_unit_supply = CLIENT_SUPPLIED_ALWAYS_EXCLUDED', c21v3 && c21v3.ac_unit_supply === 'CLIENT_SUPPLIED_ALWAYS_EXCLUDED', `got ${c21v3 && c21v3.ac_unit_supply}`);
+
+  // Copper scope
+  check('registry.v0.3 CLIM-020 copper_scope = 3m', c20v3 && c20v3.copper_scope === 'UP_TO_3_LINEAR_METRES', `got ${c20v3 && c20v3.copper_scope}`);
+  check('registry.v0.3 CLIM-021 copper_scope = 5m', c21v3 && c21v3.copper_scope === 'UP_TO_5_LINEAR_METRES', `got ${c21v3 && c21v3.copper_scope}`);
+
+  // Exact 200 MAD delta CLIM-021 - CLIM-020
+  check('CLIM-021 - CLIM-020 = exactly 200 MAD', APPROVED_PRICES['CLIM-021'] - APPROVED_PRICES['CLIM-020'] === 200,
+    `delta = ${APPROVED_PRICES['CLIM-021'] - APPROVED_PRICES['CLIM-020']}`);
+
+  // Diagnostic absorption policy present
+  const diagPolicy = cal3._meta.diagnostic_absorption_policy || {};
+  check('calibration.v0.3 diagnostic_absorption_policy present', diagPolicy.classification === 'FIXEO_POLICY', 'diagnostic_absorption_policy missing or wrong classification');
+
+  // Refrigeration doctrine present
+  const refDoctrine = cal3._meta.refrigeration_integrity_doctrine || {};
+  check('calibration.v0.3 refrigeration_integrity_doctrine present', Array.isArray(refDoctrine.sequence) && refDoctrine.sequence.length > 0, 'refrigeration_integrity_doctrine missing');
+  check('calibration.v0.3 blind top-up prohibited', Array.isArray(refDoctrine.prohibited_practices) && refDoctrine.prohibited_practices.some(p => p.includes('aveugle') || p.includes('top-up')), 'blind top-up not in prohibited_practices');
+  check('calibration.v0.3 pump-down doctrine present', (refDoctrine.pump_down_doctrine || '').length > 10, 'pump_down_doctrine missing or empty');
+
+  // Material stress test present for installation services
+  const c20v3cal = cal3svcs.find(s => s.service_code === 'CLIM-020');
+  const c21v3cal = cal3svcs.find(s => s.service_code === 'CLIM-021');
+  check('calibration.v0.3 CLIM-020 material_cost_stress_test present', c20v3cal && c20v3cal.material_cost_stress_test && c20v3cal.material_cost_stress_test.scenarios, 'CLIM-020 material_cost_stress_test missing');
+  check('calibration.v0.3 CLIM-021 material_cost_stress_test present', c21v3cal && c21v3cal.material_cost_stress_test && c21v3cal.material_cost_stress_test.scenarios, 'CLIM-021 material_cost_stress_test missing');
+
+  // No AI/ML claims
+  const priceIsNot = cal3._meta.price_is_not || [];
+  check('calibration.v0.3 price_is_not includes AI_GENERATED', priceIsNot.includes('AI_GENERATED'), 'AI_GENERATED not in price_is_not');
+  check('calibration.v0.3 price_is_not includes ML_PREDICTION', priceIsNot.includes('ML_PREDICTION'), 'ML_PREDICTION not in price_is_not');
+
+} else {
+  if (!reg3) warn('registry.v0.3.json', 'File does not exist — skipping V0.3 checks');
+  if (!cal3) warn('calibration.v0.3.json', 'File does not exist — skipping V0.3 checks');
+}
+console.log();
+
+// V0.2 artifacts still present
+console.log('── Test 16: V0.2 artifacts preserved ──');
+const V02_FILES = ['calibration.v0.2.json','human-review.v0.2.md','fair-price-policy.v0.2.md'];
+V02_FILES.forEach(f => {
+  const fp = path.join(RESEARCH_DIR, f);
+  check(`V0.2 artifact ${f} still exists`, fs.existsSync(fp), 'File missing');
+});
+console.log();
+
 // ─── Additional: Evidence usable flag on unsafe practices ───────────────────
-console.log('── Test 15: Unsafe practice evidence is marked usable=false ──');
+console.log('── Test 17: Unsafe practice evidence is marked usable=false ──');
 const unsafeUsable = evidenceList.filter(e =>
   e.unsafe_practice_flag && e.usable === true
 ).map(e => e.evidence_id);
