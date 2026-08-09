@@ -1,0 +1,60 @@
+{
+  "schema": "fixeo-consolidation-audit-v1",
+  "phase": "7C.1",
+  "generated_at": "2026-08-09",
+  "note": "READ-ONLY AUDIT — pricing unit normalization proposal only",
+
+  "frozen_unit_inventory": [
+    {"frozen": "?",                    "metier": "plomberie",     "count": 6, "issue": "No unit field populated in frozen registry — must be inferred from human-decision.v0.3.md"},
+    {"frozen": "FLAT_INTERVENTION",    "metier": "electricite",   "count": 6},
+    {"frozen": "par intervention",     "metier": "serrurerie",    "count": 4, "note": "French string — not enum"},
+    {"frozen": "par cylindre",         "metier": "serrurerie",    "count": 1},
+    {"frozen": "par serrure",          "metier": "serrurerie",    "count": 1},
+    {"frozen": "PER_INTERVENTION",     "metier": "climatisation", "count": 4},
+    {"frozen": "PER_AC_UNIT",          "metier": "climatisation", "count": 2},
+    {"frozen": "PER_INSTALLATION",     "metier": "climatisation", "count": 2},
+    {"frozen": "UNIT_FLAT_INTERVENTION","metier": "bricolage",    "count": 2},
+    {"frozen": "UNIT_PER_HOUR",        "metier": "bricolage",     "count": 1},
+    {"frozen": "UNIT_FLAT_HALF_DAY",   "metier": "bricolage",     "count": 1},
+    {"frozen": "UNIT_PER_ITEM",        "metier": "bricolage",     "count": 2},
+    {"frozen": "FORFAIT_MINIMUM",      "metier": "nettoyage",     "count": 1},
+    {"frozen": "PER_CLEANER_HOUR",     "metier": "nettoyage",     "count": 1},
+    {"frozen": "PER_INTERVENTION",     "metier": "nettoyage",     "count": 1},
+    {"frozen": "PER_SOFA_2_SEAT",      "metier": "nettoyage",     "count": 1},
+    {"frozen": "PER_SOFA_3_SEAT",      "metier": "nettoyage",     "count": 1},
+    {"frozen": "PER_MATTRESS_BOTH_FACES","metier":"nettoyage",    "count": 2},
+    {"frozen": "PER_M2",               "metier": "nettoyage",     "count": 1},
+    {"frozen": "MINIMUM_PROJECT",      "metier": "peinture",      "count": 1},
+    {"frozen": "PER_PAINTED_M2",       "metier": "peinture",      "count": 4},
+    {"frozen": "PER_CEILING_M2",       "metier": "peinture",      "count": 1},
+    {"frozen": "PER_DOOR",             "metier": "menuiserie",    "count": 3},
+    {"frozen": "FLAT_INTERVENTION",    "metier": "menuiserie",    "count": 2},
+    {"frozen": "BASE_VISIT_PLUS_INCREMENTAL","metier":"menuiserie","count": 2}
+  ],
+
+  "collision_issues": [
+    {"issue": "FLAT_INTERVENTION vs par intervention vs PER_INTERVENTION vs UNIT_FLAT_INTERVENTION vs FORFAIT_MINIMUM", "description": "Five strings for 'one fixed price per visit/intervention'. Must normalize.", "severity": "HIGH", "resolution": "Canonical: FLAT_INTERVENTION"},
+    {"issue": "par cylindre / par serrure — French strings", "description": "Serrurerie uses French-language unit strings instead of enum values.", "severity": "MEDIUM", "resolution": "Canonical: PER_ITEM (with item_label field for display)"},
+    {"issue": "PER_INTERVENTION vs PER_AC_UNIT vs PER_INSTALLATION (climatisation)", "description": "PER_INSTALLATION and PER_AC_UNIT are semantically the same for split AC (1 unit = 1 installation). PER_INTERVENTION is appropriate for diagnostic. Normalize: diagnostic = FLAT_INTERVENTION; cleaning/install = PER_AC_UNIT.", "severity": "MEDIUM", "resolution": "Canonical: FLAT_INTERVENTION for diagnostic, PER_AC_UNIT for cleaning/install"},
+    {"issue": "UNIT_PER_HOUR vs PER_CLEANER_HOUR", "description": "Bricolage hourly is per-single-worker; nettoyage is per-cleaner×count. MUST NOT collapse.", "severity": "CRITICAL", "resolution": "Canonical: PER_HOUR (bricolage, 1 worker implicit) vs PER_CLEANER_HOUR (nettoyage, worker_count explicit input)"},
+    {"issue": "UNIT_FLAT_HALF_DAY", "description": "Half-day is a time-block. Proposed canonical: FLAT_INTERVENTION with scope metadata.", "severity": "LOW", "resolution": "Canonical: FLAT_INTERVENTION with duration_scope: 'up to 4h'"},
+    {"issue": "PER_SOFA_2_SEAT / PER_SOFA_3_SEAT / PER_MATTRESS_BOTH_FACES", "description": "These are per-item specifics (sofa size tier, mattress side count). Canonical unit: PER_ITEM; item_spec carries the tier.", "severity": "LOW", "resolution": "Canonical: PER_ITEM with item_spec field"},
+    {"issue": "PER_M2 (nettoyage après-chantier) vs PER_PAINTED_M2 (peinture) vs PER_CEILING_M2 (peinture plafond)", "description": "THREE DISTINCT m² semantics. PER_M2 = floor/surface area. PER_PAINTED_M2 = painted surface (converted from floor area via conversion model). PER_CEILING_M2 = actual ceiling area measured directly. These MUST NOT be collapsed.", "severity": "CRITICAL", "resolution": "Maintain all three as distinct enum values. Estimator must ask correct measurement question for each."},
+    {"issue": "BASE_VISIT_PLUS_INCREMENTAL", "description": "Menuiserie batch pricing. Not a standard unit but a formula modifier on FLAT_INTERVENTION. Unit = FLAT_INTERVENTION; batch_rule field carries the increment.", "severity": "LOW", "resolution": "Canonical: FLAT_INTERVENTION + batch_rule metadata; unit field = FLAT_INTERVENTION"},
+    {"issue": "MINIMUM_PROJECT (peinture PEIN-001)", "description": "This is not a unit — it is a minimum-floor policy. The 'service' PEIN-001 is actually a policy anchor, not a separately bookable service.", "severity": "HIGH", "resolution": "In canonical registry: PEIN-001 becomes a policy_ref (min_project_floor) referenced by all peinture services. Not a service with its own unit."}
+  ],
+
+  "proposed_canonical_unit_enum": [
+    {"value": "FLAT_INTERVENTION", "description": "One price for one visit/intervention. No quantity input beyond eligibility check.", "replaces": ["par intervention", "PER_INTERVENTION", "UNIT_FLAT_INTERVENTION", "FORFAIT_MINIMUM", "BASE_VISIT (batch base)"]},
+    {"value": "PER_ITEM",         "description": "Price per discrete item (furniture piece, hinge, cylinder, sofa, mattress). Item type disambiguated via item_spec.", "replaces": ["par cylindre", "par serrure", "UNIT_PER_ITEM", "PER_SOFA_2_SEAT", "PER_SOFA_3_SEAT", "PER_MATTRESS_BOTH_FACES"]},
+    {"value": "PER_AC_UNIT",      "description": "Price per air conditioning unit. AC-specific; do not generalize.", "replaces": ["PER_AC_UNIT", "PER_INSTALLATION (clim)"]},
+    {"value": "PER_DOOR",         "description": "Price per door. Door-specific (menuiserie, serrurerie door work).", "replaces": ["PER_DOOR"]},
+    {"value": "PER_HOUR",         "description": "Price per hour for single worker. Minimum billing period applies. Bricolage only.", "replaces": ["UNIT_PER_HOUR", "HOURLY"]},
+    {"value": "PER_CLEANER_HOUR", "description": "Price per cleaner per hour. Worker count is explicit input: TOTAL = rate × workers × hours. Nettoyage only.", "replaces": ["PER_CLEANER_HOUR"], "warning": "MUST NOT be confused with PER_HOUR"},
+    {"value": "PER_HALF_DAY",     "description": "Flat block pricing for up to 4h of multi-task work. Bricolage only. Could be modelled as FLAT_INTERVENTION with duration_scope metadata.", "replaces": ["UNIT_FLAT_HALF_DAY", "HALF_DAY"]},
+    {"value": "PER_M2",           "description": "Price per m² of FLOOR/SURFACE AREA. Nettoyage après-chantier. NOT painted surface.", "replaces": ["PER_M2 (nettoyage)"], "warning": "MUST NOT be conflated with PER_PAINTED_M2"},
+    {"value": "PER_PAINTED_M2",   "description": "Price per m² of PAINTED SURFACE AREA. Peinture walls. Converted from floor area via conversion model (RESEARCH_ESTIMATION_ONLY). NOT equal to floor m².", "replaces": ["PER_PAINTED_M2"], "warning": "MUST NOT be conflated with PER_M2 or PER_CEILING_M2"},
+    {"value": "PER_CEILING_M2",   "description": "Price per m² of CEILING AREA. Peinture plafond. Measured directly from ceiling dimensions. NOT floor area, NOT painted wall area.", "replaces": ["PER_CEILING_M2"], "warning": "MUST NOT be conflated with PER_PAINTED_M2"},
+    {"value": "QUOTE_ONLY",       "description": "No standardized unit. Custom quote required.", "replaces": ["QUOTE_REQUIRED unit context"]}
+  ]
+}

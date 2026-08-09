@@ -1,0 +1,170 @@
+{
+  "schema": "fixeo-consolidation-audit-v1",
+  "phase": "7C.1",
+  "generated_at": "2026-08-09",
+  "note": "READ-ONLY AUDIT — no production files modified",
+
+  "legacy_sources": [
+    {
+      "id": "LEGACY-01",
+      "file": "js/fixeo-pricing-marocain.js",
+      "status": "ACTIVE",
+      "loaded_in": ["index.html (deferred, v=pm1)"],
+      "surfaces": ["homepage artisan cards priceFrom/priceLabel", "artisan directory cards (via patchAllArtisans)"],
+      "what_it_displays": "Category-level ranges (from/to). E.g. plomberie: 150-350 MAD, menuiserie: 150-900 MAD, bricolage: 100-400 MAD.",
+      "key_issues": [
+        {"issue": "Overwrites real Supabase artisan price_from/price_label for undeclared artisans (Phase 7B.1 hotfix applied — now conditional)", "severity": "P1 — mitigated but dual-field complexity remains"},
+        {"issue": "electricite floor 100 MAD — below all canonical research floors (180-200 MAD)", "severity": "P1"},
+        {"issue": "bricolage floor 100 MAD — below canonical 200 MAD minimum", "severity": "P1"},
+        {"issue": "menuiserie 150-900 MAD — canonical range is 300-500 MAD for standardized repairs; 150 MAD is critically below floor", "severity": "P0"},
+        {"issue": "peinture 800-2500 MAD — conflates labour-only per-m² with all-in project pricing", "severity": "P1"},
+        {"issue": "nettoyage 200-600 MAD — uses room/project range; canonical is per-cleaner-hour (65 MAD) × hours × workers", "severity": "P1"},
+        {"issue": "plomberie 150-350 MAD — canonical prices are 180-300 MAD per intervention; range not wrong but unit semantics differ", "severity": "P2"}
+      ]
+    },
+    {
+      "id": "LEGACY-02",
+      "file": "js/fixeo-estimation-engine-v1.js",
+      "status": "ACTIVE (lazy-loaded via reservation stack on index.html)",
+      "surfaces": ["homepage estimation modal (RAFI pre-flow)", "estimation widget"],
+      "what_it_displays": "simple/medium/heavy/urgent complexity tiers per métier. E.g. plomberie simple: 120-250 MAD; menuiserie heavy: 800-3000 MAD.",
+      "key_issues": [
+        {"issue": "Universal 4-tier architecture (simple/medium/heavy/urgent) — incompatible with canonical per-service architecture", "severity": "P0"},
+        {"issue": "menuiserie heavy max 3000 MAD — critically low for custom placard (starts 2000 MAD/ml)", "severity": "P0"},
+        {"issue": "Floor 120 MAD for plomberie/electricite — below all canonical research minimums", "severity": "P0"},
+        {"issue": "Urgency = 4th complexity tier (not a time modifier) — semantic collision with null urgency modifier doctrine", "severity": "P1"},
+        {"issue": "ETA: hardcoded '2-4 heures' — zero connection to real availability", "severity": "P2"},
+        {"issue": "Covers only 9 of 13 métiers — bricolage, jardinage, déménagement, toiture missing", "severity": "P2"},
+        {"issue": "Artisan count filter uses 'proximité' label but filters all city artisans — geographic overstatement", "severity": "P2"}
+      ]
+    },
+    {
+      "id": "LEGACY-03",
+      "file": "js/fixeo-estimation-v2-hero.js",
+      "status": "DEAD — never loaded by any HTML page",
+      "surfaces": ["NONE"],
+      "what_it_displays": "N/A",
+      "key_issues": [
+        {"issue": "Best pricing matrix in production codebase (17 métiers × 4 tiers) — should NOT be deleted; will be superseded by canonical engine", "severity": "INFO"},
+        {"issue": "Contains service-level pricing data more granular than v1 — valuable reference before deletion", "severity": "INFO"}
+      ],
+      "do_not_delete": true
+    },
+    {
+      "id": "LEGACY-04",
+      "file": "js/reservation.js",
+      "status": "ACTIVE (loaded in reservation flow)",
+      "surfaces": ["Reservation modal SERVICE_PRICING lookup", "pre-reservation price display"],
+      "what_it_displays": "Service-name-keyed price map (e.g. 'Fuite d eau: {from:150,to:300}'). Also sets window.SERVICE_PRICING.",
+      "key_issues": [
+        {"issue": "Window.SERVICE_PRICING namespace collision with fixeo-pricing-marocain.js (category-keyed). Race condition if marocain loads after reservation — wrong key type delivered to reservation-v2.", "severity": "P0"},
+        {"issue": "Peinture: 800-1500 MAD (per room) — conflicts with canonical per-m² doctrine", "severity": "P0"},
+        {"issue": "Salle de bain: 1500-5000 MAD — market evidence shows 5000+ MAD labour-only; floor critically low", "severity": "P1"},
+        {"issue": "Urgence treated as category (200-500 MAD) — semantic collision with canonical null urgency modifier", "severity": "P1"},
+        {"issue": "~64 service strings not normalized against canonical service codes", "severity": "P1"}
+      ]
+    },
+    {
+      "id": "LEGACY-05",
+      "file": "js/reservation-v2.js",
+      "status": "ACTIVE (reservation fallback chain)",
+      "surfaces": ["Reservation modal fallback prices when reservation.js lookup fails"],
+      "what_it_displays": "SVC_PRICING_FB fallback map. Peinture: 20-60 MAD (per m²). Plomberie simple: 150-280 MAD.",
+      "key_issues": [
+        {"issue": "Peinture: 20-60 MAD — correct unit (per m²) but CONTRADICTS reservation.js 800-1500 MAD (per room). Same fallback chain, 40× ratio depending on which file wins.", "severity": "P0 — active pricing contradiction on live surface"},
+        {"issue": "Depends on window.SERVICE_PRICING from reservation.js. If race condition (see LEGACY-04) → wrong key type → always falls back to SVC_PRICING_FB → always shows per-m² Peinture price even when room-based was intended.", "severity": "P0"}
+      ]
+    },
+    {
+      "id": "LEGACY-06",
+      "file": "js/fixeo-profile-flagship-v1.js + js/fixeo-profile-v3.js",
+      "status": "ACTIVE (artisan profile pages)",
+      "surfaces": ["Artisan profile pages price display"],
+      "what_it_displays": "MAR_PRICES (15 cat from-only) and PRICING string map (22 entries). Arithmetic derived prices.",
+      "key_issues": [
+        {"issue": "Third and fourth independent pricing sources for same surfaces — no canonical connection", "severity": "P1"},
+        {"issue": "Arithmetic derivation without real artisan data — hasPriceData=true misrepresented", "severity": "P1"}
+      ]
+    },
+    {
+      "id": "LEGACY-07",
+      "file": "js/fixeo-ai-request-engine.js",
+      "status": "ACTIVE (fallback in AIRE request flow)",
+      "surfaces": ["RAFI/AIRE fallback price display when no category match"],
+      "what_it_displays": "PRICE_MAP — 12 category flat ranges. Catchall fallback.",
+      "key_issues": [
+        {"issue": "12-category fallback covers only macro-categories — no sub-service resolution", "severity": "P2"}
+      ]
+    },
+    {
+      "id": "LEGACY-08",
+      "file": "generate-pseo-v2.js + generate-lps.js",
+      "status": "BUILD-TIME (not runtime)",
+      "surfaces": ["Generated pSEO HTML pages (already built, static in production)"],
+      "what_it_displays": "pSEO pages show hardcoded price ranges. E.g. plomberie 'Intervention simple: 300-600 MAD' (inflated vs canonical 150-350 MAD).",
+      "key_issues": [
+        {"issue": "pSEO 'Intervention simple' 300-600 MAD — canonical market research shows 150-350 MAD for simple plomberie. 2× inflation on public SEO pages.", "severity": "P1 — public-facing misinformation"},
+        {"issue": "pSEO regeneration requires build-time migration of generators BEFORE new pages are built", "severity": "P1"},
+        {"issue": "12 cities × plomberie specific pricing in generate-lps.js — partial city data not consistent with null city_adjustment doctrine", "severity": "P2"}
+      ]
+    }
+  ],
+
+  "cross_source_contradictions": [
+    {
+      "contradiction_id": "CONT-01",
+      "description": "Peinture unit collision — same surface, two prices 40× apart",
+      "source_a": "reservation.js: Peinture 800-1500 MAD (per room)",
+      "source_b": "reservation-v2.js SVC_PRICING_FB: Peinture 20-60 MAD (per m²)",
+      "canonical": "35-75 MAD/m² painted surface (labour or all-in)",
+      "severity": "P0 — ACTIVE CONTRADICTION ON LIVE BOOKING SURFACE",
+      "risk": "Race condition between reservation.js and fixeo-pricing-marocain.js determines which price client sees — non-deterministic"
+    },
+    {
+      "contradiction_id": "CONT-02",
+      "description": "Bricolage floor mismatch — 100 vs 200 MAD",
+      "source_a": "fixeo-pricing-marocain.js: bricolage from: 100 MAD",
+      "source_b": "Canonical research: BRIC-001 minimum visit = 200 MAD",
+      "canonical": "200 MAD",
+      "severity": "P1 — below artisan economic floor"
+    },
+    {
+      "contradiction_id": "CONT-03",
+      "description": "Electricite floor — 100 vs 200 MAD",
+      "source_a": "fixeo-pricing-marocain.js: electricite from: 100 MAD",
+      "source_b": "fixeo-estimation-engine-v1.js: electricite simple from: 100 MAD",
+      "source_c": "Canonical: electricite.diagnostic = 200 MAD, prise/interrupteur = 220 MAD",
+      "canonical": "200-250 MAD",
+      "severity": "P0 — 100 MAD is below artisan floor for any urban Casablanca intervention"
+    },
+    {
+      "contradiction_id": "CONT-04",
+      "description": "Serrurerie floor — 150 vs 220-380 MAD",
+      "source_a": "fixeo-pricing-marocain.js: serrurerie from: 150 MAD",
+      "source_b": "Canonical: porte claquée = 220 MAD, verrouillée = 380 MAD",
+      "canonical": "220-400 MAD depending on service",
+      "severity": "P1"
+    },
+    {
+      "contradiction_id": "CONT-05",
+      "description": "Menuiserie floor and ceiling mismatch",
+      "source_a": "fixeo-pricing-marocain.js: menuiserie from: 150, to: 900 MAD",
+      "source_b": "fixeo-estimation-engine-v1.js: menuiserie simple 150-350, heavy max 3000 MAD",
+      "source_c": "Canonical: all standardized services 300-500 MAD; custom fabrication = QUOTE (market 2000-9000 MAD/ml)",
+      "canonical": "300-500 MAD standardized; QUOTE for custom",
+      "severity": "P0 — 150 MAD floor is below the 300 MAD canonical minimum"
+    },
+    {
+      "contradiction_id": "CONT-06",
+      "description": "Fixed-price vs 'indicative' disclaimer contradiction",
+      "description_detail": "Frozen artifacts simultaneously state: (1) human-approved fixed prices (e.g. MENU_006 = 500 MAD, not a range); (2) disclaimer 'Prix indicatif FIXEO — tarif réel confirmé avec l'artisan'. These are contradictory: a fixed price is not indicative.",
+      "severity": "P1 — philosophical/product contradiction requiring explicit human decision",
+      "options": {
+        "A": "FIXEO Reference Estimate — all prices indicative, artisan confirms actual price. Current disclaimer is correct. No guaranteed price.",
+        "B": "FIXEO Standard Price — for eligible standardized services FIXEO guarantees the price. Client pays no more. Artisan receives FIXEO price - commission. Disclaimer becomes: 'Prix standard FIXEO pour les interventions éligibles — tarif garanti si conditions satisfaites.'",
+        "C": "Hybrid — standardized fixed price for eligible services; indicative range for uncertain services; quote for custom. Disclaimer adapts by service type.",
+        "recommendation": "Option C — most honest to current doctrine. All standardized approved services already have eligibility conditions baked in. Client experience: 'Ce service est au tarif fixe FIXEO de X MAD si les conditions suivantes sont réunies: [...]. Sinon, devis artisan.' This resolves the contradiction without overpromising."
+      }
+    }
+  ]
+}

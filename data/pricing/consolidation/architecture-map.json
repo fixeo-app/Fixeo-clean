@@ -1,0 +1,137 @@
+{
+  "schema": "fixeo-consolidation-audit-v1",
+  "phase": "7C.1",
+  "generated_at": "2026-08-09",
+  "note": "READ-ONLY AUDIT — architecture normalization proposal only",
+
+  "frozen_architecture_inventory": [
+    {"frozen": "FIXEO_FIXED_PRICE",           "metier": "plomberie",      "count": 6, "note": "All 6 plomberie pilots use this string"},
+    {"frozen": "FIXED",                        "metier": "electricite",    "count": 5},
+    {"frozen": "CONDITIONAL_FIXED",            "metier": "electricite",    "count": 1},
+    {"frozen": "FIXED",                        "metier": "serrurerie",     "count": 1},
+    {"frozen": "CONDITIONAL_FIXED",            "metier": "serrurerie",     "count": 3},
+    {"frozen": "LABOUR_FIXED_PART_SEPARATE",   "metier": "serrurerie",     "count": 2},
+    {"frozen": "FIXED",                        "metier": "climatisation",  "count": 4},
+    {"frozen": "FIXED_PER_AC_UNIT",            "metier": "climatisation",  "count": 2},
+    {"frozen": "CONDITIONAL_FIXED",            "metier": "climatisation",  "count": 2},
+    {"frozen": "MINIMUM_VISIT_PRICE",          "metier": "bricolage",      "count": 1},
+    {"frozen": "HOURLY",                       "metier": "bricolage",      "count": 1},
+    {"frozen": "HALF_DAY",                     "metier": "bricolage",      "count": 1},
+    {"frozen": "PER_ITEM_FORFAIT",             "metier": "bricolage",      "count": 2},
+    {"frozen": "CONDITIONAL_FIXED",            "metier": "bricolage",      "count": 1},
+    {"frozen": "FORFAIT_MINIMUM",              "metier": "nettoyage",      "count": 1},
+    {"frozen": "PER_CLEANER_HOUR",             "metier": "nettoyage",      "count": 1},
+    {"frozen": "CONDITIONAL_FIXED",            "metier": "nettoyage",      "count": 1, "note": "Grand ménage"},
+    {"frozen": "FORFAIT_BY_ITEM",              "metier": "nettoyage",      "count": 4},
+    {"frozen": "PER_M2_WITH_MINIMUM",          "metier": "nettoyage",      "count": 1},
+    {"frozen": "MINIMUM_PROJECT_FLOOR",        "metier": "peinture",       "count": 1},
+    {"frozen": "LABOUR_ONLY_PER_PAINTED_M2",   "metier": "peinture",       "count": 1},
+    {"frozen": "ALL_IN_STANDARD_PER_PAINTED_M2","metier": "peinture",      "count": 1},
+    {"frozen": "CONDITIONAL_PER_CEILING_M2",   "metier": "peinture",       "count": 1},
+    {"frozen": "ALL_IN_WITH_MINOR_PREP_PER_PAINTED_M2","metier":"peinture","count": 1},
+    {"frozen": "PREPARATION_ADD_ON_PER_PAINTED_M2","metier":"peinture",    "count": 1},
+    {"frozen": "CONDITIONAL_FIXED",            "metier": "menuiserie",     "count": 5},
+    {"frozen": "LABOUR_FIXED_PART_SEPARATE",   "metier": "menuiserie",     "count": 2}
+  ],
+
+  "deduplicated_frozen_strings": [
+    "FIXEO_FIXED_PRICE",
+    "FIXED",
+    "FIXED_PER_AC_UNIT",
+    "CONDITIONAL_FIXED",
+    "LABOUR_FIXED_PART_SEPARATE",
+    "MINIMUM_VISIT_PRICE",
+    "HOURLY",
+    "HALF_DAY",
+    "PER_ITEM_FORFAIT",
+    "FORFAIT_MINIMUM",
+    "PER_CLEANER_HOUR",
+    "FORFAIT_BY_ITEM",
+    "PER_M2_WITH_MINIMUM",
+    "MINIMUM_PROJECT_FLOOR",
+    "LABOUR_ONLY_PER_PAINTED_M2",
+    "ALL_IN_STANDARD_PER_PAINTED_M2",
+    "CONDITIONAL_PER_CEILING_M2",
+    "ALL_IN_WITH_MINOR_PREP_PER_PAINTED_M2",
+    "PREPARATION_ADD_ON_PER_PAINTED_M2"
+  ],
+
+  "collision_issues": [
+    {"issue": "FIXEO_FIXED_PRICE vs FIXED", "description": "Plomberie uses 'FIXEO_FIXED_PRICE'; all other métiers use 'FIXED'. Semantically identical. Must normalize to one string.", "severity": "HIGH", "resolution": "Canonical: FIXED"},
+    {"issue": "FIXED vs FIXED_PER_AC_UNIT", "description": "CLIM-003/004 use FIXED_PER_AC_UNIT but unit field already says PER_AC_UNIT. The per-unit qualifier belongs in the pricing_unit field, not architecture. Architecture = FIXED.", "severity": "MEDIUM", "resolution": "Canonical: FIXED; unit: PER_AC_UNIT"},
+    {"issue": "MINIMUM_VISIT_PRICE vs FORFAIT_MINIMUM vs MINIMUM_PROJECT_FLOOR", "description": "Three different strings for 'minimum charge' across bricolage, nettoyage, peinture. All express the same anti-additive floor rule.", "severity": "HIGH", "resolution": "Canonical: MINIMUM_FLOOR with min_amount field; rule: FINAL_PRICE = max(min_amount, service_price)"},
+    {"issue": "HOURLY vs PER_CLEANER_HOUR", "description": "Bricolage HOURLY (1 worker implicit) vs Nettoyage PER_CLEANER_HOUR (explicit worker count). These are DIFFERENT semantics and must NOT be collapsed.", "severity": "CRITICAL", "resolution": "Keep as distinct architectures: TIME_BASED_SINGLE (bricolage) vs TIME_BASED_TEAM (nettoyage)"},
+    {"issue": "HALF_DAY vs HOURLY", "description": "HALF_DAY is a pre-packaged time block (400 MAD flat), not a continuous hourly rate. It is conceptually FIXED with a time-scope constraint, not TIME_BASED.", "severity": "LOW", "resolution": "Canonical: FIXED (with duration scope metadata: 'up to 4h')"},
+    {"issue": "PER_ITEM_FORFAIT vs FORFAIT_BY_ITEM", "description": "Bricolage and Nettoyage use different strings for per-item fixed pricing. Semantically equivalent.", "severity": "MEDIUM", "resolution": "Canonical: FIXED; unit: PER_ITEM"},
+    {"issue": "LABOUR_ONLY_PER_PAINTED_M2 vs ALL_IN_STANDARD_PER_PAINTED_M2 vs ALL_IN_WITH_MINOR_PREP_PER_PAINTED_M2", "description": "All three are per-m² unit-rate services for peinture. The distinction is in materials_included, not architecture. Architecture for all = VARIABLE_UNIT; unit = PER_PAINTED_M2; materials field carries the distinction.", "severity": "MEDIUM", "resolution": "Canonical: VARIABLE_UNIT; unit: PER_PAINTED_M2; materials: {paint: CLIENT_SUPPLIED|INCLUDED, prep: EXCLUDED|INCLUDED}"},
+    {"issue": "CONDITIONAL_PER_CEILING_M2 vs per_painted_m2 services", "description": "Plafond uses ceiling m², not painted m². Must not be collapsed. The measurement_basis field carries this distinction, not the architecture.", "severity": "HIGH", "resolution": "Canonical: VARIABLE_UNIT; unit: PER_CEILING_M2. Do NOT merge with PER_PAINTED_M2."},
+    {"issue": "PREPARATION_ADD_ON_PER_PAINTED_M2", "description": "ADD_ON is a distinct architecture: this service cannot be booked standalone; it adds to a primary service. No other métier has ADD_ON yet.", "severity": "LOW", "resolution": "Canonical: ADD_ON — preserve as distinct architecture type"},
+    {"issue": "PER_M2_WITH_MINIMUM (nettoyage) vs MINIMUM_PROJECT_FLOOR (peinture)", "description": "Both express 'unit rate with a minimum project value'. The pattern is identical: FINAL = max(minimum, unit_rate × m²).", "severity": "MEDIUM", "resolution": "Canonical: VARIABLE_UNIT with min_amount field; formula: MAX_OF_MINIMUM_OR_UNIT_MULTIPLICATION"}
+  ],
+
+  "proposed_canonical_architecture_enum": {
+    "FIXED": {
+      "description": "One canonical price. No inputs beyond service selection and eligibility check.",
+      "maps_from": ["FIXEO_FIXED_PRICE", "FIXED", "FIXED_PER_AC_UNIT (with per-unit semantics moved to pricing_unit)", "PER_ITEM_FORFAIT", "FORFAIT_BY_ITEM", "HALF_DAY"],
+      "formula": "price = approved_fixed_price",
+      "required_params": ["approved_fixed_price"],
+      "unit_carries_differentiation": true
+    },
+    "CONDITIONAL_FIXED": {
+      "description": "Fixed price contingent on eligibility conditions being met. If not met, escape to QUOTE.",
+      "maps_from": ["CONDITIONAL_FIXED"],
+      "formula": "if eligibility_met: price = approved_fixed_price; else: QUOTE",
+      "required_params": ["approved_fixed_price", "eligibility_conditions[]", "escape_conditions[]"]
+    },
+    "VARIABLE_UNIT": {
+      "description": "Price = unit_rate × quantity. May have minimum floor. Quantity is user input.",
+      "maps_from": ["LABOUR_ONLY_PER_PAINTED_M2", "ALL_IN_STANDARD_PER_PAINTED_M2", "ALL_IN_WITH_MINOR_PREP_PER_PAINTED_M2", "CONDITIONAL_PER_CEILING_M2", "PER_M2_WITH_MINIMUM"],
+      "formula": "price = max(min_amount, unit_rate × quantity)",
+      "required_params": ["unit_rate", "pricing_unit", "min_amount"]
+    },
+    "TIME_BASED_SINGLE": {
+      "description": "Price = hourly_rate × hours. 1 worker implicit. Minimum billing period applies.",
+      "maps_from": ["HOURLY (bricolage)"],
+      "formula": "price = max(minimum_payable, hourly_rate × hours)",
+      "required_params": ["hourly_rate", "minimum_hours", "minimum_payable"]
+    },
+    "TIME_BASED_TEAM": {
+      "description": "Price = rate_per_cleaner_per_hour × worker_count × hours. Worker count is explicit user input.",
+      "maps_from": ["PER_CLEANER_HOUR (nettoyage)"],
+      "formula": "price = rate × worker_count × hours",
+      "required_params": ["rate_per_worker_hour", "worker_count", "hours"],
+      "note": "MUST NOT be collapsed with TIME_BASED_SINGLE — worker-count semantics differ fundamentally"
+    },
+    "LABOUR_FIXED_PART_SEPARATE": {
+      "description": "Fixed labour price. Hardware/part is separate, disclosed, and client-approved before purchase.",
+      "maps_from": ["LABOUR_FIXED_PART_SEPARATE", "FIXEO_FIXED_PRICE for robinet/chasse_eau (where client supplies part)"],
+      "formula": "price = fixed_labour_price; hardware = disclosed_separately",
+      "required_params": ["fixed_labour_price", "hardware_disclosure_policy_ref", "batch_rule_if_any"]
+    },
+    "MINIMUM_FLOOR": {
+      "description": "Service price is always max(min_amount, calculated_price). Min is embedded, NOT additive.",
+      "maps_from": ["MINIMUM_VISIT_PRICE", "FORFAIT_MINIMUM", "MINIMUM_PROJECT_FLOOR"],
+      "formula": "price = max(min_amount, service_price). NEVER min_amount + service_price.",
+      "required_params": ["min_amount", "scope"],
+      "anti_additive_rule": "MANDATORY"
+    },
+    "ADD_ON": {
+      "description": "Cannot be booked standalone. Always combined with a primary service of the same métier.",
+      "maps_from": ["PREPARATION_ADD_ON_PER_PAINTED_M2"],
+      "formula": "price = unit_rate × quantity (added to primary service price)",
+      "required_params": ["unit_rate", "pricing_unit", "primary_service_requirement"]
+    },
+    "DIAGNOSTIC_FIRST": {
+      "description": "Artisan must diagnose before fixed price can be confirmed. Diagnostic fee charged; absorbed if standardized repair follows.",
+      "maps_from": ["DIAGNOSIS_FIRST (electricite archive)"],
+      "formula": "diagnostic_fee charged; if standardized_repair: fee absorbed; else: fee + quote",
+      "required_params": ["diagnostic_fee", "absorption_conditions[]"]
+    },
+    "QUOTE_REQUIRED": {
+      "description": "No standardized price possible. Quote from artisan required.",
+      "maps_from": ["QUOTE_REQUIRED across all métiers"],
+      "formula": "N/A — no price",
+      "required_params": ["quote_reason"]
+    }
+  }
+}

@@ -1,0 +1,205 @@
+{
+  "schema": "fixeo-consolidation-audit-v1",
+  "phase": "7C.1",
+  "generated_at": "2026-08-09",
+  "note": "READ-ONLY AUDIT — policy registry proposal only. Do not implement.",
+  "global_policies": [
+    {
+      "policy_id": "POL-ANTI-DOUBLE-CHARGE",
+      "label": "Anti-Double-Charge / Non-Additive Minimum",
+      "applies_to": [
+        "bricolage",
+        "nettoyage",
+        "peinture",
+        "menuiserie"
+      ],
+      "formula": "FINAL_PRICE = max(MINIMUM, STANDARD_SERVICE_PRICE). NEVER minimum + service.",
+      "canonical_rule": "Minimum is a floor, not an additional charge.",
+      "status": "CONSISTENT — all métiers with explicit minimum use this rule",
+      "variations": "None found. All four métiers define the same anti-stack rule.",
+      "anti_additive_rule": "NOT_ADDITIVE — MINIMUM IS FLOOR NOT ADDITIVE",
+      "canonical_formula": "FINAL_PRICE = max(MINIMUM, SERVICE_PRICE). NOT_ADDITIVE. NOT: MINIMUM + SERVICE_PRICE."
+    },
+    {
+      "policy_id": "POL-HORS-PERIMETRE",
+      "label": "Hors Périmètre Prix FIXEO — Escape Workflow",
+      "applies_to": [
+        "all_metiers"
+      ],
+      "base_workflow": [
+        "STOP",
+        "IDENTIFY",
+        "EXPLAIN",
+        "DECLARE_OUT_OF_SCOPE",
+        "QUOTE_OR_ROUTE",
+        "OBTAIN_APPROVAL",
+        "CONTINUE"
+      ],
+      "metier_extra_steps": {
+        "electricite": [
+          "MAKE_SAFE — cut power, verify isolation BEFORE any scope declaration or continuation"
+        ],
+        "serrurerie": [
+          "AUTHORIZATION_CHECK — verify occupancy right before unlock if no key presented"
+        ],
+        "climatisation": [
+          "REFRIGERATION_INTEGRITY — if leak found, stop recharge, issue leak-first quote"
+        ]
+      },
+      "status": "CONSISTENT base workflow — metier-specific safety steps correctly preserved",
+      "note": "Electrical MAKE_SAFE must come FIRST even before IDENTIFY — artisan safety overrides workflow order"
+    },
+    {
+      "policy_id": "POL-HARDWARE-DISCLOSURE",
+      "label": "Hardware / Part Disclosure Sequence",
+      "applies_to": [
+        "plomberie",
+        "serrurerie",
+        "electricite",
+        "menuiserie"
+      ],
+      "sequence": [
+        "IDENTIFY",
+        "SPECIFY",
+        "STATE_PRICE",
+        "CLIENT_APPROVAL",
+        "ACQUIRE",
+        "INSTALL",
+        "RETURN_OLD_PART"
+      ],
+      "prohibition": "Silent hardware bundling PROHIBITED. Silent markup PROHIBITED.",
+      "preferred_model": "ARTISAN_SUPPLIED_AT_DISCLOSED_PRICE",
+      "fallback": "CLIENT_SUPPLIED_PART",
+      "rejected": "PART_BUNDLED_IN_FIXED_PRICE (except consumables < 10 MAD)",
+      "status": "CONSISTENT across all four métiers",
+      "note": "Plomberie and menuiserie have 'client supplies main part' (robinet/door leaf) which is a variant of CLIENT_SUPPLIED_PART model"
+    },
+    {
+      "policy_id": "POL-DIAGNOSTIC-ABSORPTION",
+      "label": "Diagnostic Fee Absorption Rule",
+      "applies_to": [
+        "plomberie",
+        "electricite",
+        "climatisation"
+      ],
+      "rule": "Diagnostic fee absorbed into intervention price if client accepts qualifying standardized same-visit repair",
+      "absorption_policy": "D3 — absorbed for standardized qualifying services; standalone otherwise",
+      "standalone_trigger": "no repair / inconclusive / out of scope / specialist needed / utility equipment",
+      "plomberie_diag_price": 180,
+      "electricite_diag_price": 200,
+      "climatisation_diag_price": 250,
+      "status": "CONSISTENT RULE — prices differ by métier (justified by tool burden)",
+      "variations": {
+        "serrurerie": "No explicit diagnostic service — serrurerie assessment is part of opening/replacement service",
+        "bricolage": "No diagnostic — scope is assessed on booking via pre-screening",
+        "nettoyage": "No diagnostic — scope assessed via surface area and property type",
+        "peinture": "No diagnostic — scope assessed via m² and surface condition questions",
+        "menuiserie": "No standalone diagnostic — minimum floor (300 MAD) covers assessment cost on repair visits"
+      }
+    },
+    {
+      "policy_id": "POL-ELECTRICAL-SAFETY",
+      "label": "Electrical Safety Override",
+      "applies_to": [
+        "electricite"
+      ],
+      "canonical_rule": "MAKE_SAFE before any work proceeds. Artisan who bypasses safety to stay within fixed price acts outside FIXEO standards and assumes full personal liability.",
+      "onee_boundary": "Disjoncteur de branchement (limiteur de puissance) = ONEE property. NEVER FIXEO scope. Redirect to ONEE (0801 00 20 20).",
+      "earth_ground_matrix": "6-condition policy (present+connected / disconnected / absent / damaged / legacy 2-wire / incorrectly bonded) — each has defined action including SAFETY_OVERRIDE conditions",
+      "status": "UNIQUE TO ELECTRICITE — do not apply to other métiers"
+    },
+    {
+      "policy_id": "POL-REFRIGERATION-INTEGRITY",
+      "label": "Refrigeration Integrity",
+      "applies_to": [
+        "climatisation"
+      ],
+      "rule": "If leak found during recharge: STOP recharge, issue LEAK-FIRST quote. Blind top-up without leak check PROHIBITED.",
+      "r22_rule": "R22 systems (pre-2020): artisan must inform client R22 is being phased out. No blind R22 top-up.",
+      "r32_rule": "R32 systems: flammable refrigerant — requires specialist certification. Standard FIXEO scope only for R410A unless artisan is certified for R32.",
+      "vacuum_requirement": "Vacuum required before any recharge. No shortcuts.",
+      "status": "UNIQUE TO CLIMATISATION"
+    },
+    {
+      "policy_id": "POL-SERRURERIE-AUTHORIZATION",
+      "label": "Serrurerie Occupancy Authorization",
+      "applies_to": [
+        "serrurerie"
+      ],
+      "rule": "Before any lockout opening: artisan must verify occupancy right. Proof of residence or ID required when no key presented and circumstance is ambiguous.",
+      "vehicle_safe": "Vehicle and safe access require additional authorization verification and may require attestation.",
+      "status": "UNIQUE TO SERRURERIE"
+    },
+    {
+      "policy_id": "POL-PAINTED-SURFACE-CONVERSION",
+      "label": "Painted Surface Conversion",
+      "applies_to": [
+        "peinture"
+      ],
+      "rule": "Floor area (m²) ≠ Painted surface (m²). Conversion required. Current conversion model = RESEARCH_ESTIMATION_ONLY.",
+      "conversion_model_status": "NOT APPROVED — do not use in production estimator yet",
+      "ceiling_rule": "Ceiling m² is measured directly from ceiling dimensions — NOT converted from floor area.",
+      "do_not_collapse": "PER_PAINTED_M2 ≠ PER_CEILING_M2 ≠ PER_M2 (nettoyage). Three distinct measurement bases.",
+      "status": "UNIQUE TO PEINTURE — no other métier needs painted-surface conversion"
+    },
+    {
+      "policy_id": "POL-CLEANER-HOUR-TEAM",
+      "label": "Cleaner-Hour Team Scaling",
+      "applies_to": [
+        "nettoyage"
+      ],
+      "rule": "TOTAL = rate_per_cleaner_per_hour × worker_count × hours. Worker count is explicit input from client.",
+      "formula": "TOTAL = 65 MAD × workers × hours",
+      "minimum_floor": "max(200 MAD, total). NET-001 floor applies.",
+      "do_not_confuse_with_bricolage": "Bricolage PER_HOUR is single-worker only. NEVER apply cleaner-team logic to bricolage.",
+      "status": "UNIQUE TO NETTOYAGE"
+    },
+    {
+      "policy_id": "POL-FIXEO-DUAL-FAIRNESS",
+      "label": "FIXEO Dual Fairness Principle",
+      "applies_to": [
+        "all_metiers"
+      ],
+      "canonical_statement": "A FIXEO price is acceptable only if it simultaneously protects the client from arbitrary overpricing AND the artisan from economically unsustainable underpricing. FIXEO must NOT target the cheapest market price.",
+      "universal_hard_floor_artisan_net": 100,
+      "status": "CONSISTENT — all 8 métiers use this principle",
+      "corollaries": [
+        "Artisan economic floor is a client-quality guarantee — artisan who cannot cover travel and tools will not serve clients well",
+        "A client who receives a hidden hardware charge has been deceived",
+        "A client who discovers fabrication scope on-site must be quoted and allowed to decline"
+      ]
+    },
+    {
+      "policy_id": "POL-CITY-NULL",
+      "label": "City Adjustment Null Policy",
+      "applies_to": [
+        "all_metiers"
+      ],
+      "frozen_value": "city_adjustment = null for all frozen services across all 8 métiers",
+      "legacy_conflict": "fixeo-pricing-marocain.js has no city multipliers (category-level only). reservation.js has no city multipliers. No active city-adjustment logic in production.",
+      "migration_risk": "LOW — no production city-adjustment logic to migrate or conflict with",
+      "status": "CONSISTENT ACROSS ALL 8 METIERS"
+    },
+    {
+      "policy_id": "POL-MODIFIERS-NULL",
+      "label": "Time / Urgency Modifier Null Policy",
+      "applies_to": [
+        "all_metiers"
+      ],
+      "frozen_values": "urgency_modifier = null, night_modifier = null, weekend_modifier = null, holiday_modifier = null, express_modifier = null",
+      "legacy_conflict": "fixeo-estimation-engine-v1.js has 'urgent' as a complexity tier (NOT a time modifier). reservation.js has urgency labels. None are canonical modifiers.",
+      "migration_risk": "MEDIUM — legacy 'urgent' tier in faee-v1 must be cleanly separated from time-of-day modifiers in canonical system",
+      "status": "CONSISTENT ACROSS ALL 8 METIERS"
+    },
+    {
+      "policy_id": "POL-DISCLAIMER",
+      "label": "Client-Facing Price Disclaimer",
+      "frozen_text": "Prix indicatif FIXEO — tarif réel confirmé avec l'artisan avant intervention.",
+      "applies_to": [
+        "all_metiers"
+      ],
+      "status_in_frozen_artifacts": "DOCUMENTED_ONLY — not deployed",
+      "contradiction_flag": "CRITICAL — see legacy-collision-map.json for fixed-price vs indicative contradiction analysis"
+    }
+  ]
+}
