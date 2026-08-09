@@ -454,3 +454,255 @@ console.log('\nStatus: ' + finalStatus);
 if (fail === 0) {
   console.log('\nPHASE 7B.10.1 — FIXEO MENUISERIE HUMAN CALIBRATION — COMPLETE — HUMAN PRICE DECISION REQUIRED');
 }
+
+// ─── V0.3 HUMAN DECISION FREEZE CHECKS ───────────────────────────────────────
+const fs3 = fs;
+const path3 = path;
+
+console.log('\n=== 31. V0.3 REGISTRY FILE EXISTS ===');
+const v03RegFile = path3.join(BASE, 'registry.v0.3.json');
+check(fs3.existsSync(v03RegFile), 'registry.v0.3.json exists', 'MISSING: registry.v0.3.json');
+
+let reg3 = null;
+if (fs3.existsSync(v03RegFile)) {
+  try {
+    reg3 = JSON.parse(fs3.readFileSync(v03RegFile, 'utf8'));
+    ok('registry.v0.3.json is valid JSON');
+    pass++;
+
+    console.log('\n=== 32. APPROVED PRICE EXACT VALUES ===');
+    const svcMap = {};
+    (reg3.services || []).forEach(s => { svcMap[s.service_code] = s; });
+
+    const expected = [
+      { code: 'MENU_001',  price_field: 'approved_price',        expected: 300 },
+      { code: 'MENU_001B', price_field: 'approved_price',        expected: 350 },
+      { code: 'MENU_002',  price_field: 'approved_labour_price', expected: 300 },
+      { code: 'MENU_003',  price_field: 'approved_labour_price', expected: 300 },
+      { code: 'MENU_004A', price_field: 'approved_price',        expected: 300 },
+      { code: 'MENU_004B', price_field: 'approved_price',        expected: 350 },
+      { code: 'MENU_006',  price_field: 'approved_price',        expected: 500 },
+    ];
+
+    expected.forEach(({ code, price_field, expected: exp }) => {
+      const svc = svcMap[code];
+      check(svc && svc[price_field] === exp,
+        `${code} ${price_field} = ${exp} MAD`,
+        `${code} ${price_field} expected ${exp}, got ${svc ? svc[price_field] : 'MISSING'}`
+      );
+    });
+
+    console.log('\n=== 33. ALL APPROVED SERVICES — human_decision = APPROVED ===');
+    const appCodes = ['MENU_001','MENU_001B','MENU_002','MENU_003','MENU_004A','MENU_004B','MENU_006'];
+    appCodes.forEach(c => {
+      const svc = svcMap[c];
+      check(svc && svc.human_decision === 'APPROVED',
+        `${c} human_decision = APPROVED`,
+        `${c} human_decision = ${svc ? svc.human_decision : 'MISSING'}`
+      );
+    });
+
+    console.log('\n=== 34. ALL SERVICES — production_ready = false ===');
+    const notFalse3 = (reg3.services || []).filter(s => s.production_ready !== false);
+    check(notFalse3.length === 0,
+      'All services have production_ready = false',
+      `Non-false production_ready: ${notFalse3.map(s => s.service_code).join(', ')}`
+    );
+
+    console.log('\n=== 35. MENU_005 — human_decision = DEFERRED, price = null ===');
+    const m005 = svcMap['MENU_005'];
+    check(m005 && m005.human_decision === 'DEFERRED' && m005.approved_price === null,
+      'MENU_005 human_decision = DEFERRED and approved_price = null',
+      `MENU_005 state: decision=${m005 ? m005.human_decision : 'MISSING'}, price=${m005 ? m005.approved_price : 'MISSING'}`
+    );
+
+    console.log('\n=== 36. FLOOR = 300 MAD — NOT ADDITIVE ===');
+    const gp3 = reg3.global_policy || {};
+    const floor = gp3.menuiserie_minimum_floor || {};
+    check(floor.value === 300,
+      'Menuiserie minimum floor = 300 MAD',
+      `Floor value = ${floor.value}, expected 300`
+    );
+    check(floor.is_additive === false,
+      'Floor is_additive = false (not additive)',
+      'Floor is_additive must be false'
+    );
+    check(typeof floor.canonical_rule === 'string' && floor.canonical_rule.includes('max('),
+      'Floor canonical_rule contains max() formula',
+      'Floor canonical_rule missing max() formula'
+    );
+
+    console.log('\n=== 37. MENU_002/003 — LABOUR_FIXED_PART_SEPARATE ===');
+    ['MENU_002','MENU_003'].forEach(c => {
+      const svc = svcMap[c];
+      check(svc && svc.architecture === 'LABOUR_FIXED_PART_SEPARATE',
+        `${c} architecture = LABOUR_FIXED_PART_SEPARATE`,
+        `${c} architecture = ${svc ? svc.architecture : 'MISSING'}`
+      );
+      check(svc && svc.hardware_included === false,
+        `${c} hardware_included = false`,
+        `${c} hardware_included must be false`
+      );
+    });
+
+    console.log('\n=== 38. HARDWARE DISCLOSURE SEQUENCE PRESENT ===');
+    const hwDoc = reg3.hardware_doctrine || {};
+    check(Array.isArray(hwDoc.disclosure_sequence) && hwDoc.disclosure_sequence.length >= 7,
+      'Hardware disclosure sequence present (≥7 steps)',
+      'Missing or incomplete hardware disclosure sequence'
+    );
+    check(hwDoc.silent_bundling === 'PROHIBITED',
+      'silent_bundling = PROHIBITED',
+      'silent_bundling must be PROHIBITED'
+    );
+    check(hwDoc.silent_markup === 'PROHIBITED',
+      'silent_markup = PROHIBITED',
+      'silent_markup must be PROHIBITED'
+    );
+
+    console.log('\n=== 39. BATCH RULES — EXPERIMENTAL, NOT UNIVERSAL ===');
+    const batchRules = reg3.batch_rules || {};
+    check(batchRules.status === 'EXPERIMENTAL_BATCH_RULE — NOT universal law',
+      'Batch rules status = EXPERIMENTAL_BATCH_RULE',
+      `Batch rules status = ${batchRules.status}`
+    );
+    check(batchRules.price_provenance === 'FIXEO_HUMAN_CALIBRATED_PILOT_BATCH_RULE',
+      'Batch provenance = FIXEO_HUMAN_CALIBRATED_PILOT_BATCH_RULE',
+      `Batch provenance = ${batchRules.price_provenance}`
+    );
+
+    // Verify +50/+100 increments
+    const batchArr = batchRules.rules || [];
+    const b002 = batchArr.find(r => r.service === 'MENU_002');
+    const b003 = batchArr.find(r => r.service === 'MENU_003');
+    check(b002 && b002.incremental_same_door_same_visit === 50,
+      'MENU_002 batch increment = 50 MAD',
+      `MENU_002 batch increment = ${b002 ? b002.incremental_same_door_same_visit : 'MISSING'}`
+    );
+    check(b003 && b003.incremental_same_cabinet_same_visit === 100,
+      'MENU_003 batch increment = 100 MAD',
+      `MENU_003 batch increment = ${b003 ? b003.incremental_same_cabinet_same_visit : 'MISSING'}`
+    );
+
+    console.log('\n=== 40. CUSTOM FABRICATION — NO CANONICAL PER-ML PRICE ===');
+    const hasCanonicalMl3 = JSON.stringify(reg3).includes('"canonical_linear_metre_price"');
+    check(!hasCanonicalMl3,
+      'No canonical_linear_metre_price in V0.3 registry',
+      'FOUND canonical_linear_metre_price — must not exist'
+    );
+    const custom = (reg3.services || []).filter(s =>
+      ['MENU_007','MENU_008','MENU_009','MENU_010','MENU_011'].includes(s.service_code)
+    );
+    check(custom.every(s => s.human_decision === 'QUOTE_REQUIRED'),
+      'All custom fabrication services (MENU_007-011) = QUOTE_REQUIRED',
+      `Custom services not QUOTE_REQUIRED: ${custom.filter(s => s.human_decision !== 'QUOTE_REQUIRED').map(s => s.service_code).join(', ')}`
+    );
+
+    console.log('\n=== 41. ALL SERVICES — CITY/TIME MODIFIERS NULL ===');
+    const modFields = ['city_adjustment','urgency_modifier','night_modifier','weekend_modifier','holiday_modifier','express_modifier'];
+    const badMod3 = (reg3.services || []).filter(s =>
+      modFields.some(f => s[f] !== null)
+    );
+    check(badMod3.length === 0,
+      'All V0.3 services have city/time modifiers = null',
+      `Non-null modifiers: ${badMod3.map(s => s.service_code).join(', ')}`
+    );
+
+    console.log('\n=== 42. PRICE PROVENANCE EXACT ===');
+    const correctProv = 'FIXEO_HUMAN_CALIBRATED_PILOT';
+    const correctMat = 'LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION';
+    check(gp3.price_provenance === correctProv,
+      `Global price_provenance = ${correctProv}`,
+      `price_provenance = ${gp3.price_provenance}`
+    );
+    check(gp3.maturity === correctMat,
+      `Global maturity = ${correctMat}`,
+      `maturity = ${gp3.maturity}`
+    );
+
+    console.log('\n=== 43. CROSS-MÉTIER BOUNDARIES PRESENT ===');
+    const cmb = reg3.cross_metier_boundaries || {};
+    check(typeof cmb.lock_cylinder_security === 'string' && cmb.lock_cylinder_security.includes('SERRURERIE'),
+      'lock_cylinder_security routes to SERRURERIE',
+      'Missing lock_cylinder_security boundary'
+    );
+    check(typeof cmb.aluminium_fabrication === 'string',
+      'aluminium_fabrication boundary present',
+      'Missing aluminium_fabrication boundary'
+    );
+
+    console.log('\n=== 44. MENU_006 ECONOMICS — ALL SCENARIOS VIABLE ===');
+    const m006 = svcMap['MENU_006'];
+    const econ = (m006 && m006.economic_validation && m006.economic_validation.commission_scenarios) || [];
+    check(econ.length === 4,
+      'MENU_006 has 4 commission scenarios',
+      `MENU_006 has ${econ.length} scenarios, expected 4`
+    );
+    check(econ.every(s => s.viable === true),
+      'All MENU_006 commission scenarios viable = true',
+      `Some MENU_006 scenarios not viable: ${econ.filter(s => s.viable !== true).map(s => s.rate).join(', ')}`
+    );
+
+  } catch(e) {
+    err(`registry.v0.3.json parse/check error: ${e.message}`);
+    fail++;
+  }
+}
+
+console.log('\n=== 45. V0.3 CALIBRATION FILE ===');
+const v03CalFile = path3.join(BASE, 'calibration.v0.3.json');
+check(fs3.existsSync(v03CalFile), 'calibration.v0.3.json exists', 'MISSING: calibration.v0.3.json');
+if (fs3.existsSync(v03CalFile)) {
+  try {
+    const cal3 = JSON.parse(fs3.readFileSync(v03CalFile, 'utf8'));
+    ok('calibration.v0.3.json is valid JSON');
+    pass++;
+    check(cal3.floor_decision && cal3.floor_decision.menuiserie_minimum_floor === 300,
+      'calibration.v0.3.json floor = 300',
+      'calibration.v0.3.json floor != 300'
+    );
+    check(cal3.floor_decision && cal3.floor_decision.is_additive === false,
+      'calibration.v0.3.json floor is_additive = false',
+      'calibration.v0.3.json floor is_additive must be false'
+    );
+    check(Array.isArray(cal3.floor_decision.floor_verification) && cal3.floor_decision.floor_verification.length === 7,
+      'Floor verification covers 7 approved services',
+      `Floor verification has ${cal3.floor_decision.floor_verification ? cal3.floor_decision.floor_verification.length : 0} entries, expected 7`
+    );
+    const allSatisfy = cal3.floor_decision.floor_verification.every(v => v.satisfies_300_floor === true);
+    check(allSatisfy, 'All approved services satisfy 300 MAD floor', 'Some approved services do not satisfy 300 MAD floor');
+  } catch(e) {
+    err(`calibration.v0.3.json error: ${e.message}`);
+    fail++;
+  }
+}
+
+console.log('\n=== 46. V0.3 HUMAN-DECISION FILE ===');
+check(fs3.existsSync(path3.join(BASE, 'human-decision.v0.3.md')),
+  'human-decision.v0.3.md exists',
+  'MISSING: human-decision.v0.3.md'
+);
+
+console.log('\n=== 47. V0.3 FAIR-PRICE-POLICY FILE ===');
+check(fs3.existsSync(path3.join(BASE, 'fair-price-policy.v0.3.md')),
+  'fair-price-policy.v0.3.md exists',
+  'MISSING: fair-price-policy.v0.3.md'
+);
+
+// Final summary
+console.log('\n' + '═'.repeat(60));
+console.log('FINAL VALIDATION SUMMARY (V0.1 + V0.2 + V0.3)');
+console.log('═'.repeat(60));
+console.log(`  PASS: ${pass}`);
+console.log(`  FAIL: ${fail}`);
+if (fail > 0) {
+  console.log('\nFailed checks:');
+  errors.forEach(e => console.log(`  - ${e}`));
+}
+const finalStatus3 = fail === 0
+  ? '✅ ALL CHECKS PASSED'
+  : `❌ ${fail} CHECK(S) FAILED`;
+console.log('\nStatus: ' + finalStatus3);
+if (fail === 0) {
+  console.log('\nPHASE 7B.10.2 — FIXEO MENUISERIE HUMAN PRICE DECISION FREEZE — COMPLETE — PRICING RESEARCH WAVE READY FOR CONSOLIDATION');
+}

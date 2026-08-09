@@ -1,0 +1,775 @@
+{
+  "schema_version": "v0.3",
+  "metier": "menuiserie",
+  "phase": "7B.10.2",
+  "type": "HUMAN_PRICE_DECISION_FREEZE",
+  "registry_version": "0.3.0",
+  "status": "HUMAN_PRICE_DECISION_FROZEN",
+  "generated_at": "2026-08-09",
+  "based_on_research_commit": "184e154",
+  "based_on_calibration_phase": "7B.10.1",
+  "v01_artifacts_status": "IMMUTABLE — not modified",
+  "v02_artifacts_status": "IMMUTABLE — not modified (retains original PENDING candidate recommendations)",
+  "global_policy": {
+    "price_formula": "FIXEO_MENUISERIE_STANDARD_PRICE = LABOUR + TRAVEL + BASIC_CONSUMABLES",
+    "hardware_formula": "VARIABLE_HARDWARE = SEPARATE — identified, specified, priced, client-approved, acquired, installed, old part returned",
+    "minimum_floor_universal": 100,
+    "menuiserie_minimum_floor": {
+      "value": 300,
+      "classification": "FIXEO_POLICY",
+      "architecture": "EMBEDDED_NOT_ADDITIVE",
+      "canonical_rule": "FINAL_PRICE = max(300 MAD, STANDARD_SERVICE_PRICE)",
+      "prohibited": "300 MAD + service_price — NEVER",
+      "is_separate_line_item": false,
+      "is_legal_tariff": false,
+      "is_market_statistic": false,
+      "all_approved_services_satisfy_floor": true,
+      "is_additive": false
+    },
+    "target_artisan_net": {
+      "value": 150,
+      "classification": "FIXEO_POLICY",
+      "universal_hard_floor": 100,
+      "note": "Internal fairness target — not a legal Moroccan wage, not a statistical market fact. Reflects specialist tools, precision, hardware knowledge, travel, setup, sourcing risk."
+    },
+    "market_scope": "NATIONAL_MOROCCO",
+    "city_adjustment": null,
+    "urgency_modifier": null,
+    "night_modifier": null,
+    "weekend_modifier": null,
+    "holiday_modifier": null,
+    "express_modifier": null,
+    "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+    "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
+    "future_disclaimer": "Prix indicatif FIXEO — tarif réel confirmé avec l'artisan avant intervention.",
+    "disclaimer_status": "DOCUMENTED_ONLY — not deployed"
+  },
+  "hardware_doctrine": {
+    "principle": "FIXEO MENUISERIE STANDARD PRICE = LABOUR + TRAVEL + BASIC_CONSUMABLES. VARIABLE_HARDWARE = SEPARATE.",
+    "disclosure_sequence": [
+      "1. IDENTIFY part — type, dimensions, quality",
+      "2. SPECIFY — confirm exact specification with client",
+      "3. STATE price — communicate unit cost clearly",
+      "4. CLIENT APPROVAL — explicit confirmation required before any purchase",
+      "5. ACQUIRE — purchase or use approved artisan stock",
+      "6. INSTALL — with care and artisan warranty",
+      "7. RETURN OLD PART — return removed hardware to client where appropriate"
+    ],
+    "hardware_in_scope": [
+      "hinges",
+      "runners",
+      "rollers",
+      "handles",
+      "brackets",
+      "specialty fittings"
+    ],
+    "silent_bundling": "PROHIBITED",
+    "silent_markup": "PROHIBITED",
+    "part_supply_policy": {
+      "preferred": "ARTISAN_SUPPLIED_PART_AT_DISCLOSED_PRICE",
+      "allowed_fallback": "CLIENT_SUPPLIED_PART",
+      "rejected_as_default": "PART_INCLUDED_IN_FIXED_PRICE",
+      "rejection_reason": "Hardware prices vary materially (standard vs soft-close hinge: 20-40 vs 59-120 MAD). Bundling creates opacity and unfairness.",
+      "client_supplied_note": "Artisan must verify compatibility before installation. No warranty on client-supplied hardware.",
+      "non_standard_unavailable": "SECOND_VISIT_QUOTE or PART_SOURCING_QUOTE — do not silently absorb sourcing cost"
+    }
+  },
+  "batch_rules": {
+    "status": "EXPERIMENTAL_BATCH_RULE — NOT universal law",
+    "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT_BATCH_RULE",
+    "scope_limitation": "Narrowly defined same-item/same-system only. Different cabinet/door/substantially different setup = new service scope or new quote.",
+    "rules": [
+      {
+        "service": "MENU_002",
+        "base_labour": 300,
+        "incremental_rule": "Additional hinge on SAME door / SAME visit: +50 MAD labour each",
+        "scope": "SAME_DOOR_SAME_VISIT only",
+        "cross_cabinet": "Different cabinet = new base visit",
+        "incremental_same_door_same_visit": 50
+      },
+      {
+        "service": "MENU_003",
+        "base_labour": 300,
+        "incremental_rule": "Additional drawer in SAME cabinet / SAME visit: +100 MAD labour each",
+        "scope": "SAME_CABINET_SAME_VISIT only",
+        "cross_cabinet": "Different cabinet = new base visit",
+        "incremental_same_cabinet_same_visit": 100
+      }
+    ],
+    "prohibition": "Do not extrapolate increments to unrelated hardware or different-system scenarios"
+  },
+  "cross_metier_boundaries": {
+    "lock_cylinder_security": "SERRURERIE",
+    "flat_pack_assembly": "BRICOLAGE",
+    "paint_varnish_finish": "PEINTURE",
+    "glass_mirror": "VITRERIE",
+    "structural_wall_frame": "MAÇONNERIE",
+    "aluminium_fabrication": "DEFERRED_SPECIALIST",
+    "custom_wood_fabrication": "MENUISERIE_QUOTE_REQUIRED",
+    "rule": "No standardized repair may absorb specialist work"
+  },
+  "services": [
+    {
+      "service_code": "MENU_001",
+      "label": "Réglage porte intérieure simple",
+      "description": "Adjustment of one interior wooden/MDF door — hinges, alignment, screws, lubrication. No material reconstruction.",
+      "human_decision": "APPROVED",
+      "approved_price": 300,
+      "currency": "MAD",
+      "architecture": "CONDITIONAL_FIXED",
+      "pricing_unit": "PER_DOOR",
+      "production_ready": false,
+      "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+      "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
+      "external_evidence_range": {
+        "low": 150,
+        "high": 300,
+        "basis": "Implied from menuisier daily rate 300-500 MAD/day (lechantier.ma Grade B). No direct published Moroccan price found."
+      },
+      "confidence": "LOW",
+      "city_adjustment": null,
+      "urgency_modifier": null,
+      "night_modifier": null,
+      "weekend_modifier": null,
+      "holiday_modifier": null,
+      "express_modifier": null,
+      "scope_inclusions": [
+        "ONE interior wooden or MDF door",
+        "hinge adjustment and tightening",
+        "screw tightening and replacement where stripped",
+        "door alignment check",
+        "lubrication where relevant",
+        "minor correction without material reconstruction",
+        "standard residential access",
+        "travel included",
+        "basic consumables included (screws, lubricant)"
+      ],
+      "scope_exclusions": [
+        "lock/cylinder/security mechanism → SERRURERIE",
+        "security door / porte blindée",
+        "rotten wood",
+        "frame reconstruction",
+        "structural wall/frame issue → MAÇONNERIE",
+        "full door replacement",
+        "significant woodworking",
+        "major warp requiring full rehang → MENU_007"
+      ],
+      "escape_policy": {
+        "triggers": [
+          "frame is rotten",
+          "frame is structurally deformed",
+          "wall/frame is unstable",
+          "major door warp requiring full rehang",
+          "door needs rebuild",
+          "security mechanism involved",
+          "lock/cylinder work involved",
+          "full replacement required"
+        ],
+        "workflow": "STOP → IDENTIFY → EXPLAIN → DECLARE HORS PÉRIMÈTRE PRIX FIXEO → QUOTE or ROUTE → CLIENT APPROVAL → CONTINUE if appropriate",
+        "rule": "No silent price increase"
+      },
+      "hardware_policy": "NA — no variable hardware in scope",
+      "metier_boundary": [
+        "lock/cylinder → SERRURERIE",
+        "frame damage → MAÇONNERIE",
+        "full replacement → MENU_007 QUOTE"
+      ]
+    },
+    {
+      "service_code": "MENU_001B",
+      "label": "Réglage porte intérieure + rabotage léger",
+      "description": "Adjustment of one interior door including minor planing/edge correction. Door is structurally sound; rubbing correctable with limited rabotage.",
+      "human_decision": "APPROVED",
+      "approved_price": 350,
+      "currency": "MAD",
+      "architecture": "CONDITIONAL_FIXED",
+      "pricing_unit": "PER_DOOR",
+      "production_ready": false,
+      "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+      "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
+      "applies_when": [
+        "door is structurally sound",
+        "minor rubbing correctable with limited planing",
+        "no frame reconstruction required",
+        "no major warp",
+        "no custom fabrication required"
+      ],
+      "scope_inclusions": [
+        "all inclusions of MENU_001",
+        "minor rabotage / edge correction",
+        "re-alignment after planing",
+        "functional test"
+      ],
+      "scope_exclusions": [
+        "all exclusions of MENU_001",
+        "major planing requiring full door remachining → QUOTE"
+      ],
+      "escape_policy": {
+        "triggers": [
+          "planing required exceeds minor correction",
+          "door dimensionally incompatible with frame",
+          "warp structural not correctable by planing",
+          "any trigger from MENU_001 escape list"
+        ],
+        "workflow": "STOP → IDENTIFY → EXPLAIN → DECLARE HORS PÉRIMÈTRE → QUOTE",
+        "rule": "No silent price increase"
+      },
+      "confidence": "LOW",
+      "city_adjustment": null,
+      "urgency_modifier": null,
+      "night_modifier": null,
+      "weekend_modifier": null,
+      "holiday_modifier": null,
+      "express_modifier": null,
+      "hardware_policy": "NA",
+      "metier_boundary": [
+        "lock/cylinder → SERRURERIE",
+        "major fabrication → QUOTE"
+      ]
+    },
+    {
+      "service_code": "MENU_002",
+      "label": "Remplacement charnière meuble / placard — main d'œuvre",
+      "description": "Labour for hinge diagnosis, removal, replacement, and alignment on one cabinet/wardrobe door. Hardware SEPARATE.",
+      "human_decision": "APPROVED",
+      "approved_labour_price": 300,
+      "hardware_included": false,
+      "currency": "MAD",
+      "architecture": "LABOUR_FIXED_PART_SEPARATE",
+      "pricing_unit": "BASE_VISIT_PLUS_INCREMENTAL",
+      "production_ready": false,
+      "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+      "batch_rule_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT_BATCH_RULE",
+      "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
+      "external_evidence_range": {
+        "low": 150,
+        "high": 250,
+        "basis": "Implied from daily rate. Hardware prices confirmed separately from retail sources."
+      },
+      "confidence": "LOW",
+      "batch_rule": {
+        "status": "EXPERIMENTAL_BATCH_RULE",
+        "base_labour": 300,
+        "incremental_same_door_same_visit": 50,
+        "scope": "SAME_DOOR_SAME_VISIT only",
+        "different_cabinet": "new base visit charge",
+        "examples": [
+          {
+            "hinges": 1,
+            "labour": 300
+          },
+          {
+            "hinges": 2,
+            "same_door": true,
+            "labour": 350
+          },
+          {
+            "hinges": 4,
+            "same_door": true,
+            "labour": 450
+          }
+        ]
+      },
+      "hardware_reference": {
+        "standard_hinge": {
+          "low": 20,
+          "high": 40,
+          "unit": "per_hinge",
+          "source": "SRC_MENU_013 Mr.Bricolage"
+        },
+        "soft_close_hinge": {
+          "low": 59,
+          "high": 120,
+          "unit": "per_hinge",
+          "source": "SRC_MENU_013 Mr.Bricolage"
+        },
+        "status": "REFERENCE_EVIDENCE — disclosed and client-approved separately"
+      },
+      "scope_inclusions": [
+        "ONE cabinet/wardrobe door, standard accessible installation",
+        "hinge diagnosis and removal",
+        "fitting new hinge(s)",
+        "door rehang and alignment",
+        "basic screws/consumables",
+        "travel included"
+      ],
+      "scope_exclusions": [
+        "hinge hardware — SEPARATE, client-approved",
+        "stripped/rotten hinge hole requiring dowel repair → QUOTE",
+        "frame damage",
+        "door fabrication",
+        "non-standard hinge requiring special order → SECOND_VISIT_QUOTE"
+      ],
+      "city_adjustment": null,
+      "urgency_modifier": null,
+      "night_modifier": null,
+      "weekend_modifier": null,
+      "holiday_modifier": null,
+      "express_modifier": null,
+      "hardware_policy": "LABOUR_FIXED_PART_SEPARATE — hardware disclosed and client-approved before purchase",
+      "metier_boundary": [
+        "door fabrication → QUOTE",
+        "frame damage → MAÇONNERIE"
+      ]
+    },
+    {
+      "service_code": "MENU_003",
+      "label": "Remplacement coulisse tiroir — main d'œuvre",
+      "description": "Labour for drawer runner removal, replacement pair installation, and adjustment on one accessible drawer. Hardware SEPARATE.",
+      "human_decision": "APPROVED",
+      "approved_labour_price": 300,
+      "hardware_included": false,
+      "currency": "MAD",
+      "architecture": "LABOUR_FIXED_PART_SEPARATE",
+      "pricing_unit": "BASE_VISIT_PLUS_INCREMENTAL",
+      "production_ready": false,
+      "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+      "batch_rule_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT_BATCH_RULE",
+      "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
+      "external_evidence_range": {
+        "low": 225,
+        "high": 300,
+        "basis": "Implied from daily rate. Hardware confirmed from retail."
+      },
+      "confidence": "LOW",
+      "batch_rule": {
+        "status": "EXPERIMENTAL_BATCH_RULE",
+        "base_labour": 300,
+        "incremental_same_cabinet_same_visit": 100,
+        "scope": "SAME_CABINET_SAME_VISIT only",
+        "different_cabinet": "new base visit charge",
+        "examples": [
+          {
+            "drawers": 1,
+            "labour": 300
+          },
+          {
+            "drawers": 2,
+            "same_cabinet": true,
+            "labour": 400
+          },
+          {
+            "drawers": 3,
+            "same_cabinet": true,
+            "labour": 500
+          }
+        ]
+      },
+      "hardware_reference": {
+        "standard_runner_pair": {
+          "low": 20,
+          "high": 26,
+          "unit": "per_pair",
+          "source": "SRC_MENU_014 Mr.Bricolage"
+        },
+        "quality_runner_pair": {
+          "low": 55,
+          "high": 99,
+          "unit": "per_pair",
+          "source": "SRC_MENU_014 Jumia"
+        },
+        "status": "REFERENCE_EVIDENCE — disclosed and client-approved separately"
+      },
+      "scope_inclusions": [
+        "ONE drawer, standard accessible cabinet",
+        "drawer removal",
+        "old runner pair removal (both sides)",
+        "new runner pair mounting at disclosed hardware cost",
+        "drawer reinstallation",
+        "functional test and adjustment",
+        "basic consumables (screws)",
+        "travel included"
+      ],
+      "scope_exclusions": [
+        "runner hardware — SEPARATE, client-approved",
+        "broken drawer box → QUOTE",
+        "non-standard dimensions requiring machining",
+        "proprietary integrated system requiring specialist tools → QUOTE"
+      ],
+      "city_adjustment": null,
+      "urgency_modifier": null,
+      "night_modifier": null,
+      "weekend_modifier": null,
+      "holiday_modifier": null,
+      "express_modifier": null,
+      "hardware_policy": "LABOUR_FIXED_PART_SEPARATE — hardware disclosed and client-approved before purchase",
+      "metier_boundary": [
+        "drawer box reconstruction → QUOTE",
+        "custom machining → QUOTE"
+      ]
+    },
+    {
+      "service_code": "MENU_004A",
+      "label": "Ajustement porte coulissante placard — 1 panneau",
+      "description": "Adjustment of one sliding panel in a wardrobe/placard system. No major hardware replacement.",
+      "human_decision": "APPROVED",
+      "approved_price": 300,
+      "currency": "MAD",
+      "architecture": "CONDITIONAL_FIXED",
+      "pricing_unit": "FLAT_INTERVENTION",
+      "production_ready": false,
+      "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+      "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
+      "external_evidence_range": {
+        "low": 150,
+        "high": 300,
+        "basis": "Implied from daily rate. No direct published Moroccan price found."
+      },
+      "confidence": "LOW",
+      "scope_inclusions": [
+        "ONE sliding panel",
+        "track cleaning and debris removal",
+        "alignment correction",
+        "roller adjustment where adjustable",
+        "tightening",
+        "lubrication of track",
+        "standard accessible system",
+        "travel included"
+      ],
+      "scope_exclusions": [
+        "major hardware replacement (roller/track) → PART_SEPARATE or QUOTE",
+        "panel warped/structurally deformed → QUOTE",
+        "track broken/bent → QUOTE",
+        "custom/non-standard panel → QUOTE",
+        "mirror panel (fragility risk — separate disclaimer)"
+      ],
+      "hardware_policy": "PART_SEPARATE if roller or small compatible component required",
+      "escape_policy": {
+        "triggers": [
+          "track is bent or broken",
+          "roller housing broken beyond adjustment",
+          "panel itself is warped",
+          "custom panel cannot be re-engaged",
+          "standard compatible hardware unavailable"
+        ],
+        "workflow": "STOP → IDENTIFY → EXPLAIN → DECLARE HORS PÉRIMÈTRE → QUOTE",
+        "track_replacement": "QUOTE_REQUIRED"
+      },
+      "city_adjustment": null,
+      "urgency_modifier": null,
+      "night_modifier": null,
+      "weekend_modifier": null,
+      "holiday_modifier": null,
+      "express_modifier": null,
+      "metier_boundary": [
+        "roller replacement with unavailable hardware → QUOTE",
+        "panel fabrication → MENUISERIE QUOTE"
+      ]
+    },
+    {
+      "service_code": "MENU_004B",
+      "label": "Ajustement système coulissant placard — 2+ panneaux",
+      "description": "Adjustment of a sliding wardrobe door system with two or more panels. No major hardware replacement.",
+      "human_decision": "APPROVED",
+      "approved_price": 350,
+      "currency": "MAD",
+      "architecture": "CONDITIONAL_FIXED",
+      "pricing_unit": "FLAT_INTERVENTION",
+      "production_ready": false,
+      "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+      "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
+      "confidence": "LOW",
+      "scope_inclusions": [
+        "ONE wardrobe sliding-door system",
+        "two or more panels",
+        "alignment of all panels",
+        "track cleaning",
+        "roller adjustment for each panel",
+        "synchronization and positioning",
+        "standard accessible system",
+        "travel included"
+      ],
+      "scope_exclusions": [
+        "track replacement → QUOTE_REQUIRED",
+        "custom/unavailable hardware → QUOTE_REQUIRED",
+        "panel structural deformation → QUOTE",
+        "mirror panel (fragility risk — separate disclaimer)"
+      ],
+      "hardware_policy": "PART_SEPARATE if compatible component available; QUOTE if custom/unavailable",
+      "escape_policy": {
+        "triggers": [
+          "track broken or must be replaced",
+          "panel warped",
+          "custom roller unavailable",
+          "structural wardrobe deformation",
+          "custom fabrication required"
+        ],
+        "workflow": "STOP → IDENTIFY → EXPLAIN → DECLARE HORS PÉRIMÈTRE → QUOTE",
+        "track_replacement": "QUOTE_REQUIRED"
+      },
+      "city_adjustment": null,
+      "urgency_modifier": null,
+      "night_modifier": null,
+      "weekend_modifier": null,
+      "holiday_modifier": null,
+      "express_modifier": null,
+      "metier_boundary": [
+        "track replacement → QUOTE",
+        "panel fabrication → MENUISERIE QUOTE"
+      ]
+    },
+    {
+      "service_code": "MENU_005",
+      "label": "Petite réparation meuble bois",
+      "human_decision": "DEFERRED",
+      "approved_price": null,
+      "production_ready": false,
+      "deferral_reason": "Insufficient Moroccan external evidence and overly broad scope definition. Cannot anchor any candidate price without artisan-interview ground-truth or FIXEO mission data.",
+      "future_reopening_requires": [
+        "narrower taxonomy definition",
+        "FIXEO mission data with service_sub_code",
+        "stronger external evidence (minimum Grade C+ with observed prices)"
+      ],
+      "city_adjustment": null,
+      "urgency_modifier": null,
+      "night_modifier": null,
+      "weekend_modifier": null,
+      "holiday_modifier": null,
+      "express_modifier": null,
+      "hardware_policy": "DEFERRED"
+    },
+    {
+      "service_code": "MENU_006",
+      "label": "Pose porte intérieure — main d'œuvre seule",
+      "description": "Labour for installation of one standard interior door leaf on existing compatible frame. Client provides door leaf.",
+      "human_decision": "APPROVED",
+      "approved_price": 500,
+      "currency": "MAD",
+      "architecture": "CONDITIONAL_FIXED",
+      "pricing_unit": "PER_DOOR",
+      "production_ready": false,
+      "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+      "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
+      "external_evidence_range": {
+        "low": 300,
+        "high": 700,
+        "basis": "Corroborated by 2 C/C+ Moroccan sources (allo-maison.ma, fixeo.ma blog). MEDIUM confidence — strongest evidence in this phase."
+      },
+      "confidence": "MEDIUM",
+      "eligibility_conditions": [
+        "client supplies the door leaf (vantail)",
+        "standard residential dimensions: 73cm, 83cm, or 93cm width",
+        "existing frame (bâti) compatible with new door",
+        "no masonry modification required",
+        "no structural frame repair",
+        "normal access — standard residential",
+        "no security door"
+      ],
+      "scope_inclusions": [
+        "removal of old door leaf where applicable",
+        "fitting new door leaf on existing compatible bâti",
+        "installation and alignment of 2–3 standard hinges",
+        "minor planing (rabotage léger) if needed for fit",
+        "handle hole preparation",
+        "basic strike plate alignment",
+        "functional test",
+        "cleanup",
+        "travel included"
+      ],
+      "scope_exclusions": [
+        "door leaf — client supplies",
+        "frame/bâti supply or replacement → QUOTE",
+        "masonry work → MAÇONNERIE pre-work",
+        "structural frame repair",
+        "lock/cylinder/security mechanism → SERRURERIE",
+        "non-standard door dimensions",
+        "security door / porte blindée",
+        "old door disposal — client arrangement",
+        "paint/finish → PEINTURE",
+        "custom fabrication"
+      ],
+      "escape_policy": {
+        "triggers": [
+          "frame not compatible with supplied door",
+          "masonry opening modification required",
+          "non-standard dimension (>2cm trim required)",
+          "structural frame repair needed",
+          "custom trimming/fabrication required",
+          "security door",
+          "major hardware modification",
+          "wall damage discovered",
+          "heavy solid wood door requiring two-person install"
+        ],
+        "workflow": "STOP → IDENTIFY → EXPLAIN → DECLARE HORS PÉRIMÈTRE → QUOTE",
+        "lock_cylinder": "Route to SERRURERIE"
+      },
+      "economic_validation": {
+        "commission_scenarios": [
+          {
+            "rate": 0.0,
+            "artisan_gross": 500,
+            "travel_mid": 100,
+            "tool_burden": 40,
+            "artisan_net": 360,
+            "viable": true
+          },
+          {
+            "rate": 0.1,
+            "artisan_gross": 450,
+            "travel_mid": 100,
+            "tool_burden": 40,
+            "artisan_net": 310,
+            "viable": true
+          },
+          {
+            "rate": 0.15,
+            "artisan_gross": 425,
+            "travel_mid": 100,
+            "tool_burden": 40,
+            "artisan_net": 285,
+            "viable": true
+          },
+          {
+            "rate": 0.2,
+            "artisan_gross": 400,
+            "travel_mid": 100,
+            "tool_burden": 40,
+            "artisan_net": 260,
+            "viable": true
+          }
+        ],
+        "floor_check": "All scenarios produce artisan net >= 200 MAD — strongest economic profile of all 5 standardized candidates"
+      },
+      "city_adjustment": null,
+      "urgency_modifier": null,
+      "night_modifier": null,
+      "weekend_modifier": null,
+      "holiday_modifier": null,
+      "express_modifier": null,
+      "hardware_policy": "Standard hinges (2-3 units) are included in FIXEO labour price as basic installation hardware. Lock/cylinder excluded and routes to SERRURERIE.",
+      "metier_boundary": [
+        "lock/cylinder → SERRURERIE",
+        "frame/masonry → MAÇONNERIE pre-work",
+        "custom fabrication → QUOTE",
+        "finish → PEINTURE"
+      ]
+    },
+    {
+      "service_code": "MENU_007",
+      "label": "Pose porte intérieure complète — fourniture + pose",
+      "human_decision": "QUOTE_REQUIRED",
+      "approved_price": null,
+      "architecture": "QUOTE_REQUIRED",
+      "production_ready": false,
+      "reason": "Door supply cost creates 5× material variation depending on quality/material. Labour scope also expands with frame work.",
+      "reference_evidence_only": true,
+      "city_adjustment": null,
+      "urgency_modifier": null,
+      "night_modifier": null,
+      "weekend_modifier": null,
+      "holiday_modifier": null,
+      "express_modifier": null,
+      "hardware_policy": "QUOTE"
+    },
+    {
+      "service_code": "MENU_008",
+      "label": "Placard sur mesure — fabrication et pose",
+      "human_decision": "QUOTE_REQUIRED",
+      "approved_price": null,
+      "architecture": "QUOTE_REQUIRED",
+      "production_ready": false,
+      "reference_range_evidence": {
+        "low": 2000,
+        "high": 6000,
+        "unit": "MAD_per_linear_metre",
+        "status": "REFERENCE_EVIDENCE_ONLY — not a FIXEO canonical price"
+      },
+      "reason": "Dimensions, material (mélaminé vs MDF laqué vs bois massif), interior organization, and hardware create 3-5× price variation. Quote required.",
+      "city_adjustment": null,
+      "urgency_modifier": null,
+      "night_modifier": null,
+      "weekend_modifier": null,
+      "holiday_modifier": null,
+      "express_modifier": null,
+      "hardware_policy": "QUOTE"
+    },
+    {
+      "service_code": "MENU_009",
+      "label": "Dressing sur mesure — fabrication et pose",
+      "human_decision": "QUOTE_REQUIRED",
+      "approved_price": null,
+      "architecture": "QUOTE_REQUIRED",
+      "production_ready": false,
+      "reference_range_evidence": {
+        "low": 2500,
+        "high": 7000,
+        "unit": "MAD_per_linear_metre",
+        "status": "REFERENCE_EVIDENCE_ONLY"
+      },
+      "reason": "Configuration, interior organization modules, material, and hardware require full brief and site measurement.",
+      "city_adjustment": null,
+      "urgency_modifier": null,
+      "night_modifier": null,
+      "weekend_modifier": null,
+      "holiday_modifier": null,
+      "express_modifier": null,
+      "hardware_policy": "QUOTE"
+    },
+    {
+      "service_code": "MENU_010",
+      "label": "Cuisine sur mesure — fabrication et pose",
+      "human_decision": "QUOTE_REQUIRED",
+      "approved_price": null,
+      "architecture": "QUOTE_REQUIRED",
+      "production_ready": false,
+      "reference_range_evidence": {
+        "low": 3500,
+        "high": 9000,
+        "unit": "MAD_per_linear_metre",
+        "status": "REFERENCE_EVIDENCE_ONLY — hors électroménager et plan de travail"
+      },
+      "reason": "CuisinAffaires (25,000+ kitchens): annoncer un prix au mètre serait malhonnête. Material, hardware, worktop, appliances all variable.",
+      "city_adjustment": null,
+      "urgency_modifier": null,
+      "night_modifier": null,
+      "weekend_modifier": null,
+      "holiday_modifier": null,
+      "express_modifier": null,
+      "hardware_policy": "QUOTE"
+    },
+    {
+      "service_code": "MENU_011",
+      "label": "Bibliothèque sur mesure — fabrication et pose",
+      "human_decision": "QUOTE_REQUIRED",
+      "approved_price": null,
+      "architecture": "QUOTE_REQUIRED",
+      "production_ready": false,
+      "reference_range_evidence": {
+        "low": 1500,
+        "high": 4000,
+        "unit": "MAD_per_linear_metre",
+        "status": "REFERENCE_EVIDENCE_ONLY"
+      },
+      "reason": "Depth, thickness, panel count, material, and hardware vary.",
+      "city_adjustment": null,
+      "urgency_modifier": null,
+      "night_modifier": null,
+      "weekend_modifier": null,
+      "holiday_modifier": null,
+      "express_modifier": null,
+      "hardware_policy": "QUOTE"
+    },
+    {
+      "service_code": "MENU_012",
+      "label": "Menuiserie aluminium — fabrication et pose",
+      "human_decision": "DEFERRED",
+      "approved_price": null,
+      "architecture": "DEFERRED_SPECIALIST_METIER",
+      "production_ready": false,
+      "reason": "Aluminium fabrication requires different tools, profilés, suppliers, and skill set from bois. BTP labour tables list separately (120-240 MAD/m²). Deferred as separate specialist métier.",
+      "reference_range_evidence": {
+        "low": 700,
+        "high": 2500,
+        "unit": "MAD_per_m2",
+        "status": "REFERENCE_EVIDENCE_ONLY"
+      },
+      "city_adjustment": null,
+      "urgency_modifier": null,
+      "night_modifier": null,
+      "weekend_modifier": null,
+      "holiday_modifier": null,
+      "express_modifier": null,
+      "hardware_policy": "DEFERRED"
+    }
+  ]
+}

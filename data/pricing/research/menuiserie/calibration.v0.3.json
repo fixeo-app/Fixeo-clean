@@ -1,0 +1,178 @@
+{
+  "schema_version": "v0.3",
+  "metier": "menuiserie",
+  "phase": "7B.10.2",
+  "type": "HUMAN_PRICE_DECISION_FREEZE_CALIBRATION",
+  "generated_at": "2026-08-09",
+  "status": "HUMAN_PRICES_FROZEN",
+
+  "approved_prices_summary": {
+    "MENU_001": {"label": "Réglage porte simple", "approved_price": 300, "human_decision": "APPROVED"},
+    "MENU_001B": {"label": "Réglage porte + rabotage léger", "approved_price": 350, "human_decision": "APPROVED"},
+    "MENU_002": {"label": "Charnière labour base", "approved_labour_price": 300, "human_decision": "APPROVED", "architecture": "LABOUR_FIXED_PART_SEPARATE"},
+    "MENU_003": {"label": "Coulisse tiroir labour base", "approved_labour_price": 300, "human_decision": "APPROVED", "architecture": "LABOUR_FIXED_PART_SEPARATE"},
+    "MENU_004A": {"label": "Sliding door adjust 1 panel", "approved_price": 300, "human_decision": "APPROVED"},
+    "MENU_004B": {"label": "Sliding door adjust 2+ panels", "approved_price": 350, "human_decision": "APPROVED"},
+    "MENU_005": {"label": "Petite réparation meuble", "approved_price": null, "human_decision": "DEFERRED"},
+    "MENU_006": {"label": "Pose porte labour only", "approved_price": 500, "human_decision": "APPROVED"}
+  },
+
+  "floor_decision": {
+    "menuiserie_minimum_floor": 300,
+    "classification": "FIXEO_POLICY",
+    "is_additive": false,
+    "rule": "FINAL_PRICE = max(300 MAD, STANDARD_SERVICE_PRICE)",
+    "all_approved_services_satisfy_floor": true,
+    "floor_verification": [
+      {"code": "MENU_001", "price": 300, "satisfies_300_floor": true},
+      {"code": "MENU_001B", "price": 350, "satisfies_300_floor": true},
+      {"code": "MENU_002", "price": 300, "satisfies_300_floor": true},
+      {"code": "MENU_003", "price": 300, "satisfies_300_floor": true},
+      {"code": "MENU_004A", "price": 300, "satisfies_300_floor": true},
+      {"code": "MENU_004B", "price": 350, "satisfies_300_floor": true},
+      {"code": "MENU_006", "price": 500, "satisfies_300_floor": true}
+    ]
+  },
+
+  "commission_sensitivity": [
+
+    {
+      "service_code": "MENU_001",
+      "approved_price": 300,
+      "tool_burden": 30,
+      "calculations": [
+        {"rate": 0.00, "artisan_gross": 300.0, "travel_low": 60, "travel_mid": 100, "travel_high": 150,
+         "net_low": 210.0, "net_mid": 170.0, "net_high": 120.0,
+         "floor_breach_any": false, "target_150_met_mid": true, "viable": true},
+        {"rate": 0.10, "artisan_gross": 270.0, "travel_low": 60, "travel_mid": 100, "travel_high": 150,
+         "net_low": 180.0, "net_mid": 140.0, "net_high": 90.0,
+         "floor_breach_high_travel": true, "floor_breach_note": "At 20% + high travel 150: net = 90 MAD < 100 MAD hard floor. 300 MAD is the recommended minimum; artisan should not accept high-travel bookings at this price without adjustment.",
+         "viable": "BORDERLINE_HIGH_TRAVEL"},
+        {"rate": 0.15, "artisan_gross": 255.0, "travel_low": 60, "travel_mid": 100, "travel_high": 150,
+         "net_low": 165.0, "net_mid": 125.0, "net_high": 75.0,
+         "floor_breach_high_travel": true, "viable": "BORDERLINE_HIGH_TRAVEL"},
+        {"rate": 0.20, "artisan_gross": 240.0, "travel_low": 60, "travel_mid": 100, "travel_high": 150,
+         "net_low": 150.0, "net_mid": 110.0, "net_high": 60.0,
+         "floor_breach_high_travel": true, "viable": "BORDERLINE_HIGH_TRAVEL",
+         "note": "300 MAD is the viable floor for urban/mid-travel. Outlying areas at 20% commission may be marginal."}
+      ]
+    },
+
+    {
+      "service_code": "MENU_001B",
+      "approved_price": 350,
+      "tool_burden": 35,
+      "calculations": [
+        {"rate": 0.00, "artisan_gross": 350.0, "net_low": 255.0, "net_mid": 215.0, "net_high": 165.0, "viable": true},
+        {"rate": 0.10, "artisan_gross": 315.0, "net_low": 220.0, "net_mid": 180.0, "net_high": 130.0, "viable": true},
+        {"rate": 0.15, "artisan_gross": 297.5, "net_low": 202.5, "net_mid": 162.5, "net_high": 112.5, "viable": true},
+        {"rate": 0.20, "artisan_gross": 280.0, "net_low": 185.0, "net_mid": 145.0, "net_high": 95.0,
+         "floor_breach_high_travel": true, "viable": "BORDERLINE_HIGH_TRAVEL",
+         "note": "20% commission + high travel: 95 MAD — just below 100 MAD hard floor. Mid-travel viable."}
+      ]
+    },
+
+    {
+      "service_code": "MENU_002",
+      "approved_labour_price": 300,
+      "tool_burden": 20,
+      "calculations": [
+        {"rate": 0.00, "artisan_gross": 300.0, "net_low": 220.0, "net_mid": 180.0, "net_high": 130.0, "viable": true},
+        {"rate": 0.10, "artisan_gross": 270.0, "net_low": 190.0, "net_mid": 150.0, "net_high": 100.0, "viable": true},
+        {"rate": 0.15, "artisan_gross": 255.0, "net_low": 175.0, "net_mid": 135.0, "net_high": 85.0,
+         "floor_breach_high_travel": true, "viable": "BORDERLINE_HIGH_TRAVEL"},
+        {"rate": 0.20, "artisan_gross": 240.0, "net_low": 160.0, "net_mid": 120.0, "net_high": 70.0,
+         "floor_breach_high_travel": true, "viable": "BORDERLINE_HIGH_TRAVEL",
+         "note": "Hardware revenue (20-120 MAD/hinge) significantly improves total job economics on real calls. Base labour of 300 MAD is minimum viable; incremental batch adds margin."}
+      ]
+    },
+
+    {
+      "service_code": "MENU_003",
+      "approved_labour_price": 300,
+      "tool_burden": 20,
+      "calculations": [
+        {"rate": 0.00, "artisan_gross": 300.0, "net_low": 220.0, "net_mid": 180.0, "net_high": 130.0, "viable": true},
+        {"rate": 0.10, "artisan_gross": 270.0, "net_low": 190.0, "net_mid": 150.0, "net_high": 100.0, "viable": true},
+        {"rate": 0.15, "artisan_gross": 255.0, "net_low": 175.0, "net_mid": 135.0, "net_high": 85.0, "viable": "BORDERLINE_HIGH_TRAVEL"},
+        {"rate": 0.20, "artisan_gross": 240.0, "net_low": 160.0, "net_mid": 120.0, "net_high": 70.0,
+         "viable": "BORDERLINE_HIGH_TRAVEL",
+         "note": "Runner hardware revenue (20-99 MAD/pair) significantly improves total job economics. Batch incremental (+100 MAD per extra drawer) makes multi-drawer calls viable."}
+      ]
+    },
+
+    {
+      "service_code": "MENU_004A",
+      "approved_price": 300,
+      "tool_burden": 20,
+      "calculations": [
+        {"rate": 0.00, "artisan_gross": 300.0, "net_low": 220.0, "net_mid": 180.0, "net_high": 130.0, "viable": true},
+        {"rate": 0.10, "artisan_gross": 270.0, "net_low": 190.0, "net_mid": 150.0, "net_high": 100.0, "viable": true},
+        {"rate": 0.15, "artisan_gross": 255.0, "net_low": 175.0, "net_mid": 135.0, "net_high": 85.0, "viable": "BORDERLINE_HIGH_TRAVEL"},
+        {"rate": 0.20, "artisan_gross": 240.0, "net_low": 160.0, "net_mid": 120.0, "net_high": 70.0, "viable": "BORDERLINE_HIGH_TRAVEL"}
+      ]
+    },
+
+    {
+      "service_code": "MENU_004B",
+      "approved_price": 350,
+      "tool_burden": 20,
+      "calculations": [
+        {"rate": 0.00, "artisan_gross": 350.0, "net_low": 270.0, "net_mid": 230.0, "net_high": 180.0, "viable": true},
+        {"rate": 0.10, "artisan_gross": 315.0, "net_low": 235.0, "net_mid": 195.0, "net_high": 145.0, "viable": true},
+        {"rate": 0.15, "artisan_gross": 297.5, "net_low": 217.5, "net_mid": 177.5, "net_high": 127.5, "viable": true},
+        {"rate": 0.20, "artisan_gross": 280.0, "net_low": 200.0, "net_mid": 160.0, "net_high": 110.0, "viable": true}
+      ]
+    },
+
+    {
+      "service_code": "MENU_006",
+      "approved_price": 500,
+      "tool_burden": 40,
+      "calculations": [
+        {"rate": 0.00, "artisan_gross": 500.0, "net_low": 400.0, "net_mid": 360.0, "net_high": 310.0, "viable": true},
+        {"rate": 0.10, "artisan_gross": 450.0, "net_low": 350.0, "net_mid": 310.0, "net_high": 260.0, "viable": true},
+        {"rate": 0.15, "artisan_gross": 425.0, "net_low": 325.0, "net_mid": 285.0, "net_high": 235.0, "viable": true},
+        {"rate": 0.20, "artisan_gross": 400.0, "net_low": 300.0, "net_mid": 260.0, "net_high": 210.0, "viable": true,
+         "note": "MENU_006 is the economically strongest candidate — viable at all commission rates and all travel distances. No floor breach at any scenario."}
+      ]
+    }
+  ],
+
+  "net_floor_verification": {
+    "universal_hard_floor": 100,
+    "target_artisan_net": 150,
+    "classification": "FIXEO_POLICY",
+    "findings": {
+      "MENU_006": "STRONG — all scenarios > 200 MAD net. No floor breach.",
+      "MENU_004B": "SOLID — all scenarios > 100 MAD net including high travel.",
+      "MENU_001B": "GOOD — borderline only at 20% + high travel (95 MAD).",
+      "MENU_001_002_003_004A": "BORDERLINE at 20% commission + high travel (60-90 MAD) — below 100 MAD hard floor in worst case. Acceptable because: (a) high-travel outlying areas are edge cases; (b) hardware revenue on MENU_002/003 significantly improves total job economics; (c) batch incremental rules improve multi-item economics; (d) 300 MAD is the justified floor given specialist tool burden."
+    },
+    "overall_verdict": "All approved prices are viable for standard urban Casablanca conditions. Outlying high-travel scenarios at 20% commission are borderline for MENU_001-004A; this is an inherent limitation of the 300 MAD floor level. The alternative (250 MAD) fails entirely. 300 MAD is the correct minimum."
+  },
+
+  "batch_economics_verified": {
+    "hinge_scenarios": [
+      {"hinges": 1, "type": "standard", "labour": 300, "hardware_est": 30, "total_est": 330},
+      {"hinges": 2, "type": "standard", "same_door": true, "labour": 350, "hardware_est": 60, "total_est": 410},
+      {"hinges": 4, "type": "standard", "same_door": true, "labour": 450, "hardware_est": 120, "total_est": 570},
+      {"hinges": 4, "type": "soft_close", "same_door": true, "labour": 450, "hardware_est": 280, "total_est": 730},
+      {"hinges": 4, "type": "standard", "two_cabinets": true, "labour": 600, "hardware_est": 120, "total_est": 720}
+    ],
+    "drawer_scenarios": [
+      {"drawers": 1, "type": "standard", "labour": 300, "hardware_est": 45, "total_est": 345},
+      {"drawers": 2, "type": "standard", "same_cabinet": true, "labour": 400, "hardware_est": 90, "total_est": 490},
+      {"drawers": 3, "type": "standard", "same_cabinet": true, "labour": 500, "hardware_est": 135, "total_est": 635},
+      {"drawers": 1, "type": "soft_close", "labour": 300, "hardware_est": 80, "total_est": 380}
+    ],
+    "distortion_check": "NO unreasonable totals. 4 hinges same door at soft-close: 730 MAD — reasonable for 60-90 min + 280 MAD hardware. All batch totals scale logically."
+  },
+
+  "city_adjustment": null,
+  "urgency_modifier": null,
+  "night_modifier": null,
+  "weekend_modifier": null,
+  "holiday_modifier": null,
+  "express_modifier": null
+}
