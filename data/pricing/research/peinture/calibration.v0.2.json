@@ -1,0 +1,769 @@
+{
+  "_meta": {
+    "phase": "7B.9.1",
+    "title": "FIXEO Peinture Human Calibration Preparation",
+    "date": "2026-08-09",
+    "based_on_commit": "db7fe39",
+    "status": "HUMAN_CALIBRATION_REQUIRED",
+    "all_human_decision": "PENDING",
+    "all_production_ready": false
+  },
+
+  "painted_surface_doctrine": {
+    "canonical_unit": "PAINTED_SURFACE_M2",
+    "definition": "Wall painted surface = sum of (wall length × wall height) for all walls, minus area of openings (doors ~1.5m², windows ~0.5m² each). Ceiling painted surface = floor area of room. These are NOT equal to floor area.",
+    "floor_area_is_not_painted_area": true,
+    "estimator_action": "Receive floor_area from client. Apply conversion internally. Never present floor_area as painted_area in client-facing price.",
+    "approved": false
+  },
+
+  "floor_area_conversion_model": {
+    "status": "FOR_HUMAN_REVIEW",
+    "approved": false,
+    "methodology": "Assumes standard Moroccan residential layout. Room perimeter derived from floor area. Standard ceiling height 2.70m. Openings deducted: 1 door per room (1.5m²) + 1 window per room (0.5m²) for typical rooms; kitchen/bathroom 1 door only.",
+    "assumptions": [
+      "Standard ceiling height: 2.70m",
+      "Floor area to perimeter: perimeter ≈ 4 × sqrt(floor_area) for square rooms; real rooms vary ±15%",
+      "Door opening deduction: 1.5m² per door",
+      "Window opening deduction: 0.5m² per standard window",
+      "Typical room count derived from apartment class",
+      "Balconies excluded from painted surface unless specified"
+    ],
+    "scenarios": [
+      {
+        "case": "Studio",
+        "floor_area_m2": 40,
+        "assumed_rooms": 1,
+        "assumed_ceiling_height_m": 2.70,
+        "estimated_wall_perimeter_m": 25,
+        "gross_wall_surface_m2": 67.5,
+        "opening_deductions_m2": 2.0,
+        "net_painted_wall_surface_m2": 65.5,
+        "ceiling_surface_m2": 40,
+        "total_paintable_surface_m2": 105.5,
+        "notes": "Studio: 1 main room, kitchen alcove, bathroom. Bathroom painting often separate scope."
+      },
+      {
+        "case": "F2",
+        "floor_area_m2": 60,
+        "assumed_rooms": 3,
+        "assumed_ceiling_height_m": 2.70,
+        "estimated_wall_perimeter_m": 60,
+        "gross_wall_surface_m2": 162,
+        "opening_deductions_m2": 9.0,
+        "net_painted_wall_surface_m2": 153,
+        "ceiling_surface_m2": 60,
+        "total_paintable_surface_m2": 213,
+        "notes": "3 rooms (salon, chambre, cuisine) + circulation. 3 doors × 1.5 + 3 windows × 0.5."
+      },
+      {
+        "case": "F3",
+        "floor_area_m2": 80,
+        "assumed_rooms": 4,
+        "assumed_ceiling_height_m": 2.70,
+        "estimated_wall_perimeter_m": 80,
+        "gross_wall_surface_m2": 216,
+        "opening_deductions_m2": 12.0,
+        "net_painted_wall_surface_m2": 204,
+        "ceiling_surface_m2": 80,
+        "total_paintable_surface_m2": 284,
+        "notes": "4 rooms + couloir. 4 doors × 1.5 + 4 windows × 0.5 + 1 couloir door."
+      },
+      {
+        "case": "F4",
+        "floor_area_m2": 110,
+        "assumed_rooms": 5,
+        "assumed_ceiling_height_m": 2.70,
+        "estimated_wall_perimeter_m": 105,
+        "gross_wall_surface_m2": 283.5,
+        "opening_deductions_m2": 16.0,
+        "net_painted_wall_surface_m2": 267.5,
+        "ceiling_surface_m2": 110,
+        "total_paintable_surface_m2": 377.5,
+        "notes": "5 rooms (salon, 3 chambres, cuisine) + couloir."
+      },
+      {
+        "case": "Villa 200m²",
+        "floor_area_m2": 200,
+        "assumed_rooms": 8,
+        "assumed_ceiling_height_m": 2.80,
+        "estimated_wall_perimeter_m": 180,
+        "gross_wall_surface_m2": 504,
+        "opening_deductions_m2": 28.0,
+        "net_painted_wall_surface_m2": 476,
+        "ceiling_surface_m2": 200,
+        "total_paintable_surface_m2": 676,
+        "notes": "Villa: higher ceiling, more rooms, more openings. Requires site visit — QUOTE_REQUIRED for villa scope."
+      }
+    ]
+  },
+
+  "painter_economic_model": {
+    "status": "FOR_HUMAN_REVIEW",
+    "approved": false,
+    "label": "FIXEO_POLICY — not Moroccan wage law",
+    "productivity": {
+      "ready_walls_per_day_m2": 60,
+      "walls_with_minor_prep_per_day_m2": 40,
+      "ceiling_per_day_m2": 50,
+      "enduit_per_day_m2": 35,
+      "note": "Assumes 2 coats per day for ready surfaces. Preparation reduces throughput. One painter working 8h."
+    },
+    "painter_day_cost_candidates": {
+      "economy_maalam": 350,
+      "standard_pro": 450,
+      "premium_pro": 600,
+      "unit": "MAD_per_painter_day",
+      "note": "Extrapolated from m² rates × productivity. A painter doing 60m²/day at 35 MAD/m² labour = 2100 MAD gross / day before commission and overhead — that is the gross billing rate. After FIXEO commission, artisan receives net."
+    },
+    "commission_stress_test": [
+      {
+        "commission_pct": 0,
+        "painter_daily_gross_at_35mad_60m2": 2100,
+        "painter_net": 2100,
+        "note": "No FIXEO commission — baseline"
+      },
+      {
+        "commission_pct": 10,
+        "painter_daily_gross_at_35mad_60m2": 2100,
+        "painter_net": 1890,
+        "note": "Standard platform commission"
+      },
+      {
+        "commission_pct": 15,
+        "painter_daily_gross_at_35mad_60m2": 2100,
+        "painter_net": 1785,
+        "note": "Mid commission"
+      },
+      {
+        "commission_pct": 20,
+        "painter_daily_gross_at_35mad_60m2": 2100,
+        "painter_net": 1680,
+        "note": "High commission — artisan day net still above 350 MAD economy baseline"
+      }
+    ],
+    "minimum_project_economic_basis": {
+      "travel_mad": 50,
+      "setup_masking_mad": 30,
+      "cleanup_mad": 20,
+      "tool_wear_mad": 15,
+      "minimum_painter_time_hours": 2,
+      "painter_hourly_rate_implied_mad": 56,
+      "minimum_labour_component_mad": 170,
+      "total_minimum_project_cost_mad": 285,
+      "proposed_minimum_with_margin_mad": 600,
+      "note": "Even a 2-hour minimum job costs ~285 MAD in direct cost. 600 MAD minimum project adds reasonable margin. Below 600 MAD, the economics are unsustainable for the artisan."
+    }
+  },
+
+  "calibration_candidates": [
+    {
+      "service_code": "PEIN-001",
+      "label": "Minimum Painting Project",
+      "label_fr": "Intervention peinture minimale",
+      "market_range_mad": "600–1200",
+      "research_anchor": "EV-001 through EV-007 (Mano.ma). Economic analysis: 2h painter minimum + setup = ~285 MAD direct cost. 600 MAD minimum with reasonable margin.",
+      "candidate_prices_mad": [600, 800, 1000, 1200],
+      "recommended_candidate_for_human_review": 800,
+      "architecture": "MINIMUM_PROJECT_FLOOR",
+      "formula_candidate": "FINAL_PRICE = max(MINIMUM_PROJECT, painted_m2 × labour_rate)",
+      "pricing_unit": "MINIMUM_PROJECT",
+      "measurement_basis": "NOT_APPLICABLE",
+      "paint_policy": "CLIENT_SUPPLIED",
+      "prep_policy": "MINOR_ONLY_INCLUDED",
+      "coat_policy": "AS_REQUIRED_FOR_SMALL_RETOUCHE",
+      "scope_inclusions_candidate": [
+        "Travel",
+        "Floor and furniture protection",
+        "Masking",
+        "Small retouche up to ~10m² painted surface",
+        "Standard tool set",
+        "Cleanup"
+      ],
+      "scope_exclusions_candidate": [
+        "Paint material (client supplies)",
+        "Preparation beyond small nail holes",
+        "Enduit de lissage",
+        "Wall surface >10m²"
+      ],
+      "complexity_escape": "If painted surface >10m², convert to PEIN-002 or PEIN-003 per-m² pricing",
+      "confidence": "MEDIUM",
+      "client_fairness_assessment": "Transparent. Client knows minimum cost before booking. Prevents surprise when artisan charges full day for 2m² retouche.",
+      "artisan_fairness_assessment": "Fair. Minimum covers setup cost. No artisan taking a 2h trip for 70 MAD.",
+      "worst_case_economics": "At 600 MAD minimum: artisan net after 15% commission = 510 MAD for ~2h work. Acceptable.",
+      "human_decision": "PENDING",
+      "production_ready": false,
+      "city_adjustment": null,
+      "urgency_modifier": null,
+      "night_modifier": null,
+      "weekend_modifier": null,
+      "holiday_modifier": null,
+      "express_modifier": null
+    },
+    {
+      "service_code": "PEIN-002",
+      "label": "Interior Wall — Labour Only (client supplies paint)",
+      "label_fr": "Peinture mur intérieur — main d'œuvre seule",
+      "market_range_mad": "25–50 MAD/m² painted surface",
+      "research_anchor": "EV-001 (Mano.ma national 25–40 MO), EV-008 (Casablanca 35–50), EV-012 (Fès 22–36). HIGH confidence. Corroborated across 3+ sources.",
+      "candidate_prices_mad": [30, 35, 40, 45],
+      "recommended_candidate_for_human_review": 35,
+      "architecture": "PER_PAINTED_M2_LABOUR_ONLY",
+      "pricing_unit": "PER_PAINTED_M2",
+      "measurement_basis": "PAINTED_SURFACE_M2",
+      "paint_policy": "CLIENT_SUPPLIED",
+      "prep_policy": "MINOR_INCLUDED_SEE_READY_TO_PAINT_CONTRACT",
+      "coat_policy": "2_COATS_CLIENT_PAINT_PRIMER_WHEN_REQUIRED",
+      "ready_to_paint_contract": {
+        "definition": "Surface eligible for PEIN-002 base rate must be READY_TO_PAINT",
+        "included_at_no_extra_charge": [
+          "Nail holes and screws (up to 5 per wall)",
+          "Very fine cracks ≤2mm width, ≤20cm length",
+          "Light surface sanding",
+          "Minimal filler application (spot only)"
+        ],
+        "excluded_triggers_escape": [
+          "Cracks >2mm or >20cm",
+          "Peeling paint areas >0.25m²",
+          "Active moisture or mold",
+          "Unstable existing coating (flaking, chalking)",
+          "Required full-wall enduit"
+        ],
+        "objective_test": "If artisan can start painting within 30 minutes of arrival (after protection setup), surface is READY_TO_PAINT. If prep time exceeds 30 min per wall, escape to PEIN-005."
+      },
+      "coat_policy_detail": {
+        "standard": "2 finish coats of client-supplied paint",
+        "primer": "Applied when substrate requires it (new plaster, colour change, high-absorption surface). Primer cost separate if not client-supplied.",
+        "dark_to_light_escape": "Dark colour → light colour change: 3 coats required. Artisan declares before starting. Price adjustment required — scope change.",
+        "specialty_paint_escape": "If client supplies paint requiring special technique (chalk paint, lime wash, etc.) — out of PEIN-002 standard scope. Quote required."
+      },
+      "small_project_behaviour": "Apply PEIN-001 minimum floor: FINAL_PRICE = max(800, painted_m2 × 35)",
+      "confidence": "HIGH",
+      "client_fairness_assessment": "Excellent. Client controls paint quality and cost. Price is transparent per m². Measurement method must be explained clearly. No hidden material markup.",
+      "artisan_fairness_assessment": "Good at 35 MAD/m². At 60m² ready walls per day: 35×60=2100 MAD/day gross. After 15% commission: 1785 MAD net/day. Sustainable.",
+      "worst_case_economics": "Small job 20m² at 35 MAD = 700 MAD. Above minimum 800? No — 700 < 800, so PEIN-001 minimum applies: 800 MAD. Good.",
+      "human_decision": "PENDING",
+      "production_ready": false,
+      "city_adjustment": null,
+      "urgency_modifier": null,
+      "night_modifier": null,
+      "weekend_modifier": null,
+      "holiday_modifier": null,
+      "express_modifier": null
+    },
+    {
+      "service_code": "PEIN-003",
+      "label": "Interior Wall — Labour + Standard Paint Included",
+      "label_fr": "Peinture mur intérieur — main d'œuvre + peinture standard incluse",
+      "market_range_mad": "45–80 MAD/m² painted surface",
+      "research_anchor": "EV-002 (Mano.ma 60–100 all-in), EV-019 (Bnidari vinyl 25–40 all-in — economy tier), EV-020 (Bnidari satin 45–75), EV-022 (Bnidari platform 30–80). HIGH confidence.",
+      "candidate_prices_mad": [50, 55, 60, 65, 70],
+      "recommended_candidate_for_human_review": 60,
+      "architecture": "PER_PAINTED_M2_LABOUR_PLUS_STANDARD_PAINT",
+      "pricing_unit": "PER_PAINTED_M2",
+      "measurement_basis": "PAINTED_SURFACE_M2",
+      "paint_policy": "ARTISAN_SUPPLIED_STANDARD_QUALITY",
+      "paint_specification_candidate": {
+        "class": "Standard acrylic vinyl — lavable (washable)",
+        "brands_eligible": ["Colorado (Colovinyl or equivalent)", "Astral (VinylAstral or equivalent)", "Atlas equivalent"],
+        "brands_excluded": ["Generic unlabelled", "Expired stock", "Non-washable economy (e.g. Oméga base white)"],
+        "finish": "Mate or satiné au choix du client dans la gamme standard",
+        "colour": "Client chooses from standard palette; mixing/tinting at artisan cost unless specialty colour",
+        "maximum_material_allowance_per_m2_mad": 15,
+        "note": "At standard paint consumption ~0.1L/m² per coat, 2 coats = 0.2L. Bidon 15L of Colorado at 439 MAD = 29 MAD/L retail. Material cost per m² ≈ 0.2 × 29 = 5.8 MAD retail. Artisan markup to 10–15 MAD/m² is reasonable."
+      },
+      "prep_policy": "Same READY_TO_PAINT contract as PEIN-002",
+      "coat_policy": "Primer where required + 2 coats standard paint",
+      "paint_supply_model_comparison": {
+        "model_A_client_supplied": {
+          "pro": "Transparent, no markup, client controls quality, simpler pricing",
+          "con": "Client may buy wrong quantity, wrong product, cause delay",
+          "price_range_mad": "25–50/m²"
+        },
+        "model_B_artisan_supplied_standard": {
+          "pro": "Operational simplicity, professional material",
+          "con": "Quality dispute risk, hidden markup risk",
+          "price_range_mad": "50–70/m²"
+        },
+        "model_C_artisan_disclosed_cost": {
+          "pro": "Maximum transparency, client approves material cost before purchase",
+          "con": "More complex pre-booking flow, artisan quotes material separately",
+          "price_range_mad": "Labour 25–50 + material disclosed"
+        },
+        "recommendation_for_human": "MODEL A (PEIN-002 CLIENT_SUPPLIED) is the most transparent FIXEO Fair Price architecture and should be the primary V1 offering. MODEL B (PEIN-003) serves clients who want full-service simplicity. MODEL C could be a future upgrade flow. Recommend offering both PEIN-002 and PEIN-003 as distinct service options."
+      },
+      "material_economics_analysis": {
+        "paint_retail_per_m2_mad": 5.8,
+        "primer_per_m2_mad": 2.0,
+        "filler_per_m2_mad": 1.0,
+        "masking_tape_per_m2_mad": 1.5,
+        "plastic_bache_per_m2_mad": 1.0,
+        "roller_brush_wear_per_m2_mad": 2.0,
+        "sanding_per_m2_mad": 0.5,
+        "wastage_10pct_mad": 1.4,
+        "total_material_per_m2_mad": 15.2,
+        "labour_at_35_mad": 35,
+        "total_cost_per_m2_mad": 50.2,
+        "candidate_price_60_margin_mad": 9.8,
+        "candidate_price_60_margin_pct": 16.3,
+        "note": "At 60 MAD/m² all-in, gross margin before commission is ~16%. After 15% FIXEO commission: artisan net on material+labour ≈ 51-15% = 43.4 MAD/m². Covers material (15.2) + labour (35) = 50.2 cost. Tight but viable at this efficiency."
+      },
+      "confidence": "HIGH",
+      "client_fairness_assessment": "Good if paint specification is explicit. Risk: client disputes paint brand or quality. Mitigation: name the brand class in booking confirmation.",
+      "artisan_fairness_assessment": "Fair if material allowance is built in. Risk: artisan uses cheap paint to increase margin. Mitigation: require named brand class.",
+      "worst_case_economics": "If artisan uses cheapest paint (5.8 MAD/m²) and bills 60 MAD: gross 54.2 margin before commission. At 15%: net 51 MAD/m² − 15.2 material = 35.8 MAD/m² effective labour. Same as PEIN-002 35 MAD/m² labour + minor material gain. Sustainable.",
+      "human_decision": "PENDING",
+      "production_ready": false,
+      "city_adjustment": null,
+      "urgency_modifier": null,
+      "night_modifier": null,
+      "weekend_modifier": null,
+      "holiday_modifier": null,
+      "express_modifier": null
+    },
+    {
+      "service_code": "PEIN-004",
+      "label": "Ceiling — Standard Repaint",
+      "label_fr": "Peinture plafond standard",
+      "market_range_mad": "20–80 MAD/m² (ambiguity resolved below)",
+      "research_anchor": "EV-005 (Mano.ma MO only 20–35 DH/m² — minimal scope). EV-015 (Mano.ma ceiling guide MO only 40–80 — broader scope including enduit). EV-016 (all-in 60–150). EV-026 (Mondevis.ma 2015: 20–32 DH — updated estimate +40% = 28–45 DH 2026).",
+      "evidence_conflict_resolution": "The ambiguity (20–35 vs 40–80) resolves based on SCOPE: a minimal ready ceiling with no enduit = 20–35 MO. The professional standard in Morocco (because most béton brut ceilings require enduit lissage) = 40–80 MO. FIXEO must define which ceiling contract it standardizes.",
+      "two_contracts": {
+        "contract_A_ready_ceiling": {
+          "label": "READY_CEILING — sound surface, no enduit required",
+          "candidate_prices_mo_mad": [25, 30, 35, 40],
+          "recommended_candidate": 30,
+          "eligibility": "Ceiling is plastered/painted, stable, no major stains, no enduit required",
+          "scope": "Minor sanding, primer where needed, 2 coats white/light paint",
+          "measurement_basis": "PAINTED_SURFACE_M2 = ceiling area = room floor area"
+        },
+        "contract_B_with_minor_prep": {
+          "label": "CEILING_WITH_MINOR_PREP — standard Moroccan béton ceiling",
+          "candidate_prices_all_in_mad": [45, 50, 55, 60],
+          "recommended_candidate": 50,
+          "eligibility": "Standard Moroccan béton brut ceiling requiring local enduit lissage",
+          "scope": "Local enduit lissage, sanding, primer, 2 coats standard paint",
+          "measurement_basis": "PAINTED_SURFACE_M2"
+        }
+      },
+      "recommended_v1_contract": "CONTRACT_B (with minor prep all-in) is more honest for the Moroccan context. CONTRACT_A could exist as a secondary service for repaint of already-finished ceilings.",
+      "separate_rate_from_walls": true,
+      "reason": "Ceiling requires more physical effort (overhead posture), often enduit lissage, and may use different paint finish (usually mate/white). Separate rate is justified.",
+      "candidate_prices_mad": [30, 35, 40, 45, 50],
+      "recommended_candidate_for_human_review": 45,
+      "architecture": "PER_CEILING_M2",
+      "pricing_unit": "PER_CEILING_M2",
+      "measurement_basis": "PAINTED_SURFACE_M2",
+      "paint_policy": "ARTISAN_SUPPLIED",
+      "prep_policy": "LOCAL_ENDUIT_MINOR_SANDING_INCLUDED",
+      "coat_policy": "PRIMER_PLUS_2",
+      "confidence": "MEDIUM",
+      "client_fairness_assessment": "Good if scope (enduit included or not) is explicit at booking.",
+      "artisan_fairness_assessment": "Fair. Ceiling work is physically harder. 45 MAD/m² all-in at 50m²/day = 2250 MAD/day gross. After commission = 1912 MAD net. Sustainable.",
+      "worst_case_economics": "20m² ceiling at 45 MAD = 900 MAD. Above 800 MAD minimum → OK, no minimum applies. Good.",
+      "human_decision": "PENDING",
+      "production_ready": false,
+      "city_adjustment": null,
+      "urgency_modifier": null,
+      "night_modifier": null,
+      "weekend_modifier": null,
+      "holiday_modifier": null,
+      "express_modifier": null
+    },
+    {
+      "service_code": "PEIN-005",
+      "label": "Interior Wall — Labour + Minor Preparation",
+      "label_fr": "Peinture mur intérieur avec préparation légère",
+      "market_range_mad": "60–110 MAD/m² all-in",
+      "research_anchor": "Derived: PEIN-003 base (45–80 DH all-in) + EV-032 enduit supplement (20–40 DH) = 65–120. EV-007 primer surcharge (8–15). Mano.ma rebouchage supplement +5–15 DH/m².",
+      "candidate_prices_labour_mad": [40, 45, 50, 55],
+      "recommended_candidate_for_human_review": 45,
+      "candidate_prices_allin_mad": [65, 70, 75, 80],
+      "architecture": "PER_PAINTED_M2_WITH_MINOR_PREP",
+      "pricing_unit": "PER_PAINTED_M2",
+      "measurement_basis": "PAINTED_SURFACE_M2",
+      "paint_policy": "ARTISAN_SUPPLIED",
+      "minor_preparation_contract": {
+        "included": [
+          "Rebouchage of holes up to 3cm diameter",
+          "Local filler on cracks up to 3mm width",
+          "Fine cracks ≤50cm length",
+          "Light sanding over entire surface",
+          "Local enduit on up to 20% of wall surface",
+          "Primer coat",
+          "2 finish coats"
+        ],
+        "excluded_escape_to_quote": [
+          "More than 20% of surface requires enduit",
+          "Cracks requiring V-cut and structural filler",
+          "Peeling over more than 25% of surface",
+          "Active moisture",
+          "Mold"
+        ]
+      },
+      "coat_policy": "PRIMER_PLUS_2",
+      "confidence": "MEDIUM",
+      "client_fairness_assessment": "Good if minor preparation boundaries are explicitly stated. Client must understand what triggers an escape to quote.",
+      "artisan_fairness_assessment": "Fair. 45 MAD/m² labour at 40m²/day (slower due to prep) = 1800 MAD/day gross. Sustainable.",
+      "worst_case_economics": "15m² at 75 MAD/m² all-in = 1125 MAD. Above 800 MAD minimum. OK.",
+      "human_decision": "PENDING",
+      "production_ready": false,
+      "city_adjustment": null,
+      "urgency_modifier": null,
+      "night_modifier": null,
+      "weekend_modifier": null,
+      "holiday_modifier": null,
+      "express_modifier": null
+    },
+    {
+      "service_code": "PEIN-006",
+      "label": "Full Standard Room (walls + ceiling)",
+      "label_fr": "Peinture pièce complète standard (murs + plafond)",
+      "market_range_mad": "1200–2800 MAD per standard room",
+      "research_anchor": "Derived from per-m² rates × standard room painted surface. Reddit EV-029: 17,000 DH / ~5 rooms = 3,400 MAD/room premium. FIXEO pSEO T0 comparison: chambre 800–1500 (LEGACY_LOW to LEGACY_SUPPORTED). Standard market cross-check: 25m² room, 65m² painted walls + 25m² ceiling = 90m² total. At 55 MAD/m² all-in: 4,950 MAD. This exceeds range suggesting the 1,200–2,800 range is for smaller rooms or excludes ceiling.",
+      "standard_room_definition": {
+        "floor_area_m2": "15–25",
+        "ceiling_height_m": 2.70,
+        "walls_included": true,
+        "ceiling_included": true,
+        "painted_wall_surface_estimate_m2": "45–65",
+        "ceiling_surface_estimate_m2": "15–25",
+        "total_painted_estimate_m2": "60–90",
+        "paint_policy": "ARTISAN_SUPPLIED_STANDARD",
+        "prep_condition": "READY_TO_PAINT",
+        "coats": "PRIMER_PLUS_2",
+        "occupied": "EMPTY_OR_LIGHT_FURNITURE"
+      },
+      "candidate_prices_mad": [1500, 1800, 2000, 2200, 2500],
+      "recommended_candidate_for_human_review": 1800,
+      "architecture_options": {
+        "A_FIXED_PER_ROOM": {
+          "pros": "Simple client experience, predictable",
+          "cons": "Hides surface area variance — 15m² vs 25m² room would get same price"
+        },
+        "B_CONDITIONAL_FIXED": {
+          "pros": "Transparent — room must meet size criteria",
+          "cons": "Requires client to know floor area"
+        },
+        "C_ESTIMATED_M2_BASED": {
+          "pros": "Most accurate — calculated from room dimensions",
+          "cons": "More complex for client"
+        }
+      },
+      "recommended_architecture": "CONDITIONAL_FIXED — room must be 15–25m² floor area. If larger, convert to per-m² pricing.",
+      "pricing_unit": "PER_ROOM",
+      "measurement_basis": "PAINTED_SURFACE_M2",
+      "paint_policy": "ARTISAN_SUPPLIED",
+      "prep_policy": "READY_TO_PAINT",
+      "coat_policy": "PRIMER_PLUS_2",
+      "confidence": "MEDIUM",
+      "client_fairness_assessment": "Good for standard rooms. Risk: client has unusually large room and expects same price. Mitigation: define room size range at booking.",
+      "artisan_fairness_assessment": "At 1,800 MAD for ~75m² painted surface = 24 MAD/m². At 60m²/day, this is ~1.25 painter-days. Gross per day = 1440 MAD. After 15% commission = 1224 MAD/day. Tight — room package may need to be calibrated higher.",
+      "worst_case_economics": "If artisan takes 1.5 days (slower prep, occupied), 1800 MAD / 1.5 = 1200 MAD/day gross. After commission: 1020 MAD/day. Still viable but at low end.",
+      "human_decision": "PENDING",
+      "production_ready": false,
+      "city_adjustment": null,
+      "urgency_modifier": null,
+      "night_modifier": null,
+      "weekend_modifier": null,
+      "holiday_modifier": null,
+      "express_modifier": null
+    },
+    {
+      "service_code": "PEIN-008",
+      "label": "Enduit de Lissage — Preparation Only",
+      "label_fr": "Enduit de lissage (préparation sans peinture)",
+      "market_range_mad": "20–40 MAD/m²",
+      "research_anchor": "EV-032 (Mano.ma: 20–40 DH/m² supplement for enduit). EV-017 (Mano.ma ceiling delta: all-in with enduit 80–180 vs without 60–150 → delta 20–30 DH/m²). SRC-009 (Mondevis.ma real devis context).",
+      "candidate_prices_mad": [20, 25, 30, 35, 40],
+      "recommended_candidate_for_human_review": 25,
+      "architecture": "PER_PAINTED_M2_PREPARATION_ONLY",
+      "pricing_unit": "PER_PAINTED_M2",
+      "measurement_basis": "PAINTED_SURFACE_M2",
+      "labour_vs_material_resolution": {
+        "market_ambiguity": "Some sources bundle enduit material into the rate; others show labour only.",
+        "recommendation": "LABOUR + ENDUIT MATERIAL INCLUDED in standard rate. Enduit material (poudre à enduire / enduit de lissage) costs ~3–6 MAD/m² retail. Including it in the rate at 25–30 MAD/m² is transparent and operationally simple.",
+        "material_cost_per_m2": "3–6 MAD",
+        "labour_component_per_m2": "20–30 MAD"
+      },
+      "scope_definition": {
+        "passes": 2,
+        "includes": [
+          "2 passes of enduit de lissage",
+          "Sanding between passes",
+          "Surface left smooth and ready for primer/paint",
+          "Enduit material supply"
+        ],
+        "excludes": [
+          "Paint application",
+          "Primer",
+          "Structural repair",
+          "Deep plaster repair (>5mm depth)",
+          "Moisture damage treatment"
+        ],
+        "max_repair_depth_mm": 5,
+        "escape": "If substrate requires >5mm fill or structural repair → HORS PÉRIMÈTRE Maçonnerie"
+      },
+      "coat_policy": "2_PASSES_ENDUIT",
+      "confidence": "MEDIUM",
+      "client_fairness_assessment": "High transparency as an explicit add-on service. Client understands what they are paying for.",
+      "artisan_fairness_assessment": "At 25 MAD/m² and 35m²/day productivity = 875 MAD/day gross enduit only. After 15% commission: 744 MAD. Low day rate — enduit is typically bundled into painting, not standalone. As add-on it makes sense.",
+      "worst_case_economics": "20m² enduit at 25 MAD = 500 MAD. Below 800 MAD minimum → minimum applies. Should be bundled with painting service in most cases.",
+      "human_decision": "PENDING",
+      "production_ready": false,
+      "city_adjustment": null,
+      "urgency_modifier": null,
+      "night_modifier": null,
+      "weekend_modifier": null,
+      "holiday_modifier": null,
+      "express_modifier": null
+    }
+  ],
+
+  "deferred_services": [
+    {
+      "service_code": "PEIN-007",
+      "label": "Full Apartment Repaint Package",
+      "reason": "Insufficient evidence to standardize. Range too wide (5,000–16,000 MAD). Apartment size, condition, and paint quality variation too great. Recommend DEFERRED pending field validation data.",
+      "classification": "DEFERRED"
+    },
+    {
+      "service_code": "PEIN-009",
+      "label": "Interior Door Painting",
+      "reason": "LOW confidence evidence. No strong Moroccan source. DEFERRED to V2.",
+      "classification": "DEFERRED"
+    },
+    {
+      "service_code": "PEIN-010",
+      "label": "Decorative — Tadelakt / Stucco / Béton Ciré",
+      "reason": "Artisan skill-dependent. 80–600 DH/m² range is too wide to standardize. QUOTE_REQUIRED always.",
+      "classification": "QUOTE_REQUIRED"
+    },
+    {
+      "service_code": "PEIN-011",
+      "label": "Exterior Facade",
+      "reason": "Scaffolding variable, height, surface condition unknown. QUOTE_REQUIRED.",
+      "classification": "QUOTE_REQUIRED"
+    },
+    {
+      "service_code": "PEIN-012",
+      "label": "Heavy Wall Repair / Moisture",
+      "reason": "QUOTE_REQUIRED or HORS PÉRIMÈTRE depending on diagnosis.",
+      "classification": "QUOTE_REQUIRED"
+    },
+    {
+      "service_code": "PEIN-EXT-001",
+      "label": "Metal railings / window frames / volets",
+      "reason": "Insufficient Moroccan evidence. DEFERRED.",
+      "classification": "DEFERRED"
+    }
+  ],
+
+  "small_project_simulations": [
+    {
+      "painted_m2": 5,
+      "labour_only_rate_35": 175,
+      "minimum_applies": true,
+      "final_price_labour_only": 800,
+      "all_in_rate_60": 300,
+      "final_price_all_in": 800,
+      "note": "Below minimum threshold — minimum project applies at 800 MAD."
+    },
+    {
+      "painted_m2": 10,
+      "labour_only_rate_35": 350,
+      "minimum_applies": true,
+      "final_price_labour_only": 800,
+      "all_in_rate_60": 600,
+      "final_price_all_in": 800,
+      "note": "Still below 800 MAD minimum."
+    },
+    {
+      "painted_m2": 15,
+      "labour_only_rate_35": 525,
+      "minimum_applies": true,
+      "final_price_labour_only": 800,
+      "all_in_rate_60": 900,
+      "final_price_all_in": 900,
+      "note": "Labour only still below minimum. All-in exceeds minimum — per-m² applies."
+    },
+    {
+      "painted_m2": 20,
+      "labour_only_rate_35": 700,
+      "minimum_applies": true,
+      "final_price_labour_only": 800,
+      "all_in_rate_60": 1200,
+      "final_price_all_in": 1200,
+      "note": "Labour only: minimum still governs at 800. All-in: per-m² governs."
+    },
+    {
+      "painted_m2": 25,
+      "labour_only_rate_35": 875,
+      "minimum_applies": false,
+      "final_price_labour_only": 875,
+      "all_in_rate_60": 1500,
+      "final_price_all_in": 1500,
+      "note": "First m² tier where labour-only exceeds minimum. Per-m² governs."
+    },
+    {
+      "painted_m2": 30,
+      "labour_only_rate_35": 1050,
+      "minimum_applies": false,
+      "final_price_labour_only": 1050,
+      "all_in_rate_60": 1800,
+      "final_price_all_in": 1800
+    },
+    {
+      "painted_m2": 50,
+      "labour_only_rate_35": 1750,
+      "minimum_applies": false,
+      "final_price_labour_only": 1750,
+      "all_in_rate_60": 3000,
+      "final_price_all_in": 3000
+    }
+  ],
+
+  "apartment_simulations_calibrated": [
+    {
+      "case": "Studio ~40m² floor",
+      "floor_area_m2": 40,
+      "painted_walls_m2": 65.5,
+      "ceiling_m2": 40,
+      "total_painted_m2": 105.5,
+      "labour_only_at_35": 3693,
+      "ceiling_at_45": 1800,
+      "total_labour_only_walls_ceiling": 5493,
+      "all_in_walls_at_60": 3930,
+      "ceiling_all_in_at_45": 1800,
+      "total_all_in": 5730,
+      "external_market_check": "Mano.ma simulation for 50m² painted surface: 3,000–4,500 MAD all-in economy. Our studio (105m²) is larger scope — market check confirms range.",
+      "market_alignment": "ALIGNED"
+    },
+    {
+      "case": "F2 ~60m² floor",
+      "floor_area_m2": 60,
+      "painted_walls_m2": 153,
+      "ceiling_m2": 60,
+      "total_painted_m2": 213,
+      "labour_only_walls_at_35": 5355,
+      "ceiling_at_45": 2700,
+      "total_labour_only": 8055,
+      "all_in_walls_at_60": 9180,
+      "ceiling_all_in_at_45": 2700,
+      "total_all_in": 11880,
+      "external_market_check": "Phase 7B.9 simulation for F2: MO only 4,125–8,250 / all-in 7,425–13,200. Our calibrated numbers: 8,055 MO / 11,880 all-in. ALIGNED.",
+      "market_alignment": "ALIGNED"
+    },
+    {
+      "case": "F3 ~80m² floor",
+      "floor_area_m2": 80,
+      "painted_walls_m2": 204,
+      "ceiling_m2": 80,
+      "total_painted_m2": 284,
+      "labour_only_walls_at_35": 7140,
+      "ceiling_at_45": 3600,
+      "total_labour_only": 10740,
+      "all_in_walls_at_60": 12240,
+      "ceiling_all_in_at_45": 3600,
+      "total_all_in": 15840,
+      "external_market_check": "Phase 7B.9: F3 MO only 5,500–11,000 / all-in 9,900–17,600. Calibrated: 10,740 MO / 15,840 all-in. ALIGNED upper-mid range.",
+      "market_alignment": "ALIGNED"
+    },
+    {
+      "case": "F4 ~110m² floor",
+      "floor_area_m2": 110,
+      "painted_walls_m2": 267.5,
+      "ceiling_m2": 110,
+      "total_painted_m2": 377.5,
+      "labour_only_walls_at_35": 9363,
+      "ceiling_at_45": 4950,
+      "total_labour_only": 14313,
+      "all_in_walls_at_60": 16050,
+      "ceiling_all_in_at_45": 4950,
+      "total_all_in": 21000,
+      "external_market_check": "Phase 7B.9: F4 MO only 7,500–15,000 / all-in 13,500–24,000. Calibrated: 14,313 MO / 21,000 all-in. ALIGNED.",
+      "market_alignment": "ALIGNED"
+    },
+    {
+      "case": "Villa ~200m² floor (QUOTE_REQUIRED reference only)",
+      "floor_area_m2": 200,
+      "painted_walls_m2": 476,
+      "ceiling_m2": 200,
+      "total_painted_m2": 676,
+      "labour_only_walls_at_35": 16660,
+      "ceiling_at_45": 9000,
+      "total_labour_only": 25660,
+      "all_in_walls_at_60": 28560,
+      "ceiling_all_in_at_45": 9000,
+      "total_all_in": 37560,
+      "note": "Villa at this scale is QUOTE_REQUIRED. Figures shown for reference calibration check only.",
+      "market_alignment": "REFERENCE_ONLY"
+    }
+  ],
+
+  "occupied_vs_empty_policy": {
+    "status": "POLICY_FOR_HUMAN_REVIEW",
+    "approved": false,
+    "recommendation": "EMPTY_PROPERTY = standard eligible at standard rates. OCCUPIED_PROPERTY = conditional — acceptable if light furniture, with standard scope. Escape to quote if: heavy furniture requiring multiple moves, restricted room access, room-by-room staging required, animals, children.",
+    "surcharge": null,
+    "note": "No percentage surcharge approved. Occupied-property complexity should be handled via scope qualification at booking."
+  },
+
+  "moisture_mold_doctrine": {
+    "status": "DOCTRINE_FOR_HUMAN_REVIEW",
+    "approved": false,
+    "rule": "FIXEO must not create a service that enables artisans to paint over unresolved water damage.",
+    "escape_workflow": [
+      "Client mentions humidity / recurring mold / peeling caused by moisture",
+      "STOP",
+      "IDENTIFY whether cause appears active",
+      "DECLARE HORS PÉRIMÈTRE Peinture",
+      "ROUTE to: Plomberie (pipe), Toiture (roof infiltration), Maçonnerie (structural moisture)",
+      "CONFIRM source resolved by specialist",
+      "CONFIRM wall dry for minimum 2 weeks",
+      "RETURN to Peinture scope"
+    ],
+    "anti_humidity_paint_policy": "Anti-humidity paint (Coloflex, anti-salpêtre) is valid ONLY on surfaces with confirmed-resolved moisture source, as a preventive measure. NOT valid as primary treatment for active water infiltration."
+  },
+
+  "client_prescreening_questions": [
+    "What surface(s) do you want to paint? (walls / ceiling / both / doors)",
+    "Floor area of the space(s) in m² (approximate is fine)",
+    "Number of rooms",
+    "Ceiling height (standard 2.70m or higher?)",
+    "Current wall condition: Good (clean, stable) / Minor damage (small holes, fine cracks) / Major damage (peeling, large cracks)",
+    "Any humidity stains, mold, or recurring peeling?",
+    "Same colour or colour change? If colour change: dark to light?",
+    "Do you already have paint purchased?",
+    "Paint quality preference: Economy / Standard washable / Premium",
+    "Is property empty or occupied?",
+    "If occupied: light furniture, or heavy / difficult to move?"
+  ],
+
+  "complexity_model": {
+    "READY_TO_PAINT": {
+      "eligibility": "PEIN-002, PEIN-003, PEIN-004, PEIN-006",
+      "architecture": "STANDARDIZED_PRICE"
+    },
+    "MINOR_PREPARATION": {
+      "eligibility": "PEIN-005",
+      "architecture": "STANDARDIZED_PRICE_MINOR_PREP"
+    },
+    "MODERATE_REPAIR": {
+      "eligibility": "PEIN-008 + PEIN-003 (combined)",
+      "architecture": "ADD_ON_ENDUIT + STANDARD_PAINT"
+    },
+    "HEAVY_REPAIR": {
+      "eligibility": "NONE",
+      "architecture": "QUOTE_REQUIRED"
+    },
+    "MOISTURE_OR_MOLD": {
+      "eligibility": "NONE",
+      "architecture": "HORS_PÉRIMÈTRE — route to specialist"
+    },
+    "STRUCTURAL_DAMAGE": {
+      "eligibility": "NONE",
+      "architecture": "HORS_PÉRIMÈTRE — Maçonnerie"
+    }
+  }
+}

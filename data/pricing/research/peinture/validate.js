@@ -196,6 +196,102 @@ check(
 );
 if (evidenceIds.length === uniqueEvidenceIds.size) console.log('    OK — all evidence IDs unique');
 
+// ---- V0.2 CALIBRATION CHECKS ----
+const calibrationPath = path.join(DIR, 'calibration.v0.2.json');
+if (fs.existsSync(calibrationPath)) {
+  console.log('\n--- V0.2 Calibration Checks ---');
+  let cal;
+  try {
+    cal = JSON.parse(fs.readFileSync(calibrationPath, 'utf8'));
+  } catch(e) {
+    fail(`calibration.v0.2.json parse failed: ${e.message}`);
+    cal = null;
+  }
+
+  if (cal) {
+    // Check 14: Exactly 7 calibration candidates
+    console.log('\n[14] Checking exactly 7 calibration candidates...');
+    const calServices = cal.calibration_candidates || [];
+    check(calServices.length === 7, `Expected 7 calibration candidates, found ${calServices.length}`);
+    if (calServices.length === 7) console.log('    OK — exactly 7 calibration candidates');
+
+    // Check 15: All calibration candidates human_decision = PENDING
+    console.log('\n[15] Checking all calibration candidates human_decision = PENDING...');
+    let calDecisionErrors = 0;
+    for (const svc of calServices) {
+      if (svc.human_decision !== 'PENDING') {
+        fail(`Calibration service ${svc.service_code} has human_decision = ${svc.human_decision} (must be PENDING)`);
+        calDecisionErrors++;
+      }
+    }
+    if (calDecisionErrors === 0) console.log('    OK — all calibration candidates are PENDING');
+
+    // Check 16: All calibration candidates production_ready = false
+    console.log('\n[16] Checking all calibration candidates production_ready = false...');
+    const calProdReady = calServices.filter(s => s.production_ready === true);
+    check(calProdReady.length === 0, `Calibration services with production_ready=true: ${calProdReady.map(s => s.service_code).join(', ')}`);
+    if (calProdReady.length === 0) console.log('    OK — all calibration candidates have production_ready=false');
+
+    // Check 17: All calibration candidates modifiers = null
+    console.log('\n[17] Checking calibration candidate modifiers are null...');
+    let calModErrors = 0;
+    const MODIFIER_FIELDS_CAL = ['city_adjustment', 'urgency_modifier', 'night_modifier', 'weekend_modifier', 'holiday_modifier', 'express_modifier'];
+    for (const svc of calServices) {
+      for (const field of MODIFIER_FIELDS_CAL) {
+        if (svc[field] !== null && svc[field] !== undefined) {
+          fail(`Calibration service ${svc.service_code} has non-null ${field}: ${svc[field]}`);
+          calModErrors++;
+        }
+      }
+    }
+    if (calModErrors === 0) console.log('    OK — all calibration modifiers are null');
+
+    // Check 18: Painted-surface doctrine preserved (measurement_basis not FLOOR_AREA on wall services)
+    console.log('\n[18] Checking painted-surface doctrine (wall services use PAINTED_SURFACE_M2)...');
+    let paintedSurfaceErrors = 0;
+    const wallServices = calServices.filter(s =>
+      s.pricing_unit === 'PER_PAINTED_M2' || s.pricing_unit === 'PER_CEILING_M2'
+    );
+    for (const svc of wallServices) {
+      if (svc.measurement_basis === 'FLOOR_AREA_M2') {
+        fail(`Service ${svc.service_code} (${svc.pricing_unit}) uses FLOOR_AREA_M2 measurement — must use PAINTED_SURFACE_M2`);
+        paintedSurfaceErrors++;
+      }
+    }
+    if (paintedSurfaceErrors === 0) console.log('    OK — painted surface doctrine preserved');
+
+    // Check 19: Correct code list
+    console.log('\n[19] Checking required service codes present...');
+    const REQUIRED_CODES = ['PEIN-001', 'PEIN-002', 'PEIN-003', 'PEIN-004', 'PEIN-005', 'PEIN-006', 'PEIN-008'];
+    const foundCodes = calServices.map(s => s.service_code);
+    const missingCodes = REQUIRED_CODES.filter(c => !foundCodes.includes(c));
+    check(missingCodes.length === 0, `Missing required calibration codes: ${missingCodes.join(', ')}`);
+    if (missingCodes.length === 0) console.log('    OK — all required service codes present');
+
+    // Check 20: Meta fields correct
+    console.log('\n[20] Checking calibration meta fields...');
+    check(cal._meta && cal._meta.all_production_ready === false, 'calibration._meta.all_production_ready must be false');
+    check(cal._meta && cal._meta.all_human_decision === 'PENDING', 'calibration._meta.all_human_decision must be PENDING');
+    if (cal._meta && cal._meta.all_production_ready === false && cal._meta.all_human_decision === 'PENDING') {
+      console.log('    OK — meta fields correct');
+    }
+  }
+} else {
+  console.log('\n[14–20] calibration.v0.2.json not found — V0.2 checks skipped');
+}
+
+// ---- V0.1 INTEGRITY CHECK ----
+console.log('\n[21] Verifying V0.1 artifacts not modified (checking file existence)...');
+const V01_FILES = ['sources.v0.1.json', 'evidence.v0.1.json', 'registry.v0.1.json', 'exclusions.v0.1.json'];
+let v01Errors = 0;
+for (const f of V01_FILES) {
+  if (!fs.existsSync(path.join(DIR, f))) {
+    fail(`V0.1 artifact missing: ${f}`);
+    v01Errors++;
+  }
+}
+if (v01Errors === 0) console.log('    OK — all V0.1 artifacts present');
+
 // ---- RESULT ----
 console.log('\n' + '='.repeat(60));
 if (PASS) {
@@ -205,6 +301,10 @@ if (PASS) {
   console.log('  All modifiers = null');
   console.log('  No approved prices');
   console.log('  External research precedes T0 comparison');
+  console.log('  V0.1 artifacts intact');
+  if (fs.existsSync(calibrationPath)) {
+    console.log('  V0.2 calibration: 7 candidates, all PENDING, painted-surface doctrine preserved');
+  }
 } else {
   console.log(`VALIDATION FAILED — ${ERRORS.length} error(s):`);
   ERRORS.forEach(e => console.log(e));
