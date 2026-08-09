@@ -1,0 +1,559 @@
+{
+  "_meta": {
+    "registry_name": "fixeo_electricite_pricing",
+    "registry_version": "0.1.0",
+    "status": "RESEARCH_NOT_PRODUCTION",
+    "phase": "Phase 7B.4 — FIXEO Fair Price Research — Electricity Morocco",
+    "date": "2026-08-09",
+    "production_ready": false,
+    "currency": "MAD",
+    "all_prices_null": false,
+    "total_services": 18,
+    "candidate_services": 5,
+    "quote_required_services": 7,
+    "diagnosis_first_services": 3,
+    "insufficient_evidence_services": 3,
+    "geographic_scope": "NATIONAL_MOROCCO",
+    "geographic_reference_city": "Casablanca",
+    "geographic_reference_city_use": "ECONOMIC_STRESS_TEST_ONLY",
+    "city_adjustment": null,
+    "city_adjustment_note": "No city multipliers applied in V0. afous.ma coefficients documented for future use: Rabat/Marrakech ×0.95, Agadir/Tanger ×0.90, Fès/Meknès/Salé ×0.85. These are external observatory values — FIXEO cannot adopt without own transaction data.",
+    "urgency_modifier": null,
+    "urgency_modifier_note": "No urgency modifiers approved. mano.ma editorial: soir +30–50%, nuit +50–100%, weekend +40–60%, jours fériés +60–100%. Materially higher than plumbing modifiers — electricity urgency commands larger premium due to safety/risk. All remain NON-CANONICAL until FIXEO has observed transaction data.",
+    "ai_claim": null,
+    "production_runtime_diff": "ZERO",
+    "key_structural_findings": [
+      "Electricity pricing is MORE heterogeneous than plumbing — range width per service is larger",
+      "Materials cost (hardware) is a MAJOR pricing variable — unlike plumbing where consumables are minimal",
+      "Per-unit pricing (per prise/interrupteur/spot) is structurally different from flat-intervention pricing",
+      "Diagnostic fee practice: generally INCLUDED in forfait for simple interventions; SEPARATE charged for complex fault-finding (tableau, court-circuit, panne intermittente)",
+      "Tarif horaire national: 150–180 DH/h (afous.ma P30-P70, 480 relevés) — market-grounding anchor",
+      "Casablanca premium: 200–280 DH/h (mano.ma) — consistent with afous.ma ×1.00 coefficient being the reference point",
+      "Safety: several intervention types are inherently incompatible with fixed pricing — burnt wiring, tableau replacement, three-phase, complete rewiring",
+      "Best standardization candidates: prise/interrupteur remplacement, luminaire installation, disjoncteur simple remplacement (with client-supplied part)",
+      "Biggest data gap: no field-level pricing for interrupteur différentiel installation, sonnette/interphone, circuit ajout — insufficient evidence"
+    ],
+    "afous_city_coefficients_documented": {
+      "casablanca": 1.00,
+      "rabat": 0.95,
+      "marrakech": 0.95,
+      "agadir": 0.90,
+      "tanger": 0.90,
+      "fes": 0.85,
+      "meknes": 0.85,
+      "sale": 0.85,
+      "source": "afous.ma/prix/methodologie (2026-08-09)",
+      "note": "External observatory values. FIXEO cannot adopt without own transaction data validation."
+    },
+    "artisan_economic_floor_casablanca": {
+      "hourly_rate_reference_MAD": 165,
+      "comment": "afous.ma P30-P70 urgency hourly rate 150-180 DH, midpoint 165 DH. 30-min intervention should yield ~82 DH labour. Add travel 40 DH (MID) + commission 15% = minimum intervention price ~200–250 DH to be viable.",
+      "minimum_viable_intervention_MAD": 200,
+      "note": "Any FIXEO fixed price below 200 MAD for a genuine 30-min residential intervention in Casablanca risks artisan economic viability."
+    },
+    "source_weight_summary": {
+      "SRC_ELEC_002_afous": 0.50,
+      "SRC_ELEC_001_mano": 0.30,
+      "SRC_ELEC_003_bnidari": 0.10,
+      "SRC_ELEC_009_bnidari_scope": 0.05,
+      "other": 0.05
+    }
+  },
+
+  "services": [
+
+    {
+      "service_code": "electricite.diagnostic",
+      "label_fr": "Déplacement et diagnostic électrique",
+      "description": "Artisan travel + on-site fault identification. Verbal findings. No repair performed.",
+      "pricing_architecture": "FLAT_DIAGNOSTIC",
+      "candidate_for_fixeo_price": true,
+      "candidacy_rationale": "Standard practice: diagnostic is an explicit, universally charged step in Morocco. Similar to plumbing model. Scope is clearly delimitable. Good standardization candidate.",
+      "production_ready": false,
+      "human_decision": "PENDING",
+      "reference_price": {
+        "consensus_low": 150,
+        "market_anchor": 250,
+        "consensus_high": 400,
+        "currency": "MAD",
+        "confidence": "LOW",
+        "confidence_rationale": "mano.ma 200–500 DH for 'recherche et diagnostic'. Wide range. afous.ma does not separate diagnostic as standalone — included in urgency hourly rate. Limited direct evidence for diagnostic-only forfait.",
+        "derivation": "Lower bound from artisan economic floor (200 DH travel+30min) minus urgency component. Anchor from mano.ma midpoint adjusted for standard hours. Upper bound from mano.ma high end."
+      },
+      "materials_policy": {
+        "labour": "included",
+        "travel": "IS_THE_SERVICE",
+        "basic_consumables": "NOT_APPLICABLE",
+        "replacement_parts": "NOT_APPLICABLE"
+      },
+      "diagnostic_policy": {
+        "mode": "IS_THE_SERVICE",
+        "Morocco_practice": "Diagnostic fee standard in Morocco — charged even if no repair proceeds. mano.ma notes: 'diagnostic often charged separately; ensure deducted if repairs confirmed.' This is aspirational not market reality — no confirmed deductible model in electricity."
+      },
+      "evidence_observations": ["OBS_ELEC_001"],
+      "evidence_count": 1,
+      "safety_classification": "STANDARD",
+      "safety_note": "Diagnostic itself is low-risk but findings may reveal DANGEROUS installations requiring immediate quote or ONRE referral."
+    },
+
+    {
+      "service_code": "electricite.prise_remplacement",
+      "label_fr": "Remplacement / réparation prise électrique standard",
+      "description": "Replacement or repair of a standard accessible electrical outlet. Part may be client-supplied or artisan-supplied.",
+      "pricing_architecture": "FLAT_INTERVENTION",
+      "candidate_for_fixeo_price": true,
+      "candidacy_rationale": "Most standardizable residential electrical intervention. Scope clearly delimitable: one accessible standard prise, replace or reconnect. Low complexity, predictable labour (20–30 min), simple hardware.",
+      "production_ready": false,
+      "human_decision": "PENDING",
+      "reference_price": {
+        "consensus_low": 150,
+        "market_anchor": 220,
+        "consensus_high": 300,
+        "currency": "MAD",
+        "confidence": "MEDIUM",
+        "confidence_rationale": "mano.ma 150–300 DH for 'réparation prise'. afous.ma 70–80 DH per unit (labour only) + travel ~50–100 DH = 120–180 DH effective per single outlet when accounting for travel. Two sources with consistent direction. Midpoint 220 DH plausible for single prise intervention including travel.",
+        "derivation": "Labour per unit 70-80 DH (afous P30-P70) + travel 50-100 DH (mano.ma urban) = 120-180 DH floor. mano.ma forfait 150-300 DH. Consensus: 150-300 MAD. Part (basic prise ~20-60 DH) — for FIXEO: client-supplied policy recommended.",
+        "unit_note": "FLAT_INTERVENTION for single outlet replacement. Per-unit only applies when multiple outlets on same visit."
+      },
+      "materials_policy": {
+        "labour": "included",
+        "travel": "included",
+        "basic_consumables": "wire connector, domino if needed — ≤20 MAD included",
+        "replacement_parts": "EXCLUDED — prise/interrupteur hardware (20–80 DH retail) must be disclosed and approved, or client-supplied",
+        "part_supply_note": "Standard prise: 20–60 DH droguerie/Bricoma. Schneider/Legrand premium: 60–120 DH. Client guidance: purchase before visit or artisan declares separately."
+      },
+      "diagnostic_policy": {
+        "mode": "INCLUDED_IN_INTERVENTION",
+        "note": "Symptom known before arrival (prise ne fonctionne plus). Standard intervention — no separate diagnostic fee for accessible outlet."
+      },
+      "complexity_escape_rules": [
+        "Wiring behind wall found burnt or damaged — HORS PÉRIMÈTRE → DIAGNOSIS_FIRST",
+        "No accessible junction box — wall opening required → HORS PÉRIMÈTRE",
+        "More than 1 outlet on different circuits → quote separately",
+        "Ground wire absent or defective → safety issue → HORS PÉRIMÈTRE + client safety warning",
+        "Prise spécialisée (four, clim, machine) → higher complexity → quote"
+      ],
+      "evidence_observations": ["OBS_ELEC_002", "OBS_ELEC_003", "OBS_ELEC_020"],
+      "evidence_count": 3,
+      "safety_classification": "STANDARD",
+      "safety_note": "Ground wire (terre) status must be verified. If missing: safety warning mandatory. Cannot ignore absence of earth connection."
+    },
+
+    {
+      "service_code": "electricite.interrupteur_remplacement",
+      "label_fr": "Remplacement / réparation interrupteur ou va-et-vient",
+      "description": "Replacement of a standard accessible wall switch, simple or two-way (va-et-vient).",
+      "pricing_architecture": "FLAT_INTERVENTION",
+      "candidate_for_fixeo_price": true,
+      "candidacy_rationale": "Identical complexity profile to prise_remplacement. 20–30 min, predictable scope, client can supply part. Same standardization level.",
+      "production_ready": false,
+      "human_decision": "PENDING",
+      "reference_price": {
+        "consensus_low": 150,
+        "market_anchor": 200,
+        "consensus_high": 280,
+        "currency": "MAD",
+        "confidence": "MEDIUM",
+        "confidence_rationale": "mano.ma 80–150 DH per unit (labour) + travel. afous.ma 70–80 DH per unit. Va-et-vient mano.ma 150–250 DH — slightly more complex. For single standard interrupteur: 150–250 DH forfait. Consistent evidence from 2 sources.",
+        "derivation": "Labour 70-80 DH (afous) + travel 50-100 DH = 120-180 DH floor. mano.ma forfait 80-150 DH per unit only. For single intervention including travel: 150-250 MAD. Va-et-vient escapes to upper range.",
+        "va_et_vient_range": {"from": 200, "to": 300, "note": "Two switching points — higher complexity than simple interrupteur"}
+      },
+      "materials_policy": {
+        "labour": "included",
+        "travel": "included",
+        "basic_consumables": "minimal — ≤10 MAD included",
+        "replacement_parts": "EXCLUDED — interrupteur hardware (15–60 DH) client-supplied or artisan-disclosed",
+        "part_supply_note": "Simple interrupteur: 15–40 DH. Schneider Unica/Legrand premium: 40–100 DH. Va-et-vient requires 2 units."
+      },
+      "diagnostic_policy": {
+        "mode": "INCLUDED_IN_INTERVENTION",
+        "note": "Symptom clear before arrival. No separate diagnostic."
+      },
+      "complexity_escape_rules": [
+        "Multiple switches on different circuits on same visit → quote per additional",
+        "Wiring damaged behind wall → HORS PÉRIMÈTRE",
+        "Complex multi-way switching system → HORS PÉRIMÈTRE",
+        "Dimmer or smart-switch installation with programming → HORS PÉRIMÈTRE"
+      ],
+      "evidence_observations": ["OBS_ELEC_003", "OBS_ELEC_004", "OBS_ELEC_020"],
+      "evidence_count": 3,
+      "safety_classification": "STANDARD"
+    },
+
+    {
+      "service_code": "electricite.luminaire_installation",
+      "label_fr": "Installation luminaire / plafonnier — main-d'œuvre seule",
+      "description": "Installation of client-supplied light fixture (plafonnier, lustre, applique). Wiring connection only.",
+      "pricing_architecture": "FLAT_INTERVENTION",
+      "candidate_for_fixeo_price": true,
+      "candidacy_rationale": "Tightly definable scope when client supplies fixture. 20–45 min depending on fixture complexity. Common residential request. Client-supplied fixture eliminates material ambiguity — same standardization logic as robinet_remplacement in plumbing.",
+      "production_ready": false,
+      "human_decision": "PENDING",
+      "reference_price": {
+        "consensus_low": 150,
+        "market_anchor": 220,
+        "consensus_high": 350,
+        "currency": "MAD",
+        "confidence": "MEDIUM",
+        "confidence_rationale": "mano.ma plafonnier simple 150–300 DH; lustre décoratif 300–600 DH. Two service types clearly differentiated. Simple fixture: 150–300 DH consistent. Lustre: 300–600 DH. For FIXEO standard scope (simple plafonnier/applique): 150–300 DH. Lustre is complexity escape.",
+        "variant_simple": {"from": 150, "to": 280, "note": "Plafonnier simple, applique murale — client supplies fixture"},
+        "variant_lustre": {"from": 300, "to": 600, "note": "Lustre lourd ou décoratif — HORS PÉRIMÈTRE standard price"},
+        "variant_spot_per_unit": {"from": 100, "to": 200, "note": "Per spot — separate unit pricing for batch installation"}
+      },
+      "materials_policy": {
+        "labour": "included",
+        "travel": "included",
+        "basic_consumables": "wire connectors, domino — ≤15 MAD included",
+        "replacement_parts": "EXCLUDED — fixture client-supplied",
+        "client_label": "Main-d'œuvre + déplacement — luminaire fourni par le client"
+      },
+      "diagnostic_policy": {
+        "mode": "INCLUDED_IN_INTERVENTION",
+        "note": "Standard installation — fixture provided, existing wiring used. No separate diagnostic."
+      },
+      "complexity_escape_rules": [
+        "Existing wiring defective or absent → HORS PÉRIMÈTRE — new wiring circuit required",
+        "Fixture weight >15 kg requiring structural hook → additional work → quote",
+        "Lustre with multiple drops and chains → HORS PÉRIMÈTRE",
+        "Installation point has no existing junction box → new saignée required → HORS PÉRIMÈTRE",
+        "Exterior installation requiring waterproofing → HORS PÉRIMÈTRE"
+      ],
+      "evidence_observations": ["OBS_ELEC_009", "OBS_ELEC_010", "OBS_ELEC_011"],
+      "evidence_count": 3,
+      "safety_classification": "STANDARD"
+    },
+
+    {
+      "service_code": "electricite.disjoncteur_remplacement",
+      "label_fr": "Remplacement disjoncteur simple (MCB) — accessible tableau",
+      "description": "Replacement of one defective single-pole circuit breaker in an accessible distribution board. Part client-supplied or artisan-declared.",
+      "pricing_architecture": "FLAT_INTERVENTION",
+      "candidate_for_fixeo_price": true,
+      "candidacy_rationale": "Tightly defined scope when restricted to single MCB in accessible tableau. 20–30 min. Predictable. However MAJOR CAUTION: diagnostics must precede — a tripping breaker may indicate underlying wiring fault, not breaker failure. FIXEO price only valid when fault confirmed as defective breaker, NOT for repeated-trip investigation.",
+      "production_ready": false,
+      "human_decision": "PENDING",
+      "reference_price": {
+        "consensus_low": 200,
+        "market_anchor": 280,
+        "consensus_high": 400,
+        "currency": "MAD",
+        "confidence": "MEDIUM",
+        "confidence_rationale": "afous.ma 170–200 DH forfait from 480 relevés (national average). mano.ma 400–800 DH (likely includes brand-name part + labour). Reconciliation: afous.ma 170–200 is national P30-P70 likely including basic MCB. mano.ma 400–800 is urban Casablanca with better part + labour. FIXEO standard scope: labour + basic MCB (40–80 DH part), travel — consistent with 200–350 MAD range. Upper 400 DH for premium breaker or differential.",
+        "part_note": "Basic MCB 40–80 DH retail (generic). Schneider iC60/Legrand DX3: 80–200 DH. Interrupteur différentiel (ID): 150–350 DH. Part cost is MATERIAL variable — client-supplied policy strongly recommended."
+      },
+      "materials_policy": {
+        "labour": "included",
+        "travel": "included",
+        "basic_consumables": "None",
+        "replacement_parts": "EXCLUDED — disjoncteur (40–200 DH depending on type) must be declared and approved separately OR client-supplied",
+        "critical_safety_note": "FIXEO must NOT supply generic uncertified disjoncteurs. If artisan supplies: certified brands only (Schneider, Legrand, ABB). Part provenance must be declared."
+      },
+      "diagnostic_policy": {
+        "mode": "CONDITIONAL",
+        "note": "IF artisan confirms on arrival that the breaker is definitively defective (verified, not tripping due to downstream overload/fault): proceed with 1-disjoncteur replacement price. IF cause uncertain (repeated trips, overloaded circuit, suspect wiring) → HORS PÉRIMÈTRE → diagnostic/investigation service.",
+        "separate_diagnostic_applicable": true
+      },
+      "complexity_escape_rules": [
+        "Cause of breaker tripping not confirmed as defective breaker → HORS PÉRIMÈTRE — investigation service",
+        "Tableau inaccessible or locked (co-propriété, technical room) → HORS PÉRIMÈTRE",
+        "Tableau itself damaged (burnt, corroded) → HORS PÉRIMÈTRE — tableau diagnostic + quote",
+        "Three-phase circuit → HORS PÉRIMÈTRE → specialist + quote",
+        "More than 1 breaker to replace → quote per additional or full-tableau assessment",
+        "Interrupteur différentiel (ID/RCD) → higher cost part → quote separately",
+        "Disjoncteur de branchement (main utility breaker) → requires ONEE authorization → HORS PÉRIMÈTRE"
+      ],
+      "evidence_observations": ["OBS_ELEC_007", "OBS_ELEC_021"],
+      "evidence_count": 2,
+      "safety_classification": "SAFETY_SENSITIVE",
+      "safety_note": "CANNOT replace ONEE disjoncteur de branchement — utility-owned, requires ONEE authorization. Must verify circuit identity before disconnection. Short-circuit investigation behind a tripping breaker must NEVER be given a fixed price."
+    },
+
+    {
+      "service_code": "electricite.panne_simple",
+      "label_fr": "Dépannage panne électrique simple — cause visible",
+      "description": "Diagnosis + repair of a simple, visible, immediately-accessible electrical fault. Cause is identified on arrival without investigation beyond visual inspection.",
+      "pricing_architecture": "FLAT_INTERVENTION",
+      "candidate_for_fixeo_price": false,
+      "candidacy_rationale": "REJECTED FOR FIXED PRICE — too heterogeneous. 'Panne simple' can be a loose wire, a tripped breaker, a burnt prise, or a defective fixture. Scope cannot be reliably pre-defined. Each case may require different parts and labour. DIAGNOSIS_FIRST architecture required.",
+      "production_ready": false,
+      "human_decision": "NOT_APPLICABLE",
+      "reference_price": {
+        "consensus_low": 200,
+        "market_anchor": 350,
+        "consensus_high": 600,
+        "currency": "MAD",
+        "confidence": "LOW",
+        "confidence_rationale": "mano.ma 'diagnostic + réparation' 500–800 DH. 'Réparation prise' 150–300 DH. 'Court-circuit' 300–600 DH. Range is too wide to establish a defensible fixed price. Useful only as context range for DIAGNOSIS_FIRST pricing.",
+        "note": "Reference range for context only — confirms artisan should quote after on-site assessment."
+      },
+      "pricing_note": "DIAGNOSIS_FIRST: artisan visits and diagnoses (150–250 DH diagnostic fee). Then quotes repair based on actual scope.",
+      "evidence_observations": ["OBS_ELEC_001", "OBS_ELEC_002", "OBS_ELEC_006"],
+      "evidence_count": 3,
+      "safety_classification": "SAFETY_SENSITIVE",
+      "safety_note": "Electrical fault investigations must NEVER receive a guaranteed fixed repair price — cause is unknown until diagnosis. Scope can escalate to burnt wiring, dangerous installations."
+    },
+
+    {
+      "service_code": "electricite.court_circuit",
+      "label_fr": "Court-circuit — diagnostic et réparation",
+      "description": "Diagnosis and repair of a short-circuit condition.",
+      "pricing_architecture": "DIAGNOSIS_FIRST",
+      "candidate_for_fixeo_price": false,
+      "candidacy_rationale": "REJECTED FOR FIXED PRICE — a court-circuit has unknown root cause until diagnosed. Cause may be: accessible loose connection (simple, 30 min), buried cable fault (complex, 2–4h + wall opening), defective appliance (not electrician scope), deteriorated installation. Price range is ×4 depending on cause.",
+      "production_ready": false,
+      "human_decision": "NOT_APPLICABLE",
+      "reference_price": {
+        "consensus_low": 300,
+        "market_anchor": 500,
+        "consensus_high": 900,
+        "currency": "MAD",
+        "confidence": "LOW",
+        "confidence_rationale": "mano.ma 300–600 DH for 'court-circuit simple'. But 'simple' is undefined — this is editorial assumption. Real court-circuit can far exceed this.",
+        "note": "Context range only — NOT for FIXEO fixed price."
+      },
+      "pricing_note": "DIAGNOSIS_FIRST: diagnostic fee (150–250 DH) + repair quote based on cause identified.",
+      "evidence_observations": ["OBS_ELEC_006"],
+      "evidence_count": 1,
+      "safety_classification": "SAFETY_CRITICAL",
+      "safety_note": "Court-circuit can indicate fire risk (carbonized wiring, overloaded circuit). Must NEVER be given a simplistic fixed price. Burnt wiring requires full replacement of affected section — not a simple repair."
+    },
+
+    {
+      "service_code": "electricite.panne_totale",
+      "label_fr": "Panne totale — perte complète du courant",
+      "description": "Total power loss to dwelling. Root cause unknown.",
+      "pricing_architecture": "DIAGNOSIS_FIRST",
+      "candidate_for_fixeo_price": false,
+      "candidacy_rationale": "REJECTED — unknown root cause. Could be: tripped main breaker (2-min fix, 0 cost), ONEE cut (not electrician scope), defective main breaker (breaker replacement), wiring fault, or multiple simultaneous faults. Diagnostic is mandatory first step.",
+      "production_ready": false,
+      "human_decision": "NOT_APPLICABLE",
+      "reference_price": null,
+      "confidence": "INSUFFICIENT",
+      "pricing_note": "Diagnostic first (150–250 DH). Repair quoted after cause established.",
+      "evidence_observations": ["OBS_ELEC_012"],
+      "evidence_count": 1,
+      "safety_classification": "SAFETY_CRITICAL"
+    },
+
+    {
+      "service_code": "electricite.tableau_diagnostic",
+      "label_fr": "Diagnostic tableau électrique",
+      "description": "Inspection and diagnosis of a distribution board — identifying defective components, sizing adequacy, safety compliance.",
+      "pricing_architecture": "FLAT_DIAGNOSTIC",
+      "candidate_for_fixeo_price": false,
+      "candidacy_rationale": "REJECTED FOR STANDARD FIXED PRICE — tableau diagnosis complexity is highly variable. Simple inspection (30 min) vs full compliance audit (2h) are different services. However a NARROW diagnostic fee could be defined for a standardized 'tableau inspection + verbal report' scope.",
+      "production_ready": false,
+      "human_decision": "PENDING",
+      "reference_price": {
+        "consensus_low": 200,
+        "market_anchor": 400,
+        "consensus_high": 800,
+        "currency": "MAD",
+        "confidence": "LOW",
+        "confidence_rationale": "mano.ma 'problème tableau' 800–1500 DH — likely includes diagnosis + minor repair. No standalone tableau diagnostic price found in evidence. Insufficient data for consensus.",
+        "note": "Range is for tableau diagnostic + initial intervention, not standalone inspection only."
+      },
+      "evidence_observations": ["OBS_ELEC_008"],
+      "evidence_count": 1,
+      "safety_classification": "SAFETY_SENSITIVE",
+      "safety_note": "Tableau inspection may reveal non-compliant or dangerous installation requiring immediate remediation. Artisan cannot ignore safety hazards discovered during inspection."
+    },
+
+    {
+      "service_code": "electricite.tableau_remplacement",
+      "label_fr": "Remplacement tableau électrique",
+      "description": "Complete replacement of a distribution board.",
+      "pricing_architecture": "QUOTE_REQUIRED",
+      "candidate_for_fixeo_price": false,
+      "candidacy_rationale": "PERMANENTLY REJECTED FOR FIXED PRICE — tableau replacement is a major project: part cost alone varies ×4 (1,200–5,000+ DH depending on modules, brand, type), labour 2–4h, may require ONEE coordination, earthing work, testing. Each installation is unique.",
+      "production_ready": false,
+      "human_decision": "NOT_APPLICABLE",
+      "reference_price": {
+        "consensus_low": 1500,
+        "market_anchor": 3000,
+        "consensus_high": 6000,
+        "currency": "MAD",
+        "confidence": "LOW",
+        "confidence_rationale": "mano.ma 4-module 1200–2000 DH; 8-module 2000–3500 DH; 12-module 3500–5000 DH. These include equipment. Useful as client budget context — not for FIXEO price. Labour-only for tableau swap: ~600–1200 DH estimated, not confirmed.",
+        "note": "Context range only (LABOUR + EQUIPMENT combined). QUOTE_REQUIRED."
+      },
+      "evidence_observations": ["OBS_ELEC_013", "OBS_ELEC_014"],
+      "evidence_count": 2,
+      "safety_classification": "SAFETY_CRITICAL",
+      "safety_note": "Tableau replacement must include: earthing verification, differential protection, circuit labelling, isolation of circuits during work, testing post-installation. Cannot be rushed or given a price without full site assessment."
+    },
+
+    {
+      "service_code": "electricite.differentiel_installation",
+      "label_fr": "Installation interrupteur différentiel / DDR",
+      "description": "Installation of a residual current device (RCD/DDR) in an existing or new distribution board.",
+      "pricing_architecture": "FLAT_INTERVENTION",
+      "candidate_for_fixeo_price": false,
+      "candidacy_rationale": "CONDITIONAL — potentially standardizable but insufficient evidence. DDR cost: 150–350 DH retail (Schneider RESI9, Legrand). Labour: 30–45 min. But requires tableau space verification, circuit compatibility check. Insufficient market data to establish reference.",
+      "production_ready": false,
+      "human_decision": "NOT_APPLICABLE",
+      "reference_price": null,
+      "confidence": "INSUFFICIENT",
+      "pricing_note": "Future research needed. Likely: 400–700 MAD labour + DDR part separately declared.",
+      "evidence_observations": [],
+      "evidence_count": 0,
+      "safety_classification": "SAFETY_SENSITIVE"
+    },
+
+    {
+      "service_code": "electricite.circuit_ajout",
+      "label_fr": "Ajout d'un circuit électrique",
+      "description": "Adding a new dedicated circuit from the tableau to a new point (e.g., for lave-linge, four, clim).",
+      "pricing_architecture": "QUOTE_REQUIRED",
+      "candidate_for_fixeo_price": false,
+      "candidacy_rationale": "REJECTED — circuit length is unknown (10m vs 40m is ×4 in cable cost). Requires tableau space, cable path through walls/floors, new breaker, new outlet. Per-metre pricing is theoretically applicable but scope varies enormously.",
+      "production_ready": false,
+      "human_decision": "NOT_APPLICABLE",
+      "reference_price": null,
+      "confidence": "INSUFFICIENT",
+      "pricing_note": "Always quote on site. Rough market context: 600–1500 MAD for typical apartment circuit addition (labour + cable + breaker + prise), dependent on distance and routing complexity.",
+      "evidence_observations": ["OBS_ELEC_005"],
+      "evidence_count": 1,
+      "safety_classification": "SAFETY_SENSITIVE"
+    },
+
+    {
+      "service_code": "electricite.point_electrique",
+      "label_fr": "Point électrique — installation prise ou interrupteur sur circuit existant",
+      "description": "Adding a new outlet or switch on an existing circuit without a new circuit from tableau.",
+      "pricing_architecture": "FLAT_INTERVENTION",
+      "candidate_for_fixeo_price": false,
+      "candidacy_rationale": "CONDITIONAL — encastré vs saillie is a major cost differentiator. Encastré requires saignée (wall chasing) = extra labour + masonry work. Saillie (surface conduit) is much simpler. Insufficient data to separate these reliably. Future standardization possible for saillie-only.",
+      "production_ready": false,
+      "human_decision": "NOT_APPLICABLE",
+      "reference_price": {
+        "consensus_low": 150,
+        "market_anchor": 250,
+        "consensus_high": 450,
+        "currency": "MAD",
+        "confidence": "LOW",
+        "confidence_rationale": "Per-unit data (70–80 DH afous.ma, 80–150 DH mano.ma) applies to labour only. Adding travel and basic materials: floor 150–250 DH for saillie single-point. Encastré may double the price. Insufficient to separate."
+      },
+      "evidence_observations": ["OBS_ELEC_003", "OBS_ELEC_004", "OBS_ELEC_020"],
+      "evidence_count": 3,
+      "safety_classification": "STANDARD"
+    },
+
+    {
+      "service_code": "electricite.sonnette_interphone",
+      "label_fr": "Sonnette / interphone — installation ou réparation",
+      "description": "Doorbell or interphone installation or repair.",
+      "pricing_architecture": "FLAT_INTERVENTION",
+      "candidate_for_fixeo_price": false,
+      "candidacy_rationale": "INSUFFICIENT EVIDENCE — no external source provided pricing for sonnette/interphone specifically. Scope varies: simple battery doorbell vs wired multi-apartment interphone are completely different interventions.",
+      "production_ready": false,
+      "human_decision": "NOT_APPLICABLE",
+      "reference_price": null,
+      "confidence": "INSUFFICIENT",
+      "pricing_note": "Simple sonnette remplacement: ~150–300 DH estimated. Interphone système: always quote. Requires further research.",
+      "evidence_observations": [],
+      "evidence_count": 0,
+      "safety_classification": "STANDARD"
+    },
+
+    {
+      "service_code": "electricite.cable_remplacement",
+      "label_fr": "Remplacement câble endommagé",
+      "description": "Replacement of a damaged electrical cable.",
+      "pricing_architecture": "QUOTE_REQUIRED",
+      "candidate_for_fixeo_price": false,
+      "candidacy_rationale": "REJECTED — cable length and routing are completely variable. Encastré vs saillie, length, section, accessibility all dramatically change scope. No fixed price possible.",
+      "production_ready": false,
+      "human_decision": "NOT_APPLICABLE",
+      "reference_price": {
+        "consensus_low": 400,
+        "market_anchor": 650,
+        "consensus_high": 900,
+        "currency": "MAD",
+        "confidence": "LOW",
+        "note": "Context range only — labour + cable for a 'typical' short accessible run. QUOTE_REQUIRED for all cases."
+      },
+      "evidence_observations": ["OBS_ELEC_016"],
+      "evidence_count": 1,
+      "safety_classification": "SAFETY_SENSITIVE"
+    },
+
+    {
+      "service_code": "electricite.installation_complete",
+      "label_fr": "Installation électrique complète — logement neuf ou rénovation totale",
+      "description": "Complete electrical installation of a dwelling.",
+      "pricing_architecture": "QUOTE_REQUIRED",
+      "candidate_for_fixeo_price": false,
+      "candidacy_rationale": "PERMANENTLY REJECTED — major project, always quote. Per-m² pricing exists as market reference (400–1200 DH/m² depending on standard) but this encompasses labour + all materials. FIXEO cannot price this.",
+      "production_ready": false,
+      "human_decision": "NOT_APPLICABLE",
+      "reference_price": {
+        "consensus_low": 400,
+        "market_anchor": 700,
+        "consensus_high": 1200,
+        "currency": "MAD",
+        "unit": "DH/m2",
+        "confidence": "LOW",
+        "note": "Per m² includes ALL labour + materials. Context only. QUOTE_REQUIRED."
+      },
+      "evidence_observations": ["OBS_ELEC_015", "OBS_ELEC_017", "OBS_ELEC_023"],
+      "evidence_count": 3,
+      "safety_classification": "SAFETY_CRITICAL"
+    },
+
+    {
+      "service_code": "electricite.mise_aux_normes",
+      "label_fr": "Mise aux normes installation électrique",
+      "description": "Bringing an existing non-compliant installation up to current Moroccan electrical standards.",
+      "pricing_architecture": "QUOTE_REQUIRED",
+      "candidate_for_fixeo_price": false,
+      "candidacy_rationale": "PERMANENTLY REJECTED — every non-compliant installation is unique. Scope defined only after full inspection. May require: new tableau, earthing, differential protection, cable replacement, additional circuits. Always QUOTE_REQUIRED.",
+      "production_ready": false,
+      "human_decision": "NOT_APPLICABLE",
+      "reference_price": {
+        "consensus_low": 8000,
+        "market_anchor": 15000,
+        "consensus_high": 40000,
+        "currency": "MAD",
+        "unit": "FLAT_PROJECT",
+        "confidence": "LOW",
+        "note": "Context range from mano.ma. Wide range reflects variability. Useful for client budget expectation only."
+      },
+      "evidence_observations": ["OBS_ELEC_017"],
+      "evidence_count": 1,
+      "safety_classification": "SAFETY_CRITICAL"
+    },
+
+    {
+      "service_code": "electricite.urgence",
+      "label_fr": "Intervention urgence électrique — hors heures",
+      "description": "Emergency electrical call-out outside standard hours.",
+      "pricing_architecture": "NARROW_RANGE",
+      "candidate_for_fixeo_price": false,
+      "candidacy_rationale": "NOT YET — urgency modifier not approved. Evidence exists for surcharge ranges but FIXEO policy is urgency_modifier=null until transaction data confirms. Noted for future phase.",
+      "production_ready": false,
+      "human_decision": "NOT_APPLICABLE",
+      "reference_price": {
+        "consensus_low": 200,
+        "market_anchor": 400,
+        "consensus_high": 800,
+        "currency": "MAD",
+        "confidence": "LOW",
+        "note": "Context only. Urgency intervention covers diagnostic only — repair quoted separately."
+      },
+      "urgency_evidence": {
+        "soir_18h_22h": "+30% to +50% (mano.ma editorial)",
+        "nuit_22h_7h": "+50% to +100% (mano.ma editorial)",
+        "weekend": "+40% to +60% (mano.ma editorial)",
+        "jours_feries": "+60% to +100% (mano.ma editorial)",
+        "afous_urgency_hourly": "150–180 DH/h (P30-P70, 480 relevés — base rate, not emergency premium)",
+        "comparison_to_plumbing_legacy": "Electricity urgency modifiers are MATERIALLY HIGHER than FIXEO legacy plumbing modifiers (+40%/+25%/+20%). Safety/risk factor commands larger premium.",
+        "note": "All modifiers remain NON-CANONICAL. FIXEO must label: 'indicatif — tarif artisan prévalent'."
+      },
+      "evidence_observations": ["OBS_ELEC_012", "OBS_ELEC_024"],
+      "evidence_count": 2,
+      "safety_classification": "SAFETY_SENSITIVE"
+    }
+
+  ]
+}

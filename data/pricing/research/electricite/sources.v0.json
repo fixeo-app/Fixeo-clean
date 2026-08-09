@@ -1,0 +1,374 @@
+{
+  "_meta": {
+    "document_type": "FIXEO_ELECTRICITE_SOURCE_REGISTRY",
+    "version": "0.1.0",
+    "phase": "Phase 7B.4 — FIXEO Fair Price Research — Electricity Morocco",
+    "date": "2026-08-09",
+    "category": "electricite",
+    "total_sources_evaluated": 13,
+    "usable_sources": 3,
+    "limited_sources": 5,
+    "rejected_sources": 5,
+    "note": "External research completed first. Internal FIXEO values captured separately (Section = legacy-comparison.md). No FIXEO legacy values influenced external findings."
+  },
+  "sources": [
+    {
+      "source_id": "SRC_ELEC_001",
+      "publisher": "mano.ma",
+      "url": "https://mano.ma/prix-electricien-au-maroc/",
+      "title": "Prix Électricien au Maroc : Guide 2026 des Tarifs",
+      "type": "PLATFORM_EDITORIAL",
+      "date_fetched": "2026-08-09",
+      "date_published": "2026 (title year)",
+      "geographic_scope": "NATIONAL_MOROCCO + 8 cities (Casablanca, Rabat, Marrakech, Tanger, Agadir, Fès, Meknès, villes moyennes)",
+      "services_covered": [
+        "tarif_horaire",
+        "remplacement_prise_interrupteur",
+        "diagnostic_panne",
+        "court_circuit",
+        "remplacement_disjoncteur",
+        "remplacement_cable_endommage",
+        "tableau_electrique",
+        "installation_complete",
+        "mise_aux_normes",
+        "prises_interrupteurs_pose",
+        "eclairage_installation",
+        "frais_deplacement",
+        "urgence"
+      ],
+      "methodology": "Platform editorial — aggregated from artisan network quotes and content editorial. No statistical method disclosed. Sample size not disclosed.",
+      "sample_size": null,
+      "labour_vs_materials": "MIXED — some prices are labour+materials combined, some labour only. Not consistently labelled.",
+      "travel_semantics": "Explicitly modelled: urban 50–100 DH; banlieue 100–200 DH; rural 200–400 DH. Notes 'many electricians waive travel fee if work confirmed'.",
+      "grade": "C+",
+      "grade_rationale": "Broad coverage, city-level granularity, 2026 edition. Editorial — no statistical methodology. High risk of internal copying between mano.ma articles. Labour/material semantics inconsistent. Qualitatively useful; quantitatively treat as indicative only.",
+      "duplication_risk": "MEDIUM — same publisher other articles likely share same editorial base",
+      "usable": true,
+      "weight_in_consensus": 0.30,
+      "raw_data": {
+        "tarif_horaire": {
+          "debutant_0_2ans": {"from": 150, "to": 180, "unit": "DH/heure"},
+          "confirme_3_7ans": {"from": 200, "to": 250, "unit": "DH/heure"},
+          "expert_10ans_plus": {"from": 250, "to": 350, "unit": "DH/heure"}
+        },
+        "forfait_intervention": {
+          "petite_reparation_prise_interrupteur": {"from": 200, "to": 400, "unit": "forfait", "includes": "AMBIGUOUS"},
+          "diagnostic_plus_reparation": {"from": 500, "to": 800, "unit": "forfait", "includes": "AMBIGUOUS"},
+          "gros_travaux_installation": {"note": "Devis personnalisé obligatoire"}
+        },
+        "frais_deplacement": {
+          "zone_urbaine_proche": {"from": 50, "to": 100},
+          "banlieue_eloignee": {"from": 100, "to": 200},
+          "zone_rurale": {"from": 200, "to": 400}
+        },
+        "depannage_reparation": {
+          "court_circuit_simple": {"from": 300, "to": 600, "unit": "forfait"},
+          "remplacement_disjoncteur_defectueux": {"from": 400, "to": 800, "unit": "forfait", "includes": "AMBIGUOUS — likely labour+part"},
+          "reparation_prise_ne_fonctionne_plus": {"from": 150, "to": 300, "unit": "forfait"},
+          "probleme_tableau_electrique": {"from": 800, "to": 1500, "unit": "forfait"},
+          "recherche_diagnostic_panne": {"from": 200, "to": 500, "unit": "forfait"},
+          "remplacement_cable_endommage": {"from": 400, "to": 900, "unit": "forfait", "includes": "AMBIGUOUS"}
+        },
+        "tableau_electrique_installation": {
+          "4_modules_petit_appart": {"from": 1200, "to": 2000, "unit": "forfait"},
+          "8_modules_appart_standard": {"from": 2000, "to": 3500, "unit": "forfait"},
+          "12_modules_grande_maison": {"from": 3500, "to": 5000, "unit": "forfait"},
+          "industriel_tertiaire": {"note": "Sur devis"},
+          "note": "Includes brands Schneider, Legrand, ABB — LIKELY INCLUDES EQUIPMENT"
+        },
+        "prises_interrupteurs": {
+          "pose_prise_simple": {"from": 80, "to": 150, "unit": "par_unite", "note": "LIKELY LABOUR ONLY — small amount"},
+          "pose_interrupteur": {"from": 80, "to": 150, "unit": "par_unite", "note": "LIKELY LABOUR ONLY"},
+          "prise_specialisee_four_clim_machine": {"from": 200, "to": 400, "unit": "par_unite"},
+          "va_et_vient": {"from": 150, "to": 250, "unit": "par_unite"},
+          "prise_usb": {"from": 200, "to": 350, "unit": "par_unite"}
+        },
+        "eclairage": {
+          "plafonnier_simple": {"from": 150, "to": 300, "unit": "par_unite"},
+          "lustre_decoratif": {"from": 300, "to": 600, "unit": "par_unite"},
+          "spot_encastre_par_spot": {"from": 100, "to": 200, "unit": "par_unite"},
+          "eclairage_led_complet_piece": {"from": 800, "to": 2000, "unit": "forfait_piece"},
+          "ruban_led_decoratif": {"from": 400, "to": 800, "unit": "forfait"},
+          "eclairage_exterieur": {"from": 600, "to": 1500, "unit": "forfait"}
+        },
+        "installation_complete": {
+          "par_m2_basique": {"from": 400, "to": 600, "unit": "DH/m2", "includes": "Câblage + prises + interrupteurs + éclairage basique"},
+          "par_m2_standard": {"from": 600, "to": 800, "unit": "DH/m2"},
+          "par_m2_premium": {"from": 800, "to": 1200, "unit": "DH/m2"}
+        },
+        "mise_aux_normes": {
+          "appart_2_chambres": {"from": 8000, "to": 15000, "unit": "forfait_complet"},
+          "appart_3_chambres": {"from": 12000, "to": 20000, "unit": "forfait_complet"},
+          "maison_villa": {"from": 20000, "to": 40000, "unit": "forfait_complet"},
+          "verification_conformite_seule": {"from": 1000, "to": 2000, "unit": "forfait"}
+        },
+        "city_data": {
+          "casablanca": {"tarif_horaire": {"from": 200, "to": 280}, "urgence": {"from": 400, "to": 800}},
+          "rabat": {"tarif_horaire": {"from": 180, "to": 250}, "urgence": {"from": 350, "to": 700}},
+          "marrakech": {"tarif_horaire": {"from": 170, "to": 240}, "urgence": {"from": 350, "to": 650}},
+          "tanger": {"tarif_horaire": {"from": 180, "to": 260}, "urgence": {"from": 400, "to": 750}},
+          "agadir": {"tarif_horaire": {"from": 160, "to": 230}, "urgence": {"from": 300, "to": 600}},
+          "fes_meknes": {"tarif_horaire": {"from": 150, "to": 220}, "urgence": {"from": 300, "to": 550}},
+          "villes_moyennes": {"tarif_horaire": {"from": 130, "to": 200}, "urgence": {"from": 250, "to": 500}}
+        },
+        "urgence_surcharges": {
+          "soir_18h_22h": "+30% to +50%",
+          "nuit_22h_7h": "+50% to +100%",
+          "weekend": "+40% to +60%",
+          "jours_feries": "+60% to +100%"
+        }
+      }
+    },
+    {
+      "source_id": "SRC_ELEC_002",
+      "publisher": "afous.ma",
+      "url": "https://afous.ma/prix/electricien",
+      "title": "Prix d'un Électricien au Maroc — 2026 — afous.ma",
+      "type": "PRICE_OBSERVATORY",
+      "date_fetched": "2026-08-09",
+      "date_published": "2026 (live observatory)",
+      "geographic_scope": "NATIONAL — with stated city coefficients for 8 cities",
+      "services_covered": [
+        "depannage_urgence_horaire",
+        "installation_prise_interrupteur",
+        "remplacement_disjoncteur"
+      ],
+      "methodology": "Stated: Client declarations + field surveys (team in 8 cities) + professional sources. Fourchette = 30th–70th percentile of declared prices. Outliers filtered (<-50% or >+200% of median). Updated quarterly.",
+      "sample_size": 2197,
+      "sample_per_service": 480,
+      "labour_vs_materials": "LABOUR_ONLY for per-unit prices. Disjoncteur is forfait (ambiguous on part inclusion).",
+      "travel_semantics": "Likely included in forfait prices based on methodology note.",
+      "grade": "B",
+      "grade_rationale": "Highest methodological credibility: stated P30–P70, 2,197 relevés, 8-city coverage, field surveys + client declarations, quarterly update. Limited to 3 electricity service types. City coefficients explicitly stated. Not 100% transaction data (also estimates when insufficient). Best available single external source.",
+      "duplication_risk": "LOW — independent collection methodology",
+      "usable": true,
+      "weight_in_consensus": 0.50,
+      "city_coefficients": {
+        "casablanca": 1.00,
+        "rabat": 0.95,
+        "marrakech": 0.95,
+        "agadir": 0.90,
+        "tanger": 0.90,
+        "fes": 0.85,
+        "meknes": 0.85,
+        "sale": 0.85,
+        "note": "Casablanca = reference (coeff 1.00). Revised every 6 months. Applied consistently."
+      },
+      "raw_data": {
+        "depannage_urgence_1h": {
+          "fourchette_low": 150,
+          "fourchette_high": 180,
+          "unit": "DH/heure",
+          "note": "Dépannage urgence (1h) — fourchette typique P30–P70",
+          "relevés": 480,
+          "12_month_evolution": "+1%",
+          "monthly_prices_DH": [170, 160, 160, 160, 170, 160, 170, 170, 170, 170, 170, 160],
+          "interpretation": "HOURLY rate for urgency call-out — not a complete intervention forfait. Separate from travel."
+        },
+        "installation_prise_interrupteur": {
+          "fourchette_low": 70,
+          "fourchette_high": 80,
+          "unit": "DH/unité",
+          "note": "Per unit installation — labour only most likely",
+          "relevés": 480,
+          "interpretation": "LABOUR_ONLY per unit. Very low — likely excludes travel and part material. Reflects competitive market rate for the labour act only."
+        },
+        "remplacement_disjoncteur": {
+          "fourchette_low": 170,
+          "fourchette_high": 200,
+          "unit": "DH forfait",
+          "note": "Remplacement disjoncteur — forfait",
+          "relevés": 480,
+          "interpretation": "FORFAIT including travel likely — disjoncteur part cost (50–150 DH retail) is unclear whether included."
+        }
+      }
+    },
+    {
+      "source_id": "SRC_ELEC_003",
+      "publisher": "bnidari.ma",
+      "url": "https://www.bnidari.ma/tarifs/electricien",
+      "title": "Tarif d'un Électricien au Maroc en 2026 — Bnidari",
+      "type": "PLATFORM_EDITORIAL",
+      "date_fetched": "2026-08-09",
+      "date_published": "2026 (title year)",
+      "geographic_scope": "NATIONAL (partial page — technical scope only retrieved)",
+      "services_covered": [
+        "installation_electrique_complete"
+      ],
+      "methodology": "Platform editorial. 'Prix moyen constaté' language used. Sample size not disclosed. Partial page retrieval — only technical guidance content rendered.",
+      "sample_size": null,
+      "labour_vs_materials": "Installation complete: explicitly includes cable, gaines, raccordement, prises, tests — LABOUR + MATERIALS combined.",
+      "travel_semantics": "Not specified in retrieved section.",
+      "grade": "C",
+      "grade_rationale": "Partial content only. Qualitatively useful for scope descriptions and installation complexity factors. No numeric prices retrieved. Cannot contribute to consensus pricing.",
+      "duplication_risk": "LOW — independent publisher",
+      "usable": true,
+      "weight_in_consensus": 0.10,
+      "raw_data": {
+        "installation_complete_scope": {
+          "includes": ["Tranchées et saignées si encastrée", "Gaines isolantes + tirage câbles cuivre", "Raccordement tableau général", "Pose prises/interrupteurs/douilles", "Tests tension + mise à la terre"],
+          "complexity_factors": ["Nombre circuits + taille tableau", "Méthode (encastrée ICTA vs saillie goulotte)", "Qualité appareillage (Legrand, Ingelec, Simon)", "Domotique / réseau RJ45 intégration"],
+          "safety_notes": ["Exiger mise à la terre (vert/jaune)", "Circuits divisés (cuisine/lumières séparés)", "Disjoncteurs différentiels calibrés normes Maroc"]
+        }
+      }
+    },
+    {
+      "source_id": "SRC_ELEC_004",
+      "publisher": "mano.ma (Casablanca city page)",
+      "url": "https://mano.ma/electricien-a-casablanca/",
+      "title": "Electricien à Casablanca — Mano.ma",
+      "type": "PLATFORM_CITY_PAGE",
+      "date_fetched": "2026-08-09",
+      "geographic_scope": "Casablanca only",
+      "services_covered": ["general_electricien_services"],
+      "methodology": "Marketplace directory — no price data on city page. Marketing text only.",
+      "sample_size": null,
+      "grade": "D",
+      "grade_rationale": "No price data. Directory landing page only. Rejected for pricing purposes.",
+      "usable": false,
+      "weight_in_consensus": 0,
+      "raw_data": {}
+    },
+    {
+      "source_id": "SRC_ELEC_005",
+      "publisher": "mano.ma (Fès city page)",
+      "url": "https://mano.ma/electricien-a-fes/",
+      "type": "PLATFORM_CITY_PAGE",
+      "date_fetched": "2026-08-09",
+      "geographic_scope": "Fès only",
+      "grade": "D",
+      "grade_rationale": "No price data. Directory marketing page only.",
+      "usable": false,
+      "weight_in_consensus": 0,
+      "raw_data": {}
+    },
+    {
+      "source_id": "SRC_ELEC_006",
+      "publisher": "allo-maison.ma",
+      "url": "https://www.allo-maison.ma/",
+      "type": "PLATFORM_MARKETPLACE",
+      "date_fetched": "2026-08-09",
+      "status": "HTTP 404 for all price URLs tried",
+      "grade": "D",
+      "grade_rationale": "URL returned 404 for all pricing-specific paths attempted. Platform exists but price pages not publicly accessible. Not usable.",
+      "usable": false,
+      "weight_in_consensus": 0,
+      "raw_data": {}
+    },
+    {
+      "source_id": "SRC_ELEC_007",
+      "publisher": "inworky.com",
+      "url": "https://www.inworky.com/prix/electricien-maroc",
+      "type": "PLATFORM_EDITORIAL",
+      "date_fetched": "2026-08-09",
+      "status": "Empty page — no content rendered",
+      "grade": "D",
+      "grade_rationale": "Page rendered but returned empty content body. Not usable.",
+      "usable": false,
+      "weight_in_consensus": 0,
+      "raw_data": {}
+    },
+    {
+      "source_id": "SRC_ELEC_008",
+      "publisher": "marocannonces.com",
+      "url": "https://www.marocannonces.com/maroc/offres/services-travaux/electricite-plomberie/",
+      "type": "CLASSIFIEDS_PLATFORM",
+      "date_fetched": "2026-08-09",
+      "geographic_scope": "NATIONAL — primarily Casablanca-heavy",
+      "grade": "D",
+      "grade_rationale": "Classified ads platform — individual artisan self-published listings. No standardized pricing. No editorial review. Individual asking prices subject to negotiation and self-interest. REJECTED for market evidence.",
+      "usable": false,
+      "weight_in_consensus": 0,
+      "raw_data": {}
+    },
+    {
+      "source_id": "SRC_ELEC_009",
+      "publisher": "bnidari.ma (installation page partial)",
+      "url": "https://www.bnidari.ma/tarifs/electricien",
+      "type": "PLATFORM_EDITORIAL",
+      "date_fetched": "2026-08-09",
+      "grade": "C",
+      "grade_rationale": "Useful for technical scope (installation complexity factors, safety notes). Pricing page did not render price tables — only technical guidance. Used as scope context only. Counted as limited-usable (scope context) not as priced evidence source.",
+      "usable": false,
+      "scope_context_only": true,
+      "weight_in_consensus": 0,
+      "raw_data": {
+        "scope_contribution": "Installation complete scope list and complexity factors extracted"
+      }
+    },
+    {
+      "source_id": "SRC_ELEC_010",
+      "publisher": "FIXEO internal — fixeo-estimation-engine-v1.js",
+      "url": "internal",
+      "type": "FIXEO_INTERNAL_LEGACY",
+      "date_fetched": "2026-08-09",
+      "grade": "T0_INTERNAL",
+      "grade_rationale": "Internal FIXEO editorial values. Collected without controlled process. Must NOT be used as market evidence or influence external consensus. Captured for legacy comparison only.",
+      "usable": false,
+      "weight_in_consensus": 0,
+      "for_legacy_comparison_only": true,
+      "raw_data": {
+        "electricite": {
+          "simple": {"from": 100, "to": 200},
+          "medium": {"from": 200, "to": 500},
+          "heavy": {"from": 400, "to": 1200},
+          "urgent": {"from": 250, "to": 600}
+        }
+      }
+    },
+    {
+      "source_id": "SRC_ELEC_011",
+      "publisher": "FIXEO internal — fixeo-pricing-marocain.js",
+      "url": "internal",
+      "type": "FIXEO_INTERNAL_LEGACY",
+      "date_fetched": "2026-08-09",
+      "grade": "T0_INTERNAL",
+      "usable": false,
+      "weight_in_consensus": 0,
+      "for_legacy_comparison_only": true,
+      "raw_data": {
+        "electricite": {"from": 100, "to": 400},
+        "comment_in_code": "Electricité: 100-200 MAD (prise), 120-250 (luminaire), 200-400 (panne)"
+      }
+    },
+    {
+      "source_id": "SRC_ELEC_012",
+      "publisher": "FIXEO internal — reservation.js",
+      "url": "internal",
+      "type": "FIXEO_INTERNAL_LEGACY",
+      "date_fetched": "2026-08-09",
+      "grade": "T0_INTERNAL",
+      "usable": false,
+      "weight_in_consensus": 0,
+      "for_legacy_comparison_only": true,
+      "raw_data": {
+        "Urgence électrique": {"from": 200, "to": 500},
+        "Panne électrique": {"from": 150, "to": 350},
+        "Installation électrique": {"from": 200, "to": 600},
+        "Prise ou interrupteur en panne": {"from": 100, "to": 200},
+        "Mise à niveau installation": {"from": 400, "to": 1200}
+      }
+    },
+    {
+      "source_id": "SRC_ELEC_013",
+      "publisher": "FIXEO internal — scripts/generate-lps.js (pSEO)",
+      "url": "internal",
+      "type": "FIXEO_INTERNAL_LEGACY",
+      "date_fetched": "2026-08-09",
+      "grade": "T0_INTERNAL",
+      "usable": false,
+      "weight_in_consensus": 0,
+      "for_legacy_comparison_only": true,
+      "raw_data": {
+        "electricien_pricing_tiers": [
+          "Dépannage panne électrique — no price in pSEO",
+          "Remplacement tableau électrique — no price in pSEO",
+          "Installation prises et éclairage — no price in pSEO",
+          "Mise aux normes — no price in pSEO",
+          "Court-circuit — no price in pSEO"
+        ],
+        "note": "pSEO generator references electricien but does not embed price ranges in the same way plomberie pSEO does"
+      }
+    }
+  ]
+}

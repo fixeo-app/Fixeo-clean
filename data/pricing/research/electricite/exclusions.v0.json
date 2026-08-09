@@ -1,0 +1,48 @@
+{
+  "_meta": {
+    "document_type": "FIXEO_ELECTRICITE_EVIDENCE_EXCLUSIONS",
+    "version": "0.1.0",
+    "phase": "Phase 7B.4",
+    "date": "2026-08-09",
+    "category": "electricite",
+    "total_excluded": 4,
+    "note": "All exclusions are source-level rejections. Individual observation exclusions also recorded in evidence.v0.json."
+  },
+  "exclusions": [
+    {
+      "exclusion_id": "EXC_ELEC_001",
+      "source_id": "SRC_ELEC_004",
+      "publisher": "mano.ma / electricien-a-casablanca",
+      "reason_code": "DIRECTORY_PAGE_NO_PRICE",
+      "reason": "City directory landing page — marketing text only, no price data.",
+      "can_be_reconsidered": false
+    },
+    {
+      "exclusion_id": "EXC_ELEC_002",
+      "source_id": "SRC_ELEC_006",
+      "publisher": "allo-maison.ma",
+      "reason_code": "HTTP_404",
+      "reason": "All price-specific URLs returned 404. Platform may require authentication or restructured URLs.",
+      "can_be_reconsidered": true,
+      "reconsideration_note": "Retry different URL patterns or contact platform in future research phase."
+    },
+    {
+      "exclusion_id": "EXC_ELEC_003",
+      "source_id": "SRC_ELEC_007",
+      "publisher": "inworky.com",
+      "reason_code": "EMPTY_PAGE",
+      "reason": "URL returned HTTP 200 but content body was empty (JavaScript-rendered content not accessible via plain fetch).",
+      "can_be_reconsidered": true,
+      "reconsideration_note": "Browser-based scraping may access the full page. Low priority — other sources sufficient."
+    },
+    {
+      "exclusion_id": "EXC_ELEC_004",
+      "source_id": "SRC_ELEC_008",
+      "publisher": "marocannonces.com",
+      "reason_code": "CLASSIFIED_ADS_SELF_PUBLISHED",
+      "reason": "Individual artisan classified advertisements. Self-published asking prices subject to negotiation, no editorial standard, represents artisan self-interest rather than market observation. Cannot be treated as market evidence.",
+      "can_be_reconsidered": false,
+      "note": "Classified ads structurally incompatible with market price evidence. Even if prices were extracted, they would require significant normalization and remain unreliable."
+    }
+  ]
+}
