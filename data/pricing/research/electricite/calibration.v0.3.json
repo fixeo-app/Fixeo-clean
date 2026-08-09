@@ -1,0 +1,348 @@
+{
+  "_meta": {
+    "document_type": "FIXEO_ELECTRICITE_COMMISSION_CALIBRATION_V0.3",
+    "calibration_version": "0.3.0",
+    "decision_version": "ELECTRICITY_FIXEO_PRICE_PILOT_V0.3",
+    "phase": "Phase 7B.4.2 — FIXEO Electricity Human Price Decision Freeze",
+    "date": "2026-08-09",
+    "based_on_calibration_version": "0.2.0",
+    "production_ready": false,
+    "currency": "MAD",
+    "geographic_scope": "NATIONAL_MOROCCO",
+    "geographic_reference_city": "Casablanca",
+    "city_adjustment": null,
+    "urgency_modifier": null,
+    "night_modifier": null,
+    "weekend_modifier": null,
+    "ai_claim": null,
+    "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+    "price_maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
+    "all_human_decisions": "APPROVED",
+    "production_runtime_diff": "ZERO",
+
+    "economic_model": {
+      "formula": "ART_NET_BEFORE_LABOUR = (FIXEO_PRICE × (1 - commission_rate)) - FUEL - CONSUMABLES",
+      "fuel_LOW_MAD": 25,
+      "fuel_MID_MAD": 40,
+      "fuel_HIGH_MAD": 60,
+      "floor_MAD": 100,
+      "floor_note": "100 MAD = absolute viability guard. NOT the target. Electricity work carries tool capital costs — economics should materially exceed the floor.",
+      "target_at_15pct_MAD": 150
+    },
+
+    "approved_prices_summary": {
+      "electricite.diagnostic": 200,
+      "electricite.prise_remplacement": 220,
+      "electricite.interrupteur_remplacement.simple": 220,
+      "electricite.interrupteur_remplacement.va_et_vient": 250,
+      "electricite.luminaire_installation": 220,
+      "electricite.disjoncteur_remplacement": 250
+    },
+
+    "floor_breach_summary": {
+      "diagnostic_200": false,
+      "prise_220": false,
+      "interrupteur_simple_220": false,
+      "interrupteur_simple_220_note": "V0.2 proposed 200 MAD had floor breach at 20%+HIGH60 (90 MAD net). Resolved by approving 220 MAD. All scenarios clear.",
+      "interrupteur_vav_250": false,
+      "luminaire_220": false,
+      "disjoncteur_250": false,
+      "total_floor_breaches": 0
+    }
+  },
+
+  "services": [
+
+    {
+      "service_code": "electricite.diagnostic",
+      "label_fr": "Déplacement et diagnostic électrique",
+      "human_decision": "APPROVED",
+      "production_ready": false,
+      "approved_price_MAD": 200,
+      "approved_architecture": "FIXED",
+      "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+
+      "scope_contract": {
+        "included": ["Travel", "On-site inspection", "Basic measurements", "Voltage/continuity/circuit checks", "Non-invasive fault identification", "Verbal findings", "Safety observations"],
+        "excluded": ["Repair work", "Invasive opening", "Specialist equipment", "Full audit", "Certification", "Written report", "Second visit", "Parts", "Distributor-controlled equipment"]
+      },
+
+      "diagnostic_policy": {
+        "mode": "IS_THE_SERVICE",
+        "absorption_rule": "ACTIVE",
+        "absorbed_when": "Client accepts qualifying standardized FIXEO electrical repair, same visit",
+        "payable_when": "No repair; out-of-scope; client declines; inconclusive; specialist needed; distributor equipment; return visit needed"
+      },
+
+      "materials_policy": {
+        "labour": "included",
+        "travel": "IS_THE_SERVICE",
+        "consumables_MAD": 0,
+        "parts": "none"
+      },
+
+      "commission_sensitivity": {
+        "pilot_price_MAD": 200,
+        "consumables_MAD": 0,
+        "scenarios": [
+          {"commission_pct": 0,  "fuel": "LOW_25",  "fixeo_takes_MAD": 0,  "artisan_gross_MAD": 200, "less_fuel_MAD": 25, "less_consumables_MAD": 0, "artisan_net_MAD": 175, "above_floor": true,  "rating": "STRONG"},
+          {"commission_pct": 0,  "fuel": "MID_40",  "fixeo_takes_MAD": 0,  "artisan_gross_MAD": 200, "less_fuel_MAD": 40, "less_consumables_MAD": 0, "artisan_net_MAD": 160, "above_floor": true,  "rating": "STRONG"},
+          {"commission_pct": 0,  "fuel": "HIGH_60", "fixeo_takes_MAD": 0,  "artisan_gross_MAD": 200, "less_fuel_MAD": 60, "less_consumables_MAD": 0, "artisan_net_MAD": 140, "above_floor": true,  "rating": "STRONG"},
+          {"commission_pct": 10, "fuel": "LOW_25",  "fixeo_takes_MAD": 20, "artisan_gross_MAD": 180, "less_fuel_MAD": 25, "less_consumables_MAD": 0, "artisan_net_MAD": 155, "above_floor": true,  "rating": "STRONG"},
+          {"commission_pct": 10, "fuel": "MID_40",  "fixeo_takes_MAD": 20, "artisan_gross_MAD": 180, "less_fuel_MAD": 40, "less_consumables_MAD": 0, "artisan_net_MAD": 140, "above_floor": true,  "rating": "ACCEPTABLE"},
+          {"commission_pct": 10, "fuel": "HIGH_60", "fixeo_takes_MAD": 20, "artisan_gross_MAD": 180, "less_fuel_MAD": 60, "less_consumables_MAD": 0, "artisan_net_MAD": 120, "above_floor": true,  "rating": "ACCEPTABLE"},
+          {"commission_pct": 15, "fuel": "LOW_25",  "fixeo_takes_MAD": 30, "artisan_gross_MAD": 170, "less_fuel_MAD": 25, "less_consumables_MAD": 0, "artisan_net_MAD": 145, "above_floor": true,  "rating": "ACCEPTABLE"},
+          {"commission_pct": 15, "fuel": "MID_40",  "fixeo_takes_MAD": 30, "artisan_gross_MAD": 170, "less_fuel_MAD": 40, "less_consumables_MAD": 0, "artisan_net_MAD": 130, "above_floor": true,  "rating": "ACCEPTABLE"},
+          {"commission_pct": 15, "fuel": "HIGH_60", "fixeo_takes_MAD": 30, "artisan_gross_MAD": 170, "less_fuel_MAD": 60, "less_consumables_MAD": 0, "artisan_net_MAD": 110, "above_floor": true,  "rating": "ACCEPTABLE"},
+          {"commission_pct": 20, "fuel": "LOW_25",  "fixeo_takes_MAD": 40, "artisan_gross_MAD": 160, "less_fuel_MAD": 25, "less_consumables_MAD": 0, "artisan_net_MAD": 135, "above_floor": true,  "rating": "ACCEPTABLE"},
+          {"commission_pct": 20, "fuel": "MID_40",  "fixeo_takes_MAD": 40, "artisan_gross_MAD": 160, "less_fuel_MAD": 40, "less_consumables_MAD": 0, "artisan_net_MAD": 120, "above_floor": true,  "rating": "ACCEPTABLE"},
+          {"commission_pct": 20, "fuel": "HIGH_60", "fixeo_takes_MAD": 40, "artisan_gross_MAD": 160, "less_fuel_MAD": 60, "less_consumables_MAD": 0, "artisan_net_MAD": 100, "above_floor": true,  "rating": "WEAK_AT_FLOOR"}
+        ],
+        "worst_case": {"commission_pct": 20, "fuel": "HIGH_60", "artisan_net_MAD": 100, "above_floor": true, "rating": "WEAK_AT_FLOOR"},
+        "floor_breach": false,
+        "note": "Diagnostic-only service — at floor exactly @20%+HIGH60. Acceptable for travel-only intervention with no consumables."
+      },
+
+      "client_fairness": "ACCEPTABLE",
+      "artisan_fairness": "ACCEPTABLE"
+    },
+
+    {
+      "service_code": "electricite.prise_remplacement",
+      "label_fr": "Remplacement prise électrique standard — main-d'œuvre seule",
+      "human_decision": "APPROVED",
+      "production_ready": false,
+      "approved_price_MAD": 220,
+      "approved_architecture": "FIXED",
+      "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+
+      "scope_contract": {
+        "included": ["Travel", "Labour", "Circuit isolation", "Remove existing outlet", "Prepare/reconnect conductors", "Install client-supplied outlet", "Connectors ≤20 MAD", "Functional test"],
+        "excluded": ["Outlet hardware (client-supplied)", "New wall box", "Cable replacement", "New circuit", "Multiple outlets", "Specialized outlets", "Burnt wiring", "Earth remediation"]
+      },
+
+      "diagnostic_policy": {
+        "mode": "INCLUDED_IN_INTERVENTION",
+        "note": "Symptom clear on arrival."
+      },
+
+      "materials_policy": {
+        "labour": "included",
+        "travel": "included",
+        "consumables_MAD": 15,
+        "outlet_hardware": "EXCLUDED — CLIENT_SUPPLIED"
+      },
+
+      "commission_sensitivity": {
+        "pilot_price_MAD": 220,
+        "consumables_MAD": 15,
+        "scenarios": [
+          {"commission_pct": 0,  "fuel": "LOW_25",  "fixeo_takes_MAD": 0,  "artisan_gross_MAD": 220, "less_fuel_MAD": 25, "less_consumables_MAD": 15, "artisan_net_MAD": 180, "above_floor": true,  "rating": "STRONG"},
+          {"commission_pct": 0,  "fuel": "MID_40",  "fixeo_takes_MAD": 0,  "artisan_gross_MAD": 220, "less_fuel_MAD": 40, "less_consumables_MAD": 15, "artisan_net_MAD": 165, "above_floor": true,  "rating": "STRONG"},
+          {"commission_pct": 0,  "fuel": "HIGH_60", "fixeo_takes_MAD": 0,  "artisan_gross_MAD": 220, "less_fuel_MAD": 60, "less_consumables_MAD": 15, "artisan_net_MAD": 145, "above_floor": true,  "rating": "ACCEPTABLE"},
+          {"commission_pct": 10, "fuel": "LOW_25",  "fixeo_takes_MAD": 22, "artisan_gross_MAD": 198, "less_fuel_MAD": 25, "less_consumables_MAD": 15, "artisan_net_MAD": 158, "above_floor": true,  "rating": "STRONG"},
+          {"commission_pct": 10, "fuel": "MID_40",  "fixeo_takes_MAD": 22, "artisan_gross_MAD": 198, "less_fuel_MAD": 40, "less_consumables_MAD": 15, "artisan_net_MAD": 143, "above_floor": true,  "rating": "ACCEPTABLE"},
+          {"commission_pct": 10, "fuel": "HIGH_60", "fixeo_takes_MAD": 22, "artisan_gross_MAD": 198, "less_fuel_MAD": 60, "less_consumables_MAD": 15, "artisan_net_MAD": 123, "above_floor": true,  "rating": "ACCEPTABLE"},
+          {"commission_pct": 15, "fuel": "LOW_25",  "fixeo_takes_MAD": 33, "artisan_gross_MAD": 187, "less_fuel_MAD": 25, "less_consumables_MAD": 15, "artisan_net_MAD": 147, "above_floor": true,  "rating": "ACCEPTABLE"},
+          {"commission_pct": 15, "fuel": "MID_40",  "fixeo_takes_MAD": 33, "artisan_gross_MAD": 187, "less_fuel_MAD": 40, "less_consumables_MAD": 15, "artisan_net_MAD": 132, "above_floor": true,  "rating": "ACCEPTABLE"},
+          {"commission_pct": 15, "fuel": "HIGH_60", "fixeo_takes_MAD": 33, "artisan_gross_MAD": 187, "less_fuel_MAD": 60, "less_consumables_MAD": 15, "artisan_net_MAD": 112, "above_floor": true,  "rating": "ACCEPTABLE"},
+          {"commission_pct": 20, "fuel": "LOW_25",  "fixeo_takes_MAD": 44, "artisan_gross_MAD": 176, "less_fuel_MAD": 25, "less_consumables_MAD": 15, "artisan_net_MAD": 136, "above_floor": true,  "rating": "ACCEPTABLE"},
+          {"commission_pct": 20, "fuel": "MID_40",  "fixeo_takes_MAD": 44, "artisan_gross_MAD": 176, "less_fuel_MAD": 40, "less_consumables_MAD": 15, "artisan_net_MAD": 121, "above_floor": true,  "rating": "ACCEPTABLE"},
+          {"commission_pct": 20, "fuel": "HIGH_60", "fixeo_takes_MAD": 44, "artisan_gross_MAD": 176, "less_fuel_MAD": 60, "less_consumables_MAD": 15, "artisan_net_MAD": 101, "above_floor": true,  "rating": "ACCEPTABLE"}
+        ],
+        "worst_case": {"commission_pct": 20, "fuel": "HIGH_60", "artisan_net_MAD": 101, "above_floor": true, "rating": "ACCEPTABLE"},
+        "floor_breach": false
+      },
+
+      "client_fairness": "ACCEPTABLE",
+      "artisan_fairness": "ACCEPTABLE"
+    },
+
+    {
+      "service_code": "electricite.interrupteur_remplacement",
+      "label_fr": "Remplacement interrupteur standard — main-d'œuvre seule",
+      "human_decision": "APPROVED",
+      "production_ready": false,
+      "approved_price_simple_MAD": 220,
+      "approved_price_va_et_vient_MAD": 250,
+      "approved_architecture": "FIXED",
+      "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+
+      "v02_floor_breach_resolution": {
+        "v02_proposed_simple_MAD": 200,
+        "breach_condition": "20% commission + HIGH_60 fuel = 90 MAD net (below 100 MAD floor)",
+        "resolution": "Approved price raised to 220 MAD — all commission scenarios clear at V0.3",
+        "floor_breach_at_v03": false
+      },
+
+      "scope_contract": {
+        "simple_included": ["Travel", "Labour", "Safe isolation", "Remove existing switch", "Reconnect conductors", "Install client-supplied switch", "Connectors ≤10 MAD", "Functional test"],
+        "va_et_vient_additions": ["Both switching positions", "Correct conductor assignment both ends", "Connectors ≤15 MAD"],
+        "excluded_both": ["Switch hardware (client-supplied)", "Dimmers", "Smart switches", "Multi-way complex systems", "Burnt wiring", "Circuit modification", "Wall repair", "Outdoor/specialized"]
+      },
+
+      "diagnostic_policy": {
+        "mode": "INCLUDED_IN_INTERVENTION",
+        "note": "Symptom clear on arrival."
+      },
+
+      "materials_policy": {
+        "labour": "included",
+        "travel": "included",
+        "consumables_simple_MAD": 10,
+        "consumables_va_et_vient_MAD": 15,
+        "switch_hardware": "EXCLUDED — CLIENT_SUPPLIED"
+      },
+
+      "commission_sensitivity": {
+        "scenarios_simple_220": [
+          {"commission_pct": 0,  "fuel": "LOW_25",  "fixeo_takes_MAD": 0,  "artisan_gross_MAD": 220, "less_fuel_MAD": 25, "less_consumables_MAD": 10, "artisan_net_MAD": 185, "above_floor": true,  "rating": "STRONG"},
+          {"commission_pct": 0,  "fuel": "MID_40",  "fixeo_takes_MAD": 0,  "artisan_gross_MAD": 220, "less_fuel_MAD": 40, "less_consumables_MAD": 10, "artisan_net_MAD": 170, "above_floor": true,  "rating": "STRONG"},
+          {"commission_pct": 0,  "fuel": "HIGH_60", "fixeo_takes_MAD": 0,  "artisan_gross_MAD": 220, "less_fuel_MAD": 60, "less_consumables_MAD": 10, "artisan_net_MAD": 150, "above_floor": true,  "rating": "STRONG"},
+          {"commission_pct": 10, "fuel": "LOW_25",  "fixeo_takes_MAD": 22, "artisan_gross_MAD": 198, "less_fuel_MAD": 25, "less_consumables_MAD": 10, "artisan_net_MAD": 163, "above_floor": true,  "rating": "STRONG"},
+          {"commission_pct": 10, "fuel": "MID_40",  "fixeo_takes_MAD": 22, "artisan_gross_MAD": 198, "less_fuel_MAD": 40, "less_consumables_MAD": 10, "artisan_net_MAD": 148, "above_floor": true,  "rating": "ACCEPTABLE"},
+          {"commission_pct": 10, "fuel": "HIGH_60", "fixeo_takes_MAD": 22, "artisan_gross_MAD": 198, "less_fuel_MAD": 60, "less_consumables_MAD": 10, "artisan_net_MAD": 128, "above_floor": true,  "rating": "ACCEPTABLE"},
+          {"commission_pct": 15, "fuel": "LOW_25",  "fixeo_takes_MAD": 33, "artisan_gross_MAD": 187, "less_fuel_MAD": 25, "less_consumables_MAD": 10, "artisan_net_MAD": 152, "above_floor": true,  "rating": "STRONG"},
+          {"commission_pct": 15, "fuel": "MID_40",  "fixeo_takes_MAD": 33, "artisan_gross_MAD": 187, "less_fuel_MAD": 40, "less_consumables_MAD": 10, "artisan_net_MAD": 137, "above_floor": true,  "rating": "ACCEPTABLE"},
+          {"commission_pct": 15, "fuel": "HIGH_60", "fixeo_takes_MAD": 33, "artisan_gross_MAD": 187, "less_fuel_MAD": 60, "less_consumables_MAD": 10, "artisan_net_MAD": 117, "above_floor": true,  "rating": "ACCEPTABLE"},
+          {"commission_pct": 20, "fuel": "LOW_25",  "fixeo_takes_MAD": 44, "artisan_gross_MAD": 176, "less_fuel_MAD": 25, "less_consumables_MAD": 10, "artisan_net_MAD": 141, "above_floor": true,  "rating": "ACCEPTABLE"},
+          {"commission_pct": 20, "fuel": "MID_40",  "fixeo_takes_MAD": 44, "artisan_gross_MAD": 176, "less_fuel_MAD": 40, "less_consumables_MAD": 10, "artisan_net_MAD": 126, "above_floor": true,  "rating": "ACCEPTABLE"},
+          {"commission_pct": 20, "fuel": "HIGH_60", "fixeo_takes_MAD": 44, "artisan_gross_MAD": 176, "less_fuel_MAD": 60, "less_consumables_MAD": 10, "artisan_net_MAD": 106, "above_floor": true,  "rating": "ACCEPTABLE"}
+        ],
+        "worst_case_simple": {"commission_pct": 20, "fuel": "HIGH_60", "artisan_net_MAD": 106, "above_floor": true, "rating": "ACCEPTABLE"},
+        "floor_breach_simple": false,
+        "floor_breach_simple_note": "V0.2 proposed 200 MAD had floor breach at 20%+HIGH60 (90 MAD). Resolved by approved price of 220 MAD.",
+
+        "scenarios_va_et_vient_250": [
+          {"commission_pct": 0,  "fuel": "LOW_25",  "fixeo_takes_MAD": 0,  "artisan_gross_MAD": 250, "less_fuel_MAD": 25, "less_consumables_MAD": 15, "artisan_net_MAD": 210, "above_floor": true,  "rating": "STRONG"},
+          {"commission_pct": 0,  "fuel": "MID_40",  "fixeo_takes_MAD": 0,  "artisan_gross_MAD": 250, "less_fuel_MAD": 40, "less_consumables_MAD": 15, "artisan_net_MAD": 195, "above_floor": true,  "rating": "STRONG"},
+          {"commission_pct": 0,  "fuel": "HIGH_60", "fixeo_takes_MAD": 0,  "artisan_gross_MAD": 250, "less_fuel_MAD": 60, "less_consumables_MAD": 15, "artisan_net_MAD": 175, "above_floor": true,  "rating": "STRONG"},
+          {"commission_pct": 10, "fuel": "LOW_25",  "fixeo_takes_MAD": 25, "artisan_gross_MAD": 225, "less_fuel_MAD": 25, "less_consumables_MAD": 15, "artisan_net_MAD": 185, "above_floor": true,  "rating": "STRONG"},
+          {"commission_pct": 10, "fuel": "MID_40",  "fixeo_takes_MAD": 25, "artisan_gross_MAD": 225, "less_fuel_MAD": 40, "less_consumables_MAD": 15, "artisan_net_MAD": 170, "above_floor": true,  "rating": "STRONG"},
+          {"commission_pct": 10, "fuel": "HIGH_60", "fixeo_takes_MAD": 25, "artisan_gross_MAD": 225, "less_fuel_MAD": 60, "less_consumables_MAD": 15, "artisan_net_MAD": 150, "above_floor": true,  "rating": "STRONG"},
+          {"commission_pct": 15, "fuel": "LOW_25",  "fixeo_takes_MAD": 37.5, "artisan_gross_MAD": 212.5, "less_fuel_MAD": 25, "less_consumables_MAD": 15, "artisan_net_MAD": 172.5, "above_floor": true, "rating": "STRONG"},
+          {"commission_pct": 15, "fuel": "MID_40",  "fixeo_takes_MAD": 37.5, "artisan_gross_MAD": 212.5, "less_fuel_MAD": 40, "less_consumables_MAD": 15, "artisan_net_MAD": 157.5, "above_floor": true, "rating": "STRONG"},
+          {"commission_pct": 15, "fuel": "HIGH_60", "fixeo_takes_MAD": 37.5, "artisan_gross_MAD": 212.5, "less_fuel_MAD": 60, "less_consumables_MAD": 15, "artisan_net_MAD": 137.5, "above_floor": true, "rating": "ACCEPTABLE"},
+          {"commission_pct": 20, "fuel": "LOW_25",  "fixeo_takes_MAD": 50, "artisan_gross_MAD": 200, "less_fuel_MAD": 25, "less_consumables_MAD": 15, "artisan_net_MAD": 160, "above_floor": true,  "rating": "STRONG"},
+          {"commission_pct": 20, "fuel": "MID_40",  "fixeo_takes_MAD": 50, "artisan_gross_MAD": 200, "less_fuel_MAD": 40, "less_consumables_MAD": 15, "artisan_net_MAD": 145, "above_floor": true,  "rating": "ACCEPTABLE"},
+          {"commission_pct": 20, "fuel": "HIGH_60", "fixeo_takes_MAD": 50, "artisan_gross_MAD": 200, "less_fuel_MAD": 60, "less_consumables_MAD": 15, "artisan_net_MAD": 125, "above_floor": true,  "rating": "ACCEPTABLE"}
+        ],
+        "worst_case_va_et_vient": {"commission_pct": 20, "fuel": "HIGH_60", "artisan_net_MAD": 125, "above_floor": true, "rating": "ACCEPTABLE"},
+        "floor_breach_va_et_vient": false
+      },
+
+      "client_fairness_simple": "STRONG",
+      "artisan_fairness_simple": "ACCEPTABLE",
+      "client_fairness_va_et_vient": "STRONG",
+      "artisan_fairness_va_et_vient": "STRONG"
+    },
+
+    {
+      "service_code": "electricite.luminaire_installation",
+      "label_fr": "Installation luminaire / plafonnier — main-d'œuvre seule",
+      "human_decision": "APPROVED",
+      "production_ready": false,
+      "approved_price_MAD": 220,
+      "approved_architecture": "FIXED",
+      "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+
+      "scope_contract": {
+        "included": ["Travel", "Labour", "Voltage check at existing point", "Remove existing fixture if applicable", "Prepare conductors", "Install client-supplied luminaire", "Connectors ≤15 MAD", "Functional test", "Earth connection if applicable"],
+        "excluded": ["Fixture (client-supplied)", "Chandelier/lustre", "Heavy fixture", "High ceiling", "Recessed spots", "Multiple fixtures", "New circuit", "Damaged circuit", "Smart lighting", "Outdoor"]
+      },
+
+      "diagnostic_policy": {
+        "mode": "INCLUDED_IN_INTERVENTION",
+        "note": "Existing point assumed functional. Voltage check confirms."
+      },
+
+      "materials_policy": {
+        "labour": "included",
+        "travel": "included",
+        "consumables_MAD": 15,
+        "fixture": "EXCLUDED — CLIENT_SUPPLIED"
+      },
+
+      "commission_sensitivity": {
+        "pilot_price_MAD": 220,
+        "consumables_MAD": 15,
+        "scenarios": [
+          {"commission_pct": 0,  "fuel": "LOW_25",  "fixeo_takes_MAD": 0,  "artisan_gross_MAD": 220, "less_fuel_MAD": 25, "less_consumables_MAD": 15, "artisan_net_MAD": 180, "above_floor": true,  "rating": "STRONG"},
+          {"commission_pct": 0,  "fuel": "MID_40",  "fixeo_takes_MAD": 0,  "artisan_gross_MAD": 220, "less_fuel_MAD": 40, "less_consumables_MAD": 15, "artisan_net_MAD": 165, "above_floor": true,  "rating": "STRONG"},
+          {"commission_pct": 0,  "fuel": "HIGH_60", "fixeo_takes_MAD": 0,  "artisan_gross_MAD": 220, "less_fuel_MAD": 60, "less_consumables_MAD": 15, "artisan_net_MAD": 145, "above_floor": true,  "rating": "ACCEPTABLE"},
+          {"commission_pct": 10, "fuel": "LOW_25",  "fixeo_takes_MAD": 22, "artisan_gross_MAD": 198, "less_fuel_MAD": 25, "less_consumables_MAD": 15, "artisan_net_MAD": 158, "above_floor": true,  "rating": "STRONG"},
+          {"commission_pct": 10, "fuel": "MID_40",  "fixeo_takes_MAD": 22, "artisan_gross_MAD": 198, "less_fuel_MAD": 40, "less_consumables_MAD": 15, "artisan_net_MAD": 143, "above_floor": true,  "rating": "ACCEPTABLE"},
+          {"commission_pct": 10, "fuel": "HIGH_60", "fixeo_takes_MAD": 22, "artisan_gross_MAD": 198, "less_fuel_MAD": 60, "less_consumables_MAD": 15, "artisan_net_MAD": 123, "above_floor": true,  "rating": "ACCEPTABLE"},
+          {"commission_pct": 15, "fuel": "LOW_25",  "fixeo_takes_MAD": 33, "artisan_gross_MAD": 187, "less_fuel_MAD": 25, "less_consumables_MAD": 15, "artisan_net_MAD": 147, "above_floor": true,  "rating": "ACCEPTABLE"},
+          {"commission_pct": 15, "fuel": "MID_40",  "fixeo_takes_MAD": 33, "artisan_gross_MAD": 187, "less_fuel_MAD": 40, "less_consumables_MAD": 15, "artisan_net_MAD": 132, "above_floor": true,  "rating": "ACCEPTABLE"},
+          {"commission_pct": 15, "fuel": "HIGH_60", "fixeo_takes_MAD": 33, "artisan_gross_MAD": 187, "less_fuel_MAD": 60, "less_consumables_MAD": 15, "artisan_net_MAD": 112, "above_floor": true,  "rating": "ACCEPTABLE"},
+          {"commission_pct": 20, "fuel": "LOW_25",  "fixeo_takes_MAD": 44, "artisan_gross_MAD": 176, "less_fuel_MAD": 25, "less_consumables_MAD": 15, "artisan_net_MAD": 136, "above_floor": true,  "rating": "ACCEPTABLE"},
+          {"commission_pct": 20, "fuel": "MID_40",  "fixeo_takes_MAD": 44, "artisan_gross_MAD": 176, "less_fuel_MAD": 40, "less_consumables_MAD": 15, "artisan_net_MAD": 121, "above_floor": true,  "rating": "ACCEPTABLE"},
+          {"commission_pct": 20, "fuel": "HIGH_60", "fixeo_takes_MAD": 44, "artisan_gross_MAD": 176, "less_fuel_MAD": 60, "less_consumables_MAD": 15, "artisan_net_MAD": 101, "above_floor": true,  "rating": "ACCEPTABLE"}
+        ],
+        "worst_case": {"commission_pct": 20, "fuel": "HIGH_60", "artisan_net_MAD": 101, "above_floor": true, "rating": "ACCEPTABLE"},
+        "floor_breach": false
+      },
+
+      "client_fairness": "STRONG",
+      "artisan_fairness": "ACCEPTABLE"
+    },
+
+    {
+      "service_code": "electricite.disjoncteur_remplacement",
+      "label_fr": "Remplacement disjoncteur simple (MCB) — main-d'œuvre seule",
+      "human_decision": "APPROVED",
+      "production_ready": false,
+      "approved_price_MAD": 250,
+      "approved_architecture": "CONDITIONAL_FIXED",
+      "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+      "safety_sensitivity": "HIGHEST_OF_FIVE",
+
+      "scope_contract": {
+        "conditions_must_all_be_met": ["Private residential board", "ONE defective MCB confirmed", "Accessible tableau", "No distributor-controlled equipment", "No burnt wiring or overheating", "No busbar damage", "No recurring unexplained tripping", "No downstream fault pending", "Correct replacement spec available"],
+        "included": ["Travel", "Labour", "Visual tableau inspection", "Defective MCB confirmed", "Safe isolation", "Remove MCB", "Install client-supplied MCB", "Reconnect conductors", "Functional test", "Post-installation visible check"],
+        "excluded": ["MCB hardware (client-supplied)", "Multiple MCBs", "DDR/RCD", "Distributor-controlled equipment", "Busbar work", "Cable repair", "Fault investigation", "Tableau remediation", "Three-phase", "Commercial"]
+      },
+
+      "diagnostic_policy": {
+        "mode": "CONDITIONAL",
+        "when_direct": "MCB physically defective confirmed on arrival — proceed.",
+        "when_diagnostic_first": "Cause uncertain, repeated tripping, or downstream fault suspected → diagnostic service (200 MAD) first.",
+        "absorption": "If same-visit: diagnostic 200 MAD absorbed into 250 MAD disjoncteur service."
+      },
+
+      "materials_policy": {
+        "labour": "included",
+        "travel": "included",
+        "consumables_MAD": 0,
+        "mcb_hardware": "EXCLUDED — CLIENT_SUPPLIED"
+      },
+
+      "commission_sensitivity": {
+        "pilot_price_MAD": 250,
+        "consumables_MAD": 0,
+        "scenarios": [
+          {"commission_pct": 0,  "fuel": "LOW_25",  "fixeo_takes_MAD": 0,  "artisan_gross_MAD": 250, "less_fuel_MAD": 25, "less_consumables_MAD": 0, "artisan_net_MAD": 225, "above_floor": true,  "rating": "STRONG"},
+          {"commission_pct": 0,  "fuel": "MID_40",  "fixeo_takes_MAD": 0,  "artisan_gross_MAD": 250, "less_fuel_MAD": 40, "less_consumables_MAD": 0, "artisan_net_MAD": 210, "above_floor": true,  "rating": "STRONG"},
+          {"commission_pct": 0,  "fuel": "HIGH_60", "fixeo_takes_MAD": 0,  "artisan_gross_MAD": 250, "less_fuel_MAD": 60, "less_consumables_MAD": 0, "artisan_net_MAD": 190, "above_floor": true,  "rating": "STRONG"},
+          {"commission_pct": 10, "fuel": "LOW_25",  "fixeo_takes_MAD": 25, "artisan_gross_MAD": 225, "less_fuel_MAD": 25, "less_consumables_MAD": 0, "artisan_net_MAD": 200, "above_floor": true,  "rating": "STRONG"},
+          {"commission_pct": 10, "fuel": "MID_40",  "fixeo_takes_MAD": 25, "artisan_gross_MAD": 225, "less_fuel_MAD": 40, "less_consumables_MAD": 0, "artisan_net_MAD": 185, "above_floor": true,  "rating": "STRONG"},
+          {"commission_pct": 10, "fuel": "HIGH_60", "fixeo_takes_MAD": 25, "artisan_gross_MAD": 225, "less_fuel_MAD": 60, "less_consumables_MAD": 0, "artisan_net_MAD": 165, "above_floor": true,  "rating": "STRONG"},
+          {"commission_pct": 15, "fuel": "LOW_25",  "fixeo_takes_MAD": 37.5, "artisan_gross_MAD": 212.5, "less_fuel_MAD": 25, "less_consumables_MAD": 0, "artisan_net_MAD": 187.5, "above_floor": true, "rating": "STRONG"},
+          {"commission_pct": 15, "fuel": "MID_40",  "fixeo_takes_MAD": 37.5, "artisan_gross_MAD": 212.5, "less_fuel_MAD": 40, "less_consumables_MAD": 0, "artisan_net_MAD": 172.5, "above_floor": true, "rating": "STRONG"},
+          {"commission_pct": 15, "fuel": "HIGH_60", "fixeo_takes_MAD": 37.5, "artisan_gross_MAD": 212.5, "less_fuel_MAD": 60, "less_consumables_MAD": 0, "artisan_net_MAD": 152.5, "above_floor": true, "rating": "STRONG"},
+          {"commission_pct": 20, "fuel": "LOW_25",  "fixeo_takes_MAD": 50, "artisan_gross_MAD": 200, "less_fuel_MAD": 25, "less_consumables_MAD": 0, "artisan_net_MAD": 175, "above_floor": true,  "rating": "STRONG"},
+          {"commission_pct": 20, "fuel": "MID_40",  "fixeo_takes_MAD": 50, "artisan_gross_MAD": 200, "less_fuel_MAD": 40, "less_consumables_MAD": 0, "artisan_net_MAD": 160, "above_floor": true,  "rating": "STRONG"},
+          {"commission_pct": 20, "fuel": "HIGH_60", "fixeo_takes_MAD": 50, "artisan_gross_MAD": 200, "less_fuel_MAD": 60, "less_consumables_MAD": 0, "artisan_net_MAD": 140, "above_floor": true,  "rating": "ACCEPTABLE"}
+        ],
+        "worst_case": {"commission_pct": 20, "fuel": "HIGH_60", "artisan_net_MAD": 140, "above_floor": true, "rating": "ACCEPTABLE"},
+        "floor_breach": false,
+        "note": "Strongest economics of the five. No consumables. Safety premium justified."
+      },
+
+      "client_fairness": "ACCEPTABLE",
+      "artisan_fairness": "STRONG"
+    }
+
+  ]
+}

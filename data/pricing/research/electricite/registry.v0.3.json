@@ -1,0 +1,602 @@
+{
+  "_meta": {
+    "registry_name": "fixeo_electricite_pricing",
+    "registry_version": "0.3.0",
+    "decision_version": "ELECTRICITY_FIXEO_PRICE_PILOT_V0.3",
+    "status": "HUMAN_APPROVED_PILOT_NOT_PRODUCTION",
+    "phase": "Phase 7B.4.2 — FIXEO Electricity Human Price Decision Freeze",
+    "date": "2026-08-09",
+    "based_on_registry_version": "0.2.0",
+    "production_ready": false,
+    "production_ready_note": "HUMAN_APPROVED research/pilot decisions. NOT production deployment authorization. Requires explicit FIXEO product team production sign-off.",
+    "currency": "MAD",
+    "geographic_scope": "NATIONAL_MOROCCO",
+    "geographic_reference_city": "Casablanca",
+    "geographic_reference_city_use": "ECONOMIC_STRESS_TEST_ONLY",
+    "city_adjustment": null,
+    "urgency_modifier": null,
+    "night_modifier": null,
+    "weekend_modifier": null,
+    "holiday_modifier": null,
+    "express_modifier": null,
+    "ai_claim": null,
+    "ai_claim_note": "Current system = RULE_BASED_LOOKUP at LEVEL_0. 'FIXEO AI Price' and all equivalent labels PROHIBITED until LEVEL_4.",
+    "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+    "price_provenance_description": "Human-calibrated FIXEO pilot price derived from Moroccan market research, standardized scope definition, safety review, and client/artisan dual-fairness analysis.",
+    "price_maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
+    "services_in_v03": 5,
+    "all_human_decisions": "APPROVED",
+    "production_runtime_diff": "ZERO",
+
+    "approved_pilot_prices": {
+      "electricite.diagnostic": 200,
+      "electricite.prise_remplacement": 220,
+      "electricite.interrupteur_remplacement.simple": 220,
+      "electricite.interrupteur_remplacement.va_et_vient": 250,
+      "electricite.luminaire_installation": 220,
+      "electricite.disjoncteur_remplacement": 250
+    },
+
+    "canonical_doctrines": {
+      "dual_fairness_principle": "A FIXEO price is acceptable only if it simultaneously protects the client from arbitrary overpricing AND the artisan from economically unsustainable underpricing. A FIXEO electricity price must additionally NEVER create an economic incentive for the artisan to bypass a safety condition to remain inside the fixed-price scope.",
+      "electrical_safety_override": "FIXEO_ELECTRICAL_SAFETY_OVERRIDE: When an unsafe or materially different condition is discovered — STOP → MAKE SAFE → EXPLAIN → DECLARE HORS PÉRIMÈTRE → DO NOT INCREASE SILENTLY → QUOTE → APPROVE → CONTINUE. Safety always overrides standardized pricing.",
+      "hors_perimetre_workflow": "1.STOP 2.MAKE SAFE 3.EXPLAIN 4.DECLARE 'Cette intervention est HORS PÉRIMÈTRE PRIX FIXEO' 5.DO NOT INCREASE SILENTLY 6.QUOTE 7.APPROVE 8.CONTINUE. Client retains right to decline; 200 MAD diagnostic fee applies.",
+      "diagnostic_absorption_rule": "If the client accepts a qualifying standardized FIXEO electrical repair and that repair is completed during the SAME visit, the 200 MAD diagnostic fee is ABSORBED into the standardized intervention price. Client must NOT pay diagnostic + full intervention price for same-visit standard repair.",
+      "materials_canonical": "FIXEO standard electrical price = LABOUR + TRAVEL + DEFINED SMALL CONSUMABLES. Major electrical hardware (prise, interrupteur, luminaire, MCB/disjoncteur) = NOT silently included. Default: CLIENT_SUPPLIED. Alternative: ARTISAN_SUPPLIED_SEPARATELY_DISCLOSED — identify part, state spec/brand, state price, obtain client approval, then install.",
+      "distributor_boundary": "DISTRIBUTOR_CONTROLLED_EQUIPMENT is outside the standardized FIXEO electrician scope unless explicitly authorized. Examples: electricity meter, sealed utility equipment, distributor-controlled service breaker/disjoncteur de branchement, sealed upstream equipment. Private downstream equipment (distribution board, DIN-rail MCBs, circuits, outlets, switches, luminaires) may fall within artisan scope.",
+      "distributor_boundary_note": "FIXEO operates across Morocco. Distribution responsibility varies by city/territory/operator. Generic concept DISTRIBUTOR_CONTROLLED_EQUIPMENT is canonical — never encode a single operator as universal Morocco doctrine. Operator-specific details are research evidence only.",
+      "earth_policy_principle": "FIXEO must never represent an installation as compliant merely because the requested visible component was replaced. Earth/ground safety conditions must be evaluated before proceeding.",
+      "multiple_item_policy": "Approved pilot prices apply to ONE standardized item per intervention. MULTI_ITEM_BATCH_PRICING = NOT_YET_DEFINED. Batch work has different economics (shared travel/setup). Future dedicated batch-price research required. FIXEO must not imply single-item prices multiply linearly.",
+      "no_urgency_modifiers": "urgency_modifier = null. All time/urgency modifiers = null. Legacy FIXEO percentages are NON-CANONICAL. No surcharge approved in this phase.",
+      "no_city_multipliers": "city_adjustment = null. National pilot prices only. External city coefficients are research evidence only."
+    }
+  },
+
+  "pilot_scope_contracts": [
+
+    {
+      "service_code": "electricite.diagnostic",
+      "label_fr": "Déplacement et diagnostic électrique",
+      "pricing_architecture": "FIXED",
+      "approved_price_MAD": 200,
+      "approved_architecture": "FIXED",
+      "human_decision": "APPROVED",
+      "decision_version": "ELECTRICITY_FIXEO_PRICE_PILOT_V0.3",
+      "production_ready": false,
+      "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+      "price_maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
+      "currency": "MAD",
+
+      "market_reference": {
+        "consensus_low": 150,
+        "market_anchor": 250,
+        "consensus_high": 400,
+        "confidence": "LOW",
+        "basis": "mano.ma 200-500 DH (diagnostic+search); afous.ma 150-180 DH/h hourly (480 relevés). Diagnostic-only anchor: 200-300 DH."
+      },
+
+      "scope_included": [
+        "Travel to client location",
+        "Initial on-site electrical inspection",
+        "Basic electrical measurements",
+        "Voltage, continuity, and circuit checks where appropriate",
+        "Non-invasive fault-identification attempt",
+        "Verbal findings communicated to client",
+        "Verbal repair recommendation or quote where applicable",
+        "Basic safety observations"
+      ],
+      "scope_excluded": [
+        "Any repair work",
+        "Invasive wall opening or dismantling",
+        "Extensive hidden-circuit tracing",
+        "Specialist detection equipment (thermal camera, megohmmeter, power quality analyser)",
+        "Full electrical installation audit or compliance assessment",
+        "Electrical certification or regulatory sign-off",
+        "Formal written diagnostic report",
+        "Second visit",
+        "Any replacement part",
+        "Distributor-controlled or utility-sealed equipment"
+      ],
+
+      "diagnostic_policy": {
+        "mode": "IS_THE_SERVICE",
+        "approved_fee_MAD": 200,
+        "absorption_rule": "ACTIVE",
+        "absorption_condition": "Fee absorbed if client accepts a qualifying standardized FIXEO electrical repair completed during the SAME visit. Client must NOT pay 200 MAD diagnostic + full intervention price for same-visit standard repair.",
+        "fee_payable_when": [
+          "No repair performed",
+          "Intervention is outside standardized FIXEO scope",
+          "Client declines the new quote",
+          "Diagnosis is inconclusive",
+          "Specialist investigation is required",
+          "Distributor-controlled equipment is the fault source",
+          "Return visit is necessary"
+        ]
+      },
+
+      "materials_policy": {
+        "labour": "included",
+        "travel": "IS_THE_SERVICE",
+        "consumables": "none",
+        "parts": "none"
+      },
+
+      "safety_classification": "STANDARD",
+      "safety_override_applies": true,
+
+      "complexity_escape_rules": [
+        "Address outside normal urban zone → travel supplement quote",
+        "Specialist equipment required (thermal camera, megohmmeter) → HORS PÉRIMÈTRE → specialist diagnostic",
+        "Distributor-controlled equipment fault identified → HORS PÉRIMÈTRE → redirect to appropriate operator",
+        "Intermittent fault cannot be reproduced → inconclusive → 200 MAD charged",
+        "Safety override triggered → MAKE SAFE → HORS PÉRIMÈTRE → safety remediation quote",
+        "Full installation audit required → HORS PÉRIMÈTRE → compliance assessment quote"
+      ],
+
+      "client_disclosure": "Frais de déplacement et diagnostic : 200 MAD. Ce montant est dû même si vous ne procédez pas à la réparation. Si une réparation FIXEO standard est réalisée lors de la même visite, le diagnostic est inclus dans le prix de l'intervention.",
+      "artisan_disclosure": "Prix FIXEO diagnostic électrique : 200 MAD. Si le client accepte immédiatement une réparation FIXEO standard lors de la même visite, le diagnostic est absorbé dans le prix de l'intervention — ne facturez pas les deux séparément.",
+      "required_ui_disclaimer": "Prix indicatif FIXEO — tarif réel confirmé avec l'artisan avant intervention.",
+
+      "human_fairness": {
+        "client_fairness": "ACCEPTABLE",
+        "artisan_fairness": "ACCEPTABLE"
+      }
+    },
+
+    {
+      "service_code": "electricite.prise_remplacement",
+      "label_fr": "Remplacement prise électrique standard — main-d'œuvre seule",
+      "pricing_architecture": "FIXED",
+      "approved_price_MAD": 220,
+      "approved_architecture": "FIXED",
+      "human_decision": "APPROVED",
+      "decision_version": "ELECTRICITY_FIXEO_PRICE_PILOT_V0.3",
+      "production_ready": false,
+      "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+      "price_maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
+      "currency": "MAD",
+
+      "market_reference": {
+        "consensus_low": 150,
+        "market_anchor": 220,
+        "consensus_high": 300,
+        "confidence": "MEDIUM",
+        "basis": "afous.ma 70-80 DH/unit labour only + travel 50-100 DH = 120-180 DH floor (480 relevés). mano.ma 150-300 DH forfait (mid 225 DH)."
+      },
+
+      "scope_standardized_conditions": [
+        "ONE standard accessible residential outlet",
+        "Existing wall box present and suitable",
+        "Accessible circuit — isolation at tableau feasible",
+        "Existing conductors in serviceable condition",
+        "Client-supplied replacement outlet"
+      ],
+
+      "scope_included": [
+        "Travel to client location",
+        "Labour to perform the replacement",
+        "Safe circuit isolation at tableau",
+        "Removal of existing outlet from wall box",
+        "Preparation and reconnection of existing conductors",
+        "Installation of client-supplied standard outlet",
+        "Minor connector consumables up to 20 MAD",
+        "Functional test — voltage verified, polarity checked, earth observed where applicable"
+      ],
+      "scope_excluded": [
+        "Outlet hardware — CLIENT_SUPPLIED",
+        "New wall box installation",
+        "Wall repair or plastering",
+        "Cable replacement or extension",
+        "New circuit from distribution board",
+        "Specialized outlet (32A, CEE, USB-integrated, dedicated appliance circuit)",
+        "Multiple outlets on separate circuits",
+        "Outdoor or weatherproof outlet",
+        "Burnt, melted, or carbonized conductors",
+        "Hidden electrical fault upstream",
+        "Major earth circuit remediation",
+        "Abnormal upstream electrical condition"
+      ],
+
+      "earth_policy": {
+        "present_connected": "Proceed. Verify continuity.",
+        "disconnected_at_terminal_safe": "Reconnect. Inform client. Proceed.",
+        "absent_from_required_circuit": "SAFETY_OVERRIDE — HORS PÉRIMÈTRE — remediation quote",
+        "conductor_damaged_melted": "SAFETY_OVERRIDE — HORS PÉRIMÈTRE — cable replacement quote",
+        "legacy_two_wire_zone": "SAFETY_OVERRIDE — do not represent as compliant — remediation path",
+        "neutral_improperly_used_as_earth": "SAFETY_OVERRIDE — never normalize under standardized price"
+      },
+
+      "materials_policy": {
+        "labour": "included",
+        "travel": "included",
+        "consumables": "Domino/Wago connectors up to 20 MAD included",
+        "outlet_hardware": "EXCLUDED — CLIENT_SUPPLIED",
+        "client_label": "Main-d'œuvre + déplacement — prise fournie par le client",
+        "artisan_supply_protocol": "If artisan supplies: identify part, state price, obtain client approval, certified only, before installation."
+      },
+
+      "diagnostic_policy": {
+        "mode": "INCLUDED_IN_INTERVENTION",
+        "note": "Symptom clear and confirmed on arrival. No separate diagnostic fee."
+      },
+
+      "safety_classification": "STANDARD",
+      "safety_override_applies": true,
+      "safety_pre_work": "Isolate circuit at tableau. Verify dead at terminal before touching conductors.",
+
+      "complexity_escape_rules": [
+        "Burnt or melted conductors found → SAFETY_OVERRIDE → HORS PÉRIMÈTRE",
+        "Earth circuit absent from cable run → SAFETY_OVERRIDE → HORS PÉRIMÈTRE",
+        "Wall box cracked, incompatible, or absent → HORS PÉRIMÈTRE → quote",
+        "Wiring brittle, undersized, or aluminium → HORS PÉRIMÈTRE → cable quote",
+        "Multiple outlets on separate circuits → HORS PÉRIMÈTRE → batch quote",
+        "Specialized outlet required (32A/CEE/appliance) → HORS PÉRIMÈTRE → dedicated-circuit service",
+        "Upstream fault detected → HORS PÉRIMÈTRE → diagnostic service",
+        "New cable run required → HORS PÉRIMÈTRE → circuit addition service"
+      ],
+
+      "client_disclosure": "Prix FIXEO : 220 MAD — main-d'œuvre et déplacement. La prise est fournie par le client et n'est PAS incluse dans ce prix. Si l'artisan fournit la prise, elle est facturée séparément avec votre accord.",
+      "artisan_disclosure": "Prix FIXEO remplacement prise : 220 MAD — main-d'œuvre seule. La prise est fournie par le client. Vérifier la présence et la continuité du conducteur de protection avant d'installer la nouvelle prise.",
+      "required_ui_disclaimer": "Prix indicatif FIXEO — tarif réel confirmé avec l'artisan avant intervention.",
+
+      "human_fairness": {
+        "client_fairness": "ACCEPTABLE",
+        "artisan_fairness": "ACCEPTABLE"
+      }
+    },
+
+    {
+      "service_code": "electricite.interrupteur_remplacement",
+      "label_fr": "Remplacement interrupteur standard — main-d'œuvre seule",
+      "pricing_architecture": "FIXED",
+      "human_decision": "APPROVED",
+      "decision_version": "ELECTRICITY_FIXEO_PRICE_PILOT_V0.3",
+      "production_ready": false,
+      "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+      "price_maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
+      "currency": "MAD",
+
+      "variants": {
+        "simple": {
+          "approved_price_MAD": 220,
+          "approved_architecture": "FIXED",
+          "label_fr": "Interrupteur simple — un seul point de commande",
+          "scope_standardized_conditions": [
+            "ONE accessible standard residential single switching point",
+            "Standard single-circuit switch leg",
+            "Accessible back-box",
+            "Existing conductors serviceable",
+            "Client-supplied replacement switch"
+          ],
+          "scope_included": [
+            "Travel to client location",
+            "Labour to perform the replacement",
+            "Safe circuit isolation",
+            "Removal of existing simple switch",
+            "Conductor identification and reconnection",
+            "Installation of client-supplied simple switch",
+            "Minor connectors up to 10 MAD",
+            "Functional test"
+          ],
+          "floor_breach_resolved": true,
+          "floor_breach_note": "200 MAD had a floor breach at 20% commission + HIGH fuel (90 MAD net < 100 MAD floor). Resolved by approving 220 MAD — all commission scenarios clear."
+        },
+        "va_et_vient": {
+          "approved_price_MAD": 250,
+          "approved_architecture": "FIXED",
+          "label_fr": "Va-et-vient — deux points de commande",
+          "scope_standardized_conditions": [
+            "Defined standard residential va-et-vient configuration",
+            "TWO switching positions on ONE circuit",
+            "Both back-boxes accessible",
+            "Existing conductors serviceable",
+            "Client-supplied switch hardware (both positions)"
+          ],
+          "scope_included": [
+            "Travel to client location",
+            "Labour for both switching positions",
+            "Safe circuit isolation",
+            "Correct conductor identification at both positions",
+            "Removal, reconnection, and installation of client-supplied va-et-vient switches",
+            "Connectors up to 15 MAD",
+            "Functional test both positions"
+          ]
+        }
+      },
+
+      "scope_excluded_both": [
+        "Switch hardware — CLIENT_SUPPLIED",
+        "Dimmer switch installation",
+        "Smart or connected switch requiring programming",
+        "Complex multi-way switching systems (3-way or more)",
+        "Burnt or discoloured conductors behind back-box",
+        "Hidden electrical fault",
+        "Circuit modification",
+        "Wall repair",
+        "Outdoor or weatherproof switch",
+        "Additional switching points beyond defined scope"
+      ],
+
+      "materials_policy": {
+        "labour": "included",
+        "travel": "included",
+        "consumables_simple": "Minor connectors up to 10 MAD included",
+        "consumables_va_et_vient": "Connectors up to 15 MAD included",
+        "switch_hardware": "EXCLUDED — CLIENT_SUPPLIED",
+        "client_label_simple": "Main-d'œuvre + déplacement — interrupteur fourni par le client",
+        "client_label_va_et_vient": "Main-d'œuvre + déplacement — 2 interrupteurs va-et-vient fournis par le client",
+        "artisan_supply_protocol": "If artisan supplies: identify part, state price, obtain client approval, before installation."
+      },
+
+      "diagnostic_policy": {
+        "mode": "INCLUDED_IN_INTERVENTION",
+        "note": "Symptom clear and confirmed on arrival. No separate diagnostic fee."
+      },
+
+      "safety_classification": "STANDARD",
+      "safety_override_applies": true,
+      "safety_pre_work": "Isolate circuit at tableau. Verify dead before touching conductors.",
+
+      "complexity_escape_rules": [
+        "Burnt or discoloured conductors behind back-box → SAFETY_OVERRIDE → HORS PÉRIMÈTRE",
+        "Switch controls more than one circuit → HORS PÉRIMÈTRE",
+        "Dimmer or smart switch requested → HORS PÉRIMÈTRE → quote",
+        "3-way or more complex multi-switch → HORS PÉRIMÈTRE → quote",
+        "Outdoor or weatherproof switch → HORS PÉRIMÈTRE → quote",
+        "Additional switching points beyond single va-et-vient → HORS PÉRIMÈTRE → batch quote",
+        "Upstream fault detected → HORS PÉRIMÈTRE → diagnostic service"
+      ],
+
+      "client_disclosure": "Prix FIXEO : 220 MAD (interrupteur simple) / 250 MAD (va-et-vient) — main-d'œuvre et déplacement. L'interrupteur est fourni par le client.",
+      "artisan_disclosure": "Prix FIXEO remplacement interrupteur : 220 MAD (simple) / 250 MAD (va-et-vient) — main-d'œuvre seule. Isoler le circuit avant toute intervention.",
+      "required_ui_disclaimer": "Prix indicatif FIXEO — tarif réel confirmé avec l'artisan avant intervention.",
+
+      "human_fairness": {
+        "simple": {
+          "client_fairness": "STRONG",
+          "artisan_fairness": "ACCEPTABLE"
+        },
+        "va_et_vient": {
+          "client_fairness": "STRONG",
+          "artisan_fairness": "STRONG"
+        }
+      }
+    },
+
+    {
+      "service_code": "electricite.luminaire_installation",
+      "label_fr": "Installation luminaire / plafonnier — main-d'œuvre seule",
+      "pricing_architecture": "FIXED",
+      "approved_price_MAD": 220,
+      "approved_architecture": "FIXED",
+      "human_decision": "APPROVED",
+      "decision_version": "ELECTRICITY_FIXEO_PRICE_PILOT_V0.3",
+      "production_ready": false,
+      "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+      "price_maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
+      "currency": "MAD",
+
+      "market_reference": {
+        "consensus_low": 150,
+        "market_anchor": 220,
+        "consensus_high": 300,
+        "confidence": "MEDIUM",
+        "basis": "mano.ma plafonnier simple 150-300 DH (mid 225 DH). Standard plafonnier anchor: 200-250 DH."
+      },
+
+      "scope_standardized_conditions": [
+        "ONE simple client-supplied residential plafonnier or applique",
+        "Existing functional electrical point",
+        "Functional existing wiring at installation point",
+        "Normal accessible mounting (standard ceiling or wall height)",
+        "No new circuit required"
+      ],
+
+      "scope_included": [
+        "Travel to client location",
+        "Labour to perform the installation",
+        "Voltage check at existing electrical point",
+        "Removal of existing simple fixture where applicable",
+        "Conductor preparation and connection",
+        "Installation of client-supplied simple luminaire",
+        "Connectors up to 15 MAD",
+        "Functional test — fixture powers on, switch operation confirmed",
+        "Earth connection where technically applicable"
+      ],
+      "scope_excluded": [
+        "Luminaire or fixture — CLIENT_SUPPLIED",
+        "Chandelier or lustre",
+        "Heavy fixture",
+        "Unusually high ceiling beyond standard accessible height",
+        "Recessed spot installation",
+        "Multiple fixtures on same visit",
+        "New electrical point",
+        "New circuit from distribution board",
+        "Significant drilling or construction work",
+        "LED driver troubleshooting for defective panel",
+        "Smart or connected lighting with hub programming",
+        "Damaged existing circuit at installation point",
+        "Outdoor installation or weatherproof requirements"
+      ],
+
+      "earth_policy": {
+        "class_I_fixture_earth_present": "Connect earth to fixture earth terminal. Verify continuity.",
+        "earth_absent_at_point": "Inform client. If Class I fixture, client decides whether to address earth first. Do not represent as compliant if earth absent and required.",
+        "class_II_fixture": "No earth terminal required. Proceed normally.",
+        "conductors_burnt_at_point": "SAFETY_OVERRIDE — HORS PÉRIMÈTRE"
+      },
+
+      "materials_policy": {
+        "labour": "included",
+        "travel": "included",
+        "consumables": "Wire connectors up to 15 MAD included",
+        "fixture": "EXCLUDED — CLIENT_SUPPLIED",
+        "client_label": "Main-d'œuvre + déplacement — luminaire fourni par le client",
+        "artisan_supply_protocol": "If artisan supplies fixture: identify, state price, obtain client approval, before installation."
+      },
+
+      "diagnostic_policy": {
+        "mode": "INCLUDED_IN_INTERVENTION",
+        "note": "Existing point assumed functional. Brief voltage check confirms before work. No separate diagnostic fee."
+      },
+
+      "safety_classification": "STANDARD",
+      "safety_override_applies": true,
+      "safety_pre_work": "Turn off circuit at tableau. Verify dead at wiring point before touching conductors.",
+
+      "complexity_escape_rules": [
+        "Existing wiring absent or severed at ceiling point → HORS PÉRIMÈTRE → new circuit/wiring quote",
+        "Conductors burnt or overheated → SAFETY_OVERRIDE → HORS PÉRIMÈTRE",
+        "Fixture weight requires structural hook beyond normal ceiling rose → HORS PÉRIMÈTRE → structural mount quote",
+        "Ceiling height requires specialist equipment beyond standard artisan ladder → HORS PÉRIMÈTRE → quote",
+        "Chandelier with complex wiring or multiple canopy drops → HORS PÉRIMÈTRE → quote",
+        "Recessed spot installation → HORS PÉRIMÈTRE → per-spot service (future scope)",
+        "LED panel with defective driver → HORS PÉRIMÈTRE → troubleshooting quote",
+        "Smart or connected fixture requiring hub setup → HORS PÉRIMÈTRE → quote",
+        "Multiple fixtures → HORS PÉRIMÈTRE → batch quote (future scope)"
+      ],
+
+      "client_disclosure": "Prix FIXEO : 220 MAD — main-d'œuvre et déplacement. Le luminaire est fourni par le client. Valable pour un plafonnier ou une applique simple sur un point électrique existant fonctionnel.",
+      "artisan_disclosure": "Prix FIXEO installation luminaire : 220 MAD — main-d'œuvre seule. Le luminaire est fourni par le client. Vérifier que le point électrique est fonctionnel avant d'intervenir.",
+      "required_ui_disclaimer": "Prix indicatif FIXEO — tarif réel confirmé avec l'artisan avant intervention.",
+
+      "human_fairness": {
+        "client_fairness": "STRONG",
+        "artisan_fairness": "ACCEPTABLE"
+      }
+    },
+
+    {
+      "service_code": "electricite.disjoncteur_remplacement",
+      "label_fr": "Remplacement disjoncteur simple (MCB) — main-d'œuvre seule",
+      "pricing_architecture": "CONDITIONAL_FIXED",
+      "approved_price_MAD": 250,
+      "approved_architecture": "CONDITIONAL_FIXED",
+      "human_decision": "APPROVED",
+      "decision_version": "ELECTRICITY_FIXEO_PRICE_PILOT_V0.3",
+      "production_ready": false,
+      "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+      "price_maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
+      "currency": "MAD",
+      "safety_sensitivity": "HIGHEST_OF_FIVE",
+
+      "market_reference": {
+        "consensus_low": 200,
+        "market_anchor": 280,
+        "consensus_high": 400,
+        "confidence": "MEDIUM",
+        "basis": "afous.ma 170-200 DH forfait (480 relevés, national, includes likely basic MCB). mano.ma 400-800 DH (includes premium brand part, Casablanca). Labour-only + travel + safety checks: 200-350 DH estimated."
+      },
+
+      "conditional_fixed_note": "The approved FIXEO price of 250 MAD applies ONLY when all standardized conditions are satisfied. The CONDITIONAL_FIXED architecture acknowledges that this service requires mandatory scope verification before the fixed price applies.",
+
+      "scope_standardized_conditions": [
+        "Private residential distribution board",
+        "ONE standard modular MCB requiring replacement",
+        "Accessible tableau — no distributor-sealed or utility-controlled components involved",
+        "Cause sufficiently identified — breaker itself confirmed defective (broken toggle, cracked housing, non-latching, internal failure)",
+        "Replacement MCB has technically appropriate specification (same voltage, current rating, type)",
+        "No burnt smell, scorch marks, or tableau overheating",
+        "No busbar damage",
+        "No unexplained recurring tripping pattern requiring investigation",
+        "No downstream fault requiring investigation",
+        "No three-phase complexity",
+        "No distributor-controlled equipment involved"
+      ],
+
+      "diagnostic_first_required_when": [
+        "Breaker trips immediately on reset — downstream fault likely present",
+        "Breaker trips repeatedly without clear assignable cause",
+        "Burning smell or scorch marks visible inside tableau",
+        "Multiple breakers tripping simultaneously",
+        "Client cannot reliably identify which circuit the breaker controls",
+        "Poor or uncertain installation condition",
+        "Any condition where the cause of failure is unresolved"
+      ],
+
+      "diagnostic_first_critical_note": "An electrician must NEVER replace a breaker merely because it trips. If the reason for tripping is unresolved: DIAGNOSTIC_FIRST.",
+
+      "distributor_boundary": {
+        "in_scope_confirmed": "Private residential distribution board, standard DIN-rail MCBs, client-owned downstream circuits",
+        "out_of_scope": "Distributor-controlled service breaker / disjoncteur de branchement, sealed upstream equipment, electricity meter, any utility-sealed component. These are outside FIXEO electrician scope.",
+        "identification_guidance": "Distributor-controlled equipment: typically separately housed, operator-branded, has utility seal that must not be broken, adjacent to or preceding the meter. Private MCBs: DIN-rail mounted, in client's own tableau, no utility seal.",
+        "if_distributor_fault": "200 MAD diagnostic fee charged (artisan traveled and diagnosed). Client directed to appropriate distribution operator for that territory. FIXEO cannot resolve."
+      },
+
+      "scope_included": [
+        "Travel to client location",
+        "Labour to perform the replacement",
+        "Visual inspection of distribution board on arrival",
+        "Confirmation that MCB replacement is warranted (defective MCB verified)",
+        "Safe isolation — downstream circuits turned off, working area confirmed dead",
+        "Removal of defective MCB from DIN rail",
+        "Installation of client-supplied replacement MCB of correct specification",
+        "Reconnection of load conductors",
+        "Functional test — circuit restored, MCB holds under normal load",
+        "Post-installation visible check of tableau for obvious anomalies"
+      ],
+      "scope_excluded": [
+        "MCB hardware itself — CLIENT_SUPPLIED",
+        "Multiple MCBs (more than one replacement in scope)",
+        "DDR/RCD work — different device type, higher cost",
+        "Distributor-controlled service breaker — NEVER",
+        "Busbar work",
+        "Wiring investigation behind tableau",
+        "Fault-tripping investigation (→ diagnostic service)",
+        "Broader tableau remediation",
+        "Three-phase circuits",
+        "Industrial or commercial installations"
+      ],
+
+      "materials_policy": {
+        "labour": "included",
+        "travel": "included",
+        "consumables": "None required for MCB swap",
+        "mcb_hardware": "EXCLUDED — CLIENT_SUPPLIED",
+        "client_label": "Main-d'œuvre + déplacement — disjoncteur fourni par le client",
+        "client_guidance_on_part": "Client must supply a replacement MCB of identical specification: same current rating (e.g. 16A, 20A, 32A), same pole count (1P or 2P), same type. Certified brands: Schneider, Legrand, ABB, Hager. Available from electrical wholesalers.",
+        "artisan_supply_protocol": "If artisan supplies MCB: certified brand only, identify spec, state price, obtain client approval before installation. Never install uncertified or unspecified breaker."
+      },
+
+      "diagnostic_policy": {
+        "mode": "CONDITIONAL",
+        "when_included": "MCB physically defective confirmed on arrival without investigation — proceed directly to replacement.",
+        "when_diagnostic_first": "Cause uncertain, repeated tripping, or downstream fault suspected → book diagnostic service first (200 MAD).",
+        "absorption": "If diagnostic confirms single defective MCB and client accepts same-visit replacement: 200 MAD diagnostic fee absorbed into 250 MAD disjoncteur service."
+      },
+
+      "safety_classification": "SAFETY_SENSITIVE",
+      "safety_override_applies": true,
+      "mandatory_safety_checks": [
+        "Turn off all downstream circuits before opening and working in panel",
+        "Verify working area is dead before touching any conductors",
+        "Do NOT work on live busbars",
+        "Verify replacement MCB specification matches original",
+        "Test after installation before closing tableau"
+      ],
+
+      "complexity_escape_rules": [
+        "Breaker trips immediately on reset → DIAGNOSTIC_FIRST → downstream fault investigation",
+        "Burning smell or scorch marks in tableau → SAFETY_OVERRIDE → HORS PÉRIMÈTRE",
+        "Busbar damaged, overheated, or corroded → SAFETY_OVERRIDE → HORS PÉRIMÈTRE → tableau assessment",
+        "Multiple MCBs defective → HORS PÉRIMÈTRE → full tableau assessment quote",
+        "DDR/RCD is the component requiring replacement → HORS PÉRIMÈTRE → DDR installation quote",
+        "Three-phase circuit → HORS PÉRIMÈTRE → specialist quote",
+        "Distributor-controlled equipment identified → HORS PÉRIMÈTRE → redirect to appropriate operator",
+        "Replacement MCB specification cannot be verified → pause → verify before proceeding",
+        "Wiring behind MCB burnt, oversized, or undersized → SAFETY_OVERRIDE → HORS PÉRIMÈTRE",
+        "Cause of tripping unresolved → DIAGNOSTIC_FIRST before any replacement"
+      ],
+
+      "client_disclosure": "Prix FIXEO : 250 MAD — main-d'œuvre et déplacement. Le disjoncteur est fourni par le client (même calibre que l'original). Ce prix s'applique uniquement si le disjoncteur est physiquement défectueux. Si le disjoncteur saute de façon répétée, un diagnostic préalable (200 MAD) est nécessaire pour identifier la cause.",
+      "artisan_disclosure": "Prix FIXEO remplacement disjoncteur : 250 MAD — main-d'œuvre seule. Client fournit le disjoncteur (même calibre). Ne jamais intervenir sur le disjoncteur de branchement ou tout équipement scellé du distributeur. Si le disjoncteur saute immédiatement au réenclenchement : déclarer hors périmètre et proposer le service de diagnostic.",
+      "required_ui_disclaimer": "Prix indicatif FIXEO — tarif réel confirmé avec l'artisan avant intervention.",
+
+      "human_fairness": {
+        "client_fairness": "ACCEPTABLE",
+        "artisan_fairness": "STRONG"
+      }
+    }
+
+  ]
+}
