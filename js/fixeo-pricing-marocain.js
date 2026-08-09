@@ -73,13 +73,68 @@
     // Prefer category (normalized chip key) over service (may be capitalized variant)
     var svc = artisan.category || artisan.service || '';
     var p = getPricing(svc);
-    artisan.priceFrom  = p.from;
-    artisan.priceTo    = p.to;
-    artisan.priceRange = p.range;
-    artisan.priceLabel = p.label;
-    artisan.priceType  = 'fixed_estimate';
-    artisan.priceUnit  = 'intervention';  // replaces 'h'
-    artisan.hasPriceData = true;
+
+    /* ── 7B.1 ARTISAN PRICE INTEGRITY HOTFIX ──────────────────────────
+     * DOCTRINE: artisan-declared prices and FIXEO market-reference prices
+     * are two distinct concepts and MUST NEVER overwrite each other.
+     *
+     * Supabase sets artisan.price_from (snake_case) and artisan.priceFrom
+     * (camelCase) at load time via fixeo-supabase-loader.js _toFixeo().
+     * Preserve both when present; only fill with market-reference data
+     * for artisans who have not declared a price.
+     *
+     * Market-reference pricing is stored under artisan.marketPriceFrom /
+     * artisan.marketPriceTo / artisan.marketPriceRange / artisan.marketPriceLabel
+     * regardless of whether the artisan has a declared price. This keeps
+     * the reference data available to any consumer that needs it explicitly.
+     *
+     * priceSource: 'artisan_declared' | 'fixeo_reference' — indicates
+     * which dataset the primary price fields (priceFrom / priceLabel)
+     * currently reflect. Consumers MUST check this before making
+     * artisan-specific claims about the displayed price. ── */
+
+    /* Always store market-reference values under separate namespaced fields */
+    artisan.marketPriceFrom  = p.from;
+    artisan.marketPriceTo    = p.to;
+    artisan.marketPriceRange = p.range;
+    artisan.marketPriceLabel = p.label;
+    artisan.marketPriceSource = 'fixeo_reference';
+
+    /* Determine whether the artisan has a real declared price.
+     * price_from (snake_case) is the canonical Supabase field.
+     * priceFrom (camelCase) is the normalised copy from _toFixeo().
+     * A value of null, 0, or undefined means "no declared price". */
+    var hasDeclaredPrice = (
+      (artisan.price_from  && Number(artisan.price_from)  > 0) ||
+      (artisan.priceFrom   && Number(artisan.priceFrom)   > 0 && artisan.priceSource !== 'fixeo_reference')
+    );
+
+    if (hasDeclaredPrice) {
+      /* Preserve the artisan's own price in all primary price fields.
+       * Ensure both camelCase and snake_case are consistent. */
+      var declaredFrom = Number(artisan.price_from || artisan.priceFrom);
+      artisan.priceFrom  = declaredFrom;
+      artisan.priceTo    = artisan.price_to   || null;
+      artisan.priceRange = artisan.price_range || null;
+      artisan.priceLabel = artisan.price_label || artisan.priceLabel || '';
+      artisan.priceType  = artisan.priceType   || 'artisan_declared';
+      artisan.priceUnit  = artisan.priceUnit   || 'intervention';
+      artisan.hasPriceData = true;
+      artisan.priceSource  = 'artisan_declared';
+    } else {
+      /* No declared price — store market-reference values in primary fields
+       * so existing consumers (which read priceFrom / priceLabel) still
+       * receive a usable fallback. Mark provenance clearly. */
+      artisan.priceFrom  = p.from;
+      artisan.priceTo    = p.to;
+      artisan.priceRange = p.range;
+      artisan.priceLabel = p.label;
+      artisan.priceType  = 'fixed_estimate';
+      artisan.priceUnit  = 'intervention';
+      artisan.hasPriceData = false;        /* artisan has NOT declared a price */
+      artisan.priceSource  = 'fixeo_reference';
+    }
+
     return artisan;
   }
 
@@ -135,18 +190,18 @@
 
   function patchAllArtisans() {
     if (!window.ARTISANS || !Array.isArray(window.ARTISANS)) return 0;
-    var patched = 0;
+    var declared = 0, reference = 0;
     window.ARTISANS.forEach(function (a) {
       // Normalize category to chip keys (plomberieurgence → plomberie, etc.)
       _normalizeArtisanCategory(a);
-      // Always patch — set fixed_estimate pricing for every artisan
+      // Patch pricing — preserves artisan-declared prices (7B.1 integrity hotfix)
       patchArtisanPricing(a);
-      patched++;
+      if (a.priceSource === 'artisan_declared') declared++; else reference++;
     });
-    if (window._fixeoDebug && patched > 0) {
-      console.log('[fixeo-pricing] Patched', patched, 'artisans with Moroccan fixed-estimate pricing');
+    if (window._fixeoDebug) {
+      console.log('[fixeo-pricing 7B.1] artisan_declared:', declared, '| fixeo_reference:', reference);
     }
-    return patched;
+    return declared + reference;
   }
 
   /* ══════════════════════════════════════════════════════════
