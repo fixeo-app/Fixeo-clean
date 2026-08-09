@@ -40,11 +40,14 @@ console.log('[1] Prior Validators');
 function runValidator(file, expectedPass) {
   try {
     const out = execSync('node ' + file, { cwd: REPO_ROOT, encoding: 'utf8' });
-    const m = out.match(/PASS:\s*(\d+)/);
-    const passCount = m ? parseInt(m[1]) : 0;
-    const failed = out.includes('FAIL:') && !out.includes('FAIL: 0');
-    check(!failed && passCount >= expectedPass, file + ' >= ' + expectedPass + ' PASS',
-      failed ? 'Validator reported failures' : null);
+    // Match final summary line like "PASS: 91" or "PASS: 91 / FAIL: 0"
+    const summaryMatch = out.match(/^\s*PASS:\s*(\d+)/m);
+    const passCount = summaryMatch ? parseInt(summaryMatch[1]) : 0;
+    // Check Status line
+    const allPassed = out.includes('ALL CHECKS PASSED') || out.includes('ALL 53') || out.includes('ALL PASS');
+    const anyFailed = out.match(/FAIL:\s*[1-9]/);
+    check(!anyFailed && passCount >= expectedPass, file + ' >= ' + expectedPass + ' PASS (got ' + passCount + ')',
+      anyFailed ? 'Validator reported failures' : (passCount < expectedPass ? 'Pass count too low' : null));
   } catch(e) {
     check(false, file, 'Error: ' + e.message.slice(0, 100));
   }
