@@ -166,11 +166,29 @@
       .artdir-explore-inner{grid-template-columns:1fr;gap:20px}
     }
     @media(max-width:640px){
-      .cp-section{padding:28px 0}
-      .cp-trust-grid{grid-template-columns:1fr 1fr}
+      /* Trust section: reduce outer vertical padding */
+      .cp-section{padding:24px 0}
+      /* Trust heading sub margin */
+      .cp-section-sub{margin-bottom:14px}
+      /* Trust grid: 2-col layout + tighter gap */
+      .cp-trust-grid{grid-template-columns:1fr 1fr;gap:7px}
+      /* Trust card: reduce padding + internal gap */
+      .cp-trust-card{padding:10px 12px;gap:5px;border-radius:12px}
+      /* Trust icon: smaller */
+      .cp-trust-icon{font-size:1.1rem}
+      /* Trust title: compact */
+      .cp-trust-title{font-size:0.88rem}
+      /* Trust body: tighter line-height */
+      .cp-trust-text{font-size:0.79rem;line-height:1.42}
     }
-    @media(max-width:480px){
+    @media(max-width:379px){
+      /* Below 380px: revert to 1-col — card width too narrow for 2-col readability */
       .cp-trust-grid{grid-template-columns:1fr}
+      .artdir-after{padding:16px 14px 0}
+      .artdir-explore{padding:20px 14px 28px}
+    }
+    @media(min-width:380px) and (max-width:640px){
+      /* 380–640px: 2-col stays; ensure explore padding at mobile widths */
       .artdir-after{padding:16px 14px 0}
       .artdir-explore{padding:20px 14px 28px}
     }
@@ -375,7 +393,7 @@
   <div class="cp-trust-grid">
     <div class="cp-trust-card">
       <span class="cp-trust-icon">✔️</span>
-      <p class="cp-trust-title">Profil vérifié progressivement</p>
+      <p class="cp-trust-title">Profil enrichi progressivement</p>
       <p class="cp-trust-text">La spécialité et la ville sont déclarées à l'inscription. Les évaluations s'accumulent au fil des interventions réelles.</p>
     </div>
     <div class="cp-trust-card">
