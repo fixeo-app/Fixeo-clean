@@ -1,0 +1,296 @@
+{
+  "_meta": {
+    "file": "registry.v0.1.json",
+    "registry": "fixeo_serrurerie_pricing",
+    "version": "0.1.0",
+    "status": "RESEARCH_V0_NOT_PRODUCTION",
+    "production_ready": false,
+    "last_updated": "2026-08-09",
+    "phase": "7B.5",
+    "description": "Research-only price registry for FIXEO serrurerie. NOT to be imported into production. These are research reference ranges pending human calibration. All prices in MAD.",
+    "provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+    "maturity_level": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
+    "canonical_disclaimer": "Prix indicatif FIXEO — tarif réel confirmé avec l'artisan avant intervention.",
+    "diagnostic_absorption": "HUMAN_CALIBRATION_REQUIRED — diagnostic/call-out structural relevance to locksmith must be determined by human calibration. NOT automatically adopted from plumbing/electricity.",
+    "urgency_modifier": null,
+    "night_modifier": null,
+    "weekend_modifier": null,
+    "city_multiplier": null,
+    "note_on_modifiers": "Evidence strongly supports 50% night surcharge (22h–7h). This is documented as market evidence but MUST NOT be made canonical until human calibration decision is made."
+  },
+  "services": [
+    {
+      "service_key": "serrurerie.porte_claquee_ouverture",
+      "label": "Ouverture porte claquée — cylindre standard",
+      "description": "Porte fermée sans clé (pêne rentré, non verrouillée). Ouverture non destructive. Aucun remplacement nécessaire en standard.",
+      "pricing_mode": "FIXED",
+      "research_reference_price_day_MAD": 200,
+      "research_reference_range_day_MAD": {"low": 150, "high": 300},
+      "research_reference_range_night_MAD": {"low": 250, "high": 500},
+      "travel_included": true,
+      "parts_included": "NONE_REQUIRED",
+      "confidence": "HIGH",
+      "pilot_candidate": true,
+      "human_calibration_required": true,
+      "human_approved": false,
+      "artisan_floor_check": "PASS — see artisan_floor_analysis",
+      "hors_perimetre_triggers": [
+        "Porte blindée identifiée",
+        "Serrure endommagée",
+        "Clé cassée dans le barillet"
+      ]
+    },
+    {
+      "service_key": "serrurerie.porte_claquee_blindee_ouverture",
+      "label": "Ouverture porte claquée — porte blindée",
+      "description": "Porte blindée fermée sans clé. Outillage spécifique. Ouverture non destructive tentée en premier.",
+      "pricing_mode": "CONDITIONAL_FIXED",
+      "condition": "Porte blindée confirmée, non verrouillée à clé",
+      "research_reference_price_day_MAD": 350,
+      "research_reference_range_day_MAD": {"low": 250, "high": 400},
+      "research_reference_range_night_MAD": {"low": 350, "high": 600},
+      "travel_included": true,
+      "parts_included": "NONE_REQUIRED",
+      "confidence": "MEDIUM",
+      "pilot_candidate": true,
+      "human_calibration_required": true,
+      "human_approved": false,
+      "hors_perimetre_triggers": [
+        "Porte verrouillée à clé",
+        "Mécanisme multipoints endommagé",
+        "Ouverture non destructive impossible"
+      ]
+    },
+    {
+      "service_key": "serrurerie.porte_verrouillee_ouverture",
+      "label": "Ouverture porte verrouillée (clés perdues)",
+      "description": "Porte verrouillée à clé. Crochetage tenté en premier. Perçage possible si nécessaire. Cylindre souvent à remplacer.",
+      "pricing_mode": "CONDITIONAL_FIXED",
+      "condition": "Porte standard non-blindée. Cylindre standard. Remplacement cylindre facturé séparément si nécessaire.",
+      "research_reference_price_day_MAD": 380,
+      "research_reference_range_day_MAD": {"low": 300, "high": 450},
+      "research_reference_range_night_MAD": {"low": 450, "high": 650},
+      "travel_included": true,
+      "parts_included": "CONDITIONAL — cylindre_remplacement_standard billed separately if required",
+      "confidence": "HIGH",
+      "pilot_candidate": true,
+      "human_calibration_required": true,
+      "human_approved": false,
+      "hors_perimetre_triggers": [
+        "Porte blindée ou multipoints",
+        "Serrure endommagée nécessitant remplacement complet",
+        "Accès au barillet impossible"
+      ]
+    },
+    {
+      "service_key": "serrurerie.cle_cassee_extraction",
+      "label": "Extraction de clé cassée",
+      "description": "Fragment de clé dans le barillet. Outils spécialisés. Pas de remplacement si cylindre intact.",
+      "pricing_mode": "CONDITIONAL_FIXED",
+      "condition": "Barillet intact après extraction. Si cylindre endommagé: cylindre_remplacement facturé séparément.",
+      "research_reference_price_day_MAD": 200,
+      "research_reference_range_day_MAD": {"low": 150, "high": 300},
+      "research_reference_range_night_MAD": {"low": 250, "high": 450},
+      "travel_included": true,
+      "parts_included": "NONE — extraction only",
+      "confidence": "HIGH",
+      "pilot_candidate": true,
+      "human_calibration_required": true,
+      "human_approved": false,
+      "hors_perimetre_triggers": [
+        "Barillet endommagé nécessitant remplacement",
+        "Clé cassée dans serrure blindée"
+      ]
+    },
+    {
+      "service_key": "serrurerie.cylindre_remplacement_standard",
+      "label": "Remplacement cylindre standard",
+      "description": "Remplacement barillet cylindre européen standard (qualité entrée/milieu de gamme). Main d'oeuvre + cylindre standard inclus. Client doit approuver la référence et le prix du cylindre avant installation.",
+      "pricing_mode": "UNIT_BASED",
+      "unit": "par cylindre",
+      "research_reference_price_MAD": 350,
+      "research_reference_range_MAD": {"low": 200, "high": 500},
+      "note_on_range": "200 MAD = lower-bound (entry-level cylinder only, marginal artisan net). MINIMUM VIABLE price with standard cylinder (150 MAD part) is 350 MAD at 15% commission + 40 MAD fuel. 500 MAD = quality brand (Vachette, Mul-T-Lock). Human calibrator must decide reference price. Client must be informed of exact brand and price before installation.",
+      "travel_included": true,
+      "parts_included": "STANDARD_CYLINDER_INCLUDED_WITH_DISCLOSURE",
+      "confidence": "HIGH",
+      "pilot_candidate": true,
+      "human_calibration_required": true,
+      "human_approved": false,
+      "hors_perimetre_triggers": [
+        "Cylindre haute sécurité ou breveté demandé",
+        "Mécanisme de porte blindée"
+      ]
+    },
+    {
+      "service_key": "serrurerie.serrure_remplacement_standard",
+      "label": "Remplacement serrure monopoint standard",
+      "description": "Remplacement serrure complète monopoint (porte standard). Main d'oeuvre + serrure standard incluse.",
+      "pricing_mode": "CONDITIONAL_FIXED",
+      "condition": "Porte standard, serrure monopoint accessible",
+      "research_reference_price_MAD": 500,
+      "research_reference_range_MAD": {"low": 400, "high": 700},
+      "travel_included": true,
+      "parts_included": "STANDARD_LOCK_WITH_DISCLOSURE",
+      "confidence": "MEDIUM",
+      "pilot_candidate": true,
+      "human_calibration_required": true,
+      "human_approved": false,
+      "hors_perimetre_triggers": [
+        "Serrure multipoints",
+        "Porte blindée",
+        "Mécanisme non standard"
+      ]
+    },
+    {
+      "service_key": "serrurerie.serrure_grippee_deblocage",
+      "label": "Déblocage serrure grippée",
+      "description": "Dégrippage, lubrification, réalignement pêne. Aucun remplacement si mécanisme intact.",
+      "pricing_mode": "CONDITIONAL_FIXED",
+      "condition": "Mécanisme intact, pas de remplacement nécessaire",
+      "research_reference_price_MAD": 170,
+      "research_reference_range_MAD": {"low": 100, "high": 250},
+      "note_on_floor": "100 MAD is unviable at 15% commission + 40 MAD fuel (artisan net = 45 MAD). Minimum viable price = 170 MAD (artisan net = 105 MAD). Market floor from evidence is 150 MAD — but at 150 MAD artisan net = 87 MAD, below 100 MAD floor. Human calibrator must decide: 170 MAD minimum viable, or 200 MAD for comfort.",
+      "travel_included": true,
+      "parts_included": "CONSUMABLES_ONLY",
+      "confidence": "LOW",
+      "pilot_candidate": true,
+      "human_calibration_required": true,
+      "human_approved": false,
+      "note": "LOW confidence — single source mention. Human must decide if this is worth a separate pilot entry."
+    },
+    {
+      "service_key": "serrurerie.serrure_multipoints",
+      "label": "Serrure multipoints (remplacement mécanisme)",
+      "description": "Remplacement mécanisme serrure multipoints (3 points ou plus). Devis obligatoire.",
+      "pricing_mode": "QUOTE_REQUIRED",
+      "research_reference_range_MAD": {"low": 700, "high": 2000},
+      "confidence": "MEDIUM",
+      "pilot_candidate": false,
+      "human_approved": false,
+      "note": "QUOTE_REQUIRED — too variable for fixed price"
+    },
+    {
+      "service_key": "serrurerie.porte_blindee_ouverture",
+      "label": "Ouverture porte blindée verrouillée",
+      "description": "Porte blindée verrouillée à clé. Diagnostic obligatoire. Devis avant intervention.",
+      "pricing_mode": "DIAGNOSIS_FIRST",
+      "research_reference_range_day_MAD": {"low": 400, "high": 1500},
+      "confidence": "MEDIUM",
+      "pilot_candidate": false,
+      "human_approved": false
+    },
+    {
+      "service_key": "serrurerie.porte_blindee_installation",
+      "label": "Installation porte blindée",
+      "description": "Fourniture et pose porte blindée. Devis obligatoire.",
+      "pricing_mode": "QUOTE_REQUIRED",
+      "research_reference_range_MAD": {"low": 2500, "high": 12000},
+      "confidence": "MEDIUM",
+      "pilot_candidate": false,
+      "human_approved": false
+    },
+    {
+      "service_key": "serrurerie.coffre_fort_ouverture",
+      "label": "Ouverture coffre-fort",
+      "description": "Ouverture coffre-fort bloqué. Spécialiste. Justificatif propriété obligatoire.",
+      "pricing_mode": "QUOTE_REQUIRED",
+      "confidence": "LOW",
+      "pilot_candidate": false,
+      "human_approved": false,
+      "authorization_requirement": "MANDATORY_OWNERSHIP_PROOF"
+    },
+    {
+      "service_key": "serrurerie.voiture_ouverture",
+      "label": "Ouverture portière véhicule",
+      "description": "Véhicule ancien (mécanique): CONDITIONAL_FIXED. Véhicule moderne (électronique): DIAGNOSIS_FIRST.",
+      "pricing_mode": "CONDITIONAL_FIXED",
+      "condition": "Véhicule mécanique standard. Véhicule électronique: DIAGNOSIS_FIRST.",
+      "research_reference_range_MAD": {
+        "mecanique": {"low": 150, "high": 300},
+        "electronique": {"low": 500, "high": 1500}
+      },
+      "confidence": "LOW",
+      "pilot_candidate": false,
+      "human_approved": false,
+      "authorization_requirement": "VEHICLE_OWNERSHIP_RECOMMENDED"
+    },
+    {
+      "service_key": "serrurerie.cylindre_haute_securite",
+      "label": "Remplacement cylindre haute sécurité",
+      "description": "Cylindre breveté, anti-effraction, carte propriété. Devis.",
+      "pricing_mode": "QUOTE_REQUIRED",
+      "research_reference_range_MAD": {"low": 700, "high": 1500},
+      "confidence": "MEDIUM",
+      "pilot_candidate": false,
+      "human_approved": false
+    },
+    {
+      "service_key": "serrurerie.apres_effraction_securisation",
+      "label": "Sécurisation après effraction",
+      "description": "Intervention post-cambriolage. PV police requis d'abord. Diagnostic obligatoire.",
+      "pricing_mode": "DIAGNOSIS_FIRST",
+      "confidence": "LOW",
+      "pilot_candidate": false,
+      "human_approved": false,
+      "note": "Police PV mandatory before locksmith work"
+    }
+  ],
+  "artisan_floor_analysis": {
+    "reference_commission_pct": 15,
+    "sensitivity_levels_pct": [0, 10, 15, 20],
+    "travel_fuel_scenarios_MAD": [25, 40, 60],
+    "minimum_artisan_floor_MAD": 100,
+    "analyses": [
+      {
+        "service": "serrurerie.porte_claquee_ouverture",
+        "research_reference_price_MAD": 200,
+        "scenario": "15% commission, 40 MAD fuel",
+        "artisan_net": "200 - 30 (15%) - 40 (fuel) = 130 MAD",
+        "verdict": "PASS — 130 > 100 MAD floor. Duration ~15 min. Net/hour = 520 MAD/h. Viable.",
+        "scenario_worst_20pct_60fuel": "200 - 40 - 60 = 100 MAD",
+        "verdict_worst": "MARGINAL — exactly at floor. Price cannot go lower.",
+        "minimum_viable_price_MAD": 200
+      },
+      {
+        "service": "serrurerie.porte_verrouillee_ouverture",
+        "research_reference_price_MAD": 380,
+        "scenario": "15% commission, 40 MAD fuel",
+        "artisan_net": "380 - 57 - 40 = 283 MAD",
+        "verdict": "PASS — comfortable. Duration 30–60 min.",
+        "minimum_viable_price_MAD": 300
+      },
+      {
+        "service": "serrurerie.cle_cassee_extraction",
+        "research_reference_price_MAD": 200,
+        "scenario": "15% commission, 40 MAD fuel",
+        "artisan_net": "200 - 30 - 40 = 130 MAD",
+        "verdict": "PASS — 15 min specialized work. Viable.",
+        "minimum_viable_price_MAD": 200
+      },
+      {
+        "service": "serrurerie.cylindre_remplacement_standard",
+        "research_reference_price_MAD": 300,
+        "scenario": "15% commission, 40 MAD fuel, 150 MAD standard cylinder cost",
+        "artisan_net_before_labour": "300 - 45 - 40 - 150 = 65 MAD",
+        "verdict": "MARGINAL — at 300 MAD the artisan net before labour is low if using standard cylinder. At 350–400 MAD more viable.",
+        "note": "This is why the range 200–500 exists. 200 MAD is unsustainable without a very cheap cylinder. Human calibrator must decide reference price carefully.",
+        "minimum_viable_price_with_150_cylinder_15pct_40fuel_MAD": 350
+      }
+    ],
+    "conclusion": "No proposed FIXEO research reference price fails the artisan floor test at 15% commission and 40 MAD fuel, with the exception of cylindre_remplacement_standard at 200 MAD which is the floor (parts excluded scenario). The research reference prices are sustainable at 15% commission with the standard 40 MAD fuel scenario."
+  },
+  "diagnostic_callout_assessment": {
+    "question": "Is a standalone diagnostic / call-out fee structurally relevant to Moroccan locksmith services?",
+    "finding": "DIFFERENT_FROM_PLUMBING_ELECTRICITY",
+    "reasoning": [
+      "In plumbing/electricity, a diagnostic involves inspection before a recommendation. In locksmithing, the intervention type (porte claquée, clé cassée, etc.) is typically stated by the client before arrival.",
+      "The Moroccan market evidence shows locksmith pricing is INTERVENTION-BASED, not DIAGNOSTIC-BASED. The artisan states a price for 'ouverture porte claquée' over the phone.",
+      "However, for complex scenarios (blindée verrouillée, coffre fort, damage assessment), a call-out/inspection fee may be appropriate before the intervention quote.",
+      "Market sources show locksmith call-out fees are NOT common as standalone charges in Morocco — they are typically bundled into the intervention price.",
+      "Night surcharge (50%) effectively acts as an urgency fee and is already well-evidenced."
+    ],
+    "recommendation": "DO NOT automatically create a serrurerie.diagnostic fee equivalent to plomberie.diagnostic=180 MAD. Instead: (1) DIAGNOSIS_FIRST services have a 'déplacement diagnostic' cost that should be quoted before travel; (2) This should be decided by human calibration, not copied from plumbing.",
+    "status": "HUMAN_CALIBRATION_REQUIRED"
+  }
+}

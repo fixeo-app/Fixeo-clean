@@ -1,0 +1,147 @@
+{
+  "_meta": {
+    "file": "exclusions.v0.1.json",
+    "registry": "fixeo_serrurerie_pricing",
+    "version": "0.1.0",
+    "status": "RESEARCH_V0_NOT_PRODUCTION",
+    "production_ready": false,
+    "last_updated": "2026-08-09",
+    "phase": "7B.5",
+    "description": "Scope exclusions and HORS PÉRIMÈTRE triggers for FIXEO serrurerie standardized prices. These conditions must cause the artisan to STOP, declare HORS PÉRIMÈTRE, and obtain explicit client approval before continuing."
+  },
+  "global_exclusions": [
+    {
+      "exclusion_id": "EXC_SERR_001",
+      "category": "DESTRUCTIVE_OPENING_ESCALATION",
+      "trigger": "Artisan determines non-destructive opening is impossible",
+      "description": "Any technique requiring drilling, cutting, or permanent damage to lock, cylinder, or door frame. Must be explicitly disclosed to client with revised quote before proceeding.",
+      "action": "STOP_DECLARE_HORS_PERIMETRE_OBTAIN_APPROVAL",
+      "replacement_required": true,
+      "notes": "Destructive opening almost always requires cylinder or mechanism replacement after. This must be quoted and approved before work begins."
+    },
+    {
+      "exclusion_id": "EXC_SERR_002",
+      "category": "BLINDEE_COMPLEXITY",
+      "trigger": "Door confirmed as reinforced/armoured (porte blindée) with multi-point locking",
+      "description": "Armoured doors require specialist tools, extended time, and have highly variable mechanisms. Cannot be reliably standardized.",
+      "action": "DIAGNOSIS_FIRST_QUOTE_REQUIRED",
+      "notes": "Porte claquée blindée can be a CONDITIONAL_FIXED; porte blindée verrouillée must be DIAGNOSIS_FIRST."
+    },
+    {
+      "exclusion_id": "EXC_SERR_003",
+      "category": "PARTS_REPLACEMENT",
+      "trigger": "Any hardware replacement required (cylinder, lock body, mechanism)",
+      "description": "All replacement parts must be identified, specified, priced, and explicitly approved by client before installation. No silent bundling.",
+      "action": "DISCLOSE_PART_SPEC_PRICE_OBTAIN_APPROVAL",
+      "notes": "Client may choose to supply their own part. Artisan may supply only after disclosure and approval."
+    },
+    {
+      "exclusion_id": "EXC_SERR_004",
+      "category": "AUTHORIZATION_FAILURE",
+      "trigger": "Artisan cannot verify occupant identity or right of access",
+      "description": "If the person requesting opening cannot demonstrate they are the occupant/owner (CIN, bail, facture eau/electricité, or gardien attestation), artisan must NOT proceed.",
+      "action": "REFUSE_SERVICE_PENDING_VERIFICATION",
+      "notes": "allo-maison.ma explicitly confirms this is standard practice and professional obligation in Morocco. FIXEO must not incentivize opening without verification."
+    },
+    {
+      "exclusion_id": "EXC_SERR_005",
+      "category": "SECURITY_CRITICAL_HARDWARE",
+      "trigger": "Coffre-fort, safe, vault, security cabinet",
+      "description": "Safe/vault opening is a specialist service with mandatory ownership verification. Not a standardizable fixed-price service.",
+      "action": "QUOTE_REQUIRED_WITH_OWNERSHIP_PROOF",
+      "notes": "Opens ONLY for documented owner. Police involvement may be required in disputed cases."
+    },
+    {
+      "exclusion_id": "EXC_SERR_006",
+      "category": "VEHICLE_MODERN_ELECTRONIC",
+      "trigger": "Modern vehicle with electronic key, smart key, proximity key, or keyless entry",
+      "description": "Electronic vehicle key programming requires specialist equipment. Cannot be reliably standardized with locksmith labour alone.",
+      "action": "DIAGNOSIS_FIRST_SPECIALIST_REQUIRED",
+      "notes": "Older vehicles (mechanical lock) can be CONDITIONAL_FIXED. Modern vehicles: specialist or manufacturer intervention."
+    },
+    {
+      "exclusion_id": "EXC_SERR_007",
+      "category": "MULTIPOINT_MECHANISM_REPLACEMENT",
+      "trigger": "Full multipoint lock mechanism replacement required",
+      "description": "Multipoint lock mechanisms vary widely in brand, configuration, and price. Not safely standardizable.",
+      "action": "QUOTE_REQUIRED",
+      "notes": "Parts can range 500–2000 MAD. Cylinder-only replacement of a multipoint door is different and may be standardizable."
+    },
+    {
+      "exclusion_id": "EXC_SERR_008",
+      "category": "POST_EFFRACTION",
+      "trigger": "Break-in or attempted break-in detected",
+      "description": "Post-burglary intervention requires damage assessment before any work. Police PV required first for insurance. Variable scope.",
+      "action": "DIAGNOSIS_FIRST_POLICE_PV_FIRST",
+      "notes": "allo-maison explicitly confirms: police PV before locksmith work to preserve insurance claim."
+    },
+    {
+      "exclusion_id": "EXC_SERR_009",
+      "category": "SHARED_BUILDING_ACCESS",
+      "trigger": "Intervention on building common entrance, copropriété door, or shared access point",
+      "description": "Opening shared building access requires syndic or copropriété authorization, not individual occupant authorization alone.",
+      "action": "REQUIRE_SYNDIC_AUTHORIZATION"
+    },
+    {
+      "exclusion_id": "EXC_SERR_010",
+      "category": "DIGICODE_SMART_LOCK",
+      "trigger": "Electronic keypad, digicode, or connected lock malfunction or installation",
+      "description": "Electronic systems may require manufacturer technical support, programming equipment. Not reliably standardizable.",
+      "action": "DIAGNOSIS_FIRST_SPECIALIST_MAY_BE_REQUIRED"
+    }
+  ],
+  "authorization_doctrine": {
+    "title": "FIXEO LOCKSMITH AUTHORIZATION DOCTRINE — RESEARCH DRAFT",
+    "status": "RESEARCH_DRAFT — for human review, not canonical",
+    "principle": "A FIXEO-registered locksmith must NEVER open a property, vehicle, or safe without reasonable verification that the requesting person has a legal right of access.",
+    "standard_residential": {
+      "acceptable_proof": [
+        "CIN / Carte Nationale d'Identité matching the address",
+        "Bail (rental contract) matching name and address",
+        "Facture eau/électricité at the address in the person's name",
+        "Attestation from on-site gardien or syndic",
+        "Presence of personal belongings visible through window/intercom"
+      ],
+      "post_opening_verification": "If documents are inside, artisan may proceed after visual confirmation (through window/intercom) and document review immediately after door opens.",
+      "escalation": "If no proof available and no visual confirmation possible: REFUSE and advise client to contact police or landlord."
+    },
+    "vehicle": {
+      "acceptable_proof": [
+        "Carte grise (vehicle registration) in person's name",
+        "Insurance certificate matching person's name",
+        "Proof of employment if company vehicle"
+      ]
+    },
+    "safe_vault": {
+      "acceptable_proof": [
+        "Purchase receipt or ownership documentation",
+        "Tenancy agreement for hotel/office safe",
+        "Written authorization from property owner for embedded safe"
+      ],
+      "escalation": "If ownership cannot be verified: REFUSE. Police involvement may be necessary."
+    },
+    "disputed_access": {
+      "guidance": "In family disputes, divorce situations, or landlord/tenant conflicts over property access: REFUSE and advise parties to resolve through legal channels. A locksmith opening a property in a disputed access situation risks participating in an unlawful act.",
+      "police_recommendation": "Advise requesting party to obtain police accompaniment (assistance du commissariat) for legal protection of all parties."
+    },
+    "security_principle": "FIXEO pricing must NEVER create an economic incentive for the artisan to bypass authorization checks. No bonus, no volume incentive, no minimum throughput requirement should compromise this."
+  },
+  "services_not_in_fixeo_scope": [
+    {
+      "service": "Duplication de clé simple",
+      "reason": "No call-out required. Client visits artisan shop. Not a FIXEO intervention."
+    },
+    {
+      "service": "Alarme installation / systèmes d'alarme",
+      "reason": "Separate specialist trade. Not standard locksmith scope."
+    },
+    {
+      "service": "Menuiserie / réparation dormant / réparation encadrement porte",
+      "reason": "Different trade (menuiserie/charpente). Scope outside serrurerie."
+    },
+    {
+      "service": "Électronique / interphone / contrôle d'accès centralisé",
+      "reason": "Electronic access control is a separate specialist scope."
+    }
+  ]
+}

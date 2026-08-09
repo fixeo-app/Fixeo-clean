@@ -1,0 +1,266 @@
+{
+  "_meta": {
+    "file": "sources.v0.1.json",
+    "registry": "fixeo_serrurerie_pricing",
+    "version": "0.1.0",
+    "status": "RESEARCH_V0_NOT_PRODUCTION",
+    "description": "Source registry for Phase 7B.5 serrurerie market research. Each source referenced by service evidence rows. No source may be added without complete metadata.",
+    "production_ready": false,
+    "last_updated": "2026-08-09",
+    "phase": "7B.5"
+  },
+  "sources": [
+    {
+      "source_id": "SRC_SERR_001",
+      "publisher": "mano.ma",
+      "url": "https://mano.ma/prix-serrurier-au-maroc/",
+      "source_type": "PLATFORM_EDITORIAL",
+      "geographic_scope": "NATIONAL_MOROCCO_WITH_CITY_COMMENTARY",
+      "cities_mentioned": ["Casablanca", "Rabat", "Tanger", "Marrakech", "Agadir"],
+      "publication_date": "2025-2026",
+      "research_access_date": "2026-08-09",
+      "quality_grade": "C+",
+      "methodology_summary": "Editorial price guide from a Moroccan service marketplace. Provides per-intervention price ranges with day vs. night/weekend split. Explicit note that prices include labour and travel; parts always extra. Anti-scam section validates price floor. Urgency surcharge documented as 30–50% on day rates.",
+      "services_covered": [
+        "porte_claquee_standard",
+        "porte_claquee_blindee",
+        "porte_verrouillee",
+        "porte_blindee_multipoints_verrouillee",
+        "serrure_1point",
+        "serrure_3points",
+        "cylindre_remplacement",
+        "serrure_haute_securite",
+        "cle_cassee_extraction",
+        "cle_duplication_simple",
+        "cle_duplication_securisee",
+        "verrou_installation",
+        "porte_blindee_installation"
+      ],
+      "price_ranges_captured": {
+        "porte_claquee_standard_jour": "150–250 MAD",
+        "porte_claquee_standard_nuit": "250–400 MAD",
+        "porte_claquee_blindee_jour": "250–350 MAD",
+        "porte_claquee_blindee_nuit": "350–500 MAD",
+        "porte_verrouillee_jour": "300–450 MAD",
+        "porte_verrouillee_nuit": "450–650 MAD",
+        "porte_blindee_multipoints_jour": "400–600 MAD",
+        "porte_blindee_multipoints_nuit": "600–850 MAD",
+        "serrure_1point": "400–600 MAD",
+        "serrure_3points": "700–1200 MAD",
+        "cylindre_remplacement": "200–450 MAD",
+        "serrure_haute_securite": "900–2000 MAD",
+        "cle_cassee_extraction": "150–300 MAD",
+        "cle_duplication_simple": "30–80 MAD",
+        "cle_duplication_securisee": "100–250 MAD",
+        "verrou_installation": "300–500 MAD",
+        "porte_blindee_installation": "2500+ MAD"
+      },
+      "parts_policy": "PARTS_ALWAYS_EXTRA — explicitly stated: labour + travel included, parts billed separately",
+      "urgency_semantics": "NIGHT_WEEKEND_SURCHARGE_30_50_PERCENT — explicitly stated",
+      "limitations": [
+        "Single editorial source — no declared sample methodology",
+        "City commentary is descriptive, no per-city price table",
+        "Parts price ranges not always validated against hardware suppliers",
+        "Upper ceiling values may include complex scope"
+      ],
+      "duplication_risk": "LOW — content is specific and not verbatim-copied elsewhere",
+      "notes": "Most comprehensive single Moroccan source found. Clear scope separation of labour vs. parts. Anti-scam price floors corroborate evidence from other sources. Night surcharge 30–50% is internally consistent."
+    },
+    {
+      "source_id": "SRC_SERR_002",
+      "publisher": "allo-maison.ma",
+      "url": "https://allo-maison.ma/serrurier",
+      "source_type": "PLATFORM_MARKETPLACE_EDITORIAL",
+      "geographic_scope": "NATIONAL_MOROCCO_6_CITY_BREAKDOWN",
+      "cities_mentioned": ["Casablanca", "Rabat", "Marrakech", "Tanger", "Fès", "Agadir"],
+      "publication_date": "2026 (last verified July 2026)",
+      "research_access_date": "2026-08-09",
+      "quality_grade": "C+",
+      "methodology_summary": "Platform editorial with per-city summaries. States 'tarifs constatés sur le réseau' — implies transaction-derived data though sample size unknown. National guide page aggregates 6 city pages. Night surcharge 50–100% documented. Parts (cylinder vs. full lock mechanism) distinction explicit. Authorization doctrine (CIN check) explicitly present.",
+      "services_covered": [
+        "porte_claquee",
+        "porte_verrouillee",
+        "porte_blindee_ouverture",
+        "cylindre_remplacement",
+        "cylindre_haute_securite",
+        "porte_blindee_installation",
+        "nuit_urgence",
+        "serrure_a_gorge",
+        "serrure_multipoints",
+        "cle_cassee"
+      ],
+      "price_ranges_captured": {
+        "porte_claquee_jour_national": "150–350 MAD",
+        "porte_verrouillee_jour_national": "300–700 MAD",
+        "porte_blindee_jour_national": "500–1500 MAD",
+        "cylindre_standard": "200–500 MAD",
+        "cylindre_haute_securite": "700–1500 MAD",
+        "nuit_surcharge": "50–100%",
+        "porte_claquee_casablanca": "150–300 MAD",
+        "porte_claquee_rabat": "180–400 MAD",
+        "porte_claquee_marrakech": "150–400 MAD",
+        "porte_claquee_tanger": "170–400 MAD",
+        "porte_claquee_fes": "130–300 MAD",
+        "porte_claquee_agadir": "160–380 MAD",
+        "porte_blindee_installation_casablanca": "3500–8000 MAD",
+        "porte_blindee_installation_marrakech": "4500–12000 MAD"
+      },
+      "parts_policy": "PARTS_EXPLICIT — cylindre vs serrure complète distinction documented; cylinder change vs. full lock replacement explained",
+      "urgency_semantics": "NIGHT_22H_7H_SURCHARGE_50_100_PERCENT; weekend and holidays same surcharge",
+      "authorization_doctrine": "EXPLICIT — CIN, bail, facture d'eau required or gardien attestation; serrurier right and duty to verify occupancy",
+      "limitations": [
+        "Same national platform as city pages — not fully independent across city subpages",
+        "Quoted as 'constatées' but no sample size disclosed",
+        "Marrakech blindée installation upper figure (12 000 MAD) significantly above national range — tourist market premium",
+        "Night surcharge range (50–100%) is wider than mano.ma (30–50%) — may reflect different artisan segments"
+      ],
+      "duplication_risk": "LOW — original content, not duplicated from mano.ma",
+      "notes": "Second independent C+ source. Authorization doctrine explicitly documented. Night surcharge 50–100% vs mano.ma 30–50% — taking 50% as conservative anchor. Fès cheapest city; Rabat most expensive for standard opening."
+    },
+    {
+      "source_id": "SRC_SERR_003",
+      "publisher": "allo-maison.ma",
+      "url": "https://allo-maison.ma/serrurier-casablanca",
+      "source_type": "PLATFORM_MARKETPLACE_EDITORIAL",
+      "geographic_scope": "CASABLANCA",
+      "cities_mentioned": ["Casablanca"],
+      "publication_date": "2026 (last verified April 2026)",
+      "research_access_date": "2026-08-09",
+      "quality_grade": "C",
+      "methodology_summary": "City-specific page from same publisher as SRC_SERR_002. 'Tarifs recoupés avec les demandes réelles, revus chaque trimestre.' More granular on Casablanca-specific lock types (serrure à gorge in older medina/working-class neighbourhoods vs. cylindre européen in modern apartments). Vehicle locksmith data present. Serrurerie automobile pricing included.",
+      "services_covered": [
+        "porte_claquee_casablanca",
+        "porte_verrouillee_casablanca",
+        "porte_blindee_ouverture_casablanca",
+        "cylindre_remplacement_casablanca",
+        "serrure_3points_casablanca",
+        "voiture_ouverture_casablanca",
+        "voiture_electronique_casablanca",
+        "porte_blindee_installation_casablanca"
+      ],
+      "price_ranges_captured": {
+        "porte_claquee_jour": "150–300 MAD",
+        "porte_claquee_nuit_we": "300–500 MAD",
+        "porte_blindee_ouverture_jour": "400–800 MAD",
+        "cylindre_entree_gamme": "80–150 MAD (part only)",
+        "cylindre_qualite": "250–500 MAD (part only)",
+        "cylindre_pose_comprise": "200–600 MAD",
+        "porte_blindee_installation": "3500–8000 MAD",
+        "voiture_ancienne_ouverture": "150–300 MAD",
+        "voiture_moderne_electronique": "500–1500 MAD",
+        "nuit_22h_7h_surcharge": "50–100%"
+      },
+      "parts_policy": "PARTS_EXPLICIT — cylinder part price stated separately (80–500 MAD) from labour+part combined (200–600 MAD)",
+      "urgency_semantics": "NIGHT_22H_7H_SURCHARGE_50_100_PERCENT; deplacement 50–100 MAD sometimes separate",
+      "limitations": [
+        "Same publisher as SRC_SERR_002 — counted as Casablanca-specific supplement, not independent national source",
+        "Vehicle locksmith pricing for modern cars is a wide range (500–1500 MAD) — specialist vs. generalist gap",
+        "Tariffs 'recoupées' — implies some transaction basis but no sample size"
+      ],
+      "duplication_risk": "SAME_PUBLISHER_SRC_SERR_002 — used as geographic supplement only",
+      "notes": "Good supplementary data for Casablanca and vehicle locksmith segment. Blind door installation range consistent with national page."
+    },
+    {
+      "source_id": "SRC_SERR_004",
+      "publisher": "mesdepanneurs.co",
+      "url": "https://www.mesdepanneurs.co/serrurerie",
+      "source_type": "ARTISAN_PLATFORM_ADVERTISED_PRICE",
+      "geographic_scope": "CASABLANCA",
+      "cities_mentioned": ["Casablanca"],
+      "publication_date": "2025-2026",
+      "research_access_date": "2026-08-09",
+      "quality_grade": "D",
+      "methodology_summary": "Advertised floor prices from a Casablanca locksmith platform. Minimum 'à partir de' prices. Not transaction-verified medians. Useful for floor calibration only.",
+      "services_covered": [
+        "changement_serrure",
+        "reparation_porte",
+        "serrure_3points_pose",
+        "cylindre_extraction",
+        "blindage_porte"
+      ],
+      "price_ranges_captured": {
+        "changement_serrure_floor": "100 MAD",
+        "reparation_porte_floor": "100 MAD",
+        "serrure_3points_floor": "249 MAD",
+        "cylindre_extraction_floor": "120 MAD",
+        "blindage_porte_floor": "900 MAD",
+        "ouverture_floor": "90 MAD"
+      },
+      "parts_policy": "UNCLEAR — 'à partir de' prices, scope of parts inclusion not stated",
+      "urgency_semantics": "NOT_STATED",
+      "limitations": [
+        "Floor prices only — actual prices likely significantly higher",
+        "No scope clarity on parts inclusion",
+        "Single artisan platform — not representative of market",
+        "100 MAD serrure change likely parts-not-included or entry-level only",
+        "Possible bait pricing"
+      ],
+      "duplication_risk": "LOW",
+      "notes": "D-grade. Useful only to confirm market floor exists. The 100 MAD floor for changement serrure is likely bare-minimum scenario or excludes parts. NOT to be used as a price anchor."
+    },
+    {
+      "source_id": "SRC_SERR_005",
+      "publisher": "serrurierpro.ma",
+      "url": "https://www.serrurierpro.ma/ouverture-coffre-fort/",
+      "source_type": "SPECIALIST_ARTISAN_WEBSITE",
+      "geographic_scope": "NATIONAL_MOROCCO",
+      "cities_mentioned": ["Rabat", "Casablanca", "Tanger", "Marrakech"],
+      "publication_date": "2025-2026",
+      "research_access_date": "2026-08-09",
+      "quality_grade": "D",
+      "methodology_summary": "Specialist locksmith company website covering safe/vault opening. No explicit price disclosure — 'devis clair avant intervention' model. Confirms this service requires specialist knowledge, 24/7 availability, and confidentiality. No numerical data extractable.",
+      "services_covered": [
+        "coffre_fort_ouverture",
+        "coffre_fort_reparation",
+        "coffre_fort_installation"
+      ],
+      "price_ranges_captured": {},
+      "parts_policy": "QUOTE_BASED",
+      "urgency_semantics": "24_7_AVAILABLE",
+      "limitations": [
+        "No numerical prices disclosed",
+        "Service description only",
+        "Single company site"
+      ],
+      "duplication_risk": "LOW",
+      "notes": "Confirms coffre fort is QUOTE_REQUIRED / DIAGNOSIS_FIRST. No price data extractable. Supports taxonomy decision to classify safe services separately."
+    },
+    {
+      "source_id": "SRC_SERR_006",
+      "publisher": "serrurier.ma",
+      "url": "https://www.serruriermaroc.online/ and serrurier.ma",
+      "source_type": "ARTISAN_PLATFORM_GENERAL",
+      "geographic_scope": "CASABLANCA_RABAT_TANGER",
+      "cities_mentioned": ["Casablanca", "Rabat", "Tanger"],
+      "publication_date": "2025-2026",
+      "research_access_date": "2026-08-09",
+      "quality_grade": "D",
+      "methodology_summary": "Service listing confirming serrurerie automobile, coffre fort, digicode as standard services. No numerical prices stated — 'tarifs clairs' claimed. Confirms vehicle and safe segments are part of mainstream locksmith offer in Morocco.",
+      "services_covered": [
+        "ouverture_porte",
+        "voiture_ouverture",
+        "coffre_fort",
+        "digicode_installation",
+        "urgence_24_7"
+      ],
+      "price_ranges_captured": {},
+      "parts_policy": "NOT_STATED",
+      "urgency_semantics": "24_7",
+      "limitations": [
+        "No numerical data",
+        "Marketing content only"
+      ],
+      "duplication_risk": "LOW",
+      "notes": "Confirms service taxonomy: vehicle, safe, digicode all part of locksmith scope in Morocco. No price data."
+    }
+  ],
+  "source_quality_summary": {
+    "grade_A": 0,
+    "grade_B": 0,
+    "grade_C_plus": 2,
+    "grade_C": 1,
+    "grade_D": 3,
+    "independent_C_plus_sources": 2,
+    "notes": "No transaction-observatory or statistically verified data found for Moroccan locksmith market. Best available evidence is C+ editorial from established Moroccan platforms. Consistent cross-source corroboration of core price ranges across SRC_SERR_001 and SRC_SERR_002 increases confidence."
+  }
+}
