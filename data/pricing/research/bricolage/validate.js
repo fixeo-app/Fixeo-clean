@@ -321,4 +321,126 @@ console.log(`production_ready: false`);
 console.log(`human_decision: PENDING`);
 console.log('═'.repeat(60));
 
+// exit moved to end
+
+// ─── V0.2 Extended Checks ────────────────────────────────────────────────────
+
+console.log('\n[V0.2] V0.2 calibration artifacts');
+
+const v02Files = [
+  'calibration.v0.2.json',
+  'human-review.v0.2.md',
+  'fair-price-policy.v0.2.md'
+];
+
+for (const f of v02Files) {
+  const fpath = path.join(RESEARCH_DIR, f);
+  if (fs.existsSync(fpath)) ok(`V0.2 file exists: ${f}`);
+  else err(`V0.2 file exists: ${f}`, 'MISSING');
+}
+
+// Load and validate calibration.v0.2.json
+const calibration = loadJSON('calibration.v0.2.json');
+if (calibration) {
+  ok('calibration.v0.2.json parses');
+  if (calibration.production_ready === false) ok('calibration production_ready = false');
+  else err('calibration production_ready must be false');
+  if (calibration.human_decision === 'PENDING') ok('calibration human_decision = PENDING');
+  else err('calibration human_decision must be PENDING');
+  if (calibration.city_adjustment === null) ok('calibration city_adjustment = null');
+  else err('calibration city_adjustment must be null');
+  // Check no modifiers
+  const mods = ['urgency_modifier','night_modifier','weekend_modifier','holiday_modifier','express_modifier'];
+  let modClean = true;
+  for (const m of mods) {
+    if (calibration[m] !== null) { err(`calibration ${m} must be null`); modClean = false; }
+  }
+  if (modClean) ok('calibration all modifiers = null');
+
+  // Check candidate calibrations all have human_decision PENDING
+  if (calibration.candidate_calibrations) {
+    let allPending = true;
+    for (const c of calibration.candidate_calibrations) {
+      if (c.human_decision !== 'PENDING') {
+        err(`Calibration ${c.code} human_decision must be PENDING`);
+        allPending = false;
+      }
+    }
+    if (allPending) ok(`All ${calibration.candidate_calibrations.length} calibration candidates: human_decision = PENDING`);
+  }
+
+  // Check no approved prices in candidates
+  if (calibration.candidate_calibrations) {
+    let noApproved = true;
+    for (const c of calibration.candidate_calibrations) {
+      if (c.approved_price !== undefined) {
+        err(`Candidate ${c.code} must not have approved_price`);
+        noApproved = false;
+      }
+    }
+    if (noApproved) ok('No approved_price fields in calibration candidates');
+  }
+
+  // Check basket simulations exist
+  if (calibration.basket_simulations && calibration.basket_simulations.length >= 8) {
+    ok(`Basket simulations present: ${calibration.basket_simulations.length} baskets`);
+  } else {
+    err('Expected at least 8 basket simulations');
+  }
+
+  // Check V0.1 reference is present
+  if (calibration.v01_reference_commit === '41583c1') ok('V0.1 reference commit correct');
+  else err('V0.1 reference commit must be 41583c1');
+
+  // Commission math check — spot check BRIC-001 at 200 MAD
+  const bric001 = calibration.candidate_calibrations.find(c => c.code === 'BRIC-001');
+  if (bric001) {
+    const cand200 = bric001.candidates_compared.find(c => c.candidate_MAD === 200);
+    if (cand200) {
+      const expectedNet = Math.round(200 * 0.8);
+      if (cand200.worst_case_artisan_net.commission_20pct === expectedNet) ok('Commission math BRIC-001 @200 MAD: 20% → 160 MAD ✓');
+      else err(`Commission math BRIC-001 @200 MAD: expected ${expectedNet}, got ${cand200.worst_case_artisan_net.commission_20pct}`);
+      const afterFuel = expectedNet - 40;
+      if (cand200.worst_case_artisan_net.minus_fuel_40MAD === afterFuel) ok('Post-fuel BRIC-001 @200 MAD: 120 MAD ✓');
+      else err(`Post-fuel BRIC-001 @200 MAD: expected ${afterFuel}`);
+      if (cand200.worst_case_artisan_net.above_100MAD_floor === true) ok('BRIC-001 @200 MAD above 100 MAD hard floor ✓');
+    }
+  }
+
+  // Check BRIC-030 at 300 MAD commission math
+  const bric030 = calibration.candidate_calibrations.find(c => c.code === 'BRIC-030');
+  if (bric030) {
+    const cand300 = bric030.candidates_compared.find(c => c.candidate_MAD === 300);
+    if (cand300) {
+      const expectedNet = Math.round(300 * 0.8);
+      if (cand300.worst_case_artisan_net.commission_20pct === expectedNet) ok('Commission math BRIC-030 @300 MAD: 20% → 240 MAD ✓');
+      else err(`Commission math BRIC-030 @300 MAD: expected ${expectedNet}`);
+      if (cand300.worst_case_artisan_net.above_100MAD_floor === true) ok('BRIC-030 @300 MAD above 100 MAD hard floor ✓');
+    }
+  }
+}
+
+// Check V0.1 files not modified
+console.log('\n[V0.2] V0.1 artifact immutability');
+const v01Files = ['registry.v0.1.json','sources.v0.1.json','evidence.v0.1.json','exclusions.v0.1.json'];
+try {
+  const { execSync: execS } = require('child_process');
+  for (const f of v01Files) {
+    const fpath = `data/pricing/research/bricolage/${f}`;
+    try {
+      const diff = execS(`git diff HEAD -- ${fpath}`, { cwd: REPO_ROOT }).toString();
+      if (diff.length === 0) ok(`V0.1 immutable: ${f}`);
+      else err(`V0.1 modified: ${f}`, 'MUST NOT be changed in V0.2 phase');
+    } catch(e) {
+      warn(`Could not check git diff for ${f}`);
+    }
+  }
+} catch(e) {
+  warn('V0.1 immutability check skipped', e.message);
+}
+
+// Final summary re-print (the main one already printed above — this is the extended count)
+console.log('\n[V0.2 check complete — see final totals above]');
+
+// Final exit
 process.exit(fail > 0 ? 1 : 0);

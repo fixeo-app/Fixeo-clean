@@ -1,0 +1,814 @@
+{
+  "schema_version": "0.2",
+  "phase": "7B.7.1",
+  "metier": "bricolage",
+  "production_ready": false,
+  "review_status": "HUMAN_CALIBRATION_PREPARATION",
+  "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
+  "human_decision": "PENDING",
+  "price_provenance": "RESEARCH_CANDIDATE_PENDING_HUMAN_APPROVAL",
+  "market_scope": "NATIONAL_MOROCCO",
+  "city_adjustment": null,
+  "urgency_modifier": null,
+  "night_modifier": null,
+  "weekend_modifier": null,
+  "holiday_modifier": null,
+  "express_modifier": null,
+  "v01_reference_commit": "41583c1",
+  "note": "V0.1 research artifacts are immutable. This file adds calibration analysis only. No price approved.",
+
+  "architecture_decision": {
+    "conclusion": "Bricolage requires a THREE-LAYER architecture, not a single pricing model.",
+    "layers": [
+      {
+        "layer": "FOUNDATION",
+        "name": "Minimum Visit Price",
+        "purpose": "Guarantees economic viability for any standalone call-out. Travel + setup + basic task included. Prevents sub-floor pricing.",
+        "candidate_code": "BRIC-001",
+        "recommended_value_range_MAD": [180, 220],
+        "note": "All per-item prices for standalone visits must be at or above this floor."
+      },
+      {
+        "layer": "TASK",
+        "name": "Per-Item Standardized Prices",
+        "purpose": "Clear, client-friendly prices for predictable bounded tasks. Absorbs minimum visit when single task.",
+        "candidate_codes": ["BRIC-010","BRIC-011","BRIC-020","BRIC-030"],
+        "note": "When one standardized task is booked standalone, its price must >= minimum visit price."
+      },
+      {
+        "layer": "BATCH",
+        "name": "Multi-Task Economics",
+        "purpose": "Additional tasks in same visit priced at reduced incremental rate — travel already paid.",
+        "candidate_codes": ["BRIC-003","BRIC-070"],
+        "note": "Half-day or first+additional architecture resolves multi-task visit fairness."
+      }
+    ],
+    "anti_double_charge_principle": "A client booking a single TV mount (BRIC-030 at 300 MAD) must NOT additionally pay a minimum visit fee (BRIC-001). The task price already includes travel. Minimum visit applies ONLY to micro-tasks with no associated standardized task price."
+  },
+
+  "candidate_calibrations": [
+
+    {
+      "code": "BRIC-001",
+      "label": "Déplacement minimum / forfait visite",
+      "research_range": [150, 250],
+      "research_anchor": 200,
+      "evidence_confidence": "MEDIUM",
+      "candidates_compared": [
+        {
+          "candidate_MAD": 180,
+          "rationale": "Barely above market floor (150 MAD Adom.ma). Conservative — risks being TOO LOW for cities with high travel cost (Casablanca peak-hour Bouregreg crossing = 100 MAD travel alone).",
+          "worst_case_artisan_net": {
+            "commission_20pct": 144,
+            "minus_fuel_40MAD": 104,
+            "above_100MAD_floor": true,
+            "margin": "THIN"
+          },
+          "client_perception": "Very accessible. Risk of undervaluing the visit.",
+          "verdict": "POSSIBLE_BUT_MARGINAL"
+        },
+        {
+          "candidate_MAD": 200,
+          "rationale": "Market anchor. Allo-Maison minimum start. Tanger/Casablanca economics justify. Full slot covered. Clean round number.",
+          "worst_case_artisan_net": {
+            "commission_20pct": 160,
+            "minus_fuel_40MAD": 120,
+            "above_100MAD_floor": true,
+            "margin": "COMFORTABLE"
+          },
+          "client_perception": "Accepted in market. Client understands 'artisan travels, you pay for the slot'.",
+          "verdict": "STRONG_CANDIDATE"
+        },
+        {
+          "candidate_MAD": 220,
+          "rationale": "Slightly above anchor. Casablanca/Rabat urban travel stress test covered better.",
+          "worst_case_artisan_net": {
+            "commission_20pct": 176,
+            "minus_fuel_40MAD": 136,
+            "above_100MAD_floor": true,
+            "margin": "GOOD"
+          },
+          "client_perception": "Slightly higher than market floor but still reasonable. Will be seen as 'a bit expensive for one nail'.",
+          "verdict": "VIABLE"
+        },
+        {
+          "candidate_MAD": 250,
+          "rationale": "Top of research range. May create client friction for micro-tasks.",
+          "worst_case_artisan_net": {
+            "commission_20pct": 200,
+            "minus_fuel_40MAD": 160,
+            "above_100MAD_floor": true,
+            "margin": "STRONG"
+          },
+          "client_perception": "HIGH for a single hook or tiny fix. Could deter use for micro-tasks.",
+          "verdict": "TOO_HIGH_FOR_MINIMUM_VISIT"
+        }
+      ],
+      "scope_contract": {
+        "included_on_site_time": "Up to 30 minutes",
+        "included_tasks": "One micro-task (single hook, one small adjustment, one fixing point)",
+        "travel": "INCLUDED",
+        "standard_consumables": "INCLUDED (standard wall plugs, screws for masonry up to 4 points)",
+        "hardware": "CLIENT_SUPPLIED",
+        "after_included_time": "Transition to hourly rate (BRIC-002) pro-rated, or negotiate before starting additional work",
+        "anti_double_charge": "If client books a standardized task (BRIC-010, BRIC-020, BRIC-030), minimum visit is ABSORBED into that task's price. Do not stack."
+      },
+      "recommended_candidate": 200,
+      "human_decision": "PENDING"
+    },
+
+    {
+      "code": "BRIC-010",
+      "label": "Montage meuble petit",
+      "definition": {
+        "qualifies_as_small": [
+          "Bedside table / table de nuit (1 package, <10kg, est. 20–45 min assembly)",
+          "Simple chair without armrests (1 package, est. 15–30 min)",
+          "Small stool or ottoman",
+          "Simple small table (coffee table, console, est. 20–40 min)",
+          "Small shoe rack (1 package, est. 20–30 min)",
+          "Simple shelving unit in kit without wall anchoring (2–3 shelves, est. 30–45 min)"
+        ],
+        "does_NOT_qualify": [
+          "Anything with >1 package (→ MEDIUM or above)",
+          "Any furniture requiring wall anchoring for safety (→ MEDIUM includes anchoring)",
+          "Anything with doors or drawers (→ MEDIUM)",
+          "IKEA HEMNES / MALM / BILLY — 2+ packages (→ MEDIUM)"
+        ],
+        "assembly_time_estimate": "15–45 minutes"
+      },
+      "research_range": [150, 300],
+      "research_anchor": 200,
+      "kitea_reference": 200,
+      "evidence_confidence": "MEDIUM",
+      "candidates_compared": [
+        {
+          "candidate_MAD": 180,
+          "worst_case_artisan_net": {
+            "commission_20pct": 144,
+            "minus_fuel_40MAD": 104,
+            "above_100MAD_floor": true
+          },
+          "client_perception": "Good. Competitive with Kitea 200 MAD.",
+          "verdict": "VIABLE_BUT_VERY_TIGHT"
+        },
+        {
+          "candidate_MAD": 200,
+          "worst_case_artisan_net": {
+            "commission_20pct": 160,
+            "minus_fuel_40MAD": 120,
+            "above_100MAD_floor": true
+          },
+          "client_perception": "Matches Kitea reference. Client-transparent.",
+          "verdict": "STRONG_CANDIDATE"
+        },
+        {
+          "candidate_MAD": 220,
+          "worst_case_artisan_net": {
+            "commission_20pct": 176,
+            "minus_fuel_40MAD": 136,
+            "above_100MAD_floor": true
+          },
+          "client_perception": "Slightly above Kitea. Justifiable for independent FIXEO artisan (verified, platform quality).",
+          "verdict": "VIABLE"
+        },
+        {
+          "candidate_MAD": 250,
+          "worst_case_artisan_net": {
+            "commission_20pct": 200,
+            "minus_fuel_40MAD": 160,
+            "above_100MAD_floor": true
+          },
+          "client_perception": "Above Kitea anchor. Risk of client choosing Kitea service instead.",
+          "verdict": "POSSIBLE_UPPER_LIMIT"
+        }
+      ],
+      "standalone_coherence_check": {
+        "test": "Is 200 MAD for small furniture >= minimum visit 200 MAD?",
+        "result": "200 MAD = 200 MAD minimum visit. COHERENT — client pays task price, travel absorbed. No double charge.",
+        "verdict": "PASS"
+      },
+      "recommended_candidate": 200,
+      "human_decision": "PENDING"
+    },
+
+    {
+      "code": "BRIC-011",
+      "label": "Montage meuble moyen",
+      "definition": {
+        "qualifies_as_medium": [
+          "Desk (bureau) with drawer unit (2–3 packages, est. 45–90 min)",
+          "Chest of drawers / commode (2+ packages, est. 45–75 min)",
+          "Bookcase / bibliothèque (IKEA BILLY 2–4 packages, est. 60–90 min)",
+          "Simple 2-door wardrobe without interior fittings (est. 60–90 min)",
+          "Simple bed frame single/double without headboard complexity (est. 60–90 min)",
+          "TV unit / buffet with doors/drawers (est. 45–90 min)",
+          "Sofa in kit (est. 30–60 min)"
+        ],
+        "does_NOT_qualify": [
+          "Wardrobe with interior fittings / PAX system (→ LARGE)",
+          "Bed with storage drawers below (→ LARGE)",
+          "4+ packages of same item (→ LARGE)"
+        ],
+        "assembly_time_estimate": "45–90 minutes"
+      },
+      "research_range": [200, 450],
+      "research_anchor": 300,
+      "evidence_confidence": "LOW",
+      "candidates_compared": [
+        {
+          "candidate_MAD": 250,
+          "worst_case_artisan_net": {
+            "commission_20pct": 200,
+            "minus_fuel_40MAD": 160,
+            "above_100MAD_floor": true
+          },
+          "time_check": "At 250 MAD, artisan at 130 MAD/h earns 250/1.2h ≈ 208 MAD/h effective. Strong.",
+          "verdict": "VIABLE_BUT_BELOW_ANCHOR"
+        },
+        {
+          "candidate_MAD": 280,
+          "worst_case_artisan_net": {
+            "commission_20pct": 224,
+            "minus_fuel_40MAD": 184,
+            "above_100MAD_floor": true
+          },
+          "verdict": "VIABLE"
+        },
+        {
+          "candidate_MAD": 300,
+          "worst_case_artisan_net": {
+            "commission_20pct": 240,
+            "minus_fuel_40MAD": 200,
+            "above_100MAD_floor": true
+          },
+          "client_perception": "Reasonable for 1–1.5h professional assembly.",
+          "verdict": "STRONG_CANDIDATE"
+        },
+        {
+          "candidate_MAD": 350,
+          "worst_case_artisan_net": {
+            "commission_20pct": 280,
+            "minus_fuel_40MAD": 240,
+            "above_100MAD_floor": true
+          },
+          "client_perception": "Justifiable for complex medium (BILLY + wall anchoring).",
+          "verdict": "VIABLE_UPPER"
+        }
+      ],
+      "low_evidence_warning": "Confidence LOW. Only 3 sources. Human calibrator should verify before approving.",
+      "recommended_candidate": 300,
+      "human_decision": "PENDING"
+    },
+
+    {
+      "code": "BRIC-012",
+      "label": "Montage armoire / grand meuble",
+      "definition": {
+        "qualifies_as_large": [
+          "IKEA PAX wardrobe standard (3+ packages, doors, est. 90–180 min)",
+          "IKEA PAX with interior fittings/sliding doors (est. 2–3h+)",
+          "Large wardrobe 2–3 doors with shelves/drawers (est. 90–150 min)",
+          "Bed frame with storage drawers (est. 90–120 min)",
+          "Large modular shelving system requiring wall anchoring"
+        ]
+      },
+      "research_range": [300, 700],
+      "research_anchor": 450,
+      "evidence_confidence": "LOW",
+      "architecture_comparison": {
+        "CONDITIONAL_FIXED": {
+          "description": "Fixed price for clearly defined large item. Escape if complexity exceeds definition.",
+          "pros": "Client knows price upfront",
+          "cons": "Wide variance in actual time (simple PAX = 90 min; complex PAX sliding = 3h). Fixed price may undercompensate.",
+          "verdict": "RISKY without tight scope definition"
+        },
+        "HOURLY": {
+          "description": "Time-based. 130 MAD/h × actual duration.",
+          "pros": "Fair to artisan; accurate for variable complexity",
+          "cons": "Client cannot know total cost. Creates trust risk on first booking.",
+          "verdict": "VIABLE for large furniture if client pre-agrees time estimate range"
+        },
+        "QUOTE_REQUIRED": {
+          "description": "All large furniture → quote before confirmation.",
+          "pros": "No scope overrun. No underpayment.",
+          "cons": "Reduces instant-booking convenience.",
+          "verdict": "SAFE but reduces FIXEO standardization benefit"
+        }
+      },
+      "recommendation": "DEFER_TO_HOURLY_OR_QUOTE",
+      "rationale": "Evidence confidence is LOW. Assembly time variance is too large to standardize safely. PAX standard may work at 450–500 MAD; PAX complex would need 600–700 MAD or hourly. Cannot set a single CONDITIONAL_FIXED price without creating artisan undercompensation risk.",
+      "proposed_disposition": "QUOTE_REQUIRED for very large / complex. HOURLY (2h estimate upfront) for standard large furniture. CONDITIONAL_FIXED possible ONLY after stronger transaction evidence.",
+      "recommended_candidate": null,
+      "human_decision": "PENDING",
+      "calibration_note": "RECOMMEND DEFERRING fixed price. Offer HOURLY (BRIC-002) as primary architecture for large furniture."
+    },
+
+    {
+      "code": "BRIC-020",
+      "label": "Pose étagère murale",
+      "definition": {
+        "standard_eligible": [
+          "Wall shelf — client supplies shelf + brackets (or integrated kit)",
+          "Standard masonry or parpaing wall",
+          "Up to 20kg load rating",
+          "Up to 4 fixing points (2 brackets × 2 screws each)",
+          "Standard accessible height (<2.5m)"
+        ],
+        "not_eligible": [
+          "Shelf >20kg load (escape to conditional with disclosure)",
+          "Reinforced concrete wall (conditional surcharge)",
+          "Tile wall (conditional surcharge — crack risk disclosure)",
+          "Plasterboard without confirmed stud (conditional)",
+          "Height >2.5m (quote)",
+          "Glass shelf requiring specialty fixings (quote)"
+        ],
+        "assembly_time_estimate": "20–40 minutes per shelf"
+      },
+      "research_range": [150, 300],
+      "research_anchor": 200,
+      "evidence_confidence": "LOW",
+      "interaction_with_BRIC001": {
+        "scenario": "Client books 1 shelf (standalone visit)",
+        "problem": "If shelf price = 200 MAD and minimum visit = 200 MAD, they are equal. Good: no double charge possible.",
+        "problem_if_shelf_at_150MAD": "150 MAD shelf < 200 MAD minimum visit = INCOHERENT. Client should pay minimum visit, not 150 MAD.",
+        "conclusion": "Shelf price MUST be >= minimum visit price. Research range low (150 MAD) is therefore not viable as standalone fixed price.",
+        "verdict": "Floor for standalone shelf price = minimum visit price (200 MAD)"
+      },
+      "candidates_compared": [
+        {
+          "candidate_MAD": 180,
+          "note": "Below recommended minimum visit 200 MAD. Creates incoherence if used standalone. Not recommended.",
+          "verdict": "INCOHERENT_IF_STANDALONE"
+        },
+        {
+          "candidate_MAD": 200,
+          "worst_case_artisan_net": {
+            "commission_20pct": 160,
+            "minus_fuel_40MAD": 120,
+            "above_100MAD_floor": true
+          },
+          "client_perception": "Reasonable. Matches minimum visit — good coherence.",
+          "verdict": "STRONG_CANDIDATE"
+        },
+        {
+          "candidate_MAD": 220,
+          "worst_case_artisan_net": {
+            "commission_20pct": 176,
+            "minus_fuel_40MAD": 136,
+            "above_100MAD_floor": true
+          },
+          "verdict": "VIABLE"
+        },
+        {
+          "candidate_MAD": 250,
+          "verdict": "VIABLE — upper range evidence"
+        }
+      ],
+      "additional_shelf_incremental": {
+        "note": "Second/third shelf in same visit: travel already paid. Incremental price should be lower.",
+        "proposed_analysis": "See multi-task section"
+      },
+      "recommended_candidate": 200,
+      "human_decision": "PENDING"
+    },
+
+    {
+      "code": "BRIC-030",
+      "label": "Fixation TV murale standard",
+      "standard_contract": {
+        "client_supplies": ["TV", "Compatible wall bracket (support mural)", "Instruction manual for bracket"],
+        "artisan_supplies": ["Labour", "SDS-capable drill", "Standard anchors for masonry (4× M8 expansion)", "Level tool"],
+        "inclusions": [
+          "Drilling (up to 4 points in standard masonry)",
+          "Standard expansion anchor installation",
+          "Bracket mounting on wall",
+          "TV hanging on bracket",
+          "Level alignment",
+          "Basic cable tidying on surface (no wall routing)"
+        ],
+        "explicit_exclusions": [
+          "TV bracket (client-supplied)",
+          "Cable concealment inside wall",
+          "Electrical socket relocation (ELECTRICITE)",
+          "Second worker if TV too heavy to lift alone",
+          "Articulating/full-motion bracket installation (complexity surcharge)"
+        ],
+        "eligibility_conditions": {
+          "wall_type": "Standard masonry (parpaing, béton non-armé, brique standard)",
+          "TV_max_size": "≤65 pouces",
+          "TV_max_weight": "≤40kg",
+          "height": "Standard accessible (<2.5m from floor to bracket centre)",
+          "bracket_type": "Fixed or simple tilt — NOT full-motion/articulating at this price"
+        },
+        "complexity_escapes": [
+          {"condition": "Reinforced concrete wall (béton armé)", "action": "DECLARE_CONDITIONAL → surcharge or quote for SDS-MAX + chemical anchors"},
+          {"condition": "Plasterboard/drywall (placo)", "action": "DECLARE_CONDITIONAL → must locate studs; heavy TV may require quote"},
+          {"condition": "TV > 65\" or > 40kg", "action": "DECLARE_HORS_PERIMETRE → quote for 2-person job"},
+          {"condition": "Full-motion articulating bracket", "action": "DECLARE_CONDITIONAL → surcharge (additional time and precision)"},
+          {"condition": "Cable concealment in wall", "action": "DECLARE_HORS_PERIMETRE_BRICOLAGE → route to Electricité if socket relocation needed"},
+          {"condition": "Tile or marble wall", "action": "DECLARE_CONDITIONAL → diamond bit needed, crack risk disclosure, surcharge"},
+          {"condition": "Height > 2.5m", "action": "DECLARE_HORS_PERIMETRE → scaffolding required, quote"}
+        ]
+      },
+      "research_range": [200, 400],
+      "research_anchor": 300,
+      "evidence_confidence": "MEDIUM",
+      "strongest_evidence": "m3allempro.com Casablanca: 300 MAD, 89 reviews, 412 missions. Stepone.ma: 200–400 MAD. Both bracket-excluded.",
+      "candidates_compared": [
+        {
+          "candidate_MAD": 250,
+          "worst_case_artisan_net": {
+            "commission_20pct": 200,
+            "minus_fuel_40MAD": 160,
+            "above_100MAD_floor": true
+          },
+          "time_check": "TV mount takes ~45–60 min. 250 MAD / 1h = 250 MAD/h effective — strong.",
+          "client_perception": "Competitive. Below market anchor but defensible.",
+          "verdict": "VIABLE_LOW"
+        },
+        {
+          "candidate_MAD": 280,
+          "worst_case_artisan_net": {
+            "commission_20pct": 224,
+            "minus_fuel_40MAD": 184,
+            "above_100MAD_floor": true
+          },
+          "verdict": "VIABLE"
+        },
+        {
+          "candidate_MAD": 300,
+          "worst_case_artisan_net": {
+            "commission_20pct": 240,
+            "minus_fuel_40MAD": 200,
+            "above_100MAD_floor": true
+          },
+          "client_perception": "Matches market anchor. Clean number.",
+          "verdict": "STRONG_CANDIDATE"
+        },
+        {
+          "candidate_MAD": 350,
+          "worst_case_artisan_net": {
+            "commission_20pct": 280,
+            "minus_fuel_40MAD": 240,
+            "above_100MAD_floor": true
+          },
+          "client_perception": "Above market anchor. Justified only if bracket complexity or urban premium applied.",
+          "verdict": "VIABLE_UPPER"
+        }
+      ],
+      "recommended_candidate": 300,
+      "human_decision": "PENDING"
+    }
+  ],
+
+  "multi_task_architecture": {
+
+    "model_A": {
+      "name": "Minimum Visit + Incremental Tasks",
+      "structure": "minimum_visit_price + per_additional_task_incremental",
+      "proposed_incremental_rates_tested": [
+        {"pct": 50, "note": "Second item = 50% of first. Aggressive discount. Artisan economically fair but may signal low value."},
+        {"pct": 60, "note": "Second item = 60% of first. Reasonable."},
+        {"pct": 65, "note": "Research suggested range (60–70%). Mid-point."},
+        {"pct": 70, "note": "Second item = 70% of first. Conservative discount."},
+        {"pct": 75, "note": "Second item = 75% of first. Small discount — less differentiated from standalone."}
+      ],
+      "simulation_2items": {
+        "item1_shelf_200MAD": 200,
+        "at_65pct": {"item2": 130, "total": 330},
+        "at_70pct": {"item2": 140, "total": 340},
+        "2x_standalone_total": 400,
+        "saving_at_65pct": 70,
+        "saving_at_70pct": 60,
+        "assessment": "Client saves 60–70 MAD vs 2 standalone visits. Reasonable."
+      },
+      "simulation_3items": {
+        "item1_shelf_200MAD": 200,
+        "at_65pct": {"item2": 130, "item3": 130, "total": 460},
+        "3x_standalone_total": 600,
+        "saving": 140,
+        "assessment": "Client saves 140 MAD vs 3 standalone. Defensible."
+      },
+      "weakness": "Complexity of calculating incremental total in advance. Client must do mental arithmetic. Less clean than half-day.",
+      "verdict": "VIABLE but complex to communicate clearly. Better for tech-based estimator than WhatsApp booking."
+    },
+
+    "model_B": {
+      "name": "Half-Day (Demi-journée)",
+      "research_range": [300, 550],
+      "research_anchor": 400,
+      "candidates_compared": [
+        {
+          "candidate_MAD": 350,
+          "artisan_hours": "3–4h",
+          "effective_hourly": "87–117 MAD/h",
+          "worst_case_net_20pct_minus_fuel": {"commission_20pct": 280, "minus_fuel_40MAD": 240},
+          "client_value": "5–7 small tasks covered. Outstanding value.",
+          "verdict": "TOO_LOW — artisan effective hourly below market rate at slow end"
+        },
+        {
+          "candidate_MAD": 400,
+          "artisan_hours": "3–4h",
+          "effective_hourly": "100–133 MAD/h",
+          "worst_case_net_20pct_minus_fuel": {"commission_20pct": 320, "minus_fuel_40MAD": 280},
+          "client_value": "Equivalent to 2 standalone tasks — good deal for 5+ items",
+          "verdict": "STRONG_CANDIDATE — matches research anchor"
+        },
+        {
+          "candidate_MAD": 450,
+          "effective_hourly": "112–150 MAD/h",
+          "worst_case_net_20pct_minus_fuel": {"commission_20pct": 360, "minus_fuel_40MAD": 320},
+          "client_value": "Still good value for 5+ tasks",
+          "verdict": "VIABLE"
+        },
+        {
+          "candidate_MAD": 500,
+          "effective_hourly": "125–167 MAD/h",
+          "worst_case_net_20pct_minus_fuel": {"commission_20pct": 400, "minus_fuel_40MAD": 360},
+          "client_value": "Starting to feel expensive unless many tasks confirmed",
+          "verdict": "VIABLE_UPPER"
+        }
+      ],
+      "contract": {
+        "duration": "3–4 hours on-site",
+        "travel": "INCLUDED (single journey both ways)",
+        "standard_consumables": "INCLUDED",
+        "hardware": "ALL CLIENT_SUPPLIED",
+        "task_limit": "All tasks achievable within 3–4h",
+        "specialist_tasks": "EXCLUDED — any electrical/plumbing/lock task escapes to specialist",
+        "overtime": "If tasks require >4h: transition to hourly rate for additional time, pre-agreed"
+      },
+      "recommended_candidate": 400,
+      "verdict": "STRONG — best architecture for batched mixed-task visits"
+    },
+
+    "model_C": {
+      "name": "Hourly (à l'heure)",
+      "research_range_per_hour": [100, 180],
+      "research_anchor_per_hour": 130,
+      "minimum_billing_tested": ["1h", "2h"],
+      "candidates_compared": [
+        {
+          "rate_MAD_per_hour": 130,
+          "minimum_1h": {"1h_charge": 130, "artisan_net_20pct": 104, "minus_fuel": 64, "assessment": "Below 100 MAD floor after fuel. Not viable standalone with fuel."},
+          "minimum_2h": {"2h_charge": 260, "artisan_net_20pct": 208, "minus_fuel": 168, "assessment": "Viable. But 260 MAD for 2h = same as 1 TV mount. Client may prefer task price."}
+        },
+        {
+          "rate_MAD_per_hour": 150,
+          "minimum_1h": {"1h_charge": 150, "artisan_net_20pct": 120, "minus_fuel": 80, "assessment": "Marginally viable."},
+          "minimum_2h": {"2h_charge": 300, "artisan_net_20pct": 240, "minus_fuel": 200, "assessment": "Strong. Matches TV mount price naturally."}
+        },
+        {
+          "rate_MAD_per_hour": 160,
+          "minimum_2h": {"2h_charge": 320, "artisan_net_20pct": 256, "minus_fuel": 216, "assessment": "Strong. Clean economics."}
+        }
+      ],
+      "client_uncertainty_risk": "HIGH — client cannot predict total cost for open-ended task list. Trust barrier for first booking.",
+      "artisan_incentive_risk": "MEDIUM — hourly can incentivize slow work. Mitigated by artisan reputation/rating.",
+      "recommended_minimum": "2h minimum billing",
+      "recommended_candidate_rate": 150,
+      "verdict": "VIABLE for open-ended or unknown-scope work. NOT recommended as primary architecture for predictable tasks.",
+      "best_use_cases": ["Open-ended task lists of unknown composition", "Large furniture assembly (variable time)", "Light renovation prep work"]
+    },
+
+    "architecture_recommendation": {
+      "primary_for_single_task": "PER_ITEM_FORFAIT (BRIC-010, BRIC-020, BRIC-030)",
+      "primary_for_multi_task": "HALF_DAY (BRIC-003 at 400 MAD)",
+      "primary_for_open_ended": "HOURLY (BRIC-002 at 150 MAD/h, 2h minimum)",
+      "safety_net_for_micro_task": "MINIMUM_VISIT (BRIC-001 at 200 MAD)",
+      "note": "These four architectures cover the full bricolage spectrum without overlap or double-charge risk."
+    }
+  },
+
+  "basket_simulations": [
+    {
+      "basket_id": "B1",
+      "description": "1 simple frame / hook task (single nail hook)",
+      "estimated_artisan_time_on_site": "10–15 min",
+      "architectures": {
+        "unit_price": {"result": "No dedicated code. Too small for standalone standardized price.", "cost_MAD": null},
+        "minimum_visit": {"cost_MAD": 200, "artisan_net_20pct_minus_fuel": 120, "assessment": "MINIMUM_VISIT applies. Client pays 200 MAD for a 15-min task. Economically justified."},
+        "hourly_2h_min": {"cost_MAD": 300, "assessment": "2h minimum = 300 MAD for a 15-min task. CLIENT UNFAIR — overkill."},
+        "half_day": {"cost_MAD": 400, "assessment": "Gross overkill for single hook."}
+      },
+      "best_architecture": "MINIMUM_VISIT at 200 MAD",
+      "client_fairness": "ACCEPTABLE — client told upfront this is minimum. Can batch other tasks to justify the visit.",
+      "artisan_fairness": "FAIR — slot consumed regardless of task duration.",
+      "recommendation": "Encourage client to batch with other tasks before booking."
+    },
+    {
+      "basket_id": "B2",
+      "description": "1 shelf (standalone visit)",
+      "estimated_artisan_time_on_site": "25–40 min",
+      "architectures": {
+        "unit_price": {"cost_MAD": 200, "assessment": "BRIC-020 at 200 MAD. Matches minimum visit. COHERENT."},
+        "minimum_visit": {"cost_MAD": 200, "assessment": "Same as task price — absorbed. No double charge."},
+        "hourly_2h_min": {"cost_MAD": 300, "assessment": "CLIENT UNFAIR — 300 MAD for 30-min shelf job."},
+        "half_day": {"cost_MAD": 400, "assessment": "CLIENT UNFAIR for single shelf."}
+      },
+      "best_architecture": "PER_ITEM at 200 MAD",
+      "client_fairness": "GOOD — transparent, known before artisan arrives.",
+      "artisan_fairness": "ACCEPTABLE — 200 MAD × 80% commission = 160 MAD net - 40 MAD fuel = 120 MAD for ~45 min slot. Viable."
+    },
+    {
+      "basket_id": "B3",
+      "description": "2 shelves (same visit)",
+      "estimated_artisan_time_on_site": "50–80 min",
+      "architectures": {
+        "unit_by_unit": {"cost_MAD": 400, "assessment": "2 × 200 MAD = 400 MAD. Travel counted twice. UNFAIR."},
+        "first_plus_additional_65pct": {"cost_MAD": 330, "assessment": "200 + 130 = 330 MAD. Client saves 70 MAD."},
+        "hourly_actual": {"cost_MAD": 195, "note": "1.3h × 150 = 195 MAD. But 2h minimum applies = 300 MAD."},
+        "half_day": {"cost_MAD": 400, "assessment": "Justified but 400 MAD for 2 shelves (~1h) is high."}
+      },
+      "best_architecture": "FIRST_ITEM + ADDITIONAL at 65–70% gives 330–340 MAD. OR half-day if more tasks to add.",
+      "client_fairness": "GOOD if incremental architecture used.",
+      "artisan_fairness": "GOOD — 330 MAD × 80% = 264 MAD - 40 MAD fuel = 224 MAD for ~1h on-site. 224 MAD/h effective — excellent."
+    },
+    {
+      "basket_id": "B4",
+      "description": "1 shelf + 1 curtain rod",
+      "estimated_artisan_time_on_site": "40–60 min",
+      "architectures": {
+        "unit_by_unit": {"cost_MAD": 400, "assessment": "200 + 200 (imputed) = 400 MAD. Travel double-counted. UNFAIR."},
+        "first_plus_additional_65pct": {"cost_MAD": 330, "assessment": "200 + 130 = 330 MAD."},
+        "half_day": {"cost_MAD": 400, "assessment": "Generous for 2 tasks but includes more capacity."}
+      },
+      "note": "Curtain rod has INSUFFICIENT evidence for its own fixed price. Treat as second-item incremental within BRIC-070.",
+      "best_architecture": "MINIMUM_VISIT_PLUS_INCREMENTAL or HALF_DAY if more tasks available.",
+      "client_fairness": "GOOD"
+    },
+    {
+      "basket_id": "B5",
+      "description": "2 shelves + 1 mirror + 3 frames",
+      "estimated_artisan_time_on_site": "90–120 min",
+      "architectures": {
+        "unit_by_unit_6tasks": {"cost_MAD": 1200, "note": "6 × 200 MAD. Absurd — travel counted 6 times."},
+        "first_plus_additional_65pct_6tasks": {
+          "cost_MAD": 875,
+          "breakdown": "200 + 5×130 = 200+650 = 850 MAD",
+          "actual_850": 850,
+          "assessment": "Still feels high for 2h work."
+        },
+        "half_day_400MAD": {"cost_MAD": 400, "assessment": "Client gets 5+ tasks done in 3–4h slot for 400 MAD. EXCELLENT VALUE. Artisan earns 400 MAD for 2h = good."},
+        "hourly_2h_actual": {"cost_MAD": 300, "assessment": "2h × 150 MAD = 300 MAD. Could work. But scope unknown at booking."}
+      },
+      "best_architecture": "HALF_DAY at 400 MAD",
+      "client_fairness": "EXCELLENT — 400 MAD for 6 items = 67 MAD per item effective.",
+      "artisan_fairness": "GOOD — 400 MAD × 80% = 320 MAD - 40 MAD fuel = 280 MAD for 2h = 140 MAD/h effective."
+    },
+    {
+      "basket_id": "B6",
+      "description": "1 small furniture assembly + 1 shelf",
+      "estimated_artisan_time_on_site": "50–80 min",
+      "architectures": {
+        "unit_by_unit": {"cost_MAD": 400, "assessment": "200 + 200 = 400 MAD. Travel double-counted. UNFAIR."},
+        "first_plus_additional_65pct": {"cost_MAD": 330, "assessment": "200 + 130 = 330 MAD."},
+        "half_day": {"cost_MAD": 400, "assessment": "Generous but fair if more tasks available."}
+      },
+      "best_architecture": "FIRST_ITEM + ADDITIONAL at 330 MAD. Half-day if client has 4+ tasks total.",
+      "client_fairness": "GOOD"
+    },
+    {
+      "basket_id": "B7",
+      "description": "TV mounting + 2 small wall-fixing tasks",
+      "estimated_artisan_time_on_site": "75–105 min",
+      "architectures": {
+        "unit_by_unit": {"cost_MAD": 700, "assessment": "300 + 200 + 200 = 700 MAD. Travel triple-counted. VERY UNFAIR."},
+        "first_plus_additional_65pct": {"cost_MAD": 560, "breakdown": "300 (TV) + 130 + 130 = 560 MAD"},
+        "half_day_400MAD": {"cost_MAD": 400, "assessment": "Client saves 160 vs incremental. Artisan earns 400 MAD for ~1.5h."},
+        "hourly_2h_min": {"cost_MAD": 300, "assessment": "2h × 150 = 300 MAD. But scope definition harder upfront."}
+      },
+      "best_architecture": "HALF_DAY at 400 MAD is fairest for client. Incremental model at 560 MAD also defensible but less client-friendly.",
+      "client_fairness": "HALF_DAY = EXCELLENT | INCREMENTAL = ACCEPTABLE | UNIT = UNFAIR",
+      "artisan_fairness": "HALF_DAY: 400 × 80% - 40 fuel = 280 MAD for 1.5h ≈ 187 MAD/h effective — VERY GOOD."
+    },
+    {
+      "basket_id": "B8",
+      "description": "3 hours of heterogeneous small tasks (unknown task list)",
+      "estimated_artisan_time_on_site": "3h",
+      "architectures": {
+        "unit_by_unit": {"cost_MAD": null, "assessment": "Cannot price unknown task list by unit. NOT APPLICABLE."},
+        "hourly_3h_at_150": {"cost_MAD": 450, "assessment": "3h × 150 = 450 MAD. Clean. But client uncertainty about final cost."},
+        "half_day": {"cost_MAD": 400, "assessment": "4h slot = 400 MAD. Client saves 50 MAD vs hourly for 3h."}
+      },
+      "best_architecture": "HALF_DAY at 400 MAD or HOURLY at 150 MAD/h if client wants precise billing.",
+      "recommendation": "For unknown task lists: offer client choice of HOURLY or HALF_DAY. FIXEO pre-screening questions reduce unknowns."
+    }
+  ],
+
+  "first_item_additional_analysis": {
+    "hypothesis": "additional item in same visit = X% of first item price",
+    "stress_tests": [
+      {"pct": 50, "2_items_shelf": 300, "3_items_shelf": 400, "5_items_shelf": 600, "assessment": "Too aggressive — signals low quality. Artisan net at 5 items: 600×80%-40=440 MAD for ~2h = 220/h. Good but low item value."},
+      {"pct": 60, "2_items_shelf": 320, "3_items_shelf": 440, "5_items_shelf": 680, "assessment": "Reasonable."},
+      {"pct": 65, "2_items_shelf": 330, "3_items_shelf": 460, "5_items_shelf": 720, "assessment": "Research suggested range. Good balance."},
+      {"pct": 70, "2_items_shelf": 340, "3_items_shelf": 480, "5_items_shelf": 760, "assessment": "Small discount. Client may not feel the batch benefit strongly."},
+      {"pct": 75, "2_items_shelf": 350, "3_items_shelf": 500, "5_items_shelf": 800, "assessment": "Minimal discount. Better to just use full prices."}
+    ],
+    "universal_pct_conclusion": "65% is a reasonable mid-point for SIMILAR tasks in same family. However:",
+    "heterogeneous_tasks_note": "For mixed task families (TV mount 300 MAD first + shelf 200 MAD additional), percentages become confusing. Simpler: use HALF_DAY as catch-all for mixed visits.",
+    "recommendation": "FIRST_ITEM + ADDITIONAL_AT_65% for homogeneous tasks (2–3 shelves, 2 small furniture). HALF_DAY for heterogeneous mixed lists.",
+    "human_decision": "PENDING — exact percentage must be approved by human"
+  },
+
+  "material_hardware_policy": {
+    "included_as_consumables": [
+      "Standard wall plugs / chevilles plastique 6–10mm for normal masonry — up to 8 fixings per intervention",
+      "Standard screws matching standard fixings",
+      "Basic cable ties for surface cable management (TV mount)"
+    ],
+    "part_separate_with_disclosure": [
+      "Specialty hollow-wall anchors (Molly, toggle) for hollow block / plasterboard — disclose unit cost + quantity before proceeding",
+      "Chemical anchors M10 for reinforced concrete heavy mounts — disclose before proceeding",
+      "Artisan-sourced replacement hinges or handles (if not client-supplied) — separate line item with approval",
+      "Specialty tile/diamond drill bits if artisan must purchase — disclose before proceeding"
+    ],
+    "always_client_supplied": [
+      "Shelf (étagère) — all types",
+      "Shelf brackets if not integrated into shelf",
+      "Curtain rod (tringle) and all hardware",
+      "TV wall bracket (support mural)",
+      "Mirror",
+      "Furniture (flat-pack, all items)",
+      "Bathroom accessories (porte-serviettes, patère, etc.)",
+      "Picture hooks, frames, artwork",
+      "Replacement handles / hinges (for client-directed repair)"
+    ],
+    "disclosure_protocol": "IDENTIFY item → STATE specification → STATE unit cost → CONFIRM quantity → CLIENT APPROVAL → PROCEED. Never buy and charge back without prior approval."
+  },
+
+  "wall_substrate_policy": {
+    "STANDARD_ELIGIBLE": {
+      "substrates": ["Parpaing (hollow concrete block, standard)", "Brique pleine (solid brick)", "Béton non-armé (plain concrete)", "Enduit/plâtre sur maçonnerie solide"],
+      "standard_anchors": "Standard expansion plugs 6–10mm",
+      "price_impact": "None — included in base price",
+      "drill_required": "Standard SDS or percussion drill"
+    },
+    "CONDITIONAL_SURCHARGE": {
+      "substrates": ["Béton armé (reinforced concrete)", "Brique creuse (hollow block)", "Carrelage (tile)", "Placo-plâtre (plasterboard/drywall) — stud confirmed"],
+      "disclosure": "STOP → identify substrate → EXPLAIN to client → DECLARE CONDITIONAL → state surcharge or quote → OBTAIN approval",
+      "typical_surcharge": "50–100 MAD additional (research-indicative, not FIXEO-approved)",
+      "drill_required": "SDS-Max or diamond tip depending on substrate"
+    },
+    "QUOTE_REQUIRED": {
+      "substrates": ["Marbre / pierre naturelle (breakage risk)", "Pisé / tadelakt (riad)", "Substrate unknown or multiple layers", "Load-bearing wall uncertainty"],
+      "action": "DECLARE HORS PÉRIMÈTRE PRIX STANDARD → quote required"
+    },
+    "SPECIALIST_REQUIRED": {
+      "substrates": ["Mur porteur (structural wall — drilling or modification)"],
+      "action": "REFUSE — MAÇONNERIE or structural engineer required"
+    }
+  },
+
+  "metier_boundary_freeze": {
+    "ELECTRICITE": {
+      "rule": "ANY work involving electrical circuit conductors, wiring connections, outlet or switch replacement, luminaire wiring, electrical socket relocation — routes to ELECTRICITE without exception.",
+      "key_escape_condition": "Cable concealment requiring electrical socket move during TV installation"
+    },
+    "PLOMBERIE": {
+      "rule": "Any pipe modification, hot water system, drainage change — PLOMBERIE. Minor consumer maintenance (tap washer, siphon) — CONDITIONAL FIXEO decision deferred.",
+      "note": "FIXEO has not yet approved minor plumbing as bricolage scope. Default to PLOMBERIE until explicit human decision."
+    },
+    "SERRURERIE": {
+      "rule": "Lock cylinder, security mechanism, entrance door lock — SERRURERIE. Interior non-security door handle — BRICOLAGE_ALLOWED.",
+      "key_distinction": "Interior lever handle on bedroom/bathroom door = bricolage. Porte palière / porte blindée = serrurerie always."
+    },
+    "MENUISERIE": {
+      "rule": "Custom fabrication, structural wood — MENUISERIE. Adjustment of existing hardware (hinge, handle) on interior door — BRICOLAGE_ALLOWED."
+    },
+    "MACONNERIE": {
+      "rule": "Load-bearing wall — MAÇONNERIE. Anchor-size drilling in non-structural wall — BRICOLAGE_ALLOWED."
+    },
+    "CARRELAGE": {"rule": "Tile laying, replacement, grouting — CARRELAGE always."},
+    "PEINTURE": {"rule": "Any wall painting — PEINTURE always."},
+    "VITRERIE": {"rule": "Glass modification, window glass — VITRERIE always."}
+  },
+
+  "services_disposition": {
+    "CALIBRATE_NOW": [
+      {"code": "BRIC-001", "reason": "Foundation of bricolage economics. High evidence. Must be defined first."},
+      {"code": "BRIC-002", "reason": "Hourly rate needed for open-ended work and large furniture. Well evidenced."},
+      {"code": "BRIC-003", "reason": "Half-day is primary multi-task architecture. Well evidenced."},
+      {"code": "BRIC-010", "reason": "High demand (IKEA/Kitea market). Strong anchor (Kitea 200 MAD). Clear scope."},
+      {"code": "BRIC-020", "reason": "High frequency. Scope tightly defined. Price coherent with minimum visit."},
+      {"code": "BRIC-030", "reason": "Best-evidenced specific task. Clear standard contract. 300 MAD anchor solid."},
+      {"code": "BRIC-070", "reason": "Multi-task architecture decision needed to resolve batch pricing."}
+    ],
+    "DEFER": [
+      {"code": "BRIC-011", "reason": "LOW confidence. Time variance too large (45–90 min). Recommend: use HOURLY or quote until better evidence.", "reopen_when": "5+ transaction observations for medium furniture price"},
+      {"code": "BRIC-012", "reason": "LOW confidence. Assembly time 90–180+ min. Recommend HOURLY. Too variable for fixed price.", "reopen_when": "Strong transaction evidence for specific item types"},
+      {"code": "BRIC-021", "reason": "INSUFFICIENT evidence. No Moroccan price. Treat as multi-task add-on.", "reopen_when": "Moroccan platform data with price for curtain rod standalone"},
+      {"code": "BRIC-022", "reason": "INSUFFICIENT evidence. Include as add-on item in BRIC-070.", "reopen_when": "Dedicated source"},
+      {"code": "BRIC-023", "reason": "Too small for standalone FIXEO service. Add-on only.", "reopen_when": "Never — recommend always as add-on"},
+      {"code": "BRIC-040", "reason": "INSUFFICIENT evidence. Tile drilling risk. Include in multi-task only.", "reopen_when": "Dedicated source + tile crack disclosure protocol"},
+      {"code": "BRIC-050", "reason": "LOW confidence. Scope definition depends heavily on on-site assessment. Risk of underquote.", "reopen_when": "Transaction data"},
+      {"code": "BRIC-051", "reason": "LOW confidence. Very quick task. Better as minimum-visit add-on.", "reopen_when": "Transaction data"},
+      {"code": "BRIC-060", "reason": "LOW confidence. Tiny task. Always as add-on in multi-task visit.", "reopen_when": "Never — always add-on"}
+    ],
+    "QUOTE_REQUIRED_PERMANENTLY": [
+      {"code": "BRIC-031", "reason": "Complex TV install. Too variable. Cable concealment may require electrician."},
+      {"code": "BRIC-X012", "reason": "IKEA kitchen. 2–4 days. Always quote."}
+    ]
+  }
+}
