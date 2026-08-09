@@ -1,0 +1,171 @@
+{
+  "suite": "prototype-tests-v2",
+  "phase": "7C.8C",
+  "timestamp": "2026-08-09T23:53:43.328Z",
+  "total": 40,
+  "passed": 40,
+  "failed": 0,
+  "status": "PASS",
+  "results": [
+    {
+      "name": "01 No alert() in estimator-prototype.js",
+      "status": "PASS"
+    },
+    {
+      "name": "02 No alert() in estimator-prototype.html",
+      "status": "PASS"
+    },
+    {
+      "name": "03 No alert() in estimation-page-prototype.html",
+      "status": "PASS"
+    },
+    {
+      "name": "04 ctaLabel function present in JS",
+      "status": "PASS"
+    },
+    {
+      "name": "05 RAFI_STATES present in JS",
+      "status": "PASS"
+    },
+    {
+      "name": "06 setRAFIState function present in JS",
+      "status": "PASS"
+    },
+    {
+      "name": "07 showHandoffScreen present in JS",
+      "status": "PASS"
+    },
+    {
+      "name": "08 Auto-advance boolean answer with 400ms delay in JS",
+      "status": "PASS"
+    },
+    {
+      "name": "09 result-price-container class in CSS",
+      "status": "PASS"
+    },
+    {
+      "name": "10 result-price-number class in CSS",
+      "status": "PASS"
+    },
+    {
+      "name": "11 result-price-unit class in CSS",
+      "status": "PASS"
+    },
+    {
+      "name": "12 scope-chip class in CSS",
+      "status": "PASS"
+    },
+    {
+      "name": "13 scope-collapse-trigger class in CSS",
+      "status": "PASS"
+    },
+    {
+      "name": "14 labour-disclosure class in CSS or JS",
+      "status": "PASS"
+    },
+    {
+      "name": "15 Diagnostic deduction copy in JS",
+      "status": "PASS"
+    },
+    {
+      "name": "16 Quote \"vérifiée sur place\" copy in JS",
+      "status": "PASS"
+    },
+    {
+      "name": "17 Safety \"vérification nécessaire\" copy in JS",
+      "status": "PASS"
+    },
+    {
+      "name": "18 Route \"autre métier\" copy in JS",
+      "status": "PASS"
+    },
+    {
+      "name": "19 64px price size in CSS",
+      "status": "PASS"
+    },
+    {
+      "name": "20 No #A0A0A0 as --color-text-secondary in CSS",
+      "status": "PASS"
+    },
+    {
+      "name": "21 \"Trouver un artisan\" CTA label in JS",
+      "status": "PASS"
+    },
+    {
+      "name": "22 \"Réserver le diagnostic\" CTA label in JS",
+      "status": "PASS"
+    },
+    {
+      "name": "23 \"Demander un devis\" CTA label in JS",
+      "status": "PASS"
+    },
+    {
+      "name": "24 220ms or 200ms transition in CSS",
+      "status": "PASS"
+    },
+    {
+      "name": "25 RAFI pulse animation @keyframes pulse-glow in CSS",
+      "status": "PASS"
+    },
+    {
+      "name": "26 intelligence-line animated accent in CSS",
+      "status": "PASS"
+    },
+    {
+      "name": "27 Mobile adaptive height (min/dvh) in CSS",
+      "status": "PASS"
+    },
+    {
+      "name": "28 safe-area-inset preserved in CSS",
+      "status": "PASS"
+    },
+    {
+      "name": "29 No floor-to-painted conversion in JS",
+      "status": "PASS"
+    },
+    {
+      "name": "30 No production imports in JS",
+      "status": "PASS"
+    },
+    {
+      "name": "31 All 8 outcome types referenced in JS",
+      "status": "PASS"
+    },
+    {
+      "name": "32 24px modal radius in CSS",
+      "status": "PASS"
+    },
+    {
+      "name": "33 Layered box-shadow in CSS",
+      "status": "PASS"
+    },
+    {
+      "name": "34 Warm background #FDFCFA in CSS",
+      "status": "PASS"
+    },
+    {
+      "name": "35 Progress de-emphasis (opacity 0.45 or result-active) in CSS or JS",
+      "status": "PASS"
+    },
+    {
+      "name": "36 Labour+part never summed in JS",
+      "status": "PASS"
+    },
+    {
+      "name": "37 Handoff screen has \"Retour au prototype\" text",
+      "status": "PASS"
+    },
+    {
+      "name": "38 RAFI_STATES all 5 states present in JS",
+      "status": "PASS"
+    },
+    {
+      "name": "39 .launcher class in CSS",
+      "status": "PASS"
+    },
+    {
+      "name": "40 intelligence-line width transition 400ms in CSS",
+      "status": "PASS"
+    }
+  ]
+}

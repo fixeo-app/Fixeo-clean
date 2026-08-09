@@ -6,7 +6,7 @@
   <title>FIXEO Estimator — Prototype Interne</title>
   <!--
     ═══════════════════════════════════════════════════════════════
-    FIXEO Estimator Dormant Visual Prototype — Phase 7C.8B
+    FIXEO Estimator Dormant Visual Prototype — Phase 7C.8C
     Status: PROTOTYPE INTERNE — NON PRODUCTION
     Engine: DORMANT | Orchestrator: DORMANT | Production: BLOCKED
     ═══════════════════════════════════════════════════════════════
@@ -36,8 +36,9 @@
 
 <!-- ── Demo Launcher ─────────────────────────────────────────────── -->
 <div class="launcher" id="launcher">
+  <span class="launcher-label">PROTOTYPE LAUNCHER — NON PRODUCTION</span>
   <div class="launcher__badge">Prototype Interne — Non Production</div>
-  <h1 class="launcher__title">FIXEO Estimator — Prototype V1</h1>
+  <h1 class="launcher__title">FIXEO Estimator — Prototype V2</h1>
   <p class="launcher__sub">
     Sélectionnez un scénario pour tester l'expérience estimateur.
     Toutes les valeurs proviennent de l'orchestrateur dormant — aucun calcul de prix dans l'UI.
@@ -139,7 +140,6 @@ var FIXTURES_DATA = [
 /* ─── Simulated Outcomes (from pre-run orchestrator — zero UI calculation) ── */
 // These outcomes were computed by running the real orchestrator + engine.
 // The UI only renders these — it does NOT recompute prices.
-// Source: node -e "... resolveFlow ..." (see estimator-prototype-fixtures.js)
 var SIMULATED_OUTCOMES = {
   A: { outcome_type:'PRICE_READY', commercial_output_type:'FIXEO_PRICE',
        service_code:'menuiserie.reglage_porte.sans_rabotage',
@@ -231,6 +231,84 @@ function stageFromState(state) {
   return 'BESOIN';
 }
 
+/* RAFI state */
+var RAFI_STATES = {
+  idle:       { label: 'RAFI',          copy: 'Analyse de votre besoin' },
+  analyzing:  { label: 'RAFI analyse',  copy: 'Identification de l\'intervention…' },
+  identified: { label: 'RAFI',          copy: 'Intervention identifiée' },
+  verifying:  { label: 'RAFI vérifie',  copy: 'Vérification du périmètre' },
+  complete:   { label: 'RAFI',          copy: 'Prix FIXEO prêt' },
+};
+
+function setRAFIState(state) {
+  var s = RAFI_STATES[state] || RAFI_STATES.idle;
+  var markEl = document.getElementById('rafi-mark');
+  var lineEl = document.getElementById('rafi-state-line');
+  if (markEl) {
+    markEl.textContent = s.label;
+    markEl.classList.remove('rafi-pulse');
+    void markEl.offsetWidth;
+    markEl.classList.add('rafi-pulse');
+    setTimeout(function(){ markEl.classList.remove('rafi-pulse'); }, 300);
+  }
+  if (lineEl) {
+    lineEl.style.opacity = '0';
+    setTimeout(function(){ lineEl.textContent = s.copy; lineEl.style.opacity = '1'; }, 90);
+  }
+}
+
+/* Handoff screen — replaces browser alert */
+function showHandoffScreen(session, outcome) {
+  var bodySlot = document.getElementById('body-slot');
+  var footerSlot = document.getElementById('footer-slot');
+  if (!bodySlot || !footerSlot) return;
+  setRAFIState('verifying');
+
+  var serviceName = outcome && outcome.service_code
+    ? outcome.service_code.split('.').pop().replace(/_/g, ' ')
+    : '';
+
+  var body = el('div', 'estimator-body step-enter handoff-screen');
+  body.appendChild(el('div', 'handoff-title', 'Réservation — handoff prototype'));
+  if (serviceName) body.appendChild(el('div', 'result-service-name', serviceName));
+  if (outcome && outcome.price) {
+    var amt = outcome.price.amount_mad || outcome.price.labour_amount_mad;
+    if (amt) body.appendChild(el('div', 'handoff-price', formatMAD(amt)));
+  }
+  body.appendChild(el('div', 'handoff-body',
+    'En production : ce bouton démarrerait la réservation FIXEO. Dans ce prototype, la réservation est dormante.'));
+  bodySlot.innerHTML = '';
+  bodySlot.appendChild(body);
+
+  var footer = el('div', 'estimator-footer');
+  var backBtn = el('button', 'handoff-back btn-secondary', 'Retour au prototype');
+  backBtn.onclick = closeModal;
+  footer.appendChild(backBtn);
+  footerSlot.innerHTML = '';
+  footerSlot.appendChild(footer);
+}
+
+/* ctaLabel */
+function ctaLabel(outcome) {
+  var ot = outcome && outcome.outcome_type;
+  switch(ot) {
+    case 'PRICE_READY':
+    case 'LABOUR_PLUS_PART_READY':
+      if (outcome.price && outcome.price.labour_amount_mad) {
+        return 'Trouver un artisan — Main-d\'œuvre ' + formatMAD(outcome.price.labour_amount_mad);
+      }
+      return 'Trouver un artisan — ' + formatMAD(outcome.price && outcome.price.amount_mad);
+    case 'DIAGNOSTIC_READY':
+      return 'Réserver le diagnostic — ' + formatMAD(outcome.price && outcome.price.amount_mad);
+    case 'QUOTE_REQUIRED':
+      return 'Demander un devis';
+    case 'ROUTE_REQUIRED':
+      return 'Continuer' + (outcome.target_metier ? ' en ' + outcome.target_metier : '');
+    default:
+      return 'Continuer';
+  }
+}
+
 function renderProgress(activeStage) {
   var stages = ['BESOIN','PRECISIONS','RESULTAT'];
   var labels = {BESOIN:'Besoin',PRECISIONS:'Précisions',RESULTAT:'Résultat FIXEO'};
@@ -257,13 +335,28 @@ function renderProgress(activeStage) {
 function renderHeader(session) {
   var h = el('div','estimator-header');
   h.setAttribute('id','estimator-header');
-  var glyph = el('div','estimator-header__rafi','R');
-  h.appendChild(glyph);
-  var tw = el('div','estimator-header__title');
-  tw.appendChild(el('div','','Estimation FIXEO'));
-  tw.appendChild(el('div','estimator-header__sub','Identifions l\'intervention et son prix.'));
-  h.appendChild(tw);
-  var close = el('button','estimator-header__close','×');
+
+  // Intelligence line
+  var intLine = el('div','intelligence-line');
+  h.appendChild(intLine);
+
+  // Header left
+  var left = el('div','header-left');
+  var rafiMark = el('span','rafi-indicator');
+  rafiMark.setAttribute('id','rafi-mark');
+  rafiMark.textContent = 'RAFI';
+  left.appendChild(rafiMark);
+
+  var headerText = el('div','header-text');
+  headerText.appendChild(el('div','header-title','Estimation FIXEO'));
+  var rafiLine = el('div','rafi-state');
+  rafiLine.setAttribute('id','rafi-state-line');
+  rafiLine.textContent = 'Analyse de votre besoin';
+  headerText.appendChild(rafiLine);
+  left.appendChild(headerText);
+  h.appendChild(left);
+
+  var close = el('button','modal-close','×');
   close.setAttribute('aria-label','Fermer');
   close.setAttribute('id','modal-close');
   close.onclick = closeModal;
@@ -273,35 +366,46 @@ function renderHeader(session) {
 
 function renderContext(session) {
   if (!session || !session.metier) return null;
-  var ctx = el('div','estimator-context');
-  var isRafi = session.entry_context && session.entry_context.entry_point === 'RAFI';
-  var rafi = el('span','rafi-indicator', isRafi ? 'RAFI a identifié :' : 'RAFI a identifié :');
-  ctx.appendChild(rafi);
+  var ctx = el('div','estimator-context rafi-question-header');
+  var rafiSmall = el('span','rafi-indicator small','RAFI vérifie');
+  ctx.appendChild(rafiSmall);
+  ctx.appendChild(el('span','context-detail',' un détail'));
   var parts = [];
   if (session.metier) parts.push(METIER_LABELS[session.metier] || session.metier);
   if (session.service_code) parts.push(session.service_code.split('.').pop().replace(/_/g,' '));
-  ctx.appendChild(el('span','rafi-identified', parts.join(' — ')));
+  if (parts.length) ctx.appendChild(el('span','rafi-identified',' — '+parts.join(' — ')));
   return ctx;
 }
 
-function renderScopeList(included, excluded) {
+function renderScopeChips(included, excluded) {
   var defaults = ['Déplacement','Main-d\'oeuvre','Fournitures standard','Test final'];
   var items = (included && included.length) ? included : defaults;
-  var section = el('div','scope-section');
-  var incH = el('div','scope-heading','Compris :');
-  var incL = el('ul','scope-list'); incL.setAttribute('aria-label','Ce qui est compris');
-  items.forEach(function(i){ incL.appendChild(el('li','',i)); });
-  section.appendChild(incH); section.appendChild(incL);
+
+  var wrap = el('div','');
+  var chips = el('div','scope-chips');
+  items.forEach(function(i){ chips.appendChild(el('span','scope-chip',i)); });
+  wrap.appendChild(chips);
+
   if (excluded && excluded.length) {
-    var excH = el('div','scope-heading','Non compris :');
-    var excL = el('ul','scope-list'); excL.setAttribute('aria-label','Ce qui n\'est pas compris');
-    excluded.forEach(function(i){ excL.appendChild(el('li','',i)); });
-    section.appendChild(excH); section.appendChild(excL);
+    var trigger = el('span','scope-collapse-trigger','Voir les exclusions ▾');
+    var excDiv = el('div','scope-exclusions');
+    excDiv.setAttribute('hidden','');
+    var excChips = el('div','scope-chips');
+    excluded.forEach(function(i){ excChips.appendChild(el('span','scope-chip',i)); });
+    excDiv.appendChild(excChips);
+    trigger.addEventListener('click', function() {
+      var hidden = excDiv.hasAttribute('hidden');
+      if (hidden) { excDiv.removeAttribute('hidden'); trigger.textContent='Masquer les exclusions ▴'; }
+      else { excDiv.setAttribute('hidden',''); trigger.textContent='Voir les exclusions ▾'; }
+    });
+    wrap.appendChild(trigger);
+    wrap.appendChild(excDiv);
   }
-  section.appendChild(el('p','scope-doctrine',
+
+  wrap.appendChild(el('p','scope-doctrine',
     'Ce prix s\'applique au périmètre indiqué. Si l\'intervention réelle est différente, ' +
     'l\'artisan doit vous l\'expliquer et obtenir votre accord avant de continuer.'));
-  return section;
+  return wrap;
 }
 
 function renderOutcomeBody(session) {
@@ -309,94 +413,100 @@ function renderOutcomeBody(session) {
   var ot = session.state;
   var ct = outcome.commercial_output_type;
 
-  if (ot === 'PRICE_READY' && ct === 'FIXEO_CALCULATED_PRICE') {
-    var body = el('div','estimator-body step-enter');
-    body.appendChild(el('div','result-identified','✓ Votre intervention est identifiée'));
+  if (ot === 'PRICE_READY') {
+    var body = el('div','estimator-body step-enter result-enter');
+    body.appendChild(el('div','result-identified','✓ Intervention identifiée'));
     body.appendChild(el('div','result-service-name',
       outcome.service_code.split('.').pop().replace(/_/g,' ')));
-    var trace = outcome._calc_trace || {};
-    if (trace.worker_count)
-      body.appendChild(el('div','result-basis',
-        trace.worker_count+' prestataire(s) × '+trace.hours+' heure(s) × '+trace.rate+' MAD'));
-    body.appendChild(el('div','result-price', formatMAD(outcome.price && outcome.price.amount_mad)));
-    body.appendChild(el('div','result-price-label','Prix FIXEO calculé'));
-    body.appendChild(renderScopeList(outcome.scope_summary, outcome.exclusions_summary));
+    var amtNum = outcome.price && outcome.price.amount_mad != null
+      ? Math.round(outcome.price.amount_mad).toString() : '—';
+    var priceContainer = el('div','result-price-container');
+    var priceRow = el('div','result-price');
+    priceRow.appendChild(el('span','result-price-number',amtNum));
+    priceRow.appendChild(el('span','result-price-unit','MAD'));
+    priceContainer.appendChild(priceRow);
+    priceContainer.appendChild(el('div','result-price-label','PRIX FIXEO'));
+    priceContainer.appendChild(el('div','result-price-scope','Applicable au périmètre identifié'));
+    body.appendChild(priceContainer);
+    body.appendChild(renderScopeChips(outcome.scope_summary, outcome.exclusions_summary));
     return body;
   }
-  if (ot === 'PRICE_READY') {
-    var body2 = el('div','estimator-body step-enter');
-    body2.appendChild(el('div','result-identified','✓ Votre intervention est identifiée'));
-    body2.appendChild(el('div','result-service-name',
-      outcome.service_code.split('.').pop().replace(/_/g,' ')));
-    body2.appendChild(el('div','result-price', formatMAD(outcome.price && outcome.price.amount_mad)));
-    body2.appendChild(el('div','result-price-label','PRIX FIXEO'));
-    body2.appendChild(renderScopeList(outcome.scope_summary, outcome.exclusions_summary));
-    return body2;
-  }
   if (ot === 'LABOUR_PLUS_PART_READY') {
-    var body3 = el('div','estimator-body step-enter');
-    body3.appendChild(el('div','result-identified','✓ Votre intervention est identifiée'));
+    var body3 = el('div','estimator-body step-enter result-enter');
+    body3.appendChild(el('div','result-identified','✓ Intervention identifiée'));
     body3.appendChild(el('div','result-service-name',
       outcome.service_code.split('.').pop().replace(/_/g,' ')));
     var labAmt = outcome.price && outcome.price.labour_amount_mad;
-    var cards = el('div','labour-part-cards');
     var lcard = el('div','labour-card');
-    lcard.appendChild(el('div','labour-card__label','Main-d\'oeuvre FIXEO'));
-    lcard.appendChild(el('div','labour-card__amount',formatMAD(labAmt)));
-    cards.appendChild(lcard);
+    lcard.appendChild(el('div','labour-card__label','Main-d\'œuvre FIXEO'));
+    var amtEl = el('div','labour-card__amount');
+    amtEl.appendChild(el('span','',labAmt != null ? Math.round(labAmt).toString() : '—'));
+    amtEl.appendChild(el('span','result-price-unit','MAD'));
+    lcard.appendChild(amtEl);
+    body3.appendChild(lcard);
     var pcard = el('div','part-card');
     pcard.appendChild(el('div','part-card__label','Pièce / matériel'));
-    pcard.appendChild(el('div','part-card__value','Non compris dans les '+formatMAD(labAmt)));
-    cards.appendChild(pcard);
-    body3.appendChild(cards);
-    body3.appendChild(el('div','part-disclosure',
+    pcard.appendChild(el('div','part-card__value','Prix séparé — à confirmer avec l\'artisan'));
+    body3.appendChild(pcard);
+    body3.appendChild(el('div','labour-disclosure',
       'Si l\'artisan fournit la pièce, son prix doit vous être communiqué et approuvé avant installation.'));
     return body3;
   }
   if (ot === 'DIAGNOSTIC_READY') {
-    var body4 = el('div','estimator-body step-enter');
-    body4.appendChild(el('div','diagnostic-intro','Votre intervention nécessite d\'abord un diagnostic.'));
+    var body4 = el('div','estimator-body step-enter result-enter');
+    body4.appendChild(el('div','result-identified','✓ Intervention identifiée'));
+    body4.appendChild(el('div','diagnostic-intro','Un diagnostic est nécessaire avant réparation.'));
     var diagAmt = outcome.price && (outcome.price.amount_mad || outcome.diagnostic_price_mad);
-    body4.appendChild(el('div','result-price',formatMAD(diagAmt)));
-    body4.appendChild(el('div','result-price-label','Diagnostic FIXEO'));
-    var metier = outcome.service_code ? outcome.service_code.split('.')[0] : 'electricite';
-    body4.appendChild(el('div','diagnostic-absorption', ABSORPTION_COPY[metier] || ABSORPTION_COPY.electricite));
+    var diagNum = diagAmt != null ? Math.round(diagAmt).toString() : '—';
+    var diagContainer = el('div','result-price-container');
+    var diagRow = el('div','result-price');
+    diagRow.appendChild(el('span','result-price-number',diagNum));
+    diagRow.appendChild(el('span','result-price-unit','MAD'));
+    diagContainer.appendChild(diagRow);
+    diagContainer.appendChild(el('div','result-price-label','DIAGNOSTIC FIXEO'));
+    body4.appendChild(diagContainer);
+    body4.appendChild(el('div','diagnostic-absorption',
+      'Ce diagnostic peut être déduit d\'une réparation éligible selon les conditions du service.'));
     return body4;
   }
   if (ot === 'QUOTE_REQUIRED') {
-    var body5 = el('div','estimator-body step-enter');
-    body5.appendChild(el('div','quote-title','Cette intervention nécessite un devis.'));
+    var body5 = el('div','estimator-body step-enter result-enter');
+    body5.appendChild(el('div','quote-title','Cette intervention doit être vérifiée sur place.'));
     body5.appendChild(el('div','quote-reason',
-      'L\'intervention dépasse le périmètre standard et requiert une évaluation personnalisée sur place.'));
+      'FIXEO vous oriente vers un devis adapté au périmètre réel.'));
     return body5;
   }
   if (ot === 'SAFETY_STOP') {
     var body6 = el('div','estimator-body step-enter safety-stop-body');
-    body6.appendChild(el('div','safety-icon','⚠'));
+    var safetyWrap = el('div','safety-surface');
+    safetyWrap.appendChild(el('span','safety-icon','⚠'));
     var st = el('h2','safety-title','Une vérification est nécessaire avant de continuer.');
     st.setAttribute('id','safety-heading');
-    body6.appendChild(st);
-    body6.appendChild(el('div','safety-body',
+    safetyWrap.appendChild(st);
+    safetyWrap.appendChild(el('div','safety-body',
       'Pour votre sécurité, nous ne pouvons pas établir un prix dans cette situation. '+
-      'Veuillez cesser d\'utiliser l\'installation et contacter un professionnel qualifié.'));
+      'Veuillez cesser d\'utiliser l\'installation.'));
+    safetyWrap.appendChild(el('div','safety-body',
+      'Nous vous recommandons de contacter un professionnel qualifié.'));
+    body6.appendChild(safetyWrap);
     return body6;
   }
   if (ot === 'ROUTE_REQUIRED') {
-    var body7 = el('div','estimator-body step-enter');
-    body7.appendChild(el('div','route-title','Cette intervention relève d\'un autre métier.'));
+    var body7 = el('div','estimator-body step-enter result-enter');
+    body7.appendChild(el('div','route-title','RAFI a identifié un autre métier plus adapté.'));
     body7.appendChild(el('div','route-sub','FIXEO vous redirige vers le bon type d\'artisan.'));
     return body7;
   }
   if (ot === 'REQUALIFY') {
-    var body8 = el('div','estimator-body step-enter');
+    var body8 = el('div','estimator-body step-enter result-enter');
     body8.appendChild(el('div','requali-title','Votre besoin dépasse le périmètre du prix standard.'));
     body8.appendChild(el('div','requali-body','Un artisan FIXEO vous contactera pour un devis personnalisé.'));
     return body8;
   }
   // PAGE_REQUIRED / QUALIFICATION
   var body9 = el('div','estimator-body step-enter');
-  body9.appendChild(el('div','handoff-title','Cette intervention demande quelques précisions supplémentaires.'));
-  body9.appendChild(el('div','handoff-body','Continuez sur la page estimation pour finaliser votre demande.'));
+  body9.appendChild(el('div','handoff-title','RAFI vérifie votre intervention'));
+  body9.appendChild(el('div','handoff-body','Quelques précisions supplémentaires sont nécessaires pour calculer correctement le prix.'));
   return body9;
 }
 
@@ -406,24 +516,20 @@ function renderOutcomeFooter(session) {
   var footer = el('div','estimator-footer');
   footer.setAttribute('id','estimator-footer');
 
-  if (ot === 'PRICE_READY') {
-    var amt = outcome.price && outcome.price.amount_mad;
-    var btn = el('button','btn-primary','Continuer avec ce prix — '+formatMAD(amt));
-    btn.onclick = function(){ alert('Réservation → (dormante)'); };
+  // Build outcome-for-cta
+  var outcomeForCta = Object.assign({}, outcome, { outcome_type: ot });
+
+  if (ot === 'PRICE_READY' || ot === 'LABOUR_PLUS_PART_READY') {
+    var btn = el('button','btn-primary', ctaLabel(outcomeForCta));
+    btn.onclick = function(){ showHandoffScreen(session, outcome); };
     footer.appendChild(btn);
-  } else if (ot === 'LABOUR_PLUS_PART_READY') {
-    var labAmt = outcome.price && outcome.price.labour_amount_mad;
-    var btn2 = el('button','btn-primary','Continuer — Main-d\'oeuvre '+formatMAD(labAmt));
-    btn2.onclick = function(){ alert('Réservation → (dormante)'); };
-    footer.appendChild(btn2);
   } else if (ot === 'DIAGNOSTIC_READY') {
-    var diagAmt = outcome.price && (outcome.price.amount_mad || outcome.diagnostic_price_mad);
-    var btn3 = el('button','btn-primary','Réserver le diagnostic — '+formatMAD(diagAmt));
-    btn3.onclick = function(){ alert('Réservation → (dormante)'); };
+    var btn3 = el('button','btn-primary', ctaLabel(outcomeForCta));
+    btn3.onclick = function(){ showHandoffScreen(session, outcome); };
     footer.appendChild(btn3);
   } else if (ot === 'QUOTE_REQUIRED') {
-    var btn4 = el('button','btn-primary','Demander un devis');
-    btn4.onclick = function(){ alert('Devis → (dormant)'); };
+    var btn4 = el('button','btn-primary', ctaLabel(outcomeForCta));
+    btn4.onclick = function(){ showHandoffScreen(session, outcome); };
     footer.appendChild(btn4);
   } else if (ot === 'SAFETY_STOP') {
     // No CTA — safety stop
@@ -435,7 +541,7 @@ function renderOutcomeFooter(session) {
     footer.appendChild(btn5);
   } else {
     var btn6 = el('button','btn-primary','Continuer');
-    btn6.onclick = function(){ alert('Flux → (dormant)'); };
+    btn6.onclick = function(){ showHandoffScreen(session, outcome); };
     footer.appendChild(btn6);
   }
 
@@ -464,35 +570,59 @@ function renderModalForFixture(fixtureId) {
   modal.setAttribute('aria-modal','true');
   modal.setAttribute('aria-labelledby','estimator-header');
 
+  var stage = stageFromState(session.state);
+  if (stage === 'RESULTAT') modal.classList.add('result-active');
+
   // Header
   modal.appendChild(renderHeader(session));
 
   // Progress
-  var stage = stageFromState(session.state);
-  modal.appendChild(renderProgress(stage));
+  var progressSlot = el('div','');
+  progressSlot.setAttribute('id','progress-slot');
+  progressSlot.appendChild(renderProgress(stage));
+  modal.appendChild(progressSlot);
 
-  // Context (RAFI indicator)
+  // Context
+  var ctxSlot = el('div','');
+  ctxSlot.setAttribute('id','ctx-slot');
   var ctx = renderContext(session);
-  if (ctx) modal.appendChild(ctx);
+  if (ctx) ctxSlot.appendChild(ctx);
+  modal.appendChild(ctxSlot);
 
   // Body
-  modal.appendChild(renderOutcomeBody(session));
+  var bodySlot = el('div','');
+  bodySlot.setAttribute('id','body-slot');
+  bodySlot.appendChild(renderOutcomeBody(session));
+  modal.appendChild(bodySlot);
 
   // Footer
-  modal.appendChild(renderOutcomeFooter(session));
+  var footerSlot = el('div','');
+  footerSlot.setAttribute('id','footer-slot');
+  footerSlot.appendChild(renderOutcomeFooter(session));
+  modal.appendChild(footerSlot);
 
   backdrop.appendChild(modal);
   root.appendChild(backdrop);
   document.getElementById('launcher').style.display = 'none';
 
-  // Focus management
+  // Set RAFI state
+  var rafiState = stage === 'RESULTAT' ? 'complete' : 'verifying';
+  if (session.state === 'DIAGNOSTIC_READY') rafiState = 'identified';
+  if (session.state === 'SAFETY_STOP') rafiState = 'idle';
+  setTimeout(function(){ setRAFIState(rafiState); }, 50);
+
+  // Trigger intelligence line
+  var intLine = modal.querySelector('.intelligence-line');
+  if (intLine) {
+    setTimeout(function(){
+      intLine.classList.add('active');
+    }, 100);
+  }
+
   var firstBtn = modal.querySelector('button');
   if (firstBtn) firstBtn.focus();
-
-  // ESC to close (desktop)
   document.addEventListener('keydown', handleEsc);
 
-  // Announce result
   var live = document.getElementById('aria-live-result');
   if (live) live.textContent = 'Résultat chargé : ' + session.state;
 }
@@ -506,7 +636,6 @@ function closeModal() {
 }
 
 function launchDirect() {
-  // Show entry screen (métier selection)
   var root = document.getElementById('modal-root');
   root.innerHTML = '';
 
@@ -520,9 +649,18 @@ function launchDirect() {
   modal.setAttribute('aria-labelledby','estimator-header');
 
   modal.appendChild(renderHeader(null));
-  modal.appendChild(renderProgress('BESOIN'));
+
+  var progressSlot = el('div','');
+  progressSlot.setAttribute('id','progress-slot');
+  progressSlot.appendChild(renderProgress('BESOIN'));
+  modal.appendChild(progressSlot);
+
+  var ctxSlot = el('div','');
+  ctxSlot.setAttribute('id','ctx-slot');
+  modal.appendChild(ctxSlot);
 
   var body = el('div','estimator-body step-enter');
+  body.setAttribute('id','body-slot');
   body.appendChild(el('h2','entry-headline','Que faut-il réparer, installer ou entretenir ?'));
   var inputWrap = el('div','entry-input-wrap');
   var ta = document.createElement('textarea');
@@ -531,7 +669,7 @@ function launchDirect() {
   inputWrap.appendChild(ta);
   body.appendChild(inputWrap);
   body.appendChild(el('p','',
-    '<span style="font-size:12px;color:#A0A0A0">Ou choisissez directement :</span>'));
+    '<span style="font-size:12px;color:#8A8784">Ou choisissez directement :</span>'));
 
   var chips = el('div','metier-shortcuts');
   var metierList = [
@@ -547,24 +685,31 @@ function launchDirect() {
   metierList.forEach(function(m) {
     var chip = el('button','metier-chip', m.icon + ' ' + m.label);
     chip.setAttribute('type','button');
-    chip.onclick = function() { alert('Prototype: sélectionner "'+ m.label +'" démarrerait le flux qualification.\n(Orchestrateur Node requis pour complétion interactive.)'); };
+    chip.onclick = function() {
+      // showHandoffScreen for prototype — no real flow without Node
+      var mockSession = { metier: m.code, service_code: null, state: 'QUALIFICATION' };
+      showHandoffScreen(mockSession, null);
+    };
     chips.appendChild(chip);
   });
   body.appendChild(chips);
+  modal.appendChild(body);
 
   var footer = el('div','estimator-footer');
+  footer.setAttribute('id','footer-slot');
   var cta = el('button','btn-primary','Continuer');
   cta.onclick = function() {
-    alert('En production: RAFI classerait le texte et démarrerait l\'orchestrateur.\nPrototype: utilisez les boutons de scénarios.');
+    var mockSession = { metier: null, service_code: null, state: 'QUALIFICATION' };
+    showHandoffScreen(mockSession, null);
   };
   footer.appendChild(cta);
-
-  modal.appendChild(body);
   modal.appendChild(footer);
+
   backdrop.appendChild(modal);
   root.appendChild(backdrop);
   document.getElementById('launcher').style.display = 'none';
   document.addEventListener('keydown', handleEsc);
+  setTimeout(function(){ setRAFIState('idle'); }, 50);
   if (ta) ta.focus();
 }
 

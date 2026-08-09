@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════════
-   FIXEO Estimator Dormant Visual Prototype — Phase 7C.8B
+   FIXEO Estimator Dormant Visual Prototype — Phase 7C.8C
    estimator-prototype.js — Component Renderers + Orchestrator Flow
    Status: PROTOTYPE INTERNE — NON PRODUCTION
    ═══════════════════════════════════════════════════════════════════
@@ -21,6 +21,36 @@ if (typeof require !== 'undefined') {
 // In browser: window.EstimatorAdapter must be set before this script runs.
 function getAdapter() {
   return _adapter || window.EstimatorAdapter;
+}
+
+/* ── RAFI State Machine ──────────────────────────────────────────── */
+var RAFI_STATES = {
+  idle:       { label: 'RAFI',          copy: 'Analyse de votre besoin' },
+  analyzing:  { label: 'RAFI analyse',  copy: 'Identification de l\'intervention…' },
+  identified: { label: 'RAFI',          copy: 'Intervention identifiée' },
+  verifying:  { label: 'RAFI vérifie',  copy: 'Vérification du périmètre' },
+  complete:   { label: 'RAFI',          copy: 'Prix FIXEO prêt' },
+};
+
+function setRAFIState(state) {
+  var s = RAFI_STATES[state] || RAFI_STATES.idle;
+  var markEl = document.getElementById('rafi-mark');
+  var lineEl = document.getElementById('rafi-state-line');
+  if (markEl) {
+    markEl.textContent = s.label;
+    markEl.classList.remove('rafi-pulse');
+    // force reflow for re-trigger
+    void markEl.offsetWidth;
+    markEl.classList.add('rafi-pulse');
+    setTimeout(function() { markEl.classList.remove('rafi-pulse'); }, 300);
+  }
+  if (lineEl) {
+    lineEl.style.opacity = '0';
+    setTimeout(function() {
+      lineEl.textContent = s.copy;
+      lineEl.style.opacity = '1';
+    }, 90);
+  }
 }
 
 /* ── State ──────────────────────────────────────────────────────── */
@@ -76,6 +106,81 @@ function formatMAD(n) {
   return Math.round(n).toString() + ' MAD';
 }
 
+/* ── Context-sensitive CTA labels ────────────────────────────────── */
+function ctaLabel(outcome) {
+  var ot = outcome && outcome.outcome_type;
+  switch (ot) {
+    case 'PRICE_READY':
+    case 'LABOUR_PLUS_PART_READY':
+      if (outcome.price && outcome.price.labour_amount_mad) {
+        return 'Trouver un artisan — Main-d\'œuvre ' + formatMAD(outcome.price.labour_amount_mad);
+      }
+      return 'Trouver un artisan — ' + formatMAD(outcome.price && outcome.price.amount_mad);
+    case 'DIAGNOSTIC_READY':
+      return 'Réserver le diagnostic — ' + formatMAD(outcome.price && outcome.price.amount_mad);
+    case 'QUOTE_REQUIRED':
+      return 'Demander un devis';
+    case 'ROUTE_REQUIRED':
+      return 'Continuer' + (outcome.target_metier ? ' en ' + outcome.target_metier : '');
+    default:
+      return 'Continuer';
+  }
+}
+
+/* ── Handoff screen (replaces browser alert for reservation) ──────────── */
+function showHandoffScreen(session, outcome) {
+  var bodySlot = document.getElementById('body-slot');
+  var footerSlot = document.getElementById('footer-slot');
+  if (!bodySlot || !footerSlot) return;
+
+  setRAFIState('verifying');
+
+  var serviceName = outcome && outcome.service_code
+    ? outcome.service_code.split('.').pop().replace(/_/g, ' ')
+    : (session && session.service_code ? session.service_code.split('.').pop().replace(/_/g, ' ') : 'Prestation');
+
+  var body = el('div', 'estimator-body step-enter handoff-screen');
+
+  var title = el('div', 'handoff-title', 'Réservation — handoff prototype');
+  body.appendChild(title);
+
+  if (serviceName) {
+    body.appendChild(el('div', 'result-service-name', serviceName));
+  }
+
+  if (outcome && outcome.price) {
+    var priceAmt = outcome.price.amount_mad || outcome.price.labour_amount_mad;
+    if (priceAmt) {
+      var priceEl = el('div', 'handoff-price', formatMAD(priceAmt));
+      body.appendChild(priceEl);
+    }
+  }
+
+  body.appendChild(el('div', 'handoff-body',
+    'En production : ce bouton démarrerait la réservation FIXEO. ' +
+    'Dans ce prototype, la réservation est dormante.'));
+
+  var metierLabel = session && session.metier
+    ? (METIER_LABELS[session.metier] || session.metier)
+    : '';
+  if (metierLabel) {
+    body.appendChild(el('div', 'diagnostic-intro', 'Métier : ' + metierLabel));
+  }
+
+  bodySlot.innerHTML = '';
+  bodySlot.appendChild(body);
+
+  var footer = el('div', 'estimator-footer');
+  var backBtn = el('button', 'handoff-back btn-secondary', 'Retour au prototype');
+  backBtn.addEventListener('click', function() {
+    if (STATE.onClose) STATE.onClose();
+  });
+  footer.appendChild(backBtn);
+
+  footerSlot.innerHTML = '';
+  footerSlot.appendChild(footer);
+}
+
 /* ── Focus trap ──────────────────────────────────────────────────── */
 function trapFocus(container) {
   var focusable = container.querySelectorAll(
@@ -96,29 +201,50 @@ function trapFocus(container) {
   first.focus();
 }
 
+/* ── Intelligence line animation ─────────────────────────────────── */
+function triggerIntelligenceLine() {
+  var line = document.querySelector('.intelligence-line');
+  if (!line) return;
+  line.classList.remove('active');
+  void line.offsetWidth;
+  line.classList.add('active');
+}
+
 /* ═══════════════════════════════════════════════════════════════════
    COMPONENT RENDERERS
    ═══════════════════════════════════════════════════════════════════ */
 
-/* EstimatorHeader */
+/* EstimatorHeader — new structure with RAFI state */
 function renderHeader(opts) {
   opts = opts || {};
   var header = el('div', 'estimator-header');
   header.setAttribute('id', 'estimator-header');
 
-  var glyph = el('div', 'estimator-header__rafi', 'R');
-  header.appendChild(glyph);
+  // Intelligence line
+  var intLine = el('div', 'intelligence-line');
+  header.appendChild(intLine);
 
-  var titleWrap = el('div', 'estimator-header__title');
-  titleWrap.appendChild(el('div', '', 'Estimation FIXEO'));
-  if (opts.subline) {
-    titleWrap.appendChild(el('div', 'estimator-header__sub', opts.subline));
-  }
-  header.appendChild(titleWrap);
+  // Header left: RAFI badge + text
+  var left = el('div', 'header-left');
 
-  var closeBtn = el('button', 'estimator-header__close', '×');
-  closeBtn.setAttribute('aria-label', 'Fermer l\'estimation');
-  closeBtn.setAttribute('id', 'estimator-close');
+  var rafiMark = el('span', 'rafi-indicator');
+  rafiMark.setAttribute('id', 'rafi-mark');
+  rafiMark.textContent = 'RAFI';
+  left.appendChild(rafiMark);
+
+  var headerText = el('div', 'header-text');
+  headerText.appendChild(el('div', 'header-title', 'Estimation FIXEO'));
+  var rafiStateLine = el('div', 'rafi-state');
+  rafiStateLine.setAttribute('id', 'rafi-state-line');
+  rafiStateLine.textContent = opts.rafiState || 'Analyse de votre besoin';
+  headerText.appendChild(rafiStateLine);
+  left.appendChild(headerText);
+  header.appendChild(left);
+
+  var closeBtn = el('button', 'modal-close');
+  closeBtn.setAttribute('aria-label', 'Fermer');
+  closeBtn.setAttribute('id', 'modal-close');
+  closeBtn.innerHTML = '×';
   closeBtn.addEventListener('click', function() { if (STATE.onClose) STATE.onClose(); });
   header.appendChild(closeBtn);
 
@@ -156,17 +282,18 @@ function renderProgress(activeStage) {
 /* RAFIIndicator + EstimatorContext */
 function renderContext(session) {
   if (!session || (!session.metier && !session.service_code)) return null;
-  var ctx = el('div', 'estimator-context');
-  var entry = session.entry_context && session.entry_context.entry_point;
-  var rafiText = (entry === 'RAFI') ? 'RAFI a identifié :' : 'RAFI a identifié :';
-  var rafi = el('span', 'rafi-indicator', rafiText);
+  var ctx = el('div', 'estimator-context rafi-question-header');
+  var rafi = el('span', 'rafi-indicator small', 'RAFI vérifie');
   ctx.appendChild(rafi);
+  ctx.appendChild(el('span', 'context-detail', ' un détail'));
 
-  var info = [];
-  if (session.metier) info.push(METIER_LABELS[session.metier] || session.metier);
-  if (session.service_label) info.push(session.service_label);
-  if (info.length) {
-    ctx.appendChild(el('span', 'rafi-identified', info.join(' — ')));
+  if (session.metier || session.service_label) {
+    var info = [];
+    if (session.metier) info.push(METIER_LABELS[session.metier] || session.metier);
+    if (session.service_label) info.push(session.service_label);
+    if (info.length) {
+      ctx.appendChild(el('span', 'rafi-identified', ' — ' + info.join(' — ')));
+    }
   }
   return ctx;
 }
@@ -174,8 +301,8 @@ function renderContext(session) {
 /* RAFIIndicator (verifying) */
 function renderRAFIVerifying() {
   var ctx = el('div', 'estimator-context');
-  ctx.appendChild(el('span', 'rafi-indicator', 'RAFI'));
-  ctx.appendChild(el('span', '', 'vérifie quelques détails avant d\'afficher le prix.'));
+  ctx.appendChild(el('span', 'rafi-indicator', 'RAFI vérifie'));
+  ctx.appendChild(el('span', 'context-detail', ' quelques détails avant d\'afficher le prix.'));
   return ctx;
 }
 
@@ -194,14 +321,13 @@ function renderAnswerCard(opt, isSelected, onSelect) {
   return card;
 }
 
-/* YesNoChoice */
+/* YesNo */
 function renderYesNo(includeUnknown, onSelect) {
   var opts = [
     { value: true,  label: 'Oui' },
     { value: false, label: 'Non' },
   ];
   if (includeUnknown) opts.push({ value: null, label: 'Je ne sais pas' });
-
   var wrap = el('div', 'answer-cards');
   opts.forEach(function(opt) {
     var card = renderAnswerCard(opt, STATE.pendingAnswer === opt.value, onSelect);
@@ -214,7 +340,6 @@ function renderYesNo(includeUnknown, onSelect) {
 function renderQuantityInput(current, min, max, onChange) {
   min = min || 1; max = max || 20;
   var row = el('div', 'quantity-row');
-
   var btnMinus = el('button', 'qty-btn', '−');
   btnMinus.setAttribute('aria-label', 'Diminuer');
   btnMinus.setAttribute('type', 'button');
@@ -224,10 +349,8 @@ function renderQuantityInput(current, min, max, onChange) {
     valEl.textContent = v;
     onChange(v);
   });
-
   var valEl = el('div', 'qty-value', String(STATE.quantityValue || current));
   valEl.setAttribute('aria-live', 'polite');
-
   var btnPlus = el('button', 'qty-btn', '+');
   btnPlus.setAttribute('aria-label', 'Augmenter');
   btnPlus.setAttribute('type', 'button');
@@ -237,7 +360,6 @@ function renderQuantityInput(current, min, max, onChange) {
     valEl.textContent = v;
     onChange(v);
   });
-
   row.appendChild(btnMinus);
   row.appendChild(valEl);
   row.appendChild(btnPlus);
@@ -249,7 +371,6 @@ function renderMeasurementInput(onChange) {
   var wrap = el('div', '');
   wrap.appendChild(el('p', 'diagnostic-intro',
     'Pour calculer correctement votre prix, nous avons besoin de la surface à peindre.'));
-
   var inp = el('input', 'measurement-input');
   inp.setAttribute('type', 'number');
   inp.setAttribute('min', '1');
@@ -269,8 +390,59 @@ function renderMeasurementInput(onChange) {
   return wrap;
 }
 
+/* ── Scope chips renderer ────────────────────────────────────────── */
+function renderScopeChips(included, excluded) {
+  var defaultIncluded = ['Déplacement', 'Main-d\'oeuvre', 'Fournitures standard', 'Test final'];
+  var items = (included && included.length > 0) ? included : defaultIncluded;
+
+  var wrap = el('div', '');
+
+  var chipsEl = el('div', 'scope-chips');
+  items.forEach(function(item) {
+    chipsEl.appendChild(el('span', 'scope-chip', typeof item === 'string' ? item : JSON.stringify(item)));
+  });
+  wrap.appendChild(chipsEl);
+
+  if (excluded && excluded.length > 0) {
+    var trigger = el('span', 'scope-collapse-trigger', 'Voir les exclusions ▾');
+    var exclusionsEl = el('div', 'scope-exclusions');
+    exclusionsEl.setAttribute('hidden', '');
+
+    var excChips = el('div', 'scope-chips');
+    excluded.forEach(function(item) {
+      excChips.appendChild(el('span', 'scope-chip', typeof item === 'string' ? item : JSON.stringify(item)));
+    });
+    exclusionsEl.appendChild(excChips);
+
+    trigger.addEventListener('click', function() {
+      var hidden = exclusionsEl.hasAttribute('hidden');
+      if (hidden) {
+        exclusionsEl.removeAttribute('hidden');
+        trigger.textContent = 'Masquer les exclusions ▴';
+      } else {
+        exclusionsEl.setAttribute('hidden', '');
+        trigger.textContent = 'Voir les exclusions ▾';
+      }
+    });
+    wrap.appendChild(trigger);
+    wrap.appendChild(exclusionsEl);
+  }
+
+  var doctrine = el('p', 'scope-doctrine',
+    'Ce prix s\'applique au périmètre indiqué. Si l\'intervention réelle est différente, ' +
+    'l\'artisan doit vous l\'expliquer et obtenir votre accord avant de continuer.');
+  wrap.appendChild(doctrine);
+
+  return wrap;
+}
+
+/* ── Scope List (legacy compat) ──────────────────────────────────── */
+function renderScopeList(included, excluded) {
+  return renderScopeChips(included, excluded);
+}
+
 /* EstimatorQuestion — renders one question screen */
-function renderQuestion(step) {
+function renderQuestion(step, onAutoAdvance) {
   var isSafety = step.priority === 'SAFETY';
   var body = el('div', 'estimator-body step-enter' + (isSafety ? ' question-safety' : ''));
 
@@ -281,6 +453,13 @@ function renderQuestion(step) {
     body.appendChild(note);
   }
 
+  // RAFI question header
+  var rafiHeader = el('div', 'estimator-context rafi-question-header');
+  var rafiSmall = el('span', 'rafi-indicator small', 'RAFI vérifie');
+  rafiHeader.appendChild(rafiSmall);
+  rafiHeader.appendChild(el('span', 'context-detail', ' un détail'));
+  body.appendChild(rafiHeader);
+
   var heading = el('h2', 'question-heading');
   heading.setAttribute('id', 'question-heading');
   heading.textContent = promptFromKey(step.prompt_key, step.question_id);
@@ -288,9 +467,10 @@ function renderQuestion(step) {
 
   STATE.pendingAnswer = null;
 
+  var isBoolean = step.answer_type === 'boolean';
+
   var onSelect = function(val) {
     STATE.pendingAnswer = val;
-    // Re-render cards with updated selection
     body.querySelectorAll('.answer-card').forEach(function(c) {
       var v = c.__optValue;
       var sel = (v === val || (val === true && v === true) || (val === false && v === false));
@@ -299,9 +479,16 @@ function renderQuestion(step) {
       c.querySelector('.answer-card__check').textContent = sel ? '✓' : '';
     });
     updateCTA(true);
+
+    // Auto-advance for boolean answers after 400ms
+    if (isBoolean && onAutoAdvance && typeof onAutoAdvance === 'function') {
+      setTimeout(function() {
+        onAutoAdvance(val);
+      }, 400);
+    }
   };
 
-  if (step.answer_type === 'boolean') {
+  if (isBoolean) {
     var includeUnknown = step.priority !== 'SAFETY';
     var cards = renderYesNo(includeUnknown, onSelect);
     cards.querySelectorAll('.answer-card').forEach(function(c, i) {
@@ -332,7 +519,6 @@ function renderQuestion(step) {
     body.appendChild(wrap2);
 
   } else {
-    // Fallback: free text / single yes/no
     var cards2 = renderYesNo(false, onSelect);
     cards2.querySelectorAll('.answer-card').forEach(function(c, i) {
       c.__optValue = [true, false][i];
@@ -362,7 +548,6 @@ var PROMPT_LABELS = {
 
 function promptFromKey(promptKey, questionId) {
   if (PROMPT_LABELS[promptKey]) return PROMPT_LABELS[promptKey];
-  // Derive from question_id prefix
   var base = questionId ? questionId.split('@')[0] : '';
   return PROMPT_LABELS[base] || questionId || 'Question de qualification';
 }
@@ -371,65 +556,38 @@ function optionLabel(opt) {
   return String(opt).replace(/_/g, ' ');
 }
 
-/* ── Scope List ─────────────────────────────────────────────────── */
-function renderScopeList(included, excluded) {
-  var defaultIncluded = ['Déplacement', 'Main-d\'oeuvre', 'Fournitures standard', 'Test final'];
-  var items = (included && included.length > 0) ? included : defaultIncluded;
-  var section = el('div', 'scope-section');
-
-  var incHeading = el('div', 'scope-heading', 'Compris :');
-  var incList = el('ul', 'scope-list');
-  incList.setAttribute('aria-label', 'Ce qui est compris');
-  items.forEach(function(item) {
-    incList.appendChild(el('li', '', typeof item === 'string' ? item : JSON.stringify(item)));
-  });
-  section.appendChild(incHeading);
-  section.appendChild(incList);
-
-  if (excluded && excluded.length > 0) {
-    var excHeading = el('div', 'scope-heading', 'Non compris :');
-    var excList = el('ul', 'scope-list');
-    excList.setAttribute('aria-label', 'Ce qui n\'est pas compris');
-    excluded.forEach(function(item) {
-      excList.appendChild(el('li', '', typeof item === 'string' ? item : JSON.stringify(item)));
-    });
-    section.appendChild(excHeading);
-    section.appendChild(excList);
-  }
-
-  var doctrine = el('p', 'scope-doctrine',
-    'Ce prix s\'applique au périmètre indiqué. Si l\'intervention réelle est différente, ' +
-    'l\'artisan doit vous l\'expliquer et obtenir votre accord avant de continuer.');
-  section.appendChild(doctrine);
-  return section;
-}
-
-/* ── PriceResult (FIXEO_PRICE / ADD_ON) ─────────────────────────── */
+/* ── PriceResult (FIXEO_PRICE) ───────────────────────────────────── */
 function renderPriceResult(outcome) {
-  var body = el('div', 'estimator-body step-enter');
-  body.appendChild(el('div', 'result-identified', '✓ Votre intervention est identifiée'));
+  var body = el('div', 'estimator-body step-enter result-enter');
+  body.appendChild(el('div', 'result-identified', '✓ Intervention identifiée'));
 
   var name = outcome.service_code ? outcome.service_code.split('.').pop().replace(/_/g, ' ') : 'Prestation';
   body.appendChild(el('div', 'result-service-name', name));
 
-  // Price comes from orchestrator outcome — UI does NOT compute this
   var amountMAD = outcome.price && outcome.price.amount_mad;
-  body.appendChild(el('div', 'result-price', formatMAD(amountMAD)));
-  body.appendChild(el('div', 'result-price-label', 'PRIX FIXEO'));
+  var amtNum = amountMAD != null ? Math.round(amountMAD).toString() : '—';
 
-  body.appendChild(renderScopeList(outcome.scope_summary, outcome.exclusions_summary));
+  var priceContainer = el('div', 'result-price-container');
+  var priceRow = el('div', 'result-price');
+  priceRow.appendChild(el('span', 'result-price-number', amtNum));
+  priceRow.appendChild(el('span', 'result-price-unit', 'MAD'));
+  priceContainer.appendChild(priceRow);
+  priceContainer.appendChild(el('div', 'result-price-label', 'PRIX FIXEO'));
+  priceContainer.appendChild(el('div', 'result-price-scope', 'Applicable au périmètre identifié'));
+  body.appendChild(priceContainer);
+
+  body.appendChild(renderScopeChips(outcome.scope_summary, outcome.exclusions_summary));
   return body;
 }
 
-/* ── CalculatedPriceResult (FIXEO_CALCULATED_PRICE) ─────────────── */
+/* ── CalculatedPriceResult ────────────────────────────────────────── */
 function renderCalculatedPriceResult(outcome, session) {
-  var body = el('div', 'estimator-body step-enter');
-  body.appendChild(el('div', 'result-identified', '✓ Votre intervention est identifiée'));
+  var body = el('div', 'estimator-body step-enter result-enter');
+  body.appendChild(el('div', 'result-identified', '✓ Intervention identifiée'));
 
   var name = outcome.service_code ? outcome.service_code.split('.').pop().replace(/_/g, ' ') : 'Prestation';
   body.appendChild(el('div', 'result-service-name', name));
 
-  // Build basis line from engine_result trace — UI reads, does NOT recalculate
   var engineResult = session && session.engine_result;
   var pricing = engineResult && engineResult.pricing;
   if (pricing && pricing.calculation_model === 'TIME_BASED_TEAM') {
@@ -442,107 +600,129 @@ function renderCalculatedPriceResult(outcome, session) {
   }
 
   var amountMAD = outcome.price && outcome.price.amount_mad;
-  body.appendChild(el('div', 'result-price', formatMAD(amountMAD)));
-  body.appendChild(el('div', 'result-price-label', 'Prix FIXEO calculé'));
-  body.appendChild(renderScopeList(outcome.scope_summary, outcome.exclusions_summary));
+  var amtNum = amountMAD != null ? Math.round(amountMAD).toString() : '—';
+
+  var priceContainer = el('div', 'result-price-container');
+  var priceRow = el('div', 'result-price');
+  priceRow.appendChild(el('span', 'result-price-number', amtNum));
+  priceRow.appendChild(el('span', 'result-price-unit', 'MAD'));
+  priceContainer.appendChild(priceRow);
+  priceContainer.appendChild(el('div', 'result-price-label', 'PRIX FIXEO'));
+  priceContainer.appendChild(el('div', 'result-price-scope', 'Applicable au périmètre identifié'));
+  body.appendChild(priceContainer);
+
+  body.appendChild(renderScopeChips(outcome.scope_summary, outcome.exclusions_summary));
   return body;
 }
 
 /* ── LabourPartResult ────────────────────────────────────────────── */
 function renderLabourPartResult(outcome) {
-  var body = el('div', 'estimator-body step-enter');
-  body.appendChild(el('div', 'result-identified', '✓ Votre intervention est identifiée'));
+  var body = el('div', 'estimator-body step-enter result-enter');
+  body.appendChild(el('div', 'result-identified', '✓ Intervention identifiée'));
 
   var name = outcome.service_code ? outcome.service_code.split('.').pop().replace(/_/g, ' ') : 'Prestation';
   body.appendChild(el('div', 'result-service-name', name));
 
-  var cards = el('div', 'labour-part-cards');
-
-  // Card 1 — Labour (amount from orchestrator)
   var labourAmt = outcome.price && outcome.price.labour_amount_mad;
-  var labour = el('div', 'labour-card');
-  labour.appendChild(el('div', 'labour-card__label', 'Main-d\'oeuvre FIXEO'));
-  labour.appendChild(el('div', 'labour-card__amount', formatMAD(labourAmt)));
-  cards.appendChild(labour);
 
-  // Card 2 — Part (never summed with labour)
-  var part = el('div', 'part-card');
-  part.appendChild(el('div', 'part-card__label', 'Pièce / matériel'));
-  part.appendChild(el('div', 'part-card__value', 'Non compris dans les ' + formatMAD(labourAmt)));
-  cards.appendChild(part);
+  var labourCard = el('div', 'labour-card');
+  labourCard.appendChild(el('div', 'labour-card__label', 'Main-d\'œuvre FIXEO'));
+  var amountEl = el('div', 'labour-card__amount');
+  amountEl.appendChild(el('span', '', labourAmt != null ? Math.round(labourAmt).toString() : '—'));
+  amountEl.appendChild(el('span', 'result-price-unit', 'MAD'));
+  labourCard.appendChild(amountEl);
+  body.appendChild(labourCard);
 
-  body.appendChild(cards);
-  body.appendChild(el('div', 'part-disclosure',
+  // part-card is separate — labour+part NEVER summed
+  var partCard = el('div', 'part-card');
+  partCard.appendChild(el('div', 'part-card__label', 'Pièce / matériel'));
+  partCard.appendChild(el('div', 'part-card__value', 'Prix séparé — à confirmer avec l\'artisan'));
+  body.appendChild(partCard);
+
+  // labour-disclosure: part price must be disclosed (Si l'artisan fournit la pièce...)
+  body.appendChild(el('div', 'labour-disclosure',
     'Si l\'artisan fournit la pièce, son prix doit vous être communiqué et approuvé avant installation.'));
+
   return body;
 }
 
 /* ── DiagnosticResult ────────────────────────────────────────────── */
 function renderDiagnosticResult(outcome) {
-  var body = el('div', 'estimator-body step-enter');
-  body.appendChild(el('div', 'diagnostic-intro',
-    'Votre intervention nécessite d\'abord un diagnostic.'));
+  var body = el('div', 'estimator-body step-enter result-enter');
+  body.appendChild(el('div', 'result-identified', '✓ Intervention identifiée'));
+  body.appendChild(el('div', 'diagnostic-intro', 'Un diagnostic est nécessaire avant réparation.'));
 
-  // Amount from orchestrator — exact integer, no "environ"
   var amountMAD = outcome.price && (outcome.price.amount_mad || outcome.diagnostic_price_mad);
-  body.appendChild(el('div', 'result-price', formatMAD(amountMAD)));
-  body.appendChild(el('div', 'result-price-label', 'Diagnostic FIXEO'));
+  var amtNum = amountMAD != null ? Math.round(amountMAD).toString() : '—';
 
-  var metier = outcome.service_code ? outcome.service_code.split('.')[0] : 'plomberie';
-  var absorption = ABSORPTION_COPY[metier] || ABSORPTION_COPY['electricite'];
-  body.appendChild(el('div', 'diagnostic-absorption', absorption));
+  var priceContainer = el('div', 'result-price-container');
+  var priceRow = el('div', 'result-price');
+  priceRow.appendChild(el('span', 'result-price-number', amtNum));
+  priceRow.appendChild(el('span', 'result-price-unit', 'MAD'));
+  priceContainer.appendChild(priceRow);
+  priceContainer.appendChild(el('div', 'result-price-label', 'DIAGNOSTIC FIXEO'));
+  body.appendChild(priceContainer);
+
+  body.appendChild(el('div', 'diagnostic-absorption',
+    'Ce diagnostic peut être déduit d\'une réparation éligible selon les conditions du service.'));
+
   return body;
 }
 
 /* ── QuoteResult ─────────────────────────────────────────────────── */
 function renderQuoteResult(outcome) {
-  var body = el('div', 'estimator-body step-enter');
-  body.appendChild(el('div', 'quote-title', 'Cette intervention nécessite un devis.'));
+  var body = el('div', 'estimator-body step-enter result-enter');
+  body.appendChild(el('div', 'quote-title', 'Cette intervention doit être vérifiée sur place.'));
   body.appendChild(el('div', 'quote-reason',
-    'L\'intervention dépasse le périmètre standard et requiert une évaluation personnalisée sur place.'));
-  // No price — QUOTE_REQUIRED is a valid outcome, not an error
+    'FIXEO vous oriente vers un devis adapté au périmètre réel.'));
   return body;
 }
 
 /* ── RouteResult ─────────────────────────────────────────────────── */
 function renderRouteResult(outcome) {
-  var body = el('div', 'estimator-body step-enter');
-  var targetMetier = (outcome && outcome.route_target_metier) || 'serrurerie';
-  body.appendChild(el('div', 'route-title',
-    'Cette intervention relève plutôt de la ' + (METIER_LABELS[targetMetier] || targetMetier) + '.'));
+  var body = el('div', 'estimator-body step-enter result-enter');
+  body.appendChild(el('div', 'route-title', 'RAFI a identifié un autre métier plus adapté.'));
+  var targetMetier = (outcome && (outcome.route_target_metier || outcome.target_metier)) || 'serrurerie';
   body.appendChild(el('div', 'route-sub',
-    'FIXEO vous redirige vers le bon type d\'artisan.'));
+    'Métier recommandé : ' + (METIER_LABELS[targetMetier] || targetMetier)));
   return body;
 }
 
 /* ── SafetyResult ────────────────────────────────────────────────── */
-function renderSafetyResult() {
+function renderSafetyResult(outcome) {
   var body = el('div', 'estimator-body step-enter safety-stop-body');
-  body.appendChild(el('div', 'safety-icon', '⚠'));
-  body.appendChild(el('h2', 'safety-title', 'Une vérification est nécessaire avant de continuer.'));
-  body.appendChild(el('div', 'safety-body',
-    'Pour votre sécurité, nous ne pouvons pas établir un prix dans cette situation. ' +
-    'Veuillez cesser d\'utiliser l\'installation et contacter un professionnel qualifié.'));
-  // No price — safety stop never shows price
+
+  var safetyWrap = el('div', 'safety-surface');
+  safetyWrap.appendChild(el('span', 'safety-icon', '⚠'));
+  var st = el('h2', 'safety-title', 'Une vérification est nécessaire avant de continuer.');
+  st.setAttribute('id', 'safety-heading');
+  safetyWrap.appendChild(st);
+
+  var reason = (outcome && outcome.safety_reason) ? outcome.safety_reason
+    : 'Pour votre sécurité, nous ne pouvons pas établir un prix dans cette situation.';
+  safetyWrap.appendChild(el('div', 'safety-body', reason));
+  safetyWrap.appendChild(el('div', 'safety-body',
+    'Nous vous recommandons de contacter un professionnel qualifié.'));
+  body.appendChild(safetyWrap);
+
   return body;
 }
 
 /* ── RequalificationResult ───────────────────────────────────────── */
 function renderRequalifyResult() {
-  var body = el('div', 'estimator-body step-enter');
+  var body = el('div', 'estimator-body step-enter result-enter');
   body.appendChild(el('div', 'requali-title', 'Votre besoin dépasse le périmètre du prix standard.'));
   body.appendChild(el('div', 'requali-body',
     'L\'intervention nécessite une évaluation spécifique. Un artisan FIXEO vous contactera pour convenir d\'un devis.'));
   return body;
 }
 
-/* ── Modal→Page Handoff Screen ───────────────────────────────────── */
+/* ── Modal→Page Handoff ──────────────────────────────────────────── */
 function renderHandoff() {
   var body = el('div', 'estimator-body step-enter');
-  body.appendChild(el('div', 'handoff-title',
-    'Cette intervention demande quelques précisions supplémentaires.'));
+  body.appendChild(el('div', 'handoff-title', 'RAFI vérifie votre intervention'));
   body.appendChild(el('div', 'handoff-body',
-    'Nous allons continuer dans la page estimation pour finaliser votre demande.'));
+    'Quelques précisions supplémentaires sont nécessaires pour calculer correctement le prix.'));
   return body;
 }
 
@@ -606,39 +786,31 @@ EstimatorModal.prototype.render = function() {
   var root = this._root;
   root.innerHTML = '';
 
-  // Backdrop
   var backdrop = el('div', 'estimator-backdrop');
   backdrop.setAttribute('id', 'estimator-backdrop');
   backdrop.addEventListener('click', function(e) {
     if (e.target === backdrop) STATE.onClose();
   });
 
-  // Modal container
   var modal = el('div', 'estimator-modal');
   modal.setAttribute('role', 'dialog');
   modal.setAttribute('aria-modal', 'true');
   modal.setAttribute('aria-labelledby', 'estimator-header');
 
-  // Header
-  var subline = 'Identifions l\'intervention et son prix.';
-  modal.appendChild(renderHeader({ subline: subline }));
+  modal.appendChild(renderHeader({}));
 
-  // Progress placeholder
   var progressSlot = el('div', '');
   progressSlot.setAttribute('id', 'progress-slot');
   modal.appendChild(progressSlot);
 
-  // Context placeholder
   var ctxSlot = el('div', '');
   ctxSlot.setAttribute('id', 'ctx-slot');
   modal.appendChild(ctxSlot);
 
-  // Body placeholder
   var bodySlot = el('div', '');
   bodySlot.setAttribute('id', 'body-slot');
   modal.appendChild(bodySlot);
 
-  // Footer placeholder
   var footerSlot = el('div', '');
   footerSlot.setAttribute('id', 'footer-slot');
   modal.appendChild(footerSlot);
@@ -647,8 +819,7 @@ EstimatorModal.prototype.render = function() {
   root.appendChild(backdrop);
 
   trapFocus(modal);
-
-  // Start entry screen
+  setRAFIState('idle');
   this._renderEntry();
 };
 
@@ -657,8 +828,19 @@ EstimatorModal.prototype._update = function(bodyEl, footerEl, session) {
   var ctxSlot = document.getElementById('ctx-slot');
   var bodySlot = document.getElementById('body-slot');
   var footerSlot = document.getElementById('footer-slot');
+  var modal = document.querySelector('.estimator-modal');
 
   var stage = stageFromState(session && session.state);
+
+  // Progress de-emphasis on result screens
+  if (modal) {
+    if (stage === 'RESULTAT') {
+      modal.classList.add('result-active');
+    } else {
+      modal.classList.remove('result-active');
+    }
+  }
+
   progressSlot.innerHTML = '';
   progressSlot.appendChild(renderProgress(stage));
 
@@ -678,6 +860,7 @@ EstimatorModal.prototype._update = function(bodyEl, footerEl, session) {
 /* Entry screen */
 EstimatorModal.prototype._renderEntry = function() {
   var self = this;
+  setRAFIState('idle');
   var body = el('div', 'estimator-body step-enter');
   body.appendChild(el('h2', 'entry-headline', 'Que faut-il réparer, installer ou entretenir ?'));
 
@@ -689,8 +872,7 @@ EstimatorModal.prototype._renderEntry = function() {
   inputWrap.appendChild(textarea);
   body.appendChild(inputWrap);
 
-  // Métier shortcuts
-  body.appendChild(el('div', '', '<span style="font-size:12px;color:#A0A0A0;margin-bottom:6px;display:block;">Ou choisissez directement :</span>'));
+  body.appendChild(el('div', '', '<span style="font-size:12px;color:#8A8784;margin-bottom:6px;display:block;">Ou choisissez directement :</span>'));
   var metierGrid = el('div', 'metier-shortcuts');
   var metiers = [
     { code: 'plomberie', icon: '🔧', label: 'Plomberie' },
@@ -718,7 +900,6 @@ EstimatorModal.prototype._renderEntry = function() {
       if (txt) {
         self._startWithFreeText(txt);
       } else {
-        // No text — show métier selection
         self._renderMetierSelection();
       }
     },
@@ -727,7 +908,6 @@ EstimatorModal.prototype._renderEntry = function() {
   this._update(body, footer, null);
 };
 
-/* Direct-text entry → show métier selection (no AI classifier in prototype) */
 EstimatorModal.prototype._startWithFreeText = function(txt) {
   this._renderMetierSelection({ free_text: txt });
 };
@@ -737,12 +917,13 @@ EstimatorModal.prototype._startWithMetier = function(metier) {
   var adapter = getAdapter();
   var result = adapter.startSession({ entry_point: 'DIRECT_CTA', metier_hint: metier });
   if (!result.ok) { this._renderError(result.error); return; }
-  STATE.history.push(null); // entry
+  STATE.history.push(null);
   this._session = result.session;
+  setRAFIState('analyzing');
+  triggerIntelligenceLine();
   this._advance(result.session);
 };
 
-/* Métier selection screen */
 EstimatorModal.prototype._renderMetierSelection = function(opts) {
   var self = this;
   opts = opts || {};
@@ -777,7 +958,6 @@ EstimatorModal.prototype._renderMetierSelection = function(opts) {
   this._update(body, footer, null);
 };
 
-/* Service selection screen */
 EstimatorModal.prototype._renderServiceSelection = function(session, candidates) {
   var self = this;
   var body = el('div', 'estimator-body step-enter');
@@ -795,6 +975,8 @@ EstimatorModal.prototype._renderServiceSelection = function(session, candidates)
     card.appendChild(el('span', 'answer-card__label', label));
     card.addEventListener('click', function() {
       STATE.history.push(session);
+      setRAFIState('analyzing');
+      triggerIntelligenceLine();
       var res = adapter.selectService(session, svc.service_code);
       if (!res.ok) { self._renderError(res.error); return; }
       self._session = res.session;
@@ -804,19 +986,14 @@ EstimatorModal.prototype._renderServiceSelection = function(session, candidates)
   });
   body.appendChild(cards);
 
-  var footer = renderFooter({
-    showBack: true,
-    onBack: function() { self._back(); },
-  });
+  var footer = renderFooter({ showBack: true, onBack: function() { self._back(); } });
   this._update(body, footer, session);
 };
 
-/* Advance: interrogate orchestrator for next step */
 EstimatorModal.prototype._advance = function(session) {
   var self = this;
   var adapter = getAdapter();
 
-  // Check UI recommendation for page handoff
   if (session.ui_recommendation === 'PAGE_REQUIRED') {
     this._renderHandoffScreen(session, true);
     return;
@@ -838,25 +1015,28 @@ EstimatorModal.prototype._advance = function(session) {
   }
 
   if (s.type === 'QUESTION') {
-    // Check PAGE_RECOMMENDED threshold (4+ questions)
     if (session.ui_recommendation === 'PAGE_RECOMMENDED') {
       this._renderHandoffScreen(session, false);
       return;
     }
+    setRAFIState('verifying');
     this._renderQuestionScreen(session, s);
     return;
   }
 
   if (s.type === 'READY') {
-    // Evaluate
+    setRAFIState('analyzing');
     var evalRes = adapter.evaluate(session);
     if (!evalRes.ok) { this._renderError(evalRes.error); return; }
     self._session = evalRes.session;
+    setRAFIState('complete');
+    triggerIntelligenceLine();
     self._renderOutcome(evalRes.session);
     return;
   }
 
   if (s.type === 'OUTCOME') {
+    setRAFIState('complete');
     this._renderOutcome(session);
     return;
   }
@@ -864,16 +1044,29 @@ EstimatorModal.prototype._advance = function(session) {
   this._renderError({ code: 'UNEXPECTED_STEP', step: s.type });
 };
 
-/* Question screen */
 EstimatorModal.prototype._renderQuestionScreen = function(session, step) {
   var self = this;
   var adapter = getAdapter();
   STATE.pendingAnswer = null;
   STATE.quantityValue = step.answer_type === 'integer' ? 1 : null;
 
-  var body = renderQuestion(step);
+  var isBoolean = step.answer_type === 'boolean';
   var isQty = step.answer_type === 'integer';
   var isMeasurement = step.input_id && step.input_id.indexOf('painted_m2') >= 0;
+
+  // Auto-advance callback for boolean answers
+  var onAutoAdvance = isBoolean ? function(val) {
+    STATE.pendingAnswer = val;
+    triggerIntelligenceLine();
+    setRAFIState('analyzing');
+    STATE.history.push(session);
+    var res = adapter.answerQuestion(session, step.question_id, val);
+    if (!res.ok) { self._renderError(res.error); return; }
+    self._session = res.session;
+    self._advance(res.session);
+  } : null;
+
+  var body = renderQuestion(step, onAutoAdvance);
 
   var footer = renderFooter({
     primaryLabel: 'Continuer',
@@ -886,6 +1079,8 @@ EstimatorModal.prototype._renderQuestionScreen = function(session, step) {
       if (isMeasurement) answer = STATE.measurementValue;
       if (answer === null || answer === undefined) return;
 
+      triggerIntelligenceLine();
+      setRAFIState('analyzing');
       STATE.history.push(session);
       var res = adapter.answerQuestion(session, step.question_id, answer);
       if (!res.ok) { self._renderError(res.error); return; }
@@ -897,7 +1092,6 @@ EstimatorModal.prototype._renderQuestionScreen = function(session, step) {
   this._update(body, footer, session);
 };
 
-/* Outcome rendering */
 EstimatorModal.prototype._renderOutcome = function(session) {
   var self = this;
   var outcome = session.outcome || {};
@@ -908,51 +1102,58 @@ EstimatorModal.prototype._renderOutcome = function(session) {
   secondaryLabel = 'Modifier mon besoin';
   secondaryHandler = function() { self._renderEntry(); };
 
+  // Assign outcome_type for ctaLabel
+  var outcomeForCta = Object.assign({}, outcome, { outcome_type: outcomeType });
+
   if (outcomeType === 'PRICE_READY' && comercialType === 'FIXEO_CALCULATED_PRICE') {
     body = renderCalculatedPriceResult(outcome, session);
-    var amt = outcome.price && outcome.price.amount_mad;
-    primaryLabel = 'Continuer avec ce prix — ' + formatMAD(amt);
-    primaryHandler = function() { alert('Réservation → (dormante)'); };
+    setRAFIState('complete');
+    primaryLabel = ctaLabel(outcomeForCta);
+    primaryHandler = function() { showHandoffScreen(session, outcome); };
 
   } else if (outcomeType === 'PRICE_READY') {
     body = renderPriceResult(outcome);
-    var amt2 = outcome.price && outcome.price.amount_mad;
-    primaryLabel = 'Continuer avec ce prix — ' + formatMAD(amt2);
-    primaryHandler = function() { alert('Réservation → (dormante)'); };
+    setRAFIState('complete');
+    primaryLabel = ctaLabel(outcomeForCta);
+    primaryHandler = function() { showHandoffScreen(session, outcome); };
 
   } else if (outcomeType === 'LABOUR_PLUS_PART_READY') {
     body = renderLabourPartResult(outcome);
-    var labour = outcome.price && outcome.price.labour_amount_mad;
-    primaryLabel = 'Continuer — Main-d\'oeuvre ' + formatMAD(labour);
-    primaryHandler = function() { alert('Réservation → (dormante)'); };
+    setRAFIState('complete');
+    primaryLabel = ctaLabel(outcomeForCta);
+    primaryHandler = function() { showHandoffScreen(session, outcome); };
 
   } else if (outcomeType === 'DIAGNOSTIC_READY') {
     body = renderDiagnosticResult(outcome);
-    var diag = outcome.price && outcome.price.amount_mad;
-    primaryLabel = 'Réserver le diagnostic — ' + formatMAD(diag);
-    primaryHandler = function() { alert('Réservation diagnostic → (dormante)'); };
+    setRAFIState('identified');
+    primaryLabel = ctaLabel(outcomeForCta);
+    primaryHandler = function() { showHandoffScreen(session, outcome); };
 
   } else if (outcomeType === 'QUOTE_REQUIRED') {
     body = renderQuoteResult(outcome);
-    primaryLabel = 'Demander un devis';
-    primaryHandler = function() { alert('Devis → (dormant)'); };
+    setRAFIState('complete');
+    primaryLabel = ctaLabel(outcomeForCta);
+    primaryHandler = function() { showHandoffScreen(session, outcome); };
 
   } else if (outcomeType === 'ROUTE_REQUIRED') {
     body = renderRouteResult(outcome);
-    var target = outcome.route_target_metier || 'serrurerie';
+    var target = outcome.route_target_metier || outcome.target_metier || 'serrurerie';
+    setRAFIState('complete');
     primaryLabel = 'Continuer en ' + (METIER_LABELS[target] || target);
     primaryHandler = function() { self._startWithMetier(target); };
 
   } else if (outcomeType === 'SAFETY_STOP') {
-    body = renderSafetyResult();
+    body = renderSafetyResult(outcome);
+    setRAFIState('idle');
     primaryLabel = null;
     secondaryLabel = 'Fermer';
     secondaryHandler = function() { STATE.onClose(); };
 
   } else if (outcomeType === 'REQUALIFY') {
     body = renderRequalifyResult();
+    setRAFIState('complete');
     primaryLabel = 'Demander un devis';
-    primaryHandler = function() { alert('Devis → (dormant)'); };
+    primaryHandler = function() { showHandoffScreen(session, outcome); };
 
   } else {
     body = el('div', 'estimator-body step-enter');
@@ -974,19 +1175,17 @@ EstimatorModal.prototype._renderOutcome = function(session) {
   var footer = renderFooter(footerOpts);
   this._update(body, footer, session);
 
-  // Announce result for accessibility
   var live = document.getElementById('aria-live-result');
   if (live) live.textContent = 'Résultat : ' + outcomeType;
 };
 
-/* Modal → Page handoff screen */
 EstimatorModal.prototype._renderHandoffScreen = function(session, isRequired) {
   var self = this;
+  setRAFIState('verifying');
   var body = renderHandoff();
   var footer = renderFooter({
     primaryLabel: 'Continuer l\'estimation',
     onPrimary: function() {
-      // Serialize session and pass to /estimation page
       if (STATE.onPageHandoff) STATE.onPageHandoff(session);
     },
     secondaryLabel: 'Modifier mon besoin',
@@ -995,7 +1194,6 @@ EstimatorModal.prototype._renderHandoffScreen = function(session, isRequired) {
   this._update(body, footer, session);
 };
 
-/* Back */
 EstimatorModal.prototype._back = function() {
   if (STATE.history.length === 0) { this._renderEntry(); return; }
   var prev = STATE.history.pop();
@@ -1004,7 +1202,6 @@ EstimatorModal.prototype._back = function() {
   this._advance(prev);
 };
 
-/* Error */
 EstimatorModal.prototype._renderError = function(err) {
   var body = el('div', 'estimator-body step-enter');
   body.appendChild(el('p', 'diagnostic-intro',
@@ -1038,7 +1235,6 @@ function renderSummary(session, knownSelections) {
     summary.appendChild(svcItem);
   }
 
-  // Progress stage — no price before engine result
   var progressItem = el('div', 'summary-item');
   progressItem.appendChild(el('div', 'summary-item__key', 'Étape'));
   progressItem.appendChild(el('div', 'summary-item__val',
@@ -1081,12 +1277,17 @@ if (typeof module !== 'undefined') {
     renderSafetyResult: renderSafetyResult,
     renderRequalifyResult: renderRequalifyResult,
     renderScopeList: renderScopeList,
+    renderScopeChips: renderScopeChips,
     renderSummary: renderSummary,
     renderProgress: renderProgress,
     renderHeader: renderHeader,
     renderHandoff: renderHandoff,
     stageFromState: stageFromState,
     formatMAD: formatMAD,
+    ctaLabel: ctaLabel,
+    setRAFIState: setRAFIState,
+    showHandoffScreen: showHandoffScreen,
+    RAFI_STATES: RAFI_STATES,
     ABSORPTION_COPY: ABSORPTION_COPY,
     METIER_LABELS: METIER_LABELS,
     STATE: STATE,

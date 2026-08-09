@@ -6,7 +6,7 @@
   <title>FIXEO — Estimation — Prototype</title>
   <!--
     ═══════════════════════════════════════════════════════════════
-    FIXEO /estimation Page Prototype — Phase 7C.8B
+    FIXEO /estimation Page Prototype — Phase 7C.8C
     Status: PROTOTYPE INTERNE — NON PRODUCTION
     Surface: PAGE_RECOMMENDED / PAGE_REQUIRED flows
     ═══════════════════════════════════════════════════════════════
@@ -24,38 +24,43 @@
     .painting-options { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
     .painting-option {
       display: flex; align-items: center; gap: 14px;
-      padding: 16px 18px; border: 1.5px solid #E5E4E0;
-      border-radius: 12px; cursor: pointer; background: #fff;
-      transition: border-color 140ms;
+      padding: 16px 18px; border: 1.5px solid #E8E6E2;
+      border-radius: 14px; cursor: pointer; background: #fff;
+      transition: border-color 180ms ease, background 180ms ease;
     }
-    .painting-option:hover { border-color: #FF6B2B; }
+    .painting-option:hover { border-color: #FF6B2B; background: #FDFAF8; }
     .painting-option.selected {
       border-color: #C8238B;
-      background: linear-gradient(135deg, rgba(255,107,43,0.05) 0%, rgba(200,35,139,0.05) 100%);
+      background: linear-gradient(135deg, rgba(255,107,43,0.04) 0%, rgba(200,35,139,0.04) 100%);
     }
     .painting-option__icon { font-size: 22px; flex-shrink: 0; }
     .painting-option__text { flex: 1; }
     .painting-option__title { font-size: 15px; font-weight: 600; }
-    .painting-option__sub { font-size: 13px; color: #6B6B6B; }
+    .painting-option__sub { font-size: 13px; color: #5A5A5A; }
     .painted-input-row { display: none; margin-top: 16px; }
     .painted-input-row.active { display: flex; align-items: center; gap: 12px; }
     .painted-m2-input {
       width: 100px; padding: 12px; font-size: 20px; font-weight: 600;
-      border: 1.5px solid #E5E4E0; border-radius: 10px; text-align: center;
-      outline: none; transition: border-color 140ms;
+      border: 1.5px solid #E8E6E2; border-radius: 10px; text-align: center;
+      outline: none; transition: border-color 180ms;
     }
     .painted-m2-input:focus { border-color: #FF6B2B; }
     .guided-placeholder {
       background: #F0EFED; border-radius: 10px; padding: 20px; text-align: center;
-      color: #6B6B6B; font-size: 14px; margin-top: 16px;
+      color: #5A5A5A; font-size: 14px; margin-top: 16px;
     }
     .guided-placeholder strong { display: block; font-size: 15px; color: #1A1A1A; margin-bottom: 6px; }
+    .page-main-centered {
+      max-width: 720px;
+      margin: 0 auto;
+      width: 100%;
+    }
   </style>
 </head>
 <body>
 
 <div class="proto-banner" role="alert">
-  PROTOTYPE INTERNE — NON PRODUCTION — /estimation page — Phase 7C.8B
+  PROTOTYPE INTERNE — NON PRODUCTION — /estimation page — Phase 7C.8C
 </div>
 <div id="aria-live-result" aria-live="polite" aria-atomic="true"
      style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden"></div>
@@ -64,19 +69,19 @@
 <div class="page-layout" id="estimation-layout">
 
   <!-- Main flow column -->
-  <div class="page-main">
+  <div class="page-main page-main-centered">
     <!-- Page header -->
     <div class="page-header">
       <div class="estimator-header__rafi">R</div>
       <div>
         <div class="page-header-logo">FIXEO</div>
-        <div style="font-size:12px;color:#6B6B6B;">Estimation — précisions supplémentaires</div>
+        <div style="font-size:12px;color:#5A5A5A;">Estimation — précisions supplémentaires</div>
       </div>
       <div style="flex:1"></div>
       <div id="page-progress-slot"></div>
     </div>
 
-    <!-- Context strip -->
+    <!-- RAFI context strip -->
     <div id="page-ctx-slot"></div>
 
     <!-- Question / result body -->
@@ -127,45 +132,70 @@ function renderProgress(activeStage) {
   return prog;
 }
 
+/* ─── Handoff screen — replaces browser alert ─────────────────────────── */
+function showPageHandoffScreen(serviceName, price) {
+  var bodySlot = document.getElementById('page-body-slot');
+  var footerSlot = document.getElementById('page-footer-slot');
+
+  var body = el('div','step-enter handoff-screen');
+  body.appendChild(el('div','handoff-title','Réservation — handoff prototype'));
+  if (serviceName) body.appendChild(el('div','result-service-name', serviceName));
+  if (price) body.appendChild(el('div','handoff-price', formatMAD(price)));
+  body.appendChild(el('div','handoff-body',
+    'En production : ce bouton démarrerait la réservation FIXEO. Dans ce prototype, la réservation est dormante.'));
+
+  bodySlot.innerHTML = '';
+  bodySlot.appendChild(body);
+
+  var footer = el('div','');
+  var backBtn = el('button','handoff-back btn-secondary','Retour au prototype');
+  backBtn.onclick = function(){ location.reload(); };
+  footer.appendChild(backBtn);
+  footerSlot.innerHTML = '';
+  footerSlot.appendChild(footer);
+}
+
 /* ─── Summary sidebar ──────────────────────────────────────────── */
 function renderSummary(metier, serviceCode, stage) {
   var sum = document.getElementById('page-summary-slot');
   sum.innerHTML = '';
-  sum.appendChild(el('div','summary-heading','Votre demande'));
+
+  var card = el('div','');
+  card.appendChild(el('div','summary-heading','Votre demande'));
 
   function addItem(key, val) {
     var item = el('div','summary-item');
     item.appendChild(el('div','summary-item__key',key));
     item.appendChild(el('div','summary-item__val',val));
-    sum.appendChild(item);
+    card.appendChild(item);
   }
 
   if (metier) addItem('Métier', METIER_LABELS[metier] || metier);
   if (serviceCode) addItem('Service', serviceCode.split('.').pop().replace(/_/g,' '));
   addItem('Étape', stage === 'PRECISIONS' ? 'Précisions en cours' : 'Besoin');
   // No price before engine result — doctrine enforced
-  sum.appendChild(el('div','',
-    '<p style="font-size:11px;color:#A0A0A0;margin-top:12px;line-height:1.5;">'+
+  card.appendChild(el('div','',
+    '<p style="font-size:11px;color:#8A8784;margin-top:12px;line-height:1.5;">'+
     'Le prix s\'affichera après confirmation de la surface.'+
     '</p>'));
+  sum.appendChild(card);
 }
 
 /* ─── Painting PAGE_REQUIRED flow ─────────────────────────────── */
 // This is the canonical PAGE_REQUIRED state:
-// - User is asked for painted_m2
+// - User is asked for painted_m2 (surface réellement peinte)
 // - No floor→painted conversion is allowed
 // - The engine receives painted_m2 directly
 var paintedM2 = null;
 var selectedOption = null;
 
 function renderPaintingFlow(metier, serviceCode) {
-  // Context strip
+  // RAFI context strip
   var ctxSlot = document.getElementById('page-ctx-slot');
   ctxSlot.innerHTML = '';
-  var ctx = el('div','estimator-context');
-  ctx.appendChild(el('span','rafi-indicator','RAFI'));
-  ctx.appendChild(el('span','',
-    ' identifie la surface pour calculer le prix exact.'));
+  var ctx = el('div','estimator-context rafi-question-header');
+  ctx.appendChild(el('span','rafi-indicator small','RAFI vérifie'));
+  ctx.appendChild(el('span','context-detail',' un détail'));
   ctxSlot.appendChild(ctx);
 
   // Body
@@ -174,7 +204,7 @@ function renderPaintingFlow(metier, serviceCode) {
 
   var heading = el('h2','question-heading');
   heading.setAttribute('id','question-heading');
-  heading.textContent = 'Pour calculer correctement votre prix, nous avons besoin de la surface à peindre.';
+  heading.textContent = 'Quelle surface sera réellement peinte ?';
   bodySlot.appendChild(heading);
 
   var options = el('div','painting-options');
@@ -206,7 +236,7 @@ function renderPaintingFlow(metier, serviceCode) {
   inputRow.appendChild(m2Input);
   inputRow.appendChild(el('span','measurement-unit','m²'));
 
-  // Option 2: Help me calculate
+  // Option 2: Help me calculate (not yet available)
   var opt2 = el('div','painting-option');
   opt2.setAttribute('tabindex','0');
   opt2.setAttribute('role','radio');
@@ -215,7 +245,7 @@ function renderPaintingFlow(metier, serviceCode) {
   opt2.innerHTML = '<div class="painting-option__icon">🔢</div>' +
     '<div class="painting-option__text">' +
     '<div class="painting-option__title" id="opt2-title">Aidez-moi à calculer</div>' +
-    '<div class="painting-option__sub">Assistant de mesure guidé</div>' +
+    '<div class="painting-option__sub">Assistant de mesure — bientôt disponible</div>' +
     '</div>';
 
   var guidedPlaceholder = el('div','guided-placeholder');
@@ -245,10 +275,8 @@ function renderPaintingFlow(metier, serviceCode) {
     paintedM2 = null; updatePageCTA();
   });
 
-  ['keydown'].forEach(function(ev) {
-    [opt1, opt2].forEach(function(o) {
-      o.addEventListener(ev, function(e) { if(e.key==='Enter'||e.key===' '){e.preventDefault();o.click();} });
-    });
+  [opt1, opt2].forEach(function(o) {
+    o.addEventListener('keydown', function(e) { if(e.key==='Enter'||e.key===' '){e.preventDefault();o.click();} });
   });
 
   options.appendChild(opt1);
@@ -307,16 +335,22 @@ function showPaintingResult(serviceCode, m2) {
   var bodySlot = document.getElementById('page-body-slot');
   bodySlot.innerHTML = '';
 
-  var body = el('div','step-enter');
-  body.appendChild(el('div','result-identified','✓ Votre intervention est identifiée'));
+  var body = el('div','step-enter result-enter');
+  body.appendChild(el('div','result-identified','✓ Intervention identifiée'));
   body.appendChild(el('div','result-service-name','Peinture mur intérieur'));
 
   // Basis from engine result
   body.appendChild(el('div','result-basis', m2 + ' m² × ' + PEINTURE_RATE_FROM_ENGINE + ' MAD/m²'));
 
-  // Price from engine outcome (pre-computed)
-  body.appendChild(el('div','result-price', formatMAD(engineAmount)));
-  body.appendChild(el('div','result-price-label','Prix FIXEO calculé'));
+  // Price container
+  var priceContainer = el('div','result-price-container');
+  var priceRow = el('div','result-price');
+  priceRow.appendChild(el('span','result-price-number', Math.round(engineAmount).toString()));
+  priceRow.appendChild(el('span','result-price-unit','MAD'));
+  priceContainer.appendChild(priceRow);
+  priceContainer.appendChild(el('div','result-price-label','PRIX FIXEO'));
+  priceContainer.appendChild(el('div','result-price-scope','Applicable au périmètre identifié'));
+  body.appendChild(priceContainer);
 
   body.appendChild(el('p','scope-doctrine',
     'Ce prix s\'applique au périmètre indiqué. Si l\'intervention réelle est différente, '+
@@ -326,8 +360,8 @@ function showPaintingResult(serviceCode, m2) {
 
   var footerSlot = document.getElementById('page-footer-slot');
   footerSlot.innerHTML = '';
-  var cta = el('button','btn-primary','Continuer avec ce prix — '+formatMAD(engineAmount));
-  cta.onclick = function(){ alert('Réservation → (dormante)'); };
+  var cta = el('button','btn-primary','Trouver un artisan — '+formatMAD(engineAmount));
+  cta.onclick = function(){ showPageHandoffScreen('Peinture mur intérieur', engineAmount); };
   footerSlot.appendChild(cta);
   var sec = el('button','btn-secondary','Modifier mon besoin');
   sec.onclick = function(){ location.reload(); };
@@ -366,9 +400,9 @@ function renderComplexFlow() {
   document.getElementById('page-progress-slot').appendChild(renderProgress('PRECISIONS'));
 
   var ctxSlot = document.getElementById('page-ctx-slot');
-  var ctx = el('div','estimator-context');
-  ctx.appendChild(el('span','rafi-indicator','RAFI vérifie'));
-  ctx.appendChild(el('span','',' quelques détails avant d\'afficher le prix.'));
+  var ctx = el('div','estimator-context rafi-question-header');
+  ctx.appendChild(el('span','rafi-indicator small','RAFI vérifie'));
+  ctx.appendChild(el('span','context-detail',' un détail'));
   ctxSlot.appendChild(ctx);
 
   var bodySlot = document.getElementById('page-body-slot');
@@ -378,19 +412,15 @@ function renderComplexFlow() {
   bodySlot.appendChild(heading);
 
   var note = el('div','',
-    '<p style="font-size:13px;color:#6B6B6B;margin-bottom:20px;">'+
+    '<p style="font-size:13px;color:#5A5A5A;margin-bottom:20px;">'+
     'Cette intervention nécessite quelques précisions pour calculer le prix exact.'+
     '</p>');
   bodySlot.appendChild(note);
 
-  // Sample 4+ question indicators (PAGE_RECOMMENDED because ≥4 remaining)
-  var qList = ['Nombre de prestataires','Durée (heures)','Type de nettoyage','Surface approximative (m²)'];
-  var answeredQ = 0;
   var qItems = el('div','answer-cards');
 
-  // Just show the first question as active (UI mock)
   var rowQ1 = el('div','',
-    '<div style="margin-bottom:8px;font-size:12px;color:#A0A0A0;">Question 1 sur '+qList.length+'</div>');
+    '<div style="margin-bottom:8px;font-size:12px;color:#8A8784;">Question 1 sur 4</div>');
   var qty = el('div','quantity-row');
   var v = 2;
 
@@ -406,7 +436,10 @@ function renderComplexFlow() {
 
   var footerSlot = document.getElementById('page-footer-slot');
   var cta = el('button','btn-primary','Continuer');
-  cta.onclick = function(){ alert('Suite du flux → (orchestrateur Node requis pour complétion interactive)'); };
+  cta.onclick = function(){
+    // showHandoffScreen for prototype
+    showPageHandoffScreen('Grand ménage', null);
+  };
   footerSlot.appendChild(cta);
   var back = el('button','btn-back','← Retour'); back.onclick = function(){history.back();};
   footerSlot.appendChild(back);
