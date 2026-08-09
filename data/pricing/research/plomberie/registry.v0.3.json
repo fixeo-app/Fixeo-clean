@@ -1,0 +1,563 @@
+{
+  "_meta": {
+    "registry_name": "fixeo_plumbing_pricing",
+    "registry_version": "0.3.0",
+    "status": "HUMAN_APPROVED_PILOT_NOT_PRODUCTION",
+    "phase": "Phase 7B.3.3 — Human Price Decision Freeze",
+    "based_on": "registry.v0.2.json (v0.2.0)",
+    "approval_date": "2026-08-09",
+    "production_ready": false,
+    "currency": "MAD",
+    "pricing_architecture": "FIXEO_FIXED_PRICE",
+    "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+    "price_provenance_description": "FIXEO human-calibrated pilot price based on aggregated Moroccan market research and dual-fairness economic review.",
+    "ai_claim": null,
+    "ai_claim_note": "Current system maturity = LEVEL_0 (EXTERNAL_RESEARCH / HUMAN_CALIBRATION). No AI, no machine-learning, no statistical model. 'FIXEO AI Price' and equivalent claims are PROHIBITED.",
+    "geographic_scope": "NATIONAL_MOROCCO",
+    "geographic_reference_city": "Casablanca",
+    "geographic_reference_city_use": "ECONOMIC_STRESS_TEST_ONLY",
+    "city_adjustment": null,
+    "city_adjustment_note": "No city multipliers. City-specific pricing requires sufficient FIXEO transaction observations. Casablanca ×1.15 style multipliers NOT approved.",
+    "urgency_modifier": null,
+    "urgency_modifier_note": "No urgency/night/weekend modifiers approved. Legacy +40%/+25%/+20% values remain NON-CANONICAL. Dedicated urgency research phase required.",
+    "version_history": [
+      {"version": "0.1.0", "date": "2026-08-09", "phase": "7B.3.1", "description": "Raw normalized research — 20 services, 16 with numeric references"},
+      {"version": "0.2.0", "date": "2026-08-09", "phase": "7B.3.2", "description": "Human calibration candidates — terminology corrected, scope contracts, economic model"},
+      {"version": "0.3.0", "date": "2026-08-09", "phase": "7B.3.3", "description": "Human-approved pilot prices — 6 FIXED prices frozen with full scope contracts"}
+    ],
+    "dual_fairness_principle": "A FIXEO price is acceptable only if it simultaneously protects the client from arbitrary overpricing AND the artisan from economically unsustainable underpricing. FIXEO must NOT target the cheapest market price. FIXEO should target a defensible central fair price. The objective is CLIENT_FAIRNESS + ARTISAN_VIABILITY + PRICE_PREDICTABILITY + CLEAR_SCOPE — not lowest-price competition.",
+    "complexity_escape_doctrine": "A FIXEO fixed price must NEVER silently increase. If the artisan discovers the real intervention falls outside the approved standard scope: (1) stop before additional work; (2) identify the objective escape condition; (3) explain to the client; (4) declare HORS_PERIMETRE_PRIX_FIXEO; (5) provide additional quote; (6) obtain explicit client approval; (7) only then continue.",
+    "diagnostic_absorption_rule": "If the client immediately accepts a qualifying standardized FIXEO repair completable during the SAME visit, the diagnostic fee (180 MAD) is ABSORBED into the intervention price. The client must not pay 180 MAD diagnostic PLUS the full standardized FIXEO intervention price for a simple same-visit standardized repair. If no repair is performed, or if the intervention requires a quote or specialized diagnosis, the 180 MAD diagnostic remains payable.",
+    "approved_pilot_services": 6,
+    "approved_pilot_service_codes": [
+      "plomberie.diagnostic",
+      "plomberie.fuite_simple",
+      "plomberie.debouchage_evier",
+      "plomberie.debouchage_wc_simple",
+      "plomberie.robinet_remplacement",
+      "plomberie.chasse_eau"
+    ],
+    "approved_pilot_prices_summary": {
+      "plomberie.diagnostic": 180,
+      "plomberie.fuite_simple": 250,
+      "plomberie.debouchage_evier": 250,
+      "plomberie.debouchage_wc_simple": 300,
+      "plomberie.robinet_remplacement": 250,
+      "plomberie.chasse_eau": 300
+    }
+  },
+
+  "pilot_scope_contracts": [
+
+    {
+      "service_code": "plomberie.diagnostic",
+      "label_fr": "Déplacement et diagnostic plomberie",
+      "fixeo_price": 180,
+      "currency": "MAD",
+      "pricing_architecture": "FIXEO_FIXED_PRICE",
+      "human_approved": true,
+      "pilot_status": "HUMAN_APPROVED_PILOT",
+      "production_ready": false,
+      "approval_date": "2026-08-09",
+      "approved_version": "0.3.0",
+
+      "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+      "evidence_basis": ["SRC_PLUMBING_001", "SRC_PLUMBING_006", "SRC_PLUMBING_007"],
+      "market_reference": {"consensus_low": 100, "market_anchor": 150, "consensus_high": 200, "confidence": "MEDIUM"},
+
+      "included_scope": [
+        "standard artisan travel within normal intervention zone",
+        "initial on-site diagnosis",
+        "identification of likely cause where possible",
+        "verbal explanation of findings to client",
+        "verbal quote for repair work if applicable"
+      ],
+      "excluded_scope": [
+        "heavy dismantling of any kind",
+        "specialized leak-detection equipment (thermal camera, pressure test, endoscope)",
+        "any repair work — diagnostic only",
+        "second visit",
+        "written diagnostic report or certification",
+        "collective plumbing or building common systems",
+        "access requiring specialist equipment or building-manager authorization"
+      ],
+
+      "materials_policy": {
+        "labour": "included",
+        "travel": "included — IS the service",
+        "basic_consumables": "NOT_APPLICABLE",
+        "replacement_parts": "NOT_APPLICABLE — diagnostic only"
+      },
+
+      "diagnostic_policy": {
+        "mode": "IS_THE_SERVICE",
+        "absorption_rule": "ACTIVE",
+        "absorption_condition": "If client immediately accepts a qualifying standardized FIXEO repair completable during the SAME visit, this 180 MAD fee is ABSORBED into the intervention price. Client must NOT pay 180 MAD diagnostic PLUS full FIXEO intervention price for a simple same-visit repair.",
+        "payable_when": "No repair performed, OR intervention requires quote/specialized diagnosis not covered by same-visit standardized service.",
+        "deductible_from_repair": false,
+        "morocco_market_note": "Diagnostic fee is standard practice in Morocco. Charged even if client does not proceed. Absorption rule is a FIXEO policy innovation — not a market-standard deductible model."
+      },
+
+      "complexity_escape_rules": [
+        "client address outside normal urban service zone",
+        "access requires specialist equipment (scaffolding, locked technical room)",
+        "collective/immeuble plumbing requiring building manager authorization",
+        "client cannot reproduce problem during visit (intermittent fault — diagnosis inconclusive)",
+        "problem requires specialized detection equipment not carried as standard"
+      ],
+
+      "hors_perimetre_trigger": "Any escape condition above → declare HORS_PERIMETRE_PRIX_FIXEO → provide revised quote → obtain explicit client approval before proceeding.",
+
+      "client_disclosure": "Frais de déplacement et diagnostic : 180 MAD. Ce montant est dû même si vous ne procédez pas à la réparation. Si une réparation FIXEO standard est réalisée lors de la même visite, le diagnostic est inclus dans le prix de l'intervention.",
+      "artisan_disclosure": "Prix FIXEO diagnostic : 180 MAD. Si le client accepte immédiatement une réparation FIXEO standard lors de la même visite, intégrez le diagnostic dans le prix de l'intervention et ne facturez pas le diagnostic séparément.",
+
+      "commission_sensitivity": {
+        "approved_price_MAD": 180,
+        "fuel_scenario": "MID_40_MAD",
+        "materials_MAD": 0,
+        "artisan_economic_floor_MAD": 100,
+        "scenarios": [
+          {"commission_pct": 0,  "fixeo_takes_MAD": 0,    "artisan_gross_MAD": 180, "less_fuel_MAD": 140, "artisan_net_pre_labour_MAD": 140, "above_floor": true},
+          {"commission_pct": 10, "fixeo_takes_MAD": 18,   "artisan_gross_MAD": 162, "less_fuel_MAD": 122, "artisan_net_pre_labour_MAD": 122, "above_floor": true},
+          {"commission_pct": 15, "fixeo_takes_MAD": 27,   "artisan_gross_MAD": 153, "less_fuel_MAD": 113, "artisan_net_pre_labour_MAD": 113, "above_floor": true},
+          {"commission_pct": 20, "fixeo_takes_MAD": 36,   "artisan_gross_MAD": 144, "less_fuel_MAD": 104, "artisan_net_pre_labour_MAD": 104, "above_floor": true}
+        ],
+        "commission_risk_note": "180 MAD approved price improves economics vs V0.2 anchor of 150 MAD. At 20% commission + MID fuel: 104 MAD net — above floor. ACCEPTABLE at all commission scenarios tested.",
+        "floor_breach": false
+      },
+
+      "client_fairness": "ACCEPTABLE",
+      "artisan_fairness": "ACCEPTABLE",
+      "dual_fairness_result": "PASS at all commission scenarios with approved price of 180 MAD"
+    },
+
+    {
+      "service_code": "plomberie.fuite_simple",
+      "label_fr": "Réparation fuite simple — visible et accessible",
+      "fixeo_price": 250,
+      "currency": "MAD",
+      "pricing_architecture": "FIXEO_FIXED_PRICE",
+      "human_approved": true,
+      "pilot_status": "HUMAN_APPROVED_PILOT",
+      "production_ready": false,
+      "approval_date": "2026-08-09",
+      "approved_version": "0.3.0",
+
+      "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+      "evidence_basis": ["SRC_PLUMBING_001", "SRC_PLUMBING_005", "SRC_PLUMBING_006", "SRC_PLUMBING_007", "SRC_PLUMBING_004"],
+      "market_reference": {"consensus_low": 150, "market_anchor": 220, "consensus_high": 350, "confidence": "MEDIUM"},
+
+      "included_scope": [
+        "travel within normal intervention zone",
+        "labour",
+        "one visible and accessible simple leak",
+        "standard repair: tightening, joint replacement, raccord sealing",
+        "basic consumables: joint de robinetterie, joint torique, téflon, pâte d'étanchéité — total ≤50 MAD"
+      ],
+      "excluded_scope": [
+        "concealed leak (inside wall, floor, or ceiling) → fuite_encastree",
+        "pipe replacement requiring significant work (>20 cm)",
+        "specialized leak-detection equipment",
+        "expensive replacement part (any part >50 MAD — quoted separately before installation)",
+        "multiple unrelated leaks (>1 intervention point)",
+        "water damage assessment or drying",
+        "masonry, tiling, or plasterwork"
+      ],
+
+      "materials_policy": {
+        "labour": "included",
+        "travel": "included",
+        "basic_consumables": "included — joint, joint torique, téflon, pâte — total ≤50 MAD",
+        "replacement_parts": "EXCLUDED — any part >50 MAD must be quoted separately and approved by client BEFORE installation",
+        "part_disclosure_required": true
+      },
+
+      "diagnostic_policy": {
+        "mode": "INCLUDED_IN_INTERVENTION",
+        "note": "For visible, accessible fuite — no separate diagnostic fee. Visual identification step is included in the 250 MAD intervention price."
+      },
+
+      "complexity_escape_rules": [
+        "leak source not visible once artisan arrives on site → HORS PÉRIMÈTRE",
+        "pipe access requires tile, wall, or floor removal → HORS PÉRIMÈTRE",
+        "more than one distinct leak point discovered → HORS PÉRIMÈTRE",
+        "required replacement part costs >50 MAD — stop, quote, await client approval before installing",
+        "corroded pipe section requiring replacement >20 cm → HORS PÉRIMÈTRE",
+        "leak is determined to be concealed/embedded → escalate to fuite_encastree"
+      ],
+
+      "hors_perimetre_trigger": "Any escape condition above → stop work → declare HORS_PERIMETRE_PRIX_FIXEO → explain objectively to client → provide new quote → obtain explicit approval before continuing.",
+
+      "client_disclosure": "Prix FIXEO : 250 MAD. Comprend déplacement, main-d'œuvre, et petits consommables (≤50 MAD). Pièces de remplacement >50 MAD facturées séparément avec votre accord préalable.",
+      "artisan_disclosure": "Prix FIXEO fuite simple : 250 MAD. Une seule fuite visible et accessible. Consommables de base inclus (≤50 MAD). Toute pièce >50 MAD doit être soumise au client avant installation.",
+
+      "commission_sensitivity": {
+        "approved_price_MAD": 250,
+        "fuel_scenario": "MID_40_MAD",
+        "materials_MAD": 30,
+        "artisan_economic_floor_MAD": 100,
+        "scenarios": [
+          {"commission_pct": 0,  "fixeo_takes_MAD": 0,    "artisan_gross_MAD": 250, "less_fuel_MAD": 210, "less_materials_MAD": 180, "artisan_net_pre_labour_MAD": 180, "above_floor": true},
+          {"commission_pct": 10, "fixeo_takes_MAD": 25,   "artisan_gross_MAD": 225, "less_fuel_MAD": 185, "less_materials_MAD": 155, "artisan_net_pre_labour_MAD": 155, "above_floor": true},
+          {"commission_pct": 15, "fixeo_takes_MAD": 37.5, "artisan_gross_MAD": 212.5, "less_fuel_MAD": 172.5, "less_materials_MAD": 142.5, "artisan_net_pre_labour_MAD": 142.5, "above_floor": true},
+          {"commission_pct": 20, "fixeo_takes_MAD": 50,   "artisan_gross_MAD": 200, "less_fuel_MAD": 160, "less_materials_MAD": 130, "artisan_net_pre_labour_MAD": 130, "above_floor": true}
+        ],
+        "commission_risk_note": "250 MAD approved price is 30 MAD above V0.2 anchor of 220 MAD. Improved economics at all commission rates. At 20%: 130 MAD net — comfortably above floor. ACCEPTABLE at all scenarios.",
+        "floor_breach": false
+      },
+
+      "client_fairness": "ACCEPTABLE",
+      "artisan_fairness": "ACCEPTABLE",
+      "dual_fairness_result": "PASS at all commission scenarios with approved price of 250 MAD"
+    },
+
+    {
+      "service_code": "plomberie.debouchage_evier",
+      "label_fr": "Débouchage évier ou lavabo — méthode manuelle",
+      "fixeo_price": 250,
+      "currency": "MAD",
+      "pricing_architecture": "FIXEO_FIXED_PRICE",
+      "human_approved": true,
+      "pilot_status": "HUMAN_APPROVED_PILOT",
+      "production_ready": false,
+      "approval_date": "2026-08-09",
+      "approved_version": "0.3.0",
+
+      "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+      "evidence_basis": ["SRC_PLUMBING_001", "SRC_PLUMBING_005", "SRC_PLUMBING_006", "SRC_PLUMBING_007"],
+      "market_reference": {"consensus_low": 150, "market_anchor": 220, "consensus_high": 300, "confidence": "MEDIUM"},
+
+      "included_scope": [
+        "travel within normal intervention zone",
+        "labour",
+        "one sink (évier) or washbasin (lavabo)",
+        "standard manual unclogging",
+        "normal hand tools: déboucheur à pression, ventouse, furet manuel ≤5m",
+        "siphon inspection and cleaning (no replacement)"
+      ],
+      "excluded_scope": [
+        "multiple fixtures backing up simultaneously",
+        "building drainage column (colonne) → debouchage_colonne",
+        "recurring deep blockage requiring professional motorized equipment",
+        "motorized or high-pressure unclogging equipment",
+        "structural drainage issue",
+        "major dismantling",
+        "siphon replacement (part >50 MAD — quoted separately if required)"
+      ],
+
+      "materials_policy": {
+        "labour": "included",
+        "travel": "included",
+        "basic_consumables": "NONE — débouchage consumes no materials",
+        "replacement_parts": "EXCLUDED — siphon replacement (if required) quoted separately"
+      },
+
+      "diagnostic_policy": {
+        "mode": "INCLUDED_IN_INTERVENTION",
+        "note": "Standard visible blockage — no separate diagnostic fee. Symptom declared by client; artisan proceeds directly."
+      },
+
+      "pre_arrival_classification_questions": [
+        "Which fixture: kitchen sink (évier) or bathroom basin (lavabo)?",
+        "Draining very slowly or completely stopped?",
+        "Do multiple fixtures seem blocked at once? (→ escalate: shared pipe or colonne)",
+        "Is water backing up into another fixture when this one drains? (→ escalate to colonne)",
+        "Has there been a recurring blockage over several weeks? (→ may indicate structural issue)"
+      ],
+
+      "complexity_escape_rules": [
+        "simple manual method fails on-site → HORS PÉRIMÈTRE — quote for professional motorized method",
+        "multiple fixtures found affected on arrival → HORS PÉRIMÈTRE — escalate to colonne or professional",
+        "siphon cracked or corroded requiring replacement >50 MAD → quote separately before installing",
+        "access obstructed by built-in furniture preventing effective intervention → HORS PÉRIMÈTRE",
+        "blockage located deeper than furet reach (>5m) → HORS PÉRIMÈTRE"
+      ],
+
+      "hors_perimetre_trigger": "Any escape condition above → stop work → declare HORS_PERIMETRE_PRIX_FIXEO → explain to client → provide new quote → obtain explicit approval.",
+
+      "client_disclosure": "Prix FIXEO : 250 MAD. Un évier ou lavabo. Méthode manuelle uniquement. Si le débouchage manuel ne suffit pas, un devis séparé sera nécessaire.",
+      "artisan_disclosure": "Prix FIXEO débouchage évier : 250 MAD. Un seul évier ou lavabo, méthode manuelle. Si la méthode manuelle échoue, déclarer hors périmètre et proposer un nouveau devis.",
+
+      "commission_sensitivity": {
+        "approved_price_MAD": 250,
+        "fuel_scenario": "MID_40_MAD",
+        "materials_MAD": 0,
+        "artisan_economic_floor_MAD": 100,
+        "scenarios": [
+          {"commission_pct": 0,  "fixeo_takes_MAD": 0,    "artisan_gross_MAD": 250, "less_fuel_MAD": 210, "artisan_net_pre_labour_MAD": 210, "above_floor": true},
+          {"commission_pct": 10, "fixeo_takes_MAD": 25,   "artisan_gross_MAD": 225, "less_fuel_MAD": 185, "artisan_net_pre_labour_MAD": 185, "above_floor": true},
+          {"commission_pct": 15, "fixeo_takes_MAD": 37.5, "artisan_gross_MAD": 212.5, "less_fuel_MAD": 172.5, "artisan_net_pre_labour_MAD": 172.5, "above_floor": true},
+          {"commission_pct": 20, "fixeo_takes_MAD": 50,   "artisan_gross_MAD": 200, "less_fuel_MAD": 160, "artisan_net_pre_labour_MAD": 160, "above_floor": true}
+        ],
+        "commission_risk_note": "No materials — cleanest economics. 250 MAD approved price 30 MAD above V0.2 anchor. At 20%: 160 MAD net — strong. ACCEPTABLE at all scenarios.",
+        "floor_breach": false
+      },
+
+      "client_fairness": "STRONG",
+      "artisan_fairness": "ACCEPTABLE",
+      "dual_fairness_result": "PASS at all commission scenarios with approved price of 250 MAD"
+    },
+
+    {
+      "service_code": "plomberie.debouchage_wc_simple",
+      "label_fr": "Débouchage WC — méthode manuelle",
+      "fixeo_price": 300,
+      "currency": "MAD",
+      "pricing_architecture": "FIXEO_FIXED_PRICE",
+      "human_approved": true,
+      "pilot_status": "HUMAN_APPROVED_PILOT",
+      "production_ready": false,
+      "approval_date": "2026-08-09",
+      "approved_version": "0.3.0",
+
+      "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+      "evidence_basis": ["SRC_PLUMBING_001", "SRC_PLUMBING_002", "SRC_PLUMBING_003", "SRC_PLUMBING_005", "SRC_PLUMBING_007"],
+      "market_reference": {"consensus_low": 200, "market_anchor": 280, "consensus_high": 450, "confidence": "MEDIUM"},
+
+      "included_scope": [
+        "travel within normal intervention zone",
+        "labour",
+        "one WC fixture",
+        "simple isolated blockage",
+        "standard manual intervention: ventouse à cloche WC, furet manuel ≤5m",
+        "one intervention attempt"
+      ],
+      "excluded_scope": [
+        "foreign object requiring complex or specialized extraction",
+        "multiple fixtures backing up simultaneously",
+        "building drainage column → debouchage_colonne",
+        "previous failed professional intervention → professional method required",
+        "motorized or professional high-pressure equipment requirement",
+        "structural drainage issue",
+        "WC dismantling or removal",
+        "non-standard WC (chimique, collectif, assainissement non-collectif)"
+      ],
+
+      "materials_policy": {
+        "labour": "included",
+        "travel": "included",
+        "basic_consumables": "NONE",
+        "replacement_parts": "EXCLUDED"
+      },
+
+      "diagnostic_policy": {
+        "mode": "INCLUDED_IN_INTERVENTION",
+        "note": "Standard WC blockage — symptom declared by client; artisan proceeds directly. No separate diagnostic fee."
+      },
+
+      "pre_arrival_classification_questions": [
+        "Completely blocked (no drainage at all) or slow drainage?",
+        "Prior manual attempt that failed? (→ professional method required)",
+        "Do multiple fixtures (évier, lavabo, baignoire) seem affected? (→ escalate to colonne)",
+        "Is water backing up into bath or shower when you flush? (→ escalate to colonne)",
+        "Was a foreign object dropped in the WC? (→ professional specialized extraction required)",
+        "Recurring blockage more than 3 times in 12 months? (→ professional inspection + CCTV scope)"
+      ],
+
+      "complexity_escape_rules": [
+        "manual method fails on-site → HORS PÉRIMÈTRE — quote for professional motorized method",
+        "foreign body confirmed on arrival → HORS PÉRIMÈTRE — professional specialized extraction required",
+        "backing-up to other fixtures discovered on arrival → HORS PÉRIMÈTRE — escalate to colonne",
+        "multiple fixtures affected on arrival → HORS PÉRIMÈTRE",
+        "WC dismantling required for access → HORS PÉRIMÈTRE"
+      ],
+
+      "hors_perimetre_trigger": "Any escape condition above → stop work → declare HORS_PERIMETRE_PRIX_FIXEO → explain to client → provide new quote → obtain explicit approval.",
+
+      "client_disclosure": "Prix FIXEO : 300 MAD. Un WC, méthode manuelle, blocage isolé simple. Si la méthode manuelle ne suffit pas, un devis pour intervention professionnelle sera nécessaire.",
+      "artisan_disclosure": "Prix FIXEO débouchage WC simple : 300 MAD. Un WC, méthode manuelle uniquement. Si la méthode manuelle échoue, déclarer hors périmètre et proposer un nouveau devis.",
+
+      "commission_sensitivity": {
+        "approved_price_MAD": 300,
+        "fuel_scenario": "MID_40_MAD",
+        "materials_MAD": 0,
+        "artisan_economic_floor_MAD": 100,
+        "scenarios": [
+          {"commission_pct": 0,  "fixeo_takes_MAD": 0,    "artisan_gross_MAD": 300, "less_fuel_MAD": 260, "artisan_net_pre_labour_MAD": 260, "above_floor": true},
+          {"commission_pct": 10, "fixeo_takes_MAD": 30,   "artisan_gross_MAD": 270, "less_fuel_MAD": 230, "artisan_net_pre_labour_MAD": 230, "above_floor": true},
+          {"commission_pct": 15, "fixeo_takes_MAD": 45,   "artisan_gross_MAD": 255, "less_fuel_MAD": 215, "artisan_net_pre_labour_MAD": 215, "above_floor": true},
+          {"commission_pct": 20, "fixeo_takes_MAD": 60,   "artisan_gross_MAD": 240, "less_fuel_MAD": 200, "artisan_net_pre_labour_MAD": 200, "above_floor": true}
+        ],
+        "commission_risk_note": "No materials. 300 MAD approved price gives strongest artisan net of all six services. At 20%: 200 MAD net. STRONG at all scenarios.",
+        "floor_breach": false
+      },
+
+      "client_fairness": "STRONG",
+      "artisan_fairness": "STRONG",
+      "dual_fairness_result": "PASS — STRONG at all commission scenarios with approved price of 300 MAD"
+    },
+
+    {
+      "service_code": "plomberie.robinet_remplacement",
+      "label_fr": "Remplacement robinet / mitigeur — main-d'œuvre seule",
+      "fixeo_price": 250,
+      "currency": "MAD",
+      "pricing_architecture": "FIXEO_FIXED_PRICE",
+      "human_approved": true,
+      "pilot_status": "HUMAN_APPROVED_PILOT",
+      "production_ready": false,
+      "approval_date": "2026-08-09",
+      "approved_version": "0.3.0",
+
+      "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+      "evidence_basis": ["SRC_PLUMBING_001", "SRC_PLUMBING_005", "SRC_PLUMBING_006", "SRC_PLUMBING_007"],
+      "market_reference": {"consensus_low": 150, "market_anchor": 200, "consensus_high": 300, "confidence": "MEDIUM"},
+
+      "included_scope": [
+        "travel within normal intervention zone",
+        "labour",
+        "removal of standard existing tap or mixer",
+        "installation of standard replacement tap or mixer",
+        "standard connection: existing flexible hoses or standard-thread connection",
+        "basic consumables: joint de raccord, téflon ≤50 MAD"
+      ],
+      "excluded_scope": [
+        "the tap or mixer itself — NOT included",
+        "modification of plumbing network",
+        "inaccessible or corroded connections requiring additional significant work",
+        "wall opening or masonry work",
+        "non-standard thread requiring adapter fitting >50 MAD",
+        "wall-mounted spout installation (different complexity)",
+        "shower mixer or thermostatic mixer (separate quote)",
+        "premium or custom fixtures requiring additional work",
+        "new flexible hoses if not already present (artisan quotes separately: typically 30–60 MAD each)",
+        "robinet d'arrêt replacement if also defective (separate service)"
+      ],
+
+      "materials_policy": {
+        "labour": "included",
+        "travel": "included",
+        "basic_consumables": "included — joint de raccord, téflon ≤50 MAD total",
+        "replacement_parts": "EXCLUDED — tap/mixer NOT included",
+        "part_supply_policy": "CLIENT SUPPLIES THE TAP/MIXER BY DEFAULT. If the artisan supplies the part at the client's request: (1) part must be disclosed separately; (2) client must approve the part price before installation; (3) it must NEVER be silently bundled into the 250 MAD FIXEO standard labour price.",
+        "client_guidance": "Achetez votre robinet ou mitigeur avant l'intervention (disponible en droguerie ou Bricoma). Si vous n'êtes pas sûr du modèle, l'artisan peut vous conseiller par téléphone."
+      },
+
+      "diagnostic_policy": {
+        "mode": "INCLUDED_IN_INTERVENTION",
+        "note": "Job is known before arrival. Client supplies the part. No separate diagnostic step."
+      },
+
+      "complexity_escape_rules": [
+        "tap/mixer thread size non-standard requiring adapter >50 MAD → quote adapter separately before proceeding",
+        "old tap/mixer corroded or seized requiring cutting tool and >30 min additional work → HORS PÉRIMÈTRE",
+        "robinet d'arrêt below also found defective → quote separately as additional service",
+        "wall-mounted installation required (different operation) → HORS PÉRIMÈTRE",
+        "pipe requires re-routing → HORS PÉRIMÈTRE",
+        "new flexible hoses required (not existing): quote separately before purchasing"
+      ],
+
+      "hors_perimetre_trigger": "Any escape condition above → stop work → declare HORS_PERIMETRE_PRIX_FIXEO → explain to client → provide new quote → obtain explicit approval before continuing.",
+
+      "client_facing_label": "Main-d'œuvre + déplacement — robinet / mitigeur fourni par le client",
+      "client_disclosure": "Prix FIXEO : 250 MAD — main-d'œuvre et déplacement uniquement. Le robinet ou mitigeur est fourni par le client et n'est PAS inclus dans ce prix. Si l'artisan fournit la pièce à votre demande, elle sera facturée séparément avec votre accord.",
+      "artisan_disclosure": "Prix FIXEO remplacement robinet : 250 MAD — main-d'œuvre seule. Le robinet est fourni par le client. Si le client demande à l'artisan de fournir la pièce, elle doit être déclarée et approuvée séparément avant installation.",
+
+      "commission_sensitivity": {
+        "approved_price_MAD": 250,
+        "fuel_scenario": "MID_40_MAD",
+        "materials_MAD": 20,
+        "artisan_economic_floor_MAD": 100,
+        "scenarios": [
+          {"commission_pct": 0,  "fixeo_takes_MAD": 0,    "artisan_gross_MAD": 250, "less_fuel_MAD": 210, "less_materials_MAD": 190, "artisan_net_pre_labour_MAD": 190, "above_floor": true},
+          {"commission_pct": 10, "fixeo_takes_MAD": 25,   "artisan_gross_MAD": 225, "less_fuel_MAD": 185, "less_materials_MAD": 165, "artisan_net_pre_labour_MAD": 165, "above_floor": true},
+          {"commission_pct": 15, "fixeo_takes_MAD": 37.5, "artisan_gross_MAD": 212.5, "less_fuel_MAD": 172.5, "less_materials_MAD": 152.5, "artisan_net_pre_labour_MAD": 152.5, "above_floor": true},
+          {"commission_pct": 20, "fixeo_takes_MAD": 50,   "artisan_gross_MAD": 200, "less_fuel_MAD": 160, "less_materials_MAD": 140, "artisan_net_pre_labour_MAD": 140, "above_floor": true}
+        ],
+        "commission_risk_note": "250 MAD approved price is 50 MAD above V0.2 anchor of 200 MAD. This fully resolves the V0.2 commission-sensitivity concern. At 20%: 140 MAD net — comfortable. ACCEPTABLE at all scenarios.",
+        "floor_breach": false,
+        "v02_concern_resolved": true
+      },
+
+      "client_fairness": "ACCEPTABLE",
+      "artisan_fairness": "ACCEPTABLE",
+      "dual_fairness_result": "PASS at all commission scenarios with approved price of 250 MAD"
+    },
+
+    {
+      "service_code": "plomberie.chasse_eau",
+      "label_fr": "Remplacement mécanisme chasse d'eau — main-d'œuvre seule",
+      "fixeo_price": 300,
+      "currency": "MAD",
+      "pricing_architecture": "FIXEO_FIXED_PRICE",
+      "human_approved": true,
+      "pilot_status": "HUMAN_APPROVED_PILOT",
+      "production_ready": false,
+      "approval_date": "2026-08-09",
+      "approved_version": "0.3.0",
+
+      "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+      "evidence_basis": ["SRC_PLUMBING_001", "SRC_PLUMBING_006"],
+      "market_reference": {"consensus_low": 200, "market_anchor": 280, "consensus_high": 400, "confidence": "MEDIUM"},
+
+      "included_scope": [
+        "travel within normal intervention zone",
+        "labour",
+        "standard accessible WC cistern (réservoir apparent, non encastré)",
+        "diagnosis of flush mechanism issue",
+        "standard mechanism repair or replacement labour",
+        "minor seal or basic consumable where appropriate (≤30 MAD)"
+      ],
+      "excluded_scope": [
+        "replacement flushing mechanism or significant replacement part — NOT included",
+        "concealed cistern requiring wall or tile access",
+        "wall-hung WC (WC suspendu) requiring bâti-support access work → sanitaire_wc_suspendu",
+        "inaccessible mechanism requiring structural intervention",
+        "structural plumbing modification",
+        "non-standard or premium flush system",
+        "major replacement parts beyond standard mono-bloc mechanism",
+        "WC bowl or cistern replacement (cracked or broken cistern)"
+      ],
+
+      "materials_policy": {
+        "labour": "included",
+        "travel": "included",
+        "basic_consumables": "included — joint d'étanchéité de raccord ≤30 MAD",
+        "replacement_parts": "EXCLUDED — replacement mechanism NOT included",
+        "part_supply_policy": "CLIENT SUPPLIES THE REPLACEMENT MECHANISM BY DEFAULT. Typical universal mono-bloc mechanism: 60–120 MAD at droguerie or Bricoma. If artisan supplies: declared and approved separately, never silently bundled.",
+        "client_guidance": "Avant l'intervention, achetez un mécanisme de chasse universel (type mono-bloc, 60–120 MAD en droguerie). Si vous n'êtes pas sûr du modèle, l'artisan peut vous conseiller par téléphone."
+      },
+
+      "diagnostic_policy": {
+        "mode": "INCLUDED_IN_INTERVENTION",
+        "note": "Symptom is known before arrival (WC running, not flushing, or leaking at base). Diagnostic step included in 300 MAD price."
+      },
+
+      "pre_arrival_classification_question": "Standard WC avec réservoir apparent, ou WC suspendu avec bâti-support encastré dans le mur ? (WC suspendu = hors périmètre prix standard)",
+
+      "complexity_escape_rules": [
+        "WC is wall-hung/suspended (bâti-support) — discovered before or on arrival → HORS PÉRIMÈTRE → sanitaire_wc_suspendu",
+        "cistern cracked or broken (requires replacement, not mechanism repair) → HORS PÉRIMÈTRE",
+        "robinet d'arrêt feeding cistern also defective → quote separately as additional service",
+        "old mechanism corroded or seized requiring special extraction >30 min additional → HORS PÉRIMÈTRE",
+        "non-standard or proprietary flush system requiring specialist parts → HORS PÉRIMÈTRE"
+      ],
+
+      "hors_perimetre_trigger": "Any escape condition above → stop work → declare HORS_PERIMETRE_PRIX_FIXEO → explain to client → provide new quote → obtain explicit approval.",
+
+      "client_facing_label": "Main-d'œuvre + déplacement — mécanisme fourni par le client",
+      "client_disclosure": "Prix FIXEO : 300 MAD — main-d'œuvre et déplacement. Le mécanisme de chasse est fourni par le client et n'est PAS inclus dans ce prix (disponible en droguerie : 60–120 MAD). Valable uniquement pour WC standard à réservoir apparent.",
+      "artisan_disclosure": "Prix FIXEO remplacement chasse d'eau : 300 MAD — main-d'œuvre seule. Le mécanisme est fourni par le client. WC suspendu = hors périmètre. Si le mécanisme n'est pas fourni par le client, ne pas commencer les travaux sans accord de prix.",
+
+      "commission_sensitivity": {
+        "approved_price_MAD": 300,
+        "fuel_scenario": "MID_40_MAD",
+        "materials_MAD": 15,
+        "artisan_economic_floor_MAD": 100,
+        "scenarios": [
+          {"commission_pct": 0,  "fixeo_takes_MAD": 0,    "artisan_gross_MAD": 300, "less_fuel_MAD": 260, "less_materials_MAD": 245, "artisan_net_pre_labour_MAD": 245, "above_floor": true},
+          {"commission_pct": 10, "fixeo_takes_MAD": 30,   "artisan_gross_MAD": 270, "less_fuel_MAD": 230, "less_materials_MAD": 215, "artisan_net_pre_labour_MAD": 215, "above_floor": true},
+          {"commission_pct": 15, "fixeo_takes_MAD": 45,   "artisan_gross_MAD": 255, "less_fuel_MAD": 215, "less_materials_MAD": 200, "artisan_net_pre_labour_MAD": 200, "above_floor": true},
+          {"commission_pct": 20, "fixeo_takes_MAD": 60,   "artisan_gross_MAD": 240, "less_fuel_MAD": 200, "less_materials_MAD": 185, "artisan_net_pre_labour_MAD": 185, "above_floor": true}
+        ],
+        "commission_risk_note": "300 MAD approved price — 20 MAD above V0.2 anchor. At 20%: 185 MAD net. ACCEPTABLE at all scenarios.",
+        "floor_breach": false
+      },
+
+      "client_fairness": "ACCEPTABLE",
+      "artisan_fairness": "ACCEPTABLE",
+      "dual_fairness_result": "PASS at all commission scenarios with approved price of 300 MAD"
+    }
+
+  ]
+}

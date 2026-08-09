@@ -1,0 +1,454 @@
+{
+  "_meta": {
+    "document_type": "FIXEO_PLUMBING_PRICE_CALIBRATION",
+    "calibration_version": "0.3.0",
+    "status": "HUMAN_APPROVED_PILOT_NOT_PRODUCTION",
+    "phase": "Phase 7B.3.3 — Human Price Decision Freeze",
+    "based_on_registry_version": "0.3.0",
+    "approval_date": "2026-08-09",
+    "production_ready": false,
+    "currency": "MAD",
+    "geographic_scope": "NATIONAL_MOROCCO",
+    "city_adjustment": null,
+    "urgency_modifier": null,
+    "ai_claim": null,
+    "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+    "price_provenance_description": "FIXEO human-calibrated pilot price based on aggregated Moroccan market research and dual-fairness economic review.",
+    "commission_scenarios_tested": [
+      0,
+      10,
+      15,
+      20
+    ],
+    "fuel_cost_scenario": "MID_40_MAD",
+    "artisan_economic_floor_casablanca_MAD": 100,
+    "all_human_decisions": "APPROVED",
+    "all_floor_breaches": false,
+    "validation_flags": {
+      "exactly_6_approved_services": true,
+      "all_human_approved_true": true,
+      "all_production_ready_false": true,
+      "approved_prices_exact": true,
+      "currency_MAD": true,
+      "no_city_multiplier": true,
+      "no_urgency_percentage": true,
+      "no_ai_claim": true,
+      "replacement_parts_excluded_where_required": true,
+      "every_service_has_included_scope": true,
+      "every_service_has_excluded_scope": true,
+      "every_service_has_complexity_escape_rules": true,
+      "every_service_has_provenance": true,
+      "diagnostic_absorption_rule_represented": true,
+      "hors_perimetre_doctrine_represented": true,
+      "all_source_references_traceable": true,
+      "v01_untouched": true,
+      "v02_untouched": true,
+      "production_runtime_diff": "ZERO",
+      "commission_math_verified": true,
+      "no_floor_breach_any_service_any_rate": true
+    }
+  },
+  "services": [
+    {
+      "service_code": "plomberie.diagnostic",
+      "label_fr": "Déplacement et diagnostic plomberie",
+      "fixeo_price_MAD": 180,
+      "currency": "MAD",
+      "pricing_architecture": "FIXEO_FIXED_PRICE",
+      "human_approved": true,
+      "pilot_status": "HUMAN_APPROVED_PILOT",
+      "production_ready": false,
+      "approval_date": "2026-08-09",
+      "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+      "market_reference": {
+        "consensus_low": 100,
+        "market_anchor": 150,
+        "consensus_high": 200,
+        "confidence": "MEDIUM"
+      },
+      "materials_MAD": 0,
+      "fuel_scenario": "MID_40_MAD",
+      "artisan_economic_floor_MAD": 100,
+      "commission_scenarios": [
+        {
+          "commission_pct": 0,
+          "fixeo_takes_MAD": 0.0,
+          "artisan_gross_MAD": 180.0,
+          "less_fuel_MAD": 140.0,
+          "artisan_net_pre_labour_MAD": 140.0,
+          "above_floor": true
+        },
+        {
+          "commission_pct": 10,
+          "fixeo_takes_MAD": 18.0,
+          "artisan_gross_MAD": 162.0,
+          "less_fuel_MAD": 122.0,
+          "artisan_net_pre_labour_MAD": 122.0,
+          "above_floor": true
+        },
+        {
+          "commission_pct": 15,
+          "fixeo_takes_MAD": 27.0,
+          "artisan_gross_MAD": 153.0,
+          "less_fuel_MAD": 113.0,
+          "artisan_net_pre_labour_MAD": 113.0,
+          "above_floor": true
+        },
+        {
+          "commission_pct": 20,
+          "fixeo_takes_MAD": 36.0,
+          "artisan_gross_MAD": 144.0,
+          "less_fuel_MAD": 104.0,
+          "artisan_net_pre_labour_MAD": 104.0,
+          "above_floor": true
+        }
+      ],
+      "floor_breach": false,
+      "client_fairness": "ACCEPTABLE",
+      "artisan_fairness": "ACCEPTABLE",
+      "dual_fairness_result": "PASS at all commission scenarios with approved price of 180 MAD",
+      "source_references": [
+        "SRC_PLUMBING_001",
+        "SRC_PLUMBING_006",
+        "SRC_PLUMBING_007"
+      ]
+    },
+    {
+      "service_code": "plomberie.fuite_simple",
+      "label_fr": "Réparation fuite simple — visible et accessible",
+      "fixeo_price_MAD": 250,
+      "currency": "MAD",
+      "pricing_architecture": "FIXEO_FIXED_PRICE",
+      "human_approved": true,
+      "pilot_status": "HUMAN_APPROVED_PILOT",
+      "production_ready": false,
+      "approval_date": "2026-08-09",
+      "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+      "market_reference": {
+        "consensus_low": 150,
+        "market_anchor": 220,
+        "consensus_high": 350,
+        "confidence": "MEDIUM"
+      },
+      "materials_MAD": 30,
+      "fuel_scenario": "MID_40_MAD",
+      "artisan_economic_floor_MAD": 100,
+      "commission_scenarios": [
+        {
+          "commission_pct": 0,
+          "fixeo_takes_MAD": 0.0,
+          "artisan_gross_MAD": 250.0,
+          "less_fuel_MAD": 210.0,
+          "artisan_net_pre_labour_MAD": 180.0,
+          "above_floor": true,
+          "less_materials_MAD": 180.0
+        },
+        {
+          "commission_pct": 10,
+          "fixeo_takes_MAD": 25.0,
+          "artisan_gross_MAD": 225.0,
+          "less_fuel_MAD": 185.0,
+          "artisan_net_pre_labour_MAD": 155.0,
+          "above_floor": true,
+          "less_materials_MAD": 155.0
+        },
+        {
+          "commission_pct": 15,
+          "fixeo_takes_MAD": 37.5,
+          "artisan_gross_MAD": 212.5,
+          "less_fuel_MAD": 172.5,
+          "artisan_net_pre_labour_MAD": 142.5,
+          "above_floor": true,
+          "less_materials_MAD": 142.5
+        },
+        {
+          "commission_pct": 20,
+          "fixeo_takes_MAD": 50.0,
+          "artisan_gross_MAD": 200.0,
+          "less_fuel_MAD": 160.0,
+          "artisan_net_pre_labour_MAD": 130.0,
+          "above_floor": true,
+          "less_materials_MAD": 130.0
+        }
+      ],
+      "floor_breach": false,
+      "client_fairness": "ACCEPTABLE",
+      "artisan_fairness": "ACCEPTABLE",
+      "dual_fairness_result": "PASS at all commission scenarios with approved price of 250 MAD",
+      "source_references": [
+        "SRC_PLUMBING_001",
+        "SRC_PLUMBING_005",
+        "SRC_PLUMBING_006",
+        "SRC_PLUMBING_007",
+        "SRC_PLUMBING_004"
+      ]
+    },
+    {
+      "service_code": "plomberie.debouchage_evier",
+      "label_fr": "Débouchage évier ou lavabo — méthode manuelle",
+      "fixeo_price_MAD": 250,
+      "currency": "MAD",
+      "pricing_architecture": "FIXEO_FIXED_PRICE",
+      "human_approved": true,
+      "pilot_status": "HUMAN_APPROVED_PILOT",
+      "production_ready": false,
+      "approval_date": "2026-08-09",
+      "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+      "market_reference": {
+        "consensus_low": 150,
+        "market_anchor": 220,
+        "consensus_high": 300,
+        "confidence": "MEDIUM"
+      },
+      "materials_MAD": 0,
+      "fuel_scenario": "MID_40_MAD",
+      "artisan_economic_floor_MAD": 100,
+      "commission_scenarios": [
+        {
+          "commission_pct": 0,
+          "fixeo_takes_MAD": 0.0,
+          "artisan_gross_MAD": 250.0,
+          "less_fuel_MAD": 210.0,
+          "artisan_net_pre_labour_MAD": 210.0,
+          "above_floor": true
+        },
+        {
+          "commission_pct": 10,
+          "fixeo_takes_MAD": 25.0,
+          "artisan_gross_MAD": 225.0,
+          "less_fuel_MAD": 185.0,
+          "artisan_net_pre_labour_MAD": 185.0,
+          "above_floor": true
+        },
+        {
+          "commission_pct": 15,
+          "fixeo_takes_MAD": 37.5,
+          "artisan_gross_MAD": 212.5,
+          "less_fuel_MAD": 172.5,
+          "artisan_net_pre_labour_MAD": 172.5,
+          "above_floor": true
+        },
+        {
+          "commission_pct": 20,
+          "fixeo_takes_MAD": 50.0,
+          "artisan_gross_MAD": 200.0,
+          "less_fuel_MAD": 160.0,
+          "artisan_net_pre_labour_MAD": 160.0,
+          "above_floor": true
+        }
+      ],
+      "floor_breach": false,
+      "client_fairness": "STRONG",
+      "artisan_fairness": "ACCEPTABLE",
+      "dual_fairness_result": "PASS at all commission scenarios with approved price of 250 MAD",
+      "source_references": [
+        "SRC_PLUMBING_001",
+        "SRC_PLUMBING_005",
+        "SRC_PLUMBING_006",
+        "SRC_PLUMBING_007"
+      ]
+    },
+    {
+      "service_code": "plomberie.debouchage_wc_simple",
+      "label_fr": "Débouchage WC — méthode manuelle",
+      "fixeo_price_MAD": 300,
+      "currency": "MAD",
+      "pricing_architecture": "FIXEO_FIXED_PRICE",
+      "human_approved": true,
+      "pilot_status": "HUMAN_APPROVED_PILOT",
+      "production_ready": false,
+      "approval_date": "2026-08-09",
+      "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+      "market_reference": {
+        "consensus_low": 200,
+        "market_anchor": 280,
+        "consensus_high": 450,
+        "confidence": "MEDIUM"
+      },
+      "materials_MAD": 0,
+      "fuel_scenario": "MID_40_MAD",
+      "artisan_economic_floor_MAD": 100,
+      "commission_scenarios": [
+        {
+          "commission_pct": 0,
+          "fixeo_takes_MAD": 0.0,
+          "artisan_gross_MAD": 300.0,
+          "less_fuel_MAD": 260.0,
+          "artisan_net_pre_labour_MAD": 260.0,
+          "above_floor": true
+        },
+        {
+          "commission_pct": 10,
+          "fixeo_takes_MAD": 30.0,
+          "artisan_gross_MAD": 270.0,
+          "less_fuel_MAD": 230.0,
+          "artisan_net_pre_labour_MAD": 230.0,
+          "above_floor": true
+        },
+        {
+          "commission_pct": 15,
+          "fixeo_takes_MAD": 45.0,
+          "artisan_gross_MAD": 255.0,
+          "less_fuel_MAD": 215.0,
+          "artisan_net_pre_labour_MAD": 215.0,
+          "above_floor": true
+        },
+        {
+          "commission_pct": 20,
+          "fixeo_takes_MAD": 60.0,
+          "artisan_gross_MAD": 240.0,
+          "less_fuel_MAD": 200.0,
+          "artisan_net_pre_labour_MAD": 200.0,
+          "above_floor": true
+        }
+      ],
+      "floor_breach": false,
+      "client_fairness": "STRONG",
+      "artisan_fairness": "STRONG",
+      "dual_fairness_result": "PASS — STRONG at all commission scenarios with approved price of 300 MAD",
+      "source_references": [
+        "SRC_PLUMBING_001",
+        "SRC_PLUMBING_002",
+        "SRC_PLUMBING_003",
+        "SRC_PLUMBING_005",
+        "SRC_PLUMBING_007"
+      ]
+    },
+    {
+      "service_code": "plomberie.robinet_remplacement",
+      "label_fr": "Remplacement robinet / mitigeur — main-d'œuvre seule",
+      "fixeo_price_MAD": 250,
+      "currency": "MAD",
+      "pricing_architecture": "FIXEO_FIXED_PRICE",
+      "human_approved": true,
+      "pilot_status": "HUMAN_APPROVED_PILOT",
+      "production_ready": false,
+      "approval_date": "2026-08-09",
+      "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+      "market_reference": {
+        "consensus_low": 150,
+        "market_anchor": 200,
+        "consensus_high": 300,
+        "confidence": "MEDIUM"
+      },
+      "materials_MAD": 20,
+      "fuel_scenario": "MID_40_MAD",
+      "artisan_economic_floor_MAD": 100,
+      "commission_scenarios": [
+        {
+          "commission_pct": 0,
+          "fixeo_takes_MAD": 0.0,
+          "artisan_gross_MAD": 250.0,
+          "less_fuel_MAD": 210.0,
+          "artisan_net_pre_labour_MAD": 190.0,
+          "above_floor": true,
+          "less_materials_MAD": 190.0
+        },
+        {
+          "commission_pct": 10,
+          "fixeo_takes_MAD": 25.0,
+          "artisan_gross_MAD": 225.0,
+          "less_fuel_MAD": 185.0,
+          "artisan_net_pre_labour_MAD": 165.0,
+          "above_floor": true,
+          "less_materials_MAD": 165.0
+        },
+        {
+          "commission_pct": 15,
+          "fixeo_takes_MAD": 37.5,
+          "artisan_gross_MAD": 212.5,
+          "less_fuel_MAD": 172.5,
+          "artisan_net_pre_labour_MAD": 152.5,
+          "above_floor": true,
+          "less_materials_MAD": 152.5
+        },
+        {
+          "commission_pct": 20,
+          "fixeo_takes_MAD": 50.0,
+          "artisan_gross_MAD": 200.0,
+          "less_fuel_MAD": 160.0,
+          "artisan_net_pre_labour_MAD": 140.0,
+          "above_floor": true,
+          "less_materials_MAD": 140.0
+        }
+      ],
+      "floor_breach": false,
+      "client_fairness": "ACCEPTABLE",
+      "artisan_fairness": "ACCEPTABLE",
+      "dual_fairness_result": "PASS at all commission scenarios with approved price of 250 MAD",
+      "source_references": [
+        "SRC_PLUMBING_001",
+        "SRC_PLUMBING_005",
+        "SRC_PLUMBING_006",
+        "SRC_PLUMBING_007"
+      ]
+    },
+    {
+      "service_code": "plomberie.chasse_eau",
+      "label_fr": "Remplacement mécanisme chasse d'eau — main-d'œuvre seule",
+      "fixeo_price_MAD": 300,
+      "currency": "MAD",
+      "pricing_architecture": "FIXEO_FIXED_PRICE",
+      "human_approved": true,
+      "pilot_status": "HUMAN_APPROVED_PILOT",
+      "production_ready": false,
+      "approval_date": "2026-08-09",
+      "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+      "market_reference": {
+        "consensus_low": 200,
+        "market_anchor": 280,
+        "consensus_high": 400,
+        "confidence": "MEDIUM"
+      },
+      "materials_MAD": 15,
+      "fuel_scenario": "MID_40_MAD",
+      "artisan_economic_floor_MAD": 100,
+      "commission_scenarios": [
+        {
+          "commission_pct": 0,
+          "fixeo_takes_MAD": 0.0,
+          "artisan_gross_MAD": 300.0,
+          "less_fuel_MAD": 260.0,
+          "artisan_net_pre_labour_MAD": 245.0,
+          "above_floor": true,
+          "less_materials_MAD": 245.0
+        },
+        {
+          "commission_pct": 10,
+          "fixeo_takes_MAD": 30.0,
+          "artisan_gross_MAD": 270.0,
+          "less_fuel_MAD": 230.0,
+          "artisan_net_pre_labour_MAD": 215.0,
+          "above_floor": true,
+          "less_materials_MAD": 215.0
+        },
+        {
+          "commission_pct": 15,
+          "fixeo_takes_MAD": 45.0,
+          "artisan_gross_MAD": 255.0,
+          "less_fuel_MAD": 215.0,
+          "artisan_net_pre_labour_MAD": 200.0,
+          "above_floor": true,
+          "less_materials_MAD": 200.0
+        },
+        {
+          "commission_pct": 20,
+          "fixeo_takes_MAD": 60.0,
+          "artisan_gross_MAD": 240.0,
+          "less_fuel_MAD": 200.0,
+          "artisan_net_pre_labour_MAD": 185.0,
+          "above_floor": true,
+          "less_materials_MAD": 185.0
+        }
+      ],
+      "floor_breach": false,
+      "client_fairness": "ACCEPTABLE",
+      "artisan_fairness": "ACCEPTABLE",
+      "dual_fairness_result": "PASS at all commission scenarios with approved price of 300 MAD",
+      "source_references": [
+        "SRC_PLUMBING_001",
+        "SRC_PLUMBING_006"
+      ]
+    }
+  ]
+}
