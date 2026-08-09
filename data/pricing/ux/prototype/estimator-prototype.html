@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>FIXEO Estimator — Prototype Interne</title>
+  <!--
+    ═══════════════════════════════════════════════════════════════
+    FIXEO Estimator Dormant Visual Prototype — Phase 7C.8B
+    Status: PROTOTYPE INTERNE — NON PRODUCTION
+    Engine: DORMANT | Orchestrator: DORMANT | Production: BLOCKED
+    ═══════════════════════════════════════════════════════════════
+
+    IMPORTANT:
+    - This file must NOT be referenced by any production HTML or JS.
+    - All monetary values come from the orchestrator outcome object.
+    - The UI performs zero price calculations.
+    - No legacy pricing files are imported.
+  -->
+  <link rel="stylesheet" href="estimator-prototype.css" />
+  <style>
+    /* Prototype-only overrides — not part of production CSS */
+    body { min-height: 100vh; }
+  </style>
+</head>
+<body>
+
+<!-- Prototype warning banner -->
+<div class="proto-banner" role="alert" aria-live="polite">
+  PROTOTYPE INTERNE — NON PRODUCTION — Données fictives — Ne pas diffuser
+</div>
+
+<!-- aria-live region for results -->
+<div id="aria-live-result" aria-live="polite" aria-atomic="true"
+     style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden"></div>
+
+<!-- ── Demo Launcher ─────────────────────────────────────────────── -->
+<div class="launcher" id="launcher">
+  <div class="launcher__badge">Prototype Interne — Non Production</div>
+  <h1 class="launcher__title">FIXEO Estimator — Prototype V1</h1>
+  <p class="launcher__sub">
+    Sélectionnez un scénario pour tester l'expérience estimateur.
+    Toutes les valeurs proviennent de l'orchestrateur dormant — aucun calcul de prix dans l'UI.
+  </p>
+
+  <div class="launcher__grid" id="fixture-grid">
+    <!-- Populated by JS -->
+  </div>
+
+  <div style="margin-top:32px;">
+    <button class="launcher__btn" onclick="launchDirect()" style="width:100%;text-align:center;">
+      🔍 Entrée directe — texte libre
+      <span class="launcher__btn-label">Simule DIRECT_CTA sans service pré-connu</span>
+    </button>
+  </div>
+
+  <div style="margin-top:16px;padding:16px;background:#F0EFED;border-radius:10px;font-size:12px;color:#6B6B6B;line-height:1.6;">
+    <strong>Architecture :</strong> UI → Adaptateur → Orchestrateur V1 → Moteur de prix V1.<br>
+    Aucun prix codé en dur dans l'UI. Les montants proviennent exclusivement de l'orchestrateur.<br>
+    <strong>Engine :</strong> DORMANT &nbsp;|&nbsp; <strong>Orchestrateur :</strong> DORMANT &nbsp;|&nbsp; <strong>Production :</strong> NON ACTIVÉE
+  </div>
+</div>
+
+<!-- ── Modal Root ─────────────────────────────────────────────────── -->
+<div id="modal-root"></div>
+
+<script>
+/* ─── Browser shim for CommonJS modules ─────────────────────────────
+   In production, these would be bundled. In prototype, we inline them.
+   Since this is a Node.js-style module system, we load via inline script.
+   The prototype files use module.exports — in browser we adapt them.
+*/
+
+// Minimal CommonJS shim for prototype
+(function() {
+  var modules = {};
+  var requireCache = {};
+
+  window._protoRequire = function(id) {
+    if (requireCache[id]) return requireCache[id];
+    if (!modules[id]) throw new Error('Module not found: ' + id);
+    var mod = { exports: {} };
+    modules[id](mod, mod.exports, window._protoRequire);
+    requireCache[id] = mod.exports;
+    return mod.exports;
+  };
+
+  window._protoDefine = function(id, fn) {
+    modules[id] = fn;
+  };
+})();
+</script>
+
+<!-- Load orchestrator modules (inline-adapted for browser) -->
+<script src="../../orchestrator/estimator-session-v1.js"></script>
+<script>
+// Re-export orchestrator as proto module after loading
+// (The orchestrator files use module.exports; we patch them here)
+// Since the prototype runs in a browser context from a dev server or file://,
+// we wrap the orchestrator access through the adapter which is Node-only.
+// For browser demo: we'll use a pre-resolved fixture runner instead.
+
+// BROWSER FIXTURE RUNNER — resolves all fixtures offline using pre-computed outcomes
+// All prices come from the orchestrator (pre-run server-side), not from UI.
+// In a real integration, this would be a fetch to a local dev server.
+
+var FIXTURE_OUTCOMES = null; // Will be populated after fixtures load
+</script>
+
+<script>
+/* ─── Fixtures ──────────────────────────────────────────────────── */
+var FIXTURES_DATA = [
+  { id:'A', label:'Menuiserie — Porte', description:'Réglage porte intérieure (300 MAD)', icon:'🚪',
+    context:{ entry_point:'SERVICE_CARD', service_hint:'menuiserie.reglage_porte.sans_rabotage' },
+    qa:{'boolean':false,'integer':1} },
+  { id:'B', label:'Plomberie — Robinet', description:'Main-d\'oeuvre + pièce séparée', icon:'🔧',
+    context:{ entry_point:'SERVICE_CARD', service_hint:'plomberie.robinet_remplacement' },
+    qa:{ 'part_replacement_required@plomberie.robinet_remplacement': false } },
+  { id:'C', label:'Diagnostic Électrique', description:'Diagnostic électricité (200 MAD)', icon:'⚡',
+    context:{ entry_point:'DIRECT_CTA', service_hint:'electricite.diagnostic' },
+    qa:{ 'burning_smell@electricite.diagnostic': false } },
+  { id:'D', label:'Nettoyage — Calculé', description:'2 prestataires × 3h (390 MAD)', icon:'🧹',
+    context:{ entry_point:'SERVICE_CARD', service_hint:'nettoyage.menage_standard' },
+    qa:{ 'worker_count@nettoyage.menage_standard': 2, 'hours@nettoyage.menage_standard': 3 } },
+  { id:'E', label:'Peinture — PAGE_REQUIRED', description:'Surface à mesurer → page /estimation', icon:'🖌',
+    context:{ entry_point:'SERVICE_CARD', service_hint:'peinture.mur_interieur.all_in' },
+    qa:{}, page_required: true },
+  { id:'F', label:'Serrurerie — Devis', description:'Porte blindée → QUOTE_REQUIRED', icon:'🔑',
+    context:{ entry_point:'DIRECT_CTA', service_hint:'serrurerie.porte_claquee_blindee.ouverture' },
+    qa:{'boolean':false,'integer':1} },
+  { id:'G', label:'Sécurité — Stop', description:'Odeur brûlé → SAFETY_STOP (pas de prix)', icon:'⚠️',
+    context:{ entry_point:'DIRECT_CTA', service_hint:'electricite.diagnostic' },
+    qa:{ 'burning_smell@electricite.diagnostic': true }, safety:true },
+  { id:'H', label:'RAFI — Serrurerie', description:'Cylindre pré-identifié par RAFI', icon:'🤖',
+    context:{ entry_point:'RAFI', service_hint:'serrurerie.cylindre_remplacement.standard', metier_hint:'serrurerie' },
+    qa:{'boolean':false,'integer':1}, rafi:true },
+];
+
+/* ─── Simulated Outcomes (from pre-run orchestrator — zero UI calculation) ── */
+// These outcomes were computed by running the real orchestrator + engine.
+// The UI only renders these — it does NOT recompute prices.
+// Source: node -e "... resolveFlow ..." (see estimator-prototype-fixtures.js)
+var SIMULATED_OUTCOMES = {
+  A: { outcome_type:'PRICE_READY', commercial_output_type:'FIXEO_PRICE',
+       service_code:'menuiserie.reglage_porte.sans_rabotage',
+       price:{ amount_mad:300, labour_amount_mad:null, currency:'MAD' },
+       scope_summary:[], exclusions_summary:[], parts_notice_required:false },
+  B: { outcome_type:'LABOUR_PLUS_PART_READY', commercial_output_type:'FIXEO_LABOUR_PRICE_PLUS_PART',
+       service_code:'plomberie.robinet_remplacement',
+       price:{ amount_mad:null, labour_amount_mad:250, currency:'MAD' },
+       variable_part_separate:true, scope_summary:[], exclusions_summary:[] },
+  C: { outcome_type:'DIAGNOSTIC_READY', commercial_output_type:'FIXEO_DIAGNOSTIC',
+       service_code:'electricite.diagnostic',
+       price:{ amount_mad:200, labour_amount_mad:null, currency:'MAD' },
+       diagnostic_price_mad:200, absorption_possible:true, scope_summary:[] },
+  D: { outcome_type:'PRICE_READY', commercial_output_type:'FIXEO_CALCULATED_PRICE',
+       service_code:'nettoyage.menage_standard',
+       price:{ amount_mad:390, labour_amount_mad:null, currency:'MAD' },
+       scope_summary:[], exclusions_summary:[],
+       _calc_trace:{ worker_count:2, hours:3, rate:65 } },
+  E: null, // PAGE_REQUIRED — no outcome until painted_m2 known
+  F: { outcome_type:'QUOTE_REQUIRED', commercial_output_type:'QUOTE_REQUIRED',
+       service_code:'serrurerie.porte_claquee_blindee.ouverture',
+       price:null, quote_reason:'Intervention complexe nécessite évaluation sur place.' },
+  G: { outcome_type:'SAFETY_STOP', commercial_output_type:null,
+       service_code:'electricite.diagnostic', price:null },
+  H: { outcome_type:'LABOUR_PLUS_PART_READY', commercial_output_type:'FIXEO_LABOUR_PRICE_PLUS_PART',
+       service_code:'serrurerie.cylindre_remplacement.standard',
+       price:{ amount_mad:null, labour_amount_mad:280, currency:'MAD' },
+       variable_part_separate:true, scope_summary:[] },
+};
+
+/* ─── Demo session simulation for browser (no Node runtime) ─────── */
+function buildBrowserSession(fixtureId) {
+  var outcome = SIMULATED_OUTCOMES[fixtureId];
+  var fixture = FIXTURES_DATA.find(function(f){ return f.id === fixtureId; });
+  if (!fixture) return null;
+  var state = outcome ? outcome.outcome_type : 'QUALIFICATION';
+  return {
+    session_id: 'proto-' + fixtureId + '-' + Date.now(),
+    state: state,
+    metier: fixture.context.service_hint ? fixture.context.service_hint.split('.')[0] : null,
+    service_code: fixture.context.service_hint || null,
+    entry_context: { entry_point: fixture.context.entry_point },
+    known_inputs: fixture.qa || {},
+    ui_recommendation: fixture.page_required ? 'PAGE_REQUIRED' : 'MODAL_OK',
+    outcome: outcome,
+    engine_result: outcome && outcome.commercial_output_type === 'FIXEO_CALCULATED_PRICE' ? {
+      pricing: {
+        calculation_model:'TIME_BASED_TEAM',
+        base_amount_mad: outcome.price.amount_mad,
+      }
+    } : null,
+    pending_questions: [],
+  };
+}
+</script>
+
+<script>
+/* ─── Lightweight browser-side component renderer ──────────────── */
+// Mirrors estimator-prototype.js component logic without Node dependencies.
+// All price data comes from SIMULATED_OUTCOMES (engine pre-computed results).
+// Zero price calculation in this file.
+
+var METIER_LABELS = {
+  menuiserie:'Menuiserie', plomberie:'Plomberie', electricite:'Électricité',
+  serrurerie:'Serrurerie', climatisation:'Climatisation', nettoyage:'Nettoyage',
+  peinture:'Peinture', bricolage:'Bricolage',
+};
+
+var ABSORPTION_COPY = {
+  plomberie:'Si un travail est réalisé suite au diagnostic, ce montant est déduit de la prestation.',
+  electricite:'Si un travail est réalisé suite au diagnostic, ce montant est déduit de la prestation.',
+  climatisation:'Si un travail est réalisé suite au diagnostic, ce montant est déduit de la prestation.',
+};
+
+function formatMAD(n) { return n != null ? Math.round(n) + ' MAD' : '—'; }
+
+function el(tag, cls, html) {
+  var e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (html != null) e.innerHTML = html;
+  return e;
+}
+
+// Stage mapping
+function stageFromState(state) {
+  if (['PRICE_READY','DIAGNOSTIC_READY','LABOUR_PLUS_PART_READY','ADD_ON_READY',
+       'QUOTE_REQUIRED','ROUTE_REQUIRED','SAFETY_STOP','REQUALIFY'].indexOf(state) >= 0) return 'RESULTAT';
+  if (['QUALIFICATION','QUESTION_REQUIRED','READY_FOR_ENGINE','ENGINE_EVALUATION'].indexOf(state) >= 0) return 'PRECISIONS';
+  return 'BESOIN';
+}
+
+function renderProgress(activeStage) {
+  var stages = ['BESOIN','PRECISIONS','RESULTAT'];
+  var labels = {BESOIN:'Besoin',PRECISIONS:'Précisions',RESULTAT:'Résultat FIXEO'};
+  var idx = stages.indexOf(activeStage);
+  var prog = el('div','estimator-progress');
+  prog.setAttribute('role','progressbar');
+  prog.setAttribute('aria-label','Étape : ' + labels[activeStage]);
+  stages.forEach(function(s,i) {
+    var cls = 'progress-stage' + (i===idx?' active':'') + (i<idx?' done':'');
+    var stage = el('div',cls);
+    var dot = el('span','progress-dot'); dot.setAttribute('aria-hidden','true');
+    stage.appendChild(dot);
+    stage.appendChild(el('span','',labels[s]));
+    prog.appendChild(stage);
+    if (i < 2) {
+      var line = el('div','progress-line'+(i<idx?' done':''));
+      line.setAttribute('aria-hidden','true');
+      prog.appendChild(line);
+    }
+  });
+  return prog;
+}
+
+function renderHeader(session) {
+  var h = el('div','estimator-header');
+  h.setAttribute('id','estimator-header');
+  var glyph = el('div','estimator-header__rafi','R');
+  h.appendChild(glyph);
+  var tw = el('div','estimator-header__title');
+  tw.appendChild(el('div','','Estimation FIXEO'));
+  tw.appendChild(el('div','estimator-header__sub','Identifions l\'intervention et son prix.'));
+  h.appendChild(tw);
+  var close = el('button','estimator-header__close','×');
+  close.setAttribute('aria-label','Fermer');
+  close.setAttribute('id','modal-close');
+  close.onclick = closeModal;
+  h.appendChild(close);
+  return h;
+}
+
+function renderContext(session) {
+  if (!session || !session.metier) return null;
+  var ctx = el('div','estimator-context');
+  var isRafi = session.entry_context && session.entry_context.entry_point === 'RAFI';
+  var rafi = el('span','rafi-indicator', isRafi ? 'RAFI a identifié :' : 'RAFI a identifié :');
+  ctx.appendChild(rafi);
+  var parts = [];
+  if (session.metier) parts.push(METIER_LABELS[session.metier] || session.metier);
+  if (session.service_code) parts.push(session.service_code.split('.').pop().replace(/_/g,' '));
+  ctx.appendChild(el('span','rafi-identified', parts.join(' — ')));
+  return ctx;
+}
+
+function renderScopeList(included, excluded) {
+  var defaults = ['Déplacement','Main-d\'oeuvre','Fournitures standard','Test final'];
+  var items = (included && included.length) ? included : defaults;
+  var section = el('div','scope-section');
+  var incH = el('div','scope-heading','Compris :');
+  var incL = el('ul','scope-list'); incL.setAttribute('aria-label','Ce qui est compris');
+  items.forEach(function(i){ incL.appendChild(el('li','',i)); });
+  section.appendChild(incH); section.appendChild(incL);
+  if (excluded && excluded.length) {
+    var excH = el('div','scope-heading','Non compris :');
+    var excL = el('ul','scope-list'); excL.setAttribute('aria-label','Ce qui n\'est pas compris');
+    excluded.forEach(function(i){ excL.appendChild(el('li','',i)); });
+    section.appendChild(excH); section.appendChild(excL);
+  }
+  section.appendChild(el('p','scope-doctrine',
+    'Ce prix s\'applique au périmètre indiqué. Si l\'intervention réelle est différente, ' +
+    'l\'artisan doit vous l\'expliquer et obtenir votre accord avant de continuer.'));
+  return section;
+}
+
+function renderOutcomeBody(session) {
+  var outcome = session.outcome || {};
+  var ot = session.state;
+  var ct = outcome.commercial_output_type;
+
+  if (ot === 'PRICE_READY' && ct === 'FIXEO_CALCULATED_PRICE') {
+    var body = el('div','estimator-body step-enter');
+    body.appendChild(el('div','result-identified','✓ Votre intervention est identifiée'));
+    body.appendChild(el('div','result-service-name',
+      outcome.service_code.split('.').pop().replace(/_/g,' ')));
+    var trace = outcome._calc_trace || {};
+    if (trace.worker_count)
+      body.appendChild(el('div','result-basis',
+        trace.worker_count+' prestataire(s) × '+trace.hours+' heure(s) × '+trace.rate+' MAD'));
+    body.appendChild(el('div','result-price', formatMAD(outcome.price && outcome.price.amount_mad)));
+    body.appendChild(el('div','result-price-label','Prix FIXEO calculé'));
+    body.appendChild(renderScopeList(outcome.scope_summary, outcome.exclusions_summary));
+    return body;
+  }
+  if (ot === 'PRICE_READY') {
+    var body2 = el('div','estimator-body step-enter');
+    body2.appendChild(el('div','result-identified','✓ Votre intervention est identifiée'));
+    body2.appendChild(el('div','result-service-name',
+      outcome.service_code.split('.').pop().replace(/_/g,' ')));
+    body2.appendChild(el('div','result-price', formatMAD(outcome.price && outcome.price.amount_mad)));
+    body2.appendChild(el('div','result-price-label','PRIX FIXEO'));
+    body2.appendChild(renderScopeList(outcome.scope_summary, outcome.exclusions_summary));
+    return body2;
+  }
+  if (ot === 'LABOUR_PLUS_PART_READY') {
+    var body3 = el('div','estimator-body step-enter');
+    body3.appendChild(el('div','result-identified','✓ Votre intervention est identifiée'));
+    body3.appendChild(el('div','result-service-name',
+      outcome.service_code.split('.').pop().replace(/_/g,' ')));
+    var labAmt = outcome.price && outcome.price.labour_amount_mad;
+    var cards = el('div','labour-part-cards');
+    var lcard = el('div','labour-card');
+    lcard.appendChild(el('div','labour-card__label','Main-d\'oeuvre FIXEO'));
+    lcard.appendChild(el('div','labour-card__amount',formatMAD(labAmt)));
+    cards.appendChild(lcard);
+    var pcard = el('div','part-card');
+    pcard.appendChild(el('div','part-card__label','Pièce / matériel'));
+    pcard.appendChild(el('div','part-card__value','Non compris dans les '+formatMAD(labAmt)));
+    cards.appendChild(pcard);
+    body3.appendChild(cards);
+    body3.appendChild(el('div','part-disclosure',
+      'Si l\'artisan fournit la pièce, son prix doit vous être communiqué et approuvé avant installation.'));
+    return body3;
+  }
+  if (ot === 'DIAGNOSTIC_READY') {
+    var body4 = el('div','estimator-body step-enter');
+    body4.appendChild(el('div','diagnostic-intro','Votre intervention nécessite d\'abord un diagnostic.'));
+    var diagAmt = outcome.price && (outcome.price.amount_mad || outcome.diagnostic_price_mad);
+    body4.appendChild(el('div','result-price',formatMAD(diagAmt)));
+    body4.appendChild(el('div','result-price-label','Diagnostic FIXEO'));
+    var metier = outcome.service_code ? outcome.service_code.split('.')[0] : 'electricite';
+    body4.appendChild(el('div','diagnostic-absorption', ABSORPTION_COPY[metier] || ABSORPTION_COPY.electricite));
+    return body4;
+  }
+  if (ot === 'QUOTE_REQUIRED') {
+    var body5 = el('div','estimator-body step-enter');
+    body5.appendChild(el('div','quote-title','Cette intervention nécessite un devis.'));
+    body5.appendChild(el('div','quote-reason',
+      'L\'intervention dépasse le périmètre standard et requiert une évaluation personnalisée sur place.'));
+    return body5;
+  }
+  if (ot === 'SAFETY_STOP') {
+    var body6 = el('div','estimator-body step-enter safety-stop-body');
+    body6.appendChild(el('div','safety-icon','⚠'));
+    var st = el('h2','safety-title','Une vérification est nécessaire avant de continuer.');
+    st.setAttribute('id','safety-heading');
+    body6.appendChild(st);
+    body6.appendChild(el('div','safety-body',
+      'Pour votre sécurité, nous ne pouvons pas établir un prix dans cette situation. '+
+      'Veuillez cesser d\'utiliser l\'installation et contacter un professionnel qualifié.'));
+    return body6;
+  }
+  if (ot === 'ROUTE_REQUIRED') {
+    var body7 = el('div','estimator-body step-enter');
+    body7.appendChild(el('div','route-title','Cette intervention relève d\'un autre métier.'));
+    body7.appendChild(el('div','route-sub','FIXEO vous redirige vers le bon type d\'artisan.'));
+    return body7;
+  }
+  if (ot === 'REQUALIFY') {
+    var body8 = el('div','estimator-body step-enter');
+    body8.appendChild(el('div','requali-title','Votre besoin dépasse le périmètre du prix standard.'));
+    body8.appendChild(el('div','requali-body','Un artisan FIXEO vous contactera pour un devis personnalisé.'));
+    return body8;
+  }
+  // PAGE_REQUIRED / QUALIFICATION
+  var body9 = el('div','estimator-body step-enter');
+  body9.appendChild(el('div','handoff-title','Cette intervention demande quelques précisions supplémentaires.'));
+  body9.appendChild(el('div','handoff-body','Continuez sur la page estimation pour finaliser votre demande.'));
+  return body9;
+}
+
+function renderOutcomeFooter(session) {
+  var outcome = session.outcome || {};
+  var ot = session.state;
+  var footer = el('div','estimator-footer');
+  footer.setAttribute('id','estimator-footer');
+
+  if (ot === 'PRICE_READY') {
+    var amt = outcome.price && outcome.price.amount_mad;
+    var btn = el('button','btn-primary','Continuer avec ce prix — '+formatMAD(amt));
+    btn.onclick = function(){ alert('Réservation → (dormante)'); };
+    footer.appendChild(btn);
+  } else if (ot === 'LABOUR_PLUS_PART_READY') {
+    var labAmt = outcome.price && outcome.price.labour_amount_mad;
+    var btn2 = el('button','btn-primary','Continuer — Main-d\'oeuvre '+formatMAD(labAmt));
+    btn2.onclick = function(){ alert('Réservation → (dormante)'); };
+    footer.appendChild(btn2);
+  } else if (ot === 'DIAGNOSTIC_READY') {
+    var diagAmt = outcome.price && (outcome.price.amount_mad || outcome.diagnostic_price_mad);
+    var btn3 = el('button','btn-primary','Réserver le diagnostic — '+formatMAD(diagAmt));
+    btn3.onclick = function(){ alert('Réservation → (dormante)'); };
+    footer.appendChild(btn3);
+  } else if (ot === 'QUOTE_REQUIRED') {
+    var btn4 = el('button','btn-primary','Demander un devis');
+    btn4.onclick = function(){ alert('Devis → (dormant)'); };
+    footer.appendChild(btn4);
+  } else if (ot === 'SAFETY_STOP') {
+    // No CTA — safety stop
+  } else if (session.ui_recommendation === 'PAGE_REQUIRED') {
+    var btn5 = el('button','btn-primary','Continuer l\'estimation');
+    btn5.onclick = function(){
+      window.location.href = 'estimation-page-prototype.html?fixture=E';
+    };
+    footer.appendChild(btn5);
+  } else {
+    var btn6 = el('button','btn-primary','Continuer');
+    btn6.onclick = function(){ alert('Flux → (dormant)'); };
+    footer.appendChild(btn6);
+  }
+
+  var sec = el('button','btn-secondary','Modifier mon besoin');
+  sec.onclick = closeModal;
+  footer.appendChild(sec);
+  return footer;
+}
+
+function renderModalForFixture(fixtureId) {
+  var fixture = FIXTURES_DATA.find(function(f){ return f.id === fixtureId; });
+  if (!fixture) return;
+  var session = buildBrowserSession(fixtureId);
+  if (!session) return;
+
+  var root = document.getElementById('modal-root');
+  root.innerHTML = '';
+
+  var backdrop = el('div','estimator-backdrop');
+  backdrop.id = 'estimator-backdrop';
+  backdrop.setAttribute('role','presentation');
+  backdrop.onclick = function(e){ if(e.target===backdrop) closeModal(); };
+
+  var modal = el('div','estimator-modal');
+  modal.setAttribute('role','dialog');
+  modal.setAttribute('aria-modal','true');
+  modal.setAttribute('aria-labelledby','estimator-header');
+
+  // Header
+  modal.appendChild(renderHeader(session));
+
+  // Progress
+  var stage = stageFromState(session.state);
+  modal.appendChild(renderProgress(stage));
+
+  // Context (RAFI indicator)
+  var ctx = renderContext(session);
+  if (ctx) modal.appendChild(ctx);
+
+  // Body
+  modal.appendChild(renderOutcomeBody(session));
+
+  // Footer
+  modal.appendChild(renderOutcomeFooter(session));
+
+  backdrop.appendChild(modal);
+  root.appendChild(backdrop);
+  document.getElementById('launcher').style.display = 'none';
+
+  // Focus management
+  var firstBtn = modal.querySelector('button');
+  if (firstBtn) firstBtn.focus();
+
+  // ESC to close (desktop)
+  document.addEventListener('keydown', handleEsc);
+
+  // Announce result
+  var live = document.getElementById('aria-live-result');
+  if (live) live.textContent = 'Résultat chargé : ' + session.state;
+}
+
+function handleEsc(e) { if (e.key === 'Escape') closeModal(); }
+
+function closeModal() {
+  document.getElementById('modal-root').innerHTML = '';
+  document.getElementById('launcher').style.display = '';
+  document.removeEventListener('keydown', handleEsc);
+}
+
+function launchDirect() {
+  // Show entry screen (métier selection)
+  var root = document.getElementById('modal-root');
+  root.innerHTML = '';
+
+  var backdrop = el('div','estimator-backdrop');
+  backdrop.id = 'estimator-backdrop';
+  backdrop.onclick = function(e){ if(e.target===backdrop) closeModal(); };
+
+  var modal = el('div','estimator-modal');
+  modal.setAttribute('role','dialog');
+  modal.setAttribute('aria-modal','true');
+  modal.setAttribute('aria-labelledby','estimator-header');
+
+  modal.appendChild(renderHeader(null));
+  modal.appendChild(renderProgress('BESOIN'));
+
+  var body = el('div','estimator-body step-enter');
+  body.appendChild(el('h2','entry-headline','Que faut-il réparer, installer ou entretenir ?'));
+  var inputWrap = el('div','entry-input-wrap');
+  var ta = document.createElement('textarea');
+  ta.className = 'entry-input'; ta.rows = 3; ta.placeholder = 'Ex. Ma porte frotte au sol et ferme mal';
+  ta.setAttribute('aria-label','Décrivez votre besoin');
+  inputWrap.appendChild(ta);
+  body.appendChild(inputWrap);
+  body.appendChild(el('p','',
+    '<span style="font-size:12px;color:#A0A0A0">Ou choisissez directement :</span>'));
+
+  var chips = el('div','metier-shortcuts');
+  var metierList = [
+    {code:'plomberie',icon:'🔧',label:'Plomberie'},
+    {code:'electricite',icon:'⚡',label:'Électricité'},
+    {code:'menuiserie',icon:'🚪',label:'Menuiserie'},
+    {code:'serrurerie',icon:'🔑',label:'Serrurerie'},
+    {code:'nettoyage',icon:'🧹',label:'Nettoyage'},
+    {code:'peinture',icon:'🖌',label:'Peinture'},
+    {code:'climatisation',icon:'❄️',label:'Climatisation'},
+    {code:'bricolage',icon:'🛠',label:'Bricolage'},
+  ];
+  metierList.forEach(function(m) {
+    var chip = el('button','metier-chip', m.icon + ' ' + m.label);
+    chip.setAttribute('type','button');
+    chip.onclick = function() { alert('Prototype: sélectionner "'+ m.label +'" démarrerait le flux qualification.\n(Orchestrateur Node requis pour complétion interactive.)'); };
+    chips.appendChild(chip);
+  });
+  body.appendChild(chips);
+
+  var footer = el('div','estimator-footer');
+  var cta = el('button','btn-primary','Continuer');
+  cta.onclick = function() {
+    alert('En production: RAFI classerait le texte et démarrerait l\'orchestrateur.\nPrototype: utilisez les boutons de scénarios.');
+  };
+  footer.appendChild(cta);
+
+  modal.appendChild(body);
+  modal.appendChild(footer);
+  backdrop.appendChild(modal);
+  root.appendChild(backdrop);
+  document.getElementById('launcher').style.display = 'none';
+  document.addEventListener('keydown', handleEsc);
+  if (ta) ta.focus();
+}
+
+/* ─── Build fixture grid ─────────────────────────────────────────── */
+document.addEventListener('DOMContentLoaded', function() {
+  var grid = document.getElementById('fixture-grid');
+  FIXTURES_DATA.forEach(function(f) {
+    var btn = el('button','launcher__btn');
+    btn.innerHTML = '<strong>' + f.icon + ' Flow ' + f.id + ' — ' + f.label + '</strong>';
+    btn.innerHTML += '<span class="launcher__btn-label">' + f.description + '</span>';
+    btn.onclick = function() { renderModalForFixture(f.id); };
+    grid.appendChild(btn);
+  });
+});
+</script>
+</body>
+</html>
