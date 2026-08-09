@@ -1,0 +1,197 @@
+{
+  "meta": {
+    "schema_version": "7C.6-v1",
+    "production_ready": false,
+    "dormant": true
+  },
+  "entry_modes": {
+    "A_DIRECT_CTA": {
+      "id": "DIRECT_CTA",
+      "label": "Estimer mon intervention",
+      "description": "Client opens estimator from generic CTA. No service pre-filled.",
+      "initial_payload": {
+        "entry_point": "DIRECT_CTA",
+        "metier_hint": null,
+        "service_hint": null,
+        "free_text": null,
+        "city_slug": null,
+        "artisan_id": null,
+        "request_context": {}
+      },
+      "starts_at": "METIER_SELECTION",
+      "homepage_placements": [
+        "hero_secondary_cta",
+        "floating_cta",
+        "service_cards"
+      ]
+    },
+    "B_SERVICE_CARD": {
+      "id": "SERVICE_CARD",
+      "label": "From service card click",
+      "description": "Client clicks a service card (e.g. \"Débouchage évier\"). Service may pre-fill.",
+      "initial_payload": {
+        "entry_point": "SERVICE_CARD",
+        "metier_hint": "plomberie",
+        "service_hint": "plomberie.debouchage_evier",
+        "free_text": null,
+        "city_slug": null,
+        "artisan_id": null,
+        "request_context": {
+          "card_context": "plomberie_debouchage"
+        }
+      },
+      "starts_at": "SERVICE_SELECTION"
+    },
+    "C_ARTISAN_PROFILE": {
+      "id": "ARTISAN_PROFILE",
+      "label": "From artisan profile Reserve CTA",
+      "description": "Artisan métier pre-fills métier hint. Service still requires qualification. No artisan-specific price modification.",
+      "initial_payload": {
+        "entry_point": "ARTISAN_PROFILE",
+        "metier_hint": "electricite",
+        "service_hint": null,
+        "free_text": null,
+        "city_slug": "casablanca",
+        "artisan_id": "uuid_here",
+        "request_context": {
+          "artisan_metier": "electricite"
+        }
+      },
+      "starts_at": "SERVICE_SELECTION",
+      "doctrine": "Artisan métier pre-fills but cannot force incompatible service. Canonical price unchanged regardless of artisan."
+    },
+    "D_RAFI": {
+      "id": "RAFI",
+      "label": "From RAFI identified need",
+      "description": "RAFI provides metier_hint, service_hint, urgency context. RAFI must not calculate price.",
+      "initial_payload": {
+        "entry_point": "RAFI",
+        "metier_hint": "plomberie",
+        "service_hint": "plomberie.fuite_simple",
+        "free_text": "fuite sous évier cuisine",
+        "city_slug": "rabat",
+        "artisan_id": null,
+        "request_context": {
+          "urgency": "normal",
+          "rafi_confidence": "HIGH"
+        }
+      },
+      "starts_at": "SERVICE_SELECTION",
+      "rafi_contract": {
+        "rafi_may_provide": [
+          "metier_hint",
+          "service_hint",
+          "free_text",
+          "urgency_context"
+        ],
+        "rafi_must_not": [
+          "calculate_price",
+          "apply_urgency_surcharge",
+          "select_artisan"
+        ],
+        "urgency_price_effect": null,
+        "orchestrator_validates_rafi_hint": true
+      }
+    },
+    "E_RESERVATION_FLOW": {
+      "id": "RESERVATION_FLOW",
+      "label": "Estimator invoked from within reservation flow",
+      "description": "User in reservation wants price confirmation before booking.",
+      "initial_payload": {
+        "entry_point": "RESERVATION_FLOW",
+        "metier_hint": null,
+        "service_hint": null,
+        "free_text": null,
+        "city_slug": null,
+        "artisan_id": null,
+        "request_context": {
+          "origin": "reservation_modal"
+        }
+      },
+      "starts_at": "METIER_SELECTION",
+      "note": "Reservation must consume pricing_context_token from estimator, not recalculate price."
+    },
+    "F_DEEP_LINK": {
+      "id": "DEEP_LINK",
+      "label": "URL deep-link with known métier/service",
+      "description": "URL params prefill estimator: /estimation?metier=plomberie&service=fuite_simple",
+      "url_patterns": [
+        "/estimation",
+        "/estimation?metier=...",
+        "/estimation?service=...",
+        "/estimation?metier=...&service=..."
+      ],
+      "initial_payload": {
+        "entry_point": "DEEP_LINK",
+        "metier_hint": "{from_url}",
+        "service_hint": "{from_url}",
+        "free_text": null,
+        "city_slug": "{from_url}",
+        "artisan_id": null,
+        "request_context": {
+          "url_params": true
+        }
+      },
+      "starts_at": "SERVICE_SELECTION",
+      "validation": "URL params must be validated against canonical registry. Invalid params → METIER_SELECTION fallback."
+    }
+  },
+  "normalized_initial_payload_schema": {
+    "entry_point": {
+      "type": "string",
+      "required": true,
+      "enum": [
+        "DIRECT_CTA",
+        "SERVICE_CARD",
+        "ARTISAN_PROFILE",
+        "RAFI",
+        "RESERVATION_FLOW",
+        "DEEP_LINK"
+      ]
+    },
+    "metier_hint": {
+      "type": "string",
+      "required": false,
+      "allowed_values": [
+        "plomberie",
+        "electricite",
+        "serrurerie",
+        "climatisation",
+        "bricolage",
+        "nettoyage",
+        "peinture",
+        "menuiserie"
+      ],
+      "default": null
+    },
+    "service_hint": {
+      "type": "string",
+      "required": false,
+      "must_exist_in_canonical_registry": true,
+      "default": null
+    },
+    "free_text": {
+      "type": "string",
+      "required": false,
+      "max_length": 500,
+      "default": null
+    },
+    "city_slug": {
+      "type": "string",
+      "required": false,
+      "role": "CONTEXT_NOT_PRICING",
+      "default": null
+    },
+    "artisan_id": {
+      "type": "string",
+      "required": false,
+      "role": "CONTEXT_NOT_PRICING",
+      "default": null
+    },
+    "request_context": {
+      "type": "object",
+      "required": false,
+      "default": {}
+    }
+  }
+}

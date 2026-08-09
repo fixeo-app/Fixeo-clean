@@ -1,0 +1,594 @@
+{
+  "meta": {
+    "schema_version": "7C.6-v1",
+    "production_ready": false,
+    "dormant": true,
+    "scenario_count": 35
+  },
+  "scenarios": [
+    {
+      "id": "FLOW-001",
+      "label": "Simple plumbing — porte claquée",
+      "entry": "DIRECT_CTA",
+      "metier": "serrurerie",
+      "service_code": "serrurerie.porte_claquee_ouverture",
+      "questions_count": 0,
+      "expected_state": "PRICE_READY",
+      "expected_outcome": "FIXEO_PRICE",
+      "expected_amount": 220,
+      "note": "No conditions → immediate price"
+    },
+    {
+      "id": "FLOW-002",
+      "label": "Simple plumbing — débouchage évier",
+      "entry": "SERVICE_CARD",
+      "metier": "plomberie",
+      "service_code": "plomberie.debouchage_evier",
+      "questions_count": 0,
+      "expected_state": "PRICE_READY",
+      "expected_outcome": "FIXEO_PRICE",
+      "expected_amount": 220
+    },
+    {
+      "id": "FLOW-003",
+      "label": "Simple plumbing — fuite simple",
+      "entry": "DIRECT_CTA",
+      "metier": "plomberie",
+      "service_code": "plomberie.fuite_simple",
+      "questions_count": 0,
+      "expected_state": "PRICE_READY",
+      "expected_outcome": "FIXEO_PRICE",
+      "expected_amount": 200
+    },
+    {
+      "id": "FLOW-004",
+      "label": "Plumbing diagnostic",
+      "entry": "DIRECT_CTA",
+      "metier": "plomberie",
+      "service_code": "plomberie.diagnostic",
+      "questions_count": 0,
+      "expected_state": "DIAGNOSTIC_READY",
+      "expected_outcome": "FIXEO_DIAGNOSTIC",
+      "expected_amount": 180,
+      "absorption_note": "Absorbed if same-visit repair"
+    },
+    {
+      "id": "FLOW-005",
+      "label": "Electricite diagnostic",
+      "entry": "DIRECT_CTA",
+      "metier": "electricite",
+      "service_code": "electricite.diagnostic",
+      "questions_count": 0,
+      "expected_state": "DIAGNOSTIC_READY",
+      "expected_outcome": "FIXEO_DIAGNOSTIC",
+      "expected_amount": 200
+    },
+    {
+      "id": "FLOW-006",
+      "label": "Electricite — disjoncteur safe",
+      "entry": "DIRECT_CTA",
+      "metier": "electricite",
+      "service_code": "electricite.disjoncteur_remplacement",
+      "questions": [
+        {
+          "id": "burning_smell",
+          "answer": false
+        },
+        {
+          "id": "scorch_marks",
+          "answer": false
+        },
+        {
+          "id": "distributor_equipment_involved",
+          "answer": false
+        },
+        {
+          "id": "mcb_defect_confirmed",
+          "answer": "physically_broken"
+        }
+      ],
+      "questions_count": 4,
+      "expected_state": "PRICE_READY",
+      "expected_outcome": "FIXEO_PRICE",
+      "expected_amount": 250
+    },
+    {
+      "id": "FLOW-007",
+      "label": "Electricite — unsafe: burning smell",
+      "entry": "DIRECT_CTA",
+      "metier": "electricite",
+      "service_code": "electricite.disjoncteur_remplacement",
+      "questions": [
+        {
+          "id": "burning_smell",
+          "answer": true
+        }
+      ],
+      "questions_count": 1,
+      "expected_state": "SAFETY_STOP",
+      "expected_outcome": "SAFETY_STOP",
+      "expected_amount": null,
+      "note": "Question 1 is safety — immediately stops on yes"
+    },
+    {
+      "id": "FLOW-008",
+      "label": "Electricite — distributor equipment route",
+      "entry": "DIRECT_CTA",
+      "metier": "electricite",
+      "service_code": "electricite.disjoncteur_remplacement",
+      "questions": [
+        {
+          "id": "burning_smell",
+          "answer": false
+        },
+        {
+          "id": "distributor_equipment_involved",
+          "answer": true
+        }
+      ],
+      "questions_count": 2,
+      "expected_state": "ROUTE_REQUIRED",
+      "expected_outcome": "ROUTE_REQUIRED",
+      "note": "Distributor equipment → external route"
+    },
+    {
+      "id": "FLOW-009",
+      "label": "Electricite — prise remplacement",
+      "entry": "SERVICE_CARD",
+      "metier": "electricite",
+      "service_code": "electricite.prise_remplacement",
+      "questions_count": 0,
+      "expected_state": "PRICE_READY",
+      "expected_outcome": "FIXEO_PRICE",
+      "expected_amount": 120
+    },
+    {
+      "id": "FLOW-010",
+      "label": "Serrurerie — porte blindée",
+      "entry": "DIRECT_CTA",
+      "metier": "serrurerie",
+      "service_code": "serrurerie.porte_claquee_blindee.ouverture",
+      "questions": [
+        {
+          "id": "lock_cylinder_involved",
+          "answer": false
+        }
+      ],
+      "questions_count": 1,
+      "expected_state": "PRICE_READY",
+      "expected_outcome": "FIXEO_PRICE"
+    },
+    {
+      "id": "FLOW-011",
+      "label": "Serrurerie — cylindre remplacement (labour+part)",
+      "entry": "ARTISAN_PROFILE",
+      "metier": "serrurerie",
+      "service_code": "serrurerie.cylindre_remplacement.standard",
+      "questions_count": 0,
+      "expected_state": "LABOUR_PLUS_PART_READY",
+      "expected_outcome": "FIXEO_LABOUR_PRICE_PLUS_PART",
+      "parts_notice": "Cylindre communiqué et approuvé avant installation"
+    },
+    {
+      "id": "FLOW-012",
+      "label": "Serrurerie — lock cylinder authorization check",
+      "entry": "DIRECT_CTA",
+      "metier": "serrurerie",
+      "service_code": "serrurerie.porte_verrouillee.ouverture",
+      "questions": [
+        {
+          "id": "lock_cylinder_required",
+          "answer": true
+        }
+      ],
+      "questions_count": 1,
+      "expected_state": "REQUALIFY",
+      "note": "If cylinder required → exceeds standardized scope"
+    },
+    {
+      "id": "FLOW-013",
+      "label": "Climatisation diagnostic",
+      "entry": "DIRECT_CTA",
+      "metier": "climatisation",
+      "service_code": "climatisation.diagnostic",
+      "questions_count": 0,
+      "expected_state": "DIAGNOSTIC_READY",
+      "expected_outcome": "FIXEO_DIAGNOSTIC",
+      "expected_amount": 250
+    },
+    {
+      "id": "FLOW-014",
+      "label": "Climatisation — entretien annuel 1 unit",
+      "entry": "SERVICE_CARD",
+      "metier": "climatisation",
+      "service_code": "climatisation.entretien_annuel",
+      "questions": [
+        {
+          "id": "ac_count",
+          "answer": 1
+        }
+      ],
+      "questions_count": 1,
+      "expected_state": "PRICE_READY",
+      "expected_outcome": "FIXEO_CALCULATED_PRICE",
+      "expected_amount": 300
+    },
+    {
+      "id": "FLOW-015",
+      "label": "Climatisation — entretien annuel 2 units",
+      "entry": "SERVICE_CARD",
+      "metier": "climatisation",
+      "service_code": "climatisation.entretien_annuel",
+      "questions": [
+        {
+          "id": "ac_count",
+          "answer": 2
+        }
+      ],
+      "questions_count": 1,
+      "expected_state": "PRICE_READY",
+      "expected_outcome": "FIXEO_CALCULATED_PRICE",
+      "expected_amount": 600
+    },
+    {
+      "id": "FLOW-016",
+      "label": "Climatisation installation — multi split route",
+      "entry": "DIRECT_CTA",
+      "metier": "climatisation",
+      "service_code": "climatisation.installation.standard",
+      "questions": [
+        {
+          "id": "multi_split",
+          "answer": true
+        }
+      ],
+      "questions_count": 1,
+      "expected_state": "ROUTE_REQUIRED",
+      "expected_outcome": "ROUTE_REQUIRED",
+      "note": "Multi-split → specialist/CLIM-024 or devis"
+    },
+    {
+      "id": "FLOW-017",
+      "label": "Climatisation installation — standard eligible",
+      "entry": "DIRECT_CTA",
+      "metier": "climatisation",
+      "service_code": "climatisation.installation.standard",
+      "questions": [
+        {
+          "id": "multi_split",
+          "answer": false
+        },
+        {
+          "id": "ac_capacity_btu",
+          "answer": 9000
+        },
+        {
+          "id": "installation_height_m",
+          "answer": 2.5
+        },
+        {
+          "id": "ac_count",
+          "answer": 1
+        }
+      ],
+      "questions_count": 4,
+      "expected_state": "PRICE_READY",
+      "expected_outcome": "FIXEO_PRICE",
+      "expected_amount": 1000
+    },
+    {
+      "id": "FLOW-018",
+      "label": "Bricolage — montage meuble x2 items",
+      "entry": "SERVICE_CARD",
+      "metier": "bricolage",
+      "service_code": "bricolage.montage_meuble",
+      "questions": [
+        {
+          "id": "item_count",
+          "answer": 2
+        }
+      ],
+      "questions_count": 1,
+      "expected_state": "PRICE_READY",
+      "expected_outcome": "FIXEO_CALCULATED_PRICE",
+      "expected_amount": 400
+    },
+    {
+      "id": "FLOW-019",
+      "label": "Bricolage — horaire 3 heures",
+      "entry": "DIRECT_CTA",
+      "metier": "bricolage",
+      "service_code": "bricolage.horaire",
+      "questions": [
+        {
+          "id": "hours",
+          "answer": 3
+        }
+      ],
+      "questions_count": 1,
+      "expected_state": "PRICE_READY",
+      "expected_outcome": "FIXEO_CALCULATED_PRICE",
+      "expected_amount": 450
+    },
+    {
+      "id": "FLOW-020",
+      "label": "Bricolage — fixation accrochage x3",
+      "entry": "SERVICE_CARD",
+      "metier": "bricolage",
+      "service_code": "bricolage.fixation_accrochage",
+      "questions": [
+        {
+          "id": "item_count",
+          "answer": 3
+        }
+      ],
+      "questions_count": 1,
+      "expected_state": "PRICE_READY",
+      "expected_outcome": "FIXEO_CALCULATED_PRICE",
+      "expected_amount": 600
+    },
+    {
+      "id": "FLOW-021",
+      "label": "Nettoyage — ménage standard team",
+      "entry": "DIRECT_CTA",
+      "metier": "nettoyage",
+      "service_code": "nettoyage.menage_standard",
+      "questions": [
+        {
+          "id": "worker_count",
+          "answer": 2
+        },
+        {
+          "id": "hours",
+          "answer": 3
+        }
+      ],
+      "questions_count": 2,
+      "expected_state": "PRICE_READY",
+      "expected_outcome": "FIXEO_CALCULATED_PRICE",
+      "expected_amount": 390,
+      "note": "2×3×65=390 > floor 200"
+    },
+    {
+      "id": "FLOW-022",
+      "label": "Nettoyage — single cleaner 2hr floor applies",
+      "entry": "DIRECT_CTA",
+      "metier": "nettoyage",
+      "service_code": "nettoyage.menage_standard",
+      "questions": [
+        {
+          "id": "worker_count",
+          "answer": 1
+        },
+        {
+          "id": "hours",
+          "answer": 1
+        }
+      ],
+      "questions_count": 2,
+      "expected_state": "PRICE_READY",
+      "expected_outcome": "FIXEO_CALCULATED_PRICE",
+      "expected_amount": 200,
+      "note": "1×1×65=65 < floor 200"
+    },
+    {
+      "id": "FLOW-023",
+      "label": "Nettoyage — fractional hours → provide more info",
+      "entry": "DIRECT_CTA",
+      "metier": "nettoyage",
+      "service_code": "nettoyage.menage_standard",
+      "questions": [
+        {
+          "id": "worker_count",
+          "answer": 1
+        },
+        {
+          "id": "hours",
+          "answer": 1.5
+        }
+      ],
+      "questions_count": 2,
+      "expected_state": "QUESTION_REQUIRED",
+      "expected_outcome": "PROVIDE_MORE_INFORMATION",
+      "note": "Fractional hours not supported in V1"
+    },
+    {
+      "id": "FLOW-024",
+      "label": "Nettoyage — après travaux",
+      "entry": "SERVICE_CARD",
+      "metier": "nettoyage",
+      "service_code": "nettoyage.apres_travaux",
+      "questions": [
+        {
+          "id": "surface_m2",
+          "answer": 60
+        }
+      ],
+      "questions_count": 1,
+      "expected_state": "PRICE_READY",
+      "expected_outcome": "FIXEO_CALCULATED_PRICE"
+    },
+    {
+      "id": "FLOW-025",
+      "label": "Peinture — mur standard client knows m²",
+      "entry": "DIRECT_CTA",
+      "metier": "peinture",
+      "service_code": "peinture.mur_interieur.all_in",
+      "questions": [
+        {
+          "id": "active_moisture",
+          "answer": false
+        },
+        {
+          "id": "humidity_stains",
+          "answer": false
+        },
+        {
+          "id": "painted_m2",
+          "answer": 15
+        }
+      ],
+      "questions_count": 3,
+      "expected_state": "PRICE_READY",
+      "expected_outcome": "FIXEO_CALCULATED_PRICE",
+      "expected_amount": 975,
+      "note": "15×65=975 > floor 800"
+    },
+    {
+      "id": "FLOW-026",
+      "label": "Peinture — client does not know painted m²",
+      "entry": "DIRECT_CTA",
+      "metier": "peinture",
+      "service_code": "peinture.mur_interieur.all_in",
+      "questions": [
+        {
+          "id": "active_moisture",
+          "answer": false
+        },
+        {
+          "id": "client_knows_painted_m2",
+          "answer": false
+        }
+      ],
+      "questions_count": 2,
+      "expected_state": "QUESTION_REQUIRED",
+      "expected_outcome": "PROVIDE_MORE_INFORMATION",
+      "next_action": "PROVIDE_MORE_INFORMATION",
+      "note": "GUIDED_MEASUREMENT_ASSISTANT — future dependency"
+    },
+    {
+      "id": "FLOW-027",
+      "label": "Peinture — active moisture safety stop",
+      "entry": "DIRECT_CTA",
+      "metier": "peinture",
+      "service_code": "peinture.mur_interieur.all_in",
+      "questions": [
+        {
+          "id": "active_moisture",
+          "answer": true
+        }
+      ],
+      "questions_count": 1,
+      "expected_state": "SAFETY_STOP",
+      "expected_outcome": "SAFETY_STOP"
+    },
+    {
+      "id": "FLOW-028",
+      "label": "Peinture — enduit add-on with primary service",
+      "entry": "DIRECT_CTA",
+      "metier": "peinture",
+      "service_code": "peinture.preparation_surface",
+      "questions": [
+        {
+          "id": "primary_service_code",
+          "answer": "peinture.mur_interieur.all_in"
+        },
+        {
+          "id": "painted_m2",
+          "answer": 15
+        }
+      ],
+      "questions_count": 2,
+      "expected_state": "ADD_ON_READY",
+      "expected_outcome": "FIXEO_ADD_ON"
+    },
+    {
+      "id": "FLOW-029",
+      "label": "Menuiserie — réglage porte 1 charnière",
+      "entry": "DIRECT_CTA",
+      "metier": "menuiserie",
+      "service_code": "menuiserie.remplacement_charniere",
+      "questions": [
+        {
+          "id": "hinge_count",
+          "answer": 1
+        }
+      ],
+      "questions_count": 1,
+      "expected_state": "LABOUR_PLUS_PART_READY",
+      "expected_outcome": "FIXEO_LABOUR_PRICE_PLUS_PART",
+      "note": "hinge_count=1 → standardized"
+    },
+    {
+      "id": "FLOW-030",
+      "label": "Menuiserie — hinge_count >1 → requalify",
+      "entry": "DIRECT_CTA",
+      "metier": "menuiserie",
+      "service_code": "menuiserie.remplacement_charniere",
+      "questions": [
+        {
+          "id": "hinge_count",
+          "answer": 2
+        }
+      ],
+      "questions_count": 1,
+      "expected_state": "REQUALIFY",
+      "expected_outcome": "QUOTE_REQUIRED",
+      "note": "hinge_count>1 → REQUALIFY. No batch price exposed."
+    },
+    {
+      "id": "FLOW-031",
+      "label": "RAFI prefilled — plomberie fuite",
+      "entry": "RAFI",
+      "metier": "plomberie",
+      "service_code": "plomberie.fuite_simple",
+      "questions_count": 0,
+      "expected_state": "PRICE_READY",
+      "expected_outcome": "FIXEO_PRICE",
+      "expected_amount": 200,
+      "note": "RAFI hint validated. RAFI did not calculate price."
+    },
+    {
+      "id": "FLOW-032",
+      "label": "Artisan profile — electricite entry",
+      "entry": "ARTISAN_PROFILE",
+      "metier": "electricite",
+      "service_code": "electricite.prise_remplacement",
+      "questions_count": 0,
+      "expected_state": "PRICE_READY",
+      "expected_outcome": "FIXEO_PRICE",
+      "expected_amount": 120,
+      "note": "Artisan métier prefill only. No artisan-specific price modifier."
+    },
+    {
+      "id": "FLOW-033",
+      "label": "City neutrality — same service different city",
+      "entry": "DEEP_LINK",
+      "metier": "plomberie",
+      "service_code": "plomberie.debouchage_evier",
+      "city_slug_a": "casablanca",
+      "city_slug_b": "agadir",
+      "expected_amount_both": 220,
+      "note": "city_slug has zero price effect. Both cities → 220 MAD."
+    },
+    {
+      "id": "FLOW-034",
+      "label": "Urgency neutrality — urgent flag no price change",
+      "entry": "RAFI",
+      "metier": "serrurerie",
+      "service_code": "serrurerie.porte_claquee_ouverture",
+      "urgency": "urgent",
+      "questions_count": 0,
+      "expected_state": "PRICE_READY",
+      "expected_amount": 220,
+      "note": "Urgent context. Price unchanged. No surcharge."
+    },
+    {
+      "id": "FLOW-035",
+      "label": "Quote required — climatisation cassette",
+      "entry": "DIRECT_CTA",
+      "metier": "climatisation",
+      "service_code": "climatisation.installation.cassette",
+      "questions": [
+        {
+          "id": "multi_split",
+          "answer": true
+        }
+      ],
+      "questions_count": 1,
+      "expected_state": "QUOTE_REQUIRED",
+      "expected_outcome": "QUOTE_REQUIRED",
+      "note": "Complex install → devis."
+    }
+  ]
+}

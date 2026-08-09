@@ -1,0 +1,72 @@
+{
+  "meta": {
+    "schema_version": "7C.6-v1",
+    "production_ready": false,
+    "dormant": true
+  },
+  "pricing_context_token": {
+    "purpose": "Immutable handoff object from Estimator to Reservation. Reservation must consume this token — it must NEVER recalculate price using legacy logic.",
+    "status": "DOCUMENTATION_ONLY — cryptographic implementation future concern",
+    "fields": {
+      "service_code": "canonical service code (e.g. plomberie.fuite_simple)",
+      "engine_version": "1.0.0-dormant",
+      "price_version": "v0.3",
+      "inputs_hash": "SHA-256 of inputs object used for engine call",
+      "qualification_result": {
+        "status": "ELIGIBLE",
+        "conditions_checked": []
+      },
+      "commercial_output_type": "FIXEO_PRICE | FIXEO_CALCULATED_PRICE | ...",
+      "final_amount_mad": "number | null",
+      "labour_amount_mad": "number | null",
+      "add_on_amount_mad": "number | null",
+      "diagnostic_price_mad": "number | null",
+      "variable_part_separate": "boolean",
+      "scope_snapshot": {
+        "included": [],
+        "excluded": []
+      },
+      "policy_refs": [],
+      "timestamp_utc": "ISO-8601",
+      "session_id": "estimator session identifier",
+      "signature_future": "HMAC or JWT — not implemented in V1"
+    },
+    "reservation_rules": [
+      "Reservation MUST use final_amount_mad from token as booking price",
+      "Reservation MUST NOT recalculate using reservation.js SERVICE_PRICING",
+      "Reservation MUST NOT recalculate using reservation-v2.js SVC_PRICING_FB",
+      "Reservation MUST display commercial_output_type-appropriate wording",
+      "Reservation MUST display parts_notice if variable_part_separate=true",
+      "Token expiry policy: TBD — recommend 30-minute session validity"
+    ]
+  },
+  "session_contract": {
+    "session_id": "string — UUID v4 or deterministic from inputs",
+    "entry_context": "EstimatorEntryPayload — from entry mode",
+    "metier": "string | null",
+    "service_code": "string | null",
+    "known_inputs": "object: key=input_id, value=validated_answer",
+    "question_history": "array: [{question_id, answer, timestamp}]",
+    "pending_questions": "array: question_ids in priority order",
+    "qualification_status": "PENDING | ELIGIBLE | INELIGIBLE | SAFETY_STOP | ROUTE_REQUIRED | REQUALIFY | QUOTE_REQUIRED",
+    "engine_result": "null | engine response object",
+    "outcome": "null | ClientOutcome object",
+    "state": "one of state machine states",
+    "created_at": "ISO-8601",
+    "updated_at": "ISO-8601"
+  },
+  "state_persistence": {
+    "v1_recommendation": "IN_MEMORY + URL_PARAMS",
+    "rationale": "Simple flows complete in <2 minutes. No long-lived state needed. URL params support deep-linking and back navigation.",
+    "session_storage": "Acceptable for complex flows (painting measurement assistant, multi-step quote)",
+    "local_storage": "NOT RECOMMENDED for pricing state — sensitive, may persist stale prices",
+    "server_token": "FUTURE — required when pricing token needs server-side validation before reservation",
+    "no_sensitive_data_in_url": "session_id in URL is fine, full pricing data should not be in URL querystring"
+  },
+  "estimator_reservation_boundary": {
+    "estimator_output": "pricing_context_token",
+    "reservation_input": "pricing_context_token + scheduling + contact",
+    "no_recalculation": true,
+    "legacy_not_consulted": true
+  }
+}

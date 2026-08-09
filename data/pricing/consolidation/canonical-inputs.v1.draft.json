@@ -889,6 +889,26 @@
       "required": false,
       "description": "Door trim exceeds 2cm — QUOTE trigger (menuiserie.installation_porte width exclusion).",
       "engine_v1_use": "EXCLUSION_TRIGGER"
+    },
+    "humidity_stains": {
+      "input_id": "humidity_stains",
+      "data_type": "boolean",
+      "unit": null,
+      "allowed_values": null,
+      "allowed_values_note": null,
+      "min": null,
+      "max": null,
+      "required_when": "peinture services — safety triage",
+      "semantic_definition": "Visible humidity stains or moisture marks on surface to be painted. Indicates potential active moisture ingress that may contraindicate painting.",
+      "client_question_fr": "Y a-t-il des traces d'humidité visibles sur le mur à peindre ?",
+      "client_question_ar_darija": null,
+      "validation_behavior": "boolean — true=traces présentes, false=aucune trace",
+      "safety_critical": true,
+      "privacy_classification": "NON_PERSONAL",
+      "category": "EXCLUSION_TRIGGER",
+      "engine_v1_use": true,
+      "added_in_phase": "7C.6",
+      "note": "Added in 7C.6 — referenced in question planner as safety input for peinture services. Complements active_moisture (active ingress) with visible staining."
     }
   }
 }

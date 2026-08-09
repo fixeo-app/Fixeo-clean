@@ -1,0 +1,252 @@
+{
+  "meta": {
+    "schema_version": "7C.6-v1",
+    "phase": "PHASE_7C6_ESTIMATOR_ORCHESTRATION_DESIGN",
+    "status": "DRAFT",
+    "production_ready": false,
+    "dormant": true,
+    "created": "2026-08-09T21:33:32.033Z",
+    "purpose": "Defines HOW a client request becomes a canonical pricing engine outcome and commercial UX result. No pricing calculation in orchestrator. Engine is sole calculator."
+  },
+  "canonical_authority": {
+    "sole_price_calculator": "FIXEO_PRICING_ENGINE_CORE_V1",
+    "engine_file": "data/pricing/engine/pricing-engine-core-v1.js",
+    "engine_status": "DORMANT",
+    "production_active": false,
+    "forbidden_pricing_sources": [
+      "js/fixeo-estimation-engine-v1.js",
+      "js/fixeo-pricing-marocain.js",
+      "js/reservation.js",
+      "js/reservation-v2.js"
+    ],
+    "no_dual_authority": true,
+    "no_legacy_fallback": true
+  },
+  "orchestrator_role": {
+    "what_orchestrator_does": [
+      "Understands client request context (entry mode, hints, free text)",
+      "Resolves métier (deterministic priority chain)",
+      "Resolves canonical service within métier",
+      "Determines missing required inputs",
+      "Plans minimum question sequence (safety first)",
+      "Evaluates routing / hard exclusion pre-checks",
+      "Builds valid canonical engine payload",
+      "Calls evaluateFixeoPrice() — ONLY price source",
+      "Translates engine result into structured commercial outcome",
+      "Determines next UX action"
+    ],
+    "what_orchestrator_does_not_do": [
+      "Calculate prices",
+      "Apply city multipliers",
+      "Apply urgency/night/weekend/holiday/express surcharges",
+      "Read legacy pricing maps",
+      "Fallback to legacy ranges",
+      "Create reservations or missions",
+      "Assign artisans",
+      "Handle payment",
+      "Expose production calendar",
+      "Override canonical approved prices"
+    ]
+  },
+  "metier_resolution": {
+    "priority_chain": [
+      {
+        "priority": 1,
+        "source": "EXPLICIT_CANONICAL_SERVICE_CODE",
+        "desc": "service_hint resolves directly to canonical registry"
+      },
+      {
+        "priority": 2,
+        "source": "EXPLICIT_METIER_SLUG",
+        "desc": "metier_hint is a valid canonical métier slug"
+      },
+      {
+        "priority": 3,
+        "source": "RAFI_STRUCTURED_RESULT",
+        "desc": "RAFI provides validated metier + optional service hint"
+      },
+      {
+        "priority": 4,
+        "source": "USER_SELECTED_CATEGORY",
+        "desc": "Client chose from métier menu"
+      },
+      {
+        "priority": 5,
+        "source": "FREE_TEXT_CLASSIFIER",
+        "desc": "Future NLP classifier — CLASSIFIER_REQUIRED placeholder"
+      },
+      {
+        "priority": 6,
+        "source": "MANUAL_FALLBACK",
+        "desc": "Orchestrator asks client to choose métier from list"
+      }
+    ],
+    "classifier_status": "CLASSIFIER_REQUIRED",
+    "classifier_note": "Free-text classifier not implemented in V1. If no priority 1–4 match, fall to priority 6 (manual métier selection).",
+    "confidence_threshold": "N/A_FOR_V1"
+  },
+  "city_behavior": {
+    "city_slug_role": "CONTEXT_NOT_PRICING",
+    "city_affects_price": false,
+    "city_adjustment": null,
+    "city_uses": [
+      "artisan_availability_matching",
+      "reservation_routing",
+      "display_context"
+    ],
+    "doctrine": "Estimator price is city-neutral. city_slug must NEVER be passed to engine as a price modifier. No multiplier applied."
+  },
+  "urgency_behavior": {
+    "urgency_role": "DISPATCH_PRIORITY_ONLY",
+    "urgency_affects_price": false,
+    "urgency_modifier": null,
+    "urgency_uses": [
+      "dispatch_priority",
+      "ux_wording",
+      "artisan_search_filter"
+    ],
+    "doctrine": "Urgency does NOT change canonical price. No surcharge. No +25%/+20%/+50 MAD legacy logic. FIXEO_PRICE is the same regardless of urgency."
+  },
+  "painting_ux_contract": {
+    "required_input": "painted_m2",
+    "measurement_strategy": "DIRECT_CANONICAL_MEASUREMENT",
+    "client_knows_painted_m2": {
+      "flow": "DIRECT_INPUT",
+      "action": "collect painted_m2 directly from client"
+    },
+    "client_does_not_know": {
+      "flow": "GUIDED_MEASUREMENT_ASSISTANT",
+      "status": "DESIGN_DEPENDENCY",
+      "v1_behavior": "Ask client if they know painted_m2. If not, route to PROVIDE_MORE_INFORMATION. Do not derive from floor_area_m2.",
+      "floor_to_painted_conversion": "FORBIDDEN_IN_ENGINE_AND_ORCHESTRATOR"
+    },
+    "ceiling_m2_separate": true,
+    "per_m2_unit_display": "MAD/m² de surface peinte",
+    "production_blocked_until": "GUIDED_MEASUREMENT_ASSISTANT_UX_DESIGNED"
+  },
+  "cleaning_ux_contract": {
+    "required_inputs": [
+      "worker_count",
+      "hours"
+    ],
+    "rate_display": "65 MAD / prestataire-heure",
+    "fractional_hours": {
+      "v1_behavior": "INTEGER_HOURS_ONLY",
+      "if_fractional": "return PROVIDE_MORE_INFORMATION",
+      "no_30_minute_billing": true,
+      "doctrine": "Do not invent fractional billing. HRQ-009 unresolved."
+    },
+    "worker_count_display": "Nombre de prestataires",
+    "team_math_display": "N prestataire(s) × H heure(s) × 65 MAD"
+  },
+  "menuiserie_ux_contract": {
+    "hinge_count": {
+      "v1_standard": 1,
+      "if_gt_1": "QUOTE_REQUIRED",
+      "batch_rules": "DORMANT_EXPERIMENTAL — NOT exposed in V1"
+    },
+    "drawer_count": {
+      "v1_standard": 1,
+      "if_gt_1": "QUOTE_REQUIRED",
+      "batch_rules": "DORMANT_EXPERIMENTAL — NOT exposed in V1"
+    }
+  },
+  "diagnostic_ux_contract": {
+    "diagnostic_metiers": [
+      "plomberie",
+      "electricite",
+      "climatisation"
+    ],
+    "absorption_doctrine": {
+      "plomberie": "Diagnostic 180 MAD absorbé si réparation standardisée même visite",
+      "electricite": "Diagnostic 200 MAD absorbé si réparation standardisée même visite",
+      "climatisation": "Diagnostic 250 MAD absorbé si intervention standardisée même visite"
+    },
+    "three_scenarios": [
+      {
+        "scenario": "DIRECT_DIAGNOSTIC_BOOKING",
+        "desc": "Client directly books diagnostic service"
+      },
+      {
+        "scenario": "REPAIR_AFTER_DIAGNOSTIC_TRIAGE",
+        "desc": "Client problem requires diagnostic before repair can be priced"
+      },
+      {
+        "scenario": "STANDARDIZED_REPAIR_DIRECT",
+        "desc": "Problem qualifies directly for standardized service, no diagnostic needed"
+      }
+    ],
+    "no_universal_absorption": true,
+    "doctrine": "Absorption is métier-specific and conditional. Orchestrator must not invent universal diagnostic absorption rule."
+  },
+  "labour_part_ux_contract": {
+    "services_affected": [
+      "plomberie.robinet_remplacement",
+      "plomberie.chasse_eau",
+      "serrurerie.cylindre_remplacement.standard",
+      "serrurerie.serrure_remplacement.standard",
+      "menuiserie.remplacement_charniere",
+      "menuiserie.remplacement_coulisse_tiroir"
+    ],
+    "display_model": {
+      "label_main_oeuvre": "Main-d'œuvre FIXEO",
+      "label_piece": "Pièce / matériel — séparé",
+      "notice": "Le coût de la pièce/matériel principal est communiqué et approuvé par le client avant toute installation.",
+      "no_all_in_total": true
+    },
+    "visual_separation": "REQUIRED — two distinct price concepts, not summed"
+  },
+  "quote_ux_contract": {
+    "quote_is_valid_outcome": true,
+    "quote_wording": "Votre intervention nécessite un devis.",
+    "no_fake_range": true,
+    "next_action": "REQUEST_QUOTE",
+    "doctrine": "QUOTE_REQUIRED is a successful orchestration outcome, not a failure. No legacy range displayed as substitute."
+  },
+  "commercial_copy_doctrine": {
+    "prix_indicatif": "PROHIBITED for all 5 contractual output types",
+    "fixeo_estimate_count": 0,
+    "estimate_wording_allowed": "FIXEO_ESTIMATE only — currently 0 approved services",
+    "contractual_wording": {
+      "FIXEO_PRICE": "Prix FIXEO",
+      "FIXEO_CALCULATED_PRICE": "Prix FIXEO calculé",
+      "FIXEO_LABOUR_PRICE_PLUS_PART": "Main-d'œuvre FIXEO + pièce séparée",
+      "FIXEO_DIAGNOSTIC": "Diagnostic FIXEO",
+      "FIXEO_ADD_ON": "Option FIXEO"
+    },
+    "quote_wording": "Prix sur devis"
+  },
+  "progressive_disclosure": {
+    "max_steps_target": 3,
+    "macro_flow": [
+      "Besoin",
+      "Quelques précisions",
+      "Résultat FIXEO"
+    ],
+    "simple_service_target": "Reach result in ≤ 2 questions after service selection (e.g. SERR-001 porte claquée: no conditions → immediate price)",
+    "complex_service_max": 5,
+    "safety_questions_always_first": true
+  },
+  "estimation_reservation_separation": {
+    "estimator_scope": [
+      "scope determination",
+      "canonical price outcome",
+      "eligibility qualification"
+    ],
+    "estimator_excludes": [
+      "calendar",
+      "payment",
+      "mission creation",
+      "artisan assignment",
+      "booking confirmation"
+    ],
+    "reservation_scope": [
+      "scheduling",
+      "contact capture",
+      "artisan selection",
+      "mission creation"
+    ],
+    "reservation_consumes": "pricing_context_token (validated canonical outcome)",
+    "doctrine": "Estimator ≠ Reservation. No reservation logic inside estimator. Reservation must not recalculate price using legacy logic."
+  }
+}

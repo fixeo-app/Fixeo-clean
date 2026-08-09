@@ -1,0 +1,181 @@
+{
+  "meta": {
+    "schema_version": "7C.6-v1",
+    "production_ready": false,
+    "dormant": true
+  },
+  "principle": "ASK THE MINIMUM NUMBER OF QUESTIONS REQUIRED TO REACH A SAFE, CONTRACTUAL OUTCOME.",
+  "question_priority_order": [
+    {
+      "priority": 1,
+      "category": "SAFETY",
+      "desc": "Safety-critical inputs — asked before any price inputs. A positive safety answer may immediately stop estimation."
+    },
+    {
+      "priority": 2,
+      "category": "ROUTING_BOUNDARY",
+      "desc": "Questions that may redirect to another métier or specialist. Asked before eligibility."
+    },
+    {
+      "priority": 3,
+      "category": "SERVICE_IDENTITY",
+      "desc": "Questions that narrow which canonical service applies."
+    },
+    {
+      "priority": 4,
+      "category": "ELIGIBILITY",
+      "desc": "Conditions that determine if service is in scope."
+    },
+    {
+      "priority": 5,
+      "category": "QUANTITY_MEASUREMENT",
+      "desc": "Numerical inputs needed to calculate price (ac_count, painted_m2, hours, etc.)."
+    },
+    {
+      "priority": 6,
+      "category": "PARTS_MATERIAL",
+      "desc": "Parts responsibility and supply questions."
+    },
+    {
+      "priority": 7,
+      "category": "COMMERCIAL_CLARIFICATION",
+      "desc": "Optional clarifications for commercial copy."
+    }
+  ],
+  "question_minimization_rules": [
+    "Skip questions for inputs already known from entry context",
+    "Skip city questions — city has no pricing effect",
+    "Skip urgency questions — urgency has no pricing effect",
+    "Stop asking after all required conditions satisfied",
+    "Never ask full questionnaire before service identity resolved",
+    "Safety questions always asked even if not strictly required for price calculation",
+    "Routing questions asked before eligibility questions"
+  ],
+  "planner_input_contract": {
+    "current_service_code": "string",
+    "known_inputs": "object: key=input_id, value=client_answer",
+    "required_conditions": "array: from eligibility_conditions in canonical registry",
+    "hard_exclusions": "array: from hard_exclusions in canonical registry",
+    "measurement_requirements": "array: quantity input_ids for calculation model",
+    "safety_requirements": "array: safety_critical input_ids"
+  },
+  "planner_output_contract": {
+    "next_question_id": "string | null (null = no more questions needed)",
+    "next_question_category": "SAFETY|ROUTING_BOUNDARY|SERVICE_IDENTITY|ELIGIBILITY|QUANTITY_MEASUREMENT|PARTS_MATERIAL|COMMERCIAL_CLARIFICATION",
+    "remaining_question_ids": "array",
+    "blocking": "boolean — false only if all inputs for calculation available",
+    "reason": "string"
+  },
+  "safety_inputs_by_metier": {
+    "electricite": [
+      "burning_smell",
+      "scorch_marks",
+      "distributor_equipment_involved",
+      "ddr_rcd_involved",
+      "multiple_mcbs_defective",
+      "cause_unknown"
+    ],
+    "peinture": [
+      "active_moisture",
+      "humidity_stains"
+    ],
+    "serrurerie": [
+      "lock_cylinder_required",
+      "full_replacement_required"
+    ],
+    "climatisation": [
+      "artisan_r32_certified",
+      "copper_too_degraded",
+      "facade_inaccessible",
+      "multi_split",
+      "cassette_or_ducted"
+    ],
+    "plomberie": [
+      "leak_location",
+      "part_replacement_required"
+    ],
+    "menuiserie": [
+      "door_dimensionally_incompatible",
+      "custom_hardware_unavailable",
+      "rabotage_exceeds_minor",
+      "wardrobe_structurally_deformed"
+    ],
+    "bricolage": [
+      "cause_unknown"
+    ],
+    "nettoyage": []
+  },
+  "service_simple_flows": {
+    "serrurerie.porte_claquee_ouverture": {
+      "safety_questions": [],
+      "routing_questions": [],
+      "eligibility_questions": [],
+      "quantity_questions": [],
+      "total_questions": 0,
+      "reaches_price_immediately": true,
+      "note": "FIXED price — no conditions, no exclusions → immediate FIXEO_PRICE"
+    },
+    "plomberie.debouchage_evier": {
+      "safety_questions": [],
+      "routing_questions": [],
+      "eligibility_questions": [],
+      "quantity_questions": [],
+      "total_questions": 0,
+      "reaches_price_immediately": true
+    },
+    "electricite.disjoncteur_remplacement": {
+      "safety_questions": [
+        "burning_smell",
+        "scorch_marks"
+      ],
+      "routing_questions": [
+        "distributor_equipment_involved"
+      ],
+      "eligibility_questions": [
+        "mcb_defect_confirmed"
+      ],
+      "quantity_questions": [],
+      "total_questions": 3,
+      "reaches_price_immediately": false
+    },
+    "peinture.mur_interieur.all_in": {
+      "safety_questions": [
+        "active_moisture",
+        "humidity_stains"
+      ],
+      "routing_questions": [],
+      "eligibility_questions": [],
+      "quantity_questions": [
+        "painted_m2"
+      ],
+      "total_questions": 3,
+      "measurement_note": "painted_m2 collected directly or via GUIDED_MEASUREMENT_ASSISTANT"
+    },
+    "climatisation.installation.standard": {
+      "safety_questions": [],
+      "routing_questions": [
+        "multi_split",
+        "facade_inaccessible"
+      ],
+      "eligibility_questions": [
+        "ac_capacity_btu",
+        "installation_height_m"
+      ],
+      "quantity_questions": [
+        "ac_count"
+      ],
+      "total_questions": 4
+    },
+    "nettoyage.menage_standard": {
+      "safety_questions": [],
+      "routing_questions": [],
+      "eligibility_questions": [],
+      "quantity_questions": [
+        "worker_count",
+        "hours"
+      ],
+      "total_questions": 2,
+      "notes": "INTEGER HOURS ONLY. Display: N prestataire(s) × H heure(s) × 65 MAD."
+    }
+  }
+}

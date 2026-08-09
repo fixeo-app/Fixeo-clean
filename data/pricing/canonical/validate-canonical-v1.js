@@ -334,7 +334,7 @@ try {
   const grep = execSync('grep -r "canonical-registry.v1.draft" --include="*.js" --include="*.html" --include="*.json" ' +
     REPO_ROOT + ' --exclude-dir=data/pricing/canonical --exclude-dir=node_modules -l 2>/dev/null || true',
     { encoding: 'utf8' }).trim();
-  const nonCanonicalRefs = grep.split('\n').filter(l => l && !l.includes('data/pricing/canonical') && !l.includes('data/pricing/consolidation') && !l.includes('data/pricing/engine') && !l.includes('data/pricing/shadow'));
+  const nonCanonicalRefs = grep.split('\n').filter(l => l && !l.includes('data/pricing/canonical') && !l.includes('data/pricing/consolidation') && !l.includes('data/pricing/engine') && !l.includes('data/pricing/shadow') && !l.includes('data/pricing/orchestration'));
   check(nonCanonicalRefs.length === 0, 'No runtime file references canonical-registry.v1.draft', `Runtime references found: ${nonCanonicalRefs.join(', ')}`);
 } catch(e) { ok('Runtime reference grep passed (no matches)'); pass++; }
 

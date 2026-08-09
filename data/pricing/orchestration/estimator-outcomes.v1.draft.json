@@ -1,0 +1,211 @@
+{
+  "meta": {
+    "schema_version": "7C.6-v1",
+    "production_ready": false,
+    "dormant": true
+  },
+  "client_outcome_schema": {
+    "outcome_type": {
+      "type": "string",
+      "enum": [
+        "PRICE_READY",
+        "DIAGNOSTIC_READY",
+        "LABOUR_PLUS_PART_READY",
+        "ADD_ON_READY",
+        "QUOTE_REQUIRED",
+        "ROUTE_REQUIRED",
+        "SAFETY_STOP",
+        "REQUALIFY"
+      ]
+    },
+    "headline": {
+      "type": "string",
+      "desc": "Primary display text for client"
+    },
+    "price": {
+      "amount_mad": {
+        "type": "number|null"
+      },
+      "currency": {
+        "type": "string",
+        "value": "MAD"
+      },
+      "label": {
+        "type": "string|null",
+        "desc": "Display label: Prix FIXEO / Prix FIXEO calculé / etc."
+      }
+    },
+    "scope_summary": {
+      "type": "array",
+      "items": "string",
+      "desc": "Bullet points of what is included"
+    },
+    "exclusions_summary": {
+      "type": "array",
+      "items": "string",
+      "desc": "What is NOT included / scope boundaries"
+    },
+    "parts_notice": {
+      "type": "string|null",
+      "desc": "For LABOUR_PLUS_PART: pièce séparée notice"
+    },
+    "diagnostic_notice": {
+      "type": "string|null",
+      "desc": "For DIAGNOSTIC: absorption doctrine"
+    },
+    "next_action": {
+      "type": "string",
+      "enum": [
+        "CONTINUE_TO_RESERVATION",
+        "CHOOSE_ARTISAN",
+        "REQUEST_QUOTE",
+        "BOOK_DIAGNOSTIC",
+        "CHANGE_SERVICE",
+        "CHANGE_METIER",
+        "PROVIDE_MORE_INFORMATION",
+        "CONTACT_SUPPORT",
+        "STOP_FOR_SAFETY"
+      ]
+    },
+    "engine_result_ref": {
+      "type": "string",
+      "desc": "Reference to engine result for audit trail"
+    }
+  },
+  "outcome_types": {
+    "PRICE_READY": {
+      "triggers": [
+        "FIXEO_PRICE",
+        "FIXEO_CALCULATED_PRICE"
+      ],
+      "headline_template": "Votre intervention FIXEO : {amount} MAD",
+      "price_shown": true,
+      "amount_source": "engine_result.pricing.final_amount_mad",
+      "label": "Prix FIXEO",
+      "next_actions": [
+        "CONTINUE_TO_RESERVATION",
+        "CHOOSE_ARTISAN"
+      ],
+      "copy_doctrine": "Show exact canonical price. No \"indicatif\". No range."
+    },
+    "DIAGNOSTIC_READY": {
+      "triggers": [
+        "FIXEO_DIAGNOSTIC"
+      ],
+      "headline_template": "Diagnostic FIXEO : {amount} MAD",
+      "price_shown": true,
+      "amount_source": "engine_result.pricing.diagnostic_price_mad",
+      "label": "Diagnostic FIXEO",
+      "absorption_notice": true,
+      "next_actions": [
+        "BOOK_DIAGNOSTIC",
+        "CONTINUE_TO_RESERVATION"
+      ],
+      "copy_doctrine": "Show diagnostic price. Show absorption conditions specific to métier."
+    },
+    "LABOUR_PLUS_PART_READY": {
+      "triggers": [
+        "FIXEO_LABOUR_PRICE_PLUS_PART"
+      ],
+      "headline_template": "Main-d'œuvre FIXEO : {amount} MAD + pièce séparée",
+      "price_shown": true,
+      "amount_source": "engine_result.pricing.labour_amount_mad",
+      "label": "Main-d'œuvre FIXEO",
+      "parts_notice": "La pièce/matériel principal est communiqué et approuvé par le client avant toute installation.",
+      "visual_separation": "REQUIRED",
+      "next_actions": [
+        "CONTINUE_TO_RESERVATION",
+        "CHOOSE_ARTISAN"
+      ],
+      "copy_doctrine": "Two distinct price concepts. Never sum labour + unknown part cost."
+    },
+    "ADD_ON_READY": {
+      "triggers": [
+        "FIXEO_ADD_ON"
+      ],
+      "headline_template": "Option FIXEO : +{amount} MAD",
+      "price_shown": true,
+      "amount_source": "engine_result.pricing.add_on_amount_mad",
+      "label": "Option FIXEO",
+      "primary_service_required": true,
+      "next_actions": [
+        "CONTINUE_TO_RESERVATION"
+      ]
+    },
+    "QUOTE_REQUIRED": {
+      "triggers": [
+        "QUOTE_REQUIRED",
+        "engine_error_QUOTE_ONLY"
+      ],
+      "headline_template": "Votre intervention nécessite un devis.",
+      "price_shown": false,
+      "label": "Prix sur devis",
+      "next_actions": [
+        "REQUEST_QUOTE"
+      ],
+      "is_successful_outcome": true,
+      "copy_doctrine": "QUOTE_REQUIRED is valid. Never show fake range. Devis is the product."
+    },
+    "ROUTE_REQUIRED": {
+      "triggers": [
+        "ROUTE_REQUIRED",
+        "HARD_EXCLUSION_routing"
+      ],
+      "headline_template": "Cette intervention relève d'un spécialiste {target_metier}.",
+      "price_shown": false,
+      "next_actions": [
+        "CHANGE_METIER"
+      ],
+      "copy_doctrine": "No price. Requalify client need to correct métier."
+    },
+    "SAFETY_STOP": {
+      "triggers": [
+        "SAFETY_STOP",
+        "qualification_STOP_SAFETY"
+      ],
+      "headline_template": "Cette situation nécessite une attention immédiate.",
+      "price_shown": false,
+      "next_actions": [
+        "STOP_FOR_SAFETY",
+        "CONTACT_SUPPORT"
+      ],
+      "safety_guidance": true,
+      "copy_doctrine": "No price. Never show partial price after safety stop."
+    },
+    "REQUALIFY": {
+      "triggers": [
+        "REQUALIFY",
+        "HARD_EXCLUSION_requalify"
+      ],
+      "headline_template": "Votre besoin dépasse le périmètre standard.",
+      "price_shown": false,
+      "next_actions": [
+        "REQUEST_QUOTE",
+        "CHANGE_SERVICE"
+      ],
+      "copy_doctrine": "Suggest quote or alternative service. No experimental batch prices."
+    }
+  },
+  "next_action_enum": [
+    "CONTINUE_TO_RESERVATION",
+    "CHOOSE_ARTISAN",
+    "REQUEST_QUOTE",
+    "BOOK_DIAGNOSTIC",
+    "CHANGE_SERVICE",
+    "CHANGE_METIER",
+    "PROVIDE_MORE_INFORMATION",
+    "CONTACT_SUPPORT",
+    "STOP_FOR_SAFETY"
+  ],
+  "next_action_definitions": {
+    "CONTINUE_TO_RESERVATION": "Proceed to artisan booking flow with pricing context token",
+    "CHOOSE_ARTISAN": "Browse available artisans for this service and price",
+    "REQUEST_QUOTE": "Submit bespoke quotation request",
+    "BOOK_DIAGNOSTIC": "Book diagnostic visit directly",
+    "CHANGE_SERVICE": "Return to service selection within same métier",
+    "CHANGE_METIER": "Return to métier selection",
+    "PROVIDE_MORE_INFORMATION": "More inputs needed (e.g. painted_m2 unknown, fractional hours)",
+    "CONTACT_SUPPORT": "Safety or complex situation — contact FIXEO support",
+    "STOP_FOR_SAFETY": "Safety exclusion triggered — provide safety guidance"
+  }
+}

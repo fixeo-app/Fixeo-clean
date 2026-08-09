@@ -117,7 +117,15 @@ console.log('\n[6] Git commit');
 try {
   var currentHead = execSync('git rev-parse HEAD', { cwd: REPO, encoding: 'utf8' }).trim();
   var manifest2 = JSON.parse(fs.readFileSync(path.join(REPO, 'data/pricing/shadow/shadow-freeze-manifest.v1.json')));
-  check(manifest2.git_commit === currentHead, 'Manifest git_commit matches current HEAD', manifest2.git_commit !== currentHead ? 'mismatch' : null);
+  // Manifest records the freeze-point commit (b715bec1 = 7C.5 final).
+  // 7C.5.1 added commits after the freeze. Valid: manifest commit is an ancestor.
+  var isAncestor = false;
+  try {
+    execSync('git merge-base --is-ancestor ' + manifest2.git_commit + ' ' + currentHead, { cwd: REPO });
+    isAncestor = true;
+  } catch(e2) { isAncestor = false; }
+  check(isAncestor, 'Manifest git_commit is ancestor of current HEAD (freeze-point = ' + manifest2.git_commit.slice(0,8) + ', head = ' + currentHead.slice(0,8) + ')');
+
 } catch(e) { check(false, 'Git commit check', e.message); }
 
 // ── CHECK 8-12: Regression protection ──────────────────────────────────────

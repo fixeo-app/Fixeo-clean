@@ -1,0 +1,98 @@
+{
+  "meta": {
+    "schema_version": "7C.6-v1",
+    "production_ready": false,
+    "dormant": true,
+    "note": "Pure dormant API contract. No DOM. No network. No production import."
+  },
+  "api_functions": {
+    "startEstimator": {
+      "signature": "startEstimator(context: EstimatorEntryPayload): EstimatorSession",
+      "description": "Create new estimator session from entry context. Apply priority chain for métier/service resolution.",
+      "returns": "EstimatorSession with initial state",
+      "no_side_effects": true
+    },
+    "answerEstimatorQuestion": {
+      "signature": "answerEstimatorQuestion(session: EstimatorSession, question_id: string, answer: any): EstimatorSession",
+      "description": "Record client answer. Validate input type. Update known_inputs. Re-run question planner.",
+      "returns": "Updated EstimatorSession",
+      "no_side_effects": true,
+      "validation": "Answer must match canonical input data_type and allowed_values"
+    },
+    "getNextEstimatorStep": {
+      "signature": "getNextEstimatorStep(session: EstimatorSession): EstimatorStep",
+      "description": "Determine current state and next required action: question to ask, or readiness for engine.",
+      "returns": "{ state, next_question: QuestionPlannerOutput | null, ready_for_engine: boolean }",
+      "no_side_effects": true
+    },
+    "evaluateEstimator": {
+      "signature": "evaluateEstimator(session: EstimatorSession): EstimatorSession",
+      "description": "Build engine payload, call evaluateFixeoPrice(), translate result to ClientOutcome. Sole price calculation entry point.",
+      "returns": "EstimatorSession with engine_result and outcome populated",
+      "calls": "evaluateFixeoPrice() from pricing-engine-core-v1.js — the ONLY price source",
+      "no_side_effects": true,
+      "pre_conditions": [
+        "session.state === READY_FOR_ENGINE",
+        "all required inputs present",
+        "no pending safety questions"
+      ]
+    },
+    "buildPricingContextToken": {
+      "signature": "buildPricingContextToken(session: EstimatorSession): PricingContextToken",
+      "description": "Create immutable handoff token for Reservation. Only callable when session has valid outcome.",
+      "returns": "PricingContextToken (documentation only — no crypto in V1)",
+      "no_side_effects": true
+    }
+  },
+  "return_types": {
+    "EstimatorSession": "See handoff contract session_contract",
+    "EstimatorStep": {
+      "state": "string",
+      "next_question": "QuestionPlannerOutput|null",
+      "ready_for_engine": "boolean",
+      "outcome": "ClientOutcome|null"
+    },
+    "QuestionPlannerOutput": {
+      "next_question_id": "string|null",
+      "category": "string",
+      "remaining_question_ids": "array",
+      "blocking": "boolean",
+      "reason": "string"
+    },
+    "ClientOutcome": "See outcomes contract client_outcome_schema",
+    "PricingContextToken": "See handoff contract pricing_context_token"
+  },
+  "analytics_events": [
+    "estimator_open",
+    "metier_selected",
+    "service_selected",
+    "question_answered",
+    "qualification_failed",
+    "route_triggered",
+    "safety_stop_triggered",
+    "price_ready",
+    "diagnostic_ready",
+    "quote_required",
+    "reservation_continue",
+    "estimator_abandoned"
+  ],
+  "accessibility_contract": {
+    "keyboard_navigation": "All interactive elements keyboard accessible",
+    "focus_management": "Focus moves to next question after answer. Focus returns to CTA on close.",
+    "screen_reader_labels": "All inputs have aria-label or aria-labelledby",
+    "progress_semantics": "aria-live region announces step progress",
+    "error_announcements": "aria-live=assertive for validation errors",
+    "modal_escape": "ESC closes modal. Focus returns to trigger.",
+    "mobile_keyboard": "Numeric keyboard for number inputs. Form input does not jump behind keyboard.",
+    "no_color_only_status": "Status communicated with text + icon, not color alone."
+  },
+  "mobile_contract": {
+    "layout": "Mobile-first. Single column. Large touch targets (min 44px).",
+    "bottom_sheet": "Modal renders as bottom sheet on mobile",
+    "keyboard_open": "Input stays visible above keyboard. Scroll to input on focus.",
+    "back_navigation": "Back button returns to previous question / state",
+    "scroll_restoration": "Return to top of question on step change",
+    "close_control": "X button always accessible at top-right. Not hidden by keyboard.",
+    "result_summary": "Price result sticky at bottom on mobile for easy access to CTA"
+  }
+}

@@ -1,0 +1,231 @@
+{
+  "meta": {
+    "schema_version": "7C.6-v1",
+    "production_ready": false,
+    "dormant": true
+  },
+  "states": {
+    "START": {
+      "description": "Initial state. Session created. Entry context received.",
+      "valid_transitions": [
+        "METIER_SELECTION",
+        "SERVICE_SELECTION"
+      ],
+      "transition_logic": "If service_hint resolves to canonical service → SERVICE_SELECTION. Else → METIER_SELECTION.",
+      "entry_actions": [
+        "validate entry context",
+        "log estimator_open event"
+      ]
+    },
+    "METIER_SELECTION": {
+      "description": "Resolving which métier (plomberie, électricité, etc.) applies.",
+      "valid_transitions": [
+        "SERVICE_SELECTION"
+      ],
+      "transition_logic": "When metier is resolved from priority chain → SERVICE_SELECTION.",
+      "possible_blockers": [
+        "CLASSIFIER_REQUIRED: ask client to choose"
+      ],
+      "entry_actions": [
+        "apply priority chain",
+        "log metier_selected"
+      ]
+    },
+    "SERVICE_SELECTION": {
+      "description": "Client or system selects specific canonical service within métier.",
+      "valid_transitions": [
+        "QUALIFICATION"
+      ],
+      "transition_logic": "When service_code resolves to a canonical registry entry → QUALIFICATION.",
+      "entry_actions": [
+        "filter services by metier",
+        "present service family groups",
+        "log service_selected"
+      ]
+    },
+    "QUALIFICATION": {
+      "description": "Evaluating eligibility conditions and hard exclusions against known inputs.",
+      "valid_transitions": [
+        "QUESTION_REQUIRED",
+        "READY_FOR_ENGINE",
+        "ROUTE_REQUIRED",
+        "SAFETY_STOP",
+        "REQUALIFY"
+      ],
+      "transition_logic": [
+        "If any pending safety questions → QUESTION_REQUIRED (priority=SAFETY)",
+        "If any routing boundary questions pending → QUESTION_REQUIRED (priority=ROUTING)",
+        "If all required inputs satisfied and no exclusion → READY_FOR_ENGINE",
+        "If hard exclusion: routing type → ROUTE_REQUIRED",
+        "If hard exclusion: safety type → SAFETY_STOP",
+        "If hard exclusion: requalify type → REQUALIFY"
+      ],
+      "entry_actions": [
+        "run question planner",
+        "evaluate known exclusions"
+      ]
+    },
+    "QUESTION_REQUIRED": {
+      "description": "Orchestrator needs one more input from client.",
+      "valid_transitions": [
+        "QUALIFICATION"
+      ],
+      "transition_logic": "After client answers → re-enter QUALIFICATION.",
+      "entry_actions": [
+        "present next question",
+        "log question_answered on response"
+      ]
+    },
+    "READY_FOR_ENGINE": {
+      "description": "All required inputs collected. Payload validated. Ready to call engine.",
+      "valid_transitions": [
+        "ENGINE_EVALUATION"
+      ],
+      "transition_logic": "Immediately → ENGINE_EVALUATION (no user interaction).",
+      "entry_actions": [
+        "build engine payload",
+        "validate all canonical inputs"
+      ]
+    },
+    "ENGINE_EVALUATION": {
+      "description": "Calling evaluateFixeoPrice(). Awaiting result.",
+      "valid_transitions": [
+        "PRICE_READY",
+        "DIAGNOSTIC_READY",
+        "LABOUR_PLUS_PART_READY",
+        "ADD_ON_READY",
+        "QUOTE_REQUIRED",
+        "ROUTE_REQUIRED",
+        "SAFETY_STOP",
+        "REQUALIFY"
+      ],
+      "transition_logic": "Engine result commercial_output_type determines target state."
+    },
+    "PRICE_READY": {
+      "description": "Engine returned FIXEO_PRICE or FIXEO_CALCULATED_PRICE. Price is exact and contractual.",
+      "valid_transitions": [
+        "CONFIRMATION_READY"
+      ],
+      "output_types": [
+        "FIXEO_PRICE",
+        "FIXEO_CALCULATED_PRICE"
+      ],
+      "entry_actions": [
+        "build client outcome",
+        "log price_ready"
+      ]
+    },
+    "DIAGNOSTIC_READY": {
+      "description": "Engine returned FIXEO_DIAGNOSTIC. Show diagnostic price + absorption conditions.",
+      "valid_transitions": [
+        "CONFIRMATION_READY"
+      ],
+      "output_types": [
+        "FIXEO_DIAGNOSTIC"
+      ],
+      "entry_actions": [
+        "build diagnostic outcome",
+        "show absorption doctrine",
+        "log diagnostic_ready"
+      ]
+    },
+    "LABOUR_PLUS_PART_READY": {
+      "description": "Engine returned FIXEO_LABOUR_PRICE_PLUS_PART. Labour price known; parts separate.",
+      "valid_transitions": [
+        "CONFIRMATION_READY"
+      ],
+      "output_types": [
+        "FIXEO_LABOUR_PRICE_PLUS_PART"
+      ],
+      "entry_actions": [
+        "build two-part outcome",
+        "show parts notice",
+        "log price_ready"
+      ]
+    },
+    "ADD_ON_READY": {
+      "description": "Engine returned FIXEO_ADD_ON. Only valid in context of a primary service.",
+      "valid_transitions": [
+        "CONFIRMATION_READY"
+      ],
+      "output_types": [
+        "FIXEO_ADD_ON"
+      ],
+      "entry_actions": [
+        "build add-on outcome",
+        "reference primary service"
+      ]
+    },
+    "QUOTE_REQUIRED": {
+      "description": "Service requires bespoke quotation. No price shown. Valid successful outcome.",
+      "valid_transitions": [
+        "CONFIRMATION_READY"
+      ],
+      "entry_actions": [
+        "build quote outcome",
+        "log quote_required"
+      ]
+    },
+    "ROUTE_REQUIRED": {
+      "description": "Client need belongs to a different métier or specialist. Redirect.",
+      "valid_transitions": [
+        "METIER_SELECTION",
+        "START"
+      ],
+      "entry_actions": [
+        "build route outcome",
+        "log route_triggered"
+      ],
+      "examples": [
+        "BRIC + wiring → Electricite",
+        "MENU + security → Serrurerie",
+        "CLIM + R32 → specialist"
+      ]
+    },
+    "SAFETY_STOP": {
+      "description": "Safety exclusion triggered. No price. Client must receive safety instruction.",
+      "valid_transitions": [],
+      "terminal": true,
+      "next_actions": [
+        "CONTACT_SUPPORT"
+      ],
+      "entry_actions": [
+        "build safety outcome",
+        "show safety guidance",
+        "no price displayed"
+      ],
+      "examples": [
+        "ELEC + burning_smell",
+        "ELEC + distributor_equipment_involved"
+      ]
+    },
+    "REQUALIFY": {
+      "description": "Scope exceeds standardized service. Redirect to quote or adjacent service.",
+      "valid_transitions": [
+        "QUOTE_REQUIRED",
+        "SERVICE_SELECTION"
+      ],
+      "entry_actions": [
+        "build requalify outcome",
+        "suggest alternatives if available"
+      ],
+      "examples": [
+        "MENU hinge_count>1",
+        "MENU drawer_count>1",
+        "CLIM multi_split"
+      ]
+    },
+    "CONFIRMATION_READY": {
+      "description": "Full outcome ready. Client can proceed to next action.",
+      "valid_transitions": [],
+      "terminal": true,
+      "entry_actions": [
+        "present outcome card",
+        "generate pricing_context_token",
+        "log reservation_continue or abandoned"
+      ]
+    }
+  },
+  "no_hidden_transitions": true,
+  "transition_principle": "Every state change is deterministic. No implicit state. All transitions documented."
+}
