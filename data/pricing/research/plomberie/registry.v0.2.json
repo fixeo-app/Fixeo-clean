@@ -1,0 +1,990 @@
+{
+  "_meta": {
+    "registry_name": "fixeo_plumbing_pricing",
+    "registry_version": "0.2.0",
+    "status": "RESEARCH_V0.2_NOT_PRODUCTION",
+    "effective_market_date": "2026-08-09",
+    "research_completed_at": "2026-08-09",
+    "currency": "MAD",
+    "geographic_scope": "NATIONAL_MOROCCO",
+    "geographic_reference_city": "Casablanca",
+    "production_ready": false,
+    "description": "Canonical plumbing pricing registry derived from Phase 7B.3 independent Moroccan market research. V0 is a research artifact only. It is NOT a production tariff authority. DO NOT load this file in any browser runtime, DO NOT reference it from any HTML page, DO NOT import it from any JavaScript module. All prices represent external market evidence — they are NOT FIXEO's commercial prices and MUST NOT be displayed to users without a production review cycle.",
+    "disclaimer_required_if_ever_displayed": "Prix indicatifs issus d'une étude de marché. Tarifs réels variables selon l'artisan, la ville et les conditions de l'intervention. Devis requis avant toute intervention.",
+    "materials_baseline": "All reference prices = LABOUR + TRAVEL ONLY unless explicitly noted. Basic consumables (téflon, joint, pâte d'étanchéité) ≤50 DH are absorbed into forfait per market consensus. Any replacement part >50 DH must be quoted separately.",
+    "pricing_unit_enum": [
+      "FLAT_INTERVENTION",
+      "FLAT_DIAGNOSTIC",
+      "PER_ITEM",
+      "QUOTE_ONLY"
+    ],
+    "pricing_mode_enum": [
+      "STANDARDIZED",
+      "NARROW_RANGE",
+      "DIAGNOSIS_FIRST",
+      "ESTIMATION",
+      "QUOTE_REQUIRED"
+    ],
+    "materials_policy_enum": [
+      "LABOUR_ONLY",
+      "LABOUR_PLUS_BASIC_CONSUMABLES",
+      "LABOUR_ONLY_EQUIPMENT_SEPARATE",
+      "NONE_APPLICABLE",
+      "UNKNOWN"
+    ],
+    "confidence_enum": [
+      "HIGH",
+      "MEDIUM",
+      "LOW",
+      "INSUFFICIENT"
+    ],
+    "city_adjustment": null,
+    "city_adjustment_note": "Geographic price variation confirmed qualitatively (4-cluster model: Casablanca > Rabat > Marrakech/Tanger/Agadir > Fès/Meknès/others). Numeric city multipliers NOT encoded in V0 — insufficient independent evidence to assign defensible percentages. V1 price engine must use Casablanca as reference city and apply cluster adjustments only after market research validation.",
+    "urgency_modifier": null,
+    "urgency_modifier_note": "Evidence confirms night/weekend work commands higher prices in Morocco, but no standardized surcharge percentage is applicable. Some artisans charge no surcharge. V0 does NOT encode urgency modifiers. Platform must surface this as a disclosure item, not as a price modification.",
+    "how_to_update": "See README.md — section: Rules for Updating Registry",
+    "version_history": [
+      {
+        "version": "0.1.0",
+        "date": "2026-08-09",
+        "author": "Phase 7B.3 research",
+        "change": "Initial V0 — 19 service entries, 8 independent external sources, 34 evidence observations, 16 exclusion records"
+      }
+    ],
+    "based_on": "registry.v0.json (v0.1.0) — V0.1 preserved, not overwritten",
+    "v02_changes": [
+      "Terminology corrected: fair_low → consensus_low, fair_price → market_anchor, fair_high → consensus_high",
+      "Geographic semantics clarified: geographic_reference_city_use added",
+      "Statistical methodology note added to all reference_price entries",
+      "Phase 7B.3.2 calibration cross-references added"
+    ],
+    "geographic_reference_city_use": "ECONOMIC_STRESS_TEST_ONLY — Casablanca is NOT claimed to represent all Moroccan pricing. Used as viability floor for artisan economics.",
+    "geographic_scope_note": "Research aggregates national Moroccan published sources. Natural bias toward Casablanca/Rabat where source concentration is highest. Values are NOT city-specific.",
+    "statistical_methodology_note": "consensus_low/market_anchor/consensus_high are weighted aggregates of external published ranges — NOT FIXEO-calculated statistical percentiles over raw transactions. True percentile calculations (P25/P50/P75) will only be introduced when FIXEO possesses sufficient normalized transaction-level observations meeting minimum sample-size thresholds."
+  },
+  "services": [
+    {
+      "service_code": "plomberie.diagnostic",
+      "category": "plomberie",
+      "label_fr": "Déplacement et diagnostic",
+      "label_ar_darija": "زيارة و تشخيص",
+      "pricing_mode": "STANDARDIZED",
+      "pricing_unit": "FLAT_DIAGNOSTIC",
+      "market_scope": "NATIONAL_MOROCCO",
+      "reference_price": {
+        "currency": "MAD",
+        "consensus_low": 100,
+        "market_anchor": 150,
+        "consensus_high": 200,
+        "anchor_derivation_note": "fair_low=100: minimum call-out in smaller cities; consistent with artisan economic floor. fair_price=150: P50 of the 3-source convergence band (100–200). fair_high=200: Casablanca standard-hours ceiling confirmed by 4 independent sources. FIXEO pSEO T1 at 150–250 excluded from evidence (internal data) but confirms the upper end.",
+        "terminology_note": "V0.2 corrected: consensus_low/market_anchor/consensus_high replace P30/fair_price/P75. These are weighted market aggregates, not FIXEO-owned raw statistical percentiles."
+      },
+      "materials_policy": "NONE_APPLICABLE",
+      "travel_policy": {
+        "travel_included": true,
+        "note": "By definition — this IS the travel and diagnostic service"
+      },
+      "diagnostic_policy": {
+        "diagnostic_required": true,
+        "diagnostic_fee_mode": "IS_THE_SERVICE",
+        "note": "This service IS the diagnostic fee. Confirmed by bnidari.ma FAQ: 'Le diagnostic et le déplacement sont du temps de travail' — charged even if client does not proceed with repair. No evidence of deductible-if-repair model in Morocco."
+      },
+      "confidence": "MEDIUM",
+      "confidence_justification": {
+        "evidence_count": 3,
+        "source_diversity": "3 independent publishers (mano.ma, bnidari.ma, inworky.com)",
+        "unit_consistency": "All forfait — consistent",
+        "scope_consistency": "Consistently defined as standalone call-out/diagnostic visit",
+        "geographic_consistency": "National consensus; Casablanca premium noted but within range",
+        "recency": "All sources 2025–2026"
+      },
+      "evidence_summary": "3 independent sources converge tightly at 100–200 DH. bnidari.ma provides explicit scope definition and confirmed billing practice. afous.ma does not separately price diagnostic as a standalone service.",
+      "evidence_count": 3,
+      "source_ids": [
+        "SRC_PLUMBING_001",
+        "SRC_PLUMBING_006",
+        "SRC_PLUMBING_007"
+      ],
+      "research_notes": "This should become a universal baseline fee visible on all FIXEO service requests. The 'diagnostic absorbed into repair' model (if repair done same day, no separate diagnostic charge) is common in France but not confirmed in Morocco — do not assume it.",
+      "candidate_for_fixeo_price": true,
+      "candidate_rationale": "Scope is objective and universally understood. Unit (forfait per visit) is clear. Material policy: none. Price spread is narrow and stable. Can become a FIXEO-defined baseline fee applied to all diagnosis-first interventions.",
+      "production_ready": false,
+      "review_status": "AWAITING_FIXEO_PRODUCT_REVIEW",
+      "last_researched_at": "2026-08-09",
+      "version": "0.2.0"
+    },
+    {
+      "service_code": "plomberie.fuite_simple",
+      "category": "plomberie",
+      "label_fr": "Réparation fuite simple (raccord ou joint visible et accessible)",
+      "label_ar_darija": "إصلاح تسرب بسيط",
+      "pricing_mode": "NARROW_RANGE",
+      "pricing_unit": "FLAT_INTERVENTION",
+      "market_scope": "NATIONAL_MOROCCO",
+      "reference_price": {
+        "currency": "MAD",
+        "consensus_low": 150,
+        "market_anchor": 220,
+        "consensus_high": 350,
+        "anchor_derivation_note": "fair_low=150: minimum across 4 C+/C sources; consistent with artisan economic floor (150 DH minimum viable for Casablanca simple job). fair_price=220: weighted median using afous.ma anchor (P50 ≈ 185 DH, weight 0.50) + mano.ma+bnidari convergence midpoint (250 DH, weight 0.35) + inworky/allo-maison (250 DH, weight 0.15) → weighted: 185×0.50 + 250×0.35 + 250×0.15 = 92.5 + 87.5 + 37.5 = 217.5 → rounded to 220. fair_high=350: P75 of the distribution excluding scope-creep upper ends.",
+        "terminology_note": "V0.2 corrected: consensus_low/market_anchor/consensus_high replace P30/fair_price/P75. These are weighted market aggregates, not FIXEO-owned raw statistical percentiles."
+      },
+      "materials_policy": "LABOUR_PLUS_BASIC_CONSUMABLES",
+      "materials_note": "Basic consumables (téflon, joint d'étanchéité, pâte de joint) ≤50 DH included in forfait per all-source consensus. Any replacement part (robinet, raccord >50 DH) invoiced separately.",
+      "travel_policy": {
+        "travel_included": true,
+        "note": "All sources confirm travel included in forfait"
+      },
+      "diagnostic_policy": {
+        "diagnostic_required": false,
+        "diagnostic_fee_mode": "included",
+        "note": "For visible, accessible fuite — no separate diagnostic step required. Artisan can price and proceed directly."
+      },
+      "confidence": "MEDIUM",
+      "confidence_justification": {
+        "evidence_count": 5,
+        "source_diversity": "5 observations from 4 independent publishers; afous.ma (B+) provides quantitative anchor",
+        "unit_consistency": "All forfait — fully consistent",
+        "scope_consistency": "Scope well-defined: visible, accessible fuite (joint, raccord apparent, flexible visible)",
+        "geographic_consistency": "National consistent; Marrakech ~15% lower (excluded from national aggregate)",
+        "recency": "All sources 2025–2026; afous.ma reports 0% price change over 12 months"
+      },
+      "evidence_summary": "6 observations across 5 publishers. afous.ma P30–P70 = 170–200 DH (480 observations). mano.ma and bnidari.ma converge at 150–350 DH. Marrakech-specific data (100–350) excluded from national aggregate. Strong convergence in the 150–350 range for simple visible fuite repair.",
+      "evidence_count": 5,
+      "source_ids": [
+        "SRC_PLUMBING_001",
+        "SRC_PLUMBING_005",
+        "SRC_PLUMBING_006",
+        "SRC_PLUMBING_007",
+        "SRC_PLUMBING_004"
+      ],
+      "research_notes": "This service covers: leaking tap joint, dripping under-sink raccord, visible flexible hose leak, dripping external pipe raccord. Does NOT cover: fuite in wall/floor (see fuite_encastree), leaking shower tray seal (different scope). Note: plomberie.flexible_remplacement is absorbed here per EXCL_012 — a leaking flexible is resolved as fuite_simple.",
+      "candidate_for_fixeo_price": true,
+      "candidate_rationale": "Scope is objectively definable. Unit is clear (forfait per intervention). Material policy controllable (basic consumables only). Price spread is stable (afous.ma reports 0% change). Evidence quality is the strongest in this registry for a repair service.",
+      "production_ready": false,
+      "review_status": "AWAITING_FIXEO_PRODUCT_REVIEW",
+      "last_researched_at": "2026-08-09",
+      "version": "0.2.0"
+    },
+    {
+      "service_code": "plomberie.fuite_localisation",
+      "category": "plomberie",
+      "label_fr": "Localisation de fuite cachée (détection seule)",
+      "label_ar_darija": "تحديد موقع تسرب مخفي",
+      "pricing_mode": "DIAGNOSIS_FIRST",
+      "pricing_unit": "FLAT_DIAGNOSTIC",
+      "market_scope": "NATIONAL_MOROCCO",
+      "reference_price": {
+        "currency": "MAD",
+        "consensus_low": 350,
+        "market_anchor": 600,
+        "consensus_high": 1000,
+        "anchor_derivation_note": "Single primary source (mano.ma 400–1,000 DH). fair_low=350: slightly below mano.ma minimum (400) to reflect possibility of simpler acoustic detection in some cases. fair_price=600: midpoint of the confirmed range. fair_high=1,000: confirmed upper bound from source. LOW confidence — single source for this sub-scope.",
+        "terminology_note": "V0.2 corrected: consensus_low/market_anchor/consensus_high replace P30/fair_price/P75. These are weighted market aggregates, not FIXEO-owned raw statistical percentiles."
+      },
+      "materials_policy": "NONE_APPLICABLE",
+      "materials_note": "Localisation only — no repair, no materials at this stage",
+      "travel_policy": {
+        "travel_included": true,
+        "note": "Confirmed in source"
+      },
+      "diagnostic_policy": {
+        "diagnostic_required": true,
+        "diagnostic_fee_mode": "IS_THE_SERVICE",
+        "note": "This service IS the diagnostic. Artisan uses acoustic, thermal, or pressure-based detection equipment. The result is a localisation report — no repair included. Repair is a separate subsequent intervention (see fuite_encastree if repair required)."
+      },
+      "confidence": "LOW",
+      "confidence_justification": {
+        "evidence_count": 1,
+        "source_diversity": "1 primary source (mano.ma) — insufficient for MEDIUM confidence",
+        "unit_consistency": "forfait — consistent",
+        "scope_consistency": "Scope clearly separated from 'localisation + repair' in mano.ma — good",
+        "geographic_consistency": "National only",
+        "recency": "2025–2026"
+      },
+      "evidence_summary": "1 primary source. mano.ma explicitly separates 'localisation de fuite cachée (détection)' from 'fuite cachée sous dalle + réparation'. Range 400–1,000 DH for detection only. allo-maison.ma Marrakech 400–600 DH may corroborate but scope is ambiguous (see EXCL).",
+      "evidence_count": 1,
+      "source_ids": [
+        "SRC_PLUMBING_001"
+      ],
+      "research_notes": "This service requires specialist equipment (acoustic sensor, thermal camera, or tracer gas). Not all plumbers can perform this — should only be shown for artisans with confirmed detection capability. FIXEO should display as 'Frais de localisation: 350–1,000 DH — devis confirmé sur place'. Must NOT promise that repair is included.",
+      "candidate_for_fixeo_price": false,
+      "candidate_rationale": "Insufficient evidence (1 source). Scope is specialist and equipment-dependent. Cannot standardize without more evidence.",
+      "production_ready": false,
+      "review_status": "REQUIRES_ADDITIONAL_RESEARCH",
+      "last_researched_at": "2026-08-09",
+      "version": "0.2.0"
+    },
+    {
+      "service_code": "plomberie.fuite_encastree",
+      "category": "plomberie",
+      "label_fr": "Réparation fuite encastrée (accès nécessitant cassage)",
+      "label_ar_darija": "إصلاح تسرب في الجدار أو البلاط",
+      "pricing_mode": "DIAGNOSIS_FIRST",
+      "pricing_unit": "FLAT_INTERVENTION",
+      "market_scope": "NATIONAL_MOROCCO",
+      "reference_price": {
+        "currency": "MAD",
+        "consensus_low": 800,
+        "market_anchor": 1300,
+        "consensus_high": 2500,
+        "anchor_derivation_note": "Single source (mano.ma 800–2,500 DH) for this specific scope. fair_low=800: source minimum. fair_price=1,300: estimated P50 of the range (simple single-tile access vs multi-tile or floor cassage). fair_high=2,500: source maximum. Very wide range reflects variable cassage extent. LOW confidence — single source.",
+        "terminology_note": "V0.2 corrected: consensus_low/market_anchor/consensus_high replace P30/fair_price/P75. These are weighted market aggregates, not FIXEO-owned raw statistical percentiles."
+      },
+      "materials_policy": "LABOUR_ONLY",
+      "materials_note": "MO + cassage + repair only. Replacement materials (tiles, plaster, pipe, raccords) invoiced separately. Tile replacement by tiler may require a separate artisan.",
+      "travel_policy": {
+        "travel_included": true,
+        "note": "Assumed included in forfait"
+      },
+      "diagnostic_policy": {
+        "diagnostic_required": true,
+        "diagnostic_fee_mode": "included",
+        "note": "Scope assessment (how much to cassage, what pipe, what access) is part of this intervention — the artisan must see the situation before confirming the price. The reference range represents the full intervention after diagnosis on-site."
+      },
+      "confidence": "LOW",
+      "confidence_justification": {
+        "evidence_count": 1,
+        "source_diversity": "1 source",
+        "unit_consistency": "forfait — consistent",
+        "scope_consistency": "Well-defined sub-scope within the fuite category",
+        "geographic_consistency": "National only",
+        "recency": "2025–2026"
+      },
+      "evidence_summary": "mano.ma explicitly separates this scope from simple fuite. Range 800–2,500 DH is very wide — reflects variable depth and extent of cassage. Minimum (~800 DH) = simple case, 1–2 tiles, accessible pipe. Maximum (~2,500 DH) = extended cassage, difficult access, significant wall/floor reconstruction.",
+      "evidence_count": 1,
+      "source_ids": [
+        "SRC_PLUMBING_001"
+      ],
+      "research_notes": "This service should ALWAYS be presented as DIAGNOSIS_FIRST. FIXEO must never show a confirmed price for this service before artisan on-site assessment. Indicative range must be labeled 'fourchette indicative — confirmée sur place'. Cassage cost must be discussed separately from reconstruction cost.",
+      "candidate_for_fixeo_price": false,
+      "candidate_rationale": "Scope is inherently variable — cannot standardize without knowing extent of cassage. Quote-based pricing is appropriate.",
+      "production_ready": false,
+      "review_status": "REQUIRES_ADDITIONAL_RESEARCH",
+      "last_researched_at": "2026-08-09",
+      "version": "0.2.0"
+    },
+    {
+      "service_code": "plomberie.debouchage_evier",
+      "category": "plomberie",
+      "label_fr": "Débouchage évier ou lavabo (méthode manuelle)",
+      "label_ar_darija": "فك انسداد الحوض أو المغسلة",
+      "pricing_mode": "NARROW_RANGE",
+      "pricing_unit": "FLAT_INTERVENTION",
+      "market_scope": "NATIONAL_MOROCCO",
+      "reference_price": {
+        "currency": "MAD",
+        "consensus_low": 150,
+        "market_anchor": 220,
+        "consensus_high": 300,
+        "anchor_derivation_note": "fair_low=150: minimum across 3 C-grade sources; above artisan economic floor. fair_price=220: weighted median: afous.ma P50 ≈ 230 DH (weight 0.50) + mano.ma+bnidari convergence midpoint (225 DH, weight 0.35) + inworky (225 DH, weight 0.15) → 230×0.50 + 225×0.35 + 225×0.15 = 115 + 78.75 + 33.75 = 227.5 → rounded to 220 (slightly conservative to account for national aggregate pulling below Casablanca). fair_high=300: P75 of the distribution normalized for standard manual débouchage scope.",
+        "terminology_note": "V0.2 corrected: consensus_low/market_anchor/consensus_high replace P30/fair_price/P75. These are weighted market aggregates, not FIXEO-owned raw statistical percentiles."
+      },
+      "materials_policy": "NONE_APPLICABLE",
+      "materials_note": "Manual débouchage — no materials used. Small amount of drain cleaner (<20 DH) occasionally used — absorbed into forfait per market consensus.",
+      "travel_policy": {
+        "travel_included": true,
+        "note": "All sources confirm travel included"
+      },
+      "diagnostic_policy": {
+        "diagnostic_required": false,
+        "diagnostic_fee_mode": "included",
+        "note": "Standard visible blockage — no separate diagnostic needed. Client describes symptom; artisan proceeds."
+      },
+      "confidence": "MEDIUM",
+      "confidence_justification": {
+        "evidence_count": 4,
+        "source_diversity": "4 independent publishers including afous.ma (B+) as quantitative anchor",
+        "unit_consistency": "All forfait — consistent",
+        "scope_consistency": "Scope well-defined: manual débouchage évier/lavabo. Upper bounds normalized to exclude professional equipment scope.",
+        "geographic_consistency": "National consistent; allo-maison Marrakech slightly lower (consistent with cluster model)",
+        "recency": "All 2025–2026; afous.ma 12-month stability confirmed"
+      },
+      "evidence_summary": "afous.ma P30–P70 = 210–250 DH (480 declared observations). mano.ma, bnidari.ma, inworky.com converge on 150–300 DH. Strong evidence base. Note: afous.ma labels its category 'débouchage canalisation' which likely aggregates évier+WC simple — accounted for in confidence level.",
+      "evidence_count": 4,
+      "source_ids": [
+        "SRC_PLUMBING_001",
+        "SRC_PLUMBING_005",
+        "SRC_PLUMBING_006",
+        "SRC_PLUMBING_007"
+      ],
+      "research_notes": "Note: plomberie.siphon_remplacement is absorbed here per EXCL_013 — a blocked siphon is resolved as débouchage_evier. Upper bound 300 DH covers moderately stubborn blockage. Above 300 DH = professional equipment territory (separate service).",
+      "candidate_for_fixeo_price": true,
+      "candidate_rationale": "Scope is objectively definable. Unit is clear. No materials. Price spread is narrow and stable. afous.ma anchor with 480 observations provides strong statistical grounding.",
+      "production_ready": false,
+      "review_status": "AWAITING_FIXEO_PRODUCT_REVIEW",
+      "last_researched_at": "2026-08-09",
+      "version": "0.2.0"
+    },
+    {
+      "service_code": "plomberie.debouchage_wc_simple",
+      "category": "plomberie",
+      "label_fr": "Débouchage WC (méthode manuelle — ventouse et furet standard)",
+      "label_ar_darija": "فك انسداد المرحاض بالعتاد اليدوي",
+      "pricing_mode": "NARROW_RANGE",
+      "pricing_unit": "FLAT_INTERVENTION",
+      "market_scope": "NATIONAL_MOROCCO",
+      "reference_price": {
+        "currency": "MAD",
+        "consensus_low": 200,
+        "market_anchor": 280,
+        "consensus_high": 450,
+        "anchor_derivation_note": "fair_low=200: minimum across sources for WC specifically (consistently higher than évier). fair_price=280: weighted: afous.ma P50 ≈ 230 (weight 0.50, noting it aggregates évier+WC) + mano.ma+bnidari WC-specific midpoint (325 DH, weight 0.35) + allo-maison Casablanca midpoint (360 DH normalized to 340, weight 0.15) → 230×0.50 + 325×0.35 + 340×0.15 = 115 + 113.75 + 51 = 279.75 → rounded to 280. fair_high=450: allo-maison Casablanca ceiling (420 DH normalized) is the best Casablanca-specific upper bound for professional-grade simple débouchage.",
+        "terminology_note": "V0.2 corrected: consensus_low/market_anchor/consensus_high replace P30/fair_price/P75. These are weighted market aggregates, not FIXEO-owned raw statistical percentiles."
+      },
+      "materials_policy": "NONE_APPLICABLE",
+      "materials_note": "Manual ventouse + furet. No materials consumed. Minor cleaner use (<20 DH) absorbed.",
+      "travel_policy": {
+        "travel_included": true,
+        "note": "All sources confirm"
+      },
+      "diagnostic_policy": {
+        "diagnostic_required": false,
+        "diagnostic_fee_mode": "included",
+        "note": "Client describes WC blocked — artisan proceeds with standard manual method. No pre-visit diagnostic needed for standard blockage."
+      },
+      "confidence": "MEDIUM",
+      "confidence_justification": {
+        "evidence_count": 5,
+        "source_diversity": "5 observations across 4 publishers including a Casablanca marketplace specific figure (SRC_PLUMBING_003) and afous.ma anchor",
+        "unit_consistency": "All forfait — consistent",
+        "scope_consistency": "Manual method clearly separated from professional equipment method across sources",
+        "geographic_consistency": "National + Casablanca-specific both available; consistent direction",
+        "recency": "All 2025–2026"
+      },
+      "evidence_summary": "6 observations across 4 publishers. afous.ma P30–P70 = 210–250 DH (aggregate, includes évier). allo-maison.ma Casablanca states 300–450 DH specifically for WC débouchage with travel+equipment. mano.ma 200–500 DH for manual WC. bnidari.ma 150–300 DH (may be évier-biased). Highest confidence of all débouchage sub-services.",
+      "evidence_count": 5,
+      "source_ids": [
+        "SRC_PLUMBING_001",
+        "SRC_PLUMBING_002",
+        "SRC_PLUMBING_003",
+        "SRC_PLUMBING_005",
+        "SRC_PLUMBING_007"
+      ],
+      "research_notes": "Best-evidenced débouchage service. allo-maison.ma Casablanca figure (300–450 DH) is particularly credible as it comes from a marketplace with 119 active artisans and explicitly states travel+equipment included. The normalized figure (280–420 DH after consumables) is internally consistent.",
+      "candidate_for_fixeo_price": true,
+      "candidate_rationale": "Scope is well-defined. Unit is clear. No materials. Strong evidence across 4 independent publishers. allo-maison.ma marketplace figure provides marketplace-grounded Casablanca anchor.",
+      "production_ready": false,
+      "review_status": "AWAITING_FIXEO_PRODUCT_REVIEW",
+      "last_researched_at": "2026-08-09",
+      "version": "0.2.0"
+    },
+    {
+      "service_code": "plomberie.debouchage_wc_professionnel",
+      "category": "plomberie",
+      "label_fr": "Débouchage WC professionnel (équipement motorisé)",
+      "label_ar_darija": "فك انسداد المرحاض بمعدات متخصصة",
+      "pricing_mode": "ESTIMATION",
+      "pricing_unit": "FLAT_INTERVENTION",
+      "market_scope": "NATIONAL_MOROCCO",
+      "reference_price": {
+        "currency": "MAD",
+        "consensus_low": 400,
+        "market_anchor": 600,
+        "consensus_high": 800,
+        "anchor_derivation_note": "Single source (mano.ma SRC_PLUMBING_002, 400–800 DH). fair_low=400: source minimum. fair_price=600: midpoint. fair_high=800: source maximum. LOW confidence — single source.",
+        "terminology_note": "V0.2 corrected: consensus_low/market_anchor/consensus_high replace P30/fair_price/P75. These are weighted market aggregates, not FIXEO-owned raw statistical percentiles."
+      },
+      "materials_policy": "NONE_APPLICABLE",
+      "materials_note": "Equipment-only method. No materials consumed.",
+      "travel_policy": {
+        "travel_included": true,
+        "note": "Assumed in forfait"
+      },
+      "diagnostic_policy": {
+        "diagnostic_required": false,
+        "diagnostic_fee_mode": "included",
+        "note": "Standard professional method for stubborn blockage after simple manual method fails. No pre-diagnostic required if client confirms manual method already attempted."
+      },
+      "confidence": "LOW",
+      "confidence_justification": {
+        "evidence_count": 1,
+        "source_diversity": "1 source",
+        "unit_consistency": "forfait — consistent",
+        "scope_consistency": "Distinct from manual method in same source",
+        "geographic_consistency": "National only",
+        "recency": "2026"
+      },
+      "evidence_summary": "Single source (mano.ma dedicated débouchage guide). Motorised furet professional method. Range 400–800 DH.",
+      "evidence_count": 1,
+      "source_ids": [
+        "SRC_PLUMBING_002"
+      ],
+      "research_notes": "This service is typically invoked when the manual method fails. In practice the artisan may switch methods during the same intervention — FIXEO needs to define scope precisely: is this billed separately if standard débouchage is attempted first?",
+      "candidate_for_fixeo_price": false,
+      "candidate_rationale": "Only 1 source. Equipment availability varies by artisan. Cannot standardize at V0.",
+      "production_ready": false,
+      "review_status": "REQUIRES_ADDITIONAL_RESEARCH",
+      "last_researched_at": "2026-08-09",
+      "version": "0.2.0"
+    },
+    {
+      "service_code": "plomberie.robinet_remplacement",
+      "category": "plomberie",
+      "label_fr": "Remplacement robinet ou mitigeur (pose seule — fourni par le client)",
+      "label_ar_darija": "تركيب صنبور أو خلاط جديد",
+      "pricing_mode": "STANDARDIZED",
+      "pricing_unit": "FLAT_INTERVENTION",
+      "market_scope": "NATIONAL_MOROCCO",
+      "reference_price": {
+        "currency": "MAD",
+        "consensus_low": 150,
+        "market_anchor": 200,
+        "consensus_high": 300,
+        "anchor_derivation_note": "fair_low=150: minimum across 4 sources; above artisan economic floor. fair_price=200: weighted: afous.ma P50 ≈ 185 (weight 0.50) + bnidari.ma midpoint (225 DH, weight 0.35) + mano.ma conservative midpoint (375 DH normalized to 250 DH for MO-only, weight 0.15) → 185×0.50 + 225×0.35 + 250×0.15 = 92.5 + 78.75 + 37.5 = 208.75 → rounded to 200. fair_high=300: bnidari.ma ceiling for standard robinet replacement.",
+        "terminology_note": "V0.2 corrected: consensus_low/market_anchor/consensus_high replace P30/fair_price/P75. These are weighted market aggregates, not FIXEO-owned raw statistical percentiles."
+      },
+      "materials_policy": "LABOUR_ONLY",
+      "materials_note": "MO only. Client supplies the robinet/mitigeur. All fixture prices excluded. If artisan supplies the robinet, it is invoiced separately at purchase price + margin.",
+      "travel_policy": {
+        "travel_included": true,
+        "note": "All sources confirm travel included in forfait"
+      },
+      "diagnostic_policy": {
+        "diagnostic_required": false,
+        "diagnostic_fee_mode": "included",
+        "note": "Client provides the new robinet. Artisan's task is remove-old, install-new, test. No diagnostic required."
+      },
+      "confidence": "MEDIUM",
+      "confidence_justification": {
+        "evidence_count": 4,
+        "source_diversity": "afous.ma (B+) + 3 editorial sources; 4 independent publishers",
+        "unit_consistency": "All forfait — consistent",
+        "scope_consistency": "Scope universally understood as MO-only with client-supplied fixture",
+        "geographic_consistency": "National consistent",
+        "recency": "All 2025–2026; afous.ma 12-month stability confirmed"
+      },
+      "evidence_summary": "afous.ma P30–P70 = 170–200 DH (480 declared observations for the fuite/robinet category). bnidari.ma 150–300 DH for 'remplacement robinet (pose)'. mano.ma 200–600 DH (upper normalized for complex mitigeur). inworky.com 150–500 DH (upper normalized). Tight convergence in the 150–300 DH range for standard MO-only replacement.",
+      "evidence_count": 4,
+      "source_ids": [
+        "SRC_PLUMBING_001",
+        "SRC_PLUMBING_005",
+        "SRC_PLUMBING_006",
+        "SRC_PLUMBING_007"
+      ],
+      "research_notes": "BEST FIXEO_PRICE_CANDIDATE in this registry. Scope is discrete, objective, and universally understood. The equipment (robinet) is completely separate from the service. The artisan's task is identical regardless of robinet brand. Duration consistently 1 hour across sources. Lowest scope variability of any plumbing service.",
+      "candidate_for_fixeo_price": true,
+      "candidate_rationale": "Top candidate. Scope is purely objective (remove old robinet, install new one supplied by client, test). Unit is clear. No materials. Price is stable. afous.ma 480-observation anchor. Duration 1h consistently noted. Model scope text: 'Remplacement d'un robinet ou mitigeur standard fourni par le client. Inclut: démontage ancien appareil, pose, joint d'étanchéité, test. Exclut: robinet, fournitures non-standard, modification de tuyauterie.'",
+      "production_ready": false,
+      "review_status": "AWAITING_FIXEO_PRODUCT_REVIEW",
+      "last_researched_at": "2026-08-09",
+      "version": "0.2.0"
+    },
+    {
+      "service_code": "plomberie.chasse_eau",
+      "category": "plomberie",
+      "label_fr": "Remplacement mécanisme de chasse d'eau (MO seule)",
+      "label_ar_darija": "تركيب طقم سيفون مرحاض",
+      "pricing_mode": "STANDARDIZED",
+      "pricing_unit": "FLAT_INTERVENTION",
+      "market_scope": "NATIONAL_MOROCCO",
+      "reference_price": {
+        "currency": "MAD",
+        "consensus_low": 200,
+        "market_anchor": 280,
+        "consensus_high": 400,
+        "anchor_derivation_note": "fair_low=200: both sources agree on this minimum. fair_price=280: weighted average of the two sources: bnidari.ma midpoint 300 DH (weight 0.60, cleaner scope definition) + mano.ma normalized midpoint 300 DH (weight 0.40) = 300 DH. Adjusted down to 280 to account for national average pulling below Casablanca. fair_high=400: both sources agree on this ceiling for standard mechanism replacement.",
+        "terminology_note": "V0.2 corrected: consensus_low/market_anchor/consensus_high replace P30/fair_price/P75. These are weighted market aggregates, not FIXEO-owned raw statistical percentiles."
+      },
+      "materials_policy": "LABOUR_ONLY",
+      "materials_note": "MO only. Client supplies the mécanisme de chasse (kit available at Bricoma, droguerie: 50–200 DH). If artisan supplies the kit, it is invoiced separately.",
+      "travel_policy": {
+        "travel_included": true,
+        "note": "Confirmed"
+      },
+      "diagnostic_policy": {
+        "diagnostic_required": false,
+        "diagnostic_fee_mode": "included",
+        "note": "Standard WC flush mechanism failure — scope is self-evident. Artisan replaces standard mécanisme."
+      },
+      "confidence": "MEDIUM",
+      "confidence_justification": {
+        "evidence_count": 2,
+        "source_diversity": "2 independent publishers (mano.ma, bnidari.ma); afous.ma does not separately cover this service",
+        "unit_consistency": "Both forfait — consistent",
+        "scope_consistency": "Both sources clearly define as mécanisme replacement MO only",
+        "geographic_consistency": "National; no city breakdown available",
+        "recency": "Both 2025–2026"
+      },
+      "evidence_summary": "2 independent sources with strong convergence: bnidari.ma 200–400 DH, mano.ma 200–500 DH (normalized to 400 ceiling for standard mechanism). Duration noted as 1h by bnidari.ma. Strong internal consistency despite limited source count.",
+      "evidence_count": 2,
+      "source_ids": [
+        "SRC_PLUMBING_001",
+        "SRC_PLUMBING_006"
+      ],
+      "research_notes": "Second-best FIXEO_PRICE_CANDIDATE. Scope is discrete and non-ambiguous. Mécanisme de chasse is standard hardware (same fitting across most WC brands). Duration 1h. Scope text: 'Remplacement du mécanisme de chasse d'eau (kit fourni par le client). Inclut: vidange réservoir, démontage ancien mécanisme, pose, test étanchéité. Exclut: kit mécanisme, modification de réservoir.'",
+      "candidate_for_fixeo_price": true,
+      "candidate_rationale": "Strong candidate. 2 sources with tight convergence. Scope is discrete and standard. No materials. Duration 1h. Kit is client-supplied.",
+      "production_ready": false,
+      "review_status": "AWAITING_FIXEO_PRODUCT_REVIEW",
+      "last_researched_at": "2026-08-09",
+      "version": "0.2.0"
+    },
+    {
+      "service_code": "plomberie.chauffe_eau_reparation",
+      "category": "plomberie",
+      "label_fr": "Dépannage et réparation chauffe-eau (diagnostic inclus)",
+      "label_ar_darija": "تصليح سخان الماء",
+      "pricing_mode": "DIAGNOSIS_FIRST",
+      "pricing_unit": "FLAT_DIAGNOSTIC",
+      "market_scope": "NATIONAL_MOROCCO",
+      "reference_price": {
+        "currency": "MAD",
+        "consensus_low": 300,
+        "market_anchor": 400,
+        "consensus_high": 600,
+        "anchor_derivation_note": "fair_low=300: mano.ma confirmed minimum (300 DH). fair_price=400: afous.ma P50 for 'remplacement chauffe-eau pose seule' (390 DH) used as PROXY for repair diagnostic+labour range lower bound. The afous.ma figure is technically for installation but provides a credible anchor for the 'artisan + 1h intervention' cost tier. Weighted with mano.ma midpoint (600 DH) → 390×0.50 + 600×0.35 = 195 + 210 = 405 → 400 DH. fair_high=600: mano.ma normalized ceiling (900 DH → 600 DH after scope normalization to exclude complex part replacement). NOTE: this is the diagnostic + basic repair range only. Parts (résistance, thermostat, pompe) invoiced separately.",
+        "terminology_note": "V0.2 corrected: consensus_low/market_anchor/consensus_high replace P30/fair_price/P75. These are weighted market aggregates, not FIXEO-owned raw statistical percentiles."
+      },
+      "materials_policy": "LABOUR_ONLY",
+      "materials_note": "Diagnostic visit + identification of fault + basic repair (labour only). Replacement parts (résistance: 150–400 DH; thermostat: 100–250 DH; anode: 80–150 DH; pompe chaleur compresseur: >1,000 DH) invoiced separately at artisan's purchase cost.",
+      "travel_policy": {
+        "travel_included": true,
+        "note": "Travel included in diagnostic visit forfait"
+      },
+      "diagnostic_policy": {
+        "diagnostic_required": true,
+        "diagnostic_fee_mode": "included",
+        "note": "This service is DIAGNOSIS_FIRST by nature. The fault cause (résistance, thermostat, joint, anode, lime scale, gas valve) cannot be determined without on-site inspection. The reference price represents the diagnostic + simple repair (e.g., thermostat replacement). Complex repairs with major parts are a separate quote."
+      },
+      "confidence": "LOW",
+      "confidence_justification": {
+        "evidence_count": 2,
+        "source_diversity": "2 sources (mano.ma + afous.ma proxy); afous.ma data is for installation not repair — proxy use reduces confidence",
+        "unit_consistency": "forfait — consistent",
+        "scope_consistency": "Scope is inherently variable (fault type unknown) — reduces confidence",
+        "geographic_consistency": "National only",
+        "recency": "2025–2026"
+      },
+      "evidence_summary": "mano.ma 300–900 DH for 'dépannage chauffe-eau' (normalized ceiling to 600 for MO-only repair). afous.ma P30–P70 340–390 DH for 'remplacement pose seule' used as proxy anchor. Reservation.js internal (T1) also shows 200–500 DH — not used as evidence. The wide range reflects the diagnosis-first nature of this service.",
+      "evidence_count": 2,
+      "source_ids": [
+        "SRC_PLUMBING_001",
+        "SRC_PLUMBING_005"
+      ],
+      "research_notes": "DIAGNOSIS_FIRST service. Reference price = diagnostic visit + identify fault + basic repair. Display format must be: 'Frais de dépannage: 300–600 DH — pièces de rechange facturées séparément selon diagnostic.' The artisan should confirm before any part is ordered.",
+      "candidate_for_fixeo_price": false,
+      "candidate_rationale": "Cannot standardize — fault type determines actual cost. Diagnostic fee can be standardized (see plomberie.diagnostic) but repair cost requires on-site assessment.",
+      "production_ready": false,
+      "review_status": "REQUIRES_ADDITIONAL_RESEARCH",
+      "last_researched_at": "2026-08-09",
+      "version": "0.2.0"
+    },
+    {
+      "service_code": "plomberie.chauffe_eau_installation_electrique",
+      "category": "plomberie",
+      "label_fr": "Installation ou remplacement chauffe-eau électrique (pose seule — client fournit l'appareil)",
+      "label_ar_darija": "تركيب سخان كهربائي",
+      "pricing_mode": "ESTIMATION",
+      "pricing_unit": "FLAT_INTERVENTION",
+      "market_scope": "NATIONAL_MOROCCO",
+      "reference_price": {
+        "currency": "MAD",
+        "consensus_low": 300,
+        "market_anchor": 400,
+        "consensus_high": 600,
+        "anchor_derivation_note": "Significant source conflict — mano.ma (800–2,000 DH) vs afous.ma P30–P70 (340–390 DH) vs bnidari.ma (300–500 DH). The afous.ma and bnidari.ma figures converge for like-for-like replacement in same location. mano.ma upper range likely includes complex installation (repositioning, new electrical circuit, bracket fabrication) — excluded per EXCL_008. fair_low=300: bnidari.ma minimum. fair_price=400: afous.ma P50 (390 DH) weighted 0.50 + bnidari.ma midpoint (400 DH) weighted 0.50 → 395 → 400 DH. fair_high=600: bnidari.ma ceiling (500 DH) + 20% buffer for moderately complex installation. NOTE: This reference price is for standard like-for-like replacement only.",
+        "terminology_note": "V0.2 corrected: consensus_low/market_anchor/consensus_high replace P30/fair_price/P75. These are weighted market aggregates, not FIXEO-owned raw statistical percentiles."
+      },
+      "materials_policy": "LABOUR_ONLY_EQUIPMENT_SEPARATE",
+      "materials_note": "MO only. Client supplies the chauffe-eau électrique (50–80L unit: 1,200–2,000 DH at Bricoma/Aswak Assalam). If artisan supplies the unit, invoiced separately at purchase price.",
+      "travel_policy": {
+        "travel_included": true,
+        "note": "Confirmed"
+      },
+      "diagnostic_policy": {
+        "diagnostic_required": false,
+        "diagnostic_fee_mode": "included",
+        "note": "Standard replacement of existing electric chauffe-eau in same location — no diagnostic needed. If installation requires new location or electrical circuit modification, this is a different scope requiring a separate quote."
+      },
+      "confidence": "LOW",
+      "confidence_justification": {
+        "evidence_count": 2,
+        "source_diversity": "afous.ma (B+) + bnidari.ma (C+) — but significant conflict with mano.ma excluded source",
+        "unit_consistency": "forfait — consistent for the 2 included sources",
+        "scope_consistency": "UNRESOLVED CONFLICT — mano.ma significantly higher than afous.ma+bnidari.ma; mano.ma excluded but uncertainty remains",
+        "geographic_consistency": "National only",
+        "recency": "2025–2026"
+      },
+      "evidence_summary": "afous.ma P30–P70 = 340–390 DH (480 observations, 'remplacement chauffe-eau pose seule'). bnidari.ma = 300–500 DH (pose seule, explicit). mano.ma = 800–2,000 DH (excluded — scope conflict: likely includes complex installation). The 300–600 DH range is defensible for standard like-for-like replacement only. Significant uncertainty for non-standard installations.",
+      "evidence_count": 2,
+      "source_ids": [
+        "SRC_PLUMBING_005",
+        "SRC_PLUMBING_006"
+      ],
+      "research_notes": "SCOPE QUALIFIER REQUIRED: This price is for standard like-for-like replacement (same location, same mounting, existing electrical circuit compatible). Non-standard installations (new location, new circuit, gas conversion, solar) must be quoted separately. The mano.ma 800–2,000 DH range may be applicable for those non-standard cases.",
+      "candidate_for_fixeo_price": false,
+      "candidate_rationale": "Unresolved source conflict. Standard vs non-standard scope distinction not yet properly evidenced. LOW confidence insufficient for FIXEO price commitment.",
+      "production_ready": false,
+      "review_status": "REQUIRES_ADDITIONAL_RESEARCH",
+      "last_researched_at": "2026-08-09",
+      "version": "0.2.0"
+    },
+    {
+      "service_code": "plomberie.chauffe_eau_installation_gaz",
+      "category": "plomberie",
+      "label_fr": "Installation chauffe-eau à gaz (pose seule — client fournit l'appareil)",
+      "label_ar_darija": "تركيب سخان غاز",
+      "pricing_mode": "ESTIMATION",
+      "pricing_unit": "FLAT_INTERVENTION",
+      "market_scope": "NATIONAL_MOROCCO",
+      "reference_price": {
+        "currency": "MAD",
+        "consensus_low": 400,
+        "market_anchor": 500,
+        "consensus_high": 700,
+        "anchor_derivation_note": "Single source (bnidari.ma 400–600 DH for gas chauffe-eau pose seule). Higher than electric equivalent due to gas connection complexity and safety requirements (évacuation des gaz brûlés — norm compliance required). fair_low=400: source minimum. fair_price=500: estimated P50. fair_high=700: source ceiling +100 DH buffer for compliance complexity. LOW confidence — single source.",
+        "terminology_note": "V0.2 corrected: consensus_low/market_anchor/consensus_high replace P30/fair_price/P75. These are weighted market aggregates, not FIXEO-owned raw statistical percentiles."
+      },
+      "materials_policy": "LABOUR_ONLY_EQUIPMENT_SEPARATE",
+      "materials_note": "MO only. Client supplies the gas chauffe-eau (6–10L unit: 1,500–3,000 DH). Gas connection tubes and evacuation materials may be extra.",
+      "travel_policy": {
+        "travel_included": true,
+        "note": "Assumed in forfait"
+      },
+      "diagnostic_policy": {
+        "diagnostic_required": false,
+        "diagnostic_fee_mode": "included",
+        "note": "Standard replacement in same location. Gas safety compliance check required — artisan must verify evacuation des gaz brûlés is adequate."
+      },
+      "confidence": "LOW",
+      "confidence_justification": {
+        "evidence_count": 1,
+        "source_diversity": "1 source",
+        "unit_consistency": "forfait",
+        "scope_consistency": "Gas-specific scope noted",
+        "geographic_consistency": "National only",
+        "recency": "2026"
+      },
+      "evidence_summary": "Single source: bnidari.ma 400–600 DH for 'chauffe-eau à gaz — pose'. mano.ma figure (1,000–2,500 DH) excluded due to likely materials bundle. Gas chauffe-eau installation requires additional safety compliance steps vs electric.",
+      "evidence_count": 1,
+      "source_ids": [
+        "SRC_PLUMBING_006"
+      ],
+      "research_notes": "Gas installation requires confirmation of ONOE/RADEEMA compliance and proper evacuation des gaz brûlés. FIXEO artisans handling gas must have appropriate qualifications. This must be surfaced in the artisan profile requirements, not just in pricing.",
+      "candidate_for_fixeo_price": false,
+      "candidate_rationale": "Single source + compliance requirements + scope variability = not a standardization candidate at V0.",
+      "production_ready": false,
+      "review_status": "REQUIRES_ADDITIONAL_RESEARCH",
+      "last_researched_at": "2026-08-09",
+      "version": "0.2.0"
+    },
+    {
+      "service_code": "plomberie.debouchage_colonne",
+      "category": "plomberie",
+      "label_fr": "Débouchage colonne ou canalisation principale",
+      "label_ar_darija": "تفريغ عمود الصرف أو القناة الرئيسية",
+      "pricing_mode": "ESTIMATION",
+      "pricing_unit": "FLAT_INTERVENTION",
+      "market_scope": "NATIONAL_MOROCCO",
+      "reference_price": {
+        "currency": "MAD",
+        "consensus_low": 500,
+        "market_anchor": 800,
+        "consensus_high": 1500,
+        "anchor_derivation_note": "2 observations: SRC_PLUMBING_001 (300–700 DH furet long, normalized to 500–800 DH for colonne scope) + SRC_PLUMBING_002 (800–1,500 DH hydrocurage haute pression). fair_low=500: minimum for professional furet colonne intervention. fair_price=800: boundary between standard professional furet and hydrocurage methods. fair_high=1,500: hydrocurage haute pression ceiling from mano.ma débouchage guide. Note: camion hydrocureur (2,000–3,500 DH) excluded per EXCL_009 as B2B scope.",
+        "terminology_note": "V0.2 corrected: consensus_low/market_anchor/consensus_high replace P30/fair_price/P75. These are weighted market aggregates, not FIXEO-owned raw statistical percentiles."
+      },
+      "materials_policy": "NONE_APPLICABLE",
+      "materials_note": "Equipment rental/depreciation included in forfait. No materials consumed.",
+      "travel_policy": {
+        "travel_included": true,
+        "note": "Professional equipment transport included"
+      },
+      "diagnostic_policy": {
+        "diagnostic_required": true,
+        "diagnostic_fee_mode": "included",
+        "note": "Artisan must assess which method is needed (furet, hydrocurage, camera inspection) before confirming price. Method selection determines price tier significantly."
+      },
+      "confidence": "LOW",
+      "confidence_justification": {
+        "evidence_count": 2,
+        "source_diversity": "Same publisher (mano.ma SRC_001 + SRC_002)",
+        "unit_consistency": "forfait — consistent",
+        "scope_consistency": "Wide scope — from furet simple to professional hydrocurage",
+        "geographic_consistency": "National only",
+        "recency": "2025–2026"
+      },
+      "evidence_summary": "Both observations from mano.ma (same publisher, different guides). Wide price range reflects method-dependence. Not truly 2 independent sources.",
+      "evidence_count": 2,
+      "source_ids": [
+        "SRC_PLUMBING_001",
+        "SRC_PLUMBING_002"
+      ],
+      "research_notes": "Method-dependent pricing — FIXEO must surface this clearly. Cannot give a single price for 'débouchage colonne'. Must ask: has standard débouchage been attempted? Is this a single residential pipe or a building column? Method determines price tier completely.",
+      "candidate_for_fixeo_price": false,
+      "candidate_rationale": "Method-dependent scope. Equipment availability varies. Cannot standardize at V0.",
+      "production_ready": false,
+      "review_status": "REQUIRES_ADDITIONAL_RESEARCH",
+      "last_researched_at": "2026-08-09",
+      "version": "0.2.0"
+    },
+    {
+      "service_code": "plomberie.sanitaire_lavabo",
+      "category": "plomberie",
+      "label_fr": "Pose lavabo ou vasque (MO seule — client fournit l'équipement)",
+      "label_ar_darija": "تركيب مغسلة أو حوض",
+      "pricing_mode": "ESTIMATION",
+      "pricing_unit": "FLAT_INTERVENTION",
+      "market_scope": "NATIONAL_MOROCCO",
+      "reference_price": {
+        "currency": "MAD",
+        "consensus_low": 200,
+        "market_anchor": 300,
+        "consensus_high": 500,
+        "anchor_derivation_note": "Single source (bnidari.ma 200–500 DH). fair_price=300: estimated P50. LOW confidence.",
+        "terminology_note": "V0.2 corrected: consensus_low/market_anchor/consensus_high replace P30/fair_price/P75. These are weighted market aggregates, not FIXEO-owned raw statistical percentiles."
+      },
+      "materials_policy": "LABOUR_ONLY",
+      "materials_note": "MO only. Client supplies lavabo/vasque. Raccords and joints (<50 DH) absorbed into forfait.",
+      "travel_policy": {
+        "travel_included": true
+      },
+      "diagnostic_policy": {
+        "diagnostic_required": false,
+        "diagnostic_fee_mode": "included"
+      },
+      "confidence": "LOW",
+      "confidence_justification": {
+        "evidence_count": 1,
+        "source_diversity": "1 source",
+        "unit_consistency": "forfait",
+        "scope_consistency": "Pose seule explicitly noted",
+        "geographic_consistency": "National only",
+        "recency": "2026"
+      },
+      "evidence_summary": "Single source: bnidari.ma 200–500 DH (pose seule, lavabo/vasque). No cross-validation.",
+      "evidence_count": 1,
+      "source_ids": [
+        "SRC_PLUMBING_006"
+      ],
+      "research_notes": "Included for completeness but LOW confidence. Needs cross-validation before being used even as an estimation reference.",
+      "candidate_for_fixeo_price": false,
+      "candidate_rationale": "Single source — insufficient for standardization.",
+      "production_ready": false,
+      "review_status": "REQUIRES_ADDITIONAL_RESEARCH",
+      "last_researched_at": "2026-08-09",
+      "version": "0.2.0"
+    },
+    {
+      "service_code": "plomberie.sanitaire_wc_standard",
+      "category": "plomberie",
+      "label_fr": "Pose WC standard (MO seule — client fournit l'équipement)",
+      "label_ar_darija": "تركيب مرحاض عادي",
+      "pricing_mode": "ESTIMATION",
+      "pricing_unit": "FLAT_INTERVENTION",
+      "market_scope": "NATIONAL_MOROCCO",
+      "reference_price": {
+        "currency": "MAD",
+        "consensus_low": 300,
+        "market_anchor": 380,
+        "consensus_high": 500,
+        "anchor_derivation_note": "Single source (bnidari.ma 300–500 DH). fair_price=380: estimated P50. LOW confidence.",
+        "terminology_note": "V0.2 corrected: consensus_low/market_anchor/consensus_high replace P30/fair_price/P75. These are weighted market aggregates, not FIXEO-owned raw statistical percentiles."
+      },
+      "materials_policy": "LABOUR_ONLY",
+      "materials_note": "MO only. Client supplies WC. Joints and sealant (<50 DH) absorbed into forfait.",
+      "travel_policy": {
+        "travel_included": true
+      },
+      "diagnostic_policy": {
+        "diagnostic_required": false,
+        "diagnostic_fee_mode": "included"
+      },
+      "confidence": "LOW",
+      "confidence_justification": {
+        "evidence_count": 1,
+        "source_diversity": "1 source",
+        "unit_consistency": "forfait",
+        "scope_consistency": "Standard WC clearly separated from suspended WC in same source",
+        "geographic_consistency": "National only",
+        "recency": "2026"
+      },
+      "evidence_summary": "Single source: bnidari.ma 300–500 DH (pose seule, WC standard). No cross-validation.",
+      "evidence_count": 1,
+      "source_ids": [
+        "SRC_PLUMBING_006"
+      ],
+      "candidate_for_fixeo_price": false,
+      "candidate_rationale": "Single source — insufficient for standardization.",
+      "production_ready": false,
+      "review_status": "REQUIRES_ADDITIONAL_RESEARCH",
+      "last_researched_at": "2026-08-09",
+      "version": "0.2.0"
+    },
+    {
+      "service_code": "plomberie.sanitaire_wc_suspendu",
+      "category": "plomberie",
+      "label_fr": "Pose WC suspendu avec bâti-support (MO seule — client fournit l'équipement)",
+      "label_ar_darija": "تركيب مرحاض معلق مع هيكل التثبيت",
+      "pricing_mode": "ESTIMATION",
+      "pricing_unit": "FLAT_INTERVENTION",
+      "market_scope": "NATIONAL_MOROCCO",
+      "reference_price": {
+        "currency": "MAD",
+        "consensus_low": 800,
+        "market_anchor": 1100,
+        "consensus_high": 1500,
+        "anchor_derivation_note": "Single source (bnidari.ma 800–1,500 DH with bâti-support). Higher complexity vs standard WC: bâti-support installation requires wall anchoring, plumbing connection at height, concealed flush. fair_price=1,100: estimated P50. LOW confidence.",
+        "terminology_note": "V0.2 corrected: consensus_low/market_anchor/consensus_high replace P30/fair_price/P75. These are weighted market aggregates, not FIXEO-owned raw statistical percentiles."
+      },
+      "materials_policy": "LABOUR_ONLY",
+      "materials_note": "MO only. Client supplies WC + bâti-support. Wall anchors and sealant (<50 DH) absorbed.",
+      "travel_policy": {
+        "travel_included": true
+      },
+      "diagnostic_policy": {
+        "diagnostic_required": false,
+        "diagnostic_fee_mode": "included",
+        "note": "Pre-visit may be needed to confirm wall type (solid concrete vs partition) — affects bâti-support anchoring method."
+      },
+      "confidence": "LOW",
+      "confidence_justification": {
+        "evidence_count": 1,
+        "source_diversity": "1 source",
+        "unit_consistency": "forfait",
+        "scope_consistency": "Explicitly includes bâti-support installation",
+        "geographic_consistency": "National only",
+        "recency": "2026"
+      },
+      "evidence_summary": "Single source: bnidari.ma 800–1,500 DH (pose avec bâti-support). No cross-validation.",
+      "evidence_count": 1,
+      "source_ids": [
+        "SRC_PLUMBING_006"
+      ],
+      "candidate_for_fixeo_price": false,
+      "candidate_rationale": "Single source. Wall type dependency. Cannot standardize.",
+      "production_ready": false,
+      "review_status": "REQUIRES_ADDITIONAL_RESEARCH",
+      "last_researched_at": "2026-08-09",
+      "version": "0.2.0"
+    },
+    {
+      "service_code": "plomberie.flexible_remplacement",
+      "category": "plomberie",
+      "label_fr": "Remplacement flexible de robinetterie",
+      "label_ar_darija": null,
+      "pricing_mode": "STANDARDIZED",
+      "pricing_unit": "FLAT_INTERVENTION",
+      "market_scope": "NATIONAL_MOROCCO",
+      "reference_price": null,
+      "materials_policy": "LABOUR_PLUS_BASIC_CONSUMABLES",
+      "travel_policy": {
+        "travel_included": true
+      },
+      "diagnostic_policy": {
+        "diagnostic_required": false,
+        "diagnostic_fee_mode": "included"
+      },
+      "confidence": "INSUFFICIENT",
+      "evidence_summary": "No standalone market evidence found. Intervention is absorbed into plomberie.fuite_simple in all sources — a leaking flexible is priced identically to any other visible accessible fuite. See EXCL_012.",
+      "evidence_count": 0,
+      "source_ids": [],
+      "research_notes": "Use plomberie.fuite_simple pricing for flexible remplacement. This entry exists only to map the service code to the correct reference.",
+      "canonical_mapping": "plomberie.fuite_simple",
+      "candidate_for_fixeo_price": false,
+      "production_ready": false,
+      "review_status": "ABSORBED_INTO_FUITE_SIMPLE",
+      "last_researched_at": "2026-08-09",
+      "version": "0.2.0"
+    },
+    {
+      "service_code": "plomberie.siphon_remplacement",
+      "category": "plomberie",
+      "label_fr": "Remplacement siphon",
+      "label_ar_darija": null,
+      "pricing_mode": "STANDARDIZED",
+      "pricing_unit": "FLAT_INTERVENTION",
+      "market_scope": "NATIONAL_MOROCCO",
+      "reference_price": null,
+      "materials_policy": "LABOUR_PLUS_BASIC_CONSUMABLES",
+      "travel_policy": {
+        "travel_included": true
+      },
+      "diagnostic_policy": {
+        "diagnostic_required": false,
+        "diagnostic_fee_mode": "included"
+      },
+      "confidence": "INSUFFICIENT",
+      "evidence_summary": "No standalone market evidence found. Intervention absorbed into plomberie.debouchage_evier (if blockage-cause) or plomberie.fuite_simple (if leaking). See EXCL_013.",
+      "evidence_count": 0,
+      "source_ids": [],
+      "research_notes": "Use plomberie.debouchage_evier or plomberie.fuite_simple pricing depending on presenting symptom.",
+      "canonical_mapping": "plomberie.debouchage_evier OR plomberie.fuite_simple",
+      "candidate_for_fixeo_price": false,
+      "production_ready": false,
+      "review_status": "ABSORBED_INTO_OTHER_SERVICES",
+      "last_researched_at": "2026-08-09",
+      "version": "0.2.0"
+    },
+    {
+      "service_code": "plomberie.salle_de_bain",
+      "category": "plomberie",
+      "label_fr": "Rénovation salle de bain (ensemble ou partielle)",
+      "label_ar_darija": "تجديد الحمام",
+      "pricing_mode": "QUOTE_REQUIRED",
+      "pricing_unit": "QUOTE_ONLY",
+      "market_scope": "NATIONAL_MOROCCO",
+      "reference_price": null,
+      "reference_price_indicative_note": "No reference price is appropriate. mano.ma provides 5,000–15,000+ DH (MO only) as an order-of-magnitude indicator for complete renovation — the '+' sign indicates no practical upper limit. This value is NOT a FIXEO reference price and must NOT be displayed as such.",
+      "materials_policy": "UNKNOWN",
+      "travel_policy": {
+        "travel_included": true
+      },
+      "diagnostic_policy": {
+        "diagnostic_required": true,
+        "diagnostic_fee_mode": "separate",
+        "note": "Pre-visit required to scope the renovation. Diagnostic fee 100–200 DH applies."
+      },
+      "confidence": "INSUFFICIENT",
+      "evidence_summary": "Scope too variable for a reference price. Size, current state, element choices (baignoire, douche italienne, WC, lavabo count), waterproofing requirements, and existing pipe condition all drive the cost. See EXCL_014.",
+      "evidence_count": 0,
+      "source_ids": [],
+      "research_notes": "QUOTE_REQUIRED. FIXEO should direct clients requesting full bathroom renovation to submit a detailed description and receive artisan quotes. No reference price should be displayed for this service.",
+      "candidate_for_fixeo_price": false,
+      "candidate_rationale": "Not standardizable — scope inherently variable.",
+      "production_ready": false,
+      "review_status": "PERMANENTLY_QUOTE_REQUIRED",
+      "last_researched_at": "2026-08-09",
+      "version": "0.2.0"
+    },
+    {
+      "service_code": "plomberie.urgence",
+      "category": "plomberie",
+      "label_fr": "Modificateur urgence / nuit / week-end",
+      "label_ar_darija": null,
+      "pricing_mode": "QUOTE_REQUIRED",
+      "pricing_unit": "QUOTE_ONLY",
+      "market_scope": "NATIONAL_MOROCCO",
+      "reference_price": null,
+      "urgency_evidence": {
+        "qualitative_finding": "Night/weekend work consistently costs more than standard-hours work in Morocco. Practice is confirmed by multiple sources. However no standardized surcharge percentage exists.",
+        "quantitative_claim": {
+          "source": "SRC_PLUMBING_001 (single editorial source)",
+          "evening_18h_22h": "+20% to +50%",
+          "night_22h_8h": "+50% to +100%",
+          "weekend_holiday": "+50% to +150%",
+          "caveat": "These percentages are from a single editorial source with no declared methodology. 'Certains plombiers n'appliquent aucune majoration horaire' — the practice is not universal.",
+          "recommendation": "Do NOT encode numeric urgency modifiers in V0. Display qualitative disclosure only."
+        },
+        "legacy_fixeo_values_assessment": {
+          "plus_40_urgence": "TOO LOW vs evidence (+50–100% for night urgence)",
+          "plus_25_nuit": "TOO LOW vs evidence (+50–100%)",
+          "plus_20_weekend": "TOO LOW vs evidence (+50–150%)"
+        }
+      },
+      "confidence": "INSUFFICIENT",
+      "evidence_summary": "Urgency is a condition modifier, not a standalone service. Evidence confirms existence of surcharges but not standardized values. Legacy FIXEO surcharge percentages significantly understate market evidence. V0 records the qualitative finding only.",
+      "evidence_count": 1,
+      "source_ids": [
+        "SRC_PLUMBING_001"
+      ],
+      "research_notes": "The correct FIXEO approach is: display a qualitative disclosure ('Interventions en soirée et week-end : majoration possible — vérifiez le tarif avec l'artisan avant de confirmer'), NOT apply a percentage to the base price automatically. Artisans must declare their urgency policy in their profile.",
+      "candidate_for_fixeo_price": false,
+      "production_ready": false,
+      "review_status": "PERMANENTLY_QUALITATIVE_ONLY",
+      "last_researched_at": "2026-08-09",
+      "version": "0.2.0"
+    }
+  ]
+}

@@ -1,0 +1,681 @@
+{
+  "_meta": {
+    "document_type": "FIXEO_PLUMBING_PRICE_CALIBRATION",
+    "calibration_version": "0.2.0",
+    "status": "CALIBRATION_DRAFT_HUMAN_REVIEW_REQUIRED",
+    "production_ready": false,
+    "based_on_registry_version": "0.1.0",
+    "calibration_date": "2026-08-09",
+    "phase": "Phase 7B.3.2 — Human Calibration & Fair-Price Policy",
+    "currency": "MAD",
+    "geographic_scope": "NATIONAL_MOROCCO",
+    "geographic_reference_city": "Casablanca",
+    "geographic_reference_city_use": "ECONOMIC_STRESS_TEST_ONLY",
+    "statistical_terminology_note": "Terminology corrected from V0.1. 'P30/P75' replaced by 'CONSENSUS_LOW/CONSENSUS_HIGH'. 'fair_price' replaced by 'WEIGHTED_MARKET_ANCHOR'. These are weighted aggregates of external published ranges — NOT FIXEO-calculated statistical percentiles over raw transactions.",
+    "dual_fairness_principle": "A FIXEO price is acceptable only if it simultaneously protects the client from arbitrary overpricing AND the artisan from economically unsustainable underpricing. Neither side alone determines the reference.",
+    "commission_scenarios_tested": [0, 10, 15, 20],
+    "fuel_cost_scenarios": {
+      "LOW_MAD": 25,
+      "MID_MAD": 40,
+      "HIGH_MAD": 60,
+      "note": "Casablanca urban round-trip. Scenario estimates only — no artisan cost survey conducted."
+    },
+    "artisan_economic_floor_casablanca": {
+      "minimum_viable_net_before_labour_MAD": 100,
+      "note": "Below 100 MAD artisan net after commission + fuel = intervention likely uneconomic for professional artisan in Casablanca. Basis: qualitative reasoning from artisan monthly income targets and job-per-day assumptions. Not validated by artisan cost survey."
+    },
+    "disclaimer": "All prices in this calibration are RESEARCH ARTIFACTS. They are NOT FIXEO prices. They require formal human product review and approval before any production use.",
+    "city_adjustment": null,
+    "urgency_modifier": null,
+    "all_human_decisions": "PENDING"
+  },
+
+  "services": [
+
+    {
+      "service_code": "plomberie.diagnostic",
+      "label_fr": "Déplacement et diagnostic plomberie",
+
+      "market_evidence": {
+        "consensus_low_MAD": 100,
+        "market_anchor_MAD": 150,
+        "consensus_high_MAD": 200,
+        "confidence": "MEDIUM",
+        "terminology_correction_note": "V0.1 called these P30/fair_price/P75. Corrected: these are CONSENSUS_LOW/WEIGHTED_MARKET_ANCHOR/CONSENSUS_HIGH derived from weighted aggregation of external published ranges, not from FIXEO-owned raw transaction data."
+      },
+
+      "scope_contract": {
+        "included": [
+          "artisan travel within normal service zone (typically ≤20 km urban)",
+          "visual and technical inspection at intervention site",
+          "verbal identification of problem to client",
+          "verbal quote for repair work if applicable",
+          "basic manual assessment (running taps, flush test, visible pipe inspection)"
+        ],
+        "excluded": [
+          "any repair work",
+          "parts of any kind",
+          "second visit",
+          "written diagnostic report or certification",
+          "hidden/embedded pipe inspection requiring specialist equipment",
+          "collective plumbing or building common systems",
+          "access difficulty beyond standard apartment/house"
+        ],
+        "labour": "included",
+        "travel": "included — IS the service",
+        "diagnostic": "IS the service",
+        "basic_consumables": "NOT_APPLICABLE",
+        "main_replacement_part": "NOT_APPLICABLE"
+      },
+
+      "complexity_escape_conditions": [
+        "client address outside normal urban service zone",
+        "access requires specialist equipment (scaffolding, locked technical room)",
+        "collective/immeuble plumbing requiring building manager authorization",
+        "client cannot reproduce problem during visit (intermittent fault)"
+      ],
+
+      "diagnostic_policy": {
+        "options": ["D1_STANDALONE_NEVER_DEDUCTIBLE", "D2_DEDUCTIBLE_IF_SAME_DAY_REPAIR", "D3_HYBRID_ABSORBED_FOR_STANDARDIZED"],
+        "recommended": "D1_STANDALONE_NEVER_DEDUCTIBLE for diagnostic-first services; D3 for standardized intervention services",
+        "human_decision": "PENDING"
+      },
+
+      "commission_sensitivity": {
+        "client_price_anchor_MAD": 150,
+        "fuel_scenario": "MID_40_MAD",
+        "materials_MAD": 0,
+        "scenarios": [
+          {"commission_pct": 0,  "fixeo_takes_MAD": 0,     "artisan_gross_MAD": 150, "less_fuel_MAD": 110, "artisan_net_pre_labour_MAD": 110},
+          {"commission_pct": 10, "fixeo_takes_MAD": 15,    "artisan_gross_MAD": 135, "less_fuel_MAD": 95,  "artisan_net_pre_labour_MAD": 95},
+          {"commission_pct": 15, "fixeo_takes_MAD": 22.5,  "artisan_gross_MAD": 127.5, "less_fuel_MAD": 87.5, "artisan_net_pre_labour_MAD": 87.5},
+          {"commission_pct": 20, "fixeo_takes_MAD": 30,    "artisan_gross_MAD": 120, "less_fuel_MAD": 80,  "artisan_net_pre_labour_MAD": 80}
+        ],
+        "commission_risk_at_15pct": "MEDIUM — 87.5 MAD net pre-labour. Marginal if visit takes >20 min total.",
+        "commission_risk_at_20pct": "WEAK — 80 MAD net pre-labour. Likely uneconomic for long urban travel."
+      },
+
+      "client_fairness": {
+        "rating": "ACCEPTABLE",
+        "key_issue": "Client must understand fee is owed even if no repair proceeds. Requires explicit pre-booking disclosure.",
+        "required_disclosure": "Frais de déplacement/diagnostic : 100–180 MAD — même si vous ne procédez pas à la réparation."
+      },
+
+      "artisan_fairness": {
+        "rating": "WEAK_TO_ACCEPTABLE",
+        "key_issue": "Economics at 15–20% commission + high fuel cost fall below 100 MAD net. Only acceptable if diagnostic visit is < 20 min total travel+inspection. Long urban travel makes this WEAK at anchor price.",
+        "mitigation": "Consider raising anchor to 180 MAD if commission ever exceeds 15%."
+      },
+
+      "recommended_price_architecture": "OPTION_B_NARROW_RANGE",
+      "proposed_pilot_price": {"low_MAD": 100, "high_MAD": 180, "display": "100–180 MAD"},
+      "proposed_pilot_rationale": "Range acknowledges legitimate geographic travel variation. Floor 100 MAD = evidence minimum. Ceiling 180 MAD = commission-robust anchor. Avoids setting a fixed 150 MAD that becomes uneconomic if commission rises.",
+
+      "candidate_status_after_calibration": "READY_FOR_NARROW_RANGE_PILOT",
+      "candidate_status_confidence": "CONDITIONAL — requires diagnostic policy decision first",
+      "human_decision": "PENDING",
+
+      "production_ready": false
+    },
+
+    {
+      "service_code": "plomberie.fuite_simple",
+      "label_fr": "Réparation fuite simple — visible et accessible",
+
+      "market_evidence": {
+        "consensus_low_MAD": 150,
+        "market_anchor_MAD": 220,
+        "consensus_high_MAD": 350,
+        "confidence": "MEDIUM",
+        "terminology_correction_note": "V0.1 P30→CONSENSUS_LOW; fair_price→WEIGHTED_MARKET_ANCHOR; P75→CONSENSUS_HIGH"
+      },
+
+      "scope_contract": {
+        "included": [
+          "artisan travel within normal service zone",
+          "visual identification of the fuite",
+          "one intervention point (single leak source)",
+          "accessible plumbing — no wall/floor/ceiling opening required",
+          "standard repair: tightening, joint replacement, raccord sealing",
+          "basic sealing consumables: joint de robinetterie, joint torique, téflon, pâte d'étanchéité — total ≤50 MAD"
+        ],
+        "excluded": [
+          "leak inside wall, floor, or ceiling (→ fuite_encastree)",
+          "leak requiring pipe replacement > 20 cm",
+          "multiple simultaneous leak points (>1 = separate quote)",
+          "flexible hose replacement >60 MAD",
+          "valve replacement (robinet d'arrêt, vanne) >50 MAD",
+          "raccord replacement >50 MAD",
+          "shower/bathtub mixer cartridge replacement",
+          "water damage assessment or drying",
+          "masonry, tiling, or plasterwork"
+        ],
+        "labour": "included",
+        "travel": "included",
+        "diagnostic": "included — micro-step visual identification before repair",
+        "basic_consumables": "included — joint, joint torique, téflon, pâte — total ≤50 MAD",
+        "main_replacement_part": "EXCLUDED — any part >50 MAD quoted separately before installation"
+      },
+
+      "pre_arrival_classification_questions": [
+        "Can you see where the water is coming from?",
+        "Is it coming from a pipe joint, tap connection, or visible raccord? (if yes → fuite_simple)",
+        "Is the pipe behind a wall or under a floor? (if yes → fuite_encastree)",
+        "Is it one leak point or multiple? (multiple → separate quote)"
+      ],
+
+      "complexity_escape_conditions": [
+        "leak source not visible once artisan arrives (→ fuite_localisation)",
+        "pipe access requires tile or wall removal",
+        "more than one leak point discovered",
+        "required part costs >50 MAD (artisan must quote client before installing)",
+        "corroded pipe section requires replacement >20 cm"
+      ],
+
+      "commission_sensitivity": {
+        "client_price_anchor_MAD": 220,
+        "fuel_scenario": "MID_40_MAD",
+        "materials_MAD": 30,
+        "scenarios": [
+          {"commission_pct": 0,  "fixeo_takes_MAD": 0,  "artisan_gross_MAD": 220, "less_fuel_MAD": 180, "less_materials_MAD": 150, "artisan_net_pre_labour_MAD": 150},
+          {"commission_pct": 10, "fixeo_takes_MAD": 22, "artisan_gross_MAD": 198, "less_fuel_MAD": 158, "less_materials_MAD": 128, "artisan_net_pre_labour_MAD": 128},
+          {"commission_pct": 15, "fixeo_takes_MAD": 33, "artisan_gross_MAD": 187, "less_fuel_MAD": 147, "less_materials_MAD": 117, "artisan_net_pre_labour_MAD": 117},
+          {"commission_pct": 20, "fixeo_takes_MAD": 44, "artisan_gross_MAD": 176, "less_fuel_MAD": 136, "less_materials_MAD": 106, "artisan_net_pre_labour_MAD": 106}
+        ],
+        "commission_risk_at_15pct": "ACCEPTABLE — 117 MAD net pre-labour for 30–45 min job",
+        "commission_risk_at_20pct": "ACCEPTABLE — 106 MAD net. Monitor if commission rises further.",
+        "warning_at_consensus_low": "At CONSENSUS_LOW 150 MAD with 15% commission + mid fuel + materials: artisan net ~67 MAD — UNACCEPTABLE. Low-end price must not be presented as a viable FIXEO offering."
+      },
+
+      "client_fairness": {
+        "rating": "ACCEPTABLE",
+        "key_issue": "Client must understand major replacement parts are not included. Risk: client expects their leaking flexible hose to be replaced for free.",
+        "required_disclosure": "Pièces de remplacement >50 MAD facturées séparément avec accord du client avant installation."
+      },
+
+      "artisan_fairness": {
+        "rating": "ACCEPTABLE",
+        "key_issue": "Acceptable at anchor. Scope escape rules must be rigidly followed — artisan must not be trapped with a complex job at a simple price.",
+        "note": "Materials cost (20–40 MAD) reduces artisan net. This makes fuite_simple the most materials-sensitive of the six candidates."
+      },
+
+      "recommended_price_architecture": "OPTION_B_NARROW_RANGE",
+      "proposed_pilot_price": {"low_MAD": 180, "high_MAD": 280, "display": "180–280 MAD"},
+      "proposed_pilot_rationale": "Anchor 220 MAD is sound. Floor raised to 180 MAD (vs. evidence CONSENSUS_LOW 150) to maintain artisan economic viability after materials. Ceiling 280 MAD acknowledges moderate complexity within scope. CONSENSUS_HIGH 350 MAD is the out-of-scope boundary, not the display ceiling.",
+
+      "candidate_status_after_calibration": "READY_FOR_NARROW_RANGE_PILOT",
+      "candidate_status_confidence": "MEDIUM — requires pre-arrival classification questions to be implemented in booking flow",
+      "human_decision": "PENDING",
+
+      "production_ready": false
+    },
+
+    {
+      "service_code": "plomberie.debouchage_evier",
+      "label_fr": "Débouchage évier ou lavabo — méthode manuelle",
+
+      "market_evidence": {
+        "consensus_low_MAD": 150,
+        "market_anchor_MAD": 220,
+        "consensus_high_MAD": 300,
+        "confidence": "MEDIUM",
+        "terminology_correction_note": "V0.1 terminology corrected"
+      },
+
+      "scope_contract": {
+        "included": [
+          "artisan travel within normal service zone",
+          "one blocked fixture: évier (kitchen) OR lavabo (bathroom basin)",
+          "manual method: déboucheur à pression, ventouse, furet manuel ≤5m",
+          "siphon inspection, cleaning, basic re-seating (no replacement)",
+          "one intervention attempt at the fixture"
+        ],
+        "excluded": [
+          "multiple simultaneous fixtures (each additional = separate quote)",
+          "motorized furet / hydro-jetting (→ professional method, separate quote)",
+          "siphon replacement (new part >50 MAD = client-quoted separately)",
+          "colonne or shared pipe access (→ debouchage_colonne)",
+          "chemical treatment beyond standard plumber's agent",
+          "external drain / garden / roof drain"
+        ],
+        "labour": "included",
+        "travel": "included",
+        "diagnostic": "included — minimal; symptom already known",
+        "basic_consumables": "NONE — débouchage consumes no materials",
+        "main_replacement_part": "EXCLUDED"
+      },
+
+      "pre_arrival_classification_questions": [
+        "Which fixture: kitchen sink, bathroom basin, or bath/shower?",
+        "Draining slowly or completely stopped?",
+        "Do multiple fixtures seem blocked? (→ escalate: shared pipe or colonne)",
+        "Has it been recurring over weeks? (→ may indicate structural issue or colonne)",
+        "Is water backing up into another fixture when this one drains? (→ escalate to colonne)"
+      ],
+
+      "debouchage_method_classification": {
+        "simple_manual": ["single fixture, recent blockage, slow drain — no backing-up"],
+        "may_need_professional": ["recurring blockage same fixture", "partial success on prior manual attempt"],
+        "escalate_to_colonne": ["multiple fixtures affected", "backing up to other fixtures", "kitchen grease blockage >1 year"]
+      },
+
+      "complexity_escape_conditions": [
+        "simple manual method fails on-site",
+        "blockage located deeper than furet reach",
+        "multiple fixtures found affected on arrival",
+        "siphon cracked or corroded (requires replacement >50 MAD)",
+        "access obstructed (built-in furniture, under-sink unit with no clearance)"
+      ],
+
+      "commission_sensitivity": {
+        "client_price_anchor_MAD": 220,
+        "fuel_scenario": "MID_40_MAD",
+        "materials_MAD": 0,
+        "scenarios": [
+          {"commission_pct": 0,  "fixeo_takes_MAD": 0,  "artisan_gross_MAD": 220, "less_fuel_MAD": 180, "artisan_net_pre_labour_MAD": 180},
+          {"commission_pct": 10, "fixeo_takes_MAD": 22, "artisan_gross_MAD": 198, "less_fuel_MAD": 158, "artisan_net_pre_labour_MAD": 158},
+          {"commission_pct": 15, "fixeo_takes_MAD": 33, "artisan_gross_MAD": 187, "less_fuel_MAD": 147, "artisan_net_pre_labour_MAD": 147},
+          {"commission_pct": 20, "fixeo_takes_MAD": 44, "artisan_gross_MAD": 176, "less_fuel_MAD": 136, "artisan_net_pre_labour_MAD": 136}
+        ],
+        "commission_risk_at_15pct": "ACCEPTABLE — 147 MAD net pre-labour for 20–30 min job",
+        "commission_risk_at_20pct": "ACCEPTABLE — 136 MAD net. Clean economics — no materials cost."
+      },
+
+      "client_fairness": {
+        "rating": "STRONG",
+        "key_issue": "None material. No parts, no materials ambiguity. Scope is obvious to a typical client.",
+        "required_disclosure": "Méthode manuelle uniquement. Si le débouchage manuel échoue, une intervention avec équipement motorisé sera nécessaire et fera l'objet d'un nouveau devis."
+      },
+
+      "artisan_fairness": {
+        "rating": "ACCEPTABLE",
+        "key_issue": "Clean economics. No materials. 20–30 min job at 147 MAD net is respectable.",
+        "note": "Best client-fairness score of the six candidates. Straightforward intervention economics."
+      },
+
+      "recommended_price_architecture": "OPTION_A_FIXED_PRICE or OPTION_B_NARROW_RANGE",
+      "proposed_pilot_price": {
+        "option_A": {"fixed_MAD": 220, "display": "220 MAD"},
+        "option_B": {"low_MAD": 180, "high_MAD": 250, "display": "180–250 MAD"},
+        "preferred": "OPTION_A if pre-arrival classification is implemented; OPTION_B otherwise"
+      },
+      "proposed_pilot_rationale": "Best standardization candidate among débouchage services. No materials. Pre-arrival questions can classify effectively. Fixed 220 MAD is defensible. Narrow range 180–250 MAD is safer if pre-screening cannot filter complex cases.",
+
+      "candidate_status_after_calibration": "READY_FOR_FIXED_PRICE_PILOT",
+      "candidate_status_confidence": "MEDIUM — conditional on pre-arrival question implementation",
+      "human_decision": "PENDING",
+
+      "production_ready": false
+    },
+
+    {
+      "service_code": "plomberie.debouchage_wc_simple",
+      "label_fr": "Débouchage WC — méthode manuelle (ventouse + furet)",
+
+      "market_evidence": {
+        "consensus_low_MAD": 200,
+        "market_anchor_MAD": 280,
+        "consensus_high_MAD": 450,
+        "confidence": "MEDIUM",
+        "terminology_correction_note": "V0.1 terminology corrected. CONSENSUS_HIGH 450 from allo-maison.ma Casablanca marketplace (119 artisans) — credible upper bound for stubborn blockage within simple scope."
+      },
+
+      "scope_contract": {
+        "included": [
+          "artisan travel within normal service zone",
+          "one WC fixture",
+          "manual method: ventouse à cloche WC, furet manuel ≤5m",
+          "one intervention attempt"
+        ],
+        "excluded": [
+          "motorized furet / électroportatif / hydro-jetting (→ debouchage_wc_professionnel)",
+          "WC dismantling or removal",
+          "pipe replacement",
+          "colonne/immeuble shared pipe access (→ debouchage_colonne)",
+          "non-standard WC (chimique, collectif, assainissement non-collectif)",
+          "foreign body extraction requiring specialized tools"
+        ],
+        "labour": "included",
+        "travel": "included",
+        "diagnostic": "included — minimal; symptom known in advance",
+        "basic_consumables": "NONE",
+        "main_replacement_part": "EXCLUDED"
+      },
+
+      "pre_arrival_classification_questions": [
+        "Completely blocked (no drainage at all) or just slow?",
+        "Prior manual attempt that failed? (→ professional method)",
+        "Do multiple fixtures (évier, lavabo, baignoire) seem affected? (→ colonne)",
+        "Is water backing up into bath/shower when you flush? (→ colonne)",
+        "Was a foreign object dropped in the WC? (→ professional tool required)",
+        "Recurring blockage >3 times in 12 months? (→ professional inspection + CCTV scope)"
+      ],
+
+      "debouchage_method_classification": {
+        "simple_manual": ["standard blockage, first occurrence, no backing-up"],
+        "escalate_to_professional": ["prior manual attempt failed", "foreign body suspected", "recurring >3×/year"],
+        "escalate_to_colonne": ["multiple fixtures affected", "backing up to other fixtures"]
+      },
+
+      "complexity_escape_conditions": [
+        "manual method fails on-site (→ artisan explains; new quote for professional method)",
+        "foreign body confirmed (professional extraction tool required)",
+        "backing-up to other fixtures discovered on arrival"
+      ],
+
+      "commission_sensitivity": {
+        "client_price_anchor_MAD": 280,
+        "fuel_scenario": "MID_40_MAD",
+        "materials_MAD": 0,
+        "scenarios": [
+          {"commission_pct": 0,  "fixeo_takes_MAD": 0,  "artisan_gross_MAD": 280, "less_fuel_MAD": 240, "artisan_net_pre_labour_MAD": 240},
+          {"commission_pct": 10, "fixeo_takes_MAD": 28, "artisan_gross_MAD": 252, "less_fuel_MAD": 212, "artisan_net_pre_labour_MAD": 212},
+          {"commission_pct": 15, "fixeo_takes_MAD": 42, "artisan_gross_MAD": 238, "less_fuel_MAD": 198, "artisan_net_pre_labour_MAD": 198},
+          {"commission_pct": 20, "fixeo_takes_MAD": 56, "artisan_gross_MAD": 224, "less_fuel_MAD": 184, "artisan_net_pre_labour_MAD": 184}
+        ],
+        "commission_risk_at_15pct": "ACCEPTABLE_TO_STRONG — 198 MAD net pre-labour for 30–45 min job",
+        "commission_risk_at_20pct": "ACCEPTABLE — 184 MAD net. Best commission resilience of the six candidates."
+      },
+
+      "client_fairness": {
+        "rating": "STRONG",
+        "key_issue": "None material. WC débouchage price is universally understood in Morocco. No parts, no materials.",
+        "required_disclosure": "Méthode manuelle uniquement. Si inefficace, intervention professionnelle avec équipement motorisé = nouveau devis."
+      },
+
+      "artisan_fairness": {
+        "rating": "STRONG",
+        "key_issue": "Best economics of the six candidates. 198 MAD net pre-labour at 15% commission for a 30–45 min job is economically solid.",
+        "note": "Only candidate rated STRONG for artisan fairness at anchor price."
+      },
+
+      "recommended_price_architecture": "OPTION_B_NARROW_RANGE",
+      "proposed_pilot_price": {"low_MAD": 220, "high_MAD": 320, "display": "220–320 MAD"},
+      "proposed_pilot_rationale": "Anchor 280 MAD is strong. Floor 220 MAD (vs. CONSENSUS_LOW 200) provides artisan viability margin. Ceiling 320 MAD captures upper market evidence band (allo-maison.ma Casablanca 300–450 for manual method). Honest range for a well-defined service.",
+
+      "candidate_status_after_calibration": "READY_FOR_NARROW_RANGE_PILOT",
+      "candidate_status_confidence": "MEDIUM-HIGH — strongest economics of all six candidates; pre-arrival questions manageable",
+      "human_decision": "PENDING",
+
+      "production_ready": false
+    },
+
+    {
+      "service_code": "plomberie.robinet_remplacement",
+      "label_fr": "Remplacement robinet / mitigeur — main-d'œuvre seule",
+
+      "market_evidence": {
+        "consensus_low_MAD": 150,
+        "market_anchor_MAD": 200,
+        "consensus_high_MAD": 300,
+        "confidence": "MEDIUM",
+        "terminology_correction_note": "V0.1 terminology corrected"
+      },
+
+      "scope_contract": {
+        "included": [
+          "artisan travel within normal service zone",
+          "isolation of water supply (fermeture robinet d'arrêt)",
+          "removal of old robinet / mitigeur",
+          "installation of new robinet / mitigeur supplied by client",
+          "connection: alimentation froide + chaude (standard flexible connections — existing flexibles)",
+          "sealing: téflon, joint de raccord ≤50 MAD total",
+          "test: running water, leak check"
+        ],
+        "excluded": [
+          "the robinet / mitigeur itself — supplied by client",
+          "flexible hoses if new ones required (artisan quotes separately: typically 30–60 MAD each)",
+          "robinet d'arrêt under-sink replacement",
+          "modification to existing pipe routing",
+          "wall-mounted spout installation (different operation)",
+          "shower mixer / thermostatic mixer (more complex — separate quote)",
+          "non-standard thread / vintage fitting adaptation",
+          "masonry or tile work"
+        ],
+        "labour": "included",
+        "travel": "included",
+        "diagnostic": "included — minimal; job is known before arrival",
+        "basic_consumables": "included — téflon, joint de raccord ≤50 MAD",
+        "main_replacement_part": "EXCLUDED — client supplies new robinet/mitigeur",
+        "part_supply_policy": "If client has NOT purchased the part: artisan may supply + invoice separately. Client has the right to purchase themselves from Bricoma/droguerie."
+      },
+
+      "client_facing_label": "Main-d'œuvre + déplacement — robinet / mitigeur fourni par le client",
+
+      "replacement_part_policy": {
+        "part_included": false,
+        "part_supplied_by": "CLIENT",
+        "if_artisan_supplies": "Invoiced separately at purchase receipt price; artisan may add supply fee. Must be disclosed before purchase.",
+        "client_guidance": "Achetez votre robinet ou mitigeur en droguerie ou Bricoma avant l'intervention. Si vous n'êtes pas sûr du modèle, appelez l'artisan avant."
+      },
+
+      "complexity_escape_conditions": [
+        "robinet thread size non-standard (requires adapter fitting >50 MAD)",
+        "old robinet corroded or seized (requires cutting tool, >30 min additional work)",
+        "robinet d'arrêt below also defective (additional service)",
+        "wall-mounted installation (different complexity level)",
+        "pipe requires re-routing",
+        "hot/cold supply reversal correction required simultaneously"
+      ],
+
+      "commission_sensitivity": {
+        "client_price_anchor_MAD": 200,
+        "fuel_scenario": "MID_40_MAD",
+        "materials_MAD": 20,
+        "scenarios": [
+          {"commission_pct": 0,  "fixeo_takes_MAD": 0,  "artisan_gross_MAD": 200, "less_fuel_MAD": 160, "less_materials_MAD": 140, "artisan_net_pre_labour_MAD": 140},
+          {"commission_pct": 10, "fixeo_takes_MAD": 20, "artisan_gross_MAD": 180, "less_fuel_MAD": 140, "less_materials_MAD": 120, "artisan_net_pre_labour_MAD": 120},
+          {"commission_pct": 15, "fixeo_takes_MAD": 30, "artisan_gross_MAD": 170, "less_fuel_MAD": 130, "less_materials_MAD": 110, "artisan_net_pre_labour_MAD": 110},
+          {"commission_pct": 20, "fixeo_takes_MAD": 40, "artisan_gross_MAD": 160, "less_fuel_MAD": 120, "less_materials_MAD": 100, "artisan_net_pre_labour_MAD": 100}
+        ],
+        "commission_risk_at_15pct": "ACCEPTABLE — 110 MAD net pre-labour for 30 min job",
+        "commission_risk_at_20pct": "MEDIUM — exactly 100 MAD net (artisan floor). Requires monitoring if commission rises.",
+        "note": "Most commission-sensitive of the six candidates. At 20% + high fuel (60 MAD): net drops to 80 MAD — below artisan floor. Consider raising anchor to 220–230 MAD if commission increases."
+      },
+
+      "client_fairness": {
+        "rating": "ACCEPTABLE",
+        "key_issue": "Key risk: client assumes new robinet is included in the price. Label 'main-d'œuvre seule' must be prominent and explained before booking.",
+        "required_disclosure": "Ce prix couvre la main-d'œuvre uniquement. Le robinet ou mitigeur est à fournir par le client. Si l'artisan fournit la pièce, elle est facturée séparément.",
+        "upgraded_if": "Pre-booking disclosure is clear and confirmed by client → CLIENT_FAIRNESS upgrades to STRONG"
+      },
+
+      "artisan_fairness": {
+        "rating": "ACCEPTABLE",
+        "key_issue": "Commission sensitivity is the main risk. At current 15% commission: acceptable. At 20%: monitor.",
+        "note": "Tightest economics of the six candidates despite being rated BEST standardization candidate — due to lower anchor price (200 MAD) relative to job duration (30 min)."
+      },
+
+      "recommended_price_architecture": "OPTION_A_FIXED_PRICE",
+      "proposed_pilot_price": {"fixed_MAD": 200, "display": "200 MAD", "alternative_if_commission_rises": "220–230 MAD"},
+      "proposed_pilot_rationale": "BEST OVERALL CANDIDATE for fixed-price. Scope is the most tightly defined of all six. Client supplies the part. Artisan's task is identical every time. Duration ~30 min. Clear scope exclusions. Commission sensitivity is the only risk — manageable at 15%.",
+
+      "candidate_status_after_calibration": "READY_FOR_FIXED_PRICE_PILOT",
+      "candidate_status_confidence": "HIGH — strongest standardization candidate; scope clearest; pre-screening simplest",
+      "human_decision": "PENDING",
+
+      "production_ready": false
+    },
+
+    {
+      "service_code": "plomberie.chasse_eau",
+      "label_fr": "Remplacement mécanisme chasse d'eau — main-d'œuvre seule",
+
+      "market_evidence": {
+        "consensus_low_MAD": 200,
+        "market_anchor_MAD": 280,
+        "consensus_high_MAD": 400,
+        "confidence": "MEDIUM",
+        "terminology_correction_note": "V0.1 terminology corrected"
+      },
+
+      "scope_contract": {
+        "included": [
+          "artisan travel within normal service zone",
+          "isolation of water supply to WC cistern",
+          "removal of old mécanisme de chasse (flotteur + clapet or mono-bloc)",
+          "installation of standard mono-bloc fill+flush mechanism (universal fit) supplied by client",
+          "test: refill, flush test, leak check",
+          "adjustment of float/fill level"
+        ],
+        "excluded": [
+          "the mécanisme de chasse d'eau itself — supplied by client (universal mono-bloc: 60–120 MAD at droguerie/Bricoma)",
+          "WC cistern replacement (cracked/broken = separate service)",
+          "WC chassis or bâti-support (→ sanitaire_wc_suspendu)",
+          "WC bowl replacement",
+          "push-button or dual-flush button replacement if not simultaneous",
+          "suspended WC / wall-hung WC with access panel (→ complex scope, separate quote)",
+          "pipe work beyond cistern connection"
+        ],
+        "labour": "included",
+        "travel": "included",
+        "diagnostic": "included — minimal; symptom known (WC running, not flushing, leak at base)",
+        "basic_consumables": "included — joint d'étanchéité de raccord ≤30 MAD",
+        "main_replacement_part": "EXCLUDED — client supplies new mécanisme de chasse",
+        "part_cost_guidance": "Universal mono-bloc mechanism: typically 60–120 MAD at Bricoma, Aswak Assalam, or droguerie"
+      },
+
+      "client_facing_label": "Main-d'œuvre + déplacement — mécanisme fourni par le client",
+
+      "replacement_part_policy": {
+        "part_included": false,
+        "part_supplied_by": "CLIENT",
+        "recommended_part": "Mécanisme mono-bloc universel (available at Bricoma, Aswak Assalam, droguerie — 60–120 MAD)",
+        "client_guidance": "Avant l'intervention, achetez un mécanisme de chasse universel (type mono-bloc, 60–120 MAD en droguerie ou Bricoma). Si vous n'êtes pas sûr du modèle, l'artisan peut vous conseiller par téléphone."
+      },
+
+      "complexity_escape_conditions": [
+        "WC is wall-hung/suspended (bâti-support installation required → sanitaire_wc_suspendu)",
+        "cistern cracked or broken (cistern replacement, not mechanism replacement)",
+        "robinet d'arrêt feeding cistern is also defective (additional service)",
+        "old mechanism corroded/seized requiring special extraction (>30 min additional)",
+        "double-flush button frame requires cistern re-access (sometimes additional 20 min)"
+      ],
+
+      "commission_sensitivity": {
+        "client_price_anchor_MAD": 280,
+        "fuel_scenario": "MID_40_MAD",
+        "materials_MAD": 15,
+        "scenarios": [
+          {"commission_pct": 0,  "fixeo_takes_MAD": 0,  "artisan_gross_MAD": 280, "less_fuel_MAD": 240, "less_materials_MAD": 225, "artisan_net_pre_labour_MAD": 225},
+          {"commission_pct": 10, "fixeo_takes_MAD": 28, "artisan_gross_MAD": 252, "less_fuel_MAD": 212, "less_materials_MAD": 197, "artisan_net_pre_labour_MAD": 197},
+          {"commission_pct": 15, "fixeo_takes_MAD": 42, "artisan_gross_MAD": 238, "less_fuel_MAD": 198, "less_materials_MAD": 183, "artisan_net_pre_labour_MAD": 183},
+          {"commission_pct": 20, "fixeo_takes_MAD": 56, "artisan_gross_MAD": 224, "less_fuel_MAD": 184, "less_materials_MAD": 169, "artisan_net_pre_labour_MAD": 169}
+        ],
+        "commission_risk_at_15pct": "ACCEPTABLE — 183 MAD net pre-labour for 45–60 min job",
+        "commission_risk_at_20pct": "ACCEPTABLE — 169 MAD net. Good economics across all commission scenarios."
+      },
+
+      "client_fairness": {
+        "rating": "ACCEPTABLE",
+        "key_issue": "Client must understand mécanisme is not included. Requires clear disclosure + guidance on what to buy and where.",
+        "required_disclosure": "Ce prix couvre la main-d'œuvre uniquement. Le mécanisme de chasse est à fournir par le client (60–120 MAD en droguerie).",
+        "upgraded_if": "Client guidance is effective at pre-booking stage → CLIENT_FAIRNESS upgrades to STRONG"
+      },
+
+      "artisan_fairness": {
+        "rating": "ACCEPTABLE",
+        "key_issue": "Good economics. At 15%, 183 MAD net for 45–60 min is solid. Suspended WC escape condition must be enforced.",
+        "note": "Better per-hour economics than robinet_remplacement due to higher anchor (280 vs 200 MAD) despite longer duration."
+      },
+
+      "recommended_price_architecture": "OPTION_A_FIXED_PRICE",
+      "proposed_pilot_price": {
+        "fixed_MAD": 250,
+        "display": "250 MAD",
+        "alternative_narrow_range": {"low_MAD": 220, "high_MAD": 300, "display": "220–300 MAD"},
+        "preferred": "OPTION_A at 250 MAD if pre-screening can filter suspended WC; OPTION_B 220–300 MAD otherwise"
+      },
+      "proposed_pilot_rationale": "Second-best standardization candidate. Scope is well-defined. Economics strong. Client-side: universal mono-bloc mechanism is standard commodity. Main risk is suspended WC misclassification — handle via pre-booking question 'Standard WC (réservoir visible) ou WC suspendu (bâti-support) ?'",
+
+      "candidate_status_after_calibration": "READY_FOR_FIXED_PRICE_PILOT",
+      "candidate_status_confidence": "MEDIUM-HIGH — requires suspended WC pre-screening question",
+      "human_decision": "PENDING",
+
+      "production_ready": false
+    }
+
+  ],
+
+  "summary_matrix": {
+    "note": "See human-review.v0.2.md for full decision table. All HUMAN_DECISION fields = PENDING.",
+    "services": [
+      {
+        "service_code": "plomberie.diagnostic",
+        "consensus_low": 100, "market_anchor": 150, "consensus_high": 200,
+        "proposed_architecture": "OPTION_B_NARROW_RANGE",
+        "proposed_display": "100–180 MAD",
+        "client_fairness": "ACCEPTABLE", "artisan_fairness": "WEAK_TO_ACCEPTABLE",
+        "commission_risk_15pct": "MEDIUM", "commission_risk_20pct": "WEAK",
+        "candidate_status": "READY_FOR_NARROW_RANGE_PILOT",
+        "human_decision": "PENDING"
+      },
+      {
+        "service_code": "plomberie.fuite_simple",
+        "consensus_low": 150, "market_anchor": 220, "consensus_high": 350,
+        "proposed_architecture": "OPTION_B_NARROW_RANGE",
+        "proposed_display": "180–280 MAD",
+        "client_fairness": "ACCEPTABLE", "artisan_fairness": "ACCEPTABLE",
+        "commission_risk_15pct": "ACCEPTABLE", "commission_risk_20pct": "ACCEPTABLE",
+        "candidate_status": "READY_FOR_NARROW_RANGE_PILOT",
+        "human_decision": "PENDING"
+      },
+      {
+        "service_code": "plomberie.debouchage_evier",
+        "consensus_low": 150, "market_anchor": 220, "consensus_high": 300,
+        "proposed_architecture": "OPTION_A_FIXED_or_OPTION_B_NARROW",
+        "proposed_display": "220 MAD (fixed) or 180–250 MAD (range)",
+        "client_fairness": "STRONG", "artisan_fairness": "ACCEPTABLE",
+        "commission_risk_15pct": "ACCEPTABLE", "commission_risk_20pct": "ACCEPTABLE",
+        "candidate_status": "READY_FOR_FIXED_PRICE_PILOT",
+        "human_decision": "PENDING"
+      },
+      {
+        "service_code": "plomberie.debouchage_wc_simple",
+        "consensus_low": 200, "market_anchor": 280, "consensus_high": 450,
+        "proposed_architecture": "OPTION_B_NARROW_RANGE",
+        "proposed_display": "220–320 MAD",
+        "client_fairness": "STRONG", "artisan_fairness": "STRONG",
+        "commission_risk_15pct": "ACCEPTABLE", "commission_risk_20pct": "ACCEPTABLE",
+        "candidate_status": "READY_FOR_NARROW_RANGE_PILOT",
+        "human_decision": "PENDING"
+      },
+      {
+        "service_code": "plomberie.robinet_remplacement",
+        "consensus_low": 150, "market_anchor": 200, "consensus_high": 300,
+        "proposed_architecture": "OPTION_A_FIXED_PRICE",
+        "proposed_display": "200 MAD",
+        "client_fairness": "ACCEPTABLE", "artisan_fairness": "ACCEPTABLE",
+        "commission_risk_15pct": "ACCEPTABLE", "commission_risk_20pct": "MEDIUM",
+        "candidate_status": "READY_FOR_FIXED_PRICE_PILOT",
+        "human_decision": "PENDING"
+      },
+      {
+        "service_code": "plomberie.chasse_eau",
+        "consensus_low": 200, "market_anchor": 280, "consensus_high": 400,
+        "proposed_architecture": "OPTION_A_FIXED_PRICE",
+        "proposed_display": "250 MAD (or 220–300 MAD narrow)",
+        "client_fairness": "ACCEPTABLE", "artisan_fairness": "ACCEPTABLE",
+        "commission_risk_15pct": "ACCEPTABLE", "commission_risk_20pct": "ACCEPTABLE",
+        "candidate_status": "READY_FOR_FIXED_PRICE_PILOT",
+        "human_decision": "PENDING"
+      }
+    ]
+  },
+
+  "validation_flags": {
+    "production_ready_any_service": false,
+    "human_decision_any_not_pending": false,
+    "unsupported_city_multiplier": false,
+    "unsupported_urgency_percentage": false,
+    "genuine_percentile_claim": false,
+    "replacement_part_silently_included": false,
+    "commission_math_verified": true,
+    "production_imports": false,
+    "html_references": false,
+    "runtime_js_references": false,
+    "original_evidence_preserved": true,
+    "original_sources_preserved": true,
+    "v01_registry_preserved": true
+  }
+}
