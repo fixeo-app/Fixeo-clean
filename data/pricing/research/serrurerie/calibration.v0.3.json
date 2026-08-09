@@ -1,0 +1,180 @@
+{
+  "_meta": {
+    "file": "calibration.v0.3.json",
+    "registry": "fixeo_serrurerie_pricing",
+    "version": "0.3.0",
+    "phase": "7B.5.2",
+    "status": "HUMAN_APPROVED_PILOT_NOT_PRODUCTION",
+    "description": "Phase 7B.5.2 — Frozen economic calibration for all 6 approved serrurerie pilot prices. Hardware NOT subtracted from labour-only floor checks (parts are always separate). All commission/fuel combinations verified. Zero floor breaches.",
+    "production_ready": false,
+    "last_updated": "2026-08-09",
+    "maturity": "LEVEL_0_EXTERNAL_RESEARCH_HUMAN_CALIBRATION",
+    "price_provenance": "FIXEO_HUMAN_CALIBRATED_PILOT",
+    "commission_sensitivity_pct": [0, 10, 15, 20],
+    "fuel_scenarios_MAD": {"LOW": 25, "MID": 40, "HIGH": 60},
+    "artisan_floor_MAD": 100,
+    "floor_grade_thresholds": {"STRONG": 150, "ACCEPTABLE": 100, "MARGINAL": 70, "FAIL": 0},
+    "hardware_floor_note": "For LABOUR_FIXED_PART_SEPARATE services (cylindre, serrure), hardware cost is NOT subtracted in floor checks. Hardware is a separate, client-approved transaction — it does not come out of the FIXEO labour price.",
+    "zero_floor_breaches": true,
+    "night_modifier": null,
+    "weekend_modifier": null,
+    "city_multiplier": null
+  },
+
+  "full_matrix": [
+    {
+      "service_key": "serrurerie.porte_claquee_ouverture",
+      "approved_price_MAD": 220,
+      "hardware_cost_for_floor_check": 0,
+      "scenarios": [
+        {"commission_pct": 0,  "fuel": "LOW", "fuel_MAD": 25, "artisan_net": 195, "grade": "STRONG"},
+        {"commission_pct": 0,  "fuel": "MID", "fuel_MAD": 40, "artisan_net": 180, "grade": "STRONG"},
+        {"commission_pct": 0,  "fuel": "HIGH","fuel_MAD": 60, "artisan_net": 160, "grade": "STRONG"},
+        {"commission_pct": 10, "fuel": "LOW", "fuel_MAD": 25, "artisan_net": 173, "grade": "STRONG"},
+        {"commission_pct": 10, "fuel": "MID", "fuel_MAD": 40, "artisan_net": 158, "grade": "STRONG"},
+        {"commission_pct": 10, "fuel": "HIGH","fuel_MAD": 60, "artisan_net": 138, "grade": "ACCEPTABLE"},
+        {"commission_pct": 15, "fuel": "LOW", "fuel_MAD": 25, "artisan_net": 162, "grade": "STRONG"},
+        {"commission_pct": 15, "fuel": "MID", "fuel_MAD": 40, "artisan_net": 147, "grade": "ACCEPTABLE"},
+        {"commission_pct": 15, "fuel": "HIGH","fuel_MAD": 60, "artisan_net": 127, "grade": "ACCEPTABLE"},
+        {"commission_pct": 20, "fuel": "LOW", "fuel_MAD": 25, "artisan_net": 151, "grade": "STRONG"},
+        {"commission_pct": 20, "fuel": "MID", "fuel_MAD": 40, "artisan_net": 136, "grade": "ACCEPTABLE"},
+        {"commission_pct": 20, "fuel": "HIGH","fuel_MAD": 60, "artisan_net": 116, "grade": "ACCEPTABLE"}
+      ],
+      "worst_case": {"commission_pct": 20, "fuel": "HIGH", "artisan_net": 116, "grade": "ACCEPTABLE"},
+      "floor_breach": false,
+      "market_position": "Lower third of 150–300 MAD range"
+    },
+    {
+      "service_key": "serrurerie.porte_claquee_blindee_ouverture",
+      "approved_price_MAD": 350,
+      "hardware_cost_for_floor_check": 0,
+      "scenarios": [
+        {"commission_pct": 0,  "fuel": "LOW", "fuel_MAD": 25, "artisan_net": 325, "grade": "STRONG"},
+        {"commission_pct": 0,  "fuel": "MID", "fuel_MAD": 40, "artisan_net": 310, "grade": "STRONG"},
+        {"commission_pct": 0,  "fuel": "HIGH","fuel_MAD": 60, "artisan_net": 290, "grade": "STRONG"},
+        {"commission_pct": 10, "fuel": "LOW", "fuel_MAD": 25, "artisan_net": 290, "grade": "STRONG"},
+        {"commission_pct": 10, "fuel": "MID", "fuel_MAD": 40, "artisan_net": 275, "grade": "STRONG"},
+        {"commission_pct": 10, "fuel": "HIGH","fuel_MAD": 60, "artisan_net": 255, "grade": "STRONG"},
+        {"commission_pct": 15, "fuel": "LOW", "fuel_MAD": 25, "artisan_net": 273, "grade": "STRONG"},
+        {"commission_pct": 15, "fuel": "MID", "fuel_MAD": 40, "artisan_net": 258, "grade": "STRONG"},
+        {"commission_pct": 15, "fuel": "HIGH","fuel_MAD": 60, "artisan_net": 238, "grade": "STRONG"},
+        {"commission_pct": 20, "fuel": "LOW", "fuel_MAD": 25, "artisan_net": 255, "grade": "STRONG"},
+        {"commission_pct": 20, "fuel": "MID", "fuel_MAD": 40, "artisan_net": 240, "grade": "STRONG"},
+        {"commission_pct": 20, "fuel": "HIGH","fuel_MAD": 60, "artisan_net": 220, "grade": "STRONG"}
+      ],
+      "worst_case": {"commission_pct": 20, "fuel": "HIGH", "artisan_net": 220, "grade": "STRONG"},
+      "floor_breach": false,
+      "market_position": "Midpoint of 250–400 MAD range"
+    },
+    {
+      "service_key": "serrurerie.porte_verrouillee_ouverture",
+      "approved_price_MAD": 380,
+      "hardware_cost_for_floor_check": 0,
+      "scenarios": [
+        {"commission_pct": 0,  "fuel": "LOW", "fuel_MAD": 25, "artisan_net": 355, "grade": "STRONG"},
+        {"commission_pct": 0,  "fuel": "MID", "fuel_MAD": 40, "artisan_net": 340, "grade": "STRONG"},
+        {"commission_pct": 0,  "fuel": "HIGH","fuel_MAD": 60, "artisan_net": 320, "grade": "STRONG"},
+        {"commission_pct": 10, "fuel": "LOW", "fuel_MAD": 25, "artisan_net": 317, "grade": "STRONG"},
+        {"commission_pct": 10, "fuel": "MID", "fuel_MAD": 40, "artisan_net": 302, "grade": "STRONG"},
+        {"commission_pct": 10, "fuel": "HIGH","fuel_MAD": 60, "artisan_net": 282, "grade": "STRONG"},
+        {"commission_pct": 15, "fuel": "LOW", "fuel_MAD": 25, "artisan_net": 298, "grade": "STRONG"},
+        {"commission_pct": 15, "fuel": "MID", "fuel_MAD": 40, "artisan_net": 283, "grade": "STRONG"},
+        {"commission_pct": 15, "fuel": "HIGH","fuel_MAD": 60, "artisan_net": 263, "grade": "STRONG"},
+        {"commission_pct": 20, "fuel": "LOW", "fuel_MAD": 25, "artisan_net": 279, "grade": "STRONG"},
+        {"commission_pct": 20, "fuel": "MID", "fuel_MAD": 40, "artisan_net": 264, "grade": "STRONG"},
+        {"commission_pct": 20, "fuel": "HIGH","fuel_MAD": 60, "artisan_net": 244, "grade": "STRONG"}
+      ],
+      "worst_case": {"commission_pct": 20, "fuel": "HIGH", "artisan_net": 244, "grade": "STRONG"},
+      "floor_breach": false,
+      "market_position": "Below midpoint of 300–450 MAD range"
+    },
+    {
+      "service_key": "serrurerie.cle_cassee_extraction",
+      "approved_price_MAD": 220,
+      "hardware_cost_for_floor_check": 0,
+      "scenarios": [
+        {"commission_pct": 0,  "fuel": "LOW", "fuel_MAD": 25, "artisan_net": 195, "grade": "STRONG"},
+        {"commission_pct": 0,  "fuel": "MID", "fuel_MAD": 40, "artisan_net": 180, "grade": "STRONG"},
+        {"commission_pct": 0,  "fuel": "HIGH","fuel_MAD": 60, "artisan_net": 160, "grade": "STRONG"},
+        {"commission_pct": 10, "fuel": "LOW", "fuel_MAD": 25, "artisan_net": 173, "grade": "STRONG"},
+        {"commission_pct": 10, "fuel": "MID", "fuel_MAD": 40, "artisan_net": 158, "grade": "STRONG"},
+        {"commission_pct": 10, "fuel": "HIGH","fuel_MAD": 60, "artisan_net": 138, "grade": "ACCEPTABLE"},
+        {"commission_pct": 15, "fuel": "LOW", "fuel_MAD": 25, "artisan_net": 162, "grade": "STRONG"},
+        {"commission_pct": 15, "fuel": "MID", "fuel_MAD": 40, "artisan_net": 147, "grade": "ACCEPTABLE"},
+        {"commission_pct": 15, "fuel": "HIGH","fuel_MAD": 60, "artisan_net": 127, "grade": "ACCEPTABLE"},
+        {"commission_pct": 20, "fuel": "LOW", "fuel_MAD": 25, "artisan_net": 151, "grade": "STRONG"},
+        {"commission_pct": 20, "fuel": "MID", "fuel_MAD": 40, "artisan_net": 136, "grade": "ACCEPTABLE"},
+        {"commission_pct": 20, "fuel": "HIGH","fuel_MAD": 60, "artisan_net": 116, "grade": "ACCEPTABLE"}
+      ],
+      "worst_case": {"commission_pct": 20, "fuel": "HIGH", "artisan_net": 116, "grade": "ACCEPTABLE"},
+      "floor_breach": false,
+      "market_position": "Lower third of 150–300 MAD range"
+    },
+    {
+      "service_key": "serrurerie.cylindre_remplacement_standard",
+      "approved_price_MAD": 280,
+      "hardware_cost_for_floor_check": 0,
+      "hardware_floor_note": "Cylinder is client-approved extra. Not subtracted from FIXEO labour price.",
+      "scenarios": [
+        {"commission_pct": 0,  "fuel": "LOW", "fuel_MAD": 25, "artisan_net": 255, "grade": "STRONG"},
+        {"commission_pct": 0,  "fuel": "MID", "fuel_MAD": 40, "artisan_net": 240, "grade": "STRONG"},
+        {"commission_pct": 0,  "fuel": "HIGH","fuel_MAD": 60, "artisan_net": 220, "grade": "STRONG"},
+        {"commission_pct": 10, "fuel": "LOW", "fuel_MAD": 25, "artisan_net": 227, "grade": "STRONG"},
+        {"commission_pct": 10, "fuel": "MID", "fuel_MAD": 40, "artisan_net": 212, "grade": "STRONG"},
+        {"commission_pct": 10, "fuel": "HIGH","fuel_MAD": 60, "artisan_net": 192, "grade": "STRONG"},
+        {"commission_pct": 15, "fuel": "LOW", "fuel_MAD": 25, "artisan_net": 213, "grade": "STRONG"},
+        {"commission_pct": 15, "fuel": "MID", "fuel_MAD": 40, "artisan_net": 198, "grade": "STRONG"},
+        {"commission_pct": 15, "fuel": "HIGH","fuel_MAD": 60, "artisan_net": 178, "grade": "STRONG"},
+        {"commission_pct": 20, "fuel": "LOW", "fuel_MAD": 25, "artisan_net": 199, "grade": "STRONG"},
+        {"commission_pct": 20, "fuel": "MID", "fuel_MAD": 40, "artisan_net": 184, "grade": "STRONG"},
+        {"commission_pct": 20, "fuel": "HIGH","fuel_MAD": 60, "artisan_net": 164, "grade": "STRONG"}
+      ],
+      "worst_case": {"commission_pct": 20, "fuel": "HIGH", "artisan_net": 164, "grade": "STRONG"},
+      "floor_breach": false,
+      "client_total_example": {
+        "with_standard_cylinder_80_MAD": "360 MAD total",
+        "with_midrange_cylinder_150_MAD": "430 MAD total",
+        "with_quality_cylinder_250_MAD": "530 MAD total",
+        "note": "Client total = 280 MAD labour + disclosed cylinder price. All within honest Moroccan market range."
+      }
+    },
+    {
+      "service_key": "serrurerie.serrure_remplacement_standard",
+      "approved_price_MAD": 400,
+      "hardware_cost_for_floor_check": 0,
+      "hardware_floor_note": "Lock body is client-approved extra. Not subtracted from FIXEO labour price.",
+      "scenarios": [
+        {"commission_pct": 0,  "fuel": "LOW", "fuel_MAD": 25, "artisan_net": 375, "grade": "STRONG"},
+        {"commission_pct": 0,  "fuel": "MID", "fuel_MAD": 40, "artisan_net": 360, "grade": "STRONG"},
+        {"commission_pct": 0,  "fuel": "HIGH","fuel_MAD": 60, "artisan_net": 340, "grade": "STRONG"},
+        {"commission_pct": 10, "fuel": "LOW", "fuel_MAD": 25, "artisan_net": 335, "grade": "STRONG"},
+        {"commission_pct": 10, "fuel": "MID", "fuel_MAD": 40, "artisan_net": 320, "grade": "STRONG"},
+        {"commission_pct": 10, "fuel": "HIGH","fuel_MAD": 60, "artisan_net": 300, "grade": "STRONG"},
+        {"commission_pct": 15, "fuel": "LOW", "fuel_MAD": 25, "artisan_net": 315, "grade": "STRONG"},
+        {"commission_pct": 15, "fuel": "MID", "fuel_MAD": 40, "artisan_net": 300, "grade": "STRONG"},
+        {"commission_pct": 15, "fuel": "HIGH","fuel_MAD": 60, "artisan_net": 280, "grade": "STRONG"},
+        {"commission_pct": 20, "fuel": "LOW", "fuel_MAD": 25, "artisan_net": 295, "grade": "STRONG"},
+        {"commission_pct": 20, "fuel": "MID", "fuel_MAD": 40, "artisan_net": 280, "grade": "STRONG"},
+        {"commission_pct": 20, "fuel": "HIGH","fuel_MAD": 60, "artisan_net": 260, "grade": "STRONG"}
+      ],
+      "worst_case": {"commission_pct": 20, "fuel": "HIGH", "artisan_net": 260, "grade": "STRONG"},
+      "floor_breach": false,
+      "client_total_example": {
+        "with_standard_lock_150_MAD": "550 MAD total",
+        "with_midrange_lock_250_MAD": "650 MAD total",
+        "with_quality_lock_350_MAD": "750 MAD total",
+        "note": "Client total = 400 MAD labour + disclosed lock price. Consistent with 400–700 MAD market range."
+      }
+    }
+  ],
+
+  "floor_summary": {
+    "total_scenarios_checked": 72,
+    "floor_breaches": 0,
+    "minimum_artisan_net_observed_MAD": 116,
+    "service_with_minimum_net": ["serrurerie.porte_claquee_ouverture", "serrurerie.cle_cassee_extraction"],
+    "grade_at_minimum": "ACCEPTABLE",
+    "verification_method": "Python computation, all 12 commission×fuel combinations per service",
+    "zero_floor_breaches_confirmed": true
+  }
+}
