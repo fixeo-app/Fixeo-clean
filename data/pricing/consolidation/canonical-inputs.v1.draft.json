@@ -5,9 +5,10 @@
     "status": "DRAFT",
     "production_ready": false,
     "version": "1.0.0-draft",
-    "total_inputs": 35,
+    "total_inputs": 68,
     "date": "2026-08-09",
-    "note": "Canonical input dictionary for all machine-readable predicates and formulas in the canonical pricing registry. Inputs are semantic definitions — not UI fields. One input may map to multiple UI questions or be derived from answers."
+    "note": "Canonical input dictionary for all machine-readable predicates and formulas in the canonical pricing registry. Inputs are semantic definitions — not UI fields. One input may map to multiple UI questions or be derived from answers. Phase 7C.5: Added 33 missing EXCLUSION_TRIGGER and MODIFIER_NULL inputs discovered during shadow validation. All modifiers remain null in Engine V1.",
+    "last_updated_phase": "7C.5"
   },
   "inputs": {
     "city_slug": {
@@ -401,10 +402,11 @@
     },
     "mcb_defect_confirmed": {
       "input_id": "mcb_defect_confirmed",
-      "data_type": "boolean",
+      "data_type": "string",
       "allowed_values": [
-        true,
-        false
+        "physically_broken",
+        "trips_repeatedly",
+        "not_confirmed"
       ],
       "min": null,
       "max": null,
@@ -415,7 +417,12 @@
       "validation_behavior": "SOFT — prebooking question only. Artisan makes final determination on site. Repeated tripping without clear cause → DIAGNOSTIC_FIRST.",
       "safety_critical": true,
       "safety_note": "Never replace a MCB without confirming it is defective. Repeated tripping = downstream fault = DIAGNOSTIC_FIRST per POL-ELECTRICAL-SAFETY-V1.",
-      "privacy_classification": "NON_SENSITIVE"
+      "privacy_classification": "NON_SENSITIVE",
+      "canonical_bug_fix": {
+        "phase": "7C.5",
+        "previous_type": "boolean",
+        "correction": "canonical-registry condition checks mcb_defect_confirmed = physically_broken (string enum). Input type corrected from boolean to string. Allowed values: physically_broken, trips_repeatedly, not_confirmed."
+      }
     },
     "distributor_equipment_involved": {
       "input_id": "distributor_equipment_involved",
@@ -516,7 +523,9 @@
         "RIAD",
         "MAISON",
         "BUREAU",
-        "OTHER"
+        "OTHER",
+        "studio_f1",
+        "f4_f5_large"
       ],
       "min": null,
       "max": null,
@@ -526,7 +535,11 @@
       "client_question_ar_darija": "أش نوع الملك؟ (شقة / فيلا / دار؟)",
       "validation_behavior": "HARD for NET-004 if VILLA. SOFT eligibility flag for other sizes. Artisan confirms on site.",
       "safety_critical": false,
-      "privacy_classification": "NON_SENSITIVE"
+      "privacy_classification": "NON_SENSITIVE",
+      "canonical_bug_fix": {
+        "phase": "7C.5",
+        "correction": "Added studio_f1 and f4_f5_large to allowed_values — these appear in nettoyage.grand_menage REQUALIFY exclusion triggers but were absent from enum."
+      }
     },
     "door_locked_with_key": {
       "input_id": "door_locked_with_key",
@@ -626,6 +639,256 @@
       "validation_behavior": "HARD gate — ADD_ON_PRIMARY_NOT_ELIGIBLE if not in allowed list.",
       "safety_critical": false,
       "privacy_classification": "NON_SENSITIVE"
+    },
+    "urgency": {
+      "input_id": "urgency",
+      "data_type": "string",
+      "required": false,
+      "description": "Urgency level — modifier null in Engine V1. Not used in pricing.",
+      "allowed_values": [
+        "urgent",
+        "normal"
+      ],
+      "engine_v1_use": "MODIFIER_NULL",
+      "modifier_status": "null_all_modifiers"
+    },
+    "night": {
+      "input_id": "night",
+      "data_type": "boolean",
+      "required": false,
+      "description": "Night intervention flag — night_modifier=null in Engine V1.",
+      "engine_v1_use": "MODIFIER_NULL"
+    },
+    "weekend": {
+      "input_id": "weekend",
+      "data_type": "boolean",
+      "required": false,
+      "description": "Weekend flag — weekend_modifier=null in Engine V1.",
+      "engine_v1_use": "MODIFIER_NULL"
+    },
+    "holiday": {
+      "input_id": "holiday",
+      "data_type": "boolean",
+      "required": false,
+      "description": "Public holiday flag — holiday_modifier=null in Engine V1.",
+      "engine_v1_use": "MODIFIER_NULL"
+    },
+    "express": {
+      "input_id": "express",
+      "data_type": "boolean",
+      "required": false,
+      "description": "Express delivery flag — express_modifier=null in Engine V1.",
+      "engine_v1_use": "MODIFIER_NULL"
+    },
+    "burning_smell": {
+      "input_id": "burning_smell",
+      "data_type": "boolean",
+      "required": false,
+      "description": "Burning smell detected — STOP_SAFETY trigger.",
+      "engine_v1_use": "EXCLUSION_TRIGGER"
+    },
+    "scorch_marks": {
+      "input_id": "scorch_marks",
+      "data_type": "boolean",
+      "required": false,
+      "description": "Scorch marks detected — STOP_SAFETY trigger.",
+      "engine_v1_use": "EXCLUSION_TRIGGER"
+    },
+    "mcb_trips_repeatedly": {
+      "input_id": "mcb_trips_repeatedly",
+      "data_type": "boolean",
+      "required": false,
+      "description": "MCB trips repeatedly — route trigger.",
+      "engine_v1_use": "EXCLUSION_TRIGGER"
+    },
+    "cause_unknown": {
+      "input_id": "cause_unknown",
+      "data_type": "boolean",
+      "required": false,
+      "description": "Trip cause unknown — route trigger.",
+      "engine_v1_use": "EXCLUSION_TRIGGER"
+    },
+    "multiple_mcbs_defective": {
+      "input_id": "multiple_mcbs_defective",
+      "data_type": "boolean",
+      "required": false,
+      "description": "Multiple MCBs defective — QUOTE trigger.",
+      "engine_v1_use": "EXCLUSION_TRIGGER"
+    },
+    "ddr_rcd_involved": {
+      "input_id": "ddr_rcd_involved",
+      "data_type": "boolean",
+      "required": false,
+      "description": "DDR/RCD involved — QUOTE trigger.",
+      "engine_v1_use": "EXCLUSION_TRIGGER"
+    },
+    "three_phase_circuit": {
+      "input_id": "three_phase_circuit",
+      "data_type": "boolean",
+      "required": false,
+      "description": "Three-phase circuit — QUOTE trigger.",
+      "engine_v1_use": "EXCLUSION_TRIGGER"
+    },
+    "part_replacement_required": {
+      "input_id": "part_replacement_required",
+      "data_type": "boolean",
+      "required": false,
+      "description": "Part replacement required — exclusion trigger (serrurerie).",
+      "engine_v1_use": "EXCLUSION_TRIGGER"
+    },
+    "barrel_previously_damaged": {
+      "input_id": "barrel_previously_damaged",
+      "data_type": "boolean",
+      "required": false,
+      "description": "Barrel previously damaged — QUOTE trigger (serrurerie.cle_cassee).",
+      "engine_v1_use": "EXCLUSION_TRIGGER"
+    },
+    "leak_location": {
+      "input_id": "leak_location",
+      "data_type": "string",
+      "required": false,
+      "description": "Leak location — route trigger (climatisation.reparation_fuite).",
+      "allowed_values": [
+        "UNKNOWN",
+        "INDOOR_EVAPORATOR",
+        "OUTDOOR_CONDENSER",
+        "COMPRESSOR",
+        "CONCEALED",
+        "EXTERNAL_ACCESSIBLE_COPPER"
+      ],
+      "engine_v1_use": "EXCLUSION_TRIGGER"
+    },
+    "artisan_r32_certified": {
+      "input_id": "artisan_r32_certified",
+      "data_type": "boolean",
+      "required": false,
+      "description": "Artisan R32 A2L certified — exclusion trigger.",
+      "engine_v1_use": "EXCLUSION_TRIGGER"
+    },
+    "copper_too_degraded": {
+      "input_id": "copper_too_degraded",
+      "data_type": "boolean",
+      "required": false,
+      "description": "Copper pipe too degraded — QUOTE trigger (climatisation).",
+      "engine_v1_use": "EXCLUSION_TRIGGER"
+    },
+    "multi_split": {
+      "input_id": "multi_split",
+      "data_type": "boolean",
+      "required": false,
+      "description": "Multi-split system — QUOTE trigger (climatisation installation).",
+      "engine_v1_use": "EXCLUSION_TRIGGER"
+    },
+    "cassette_or_ducted": {
+      "input_id": "cassette_or_ducted",
+      "data_type": "boolean",
+      "required": false,
+      "description": "Cassette or ducted system — QUOTE trigger.",
+      "engine_v1_use": "EXCLUSION_TRIGGER"
+    },
+    "facade_inaccessible": {
+      "input_id": "facade_inaccessible",
+      "data_type": "boolean",
+      "required": false,
+      "description": "Facade inaccessible — QUOTE trigger (climatisation installation).",
+      "engine_v1_use": "EXCLUSION_TRIGGER"
+    },
+    "reinforced_concrete_gt_25cm": {
+      "input_id": "reinforced_concrete_gt_25cm",
+      "data_type": "boolean",
+      "required": false,
+      "description": "Reinforced concrete >25cm — QUOTE trigger.",
+      "engine_v1_use": "EXCLUSION_TRIGGER"
+    },
+    "copper_run_gt_5m": {
+      "input_id": "copper_run_gt_5m",
+      "data_type": "boolean",
+      "required": false,
+      "description": "Copper run >5m — QUOTE trigger (climatisation cassette).",
+      "engine_v1_use": "EXCLUSION_TRIGGER"
+    },
+    "tv_weight_kg": {
+      "input_id": "tv_weight_kg",
+      "data_type": "number",
+      "required": false,
+      "description": "TV weight kg — QUOTE trigger (bricolage.intervention_conditionnelle).",
+      "engine_v1_use": "EXCLUSION_TRIGGER"
+    },
+    "wall_type": {
+      "input_id": "wall_type",
+      "data_type": "string",
+      "required": false,
+      "description": "Wall type — QUOTE trigger (bricolage).",
+      "allowed_values": [
+        "PLACO_WITH_INSUFFICIENT_STUDS",
+        "BRICK",
+        "CONCRETE",
+        "OTHER"
+      ],
+      "engine_v1_use": "EXCLUSION_TRIGGER"
+    },
+    "rabotage_exceeds_minor": {
+      "input_id": "rabotage_exceeds_minor",
+      "data_type": "boolean",
+      "required": false,
+      "description": "Rabotage exceeds minor scope — QUOTE trigger (menuiserie).",
+      "engine_v1_use": "EXCLUSION_TRIGGER"
+    },
+    "door_dimensionally_incompatible": {
+      "input_id": "door_dimensionally_incompatible",
+      "data_type": "boolean",
+      "required": false,
+      "description": "Door dimensionally incompatible — QUOTE trigger.",
+      "engine_v1_use": "EXCLUSION_TRIGGER"
+    },
+    "lock_cylinder_involved": {
+      "input_id": "lock_cylinder_involved",
+      "data_type": "boolean",
+      "required": false,
+      "description": "Lock cylinder involved — route trigger (menuiserie).",
+      "engine_v1_use": "EXCLUSION_TRIGGER"
+    },
+    "lock_cylinder_required": {
+      "input_id": "lock_cylinder_required",
+      "data_type": "boolean",
+      "required": false,
+      "description": "Lock cylinder required — route trigger (menuiserie.installation_porte).",
+      "engine_v1_use": "EXCLUSION_TRIGGER"
+    },
+    "full_replacement_required": {
+      "input_id": "full_replacement_required",
+      "data_type": "boolean",
+      "required": false,
+      "description": "Full replacement required — QUOTE trigger (menuiserie).",
+      "engine_v1_use": "EXCLUSION_TRIGGER"
+    },
+    "mirror_panel": {
+      "input_id": "mirror_panel",
+      "data_type": "boolean",
+      "required": false,
+      "description": "Mirror panel — REQUALIFY trigger (menuiserie.coulissante.sans_piece).",
+      "engine_v1_use": "EXCLUSION_TRIGGER"
+    },
+    "custom_hardware_unavailable": {
+      "input_id": "custom_hardware_unavailable",
+      "data_type": "boolean",
+      "required": false,
+      "description": "Custom hardware unavailable — QUOTE trigger (menuiserie.coulissante.avec_galets).",
+      "engine_v1_use": "EXCLUSION_TRIGGER"
+    },
+    "wardrobe_structurally_deformed": {
+      "input_id": "wardrobe_structurally_deformed",
+      "data_type": "boolean",
+      "required": false,
+      "description": "Wardrobe structurally deformed — QUOTE trigger (menuiserie).",
+      "engine_v1_use": "EXCLUSION_TRIGGER"
+    },
+    "trim_gt_2cm": {
+      "input_id": "trim_gt_2cm",
+      "data_type": "boolean",
+      "required": false,
+      "description": "Door trim exceeds 2cm — QUOTE trigger (menuiserie.installation_porte width exclusion).",
+      "engine_v1_use": "EXCLUSION_TRIGGER"
     }
   }
 }

@@ -4161,14 +4161,23 @@
       "effective_from": null,
       "effective_to": null,
       "price_model": {
-        "calculation_model": "FIXED",
+        "calculation_model": "UNIT_MULTIPLICATION",
         "commercial_output_type": "FIXEO_CALCULATED_PRICE",
         "currency": "MAD",
-        "formula_id": "FORMULA-FIXED-V1",
+        "formula_id": "FORMULA-UNIT-V1",
         "formula_params": {},
-        "fixed_amount_mad": 200,
-        "unit_rate_mad": null,
-        "unit": "PER_ITEM"
+        "fixed_amount_mad": null,
+        "unit_rate_mad": 200,
+        "unit": "PER_ITEM",
+        "quantity_input": "item_count",
+        "canonical_bug_fix": {
+          "phase": "7C.5",
+          "previous_model": "FIXED",
+          "previous_formula": "FORMULA-FIXED-V1",
+          "correction": "V0.3 source specifies PER_ITEM_FORFAIT (200 MAD/item). Canonical registry incorrectly mapped as FIXED. Fixed to UNIT_MULTIPLICATION during shadow validation.",
+          "approved_price_unchanged": true,
+          "v03_architecture": "PER_ITEM_FORFAIT"
+        }
       },
       "minimum_floor": {
         "enabled": false,
@@ -4286,14 +4295,23 @@
       "effective_from": null,
       "effective_to": null,
       "price_model": {
-        "calculation_model": "FIXED",
+        "calculation_model": "UNIT_MULTIPLICATION",
         "commercial_output_type": "FIXEO_CALCULATED_PRICE",
         "currency": "MAD",
-        "formula_id": "FORMULA-FIXED-V1",
+        "formula_id": "FORMULA-UNIT-V1",
         "formula_params": {},
-        "fixed_amount_mad": 200,
-        "unit_rate_mad": null,
-        "unit": "PER_ITEM"
+        "fixed_amount_mad": null,
+        "unit_rate_mad": 200,
+        "unit": "PER_ITEM",
+        "quantity_input": "item_count",
+        "canonical_bug_fix": {
+          "phase": "7C.5",
+          "previous_model": "FIXED",
+          "previous_formula": "FORMULA-FIXED-V1",
+          "correction": "V0.3 source specifies PER_ITEM_FORFAIT (200 MAD/item). Canonical registry incorrectly mapped as FIXED. Fixed to UNIT_MULTIPLICATION during shadow validation.",
+          "approved_price_unchanged": true,
+          "v03_architecture": "PER_ITEM_FORFAIT"
+        }
       },
       "minimum_floor": {
         "enabled": false,

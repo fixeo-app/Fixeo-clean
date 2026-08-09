@@ -1,0 +1,1087 @@
+{
+  "meta": {
+    "schema_version": "7C.5-v1",
+    "phase": "PHASE_7C5_SHADOW_VALIDATION",
+    "created": "2026-08-09T20:49:48.410Z",
+    "production_ready": false,
+    "dormant": true,
+    "doctrine": "Legacy values are COMPARISON_ONLY. Canonical human-approved prices are SOURCE_OF_TRUTH. Legacy mismatch = LEGACY_COLLISION not ENGINE_FAIL."
+  },
+  "summary": {
+    "total_services": 53,
+    "severity_breakdown": {
+      "CRITICAL": 11,
+      "HIGH": 12,
+      "MEDIUM": 3,
+      "LOW": 0,
+      "INFO": 27
+    },
+    "key_structural_collisions": [
+      "ALL: Legacy used broad price RANGES, canonical uses exact approved prices",
+      "ALL: Legacy applied city_tier multipliers (x1.15 Casablanca, x1.05 Tanger) — canonical city_adjustment=null",
+      "ALL: Legacy applied urgency/night/weekend surcharges — canonical all modifiers=null",
+      "LABOUR+PART: Legacy range may have included parts — canonical explicitly separates (variable_part_separate=true)",
+      "ELECTRICITE floor: Legacy engine simple_from=100 MAD — canonical diagnostic=200 MAD",
+      "MENUISERIE floor: Legacy metier_from=150 MAD — canonical minimum_floor=300 MAD",
+      "PEINTURE architecture: Legacy simple=150-350 MAD (room estimate) vs canonical per_m2 model (completely different)",
+      "P0 ACTIVE: reservation.js 800 MAD/m2 vs reservation-v2.js 20 MAD/m2 LIVE contradiction"
+    ],
+    "note": "These are LEGACY_COLLISION classifications, not ENGINE_FAIL. The engine correctly implements canonical approved prices."
+  },
+  "comparisons": [
+    {
+      "canonical_service_code": "plomberie.diagnostic",
+      "metier": "plomberie",
+      "calculation_model": "DIAGNOSTIC",
+      "commercial_output_type": "FIXEO_DIAGNOSTIC",
+      "canonical_amount_mad": 180,
+      "legacy_range_from": 150,
+      "legacy_range_to": 350,
+      "legacy_status": "MATCH",
+      "delta_vs_legacy": "WITHIN_RANGE",
+      "semantic_collision": [
+        "LEGACY_RANGE_vs_CANONICAL_FIXED",
+        "LEGACY_CITY_MULTIPLIER_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_SURCHARGE_ACTIVE_vs_CANONICAL_NULL"
+      ],
+      "severity": "INFO",
+      "minimum_floor_mad": null,
+      "variable_part_separate": false
+    },
+    {
+      "canonical_service_code": "plomberie.fuite_simple",
+      "metier": "plomberie",
+      "calculation_model": "FIXED",
+      "commercial_output_type": "FIXEO_PRICE",
+      "canonical_amount_mad": 250,
+      "legacy_range_from": 150,
+      "legacy_range_to": 350,
+      "legacy_status": "MATCH",
+      "delta_vs_legacy": "WITHIN_RANGE",
+      "semantic_collision": [
+        "LEGACY_RANGE_vs_CANONICAL_FIXED",
+        "LEGACY_CITY_MULTIPLIER_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_SURCHARGE_ACTIVE_vs_CANONICAL_NULL"
+      ],
+      "severity": "INFO",
+      "minimum_floor_mad": null,
+      "variable_part_separate": false
+    },
+    {
+      "canonical_service_code": "plomberie.debouchage_evier",
+      "metier": "plomberie",
+      "calculation_model": "FIXED",
+      "commercial_output_type": "FIXEO_PRICE",
+      "canonical_amount_mad": 250,
+      "legacy_range_from": 150,
+      "legacy_range_to": 350,
+      "legacy_status": "MATCH",
+      "delta_vs_legacy": "WITHIN_RANGE",
+      "semantic_collision": [
+        "LEGACY_RANGE_vs_CANONICAL_FIXED",
+        "LEGACY_CITY_MULTIPLIER_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_SURCHARGE_ACTIVE_vs_CANONICAL_NULL"
+      ],
+      "severity": "INFO",
+      "minimum_floor_mad": null,
+      "variable_part_separate": false
+    },
+    {
+      "canonical_service_code": "plomberie.debouchage_wc_simple",
+      "metier": "plomberie",
+      "calculation_model": "FIXED",
+      "commercial_output_type": "FIXEO_PRICE",
+      "canonical_amount_mad": 300,
+      "legacy_range_from": 150,
+      "legacy_range_to": 350,
+      "legacy_status": "MATCH",
+      "delta_vs_legacy": "WITHIN_RANGE",
+      "semantic_collision": [
+        "LEGACY_RANGE_vs_CANONICAL_FIXED",
+        "LEGACY_CITY_MULTIPLIER_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_SURCHARGE_ACTIVE_vs_CANONICAL_NULL"
+      ],
+      "severity": "INFO",
+      "minimum_floor_mad": null,
+      "variable_part_separate": false
+    },
+    {
+      "canonical_service_code": "plomberie.robinet_remplacement",
+      "metier": "plomberie",
+      "calculation_model": "LABOUR_FIXED_PART_SEPARATE",
+      "commercial_output_type": "FIXEO_LABOUR_PRICE_PLUS_PART",
+      "canonical_amount_mad": 250,
+      "legacy_range_from": 150,
+      "legacy_range_to": 350,
+      "legacy_status": "MATCH",
+      "delta_vs_legacy": "WITHIN_RANGE",
+      "semantic_collision": [
+        "LEGACY_RANGE_vs_CANONICAL_FIXED",
+        "LEGACY_CITY_MULTIPLIER_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_SURCHARGE_ACTIVE_vs_CANONICAL_NULL",
+        "CRITICAL_SEMANTIC: LEGACY_ALL_IN_RANGE_vs_CANONICAL_LABOUR_ONLY — legacy range likely included parts, canonical explicitly separates"
+      ],
+      "severity": "CRITICAL",
+      "minimum_floor_mad": null,
+      "variable_part_separate": true
+    },
+    {
+      "canonical_service_code": "plomberie.chasse_eau",
+      "metier": "plomberie",
+      "calculation_model": "LABOUR_FIXED_PART_SEPARATE",
+      "commercial_output_type": "FIXEO_LABOUR_PRICE_PLUS_PART",
+      "canonical_amount_mad": 300,
+      "legacy_range_from": 150,
+      "legacy_range_to": 350,
+      "legacy_status": "MATCH",
+      "delta_vs_legacy": "WITHIN_RANGE",
+      "semantic_collision": [
+        "LEGACY_RANGE_vs_CANONICAL_FIXED",
+        "LEGACY_CITY_MULTIPLIER_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_SURCHARGE_ACTIVE_vs_CANONICAL_NULL",
+        "CRITICAL_SEMANTIC: LEGACY_ALL_IN_RANGE_vs_CANONICAL_LABOUR_ONLY — legacy range likely included parts, canonical explicitly separates"
+      ],
+      "severity": "CRITICAL",
+      "minimum_floor_mad": null,
+      "variable_part_separate": true
+    },
+    {
+      "canonical_service_code": "electricite.diagnostic",
+      "metier": "electricite",
+      "calculation_model": "DIAGNOSTIC",
+      "commercial_output_type": "FIXEO_DIAGNOSTIC",
+      "canonical_amount_mad": 200,
+      "legacy_range_from": 100,
+      "legacy_range_to": 400,
+      "legacy_status": "MATCH",
+      "delta_vs_legacy": "WITHIN_RANGE",
+      "semantic_collision": [
+        "LEGACY_RANGE_vs_CANONICAL_FIXED",
+        "LEGACY_CITY_MULTIPLIER_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_SURCHARGE_ACTIVE_vs_CANONICAL_NULL",
+        "HIGH: LEGACY_FLOOR_100_vs_CANONICAL_DIAGNOSTIC_200"
+      ],
+      "severity": "HIGH",
+      "minimum_floor_mad": null,
+      "variable_part_separate": false
+    },
+    {
+      "canonical_service_code": "electricite.prise_remplacement",
+      "metier": "electricite",
+      "calculation_model": "FIXED",
+      "commercial_output_type": "FIXEO_PRICE",
+      "canonical_amount_mad": 220,
+      "legacy_range_from": 100,
+      "legacy_range_to": 400,
+      "legacy_status": "MATCH",
+      "delta_vs_legacy": "WITHIN_RANGE",
+      "semantic_collision": [
+        "LEGACY_RANGE_vs_CANONICAL_FIXED",
+        "LEGACY_CITY_MULTIPLIER_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_SURCHARGE_ACTIVE_vs_CANONICAL_NULL"
+      ],
+      "severity": "INFO",
+      "minimum_floor_mad": null,
+      "variable_part_separate": false
+    },
+    {
+      "canonical_service_code": "electricite.interrupteur_remplacement.simple",
+      "metier": "electricite",
+      "calculation_model": "FIXED",
+      "commercial_output_type": "FIXEO_PRICE",
+      "canonical_amount_mad": 220,
+      "legacy_range_from": 100,
+      "legacy_range_to": 400,
+      "legacy_status": "MATCH",
+      "delta_vs_legacy": "WITHIN_RANGE",
+      "semantic_collision": [
+        "LEGACY_RANGE_vs_CANONICAL_FIXED",
+        "LEGACY_CITY_MULTIPLIER_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_SURCHARGE_ACTIVE_vs_CANONICAL_NULL"
+      ],
+      "severity": "INFO",
+      "minimum_floor_mad": null,
+      "variable_part_separate": false
+    },
+    {
+      "canonical_service_code": "electricite.interrupteur_remplacement.va_et_vient",
+      "metier": "electricite",
+      "calculation_model": "FIXED",
+      "commercial_output_type": "FIXEO_PRICE",
+      "canonical_amount_mad": 250,
+      "legacy_range_from": 100,
+      "legacy_range_to": 400,
+      "legacy_status": "MATCH",
+      "delta_vs_legacy": "WITHIN_RANGE",
+      "semantic_collision": [
+        "LEGACY_RANGE_vs_CANONICAL_FIXED",
+        "LEGACY_CITY_MULTIPLIER_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_SURCHARGE_ACTIVE_vs_CANONICAL_NULL"
+      ],
+      "severity": "INFO",
+      "minimum_floor_mad": null,
+      "variable_part_separate": false
+    },
+    {
+      "canonical_service_code": "electricite.luminaire_installation",
+      "metier": "electricite",
+      "calculation_model": "FIXED",
+      "commercial_output_type": "FIXEO_PRICE",
+      "canonical_amount_mad": 220,
+      "legacy_range_from": 100,
+      "legacy_range_to": 400,
+      "legacy_status": "MATCH",
+      "delta_vs_legacy": "WITHIN_RANGE",
+      "semantic_collision": [
+        "LEGACY_RANGE_vs_CANONICAL_FIXED",
+        "LEGACY_CITY_MULTIPLIER_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_SURCHARGE_ACTIVE_vs_CANONICAL_NULL"
+      ],
+      "severity": "INFO",
+      "minimum_floor_mad": null,
+      "variable_part_separate": false
+    },
+    {
+      "canonical_service_code": "electricite.disjoncteur_remplacement",
+      "metier": "electricite",
+      "calculation_model": "CONDITIONAL_FIXED",
+      "commercial_output_type": "FIXEO_PRICE",
+      "canonical_amount_mad": 250,
+      "legacy_range_from": 100,
+      "legacy_range_to": 400,
+      "legacy_status": "MATCH",
+      "delta_vs_legacy": "WITHIN_RANGE",
+      "semantic_collision": [
+        "LEGACY_RANGE_vs_CANONICAL_FIXED",
+        "LEGACY_CITY_MULTIPLIER_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_SURCHARGE_ACTIVE_vs_CANONICAL_NULL"
+      ],
+      "severity": "INFO",
+      "minimum_floor_mad": null,
+      "variable_part_separate": false
+    },
+    {
+      "canonical_service_code": "serrurerie.porte_claquee_ouverture",
+      "metier": "serrurerie",
+      "calculation_model": "FIXED",
+      "commercial_output_type": "FIXEO_PRICE",
+      "canonical_amount_mad": 220,
+      "legacy_range_from": 150,
+      "legacy_range_to": 400,
+      "legacy_status": "MATCH",
+      "delta_vs_legacy": "WITHIN_RANGE",
+      "semantic_collision": [
+        "LEGACY_RANGE_vs_CANONICAL_FIXED",
+        "LEGACY_CITY_MULTIPLIER_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_SURCHARGE_ACTIVE_vs_CANONICAL_NULL"
+      ],
+      "severity": "INFO",
+      "minimum_floor_mad": null,
+      "variable_part_separate": false
+    },
+    {
+      "canonical_service_code": "serrurerie.porte_claquee_blindee.ouverture",
+      "metier": "serrurerie",
+      "calculation_model": "CONDITIONAL_FIXED",
+      "commercial_output_type": "FIXEO_PRICE",
+      "canonical_amount_mad": 350,
+      "legacy_range_from": 150,
+      "legacy_range_to": 400,
+      "legacy_status": "MATCH",
+      "delta_vs_legacy": "WITHIN_RANGE",
+      "semantic_collision": [
+        "LEGACY_RANGE_vs_CANONICAL_FIXED",
+        "LEGACY_CITY_MULTIPLIER_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_SURCHARGE_ACTIVE_vs_CANONICAL_NULL"
+      ],
+      "severity": "INFO",
+      "minimum_floor_mad": null,
+      "variable_part_separate": false
+    },
+    {
+      "canonical_service_code": "serrurerie.porte_verrouillee.ouverture",
+      "metier": "serrurerie",
+      "calculation_model": "CONDITIONAL_FIXED",
+      "commercial_output_type": "FIXEO_PRICE",
+      "canonical_amount_mad": 380,
+      "legacy_range_from": 150,
+      "legacy_range_to": 400,
+      "legacy_status": "MATCH",
+      "delta_vs_legacy": "WITHIN_RANGE",
+      "semantic_collision": [
+        "LEGACY_RANGE_vs_CANONICAL_FIXED",
+        "LEGACY_CITY_MULTIPLIER_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_SURCHARGE_ACTIVE_vs_CANONICAL_NULL"
+      ],
+      "severity": "INFO",
+      "minimum_floor_mad": null,
+      "variable_part_separate": false
+    },
+    {
+      "canonical_service_code": "serrurerie.cle_cassee_extraction",
+      "metier": "serrurerie",
+      "calculation_model": "CONDITIONAL_FIXED",
+      "commercial_output_type": "FIXEO_PRICE",
+      "canonical_amount_mad": 220,
+      "legacy_range_from": 150,
+      "legacy_range_to": 400,
+      "legacy_status": "MATCH",
+      "delta_vs_legacy": "WITHIN_RANGE",
+      "semantic_collision": [
+        "LEGACY_RANGE_vs_CANONICAL_FIXED",
+        "LEGACY_CITY_MULTIPLIER_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_SURCHARGE_ACTIVE_vs_CANONICAL_NULL"
+      ],
+      "severity": "INFO",
+      "minimum_floor_mad": null,
+      "variable_part_separate": false
+    },
+    {
+      "canonical_service_code": "serrurerie.cylindre_remplacement.standard",
+      "metier": "serrurerie",
+      "calculation_model": "LABOUR_FIXED_PART_SEPARATE",
+      "commercial_output_type": "FIXEO_LABOUR_PRICE_PLUS_PART",
+      "canonical_amount_mad": 280,
+      "legacy_range_from": 150,
+      "legacy_range_to": 400,
+      "legacy_status": "MATCH",
+      "delta_vs_legacy": "WITHIN_RANGE",
+      "semantic_collision": [
+        "LEGACY_RANGE_vs_CANONICAL_FIXED",
+        "LEGACY_CITY_MULTIPLIER_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_SURCHARGE_ACTIVE_vs_CANONICAL_NULL",
+        "CRITICAL_SEMANTIC: LEGACY_ALL_IN_RANGE_vs_CANONICAL_LABOUR_ONLY — legacy range likely included parts, canonical explicitly separates"
+      ],
+      "severity": "CRITICAL",
+      "minimum_floor_mad": null,
+      "variable_part_separate": true
+    },
+    {
+      "canonical_service_code": "serrurerie.serrure_remplacement.standard",
+      "metier": "serrurerie",
+      "calculation_model": "LABOUR_FIXED_PART_SEPARATE",
+      "commercial_output_type": "FIXEO_LABOUR_PRICE_PLUS_PART",
+      "canonical_amount_mad": 400,
+      "legacy_range_from": 150,
+      "legacy_range_to": 400,
+      "legacy_status": "MATCH",
+      "delta_vs_legacy": "WITHIN_RANGE",
+      "semantic_collision": [
+        "LEGACY_RANGE_vs_CANONICAL_FIXED",
+        "LEGACY_CITY_MULTIPLIER_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_SURCHARGE_ACTIVE_vs_CANONICAL_NULL",
+        "CRITICAL_SEMANTIC: LEGACY_ALL_IN_RANGE_vs_CANONICAL_LABOUR_ONLY — legacy range likely included parts, canonical explicitly separates"
+      ],
+      "severity": "CRITICAL",
+      "minimum_floor_mad": null,
+      "variable_part_separate": true
+    },
+    {
+      "canonical_service_code": "climatisation.diagnostic",
+      "metier": "climatisation",
+      "calculation_model": "DIAGNOSTIC",
+      "commercial_output_type": "FIXEO_DIAGNOSTIC",
+      "canonical_amount_mad": 250,
+      "legacy_range_from": 200,
+      "legacy_range_to": 900,
+      "legacy_status": "MATCH",
+      "delta_vs_legacy": "WITHIN_RANGE",
+      "semantic_collision": [
+        "LEGACY_RANGE_vs_CANONICAL_FIXED",
+        "LEGACY_CITY_MULTIPLIER_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_SURCHARGE_ACTIVE_vs_CANONICAL_NULL",
+        "MEDIUM: NO_DEDICATED_LEGACY_DIAGNOSTIC_vs_CANONICAL_250"
+      ],
+      "severity": "MEDIUM",
+      "minimum_floor_mad": null,
+      "variable_part_separate": false
+    },
+    {
+      "canonical_service_code": "climatisation.entretien_annuel",
+      "metier": "climatisation",
+      "calculation_model": "UNIT_MULTIPLICATION",
+      "commercial_output_type": "FIXEO_CALCULATED_PRICE",
+      "canonical_amount_mad": 300,
+      "legacy_range_from": 200,
+      "legacy_range_to": 900,
+      "legacy_status": "MATCH",
+      "delta_vs_legacy": "WITHIN_RANGE",
+      "semantic_collision": [
+        "LEGACY_RANGE_vs_CANONICAL_FIXED",
+        "LEGACY_CITY_MULTIPLIER_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_SURCHARGE_ACTIVE_vs_CANONICAL_NULL"
+      ],
+      "severity": "INFO",
+      "minimum_floor_mad": null,
+      "variable_part_separate": false
+    },
+    {
+      "canonical_service_code": "climatisation.desinfection_profonde",
+      "metier": "climatisation",
+      "calculation_model": "UNIT_MULTIPLICATION",
+      "commercial_output_type": "FIXEO_CALCULATED_PRICE",
+      "canonical_amount_mad": 450,
+      "legacy_range_from": 200,
+      "legacy_range_to": 900,
+      "legacy_status": "MATCH",
+      "delta_vs_legacy": "WITHIN_RANGE",
+      "semantic_collision": [
+        "LEGACY_RANGE_vs_CANONICAL_FIXED",
+        "LEGACY_CITY_MULTIPLIER_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_SURCHARGE_ACTIVE_vs_CANONICAL_NULL"
+      ],
+      "severity": "INFO",
+      "minimum_floor_mad": null,
+      "variable_part_separate": false
+    },
+    {
+      "canonical_service_code": "climatisation.recharge_gaz_r22",
+      "metier": "climatisation",
+      "calculation_model": "FIXED",
+      "commercial_output_type": "FIXEO_PRICE",
+      "canonical_amount_mad": 250,
+      "legacy_range_from": 200,
+      "legacy_range_to": 900,
+      "legacy_status": "MATCH",
+      "delta_vs_legacy": "WITHIN_RANGE",
+      "semantic_collision": [
+        "LEGACY_RANGE_vs_CANONICAL_FIXED",
+        "LEGACY_CITY_MULTIPLIER_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_SURCHARGE_ACTIVE_vs_CANONICAL_NULL"
+      ],
+      "severity": "INFO",
+      "minimum_floor_mad": null,
+      "variable_part_separate": false
+    },
+    {
+      "canonical_service_code": "climatisation.reparation_fuite_recharge",
+      "metier": "climatisation",
+      "calculation_model": "CONDITIONAL_FIXED",
+      "commercial_output_type": "FIXEO_PRICE",
+      "canonical_amount_mad": 600,
+      "legacy_range_from": 200,
+      "legacy_range_to": 900,
+      "legacy_status": "MATCH",
+      "delta_vs_legacy": "WITHIN_RANGE",
+      "semantic_collision": [
+        "LEGACY_RANGE_vs_CANONICAL_FIXED",
+        "LEGACY_CITY_MULTIPLIER_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_SURCHARGE_ACTIVE_vs_CANONICAL_NULL"
+      ],
+      "severity": "INFO",
+      "minimum_floor_mad": null,
+      "variable_part_separate": false
+    },
+    {
+      "canonical_service_code": "climatisation.installation.standard",
+      "metier": "climatisation",
+      "calculation_model": "CONDITIONAL_FIXED",
+      "commercial_output_type": "FIXEO_PRICE",
+      "canonical_amount_mad": 1000,
+      "legacy_range_from": 200,
+      "legacy_range_to": 900,
+      "legacy_status": "HIGHER",
+      "delta_vs_legacy": "+100",
+      "semantic_collision": [
+        "LEGACY_RANGE_vs_CANONICAL_FIXED",
+        "LEGACY_CITY_MULTIPLIER_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_SURCHARGE_ACTIVE_vs_CANONICAL_NULL"
+      ],
+      "severity": "MEDIUM",
+      "minimum_floor_mad": null,
+      "variable_part_separate": false
+    },
+    {
+      "canonical_service_code": "climatisation.installation.cassette",
+      "metier": "climatisation",
+      "calculation_model": "CONDITIONAL_FIXED",
+      "commercial_output_type": "FIXEO_PRICE",
+      "canonical_amount_mad": 1200,
+      "legacy_range_from": 200,
+      "legacy_range_to": 900,
+      "legacy_status": "HIGHER",
+      "delta_vs_legacy": "+300",
+      "semantic_collision": [
+        "LEGACY_RANGE_vs_CANONICAL_FIXED",
+        "LEGACY_CITY_MULTIPLIER_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_SURCHARGE_ACTIVE_vs_CANONICAL_NULL"
+      ],
+      "severity": "MEDIUM",
+      "minimum_floor_mad": null,
+      "variable_part_separate": false
+    },
+    {
+      "canonical_service_code": "climatisation.desinstallation",
+      "metier": "climatisation",
+      "calculation_model": "FIXED",
+      "commercial_output_type": "FIXEO_PRICE",
+      "canonical_amount_mad": 550,
+      "legacy_range_from": 200,
+      "legacy_range_to": 900,
+      "legacy_status": "MATCH",
+      "delta_vs_legacy": "WITHIN_RANGE",
+      "semantic_collision": [
+        "LEGACY_RANGE_vs_CANONICAL_FIXED",
+        "LEGACY_CITY_MULTIPLIER_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_SURCHARGE_ACTIVE_vs_CANONICAL_NULL"
+      ],
+      "severity": "INFO",
+      "minimum_floor_mad": null,
+      "variable_part_separate": false
+    },
+    {
+      "canonical_service_code": "bricolage.visite_minimum",
+      "metier": "bricolage",
+      "calculation_model": "MINIMUM_FLOOR",
+      "commercial_output_type": "FIXEO_PRICE",
+      "canonical_amount_mad": 200,
+      "legacy_range_from": 100,
+      "legacy_range_to": 400,
+      "legacy_status": "MATCH",
+      "delta_vs_legacy": "WITHIN_RANGE",
+      "semantic_collision": [
+        "LEGACY_RANGE_vs_CANONICAL_FIXED",
+        "LEGACY_CITY_MULTIPLIER_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_SURCHARGE_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_NON_ENFORCED_FLOOR_vs_CANONICAL_NON_ADDITIVE",
+        "HIGH: LEGACY_FLOOR_100_vs_CANONICAL_200_MAD (delta=100 MAD)"
+      ],
+      "severity": "HIGH",
+      "minimum_floor_mad": 200,
+      "variable_part_separate": false
+    },
+    {
+      "canonical_service_code": "bricolage.horaire",
+      "metier": "bricolage",
+      "calculation_model": "TIME_BASED_SINGLE",
+      "commercial_output_type": "FIXEO_CALCULATED_PRICE",
+      "canonical_amount_mad": 150,
+      "legacy_range_from": 100,
+      "legacy_range_to": 400,
+      "legacy_status": "MATCH",
+      "delta_vs_legacy": "WITHIN_RANGE",
+      "semantic_collision": [
+        "LEGACY_RANGE_vs_CANONICAL_FIXED",
+        "LEGACY_CITY_MULTIPLIER_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_SURCHARGE_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_NON_ENFORCED_FLOOR_vs_CANONICAL_NON_ADDITIVE",
+        "HIGH: LEGACY_FLOOR_100_vs_CANONICAL_200_MAD (delta=100 MAD)"
+      ],
+      "severity": "HIGH",
+      "minimum_floor_mad": 200,
+      "variable_part_separate": false
+    },
+    {
+      "canonical_service_code": "bricolage.demi_journee",
+      "metier": "bricolage",
+      "calculation_model": "FIXED",
+      "commercial_output_type": "FIXEO_PRICE",
+      "canonical_amount_mad": 400,
+      "legacy_range_from": 100,
+      "legacy_range_to": 400,
+      "legacy_status": "MATCH",
+      "delta_vs_legacy": "WITHIN_RANGE",
+      "semantic_collision": [
+        "LEGACY_RANGE_vs_CANONICAL_FIXED",
+        "LEGACY_CITY_MULTIPLIER_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_SURCHARGE_ACTIVE_vs_CANONICAL_NULL"
+      ],
+      "severity": "INFO",
+      "minimum_floor_mad": null,
+      "variable_part_separate": false
+    },
+    {
+      "canonical_service_code": "bricolage.montage_meuble",
+      "metier": "bricolage",
+      "calculation_model": "UNIT_MULTIPLICATION",
+      "commercial_output_type": "FIXEO_CALCULATED_PRICE",
+      "canonical_amount_mad": 200,
+      "legacy_range_from": 100,
+      "legacy_range_to": 400,
+      "legacy_status": "MATCH",
+      "delta_vs_legacy": "WITHIN_RANGE",
+      "semantic_collision": [
+        "LEGACY_RANGE_vs_CANONICAL_FIXED",
+        "LEGACY_CITY_MULTIPLIER_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_SURCHARGE_ACTIVE_vs_CANONICAL_NULL"
+      ],
+      "severity": "INFO",
+      "minimum_floor_mad": null,
+      "variable_part_separate": false
+    },
+    {
+      "canonical_service_code": "bricolage.fixation_accrochage",
+      "metier": "bricolage",
+      "calculation_model": "UNIT_MULTIPLICATION",
+      "commercial_output_type": "FIXEO_CALCULATED_PRICE",
+      "canonical_amount_mad": 200,
+      "legacy_range_from": 100,
+      "legacy_range_to": 400,
+      "legacy_status": "MATCH",
+      "delta_vs_legacy": "WITHIN_RANGE",
+      "semantic_collision": [
+        "LEGACY_RANGE_vs_CANONICAL_FIXED",
+        "LEGACY_CITY_MULTIPLIER_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_SURCHARGE_ACTIVE_vs_CANONICAL_NULL"
+      ],
+      "severity": "INFO",
+      "minimum_floor_mad": null,
+      "variable_part_separate": false
+    },
+    {
+      "canonical_service_code": "bricolage.intervention_conditionnelle",
+      "metier": "bricolage",
+      "calculation_model": "CONDITIONAL_FIXED",
+      "commercial_output_type": "FIXEO_PRICE",
+      "canonical_amount_mad": 300,
+      "legacy_range_from": 100,
+      "legacy_range_to": 400,
+      "legacy_status": "MATCH",
+      "delta_vs_legacy": "WITHIN_RANGE",
+      "semantic_collision": [
+        "LEGACY_RANGE_vs_CANONICAL_FIXED",
+        "LEGACY_CITY_MULTIPLIER_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_SURCHARGE_ACTIVE_vs_CANONICAL_NULL"
+      ],
+      "severity": "INFO",
+      "minimum_floor_mad": null,
+      "variable_part_separate": false
+    },
+    {
+      "canonical_service_code": "nettoyage.visite_minimum",
+      "metier": "nettoyage",
+      "calculation_model": "MINIMUM_FLOOR",
+      "commercial_output_type": "FIXEO_PRICE",
+      "canonical_amount_mad": 200,
+      "legacy_range_from": 200,
+      "legacy_range_to": 600,
+      "legacy_status": "MATCH",
+      "delta_vs_legacy": "WITHIN_RANGE",
+      "semantic_collision": [
+        "LEGACY_RANGE_vs_CANONICAL_FIXED",
+        "LEGACY_CITY_MULTIPLIER_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_SURCHARGE_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_NON_ENFORCED_FLOOR_vs_CANONICAL_NON_ADDITIVE",
+        "HIGH: LEGACY_FLOOR_150_vs_CANONICAL_200_MAD (delta=50 MAD)"
+      ],
+      "severity": "HIGH",
+      "minimum_floor_mad": 200,
+      "variable_part_separate": false
+    },
+    {
+      "canonical_service_code": "nettoyage.menage_standard",
+      "metier": "nettoyage",
+      "calculation_model": "TIME_BASED_TEAM",
+      "commercial_output_type": "FIXEO_CALCULATED_PRICE",
+      "canonical_amount_mad": 65,
+      "legacy_range_from": 200,
+      "legacy_range_to": 600,
+      "legacy_status": "LOWER",
+      "delta_vs_legacy": "-135",
+      "semantic_collision": [
+        "LEGACY_RANGE_vs_CANONICAL_FIXED",
+        "LEGACY_CITY_MULTIPLIER_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_SURCHARGE_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_NON_ENFORCED_FLOOR_vs_CANONICAL_NON_ADDITIVE",
+        "HIGH: LEGACY_FLOOR_150_vs_CANONICAL_200_MAD (delta=50 MAD)"
+      ],
+      "severity": "HIGH",
+      "minimum_floor_mad": 200,
+      "variable_part_separate": false
+    },
+    {
+      "canonical_service_code": "nettoyage.grand_menage",
+      "metier": "nettoyage",
+      "calculation_model": "CONDITIONAL_FIXED",
+      "commercial_output_type": "FIXEO_PRICE",
+      "canonical_amount_mad": 600,
+      "legacy_range_from": 200,
+      "legacy_range_to": 600,
+      "legacy_status": "MATCH",
+      "delta_vs_legacy": "WITHIN_RANGE",
+      "semantic_collision": [
+        "LEGACY_RANGE_vs_CANONICAL_FIXED",
+        "LEGACY_CITY_MULTIPLIER_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_SURCHARGE_ACTIVE_vs_CANONICAL_NULL"
+      ],
+      "severity": "INFO",
+      "minimum_floor_mad": null,
+      "variable_part_separate": false
+    },
+    {
+      "canonical_service_code": "nettoyage.canape.deux_places",
+      "metier": "nettoyage",
+      "calculation_model": "FIXED",
+      "commercial_output_type": "FIXEO_PRICE",
+      "canonical_amount_mad": 300,
+      "legacy_range_from": 200,
+      "legacy_range_to": 600,
+      "legacy_status": "MATCH",
+      "delta_vs_legacy": "WITHIN_RANGE",
+      "semantic_collision": [
+        "LEGACY_RANGE_vs_CANONICAL_FIXED",
+        "LEGACY_CITY_MULTIPLIER_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_SURCHARGE_ACTIVE_vs_CANONICAL_NULL"
+      ],
+      "severity": "INFO",
+      "minimum_floor_mad": null,
+      "variable_part_separate": false
+    },
+    {
+      "canonical_service_code": "nettoyage.canape.trois_places",
+      "metier": "nettoyage",
+      "calculation_model": "FIXED",
+      "commercial_output_type": "FIXEO_PRICE",
+      "canonical_amount_mad": 450,
+      "legacy_range_from": 200,
+      "legacy_range_to": 600,
+      "legacy_status": "MATCH",
+      "delta_vs_legacy": "WITHIN_RANGE",
+      "semantic_collision": [
+        "LEGACY_RANGE_vs_CANONICAL_FIXED",
+        "LEGACY_CITY_MULTIPLIER_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_SURCHARGE_ACTIVE_vs_CANONICAL_NULL"
+      ],
+      "severity": "INFO",
+      "minimum_floor_mad": null,
+      "variable_part_separate": false
+    },
+    {
+      "canonical_service_code": "nettoyage.matelas.simple",
+      "metier": "nettoyage",
+      "calculation_model": "FIXED",
+      "commercial_output_type": "FIXEO_PRICE",
+      "canonical_amount_mad": 250,
+      "legacy_range_from": 200,
+      "legacy_range_to": 600,
+      "legacy_status": "MATCH",
+      "delta_vs_legacy": "WITHIN_RANGE",
+      "semantic_collision": [
+        "LEGACY_RANGE_vs_CANONICAL_FIXED",
+        "LEGACY_CITY_MULTIPLIER_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_SURCHARGE_ACTIVE_vs_CANONICAL_NULL"
+      ],
+      "severity": "INFO",
+      "minimum_floor_mad": null,
+      "variable_part_separate": false
+    },
+    {
+      "canonical_service_code": "nettoyage.matelas.double",
+      "metier": "nettoyage",
+      "calculation_model": "FIXED",
+      "commercial_output_type": "FIXEO_PRICE",
+      "canonical_amount_mad": 300,
+      "legacy_range_from": 200,
+      "legacy_range_to": 600,
+      "legacy_status": "MATCH",
+      "delta_vs_legacy": "WITHIN_RANGE",
+      "semantic_collision": [
+        "LEGACY_RANGE_vs_CANONICAL_FIXED",
+        "LEGACY_CITY_MULTIPLIER_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_SURCHARGE_ACTIVE_vs_CANONICAL_NULL"
+      ],
+      "severity": "INFO",
+      "minimum_floor_mad": null,
+      "variable_part_separate": false
+    },
+    {
+      "canonical_service_code": "nettoyage.apres_travaux",
+      "metier": "nettoyage",
+      "calculation_model": "UNIT_MULTIPLICATION_WITH_FLOOR",
+      "commercial_output_type": "FIXEO_CALCULATED_PRICE",
+      "canonical_amount_mad": 18,
+      "legacy_range_from": 200,
+      "legacy_range_to": 600,
+      "legacy_status": "LOWER",
+      "delta_vs_legacy": "-182",
+      "semantic_collision": [
+        "LEGACY_RANGE_vs_CANONICAL_FIXED",
+        "LEGACY_CITY_MULTIPLIER_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_SURCHARGE_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_NON_ENFORCED_FLOOR_vs_CANONICAL_NON_ADDITIVE",
+        "HIGH: LEGACY_FLOOR_150_vs_CANONICAL_1000_MAD (delta=850 MAD)"
+      ],
+      "severity": "HIGH",
+      "minimum_floor_mad": 1000,
+      "variable_part_separate": false
+    },
+    {
+      "canonical_service_code": "peinture.forfait_minimum",
+      "metier": "peinture",
+      "calculation_model": "MINIMUM_FLOOR",
+      "commercial_output_type": "FIXEO_PRICE",
+      "canonical_amount_mad": 800,
+      "legacy_range_from": 800,
+      "legacy_range_to": 2500,
+      "legacy_status": "MATCH",
+      "delta_vs_legacy": "WITHIN_RANGE",
+      "semantic_collision": [
+        "LEGACY_RANGE_vs_CANONICAL_FIXED",
+        "LEGACY_CITY_MULTIPLIER_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_SURCHARGE_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_NON_ENFORCED_FLOOR_vs_CANONICAL_NON_ADDITIVE",
+        "HIGH: LEGACY_FLOOR_150_vs_CANONICAL_800_MAD (delta=650 MAD)"
+      ],
+      "severity": "HIGH",
+      "minimum_floor_mad": 800,
+      "variable_part_separate": false
+    },
+    {
+      "canonical_service_code": "peinture.mur_interieur.labour_only",
+      "metier": "peinture",
+      "calculation_model": "UNIT_MULTIPLICATION_WITH_FLOOR",
+      "commercial_output_type": "FIXEO_CALCULATED_PRICE",
+      "canonical_amount_mad": 35,
+      "legacy_range_from": 800,
+      "legacy_range_to": 2500,
+      "legacy_status": "LOWER",
+      "delta_vs_legacy": "-765",
+      "semantic_collision": [
+        "LEGACY_RANGE_vs_CANONICAL_FIXED",
+        "LEGACY_CITY_MULTIPLIER_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_SURCHARGE_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_NON_ENFORCED_FLOOR_vs_CANONICAL_NON_ADDITIVE",
+        "HIGH: LEGACY_FLOOR_150_vs_CANONICAL_800_MAD (delta=650 MAD)",
+        "CRITICAL_P0: ACTIVE_PRODUCTION_CONTRADICTION — reservation.js 800 MAD/m2 vs reservation-v2.js 20 MAD/m2 vs canonical 35 MAD/m2"
+      ],
+      "severity": "CRITICAL",
+      "minimum_floor_mad": 800,
+      "variable_part_separate": false
+    },
+    {
+      "canonical_service_code": "peinture.mur_interieur.all_in",
+      "metier": "peinture",
+      "calculation_model": "UNIT_MULTIPLICATION_WITH_FLOOR",
+      "commercial_output_type": "FIXEO_CALCULATED_PRICE",
+      "canonical_amount_mad": 65,
+      "legacy_range_from": 800,
+      "legacy_range_to": 2500,
+      "legacy_status": "LOWER",
+      "delta_vs_legacy": "-735",
+      "semantic_collision": [
+        "LEGACY_RANGE_vs_CANONICAL_FIXED",
+        "LEGACY_CITY_MULTIPLIER_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_SURCHARGE_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_NON_ENFORCED_FLOOR_vs_CANONICAL_NON_ADDITIVE",
+        "HIGH: LEGACY_FLOOR_150_vs_CANONICAL_800_MAD (delta=650 MAD)",
+        "CRITICAL_P0: ACTIVE_PRODUCTION_CONTRADICTION — reservation.js 800 MAD/m2 vs reservation-v2.js 20 MAD/m2 vs canonical 65 MAD/m2"
+      ],
+      "severity": "CRITICAL",
+      "minimum_floor_mad": 800,
+      "variable_part_separate": false
+    },
+    {
+      "canonical_service_code": "peinture.plafond.labour_only",
+      "metier": "peinture",
+      "calculation_model": "UNIT_MULTIPLICATION_WITH_FLOOR",
+      "commercial_output_type": "FIXEO_CALCULATED_PRICE",
+      "canonical_amount_mad": 45,
+      "legacy_range_from": 800,
+      "legacy_range_to": 2500,
+      "legacy_status": "LOWER",
+      "delta_vs_legacy": "-755",
+      "semantic_collision": [
+        "LEGACY_RANGE_vs_CANONICAL_FIXED",
+        "LEGACY_CITY_MULTIPLIER_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_SURCHARGE_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_NON_ENFORCED_FLOOR_vs_CANONICAL_NON_ADDITIVE",
+        "HIGH: LEGACY_FLOOR_150_vs_CANONICAL_800_MAD (delta=650 MAD)",
+        "CRITICAL_P0: ACTIVE_PRODUCTION_CONTRADICTION — reservation.js 800 MAD/m2 vs reservation-v2.js 20 MAD/m2 vs canonical 45 MAD/m2"
+      ],
+      "severity": "CRITICAL",
+      "minimum_floor_mad": 800,
+      "variable_part_separate": false
+    },
+    {
+      "canonical_service_code": "peinture.mur_interieur.all_in_avec_prep",
+      "metier": "peinture",
+      "calculation_model": "UNIT_MULTIPLICATION_WITH_FLOOR",
+      "commercial_output_type": "FIXEO_CALCULATED_PRICE",
+      "canonical_amount_mad": 75,
+      "legacy_range_from": 800,
+      "legacy_range_to": 2500,
+      "legacy_status": "LOWER",
+      "delta_vs_legacy": "-725",
+      "semantic_collision": [
+        "LEGACY_RANGE_vs_CANONICAL_FIXED",
+        "LEGACY_CITY_MULTIPLIER_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_SURCHARGE_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_NON_ENFORCED_FLOOR_vs_CANONICAL_NON_ADDITIVE",
+        "HIGH: LEGACY_FLOOR_150_vs_CANONICAL_800_MAD (delta=650 MAD)",
+        "CRITICAL_P0: ACTIVE_PRODUCTION_CONTRADICTION — reservation.js 800 MAD/m2 vs reservation-v2.js 20 MAD/m2 vs canonical 75 MAD/m2"
+      ],
+      "severity": "CRITICAL",
+      "minimum_floor_mad": 800,
+      "variable_part_separate": false
+    },
+    {
+      "canonical_service_code": "peinture.preparation_surface",
+      "metier": "peinture",
+      "calculation_model": "ADD_ON",
+      "commercial_output_type": "FIXEO_ADD_ON",
+      "canonical_amount_mad": 25,
+      "legacy_range_from": 800,
+      "legacy_range_to": 2500,
+      "legacy_status": "LOWER",
+      "delta_vs_legacy": "-775",
+      "semantic_collision": [
+        "LEGACY_RANGE_vs_CANONICAL_FIXED",
+        "LEGACY_CITY_MULTIPLIER_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_SURCHARGE_ACTIVE_vs_CANONICAL_NULL",
+        "CRITICAL_P0: ACTIVE_PRODUCTION_CONTRADICTION — reservation.js 800 MAD/m2 vs reservation-v2.js 20 MAD/m2 vs canonical 25 MAD/m2"
+      ],
+      "severity": "CRITICAL",
+      "minimum_floor_mad": null,
+      "variable_part_separate": false
+    },
+    {
+      "canonical_service_code": "menuiserie.reglage_porte.sans_rabotage",
+      "metier": "menuiserie",
+      "calculation_model": "CONDITIONAL_FIXED",
+      "commercial_output_type": "FIXEO_PRICE",
+      "canonical_amount_mad": 300,
+      "legacy_range_from": 150,
+      "legacy_range_to": 900,
+      "legacy_status": "MATCH",
+      "delta_vs_legacy": "WITHIN_RANGE",
+      "semantic_collision": [
+        "LEGACY_RANGE_vs_CANONICAL_FIXED",
+        "LEGACY_CITY_MULTIPLIER_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_SURCHARGE_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_NON_ENFORCED_FLOOR_vs_CANONICAL_NON_ADDITIVE",
+        "HIGH: LEGACY_FLOOR_150_vs_CANONICAL_300_MAD (delta=150 MAD)"
+      ],
+      "severity": "HIGH",
+      "minimum_floor_mad": 300,
+      "variable_part_separate": false
+    },
+    {
+      "canonical_service_code": "menuiserie.reglage_porte.avec_rabotage",
+      "metier": "menuiserie",
+      "calculation_model": "CONDITIONAL_FIXED",
+      "commercial_output_type": "FIXEO_PRICE",
+      "canonical_amount_mad": 350,
+      "legacy_range_from": 150,
+      "legacy_range_to": 900,
+      "legacy_status": "MATCH",
+      "delta_vs_legacy": "WITHIN_RANGE",
+      "semantic_collision": [
+        "LEGACY_RANGE_vs_CANONICAL_FIXED",
+        "LEGACY_CITY_MULTIPLIER_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_SURCHARGE_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_NON_ENFORCED_FLOOR_vs_CANONICAL_NON_ADDITIVE",
+        "HIGH: LEGACY_FLOOR_150_vs_CANONICAL_300_MAD (delta=150 MAD)"
+      ],
+      "severity": "HIGH",
+      "minimum_floor_mad": 300,
+      "variable_part_separate": false
+    },
+    {
+      "canonical_service_code": "menuiserie.remplacement_charniere",
+      "metier": "menuiserie",
+      "calculation_model": "LABOUR_FIXED_PART_SEPARATE",
+      "commercial_output_type": "FIXEO_LABOUR_PRICE_PLUS_PART",
+      "canonical_amount_mad": 300,
+      "legacy_range_from": 150,
+      "legacy_range_to": 900,
+      "legacy_status": "MATCH",
+      "delta_vs_legacy": "WITHIN_RANGE",
+      "semantic_collision": [
+        "LEGACY_RANGE_vs_CANONICAL_FIXED",
+        "LEGACY_CITY_MULTIPLIER_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_SURCHARGE_ACTIVE_vs_CANONICAL_NULL",
+        "CRITICAL_SEMANTIC: LEGACY_ALL_IN_RANGE_vs_CANONICAL_LABOUR_ONLY — legacy range likely included parts, canonical explicitly separates",
+        "LEGACY_NON_ENFORCED_FLOOR_vs_CANONICAL_NON_ADDITIVE",
+        "HIGH: LEGACY_FLOOR_150_vs_CANONICAL_300_MAD (delta=150 MAD)"
+      ],
+      "severity": "CRITICAL",
+      "minimum_floor_mad": 300,
+      "variable_part_separate": true
+    },
+    {
+      "canonical_service_code": "menuiserie.remplacement_coulisse_tiroir",
+      "metier": "menuiserie",
+      "calculation_model": "LABOUR_FIXED_PART_SEPARATE",
+      "commercial_output_type": "FIXEO_LABOUR_PRICE_PLUS_PART",
+      "canonical_amount_mad": 300,
+      "legacy_range_from": 150,
+      "legacy_range_to": 900,
+      "legacy_status": "MATCH",
+      "delta_vs_legacy": "WITHIN_RANGE",
+      "semantic_collision": [
+        "LEGACY_RANGE_vs_CANONICAL_FIXED",
+        "LEGACY_CITY_MULTIPLIER_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_SURCHARGE_ACTIVE_vs_CANONICAL_NULL",
+        "CRITICAL_SEMANTIC: LEGACY_ALL_IN_RANGE_vs_CANONICAL_LABOUR_ONLY — legacy range likely included parts, canonical explicitly separates",
+        "LEGACY_NON_ENFORCED_FLOOR_vs_CANONICAL_NON_ADDITIVE",
+        "HIGH: LEGACY_FLOOR_150_vs_CANONICAL_300_MAD (delta=150 MAD)"
+      ],
+      "severity": "CRITICAL",
+      "minimum_floor_mad": 300,
+      "variable_part_separate": true
+    },
+    {
+      "canonical_service_code": "menuiserie.deblocage_porte_coulissante.sans_piece",
+      "metier": "menuiserie",
+      "calculation_model": "CONDITIONAL_FIXED",
+      "commercial_output_type": "FIXEO_PRICE",
+      "canonical_amount_mad": 300,
+      "legacy_range_from": 150,
+      "legacy_range_to": 900,
+      "legacy_status": "MATCH",
+      "delta_vs_legacy": "WITHIN_RANGE",
+      "semantic_collision": [
+        "LEGACY_RANGE_vs_CANONICAL_FIXED",
+        "LEGACY_CITY_MULTIPLIER_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_SURCHARGE_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_NON_ENFORCED_FLOOR_vs_CANONICAL_NON_ADDITIVE",
+        "HIGH: LEGACY_FLOOR_150_vs_CANONICAL_300_MAD (delta=150 MAD)"
+      ],
+      "severity": "HIGH",
+      "minimum_floor_mad": 300,
+      "variable_part_separate": false
+    },
+    {
+      "canonical_service_code": "menuiserie.deblocage_porte_coulissante.avec_galets",
+      "metier": "menuiserie",
+      "calculation_model": "CONDITIONAL_FIXED",
+      "commercial_output_type": "FIXEO_PRICE",
+      "canonical_amount_mad": 350,
+      "legacy_range_from": 150,
+      "legacy_range_to": 900,
+      "legacy_status": "MATCH",
+      "delta_vs_legacy": "WITHIN_RANGE",
+      "semantic_collision": [
+        "LEGACY_RANGE_vs_CANONICAL_FIXED",
+        "LEGACY_CITY_MULTIPLIER_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_SURCHARGE_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_NON_ENFORCED_FLOOR_vs_CANONICAL_NON_ADDITIVE",
+        "HIGH: LEGACY_FLOOR_150_vs_CANONICAL_300_MAD (delta=150 MAD)"
+      ],
+      "severity": "HIGH",
+      "minimum_floor_mad": 300,
+      "variable_part_separate": false
+    },
+    {
+      "canonical_service_code": "menuiserie.installation_porte",
+      "metier": "menuiserie",
+      "calculation_model": "CONDITIONAL_FIXED",
+      "commercial_output_type": "FIXEO_PRICE",
+      "canonical_amount_mad": 500,
+      "legacy_range_from": 150,
+      "legacy_range_to": 900,
+      "legacy_status": "MATCH",
+      "delta_vs_legacy": "WITHIN_RANGE",
+      "semantic_collision": [
+        "LEGACY_RANGE_vs_CANONICAL_FIXED",
+        "LEGACY_CITY_MULTIPLIER_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_SURCHARGE_ACTIVE_vs_CANONICAL_NULL",
+        "LEGACY_NON_ENFORCED_FLOOR_vs_CANONICAL_NON_ADDITIVE",
+        "HIGH: LEGACY_FLOOR_150_vs_CANONICAL_300_MAD (delta=150 MAD)"
+      ],
+      "severity": "HIGH",
+      "minimum_floor_mad": 300,
+      "variable_part_separate": false
+    }
+  ]
+}

@@ -93,14 +93,27 @@ function validateInputs(inputs, requiredInputIds, inputIndex) {
     if (dtype === 'integer') {
       if (typeof val !== 'number' || !Number.isInteger(val)) {
         errors.push({ code: 'INVALID_INPUT_TYPE', message: `Input '${inputId}' must be integer, got ${typeof val} (${val})`, field: inputId });
-      } else if (val < 0 && inputId !== 'installation_height_m') {
-        errors.push({ code: 'NEGATIVE_QUANTITY', message: `Input '${inputId}' must be non-negative`, field: inputId });
+      } else {
+        // Quantity inputs must be strictly positive (> 0)
+        const QUANTITY_INPUTS = new Set(['item_count','ac_count','hours','worker_count',
+          'surface_m2','painted_m2','ceiling_m2','hinge_count','drawer_count',
+          'ac_capacity_btu','door_width_cm','tv_inches']);
+        if (QUANTITY_INPUTS.has(inputId) && val <= 0) {
+          errors.push({ code: 'NEGATIVE_QUANTITY', message: `Input '${inputId}' must be > 0`, field: inputId });
+        } else if (!QUANTITY_INPUTS.has(inputId) && inputId !== 'installation_height_m' && val < 0) {
+          errors.push({ code: 'NEGATIVE_QUANTITY', message: `Input '${inputId}' must be non-negative`, field: inputId });
+        }
       }
     } else if (dtype === 'number') {
       if (typeof val !== 'number' || !isFinite(val)) {
         errors.push({ code: 'INVALID_INPUT_TYPE', message: `Input '${inputId}' must be a finite number`, field: inputId });
-      } else if (val < 0) {
-        errors.push({ code: 'NEGATIVE_QUANTITY', message: `Input '${inputId}' must be non-negative`, field: inputId });
+      } else {
+        const NUMBER_QUANTITY_INPUTS = new Set(['hours','surface_m2','painted_m2','ceiling_m2','tv_weight_kg']);
+        if (NUMBER_QUANTITY_INPUTS.has(inputId) && val <= 0) {
+          errors.push({ code: 'NEGATIVE_QUANTITY', message: `Input '${inputId}' must be > 0`, field: inputId });
+        } else if (!NUMBER_QUANTITY_INPUTS.has(inputId) && val < 0) {
+          errors.push({ code: 'NEGATIVE_QUANTITY', message: `Input '${inputId}' must be non-negative`, field: inputId });
+        }
       }
     } else if (dtype === 'boolean') {
       if (typeof val !== 'boolean') {
@@ -195,6 +208,102 @@ function evaluateEligibility(svc, inputs) {
 
 // ─── Hard exclusion evaluator ─────────────────────────────────────────────────
 
+/**
+ * Parse and evaluate a canonical trigger prose string against inputs.
+ *
+ * Supported patterns:
+ *   field = True / False
+ *   field = VALUE
+ *   field IN [A, B, C]
+ *   field NOT_IN [A, B, C]
+ *   field GT number
+ *   field LT number
+ *   cond1 AND cond2
+ *   cond1 OR cond2
+ *
+ * No eval. No dynamic Function. Pure string parsing.
+ */
+function parseTrigger(trigStr, inputs) {
+  if (!trigStr) return false;
+  const s = trigStr.trim();
+
+  // AND (split on ' AND ', left-to-right)
+  const andIdx = s.indexOf(' AND ');
+  if (andIdx !== -1) {
+    return parseTrigger(s.slice(0, andIdx), inputs) && parseTrigger(s.slice(andIdx + 5), inputs);
+  }
+
+  // OR (split on ' OR ', left-to-right)
+  const orIdx = s.indexOf(' OR ');
+  if (orIdx !== -1) {
+    return parseTrigger(s.slice(0, orIdx), inputs) || parseTrigger(s.slice(orIdx + 4), inputs);
+  }
+
+  // field IN [A, B, C]
+  const inMatch = s.match(/^(\w+)\s+IN\s+\[([^\]]+)\]$/);
+  if (inMatch) {
+    const field = inMatch[1];
+    const vals = inMatch[2].split(',').map(v => v.trim());
+    const fv = inputs[field];
+    return fv !== undefined && vals.includes(String(fv));
+  }
+
+  // field NOT_IN [A, B, C]
+  const notInMatch = s.match(/^(\w+)\s+NOT_IN\s+\[([^\]]+)\]$/);
+  if (notInMatch) {
+    const field = notInMatch[1];
+    const vals = notInMatch[2].split(',').map(v => v.trim());
+    const fv = inputs[field];
+    return fv === undefined || !vals.includes(String(fv));
+  }
+
+  // field GT number
+  const gtMatch = s.match(/^(\w+)\s+GT\s+(-?\d+(?:\.\d+)?)$/);
+  if (gtMatch) {
+    const fv = inputs[gtMatch[1]];
+    return fv !== undefined && Number(fv) > Number(gtMatch[2]);
+  }
+
+  // field LT number
+  const ltMatch = s.match(/^(\w+)\s+LT\s+(-?\d+(?:\.\d+)?)$/);
+  if (ltMatch) {
+    const fv = inputs[ltMatch[1]];
+    return fv !== undefined && Number(fv) < Number(ltMatch[2]);
+  }
+
+  // field = True
+  const trueMatch = s.match(/^(\w+)\s*=\s*True$/);
+  if (trueMatch) {
+    const fv = inputs[trueMatch[1]];
+    return fv === true || fv === 'True' || fv === 'true';
+  }
+
+  // field = False
+  const falseMatch = s.match(/^(\w+)\s*=\s*False$/);
+  if (falseMatch) {
+    const fv = inputs[falseMatch[1]];
+    return fv === false || fv === 'False' || fv === 'false';
+  }
+
+  // field = VALUE (string/enum)
+  const eqMatch = s.match(/^(\w+)\s*=\s*(\S+)$/);
+  if (eqMatch) {
+    const fv = inputs[eqMatch[1]];
+    if (fv === undefined) return false;
+    return String(fv) === eqMatch[2];
+  }
+
+  // Bare field name (no operator) — treat as boolean-truthy check: field === true
+  const bareMatch = s.match(/^(\w+)$/);
+  if (bareMatch) {
+    const fv = inputs[bareMatch[1]];
+    return fv === true || fv === 'True' || fv === 'true';
+  }
+
+  // Unrecognized trigger pattern — treat as not fired (safe: never fires false positive)
+  return false;
+}
+
 function evaluateHardExclusions(svc, inputs, routeIndex) {
   const elig = svc.eligibility || {};
 
@@ -205,8 +314,8 @@ function evaluateHardExclusions(svc, inputs, routeIndex) {
       const { result } = evaluatePredicate(excl.trigger_condition, inputs);
       fired = result;
     } else if (excl.trigger) {
-      // Prose trigger — cannot evaluate programmatically, skip
-      fired = false;
+      // Parse canonical trigger prose string
+      fired = parseTrigger(excl.trigger, inputs);
     }
 
     if (!fired) continue;
@@ -228,7 +337,7 @@ function evaluateHardExclusions(svc, inputs, routeIndex) {
     return {
       fired: true,
       action,
-      reason_code: excl.reason_code || action,
+      reason_code: excl.id || excl.reason_code || action,
       reason: excl.reason || excl.description || `Hard exclusion: ${action}`,
       routing
     };
@@ -699,6 +808,9 @@ function evaluateFixeoPrice({ service_code, inputs = {} } = {}) {
     UNIT_MULTIPLICATION_WITH_FLOOR: [pm.quantity_input || (pm.unit === 'PER_AC_UNIT' ? 'ac_count' : pm.unit === 'PER_M2' ? 'surface_m2' : pm.unit === 'PER_PAINTED_M2' ? 'painted_m2' : pm.unit === 'PER_CEILING_M2' ? 'ceiling_m2' : 'item_count')],
   };
   for (const inp of (modelInputMap[model] || [])) { if (inp) referencedInputs.add(inp); }
+  // Add batch guard inputs for menuiserie services (validated before batch guard fires)
+  if (canonicalCode === 'menuiserie.remplacement_charniere') referencedInputs.add('hinge_count');
+  if (canonicalCode === 'menuiserie.remplacement_coulisse_tiroir') referencedInputs.add('drawer_count');
 
   const validationErrors = validateInputs(inputs, [...referencedInputs], inputIndex);
   if (validationErrors.length > 0) {
