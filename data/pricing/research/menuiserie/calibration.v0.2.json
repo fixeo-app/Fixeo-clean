@@ -1,0 +1,654 @@
+{
+  "schema_version": "v0.2",
+  "metier": "menuiserie",
+  "phase": "7B.10.1",
+  "type": "HUMAN_CALIBRATION_PREPARATION",
+  "status": "HUMAN_PRICE_DECISION_REQUIRED",
+  "generated_at": "2026-08-09",
+  "based_on_research_commit": "184e154",
+  "v01_artifacts_status": "IMMUTABLE — not modified",
+
+  "global_policy": {
+    "price_formula": "FIXEO_STANDARD_MENUISERIE_PRICE = LABOUR + TRAVEL_INCLUDED + BASIC_CONSUMABLES",
+    "hardware_formula": "VARIABLE_HARDWARE = SEPARATE — client-disclosed and client-approved before purchase",
+    "minimum_floor_universal": 100,
+    "minimum_floor_menuiserie_candidate": {
+      "proposed": 300,
+      "range_tested": [250, 300, 350, 400],
+      "label": "FIXEO_POLICY — not market fact",
+      "rationale": "Menuiserie minimum structurally higher than Bricolage (200 MAD) due to: specialist precision tools (drill, chisel, level, rabot), hardware diagnosis skill, hardware sourcing complexity, greater setup burden, higher qualification. Standard menuisier daily rate 300-500 MAD/day (lechantier.ma Grade B). At 30-min minimum visit: 150-250 MAD pure labour + 80-150 MAD burdened travel/tool overhead = 230-400 MAD effective cost floor. 300 MAD is the mid-point of the justified range.",
+      "architecture": "EMBEDDED_IN_SERVICE_PRICES — not a separate charge; see anti_double_charge_doctrine"
+    },
+    "anti_double_charge_doctrine": {
+      "rule": "FINAL_PRICE = max(MENUISERIE_MINIMUM, STANDARD_SERVICE_PRICE) — never minimum + service",
+      "example_correct": "If minimum = 300 MAD and door adjustment = 350 MAD → client pays 350 MAD",
+      "example_wrong": "300 MAD minimum + 350 MAD adjustment = 650 MAD — PROHIBITED",
+      "rationale": "Minimum is a floor protecting the artisan on simple/quick work. It does not add to legitimate service prices that already exceed the floor."
+    },
+    "hardware_doctrine": {
+      "sequence": ["IDENTIFY broken/needed hardware", "SPECIFY type and brand/quality tier", "STATE unit price to client", "GET CLIENT APPROVAL", "PURCHASE or supply", "INSTALL", "RETURN old part where appropriate"],
+      "silent_bundling": "PROHIBITED",
+      "silent_markup": "PROHIBITED",
+      "part_supply_model": {
+        "preferred": "MODEL_B — ARTISAN_SUPPLIED_AT_DISCLOSED_PRICE",
+        "model_a": "CLIENT_SUPPLIED_PART — acceptable when client provides compatible compatible part; artisan must verify compatibility before installation; no warranty on client-supplied hardware",
+        "model_b": "ARTISAN_SUPPLIED_AT_DISCLOSED_PRICE — artisan sources, discloses cost, client approves. Preferred: artisan efficiency, correct part guaranteed",
+        "model_c": "PART_INCLUDED_IN_FIXED_PRICE — REJECTED for variable hardware (hinge type, runner quality create 3× cost variation). Acceptable only for consumables (screws, wood glue) below 10 MAD total",
+        "rationale_reject_c": "Standard vs soft-close hinge: 20-40 MAD vs 59-120 MAD. Bundling at mid-price is either unfair to artisan (on soft-close job) or unfair to client (on standard job). Transparency requires disclosure."
+      }
+    },
+    "hardware_sourcing_policy": {
+      "scenario_a": "Client already has compatible part → artisan installs → no sourcing charge",
+      "scenario_b": "Artisan brings likely compatible standard part (hinge, basic runner) → install → disclose part cost",
+      "scenario_c": "Artisan diagnoses need but must source non-standard/unavailable part → SEPARATE QUOTE for return visit",
+      "return_visit_policy": "If artisan must leave, source, and return → treat as second intervention; price separately or as quoted package. Do not hide sourcing time in first-visit labour.",
+      "recommendation": "Artisans should carry a basic toolkit of most common hinges (standard + soft-close) and runners (standard pair 35-40cm, 45cm, 50cm) to minimize return visits."
+    },
+    "custom_fabrication_doctrine": {
+      "status": "QUOTE_REQUIRED — immutable for estimator V1",
+      "services": ["MENU_007", "MENU_008", "MENU_009", "MENU_010", "MENU_011"],
+      "per_linear_metre_ranges": "REFERENCE_EVIDENCE_ONLY — not FIXEO standard prices",
+      "rationale": "Material choice alone (mélaminé vs MDF laqué vs bois massif) creates 3-5× price variation. Scope definitions (upper+lower vs lower only; worktop included or not; hardware brand) create further 30-50% variation. CuisinAffaires (25,000+ kitchens) explicitly states prix au mètre is misleading. No standardization possible without full client brief and site measurement."
+    }
+  },
+
+  "calibration_candidates": [
+
+    {
+      "service_code": "MENU_001",
+      "label": "Réglage porte intérieure (ajustement, frottement)",
+      "v01_confidence": "LOW",
+      "v01_research_anchor": null,
+      "external_implied_range": {"low": 150, "high": 300, "basis": "Implied from menuisier daily rate 300-500 MAD/day (Grade B). 30-60 min intervention = 150-250 MAD pure labour + tool/travel overhead."},
+      "calibration_status": "CALIBRATE_NOW",
+
+      "candidate_prices_tested": [
+        {
+          "price": 250,
+          "assessment": "BORDERLINE — 20% commission → artisan 200 MAD. At mid-travel (100 MAD), net 100 MAD. Tight but defensible for very short (20-min) adjustment only. Risk: artisan rushes precision work.",
+          "verdict": "TOO_LOW for standard case"
+        },
+        {
+          "price": 300,
+          "assessment": "RECOMMENDED MINIMUM — 20% commission → artisan 240 MAD. At mid-travel (100 MAD), net 140 MAD for 30-45 min skilled work + tools. 15% commission → 255 MAD artisan; net 155 MAD. Viable with artisan carrying tools.",
+          "verdict": "VIABLE — recommended anchor"
+        },
+        {
+          "price": 350,
+          "assessment": "COMFORTABLE — 20% commission → artisan 280 MAD. Net ~180 MAD after travel. Good for any adjustment taking 30-60 min including planing (rabotage léger). Aligns with market expectation for skilled repair visit.",
+          "verdict": "VIABLE — reasonable upper anchor for 'with minor planing'"
+        },
+        {
+          "price": 400,
+          "assessment": "HIGH for pure adjustment — 20% commission → artisan 320 MAD. Justified only if door requires planing AND multiple re-checks AND >60 min. Risk: client perception of overcharge for 'just adjusting a door'.",
+          "verdict": "ACCEPTABLE only for complex adjustment; consider escape to QUOTE above this level"
+        }
+      ],
+
+      "recommended_calibration": {
+        "simple_adjustment": 300,
+        "with_planing": 350,
+        "label": "FIXEO_POLICY",
+        "architecture": "CONDITIONAL_FIXED",
+        "pricing_unit": "PER_DOOR",
+        "rationale": "Two-tier within service: simple (300 MAD) covers hinge tightening, alignment, lubrication; with-planing (350 MAD) covers same plus rabotage léger. Keeps price client-readable without forcing quote for minor planing."
+      },
+
+      "scope_definition": {
+        "inclusions": [
+          "ONE standard interior wooden/MDF door",
+          "hinge tightening and adjustment",
+          "door alignment check",
+          "lubrication (hinges, stops)",
+          "screw tightening and replacement where stripped",
+          "rabotage léger (minor planing) — applies +50 MAD tier"
+        ],
+        "exclusions": [
+          "lock or cylinder mechanism → SERRURERIE",
+          "security door / porte blindée",
+          "rotten or structurally damaged frame",
+          "major frame deformation requiring masonry (→ MAÇONNERIE)",
+          "full door replacement",
+          "major wood reconstruction",
+          "non-standard / custom door",
+          "more than one door per booking (repeat at same price per door)"
+        ],
+        "complexity_escape_conditions": [
+          "Frame structurally damaged → stop, advise client, QUOTE or route MAÇONNERIE",
+          "Wood rot found beyond surface → stop, advise, QUOTE",
+          "Door warp requires full rehang + new hinge set → escalate to MENU_007",
+          "Lock action impaired by alignment → fix alignment only; lock work routes to SERRURERIE"
+        ]
+      },
+
+      "pre_screening_questions": [
+        "Quelle type de porte ? (intérieure bois/MDF — porte chambre, salle de bain, cuisine)",
+        "Quel est le problème ? (frotte / ne ferme pas / bruyante / tordue)",
+        "La charnière est-elle cassée ou juste mal réglée ?",
+        "Le cadre (bâti) est-il endommagé ou en bon état ?",
+        "La porte est-elle standard ou sur mesure ?"
+      ],
+
+      "economic_model": {
+        "client_price": 300,
+        "commission_scenarios": [
+          {"rate": 0, "artisan_gross": 300, "travel_mid": 100, "tool_burden": 30, "artisan_net": 170, "viable": true},
+          {"rate": 0.10, "artisan_gross": 270, "travel_mid": 100, "tool_burden": 30, "artisan_net": 140, "viable": true},
+          {"rate": 0.15, "artisan_gross": 255, "travel_mid": 100, "tool_burden": 30, "artisan_net": 125, "viable": true},
+          {"rate": 0.20, "artisan_gross": 240, "travel_mid": 100, "tool_burden": 30, "artisan_net": 110, "viable": "BORDERLINE — floor 100 MAD met; real edge case if high travel"}
+        ],
+        "tool_burden_note": "Drill/driver, level, chisels, wood file, lubricant. ~30 MAD amortized burden per intervention.",
+        "travel_scenarios": {
+          "low": 60,
+          "mid": 100,
+          "high": 150
+        },
+        "floor_check": "At 300 MAD / 20% commission / high travel 150 MAD / tools 30 MAD → artisan net 60 MAD. BELOW FLOOR. Suggests 300 MAD may be tight in high-travel urban scenarios. 350 MAD resolves this. Recommend 300 MAD as city-centre floor, note risk for outlying areas.",
+        "recommended_artisan_net_target_label": "FIXEO_POLICY",
+        "recommended_artisan_net_target": 150
+      },
+
+      "human_decision": "PENDING",
+      "production_ready": false
+    },
+
+    {
+      "service_code": "MENU_002",
+      "label": "Remplacement charnière meuble / placard (labour fixe + pièce séparée)",
+      "v01_confidence": "LOW",
+      "v01_research_anchor": null,
+      "external_implied_range": {"low": 150, "high": 250, "basis": "30-45 min implied from daily rate. Hardware 20-120 MAD separately."},
+      "calibration_status": "CALIBRATE_NOW",
+
+      "hardware_prices_confirmed": {
+        "standard_hinge": {"low": 20, "high": 40, "unit": "per_hinge", "source": "SRC_MENU_013"},
+        "soft_close_hinge": {"low": 59, "high": 120, "unit": "per_hinge", "source": "SRC_MENU_013"},
+        "note": "Hardware price disclosed and approved BEFORE purchase. Always separate from labour."
+      },
+
+      "batch_economics_analysis": {
+        "question": "Should 1 hinge and 4 hinges on the same cabinet have the same labour fee?",
+        "analysis": "Replacing 1 hinge: dismantle door, remove old hinge, fit new hinge, rehang door, adjust — 20-30 min. Replacing 4 hinges on same door (or two doors same cabinet): door already off, 4× hinge swap — adds ~15-20 min. Replacing 4 hinges on 2 different cabinets: 2 doors-off cycles — adds ~30 min.",
+        "recommendation": "SAME_VISIT_BASE_FEE + INCREMENTAL_PER_ADDITIONAL_HINGE_SAME_VISIT",
+        "architecture_options": [
+          {
+            "option": "A — One-visit flat fee (up to 4 hinges)",
+            "assessment": "Simple for client. Unfair to artisan on single-hinge job vs 4-hinge. But 20-30 MAD per additional hinge hardware limits artisan exposure. Acceptable if flat labour = value for 2-hinge average.",
+            "verdict": "ACCEPTABLE if fee is set at 2-hinge equivalent (~250-300 MAD)"
+          },
+          {
+            "option": "B — Base visit + incremental per extra hinge",
+            "assessment": "More precise. Base: 250 MAD (covers visit + 1st hinge). Each additional hinge same door/visit: +50 MAD labour. Simple math for artisan. Transparent for client.",
+            "verdict": "RECOMMENDED — avoids flat-fee distortion at extremes"
+          },
+          {
+            "option": "C — Per-hinge flat labour",
+            "assessment": "150 MAD per hinge seems reasonable but: 4 hinges = 600 MAD labour alone, which is 2× a full door install. Overprices batch. Underprices single visit (travel is fixed cost).",
+            "verdict": "REJECTED — creates unreasonable totals at scale"
+          }
+        ],
+        "recommended_architecture": "Option B: base_visit (250 MAD labour, covers 1 hinge) + additional_hinge_same_visit (50 MAD labour each). Cap: same door only for incremental; different cabinet = new base visit.",
+        "batch_examples": [
+          {"scenario": "1 hinge, standard", "labour": 250, "hardware_est": 30, "total_est": 280},
+          {"scenario": "2 hinges same door, standard", "labour": 300, "hardware_est": 60, "total_est": 360},
+          {"scenario": "4 hinges same door, soft-close", "labour": 400, "hardware_est": 400, "total_est": 800},
+          {"scenario": "4 hinges 2 cabinets same visit", "labour": 500, "hardware_est": 160, "total_est": 660}
+        ]
+      },
+
+      "candidate_prices_tested": [
+        {
+          "labour_base": 250,
+          "assessment": "20% commission → artisan 200 MAD gross. Mid-travel 100 MAD → net 100 MAD for 30 min skilled work. Tight but at hard floor. Acceptable only with incremental model where 2nd-4th hinges add margin.",
+          "verdict": "MINIMUM viable for base; needs incremental to work economically"
+        },
+        {
+          "labour_base": 300,
+          "assessment": "20% commission → artisan 240 MAD. Mid-travel → net 140 MAD. 30-45 min work. Comfortable.",
+          "verdict": "RECOMMENDED BASE — with +50 MAD each extra hinge same visit"
+        },
+        {
+          "labour_base": 350,
+          "assessment": "20% → artisan 280 MAD. Net ~180 MAD. Justified if hinge requires custom wood preparation (stripped hole repair, dowel fill).",
+          "verdict": "UPPER BASE — for complex hinge replacement requiring hole repair"
+        }
+      ],
+
+      "recommended_calibration": {
+        "base_labour_1st_hinge": 300,
+        "incremental_labour_per_extra_hinge_same_door": 50,
+        "hardware": "SEPARATE — client approved",
+        "label": "FIXEO_POLICY",
+        "architecture": "LABOUR_FIXED_PART_SEPARATE",
+        "pricing_unit": "FLAT_INTERVENTION_PLUS_INCREMENTAL"
+      },
+
+      "scope_definition": {
+        "inclusions": [
+          "ONE cabinet / wardrobe / placard door — standard accessible",
+          "up to 4 hinges same door (incremental pricing after 1st)",
+          "remove old hinge(s)",
+          "fit new hinge(s) — artisan supplies at disclosed price",
+          "rehang door",
+          "alignment adjustment",
+          "basic consumables (screws)"
+        ],
+        "exclusions": [
+          "stripped or rotten hinge hole requiring dowel repair → +scope, escalate to QUOTE",
+          "frame damage",
+          "door fabrication",
+          "more than one cabinet per booking without agreement",
+          "custom non-standard hinge requiring special order → QUOTE for return visit"
+        ]
+      },
+
+      "pre_screening_questions": [
+        "Quelle pièce de meuble ? (placard, armoire, cuisine)",
+        "Combien de portes concernées ?",
+        "Combien de charnières par porte ?",
+        "Type de charnière : standard ou fermeture douce (soft-close) ?",
+        "Le bois autour de la charnière est-il endommagé (arraché, pourri) ?",
+        "Avez-vous déjà la charnière de remplacement ?"
+      ],
+
+      "economic_model": {
+        "base_labour": 300,
+        "commission_scenarios": [
+          {"rate": 0.10, "artisan_gross": 270, "travel_mid": 100, "tool_burden": 20, "artisan_net": 150, "viable": true},
+          {"rate": 0.15, "artisan_gross": 255, "travel_mid": 100, "tool_burden": 20, "artisan_net": 135, "viable": true},
+          {"rate": 0.20, "artisan_gross": 240, "travel_mid": 100, "tool_burden": 20, "artisan_net": 120, "viable": true}
+        ],
+        "floor_check": "At 300 MAD base / 20% / high travel 150 / tools 20 → net 70 MAD. Edge case in high-travel area. Incremental hinge revenue + hardware improves economics quickly."
+      },
+
+      "human_decision": "PENDING",
+      "production_ready": false
+    },
+
+    {
+      "service_code": "MENU_003",
+      "label": "Remplacement coulisse tiroir (labour fixe + pièce séparée)",
+      "v01_confidence": "LOW",
+      "v01_research_anchor": null,
+      "external_implied_range": {"low": 225, "high": 300, "basis": "45-60 min implied from daily rate."},
+      "calibration_status": "CALIBRATE_NOW",
+
+      "hardware_prices_confirmed": {
+        "standard_runner_pair": {"low": 20, "high": 26, "unit": "per_pair", "source": "SRC_MENU_014 Mr. Bricolage"},
+        "quality_runner_pair_jumia": {"low": 55, "high": 99, "unit": "per_pair", "source": "SRC_MENU_014"},
+        "note": "Runners sold in pairs. Always replace as pair. Hardware disclosed and approved separately."
+      },
+
+      "batch_economics_analysis": {
+        "question": "2 drawers same cabinet — same or doubled labour?",
+        "analysis": "Drawer 1: remove drawer, detach old runners (2 sides), mount new runners, reinstall drawer, test — 30-40 min. Drawer 2 same cabinet: second pull-out, same process — 20-30 min additional. Same cabinet = same access setup, tool already positioned.",
+        "recommendation": "BASE visit (1 drawer) + INCREMENTAL per additional drawer same cabinet/same visit",
+        "incremental": "+100 MAD per additional drawer same cabinet (same access, tools positioned)",
+        "examples": [
+          {"scenario": "1 drawer, standard runners", "labour": 300, "hardware_est": 45, "total_est": 345},
+          {"scenario": "2 drawers same cabinet, standard", "labour": 400, "hardware_est": 90, "total_est": 490},
+          {"scenario": "1 drawer, soft-close runners", "labour": 300, "hardware_est": 80, "total_est": 380}
+        ]
+      },
+
+      "candidate_prices_tested": [
+        {
+          "labour_base": 250,
+          "assessment": "20% → artisan 200 MAD. At mid-travel → net 100 MAD for 40-50 min work (slower than hinge — drawer removal + runner mounting more steps). Tight.",
+          "verdict": "MARGINALLY viable only if travel is low"
+        },
+        {
+          "labour_base": 300,
+          "assessment": "20% → artisan 240 MAD. Mid-travel → net ~120-140 MAD. Comfortable for 40-50 min precise drawer work.",
+          "verdict": "RECOMMENDED BASE"
+        },
+        {
+          "labour_base": 350,
+          "assessment": "20% → artisan 280 MAD. Net ~170 MAD. Justified for custom drawer dimensions requiring adjustment or non-standard mounting.",
+          "verdict": "UPPER TIER for complex runner install"
+        }
+      ],
+
+      "recommended_calibration": {
+        "base_labour_1st_drawer": 300,
+        "incremental_per_additional_drawer_same_cabinet": 100,
+        "hardware": "SEPARATE — client approved",
+        "label": "FIXEO_POLICY",
+        "architecture": "LABOUR_FIXED_PART_SEPARATE",
+        "pricing_unit": "FLAT_INTERVENTION_PLUS_INCREMENTAL",
+        "quality_tiers": {
+          "standard_runner": "hardware at ~20-26 MAD/pair",
+          "soft_close_runner": "hardware at ~55-99 MAD/pair",
+          "note": "Artisan must disclose runner type and client must approve before purchase"
+        }
+      },
+
+      "scope_definition": {
+        "inclusions": [
+          "ONE drawer, standard accessible cabinet",
+          "remove drawer",
+          "remove old runner pair (both sides)",
+          "mount new runner pair at disclosed hardware cost",
+          "reinstall drawer",
+          "test and adjust",
+          "basic consumables (screws)"
+        ],
+        "exclusions": [
+          "drawer box reconstruction (broken drawer sides → QUOTE)",
+          "non-standard drawer dimensions requiring custom machining",
+          "fully embedded/integrated drawer systems (IKEA soft-close system etc.) requiring specialist tools",
+          "more than one cabinet without agreement",
+          "cabinet structural damage"
+        ]
+      },
+
+      "pre_screening_questions": [
+        "Quel meuble ? (cuisine, armoire, bureau)",
+        "Combien de tiroirs concernés ?",
+        "Le tiroir coulisse-t-il encore ou est-il complètement bloqué/sorti ?",
+        "Le caisson (boîte) du tiroir est-il en bon état ou endommagé ?",
+        "Type souhaité : coulisse standard ou soft-close (fermeture douce) ?",
+        "Avez-vous déjà les coulisses de remplacement ?"
+      ],
+
+      "economic_model": {
+        "base_labour": 300,
+        "commission_scenarios": [
+          {"rate": 0.10, "artisan_gross": 270, "travel_mid": 100, "tool_burden": 20, "artisan_net": 150, "viable": true},
+          {"rate": 0.15, "artisan_gross": 255, "travel_mid": 100, "tool_burden": 20, "artisan_net": 135, "viable": true},
+          {"rate": 0.20, "artisan_gross": 240, "travel_mid": 100, "tool_burden": 20, "artisan_net": 120, "viable": true}
+        ]
+      },
+
+      "human_decision": "PENDING",
+      "production_ready": false
+    },
+
+    {
+      "service_code": "MENU_004",
+      "label": "Ajustement porte coulissante placard (roulette, rail)",
+      "v01_confidence": "LOW",
+      "v01_research_anchor": null,
+      "external_implied_range": {"low": 150, "high": 300, "basis": "Implied from daily rate. Adjustment-only service; no direct Moroccan price evidence."},
+      "calibration_status": "CALIBRATE_NOW",
+
+      "distinction_critical": {
+        "adjustment_only": "Tighten, realign, clean track, adjust existing roller — no part replacement",
+        "roller_replacement": "LABOUR_FIXED_PART_SEPARATE — roller hardware ~30-80 MAD estimated each",
+        "track_replacement": "QUOTE_REQUIRED — track damage is structural, dimensions vary",
+        "note": "These three variants must route to different architectures. Pre-screening must triage before any price is stated."
+      },
+
+      "candidate_prices_tested": [
+        {
+          "price": 300,
+          "assessment": "20% → artisan 240 MAD. Mid-travel → net ~140 MAD. Reasonable for 20-40 min sliding door adjustment including track cleaning and roller check.",
+          "verdict": "VIABLE — aligns with MENU_001 door adjustment"
+        },
+        {
+          "price": 350,
+          "assessment": "20% → artisan 280 MAD. Net ~170 MAD. Justified for sliding system with multiple panels or complex two-track system.",
+          "verdict": "VIABLE — upper anchor for 2+ panel systems"
+        },
+        {
+          "price": 400,
+          "assessment": "20% → artisan 320 MAD. Net ~200 MAD. High for pure adjustment; only if complex multi-panel system requiring precise balancing.",
+          "verdict": "ONLY IF multiple panels and significant realignment"
+        },
+        {
+          "price": 450,
+          "assessment": "At this level, quote is more appropriate — risk of scope inflation.",
+          "verdict": "ESCAPE TO QUOTE above 400 MAD"
+        }
+      ],
+
+      "recommended_calibration": {
+        "adjustment_only_single_panel": 300,
+        "adjustment_two_plus_panels": 350,
+        "roller_replacement": "LABOUR_FIXED_PART_SEPARATE — +200 MAD labour per roller pair + hardware at disclosed price",
+        "hardware": "PART_SEPARATE — rollers at disclosed price if replacement needed; adjustment-only variant has no hardware charge",
+        "label": "FIXEO_POLICY",
+        "architecture": "CONDITIONAL_FIXED",
+        "pricing_unit": "FLAT_INTERVENTION"
+      },
+
+      "scope_definition": {
+        "inclusions": [
+          "ONE wardrobe/sliding-door system",
+          "alignment check",
+          "track cleaning and debris removal",
+          "roller adjustment (height/position) if adjustable",
+          "minor tightening",
+          "lubrication of track"
+        ],
+        "exclusions": [
+          "roller replacement (→ LABOUR_FIXED_PART_SEPARATE)",
+          "track replacement (→ QUOTE)",
+          "panel warped/structurally deformed (→ QUOTE)",
+          "custom/non-standard panel requiring fabrication",
+          "mirror panel handling (fragility risk — separate disclaimer)",
+          "major cabinet structural deformation"
+        ],
+        "complexity_escape_conditions": [
+          "Track is bent or broken → QUOTE",
+          "Roller housing is broken beyond adjustment → PART_SEPARATE",
+          "Panel itself is warped → QUOTE",
+          "Custom-made panel cannot be re-engaged → QUOTE"
+        ]
+      },
+
+      "pre_screening_questions": [
+        "Quel type de porte ? (porte coulissante placard chambre / dressing / penderie)",
+        "Combien de panneaux coulissants ?",
+        "Le problème : dérailler / ne coulisse pas / bruit / désaxée ?",
+        "La roulette est-elle visible et cassée ou juste usée ?",
+        "Le rail (bas ou haut) est-il endommagé ou déformé ?",
+        "La porte est-elle en bois/MDF ou avec miroir ?"
+      ],
+
+      "economic_model": {
+        "candidate_price": 300,
+        "commission_scenarios": [
+          {"rate": 0.10, "artisan_gross": 270, "travel_mid": 100, "tool_burden": 20, "artisan_net": 150, "viable": true},
+          {"rate": 0.15, "artisan_gross": 255, "travel_mid": 100, "tool_burden": 20, "artisan_net": 135, "viable": true},
+          {"rate": 0.20, "artisan_gross": 240, "travel_mid": 100, "tool_burden": 20, "artisan_net": 120, "viable": true}
+        ]
+      },
+
+      "human_decision": "PENDING",
+      "production_ready": false
+    },
+
+    {
+      "service_code": "MENU_006",
+      "label": "Pose porte intérieure — main d'œuvre seule (client fournit la porte)",
+      "v01_confidence": "MEDIUM",
+      "v01_research_anchor": "300-700 MAD (EV_MENU_006 — corroborated by SRC_MENU_004 allo-maison and SRC_MENU_005 fixeo.ma blog)",
+      "external_range_confirmed": {"low": 300, "high": 700, "basis": "Two C/C+ Moroccan sources corroborate. Labour only, standard conditions."},
+      "calibration_status": "CALIBRATE_NOW",
+
+      "eligibility_conditions": {
+        "client_must_provide": ["door leaf (vantail)", "standard hardware if any beyond basic hinges"],
+        "existing_frame_requirement": "Frame/bâti must be compatible with new door. If frame requires replacement → route to QUOTE (scope expands to frame supply and installation).",
+        "standard_dimensions": "Standard Moroccan interior door widths: 73cm, 83cm, 93cm. Non-standard → QUOTE.",
+        "access": "Normal residential access. No stairs/elevator exclusion unless extreme (>4 floors no lift with heavy door).",
+        "old_door_removal": "Must be specified: removal included or not (see inclusions below)"
+      },
+
+      "inclusions_matrix": {
+        "baseline_includes": [
+          "hang door leaf on existing compatible frame",
+          "fit standard hinges (2-3 depending on door height)",
+          "adjust door alignment",
+          "minor planing (rabotage léger) if door needs slight sizing",
+          "fit door stop/arrêt de porte if present",
+          "basic cleanup"
+        ],
+        "old_door_removal": {
+          "question": "Is removal of old door leaf included?",
+          "recommendation": "INCLUDE in base price — client rarely has means to remove heavy door safely; partial service creates disputes",
+          "note": "Old door disposal NOT included — client arrangement"
+        },
+        "handle_and_strike_plate": {
+          "question": "Is handle hole prep and strike plate fitting included?",
+          "recommendation": "YES — handle hole preparation (drilling) and basic strike plate fitting are integral to the door installation. Lock/cylinder fitting routes to SERRURERIE.",
+          "boundary": "Handle prep included; lock mechanism excluded → SERRURERIE"
+        }
+      },
+
+      "candidate_prices_tested": [
+        {
+          "price": 400,
+          "assessment": "20% → artisan 320 MAD. Mid-travel → net ~200 MAD for 1-1.5h work (hang, align, test, plane if needed). Viable. Slightly low for doors requiring significant planing.",
+          "verdict": "VIABLE — lower anchor for simple hang, good frame, no planing"
+        },
+        {
+          "price": 500,
+          "assessment": "20% → artisan 400 MAD. Net ~280 MAD for ~1.5h. Comfortable. Market mid-point for most standard interior door installs.",
+          "verdict": "RECOMMENDED ANCHOR — covers standard conditions including minor planing"
+        },
+        {
+          "price": 600,
+          "assessment": "20% → artisan 480 MAD. Net ~360 MAD for ~2h. Justified for heavier doors, significant planing, removal of old door.",
+          "verdict": "UPPER VIABLE — for heavy door or old door removal included + planing"
+        },
+        {
+          "price": 700,
+          "assessment": "20% → artisan 560 MAD. Net ~440 MAD. At this level a QUOTE may be more appropriate — risk of scope creep expectations.",
+          "verdict": "ACCEPTABLE upper limit; above this → QUOTE"
+        }
+      ],
+
+      "recommended_calibration": {
+        "standard_door_no_removal": 500,
+        "with_old_door_removal": 550,
+        "label": "FIXEO_POLICY",
+        "architecture": "CONDITIONAL_FIXED",
+        "pricing_unit": "PER_DOOR",
+        "note": "If human prefers simpler single price: 500 MAD including old door removal is defensible and avoids client confusion on scope."
+      },
+
+      "scope_final_definition": {
+        "inclusions": [
+          "remove old door leaf (included in recommended price)",
+          "hang new door leaf on existing compatible bâti",
+          "fit 2-3 standard hinges",
+          "door alignment and adjustment",
+          "rabotage léger (minor planing) if needed for fit",
+          "handle hole preparation if new handle required",
+          "basic strike plate fitting",
+          "cleanup"
+        ],
+        "exclusions": [
+          "door leaf supply → client provides",
+          "frame/bâti supply or replacement (→ QUOTE)",
+          "lock/cylinder fitting (→ SERRURERIE)",
+          "non-standard door dimensions",
+          "security door / porte blindée",
+          "masonry work for frame (→ MAÇONNERIE pre-work)",
+          "old door disposal (→ client arrangement)",
+          "paint/finish (→ PEINTURE)"
+        ],
+        "complexity_escape_conditions": [
+          "Frame not compatible → stop, advise, QUOTE",
+          "Door significantly oversized (>2cm trim needed) → QUOTE for custom planing",
+          "No existing frame → QUOTE (frame fabrication + install)",
+          "Heavy solid wood door >40kg → assess on-site, QUOTE if two-man job"
+        ]
+      },
+
+      "pre_screening_questions": [
+        "La porte (vantail) est-elle déjà achetée ? Quelle dimension ?",
+        "Le cadre (bâti) existant est-il en bon état ?",
+        "Y a-t-il une ancienne porte à retirer ?",
+        "S'agit-il d'une porte standard intérieure (chambre, salle de bain) ?",
+        "Avez-vous une poignée à installer ? (serrure ? → SERRURERIE pour cylindre)",
+        "Y a-t-il des travaux de mur/cadre nécessaires ?"
+      ],
+
+      "economic_model": {
+        "candidate_price": 500,
+        "commission_scenarios": [
+          {"rate": 0.10, "artisan_gross": 450, "travel_mid": 100, "tool_burden": 40, "artisan_net": 310, "viable": true},
+          {"rate": 0.15, "artisan_gross": 425, "travel_mid": 100, "tool_burden": 40, "artisan_net": 285, "viable": true},
+          {"rate": 0.20, "artisan_gross": 400, "travel_mid": 100, "tool_burden": 40, "artisan_net": 260, "viable": true}
+        ],
+        "tool_burden_note": "Drill/driver, chisels, rabot, level, square, hinges (artisan carries standard set). ~40 MAD amortized burden for door installation.",
+        "verdict": "Economically solid at 500 MAD — all commission scenarios produce viable artisan net (>200 MAD). This is the strongest candidate for standardization."
+      },
+
+      "human_decision": "PENDING",
+      "production_ready": false
+    },
+
+    {
+      "service_code": "MENU_005",
+      "label": "Petite réparation meuble bois",
+      "v01_confidence": "INSUFFICIENT",
+      "calibration_status": "DEFER",
+      "rationale": "No Moroccan external price anchor found in V0.1 research. AllohRayfi confirms service demand but publishes no price. Insufficient external evidence to support any candidate price without artisan-interview ground-truth. Risk: any price set without evidence is a guess, not a calibration. Recommend deferring until platform data or artisan interviews provide anchor.",
+      "human_decision": "PENDING",
+      "production_ready": false
+    }
+  ],
+
+  "minimum_intervention_analysis": {
+    "label": "MENUISERIE_MINIMUM_INTERVENTION",
+    "universal_hard_floor": 100,
+    "menuiserie_practical_minimum_candidate": 300,
+    "range_tested": [250, 300, 350, 400],
+    "architecture_recommendation": "EMBEDDED_IN_SERVICE_PRICES",
+    "architecture_options_evaluated": [
+      {
+        "option": "A — EXPLICIT MENUISERIE_MINIMUM_VISIT charge",
+        "assessment": "Transparent. Client knows minimum call-out. Risk: double-charge perception if combined with service. Requires strict anti-stack rule.",
+        "verdict": "VIABLE if anti-double-charge rule is ironclad"
+      },
+      {
+        "option": "B — EMBEDDED — services are priced so no service < minimum",
+        "assessment": "Cleaner client experience. All standardized services already ≥ 300 MAD. The minimum is implicit in service pricing. No separate line item.",
+        "verdict": "RECOMMENDED — aligns with BRICOLAGE and SERRURERIE pattern"
+      },
+      {
+        "option": "C — FLOOR FORMULA only",
+        "assessment": "max(MINIMUM, SERVICE_PRICE). Mechanically correct. Risk: internal complexity in estimator. But identical to option B if all services ≥ minimum.",
+        "verdict": "EQUIVALENT TO B — use B for simplicity"
+      }
+    ],
+    "recommendation": "Option B — EMBEDDED. All 5 calibration candidates are priced at or above 300 MAD, so the minimum is naturally satisfied without a separate charge. The anti-double-charge rule is still documented to prevent future mistakes.",
+    "metier_comparison": {
+      "bricolage_minimum": 200,
+      "menuiserie_minimum_candidate": 300,
+      "difference_justification": "Menuiserie specialist tools (precision drill, chisels, rabot, level) vs handyman tools. Higher qualification. Hardware diagnosis. Possible sourcing time. Tool burden amortized over fewer specialist visits per day."
+    },
+    "label_required": "FIXEO_POLICY — not market fact"
+  },
+
+  "batch_economics_summary": {
+    "hinge_replacement": {
+      "1_hinge": {"labour": 300, "hardware_est": 30, "total_est": 330},
+      "2_hinges_same_door": {"labour": 350, "hardware_est": 60, "total_est": 410},
+      "4_hinges_same_door": {"labour": 450, "hardware_est": 120, "total_est": 570},
+      "4_hinges_2_cabinets": {"labour": 600, "hardware_est": 120, "total_est": 720},
+      "note": "Second cabinet = new base visit labour"
+    },
+    "drawer_runners": {
+      "1_drawer": {"labour": 300, "hardware_est": 45, "total_est": 345},
+      "2_drawers_same_cabinet": {"labour": 400, "hardware_est": 90, "total_est": 490},
+      "3_drawers_same_cabinet": {"labour": 500, "hardware_est": 135, "total_est": 635},
+      "note": "Totals include standard runner hardware estimate"
+    },
+    "reasonableness_check": {
+      "4_hinges_same_door_total": "570 MAD — reasonable for 60-90 min work + 4 soft-close hinges",
+      "2_drawers_same_cabinet_total": "490 MAD — reasonable for 60-70 min work + 2 runner pairs",
+      "verdict": "No unreasonable totals detected. Batch economics scale logically without distortion."
+    }
+  },
+
+  "city_adjustment": null,
+  "urgency_modifier": null,
+  "night_modifier": null,
+  "weekend_modifier": null,
+  "holiday_modifier": null,
+  "express_modifier": null
+}
