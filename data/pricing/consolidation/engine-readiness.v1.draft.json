@@ -1,0 +1,179 @@
+{
+  "_meta": {
+    "artifact": "engine-readiness.v1.draft.json",
+    "phase": "7C.3.1",
+    "date": "2026-08-09",
+    "status": "ENGINE_CORE_V1_READY",
+    "description": "Engine Core V1 readiness gate. All engine-blocking items resolved. Production readiness is separate — all services remain production_ready=false.",
+    "preceding_phases": ["7C.1", "7C.1.1", "7C.2", "7C.3", "7C.3.1"]
+  },
+
+  "engine_core_v1_readiness": {
+    "ENGINE_CORE_V1_READY": true,
+    "assessed_date": "2026-08-09",
+    "assessed_phase": "7C.3.1",
+
+    "gate_results": {
+      "engine_blocking_hrq_count_zero": {
+        "required": true,
+        "result": true,
+        "engine_blocking_count": 0,
+        "note": "HRQ-001 RESOLVED, HRQ-002 RESOLVED_FOR_ENGINE, HRQ-003 RESOLVED_FOR_ENGINE"
+      },
+      "all_required_canonical_inputs_defined": {
+        "required": true,
+        "result": true,
+        "input_registry": "data/pricing/consolidation/canonical-inputs.v1.draft.json",
+        "total_inputs": 34,
+        "note": "All inputs used by any predicate, formula, or eligibility gate are registered."
+      },
+      "no_engine_use_of_unvalidated_conversion": {
+        "required": true,
+        "result": true,
+        "note": "floor_to_painted_m2 conversion status = RESEARCH_ESTIMATION_ONLY, engine_v1_use = false. Engine receives painted_m2 directly.",
+        "measurement_doctrine": "DIRECT_CANONICAL_MEASUREMENT"
+      },
+      "no_engine_execution_of_experimental_batch": {
+        "required": true,
+        "result": true,
+        "note": "MENU_002/MENU_003 batch increments (EXPERIMENTAL_BATCH_RULE) are NOT executed by Engine V1. base_quantity = 1. Over-quantity → REQUALIFY / QUOTE_REQUIRED."
+      },
+      "no_price_changed": {
+        "required": true,
+        "result": true,
+        "note": "All 53 approved prices unchanged from V0.3 human decisions."
+      },
+      "no_runtime_integration_exists": {
+        "required": true,
+        "result": true,
+        "note": "Canonical registry is not imported, required, or loaded by any production runtime file."
+      }
+    },
+
+    "DOES_NOT_MEAN": {
+      "production_ready": false,
+      "all_services_production_ready": false,
+      "activation_flags_enabled": false,
+      "deployment_approved": false,
+      "note": "ENGINE_CORE_V1_READY = true means the engine can be implemented against this contract. All services remain production_ready = false. No activation until Stage 4 of migration plan."
+    }
+  },
+
+  "engine_v1_contract": {
+    "version": "V1",
+
+    "measurement_doctrine": {
+      "policy": "DIRECT_CANONICAL_MEASUREMENT",
+      "painted_m2_services": ["PEIN-002", "PEIN-003", "PEIN-005", "PEIN-008"],
+      "painted_m2_source": "DIRECT_CLIENT_INPUT",
+      "floor_to_painted_conversion": {
+        "status": "RESEARCH_ESTIMATION_ONLY",
+        "engine_v1_use": false,
+        "production_allowed": false
+      },
+      "future_ux": {
+        "name": "GUIDED_PAINTED_SURFACE_CALCULATOR",
+        "scope": "FUTURE_UX_ONLY",
+        "in_engine_v1": false,
+        "note": "May be added as a UX helper in a future estimator. Requires separate design + validation. Client must confirm painted_m2 before price execution. Engine still receives only painted_m2 — never floor_area_m2."
+      }
+    },
+
+    "rounding_policy": {
+      "policy": "EXACT_INTEGER_MAD",
+      "status": "APPROVED",
+      "approved_phase": "7C.3",
+      "NOT_APPROVED": ["NEAREST_5_MAD", "NEAREST_10_MAD", "PSYCHOLOGICAL_ROUNDING"]
+    },
+
+    "fractional_hour_policy": {
+      "net_002_engine_v1": "INTEGER_HOURS_ONLY",
+      "bric_002_engine_v1": "INTEGER_HOURS_ONLY",
+      "non_integer_behavior": "UNRESOLVED_NON_BLOCKING",
+      "nearest_30min_invented": false,
+      "hrq_ref": "HRQ-009",
+      "note": "Engine V1 accepts integer hours. No fractional-hour billing doctrine silently invented. Decimal handling is UNRESOLVED_NON_BLOCKING — to be resolved before estimator V1 handles non-integer hour inputs."
+    },
+
+    "batch_policy": {
+      "MENU_002": {
+        "engine_v1_base_quantity": 1,
+        "engine_v1_executes_batch": false,
+        "over_quantity_behavior": "REQUALIFY",
+        "over_quantity_disposition": "QUOTE_REQUIRED",
+        "experimental_increment_mad": 50,
+        "experimental_status": "DORMANT"
+      },
+      "MENU_003": {
+        "engine_v1_base_quantity": 1,
+        "engine_v1_executes_batch": false,
+        "over_quantity_behavior": "REQUALIFY",
+        "over_quantity_disposition": "QUOTE_REQUIRED",
+        "experimental_increment_mad": 100,
+        "experimental_status": "DORMANT"
+      },
+      "NET_002": {
+        "engine_v1_scaling": "TEAM_SCALING",
+        "worker_count_required": true,
+        "unit": "PER_CLEANER_HOUR",
+        "status": "APPROVED_CANONICAL"
+      },
+      "BRIC_002": {
+        "engine_v1_scaling": "SINGLE_ARTISAN_TIME",
+        "worker_count_required": false,
+        "unit": "PER_HOUR",
+        "status": "APPROVED_CANONICAL"
+      }
+    },
+
+    "semantic_corrections_confirmed": {
+      "plomberie_robinet_remplacement": {
+        "calculation_model": "LABOUR_FIXED_PART_SEPARATE",
+        "commercial_output_type": "FIXEO_LABOUR_PRICE_PLUS_PART",
+        "hrq": "HRQ-001",
+        "status": "RESOLVED",
+        "confirmation_type": "CANONICAL_SEMANTIC_CONFIRMATION"
+      },
+      "plomberie_chasse_eau": {
+        "calculation_model": "LABOUR_FIXED_PART_SEPARATE",
+        "commercial_output_type": "FIXEO_LABOUR_PRICE_PLUS_PART",
+        "hrq": "HRQ-001",
+        "status": "RESOLVED",
+        "confirmation_type": "CANONICAL_SEMANTIC_CONFIRMATION"
+      }
+    },
+
+    "service_count": 53,
+    "engine_executable_services": 53,
+    "production_ready_services": 0,
+    "activation_flags": false
+  },
+
+  "human_review_queue_summary": {
+    "total_items": 10,
+    "engine_blocking": 0,
+    "production_blocking": 5,
+    "non_blocking_or_resolved": 5,
+
+    "items": {
+      "HRQ-001": {"status": "RESOLVED", "engine": false, "production": false},
+      "HRQ-002": {"status": "RESOLVED_FOR_ENGINE", "engine": false, "production": true, "production_note": "UX measurement experience still pending"},
+      "HRQ-003": {"status": "RESOLVED_FOR_ENGINE", "engine": false, "production": false, "note": "Experimental batch dormant"},
+      "HRQ-004": {"status": "OPEN", "engine": false, "production": true, "production_note": "NET-030 field validation"},
+      "HRQ-005": {"status": "OPEN", "engine": false, "production": true, "production_note": "LOW/MEDIUM confidence pilot"},
+      "HRQ-006": {"status": "OPEN", "engine": false, "production": true, "production_note": "CLIM-025 copper add-on not calibrated"},
+      "HRQ-007": {"status": "OPEN", "engine": false, "production": false},
+      "HRQ-008": {"status": "OPEN", "engine": false, "production": true, "production_note": "Legal + Darija copy review"},
+      "HRQ-009": {"status": "OPEN", "engine": false, "production": false, "note": "Fractional hours UNRESOLVED_NON_BLOCKING"},
+      "HRQ-010": {"status": "OPEN", "engine": false, "production": false, "note": "Serrurerie prose correct by design"}
+    }
+  },
+
+  "production_gate_remaining": {
+    "description": "Items that must be resolved before any production activation. Engine V1 implementation may proceed in parallel.",
+    "items": ["HRQ-002 (UX)", "HRQ-004 (NET-030)", "HRQ-005 (pilot)", "HRQ-006 (CLIM-025)", "HRQ-008 (copy)"],
+    "production_promotion_gates_total": 10,
+    "production_promotion_gates_cleared": 0,
+    "note": "See canonical-registry.v1.draft.json _meta.migration_plan for the 10-gate production promotion checklist."
+  }
+}

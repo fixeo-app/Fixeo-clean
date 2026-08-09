@@ -6,9 +6,12 @@
     "production_ready": false,
     "date": "2026-08-09",
     "total_items": 10,
-    "engine_blocking_count": 2,
-    "production_blocking_count": 6,
-    "note": "Unresolved semantic issues requiring future human decision before production promotion. Only genuine semantic uncertainty is listed. Items with clear frozen evidence are NOT listed here — they are resolved in the canonical registry."
+    "engine_blocking_count": 0,
+    "production_blocking_count": 5,
+    "note": "Unresolved semantic issues requiring future human decision before production promotion. Only genuine semantic uncertainty is listed. Items with clear frozen evidence are NOT listed here — they are resolved in the canonical registry.",
+    "non_blocking_count": 5,
+    "last_updated_phase": "7C.3.1",
+    "last_updated_date": "2026-08-09"
   },
   "items": {
     "HRQ-001": {
@@ -22,9 +25,19 @@
       "why_not_machine_safe": "The pricing_architecture field (FIXEO_FIXED_PRICE) and the scope text (main-d'oeuvre seule, client-supplied part) directly contradict each other. Machine cannot resolve authority conflict without human confirmation.",
       "recommended_next_action": "Read plomberie/human-decision.v0.3.md section on robinet_remplacement and chasse_eau. If the decision document confirms labour-only with client-supplied part → classification is confirmed, remove this flag. If it confirms all-in fixed price → reclassify back to FIXEO_FIXED_PRICE with materials = ARTISAN_SUPPLIED and remove part disclosure policy refs.",
       "blocking_for_engine": false,
-      "blocking_for_production": true,
+      "blocking_for_production": false,
       "priority": "HIGH",
-      "effort": "MINUTES — simple document read and confirm"
+      "effort": "MINUTES — simple document read and confirm",
+      "status": "RESOLVED",
+      "resolution": {
+        "phase": "7C.3.1",
+        "date": "2026-08-09",
+        "decision": "CANONICAL_SEMANTIC_CONFIRMATION",
+        "outcome": "plomberie.robinet_remplacement and plomberie.chasse_eau confirmed LABOUR_FIXED_PART_SEPARATE / FIXEO_LABOUR_PRICE_PLUS_PART. Prices unchanged. V0.3 human decisions confirmed principal hardware excluded. No scope change.",
+        "engine_blocking": false,
+        "production_blocking": false
+      },
+      "classification": "RESOLVED"
     },
     "HRQ-002": {
       "review_id": "HRQ-002",
@@ -37,10 +50,20 @@
       "problem": "The canonical unit for all interior wall painting services is PER_PAINTED_M2 — the actual painted wall surface. This is NOT the floor area of the room or apartment. In practice, clients may not know their painted m² and may only know their floor area or room size. Any conversion from floor_m2 to painted_m2 is marked RESEARCH_ESTIMATION_ONLY in the canonical registry and is not approved for production. The estimator V1 must ask the client for painted_m2 directly, which may reduce conversion rates.",
       "why_not_machine_safe": "No validated conversion formula exists. The ratio of painted_m2 to floor_m2 varies substantially by ceiling height, room shape, number of windows/doors, and whether only some walls are painted. Any fixed ratio (e.g. 2.5×) would produce unreliable prices — potentially misleading clients.",
       "recommended_next_action": "Three options: (A) Estimator V1 always asks client for painted_m2 directly — cleaner, requires user input. (B) Estimator V1 provides a guided estimator tool (client inputs room dimensions + ceiling height + window count → system estimates painted_m2) — requires UX design approval. (C) Estimator V1 offers artisan-measured on-site pricing only — no pre-booking calculation. Human decision required on which option to implement before estimator V1 design.",
-      "blocking_for_engine": true,
+      "blocking_for_engine": false,
       "blocking_for_production": true,
       "priority": "HIGH",
-      "effort": "MEDIUM — requires UX and product decision"
+      "effort": "MEDIUM — requires UX and product decision",
+      "status": "RESOLVED_FOR_ENGINE",
+      "resolution": {
+        "phase": "7C.3.1",
+        "date": "2026-08-09",
+        "engine_decision": "DIRECT_CANONICAL_MEASUREMENT — engine receives painted_m2 directly. Must not derive from floor_area_m2.",
+        "ux_decision": "GUIDED_PAINTED_SURFACE_CALCULATOR is future UX scope. Separate from engine contract. Requires separate design/validation. Client must confirm painted_m2 before price execution.",
+        "conversion_status": "RESEARCH_ESTIMATION_ONLY — unchanged, production_allowed=false",
+        "resolved_for_engine": true,
+        "production_ux_review_remains": true
+      }
     },
     "HRQ-003": {
       "review_id": "HRQ-003",
@@ -52,10 +75,20 @@
       "problem": "MENU_002 (charnière) and MENU_003 (coulisse tiroir) have EXPERIMENTAL_BATCH_RULE: +50 MAD per additional hinge (same door) and +100 MAD per additional drawer (same cabinet). These rules are calibrated but marked NOT_PROMOTED_TO_UNIVERSAL_CANONICAL. The estimator V1 cannot know whether to apply the batch increment without explicit promotion approval. Currently: if client books N hinges, does the system apply 300 + (N-1)×50, or does it require separate bookings?",
       "why_not_machine_safe": "Batch pricing rules interact with the pricing engine in non-trivial ways. If promoted without a production test, the artisan might not honor the batch price if the platform communicates it to the client before the artisan confirms. The rule needs operational validation (how does artisan see it? how does client see it? is it a pre-booking calculation or a post-visit adjustment?).",
       "recommended_next_action": "Human decision: (A) promote EXPERIMENTAL_BATCH_RULE to APPROVED for estimator V1 (enables 300 + (N-1)×50 calculation). (B) Keep experimental — estimator shows base price for 1 item and notes 'additional items may apply'. (C) Define operational protocol (artisan confirms batch on arrival) before promotion. Requires explicit human decision before estimator V1 implementation.",
-      "blocking_for_engine": true,
+      "blocking_for_engine": false,
       "blocking_for_production": false,
       "priority": "MEDIUM",
-      "effort": "LOW — clear decision needed, no new research required"
+      "effort": "LOW — clear decision needed, no new research required",
+      "status": "RESOLVED_FOR_ENGINE",
+      "resolution": {
+        "phase": "7C.3.1",
+        "date": "2026-08-09",
+        "engine_decision": "Engine V1 scope = base quantity 1 for MENU_002/MENU_003. hinge_count>1 or drawer_count>1 → REQUALIFY / QUOTE_REQUIRED. Engine must NOT execute experimental +50/+100 MAD increments.",
+        "batch_status": "EXPERIMENTAL_BATCH_RULE — dormant, values preserved as research history only.",
+        "promotion_path": "Requires explicit human approval + normalized FIXEO field mission evidence.",
+        "resolved_for_engine": true,
+        "experimental_rule_remains_dormant": true
+      }
     },
     "HRQ-004": {
       "review_id": "HRQ-004",
@@ -69,7 +102,9 @@
       "blocking_for_engine": false,
       "blocking_for_production": true,
       "priority": "MEDIUM",
-      "effort": "HIGH — requires field data collection"
+      "effort": "HIGH — requires field data collection",
+      "classification": "PRODUCTION_BLOCKING",
+      "note": "Field validation needed before production activation of NET-030."
     },
     "HRQ-005": {
       "review_id": "HRQ-005",
@@ -91,7 +126,9 @@
       "blocking_for_engine": false,
       "blocking_for_production": true,
       "priority": "LOW",
-      "effort": "HIGH — requires field pilot program"
+      "effort": "HIGH — requires field pilot program",
+      "classification": "PRODUCTION_BLOCKING",
+      "note": "LOW/MEDIUM confidence services need pilot data before production."
     },
     "HRQ-006": {
       "review_id": "HRQ-006",
@@ -106,7 +143,9 @@
       "blocking_for_engine": false,
       "blocking_for_production": true,
       "priority": "MEDIUM",
-      "effort": "MEDIUM — requires dedicated CLIM-025 calibration or explicit QUOTE decision"
+      "effort": "MEDIUM — requires dedicated CLIM-025 calibration or explicit QUOTE decision",
+      "classification": "PRODUCTION_BLOCKING",
+      "note": "CLIM-025 copper add-on not calibrated — not in Engine V1 scope."
     },
     "HRQ-007": {
       "review_id": "HRQ-007",
@@ -120,7 +159,9 @@
       "blocking_for_engine": false,
       "blocking_for_production": false,
       "priority": "LOW",
-      "effort": "LOW — already encoded as soft flag in canonical registry"
+      "effort": "LOW — already encoded as soft flag in canonical registry",
+      "classification": "NON_BLOCKING",
+      "note": "BRIC-030 full-motion bracket soft flag — resolved informally."
     },
     "HRQ-008": {
       "review_id": "HRQ-008",
@@ -134,7 +175,9 @@
       "blocking_for_engine": false,
       "blocking_for_production": true,
       "priority": "HIGH",
-      "effort": "MEDIUM — review process, not research"
+      "effort": "MEDIUM — review process, not research",
+      "classification": "PRODUCTION_BLOCKING",
+      "note": "FR legal + Darija native copy review needed before client-facing deployment."
     },
     "HRQ-009": {
       "review_id": "HRQ-009",
@@ -148,7 +191,9 @@
       "blocking_for_engine": false,
       "blocking_for_production": false,
       "priority": "LOW",
-      "effort": "LOW — single product decision on hour granularity"
+      "effort": "LOW — single product decision on hour granularity",
+      "classification": "NON_BLOCKING",
+      "note": "NET-002 fractional hours: Engine V1 = integer hours only. Decimal behavior UNRESOLVED_NON_BLOCKING. No nearest-30min invented."
     },
     "HRQ-010": {
       "review_id": "HRQ-010",
@@ -163,7 +208,9 @@
       "blocking_for_engine": false,
       "blocking_for_production": false,
       "priority": "LOW",
-      "effort": "ZERO — already correctly encoded in registry"
+      "effort": "ZERO — already correctly encoded in registry",
+      "classification": "NON_BLOCKING",
+      "note": "Serrurerie prose eligibility is correct by design — artisan on-site assessment. Not a predicate gap."
     }
   }
 }
