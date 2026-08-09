@@ -23,7 +23,34 @@
     "note": "DRAFT NON_PRODUCTION — NOT imported by any runtime. NOT referenced by any production file. Phase 7C.2 design artifact only.",
     "runtime_import": false,
     "html_script_reference": false,
-    "supabase_reference": false
+    "supabase_reference": false,
+    "governance": {
+      "rounding_policy": {
+        "status": "APPROVED",
+        "mode": "EXACT_INTEGER_MAD",
+        "approved_by": "HUMAN_DECISION_PHASE_7C3",
+        "approved_date": "2026-08-09",
+        "description": "No commercial rounding is applied. Canonical FIXEO calculations preserve exact integer MAD results. If an input/formula could produce a non-integer MAD result, it must NOT be silently rounded — instead it must be flagged for explicit future handling. See HRQ-009 for the fractional-hours edge case.",
+        "integer_safe_formulas": [
+          "FIXED",
+          "CONDITIONAL_FIXED",
+          "MINIMUM_FLOOR",
+          "DIAGNOSTIC"
+        ],
+        "currently_exact_integer": [
+          "UNIT_MULTIPLICATION_WITH_FLOOR",
+          "TIME_BASED_SINGLE",
+          "TIME_BASED_TEAM",
+          "ADD_ON"
+        ],
+        "currently_exact_integer_note": "All current approved unit rates (65, 35, 45, 65, 75, 25, 18 MAD) × integer inputs × integer workers produce integer results with current data. If future inputs introduce fractional hours, see HRQ-009.",
+        "NOT_APPROVED": [
+          "NEAREST_5_MAD",
+          "NEAREST_10_MAD",
+          "PSYCHOLOGICAL_ROUNDING"
+        ]
+      }
+    }
   },
   "enums": {
     "calculation_models": [
@@ -1593,10 +1620,72 @@
       },
       "eligibility": {
         "qualification_status": "CONDITIONAL",
-        "required_conditions": [],
-        "hard_exclusions": [],
-        "prebooking_questions": [],
-        "supporting_prose": null
+        "structured": true,
+        "required_conditions": [
+          {
+            "id": "E-ELEC-DISJ-01",
+            "field": "distributor_equipment_involved",
+            "operator": "EQ",
+            "value": false,
+            "effect": "ELIGIBLE",
+            "description": "Must be private residential distribution board, not distributor-controlled equipment"
+          },
+          {
+            "id": "E-ELEC-DISJ-02",
+            "field": "mcb_defect_confirmed",
+            "operator": "EQ",
+            "value": "physically_broken",
+            "effect": "ELIGIBLE",
+            "description": "MCB must be physically defective — broken toggle, cracked housing, or non-latching. Repeated tripping without clear cause = DIAGNOSTIC_FIRST"
+          }
+        ],
+        "hard_exclusions": [
+          {
+            "id": "X-ELEC-DISJ-01",
+            "trigger": "distributor_equipment_involved = True",
+            "action": "ROUTE",
+            "description": "Distributor-controlled equipment (disjoncteur de branchement, utility seal present) is absolutely excluded. Charge 200 MAD diagnostic, direct client to ONEE or territory operator.",
+            "route_ref": "ROUTE-ELEC-ONEE-001",
+            "target_metier": "onee_distributor"
+          },
+          {
+            "id": "X-ELEC-DISJ-02",
+            "trigger": "burning_smell OR scorch_marks = True",
+            "action": "STOP_SAFETY",
+            "description": "Burning smell or scorch marks in tableau = SAFETY_OVERRIDE → HORS PÉRIMÈTRE. Full tableau assessment required. Quote."
+          },
+          {
+            "id": "X-ELEC-DISJ-03",
+            "trigger": "mcb_trips_repeatedly = True AND cause_unknown = True",
+            "action": "ROUTE",
+            "description": "Repeated tripping without clear assigned cause → DIAGNOSTIC_FIRST. Book electricite.diagnostic (200 MAD) first. May absorb into disjoncteur_remplacement if same-visit diagnosis confirms single defective MCB."
+          },
+          {
+            "id": "X-ELEC-DISJ-04",
+            "trigger": "multiple_mcbs_defective = True",
+            "action": "QUOTE_REQUIRED",
+            "description": "More than one MCB requiring replacement → full tableau assessment quote."
+          },
+          {
+            "id": "X-ELEC-DISJ-05",
+            "trigger": "ddr_rcd_involved = True",
+            "action": "QUOTE_REQUIRED",
+            "description": "DDR/RCD device replacement is a different, higher-cost service."
+          },
+          {
+            "id": "X-ELEC-DISJ-06",
+            "trigger": "three_phase_circuit = True",
+            "action": "QUOTE_REQUIRED",
+            "description": "Three-phase circuits are outside this service scope."
+          }
+        ],
+        "prebooking_question_refs": [
+          "Q-ELEC-DISTRIBUTOR",
+          "Q-ELEC-MCB-DEFECT",
+          "Q-ELEC-BURNING-SMELL"
+        ],
+        "supporting_prose": "If MCB is physically defective and all exclusion conditions are absent: proceed to replacement. Client supplies MCB of identical specification (same current rating, pole count, type). Artisan may supply certified MCB (Schneider, Legrand, ABB, Hager) with prior client approval — POL-PART-DISCLOSURE-V1 applies.",
+        "human_review_required": false
       },
       "policy_refs": [
         "POL-HORS-PERIMETRE-V1",
@@ -1833,10 +1922,52 @@
       },
       "eligibility": {
         "qualification_status": "CONDITIONAL",
-        "required_conditions": [],
-        "hard_exclusions": [],
-        "prebooking_questions": [],
-        "supporting_prose": null
+        "structured": true,
+        "required_conditions": [
+          {
+            "id": "E-SERR-BLINDEE-01",
+            "field": "security_door",
+            "operator": "EQ",
+            "value": true,
+            "effect": "ELIGIBLE",
+            "description": "Must be confirmed security/armoured door (porte blindée or renforcée)"
+          },
+          {
+            "id": "E-SERR-BLINDEE-02",
+            "field": "door_locked_with_key",
+            "operator": "EQ",
+            "value": false,
+            "effect": "ELIGIBLE",
+            "description": "Door must be slammed only (not locked with key). Locked → serrurerie.porte_verrouillee_ouverture (380 MAD) instead"
+          }
+        ],
+        "hard_exclusions": [
+          {
+            "id": "X-SERR-BLINDEE-01",
+            "trigger": "security_door = False",
+            "action": "ROUTE",
+            "description": "Standard door (non-blind) slammed → serrurerie.porte_claquee_ouverture (220 MAD)"
+          },
+          {
+            "id": "X-SERR-BLINDEE-02",
+            "trigger": "door_locked_with_key = True AND security_door = True",
+            "action": "QUOTE_REQUIRED",
+            "description": "Blindée AND locked with key → complex case, serrurerie specialist assessment required"
+          },
+          {
+            "id": "X-SERR-BLINDEE-03",
+            "trigger": "part_replacement_required = True",
+            "action": "QUOTE_REQUIRED",
+            "description": "Any part or mechanism replacement on security door is outside this service scope"
+          }
+        ],
+        "prebooking_question_refs": [
+          "Q-SERR-SECURITY-DOOR",
+          "Q-SERR-DOOR-SLAMMED-ONLY",
+          "Q-SERR-AUTHORIZATION"
+        ],
+        "supporting_prose": "350 MAD covers non-destructive opening labour for security/armoured door that has slammed shut only. If door slammed AND locked, higher complexity assessment required.",
+        "human_review_required": false
       },
       "policy_refs": [
         "POL-HORS-PERIMETRE-V1",
@@ -1953,10 +2084,38 @@
       },
       "eligibility": {
         "qualification_status": "CONDITIONAL",
-        "required_conditions": [],
-        "hard_exclusions": [],
+        "required_conditions": [
+          {
+            "id": "E-SERR-VERR-01",
+            "field": "security_door",
+            "operator": "EQ",
+            "value": false,
+            "effect": "ELIGIBLE",
+            "description": "Standard residential door, not security/armoured"
+          }
+        ],
+        "hard_exclusions": [
+          {
+            "id": "X-SERR-VERR-01",
+            "trigger": "security_door = True",
+            "action": "QUOTE_REQUIRED",
+            "description": "Security door + locked with key → specialist assessment required, not standard 380 MAD service"
+          },
+          {
+            "id": "X-SERR-VERR-02",
+            "trigger": "part_replacement_required = True",
+            "action": "QUOTE_REQUIRED",
+            "description": "Cylinder replacement required: announced and approved before drilling. Cylinder is PART_SEPARATE — see POL-PART-DISCLOSURE-V1"
+          }
+        ],
         "prebooking_questions": [],
-        "supporting_prose": null
+        "supporting_prose": "380 MAD for opening standard residential non-security door when keys are lost/stolen/locked inside. Method: picking or drilling cylinder if necessary. If barrel drilled: artisan announces cylinder replacement price BEFORE drilling — client approves explicitly. Cylinder is separate (POL-PART-DISCLOSURE-V1). Authorization verification mandatory (POL-SERRURERIE-AUTHORIZATION-V1). The 'non-damaged barrel' condition (for cle_cassee vs verrouillee differentiation) is artisan-assessed on site — not a prebooking predicate.",
+        "structured": true,
+        "prebooking_question_refs": [
+          "Q-SERR-SECURITY-DOOR",
+          "Q-SERR-AUTHORIZATION"
+        ],
+        "human_review_required": false
       },
       "policy_refs": [
         "POL-HORS-PERIMETRE-V1",
@@ -2073,10 +2232,36 @@
       },
       "eligibility": {
         "qualification_status": "CONDITIONAL",
-        "required_conditions": [],
-        "hard_exclusions": [],
-        "prebooking_questions": [],
-        "supporting_prose": null
+        "structured": true,
+        "required_conditions": [
+          {
+            "id": "E-SERR-CLE-01",
+            "field": "security_door",
+            "operator": "EQ",
+            "value": false,
+            "effect": "ELIGIBLE",
+            "description": "Standard cylinder barrel — not security door"
+          }
+        ],
+        "hard_exclusions": [
+          {
+            "id": "X-SERR-CLE-01",
+            "trigger": "barrel_previously_damaged = True",
+            "action": "QUOTE_REQUIRED",
+            "description": "Barrel already damaged from previous DIY extraction attempt → cylinder replacement scope, POL-PART-DISCLOSURE-V1 applies"
+          },
+          {
+            "id": "X-SERR-CLE-02",
+            "trigger": "security_door = True",
+            "action": "QUOTE_REQUIRED",
+            "description": "Security door barrel extraction → specialist assessment required"
+          }
+        ],
+        "prebooking_question_refs": [
+          "Q-SERR-AUTHORIZATION"
+        ],
+        "supporting_prose": "220 MAD for extraction of broken key fragment from standard cylinder barrel. The 'barrel non-damaged' condition cannot be verified at prebooking — artisan assesses on site. If barrel found damaged on arrival: artisan declares HORS PÉRIMÈTRE, explains, proposes cylinder replacement (POL-PART-DISCLOSURE-V1). Authorization verification mandatory (POL-SERRURERIE-AUTHORIZATION-V1).",
+        "human_review_required": false
       },
       "policy_refs": [
         "POL-HORS-PERIMETRE-V1",
@@ -2949,10 +3134,62 @@
       },
       "eligibility": {
         "qualification_status": "CONDITIONAL",
-        "required_conditions": [],
-        "hard_exclusions": [],
+        "required_conditions": [
+          {
+            "id": "E-CLIM-013-01",
+            "field": "leak_location_confirmed",
+            "operator": "EQ",
+            "value": "EXTERNAL_ACCESSIBLE_COPPER",
+            "effect": "ELIGIBLE",
+            "description": "Leak must be confirmed on external accessible copper pipe"
+          },
+          {
+            "id": "E-CLIM-013-02",
+            "field": "refrigerant_type",
+            "operator": "NOT_IN",
+            "value": [
+              "R32"
+            ],
+            "effect": "ELIGIBLE",
+            "description": "Non-R32 refrigerant OR R32 with certified A2L artisan confirmed"
+          }
+        ],
+        "hard_exclusions": [
+          {
+            "id": "X-CLIM-013-01",
+            "trigger": "leak_location IN [INDOOR_EVAPORATOR, OUTDOOR_CONDENSER, COMPRESSOR, CONCEALED]",
+            "action": "QUOTE_REQUIRED",
+            "description": "Leak not on external accessible copper → HORS PÉRIMÈTRE → DEVIS"
+          },
+          {
+            "id": "X-CLIM-013-02",
+            "trigger": "leak_location = UNKNOWN",
+            "action": "ROUTE",
+            "description": "Unknown leak location → CLIM-002 diagnostic first (250 MAD)",
+            "route_ref": "ROUTE-CLIM-DIAG-001"
+          },
+          {
+            "id": "X-CLIM-013-03",
+            "trigger": "refrigerant_type = R32 AND artisan_r32_certified = False",
+            "action": "ROUTE",
+            "description": "R32 requires A2L-certified artisan → specialist route",
+            "route_ref": "ROUTE-CLIM-R32-001"
+          },
+          {
+            "id": "X-CLIM-013-04",
+            "trigger": "copper_too_degraded = True",
+            "action": "QUOTE_REQUIRED",
+            "description": "Copper too degraded to braze → section replacement QUOTE_REQUIRED"
+          }
+        ],
         "prebooking_questions": [],
-        "supporting_prose": null
+        "supporting_prose": "600 MAD = labour only for brazing/crimping accessible external copper pipe leak. Post-repair nitrogen pressure test included. Refrigerant recharge (CLIM-010/011/012) and vacuum (CLIM-014) are ALWAYS separate services billed separately with client approval. Critical: never present 600 MAD as 'repair + gas recharge all-in'.",
+        "structured": true,
+        "prebooking_question_refs": [
+          "Q-CLIM-LEAK-LOCATION",
+          "Q-CLIM-REFRIGERANT-TYPE"
+        ],
+        "human_review_required": false
       },
       "policy_refs": [
         "POL-HORS-PERIMETRE-V1",
@@ -3077,10 +3314,65 @@
       },
       "eligibility": {
         "qualification_status": "CONDITIONAL",
-        "required_conditions": [],
-        "hard_exclusions": [],
+        "required_conditions": [
+          {
+            "id": "E-CLIM-020-01",
+            "field": "ac_capacity_btu",
+            "operator": "GTE",
+            "value": 7000,
+            "effect": "ELIGIBLE",
+            "description": "Minimum 7000 BTU residential mono-split"
+          },
+          {
+            "id": "E-CLIM-020-02",
+            "field": "ac_capacity_btu",
+            "operator": "LTE",
+            "value": 24000,
+            "effect": "ELIGIBLE",
+            "description": "Maximum 24000 BTU standard residential"
+          },
+          {
+            "id": "E-CLIM-020-03",
+            "field": "installation_height_m",
+            "operator": "LTE",
+            "value": 2.5,
+            "effect": "ELIGIBLE",
+            "description": "Indoor unit ≤2.5m height"
+          }
+        ],
+        "hard_exclusions": [
+          {
+            "id": "X-CLIM-020-01",
+            "trigger": "multi_split = True",
+            "action": "QUOTE_REQUIRED",
+            "description": "Multi-split system → CLIM-024 or DEVIS"
+          },
+          {
+            "id": "X-CLIM-020-02",
+            "trigger": "cassette_or_ducted = True",
+            "action": "QUOTE_REQUIRED",
+            "description": "Cassette/ducted → DEVIS (different architecture)"
+          },
+          {
+            "id": "X-CLIM-020-03",
+            "trigger": "facade_inaccessible = True",
+            "action": "QUOTE_REQUIRED",
+            "description": "Inaccessible façade → DEVIS"
+          },
+          {
+            "id": "X-CLIM-020-04",
+            "trigger": "reinforced_concrete_gt_25cm = True",
+            "action": "QUOTE_REQUIRED",
+            "description": "Thick reinforced concrete → core drill needed → DEVIS"
+          }
+        ],
         "prebooking_questions": [],
-        "supporting_prose": null
+        "supporting_prose": "1000 MAD: travel, labour, wall bracket, up to 3m copper + insulation, inter-unit cable, condensate drain, first wall penetration. AC unit ALWAYS client-supplied. Copper >3m → CLIM-021 (up to 5m) or CLIM-025 (beyond 5m, deferred) or DEVIS.",
+        "structured": true,
+        "prebooking_question_refs": [
+          "Q-CLIM-INSTALL-COPPER-LENGTH"
+        ],
+        "human_review_required": false
       },
       "policy_refs": [
         "POL-HORS-PERIMETRE-V1"
@@ -3202,10 +3494,59 @@
       },
       "eligibility": {
         "qualification_status": "CONDITIONAL",
-        "required_conditions": [],
-        "hard_exclusions": [],
+        "required_conditions": [
+          {
+            "id": "E-CLIM-021-01",
+            "field": "ac_capacity_btu",
+            "operator": "GTE",
+            "value": 7000,
+            "effect": "ELIGIBLE",
+            "description": "Min 7000 BTU"
+          },
+          {
+            "id": "E-CLIM-021-02",
+            "field": "ac_capacity_btu",
+            "operator": "LTE",
+            "value": 24000,
+            "effect": "ELIGIBLE",
+            "description": "Max 24000 BTU"
+          },
+          {
+            "id": "E-CLIM-021-03",
+            "field": "installation_height_m",
+            "operator": "LTE",
+            "value": 2.5,
+            "effect": "ELIGIBLE",
+            "description": "Indoor unit ≤2.5m"
+          }
+        ],
+        "hard_exclusions": [
+          {
+            "id": "X-CLIM-021-01",
+            "trigger": "multi_split = True",
+            "action": "QUOTE_REQUIRED",
+            "description": "Multi-split → CLIM-024 or DEVIS"
+          },
+          {
+            "id": "X-CLIM-021-02",
+            "trigger": "copper_run_gt_5m = True",
+            "action": "QUOTE_REQUIRED",
+            "description": "Copper >5m: CLIM-025 not yet approved → DEVIS. See HRQ-006."
+          },
+          {
+            "id": "X-CLIM-021-03",
+            "trigger": "facade_inaccessible = True",
+            "action": "QUOTE_REQUIRED",
+            "description": "Inaccessible façade → DEVIS"
+          }
+        ],
         "prebooking_questions": [],
-        "supporting_prose": null
+        "supporting_prose": "1200 MAD: same as CLIM-020 with copper up to 5m. 200 MAD delta: 2 extra metres copper + additional labour. Copper >5m: CLIM-025 (deferred, see HRQ-006) or DEVIS.",
+        "structured": true,
+        "prebooking_question_refs": [
+          "Q-CLIM-INSTALL-COPPER-LENGTH"
+        ],
+        "human_review_required": false
       },
       "policy_refs": [
         "POL-HORS-PERIMETRE-V1"
@@ -4075,10 +4416,47 @@
       },
       "eligibility": {
         "qualification_status": "CONDITIONAL",
-        "required_conditions": [],
-        "hard_exclusions": [],
-        "prebooking_questions": [],
-        "supporting_prose": null
+        "structured": true,
+        "required_conditions": [
+          {
+            "id": "E-BRIC-030-01",
+            "field": "tv_inches",
+            "operator": "LTE",
+            "value": 65,
+            "effect": "ELIGIBLE",
+            "description": "TV ≤65 inches standard scope"
+          },
+          {
+            "id": "E-BRIC-030-02",
+            "field": "bracket_type",
+            "operator": "IN",
+            "value": [
+              "FIXED",
+              "TILT"
+            ],
+            "effect": "ELIGIBLE",
+            "description": "Fixed or simple tilt bracket — FULL_MOTION is soft flag"
+          }
+        ],
+        "hard_exclusions": [
+          {
+            "id": "X-BRIC-030-01",
+            "trigger": "tv_inches GT 65 OR tv_weight_kg GT 40",
+            "action": "QUOTE_REQUIRED",
+            "description": "TV >65 inches or >40 kg → heavy mounting, QUOTE_REQUIRED"
+          },
+          {
+            "id": "X-BRIC-030-02",
+            "trigger": "wall_type = PLACO_WITH_INSUFFICIENT_STUDS",
+            "action": "QUOTE_REQUIRED",
+            "description": "Plasterboard without adequate studs → structural assessment, QUOTE"
+          }
+        ],
+        "prebooking_question_refs": [
+          "Q-BRIC-TV-SIZE"
+        ],
+        "supporting_prose": "300 MAD covers TV wall mounting for standard residential TV (≤65 inches, ≤40 kg). Client supplies TV AND bracket. Artisan supplies fixing hardware (chevilles, vis). FULL_MOTION articulated arm: soft flag — artisan assesses complexity on site, may apply scope change for complex cases. Wall type (béton/brique vs placo): artisan assesses on site.",
+        "human_review_required": false
       },
       "policy_refs": [
         "POL-HORS-PERIMETRE-V1",
@@ -4439,10 +4817,38 @@
       },
       "eligibility": {
         "qualification_status": "CONDITIONAL",
-        "required_conditions": [],
-        "hard_exclusions": [],
-        "prebooking_questions": [],
-        "supporting_prose": null
+        "structured": true,
+        "required_conditions": [
+          {
+            "id": "E-NET-004-01",
+            "field": "property_type",
+            "operator": "IN",
+            "value": [
+              "APARTMENT"
+            ],
+            "effect": "ELIGIBLE",
+            "description": "Standard F2/F3 apartment (60–100 m²). Other property types require quote."
+          }
+        ],
+        "hard_exclusions": [
+          {
+            "id": "X-NET-004-01",
+            "trigger": "property_type = VILLA",
+            "action": "QUOTE_REQUIRED",
+            "description": "Villa → 600 MAD does not apply. QUOTE_REQUIRED."
+          },
+          {
+            "id": "X-NET-004-02",
+            "trigger": "property_type IN [studio_f1, f4_f5_large]",
+            "action": "REQUALIFY",
+            "description": "Studio/F1 or large F4/F5+: no approved tier yet. May offer hourly (NET-002) or QUOTE."
+          }
+        ],
+        "prebooking_question_refs": [
+          "Q-NET-PROPERTY-TYPE"
+        ],
+        "supporting_prose": "600 MAD for deep clean of F2/F3 apartment (60–100 m²). Includes professional products and equipment. Typically 2 cleaners. Villa scope → QUOTE_REQUIRED. F4/F5 → no approved tier, offer hourly or QUOTE.",
+        "human_review_required": false
       },
       "policy_refs": [
         "POL-HORS-PERIMETRE-V1",
@@ -5263,11 +5669,31 @@
         "conversion_status": "RESEARCH_ESTIMATION_ONLY"
       },
       "eligibility": {
-        "qualification_status": "OPEN",
+        "qualification_status": "CONDITIONAL",
         "required_conditions": [],
-        "hard_exclusions": [],
+        "hard_exclusions": [
+          {
+            "id": "X-PEIN-MOISTURE-01",
+            "trigger": "active_moisture = True",
+            "action": "STOP_SAFETY",
+            "description": "Active moisture present → HORS PÉRIMÈTRE ABSOLU. Resolve plumbing/roofing source before any painting. POL-PAINTED-SURFACE-V1."
+          },
+          {
+            "id": "X-PEIN-COND-01",
+            "trigger": "surface_condition IN [MAJOR_PREPARATION, STRUCTURAL_CRACK]",
+            "action": "QUOTE_REQUIRED",
+            "description": "Major preparation or structural crack → HORS PÉRIMÈTRE / QUOTE_REQUIRED"
+          }
+        ],
         "prebooking_questions": [],
-        "supporting_prose": null
+        "supporting_prose": "35 MAD/m² labour only. Client supplies paint. max(800, 35 × painted_m2). READY_TO_PAINT condition required. active_moisture = HORS PÉRIMÈTRE absolute. Surface MINOR_PREPARATION → route to PEIN-005. painted_m2 requested directly — no floor_m2 conversion.",
+        "structured": true,
+        "prebooking_question_refs": [
+          "Q-PEIN-ACTIVE-MOISTURE",
+          "Q-PEIN-SURFACE-CONDITION",
+          "Q-PEIN-CLIENT-SUPPLIES-PAINT"
+        ],
+        "human_review_required": false
       },
       "policy_refs": [
         "POL-HORS-PERIMETRE-V1",
@@ -5383,11 +5809,31 @@
         "conversion_status": "RESEARCH_ESTIMATION_ONLY"
       },
       "eligibility": {
-        "qualification_status": "OPEN",
+        "qualification_status": "CONDITIONAL",
         "required_conditions": [],
-        "hard_exclusions": [],
+        "hard_exclusions": [
+          {
+            "id": "X-PEIN-MOISTURE-01",
+            "trigger": "active_moisture = True",
+            "action": "STOP_SAFETY",
+            "description": "Active moisture present → HORS PÉRIMÈTRE ABSOLU. Resolve plumbing/roofing source before any painting. POL-PAINTED-SURFACE-V1."
+          },
+          {
+            "id": "X-PEIN-COND-01",
+            "trigger": "surface_condition IN [MAJOR_PREPARATION, STRUCTURAL_CRACK]",
+            "action": "QUOTE_REQUIRED",
+            "description": "Major preparation or structural crack → HORS PÉRIMÈTRE / QUOTE_REQUIRED"
+          }
+        ],
         "prebooking_questions": [],
-        "supporting_prose": null
+        "supporting_prose": "65 MAD/m² all-in. Artisan supplies standard paint. max(800, 65 × painted_m2). READY_TO_PAINT. Same exclusions as PEIN-002.",
+        "structured": true,
+        "prebooking_question_refs": [
+          "Q-PEIN-ACTIVE-MOISTURE",
+          "Q-PEIN-SURFACE-CONDITION",
+          "Q-PEIN-CLIENT-SUPPLIES-PAINT"
+        ],
+        "human_review_required": false
       },
       "policy_refs": [
         "POL-HORS-PERIMETRE-V1",
@@ -5503,11 +5949,30 @@
         "conversion_status": "NOT_APPLICABLE"
       },
       "eligibility": {
-        "qualification_status": "OPEN",
+        "qualification_status": "CONDITIONAL",
         "required_conditions": [],
-        "hard_exclusions": [],
+        "hard_exclusions": [
+          {
+            "id": "X-PEIN-MOISTURE-01",
+            "trigger": "active_moisture = True",
+            "action": "STOP_SAFETY",
+            "description": "Active moisture present → HORS PÉRIMÈTRE ABSOLU. Resolve plumbing/roofing source before any painting. POL-PAINTED-SURFACE-V1."
+          },
+          {
+            "id": "X-PEIN-COND-01",
+            "trigger": "surface_condition IN [MAJOR_PREPARATION, STRUCTURAL_CRACK]",
+            "action": "QUOTE_REQUIRED",
+            "description": "Major preparation or structural crack → HORS PÉRIMÈTRE / QUOTE_REQUIRED"
+          }
+        ],
         "prebooking_questions": [],
-        "supporting_prose": null
+        "supporting_prose": "45 MAD/ceiling_m2 all-in. ceiling_m2 = floor area of room. max(800, 45 × ceiling_m2). Active moisture on ceiling (leak from above) → HORS PÉRIMÈTRE — resolve source first.",
+        "structured": true,
+        "prebooking_question_refs": [
+          "Q-PEIN-ACTIVE-MOISTURE",
+          "Q-PEIN-SURFACE-CONDITION"
+        ],
+        "human_review_required": false
       },
       "policy_refs": [
         "POL-HORS-PERIMETRE-V1",
@@ -5623,11 +6088,30 @@
         "conversion_status": "RESEARCH_ESTIMATION_ONLY"
       },
       "eligibility": {
-        "qualification_status": "OPEN",
+        "qualification_status": "CONDITIONAL",
         "required_conditions": [],
-        "hard_exclusions": [],
+        "hard_exclusions": [
+          {
+            "id": "X-PEIN-MOISTURE-01",
+            "trigger": "active_moisture = True",
+            "action": "STOP_SAFETY",
+            "description": "Active moisture present → HORS PÉRIMÈTRE ABSOLU. Resolve plumbing/roofing source before any painting. POL-PAINTED-SURFACE-V1."
+          },
+          {
+            "id": "X-PEIN-COND-01",
+            "trigger": "surface_condition IN [MAJOR_PREPARATION, STRUCTURAL_CRACK]",
+            "action": "QUOTE_REQUIRED",
+            "description": "Major preparation or structural crack → HORS PÉRIMÈTRE / QUOTE_REQUIRED"
+          }
+        ],
         "prebooking_questions": [],
-        "supporting_prose": null
+        "supporting_prose": "75 MAD/m² all-in with minor preparation. Artisan supplies paint. max(800, 75 × painted_m2). MINOR_PREPARATION condition. Major prep → QUOTE_REQUIRED.",
+        "structured": true,
+        "prebooking_question_refs": [
+          "Q-PEIN-ACTIVE-MOISTURE",
+          "Q-PEIN-SURFACE-CONDITION"
+        ],
+        "human_review_required": false
       },
       "policy_refs": [
         "POL-HORS-PERIMETRE-V1",
@@ -5743,11 +6227,26 @@
         "conversion_status": "NOT_APPLICABLE"
       },
       "eligibility": {
-        "qualification_status": "CONDITIONAL",
+        "qualification_status": "ADD_ON_ONLY",
+        "structured": true,
         "required_conditions": [],
-        "hard_exclusions": [],
-        "prebooking_questions": [],
-        "supporting_prose": null
+        "hard_exclusions": [
+          {
+            "id": "X-PEIN-008-01",
+            "trigger": "primary_painting_service_booked = False",
+            "action": "UNAVAILABLE",
+            "description": "Cannot be booked standalone. Requires qualifying primary peinture service (PEIN-002, PEIN-003, or PEIN-004)."
+          }
+        ],
+        "prebooking_question_refs": [],
+        "supporting_prose": "PEIN-008 is an add-on for enduit de lissage preparation. 25 MAD/m² of painted surface. Must accompany PEIN-002, PEIN-003, or PEIN-004. Maximum repair depth: 5mm. Deeper substrate repair → HORS PÉRIMÈTRE maçonnerie.",
+        "human_review_required": false,
+        "primary_service_required": true,
+        "allowed_primary_service_codes": [
+          "peinture.mur_interieur.labour_only",
+          "peinture.mur_interieur.all_in",
+          "peinture.plafond.labour_only"
+        ]
       },
       "policy_refs": [
         "POL-HORS-PERIMETRE-V1",
@@ -5863,10 +6362,66 @@
       },
       "eligibility": {
         "qualification_status": "CONDITIONAL",
-        "required_conditions": [],
-        "hard_exclusions": [],
-        "prebooking_questions": [],
-        "supporting_prose": null
+        "structured": true,
+        "required_conditions": [
+          {
+            "id": "E-MENU-001-01",
+            "field": "security_door",
+            "operator": "EQ",
+            "value": false,
+            "effect": "ELIGIBLE",
+            "description": "Must not be a security/armoured door"
+          },
+          {
+            "id": "E-MENU-001-02",
+            "field": "frame_condition",
+            "operator": "IN",
+            "value": [
+              "SOUND",
+              "COMPATIBLE",
+              "MINOR_DAMAGE"
+            ],
+            "effect": "ELIGIBLE",
+            "description": "Door frame must be structurally sound or minor damage (artisan assesses)"
+          }
+        ],
+        "hard_exclusions": [
+          {
+            "id": "X-MENU-001-01",
+            "trigger": "security_door = True",
+            "action": "ROUTE",
+            "description": "Security door → SERRURERIE",
+            "route_ref": "ROUTE-MENU-LOCK-001",
+            "target_metier": "serrurerie"
+          },
+          {
+            "id": "X-MENU-001-02",
+            "trigger": "frame_condition IN [ROTTED, STRUCTURALLY_DEFORMED]",
+            "action": "HORS_PERIMETRE",
+            "description": "Rotten or structurally deformed frame → QUOTE, pre-work required"
+          },
+          {
+            "id": "X-MENU-001-03",
+            "trigger": "lock_cylinder_involved = True",
+            "action": "ROUTE",
+            "description": "Lock/cylinder work → SERRURERIE",
+            "route_ref": "ROUTE-MENU-LOCK-001",
+            "target_metier": "serrurerie"
+          },
+          {
+            "id": "X-MENU-001-04",
+            "trigger": "full_replacement_required = True",
+            "action": "QUOTE_REQUIRED",
+            "description": "Full door replacement → QUOTE_REQUIRED"
+          }
+        ],
+        "prebooking_question_refs": [
+          "Q-MENU-SECURITY-DOOR",
+          "Q-MENU-DOOR-TYPE",
+          "Q-MENU-FRAME-CONDITION"
+        ],
+        "supporting_prose": "300 MAD for adjustment of ONE interior wooden or MDF door without planing. Includes hinge tightening, alignment, lubrication. No material replacement in scope.",
+        "human_review_required": false
       },
       "policy_refs": [
         "POL-HORS-PERIMETRE-V1",
@@ -5982,10 +6537,57 @@
       },
       "eligibility": {
         "qualification_status": "CONDITIONAL",
-        "required_conditions": [],
-        "hard_exclusions": [],
-        "prebooking_questions": [],
-        "supporting_prose": null
+        "structured": true,
+        "required_conditions": [
+          {
+            "id": "E-MENU-001B-01",
+            "field": "security_door",
+            "operator": "EQ",
+            "value": false,
+            "effect": "ELIGIBLE",
+            "description": "Must not be a security door"
+          },
+          {
+            "id": "E-MENU-001B-02",
+            "field": "frame_condition",
+            "operator": "IN",
+            "value": [
+              "SOUND",
+              "COMPATIBLE"
+            ],
+            "effect": "ELIGIBLE",
+            "description": "Frame must be structurally sound — rabotage requires stable frame"
+          }
+        ],
+        "hard_exclusions": [
+          {
+            "id": "X-MENU-001B-01",
+            "trigger": "security_door = True",
+            "action": "ROUTE",
+            "description": "Security door → SERRURERIE",
+            "route_ref": "ROUTE-MENU-LOCK-001",
+            "target_metier": "serrurerie"
+          },
+          {
+            "id": "X-MENU-001B-02",
+            "trigger": "rabotage_exceeds_minor = True",
+            "action": "QUOTE_REQUIRED",
+            "description": "Major planing requiring full door remachining → QUOTE"
+          },
+          {
+            "id": "X-MENU-001B-03",
+            "trigger": "door_dimensionally_incompatible = True",
+            "action": "QUOTE_REQUIRED",
+            "description": "Door dimensionally incompatible with frame → QUOTE"
+          }
+        ],
+        "prebooking_question_refs": [
+          "Q-MENU-SECURITY-DOOR",
+          "Q-MENU-DOOR-TYPE",
+          "Q-MENU-FRAME-CONDITION"
+        ],
+        "supporting_prose": "350 MAD for adjustment with minor planing (rabotage léger). Includes all of MENU_001 scope plus limited edge correction and realignment after planing.",
+        "human_review_required": false
       },
       "policy_refs": [
         "POL-HORS-PERIMETRE-V1",
@@ -6375,10 +6977,48 @@
       },
       "eligibility": {
         "qualification_status": "CONDITIONAL",
-        "required_conditions": [],
-        "hard_exclusions": [],
-        "prebooking_questions": [],
-        "supporting_prose": null
+        "structured": true,
+        "required_conditions": [
+          {
+            "id": "E-MENU-004A-01",
+            "field": "panel_warped",
+            "operator": "EQ",
+            "value": false,
+            "effect": "ELIGIBLE",
+            "description": "Sliding panel must not be warped/structurally deformed"
+          },
+          {
+            "id": "E-MENU-004A-02",
+            "field": "track_broken",
+            "operator": "EQ",
+            "value": false,
+            "effect": "ELIGIBLE",
+            "description": "Track must not be bent or broken"
+          }
+        ],
+        "hard_exclusions": [
+          {
+            "id": "X-MENU-004A-01",
+            "trigger": "track_broken = True",
+            "action": "QUOTE_REQUIRED",
+            "description": "Track bent or broken → track replacement QUOTE_REQUIRED"
+          },
+          {
+            "id": "X-MENU-004A-02",
+            "trigger": "panel_warped = True",
+            "action": "QUOTE_REQUIRED",
+            "description": "Panel structurally warped → QUOTE_REQUIRED"
+          },
+          {
+            "id": "X-MENU-004A-03",
+            "trigger": "mirror_panel = True",
+            "action": "REQUALIFY",
+            "description": "Mirror panel: fragility risk — separate disclaimer required, artisan assesses on site"
+          }
+        ],
+        "prebooking_question_refs": [],
+        "supporting_prose": "300 MAD for ONE sliding panel: track cleaning, alignment, roller adjustment, lubrication. No hardware replacement in scope.",
+        "human_review_required": false
       },
       "policy_refs": [
         "POL-HORS-PERIMETRE-V1",
@@ -6494,10 +7134,48 @@
       },
       "eligibility": {
         "qualification_status": "CONDITIONAL",
-        "required_conditions": [],
-        "hard_exclusions": [],
-        "prebooking_questions": [],
-        "supporting_prose": null
+        "structured": true,
+        "required_conditions": [
+          {
+            "id": "E-MENU-004B-01",
+            "field": "panel_warped",
+            "operator": "EQ",
+            "value": false,
+            "effect": "ELIGIBLE",
+            "description": "Panels must not be structurally warped"
+          },
+          {
+            "id": "E-MENU-004B-02",
+            "field": "track_must_be_replaced",
+            "operator": "EQ",
+            "value": false,
+            "effect": "ELIGIBLE",
+            "description": "Track replacement must NOT be required for 350 MAD scope"
+          }
+        ],
+        "hard_exclusions": [
+          {
+            "id": "X-MENU-004B-01",
+            "trigger": "track_must_be_replaced = True",
+            "action": "QUOTE_REQUIRED",
+            "description": "Track replacement required → QUOTE_REQUIRED"
+          },
+          {
+            "id": "X-MENU-004B-02",
+            "trigger": "custom_hardware_unavailable = True",
+            "action": "QUOTE_REQUIRED",
+            "description": "Custom/unavailable rollers → QUOTE_REQUIRED"
+          },
+          {
+            "id": "X-MENU-004B-03",
+            "trigger": "wardrobe_structurally_deformed = True",
+            "action": "QUOTE_REQUIRED",
+            "description": "Structural wardrobe deformation → QUOTE_REQUIRED"
+          }
+        ],
+        "prebooking_question_refs": [],
+        "supporting_prose": "350 MAD for wardrobe sliding door system (2+ panels): alignment, track cleaning, roller adjustment, synchronization. Small compatible hardware: PART_SEPARATE if needed.",
+        "human_review_required": false
       },
       "policy_refs": [
         "POL-HORS-PERIMETRE-V1",
@@ -6620,10 +7298,91 @@
       },
       "eligibility": {
         "qualification_status": "CONDITIONAL",
-        "required_conditions": [],
-        "hard_exclusions": [],
-        "prebooking_questions": [],
-        "supporting_prose": null
+        "structured": true,
+        "required_conditions": [
+          {
+            "id": "E-MENU-006-01",
+            "field": "security_door",
+            "operator": "EQ",
+            "value": false,
+            "effect": "ELIGIBLE",
+            "description": "Must not be security door"
+          },
+          {
+            "id": "E-MENU-006-02",
+            "field": "door_width_cm",
+            "operator": "IN",
+            "value": [
+              73,
+              83,
+              93
+            ],
+            "effect": "ELIGIBLE",
+            "description": "Standard residential door width: 73, 83, or 93 cm"
+          },
+          {
+            "id": "E-MENU-006-03",
+            "field": "frame_condition",
+            "operator": "IN",
+            "value": [
+              "SOUND",
+              "COMPATIBLE"
+            ],
+            "effect": "ELIGIBLE",
+            "description": "Existing frame must be compatible with new door"
+          },
+          {
+            "id": "E-MENU-006-04",
+            "field": "masonry_modification_required",
+            "operator": "EQ",
+            "value": false,
+            "effect": "ELIGIBLE",
+            "description": "No masonry modification or structural frame repair required"
+          }
+        ],
+        "hard_exclusions": [
+          {
+            "id": "X-MENU-006-01",
+            "trigger": "security_door = True",
+            "action": "QUOTE_REQUIRED",
+            "description": "Security door installation → specialist scope, QUOTE_REQUIRED"
+          },
+          {
+            "id": "X-MENU-006-02",
+            "trigger": "door_width_cm NOT_IN [73,83,93] AND trim_gt_2cm = True",
+            "action": "QUOTE_REQUIRED",
+            "description": "Non-standard width requiring >2cm trim → QUOTE_REQUIRED"
+          },
+          {
+            "id": "X-MENU-006-03",
+            "trigger": "masonry_modification_required = True",
+            "action": "HORS_PERIMETRE",
+            "description": "Masonry pre-work required → complete masonry first, then rebook MENU_006"
+          },
+          {
+            "id": "X-MENU-006-04",
+            "trigger": "lock_cylinder_required = True",
+            "action": "ROUTE",
+            "description": "Lock/cylinder installation → SERRURERIE",
+            "route_ref": "ROUTE-MENU-LOCK-001",
+            "target_metier": "serrurerie"
+          },
+          {
+            "id": "X-MENU-006-05",
+            "trigger": "frame_condition IN [ROTTED, STRUCTURALLY_DEFORMED]",
+            "action": "QUOTE_REQUIRED",
+            "description": "Frame not compatible → frame replacement/repair first"
+          }
+        ],
+        "prebooking_question_refs": [
+          "Q-MENU-SECURITY-DOOR",
+          "Q-MENU-DOOR-TYPE",
+          "Q-MENU-FRAME-CONDITION",
+          "Q-MENU-MASONRY-REQUIRED",
+          "Q-MENU-DOOR-WIDTH"
+        ],
+        "supporting_prose": "500 MAD for installation of client-supplied door leaf on existing compatible bâti. Includes: removal of old leaf, fitting new leaf, 2–3 hinges (included as basic installation hardware), minor planing if needed, handle hole prep, strike plate alignment, functional test.",
+        "human_review_required": false
       },
       "policy_refs": [
         "POL-HORS-PERIMETRE-V1",

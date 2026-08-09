@@ -1,0 +1,169 @@
+{
+  "_meta": {
+    "artifact": "FIXEO_HUMAN_REVIEW_QUEUE_V1",
+    "phase": "7C.3",
+    "status": "DRAFT",
+    "production_ready": false,
+    "date": "2026-08-09",
+    "total_items": 10,
+    "engine_blocking_count": 2,
+    "production_blocking_count": 6,
+    "note": "Unresolved semantic issues requiring future human decision before production promotion. Only genuine semantic uncertainty is listed. Items with clear frozen evidence are NOT listed here — they are resolved in the canonical registry."
+  },
+  "items": {
+    "HRQ-001": {
+      "review_id": "HRQ-001",
+      "service_codes": [
+        "plomberie.robinet_remplacement",
+        "plomberie.chasse_eau"
+      ],
+      "category": "SEMANTIC_CLASSIFICATION_CONFIRMATION",
+      "problem": "V0.3 registry marks both services as pricing_architecture = FIXEO_FIXED_PRICE. However, the V0.3 scope text explicitly states: label 'main-d'œuvre seule', excluded_scope includes 'the tap/mixer NOT included' and 'CLIENT SUPPLIES THE TAP/MIXER BY DEFAULT'. These two fields are semantically inconsistent. The canonical registry classifies both as LABOUR_FIXED_PART_SEPARATE based on the scope text. This interpretation appears correct but has not been explicitly confirmed by a human reading plomberie/human-decision.v0.3.md.",
+      "why_not_machine_safe": "The pricing_architecture field (FIXEO_FIXED_PRICE) and the scope text (main-d'oeuvre seule, client-supplied part) directly contradict each other. Machine cannot resolve authority conflict without human confirmation.",
+      "recommended_next_action": "Read plomberie/human-decision.v0.3.md section on robinet_remplacement and chasse_eau. If the decision document confirms labour-only with client-supplied part → classification is confirmed, remove this flag. If it confirms all-in fixed price → reclassify back to FIXEO_FIXED_PRICE with materials = ARTISAN_SUPPLIED and remove part disclosure policy refs.",
+      "blocking_for_engine": false,
+      "blocking_for_production": true,
+      "priority": "HIGH",
+      "effort": "MINUTES — simple document read and confirm"
+    },
+    "HRQ-002": {
+      "review_id": "HRQ-002",
+      "service_codes": [
+        "peinture.mur_interieur.labour_only",
+        "peinture.mur_interieur.all_in",
+        "peinture.mur_interieur.all_in_avec_prep"
+      ],
+      "category": "MEASUREMENT_CONVERSION",
+      "problem": "The canonical unit for all interior wall painting services is PER_PAINTED_M2 — the actual painted wall surface. This is NOT the floor area of the room or apartment. In practice, clients may not know their painted m² and may only know their floor area or room size. Any conversion from floor_m2 to painted_m2 is marked RESEARCH_ESTIMATION_ONLY in the canonical registry and is not approved for production. The estimator V1 must ask the client for painted_m2 directly, which may reduce conversion rates.",
+      "why_not_machine_safe": "No validated conversion formula exists. The ratio of painted_m2 to floor_m2 varies substantially by ceiling height, room shape, number of windows/doors, and whether only some walls are painted. Any fixed ratio (e.g. 2.5×) would produce unreliable prices — potentially misleading clients.",
+      "recommended_next_action": "Three options: (A) Estimator V1 always asks client for painted_m2 directly — cleaner, requires user input. (B) Estimator V1 provides a guided estimator tool (client inputs room dimensions + ceiling height + window count → system estimates painted_m2) — requires UX design approval. (C) Estimator V1 offers artisan-measured on-site pricing only — no pre-booking calculation. Human decision required on which option to implement before estimator V1 design.",
+      "blocking_for_engine": true,
+      "blocking_for_production": true,
+      "priority": "HIGH",
+      "effort": "MEDIUM — requires UX and product decision"
+    },
+    "HRQ-003": {
+      "review_id": "HRQ-003",
+      "service_codes": [
+        "menuiserie.remplacement_charniere",
+        "menuiserie.remplacement_coulisse_tiroir"
+      ],
+      "category": "EXPERIMENTAL_BATCH_PROMOTION",
+      "problem": "MENU_002 (charnière) and MENU_003 (coulisse tiroir) have EXPERIMENTAL_BATCH_RULE: +50 MAD per additional hinge (same door) and +100 MAD per additional drawer (same cabinet). These rules are calibrated but marked NOT_PROMOTED_TO_UNIVERSAL_CANONICAL. The estimator V1 cannot know whether to apply the batch increment without explicit promotion approval. Currently: if client books N hinges, does the system apply 300 + (N-1)×50, or does it require separate bookings?",
+      "why_not_machine_safe": "Batch pricing rules interact with the pricing engine in non-trivial ways. If promoted without a production test, the artisan might not honor the batch price if the platform communicates it to the client before the artisan confirms. The rule needs operational validation (how does artisan see it? how does client see it? is it a pre-booking calculation or a post-visit adjustment?).",
+      "recommended_next_action": "Human decision: (A) promote EXPERIMENTAL_BATCH_RULE to APPROVED for estimator V1 (enables 300 + (N-1)×50 calculation). (B) Keep experimental — estimator shows base price for 1 item and notes 'additional items may apply'. (C) Define operational protocol (artisan confirms batch on arrival) before promotion. Requires explicit human decision before estimator V1 implementation.",
+      "blocking_for_engine": true,
+      "blocking_for_production": false,
+      "priority": "MEDIUM",
+      "effort": "LOW — clear decision needed, no new research required"
+    },
+    "HRQ-004": {
+      "review_id": "HRQ-004",
+      "service_codes": [
+        "nettoyage.apres_travaux"
+      ],
+      "category": "EVIDENCE_CONFIDENCE",
+      "problem": "NET-030 (post-construction cleaning, 18 MAD/m², 1000 MAD minimum) has source_confidence = LOW — only 2 sources. The V0.3 calibration explicitly states 'Human field verification strongly recommended before production.' The service is approved and canonically registered, but its evidence quality is below the threshold for confident production deployment.",
+      "why_not_machine_safe": "Evidence confidence is a data quality issue, not a semantic one. The machine cannot validate pricing against market reality. Only artisan field testing or additional external research can confirm the price is appropriate.",
+      "recommended_next_action": "Before production promotion: (A) Run 3–5 test missions with artisans at 18 MAD/m² + 1000 MAD minimum to validate market reaction and artisan acceptance. (B) OR source additional external pricing evidence to raise confidence to MEDIUM or HIGH. (C) Alternative: hold NET-030 at QUOTE_REQUIRED until field validation is complete.",
+      "blocking_for_engine": false,
+      "blocking_for_production": true,
+      "priority": "MEDIUM",
+      "effort": "HIGH — requires field data collection"
+    },
+    "HRQ-005": {
+      "review_id": "HRQ-005",
+      "service_codes": [
+        "nettoyage.visite_minimum",
+        "nettoyage.menage_standard",
+        "menuiserie.remplacement_charniere",
+        "menuiserie.remplacement_coulisse_tiroir",
+        "menuiserie.reglage_porte.sans_rabotage",
+        "menuiserie.reglage_porte.avec_rabotage",
+        "menuiserie.deblocage_porte_coulissante.sans_piece",
+        "menuiserie.deblocage_porte_coulissante.avec_galets",
+        "menuiserie.installation_porte"
+      ],
+      "category": "EVIDENCE_CONFIDENCE",
+      "problem": "Multiple menuiserie and nettoyage services have evidence_confidence = LOW or MEDIUM with LEVEL_0 maturity (external research + human calibration only, no transaction data). These are approved for design purposes but have not been validated by real artisan missions.",
+      "why_not_machine_safe": "Market pricing in Morocco can vary significantly from external research sources. Artisan acceptance rates and client conversion at canonical prices are unknown until field testing.",
+      "recommended_next_action": "Shadow engine + artisan pilot missions (Phase 7C.3+ or pilot program) before production promotion of LOW-confidence services. No design blocker — but production requires field validation.",
+      "blocking_for_engine": false,
+      "blocking_for_production": true,
+      "priority": "LOW",
+      "effort": "HIGH — requires field pilot program"
+    },
+    "HRQ-006": {
+      "review_id": "HRQ-006",
+      "service_codes": [
+        "climatisation.installation_mono_split_3m",
+        "climatisation.installation_mono_split_5m"
+      ],
+      "category": "DEFERRED_SERVICE_GAP",
+      "problem": "CLIM-020 (installation ≤3m copper) and CLIM-021 (installation ≤5m copper) both specify that copper beyond their respective limits triggers CLIM-025 (per-metre add-on). CLIM-025 is explicitly NOT YET APPROVED — it has no calibrated price, no human decision, and is marked as deferred. Currently: if a client needs 6m copper run, the system has no approved standardized price for the extra metre. The per_metre_formula_frozen note in V0.3 explicitly says 'DO NOT create per-metre production formula in this phase.'",
+      "why_not_machine_safe": "CLIM-025 has no approved price. The engine cannot calculate the add-on for copper beyond 5m without it.",
+      "recommended_next_action": "Before production launch of CLIM-020/021: either (A) approve CLIM-025 per-metre add-on with dedicated calibration phase, or (B) define that copper >5m → QUOTE_REQUIRED (artisan on site confirms). Option B is simpler and consistent with frozen evidence.",
+      "blocking_for_engine": false,
+      "blocking_for_production": true,
+      "priority": "MEDIUM",
+      "effort": "MEDIUM — requires dedicated CLIM-025 calibration or explicit QUOTE decision"
+    },
+    "HRQ-007": {
+      "review_id": "HRQ-007",
+      "service_codes": [
+        "bricolage.fixation_tv"
+      ],
+      "category": "ELIGIBILITY_PARTIAL_PROSE",
+      "problem": "BRIC-030 (TV mounting, 300 MAD) standard eligibility has a partial structured contract (≤65 inches, ≤40 kg, FIXED or TILT bracket, non-VESA-special) with a 'special note' about full-motion articulated mounts. The scope_contract has structured fields but the 'full_motion_articulated' arm case is documented as 'artisan assesses on site' — not a hard block. The eligibility predicate is therefore SOFT for this condition, not machine-hard.",
+      "why_not_machine_safe": "Full-motion articulated mount complexity is case-by-case. A machine cannot determine from a prebooking question alone whether the specific mount/wall combination is within scope. Artisan on-site assessment is the correct resolution mechanism.",
+      "recommended_next_action": "Keep bracket_type = FULL_MOTION as a SOFT eligibility flag (show warning to client, do not block booking). Artisan confirms on arrival. Document this in estimator V1 UX spec. No new human decision required — soft flag is the correct semantics.",
+      "blocking_for_engine": false,
+      "blocking_for_production": false,
+      "priority": "LOW",
+      "effort": "LOW — already encoded as soft flag in canonical registry"
+    },
+    "HRQ-008": {
+      "review_id": "HRQ-008",
+      "service_codes": [
+        "ALL_SERVICES"
+      ],
+      "category": "COMMERCIAL_COPY_APPROVAL",
+      "problem": "The commercial-copy.v1.draft.json defines canonical French copy strings per output type. These strings have NOT been reviewed by a copywriter, legal reviewer, or native Darija speaker. The Darija strings in particular are machine-translated proposals and require native speaker validation before any production use.",
+      "why_not_machine_safe": "Copy strings affect client trust and legal clarity. Machine-generated Darija may contain errors or register mismatches that undermine client confidence or create ambiguity about pricing commitments.",
+      "recommended_next_action": "Before deploying any copy string to a client-facing surface: (A) Legal review of all contractual disclosure strings (especially FIXEO_PRICE, FIXEO_LABOUR_PRICE_PLUS_PART). (B) Native Darija speaker review of all Darija strings. (C) UX copywriter review of French strings for tone and length. Human approval gate required — already documented in production promotion gate.",
+      "blocking_for_engine": false,
+      "blocking_for_production": true,
+      "priority": "HIGH",
+      "effort": "MEDIUM — review process, not research"
+    },
+    "HRQ-009": {
+      "review_id": "HRQ-009",
+      "service_codes": [
+        "nettoyage.menage_standard"
+      ],
+      "category": "ROUNDING_EDGE_CASE",
+      "problem": "NET-002 (65 MAD × workers × hours) with EXACT_INTEGER_MAD rounding policy: in practice, 65 is always an integer, workers is always an integer, and hours is billed in whole hours — so the formula always produces exact integer MAD results. However, if future input allows fractional hours (e.g., 1.5 hours), the formula 65 × 1 × 1.5 = 97.5 MAD would produce a non-integer result. The approved EXACT_INTEGER_MAD policy says such cases must NOT be silently rounded — they must be flagged for explicit future handling.",
+      "why_not_machine_safe": "The current frozen design assumes whole-hour billing. If the estimator V1 allows fractional hours, the formula could produce non-integer MAD values that violate the EXACT_INTEGER_MAD policy without an explicit decision on how to handle them.",
+      "recommended_next_action": "Confirm with product team: (A) Hours are always billed in whole-hour increments — policy remains valid, no rounding needed. (B) If fractional hours are desired: human decision required on rounding rule for NET-002 specifically (e.g., ceiling to next hour = artisan-friendly; floor = client-friendly; nearest integer = neutral). Current design: whole-hour billing assumed. Flag for confirmation before estimator V1 hour input design.",
+      "blocking_for_engine": false,
+      "blocking_for_production": false,
+      "priority": "LOW",
+      "effort": "LOW — single product decision on hour granularity"
+    },
+    "HRQ-010": {
+      "review_id": "HRQ-010",
+      "service_codes": [
+        "serrurerie.porte_verrouillee_ouverture",
+        "serrurerie.cle_cassee_extraction"
+      ],
+      "category": "ELIGIBILITY_PARTIAL_PROSE",
+      "problem": "serrurerie.porte_verrouillee_ouverture (380 MAD) has condition: 'Porte résidentielle standard non blindée. Clés perdues, volées ou enfermées à l'intérieur.' This is partially structured (security_door = False is a predicate) but 'clés perdues/volées/enfermées' cannot be machine-verified — it is client-declared. serrurerie.cle_cassee_extraction (220 MAD) has condition: 'Fragment de clé dans le barillet standard. Barillet non endommagé au préalable par tentative maison.' The 'non-endommagé' condition is artisan-assessed on site — cannot be a prebooking predicate.",
+      "why_not_machine_safe": "Authorization and key-state conditions are artisan-verified on site, not client-declared at booking. A machine cannot verify these claims before dispatch. This is correct by design — the service requires on-site verification.",
+      "recommended_next_action": "No new human decision required. Keep qualification_status = CONDITIONAL with supporting_prose for these conditions. Artisan verifies on site. If barrel is damaged on arrival: scope-change protocol applies. This is the correct canonical representation — mark as RESOLVED_IN_REGISTRY.",
+      "blocking_for_engine": false,
+      "blocking_for_production": false,
+      "priority": "LOW",
+      "effort": "ZERO — already correctly encoded in registry"
+    }
+  }
+}

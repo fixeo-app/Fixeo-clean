@@ -1,0 +1,700 @@
+{
+  "_meta": {
+    "artifact": "FIXEO_CANONICAL_PREBOOKING_QUESTIONS_V1",
+    "phase": "7C.3",
+    "status": "DRAFT",
+    "production_ready": false,
+    "version": "1.0.0-draft",
+    "date": "2026-08-09",
+    "total_questions": 19,
+    "note": "Semantic question contract for conditional service eligibility. Not a UI specification. One question may drive one or more eligibility predicates. Questions are referenced by ID from service entries."
+  },
+  "questions": {
+    "Q-ELEC-MCB-DEFECT": {
+      "question_id": "Q-ELEC-MCB-DEFECT",
+      "input_id": "mcb_defect_confirmed",
+      "metier": "electricite",
+      "service_refs": [
+        "electricite.disjoncteur_remplacement"
+      ],
+      "question_fr": "Le disjoncteur est-il physiquement cassé (bouton bloqué, boîtier fissuré, levier ne restant pas en position) — ou saute-t-il à répétition sans raison claire ?",
+      "question_ar_darija": "واش الديسجونكتور مكسور جسمياً (مفتاحه ما كيمشيش) — ولا كيوقف وحده باستمرار بلا سبب واضح؟",
+      "answer_type": "single_choice",
+      "allowed_answers": [
+        {
+          "value": "physically_broken",
+          "label_fr": "Physiquement cassé (bouton bloqué ou boîtier fissuré)",
+          "effect": "ELIGIBLE"
+        },
+        {
+          "value": "trips_repeatedly",
+          "label_fr": "Saute à répétition ou sans raison claire",
+          "effect": "DIAGNOSTIC_FIRST"
+        },
+        {
+          "value": "unknown",
+          "label_fr": "Je ne sais pas",
+          "effect": "DIAGNOSTIC_FIRST"
+        }
+      ],
+      "required": true,
+      "blocking_conditions": [
+        "trips_repeatedly → DIAGNOSTIC_FIRST: book electricite.diagnostic (200 MAD) before replacement"
+      ],
+      "route_conditions": [],
+      "why_needed": "An electrician must NEVER replace a breaker merely because it trips. Repeated tripping = downstream fault requiring diagnostic first. Replacing without diagnosis is a safety hazard."
+    },
+    "Q-ELEC-DISTRIBUTOR": {
+      "question_id": "Q-ELEC-DISTRIBUTOR",
+      "input_id": "distributor_equipment_involved",
+      "metier": "electricite",
+      "service_refs": [
+        "electricite.disjoncteur_remplacement"
+      ],
+      "question_fr": "S'agit-il du disjoncteur de branchement — l'appareil séparé de votre tableau, typiquement avec un sceau du distributeur ?",
+      "question_ar_darija": "واش هو ديسجونكتور الكيد ديال الكمبيني — اللي مع ختم الشركة ومنفصل على التابلو ديالك؟",
+      "answer_type": "boolean",
+      "allowed_answers": [
+        {
+          "value": true,
+          "label_fr": "Oui — c'est l'équipement du distributeur",
+          "effect": "ROUTE_ONEE"
+        },
+        {
+          "value": false,
+          "label_fr": "Non — c'est dans mon tableau électrique privé",
+          "effect": "ELIGIBLE"
+        }
+      ],
+      "required": true,
+      "blocking_conditions": [
+        "True → absolute exclusion: charge 200 MAD diagnostic, direct client to ONEE or territory distributor"
+      ],
+      "route_conditions": [
+        "True → ROUTE-ELEC-ONEE-001"
+      ],
+      "why_needed": "Distributor-controlled equipment is legally and technically outside FIXEO electrician scope. Tampering is illegal. Identification must happen before dispatch."
+    },
+    "Q-ELEC-BURNING-SMELL": {
+      "question_id": "Q-ELEC-BURNING-SMELL",
+      "input_id": "surface_condition",
+      "metier": "electricite",
+      "service_refs": [
+        "electricite.disjoncteur_remplacement"
+      ],
+      "question_fr": "Y a-t-il une odeur de brûlé ou des traces noires dans votre tableau électrique ?",
+      "question_ar_darija": "واش كاين ريحة محروق أو آثار سواد في التابلو ديالك؟",
+      "answer_type": "boolean",
+      "allowed_answers": [
+        {
+          "value": true,
+          "label_fr": "Oui — odeur de brûlé ou traces noires",
+          "effect": "SAFETY_OVERRIDE"
+        },
+        {
+          "value": false,
+          "label_fr": "Non",
+          "effect": "CONTINUE"
+        }
+      ],
+      "required": true,
+      "blocking_conditions": [
+        "True → SAFETY_OVERRIDE: HORS PÉRIMÈTRE, full tableau assessment required → QUOTE"
+      ],
+      "route_conditions": [],
+      "why_needed": "Burning smell or scorch marks indicate overheating — a fire hazard. POL-ELECTRICAL-SAFETY-V1 mandates STOP before any panel work."
+    },
+    "Q-SERR-DOOR-SLAMMED-ONLY": {
+      "question_id": "Q-SERR-DOOR-SLAMMED-ONLY",
+      "input_id": "security_door",
+      "metier": "serrurerie",
+      "service_refs": [
+        "serrurerie.porte_claquee_ouverture",
+        "serrurerie.porte_claquee_blindee.ouverture"
+      ],
+      "question_fr": "La porte s'est-elle claquée (fermée par le vent ou involontairement) sans avoir été verrouillée à clé ?",
+      "question_ar_darija": "واش الباب انسكر وحده (من الريح أو بلا قصد) بلا ما يتدير بالمفتاح؟",
+      "answer_type": "boolean",
+      "allowed_answers": [
+        {
+          "value": true,
+          "label_fr": "Oui — claquée seulement, pas de clé",
+          "effect": "ELIGIBLE_SLAMMED"
+        },
+        {
+          "value": false,
+          "label_fr": "Non — verrouillée à clé (clés perdues/enfermées)",
+          "effect": "ELIGIBLE_LOCKED"
+        }
+      ],
+      "required": true,
+      "blocking_conditions": [],
+      "route_conditions": [],
+      "why_needed": "Distinguishes serrurerie.porte_claquee_ouverture (220 MAD) from serrurerie.porte_verrouillee_ouverture (380 MAD). Different technique and price."
+    },
+    "Q-SERR-SECURITY-DOOR": {
+      "question_id": "Q-SERR-SECURITY-DOOR",
+      "input_id": "security_door",
+      "metier": "serrurerie",
+      "service_refs": [
+        "serrurerie.porte_claquee_ouverture",
+        "serrurerie.porte_claquee_blindee.ouverture"
+      ],
+      "question_fr": "Est-ce une porte blindée ou renforcée ?",
+      "question_ar_darija": "واش الباب بلندي أو مقوّى؟",
+      "answer_type": "boolean",
+      "allowed_answers": [
+        {
+          "value": true,
+          "label_fr": "Oui — porte blindée",
+          "effect": "ROUTE_BLINDEE"
+        },
+        {
+          "value": false,
+          "label_fr": "Non — porte standard",
+          "effect": "CONTINUE"
+        }
+      ],
+      "required": true,
+      "blocking_conditions": [],
+      "route_conditions": [
+        "True + slammed → serrurerie.porte_claquee_blindee.ouverture (350 MAD)"
+      ],
+      "why_needed": "Security doors require different technique. Price: 350 MAD vs 220 MAD. Determines which service applies."
+    },
+    "Q-SERR-AUTHORIZATION": {
+      "question_id": "Q-SERR-AUTHORIZATION",
+      "input_id": "property_occupied_status",
+      "metier": "serrurerie",
+      "service_refs": [
+        "serrurerie.porte_claquee_ouverture",
+        "serrurerie.porte_claquee_blindee.ouverture",
+        "serrurerie.porte_verrouillee_ouverture"
+      ],
+      "question_fr": "Êtes-vous le propriétaire ou l'occupant légitime de ce logement ?",
+      "question_ar_darija": "واش نتا صاحب الدار أو ساكن فيها بشكل قانوني؟",
+      "answer_type": "single_choice",
+      "allowed_answers": [
+        {
+          "value": "owner_present",
+          "label_fr": "Je suis le propriétaire / l'occupant — je serai présent",
+          "effect": "ELIGIBLE"
+        },
+        {
+          "value": "authorized_third_party",
+          "label_fr": "Je suis autorisé (syndic, famille, urgence)",
+          "effect": "AUTHORIZATION_VERIFY"
+        },
+        {
+          "value": "unknown",
+          "label_fr": "Autre situation",
+          "effect": "AUTHORIZATION_REQUIRED"
+        }
+      ],
+      "required": true,
+      "blocking_conditions": [
+        "unknown → STOP — artisan verifies authorization before proceeding. POL-SERRURERIE-AUTHORIZATION-V1."
+      ],
+      "route_conditions": [],
+      "why_needed": "Serrurerie services involve access to a locked property. Artisan must verify occupancy authorization. This is a safety and legal requirement, not optional."
+    },
+    "Q-CLIM-LEAK-LOCATION": {
+      "question_id": "Q-CLIM-LEAK-LOCATION",
+      "input_id": "leak_location_confirmed",
+      "metier": "climatisation",
+      "service_refs": [
+        "climatisation.reparation_fuite_accessible"
+      ],
+      "question_fr": "Où se situe la fuite de réfrigérant ? (tuyau cuivre extérieur accessible / intérieur de l'unité / inconnu ?)",
+      "question_ar_darija": "فين كاين تسرب الغاز؟ (أنبوب النحاس الخارجي / داخل الجهاز / ما عارفش؟)",
+      "answer_type": "single_choice",
+      "allowed_answers": [
+        {
+          "value": "EXTERNAL_ACCESSIBLE_COPPER",
+          "label_fr": "Tuyau cuivre extérieur — visible et accessible",
+          "effect": "ELIGIBLE"
+        },
+        {
+          "value": "INDOOR_EVAPORATOR",
+          "label_fr": "À l'intérieur de l'unité intérieure (évaporateur)",
+          "effect": "HORS_PERIMETRE"
+        },
+        {
+          "value": "OUTDOOR_CONDENSER",
+          "label_fr": "À l'intérieur de l'unité extérieure (condenseur)",
+          "effect": "HORS_PERIMETRE"
+        },
+        {
+          "value": "COMPRESSOR",
+          "label_fr": "Au compresseur",
+          "effect": "HORS_PERIMETRE"
+        },
+        {
+          "value": "CONCEALED_WALL_FLOOR",
+          "label_fr": "Dans un mur ou une dalle (encastré)",
+          "effect": "HORS_PERIMETRE"
+        },
+        {
+          "value": "UNKNOWN",
+          "label_fr": "Je ne sais pas où est la fuite",
+          "effect": "DIAGNOSTIC_FIRST"
+        }
+      ],
+      "required": true,
+      "blocking_conditions": [
+        "anything except EXTERNAL_ACCESSIBLE_COPPER → HORS PÉRIMÈTRE or DIAGNOSTIC_FIRST"
+      ],
+      "route_conditions": [
+        "UNKNOWN → book CLIM-002 diagnostic first"
+      ],
+      "why_needed": "CLIM-013 (600 MAD) is for accessible external copper pipe only. Other leak locations require quote. This prevents artisan dispatch for out-of-scope situations."
+    },
+    "Q-CLIM-REFRIGERANT-TYPE": {
+      "question_id": "Q-CLIM-REFRIGERANT-TYPE",
+      "input_id": "refrigerant_type",
+      "metier": "climatisation",
+      "service_refs": [
+        "climatisation.reparation_fuite_accessible"
+      ],
+      "question_fr": "Quel réfrigérant utilise votre climatiseur ? (R32, R410A, R22 — visible sur l'unité extérieure)",
+      "question_ar_darija": "أش نوع الغاز ديال كليماتيك ديالك؟ (مكتوب على الوحدة الخارجية: R32، R410A، R22)",
+      "answer_type": "single_choice",
+      "allowed_answers": [
+        {
+          "value": "R410A",
+          "label_fr": "R410A",
+          "effect": "ELIGIBLE"
+        },
+        {
+          "value": "R32",
+          "label_fr": "R32",
+          "effect": "ROUTE_R32_SPECIALIST"
+        },
+        {
+          "value": "R22",
+          "label_fr": "R22 (ancien réfrigérant)",
+          "effect": "ELIGIBLE_WITH_NOTE"
+        },
+        {
+          "value": "OTHER",
+          "label_fr": "Autre / inconnu",
+          "effect": "DIAGNOSTIC_FIRST"
+        }
+      ],
+      "required": true,
+      "blocking_conditions": [
+        "R32 without certified artisan → ROUTE to R32/A2L specialist"
+      ],
+      "route_conditions": [
+        "R32 → POL-REFRIGERATION-INTEGRITY-V1, check artisan certification before dispatch"
+      ],
+      "why_needed": "R32 is A2L mildly flammable. Work on R32 requires specific certified equipment and artisan training. Safety-critical dispatch check."
+    },
+    "Q-CLIM-INSTALL-COPPER-LENGTH": {
+      "question_id": "Q-CLIM-INSTALL-COPPER-LENGTH",
+      "input_id": "installation_height_m",
+      "metier": "climatisation",
+      "service_refs": [
+        "climatisation.installation_mono_split_3m",
+        "climatisation.installation_mono_split_5m"
+      ],
+      "question_fr": "Quelle est la distance approximative entre l'unité intérieure et l'unité extérieure ?",
+      "question_ar_darija": "قياس شحال التقريبية بين الوحدة الداخلية والخارجية؟",
+      "answer_type": "single_choice",
+      "allowed_answers": [
+        {
+          "value": "up_to_3m",
+          "label_fr": "Jusqu'à 3 mètres",
+          "effect": "CLIM020_ELIGIBLE"
+        },
+        {
+          "value": "3_to_5m",
+          "label_fr": "Entre 3 et 5 mètres",
+          "effect": "CLIM021_ELIGIBLE"
+        },
+        {
+          "value": "above_5m",
+          "label_fr": "Plus de 5 mètres",
+          "effect": "ADD_ON_CLIM025_OR_QUOTE"
+        }
+      ],
+      "required": true,
+      "blocking_conditions": [
+        "above_5m → requires CLIM-025 per-extra-metre add-on (not yet calibrated) or QUOTE"
+      ],
+      "route_conditions": [],
+      "why_needed": "CLIM-020 includes up to 3m copper. CLIM-021 includes up to 5m. Beyond 5m triggers CLIM-025 (deferred, not yet approved) or QUOTE."
+    },
+    "Q-MENU-DOOR-TYPE": {
+      "question_id": "Q-MENU-DOOR-TYPE",
+      "input_id": "door_type",
+      "metier": "menuiserie",
+      "service_refs": [
+        "menuiserie.reglage_porte.sans_rabotage",
+        "menuiserie.reglage_porte.avec_rabotage",
+        "menuiserie.installation_porte"
+      ],
+      "question_fr": "De quel type de porte s'agit-il ?",
+      "question_ar_darija": "أش نوع الباب؟",
+      "answer_type": "single_choice",
+      "allowed_answers": [
+        {
+          "value": "bois",
+          "label_fr": "Bois (hêtre, pin, sapelli...)",
+          "effect": "ELIGIBLE"
+        },
+        {
+          "value": "mdf",
+          "label_fr": "MDF / aggloméré",
+          "effect": "ELIGIBLE"
+        },
+        {
+          "value": "aluminium",
+          "label_fr": "Aluminium",
+          "effect": "CONDITIONAL_NOTE"
+        },
+        {
+          "value": "pvc",
+          "label_fr": "PVC",
+          "effect": "CONDITIONAL_NOTE"
+        },
+        {
+          "value": "blindee",
+          "label_fr": "Blindée / porte de sécurité",
+          "effect": "ROUTE_SERRURERIE"
+        }
+      ],
+      "required": true,
+      "blocking_conditions": [
+        "blindee → ROUTE to serrurerie immediately"
+      ],
+      "route_conditions": [
+        "blindee → serrurerie services (appropriate service depends on situation)"
+      ],
+      "why_needed": "Menuiserie services apply to interior wooden/MDF doors. Security doors are serrurerie scope. Aluminium/PVC doors may have different eligibility — artisan confirms on site."
+    },
+    "Q-MENU-SECURITY-DOOR": {
+      "question_id": "Q-MENU-SECURITY-DOOR",
+      "input_id": "security_door",
+      "metier": "menuiserie",
+      "service_refs": [
+        "menuiserie.reglage_porte.sans_rabotage",
+        "menuiserie.reglage_porte.avec_rabotage",
+        "menuiserie.installation_porte"
+      ],
+      "question_fr": "Est-ce une porte blindée ou renforcée ?",
+      "question_ar_darija": "واش الباب بلندي أو مقوّى؟",
+      "answer_type": "boolean",
+      "allowed_answers": [
+        {
+          "value": true,
+          "label_fr": "Oui — porte blindée",
+          "effect": "ROUTE_SERRURERIE"
+        },
+        {
+          "value": false,
+          "label_fr": "Non — porte intérieure standard",
+          "effect": "CONTINUE"
+        }
+      ],
+      "required": true,
+      "blocking_conditions": [
+        "True → ROUTE to serrurerie. Menuiserie services ineligible."
+      ],
+      "route_conditions": [
+        "True → ROUTE-MENU-LOCK-001"
+      ],
+      "why_needed": "All menuiserie door services explicitly exclude security doors. Hard routing gate."
+    },
+    "Q-MENU-FRAME-CONDITION": {
+      "question_id": "Q-MENU-FRAME-CONDITION",
+      "input_id": "frame_condition",
+      "metier": "menuiserie",
+      "service_refs": [
+        "menuiserie.reglage_porte.sans_rabotage",
+        "menuiserie.reglage_porte.avec_rabotage",
+        "menuiserie.installation_porte"
+      ],
+      "question_fr": "Le cadre de la porte est-il en bon état ? (Pas de bois pourri, pas de déformation structurelle du bâti ?)",
+      "question_ar_darija": "واش إطار الباب مزيان؟ (ماشي فيه عفن ولا تشويه في الهيكل؟)",
+      "answer_type": "single_choice",
+      "allowed_answers": [
+        {
+          "value": "SOUND",
+          "label_fr": "En bon état — cadre sain",
+          "effect": "ELIGIBLE"
+        },
+        {
+          "value": "COMPATIBLE",
+          "label_fr": "Utilisable avec la nouvelle porte",
+          "effect": "ELIGIBLE"
+        },
+        {
+          "value": "MINOR_DAMAGE",
+          "label_fr": "Légèrement endommagé — artisan juge sur place",
+          "effect": "ARTISAN_ASSESS"
+        },
+        {
+          "value": "ROTTED",
+          "label_fr": "Bois pourri",
+          "effect": "HORS_PERIMETRE"
+        },
+        {
+          "value": "STRUCTURALLY_DEFORMED",
+          "label_fr": "Déformation structurelle (mur ou bâti instable)",
+          "effect": "HORS_PERIMETRE"
+        }
+      ],
+      "required": true,
+      "blocking_conditions": [
+        "ROTTED → HORS PÉRIMÈTRE — frame must be replaced/repaired first",
+        "STRUCTURALLY_DEFORMED → HORS PÉRIMÈTRE → maçonnerie or QUOTE"
+      ],
+      "route_conditions": [],
+      "why_needed": "Rotten or structurally deformed door frames are outside menuiserie standardized scope. Artisan cannot safely complete the service."
+    },
+    "Q-MENU-MASONRY-REQUIRED": {
+      "question_id": "Q-MENU-MASONRY-REQUIRED",
+      "input_id": "frame_condition",
+      "metier": "menuiserie",
+      "service_refs": [
+        "menuiserie.installation_porte"
+      ],
+      "question_fr": "L'installation nécessite-t-elle des travaux de maçonnerie (agrandissement de l'ouverture, réparation du mur) ?",
+      "question_ar_darija": "واش التركيب محتاج أشغال بناء (توسيع الفتحة أو إصلاح الحيط)؟",
+      "answer_type": "boolean",
+      "allowed_answers": [
+        {
+          "value": true,
+          "label_fr": "Oui — modification de la maçonnerie requise",
+          "effect": "HORS_PERIMETRE"
+        },
+        {
+          "value": false,
+          "label_fr": "Non — bâti existant compatible",
+          "effect": "CONTINUE"
+        }
+      ],
+      "required": true,
+      "blocking_conditions": [
+        "True → HORS PÉRIMÈTRE. Masonry pre-work required before MENU_006."
+      ],
+      "route_conditions": [],
+      "why_needed": "MENU_006 (500 MAD door installation) requires existing compatible frame. Masonry modification → HORS PÉRIMÈTRE."
+    },
+    "Q-MENU-DOOR-WIDTH": {
+      "question_id": "Q-MENU-DOOR-WIDTH",
+      "input_id": "door_width_cm",
+      "metier": "menuiserie",
+      "service_refs": [
+        "menuiserie.installation_porte"
+      ],
+      "question_fr": "Quelle est la largeur de la porte (en cm) ? Les dimensions standard sont 73 cm, 83 cm ou 93 cm.",
+      "question_ar_darija": "شحال عرض الباب (بالسانتيمتر)؟ الأبعاد المعيارية هي 73 أو 83 أو 93 سم.",
+      "answer_type": "single_choice",
+      "allowed_answers": [
+        {
+          "value": 73,
+          "label_fr": "73 cm (standard)",
+          "effect": "ELIGIBLE"
+        },
+        {
+          "value": 83,
+          "label_fr": "83 cm (standard)",
+          "effect": "ELIGIBLE"
+        },
+        {
+          "value": 93,
+          "label_fr": "93 cm (standard)",
+          "effect": "ELIGIBLE"
+        },
+        {
+          "value": "other",
+          "label_fr": "Autre dimension",
+          "effect": "CONDITIONAL_QUOTE"
+        }
+      ],
+      "required": true,
+      "blocking_conditions": [
+        "other → eligibility flag — artisan assesses on site. If >2cm trim required → QUOTE"
+      ],
+      "route_conditions": [],
+      "why_needed": "MENU_006 scope: standard Moroccan residential interior door widths (73, 83, 93 cm). Non-standard may require custom trimming → out of scope."
+    },
+    "Q-PEIN-ACTIVE-MOISTURE": {
+      "question_id": "Q-PEIN-ACTIVE-MOISTURE",
+      "input_id": "active_moisture",
+      "metier": "peinture",
+      "service_refs": [
+        "peinture.mur_interieur.labour_only",
+        "peinture.mur_interieur.all_in",
+        "peinture.mur_interieur.all_in_avec_prep",
+        "peinture.plafond.labour_only"
+      ],
+      "question_fr": "Y a-t-il des traces d'humidité active, d'infiltration ou de moisissure ?",
+      "question_ar_darija": "واش كاين رطوبة نشيطة، تسرب أو تعفن فالحيطان؟",
+      "answer_type": "boolean",
+      "allowed_answers": [
+        {
+          "value": true,
+          "label_fr": "Oui — traces d'humidité ou moisissure",
+          "effect": "HORS_PERIMETRE"
+        },
+        {
+          "value": false,
+          "label_fr": "Non",
+          "effect": "CONTINUE"
+        }
+      ],
+      "required": true,
+      "blocking_conditions": [
+        "True → HORS PÉRIMÈTRE ABSOLU — resolve moisture source first (plomberie or toiture). No painting until source resolved."
+      ],
+      "route_conditions": [
+        "True → route to plomberie (internal leak) or toiture specialist (roof) depending on source"
+      ],
+      "why_needed": "Painting over active moisture is harmful and pointless. POL-PAINTED-SURFACE-V1 is absolute — active moisture = peinture out of scope."
+    },
+    "Q-PEIN-SURFACE-CONDITION": {
+      "question_id": "Q-PEIN-SURFACE-CONDITION",
+      "input_id": "surface_condition",
+      "metier": "peinture",
+      "service_refs": [
+        "peinture.mur_interieur.labour_only",
+        "peinture.mur_interieur.all_in",
+        "peinture.plafond.labour_only"
+      ],
+      "question_fr": "Dans quel état sont les murs ?",
+      "question_ar_darija": "فاش حال الحيطان؟",
+      "answer_type": "single_choice",
+      "allowed_answers": [
+        {
+          "value": "READY_TO_PAINT",
+          "label_fr": "Prêts à peindre — propres, secs, stables",
+          "effect": "ELIGIBLE_STANDARD"
+        },
+        {
+          "value": "MINOR_PREPARATION",
+          "label_fr": "Légèrement abîmés — quelques trous, fissures fines",
+          "effect": "PEIN005_OR_PEIN008"
+        },
+        {
+          "value": "MAJOR_PREPARATION",
+          "label_fr": "Beaucoup de préparation nécessaire",
+          "effect": "HORS_PERIMETRE"
+        },
+        {
+          "value": "STRUCTURAL_CRACK",
+          "label_fr": "Fissures structurelles (larges, traversantes)",
+          "effect": "HORS_PERIMETRE"
+        }
+      ],
+      "required": true,
+      "blocking_conditions": [
+        "MAJOR_PREPARATION → QUOTE_REQUIRED",
+        "STRUCTURAL_CRACK → HORS PÉRIMÈTRE maçonnerie"
+      ],
+      "route_conditions": [
+        "STRUCTURAL_CRACK → maçonnerie referral"
+      ],
+      "why_needed": "Routes client to correct peinture service. READY_TO_PAINT → PEIN-002/003. MINOR_PREPARATION → PEIN-005 or PEIN-008 add-on. Major/structural → out of scope."
+    },
+    "Q-PEIN-CLIENT-SUPPLIES-PAINT": {
+      "question_id": "Q-PEIN-CLIENT-SUPPLIES-PAINT",
+      "input_id": "client_supplies_paint",
+      "metier": "peinture",
+      "service_refs": [
+        "peinture.mur_interieur.labour_only",
+        "peinture.mur_interieur.all_in",
+        "peinture.mur_interieur.all_in_avec_prep"
+      ],
+      "question_fr": "Fournissez-vous la peinture vous-même, ou souhaitez-vous que l'artisan fournisse la peinture standard ?",
+      "question_ar_darija": "واش غتجيب الصبغة بنفسك، أم تبغي العامل يجيب الصبغة المعيارية؟",
+      "answer_type": "single_choice",
+      "allowed_answers": [
+        {
+          "value": "client_supplies",
+          "label_fr": "Je fournis ma propre peinture",
+          "effect": "PEIN002_LABOUR_ONLY"
+        },
+        {
+          "value": "artisan_supplies",
+          "label_fr": "L'artisan fournit la peinture standard",
+          "effect": "PEIN003_OR_PEIN005_ALL_IN"
+        }
+      ],
+      "required": true,
+      "blocking_conditions": [],
+      "route_conditions": [],
+      "why_needed": "Hard routing gate between PEIN-002 (35 MAD/m², labour only) and PEIN-003/005 (65–75 MAD/m², all-in). Different price, different scope."
+    },
+    "Q-NET-PROPERTY-TYPE": {
+      "question_id": "Q-NET-PROPERTY-TYPE",
+      "input_id": "property_type",
+      "metier": "nettoyage",
+      "service_refs": [
+        "nettoyage.grand_menage"
+      ],
+      "question_fr": "Quel type de bien souhaitez-vous faire nettoyer en profondeur ?",
+      "question_ar_darija": "أش نوع الملك اللي بغيتي تنظفو بشكل عميق؟",
+      "answer_type": "single_choice",
+      "allowed_answers": [
+        {
+          "value": "apartment_f2_f3",
+          "label_fr": "Appartement F2/F3 (60–100 m²)",
+          "effect": "ELIGIBLE_600MAD"
+        },
+        {
+          "value": "villa",
+          "label_fr": "Villa",
+          "effect": "QUOTE_REQUIRED"
+        },
+        {
+          "value": "studio_f1",
+          "label_fr": "Studio / F1",
+          "effect": "CONDITIONAL_NOTE"
+        },
+        {
+          "value": "f4_f5_large",
+          "label_fr": "Grand appartement F4/F5 ou plus",
+          "effect": "CONDITIONAL_NOTE"
+        },
+        {
+          "value": "other",
+          "label_fr": "Autre",
+          "effect": "QUOTE_REQUIRED"
+        }
+      ],
+      "required": true,
+      "blocking_conditions": [
+        "villa → QUOTE_REQUIRED: 600 MAD does not cover villas",
+        "f4_f5_large → no approved tier — advise client, may offer hourly or QUOTE"
+      ],
+      "route_conditions": [],
+      "why_needed": "NET-004 (grand nettoyage 600 MAD) is calibrated for F2/F3 apartments (60–100 m²). Villa scope → QUOTE_REQUIRED. Other sizes not yet approved."
+    },
+    "Q-BRIC-TV-SIZE": {
+      "question_id": "Q-BRIC-TV-SIZE",
+      "input_id": "tv_inches",
+      "metier": "bricolage",
+      "service_refs": [
+        "bricolage.fixation_tv"
+      ],
+      "question_fr": "Quelle est la taille de votre télévision (en pouces) ?",
+      "question_ar_darija": "شحال بوصة تيليفيزيون ديالك؟",
+      "answer_type": "integer",
+      "allowed_answers": null,
+      "answer_range": {
+        "min": 24,
+        "max": 100,
+        "eligibility_threshold": 65
+      },
+      "required": true,
+      "blocking_conditions": [
+        ">65 inches → eligibility flag — artisan confirms on site. Very large screen may require QUOTE"
+      ],
+      "route_conditions": [],
+      "why_needed": "BRIC-030 standard scope: ≤65 inches / ≤40 kg. Above threshold → scope change or heavy mounting quote."
+    }
+  }
+}

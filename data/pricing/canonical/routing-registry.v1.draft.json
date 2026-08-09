@@ -5,9 +5,9 @@
     "version": "1.0.0-draft",
     "status": "DRAFT_NON_PRODUCTION",
     "production_ready": false,
-    "note": "NOT imported by any runtime. Design artifact only."
+    "note": "NOT imported by any runtime. Design artifact only.",
+    "total_routes": 18
   },
-
   "routes": {
     "ROUTE-MENU-LOCK-001": {
       "route_id": "ROUTE-MENU-LOCK-001",
@@ -196,6 +196,19 @@
       "hardness": "HARD",
       "client_message_key": "route.all.permit_required",
       "description": "Any work requiring a building permit or regulatory licence is outside FIXEO scope — must route to a licensed contractor."
+    },
+    "ROUTE-CLIM-DIAG-001": {
+      "route_id": "ROUTE-CLIM-DIAG-001",
+      "trigger": "Refrigerant leak location UNKNOWN — source not confirmed",
+      "source_service": "climatisation.reparation_fuite_accessible",
+      "source_metier": "climatisation",
+      "target": "climatisation.diagnostic",
+      "target_metier": "climatisation",
+      "target_service": "CLIM-002",
+      "action": "BOOK_DIAGNOSTIC_FIRST",
+      "description": "When the refrigerant leak location is unknown, book CLIM-002 diagnostic (250 MAD) first to confirm leak location before dispatching for CLIM-013 repair. Diagnostic fee may be absorbed if same-visit repair is accepted.",
+      "absorption_applies": true,
+      "canonical_policy": "POL-DIAGNOSTIC-ABSORPTION-CLIM-V1"
     }
   }
 }

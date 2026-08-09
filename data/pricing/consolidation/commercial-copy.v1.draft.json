@@ -1,0 +1,141 @@
+{
+  "_meta": {
+    "artifact": "FIXEO_COMMERCIAL_COPY_REGISTRY_V1",
+    "phase": "7C.3",
+    "status": "DRAFT",
+    "production_ready": false,
+    "version": "1.0.0-draft",
+    "date": "2026-08-09",
+    "deployment_status": "NOT_DEPLOYED",
+    "note": "Documentation-only output copy registry. Defines canonical French (and Darija) copy strings per commercial output type. Must not introduce 'prix indicatif' for FIXEO_PRICE or FIXEO_CALCULATED_PRICE. FIXEO_ESTIMATE is the only estimate wording. Strings must be approved before any production surface uses them. This artifact is DOCUMENTATION — not a translation file for runtime use."
+  },
+  "doctrines": {
+    "contractual_price_doctrine": "A FIXEO price displayed to a client is a contractual commitment for the declared eligible scope. It is not indicative. It does not need to be confirmed with the artisan. The artisan cannot negotiate it. Scope changes follow the scope-change protocol.",
+    "legacy_disclaimer_status": "LEGACY_RESEARCH_DISCLAIMER: 'Prix indicatif FIXEO — tarif réel confirmé avec l'artisan avant intervention.' This disclaimer is INCORRECT for FIXEO_PRICE, FIXEO_CALCULATED_PRICE, FIXEO_LABOUR_PRICE_PLUS_PART, FIXEO_DIAGNOSTIC, and FIXEO_ADD_ON. It is only applicable to FIXEO_ESTIMATE and QUOTE_REQUIRED, which have zero approved standardized services in this pilot.",
+    "copy_approval_gate": "No copy string from this registry may be deployed to any client-facing surface without explicit human approval. This is a documentation artifact only.",
+    "darija_note": "Darija copy is included where semantically faithful to the French canonical version. Darija strings are proposals — they require native speaker review before any deployment."
+  },
+  "copy_by_output_type": {
+    "FIXEO_PRICE": {
+      "output_type": "FIXEO_PRICE",
+      "commercial_status": "CONTRACTUAL",
+      "canonical_label_fr": "Prix FIXEO",
+      "canonical_label_ar_darija": "ثمن فيكسيو",
+      "price_display_template_fr": "Prix FIXEO : {price} MAD",
+      "price_display_template_ar_darija": "ثمن فيكسيو: {price} درهم",
+      "scope_qualifier_fr": "pour la prestation déclarée dans les conditions standard",
+      "client_disclosure_fr": "Ce prix est garanti pour le périmètre déclaré. Toute modification de périmètre est expliquée et approuvée par vous avant tout travail supplémentaire.",
+      "client_disclosure_ar_darija": "هاد الثمن مضمون للخدمة المحددة. أي تغيير في النطاق كيتشرح وكيتوافق عليه معاك قبل أي خدمة زايدة.",
+      "artisan_disclosure_fr": "Prix FIXEO contractuel : {price} MAD — main-d'œuvre et déplacement inclus pour la prestation déclarée. Hors périmètre : déclarer, expliquer, obtenir accord client avant de continuer.",
+      "NOT_ALLOWED_fr": "Prix indicatif FIXEO — (INTERDIT pour ce type)",
+      "copy_key_price": "copy.fixeo_price.price",
+      "copy_key_scope": "copy.{metier}.{service}.scope"
+    },
+    "FIXEO_CALCULATED_PRICE": {
+      "output_type": "FIXEO_CALCULATED_PRICE",
+      "commercial_status": "CONTRACTUAL",
+      "canonical_label_fr": "Prix FIXEO calculé",
+      "canonical_label_ar_darija": "ثمن فيكسيو محسوب",
+      "price_display_template_fr": "Prix FIXEO : {calculated_price} MAD ({rate} MAD × {quantity} {unit})",
+      "price_display_template_ar_darija": "ثمن فيكسيو: {calculated_price} درهم",
+      "floor_display_fr": "Prix minimum applicable : {floor} MAD",
+      "client_disclosure_fr": "Ce prix est calculé à partir de vos données ({rate} MAD × {quantity} {unit}). Il est garanti pour le périmètre déclaré. Si la quantité réelle diffère, le calcul est ajusté avec votre accord.",
+      "client_disclosure_ar_darija": "هاد الثمن محسوب على أساس معطياتك ({rate} درهم × {quantity} {unit}). مضمون للخدمة المحددة.",
+      "artisan_disclosure_fr": "Prix FIXEO calculé : {rate} MAD × {quantity} {unit} = {calculated_price} MAD (minimum {floor} MAD si applicable).",
+      "NOT_ALLOWED_fr": "Prix indicatif FIXEO — (INTERDIT pour ce type)",
+      "copy_key_price": "copy.fixeo_calculated_price.price",
+      "copy_key_formula": "copy.fixeo_calculated_price.formula"
+    },
+    "FIXEO_LABOUR_PRICE_PLUS_PART": {
+      "output_type": "FIXEO_LABOUR_PRICE_PLUS_PART",
+      "commercial_status": "CONTRACTUAL_LABOUR_ONLY",
+      "canonical_label_fr": "Prix FIXEO main-d'œuvre + pièce séparée",
+      "canonical_label_ar_darija": "ثمن فيكسيو للعمل + القطعة منفصلة",
+      "price_display_template_fr": "Main-d'œuvre FIXEO : {labour_price} MAD — pièce à chiffrer séparément avec accord",
+      "price_display_template_ar_darija": "عمل فيكسيو: {labour_price} درهم — القطعة محسوبة منفصلة مع موافقتك",
+      "parts_disclosure_fr": "La pièce de remplacement n'est PAS incluse dans ce prix. L'artisan vous identifie la pièce, vous annonce le prix et attend votre accord avant installation.",
+      "parts_disclosure_ar_darija": "القطعة ما داخلاش في هاد الثمن. العامل غيعرفك القطعة، غيقولك بثمنها، وغيستناك تقبل قبل ما يركبها.",
+      "client_disclosure_fr": "Prix FIXEO {labour_price} MAD — main-d'œuvre et déplacement. La pièce ({part_description}) est chiffrée séparément : l'artisan vous en informe et obtient votre accord avant toute installation.",
+      "artisan_disclosure_fr": "Prix FIXEO main-d'œuvre : {labour_price} MAD. Protocole pièce : identifier, proposer marque + spec, annoncer prix, attendre approbation client écrite/verbale explicite, puis installer. Remettre ancienne pièce au client.",
+      "NOT_ALLOWED_fr": "Prix indicatif FIXEO — (INTERDIT pour ce type)",
+      "copy_key_price": "copy.fixeo_labour_price_plus_part.price",
+      "copy_key_parts": "copy.fixeo_labour_price_plus_part.parts_disclosure"
+    },
+    "FIXEO_DIAGNOSTIC": {
+      "output_type": "FIXEO_DIAGNOSTIC",
+      "commercial_status": "CONTRACTUAL",
+      "canonical_label_fr": "Diagnostic FIXEO",
+      "canonical_label_ar_darija": "تشخيص فيكسيو",
+      "price_display_template_fr": "Diagnostic FIXEO : {diagnostic_price} MAD",
+      "price_display_template_ar_darija": "تشخيص فيكسيو: {diagnostic_price} درهم",
+      "absorption_disclosure_fr": "Si une réparation FIXEO standardisée est acceptée sur le même déplacement, le diagnostic ({diagnostic_price} MAD) est déduit du prix de la réparation.",
+      "absorption_disclosure_ar_darija": "إذا قبلتي إصلاح فيكسيو في نفس الزيارة، ثمن التشخيص ({diagnostic_price} درهم) كيتطرح من ثمن الإصلاح.",
+      "no_absorption_fr": "Si aucune réparation n'est acceptée lors de cette visite, le diagnostic est facturé en totalité ({diagnostic_price} MAD).",
+      "metier_specific_note": "Diagnostic absorption rules are independently defined per métier. See: POL-DIAGNOSTIC-ABSORPTION-PLOMBERIE-V1, POL-DIAGNOSTIC-ABSORPTION-ELECTRICITE-V1, POL-DIAGNOSTIC-ABSORPTION-CLIM-V1.",
+      "NOT_ALLOWED_fr": "Prix indicatif FIXEO — (INTERDIT pour ce type)",
+      "copy_key_price": "copy.fixeo_diagnostic.price",
+      "copy_key_absorption": "copy.fixeo_diagnostic.absorption"
+    },
+    "FIXEO_ADD_ON": {
+      "output_type": "FIXEO_ADD_ON",
+      "commercial_status": "CONTRACTUAL_ADD_ON",
+      "canonical_label_fr": "Supplément FIXEO",
+      "canonical_label_ar_darija": "إضافة فيكسيو",
+      "price_display_template_fr": "Supplément préparation FIXEO : {addon_price} MAD ({rate} MAD × {quantity} {unit})",
+      "primary_service_required_disclosure_fr": "Ce service ne peut être proposé qu'en complément d'une prestation FIXEO de peinture. Il n'est pas disponible en réservation autonome.",
+      "primary_service_required_disclosure_ar_darija": "هاد الخدمة ما تنجمش تحجزها وحدها — خاص تكون مع خدمة صباغة فيكسيو.",
+      "applicable_primary_services_fr": "Applicable avec : PEIN-002 (mur labour only), PEIN-003 (mur all-in), PEIN-004 (plafond)",
+      "NOT_ALLOWED_fr": "Prix indicatif FIXEO — (INTERDIT pour ce type)",
+      "copy_key_price": "copy.fixeo_add_on.price",
+      "copy_key_primary": "copy.fixeo_add_on.primary_service_required"
+    },
+    "FIXEO_ESTIMATE": {
+      "output_type": "FIXEO_ESTIMATE",
+      "commercial_status": "NON_CONTRACTUAL_ESTIMATE",
+      "approved_services_count": 0,
+      "canonical_label_fr": "Estimation FIXEO",
+      "canonical_label_ar_darija": "تقدير فيكسيو",
+      "price_display_template_fr": "Estimation FIXEO : environ {estimated_price} MAD — tarif indicatif uniquement",
+      "client_disclosure_fr": "Ce prix est une estimation indicative. Le tarif réel sera confirmé avec l'artisan avant démarrage des travaux. Il peut varier selon les conditions réelles.",
+      "NOT_USED_fr": "FIXEO_ESTIMATE has 0 approved services in the current pilot. Not deployed. Retained for future use if human decision approves an estimate-classified service.",
+      "copy_key_price": "copy.fixeo_estimate.price",
+      "copy_key_disclaimer": "copy.fixeo_estimate.disclaimer"
+    },
+    "QUOTE_REQUIRED": {
+      "output_type": "QUOTE_REQUIRED",
+      "commercial_status": "NON_STANDARDIZED",
+      "approved_services_count": 0,
+      "canonical_label_fr": "Devis requis",
+      "canonical_label_ar_darija": "خاص تطلب الثمن",
+      "client_disclosure_fr": "Ce service nécessite un devis personnalisé. L'artisan évalue votre situation sur place et vous remet un devis précis avant tout travail.",
+      "client_disclosure_ar_darija": "هاد الخدمة محتاجة تقدير خاص. العامل غيجي يشوف وغيعطيك ثمن واضح قبل ما يبدأ.",
+      "copy_key_price": "copy.quote_required.message"
+    }
+  },
+  "minimum_floor_copy": {
+    "floor_disclosure_fr": "Un forfait minimum de {floor} MAD s'applique à cette prestation. Si le calcul au {unit} donne un résultat inférieur à {floor} MAD, c'est le forfait minimum qui s'applique. Ce forfait ne s'ajoute JAMAIS au calcul — c'est un plancher, pas un supplément.",
+    "floor_disclosure_ar_darija": "كاين حد أدنى {floor} درهم لهاد الخدمة. ما كيزادش على الثمن — هو حد أدنى فقط."
+  },
+  "parts_disclosure_steps_fr": [
+    "1. L'artisan identifie la pièce nécessaire.",
+    "2. Il vous annonce : marque, spécification technique, et prix.",
+    "3. Il attend votre accord explicite.",
+    "4. Seulement après accord : il procède à l'installation.",
+    "5. L'ancienne pièce vous est remise.",
+    "6. Aucune installation sans accord préalable.",
+    "7. Le prix FIXEO (main-d'œuvre) reste inchangé quelle que soit la pièce choisie."
+  ],
+  "scope_change_copy_fr": {
+    "trigger_fr": "Situation hors périmètre identifiée",
+    "artisan_script_fr": "Je dois vous informer que la situation constatée dépasse le périmètre FIXEO standard pour cette intervention. Je vous explique ce que j'ai trouvé, ce qui est nécessaire en plus, et je vous donne un prix avant de continuer. Je n'agis pas sans votre accord.",
+    "steps_fr": [
+      "STOP — l'artisan cesse le travail en cours",
+      "IDENTIFIE — la situation hors périmètre",
+      "EXPLIQUE — clairement au client ce qu'il a trouvé",
+      "DÉCLARE — le changement de périmètre",
+      "CALCULE — le nouveau prix FIXEO ou devis",
+      "OBTIENT ACCORD — client approuve explicitement avant de continuer",
+      "CONTINUE — seulement après accord"
+    ]
+  }
+}
