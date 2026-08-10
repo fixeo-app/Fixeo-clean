@@ -864,12 +864,87 @@
       footerSlot.innerHTML = '';
       footerSlot.appendChild(footer);
 
+    } else if (next_step && next_step.type === 'SERVICE_SELECTION') {
+      // 7C.9K.5: render service choice — must NOT call _evaluate() here.
+      setRAFIState('idle');
+      self._renderServiceSelection(next_step);
+
     } else if (session.state === 'READY_FOR_ENGINE' || next_step && next_step.type === 'READY') {
       self._evaluate();
     } else {
-      // Fallback — evaluate
+      // Fallback — evaluate only for genuinely unexpected states (not SERVICE_SELECTION).
       self._evaluate();
     }
+  };
+
+  /**
+   * _renderServiceSelection — Phase 7C.9K.5
+   *
+   * Renders a generic list of service choices from nextStep.candidate_services.
+   * No métier-specific hardcoding. One tap selects and advances the session.
+   * Repeated taps blocked while the API request is in-flight.
+   */
+  EstimatorModal.prototype._renderServiceSelection = function(nextStep) {
+    var self = this;
+    var bodySlot = document.getElementById('body-slot');
+    var footerSlot = document.getElementById('footer-slot');
+    if (!bodySlot || !footerSlot) return;
+
+    var candidates = (nextStep && nextStep.candidate_services) || [];
+    if (candidates.length === 0) {
+      // No candidates — show recoverable error; never fall through to evaluate.
+      return self._showError('Aucun service disponible pour ce métier.');
+    }
+
+    var pending = false; // lock to prevent duplicate API calls
+
+    var body = el('div', 'estimator-body step-enter');
+    body.appendChild(el('p', 'question-prompt', 'Quel type d\'intervention souhaitez-vous ?'));
+
+    var cards = el('div', 'answer-cards');
+
+    candidates.forEach(function(svc) {
+      var card = renderAnswerCard(
+        { label: svc.label_fr || svc.short_label_fr || svc.service_code, value: svc.service_code },
+        false,
+        function(serviceCode) {
+          if (pending) return; // block repeated taps
+          pending = true;
+
+          // Dim all cards visually while awaiting response
+          cards.querySelectorAll('.answer-card').forEach(function(c) {
+            c.setAttribute('aria-disabled', 'true');
+            c.style.opacity = '0.5';
+          });
+
+          setRAFIState('analyzing');
+          triggerIntelligenceLine();
+
+          window.FixeoEstimatorAPI.selectService(STATE.sessionToken, serviceCode)
+            .then(function(r) {
+              if (!r.ok) {
+                pending = false;
+                return self._showError('Impossible de sélectionner ce service.');
+              }
+              // Store new opaque token — old token must not be reused.
+              STATE.sessionToken = r.session.session_token;
+              STATE.session = r.session;
+              // _renderStep handles QUESTION, READY_FOR_ENGINE, PAGE_REQUIRED, etc.
+              self._renderStep(r.session, r.next_step);
+            })
+            .catch(function() {
+              pending = false;
+              self._showError('Problème de connexion. Veuillez réessayer.');
+            });
+        }
+      );
+      cards.appendChild(card);
+    });
+
+    body.appendChild(cards);
+    bodySlot.innerHTML = '';
+    bodySlot.appendChild(body);
+    footerSlot.innerHTML = ''; // no footer action needed — tap auto-advances
   };
 
   EstimatorModal.prototype._submitAnswer = function(questionId, answer) {

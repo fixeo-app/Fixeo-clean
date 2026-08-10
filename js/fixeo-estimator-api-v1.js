@@ -27,6 +27,10 @@
     answer: function(sessionToken, questionId, answer) {
       return _call({ action: 'answer', session_token: sessionToken, question_id: questionId, answer: answer });
     },
+    // 7C.9K.5: advance from SERVICE_SELECTION to QUALIFICATION/READY_FOR_ENGINE
+    selectService: function(sessionToken, serviceCode) {
+      return _call({ action: 'select_service', session_token: sessionToken, service_code: serviceCode });
+    },
     evaluate: function(sessionToken) {
       return _call({ action: 'evaluate', session_token: sessionToken });
     },

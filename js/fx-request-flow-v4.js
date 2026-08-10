@@ -837,8 +837,11 @@
               urgency:      null, // urgency not yet known at step1 in standard mode
             }).then(function(result) {
               if (result && result.accepted === true) {
-                // Estimator V2 owns the interaction — suppress city advance.
-                return;
+                // 7C.9K.5: Estimator V2 owns the interaction.
+                // Dismiss RAFI so Estimator (z-index 1000) becomes visible.
+                // fxrf4 close() is safe: Estimator has no dependency on _st.
+                window.closeModal('request-modal');
+                return; // city advance suppressed
               }
               // accepted:false — reset guard, continue legacy city flow.
               _fxrf4EstimatorLaunched = false;

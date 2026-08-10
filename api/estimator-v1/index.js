@@ -31,7 +31,7 @@ const {
 } = require('./fixeo-estimator-runtime-v1');
 
 const MAX_BODY_BYTES    = 32 * 1024; // 32KB
-const VALID_ACTIONS     = new Set(['start', 'answer', 'evaluate', 'verify_pricing_context']);
+const VALID_ACTIONS     = new Set(['start', 'answer', 'evaluate', 'verify_pricing_context', 'select_service']);
 const QUESTION_ID_RE    = /^[a-z0-9_@.\-]{3,120}$/i;
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -255,6 +255,58 @@ function reconstructSession(payload) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Action: select_service  (Phase 7C.9K.5)
+// Body: { action:'select_service', session_token, service_code }
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Transitions a SERVICE_SELECTION session to QUALIFICATION or READY_FOR_ENGINE
+ * by recording the user's chosen service_code.
+ *
+ * Security contract identical to handleAnswer:
+ *   - session unsealed from opaque token (never from client plaintext)
+ *   - orchestrator validates serviceCode against getCandidateServices(metier)
+ *   - new opaque token issued for the updated session
+ *   - no raw session, secret, or pricing internals ever returned
+ */
+function handleSelectService(body, secret) {
+  const { session_token, service_code } = body;
+  if (!session_token) return { status: 400, body: { ok: false, error: 'missing_session_token' } };
+  if (!service_code || typeof service_code !== 'string' || !service_code.trim()) {
+    return { status: 400, body: { ok: false, error: 'missing_service_code' } };
+  }
+
+  let sessionPayload;
+  try { sessionPayload = unsealToken(session_token, secret); }
+  catch (e) {
+    if (e.message === 'Token expired') return { status: 401, body: { ok: false, error: 'session_expired' } };
+    return { status: 401, body: { ok: false, error: 'invalid_session_token' } };
+  }
+
+  const session = reconstructSession(sessionPayload);
+  const result = orchestrator.selectService(session, service_code.trim());
+  if (!result.ok) {
+    const errCode = result.error && result.error.code;
+    const status = (errCode === 'ILLEGAL_STATE' || errCode === 'UNKNOWN_SERVICE_CODE') ? 422 : 400;
+    return { status, body: { ok: false, error: result.error || 'select_service_failed' } };
+  }
+
+  const updatedSession = result.session;
+  const view = normalizeSessionView(updatedSession, secret);
+
+  const stepResult = orchestrator.getNextEstimatorStep(updatedSession);
+  let next_step = null;
+  if (stepResult.ok && stepResult.step) {
+    next_step = sanitizeStep(stepResult.step);
+  }
+
+  return {
+    status: 200,
+    body: { ok: true, session: view, next_step },
+  };
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Sanitize step — only expose browser-safe question fields
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -276,6 +328,21 @@ function sanitizeStep(step) {
   }
   if (step.type === 'READY') {
     return { type: 'READY' };
+  }
+  // 7C.9K.5: expose candidate services for SERVICE_SELECTION step.
+  // Only UI-safe fields: service_code + labels. No pricing internals.
+  if (step.type === 'SERVICE_SELECTION') {
+    var sanitizedCandidates = (step.candidate_services || []).map(function(s) {
+      return {
+        service_code:    s.service_code,
+        label_fr:        s.label_fr,
+        short_label_fr:  s.short_label_fr,
+      };
+    });
+    return {
+      type:               'SERVICE_SELECTION',
+      candidate_services: sanitizedCandidates,
+    };
   }
   return { type: step.type };
 }
@@ -319,6 +386,7 @@ module.exports = async function handler(req, res) {
     switch (action) {
       case 'start':                   result = handleStart(body, secret); break;
       case 'answer':                  result = handleAnswer(body, secret); break;
+      case 'select_service':          result = handleSelectService(body, secret); break;
       case 'evaluate':                result = handleEvaluate(body, secret); break;
       case 'verify_pricing_context':  result = handleVerifyPricingContext(body, secret); break;
       default:

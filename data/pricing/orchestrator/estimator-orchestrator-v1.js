@@ -511,8 +511,76 @@ function parseDeepLinkParams(params) {
   };
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// 5. selectService
+// ─────────────────────────────────────────────────────────────────────────────
+/**
+ * Phase 7C.9K.5 — Public contract for advancing from SERVICE_SELECTION.
+ *
+ * Validates that:
+ *   - session exists and is in SERVICE_SELECTION state
+ *   - session.metier is set
+ *   - serviceCode is a known candidate for session.metier (no cross-métier)
+ *
+ * Then resolves the canonical service_code, clones the session with it,
+ * and advances via qualifyOrAdvance → QUALIFICATION or READY_FOR_ENGINE.
+ *
+ * Never computes or exposes prices.
+ *
+ * @param {object} session — reconstructed session object (from unsealToken)
+ * @param {string} serviceCode — canonical service_code chosen by the user
+ * @param {string} [now] — ISO timestamp (injectable for tests)
+ * @returns {{ ok: true, session } | { ok: false, error }}
+ */
+function selectService(session, serviceCode, now) {
+  if (!session) {
+    return { ok: false, error: { code: 'NO_SESSION', message: 'Session required' } };
+  }
+
+  if (session.state !== 'SERVICE_SELECTION') {
+    return { ok: false, error: {
+      code: 'ILLEGAL_STATE',
+      message: 'selectService requires SERVICE_SELECTION state. Current: ' + session.state,
+    } };
+  }
+
+  if (!session.metier) {
+    return { ok: false, error: { code: 'NO_METIER', message: 'session.metier required for selectService' } };
+  }
+
+  if (!serviceCode || typeof serviceCode !== 'string' || !serviceCode.trim()) {
+    return { ok: false, error: { code: 'MISSING_SERVICE_CODE', message: 'serviceCode is required' } };
+  }
+
+  // Validate serviceCode is a known candidate for THIS session's métier.
+  // This prevents cross-métier injections (e.g. electricite code on plomberie session).
+  var candidates = resolver.getCandidateServices(session.metier);
+  var isCandidate = candidates.some(function(c) { return c.service_code === serviceCode; });
+  if (!isCandidate) {
+    return { ok: false, error: {
+      code: 'UNKNOWN_SERVICE_CODE',
+      message: 'service_code not in candidate list for metier ' + session.metier + ': ' + serviceCode,
+    } };
+  }
+
+  // Resolve canonical service_code through existing resolver (validates against registry).
+  var resolvedSvc = resolver.resolveServiceCode(serviceCode, session.metier);
+  if (!resolvedSvc.ok) {
+    return { ok: false, error: resolvedSvc.error };
+  }
+
+  var ts = now || new Date().toISOString();
+
+  // Clone session with the chosen service_code (preserves all other fields).
+  var updated = sessionModule.cloneSession(session, { service_code: resolvedSvc.service_code }, ts);
+
+  // Advance: QUALIFICATION (has questions) or READY_FOR_ENGINE (no questions).
+  return qualifyOrAdvance(updated, ts);
+}
+
 module.exports = {
   startEstimator: startEstimator,
+  selectService: selectService,
   answerEstimatorQuestion: answerEstimatorQuestion,
   getNextEstimatorStep: getNextEstimatorStep,
   evaluateEstimator: evaluateEstimator,
