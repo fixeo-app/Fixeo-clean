@@ -210,6 +210,35 @@ var METIER_LABELS = {
   peinture:'Peinture', bricolage:'Bricolage',
 };
 
+/* ─── Client label resolver (prototype-only, no canonical changes) ── */
+var CLIENT_LABELS_HTML = {
+  'menuiserie.reglage_porte.sans_rabotage':    { primary: 'Réglage de porte intérieure',      secondary: 'Sans rabotage' },
+  'menuiserie.reglage_porte':                  { primary: 'Réglage de porte intérieure',      secondary: null },
+  'menuiserie.remplacement_charniere':         { primary: 'Remplacement de charnière',        secondary: null },
+  'plomberie.robinet_remplacement':            { primary: 'Remplacement de robinet',          secondary: 'Main-d\'œuvre FIXEO' },
+  'electricite.diagnostic':                    { primary: 'Diagnostic électrique',            secondary: null },
+  'electricite.luminaire_installation':        { primary: 'Installation de luminaire',        secondary: null },
+  'nettoyage.menage_standard':                 { primary: 'Ménage standard',                  secondary: null },
+  'nettoyage.grand_menage':                    { primary: 'Grand ménage',                     secondary: null },
+  'peinture.mur_interieur.all_in':             { primary: 'Peinture mur intérieur',           secondary: 'Peinture standard incluse' },
+  'peinture.mur_interieur':                    { primary: 'Peinture mur intérieur',           secondary: null },
+  'serrurerie.porte_claquee_blindee.ouverture':{ primary: 'Intervention serrurerie complexe', secondary: 'Porte blindée' },
+  'serrurerie.cylindre_remplacement.standard': { primary: 'Remplacement de cylindre',        secondary: 'Modèle standard' },
+  'serrurerie.cylindre_remplacement':          { primary: 'Remplacement de cylindre',        secondary: null },
+  'climatisation.diagnostic':                  { primary: 'Diagnostic climatisation',         secondary: null },
+};
+var FORBIDDEN_HTML = ['standard','all_in','all-in','sans_rabotage','simple','labour_only','avec_galets'];
+function resolveClientLabelHTML(serviceCode) {
+  if (!serviceCode) return { primary: 'Intervention', secondary: null };
+  if (CLIENT_LABELS_HTML[serviceCode]) return CLIENT_LABELS_HTML[serviceCode];
+  var parts = serviceCode.split('.');
+  var last = parts[parts.length - 1].replace(/_/g, ' ');
+  if (FORBIDDEN_HTML.some(function(t){ return last.toLowerCase() === t; })) {
+    last = parts.slice(0,-1).join(' ').replace(/_/g,' ');
+  }
+  return { primary: last.charAt(0).toUpperCase() + last.slice(1), secondary: null };
+}
+
 var ABSORPTION_COPY = {
   plomberie:'Si un travail est réalisé suite au diagnostic, ce montant est déduit de la prestation.',
   electricite:'Si un travail est réalisé suite au diagnostic, ce montant est déduit de la prestation.',
@@ -266,13 +295,13 @@ function showHandoffScreen(session, outcome) {
   if (!bodySlot || !footerSlot) return;
   setRAFIState('verifying');
 
-  var serviceName = outcome && outcome.service_code
-    ? outcome.service_code.split('.').pop().replace(/_/g, ' ')
-    : '';
+  var _rclH = outcome && outcome.service_code ? resolveClientLabelHTML(outcome.service_code) : {primary:'Intervention',secondary:null};
+  var serviceName = _rclH.primary;
 
   var body = el('div', 'estimator-body step-enter handoff-screen');
-  body.appendChild(el('div', 'handoff-title', 'Réservation — handoff prototype'));
-  if (serviceName) body.appendChild(el('div', 'result-service-name', serviceName));
+  body.appendChild(el('div', 'handoff-title', 'PRIX FIXEO TRANSMIS'));
+  body.appendChild(el('div', 'result-service-name', serviceName));
+  if (_rclH.secondary) body.appendChild(el('div','result-service-secondary',_rclH.secondary));
   if (outcome && outcome.price) {
     var amt = outcome.price.amount_mad || outcome.price.labour_amount_mad;
     if (amt) body.appendChild(el('div', 'handoff-price', formatMAD(amt)));
@@ -374,7 +403,11 @@ function renderContext(session) {
   ctx.appendChild(el('span','context-detail',' un détail'));
   var parts = [];
   if (session.metier) parts.push(METIER_LABELS[session.metier] || session.metier);
-  if (session.service_code) parts.push(session.service_code.split('.').pop().replace(/_/g,' '));
+  if (session.service_code) {
+    var _lbl = resolveClientLabelHTML(session.service_code);
+    parts.push(_lbl.primary);
+    // secondary shown separately, not concatenated into strip
+  }
   if (parts.length) ctx.appendChild(el('span','rafi-identified',' — '+parts.join(' — ')));
   return ctx;
 }
@@ -417,15 +450,16 @@ function renderOutcomeBody(session) {
 
   if (ot === 'PRICE_READY') {
     var body = el('div','estimator-body step-enter result-enter');
+    var _lblA = resolveClientLabelHTML(outcome.service_code || '');
     body.appendChild(el('div','result-identified','✓ Intervention identifiée'));
-    body.appendChild(el('div','result-service-name',
-      outcome.service_code.split('.').pop().replace(/_/g,' ')));
+    body.appendChild(el('div','result-service-name', _lblA.primary));
+    if (_lblA.secondary) body.appendChild(el('div','result-service-secondary', _lblA.secondary));
     var amtNum = outcome.price && outcome.price.amount_mad != null
       ? Math.round(outcome.price.amount_mad).toString() : '—';
-    var priceContainer = el('div','result-price-container');
-    var priceRow = el('div','result-price');
-    priceRow.appendChild(el('span','result-price-number',amtNum));
-    priceRow.appendChild(el('span','result-price-unit','MAD'));
+    var priceContainer = el('div','result-price-container price-reveal');
+    var priceRow = el('div','result-price result-price-row');
+    priceRow.appendChild(el('span','amount',amtNum));
+    priceRow.appendChild(el('span','currency',' MAD'));
     priceContainer.appendChild(priceRow);
     priceContainer.appendChild(el('div','result-price-label','PRIX FIXEO'));
     priceContainer.appendChild(el('div','result-price-scope','Applicable au périmètre identifié'));
@@ -435,15 +469,16 @@ function renderOutcomeBody(session) {
   }
   if (ot === 'LABOUR_PLUS_PART_READY') {
     var body3 = el('div','estimator-body step-enter result-enter');
+    var _lblB = resolveClientLabelHTML(outcome.service_code || '');
     body3.appendChild(el('div','result-identified','✓ Intervention identifiée'));
-    body3.appendChild(el('div','result-service-name',
-      outcome.service_code.split('.').pop().replace(/_/g,' ')));
+    body3.appendChild(el('div','result-service-name', _lblB.primary));
+    if (_lblB.secondary) body3.appendChild(el('div','result-service-secondary', _lblB.secondary));
     var labAmt = outcome.price && outcome.price.labour_amount_mad;
     var lcard = el('div','labour-card');
     lcard.appendChild(el('div','labour-card__label','Main-d\'œuvre FIXEO'));
     var amtEl = el('div','labour-card__amount');
-    amtEl.appendChild(el('span','',labAmt != null ? Math.round(labAmt).toString() : '—'));
-    amtEl.appendChild(el('span','result-price-unit','MAD'));
+    amtEl.appendChild(el('span','amount',labAmt != null ? Math.round(labAmt).toString() : '—'));
+    amtEl.appendChild(el('span','currency',' MAD'));
     lcard.appendChild(amtEl);
     body3.appendChild(lcard);
     var pcard = el('div','part-card');

@@ -460,8 +460,11 @@ function renderComplexFlow() {
 
 /* ─── Init ─────────────────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', function() {
+  // Support both ?fixture=E (direct) and #fixture=E (via serve clean-URL routing)
   var params = new URLSearchParams(window.location.search);
-  var fixture = params.get('fixture');
+  var fixture = params.get('fixture') ||
+    (window.location.hash.match(/fixture=([A-Z])/) || [])[1] ||
+    (document.cookie.match(/fixture=([A-Z])/) || [])[1] || null;
 
   if (fixture === 'E') {
     // Painting PAGE_REQUIRED flow
