@@ -1045,11 +1045,15 @@
         if (window.FixeoEstimatorReservationBridge && self._pricingContextToken) {
           window.FixeoEstimatorReservationBridge.prepareContext(self._pricingContextToken);
         }
-        // Dispatch event for reservation modal
+        // 7C.9L.1: dispatch reservation event — listener in index.html owns the
+        // lifecycle from here. Estimator is NOT closed unconditionally:
+        // - on success: listener calls FixeoEstimatorV2.close() after open() returns
+        // - on failure: Estimator stays visible, user can retry
+        // STATE.onClose() intentionally removed from this path.
         document.dispatchEvent(new CustomEvent('fixeo:estimator-reserve', {
           detail: { pricing_context_token: self._pricingContextToken }
         }));
-        if (STATE.onClose) STATE.onClose();
+        // Do NOT call STATE.onClose() here — listener handles Estimator close.
       };
     } else if (ot === 'QUOTE_REQUIRED') {
       footerOpts.primaryLabel = 'Demander un devis';
