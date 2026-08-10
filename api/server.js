@@ -49,6 +49,16 @@ const {
   BookingAuthorityError,
 } = require('./fixeo-booking-authority-v1');
 
+/* ── Phase 7C.9E — Estimator Context Idempotency Guard ─────────────────── */
+/* Guarantees one-booking-per-pricing-context atomicity via Supabase.         */
+/* FAIL CLOSED: if Supabase unavailable → HTTP 503. Never bypass idempotency. */
+const {
+  consumeEstimatorContext,
+  commitEstimatorContext,
+  failEstimatorContext,
+  IdempotencyError,
+} = require('./fixeo-estimator-idempotency-v1');
+
 const app  = express();
 const PORT = process.env.PORT || 3001;
 
@@ -696,10 +706,104 @@ app.post('/api/booking/cod', async (req, res) => {
         : '(legacy path)'
     );
 
-    /* ── Anti-doublon ────────────────────────────────────── */
+    /* ── Anti-doublon orderID (in-memory, legacy) ───────────── */
+    /* Note: orderID-based dedup is in-memory only (not durable across instances).
+       For estimator-backed bookings, context_id idempotency (Supabase) is the
+       durable replay guard. This orderID check remains for legacy COD bookings. */
     if (codOrders.has(orderID)) {
-      console.warn(`[Fixeo API] ⚠️  COD doublon ignoré : ${orderID}`);
+      console.warn(`[Fixeo API] ⚠️  COD doublon orderID ignoré : ${orderID}`);
       return res.status(409).json({ success: false, error: 'Commande COD déjà enregistrée pour cet orderID.' });
+    }
+
+    /* ══════════════════════════════════════════════════════
+       7C.9E — ESTIMATOR CONTEXT IDEMPOTENCY GUARD
+       ══════════════════════════════════════════════════════
+       For estimator-backed bookings (estimator_context_token present):
+         1. Atomically consume context_id via Supabase UNIQUE constraint.
+         2. If already_consumed_same → return previous booking (idempotent retry).
+         3. If already_consumed_conflict → 409, no booking created.
+         4. If persistence unavailable → 503 FAIL CLOSED (never bypass).
+
+       For legacy bookings (no estimator_context_token):
+         Skip — idempotency guard not applicable.
+    ══════════════════════════════════════════════════════ */
+    let idempotencyResult = null;
+
+    if (bookingAuthority.estimator_verified && bookingAuthority.context_id) {
+      try {
+        idempotencyResult = await consumeEstimatorContext(bookingAuthority.context_id, {
+          outcome_type: bookingAuthority.outcome_type,
+          service_code: bookingAuthority.service_code,
+          session_id:   bookingAuthority.session_id,
+          amount_mad:   totalAmount,
+        });
+      } catch (idempotencyErr) {
+        if (idempotencyErr instanceof IdempotencyError) {
+          const code = idempotencyErr.code;
+          if (code === 'CONFIG_MISSING' || code === 'PERSISTENCE_UNAVAILABLE') {
+            /* Idempotency store unavailable — FAIL CLOSED.
+               Cannot guarantee one-booking-per-context → reject the request.
+               This is a temporary state: admin must ensure Supabase is reachable. */
+            console.error('[Fixeo API] ❌ Idempotency persistence unavailable:', idempotencyErr.message);
+            return res.status(503).json({
+              success: false,
+              error:   'idempotency_persistence_unavailable',
+              message: 'Service temporairement indisponible. Veuillez réessayer dans quelques instants.',
+            });
+          }
+          if (code === 'ALREADY_CONSUMED') {
+            /* Context committed for a DIFFERENT service — conflict */
+            console.warn('[Fixeo API] ⚠️  Estimator context conflict:', idempotencyErr.message);
+            return res.status(409).json({
+              success: false,
+              error:   'estimator_context_already_consumed',
+              message: 'Ce devis a déjà été utilisé pour une autre réservation.',
+            });
+          }
+          if (code === 'CONTEXT_ID_REQUIRED') {
+            /* Malformed context_id — treat as token defect */
+            console.error('[Fixeo API] ❌ context_id validation failed:', idempotencyErr.message);
+            return res.status(422).json({
+              success: false,
+              error:   'estimator_context_invalid',
+              code:    'CONTEXT_ID_REQUIRED',
+            });
+          }
+          /* Unknown IdempotencyError code — fail closed */
+          console.error('[Fixeo API] ❌ Unknown IdempotencyError:', idempotencyErr.code, idempotencyErr.message);
+          return res.status(503).json({ success: false, error: 'idempotency_error' });
+        }
+        throw idempotencyErr; // unexpected — outer catch handles it
+      }
+
+      /* Safe idempotent retry — return the previous booking */
+      if (idempotencyResult.status === 'already_consumed_same') {
+        console.log('[Fixeo API] ✅ Idempotent retry — returning previous booking:', idempotencyResult.booking_ref);
+        return res.json({
+          success:         true,
+          orderID:         orderID,
+          bookingRef:      idempotencyResult.booking_ref,
+          orderStatus:     'pending_cod',
+          slotLock:        true,
+          paymentMethod:   'Cash on Delivery',
+          totalAmount:     totalAmount,
+          price_authority: bookingAuthority.source,
+          idempotent_retry: true,
+          message:         'Réservation déjà enregistrée. Voici les détails de votre réservation précédente.',
+        });
+      }
+
+      /* Concurrent conflict — another request is creating this booking */
+      if (idempotencyResult.status === 'already_consumed_conflict') {
+        console.warn('[Fixeo API] ⚠️  Concurrent context conflict — reject duplicate');
+        return res.status(409).json({
+          success: false,
+          error:   'estimator_context_concurrent_conflict',
+          message: 'Réservation en cours de traitement. Veuillez patienter.',
+        });
+      }
+
+      /* status === 'acquired' → proceed with booking creation */
     }
 
     /* ── Calcul commission & net artisan ─────────────────── */
@@ -710,10 +814,6 @@ app.post('/api/booking/cod', async (req, res) => {
     const bookingRef = 'COD-' + Date.now().toString(36).toUpperCase();
 
     /* ── Canonical estimator metadata for booking record ─── */
-    /* These fields are stored alongside the booking for audit/admin.
-       They do NOT change the COD schema — appended as additional fields.
-       Supabase persistence is a future phase (7C.9E+) task.
-       For now they are stored in the in-memory codOrders record and logged. */
     const estimatorMeta = bookingAuthority.estimator_verified ? {
       estimator_pricing_verified: true,
       estimator_outcome_type:     bookingAuthority.outcome_type,
@@ -725,7 +825,7 @@ app.post('/api/booking/cod', async (req, res) => {
       estimator_pricing_verified: false,
     };
 
-    /* ── Enregistrement ──────────────────────────────────── */
+    /* ── Enregistrement (in-memory + idempotency commit) ─── */
     codOrders.set(orderID, {
       orderID,
       bookingRef,
@@ -739,6 +839,19 @@ app.post('/api/booking/cod', async (req, res) => {
       createdAt     : new Date().toISOString(),
       ...estimatorMeta,
     });
+
+    /* 7C.9E: Commit the idempotency record now that booking is created */
+    if (bookingAuthority.estimator_verified && bookingAuthority.context_id) {
+      /* Non-blocking: booking already in memory — commit failure is non-fatal */
+      commitEstimatorContext(bookingAuthority.context_id, {
+        booking_ref: bookingRef,
+        order_id:    orderID,
+      }).catch(function(commitErr) {
+        /* Best-effort: log but don't fail the response */
+        console.warn('[Fixeo API] ⚠️  Idempotency commit failed (non-fatal):', commitErr.message,
+          '— booking already created ref:', bookingRef);
+      });
+    }
 
     console.log(
       `[Fixeo API] ✅ COD enregistré — ref: ${bookingRef}`,
@@ -772,6 +885,17 @@ app.post('/api/booking/cod', async (req, res) => {
 
   } catch (err) {
     console.error('[Fixeo API] ❌ /api/booking/cod exception:', err.message);
+    /* 7C.9E: If we acquired an idempotency context but hit an unexpected error,
+       mark it as failed so the user can retry (recovery path). */
+    try {
+      if (
+        err._acquiredContextId &&
+        typeof err._acquiredContextId === 'string'
+      ) {
+        failEstimatorContext(err._acquiredContextId, 'server_exception: ' + err.message)
+          .catch(function() {}); // best-effort
+      }
+    } catch (_) {}
     return res.status(500).json({ success: false, error: 'internal_server_error' });
   }
 });
