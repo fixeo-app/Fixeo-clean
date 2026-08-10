@@ -979,7 +979,15 @@ app.get('/api/health/cod', (req, res) => {
 /* ── Multer — Upload avatars artisans ────────────────────── */
 const _UPLOADS_DIR = require('path').join(__dirname, '..', 'uploads', 'artisans');
 const _fs = require('fs');
-if (!_fs.existsSync(_UPLOADS_DIR)) _fs.mkdirSync(_UPLOADS_DIR, { recursive: true });
+/* Phase 7C.9I: Guard mkdirSync — Vercel serverless has a read-only fs at /var/task.
+   mkdirSync would crash the module at startup. Graceful degradation: avatar upload
+   routes (/api/admin/artisans/*) will fail if dir unavailable, but COD/booking/
+   estimator paths are unaffected. Directory creation still works in local dev. */
+try {
+  if (!_fs.existsSync(_UPLOADS_DIR)) _fs.mkdirSync(_UPLOADS_DIR, { recursive: true });
+} catch (_mkdirErr) {
+  console.warn('[Fixeo API] uploads/artisans dir unavailable (read-only fs):', _mkdirErr.code);
+}
 
 const _artisanStorage = multer.diskStorage({
   destination : (req, file, cb) => cb(null, _UPLOADS_DIR),
