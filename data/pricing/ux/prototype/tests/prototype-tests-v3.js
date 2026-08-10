@@ -210,7 +210,7 @@ var report = {
   failures: failures
 };
 
-fs.writeFileSync(path.join(dir, 'tests', 'prototype-test-report.v3.json'), JSON.stringify(report, null, 2));
+fs.writeFileSync(path.join(dir, 'prototype-test-report.v3.json'), JSON.stringify(report, null, 2));
 console.log('Report written to prototype-test-report.v3.json');
 
 if (failed > 0) process.exit(1);
