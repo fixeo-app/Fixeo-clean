@@ -1,6 +1,6 @@
 /*!
  * api/estimator-v1/fixeo-estimator-runtime-v1.js
- * FIXEO Estimator Runtime — Normalization Module — Phase 7C.9B
+ * FIXEO Estimator Runtime — Normalization Module — Phase 7C.9B / 7C.9C
  *
  * Exports browser-safe views of internal session/outcome objects.
  * Uses REAL canonical field names from estimator-outcome-mapper-v1.
@@ -8,7 +8,17 @@
  */
 'use strict';
 
+const crypto       = require('crypto');
 const { sealToken } = require('./fixeo-estimator-token-v1');
+
+/**
+ * generateContextId() — opaque server-side one-time nonce for pricing context binding.
+ * Prevents context_id forgery from browser. Not a one-time-use token (no persistent store)
+ * but uniquely identifies this exact pricing evaluation event for logging/audit.
+ */
+function generateContextId() {
+  return 'fxctx-' + crypto.randomBytes(16).toString('hex');
+}
 
 const SESSION_TTL_MS      = 30 * 60 * 1000; // 30 min
 const PRICING_CTX_TTL_MS  = 15 * 60 * 1000; // 15 min
@@ -117,15 +127,19 @@ function buildPricingContextPayload(session) {
     service_code:  o.service_code,
     outcome_type:  o.outcome_type,
     session_id:    session.session_id,
+    // Cryptographic nonce — server-generated, prevents client-side context_id forgery.
+    // Uniquely identifies this pricing evaluation event.
+    context_id:    generateContextId(),
     // Price fields — canonical
-    amount_mad:         (o.price && o.price.amount_mad)         || null,
-    labour_amount_mad:  (o.price && o.price.labour_amount_mad)  || null,
+    amount_mad:         (o.price && o.price.amount_mad)         !== undefined ? (o.price.amount_mad)        : null,
+    labour_amount_mad:  (o.price && o.price.labour_amount_mad)  !== undefined ? (o.price.labour_amount_mad) : null,
     currency:           (o.price && o.price.currency)           || 'MAD',
     // Rendering hints
     parts_separate:   !!(o.outcome_type === 'LABOUR_PLUS_PART_READY' && o.variable_part_separate),
     is_diagnostic:    !!(o.outcome_type === 'DIAGNOSTIC_READY'),
     absorption_possible: !!(o.outcome_type === 'DIAGNOSTIC_READY' && o.absorption_possible),
     // TTL
+    issued_at:  Date.now(),
     expires_at: Date.now() + PRICING_CTX_TTL_MS,
   };
 

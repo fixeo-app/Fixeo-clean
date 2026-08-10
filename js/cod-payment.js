@@ -155,7 +155,13 @@
         address      : bookingData.address     || '—',
         phone        : bookingData.phone       || '—',
         isExpress    : !!bookingData.isExpress,
-      }
+      },
+      /* ── 7C.9C: Estimator pricing context token (pass-through to server) ──
+         When present, the server IGNORES clientDetails.totalAmount and derives
+         the canonical booking price from this encrypted token server-side.
+         This field is opaque to the browser — never decoded client-side.
+         When absent (legacy booking), server uses clientDetails.totalAmount. */
+      estimator_context_token: bookingData._estimator_context_token || undefined,
     };
 
     /* Essayer le backend */

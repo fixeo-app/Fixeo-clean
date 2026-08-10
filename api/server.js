@@ -40,6 +40,15 @@ require('dotenv').config({
   path: path.resolve(__dirname, '../.env')
 });
 
+/* ── Phase 7C.9C — Server-Authoritative Booking Price Resolver ──────────── */
+/* Resolves the canonical booking price from an encrypted estimator context   */
+/* token. When no token is present, falls back to legacy browser amount.      */
+/* FAIL CLOSED: any token defect → hard reject, never silently fall back.     */
+const {
+  resolveAuthoritativeBookingPricing,
+  BookingAuthorityError,
+} = require('./fixeo-booking-authority-v1');
+
 const app  = express();
 const PORT = process.env.PORT || 3001;
 
@@ -630,41 +639,67 @@ const COD_COMMISSION_RATE = 0.15; // 10% pour COD
 
 app.post('/api/booking/cod', async (req, res) => {
   console.log('\n[Fixeo API] ══ /api/booking/cod ══════════════');
-  console.log('[Fixeo API] Body reçu:', JSON.stringify(req.body));
+  /* NOTE: Do NOT log full body — may contain sensitive estimator token */
 
   try {
-    const { orderID, clientDetails } = req.body;
+    const { orderID, clientDetails, estimator_context_token } = req.body;
 
-    /* ── Validation ──────────────────────────────────────── */
+    /* ── Basic validation ────────────────────────────────── */
     if (!orderID) {
-      return res.status(400).json({
-        success: false,
-        error: 'orderID manquant dans la requête.'
-      });
+      return res.status(400).json({ success: false, error: 'orderID manquant dans la requête.' });
     }
-
     if (!clientDetails || typeof clientDetails !== 'object') {
-      return res.status(400).json({
-        success: false,
-        error: 'clientDetails manquant ou invalide.'
-      });
+      return res.status(400).json({ success: false, error: 'clientDetails manquant ou invalide.' });
     }
 
-    const totalAmount = parseFloat(clientDetails.totalAmount || clientDetails.price || 0);
-    if (isNaN(totalAmount) || totalAmount <= 0) {
-      return res.status(400).json({
-        success: false,
-        error: 'totalAmount invalide ou manquant dans clientDetails.'
+    /* ══════════════════════════════════════════════════════
+       7C.9C — SERVER-AUTHORITATIVE PRICING RESOLUTION
+       ══════════════════════════════════════════════════════
+       resolveAuthoritativeBookingPricing() enforces:
+         - If estimator_context_token present: server token price WINS.
+           browser clientDetails.totalAmount is IGNORED.
+         - If no token: legacy path — use browser totalAmount as before.
+         - Token defect with token present: FAIL CLOSED (hard reject).
+           NEVER fall back to browser price when token is present.
+    ══════════════════════════════════════════════════════ */
+    let bookingAuthority;
+    try {
+      bookingAuthority = resolveAuthoritativeBookingPricing({
+        estimatorContextToken: estimator_context_token || null,
+        browserTotalAmount:    clientDetails.totalAmount || clientDetails.price,
+        secret:                process.env.FIXEO_ESTIMATOR_SECRET,
       });
+    } catch (authorityErr) {
+      if (authorityErr instanceof BookingAuthorityError) {
+        /* Estimator token was present but invalid/non-payable → HARD REJECT.
+           Do NOT fall back. The browser supplied a token it cannot be trusted to replace. */
+        console.warn('[Fixeo API] ⚠️  COD price authority rejected:', authorityErr.code, authorityErr.message);
+        return res.status(422).json({
+          success: false,
+          error:   'estimator_price_authority_failed',
+          code:    authorityErr.code,
+          /* Do not echo the token or the decrypted details */
+        });
+      }
+      throw authorityErr; // unexpected — let the outer catch handle it
     }
+
+    const totalAmount = bookingAuthority.amount_mad;
+
+    /* Log what authority source was used — safe fields only */
+    console.log(
+      '[Fixeo API] Price authority:',
+      bookingAuthority.source,
+      '| amount:', totalAmount, 'MAD',
+      bookingAuthority.estimator_verified
+        ? ('| outcome: ' + bookingAuthority.outcome_type + ' | svc: ' + bookingAuthority.service_code)
+        : '(legacy path)'
+    );
 
     /* ── Anti-doublon ────────────────────────────────────── */
     if (codOrders.has(orderID)) {
       console.warn(`[Fixeo API] ⚠️  COD doublon ignoré : ${orderID}`);
-      return res.status(409).json({
-        success: false,
-        error: 'Commande COD déjà enregistrée pour cet orderID.'
-      });
+      return res.status(409).json({ success: false, error: 'Commande COD déjà enregistrée pour cet orderID.' });
     }
 
     /* ── Calcul commission & net artisan ─────────────────── */
@@ -674,7 +709,23 @@ app.post('/api/booking/cod', async (req, res) => {
     /* ── Génération référence booking ────────────────────── */
     const bookingRef = 'COD-' + Date.now().toString(36).toUpperCase();
 
-    /* ── Enregistrement (anti-doublon + simulation DB) ───── */
+    /* ── Canonical estimator metadata for booking record ─── */
+    /* These fields are stored alongside the booking for audit/admin.
+       They do NOT change the COD schema — appended as additional fields.
+       Supabase persistence is a future phase (7C.9E+) task.
+       For now they are stored in the in-memory codOrders record and logged. */
+    const estimatorMeta = bookingAuthority.estimator_verified ? {
+      estimator_pricing_verified: true,
+      estimator_outcome_type:     bookingAuthority.outcome_type,
+      estimator_service_code:     bookingAuthority.service_code,
+      estimator_context_id:       bookingAuthority.context_id,
+      estimator_parts_separate:   bookingAuthority.parts_separate,
+      estimator_is_diagnostic:    bookingAuthority.is_diagnostic,
+    } : {
+      estimator_pricing_verified: false,
+    };
+
+    /* ── Enregistrement ──────────────────────────────────── */
     codOrders.set(orderID, {
       orderID,
       bookingRef,
@@ -686,9 +737,14 @@ app.post('/api/booking/cod', async (req, res) => {
       orderStatus   : 'pending_cod',
       slotLock      : true,
       createdAt     : new Date().toISOString(),
+      ...estimatorMeta,
     });
 
-    console.log(`[Fixeo API] ✅ COD enregistré — ref: ${bookingRef} | montant: ${totalAmount} MAD | commission: ${commission} MAD | net artisan: ${netArtisan} MAD`);
+    console.log(
+      `[Fixeo API] ✅ COD enregistré — ref: ${bookingRef}`,
+      `| montant: ${totalAmount} MAD (${bookingAuthority.source})`,
+      `| commission: ${commission} MAD | net artisan: ${netArtisan} MAD`
+    );
 
     /* ── Réponse succès ──────────────────────────────────── */
     return res.json({
@@ -701,6 +757,8 @@ app.post('/api/booking/cod', async (req, res) => {
       totalAmount  : totalAmount,
       commission   : commission,
       netArtisan   : netArtisan,
+      /* Return the price authority source so the client UI can confirm */
+      price_authority: bookingAuthority.source,
       message      : 'Commande Cash on Delivery enregistrée avec succès. Paiement à effectuer lors de la livraison.',
       meta: {
         artisan    : clientDetails.artisanName || clientDetails.artisan || '—',
@@ -714,10 +772,7 @@ app.post('/api/booking/cod', async (req, res) => {
 
   } catch (err) {
     console.error('[Fixeo API] ❌ /api/booking/cod exception:', err.message);
-    return res.status(500).json({
-      success: false,
-      error  : err.toString()
-    });
+    return res.status(500).json({ success: false, error: 'internal_server_error' });
   }
 });
 
