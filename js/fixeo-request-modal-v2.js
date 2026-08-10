@@ -140,6 +140,27 @@
             problemInput.placeholder = p.hint;
             setTimeout(function () { problemInput.focus(); }, 50);
           }
+
+          // ── 7C.9D: Estimator V2 dormant hook ──────────────────────────────
+          // GUARD: only fires when flag is ON. Flag OFF = zero behavioral change.
+          // try/catch: any error falls back to legacy form flow silently.
+          if (p.slug &&
+              window.FixeoEstimatorConfig &&
+              window.FixeoEstimatorConfig.estimatorV2Enabled === true &&
+              window.FixeoEstimatorV2 &&
+              typeof window.FixeoEstimatorV2.open === 'function') {
+            try {
+              var _city = null;
+              try { _city = citySelect && citySelect.value ? citySelect.value : null; } catch (_) {}
+              window.FixeoEstimatorV2.open({
+                source: 'request_modal',
+                metier_hint: p.slug,
+                city: _city,
+                urgency: isExpress ? 'urgent' : null,
+              }).catch(function() { /* noop — legacy flow continues */ });
+            } catch (_) { /* noop — legacy flow continues */ }
+          }
+          // ── end estimator hook ─────────────────────────────────────────────
         });
 
         grid.appendChild(btn);

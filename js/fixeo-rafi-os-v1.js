@@ -1165,6 +1165,24 @@
           _mem.update({ category: { label: lbl, cat: selected.dataset.slug || '' } });
           RafiConversation.onServiceSelected(lbl);
           _checkSummary(modal);
+
+          // ── 7C.9D: Estimator V2 dormant hook ──────────────────────────────
+          // GUARD: only fires when flag is ON. Flag OFF = zero behavioral change.
+          if (selected.dataset.slug &&
+              window.FixeoEstimatorConfig &&
+              window.FixeoEstimatorConfig.estimatorV2Enabled === true &&
+              window.FixeoEstimatorV2 &&
+              typeof window.FixeoEstimatorV2.open === 'function') {
+            try {
+              window.FixeoEstimatorV2.open({
+                source: 'rafi',
+                metier_hint: selected.dataset.slug || null,
+                city: _mem.city || null,
+                urgency: _mem.isUrgent ? 'urgent' : null,
+              }).catch(function() { /* noop — RAFI legacy flow continues */ });
+            } catch (_) { /* noop — RAFI legacy flow continues */ }
+          }
+          // ── end estimator hook ─────────────────────────────────────────────
         }
       }
     });

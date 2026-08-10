@@ -232,12 +232,17 @@ test('H.1 Feature flag still false', function() {
   assertNot(code.includes('estimatorV2Enabled: true'));
 });
 
-test('H.2 index.html does not load estimator-v2.js unconditionally', function() {
+test('H.2 index.html estimator-v2.js is dormant-defer when present (7C.9D+)', function() {
+  // 7C.9D: estimator-v2.js is loaded as dormant defer asset — internal stub keeps it behaviorally inactive.
   const code = read('index.html');
-  assertNot(
-    code.includes('<script src="js/fixeo-estimator-v2.js"') ||
-    code.includes("<script src='js/fixeo-estimator-v2.js'")
-  );
+  // If present, must use defer
+  if (code.includes('fixeo-estimator-v2.js')) {
+    const v2Idx = code.indexOf('fixeo-estimator-v2.js');
+    const tag = code.slice(v2Idx - 40, v2Idx + 60);
+    assert(tag.includes('defer'), 'estimator-v2.js must be defer-loaded');
+  }
+  // Config must always be present
+  assert(code.includes('fixeo-estimator-config.js'), 'config bootstrap must be loaded');
 });
 
 test('H.3 Legacy estimator V1 still exists and not gutted', function() {

@@ -9,9 +9,30 @@
 (function() {
   'use strict';
 
-  // ── Feature gate — DORMANT until Phase 7C.9D ───────────────────
   if (window._fxEstV2Loaded) return;
-  if (!window.FixeoEstimatorConfig || window.FixeoEstimatorConfig.estimatorV2Enabled !== true) return;
+
+  // ── Public API stub — always defined so callers never get undefined ──
+  // Overwritten below when flag is ON or preview override is active.
+  window.FixeoEstimatorV2 = {
+    open:   function() { return Promise.resolve({ accepted: false, reason: 'disabled' }); },
+    close:  function() {},
+    isOpen: function() { return false; },
+  };
+
+  // ── Preview-only override (non-production hostnames only) ──────────
+  // Usage: window._FIXEO_ESTIMATOR_PREVIEW_OVERRIDE_ = true (in devtools on preview URL)
+  // Production hosts (fixeo.ma, www.fixeo.ma) ALWAYS ignore this override.
+  var _isPreviewHost = (typeof location !== 'undefined') &&
+    location.hostname !== 'fixeo.ma' &&
+    location.hostname !== 'www.fixeo.ma';
+  var _previewOverride = _isPreviewHost &&
+    (window._FIXEO_ESTIMATOR_PREVIEW_OVERRIDE_ === true);
+
+  // ── Feature gate — DORMANT until 7C.9D activation ─────────────────
+  if (!_previewOverride &&
+      (!window.FixeoEstimatorConfig ||
+       window.FixeoEstimatorConfig.estimatorV2Enabled !== true)) return;
+
   window._fxEstV2Loaded = true;
 
   // ─────────────────────────────────────────────────────────────────
@@ -129,6 +150,20 @@
     serrurerie: 'Serrurerie', climatisation: 'Climatisation', nettoyage: 'Nettoyage',
     peinture: 'Peinture', bricolage: 'Bricolage',
   };
+
+  // ─────────────────────────────────────────────────────────────────
+  // Entry context normalization
+  // ─────────────────────────────────────────────────────────────────
+  var _ALLOWED_ENTRY_FIELDS = ['source', 'metier_hint', 'service_hint', 'city', 'urgency', 'description'];
+
+  function _normalizeEntryContext(ctx) {
+    var out = {};
+    if (!ctx || typeof ctx !== 'object') return out;
+    _ALLOWED_ENTRY_FIELDS.forEach(function(k) {
+      if (ctx[k] != null) out[k] = ctx[k];
+    });
+    return out;
+  }
 
   // ─────────────────────────────────────────────────────────────────
   // State
@@ -688,6 +723,30 @@
   }
 
   // ─────────────────────────────────────────────────────────────────
+  // Container management (self-managed DOM)
+  // ─────────────────────────────────────────────────────────────────
+  var _activeModal = null;
+  var _activeContainer = null;
+
+  function _createContainer() {
+    var c = document.createElement('div');
+    c.setAttribute('id', 'fixeo-estimator-v2-root');
+    c.setAttribute('aria-live', 'polite');
+    document.body.appendChild(c);
+    return c;
+  }
+
+  function _destroyContainer() {
+    try {
+      if (_activeContainer && _activeContainer.parentNode) {
+        _activeContainer.parentNode.removeChild(_activeContainer);
+      }
+    } catch (_) {}
+    _activeContainer = null;
+    _activeModal = null;
+  }
+
+  // ─────────────────────────────────────────────────────────────────
   // EstimatorModal — main flow controller
   // ─────────────────────────────────────────────────────────────────
 
@@ -943,13 +1002,42 @@
   };
 
   // ─────────────────────────────────────────────────────────────────
-  // Public API
+  // Public API (overwrites stub defined at top of IIFE)
   // ─────────────────────────────────────────────────────────────────
   window.FixeoEstimatorV2 = {
-    open: function(rootEl, opts) {
-      var modal = new EstimatorModal(rootEl, opts);
-      modal.render();
-      return modal;
+    /**
+     * Open the estimator modal with an entry context.
+     * Returns Promise<{ accepted: true }> on success.
+     * Returns Promise<{ accepted: false, reason }> if already open, disabled, or error.
+     */
+    open: function(entryContext) {
+      if (_activeModal) {
+        return Promise.resolve({ accepted: true }); // already open
+      }
+      var normalizedCtx = _normalizeEntryContext(entryContext || {});
+      try {
+        _activeContainer = _createContainer();
+        _activeModal = new EstimatorModal(_activeContainer, {
+          entryContext: normalizedCtx,
+          onClose: function() { _destroyContainer(); },
+        });
+        _activeModal.render();
+        return Promise.resolve({ accepted: true });
+      } catch (e) {
+        _destroyContainer();
+        return Promise.resolve({ accepted: false, reason: 'init_error' });
+      }
+    },
+
+    /** Close the estimator modal. */
+    close: function() {
+      if (STATE.onClose) STATE.onClose();
+      else _destroyContainer();
+    },
+
+    /** Returns true if the estimator modal is currently open. */
+    isOpen: function() {
+      return !!_activeModal;
     },
   };
 

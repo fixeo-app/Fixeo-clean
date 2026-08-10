@@ -399,16 +399,19 @@ test('N.1 FixeoEstimatorConfig.estimatorV2Enabled is false', function() {
   assertNot(code.includes('estimatorV2Enabled: true'), 'flag must not be true');
 });
 
-test('N.2 index.html does not load fixeo-estimator-v2.js unconditionally', function() {
+test('N.2 index.html estimator-v2.js is loaded dormant (7C.9D) with internal flag guard', function() {
+  // 7C.9D: estimator-v2.js is now loaded as a dormant defer asset.
+  // Behavioral dormancy is enforced by the flag check INSIDE the script (stub pattern).
   const code = read('index.html');
-  // V2 UI should NOT be loaded always — only config bootstrap
-  assertNot(
-    code.includes('<script src="js/fixeo-estimator-v2.js"') ||
-    code.includes("<script src='js/fixeo-estimator-v2.js'"),
-    'index.html must not unconditionally load fixeo-estimator-v2.js'
-  );
-  // Config file should be loaded (tiny, does nothing when flag OFF)
+  // Config file must be loaded (tiny feature gate bootstrap)
   assert(code.includes('fixeo-estimator-config.js'), 'index.html must load config bootstrap');
+  // estimator-v2.js when present must use defer (not block rendering)
+  if (code.includes('fixeo-estimator-v2.js')) {
+    const v2Idx = code.indexOf('fixeo-estimator-v2.js');
+    const tag = code.slice(v2Idx - 40, v2Idx + 60);
+    assert(tag.includes('defer'), 'estimator-v2.js must be defer-loaded when present');
+    // Internal flag guard is the safety net — verified by security test 15 + 7C.9D validator
+  }
 });
 
 /* ════════════════════════════════════════════════════════════

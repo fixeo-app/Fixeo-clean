@@ -678,13 +678,17 @@ test('N.3 Feature flag still false after 7C.9C', function() {
   assert_(code.includes('estimatorV2Enabled: false'), 'Feature flag must still be false');
 });
 
-test('N.4 index.html still does NOT load fixeo-estimator-v2.js unconditionally', function() {
+test('N.4 index.html estimator-v2.js is defer-loaded dormant (7C.9D), flag guard intact', function() {
+  // 7C.9D: estimator-v2.js is now loaded as dormant defer asset with internal stub.
+  // Behavioral dormancy: estimatorV2Enabled: false + internal stub = zero behavior when flag OFF.
   const fs = require('fs');
   const code = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
-  assert_(
-    !(code.includes('<script src="js/fixeo-estimator-v2.js"') || code.includes("<script src='js/fixeo-estimator-v2.js'")),
-    'index.html must not unconditionally load estimator-v2.js'
-  );
+  assert_(code.includes('fixeo-estimator-config.js'), 'config bootstrap must be in index.html');
+  if (code.includes('fixeo-estimator-v2.js')) {
+    const v2Idx = code.indexOf('fixeo-estimator-v2.js');
+    const tag = code.slice(v2Idx - 40, v2Idx + 60);
+    assert_(tag.includes('defer'), 'estimator-v2.js must be defer when present');
+  }
 });
 
 test('N.5 Legacy estimator V1 still exists', function() {
