@@ -25,6 +25,12 @@
   if (window._fxrf4Loaded) return;
   window._fxrf4Loaded = true;
 
+  // ── 7C.9K.2: Estimator V2 one-shot guard (module scope) ─────────────────
+  // Prevents multiple FixeoEstimatorV2.open() calls across chip taps in the
+  // same fxrf4 session. Reset on accepted:false / catch / throw. Also reset
+  // implicitly on next fxrf4 open() call via _fresh() reinit (new _st object).
+  var _fxrf4EstimatorLaunched = false;
+
   /* ══════════════════════════════════════════════════════════
      CONSTANTS
   ══════════════════════════════════════════════════════════ */
@@ -810,7 +816,44 @@
         st.serviceSlug  = svc.slug;
         st.serviceLabel = svc.label;
         var ack = MSG.ack[svc.slug] || MSG.ack._default;
-        _chipTap(chip, chips, function() { _transitionFwd(_renderStep2); }, ack);
+
+        // ── 7C.9K.2: Estimator V2 takeover on standard métier-card tap ──────
+        // GUARD: only fires when flag is ON and slug is canonical (not 'autre').
+        // Flag OFF = byte-for-byte legacy _chipTap behavior unchanged.
+        // ONE-SHOT: _fxrf4EstimatorLaunched (module scope) prevents multi-open.
+        var _advance = function() { _transitionFwd(_renderStep2); };
+        if (svc.slug !== 'autre' &&
+            !_fxrf4EstimatorLaunched &&
+            window.FixeoEstimatorConfig &&
+            window.FixeoEstimatorConfig.estimatorV2Enabled === true &&
+            window.FixeoEstimatorV2 &&
+            typeof window.FixeoEstimatorV2.open === 'function') {
+          _fxrf4EstimatorLaunched = true; // set before async — prevents races
+          _chipTap(chip, chips, function() {
+            window.FixeoEstimatorV2.open({
+              source:       'rafi',
+              metier_hint:  svc.slug,
+              city:         st.detectedCity || st.prefillCity || null,
+              urgency:      null, // urgency not yet known at step1 in standard mode
+            }).then(function(result) {
+              if (result && result.accepted === true) {
+                // Estimator V2 owns the interaction — suppress city advance.
+                return;
+              }
+              // accepted:false — reset guard, continue legacy city flow.
+              _fxrf4EstimatorLaunched = false;
+              _advance();
+            }).catch(function() {
+              // Any error — reset guard, continue legacy city flow.
+              _fxrf4EstimatorLaunched = false;
+              _advance();
+            });
+          }, ack);
+        } else {
+          // Flag OFF, 'autre', or already launched — exact legacy behavior.
+          _chipTap(chip, chips, _advance, ack);
+        }
+        // ── end estimator hook ───────────────────────────────────────────────
       }
 
       chip.addEventListener('click',    _onTap);
@@ -1536,6 +1579,8 @@
 
     _st = _fresh(mode, source);
     _readContext(_st);
+    // 7C.9K.2: reset estimator guard on each fxrf4 session open
+    _fxrf4EstimatorLaunched = false;
 
     _isOpen = true;
 
