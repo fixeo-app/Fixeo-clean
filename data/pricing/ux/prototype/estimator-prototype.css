@@ -44,6 +44,18 @@
   --ease: cubic-bezier(0.2,0,0,1);
   --ease-out: cubic-bezier(0,0,0.2,1);
 
+  /* 8E surface aliases — estimation-page-prototype.html uses these names */
+  --modal-surface:       #1C1C22;
+  --modal-elevated:      #252530;
+  --modal-border:        rgba(255,255,255,0.08);
+  --modal-border-soft:   rgba(255,255,255,0.04);
+  --fixeo-orange:        #FF7A00;
+  --fixeo-magenta:       #FF2D95;
+  /* text aliases (dark-surface context) */
+  --text-primary:        #F2F0EC;
+  --text-secondary:      rgba(242,240,236,0.55);
+  --text-muted:          rgba(242,240,236,0.28);
+
   /* V1/V2 legacy compat aliases — DO NOT REMOVE (test contracts) */
   --color-bg:            #F0EFEB;
   --color-surface:       #FDFCFA;
@@ -58,7 +70,7 @@
   --gradient-accent:     linear-gradient(135deg, #FF6B2B 0%, #C8238B 100%);
   --gradient-v1-start:   #FF6B2B;
   --gradient-v1-end:     #C8238B;
-  --modal-radius:        24px;
+  --modal-radius:        20px;   /* 7C.8B compat: requires 20px; V2 compat: --modal-radius: 24px */
   --modal-width:         600px;
   --card-radius:         14px;
   --btn-radius:          14px;
