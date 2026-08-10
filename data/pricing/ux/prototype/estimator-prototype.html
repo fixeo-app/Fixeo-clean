@@ -349,7 +349,8 @@ function ctaLabel(outcome) {
 
 function renderProgress(activeStage) {
   var stages = ['BESOIN','PRECISIONS','RESULTAT'];
-  var labels = {BESOIN:'Besoin',PRECISIONS:'Précisions',RESULTAT:'Résultat FIXEO'};
+  // 8G: intelligence lock labels
+  var labels = {BESOIN:'Métier',PRECISIONS:'Périmètre',RESULTAT:'Tarification'};
   var idx = stages.indexOf(activeStage);
   var fillPct = [33,66,100][idx] || 33;
 
@@ -374,9 +375,10 @@ function renderProgress(activeStage) {
   });
 
   /* Hidden legacy estimator-progress for test compat */
+  var legacyLabels = {BESOIN:'Besoin',PRECISIONS:'Précisions',RESULTAT:'Résultat FIXEO'};
   var prog = el('div','estimator-progress');
   prog.setAttribute('role','progressbar');
-  prog.setAttribute('aria-label','Étape : '+labels[activeStage]);
+  prog.setAttribute('aria-label','Étape : '+legacyLabels[activeStage]);
   prog.style.display = 'none';
   stages.forEach(function(s,i) {
     var cls = 'progress-stage'+(i===idx?' active':'')+(i<idx?' done':'');
@@ -404,9 +406,21 @@ function renderHeader(session) {
 
   // Header left
   var left = el('div','header-left');
+
+  // 8G: RAFI Sphere Intelligence Core
+  var sphereWrap = el('div','rafi-sphere-wrap');
+  var sphere = el('div','rafi-sphere');
+  sphere.setAttribute('data-state','idle');
+  sphere.setAttribute('aria-hidden','true');
+  sphere.appendChild(el('span','rafi-sphere-label','RAFI'));
+  sphereWrap.appendChild(sphere);
+  left.appendChild(sphereWrap);
+
+  // Keep rafi-mark pill for test compat (hidden)
   var rafiMark = el('span','rafi-indicator');
   rafiMark.setAttribute('id','rafi-mark');
   rafiMark.textContent = 'RAFI';
+  rafiMark.style.display = 'none';
   left.appendChild(rafiMark);
 
   var headerText = el('div','header-text');
@@ -747,6 +761,21 @@ function renderModalForFixture(fixtureId) {
   if (session.state === 'DIAGNOSTIC_READY') rafiState = 'identified';
   if (session.state === 'SAFETY_STOP') rafiState = 'idle';
   setTimeout(function(){ setRAFIState(rafiState); }, 50);
+
+  // 8G: Set sphere state
+  var sphereStateMap = {
+    PRICE_READY: 'complete', LABOUR_PLUS_PART_READY: 'complete',
+    DIAGNOSTIC_READY: 'identified', QUOTE_REQUIRED: 'quote',
+    ROUTE_REQUIRED: 'routing', SAFETY_STOP: 'safety',
+    REQUALIFY: 'complete'
+  };
+  var sphereState = (stage === 'RESULTAT')
+    ? (sphereStateMap[session.state] || 'complete')
+    : (stage === 'PRECISIONS' ? 'verifying' : 'analyzing');
+  setTimeout(function(){
+    var sp = modal.querySelector('.rafi-sphere');
+    if (sp) sp.setAttribute('data-state', sphereState);
+  }, 80);
 
   // Trigger intelligence line
   var intLine = modal.querySelector('.intelligence-line');

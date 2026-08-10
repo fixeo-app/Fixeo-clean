@@ -255,6 +255,183 @@ body {
 .modal-close:hover { background: var(--ink4); color: var(--t1); }
 .modal-close:focus-visible { outline: 2px solid var(--fo); outline-offset: 2px; }
 
+/* ═══════════════════════════════════════════════════════════════════
+   RAFI SPHERE — INTELLIGENCE CORE (Phase 7C.8G)
+   CSS-only, no external deps, no WebGL, no canvas
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Sphere container — sits in header-left */
+.rafi-sphere-wrap {
+  width: 44px; height: 44px; position: relative; flex-shrink: 0;
+}
+.rafi-sphere {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: radial-gradient(circle at 38% 32%, #26202E 0%, #141418 70%);
+  border: 1.5px solid rgba(255,122,0,0.18);
+  position: relative; overflow: visible;
+  display: flex; align-items: center; justify-content: center;
+  transition: box-shadow 700ms cubic-bezier(0.2,0,0,1),
+              border-color 500ms cubic-bezier(0.2,0,0,1);
+}
+/* Inner RAFI text */
+.rafi-sphere-label {
+  font-size: 7px; font-weight: 900; letter-spacing: 0.09em;
+  color: rgba(255,122,0,0.6); text-transform: uppercase;
+  position: relative; z-index: 2; user-select: none;
+}
+/* Internal radial glow — intensity driven by state */
+.rafi-sphere::before {
+  content: '';
+  position: absolute; inset: 0; border-radius: 50%;
+  background: radial-gradient(circle at 50% 65%, rgba(255,122,0,0.0) 0%, transparent 70%);
+  transition: background 700ms cubic-bezier(0.2,0,0,1);
+  z-index: 1;
+}
+/* Outer orbit ring */
+.rafi-sphere::after {
+  content: '';
+  position: absolute; inset: -6px; border-radius: 50%;
+  border: 1px solid transparent;
+  transition: border-color 500ms, box-shadow 500ms;
+}
+
+/* ── Sphere States ───────────────────────────────────────────────── */
+
+/* IDLE — barely there, only a soft inner ember */
+.rafi-sphere[data-state="idle"] {
+  border-color: rgba(255,122,0,0.14);
+  box-shadow: 0 0 10px rgba(255,122,0,0.06), inset 0 0 6px rgba(255,122,0,0.04);
+}
+
+/* ANALYZING — warm orange light breathes through the core */
+.rafi-sphere[data-state="analyzing"] {
+  border-color: rgba(255,122,0,0.32);
+  box-shadow: 0 0 22px rgba(255,122,0,0.18), inset 0 0 14px rgba(255,122,0,0.10);
+  animation: rafi-breathe 2.6s ease-in-out infinite;
+}
+.rafi-sphere[data-state="analyzing"]::before {
+  background: radial-gradient(circle at 42% 58%, rgba(255,122,0,0.20) 0%, transparent 62%);
+}
+.rafi-sphere[data-state="analyzing"]::after {
+  border-color: rgba(255,122,0,0.14);
+  animation: rafi-orbit 4.0s linear infinite;
+}
+@keyframes rafi-breathe {
+  0%, 100% { box-shadow: 0 0 22px rgba(255,122,0,0.18), inset 0 0 14px rgba(255,122,0,0.10); }
+  50%       { box-shadow: 0 0 34px rgba(255,122,0,0.30), inset 0 0 20px rgba(255,122,0,0.16); }
+}
+@keyframes rafi-orbit {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* VERIFYING — magenta tint, slower stable orbit */
+.rafi-sphere[data-state="verifying"] {
+  border-color: rgba(255,45,149,0.24);
+  box-shadow: 0 0 18px rgba(255,45,149,0.12), inset 0 0 10px rgba(255,45,149,0.07);
+  animation: rafi-verify-pulse 3.2s ease-in-out infinite;
+}
+.rafi-sphere[data-state="verifying"]::before {
+  background: radial-gradient(circle at 50% 50%, rgba(255,45,149,0.14) 0%, transparent 62%);
+}
+.rafi-sphere[data-state="verifying"]::after {
+  border-color: rgba(255,45,149,0.18);
+  animation: rafi-orbit 5.5s linear infinite;
+}
+@keyframes rafi-verify-pulse {
+  0%, 100% { box-shadow: 0 0 18px rgba(255,45,149,0.12), inset 0 0 10px rgba(255,45,149,0.07); }
+  50%       { box-shadow: 0 0 26px rgba(255,45,149,0.20), inset 0 0 14px rgba(255,45,149,0.12); }
+}
+
+/* IDENTIFIED — brief convergence flash, then settles to green tint */
+.rafi-sphere[data-state="identified"] {
+  border-color: rgba(46,204,122,0.28);
+  box-shadow: 0 0 18px rgba(46,204,122,0.14), inset 0 0 10px rgba(46,204,122,0.08);
+  animation: rafi-lock 0.55s cubic-bezier(0.2,0,0,1) both;
+}
+.rafi-sphere[data-state="identified"]::before {
+  background: radial-gradient(circle at 50% 50%, rgba(46,204,122,0.16) 0%, transparent 60%);
+}
+.rafi-sphere[data-state="identified"]::after {
+  border-color: rgba(46,204,122,0.20);
+}
+@keyframes rafi-lock {
+  0%   { transform: scale(1.0); }
+  35%  { transform: scale(1.09); }
+  100% { transform: scale(1.0); }
+}
+
+/* COMPLETE / PRICE RESOLVED — quiet, settled, green presence */
+.rafi-sphere[data-state="complete"] {
+  border-color: rgba(46,204,122,0.18);
+  box-shadow: 0 0 12px rgba(46,204,122,0.09), inset 0 0 7px rgba(46,204,122,0.06);
+}
+.rafi-sphere[data-state="complete"]::before {
+  background: radial-gradient(circle at 50% 50%, rgba(46,204,122,0.10) 0%, transparent 60%);
+}
+
+/* SAFETY — amber, no animation, calm */
+.rafi-sphere[data-state="safety"] {
+  border-color: rgba(255,154,31,0.28);
+  box-shadow: 0 0 14px rgba(255,154,31,0.12), inset 0 0 8px rgba(255,154,31,0.08);
+}
+.rafi-sphere[data-state="safety"]::before {
+  background: radial-gradient(circle at 50% 50%, rgba(255,154,31,0.14) 0%, transparent 62%);
+}
+
+/* ROUTING — orange orbit, directional signal */
+.rafi-sphere[data-state="routing"] {
+  border-color: rgba(255,122,0,0.28);
+  box-shadow: 0 0 18px rgba(255,122,0,0.16), inset 0 0 10px rgba(255,122,0,0.09);
+}
+.rafi-sphere[data-state="routing"]::after {
+  border-color: rgba(255,122,0,0.18);
+  animation: rafi-orbit 3.8s linear infinite;
+}
+
+/* QUOTE — neutral, analysis complete but unresolved */
+.rafi-sphere[data-state="quote"] {
+  border-color: rgba(242,240,236,0.12);
+  box-shadow: 0 0 10px rgba(242,240,236,0.05), inset 0 0 6px rgba(242,240,236,0.03);
+}
+
+/* Reduced motion — kill all sphere animation */
+@media (prefers-reduced-motion: reduce) {
+  .rafi-sphere,
+  .rafi-sphere::before,
+  .rafi-sphere::after {
+    animation: none !important;
+    transition: border-color 0.01ms, box-shadow 0.01ms !important;
+  }
+}
+
+/* Mini sphere for /estimation page header */
+.page-sphere {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: radial-gradient(circle at 36% 34%, #26202E 0%, #141418 70%);
+  border: 1.5px solid rgba(255,122,0,0.22);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 6px; font-weight: 900; letter-spacing: 0.09em;
+  color: rgba(255,122,0,0.65); text-transform: uppercase;
+  flex-shrink: 0;
+  box-shadow: 0 0 14px rgba(255,122,0,0.14), inset 0 0 8px rgba(255,122,0,0.08);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   QUESTION INTELLIGENCE COPY (Phase 7C.8G)
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Sub-copy line under question heading */
+.question-intelligence-copy {
+  font-size: 13px; color: var(--t3); line-height: 1.6;
+  margin-top: -16px; margin-bottom: 16px;
+}
+
+/* Progressive understanding confirmed/pending states */
+.understanding-row.confirmed .understanding-key { color: var(--ok); }
+.understanding-row.confirmed .understanding-val { color: var(--t1); }
+.understanding-row.pending .understanding-val { color: var(--t3); font-style: italic; }
+
 /* ── Intelligence Sweep Line ─────────────────────────────────────── */
 .intelligence-line {
   position: absolute; top: 2px; left: 0; right: 0; height: 1px;
@@ -892,7 +1069,22 @@ body {
 .price-reveal { animation: price-reveal 280ms var(--ease) both; }
 
 /* Result-active: de-emphasize progress strip */
-.estimator-modal.result-active .rafi-state-bar { opacity: 0.5; }
+.estimator-modal.result-active .rafi-state-bar { opacity: 0.4; }
+
+/* ── CTA — reduced neon bloom (Phase 7C.8G) ─────────────────────── */
+.btn-primary {
+  box-shadow: 0 2px 10px rgba(255,122,0,0.20), 0 1px 4px rgba(0,0,0,0.28);
+}
+.btn-primary:hover:not(:disabled) {
+  box-shadow: 0 4px 20px rgba(255,122,0,0.28), 0 2px 8px rgba(0,0,0,0.28) !important;
+  transform: translateY(-1px);
+}
+
+/* ── Improved readability ────────────────────────────────────────── */
+.labour-disclosure { color: var(--t2) !important; }
+.scope-doctrine    { color: var(--t2) !important; }
+.diagnostic-absorption { color: var(--t2) !important; }
+.outcome-body      { color: var(--t1) !important; }
 
 /* requalify */
 .requali-title { font-size: 18px; font-weight: 600; color: var(--t1); margin-bottom: 10px; }

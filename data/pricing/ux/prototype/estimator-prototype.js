@@ -32,6 +32,21 @@ var RAFI_STATES = {
   complete:   { label: 'RAFI',          copy: 'Prix FIXEO prêt' },
 };
 
+/* ── RAFI Sphere State Controller (Phase 7C.8G) ─────────────────── */
+function setSphereState(sphereState) {
+  var sphere = document.querySelector('.rafi-sphere');
+  if (sphere) sphere.setAttribute('data-state', sphereState);
+}
+
+/* Map RAFI machine state → sphere visual state */
+var _SPHERE_STATE_MAP = {
+  idle:       'idle',
+  analyzing:  'analyzing',
+  verifying:  'verifying',
+  identified: 'identified',
+  complete:   'complete',
+};
+
 function setRAFIState(state) {
   var s = RAFI_STATES[state] || RAFI_STATES.idle;
   var markEl = document.getElementById('rafi-mark');
@@ -51,6 +66,9 @@ function setRAFIState(state) {
       lineEl.style.opacity = '1';
     }, 90);
   }
+  // Drive sphere state
+  var sphereState = _SPHERE_STATE_MAP[state] || 'idle';
+  setSphereState(sphereState);
 }
 
 /* ── State ──────────────────────────────────────────────────────── */
@@ -212,12 +230,23 @@ function renderHeader(opts) {
   var intLine = el('div', 'intelligence-line');
   header.appendChild(intLine);
 
-  // Header left: RAFI badge + text
+  // Header left: RAFI sphere + badge + text
   var left = el('div', 'header-left');
 
+  // RAFI Sphere — Phase 7C.8G Intelligence Core
+  var sphereWrap = el('div', 'rafi-sphere-wrap');
+  var sphere = el('div', 'rafi-sphere');
+  sphere.setAttribute('data-state', 'idle');
+  sphere.setAttribute('aria-hidden', 'true');
+  sphere.appendChild(el('span', 'rafi-sphere-label', 'RAFI'));
+  sphereWrap.appendChild(sphere);
+  left.appendChild(sphereWrap);
+
+  // RAFI pill — kept for test compat, hidden when sphere is present
   var rafiMark = el('span', 'rafi-indicator');
   rafiMark.setAttribute('id', 'rafi-mark');
   rafiMark.textContent = 'RAFI';
+  rafiMark.style.display = 'none';
   left.appendChild(rafiMark);
 
   var headerText = el('div', 'header-text');
@@ -239,10 +268,11 @@ function renderHeader(opts) {
   return header;
 }
 
-/* EstimatorProgress — 8F: RAFI State Bar */
+/* EstimatorProgress — 8G: RAFI Intelligence Locks */
 function renderProgress(activeStage) {
   var stages = ['BESOIN', 'PRECISIONS', 'RESULTAT'];
-  var labels = { BESOIN: 'Besoin', PRECISIONS: 'Précisions', RESULTAT: 'Résultat FIXEO' };
+  // 8G: intelligence lock language instead of generic wizard steps
+  var labels = { BESOIN: 'Métier', PRECISIONS: 'Périmètre', RESULTAT: 'Tarification' };
   var activeIdx = stages.indexOf(activeStage);
 
   // Fill percentage: 0→33%, 1→66%, 2→100%
@@ -478,6 +508,12 @@ function renderQuestion(step, onAutoAdvance) {
   heading.setAttribute('id', 'question-heading');
   heading.textContent = promptFromKey(step.prompt_key, step.question_id);
   body.appendChild(heading);
+
+  // 8G: Intelligence copy — reinforces that RAFI is narrowing the intervention
+  if (!isSafety) {
+    body.appendChild(el('p', 'question-intelligence-copy',
+      'Ce détail permet à FIXEO de calculer le périmètre exact.'));
+  }
 
   STATE.pendingAnswer = null;
 
@@ -1268,6 +1304,7 @@ EstimatorModal.prototype._renderOutcome = function(session) {
   } else if (outcomeType === 'QUOTE_REQUIRED') {
     body = renderQuoteResult(outcome);
     setRAFIState('complete');
+    setSphereState('quote');
     primaryLabel = ctaLabel(outcomeForCta);
     primaryHandler = function() { showHandoffScreen(session, outcome); };
 
@@ -1275,12 +1312,14 @@ EstimatorModal.prototype._renderOutcome = function(session) {
     body = renderRouteResult(outcome);
     var target = outcome.route_target_metier || outcome.target_metier || 'serrurerie';
     setRAFIState('complete');
+    setSphereState('routing');
     primaryLabel = 'Continuer en ' + (METIER_LABELS[target] || target);
     primaryHandler = function() { self._startWithMetier(target); };
 
   } else if (outcomeType === 'SAFETY_STOP') {
     body = renderSafetyResult(outcome);
     setRAFIState('idle');
+    setSphereState('safety');
     primaryLabel = null;
     secondaryLabel = 'Fermer';
     secondaryHandler = function() { STATE.onClose(); };
