@@ -1058,6 +1058,17 @@
   function _watchHeroInput() {
     /* Wait for QSM to inject #qsm-input-nlp */
     var attempts = 0;
+
+    // ── 7C.9K.1: one-shot guard ──────────────────────────────────────────────
+    // Prevents multiple FixeoEstimatorV2.open() calls across repeated AIRE
+    // input callbacks for the same RAFI QSM session.
+    // Reset alongside _mem.reset() when RAFI session ends (modal close / eject).
+    var _qsmEstimatorLaunched = false;
+
+    function _resetQsmEstimatorGuard() {
+      _qsmEstimatorLaunched = false;
+    }
+
     function _try() {
       var input = _el('qsm-input-nlp');
       if (!input) {
@@ -1071,7 +1082,47 @@
           var cat   = window.FixeoAIRE.detect(text);
           var urg   = cat ? window.FixeoAIRE.detectUrgency(text, cat) : false;
           RafiEntry.onAnalysis(cat || null, urg);
-          if (cat) _mem.update({ category: cat, isUrgent: urg });
+          if (cat) {
+            _mem.update({ category: cat, isUrgent: urg });
+
+            // ── 7C.9K.1: Estimator V2 QSM takeover ─────────────────────────
+            // GUARD: only fires when flag is ON. Flag OFF = zero behavioral change.
+            // ONE-SHOT: skipped if already launched this session.
+            if (!_qsmEstimatorLaunched &&
+                cat.cat &&
+                window.FixeoEstimatorConfig &&
+                window.FixeoEstimatorConfig.estimatorV2Enabled === true &&
+                window.FixeoEstimatorV2 &&
+                typeof window.FixeoEstimatorV2.open === 'function') {
+              _qsmEstimatorLaunched = true; // set before async call — prevents races
+              try {
+                window.FixeoEstimatorV2.open({
+                  source: 'rafi',
+                  metier_hint: cat.cat,
+                  city: _mem.city || null,
+                  urgency: urg ? 'urgent' : null,
+                }).then(function (result) {
+                  if (result && result.accepted === true) {
+                    // Estimator V2 owns the interaction — suppress QSM city/phone
+                    // progression by not advancing the legacy QSM flow.
+                    // RAFI entry state is preserved; fallback remains available
+                    // if the estimator is dismissed.
+                    return;
+                  }
+                  // accepted:false — estimator declined; reset guard and let
+                  // legacy RAFI QSM continue exactly as before.
+                  _qsmEstimatorLaunched = false;
+                }).catch(function () {
+                  // Any rejection — reset guard, legacy RAFI QSM continues.
+                  _qsmEstimatorLaunched = false;
+                });
+              } catch (_e) {
+                // Synchronous throw — reset guard, legacy RAFI QSM continues.
+                _qsmEstimatorLaunched = false;
+              }
+            }
+            // ── end estimator hook ───────────────────────────────────────────
+          }
         }
       });
       /* Check city select */
@@ -1086,10 +1137,14 @@
       }
     }
     _try();
+
+    // Expose guard reset so _mem.reset() (called on modal close) can clear it.
+    return { resetEstimatorGuard: _resetQsmEstimatorGuard };
   }
 
   /* ── Modal watcher ──────────────────────────────────────────── */
-  function _watchModal() {
+  /* 7C.9K.1: accepts optional heroInputHandle to reset QSM estimator guard */
+  function _watchModal(heroInputHandle) {
     var modal = _el('request-modal');
     if (!modal) return;
 
@@ -1112,6 +1167,10 @@
           RafiThinking.reset();
           _mem.reset();
           RafiEntry.reset();
+          /* 7C.9K.1: reset QSM estimator one-shot guard on session end */
+          if (heroInputHandle && typeof heroInputHandle.resetEstimatorGuard === 'function') {
+            heroInputHandle.resetEstimatorGuard();
+          }
         }
       });
     });
@@ -1290,8 +1349,9 @@
     _updateHeroSubtitle();
     /* Mount RAFI inside QSM dialog (polls until QSM renders) */
     RafiEntry.mount();
-    _watchHeroInput();
-    _watchModal();
+    /* 7C.9K.1: capture guard-reset handle from _watchHeroInput */
+    var _heroInputHandle = _watchHeroInput();
+    _watchModal(_heroInputHandle);
   }
 
   if (document.readyState === 'loading') {
