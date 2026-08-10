@@ -161,23 +161,34 @@ function renderSummary(metier, serviceCode, stage) {
   sum.innerHTML = '';
 
   var card = el('div','');
-  card.appendChild(el('div','summary-heading','Votre demande'));
+  card.appendChild(el('div','understanding-head','CE QUE FIXEO A COMPRIS'));
 
   function addItem(key, val) {
     var item = el('div','summary-item');
-    item.appendChild(el('div','summary-item__key',key));
-    item.appendChild(el('div','summary-item__val',val));
+    if (key) item.appendChild(el('div','summary-item__key',key));
+    var valEl = el('div', key ? 'summary-item__val' : 'summary-item__val muted', val);
+    if (!key) valEl.style.cssText = 'font-size:13px;color:#8A8784;margin-top:-6px;';
+    item.appendChild(valEl);
     card.appendChild(item);
   }
 
-  if (metier) addItem('Métier', METIER_LABELS[metier] || metier);
-  if (serviceCode) addItem('Service', serviceCode.split('.').pop().replace(/_/g,' '));
+  var METIER_ICONS_P = { menuiserie:'🚪', plomberie:'🔧', electricite:'⚡', serrurerie:'🔑', climatisation:'❄️', nettoyage:'🧹', peinture:'🎨', bricolage:'🔨' };
+  var CLIENT_LABELS_P = {
+    'peinture.mur_interieur.all_in': { primary: 'Peinture mur intérieur', secondary: 'Peinture standard incluse' },
+    'nettoyage.menage_standard': { primary: 'Ménage standard', secondary: null },
+    'nettoyage.grand_menage': { primary: 'Grand ménage', secondary: null },
+  };
+  if (metier) addItem('Métier', (METIER_ICONS_P[metier]||'') + ' ' + (METIER_LABELS[metier] || metier));
+  if (serviceCode) {
+    var lbl = CLIENT_LABELS_P[serviceCode];
+    if (lbl) { addItem('Service', lbl.primary); if (lbl.secondary) addItem(null, lbl.secondary); }
+    else { addItem('Service', serviceCode.split('.').slice(-2).join(' ').replace(/_/g,' ')); }
+  }
   addItem('Étape', stage === 'PRECISIONS' ? 'Précisions en cours' : 'Besoin');
   // No price before engine result — doctrine enforced
-  card.appendChild(el('div','',
-    '<p style="font-size:11px;color:#8A8784;margin-top:12px;line-height:1.5;">'+
-    'Le prix s\'affichera après confirmation de la surface.'+
-    '</p>'));
+  var sigLine = el('div','fixeo-signal'); sigLine.setAttribute('aria-hidden','true');
+  card.appendChild(sigLine);
+  card.appendChild(el('div','understanding-status','Analyse en cours…'));
   sum.appendChild(card);
 }
 
@@ -420,7 +431,7 @@ function renderComplexFlow() {
   var qItems = el('div','answer-cards');
 
   var rowQ1 = el('div','',
-    '<div style="margin-bottom:8px;font-size:12px;color:#8A8784;">Question 1 sur 4</div>');
+    '');
   var qty = el('div','quantity-row');
   var v = 2;
 

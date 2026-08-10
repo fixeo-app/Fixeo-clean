@@ -1184,7 +1184,7 @@ EstimatorModal.prototype._renderHandoffScreen = function(session, isRequired) {
   setRAFIState('verifying');
   var body = renderHandoff();
   var footer = renderFooter({
-    primaryLabel: 'Continuer l\'estimation',
+    primaryLabel: "Continuer l'analyse",
     onPrimary: function() {
       if (STATE.onPageHandoff) STATE.onPageHandoff(session);
     },
@@ -1292,4 +1292,388 @@ if (typeof module !== 'undefined') {
     METIER_LABELS: METIER_LABELS,
     STATE: STATE,
   };
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   PHASE 7C.8D — SIGNATURE EXPERIENCE V3 ADDITIONS
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── A. CLIENT LABEL MAP ─────────────────────────────────────────── */
+var CLIENT_LABELS = {
+  'menuiserie.reglage_porte.sans_rabotage':    { primary: 'Réglage de porte intérieure',       secondary: 'Sans rabotage' },
+  'menuiserie.reglage_porte':                  { primary: 'Réglage de porte intérieure',       secondary: null },
+  'menuiserie.remplacement_charniere':         { primary: 'Remplacement de charnière',         secondary: null },
+  'plomberie.robinet_remplacement':            { primary: 'Remplacement de robinet',           secondary: 'Main-d\'œuvre FIXEO' },
+  'electricite.diagnostic':                    { primary: 'Diagnostic électrique',             secondary: null },
+  'electricite.luminaire_installation':        { primary: 'Installation de luminaire',         secondary: null },
+  'nettoyage.menage_standard':                 { primary: 'Ménage standard',                   secondary: null },
+  'nettoyage.grand_menage':                    { primary: 'Grand ménage',                      secondary: null },
+  'peinture.mur_interieur.all_in':             { primary: 'Peinture mur intérieur',           secondary: 'Peinture standard incluse' },
+  'peinture.mur_interieur':                    { primary: 'Peinture mur intérieur',           secondary: null },
+  'serrurerie.porte_claquee_blindee.ouverture':{ primary: 'Intervention serrurerie complexe', secondary: 'Porte blindée' },
+  'serrurerie.cylindre_remplacement.standard': { primary: 'Remplacement de cylindre',         secondary: 'Modèle standard' },
+  'serrurerie.cylindre_remplacement':          { primary: 'Remplacement de cylindre',         secondary: null },
+  'climatisation.diagnostic':                  { primary: 'Diagnostic climatisation',          secondary: null },
+};
+
+function resolveClientLabel(serviceCode) {
+  if (!serviceCode) return { primary: 'Intervention', secondary: null };
+  if (CLIENT_LABELS[serviceCode]) return CLIENT_LABELS[serviceCode];
+  var FORBIDDEN = ['standard','all_in','all-in','sans_rabotage','simple','labour_only','avec_galets'];
+  var parts = serviceCode.split('.');
+  var last = parts[parts.length - 1].replace(/_/g, ' ');
+  if (FORBIDDEN.some(function(t){ return last.toLowerCase() === t; })) {
+    last = parts.slice(0,-1).join(' ').replace(/_/g,' ');
+  }
+  return { primary: last.charAt(0).toUpperCase() + last.slice(1), secondary: null };
+}
+
+/* ── B. UNDERSTANDING PANEL ──────────────────────────────────────── */
+var METIER_ICONS = {
+  menuiserie:'🚪', plomberie:'🔧', electricite:'⚡', serrurerie:'🔑',
+  climatisation:'❄️', nettoyage:'🧹', peinture:'🎨', bricolage:'🔨'
+};
+
+function buildUnderstandingData(session) {
+  var known = session.known_inputs || {};
+  var items = [];
+  var sc = session.service_code || (session.entry_context && session.entry_context.service_hint);
+  var metier = session.metier || (sc && sc.split('.')[0]) || null;
+  var lbl = sc ? resolveClientLabel(sc) : null;
+  if (metier) items.push({ key: 'Métier', val: (METIER_ICONS[metier] || '') + ' ' + (METIER_LABELS[metier] || metier) });
+  if (lbl) {
+    items.push({ key: 'Service', val: lbl.primary });
+    if (lbl.secondary) items.push({ key: null, val: lbl.secondary, muted: true });
+  }
+  if (known.worker_count != null) items.push({ key: 'Prestataires', val: known.worker_count });
+  if (known.hours != null) items.push({ key: 'Durée', val: known.hours + ' h' });
+  if (known.painted_m2 != null) items.push({ key: 'Surface', val: known.painted_m2 + ' m²' });
+  if (known.hinge_count != null) items.push({ key: 'Charnières', val: known.hinge_count });
+  return items;
+}
+
+function renderUnderstandingPanel(session, pendingCount) {
+  var data = buildUnderstandingData(session);
+  var panel = el('div', 'understanding-panel');
+  panel.setAttribute('aria-label', 'Ce que FIXEO a compris');
+
+  var head = el('div', 'understanding-head', 'CE QUE FIXEO A COMPRIS');
+  panel.appendChild(head);
+
+  if (data.length === 0) {
+    panel.appendChild(el('div', 'understanding-empty', 'Analyse en cours…'));
+  } else {
+    var grid = el('div', 'understanding-grid');
+    data.forEach(function(item) {
+      var row = el('div', 'understanding-row' + (item.muted ? ' muted' : ''));
+      if (item.key) row.appendChild(el('span', 'understanding-key', item.key));
+      row.appendChild(el('span', 'understanding-val', String(item.val)));
+      grid.appendChild(row);
+    });
+    panel.appendChild(grid);
+  }
+
+  var sig = el('div', 'fixeo-signal');
+  sig.setAttribute('aria-hidden', 'true');
+  panel.appendChild(sig);
+
+  var statusText = pendingCount > 0
+    ? ('Encore ' + pendingCount + ' précision' + (pendingCount > 1 ? 's' : ''))
+    : 'Intervention qualifiée ✓';
+  panel.appendChild(el('div', 'understanding-status', statusText));
+
+  return panel;
+}
+
+/* ── F. INTELLIGENCE TRANSITION ──────────────────────────────────── */
+function runIntelligenceTransition(callback) {
+  var line = document.getElementById('intelligence-line');
+  if (line) {
+    line.classList.remove('active');
+    void line.offsetWidth;
+    line.classList.add('active');
+  }
+  setTimeout(callback, 350);
+}
+
+/* ── G. RESULT SCREEN — UPDATED RENDERERS ────────────────────────── */
+function renderPriceReady(session, outcome) {
+  var body = el('div','estimator-body step-enter result-enter');
+  body.classList.add('result-active-body');
+
+  var verified = el('div','result-identified');
+  verified.innerHTML = '<span class="result-check">✓</span> Intervention identifiée';
+  body.appendChild(verified);
+
+  var lbl = resolveClientLabel(outcome.service_code || session.service_code);
+  body.appendChild(el('div','result-service-name', lbl.primary));
+  if (lbl.secondary) {
+    body.appendChild(el('div','result-service-secondary', lbl.secondary));
+  }
+
+  var container = el('div','result-price-container price-reveal');
+  var priceRow = el('div','result-price');
+  priceRow.classList.add('result-price-row');
+  var amtEl = el('span','amount', Math.round(outcome.price.amount_mad).toString());
+  var curEl = el('span','currency',' MAD');
+  priceRow.appendChild(amtEl);
+  priceRow.appendChild(curEl);
+  container.appendChild(priceRow);
+  container.appendChild(el('div','result-price-label','PRIX FIXEO'));
+  container.appendChild(el('div','result-price-verified','Périmètre vérifié'));
+  body.appendChild(container);
+
+  var includes = outcome.scope_includes || ['Déplacement', 'Main-d\'œuvre', 'Test final'];
+  body.appendChild(renderScopeChipsV3(includes, outcome.scope_excludes || []));
+
+  return body;
+}
+
+function renderLabourResult(session, outcome) {
+  var body = el('div','estimator-body step-enter result-enter');
+
+  var verified = el('div','result-identified');
+  verified.innerHTML = '<span class="result-check">✓</span> Intervention identifiée';
+  body.appendChild(verified);
+
+  var lbl = resolveClientLabel(outcome.service_code || session.service_code);
+  body.appendChild(el('div','result-service-name', lbl.primary));
+  if (lbl.secondary) body.appendChild(el('div','result-service-secondary', lbl.secondary));
+
+  var labourAmt = outcome.price && outcome.price.labour_amount_mad;
+  var labourCard = el('div','labour-card');
+  labourCard.appendChild(el('div','labour-card__label','Main-d\'œuvre FIXEO'));
+  var amountEl = el('div','labour-card__amount');
+  var amtSpanL = el('span','amount', labourAmt != null ? Math.round(labourAmt).toString() : '—');
+  var curSpanL = el('span','currency',' MAD');
+  amountEl.appendChild(amtSpanL);
+  amountEl.appendChild(curSpanL);
+  labourCard.appendChild(amountEl);
+  body.appendChild(labourCard);
+
+  var partCard = el('div','part-card');
+  partCard.appendChild(el('div','part-card__label','Pièce / matériel'));
+  partCard.appendChild(el('div','part-card__value','Prix séparé — à confirmer avec l\'artisan'));
+  body.appendChild(partCard);
+
+  body.appendChild(el('div','labour-disclosure',
+    'Si l\'artisan fournit la pièce, son prix doit vous être communiqué et approuvé avant installation.'));
+
+  return body;
+}
+
+function renderDiagnosticReady(session, outcome) {
+  var body = el('div','estimator-body step-enter result-enter');
+
+  var verified = el('div','result-identified');
+  verified.innerHTML = '<span class="result-check">✓</span> Intervention identifiée';
+  body.appendChild(verified);
+
+  var lbl = resolveClientLabel(outcome.service_code || session.service_code);
+  body.appendChild(el('div','result-service-name', lbl.primary));
+  if (lbl.secondary) body.appendChild(el('div','result-service-secondary', lbl.secondary));
+
+  body.appendChild(el('div','diagnostic-intro','Un diagnostic est nécessaire avant réparation.'));
+
+  var amountMAD = outcome.price && (outcome.price.amount_mad || outcome.diagnostic_price_mad);
+  var container = el('div','result-price-container price-reveal');
+  var priceRow = el('div','result-price');
+  priceRow.classList.add('result-price-row');
+  var amtSpanD = el('span','amount', amountMAD != null ? Math.round(amountMAD).toString() : '—');
+  var curSpanD = el('span','currency',' MAD');
+  priceRow.appendChild(amtSpanD);
+  priceRow.appendChild(curSpanD);
+  container.appendChild(priceRow);
+  container.appendChild(el('div','result-price-label','DIAGNOSTIC FIXEO'));
+  container.appendChild(el('div','result-price-verified','Périmètre vérifié'));
+  body.appendChild(container);
+
+  body.appendChild(el('div','diagnostic-absorption',
+    'Ce diagnostic peut être déduit d\'une réparation éligible selon les conditions du service.'));
+
+  return body;
+}
+
+/* ── H. ROUTING — DIRECTIONAL VISUAL ────────────────────────────── */
+function renderRouteResultV3(session, outcome) {
+  var body = el('div','estimator-body step-enter result-enter');
+
+  var title = el('div','route-rafi-title');
+  title.innerHTML = '<span class="rafi-indicator small">RAFI</span> a réorienté votre demande';
+  body.appendChild(title);
+
+  var sourceMetier = (session.entry_context && session.entry_context.metier) || session.metier || '—';
+  var targetMetier = outcome.target_metier || 'autre métier';
+
+  var dirEl = el('div','route-direction');
+  dirEl.appendChild(el('div','route-source', (METIER_LABELS[sourceMetier] || sourceMetier) + ' →'));
+  dirEl.appendChild(el('div','route-target', METIER_LABELS[targetMetier] || targetMetier));
+  body.appendChild(dirEl);
+
+  body.appendChild(el('div','route-reason','Cette intervention touche à un périmètre différent.'));
+  return body;
+}
+
+/* ── I. QUOTE — NO FAILURE VISUAL ───────────────────────────────── */
+function renderQuoteResultV3(session, outcome) {
+  var body = el('div','estimator-body step-enter result-enter');
+
+  var lbl = resolveClientLabel(outcome.service_code || session.service_code);
+
+  body.appendChild(el('div','result-identified-neutral','Intervention qualifiée'));
+  body.appendChild(el('div','result-service-name', lbl.primary));
+  if (lbl.secondary) body.appendChild(el('div','result-service-secondary', lbl.secondary));
+
+  var quoteCard = el('div','quote-card');
+  quoteCard.appendChild(el('div','quote-card__title','Devis nécessaire'));
+  quoteCard.appendChild(el('div','quote-card__reason',
+    'FIXEO a identifié que cette intervention ne peut pas être standardisée sans vérification sur place.'));
+  quoteCard.appendChild(el('div','quote-card__why','Complexité ou périmètre variable'));
+  body.appendChild(quoteCard);
+
+  return body;
+}
+
+/* ── J. SAFETY — CALM AMBER ─────────────────────────────────────── */
+function renderSafetyResultV3(session, outcome) {
+  var body = el('div','estimator-body step-enter safety-stop-body');
+
+  var safetyWrap = el('div','safety-surface');
+  safetyWrap.appendChild(el('span','safety-icon','⚠'));
+  safetyWrap.appendChild(el('h2','safety-title','Vérification de sécurité'));
+  safetyWrap.appendChild(el('div','safety-body','Une situation potentiellement dangereuse a été détectée.'));
+  safetyWrap.appendChild(el('div','safety-body',
+    'FIXEO ne peut pas afficher de prix avant sécurisation de la situation.'));
+  safetyWrap.appendChild(el('div','safety-recommendation',
+    'Nous vous recommandons de contacter un professionnel qualifié.'));
+  body.appendChild(safetyWrap);
+
+  return body;
+}
+
+/* ── K. HANDOFF SCREEN (modal→page) ─────────────────────────────── */
+function renderHandoffScreen(session) {
+  var lbl = resolveClientLabel(session.service_code || (session.entry_context && session.entry_context.service_hint));
+  var body = el('div','estimator-body step-enter handoff-screen');
+
+  var rafiLine = el('div','handoff-rafi');
+  rafiLine.innerHTML = '<span class="rafi-indicator">RAFI</span><span class="handoff-rafi-text"> a besoin de quelques mesures supplémentaires</span>';
+  body.appendChild(rafiLine);
+
+  body.appendChild(el('div','handoff-service', lbl.primary));
+
+  var checklist = el('div','handoff-checklist');
+  var identified = ['Métier','Service','Type de prestation'];
+  identified.forEach(function(item){
+    var row = el('div','handoff-check-row','✓ ' + item);
+    checklist.appendChild(row);
+  });
+  body.appendChild(checklist);
+
+  var pending = el('div','handoff-pending');
+  pending.appendChild(el('div','handoff-pending__label','À préciser'));
+  pending.appendChild(el('div','handoff-pending__item','Surface réellement peinte'));
+  body.appendChild(pending);
+
+  return body;
+}
+
+/* ── M. RESERVATION HANDOFF SCREEN (no alert) ───────────────────── */
+function showHandoffScreenV3(session, outcome) {
+  var lbl = resolveClientLabel(outcome.service_code || session.service_code || (session.entry_context && session.entry_context.service_hint));
+  var root = document.getElementById('modal-root') || document.body;
+
+  var screen = el('div','reservation-handoff-screen');
+
+  var badge = el('div','handoff-badge','PRIX FIXEO TRANSMIS');
+  screen.appendChild(badge);
+
+  var svcTitle = el('div','handoff-service-title', lbl.primary);
+  screen.appendChild(svcTitle);
+  if (lbl.secondary) screen.appendChild(el('div','handoff-service-sub', lbl.secondary));
+
+  if (outcome && outcome.price) {
+    var priceEl = el('div','handoff-price');
+    var amtVal = outcome.price.labour_amount_mad || outcome.price.amount_mad || outcome.diagnostic_price_mad;
+    if (amtVal != null) {
+      var amtSpan = el('span','amount', Math.round(amtVal).toString());
+      var curSpan = el('span','currency',' MAD');
+      priceEl.appendChild(amtSpan);
+      priceEl.appendChild(curSpan);
+    }
+    screen.appendChild(priceEl);
+  }
+
+  screen.appendChild(el('div','handoff-status','Handoff réservation — prototype'));
+  screen.appendChild(el('p','handoff-note',
+    'En production, cette action démarrerait le processus de réservation FIXEO. Moteur et orchestrateur restent dormants.'));
+
+  var backBtn = el('button','handoff-back-btn','← Retour au prototype');
+  backBtn.onclick = function(){ location.reload(); };
+  screen.appendChild(backBtn);
+
+  var modalContent = document.querySelector('.modal-content') || root;
+  if (modalContent) { modalContent.innerHTML = ''; modalContent.appendChild(screen); }
+}
+
+/* ── D. SCOPE CHIPS V3 — individual DOM elements ─────────────────── */
+function renderScopeChipsV3(includes, excludes) {
+  var wrap = el('div','');
+  var chipsDiv = el('div','scope-chips');
+  chipsDiv.setAttribute('role','list');
+
+  var items = (includes && includes.length) ? includes : [];
+  items.forEach(function(item) {
+    var chip = el('span','scope-chip');
+    chip.setAttribute('role','listitem');
+    chip.textContent = typeof item === 'string' ? item : JSON.stringify(item);
+    chipsDiv.appendChild(chip);
+  });
+  wrap.appendChild(chipsDiv);
+
+  if (excludes && excludes.length) {
+    var trigger = el('button','scope-collapse-trigger','Voir les exclusions ▾');
+    trigger.type = 'button';
+    var excDiv = el('div','scope-exclusions');
+    excDiv.setAttribute('hidden','');
+    var excChips = el('div','scope-chips');
+    excChips.setAttribute('role','list');
+    excludes.forEach(function(item) {
+      var chip = el('span','scope-chip exclusion');
+      chip.setAttribute('role','listitem');
+      chip.textContent = typeof item === 'string' ? item : JSON.stringify(item);
+      excChips.appendChild(chip);
+    });
+    trigger.onclick = function() {
+      var isHidden = excDiv.hasAttribute('hidden');
+      if (isHidden) { excDiv.removeAttribute('hidden'); trigger.textContent = 'Masquer ▴'; }
+      else { excDiv.setAttribute('hidden',''); trigger.textContent = 'Voir les exclusions ▾'; }
+    };
+    excDiv.appendChild(excChips);
+    wrap.appendChild(trigger);
+    wrap.appendChild(excDiv);
+  }
+  return wrap;
+}
+
+/* ── Export new symbols ──────────────────────────────────────────── */
+if (typeof module !== 'undefined') {
+  var _prev = module.exports;
+  module.exports = Object.assign({}, _prev, {
+    CLIENT_LABELS: CLIENT_LABELS,
+    METIER_ICONS: METIER_ICONS,
+    resolveClientLabel: resolveClientLabel,
+    buildUnderstandingData: buildUnderstandingData,
+    renderUnderstandingPanel: renderUnderstandingPanel,
+    runIntelligenceTransition: runIntelligenceTransition,
+    renderPriceReady: renderPriceReady,
+    renderLabourResult: renderLabourResult,
+    renderDiagnosticReady: renderDiagnosticReady,
+    renderRouteResultV3: renderRouteResultV3,
+    renderQuoteResultV3: renderQuoteResultV3,
+    renderSafetyResultV3: renderSafetyResultV3,
+    renderHandoffScreen: renderHandoffScreen,
+    showHandoffScreenV3: showHandoffScreenV3,
+    renderScopeChipsV3: renderScopeChipsV3,
+  });
 }

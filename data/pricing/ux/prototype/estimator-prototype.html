@@ -111,28 +111,28 @@ var FIXTURE_OUTCOMES = null; // Will be populated after fixtures load
 <script>
 /* ─── Fixtures ──────────────────────────────────────────────────── */
 var FIXTURES_DATA = [
-  { id:'A', label:'Menuiserie — Porte', description:'Réglage porte intérieure (300 MAD)', icon:'🚪',
+  { id:'A', label:'Réglage de porte', description:'Réglage porte intérieure (300 MAD)', icon:'🚪',
     context:{ entry_point:'SERVICE_CARD', service_hint:'menuiserie.reglage_porte.sans_rabotage' },
     qa:{'boolean':false,'integer':1} },
-  { id:'B', label:'Plomberie — Robinet', description:'Main-d\'oeuvre + pièce séparée', icon:'🔧',
+  { id:'B', label:'Remplacement de robinet', description:'Main-d\'oeuvre + pièce séparée', icon:'🔧',
     context:{ entry_point:'SERVICE_CARD', service_hint:'plomberie.robinet_remplacement' },
     qa:{ 'part_replacement_required@plomberie.robinet_remplacement': false } },
-  { id:'C', label:'Diagnostic Électrique', description:'Diagnostic électricité (200 MAD)', icon:'⚡',
+  { id:'C', label:'Diagnostic électrique', description:'Diagnostic électricité (200 MAD)', icon:'⚡',
     context:{ entry_point:'DIRECT_CTA', service_hint:'electricite.diagnostic' },
     qa:{ 'burning_smell@electricite.diagnostic': false } },
-  { id:'D', label:'Nettoyage — Calculé', description:'2 prestataires × 3h (390 MAD)', icon:'🧹',
+  { id:'D', label:'Ménage standard calculé', description:'2 prestataires × 3h (390 MAD)', icon:'🧹',
     context:{ entry_point:'SERVICE_CARD', service_hint:'nettoyage.menage_standard' },
     qa:{ 'worker_count@nettoyage.menage_standard': 2, 'hours@nettoyage.menage_standard': 3 } },
   { id:'E', label:'Peinture — PAGE_REQUIRED', description:'Surface à mesurer → page /estimation', icon:'🖌',
     context:{ entry_point:'SERVICE_CARD', service_hint:'peinture.mur_interieur.all_in' },
     qa:{}, page_required: true },
-  { id:'F', label:'Serrurerie — Devis', description:'Porte blindée → QUOTE_REQUIRED', icon:'🔑',
+  { id:'F', label:'Serrurerie complexe — Devis', description:'Porte blindée → QUOTE_REQUIRED', icon:'🔑',
     context:{ entry_point:'DIRECT_CTA', service_hint:'serrurerie.porte_claquee_blindee.ouverture' },
     qa:{'boolean':false,'integer':1} },
   { id:'G', label:'Sécurité — Stop', description:'Odeur brûlé → SAFETY_STOP (pas de prix)', icon:'⚠️',
     context:{ entry_point:'DIRECT_CTA', service_hint:'electricite.diagnostic' },
     qa:{ 'burning_smell@electricite.diagnostic': true }, safety:true },
-  { id:'H', label:'RAFI — Serrurerie', description:'Cylindre pré-identifié par RAFI', icon:'🤖',
+  { id:'H', label:'Remplacement de cylindre', description:'Cylindre pré-identifié par RAFI', icon:'🤖',
     context:{ entry_point:'RAFI', service_hint:'serrurerie.cylindre_remplacement.standard', metier_hint:'serrurerie' },
     qa:{'boolean':false,'integer':1}, rafi:true },
 ];
@@ -144,6 +144,7 @@ var SIMULATED_OUTCOMES = {
   A: { outcome_type:'PRICE_READY', commercial_output_type:'FIXEO_PRICE',
        service_code:'menuiserie.reglage_porte.sans_rabotage',
        price:{ amount_mad:300, labour_amount_mad:null, currency:'MAD' },
+       scope_includes:['Déplacement', 'Main-d\'œuvre', 'Réglage', 'Test final'],
        scope_summary:[], exclusions_summary:[], parts_notice_required:false },
   B: { outcome_type:'LABOUR_PLUS_PART_READY', commercial_output_type:'FIXEO_LABOUR_PRICE_PLUS_PART',
        service_code:'plomberie.robinet_remplacement',
@@ -156,6 +157,7 @@ var SIMULATED_OUTCOMES = {
   D: { outcome_type:'PRICE_READY', commercial_output_type:'FIXEO_CALCULATED_PRICE',
        service_code:'nettoyage.menage_standard',
        price:{ amount_mad:390, labour_amount_mad:null, currency:'MAD' },
+       scope_includes:['Déplacement', '2 prestataires', '3 heures', 'Produits professionnels'],
        scope_summary:[], exclusions_summary:[],
        _calc_trace:{ worker_count:2, hours:3, rate:65 } },
   E: null, // PAGE_REQUIRED — no outcome until painted_m2 known
@@ -534,7 +536,7 @@ function renderOutcomeFooter(session) {
   } else if (ot === 'SAFETY_STOP') {
     // No CTA — safety stop
   } else if (session.ui_recommendation === 'PAGE_REQUIRED') {
-    var btn5 = el('button','btn-primary','Continuer l\'estimation');
+    var btn5 = el('button','btn-primary','Continuer l\'analyse');
     btn5.onclick = function(){
       window.location.href = 'estimation-page-prototype.html?fixture=E';
     };
@@ -719,6 +721,7 @@ document.addEventListener('DOMContentLoaded', function() {
   FIXTURES_DATA.forEach(function(f) {
     var btn = el('button','launcher__btn');
     btn.innerHTML = '<strong>' + f.icon + ' Flow ' + f.id + ' — ' + f.label + '</strong>';
+    btn.setAttribute('data-flow', f.id);
     btn.innerHTML += '<span class="launcher__btn-label">' + f.description + '</span>';
     btn.onclick = function() { renderModalForFixture(f.id); };
     grid.appendChild(btn);
