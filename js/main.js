@@ -1235,7 +1235,13 @@ function getResultProfessionLabel(cat, lang = 'fr') {
   return (labels[cat] && labels[cat][lang]) || getCategoryLabel(cat, lang) || 'Artisan';
 }
 
-function buildOtherArtisanCard(a) {
+function buildOtherArtisanCard(a, opts) {
+  /* 7C.9L.3C: opts = { estimatorMode: true, hidePrice: true }
+   * estimatorMode: disables profile navigation, hides base price, whole card selects artisan.
+   * Omitting opts (all homepage calls) → pixel/behavior-equivalent to before.
+   */
+  var _estimatorMode = !!(opts && opts.estimatorMode);
+  var _hidePrice     = !!(opts && (opts.hidePrice || opts.estimatorMode));
   const lang = window.i18n ? window.i18n.lang : 'fr';
   const service = getCategoryLabel(a.category, lang);
   const profession = getResultProfessionLabel(a.category, lang);
@@ -1264,7 +1270,7 @@ function buildOtherArtisanCard(a) {
   const deduped = visibleSkills.filter(sk => sk && sk.toLowerCase().trim() !== categoryNorm).slice(0, 3);
 
   return `
-    <article class="artisan-card other-card discover-harmonized-card result-card" data-id="${a.id}" style="position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.12);background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.035));box-shadow:0 18px 44px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.05);transition:transform .22s ease, box-shadow .22s ease, border-color .22s ease" onmouseenter="this.style.transform='translateY(-4px)';this.style.boxShadow='0 24px 54px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.07)';this.style.borderColor='rgba(225,48,108,.28)'" onmouseleave="this.style.transform='translateY(0)';this.style.boxShadow='0 18px 44px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.05)';this.style.borderColor='rgba(255,255,255,.12)'">
+    <article class="artisan-card other-card discover-harmonized-card result-card" ${_estimatorMode ? ('data-estimator-id="'+a.id+'" onclick="if(window.FixeoReservation&&window.FixeoReservation._selectArtisanFromPicker){window.FixeoReservation._selectArtisanFromPicker('+JSON.stringify(String(a.id))+')};" role="button" tabindex="0"') : ('data-id="'+a.id+'"')} style="position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.12);background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.035));box-shadow:0 18px 44px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.05);transition:transform .22s ease, box-shadow .22s ease, border-color .22s ease${_estimatorMode ? ';cursor:pointer' : ''}" onmouseenter="this.style.transform='translateY(-4px)';this.style.boxShadow='0 24px 54px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.07)';this.style.borderColor='rgba(225,48,108,.28)'" onmouseleave="this.style.transform='translateY(0)';this.style.boxShadow='0 18px 44px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.05)';this.style.borderColor='rgba(255,255,255,.12)'">
       <!-- Change 7: tighter vertical rhythm — gap 8px header, 10px meta, 12px price, 16px CTA -->
       <div class="result-top" style="align-items:flex-start;gap:1rem;margin-bottom:8px">
         ${(function(){
@@ -1309,10 +1315,10 @@ function buildOtherArtisanCard(a) {
               <div class="artisan-badges badges" style="gap:.45rem;margin-top:8px">${primaryBadge}${topBadge}${newBadge}${secondaryBadge}${pendingBadge}</div>
             </div>
             <!-- facp-v2c Task1: label first in DOM (natural column flow) → "À partir de" top, price below -->
-            <div class="facp-price-block" style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;margin-left:auto;text-align:right;flex-shrink:0">
-              ${window._fpb ? _fpb(a) : '<span class="facp-price-label">\u00c0 partir de</span>'}
-              <span class="facp-price-number">${window._fpb ? '' : (a.priceFrom && a.priceFrom > 100 ? a.priceFrom : 150)}<span class="facp-price-currency">${window._fpb ? '' : '\u00a0MAD'}</span></span>
-            </div>
+            ${_hidePrice ? '' : '<div class="facp-price-block" style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;margin-left:auto;text-align:right;flex-shrink:0">' +
+              (window._fpb ? _fpb(a) : '<span class="facp-price-label">\u00c0 partir de</span>') +
+              '<span class="facp-price-number">' + (window._fpb ? '' : (a.priceFrom && a.priceFrom > 100 ? a.priceFrom : 150)) + '<span class="facp-price-currency">' + (window._fpb ? '' : '\u00a0MAD') + '</span></span>' +
+              '</div>'}
           </div>
         </div>
       </div>
@@ -1342,14 +1348,17 @@ function buildOtherArtisanCard(a) {
       <!-- CTAs + Step 6 under-CTA trust -->
       <div class="result-actions card-buttons" style="display:flex;flex-direction:column;align-items:stretch;gap:.5rem;margin-top:16px">
         <div style="display:flex;align-items:center;justify-content:flex-end;gap:.75rem;flex-wrap:wrap">
-          <button class="btn-primary btn-other-profile ssb2-btn-profile secondary-btn" onclick="event.stopPropagation();if(window.FixeoPublicProfileLinks){window.FixeoPublicProfileLinks.openBySourceId(${serializedArtisanId}, event);}else if(window.openArtisanModal){openArtisanModal(${serializedArtisanId});}" title="Voir le profil complet" style="font-weight:700;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);box-shadow:none;min-width:100px">Voir profil</button>
-          <button class="btn-primary fhp-btn-reserve-list" onclick="event.stopPropagation();if(window.FixeoReservation){window.FixeoReservation.open(${serializedArtisanId});}else if(window.openReservationModal){window.openReservationModal(${serializedArtisanId});}" title="Réserver cet artisan" style="min-width:170px;font-weight:800;background:linear-gradient(135deg,#E1306C,#833AB4);border:none;box-shadow:0 8px 22px rgba(225,48,108,.22);transition:all .2s ease" onmouseenter="this.style.transform='scale(1.02) translateY(-1px)';this.style.boxShadow='0 12px 28px rgba(225,48,108,.32)'" onmouseleave="this.style.transform='';this.style.boxShadow='0 8px 22px rgba(225,48,108,.22)'">R\u00e9server en 1 clic</button>
+          ${_estimatorMode ? '' : '<button class="btn-primary btn-other-profile ssb2-btn-profile secondary-btn" onclick="event.stopPropagation();if(window.FixeoPublicProfileLinks){window.FixeoPublicProfileLinks.openBySourceId('+serializedArtisanId+', event);}else if(window.openArtisanModal){openArtisanModal('+serializedArtisanId+');}" title="Voir le profil complet" style="font-weight:700;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);box-shadow:none;min-width:100px">Voir profil</button>'}
+          <button class="btn-primary fhp-btn-reserve-list" onclick="event.stopPropagation();${_estimatorMode ? ('if(window.FixeoReservation&&window.FixeoReservation._selectArtisanFromPicker){window.FixeoReservation._selectArtisanFromPicker('+serializedArtisanId+')}') : ('if(window.FixeoReservation){window.FixeoReservation.open('+serializedArtisanId+');}else if(window.openReservationModal){window.openReservationModal('+serializedArtisanId+');}')}" title="${_estimatorMode ? 'Choisir cet artisan' : 'Réserver cet artisan'}" style="min-width:170px;font-weight:800;background:linear-gradient(135deg,#E1306C,#833AB4);border:none;box-shadow:0 8px 22px rgba(225,48,108,.22);transition:all .2s ease" onmouseenter="this.style.transform='scale(1.02) translateY(-1px)';this.style.boxShadow='0 12px 28px rgba(225,48,108,.32)'" onmouseleave="this.style.transform='';this.style.boxShadow='0 8px 22px rgba(225,48,108,.22)'">${_estimatorMode ? 'Choisir cet artisan' : 'R\u00e9server en 1 clic'}</button>
         </div>
         <!-- Step 6 — under-CTA trust text -->
         <div class="pvc-under-cta" style="text-align:right">Sans engagement — paiement après intervention</div>
       </div>
     </article>`;
 }
+
+/* 7C.9L.3C: expose for estimator-origin artisan picker in reservation.js */
+window.buildOtherArtisanCard = buildOtherArtisanCard;
 
 // ── UPDATE OTHER SEE-MORE BUTTON ──────────────────────────────
 function _updateOtherSeeMoreBtn() {

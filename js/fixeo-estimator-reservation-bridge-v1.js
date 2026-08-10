@@ -59,6 +59,7 @@
           return {
             valid:             true,
             outcome_type:      r.outcome_type,
+            service_code:      r.service_code,   // 7C.9L.3C: propagate for artisan picker métier filter
             amount_mad:        r.amount_mad,
             labour_amount_mad: r.labour_amount_mad,
             parts_separate:    r.parts_separate,

@@ -152,6 +152,9 @@
     description: '',
     address: '',
     phone: '',
+    // 7C.9L.3C — Estimator-origin artisan picker state
+    _estimatorCtx:  null,  // verified pricing context (set async in open())
+    estimatorCity:  null,  // city chosen by user in estimator picker stage
   };
 
   /* ════════════════════════════════════════════════════════
@@ -454,8 +457,13 @@
               <div class="fixeo-res-badges">${badgesHtml}</div>
             </div>
             <div class="fixeo-res-artisan-price">
-              <div class="fixeo-res-price-val" id="res-price-display" style="font-size:1.45rem;font-weight:900;letter-spacing:-.01em">${a.priceFrom} MAD</div>
-              <div class="fixeo-res-price-unit" id="res-price-unit" style="${state.selectedService ? 'display:none' : ''}">${a.priceLabel || ('\u00c0 partir de ' + (a.priceFrom||150) + ' MAD')}</div>
+              ${/* 7C.9L.3C: when estimator context active, show FIXEO price instead of artisan base price */
+                (state._estimatorCtx && state._estimatorCtx.valid && state._estimatorCtx.amount_mad)
+                  ? '<div class="fixeo-res-price-val" id="res-price-display" style="font-size:1.45rem;font-weight:900;letter-spacing:-.01em;color:#E1306C">' + state._estimatorCtx.amount_mad.toLocaleString('fr-FR') + '\u00a0MAD</div>'
+                    + '<div class="fixeo-res-price-unit" id="res-price-unit" style="color:rgba(225,48,108,.8)">Prix FIXEO garanti</div>'
+                  : '<div class="fixeo-res-price-val" id="res-price-display" style="font-size:1.45rem;font-weight:900;letter-spacing:-.01em">' + a.priceFrom + ' MAD</div>'
+                    + '<div class="fixeo-res-price-unit" id="res-price-unit" style="' + (state.selectedService ? 'display:none' : '') + '">' + (a.priceLabel || ('\u00c0 partir de ' + (a.priceFrom||150) + ' MAD')) + '</div>'
+              }
             </div>
           </div>
           <div class="fxrva-artisan-coord">\u2714 Coordonn\u00e9 par Fixeo &nbsp;\u00b7&nbsp; Paiement apr\u00e8s intervention</div>
@@ -483,7 +491,16 @@
                 + '<div style="font-size:.78rem;color:rgba(255,255,255,.55);margin-bottom:12px;padding-left:2px">'
                 +  '\ud83d\udca1 Prix recommand\u00e9 Fixeo\u00a0: <strong style="color:rgba(255,255,255,.78)">~'+ _rec +' MAD</strong>'
                 + '</div>';
-            })()} ` : `
+            })()} ` : state._estimatorCtx && state._estimatorCtx.valid ? `
+            <!-- 7C.9L.3C: Estimator mode — service pre-selected from context, no legacy range pills -->
+            <input type="hidden" id="res-service" value="${sanitize(state.selectedService)}"/>
+            <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:linear-gradient(135deg,rgba(225,48,108,.1),rgba(131,58,180,.08));border:1px solid rgba(225,48,108,.22);border-radius:10px;margin-bottom:10px">
+              <span style="font-size:1rem">${CATEGORY_ICONS[a.category] || '🛠️'}</span>
+              <div>
+                <div style="font-size:.82rem;font-weight:700;color:#fff">${sanitize(state.selectedService)}</div>
+                <div style="font-size:.72rem;color:rgba(255,255,255,.5);margin-top:2px">Prix FIXEO — ${state._estimatorCtx.amount_mad ? state._estimatorCtx.amount_mad.toLocaleString('fr-FR') + '\u00a0MAD' : ''}</div>
+              </div>
+            </div>` : `
             <div class="fixeo-res-field">
               <label class="fixeo-res-label">🛠️ Service souhaité *</label>
               <input type="hidden" id="res-service" value="${sanitize(state.selectedService)}"/>
@@ -630,7 +647,10 @@
         : ['Créneau',   sanitize(slotLabel)],
       state.description ? ['Description', sanitize(state.description.substring(0, 60) + (state.description.length > 60 ? '…' : ''))] : null,
       ['Adresse',      sanitize(state.address)],
-      ['Tarif service', `${a.priceLabel || (serviceTotal + ' MAD')} (indicatif)`],
+      /* 7C.9L.3C: estimator context → authoritative FIXEO price, no "(indicatif)" */
+      (state._estimatorCtx && state._estimatorCtx.valid && state._estimatorCtx.amount_mad)
+        ? ['Prix FIXEO', `${state._estimatorCtx.amount_mad.toLocaleString('fr-FR')} MAD`]
+        : ['Tarif service', `${a.priceLabel || (serviceTotal + ' MAD')} (indicatif)`],
       ['Frais de service (5%)', `${platformFee} MAD`],
     ].filter(Boolean);
 
@@ -789,7 +809,183 @@
   /* ════════════════════════════════════════════════════════
      RENDER ARTISAN PICKER (when no artisan passed)
   ════════════════════════════════════════════════════════ */
+  /* ── 7C.9L.3C: Estimator-origin artisan picker — city selection stage ──────────────
+   * Shown when estimator context is valid AND city not yet selected.
+   * Uses canonical _ESTIMATOR_CITIES list (same 20 cities as fxrf4/ALL_CITIES).
+   * User MUST explicitly tap a city chip — no silent auto-confirm from localStorage.
+   * ─────────────────────────────────────────────────────────────────────────────── */
+  function renderEstimatorCityPicker() {
+    var ctx = state._estimatorCtx;
+    var metier = ctx && ctx.service_code ? ctx.service_code.split('.')[0] : '';
+    var metierLabel = CATEGORY_LABELS[metier] || sanitize(metier);
+    var amountDisplay = ctx && ctx.amount_mad ? ctx.amount_mad.toLocaleString('fr-FR') + ' MAD' : '';
+
+    /* Suggested city from localStorage — shown as highlighted chip but NOT auto-selected */
+    var suggestedCity = '';
+    try { suggestedCity = localStorage.getItem('fixeo_detected_city') || ''; } catch (_) {}
+    var suggestedNorm = _normCity(suggestedCity);
+    var cityIsInList = suggestedCity && _ESTIMATOR_CITIES.some(function(c) {
+      return _normCity(c) === suggestedNorm;
+    });
+    /* Canonical display form of the suggested city */
+    var suggestedDisplay = cityIsInList
+      ? _ESTIMATOR_CITIES.find(function(c) { return _normCity(c) === suggestedNorm; })
+      : '';
+
+    /* City chips — top cities first, then remainder */
+    var topSet = new Set(_ESTIMATOR_TOP_CITIES);
+    var otherCities = _ESTIMATOR_CITIES.filter(function(c) { return !topSet.has(c); });
+
+    function _chip(city) {
+      var isSuggested = suggestedDisplay && _normCity(city) === _normCity(suggestedDisplay);
+      var safeCity = JSON.stringify(city);
+      return '<button class="fixeo-res-slot' + (isSuggested ? ' active' : '') + '"'
+        + ' onclick="event.stopPropagation();FixeoReservation._setEstimatorCity(' + safeCity + ');"'
+        + ' style="text-align:center;padding:10px 14px;font-size:.85rem;font-weight:700;cursor:pointer;border-radius:10px;'
+        + (isSuggested ? 'border:1.5px solid rgba(225,48,108,.6);' : '')
+        + '">'
+        + sanitize(city)
+        + (isSuggested ? ' <span style="font-size:.65rem;opacity:.75">✓ Détecté</span>' : '')
+        + '</button>';
+    }
+
+    var topChips    = _ESTIMATOR_TOP_CITIES.map(_chip).join('');
+    var otherChips  = otherCities.map(_chip).join('');
+
+    return `
+      <div class="fixeo-res-dialog" role="document">
+        <div class="fixeo-res-header">
+          <div class="fixeo-res-header-left">
+            <div class="fixeo-res-header-icon">${CATEGORY_ICONS[metier] || '🛠️'}</div>
+            <div>
+              <div class="fixeo-res-header-title">${sanitize(metierLabel)} — Prix FIXEO ${sanitize(amountDisplay)}</div>
+              <div class="fixeo-res-header-sub">Sélectionnez votre ville d'intervention</div>
+            </div>
+          </div>
+          <button class="fixeo-res-close" onclick="FixeoReservation.close()" aria-label="Fermer">✕</button>
+        </div>
+        <div class="fixeo-res-body">
+          <div style="margin-bottom:14px">
+            <div class="fixeo-res-label" style="margin-bottom:10px">📍 Où doit intervenir l'artisan&nbsp;?</div>
+            <div class="fixeo-res-slot-grid" style="grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px">
+              ${topChips}
+            </div>
+            <div class="fixeo-res-slot-grid" style="grid-template-columns:repeat(3,1fr);gap:8px">
+              ${otherChips}
+            </div>
+          </div>
+          <div style="font-size:.68rem;color:rgba(255,255,255,.32);text-align:center;padding-top:4px">
+            Choisissez la ville pour voir les artisans disponibles
+          </div>
+        </div>
+      </div>`;
+  }
+
+  /* ── 7C.9L.3C: Estimator-origin artisan picker — filtered artisan cards stage ──────
+   * City known. Filters window.ARTISANS by exact métier + normalized city.
+   * Renders canonical homepage cards via window.buildOtherArtisanCard(a, {estimatorMode}).
+   * NEVER falls back to all artisans. NEVER falls back to another city silently.
+   * ─────────────────────────────────────────────────────────────────────────────── */
+  function renderEstimatorArtisanPicker() {
+    var ctx    = state._estimatorCtx;
+    var city   = state.estimatorCity;
+    var metier = ctx && ctx.service_code ? ctx.service_code.split('.')[0] : '';
+    var metierLabel = CATEGORY_LABELS[metier] || sanitize(metier);
+    var amountDisplay = ctx && ctx.amount_mad ? ctx.amount_mad.toLocaleString('fr-FR') + '\u00a0MAD' : '';
+
+    /* Strict métier + city filter — normalized comparison, "Maroc" default never matches */
+    var normCity = _normCity(city);
+    var matched = (window.ARTISANS || []).filter(function(a) {
+      if (a.category !== metier) return false;
+      var ac = _normCity(a.city);
+      if (!ac || ac === 'maroc') return false;  // "Maroc" default → no city data → exclude
+      return ac.indexOf(normCity) !== -1;
+    });
+
+    /* Context header — shown above cards */
+    var contextBadge = '<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;'
+      + 'background:linear-gradient(135deg,rgba(225,48,108,.12),rgba(131,58,180,.10));'
+      + 'border:1px solid rgba(225,48,108,.25);border-radius:12px;margin-bottom:16px">'
+      + '<span style="font-size:1.1rem">' + (CATEGORY_ICONS[metier] || '🛠️') + '</span>'
+      + '<div style="flex:1;min-width:0">'
+      + '<div style="font-size:.82rem;font-weight:700;color:#fff">' + sanitize(metierLabel) + ' · ' + sanitize(city) + '</div>'
+      + '<div style="font-size:.76rem;color:rgba(255,255,255,.55);margin-top:2px">Prix FIXEO&nbsp;: <strong style="color:#fff">' + sanitize(amountDisplay) + '</strong></div>'
+      + '</div>'
+      + '<button onclick="FixeoReservation._setEstimatorCity(null)" style="background:none;border:none;color:rgba(255,255,255,.45);font-size:.75rem;cursor:pointer;padding:4px 8px;border-radius:6px;border:1px solid rgba(255,255,255,.12)">Changer de ville</button>'
+      + '</div>';
+
+    /* Empty state — truthful, no fallback */
+    if (matched.length === 0) {
+      return `
+        <div class="fixeo-res-dialog" role="document">
+          <div class="fixeo-res-header">
+            <div class="fixeo-res-header-left">
+              <div class="fixeo-res-header-icon">${CATEGORY_ICONS[metier] || '🛠️'}</div>
+              <div>
+                <div class="fixeo-res-header-title">${sanitize(metierLabel)} · ${sanitize(city)}</div>
+                <div class="fixeo-res-header-sub">Prix FIXEO — ${sanitize(amountDisplay)}</div>
+              </div>
+            </div>
+            <button class="fixeo-res-close" onclick="FixeoReservation.close()" aria-label="Fermer">✕</button>
+          </div>
+          <div class="fixeo-res-body">
+            ${contextBadge}
+            <div style="text-align:center;color:rgba(255,255,255,.55);padding:2rem 1rem">
+              <div style="font-size:1.5rem;margin-bottom:10px">🔍</div>
+              <div style="font-weight:700;margin-bottom:8px">Aucun artisan ${sanitize(metierLabel)} disponible à ${sanitize(city)} pour le moment.</div>
+              <button onclick="FixeoReservation._setEstimatorCity(null)"
+                style="margin-top:12px;padding:10px 20px;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:.85rem;font-weight:700;cursor:pointer">
+                Changer de ville
+              </button>
+            </div>
+          </div>
+        </div>`;
+    }
+
+    /* Render matched artisans using canonical homepage card renderer */
+    var useHomepageCards = typeof window.buildOtherArtisanCard === 'function';
+    var cardsHtml = matched.slice(0, 9).map(function(a) {
+      if (useHomepageCards) {
+        return window.buildOtherArtisanCard(a, { estimatorMode: true, hidePrice: true });
+      }
+      /* Fallback: simple card (main.js not yet loaded) */
+      var safeId = JSON.stringify(String(a.id));
+      return '<div class="fixeo-res-picker-card" onclick="FixeoReservation._selectArtisanFromPicker(' + safeId + ')">'
+        + '<div class="fixeo-res-picker-info"><div class="fixeo-res-picker-name">' + sanitize(a.name) + '</div>'
+        + '<div class="fixeo-res-picker-cat">' + sanitize(CATEGORY_LABELS[a.category] || a.category) + ' · ' + sanitize(a.city) + '</div></div></div>';
+    }).join('');
+
+    return `
+      <div class="fixeo-res-dialog" role="document">
+        <div class="fixeo-res-header">
+          <div class="fixeo-res-header-left">
+            <div class="fixeo-res-header-icon">${CATEGORY_ICONS[metier] || '🛠️'}</div>
+            <div>
+              <div class="fixeo-res-header-title">Artisans ${sanitize(metierLabel)} · ${sanitize(city)}</div>
+              <div class="fixeo-res-header-sub">Sélectionnez votre artisan · Prix FIXEO ${sanitize(amountDisplay)}</div>
+            </div>
+          </div>
+          <button class="fixeo-res-close" onclick="FixeoReservation.close()" aria-label="Fermer">✕</button>
+        </div>
+        <div class="fixeo-res-body">
+          ${contextBadge}
+          <div style="${useHomepageCards ? 'display:flex;flex-direction:column;gap:16px' : ''}">
+            ${cardsHtml}
+          </div>
+        </div>
+      </div>`;
+  }
+
   function renderArtisanPicker() {
+    /* 7C.9L.3C: Estimator-origin flow — city then artisan cards */
+    if (state._estimatorCtx && state._estimatorCtx.valid && !state.artisan) {
+      if (!state.estimatorCity) {
+        return renderEstimatorCityPicker();
+      }
+      return renderEstimatorArtisanPicker();
+    }
+
+    /* Generic picker — unchanged */
     const artisans = window.ARTISANS || [];
     const cardsHtml = artisans.slice(0, 8).map(a => {
       const catIcon = CATEGORY_ICONS[a.category] || '🛠️';
@@ -882,6 +1078,26 @@
   /* ════════════════════════════════════════════════════════
      PUBLIC API: OPEN / CLOSE
   ════════════════════════════════════════════════════════ */
+  /* ── 7C.9L.3C: City normalization helper — lowercase + NFD + strip diacritics + trim ── */
+  function _normCity(s) {
+    return String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+  }
+
+  /* ── 7C.9L.3C: Canonical Moroccan city list — same 20 cities as fxrf4 / ALL_CITIES ── */
+  var _ESTIMATOR_CITIES = [
+    'Casablanca','Rabat','Marrakech','Fès','Tanger','Agadir',
+    'Meknès','Oujda','Kénitra','Tétouan','Salé','Temara',
+    'El Jadida','Béni Mellal','Nador','Khouribga','Safi',
+    'Taza','Ouarzazate','Mohammedia'
+  ];
+  var _ESTIMATOR_TOP_CITIES = ['Casablanca','Rabat','Marrakech','Tanger','Agadir','Fès'];
+
+  /* ── 7C.9L.3C: Set estimator city from picker — exposed for inline onclick ── */
+  function _setEstimatorCity(city) {
+    state.estimatorCity = city || null;
+    render();
+  }
+
   function open(artisanInput, isExpress, urgentContext) {
     document.body.classList.add('fixeo-booking-modal-open');
     document.getElementById('ppui-sticky-cta')?.style.setProperty('display', 'none', 'important');
@@ -897,15 +1113,9 @@
     state.description = '';
     state.address = '';
     state.phone = '';
-
-    // ── Estimator V2 context (dormant bridge — active only when flag ON) ──
+    // 7C.9L.3C: reset estimator-origin picker state
     state._estimatorCtx = null;
-    if (window.FixeoEstimatorConfig && window.FixeoEstimatorConfig.estimatorV2Enabled === true &&
-        window.FixeoEstimatorReservationBridge && window.FixeoEstimatorReservationBridge.getContext()) {
-      window.FixeoEstimatorReservationBridge.verifyContext().then(function(ctx) {
-        if (ctx && ctx.valid) state._estimatorCtx = ctx;
-      }).catch(function() { state._estimatorCtx = null; });
-    }
+    state.estimatorCity = null;
 
     // Resolve artisan
     state.artisan = artisanInput ? normalizeArtisan(artisanInput) : null;
@@ -923,7 +1133,28 @@
     }
 
     ensureBackdrop();
-    render();
+
+    // ── 7C.9L.3C: Estimator V2 context — await verification BEFORE first render ──
+    // When estimator context token is in sessionStorage: verify server-side first,
+    // then render (city picker for no-artisan estimator flow, or normal step 1).
+    // Non-estimator paths: verifyContext returns null immediately — no latency.
+    if (window.FixeoEstimatorConfig && window.FixeoEstimatorConfig.estimatorV2Enabled === true &&
+        window.FixeoEstimatorReservationBridge && window.FixeoEstimatorReservationBridge.getContext()) {
+      window.FixeoEstimatorReservationBridge.verifyContext().then(function(ctx) {
+        if (ctx && ctx.valid) state._estimatorCtx = ctx;
+        render();
+      }).catch(function() {
+        state._estimatorCtx = null;
+        render();
+      });
+      // Show modal shell immediately; artisan picker renders after verifyContext resolves
+      var modal = ensureModal();
+      modal.innerHTML = '<div class="fixeo-res-dialog" role="document"><div class="fixeo-res-body" style="display:flex;align-items:center;justify-content:center;min-height:120px"><span style="color:rgba(255,255,255,.5);font-size:.9rem">Chargement…</span></div></div>';
+      modal.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    } else {
+      render();
+    }
 
     /* ── Refresh slot grid with booked slots for today ── */
     if (state.artisan && !state.isExpress && window.FixeoSlotLock) {
@@ -932,16 +1163,16 @@
       });
     }
 
-    const modal = document.getElementById(MODAL_ID);
-    if (modal) {
-      modal.classList.add('open');
+    const _openModal = document.getElementById(MODAL_ID);
+    if (_openModal) {
+      _openModal.classList.add('open');
       document.body.style.overflow = 'hidden';
       // Urgent mode: focus address field immediately — skip service/date fields
       // Normal/express: focus first interactive element
       requestAnimationFrame(() => {
         const target = (state.isUrgent && !state.address)
-          ? modal.querySelector('#res-address')
-          : modal.querySelector('select, input, button');
+          ? _openModal.querySelector('#res-address')
+          : _openModal.querySelector('select, input, button');
         if (target) { target.focus(); target.scrollIntoView && target.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }
       });
     }
@@ -971,6 +1202,16 @@
   function _selectArtisanFromPicker(id) {
     state.artisan = normalizeArtisan(id);
     state.step = 1;
+    /* 7C.9L.3C: estimator mode — pre-fill service from service_code to pass validation.
+     * The hidden input carries this value; step 1 shows the estimator service badge instead
+     * of the legacy service pills. state._estimatorCtx is NOT reset here. */
+    if (state._estimatorCtx && state._estimatorCtx.valid && state._estimatorCtx.service_code) {
+      if (!state.selectedService) {
+        var _metier = state._estimatorCtx.service_code.split('.')[0];
+        var _svcList = SERVICE_MAP[_metier];
+        state.selectedService = (_svcList && _svcList.length) ? _svcList[0] : state._estimatorCtx.service_code;
+      }
+    }
     render();
   }
 
@@ -1467,6 +1708,7 @@
     close,
     // Internal handlers (called from inline HTML onclick)
     _selectArtisanFromPicker,
+    _setEstimatorCity,    // 7C.9L.3C: used by estimator city picker inline onclick
     _onServiceChange,
     _onDateChange,
     _onDescChange,
