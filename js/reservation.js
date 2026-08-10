@@ -460,7 +460,7 @@
               ${/* 7C.9L.3C: when estimator context active, show FIXEO price instead of artisan base price */
                 (state._estimatorCtx && state._estimatorCtx.valid && state._estimatorCtx.amount_mad)
                   ? '<div class="fixeo-res-price-val" id="res-price-display" style="font-size:1.45rem;font-weight:900;letter-spacing:-.01em;color:#E1306C">' + state._estimatorCtx.amount_mad.toLocaleString('fr-FR') + '\u00a0MAD</div>'
-                    + '<div class="fixeo-res-price-unit" id="res-price-unit" style="color:rgba(225,48,108,.8)">Prix FIXEO garanti</div>'
+                    + '<div class="fixeo-res-price-unit" id="res-price-unit" style="color:rgba(225,48,108,.8)">Prix FIXEO</div>'
                   : '<div class="fixeo-res-price-val" id="res-price-display" style="font-size:1.45rem;font-weight:900;letter-spacing:-.01em">' + a.priceFrom + ' MAD</div>'
                     + '<div class="fixeo-res-price-unit" id="res-price-unit" style="' + (state.selectedService ? 'display:none' : '') + '">' + (a.priceLabel || ('\u00c0 partir de ' + (a.priceFrom||150) + ' MAD')) + '</div>'
               }
@@ -1202,14 +1202,14 @@
   function _selectArtisanFromPicker(id) {
     state.artisan = normalizeArtisan(id);
     state.step = 1;
-    /* 7C.9L.3C: estimator mode — pre-fill service from service_code to pass validation.
-     * The hidden input carries this value; step 1 shows the estimator service badge instead
-     * of the legacy service pills. state._estimatorCtx is NOT reset here. */
+    /* 7C.9L.3E: estimator mode — use exact Estimator service identity, never SERVICE_MAP[metier][0].
+     * service_label = canonical human label ("Débouchage évier standard") from verified context.
+     * service_code  = machine identity ("plomberie.debouchage_evier") — fallback when label absent.
+     * SERVICE_MAP is never consulted for Estimator-origin service identity.
+     * state._estimatorCtx is NOT reset here. */
     if (state._estimatorCtx && state._estimatorCtx.valid && state._estimatorCtx.service_code) {
       if (!state.selectedService) {
-        var _metier = state._estimatorCtx.service_code.split('.')[0];
-        var _svcList = SERVICE_MAP[_metier];
-        state.selectedService = (_svcList && _svcList.length) ? _svcList[0] : state._estimatorCtx.service_code;
+        state.selectedService = state._estimatorCtx.service_label || state._estimatorCtx.service_code;
       }
     }
     render();

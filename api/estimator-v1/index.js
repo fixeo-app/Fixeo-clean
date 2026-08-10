@@ -22,6 +22,7 @@
 'use strict';
 
 const orchestrator = require('../../data/pricing/orchestrator/estimator-orchestrator-v1');
+const resolver     = require('../../data/pricing/orchestrator/estimator-service-resolver-v1');
 const { sealToken, unsealToken }  = require('./fixeo-estimator-token-v1');
 const {
   normalizeSessionView,
@@ -217,12 +218,22 @@ function handleVerifyPricingContext(body, secret) {
     return { status: 200, body: { valid: false, reason: 'not_pricing_context' } };
   }
 
+  // Resolve canonical human-facing label from the already-loaded service registry.
+  // Uses the same resolver that populates SERVICE_SELECTION candidate labels.
+  // Safe fallback: if lookup fails for any reason, service_label is null (never invent a label).
+  let service_label = null;
+  try {
+    const svcDef = resolver.getService(payload.service_code);
+    if (svcDef && svcDef.label_fr) service_label = svcDef.label_fr;
+  } catch (_) { /* defensive — service_label stays null */ }
+
   return {
     status: 200,
     body: {
       valid:               true,
       outcome_type:        payload.outcome_type,
       service_code:        payload.service_code,
+      service_label:       service_label,
       amount_mad:          payload.amount_mad,
       labour_amount_mad:   payload.labour_amount_mad,
       parts_separate:      payload.parts_separate,

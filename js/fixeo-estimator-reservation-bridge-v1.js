@@ -59,7 +59,8 @@
           return {
             valid:             true,
             outcome_type:      r.outcome_type,
-            service_code:      r.service_code,   // 7C.9L.3C: propagate for artisan picker métier filter
+            service_code:      r.service_code,        // machine identity — métier filter + booking record
+            service_label:     r.service_label || null, // 7C.9L.3E: canonical human label ("Débouchage évier standard")
             amount_mad:        r.amount_mad,
             labour_amount_mad: r.labour_amount_mad,
             parts_separate:    r.parts_separate,

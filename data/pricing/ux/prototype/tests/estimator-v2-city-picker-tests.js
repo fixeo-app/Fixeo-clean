@@ -146,7 +146,7 @@ assert('25. CTA text is "Choisir cet artisan" in estimator mode',
 console.log('\nSECTION 7 — Step 1 and Step 2');
 
 assert('26. Step 1 artisan price shows Prix FIXEO when estimator active',
-  resSrc.includes('Prix FIXEO garanti'));
+  resSrc.includes('Prix FIXEO') && !resSrc.includes('Prix FIXEO garanti'));
 
 assert('27. Step 2 shows "Prix FIXEO" without "(indicatif)" when estimator active',
   resSrc.includes("['Prix FIXEO'") && !resSrc.match(/'Prix FIXEO'.*indicatif/));
