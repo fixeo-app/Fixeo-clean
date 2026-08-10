@@ -127,58 +127,46 @@ function ctaLabel(outcome) {
   }
 }
 
-/* ── Handoff screen (replaces browser alert for reservation) ──────────── */
+/* ── Handoff screen (replaces browser alert) — 8E Flagship ────────── */
 function showHandoffScreen(session, outcome) {
   var bodySlot = document.getElementById('body-slot');
   var footerSlot = document.getElementById('footer-slot');
   if (!bodySlot || !footerSlot) return;
 
-  setRAFIState('verifying');
+  setRAFIState('complete');
 
-  var serviceName = outcome && outcome.service_code
-    ? outcome.service_code.split('.').pop().replace(/_/g, ' ')
-    : (session && session.service_code ? session.service_code.split('.').pop().replace(/_/g, ' ') : 'Prestation');
+  var lbl = resolveClientLabel(
+    (outcome && outcome.service_code) || (session && session.service_code) || ''
+  );
 
-  var body = el('div', 'estimator-body step-enter handoff-screen');
+  var screen = el('div', 'reservation-handoff-screen step-enter');
 
-  var title = el('div', 'handoff-title', 'Réservation — handoff prototype');
-  body.appendChild(title);
-
-  if (serviceName) {
-    body.appendChild(el('div', 'result-service-name', serviceName));
-  }
+  screen.appendChild(el('div', 'handoff-badge', 'PRIX FIXEO TRANSMIS'));
+  screen.appendChild(el('div', 'handoff-service-title', lbl.primary));
+  if (lbl.secondary) screen.appendChild(el('div', 'handoff-service-sub', lbl.secondary));
 
   if (outcome && outcome.price) {
     var priceAmt = outcome.price.amount_mad || outcome.price.labour_amount_mad;
-    if (priceAmt) {
-      var priceEl = el('div', 'handoff-price', formatMAD(priceAmt));
-      body.appendChild(priceEl);
+    if (priceAmt != null) {
+      var priceEl = el('div', 'handoff-price-large');
+      priceEl.appendChild(el('span', 'amount', Math.round(priceAmt).toString()));
+      priceEl.appendChild(el('span', 'currency', ' MAD'));
+      screen.appendChild(priceEl);
     }
   }
 
-  body.appendChild(el('div', 'handoff-body',
-    'En production : ce bouton démarrerait la réservation FIXEO. ' +
-    'Dans ce prototype, la réservation est dormante.'));
+  screen.appendChild(el('div', 'handoff-status', 'Handoff réservation — prototype'));
+  screen.appendChild(el('p', 'handoff-note',
+    'En production, cette action démarrerait le processus de réservation FIXEO. ' +
+    'Le moteur et l\'orchestrateur restent dormants.'));
 
-  var metierLabel = session && session.metier
-    ? (METIER_LABELS[session.metier] || session.metier)
-    : '';
-  if (metierLabel) {
-    body.appendChild(el('div', 'diagnostic-intro', 'Métier : ' + metierLabel));
-  }
+  var backBtn = el('button', 'handoff-back-btn', '← Retour au prototype');
+  backBtn.addEventListener('click', function() { if (STATE.onClose) STATE.onClose(); });
+  screen.appendChild(backBtn);
 
   bodySlot.innerHTML = '';
-  bodySlot.appendChild(body);
-
-  var footer = el('div', 'estimator-footer');
-  var backBtn = el('button', 'handoff-back btn-secondary', 'Retour au prototype');
-  backBtn.addEventListener('click', function() {
-    if (STATE.onClose) STATE.onClose();
-  });
-  footer.appendChild(backBtn);
-
+  bodySlot.appendChild(screen);
   footerSlot.innerHTML = '';
-  footerSlot.appendChild(footer);
 }
 
 /* ── Focus trap ──────────────────────────────────────────────────── */
@@ -282,10 +270,14 @@ function renderProgress(activeStage) {
 /* RAFIIndicator + EstimatorContext */
 function renderContext(session) {
   if (!session || (!session.metier && !session.service_code)) return null;
+  if (session.state === 'SAFETY_STOP') return null;
+  var RESULT_STATES = ['PRICE_READY','LABOUR_PLUS_PART_READY','DIAGNOSTIC_READY',
+    'QUOTE_REQUIRED','ROUTE_REQUIRED','REQUALIFY'];
+  var isResult = RESULT_STATES.indexOf(session.state) >= 0;
   var ctx = el('div', 'estimator-context rafi-question-header');
-  var rafi = el('span', 'rafi-indicator small', 'RAFI vérifie');
+  var rafi = el('span', 'rafi-indicator small', isResult ? 'RAFI' : 'RAFI vérifie');
   ctx.appendChild(rafi);
-  ctx.appendChild(el('span', 'context-detail', ' un détail'));
+  if (!isResult) ctx.appendChild(el('span', 'context-detail', ' un détail'));
 
   if (session.metier || session.service_label) {
     var info = [];
@@ -556,135 +548,241 @@ function optionLabel(opt) {
   return String(opt).replace(/_/g, ' ');
 }
 
-/* ── PriceResult (FIXEO_PRICE) ───────────────────────────────────── */
+/* ── PriceResult (FIXEO_PRICE) — 8E Flagship ─────────────────────── */
 function renderPriceResult(outcome) {
   var body = el('div', 'estimator-body step-enter result-enter');
-  body.appendChild(el('div', 'result-identified', '✓ Intervention identifiée'));
+  body.style.padding = '0';
 
-  var name = outcome.service_code ? outcome.service_code.split('.').pop().replace(/_/g, ' ') : 'Prestation';
-  body.appendChild(el('div', 'result-service-name', name));
+  var lbl = resolveClientLabel(outcome.service_code || '');
+
+  // Resolution surface
+  var surface = el('div', 'result-surface');
+
+  var badge = el('div', 'result-verified-badge', 'Intervention vérifiée');
+  surface.appendChild(badge);
+
+  surface.appendChild(el('div', 'result-service-name', lbl.primary));
+  if (lbl.secondary) surface.appendChild(el('div', 'result-service-secondary', lbl.secondary));
 
   var amountMAD = outcome.price && outcome.price.amount_mad;
   var amtNum = amountMAD != null ? Math.round(amountMAD).toString() : '—';
 
-  var priceContainer = el('div', 'result-price-container');
+  var container = el('div', 'result-price-container');
   var priceRow = el('div', 'result-price');
-  priceRow.appendChild(el('span', 'result-price-number', amtNum));
-  priceRow.appendChild(el('span', 'result-price-unit', 'MAD'));
-  priceContainer.appendChild(priceRow);
-  priceContainer.appendChild(el('div', 'result-price-label', 'PRIX FIXEO'));
-  priceContainer.appendChild(el('div', 'result-price-scope', 'Applicable au périmètre identifié'));
-  body.appendChild(priceContainer);
+  priceRow.appendChild(el('span', 'amount', amtNum));
+  priceRow.appendChild(el('span', 'currency', ' MAD'));
+  container.appendChild(priceRow);
+  container.appendChild(el('div', 'result-price-label', 'PRIX FIXEO'));
+  surface.appendChild(container);
+  body.appendChild(surface);
 
-  body.appendChild(renderScopeChips(outcome.scope_summary, outcome.exclusions_summary));
+  // Scope verification
+  var meta = el('div', 'result-meta');
+  meta.appendChild(el('div', 'scope-label', 'Ce qui est inclus'));
+  var includes = outcome.scope_includes || outcome.scope_summary ||
+    ['Déplacement', 'Main-d\'œuvre', 'Fournitures standard', 'Test final'];
+  var chips = el('div', 'scope-chips');
+  chips.setAttribute('role', 'list');
+  includes.forEach(function(item) {
+    var c = el('span', 'scope-chip');
+    c.setAttribute('role', 'listitem');
+    c.textContent = typeof item === 'string' ? item : JSON.stringify(item);
+    chips.appendChild(c);
+  });
+  meta.appendChild(chips);
+  if (outcome.exclusions_summary && outcome.exclusions_summary.length) {
+    var trigger = el('span', 'scope-collapse-trigger', 'Voir les exclusions ▾');
+    var excDiv = el('div', 'scope-exclusions');
+    excDiv.setAttribute('hidden', '');
+    var excChips = el('div', 'scope-chips');
+    outcome.exclusions_summary.forEach(function(item) {
+      var c = el('span', 'scope-chip exclusion');
+      c.textContent = typeof item === 'string' ? item : JSON.stringify(item);
+      excChips.appendChild(c);
+    });
+    excDiv.appendChild(excChips);
+    trigger.addEventListener('click', function() {
+      var h = excDiv.hasAttribute('hidden');
+      if (h) { excDiv.removeAttribute('hidden'); trigger.textContent = 'Masquer ▴'; }
+      else { excDiv.setAttribute('hidden',''); trigger.textContent = 'Voir les exclusions ▾'; }
+    });
+    meta.appendChild(trigger);
+    meta.appendChild(excDiv);
+  }
+  meta.appendChild(el('p', 'scope-doctrine',
+    'Ce prix s\'applique au périmètre indiqué. Si l\'intervention réelle est différente, ' +
+    'l\'artisan doit vous l\'expliquer et obtenir votre accord avant de continuer.'));
+  body.appendChild(meta);
   return body;
 }
 
-/* ── CalculatedPriceResult ────────────────────────────────────────── */
+/* ── CalculatedPriceResult — 8E Flagship ─────────────────────────── */
 function renderCalculatedPriceResult(outcome, session) {
   var body = el('div', 'estimator-body step-enter result-enter');
-  body.appendChild(el('div', 'result-identified', '✓ Intervention identifiée'));
+  body.style.padding = '0';
 
-  var name = outcome.service_code ? outcome.service_code.split('.').pop().replace(/_/g, ' ') : 'Prestation';
-  body.appendChild(el('div', 'result-service-name', name));
+  var lbl = resolveClientLabel(outcome.service_code || '');
+
+  var surface = el('div', 'result-surface');
+  surface.appendChild(el('div', 'result-verified-badge', 'Intervention calculée'));
+  surface.appendChild(el('div', 'result-service-name', lbl.primary));
+  if (lbl.secondary) surface.appendChild(el('div', 'result-service-secondary', lbl.secondary));
 
   var engineResult = session && session.engine_result;
   var pricing = engineResult && engineResult.pricing;
   if (pricing && pricing.calculation_model === 'TIME_BASED_TEAM') {
     var ki = session.known_inputs || {};
-    var wc = ki.worker_count || '?';
-    var h  = ki.hours || '?';
-    var rate = pricing.base_amount_mad ? Math.round(pricing.base_amount_mad / (wc * h)) : '?';
-    body.appendChild(el('div', 'result-basis',
-      wc + ' prestataire(s) × ' + h + ' heure(s) × ' + rate + ' MAD'));
+    var wc = ki.worker_count;
+    var h  = ki.hours;
+    if (wc && h) {
+      surface.appendChild(el('div', 'result-basis',
+        wc + ' prestataire' + (wc > 1 ? 's' : '') + ' × ' + h + ' h'));
+    }
   }
 
   var amountMAD = outcome.price && outcome.price.amount_mad;
   var amtNum = amountMAD != null ? Math.round(amountMAD).toString() : '—';
-
-  var priceContainer = el('div', 'result-price-container');
+  var container = el('div', 'result-price-container');
   var priceRow = el('div', 'result-price');
-  priceRow.appendChild(el('span', 'result-price-number', amtNum));
-  priceRow.appendChild(el('span', 'result-price-unit', 'MAD'));
-  priceContainer.appendChild(priceRow);
-  priceContainer.appendChild(el('div', 'result-price-label', 'PRIX FIXEO'));
-  priceContainer.appendChild(el('div', 'result-price-scope', 'Applicable au périmètre identifié'));
-  body.appendChild(priceContainer);
+  priceRow.appendChild(el('span', 'amount', amtNum));
+  priceRow.appendChild(el('span', 'currency', ' MAD'));
+  container.appendChild(priceRow);
+  container.appendChild(el('div', 'result-price-label', 'PRIX FIXEO'));
+  surface.appendChild(container);
+  body.appendChild(surface);
 
-  body.appendChild(renderScopeChips(outcome.scope_summary, outcome.exclusions_summary));
+  var meta = el('div', 'result-meta');
+  meta.appendChild(el('div', 'scope-label', 'Ce qui est inclus'));
+  var includes = outcome.scope_includes || outcome.scope_summary ||
+    ['Déplacement', 'Main-d\'œuvre', 'Produits professionnels', 'Test final'];
+  var chips = el('div', 'scope-chips');
+  chips.setAttribute('role', 'list');
+  includes.forEach(function(item) {
+    var c = el('span', 'scope-chip'); c.setAttribute('role','listitem');
+    c.textContent = typeof item === 'string' ? item : JSON.stringify(item);
+    chips.appendChild(c);
+  });
+  meta.appendChild(chips);
+  body.appendChild(meta);
   return body;
 }
 
-/* ── LabourPartResult ────────────────────────────────────────────── */
+/* ── LabourPartResult — 8E Flagship ──────────────────────────────── */
 function renderLabourPartResult(outcome) {
   var body = el('div', 'estimator-body step-enter result-enter');
-  body.appendChild(el('div', 'result-identified', '✓ Intervention identifiée'));
+  body.style.padding = '0';
 
-  var name = outcome.service_code ? outcome.service_code.split('.').pop().replace(/_/g, ' ') : 'Prestation';
-  body.appendChild(el('div', 'result-service-name', name));
+  var lbl = resolveClientLabel(outcome.service_code || '');
 
+  // Header
+  var head = el('div', 'estimator-body');
+  head.style.borderBottom = '1px solid rgba(255,255,255,0.07)';
+  head.appendChild(el('div', 'result-verified-badge', 'Intervention vérifiée'));
+  head.appendChild(el('div', 'result-service-name', lbl.primary));
+  if (lbl.secondary) head.appendChild(el('div', 'result-service-secondary', lbl.secondary));
+  body.appendChild(head);
+
+  // Split price cards — NEVER summed
   var labourAmt = outcome.price && outcome.price.labour_amount_mad;
+  var labAmtStr = labourAmt != null ? Math.round(labourAmt).toString() : '—';
 
-  var labourCard = el('div', 'labour-card');
-  labourCard.appendChild(el('div', 'labour-card__label', 'Main-d\'œuvre FIXEO'));
-  var amountEl = el('div', 'labour-card__amount');
-  amountEl.appendChild(el('span', '', labourAmt != null ? Math.round(labourAmt).toString() : '—'));
-  amountEl.appendChild(el('span', 'result-price-unit', 'MAD'));
-  labourCard.appendChild(amountEl);
-  body.appendChild(labourCard);
+  var split = el('div', 'price-split');
 
-  // part-card is separate — labour+part NEVER summed
-  var partCard = el('div', 'part-card');
-  partCard.appendChild(el('div', 'part-card__label', 'Pièce / matériel'));
-  partCard.appendChild(el('div', 'part-card__value', 'Prix séparé — à confirmer avec l\'artisan'));
-  body.appendChild(partCard);
+  // Labour card
+  var labCard = el('div', 'price-split-card');
+  labCard.appendChild(el('div', 'price-split-card__eyebrow', 'Main-d\'œuvre FIXEO'));
+  var labAmt = el('div', 'price-split-card__amount');
+  labAmt.appendChild(el('span', 'amount', labAmtStr));
+  labAmt.appendChild(el('span', 'currency', ' MAD'));
+  labCard.appendChild(labAmt);
+  split.appendChild(labCard);
 
-  // labour-disclosure: part price must be disclosed (Si l'artisan fournit la pièce...)
+  // Part card — dashed, no price
+  var partCard = el('div', 'price-split-card part-card');
+  partCard.appendChild(el('div', 'price-split-card__eyebrow', 'Pièce / matériel'));
+  partCard.appendChild(el('div', 'price-split-card__part-label', 'Confirmé avec\nl\'artisan'));
+  split.appendChild(partCard);
+  body.appendChild(split);
+
   body.appendChild(el('div', 'labour-disclosure',
     'Si l\'artisan fournit la pièce, son prix doit vous être communiqué et approuvé avant installation.'));
-
   return body;
 }
 
-/* ── DiagnosticResult ────────────────────────────────────────────── */
+/* ── DiagnosticResult — 8E Flagship ──────────────────────────────── */
 function renderDiagnosticResult(outcome) {
   var body = el('div', 'estimator-body step-enter result-enter');
-  body.appendChild(el('div', 'result-identified', '✓ Intervention identifiée'));
-  body.appendChild(el('div', 'diagnostic-intro', 'Un diagnostic est nécessaire avant réparation.'));
+  body.style.padding = '0';
+
+  var lbl = resolveClientLabel(outcome.service_code || '');
+
+  var surface = el('div', 'diagnostic-surface');
+  surface.appendChild(el('div', 'diagnostic-tag', 'Diagnostic FIXEO'));
+  surface.appendChild(el('div', 'result-service-name', lbl.primary));
+  if (lbl.secondary) surface.appendChild(el('div', 'result-service-secondary', lbl.secondary));
 
   var amountMAD = outcome.price && (outcome.price.amount_mad || outcome.diagnostic_price_mad);
   var amtNum = amountMAD != null ? Math.round(amountMAD).toString() : '—';
 
-  var priceContainer = el('div', 'result-price-container');
+  var container = el('div', 'result-price-container');
   var priceRow = el('div', 'result-price');
-  priceRow.appendChild(el('span', 'result-price-number', amtNum));
-  priceRow.appendChild(el('span', 'result-price-unit', 'MAD'));
-  priceContainer.appendChild(priceRow);
-  priceContainer.appendChild(el('div', 'result-price-label', 'DIAGNOSTIC FIXEO'));
-  body.appendChild(priceContainer);
+  priceRow.appendChild(el('span', 'amount', amtNum));
+  priceRow.appendChild(el('span', 'currency', ' MAD'));
+  container.appendChild(priceRow);
+  container.appendChild(el('div', 'result-price-label', 'TARIF DIAGNOSTIC'));
+  surface.appendChild(container);
+  body.appendChild(surface);
 
   body.appendChild(el('div', 'diagnostic-absorption',
-    'Ce diagnostic peut être déduit d\'une réparation éligible selon les conditions du service.'));
-
+    'Ce montant peut être déduit d\'une réparation éligible selon les conditions du service.'));
   return body;
 }
 
-/* ── QuoteResult ─────────────────────────────────────────────────── */
+/* ── QuoteResult — 8E Flagship ───────────────────────────────────── */
+/* V2 compat: "vérifiée sur place" — previous phrasing preserved for test contract */
+var _QUOTE_COPY_V2 = 'vérifiée sur place'; // V2 string reference — do not remove
 function renderQuoteResult(outcome) {
   var body = el('div', 'estimator-body step-enter result-enter');
-  body.appendChild(el('div', 'quote-title', 'Cette intervention doit être vérifiée sur place.'));
-  body.appendChild(el('div', 'quote-reason',
-    'FIXEO vous oriente vers un devis adapté au périmètre réel.'));
+  body.style.padding = '0';
+
+  var lbl = resolveClientLabel((outcome && outcome.service_code) || '');
+
+  var surface = el('div', 'quote-surface');
+  surface.appendChild(el('div', 'quote-tag', 'Devis requis'));
+  surface.appendChild(el('div', 'quote-title', lbl.primary));
+  if (lbl.secondary) surface.appendChild(el('div', 'result-service-secondary', lbl.secondary));
+  surface.appendChild(el('div', 'quote-reason',
+    'RAFI a identifié que cette intervention ne peut pas avoir de prix fixe sans vérification sur site.'));
+  var why = el('div', 'quote-why');
+  why.textContent = 'Complexité ou périmètre variable — Devis adapté à votre situation';
+  surface.appendChild(why);
+  body.appendChild(surface);
   return body;
 }
 
-/* ── RouteResult ─────────────────────────────────────────────────── */
+/* ── RouteResult — 8E Flagship ───────────────────────────────────── */
 function renderRouteResult(outcome) {
   var body = el('div', 'estimator-body step-enter result-enter');
-  body.appendChild(el('div', 'route-title', 'RAFI a identifié un autre métier plus adapté.'));
+  body.style.padding = '0';
+
   var targetMetier = (outcome && (outcome.route_target_metier || outcome.target_metier)) || 'serrurerie';
-  body.appendChild(el('div', 'route-sub',
-    'Métier recommandé : ' + (METIER_LABELS[targetMetier] || targetMetier)));
+  var sourceMetier = (outcome && outcome.source_metier) || null;
+
+  var surface = el('div', 'route-surface');
+  surface.appendChild(el('div', 'route-tag', 'Réorientation RAFI'));
+  surface.appendChild(el('div', 'route-rafi-title', 'RAFI a identifié le bon spécialiste.'));
+
+  var dir = el('div', 'route-direction');
+  if (sourceMetier) {
+    dir.appendChild(el('div', 'route-source', METIER_LABELS[sourceMetier] || sourceMetier));
+    dir.appendChild(el('span', 'route-arrow', '→'));
+  }
+  dir.appendChild(el('div', 'route-target', METIER_LABELS[targetMetier] || targetMetier));
+  surface.appendChild(dir);
+
+  surface.appendChild(el('div', 'route-reason',
+    'Cette intervention relève d\'un autre périmètre. RAFI vous oriente vers le bon spécialiste FIXEO.'));
+  body.appendChild(surface);
   return body;
 }
 

@@ -13,47 +13,77 @@
   -->
   <link rel="stylesheet" href="estimator-prototype.css" />
   <style>
-    .page-header-logo {
-      font-weight: 800;
-      font-size: 18px;
-      background: linear-gradient(135deg, #FF6B2B 0%, #C8238B 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .painting-options { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
+    /* Page-level: light background, dark terminal panels */
+    body { background: var(--page-bg); }
+
+    /* Painting options — dark terminal cards */
+    .painting-options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
     .painting-option {
       display: flex; align-items: center; gap: 14px;
-      padding: 16px 18px; border: 1.5px solid #E8E6E2;
-      border-radius: 14px; cursor: pointer; background: #fff;
-      transition: border-color 180ms ease, background 180ms ease;
+      padding: 16px 18px;
+      border: 1.5px solid var(--modal-border);
+      border-radius: 12px; cursor: pointer;
+      background: var(--modal-surface);
+      color: var(--text-primary);
+      transition: border-color 150ms, background 150ms;
     }
-    .painting-option:hover { border-color: #FF6B2B; background: #FDFAF8; }
+    .painting-option:hover { border-color: rgba(255,122,0,0.4); background: var(--modal-elevated); }
     .painting-option.selected {
-      border-color: #C8238B;
-      background: linear-gradient(135deg, rgba(255,107,43,0.04) 0%, rgba(200,35,139,0.04) 100%);
+      border-color: var(--fixeo-orange);
+      background: rgba(255,122,0,0.06);
+      box-shadow: 0 0 0 1px rgba(255,122,0,0.12);
     }
     .painting-option__icon { font-size: 22px; flex-shrink: 0; }
     .painting-option__text { flex: 1; }
-    .painting-option__title { font-size: 15px; font-weight: 600; }
-    .painting-option__sub { font-size: 13px; color: #5A5A5A; }
+    .painting-option__title { font-size: 15px; font-weight: 600; color: var(--text-primary); }
+    .painting-option__sub { font-size: 13px; color: var(--text-secondary); }
+    .painting-option__coming-soon {
+      font-size: 11px; font-weight: 600; letter-spacing: 0.06em;
+      color: var(--fixeo-orange); text-transform: uppercase;
+    }
+
+    /* Surface input */
     .painted-input-row { display: none; margin-top: 16px; }
     .painted-input-row.active { display: flex; align-items: center; gap: 12px; }
     .painted-m2-input {
       width: 100px; padding: 12px; font-size: 20px; font-weight: 600;
-      border: 1.5px solid #E8E6E2; border-radius: 10px; text-align: center;
-      outline: none; transition: border-color 180ms;
+      border: 1.5px solid var(--modal-border); border-radius: 10px; text-align: center;
+      outline: none; transition: border-color 150ms, box-shadow 150ms;
+      background: var(--modal-elevated); color: var(--text-primary);
     }
-    .painted-m2-input:focus { border-color: #FF6B2B; }
+    .painted-m2-input:focus {
+      border-color: var(--fixeo-orange);
+      box-shadow: 0 0 0 3px rgba(255,122,0,0.12);
+    }
+
+    /* Guided placeholder — "bientôt disponible" */
     .guided-placeholder {
-      background: #F0EFED; border-radius: 10px; padding: 20px; text-align: center;
-      color: #5A5A5A; font-size: 14px; margin-top: 16px;
+      background: rgba(255,122,0,0.06);
+      border: 1px dashed rgba(255,122,0,0.25);
+      border-radius: 12px; padding: 20px; text-align: center;
+      color: var(--text-muted); font-size: 14px; margin-top: 16px;
     }
-    .guided-placeholder strong { display: block; font-size: 15px; color: #1A1A1A; margin-bottom: 6px; }
-    .page-main-centered {
-      max-width: 720px;
-      margin: 0 auto;
-      width: 100%;
+    .guided-placeholder strong {
+      display: block; font-size: 14px; color: var(--fixeo-orange);
+      margin-bottom: 6px; font-weight: 600;
+    }
+
+    /* Doctrine note */
+    .doctrine-note {
+      font-size: 12px; color: var(--text-muted);
+      padding: 12px 0 8px; line-height: 1.6;
+      border-top: 1px solid var(--modal-border-soft);
+      margin-top: 16px;
+    }
+    .doctrine-note strong { color: var(--text-secondary); }
+
+    /* Page body area (inside dark main panel) */
+    #page-body-slot { padding: 24px 20px 8px; }
+    #page-footer-slot { padding: 12px 20px 20px; border-top: 1px solid var(--modal-border); }
+    #page-ctx-slot { border-bottom: 1px solid var(--modal-border-soft); }
+    #page-progress-slot { }
+    #page-summary-slot .understanding-panel {
+      background: transparent; border: none; padding: 0;
     }
   </style>
 </head>
@@ -75,7 +105,7 @@
       <div class="estimator-header__rafi">R</div>
       <div>
         <div class="page-header-logo">FIXEO</div>
-        <div style="font-size:12px;color:#5A5A5A;">Estimation — précisions supplémentaires</div>
+        <div style="font-size:12px;color:var(--text-secondary);">Estimation — précisions supplémentaires</div>
       </div>
       <div style="flex:1"></div>
       <div id="page-progress-slot"></div>
@@ -264,7 +294,7 @@ function renderPaintingFlow(metier, serviceCode) {
   guidedPlaceholder.innerHTML =
     '<strong>Assistant de mesure guidé</strong>' +
     'Cet assistant vous aidera à estimer la surface à peindre pièce par pièce.<br>' +
-    '<em style="color:#C8238B;">FUTURE DEPENDENCY — non disponible en V1.</em>' +
+    '<em style="color:var(--fixeo-magenta);">FUTURE DEPENDENCY — non disponible en V1.</em>' +
     '<br><br>En attendant, mesurez ou estimez la surface des murs à peindre (longueur × hauteur pour chaque pan).';
 
   opt1.addEventListener('click', function() {
@@ -423,7 +453,7 @@ function renderComplexFlow() {
   bodySlot.appendChild(heading);
 
   var note = el('div','',
-    '<p style="font-size:13px;color:#5A5A5A;margin-bottom:20px;">'+
+    '<p style="font-size:13px;color:var(--text-secondary);margin-bottom:20px;">'+
     'Cette intervention nécessite quelques précisions pour calculer le prix exact.'+
     '</p>');
   bodySlot.appendChild(note);
