@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Estimation FIXEO — Peinture</title>
+  <link rel="stylesheet" href="css/fixeo-estimator-v2.css" />
+  <style>
+    body { background: var(--page-bg); }
+
+    /* Painting options */
+    .painting-options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+    .painting-option {
+      display: flex; align-items: center; gap: 14px;
+      padding: 16px 18px;
+      border: 1.5px solid var(--modal-border);
+      border-radius: 12px; cursor: pointer;
+      background: var(--modal-surface);
+      color: var(--text-primary);
+      transition: border-color 150ms, background 150ms;
+    }
+    .painting-option:hover { border-color: rgba(255,122,0,0.4); background: var(--modal-elevated); }
+    .painting-option.selected {
+      border-color: var(--fixeo-orange);
+      background: rgba(255,122,0,0.06);
+      box-shadow: 0 0 0 1px rgba(255,122,0,0.12);
+    }
+    .painting-option__icon { font-size: 22px; flex-shrink: 0; }
+    .painting-option__text { flex: 1; }
+    .painting-option__title { font-size: 15px; font-weight: 600; color: var(--t1, #F2F0EC); }
+    .painting-option__sub { font-size: 13px; color: var(--t2, rgba(242,240,236,0.55)); }
+
+    .painted-input-row { display: none; margin-top: 16px; }
+    .painted-input-row.active { display: flex; align-items: center; gap: 12px; }
+    .painted-m2-input {
+      width: 100px; padding: 12px; font-size: 20px; font-weight: 600;
+      border: 1.5px solid var(--modal-border); border-radius: 10px; text-align: center;
+      outline: none; transition: border-color 150ms, box-shadow 150ms;
+      background: var(--modal-elevated); color: var(--text-primary);
+    }
+    .painted-m2-input:focus {
+      border-color: var(--fixeo-orange);
+      box-shadow: 0 0 0 3px rgba(255,122,0,0.12);
+    }
+
+    #page-body-slot { padding: 24px 20px 8px; }
+    #page-footer-slot { padding: 12px 20px 20px; border-top: 1px solid var(--modal-border); }
+    #page-ctx-slot { border-bottom: 1px solid var(--modal-border-soft); }
+    #page-summary-slot .understanding-panel { background: transparent; border: none; padding: 0; }
+  </style>
+</head>
+<body>
+
+<div id="aria-live-result" aria-live="polite" aria-atomic="true"
+     style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden"></div>
+
+<!-- /estimation Page Layout -->
+<div class="page-layout" id="estimation-layout">
+
+  <!-- Main flow column -->
+  <div class="page-main page-main-centered">
+    <!-- Page header -->
+    <div class="page-header">
+      <div class="page-sphere" aria-hidden="true">RAFI</div>
+      <div>
+        <div class="page-header-logo">FIXEO</div>
+        <div style="font-size:12px;color:var(--text-secondary);">Estimation — précisions supplémentaires</div>
+      </div>
+      <div style="flex:1"></div>
+      <div id="page-progress-slot"></div>
+    </div>
+
+    <!-- RAFI context strip -->
+    <div id="page-ctx-slot"></div>
+
+    <!-- Question / result body -->
+    <div id="page-body-slot"></div>
+
+    <!-- Footer actions -->
+    <div id="page-footer-slot" style="margin-top:24px;"></div>
+  </div>
+
+  <!-- Summary column (desktop sticky) -->
+  <div class="page-summary" id="page-summary-slot" aria-label="Résumé de votre demande"></div>
+</div>
+
+<!-- Estimator V2 scripts — loaded per FixeoEstimatorConfig -->
+<script src="js/fixeo-estimator-config.js" defer></script>
+<script src="js/fixeo-estimator-api-v1.js" defer></script>
+
+<script>
+(function() {
+  'use strict';
+
+  /* ── Utilities ──────────────────────────────────────────────── */
+  function el(tag, cls, html) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (html != null) e.innerHTML = html;
+    return e;
+  }
+  function formatMAD(n) { return n != null ? Math.round(n) + ' MAD' : '—'; }
+
+  var METIER_LABELS = {
+    menuiserie:'Menuiserie', plomberie:'Plomberie', electricite:'Électricité',
+    serrurerie:'Serrurerie', climatisation:'Climatisation', nettoyage:'Nettoyage',
+    peinture:'Peinture', bricolage:'Bricolage',
+  };
+
+  /* ── Client labels ─────────────────────────────────────────── */
+  var CLIENT_LABELS_HTML = {
+    'peinture.mur_interieur.all_in': { primary: 'Peinture mur intérieur', secondary: 'Fournitures incluses' },
+    'peinture.mur_interieur.labour_only': { primary: 'Peinture mur intérieur', secondary: 'Main-d\'œuvre seulement' },
+    'nettoyage.grand_menage': { primary: 'Grand ménage', secondary: null },
+    'nettoyage.menage_standard': { primary: 'Ménage standard', secondary: null },
+  };
+
+  function resolveClientLabelHTML(serviceCode) {
+    var lbl = CLIENT_LABELS_HTML[serviceCode];
+    if (lbl) return lbl;
+    var parts = (serviceCode || '').split('.');
+    var primary = parts.slice(1).join(' ').replace(/_/g, ' ') || serviceCode || 'Intervention';
+    return { primary: primary.charAt(0).toUpperCase() + primary.slice(1), secondary: null };
+  }
+
+  /* ── Progress ──────────────────────────────────────────────── */
+  function renderProgress(activeStage) {
+    var stages = ['BESOIN', 'PRECISIONS', 'RESULTAT'];
+    var labels = { BESOIN: 'Métier', PRECISIONS: 'Périmètre', RESULTAT: 'Tarification' };
+    var idx = stages.indexOf(activeStage);
+    var prog = el('div', 'estimator-progress');
+    prog.style.padding = '0';
+    prog.setAttribute('role', 'progressbar');
+    prog.setAttribute('aria-label', 'Étape : ' + labels[activeStage]);
+    stages.forEach(function(s, i) {
+      var cls = 'progress-stage' + (i === idx ? ' active' : '') + (i < idx ? ' done' : '');
+      var stage = el('div', cls);
+      var dot = el('span', 'progress-dot'); dot.setAttribute('aria-hidden', 'true');
+      stage.appendChild(dot);
+      stage.appendChild(el('span', '', labels[s]));
+      prog.appendChild(stage);
+      if (i < 2) {
+        var line = el('div', 'progress-line' + (i < idx ? ' done' : ''));
+        line.setAttribute('aria-hidden', 'true');
+        prog.appendChild(line);
+      }
+    });
+    return prog;
+  }
+
+  /* ── Summary sidebar ───────────────────────────────────────── */
+  function renderSummary(metier, serviceCode, stage) {
+    var sum = document.getElementById('page-summary-slot');
+    if (!sum) return;
+    sum.innerHTML = '';
+    var card = el('div', '');
+    card.appendChild(el('div', 'understanding-head', 'CE QUE FIXEO A COMPRIS'));
+
+    function addItem(key, val) {
+      var item = el('div', 'summary-item');
+      if (key) item.appendChild(el('div', 'summary-item__key', key));
+      item.appendChild(el('div', 'summary-item__val', val));
+      card.appendChild(item);
+    }
+
+    var icons = { menuiserie: '🚪', plomberie: '🔧', electricite: '⚡', serrurerie: '🔑', climatisation: '❄️', nettoyage: '🧹', peinture: '🎨', bricolage: '🔨' };
+    if (metier) addItem('Métier', (icons[metier] || '') + ' ' + (METIER_LABELS[metier] || metier));
+    if (serviceCode) {
+      var lbl = resolveClientLabelHTML(serviceCode);
+      addItem('Service', lbl.primary);
+    }
+    addItem('Étape', stage === 'PRECISIONS' ? 'Précisions en cours' : 'Besoin');
+    var sigLine = el('div', 'fixeo-signal'); sigLine.setAttribute('aria-hidden', 'true');
+    card.appendChild(sigLine);
+    card.appendChild(el('div', 'understanding-status', 'Analyse en cours…'));
+    sum.appendChild(card);
+  }
+
+  /* ── Graceful restart ──────────────────────────────────────── */
+  function showRestartState() {
+    var bodySlot = document.getElementById('page-body-slot');
+    var footerSlot = document.getElementById('page-footer-slot');
+    if (!bodySlot) return;
+
+    var box = el('div', 'estimation-restart-box');
+    box.appendChild(el('div', 'estimation-restart-title', 'Votre session a expiré'));
+    box.appendChild(el('p', 'estimation-restart-body',
+      'Pour obtenir votre estimation, veuillez recommencer depuis le début.'));
+    var link = el('a', 'estimation-restart-link', 'Estimer mon intervention');
+    link.href = '/';
+    box.appendChild(link);
+
+    bodySlot.innerHTML = '';
+    bodySlot.appendChild(box);
+    if (footerSlot) footerSlot.innerHTML = '';
+  }
+
+  /* ── Session restore ───────────────────────────────────────── */
+  var SESSION_KEY = 'fixeo_estimator_token_v1';
+  var CTX_KEY = 'fixeo_estimator_ctx_v1';
+
+  var paintedM2 = null;
+  var selectedOption = null;
+  var _sessionToken = null;
+
+  /* ── Painting flow (PAGE_REQUIRED) ─────────────────────────── */
+  function renderPaintingFlow(metier, serviceCode) {
+    var ctxSlot = document.getElementById('page-ctx-slot');
+    if (ctxSlot) {
+      ctxSlot.innerHTML = '';
+      var ctx = el('div', 'estimator-context rafi-question-header');
+      ctx.appendChild(el('span', 'rafi-indicator small', 'RAFI vérifie'));
+      ctx.appendChild(el('span', 'context-detail', ' un détail'));
+      ctxSlot.appendChild(ctx);
+    }
+
+    var bodySlot = document.getElementById('page-body-slot');
+    if (!bodySlot) return;
+    bodySlot.innerHTML = '';
+
+    var heading = el('h2', 'question-heading');
+    heading.setAttribute('id', 'question-heading');
+    heading.textContent = 'Quelle surface sera réellement peinte ?';
+    bodySlot.appendChild(heading);
+
+    var options = el('div', 'painting-options');
+
+    var opt1 = el('div', 'painting-option');
+    opt1.setAttribute('tabindex', '0');
+    opt1.setAttribute('role', 'radio');
+    opt1.setAttribute('aria-checked', 'false');
+    opt1.setAttribute('aria-labelledby', 'opt1-title');
+    opt1.innerHTML = '<div class="painting-option__icon">📐</div>' +
+      '<div class="painting-option__text">' +
+      '<div class="painting-option__title" id="opt1-title">Je connais la surface</div>' +
+      '<div class="painting-option__sub">Saisir directement les m² à peindre</div>' +
+      '</div>';
+
+    var inputRow = el('div', 'painted-input-row');
+    inputRow.setAttribute('id', 'painted-input-row');
+    var m2Input = document.createElement('input');
+    m2Input.type = 'number'; m2Input.min = '1'; m2Input.max = '5000';
+    m2Input.placeholder = 'Ex. 45';
+    m2Input.className = 'painted-m2-input';
+    m2Input.setAttribute('aria-label', 'Surface à peindre en m²');
+    m2Input.addEventListener('input', function() {
+      var v = parseFloat(m2Input.value);
+      paintedM2 = (!isNaN(v) && v > 0) ? v : null;
+      updatePageCTA();
+    });
+    inputRow.appendChild(m2Input);
+    inputRow.appendChild(el('span', 'measurement-unit', 'm²'));
+
+    opt1.addEventListener('click', function() {
+      selectedOption = 'known';
+      opt1.classList.add('selected'); opt1.setAttribute('aria-checked', 'true');
+      opt2.classList.remove('selected'); opt2.setAttribute('aria-checked', 'false');
+      inputRow.classList.add('active');
+      paintedM2 = null; updatePageCTA();
+      setTimeout(function() { m2Input.focus(); }, 50);
+    });
+    [opt1].forEach(function(o) {
+      o.addEventListener('keydown', function(e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); o.click(); } });
+    });
+
+    var opt2 = el('div', 'painting-option');
+    opt2.setAttribute('tabindex', '0');
+    opt2.setAttribute('role', 'radio');
+    opt2.setAttribute('aria-checked', 'false');
+    opt2.setAttribute('aria-labelledby', 'opt2-title');
+    opt2.innerHTML = '<div class="painting-option__icon">🔢</div>' +
+      '<div class="painting-option__text">' +
+      '<div class="painting-option__title" id="opt2-title">Aidez-moi à calculer</div>' +
+      '<div class="painting-option__sub">Assistant de mesure — bientôt disponible</div>' +
+      '</div>';
+    opt2.addEventListener('click', function() {
+      selectedOption = 'unknown';
+      opt2.classList.add('selected'); opt2.setAttribute('aria-checked', 'true');
+      opt1.classList.remove('selected'); opt1.setAttribute('aria-checked', 'false');
+      inputRow.classList.remove('active');
+      paintedM2 = null; updatePageCTA();
+    });
+    opt2.addEventListener('keydown', function(e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); opt2.click(); } });
+
+    options.appendChild(opt1);
+    options.appendChild(inputRow);
+    options.appendChild(opt2);
+    bodySlot.appendChild(options);
+
+    bodySlot.appendChild(el('p', 'scope-doctrine',
+      'La surface peinte est la seule mesure utilisée pour calculer le prix. ' +
+      'L\'artisan vous confirmera les conditions sur place.'));
+
+    var footerSlot = document.getElementById('page-footer-slot');
+    if (footerSlot) {
+      footerSlot.innerHTML = '';
+      var cta = el('button', 'btn-primary', 'Calculer mon prix FIXEO');
+      cta.id = 'page-cta';
+      cta.disabled = true;
+      cta.onclick = function() {
+        if (!paintedM2 || !_sessionToken) return;
+        fetchPaintingResult(serviceCode, paintedM2);
+      };
+      footerSlot.appendChild(cta);
+      var back = el('button', 'btn-back', '← Retour');
+      back.onclick = function() { history.back(); };
+      footerSlot.appendChild(back);
+    }
+
+    renderSummary(metier, serviceCode, 'PRECISIONS');
+  }
+
+  function updatePageCTA() {
+    var cta = document.getElementById('page-cta');
+    if (cta) cta.disabled = (paintedM2 == null || selectedOption !== 'known');
+  }
+
+  /* ── Fetch painting result via server API ──────────────────── */
+  // Calls window.FixeoEstimatorAPI.evaluate(sessionToken) — NO hardcoded multiplication
+  function fetchPaintingResult(serviceCode, m2) {
+    if (!window.FixeoEstimatorAPI) {
+      showNoApiState();
+      return;
+    }
+    // Answer the painted_m2 question, then evaluate
+    window.FixeoEstimatorAPI.answer(_sessionToken, 'painted_m2@' + serviceCode, m2)
+      .then(function(r) {
+        if (!r.ok) { showErrorState('Impossible de traiter votre réponse.'); return; }
+        _sessionToken = r.session.session_token;
+        return window.FixeoEstimatorAPI.evaluate(_sessionToken);
+      })
+      .then(function(r) {
+        if (!r) return;
+        if (!r.ok || !r.outcome) { showErrorState('Impossible de calculer le prix.'); return; }
+        showPaintingResult(serviceCode, m2, r.outcome, r.pricing_context_token);
+      })
+      .catch(function() {
+        showErrorState('Problème de connexion. Veuillez réessayer.');
+      });
+  }
+
+  function showNoApiState() {
+    showErrorState('Le service d\'estimation n\'est pas disponible actuellement.');
+  }
+
+  function showErrorState(msg) {
+    var bodySlot = document.getElementById('page-body-slot');
+    if (!bodySlot) return;
+    var div = el('div', 'estimator-body');
+    div.appendChild(el('p', '', msg));
+    var link = el('a', 'estimation-restart-link', 'Estimer mon intervention');
+    link.href = '/';
+    div.appendChild(link);
+    bodySlot.innerHTML = '';
+    bodySlot.appendChild(div);
+  }
+
+  /* ── Painting result ──────────────────────────────────────── */
+  // amount_mad comes from server outcome — no multiplication in browser
+  function showPaintingResult(serviceCode, m2, outcome, pricingContextToken) {
+    var amountMAD = outcome && outcome.price && outcome.price.amount_mad;
+    if (amountMAD == null) { showErrorState('Prix indisponible.'); return; }
+    var amtStr = Math.round(amountMAD).toString();
+    var lbl = resolveClientLabelHTML(serviceCode);
+
+    var bodySlot = document.getElementById('page-body-slot');
+    var progressSlot = document.getElementById('page-progress-slot');
+    bodySlot.innerHTML = '';
+    if (progressSlot) { progressSlot.innerHTML = ''; progressSlot.appendChild(renderProgress('RESULTAT')); }
+
+    var shell = el('div', 'result-shell step-enter result-enter');
+
+    var rHead = el('div', 'result-header');
+    rHead.appendChild(el('div', 'result-verified-dot'));
+    var col = el('div', 'result-rafi-col');
+    col.appendChild(el('div', 'result-rafi-state', 'Analyse terminée'));
+    col.appendChild(el('div', 'result-rafi-label', 'Intervention identifiée'));
+    rHead.appendChild(col);
+    shell.appendChild(rHead);
+
+    var srow = el('div', 'result-service-row');
+    srow.appendChild(el('div', 'result-service-name', lbl.primary));
+    if (lbl.secondary) srow.appendChild(el('div', 'result-service-secondary', lbl.secondary));
+    shell.appendChild(srow);
+
+    var hero = el('div', 'price-hero');
+    var inner = el('div', 'price-hero-inner');
+    inner.appendChild(el('div', 'price-eyebrow', 'Prix FIXEO'));
+    var display = el('div', 'price-display');
+    display.appendChild(el('span', 'amount', amtStr));
+    display.appendChild(el('span', 'currency', ' MAD'));
+    inner.appendChild(display);
+    inner.appendChild(el('div', 'price-sublabel', 'Périmètre vérifié · ' + m2 + ' m²'));
+    hero.appendChild(inner);
+    shell.appendChild(hero);
+
+    var scope = el('div', 'scope-section');
+    scope.appendChild(el('div', 'scope-section-label', 'Ce qui est inclus'));
+    var chips = el('div', 'scope-chips'); chips.setAttribute('role', 'list');
+    var includes = (outcome.scope_summary && outcome.scope_summary.length > 0)
+      ? outcome.scope_summary
+      : ['Déplacement', 'Main-d\'œuvre', 'Peinture standard', 'Finition'];
+    includes.forEach(function(item) {
+      var c = el('span', 'scope-chip'); c.setAttribute('role', 'listitem');
+      c.textContent = typeof item === 'string' ? item : JSON.stringify(item);
+      chips.appendChild(c);
+    });
+    scope.appendChild(chips);
+    scope.appendChild(el('p', 'scope-doctrine',
+      'Ce prix s\'applique au périmètre indiqué (' + m2 + ' m²). ' +
+      'Si l\'intervention réelle est différente, l\'artisan doit vous l\'expliquer et obtenir votre accord.'));
+    shell.appendChild(scope);
+
+    bodySlot.appendChild(shell);
+
+    var footerSlot = document.getElementById('page-footer-slot');
+    if (footerSlot) {
+      footerSlot.innerHTML = '';
+      var cta = el('button', 'btn-primary', 'Trouver un artisan — ' + amtStr + ' MAD');
+      cta.id = 'page-result-cta';
+      cta.onclick = function() {
+        // Store opaque token — never raw amounts in sessionStorage
+        if (pricingContextToken && window.FixeoEstimatorReservationBridge) {
+          window.FixeoEstimatorReservationBridge.prepareContext(pricingContextToken);
+        }
+        document.dispatchEvent(new CustomEvent('fixeo:estimator-reserve', {
+          detail: { pricing_context_token: pricingContextToken }
+        }));
+      };
+      footerSlot.appendChild(cta);
+      var sec = el('button', 'btn-secondary', 'Modifier mon besoin');
+      sec.onclick = function() { location.reload(); };
+      footerSlot.appendChild(sec);
+    }
+
+    // Sidebar
+    renderSummaryWithResult(serviceCode, m2, amountMAD);
+
+    var live = document.getElementById('aria-live-result');
+    if (live) live.textContent = 'Prix FIXEO calculé : ' + amtStr + ' MAD';
+  }
+
+  function renderSummaryWithResult(serviceCode, m2, amount) {
+    var sum = document.getElementById('page-summary-slot');
+    if (!sum) return;
+    sum.innerHTML = '';
+    var card = el('div', '');
+    card.appendChild(el('div', 'understanding-head', 'RÉSULTAT FIXEO'));
+
+    function addItem(k, v) {
+      var item = el('div', 'summary-item');
+      item.appendChild(el('div', 'summary-item__key', k));
+      item.appendChild(el('div', 'summary-item__val', v));
+      card.appendChild(item);
+    }
+    addItem('Métier', '🎨 Peinture');
+    var lbl = resolveClientLabelHTML(serviceCode);
+    addItem('Service', lbl.primary);
+    addItem('Surface', m2 + ' m²');
+
+    var priceItem = el('div', 'summary-item');
+    priceItem.appendChild(el('div', 'summary-item__key', 'Prix FIXEO'));
+    var priceVal = el('div', 'summary-item__val');
+    // Semantic DOM: amount and currency are always separate spans
+    priceVal.appendChild(el('span', 'amount', Math.round(amount).toString()));
+    priceVal.appendChild(el('span', 'currency', ' MAD'));
+    priceItem.appendChild(priceVal);
+    card.appendChild(priceItem);
+
+    var sigLine = el('div', 'fixeo-signal'); sigLine.setAttribute('aria-hidden', 'true');
+    card.appendChild(sigLine);
+    card.appendChild(el('div', 'understanding-status result-rafi-state', 'Analyse terminée'));
+    sum.appendChild(card);
+  }
+
+  /* ── Init: session restore from sessionStorage ─────────────── */
+  document.addEventListener('DOMContentLoaded', function() {
+    // Try to restore session from sessionStorage (written by estimator when PAGE_REQUIRED)
+    var storedToken = null;
+    try {
+      storedToken = sessionStorage.getItem(SESSION_KEY);
+    } catch (_) {}
+
+    if (!storedToken) {
+      // No session — show graceful restart
+      showRestartState();
+      return;
+    }
+
+    // Session exists — render painting flow
+    _sessionToken = storedToken;
+
+    // Clear the token so it isn't reused after page reload
+    try { sessionStorage.removeItem(SESSION_KEY); } catch (_) {}
+
+    var progressSlot = document.getElementById('page-progress-slot');
+    if (progressSlot) progressSlot.appendChild(renderProgress('PRECISIONS'));
+
+    renderPaintingFlow('peinture', 'peinture.mur_interieur.all_in');
+  });
+
+}());
+</script>
+</body>
+</html>

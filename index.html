@@ -2558,6 +2558,8 @@ section#home.hero.hero-section {
   <link rel="stylesheet" href="css/fixeo-enterprise-teaser-v1.css?v=fxet-v1c">
   <script src="js/fixeo-consent-v1.js?v=fcv1c"></script>
   <script src="js/fixeo-analytics-config.js?v=fac1b" defer></script>
+  <!-- Estimator V2 config bootstrap — dormant (estimatorV2Enabled: false) -->
+  <script src="js/fixeo-estimator-config.js" defer></script>
   <script src="js/fixeo-analytics-bootstrap.js?v=fab1c" defer></script>
 <!-- V1A.2-int1: Section CSS loads last to guarantee source-order win over all external CSS -->
 <link rel="stylesheet" href="css/fixeo-artisan-section-v1.css?v=fxhome-artisan-section-v1a2-int11">
@@ -6575,6 +6577,7 @@ window.addEventListener('load', function () {
          MutationObserver fires after V2 upgrade; same JS as artisan-profile.html */
       .then(function () { return loadScriptOnce('js/fixeo-reservation-flagship-v1.js?v=fxresf-v11a'); })
       .then(function () { return loadScriptOnce('js/fixeo-estimation-engine-v1.js?v=faee-v1e'); })
+
       .then(function () { return loadScriptOnce('js/fixeo-review-engine-v1.js?v=frev-v1b'); })
       .then(function () {
         _loaded  = true;

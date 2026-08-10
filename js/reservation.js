@@ -601,7 +601,9 @@
     const a = state.artisan;
     const _svcP    = !state.isUrgent ? SERVICE_PRICING[state.selectedService] : null;
     const _svcBase = (_svcP && _svcP.from) ? _svcP.from : a.priceFrom;
-    const serviceTotal = state.isExpress && state.selectedService?.includes('Urgence') ? (_svcBase * 1.3 | 0) : _svcBase;
+    const _useEstimator = state._estimatorCtx && state._estimatorCtx.valid &&
+      window.FixeoEstimatorConfig && window.FixeoEstimatorConfig.estimatorV2Enabled === true;
+    const serviceTotal = _useEstimator ? (state._estimatorCtx.amount_mad || state._estimatorCtx.labour_amount_mad || _svcBase) : (state.isExpress && state.selectedService?.includes('Urgence') ? (_svcBase * 1.3 | 0) : _svcBase);
     const platformFee  = Math.round(serviceTotal * 0.05);
     const expressFee   = state.isExpress ? 50 : 0;
     const urgentFee    = state.isUrgent  ? 50 : 0;
@@ -895,6 +897,15 @@
     state.description = '';
     state.address = '';
     state.phone = '';
+
+    // ── Estimator V2 context (dormant bridge — active only when flag ON) ──
+    state._estimatorCtx = null;
+    if (window.FixeoEstimatorConfig && window.FixeoEstimatorConfig.estimatorV2Enabled === true &&
+        window.FixeoEstimatorReservationBridge && window.FixeoEstimatorReservationBridge.getContext()) {
+      window.FixeoEstimatorReservationBridge.verifyContext().then(function(ctx) {
+        if (ctx && ctx.valid) state._estimatorCtx = ctx;
+      }).catch(function() { state._estimatorCtx = null; });
+    }
 
     // Resolve artisan
     state.artisan = artisanInput ? normalizeArtisan(artisanInput) : null;
@@ -1221,6 +1232,10 @@
       price       : total,
       _total      : total,
       isExpress   : state.isExpress,
+      _estimator_context_token: (state._estimatorCtx && state._estimatorCtx._token) || null,
+      _estimator_outcome_type: (state._estimatorCtx && state._estimatorCtx.outcome_type) || null,
+      _parts_separate: (state._estimatorCtx && state._estimatorCtx.parts_separate) || false,
+      _is_diagnostic: (state._estimatorCtx && state._estimatorCtx.is_diagnostic) || false,
     };
 
     /* ── Lire la méthode de paiement sélectionnée ── */

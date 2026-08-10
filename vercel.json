@@ -73,9 +73,21 @@
     {
       "src": "api/enterprise-contact-fn/index.js",
       "use": "@vercel/node"
+    },
+    {
+      "src": "api/estimator-v1/index.js",
+      "use": "@vercel/node"
     }
   ],
   "routes": [
+    {
+      "src": "^/api/estimator-v1$",
+      "dest": "/api/estimator-v1/index.js"
+    },
+    {
+      "src": "^/estimation$",
+      "dest": "/estimation.html"
+    },
     {
       "src": "^/api/enterprise-contact$",
       "dest": "/api/enterprise-contact-fn/index.js"

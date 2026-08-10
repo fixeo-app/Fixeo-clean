@@ -1,0 +1,6 @@
+{
+  "name": "fixeo-estimator-v1-fn",
+  "version": "1.0.0",
+  "description": "FIXEO Estimator V1 Serverless Function",
+  "main": "index.js"
+}
