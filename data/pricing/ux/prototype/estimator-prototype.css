@@ -266,8 +266,12 @@ body {
 }
 .rafi-sphere {
   width: 40px; height: 40px; border-radius: 50%;
-  background: radial-gradient(circle at 38% 32%, #26202E 0%, #141418 70%);
-  border: 1.5px solid rgba(255,122,0,0.18);
+  /* Richer depth: warm highlight at top-left, deep core, dark rim */
+  background:
+    radial-gradient(circle at 32% 28%, rgba(80,55,100,0.55) 0%, transparent 44%),
+    radial-gradient(circle at 38% 32%, #2A2035 0%, #0F0E13 68%);
+  border: 1.5px solid rgba(255,122,0,0.22);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.50), inset 0 1px 0 rgba(255,255,255,0.05);
   position: relative; overflow: visible;
   display: flex; align-items: center; justify-content: center;
   transition: box-shadow 700ms cubic-bezier(0.2,0,0,1),
@@ -275,8 +279,8 @@ body {
 }
 /* Inner RAFI text */
 .rafi-sphere-label {
-  font-size: 7px; font-weight: 900; letter-spacing: 0.09em;
-  color: rgba(255,122,0,0.6); text-transform: uppercase;
+  font-size: 7px; font-weight: 900; letter-spacing: 0.10em;
+  color: rgba(255,122,0,0.75); text-transform: uppercase;
   position: relative; z-index: 2; user-select: none;
 }
 /* Internal radial glow — intensity driven by state */
@@ -287,112 +291,150 @@ body {
   transition: background 700ms cubic-bezier(0.2,0,0,1);
   z-index: 1;
 }
+/* Specular highlight — top-left glass glint, always present */
+.rafi-sphere-wrap::before {
+  content: '';
+  position: absolute;
+  top: 5px; left: 5px;
+  width: 10px; height: 7px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 40% 30%, rgba(255,255,255,0.12) 0%, transparent 80%);
+  pointer-events: none; z-index: 10;
+}
 /* Outer orbit ring */
 .rafi-sphere::after {
   content: '';
-  position: absolute; inset: -6px; border-radius: 50%;
+  position: absolute; inset: -7px; border-radius: 50%;
   border: 1px solid transparent;
   transition: border-color 500ms, box-shadow 500ms;
 }
 
 /* ── Sphere States ───────────────────────────────────────────────── */
 
-/* IDLE — barely there, only a soft inner ember */
+/* IDLE — ember core visible, awaiting intent */
 .rafi-sphere[data-state="idle"] {
-  border-color: rgba(255,122,0,0.14);
-  box-shadow: 0 0 10px rgba(255,122,0,0.06), inset 0 0 6px rgba(255,122,0,0.04);
+  border-color: rgba(255,122,0,0.20);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.50), inset 0 1px 0 rgba(255,255,255,0.05),
+              0 0 14px rgba(255,122,0,0.10), inset 0 0 8px rgba(255,122,0,0.06);
+}
+.rafi-sphere[data-state="idle"]::before {
+  background: radial-gradient(circle at 50% 65%, rgba(255,122,0,0.08) 0%, transparent 65%);
 }
 
-/* ANALYZING — warm orange light breathes through the core */
+/* ANALYZING — warm orange energy, visible orbit arc */
 .rafi-sphere[data-state="analyzing"] {
-  border-color: rgba(255,122,0,0.32);
-  box-shadow: 0 0 22px rgba(255,122,0,0.18), inset 0 0 14px rgba(255,122,0,0.10);
+  border-color: rgba(255,122,0,0.42);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.50), inset 0 1px 0 rgba(255,255,255,0.05),
+              0 0 26px rgba(255,122,0,0.24), 0 0 8px rgba(255,122,0,0.16),
+              inset 0 0 16px rgba(255,122,0,0.14);
   animation: rafi-breathe 2.6s ease-in-out infinite;
 }
 .rafi-sphere[data-state="analyzing"]::before {
-  background: radial-gradient(circle at 42% 58%, rgba(255,122,0,0.20) 0%, transparent 62%);
+  background: radial-gradient(circle at 42% 58%, rgba(255,122,0,0.26) 0%, transparent 60%);
 }
 .rafi-sphere[data-state="analyzing"]::after {
-  border-color: rgba(255,122,0,0.14);
+  border-color: rgba(255,122,0,0.22);
+  box-shadow: 0 0 6px rgba(255,122,0,0.12);
   animation: rafi-orbit 4.0s linear infinite;
 }
 @keyframes rafi-breathe {
-  0%, 100% { box-shadow: 0 0 22px rgba(255,122,0,0.18), inset 0 0 14px rgba(255,122,0,0.10); }
-  50%       { box-shadow: 0 0 34px rgba(255,122,0,0.30), inset 0 0 20px rgba(255,122,0,0.16); }
+  0%, 100% { box-shadow: 0 1px 3px rgba(0,0,0,0.50), inset 0 1px 0 rgba(255,255,255,0.05),
+                          0 0 26px rgba(255,122,0,0.24), 0 0 8px rgba(255,122,0,0.16),
+                          inset 0 0 16px rgba(255,122,0,0.14); }
+  50%       { box-shadow: 0 1px 3px rgba(0,0,0,0.50), inset 0 1px 0 rgba(255,255,255,0.05),
+                          0 0 38px rgba(255,122,0,0.36), 0 0 14px rgba(255,122,0,0.22),
+                          inset 0 0 22px rgba(255,122,0,0.20); }
 }
 @keyframes rafi-orbit {
   from { transform: rotate(0deg); }
   to   { transform: rotate(360deg); }
 }
 
-/* VERIFYING — magenta tint, slower stable orbit */
+/* VERIFYING — magenta tint, legible pulse, visible orbit */
 .rafi-sphere[data-state="verifying"] {
-  border-color: rgba(255,45,149,0.24);
-  box-shadow: 0 0 18px rgba(255,45,149,0.12), inset 0 0 10px rgba(255,45,149,0.07);
+  border-color: rgba(255,45,149,0.36);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.50), inset 0 1px 0 rgba(255,255,255,0.05),
+              0 0 22px rgba(255,45,149,0.18), 0 0 7px rgba(255,45,149,0.14),
+              inset 0 0 14px rgba(255,45,149,0.10);
   animation: rafi-verify-pulse 3.2s ease-in-out infinite;
 }
 .rafi-sphere[data-state="verifying"]::before {
-  background: radial-gradient(circle at 50% 50%, rgba(255,45,149,0.14) 0%, transparent 62%);
+  background: radial-gradient(circle at 50% 50%, rgba(255,45,149,0.20) 0%, transparent 60%);
 }
 .rafi-sphere[data-state="verifying"]::after {
-  border-color: rgba(255,45,149,0.18);
+  border-color: rgba(255,45,149,0.24);
+  box-shadow: 0 0 5px rgba(255,45,149,0.10);
   animation: rafi-orbit 5.5s linear infinite;
 }
 @keyframes rafi-verify-pulse {
-  0%, 100% { box-shadow: 0 0 18px rgba(255,45,149,0.12), inset 0 0 10px rgba(255,45,149,0.07); }
-  50%       { box-shadow: 0 0 26px rgba(255,45,149,0.20), inset 0 0 14px rgba(255,45,149,0.12); }
+  0%, 100% { box-shadow: 0 1px 3px rgba(0,0,0,0.50), inset 0 1px 0 rgba(255,255,255,0.05),
+                          0 0 22px rgba(255,45,149,0.18), 0 0 7px rgba(255,45,149,0.14),
+                          inset 0 0 14px rgba(255,45,149,0.10); }
+  50%       { box-shadow: 0 1px 3px rgba(0,0,0,0.50), inset 0 1px 0 rgba(255,255,255,0.05),
+                          0 0 32px rgba(255,45,149,0.28), 0 0 12px rgba(255,45,149,0.20),
+                          inset 0 0 18px rgba(255,45,149,0.16); }
 }
 
-/* IDENTIFIED — brief convergence flash, then settles to green tint */
+/* IDENTIFIED — green convergence lock event */
 .rafi-sphere[data-state="identified"] {
-  border-color: rgba(46,204,122,0.28);
-  box-shadow: 0 0 18px rgba(46,204,122,0.14), inset 0 0 10px rgba(46,204,122,0.08);
+  border-color: rgba(46,204,122,0.40);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.50), inset 0 1px 0 rgba(255,255,255,0.05),
+              0 0 24px rgba(46,204,122,0.22), 0 0 8px rgba(46,204,122,0.16),
+              inset 0 0 14px rgba(46,204,122,0.12);
   animation: rafi-lock 0.55s cubic-bezier(0.2,0,0,1) both;
 }
 .rafi-sphere[data-state="identified"]::before {
-  background: radial-gradient(circle at 50% 50%, rgba(46,204,122,0.16) 0%, transparent 60%);
+  background: radial-gradient(circle at 50% 50%, rgba(46,204,122,0.22) 0%, transparent 58%);
 }
 .rafi-sphere[data-state="identified"]::after {
-  border-color: rgba(46,204,122,0.20);
+  border-color: rgba(46,204,122,0.28);
 }
 @keyframes rafi-lock {
-  0%   { transform: scale(1.0); }
-  35%  { transform: scale(1.09); }
+  0%   { transform: scale(1.0); box-shadow: 0 1px 3px rgba(0,0,0,0.50), 0 0 8px rgba(46,204,122,0.10); }
+  35%  { transform: scale(1.10); box-shadow: 0 1px 3px rgba(0,0,0,0.50), 0 0 36px rgba(46,204,122,0.40); }
   100% { transform: scale(1.0); }
 }
 
-/* COMPLETE / PRICE RESOLVED — quiet, settled, green presence */
+/* COMPLETE / PRICE RESOLVED — settled green intelligence */
 .rafi-sphere[data-state="complete"] {
-  border-color: rgba(46,204,122,0.18);
-  box-shadow: 0 0 12px rgba(46,204,122,0.09), inset 0 0 7px rgba(46,204,122,0.06);
+  border-color: rgba(46,204,122,0.28);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.50), inset 0 1px 0 rgba(255,255,255,0.05),
+              0 0 16px rgba(46,204,122,0.14), inset 0 0 10px rgba(46,204,122,0.08);
 }
 .rafi-sphere[data-state="complete"]::before {
-  background: radial-gradient(circle at 50% 50%, rgba(46,204,122,0.10) 0%, transparent 60%);
+  background: radial-gradient(circle at 50% 50%, rgba(46,204,122,0.14) 0%, transparent 58%);
 }
 
-/* SAFETY — amber, no animation, calm */
+/* SAFETY — calm amber, static, no excitement */
 .rafi-sphere[data-state="safety"] {
-  border-color: rgba(255,154,31,0.28);
-  box-shadow: 0 0 14px rgba(255,154,31,0.12), inset 0 0 8px rgba(255,154,31,0.08);
+  border-color: rgba(255,154,31,0.34);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.50), inset 0 1px 0 rgba(255,255,255,0.05),
+              0 0 18px rgba(255,154,31,0.16), inset 0 0 10px rgba(255,154,31,0.10);
 }
 .rafi-sphere[data-state="safety"]::before {
-  background: radial-gradient(circle at 50% 50%, rgba(255,154,31,0.14) 0%, transparent 62%);
+  background: radial-gradient(circle at 50% 50%, rgba(255,154,31,0.18) 0%, transparent 60%);
 }
 
-/* ROUTING — orange orbit, directional signal */
+/* ROUTING — orange, active directional orbit */
 .rafi-sphere[data-state="routing"] {
-  border-color: rgba(255,122,0,0.28);
-  box-shadow: 0 0 18px rgba(255,122,0,0.16), inset 0 0 10px rgba(255,122,0,0.09);
+  border-color: rgba(255,122,0,0.36);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.50), inset 0 1px 0 rgba(255,255,255,0.05),
+              0 0 22px rgba(255,122,0,0.20), inset 0 0 12px rgba(255,122,0,0.12);
+}
+.rafi-sphere[data-state="routing"]::before {
+  background: radial-gradient(circle at 42% 58%, rgba(255,122,0,0.18) 0%, transparent 62%);
 }
 .rafi-sphere[data-state="routing"]::after {
-  border-color: rgba(255,122,0,0.18);
+  border-color: rgba(255,122,0,0.24);
+  box-shadow: 0 0 6px rgba(255,122,0,0.12);
   animation: rafi-orbit 3.8s linear infinite;
 }
 
-/* QUOTE — neutral, analysis complete but unresolved */
+/* QUOTE — neutral, measured resolution */
 .rafi-sphere[data-state="quote"] {
-  border-color: rgba(242,240,236,0.12);
-  box-shadow: 0 0 10px rgba(242,240,236,0.05), inset 0 0 6px rgba(242,240,236,0.03);
+  border-color: rgba(242,240,236,0.18);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.50), inset 0 1px 0 rgba(255,255,255,0.05),
+              0 0 12px rgba(242,240,236,0.06), inset 0 0 7px rgba(242,240,236,0.04);
 }
 
 /* Reduced motion — kill all sphere animation */
@@ -408,13 +450,24 @@ body {
 /* Mini sphere for /estimation page header */
 .page-sphere {
   width: 32px; height: 32px; border-radius: 50%;
-  background: radial-gradient(circle at 36% 34%, #26202E 0%, #141418 70%);
-  border: 1.5px solid rgba(255,122,0,0.22);
+  background:
+    radial-gradient(circle at 32% 28%, rgba(80,55,100,0.50) 0%, transparent 44%),
+    radial-gradient(circle at 36% 34%, #2A2035 0%, #0F0E13 68%);
+  border: 1.5px solid rgba(255,122,0,0.28);
   display: flex; align-items: center; justify-content: center;
-  font-size: 6px; font-weight: 900; letter-spacing: 0.09em;
-  color: rgba(255,122,0,0.65); text-transform: uppercase;
+  font-size: 6px; font-weight: 900; letter-spacing: 0.10em;
+  color: rgba(255,122,0,0.80); text-transform: uppercase;
   flex-shrink: 0;
-  box-shadow: 0 0 14px rgba(255,122,0,0.14), inset 0 0 8px rgba(255,122,0,0.08);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.50), inset 0 1px 0 rgba(255,255,255,0.05),
+              0 0 18px rgba(255,122,0,0.18), inset 0 0 10px rgba(255,122,0,0.10);
+  position: relative;
+}
+.page-sphere::before {
+  content: '';
+  position: absolute; top: 4px; left: 4px;
+  width: 8px; height: 6px; border-radius: 50%;
+  background: radial-gradient(ellipse at 40% 30%, rgba(255,255,255,0.10) 0%, transparent 80%);
+  pointer-events: none;
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -1004,8 +1057,13 @@ body {
 }
 
 /* V1/V2 compat classes (do not remove — test contracts) */
-.result-price-number { font-size: inherit; font-weight: inherit; }
-.result-price-unit { font-size: 18px; font-weight: 600; color: var(--t2); -webkit-text-fill-color: var(--t2); }
+/* result-price-number: alias → same gradient treatment as .amount (page compat) */
+.result-price-number {
+  font-size: 72px; font-weight: 900; letter-spacing: -0.04em; line-height: 1;
+  background: var(--fg); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.result-price-unit { font-size: 20px; font-weight: 700; color: var(--t2); -webkit-text-fill-color: var(--t2); padding-bottom: 8px; }
 .result-identified {
   font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ok); margin-bottom: 6px;
 }

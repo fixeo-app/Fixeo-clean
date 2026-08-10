@@ -6,12 +6,12 @@
   <title>FIXEO — Estimation — Prototype</title>
   <!--
     ═══════════════════════════════════════════════════════════════
-    FIXEO /estimation Page Prototype — Phase 7C.8F-R
+    FIXEO /estimation Page Prototype — Phase 7C.8G.1
     Status: PROTOTYPE INTERNE — NON PRODUCTION
     Surface: PAGE_RECOMMENDED / PAGE_REQUIRED flows
     ═══════════════════════════════════════════════════════════════
   -->
-  <link rel="stylesheet" href="estimator-prototype.css?v=8g" />
+  <link rel="stylesheet" href="estimator-prototype.css?v=8g1" />
   <style>
     /* Page-level: light background, dark terminal panels */
     body { background: var(--page-bg); }
@@ -90,7 +90,7 @@
 <body>
 
 <div class="proto-banner" role="alert">
-  PROTOTYPE INTERNE — NON PRODUCTION — /estimation page — Phase 7C.8F-R
+  PROTOTYPE INTERNE — NON PRODUCTION — /estimation page — Phase 7C.8G.1
 </div>
 <div id="aria-live-result" aria-live="polite" aria-atomic="true"
      style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden"></div>
@@ -144,7 +144,7 @@ var METIER_LABELS = {
 /* ─── Progress ─────────────────────────────────────────────────── */
 function renderProgress(activeStage) {
   var stages = ['BESOIN','PRECISIONS','RESULTAT'];
-  var labels = {BESOIN:'Besoin',PRECISIONS:'Précisions',RESULTAT:'Résultat FIXEO'};
+  var labels = {BESOIN:'Métier',PRECISIONS:'Périmètre',RESULTAT:'Tarification'};
   var idx = stages.indexOf(activeStage);
   var prog = el('div','estimator-progress');
   prog.style.padding = '0';
@@ -362,75 +362,119 @@ function updatePageCTA() {
 // The engine outcome is requested from orchestrator (pre-computed for prototype)
 // Rate comes from engine_result.pricing, never hardcoded in UI
 function showPaintingResult(serviceCode, m2) {
-  // In Node prototype: would call adapter.resolveFlow with painted_m2 = m2
-  // Browser prototype: simulates engine call result
-  // Rate per m2 is read from engine pricing data — NOT from UI code
-  var PEINTURE_RATE_FROM_ENGINE = 65; // MAD/m² — THIS IS READ FROM engine_result.pricing.unit_rate_mad
-  // (In production, this would be outcome.price.amount_mad from adapter.evaluate())
-  // We display it here only because we pre-ran the engine for the prototype
+  // Engine simulation: unit_rate_mad is from engine_result.pricing.unit_rate_mad
+  // The UI receives outcome.price.amount_mad — it does NOT perform multiplication.
+  // Pre-run orchestrator result for peinture.mur_interieur.all_in: 65 MAD/m²
+  var UNIT_RATE_FROM_ENGINE = 65; // engine_result.pricing.unit_rate_mad
+  var engineAmount = Math.round(m2 * UNIT_RATE_FROM_ENGINE);
+  // The engine computes this; the prototype simulates receiving outcome.price.amount_mad = engineAmount
+  var amtStr = engineAmount.toString();
 
-  // Simulate engine outcome structure (as returned by orchestrator.evaluateEstimator)
-  var engineAmount = Math.round(m2 * PEINTURE_RATE_FROM_ENGINE); // This calc is in the ENGINE not UI
-  // The UI receives outcome.price.amount_mad from the engine — it does not perform multiplication
-
+  // ─── Body: Flagship result shell — visual parity with modal PRICE_READY ────
   var bodySlot = document.getElementById('page-body-slot');
   bodySlot.innerHTML = '';
 
-  var body = el('div','step-enter result-enter');
-  body.appendChild(el('div','result-identified','✓ Intervention identifiée'));
-  body.appendChild(el('div','result-service-name','Peinture mur intérieur'));
+  var shell = el('div','result-shell step-enter result-enter');
 
-  // Basis from engine result
-  body.appendChild(el('div','result-basis', m2 + ' m² × ' + PEINTURE_RATE_FROM_ENGINE + ' MAD/m²'));
+  // ① RESULT HEADER — identical doctrine to modal PRICE_READY
+  var rHead = el('div','result-header');
+  var dot = el('div','result-verified-dot'); rHead.appendChild(dot);
+  var col = el('div','result-rafi-col');
+  col.appendChild(el('div','result-rafi-state','Analyse terminée'));
+  col.appendChild(el('div','result-rafi-label','Intervention identifiée'));
+  rHead.appendChild(col);
+  shell.appendChild(rHead);
 
-  // Price container
-  var priceContainer = el('div','result-price-container');
-  var priceRow = el('div','result-price');
-  priceRow.appendChild(el('span','result-price-number', Math.round(engineAmount).toString()));
-  priceRow.appendChild(el('span','result-price-unit','MAD'));
-  priceContainer.appendChild(priceRow);
-  priceContainer.appendChild(el('div','result-price-label','PRIX FIXEO'));
-  priceContainer.appendChild(el('div','result-price-scope','Applicable au périmètre identifié'));
-  body.appendChild(priceContainer);
+  // ② SERVICE IDENTITY
+  var srow = el('div','result-service-row');
+  srow.appendChild(el('div','result-service-name','Peinture mur intérieur'));
+  srow.appendChild(el('div','result-service-secondary','Peinture standard incluse'));
+  shell.appendChild(srow);
 
-  body.appendChild(el('p','scope-doctrine',
-    'Ce prix s\'applique au périmètre indiqué. Si l\'intervention réelle est différente, '+
-    'l\'artisan doit vous l\'expliquer et obtenir votre accord avant de continuer.'));
+  // ③ PRICE HERO — same composition as modal (price-hero > price-hero-inner > price-display > .amount + .currency)
+  var hero = el('div','price-hero');
+  var inner = el('div','price-hero-inner');
+  inner.appendChild(el('div','price-eyebrow','Prix FIXEO'));
+  var display = el('div','price-display');
+  // Semantic DOM: amount and currency are always separate spans — contract from 7C.8D
+  var amountSpan = el('span','amount', amtStr);
+  var currencySpan = el('span','currency',' MAD');
+  display.appendChild(amountSpan);
+  display.appendChild(currencySpan);
+  inner.appendChild(display);
+  // Basis from engine (m² × rate shown as transparent data, not for user confusion)
+  inner.appendChild(el('div','price-sublabel','Périmètre vérifié · ' + m2 + ' m²'));
+  hero.appendChild(inner);
+  shell.appendChild(hero);
 
-  bodySlot.appendChild(body);
+  // ④ SCOPE
+  var scope = el('div','scope-section');
+  scope.appendChild(el('div','scope-section-label','Ce qui est inclus'));
+  var chips = el('div','scope-chips'); chips.setAttribute('role','list');
+  ['Déplacement', 'Main-d\'œuvre', 'Peinture standard', 'Finition'].forEach(function(item) {
+    var c = el('span','scope-chip'); c.setAttribute('role','listitem');
+    c.textContent = item; chips.appendChild(c);
+  });
+  scope.appendChild(chips);
+  scope.appendChild(el('p','scope-doctrine',
+    'Ce prix s\'applique au périmètre indiqué (' + m2 + ' m²). ' +
+    'Si l\'intervention réelle est différente, l\'artisan doit vous l\'expliquer et obtenir votre accord avant de continuer.'));
+  shell.appendChild(scope);
 
+  bodySlot.appendChild(shell);
+
+  // ─── Footer CTA — amount echoed from engineAmount (never recalculated) ────
   var footerSlot = document.getElementById('page-footer-slot');
   footerSlot.innerHTML = '';
-  var cta = el('button','btn-primary','Trouver un artisan — '+formatMAD(engineAmount));
+  var cta = el('button','btn-primary');
+  cta.id = 'page-result-cta';
+  // CTA price echoes engineAmount (same source as main price hero)
+  cta.textContent = 'Trouver un artisan — ' + engineAmount + ' MAD';
   cta.onclick = function(){ showPageHandoffScreen('Peinture mur intérieur', engineAmount); };
   footerSlot.appendChild(cta);
   var sec = el('button','btn-secondary','Modifier mon besoin');
   sec.onclick = function(){ location.reload(); };
   footerSlot.appendChild(sec);
 
-  // Update summary — no price shown before result, now show it
-  renderSummaryWithResult('peinture', serviceCode, engineAmount);
+  // ─── Sidebar with result — flagship parity ───────────────────────────────
+  renderSummaryWithResult(serviceCode, m2, engineAmount);
 
+  // Aria live
   var live = document.getElementById('aria-live-result');
-  if (live) live.textContent = 'Prix calculé : ' + formatMAD(engineAmount);
+  if (live) live.textContent = 'Prix FIXEO calculé : ' + engineAmount + ' MAD';
 }
 
-function renderSummaryWithResult(metier, serviceCode, amount) {
+function renderSummaryWithResult(serviceCode, m2, amount) {
   var sum = document.getElementById('page-summary-slot');
   sum.innerHTML = '';
-  sum.appendChild(el('div','summary-heading','Résultat FIXEO'));
+  var card = el('div','');
+
+  // Sidebar heading — matches understanding panel style
+  card.appendChild(el('div','understanding-head','RÉSULTAT FIXEO'));
 
   function addItem(k,v){
     var item=el('div','summary-item');
     item.appendChild(el('div','summary-item__key',k));
     item.appendChild(el('div','summary-item__val',v));
-    sum.appendChild(item);
+    card.appendChild(item);
   }
-  addItem('Métier', 'Peinture');
-  if (serviceCode) addItem('Service', serviceCode.split('.').pop().replace(/_/g,' '));
-  addItem('Surface', paintedM2 + ' m²');
-  // Price shown only after engine result — not before
-  addItem('Prix FIXEO', formatMAD(amount));
+  addItem('Métier', '🎨 Peinture');
+  addItem('Service', 'Peinture mur intérieur');
+  addItem('Surface', m2 + ' m²');
+  // Sidebar price — semantic DOM: amount + currency separate (matches 7C.8D contract)
+  var priceItem = el('div','summary-item');
+  priceItem.appendChild(el('div','summary-item__key','Prix FIXEO'));
+  var priceVal = el('div','summary-item__val');
+  priceVal.appendChild(el('span','amount', amount.toString()));
+  priceVal.appendChild(el('span','currency',' MAD'));
+  priceItem.appendChild(priceVal);
+  card.appendChild(priceItem);
+
+  // Signal line
+  var sigLine = el('div','fixeo-signal'); sigLine.setAttribute('aria-hidden','true');
+  card.appendChild(sigLine);
+  card.appendChild(el('div','understanding-status result-rafi-state','Analyse terminée'));
+  sum.appendChild(card);
 }
 
 /* ─── /estimation page complex flow (4+ questions example) ─────── */
