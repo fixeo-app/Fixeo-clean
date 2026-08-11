@@ -214,9 +214,9 @@ test('18. 3Z.1 FAEE isolation unchanged: data-estimator-context in reservation.j
 ══════════════════════════════════════════════════════════════ */
 console.log('\n── Group 7: Cache keys ──');
 
-test('19. hero-resume JS: fxhro-v1c-qsm-reset in both file and index.html', function () {
-  assert(ctrlSrc.includes('fxhro-v1c-qsm-reset'), 'version in JS');
-  assert(idxSrc.includes('fixeo-hero-resume-v1.js?v=fxhro-v1c-qsm-reset'), 'JS key in index.html');
+test('19. hero-resume JS: fxhro-v1d-reservation-exit in both file and index.html', function () {
+  assert(ctrlSrc.includes('fxhro-v1d-reservation-exit'), 'version in JS');
+  assert(idxSrc.includes('fixeo-hero-resume-v1.js?v=fxhro-v1d-reservation-exit'), 'JS key in index.html');
   assert(!idxSrc.includes('fixeo-hero-resume-v1.js?v=fxhro-v1b-reset'), 'old key gone');
 });
 

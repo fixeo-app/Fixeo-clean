@@ -239,7 +239,7 @@ test('24. cache key updated to fxhro-v1d-visual in index.html', function () {
   assert(idxSrc.includes('fixeo-hero-resume-v1.css?v=fxhro-v1d-visual'), 'CSS cache key updated');
   assert(!idxSrc.includes('fixeo-hero-resume-v1.css?v=fxhro-v1c-qsm-reset'), 'old CSS key gone');
   /* JS key unchanged — no JS changes in 3Z.2D */
-  assert(idxSrc.includes('fixeo-hero-resume-v1.js?v=fxhro-v1c-qsm-reset'), 'JS key unchanged');
+  assert(idxSrc.includes('fixeo-hero-resume-v1.js?v=fxhro-v1d-reservation-exit'), 'JS key unchanged');
 });
 
 /* ── Summary ──────────────────────────────────────────────────── */

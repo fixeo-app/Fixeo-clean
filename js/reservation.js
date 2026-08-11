@@ -1471,6 +1471,14 @@
         window.FixeoEstimatorV2.isOpen()) {
       window.FixeoEstimatorV2.close();
     }
+    /* 7C.9L.3Z.2D.1: signal true Reservation dismissal to Hero Resume controller.
+     * Emitted ONLY here — after full modal teardown, after Estimator destroy.
+     * NOT emitted by _dismissReservationLayer() (used for internal Step transitions).
+     * NOT emitted on: artisan←Back, Step1←Back, Step2←Back, city-back-to-estimator.
+     * No price payload. No token payload. No personal data. */
+    try {
+      document.dispatchEvent(new CustomEvent('fixeo:reservation-closed', { bubbles: false }));
+    } catch (_e) { /* CustomEvent not supported — silent */ }
   }
 
   /* ════════════════════════════════════════════════════════
@@ -1797,6 +1805,13 @@
             }
             /* ── V1-A: Pipeline bridge → artisan inbox ─────────── */
             _bridgeToArtisanInbox(bookingData, orderID, a.city || '');
+            /* 7C.9L.3Z.2D.1: clear verified pricing context before redirect so that
+             * returning to homepage via Back does NOT resurface old price card.
+             * The booking is complete — the pricing journey is consumed. */
+            if (window.FixeoEstimatorReservationBridge &&
+                typeof window.FixeoEstimatorReservationBridge.clearContext === 'function') {
+              window.FixeoEstimatorReservationBridge.clearContext();
+            }
             /* ── Redirection vers la page de confirmation COD v15 ── */
             const confirmURL = (window.FixeoCOD && window.FixeoCOD.config)
               ? window.FixeoCOD.config.CONFIRMATION_URL
@@ -1838,6 +1853,11 @@
         }
         /* V1-A: Pipeline bridge (FixeoCOD fallback path) */
         _bridgeToArtisanInbox(bookingData, codID, a.city || '');
+        /* 7C.9L.3Z.2D.1: clear pricing context — booking consumed */
+        if (window.FixeoEstimatorReservationBridge &&
+            typeof window.FixeoEstimatorReservationBridge.clearContext === 'function') {
+          window.FixeoEstimatorReservationBridge.clearContext();
+        }
         alert(`\u2705 Votre artisan est r\u00e9serv\u00e9 \u2705\nR\u00e9f\u00e9rence\u00a0: ${codRef}\nMontant\u00a0: ${total} MAD (paiement \u00e0 la livraison)`);
       }
 

@@ -1,5 +1,5 @@
 /*!
- * js/fixeo-hero-resume-v1.js — fxhro-v1a
+ * js/fixeo-hero-resume-v1.js — fxhro-v1d-reservation-exit
  * Phase 7C.9L.3Z.2C — Stateful Hero Verified Price Resume
  *
  * Responsibility: verify an opaque estimator pricing context token,
@@ -23,7 +23,7 @@
  * Deferred until after: FixeoEstimatorReservationBridge, FixeoEstimatorConfig,
  *   FixeoEstimatorV2 (optionally), quick-search-modal.js (for #qsm-input-nlp).
  *
- * Version: fxhro-v1c-qsm-reset
+ * Version: fxhro-v1d-reservation-exit
  */
 (function () {
   'use strict';
@@ -367,10 +367,13 @@
           return;
         }
         /* Token already in sessionStorage from 3Z.2B early persist.
-           Reservation.open(null) → verifyContext() server call → artisan or city picker. */
+           Reservation.open(null) → verifyContext() server call → artisan or city picker.
+           7C.9L.3Z.2D.1: Do NOT call _dismissPriceReady() here.
+           The Reservation UI overlays the page — the price card does not need
+           to be destroyed. When Reservation closes (fixeo:reservation-closed),
+           _runVerification() re-checks the token and restores the card.
+           This is CLOSE ≠ RESET: cancelling Reservation must return to verified price. */
         window.FixeoReservation.open(null, false, null);
-        /* Hide card while reservation is open (not destroyed — user may close reservation) */
-        _dismissPriceReady();
       } catch (_e) {
         if (btn) { btn.disabled = false; btn.textContent = 'Continuer avec ce prix'; }
       }
@@ -481,11 +484,46 @@
     }, 80);
   });
 
-  /* ── Reservation closed listener ─────────────────────────
-   * When reservation modal closes (e.g. user tapped ✕ on reservation),
-   * re-display the price card if token still valid (user may want to continue).
-   * Only re-check if we were previously in PRICE_READY state.
+  /* ── fixeo:reservation-closed listener ──────────────────
+   * 7C.9L.3Z.2D.1: emitted by reservation.js close() ONLY on true user
+   * dismissal (× button). NOT emitted on internal Back transitions
+   * (artisan←Back, Step1←Back, Step2←Back, city-back-to-estimator).
+   *
+   * Contract: CLOSE ≠ RESET.
+   * Cancelling Reservation returns to the existing verified price journey.
+   * Only "Nouvelle demande" or booking completion may clear the token.
+   *
+   * Guard chain (mirrors _runVerification guards):
+   *   - profile-return must not be active
+   *   - Estimator tunnel must not be active (tunnel = user re-opened Estimator)
+   *   - Token must still exist (clearContext() by "Nouvelle demande" or booking = no card)
+   *   - Reservation must be fully closed (modal not open)
+   *   - Generation counter incremented to invalidate any in-flight verify
    */
+  var _resClosedTimer = null;
+  document.addEventListener('fixeo:reservation-closed', function () {
+    clearTimeout(_resClosedTimer);
+    _resClosedTimer = setTimeout(function () {
+      /* Guard: profile-return flow owns restoration */
+      if (_profileReturnActive()) return;
+      /* Guard: Estimator tunnel is live (user somehow opened Estimator) */
+      if (_estimatorTunnelActive()) return;
+      /* Guard: bridge and config must be available */
+      if (!window.FixeoEstimatorConfig ||
+          !window.FixeoEstimatorConfig.estimatorV2Enabled) return;
+      if (!window.FixeoEstimatorReservationBridge) return;
+      /* Guard: token must still exist — if clearContext() was called (booking
+       * complete or "Nouvelle demande"), getContext() returns null → no card */
+      if (!window.FixeoEstimatorReservationBridge.getContext()) return;
+      /* Guard: verify Reservation modal is actually closed (not mid-transition) */
+      var modal = document.getElementById('fixeo-reservation-modal');
+      if (modal && modal.classList.contains('open')) return;
+      /* All guards pass — re-run canonical verify to restore Hero PRICE_READY */
+      _runVerification();
+    }, 120); /* 120ms — enough for modal CSS transition to finish */
+  });
+
+  /* ── Reservation handoff tracker (retained for internal state) ─── */
   var _wasReadyBeforeReservation = false;
   document.addEventListener('fixeo:estimator-reserve', function () {
     /* Estimator→Reservation handoff: track that we were in PRICE_READY */
@@ -515,7 +553,7 @@
 
   /* ── Public API (minimal — testing + integration only) ── */
   window.FixeoHeroResume = {
-    VERSION:   'fxhro-v1c-qsm-reset',
+    VERSION:   'fxhro-v1d-reservation-exit',
     /* Re-run verification on demand (e.g. after token is written) */
     refresh:   function () { _runVerification(); },
     /* Manual reset (e.g. from test harness) */

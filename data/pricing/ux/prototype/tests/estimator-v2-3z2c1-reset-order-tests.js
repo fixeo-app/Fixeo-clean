@@ -213,7 +213,7 @@ test('16. FAEE isolation: reservation.js data-estimator-context attribute still 
 console.log('\n── Group 5: Cache key ──');
 
 test('17. Cache key updated (v1b-reset or later) in JS file', function () {
-  assert(ctrlSrc.includes('fxhro-v1b-reset') || ctrlSrc.includes('fxhro-v1c-qsm-reset'), 'version string updated in JS');
+  assert(ctrlSrc.includes('fxhro-v1b-reset') || ctrlSrc.includes('fxhro-v1c-qsm-reset') || ctrlSrc.includes('fxhro-v1d-reservation-exit'), 'version string updated in JS');
 });
 
 test('18. index.html references current fxhro cache key (v1b or later)', function () {
