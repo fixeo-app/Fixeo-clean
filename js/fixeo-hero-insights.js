@@ -31,7 +31,7 @@
   'use strict';
 
   if (window.FixeoHeroInsights) return;
-  var VERSION = 'fxhi-v1d-reset';
+  var VERSION = 'fxhi-v1e-contextual';
 
   /* ══════════════════════════════════════════════════════════
      CONSTANTS
@@ -375,15 +375,30 @@
     _state.city     = city;
 
     if (!text || text.length < 2) {
-      /* Input cleared — hide bar, reset CTA */
+      /* Input cleared — hide bar, reset CTA, return to general suggestions */
       var bar = _el('fxhi-bar');
       if (bar) bar.classList.remove('visible');
       _updateCTA(null, false);
+      try {
+        if (window.FixeoHeroSuggestionsV2 &&
+            typeof window.FixeoHeroSuggestionsV2.refreshForCategory === 'function') {
+          window.FixeoHeroSuggestionsV2.refreshForCategory(null);
+        }
+      } catch (e) {}
       return;
     }
 
     _renderBar(category, isUrgent, city);
     _updateCTA(category, isUrgent);
+
+    /* Notify suggestion module of detected category (3Z.2E.2).
+       refreshForCategory is a pure presentation call — no AIRE, no pricing. */
+    try {
+      if (window.FixeoHeroSuggestionsV2 &&
+          typeof window.FixeoHeroSuggestionsV2.refreshForCategory === 'function') {
+        window.FixeoHeroSuggestionsV2.refreshForCategory(category ? category.cat : null);
+      }
+    } catch (e) {}
   }
 
   /* ══════════════════════════════════════════════════════════

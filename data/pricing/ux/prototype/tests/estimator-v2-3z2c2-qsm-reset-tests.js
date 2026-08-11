@@ -220,9 +220,9 @@ test('19. hero-resume JS: fxhro-v1d-reservation-exit in both file and index.html
   assert(!idxSrc.includes('fixeo-hero-resume-v1.js?v=fxhro-v1b-reset'), 'old key gone');
 });
 
-test('20. hero-insights: fxhi-v1d-reset in both file and index.html', function () {
-  assert(insightsSrc.includes('fxhi-v1d-reset'), 'version in insights JS');
-  assert(idxSrc.includes('fixeo-hero-insights.js?v=fxhi-v1d-reset'), 'insights key in index.html');
+test('20. hero-insights: fxhi-v1e-contextual in both file and index.html', function () {
+  assert(insightsSrc.includes('fxhi-v1e-contextual'), 'version in insights JS');
+  assert(idxSrc.includes('fixeo-hero-insights.js?v=fxhi-v1e-contextual'), 'insights key in index.html');
   assert(!idxSrc.includes('fixeo-hero-insights.js?v=fxhi-v1c'), 'old insights key gone');
 });
 

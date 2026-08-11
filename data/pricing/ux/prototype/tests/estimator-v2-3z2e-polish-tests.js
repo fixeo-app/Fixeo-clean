@@ -170,9 +170,9 @@ test('15. FXHI JS untouched: category detection unchanged', function () {
     'pill rendering in JS intact');
 });
 
-test('16. FXHI JS VERSION unchanged (fxhi-v1d-reset)', function () {
-  assert(fxhiJs.includes('fxhi-v1d-reset') || fxhiJs.includes("VERSION") && !fxhiJs.includes('fxhi-v1e'),
-    'JS version not bumped — fxhi-v1d-reset');
+test('16. FXHI JS VERSION unchanged (fxhi-v1e-contextual)', function () {
+  assert(fxhiJs.includes('fxhi-v1e-contextual') || fxhiJs.includes("VERSION") && !fxhiJs.includes('fxhi-v1e'),
+    'JS version not bumped — fxhi-v1e-contextual');
 });
 
 test('17. QSM reset logic untouched: resetMetier still exported', function () {
@@ -207,8 +207,8 @@ test('22. Hero Resume listener for reservation-closed intact', function () {
 ══════════════════════════════════════════════════════════════ */
 console.log('\n── Group 4: Cache keys ──');
 
-test('23. FXHI CSS key: fxhi-v1d-polish in index.html', function () {
-  assert(idxSrc.includes('fixeo-hero-insights.css?v=fxhi-v1d-polish'), 'FXHI CSS key updated');
+test('23. FXHI CSS key: fxhi-v1e-v2-clean in index.html', function () {
+  assert(idxSrc.includes('fixeo-hero-insights.css?v=fxhi-v1e-v2-clean'), 'FXHI CSS key updated');
   assert(!idxSrc.includes('fixeo-hero-insights.css?v=fxhi-v1c'), 'old FXHI key gone');
 });
 
@@ -217,8 +217,8 @@ test('24. Hero-resume CSS key: fxhro-v1e-final-polish in index.html', function (
   assert(!idxSrc.includes('fixeo-hero-resume-v1.css?v=fxhro-v1d-visual'), 'old resume CSS key gone');
 });
 
-test('25. JS keys unchanged: fxhi-v1d-reset, fxhro-v1d-reservation-exit', function () {
-  assert(idxSrc.includes('fixeo-hero-insights.js?v=fxhi-v1d-reset'), 'FXHI JS key unchanged');
+test('25. JS keys unchanged: fxhi-v1e-contextual, fxhro-v1d-reservation-exit', function () {
+  assert(idxSrc.includes('fixeo-hero-insights.js?v=fxhi-v1e-contextual'), 'FXHI JS key unchanged');
   assert(idxSrc.includes('fixeo-hero-resume-v1.js?v=fxhro-v1d-reservation-exit'), 'hero-resume JS unchanged');
 });
 

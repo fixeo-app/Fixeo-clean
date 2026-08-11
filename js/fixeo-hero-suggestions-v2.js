@@ -35,7 +35,7 @@
   if (window._fxHsv2Loaded) return;
   window._fxHsv2Loaded = true;
 
-  var VERSION = 'fxhsv2-v1a';
+  var VERSION = 'fxhsv2-v1b-contextual';
 
   /* ══════════════════════════════════════════════════════════
      CHIP POOL — all available chips across all categories
@@ -118,6 +118,12 @@
 
   /* Session storage key for rotation memory */
   var SEEN_KEY = 'fxhsv2_seen';
+
+  /* Currently detected category — null = general/fresh */
+  var _activeCat = null;
+
+  /* Max chips to show (3 on mobile is the contract) */
+  var MAX_CHIPS = 3;
 
   /* ══════════════════════════════════════════════════════════
      UTILS
@@ -204,15 +210,24 @@
      CHIP SELECTION ALGORITHM
   ══════════════════════════════════════════════════════════ */
 
-  function _selectChips() {
+  function _selectChips(catFilter) {
     var tier      = _getCurrentTier();
     var seen      = _getSeenChips();
     var demandCats = _getDemandCats(); /* top demand categories from localStorage */
+
+    /* Category-aware pool: if a category is detected, filter CHIP_POOL to same cat only.
+       Falls back to full pool if no cat-specific chips exist (safety). */
+    var activeCatKey = catFilter || _activeCat;
+    var pool = CHIP_POOL;
+    if (activeCatKey) {
+      var catPool = CHIP_POOL.filter(function (c) { return c.cat === activeCatKey; });
+      if (catPool.length >= 2) pool = catPool; /* only switch if we have enough chips */
+    }
     var seenSet   = {};
     seen.forEach(function (t) { seenSet[t] = true; });
 
-    /* SCORE every chip in CHIP_POOL */
-    var scored = CHIP_POOL.map(function (chip) {
+    /* SCORE every chip in pool (category-filtered if available) */
+    var scored = pool.map(function (chip) {
       var score = 0;
 
       /* Layer 1 — Time tier (40pts) */
@@ -239,23 +254,25 @@
     /* Sort by score DESC */
     scored.sort(function (a, b) { return b.score - a.score; });
 
-    /* Pick top 4, enforcing: no more than 2 from same category */
+    /* Pick top MAX_CHIPS (3), same-category cap: no more than 2 per cat */
     var selected = [];
     var catCounts = {};
-    for (var i = 0; i < scored.length && selected.length < 4; i++) {
+    for (var i = 0; i < scored.length && selected.length < MAX_CHIPS; i++) {
       var c = scored[i].chip;
       var cc = catCounts[c.cat] || 0;
-      if (cc < 2) {
+      /* If category-filtered (cat-specific pool), allow all same cat */
+      var samePool = !!activeCatKey;
+      if (cc < 2 || samePool) {
         selected.push(c);
-        catCounts[c.cat] = cc + 1;
+        catCounts[c.cat] = (catCounts[c.cat] || 0) + 1;
       }
     }
 
-    /* Guarantee 4 chips — fill from all-day pool if needed */
-    if (selected.length < 4) {
+    /* Guarantee MAX_CHIPS — fill from all-day pool if needed (only when no cat filter) */
+    if (selected.length < MAX_CHIPS && !activeCatKey) {
       var fallbacks = CHIP_POOL.filter(function (c) { return c.tier === 'all'; });
       _shuffle(fallbacks);
-      for (var j = 0; j < fallbacks.length && selected.length < 4; j++) {
+      for (var j = 0; j < fallbacks.length && selected.length < MAX_CHIPS; j++) {
         var alreadyIn = selected.some(function (s) { return s.text === fallbacks[j].text; });
         if (!alreadyIn) selected.push(fallbacks[j]);
       }
@@ -271,21 +288,27 @@
      BUILD CONTEXTUAL LABEL
   ══════════════════════════════════════════════════════════ */
 
-  function _buildLabel(tier, city) {
+  function _buildLabel(tier, city, catKey) {
     var cfg = LABEL_CONFIG[tier] || LABEL_CONFIG.afternoon;
     var labelEl = document.querySelector('.qsm-service-suggestions .qsm-suggestions-label');
     if (!labelEl) return;
 
-    /* Build context text — city-aware if available */
-    var labelText = cfg.text;
-    if (city && (tier === 'afternoon' || tier === 'morning')) {
-      var cityShort = city.replace(/^(Casablanca|Casa)$/i, 'Casa')
-                          .replace(/^Marrakech$/i, 'Marrakech')
-                          .replace(/^Mohammedia$/i, 'Mohammedia');
-      labelText = 'Populaires \u00e0 ' + cityShort;
-    }
-    if (tier === 'night') {
-      labelText = 'Urgences disponibles 24h/7';
+    /* Category-specific label takes priority */
+    var labelText;
+    if (catKey) {
+      labelText = 'Suggestions rapides';
+    } else {
+      /* Time-aware label (genuinely driven by hour — truthful) */
+      labelText = cfg.text;
+      if (city && (tier === 'afternoon' || tier === 'morning')) {
+        var cityShort = city.replace(/^(Casablanca|Casa)$/i, 'Casa')
+                            .replace(/^Marrakech$/i, 'Marrakech')
+                            .replace(/^Mohammedia$/i, 'Mohammedia');
+        labelText = 'Populaires \u00e0 ' + cityShort;
+      }
+      if (tier === 'night') {
+        labelText = 'Urgences disponibles 24h/7';
+      }
     }
 
     labelEl.className = 'qsm-suggestions-label fxhsv2-label';
@@ -368,7 +391,7 @@
     var container = document.querySelector('.qsm-service-suggestions');
     if (!container) return;
 
-    var chips     = _selectChips();
+    var chips     = _selectChips(_activeCat);
     var tier      = _getCurrentTier();
     var city      = _getCity();
     var demandCats = _getDemandCats();
@@ -377,7 +400,7 @@
     _markSeen(chips);
 
     /* Update label */
-    _buildLabel(tier, city);
+    _buildLabel(tier, city, _activeCat);
 
     /* Remove all existing chips (but preserve label element) */
     var oldChips = container.querySelectorAll('.qsm-suggestion-chip, .fxhsv2-dynamic-chip');
@@ -516,10 +539,25 @@
       _rendered = false;
       _tryRender();
     },
-    selectChips: _selectChips,   /* debug: inspect selected chips */
-    getDemandCats: _getDemandCats, /* debug: inspect demand signal */
+    /* Called by fixeo-hero-insights.js after category detection changes.
+       catKey: string (e.g. 'plomberie') or null (general/fresh state).
+       Immediately re-renders suggestion chips for the new category.
+       Does NOT touch AIRE, pricing, QSM state, or input value. */
+    refreshForCategory: function (catKey) {
+      var prev = _activeCat;
+      _activeCat = catKey || null;
+      /* Only re-render if category actually changed */
+      if (prev === _activeCat) return;
+      var container = document.querySelector('.qsm-service-suggestions');
+      if (!container) return;
+      /* Re-render without resetting the _rendered flag (QSM still present) */
+      _renderChips();
+    },
+    selectChips: _selectChips,        /* debug: inspect selected chips */
+    getDemandCats: _getDemandCats,    /* debug: inspect demand signal */
+    getActiveCat: function () { return _activeCat; }, /* debug */
   };
 
-  console.log('[FixeoHeroSuggestionsV2] ' + VERSION + ' loaded');
+  console.log('[FixeoHeroSuggestionsV2] ' + VERSION + ' loaded — MAX_CHIPS=' + MAX_CHIPS + ', contextual-cat=enabled');
 
 }(window, document));

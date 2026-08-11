@@ -487,3 +487,19 @@
     white-space: normal;
   }
 }
+
+/* ════════════════════════════════════════════════════════════
+   PHASE 7C.9L.3Z.2E.2 — V2 price hint suppression
+   Version: fxhi-v1e-v2-clean
+   ──────────────────────────────────────────────────────────
+   estimatorV2Enabled=true is always-on in production.
+   Estimator V2 is the ONLY authoritative price source.
+   The Hero approximate price range (PRICE_MAP client-side)
+   conflicts with the single-price narrative.
+   CSS-only suppression — JS/data unchanged.
+   Only server-verified "Prix FIXEO vérifié / 250 MAD" via
+   #fxhro-card is allowed to show a monetary amount.
+   ════════════════════════════════════════════════════════════ */
+.fxhi-pill-price {
+  display: none !important; /* V2 always-on: no approximate client price range */
+}

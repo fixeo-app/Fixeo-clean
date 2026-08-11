@@ -230,8 +230,8 @@ test('24. Hero-resume CSS key unchanged: fxhro-v1e-final-polish (3Z.2E not touch
   assert(idxSrc.includes('fixeo-hero-resume-v1.css?v=fxhro-v1e-final-polish'), 'resume CSS key unchanged');
 });
 
-test('25. FXHI CSS key unchanged: fxhi-v1d-polish', function () {
-  assert(idxSrc.includes('fixeo-hero-insights.css?v=fxhi-v1d-polish'), 'FXHI CSS key unchanged');
+test('25. FXHI CSS key unchanged: fxhi-v1e-v2-clean', function () {
+  assert(idxSrc.includes('fixeo-hero-insights.css?v=fxhi-v1e-v2-clean'), 'FXHI CSS key unchanged');
 });
 
 /* ══════════════════════════════════════════════════════════════
@@ -260,7 +260,7 @@ test('30. QSM reset API unchanged: resetMetier exported', function () {
   assert(qsmJs.includes('resetMetier'), 'resetMetier intact');
 });
 
-test('31. FXHI 3Z.2E polish preserved: fxhi-v1d-polish CSS present', function () {
+test('31. FXHI 3Z.2E polish preserved: fxhi-v1e-v2-clean CSS present', function () {
   assert(fxhiCss.includes('PHASE 7C.9L.3Z.2E'), '3Z.2E append still in FXHI CSS');
   assert(fxhiCss.includes('flex-wrap: wrap'), 'mobile flex-wrap preserved');
 });
