@@ -221,11 +221,14 @@ t('33: normal homepage profile link unaffected (no source=estimator on homepage 
   fhpSrc.includes("encodeURIComponent(String(a.id))") &&
   fhpSrc.includes("&source=estimator"));
 
-t('34: fixeo-estimator-v2.js not modified (PRICE_READY back deferred)',
+t('34: fixeo-estimator-v2.js PRICE_READY flow unchanged (3X: hide/reveal added but no PRICE_READY mutation)',
   (function() {
     try {
       var v2src = fs.readFileSync(path.join(root, 'js/fixeo-estimator-v2.js'), 'utf8');
-      return !v2src.includes('_hideContainer') && !v2src.includes('reveal:');
+      /* 3X: hide() and reveal() legitimately added; _hideContainer must NOT exist.
+       * PRICE_READY rendering path must remain intact. */
+      return !v2src.includes('_hideContainer') && v2src.includes('PRICE_READY') &&
+             v2src.includes('_pricingContextToken');
     } catch (_) { return true; }
   })());
 

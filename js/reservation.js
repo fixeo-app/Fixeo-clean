@@ -334,6 +334,15 @@
         var dest = backBtn.getAttribute('data-res-back');
         if (dest === 'close') {
           window.FixeoReservation && window.FixeoReservation.close();
+        } else if (dest === 'city-back-to-estimator') {
+          /* 7C.9L.3X: city picker ← Retour → dismiss reservation, reveal existing PRICE_READY.
+           * Does NOT close the Estimator — it was hidden (not destroyed) at handoff.
+           * pricing_context_token is NOT cleared. No new pricing call. */
+          _dismissReservationLayer();
+          if (window.FixeoEstimatorV2 &&
+              typeof window.FixeoEstimatorV2.reveal === 'function') {
+            window.FixeoEstimatorV2.reveal();
+          }
         } else if (dest === 'city') {
           /* 7C.9L.3W: navigate to city picker WITHOUT clearing estimatorCity.
            * Casablanca is preserved; city picker will highlight it.
@@ -1029,8 +1038,9 @@
         <div class="fixeo-res-body">
           <div style="margin-bottom:14px">
             <div class="fixeo-res-label" style="margin-bottom:10px">📍 Où doit intervenir l'artisan&nbsp;?</div>
-            <button type="button" class="fixeo-res-btn-secondary" data-res-back="close"
-            style="margin-bottom:14px;align-self:flex-start;font-size:.8rem;padding:8px 14px;display:flex;align-items:center;gap:5px">
+            <button type="button" class="fixeo-res-btn-secondary" data-res-back="city-back-to-estimator"
+            style="margin-bottom:14px;align-self:flex-start;font-size:.8rem;padding:8px 14px;display:flex;align-items:center;gap:5px"
+            aria-label="Retour à l'estimation">
             ← Retour
           </button>
           <div class="fixeo-res-slot-grid" style="grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px">
@@ -1418,18 +1428,35 @@
     open(artisanInput, true);
   }
 
-  function close() {
-     document.body.classList.remove('fixeo-booking-modal-open');
-     document.getElementById('fixeo-floating-reserve')?.style.removeProperty('display');
-     document.getElementById('ppui-sticky-cta')?.style.removeProperty('display');
-    const modal = document.getElementById(MODAL_ID);
-    if (modal) {
-      modal.classList.remove('open');
-    }
+  /* 7C.9L.3X: shared modal teardown used by both full close() and city-back-to-estimator.
+   * Extracts only the presentation layer: modal, backdrop, body-lock, floating controls.
+   * Does NOT destroy the Estimator — callers decide whether to do that. */
+  function _dismissReservationLayer() {
+    document.body.classList.remove('fixeo-booking-modal-open');
+    var floatBtn = document.getElementById('fixeo-floating-reserve');
+    if (floatBtn) floatBtn.style.removeProperty('display');
+    var stickyBtn = document.getElementById('ppui-sticky-cta');
+    if (stickyBtn) stickyBtn.style.removeProperty('display');
+    var modal = document.getElementById(MODAL_ID);
+    if (modal) modal.classList.remove('open');
     removeBackdrop();
     document.body.style.overflow = '';
+  }
+
+  function close() {
+    _dismissReservationLayer();
     state.artisan = null;
     state.isExpress = false;
+    /* 7C.9L.3X: true full exit — destroy hidden Estimator (if any) to prevent leak.
+     * The handoff used hide() not close(), so the container may still be alive.
+     * Estimator-origin reservation: destroy now that user is fully exiting the tunnel.
+     * Non-Estimator reservation: FixeoEstimatorV2 either doesn't exist or is not open; safe no-op. */
+    if (window.FixeoEstimatorV2 &&
+        typeof window.FixeoEstimatorV2.close === 'function' &&
+        typeof window.FixeoEstimatorV2.isOpen === 'function' &&
+        window.FixeoEstimatorV2.isOpen()) {
+      window.FixeoEstimatorV2.close();
+    }
   }
 
   /* ════════════════════════════════════════════════════════

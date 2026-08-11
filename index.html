@@ -2564,7 +2564,7 @@ section#home.hero.hero-section {
   <link rel="stylesheet" href="css/fixeo-estimator-v2.css?v=7c9d">
   <script src="js/fixeo-estimator-api-v1.js" defer></script>
   <script src="js/fixeo-estimator-reservation-bridge-v1.js" defer></script>
-  <script src="js/fixeo-estimator-v2.js" defer></script>
+  <script src="js/fixeo-estimator-v2.js?v=3x-hide-reveal" defer></script>
   <script src="js/fixeo-analytics-bootstrap.js?v=fab1c" defer></script>
 <!-- V1A.2-int1: Section CSS loads last to guarantee source-order win over all external CSS -->
 <link rel="stylesheet" href="css/fixeo-artisan-section-v1.css?v=fxhome-artisan-section-v1a2-int11">
@@ -6577,7 +6577,7 @@ window.addEventListener('load', function () {
     if (cb) _queue.push(cb);
 
     /* Load in dependency order: reservation → slot-lock → payment → cod-payment */
-    loadScriptOnce('js/reservation.js?v=v1g')
+    loadScriptOnce('js/reservation.js?v=v1h')
       .then(function () { return loadScriptOnce('js/slot-lock.js?v=50a38b9'); })
       .then(function () { return loadScriptOnce('js/payment.js?v=50a38b9'); })
       .then(function () { return loadScriptOnce('js/cod-payment.js?v=50a38b9'); })
@@ -6714,9 +6714,14 @@ window.addEventListener('load', function () {
         //    FixeoReservation.open() reads it async via verifyContext() internally.
         window.FixeoReservation.open(null, false, null);
 
-        // 6. Reservation modal is open — now safe to close Estimator.
+        // 6. Reservation modal is open — hide Estimator (keep PRICE_READY DOM alive).
+        // 7C.9L.3X: use hide() instead of close() so city ← Retour can reveal it.
         if (window.FixeoEstimatorV2 &&
+            typeof window.FixeoEstimatorV2.hide === 'function') {
+          window.FixeoEstimatorV2.hide();
+        } else if (window.FixeoEstimatorV2 &&
             typeof window.FixeoEstimatorV2.close === 'function') {
+          // Fallback for older script version (should not happen in production).
           window.FixeoEstimatorV2.close();
         }
       } catch (_err) {

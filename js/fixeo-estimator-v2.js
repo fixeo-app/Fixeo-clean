@@ -1109,13 +1109,40 @@
       }
     },
 
-    /** Close the estimator modal. */
+    /** Close the estimator modal (true destroy). */
     close: function() {
       if (STATE.onClose) STATE.onClose();
       else _destroyContainer();
     },
 
-    /** Returns true if the estimator modal is currently open. */
+    /**
+     * 7C.9L.3X — Hide: keep PRICE_READY DOM alive, make container non-visible.
+     * Called by the reservation handoff instead of close() so the user can return.
+     * Does NOT destroy session, mint token, or call the pricing API.
+     * Safe no-op if no active container.
+     */
+    hide: function() {
+      if (!_activeContainer) return;
+      try {
+        _activeContainer.style.visibility = 'hidden';
+        _activeContainer.style.pointerEvents = 'none';
+      } catch (_) {}
+    },
+
+    /**
+     * 7C.9L.3X — Reveal: show the existing hidden PRICE_READY container again.
+     * Does NOT call open(), does NOT recalculate, does NOT mint a new token.
+     * Safe no-op if no active container exists.
+     */
+    reveal: function() {
+      if (!_activeContainer) return;
+      try {
+        _activeContainer.style.visibility = '';
+        _activeContainer.style.pointerEvents = '';
+      } catch (_) {}
+    },
+
+    /** Returns true if the estimator modal is currently open (visible or hidden). */
     isOpen: function() {
       return !!_activeModal;
     },

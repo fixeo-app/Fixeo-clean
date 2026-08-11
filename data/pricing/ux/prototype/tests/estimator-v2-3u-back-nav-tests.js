@@ -17,10 +17,10 @@ var indexSrc   = fs.readFileSync(__dirname + '/../../../../../index.html','utf8'
 var cssSrc     = fs.readFileSync(__dirname + '/../../../../../css/artisan-card-conversion-v1.css','utf8');
 
 /* ── BACK NAVIGATION ── */
-t('1: city picker has data-res-back="close"',
-  resSrc.includes('data-res-back="close"'));
-t('2: city back destination is close (not open/reset)',
-  resSrc.includes("dest === 'close'") && resSrc.includes("window.FixeoReservation && window.FixeoReservation.close()"));
+t('1: city picker has back button (3X: now data-res-back="city-back-to-estimator")',
+  resSrc.includes('data-res-back="city-back-to-estimator"'));
+t('2: city back destination handled (3X: city-back-to-estimator → dismiss + reveal)',
+  resSrc.includes("dest === 'city-back-to-estimator'") && resSrc.includes('_dismissReservationLayer()'));
 t('3: city back does NOT call clearContext',
   !resSrc.includes("clearContext") || resSrc.indexOf('clearContext') > resSrc.indexOf('data-res-back'));
 t('4: artisan picker has data-res-back="city"',
