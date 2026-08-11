@@ -1177,3 +1177,41 @@
     padding-top: 18px;
   }
 }
+
+/* ════════════════════════════════════════════════════════════
+   PHASE 7C.9L.3Z.2E.1 — iOS focus auto-zoom neutralization
+   Version: qsm12-ios-zoom
+   ──────────────────────────────────────────────────────────
+   Root cause: .qsm-seg-input / .qsm-seg-select at 0.92rem (≈14.7px)
+   triggers iOS Safari automatic viewport zoom on focus.
+   Fix: raise to 16px minimum on all mobile widths.
+   Preserve perceived size via letter-spacing / line-height.
+   CSS-only. No JS. No transform:scale workaround.
+   No user-scalable=no. Pinch zoom fully preserved.
+   Append-only. Zero existing rules overridden globally.
+   ════════════════════════════════════════════════════════════ */
+
+/* Apply on ALL widths — 16px minimum for iOS non-zoom guarantee.
+   Base font-size 0.92rem ≈ 14.7px on standard 16px root.
+   Override to 1rem = 16px exactly. Visual density preserved
+   via slight letter-spacing reduction and existing padding/height. */
+.qsm-seg-input,
+.qsm-seg-select {
+  font-size: 1rem !important;        /* 16px — iOS Safari auto-zoom threshold */
+  letter-spacing: -0.01em;          /* compensates visual expansion at 16px */
+}
+
+/* Placeholder: match the new base size, keep opacity/color */
+.qsm-seg-input::placeholder {
+  font-size: 1rem !important;
+  letter-spacing: -0.01em;
+}
+
+/* ── text-size-adjust: prevent browser from auto-scaling text ─
+   Already present on page via fx-request-flow-v4.css (100%).
+   Reinforce on QSM host for isolation. */
+.qsm-inline-host,
+#hero-quick-search {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
