@@ -1433,7 +1433,7 @@
         const target = (state.isUrgent && !state.address)
           ? _openModal.querySelector('#res-address')
           : _openModal.querySelector('select, input, button');
-        if (target) { target.focus(); target.scrollIntoView && target.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }
+        if (target) { target.focus({ preventScroll: true }); /* 3Z.2E.3: preventScroll prevents iOS viewport jump; scrollIntoView removed (modal is full-screen fixed) */
       });
     }
   }
