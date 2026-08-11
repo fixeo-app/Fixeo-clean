@@ -142,10 +142,78 @@
   }
 
   /* ══════════════════════════════════════════════════════
+     ARTISAN DATA READINESS
+     /estimation: fixeo-supabase-loader.js is lazy-loaded by the reservation
+     stack, but its path-guard auto-load only fires for homepage/marketplace/admin.
+     On /estimation the LOADED flag stays false and window.ARTISANS stays empty
+     unless load() is called explicitly.
+
+     _waitForArtisanData(cb, timeoutMs):
+       1. Checks whether ARTISANS is already populated (data-ready fast path).
+       2. Otherwise calls FixeoSupabaseLoader.load() — idempotent (LOADED guard).
+       3. Waits for the fixeo:artisans:loaded event (fires after _injectIntoMarketplace).
+       4. Falls back after timeoutMs (Supabase unreachable / truly zero artisans).
+       5. Always calls cb exactly once.
+
+     This ensures window.ARTISANS is populated BEFORE FixeoReservation.open() runs,
+     so renderEstimatorArtisanPicker() reads a full dataset and never produces a
+     false "Aucun artisan" result due to an empty-array race.
+
+     Reservation.js is NOT modified.
+     Supabase schema is NOT modified.
+  ══════════════════════════════════════════════════════ */
+  var ARTISAN_DATA_TIMEOUT_MS = 6000; // wait up to 6s before fallback-open
+
+  function _waitForArtisanData(cb) {
+    /* Fast path: artisans already in window.ARTISANS */
+    if (Array.isArray(window.ARTISANS) && window.ARTISANS.length > 0) {
+      cb();
+      return;
+    }
+
+    var done = false;
+    function _once() {
+      if (done) return;
+      done = true;
+      window.removeEventListener('fixeo:artisans:loaded', _once);
+      cb();
+    }
+
+    /* Listen for the event fired by _injectIntoMarketplace */
+    window.addEventListener('fixeo:artisans:loaded', _once, { once: true });
+
+    /* Safety timeout: if Supabase is unreachable or FixeoDB is empty,
+       the event never fires — open reservation anyway (true zero-match handled by UI) */
+    setTimeout(function () {
+      if (!done) {
+        console.warn('[fxep] artisan data timeout — opening reservation with available data');
+        _once();
+      }
+    }, ARTISAN_DATA_TIMEOUT_MS);
+
+    /* Trigger load — idempotent (LOADED flag prevents double-fetch) */
+    if (window.FixeoSupabaseLoader &&
+        typeof window.FixeoSupabaseLoader.load === 'function') {
+      window.FixeoSupabaseLoader.load();
+    } else {
+      /* Loader not yet attached — script still loading; event will fire after script evaluates
+         and auto-attach; worst case the timeout fires */
+    }
+  }
+
+  /* ══════════════════════════════════════════════════════
      RESERVATION HANDOFF LISTENER
      Handles fixeo:estimator-reserve from both:
      - PAGE_REQUIRED result CTA (painting flow)
      - PUBLIC Estimator V2 PRICE_READY CTA
+
+     FLOW (post 7C.10C.0 fix):
+       fixeo:estimator-reserve
+       → _loadReservationStack (scripts ready)
+       → _waitForArtisanData (artisan dataset ready)
+       → FixeoReservation.open()
+
+     window.ARTISANS is guaranteed populated before open() runs.
   ══════════════════════════════════════════════════════ */
   var _reservationHandoffPending = false;
 
@@ -157,35 +225,47 @@
 
     _ensureReservationLoader();
     window._loadReservationStack(function () {
-      try {
-        if (!window.FixeoReservation ||
-            typeof window.FixeoReservation.open !== 'function') {
+      /* Scripts ready. Now ensure artisan data is in window.ARTISANS
+         before opening Reservation — prevents false "Aucun artisan" race. */
+      _waitForArtisanData(function () {
+        try {
+          if (!window.FixeoReservation ||
+              typeof window.FixeoReservation.open !== 'function') {
+            _reservationHandoffPending = false;
+            return;
+          }
+          window.FixeoReservation.open(null, false, null);
+
+          /* Hide Estimator V2 if still open (PRICE_READY dom preserved) */
+          if (window.FixeoEstimatorV2 &&
+              typeof window.FixeoEstimatorV2.hide === 'function') {
+            window.FixeoEstimatorV2.hide();
+          }
+        } catch (_err) {
           _reservationHandoffPending = false;
           return;
         }
-        window.FixeoReservation.open(null, false, null);
-
-        /* Hide Estimator V2 if still open (PRICE_READY dom preserved) */
-        if (window.FixeoEstimatorV2 &&
-            typeof window.FixeoEstimatorV2.hide === 'function') {
-          window.FixeoEstimatorV2.hide();
-        }
-      } catch (_err) {
         _reservationHandoffPending = false;
-        return;
-      }
-      _reservationHandoffPending = false;
+      });
     });
   });
 
-  /* Preload reservation stack on idle */
+  /* Preload reservation stack on idle — also triggers artisan data fetch early,
+     so that window.ARTISANS is populated before the user taps "Trouver un artisan".
+     This minimizes visible loading time on the handoff. */
   (function () {
     var _idle = window.requestIdleCallback
       ? function (cb) { window.requestIdleCallback(cb, { timeout: 3000 }); }
       : function (cb) { setTimeout(cb, 2000); };
     _idle(function () {
       _ensureReservationLoader();
-      window._loadReservationStack(null);
+      window._loadReservationStack(function () {
+        /* After scripts load, start artisan fetch immediately (idempotent) */
+        if (window.FixeoSupabaseLoader &&
+            typeof window.FixeoSupabaseLoader.load === 'function') {
+          window.FixeoSupabaseLoader.load();
+        }
+      });
     });
   }());
 

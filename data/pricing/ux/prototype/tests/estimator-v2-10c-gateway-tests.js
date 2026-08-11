@@ -70,10 +70,11 @@ t('11. no user-scalable in viewport', !estimationHtml.includes('user-scalable'))
 ══════════════════════════════════════════════════════ */
 console.log('\n[3] Cache key discipline');
 
-t('12. CSS cache key updated to fxestpage-v2a-gateway',
-  estimationHtml.includes('fixeo-estimation-page-v1.css?v=fxestpage-v2a-gateway'));
-t('13. JS cache key updated to fxestpage-v2a-gateway',
-  estimationHtml.includes('fixeo-estimation-page-v1.js?v=fxestpage-v2a-gateway'));
+t('12. CSS cache key is current (v2a-gateway — CSS unchanged in 10C.0)',
+  estimationHtml.includes('fixeo-estimation-page-v1.css?v=fxestpage-v2a-gateway') ||
+  estimationHtml.includes('fixeo-estimation-page-v1.css?v=fxestpage-v2b-artisan-ready'));
+t('13. JS cache key updated to fxestpage-v2b-artisan-ready',
+  estimationHtml.includes('fixeo-estimation-page-v1.js?v=fxestpage-v2b-artisan-ready'));
 t('14. Old v2 keys absent (no stale fxestpage-v1c or v1d in estimation.html)',
   !estimationHtml.includes('fxestpage-v1c') &&
   !estimationHtml.includes('fxestpage-v1d'));
