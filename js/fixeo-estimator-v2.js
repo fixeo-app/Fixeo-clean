@@ -738,6 +738,9 @@
   }
 
   function _destroyContainer() {
+    // 7C.9L.3Z.2B: idempotency guard — no-op if already destroyed.
+    if (!_activeContainer && !_activeModal) return;
+
     // 7C.9L.3Y.1: remove tunnel ownership class on every true destroy path.
     // Covers: Estimator own ×, reservation full exit, any terminal failure.
     try { document.body.classList.remove('fx-estimator-tunnel-active'); } catch (_) {}
@@ -748,6 +751,14 @@
     } catch (_) {}
     _activeContainer = null;
     _activeModal = null;
+
+    // 7C.9L.3Z.2B: signal true Estimator session end to RFOS and any listener.
+    // Fires AFTER refs are nulled so FixeoEstimatorV2.isOpen() returns false in listeners.
+    // Does NOT fire on hide() / reveal() — only on terminal destroy.
+    // No pricing payload — subscribers must NOT use this to infer price state.
+    try {
+      document.dispatchEvent(new CustomEvent('fixeo:estimator-closed'));
+    } catch (_) {}
   }
 
   // ─────────────────────────────────────────────────────────────────
@@ -1043,9 +1054,17 @@
     var noPricingToken = new Set(['SAFETY_STOP', 'QUOTE_REQUIRED', 'ROUTE_REQUIRED', 'REQUALIFY']);
 
     if (!noPricingToken.has(ot) && self._pricingContextToken) {
+      // 7C.9L.3Z.2B: persist opaque pricing context immediately on PRICE_READY render.
+      // This is a pure sessionStorage write (no API call, no new token, no recalculation).
+      // Allows Hero resume controller to server-verify the result even if user taps × before CTA.
+      // The CTA onPrimary path calls prepareContext() again — idempotent overwrite with same token.
+      if (window.FixeoEstimatorReservationBridge) {
+        window.FixeoEstimatorReservationBridge.prepareContext(self._pricingContextToken);
+      }
+
       footerOpts.primaryLabel = ctaLabel(outcome);
       footerOpts.onPrimary = function() {
-        // Store opaque token — never raw amounts
+        // Store opaque token — never raw amounts (idempotent — same token already persisted above)
         if (window.FixeoEstimatorReservationBridge && self._pricingContextToken) {
           window.FixeoEstimatorReservationBridge.prepareContext(self._pricingContextToken);
         }

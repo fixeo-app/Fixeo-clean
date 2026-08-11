@@ -1138,6 +1138,17 @@
     }
     _try();
 
+    // 7C.9L.3Z.2B: listen for Estimator V2 terminal close — reset one-shot guard so Hero
+    // re-entry is possible after user taps ×. One-shot binding (window flag) prevents
+    // duplicate listeners if _watchHeroInput() is ever invoked again.
+    // Does NOT reset _mem.category, _mem.city, Hero input, or RFOS badge.
+    if (!window._fxRfosEstimatorClosedBound) {
+      window._fxRfosEstimatorClosedBound = true;
+      document.addEventListener('fixeo:estimator-closed', function() {
+        _resetQsmEstimatorGuard();
+      });
+    }
+
     // Expose guard reset so _mem.reset() (called on modal close) can clear it.
     return { resetEstimatorGuard: _resetQsmEstimatorGuard };
   }

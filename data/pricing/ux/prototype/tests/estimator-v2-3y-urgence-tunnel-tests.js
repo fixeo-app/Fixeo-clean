@@ -57,7 +57,8 @@ t('5: _destroyContainer() removes fx-estimator-tunnel-active',
 t('6: class removed BEFORE container removed (no orphan if removal throws)',
   (function() {
     var idx = estSrc.indexOf('function _destroyContainer()');
-    var block = estSrc.substring(idx, idx + 400);
+    // 7C.9L.3Z.2B: window extended from 400→700 to accommodate idempotency guard
+    var block = estSrc.substring(idx, idx + 700);
     var removeClassPos = block.indexOf("classList.remove('fx-estimator-tunnel-active')");
     var removeNodePos  = block.indexOf('parentNode.removeChild');
     return removeClassPos !== -1 && removeNodePos !== -1 && removeClassPos < removeNodePos;
