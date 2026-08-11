@@ -225,8 +225,8 @@ test('18. listener guard: getContext returns null after clearContext → listene
 ══════════════════════════════════════════════════════════════ */
 console.log('\n── Group 6: Visual contract unchanged ──');
 
-test('19. CSS cache key fxhro-v1d-visual still present in index.html (CSS unchanged)', function () {
-  assert(idxSrc.includes('fixeo-hero-resume-v1.css?v=fxhro-v1d-visual'), 'CSS cache key unchanged');
+test('19. CSS cache key fxhro-v1e-final-polish still present in index.html (CSS unchanged)', function () {
+  assert(idxSrc.includes('fixeo-hero-resume-v1.css?v=fxhro-v1e-final-polish'), 'CSS cache key unchanged');
 });
 
 test('20. JS cache key updated to fxhro-v1d-reservation-exit', function () {

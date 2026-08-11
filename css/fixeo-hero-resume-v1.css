@@ -469,3 +469,49 @@ section#home #fxhi-bar {
     height: 66px;
   }
 }
+
+/* ══════════════════════════════════════════════════════════════
+   PHASE 7C.9L.3Z.2E micro-polish additions — fxhro-v1e-final-polish
+   Append-only. All rules scoped to existing 3Z.2D selectors.
+══════════════════════════════════════════════════════════════ */
+
+/* ── QSM segment border: softer ambient glass ──────────────── */
+section#home .qsm-segment {
+  border-color: rgba(255, 255, 255, 0.09); /* slightly softer than base 0.12 */
+}
+
+/* ── PRICE_READY card: softer border, less outer glow ─────── */
+#fxhro-card {
+  border-color: rgba(72, 100, 255, 0.18); /* was 0.24 */
+  box-shadow:
+    0 1px 0 rgba(100, 130, 255, 0.10) inset,
+    0 8px 28px rgba(0, 0, 0, 0.44),       /* was 12px 40px 0.50 */
+    0 0 0 1px rgba(255, 255, 255, 0.03);  /* was 0.04 */
+}
+
+/* ── Continue CTA: slightly less ambient glow ──────────────── */
+#fxhro-btn-continue {
+  box-shadow:
+    0 5px 16px rgba(225, 48, 108, 0.22),  /* was 6px 20px 0.28 */
+    0 2px 5px rgba(0, 0, 0, 0.20);
+}
+
+/* ── Trust whisper: slightly softer, closer to card ─────────── */
+section#home.rfos-hero-recomposed .rfos-trust-whisper {
+  margin-top: 10px; /* was 14px base */
+  font-size: 0.67rem; /* was 0.70rem */
+  opacity: 0.85;
+}
+
+/* ── Price card: tighten service-to-price spacing ───────────── */
+.fxhro-service {
+  margin-bottom: 6px; /* unchanged — already good */
+}
+
+/* ── PRICE_READY: card width matches QSM width (Hero margins) ──
+   Override max-width to use full width on mobile exactly like QSM segments */
+@media (max-width: 479px) {
+  #fxhro-card {
+    border-radius: 14px; /* consistent with segment radius 16px, slightly tighter */
+  }
+}

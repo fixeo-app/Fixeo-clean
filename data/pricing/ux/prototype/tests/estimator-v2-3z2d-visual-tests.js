@@ -235,8 +235,8 @@ test('23. PRICE_READY compact RAFI: avatar ≤ 80px in result mode', function ()
     'PRICE_READY avatar ≤ 80px, got: ' + (m && m[1]));
 });
 
-test('24. cache key updated to fxhro-v1d-visual in index.html', function () {
-  assert(idxSrc.includes('fixeo-hero-resume-v1.css?v=fxhro-v1d-visual'), 'CSS cache key updated');
+test('24. cache key updated to fxhro-v1e-final-polish in index.html', function () {
+  assert(idxSrc.includes('fixeo-hero-resume-v1.css?v=fxhro-v1e-final-polish'), 'CSS cache key updated');
   assert(!idxSrc.includes('fixeo-hero-resume-v1.css?v=fxhro-v1c-qsm-reset'), 'old CSS key gone');
   /* JS key unchanged — no JS changes in 3Z.2D */
   assert(idxSrc.includes('fixeo-hero-resume-v1.js?v=fxhro-v1d-reservation-exit'), 'JS key unchanged');

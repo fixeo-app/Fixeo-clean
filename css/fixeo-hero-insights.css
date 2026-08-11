@@ -196,3 +196,294 @@
     display: none;
   }
 }
+
+/* ════════════════════════════════════════════════════════════
+   PHASE 7C.9L.3Z.2E — Final Premium Polish
+   Version: fxhi-v1d-polish
+   ──────────────────────────────────────────────────────────
+   Append-only overrides. All selectors scoped to #fxhi-bar.
+   Zero data / state / JS logic changes.
+   ════════════════════════════════════════════════════════════ */
+
+/* ── Container: softer ambient, less competing depth ───────── */
+#fxhi-bar {
+  border: 1px solid rgba(255, 255, 255, 0.07); /* was 0.09 */
+  box-shadow:
+    0 2px 12px rgba(0, 0, 0, 0.20),            /* was 4px 24px 0.28 */
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);   /* was 0.06 */
+  background: rgba(10, 10, 20, 0.50);          /* was rgba(15,15,25,0.55) */
+  max-height: none;                            /* remove 60px cap — allow 2-row expansion */
+  margin-top: 4px;                             /* was 8px in base, already 4px from 3Z.2D */
+}
+
+/* ── Pill defaults: softer, secondary hierarchy ─────────────── */
+.fxhi-pill {
+  font-size: .70rem;     /* was .78rem */
+  font-weight: 500;      /* was 700 */
+  padding: 7px 10px;    /* was 8px 14px */
+  flex-shrink: 1;        /* allow shrinking on mobile */
+  white-space: normal;   /* allow wrap on mobile */
+  border-right: 1px solid rgba(255, 255, 255, 0.05); /* was 0.07 */
+  color: rgba(255, 255, 255, 0.75);                  /* was 0.85 */
+}
+
+/* ── Category pill: lower visual weight (RAFI already communicated métier) */
+.fxhi-pill-category {
+  color: rgba(255, 255, 255, 0.50);      /* was #fff — clearly secondary */
+  background: transparent;               /* was rgba(255,255,255,0.04) */
+  font-size: .68rem;
+  font-weight: 400;
+}
+.fxhi-pill-category .fxhi-pill-icon {
+  font-size: .78rem;   /* was .88rem */
+  opacity: 0.65;
+}
+.fxhi-pill-category .fxhi-pill-label {
+  display: none;        /* already hidden at mobile — keep hidden globally as redundant */
+}
+
+/* ── Count pill: STRONGEST rail item (artisan availability is factual/urgent) */
+.fxhi-pill-count {
+  color: #5eddc5;
+  font-weight: 700;     /* intentionally strong — this is the key fact */
+  font-size: .74rem;
+}
+.fxhi-pill-count .fxhi-pill-value {
+  font-size: .74rem;
+  font-weight: 800;
+}
+
+/* ── Response/time pill: softest — indicative, secondary ─────── */
+.fxhi-pill-time {
+  color: rgba(255, 255, 255, 0.55);  /* was 0.82 */
+  font-size: .66rem;
+  font-weight: 400;
+}
+.fxhi-pill-time .fxhi-pill-unit {
+  font-size: .60rem;
+  color: rgba(255, 255, 255, 0.25);
+}
+
+/* ── Urgency: keep pulsing — retain full contrast ────────────── */
+.fxhi-pill-urgent {
+  color: rgba(255, 107, 157, 0.90);  /* slightly softer opacity */
+}
+
+/* ══════════════════════════════════════════════════════════════
+   MOBILE LAYOUT FIX — 360–430px
+   Replace 3-column compressed row with adaptive 2-row layout.
+
+   Architecture (Option A from brief):
+     Row 1: count pill (full width) — strongest fact
+     Row 2: category + time pills   — secondary context
+
+   Implementation via flex-wrap + order.
+   No DOM changes. CSS only.
+   Data unchanged.
+═══════════════════════════════════════════════════════════════ */
+@media (max-width: 600px) {
+  #fxhi-bar {
+    border-radius: 10px;
+  }
+
+  /* Make .fxhi-pills wrap */
+  .fxhi-pills {
+    flex-wrap: wrap;
+    padding: 0;
+    gap: 0;
+  }
+
+  /* Row 1: count pill — full width, prominently displayed */
+  .fxhi-pill-count {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 8px 12px;
+    order: 1;
+    white-space: normal;
+    word-break: break-word;
+  }
+
+  /* Row 2a: category pill — half width, left */
+  .fxhi-pill-category {
+    flex: 1 1 40%;
+    min-width: 0;
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: none;
+    padding: 6px 10px;
+    order: 2;
+    white-space: normal;
+    overflow: visible;
+  }
+
+  /* Row 2b: time pill — remaining width, right */
+  .fxhi-pill-time {
+    flex: 1 1 55%;
+    min-width: 0;
+    border-right: none;
+    border-bottom: none;
+    padding: 6px 10px;
+    order: 3;
+    white-space: normal;
+    word-break: break-word;   /* ensures "Réponse estimée : 15 min" wraps if needed */
+    overflow: visible;
+  }
+
+  /* Urgency pill: full width row (replaces count row when urgent) */
+  .fxhi-pill-urgent {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 8px 12px;
+    order: 1;
+    white-space: normal;
+  }
+}
+
+/* ── 430px: slightly looser — all 3 pills can nearly fit in one row */
+@media (min-width: 430px) and (max-width: 600px) {
+  /* At 430px+ the 3-column layout starts to work — give it a try
+     but if time pill is still tight, the mobile 2-row rules above
+     at ≤430px will have handled it */
+  .fxhi-pills {
+    flex-wrap: wrap; /* still allow wrap as safety */
+  }
+}
+
+/* ════════════════════════════════════════════════════════════
+   PHASE 7C.9L.3Z.2E — Final Premium Polish
+   Version: fxhi-v1d-polish
+   ──────────────────────────────────────────────────────────
+   Append-only overrides. All selectors scoped to #fxhi-bar.
+   Zero data / state / JS logic changes.
+   ════════════════════════════════════════════════════════════ */
+
+/* ── Container: softer ambient, less competing depth ───────── */
+#fxhi-bar {
+  border: 1px solid rgba(255, 255, 255, 0.07); /* was 0.09 */
+  box-shadow:
+    0 2px 12px rgba(0, 0, 0, 0.20),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  background: rgba(10, 10, 20, 0.50);
+  max-height: none;     /* remove 60px cap — allow 2-row on mobile */
+  margin-top: 4px;
+}
+
+/* ── Pill defaults: softer, secondary hierarchy ─────────────── */
+.fxhi-pill {
+  font-size: .70rem;
+  font-weight: 500;
+  padding: 7px 10px;
+  flex-shrink: 1;
+  white-space: normal;
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* ── Category: lowest contrast — RAFI already named métier ─── */
+.fxhi-pill-category {
+  color: rgba(255, 255, 255, 0.48);
+  background: transparent;
+  font-size: .68rem;
+  font-weight: 400;
+}
+.fxhi-pill-category .fxhi-pill-icon {
+  font-size: .78rem;
+  opacity: 0.60;
+}
+.fxhi-pill-category .fxhi-pill-label {
+  display: none;
+}
+
+/* ── Count: STRONGEST rail item ─────────────────────────────── */
+.fxhi-pill-count {
+  color: #5eddc5;
+  font-weight: 700;
+  font-size: .74rem;
+}
+.fxhi-pill-count .fxhi-pill-value {
+  font-size: .74rem;
+  font-weight: 800;
+}
+
+/* ── Time: softest — indicative ──────────────────────────────── */
+.fxhi-pill-time {
+  color: rgba(255, 255, 255, 0.50);
+  font-size: .66rem;
+  font-weight: 400;
+}
+.fxhi-pill-time .fxhi-pill-unit {
+  font-size: .60rem;
+  color: rgba(255, 255, 255, 0.22);
+}
+
+/* ── Urgency: retain visual weight ──────────────────────────── */
+.fxhi-pill-urgent {
+  color: rgba(255, 107, 157, 0.90);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   MOBILE LAYOUT FIX — 360–430px
+   2-row adaptive layout eliminates all pill clipping.
+   Row 1: count pill (full width)        — primary fact
+   Row 2: category | time               — secondary context
+   CSS-only. No DOM changes. No data changes.
+══════════════════════════════════════════════════════════════ */
+@media (max-width: 600px) {
+  #fxhi-bar {
+    border-radius: 10px;
+  }
+
+  .fxhi-pills {
+    flex-wrap: wrap;
+    padding: 0;
+    gap: 0;
+    align-items: stretch;
+  }
+
+  /* Row 1: count — full width, strongest */
+  .fxhi-pill-count {
+    width: 100%;
+    flex: none;
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 8px 12px;
+    order: 1;
+    white-space: normal;
+    word-break: break-word;
+  }
+
+  /* Row 2a: category — left portion */
+  .fxhi-pill-category {
+    flex: 0 0 auto;
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 6px 10px;
+    order: 2;
+    white-space: normal;
+    min-width: 0;
+    overflow: visible;
+  }
+
+  /* Row 2b: time — fills remaining width, full text visible */
+  .fxhi-pill-time {
+    flex: 1 1 0%;
+    border-right: none;
+    padding: 6px 10px;
+    order: 3;
+    white-space: normal;
+    word-break: break-word;
+    min-width: 0;
+    overflow: visible;
+  }
+
+  /* Urgency: full width row */
+  .fxhi-pill-urgent {
+    width: 100%;
+    flex: none;
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 8px 12px;
+    order: 1;
+    white-space: normal;
+  }
+}
