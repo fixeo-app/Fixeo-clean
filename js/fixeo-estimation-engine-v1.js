@@ -1,6 +1,6 @@
 /* ============================================================
    FIXEO AI ESTIMATION ENGINE V1
-   Version: faee-v1d
+   Version: faee-v2a
    Strategy: Additive hooks onto:
      1. #fixeo-reservation-modal (artisan reservation)
      2. #request-modal (homepage "Publier une demande" + Urgent)
@@ -15,7 +15,7 @@
   if (window._fxEstV1Loaded) return;
   window._fxEstV1Loaded = true;
 
-  var VERSION          = 'faee-v1d';
+  var VERSION          = 'faee-v2a';
   var MODAL_ID         = 'fixeo-reservation-modal';   /* artisan reservation modal */
   var REQUEST_MODAL_ID = 'request-modal';              /* homepage request modal    */
 
@@ -357,6 +357,18 @@
 
   function _update(m) {
     if (!m || !m.offsetParent) return; /* modal not visible */
+
+    /* 3Z.1: Reservation discriminator.
+     * reservation.js sets data-estimator-context="true" on #fixeo-reservation-modal
+     * whenever state._estimatorCtx.valid is true (both live handoff and profile-return).
+     * When this marker is present, the reservation is unambiguously Estimator-V2-origin.
+     * Suppress the legacy FAEE range entirely; remove any stale #faee-container. */
+    if (m.getAttribute('data-estimator-context') === 'true') {
+      var stale = m.querySelector('#faee-container');
+      if (stale) stale.parentNode && stale.parentNode.removeChild(stale);
+      return;
+    }
+
     try {
       var st      = _readModalState(m);
       var result  = analyze(st);
@@ -585,7 +597,27 @@
 
   var HERO_CONTAINER_ID = 'faee-hero-container';
 
+  /* ── 3Z.1: V2 enabled check ──────────────────────────────
+   * Returns true when Estimator V2 is active.
+   * Single source: window.FixeoEstimatorConfig.estimatorV2Enabled (faee-v2a).
+   * Never invents a second flag — reads the same object used site-wide.
+   * ─────────────────────────────────────────────────────── */
+  function _v2Enabled() {
+    return !!(window.FixeoEstimatorConfig &&
+              window.FixeoEstimatorConfig.estimatorV2Enabled === true);
+  }
+
   function _attachToHero() {
+    /* 3Z.1: When Estimator V2 is enabled, the hero estimation card is
+       fully suppressed. V2 provides a server-authoritative price experience;
+       the local FAEE range (e.g. 120–250 MAD) must never appear in this path.
+       Also remove any stale #faee-hero-container left from a prior session. */
+    if (_v2Enabled()) {
+      var stale = document.getElementById(HERO_CONTAINER_ID);
+      if (stale) stale.parentNode && stale.parentNode.removeChild(stale);
+      return;
+    }
+
     /* V2 guard (fxv-v2a): if #faee-v2-hero is present, V2 engine handles the
        homepage estimation card. V1 skips hero injection to prevent duplication. */
     if (document.getElementById('faee-v2-hero')) return;

@@ -6577,7 +6577,7 @@ window.addEventListener('load', function () {
     if (cb) _queue.push(cb);
 
     /* Load in dependency order: reservation → slot-lock → payment → cod-payment */
-    loadScriptOnce('js/reservation.js?v=v1h')
+    loadScriptOnce('js/reservation.js?v=v1i')
       .then(function () { return loadScriptOnce('js/slot-lock.js?v=50a38b9'); })
       .then(function () { return loadScriptOnce('js/payment.js?v=50a38b9'); })
       .then(function () { return loadScriptOnce('js/cod-payment.js?v=50a38b9'); })
@@ -6585,7 +6585,7 @@ window.addEventListener('load', function () {
       /* fxresf-v11a: Flagship presentation enhancer — loads after reservation-v2.js so
          MutationObserver fires after V2 upgrade; same JS as artisan-profile.html */
       .then(function () { return loadScriptOnce('js/fixeo-reservation-flagship-v1.js?v=fxresf-v11a'); })
-      .then(function () { return loadScriptOnce('js/fixeo-estimation-engine-v1.js?v=faee-v1e'); })
+      .then(function () { return loadScriptOnce('js/fixeo-estimation-engine-v1.js?v=faee-v2a'); })
 
       .then(function () { return loadScriptOnce('js/fixeo-review-engine-v1.js?v=frev-v1b'); })
       .then(function () {

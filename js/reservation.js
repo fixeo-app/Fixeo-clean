@@ -1264,6 +1264,20 @@
 
   function render() {
     const modal = ensureModal();
+
+    /* 3Z.1: Set/remove Estimator-V2-origin discriminator on the modal element.
+     * This presentation-only marker tells FAEE (fixeo-estimation-engine-v1.js)
+     * whether to suppress its legacy local price range for this reservation.
+     * Contains no price, no token, no service code, no city.
+     * Survives modal.innerHTML replacement (set on modal element itself, not inner DOM).
+     * Cleared on every open() reset (state._estimatorCtx = null → render → attribute removed).
+     */
+    if (state._estimatorCtx && state._estimatorCtx.valid) {
+      modal.setAttribute('data-estimator-context', 'true');
+    } else {
+      modal.removeAttribute('data-estimator-context');
+    }
+
     if (!state.artisan) {
       modal.innerHTML = renderArtisanPicker();
     } else if (state.step === 1) {
