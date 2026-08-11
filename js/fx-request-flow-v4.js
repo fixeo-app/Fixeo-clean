@@ -39,6 +39,10 @@
   var STORAGE_KEY = 'fixeo_client_requests';
   var CITY_STORAGE_KEY = 'fixeo_detected_city';
   var PHONE_MEMORY_KEY = 'fxrf4_last_phone';
+  /* 7C.9L.3H: session-scoped trusted-city key — written only when city is confirmed
+   * this session (fresh geolocation or explicit user selection). Never from stale
+   * localStorage restore. Read at Estimator launch as the canonical city_slug source. */
+  var TRUSTED_CITY_SESSION_KEY = 'fxrf4_trusted_city_session';
 
   /* All 20 production cities — exact match with #request-city select */
   var ALL_CITIES = [
@@ -830,10 +834,17 @@
             typeof window.FixeoEstimatorV2.open === 'function') {
           _fxrf4EstimatorLaunched = true; // set before async — prevents races
           _chipTap(chip, chips, function() {
+            /* 7C.9L.3H: only send city_slug when trusted this session.
+             * sessionStorage.fxrf4_trusted_city_session is written ONLY by:
+             *   (a) live geolocation resolution this session
+             *   (b) explicit user city chip/select interaction this session
+             * Never written from localStorage restore → no stale city is auto-trusted. */
+            var _trustedCity = null;
+            try { _trustedCity = sessionStorage.getItem(TRUSTED_CITY_SESSION_KEY) || null; } catch(_) {}
             window.FixeoEstimatorV2.open({
               source:       'rafi',
               metier_hint:  svc.slug,
-              city:         st.detectedCity || st.prefillCity || null,
+              city_slug:    _trustedCity,   // 7C.9L.3H: canonical field (was 'city', now 'city_slug')
               urgency:      null, // urgency not yet known at step1 in standard mode
             }).then(function(result) {
               if (result && result.accepted === true) {

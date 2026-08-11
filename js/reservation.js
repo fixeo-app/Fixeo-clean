@@ -895,8 +895,13 @@
 
     /* Strict métier + city filter — normalized comparison, "Maroc" default never matches */
     var normCity = _normCity(city);
+    /* 7C.9L.3H: match a.category (canonical) OR a.service (Supabase fallback when
+     * service_category column is read as row.category=undefined — see 3F audit).
+     * Aligns with main.js matchCat contract. Never falls back to all artisans. */
     var matched = (window.ARTISANS || []).filter(function(a) {
-      if (a.category !== metier) return false;
+      var aCat = (a.category || '').toLowerCase();
+      var aSvc = (a.service  || '').toLowerCase();
+      if (aCat !== metier && aSvc !== metier) return false;
       var ac = _normCity(a.city);
       if (!ac || ac === 'maroc') return false;  // "Maroc" default → no city data → exclude
       return ac.indexOf(normCity) !== -1;
@@ -1141,7 +1146,13 @@
     if (window.FixeoEstimatorConfig && window.FixeoEstimatorConfig.estimatorV2Enabled === true &&
         window.FixeoEstimatorReservationBridge && window.FixeoEstimatorReservationBridge.getContext()) {
       window.FixeoEstimatorReservationBridge.verifyContext().then(function(ctx) {
-        if (ctx && ctx.valid) state._estimatorCtx = ctx;
+        if (ctx && ctx.valid) {
+          state._estimatorCtx = ctx;
+          // 7C.9L.3H: trusted city sealed in pricing context — skip city picker.
+          // city_slug is non-authoritative for price; used only for artisan matching.
+          // null → estimatorCity stays null → city picker shown (normal unknown-city flow).
+          if (ctx.city_slug) state.estimatorCity = ctx.city_slug;
+        }
         render();
       }).catch(function() {
         state._estimatorCtx = null;

@@ -234,6 +234,9 @@ function handleVerifyPricingContext(body, secret) {
       outcome_type:        payload.outcome_type,
       service_code:        payload.service_code,
       service_label:       service_label,
+      // 7C.9L.3H: city_slug — matching context sealed in token, non-authoritative for price.
+      // null when no trusted city was present at Estimator session start.
+      city_slug:           payload.city_slug || null,
       amount_mad:          payload.amount_mad,
       labour_amount_mad:   payload.labour_amount_mad,
       parts_separate:      payload.parts_separate,

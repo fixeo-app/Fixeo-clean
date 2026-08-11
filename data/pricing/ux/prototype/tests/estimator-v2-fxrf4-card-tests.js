@@ -50,8 +50,9 @@ assert('1.3 source: \'rafi\' in standard _onTap open call',
 assert('1.4 metier_hint: svc.slug (not label)',
   src.includes('metier_hint:  svc.slug'));
 
-assert('1.5 city from _st.detectedCity || _st.prefillCity',
-  src.includes('city:         st.detectedCity || st.prefillCity || null'));
+// 7C.9L.3H: field renamed city → city_slug; only trusted session city sent (not stale localStorage)
+assert('1.5 city_slug from trusted session key (7C.9L.3H)',
+  src.includes('city_slug:') && src.includes('TRUSTED_CITY_SESSION_KEY') && src.includes('sessionStorage.getItem'));
 
 assert('1.6 urgency: null in standard mode (not yet known at step1)',
   src.includes('urgency:      null, // urgency not yet known at step1'));

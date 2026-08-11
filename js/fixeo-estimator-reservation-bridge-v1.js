@@ -61,6 +61,7 @@
             outcome_type:      r.outcome_type,
             service_code:      r.service_code,        // machine identity — métier filter + booking record
             service_label:     r.service_label || null, // 7C.9L.3E: canonical human label ("Débouchage évier standard")
+            city_slug:         r.city_slug     || null, // 7C.9L.3H: verified matching city (non-price)
             amount_mad:        r.amount_mad,
             labour_amount_mad: r.labour_amount_mad,
             parts_separate:    r.parts_separate,

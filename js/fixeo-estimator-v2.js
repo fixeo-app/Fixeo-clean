@@ -154,7 +154,8 @@
   // ─────────────────────────────────────────────────────────────────
   // Entry context normalization
   // ─────────────────────────────────────────────────────────────────
-  var _ALLOWED_ENTRY_FIELDS = ['source', 'metier_hint', 'service_hint', 'city', 'urgency', 'description'];
+  // 7C.9L.3H: added 'city_slug' (canonical internal field, replaces legacy 'city')
+  var _ALLOWED_ENTRY_FIELDS = ['source', 'metier_hint', 'service_hint', 'city_slug', 'city', 'urgency', 'description'];
 
   function _normalizeEntryContext(ctx) {
     var out = {};

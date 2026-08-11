@@ -30,7 +30,9 @@
     } catch (_) { svc = []; }
 
     var available = row.availability === 'available';
-    const rawCategory = (row.category || (svc[0] || '') || '').trim().toLowerCase();
+    // 7C.9L.3H: Supabase schema uses 'service_category' column (no 'category' column).
+    // Precedence: row.category (legacy) → row.service_category → services[0] → fallback.
+    const rawCategory = (row.category || row.service_category || (svc[0] || '') || '').trim().toLowerCase();
     const finalCategory = rawCategory || 'bricolage';
 
     return {

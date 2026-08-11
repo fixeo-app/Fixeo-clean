@@ -30,11 +30,13 @@ assert('1. service_code propagated in verifyContext return',
 // ─── SECTION 2: Context-before-render lifecycle ───────────────────────────────
 console.log('\nSECTION 2 — Context before render');
 
-assert('2. verifyContext resolves THEN render() in open()',
+// 7C.9L.3H: verifyContext → city_slug → estimatorCity → render() — gap widened
+assert('2. verifyContext resolves THEN render() in open() (7C.9L.3H: city_slug assignment in between)',
   (function() {
     var vIdx = resSrc.indexOf('verifyContext().then');
-    var rIdx = resSrc.indexOf('render();', vIdx);
-    return vIdx > 0 && rIdx > vIdx && (rIdx - vIdx) < 300;
+    var rIdx = resSrc.lastIndexOf('render();', resSrc.indexOf('}).catch', vIdx));
+    return vIdx > 0 && rIdx > vIdx && (rIdx - vIdx) < 600 &&
+           resSrc.includes('city_slug') && resSrc.includes('state.estimatorCity = ctx.city_slug');
   })());
 
 assert('3. state._estimatorCtx reset on open()',
@@ -93,8 +95,10 @@ console.log('\nSECTION 5 — Métier + city filtering');
 assert('13. Métier derived from service_code.split(\'.\')[0]',
   resSrc.match(/service_code\.split\('\.'\)\[0\]/));
 
-assert('14. a.category === metier — exact métier match',
-  resSrc.match(/a\.category\s*!==\s*metier/));
+// 7C.9L.3H: filter now checks BOTH a.category AND a.service (Supabase service_category alignment)
+assert('14. a.category OR a.service matches metier (7C.9L.3H expanded filter)',
+  resSrc.includes('aCat !== metier && aSvc !== metier') ||
+  (resSrc.match(/a\.category\s*!==\s*metier/) && resSrc.match(/a\.service/)));
 
 assert('15. City normalized — NFD + diacritics + lowercase',
   resSrc.includes("normalize('NFD')") && resSrc.includes("replace(/[\\u0300-\\u036f]/g") &&

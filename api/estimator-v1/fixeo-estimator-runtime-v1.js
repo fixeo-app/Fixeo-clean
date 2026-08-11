@@ -127,6 +127,10 @@ function buildPricingContextPayload(session) {
     service_code:  o.service_code,
     outcome_type:  o.outcome_type,
     session_id:    session.session_id,
+    // 7C.9L.3H: city_slug — matching context ONLY, sealed for tamper-evidence.
+    // MUST NOT affect price, pricing engine, or booking authority.
+    // null when no trusted current-session city was provided.
+    city_slug:     (session.entry_context && session.entry_context.city_slug) || null,
     // Cryptographic nonce — server-generated, prevents client-side context_id forgery.
     // Uniquely identifies this pricing evaluation event.
     context_id:    generateContextId(),

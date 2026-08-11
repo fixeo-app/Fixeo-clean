@@ -4733,6 +4733,8 @@ html #services.fc3-chapter {
             _activateCityChip(picked);
             _showCityKnown(picked);
             _closeCityChips();
+            /* 7C.9L.3H: explicit user city selection this session → trusted */
+            try { sessionStorage.setItem('fxrf4_trusted_city_session', picked); } catch(_) {}
           });
         });
 
@@ -4770,6 +4772,8 @@ html #services.fc3-chapter {
               _showCityKnown(v);
               _activateCityChip(v);
               _closeCityChips();
+              /* 7C.9L.3H: explicit user city selection this session → trusted */
+              try { sessionStorage.setItem('fxrf4_trusted_city_session', v); } catch(_) {}
             } else if (!v) {
               _hideCityKnown();
               _activateCityChip('');
@@ -6752,7 +6756,15 @@ window.addEventListener('load', function () {
         _setLabel('\u{1F4CD} R\u00e9sultats autour de vous \u00b7 Modifier');
       }
 
-      if (city) { _preselectCity(city); }
+      if (city) {
+        var _preselectOk = _preselectCity(city);
+        /* 7C.9L.3H: write session-scoped trusted city ONLY when geo resolved a canonical
+         * city this session. _preselectCity returns true only for cities in the qsm list.
+         * Never written from localStorage restore — this block runs only after live geo. */
+        if (_preselectOk) {
+          try { sessionStorage.setItem('fxrf4_trusted_city_session', sel ? sel.value : city); } catch(_) {}
+        }
+      }
       if (city) {
         /* K-1: expose detected city globally for fhp.js ranking pipeline.
          * fhp._getFilterContext() reads this as Priority-3 fallback (below manual selections).
