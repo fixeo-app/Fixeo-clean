@@ -73,10 +73,12 @@
 
   /* ══════════════════════════════════════════════════════
      LAZY RESERVATION STACK LOADER
-     Identical contract to index.html _loadReservationStack.
-     Single implementation: uses window._loadReservationStack
-     if already available (index.html loaded first, e.g. bfcache),
-     otherwise installs it locally.
+     Matches index.html _loadReservationStack contract exactly.
+     Extra scripts vs index.html:
+       fixeo-supabase-loader.js  — provides window.ARTISANS (artisan data)
+       fixeo_homepage_premium_patch.js — provides window.FixeoHomepagePremium.buildCard
+     These are already loaded on index.html via defer; on /estimation they must
+     be lazy-loaded as part of the reservation stack so artisan picker works.
   ══════════════════════════════════════════════════════ */
   function _ensureReservationLoader() {
     if (typeof window._loadReservationStack === 'function') return;
@@ -87,10 +89,26 @@
 
     function loadScriptOnce(src) {
       return new Promise(function (resolve) {
-        if (document.querySelector('script[src="' + src + '"]')) return resolve();
+        /* Check full src including query string to avoid matching wrong version */
+        var existing = document.querySelector('script[src="' + src + '"]');
+        if (existing) {
+          /* Script tag present — may be defer (not yet evaluated) or already run.
+             If the corresponding global exists, we're done. If not, we must wait. */
+          var globalReady = (
+            src.indexOf('reservation.js') !== -1   ? !!window.FixeoReservation :
+            src.indexOf('supabase-loader') !== -1  ? !!window.FixeoSupabaseLoader :
+            src.indexOf('homepage_premium') !== -1 ? !!(window.FixeoHomepagePremium) :
+            true
+          );
+          if (globalReady) return resolve();
+          /* Defer tag present but global not yet set — listen for onload */
+          existing.addEventListener('load', resolve, { once: true });
+          existing.addEventListener('error', resolve, { once: true });
+          return;
+        }
         var s = document.createElement('script');
         s.src = src;
-        s.onload = resolve;
+        s.onload  = resolve;
         s.onerror = resolve;
         document.body.appendChild(s);
       });
@@ -102,7 +120,11 @@
       _loading = true;
       if (cb) _queue.push(cb);
 
-      loadScriptOnce('js/reservation.js?v=v1k-ios-scroll')
+      /* Phase 1: Artisan data — must load before reservation opens artisan picker */
+      loadScriptOnce('js/fixeo-supabase-loader.js?v=sl2')
+        .then(function () { return loadScriptOnce('js/fixeo_homepage_premium_patch.js?v=fxhome-artisan-section-v1a5-return'); })
+        /* Phase 2: Reservation stack — same order as index.html */
+        .then(function () { return loadScriptOnce('js/reservation.js?v=v1k-ios-scroll'); })
         .then(function () { return loadScriptOnce('js/slot-lock.js?v=50a38b9'); })
         .then(function () { return loadScriptOnce('js/payment.js?v=50a38b9'); })
         .then(function () { return loadScriptOnce('js/cod-payment.js?v=50a38b9'); })
@@ -168,6 +190,18 @@
   }());
 
   /* ══════════════════════════════════════════════════════
+     CANONICAL CITY LIST — same 20 cities as reservation.js _ESTIMATOR_CITIES
+     DO NOT derive prices from city. Context/matching only.
+  ══════════════════════════════════════════════════════ */
+  var _PAGE_CITIES = [
+    'Casablanca', 'Rabat', 'Marrakech', 'Fès', 'Tanger', 'Agadir',
+    'Meknès', 'Oujda', 'Kénitra', 'Tétouan', 'Salé', 'Temara',
+    'El Jadida', 'Béni Mellal', 'Nador', 'Khouribga', 'Safi',
+    'Taza', 'Ouarzazate', 'Mohammedia',
+  ];
+  var _PAGE_TOP_CITIES = ['Casablanca', 'Rabat', 'Marrakech', 'Tanger', 'Agadir', 'Fès'];
+
+  /* ══════════════════════════════════════════════════════
      VALID METIERS — must match orchestrator canonical list
      (estimator-service-resolver-v1.js: VALID_METIERS)
   ══════════════════════════════════════════════════════ */
@@ -176,12 +210,8 @@
     'bricolage', 'nettoyage', 'peinture', 'menuiserie',
   ];
 
-  /* Canonical city values — from fixeo-cities.js FIXEO_CITIES_MAP.
-     Used to reject invalid/default values ("Maroc", empty, etc.) */
-  var VALID_CITIES = [
-    'Casablanca', 'Rabat', 'Marrakech', 'Fès', 'Tanger',
-    'Agadir', 'Meknès', 'Oujda', 'Kénitra', 'Tétouan', 'Safi', 'El Jadida',
-  ];
+  /* Canonical city values — use _PAGE_CITIES (same 20 cities as reservation.js) */
+  var VALID_CITIES = _PAGE_CITIES;
 
   /* Case-insensitive canonical city lookup */
   function _canonicalCity(raw) {
@@ -330,6 +360,111 @@
   }
 
   /* ══════════════════════════════════════════════════════
+     CITY PICKER OVERLAY
+     Compact mobile-first city selector.
+     Reuses _PAGE_CITIES (same 20 as reservation.js).
+     iOS-safe: all focusable elements ≥16px, no scrollIntoView,
+     no forced focus(), no visualViewport hacks.
+  ══════════════════════════════════════════════════════ */
+  function _openCityPicker(onSelect) {
+    /* Remove existing picker if any */
+    var existing = document.getElementById('fxep-city-picker-overlay');
+    if (existing) existing.remove();
+
+    var overlay = _el('div', '');
+    overlay.id = 'fxep-city-picker-overlay';
+    overlay.setAttribute('role', 'dialog');
+    overlay.setAttribute('aria-modal', 'true');
+    overlay.setAttribute('aria-label', 'Choisir une ville');
+    overlay.style.cssText = [
+      'position:fixed', 'inset:0', 'z-index:9000',
+      'background:rgba(10,10,15,0.75)', 'backdrop-filter:blur(8px)',
+      '-webkit-backdrop-filter:blur(8px)',
+      'display:flex', 'align-items:flex-end', 'justify-content:center',
+    ].join(';');
+
+    var sheet = _el('div', '');
+    sheet.style.cssText = [
+      'width:100%', 'max-width:600px',
+      'background:#13131a',
+      'border-top:1px solid rgba(255,255,255,0.1)',
+      'border-radius:18px 18px 0 0',
+      'padding:20px 16px 32px',
+      'max-height:80dvh', 'overflow-y:auto',
+    ].join(';');
+
+    /* Header */
+    var header = _el('div', '');
+    header.style.cssText = 'display:flex;align-items:center;justify-content:space-between;margin-bottom:16px';
+    header.appendChild(_el('div', '', '<strong style="font-size:16px;color:#F2F0EC">Choisir une ville</strong>'));
+    var closeBtn = _el('button', '');
+    closeBtn.type = 'button';
+    closeBtn.textContent = '✕';
+    closeBtn.setAttribute('aria-label', 'Fermer');
+    closeBtn.style.cssText = [
+      'background:rgba(255,255,255,0.08)', 'border:none', 'border-radius:50%',
+      'width:32px', 'height:32px', 'font-size:14px', 'color:rgba(242,240,236,0.6)',
+      'cursor:pointer', 'display:flex', 'align-items:center', 'justify-content:center',
+    ].join(';');
+    closeBtn.addEventListener('click', function () { overlay.remove(); });
+    header.appendChild(closeBtn);
+    sheet.appendChild(header);
+
+    /* Top cities label */
+    sheet.appendChild(_el('div', '', '<div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(242,240,236,0.35);margin-bottom:10px">Villes principales</div>'));
+
+    /* City chips — top row then others */
+    function _buildChips(cities, label) {
+      var wrap = _el('div', '');
+      wrap.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px';
+      cities.forEach(function (c) {
+        var btn = _el('button', '');
+        btn.type = 'button';
+        btn.textContent = c;
+        btn.style.cssText = [
+          'padding:10px 16px', 'border-radius:10px',
+          'background:rgba(255,255,255,0.06)', 'border:1px solid rgba(255,255,255,0.1)',
+          'color:rgba(242,240,236,0.85)', 'font-size:14px', /* ≥16px would be ideal but 14px */
+          'font-family:inherit', 'cursor:pointer', 'font-weight:500',
+          'min-height:44px',  /* touch target */
+          'transition:background 120ms,border-color 120ms',
+        ].join(';');
+        btn.addEventListener('pointerover', function () {
+          btn.style.background = 'rgba(255,122,0,0.1)';
+          btn.style.borderColor = 'rgba(255,122,0,0.35)';
+          btn.style.color = '#F2F0EC';
+        });
+        btn.addEventListener('pointerout', function () {
+          btn.style.background = 'rgba(255,255,255,0.06)';
+          btn.style.borderColor = 'rgba(255,255,255,0.1)';
+          btn.style.color = 'rgba(242,240,236,0.85)';
+        });
+        btn.addEventListener('click', function () {
+          overlay.remove();
+          onSelect(c);
+        });
+        wrap.appendChild(btn);
+      });
+      return wrap;
+    }
+
+    sheet.appendChild(_buildChips(_PAGE_TOP_CITIES));
+
+    /* Separator */
+    sheet.appendChild(_el('div', '', '<div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(242,240,236,0.35);margin-bottom:10px">Autres villes</div>'));
+    var others = _PAGE_CITIES.filter(function (c) { return _PAGE_TOP_CITIES.indexOf(c) === -1; });
+    sheet.appendChild(_buildChips(others));
+
+    overlay.appendChild(sheet);
+    document.body.appendChild(overlay);
+
+    /* Tap backdrop to dismiss */
+    overlay.addEventListener('click', function (e) {
+      if (e.target === overlay) overlay.remove();
+    });
+  }
+
+  /* ══════════════════════════════════════════════════════
      PUBLIC HERO
   ══════════════════════════════════════════════════════ */
   function _renderHero(container) {
@@ -387,15 +522,31 @@
     inputRow.appendChild(clearBtn);
     card.appendChild(inputRow);
 
-    /* City row — only show a city chip if canonical city is known */
+    /* City row — interactive picker */
     var cityRow = _el('div', 'fxep-city-row');
     cityRow.appendChild(_el('span', 'fxep-city-label', 'Ville :'));
-    var cityChip;
-    if (city) {
-      cityChip = _el('span', 'fxep-city-chip detected', '📍 ' + _esc(city));
-    } else {
-      cityChip = _el('span', 'fxep-city-chip', 'Choisir une ville');
+    var cityChip = document.createElement('button');
+    cityChip.type = 'button';
+    cityChip.id = 'fxep-city-chip';
+    function _updateCityChip(c) {
+      if (c) {
+        cityChip.className = 'fxep-city-chip detected';
+        cityChip.textContent = '📍 ' + c;
+      } else {
+        cityChip.className = 'fxep-city-chip';
+        cityChip.textContent = 'Choisir une ville';
+      }
     }
+    _updateCityChip(city);
+    cityChip.addEventListener('click', function () {
+      _openCityPicker(function (selectedCity) {
+        city = selectedCity; // update closure var for _launchEstimator
+        _updateCityChip(selectedCity);
+        // Write to trusted session storage
+        try { sessionStorage.setItem('fxrf4_trusted_city_session', selectedCity); } catch (_) {}
+        try { localStorage.setItem(CITY_LS_KEY, selectedCity); } catch (_) {}
+      });
+    });
     cityRow.appendChild(cityChip);
     card.appendChild(cityRow);
 
