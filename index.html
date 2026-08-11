@@ -6210,7 +6210,7 @@ function openContentModal(type) {
 <script src="js/fixeo-session-bridge.js?v=sb1"></script>
 <script src="js/homepage-v13.js?v=50a38b9"></script>
 <script src="js/hero-performance.js?v=50a38b9" defer></script>
-<script src="js/fixeo_homepage_premium_patch.js?v=fxhome-artisan-section-v1a2-int1"></script>
+<script src="js/fixeo_homepage_premium_patch.js?v=fxhome-artisan-section-v1a3-estimator"></script>
 
 <script>
 /* ================================================================
@@ -6577,7 +6577,7 @@ window.addEventListener('load', function () {
     if (cb) _queue.push(cb);
 
     /* Load in dependency order: reservation → slot-lock → payment → cod-payment */
-    loadScriptOnce('js/reservation.js?v=v1b')
+    loadScriptOnce('js/reservation.js?v=v1c')
       .then(function () { return loadScriptOnce('js/slot-lock.js?v=50a38b9'); })
       .then(function () { return loadScriptOnce('js/payment.js?v=50a38b9'); })
       .then(function () { return loadScriptOnce('js/cod-payment.js?v=50a38b9'); })

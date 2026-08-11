@@ -179,18 +179,21 @@
   }
 
   function getArtisanById(id) {
-    /* Check window.ARTISANS first, then fall back to bare ARTISANS (set by main.js) */
+    /* Phase 7C.9L.3O: canonical string comparison — supports numeric strings,
+     * UUID strings, and any other legitimate artisan ID shape stored in
+     * window.ARTISANS (covers Supabase UUIDs where legacy_id is absent). */
     const pool = window.ARTISANS || (typeof ARTISANS !== 'undefined' && Array.isArray(ARTISANS) ? ARTISANS : null);
     if (pool) {
-      return pool.find(a => a.id === id || a.id === parseInt(id)) || null;
+      var sid = String(id);
+      return pool.find(function(a) { return String(a.id) === sid; }) || null;
     }
     return null;
   }
 
   function normalizeArtisan(input) {
     if (!input) return null;
-    // If it's a number/string id
-    if (typeof input === 'number' || (typeof input === 'string' && !isNaN(input))) {
+    // If it's a number OR any string id (including UUIDs) — Phase 7C.9L.3O
+    if (typeof input === 'number' || typeof input === 'string') {
       return getArtisanById(input);
     }
     // If it's already an object
@@ -1034,17 +1037,28 @@
         </div>`;
     }
 
-    /* Render matched artisans using canonical homepage card renderer */
-    var useHomepageCards = typeof window.buildOtherArtisanCard === 'function';
-    var cardsHtml = matched.slice(0, 9).map(function(a) {
-      if (useHomepageCards) {
-        return window.buildOtherArtisanCard(a, { estimatorMode: true, hidePrice: true });
+    /* Phase 7C.9L.3O — render matched artisans using the REAL official homepage
+     * premium card renderer (fixeo_homepage_premium_patch.js _buildCard).
+     * Priority A: FixeoHomepagePremium.buildCard (estimatorMode:true)
+     *   → official pvc-card fhp-card layout, no price, CTA = "Choisir cet artisan"
+     * Priority B: buildOtherArtisanCard — NOT used as preferred path per 3O spec.
+     *   This path is intentionally absent; the official card is the only visual path.
+     * Fallback: simple truthful card when premium renderer not yet loaded. */
+    var useOfficialCard = (
+      window.FixeoHomepagePremium &&
+      typeof window.FixeoHomepagePremium.buildCard === 'function'
+    );
+    var cardsHtml = matched.slice(0, 9).map(function(a, idx) {
+      if (useOfficialCard) {
+        return window.FixeoHomepagePremium.buildCard(a, idx, { estimatorMode: true });
       }
-      /* Fallback: simple card (main.js not yet loaded) */
-      var safeId = JSON.stringify(String(a.id));
-      return '<div class="fixeo-res-picker-card" onclick="FixeoReservation._selectArtisanFromPicker(' + safeId + ')">'
+      /* Fallback: simple truthful card (premium patch not yet loaded).
+       * No inline reservation onclick — data-estimator-id delegated listener handles selection. */
+      return '<article class="fixeo-res-picker-card" data-estimator-id="' + sanitize(String(a.id)) + '" role="button" tabindex="0">'
         + '<div class="fixeo-res-picker-info"><div class="fixeo-res-picker-name">' + sanitize(a.name) + '</div>'
-        + '<div class="fixeo-res-picker-cat">' + sanitize(CATEGORY_LABELS[a.category] || a.category) + ' · ' + sanitize(a.city) + '</div></div></div>';
+        + '<div class="fixeo-res-picker-cat">' + sanitize(CATEGORY_LABELS[a.category] || a.category) + ' · ' + sanitize(a.city) + '</div>'
+        + '<button class="fixeo-res-picker-cta" type="button" data-estimator-select="true">Choisir cet artisan</button>'
+        + '</div></article>';
     }).join('');
 
     return `

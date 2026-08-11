@@ -1408,7 +1408,75 @@
     if (!_searchActive) { _renderPremiumGrid(); }
   }
 
-  window.FixeoHomepagePremium = { refresh:_renderPremiumGrid, enterSearch:_enterSearchMode, enterHomepage:_enterHomepageMode, refreshIfIdle:_refreshIfIdle };
+  /* ════════════════════════════════════════════════════════
+     ESTIMATOR ADAPTER — Phase 7C.9L.3O
+     Exposes _buildCard for Estimator picker reuse.
+     opts.estimatorMode === true:
+       - Suppresses price block ("À partir de X MAD" / "Tarif renseigné")
+       - Suppresses "Voir le profil complet" link
+       - Renames primary CTA to "Choisir cet artisan"
+       - Adds data-estimator-id on article, data-estimator-select on CTA
+       - No inline JS in card markup — delegated listener owns selection
+     Normal homepage call (_buildCard(a, idx)) is completely unchanged.
+  ════════════════════════════════════════════════════════ */
+  function _buildCardEstimator(a, idx) {
+    /* Build canonical card then patch estimator-specific attributes/labels */
+    var html = _buildCard(a, idx);
+
+    /* --- Suppress price block ---
+     * Replace <div class="pvc-action-v3b">…</div> block with estimator version.
+     * Strategy: reconstruct only the action block (always ends the article),
+     * while keeping all preceding markup untouched. */
+
+    var cat      = (a.category || a.service || '').toLowerCase();
+    var catIcon  = CAT_ICONS[cat] || '🔧';
+    var catLbl   = CAT_LABELS[cat] || (a.service || a.category || 'Service');
+    var name     = a.name || a.full_name || 'Artisan Fixeo';
+    var aid      = String(a.id || a._supabase_id || '');
+
+    /* Estimator action block: divider + CTA only; no price, no profile link */
+    var estimatorAction =
+      '<div class="pvc-action-v3b">' +
+        '<div class="pvc-divider pvc-divider-v3b"></div>' +
+        '<button class="pvc-btn-reserve-v2 fhp-btn-reserve pvc-btn-v3b" type="button"' +
+          ' data-estimator-select="true"' +
+          ' aria-label="Choisir ' + _esc(name) + ', ' + _esc(catLbl) + '">' +
+          'Choisir cet artisan' +
+        '</button>' +
+      '</div>' +
+    '</article>';
+
+    /* Replace the action block: find opening <div class="pvc-action-v3b"> to end of article.
+     * _buildCard always closes with </div>\n</article> inside the action block. */
+    var actionStart = html.lastIndexOf('<div class="pvc-action-v3b">');
+    if (actionStart !== -1) {
+      html = html.substring(0, actionStart) + estimatorAction;
+    }
+
+    /* Add data-estimator-id to the article opening tag */
+    html = html.replace(
+      '<article class="pvc-card fhp-card"',
+      '<article class="pvc-card fhp-card" data-estimator-id="' + _esc(aid) + '"'
+    );
+
+    return html;
+  }
+
+  window.FixeoHomepagePremium = {
+    refresh:       _renderPremiumGrid,
+    enterSearch:   _enterSearchMode,
+    enterHomepage: _enterHomepageMode,
+    refreshIfIdle: _refreshIfIdle,
+    /* Phase 7C.9L.3O: exposed for Estimator picker.
+     * When opts.estimatorMode is true → estimator-adapted card.
+     * Otherwise → normal homepage card (backward-compatible). */
+    buildCard: function(a, idx, opts) {
+      if (opts && opts.estimatorMode) {
+        return _buildCardEstimator(a, idx);
+      }
+      return _buildCard(a, idx);
+    }
+  };
 
 }(window));
 
