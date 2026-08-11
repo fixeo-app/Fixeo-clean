@@ -6210,7 +6210,7 @@ function openContentModal(type) {
 <script src="js/fixeo-session-bridge.js?v=sb1"></script>
 <script src="js/homepage-v13.js?v=50a38b9"></script>
 <script src="js/hero-performance.js?v=50a38b9" defer></script>
-<script src="js/fixeo_homepage_premium_patch.js?v=fxhome-artisan-section-v1a4-profile"></script>
+<script src="js/fixeo_homepage_premium_patch.js?v=fxhome-artisan-section-v1a5-return"></script>
 
 <script>
 /* ================================================================
@@ -6577,7 +6577,7 @@ window.addEventListener('load', function () {
     if (cb) _queue.push(cb);
 
     /* Load in dependency order: reservation → slot-lock → payment → cod-payment */
-    loadScriptOnce('js/reservation.js?v=v1d')
+    loadScriptOnce('js/reservation.js?v=v1e')
       .then(function () { return loadScriptOnce('js/slot-lock.js?v=50a38b9'); })
       .then(function () { return loadScriptOnce('js/payment.js?v=50a38b9'); })
       .then(function () { return loadScriptOnce('js/cod-payment.js?v=50a38b9'); })
@@ -6610,6 +6610,59 @@ window.addEventListener('load', function () {
 
   /* Expose for any other callers (e.g. SecondarySearch._handleReserve) */
   window._loadReservationStack = loadReservationStack;
+
+  /* ── Phase 7C.9L.3U: Estimator artisan picker auto-restore ──────────────
+   * Fires on pageshow (covers bfcache + fresh load) when the user navigated
+   * to artisan-profile.html?source=estimator and pressed "← Retour à ma sélection".
+   * Trigger: BOTH markers present → lazy-load reservation stack → open(null).
+   * existing verifyContext() re-verifies token server-side → restores:
+   *   service_code, service_label, amount_mad, city_slug.
+   * One-shot: marker cleared after restoration attempt (success or failure).
+   * ──────────────────────────────────────────────────────────────────────── */
+  var _fxEstimatorReturnRestoreInFlight = false;
+
+  function _maybeRestoreEstimatorPicker() {
+    if (_fxEstimatorReturnRestoreInFlight) return;
+    var RETURN_MARKER = 'fx_estimator_return_v1';
+    var TOKEN_KEY     = 'fixeo_estimator_ctx_v1';
+    var hasMarker, hasToken;
+    try {
+      hasMarker = !!sessionStorage.getItem(RETURN_MARKER);
+      hasToken  = !!sessionStorage.getItem(TOKEN_KEY);
+    } catch (_) { return; }
+    if (!hasMarker || !hasToken) return;
+
+    _fxEstimatorReturnRestoreInFlight = true;
+    /* Clear one-shot marker before async work — prevents duplicate triggers.
+     * Token is NOT cleared here — verifyContext() needs it. */
+    try { sessionStorage.removeItem(RETURN_MARKER); } catch (_) {}
+
+    loadReservationStack(function() {
+      try {
+        if (!window.FixeoReservation || typeof window.FixeoReservation.open !== 'function') {
+          _fxEstimatorReturnRestoreInFlight = false;
+          return;
+        }
+        /* open(null) with token present: verifyContext() fires server-side,
+         * restores _estimatorCtx (service, amount, city_slug) → artisan picker rendered. */
+        window.FixeoReservation.open(null, false, null);
+      } catch (_err) {
+        /* Terminal failure — guard stays true to prevent loops */
+      }
+      _fxEstimatorReturnRestoreInFlight = false;
+    });
+  }
+
+  /* pageshow fires on fresh load AND bfcache restore */
+  window.addEventListener('pageshow', function() {
+    setTimeout(_maybeRestoreEstimatorPicker, 120);
+  });
+  /* DOMContentLoaded as secondary safety net for non-bfcache paths */
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+      setTimeout(_maybeRestoreEstimatorPicker, 120);
+    }, { once: true });
+  }
 
   /* ── Phase 7C.9L.1: Estimator V2 → Reservation handoff listener ────────────
    *

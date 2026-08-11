@@ -327,6 +327,37 @@
        *   handled above). Selects same artisan. */
       if (!modal.contains(e.target)) return;
 
+      /* Priority 0 — Back navigation ([data-res-back]) */
+      var backBtn = e.target.closest ? e.target.closest('[data-res-back]') : null;
+      if (backBtn && modal.contains(backBtn)) {
+        var dest = backBtn.getAttribute('data-res-back');
+        if (dest === 'close') {
+          window.FixeoReservation && window.FixeoReservation.close();
+        } else if (dest === 'city') {
+          /* Artisan picker → city picker: clear city, keep _estimatorCtx intact */
+          state.estimatorCity = null;
+          render();
+        } else if (dest === 'artisan') {
+          /* Step 1 → artisan picker: save draft from DOM before clearing artisan */
+          var descEl2 = document.getElementById('res-desc');
+          var addrEl2 = document.getElementById('res-address');
+          var phoneEl2 = document.getElementById('res-phone');
+          if (descEl2) state.description = descEl2.value;
+          if (addrEl2) state.address = addrEl2.value;
+          if (phoneEl2) state.phone = phoneEl2.value;
+          state.artisan = null;
+          render();
+        } else if (dest === 'step1') {
+          /* Step 2 → Step 1: reuse existing _goToStep1 */
+          if (window.FixeoReservation && window.FixeoReservation._goToStep1) {
+            window.FixeoReservation._goToStep1();
+          }
+        }
+        e.preventDefault();
+        e.stopPropagation();
+        return;
+      }
+
       /* Priority A — CTA ([data-estimator-select]) */
       var selectBtn = e.target.closest ? e.target.closest('[data-estimator-select]') : null;
       if (selectBtn && modal.contains(selectBtn)) {
@@ -338,6 +369,14 @@
             typeof window.FixeoReservation._selectArtisanFromPicker === 'function') {
           window.FixeoReservation._selectArtisanFromPicker(artisanId);
         }
+        return;
+      }
+
+      /* Priority A.5 — Estimator profile link: write return marker, allow native navigation */
+      var profileLink = e.target.closest ? e.target.closest('[data-estimator-profile]') : null;
+      if (profileLink && modal.contains(profileLink)) {
+        try { sessionStorage.setItem('fx_estimator_return_v1', 'artisan-picker'); } catch (_) {}
+        /* Allow native <a href> navigation — do NOT call _selectArtisanFromPicker */
         return;
       }
 
@@ -675,6 +714,11 @@
 
             <div class="fixeo-res-error" id="res-error" style="display:none"></div>
 
+            ${state._estimatorCtx && state._estimatorCtx.valid ? `
+            <button type="button" class="fixeo-res-btn-secondary" data-res-back="artisan"
+              style="margin-bottom:8px;font-size:.82rem;padding:10px 16px;display:flex;align-items:center;gap:5px">
+              ← Retour
+            </button>` : ''}
             <button class="fixeo-res-btn-primary" id="res-step1-cta"
                     style="${state.isUrgent ? 'background:linear-gradient(135deg,#ff416c,#ff4b2b);box-shadow:0 6px 20px rgba(255,65,108,.35);font-size:1rem;font-weight:800;height:52px;border-radius:14px;letter-spacing:.02em' : ''}"
                     onclick="FixeoReservation._submitStep1()">
@@ -865,8 +909,8 @@
 
           <!-- Actions -->
           <div class="fixeo-res-actions">
-            <button class="fixeo-res-btn-secondary" onclick="FixeoReservation._goToStep1()">
-              ← Modifier
+            <button type="button" class="fixeo-res-btn-secondary" data-res-back="step1">
+              ← Retour
             </button>
             <button class="fixeo-res-btn-primary fixeo-res-btn-pay"
                     style="${state.isUrgent ? 'background:linear-gradient(135deg,#ff416c,#ff4b2b);box-shadow:0 6px 20px rgba(255,65,108,.35);font-size:1rem;font-weight:800;border-radius:14px;letter-spacing:.02em' : ''}"
@@ -957,7 +1001,11 @@
         <div class="fixeo-res-body">
           <div style="margin-bottom:14px">
             <div class="fixeo-res-label" style="margin-bottom:10px">📍 Où doit intervenir l'artisan&nbsp;?</div>
-            <div class="fixeo-res-slot-grid" style="grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px">
+            <button type="button" class="fixeo-res-btn-secondary" data-res-back="close"
+            style="margin-bottom:14px;align-self:flex-start;font-size:.8rem;padding:8px 14px;display:flex;align-items:center;gap:5px">
+            ← Retour
+          </button>
+          <div class="fixeo-res-slot-grid" style="grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px">
               ${topChips}
             </div>
             <div class="fixeo-res-slot-grid" style="grid-template-columns:repeat(3,1fr);gap:8px">
@@ -1069,6 +1117,10 @@
             <div>
               <div class="fixeo-res-header-title">Artisans ${sanitize(metierLabel)} · ${sanitize(city)}</div>
               <div class="fixeo-res-header-sub">Sélectionnez votre artisan · Prix FIXEO ${sanitize(amountDisplay)}</div>
+              <button type="button" class="fixeo-res-btn-secondary" data-res-back="city"
+                style="margin-top:6px;font-size:.78rem;padding:5px 10px;display:inline-flex;align-items:center;gap:4px;align-self:flex-start">
+                ← Retour
+              </button>
             </div>
           </div>
           <button class="fixeo-res-close" onclick="FixeoReservation.close()" aria-label="Fermer">✕</button>
@@ -1549,6 +1601,20 @@
     render();
   }
 
+  /* 7C.9L.3U: Back from Step 1 → artisan picker.
+   * Preserves: _estimatorCtx, estimatorCity, selectedService, pricing_context_token.
+   * Saves current form draft from DOM before clearing artisan. */
+  function _goToArtisanPicker() {
+    var descEl = document.getElementById('res-desc');
+    var addrEl = document.getElementById('res-address');
+    var phoneEl = document.getElementById('res-phone');
+    if (descEl) state.description = descEl.value;
+    if (addrEl) state.address = addrEl.value;
+    if (phoneEl) state.phone = phoneEl.value;
+    state.artisan = null;
+    render();
+  }
+
   // ── Urgent: show loading state then hand off to payment ──────────────────
   function _urgentConfirm(btn, total) {
     if (!btn) { _proceedToPayment(total); return; }
@@ -1829,6 +1895,7 @@
     _onSlotClick,
     _submitStep1,
     _goToStep1,
+    _goToArtisanPicker,
     _urgentConfirm,
     _proceedToPayment,
     _initPills,

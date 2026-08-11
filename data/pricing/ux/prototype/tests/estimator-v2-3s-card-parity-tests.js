@@ -85,10 +85,10 @@ t('profile link has pvc-profile-v3b class',
   estCard.includes('pvc-profile-v3b'));
 t('profile link has fhp-btn-profile class',
   estCard.includes('fhp-btn-profile'));
-t('profile link has target=_blank',
-  estCard.includes('target="_blank"'));
-t('profile link has rel=noopener noreferrer',
-  estCard.includes('rel="noopener noreferrer"'));
+t('profile link is same-tab (no target=_blank — 3U: deterministic return)',
+  !estCard.includes('target="_blank"') && estCard.includes('source=estimator'));
+t('profile link has data-estimator-profile (3U: delegated return marker)',
+  estCard.includes('data-estimator-profile="true"'));
 
 /* ── 17: Profile URL format ── */
 t('profile href format artisan-profile.html?id=',

@@ -1444,8 +1444,8 @@
           'Choisir cet artisan' +
         '</button>' +
         '<a class="pvc-profile-link fhp-btn-profile pvc-profile-v3b"' +
-          ' href="artisan-profile.html?id=' + encodeURIComponent(aid) + '"' +
-          ' target="_blank" rel="noopener noreferrer"' +
+          ' href="artisan-profile.html?id=' + encodeURIComponent(aid) + '&source=estimator"' +
+          ' data-estimator-profile="true"' +
           ' aria-label="Voir le profil complet de ' + _esc(name) + '">' +
           'Voir le profil complet ›' +
         '</a>' +

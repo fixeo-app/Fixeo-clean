@@ -1422,4 +1422,93 @@ document.addEventListener('visibilitychange', function () {
     if (normalizeText(loadingTitle.textContent || '') !== normalizeText('Chargement du profil artisan')) return;
     renderNotFound(root);
   }, 2200);
+
+/* ══════════════════════════════════════════════════════════════════
+   Phase 7C.9L.3U — Estimator return control
+   Shows "← Retour à ma sélection" ONLY when:
+     - URL query source=estimator
+     - sessionStorage fx_estimator_return_v1 exists
+     - sessionStorage fixeo_estimator_ctx_v1 (pricing token) exists
+   Navigation: deterministic window.location.href = '/' (not history.back)
+   Normal profile visits: completely unaffected (no source param).
+   ══════════════════════════════════════════════════════════════════ */
+(function _fxEstimatorReturnControl() {
+  'use strict';
+  var RETURN_MARKER = 'fx_estimator_return_v1';
+  var TOKEN_KEY     = 'fixeo_estimator_ctx_v1';
+
+  function _shouldShow() {
+    try {
+      var src = (new URLSearchParams(window.location.search)).get('source');
+      if (src !== 'estimator') return false;
+      if (!sessionStorage.getItem(RETURN_MARKER)) return false;
+      if (!sessionStorage.getItem(TOKEN_KEY)) return false;
+      return true;
+    } catch (_) { return false; }
+  }
+
+  function _injectReturnControl() {
+    if (!_shouldShow()) return;
+    /* Build the control bar */
+    var bar = document.createElement('div');
+    bar.id = 'fx-estimator-return-bar';
+    bar.setAttribute('role', 'navigation');
+    bar.setAttribute('aria-label', 'Retour à la sélection');
+    bar.style.cssText = [
+      'position:fixed','top:0','left:0','right:0','z-index:99999',
+      'background:rgba(18,18,24,0.97)','border-bottom:1px solid rgba(255,255,255,0.10)',
+      'display:flex','align-items:center','padding:10px 16px','gap:10px',
+      'box-shadow:0 2px 12px rgba(0,0,0,0.35)','backdrop-filter:blur(8px)',
+      '-webkit-backdrop-filter:blur(8px)'
+    ].join(';');
+
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.textContent = '← Retour à ma sélection';
+    btn.style.cssText = [
+      'background:none','border:1.5px solid rgba(255,90,31,0.55)',
+      'border-radius:10px','color:#fff','font-size:.85rem','font-weight:700',
+      'padding:8px 16px','cursor:pointer','display:flex','align-items:center',
+      'gap:6px','-webkit-tap-highlight-color:transparent',
+      'transition:border-color .14s,background .14s'
+    ].join(';');
+    btn.addEventListener('mouseover', function() {
+      btn.style.background = 'rgba(255,90,31,0.12)';
+      btn.style.borderColor = 'rgba(255,90,31,0.85)';
+    });
+    btn.addEventListener('mouseout', function() {
+      btn.style.background = 'none';
+      btn.style.borderColor = 'rgba(255,90,31,0.55)';
+    });
+    btn.addEventListener('click', function() {
+      /* Navigate deterministically to root — restoration hook in index.html fires on pageshow */
+      window.location.href = '/';
+    });
+
+    var label = document.createElement('span');
+    label.style.cssText = 'font-size:.75rem;color:rgba(255,255,255,0.45);';
+    label.textContent = 'Votre sélection Fixeo vous attend';
+
+    bar.appendChild(btn);
+    bar.appendChild(label);
+
+    /* Inject: prepend to body, or as first child of body once DOM ready */
+    function _attach() {
+      if (document.body) {
+        document.body.insertBefore(bar, document.body.firstChild);
+        /* Offset page content so bar does not overlap */
+        document.body.style.paddingTop = (document.body.style.paddingTop
+          ? (parseInt(document.body.style.paddingTop, 10) + 54) + 'px'
+          : '54px');
+      }
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', _attach, { once: true });
+    } else {
+      _attach();
+    }
+  }
+
+  _injectReturnControl();
+})();
 })(window, document);
