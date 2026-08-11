@@ -272,6 +272,46 @@
     return modal;
   }
 
+  /* ── 7C.9L.3I: Delegated city-chip click handler ──────────────────────────
+   * One listener bound once on document. Intercepts clicks on
+   * [data-estimator-city] chips scoped inside #fixeo-reservation-modal.
+   * Replaces malformed inline onclick that used JSON.stringify("City") inside
+   * a double-quoted HTML attribute — browser truncated the attribute at the
+   * first inner double-quote, silently dropping the entire handler.
+   * ────────────────────────────────────────────────────────────────────────── */
+  if (!window._fxResEstimatorCityListenerBound) {
+    window._fxResEstimatorCityListenerBound = true;
+    document.addEventListener('click', function(e) {
+      /* Walk up from event target to find a data-estimator-city chip */
+      var chip = e.target.closest
+        ? e.target.closest('[data-estimator-city]')
+        : (function() {
+            var n = e.target;
+            while (n && n !== document) {
+              if (n.getAttribute && n.getAttribute('data-estimator-city')) return n;
+              n = n.parentNode;
+            }
+            return null;
+          })();
+      if (!chip) return;
+
+      /* Scope strictly to the reservation modal */
+      var modal = document.getElementById(MODAL_ID);
+      if (!modal || !modal.contains(chip)) return;
+
+      e.preventDefault();
+      e.stopPropagation();
+
+      var city = chip.getAttribute('data-estimator-city');
+      if (!city) return;
+
+      if (window.FixeoReservation &&
+          typeof window.FixeoReservation._setEstimatorCity === 'function') {
+        window.FixeoReservation._setEstimatorCity(city);
+      }
+    }, true /* capture: fires before target bubbling, handles iOS tap */);
+  }
+
   /* ════════════════════════════════════════════════════════
      V1-JC: Premium initials avatar for the reservation modal
      Mirrors fixeo-profile-v1jb.js _nameHash + _initials for
@@ -838,9 +878,14 @@
 
     function _chip(city) {
       var isSuggested = suggestedDisplay && _normCity(city) === _normCity(suggestedDisplay);
-      var safeCity = JSON.stringify(city);
-      return '<button class="fixeo-res-slot' + (isSuggested ? ' active' : '') + '"'
-        + ' onclick="event.stopPropagation();FixeoReservation._setEstimatorCity(' + safeCity + ');"'
+      /* 7C.9L.3I: data-estimator-city replaces inline onclick.
+       * JSON.stringify produced "City" (double-quoted) inside a double-quoted HTML
+       * attribute — browser terminated onclick at the first inner quote, silently
+       * discarding the entire handler. City never reached _setEstimatorCity.
+       * Fix: city stored in data-estimator-city; delegated listener in modal root reads it.
+       * sanitize() ensures no HTML-special chars in display text. */
+      return '<button type="button" class="fixeo-res-slot' + (isSuggested ? ' active' : '') + '"'
+        + ' data-estimator-city="' + sanitize(city) + '"'
         + ' style="text-align:center;padding:10px 14px;font-size:.85rem;font-weight:700;cursor:pointer;border-radius:10px;'
         + (isSuggested ? 'border:1.5px solid rgba(225,48,108,.6);' : '')
         + '">'
