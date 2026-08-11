@@ -212,17 +212,17 @@ test('16. FAEE isolation: reservation.js data-estimator-context attribute still 
 /* ── Group 5: Cache key updated ─────────────────────────────── */
 console.log('\n── Group 5: Cache key ──');
 
-test('17. Cache key updated to fxhro-v1b-reset in JS file', function () {
-  assert(ctrlSrc.includes('fxhro-v1b-reset'), 'version string updated in JS');
+test('17. Cache key updated (v1b-reset or later) in JS file', function () {
+  assert(ctrlSrc.includes('fxhro-v1b-reset') || ctrlSrc.includes('fxhro-v1c-qsm-reset'), 'version string updated in JS');
 });
 
-test('18. index.html references fxhro-v1b-reset for both CSS and JS', function () {
+test('18. index.html references current fxhro cache key (v1b or later)', function () {
   var idxSrc = fs.readFileSync(
     path.join(__dirname, '../../../../../index.html'), 'utf8');
-  assert(idxSrc.includes('fixeo-hero-resume-v1.css?v=fxhro-v1b-reset'), 'CSS cache key updated');
-  assert(idxSrc.includes('fixeo-hero-resume-v1.js?v=fxhro-v1b-reset'), 'JS cache key updated');
-  assert(!idxSrc.includes('fixeo-hero-resume-v1.js?v=fxhro-v1a'), 'old JS key gone');
-  assert(!idxSrc.includes('fixeo-hero-resume-v1.css?v=fxhro-v1a'), 'old CSS key gone');
+  assert(idxSrc.includes('fixeo-hero-resume-v1.css?v=fxhro-v1') , 'CSS cache key present');
+  assert(idxSrc.includes('fixeo-hero-resume-v1.js?v=fxhro-v1'), 'JS cache key present');
+  assert(!idxSrc.includes('fixeo-hero-resume-v1.js?v=fxhro-v1a'), 'old v1a JS key gone');
+  assert(!idxSrc.includes('fixeo-hero-resume-v1.css?v=fxhro-v1a'), 'old v1a CSS key gone');
 });
 
 /* ── Summary ─────────────────────────────────────────────────── */

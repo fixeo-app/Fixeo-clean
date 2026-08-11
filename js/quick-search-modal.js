@@ -657,8 +657,25 @@
     _renderInline();
   }
 
+  /* ── resetMetier: clear category/service state, preserve city ──
+   * Called by hero-resume on "Nouvelle demande".
+   * Clears st.cat (detected/selected service category) and the
+   * #qsm-select-cat DOM select — without touching st.city or the
+   * city select. Does NOT call _doSearch() or dispatch input events.
+   * AIRE will re-detect naturally on the user's next genuine keystroke.
+   */
+  function _resetMetier() {
+    st.cat     = '';
+    st.query   = '';
+    st.results = [];
+    st.searched = false;
+    var catEl = document.getElementById('qsm-select-cat');
+    if (catEl) catEl.value = '';
+    /* city (st.city + #qsm-select-city) intentionally NOT touched */
+  }
+
   /* Expose globally */
-  window.QuickSearchModal = { open, close, focusInline, _book, renderInline: _renderInline };
+  window.QuickSearchModal = { open, close, focusInline, _book, renderInline: _renderInline, resetMetier: _resetMetier };
 
   console.log('✅ Fixeo Quick Search Modal v8 loaded (inline hero)');
 

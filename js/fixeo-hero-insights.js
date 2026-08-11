@@ -31,7 +31,7 @@
   'use strict';
 
   if (window.FixeoHeroInsights) return;
-  var VERSION = 'fxhi-v1c';
+  var VERSION = 'fxhi-v1d-reset';
 
   /* ══════════════════════════════════════════════════════════
      CONSTANTS
@@ -505,10 +505,30 @@
     console.log('[FixeoHeroInsights] Hero Insights ' + VERSION + ' init');
   }
 
+  /* ── Reset métier state (city preserved) ────────────────────
+   * Called by hero-resume on "Nouvelle demande".
+   * Clears request-specific state; preserves city.
+   * Does NOT dispatch input events — no AIRE re-trigger, no Estimator open.
+   */
+  function _reset() {
+    /* Clear request-specific state; city intentionally preserved */
+    _state.category = null;
+    _state.isUrgent = false;
+    /* _state.city: NOT cleared */
+
+    /* Hide the insights bar (remove .visible class) */
+    var bar = _el('fxhi-bar');
+    if (bar) bar.classList.remove('visible');
+
+    /* Reset CTA to canonical neutral label */
+    _updateCTA(null, false);
+  }
+
   /* ── Public API ─────────────────────────────────────────── */
   window.FixeoHeroInsights = {
     VERSION: VERSION,
-    analyze: _analyze
+    analyze: _analyze,
+    reset:   _reset,
   };
 
   /* Boot after DOM ready */

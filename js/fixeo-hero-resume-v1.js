@@ -23,7 +23,7 @@
  * Deferred until after: FixeoEstimatorReservationBridge, FixeoEstimatorConfig,
  *   FixeoEstimatorV2 (optionally), quick-search-modal.js (for #qsm-input-nlp).
  *
- * Version: fxhro-v1b-reset
+ * Version: fxhro-v1c-qsm-reset
  */
 (function () {
   'use strict';
@@ -262,20 +262,46 @@
       }
     } catch (_) {}
 
-    /* 3. NOW remove verified price card + state class.
-          RFOS DOM is already neutral — no flash of old state. */
+    /* 3. Hero Insights reset: clears _state.category/isUrgent, hides bar,
+          resets CTA to "Trouver mon artisan maintenant".
+          _state.city is NOT touched (city preserved by design).
+          Must run BEFORE _dismissPriceReady() — bar is display:none under
+          fxhro-price-ready-state (CSS suppressed in 3Z.2C); clearing it
+          now means it stays hidden correctly when CSS class is removed. */
+    try {
+      if (window.FixeoHeroInsights &&
+          typeof window.FixeoHeroInsights.reset === 'function') {
+        window.FixeoHeroInsights.reset();
+      }
+    } catch (_) {}
+
+    /* 4. QSM métier reset: clears st.cat, st.query, st.results, #qsm-select-cat.
+          st.city and #qsm-select-city untouched.
+          No _doSearch() called, no input event dispatched → no AIRE re-trigger,
+          no Estimator auto-open. AIRE re-detects naturally on next real keystroke. */
+    try {
+      if (window.QuickSearchModal &&
+          typeof window.QuickSearchModal.resetMetier === 'function') {
+        window.QuickSearchModal.resetMetier();
+      }
+    } catch (_) {}
+
+    /* 5. NOW remove verified price card + state class.
+          All stale métier DOM (insights bar, CTA, badge, greeting)
+          already reset — no flash of old category state. */
     _dismissPriceReady();
 
-    /* 4. Clear input text.
+    /* 6. Clear input text.
           Do NOT dispatch a synthetic input event — programmatic value
           clear does not fire the native input listener, so RFOS
           onInput() is never called and _qsmEstimatorLaunched is not
           reset. The guard remains correctly eligible for the next
-          genuine user keystroke. */
+          genuine user keystroke. FixeoHeroInsights.analyze() is also
+          not triggered — no stale métier re-rendered. */
     var inp = _el('qsm-input-nlp');
     if (inp) inp.value = '';
 
-    /* 5. Focus input to invite new request */
+    /* 7. Focus input to invite new request */
     try { if (inp) inp.focus(); } catch (_) {}
   }
 
@@ -489,7 +515,7 @@
 
   /* ── Public API (minimal — testing + integration only) ── */
   window.FixeoHeroResume = {
-    VERSION:   'fxhro-v1b-reset',
+    VERSION:   'fxhro-v1c-qsm-reset',
     /* Re-run verification on demand (e.g. after token is written) */
     refresh:   function () { _runVerification(); },
     /* Manual reset (e.g. from test harness) */
