@@ -25,8 +25,12 @@ t('3: city back does NOT call clearContext',
   !resSrc.includes("clearContext") || resSrc.indexOf('clearContext') > resSrc.indexOf('data-res-back'));
 t('4: artisan picker has data-res-back="city"',
   resSrc.includes('data-res-back="city"'));
-t('5: artisan back renders city picker (state.estimatorCity = null)',
-  resSrc.includes("dest === 'city'") && resSrc.includes("state.estimatorCity = null;"));
+t('5: artisan back renders city picker (3W: estimatorPickerScreen=city, NOT city=null)',
+  (function() {
+    var idx = resSrc.indexOf("dest === 'city'");
+    var block = resSrc.substring(idx, idx + 300);
+    return block.includes('estimatorPickerScreen') && !block.includes('estimatorCity = null');
+  })());
 t('6: artisan back does NOT reset _estimatorCtx',
   (function() {
     var block = resSrc.substring(resSrc.indexOf("dest === 'city'"), resSrc.indexOf("dest === 'city'")+120);

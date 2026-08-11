@@ -153,8 +153,9 @@
     address: '',
     phone: '',
     // 7C.9L.3C — Estimator-origin artisan picker state
-    _estimatorCtx:  null,  // verified pricing context (set async in open())
-    estimatorCity:  null,  // city chosen by user in estimator picker stage
+    _estimatorCtx:         null,  // verified pricing context (set async in open())
+    estimatorCity:         null,  // city chosen by user in estimator picker stage
+    estimatorPickerScreen: null,  // 7C.9L.3W: null|'city'|'artisan' (nav only)
   };
 
   /* ════════════════════════════════════════════════════════
@@ -334,18 +335,22 @@
         if (dest === 'close') {
           window.FixeoReservation && window.FixeoReservation.close();
         } else if (dest === 'city') {
-          /* Artisan picker → city picker: clear city, keep _estimatorCtx intact */
-          state.estimatorCity = null;
+          /* 7C.9L.3W: navigate to city picker WITHOUT clearing estimatorCity.
+           * Casablanca is preserved; city picker will highlight it.
+           * _estimatorCtx and pricing token remain completely untouched. */
+          state.estimatorPickerScreen = 'city';
           render();
         } else if (dest === 'artisan') {
-          /* Step 1 → artisan picker: save draft from DOM before clearing artisan */
+          /* 7C.9L.3W: Step 1 → artisan picker. Save draft, then show artisan picker.
+           * estimatorCity preserved; estimatorPickerScreen='artisan' shows list directly. */
           var descEl2 = document.getElementById('res-desc');
           var addrEl2 = document.getElementById('res-address');
           var phoneEl2 = document.getElementById('res-phone');
           if (descEl2) state.description = descEl2.value;
           if (addrEl2) state.address = addrEl2.value;
           if (phoneEl2) state.phone = phoneEl2.value;
-          state.artisan = null;
+          state.artisan              = null;
+          state.estimatorPickerScreen = 'artisan';
           render();
         } else if (dest === 'step1') {
           /* Step 2 → Step 1: reuse existing _goToStep1 */
@@ -375,7 +380,15 @@
       /* Priority A.5 — Estimator profile link: write return marker, allow native navigation */
       var profileLink = e.target.closest ? e.target.closest('[data-estimator-profile]') : null;
       if (profileLink && modal.contains(profileLink)) {
-        try { sessionStorage.setItem('fx_estimator_return_v1', 'artisan-picker'); } catch (_) {}
+        try {
+          sessionStorage.setItem('fx_estimator_return_v1', 'artisan-picker');
+          /* 7C.9L.3W: persist manually-selected city as UX hint (non-pricing, non-authority). */
+          if (state.estimatorCity) {
+            sessionStorage.setItem('fx_estimator_return_city_v1', state.estimatorCity);
+          } else {
+            sessionStorage.removeItem('fx_estimator_return_city_v1');
+          }
+        } catch (_) {}
         /* Allow native <a href> navigation — do NOT call _selectArtisanFromPicker */
         return;
       }
@@ -534,6 +547,12 @@
         <!-- Header -->
         <div class="fixeo-res-header">
           <div class="fixeo-res-header-left">
+            ${state._estimatorCtx && state._estimatorCtx.valid ? `
+            <button type="button" class="fixeo-res-btn-secondary" data-res-back="artisan"
+              aria-label="Retour au choix de l'artisan"
+              style="font-size:.78rem;padding:7px 11px;margin-right:6px;display:flex;align-items:center;gap:4px;flex-shrink:0">
+              ← Retour
+            </button>` : ''}
             <div class="fixeo-res-header-icon">${catIcon}</div>
             <div>
               <div class="fixeo-res-header-title">${state.isExpress ? '🚀 Réservation Express' : state.isUrgent ? '⚡ Intervention urgente' : '📅 Réserver un artisan'}</div>
@@ -714,11 +733,6 @@
 
             <div class="fixeo-res-error" id="res-error" style="display:none"></div>
 
-            ${state._estimatorCtx && state._estimatorCtx.valid ? `
-            <button type="button" class="fixeo-res-btn-secondary" data-res-back="artisan"
-              style="margin-bottom:8px;font-size:.82rem;padding:10px 16px;display:flex;align-items:center;gap:5px">
-              ← Retour
-            </button>` : ''}
             <button class="fixeo-res-btn-primary" id="res-step1-cta"
                     style="${state.isUrgent ? 'background:linear-gradient(135deg,#ff416c,#ff4b2b);box-shadow:0 6px 20px rgba(255,65,108,.35);font-size:1rem;font-weight:800;height:52px;border-radius:14px;letter-spacing:.02em' : ''}"
                     onclick="FixeoReservation._submitStep1()">
@@ -965,21 +979,28 @@
     var topSet = new Set(_ESTIMATOR_TOP_CITIES);
     var otherCities = _ESTIMATOR_CITIES.filter(function(c) { return !topSet.has(c); });
 
+    /* 7C.9L.3W: remembered city = current state.estimatorCity.
+     * Shown with "✓ Sélectionnée" badge — distinct from "Détectée" (geolocation). */
+    var rememberedCity = state.estimatorCity || '';
+    var rememberedNorm = _normCity(rememberedCity);
+
     function _chip(city) {
-      var isSuggested = suggestedDisplay && _normCity(city) === _normCity(suggestedDisplay);
-      /* 7C.9L.3I: data-estimator-city replaces inline onclick.
-       * JSON.stringify produced "City" (double-quoted) inside a double-quoted HTML
-       * attribute — browser terminated onclick at the first inner quote, silently
-       * discarding the entire handler. City never reached _setEstimatorCity.
-       * Fix: city stored in data-estimator-city; delegated listener in modal root reads it.
-       * sanitize() ensures no HTML-special chars in display text. */
-      return '<button type="button" class="fixeo-res-slot' + (isSuggested ? ' active' : '') + '"'
+      var isSuggested  = suggestedDisplay && _normCity(city) === _normCity(suggestedDisplay);
+      var isRemembered = rememberedNorm && _normCity(city) === rememberedNorm;
+      /* 7C.9L.3I: data-estimator-city delegated listener */
+      var chipClass  = 'fixeo-res-slot' + ((isSuggested || isRemembered) ? ' active' : '');
+      var chipBorder = (isSuggested || isRemembered) ? 'border:1.5px solid rgba(225,48,108,.6);' : '';
+      var badge = '';
+      if (isRemembered && !isSuggested) {
+        badge = ' <span style="font-size:.65rem;opacity:.75">✓ Sélectionnée</span>';
+      } else if (isSuggested) {
+        badge = ' <span style="font-size:.65rem;opacity:.75">✓ Détectée</span>';
+      }
+      return '<button type="button" class="' + chipClass + '"'
         + ' data-estimator-city="' + sanitize(city) + '"'
-        + ' style="text-align:center;padding:10px 14px;font-size:.85rem;font-weight:700;cursor:pointer;border-radius:10px;'
-        + (isSuggested ? 'border:1.5px solid rgba(225,48,108,.6);' : '')
-        + '">'
+        + ' style="text-align:center;padding:10px 14px;font-size:.85rem;font-weight:700;cursor:pointer;border-radius:10px;' + chipBorder + '">'
         + sanitize(city)
-        + (isSuggested ? ' <span style="font-size:.65rem;opacity:.75">✓ Détecté</span>' : '')
+        + badge
         + '</button>';
     }
 
@@ -1135,9 +1156,12 @@
   }
 
   function renderArtisanPicker() {
-    /* 7C.9L.3C: Estimator-origin flow — city then artisan cards */
+    /* 7C.9L.3C/3W: Estimator-origin flow.
+     * estimatorPickerScreen separates nav from data: null→derive, 'city'→city picker, 'artisan'→artisan picker */
     if (state._estimatorCtx && state._estimatorCtx.valid && !state.artisan) {
-      if (!state.estimatorCity) {
+      var _screen = state.estimatorPickerScreen ||
+                    (state.estimatorCity ? 'artisan' : 'city');
+      if (_screen === 'city') {
         return renderEstimatorCityPicker();
       }
       return renderEstimatorArtisanPicker();
@@ -1252,7 +1276,11 @@
 
   /* ── 7C.9L.3C: Set estimator city from picker — exposed for inline onclick ── */
   function _setEstimatorCity(city) {
-    state.estimatorCity = city || null;
+    /* 7C.9L.3W: update city data AND navigation screen atomically.
+     * null → city picker ('city'); non-null → artisan picker ('artisan').
+     * "Changer de ville" passes null → city=null, screen=city. */
+    state.estimatorCity        = city || null;
+    state.estimatorPickerScreen = city ? 'artisan' : 'city';
     render();
   }
 
@@ -1271,9 +1299,10 @@
     state.description = '';
     state.address = '';
     state.phone = '';
-    // 7C.9L.3C: reset estimator-origin picker state
-    state._estimatorCtx = null;
-    state.estimatorCity = null;
+    // 7C.9L.3C/3W: reset estimator-origin picker state
+    state._estimatorCtx        = null;
+    state.estimatorCity        = null;
+    state.estimatorPickerScreen = null;  // 3W: reset navigation screen
 
     // Resolve artisan
     state.artisan = artisanInput ? normalizeArtisan(artisanInput) : null;
@@ -1301,13 +1330,55 @@
       window.FixeoEstimatorReservationBridge.verifyContext().then(function(ctx) {
         if (ctx && ctx.valid) {
           state._estimatorCtx = ctx;
-          // 7C.9L.3H: trusted city sealed in pricing context — skip city picker.
-          // city_slug is non-authoritative for price; used only for artisan matching.
-          // null → estimatorCity stays null → city picker shown (normal unknown-city flow).
-          if (ctx.city_slug) state.estimatorCity = ctx.city_slug;
+          if (ctx.city_slug) {
+            // 7C.9L.3H/3W: server-verified city takes absolute precedence.
+            // city_slug is non-authoritative for price; used only for artisan matching + nav.
+            state.estimatorCity         = ctx.city_slug;
+            state.estimatorPickerScreen  = 'artisan';
+            // Clean up any UX city hint — server value wins.
+            try { sessionStorage.removeItem('fx_estimator_return_city_v1'); } catch (_) {}
+          } else {
+            // 7C.9L.3W: token has no city (minted with city_slug:null).
+            // Check UX return hint from profile-return flow.
+            var _returnMarker = '';
+            var _hintCity     = '';
+            try {
+              _returnMarker = sessionStorage.getItem('fx_estimator_return_v1') || '';
+              _hintCity     = sessionStorage.getItem('fx_estimator_return_city_v1') || '';
+            } catch (_) {}
+            if (_returnMarker === 'artisan-picker' && _hintCity) {
+              // Validate against canonical city list before trusting.
+              var _hintNorm = _normCity(_hintCity);
+              var _validCity = _ESTIMATOR_CITIES.find(function(c) {
+                return _normCity(c) === _hintNorm;
+              });
+              if (_validCity) {
+                // Valid UX city — restore artisan picker directly.
+                state.estimatorCity         = _validCity;
+                state.estimatorPickerScreen  = 'artisan';
+                // One-shot: clear both UX return keys immediately.
+                try {
+                  sessionStorage.removeItem('fx_estimator_return_v1');
+                  sessionStorage.removeItem('fx_estimator_return_city_v1');
+                } catch (_) {}
+              } else {
+                // Invalid city — discard both keys, show city picker.
+                try {
+                  sessionStorage.removeItem('fx_estimator_return_v1');
+                  sessionStorage.removeItem('fx_estimator_return_city_v1');
+                } catch (_) {}
+              }
+            }
+            // null → estimatorCity stays null → city picker shown (normal unknown-city flow).
+          }
         }
         render();
       }).catch(function() {
+        // Terminal verify failure — clear UX return keys to prevent infinite loops.
+        try {
+          sessionStorage.removeItem('fx_estimator_return_v1');
+          sessionStorage.removeItem('fx_estimator_return_city_v1');
+        } catch (_) {}
         state._estimatorCtx = null;
         render();
       });
