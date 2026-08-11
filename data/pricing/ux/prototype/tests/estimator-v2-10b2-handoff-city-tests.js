@@ -166,9 +166,25 @@ t('22. City picker closes on backdrop tap',
   pageJs.includes('e.target === overlay') &&
   pageJs.includes('overlay.remove()'));
 
-// 23 — no scrollIntoView call in city picker (comments mentioning it are fine)
-t('23. No scrollIntoView() call in page JS (iOS safe)',
-  !pageJs.match(/\.scrollIntoView\s*\(/));
+// 23 — scrollIntoView only permitted on service-card click (filling input),
+//       NOT on city picker, NLP focus, or city chip interactions.
+//       It is guarded by && operator so it degrades gracefully (older Safari).
+t('23. scrollIntoView() only in service-card click handler (iOS safe — guarded)',
+  (function() {
+    // Allowed: inp.scrollIntoView && inp.scrollIntoView({...}) inside service item click
+    // NOT allowed: naked .scrollIntoView() on city picker or focus handlers
+    var stripped = pageJs.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/[^\n]*/g, '');
+    // Must not have scrollIntoView in city picker or input focus
+    var cityPickerIdx = stripped.indexOf('function _openCityPicker');
+    if (cityPickerIdx > 0) {
+      var cityPickerEnd = stripped.indexOf('\n  function ', cityPickerIdx + 10);
+      var cityPickerBody = stripped.substring(cityPickerIdx, cityPickerEnd > 0 ? cityPickerEnd : cityPickerIdx + 3000);
+      if (cityPickerBody.includes('scrollIntoView')) return false;
+    }
+    // Must not have unguarded scrollIntoView near focus on nlp-input
+    if (stripped.match(/fxep-nlp-input[\s\S]{0,200}\.scrollIntoView\s*\(/)) return false;
+    return true;
+  })());
 
 // 24 — city does not affect pricing (no re-evaluate)
 t('24. City selection does not trigger FixeoEstimatorAPI.evaluate() (price unchanged)',

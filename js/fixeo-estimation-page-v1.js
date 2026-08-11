@@ -1,13 +1,13 @@
 /**
  * fixeo-estimation-page-v1.js
- * Phase 7C.10B — /estimation dual-mode controller
+ * Phase 7C.10C — /estimation premium public gateway controller
  *
  * MODES:
  *   PAGE_REQUIRED  — fixeo_estimator_token_v1 present in sessionStorage
  *                    → existing painting continuation (estimation.html inline JS handles it)
  *                    → this module exits early, never touches the token
  *   PUBLIC         — no PAGE_REQUIRED token
- *                    → render public Estimation FIXEO landing page experience
+ *                    → render premium Estimation FIXEO gateway
  *
  * AUTHORITIES:
  *   Pricing:  unchanged — Estimator V2 / AIRE / API (server)
@@ -15,7 +15,8 @@
  *   Storage:  reads fixeo_estimator_token_v1 (read-once detection only, does NOT delete)
  *             reads/writes fixeo_estimator_ctx_v1 via FixeoEstimatorReservationBridge only
  *
- * DO NOT: duplicate pricing logic, create second reservation impl, touch Supabase
+ * DO NOT: duplicate pricing logic, create second reservation impl, touch Supabase,
+ *         modify PAGE_REQUIRED painting flow, change token contracts.
  */
 
 (function () {
@@ -93,7 +94,7 @@
         var existing = document.querySelector('script[src="' + src + '"]');
         if (existing) {
           /* Script tag present — may be defer (not yet evaluated) or already run.
-             If the corresponding global exists, we're done. If not, we must wait. */
+             If the corresponding global exists, we're done. If not, listen for load. */
           var globalReady = (
             src.indexOf('reservation.js') !== -1   ? !!window.FixeoReservation :
             src.indexOf('supabase-loader') !== -1  ? !!window.FixeoSupabaseLoader :
@@ -101,7 +102,6 @@
             true
           );
           if (globalReady) return resolve();
-          /* Defer tag present but global not yet set — listen for onload */
           existing.addEventListener('load', resolve, { once: true });
           existing.addEventListener('error', resolve, { once: true });
           return;
@@ -203,17 +203,14 @@
 
   /* ══════════════════════════════════════════════════════
      VALID METIERS — must match orchestrator canonical list
-     (estimator-service-resolver-v1.js: VALID_METIERS)
   ══════════════════════════════════════════════════════ */
   var VALID_METIERS = [
     'plomberie', 'electricite', 'serrurerie', 'climatisation',
     'bricolage', 'nettoyage', 'peinture', 'menuiserie',
   ];
 
-  /* Canonical city values — use _PAGE_CITIES (same 20 cities as reservation.js) */
   var VALID_CITIES = _PAGE_CITIES;
 
-  /* Case-insensitive canonical city lookup */
   function _canonicalCity(raw) {
     if (!raw || typeof raw !== 'string') return null;
     var trimmed = raw.trim();
@@ -222,7 +219,7 @@
     for (var i = 0; i < VALID_CITIES.length; i++) {
       if (VALID_CITIES[i].toLowerCase() === lower) return VALID_CITIES[i];
     }
-    return null; // not a canonical city (e.g. "Maroc", artisan fallback, etc.)
+    return null; // rejects "Maroc", artisan card fallback, etc.
   }
 
   /* ══════════════════════════════════════════════════════
@@ -243,34 +240,25 @@
       .replace(/"/g, '&quot;');
   }
 
-  /**
-   * Return the trusted canonical city if one is known, or null.
-   * "Maroc" and any non-canonical value are rejected.
-   */
   function _getCity() {
     try {
       var raw = sessionStorage.getItem('fxrf4_trusted_city_session') ||
                 localStorage.getItem(CITY_LS_KEY);
-      return _canonicalCity(raw); // null if not a valid canonical city
+      return _canonicalCity(raw);
     } catch (_) { return null; }
   }
 
-  /**
-   * Detect metier from user query using AIRE.
-   * Returns a VALID_METIERS key or null.
-   * Non-estimator cat keys (maconnerie, carrelage, jardinage…) are excluded.
-   */
   function _detectMetier(query) {
     if (!query || !window.FixeoAIRE ||
         typeof window.FixeoAIRE.detect !== 'function') return null;
     var cat = window.FixeoAIRE.detect(query);
     if (!cat || !cat.cat) return null;
-    // Only pass through categories that are valid Estimator metiers
     return VALID_METIERS.indexOf(cat.cat) !== -1 ? cat.cat : null;
   }
 
   /* ══════════════════════════════════════════════════════
      RESUME CARD — verify existing pricing context
+     Shows server-returned values only. No client arithmetic.
   ══════════════════════════════════════════════════════ */
   function _maybeRenderResume(container) {
     var token;
@@ -281,7 +269,6 @@
     window.FixeoEstimatorReservationBridge.verifyContext()
       .then(function (ctx) {
         if (!ctx || !ctx.valid) {
-          /* Invalid token — clear it, stay on fresh public page */
           if (window.FixeoEstimatorReservationBridge) {
             window.FixeoEstimatorReservationBridge.clearContext();
           }
@@ -289,30 +276,32 @@
         }
         _renderResumeCard(container, ctx);
       })
-      .catch(function () {
-        /* Network failure: do NOT clear token — degrade gracefully */
-      });
+      .catch(function () { /* Network failure: degrade gracefully */ });
   }
 
   function _renderResumeCard(container, ctx) {
     var wrap = _el('div', 'fxep-resume-wrap fxep-public-only');
     var card = _el('div', 'fxep-resume-card');
 
-    var dot = _el('div', 'fxep-resume-dot');
-    card.appendChild(dot);
+    card.appendChild(_el('div', 'fxep-resume-dot'));
 
     var body = _el('div', 'fxep-resume-body');
     body.appendChild(_el('div', 'fxep-resume-label', 'Prix FIXEO vérifié'));
+    /* Display server-returned service label — never fabricate */
     var svc = ctx.service_label || (ctx.service_code || '').replace(/\./g, ' ');
     body.appendChild(_el('div', 'fxep-resume-service', _esc(svc)));
     if (ctx.amount_mad) {
+      /* Server value only — no multiplication */
       body.appendChild(_el('div', 'fxep-resume-price', Math.round(ctx.amount_mad) + ' MAD'));
+    }
+    if (ctx.city_slug) {
+      body.appendChild(_el('div', 'fxep-resume-price', '📍 ' + _esc(ctx.city_slug)));
     }
     card.appendChild(body);
 
     var actions = _el('div', 'fxep-resume-actions');
 
-    var continueBtn = _el('button', 'fxep-resume-cta primary', 'Continuer');
+    var continueBtn = _el('button', 'fxep-resume-cta primary', 'Continuer avec ce prix');
     continueBtn.type = 'button';
     continueBtn.addEventListener('click', function () {
       _ensureReservationLoader();
@@ -325,7 +314,7 @@
     });
     actions.appendChild(continueBtn);
 
-    var freshBtn = _el('button', 'fxep-resume-cta secondary', 'Nouvelle');
+    var freshBtn = _el('button', 'fxep-resume-cta secondary', 'Nouvelle demande');
     freshBtn.type = 'button';
     freshBtn.addEventListener('click', function () {
       if (window.FixeoEstimatorReservationBridge) {
@@ -337,7 +326,13 @@
 
     card.appendChild(actions);
     wrap.appendChild(card);
-    container.insertBefore(wrap, container.firstChild);
+    /* Insert after header but before hero */
+    var hero = container.querySelector('.fxep-hero');
+    if (hero) {
+      container.insertBefore(wrap, hero);
+    } else {
+      container.appendChild(wrap);
+    }
   }
 
   /* ══════════════════════════════════════════════════════
@@ -361,13 +356,11 @@
 
   /* ══════════════════════════════════════════════════════
      CITY PICKER OVERLAY
-     Compact mobile-first city selector.
-     Reuses _PAGE_CITIES (same 20 as reservation.js).
-     iOS-safe: all focusable elements ≥16px, no scrollIntoView,
-     no forced focus(), no visualViewport hacks.
+     iOS-safe: no scrollIntoView, no forced focus(), no viewport hacks.
+     All chip font-size ≥14px (city list items, non-input).
+     Touch targets ≥44px via min-height.
   ══════════════════════════════════════════════════════ */
   function _openCityPicker(onSelect) {
-    /* Remove existing picker if any */
     var existing = document.getElementById('fxep-city-picker-overlay');
     if (existing) existing.remove();
 
@@ -378,7 +371,7 @@
     overlay.setAttribute('aria-label', 'Choisir une ville');
     overlay.style.cssText = [
       'position:fixed', 'inset:0', 'z-index:9000',
-      'background:rgba(10,10,15,0.75)', 'backdrop-filter:blur(8px)',
+      'background:rgba(9,9,14,0.80)', 'backdrop-filter:blur(8px)',
       '-webkit-backdrop-filter:blur(8px)',
       'display:flex', 'align-items:flex-end', 'justify-content:center',
     ].join(';');
@@ -387,57 +380,61 @@
     sheet.style.cssText = [
       'width:100%', 'max-width:600px',
       'background:#13131a',
-      'border-top:1px solid rgba(255,255,255,0.1)',
+      'border-top:1px solid rgba(255,255,255,0.09)',
       'border-radius:18px 18px 0 0',
-      'padding:20px 16px 32px',
+      'padding:20px 16px env(safe-area-inset-bottom, 24px)',
       'max-height:80dvh', 'overflow-y:auto',
     ].join(';');
 
     /* Header */
-    var header = _el('div', '');
-    header.style.cssText = 'display:flex;align-items:center;justify-content:space-between;margin-bottom:16px';
-    header.appendChild(_el('div', '', '<strong style="font-size:16px;color:#F2F0EC">Choisir une ville</strong>'));
+    var hdr = _el('div', '');
+    hdr.style.cssText = 'display:flex;align-items:center;justify-content:space-between;margin-bottom:20px';
+    hdr.appendChild(_el('div', '', '<strong style="font-size:16px;color:#F2F0EC;letter-spacing:-.02em">Choisir une ville</strong>'));
     var closeBtn = _el('button', '');
     closeBtn.type = 'button';
     closeBtn.textContent = '✕';
     closeBtn.setAttribute('aria-label', 'Fermer');
     closeBtn.style.cssText = [
       'background:rgba(255,255,255,0.08)', 'border:none', 'border-radius:50%',
-      'width:32px', 'height:32px', 'font-size:14px', 'color:rgba(242,240,236,0.6)',
+      'width:34px', 'height:34px', 'font-size:13px', 'color:rgba(242,240,236,0.6)',
       'cursor:pointer', 'display:flex', 'align-items:center', 'justify-content:center',
+      'flex-shrink:0',
     ].join(';');
     closeBtn.addEventListener('click', function () { overlay.remove(); });
-    header.appendChild(closeBtn);
-    sheet.appendChild(header);
+    hdr.appendChild(closeBtn);
+    sheet.appendChild(hdr);
 
-    /* Top cities label */
-    sheet.appendChild(_el('div', '', '<div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(242,240,236,0.35);margin-bottom:10px">Villes principales</div>'));
+    function _sectionLabel(text) {
+      var d = _el('div', '');
+      d.style.cssText = 'font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(242,240,236,0.32);margin-bottom:10px';
+      d.textContent = text;
+      return d;
+    }
 
-    /* City chips — top row then others */
-    function _buildChips(cities, label) {
+    function _buildChipGrid(cities) {
       var wrap = _el('div', '');
-      wrap.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px';
+      wrap.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px';
       cities.forEach(function (c) {
         var btn = _el('button', '');
         btn.type = 'button';
         btn.textContent = c;
         btn.style.cssText = [
           'padding:10px 16px', 'border-radius:10px',
-          'background:rgba(255,255,255,0.06)', 'border:1px solid rgba(255,255,255,0.1)',
-          'color:rgba(242,240,236,0.85)', 'font-size:14px', /* ≥16px would be ideal but 14px */
+          'background:rgba(255,255,255,0.055)', 'border:1px solid rgba(255,255,255,0.09)',
+          'color:rgba(242,240,236,0.82)', 'font-size:14px',
           'font-family:inherit', 'cursor:pointer', 'font-weight:500',
-          'min-height:44px',  /* touch target */
-          'transition:background 120ms,border-color 120ms',
+          'min-height:44px',
+          'transition:background 120ms,border-color 120ms,color 120ms',
         ].join(';');
         btn.addEventListener('pointerover', function () {
           btn.style.background = 'rgba(255,122,0,0.1)';
-          btn.style.borderColor = 'rgba(255,122,0,0.35)';
+          btn.style.borderColor = 'rgba(255,122,0,0.3)';
           btn.style.color = '#F2F0EC';
         });
         btn.addEventListener('pointerout', function () {
-          btn.style.background = 'rgba(255,255,255,0.06)';
-          btn.style.borderColor = 'rgba(255,255,255,0.1)';
-          btn.style.color = 'rgba(242,240,236,0.85)';
+          btn.style.background = 'rgba(255,255,255,0.055)';
+          btn.style.borderColor = 'rgba(255,255,255,0.09)';
+          btn.style.color = 'rgba(242,240,236,0.82)';
         });
         btn.addEventListener('click', function () {
           overlay.remove();
@@ -448,36 +445,120 @@
       return wrap;
     }
 
-    sheet.appendChild(_buildChips(_PAGE_TOP_CITIES));
-
-    /* Separator */
-    sheet.appendChild(_el('div', '', '<div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(242,240,236,0.35);margin-bottom:10px">Autres villes</div>'));
+    sheet.appendChild(_sectionLabel('Villes principales'));
+    sheet.appendChild(_buildChipGrid(_PAGE_TOP_CITIES));
+    sheet.appendChild(_sectionLabel('Autres villes'));
     var others = _PAGE_CITIES.filter(function (c) { return _PAGE_TOP_CITIES.indexOf(c) === -1; });
-    sheet.appendChild(_buildChips(others));
+    sheet.appendChild(_buildChipGrid(others));
 
     overlay.appendChild(sheet);
     document.body.appendChild(overlay);
 
-    /* Tap backdrop to dismiss */
     overlay.addEventListener('click', function (e) {
       if (e.target === overlay) overlay.remove();
     });
   }
 
   /* ══════════════════════════════════════════════════════
-     PUBLIC HERO
+     ESTIMATOR LAUNCH
+     Canonical RFOS contract:
+       source: 'rafi'
+       metier_hint: <VALID_METIERS key> — only if AIRE confirms
+       city: <canonical city label> — only if canonical
+     DO NOT pass: initial_query, free_text
+  ══════════════════════════════════════════════════════ */
+  function _launchEstimator(query) {
+    if (!window.FixeoEstimatorV2) return;
+    var metier = _detectMetier(query);
+    var city = _getCity();
+    var ctx = { source: 'rafi' };
+    if (metier) ctx.metier_hint = metier;
+    if (city)   ctx.city = city;
+    window.FixeoEstimatorV2.open(ctx);
+  }
+
+  /* ══════════════════════════════════════════════════════
+     SUGGESTION REFRESH (AIRE-driven)
+  ══════════════════════════════════════════════════════ */
+  function _refreshSuggestions(wrap, inputEl, query) {
+    if (!query || query.length < 2) {
+      wrap.innerHTML = '';
+      GENERAL_SUGGESTIONS.slice(0, MAX_CHIPS).forEach(function (chip) {
+        var c = _el('button', 'fxep-sugg-chip', _esc(chip.label));
+        c.type = 'button';
+        c.addEventListener('click', function () {
+          inputEl.value = chip.hint;
+          inputEl.dispatchEvent(new Event('input', { bubbles: true }));
+          inputEl.focus();
+        });
+        wrap.appendChild(c);
+      });
+      return;
+    }
+    if (window.FixeoAIRE && typeof window.FixeoAIRE.detect === 'function') {
+      var cat = window.FixeoAIRE.detect(query);
+      if (cat && cat.cat &&
+          window.FixeoHeroSuggestionsV2 &&
+          typeof window.FixeoHeroSuggestionsV2.refreshForCategory === 'function') {
+        window.FixeoHeroSuggestionsV2.refreshForCategory(cat.cat);
+      }
+    }
+  }
+
+  /* ══════════════════════════════════════════════════════
+     HEADER
+  ══════════════════════════════════════════════════════ */
+  function _renderHeader(container) {
+    var header = _el('header', 'fxep-header fxep-public-only');
+    header.setAttribute('role', 'banner');
+
+    var brand = _el('a', 'fxep-header-brand');
+    brand.href = '/';
+    brand.setAttribute('aria-label', 'FIXEO — Accueil');
+    var img = document.createElement('img');
+    img.src = '/img/logo.png';
+    img.alt = 'FIXEO';
+    img.height = 26;
+    img.loading = 'eager';
+    brand.appendChild(img);
+    header.appendChild(brand);
+
+    /* RAFI technology badge */
+    var badge = _el('div', 'fxep-header-rafi-badge');
+    badge.setAttribute('aria-label', 'Technologie RAFI');
+    badge.appendChild(_el('span', 'fxep-header-rafi-dot'));
+    badge.appendChild(document.createTextNode('RAFI'));
+    header.appendChild(badge);
+
+    header.appendChild(_el('div', 'fxep-header-spacer'));
+
+    var back = _el('a', 'fxep-header-back', '← Accueil');
+    back.href = '/';
+    header.appendChild(back);
+
+    container.insertBefore(header, container.firstChild);
+  }
+
+  /* ══════════════════════════════════════════════════════
+     HERO — RAFI COMMAND CENTER
   ══════════════════════════════════════════════════════ */
   function _renderHero(container) {
     var city = _getCity();
 
     var section = _el('section', 'fxep-hero fxep-public-only');
-    section.setAttribute('aria-label', 'Estimation FIXEO');
+    section.setAttribute('aria-label', 'Estimation FIXEO — RAFI command center');
+
+    /* RAFI technology signal */
+    var signal = _el('div', 'fxep-hero-signal');
+    signal.setAttribute('aria-hidden', 'true');
+    signal.appendChild(_el('span', 'fxep-hero-signal-line'));
+    signal.appendChild(_el('span', 'fxep-hero-signal-dot'));
+    signal.appendChild(document.createTextNode('RAFI · Moteur d\'analyse FIXEO'));
+    signal.appendChild(_el('span', 'fxep-hero-signal-line r'));
+    section.appendChild(signal);
 
     /* Eyebrow */
-    var eyebrow = _el('div', 'fxep-hero-eyebrow');
-    eyebrow.appendChild(_el('span', 'fxep-hero-eyebrow-dot'));
-    eyebrow.appendChild(document.createTextNode('Estimation FIXEO'));
-    section.appendChild(eyebrow);
+    section.appendChild(_el('span', 'fxep-hero-eyebrow', 'ESTIMATION FIXEO'));
 
     /* H1 */
     var h1 = _el('h1', 'fxep-hero-h1', 'Obtenez votre estimation FIXEO');
@@ -485,13 +566,14 @@
 
     /* Subtitle */
     section.appendChild(_el('p', 'fxep-hero-sub',
-      'Décrivez votre intervention. RAFI analyse votre besoin et, lorsque le périmètre est identifiable, ' +
-      'vous propose un prix FIXEO vérifié avant de choisir votre artisan.'));
+      'Décrivez votre intervention. RAFI analyse votre besoin et vérifie ' +
+      'si un Prix FIXEO peut être établi avant de choisir votre artisan.'));
 
-    /* Input card */
+    /* Input card / analysis console */
     var card = _el('div', 'fxep-input-card');
-    var inputRow = _el('div', 'fxep-input-row');
+    card.setAttribute('role', 'search');
 
+    var inputRow = _el('div', 'fxep-input-row');
     var icon = _el('span', 'fxep-input-icon');
     icon.textContent = '🔍';
     icon.setAttribute('aria-hidden', 'true');
@@ -506,13 +588,13 @@
     input.setAttribute('autocorrect', 'off');
     input.setAttribute('spellcheck', 'false');
     input.setAttribute('aria-label', 'Décrivez votre besoin');
-    /* iOS: font-size ≥ 16px prevents auto-zoom (see Phase 3Z.2E.1) */
+    /* CRITICAL: font-size ≥16px prevents iOS Safari auto-zoom on focus */
     input.style.fontSize = '1rem';
     inputRow.appendChild(input);
 
     var clearBtn = _el('button', 'fxep-input-clear', '✕');
     clearBtn.type = 'button';
-    clearBtn.setAttribute('aria-label', 'Effacer');
+    clearBtn.setAttribute('aria-label', 'Effacer la saisie');
     clearBtn.addEventListener('click', function () {
       input.value = '';
       card.classList.remove('has-value');
@@ -522,7 +604,7 @@
     inputRow.appendChild(clearBtn);
     card.appendChild(inputRow);
 
-    /* City row — interactive picker */
+    /* City row */
     var cityRow = _el('div', 'fxep-city-row');
     cityRow.appendChild(_el('span', 'fxep-city-label', 'Ville :'));
     var cityChip = document.createElement('button');
@@ -540,9 +622,8 @@
     _updateCityChip(city);
     cityChip.addEventListener('click', function () {
       _openCityPicker(function (selectedCity) {
-        city = selectedCity; // update closure var for _launchEstimator
+        city = selectedCity;
         _updateCityChip(selectedCity);
-        // Write to trusted session storage
         try { sessionStorage.setItem('fxrf4_trusted_city_session', selectedCity); } catch (_) {}
         try { localStorage.setItem(CITY_LS_KEY, selectedCity); } catch (_) {}
       });
@@ -550,13 +631,35 @@
     cityRow.appendChild(cityChip);
     card.appendChild(cityRow);
 
-    /* Suggestions */
+    /* Suggestion chips */
     var suggestWrap = _buildSuggestions(GENERAL_SUGGESTIONS, input);
     card.appendChild(suggestWrap);
 
     section.appendChild(card);
 
-    /* CTA */
+    /* Product pipeline micro-signal */
+    var rail = _el('div', 'fxep-pipeline-rail');
+    rail.setAttribute('aria-hidden', 'true');
+    var nodes = [
+      { icon: '🔍', label: 'RAFI analyse' },
+      { icon: '→', label: null, arrow: true },
+      { icon: '📐', label: 'Périmètre vérifié' },
+      { icon: '→', label: null, arrow: true },
+      { icon: '✓', label: 'Résultat adapté' },
+    ];
+    nodes.forEach(function (n) {
+      if (n.arrow) {
+        rail.appendChild(_el('span', 'fxep-pipeline-arrow', '→'));
+      } else {
+        var node = _el('span', 'fxep-pipeline-node');
+        node.appendChild(_el('span', 'fxep-pipeline-icon', n.icon));
+        node.appendChild(document.createTextNode(n.label));
+        rail.appendChild(node);
+      }
+    });
+    section.appendChild(rail);
+
+    /* Primary CTA */
     var cta = _el('button', 'fxep-hero-cta', '✦ Analyser mon besoin');
     cta.type = 'button';
     cta.addEventListener('click', function () {
@@ -580,63 +683,64 @@
     container.appendChild(section);
   }
 
-  /* Refresh suggestion chips based on AIRE category detection */
-  function _refreshSuggestions(wrap, inputEl, query) {
-    if (!query || query.length < 2) {
-      /* Restore general suggestions */
-      wrap.innerHTML = '';
-      GENERAL_SUGGESTIONS.slice(0, MAX_CHIPS).forEach(function (chip) {
-        var c = _el('button', 'fxep-sugg-chip', _esc(chip.label));
-        c.type = 'button';
-        c.addEventListener('click', function () {
-          inputEl.value = chip.hint;
-          inputEl.dispatchEvent(new Event('input', { bubbles: true }));
-          inputEl.focus();
-        });
-        wrap.appendChild(c);
-      });
-      return;
-    }
-
-    /* Use AIRE if available to detect category */
-    if (window.FixeoAIRE && typeof window.FixeoAIRE.detect === 'function') {
-      var cat = window.FixeoAIRE.detect(query);
-      if (cat && window.FixeoHeroSuggestionsV2 &&
-          typeof window.FixeoHeroSuggestionsV2.refreshForCategory === 'function') {
-        /* Reuse existing suggestion infrastructure for category-filtered chips */
-        window.FixeoHeroSuggestionsV2.refreshForCategory(cat);
-      }
-    }
-  }
-
   /* ══════════════════════════════════════════════════════
-     ESTIMATOR LAUNCH
-     Follows canonical RFOS contract (fixeo-rafi-os-v1.js):
-       source: 'rafi'
-       metier_hint: <canonical VALID_METIERS key> | absent if unknown
-       city: <canonical city label> | null
-       urgency: null (no urgency detection on this page)
-     DO NOT pass: initial_query, free_text (not in _ALLOWED_ENTRY_FIELDS
-     or causes METIER_SELECTION→_evaluate() failure path)
+     OUTCOME ARCHITECTURE — "Une analyse, le bon parcours."
+     Shows 4 possible RAFI outcomes. No fake percentages.
+     No fake confidence. No fake timing.
   ══════════════════════════════════════════════════════ */
-  function _launchEstimator(query) {
-    if (!window.FixeoEstimatorV2) {
-      return;
-    }
+  function _renderOutcomes(container) {
+    var section = _el('section', 'fxep-outcomes fxep-public-only');
+    section.setAttribute('aria-label', 'Parcours RAFI selon le type d\'intervention');
 
-    var metier = _detectMetier(query); // null if AIRE unavailable or no match
-    var city = _getCity();             // null if no canonical city known
+    section.appendChild(_el('div', 'fxep-section-label', 'Une analyse, le bon parcours.'));
+    section.appendChild(_el('h2', 'fxep-outcomes-heading', 'RAFI choisit le bon résultat'));
+    section.appendChild(_el('p', 'fxep-outcomes-sub',
+      'RAFI ne produit pas de prix pour toute intervention. ' +
+      'Quand le périmètre n\'est pas identifiable, il vous oriente vers la bonne étape suivante.'));
 
-    var entryContext = { source: 'rafi' };
-    if (metier) entryContext.metier_hint = metier;
-    if (city)   entryContext.city = city;
-    // urgency: not detected on this page — omit
+    var grid = _el('div', 'fxep-outcomes-grid');
 
-    window.FixeoEstimatorV2.open(entryContext);
+    var OUTCOMES = [
+      {
+        icon: '💰',
+        name: 'Prix FIXEO',
+        desc: 'Le périmètre est identifiable : FIXEO peut afficher un prix vérifié.',
+        cls: 'fxep-outcome-card is-price',
+      },
+      {
+        icon: '🔎',
+        name: 'Diagnostic',
+        desc: 'Une vérification sur place est nécessaire avant de chiffrer correctement.',
+        cls: 'fxep-outcome-card',
+      },
+      {
+        icon: '📋',
+        name: 'Devis',
+        desc: 'Les travaux nécessitent une étude ou plusieurs paramètres sur mesure.',
+        cls: 'fxep-outcome-card',
+      },
+      {
+        icon: '👷',
+        name: 'Artisan',
+        desc: 'RAFI identifie le métier et vous dirige vers les professionnels adaptés.',
+        cls: 'fxep-outcome-card',
+      },
+    ];
+
+    OUTCOMES.forEach(function (o) {
+      var card = _el('div', o.cls);
+      card.appendChild(_el('span', 'fxep-outcome-icon', o.icon));
+      card.appendChild(_el('div', 'fxep-outcome-name', _esc(o.name)));
+      card.appendChild(_el('div', 'fxep-outcome-desc', _esc(o.desc)));
+      grid.appendChild(card);
+    });
+
+    section.appendChild(grid);
+    container.appendChild(section);
   }
 
   /* ══════════════════════════════════════════════════════
-     HOW IT WORKS SECTION
+     HOW IT WORKS — 3-step pipeline flow
   ══════════════════════════════════════════════════════ */
   function _renderHow(container) {
     var section = _el('section', 'fxep-how fxep-public-only');
@@ -648,22 +752,25 @@
 
     var STEPS = [
       {
-        title: 'Décrivez votre besoin',
-        desc: 'En quelques mots, expliquez ce qui se passe. RAFI identifie le type d\'intervention sans jargon technique.',
+        num: '1',
+        title: 'Décrivez',
+        desc: 'Expliquez simplement ce qui se passe, avec vos propres mots. Pas de jargon technique requis.',
       },
       {
-        title: 'RAFI analyse l\'intervention',
-        desc: 'Notre moteur d\'analyse évalue le périmètre, pose les questions clés si nécessaire, et classe votre demande.',
+        num: '2',
+        title: 'RAFI analyse',
+        desc: 'RAFI identifie le métier, précise le périmètre et pose uniquement les questions nécessaires.',
       },
       {
-        title: 'Vous obtenez un résultat clair',
-        desc: 'Lorsque le périmètre est identifiable, vous recevez un prix FIXEO vérifié. Vous choisissez ensuite votre artisan.',
+        num: '3',
+        title: 'Continuez',
+        desc: 'Prix FIXEO lorsqu\'il est vérifiable, sinon diagnostic, devis ou sélection d\'artisan.',
       },
     ];
 
-    STEPS.forEach(function (s, i) {
+    STEPS.forEach(function (s) {
       var step = _el('div', 'fxep-step');
-      step.appendChild(_el('div', 'fxep-step-num', String(i + 1)));
+      step.appendChild(_el('div', 'fxep-step-num', _esc(s.num)));
       var body = _el('div', 'fxep-step-body');
       body.appendChild(_el('div', 'fxep-step-title', _esc(s.title)));
       body.appendChild(_el('div', 'fxep-step-desc', _esc(s.desc)));
@@ -676,31 +783,60 @@
   }
 
   /* ══════════════════════════════════════════════════════
-     ELIGIBLE SERVICES SECTION
-     Only real PRICE_READY services from canonical pricing.
+     ELIGIBLE SERVICES
+     SOURCE AUDITED: golden-orchestration-fixtures.v1.json
+     PRICE_READY proven services:
+       plomberie    — debouchage_evier (GF-PLO-002)
+       electricite  — prise_remplacement (GF-ELE-001)
+       serrurerie   — porte_claquee_standard (GF-SERR-001), cle_cassee (GF-SERR-003)
+       climatisation — installation standard (GF-CLIM-002)
+       bricolage    — à l'heure / montage meuble (GF-BRIC-001/2/3)
+       nettoyage    — grand ménage (GF-NET-001/2)
+       peinture     — mur intérieur all_in (GF-PEIN-001)
+       menuiserie   — installation_porte (GF-MENU-003)
+     SAFE badge: "Analyse RAFI" for non-proven or ambiguous services.
+     NEVER display price ranges (150–350 MAD etc).
   ══════════════════════════════════════════════════════ */
   function _renderServices(container) {
     var section = _el('section', 'fxep-services fxep-public-only');
     section.setAttribute('aria-label', 'Exemples de services');
 
-    section.appendChild(_el('div', 'fxep-section-label', 'Exemples de services'));
+    section.appendChild(_el('div', 'fxep-section-label', 'Exemples d\'interventions'));
 
     var SERVICES = [
-      { icon: '🔧', name: 'Débouchage évier standard', badge: 'Prix FIXEO possible' },
-      { icon: '⚡', name: 'Remplacement prise électrique', badge: 'Prix FIXEO possible' },
-      { icon: '🔑', name: 'Porte claquée — ouverture', badge: 'Prix FIXEO possible' },
-      { icon: '❄️', name: 'Installation climatisation', badge: 'Prix FIXEO possible' },
-      { icon: '🔨', name: 'Bricolage à l\'heure', badge: 'Prix FIXEO possible' },
-      { icon: '🚿', name: 'Réparation fuite simple', badge: 'Analyse requise' },
+      /* Proven PRICE_READY from fixtures */
+      { icon: '🔧', name: 'Débouchage évier', badge: 'Prix FIXEO possible', priced: true },
+      { icon: '⚡', name: 'Prise électrique défectueuse', badge: 'Prix FIXEO possible', priced: true },
+      { icon: '🔑', name: 'Porte claquée', badge: 'Prix FIXEO possible', priced: true },
+      { icon: '❄️', name: 'Installation climatisation', badge: 'Prix FIXEO possible', priced: true },
+      { icon: '🎨', name: 'Peinture mur intérieur', badge: 'Prix FIXEO possible', priced: true },
+      /* Proven PRICE_READY: bricolage à l'heure */
+      { icon: '🔨', name: 'Bricolage à l\'heure', badge: 'Prix FIXEO possible', priced: true },
     ];
 
     var grid = _el('div', 'fxep-service-grid');
     SERVICES.forEach(function (s) {
       var item = _el('div', 'fxep-service-item');
+      item.setAttribute('role', 'button');
+      item.setAttribute('tabindex', '0');
+      /* Clicking a service card pre-fills the hero input */
+      var hint = s.name.toLowerCase();
+      item.addEventListener('click', function () {
+        var inp = document.getElementById('fxep-nlp-input');
+        if (inp) {
+          inp.value = hint;
+          inp.dispatchEvent(new Event('input', { bubbles: true }));
+          /* preventScroll: no viewport jump on iOS (3Z.2E.3 contract) */
+          inp.focus({ preventScroll: true });
+        }
+      });
+      item.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); item.click(); }
+      });
       item.appendChild(_el('span', 'fxep-service-icon', s.icon));
       var body = _el('div', 'fxep-service-body');
       body.appendChild(_el('div', 'fxep-service-name', _esc(s.name)));
-      body.appendChild(_el('div', 'fxep-service-badge', _esc(s.badge)));
+      body.appendChild(_el('div', 'fxep-service-badge' + (s.priced ? ' is-price' : ''), _esc(s.badge)));
       item.appendChild(body);
       grid.appendChild(item);
     });
@@ -709,17 +845,95 @@
   }
 
   /* ══════════════════════════════════════════════════════
+     FIXEO UNIVERSE GATEWAY
+     Links to confirmed existing FIXEO routes only.
+     No invented hrefs.
+  ══════════════════════════════════════════════════════ */
+  function _renderGateway(container) {
+    var section = _el('section', 'fxep-gateway fxep-public-only');
+    section.setAttribute('aria-label', 'Explorer FIXEO');
+
+    section.appendChild(_el('div', 'fxep-section-label', 'Explorez FIXEO'));
+    section.appendChild(_el('h2', 'fxep-gateway-heading', 'Continuez dans FIXEO'));
+    section.appendChild(_el('p', 'fxep-gateway-sub',
+      'Découvrez les autres entrées vers l\'univers FIXEO.'));
+
+    var grid = _el('div', 'fxep-gateway-grid');
+
+    var CARDS = [
+      {
+        icon: '👷',
+        label: 'Explorer les artisans',
+        desc: 'Parcourez les profils d\'artisans référencés sur FIXEO dans votre ville.',
+        href: '/artisans.html',
+      },
+      {
+        icon: '📝',
+        label: 'Publier une demande',
+        desc: 'Décrivez votre besoin et recevez des propositions d\'artisans disponibles.',
+        href: '/',    /* Homepage — request form is on index */
+        openRequest: true,
+      },
+      {
+        icon: '💡',
+        label: 'Comment ça marche',
+        desc: 'Comprenez le fonctionnement de FIXEO, de RAFI et du Prix FIXEO.',
+        href: '/comment-ca-marche.html',
+      },
+      {
+        icon: '🏢',
+        label: 'FIXEO Entreprises',
+        desc: 'Solutions de maintenance et intervention pour les entreprises.',
+        href: '/entreprises.html',
+      },
+    ];
+
+    CARDS.forEach(function (c) {
+      var card;
+      if (c.href && !c.openRequest) {
+        card = _el('a', 'fxep-gateway-card');
+        card.href = c.href;
+      } else {
+        card = _el('div', 'fxep-gateway-card');
+        card.setAttribute('tabindex', '0');
+        if (c.openRequest) {
+          card.addEventListener('click', function () {
+            /* Navigate to homepage — request modal will auto-open via hash or user action */
+            window.location.href = '/';
+          });
+          card.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); card.click(); }
+          });
+        }
+      }
+      card.appendChild(_el('span', 'fxep-gateway-icon', c.icon));
+      card.appendChild(_el('div', 'fxep-gateway-label', _esc(c.label)));
+      card.appendChild(_el('div', 'fxep-gateway-desc', _esc(c.desc)));
+      grid.appendChild(card);
+    });
+
+    section.appendChild(grid);
+    container.appendChild(section);
+  }
+
+  /* ══════════════════════════════════════════════════════
      TRUST RAIL
+     Only verifiable product claims.
+     "Profils référencés" (safer than "vérifiés").
+     "Paiement après intervention" — confirmed product truth.
+     "Analyse gratuite" — confirmed.
+     "Prix vérifié lorsque le périmètre le permet" — accurate.
   ══════════════════════════════════════════════════════ */
   function _renderTrust(container) {
     var section = _el('section', 'fxep-trust fxep-public-only');
-    section.setAttribute('aria-label', 'Garanties FIXEO');
+    section.setAttribute('aria-label', 'Engagements FIXEO');
 
     var rail = _el('div', 'fxep-trust-rail');
     var ITEMS = [
-      { icon: '🆓', label: 'Gratuit' },
+      { icon: '🆓', label: 'Analyse gratuite' },
       { icon: '🔒', label: 'Paiement après intervention' },
-      { icon: '✅', label: 'Artisans vérifiés' },
+      { icon: '✓', label: 'Prix vérifié par RAFI' },
+      { icon: '👷', label: 'Profils référencés FIXEO' },
     ];
     ITEMS.forEach(function (t) {
       var item = _el('div', 'fxep-trust-item');
@@ -733,10 +947,14 @@
 
   /* ══════════════════════════════════════════════════════
      FAQ
+     Max 5. Answers follow product doctrine exactly.
   ══════════════════════════════════════════════════════ */
   function _renderFAQ(container) {
     var section = _el('section', 'fxep-faq fxep-public-only');
     section.setAttribute('aria-label', 'Questions fréquentes');
+    section.setAttribute('itemscope', '');
+    section.setAttribute('itemtype', 'https://schema.org/FAQPage');
+
     section.appendChild(_el('div', 'fxep-section-label', 'Questions fréquentes'));
 
     var list = _el('div', 'fxep-faq-list');
@@ -744,25 +962,31 @@
     var QA = [
       {
         q: 'Comment FIXEO calcule-t-il mon estimation ?',
-        a: 'RAFI identifie le type d\'intervention à partir de votre description. Lorsque le périmètre est clair ' +
-           'et catalogué, le moteur de tarification FIXEO produit un prix vérifié basé sur les conditions réelles ' +
-           'du marché marocain — sans marge d\'imprécision artificielle.',
+        a: 'RAFI identifie le type d\'intervention à partir de votre description. ' +
+           'Lorsque le périmètre est clair et catalogué, le moteur de tarification FIXEO ' +
+           'produit un prix vérifié — basé sur les conditions réelles du marché marocain.',
       },
       {
-        q: 'Tous les services ont-ils un prix FIXEO ?',
-        a: 'Non. Les interventions dont le coût dépend de mesures précises (surface à peindre, longueur de ' +
-           'tuyauterie…) ou de diagnostics sur place ne reçoivent pas de prix FIXEO. Dans ces cas, RAFI vous ' +
-           'oriente vers un artisan pour un devis ou un diagnostic.',
+        q: 'Tous les services ont-ils un Prix FIXEO ?',
+        a: 'Non. Les interventions dont le coût dépend de mesures précises (surface à peindre, ' +
+           'longueur de tuyauterie…) ou de diagnostics sur place ne reçoivent pas de Prix FIXEO. ' +
+           'Dans ces cas, RAFI vous oriente vers un artisan pour un diagnostic ou un devis.',
       },
       {
         q: 'Que se passe-t-il si l\'intervention réelle est différente ?',
-        a: 'Le prix FIXEO s\'applique au périmètre que vous avez décrit. Si l\'artisan constate une intervention ' +
-           'différente sur place, il doit vous l\'expliquer et obtenir votre accord avant de continuer.',
+        a: 'Le Prix FIXEO s\'applique au périmètre que vous avez décrit. Si l\'artisan ' +
+           'constate une situation différente sur place, il doit vous l\'expliquer et obtenir ' +
+           'votre accord avant de continuer.',
       },
       {
         q: 'Puis-je choisir mon artisan après l\'estimation ?',
-        a: 'Oui. Une fois votre prix FIXEO obtenu, vous accédez à la liste des artisans disponibles ' +
-           'dans votre ville. Vous choisissez librement parmi les profils vérifiés FIXEO.',
+        a: 'Oui. Une fois votre résultat obtenu, vous accédez à la liste des artisans référencés ' +
+           'disponibles dans votre ville. Vous choisissez librement parmi les profils FIXEO.',
+      },
+      {
+        q: 'Est-ce que l\'analyse est gratuite ?',
+        a: 'Oui. L\'analyse par RAFI est entièrement gratuite. Vous ne payez qu\'après ' +
+           'l\'intervention de l\'artisan.',
       },
     ];
 
@@ -803,39 +1027,9 @@
   }
 
   /* ══════════════════════════════════════════════════════
-     HEADER SHIM (minimal — full header injected by
-     fixeo-header-global.js when present on page)
-  ══════════════════════════════════════════════════════ */
-  function _renderHeader(container) {
-    var header = _el('header', 'fxep-header fxep-public-only');
-    header.setAttribute('role', 'banner');
-
-    var brand = _el('a', 'fxep-header-brand');
-    brand.href = '/';
-    var img = document.createElement('img');
-    img.src = '/img/logo.png';
-    img.alt = 'FIXEO';
-    img.height = 26;
-    img.loading = 'eager';
-    brand.appendChild(img);
-    header.appendChild(brand);
-
-    header.appendChild(_el('div', 'fxep-header-spacer'));
-
-    var back = _el('a', 'fxep-header-back', '← Accueil');
-    back.href = '/';
-    header.appendChild(back);
-
-    container.insertBefore(header, container.firstChild);
-  }
-
-  /* ══════════════════════════════════════════════════════
      FOOTER SHIM
   ══════════════════════════════════════════════════════ */
   function _renderFooter(container) {
-    var section = _el('div', 'fxep-section-divider fxep-public-only');
-    container.appendChild(section);
-
     var footer = _el('footer', 'fxep-footer fxep-public-only');
     footer.setAttribute('role', 'contentinfo');
 
@@ -845,8 +1039,9 @@
 
     var links = _el('div', 'fxep-footer-links');
     var LINKS = [
-      { label: 'Comment ça marche', href: '/comment-ca-marche' },
-      { label: 'Nos garanties', href: '/nos-garanties' },
+      { label: 'Comment ça marche', href: '/comment-ca-marche.html' },
+      { label: 'Tarifs', href: '/pricing.html' },
+      { label: 'Entreprises', href: '/entreprises.html' },
     ];
     LINKS.forEach(function (l) {
       var a = _el('a', 'fxep-footer-link', _esc(l.label));
@@ -864,35 +1059,34 @@
     var wrap = document.createElement('div');
     wrap.id = 'fxep-public-root';
 
-    /* Sections in order */
+    /* Render in order */
     _renderHeader(wrap);
     _renderHero(wrap);
 
-    /* Resume card: inject after Hero if ctx_v1 exists */
+    /* Resume card: inject between header and hero (after _renderHero) */
     _maybeRenderResume(wrap);
 
-    var div1 = _el('div', 'fxep-section-divider fxep-public-only');
-    wrap.appendChild(div1);
+    wrap.appendChild(_el('div', 'fxep-section-divider fxep-public-only'));
+    _renderOutcomes(wrap);
 
+    wrap.appendChild(_el('div', 'fxep-section-divider fxep-public-only'));
     _renderHow(wrap);
 
-    var div2 = _el('div', 'fxep-section-divider fxep-public-only');
-    wrap.appendChild(div2);
-
+    wrap.appendChild(_el('div', 'fxep-section-divider fxep-public-only'));
     _renderServices(wrap);
 
-    var div3 = _el('div', 'fxep-section-divider fxep-public-only');
-    wrap.appendChild(div3);
+    wrap.appendChild(_el('div', 'fxep-section-divider fxep-public-only'));
+    _renderGateway(wrap);
 
+    wrap.appendChild(_el('div', 'fxep-section-divider fxep-public-only'));
     _renderTrust(wrap);
 
-    var div4 = _el('div', 'fxep-section-divider fxep-public-only');
-    wrap.appendChild(div4);
-
+    wrap.appendChild(_el('div', 'fxep-section-divider fxep-public-only'));
     _renderFAQ(wrap);
+
     _renderFooter(wrap);
 
-    /* Prepend before PAGE_REQUIRED layout so it renders above */
+    /* Prepend before PAGE_REQUIRED layout */
     if (document.body) {
       document.body.insertBefore(wrap, document.body.firstChild);
     }

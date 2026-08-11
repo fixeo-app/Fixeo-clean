@@ -229,8 +229,8 @@ console.log('\n── CACHE KEYS ──');
 t('T30: fixeo-estimation-engine-v1.js bumped to faee-v2a in index.html',
   idxSrc.includes('fixeo-estimation-engine-v1.js?v=faee-v2a'));
 
-t('T31: reservation.js bumped to v1i in index.html',
-  idxSrc.includes('reservation.js?v=v1k-ios-scroll'));
+t('T31: reservation.js bumped to v1l in index.html',
+  idxSrc.includes('reservation.js?v=v1l-syntax-fix'));
 
 t('T32: VERSION in FAEE updated to faee-v2a',
   faeeSrc.includes("var VERSION          = 'faee-v2a'"));

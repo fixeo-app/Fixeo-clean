@@ -63,9 +63,10 @@ console.log('\n── 7C.10B.1 — PUBLIC ENTRY CONTRACT + CITY HOTFIX ──');
 console.log('\n[1] Public entry payload');
 
 // 1 — metier_hint used (not initial_query as a JS key assignment)
-t('1. entryContext uses metier_hint (not initial_query as assignment)',
-  pageJs.includes('entryContext.metier_hint') &&
-  !pageJs.match(/entryContext\.initial_query\s*=/));
+t('1. entryContext/ctx uses metier_hint (not initial_query as assignment)',
+  (pageJs.includes('entryContext.metier_hint') || pageJs.includes('ctx.metier_hint')) &&
+  !pageJs.match(/entryContext\.initial_query\s*=/) &&
+  !pageJs.match(/ctx\.initial_query\s*=/));
 
 // 2 — source: rafi used (canonical RFOS contract)
 t('2. source: rafi in entryContext (matches RFOS canonical contract)',
@@ -76,7 +77,9 @@ t('3. city passed as entryContext.city (matches RFOS contract)',
   (function() {
     // Must have: entryContext.city = city (or similar)
     return pageJs.includes('entryContext.city = city') ||
-           pageJs.includes("entryContext['city'] = city");
+           pageJs.includes("entryContext['city'] = city") ||
+           pageJs.includes('ctx.city = city') ||
+           pageJs.includes("ctx['city'] = city");
   })());
 
 // 4 — no initial_query assignment in entryContext
@@ -132,7 +135,8 @@ t('12. _detectMetier filters against VALID_METIERS list',
 // 13 — no metier_hint when query is empty/unrecognized
 t('13. entryContext.metier_hint only added when metier is non-null',
   pageJs.includes('if (metier)') &&
-  pageJs.match(/if \(metier\)\s+entryContext\.metier_hint = metier/));
+  (pageJs.match(/if \(metier\)\s+entryContext\.metier_hint = metier/) ||
+   pageJs.match(/if \(metier\)\s+ctx\.metier_hint = metier/)));
 
 /* ══════════════════════════════════════════════════════════
    GROUP 3 — CITY VALIDATION

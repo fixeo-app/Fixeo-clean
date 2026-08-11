@@ -97,6 +97,7 @@
         <a class="fixeo-gh-drawer-link${_activeClass('services.html')}" href="services.html"><span class="fixeo-gh-di" aria-hidden="true">🔧</span> Services</a>
         <a class="fixeo-gh-drawer-link${_activeClass('artisans.html')}" href="artisans.html"><span class="fixeo-gh-di" aria-hidden="true">👷</span> Artisans</a>
         <a class="fixeo-gh-drawer-link${_activeClass('comment-ca-marche.html')}" href="comment-ca-marche.html"><span class="fixeo-gh-di" aria-hidden="true">💡</span> Comment \u00e7a marche</a>
+        <a class="fixeo-gh-drawer-link${_activeClass('estimation.html')}" href="estimation.html"><span class="fixeo-gh-di" aria-hidden="true">✦</span> Estimation FIXEO</a>
         <a class="fixeo-gh-drawer-link${_activeClass('pricing.html')}" href="pricing.html"><span class="fixeo-gh-di" aria-hidden="true">💎</span> Tarifs</a>
         <a class="fixeo-gh-drawer-link${_activeClass('presse-partenariats.html')}" href="presse-partenariats.html"><span class="fixeo-gh-di" aria-hidden="true">📰</span> Presse &amp; Partenariats</a>
         <a class="fixeo-gh-drawer-link fixeo-gh-drawer-link--enterprise${_activeClass('entreprises.html')}" href="entreprises.html"><span class="fixeo-gh-di" aria-hidden="true">🏢</span> Entreprises</a>
