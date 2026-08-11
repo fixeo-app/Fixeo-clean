@@ -738,6 +738,9 @@
   }
 
   function _destroyContainer() {
+    // 7C.9L.3Y.1: remove tunnel ownership class on every true destroy path.
+    // Covers: Estimator own ×, reservation full exit, any terminal failure.
+    try { document.body.classList.remove('fx-estimator-tunnel-active'); } catch (_) {}
     try {
       if (_activeContainer && _activeContainer.parentNode) {
         _activeContainer.parentNode.removeChild(_activeContainer);
@@ -1102,8 +1105,13 @@
           onClose: function() { _destroyContainer(); },
         });
         _activeModal.render();
+        // 7C.9L.3Y.1: mark Estimator tunnel as active — FAB suppressed via CSS.
+        // Removed only in close() → _destroyContainer path (true exit).
+        // hide()/reveal() intentionally do NOT touch this class.
+        try { document.body.classList.add('fx-estimator-tunnel-active'); } catch (_) {}
         return Promise.resolve({ accepted: true });
       } catch (e) {
+        // open() failed before active Estimator established — no class to orphan.
         _destroyContainer();
         return Promise.resolve({ accepted: false, reason: 'init_error' });
       }

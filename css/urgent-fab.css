@@ -120,6 +120,19 @@ body.modal-open #fixeo-urgent-fab {
   transition: opacity 0.20s ease, transform 0.20s ease !important;
 }
 
+/* 7C.9L.3Y.1 — Suppress FAB during full Estimator tunnel (RAFI→Estimator→PRICE_READY→Reservation).
+ * Single source of truth: body.fx-estimator-tunnel-active set by FixeoEstimatorV2.open(),
+ * cleared by FixeoEstimatorV2.close()/_destroyContainer() only (NOT by hide/reveal).
+ * Covers: Estimator open, PRICE_READY, Estimator hidden behind reservation (hide()),
+ *         city-back → reveal(), all internal reservation back transitions.
+ * WhatsApp .chat-widget intentionally excluded. */
+body.fx-estimator-tunnel-active #fixeo-urgent-fab {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transform: translateY(14px) scale(0.88) !important;
+  transition: opacity 0.20s ease, transform 0.20s ease !important;
+}
+
 /* ══════════════════════════════════════════════════════════
    MOBILE — slightly larger tap target
    ══════════════════════════════════════════════════════════ */
