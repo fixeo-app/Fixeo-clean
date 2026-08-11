@@ -282,7 +282,13 @@
   if (!window._fxResEstimatorCityListenerBound) {
     window._fxResEstimatorCityListenerBound = true;
     document.addEventListener('click', function(e) {
-      /* Walk up from event target to find a data-estimator-city chip */
+      var modal = document.getElementById(MODAL_ID);
+      if (!modal) return;
+
+      /* ── 1. City chip tap ─────────────────────────────────────────────────
+       * [data-estimator-city] chips rendered by renderEstimatorCityPicker().
+       * 7C.9L.3I: inline onclick removed — ID was JSON.stringify("City") in
+       * double-quoted attr → truncated by HTML parser → handler never fired. */
       var chip = e.target.closest
         ? e.target.closest('[data-estimator-city]')
         : (function() {
@@ -293,21 +299,57 @@
             }
             return null;
           })();
-      if (!chip) return;
+      if (chip && modal.contains(chip)) {
+        e.preventDefault();
+        e.stopPropagation();
+        var city = chip.getAttribute('data-estimator-city');
+        if (city && window.FixeoReservation &&
+            typeof window.FixeoReservation._setEstimatorCity === 'function') {
+          window.FixeoReservation._setEstimatorCity(city);
+        }
+        return;
+      }
 
-      /* Scope strictly to the reservation modal */
-      var modal = document.getElementById(MODAL_ID);
-      if (!modal || !modal.contains(chip)) return;
+      /* ── 2. Estimator artisan card selection ──────────────────────────────
+       * 7C.9L.3K: inline onclick on article + CTA both used JSON.stringify(id)
+       * inside double-quoted HTML attr → truncated → neither fired.
+       * Fix: article[data-estimator-id] carries the ID; CTA has data-estimator-select.
+       *
+       * Priority A: CTA button tap ([data-estimator-select]) — explicit user intent.
+       *   Finds parent article[data-estimator-id], reads ID, calls _selectArtisanFromPicker.
+       *   stopPropagation prevents the card-body branch below from also firing.
+       *
+       * Priority B: Card body tap anywhere on article[data-estimator-id] NOT on
+       *   a button/a/interactive child (other than data-estimator-select which is
+       *   handled above). Selects same artisan. */
+      if (!modal.contains(e.target)) return;
 
-      e.preventDefault();
-      e.stopPropagation();
+      /* Priority A — CTA ([data-estimator-select]) */
+      var selectBtn = e.target.closest ? e.target.closest('[data-estimator-select]') : null;
+      if (selectBtn && modal.contains(selectBtn)) {
+        e.preventDefault();
+        e.stopPropagation();
+        var article = selectBtn.closest ? selectBtn.closest('article[data-estimator-id]') : null;
+        var artisanId = article && article.getAttribute('data-estimator-id');
+        if (artisanId && window.FixeoReservation &&
+            typeof window.FixeoReservation._selectArtisanFromPicker === 'function') {
+          window.FixeoReservation._selectArtisanFromPicker(artisanId);
+        }
+        return;
+      }
 
-      var city = chip.getAttribute('data-estimator-city');
-      if (!city) return;
-
-      if (window.FixeoReservation &&
-          typeof window.FixeoReservation._setEstimatorCity === 'function') {
-        window.FixeoReservation._setEstimatorCity(city);
+      /* Priority B — card body tap (not on unrelated interactive controls) */
+      if (e.target.closest && e.target.closest('button:not([data-estimator-select]), a, [role="button"]:not(article[data-estimator-id])')) return;
+      var artCard = e.target.closest ? e.target.closest('article[data-estimator-id]') : null;
+      if (artCard && modal.contains(artCard)) {
+        e.preventDefault();
+        e.stopPropagation();
+        var cardId = artCard.getAttribute('data-estimator-id');
+        if (cardId && window.FixeoReservation &&
+            typeof window.FixeoReservation._selectArtisanFromPicker === 'function') {
+          window.FixeoReservation._selectArtisanFromPicker(cardId);
+        }
+        return;
       }
     }, true /* capture: fires before target bubbling, handles iOS tap */);
   }

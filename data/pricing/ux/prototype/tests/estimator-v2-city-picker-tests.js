@@ -140,8 +140,10 @@ assert('22. Estimator card has no competing price — hidePrice suppresses facp-
 assert('23. Estimator card uses data-estimator-id (not data-id) — disables profile nav',
   mainSrc.includes("data-estimator-id") && mainSrc.includes("_estimatorMode"));
 
-assert('24. Whole card onclick calls _selectArtisanFromPicker',
-  mainSrc.includes('FixeoReservation._selectArtisanFromPicker'));
+// 7C.9L.3K: inline onclick removed — now delegated via reservation.js listener
+assert('24. Whole card calls _selectArtisanFromPicker (7C.9L.3K: via delegated listener, not inline onclick)',
+  resSrc.includes('_selectArtisanFromPicker(artisanId)') ||
+  resSrc.includes('_selectArtisanFromPicker(cardId)'));
 
 assert('25. CTA text is "Choisir cet artisan" in estimator mode',
   mainSrc.includes('Choisir cet artisan'));
