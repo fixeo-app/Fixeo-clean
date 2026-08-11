@@ -6014,7 +6014,7 @@ html #services.fc3-chapter {
 <script src="js/i18n.js?v=i18n3"></script>
 <script defer src="js/notifications.js?v=50a38b9"></script>
 <script src="js/fixeo-public-profile-links.js?v=50a38b9"></script>
-<script src="js/main.js?v=facp-v2c"></script>
+<script src="js/main.js?v=facp-v2d"></script>
 <!-- fixeo_seed_patch.js DISABLED - seeds now in Supabase -->
   <script src="js/fixeo-matching-engine.js?v=me1"></script>
   <script src="js/fixeo-pricing-marocain.js?v=pm1" defer></script>
@@ -6577,7 +6577,7 @@ window.addEventListener('load', function () {
     if (cb) _queue.push(cb);
 
     /* Load in dependency order: reservation → slot-lock → payment → cod-payment */
-    loadScriptOnce('js/reservation.js?v=v1a')
+    loadScriptOnce('js/reservation.js?v=v1b')
       .then(function () { return loadScriptOnce('js/slot-lock.js?v=50a38b9'); })
       .then(function () { return loadScriptOnce('js/payment.js?v=50a38b9'); })
       .then(function () { return loadScriptOnce('js/cod-payment.js?v=50a38b9'); })
