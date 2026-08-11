@@ -1075,7 +1075,7 @@
         </div>
         <div class="fixeo-res-body">
           ${contextBadge}
-          <div style="${useHomepageCards ? 'display:flex;flex-direction:column;gap:16px' : ''}">
+          <div style="${useOfficialCard ? 'display:flex;flex-direction:column;gap:16px' : ''}">
             ${cardsHtml}
           </div>
         </div>
