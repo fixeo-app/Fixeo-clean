@@ -1,152 +1,170 @@
 /*!
- * css/fixeo-hero-resume-v1.css — fxhro-v1c-qsm-reset
- * Phase 7C.9L.3Z.2C — Stateful Hero Verified Price Resume
+ * css/fixeo-hero-resume-v1.css — fxhro-v1d-visual
+ * Phase 7C.9L.3Z.2D — Premium Hero visual refinement
  *
- * Scope: #fxhro-card + section#home.fxhro-price-ready-state state-hides.
+ * Scope: #fxhro-card + section#home.fxhro-price-ready-state state-hides
+ *        + Hero FRESH state spacing refinements via append-only overrides.
  * Mobile-first: 360–390px primary target.
  *
- * NEVER touches: RFOS structure, QSM layout, legacy Hero, pricing engine.
- * Isolation: all rules scoped to #fxhro-card or #home.fxhro-price-ready-state.
+ * AUTHORITY:
+ *   All rules either scoped to #fxhro-card, #home.fxhro-price-ready-state,
+ *   or explicitly narrowed overrides of rfos-v2c / qsm9 base values.
+ *   Zero pricing, state-machine, or event-handler changes.
+ *   CSS-only. JS logic diff = 0.
  */
 
-/* ── Card container ─────────────────────────────────────── */
+/* ══════════════════════════════════════════════════════════════
+   FRESH HERO — SPACING REFINEMENTS
+   Reduce vertical dead space without losing premium breathing room.
+   All overrides scoped to .rfos-hero-recomposed to avoid global bleed.
+══════════════════════════════════════════════════════════════ */
 
-#fxhro-card {
-  display: none; /* hidden by default — JS shows when PRICE_READY */
-  width: 100%;
-  box-sizing: border-box;
-  padding: 14px 16px 12px;
-  background: rgba(255, 255, 255, 0.07);
-  border: 1px solid rgba(72, 100, 255, 0.22);
-  border-radius: 14px;
-  text-align: center;
-  color: #ffffff;
-  animation: fxhro-fadein 0.28s ease both;
-  order: 1; /* sits after .rfos-stage-wrap (order:1) by DOM order, before #hero-quick-search (order:2) */
+/* Tighter RAFI stage bottom padding → QSM appears higher on screen */
+section#home.rfos-hero-recomposed .rfos-stage-wrap {
+  padding-bottom: 20px; /* was 32px */
 }
 
-@keyframes fxhro-fadein {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
+/* Avatar wrap: reduce halo padding zone */
+section#home.rfos-hero-recomposed .rfos-avatar-wrap {
+  padding: 14px; /* was 20px */
+  margin-bottom: 12px; /* was 18px */
 }
 
-/* ── Eyebrow ────────────────────────────────────────────── */
-
-.fxhro-eyebrow {
-  font-size: 0.60rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: rgba(72, 100, 255, 0.85);
-  margin-bottom: 4px;
+/* Avatar: 80px on mobile — still readable, less vertical mass */
+section#home.rfos-hero-recomposed .rfos-avatar {
+  width: 80px;
+  height: 80px;
 }
 
-/* ── Service label ──────────────────────────────────────── */
-
-.fxhro-service {
-  font-size: 0.90rem;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.92);
-  margin-bottom: 6px;
-  line-height: 1.3;
-  /* Prevent overlong labels from breaking card */
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 100%;
+section#home.rfos-hero-recomposed .rfos-avatar img {
+  width: 66px;
+  height: 66px;
 }
 
-/* ── Price ──────────────────────────────────────────────── */
-
-.fxhro-price {
-  font-size: 1.55rem;
-  font-weight: 800;
-  color: #ffffff;
-  letter-spacing: -0.01em;
-  margin-bottom: 4px;
-  line-height: 1.1;
+/* Halo: softer bloom — less diffuse neon spread */
+section#home.rfos-hero-recomposed .rfos-halo {
+  background: radial-gradient(
+    ellipse at 48% 44%,
+    rgba(72, 100, 255, 0.20) 0%,
+    rgba(72, 100, 255, 0.08) 40%,
+    transparent 68%
+  );
+  filter: blur(16px); /* was blur(22px) */
 }
 
-.fxhro-price-unit {
-  font-size: 0.92rem;
-  font-weight: 500;
-  opacity: 0.72;
+/* Identity: tighter */
+section#home.rfos-hero-recomposed .rfos-identity {
+  margin-bottom: 10px; /* was 14px */
 }
 
-/* ── City line ──────────────────────────────────────────── */
-
-.fxhro-city {
-  font-size: 0.72rem;
-  color: rgba(255, 255, 255, 0.55);
-  margin-bottom: 12px;
+/* Greeting: slightly tighter line-height on mobile */
+section#home.rfos-hero-recomposed .rfos-greeting {
+  margin-bottom: 2px; /* was 4px */
 }
 
-/* When no city: margin goes on price block */
-#fxhro-card .fxhro-price:last-of-type {
-  margin-bottom: 12px;
+/* QSM: reduce margin below inline host on mobile */
+section#home.rfos-hero-recomposed .qsm-inline-host {
+  margin-bottom: 32px; /* was 50px, allows trust line to appear higher */
 }
 
-/* ── Actions ────────────────────────────────────────────── */
+/* ── QSM console: subtler ambient glow ─────────────────────────
+   On mobile (#hero-quick-search inline mode), the per-segment cards
+   and CTA button carry the FIXEO gradient. Reduce the surrounding
+   bloom that makes the console feel like a neon widget.
+*/
 
-.fxhro-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  width: 100%;
+/* Segment cards: softer focus ring */
+section#home .qsm-search-section .qsm-segment:focus-within {
+  border-color: rgba(225, 48, 108, 0.40); /* was 0.55 */
+  box-shadow:
+    0 0 0 3px rgba(225, 48, 108, 0.08), /* was 4px / 0.12 */
+    0 8px 22px rgba(0, 0, 0, 0.12);     /* was 12px / 0.14 */
 }
 
-/* Primary CTA */
-#fxhro-btn-continue {
-  display: block;
-  width: 100%;
-  padding: 13px 16px;
-  border: none;
-  border-radius: 10px;
-  background: linear-gradient(135deg, #4864ff 0%, #6c47ff 100%);
-  color: #ffffff;
-  font-size: 0.90rem;
-  font-weight: 700;
-  cursor: pointer;
-  min-height: 48px; /* iOS touch target */
-  transition: opacity 0.15s ease, transform 0.12s ease;
-  -webkit-tap-highlight-color: transparent;
+/* CTA button: keep gradient bright but reduce outer glow spread */
+section#home #qsm-btn-search {
+  box-shadow:
+    0 8px 20px rgba(225, 48, 108, 0.22), /* was 30px / 0.30 */
+    0 0 10px rgba(131, 58, 180, 0.10);   /* was 18px / 0.16 */
 }
 
-#fxhro-btn-continue:hover {
-  opacity: 0.88;
-}
-#fxhro-btn-continue:active {
-  transform: scale(0.97);
-}
-
-/* Secondary CTA */
-#fxhro-btn-new {
-  display: block;
-  width: 100%;
-  padding: 9px 16px;
-  border: none;
-  background: transparent;
-  color: rgba(255, 255, 255, 0.52);
-  font-size: 0.78rem;
-  font-weight: 500;
-  cursor: pointer;
-  min-height: 36px;
-  transition: color 0.15s ease;
-  -webkit-tap-highlight-color: transparent;
+section#home #qsm-btn-search:hover {
+  box-shadow:
+    0 10px 24px rgba(225, 48, 108, 0.28),
+    0 0 12px rgba(131, 58, 180, 0.12);
 }
 
-#fxhro-btn-new:hover {
-  color: rgba(255, 255, 255, 0.80);
+/* ── Hero Insights: subtler presentation ─────────────────────── */
+section#home #fxhi-bar {
+  margin-top: 4px; /* was 8px */
 }
 
-/* ── PRICE_READY state hides ────────────────────────────── */
+/* ══════════════════════════════════════════════════════════════
+   PRICE_READY STATE — VISUAL TRANSFORMATION
+   When #home.fxhro-price-ready-state:
+     1. QSM search console visually hidden (CSS only, DOM preserved)
+     2. RAFI stage compacted
+     3. Verified price card becomes primary surface
+══════════════════════════════════════════════════════════════ */
 
-/* Show the card */
+/* ── 1. Hide normal search console in PRICE_READY ───────────────
+   #hero-quick-search contains: input, city select, CTA, insights.
+   These are superseded by the verified price card.
+   CSS hide only — DOM/state/listeners fully preserved.
+   When PRICE_READY ends, _dismissPriceReady() removes class → QSM reappears. */
+#home.fxhro-price-ready-state #hero-quick-search {
+  display: none !important;
+}
+
+/* ── 2. Show the card ───────────────────────────────────────── */
 #home.fxhro-price-ready-state #fxhro-card {
   display: block;
 }
 
-/* Hide animated greeting (text stays but opacity→0) */
+/* ── 3. Compact RAFI stage for result mode ──────────────────── */
+#home.fxhro-price-ready-state .rfos-stage-wrap {
+  padding-bottom: 14px; /* tighter — result mode, not invitation mode */
+}
+
+#home.fxhro-price-ready-state .rfos-avatar-wrap {
+  padding: 10px;
+  margin-bottom: 8px;
+}
+
+/* Compact avatar in result mode — 68px */
+#home.fxhro-price-ready-state .rfos-avatar {
+  width: 68px;
+  height: 68px;
+  box-shadow:
+    inset 0 1px 0 rgba(140, 160, 255, 0.10),
+    0 4px 16px rgba(72, 100, 255, 0.10),
+    0 1px 4px rgba(0, 0, 0, 0.18);
+}
+
+#home.fxhro-price-ready-state .rfos-avatar img {
+  width: 56px;
+  height: 56px;
+}
+
+/* Halo: very subtle in result mode */
+#home.fxhro-price-ready-state .rfos-halo {
+  background: radial-gradient(
+    ellipse at 48% 44%,
+    rgba(72, 100, 255, 0.14) 0%,
+    transparent 60%
+  );
+  filter: blur(12px);
+  animation: none;
+}
+
+/* Identity: tighter in result mode */
+#home.fxhro-price-ready-state .rfos-identity {
+  margin-bottom: 6px;
+}
+
+/* ── Hides (existing state hides, kept from v1c) ──────────────── */
+
+/* Hide animated greeting — result has no invitation text */
 #home.fxhro-price-ready-state .rfos-greeting {
   display: none;
 }
@@ -171,51 +189,283 @@
   display: none;
 }
 
-/* Suppress fxhi-bar indicative price pill in PRICE_READY state.
-   We hide the whole bar when a server-verified price is shown.
-   This prevents client-side "120–250 MAD" coexisting with "250 MAD" verified. */
+/* Hide client-side insights bar — server-verified price takes precedence */
 #home.fxhro-price-ready-state #fxhi-bar {
   display: none !important;
 }
 
-/* Freeze any RFOS avatar waiting-loop animation */
+/* Freeze avatar halo breathe animation */
 #home.fxhro-price-ready-state .rfos-halo {
   animation: none;
 }
 
-/* ── Responsive tweaks ──────────────────────────────────── */
+/* ══════════════════════════════════════════════════════════════
+   VERIFIED PRICE CARD
+   #fxhro-card — deep navy premium surface
+══════════════════════════════════════════════════════════════ */
 
+#fxhro-card {
+  display: none; /* hidden by default — shown under fxhro-price-ready-state */
+  width: 100%;
+  box-sizing: border-box;
+  padding: 18px 18px 14px;
+  background:
+    linear-gradient(
+      160deg,
+      rgba(12, 15, 44, 0.96) 0%,
+      rgba(8, 10, 32, 0.97) 100%
+    );
+  border: 1px solid rgba(72, 100, 255, 0.24);
+  border-radius: 16px;
+  text-align: center;
+  color: #ffffff;
+  box-shadow:
+    0 1px 0 rgba(100, 130, 255, 0.14) inset,
+    0 12px 40px rgba(0, 0, 0, 0.50),
+    0 0 0 1px rgba(255, 255, 255, 0.04);
+  order: 1; /* sits between .rfos-stage-wrap and #hero-quick-search */
+  /* Entrance animation */
+  animation: fxhro-fadein 0.26s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes fxhro-fadein {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #fxhro-card { animation: none; }
+}
+
+/* ── Eyebrow ─────────────────────────────────────────────────── */
+
+.fxhro-eyebrow {
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(100, 140, 255, 0.75);
+  margin-bottom: 6px;
+}
+
+/* ── Service label ───────────────────────────────────────────── */
+
+.fxhro-service {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.80);
+  margin-bottom: 8px;
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+  padding: 0 4px;
+}
+
+/* ── Price — dominant typographic element ────────────────────── */
+
+.fxhro-price {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 3px;
+  margin-bottom: 6px;
+  line-height: 1;
+}
+
+.fxhro-price-amount {
+  font-size: 2.60rem;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.fxhro-price-unit {
+  font-size: 1.00rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.55);
+  letter-spacing: 0.02em;
+  align-self: flex-end;
+  padding-bottom: 4px;
+}
+
+/* ── City line ───────────────────────────────────────────────── */
+
+.fxhro-city {
+  font-size: 0.70rem;
+  color: rgba(255, 255, 255, 0.45);
+  margin-bottom: 14px;
+  letter-spacing: 0.01em;
+}
+
+/* When no city: price block provides bottom margin */
+#fxhro-card:not(:has(.fxhro-city)) .fxhro-price {
+  margin-bottom: 14px;
+}
+
+/* Fallback for browsers without :has() */
+#fxhro-card .fxhro-price:only-of-type {
+  margin-bottom: 14px;
+}
+
+/* ── Separator ───────────────────────────────────────────────── */
+
+.fxhro-sep {
+  width: 40px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.10);
+  margin: 0 auto 14px;
+}
+
+/* ── Actions ─────────────────────────────────────────────────── */
+
+.fxhro-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+/* ── Primary CTA — "Continuer avec ce prix" ──────────────────── */
+
+#fxhro-btn-continue {
+  display: block;
+  width: 100%;
+  padding: 14px 20px;
+  border: none;
+  border-radius: 12px;
+  /* FIXEO gradient — consistent with QSM primary */
+  background: linear-gradient(135deg, #E1306C 0%, #833AB4 50%, #405DE6 100%);
+  color: #ffffff;
+  font-size: 0.92rem;
+  font-weight: 700;
+  letter-spacing: 0.005em;
+  cursor: pointer;
+  min-height: 52px;
+  box-shadow:
+    0 6px 20px rgba(225, 48, 108, 0.28),
+    0 2px 6px rgba(0, 0, 0, 0.24);
+  transition: opacity 0.15s ease, transform 0.12s ease, box-shadow 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+#fxhro-btn-continue::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0);
+  transition: background 0.15s ease;
+}
+
+#fxhro-btn-continue:hover::after {
+  background: rgba(255, 255, 255, 0.07);
+}
+
+#fxhro-btn-continue:active {
+  transform: scale(0.97);
+  box-shadow: 0 3px 12px rgba(225, 48, 108, 0.20);
+}
+
+#fxhro-btn-continue:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+/* Focus visible — accessibility */
+#fxhro-btn-continue:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 3px rgba(72, 100, 255, 0.50),
+    0 6px 20px rgba(225, 48, 108, 0.24);
+}
+
+/* ── Secondary CTA — "Nouvelle demande" ─────────────────────── */
+
+#fxhro-btn-new {
+  display: block;
+  width: 100%;
+  padding: 10px 16px;
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.40);
+  font-size: 0.76rem;
+  font-weight: 500;
+  cursor: pointer;
+  min-height: 36px;
+  transition: color 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#fxhro-btn-new:hover {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+#fxhro-btn-new:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.22);
+  border-radius: 6px;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════════════════════════ */
+
+/* ── ≥480px: side-by-side CTAs ───────────────────────────────── */
 @media (min-width: 480px) {
   #fxhro-card {
-    padding: 16px 20px 14px;
+    padding: 20px 22px 16px;
   }
-  .fxhro-price {
-    font-size: 1.75rem;
+  .fxhro-price-amount {
+    font-size: 3.0rem;
   }
   .fxhro-actions {
     flex-direction: row;
+    align-items: center;
     justify-content: center;
+    gap: 10px;
   }
   #fxhro-btn-continue {
     flex: 1;
-    max-width: 260px;
+    max-width: 240px;
   }
   #fxhro-btn-new {
     flex: none;
     width: auto;
-    padding: 9px 20px;
+    padding: 10px 20px;
+    white-space: nowrap;
   }
 }
 
+/* ── ≥768px: desktop — centered, max-width ───────────────────── */
 @media (min-width: 768px) {
   #fxhro-card {
-    max-width: 460px;
+    max-width: 480px;
     margin: 0 auto;
   }
-}
+  .fxhro-price-amount {
+    font-size: 3.20rem;
+  }
 
-@media (prefers-reduced-motion: reduce) {
-  #fxhro-card {
-    animation: none;
+  /* FRESH: larger RAFI on desktop */
+  section#home.rfos-hero-recomposed .rfos-avatar {
+    width: 96px;
+    height: 96px;
+  }
+  section#home.rfos-hero-recomposed .rfos-avatar img {
+    width: 80px;
+    height: 80px;
+  }
+
+  /* PRICE_READY: slightly larger avatar on desktop */
+  #home.fxhro-price-ready-state .rfos-avatar {
+    width: 80px;
+    height: 80px;
+  }
+  #home.fxhro-price-ready-state .rfos-avatar img {
+    width: 66px;
+    height: 66px;
   }
 }
