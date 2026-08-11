@@ -183,35 +183,25 @@ t('27: UX city validated against _ESTIMATOR_CITIES before trust',
   resSrc.includes('_ESTIMATOR_CITIES.find(function(c)') &&
   resSrc.indexOf('_ESTIMATOR_CITIES.find') > resSrc.indexOf('fx_estimator_return_city_v1'));
 
-t('28: invalid UX city clears both return keys (no poisoned state)',
+t('28: invalid UX city hint — window hint cleared one-shot (3W.2 approach)',
   (function() {
-    /* After the validCity check fails, both keys are removed */
-    var idx = resSrc.indexOf('Invalid city') !== -1
-      ? resSrc.indexOf('Invalid city')
-      : resSrc.indexOf('discard both keys');
-    if (idx === -1) idx = resSrc.indexOf('invalid city hint');
+    var idx = resSrc.indexOf('window._fxEstimatorReturnCityHint');
     return idx !== -1 &&
-           resSrc.substring(idx, idx + 300).includes("removeItem('fx_estimator_return_v1')") &&
-           resSrc.substring(idx, idx + 300).includes("removeItem('fx_estimator_return_city_v1')");
+           resSrc.substring(idx, idx + 200).includes("window._fxEstimatorReturnCityHint = ''");
   })());
-
 t('29: profile return sets estimatorPickerScreen=artisan (direct restore)',
   (function() {
     var idx = resSrc.indexOf('Valid UX city — restore artisan picker directly');
-    return idx !== -1 &&
-           resSrc.substring(idx, idx + 200).includes("estimatorPickerScreen  = 'artisan'");
+    if (idx === -1) return false;
+    var block = resSrc.substring(idx, idx + 300);
+    return block.includes('estimatorPickerScreen') && block.includes("'artisan'");
   })());
-
-t('30: profile return city key cleared after successful restore (one-shot)',
+t('30: profile return: window hint cleared one-shot (3W.2: index.html handles sStorage)',
   (function() {
-    var idx = resSrc.indexOf('One-shot: clear both UX return keys immediately');
-    if (idx === -1) idx = resSrc.indexOf('One-shot: clear');
+    var idx = resSrc.indexOf('window._fxEstimatorReturnCityHint');
     return idx !== -1 &&
-           resSrc.substring(idx, idx + 300).includes("removeItem('fx_estimator_return_v1')") &&
-           resSrc.substring(idx, idx + 300).includes("removeItem('fx_estimator_return_city_v1')");
+           resSrc.substring(idx, idx + 200).includes("window._fxEstimatorReturnCityHint = ''");
   })());
-
-/* ── 31–34: Authority + regression guards ── */
 t('31: pricing token NOT cleared by verifyContext or restore logic',
   !resSrc.includes("removeItem('fixeo_estimator_ctx_v1')"));
 

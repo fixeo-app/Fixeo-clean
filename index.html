@@ -6577,7 +6577,7 @@ window.addEventListener('load', function () {
     if (cb) _queue.push(cb);
 
     /* Load in dependency order: reservation → slot-lock → payment → cod-payment */
-    loadScriptOnce('js/reservation.js?v=v1f')
+    loadScriptOnce('js/reservation.js?v=v1g')
       .then(function () { return loadScriptOnce('js/slot-lock.js?v=50a38b9'); })
       .then(function () { return loadScriptOnce('js/payment.js?v=50a38b9'); })
       .then(function () { return loadScriptOnce('js/cod-payment.js?v=50a38b9'); })
@@ -6633,9 +6633,20 @@ window.addEventListener('load', function () {
     if (!hasMarker || !hasToken) return;
 
     _fxEstimatorReturnRestoreInFlight = true;
-    /* Clear one-shot marker before async work — prevents duplicate triggers.
-     * Token is NOT cleared here — verifyContext() needs it. */
+    /* 7C.9L.3W.2/BUG-B: capture city hint BEFORE removing sessionStorage markers.
+     * verifyContext() is async (HTTP round-trip). By the time its .then() callback runs,
+     * sessionStorage markers are already gone — the city restore branch in reservation.js
+     * would find an empty string and skip restoration.
+     * Solution: hoist the city into window._fxEstimatorReturnCityHint (ephemeral, one-shot)
+     * so verifyContext() can read it synchronously from the callback. */
+    window._fxEstimatorReturnCityHint = '';
+    try {
+      window._fxEstimatorReturnCityHint =
+        sessionStorage.getItem('fx_estimator_return_city_v1') || '';
+    } catch (_) {}
+    /* Clear both UX one-shot markers — Token (fixeo_estimator_ctx_v1) is NOT cleared. */
     try { sessionStorage.removeItem(RETURN_MARKER); } catch (_) {}
+    try { sessionStorage.removeItem('fx_estimator_return_city_v1'); } catch (_) {}
 
     loadReservationStack(function() {
       try {

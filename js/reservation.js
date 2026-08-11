@@ -547,12 +547,6 @@
         <!-- Header -->
         <div class="fixeo-res-header">
           <div class="fixeo-res-header-left">
-            ${state._estimatorCtx && state._estimatorCtx.valid ? `
-            <button type="button" class="fixeo-res-btn-secondary" data-res-back="artisan"
-              aria-label="Retour au choix de l'artisan"
-              style="font-size:.78rem;padding:7px 11px;margin-right:6px;display:flex;align-items:center;gap:4px;flex-shrink:0">
-              ← Retour
-            </button>` : ''}
             <div class="fixeo-res-header-icon">${catIcon}</div>
             <div>
               <div class="fixeo-res-header-title">${state.isExpress ? '🚀 Réservation Express' : state.isUrgent ? '⚡ Intervention urgente' : '📅 Réserver un artisan'}</div>
@@ -561,6 +555,19 @@
           </div>
           <button class="fixeo-res-close" onclick="FixeoReservation.close()" aria-label="Fermer">✕</button>
         </div>
+
+        ${/* 7C.9L.3W.2/BUG-A: ← Retour rendered in a standalone nav row OUTSIDE .fixeo-res-header-left.
+           * .fixeo-res-header-left becomes display:none!important when flagship enhancer adds
+           * .fxresf-enhanced to the header — any button inside it is hidden.
+           * This row is a sibling of .fixeo-res-header, never touched by the flagship enhancer. */
+          state._estimatorCtx && state._estimatorCtx.valid ? `
+        <div style="background:var(--fxresf-bg-card,rgba(26,26,36,0.97));border-bottom:1px solid rgba(255,255,255,.07);padding:8px 16px">
+          <button type="button" class="fixeo-res-btn-secondary" data-res-back="artisan"
+            aria-label="Retour au choix de l'artisan"
+            style="font-size:.8rem;padding:7px 14px;display:inline-flex;align-items:center;gap:5px">
+            ← Retour
+          </button>
+        </div>` : ''}
 
         <!-- Steps indicator -->
         <div class="fixeo-res-steps">
@@ -1335,46 +1342,40 @@
             // city_slug is non-authoritative for price; used only for artisan matching + nav.
             state.estimatorCity         = ctx.city_slug;
             state.estimatorPickerScreen  = 'artisan';
-            // Clean up any UX city hint — server value wins.
+            // 7C.9L.3W.2: clear window city hint — server value wins; hint no longer needed.
+            window._fxEstimatorReturnCityHint = '';
+            // Clean up residual UX sessionStorage hint if present.
             try { sessionStorage.removeItem('fx_estimator_return_city_v1'); } catch (_) {}
           } else {
-            // 7C.9L.3W: token has no city (minted with city_slug:null).
-            // Check UX return hint from profile-return flow.
-            var _returnMarker = '';
-            var _hintCity     = '';
-            try {
-              _returnMarker = sessionStorage.getItem('fx_estimator_return_v1') || '';
-              _hintCity     = sessionStorage.getItem('fx_estimator_return_city_v1') || '';
-            } catch (_) {}
-            if (_returnMarker === 'artisan-picker' && _hintCity) {
+            // 7C.9L.3W.2/BUG-B: token has no city (minted with city_slug:null).
+            // index.html removes fx_estimator_return_v1 BEFORE verifyContext() resolves,
+            // so we cannot re-check sessionStorage here. Instead, index.html captures the
+            // city into window._fxEstimatorReturnCityHint before clearing.
+            var _hintCity = (window._fxEstimatorReturnCityHint || '').trim();
+            // One-shot: clear window hint immediately (before any early return).
+            window._fxEstimatorReturnCityHint = '';
+            if (_hintCity) {
               // Validate against canonical city list before trusting.
-              var _hintNorm = _normCity(_hintCity);
+              var _hintNorm  = _normCity(_hintCity);
               var _validCity = _ESTIMATOR_CITIES.find(function(c) {
                 return _normCity(c) === _hintNorm;
               });
               if (_validCity) {
                 // Valid UX city — restore artisan picker directly.
+                // City is UX/matching state only; amount_mad + service come from server ctx.
                 state.estimatorCity         = _validCity;
                 state.estimatorPickerScreen  = 'artisan';
-                // One-shot: clear both UX return keys immediately.
-                try {
-                  sessionStorage.removeItem('fx_estimator_return_v1');
-                  sessionStorage.removeItem('fx_estimator_return_city_v1');
-                } catch (_) {}
-              } else {
-                // Invalid city — discard both keys, show city picker.
-                try {
-                  sessionStorage.removeItem('fx_estimator_return_v1');
-                  sessionStorage.removeItem('fx_estimator_return_city_v1');
-                } catch (_) {}
               }
+              // Invalid city → _validCity = undefined → fall through; estimatorCity stays null.
             }
             // null → estimatorCity stays null → city picker shown (normal unknown-city flow).
           }
         }
         render();
       }).catch(function() {
-        // Terminal verify failure — clear UX return keys to prevent infinite loops.
+        // 7C.9L.3W.2: Terminal verify failure — clear window city hint to prevent loops.
+        window._fxEstimatorReturnCityHint = '';
+        // Clear any residual UX sessionStorage keys (belt-and-suspenders).
         try {
           sessionStorage.removeItem('fx_estimator_return_v1');
           sessionStorage.removeItem('fx_estimator_return_city_v1');
