@@ -1,0 +1,695 @@
+/**
+ * fixeo-estimation-page-v1.js
+ * Phase 7C.10B — /estimation dual-mode controller
+ *
+ * MODES:
+ *   PAGE_REQUIRED  — fixeo_estimator_token_v1 present in sessionStorage
+ *                    → existing painting continuation (estimation.html inline JS handles it)
+ *                    → this module exits early, never touches the token
+ *   PUBLIC         — no PAGE_REQUIRED token
+ *                    → render public Estimation FIXEO landing page experience
+ *
+ * AUTHORITIES:
+ *   Pricing:  unchanged — Estimator V2 / AIRE / API (server)
+ *   Booking:  unchanged — FixeoReservation + Bridge (lazy-loaded)
+ *   Storage:  reads fixeo_estimator_token_v1 (read-once detection only, does NOT delete)
+ *             reads/writes fixeo_estimator_ctx_v1 via FixeoEstimatorReservationBridge only
+ *
+ * DO NOT: duplicate pricing logic, create second reservation impl, touch Supabase
+ */
+
+(function () {
+  'use strict';
+
+  /* ══════════════════════════════════════════════════════
+     CONSTANTS
+  ══════════════════════════════════════════════════════ */
+  var TOKEN_PR_KEY = 'fixeo_estimator_token_v1'; // PAGE_REQUIRED session token
+  var CTX_KEY      = 'fixeo_estimator_ctx_v1';   // pricing context (Bridge owns lifecycle)
+  var CITY_LS_KEY  = 'fixeo_detected_city';
+
+  /* Max suggestion chips on public page */
+  var MAX_CHIPS = 3;
+
+  /* Hardcoded general suggestions (no métier detected yet) */
+  var GENERAL_SUGGESTIONS = [
+    { label: 'Robinet qui fuit', hint: 'robinet fuit' },
+    { label: 'Prise électrique', hint: 'prise electrique' },
+    { label: 'Serrure bloquée', hint: 'serrure bloquee' },
+    { label: 'Débouchage évier', hint: 'debouchage evier' },
+    { label: 'Panne électrique', hint: 'panne electrique' },
+    { label: 'Chauffe-eau en panne', hint: 'chauffe-eau panne' },
+  ];
+
+  /* ══════════════════════════════════════════════════════
+     MODE DETECTION — runs synchronously before DOM paint
+  ══════════════════════════════════════════════════════ */
+  var _mode = 'public'; // default: public
+  try {
+    if (sessionStorage.getItem(TOKEN_PR_KEY)) {
+      _mode = 'page-required';
+    }
+  } catch (_) {
+    /* sessionStorage unavailable — treat as public; existing continuation
+       code in estimation.html will call showRestartState() if no token */
+  }
+
+  /* Apply body class immediately (synchronous, before render) */
+  document.documentElement.classList.add('fxep-mode-' + _mode);
+  if (document.body) {
+    document.body.dataset.estimationMode = _mode;
+    document.body.classList.add('fxep-mode-' + _mode);
+  } else {
+    document.addEventListener('DOMContentLoaded', function () {
+      document.body.dataset.estimationMode = _mode;
+      document.body.classList.add('fxep-mode-' + _mode);
+    }, { once: true });
+  }
+
+  /* PAGE_REQUIRED mode: do nothing — existing continuation code runs */
+  if (_mode === 'page-required') {
+    return;
+  }
+
+  /* ══════════════════════════════════════════════════════
+     LAZY RESERVATION STACK LOADER
+     Identical contract to index.html _loadReservationStack.
+     Single implementation: uses window._loadReservationStack
+     if already available (index.html loaded first, e.g. bfcache),
+     otherwise installs it locally.
+  ══════════════════════════════════════════════════════ */
+  function _ensureReservationLoader() {
+    if (typeof window._loadReservationStack === 'function') return;
+
+    var _loaded  = false;
+    var _loading = false;
+    var _queue   = [];
+
+    function loadScriptOnce(src) {
+      return new Promise(function (resolve) {
+        if (document.querySelector('script[src="' + src + '"]')) return resolve();
+        var s = document.createElement('script');
+        s.src = src;
+        s.onload = resolve;
+        s.onerror = resolve;
+        document.body.appendChild(s);
+      });
+    }
+
+    window._loadReservationStack = function loadReservationStack(cb) {
+      if (_loaded) { if (cb) cb(); return; }
+      if (_loading) { if (cb) _queue.push(cb); return; }
+      _loading = true;
+      if (cb) _queue.push(cb);
+
+      loadScriptOnce('js/reservation.js?v=v1k-ios-scroll')
+        .then(function () { return loadScriptOnce('js/slot-lock.js?v=50a38b9'); })
+        .then(function () { return loadScriptOnce('js/payment.js?v=50a38b9'); })
+        .then(function () { return loadScriptOnce('js/cod-payment.js?v=50a38b9'); })
+        .then(function () { return loadScriptOnce('js/reservation-v2.js?v=v2c5a'); })
+        .then(function () { return loadScriptOnce('js/fixeo-reservation-flagship-v1.js?v=fxresf-v11a'); })
+        .then(function () { return loadScriptOnce('js/fixeo-estimation-engine-v1.js?v=faee-v2a'); })
+        .then(function () { return loadScriptOnce('js/fixeo-review-engine-v1.js?v=frev-v1b'); })
+        .then(function () {
+          _loaded  = true;
+          _loading = false;
+          _queue.forEach(function (fn) { try { fn(); } catch (_) {} });
+          _queue = [];
+        });
+    };
+  }
+
+  /* ══════════════════════════════════════════════════════
+     RESERVATION HANDOFF LISTENER
+     Handles fixeo:estimator-reserve from both:
+     - PAGE_REQUIRED result CTA (painting flow)
+     - PUBLIC Estimator V2 PRICE_READY CTA
+  ══════════════════════════════════════════════════════ */
+  var _reservationHandoffPending = false;
+
+  document.addEventListener('fixeo:estimator-reserve', function (e) {
+    var token = e.detail && e.detail.pricing_context_token;
+    if (!token) return;
+    if (_reservationHandoffPending) return;
+    _reservationHandoffPending = true;
+
+    _ensureReservationLoader();
+    window._loadReservationStack(function () {
+      try {
+        if (!window.FixeoReservation ||
+            typeof window.FixeoReservation.open !== 'function') {
+          _reservationHandoffPending = false;
+          return;
+        }
+        window.FixeoReservation.open(null, false, null);
+
+        /* Hide Estimator V2 if still open (PRICE_READY dom preserved) */
+        if (window.FixeoEstimatorV2 &&
+            typeof window.FixeoEstimatorV2.hide === 'function') {
+          window.FixeoEstimatorV2.hide();
+        }
+      } catch (_err) {
+        _reservationHandoffPending = false;
+        return;
+      }
+      _reservationHandoffPending = false;
+    });
+  });
+
+  /* Preload reservation stack on idle */
+  (function () {
+    var _idle = window.requestIdleCallback
+      ? function (cb) { window.requestIdleCallback(cb, { timeout: 3000 }); }
+      : function (cb) { setTimeout(cb, 2000); };
+    _idle(function () {
+      _ensureReservationLoader();
+      window._loadReservationStack(null);
+    });
+  }());
+
+  /* ══════════════════════════════════════════════════════
+     HELPERS
+  ══════════════════════════════════════════════════════ */
+  function _el(tag, cls, html) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (html != null) e.innerHTML = html;
+    return e;
+  }
+
+  function _esc(s) {
+    return String(s || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function _getCity() {
+    try {
+      var c = sessionStorage.getItem('fxrf4_trusted_city_session') ||
+              localStorage.getItem(CITY_LS_KEY);
+      return c || '';
+    } catch (_) { return ''; }
+  }
+
+  /* ══════════════════════════════════════════════════════
+     RESUME CARD — verify existing pricing context
+  ══════════════════════════════════════════════════════ */
+  function _maybeRenderResume(container) {
+    var token;
+    try { token = sessionStorage.getItem(CTX_KEY); } catch (_) { return; }
+    if (!token) return;
+    if (!window.FixeoEstimatorReservationBridge) return;
+
+    window.FixeoEstimatorReservationBridge.verifyContext()
+      .then(function (ctx) {
+        if (!ctx || !ctx.valid) {
+          /* Invalid token — clear it, stay on fresh public page */
+          if (window.FixeoEstimatorReservationBridge) {
+            window.FixeoEstimatorReservationBridge.clearContext();
+          }
+          return;
+        }
+        _renderResumeCard(container, ctx);
+      })
+      .catch(function () {
+        /* Network failure: do NOT clear token — degrade gracefully */
+      });
+  }
+
+  function _renderResumeCard(container, ctx) {
+    var wrap = _el('div', 'fxep-resume-wrap fxep-public-only');
+    var card = _el('div', 'fxep-resume-card');
+
+    var dot = _el('div', 'fxep-resume-dot');
+    card.appendChild(dot);
+
+    var body = _el('div', 'fxep-resume-body');
+    body.appendChild(_el('div', 'fxep-resume-label', 'Prix FIXEO vérifié'));
+    var svc = ctx.service_label || (ctx.service_code || '').replace(/\./g, ' ');
+    body.appendChild(_el('div', 'fxep-resume-service', _esc(svc)));
+    if (ctx.amount_mad) {
+      body.appendChild(_el('div', 'fxep-resume-price', Math.round(ctx.amount_mad) + ' MAD'));
+    }
+    card.appendChild(body);
+
+    var actions = _el('div', 'fxep-resume-actions');
+
+    var continueBtn = _el('button', 'fxep-resume-cta primary', 'Continuer');
+    continueBtn.type = 'button';
+    continueBtn.addEventListener('click', function () {
+      _ensureReservationLoader();
+      window._loadReservationStack(function () {
+        if (window.FixeoReservation &&
+            typeof window.FixeoReservation.open === 'function') {
+          window.FixeoReservation.open(null, false, null);
+        }
+      });
+    });
+    actions.appendChild(continueBtn);
+
+    var freshBtn = _el('button', 'fxep-resume-cta secondary', 'Nouvelle');
+    freshBtn.type = 'button';
+    freshBtn.addEventListener('click', function () {
+      if (window.FixeoEstimatorReservationBridge) {
+        window.FixeoEstimatorReservationBridge.clearContext();
+      }
+      wrap.remove();
+    });
+    actions.appendChild(freshBtn);
+
+    card.appendChild(actions);
+    wrap.appendChild(card);
+    container.insertBefore(wrap, container.firstChild);
+  }
+
+  /* ══════════════════════════════════════════════════════
+     SUGGESTION CHIPS
+  ══════════════════════════════════════════════════════ */
+  function _buildSuggestions(pool, inputEl) {
+    var chips = pool.slice(0, MAX_CHIPS);
+    var wrap = _el('div', 'fxep-suggestions');
+    chips.forEach(function (chip) {
+      var c = _el('button', 'fxep-sugg-chip', _esc(chip.label));
+      c.type = 'button';
+      c.addEventListener('click', function () {
+        inputEl.value = chip.hint;
+        inputEl.dispatchEvent(new Event('input', { bubbles: true }));
+        inputEl.focus();
+      });
+      wrap.appendChild(c);
+    });
+    return wrap;
+  }
+
+  /* ══════════════════════════════════════════════════════
+     PUBLIC HERO
+  ══════════════════════════════════════════════════════ */
+  function _renderHero(container) {
+    var city = _getCity();
+
+    var section = _el('section', 'fxep-hero fxep-public-only');
+    section.setAttribute('aria-label', 'Estimation FIXEO');
+
+    /* Eyebrow */
+    var eyebrow = _el('div', 'fxep-hero-eyebrow');
+    eyebrow.appendChild(_el('span', 'fxep-hero-eyebrow-dot'));
+    eyebrow.appendChild(document.createTextNode('Estimation FIXEO'));
+    section.appendChild(eyebrow);
+
+    /* H1 */
+    var h1 = _el('h1', 'fxep-hero-h1', 'Obtenez votre estimation FIXEO');
+    section.appendChild(h1);
+
+    /* Subtitle */
+    section.appendChild(_el('p', 'fxep-hero-sub',
+      'Décrivez votre intervention. RAFI analyse votre besoin et, lorsque le périmètre est identifiable, ' +
+      'vous propose un prix FIXEO vérifié avant de choisir votre artisan.'));
+
+    /* Input card */
+    var card = _el('div', 'fxep-input-card');
+    var inputRow = _el('div', 'fxep-input-row');
+
+    var icon = _el('span', 'fxep-input-icon');
+    icon.textContent = '🔍';
+    icon.setAttribute('aria-hidden', 'true');
+    inputRow.appendChild(icon);
+
+    var input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'fxep-nlp-input';
+    input.id = 'fxep-nlp-input';
+    input.placeholder = 'Robinet qui fuit, panne électrique, serrure bloquée…';
+    input.setAttribute('autocomplete', 'off');
+    input.setAttribute('autocorrect', 'off');
+    input.setAttribute('spellcheck', 'false');
+    input.setAttribute('aria-label', 'Décrivez votre besoin');
+    /* iOS: font-size ≥ 16px prevents auto-zoom (see Phase 3Z.2E.1) */
+    input.style.fontSize = '1rem';
+    inputRow.appendChild(input);
+
+    var clearBtn = _el('button', 'fxep-input-clear', '✕');
+    clearBtn.type = 'button';
+    clearBtn.setAttribute('aria-label', 'Effacer');
+    clearBtn.addEventListener('click', function () {
+      input.value = '';
+      card.classList.remove('has-value');
+      input.focus();
+      _refreshSuggestions(suggestWrap, input, null);
+    });
+    inputRow.appendChild(clearBtn);
+    card.appendChild(inputRow);
+
+    /* City row */
+    var cityRow = _el('div', 'fxep-city-row');
+    cityRow.appendChild(_el('span', 'fxep-city-label', 'Ville :'));
+    var cityChip = _el('span', city ? 'fxep-city-chip detected' : 'fxep-city-chip',
+      city ? ('📍 ' + _esc(city)) : '📍 Maroc');
+    cityRow.appendChild(cityChip);
+    card.appendChild(cityRow);
+
+    /* Suggestions */
+    var suggestWrap = _buildSuggestions(GENERAL_SUGGESTIONS, input);
+    card.appendChild(suggestWrap);
+
+    section.appendChild(card);
+
+    /* CTA */
+    var cta = _el('button', 'fxep-hero-cta', '✦ Analyser mon besoin');
+    cta.type = 'button';
+    cta.addEventListener('click', function () {
+      _launchEstimator(input.value.trim());
+    });
+    section.appendChild(cta);
+
+    /* Wire input events */
+    input.addEventListener('input', function () {
+      var val = input.value;
+      card.classList.toggle('has-value', val.length > 0);
+      _refreshSuggestions(suggestWrap, input, val);
+    });
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        _launchEstimator(input.value.trim());
+      }
+    });
+
+    container.appendChild(section);
+  }
+
+  /* Refresh suggestion chips based on AIRE category detection */
+  function _refreshSuggestions(wrap, inputEl, query) {
+    if (!query || query.length < 2) {
+      /* Restore general suggestions */
+      wrap.innerHTML = '';
+      GENERAL_SUGGESTIONS.slice(0, MAX_CHIPS).forEach(function (chip) {
+        var c = _el('button', 'fxep-sugg-chip', _esc(chip.label));
+        c.type = 'button';
+        c.addEventListener('click', function () {
+          inputEl.value = chip.hint;
+          inputEl.dispatchEvent(new Event('input', { bubbles: true }));
+          inputEl.focus();
+        });
+        wrap.appendChild(c);
+      });
+      return;
+    }
+
+    /* Use AIRE if available to detect category */
+    if (window.FixeoAIRE && typeof window.FixeoAIRE.detect === 'function') {
+      var cat = window.FixeoAIRE.detect(query);
+      if (cat && window.FixeoHeroSuggestionsV2 &&
+          typeof window.FixeoHeroSuggestionsV2.refreshForCategory === 'function') {
+        /* Reuse existing suggestion infrastructure for category-filtered chips */
+        window.FixeoHeroSuggestionsV2.refreshForCategory(cat);
+      }
+    }
+  }
+
+  /* ══════════════════════════════════════════════════════
+     ESTIMATOR LAUNCH
+  ══════════════════════════════════════════════════════ */
+  function _launchEstimator(query) {
+    if (!window.FixeoEstimatorV2) {
+      /* Script not loaded yet — should not happen as it's defer-loaded; degrade */
+      return;
+    }
+    var entryContext = {};
+    if (query) entryContext.initial_query = query;
+    var city = _getCity();
+    if (city) entryContext.city_slug = city;
+    window.FixeoEstimatorV2.open(entryContext);
+  }
+
+  /* ══════════════════════════════════════════════════════
+     HOW IT WORKS SECTION
+  ══════════════════════════════════════════════════════ */
+  function _renderHow(container) {
+    var section = _el('section', 'fxep-how fxep-public-only');
+    section.setAttribute('aria-label', 'Comment ça marche');
+
+    section.appendChild(_el('div', 'fxep-section-label', 'Comment ça marche'));
+
+    var steps = _el('div', 'fxep-steps');
+
+    var STEPS = [
+      {
+        title: 'Décrivez votre besoin',
+        desc: 'En quelques mots, expliquez ce qui se passe. RAFI identifie le type d\'intervention sans jargon technique.',
+      },
+      {
+        title: 'RAFI analyse l\'intervention',
+        desc: 'Notre moteur d\'analyse évalue le périmètre, pose les questions clés si nécessaire, et classe votre demande.',
+      },
+      {
+        title: 'Vous obtenez un résultat clair',
+        desc: 'Lorsque le périmètre est identifiable, vous recevez un prix FIXEO vérifié. Vous choisissez ensuite votre artisan.',
+      },
+    ];
+
+    STEPS.forEach(function (s, i) {
+      var step = _el('div', 'fxep-step');
+      step.appendChild(_el('div', 'fxep-step-num', String(i + 1)));
+      var body = _el('div', 'fxep-step-body');
+      body.appendChild(_el('div', 'fxep-step-title', _esc(s.title)));
+      body.appendChild(_el('div', 'fxep-step-desc', _esc(s.desc)));
+      step.appendChild(body);
+      steps.appendChild(step);
+    });
+
+    section.appendChild(steps);
+    container.appendChild(section);
+  }
+
+  /* ══════════════════════════════════════════════════════
+     ELIGIBLE SERVICES SECTION
+     Only real PRICE_READY services from canonical pricing.
+  ══════════════════════════════════════════════════════ */
+  function _renderServices(container) {
+    var section = _el('section', 'fxep-services fxep-public-only');
+    section.setAttribute('aria-label', 'Exemples de services');
+
+    section.appendChild(_el('div', 'fxep-section-label', 'Exemples de services'));
+
+    var SERVICES = [
+      { icon: '🔧', name: 'Débouchage évier standard', badge: 'Prix FIXEO possible' },
+      { icon: '⚡', name: 'Remplacement prise électrique', badge: 'Prix FIXEO possible' },
+      { icon: '🔑', name: 'Porte claquée — ouverture', badge: 'Prix FIXEO possible' },
+      { icon: '❄️', name: 'Installation climatisation', badge: 'Prix FIXEO possible' },
+      { icon: '🔨', name: 'Bricolage à l\'heure', badge: 'Prix FIXEO possible' },
+      { icon: '🚿', name: 'Réparation fuite simple', badge: 'Analyse requise' },
+    ];
+
+    var grid = _el('div', 'fxep-service-grid');
+    SERVICES.forEach(function (s) {
+      var item = _el('div', 'fxep-service-item');
+      item.appendChild(_el('span', 'fxep-service-icon', s.icon));
+      var body = _el('div', 'fxep-service-body');
+      body.appendChild(_el('div', 'fxep-service-name', _esc(s.name)));
+      body.appendChild(_el('div', 'fxep-service-badge', _esc(s.badge)));
+      item.appendChild(body);
+      grid.appendChild(item);
+    });
+    section.appendChild(grid);
+    container.appendChild(section);
+  }
+
+  /* ══════════════════════════════════════════════════════
+     TRUST RAIL
+  ══════════════════════════════════════════════════════ */
+  function _renderTrust(container) {
+    var section = _el('section', 'fxep-trust fxep-public-only');
+    section.setAttribute('aria-label', 'Garanties FIXEO');
+
+    var rail = _el('div', 'fxep-trust-rail');
+    var ITEMS = [
+      { icon: '🆓', label: 'Gratuit' },
+      { icon: '🔒', label: 'Paiement après intervention' },
+      { icon: '✅', label: 'Artisans vérifiés' },
+    ];
+    ITEMS.forEach(function (t) {
+      var item = _el('div', 'fxep-trust-item');
+      item.appendChild(_el('span', 'fxep-trust-icon', t.icon));
+      item.appendChild(document.createTextNode(t.label));
+      rail.appendChild(item);
+    });
+    section.appendChild(rail);
+    container.appendChild(section);
+  }
+
+  /* ══════════════════════════════════════════════════════
+     FAQ
+  ══════════════════════════════════════════════════════ */
+  function _renderFAQ(container) {
+    var section = _el('section', 'fxep-faq fxep-public-only');
+    section.setAttribute('aria-label', 'Questions fréquentes');
+    section.appendChild(_el('div', 'fxep-section-label', 'Questions fréquentes'));
+
+    var list = _el('div', 'fxep-faq-list');
+
+    var QA = [
+      {
+        q: 'Comment FIXEO calcule-t-il mon estimation ?',
+        a: 'RAFI identifie le type d\'intervention à partir de votre description. Lorsque le périmètre est clair ' +
+           'et catalogué, le moteur de tarification FIXEO produit un prix vérifié basé sur les conditions réelles ' +
+           'du marché marocain — sans marge d\'imprécision artificielle.',
+      },
+      {
+        q: 'Tous les services ont-ils un prix FIXEO ?',
+        a: 'Non. Les interventions dont le coût dépend de mesures précises (surface à peindre, longueur de ' +
+           'tuyauterie…) ou de diagnostics sur place ne reçoivent pas de prix FIXEO. Dans ces cas, RAFI vous ' +
+           'oriente vers un artisan pour un devis ou un diagnostic.',
+      },
+      {
+        q: 'Que se passe-t-il si l\'intervention réelle est différente ?',
+        a: 'Le prix FIXEO s\'applique au périmètre que vous avez décrit. Si l\'artisan constate une intervention ' +
+           'différente sur place, il doit vous l\'expliquer et obtenir votre accord avant de continuer.',
+      },
+      {
+        q: 'Puis-je choisir mon artisan après l\'estimation ?',
+        a: 'Oui. Une fois votre prix FIXEO obtenu, vous accédez à la liste des artisans disponibles ' +
+           'dans votre ville. Vous choisissez librement parmi les profils vérifiés FIXEO.',
+      },
+    ];
+
+    QA.forEach(function (qa) {
+      var item = _el('div', 'fxep-faq-item');
+      item.setAttribute('itemscope', '');
+      item.setAttribute('itemprop', 'mainEntity');
+      item.setAttribute('itemtype', 'https://schema.org/Question');
+
+      var btn = _el('button', 'fxep-faq-q');
+      btn.type = 'button';
+      var qText = _el('span', '', _esc(qa.q));
+      qText.setAttribute('itemprop', 'name');
+      btn.appendChild(qText);
+      btn.appendChild(_el('span', 'fxep-faq-chevron', '▾'));
+      btn.setAttribute('aria-expanded', 'false');
+
+      var answer = _el('div', 'fxep-faq-a');
+      answer.setAttribute('itemprop', 'acceptedAnswer');
+      answer.setAttribute('itemscope', '');
+      answer.setAttribute('itemtype', 'https://schema.org/Answer');
+      var aText = _el('span', '', _esc(qa.a));
+      aText.setAttribute('itemprop', 'text');
+      answer.appendChild(aText);
+
+      btn.addEventListener('click', function () {
+        var open = item.classList.toggle('open');
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+
+      item.appendChild(btn);
+      item.appendChild(answer);
+      list.appendChild(item);
+    });
+
+    section.appendChild(list);
+    container.appendChild(section);
+  }
+
+  /* ══════════════════════════════════════════════════════
+     HEADER SHIM (minimal — full header injected by
+     fixeo-header-global.js when present on page)
+  ══════════════════════════════════════════════════════ */
+  function _renderHeader(container) {
+    var header = _el('header', 'fxep-header fxep-public-only');
+    header.setAttribute('role', 'banner');
+
+    var brand = _el('a', 'fxep-header-brand');
+    brand.href = '/';
+    var img = document.createElement('img');
+    img.src = '/img/logo.png';
+    img.alt = 'FIXEO';
+    img.height = 26;
+    img.loading = 'eager';
+    brand.appendChild(img);
+    header.appendChild(brand);
+
+    header.appendChild(_el('div', 'fxep-header-spacer'));
+
+    var back = _el('a', 'fxep-header-back', '← Accueil');
+    back.href = '/';
+    header.appendChild(back);
+
+    container.insertBefore(header, container.firstChild);
+  }
+
+  /* ══════════════════════════════════════════════════════
+     FOOTER SHIM
+  ══════════════════════════════════════════════════════ */
+  function _renderFooter(container) {
+    var section = _el('div', 'fxep-section-divider fxep-public-only');
+    container.appendChild(section);
+
+    var footer = _el('footer', 'fxep-footer fxep-public-only');
+    footer.setAttribute('role', 'contentinfo');
+
+    var brand = _el('a', 'fxep-footer-brand', 'FIXEO');
+    brand.href = '/';
+    footer.appendChild(brand);
+
+    var links = _el('div', 'fxep-footer-links');
+    var LINKS = [
+      { label: 'Comment ça marche', href: '/comment-ca-marche' },
+      { label: 'Nos garanties', href: '/nos-garanties' },
+    ];
+    LINKS.forEach(function (l) {
+      var a = _el('a', 'fxep-footer-link', _esc(l.label));
+      a.href = l.href;
+      links.appendChild(a);
+    });
+    footer.appendChild(links);
+    container.appendChild(footer);
+  }
+
+  /* ══════════════════════════════════════════════════════
+     BOOT — PUBLIC MODE ONLY
+  ══════════════════════════════════════════════════════ */
+  function _mount() {
+    var wrap = document.createElement('div');
+    wrap.id = 'fxep-public-root';
+
+    /* Sections in order */
+    _renderHeader(wrap);
+    _renderHero(wrap);
+
+    /* Resume card: inject after Hero if ctx_v1 exists */
+    _maybeRenderResume(wrap);
+
+    var div1 = _el('div', 'fxep-section-divider fxep-public-only');
+    wrap.appendChild(div1);
+
+    _renderHow(wrap);
+
+    var div2 = _el('div', 'fxep-section-divider fxep-public-only');
+    wrap.appendChild(div2);
+
+    _renderServices(wrap);
+
+    var div3 = _el('div', 'fxep-section-divider fxep-public-only');
+    wrap.appendChild(div3);
+
+    _renderTrust(wrap);
+
+    var div4 = _el('div', 'fxep-section-divider fxep-public-only');
+    wrap.appendChild(div4);
+
+    _renderFAQ(wrap);
+    _renderFooter(wrap);
+
+    /* Prepend before PAGE_REQUIRED layout so it renders above */
+    if (document.body) {
+      document.body.insertBefore(wrap, document.body.firstChild);
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', _mount, { once: true });
+  } else {
+    _mount();
+  }
+
+}());

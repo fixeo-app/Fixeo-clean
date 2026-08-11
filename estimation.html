@@ -3,7 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Estimation FIXEO — Peinture</title>
+  <title>Estimation FIXEO — Obtenez votre prix d'intervention</title>
+  <!-- Reservation CSS (needed in both modes) -->
+  <link rel="stylesheet" href="css/reservation.css?v=50a38b9" />
+  <link rel="stylesheet" href="css/reservation-v2.css?v=3" />
+  <link rel="stylesheet" href="css/fixeo-reservation-flagship-v1.css?v=fxresf-v11a" />
+  <!-- Artisan card CSS (needed for reservation artisan picker) -->
+  <link rel="stylesheet" href="css/artisan-cards-v13.css?v=50a38b9" />
+  <link rel="stylesheet" href="css/artisan-card-conversion-v1.css?v=fxhome-artisan-card-v3b3-estimator" />
+  <link rel="stylesheet" href="css/fixeo-artisan-card-premium-v1.css?v=facp-v1b" />
+  <!-- Page public skin -->
+  <link rel="stylesheet" href="css/fixeo-estimation-page-v1.css?v=fxestpage-v1a" />
+  <!-- Estimator V2 CSS (continuation form) -->
   <link rel="stylesheet" href="css/fixeo-estimator-v2.css" />
   <style>
     body { background: var(--page-bg); }
@@ -203,7 +214,7 @@
   var selectedOption = null;
   var _sessionToken = null;
 
-  /* ── Painting flow (PAGE_REQUIRED) ─────────────────────────── */
+  /* ── Painting flow (measurement continuation) ──────────────── */
   function renderPaintingFlow(metier, serviceCode) {
     var ctxSlot = document.getElementById('page-ctx-slot');
     if (ctxSlot) {
@@ -475,7 +486,7 @@
 
   /* ── Init: session restore from sessionStorage ─────────────── */
   document.addEventListener('DOMContentLoaded', function() {
-    // Try to restore session from sessionStorage (written by estimator when PAGE_REQUIRED)
+    // Try to restore session from sessionStorage (written by estimator for measurement continuation)
     var storedToken = null;
     try {
       storedToken = sessionStorage.getItem(SESSION_KEY);
@@ -501,5 +512,18 @@
 
 }());
 </script>
+
+<!-- ── Shared modules (both modes) ─────────────────────── -->
+<script src="js/fixeo-estimator-config.js" defer></script>
+<script src="js/fixeo-estimator-api-v1.js" defer></script>
+<script src="js/fixeo-estimator-reservation-bridge-v1.js" defer></script>
+<script src="js/fixeo-estimator-v2.js?v=3z2b-reentry" defer></script>
+<!-- AIRE + suggestions (PUBLIC mode) -->
+<script src="js/fixeo-ai-request-engine.js?v=aire-v1a" defer></script>
+<script src="js/fixeo-hero-suggestions-v2.js?v=fxhsv2-v1b-contextual" defer></script>
+<!-- Reservation supabase bridge -->
+<script src="js/fixeo-reservation-supabase-bridge.js?v=v3" defer></script>
+<!-- Dual-mode page controller — must load after bridge/estimator scripts -->
+<script src="js/fixeo-estimation-page-v1.js?v=fxestpage-v1a" defer></script>
 </body>
 </html>
