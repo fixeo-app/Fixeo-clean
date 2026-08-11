@@ -168,6 +168,34 @@
   }());
 
   /* ══════════════════════════════════════════════════════
+     VALID METIERS — must match orchestrator canonical list
+     (estimator-service-resolver-v1.js: VALID_METIERS)
+  ══════════════════════════════════════════════════════ */
+  var VALID_METIERS = [
+    'plomberie', 'electricite', 'serrurerie', 'climatisation',
+    'bricolage', 'nettoyage', 'peinture', 'menuiserie',
+  ];
+
+  /* Canonical city values — from fixeo-cities.js FIXEO_CITIES_MAP.
+     Used to reject invalid/default values ("Maroc", empty, etc.) */
+  var VALID_CITIES = [
+    'Casablanca', 'Rabat', 'Marrakech', 'Fès', 'Tanger',
+    'Agadir', 'Meknès', 'Oujda', 'Kénitra', 'Tétouan', 'Safi', 'El Jadida',
+  ];
+
+  /* Case-insensitive canonical city lookup */
+  function _canonicalCity(raw) {
+    if (!raw || typeof raw !== 'string') return null;
+    var trimmed = raw.trim();
+    if (!trimmed) return null;
+    var lower = trimmed.toLowerCase();
+    for (var i = 0; i < VALID_CITIES.length; i++) {
+      if (VALID_CITIES[i].toLowerCase() === lower) return VALID_CITIES[i];
+    }
+    return null; // not a canonical city (e.g. "Maroc", artisan fallback, etc.)
+  }
+
+  /* ══════════════════════════════════════════════════════
      HELPERS
   ══════════════════════════════════════════════════════ */
   function _el(tag, cls, html) {
@@ -185,12 +213,30 @@
       .replace(/"/g, '&quot;');
   }
 
+  /**
+   * Return the trusted canonical city if one is known, or null.
+   * "Maroc" and any non-canonical value are rejected.
+   */
   function _getCity() {
     try {
-      var c = sessionStorage.getItem('fxrf4_trusted_city_session') ||
-              localStorage.getItem(CITY_LS_KEY);
-      return c || '';
-    } catch (_) { return ''; }
+      var raw = sessionStorage.getItem('fxrf4_trusted_city_session') ||
+                localStorage.getItem(CITY_LS_KEY);
+      return _canonicalCity(raw); // null if not a valid canonical city
+    } catch (_) { return null; }
+  }
+
+  /**
+   * Detect metier from user query using AIRE.
+   * Returns a VALID_METIERS key or null.
+   * Non-estimator cat keys (maconnerie, carrelage, jardinage…) are excluded.
+   */
+  function _detectMetier(query) {
+    if (!query || !window.FixeoAIRE ||
+        typeof window.FixeoAIRE.detect !== 'function') return null;
+    var cat = window.FixeoAIRE.detect(query);
+    if (!cat || !cat.cat) return null;
+    // Only pass through categories that are valid Estimator metiers
+    return VALID_METIERS.indexOf(cat.cat) !== -1 ? cat.cat : null;
   }
 
   /* ══════════════════════════════════════════════════════
@@ -341,11 +387,15 @@
     inputRow.appendChild(clearBtn);
     card.appendChild(inputRow);
 
-    /* City row */
+    /* City row — only show a city chip if canonical city is known */
     var cityRow = _el('div', 'fxep-city-row');
     cityRow.appendChild(_el('span', 'fxep-city-label', 'Ville :'));
-    var cityChip = _el('span', city ? 'fxep-city-chip detected' : 'fxep-city-chip',
-      city ? ('📍 ' + _esc(city)) : '📍 Maroc');
+    var cityChip;
+    if (city) {
+      cityChip = _el('span', 'fxep-city-chip detected', '📍 ' + _esc(city));
+    } else {
+      cityChip = _el('span', 'fxep-city-chip', 'Choisir une ville');
+    }
     cityRow.appendChild(cityChip);
     card.appendChild(cityRow);
 
@@ -410,16 +460,27 @@
 
   /* ══════════════════════════════════════════════════════
      ESTIMATOR LAUNCH
+     Follows canonical RFOS contract (fixeo-rafi-os-v1.js):
+       source: 'rafi'
+       metier_hint: <canonical VALID_METIERS key> | absent if unknown
+       city: <canonical city label> | null
+       urgency: null (no urgency detection on this page)
+     DO NOT pass: initial_query, free_text (not in _ALLOWED_ENTRY_FIELDS
+     or causes METIER_SELECTION→_evaluate() failure path)
   ══════════════════════════════════════════════════════ */
   function _launchEstimator(query) {
     if (!window.FixeoEstimatorV2) {
-      /* Script not loaded yet — should not happen as it's defer-loaded; degrade */
       return;
     }
-    var entryContext = {};
-    if (query) entryContext.initial_query = query;
-    var city = _getCity();
-    if (city) entryContext.city_slug = city;
+
+    var metier = _detectMetier(query); // null if AIRE unavailable or no match
+    var city = _getCity();             // null if no canonical city known
+
+    var entryContext = { source: 'rafi' };
+    if (metier) entryContext.metier_hint = metier;
+    if (city)   entryContext.city = city;
+    // urgency: not detected on this page — omit
+
     window.FixeoEstimatorV2.open(entryContext);
   }
 

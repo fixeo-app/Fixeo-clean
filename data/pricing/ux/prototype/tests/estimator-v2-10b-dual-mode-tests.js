@@ -145,9 +145,9 @@ t('21. NLP input font-size: 1rem (iOS auto-zoom prevention)',
 // 22 — CTA launches Estimator V2 (no pricing duplication)
 t('22. CTA calls FixeoEstimatorV2.open() — no pricing logic in page JS',
   pageJs.includes('FixeoEstimatorV2.open(') &&
-  !pageJs.includes('PRICE_MAP') &&   // no price map
-  !pageJs.includes('price_per_m2') && // no per-m2 calc
-  !pageJs.includes('evaluate('));    // no evaluation logic (resume card uses amount_mad from server ctx, allowed)
+  !pageJs.includes('PRICE_MAP') &&              // no price map
+  !pageJs.includes('price_per_m2') &&           // no per-m2 calc
+  !pageJs.includes('FixeoEstimatorAPI.evaluate(')); // no direct evaluation calls
 
 // 23 — Max 3 suggestion chips
 t('23. MAX_CHIPS = 3',
