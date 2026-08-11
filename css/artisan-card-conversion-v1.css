@@ -2691,3 +2691,252 @@
   }
 }
 /* End V3B2-E */
+
+/* ══════════════════════════════════════════════════════════════════════
+   FXHOME-ARTISAN-CARD-V3B-ESTIMATOR — Modal CSS Parity Block
+   Phase 7C.9L.3S — append-only, never edit lines above.
+   Scope: #fixeo-reservation-modal .fhp-card ...
+   Purpose: Port official V3B card structural rules into the reservation
+   modal, which is NOT a descendant of #fixeo-homepage-vedette-grid.
+   All V3B layout rules were scoped to the homepage grid; without this
+   block, .pvc-trust-v3b-item defaults to display:inline, trust rows
+   collapse, and card spacing is browser-default (unstyled).
+   Differences from homepage:
+     - NO fixed 400px height (estimator cards stack vertically, auto height)
+     - pvc-price-v3b and pvc-price-block: not rendered (estimatorMode)
+     - pvc-profile-v3b opens in new tab (target=_blank in HTML)
+     - pvc-card:hover lift/scale intentionally not ported (scroll context)
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── M-A: Card shell — flex column, official padding, no fixed height ── */
+#fixeo-reservation-modal .fhp-card {
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  padding: 24px 18px 16px !important;
+  gap: 0 !important;
+}
+
+/* ── M-B: Card header — avatar + identity side by side ── */
+#fixeo-reservation-modal .fhp-card .pvc-card-header,
+#fixeo-reservation-modal .fhp-card .pvc-card-header-final {
+  display: flex !important;
+  align-items: center !important;
+  gap: 13px !important;
+  margin-bottom: 6px !important;
+  flex-shrink: 0 !important;
+  padding: 0 !important;
+}
+
+/* ── M-C: Avatar — 88px square, rounded, clipped ── */
+#fixeo-reservation-modal .fhp-card .pvc-avatar {
+  width: 88px !important;
+  height: 88px !important;
+  min-width: 88px !important;
+  flex-shrink: 0 !important;
+  border-radius: 18px !important;
+  overflow: visible !important;
+}
+#fixeo-reservation-modal .fhp-card .pvc-avatar > .pvc-avatar-img,
+#fixeo-reservation-modal .fhp-card .pvc-avatar > .pvc-avatar-silhouette {
+  border-radius: 18px !important;
+  width: 88px !important;
+  height: 88px !important;
+}
+
+/* ── M-D: Identity column — name + city/métier lines ── */
+#fixeo-reservation-modal .fhp-card .pvc-identity,
+#fixeo-reservation-modal .fhp-card .pvc-identity-final {
+  flex: 1 1 0 !important;
+  min-width: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0 !important;
+}
+
+/* ── M-E: Artisan name — two-line clamp ── */
+#fixeo-reservation-modal .fhp-card .pvc-name {
+  font-size: 0.96rem !important;
+  font-weight: 700 !important;
+  line-height: 1.22 !important;
+  letter-spacing: -0.015em !important;
+  color: #fff !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+  margin: 0 0 2px 0 !important;
+}
+
+/* ── M-F: City / métier lines ── */
+#fixeo-reservation-modal .fhp-card .pvc-line {
+  font-size: 0.70rem !important;
+  color: rgba(255,255,255,0.50) !important;
+  line-height: 1.3 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  margin: 0 0 2px 0 !important;
+}
+#fixeo-reservation-modal .fhp-card .pvc-line-available {
+  margin: 0 !important;
+}
+#fixeo-reservation-modal .fhp-card .pvc-line-available:empty {
+  display: none !important;
+}
+
+/* ── M-G: Description — 2-line clamp ── */
+#fixeo-reservation-modal .fhp-card .pvc-desc-v3b {
+  font-size: 0.76rem !important;
+  color: rgba(255,255,255,0.58) !important;
+  line-height: 1.50 !important;
+  margin: 0 0 9px 0 !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+  flex-shrink: 0 !important;
+}
+
+/* ── M-H: Trust block — two rows, each on its own line ── */
+#fixeo-reservation-modal .fhp-card .pvc-trust-v3b {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+  margin-bottom: 10px !important;
+  flex-shrink: 0 !important;
+  width: 100% !important;
+  min-width: 0 !important;
+}
+#fixeo-reservation-modal .fhp-card .pvc-trust-v3b-item {
+  display: flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  font-size: 0.68rem !important;
+  color: rgba(255,255,255,0.44) !important;
+  line-height: 1.2 !important;
+  white-space: nowrap !important;
+  min-width: 0 !important;
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
+}
+#fixeo-reservation-modal .fhp-card .pvc-trust-v3b-icon {
+  font-size: 0 !important;
+  line-height: 0 !important;
+  opacity: 1 !important;
+  flex-shrink: 0 !important;
+}
+#fixeo-reservation-modal .fhp-card .pvc-trust-v3b-icon svg {
+  width: 14px !important;
+  height: 14px !important;
+  display: inline-block !important;
+  vertical-align: middle !important;
+  flex-shrink: 0 !important;
+  color: rgba(255,255,255,0.38) !important;
+}
+
+/* ── M-I: Action area — pushed to bottom by margin-top:auto ── */
+#fixeo-reservation-modal .fhp-card .pvc-action-v3b {
+  margin-top: auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0 !important;
+  flex-shrink: 0 !important;
+}
+
+/* ── M-J: Separator ── */
+#fixeo-reservation-modal .fhp-card .pvc-divider-v3b {
+  height: 1px !important;
+  background: rgba(255,255,255,0.07) !important;
+  margin-bottom: 13px !important;
+  flex-shrink: 0 !important;
+}
+
+/* ── M-K: Primary CTA ── */
+#fixeo-reservation-modal .fhp-card .pvc-btn-v3b {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 7px !important;
+  width: 100% !important;
+  min-height: 42px !important;
+  padding: 12px 20px !important;
+  border-radius: 12px !important;
+  border: none !important;
+  font-family: inherit !important;
+  font-size: 0.88rem !important;
+  font-weight: 700 !important;
+  color: #fff !important;
+  cursor: pointer !important;
+  letter-spacing: 0.015em !important;
+  background-image: linear-gradient(135deg, #ff5a1f 0%, #d42b69 100%) !important;
+  background-color: #d42b69 !important;
+  box-shadow:
+    0 3px 12px rgba(225,48,108,0.22),
+    0 1px 4px rgba(0,0,0,0.28),
+    inset 0 1px 0 rgba(255,255,255,0.09) !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.18) !important;
+  transition: transform 0.18s ease, box-shadow 0.18s ease !important;
+  -webkit-tap-highlight-color: transparent !important;
+  margin-bottom: 6px !important;
+  position: relative !important;
+  overflow: hidden !important;
+  flex-shrink: 0 !important;
+}
+#fixeo-reservation-modal .fhp-card .pvc-btn-v3b:hover {
+  transform: scale(1.02) !important;
+  box-shadow:
+    0 5px 18px rgba(225,48,108,0.30),
+    0 2px 6px rgba(0,0,0,0.30),
+    inset 0 1px 0 rgba(255,255,255,0.12) !important;
+}
+#fixeo-reservation-modal .fhp-card .pvc-btn-v3b:active {
+  transform: scale(0.97) !important;
+}
+
+/* ── M-L: Profile link — new tab, same visual treatment ── */
+#fixeo-reservation-modal .fhp-card .pvc-profile-v3b {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 5px !important;
+  font-size: 0.78rem !important;
+  font-weight: 500 !important;
+  color: rgba(255,255,255,0.58) !important;
+  text-decoration: none !important;
+  min-height: 40px !important;
+  padding: 0 8px !important;
+  border: none !important;
+  border-bottom: 1px solid transparent !important;
+  background: none !important;
+  cursor: pointer !important;
+  font-family: inherit !important;
+  transition: color 0.18s, border-color 0.18s !important;
+  -webkit-tap-highlight-color: transparent !important;
+  letter-spacing: 0.01em !important;
+  border-radius: 8px !important;
+  flex-shrink: 0 !important;
+  text-align: center !important;
+}
+#fixeo-reservation-modal .fhp-card .pvc-profile-v3b:hover {
+  color: rgba(255,255,255,0.85) !important;
+  border-bottom-color: rgba(255,255,255,0.22) !important;
+}
+#fixeo-reservation-modal .fhp-card .pvc-profile-v3b:focus-visible {
+  outline: 2px solid rgba(255,90,31,0.55) !important;
+  outline-offset: 2px !important;
+}
+
+/* ── M-N: Suppress old structural elements (same as V3B-N on homepage) ── */
+#fixeo-reservation-modal .fhp-card .pvc-divider:not(.pvc-divider-v3b),
+#fixeo-reservation-modal .fhp-card .pvc-stats,
+#fixeo-reservation-modal .fhp-card .pvc-live-signals,
+#fixeo-reservation-modal .fhp-card .pvc-trust-line,
+#fixeo-reservation-modal .fhp-card .pvc-footer,
+#fixeo-reservation-modal .fhp-card .pvc-cta-col,
+#fixeo-reservation-modal .fhp-card .pvc-cta-row {
+  display: none !important;
+}
+
+/* End FXHOME-ARTISAN-CARD-V3B-ESTIMATOR */

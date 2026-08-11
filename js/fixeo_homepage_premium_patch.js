@@ -1413,7 +1413,7 @@
      Exposes _buildCard for Estimator picker reuse.
      opts.estimatorMode === true:
        - Suppresses price block ("À partir de X MAD" / "Tarif renseigné")
-       - Suppresses "Voir le profil complet" link
+       - Restores "Voir le profil complet" link (target=_blank — new tab preserves picker state)
        - Renames primary CTA to "Choisir cet artisan"
        - Adds data-estimator-id on article, data-estimator-select on CTA
        - No inline JS in card markup — delegated listener owns selection
@@ -1434,7 +1434,7 @@
     var name     = a.name || a.full_name || 'Artisan Fixeo';
     var aid      = String(a.id || a._supabase_id || '');
 
-    /* Estimator action block: divider + CTA only; no price, no profile link */
+    /* Estimator action block: divider + CTA + safe profile link (new tab) */
     var estimatorAction =
       '<div class="pvc-action-v3b">' +
         '<div class="pvc-divider pvc-divider-v3b"></div>' +
@@ -1443,6 +1443,12 @@
           ' aria-label="Choisir ' + _esc(name) + ', ' + _esc(catLbl) + '">' +
           'Choisir cet artisan' +
         '</button>' +
+        '<a class="pvc-profile-link fhp-btn-profile pvc-profile-v3b"' +
+          ' href="artisan-profile.html?id=' + encodeURIComponent(aid) + '"' +
+          ' target="_blank" rel="noopener noreferrer"' +
+          ' aria-label="Voir le profil complet de ' + _esc(name) + '">' +
+          'Voir le profil complet ›' +
+        '</a>' +
       '</div>' +
     '</article>';
 
