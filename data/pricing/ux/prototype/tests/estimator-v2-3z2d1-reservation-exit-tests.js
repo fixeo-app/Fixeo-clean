@@ -234,8 +234,8 @@ test('20. JS cache key updated to fxhro-v1d-reservation-exit', function () {
   assert(!idxSrc.includes('fixeo-hero-resume-v1.js?v=fxhro-v1c-qsm-reset'), 'old JS key gone');
 });
 
-test('21. reservation.js cache key updated to v1k-ios-scroll', function () {
-  assert(idxSrc.includes('reservation.js?v=v1k-ios-scroll'), 'reservation cache key updated');
+test('21. reservation.js cache key updated to v1l-syntax-fix', function () {
+  assert(idxSrc.includes('reservation.js?v=v1l-syntax-fix'), 'reservation cache key updated');
   assert(!idxSrc.includes('reservation.js?v=v1i'), 'old reservation key gone');
 });
 

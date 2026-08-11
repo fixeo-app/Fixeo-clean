@@ -141,9 +141,9 @@ test('16. No touch-action:none global style added', function () {
 ══════════════════════════════════════════════════════════════ */
 console.log('\n── Group 5: Cache keys ──');
 
-test('17. reservation.js key: v1k-ios-scroll', function () {
-  assert(idxSrc.includes("reservation.js?v=v1k-ios-scroll") ||
-         idxSrc.includes('reservation.js?v=v1k-ios-scroll'),
+test('17. reservation.js key: v1l-syntax-fix', function () {
+  assert(idxSrc.includes("reservation.js?v=v1l-syntax-fix") ||
+         idxSrc.includes('reservation.js?v=v1l-syntax-fix'),
     'reservation JS key updated');
   assert(!idxSrc.includes("reservation.js?v=v1j-hero-exit"),
     'old reservation key gone');
