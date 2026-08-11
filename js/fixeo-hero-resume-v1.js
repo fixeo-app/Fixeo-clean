@@ -23,7 +23,7 @@
  * Deferred until after: FixeoEstimatorReservationBridge, FixeoEstimatorConfig,
  *   FixeoEstimatorV2 (optionally), quick-search-modal.js (for #qsm-input-nlp).
  *
- * Version: fxhro-v1a
+ * Version: fxhro-v1b-reset
  */
 (function () {
   'use strict';
@@ -232,14 +232,18 @@
       window.FixeoEstimatorReservationBridge.clearContext();
     }
 
-    /* Remove verified price card and state class */
-    _dismissPriceReady();
+    /* ── RFOS must be cleared BEFORE _dismissPriceReady() ──────────
+     * During fxhro-price-ready-state, CSS hides .rfos-badge and
+     * .rfos-greeting (display:none) while their DOM content is stale
+     * (old category + "Compris — Plombier" greeting).
+     * _dismissPriceReady() removes fxhro-price-ready-state — which
+     * lifts the CSS hide and immediately reveals the old DOM content.
+     * By running RFOS resets first, badge.visible and greeting.innerHTML
+     * are already overwritten with neutral idle state before the CSS
+     * hide lifts. No visible flash of old category state.
+     */
 
-    /* Clear input text */
-    var inp = _el('qsm-input-nlp');
-    if (inp) inp.value = '';
-
-    /* RFOS memory reset (category/urgency only — city preserved by _mem.reset()) */
+    /* 1. Memory reset: clears category + urgency; preserves city */
     try {
       if (window.FixeoRAFI && window.FixeoRAFI.memory &&
           typeof window.FixeoRAFI.memory.reset === 'function') {
@@ -247,7 +251,10 @@
       }
     } catch (_) {}
 
-    /* RFOS entry visual reset (idle state, badge cleared, waiting loop) */
+    /* 2. Entry visual reset: sets greeting → idle, badge → null,
+          state → 'idle', _visitorActive → false, restarts wait loop.
+          MUST run after memory.reset() so _mem.category is null when
+          entry.reset() reads city for the idle greeting. */
     try {
       if (window.FixeoRAFI && window.FixeoRAFI.entry &&
           typeof window.FixeoRAFI.entry.reset === 'function') {
@@ -255,7 +262,20 @@
       }
     } catch (_) {}
 
-    /* Focus input to invite new request */
+    /* 3. NOW remove verified price card + state class.
+          RFOS DOM is already neutral — no flash of old state. */
+    _dismissPriceReady();
+
+    /* 4. Clear input text.
+          Do NOT dispatch a synthetic input event — programmatic value
+          clear does not fire the native input listener, so RFOS
+          onInput() is never called and _qsmEstimatorLaunched is not
+          reset. The guard remains correctly eligible for the next
+          genuine user keystroke. */
+    var inp = _el('qsm-input-nlp');
+    if (inp) inp.value = '';
+
+    /* 5. Focus input to invite new request */
     try { if (inp) inp.focus(); } catch (_) {}
   }
 
@@ -469,7 +489,7 @@
 
   /* ── Public API (minimal — testing + integration only) ── */
   window.FixeoHeroResume = {
-    VERSION:   'fxhro-v1a',
+    VERSION:   'fxhro-v1b-reset',
     /* Re-run verification on demand (e.g. after token is written) */
     refresh:   function () { _runVerification(); },
     /* Manual reset (e.g. from test harness) */
