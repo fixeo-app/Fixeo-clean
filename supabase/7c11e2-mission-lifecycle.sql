@@ -155,9 +155,12 @@ GRANT  EXECUTE ON FUNCTION public.decline_mission(uuid) TO authenticated;
 -- mission.status remains 'pending' (no missions.in_progress invented).
 --
 -- RACE / IDEMPOTENCY:
---   If SR UPDATE affects 0 rows because an identical concurrent call
---   already transitioned it, return ok:true + already_started:true.
---   This is stable and truthful — the desired state is already achieved.
+--   If SR UPDATE affects 0 rows, re-read the current service_request
+--   status to determine the truthful reason:
+--     current status = 'in_progress' → ok:true + already_started:true
+--     any other status               → ok:false + invalid_request_state
+--   This prevents falsely claiming already_started when the request
+--   has moved to completed/cancelled/validated by another path.
 -- ════════════════════════════════════════════════════════════
 
 CREATE OR REPLACE FUNCTION public.start_mission(
@@ -239,10 +242,24 @@ BEGIN
 
   GET DIAGNOSTICS v_rows_updated = ROW_COUNT;
 
-  -- 0 rows: concurrent identical call already succeeded (race)
-  -- desired state is already achieved → idempotent success
+  -- 0 rows: concurrent call may have won the race, OR the request may
+  -- have moved to a different terminal state (completed/cancelled/etc.).
+  -- Re-read to determine the truthful current state.
   IF v_rows_updated = 0 THEN
-    RETURN jsonb_build_object('ok', true, 'mission_id', p_mission_id, 'already_started', true);
+    -- TYPE CONTRACT: sr.id UUID vs v_request_id TEXT — cast UUID side
+    SELECT sr.status INTO v_sr_status
+    FROM   public.service_requests sr
+    WHERE  sr.id::text = v_request_id;
+
+    -- If the request is now in_progress, a concurrent identical call
+    -- already succeeded — return idempotent success.
+    IF v_sr_status = 'in_progress' THEN
+      RETURN jsonb_build_object('ok', true, 'mission_id', p_mission_id, 'already_started', true);
+    END IF;
+
+    -- Any other state (completed, cancelled, validated, etc.) means
+    -- the request has moved beyond startable — report truthfully.
+    RETURN jsonb_build_object('ok', false, 'reason', 'invalid_request_state');
   END IF;
 
   RETURN jsonb_build_object(
@@ -322,9 +339,22 @@ BEGIN
     RETURN jsonb_build_object('ok', false, 'reason', 'not_your_mission');
   END IF;
 
-  -- Idempotent read: already done is a stable completed state
+  -- Idempotent read: mission already done — verify parent request state
+  -- before returning ok:true to avoid hiding partial/corrupt legacy state.
   IF v_mission_status = 'done' THEN
-    RETURN jsonb_build_object('ok', true, 'mission_id', p_mission_id, 'already_completed', true);
+    -- TYPE CONTRACT: sr.id UUID vs v_request_id TEXT — cast UUID side
+    SELECT sr.status INTO v_sr_status
+    FROM   public.service_requests sr
+    WHERE  sr.id::text = v_request_id;
+
+    IF v_sr_status IN ('completed', 'validated') THEN
+      -- Consistent: both mission and request are in terminal completed state
+      RETURN jsonb_build_object('ok', true, 'mission_id', p_mission_id, 'already_completed', true);
+    ELSE
+      -- mission=done but request is not completed/validated — inconsistent state
+      -- Do NOT mutate anything. Return a stable failure for ops investigation.
+      RETURN jsonb_build_object('ok', false, 'reason', 'inconsistent_state');
+    END IF;
   END IF;
 
   IF v_mission_status != 'pending' THEN
@@ -361,8 +391,18 @@ BEGIN
   GET DIAGNOSTICS v_rows_m = ROW_COUNT;
 
   IF v_rows_m = 0 THEN
-    -- Concurrent call already transitioned mission — idempotent
-    RETURN jsonb_build_object('ok', true, 'mission_id', p_mission_id, 'already_completed', true);
+    -- Concurrent call already transitioned mission.
+    -- Re-read to verify parent request consistency before claiming ok:true.
+    -- TYPE CONTRACT: sr.id UUID vs v_request_id TEXT — cast UUID side
+    SELECT sr.status INTO v_sr_status
+    FROM   public.service_requests sr
+    WHERE  sr.id::text = v_request_id;
+
+    IF v_sr_status IN ('completed', 'validated') THEN
+      RETURN jsonb_build_object('ok', true, 'mission_id', p_mission_id, 'already_completed', true);
+    ELSE
+      RETURN jsonb_build_object('ok', false, 'reason', 'inconsistent_state');
+    END IF;
   END IF;
 
   -- Step 2: service_request in_progress → completed

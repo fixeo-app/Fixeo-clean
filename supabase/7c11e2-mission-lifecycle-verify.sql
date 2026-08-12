@@ -202,29 +202,42 @@ BEGIN
   END IF;
   RAISE NOTICE 'V-19 PASS: no alias-qualified SET targets in any lifecycle RPC';
 
-  -- V-20: start_mission is idempotent on race (both paths return ok:true)
+  -- V-20: start_mission re-reads state on 0-rows UPDATE (truthful race)
   SELECT pg_get_functiondef(p.oid) INTO v_def
   FROM   pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
   WHERE  n.nspname = 'public' AND p.proname = 'start_mission' LIMIT 1;
   IF v_def NOT ILIKE '%already_started%' THEN
     RAISE EXCEPTION 'V-20 FAIL: start_mission missing already_started idempotent path';
   END IF;
-  RAISE NOTICE 'V-20 PASS: start_mission has idempotent already_started path';
+  -- Verify re-read pattern: must SELECT sr.status AFTER the 0-rows check
+  IF v_def NOT ILIKE '%invalid_request_state%' THEN
+    RAISE EXCEPTION 'V-20 FAIL: start_mission 0-rows path does not return invalid_request_state for non-in_progress states';
+  END IF;
+  RAISE NOTICE 'V-20 PASS: start_mission re-reads after 0-rows; returns already_started only when status=in_progress';
 
-  -- V-21: no offered missions remain unexpected (informational)
+  -- V-21: complete_mission early-exit (mission=done) verifies parent request state
+  SELECT pg_get_functiondef(p.oid) INTO v_def
+  FROM   pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
+  WHERE  n.nspname = 'public' AND p.proname = 'complete_mission' LIMIT 1;
+  IF v_def NOT ILIKE '%inconsistent_state%' THEN
+    RAISE EXCEPTION 'V-21 FAIL: complete_mission does not check parent request state in already_completed path (inconsistent_state missing)';
+  END IF;
+  RAISE NOTICE 'V-21 PASS: complete_mission verifies parent request state before returning already_completed';
+
+  -- V-22: no offered missions remain unexpected (informational)
   DECLARE
     v_offered integer;
   BEGIN
     SELECT COUNT(*) INTO v_offered FROM public.missions WHERE status = 'offered';
-    RAISE NOTICE 'V-21 INFO: offered missions = %', v_offered;
+    RAISE NOTICE 'V-22 INFO: offered missions = %', v_offered;
   END;
 
-  -- V-22: no pending missions remain unexpected (informational)
+  -- V-23: no pending missions remain unexpected (informational)
   DECLARE
     v_pending integer;
   BEGIN
     SELECT COUNT(*) INTO v_pending FROM public.missions WHERE status = 'pending';
-    RAISE NOTICE 'V-22 INFO: pending missions = %', v_pending;
+    RAISE NOTICE 'V-23 INFO: pending missions = %', v_pending;
   END;
 
   RAISE NOTICE '══ 7C.11E.2 VERIFY COMPLETE ══';

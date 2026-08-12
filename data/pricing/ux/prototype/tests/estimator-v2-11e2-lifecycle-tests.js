@@ -549,15 +549,18 @@ not('T45: no warning-only path on SR 0-rows in complete', (function() {
   t('T46d: sr fails -> NOT ok:true', completeResult(1,0).ok !== true);
 })();
 
-/* T47: start_mission 0-rows UPDATE -> idempotent ok:true */
-t('T47: start_mission 0-rows UPDATE returns ok:true already_started', (function() {
+/* T47: start_mission 0-rows UPDATE -> re-reads before deciding (11E.2.2 updated) */
+t('T47: start_mission 0-rows UPDATE triggers re-read (not blind already_started)', (function() {
   var fi   = sql.indexOf('FUNCTION public.start_mission');
   var end  = sql.indexOf('FUNCTION public.complete_mission');
   var block = sql.slice(fi, end);
-  var zeroIdx = block.indexOf("v_rows_updated = 0");
-  if (zeroIdx < 0) return false;
-  var after = block.slice(zeroIdx, zeroIdx + 300);
-  return after.includes('already_started') && after.indexOf("'ok', true") > 0;
+  var updateIdx = block.indexOf('GET DIAGNOSTICS v_rows_updated = ROW_COUNT');
+  if (updateIdx < 0) return false;
+  var after = block.slice(updateIdx);
+  // Must re-read SR status and branch on it (not blindly return already_started)
+  return after.includes('SELECT sr.status INTO v_sr_status') &&
+         after.includes('already_started') &&
+         after.includes('invalid_request_state');
 })());
 
 /* T48: decline UPDATE unqualified SET */
@@ -598,8 +601,116 @@ t('T52: verify V-17 atomicity P0001 check', verify.includes('V-17') && verify.in
 /* T53: verify has V-19 alias SET check */
 t('T53: verify V-19 alias-qualified SET check', verify.includes('V-19'));
 
-/* T54: verify has V-20 start idempotency check */
-t('T54: verify V-20 start idempotency check', verify.includes('V-20') && verify.includes('already_started'));
+/* T54: verify has V-20 start re-read check */
+t('T54: verify V-20 start re-read check', verify.includes('V-20') && verify.includes('invalid_request_state'));
+
+/* ══════════════════════════════════════════════════════════════
+ * 7C.11E.2.2 RACE CONSISTENCY TESTS
+ * ══════════════════════════════════════════════════════════════ */
+
+/* T55: start_mission re-reads SR status after 0-rows UPDATE */
+t('T55: start_mission re-reads SR status after 0-rows UPDATE', (function() {
+  var fi   = sql.indexOf('FUNCTION public.start_mission');
+  var end  = sql.indexOf('FUNCTION public.complete_mission');
+  var block = sql.slice(fi, end);
+  // Must find SELECT sr.status INTO v_sr_status AFTER the UPDATE block
+  var updateIdx = block.indexOf('GET DIAGNOSTICS v_rows_updated = ROW_COUNT');
+  var rereadIdx = block.indexOf('SELECT sr.status INTO v_sr_status', updateIdx);
+  return rereadIdx > updateIdx && updateIdx > 0;
+})());
+
+/* T56: start 0-rows + in_progress -> ok:true already_started */
+t('T56: start 0-rows + in_progress -> already_started', (function() {
+  var fi   = sql.indexOf('FUNCTION public.start_mission');
+  var end  = sql.indexOf('FUNCTION public.complete_mission');
+  var block = sql.slice(fi, end);
+  var updateIdx = block.indexOf('GET DIAGNOSTICS v_rows_updated = ROW_COUNT');
+  var after = block.slice(updateIdx);
+  return after.includes("'in_progress'") && after.includes('already_started');
+})());
+
+/* T57: start 0-rows + non-in_progress -> ok:false invalid_request_state */
+t('T57: start 0-rows + non-in_progress -> invalid_request_state', (function() {
+  var fi   = sql.indexOf('FUNCTION public.start_mission');
+  var end  = sql.indexOf('FUNCTION public.complete_mission');
+  var block = sql.slice(fi, end);
+  var updateIdx = block.indexOf('GET DIAGNOSTICS v_rows_updated = ROW_COUNT');
+  var after = block.slice(updateIdx);
+  return after.includes('invalid_request_state');
+})());
+
+/* T58: complete mission=done early path reads SR status before returning */
+t('T58: complete already_done path reads SR status', (function() {
+  var fi   = sql.indexOf('FUNCTION public.complete_mission');
+  var end  = sql.indexOf('REVOKE EXECUTE ON FUNCTION public.complete_mission');
+  var block = sql.slice(fi, end);
+  // Find the mission=done guard, then a SELECT sr.status must follow before first return
+  var doneIdx = block.indexOf("v_mission_status = 'done'");
+  var rereadIdx = block.indexOf('SELECT sr.status INTO v_sr_status', doneIdx);
+  return doneIdx > 0 && rereadIdx > doneIdx;
+})());
+
+/* T59: complete already_done + sr=completed -> ok:true */
+t('T59: complete already_done + sr completed/validated -> ok:true', (function() {
+  var fi   = sql.indexOf('FUNCTION public.complete_mission');
+  var end  = sql.indexOf('REVOKE EXECUTE ON FUNCTION public.complete_mission');
+  var block = sql.slice(fi, end);
+  var doneIdx = block.indexOf("v_mission_status = 'done'");
+  var after = block.slice(doneIdx, doneIdx + 800);
+  return after.includes("'completed', 'validated'") || after.includes("'validated'");
+})());
+
+/* T60: complete already_done + sr NOT completed -> inconsistent_state */
+t('T60: complete already_done + sr not completed -> inconsistent_state', (function() {
+  var fi   = sql.indexOf('FUNCTION public.complete_mission');
+  var end  = sql.indexOf('REVOKE EXECUTE ON FUNCTION public.complete_mission');
+  var block = sql.slice(fi, end);
+  var doneIdx = block.indexOf("v_mission_status = 'done'");
+  var after = block.slice(doneIdx, doneIdx + 800);
+  return after.includes('inconsistent_state');
+})());
+
+/* T61: complete v_rows_m=0 path (concurrent race) also verifies SR state */
+t('T61: complete concurrent-race path also verifies SR state', (function() {
+  var fi   = sql.indexOf('FUNCTION public.complete_mission');
+  var end  = sql.indexOf('REVOKE EXECUTE ON FUNCTION public.complete_mission');
+  var block = sql.slice(fi, end);
+  var rowsMIdx = block.indexOf('GET DIAGNOSTICS v_rows_m = ROW_COUNT');
+  var rereadIdx = block.indexOf('SELECT sr.status INTO v_sr_status', rowsMIdx);
+  return rereadIdx > rowsMIdx && rowsMIdx > 0;
+})());
+
+/* T62: verify has V-21 complete parent state check */
+t('T62: verify V-21 complete parent state check', verify.includes('V-21') && verify.includes('inconsistent_state'));
+
+/* T63: simulation — start race truth table */
+(function() {
+  function startResult(updateRows, rereadStatus) {
+    if (updateRows > 0) return { ok: true };
+    if (rereadStatus === 'in_progress') return { ok: true, already_started: true };
+    return { ok: false, reason: 'invalid_request_state' };
+  }
+  t('T63a: start wins race -> ok:true', startResult(1, null).ok === true);
+  t('T63b: start loses race + sr=in_progress -> already_started', startResult(0, 'in_progress').already_started === true);
+  t('T63c: start loses race + sr=completed -> invalid_request_state', startResult(0, 'completed').reason === 'invalid_request_state');
+  t('T63d: start loses race + sr=cancelled -> invalid_request_state', startResult(0, 'cancelled').reason === 'invalid_request_state');
+  t('T63e: start loses race + sr=validated -> invalid_request_state', startResult(0, 'validated').reason === 'invalid_request_state');
+  not('T63f: start loses race + sr=completed -> NOT already_started', startResult(0, 'completed').already_started === true);
+})();
+
+/* T64: simulation — complete already_done truth table */
+(function() {
+  function completeDoneResult(srStatus) {
+    if (srStatus === 'completed' || srStatus === 'validated') return { ok: true, already_completed: true };
+    return { ok: false, reason: 'inconsistent_state' };
+  }
+  t('T64a: done + sr=completed -> ok:true already_completed', completeDoneResult('completed').ok === true);
+  t('T64b: done + sr=validated -> ok:true already_completed', completeDoneResult('validated').ok === true);
+  t('T64c: done + sr=in_progress -> inconsistent_state', completeDoneResult('in_progress').reason === 'inconsistent_state');
+  t('T64d: done + sr=assigned -> inconsistent_state', completeDoneResult('assigned').reason === 'inconsistent_state');
+  t('T64e: done + sr=new -> inconsistent_state', completeDoneResult('new').reason === 'inconsistent_state');
+  not('T64f: done + sr=in_progress -> NOT already_completed', completeDoneResult('in_progress').already_completed === true);
+})();
 
 /* ── FINAL REPORT ── */
 console.log('[11E.2] Mission Lifecycle Tests');
