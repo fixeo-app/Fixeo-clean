@@ -159,6 +159,31 @@ BEGIN
   END IF;
   RAISE NOTICE 'V-20 PASS: no automatic no_match status transition';
 
+  -- V-21: service mismatch is eliminated (CONTINUE keyword present in mismatch branch)
+  IF v_def NOT ILIKE '%CONTINUE%' THEN
+    RAISE EXCEPTION 'V-21 FAIL: dispatch_request_v1 missing CONTINUE elimination for service/city mismatch';
+  END IF;
+  RAISE NOTICE 'V-21 PASS: CONTINUE elimination for mismatch present';
+
+  -- V-22: unaccent() NOT used (would fail with empty search_path if extension not in pg_catalog)
+  IF v_def ILIKE '%unaccent(%' THEN
+    RAISE EXCEPTION 'V-22 FAIL: dispatch_request_v1 uses unaccent() — unsafe with SET search_path=''';
+  END IF;
+  RAISE NOTICE 'V-22 PASS: unaccent() not used — translate() used instead';
+
+  -- V-23: translate() used for normalization (pg_catalog, always safe)
+  IF v_def NOT ILIKE '%translate(%' THEN
+    RAISE EXCEPTION 'V-23 FAIL: dispatch_request_v1 missing translate() normalization';
+  END IF;
+  RAISE NOTICE 'V-23 PASS: translate() normalization present';
+
+  -- V-24: 23505 handler verifies offered row before returning ok:true
+  -- (must not return ok:true solely on SQLSTATE)
+  IF v_def NOT ILIKE '%status%=%offered%' THEN
+    RAISE EXCEPTION 'V-24 FAIL: 23505 handler does not verify offered row';
+  END IF;
+  RAISE NOTICE 'V-24 PASS: 23505 handler verifies offered row before ok:true';
+
   RAISE NOTICE '══ 7C.11F.1 VERIFY COMPLETE ══';
 
 END $$;

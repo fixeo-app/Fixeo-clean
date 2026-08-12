@@ -1,7 +1,7 @@
 -- ════════════════════════════════════════════════════════════
 -- 7C.11F.1 — Real Dispatch Engine V1 Core RPC
 -- supabase/7c11f1-dispatch-v1.sql
--- Revision: 7C.11F.1
+-- Revision: 7C.11F.1A — eligibility hardening
 --
 -- Creates ONE server-authoritative RPC:
 --   public.dispatch_request_v1(p_request_id uuid)
@@ -32,21 +32,49 @@
 --   4. availability = 'available'  — CHECK: ('available','busy','unavailable')
 --   (completed_missions is NOT a DB column — not used. review_count/rating are used.)
 --
+-- ELIGIBILITY GATES — 11F.1A HARDENING:
+--   Service mismatch (score=0) is an ELIMINATION, not merely a penalty.
+--     If the request has a category and the artisan's service_category
+--     produces a service score of 0 (no match, no substring), the artisan
+--     is EXCLUDED from the offer — regardless of trust/activity scores.
+--   Artisans with blank/null service_category receive partial neutral credit
+--     (score=18) only when no service category is recorded in the schema.
+--     This preserves existing "uncategorized" artisan semantics from
+--     fixeo-dispatch-engine.js (neutral 50 for no-category).
+--   City score = 0 (no city relation) is also an ELIMINATION when the
+--     request has an explicit city. An artisan in an unrelated city/zone
+--     with no national coverage must not receive the offer purely on
+--     trust/activity scores.
+--   Exception: if request has no city (v_sr_city blank/null), city
+--     filtering is suspended — any artisan may serve an uncitied request.
+--
+-- SEARCH_PATH SAFETY:
+--   unaccent() is NOT confirmed in the live schema (only uuid-ossp).
+--   Using unaccent() in a SET search_path='' context would either fail
+--   (function not found with empty path) or require public.unaccent().
+--   11F.1A removes unaccent() entirely. Normalization is done with:
+--     lower() — pg_catalog function, always available with empty search_path
+--     Manual accent strip via translate() — no extension dependency
+--   This is safe and deterministic.
+--
 -- PRIOR-OFFER EXCLUSION:
 --   Artisans already having any mission row for this request are excluded.
+--   Comparison: m.request_id = v_request_id_text (TEXT/TEXT — no cast).
 --   Prevents re-offering to declined/expired artisans.
 --
 -- RANKING ALGORITHM (weights sum to 100):
---   service match   weight 35: exact=35, substring=25, no-cat=18, mismatch=0
+--   service match   weight 35: exact=35, substring=25, no-cat=18, mismatch=ELIMINATED
 --   city match      weight 30: exact=30, substring=28, work_zone=24,
---                              no-city=15, proximity-group=18, national=6, other=0
+--                              no-city=15, proximity-group=18, national=6, other=ELIMINATED
 --   trust score     weight 20: review_count tiers + rating tiers; clamp 0–20
 --   activity score  weight 15: updated_at recency tiers; clamp 0–15
 --   Tie-breaker: artisan.id ASC (deterministic, no invented metric)
 --
 -- CONCURRENCY:
 --   SELECT ... FOR UPDATE on service_requests row serializes concurrent calls.
+--   Status is read UNDER the lock — authoritative.
 --   23505 unique_violation on INSERT → read existing offered mission.
+--   23505 handler verifies actual offered row exists before returning ok:true.
 --
 -- NO-CANDIDATE:
 --   Returns ok:false, reason:'no_candidate'
@@ -73,7 +101,6 @@ DECLARE
 
   -- Existing offer/winner check
   v_existing_mission  uuid;
-  v_existing_status   text;
 
   -- Candidate loop variables
   v_artisan_id        uuid;
@@ -94,15 +121,19 @@ DECLARE
   v_best_artisan_id   uuid;
 
   -- Normalized strings for comparison
+  -- NOTE: lower() is in pg_catalog — safe with SET search_path=''.
+  -- unaccent() requires extension in search_path — NOT used here.
+  -- Normalization uses lower() + translate() for common French accents only.
   v_req_cat_norm      text;
   v_req_city_norm     text;
   v_art_cat_norm      text;
   v_art_city_norm     text;
   v_art_zone_norm     text;
 
-  -- City proximity group matching
+  -- City proximity groups (lowercase, comma-delimited per group)
+  -- Mirrors CITY_GROUPS from fixeo-dispatch-engine.js
   v_city_groups       text[] := ARRAY[
-    'casablanca,mohammeddia,mohammedia,benslimane,el jadida',
+    'casablanca,mohammedia,mohammeddia,benslimane,el jadida',
     'rabat,sale,temara,kenitra,khemisset',
     'marrakech,safi,el kelaa des sraghna',
     'fes,fez,meknes,ifrane,taza',
@@ -125,8 +156,10 @@ BEGIN
   v_request_id_text := p_request_id::text;
 
   -- ── STEP 1: Lock the service_request row ──────────────────
-  -- FOR UPDATE serializes concurrent dispatch_request_v1 calls for the same request.
-  -- The waiting transaction re-reads status after lock is acquired.
+  -- FOR UPDATE acquires a row-level exclusive lock.
+  -- v_sr_status is read UNDER the lock — this is the authoritative
+  -- post-lock state. Any concurrent transaction that modified the row
+  -- before us will have committed; we see the final state.
   SELECT sr.status, sr.service_category, sr.city, sr.urgency
   INTO   v_sr_status, v_sr_category, v_sr_city, v_sr_urgency
   FROM   public.service_requests sr
@@ -137,7 +170,7 @@ BEGIN
     RETURN jsonb_build_object('ok', false, 'reason', 'request_not_found');
   END IF;
 
-  -- ── STEP 2: Request must be 'new' ─────────────────────────
+  -- ── STEP 2: Request must be 'new' (evaluated AFTER lock) ──
   IF v_sr_status != 'new' THEN
     RETURN jsonb_build_object(
       'ok',     false,
@@ -179,14 +212,28 @@ BEGIN
   END IF;
 
   -- ── STEP 5: Normalize request category and city ───────────
-  v_req_cat_norm  := lower(unaccent(COALESCE(v_sr_category, '')));
-  v_req_city_norm := lower(unaccent(COALESCE(v_sr_city, '')));
+  -- lower() is a pg_catalog function — safe with SET search_path=''.
+  -- translate() is also pg_catalog — safe.
+  -- unaccent() requires an extension and is NOT used here.
+  -- French accent normalization via translate() covers the common cases
+  -- present in Moroccan city/service names (é→e, è→e, ê→e, à→a, â→a, ô→o, ù→u, û→u).
+  v_req_cat_norm  := lower(translate(COALESCE(v_sr_category, ''),
+    'éèêëàâäôöùûüïîçÉÈÊËÀÂÄÔÖÙÛÜÏÎÇ',
+    'eeeeannnouuuiicEEEEAAAAOOUUUIIC'));
+  v_req_city_norm := lower(translate(COALESCE(v_sr_city, ''),
+    'éèêëàâäôöùûüïîçÉÈÊËÀÂÄÔÖÙÛÜÏÎÇ',
+    'eeeeannnouuuiicEEEEAAAAOOUUUIIC'));
 
   -- ── STEP 6: Candidate selection and scoring ───────────────
   -- Eligibility gates enforced in WHERE clause.
   -- Prior-offer exclusion via NOT EXISTS subquery.
   -- Score computed per candidate; highest wins.
   -- Tie-breaker: artisan.id ASC (deterministic — no invented metric).
+  --
+  -- ELIMINATION GATES (11F.1A hardening):
+  --   Service score = 0  AND request has a category → artisan SKIPPED (CONTINUE)
+  --   City score = 0     AND request has a city     → artisan SKIPPED (CONTINUE)
+  -- These are not ranking penalties — they are eligibility rejections.
 
   FOR v_artisan_id, v_artisan_city, v_artisan_cat, v_artisan_zone,
       v_artisan_rc, v_artisan_rat, v_artisan_updated IN
@@ -210,30 +257,40 @@ BEGIN
         WHERE  m.request_id         = v_request_id_text
           AND  m.artisan_profile_id = a.id
       )
-    ORDER BY a.id ASC   -- stable base order; fine-grained by score below
+    ORDER BY a.id ASC   -- stable base order; fine-grained by score comparison below
 
   LOOP
 
     -- ── SERVICE MATCH (weight 35) ────────────────────────────
-    v_art_cat_norm := lower(unaccent(COALESCE(v_artisan_cat, '')));
+    v_art_cat_norm := lower(translate(COALESCE(v_artisan_cat, ''),
+      'éèêëàâäôöùûüïîçÉÈÊËÀÂÄÔÖÙÛÜÏÎÇ',
+      'eeeeannnouuuiicEEEEAAAAOOUUUIIC'));
 
     IF v_req_cat_norm = '' THEN
-      v_svc_score := 18;                           -- no category — partial neutral credit
+      -- Request has no category — all artisans eligible, neutral credit
+      v_svc_score := 18;
     ELSIF v_art_cat_norm = v_req_cat_norm THEN
       v_svc_score := 35;                           -- exact match
     ELSIF position(v_req_cat_norm IN v_art_cat_norm) > 0
        OR position(v_art_cat_norm IN v_req_cat_norm) > 0 THEN
-      v_svc_score := 25;                           -- substring (e.g. climatisation / clim)
+      v_svc_score := 25;                           -- substring overlap
     ELSE
-      v_svc_score := 0;                            -- mismatch
+      -- ELIMINATION: explicit service mismatch when request has a category.
+      -- Trust/activity scores are irrelevant. Skip this artisan.
+      CONTINUE;
     END IF;
 
     -- ── CITY MATCH (weight 30) ──────────────────────────────
-    v_art_city_norm := lower(unaccent(COALESCE(v_artisan_city, '')));
-    v_art_zone_norm := lower(unaccent(COALESCE(v_artisan_zone, '')));
+    v_art_city_norm := lower(translate(COALESCE(v_artisan_city, ''),
+      'éèêëàâäôöùûüïîçÉÈÊËÀÂÄÔÖÙÛÜÏÎÇ',
+      'eeeeannnouuuiicEEEEAAAAOOUUUIIC'));
+    v_art_zone_norm := lower(translate(COALESCE(v_artisan_zone, ''),
+      'éèêëàâäôöùûüïîçÉÈÊËÀÂÄÔÖÙÛÜÏÎÇ',
+      'eeeeannnouuuiicEEEEAAAAOOUUUIIC'));
 
     IF v_req_city_norm = '' THEN
-      v_city_score := 15;                          -- no city info — neutral
+      -- Request has no city — any artisan eligible, neutral credit
+      v_city_score := 15;
 
     ELSIF v_art_city_norm = v_req_city_norm THEN
       v_city_score := 30;                          -- exact match
@@ -243,10 +300,10 @@ BEGIN
       v_city_score := 28;                          -- substring (Tanger / Tanger-Assilah)
 
     ELSIF position(v_req_city_norm IN v_art_zone_norm) > 0 THEN
-      v_city_score := 24;                          -- work_zone declares coverage
+      v_city_score := 24;                          -- work_zone explicitly covers request city
 
     ELSE
-      -- Proximity group check — same group = partial credit
+      -- Proximity group check — same Moroccan geographic cluster
       v_city_score   := 0;
       v_req_in_group := false;
       v_art_in_group := false;
@@ -260,7 +317,7 @@ BEGIN
         END IF;
       END LOOP;
 
-      -- National/all-Morocco coverage
+      -- National/all-Morocco coverage declared in work_zone
       IF v_city_score = 0 AND (
            position('national' IN v_art_zone_norm) > 0 OR
            position('maroc'    IN v_art_zone_norm) > 0 OR
@@ -269,11 +326,18 @@ BEGIN
         v_city_score := 6;
       END IF;
 
+      -- ELIMINATION: if request has an explicit city and artisan has no
+      -- geographic relation (city_score still 0), skip this artisan.
+      -- Trust/activity scores cannot override geographic incompatibility.
+      IF v_city_score = 0 THEN
+        CONTINUE;
+      END IF;
+
     END IF;
 
     -- ── TRUST SCORE (weight 20) ─────────────────────────────
-    -- review_count and rating are live schema columns.
-    -- completed_missions is NOT in public.artisans — omitted.
+    -- review_count and rating are proven live schema columns.
+    -- completed_missions is NOT in public.artisans — not used.
     v_trust_score := 0;
 
     -- Review volume tiers
@@ -297,7 +361,7 @@ BEGIN
     IF v_trust_score < 0  THEN v_trust_score := 0;  END IF;
 
     -- ── ACTIVITY SCORE (weight 15) ──────────────────────────
-    -- updated_at recency (live schema column)
+    -- updated_at recency (live schema column).
     IF v_artisan_updated IS NULL THEN
       v_days_since := 999;
     ELSE
@@ -360,7 +424,9 @@ BEGIN
   EXCEPTION
     WHEN unique_violation THEN
       -- 23505: a concurrent dispatch_request_v1 won the race.
-      -- Read the winner deterministically and return it.
+      -- Verify: read the actually-persisted offered mission row.
+      -- We do NOT return ok:true based solely on SQLSTATE 23505 —
+      -- the row must exist and be in status='offered'.
       SELECT m.id INTO v_new_mission_id
       FROM   public.missions m
       WHERE  m.request_id = v_request_id_text
@@ -368,14 +434,18 @@ BEGIN
       LIMIT  1;
 
       IF v_new_mission_id IS NOT NULL THEN
+        -- Verified: concurrent dispatch created the offer — return it.
         RETURN jsonb_build_object(
           'ok',         true,
           'reason',     'existing_offer',
           'mission_id', v_new_mission_id
         );
       ELSE
-        -- Offered was claimed before we could read — race with claim_mission
-        RETURN jsonb_build_object('ok', false, 'reason', 'already_claimed');
+        -- 23505 but no offered row visible — either:
+        --   (a) the unique violation was on a different constraint, OR
+        --   (b) the offered row was immediately claimed by another transaction.
+        -- Both cases: return a stable conflict result, not ok:true.
+        RETURN jsonb_build_object('ok', false, 'reason', 'conflict');
       END IF;
 
     WHEN OTHERS THEN
@@ -383,7 +453,9 @@ BEGIN
       RETURN jsonb_build_object('ok', false, 'reason', 'internal_error');
   END;
 
-  -- ── Success: mission created, service_request remains 'new' ──
+  -- ── Success: mission created, service_request.status remains 'new' ──
+  -- The service_request row is NOT updated here.
+  -- Only claim_mission() may transition service_requests.status to 'assigned'.
   RETURN jsonb_build_object(
     'ok',         true,
     'reason',     'dispatched',

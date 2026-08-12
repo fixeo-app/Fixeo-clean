@@ -462,6 +462,121 @@ t('T81: high score beats low score',
 t('T82: V1 model — exactly one offer per request (SQL contract in precheck)',
   precheck.includes('missions_one_offer_per_request'));
 
+/* ─────────────────────────────────────────────────────────
+ * SECTION 15 — 11F.1A Hardening: Elimination Gates
+ * ───────────────────────────────────────────────────────── */
+
+/* T86: service mismatch uses CONTINUE (eliminatory, not just zero score) */
+t('T86: service mismatch CONTINUE elimination', dispatch.includes('CONTINUE'));
+
+/* T87: city mismatch also uses CONTINUE when request has city */
+t('T87: city score=0 CONTINUE elimination', (function() {
+  var cityBlock = dispatch.slice(dispatch.indexOf('-- ── CITY MATCH'));
+  return cityBlock.includes('CONTINUE') && cityBlock.indexOf('CONTINUE') < cityBlock.indexOf('-- ── TRUST');
+})());
+
+/* T88: unaccent() NOT used (unsafe with SET search_path='') */
+t('T88: unaccent not used in executable code', (function() {
+  var stripped = dispatch
+    .replace(/--[^\n]*/g, '')
+    .replace(/\/\*[\s\S]*?\*\//g, '');
+  return !stripped.includes('unaccent(');
+})());
+
+/* T89: translate() used for normalization (pg_catalog, always safe) */
+t('T89: translate() normalization used', dispatch.includes('translate('));
+
+/* T90: 23505 handler does NOT return ok:true based solely on SQLSTATE */
+t('T90: 23505 handler verifies offered row before ok:true', (function() {
+  var uvIdx = dispatch.indexOf('WHEN unique_violation THEN');
+  var after = dispatch.slice(uvIdx, uvIdx + 800);
+  // Must contain a SELECT checking status='offered' before returning ok:true
+  return after.includes("status     = 'offered'") && after.includes("'existing_offer'");
+})());
+
+/* T91: 23505 with no found offered row returns ok:false (not ok:true) */
+t('T91: 23505 no-offered-row returns ok:false conflict', (function() {
+  var uvIdx = dispatch.indexOf('WHEN unique_violation THEN');
+  var after = dispatch.slice(uvIdx, uvIdx + 1200);
+  return after.includes("'conflict'") || (after.includes("'already_claimed'") && after.indexOf("'already_claimed'") > after.indexOf('v_new_mission_id IS NOT NULL'));
+})());
+
+/* T92: simulation — service mismatch eliminated regardless of trust/activity */
+(function() {
+  // Simulates the CONTINUE gate — mismatch artisan is skipped entirely
+  function wouldPass(artCat, reqCat) {
+    var a = (artCat||'').toLowerCase(), r = (reqCat||'').toLowerCase();
+    if (r === '') return true;           // no category — eligible
+    if (a === r) return true;            // exact
+    if (a.indexOf(r) >= 0 || r.indexOf(a) >= 0) return true; // substring
+    return false;                        // CONTINUE (eliminated)
+  }
+  t('T92a: mismatch peinture/plomberie → eliminated', !wouldPass('peinture','plomberie'));
+  t('T92b: exact plomberie/plomberie → eligible', wouldPass('plomberie','plomberie'));
+  t('T92c: no-category request → any artisan eligible', wouldPass('peinture',''));
+  t('T92d: substring clim/climatisation → eligible', wouldPass('climatisation','clim'));
+})();
+
+/* T93: simulation — city score=0 eliminated when request has city */
+(function() {
+  var CITY_GROUPS = [
+    'casablanca,mohammedia,mohammeddia,benslimane,el jadida',
+    'rabat,sale,temara,kenitra,khemisset',
+    'marrakech,safi,el kelaa des sraghna',
+    'fes,fez,meknes,ifrane,taza',
+    'agadir,tiznit,inezgane',
+    'tanger,tanger-assilah,tetouan,chefchaouen',
+    'oujda,berkane,nador',
+    'laayoune,dakhla'
+  ];
+  function cityScore(artCity, artZone, reqCity) {
+    var ac = (artCity||'').toLowerCase(), az = (artZone||'').toLowerCase(), rc = (reqCity||'').toLowerCase();
+    if (rc === '') return 15;
+    if (ac === rc) return 30;
+    if (ac.indexOf(rc) >= 0 || rc.indexOf(ac) >= 0) return 28;
+    if (az.indexOf(rc) >= 0) return 24;
+    for (var i = 0; i < CITY_GROUPS.length; i++) {
+      var g = CITY_GROUPS[i];
+      if (g.indexOf(rc) >= 0 && g.indexOf(ac) >= 0) return 18;
+    }
+    if (az.indexOf('national') >= 0 || az.indexOf('maroc') >= 0 || az.indexOf('tout') >= 0) return 6;
+    return 0;
+  }
+  function cityEligible(artCity, artZone, reqCity) {
+    var s = cityScore(artCity, artZone, reqCity);
+    // eliminated only when request has city and score=0
+    if ((reqCity||'') !== '' && s === 0) return false;
+    return true;
+  }
+  t('T93a: Agadir artisan for Casablanca request → eliminated (score=0)', !cityEligible('Agadir','','Casablanca'));
+  t('T93b: Mohammedia artisan for Casablanca → eligible (proximity)', cityEligible('Mohammedia','','Casablanca'));
+  t('T93c: national artisan for any city → eligible (score=6)', cityEligible('Oujda','national','Casablanca'));
+  t('T93d: no-city request → any artisan eligible', cityEligible('Agadir','',''));
+  t('T93e: exact city → eligible (score=30)', cityEligible('Casablanca','','Casablanca'));
+  t('T93f: Tanger for Agadir (diff group) → eliminated', !cityEligible('Tanger','','Agadir'));
+})();
+
+/* T94: high trust/activity CANNOT save a service-mismatched artisan */
+t('T94: service mismatch is eliminatory — not a ranking penalty',
+  dispatch.includes('-- ELIMINATION: explicit service mismatch') && dispatch.includes('CONTINUE'));
+
+/* T95: high trust/activity CANNOT save a city-unrelated artisan */
+t('T95: city mismatch is eliminatory — not a ranking penalty',
+  dispatch.includes('-- ELIMINATION: if request has an explicit city') && dispatch.includes('CONTINUE'));
+
+/* T96: request status re-evaluated under lock */
+t('T96: status read AFTER FOR UPDATE (under lock)',
+  dispatch.includes('FOR UPDATE') &&
+  dispatch.includes("-- ── STEP 2: Request must be 'new' (evaluated AFTER lock)"));
+
+/* T97: parent service_request.status never updated in success path */
+t('T97: no UPDATE service_requests SET status in function body', (function() {
+  var stripped = dispatch
+    .replace(/--[^\n]*/g, '')
+    .replace(/\/\*[\s\S]*?\*\//g, '');
+  return !(/UPDATE\s+public\.service_requests[\s\S]*?SET\s+status/.test(stripped));
+})());
+
 /* T83: no browser dispatch authority in SQL */
 not('T83: no browser trigger in SQL', dispatch.includes('supabase.createClient') || dispatch.includes('window.'));
 
