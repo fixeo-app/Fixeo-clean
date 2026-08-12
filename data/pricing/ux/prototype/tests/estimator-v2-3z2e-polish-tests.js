@@ -222,8 +222,8 @@ test('25. JS keys unchanged: fxhi-v1e-contextual, fxhro-v1d-reservation-exit', f
   assert(idxSrc.includes('fixeo-hero-resume-v1.js?v=fxhro-v1d-reservation-exit'), 'hero-resume JS unchanged');
 });
 
-test('26. reservation.js key unchanged: v1k-ios-scroll', function () {
-  assert(idxSrc.includes('reservation.js?v=v1k-ios-scroll'), 'reservation JS key unchanged');
+test('26. reservation.js key: v1m-estimator-copy (canonical after 10C.0.4)', function () {
+  assert(idxSrc.includes('reservation.js?v=v1m-estimator-copy'), 'reservation JS key must be v1m-estimator-copy');
 });
 
 /* ══════════════════════════════════════════════════════════════
