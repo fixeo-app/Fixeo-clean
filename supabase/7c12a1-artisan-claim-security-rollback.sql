@@ -30,9 +30,43 @@
 
 BEGIN;
 
--- Drop 7C.12A.1 RPCs
+-- Drop 7C.12A.1 RPCs and helper
 DROP FUNCTION IF EXISTS public.approve_artisan_claim(uuid);
 DROP FUNCTION IF EXISTS public.reject_artisan_claim(uuid, text);
+DROP FUNCTION IF EXISTS public._supersede_competing_claims(uuid, uuid, text);
+
+-- ── Restore claims_status_check to baseline (3 values only) ──
+-- HARD STOP if the extended constraint is not present:
+-- we only reverse what we know we changed.
+DO $$
+DECLARE v_con_def text;
+BEGIN
+  SELECT pg_get_constraintdef(c.oid) INTO v_con_def
+  FROM pg_constraint c
+  JOIN pg_class r ON r.oid = c.conrelid
+  JOIN pg_namespace n ON n.oid = r.relnamespace
+  WHERE n.nspname='public' AND r.relname='claim_requests'
+    AND c.conname='claims_status_check'
+  LIMIT 1;
+
+  IF v_con_def IS NULL THEN
+    RAISE EXCEPTION 'Rollback HARD STOP: claims_status_check not found — cannot restore safely';
+  END IF;
+
+  IF v_con_def NOT ILIKE '%superseded_by_approval%' THEN
+    RAISE NOTICE 'Rollback: claims_status_check does not contain superseded_by_approval — already at baseline, no change';
+  ELSE
+    -- Check for any superseded rows that would violate the restored constraint
+    IF EXISTS (SELECT 1 FROM public.claim_requests WHERE status = 'superseded_by_approval') THEN
+      RAISE EXCEPTION 'Rollback HARD STOP: % rows with status=superseded_by_approval exist — cannot restore 3-value CHECK constraint without data loss. Manually re-status those rows first.',
+        (SELECT COUNT(*) FROM public.claim_requests WHERE status = 'superseded_by_approval');
+    END IF;
+    ALTER TABLE public.claim_requests DROP CONSTRAINT claims_status_check;
+    ALTER TABLE public.claim_requests ADD CONSTRAINT claims_status_check
+      CHECK (status IN ('pending', 'approved', 'rejected'));
+    RAISE NOTICE 'Rollback: claims_status_check restored to 3-value baseline';
+  END IF;
+END $$;
 
 -- Drop 7C.12A.1 canonical RLS policies
 DROP POLICY IF EXISTS "7c12a1_deny_anon_all"    ON public.claim_requests;
@@ -123,11 +157,11 @@ BEGIN
 
   SELECT COUNT(*) INTO v_count FROM pg_proc p
   JOIN pg_namespace n ON n.oid=p.pronamespace
-  WHERE n.nspname='public' AND p.proname IN ('approve_artisan_claim','reject_artisan_claim');
+  WHERE n.nspname='public' AND p.proname IN ('approve_artisan_claim','reject_artisan_claim','_supersede_competing_claims');
   IF v_count > 0 THEN
-    RAISE EXCEPTION 'Rollback HARD STOP: 7C.12A.1 claim RPCs still present after DROP';
+    RAISE EXCEPTION 'Rollback HARD STOP: 7C.12A.1 RPCs/helpers still present after DROP';
   END IF;
-  RAISE NOTICE 'Rollback verify: 7C.12A.1 claim RPCs removed ✓';
+  RAISE NOTICE 'Rollback verify: 7C.12A.1 claim RPCs + helper removed ✓';
 
   SELECT COUNT(*) INTO v_count FROM pg_proc p
   JOIN pg_namespace n ON n.oid=p.pronamespace

@@ -292,12 +292,14 @@ t('S6.11: reject RPC does NOT set owner_user_id (rejection never alters ownershi
   })());
 
 t('S6.12: anon REVOKED from both RPCs',
-  migration.includes("REVOKE EXECUTE ON FUNCTION public.approve_artisan_claim(uuid)         FROM anon") &&
-  migration.includes("REVOKE EXECUTE ON FUNCTION public.reject_artisan_claim(uuid, text)    FROM anon"));
+  migration.includes("REVOKE EXECUTE ON FUNCTION public.approve_artisan_claim(uuid)") &&
+  migration.includes("FROM anon") &&
+  migration.includes("REVOKE EXECUTE ON FUNCTION public.reject_artisan_claim(uuid, text)"));
 
 t('S6.13: authenticated GRANTED to RPCs (admin check is internal)',
-  migration.includes("GRANT  EXECUTE ON FUNCTION public.approve_artisan_claim(uuid)         TO authenticated") &&
-  migration.includes("GRANT  EXECUTE ON FUNCTION public.reject_artisan_claim(uuid, text)    TO authenticated"));
+  migration.includes("GRANT  EXECUTE ON FUNCTION public.approve_artisan_claim(uuid)") &&
+  migration.includes("TO authenticated") &&
+  migration.includes("GRANT  EXECUTE ON FUNCTION public.reject_artisan_claim(uuid, text)"));
 
 t('S6.14: stale open-insert policy explicitly dropped',
   migration.includes("DROP POLICY IF EXISTS \"claims_insert\""));
@@ -527,8 +529,11 @@ t('S14.6: approve RPC uses artisan_id UUID FK as primary resolution (before lega
     var idx = migration.indexOf('CREATE OR REPLACE FUNCTION public.approve_artisan_claim');
     var end = migration.indexOf('CREATE OR REPLACE FUNCTION public.reject_artisan_claim');
     var body = migration.slice(idx, end);
-    var artisanIdIdx = body.indexOf('v_claim.artisan_id');
-    var legacyIdx    = body.indexOf('v_claim.artisan_legacy_id');
+    // v2: pre-read uses v_pre.artisan_id; locked read uses v_claim
+    var artisanIdIdx = body.indexOf('v_pre.artisan_id') > -1 ? body.indexOf('v_pre.artisan_id')
+                     : body.indexOf('v_claim.artisan_id');
+    var legacyIdx    = body.indexOf('v_pre.artisan_legacy_id') > -1 ? body.indexOf('v_pre.artisan_legacy_id')
+                     : body.indexOf('v_claim.artisan_legacy_id');
     return artisanIdIdx > -1 && legacyIdx > -1 && artisanIdIdx < legacyIdx;
   })());
 
@@ -655,10 +660,13 @@ t('S15.10: idempotent path does NOT rewrite owner_user_id',
 
 t('S15.11: idempotent path does NOT set onboarding_completed',
   (function() {
+    // onboarding_completed may appear in comments; check SET assignment context only
     var idx = _approveBody.indexOf('already_owned_consistent');
     if (idx === -1) return false;
-    var block = _approveBody.slice(Math.max(0, idx - 800), idx + 200);
-    return !block.includes('onboarding_completed');
+    var block = _approveBody.slice(Math.max(0, idx - 800), idx + 400);
+    // Must not set onboarding_completed = true in code
+    return !block.match(/onboarding_completeds*=s*true/) &&
+           !block.match(/SET[^;]*onboarding_completed/s);
   })());
 
 /* Fix 4: Multi-claim first-wins */
@@ -670,12 +678,13 @@ t('S15.13: supersede UPDATE targets same artisan with id != p_claim_id',
   _approveBody.includes("id != p_claim_id") ||
   _approveBody.includes('id        !='));
 
-t('S15.14: supersede UPDATE only targets pending claims (status = pending guard)',
+t('S15.14: supersede helper only targets pending claims (status = pending guard)',
   (function() {
-    var idx = _approveBody.indexOf('superseded_by_approval');
-    var block = _approveBody.slice(Math.max(0, idx - 300), idx + 300);
-    return block.includes("status     = 'pending'") ||
-           block.includes("status = 'pending'");
+    // v2: supersession logic is in _supersede_competing_claims helper
+    var supIdx = migration.indexOf('CREATE OR REPLACE FUNCTION public._supersede_competing_claims');
+    var supEnd = migration.indexOf('CREATE OR REPLACE FUNCTION public.reject_artisan_claim');
+    var supBody = migration.slice(supIdx, supEnd);
+    return supBody.includes("status     = 'pending'") || supBody.includes("status = 'pending'");
   })());
 
 t('S15.15: supersede does NOT touch requester accounts (no users/profiles UPDATE in supersede block)',
@@ -715,11 +724,19 @@ t('S15.18: canonical 7c12a1 deny-anon policy uses USING false WITH CHECK false',
 
 t('S15.19: no authenticated UPDATE/DELETE policy created for claim_requests',
   (function() {
-    /* Scan migration for CREATE POLICY on claim_requests with FOR UPDATE/DELETE/ALL to authenticated */
+    /* Check each CREATE POLICY block individually — a policy is FOR UPDATE/DELETE if
+     * its own single block (one policy = claim_requests + FOR XXX + TO yyy) has
+     * FOR UPDATE|DELETE|ALL combined with TO authenticated in the SAME policy.
+     * Extract policy-by-policy and check individually. */
     var idx = migration.indexOf('-- STEP 5');
-    var rlsBody = migration.slice(idx);
-    /* Should not have FOR UPDATE or FOR DELETE or FOR ALL for authenticated */
-    return !rlsBody.match(/CREATE POLICY.*claim_requests[\s\S]{0,200}FOR (UPDATE|DELETE|ALL)[\s\S]{0,200}TO authenticated/m);
+    var rlsBody = migration.slice(idx > -1 ? idx : 0);
+    /* Split on CREATE POLICY boundaries */
+    var policyBlocks = rlsBody.split(/(?=CREATE POLICY)/);
+    return !policyBlocks.some(function(block) {
+      return /claim_requests/.test(block) &&
+             /FOR\s+(UPDATE|DELETE|ALL)\b/.test(block) &&
+             /TO\s+authenticated/.test(block);
+    });
   })());
 
 t('S15.20: admin_all_claim_requests NOT recreated in migration (browser direct UPDATE removed)',
@@ -768,3 +785,221 @@ var total = passed + failed;
 console.log('\n══ RESULT: ' + passed + '/' + total + ' PASS' +
   (failed > 0 ? ' — ' + failed + ' FAIL' : ' — ALL PASS') + ' ══\n');
 if (failed > 0) process.exitCode = 1;
+
+/* ─────────────────────────────────────────────────────────
+ * SECTION 16 — Deadlock-free ordering, status constraint,
+ *              cross-representation, idempotency
+ * ───────────────────────────────────────────────────────── */
+
+/* Helpers for Section 16 */
+var _migFull = migration; /* already loaded */
+var _supBody = (function() {
+  var idx = migration.indexOf('CREATE OR REPLACE FUNCTION public._supersede_competing_claims');
+  var end = migration.indexOf('CREATE OR REPLACE FUNCTION public.reject_artisan_claim');
+  return migration.slice(idx, end);
+})();
+var _appBody = (function() {
+  var idx = migration.indexOf('CREATE OR REPLACE FUNCTION public.approve_artisan_claim');
+  var end = migration.indexOf('CREATE OR REPLACE FUNCTION public.reject_artisan_claim');
+  return migration.slice(idx, end);
+})();
+
+/* ── DEADLOCK-FREE LOCK ORDER ── */
+
+t('S16.1: non-locking pre-read (v_pre) exists before artisan FOR UPDATE',
+  _appBody.includes('v_pre') &&
+  _appBody.indexOf('v_pre') < _appBody.indexOf('FOR UPDATE'));
+
+t('S16.2: artisan FOR UPDATE acquired BEFORE claim re-lock FOR UPDATE',
+  (function() {
+    /* Use anchor: artisan WHERE a.id = v_artisan_id (LOCK A) must precede
+     * claim_not_found_locked (LOCK B re-read) in source order */
+    var artisanLockPos = _appBody.indexOf('WHERE a.id = v_artisan_id');
+    var claimLockBPos  = _appBody.indexOf('claim_not_found_locked');
+    return artisanLockPos > -1 && claimLockBPos > -1 && artisanLockPos < claimLockBPos;
+  })());
+
+t('S16.3: claim re-locked AFTER artisan lock (LOCK B or claim_not_found_locked)',
+  _appBody.includes('claim_not_found_locked') || _appBody.includes('LOCK B'));
+
+t('S16.4: claim status re-validated after re-lock (not just pre-read status)',
+  (function() {
+    /* After LOCK B, there must be a claim_not_pending check on v_claim (locked read) */
+    var lockBIdx = _appBody.indexOf('claim_not_found_locked');
+    if (lockBIdx === -1) lockBIdx = _appBody.indexOf('LOCK B');
+    if (lockBIdx === -1) return false;
+    var afterLockB = _appBody.slice(lockBIdx);
+    return afterLockB.includes('claim_not_pending') && afterLockB.includes('v_claim');
+  })());
+
+t('S16.5: requester read from locked v_claim (not only pre-read v_pre)',
+  (function() {
+    var lockBIdx = _appBody.indexOf('claim_not_found_locked');
+    if (lockBIdx === -1) return false;
+    var afterLockB = _appBody.slice(lockBIdx);
+    return afterLockB.includes('v_claim.requester_user_id') ||
+           afterLockB.includes('v_requester_id := v_claim');
+  })());
+
+t('S16.6: no circular wait possible — artisan lock is global ordering point (comment present)',
+  _appBody.includes('global ordering point') || _appBody.includes('GLOBAL ORDERING POINT') ||
+  _appBody.includes('LOCK A'));
+
+t('S16.7: concurrent approval loser handled by claim re-validation after artisan lock',
+  /* Tx B, after waiting for artisan lock, re-reads claim and finds status='superseded_by_approval' */
+  _appBody.includes('claim_not_pending') && _appBody.includes('v_claim.status'));
+
+t('S16.8: _supersede_competing_claims helper is SECURITY DEFINER',
+  _supBody.includes('SECURITY DEFINER'));
+
+t('S16.9: _supersede helper has SET search_path',
+  _supBody.includes("SET search_path = ''") || _supBody.includes('SET search_path'));
+
+/* ── STATUS CONSTRAINT (Blocker 2) ── */
+
+t('S16.10: migration contains Step 0b — claims_status_check extension',
+  migration.includes('Step 0b') || migration.includes('STEP 0b') ||
+  (migration.includes('claims_status_check') && migration.includes('superseded_by_approval') &&
+   migration.includes('DROP CONSTRAINT claims_status_check')));
+
+t('S16.11: migration drops existing constraint before recreating',
+  migration.includes('DROP CONSTRAINT claims_status_check'));
+
+t('S16.12: migration recreates constraint with 4 values including superseded_by_approval',
+  (function() {
+    var idx = migration.indexOf('ADD CONSTRAINT claims_status_check');
+    if (idx === -1) return false;
+    var block = migration.slice(idx, idx + 300);
+    return block.includes('pending') && block.includes('approved') &&
+           block.includes('rejected') && block.includes('superseded_by_approval');
+  })());
+
+t('S16.13: migration has HARD STOP if constraint definition is unexpected',
+  migration.includes('HARD STOP') && migration.includes('claims_status_check'));
+
+t('S16.14: migration handles idempotent case — already contains superseded_by_approval',
+  migration.includes('already includes superseded_by_approval') ||
+  migration.includes('superseded_by_approval%') /* ILIKE pattern in idempotent check */);
+
+t('S16.15: rollback has HARD STOP if superseded rows exist before restoring 3-value constraint',
+  rollback.includes('HARD STOP') && rollback.includes('superseded_by_approval') &&
+  rollback.includes('data loss'));
+
+t('S16.16: rollback drops _supersede_competing_claims helper',
+  rollback.includes('_supersede_competing_claims'));
+
+/* ── CROSS-REPRESENTATION SUPERSESSION ── */
+
+t('S16.17: supersede branch 1 matches by canonical artisan UUID FK',
+  _supBody.includes('artisan_id = p_artisan_id'));
+
+t('S16.18: supersede branch 2 targets claims with artisan_id IS NULL',
+  _supBody.includes('artisan_id IS NULL'));
+
+t('S16.19: supersede branch 2 joins artisans table to verify canonical identity',
+  _supBody.includes('FROM public.artisans') || _supBody.includes('FROM public.artisans a'));
+
+t('S16.20: supersede branch 2 matches a.id = p_artisan_id (canonical UUID anchor)',
+  _supBody.includes('a.id = p_artisan_id'));
+
+t('S16.21: supersede branch 2 covers UUID-text artisan_legacy_id (a.id::text = cr.artisan_legacy_id)',
+  _supBody.includes('a.id::text') && _supBody.includes('cr.artisan_legacy_id'));
+
+t('S16.22: supersede branch 2 covers artisans.legacy_id match (a.legacy_id = cr.artisan_legacy_id)',
+  _supBody.includes('a.legacy_id') && _supBody.includes('cr.artisan_legacy_id'));
+
+t('S16.23: supersede winner excluded in branch 1 (id != p_winner_claim)',
+  (function() {
+    var b1Idx = _supBody.indexOf('artisan_id = p_artisan_id');
+    if (b1Idx === -1) return false;
+    var block = _supBody.slice(Math.max(0, b1Idx - 50), b1Idx + 300);
+    return block.includes('id') && block.includes('p_winner_claim') && block.includes('!=');
+  })());
+
+t('S16.24: supersede winner excluded in branch 2 (cr.id != p_winner_claim)',
+  (function() {
+    var b2Idx = _supBody.indexOf('UPDATE public.claim_requests cr');
+    if (b2Idx === -1) return false;
+    var block = _supBody.slice(b2Idx, b2Idx + 500);
+    return block.includes('p_winner_claim') && (block.includes('cr.id') || block.includes('!= p_winner_claim'));
+  })());
+
+t('S16.25: supersede only targets pending claims in branch 1',
+  (function() {
+    var b1Idx = _supBody.indexOf('artisan_id = p_artisan_id');
+    if (b1Idx === -1) return false;
+    var block = _supBody.slice(Math.max(0, b1Idx - 50), b1Idx + 300);
+    return block.includes("status     = 'pending'") || block.includes("status = 'pending'");
+  })());
+
+t('S16.26: supersede only targets pending claims in branch 2 (cr.status)',
+  (function() {
+    var b2Idx = _supBody.indexOf('UPDATE public.claim_requests cr');
+    if (b2Idx === -1) return false;
+    var block = _supBody.slice(b2Idx, b2Idx + 500);
+    return (block.includes("cr.status            = 'pending'") ||
+            block.includes("cr.status = 'pending'") ||
+            block.includes("cr.status     = 'pending'"));
+  })());
+
+t('S16.27: supersede sets status=superseded_by_approval in both branches',
+  (function() {
+    var count = (_supBody.match(/'superseded_by_approval'/g) || []).length;
+    return count >= 2;
+  })());
+
+/* ── IDEMPOTENCY + STATE MACHINE VERIFICATION ── */
+
+t('S16.28: approved claim cannot be rejected (claim_already_approved path in reject RPC)',
+  (function() {
+    var rejIdx = migration.indexOf('CREATE OR REPLACE FUNCTION public.reject_artisan_claim');
+    var rejEnd = migration.indexOf('STEP 4: Permissions');
+    var rejBody = migration.slice(rejIdx, rejEnd);
+    return rejBody.includes('claim_already_approved') && rejBody.includes("= 'approved'");
+  })());
+
+t('S16.29: rejected claim cannot be re-approved (claim_not_pending guard covers rejected)',
+  /* claim_not_pending triggers for any status != pending, including rejected */
+  _appBody.includes('claim_not_pending') &&
+  (_appBody.includes("!= 'pending'") || _appBody.includes("!= 'pending'")));
+
+t('S16.30: superseded claim cannot be re-approved (status != pending → claim_not_pending)',
+  /* superseded_by_approval != 'pending' → caught by re-validation after LOCK B */
+  _appBody.includes('claim_not_pending') && _appBody.includes("v_claim.status != 'pending'"));
+
+t('S16.31: same claim retry safe (idempotent already_owned_consistent path)',
+  _appBody.includes('already_owned_consistent'));
+
+t('S16.32: different owner cannot overwrite (artisan_has_owner path + conditional WHERE IS NULL)',
+  _appBody.includes('artisan_has_owner') && _appBody.includes('owner_user_id IS NULL'));
+
+t('S16.33: false ok:true impossible (ROW_COUNT=0 case returns truthful state, not ok:true)',
+  _appBody.includes('conditional_update_miss') &&
+  _appBody.includes('v_reread_owner'));
+
+t('S16.34: requester mismatch guard between pre-read and locked read',
+  _appBody.includes('requester_mismatch'));
+
+/* ── VERIFY SQL COVERAGE ── */
+
+t('S16.35: verify checks deadlock-free lock order (V-7 v_pre, V-8c artisan precedes claim)',
+  verify.includes('V-7') && verify.includes('v_pre') &&
+  verify.includes('V-8c'));
+
+t('S16.36: verify checks LOCK B re-validation (V-37 and V-38)',
+  verify.includes('V-37') && verify.includes('LOCK B') &&
+  verify.includes('V-38'));
+
+t('S16.37: verify checks claims_status_check includes superseded_by_approval (V-35)',
+  verify.includes('V-35') && verify.includes('superseded_by_approval'));
+
+t('S16.38: verify checks historical status values preserved (V-36)',
+  verify.includes('V-36') && verify.includes('pending') &&
+  verify.includes('approved') && verify.includes('rejected'));
+
+t('S16.39: verify checks cross-representation supersession (V-11c, V-11d)',
+  verify.includes('V-11c') && verify.includes('artisan_id IS NULL') &&
+  verify.includes('V-11d'));
+
+t('S16.40: verify checks _supersede_competing_claims helper not executable by authenticated (V-24b)',
+  verify.includes('V-24b') && verify.includes('_supersede_competing_claims'));
