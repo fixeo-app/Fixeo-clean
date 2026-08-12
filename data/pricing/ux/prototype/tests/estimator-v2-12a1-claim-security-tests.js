@@ -1003,3 +1003,171 @@ t('S16.39: verify checks cross-representation supersession (V-11c, V-11d)',
 
 t('S16.40: verify checks _supersede_competing_claims helper not executable by authenticated (V-24b)',
   verify.includes('V-24b') && verify.includes('_supersede_competing_claims'));
+
+/* ─────────────────────────────────────────────────────────
+ * SECTION 17 — Precheck v2 coverage (be1ed2a architecture)
+ * ───────────────────────────────────────────────────────── */
+
+/* ── Status constraint (Blocker 2) ── */
+t('S17.1: precheck reads claims_status_check constraint definition',
+  precheck.includes('claims_status_check') && precheck.includes('pg_get_constraintdef'));
+
+t('S17.2: precheck detects baseline 3-value set (pending/approved/rejected)',
+  precheck.includes('pending') && precheck.includes('approved') && precheck.includes('rejected') &&
+  precheck.includes('superseded_by_approval'));
+
+t('S17.3: precheck HARD STOPs on unexpected constraint definition',
+  precheck.includes('HARD STOP') && precheck.includes('claims_status_check'));
+
+t('S17.4: precheck handles idempotent case — superseded_by_approval already present',
+  precheck.includes('superseded_by_approval') && precheck.includes('idempotent'));
+
+t('S17.5: precheck checks for parallel/duplicate status CHECK constraints',
+  precheck.includes('additional CHECK constraints'));
+
+/* ── Live status row audit ── */
+t('S17.6: precheck counts each known status value in live claim_requests',
+  precheck.includes("status = 'pending'") && precheck.includes("status = 'approved'") &&
+  precheck.includes("status = 'rejected'") && precheck.includes("status = 'superseded_by_approval'"));
+
+t('S17.7: precheck HARD STOPs on unknown status values in live rows',
+  precheck.includes('PM-12') && precheck.includes('HARD STOP') &&
+  precheck.includes('unknown status'));
+
+/* ── Cross-representation integrity ── */
+t('S17.8: precheck checks artisan_id FK orphans (missing artisans)',
+  precheck.includes('artisan_id') && precheck.includes('NOT EXISTS') &&
+  precheck.includes('missing artisans'));
+
+t('S17.9: precheck counts claims resolving via UUID-text legacy match',
+  precheck.includes('id::text = cr.artisan_legacy_id'));
+
+t('S17.10: precheck counts claims resolving via artisans.legacy_id text match',
+  precheck.includes('a.legacy_id = cr.artisan_legacy_id'));
+
+t('S17.11: precheck counts claims resolving to neither path',
+  precheck.includes('neither') || precheck.includes('resolves to no artisan'));
+
+t('S17.12: precheck HARD STOPs on ambiguous legacy_id (>1 artisan)',
+  precheck.includes('PM-24') && precheck.includes('HARD STOP') &&
+  precheck.includes('more than one') && precheck.includes('artisan_legacy_id'));
+
+t('S17.13: precheck HARD STOPs on duplicate artisans.legacy_id',
+  precheck.includes('PM-25') && precheck.includes('HARD STOP') &&
+  precheck.includes('duplicate') && precheck.includes('legacy_id'));
+
+/* ── Ownership integrity ── */
+t('S17.14: precheck HARD STOPs on contradictory ownership (different requesters approved same artisan)',
+  precheck.includes('PM-31') && precheck.includes('HARD STOP') &&
+  precheck.includes('contradictory ownership'));
+
+t('S17.15: precheck HARD STOPs on owner vs approved claim mismatch',
+  precheck.includes('PM-32') && precheck.includes('HARD STOP') &&
+  precheck.includes('owner_user_id') && precheck.includes('requester_user_id'));
+
+/* ── Helper collision / signature ── */
+t('S17.16: precheck checks _supersede_competing_claims collision',
+  precheck.includes('_supersede_competing_claims'));
+
+t('S17.17: precheck HARD STOPs on incompatible _supersede signature',
+  precheck.includes('PM-41') && precheck.includes('HARD STOP') &&
+  precheck.includes('incompatible signature'));
+
+t('S17.18: precheck checks approve_artisan_claim signature compatibility',
+  precheck.includes('PM-39') && precheck.includes('approve_artisan_claim'));
+
+t('S17.19: precheck checks reject_artisan_claim signature compatibility',
+  precheck.includes('PM-40') && precheck.includes('reject_artisan_claim'));
+
+/* ── RLS effective live state ── */
+t('S17.20: precheck enumerates all live claim_requests policies with cmd/roles/qual/wcheck',
+  precheck.includes('PM-44') && precheck.includes('policyname') &&
+  precheck.includes('with_check'));
+
+t('S17.21: precheck detects anon non-blocking INSERT/UPDATE/ALL policies',
+  precheck.includes('PM-45') && precheck.includes('anon') &&
+  precheck.includes('INSERT') && precheck.includes("= 'false'") || precheck.includes("qual IS NULL OR qual != 'false'"));
+
+t('S17.22: precheck detects authenticated UPDATE/DELETE/ALL (direct write risk)',
+  precheck.includes('PM-46') && precheck.includes('authenticated') &&
+  precheck.includes('UPDATE') && precheck.includes('DELETE'));
+
+t('S17.23: precheck detects open WITH CHECK(true) insert policies',
+  precheck.includes('PM-47') && precheck.includes('WITH CHECK') &&
+  precheck.includes('true'));
+
+/* ── Trigger state ── */
+t('S17.24: precheck confirms sync_artisan_claim defect 1 (onboarding_completed)',
+  precheck.includes('DEFECT-1') && precheck.includes('onboarding_completed'));
+
+t('S17.25: precheck confirms sync_artisan_claim defect 2 (verified=TRUE)',
+  precheck.includes('DEFECT-2') && precheck.includes('verified'));
+
+t('S17.26: precheck confirms sync_artisan_claim defect 3 (owner double-write)',
+  precheck.includes('DEFECT-3') && precheck.includes('owner_user_id'));
+
+t('S17.27: precheck checks claim_approval_sync trigger existence',
+  precheck.includes('claim_approval_sync') && precheck.includes('PM-37'));
+
+t('S17.28: precheck checks for unexpected OTHER triggers on claim_requests',
+  precheck.includes('PM-38') && precheck.includes('unexpected trigger'));
+
+/* ── Lock-order schema prerequisites ── */
+t('S17.29: precheck verifies artisans has PRIMARY KEY (FOR UPDATE safety)',
+  precheck.includes('PM-55') && precheck.includes('PRIMARY KEY') &&
+  precheck.includes('artisans'));
+
+t('S17.30: precheck verifies claim_requests has PRIMARY KEY',
+  precheck.includes('PM-56') && precheck.includes('PRIMARY KEY') &&
+  precheck.includes('claim_requests'));
+
+t('S17.31: precheck verifies claim_requests.artisan_id is UUID (LOCK A type match)',
+  precheck.includes('PM-57') && precheck.includes('artisan_id') && precheck.includes('uuid'));
+
+t('S17.32: precheck verifies artisans.owner_user_id is UUID (auth.uid() match)',
+  precheck.includes('PM-58') && precheck.includes('owner_user_id') && precheck.includes('uuid'));
+
+t('S17.33: precheck checks triggers on artisans (reverse lock order risk)',
+  precheck.includes('PM-59') && precheck.includes('artisans') &&
+  precheck.includes('reverse lock order'));
+
+/* ── FORCE RLS ── */
+t('S17.34: precheck reports FORCE RLS state on claim_requests',
+  precheck.includes('PM-43') && precheck.includes('FORCE ROW SECURITY'));
+
+t('S17.35: precheck reports RLS state on artisans, users, profiles',
+  precheck.includes('PM-48') && precheck.includes('PM-50') && precheck.includes('PM-51'));
+
+/* ── Admin role confirmation ── */
+t('S17.36: precheck confirms users.role is present for admin identification',
+  precheck.includes('PM-52') && precheck.includes('users.role'));
+
+t('S17.37: precheck warns if zero admin users exist',
+  precheck.includes('PM-53') && precheck.includes('no users with role=admin'));
+
+/* ── Read-only proof ── */
+t('S17.38: precheck has zero DDL (CREATE/ALTER/DROP) outside comments',
+  (function() {
+    var lines = precheck.split('\n').filter(function(l) {
+      return !l.trim().startsWith('--');
+    });
+    var joined = lines.join('\n');
+    return !joined.match(/^\s*(CREATE|ALTER|DROP|TRUNCATE)\s+(TABLE|FUNCTION|POLICY|INDEX|TRIGGER|CONSTRAINT)\b/mi);
+  })());
+
+t('S17.39: precheck has zero DML (INSERT/UPDATE/DELETE)',
+  (function() {
+    var lines = precheck.split('\n').filter(function(l) {
+      return !l.trim().startsWith('--');
+    });
+    var joined = lines.join('\n');
+    return !joined.match(/^\s*(INSERT\s+INTO|DELETE\s+FROM)\b/mi) &&
+           !joined.match(/^\s*UPDATE\s+public\.\w/mi);
+  })());
+
+t('S17.40: precheck DO block is balanced (1 DO $$ / 1 END $$)',
+  (function() {
+    var doCount  = (precheck.match(/\bDO \$\$/g) || []).length;
+    var endCount = (precheck.match(/^END \$\$;/m) || []).length;
+    return doCount === 1 && endCount === 1;
+  })());
