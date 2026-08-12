@@ -63,6 +63,22 @@
     'not_offered_to_you': 'Cette offre ne vous est pas adressée.'
   };
 
+  /* Business error reasons for lifecycle RPCs */
+  var LIFECYCLE_ERRORS = {
+    'unauthenticated':     'Vous devez être connecté.',
+    'artisan_not_found':   'Votre compte artisan n'est pas reconnu.',
+    'mission_not_found':   'Cette mission est introuvable.',
+    'not_your_mission':    'Cette mission ne vous appartient pas.',
+    'not_offered':         'Cette offre n'est plus disponible.',
+    'not_accepted':        'La mission doit être acceptée avant de démarrer.',
+    'already_started':     'L'intervention est déjà démarrée.',
+    'not_started':         'L'intervention doit être démarrée avant d'être terminée.',
+    'already_completed':   'Cette intervention a déjà été marquée terminée.',
+    'invalid_request_state': 'Statut inattendu. Actualisez et réessayez.',
+    'request_not_dispatchable': 'La demande n'est plus disponible.',
+    'internal_error':      'Erreur interne. Contactez le support.'
+  };
+
   /* ── STATE ─────────────────────────────────────────────────── */
   var _d = {
     offers:          [],    /* from get_my_mission_offers() */
@@ -231,6 +247,12 @@
       + 'data-mission-id="' + missionId + '" '
       + 'aria-label="Accepter l\'offre ' + service + (city ? ' à ' + city : '') + '">'
       + '✅ Accepter'
+      + '</button>'
+      + '<button class="fxa-btn fxa-btn-ghost fxad-decline-btn" '
+      + 'data-action="dispatch-decline" '
+      + 'data-mission-id="' + missionId + '" '
+      + 'aria-label="Décliner cette offre">'
+      + 'Décliner'
       + '</button>'
       + '</div>'
       + '</div>';
@@ -413,6 +435,60 @@
    * Shows post-acceptance data: description + client_phone.
    * client_phone shown ONLY if non-null.
    * ══════════════════════════════════════════════════════════════ */
+  /* ══════════════════════════════════════════════════════════════
+   * LIFECYCLE CTA — factual, driven by mission_status + request_status
+   *
+   * ARTISAN AUTHORITY:
+   *   offered  → Accept / Decline (handled in offer card)
+   *   pending + assigned   → Démarrer l'intervention
+   *   pending + in_progress → Marquer terminée
+   *   done / completed     → (no CTA — await client validation)
+   *   validated            → (no CTA — complete)
+   *
+   * NEVER shows Validate button — that is client/admin only.
+   * ══════════════════════════════════════════════════════════════ */
+  function _renderLifecycleCTA(d) {
+    var mId     = esc(d.mission_id || '');
+    var mSt     = String(d.mission_status  || '').toLowerCase().trim();
+    var rSt     = String(d.request_status  || '').toLowerCase().trim();
+
+    /* ACCEPTED + not yet started */
+    if (mSt === 'pending' && (rSt === 'assigned' || rSt === 'new')) {
+      return '<button class="fxa-btn fxa-btn-primary fxad-lifecycle-btn" '
+        + 'data-action="dispatch-start" '
+        + 'data-mission-id="' + mId + '" '
+        + 'aria-label="Démarrer l\'intervention">'
+        + '▶ Démarrer l\'intervention'
+        + '</button>';
+    }
+
+    /* IN PROGRESS */
+    if (mSt === 'pending' && rSt === 'in_progress') {
+      return '<div class="fxad-status-banner fxad-status-progress">⚡ Intervention en cours</div>'
+        + '<button class="fxa-btn fxa-btn-success fxad-lifecycle-btn" '
+        + 'data-action="dispatch-complete" '
+        + 'data-mission-id="' + mId + '" '
+        + 'aria-label="Marquer l\'intervention terminée">'
+        + '✓ Marquer l\'intervention terminée'
+        + '</button>';
+    }
+
+    /* DONE — awaiting client validation */
+    if (mSt === 'done' || rSt === 'completed') {
+      return '<div class="fxad-status-banner fxad-status-done">'
+        + '✅ Intervention terminée — en attente de validation client</div>';
+    }
+
+    /* VALIDATED */
+    if (mSt === 'validated' || rSt === 'validated') {
+      return '<div class="fxad-status-banner fxad-status-validated">'
+        + '🏅 Mission validée</div>';
+    }
+
+    return ''; /* no CTA for other states */
+  }
+
+
   function _renderAcceptedDetailModal(d) {
     var service  = esc(d.service_category || 'Service');
     var city     = d.city ? esc(d.city) : '';
@@ -463,7 +539,12 @@
         )
       + '</div>'
 
-      /* Close action */
+      /* ── Lifecycle CTAs — driven by request_status + mission_status ── */
+      + '<div class="fxad-lifecycle-actions">'
+      + _renderLifecycleCTA(d)
+      + '</div>'
+
+      /* Close */
       + '<div class="fxad-detail-actions">'
       + '<button class="fxa-btn fxa-btn-ghost fxad-modal-close-btn" '
       + 'onclick="document.getElementById(\'fxav2-modal-close\') && document.getElementById(\'fxav2-modal-close\').click()">'
@@ -505,6 +586,154 @@
   }
 
   /* ══════════════════════════════════════════════════════════════
+   * LIFECYCLE HELPER — resolve error reason to French message
+   * ══════════════════════════════════════════════════════════════ */
+  function _lifecycleErr(err, data) {
+    /* Check data.reason first (structured) then err.message/code */
+    var reason = (data && data.reason) ? String(data.reason) :
+                 String((err && (err.message || err.code)) || '').toLowerCase();
+    for (var key in LIFECYCLE_ERRORS) {
+      if (reason.indexOf(key) !== -1) return LIFECYCLE_ERRORS[key];
+    }
+    return 'Erreur inattendue. Réessayer.';
+  }
+
+  /* ── DISABLE / RESTORE BUTTON HELPERS ── */
+  function _btnBusy(btn, label) {
+    if (!btn) return;
+    btn.disabled = true;
+    btn._origText = btn.textContent;
+    btn.textContent = label || '⏳…';
+    btn.setAttribute('aria-busy', 'true');
+  }
+  function _btnRestore(btn) {
+    if (!btn) return;
+    btn.disabled = false;
+    btn.textContent = btn._origText || btn.textContent;
+    btn.removeAttribute('aria-busy');
+  }
+
+  /* ══════════════════════════════════════════════════════════════
+   * DECLINE FLOW — calls decline_mission(p_mission_id)
+   *
+   * Transitions: offered → declined
+   * service_request stays 'new' (re-dispatch by server later)
+   * ══════════════════════════════════════════════════════════════ */
+  async function _doDispatchDecline(missionId, btn) {
+    if (!missionId) return;
+    if (_d.claimInFlight[missionId]) return;
+    _d.claimInFlight[missionId] = true;
+
+    _btnBusy(btn, '⏳ Déclin…');
+
+    try {
+      var sb = await _getSB();
+      var result = await sb.rpc('decline_mission', { p_mission_id: missionId });
+
+      if (result.error) throw { _err: result.error, _data: null };
+      var data = result.data;
+      if (data && data.ok === false) throw { _err: null, _data: data };
+
+      /* Success: remove from visible offer list */
+      _d.offers = _d.offers.filter(function(o) { return o.mission_id !== missionId; });
+      _d.offersLoaded = true;
+      _renderAvailableSection();
+      _updateOfferKPI();
+      _toast('Offre déclinée.', 'info');
+
+    } catch (e) {
+      var msg = (e && e._err !== undefined)
+        ? _lifecycleErr(e._err, e._data)
+        : _lifecycleErr(e, null);
+      _toast('❌ ' + msg, 'error');
+      _btnRestore(btn);
+    }
+
+    delete _d.claimInFlight[missionId];
+  }
+
+  /* ══════════════════════════════════════════════════════════════
+   * START FLOW — calls start_mission(p_mission_id)
+   *
+   * Transitions: service_request assigned → in_progress
+   * mission.status stays 'pending' (no missions.in_progress)
+   * ══════════════════════════════════════════════════════════════ */
+  async function _doDispatchStart(missionId, btn) {
+    if (!missionId) return;
+    var key = 'start:' + missionId;
+    if (_d.claimInFlight[key]) return;
+    _d.claimInFlight[key] = true;
+
+    _btnBusy(btn, '⏳ Démarrage…');
+
+    try {
+      var sb = await _getSB();
+      var result = await sb.rpc('start_mission', { p_mission_id: missionId });
+
+      if (result.error) throw { _err: result.error, _data: null };
+      var data = result.data;
+      if (data && data.ok === false) throw { _err: null, _data: data };
+
+      _toast('▶ Intervention démarrée !', 'success');
+
+      /* Refresh detail to get updated request_status */
+      delete _d.acceptedDetails[missionId];
+      await _loadAndShowAcceptedDetail(missionId);
+      _triggerV2Refresh();
+
+    } catch (e) {
+      var msg = (e && e._err !== undefined)
+        ? _lifecycleErr(e._err, e._data)
+        : _lifecycleErr(e, null);
+      _toast('❌ ' + msg, 'error');
+      _btnRestore(btn);
+    }
+
+    delete _d.claimInFlight[key];
+  }
+
+  /* ══════════════════════════════════════════════════════════════
+   * COMPLETE FLOW — calls complete_mission(p_mission_id)
+   *
+   * Transitions: mission pending→done, request in_progress→completed
+   * Artisan CANNOT set validated — that is client/admin authority.
+   * ══════════════════════════════════════════════════════════════ */
+  async function _doDispatchComplete(missionId, btn) {
+    if (!missionId) return;
+    var key = 'complete:' + missionId;
+    if (_d.claimInFlight[key]) return;
+    _d.claimInFlight[key] = true;
+
+    _btnBusy(btn, '⏳ Finalisation…');
+
+    try {
+      var sb = await _getSB();
+      var result = await sb.rpc('complete_mission', { p_mission_id: missionId });
+
+      if (result.error) throw { _err: result.error, _data: null };
+      var data = result.data;
+      if (data && data.ok === false) throw { _err: null, _data: data };
+
+      _toast('✅ Intervention marquée terminée !', 'success');
+
+      /* Refresh detail — mission now 'done', request 'completed' */
+      delete _d.acceptedDetails[missionId];
+      await _loadAndShowAcceptedDetail(missionId);
+      _triggerV2Refresh();
+
+    } catch (e) {
+      var msg = (e && e._err !== undefined)
+        ? _lifecycleErr(e._err, e._data)
+        : _lifecycleErr(e, null);
+      _toast('❌ ' + msg, 'error');
+      _btnRestore(btn);
+    }
+
+    delete _d.claimInFlight[key];
+  }
+
+
+  /* ══════════════════════════════════════════════════════════════
    * ACTION DELEGATION — dispatched from the section
    * Handles data-action="dispatch-accept" and "dispatch-reload-offers"
    * ══════════════════════════════════════════════════════════════ */
@@ -516,8 +745,17 @@
       var missionId  = btn.dataset.missionId || '';
 
       if (action === 'dispatch-accept') {
-        e.stopPropagation(); /* prevent v2 handler from seeing this */
+        e.stopPropagation();
         _doDispatchAccept(missionId, btn);
+      } else if (action === 'dispatch-decline') {
+        e.stopPropagation();
+        _doDispatchDecline(missionId, btn);
+      } else if (action === 'dispatch-start') {
+        e.stopPropagation();
+        _doDispatchStart(missionId, btn);
+      } else if (action === 'dispatch-complete') {
+        e.stopPropagation();
+        _doDispatchComplete(missionId, btn);
       } else if (action === 'dispatch-reload-offers') {
         e.stopPropagation();
         _loadOffers();
