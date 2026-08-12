@@ -26,7 +26,7 @@
    * Mission lifecycle: accept (pending) → start (in_progress) → complete (completed)
    * SR_COLS: id,service_category,city,description,status,created_at (no final_price/updated_at)
    * RLS: artisan_read_own_linked_requests + artisan_update_assigned_requests on service_requests
-   * Identity: artisans WHERE owner_user_id=auth.uid() OR phone_public=profiles.phone
+   * Identity: artisans WHERE owner_user_id=auth.uid() (7C.12A.1: phone_public fallback removed)
    * ─────────────────────────────────────────────────────────────────────────── */
   var VERSION = 'v2d'; /* fxadv3-v1b: SELECT fix — trust_score (col DNE) removed */
 
@@ -161,34 +161,41 @@
   }
 
   /* ── DATA FETCH ───────────────────────────────────────────── */
+  /*
+   * CANONICAL ARTISAN IDENTITY CONTRACT (7C.12A.1)
+   *
+   * Identity resolution: auth.uid() → artisans.owner_user_id → artisans.id
+   *
+   * The phone_public fallback (profiles.phone = artisans.phone_public) has been
+   * permanently removed. It allowed any authenticated user who knew or controlled
+   * their profiles.phone value to load an arbitrary artisan's dashboard — a direct
+   * privilege escalation path that violates the 7C.11 security contract.
+   *
+   * If no artisan row has owner_user_id = auth.uid(), this function returns null.
+   * The caller renders the safe 'artisan_profile_not_linked' state.
+   * phone_public MUST NOT be used for authorization in any path.
+   */
   async function _loadArtisanProfile(userId) {
     var FS = window.FixeoSupabase;
     var sb = await FS.getClient();
 
-    /* Primary: owner_user_id = auth.uid() */
+    /* Canonical: owner_user_id = auth.uid() — only safe identity gate */
     var r1 = await sb.from('artisans')
-      .select('id,name,full_name,city,service_category,category,phone_public,' +
+      .select('id,name,full_name,city,service_category,category,' +
               'verified,is_verified,availability,rating,review_count,completed_missions,' +
               'owner_user_id,claimed,claim_status,badge_label,avatar_color,work_zone,' +
-              'response_time_min,description') /* fxadv3-v1b: trust_score removed (col DNE) */
+              'response_time_min,description')
+      /* phone_public intentionally excluded from SELECT — see 7C.12A.1 security note */
       .eq('owner_user_id', userId)
       .maybeSingle();
 
     if (!r1.error && r1.data) return r1.data;
 
-    /* Fallback: profiles.phone = artisans.phone (for accounts linked by phone) */
-    if (_state.profile && _state.profile.phone) {
-      var phone = String(_state.profile.phone).trim();
-      var r2 = await sb.from('artisans')
-        .select('id,name,full_name,city,service_category,category,phone_public,' +
-                'verified,is_verified,availability,rating,review_count,completed_missions,' +
-                'owner_user_id,claimed,claim_status,badge_label,avatar_color,work_zone,' +
-                'response_time_min,description') /* fxadv3-v1b: trust_score removed (col DNE) */
-        .eq('phone_public', phone)
-        .maybeSingle();
-      if (!r2.error && r2.data) return r2.data;
-    }
-
+    /* phone_public fallback REMOVED (7C.12A.1 — security hardening).
+     * Reason: profiles.phone = artisans.phone_public is not a safe identity gate.
+     * Any authenticated user controlling profiles.phone could load another artisan's
+     * dashboard. ownership must be established exclusively via owner_user_id.
+     * If no owner_user_id match: return null → dashboard renders 'artisan_profile_not_linked'. */
     return null;
   }
 

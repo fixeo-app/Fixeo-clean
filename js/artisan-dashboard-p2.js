@@ -471,28 +471,39 @@
 
   /* ── V1-C: Non-blocking Supabase availability update ────── */
   function _syncAvailToSupabase(key) {
-    /* V2-B2A Patch 8: Use FixeoSupabaseClient.ready() (public API).
-     * Previous code called FixeoSupabaseClient.getClient() which is a private
-     * internal function — not exposed on the public object → always returned
-     * undefined → the Promise chain silently failed → artisans.availability
-     * was NEVER updated in Supabase from the dashboard.
-     * Fixed: use .ready() which returns { client } after SDK loads.
+    /* 7C.12A.1 SECURITY FIX: Identity must come from auth.uid() (Supabase session),
+     * NEVER from localStorage (user_id / fixeo_user_id / sb_user_id).
+     * localStorage values are user-controlled and can be set to any UUID.
+     *
+     * RLS policy "artisans_owner_update" allows UPDATE only WHERE
+     * owner_user_id = auth.uid(). We rely on this policy as the DB-level guard.
+     * The WHERE clause uses owner_user_id = auth.uid() — NOT a caller-supplied id.
+     *
+     * Previous code: used .or() with localStorage userId — removed (7C.12A.1)
+     * where userId came from localStorage — this could target any artisan row
+     * if the localStorage value was manipulated.
+     *
+     * Fixed: UPDATE WHERE owner_user_id = auth.uid() (resolved server-side by RLS).
+     * Supabase executes UPDATE only on rows the authenticated caller owns.
      */
     var publicVal = _availKeyToPublic(key);
     try {
       if (!window.FixeoSupabaseClient || !window.FixeoSupabaseClient.CONFIGURED) return;
-      var userId = ls('user_id', ls('fixeo_user_id', ls('sb_user_id', '')));
-      if (!userId) return;
       window.FixeoSupabaseClient.ready().then(function(r) {
         if (!r || !r.client) return;
+        /* auth.uid() is enforced server-side by the artisans_owner_update RLS policy.
+         * We do not supply a WHERE id= clause — RLS restricts to owner's own row. */
         return r.client
           .from('artisans')
           .update({ availability: publicVal })
-          .or('id.eq.' + userId + ',legacy_id.eq.' + userId);
+          .eq('owner_user_id', /* resolved by RLS — use session-derived uid */
+              /* We must supply a concrete value; get it from the active session. */
+              (r.client.auth && r.client.auth.user && r.client.auth.user() &&
+               r.client.auth.user().id) || '');
       }).then(function() {
         /* Success — silent */
       }).catch(function() {
-        /* RLS may reject — silent, localStorage bridge is sufficient */
+        /* RLS will reject any mismatched identity — silent, localStorage state sufficient */
       });
     } catch(e) { /* silent */ }
   }

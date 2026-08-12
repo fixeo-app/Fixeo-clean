@@ -172,6 +172,34 @@
    * ─────────────────────────────────────────────────────── */
 
   function adminApproveClaim(claimId, adminNote) {
+    /* 7C.12A.1 SECURITY CONTRACT:
+     *
+     * This function now handles ONLY the local (localStorage/in-memory) side of
+     * claim approval for admin UI cache coherence. It is NO LONGER responsible for
+     * writing owner_user_id, claim_status, or any privileged field to Supabase.
+     *
+     * All Supabase ownership writes (owner_user_id, claim_status, claimed,
+     * users.role, profiles.role) are performed EXCLUSIVELY by the server-side
+     * Supabase RPC approve_artisan_claim(p_claim_id uuid) (SECURITY DEFINER,
+     * admin-only, called via FixeoRepository.approveClaimRequest → server RPC).
+     *
+     * REMOVED (7C.12A.1):
+     *   - Browser-side Supabase UPDATE of artisans.owner_user_id
+     *   - Browser-side Supabase UPDATE of profiles.role / users.role
+     *   - requesterUID sourced from localStorage claim.user_id
+     *   - artisanUUID sourced from localStorage claim.artisan_id
+     *   - onboarding_completed=true set during approval (claim approval ≠ onboarding complete)
+     *
+     * PRESERVED:
+     *   - localStorage cache update for admin UI coherence
+     *   - claim_status/claimed patch to in-memory artisan store (local UX only)
+     *   - fixeo:claim-approved event dispatch (triggers UI refresh)
+     *
+     * ONBOARDING CONTRACT (7C.12A.1):
+     *   onboarding_completed remains FALSE after claim approval.
+     *   It is set to TRUE only by a future dedicated server RPC that validates
+     *   required onboarding fields (7C.12A.4). Do NOT set it here.
+     */
     const claims = readClaims();
     const idx = claims.findIndex(c => c.id === claimId);
     if (idx < 0) return { ok: false, reason: 'claim_not_found' };
@@ -182,59 +210,27 @@
     claim.admin_note   = adminNote || '';
     writeClaims(claims);
 
-    // Apply onboarding data to the artisan profile
+    /* Local artisan cache patch — UI coherence only, NOT authoritative.
+     * Does NOT include owner_user_id (server-only) or onboarding_completed. */
     const patch = {
-      claimed: true,
-      claim_status: 'approved',
-      owner_account_id: claim.user_id,
-      onboarding_completed: !!(claim.onboarding),
-      verification_status: 'verified',
-      availability: 'available',
-      _claim_id: claimId
+      claimed:              true,
+      claim_status:         'approved',
+      /* onboarding_completed intentionally NOT set — approval ≠ onboarding complete (7C.12A.1) */
+      _claim_id:            claimId
     };
-
-    if (claim.onboarding) {
-      const ob = claim.onboarding;
-      if (ob.phone)       patch.phone        = ob.phone;
-      if (ob.description) patch.description  = ob.description;
-      if (ob.availability)patch.availability = ob.availability;
-      if (ob.work_zone)   patch.work_zone    = ob.work_zone;
-      if (ob.services && ob.services.length) patch.services = ob.services;
-      if (ob.city)        patch.city         = ob.city;
-    }
 
     patchArtisanInStorage(claim.artisan_id, patch);
 
-    // Supabase role promotion (if client is available — admin is authenticated)
-    // Updates artisans.owner_user_id by UUID + profiles.role + users.role = 'artisan'
-    // This path fires when FixeoRepository is NOT loaded (e.g. admin loaded without repository.js).
-    // When FixeoRepository IS loaded, approveClaimRequest() handles the same writes — no double-write
-    // because both use .eq('id', uuid) / .eq('id', requesterUID) which are idempotent.
-    if (!window.FixeoRepository) {
-      (async function _supabasePromote() {
-        try {
-          var FS = window.FixeoSupabase;
-          if (!FS) return;
-          var sb = await FS.getClient();
-          var artisanUUID = claim.artisan_id; // already UUID (legacy_id=NULL, loader sets id=UUID)
-          var requesterUID = claim.user_id;
-          if (artisanUUID && requesterUID) {
-            await sb.from('artisans').update({
-              owner_user_id: requesterUID,
-              claimed: true,
-              claim_status: 'approved',
-              updated_at: new Date().toISOString()
-            }).eq('id', artisanUUID);
-            await sb.from('profiles').update({ role: 'artisan' }).eq('id', requesterUID);
-            await sb.from('users').update({ role: 'artisan' }).eq('id', requesterUID);
-          }
-        } catch(e) {
-          console.warn('[ClaimSystem] Supabase promotion failed:', e && e.message);
-        }
-      })();
-    }
+    /* NO direct Supabase writes here (7C.12A.1 security hardening):
+     *   - artisans.owner_user_id: written by approve_artisan_claim() RPC only
+     *   - artisans.claim_status:  written by approve_artisan_claim() RPC + DB trigger
+     *   - profiles.role:          written by approve_artisan_claim() RPC only
+     *   - users.role:             written by approve_artisan_claim() RPC only
+     * The !window.FixeoRepository browser-fallback path has been removed.
+     * If FixeoRepository is not loaded, the approval is local-only until
+     * the server RPC call completes. */
 
-    dispatch('fixeo:claim-approved', { claimId, artisanId: claim.artisan_id, userId: claim.user_id });
+    dispatch('fixeo:claim-approved', { claimId, artisanId: claim.artisan_id });
     return { ok: true, artisanId: claim.artisan_id };
   }
 
@@ -431,11 +427,68 @@ for (const target of targets) {
    * 5. ONBOARDING MODAL (multi-step)
    * ─────────────────────────────────────────────────────── */
 
+  /* ── CLAIM AUTH GATE ─────────────────────────────────────────
+   * 7C.12A.1: A real Supabase authenticated session is REQUIRED before
+   * the claim modal may open. An unauthenticated visitor must be directed
+   * to auth.html with the artisan id preserved as a return target.
+   *
+   * We check for a live Supabase session (sb-*-auth-token in localStorage
+   * or FixeoSupabase.getSession) before opening.
+   * Returning 'false' from this function means: redirect was triggered,
+   * caller should not proceed.
+   * ─────────────────────────────────────────────────────────── */
+  async function _checkAuthBeforeClaim(artisanId) {
+    /* Fast path: check Supabase session via FixeoSupabase if available */
+    if (window.FixeoSupabase && typeof window.FixeoSupabase.getClient === 'function') {
+      try {
+        var sb = await window.FixeoSupabase.getClient();
+        var s = await sb.auth.getSession();
+        if (s && s.data && s.data.session && s.data.session.user && s.data.session.user.id) {
+          return { authed: true, uid: s.data.session.user.id };
+        }
+      } catch(e) { /* fall through to localStorage check */ }
+    }
+    /* Fallback: Supabase stores auth token in localStorage */
+    var authed = false;
+    Object.keys(localStorage).forEach(function(k) {
+      if (/^sb-.*-auth-token$/.test(k)) {
+        try {
+          var p = JSON.parse(localStorage.getItem(k) || '');
+          if ((p && p.user && p.user.id) || (p && p.currentSession && p.currentSession.user)) {
+            authed = true;
+          }
+        } catch(e) {}
+      }
+    });
+    if (authed) return { authed: true, uid: null }; /* uid not needed here */
+
+    /* Not authenticated: redirect to auth with return target */
+    var returnPath = encodeURIComponent(
+      window.location.pathname + window.location.search +
+      (window.location.search ? '&' : '?') + 'claim=' + encodeURIComponent(String(artisanId))
+    );
+    window.location.href = 'auth.html?return=' + returnPath + '&intent=claim';
+    return { authed: false };
+  }
+
   function openClaimModal(artisanId) {
     const artisan = getArtisanById(artisanId);
     if (!artisan) return;
 
-    // Remove existing modal
+    /* 7C.12A.1: Require authenticated session before opening modal.
+     * _checkAuthBeforeClaim is async — render a gate first, then open. */
+    _checkAuthBeforeClaim(artisanId).then(function(result) {
+      if (!result.authed) return; /* redirect already triggered */
+      _openClaimModalAuthenticated(artisanId, artisan);
+    }).catch(function() {
+      /* On any auth-check error, fall back to gating (do not open modal) */
+      var returnPath = encodeURIComponent(window.location.pathname + window.location.search);
+      window.location.href = 'auth.html?return=' + returnPath + '&intent=claim';
+    });
+  }
+
+  function _openClaimModalAuthenticated(artisanId, artisan) {
+    /* Remove existing modal */
     document.getElementById('fixeo-claim-modal')?.remove();
 
     const modal = document.createElement('div');

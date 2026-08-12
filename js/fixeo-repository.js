@@ -347,112 +347,110 @@
   /**
    * approveClaimRequest(claimId, note)
    */
+  /*
+   * approveClaimRequest(claimId, note)
+   *
+   * 7C.12A.1 SECURITY REWRITE:
+   *
+   * Previously this function directly UPDATE'd artisans.owner_user_id,
+   * profiles.role, and users.role from the browser admin session.
+   *
+   * REMOVED ENTIRELY:
+   *   - browser-side artisans.owner_user_id UPDATE
+   *   - browser-side profiles/users.role UPDATE
+   *   - requesterUID sourced from localStorage (localResult.userId / claim.user_id)
+   *   - artisanUUID derived from localStorage fallback
+   *
+   * REPLACEMENT ARCHITECTURE:
+   *   All privileged ownership writes are performed by the server-side
+   *   Supabase RPC: approve_artisan_claim(p_claim_id uuid)
+   *   This RPC is SECURITY DEFINER, SET search_path='', admin-only verified
+   *   from DB data (not caller payload). It atomically:
+   *     1. Verifies caller is admin (reads users.role for auth.uid())
+   *     2. Reads claim_requests row by p_claim_id (server-sourced identity)
+   *     3. Reads artisan from claim_requests.artisan_legacy_id (server-sourced)
+   *     4. Reads requester from claim_requests.requester_user_id (server-sourced)
+   *     5. Verifies claim.status = 'pending'
+   *     6. Verifies artisan.owner_user_id IS NULL (no existing owner)
+   *     7. Sets artisans.owner_user_id = requester_user_id
+   *        claimed = true, claim_status = 'approved'
+   *        onboarding_completed remains FALSE (approval ≠ onboarding complete)
+   *     8. Sets claim_requests.status = 'approved', reviewed_at = now()
+   *     9. Promotes users.role / profiles.role = 'artisan'
+   *    10. Returns {ok, artisan_id, requester_id} or {ok:false, reason}
+   *
+   * The browser admin session calls the RPC as an authenticated user.
+   * The RPC verifies admin authority server-side — no trust from caller payload.
+   */
   async function approveClaimRequest(claimId, note) {
-    // Step 1: Local approve (localStorage + in-memory)
-    var localResult = null;
-    if (window.FixeoClaimSystem) localResult = window.FixeoClaimSystem.adminApproveClaim(claimId, note);
+    /* Step 1: Local cache update (admin UI coherence — not authoritative) */
+    if (window.FixeoClaimSystem) window.FixeoClaimSystem.adminApproveClaim(claimId, note);
 
     if (isSupabaseMode()) {
       await window.FixeoSupabaseClient.ready();
 
-      // Step 2: Mark claim_requests row as approved
-      var _refClaim = await sb().from(T_CLAIMS)
-        .update({ status: 'approved', notes: note || '', reviewed_at: new Date().toISOString() })
-        .eq('id', claimId)
-        .select()
-        .maybeSingle();
-      if (_refClaim.error) log('approveClaimRequest claim update error: ' + _refClaim.error.message, 'error');
+      /* Step 2: Call server-authoritative RPC — all ownership writes happen here.
+       * The RPC reads all identity from the DB (claim row, artisan row) —
+       * no artisan_id or requester_id is passed from the browser. */
+      var _rpc = await sb().rpc('approve_artisan_claim', { p_claim_id: claimId });
 
-      var claimRow = _refClaim.data;
-
-      // Step 3: Resolve requester_user_id and artisan UUID from the claim row.
-      // claim_requests.artisan_legacy_id is the string passed from the profile page
-      // (?id= param = artisans.id UUID since all legacy_ids are NULL).
-      // We try the Supabase UUID directly first, then fall back to legacy_id lookup.
-      var artisanUUID = null;
-      var requesterUID = null;
-
-      if (claimRow) {
-        requesterUID = claimRow.requester_user_id || null;
-        // artisan_legacy_id holds the UUID from the URL param (since legacy_id=NULL for all rows)
-        var legacyId = claimRow.artisan_legacy_id || null;
-        if (legacyId) {
-          // Try direct UUID match first
-          var _refA = await sb().from(T_ARTISANS).select('id').eq('id', legacyId).maybeSingle();
-          if (!_refA.error && _refA.data) {
-            artisanUUID = _refA.data.id;
-          } else {
-            // Fallback: legacy_id text match (future-proof if legacy_ids get populated)
-            var _refB = await sb().from(T_ARTISANS).select('id').eq('legacy_id', legacyId).maybeSingle();
-            if (!_refB.error && _refB.data) artisanUUID = _refB.data.id;
-          }
-        }
+      if (_rpc.error) {
+        log('approveClaimRequest RPC error: ' + _rpc.error.message, 'error');
+        return { ok: false, reason: _rpc.error.message };
       }
 
-      // Also accept artisanUUID/requesterUID from localResult if Supabase claim fetch failed
-      if (!artisanUUID && localResult && localResult.artisanId) artisanUUID = localResult.artisanId;
-      if (!requesterUID && localResult) {
-        // localResult.userId comes from fixeo-claim-system.adminApproveClaim claim.user_id
-        var localClaims = [];
-        try { localClaims = JSON.parse(localStorage.getItem('fixeo_claim_requests') || '[]'); } catch(e) {}
-        var lc = localClaims.find(function(c) { return c.id === claimId; });
-        if (lc) requesterUID = lc.user_id || null;
+      var result = _rpc.data;
+      if (!result || result.ok === false) {
+        log('approveClaimRequest RPC returned error: ' + JSON.stringify(result), 'error');
+        return { ok: false, reason: (result && result.reason) || 'rpc_rejected' };
       }
 
-      // Step 4: Update artisans.owner_user_id by UUID (not legacy_id — all legacy_ids are NULL)
-      if (artisanUUID && requesterUID) {
-        var _refArt = await sb().from(T_ARTISANS)
-          .update({
-            owner_user_id:       requesterUID,
-            claimed:             true,
-            claim_status:        'approved',
-            updated_at:          new Date().toISOString()
-          })
-          .eq('id', artisanUUID)
-          .select('id,owner_user_id,claimed,claim_status')
-          .maybeSingle();
-        if (_refArt.error) {
-          log('approveClaimRequest artisan update error: ' + _refArt.error.message, 'error');
-        } else {
-          log('approveClaimRequest: artisans.owner_user_id set for ' + artisanUUID);
-        }
-      } else {
-        log('approveClaimRequest: could not resolve artisanUUID or requesterUID — artisan row not updated', 'warn');
+      /* Optional: store note in claim_requests.notes if note provided.
+       * The RPC does not accept a note param — admin note is a UI-only annotation.
+       * We write it separately via claim_requests UPDATE (not an ownership write). */
+      if (note) {
+        await sb().from(T_CLAIMS)
+          .update({ notes: String(note) })
+          .eq('id', claimId);
       }
 
-      // Step 5: Promote user role to 'artisan' in profiles and users tables
-      if (requesterUID) {
-        var _refProf = await sb().from('profiles')
-          .update({ role: 'artisan' })
-          .eq('id', requesterUID)
-          .maybeSingle();
-        if (_refProf.error) log('approveClaimRequest profiles.role update error: ' + _refProf.error.message, 'error');
-        else log('approveClaimRequest: profiles.role = artisan for ' + requesterUID);
-
-        var _refUser = await sb().from('users')
-          .update({ role: 'artisan' })
-          .eq('id', requesterUID)
-          .maybeSingle();
-        if (_refUser.error) log('approveClaimRequest users.role update error: ' + _refUser.error.message, 'error');
-        else log('approveClaimRequest: users.role = artisan for ' + requesterUID);
-      }
+      log('approveClaimRequest: RPC success — artisan_id=' + (result && result.artisan_id));
     }
     return { ok: true };
   }
 
   /**
    * rejectClaimRequest(claimId, note)
+   *
+   * 7C.12A.1: Delegated to reject_artisan_claim(p_claim_id uuid) RPC.
+   * Rejection NEVER alters artisan ownership.
    */
   async function rejectClaimRequest(claimId, note) {
+    /* Step 1: Local cache update (admin UI coherence — not authoritative) */
     if (window.FixeoClaimSystem) window.FixeoClaimSystem.adminRejectClaim(claimId, note);
 
     if (isSupabaseMode()) {
       await window.FixeoSupabaseClient.ready();
-      var _ref = await sb().from(T_CLAIMS)
-        .update({ status: 'rejected', notes: note || '', reviewed_at: new Date().toISOString() })
-        .eq('id', claimId);
-      var error = _ref.error;
-      if (error) log('rejectClaimRequest Supabase error: ' + error.message, 'error');
+
+      /* Step 2: Call server-authoritative RPC — rejection updates claim row only.
+       * artisan.owner_user_id is NEVER touched by rejection. */
+      var _rpc = await sb().rpc('reject_artisan_claim', {
+        p_claim_id: claimId,
+        p_note: note || ''
+      });
+
+      if (_rpc.error) {
+        log('rejectClaimRequest RPC error: ' + _rpc.error.message, 'error');
+        return { ok: false, reason: _rpc.error.message };
+      }
+
+      var result = _rpc.data;
+      if (!result || result.ok === false) {
+        log('rejectClaimRequest RPC returned error: ' + JSON.stringify(result), 'error');
+        return { ok: false, reason: (result && result.reason) || 'rpc_rejected' };
+      }
+
+      log('rejectClaimRequest: RPC success for claim_id=' + claimId);
     }
     return { ok: true };
   }
