@@ -228,3 +228,39 @@ ORDER  BY indexname;
 --  PM-7:  missions CHECK constraint names recorded
 --  PM-8:  live artisan SR SELECT policy confirmed
 --  PM-12: owner_user_id gap count recorded
+
+
+-- ════════════════════════════════════════════════════════════
+-- PM-15  TYPE CONTRACT ASSERTION (added in 7C.11C.1)
+-- Verify the live column types that the migration depends on.
+-- STOP CONDITION: any row where actual_type != expected_type.
+-- The migration uses m.request_id = sr.id::text throughout.
+-- If missions.request_id ever becomes uuid, the cast direction
+-- must be reversed — do not apply the migration until this
+-- check passes exactly as specified.
+-- ════════════════════════════════════════════════════════════
+SELECT
+  t.table_name,
+  t.column_name,
+  t.data_type            AS actual_type,
+  t.expected_type,
+  CASE WHEN t.data_type = t.expected_type THEN 'OK' ELSE 'STOP — TYPE MISMATCH' END AS result
+FROM (
+  VALUES
+    ('artisans',         'id',                 NULL::text, 'uuid'),
+    ('artisans',         'owner_user_id',       NULL::text, 'uuid'),
+    ('missions',         'id',                 NULL::text, 'uuid'),
+    ('missions',         'artisan_profile_id', NULL::text, 'uuid'),
+    ('missions',         'request_id',         NULL::text, 'text'),
+    ('service_requests', 'id',                 NULL::text, 'uuid')
+) t(table_name, column_name, _unused, expected_type)
+JOIN information_schema.columns c
+  ON  c.table_schema = 'public'
+  AND c.table_name   = t.table_name
+  AND c.column_name  = t.column_name;
+-- Expected: 6 rows, all result = 'OK'
+-- STOP CONDITION: any row shows 'STOP — TYPE MISMATCH'
+-- If missions.request_id = 'uuid': the migration cast direction must be
+--   reconsidered before applying. Do not proceed.
+-- Add to PRECHECK SUMMARY:
+--  PM-15: all 6 type assertions = OK              (CRITICAL)

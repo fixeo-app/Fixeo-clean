@@ -254,11 +254,15 @@ CREATE POLICY "artisan_read_own_linked_requests"
   FOR SELECT
   TO authenticated
   USING (
-    id IN (
-      SELECT m.request_id
+    -- missions.request_id is TEXT; service_requests.id is UUID.
+    -- Cast the UUID side to text for deterministic explicit equality.
+    -- DO NOT cast missions.request_id to uuid (legacy non-UUID values may exist).
+    EXISTS (
+      SELECT 1
       FROM   public.missions m
       JOIN   public.artisans a ON a.id = m.artisan_profile_id
-      WHERE  m.status        = 'pending'
+      WHERE  m.request_id    = service_requests.id::text
+        AND  m.status        = 'pending'
         AND  a.owner_user_id = auth.uid()
     )
   );
@@ -272,6 +276,14 @@ CREATE POLICY "artisan_read_own_linked_requests"
 --
 -- Artisan identity: auth.uid() → public.artisans.owner_user_id only.
 -- No phone fallback. No caller-supplied artisan UUID.
+--
+-- TYPE CONTRACT:
+--   missions.request_id is TEXT (live production schema).
+--   service_requests.id is UUID.
+--   v_request_id is declared TEXT to match missions.request_id.
+--   The SR winner UPDATE uses sr.id::text = v_request_id
+--   to perform the explicit cross-type comparison safely.
+--   DO NOT cast v_request_id to uuid.
 --
 -- Deterministic business errors (ok:false JSON, no exception):
 --   unauthenticated    — auth.uid() IS NULL
@@ -301,7 +313,7 @@ SET search_path = ''
 AS $$
 DECLARE
   v_artisan_id      uuid;
-  v_request_id      uuid;
+  v_request_id      text;   -- TEXT: matches missions.request_id live type
   v_mission_status  text;
   v_mission_artisan uuid;
   v_locked_id       uuid;
@@ -350,10 +362,11 @@ BEGIN
   -- Guard 5: atomic serialization — transition SR new → assigned
   -- WHERE status='new' is the first-accept-wins predicate.
   -- Only one concurrent caller can succeed this UPDATE.
+  -- sr.id is UUID; v_request_id is TEXT — cast UUID side explicitly.
   UPDATE public.service_requests sr
   SET    status = 'assigned'
-  WHERE  sr.id     = v_request_id
-    AND  sr.status = 'new'
+  WHERE  sr.id::text = v_request_id
+    AND  sr.status   = 'new'
   RETURNING sr.id INTO v_locked_id;
 
   IF v_locked_id IS NULL THEN
@@ -461,7 +474,7 @@ BEGIN
       -- description:  EXCLUDED — may contain phone in legacy rows
       -- client_phone: EXCLUDED — post-acceptance only
     FROM   public.missions         m
-    JOIN   public.service_requests sr ON sr.id = m.request_id
+    JOIN   public.service_requests sr ON m.request_id = sr.id::text
     WHERE  m.artisan_profile_id = v_artisan_id
       AND  m.status IN ('offered','pending','done')
     ORDER BY sr.created_at DESC
@@ -553,7 +566,7 @@ BEGIN
   )
   INTO v_result
   FROM   public.missions         m
-  JOIN   public.service_requests sr ON sr.id = m.request_id
+  JOIN   public.service_requests sr ON m.request_id = sr.id::text
   WHERE  m.id = p_mission_id;
 
   RETURN v_result;

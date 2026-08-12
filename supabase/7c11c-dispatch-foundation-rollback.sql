@@ -63,20 +63,23 @@ CREATE POLICY "artisan_read_own_linked_requests"
   FOR SELECT
   TO authenticated
   USING (
-    id IN (
-      SELECT m.request_id
+    -- missions.request_id is TEXT; service_requests.id is UUID.
+    -- Explicit cast to avoid operator does not exist: uuid = text.
+    EXISTS (
+      SELECT 1
       FROM   public.missions m
-      WHERE  m.artisan_profile_id IN (
-        SELECT a.id
-        FROM   public.artisans a
-        WHERE  a.owner_user_id = auth.uid()
-        OR     a.phone_public  = (
-          SELECT p.phone
-          FROM   public.profiles p
-          WHERE  p.id = auth.uid()
-          LIMIT  1
+      WHERE  m.request_id = service_requests.id::text
+        AND  m.artisan_profile_id IN (
+          SELECT a.id
+          FROM   public.artisans a
+          WHERE  a.owner_user_id = auth.uid()
+          OR     a.phone_public  = (
+            SELECT p.phone
+            FROM   public.profiles p
+            WHERE  p.id = auth.uid()
+            LIMIT  1
+          )
         )
-      )
     )
   );
 
