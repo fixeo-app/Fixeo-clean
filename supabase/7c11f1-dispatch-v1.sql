@@ -1,7 +1,7 @@
 -- ════════════════════════════════════════════════════════════
 -- 7C.11F.1 — Real Dispatch Engine V1 Core RPC
 -- supabase/7c11f1-dispatch-v1.sql
--- Revision: 7C.11F.1A — eligibility hardening
+-- Revision: 7C.11F.1B — agreed_price nullability + eligibility hardening
 --
 -- Creates ONE server-authoritative RPC:
 --   public.dispatch_request_v1(p_request_id uuid)
@@ -82,6 +82,55 @@
 --
 -- Run 7c11f1-dispatch-v1-precheck.sql first.
 -- ════════════════════════════════════════════════════════════
+
+-- ════════════════════════════════════════════════════════════
+-- STEP 0 — agreed_price nullability contract remediation
+--
+-- FORENSIC FINDING (7C.11F.1B):
+--   Production schema: missions.agreed_price = numeric NOT NULL, no default.
+--   Every historical INSERT wrote agreed_price=0 as a placeholder sentinel.
+--   Sources: fixeo-artisan-dashboard-v2.js L944, fixeo-dispatch-engine.js L671,
+--            rls-phase2-2026-05-08.sql L546 (commented probe).
+--   0 is NOT a real price — it is a workaround for the NOT NULL constraint.
+--
+-- BUSINESS RULE:
+--   An OFFER is not an agreed commercial price.
+--   The real price is established after mission completion via the admin
+--   COD process (fixeo-admin-cod.js, commission-lifecycle-p3a.js).
+--   dispatch_request_v1 must NOT invent a price to satisfy a schema artifact.
+--   agreed_price=NULL is the truthful value at offer creation time.
+--
+-- FIX: DROP NOT NULL constraint on agreed_price.
+--
+-- SAFETY:
+--   - No existing row is deleted or updated.
+--   - No DEFAULT is added (NULL is explicit — no silent data change).
+--   - The agreed_price CHECK constraint (>= 0 if present) is preserved.
+--     PostgreSQL CHECK constraints: NULL does NOT violate a CHECK (SQL standard).
+--     So agreed_price=NULL satisfies CHECK (agreed_price >= 0).
+--   - Legacy code writing agreed_price=0 continues to work unchanged.
+--   - Admin COD process writing a real price continues to work unchanged.
+--   - This is idempotent: if agreed_price is already nullable, it is a no-op.
+-- ════════════════════════════════════════════════════════════
+
+DO $$
+BEGIN
+  -- Only execute if the column is currently NOT NULL.
+  -- This makes the step idempotent (safe to run twice).
+  IF EXISTS (
+    SELECT 1
+    FROM information_schema.columns
+    WHERE table_schema = 'public'
+      AND table_name   = 'missions'
+      AND column_name  = 'agreed_price'
+      AND is_nullable  = 'NO'
+  ) THEN
+    ALTER TABLE public.missions ALTER COLUMN agreed_price DROP NOT NULL;
+    RAISE NOTICE 'Step 0: agreed_price NOT NULL dropped — column is now nullable';
+  ELSE
+    RAISE NOTICE 'Step 0: agreed_price already nullable — no change needed';
+  END IF;
+END $$;
 
 CREATE OR REPLACE FUNCTION public.dispatch_request_v1(
   p_request_id uuid

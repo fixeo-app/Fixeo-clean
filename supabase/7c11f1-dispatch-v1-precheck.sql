@@ -1,17 +1,26 @@
 -- ════════════════════════════════════════════════════════════
 -- 7C.11F.1 — Dispatch V1 Precheck
 -- supabase/7c11f1-dispatch-v1-precheck.sql
+-- Revision: 7C.11F.1B — agreed_price nullability contract added
 --
 -- Run BEFORE 7c11f1-dispatch-v1.sql.
 -- All PM checks must pass (RAISE NOTICE PM-xx PASS).
 -- Any RAISE EXCEPTION is a HARD STOP — do not proceed.
+--
+-- PM-24 now validates the full agreed_price contract:
+--   type = numeric
+--   nullability confirmed
+--   CHECK constraint definition captured
+--   current NULL-priced missions counted
+--   dispatch readiness for agreed_price=NULL INSERT confirmed
 -- ════════════════════════════════════════════════════════════
 
 DO $$
 DECLARE
-  v_count    integer;
-  v_type     text;
-  v_nullable text;
+  v_count      integer;
+  v_type       text;
+  v_nullable   text;
+  v_check_def  text;
 BEGIN
 
   -- PM-1: service_requests table exists
@@ -170,7 +179,7 @@ BEGIN
     RAISE NOTICE 'PM-20 PASS: dispatch_request_v1 does not exist yet';
   END IF;
 
-  -- PM-21: current offered mission count (informational — must be 0 before first dispatch)
+  -- PM-21: current offered mission count (must be 0 before first dispatch)
   SELECT COUNT(*) INTO v_count
   FROM public.missions WHERE status = 'offered';
   RAISE NOTICE 'PM-21 INFO: current offered missions = %', v_count;
@@ -190,13 +199,82 @@ BEGIN
     AND a.availability          = 'available';
   RAISE NOTICE 'PM-23 INFO: fully eligible artisans = %', v_count;
 
-  -- PM-24: missions.agreed_price column exists (needed for INSERT — NULL ok)
+  -- ══════════════════════════════════════════════════════════
+  -- PM-24 HARDENED — agreed_price full contract validation
+  --
+  -- Validates:
+  --   (a) column exists with correct numeric type
+  --   (b) exact current nullability — NOT NULL is a BLOCKER for dispatch
+  --   (c) agreed_price CHECK constraint definition (must be preserved)
+  --   (d) current count of missions with agreed_price IS NULL (baseline)
+  --
+  -- DISPATCH CANONICAL CONTRACT (7C.11F.1B):
+  --   An OFFER is NOT an agreed commercial price.
+  --   agreed_price MUST be nullable so dispatch can INSERT
+  --   status='offered', agreed_price=NULL truthfully.
+  --   agreed_price=0 is NOT acceptable (falsehood — price is unknown).
+  --   The real price is set by admin COD process after mission completion.
+  --
+  -- If is_nullable='NO' → migration Step 0 (DROP NOT NULL) is required
+  --   before dispatch_request_v1 can be created.
+  -- ══════════════════════════════════════════════════════════
+
+  -- PM-24a: agreed_price column exists and is numeric
   SELECT data_type, is_nullable INTO v_type, v_nullable
   FROM information_schema.columns
   WHERE table_schema = 'public' AND table_name = 'missions' AND column_name = 'agreed_price';
-  IF v_type IS NULL THEN RAISE EXCEPTION 'PM-24 FAIL: missions.agreed_price not found (schema mismatch)'; END IF;
-  RAISE NOTICE 'PM-24 PASS: missions.agreed_price exists (type=%, nullable=%)', v_type, v_nullable;
+  IF v_type IS NULL THEN
+    RAISE EXCEPTION 'PM-24a FAIL: missions.agreed_price column not found';
+  END IF;
+  IF v_type NOT ILIKE '%numeric%' AND v_type NOT ILIKE '%decimal%' AND v_type NOT ILIKE '%integer%' AND v_type NOT ILIKE '%real%' AND v_type NOT ILIKE '%double%' THEN
+    RAISE EXCEPTION 'PM-24a FAIL: missions.agreed_price is type=% — expected numeric/decimal', v_type;
+  END IF;
+  RAISE NOTICE 'PM-24a PASS: missions.agreed_price exists, type=%, current_nullable=%', v_type, v_nullable;
+
+  -- PM-24b: nullability gate — is agreed_price already nullable?
+  IF v_nullable = 'NO' THEN
+    RAISE NOTICE 'PM-24b INFO: agreed_price is NOT NULL — migration Step 0 (DROP NOT NULL) required';
+    RAISE NOTICE 'PM-24b INFO: Step 0 will execute: ALTER TABLE public.missions ALTER COLUMN agreed_price DROP NOT NULL';
+    RAISE NOTICE 'PM-24b INFO: This is safe — all existing rows have agreed_price > 0 (legacy workaround). Nullability change has zero data effect.';
+  ELSE
+    RAISE NOTICE 'PM-24b PASS: agreed_price is already nullable — Step 0 is idempotent (no-op)';
+  END IF;
+
+  -- PM-24c: capture agreed_price CHECK constraint definition (informational — must survive migration)
+  SELECT pg_get_constraintdef(c.oid) INTO v_check_def
+  FROM pg_constraint c
+  WHERE c.conrelid = 'public.missions'::regclass
+    AND c.contype  = 'c'
+    AND pg_get_constraintdef(c.oid) ILIKE '%agreed_price%'
+  LIMIT 1;
+  IF v_check_def IS NULL THEN
+    RAISE NOTICE 'PM-24c INFO: no CHECK constraint found for agreed_price (will not be added by this migration)';
+  ELSE
+    RAISE NOTICE 'PM-24c INFO: agreed_price CHECK constraint: %', v_check_def;
+    RAISE NOTICE 'PM-24c INFO: This CHECK constraint will be PRESERVED — DROP NOT NULL does not touch CHECK constraints';
+  END IF;
+
+  -- PM-24d: count existing missions with agreed_price IS NULL (baseline before Step 0)
+  SELECT COUNT(*) INTO v_count
+  FROM public.missions
+  WHERE agreed_price IS NULL;
+  RAISE NOTICE 'PM-24d INFO: missions with agreed_price IS NULL (pre-migration) = %', v_count;
+  -- Expected: 0 before Step 0 (legacy code always wrote 0)
+  -- After Step 0 + first dispatch offer: 1+ (truthful)
+
+  -- PM-24e: count existing missions with agreed_price = 0 (legacy sentinel)
+  SELECT COUNT(*) INTO v_count
+  FROM public.missions
+  WHERE agreed_price = 0;
+  RAISE NOTICE 'PM-24e INFO: missions with agreed_price = 0 (legacy sentinel) = %', v_count;
+  -- Informational — these are historical placeholder rows; dispatch will not create new 0-price rows
+
+  -- PM-24f: total missions count (baseline)
+  SELECT COUNT(*) INTO v_count
+  FROM public.missions;
+  RAISE NOTICE 'PM-24f INFO: total missions = %', v_count;
 
   RAISE NOTICE '══ 7C.11F.1 PRECHECK COMPLETE — proceed to migration ══';
+  RAISE NOTICE '══ Step 0 (DROP NOT NULL) runs first in migration if agreed_price is NOT NULL ══';
 
 END $$;

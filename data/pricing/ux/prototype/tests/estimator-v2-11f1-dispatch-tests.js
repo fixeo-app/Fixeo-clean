@@ -215,8 +215,11 @@ t('T40: agreed_price NULL on INSERT', (function() {
   return block.includes('agreed_price') && block.includes('NULL');
 })());
 
-/* T41: no commission column invented */
-not('T41: no commission invented', dispatch.includes('commission'));
+/* T41: no commission column invented (in executable body only — not comments) */
+not('T41: no commission invented in executable code', (function() {
+  var stripped = dispatch.replace(/--[^\n]*/g, '').replace(/\/\*[\s\S]*?\*\//g, '');
+  return stripped.includes('commission');
+})());
 
 /* T42: no price calculation invented */
 not('T42: no price calculation', dispatch.includes('amount_mad') || dispatch.includes('total_price'));
@@ -576,6 +579,114 @@ t('T97: no UPDATE service_requests SET status in function body', (function() {
     .replace(/\/\*[\s\S]*?\*\//g, '');
   return !(/UPDATE\s+public\.service_requests[\s\S]*?SET\s+status/.test(stripped));
 })());
+
+/* ─────────────────────────────────────────────────────────
+ * SECTION 16 — 11F.1B: agreed_price Schema Contract
+ * ───────────────────────────────────────────────────────── */
+
+/* T98: migration contains Step 0 (DROP NOT NULL) */
+t('T98: migration Step 0 DROP NOT NULL present',
+  dispatch.includes('ALTER COLUMN agreed_price DROP NOT NULL'));
+
+/* T99: Step 0 is conditional/idempotent (does not always execute) */
+t('T99: Step 0 is idempotent — only drops if is_nullable=NO',
+  dispatch.includes("is_nullable  = 'NO'") || dispatch.includes("is_nullable = 'NO'"));
+
+/* T100: agreed_price=0 not introduced by dispatch RPC (no zero workaround) */
+t('T100: agreed_price=0 NOT in dispatch INSERT', (function() {
+  var insertIdx = dispatch.indexOf('INSERT INTO public.missions');
+  var block = dispatch.slice(insertIdx, insertIdx + 500);
+  // Must not contain agreed_price = 0 or agreed_price=0
+  return !(/agreed_price\s*[=:]\s*0/.test(block));
+})());
+
+/* T101: T40 + T100 combined — agreed_price is NULL, not zero, on INSERT */
+t('T101: INSERT sets agreed_price=NULL (truthful) not 0 (sentinel)', (function() {
+  var insertIdx = dispatch.indexOf('INSERT INTO public.missions');
+  var block = dispatch.slice(insertIdx, insertIdx + 500);
+  return block.includes('agreed_price') &&
+         block.includes('NULL') &&
+         !(/agreed_price\s*[=:]\s*0/.test(block));
+})());
+
+/* T102: no fake price calculation in dispatch body */
+t('T102: no price calculation or derivation in dispatch body', (function() {
+  var stripped = dispatch.replace(/--[^\n]*/g, '').replace(/\/\*[\s\S]*?\*\//g, '');
+  return !stripped.includes('commission') &&
+         !stripped.includes('amount_mad') &&
+         !stripped.includes('final_price') &&
+         !stripped.includes('proposed_price') &&
+         !stripped.includes('budget');
+})());
+
+/* T103: precheck PM-24 validates nullability (not just column existence) */
+t('T103: PM-24 checks is_nullable in precheck',
+  precheck.includes("is_nullable  = 'NO'") || precheck.includes("is_nullable = 'NO'") ||
+  precheck.includes('PM-24b') || precheck.includes('nullable'));
+
+/* T104: precheck PM-24 reports current nullability (not just PASS) */
+t('T104: PM-24 captures and reports nullability value',
+  precheck.includes('PM-24a') && precheck.includes('current_nullable'));
+
+/* T105: precheck counts NULL agreed_price missions (baseline) */
+t('T105: PM-24d counts existing NULL-priced missions',
+  precheck.includes('PM-24d') && precheck.includes('agreed_price IS NULL'));
+
+/* T106: precheck counts legacy zero-priced missions */
+t('T106: PM-24e counts legacy sentinel agreed_price=0 missions',
+  precheck.includes('PM-24e') && precheck.includes('agreed_price = 0'));
+
+/* T107: verify V-14 checks agreed_price is nullable (not just column exists) */
+t('T107: verify V-14 checks is_nullable=YES after migration',
+  verify.includes('is_nullable') && verify.includes("'YES'") && verify.includes('V-14'));
+
+/* T108: verify V-14b checks price CHECK constraint preserved */
+t('T108: verify V-14b: price CHECK preserved after DROP NOT NULL',
+  verify.includes('V-14b') && verify.includes('CHECK'));
+
+/* T109: verify V-14c confirms no hardcoded agreed_price in dispatch */
+t('T109: verify V-14c: no fake price in dispatch body',
+  verify.includes('V-14c') && verify.includes('NULL'));
+
+/* T110: rollback has NULL guard before restoring NOT NULL */
+t('T110: rollback hard-stops if NULL missions exist',
+  rollback.includes('agreed_price IS NULL') && rollback.includes('HARD STOP'));
+
+/* T111: rollback does NOT execute UPDATE agreed_price (warn text in strings/comments is allowed) */
+not('T111: rollback does not execute UPDATE agreed_price to bypass guard', (function() {
+  // Strip comments and string literals before checking for actual SQL UPDATE statement.
+  // RAISE EXCEPTION / RAISE NOTICE string bodies may contain DO-NOT instructions — not executable SQL.
+  var stripped = rollback
+    .replace(/--[^\n]*/g, '')               // remove line comments
+    .replace(/'[^']*'/g, "''")              // collapse string literals to empty ''
+    .replace(/\$\$[\s\S]*?\$\$/g, '$$$$'); // collapse dollar-quote bodies
+  return /\bUPDATE\b[\s\S]{0,50}\bmissions\b[\s\S]{0,50}\bSET\b[\s\S]{0,50}\bagreed_price\b/.test(stripped);
+})());
+
+/* T112: rollback preserves 11C/11E RPCs */
+t('T112: rollback preserves all 11C/11E RPCs',
+  rollback.includes('claim_mission') && rollback.includes('get_my_mission_offers'));
+
+/* T113: simulation — agreed_price=NULL satisfies CHECK (agreed_price >= 0) */
+t('T113: NULL does not violate CHECK >= 0 (SQL standard — PostgreSQL confirmed)',
+  (function() {
+    // SQL NULL propagation: NULL >= 0 evaluates to NULL, not FALSE.
+    // PostgreSQL CHECK: a row is rejected only when CHECK evaluates to FALSE.
+    // NULL result → row is accepted. So agreed_price=NULL is valid even with CHECK >= 0.
+    // This is a doc assertion test — verifies the policy comment is present in migration.
+    return dispatch.includes('NULL does not violate a CHECK') ||
+           dispatch.includes('NULL does NOT violate a CHECK');
+  })());
+
+/* T114: forensic evidence — legacy code wrote agreed_price=0 (sentinel pattern documented) */
+t('T114: Step 0 forensic rationale documented in migration',
+  dispatch.includes('agreed_price=0 as a placeholder') ||
+  dispatch.includes('placeholder sentinel') ||
+  dispatch.includes('workaround for the NOT NULL'));
+
+/* T115: service_role only still intact after 11F.1B changes */
+t('T115: service_role GRANT still present after 11F.1B',
+  dispatch.includes('GRANT  EXECUTE ON FUNCTION public.dispatch_request_v1(uuid) TO service_role'));
 
 /* T83: no browser dispatch authority in SQL */
 not('T83: no browser trigger in SQL', dispatch.includes('supabase.createClient') || dispatch.includes('window.'));

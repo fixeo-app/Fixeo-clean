@@ -7,9 +7,10 @@
 
 DO $$
 DECLARE
-  v_count  integer;
-  v_def    text;
-  v_secdef boolean;
+  v_count    integer;
+  v_def      text;
+  v_secdef   boolean;
+  v_nullable text;
 BEGIN
 
   -- V-1: dispatch_request_v1 exists
@@ -116,11 +117,37 @@ BEGIN
   END IF;
   RAISE NOTICE 'V-13 PASS: FOR UPDATE concurrency lock present';
 
-  -- V-14: no agreed_price invention (must be NULL on INSERT)
-  IF v_def ILIKE '%agreed_price%' AND v_def NOT ILIKE '%NULL%' THEN
-    RAISE EXCEPTION 'V-14 FAIL: dispatch_request_v1 may be inventing agreed_price';
+  -- V-14: agreed_price is nullable after Step 0
+  SELECT is_nullable INTO v_nullable
+  FROM information_schema.columns
+  WHERE table_schema = 'public' AND table_name = 'missions' AND column_name = 'agreed_price';
+  IF v_nullable IS NULL THEN
+    RAISE EXCEPTION 'V-14 FAIL: missions.agreed_price column not found';
   END IF;
-  RAISE NOTICE 'V-14 PASS: agreed_price not invented (NULL on insert)';
+  IF v_nullable != 'YES' THEN
+    RAISE EXCEPTION 'V-14 FAIL: missions.agreed_price is still NOT NULL after Step 0 — migration incomplete';
+  END IF;
+  RAISE NOTICE 'V-14 PASS: missions.agreed_price is nullable — NULL offer insert is valid';
+
+  -- V-14b: agreed_price CHECK constraint preserved (if any)
+  SELECT pg_get_constraintdef(c.oid) INTO v_nullable  -- reusing variable as text
+  FROM pg_constraint c
+  WHERE c.conrelid = 'public.missions'::regclass
+    AND c.contype  = 'c'
+    AND pg_get_constraintdef(c.oid) ILIKE '%agreed_price%'
+  LIMIT 1;
+  IF v_nullable IS NOT NULL THEN
+    RAISE NOTICE 'V-14b PASS: agreed_price CHECK constraint preserved: %', v_nullable;
+  ELSE
+    RAISE NOTICE 'V-14b INFO: no agreed_price CHECK constraint (none required)';
+  END IF;
+
+  -- V-14c: dispatch RPC does not invent a fake price (no agreed_price=0 or hardcoded value)
+  IF v_def ILIKE '%agreed_price%0%' OR
+     (v_def ILIKE '%agreed_price%' AND v_def NOT ILIKE '%agreed_price%NULL%') THEN
+    RAISE EXCEPTION 'V-14c FAIL: dispatch_request_v1 may be inventing or hardcoding agreed_price';
+  END IF;
+  RAISE NOTICE 'V-14c PASS: dispatch RPC inserts agreed_price=NULL — no fake price';
 
   -- V-15: no_candidate returns ok:false (not destructive)
   IF v_def NOT ILIKE '%no_candidate%' THEN
