@@ -135,7 +135,7 @@
     step3EmergencyPre: "C\u2019est bien ce num\u00e9ro\u00a0?",
     step3EmergencySub: 'FIXEO utilisera ce num\u00e9ro pour la coordination de votre demande.',
     interstitialEmergency: 'Transmission de votre demande\u2026',
-    successEmergency: 'Demande urgente enregistr\u00e9e.',
+    successEmergency: 'Urgence transmise \u00e0 FIXEO.',
 
     /* ── Per-situation ack (emergency) — calm, decisive ── */
     ackEmergency: {
@@ -1525,6 +1525,8 @@
     _rafiSpeak(successMsg, false, true);
 
     _setProgress(3, 3);
+    /* 7C.10D.3: Complete all 3 lane steps on success — n=4 sets all (idx 0,1,2) to is-done */
+    if (isEmergency) _updateLaneStep(4);
     var fill = _q('#fxrf4-progress-fill');
     if (fill) {
       fill.style.background = isEmergency
@@ -1562,7 +1564,7 @@
     succ.appendChild(_h('p', {
       cls: 'fxrf4-success-title',
       txt: isEmergency
-        ? "Votre demande a bien \u00e9t\u00e9 transmise \u00e0 FIXEO."
+        ? "Votre demande est enregistr\u00e9e."
         : "Votre demande est d\u00e9j\u00e0 entre de bonnes mains."
     }));
 
@@ -1572,7 +1574,7 @@
     succ.appendChild(_h('p', {
       cls: 'fxrf4-success-body',
       txt: isEmergency
-        ? "L\u2019\u00e9quipe FIXEO utilisera le num\u00e9ro fourni pour la coordination."
+        ? "Num\u00e9ro enregistr\u00e9 pour la coordination FIXEO."
         : "RAFI s\u00e9lectionne d\u00e9j\u00e0 les artisans disponibles pour vous.\nVous recevrez une confirmation d\u00e8s les premi\u00e8res r\u00e9ponses."
     }));
 
@@ -1613,9 +1615,9 @@
      * Removed: "Artisans disponibles contactés" (not proven true). */
     var stepData = isEmergency
       ? [
-          { dot: '\u2705', lbl: 'Demande urgente\nenregistr\u00e9e', state: 'done' },
+          { dot: '\u2705', lbl: 'Enregistr\u00e9e', state: 'done' },
           { dot: '\u2705', lbl: 'Transmise\n\u00e0 FIXEO',           state: 'done' },
-          { dot: '\ud83d\udcac', lbl: 'Coordination\n\u00e0 venir',  state: 'waiting' }
+          { dot: '\ud83d\udcac', lbl: '\u00c0 venir', state: 'waiting' }
         ]
       : [
           { dot: '\u2705', lbl: 'Demande\nenregistr\u00e9e', state: 'done' },
@@ -2115,7 +2117,7 @@
   ══════════════════════════════════════════════════════════ */
 
   window.FixeoRequestFlowV4 = {
-    VERSION: 'fxrf4-v5d-parent-return',
+    VERSION: 'fxrf4-v5e-final-polish',
     open:    open,
     close:   close
   };

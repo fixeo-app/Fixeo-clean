@@ -2966,3 +2966,100 @@
   margin: 4px 0 0;
   padding: 0;
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   7C.10D.3 — URGENT FINAL MOBILE POLISH (fxrf4-v5z4-final-polish)
+   Emergency-scoped visual improvements only.
+   No layout changes. No functional changes. No bridge behavior changes.
+   prefers-reduced-motion extended to cover step pulse animations.
+═══════════════════════════════════════════════════════════════════ */
+
+/* ── 1. STEP 1 MOBILE — bottom breathing room for "Autre urgence" ── */
+/* Adds safe padding-bottom so the last situation item doesn't feel
+ * trapped at the bottom edge of the scrollable body on short iPhones.
+ * overflow-y:auto remains — items are still fully reachable and tappable.
+ * Scoped to [data-fxrf4-mode="emergency"] to avoid touching standard mode. */
+@media (max-width: 640px) {
+  [data-fxrf4-mode="emergency"] #fxrf4-body {
+    padding-bottom: 32px;
+  }
+}
+
+/* ── 2. BRIDGE SKIP TOUCH TARGET — fix 40px → 44px ──────────────── */
+/* Audit finding: .fxrf4-bridge-skip min-height: 40px is below iOS minimum.
+ * Fix: raise to 44px with matching vertical padding. */
+.fxrf4-bridge-skip {
+  min-height: 44px;
+  padding: 10px 8px;
+}
+
+/* ── 3. BRIDGE BORDER READABILITY — marginal improvement ─────────── */
+/* border-color: 0.18 → 0.24 — slightly more visible on OLED dark bg.
+ * Keep the blue accent clearly secondary to the amber success ring. */
+.fxrf4-estimator-bridge {
+  border-color: rgba(72, 100, 255, 0.24);
+}
+
+/* ── 4. SUCCESS CTA HIERARCHY — emergency only ───────────────────── */
+/* "Voir mes demandes" is a utility action, not a primary action.
+ * In standard mode it stays as the solid blue primary button.
+ * In emergency SUCCESS, it's downgraded to a restrained ghost control
+ * so the Estimator bridge CTA (optional accelerator) reads stronger
+ * after scrolling past the confirmation block.
+ * Touch targets preserved: min-height 44px on both buttons. */
+
+/* Emergency-scoped override: downgrade primary → utility outline */
+[data-fxrf4-mode="emergency"] .fxrf4-btn-success-primary {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.52);
+  font-weight: 500;
+  font-size: 0.86rem;
+  height: auto;
+  min-height: 44px;
+  box-shadow: none;
+}
+
+[data-fxrf4-mode="emergency"] .fxrf4-btn-success-primary:hover,
+[data-fxrf4-mode="emergency"] .fxrf4-btn-success-primary:active {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.20);
+  color: rgba(255, 255, 255, 0.70);
+  box-shadow: none;
+  transform: none;
+}
+
+/* Emergency-scoped override: secondary → lighter tertiary text */
+[data-fxrf4-mode="emergency"] .fxrf4-btn-success-secondary {
+  color: rgba(255, 255, 255, 0.32);
+  font-size: 0.80rem;
+  min-height: 44px;
+  height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── 5. PREFERS-REDUCED-MOTION — extend to step pulse ────────────── */
+/* Audit finding: fxrf4-step-pulse and fxrf4-step-pulse-emergency
+ * were not guarded by prefers-reduced-motion. fxurgent-pulse was guarded
+ * (from 10D.2). Extend coverage for completeness. */
+@media (prefers-reduced-motion: reduce) {
+  .fxrf4-success-step-dot.is-active {
+    animation: none !important;
+  }
+  .fxrf4-success-step-dot.is-active.is-emergency {
+    animation: none !important;
+  }
+}
+
+/* ── 6. LANE DONE STATE — green completion on success ────────────── */
+/* When _updateLaneStep(4) is called on emergency success:
+ * all 3 lane steps get is-done class. Apply a consistent green tone.
+ * The existing is-done rule uses rgba(32,201,151,0.70) which is correct —
+ * just ensure no is-active remnant overrides it. */
+.fxrf4-lane-step.is-done.is-active {
+  /* Safety rule: if both classes somehow coexist, done wins over active */
+  color: rgba(32, 201, 151, 0.70) !important;
+  font-weight: 700;
+}
