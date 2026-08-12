@@ -683,6 +683,74 @@ t('T61: complete concurrent-race path also verifies SR state', (function() {
 /* T62: verify has V-21 complete parent state check */
 t('T62: verify V-21 complete parent state check', verify.includes('V-21') && verify.includes('inconsistent_state'));
 
+/* ══════════════════════════════════════════════════════════════
+ * 7C.11E.2.3 — UPDATE-0 RACE: BOTH MISSION + SR RE-READ
+ * ══════════════════════════════════════════════════════════════ */
+
+/* T65: v_rows_m=0 branch re-reads MISSION status (not SR only) */
+t('T65: complete UPDATE-0 race re-reads mission status', (function() {
+  var fi   = sql.indexOf('FUNCTION public.complete_mission');
+  var end  = sql.indexOf('REVOKE EXECUTE ON FUNCTION public.complete_mission');
+  var block = sql.slice(fi, end);
+  var rowsMIdx = block.indexOf('GET DIAGNOSTICS v_rows_m = ROW_COUNT');
+  var after    = block.slice(rowsMIdx);
+  // Must SELECT m.status (mission re-read) after the ROW_COUNT check
+  var mReread  = after.indexOf('SELECT m.status INTO v_mission_status_now');
+  var srReread = after.indexOf('SELECT sr.status INTO v_sr_status');
+  return mReread > 0 && srReread > mReread;
+})());
+
+/* T66: v_rows_m=0 branch requires BOTH mission AND SR in terminal states */
+t('T66: complete UPDATE-0 both-check: mission IN done/validated AND sr IN completed/validated', (function() {
+  var fi   = sql.indexOf('FUNCTION public.complete_mission');
+  var end  = sql.indexOf('REVOKE EXECUTE ON FUNCTION public.complete_mission');
+  var block = sql.slice(fi, end);
+  var rowsMIdx = block.indexOf('GET DIAGNOSTICS v_rows_m = ROW_COUNT');
+  var after    = block.slice(rowsMIdx, rowsMIdx + 800);
+  return (after.includes("IN ('done', 'validated')") || after.includes("IN ('done','validated')")) &&
+         (after.includes("IN ('completed', 'validated')") || after.includes("IN ('completed','validated')"));
+})());
+
+/* T67: v_mission_status_now declared in DECLARE section */
+t('T67: v_mission_status_now in DECLARE block of complete_mission', (function() {
+  var fi   = sql.indexOf('FUNCTION public.complete_mission');
+  var declEnd = sql.indexOf('BEGIN', fi);
+  return sql.slice(fi, declEnd).includes('v_mission_status_now');
+})());
+
+/* T68: simulation — complete UPDATE-0 race truth table (both re-reads) */
+(function() {
+  function completeRaceResult(mStatusNow, srStatus) {
+    if ((mStatusNow === 'done' || mStatusNow === 'validated') &&
+        (srStatus === 'completed' || srStatus === 'validated')) {
+      return { ok: true, already_completed: true };
+    }
+    return { ok: false, reason: 'inconsistent_state' };
+  }
+  t('T68a: race mission=done + sr=completed -> already_completed',    completeRaceResult('done','completed').ok === true);
+  t('T68b: race mission=validated + sr=validated -> already_completed', completeRaceResult('validated','validated').ok === true);
+  t('T68c: race mission=cancelled + sr=completed -> inconsistent',    completeRaceResult('cancelled','completed').reason === 'inconsistent_state');
+  t('T68d: race mission=done + sr=cancelled -> inconsistent',         completeRaceResult('done','cancelled').reason === 'inconsistent_state');
+  t('T68e: race mission=pending + sr=completed -> inconsistent',      completeRaceResult('pending','completed').reason === 'inconsistent_state');
+  not('T68f: cancelled + completed NOT already_completed',            completeRaceResult('cancelled','completed').already_completed === true);
+  not('T68g: done + cancelled NOT already_completed',                 completeRaceResult('done','cancelled').already_completed === true);
+})();
+
+/* T69: no already_completed:true path relies solely on SR status in race branch */
+not('T69: race branch not returning already_completed based solely on SR', (function() {
+  var fi   = sql.indexOf('FUNCTION public.complete_mission');
+  var end  = sql.indexOf('REVOKE EXECUTE ON FUNCTION public.complete_mission');
+  var block = sql.slice(fi, end);
+  var rowsMIdx = block.indexOf('GET DIAGNOSTICS v_rows_m = ROW_COUNT');
+  var after    = block.slice(rowsMIdx, rowsMIdx + 800);
+  // Would be a defect: SR check comes before mission check in AND condition
+  // Verify mission check precedes or accompanies SR check
+  var mIdx = after.indexOf("IN ('done', 'validated')");
+  var sIdx = after.indexOf("IN ('completed', 'validated')");
+  // Both must exist; mission check must not be absent while SR check triggers return
+  return mIdx < 0 && sIdx > 0;  // defect: SR-only without mission check
+})());
+
 /* T63: simulation — start race truth table */
 (function() {
   function startResult(updateRows, rereadStatus) {

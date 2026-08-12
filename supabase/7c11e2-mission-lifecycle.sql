@@ -303,13 +303,14 @@ SECURITY DEFINER
 SET search_path = ''
 AS $$
 DECLARE
-  v_artisan_id      uuid;
-  v_request_id      text;    -- TEXT: matches missions.request_id live type
-  v_mission_status  text;
-  v_mission_artisan uuid;
-  v_sr_status       text;
-  v_rows_m          integer;
-  v_rows_sr         integer;
+  v_artisan_id         uuid;
+  v_request_id         text;    -- TEXT: matches missions.request_id live type
+  v_mission_status     text;
+  v_mission_artisan    uuid;
+  v_sr_status          text;
+  v_rows_m             integer;
+  v_rows_sr            integer;
+  v_mission_status_now text;    -- re-read after UPDATE-0 race (complete)
 BEGIN
 
   IF auth.uid() IS NULL THEN
@@ -391,16 +392,33 @@ BEGIN
   GET DIAGNOSTICS v_rows_m = ROW_COUNT;
 
   IF v_rows_m = 0 THEN
-    -- Concurrent call already transitioned mission.
-    -- Re-read to verify parent request consistency before claiming ok:true.
+    -- Concurrent call already transitioned mission (or mission moved to
+    -- another state via an admin/cancel path).
+    -- Re-read BOTH mission.status AND service_request.status before claiming
+    -- ok:true — checking only the SR is insufficient because the mission may
+    -- have been cancelled/altered concurrently while the SR completed.
+    --
+    -- ok:true + already_completed:true ONLY when:
+    --   mission.status IN ('done','validated')
+    --   AND service_request.status IN ('completed','validated')
+    -- Any other combination is an inconsistent state — do NOT mutate,
+    -- return stable failure for ops investigation.
+
+    -- Re-read mission status (may have been cancelled/altered concurrently)
+    SELECT m.status INTO v_mission_status_now
+    FROM   public.missions m
+    WHERE  m.id = p_mission_id;
+
     -- TYPE CONTRACT: sr.id UUID vs v_request_id TEXT — cast UUID side
     SELECT sr.status INTO v_sr_status
     FROM   public.service_requests sr
     WHERE  sr.id::text = v_request_id;
 
-    IF v_sr_status IN ('completed', 'validated') THEN
+    IF v_mission_status_now IN ('done', 'validated')
+       AND v_sr_status IN ('completed', 'validated') THEN
       RETURN jsonb_build_object('ok', true, 'mission_id', p_mission_id, 'already_completed', true);
     ELSE
+      -- mission may be cancelled, or SR not yet completed — inconsistent
       RETURN jsonb_build_object('ok', false, 'reason', 'inconsistent_state');
     END IF;
   END IF;
