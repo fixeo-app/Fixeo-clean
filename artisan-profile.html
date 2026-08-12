@@ -854,9 +854,23 @@ claaim sys<!DOCTYPE html>
      already saw. Body class is applied by fixeo-public-artisan-profile.js ONLY
      when all three estimator-return signals are present (source=estimator +
      fx_estimator_return_v1 + fixeo_estimator_ctx_v1). Normal profile visits:
-     class absent → .fxpf-price renders as usual. -->
+     class absent → .fxpf-price renders as usual.
+     7C.10C.0.5: Also suppress the lower "Tarifs marché / Prestations & prix
+     indicatifs" section (.fxpf-sec containing .fxpf-prest-grid). This section
+     contains static market ranges (150–300 MAD etc) that contradict the
+     server-verified Prix FIXEO already computed for this tunnel session.
+     Selector: :has(.fxpf-prest-grid) targets ONLY the prestations section —
+     not Réalisations, Avis clients, FAQ, or Claim (none contain .fxpf-prest-grid).
+     Belt-and-suspenders fallback for pre-:has() browsers: hide the two unique
+     children (.fxpf-prest-grid + .fxpf-footnote) so no price data is shown
+     even if the section shell remains. -->
 <style>
 body.fx-estimator-context .fxpf-price { display: none !important; }
+/* 7C.10C.0.5 — market tariffs section suppression in estimator context */
+body.fx-estimator-context .fxpf-sec:has(.fxpf-prest-grid) { display: none !important; }
+/* Fallback for browsers without :has() — hides price content; section shell may remain */
+body.fx-estimator-context .fxpf-prest-grid,
+body.fx-estimator-context .fxpf-footnote { display: none !important; }
 </style>
 <!-- fxresf-v11a: Reservation modal flagship presentation enhancer.
      Pure additive layer — zero engine changes. -->
