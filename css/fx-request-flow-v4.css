@@ -2680,3 +2680,23 @@
 .fxrf4-autre-input::placeholder {
   color: rgba(255, 255, 255, 0.38);
 }
+
+/* ─── 7C.10D.1: Emergency retry state ───────────────────────
+   Shown when /api/urgent-request returns ok:false.
+   Preserves entered data; offers single retry CTA.
+────────────────────────────────────────────────────────────── */
+.fxrf4-retry-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 28px 20px 12px;
+  text-align: center;
+}
+
+.fxrf4-retry-msg {
+  font-size: 0.88rem;
+  color: rgba(255, 255, 255, 0.60);
+  line-height: 1.5;
+  margin: 0;
+}

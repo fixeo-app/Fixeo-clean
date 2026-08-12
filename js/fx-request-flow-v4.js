@@ -1,5 +1,5 @@
 /**
- * fx-request-flow-v4.js — fxrf4-v5a1
+ * fx-request-flow-v4.js — fxrf4-v5b
  * RAFI Request Flow V5 — Emergency Mode Adaptation
  *
  * EMOTIONAL ARC: Problem → Relief → Confidence → Momentum → Trust
@@ -14,7 +14,7 @@
  * ISOLATED: Zero dependency on .modal, MutationObservers, setTimeout injections.
  * ROLLBACK: window.FIXEO_FLOW_V4 = false
  *
- * VERSION: fxrf4-v5a1 — 2026-07-26
+ * VERSION: fxrf4-v5b — 2026-08-12
  */
 
 (function () {
@@ -125,8 +125,8 @@
     step2EmergencyCity: function(city) { return 'Vous \u00eates \u00e0\u00a0' + city + '\u00a0?'; },
     step3Emergency:  'Sur quel num\u00e9ro peut-on vous rappeler\u00a0?',
     step3EmergencyPre: "C\u2019est bien ce num\u00e9ro\u00a0?",
-    interstitialEmergency: 'Je m\u2019en occupe.',
-    successEmergency: 'Je m\u2019en occupe imm\u00e9diatement.',
+    interstitialEmergency: 'Transmission de votre demande\u2026',
+    successEmergency: 'Demande urgente enregistr\u00e9e.',
 
     /* ── Per-situation ack (emergency) — calm, decisive ── */
     ackEmergency: {
@@ -310,7 +310,7 @@
         tracking_ref: ref,
         status:       'nouvelle',
         created_at:   new Date().toISOString(),
-        source:       'fxrf4-v5a1',
+        source:       'fxrf4-v5b',
         mode:         st.mode,
         viewed:       false
       };
@@ -349,8 +349,8 @@
   function _fireAnalytics(req, mode, duplicated) {
     try {
       window.dispatchEvent(new CustomEvent('fixeo:client-request-submit-success', {
-        detail: { request: req, mode: mode, source: 'fxrf4-v5a1',
-                  storageKey: STORAGE_KEY, duplicated: duplicated, version: 'fxrf4-v5a1' }
+        detail: { request: req, mode: mode, source: 'fxrf4-v5b',
+                  storageKey: STORAGE_KEY, duplicated: duplicated, version: 'fxrf4-v5b' }
       }));
     } catch(_) {}
   }
@@ -466,7 +466,7 @@
     _wireSwipeDismiss(dialog);
 
     /* Diagnostic */
-    console.log('[fxrf4-v5a1] DOM built. Header children:', head.childElementCount, '(expected 2: rafi-row, close)');
+    console.log('[fxrf4-v5b] DOM built. Header children:', head.childElementCount, '(expected 2: rafi-row, close)');
   }
 
   /* ══════════════════════════════════════════════════════════
@@ -1264,6 +1264,66 @@
      SUBMIT
   ══════════════════════════════════════════════════════════ */
 
+  /* ──────────────────────────────────────────────────────────
+   * 7C.10D.1: Durable Emergency Persist — POST /api/urgent-request
+   * Called only in emergency mode. Returns Promise<{ok, id, ref}>.
+   * Non-blocking to standard mode (never called there).
+   * ────────────────────────────────────────────────────────── */
+  function _persistEmergencyRequest(st, saved) {
+    var payload = {
+      service:      st.serviceSlug  || '',
+      problem:      st.serviceLabel || '',
+      description:  st.description  || '',
+      city:         st.city         || '',
+      phone:        st.phone        || '',
+      tracking_ref: (saved && saved.tracking_ref) || '',
+      urgency:      'now',
+      mode:         'emergency',
+      source:       'fxrf4-v5b',
+    };
+    return fetch('/api/urgent-request', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(payload),
+    }).then(function(res) {
+      return res.json().then(function(data) {
+        /* Attach server id to local record if returned */
+        if (data.ok && data.id && saved) saved._server_id = data.id;
+        return data;
+      });
+    }).catch(function(err) {
+      return { ok: false, error: err.message || 'network_error', code: 'NETWORK' };
+    });
+  }
+
+  /* ──────────────────────────────────────────────────────────
+   * _renderRetry — shown when emergency persist fails
+   * Preserves all entered data. User can retry or dismiss.
+   * ────────────────────────────────────────────────────────── */
+  function _renderRetry(btn, retryFn) {
+    _setProgress(3, 3);
+    _rafiSpeak("Impossible d\u2019enregistrer la demande pour le moment.", false, true);
+
+    _setFoot();
+    var body = _q('#fxrf4-body');
+    if (!body) return;
+
+    var wrap = _h('div', { cls: 'fxrf4-retry-wrap', 'aria-live': 'polite' });
+    wrap.appendChild(_h('p', {
+      cls: 'fxrf4-retry-msg',
+      txt: "Votre situation et vos informations sont conserv\u00e9es."
+    }));
+
+    var retryBtn = _primaryBtn('R\u00e9essayer', true, function(rb) {
+      _btnLoading(rb);
+      retryFn(rb);
+    });
+    wrap.appendChild(retryBtn);
+
+    body.innerHTML = '';
+    body.appendChild(_screen([wrap]));
+  }
+
   function _submitRequest(btn) {
     var st = _st;
 
@@ -1276,7 +1336,7 @@
 
     _btnLoading(btn);
 
-    /* Save synchronously before interstitial */
+    /* Save to localStorage first (offline memory / idempotency / dedup) */
     var result = _saveRequest(st);
     var saved = result && result.request;
 
@@ -1292,18 +1352,53 @@
       return;
     }
 
-    /* Show interstitial — save succeeded, transition is cosmetic */
-    setTimeout(function() {
-      _renderInterstitial();
-    }, 60);
+    var isEmergency = st.mode === 'emergency';
 
-    _fireAnalytics(saved, st.mode, result.duplicated);
+    if (!isEmergency) {
+      /* ── STANDARD mode: original behavior unchanged ── */
+      setTimeout(function() { _renderInterstitial(); }, 60);
+      _fireAnalytics(saved, st.mode, result.duplicated);
+      setTimeout(function() {
+        st.submitLocked = false;
+        _renderSuccess(saved);
+      }, 820);
+      return;
+    }
 
-    /* Interstitial for at least 800ms for emotional effect */
-    setTimeout(function() {
-      st.submitLocked = false;
-      _renderSuccess(saved);
-    }, 820);
+    /* ── EMERGENCY mode: durable persist contract ─────────────
+     * 7C.10D.1: Show interstitial while real API call is in flight.
+     * Success rendered ONLY after /api/urgent-request returns ok:true.
+     * Failure renders retry state — no false success shown.
+     * ────────────────────────────────────────────────────────── */
+    setTimeout(function() { _renderInterstitial(); }, 60);
+
+    /* Attempt durable persist */
+    _persistEmergencyRequest(st, saved).then(function(data) {
+      if (data && data.ok) {
+        /* Durable success — fire analytics, render success */
+        _fireAnalytics(saved, st.mode, result.duplicated);
+        st.submitLocked = false;
+        _renderSuccess(saved);
+      } else {
+        /* Persist failed — show retry, do NOT fire success analytics */
+        st.submitLocked = false;
+        _renderRetry(btn, function(rb) {
+          /* Retry: unlock, re-attempt persist with same data */
+          st.submitLocked = true;
+          st.submitTs = Date.now();
+          _persistEmergencyRequest(st, saved).then(function(d2) {
+            if (d2 && d2.ok) {
+              _fireAnalytics(saved, st.mode, result.duplicated);
+              st.submitLocked = false;
+              _renderSuccess(saved);
+            } else {
+              st.submitLocked = false;
+              _renderRetry(rb, function() {});
+            }
+          });
+        });
+      }
+    });
   }
 
   /* ══════════════════════════════════════════════════════════
@@ -1330,13 +1425,14 @@
     [1,2,3].forEach(function() { dots.appendChild(_h('span')); });
     inter.appendChild(dots);
 
+    /* 7C.10D.1: In emergency mode, interstitial persists until real API ack.
+     * "Ça prend un instant" is deferred 2.5s (network can be slow on mobile). */
     var line2 = _h('p', { cls: 'fxrf4-inter-line2', txt: MSG.interstitialLate });
     inter.appendChild(line2);
 
-    /* Show "ça prend un instant" if it takes > 1.5s */
     setTimeout(function() {
       if (line2.parentNode) line2.classList.add('is-visible');
-    }, 1500);
+    }, 2500);
 
     body.innerHTML = '';
     body.appendChild(_screen([inter]));
@@ -1386,19 +1482,24 @@
     /* RAFI attribution */
     succ.appendChild(_h('p', { cls: 'fxrf4-success-tag', txt: 'RAFI', 'aria-hidden': 'true' }));
 
-    /* Title — mode-specific */
+    /* Title — mode-specific
+     * 7C.10D.1: Emergency title now reflects REAL persistence (server-confirmed).
+     * False claims ("Votre urgence est déjà prise en charge") replaced with
+     * factual confirmed-persist copy. */
     succ.appendChild(_h('p', {
       cls: 'fxrf4-success-title',
       txt: isEmergency
-        ? "Votre urgence est d\u00e9j\u00e0 prise en charge."
+        ? "Votre demande a bien \u00e9t\u00e9 transmise \u00e0 FIXEO."
         : "Votre demande est d\u00e9j\u00e0 entre de bonnes mains."
     }));
 
-    /* Body — mode-specific */
+    /* Body — mode-specific
+     * 7C.10D.1: Emergency body no longer claims RAFI is contacting artisans.
+     * Factual: request transmitted, team will use the phone number provided. */
     succ.appendChild(_h('p', {
       cls: 'fxrf4-success-body',
       txt: isEmergency
-        ? "RAFI contacte d\u00e9j\u00e0 les artisans disponibles pr\u00e8s de chez vous.\nVous recevrez tr\u00e8s bient\u00f4t une confirmation par t\u00e9l\u00e9phone ou WhatsApp."
+        ? "L\u2019\u00e9quipe FIXEO utilisera le num\u00e9ro fourni pour la coordination."
         : "RAFI s\u00e9lectionne d\u00e9j\u00e0 les artisans disponibles pour vous.\nVous recevrez une confirmation d\u00e8s les premi\u00e8res r\u00e9ponses."
     }));
 
@@ -1411,11 +1512,16 @@
 
     /* Three-step visual — mode-specific labels */
     var stepsEl = _h('div', { cls: 'fxrf4-success-steps', 'aria-label': '\u00c9tapes suivantes' });
+    /* 7C.10D.1: Emergency status rail — factual copy.
+     * Step 1 (done): request recorded locally + durably on server — TRUE.
+     * Step 2 (done): transmitted to FIXEO — TRUE (server confirmed before this screen).
+     * Step 3 (waiting): coordination pending — honest future state.
+     * Removed: "Artisans disponibles contactés" (not proven true). */
     var stepData = isEmergency
       ? [
           { dot: '\u2705', lbl: 'Demande urgente\nenregistr\u00e9e', state: 'done' },
-          { dot: '\ud83d\udcf2', lbl: 'Artisans disponibles\ncontact\u00e9s',     state: 'active' },
-          { dot: '\ud83d\udcac', lbl: 'Confirmation\npar t\u00e9l. ou WhatsApp', state: 'waiting' }
+          { dot: '\u2705', lbl: 'Transmise\n\u00e0 FIXEO',           state: 'done' },
+          { dot: '\ud83d\udcac', lbl: 'Coordination\n\u00e0 venir',  state: 'waiting' }
         ]
       : [
           { dot: '\u2705', lbl: 'Demande\nenregistr\u00e9e', state: 'done' },
@@ -1466,7 +1572,7 @@
 
     var head = _q('#fxrf4-head');
     if (head) {
-      console.log('[fxrf4-v5a1] Success rendered. mode=' + (st.mode) +
+      console.log('[fxrf4-v5b] Success rendered. mode=' + (st.mode) +
                   ' Header children:', head.childElementCount);
     }
   }
@@ -1752,7 +1858,7 @@
   ══════════════════════════════════════════════════════════ */
 
   window.FixeoRequestFlowV4 = {
-    VERSION: 'fxrf4-v5a1',
+    VERSION: 'fxrf4-v5b',
     open:    open,
     close:   close
   };
