@@ -242,13 +242,18 @@ t('S6.4: admin role verified from DB in approve RPC (not from caller)',
 t('S6.5: artisan identity read from claim_requests row in approve RPC',
   migration.includes('artisan_legacy_id'));
 
-t('S6.6: onboarding_completed NOT set to true in approve RPC body',
+t('S6.6: onboarding_completed NOT assigned in approve RPC code (excluding SQL comments)',
   (function() {
     var approveStart = migration.indexOf('CREATE OR REPLACE FUNCTION public.approve_artisan_claim');
     var approveEnd   = migration.indexOf('CREATE OR REPLACE FUNCTION public.reject_artisan_claim');
     if (approveStart === -1 || approveEnd === -1) return false;
     var body = migration.slice(approveStart, approveEnd);
-    return !body.match(/onboarding_completed\s*=\s*true/i);
+    /* Filter out SQL comment lines (starting with --) before checking */
+    var codeLines = body.split('\n').filter(function(l) {
+      return l.trim().length > 0 && !l.trim().startsWith('--');
+    }).join('\n');
+    return !codeLines.match(/onboarding_completed\s*=\s*true/i) &&
+           !codeLines.match(/SET\s[^;]*onboarding_completed/i);
   })());
 
 t('S6.7: approve RPC comment states onboarding_completed remains false',
@@ -261,25 +266,29 @@ t('S6.8: FOR UPDATE concurrency lock in approve RPC',
 t('S6.9: artisan_has_owner guard prevents ownership theft',
   migration.includes('artisan_has_owner'));
 
-t('S6.10: reject RPC does NOT update artisans table',
+t('S6.10: reject RPC updates artisans.claim_status only — absorbs dropped trigger rejection branch',
   (function() {
+    /* reject_artisan_claim() must reset artisans.claim_status (trigger absorption) but
+     * MUST NOT set owner_user_id, onboarding_completed, verified, or availability */
     var rejectStart = migration.indexOf('CREATE OR REPLACE FUNCTION public.reject_artisan_claim');
-    var rejectEnd   = migration.indexOf('CREATE OR REPLACE FUNCTION', rejectStart + 10);
+    var next = migration.indexOf('\n-- ═══', rejectStart + 100);
     if (rejectStart === -1) return false;
-    var body = migration.slice(rejectStart, rejectEnd > -1 ? rejectEnd : rejectStart + 3000);
-    /* body must not UPDATE artisans */
-    return !body.includes('UPDATE public.artisans');
+    var body = migration.slice(rejectStart, next > -1 ? next : rejectStart + 5000);
+    var hasArtisanUpdate = body.includes('UPDATE public.artisans');
+    var hasOwnerSet      = /SET\s+owner_user_id/.test(body);
+    var hasOnboardingSet = /onboarding_completed\s*=\s*true/i.test(body);
+    var hasVerifiedSet   = /verified\s*=\s*true/i.test(body);
+    /* Must update artisans (claim_status reset), must NOT touch ownership/onboarding/verified */
+    return hasArtisanUpdate && !hasOwnerSet && !hasOnboardingSet && !hasVerifiedSet;
   })());
 
-t('S6.11: reject RPC does NOT execute UPDATE on artisans table',
+t('S6.11: reject RPC does NOT set owner_user_id (rejection never alters ownership)',
   (function() {
     var rejectStart = migration.indexOf('CREATE OR REPLACE FUNCTION public.reject_artisan_claim');
     if (rejectStart === -1) return false;
-    /* find end of reject function body (next CREATE OR REPLACE or permissions block) */
     var next = migration.indexOf('\n-- ═══', rejectStart + 100);
-    var body = migration.slice(rejectStart, next > -1 ? next : rejectStart + 3000);
-    return !body.includes('UPDATE public.artisans') &&
-           !(/SET\s+owner_user_id/.test(body));
+    var body = migration.slice(rejectStart, next > -1 ? next : rejectStart + 5000);
+    return !(/SET\s+owner_user_id/.test(body));
   })());
 
 t('S6.12: anon REVOKED from both RPCs',
@@ -299,8 +308,9 @@ t('S6.15: new authenticated INSERT policy requires requester_user_id = auth.uid(
 t('S6.16: RLS enabled on claim_requests in migration',
   migration.includes('ENABLE ROW LEVEL SECURITY'));
 
-t('S6.17: migration Step 4 alerts about sync_artisan_claim trigger manual action',
-  migration.includes('MANUAL ACTION REQUIRED') || migration.includes('sync_artisan_claim'));
+t('S6.17: migration drops sync_artisan_claim trigger and function',
+  migration.includes('DROP TRIGGER IF EXISTS claim_approval_sync') &&
+  migration.includes('DROP FUNCTION IF EXISTS public.sync_artisan_claim()'));
 
 /* ─────────────────────────────────────────────────────────
  * SECTION 7 — Precheck SQL contract
@@ -352,8 +362,15 @@ t('S8.5: verify checks 7C.11 dispatch_request_v1 untouched',
 t('S8.6: verify checks stale policies removed',
   verify.includes('claims_insert') && verify.includes('stale'));
 
-t('S8.7: verify checks reject RPC does not alter artisan ownership',
-  verify.includes('reject_artisan_claim') && verify.includes('ownership'));
+t('S8.7: verify checks reject RPC does not alter artisan owner_user_id',
+  verify.includes('reject_artisan_claim') && verify.includes('owner_user_id'));
+
+t('S8.8: verify checks sync_artisan_claim trigger and function are dropped',
+  verify.includes('claim_approval_sync') && verify.includes('sync_artisan_claim') &&
+  verify.includes('DROPPED') || verify.includes('dropped'));
+
+t('S8.9: verify checks no triggers remain on claim_requests',
+  verify.includes('triggers remaining on claim_requests'));
 
 /* ─────────────────────────────────────────────────────────
  * SECTION 9 — Atomicity and concurrency
@@ -373,7 +390,8 @@ t('S9.2: approve RPC has EXCEPTION WHEN OTHERS handler (internal_error fallback)
 t('S9.3: reject RPC has EXCEPTION WHEN OTHERS handler',
   (function() {
     var rejectStart = migration.indexOf('CREATE OR REPLACE FUNCTION public.reject_artisan_claim');
-    var body = migration.slice(rejectStart, rejectStart + 3000);
+    var next = migration.indexOf('\n-- ═══', rejectStart + 100);
+    var body = migration.slice(rejectStart, next > -1 ? next : rejectStart + 5000);
     return body.includes('WHEN OTHERS') && body.includes('internal_error');
   })());
 
@@ -390,9 +408,10 @@ t('S9.6: claim_already_approved blocks rejection of approved claim',
  * SECTION 10 — Regression: dispatch + profile untouched
  * ───────────────────────────────────────────────────────── */
 
-t('S10.1: dispatch_request_v1 not modified (not in 7C.12A.1 migration)',
-  !migration.includes('dispatch_request_v1') ||
-  migration.includes('dispatch_request_v1') && migration.includes('V-18') /* verify only */);
+t('S10.1: dispatch_request_v1 not modified by 7C.12A.1 migration (no CREATE/DROP of dispatch fn)',
+  /* migration may reference dispatch in comments/rollback verify but must not CREATE/DROP it */
+  !migration.includes('CREATE OR REPLACE FUNCTION public.dispatch_request_v1') &&
+  !migration.includes('DROP FUNCTION IF EXISTS public.dispatch_request_v1'));
 
 t('S10.2: missions lifecycle RPCs not in migration',
   !migration.includes('claim_mission') && !migration.includes('start_mission'));
@@ -464,13 +483,102 @@ not('S13.2: onboarding_completed NOT set in repository approve path',
            body.match(/onboarding_completed\s*[:=]\s*true/);
   })());
 
-not('S13.3: approve RPC does not set onboarding_completed=true in SQL',
+t('S13.3: approve RPC code lines do not set onboarding_completed=true in SQL',
+  (function() {
+    var idx = migration.indexOf('CREATE OR REPLACE FUNCTION public.approve_artisan_claim');
+    var end = migration.indexOf('CREATE OR REPLACE FUNCTION public.reject_artisan_claim');
+    if (idx === -1 || end === -1) return false;
+    var body = migration.slice(idx, end);
+    /* Filter SQL comment lines before checking */
+    var codeLines = body.split('\n').filter(function(l) {
+      return l.trim().length > 0 && !l.trim().startsWith('--');
+    }).join('\n');
+    return !codeLines.match(/onboarding_completed\s*=\s*true/i) &&
+           !codeLines.match(/SET\s[^;]*onboarding_completed/i);
+  })());
+
+/* ─────────────────────────────────────────────────────────
+ * SECTION 14 — Trigger drop: sync_artisan_claim forensic
+ * ───────────────────────────────────────────────────────── */
+
+t('S14.1: migration drops claim_approval_sync trigger',
+  migration.includes('DROP TRIGGER IF EXISTS claim_approval_sync'));
+
+t('S14.2: migration drops sync_artisan_claim() function',
+  migration.includes('DROP FUNCTION IF EXISTS public.sync_artisan_claim()'));
+
+t('S14.3: migration does not CREATE OR REPLACE sync_artisan_claim in the main migration body',
+  (function() {
+    /* The migration itself must not recreate the defective trigger.
+     * Rollback file may contain it — only check migration file. */
+    var mainEnd = migration.indexOf('-- STEP 5: RLS');
+    var mainBody = migration.slice(0, mainEnd > -1 ? mainEnd : migration.length);
+    return !mainBody.includes('CREATE OR REPLACE FUNCTION public.sync_artisan_claim');
+  })());
+
+t('S14.4: rollback restores sync_artisan_claim for emergency reversal',
+  rollback.includes('CREATE OR REPLACE FUNCTION public.sync_artisan_claim'));
+
+t('S14.5: rollback warns about onboarding_completed defect re-introduction',
+  rollback.includes('onboarding_completed defect'));
+
+t('S14.6: approve RPC uses artisan_id UUID FK as primary resolution (before legacy fallback)',
   (function() {
     var idx = migration.indexOf('CREATE OR REPLACE FUNCTION public.approve_artisan_claim');
     var end = migration.indexOf('CREATE OR REPLACE FUNCTION public.reject_artisan_claim');
     var body = migration.slice(idx, end);
-    return !!(body.match(/onboarding_completed\s*=\s*true/i));
+    var artisanIdIdx = body.indexOf('v_claim.artisan_id');
+    var legacyIdx    = body.indexOf('v_claim.artisan_legacy_id');
+    return artisanIdIdx > -1 && legacyIdx > -1 && artisanIdIdx < legacyIdx;
   })());
+
+t('S14.7: approve RPC does NOT set verified=true (not implied by claim approval)',
+  (function() {
+    var idx = migration.indexOf('CREATE OR REPLACE FUNCTION public.approve_artisan_claim');
+    var end = migration.indexOf('CREATE OR REPLACE FUNCTION public.reject_artisan_claim');
+    var body = migration.slice(idx, end);
+    var codeLines = body.split('\n').filter(function(l) {
+      return l.trim().length > 0 && !l.trim().startsWith('--');
+    }).join('\n');
+    return !codeLines.match(/verified\s*=\s*true/i);
+  })());
+
+t('S14.8: approve RPC does NOT set availability (artisan sets post-onboarding)',
+  (function() {
+    var idx = migration.indexOf('CREATE OR REPLACE FUNCTION public.approve_artisan_claim');
+    var end = migration.indexOf('CREATE OR REPLACE FUNCTION public.reject_artisan_claim');
+    var body = migration.slice(idx, end);
+    var codeLines = body.split('\n').filter(function(l) {
+      return l.trim().length > 0 && !l.trim().startsWith('--');
+    }).join('\n');
+    return !codeLines.match(/availability\s*=/i);
+  })());
+
+t('S14.9: reject RPC has owner_user_id IS NULL guard before artisan reset',
+  (function() {
+    var rejectStart = migration.indexOf('CREATE OR REPLACE FUNCTION public.reject_artisan_claim');
+    var next = migration.indexOf('\n-- ═══', rejectStart + 100);
+    var body = migration.slice(rejectStart, next > -1 ? next : rejectStart + 5000);
+    return body.includes('owner_user_id IS NULL');
+  })());
+
+t('S14.10: reject absorption: artisan reset to unclaimed (not rejected) on rejection',
+  (function() {
+    var rejectStart = migration.indexOf('CREATE OR REPLACE FUNCTION public.reject_artisan_claim');
+    var next = migration.indexOf('\n-- ═══', rejectStart + 100);
+    var body = migration.slice(rejectStart, next > -1 ? next : rejectStart + 5000);
+    return body.includes("claim_status = 'unclaimed'");
+  })());
+
+t('S14.11: verify explicitly checks trigger is dropped (V-16 and V-17)',
+  verify.includes('claim_approval_sync') && verify.includes('sync_artisan_claim') &&
+  verify.includes('dropped'));
+
+t('S14.12: dispatch eligibility unchanged — approve RPC header documents the 4 gate conditions',
+  migration.includes('onboarding_completed = true') &&
+  migration.includes("availability = 'available'") &&
+  migration.includes('owner_user_id IS NOT NULL') &&
+  migration.includes("claim_status = 'approved'"));
 
 /* ─────────────────────────────────────────────────────────
  * Summary
