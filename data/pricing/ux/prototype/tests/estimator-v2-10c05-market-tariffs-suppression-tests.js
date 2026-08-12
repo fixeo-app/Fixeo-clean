@@ -257,11 +257,11 @@ console.log('\n[10C.0.5] Authority freeze');
 
 test('reservation.js: pricing diff NONE — no changes to amount_mad or token', function () {
   // reservation.js must not have been modified in 10C.0.5
-  // Check that v1m-estimator-copy is the current version (not bumped further)
+  // Check that v1o-canonical-gate is the current version (not bumped further)
   var indexHtml = fs.readFileSync(path.join(REPO, 'index.html'), 'utf8');
   assert.ok(
-    indexHtml.includes('reservation.js?v=v1m-estimator-copy'),
-    'reservation.js cache key must still be v1m-estimator-copy (10C.0.5 must not modify it)'
+    indexHtml.includes('reservation.js?v=v1o-canonical-gate'),
+    'reservation.js cache key must still be v1o-canonical-gate (10C.0.5 must not modify it)'
   );
 });
 

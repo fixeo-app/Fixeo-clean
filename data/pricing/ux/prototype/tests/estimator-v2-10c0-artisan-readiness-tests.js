@@ -212,8 +212,8 @@ t('19. reservation.js unchanged — matching semantics NOT modified',
 console.log('\n[7] Cache key');
 
 // 20 — Cache key bumped
-t('20. Cache key bumped to fxestpage-v2d-estimator-copy',
-  estimationHtml.includes('fixeo-estimation-page-v1.js?v=fxestpage-v2d-estimator-copy'));
+t('20. Cache key bumped to fxestpage-v2e-canonical-gate',
+  estimationHtml.includes('fixeo-estimation-page-v1.js?v=fxestpage-v2e-canonical-gate'));
 
 /* ══════════════════════════════════════════════════════
    SUMMARY

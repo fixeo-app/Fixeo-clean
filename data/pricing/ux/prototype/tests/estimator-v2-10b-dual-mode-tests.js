@@ -102,8 +102,8 @@ t('14. _loadReservationStack installed when not already present',
   pageJs.includes('window._loadReservationStack'));
 
 // 15 — reservation.js loaded in correct version
-t('15. reservation.js?v=v1m-estimator-copy in loader',
-  pageJs.includes('reservation.js?v=v1m-estimator-copy'));
+t('15. reservation.js?v=v1o-canonical-gate in loader',
+  pageJs.includes('reservation.js?v=v1o-canonical-gate'));
 
 // 16 — full stack loaded in dependency order
 t('16. Full reservation stack: reservation → slot-lock → payment → cod-payment → reservation-v2 → flagship → faee → review',

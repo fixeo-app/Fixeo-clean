@@ -213,19 +213,19 @@ t('20. No raw price amount injected into DOM from profile JS',
 ══════════════════════════════════════════════════════ */
 console.log('\n[7] Cache keys');
 
-t('21. reservation.js bumped to v1m-estimator-copy in index.html',
-  indexHtml.includes('reservation.js?v=v1m-estimator-copy') ||
+t('21. reservation.js bumped to v1o-canonical-gate in index.html',
+  indexHtml.includes('reservation.js?v=v1o-canonical-gate') ||
   // In index.html it may be inside a loadScriptOnce call
-  indexHtml.includes("'js/reservation.js?v=v1m-estimator-copy'"));
+  indexHtml.includes("'js/reservation.js?v=v1o-canonical-gate'"));
 
-t('22. reservation.js bumped to v1m-estimator-copy in estimation stack',
-  pageJs.includes("'js/reservation.js?v=v1m-estimator-copy'"));
+t('22. reservation.js bumped to v1o-canonical-gate in estimation stack',
+  pageJs.includes("'js/reservation.js?v=v1o-canonical-gate'"));
 
 t('23. fixeo-public-artisan-profile.js bumped to hts3-estimator-price-context',
   profileHtml.includes('fixeo-public-artisan-profile.js?v=hts3-estimator-price-context'));
 
 t('24. estimation.html page JS key updated (v2d)',
-  estimationHtml.includes('fixeo-estimation-page-v1.js?v=fxestpage-v2d-estimator-copy'));
+  estimationHtml.includes('fixeo-estimation-page-v1.js?v=fxestpage-v2e-canonical-gate'));
 
 /* ══════════════════════════════════════════════════════
    SUMMARY

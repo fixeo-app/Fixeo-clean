@@ -163,17 +163,20 @@ test('13. _onContinue still calls FixeoReservation.open', function () {
 ══════════════════════════════════════════════════════════════ */
 console.log('\n── Group 4: Booking completion token clear ──');
 
-test('14. COD onSuccess calls clearContext before redirect', function () {
+test('14. COD onSuccess gates confirmation via _canonicalPersistGate with clearContext before redirect', function () {
   var successIdx = resSrc.indexOf('onSuccess: function(orderID, record, apiBody)');
   assert(successIdx > 0, 'onSuccess handler found');
-  /* COD success block can be up to 1000 chars — scan wider */
-  var block = resSrc.slice(successIdx, successIdx + 1200);
-  var clearIdx = block.indexOf('clearContext');
-  /* Redirect: may use window.location.href or confirmURL variable assignment */
+  /* 7C.11D.2.1: confirmation is inside onConfirmed callback of _canonicalPersistGate.
+   * Scan wider block to find gate call and both clearContext and redirect inside onConfirmed. */
+  var block = resSrc.slice(successIdx, successIdx + 3000);
+  var gateIdx    = block.indexOf('_canonicalPersistGate');
+  var clearIdx   = block.indexOf('clearContext');
   var redirectIdx = block.indexOf('window.location.href');
   if (redirectIdx < 0) redirectIdx = block.indexOf('confirmURL');
-  assert(clearIdx > 0, 'clearContext in onSuccess block (chars from success: ' + clearIdx + ')');
-  assert(redirectIdx > 0, 'redirect in onSuccess block');
+  assert(gateIdx > 0, '_canonicalPersistGate called in onSuccess block');
+  assert(clearIdx > 0, 'clearContext in onSuccess block (chars: ' + clearIdx + ')');
+  assert(redirectIdx > 0, 'redirect reference in onSuccess block');
+  assert(gateIdx < clearIdx, '_canonicalPersistGate before clearContext');
   assert(clearIdx < redirectIdx, 'clearContext before redirect (' + clearIdx + ' < ' + redirectIdx + ')');
 });
 
@@ -234,8 +237,8 @@ test('20. JS cache key updated to fxhro-v1d-reservation-exit', function () {
   assert(!idxSrc.includes('fixeo-hero-resume-v1.js?v=fxhro-v1c-qsm-reset'), 'old JS key gone');
 });
 
-test('21. reservation.js cache key updated to v1m-estimator-copy', function () {
-  assert(idxSrc.includes('reservation.js?v=v1m-estimator-copy'), 'reservation cache key updated');
+test('21. reservation.js cache key updated to v1o-canonical-gate', function () {
+  assert(idxSrc.includes('reservation.js?v=v1o-canonical-gate'), 'reservation cache key updated');
   assert(!idxSrc.includes('reservation.js?v=v1i'), 'old reservation key gone');
 });
 

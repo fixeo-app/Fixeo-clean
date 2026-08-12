@@ -156,6 +156,9 @@
     _estimatorCtx:         null,  // verified pricing context (set async in open())
     estimatorCity:         null,  // city chosen by user in estimator picker stage
     estimatorPickerScreen: null,  // 7C.9L.3W: null|'city'|'artisan' (nav only)
+    // 7C.11D.2.1 — canonical persistence gate state (Standard path only)
+    _canonicalInFlight:    false, // true while POST /api/create-request is pending
+    _canonicalIdemKey:     null,  // idempotency key for current logical reservation
   };
 
   /* ════════════════════════════════════════════════════════
@@ -1607,18 +1610,20 @@
        prevent re-injection on page reload
      — Skips if FixeoClientRequestsStore unavailable
   ════════════════════════════════════════════════════════ */
-  /* ── 7C.11D.2: Service label → canonical slug map ───────────────────────
-   * Maps artisan.category (slug) to the VALID_SLUGS accepted by /api/create-request.
-   * Fallback: 'autre' (always accepted by server).
-   * Never derived from price or browser authority.
-   */
+  /* ════════════════════════════════════════════════════════
+   7C.11D.2.1 — CANONICAL PERSISTENCE GATE (Standard path)
+   ════════════════════════════════════════════════════════
+
+   Service label → canonical server slug map.
+   Maps artisan.category (slug) to VALID_SLUGS accepted by /api/create-request.
+   Fallback: 'autre' (always accepted by server).
+*/
   var _SLUG_ALLOWLIST = [
     'plomberie','electricite','serrurerie','climatisation',
     'menuiserie','peinture','maconnerie','nettoyage','jardinage',
     'demenagement','autre'
   ];
 
-  /* Normalise a raw category string to a canonical server slug */
   function _toServiceSlug(raw) {
     if (!raw) return 'autre';
     var s = String(raw).toLowerCase().trim()
@@ -1626,9 +1631,7 @@
       .replace(/â/g,'a').replace(/à/g,'a')
       .replace(/ô/g,'o').replace(/ç/g,'c')
       .replace(/[^a-z0-9]/g,'');
-    /* Direct slug match */
     if (_SLUG_ALLOWLIST.indexOf(s) !== -1) return s;
-    /* Partial matches for common variants */
     if (s.indexOf('plomb') !== -1)    return 'plomberie';
     if (s.indexOf('elect') !== -1)    return 'electricite';
     if (s.indexOf('serru') !== -1)    return 'serrurerie';
@@ -1642,116 +1645,44 @@
     return 'autre';
   }
 
-  /* ── 7C.11D.2: Generate a reservation-namespaced idempotency key ──────── */
+  /* Generate a reservation-namespaced idempotency key (once per logical reservation). */
   function _generateIdempotencyKey() {
     try {
       if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
         return 'reservation:' + crypto.randomUUID();
       }
-    } catch (_) { /* fallback below */ }
-    /* Fallback: timestamp + Math.random — sufficient for V1 */
+    } catch (_) { /* fallback */ }
     var ts  = Date.now().toString(16);
     var rnd = Math.random().toString(16).slice(2);
     var pad = function(s, n) { while (s.length < n) s = '0' + s; return s; };
     var hex = pad(ts, 12) + pad(rnd, 12);
-    /* Format as UUID-like: 8-4-4-4-12 */
-    var uuid = [
-      hex.slice(0,8),
-      hex.slice(8,12),
-      '4' + hex.slice(13,16),
-      '8' + hex.slice(17,20),
-      hex.slice(20,32)
-    ].join('-');
+    var uuid = [hex.slice(0,8), hex.slice(8,12), '4' + hex.slice(13,16),
+                '8' + hex.slice(17,20), hex.slice(20,32)].join('-');
     return 'reservation:' + uuid;
   }
 
-  /* ── 7C.11D.2: Canonical persistence — fire to /api/create-request ───────
-   * Called AFTER the local store write succeeds (booking already confirmed).
-   * Patches the local record with persistence metadata.
-   * Never blocks the booking UX. Never exposes SERVICE_ROLE.
-   * Idempotency key is persisted to local record BEFORE the POST.
-   *
-   * @param {string} localReqId  - Date.now() id of the local request record
-   * @param {object} serverPayload - {service_category, city, description,
-   *                                  client_phone, urgency, idempotency_key}
-   */
-  function _canonicalPersistRequest(localReqId, serverPayload) {
-    /* Patch persistence_state=pending + idempotency_key into local record BEFORE POST */
+  /* Dispatch fixeo:client-request-persisted after canonical ACK.
+   * Compatible with existing event bus. No dispatch/mission side-effects. */
+  function _dispatchPersistedEvent(payload) {
     try {
-      var raw = JSON.parse(localStorage.getItem('fixeo_client_requests') || '[]');
-      var rid = String(localReqId);
-      for (var i = raw.length - 1; i >= 0; i--) {
-        if (String(raw[i].id) === rid) {
-          raw[i].persistence_state = 'pending';
-          raw[i].idempotency_key   = serverPayload.idempotency_key;
-          break;
-        }
-      }
-      localStorage.setItem('fixeo_client_requests', JSON.stringify(raw));
-    } catch (_) { /* non-critical — POST proceeds regardless */ }
-
-    /* POST to canonical server endpoint */
-    var controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
-    var timer = controller ? setTimeout(function() { controller.abort(); }, 8000) : null;
-
-    fetch('/api/create-request', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(serverPayload),
-      signal: controller ? controller.signal : undefined,
-    })
-    .then(function(r) {
-      if (timer) clearTimeout(timer);
-      if (!r.ok) throw new Error('HTTP ' + r.status);
-      return r.json();
-    })
-    .then(function(body) {
-      /* Canonical ACK — patch local record */
-      if (!body || !body.ok || !body.id) throw new Error('ok:false or no id');
-      try {
-        var raw2 = JSON.parse(localStorage.getItem('fixeo_client_requests') || '[]');
-        var rid2 = String(localReqId);
-        for (var j = raw2.length - 1; j >= 0; j--) {
-          if (String(raw2[j].id) === rid2) {
-            raw2[j].persistence_state    = 'persisted';
-            raw2[j].canonical_request_id = body.id;
-            raw2[j].canonical_ref        = body.ref || null;
-            if (body.replayed) raw2[j].replayed = true;
-            break;
-          }
-        }
-        localStorage.setItem('fixeo_client_requests', JSON.stringify(raw2));
-      } catch (_) { /* patch failure is non-critical */ }
-    })
-    .catch(function(err) {
-      if (timer) clearTimeout(timer);
-      /* Patch persistence_state=failed — keeps same idempotency_key for retry */
-      try {
-        var raw3 = JSON.parse(localStorage.getItem('fixeo_client_requests') || '[]');
-        var rid3 = String(localReqId);
-        for (var k = raw3.length - 1; k >= 0; k--) {
-          if (String(raw3[k].id) === rid3) {
-            raw3[k].persistence_state = 'failed';
-            /* idempotency_key preserved — same key reused on retry */
-            break;
-          }
-        }
-        localStorage.setItem('fixeo_client_requests', JSON.stringify(raw3));
-      } catch (_) { /* non-critical */ }
-    });
-    /* Fire-and-persist: does NOT block or affect the booking confirmation flow */
+      window.dispatchEvent(new CustomEvent('fixeo:client-request-persisted', { detail: payload }));
+    } catch (_) { /* non-critical */ }
   }
 
-  function _bridgeToArtisanInbox(bookingData, orderID, artisanCity) {
+  /* ── Write local request record (preserves fixeo:client-request-created compat) ──
+   * Called BEFORE the canonical POST. Fires event for all 23 existing listeners.
+   * Returns { localId, localReqId } or null on failure.
+   */
+  function _writeLocalRequestRecord(bookingData, orderID, artisanCity) {
     try {
       var store = window.FixeoClientRequestsStore;
-      if (!store || typeof store.appendRequest !== 'function') return;
+      if (!store || typeof store.appendRequest !== 'function') return null;
 
-      /* Check for existing bridged entry with same reservation_ref */
+      /* Idempotent guard: check existing reservation_ref */
       var existing = JSON.parse(localStorage.getItem('fixeo_client_requests') || '[]');
       if (Array.isArray(existing) && existing.some(function(r) {
         return r.reservation_ref === orderID;
-      })) return; /* already bridged — idempotent guard */
+      })) return null; /* already bridged */
 
       var payload = {
         service     : String(bookingData.service     || '').trim() || 'Réservation Fixeo',
@@ -1765,80 +1696,187 @@
         urgency     : bookingData.isExpress ? 'Urgent' : 'Normale'
       };
 
+      /* appendRequest fires fixeo:client-request-created (preserves all 23 listeners) */
       var result = store.appendRequest(payload);
-      if (result && result.request && !result.duplicated) {
-        /* Patch source metadata onto the raw stored object */
-        try {
-          var raw = JSON.parse(localStorage.getItem('fixeo_client_requests') || '[]');
-          var reqId = String(result.request.id);
-          var patched = false;
-          for (var i = raw.length - 1; i >= 0; i--) {
-            if (String(raw[i].id) === reqId) {
-              raw[i].source          = 'reservation_cod';
-              raw[i].reservation_ref = orderID;
-              raw[i].artisan_name    = String(bookingData.artisanName || '').trim();
-              raw[i].artisan_id      = String(bookingData.artisanId   || '');
-              /* V2-A3: Write canonical artisan identity so V2-A1 mirror and
-               * V2-A2 rehydration both use the same strong ID for Supabase writes/reads.
-               * Prefer _artisan_id_canonical (from profile page) > artisanId (URL param).
-               */
-              var _artisan4bridge = state && state.artisan ? state.artisan : {};
-              var _canonId = String(
-                _artisan4bridge._artisan_id_canonical ||
-                _artisan4bridge._supabase_id ||
-                _artisan4bridge.owner_account_id ||
-                bookingData.artisanId || ''
-              ).trim();
-              if (_canonId) {
-                raw[i].artisan_id_canonical = _canonId;
-                raw[i].artisan_profile_id   = _canonId;
-              }
-              patched = true;
-              break;
-            }
+      if (!result || !result.request || result.duplicated) return null;
+
+      /* Patch source metadata */
+      try {
+        var raw = JSON.parse(localStorage.getItem('fixeo_client_requests') || '[]');
+        var reqId = String(result.request.id);
+        for (var i = raw.length - 1; i >= 0; i--) {
+          if (String(raw[i].id) === reqId) {
+            raw[i].source          = 'reservation_cod';
+            raw[i].reservation_ref = orderID;
+            raw[i].artisan_name    = String(bookingData.artisanName || '').trim();
+            raw[i].artisan_id      = String(bookingData.artisanId   || '');
+            var _ab = state && state.artisan ? state.artisan : {};
+            var _cid = String(
+              _ab._artisan_id_canonical || _ab._supabase_id ||
+              _ab.owner_account_id      || bookingData.artisanId || ''
+            ).trim();
+            if (_cid) { raw[i].artisan_id_canonical = _cid; raw[i].artisan_profile_id = _cid; }
+            break;
           }
-          if (patched) localStorage.setItem('fixeo_client_requests', JSON.stringify(raw));
-        } catch(_) { /* metadata patch failure is non-critical */ }
+        }
+        localStorage.setItem('fixeo_client_requests', JSON.stringify(raw));
+      } catch (_) { /* metadata patch failure is non-critical */ }
 
-        /* ── 7C.11D.2: Canonical server persistence ──────────────────────
-         * Fire /api/create-request after local store write succeeds.
-         * Does NOT block or affect the booking confirmation UX.
-         * Success UX already shown (processCOD onSuccess already fired).
-         *
-         * service_category: derived from artisan.category slug — never from price
-         * city:             artisan city (canonical location context)
-         * description:      operational description only — no phone, no price
-         * client_phone:     stored ONLY in dedicated server column
-         * urgency:          'normale' for standard; 'urgent' for express
-         * idempotency_key:  generated once, persisted before POST
-         *
-         * NOT sent: artisan identity, client_profile_id, amount_mad, agreed_price,
-         *           commission, status, mission fields, estimator price
-         */
-        try {
-          var _artisanCat = state && state.artisan ? (state.artisan.category || '') : '';
-          var _serviceSlug = _toServiceSlug(_artisanCat);
-          var _city = String(artisanCity || bookingData.artisanCity || '').trim() || 'Casablanca';
-          var _desc = String(bookingData.description || '').trim() ||
-                      'Réservation ' + (bookingData.service || 'service');
-          var _phone = String(bookingData.phone || '').trim() || null;
-          var _urgency = bookingData.isExpress ? 'urgent' : 'normale';
-          var _idemKey = _generateIdempotencyKey();
-          var _localId = result.request.id; /* Date.now() integer */
+      return { localId: result.request.id };
+    } catch (_) { return null; }
+  }
 
-          _canonicalPersistRequest(_localId, {
-            service_category: _serviceSlug,
-            city:             _city,
-            description:      _desc,
-            client_phone:     _phone || undefined,
-            urgency:          _urgency,
-            idempotency_key:  _idemKey,
-            /* NOT sent: artisan_id, client_profile_id, amount_mad, agreed_price,
-               commission, status, estimator_price, mission fields */
-          });
-        } catch (_) { /* canonical persistence failure must never affect booking flow */ }
+  /* ── Patch local record with persistence metadata ── */
+  function _patchLocalRecord(localId, patch) {
+    try {
+      var raw = JSON.parse(localStorage.getItem('fixeo_client_requests') || '[]');
+      var rid = String(localId);
+      for (var i = raw.length - 1; i >= 0; i--) {
+        if (String(raw[i].id) === rid) {
+          Object.keys(patch).forEach(function(k) { raw[i][k] = patch[k]; });
+          break;
+        }
       }
-    } catch(_) { /* bridge failure must never affect booking flow */ }
+      localStorage.setItem('fixeo_client_requests', JSON.stringify(raw));
+    } catch (_) { /* non-critical */ }
+  }
+
+  /* ══════════════════════════════════════════════════════════
+   * 7C.11D.2.1 — CANONICAL PERSISTENCE GATE
+   *
+   * Interposes BEFORE confirmation redirect in the COD success path.
+   * ONLY if canonical ACK arrives (ok:true + id present) does the
+   * confirmation continuation run.
+   *
+   * Called with:
+   *   @param bookingData   original booking payload (from _proceedToPayment)
+   *   @param orderID       COD order ID (from processCOD onSuccess)
+   *   @param artisanCity   artisan.city string
+   *   @param onConfirmed   function() — runs existing confirmation continuation
+   *   @param onError       function(msg) — shows error (called on failure)
+   *
+   * SECURITY:
+   *   - Never exposes SERVICE_ROLE
+   *   - Never sends artisan_id, client_profile_id, price fields
+   *   - status is server-authoritative (not sent)
+   *   - idempotency_key persisted before POST
+   *   - same key reused on retry (read from state._canonicalIdemKey)
+   *   - in-flight guard: state._canonicalInFlight prevents duplicate POST
+   * ══════════════════════════════════════════════════════════ */
+  function _canonicalPersistGate(bookingData, orderID, artisanCity, onConfirmed, onError) {
+
+    /* Step 1: In-flight guard — prevent duplicate POST */
+    if (state._canonicalInFlight) return;
+    state._canonicalInFlight = true;
+
+    /* Step 2: Write local record FIRST (preserves fixeo:client-request-created compat) */
+    var localWrite = _writeLocalRequestRecord(bookingData, orderID, artisanCity);
+    var localId = localWrite ? localWrite.localId : null;
+
+    /* Step 3: Generate/reuse idempotency key (ONCE per logical reservation) */
+    if (!state._canonicalIdemKey) {
+      state._canonicalIdemKey = _generateIdempotencyKey();
+    }
+    var idemKey = state._canonicalIdemKey;
+
+    /* Step 4: Patch local record — persistence_state=pending + key BEFORE POST */
+    if (localId !== null) {
+      _patchLocalRecord(localId, { persistence_state: 'pending', idempotency_key: idemKey });
+    }
+
+    /* Step 5: Build canonical server payload.
+     * NOT sent: artisan_id, client_profile_id, amount_mad, agreed_price,
+     *           commission, status, estimator_price, mission fields.
+     */
+    var _artisanCat  = state && state.artisan ? (state.artisan.category || '') : '';
+    var _serviceSlug = _toServiceSlug(_artisanCat);
+    var _city        = String(artisanCity || bookingData.artisanCity || '').trim() || 'Casablanca';
+    var _desc        = String(bookingData.description || '').trim() ||
+                       'Réservation ' + (bookingData.service || 'service');
+    var _phone       = String(bookingData.phone || '').trim() || undefined;
+    var _urgency     = bookingData.isExpress ? 'urgent' : 'normale';
+
+    var serverPayload = {
+      service_category: _serviceSlug,
+      city:             _city,
+      description:      _desc,
+      urgency:          _urgency,
+      idempotency_key:  idemKey,
+    };
+    if (_phone) serverPayload.client_phone = _phone;
+
+    /* Step 6: POST — AWAIT canonical ACK */
+    var controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+    var timer = controller ? setTimeout(function() { controller.abort(); }, 8000) : null;
+
+    fetch('/api/create-request', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(serverPayload),
+      signal:  controller ? controller.signal : undefined,
+    })
+    .then(function(r) {
+      if (timer) clearTimeout(timer);
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    })
+    .then(function(body) {
+      /* Step 7: Require ok:true + id (canonical success invariant) */
+      if (!body || !body.ok || !body.id) {
+        throw new Error('ok:false or missing id');
+      }
+
+      /* Step 8: Patch local record — persisted state + canonical ids */
+      if (localId !== null) {
+        _patchLocalRecord(localId, {
+          persistence_state:    'persisted',
+          canonical_request_id: body.id,
+          canonical_ref:        body.ref || null,
+          replayed:             body.replayed === true ? true : undefined,
+        });
+      }
+
+      /* Step 9: Fire fixeo:client-request-persisted event (NEW — post-ACK only) */
+      _dispatchPersistedEvent({
+        local_request_id:     localId,
+        reservation_ref:      orderID,
+        canonical_request_id: body.id,
+        canonical_ref:        body.ref || null,
+        idempotency_key:      idemKey,
+        replayed:             body.replayed === true,
+      });
+
+      /* Step 10: Release in-flight guard */
+      state._canonicalInFlight = false;
+
+      /* Step 11: ONLY NOW run the existing confirmation continuation */
+      onConfirmed();
+    })
+    .catch(function(err) {
+      if (timer) clearTimeout(timer);
+
+      /* Patch local record — failed state; idempotency_key preserved for retry */
+      if (localId !== null) {
+        _patchLocalRecord(localId, { persistence_state: 'failed' });
+        /* idemKey already in local record — NOT reset, same key reused on retry */
+      }
+
+      /* Release in-flight guard for retry */
+      state._canonicalInFlight = false;
+
+      /* Show factual error — do NOT show confirmation */
+      onError('Impossible d\'enregistrer la demande. Réessayer.');
+    });
+  }
+
+  /* ── _bridgeToArtisanInbox: compatibility shim (non-COD fallback path only) ──
+   * The primary COD path now uses _canonicalPersistGate (above).
+   * This shim handles the FixeoCOD-not-loaded localStorage fallback path
+   * and preserves the local store write + fixeo:client-request-created event.
+   * Does NOT gate confirmation — fallback path is localStorage-only (no server).
+   */
+  function _bridgeToArtisanInbox(bookingData, orderID, artisanCity) {
+    _writeLocalRequestRecord(bookingData, orderID, artisanCity);
   }
 
   function _submitStep1() {
@@ -1978,24 +2016,49 @@
             }
           },
           onSuccess: function(orderID, record, apiBody) {
-            /* Gamification hook */
+            /* Gamification hook (non-confirmation side-effect — safe before gate) */
             if (window.gamification && window.gamification.updateMission) {
               window.gamification.updateMission('m2', 1);
             }
-            /* ── V1-A: Pipeline bridge → artisan inbox ─────────── */
-            _bridgeToArtisanInbox(bookingData, orderID, a.city || '');
-            /* 7C.9L.3Z.2D.1: clear verified pricing context before redirect so that
-             * returning to homepage via Back does NOT resurface old price card.
-             * The booking is complete — the pricing journey is consumed. */
-            if (window.FixeoEstimatorReservationBridge &&
-                typeof window.FixeoEstimatorReservationBridge.clearContext === 'function') {
-              window.FixeoEstimatorReservationBridge.clearContext();
-            }
-            /* ── Redirection vers la page de confirmation COD v15 ── */
-            const confirmURL = (window.FixeoCOD && window.FixeoCOD.config)
-              ? window.FixeoCOD.config.CONFIRMATION_URL
-              : 'confirmation.html';
-            window.location.href = confirmURL;
+
+            /* ── 7C.11D.2.1: CANONICAL PERSISTENCE GATE ─────────────────────
+             * The confirmation redirect runs ONLY after /api/create-request
+             * returns HTTP 200 + ok:true + id. No fire-and-persist.
+             *
+             * _canonicalPersistGate:
+             *   1. Writes local record (fires fixeo:client-request-created compat)
+             *   2. Persists idem key before POST
+             *   3. POSTs /api/create-request and AWAITS canonical ACK
+             *   4. Only on ACK: patches record, fires fixeo:client-request-persisted,
+             *      then calls onConfirmed (confirmation redirect below)
+             *   5. On failure: patches failed state, calls onError (no redirect)
+             */
+            _canonicalPersistGate(
+              bookingData,
+              orderID,
+              a.city || '',
+              /* onConfirmed — runs ONLY after canonical ACK */
+              function() {
+                /* Clear pricing context (booking is now canonically persisted) */
+                if (window.FixeoEstimatorReservationBridge &&
+                    typeof window.FixeoEstimatorReservationBridge.clearContext === 'function') {
+                  window.FixeoEstimatorReservationBridge.clearContext();
+                }
+                /* Redirect to confirmation page */
+                var confirmURL = (window.FixeoCOD && window.FixeoCOD.config)
+                  ? window.FixeoCOD.config.CONFIRMATION_URL
+                  : 'confirmation.html';
+                window.location.href = confirmURL;
+              },
+              /* onError — canonical persistence failed; no confirmation shown */
+              function(msg) {
+                /* Re-open modal with error so user can retry */
+                _showError('⚠️ ' + msg);
+                /* Re-render step 2 so the confirm button is available for retry */
+                state.step = 2;
+                render();
+              }
+            );
           },
           onError: function(err) {
             if (window.notifications && window.notifications.error) {
@@ -2006,7 +2069,11 @@
           }
         });
       } else {
-        /* FixeoCOD non chargé — fallback basique */
+        /* FixeoCOD non chargé — fallback basique.
+         * 7C.11D.2.1: Even in fallback, confirmation is gated on canonical ACK.
+         * Pre-canonical local state (slot lock, reservations LS) is written first,
+         * then _canonicalPersistGate awaits /api/create-request before showing alert.
+         */
         close();
         const codID  = 'COD-' + Date.now().toString(36).toUpperCase();
         const codRef = 'BKG-COD-' + Date.now().toString(36).toUpperCase();
@@ -2030,14 +2097,26 @@
             timeSlot: slotLabel, price: total, isExpress: state.isExpress,
           });
         }
-        /* V1-A: Pipeline bridge (FixeoCOD fallback path) */
-        _bridgeToArtisanInbox(bookingData, codID, a.city || '');
-        /* 7C.9L.3Z.2D.1: clear pricing context — booking consumed */
-        if (window.FixeoEstimatorReservationBridge &&
-            typeof window.FixeoEstimatorReservationBridge.clearContext === 'function') {
-          window.FixeoEstimatorReservationBridge.clearContext();
-        }
-        alert(`\u2705 Votre artisan est r\u00e9serv\u00e9 \u2705\nR\u00e9f\u00e9rence\u00a0: ${codRef}\nMontant\u00a0: ${total} MAD (paiement \u00e0 la livraison)`);
+        /* Gate fallback confirmation on canonical ACK (same invariant as primary path) */
+        _canonicalPersistGate(
+          bookingData,
+          codID,
+          a.city || '',
+          /* onConfirmed — only after canonical ACK */
+          function() {
+            if (window.FixeoEstimatorReservationBridge &&
+                typeof window.FixeoEstimatorReservationBridge.clearContext === 'function') {
+              window.FixeoEstimatorReservationBridge.clearContext();
+            }
+            alert('\u2705 Votre artisan est r\u00e9serv\u00e9 \u2705\nR\u00e9f\u00e9rence\u00a0: ' + codRef + '\nMontant\u00a0: ' + total + ' MAD (paiement \u00e0 la livraison)');
+          },
+          /* onError — canonical persistence failed; no confirmation shown */
+          function(msg) {
+            _showError('\u26a0\ufe0f ' + msg);
+            state.step = 2;
+            render();
+          }
+        );
       }
 
       /* ── Notify SlotLock & Admin ── */
@@ -2210,6 +2289,7 @@
     _goToArtisanPicker,
     _urgentConfirm,
     _proceedToPayment,
+    _canonicalPersistGate,
     _initPills,
   };
 
