@@ -1,41 +1,50 @@
 /**
  * FIXEO Urgent Request — api/urgent-request-fn/index.js
- * Version: fur-v1a — 2026-08-12
+ * Version: fur-v2a — 7C.11D.1
  *
  * Receives urgent-flow submissions from fx-request-flow-v4.js (emergency mode).
- * Validates fields, inserts into Supabase service_requests (existing canonical table),
+ * Validates fields, inserts into Supabase service_requests (canonical table),
  * returns JSON { ok, ref, id }.
  *
  * DESIGN:
  *   - Server-side SERVICE_ROLE key → bypasses RLS → reliable for unauthenticated users
- *   - Same table (service_requests) already read by all admin dashboards
- *   - No new table created
- *   - Returns the server-assigned row UUID for idempotency
+ *   - service_requests is the canonical parent for all dispatch flows
+ *   - client_phone stored in dedicated column (7C.11C column; NOT in description)
+ *   - urgency stored in dedicated column (7C.11C column)
+ *   - description contains operational problem description ONLY
+ *   - No phone/email/identity data in description
  *
  * SECURITY MODEL:
- *   - SERVICE ROLE key: server-side env var only, never exposed to browser
+ *   - SERVICE ROLE key: server-side env var only, NEVER exposed to browser JS
  *   - Bypasses Supabase RLS — INSERT via service role
  *   - CORS: same-origin only (www.fixeo.ma)
  *   - Rate limit: 10 submissions per IP per 5 minutes (in-memory, per-instance)
  *   - Input validation: required fields, length caps, city allowlist, phone format
  *
  * PAYLOAD accepted (from fxrf4 emergency mode):
- *   service    — métier slug (e.g. 'plomberie')
- *   problem    — human-readable situation label (e.g. 'Plomberie')
- *   description — free text (optional, from "Autre urgence" expand)
- *   city       — city name from ALL_CITIES
- *   phone      — validated phone number
+ *   service      — métier slug (e.g. 'plomberie')
+ *   problem      — human-readable situation label (e.g. 'Fuite d\'eau')
+ *   description  — free text from "Autre urgence" expand (optional)
+ *   city         — city name from ALL_CITIES
+ *   phone        — validated phone number → stored in client_phone column
  *   tracking_ref — client-generated ref (e.g. 'FX-3A7B2C')
- *   urgency    — always 'now' in emergency mode
- *   mode       — always 'emergency'
- *   source     — always 'fxrf4-v5a1' (or later versions)
+ *   urgency      — always 'now' in emergency mode
+ *   mode         — always 'emergency'
+ *   source       — version tag (e.g. 'fxrf4-v5e')
  *
  * Response: { ok: true, ref, id }
  * On error: { ok: false, error, code }
  *
+ * 7C.11D.1 CHANGES vs fur-v1a:
+ *   - client_phone stored in dedicated SR column (was concatenated into description)
+ *   - urgency stored in dedicated SR column (was implied / lost)
+ *   - description = problem label + optional free-text + tracking_ref + source ONLY
+ *   - fullDescription never includes 'Tel: ' + phone again
+ *   - Row shape updated to use 7C.11C columns
+ *
  * Environment variables required (Vercel dashboard):
  *   SUPABASE_URL              — project URL
- *   SUPABASE_SERVICE_ROLE_KEY — service_role JWT (secret)
+ *   SUPABASE_SERVICE_ROLE_KEY — service_role JWT (secret, server-side only)
  */
 'use strict';
 
@@ -85,15 +94,6 @@ var PHONE_RE = /^[+\d\s\-().]{6,20}$/;
 var REF_RE   = /^[A-Z0-9\-]{3,32}$/;
 
 /* ── Supabase insert (service role — server-side only) ── */
-/*
- * Inserts into service_requests (existing canonical table).
- * Returns the server-assigned UUID on success.
- * Throws structured Error with .code for caller classification:
- *   ENV_MISSING  — env vars not configured in Vercel
- *   SUPABASE_4xx — Supabase rejected the insert
- *   SUPABASE_5xx — Supabase server-side error
- *   NETWORK      — fetch failed
- */
 async function _insertRequest(payload) {
   var url        = process.env.SUPABASE_URL;
   var serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -141,6 +141,11 @@ function _str(v, max) {
   return String(v || '').trim().slice(0, max || 500);
 }
 
+/* ── Normalize phone: collapse whitespace, keep digits/+/- ── */
+function _normalizePhone(raw) {
+  return raw.replace(/\s+/g, ' ').trim();
+}
+
 /* ── Main handler ── */
 module.exports = async function handler(req, res) {
   /* Preflight */
@@ -168,16 +173,16 @@ module.exports = async function handler(req, res) {
     try { body = JSON.parse(body); } catch (_) { body = {}; }
   }
 
-  /* Validate required fields */
+  /* Extract and sanitize fields */
   var service     = _str(body.service,     64);
   var problem     = _str(body.problem,     128);
   var city        = _str(body.city,        128);
   var phone       = _str(body.phone,       32);
   var trackingRef = _str(body.tracking_ref, 32);
-  var description = _str(body.description, 500);
+  var freeText    = _str(body.description, 500); /* optional Autre urgence free text */
   var urgency     = _str(body.urgency,     16) || 'now';
   var mode        = _str(body.mode,        32) || 'emergency';
-  var source      = _str(body.source,      64) || 'fxrf4-v5b';
+  var source      = _str(body.source,      64) || 'fxrf4';
 
   /* Field validation */
   var errors = [];
@@ -194,29 +199,36 @@ module.exports = async function handler(req, res) {
     return;
   }
 
-  /* Build service_requests payload.
-   * Maps fxrf4 fields → canonical service_requests columns.
-   * description column carries: phone, situation label, free-text, tracking_ref, source.
-   * This is the safest approach without altering the schema.
-   * Columns confirmed present: service_category, city, description, status, created_at.
-   * client_profile_id: null (unauthenticated urgent submission).
+  /* Build description — operational content ONLY.
+   * MUST NOT contain phone, email, or client identity.
+   * client_phone goes to its dedicated column below.
    */
-  var fullDescription = [
+  var descParts = [
     'URGENCE ' + problem.toUpperCase(),
-    phone ? 'Tel: ' + phone : '',
-    description ? description : '',
+    freeText   ? freeText : '',
     trackingRef ? 'Ref: ' + trackingRef : '',
     'Source: ' + source,
-    'Mode: ' + mode,
-  ].filter(Boolean).join(' | ');
+  ].filter(Boolean);
+  var operationalDescription = descParts.join(' | ');
 
+  /* Build service_requests row.
+   * All 7C.11C columns used:
+   *   client_phone — dedicated column (NOT in description)
+   *   urgency      — dedicated column
+   *   status       — server-authoritative 'new'
+   *   client_profile_id — omitted (anonymous urgent submission)
+   *   idempotency_key   — omitted for urgent V1 (no reliable client UUID)
+   */
   var row = {
-    service_category: service,
-    city:             city,
-    description:      fullDescription,
-    status:           'new',
-    created_at:       new Date().toISOString(),
+    service_category:  service,
+    city:              city,
+    description:       operationalDescription,
+    client_phone:      _normalizePhone(phone),   /* 7C.11C column — phone isolated here */
+    urgency:           urgency,                   /* 7C.11C column — always 'now' for emergency */
+    status:            'new',                     /* server-authoritative */
+    created_at:        new Date().toISOString(),
     /* client_profile_id intentionally omitted — anonymous urgent submission */
+    /* idempotency_key intentionally omitted — urgent V1 (trackingRef is client-only) */
   };
 
   /* Attempt durable Supabase insert */
@@ -226,9 +238,8 @@ module.exports = async function handler(req, res) {
   } catch (err) {
     var code = err.code || 'UNKNOWN';
 
-    /* ENV_MISSING: Vercel not configured → 503 */
     if (code === 'ENV_MISSING') {
-      console.error('[urgent-request-v1a] ENV_MISSING:', err.message);
+      console.error('[urgent-request-v2a] ENV_MISSING:', err.message);
       res.status(503).json({
         ok: false,
         error: 'Service temporairement indisponible.',
@@ -237,9 +248,8 @@ module.exports = async function handler(req, res) {
       return;
     }
 
-    /* SUPABASE schema / constraint error → likely column missing */
     if (code === 'SUPABASE_4xx') {
-      console.error('[urgent-request-v1a] Supabase 4xx:', err.detail);
+      console.error('[urgent-request-v2a] Supabase 4xx:', err.detail);
       res.status(502).json({
         ok: false,
         error: 'Enregistrement impossible. Réessayez.',
@@ -249,8 +259,7 @@ module.exports = async function handler(req, res) {
       return;
     }
 
-    /* Network or 5xx → retriable */
-    console.error('[urgent-request-v1a] persist error:', code, err.message);
+    console.error('[urgent-request-v2a] persist error:', code, err.message);
     res.status(502).json({
       ok: false,
       error: 'Impossible d\'enregistrer la demande pour le moment.',
@@ -259,7 +268,7 @@ module.exports = async function handler(req, res) {
     return;
   }
 
-  /* Success */
+  /* Success — response contract unchanged from fur-v1a */
   res.status(200).json({
     ok:  true,
     ref: trackingRef || null,

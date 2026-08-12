@@ -79,6 +79,10 @@
       "use": "@vercel/node"
     },
     {
+      "src": "api/create-request-fn/index.js",
+      "use": "@vercel/node"
+    },
+    {
       "src": "api/estimator-v1/index.js",
       "use": "@vercel/node"
     }
@@ -99,6 +103,10 @@
     {
       "src": "^/api/urgent-request$",
       "dest": "/api/urgent-request-fn/index.js"
+    },
+    {
+      "src": "^/api/create-request$",
+      "dest": "/api/create-request-fn/index.js"
     },
     {
       "src": "^/(plombier|electricien|serrurier|climatisation)-([a-z][a-z-]*)\\.html$",
