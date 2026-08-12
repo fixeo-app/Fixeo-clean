@@ -356,17 +356,17 @@ test('8.4 No pricing call in emergency submit flow', function () {
 console.log('\n[10D.1] Cache keys');
 
 test('9.1 fx-request-flow-v4.js key: fxrf4-v5b in index.html', function () {
-  assert.ok(idx.includes('fx-request-flow-v4.js?v=fxrf4-v5c'),
-    'JS cache key must be fxrf4-v5c');
+  assert.ok(idx.includes('fx-request-flow-v4.js?v=fxrf4-v5d-parent-return'),
+    'JS cache key must be fxrf4-v5d-parent-return');
 });
 
 test('9.2 fx-request-flow-v4.css key: fxrf4-v5z1 in index.html', function () {
-  assert.ok(idx.includes('fx-request-flow-v4.css?v=fxrf4-v5z2'),
-    'CSS cache key must be fxrf4-v5z2');
+  assert.ok(idx.includes('fx-request-flow-v4.css?v=fxrf4-v5z3'),
+    'CSS cache key must be fxrf4-v5z3');
 });
 
 test('9.3 VERSION constant in JS: fxrf4-v5b', function () {
-  assert.ok(src.includes("VERSION: 'fxrf4-v5c'"),
+  assert.ok(src.includes("VERSION: 'fxrf4-v5d-parent-return'"),
     'VERSION constant must be current');
 });
 

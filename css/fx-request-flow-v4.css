@@ -2929,3 +2929,40 @@
 /* 7C.10D.2: Fix fxrf4-autre-input (was 0.90rem = 14.4px) and fxrf4-select */
 .fxrf4-autre-input { font-size: 1rem !important; }   /* 16px at 16px root */
 .fxrf4-select-wrap select { font-size: 1rem !important; }
+
+/* ═══════════════════════════════════════════════════════════════════
+   7C.10D.2.1 — URGENT PARENT SUSPEND (child Estimator active)
+   When the urgent SUCCESS screen is the parent and Estimator is
+   the optional child journey, fxrf4 must stay mounted but invisible
+   so the exact same DOM can be restored when Estimator closes.
+
+   .fxrf4-estimator-child is added by bridgeCTA click handler.
+   It is removed either:
+     (a) on fixeo:estimator-closed if NOT escalated → urgent SUCCESS reveals
+     (b) on fixeo:estimator-closed if escalated     → close() cleans up silently
+
+   CRITICAL:
+   - opacity:0 + pointer-events:none keeps DOM alive, avoids re-render
+   - visibility:hidden keeps it out of the a11y tree while suspended
+   - z-index is NOT removed — Estimator already stacks above (1000 vs 19000)
+     but fxrf4 is visually absent so no overlap issue
+   - No forced scroll, no focus, no position change
+═══════════════════════════════════════════════════════════════════ */
+
+#fxrf4-root.fxrf4-estimator-child {
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+  /* Transition is intentionally INSTANT on hide (Estimator should appear immediately)
+     and has a short reveal transition on restore. CSS class removal will use the
+     restore transition automatically via the default #fxrf4-root transition rules. */
+}
+
+/* Inline open-failure message inside the bridge */
+.fxrf4-bridge-open-error {
+  font-size: 0.80rem;
+  color: rgba(255, 200, 100, 0.85);
+  line-height: 1.5;
+  margin: 4px 0 0;
+  padding: 0;
+}

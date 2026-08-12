@@ -1696,10 +1696,25 @@
       });
 
       bridgeCTA.addEventListener('click', function() {
-        /* Build entry context from safe existing fields only.
-         * Fields: source, metier_hint, city_slug, urgency — all in _ALLOWED_ENTRY_FIELDS.
-         * NO service_code invented. NO price. NO amount.
-         * City: use TRUSTED_CITY_SESSION_KEY (written at city tap in emergency mode). */
+        /* ── 7C.10D.2.1: PARENT SUSPEND / CHILD ESTIMATOR ─────────────────────
+         * Urgent SUCCESS is the parent journey. Estimator is an optional child.
+         * We do NOT call close() here — that would destroy the parent context.
+         * Instead: suspend fxrf4 (hidden but DOM-mounted), open Estimator,
+         * then restore the exact same SUCCESS screen when Estimator truly closes.
+         *
+         * Lifecycle signals from Estimator (frozen — must not be modified):
+         *   fixeo:estimator-closed  — fires on every true _destroyContainer() call.
+         *   fixeo:estimator-reserve — fires when user taps "Trouver un artisan".
+         *   fx-estimator-tunnel-active body class — added on open, removed on destroy.
+         *
+         * Escalation guard: if user taps "Trouver un artisan" (reservation path),
+         * we disarm the return-to-urgent-success behavior and clean up fxrf4 silently.
+         * Reservation continues exactly as today. Urgent SUCCESS is NOT resurrected.
+         *
+         * NO second POST. NO _persistEmergencyRequest. NO new service_request.
+         * NO re-render of SUCCESS screen. NO _st reconstruction.
+         * ────────────────────────────────────────────────────────────────────── */
+
         var trustedCity = null;
         try { trustedCity = sessionStorage.getItem(TRUSTED_CITY_SESSION_KEY) || null; } catch (_) {}
 
@@ -1710,10 +1725,82 @@
           urgency:     'urgent',
         };
 
-        /* Close fxrf4 first (z-index 19000 > Estimator 1000 — must dismiss to see Estimator) */
-        close();
+        /* ── A. SUSPEND: hide fxrf4, don't close/destroy ── */
+        _root.classList.add('fxrf4-estimator-child');
+        /* Release scroll lock so Estimator can scroll normally.
+         * We hold _isOpen = true and _st intact — state is fully preserved. */
+        _unlock();
 
-        window.FixeoEstimatorV2.open(entryCtx).catch(function() {});
+        /* Escalation flag — set when fixeo:estimator-reserve is received */
+        var _escalated = false;
+
+        /* ── B. ARM lifecycle listeners (one-shot each) ── */
+        function _onEstimatorReserve() {
+          /* User has entered the Reservation tunnel.
+           * Disarm the return-to-urgent-success behavior.
+           * Silently tear down the suspended fxrf4 parent AFTER Estimator fully closes
+           * (handled in _onEstimatorClosed below). */
+          _escalated = true;
+          document.removeEventListener('fixeo:estimator-reserve', _onEstimatorReserve);
+        }
+
+        function _onEstimatorClosed() {
+          document.removeEventListener('fixeo:estimator-closed',  _onEstimatorClosed);
+          document.removeEventListener('fixeo:estimator-reserve', _onEstimatorReserve);
+
+          if (_escalated) {
+            /* ── ESCALATED: user went into Reservation ──
+             * Reservation is running. Silently dispose the suspended urgent parent.
+             * DO NOT show the urgent SUCCESS screen again.
+             * DO NOT emit any sounds/transitions.
+             * The close() call here correctly tears down fxrf4 state
+             * without triggering any UI transition (root is already hidden). */
+            _root.classList.remove('fxrf4-estimator-child');
+            close();
+          } else {
+            /* ── NOT ESCALATED: user pressed × on Estimator ──
+             * Restore the exact same urgent SUCCESS screen.
+             * No re-render, no new POST, no state reconstruction. */
+            _lock();
+            _root.classList.remove('fxrf4-estimator-child');
+            /* Estimator is now fully destroyed. fxrf4 SUCCESS is visible again. */
+          }
+        }
+
+        document.addEventListener('fixeo:estimator-reserve', _onEstimatorReserve);
+        document.addEventListener('fixeo:estimator-closed',  _onEstimatorClosed);
+
+        /* ── C. OPEN ESTIMATOR ── */
+        window.FixeoEstimatorV2.open(entryCtx).then(function(result) {
+          if (!result || !result.accepted) {
+            /* Estimator declined to open (e.g. already open, init_error).
+             * Restore urgent parent immediately. */
+            document.removeEventListener('fixeo:estimator-closed',  _onEstimatorClosed);
+            document.removeEventListener('fixeo:estimator-reserve', _onEstimatorReserve);
+            _lock();
+            _root.classList.remove('fxrf4-estimator-child');
+            /* Show factual inline error inside bridge (minimal, non-blocking) */
+            var errEl = bridgeWrap.querySelector('.fxrf4-bridge-open-error');
+            if (!errEl) {
+              errEl = _h('p', { cls: 'fxrf4-bridge-open-error',
+                txt: 'L\u2019estimation n\u2019a pas pu \u00eatre ouverte. Votre demande urgente reste enregistr\u00e9e.' });
+              bridgeWrap.appendChild(errEl);
+            }
+          }
+          /* result.accepted === true: Estimator is open, listeners will handle return. */
+        }).catch(function() {
+          /* Network/throw — restore urgent parent */
+          document.removeEventListener('fixeo:estimator-closed',  _onEstimatorClosed);
+          document.removeEventListener('fixeo:estimator-reserve', _onEstimatorReserve);
+          _lock();
+          _root.classList.remove('fxrf4-estimator-child');
+          var errEl = bridgeWrap.querySelector('.fxrf4-bridge-open-error');
+          if (!errEl) {
+            errEl = _h('p', { cls: 'fxrf4-bridge-open-error',
+              txt: 'L\u2019estimation n\u2019a pas pu \u00eatre ouverte. Votre demande urgente reste enregistr\u00e9e.' });
+            bridgeWrap.appendChild(errEl);
+          }
+        });
       });
 
       bridgeSkip.addEventListener('click', function() {
@@ -2028,7 +2115,7 @@
   ══════════════════════════════════════════════════════════ */
 
   window.FixeoRequestFlowV4 = {
-    VERSION: 'fxrf4-v5c',
+    VERSION: 'fxrf4-v5d-parent-return',
     open:    open,
     close:   close
   };

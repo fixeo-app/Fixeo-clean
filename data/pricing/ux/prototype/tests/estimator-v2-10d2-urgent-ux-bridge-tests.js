@@ -110,8 +110,8 @@ test('3.2 entry context uses metier_hint from st.serviceSlug', function () {
 });
 
 test('3.3 entry context uses city_slug (not raw "city")', function () {
-  var bridgeIdx = src.indexOf('fxrf4-estimator-bridge');
-  var entryCtxBlock = src.slice(bridgeIdx, bridgeIdx + 1200);
+  var ctxIdx = src.indexOf('var entryCtx');
+  var entryCtxBlock = src.slice(ctxIdx, ctxIdx + 300);
   assert.ok(entryCtxBlock.includes('city_slug'), 'Must use city_slug (canonical field)');
 });
 
@@ -160,10 +160,12 @@ test('4.2 sessionStorage write is inside isUrgent guard', function () {
 });
 
 test('4.3 Estimator bridge reads TRUSTED_CITY_SESSION_KEY', function () {
-  var bridgeIdx = src.indexOf('fxrf4-estimator-bridge');
-  var bridgeBlock = src.slice(bridgeIdx, bridgeIdx + 1200);
-  assert.ok(bridgeBlock.includes('TRUSTED_CITY_SESSION_KEY') ||
-            bridgeBlock.includes('fxrf4_trusted_city_session'),
+  /* Bridge CTA handler reads sessionStorage for trusted city */
+  var ctaIdx  = src.indexOf('bridgeCTA.addEventListener');
+  var ctaEnd  = src.indexOf('bridgeSkip.addEventListener');
+  var ctaBlock = src.slice(ctaIdx, ctaEnd);
+  assert.ok(ctaBlock.includes('TRUSTED_CITY_SESSION_KEY') ||
+            ctaBlock.includes('fxrf4_trusted_city_session'),
     'Bridge must read city from TRUSTED_CITY_SESSION_KEY');
 });
 
@@ -299,20 +301,30 @@ test('10.1 prefers-reduced-motion media query present for urgent pulse', functio
 /* ── 11. DOUBLE SUBMIT GUARD ─────────────────────────────── */
 console.log('\n[10D.2] Double submit guard');
 
-test('11.1 No second _submitRequest possible from Estimator bridge', function () {
-  var bridgeIdx = src.indexOf('fxrf4-estimator-bridge');
-  var bridgeBlock = src.slice(bridgeIdx, bridgeIdx + 2000);
-  assert.ok(!bridgeBlock.includes('_submitRequest') && !bridgeBlock.includes('_persistEmergencyRequest'),
-    'Estimator bridge must not trigger another submission');
+test('11.1 No _submitRequest or _persistEmergencyRequest CALL in Estimator bridge CTA handler', function () {
+  /* 10D.2.1: bridge uses suspend model — still no second submission.
+   * Use regex to match actual calls (not comment text). */
+  var ctaIdx   = src.indexOf('bridgeCTA.addEventListener');
+  var ctaEnd   = src.indexOf('bridgeSkip.addEventListener');
+  var ctaBlock = src.slice(ctaIdx, ctaEnd);
+  /* Strip single-line and block comments before checking */
+  var stripped = ctaBlock
+    .replace(/\/\*[\s\S]*?\*\//g, '')  /* block comments */
+    .replace(/\/\/[^\n]*/g, '');       /* line comments */
+  assert.ok(!stripped.includes('_submitRequest') && !stripped.includes('_persistEmergencyRequest'),
+    'Bridge CTA handler must not call _submitRequest or _persistEmergencyRequest');
 });
 
-test('11.2 Estimator bridge uses close() before open() — prevents double modal', function () {
-  var bridgeIdx = src.indexOf('fxrf4-estimator-bridge');
-  var bridgeBlock = src.slice(bridgeIdx, bridgeIdx + 2000);
-  var closeIdx  = bridgeBlock.indexOf('close()');
-  var openIdx   = bridgeBlock.indexOf('FixeoEstimatorV2.open');
-  assert.ok(closeIdx !== -1 && openIdx !== -1 && closeIdx < openIdx,
-    'close() must be called before FixeoEstimatorV2.open() in bridge CTA');
+test('11.2 Estimator bridge uses SUSPEND model (not close-before-open) — no double modal', function () {
+  /* 10D.2.1: suspension replaces close-before-open for parent UX preservation */
+  var ctaIdx   = src.indexOf('bridgeCTA.addEventListener');
+  var ctaEnd   = src.indexOf('bridgeSkip.addEventListener');
+  var ctaBlock = src.slice(ctaIdx, ctaEnd);
+  /* Suspension class added before open — confirms suspend model */
+  var suspendIdx = ctaBlock.indexOf("classList.add('fxrf4-estimator-child')");
+  var openIdx    = ctaBlock.indexOf('FixeoEstimatorV2.open(entryCtx)');
+  assert.ok(suspendIdx !== -1 && openIdx !== -1 && suspendIdx < openIdx,
+    'Suspend model: fxrf4-estimator-child must be added before FixeoEstimatorV2.open()');
 });
 
 /* ── 12. STANDARD MODE UNCHANGED ────────────────────────── */
@@ -332,16 +344,16 @@ test('12.2 Standard mode success body unchanged', function () {
 /* ── 13. CACHE KEYS ──────────────────────────────────────── */
 console.log('\n[10D.2] Cache keys');
 
-test('13.1 JS cache key: fxrf4-v5c in index.html', function () {
-  assert.ok(idx.includes('fx-request-flow-v4.js?v=fxrf4-v5c'), 'JS key must be fxrf4-v5c');
+test('13.1 JS cache key: fxrf4-v5d-parent-return in index.html', function () {
+  assert.ok(idx.includes('fx-request-flow-v4.js?v=fxrf4-v5d-parent-return'), 'JS key must be fxrf4-v5d-parent-return');
 });
 
-test('13.2 CSS cache key: fxrf4-v5z2 in index.html', function () {
-  assert.ok(idx.includes('fx-request-flow-v4.css?v=fxrf4-v5z2'), 'CSS key must be fxrf4-v5z2');
+test('13.2 CSS cache key: fxrf4-v5z3 in index.html', function () {
+  assert.ok(idx.includes('fx-request-flow-v4.css?v=fxrf4-v5z3'), 'CSS key must be fxrf4-v5z3');
 });
 
-test('13.3 VERSION constant: fxrf4-v5c in JS', function () {
-  assert.ok(srcHas("VERSION: 'fxrf4-v5c'"), 'VERSION constant must be fxrf4-v5c');
+test('13.3 VERSION constant: fxrf4-v5d-parent-return in JS', function () {
+  assert.ok(srcHas("VERSION: 'fxrf4-v5d-parent-return'"), 'VERSION constant must be fxrf4-v5d-parent-return');
 });
 
 /* ── AUTHORITY FREEZE ────────────────────────────────────── */
