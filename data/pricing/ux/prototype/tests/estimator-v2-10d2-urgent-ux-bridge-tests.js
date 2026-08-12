@@ -359,8 +359,8 @@ test('13.3 VERSION constant: fxrf4-v5e-final-polish in JS', function () {
 /* ── AUTHORITY FREEZE ────────────────────────────────────── */
 console.log('\n[10D.2] Authority freeze');
 
-test('14.1 reservation.js key unchanged at v1m-estimator-copy', function () {
-  assert.ok(idx.includes('reservation.js?v=v1m-estimator-copy'), 'reservation.js key unchanged');
+test('14.1 reservation.js key updated to v1n-canonical-persist', function () {
+  assert.ok(idx.includes('reservation.js?v=v1n-canonical-persist'), 'reservation.js key updated');
 });
 
 test('14.2 No pricing_context_token added in bridge', function () {

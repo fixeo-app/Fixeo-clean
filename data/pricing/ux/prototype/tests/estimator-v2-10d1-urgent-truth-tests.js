@@ -342,8 +342,8 @@ test('8.2 No /api/estimator-v1 call in emergency persist', function () {
   assert.ok(!fnBody.includes('estimator-v1'), 'No estimator API call in persist function');
 });
 
-test('8.3 reservation.js: cache key unchanged at v1m-estimator-copy', function () {
-  assert.ok(idx.includes('reservation.js?v=v1m-estimator-copy'),
+test('8.3 reservation.js: cache key updated to v1n-canonical-persist', function () {
+  assert.ok(idx.includes('reservation.js?v=v1n-canonical-persist'),
     'reservation.js cache key must be unchanged');
 });
 

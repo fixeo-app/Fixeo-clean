@@ -1607,6 +1607,141 @@
        prevent re-injection on page reload
      — Skips if FixeoClientRequestsStore unavailable
   ════════════════════════════════════════════════════════ */
+  /* ── 7C.11D.2: Service label → canonical slug map ───────────────────────
+   * Maps artisan.category (slug) to the VALID_SLUGS accepted by /api/create-request.
+   * Fallback: 'autre' (always accepted by server).
+   * Never derived from price or browser authority.
+   */
+  var _SLUG_ALLOWLIST = [
+    'plomberie','electricite','serrurerie','climatisation',
+    'menuiserie','peinture','maconnerie','nettoyage','jardinage',
+    'demenagement','autre'
+  ];
+
+  /* Normalise a raw category string to a canonical server slug */
+  function _toServiceSlug(raw) {
+    if (!raw) return 'autre';
+    var s = String(raw).toLowerCase().trim()
+      .replace(/é/g,'e').replace(/è/g,'e').replace(/ê/g,'e')
+      .replace(/â/g,'a').replace(/à/g,'a')
+      .replace(/ô/g,'o').replace(/ç/g,'c')
+      .replace(/[^a-z0-9]/g,'');
+    /* Direct slug match */
+    if (_SLUG_ALLOWLIST.indexOf(s) !== -1) return s;
+    /* Partial matches for common variants */
+    if (s.indexOf('plomb') !== -1)    return 'plomberie';
+    if (s.indexOf('elect') !== -1)    return 'electricite';
+    if (s.indexOf('serru') !== -1)    return 'serrurerie';
+    if (s.indexOf('clim') !== -1)     return 'climatisation';
+    if (s.indexOf('menuis') !== -1)   return 'menuiserie';
+    if (s.indexOf('peint') !== -1)    return 'peinture';
+    if (s.indexOf('macon') !== -1 || s.indexOf('maconn') !== -1) return 'maconnerie';
+    if (s.indexOf('nettoy') !== -1)   return 'nettoyage';
+    if (s.indexOf('jardin') !== -1)   return 'jardinage';
+    if (s.indexOf('demena') !== -1)   return 'demenagement';
+    return 'autre';
+  }
+
+  /* ── 7C.11D.2: Generate a reservation-namespaced idempotency key ──────── */
+  function _generateIdempotencyKey() {
+    try {
+      if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+        return 'reservation:' + crypto.randomUUID();
+      }
+    } catch (_) { /* fallback below */ }
+    /* Fallback: timestamp + Math.random — sufficient for V1 */
+    var ts  = Date.now().toString(16);
+    var rnd = Math.random().toString(16).slice(2);
+    var pad = function(s, n) { while (s.length < n) s = '0' + s; return s; };
+    var hex = pad(ts, 12) + pad(rnd, 12);
+    /* Format as UUID-like: 8-4-4-4-12 */
+    var uuid = [
+      hex.slice(0,8),
+      hex.slice(8,12),
+      '4' + hex.slice(13,16),
+      '8' + hex.slice(17,20),
+      hex.slice(20,32)
+    ].join('-');
+    return 'reservation:' + uuid;
+  }
+
+  /* ── 7C.11D.2: Canonical persistence — fire to /api/create-request ───────
+   * Called AFTER the local store write succeeds (booking already confirmed).
+   * Patches the local record with persistence metadata.
+   * Never blocks the booking UX. Never exposes SERVICE_ROLE.
+   * Idempotency key is persisted to local record BEFORE the POST.
+   *
+   * @param {string} localReqId  - Date.now() id of the local request record
+   * @param {object} serverPayload - {service_category, city, description,
+   *                                  client_phone, urgency, idempotency_key}
+   */
+  function _canonicalPersistRequest(localReqId, serverPayload) {
+    /* Patch persistence_state=pending + idempotency_key into local record BEFORE POST */
+    try {
+      var raw = JSON.parse(localStorage.getItem('fixeo_client_requests') || '[]');
+      var rid = String(localReqId);
+      for (var i = raw.length - 1; i >= 0; i--) {
+        if (String(raw[i].id) === rid) {
+          raw[i].persistence_state = 'pending';
+          raw[i].idempotency_key   = serverPayload.idempotency_key;
+          break;
+        }
+      }
+      localStorage.setItem('fixeo_client_requests', JSON.stringify(raw));
+    } catch (_) { /* non-critical — POST proceeds regardless */ }
+
+    /* POST to canonical server endpoint */
+    var controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+    var timer = controller ? setTimeout(function() { controller.abort(); }, 8000) : null;
+
+    fetch('/api/create-request', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(serverPayload),
+      signal: controller ? controller.signal : undefined,
+    })
+    .then(function(r) {
+      if (timer) clearTimeout(timer);
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    })
+    .then(function(body) {
+      /* Canonical ACK — patch local record */
+      if (!body || !body.ok || !body.id) throw new Error('ok:false or no id');
+      try {
+        var raw2 = JSON.parse(localStorage.getItem('fixeo_client_requests') || '[]');
+        var rid2 = String(localReqId);
+        for (var j = raw2.length - 1; j >= 0; j--) {
+          if (String(raw2[j].id) === rid2) {
+            raw2[j].persistence_state    = 'persisted';
+            raw2[j].canonical_request_id = body.id;
+            raw2[j].canonical_ref        = body.ref || null;
+            if (body.replayed) raw2[j].replayed = true;
+            break;
+          }
+        }
+        localStorage.setItem('fixeo_client_requests', JSON.stringify(raw2));
+      } catch (_) { /* patch failure is non-critical */ }
+    })
+    .catch(function(err) {
+      if (timer) clearTimeout(timer);
+      /* Patch persistence_state=failed — keeps same idempotency_key for retry */
+      try {
+        var raw3 = JSON.parse(localStorage.getItem('fixeo_client_requests') || '[]');
+        var rid3 = String(localReqId);
+        for (var k = raw3.length - 1; k >= 0; k--) {
+          if (String(raw3[k].id) === rid3) {
+            raw3[k].persistence_state = 'failed';
+            /* idempotency_key preserved — same key reused on retry */
+            break;
+          }
+        }
+        localStorage.setItem('fixeo_client_requests', JSON.stringify(raw3));
+      } catch (_) { /* non-critical */ }
+    });
+    /* Fire-and-persist: does NOT block or affect the booking confirmation flow */
+  }
+
   function _bridgeToArtisanInbox(bookingData, orderID, artisanCity) {
     try {
       var store = window.FixeoClientRequestsStore;
@@ -1664,6 +1799,44 @@
           }
           if (patched) localStorage.setItem('fixeo_client_requests', JSON.stringify(raw));
         } catch(_) { /* metadata patch failure is non-critical */ }
+
+        /* ── 7C.11D.2: Canonical server persistence ──────────────────────
+         * Fire /api/create-request after local store write succeeds.
+         * Does NOT block or affect the booking confirmation UX.
+         * Success UX already shown (processCOD onSuccess already fired).
+         *
+         * service_category: derived from artisan.category slug — never from price
+         * city:             artisan city (canonical location context)
+         * description:      operational description only — no phone, no price
+         * client_phone:     stored ONLY in dedicated server column
+         * urgency:          'normale' for standard; 'urgent' for express
+         * idempotency_key:  generated once, persisted before POST
+         *
+         * NOT sent: artisan identity, client_profile_id, amount_mad, agreed_price,
+         *           commission, status, mission fields, estimator price
+         */
+        try {
+          var _artisanCat = state && state.artisan ? (state.artisan.category || '') : '';
+          var _serviceSlug = _toServiceSlug(_artisanCat);
+          var _city = String(artisanCity || bookingData.artisanCity || '').trim() || 'Casablanca';
+          var _desc = String(bookingData.description || '').trim() ||
+                      'Réservation ' + (bookingData.service || 'service');
+          var _phone = String(bookingData.phone || '').trim() || null;
+          var _urgency = bookingData.isExpress ? 'urgent' : 'normale';
+          var _idemKey = _generateIdempotencyKey();
+          var _localId = result.request.id; /* Date.now() integer */
+
+          _canonicalPersistRequest(_localId, {
+            service_category: _serviceSlug,
+            city:             _city,
+            description:      _desc,
+            client_phone:     _phone || undefined,
+            urgency:          _urgency,
+            idempotency_key:  _idemKey,
+            /* NOT sent: artisan_id, client_profile_id, amount_mad, agreed_price,
+               commission, status, estimator_price, mission fields */
+          });
+        } catch (_) { /* canonical persistence failure must never affect booking flow */ }
       }
     } catch(_) { /* bridge failure must never affect booking flow */ }
   }
