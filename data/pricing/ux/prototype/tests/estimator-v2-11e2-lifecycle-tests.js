@@ -482,7 +482,124 @@ t('T40c: get_my_mission_offers wired', disp.includes('get_my_mission_offers'));
 
 /* ── SQL FILE COMPLETENESS ── */
 t('FILE1: precheck has 16 PM checks', precheck.includes('PM-16'));
-t('FILE2: verify has 18 V-checks',    verify.includes('V-18'));
+t('FILE2: verify has V-17 through V-22', verify.includes('V-17') && verify.includes('V-22'));
+
+/* ══════════════════════════════════════════════════════════════
+ * 7C.11E.2.1 HARDENING TESTS
+ * ══════════════════════════════════════════════════════════════ */
+
+/* T41: No invalid SET alias qualification in any lifecycle RPC */
+(function() {
+  var fns = ['decline_mission','start_mission','complete_mission'];
+  fns.forEach(function(fn) {
+    var fi   = sqlCode.indexOf('FUNCTION public.' + fn);
+    var next = fns.indexOf(fn) < fns.length - 1
+      ? sqlCode.indexOf('FUNCTION public.' + fns[fns.indexOf(fn) + 1])
+      : sqlCode.indexOf('FUNCTION public.get_accepted_mission_detail');
+    var body = sqlCode.slice(fi, next > fi ? next : fi + 5000);
+    // SET must NOT be followed by alias.column (alias = one lowercase word before dot)
+    var hasAlias = /SET\s+[a-z]\w*\./.test(body);
+    not('T41: ' + fn + ' no alias-qualified SET target', hasAlias);
+  });
+})();
+
+/* T42: complete_mission RAISE EXCEPTION on SR 0-rows */
+t('T42: complete_mission RAISE EXCEPTION for atomicity', (function() {
+  var fi  = sql.indexOf('FUNCTION public.complete_mission');
+  var end = sql.indexOf('FUNCTION public.get_accepted_mission_detail');
+  return sql.slice(fi, end).includes('RAISE EXCEPTION');
+})());
+
+/* T43: complete_mission P0001 ERRCODE */
+t('T43: complete_mission uses P0001 ERRCODE', (function() {
+  var fi  = sql.indexOf('FUNCTION public.complete_mission');
+  var end = sql.indexOf('FUNCTION public.get_accepted_mission_detail');
+  return sql.slice(fi, end).includes('P0001');
+})());
+
+/* T44: complete_mission catches P0001 returns atomicity_error */
+t('T44: complete_mission P0001 handler returns atomicity_error', (function() {
+  var fi  = sql.indexOf('FUNCTION public.complete_mission');
+  var end = sql.indexOf('FUNCTION public.get_accepted_mission_detail');
+  return sql.slice(fi, end).includes('atomicity_error');
+})());
+
+/* T45: complete_mission does NOT use WARNING-only on SR 0-rows */
+not('T45: no warning-only path on SR 0-rows in complete', (function() {
+  var fi    = sqlCode.indexOf('FUNCTION public.complete_mission');
+  var end   = sqlCode.indexOf('FUNCTION public.get_accepted_mission_detail');
+  var block = sqlCode.slice(fi, end);
+  var zeroIdx = block.indexOf('v_rows_sr = 0');
+  if (zeroIdx < 0) return false;
+  var after = block.slice(zeroIdx, zeroIdx + 400);
+  // WARNING-only (no EXCEPTION) in this branch would be a defect
+  return after.includes('RAISE WARNING') && !after.includes('RAISE EXCEPTION');
+})());
+
+/* T46: complete_mission atomicity simulation */
+(function() {
+  function completeResult(mRows, srRows) {
+    if (mRows === 0) return { ok: true, already_completed: true };
+    if (srRows === 0) return { ok: false, reason: 'atomicity_error' };
+    return { ok: true };
+  }
+  t('T46a: both succeed -> ok:true', completeResult(1,1).ok === true);
+  t('T46b: mission race -> idempotent ok:true', completeResult(0,0).ok === true && completeResult(0,0).already_completed === true);
+  t('T46c: sr fails -> ok:false atomicity_error', completeResult(1,0).ok === false && completeResult(1,0).reason === 'atomicity_error');
+  t('T46d: sr fails -> NOT ok:true', completeResult(1,0).ok !== true);
+})();
+
+/* T47: start_mission 0-rows UPDATE -> idempotent ok:true */
+t('T47: start_mission 0-rows UPDATE returns ok:true already_started', (function() {
+  var fi   = sql.indexOf('FUNCTION public.start_mission');
+  var end  = sql.indexOf('FUNCTION public.complete_mission');
+  var block = sql.slice(fi, end);
+  var zeroIdx = block.indexOf("v_rows_updated = 0");
+  if (zeroIdx < 0) return false;
+  var after = block.slice(zeroIdx, zeroIdx + 300);
+  return after.includes('already_started') && after.indexOf("'ok', true") > 0;
+})());
+
+/* T48: decline UPDATE unqualified SET */
+t('T48: decline UPDATE unqualified SET status', (function() {
+  var fi  = sql.indexOf('FUNCTION public.decline_mission');
+  var end = sql.indexOf('FUNCTION public.start_mission');
+  var block = sql.slice(fi, end);
+  return (block.indexOf("SET    status = 'declined'") > 0 || block.indexOf("SET status = 'declined'") > 0);
+})());
+
+/* T49: start UPDATE unqualified SET */
+t('T49: start UPDATE unqualified SET status', (function() {
+  var fi  = sql.indexOf('FUNCTION public.start_mission');
+  var end = sql.indexOf('FUNCTION public.complete_mission');
+  var block = sql.slice(fi, end);
+  return (block.indexOf("SET    status = 'in_progress'") > 0 || block.indexOf("SET status = 'in_progress'") > 0);
+})());
+
+/* T50: complete mission UPDATE unqualified SET */
+t('T50: complete mission UPDATE unqualified SET done', (function() {
+  var fi  = sql.indexOf('FUNCTION public.complete_mission');
+  var end = sql.indexOf('FUNCTION public.get_accepted_mission_detail');
+  var block = sql.slice(fi, end);
+  return (block.indexOf("SET    status = 'done'") > 0 || block.indexOf("SET status = 'done'") > 0);
+})());
+
+/* T51: complete SR UPDATE unqualified SET */
+t('T51: complete SR UPDATE unqualified SET completed', (function() {
+  var fi  = sql.indexOf('FUNCTION public.complete_mission');
+  var end = sql.indexOf('FUNCTION public.get_accepted_mission_detail');
+  var block = sql.slice(fi, end);
+  return (block.indexOf("SET    status = 'completed'") > 0 || block.indexOf("SET status = 'completed'") > 0);
+})());
+
+/* T52: verify has V-17 atomicity check */
+t('T52: verify V-17 atomicity P0001 check', verify.includes('V-17') && verify.includes('P0001'));
+
+/* T53: verify has V-19 alias SET check */
+t('T53: verify V-19 alias-qualified SET check', verify.includes('V-19'));
+
+/* T54: verify has V-20 start idempotency check */
+t('T54: verify V-20 start idempotency check', verify.includes('V-20') && verify.includes('already_started'));
 
 /* ── FINAL REPORT ── */
 console.log('[11E.2] Mission Lifecycle Tests');

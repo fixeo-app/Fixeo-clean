@@ -1,6 +1,7 @@
 -- ════════════════════════════════════════════════════════════
 -- 7C.11E.2 — Mission Lifecycle RPCs
 -- supabase/7c11e2-mission-lifecycle.sql
+-- Revision: 7C.11E.2.1 — syntax + atomicity hardening
 --
 -- Creates/replaces 4 server-side RPCs:
 --   1. decline_mission(p_mission_id uuid)
@@ -23,9 +24,16 @@
 -- ARTISAN AUTHORITY CEILING:
 --   offered → declined (decline_mission)
 --   offered → pending  (claim_mission — 7C.11C, unchanged)
---   pending/assigned → in_progress (start_mission)
---   in_progress → done/completed (complete_mission)
+--   pending + assigned → in_progress (start_mission)
+--   pending + in_progress → done/completed (complete_mission)
 --   validated: READ ONLY — artisan cannot set validated
+--
+-- UPDATE SYNTAX RULE (PostgreSQL):
+--   In UPDATE SET lists the target column must NOT be qualified
+--   with the table alias. Use:
+--     UPDATE public.missions m SET status = ... WHERE m.id = ...
+--   NOT:
+--     UPDATE public.missions m SET m.status = ...   ← INVALID
 --
 -- Run 7c11e2-mission-lifecycle-precheck.sql first.
 -- ════════════════════════════════════════════════════════════
@@ -105,10 +113,11 @@ BEGIN
 
   -- Atomic: transition mission offered → declined
   -- service_request remains 'new' (available for re-dispatch to another artisan)
-  UPDATE public.missions m
-  SET    m.status = 'declined'
-  WHERE  m.id     = p_mission_id
-    AND  m.status = 'offered';          -- predicate lock: only if still offered
+  -- NOTE: SET target not alias-qualified (PostgreSQL syntax requirement)
+  UPDATE public.missions
+  SET    status = 'declined'
+  WHERE  id     = p_mission_id
+    AND  status = 'offered';          -- predicate lock: only if still offered
 
   GET DIAGNOSTICS v_rows_updated = ROW_COUNT;
 
@@ -144,6 +153,11 @@ GRANT  EXECUTE ON FUNCTION public.decline_mission(uuid) TO authenticated;
 --
 -- Transitions service_request assigned → in_progress.
 -- mission.status remains 'pending' (no missions.in_progress invented).
+--
+-- RACE / IDEMPOTENCY:
+--   If SR UPDATE affects 0 rows because an identical concurrent call
+--   already transitioned it, return ok:true + already_started:true.
+--   This is stable and truthful — the desired state is already achieved.
 -- ════════════════════════════════════════════════════════════
 
 CREATE OR REPLACE FUNCTION public.start_mission(
@@ -195,7 +209,7 @@ BEGIN
     RETURN jsonb_build_object('ok', false, 'reason', 'not_accepted');
   END IF;
 
-  -- Check linked request status
+  -- Read current request status
   -- TYPE CONTRACT: sr.id UUID vs v_request_id TEXT — cast UUID side
   SELECT sr.status INTO v_sr_status
   FROM   public.service_requests sr
@@ -205,7 +219,7 @@ BEGIN
     RETURN jsonb_build_object('ok', false, 'reason', 'invalid_request_state');
   END IF;
 
-  -- Idempotent: already in_progress is a stable success
+  -- Idempotent fast-path: already in_progress means start already succeeded
   IF v_sr_status = 'in_progress' THEN
     RETURN jsonb_build_object('ok', true, 'mission_id', p_mission_id, 'already_started', true);
   END IF;
@@ -216,15 +230,19 @@ BEGIN
 
   -- Atomic: transition service_request assigned → in_progress
   -- mission.status stays 'pending' — no missions.in_progress status
-  UPDATE public.service_requests sr
-  SET    sr.status = 'in_progress'
-  WHERE  sr.id::text = v_request_id    -- TYPE CONTRACT: UUID::text = TEXT
-    AND  sr.status   = 'assigned';     -- predicate lock
+  -- NOTE: SET target not alias-qualified (PostgreSQL syntax requirement)
+  -- WHERE clause may still reference alias (valid in WHERE)
+  UPDATE public.service_requests
+  SET    status = 'in_progress'
+  WHERE  id::text = v_request_id    -- TYPE CONTRACT: UUID::text = TEXT
+    AND  status   = 'assigned';     -- predicate lock
 
   GET DIAGNOSTICS v_rows_updated = ROW_COUNT;
 
+  -- 0 rows: concurrent identical call already succeeded (race)
+  -- desired state is already achieved → idempotent success
   IF v_rows_updated = 0 THEN
-    RETURN jsonb_build_object('ok', false, 'reason', 'already_started');
+    RETURN jsonb_build_object('ok', true, 'mission_id', p_mission_id, 'already_started', true);
   END IF;
 
   RETURN jsonb_build_object(
@@ -249,6 +267,14 @@ GRANT  EXECUTE ON FUNCTION public.start_mission(uuid) TO authenticated;
 --
 -- Transitions: mission pending→done, request in_progress→completed.
 -- Artisan CANNOT set validated. That is client/admin authority.
+--
+-- ATOMICITY INVARIANT:
+--   ok:true iff AND ONLY iff BOTH transitions persisted:
+--     mission.status = 'done'
+--     service_requests.status = 'completed'
+--   If mission UPDATE succeeds but SR UPDATE affects 0 rows,
+--   a RAISE EXCEPTION forces rollback of the mission transition.
+--   No partial state is ever returned as ok:true.
 -- ════════════════════════════════════════════════════════════
 
 CREATE OR REPLACE FUNCTION public.complete_mission(
@@ -296,6 +322,7 @@ BEGIN
     RETURN jsonb_build_object('ok', false, 'reason', 'not_your_mission');
   END IF;
 
+  -- Idempotent read: already done is a stable completed state
   IF v_mission_status = 'done' THEN
     RETURN jsonb_build_object('ok', true, 'mission_id', p_mission_id, 'already_completed', true);
   END IF;
@@ -304,7 +331,7 @@ BEGIN
     RETURN jsonb_build_object('ok', false, 'reason', 'not_started');
   END IF;
 
-  -- Verify request is in_progress
+  -- Verify request is in_progress before any mutation
   -- TYPE CONTRACT: sr.id UUID vs v_request_id TEXT — cast UUID side
   SELECT sr.status INTO v_sr_status
   FROM   public.service_requests sr
@@ -318,37 +345,47 @@ BEGIN
     RETURN jsonb_build_object('ok', false, 'reason', 'not_started');
   END IF;
 
-  -- Atomic: transition mission pending → done
-  UPDATE public.missions m
-  SET    m.status = 'done'
-  WHERE  m.id     = p_mission_id
-    AND  m.status = 'pending';
+  -- ── ATOMIC PAIR ──────────────────────────────────────────
+  -- Both UPDATEs must succeed or the entire block rolls back.
+  -- RAISE EXCEPTION after the first UPDATE rolls back the whole
+  -- PL/pgSQL block including all preceding DML in this function call.
+  --
+  -- NOTE: SET target not alias-qualified (PostgreSQL syntax requirement)
+
+  -- Step 1: mission pending → done
+  UPDATE public.missions
+  SET    status = 'done'
+  WHERE  id     = p_mission_id
+    AND  status = 'pending';
 
   GET DIAGNOSTICS v_rows_m = ROW_COUNT;
 
   IF v_rows_m = 0 THEN
-    RETURN jsonb_build_object('ok', false, 'reason', 'already_completed');
+    -- Concurrent call already transitioned mission — idempotent
+    RETURN jsonb_build_object('ok', true, 'mission_id', p_mission_id, 'already_completed', true);
   END IF;
 
-  -- Atomic: transition service_request in_progress → completed
-  -- TYPE CONTRACT: sr.id UUID vs v_request_id TEXT — cast UUID side
-  UPDATE public.service_requests sr
-  SET    sr.status = 'completed'
-  WHERE  sr.id::text = v_request_id    -- TYPE CONTRACT
-    AND  sr.status   = 'in_progress';
+  -- Step 2: service_request in_progress → completed
+  -- TYPE CONTRACT: UUID::text = TEXT
+  UPDATE public.service_requests
+  SET    status = 'completed'
+  WHERE  id::text = v_request_id
+    AND  status   = 'in_progress';
 
   GET DIAGNOSTICS v_rows_sr = ROW_COUNT;
 
-  -- sr update may return 0 if already raced — mission.done is committed;
-  -- non-fatal but logged.
+  -- ATOMICITY ENFORCEMENT:
+  -- If SR transition did not occur, raise exception to roll back the
+  -- mission transition committed above. No partial state is returned.
   IF v_rows_sr = 0 THEN
-    RAISE WARNING '[complete_mission] mission=% set done; sr update returned 0 rows (status may have raced)', p_mission_id;
+    RAISE EXCEPTION '[complete_mission] atomicity violation: mission % set done but service_request % could not be set completed (status=%). Rolling back.', p_mission_id, v_request_id, v_sr_status
+      USING ERRCODE = 'P0001';
   END IF;
 
   -- ARTISAN AUTHORITY CEILING:
   -- Status 'validated' is client/admin territory ONLY.
-  -- This function will never set mission.status = 'validated'.
-  -- It will never set service_requests.status = 'validated'.
+  -- This function will NEVER set mission.status = 'validated'.
+  -- This function will NEVER set service_requests.status = 'validated'.
 
   RETURN jsonb_build_object(
     'ok',         true,
@@ -356,6 +393,9 @@ BEGIN
   );
 
 EXCEPTION
+  -- Re-raise our own atomicity exception so the caller receives ok:false
+  WHEN SQLSTATE 'P0001' THEN
+    RETURN jsonb_build_object('ok', false, 'reason', 'atomicity_error');
   WHEN OTHERS THEN
     RAISE WARNING '[complete_mission] unexpected error: %', SQLERRM;
     RETURN jsonb_build_object('ok', false, 'reason', 'internal_error');

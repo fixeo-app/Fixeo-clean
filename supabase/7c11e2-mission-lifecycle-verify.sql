@@ -161,20 +161,70 @@ BEGIN
   END IF;
   RAISE NOTICE 'V-16 PASS: complete_mission does not set validated';
 
-  -- V-17: no offered missions remain unexpected (informational)
+  -- V-17: complete_mission raises atomicity exception (no silent WARNING + ok:true on partial)
+  SELECT pg_get_functiondef(p.oid) INTO v_def
+  FROM   pg_proc p
+  JOIN   pg_namespace n ON n.oid = p.pronamespace
+  WHERE  n.nspname = 'public' AND p.proname = 'complete_mission' LIMIT 1;
+  IF v_def NOT ILIKE '%P0001%' THEN
+    RAISE EXCEPTION 'V-17 FAIL: complete_mission does not use P0001 atomicity exception';
+  END IF;
+  IF v_def NOT ILIKE '%RAISE EXCEPTION%' THEN
+    RAISE EXCEPTION 'V-17 FAIL: complete_mission missing RAISE EXCEPTION for atomicity enforcement';
+  END IF;
+  RAISE NOTICE 'V-17 PASS: complete_mission has atomicity RAISE EXCEPTION + P0001 handler';
+
+  -- V-18: complete_mission catches P0001 and returns ok:false (not ok:true)
+  IF v_def NOT ILIKE '%atomicity_error%' THEN
+    RAISE EXCEPTION 'V-18 FAIL: complete_mission P0001 handler does not return atomicity_error reason';
+  END IF;
+  RAISE NOTICE 'V-18 PASS: complete_mission P0001 handler returns ok:false reason=atomicity_error';
+
+  -- V-19: no invalid SET alias patterns in lifecycle SQL
+  -- (structural check on function bodies — all SET targets unqualified)
+  SELECT pg_get_functiondef(p.oid) INTO v_def
+  FROM   pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
+  WHERE  n.nspname = 'public' AND p.proname = 'decline_mission' LIMIT 1;
+  IF v_def ~ 'SET\s+[a-z]+\.' THEN
+    RAISE EXCEPTION 'V-19 FAIL: decline_mission has alias-qualified SET target';
+  END IF;
+  SELECT pg_get_functiondef(p.oid) INTO v_def
+  FROM   pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
+  WHERE  n.nspname = 'public' AND p.proname = 'start_mission' LIMIT 1;
+  IF v_def ~ 'SET\s+[a-z]+\.' THEN
+    RAISE EXCEPTION 'V-19 FAIL: start_mission has alias-qualified SET target';
+  END IF;
+  SELECT pg_get_functiondef(p.oid) INTO v_def
+  FROM   pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
+  WHERE  n.nspname = 'public' AND p.proname = 'complete_mission' LIMIT 1;
+  IF v_def ~ 'SET\s+[a-z]+\.' THEN
+    RAISE EXCEPTION 'V-19 FAIL: complete_mission has alias-qualified SET target';
+  END IF;
+  RAISE NOTICE 'V-19 PASS: no alias-qualified SET targets in any lifecycle RPC';
+
+  -- V-20: start_mission is idempotent on race (both paths return ok:true)
+  SELECT pg_get_functiondef(p.oid) INTO v_def
+  FROM   pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
+  WHERE  n.nspname = 'public' AND p.proname = 'start_mission' LIMIT 1;
+  IF v_def NOT ILIKE '%already_started%' THEN
+    RAISE EXCEPTION 'V-20 FAIL: start_mission missing already_started idempotent path';
+  END IF;
+  RAISE NOTICE 'V-20 PASS: start_mission has idempotent already_started path';
+
+  -- V-21: no offered missions remain unexpected (informational)
   DECLARE
     v_offered integer;
   BEGIN
     SELECT COUNT(*) INTO v_offered FROM public.missions WHERE status = 'offered';
-    RAISE NOTICE 'V-17 INFO: offered missions = %', v_offered;
+    RAISE NOTICE 'V-21 INFO: offered missions = %', v_offered;
   END;
 
-  -- V-18: no pending missions remain unexpected (informational)
+  -- V-22: no pending missions remain unexpected (informational)
   DECLARE
     v_pending integer;
   BEGIN
     SELECT COUNT(*) INTO v_pending FROM public.missions WHERE status = 'pending';
-    RAISE NOTICE 'V-18 INFO: pending missions = %', v_pending;
+    RAISE NOTICE 'V-22 INFO: pending missions = %', v_pending;
   END;
 
   RAISE NOTICE '══ 7C.11E.2 VERIFY COMPLETE ══';
