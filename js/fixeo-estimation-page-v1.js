@@ -120,8 +120,15 @@
       _loading = true;
       if (cb) _queue.push(cb);
 
-      /* Phase 1: Artisan data — must load before reservation opens artisan picker */
-      loadScriptOnce('js/fixeo-supabase-loader.js?v=sl2')
+      /* Phase 0: Artisan data dependencies — MUST load before fixeo-supabase-loader.js.
+         Without these, FixeoSupabaseLoader.load() enters "not configured" branch because
+         window.FixeoSupabaseClient === undefined and window.FixeoDB === undefined,
+         causing window.ARTISANS to remain empty and producing a false zero-match result.
+         See audit 7C.10C.0.1. Same cache keys as index.html (idempotent via loadScriptOnce). */
+      loadScriptOnce('js/fixeo-db.js?v=db2')
+        .then(function () { return loadScriptOnce('js/supabase-client.js?v=sc2'); })
+        /* Phase 1: Artisan data — loader runs after client + DB are ready */
+        .then(function () { return loadScriptOnce('js/fixeo-supabase-loader.js?v=sl2'); })
         .then(function () { return loadScriptOnce('js/fixeo_homepage_premium_patch.js?v=fxhome-artisan-section-v1a5-return'); })
         /* Phase 2: Reservation stack — same order as index.html */
         .then(function () { return loadScriptOnce('js/reservation.js?v=v1l-syntax-fix'); })
