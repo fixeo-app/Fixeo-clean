@@ -1,0 +1,279 @@
+/* ============================================================
+   FIXEO — Artisan Dispatch CSS v1
+   css/fixeo-artisan-dispatch-v1.css  v1a-offers
+
+   Extends the existing fxa-* design system.
+   Does NOT override layout, navigation, or core card styles.
+   Only adds styles needed for offer lifecycle + accepted detail.
+   ============================================================ */
+
+/* ── OFFER CARD — extends .fxa-card ───────────────────────── */
+
+.fxad-offer-card {
+  border-left: 4px solid var(--fixeo-accent, #4361ee);
+  position: relative;
+}
+
+/* Urgent offer: high-visibility left border + subtle background */
+.fxad-offer-urgent {
+  border-left-color: #e63946;
+  background: linear-gradient(135deg, #fff5f5 0%, #fff 60%);
+}
+
+/* ── URGENCY BADGE ──────────────────────────────────────────── */
+
+.fxad-badge-urgency {
+  background: #e63946;
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.72rem;
+  padding: 3px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.fxad-offer-card:not(.fxad-offer-urgent) .fxad-badge-urgency {
+  background: #f4a261;
+}
+
+/* ── PRIVACY NOTICE — pre-acceptance ──────────────────────── */
+
+.fxad-offer-privacy {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  color: #666;
+  padding: 8px 0 4px;
+  border-top: 1px solid #f0f0f0;
+  margin-top: 8px;
+  line-height: 1.4;
+}
+
+.fxad-offer-privacy-icon {
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+/* ── ACCEPT BUTTON — ensure at least 44px touch target ────── */
+
+.fxad-accept-btn {
+  min-height: 48px;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  flex: 1;
+}
+
+.fxad-accept-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* ── LOADING STATE ──────────────────────────────────────────── */
+
+.fxad-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 20px;
+  color: #555;
+  gap: 12px;
+}
+
+.fxad-loading-spinner {
+  font-size: 2rem;
+  animation: fxad-pulse 1.2s ease-in-out infinite;
+}
+
+.fxad-loading-text {
+  font-size: 0.95rem;
+  color: #666;
+}
+
+@keyframes fxad-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
+/* ── ERROR STATE ────────────────────────────────────────────── */
+
+.fxad-error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 20px;
+  gap: 10px;
+  text-align: center;
+}
+
+.fxad-error-icon {
+  font-size: 2rem;
+}
+
+.fxad-error-msg {
+  font-size: 0.9rem;
+  color: #c0392b;
+  max-width: 280px;
+  line-height: 1.5;
+}
+
+.fxad-retry-btn {
+  margin-top: 8px;
+  min-height: 44px;
+}
+
+/* ── ACCEPTED DETAIL MODAL ──────────────────────────────────── */
+
+.fxad-detail-modal {
+  padding: 4px 0 8px;
+}
+
+.fxad-detail-header {
+  text-align: center;
+  padding: 12px 0 16px;
+  border-bottom: 1px solid #f0f0f0;
+  margin-bottom: 16px;
+}
+
+.fxad-detail-badge {
+  display: inline-block;
+  background: #d4edda;
+  color: #155724;
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 4px 14px;
+  border-radius: 20px;
+  margin-bottom: 10px;
+}
+
+.fxad-detail-service {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin-bottom: 4px;
+}
+
+.fxad-detail-city {
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 4px;
+}
+
+.fxad-detail-urgency {
+  font-size: 0.85rem;
+  color: #e63946;
+  font-weight: 600;
+}
+
+.fxad-detail-section {
+  margin-bottom: 16px;
+}
+
+.fxad-detail-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #888;
+  margin-bottom: 6px;
+}
+
+.fxad-detail-desc {
+  font-size: 0.95rem;
+  color: #333;
+  line-height: 1.55;
+  background: #f8f9fa;
+  padding: 10px 12px;
+  border-radius: 8px;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+.fxad-detail-muted {
+  font-size: 0.88rem;
+  color: #999;
+  font-style: italic;
+}
+
+/* ── CONTACT BUTTONS ────────────────────────────────────────── */
+
+.fxad-detail-phone {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.fxad-contact-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px 20px;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  min-height: 48px;
+  transition: opacity 0.15s ease;
+  cursor: pointer;
+}
+
+.fxad-contact-btn:active {
+  opacity: 0.85;
+}
+
+.fxad-contact-call {
+  background: #4361ee;
+  color: #fff;
+}
+
+.fxad-contact-wa {
+  background: #25d366;
+  color: #fff;
+}
+
+/* ── DETAIL MODAL ACTIONS ───────────────────────────────────── */
+
+.fxad-detail-actions {
+  border-top: 1px solid #f0f0f0;
+  padding-top: 14px;
+  margin-top: 8px;
+}
+
+.fxad-modal-close-btn {
+  width: 100%;
+  justify-content: center;
+  min-height: 44px;
+}
+
+/* ── MOBILE ADAPTATIONS ─────────────────────────────────────── */
+
+@media (max-width: 480px) {
+  .fxad-offer-card {
+    border-left-width: 3px;
+  }
+
+  .fxad-accept-btn {
+    min-height: 52px;  /* extra touch area on small screens */
+    font-size: 1.05rem;
+  }
+
+  .fxad-contact-btn {
+    min-height: 52px;
+    font-size: 1.05rem;
+  }
+
+  .fxad-detail-modal {
+    padding: 0;
+  }
+}
+
+/* ── SECTION HEAD OVERRIDES ─────────────────────────────────── */
+
+/* Update the 'available' section heading via CSS rather than HTML change */
+#fxav2-sec-available .fxa-section-head h2::before {
+  /* content set by JS renderAvailableSection — no CSS override needed */
+}

@@ -1148,6 +1148,11 @@
     /* Read-only state reference — consumers MUST NOT write to this object */
     get _state() { return _state; },
 
+    /* Refresh: re-fetches missions and re-renders — callable by dispatch bridge */
+    refresh: async function() {
+      await _refresh();
+    },
+
     /* Thin wrappers: identical to internal handlers but dispatch notification events */
     acceptMission: async function(requestId, btn) {
       await _doAcceptMission(requestId, btn);
@@ -1164,6 +1169,9 @@
       _dispatchMissionEvent('mission-completed', requestId);
     }
   };
+
+  /* Also alias as FixeoArtisanDashboard for dispatch bridge compat */
+  window.FixeoArtisanDashboard = window.FixeoArtisanV2;
 
   document.addEventListener('DOMContentLoaded', init);
 
