@@ -78,12 +78,12 @@ t('5. window.FixeoReservation assigned in reservation.js',
 console.log('\n[2] Cache key bump');
 
 // 6 — index.html uses new reservation.js version
-t('6. index.html loader uses reservation.js?v=v1l-syntax-fix',
-  indexHtml.includes("reservation.js?v=v1l-syntax-fix"));
+t('6. index.html loader uses reservation.js?v=v1m-estimator-copy',
+  indexHtml.includes("reservation.js?v=v1m-estimator-copy"));
 
 // 7 — estimation page loader uses new reservation.js version
-t('7. fixeo-estimation-page-v1.js loader uses reservation.js?v=v1l-syntax-fix',
-  pageJs.includes("reservation.js?v=v1l-syntax-fix"));
+t('7. fixeo-estimation-page-v1.js loader uses reservation.js?v=v1m-estimator-copy',
+  pageJs.includes("reservation.js?v=v1m-estimator-copy"));
 
 // 8 — OLD version key v1k-ios-scroll absent (CDN won't serve broken file)
 t('8. Old reservation.js?v=v1k-ios-scroll key absent from all loaders',

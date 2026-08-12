@@ -72,9 +72,9 @@ console.log('\n[3] Cache key discipline');
 
 t('12. CSS cache key is current (v2a-gateway — CSS unchanged in 10C.0)',
   estimationHtml.includes('fixeo-estimation-page-v1.css?v=fxestpage-v2a-gateway') ||
-  estimationHtml.includes('fixeo-estimation-page-v1.css?v=fxestpage-v2c-artisan-deps'));
-t('13. JS cache key updated to fxestpage-v2c-artisan-deps',
-  estimationHtml.includes('fixeo-estimation-page-v1.js?v=fxestpage-v2c-artisan-deps'));
+  estimationHtml.includes('fixeo-estimation-page-v1.css?v=fxestpage-v2d-estimator-copy'));
+t('13. JS cache key updated to fxestpage-v2d-estimator-copy',
+  estimationHtml.includes('fixeo-estimation-page-v1.js?v=fxestpage-v2d-estimator-copy'));
 t('14. Old v2 keys absent (no stale fxestpage-v1c or v1d in estimation.html)',
   !estimationHtml.includes('fxestpage-v1c') &&
   !estimationHtml.includes('fxestpage-v1d'));
@@ -204,8 +204,8 @@ t('48. fixeo:estimator-reserve listener preserved in page JS',
   pageJs.includes("'fixeo:estimator-reserve'"));
 t('49. FixeoReservation.open(null, false, null) preserved',
   pageJs.includes('window.FixeoReservation.open(null, false, null)'));
-t('50. reservation.js?v=v1l-syntax-fix in reservation stack',
-  pageJs.includes('reservation.js?v=v1l-syntax-fix'));
+t('50. reservation.js?v=v1m-estimator-copy in reservation stack',
+  pageJs.includes('reservation.js?v=v1m-estimator-copy'));
 t('51. Resume card uses server amount_mad only (no client multiplication)',
   pageJs.includes('ctx.amount_mad') &&
   !pageJs.match(/amount_mad\s*\*/));

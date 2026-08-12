@@ -612,7 +612,7 @@ claaim sys<!DOCTYPE html>
 <script src="js/fixeo-estimation-engine-v1.js?v=faee-v1d" defer></script>
 <script src="js/fixeo-review-engine-v1.js?v=frev-v1b" defer></script>
 <script src="/js/fixeo-public-profile-links.js?v=v2c3b" defer></script>
-<script src="/js/fixeo-public-artisan-profile.js?v=hts2" defer></script>
+<script src="/js/fixeo-public-artisan-profile.js?v=hts3-estimator-price-context" defer></script>
 <!-- <script src="/js/fixeo-profile-v2a.js?v=fxpv3-v1b" defer></script> -->
 <script>
   (function (window, document) {
@@ -848,6 +848,16 @@ claaim sys<!DOCTYPE html>
 <!-- fxpf-v131: Flagship profile CSS + DOM transformer. Runs after V2A enhance(). -->
 <link rel="stylesheet" href="css/fixeo-profile-flagship-v1.css?v=fxpf-v131">
 <script src="js/fixeo-profile-flagship-v1.js?v=fxpf-v131" defer></script>
+<!-- 7C.10C.0.4: In verified Estimator context, suppress the generic market-range
+     budget block (.fxpf-price "Budget indicatif / à partir de X MAD / Fourchette
+     marché locale") which contradicts the server-verified FIXEO price the user
+     already saw. Body class is applied by fixeo-public-artisan-profile.js ONLY
+     when all three estimator-return signals are present (source=estimator +
+     fx_estimator_return_v1 + fixeo_estimator_ctx_v1). Normal profile visits:
+     class absent → .fxpf-price renders as usual. -->
+<style>
+body.fx-estimator-context .fxpf-price { display: none !important; }
+</style>
 <!-- fxresf-v11a: Reservation modal flagship presentation enhancer.
      Pure additive layer — zero engine changes. -->
 <link rel="stylesheet" href="css/fixeo-reservation-flagship-v1.css?v=fxresf-v11a">

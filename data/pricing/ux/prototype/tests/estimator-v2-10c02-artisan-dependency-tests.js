@@ -77,7 +77,7 @@ const dbIdx      = stackIdx("'js/fixeo-db.js?v=db2'");
 const scIdx      = stackIdx("'js/supabase-client.js?v=sc2'");
 const loaderIdx  = stackIdx("'js/fixeo-supabase-loader.js?v=sl2'");
 const patchIdx   = stackIdx("'js/fixeo_homepage_premium_patch.js?v=fxhome-artisan-section-v1a5-return'");
-const resIdx     = stackIdx("'js/reservation.js?v=v1l-syntax-fix'");
+const resIdx     = stackIdx("'js/reservation.js?v=v1m-estimator-copy'");
 
 t('6.  fixeo-db.js present in stack', dbIdx > 0);
 t('7.  supabase-client.js present in stack', scIdx > 0);
@@ -133,8 +133,8 @@ t('19. fixeo-supabase-loader.js: _injectIntoMarketplace unchanged',
 ══════════════════════════════════════════════════════ */
 console.log('\n[6] Cache key + data sanity');
 
-t('20. JS cache key bumped to fxestpage-v2c-artisan-deps',
-  estimationHtml.includes('fixeo-estimation-page-v1.js?v=fxestpage-v2c-artisan-deps'));
+t('20. JS cache key bumped to fxestpage-v2d-estimator-copy',
+  estimationHtml.includes('fixeo-estimation-page-v1.js?v=fxestpage-v2d-estimator-copy'));
 
 /* ══════════════════════════════════════════════════════
    SUMMARY

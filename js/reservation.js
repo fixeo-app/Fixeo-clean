@@ -744,7 +744,10 @@
 
             <div class="fixeo-res-price-info" id="res-tarif-estime">${state.isUrgent
               ? `⚡ <strong>Priorité urgente incluse</strong> — vous ne payez qu'après l'intervention`
-              : `\ud83d\udca1 <em style="font-style:normal">Estimation bas\u00e9e sur les prix du march\u00e9.</em><br><span style="font-size:.72rem;color:rgba(255,255,255,.5)">Aucun paiement maintenant \u2014 vous payez apr\u00e8s intervention.</span>`
+              /* 7C.10C.0.4: Estimator verified context — no generic market-range copy */
+              : (state._estimatorCtx && state._estimatorCtx.valid)
+              ? `💡 <em style="font-style:normal">Prix FIXEO vérifié pour le périmètre sélectionné.</em><br><span style="font-size:.72rem;color:rgba(255,255,255,.5)">Aucun paiement maintenant — vous payez après intervention.</span>`
+              : `💡 <em style="font-style:normal">Estimation basée sur les prix du marché.</em><br><span style="font-size:.72rem;color:rgba(255,255,255,.5)">Aucun paiement maintenant — vous payez après intervention.</span>`
             }</div>
 
             <div class="fixeo-res-error" id="res-error" style="display:none"></div>
@@ -1521,7 +1524,10 @@
       var priceEl = document.getElementById('res-price-display');
       if (priceEl) { priceEl.textContent = _sp.from + ' MAD'; }
       var tarifEl = document.getElementById('res-tarif-estime');
-      if (tarifEl) { tarifEl.innerHTML = '\ud83d\udca1 <em style="font-style:normal">Estimation bas\u00e9e sur les prix du march\u00e9.</em><br><span style="font-size:.72rem;color:rgba(255,255,255,.5)">Aucun paiement maintenant \u2014 vous payez apr\u00e8s intervention.</span>'; }
+      /* 7C.10C.0.4: Estimator verified context uses FIXEO copy; normal path keeps market copy */
+      if (tarifEl && !(state._estimatorCtx && state._estimatorCtx.valid)) {
+        tarifEl.innerHTML = '\ud83d\udca1 <em style="font-style:normal">Estimation bas\u00e9e sur les prix du march\u00e9.</em><br><span style="font-size:.72rem;color:rgba(255,255,255,.5)">Aucun paiement maintenant \u2014 vous payez apr\u00e8s intervention.</span>';
+      }
       var unitEl = document.getElementById('res-price-unit');
       if (unitEl) { unitEl.style.display = _sp ? 'none' : ''; }
     }

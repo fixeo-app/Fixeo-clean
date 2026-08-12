@@ -131,7 +131,7 @@
         .then(function () { return loadScriptOnce('js/fixeo-supabase-loader.js?v=sl2'); })
         .then(function () { return loadScriptOnce('js/fixeo_homepage_premium_patch.js?v=fxhome-artisan-section-v1a5-return'); })
         /* Phase 2: Reservation stack — same order as index.html */
-        .then(function () { return loadScriptOnce('js/reservation.js?v=v1l-syntax-fix'); })
+        .then(function () { return loadScriptOnce('js/reservation.js?v=v1m-estimator-copy'); })
         .then(function () { return loadScriptOnce('js/slot-lock.js?v=50a38b9'); })
         .then(function () { return loadScriptOnce('js/payment.js?v=50a38b9'); })
         .then(function () { return loadScriptOnce('js/cod-payment.js?v=50a38b9'); })

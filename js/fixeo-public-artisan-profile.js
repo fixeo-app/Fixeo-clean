@@ -1449,6 +1449,12 @@ document.addEventListener('visibilitychange', function () {
 
   function _injectReturnControl() {
     if (!_shouldShow()) return;
+    /* 7C.10C.0.4: Mark body as estimator context so CSS can hide the generic
+       market-range budget block (.fxpf-price) which conflicts with the server-
+       verified FIXEO price the user already saw in PRICE_READY.
+       Guard: same three signals as _shouldShow() — source=estimator + return
+       marker + pricing token. Normal profile visits: guard fails → no class. */
+    try { document.body.classList.add('fx-estimator-context'); } catch (_) {}
     /* Build the control bar */
     var bar = document.createElement('div');
     bar.id = 'fx-estimator-return-bar';
