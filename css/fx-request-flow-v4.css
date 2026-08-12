@@ -2700,3 +2700,232 @@
   line-height: 1.5;
   margin: 0;
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   7C.10D.2 — URGENT FAST LANE VISUAL IDENTITY
+   Scoped to [data-fxrf4-mode="emergency"] on #fxrf4-root.
+   Zero impact on standard mode. Mobile-first. prefers-reduced-motion respected.
+═══════════════════════════════════════════════════════════════════ */
+
+/* ── Urgent badge row ───────────────────────────────────────────── */
+#fxrf4-urgent-badge-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0 6px;
+}
+
+#fxrf4-urgent-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: #ff9a1f;
+  background: rgba(255, 154, 31, 0.10);
+  border: 1px solid rgba(255, 154, 31, 0.28);
+  border-radius: 100px;
+  padding: 4px 12px;
+}
+
+/* ── Compact lane step indicator ─────────────────────────────────── */
+#fxrf4-lane-steps {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 6px 16px 2px;
+}
+
+.fxrf4-lane-step {
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.28);
+  position: relative;
+  transition: color 0.20s ease;
+}
+
+.fxrf4-lane-step::after {
+  content: '';
+  position: absolute;
+  right: -12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.fxrf4-lane-step:last-child::after { display: none; }
+
+.fxrf4-lane-step.is-active {
+  color: #ff9a1f;
+  font-weight: 700;
+}
+
+.fxrf4-lane-step.is-done {
+  color: rgba(32, 201, 151, 0.70);
+}
+
+/* ── Step 3 emergency sub-text ──────────────────────────────────── */
+.fxrf4-step3-emergency-sub {
+  font-size: 0.80rem;
+  color: rgba(255, 255, 255, 0.48);
+  text-align: center;
+  line-height: 1.5;
+  margin: 0 0 12px;
+}
+
+/* ── Interstitial — emergency sending state ─────────────────────── */
+.fxrf4-inter-sending-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(255, 154, 31, 0.80);
+  text-align: center;
+  margin: 0 0 14px;
+}
+
+.fxrf4-interstitial.is-emergency-sending .fxrf4-inter-dots span {
+  background: rgba(255, 154, 31, 0.90);
+}
+
+@keyframes fxurgent-pulse {
+  0%, 100% { opacity: 0.4; transform: scale(0.85); }
+  50%       { opacity: 1.0; transform: scale(1.05); }
+}
+
+.fxrf4-interstitial.is-emergency-sending .fxrf4-inter-dots span:nth-child(1) {
+  animation: fxurgent-pulse 1.1s ease-in-out 0.00s infinite;
+}
+.fxrf4-interstitial.is-emergency-sending .fxrf4-inter-dots span:nth-child(2) {
+  animation: fxurgent-pulse 1.1s ease-in-out 0.22s infinite;
+}
+.fxrf4-interstitial.is-emergency-sending .fxrf4-inter-dots span:nth-child(3) {
+  animation: fxurgent-pulse 1.1s ease-in-out 0.44s infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fxrf4-interstitial.is-emergency-sending .fxrf4-inter-dots span {
+    animation: none !important;
+    opacity: 0.80;
+    transform: none;
+  }
+}
+
+/* ── Success recap (city, phone, ref) ───────────────────────────── */
+.fxrf4-success-recap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin: 0 0 16px;
+  font-size: 0.84rem;
+  color: rgba(255, 255, 255, 0.70);
+}
+
+.fxrf4-recap-line {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  line-height: 1.4;
+}
+
+.fxrf4-recap-icon { font-size: 0.90rem; }
+
+.fxrf4-recap-ref {
+  font-size: 0.80rem;
+  color: rgba(255, 255, 255, 0.45);
+  margin-top: 4px;
+}
+
+.fxrf4-recap-ref strong { color: rgba(255, 255, 255, 0.72); }
+
+/* ── Post-ACK Estimator bridge ──────────────────────────────────── */
+.fxrf4-estimator-bridge {
+  background: rgba(72, 100, 255, 0.06);
+  border: 1px solid rgba(72, 100, 255, 0.18);
+  border-radius: 16px;
+  padding: 18px 20px;
+  margin: 12px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.fxrf4-bridge-eyebrow {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: rgba(72, 100, 255, 0.70);
+  margin: 0;
+}
+
+.fxrf4-bridge-title {
+  font-size: 0.94rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.92);
+  margin: 0;
+  line-height: 1.35;
+}
+
+.fxrf4-bridge-copy {
+  font-size: 0.80rem;
+  color: rgba(255, 255, 255, 0.55);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.fxrf4-bridge-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 48px;
+  background: rgba(72, 100, 255, 0.14);
+  border: 1px solid rgba(72, 100, 255, 0.30);
+  border-radius: 12px;
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 12px 16px;
+  transition: background 0.18s ease, border-color 0.18s ease;
+}
+
+.fxrf4-bridge-cta:hover,
+.fxrf4-bridge-cta:focus {
+  background: rgba(72, 100, 255, 0.24);
+  border-color: rgba(72, 100, 255, 0.50);
+  outline: none;
+}
+
+.fxrf4-bridge-skip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 40px;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 0.82rem;
+  cursor: pointer;
+  padding: 8px;
+}
+
+.fxrf4-bridge-skip:hover { color: rgba(255, 255, 255, 0.55); }
+
+/* ── iOS font-size fix: inputs below 16px trigger auto-zoom ─────── */
+/* 7C.10D.2: Fix fxrf4-autre-input (was 0.90rem = 14.4px) and fxrf4-select */
+.fxrf4-autre-input { font-size: 1rem !important; }   /* 16px at 16px root */
+.fxrf4-select-wrap select { font-size: 1rem !important; }

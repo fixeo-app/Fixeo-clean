@@ -138,8 +138,8 @@ test('2.7 Step 3 (waiting): "Coordination à venir"', function () {
 test('2.8 Retry message: factual failure message in _renderRetry', function () {
   var retryIdx = src.indexOf('function _renderRetry');
   var retryBlock = src.slice(retryIdx, retryIdx + 600);
-  assert.ok(retryBlock.includes('enregistrer la demande'),
-    '_renderRetry must include factual failure message');
+  assert.ok(retryBlock.includes('transmettre votre urgence') || retryBlock.includes('enregistrer la demande'),
+    '_renderRetry must include factual failure message (transmettre or enregistrer)');
 });
 
 test('2.9 Retry preserves data message present', function () {
@@ -356,18 +356,18 @@ test('8.4 No pricing call in emergency submit flow', function () {
 console.log('\n[10D.1] Cache keys');
 
 test('9.1 fx-request-flow-v4.js key: fxrf4-v5b in index.html', function () {
-  assert.ok(idx.includes('fx-request-flow-v4.js?v=fxrf4-v5b'),
-    'JS cache key must be fxrf4-v5b');
+  assert.ok(idx.includes('fx-request-flow-v4.js?v=fxrf4-v5c'),
+    'JS cache key must be fxrf4-v5c');
 });
 
 test('9.2 fx-request-flow-v4.css key: fxrf4-v5z1 in index.html', function () {
-  assert.ok(idx.includes('fx-request-flow-v4.css?v=fxrf4-v5z1'),
-    'CSS cache key must be fxrf4-v5z1');
+  assert.ok(idx.includes('fx-request-flow-v4.css?v=fxrf4-v5z2'),
+    'CSS cache key must be fxrf4-v5z2');
 });
 
 test('9.3 VERSION constant in JS: fxrf4-v5b', function () {
-  assert.ok(src.includes("VERSION: 'fxrf4-v5b'"),
-    'VERSION constant must be updated');
+  assert.ok(src.includes("VERSION: 'fxrf4-v5c'"),
+    'VERSION constant must be current');
 });
 
 test('9.4 Retry CSS rules present in fx-request-flow-v4.css', function () {

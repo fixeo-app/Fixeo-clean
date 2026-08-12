@@ -1,5 +1,5 @@
 /**
- * fx-request-flow-v4.js — fxrf4-v5b
+ * fx-request-flow-v4.js — fxrf4-v5c
  * RAFI Request Flow V5 — Emergency Mode Adaptation
  *
  * EMOTIONAL ARC: Problem → Relief → Confidence → Momentum → Trust
@@ -14,7 +14,7 @@
  * ISOLATED: Zero dependency on .modal, MutationObservers, setTimeout injections.
  * ROLLBACK: window.FIXEO_FLOW_V4 = false
  *
- * VERSION: fxrf4-v5b — 2026-08-12
+ * VERSION: fxrf4-v5c — 2026-08-12
  */
 
 (function () {
@@ -103,6 +103,14 @@
     { icon: '⚠️', label: 'Autre urgence',                                slug: 'autre',         serviceLabel: 'Autre urgence'},
   ];
 
+  /* ── Emergency lane constants (7C.10D.2) ── */
+  var URGENT_BADGE_TEXT = '\u26a1 URGENCE FIXEO';
+  var URGENT_LANE_STEPS = ['1\u00a0Situation', '2\u00a0Ville', '3\u00a0Contact'];
+
+  /* Estimator-eligible métiers from emergency (VALID_METIERS in orchestrator).
+   * 'autre' is NOT a valid Estimator métier — bridge hidden for that slug. */
+  var ESTIMATOR_ELIGIBLE_SLUGS = ['plomberie', 'electricite', 'serrurerie', 'climatisation', 'menuiserie'];
+
   /* RAFI messages — v5i (standard + emergency) */
   var MSG = {
     /* ── Standard mode ── */
@@ -119,12 +127,13 @@
 
     /* ── Emergency mode ── */
     step1Emergency:     'Que se passe-t-il\u00a0?',
-    step1EmergencySub:  'Je vais trouver les bons artisans en fonction de votre situation.',
+    step1EmergencySub:  'Transmettez votre situation prioritaire \u00e0 FIXEO en quelques secondes.',
     step1EmergencyAutre: 'D\u00e9crivez-moi rapidement ce qu\u2019il se passe.',
-    step2Emergency:  'Vous \u00eates o\u00f9\u00a0?',
-    step2EmergencyCity: function(city) { return 'Vous \u00eates \u00e0\u00a0' + city + '\u00a0?'; },
-    step3Emergency:  'Sur quel num\u00e9ro peut-on vous rappeler\u00a0?',
+    step2Emergency:  'O\u00f9 faut-il intervenir\u00a0?',
+    step2EmergencyCity: function(city) { return 'Intervention \u00e0\u00a0' + city + '\u00a0?'; },
+    step3Emergency:  'Quel num\u00e9ro pour vous joindre\u00a0?',
     step3EmergencyPre: "C\u2019est bien ce num\u00e9ro\u00a0?",
+    step3EmergencySub: 'FIXEO utilisera ce num\u00e9ro pour la coordination de votre demande.',
     interstitialEmergency: 'Transmission de votre demande\u2026',
     successEmergency: 'Demande urgente enregistr\u00e9e.',
 
@@ -310,7 +319,7 @@
         tracking_ref: ref,
         status:       'nouvelle',
         created_at:   new Date().toISOString(),
-        source:       'fxrf4-v5b',
+        source:       'fxrf4-v5c',
         mode:         st.mode,
         viewed:       false
       };
@@ -349,8 +358,8 @@
   function _fireAnalytics(req, mode, duplicated) {
     try {
       window.dispatchEvent(new CustomEvent('fixeo:client-request-submit-success', {
-        detail: { request: req, mode: mode, source: 'fxrf4-v5b',
-                  storageKey: STORAGE_KEY, duplicated: duplicated, version: 'fxrf4-v5b' }
+        detail: { request: req, mode: mode, source: 'fxrf4-v5c',
+                  storageKey: STORAGE_KEY, duplicated: duplicated, version: 'fxrf4-v5c' }
       }));
     } catch(_) {}
   }
@@ -466,7 +475,7 @@
     _wireSwipeDismiss(dialog);
 
     /* Diagnostic */
-    console.log('[fxrf4-v5b] DOM built. Header children:', head.childElementCount, '(expected 2: rafi-row, close)');
+    console.log('[fxrf4-v5c] DOM built. Header children:', head.childElementCount, '(expected 2: rafi-row, close)');
   }
 
   /* ══════════════════════════════════════════════════════════
@@ -647,10 +656,48 @@
     }
   }
 
+  /* ── Emergency lane header extras (7C.10D.2) ── */
+  function _injectUrgentLaneHeader() {
+    /* Idempotent — only inject once per open */
+    if (_q('#fxrf4-urgent-badge')) return;
+
+    var head = _q('#fxrf4-head');
+    if (!head) return;
+
+    /* Urgent badge row above RAFI row */
+    var badgeRow = _h('div', { id: 'fxrf4-urgent-badge-row' });
+    var badge = _h('span', { id: 'fxrf4-urgent-badge', 'aria-label': 'Voie urgente FIXEO', txt: URGENT_BADGE_TEXT });
+    badgeRow.appendChild(badge);
+    head.insertBefore(badgeRow, head.firstChild);
+
+    /* Compact step indicator below progress bar */
+    var progress = _q('#fxrf4-progress');
+    if (progress) {
+      var laneSteps = _h('div', { id: 'fxrf4-lane-steps', 'aria-hidden': 'true' });
+      URGENT_LANE_STEPS.forEach(function(lbl, i) {
+        var s = _h('span', { cls: 'fxrf4-lane-step', txt: lbl });
+        s.setAttribute('data-step', String(i + 1));
+        laneSteps.appendChild(s);
+      });
+      progress.parentNode.insertBefore(laneSteps, progress.nextSibling);
+    }
+  }
+
+  function _updateLaneStep(n) {
+    var steps = _root ? _root.querySelectorAll('.fxrf4-lane-step') : [];
+    for (var i = 0; i < steps.length; i++) {
+      var idx = parseInt(steps[i].getAttribute('data-step'), 10);
+      steps[i].classList.toggle('is-active',  idx === n);
+      steps[i].classList.toggle('is-done',    idx < n);
+    }
+  }
+
   /* ── Emergency step 1 — situation list ─────────────────── */
   function _renderEmergencyStep1() {
     var st = _st;
 
+    _injectUrgentLaneHeader();
+    _updateLaneStep(1);
     _rafiSpeak(MSG.step1Emergency, false /* not urgent-red — calm */);
 
     /* Emergency mode label on RAFI name */
@@ -949,6 +996,7 @@
     var detected = st.detectedCity || st.prefillCity || '';
 
     _setProgress(2, 3);
+    if (isEmergency) _updateLaneStep(2);
 
     /* RAFI message */
     var msg;
@@ -993,6 +1041,13 @@
         cityChips.forEach(function(c) { c.classList.remove('is-selected'); });
         chip.classList.add('is-selected');
         st.city = city;
+        /* 7C.10D.2: In emergency mode, explicit city tap is trusted for this session.
+         * Write TRUSTED_CITY_SESSION_KEY (same key used by /estimation city picker)
+         * so that a subsequent Estimator launch can use city_slug from session trust.
+         * City affects UX/routing only — no price effect (orchestrator doctrine). */
+        if (isUrgent) {
+          try { sessionStorage.setItem(TRUSTED_CITY_SESSION_KEY, city); } catch (_) {}
+        }
         /* If express, skip urgency → go straight to step 3 */
         if (isUrgent) {
           setTimeout(function() { _transitionFwd(_renderStep3); }, 200);
@@ -1030,6 +1085,10 @@
       var city = citySelect.value;
       if (!city) return;
       st.city = city;
+      /* 7C.10D.2: explicit select = trusted for session (same as chip tap) */
+      if (isUrgent) {
+        try { sessionStorage.setItem(TRUSTED_CITY_SESSION_KEY, city); } catch (_) {}
+      }
       cityChips.forEach(function(c) { c.classList.remove('is-selected'); });
       if (isUrgent) {
         setTimeout(function() { _transitionFwd(_renderStep3); }, 200);
@@ -1131,6 +1190,7 @@
     var hasPrefill = !!st.prefillPhone;
 
     _setProgress(3, 3);
+    if (isEmergency) _updateLaneStep(3);
 
     var rafiMsg3;
     if (hasPrefill) {
@@ -1144,6 +1204,11 @@
     var body = _q('#fxrf4-body');
 
     var elements = [];
+
+    /* 7C.10D.2: Emergency step 3 — supporting sub-text (above phone input) */
+    if (isEmergency) {
+      elements.push(_h('p', { cls: 'fxrf4-step3-emergency-sub', txt: MSG.step3EmergencySub }));
+    }
 
     if (hasPrefill && !st._phoneUnlocked) {
       /* Returning user — show masked number + "Ce n'est pas mon numéro" */
@@ -1166,7 +1231,7 @@
 
       /* Primary: confirm with pre-filled number */
       var confirmBtn = _primaryBtn(
-        isEmergency ? 'Trouver un artisan maintenant' : 'Confirmer et envoyer \u2192',
+        isEmergency ? '⚡ Transmettre mon urgence' : 'Confirmer et envoyer \u2192',
         isEmergency,
         function(btn) { _submitRequest(btn); }
       );
@@ -1230,7 +1295,7 @@
         setTimeout(_applyKeyboardInset, 300);
       });
 
-      var submitLabel = isEmergency ? 'Trouver un artisan maintenant' : 'Envoyer ma demande';
+      var submitLabel = isEmergency ? '⚡ Transmettre mon urgence' : 'Envoyer ma demande';
       var submitBtn = _primaryBtn(submitLabel, isEmergency, function(btn) {
         var val = phoneInput.value.trim();
         if (!_validPhone(val)) {
@@ -1279,7 +1344,7 @@
       tracking_ref: (saved && saved.tracking_ref) || '',
       urgency:      'now',
       mode:         'emergency',
-      source:       'fxrf4-v5b',
+      source:       'fxrf4-v5c',
     };
     return fetch('/api/urgent-request', {
       method:  'POST',
@@ -1302,7 +1367,7 @@
    * ────────────────────────────────────────────────────────── */
   function _renderRetry(btn, retryFn) {
     _setProgress(3, 3);
-    _rafiSpeak("Impossible d\u2019enregistrer la demande pour le moment.", false, true);
+    _rafiSpeak("Impossible de transmettre votre urgence pour le moment.", false, true);
 
     _setFoot();
     var body = _q('#fxrf4-body');
@@ -1311,7 +1376,7 @@
     var wrap = _h('div', { cls: 'fxrf4-retry-wrap', 'aria-live': 'polite' });
     wrap.appendChild(_h('p', {
       cls: 'fxrf4-retry-msg',
-      txt: "Votre situation et vos informations sont conserv\u00e9es."
+      txt: "Votre situation, ville et num\u00e9ro sont conserv\u00e9s."
     }));
 
     var retryBtn = _primaryBtn('R\u00e9essayer', true, function(rb) {
@@ -1345,7 +1410,7 @@
       /* F3: mode-aware label restore — emergency has different CTA text */
       var _failIsEmergency = st && st.mode === 'emergency';
       if (btn.parentNode) _btnRestore(btn,
-        _failIsEmergency ? 'Trouver un artisan maintenant' : 'Envoyer ma demande',
+        _failIsEmergency ? '⚡ Transmettre mon urgence' : 'Envoyer ma demande',
         _failIsEmergency
       );
       else _renderStep3();
@@ -1420,6 +1485,14 @@
     if (!body) return;
 
     var inter = _h('div', { id: 'fxrf4-interstitial', 'aria-live': 'polite', 'aria-atomic': 'true' });
+    /* 7C.10D.2: Emergency interstitial gets urgent-pulse class for CSS animation.
+     * Animation respects prefers-reduced-motion (CSS media query handles it). */
+    if (isEmergency) inter.classList.add('is-emergency-sending');
+
+    /* Emergency: add sending label above dots */
+    if (isEmergency) {
+      inter.appendChild(_h('p', { cls: 'fxrf4-inter-sending-label', txt: 'Envoi s\u00e9curis\u00e9 \u00e0 FIXEO' }));
+    }
 
     var dots = _h('div', { cls: 'fxrf4-inter-dots', 'aria-hidden': 'true' });
     [1,2,3].forEach(function() { dots.appendChild(_h('span')); });
@@ -1504,7 +1577,28 @@
     }));
 
     /* Tracking ref */
-    if (saved && saved.tracking_ref) {
+    /* 7C.10D.2: In emergency mode show factual recap block (city + phone masked + ref).
+     * In standard mode: just the tracking ref as before. */
+    if (isEmergency && saved) {
+      var recapBlock = _h('div', { cls: 'fxrf4-success-recap' });
+      if (saved.city) {
+        var recapCity = _h('p', { cls: 'fxrf4-recap-line' });
+        recapCity.innerHTML = '<span class="fxrf4-recap-icon">📍</span> ' + saved.city;
+        recapBlock.appendChild(recapCity);
+      }
+      if (saved.phone) {
+        var maskedPhone = _maskPhone(saved.phone);
+        var recapPhone = _h('p', { cls: 'fxrf4-recap-line' });
+        recapPhone.innerHTML = '<span class="fxrf4-recap-icon">📞</span> ' + maskedPhone;
+        recapBlock.appendChild(recapPhone);
+      }
+      if (saved.tracking_ref) {
+        var recapRef = _h('p', { cls: 'fxrf4-recap-line fxrf4-recap-ref' });
+        recapRef.innerHTML = 'R\u00e9f.\u00a0urgence\u00a0: <strong>' + saved.tracking_ref + '</strong>';
+        recapBlock.appendChild(recapRef);
+      }
+      if (recapBlock.childElementCount > 0) succ.appendChild(recapBlock);
+    } else if (saved && saved.tracking_ref) {
       var ref = _h('p', { cls: 'fxrf4-success-ref' });
       ref.innerHTML = 'R\u00e9f.\u00a0: <strong>' + saved.tracking_ref + '</strong>';
       succ.appendChild(ref);
@@ -1570,9 +1664,78 @@
     actions.appendChild(homeLink);
     foot.appendChild(actions);
 
+    /* ── 7C.10D.2: Optional post-ACK Estimator bridge ──────────────
+     * Shown ONLY after server-confirmed urgent persistence (data.ok=true).
+     * Hidden for 'autre' slug (not a valid Estimator métier).
+     * Closing Estimator: fxrf4 closes first (z-index 19000 > Estimator 1000),
+     * so we close fxrf4 before opening Estimator to ensure Estimator is visible.
+     * The urgent request is already server-saved — no double-submit risk.
+     * ─────────────────────────────────────────────────────────────── */
+    var isEstimatorEligible = isEmergency &&
+      ESTIMATOR_ELIGIBLE_SLUGS.indexOf(st.serviceSlug) >= 0 &&
+      typeof window.FixeoEstimatorV2 === 'object' &&
+      typeof window.FixeoEstimatorV2.open === 'function';
+
+    if (isEstimatorEligible) {
+      var bridgeWrap = _h('div', { cls: 'fxrf4-estimator-bridge', 'aria-label': 'Option prix FIXEO', role: 'region' });
+
+      var bridgeEyebrow = _h('p', { cls: 'fxrf4-bridge-eyebrow', txt: 'POUR GAGNER DU TEMPS' });
+      var bridgeTitle   = _h('p', { cls: 'fxrf4-bridge-title', txt: 'Voir si un Prix FIXEO peut \u00eatre \u00e9tabli' });
+      var bridgeCopy    = _h('p', { cls: 'fxrf4-bridge-copy',
+        txt: 'Votre demande urgente est d\u00e9j\u00e0 enregistr\u00e9e. Vous pouvez maintenant v\u00e9rifier si cette intervention est \u00e9ligible \u00e0 un Prix FIXEO.' });
+
+      var bridgeCTA = _h('button', {
+        cls: 'fxrf4-bridge-cta',
+        type: 'button',
+        txt: 'V\u00e9rifier un Prix FIXEO'
+      });
+      var bridgeSkip = _h('button', {
+        cls: 'fxrf4-bridge-skip',
+        type: 'button',
+        txt: 'Pas maintenant'
+      });
+
+      bridgeCTA.addEventListener('click', function() {
+        /* Build entry context from safe existing fields only.
+         * Fields: source, metier_hint, city_slug, urgency — all in _ALLOWED_ENTRY_FIELDS.
+         * NO service_code invented. NO price. NO amount.
+         * City: use TRUSTED_CITY_SESSION_KEY (written at city tap in emergency mode). */
+        var trustedCity = null;
+        try { trustedCity = sessionStorage.getItem(TRUSTED_CITY_SESSION_KEY) || null; } catch (_) {}
+
+        var entryCtx = {
+          source:      'urgent',
+          metier_hint: st.serviceSlug,
+          city_slug:   trustedCity,
+          urgency:     'urgent',
+        };
+
+        /* Close fxrf4 first (z-index 19000 > Estimator 1000 — must dismiss to see Estimator) */
+        close();
+
+        window.FixeoEstimatorV2.open(entryCtx).catch(function() {});
+      });
+
+      bridgeSkip.addEventListener('click', function() {
+        if (bridgeWrap.parentNode) bridgeWrap.parentNode.removeChild(bridgeWrap);
+      });
+
+      bridgeWrap.appendChild(bridgeEyebrow);
+      bridgeWrap.appendChild(bridgeTitle);
+      bridgeWrap.appendChild(bridgeCopy);
+      bridgeWrap.appendChild(bridgeCTA);
+      bridgeWrap.appendChild(bridgeSkip);
+
+      /* Append below the success card, above the footer */
+      var succEl = _q('#fxrf4-success');
+      if (succEl && succEl.parentNode) {
+        succEl.parentNode.appendChild(bridgeWrap);
+      }
+    }
+
     var head = _q('#fxrf4-head');
     if (head) {
-      console.log('[fxrf4-v5b] Success rendered. mode=' + (st.mode) +
+      console.log('[fxrf4-v5c] Success rendered. mode=' + (st.mode) +
                   ' Header children:', head.childElementCount);
     }
   }
@@ -1701,6 +1864,13 @@
     _readContext(_st);
     // 7C.9K.2: reset estimator guard on each fxrf4 session open
     _fxrf4EstimatorLaunched = false;
+
+    // 7C.10D.2: tag root element for emergency lane CSS
+    if (mode === 'emergency') {
+      _root.setAttribute('data-fxrf4-mode', 'emergency');
+    } else {
+      _root.removeAttribute('data-fxrf4-mode');
+    }
 
     _isOpen = true;
 
@@ -1858,7 +2028,7 @@
   ══════════════════════════════════════════════════════════ */
 
   window.FixeoRequestFlowV4 = {
-    VERSION: 'fxrf4-v5b',
+    VERSION: 'fxrf4-v5c',
     open:    open,
     close:   close
   };
