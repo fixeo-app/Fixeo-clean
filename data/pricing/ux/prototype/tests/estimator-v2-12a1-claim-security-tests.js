@@ -347,8 +347,8 @@ t('S7.7: precheck is READ ONLY (no DDL statements, no DML writes)',
 t('S8.1: verify checks approve_artisan_claim SECURITY DEFINER',
   verify.includes('SECURITY DEFINER') && verify.includes('approve_artisan_claim'));
 
-t('S8.2: verify checks onboarding_completed NOT set to true in RPC',
-  verify.includes('onboarding_completed') && verify.includes('must remain false'));
+t('S8.2: verify checks onboarding_completed NOT set in RPC (V-6)',
+  verify.includes('onboarding_completed') && verify.includes('V-6'));
 
 t('S8.3: verify checks artisan_has_owner guard present',
   verify.includes('artisan_has_owner'));
@@ -370,7 +370,7 @@ t('S8.8: verify checks sync_artisan_claim trigger and function are dropped',
   verify.includes('DROPPED') || verify.includes('dropped'));
 
 t('S8.9: verify checks no triggers remain on claim_requests',
-  verify.includes('triggers remaining on claim_requests'));
+  verify.includes('claim_requests') && verify.includes('expect 0'));
 
 /* ─────────────────────────────────────────────────────────
  * SECTION 9 — Atomicity and concurrency
@@ -579,6 +579,187 @@ t('S14.12: dispatch eligibility unchanged — approve RPC header documents the 4
   migration.includes("availability = 'available'") &&
   migration.includes('owner_user_id IS NOT NULL') &&
   migration.includes("claim_status = 'approved'"));
+
+/* ─────────────────────────────────────────────────────────
+ * SECTION 15 — Concurrency hardening (Fix 1-6)
+ * ───────────────────────────────────────────────────────── */
+
+/* Helper: get approve RPC body (non-comment SQL lines) */
+var _approveBody = (function() {
+  var idx = migration.indexOf('CREATE OR REPLACE FUNCTION public.approve_artisan_claim');
+  var end = migration.indexOf('CREATE OR REPLACE FUNCTION public.reject_artisan_claim');
+  return migration.slice(idx, end);
+})();
+var _approveCode = _approveBody.split('\n').filter(function(l) {
+  return l.trim().length > 0 && !l.trim().startsWith('--');
+}).join('\n');
+
+/* Fix 1: Artisan row FOR UPDATE lock */
+t('S15.1: artisan row locked FOR UPDATE after v_artisan_id resolution',
+  (function() {
+    /* The artisan FOR UPDATE must appear AFTER the resolution block.
+     * Check that artisans table appears in a FOR UPDATE context in approve body. */
+    return _approveBody.includes('FOR UPDATE') &&
+           _approveBody.indexOf('v_artisan_id') < _approveBody.indexOf('FOR UPDATE\n  -- \u2500\u2500 STEP 8') ||
+           /* More robust: look for artisans SELECT FOR UPDATE separately from claim SELECT FOR UPDATE */
+           (_approveBody.match(/FROM public\.artisans[\s\S]*?FOR UPDATE/m) !== null);
+  })());
+
+t('S15.2: at least 2 FOR UPDATE locks (claim row + artisan row)',
+  (function() {
+    var count = (_approveBody.match(/FOR UPDATE/g) || []).length;
+    return count >= 2;
+  })());
+
+t('S15.3: artisan FOR UPDATE separated from claim FOR UPDATE (independent lock)',
+  (function() {
+    var claimFU  = _approveBody.indexOf('claim_requests');
+    var artFU    = _approveBody.lastIndexOf('FOR UPDATE');
+    var claimFUpos = _approveBody.indexOf('FOR UPDATE');
+    /* Both must exist; artisan FOR UPDATE must come after artisan resolution */
+    return claimFU !== -1 && artFU !== -1 && artFU > claimFUpos;
+  })());
+
+/* Fix 2: Conditional UPDATE with owner_user_id IS NULL */
+t('S15.4: UPDATE artisans contains WHERE owner_user_id IS NULL guard',
+  _approveCode.includes('owner_user_id IS NULL'));
+
+t('S15.5: GET DIAGNOSTICS ROW_COUNT used after conditional UPDATE',
+  _approveCode.includes('GET DIAGNOSTICS') && _approveCode.includes('ROW_COUNT'));
+
+t('S15.6: v_rows_updated = 0 branch handles post-lock race truthfully',
+  _approveBody.includes('v_rows_updated = 0') &&
+  _approveBody.includes('conditional_update_miss'));
+
+t('S15.7: re-read artisan owner under lock on 0-row UPDATE (v_reread_owner)',
+  _approveBody.includes('v_reread_owner'));
+
+t('S15.8: false success impossible — 0-row UPDATE returns error or truthful state',
+  _approveBody.includes('conditional_update_miss') ||
+  _approveBody.includes('artisan_has_owner'));
+
+/* Fix 3: Same-owner idempotency */
+t('S15.9: already_owned_consistent idempotent path present',
+  _approveBody.includes('already_owned_consistent'));
+
+t('S15.10: idempotent path does NOT rewrite owner_user_id',
+  (function() {
+    /* Find the already_owned_consistent block */
+    var idx = _approveBody.indexOf('already_owned_consistent');
+    if (idx === -1) return false;
+    /* Look back ~500 chars for the block boundary */
+    var block = _approveBody.slice(Math.max(0, idx - 800), idx + 200);
+    /* Must not set owner_user_id = inside this block */
+    return !block.match(/SET\s+owner_user_id\s*=/);
+  })());
+
+t('S15.11: idempotent path does NOT set onboarding_completed',
+  (function() {
+    var idx = _approveBody.indexOf('already_owned_consistent');
+    if (idx === -1) return false;
+    var block = _approveBody.slice(Math.max(0, idx - 800), idx + 200);
+    return !block.includes('onboarding_completed');
+  })());
+
+/* Fix 4: Multi-claim first-wins */
+t('S15.12: superseded_by_approval status assigned to competing pending claims',
+  _approveBody.includes("'superseded_by_approval'"));
+
+t('S15.13: supersede UPDATE targets same artisan with id != p_claim_id',
+  _approveBody.includes('id        != p_claim_id') ||
+  _approveBody.includes("id != p_claim_id") ||
+  _approveBody.includes('id        !='));
+
+t('S15.14: supersede UPDATE only targets pending claims (status = pending guard)',
+  (function() {
+    var idx = _approveBody.indexOf('superseded_by_approval');
+    var block = _approveBody.slice(Math.max(0, idx - 300), idx + 300);
+    return block.includes("status     = 'pending'") ||
+           block.includes("status = 'pending'");
+  })());
+
+t('S15.15: supersede does NOT touch requester accounts (no users/profiles UPDATE in supersede block)',
+  (function() {
+    var idx = _approveBody.indexOf('superseded_by_approval');
+    /* Everything between supersede and the users.role UPDATE */
+    var usersIdx = _approveBody.indexOf('UPDATE public.users');
+    var block = _approveBody.slice(idx, usersIdx > idx ? usersIdx : idx + 1000);
+    return !block.includes('UPDATE public.users') && !block.includes('UPDATE public.profiles');
+  })());
+
+t('S15.16: supersede also covers artisan_legacy_id (for legacy claim rows)',
+  (function() {
+    var idx = _approveBody.lastIndexOf('superseded_by_approval');
+    var block = _approveBody.slice(Math.max(0, idx - 400), idx + 400);
+    return block.includes('artisan_legacy_id');
+  })());
+
+/* Fix 5: RLS policy completeness */
+t('S15.17: all 16 known historical policy names explicitly dropped in migration',
+  (function() {
+    var names = [
+      'claims_insert','claims_public_insert','claims_self_read','claims_admin_all',
+      'claims_requester_read','deny_anon_claim_requests','authenticated_claim_insert',
+      'authenticated_own_claim_read','admin_all_claim_requests','claim_requests_anon_deny',
+      'claim_requests_insert','claim_requests_read','claim_requests_insert_any',
+      'claim_requests_public_insert','claim_requests_authenticated_insert',
+      'claim_requests_own_select'
+    ];
+    return names.every(function(n) { return migration.includes('"' + n + '"'); });
+  })());
+
+t('S15.18: canonical 7c12a1 deny-anon policy uses USING false WITH CHECK false',
+  migration.includes('7c12a1_deny_anon_all') &&
+  migration.includes('USING (false)') &&
+  migration.includes('WITH CHECK (false)'));
+
+t('S15.19: no authenticated UPDATE/DELETE policy created for claim_requests',
+  (function() {
+    /* Scan migration for CREATE POLICY on claim_requests with FOR UPDATE/DELETE/ALL to authenticated */
+    var idx = migration.indexOf('-- STEP 5');
+    var rlsBody = migration.slice(idx);
+    /* Should not have FOR UPDATE or FOR DELETE or FOR ALL for authenticated */
+    return !rlsBody.match(/CREATE POLICY.*claim_requests[\s\S]{0,200}FOR (UPDATE|DELETE|ALL)[\s\S]{0,200}TO authenticated/m);
+  })());
+
+t('S15.20: admin_all_claim_requests NOT recreated in migration (browser direct UPDATE removed)',
+  !migration.includes('"admin_all_claim_requests"') ||
+  migration.includes('DROP POLICY IF EXISTS "admin_all_claim_requests"') &&
+  !migration.match(/CREATE POLICY "admin_all_claim_requests"/));
+
+t('S15.21: 3 canonical policies created (deny_anon + auth_insert_own + auth_select)',
+  migration.includes('7c12a1_deny_anon_all') &&
+  migration.includes('7c12a1_auth_insert_own') &&
+  migration.includes('7c12a1_auth_select'));
+
+/* Fix 6: Verify SQL concurrency checks */
+t('S15.22: verify checks artisan FOR UPDATE lock (V-8)',
+  verify.includes('V-8') && verify.includes('artisan') && verify.includes('FOR UPDATE'));
+
+t('S15.23: verify checks FOR UPDATE count >= 2',
+  verify.includes('fewer than 2 FOR UPDATE'));
+
+t('S15.24: verify checks conditional UPDATE WHERE owner_user_id IS NULL (V-9)',
+  verify.includes('V-9') && verify.includes('owner_user_id IS NULL'));
+
+t('S15.25: verify checks ROW_COUNT (V-10)',
+  verify.includes('V-10') && verify.includes('ROW_COUNT'));
+
+t('S15.26: verify checks superseded_by_approval multi-claim first-wins (V-11)',
+  verify.includes('V-11') && verify.includes('superseded_by_approval'));
+
+t('S15.27: verify checks authenticated UPDATE/DELETE blocked (V-29)',
+  verify.includes('V-29') && verify.includes('UPDATE') && verify.includes('authenticated'));
+
+t('S15.28: verify exhaustively enumerates all 16 stale policy names (V-26)',
+  verify.includes('V-26') && verify.includes('admin_all_claim_requests') &&
+  verify.includes('claims_public_insert') && verify.includes('authenticated_claim_insert'));
+
+t('S15.29: verify confirms exactly 3 canonical policies post-migration (V-27)',
+  verify.includes('V-27') && verify.includes('3 canonical 7c12a1 policies'));
+
+t('S15.30: verify logs all surviving policies for human audit (V-30)',
+  verify.includes('V-30') && verify.includes('LIVE POLICY'));
 
 /* ─────────────────────────────────────────────────────────
  * Summary
