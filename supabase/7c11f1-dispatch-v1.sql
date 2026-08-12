@@ -1,7 +1,7 @@
 -- ════════════════════════════════════════════════════════════
 -- 7C.11F.1 — Real Dispatch Engine V1 Core RPC
 -- supabase/7c11f1-dispatch-v1.sql
--- Revision: 7C.11F.1B — agreed_price nullability + eligibility hardening
+-- Revision: 7C.11F.1C — normalization + empty-string safety
 --
 -- Creates ONE server-authoritative RPC:
 --   public.dispatch_request_v1(p_request_id uuid)
@@ -32,56 +32,74 @@
 --   4. availability = 'available'  — CHECK: ('available','busy','unavailable')
 --   (completed_missions is NOT a DB column — not used. review_count/rating are used.)
 --
--- ELIGIBILITY GATES — 11F.1A HARDENING:
---   Service mismatch (score=0) is an ELIMINATION, not merely a penalty.
---     If the request has a category and the artisan's service_category
---     produces a service score of 0 (no match, no substring), the artisan
---     is EXCLUDED from the offer — regardless of trust/activity scores.
---   Artisans with blank/null service_category receive partial neutral credit
---     (score=18) only when no service category is recorded in the schema.
---     This preserves existing "uncategorized" artisan semantics from
---     fixeo-dispatch-engine.js (neutral 50 for no-category).
---   City score = 0 (no city relation) is also an ELIMINATION when the
---     request has an explicit city. An artisan in an unrelated city/zone
---     with no national coverage must not receive the offer purely on
---     trust/activity scores.
---   Exception: if request has no city (v_sr_city blank/null), city
---     filtering is suspended — any artisan may serve an uncitied request.
+-- NORMALIZATION CONTRACT (7C.11F.1C):
+--   All category and city strings are normalized via:
+--     translate(lower(COALESCE(value, '')), 'éèêëàâäôöùûüïîç', 'eeeeaaaoouuuiic')
+--   lower() runs first — no uppercase chars remain for translate().
+--   The 15-char source/target are a verified one-to-one mapping:
+--     é è ê ë → e
+--     à â ä   → a
+--     ô ö     → o
+--     ù û ü   → u
+--     ï î     → i
+--     ç       → c
+--   Applied identically to: req_cat, req_city, art_cat, art_city, art_zone.
+--
+-- EMPTY-STRING MATCHING SAFETY (7C.11F.1C):
+--   PostgreSQL: position('' IN 'anything') = 1 > 0 (empty string matches anywhere).
+--   Service branch:
+--     request blank  → neutral score 18 (no category, all artisans eligible)
+--     artisan blank  → CONTINUE (blank artisan cannot serve categorized request)
+--     exact match    → score 35
+--     substring      → score 25 (only after both sides proven non-empty)
+--     mismatch       → CONTINUE (elimination)
+--   City branch:
+--     request blank  → neutral score 15
+--     artisan city exact (non-empty guard in place) → score 30
+--     artisan city substring (non-empty guard) → score 28
+--     work_zone covers request city → score 24 (zone may be non-empty)
+--     proximity group cluster → score 18
+--     national/all-Morocco in work_zone → score 6
+--     none of the above → CONTINUE (elimination when request city known)
+--
+-- ELIGIBILITY GATES — 11F.1A + 11F.1C:
+--   Service mismatch and blank-artisan-service: ELIMINATION (CONTINUE)
+--   City unrelated and blank-artisan-city without zone/national: ELIMINATION
+--   Trust/activity scores are NEVER consulted for eliminated candidates.
 --
 -- SEARCH_PATH SAFETY:
---   unaccent() is NOT confirmed in the live schema (only uuid-ossp).
---   Using unaccent() in a SET search_path='' context would either fail
---   (function not found with empty path) or require public.unaccent().
---   11F.1A removes unaccent() entirely. Normalization is done with:
---     lower() — pg_catalog function, always available with empty search_path
---     Manual accent strip via translate() — no extension dependency
---   This is safe and deterministic.
+--   translate() and lower() are pg_catalog functions — safe with empty path.
+--   unaccent() NOT used (not confirmed in live schema; not pg_catalog).
 --
 -- PRIOR-OFFER EXCLUSION:
---   Artisans already having any mission row for this request are excluded.
---   Comparison: m.request_id = v_request_id_text (TEXT/TEXT — no cast).
---   Prevents re-offering to declined/expired artisans.
+--   m.request_id = v_request_id_text (TEXT/TEXT — no cast needed).
 --
 -- RANKING ALGORITHM (weights sum to 100):
---   service match   weight 35: exact=35, substring=25, no-cat=18, mismatch=ELIMINATED
+--   service match   weight 35: exact=35, substring=25, no-cat=18, else=ELIMINATED
 --   city match      weight 30: exact=30, substring=28, work_zone=24,
---                              no-city=15, proximity-group=18, national=6, other=ELIMINATED
+--                              no-city=15, proximity-group=18, national=6, else=ELIMINATED
 --   trust score     weight 20: review_count tiers + rating tiers; clamp 0–20
 --   activity score  weight 15: updated_at recency tiers; clamp 0–15
 --   Tie-breaker: artisan.id ASC (deterministic, no invented metric)
 --
 -- CONCURRENCY:
---   SELECT ... FOR UPDATE on service_requests row serializes concurrent calls.
---   Status is read UNDER the lock — authoritative.
---   23505 unique_violation on INSERT → read existing offered mission.
---   23505 handler verifies actual offered row exists before returning ok:true.
+--   SELECT ... FOR UPDATE on service_requests serializes concurrent calls.
+--   Status is read UNDER the lock — authoritative post-lock state.
+--   23505 unique_violation → read existing offered mission; ok:true ONLY if row found.
 --
 -- NO-CANDIDATE:
 --   Returns ok:false, reason:'no_candidate'
 --   Does NOT set service_requests.status='no_match' in V1.
 --
+-- MIGRATION ATOMICITY (7C.11F.1C):
+--   Entire migration (Step 0 + CREATE FUNCTION + REVOKE/GRANT) is wrapped
+--   in BEGIN/COMMIT. If any statement fails, the transaction rolls back and
+--   agreed_price nullability is NOT left in a partially changed state.
+--
 -- Run 7c11f1-dispatch-v1-precheck.sql first.
 -- ════════════════════════════════════════════════════════════
+
+BEGIN;
 
 -- ════════════════════════════════════════════════════════════
 -- STEP 0 — agreed_price nullability contract remediation
@@ -106,11 +124,11 @@
 --   - No existing row is deleted or updated.
 --   - No DEFAULT is added (NULL is explicit — no silent data change).
 --   - The agreed_price CHECK constraint (>= 0 if present) is preserved.
---     PostgreSQL CHECK constraints: NULL does NOT violate a CHECK (SQL standard).
+--     PostgreSQL CHECK: NULL does NOT violate a CHECK (SQL standard).
 --     So agreed_price=NULL satisfies CHECK (agreed_price >= 0).
 --   - Legacy code writing agreed_price=0 continues to work unchanged.
 --   - Admin COD process writing a real price continues to work unchanged.
---   - This is idempotent: if agreed_price is already nullable, it is a no-op.
+--   - Idempotent: if agreed_price is already nullable, this is a no-op.
 -- ════════════════════════════════════════════════════════════
 
 DO $$
@@ -170,9 +188,10 @@ DECLARE
   v_best_artisan_id   uuid;
 
   -- Normalized strings for comparison
-  -- NOTE: lower() is in pg_catalog — safe with SET search_path=''.
-  -- unaccent() requires extension in search_path — NOT used here.
-  -- Normalization uses lower() + translate() for common French accents only.
+  -- Normalization: translate(lower(COALESCE(value,'')), 'éèêëàâäôöùûüïîç', 'eeeeaaaoouuuiic')
+  -- lower() runs first — no uppercase remains for translate().
+  -- 15-char verified one-to-one mapping (7C.11F.1C).
+  -- translate() and lower() are pg_catalog — safe with SET search_path=''.
   v_req_cat_norm      text;
   v_req_city_norm     text;
   v_art_cat_norm      text;
@@ -261,17 +280,15 @@ BEGIN
   END IF;
 
   -- ── STEP 5: Normalize request category and city ───────────
-  -- lower() is a pg_catalog function — safe with SET search_path=''.
-  -- translate() is also pg_catalog — safe.
-  -- unaccent() requires an extension and is NOT used here.
-  -- French accent normalization via translate() covers the common cases
-  -- present in Moroccan city/service names (é→e, è→e, ê→e, à→a, â→a, ô→o, ù→u, û→u).
-  v_req_cat_norm  := lower(translate(COALESCE(v_sr_category, ''),
-    'éèêëàâäôöùûüïîçÉÈÊËÀÂÄÔÖÙÛÜÏÎÇ',
-    'eeeeannnouuuiicEEEEAAAAOOUUUIIC'));
-  v_req_city_norm := lower(translate(COALESCE(v_sr_city, ''),
-    'éèêëàâäôöùûüïîçÉÈÊËÀÂÄÔÖÙÛÜÏÎÇ',
-    'eeeeannnouuuiicEEEEAAAAOOUUUIIC'));
+  -- Canonical normalization: translate(lower(COALESCE(value,'')), src15, dst15)
+  -- lower() first → uppercase eliminated before translate() runs.
+  -- 15-char verified one-to-one French accent map.
+  v_req_cat_norm  := translate(lower(COALESCE(v_sr_category, '')),
+                               'éèêëàâäôöùûüïîç',
+                               'eeeeaaaoouuuiic');
+  v_req_city_norm := translate(lower(COALESCE(v_sr_city, '')),
+                               'éèêëàâäôöùûüïîç',
+                               'eeeeaaaoouuuiic');
 
   -- ── STEP 6: Candidate selection and scoring ───────────────
   -- Eligibility gates enforced in WHERE clause.
@@ -279,10 +296,11 @@ BEGIN
   -- Score computed per candidate; highest wins.
   -- Tie-breaker: artisan.id ASC (deterministic — no invented metric).
   --
-  -- ELIMINATION GATES (11F.1A hardening):
-  --   Service score = 0  AND request has a category → artisan SKIPPED (CONTINUE)
-  --   City score = 0     AND request has a city     → artisan SKIPPED (CONTINUE)
-  -- These are not ranking penalties — they are eligibility rejections.
+  -- ELIMINATION GATES (11F.1A + 11F.1C):
+  --   Blank artisan service against categorized request → CONTINUE
+  --   Explicit service mismatch → CONTINUE
+  --   Blank artisan city without zone/national coverage → CONTINUE
+  --   Empty-string substring trap: guards placed BEFORE position() calls.
 
   FOR v_artisan_id, v_artisan_city, v_artisan_cat, v_artisan_zone,
       v_artisan_rc, v_artisan_rat, v_artisan_updated IN
@@ -306,50 +324,78 @@ BEGIN
         WHERE  m.request_id         = v_request_id_text
           AND  m.artisan_profile_id = a.id
       )
-    ORDER BY a.id ASC   -- stable base order; fine-grained by score comparison below
+    ORDER BY a.id ASC   -- stable base order; fine-grained by score below
 
   LOOP
 
+    -- ── NORMALIZE ARTISAN STRINGS ────────────────────────────
+    v_art_cat_norm  := translate(lower(COALESCE(v_artisan_cat, '')),
+                                 'éèêëàâäôöùûüïîç',
+                                 'eeeeaaaoouuuiic');
+    v_art_city_norm := translate(lower(COALESCE(v_artisan_city, '')),
+                                 'éèêëàâäôöùûüïîç',
+                                 'eeeeaaaoouuuiic');
+    v_art_zone_norm := translate(lower(COALESCE(v_artisan_zone, '')),
+                                 'éèêëàâäôöùûüïîç',
+                                 'eeeeaaaoouuuiic');
+
     -- ── SERVICE MATCH (weight 35) ────────────────────────────
-    v_art_cat_norm := lower(translate(COALESCE(v_artisan_cat, ''),
-      'éèêëàâäôöùûüïîçÉÈÊËÀÂÄÔÖÙÛÜÏÎÇ',
-      'eeeeannnouuuiicEEEEAAAAOOUUUIIC'));
+    -- Empty-string safety: position('' IN 'anything') = 1 in PostgreSQL.
+    -- Guard artisan blank before substring check.
+    --
+    -- Policy:
+    --   req blank   → neutral 18 (request has no category — all eligible)
+    --   art blank   → CONTINUE (artisan has no category for a categorized request)
+    --   exact       → 35
+    --   substring   → 25 (both sides proven non-empty by this point)
+    --   mismatch    → CONTINUE (elimination)
 
     IF v_req_cat_norm = '' THEN
-      -- Request has no category — all artisans eligible, neutral credit
-      v_svc_score := 18;
+      v_svc_score := 18;                          -- request uncategorized — neutral
+
+    ELSIF v_art_cat_norm = '' THEN
+      CONTINUE;                                   -- artisan blank vs categorized request
+
     ELSIF v_art_cat_norm = v_req_cat_norm THEN
-      v_svc_score := 35;                           -- exact match
+      v_svc_score := 35;                          -- exact match
+
     ELSIF position(v_req_cat_norm IN v_art_cat_norm) > 0
        OR position(v_art_cat_norm IN v_req_cat_norm) > 0 THEN
-      v_svc_score := 25;                           -- substring overlap
+      v_svc_score := 25;                          -- substring (both sides non-empty)
+
     ELSE
-      -- ELIMINATION: explicit service mismatch when request has a category.
-      -- Trust/activity scores are irrelevant. Skip this artisan.
-      CONTINUE;
+      CONTINUE;                                   -- explicit mismatch — elimination
     END IF;
 
     -- ── CITY MATCH (weight 30) ──────────────────────────────
-    v_art_city_norm := lower(translate(COALESCE(v_artisan_city, ''),
-      'éèêëàâäôöùûüïîçÉÈÊËÀÂÄÔÖÙÛÜÏÎÇ',
-      'eeeeannnouuuiicEEEEAAAAOOUUUIIC'));
-    v_art_zone_norm := lower(translate(COALESCE(v_artisan_zone, ''),
-      'éèêëàâäôöùûüïîçÉÈÊËÀÂÄÔÖÙÛÜÏÎÇ',
-      'eeeeannnouuuiicEEEEAAAAOOUUUIIC'));
+    -- Empty-string safety: artisan city blank must never produce a false
+    -- substring hit. Non-empty guard applied before position() calls.
+    -- work_zone and national fallbacks remain valid even when city is blank.
+    --
+    -- Policy:
+    --   req blank       → neutral 15 (any artisan may serve uncitied request)
+    --   art exact       → 30 (non-empty guard in place)
+    --   art substring   → 28 (non-empty guard in place)
+    --   work_zone match → 24 (zone may legitimately cover request city)
+    --   proximity group → 18
+    --   national        → 6
+    --   none            → CONTINUE (when request city is known)
 
     IF v_req_city_norm = '' THEN
-      -- Request has no city — any artisan eligible, neutral credit
-      v_city_score := 15;
+      v_city_score := 15;                         -- request has no city — neutral
 
-    ELSIF v_art_city_norm = v_req_city_norm THEN
-      v_city_score := 30;                          -- exact match
+    ELSIF v_art_city_norm <> ''
+      AND v_art_city_norm = v_req_city_norm THEN
+      v_city_score := 30;                         -- exact city match
 
-    ELSIF position(v_req_city_norm IN v_art_city_norm) > 0
-       OR position(v_art_city_norm IN v_req_city_norm) > 0 THEN
-      v_city_score := 28;                          -- substring (Tanger / Tanger-Assilah)
+    ELSIF v_art_city_norm <> ''
+      AND (position(v_req_city_norm IN v_art_city_norm) > 0
+        OR position(v_art_city_norm IN v_req_city_norm) > 0) THEN
+      v_city_score := 28;                         -- substring (Tanger / Tanger-Assilah)
 
-    ELSIF position(v_req_city_norm IN v_art_zone_norm) > 0 THEN
-      v_city_score := 24;                          -- work_zone explicitly covers request city
+    ELSIF v_art_zone_norm <> ''
+      AND position(v_req_city_norm IN v_art_zone_norm) > 0 THEN
+      v_city_score := 24;                         -- work_zone declares coverage
 
     ELSE
       -- Proximity group check — same Moroccan geographic cluster
@@ -357,17 +403,22 @@ BEGIN
       v_req_in_group := false;
       v_art_in_group := false;
 
-      FOREACH v_group IN ARRAY v_city_groups LOOP
-        v_req_in_group := position(v_req_city_norm IN v_group) > 0;
-        v_art_in_group := position(v_art_city_norm IN v_group) > 0;
-        IF v_req_in_group AND v_art_in_group THEN
-          v_city_score := 18;
-          EXIT;
-        END IF;
-      END LOOP;
+      -- Proximity group: artisan city must also be non-empty.
+      -- position('' IN group) = 1 in PostgreSQL — empty artisan city would
+      -- always match any group, producing a false proximity claim.
+      IF v_art_city_norm <> '' THEN
+        FOREACH v_group IN ARRAY v_city_groups LOOP
+          v_req_in_group := position(v_req_city_norm IN v_group) > 0;
+          v_art_in_group := position(v_art_city_norm IN v_group) > 0;
+          IF v_req_in_group AND v_art_in_group THEN
+            v_city_score := 18;
+            EXIT;
+          END IF;
+        END LOOP;
+      END IF;
 
       -- National/all-Morocco coverage declared in work_zone
-      IF v_city_score = 0 AND (
+      IF v_city_score = 0 AND v_art_zone_norm <> '' AND (
            position('national' IN v_art_zone_norm) > 0 OR
            position('maroc'    IN v_art_zone_norm) > 0 OR
            position('tout'     IN v_art_zone_norm) > 0
@@ -375,9 +426,7 @@ BEGIN
         v_city_score := 6;
       END IF;
 
-      -- ELIMINATION: if request has an explicit city and artisan has no
-      -- geographic relation (city_score still 0), skip this artisan.
-      -- Trust/activity scores cannot override geographic incompatibility.
+      -- ELIMINATION: request city known, artisan has no geographic relation.
       IF v_city_score = 0 THEN
         CONTINUE;
       END IF;
@@ -534,3 +583,5 @@ REVOKE EXECUTE ON FUNCTION public.dispatch_request_v1(uuid) FROM PUBLIC;
 REVOKE EXECUTE ON FUNCTION public.dispatch_request_v1(uuid) FROM anon;
 REVOKE EXECUTE ON FUNCTION public.dispatch_request_v1(uuid) FROM authenticated;
 GRANT  EXECUTE ON FUNCTION public.dispatch_request_v1(uuid) TO service_role;
+
+COMMIT;

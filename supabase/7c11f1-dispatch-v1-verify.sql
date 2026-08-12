@@ -211,6 +211,24 @@ BEGIN
   END IF;
   RAISE NOTICE 'V-24 PASS: 23505 handler verifies offered row before ok:true';
 
+  -- V-25: correct 15-char translate source string present (7C.11F.1C normalization)
+  IF v_def NOT ILIKE '%éèêëàâäôöùûüïîç%' THEN
+    RAISE EXCEPTION 'V-25 FAIL: dispatch_request_v1 missing correct 15-char translate source';
+  END IF;
+  RAISE NOTICE 'V-25 PASS: correct 15-char translate source present';
+
+  -- V-26: correct 15-char translate target string present
+  IF v_def NOT ILIKE '%eeeeaaaoouuuiic%' THEN
+    RAISE EXCEPTION 'V-26 FAIL: dispatch_request_v1 missing correct 15-char translate target';
+  END IF;
+  RAISE NOTICE 'V-26 PASS: correct 15-char translate target present';
+
+  -- V-27: empty-string artisan guard present (v_art_cat_norm = '' CONTINUE)
+  IF v_def NOT ILIKE '%v_art_cat_norm = ''''%' AND v_def NOT ILIKE "%v_art_cat_norm = ''%" THEN
+    RAISE EXCEPTION 'V-27 FAIL: dispatch_request_v1 missing empty artisan-category CONTINUE guard';
+  END IF;
+  RAISE NOTICE 'V-27 PASS: empty artisan-category guard present';
+
   RAISE NOTICE '══ 7C.11F.1 VERIFY COMPLETE ══';
 
 END $$;

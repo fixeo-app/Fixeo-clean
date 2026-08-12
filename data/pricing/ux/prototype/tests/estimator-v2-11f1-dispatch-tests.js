@@ -358,9 +358,18 @@ t('T67: rollback verifies 11C/11E RPCs intact', rollback.includes('claim_mission
  * ───────────────────────────────────────────────────────── */
 
 /* Pure JS simulation of the SQL scoring algorithm for truth-table verification */
+
+/* Canonical normalization — mirrors 7C.11F.1C translate(lower(...), src15, dst15)
+ * lower() first, then translate() for French accents.
+ * 15-char verified one-to-one map: éèêëàâäôöùûüïîç → eeeeaaaoouuuiic */
+var NORM_SRC = 'éèêëàâäôöùûüïîç';
+var NORM_DST = 'eeeeaaaoouuuiic';
 function norm(s) {
-  return (s || '').toLowerCase()
-    .normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+  var t = (s || '').toLowerCase();
+  for (var i = 0; i < NORM_SRC.length; i++) {
+    t = t.split(NORM_SRC[i]).join(NORM_DST[i]);
+  }
+  return t;
 }
 
 var CITY_GROUPS = [
@@ -374,26 +383,36 @@ var CITY_GROUPS = [
   'laayoune,dakhla'
 ];
 
+/* Service scoring with empty-string guards (7C.11F.1C).
+ * Returns null when artisan is ELIMINATED (CONTINUE in SQL). */
 function scoreService(artCat, reqCat) {
   var a = norm(artCat), r = norm(reqCat);
-  if (r === '') return 18;
-  if (a === r) return 35;
-  if (a.indexOf(r) >= 0 || r.indexOf(a) >= 0) return 25;
-  return 0;
+  if (r === '') return 18;                     // request uncategorized — neutral
+  if (a === '') return null;                   // ELIMINATED: blank artisan vs categorized request
+  if (a === r) return 35;                      // exact match
+  if (a.indexOf(r) >= 0 || r.indexOf(a) >= 0) return 25; // substring (both non-empty)
+  return null;                                 // ELIMINATED: mismatch
 }
 
+/* City scoring with empty-string guards (7C.11F.1C).
+ * Returns null when artisan is ELIMINATED.
+ * Proximity group check also requires artisan city to be non-empty — otherwise
+ * g.indexOf('') = 0 would always match, which is the empty-string substring trap. */
 function scoreCity(artCity, artZone, reqCity) {
   var ac = norm(artCity), az = norm(artZone), rc = norm(reqCity);
-  if (rc === '') return 15;
-  if (ac === rc) return 30;
-  if (ac.indexOf(rc) >= 0 || rc.indexOf(ac) >= 0) return 28;
-  if (az.indexOf(rc) >= 0) return 24;
-  for (var i = 0; i < CITY_GROUPS.length; i++) {
-    var g = CITY_GROUPS[i];
-    if (g.indexOf(rc) >= 0 && g.indexOf(ac) >= 0) return 18;
+  if (rc === '') return 15;                    // request has no city — neutral
+  if (ac !== '' && ac === rc) return 30;       // exact (non-empty guard)
+  if (ac !== '' && (ac.indexOf(rc) >= 0 || rc.indexOf(ac) >= 0)) return 28; // substring
+  if (az !== '' && az.indexOf(rc) >= 0) return 24; // work_zone covers request city
+  // Proximity group: artisan city must also be non-empty to avoid empty-string false match
+  if (ac !== '') {
+    for (var i = 0; i < CITY_GROUPS.length; i++) {
+      var g = CITY_GROUPS[i];
+      if (g.indexOf(rc) >= 0 && g.indexOf(ac) >= 0) return 18;
+    }
   }
-  if (az.indexOf('national') >= 0 || az.indexOf('maroc') >= 0 || az.indexOf('tout') >= 0) return 6;
-  return 0;
+  if (az !== '' && (az.indexOf('national') >= 0 || az.indexOf('maroc') >= 0 || az.indexOf('tout') >= 0)) return 6;
+  return null;                                 // ELIMINATED: no geographic relation
 }
 
 function scoreTrust(rc, rat) {
@@ -411,17 +430,20 @@ function scoreActivity(daysSince) {
   return 0;
 }
 
+/* Returns composite score, or null if artisan is eliminated by service or city gate */
 function totalScore(artCat, artCity, artZone, reqCat, reqCity, rc, rat, daysSince) {
-  return scoreService(artCat, reqCat) + scoreCity(artCity, artZone, reqCity) +
-         scoreTrust(rc, rat) + scoreActivity(daysSince);
+  var svc  = scoreService(artCat, reqCat);
+  var city = scoreCity(artCity, artZone, reqCity);
+  if (svc === null || city === null) return null; // eliminated
+  return svc + city + scoreTrust(rc, rat) + scoreActivity(daysSince);
 }
 
 /* T68: exact service + exact city = max service (35) + max city (30) */
 t('T68: exact match scores 35+30 for service+city',
   totalScore('plomberie', 'Casablanca', '', 'plomberie', 'Casablanca', 0, 0, 999) === 35 + 30 + 0 + 0);
 
-/* T69: service mismatch = 0 service score */
-t('T69: service mismatch = 0', scoreService('peinture', 'plomberie') === 0);
+/* T69: service mismatch → eliminated (null) */
+t('T69: service mismatch → eliminated (null)', scoreService('peinture', 'plomberie') === null);
 
 /* T70: no-category neutral = 18 */
 t('T70: no-category neutral = 18', scoreService('plomberie', '') === 18);
@@ -438,8 +460,8 @@ t('T73: proximity group match = 18', scoreCity('Mohammedia', '', 'Casablanca') =
 /* T74: national coverage = 6 */
 t('T74: national coverage = 6', scoreCity('Fès', 'national', 'Tanger') === 6);
 
-/* T75: different region, no coverage = 0 */
-t('T75: different region = 0', scoreCity('Tanger', '', 'Agadir') === 0);
+/* T75: different region, no coverage → eliminated (null) */
+t('T75: different region → eliminated (null)', scoreCity('Tanger', '', 'Agadir') === null);
 
 /* T76: work_zone covers city = 24 */
 t('T76: work_zone coverage = 24', scoreCity('Fès', 'Tanger Casablanca Rabat', 'Casablanca') === 24);
@@ -456,10 +478,9 @@ t('T79: activity 1 day = 15', scoreActivity(1) === 15);
 /* T80: activity stale artisan (>90 days) = 0 */
 t('T80: activity 91 days = 0', scoreActivity(91) === 0);
 
-/* T81: full-score artisan beats zero-score artisan */
-t('T81: high score beats low score',
-  totalScore('plomberie','Casablanca','',  'plomberie','Casablanca', 100, 4.8, 1) >
-  totalScore('peinture', 'Tanger',    '',  'plomberie','Casablanca', 0,   0,   999));
+/* T81: eligible high-score artisan beats eliminated artisan */
+t('T81: eliminated artisan cannot compete regardless of trust/activity',
+  totalScore('peinture', 'Tanger', '', 'plomberie', 'Casablanca', 100, 4.8, 1) === null);
 
 /* T82: exactly one offered mission per request in V1 */
 t('T82: V1 model — exactly one offer per request (SQL contract in precheck)',
@@ -504,68 +525,31 @@ t('T91: 23505 no-offered-row returns ok:false conflict', (function() {
   return after.includes("'conflict'") || (after.includes("'already_claimed'") && after.indexOf("'already_claimed'") > after.indexOf('v_new_mission_id IS NOT NULL'));
 })());
 
-/* T92: simulation — service mismatch eliminated regardless of trust/activity */
-(function() {
-  // Simulates the CONTINUE gate — mismatch artisan is skipped entirely
-  function wouldPass(artCat, reqCat) {
-    var a = (artCat||'').toLowerCase(), r = (reqCat||'').toLowerCase();
-    if (r === '') return true;           // no category — eligible
-    if (a === r) return true;            // exact
-    if (a.indexOf(r) >= 0 || r.indexOf(a) >= 0) return true; // substring
-    return false;                        // CONTINUE (eliminated)
-  }
-  t('T92a: mismatch peinture/plomberie → eliminated', !wouldPass('peinture','plomberie'));
-  t('T92b: exact plomberie/plomberie → eligible', wouldPass('plomberie','plomberie'));
-  t('T92c: no-category request → any artisan eligible', wouldPass('peinture',''));
-  t('T92d: substring clim/climatisation → eligible', wouldPass('climatisation','clim'));
-})();
+/* T92: simulation — service eligibility (7C.11F.1C semantics with empty-string guards) */
+/* Uses shared scoreService() which mirrors SQL CONTINUE logic exactly */
+t('T92a: mismatch peinture/plomberie → eliminated',  scoreService('peinture','plomberie') === null);
+t('T92b: exact plomberie/plomberie → score 35',       scoreService('plomberie','plomberie') === 35);
+t('T92c: no-category request → neutral 18',           scoreService('peinture','') === 18);
+t('T92d: substring clim/climatisation → score 25',    scoreService('climatisation','clim') === 25);
+t('T92e: blank artisan vs categorized → eliminated',  scoreService('','plomberie') === null);
+t('T92f: blank artisan vs blank request → neutral 18',scoreService('','') === 18);
 
-/* T93: simulation — city score=0 eliminated when request has city */
-(function() {
-  var CITY_GROUPS = [
-    'casablanca,mohammedia,mohammeddia,benslimane,el jadida',
-    'rabat,sale,temara,kenitra,khemisset',
-    'marrakech,safi,el kelaa des sraghna',
-    'fes,fez,meknes,ifrane,taza',
-    'agadir,tiznit,inezgane',
-    'tanger,tanger-assilah,tetouan,chefchaouen',
-    'oujda,berkane,nador',
-    'laayoune,dakhla'
-  ];
-  function cityScore(artCity, artZone, reqCity) {
-    var ac = (artCity||'').toLowerCase(), az = (artZone||'').toLowerCase(), rc = (reqCity||'').toLowerCase();
-    if (rc === '') return 15;
-    if (ac === rc) return 30;
-    if (ac.indexOf(rc) >= 0 || rc.indexOf(ac) >= 0) return 28;
-    if (az.indexOf(rc) >= 0) return 24;
-    for (var i = 0; i < CITY_GROUPS.length; i++) {
-      var g = CITY_GROUPS[i];
-      if (g.indexOf(rc) >= 0 && g.indexOf(ac) >= 0) return 18;
-    }
-    if (az.indexOf('national') >= 0 || az.indexOf('maroc') >= 0 || az.indexOf('tout') >= 0) return 6;
-    return 0;
-  }
-  function cityEligible(artCity, artZone, reqCity) {
-    var s = cityScore(artCity, artZone, reqCity);
-    // eliminated only when request has city and score=0
-    if ((reqCity||'') !== '' && s === 0) return false;
-    return true;
-  }
-  t('T93a: Agadir artisan for Casablanca request → eliminated (score=0)', !cityEligible('Agadir','','Casablanca'));
-  t('T93b: Mohammedia artisan for Casablanca → eligible (proximity)', cityEligible('Mohammedia','','Casablanca'));
-  t('T93c: national artisan for any city → eligible (score=6)', cityEligible('Oujda','national','Casablanca'));
-  t('T93d: no-city request → any artisan eligible', cityEligible('Agadir','',''));
-  t('T93e: exact city → eligible (score=30)', cityEligible('Casablanca','','Casablanca'));
-  t('T93f: Tanger for Agadir (diff group) → eliminated', !cityEligible('Tanger','','Agadir'));
-})();
+/* T93: simulation — city eligibility (7C.11F.1C semantics) */
+/* Uses shared scoreCity() which mirrors SQL CONTINUE logic exactly */
+t('T93a: Agadir vs Casablanca (diff group) → eliminated',     scoreCity('Agadir','','Casablanca') === null);
+t('T93b: Mohammedia vs Casablanca (proximity) → score 18',    scoreCity('Mohammedia','','Casablanca') === 18);
+t('T93c: national zone for any city → score 6',               scoreCity('Oujda','national','Casablanca') === 6);
+t('T93d: no-city request → neutral 15',                       scoreCity('Agadir','','') === 15);
+t('T93e: exact city Casablanca → score 30',                   scoreCity('Casablanca','','Casablanca') === 30);
+t('T93f: Tanger for Agadir (diff group) → eliminated',        scoreCity('Tanger','','Agadir') === null);
 
 /* T94: high trust/activity CANNOT save a service-mismatched artisan */
-t('T94: service mismatch is eliminatory — not a ranking penalty',
-  dispatch.includes('-- ELIMINATION: explicit service mismatch') && dispatch.includes('CONTINUE'));
+t('T94: service mismatch eliminatory — max trust+activity cannot overcome null',
+  totalScore('peinture','Casablanca','','plomberie','Casablanca', 100, 4.9, 1) === null);
 
 /* T95: high trust/activity CANNOT save a city-unrelated artisan */
-t('T95: city mismatch is eliminatory — not a ranking penalty',
-  dispatch.includes('-- ELIMINATION: if request has an explicit city') && dispatch.includes('CONTINUE'));
+t('T95: city mismatch eliminatory — max trust+activity cannot overcome null',
+  totalScore('plomberie','Tanger','','plomberie','Agadir', 100, 4.9, 1) === null);
 
 /* T96: request status re-evaluated under lock */
 t('T96: status read AFTER FOR UPDATE (under lock)',
@@ -687,6 +671,111 @@ t('T114: Step 0 forensic rationale documented in migration',
 /* T115: service_role only still intact after 11F.1B changes */
 t('T115: service_role GRANT still present after 11F.1B',
   dispatch.includes('GRANT  EXECUTE ON FUNCTION public.dispatch_request_v1(uuid) TO service_role'));
+
+/* ─────────────────────────────────────────────────────────
+ * SECTION 17 — 11F.1C: Normalization + Empty-String Safety
+ * ───────────────────────────────────────────────────────── */
+
+/* T116: migration has BEGIN/COMMIT (transaction atomicity) */
+t('T116: migration wrapped in BEGIN/COMMIT',
+  dispatch.includes('\nBEGIN;') && dispatch.includes('COMMIT;'));
+
+/* T117: rollback has BEGIN/COMMIT (transaction safety) */
+t('T117: rollback wrapped in BEGIN/COMMIT',
+  rollback.includes('\nBEGIN;') && rollback.includes('COMMIT;'));
+
+/* T118: correct 15-char translate source string in migration */
+t('T118: 15-char translate source in migration (éèêëàâäôöùûüïîç)',
+  dispatch.includes('éèêëàâäôöùûüïîç'));
+
+/* T119: correct 15-char translate target in migration */
+t('T119: 15-char translate target in migration (eeeeaaaoouuuiic)',
+  dispatch.includes('eeeeaaaoouuuiic'));
+
+/* T120: source and target have equal length 15 */
+t('T120: translate source and target are equal length 15', (function() {
+  var src = 'éèêëàâäôöùûüïîç';
+  var dst = 'eeeeaaaoouuuiic';
+  return src.length === 15 && dst.length === 15;
+})());
+
+/* T121: normalization verified — électricité → electricite */
+t('T121: norm("électricité") === "electricite"', norm('électricité') === 'electricite');
+
+/* T122: normalization verified — Fès → fes */
+t('T122: norm("Fès") === "fes"', norm('Fès') === 'fes');
+
+/* T123: normalization verified — FÈS (uppercase) → fes */
+t('T123: norm("FÈS") === "fes"', norm('FÈS') === 'fes');
+
+/* T124: normalization verified — Tétouan → tetouan */
+t('T124: norm("Tétouan") === "tetouan"', norm('Tétouan') === 'tetouan');
+
+/* T125: normalization verified — â maps to a (not n as in old mapping) */
+t('T125: norm("â") === "a" (not n — old mapping was corrupt)', norm('â') === 'a');
+
+/* T126: normalization verified — ô maps to o (not n as in old mapping) */
+t('T126: norm("ô") === "o" (not n — old mapping was corrupt)', norm('ô') === 'o');
+
+/* T127: normalization verified — ç → c */
+t('T127: norm("ç") === "c"', norm('ç') === 'c');
+
+/* T128: normalization verified — Casablanca (no accents) → casablanca (unchanged) */
+t('T128: norm("Casablanca") === "casablanca"', norm('Casablanca') === 'casablanca');
+
+/* T129: empty-string trap — PostgreSQL position('' IN 'anything') = 1 (documented).
+ * In JS: 'anything'.indexOf('') = 0, meaning '' matches at position 0.
+ * Guard: artisan blank must be caught BEFORE any indexOf/position() call. */
+t('T129: JS empty-string substring trap — "plomberie".indexOf("") = 0 (trap confirmed)',
+  'plomberie'.indexOf('') === 0);
+/* This test MUST pass: confirms '' matches inside any non-empty string in JS,
+ * mirroring PostgreSQL position('' IN 'plomberie') = 1 > 0. Guards are required. */
+
+/* T130: blank artisan category vs categorized request → eliminated */
+t('T130: blank artisan service vs categorized request → scoreService returns null',
+  scoreService('', 'plomberie') === null);
+
+/* T131: blank artisan city, no work_zone, vs known city → eliminated */
+t('T131: blank artisan city + no zone vs known city → scoreCity returns null',
+  scoreCity('', '', 'Casablanca') === null);
+
+/* T132: blank artisan city + valid work_zone covering city → eligible (score 24) */
+t('T132: blank artisan city + zone covering city → score 24',
+  scoreCity('', 'Casablanca region', 'Casablanca') === 24);
+
+/* T133: blank artisan city + national work_zone → eligible (score 6) */
+t('T133: blank artisan city + national zone → score 6',
+  scoreCity('', 'national', 'Casablanca') === 6);
+
+/* T134: blank artisan city + zone containing Maroc → eligible (score 6) */
+t('T134: blank artisan city + zone with maroc → score 6',
+  scoreCity('', 'tout le maroc', 'Agadir') === 6);
+
+/* T135: blank artisan city + zone with tout → eligible (score 6) */
+t('T135: blank artisan city + zone with tout → score 6',
+  scoreCity('', 'tout Maroc', 'Fes') === 6);
+
+/* T136: service mismatch + max trust/activity → still null (eliminatory) */
+t('T136: service mismatch + rating 4.9 + 100 reviews + 1 day = null (eliminated)',
+  totalScore('peinture','Casablanca','','plomberie','Casablanca', 100, 4.9, 1) === null);
+
+/* T137: city unrelated + max trust/activity → still null (eliminatory) */
+t('T137: city unrelated + rating 4.9 + 100 reviews + 1 day = null (eliminated)',
+  totalScore('plomberie','Tanger','','plomberie','Agadir', 100, 4.9, 1) === null);
+
+/* T138: verify SQL has empty artisan-category guard before substring */
+t('T138: SQL has ELSIF v_art_cat_norm = empty-string THEN CONTINUE guard',
+  dispatch.includes("ELSIF v_art_cat_norm = '' THEN") &&
+  dispatch.includes("CONTINUE;                                   -- artisan blank vs categorized request"));
+
+/* T139: verify SQL city branch uses non-empty guards before position() */
+t('T139: SQL city substring uses v_art_city_norm <> empty-string guard',
+  dispatch.includes("v_art_city_norm <> ''"));
+
+/* T140: verify normalization uses lower() first then translate() */
+t('T140: normalization order: translate(lower(COALESCE(...)))',
+  dispatch.includes("translate(lower(COALESCE(v_sr_category") ||
+  dispatch.includes("translate(lower(COALESCE(v_sr_city"));
 
 /* T83: no browser dispatch authority in SQL */
 not('T83: no browser trigger in SQL', dispatch.includes('supabase.createClient') || dispatch.includes('window.'));

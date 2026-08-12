@@ -1,63 +1,78 @@
 -- ════════════════════════════════════════════════════════════
 -- 7C.11F.1 — Dispatch V1 Rollback
 -- supabase/7c11f1-dispatch-v1-rollback.sql
--- Revision: 7C.11F.1B — includes Step 0 (agreed_price) rollback
+-- Revision: 7C.11F.1C — transaction-safe rollback
 --
 -- Drops ONLY 11F.1 objects.
 -- Does NOT touch 11C/11E RPCs, indexes, or columns.
 -- Does NOT drop missions_one_offer_per_request or other 11C indexes.
 --
+-- TRANSACTION ATOMICITY (7C.11F.1C):
+--   Wrapped in BEGIN/COMMIT so that:
+--   - dispatch RPC drop and agreed_price SET NOT NULL are atomic.
+--   - If SET NOT NULL fails (NULL rows exist), the entire rollback
+--     transaction aborts — the dispatch RPC is NOT left permanently dropped.
+--   - Either the full rollback succeeds, or the production state is unchanged.
+--
 -- STEP 0 ROLLBACK — agreed_price NOT NULL restore:
---   SAFETY CONSTRAINT: this step WILL FAIL if any mission row has
+--   SAFETY CONSTRAINT: SET NOT NULL will fail if any mission row has
 --   agreed_price IS NULL (i.e., any offered mission was created).
 --   If 11F.1 dispatch was activated and created NULL-priced offers,
 --   those rows must be manually resolved BEFORE running this rollback.
 --   DO NOT attempt to UPDATE agreed_price on real mission rows.
---   If null rows exist: HARD STOP — do not restore NOT NULL.
+--   If null rows exist: the transaction will abort (HARD STOP — no partial state).
 -- ════════════════════════════════════════════════════════════
 
--- ── STEP 1: Drop the 11F.1 dispatch RPC ──────────────────────────────
-DROP FUNCTION IF EXISTS public.dispatch_request_v1(uuid);
+BEGIN;
 
--- ── STEP 2: Rollback agreed_price NOT NULL (Step 0 reverse) ──────────
+-- ── STEP 1: Safety check — abort if NULL agreed_price rows exist ──────
 DO $$
 DECLARE
   v_null_count integer;
-  v_current_nullable text;
 BEGIN
-  -- Check current nullability
-  SELECT is_nullable INTO v_current_nullable
-  FROM information_schema.columns
-  WHERE table_schema = 'public' AND table_name = 'missions' AND column_name = 'agreed_price';
-
-  IF v_current_nullable = 'NO' THEN
-    RAISE NOTICE 'Step 0 rollback: agreed_price already NOT NULL — no action needed';
-    RETURN;
-  END IF;
-
-  -- SAFETY: count missions with NULL agreed_price
   SELECT COUNT(*) INTO v_null_count
   FROM public.missions
   WHERE agreed_price IS NULL;
 
   IF v_null_count > 0 THEN
-    -- HARD STOP: cannot restore NOT NULL while NULL rows exist.
-    -- This means dispatch was activated and created offered missions.
-    -- Manual ops resolution required before rollback.
+    -- HARD STOP: RAISE EXCEPTION aborts the entire BEGIN/COMMIT block.
+    -- The dispatch RPC will NOT be dropped, and SET NOT NULL will NOT run.
+    -- Production state is fully preserved.
     RAISE EXCEPTION
-      'Step 0 rollback HARD STOP: % mission row(s) have agreed_price IS NULL. '
-      'Cannot restore NOT NULL constraint without deleting/updating real mission data. '
+      'Rollback HARD STOP: % mission row(s) have agreed_price IS NULL. '
+      'Dispatch was activated and created offered missions. '
+      'Cannot restore NOT NULL without harming real mission data. '
       'Resolve NULL rows manually (ops decision) before retrying rollback. '
-      'DO NOT run UPDATE missions SET agreed_price=0 — that fabricates a price.',
+      'DO NOT run UPDATE missions SET agreed_price to work around this guard.',
       v_null_count;
   END IF;
 
-  -- Zero null rows — safe to restore NOT NULL
-  ALTER TABLE public.missions ALTER COLUMN agreed_price SET NOT NULL;
-  RAISE NOTICE 'Step 0 rollback: agreed_price NOT NULL restored (zero null rows confirmed)';
+  RAISE NOTICE 'Step 1: zero NULL agreed_price rows confirmed — safe to proceed';
 END $$;
 
--- ── STEP 3: Verify 11C/11E RPCs still present after rollback ─────────
+-- ── STEP 2: Drop the 11F.1 dispatch RPC ──────────────────────────────
+DROP FUNCTION IF EXISTS public.dispatch_request_v1(uuid);
+
+-- ── STEP 3: Restore agreed_price NOT NULL (Step 0 reverse) ───────────
+DO $$
+DECLARE
+  v_current_nullable text;
+BEGIN
+  SELECT is_nullable INTO v_current_nullable
+  FROM information_schema.columns
+  WHERE table_schema = 'public' AND table_name = 'missions' AND column_name = 'agreed_price';
+
+  IF v_current_nullable = 'NO' THEN
+    RAISE NOTICE 'Step 3: agreed_price already NOT NULL — no change needed';
+    RETURN;
+  END IF;
+
+  -- Zero null rows confirmed in Step 1 — safe to restore
+  ALTER TABLE public.missions ALTER COLUMN agreed_price SET NOT NULL;
+  RAISE NOTICE 'Step 3: agreed_price NOT NULL restored';
+END $$;
+
+-- ── STEP 4: Verify 11C/11E RPCs still present after rollback ─────────
 DO $$
 DECLARE v_count integer;
 BEGIN
@@ -69,7 +84,6 @@ BEGIN
                       'get_my_mission_offers');
   RAISE NOTICE 'Rollback complete. 11C/11E RPCs remaining: % (expect 6)', v_count;
 
-  -- Confirm dispatch RPC is gone
   SELECT COUNT(*) INTO v_count FROM pg_proc p
   JOIN pg_namespace n ON n.oid = p.pronamespace
   WHERE n.nspname = 'public' AND p.proname = 'dispatch_request_v1';
@@ -78,3 +92,5 @@ BEGIN
   END IF;
   RAISE NOTICE 'Rollback verify: dispatch_request_v1 dropped ✓';
 END $$;
+
+COMMIT;
