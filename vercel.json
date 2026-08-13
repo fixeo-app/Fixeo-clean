@@ -85,6 +85,10 @@
     {
       "src": "api/estimator-v1/index.js",
       "use": "@vercel/node"
+    },
+    {
+      "src": "api/admin-add-artisan-fn/index.js",
+      "use": "@vercel/node"
     }
   ],
   "routes": [
@@ -107,6 +111,10 @@
     {
       "src": "^/api/create-request$",
       "dest": "/api/create-request-fn/index.js"
+    },
+    {
+      "src": "^/api/admin/artisans/add$",
+      "dest": "/api/admin-add-artisan-fn/index.js"
     },
     {
       "src": "^/(plombier|electricien|serrurier|climatisation)-([a-z][a-z-]*)\\.html$",

@@ -355,37 +355,65 @@ async function submitArtisanForm(e) {
     });
     const body = await res.json();
 
-    if (body.success && body.artisan) {
-      _artisansList.unshift(body.artisan);
-      _lsSave(_artisansList);
-
-      /* Reset & fermer le formulaire */
+    if ((body.ok || body.success) && body.artisan) {
+      /* Reset & close form immediately */
       document.getElementById('artisan-add-form')?.reset();
       _closeArtisanFormPanel();
 
-      renderArtisansAdminTable(_artisansList);
-      _updateArtisansSidebarCount();
-      _updateArtisansKPIs(_artisansList);
-
       if (typeof showToast === 'function')
-        showToast(`✅ Artisan "${body.artisan.name}" ajouté avec succès !`, 'success');
+        showToast(`✅ Artisan "${body.artisan.name || body.artisan.full_name}" ajouté !`, 'success');
 
-      console.log('[Fixeo Artisans] ✅ Artisan ajouté :', body.artisan.id);
+      console.log('[Fixeo Artisans] ✅ Artisan canonical créé :', body.artisan.id);
+
+      /* Refresh canonical list from Supabase (authoritative) */
+      if (window.FixeoRepository && typeof window.FixeoRepository.getAllArtisans === 'function') {
+        window.FixeoRepository.getAllArtisans()
+          .then(function(canonical) {
+            if (Array.isArray(canonical) && canonical.length) {
+              _artisansList = canonical;
+              _lsSave(_artisansList); /* update display cache */
+              renderArtisansAdminTable(_artisansList);
+              _updateArtisansSidebarCount();
+              _updateArtisansKPIs(_artisansList);
+            }
+          })
+          .catch(function(e) {
+            /* Non-blocking: display cache still renders the new artisan */
+            console.warn('[Fixeo Artisans] Canonical refresh failed after add:', e.message);
+            /* Optimistic: prepend new artisan to display */
+            _artisansList.unshift(body.artisan);
+            _lsSave(_artisansList);
+            renderArtisansAdminTable(_artisansList);
+            _updateArtisansSidebarCount();
+            _updateArtisansKPIs(_artisansList);
+          });
+      } else {
+        /* FixeoRepository not available — optimistic prepend to display */
+        _artisansList.unshift(body.artisan);
+        _lsSave(_artisansList);
+        renderArtisansAdminTable(_artisansList);
+        _updateArtisansSidebarCount();
+        _updateArtisansKPIs(_artisansList);
+      }
+
+      /* Also trigger admin canonical sync refresh if loaded */
+      if (window.FixeoAdminCanonicalSync && typeof window.FixeoAdminCanonicalSync.sync === 'function') {
+        setTimeout(function(){ window.FixeoAdminCanonicalSync.sync(); }, 800);
+      }
+
     } else {
-      _artFormError(errEl, btn, '❌ ' + (body.error || 'Erreur lors de l\'ajout.'));
+      /* Server responded but reported failure — no localStorage fallback */
+      _artFormError(errEl, btn, '❌ ' + (body.detail || body.error || body.reason || 'Erreur lors de l\'ajout.'));
+      if (btn) { btn.disabled = false; btn.innerHTML = '➕ Ajouter l\'artisan'; }
     }
   } catch (err) {
-    /* CANONICAL AUTHORITY: /api/admin/artisans is not available.
-     * We do NOT fall back to localStorage artisan creation —
-     * localStorage is never an authoritative artisan store.
-     * New artisans must be created via the canonical path only
-     * (register_new_artisan RPC for self-registration, or via Supabase
-     * studio for admin-seeded profiles).
-     * Show a clear truthful error — do not silently write local data. */
-    console.warn('[Fixeo Artisans] Add-artisan API unavailable. No localStorage fallback.', err.message);
+    /* Network or parse error — NO localStorage fallback.
+     * admin-add-artisan-fn is the canonical creation authority.
+     * Truthful error only. */
+    console.warn('[Fixeo Artisans] Add-artisan API error. No localStorage fallback.', err.message);
     _artFormError(errEl, btn,
-      '⚠️ Impossible de créer l\'artisan — le service d\'ajout n\'est pas disponible. ' +
-      'Utilisez Supabase Studio pour créer un profil artisan directement, ou vérifiez votre connexion.');
+      '⚠️ Impossible de créer l\'artisan : ' + (err.message || 'erreur réseau') +
+      '. Vérifiez votre connexion ou réessayez.');
     if (btn) { btn.disabled = false; btn.innerHTML = '➕ Ajouter l\'artisan'; }
     return;
   }
