@@ -93,6 +93,33 @@ var VALID_URGENCY = ['now'];
 var PHONE_RE = /^[+\d\s\-().]{6,20}$/;
 var REF_RE   = /^[A-Z0-9\-]{3,32}$/;
 
+/* ── dispatch_request_v1 — server-side only, service_role ── */
+/* Identical to create-request-fn helper. Calls public.dispatch_request_v1
+ * via Supabase REST RPC after a confirmed INSERT success.
+ * Fire-and-forget: dispatch failure does NOT fail the request. */
+async function _callDispatch(requestId) {
+  var url        = process.env.SUPABASE_URL;
+  var serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !serviceKey) return { ok: false, dispatch_error: 'ENV_MISSING' };
+  var res;
+  try {
+    res = await fetch(url + '/rest/v1/rpc/dispatch_request_v1', {
+      method:  'POST',
+      headers: {
+        'Content-Type':  'application/json',
+        'apikey':        serviceKey,
+        'Authorization': 'Bearer ' + serviceKey,
+      },
+      body: JSON.stringify({ p_request_id: requestId }),
+    });
+  } catch (fetchErr) { return { ok: false, dispatch_error: 'NETWORK: ' + fetchErr.message }; }
+  var dispatchBody = null;
+  try { dispatchBody = await res.json(); } catch (_) { return { ok: false, dispatch_error: 'PARSE_ERROR' }; }
+  if (!res.ok) return { ok: false, dispatch_error: 'HTTP_' + res.status, dispatch_result: dispatchBody };
+  var result = dispatchBody;
+  return { ok: !!(result && result.ok), dispatched: !!(result && result.ok), dispatch_result: result };
+}
+
 /* ── Supabase insert (service role — server-side only) ── */
 async function _insertRequest(payload) {
   var url        = process.env.SUPABASE_URL;
@@ -268,10 +295,32 @@ module.exports = async function handler(req, res) {
     return;
   }
 
-  /* Success — response contract unchanged from fur-v1a */
+  /* 7C.11F.2: dispatch_request_v1 server-side after INSERT success.
+   * serverId is the canonical service_requests UUID.
+   * Fire-and-forget — dispatch failure does NOT fail the request. */
+  var dispatchOutcome = null;
+  if (serverId) {
+    try {
+      dispatchOutcome = await _callDispatch(serverId);
+    } catch (dispatchErr) {
+      console.error('[urgent-request-v2a] dispatch unexpected error:', dispatchErr.message);
+      dispatchOutcome = { ok: false, dispatch_error: 'UNEXPECTED: ' + dispatchErr.message };
+    }
+    if (dispatchOutcome && !dispatchOutcome.ok) {
+      console.warn('[urgent-request-v2a] dispatch failed for', serverId,
+        '— reason:', JSON.stringify(dispatchOutcome.dispatch_result || dispatchOutcome.dispatch_error));
+    } else {
+      console.info('[urgent-request-v2a] dispatch ok for', serverId);
+    }
+  }
+
+  /* Success — response contract: ok, ref, id (backward compat) + dispatch fields */
   res.status(200).json({
-    ok:  true,
-    ref: trackingRef || null,
-    id:  serverId    || null,
+    ok:              true,
+    ref:             trackingRef || null,
+    id:              serverId    || null,
+    dispatch_attempted: !!serverId,
+    dispatch_ok:     !!(dispatchOutcome && dispatchOutcome.ok),
+    dispatch_reason: (dispatchOutcome && dispatchOutcome.dispatch_result && dispatchOutcome.dispatch_result.reason) || null,
   });
 };

@@ -29,7 +29,10 @@
  *   - No price fields accepted or written
  *   - No missions table touched
  *
- * NOT WIRED TO STANDARD UI YET — that is 7C.11D.2.
+ * 7C.11F.2: dispatch_request_v1 is called server-side after every
+ * successful INSERT. Dispatch runs fire-and-forget style — a dispatch
+ * failure does NOT roll back the request (request persists regardless).
+ * Dispatch result is included in the response for observability.
  *
  * Environment variables required (Vercel dashboard):
  *   SUPABASE_URL              — project URL
@@ -170,6 +173,66 @@ async function _selectByKey(idemKey) {
 
   var rows = await res.json().catch(function() { return []; });
   return (rows[0] && rows[0].id) ? rows[0].id : null;
+}
+
+/* ── dispatch_request_v1 — server-side only, service_role ── */
+/*
+ * Calls public.dispatch_request_v1(p_request_id) via Supabase REST RPC.
+ * SERVICE_ROLE key is used — this function MUST remain server-side only.
+ * Returns: { ok, dispatched, dispatch_result, dispatch_error }
+ *
+ * Design:
+ *   - Called only after a confirmed INSERT success (insertedId is set)
+ *   - dispatch_request_v1 is SECURITY DEFINER, service_role ONLY in DB
+ *   - Fire-and-forget semantics: dispatch failure does NOT fail the request
+ *   - idempotent: dispatch_request_v1 has its own 23505 guard (no duplicate missions)
+ */
+async function _callDispatch(requestId) {
+  var url        = process.env.SUPABASE_URL;
+  var serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!url || !serviceKey) {
+    return { ok: false, dispatch_error: 'ENV_MISSING' };
+  }
+
+  var res;
+  try {
+    res = await fetch(url + '/rest/v1/rpc/dispatch_request_v1', {
+      method:  'POST',
+      headers: {
+        'Content-Type':  'application/json',
+        'apikey':        serviceKey,
+        'Authorization': 'Bearer ' + serviceKey,
+      },
+      body: JSON.stringify({ p_request_id: requestId }),
+    });
+  } catch (fetchErr) {
+    return { ok: false, dispatch_error: 'NETWORK: ' + fetchErr.message };
+  }
+
+  /* Parse response — dispatch_request_v1 returns jsonb */
+  var dispatchBody = null;
+  try {
+    dispatchBody = await res.json();
+  } catch (_) {
+    return { ok: false, dispatch_error: 'PARSE_ERROR' };
+  }
+
+  if (!res.ok) {
+    return {
+      ok:             false,
+      dispatch_error: 'HTTP_' + res.status,
+      dispatch_result: dispatchBody,
+    };
+  }
+
+  /* Supabase wraps RPC return value directly — dispatchBody IS the jsonb result */
+  var result = dispatchBody;
+  return {
+    ok:             !!(result && result.ok),
+    dispatched:     !!(result && result.ok),
+    dispatch_result: result,
+  };
 }
 
 /* ── Generate human-readable FIXEO ref from UUID ── */
@@ -350,11 +413,36 @@ module.exports = async function handler(req, res) {
     return;
   }
 
-  /* Step 5: New insert success */
+  /* Step 5: New insert success — call dispatch server-side */
+  /* dispatch_request_v1 is service_role only and runs entirely server-side.
+   * Dispatch failure does NOT fail the request (fire-and-forget).
+   * dispatch_request_v1 has its own 23505 idempotency guard — retries are safe. */
+  var dispatchOutcome = null;
+  try {
+    dispatchOutcome = await _callDispatch(insertedId);
+  } catch (dispatchErr) {
+    /* Unexpected throw from _callDispatch — log and continue */
+    console.error('[create-request-v1a] dispatch unexpected error:', dispatchErr.message);
+    dispatchOutcome = { ok: false, dispatch_error: 'UNEXPECTED: ' + dispatchErr.message };
+  }
+
+  if (dispatchOutcome && !dispatchOutcome.ok) {
+    /* Log dispatch failure but do NOT fail the response —
+     * the request is already persisted and canonical. */
+    console.warn('[create-request-v1a] dispatch failed for', insertedId,
+      '— reason:', JSON.stringify(dispatchOutcome.dispatch_result || dispatchOutcome.dispatch_error));
+  } else {
+    console.info('[create-request-v1a] dispatch ok for', insertedId,
+      '— result:', JSON.stringify(dispatchOutcome && dispatchOutcome.dispatch_result));
+  }
+
   res.status(200).json({
-    ok:       true,
-    id:       insertedId,
-    ref:      _makeRef(insertedId),
-    replayed: false,
+    ok:              true,
+    id:              insertedId,
+    ref:             _makeRef(insertedId),
+    replayed:        false,
+    dispatch_attempted: true,
+    dispatch_ok:     !!(dispatchOutcome && dispatchOutcome.ok),
+    dispatch_reason: (dispatchOutcome && dispatchOutcome.dispatch_result && dispatchOutcome.dispatch_result.reason) || null,
   });
 };
