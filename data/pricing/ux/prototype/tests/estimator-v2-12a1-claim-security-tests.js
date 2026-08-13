@@ -1171,3 +1171,159 @@ t('S17.40: precheck DO block is balanced (1 DO $$ / 1 END $$)',
     var endCount = (precheck.match(/^END \$\$;/m) || []).length;
     return doCount === 1 && endCount === 1;
   })());
+
+/* ════════════════════════════════════════════════════════════
+   SECTION 18: Terminal-state semantic guard (7C.12A.1 v3)
+   ════════════════════════════════════════════════════════════ */
+
+/* Shared reject body for Section 18 */
+var _s18RejectBody = (function() {
+  var start = migration.indexOf('CREATE OR REPLACE FUNCTION public.reject_artisan_claim');
+  var next  = migration.indexOf('\n-- ════', start + 100);
+  if (start === -1) return '';
+  return migration.slice(start, next > -1 ? next : start + 6000);
+})();
+
+var _s18ApproveBody = (function() {
+  var start = migration.indexOf('CREATE OR REPLACE FUNCTION public.approve_artisan_claim');
+  var end   = migration.indexOf('CREATE OR REPLACE FUNCTION public._supersede_competing_claims');
+  if (start === -1) return '';
+  return migration.slice(start, end > -1 ? end : start + 8000);
+})();
+
+var _s18VerifyBody = (function() {
+  var f = require('fs');
+  try { return f.readFileSync(require('path').join(__dirname, '../../../../../', 'supabase/7c12a1-artisan-claim-security-verify.sql'), 'utf8'); }
+  catch(e) { return ''; }
+})();
+
+/* Test 1: reject_artisan_claim contains superseded_by_approval guard */
+t('S18.1: reject_artisan_claim contains explicit superseded_by_approval terminal guard',
+  _s18RejectBody.includes('superseded_by_approval'));
+
+/* Test 2: superseded status causes claim_superseded return, not mutation */
+t('S18.2: reject_artisan_claim returns claim_superseded reason for superseded status',
+  _s18RejectBody.includes('claim_superseded'));
+
+/* Test 3: superseded guard fires BEFORE artisan resolution (no mutation possible) */
+t('S18.3: superseded_by_approval guard appears before STEP 6 artisan resolution in reject body',
+  (function() {
+    var guardIdx   = _s18RejectBody.indexOf('superseded_by_approval');
+    var step6Idx   = _s18RejectBody.indexOf('STEP 6');
+    return guardIdx > -1 && step6Idx > -1 && guardIdx < step6Idx;
+  })());
+
+/* Test 4: superseded guard fires BEFORE UPDATE public.artisans in reject body */
+t('S18.4: superseded_by_approval guard appears before any UPDATE public.artisans in reject body',
+  (function() {
+    var guardIdx  = _s18RejectBody.indexOf('superseded_by_approval');
+    var updateIdx = _s18RejectBody.indexOf('UPDATE public.artisans');
+    return guardIdx > -1 && updateIdx > -1 && guardIdx < updateIdx;
+  })());
+
+/* Test 5: superseded guard fires BEFORE UPDATE public.claim_requests in reject body */
+t('S18.5: superseded_by_approval guard appears before UPDATE claim_requests (notes/reviewed_at) in reject body',
+  (function() {
+    var guardIdx  = _s18RejectBody.indexOf('superseded_by_approval');
+    var updateIdx = _s18RejectBody.indexOf('UPDATE public.claim_requests');
+    return guardIdx > -1 && updateIdx > -1 && guardIdx < updateIdx;
+  })());
+
+/* Test 6: reject body does NOT SET reviewed_at inside the superseded branch (comments ok) */
+t('S18.6: superseded guard branch contains no reviewed_at SET mutation (comment mention ok)',
+  (function() {
+    var guardIdx  = _s18RejectBody.indexOf('superseded_by_approval');
+    var returnIdx = _s18RejectBody.indexOf("'claim_superseded'");
+    if (guardIdx === -1 || returnIdx === -1) return false;
+    var branch = _s18RejectBody.slice(guardIdx, returnIdx + 50);
+    /* filter out comment lines before checking for assignment */
+    var codeLines = branch.split('\n').filter(function(l) {
+      return !l.trim().startsWith('--');
+    }).join('\n');
+    return !(/reviewed_at\s*=/.test(codeLines));
+  })());
+
+/* Test 7: reject body does NOT SET notes inside the superseded branch (comments ok) */
+t('S18.7: superseded guard branch contains no notes SET mutation (comment mention ok)',
+  (function() {
+    var guardIdx  = _s18RejectBody.indexOf('superseded_by_approval');
+    var returnIdx = _s18RejectBody.indexOf("'claim_superseded'");
+    if (guardIdx === -1 || returnIdx === -1) return false;
+    var branch = _s18RejectBody.slice(guardIdx, returnIdx + 50);
+    var codeLines = branch.split('\n').filter(function(l) {
+      return !l.trim().startsWith('--');
+    }).join('\n');
+    return !(/\bnotes\s*=/.test(codeLines));
+  })());
+
+/* Test 8: approve pre-read guards all non-pending (claim_not_pending_preread covers approved/rejected/superseded) */
+t('S18.8: approve_artisan_claim pre-read returns claim_not_pending_preread for all non-pending statuses',
+  _s18ApproveBody.includes('claim_not_pending_preread'));
+
+/* Test 9: approve re-locked read also guards all non-pending (claim_not_pending) */
+t('S18.9: approve_artisan_claim re-locked read returns claim_not_pending for all non-pending statuses (including superseded)',
+  _s18ApproveBody.includes('claim_not_pending') &&
+  _s18ApproveBody.includes('claim_not_found_locked'));
+
+/* Test 10: approve_artisan_claim claim_not_pending_preread check precedes any FOR UPDATE */
+t('S18.10: approve pre-read terminal guard (claim_not_pending_preread) appears before LOCK A FOR UPDATE',
+  (function() {
+    var guardIdx = _s18ApproveBody.indexOf('claim_not_pending_preread');
+    var lockAIdx = _s18ApproveBody.indexOf('LOCK A');
+    return guardIdx > -1 && lockAIdx > -1 && guardIdx < lockAIdx;
+  })());
+
+/* Test 11: verify SQL contains V-39 superseded guard check */
+t('S18.11: verify SQL contains V-39 (reject contains superseded_by_approval guard)',
+  _s18VerifyBody.includes('V-39') && _s18VerifyBody.includes('superseded_by_approval'));
+
+/* Test 12: verify SQL contains V-39b claim_superseded reason check */
+t('S18.12: verify SQL contains V-39b (reject returns claim_superseded reason)',
+  _s18VerifyBody.includes('V-39b') && _s18VerifyBody.includes('claim_superseded'));
+
+/* Test 13: verify SQL contains V-40 approve pre-read terminal guard check */
+t('S18.13: verify SQL contains V-40 (approve claim_not_pending_preread guard)',
+  _s18VerifyBody.includes('V-40') && _s18VerifyBody.includes('claim_not_pending_preread'));
+
+/* Test 14: verify SQL contains V-40b approve re-locked terminal guard check */
+t('S18.14: verify SQL contains V-40b (approve claim_not_pending guard under re-lock)',
+  _s18VerifyBody.includes('V-40b') && _s18VerifyBody.includes('claim_not_pending'));
+
+/* Test 15: migration comment lists all 3 terminal states as immutable */
+t('S18.15: reject RPC header comment documents all 3 terminal states (approved/rejected/superseded_by_approval)',
+  _s18RejectBody.includes('approved') &&
+  _s18RejectBody.includes('rejected') &&
+  _s18RejectBody.includes('superseded_by_approval') &&
+  _s18RejectBody.includes('terminal'));
+
+/* Test 16: reject RPC still handles already_rejected idempotently */
+t('S18.16: reject_artisan_claim still returns already_rejected for idempotent ok:true path',
+  _s18RejectBody.includes('already_rejected'));
+
+/* Test 17: reject RPC still handles approved → claim_already_approved */
+t('S18.17: reject_artisan_claim still blocks approved → claim_already_approved',
+  _s18RejectBody.includes('claim_already_approved'));
+
+/* Test 18: superseded guard positioned after approved guard (correct check order) */
+t('S18.18: superseded guard appears after approved guard in reject body (correct terminal order)',
+  (function() {
+    var approvedIdx    = _s18RejectBody.indexOf('claim_already_approved');
+    var supersededIdx  = _s18RejectBody.indexOf('claim_superseded');
+    return approvedIdx > -1 && supersededIdx > -1 && supersededIdx > approvedIdx;
+  })());
+
+/* Test 19: _supersede_competing_claims helper still present and unchanged */
+t('S18.19: _supersede_competing_claims helper still present in migration (not affected by v3 fix)',
+  migration.includes('CREATE OR REPLACE FUNCTION public._supersede_competing_claims'));
+
+/* Test 20: RLS policies unchanged (3 canonical policies still present) */
+t('S18.20: RLS canonical policies unchanged by v3 terminal-state fix',
+  migration.includes('7c12a1_deny_anon_all') &&
+  migration.includes('7c12a1_auth_insert_own') &&
+  migration.includes('7c12a1_auth_select'));
+
+/* Final result including all sections */
+var totalFinal = passed + failed;
+console.log('\n══ FINAL RESULT (all sections incl S16/S17/S18): ' + passed + '/' + totalFinal + ' PASS' +
+  (failed > 0 ? ' — ' + failed + ' FAIL' : ' — ALL PASS') + ' ══\n');
+if (failed > 0) process.exitCode = 1;

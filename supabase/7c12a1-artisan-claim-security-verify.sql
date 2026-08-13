@@ -396,6 +396,44 @@ BEGIN
   END IF;
   RAISE NOTICE 'V-38 PASS: claim status re-validated after LOCK B (handles race with concurrent approval)';
 
-  RAISE NOTICE '══ 7C.12A.1 VERIFY COMPLETE (v2) ══';
+  -- ════════════════════════════════════════════════════════
+  -- SECTION 18: Terminal-state semantic guard (7C.12A.1 v3)
+  -- ════════════════════════════════════════════════════════
+  RAISE NOTICE '══ SECTION 18: Terminal-state semantic guard ══';
+
+  -- V-39: reject_artisan_claim contains superseded_by_approval guard
+  SELECT pg_get_functiondef(p.oid) INTO v_def FROM pg_proc p
+  JOIN pg_namespace n ON n.oid=p.pronamespace
+  WHERE n.nspname='public' AND p.proname='reject_artisan_claim' LIMIT 1;
+
+  IF v_def NOT ILIKE '%superseded_by_approval%' THEN
+    RAISE EXCEPTION 'V-39 FAIL: reject_artisan_claim does not contain superseded_by_approval terminal guard — superseded claims can be corrupted to rejected';
+  END IF;
+  RAISE NOTICE 'V-39 PASS: reject_artisan_claim contains superseded_by_approval terminal guard';
+
+  -- V-39b: reject_artisan_claim returns claim_superseded reason (not mutation)
+  IF v_def NOT ILIKE '%claim_superseded%' THEN
+    RAISE EXCEPTION 'V-39b FAIL: reject_artisan_claim does not return claim_superseded reason — terminal guard incomplete';
+  END IF;
+  RAISE NOTICE 'V-39b PASS: reject_artisan_claim returns claim_superseded reason on superseded status';
+
+  -- V-40: approve_artisan_claim pre-read path returns non-pending for all terminal states
+  -- The pre-read early exit covers approved/rejected/superseded via claim_not_pending_preread.
+  SELECT pg_get_functiondef(p.oid) INTO v_def FROM pg_proc p
+  JOIN pg_namespace n ON n.oid=p.pronamespace
+  WHERE n.nspname='public' AND p.proname='approve_artisan_claim' LIMIT 1;
+
+  IF v_def NOT ILIKE '%claim_not_pending_preread%' THEN
+    RAISE EXCEPTION 'V-40 FAIL: approve_artisan_claim missing claim_not_pending_preread early-exit — terminal states not guarded at pre-read';
+  END IF;
+  RAISE NOTICE 'V-40 PASS: approve_artisan_claim claim_not_pending_preread guards all non-pending terminal states at pre-read';
+
+  -- V-40b: approve_artisan_claim re-locked path also guards all non-pending (claim_not_pending)
+  IF v_def NOT ILIKE '%claim_not_pending%' THEN
+    RAISE EXCEPTION 'V-40b FAIL: approve_artisan_claim missing claim_not_pending guard under re-lock — superseded/rejected/approved can slip through';
+  END IF;
+  RAISE NOTICE 'V-40b PASS: approve_artisan_claim claim_not_pending guards all non-pending terminal states under re-lock';
+
+  RAISE NOTICE '══ 7C.12A.1 VERIFY COMPLETE (v3) ══';
 
 END $$;

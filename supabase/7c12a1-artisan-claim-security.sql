@@ -620,8 +620,16 @@ $$;
 --   artisans.availability
 --
 -- IDEMPOTENCY:
---   already_rejected → PASS
---   claim_already_approved → FAIL (cannot reject post-approval)
+--   already_rejected → PASS (ok:true, no mutation)
+--
+-- TERMINAL STATE GUARDS (no mutation on any terminal state):
+--   claim_already_approved    → FAIL ok:false (approved is terminal)
+--   claim_superseded          → FAIL ok:false (superseded_by_approval is terminal)
+--
+-- CANONICAL TERMINAL STATES (none may be converted to another):
+--   approved               → terminal
+--   rejected               → terminal
+--   superseded_by_approval → terminal
 -- ════════════════════════════════════════════════════════════
 
 CREATE OR REPLACE FUNCTION public.reject_artisan_claim(
@@ -679,6 +687,18 @@ BEGIN
     RETURN jsonb_build_object(
       'ok',       false,
       'reason',   'claim_already_approved',
+      'claim_id', p_claim_id
+    );
+  END IF;
+
+  -- ── STEP 5b: Superseded — terminal state, immutable ────────
+  -- superseded_by_approval is a canonical terminal state written by
+  -- approve_artisan_claim(). It must never be converted to 'rejected'.
+  -- No mutation to claim row, artisan row, reviewed_at, or notes.
+  IF v_claim.status = 'superseded_by_approval' THEN
+    RETURN jsonb_build_object(
+      'ok',       false,
+      'reason',   'claim_superseded',
       'claim_id', p_claim_id
     );
   END IF;
