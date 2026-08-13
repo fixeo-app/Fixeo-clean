@@ -8,7 +8,7 @@
   'use strict';
 
   /* ── VERSION ──────────────────────────────────────────────────── */
-  var VERSION = 'v2k'; /* 7C.11F.2: canonical sync + premium product pass */
+  var VERSION = 'v2k1'; /* v2k + verified badge (artisan.verified===true only) */
 
   /* ── PIPELINE DEFINITION ──────────────────────────────────────── */
   /* Maps a unified key to display config.
@@ -172,7 +172,7 @@
       try {
         var sb = await FS.getClient();
         var ar = await sb.from('artisans')
-          .select('id,full_name,phone_public,photo_url,service_category,rating')
+          .select('id,full_name,phone_public,photo_url,service_category,rating,verified')
           .in('id', artisanIds);
         if (ar.data) {
           ar.data.forEach(function (a) { artisanMap[a.id] = a; });
@@ -230,10 +230,16 @@
 
   function _renderArtisanChip(artisan) {
     if (!artisan) return '';
+    /* verified badge shown ONLY when artisan.verified === true (strict boolean) */
+    var verifiedBadge = artisan.verified === true
+      ? '<span class="fxv2-verified-badge" aria-label="Artisan v\u00e9rifi\u00e9 Fixeo">\u2714 V\u00e9rifi\u00e9</span>'
+      : '';
     return '<div class="fxv2-artisan-chip">'
       + '<div class="fxv2-artisan-avatar">' + esc(initials(artisan.full_name)) + '</div>'
-      + '<div><div class="fxv2-artisan-name">' + esc(artisan.full_name) + '</div>'
-      + '<div class="fxv2-artisan-svc">' + esc(artisan.service_category) + '</div></div>'
+      + '<div>'
+        + '<div class="fxv2-artisan-name">' + esc(artisan.full_name) + verifiedBadge + '</div>'
+        + '<div class="fxv2-artisan-svc">' + esc(artisan.service_category) + '</div>'
+      + '</div>'
       + '</div>';
   }
 
@@ -385,8 +391,10 @@
       ? '<div class="fxv2-hero-artisan">'
           + '<div class="fxv2-hero-artisan-avatar">' + esc(initials(artisan.full_name)) + '</div>'
           + '<div>'
-            + '<div class="fxv2-hero-artisan-name">' + esc(artisan.full_name) + '</div>'
-            + '<div class="fxv2-hero-artisan-role">' + esc(artisan.service_category || 'Artisan') + ' v\u00e9rifi\u00e9 Fixeo</div>'
+            + '<div class="fxv2-hero-artisan-name">' + esc(artisan.full_name)
+              + (artisan.verified === true ? ' <span class="fxv2-verified-badge">\u2714 V\u00e9rifi\u00e9</span>' : '')
+              + '</div>'
+            + '<div class="fxv2-hero-artisan-role">' + esc(artisan.service_category || 'Artisan') + '</div>'
           + '</div>'
         + '</div>'
       : '<div class="fxv2-hero-searching">'

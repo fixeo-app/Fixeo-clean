@@ -1444,3 +1444,21 @@ a.fxv2-header-logo:hover { opacity: .8; }
   gap: 6px;
   margin-top: 4px;
 }
+
+/* Verified badge — shown only when artisan.verified === true */
+.fxv2-verified-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  margin-left: 6px;
+  padding: 2px 7px;
+  border-radius: 20px;
+  background: rgba(34,197,94,.15);
+  border: 1px solid rgba(34,197,94,.35);
+  color: #4ade80;
+  font-size: .65rem;
+  font-weight: 700;
+  letter-spacing: .02em;
+  vertical-align: middle;
+  white-space: nowrap;
+}

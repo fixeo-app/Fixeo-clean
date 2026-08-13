@@ -379,10 +379,10 @@ check('C14.5 insights band shows factual trust signals only',
 
 /* ── C-CD-15: Version bumped ─────────────────────────────────── */
 console.log('\nC-CD-15: Version');
-check('C15.1 JS VERSION is v2k',
-  js.includes("var VERSION = 'v2k'"),
-  'VERSION not v2k');
-check('C15.2 HTML loads v2k JS',
+check('C15.1 JS VERSION is v2k or v2k1',
+  js.includes("var VERSION = 'v2k'") || js.includes("var VERSION = 'v2k1'"),
+  'VERSION not v2k/v2k1');
+check('C15.2 HTML loads v2k or v2k1 JS',
   html.includes('fixeo-dashboard-v2.js?v=v2k'),
   'HTML still loads old version of dashboard JS');
 check('C15.3 CSS has v2k additions',
@@ -397,6 +397,29 @@ check('C16.1 fxv2-sec-notifications section exists in HTML',
 check('C16.2 aria-label="Notifications" on section',
   html.includes('aria-label="Notifications"'),
   'aria-label missing on notifications section');
+
+/* ── C-CD-17: Verified badge ─────────────────────────────────── */
+console.log('\nC-CD-17: Verified badge');
+check('C17.1 verified field added to artisan select',
+  js.includes("'id,full_name,phone_public,photo_url,service_category,rating,verified'"),
+  'verified not in artisan select');
+check('C17.2 badge rendered only when artisan.verified === true (strict)',
+  js.includes('artisan.verified === true'),
+  'verified badge not strict-true-gated');
+check('C17.3 fxv2-verified-badge CSS class exists',
+  css.includes('.fxv2-verified-badge'),
+  '.fxv2-verified-badge CSS missing');
+check('C17.4 hero "vérifié Fixeo" text removed (was unconditional)',
+  !js.includes("v\u00e9rifi\u00e9 Fixeo'"),
+  'unconditional "vérifié Fixeo" text still in hero');
+check('C17.5 no private fields added alongside verified',
+  !js.includes('phone_private') && !js.includes('owner_user_id') &&
+  !js.includes('experience') && !js.includes('legacy_id'),
+  'private field added with verified');
+check('C17.6 badge has aria-label for accessibility',
+  js.includes('aria-label=') &&
+  (js.includes('V\u00e9rifi\u00e9') || js.includes('V\\u00e9rifi\\u00e9') || js.includes('Vérifi')),
+  'aria-label missing on verified badge');
 
 /* ── RESULTS ─────────────────────────────────────────────────── */
 console.log('\n' + '─'.repeat(58));
