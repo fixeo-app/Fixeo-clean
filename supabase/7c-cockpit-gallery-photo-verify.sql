@@ -83,34 +83,44 @@ WHERE name = 'artisan-media';
 -- EXPECTED: 1 row, public=true, file_size_limit <= 8388608 (8MB), mime includes image/*
 
 -- ── V-8: Storage RLS policies for artisan-media ───────────────
+-- Note: storage.policies does not exist in PostgreSQL/Supabase.
+-- Storage object policies are standard pg_policies on storage.objects.
+-- Filter by policyname prefix since bucket_id is embedded in the policy body.
 SELECT
-  name,
-  action,
+  policyname,
+  cmd,
   roles,
-  definition
-FROM storage.policies
-WHERE bucket_id = 'artisan-media'
-ORDER BY action, name;
--- EXPECTED policies:
---   artisan_media_public_read    (SELECT, anon+authenticated) — public read
---   artisan_media_owner_upload   (INSERT, authenticated)      — own path only
---   artisan_media_owner_update   (UPDATE, authenticated)      — own path only
---   artisan_media_owner_delete   (DELETE, authenticated)      — own path only
+  qual,
+  with_check
+FROM pg_policies
+WHERE schemaname = 'storage'
+  AND tablename  = 'objects'
+  AND (policyname ILIKE '%artisan_media%' OR policyname ILIKE '%artisan-media%')
+ORDER BY cmd, policyname;
+-- EXPECTED policies (policyname):
+--   artisan_media_public_read    (SELECT) — anon + authenticated
+--   artisan_media_owner_upload   (INSERT) — authenticated, own path
+--   artisan_media_owner_update   (UPDATE) — authenticated, own path
+--   artisan_media_owner_delete   (DELETE) — authenticated, own path
 
 -- ── V-9: Cross-artisan write prevention check (policy logic) ──
--- Verify upload policy uses foldername[2] = auth.uid()::text
+-- Verify write policies use bucket_id='artisan-media' + foldername[2]=auth.uid()::text
 SELECT
-  name,
-  definition,
+  policyname,
+  cmd,
+  COALESCE(qual, with_check) AS policy_body,
   CASE
-    WHEN definition ILIKE '%auth.uid()::text%'
-      AND definition ILIKE '%foldername%'
-    THEN '✅ PASS: path-scoped to auth.uid()'
+    WHEN COALESCE(qual, with_check) ILIKE '%auth.uid()%'
+      AND COALESCE(qual, with_check) ILIKE '%foldername%'
+      AND COALESCE(qual, with_check) ILIKE '%artisan-media%'
+    THEN '✅ PASS: bucket + path-scoped to auth.uid()'
     ELSE '🚨 FAIL: ownership check missing or wrong'
   END AS ownership_check
-FROM storage.policies
-WHERE bucket_id = 'artisan-media'
-  AND action IN ('INSERT','UPDATE','DELETE');
+FROM pg_policies
+WHERE schemaname = 'storage'
+  AND tablename  = 'objects'
+  AND (policyname ILIKE '%artisan_media%' OR policyname ILIKE '%artisan-media%')
+  AND cmd IN ('INSERT','UPDATE','DELETE');
 -- EXPECTED: all 3 write policies show PASS
 
 -- ── V-10: artisans.photo_url column grant still active ────────
