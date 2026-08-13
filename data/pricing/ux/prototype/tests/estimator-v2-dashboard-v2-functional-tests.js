@@ -788,6 +788,122 @@ test('S15.20 revoke SQL does not touch storage.objects or artisan-media bucket',
   assertNoMatch(revokeSql, /storage\.objects|artisan-media/i);
 });
 
+
+/* ══════════════════════════════════════════════════════════ */
+/* S16: Final privilege hardening (7c-privilege-final-hardening) */
+/* ══════════════════════════════════════════════════════════ */
+
+
+/* ══════════════════════════════════════════════════════════ */
+/* S16: Final privilege hardening (7c-privilege-final-hardening) */
+/* ══════════════════════════════════════════════════════════ */
+
+const hardenSql = fs.readFileSync(path.join(ROOT, 'supabase/7c-privilege-final-hardening.sql'), 'utf8');
+const hardenVerSql = fs.readFileSync(path.join(ROOT, 'supabase/7c-privilege-final-hardening-verify.sql'), 'utf8');
+const hardenStripped = hardenSql.split('\n').filter(l => !l.trim().startsWith('--') && l.trim() !== '').join('\n');
+
+/* Hardening SQL — correctness */
+test('S16.1 revokes REFERENCES from anon on portfolio_items', () => {
+  assertMatch(hardenStripped, /REVOKE REFERENCES ON public\.portfolio_items FROM anon/i);
+});
+test('S16.2 revokes TRIGGER from anon on portfolio_items', () => {
+  assertMatch(hardenStripped, /REVOKE TRIGGER\s+ON public\.portfolio_items FROM anon/i);
+});
+test('S16.3 revokes TRUNCATE from anon on portfolio_items', () => {
+  assertMatch(hardenStripped, /REVOKE TRUNCATE\s+ON public\.portfolio_items FROM anon/i);
+});
+test('S16.4 revokes UPDATE from authenticated on portfolio_items', () => {
+  assertMatch(hardenStripped, /REVOKE UPDATE\s+ON public\.portfolio_items FROM authenticated/i);
+});
+test('S16.5 revokes REFERENCES from authenticated on portfolio_items', () => {
+  assertMatch(hardenStripped, /REVOKE REFERENCES ON public\.portfolio_items FROM authenticated/i);
+});
+test('S16.6 revokes TRIGGER from authenticated on portfolio_items', () => {
+  assertMatch(hardenStripped, /REVOKE TRIGGER\s+ON public\.portfolio_items FROM authenticated/i);
+});
+test('S16.7 revokes TRUNCATE from authenticated on portfolio_items', () => {
+  assertMatch(hardenStripped, /REVOKE TRUNCATE\s+ON public\.portfolio_items FROM authenticated/i);
+});
+test('S16.8 revokes REFERENCES from anon on artisans', () => {
+  assertMatch(hardenStripped, /REVOKE REFERENCES ON public\.artisans FROM anon/i);
+});
+test('S16.9 revokes TRIGGER from anon on artisans', () => {
+  assertMatch(hardenStripped, /REVOKE TRIGGER\s+ON public\.artisans FROM anon/i);
+});
+test('S16.10 revokes TRUNCATE from anon on artisans', () => {
+  assertMatch(hardenStripped, /REVOKE TRUNCATE\s+ON public\.artisans FROM anon/i);
+});
+test('S16.11 revokes REFERENCES from authenticated on artisans', () => {
+  assertMatch(hardenStripped, /REVOKE REFERENCES ON public\.artisans FROM authenticated/i);
+});
+test('S16.12 revokes TRIGGER from authenticated on artisans', () => {
+  assertMatch(hardenStripped, /REVOKE TRIGGER\s+ON public\.artisans FROM authenticated/i);
+});
+test('S16.13 revokes TRUNCATE from authenticated on artisans', () => {
+  assertMatch(hardenStripped, /REVOKE TRUNCATE\s+ON public\.artisans FROM authenticated/i);
+});
+test('S16.14 does NOT revoke SELECT from anon (public reads preserved)', () => {
+  assertNoMatch(hardenStripped, /REVOKE SELECT ON public\.(artisans|portfolio_items) FROM anon/i);
+});
+test('S16.15 does NOT revoke INSERT from authenticated on portfolio_items', () => {
+  assertNoMatch(hardenStripped, /REVOKE INSERT ON public\.portfolio_items FROM authenticated/i);
+});
+test('S16.16 does NOT revoke DELETE from authenticated on portfolio_items', () => {
+  assertNoMatch(hardenStripped, /REVOKE DELETE ON public\.portfolio_items FROM authenticated/i);
+});
+test('S16.17 does NOT touch service_role', () => {
+  assertNoMatch(hardenStripped, /FROM service_role/i);
+});
+test('S16.18 does NOT contain DDL (no CREATE/ALTER/DROP)', () => {
+  assertNoMatch(hardenStripped, /^\s*(CREATE TABLE|ALTER TABLE|DROP TABLE|CREATE POLICY|DROP POLICY)/im);
+});
+test('S16.19 does NOT contain DML (no bare INSERT/UPDATE/DELETE statements)', () => {
+  const bareWrite = hardenStripped.replace(/REVOKE\s+\S[^;]+;/ig, '');
+  assertNoMatch(bareWrite, /^\s*(INSERT INTO|UPDATE\s+\w|DELETE FROM)/im);
+});
+test('S16.20 does NOT touch storage.objects or artisan-media bucket', () => {
+  assertNoMatch(hardenStripped, /storage\.objects|artisan-media/i);
+});
+
+/* Verify SQL correctness */
+test('S16.21 verify checks anon has only SELECT on portfolio_items', () => {
+  assertMatch(hardenVerSql, /privilege_type.*<>.*SELECT|<>.*'SELECT'/i);
+  assertMatch(hardenVerSql, /portfolio_items/);
+  assertMatch(hardenVerSql, /anon/);
+});
+test('S16.22 verify checks V-10 TRUNCATE = 0 rows', () => {
+  assertMatch(hardenVerSql, /TRUNCATE/);
+  assertMatch(hardenVerSql, /FAIL.*TRUNCATE|TRUNCATE.*bypass/i);
+});
+test('S16.23 verify checks V-11 TRIGGER = 0 rows', () => {
+  assertMatch(hardenVerSql, /TRIGGER/);
+});
+test('S16.24 verify checks V-12 REFERENCES = 0 rows', () => {
+  assertMatch(hardenVerSql, /REFERENCES/);
+});
+test('S16.25 verify checks authenticated INSERT/DELETE preserved', () => {
+  assertMatch(hardenVerSql, /INSERT.*DELETE|DELETE.*INSERT/);
+  assertMatch(hardenVerSql, /authenticated/);
+});
+test('S16.26 verify checks column_privileges (column UPDATE preserved)', () => {
+  assertMatch(hardenVerSql, /column_privileges/);
+});
+test('S16.27 verify checks RLS remains enabled', () => {
+  assertMatch(hardenVerSql, /rowsecurity/);
+});
+test('S16.28 verify is read-only (no DML/DDL/REVOKE/GRANT)', () => {
+  const ver = hardenVerSql.split('\n').filter(l => !l.trim().startsWith('--') && !l.trim().startsWith('/*') && l.trim() !== '*/').join('\n');
+  assertNoMatch(ver, /^\s*(CREATE|ALTER|DROP|INSERT|UPDATE|DELETE|REVOKE|GRANT)\b/im);
+});
+test('S16.29 verify has at least 12 V-checks', () => {
+  const matches = hardenVerSql.match(/── V-\d+/g) || [];
+  assert(matches.length >= 12, 'Expected >= 12 V-checks, found ' + matches.length);
+});
+test('S16.30 cockpit JS does NOT use portfolio_items UPDATE path', () => {
+  /* No cockpit application path calls UPDATE on portfolio_items */
+  assertNoMatch(ck2Exec, /from\('portfolio_items'\)\s*\.update/i);
+});
+
 /* ── Summary ─────────────────────────────────────────────── */
 console.log('\n══ Dashboard V2 Functional Pass Tests ══');
 results.forEach(r => {
