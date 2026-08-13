@@ -148,14 +148,17 @@ async function _fetchMission(missionId) {
 }
 
 /* ── PATCH settlement ──────────────────────────────────────── */
-async function _patchSettlement(missionId, finalPrice, commissionAmount) {
+async function _patchSettlement(missionId, finalPrice) {
   var url        = process.env.SUPABASE_URL;
   var serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-  /* Patch ONLY final_price and commission_amount — no other fields */
+  /* Patch ONLY final_price.
+   * The DB trigger set_commission_amount() (BEFORE INSERT OR UPDATE) will
+   * automatically compute commission_amount = round(final_price * 0.15, 2)
+   * when final_price IS NOT NULL. Sending commission_amount here would be
+   * redundant and was previously overwritten by the trigger anyway. */
   var patch = {
-    final_price:       finalPrice,
-    commission_amount: commissionAmount,
+    final_price: finalPrice,
   };
 
   var res;
@@ -183,6 +186,8 @@ async function _patchSettlement(missionId, finalPrice, commissionAmount) {
     var err2 = new Error('SUPABASE_ERROR: ' + (body && body.message ? body.message : 'HTTP ' + res.status));
     err2.code = 'SUPABASE'; throw err2;
   }
+  /* Return the DB-computed row — commission_amount is set by the trigger,
+   * so we read it back from the response rather than using our local calc. */
   var updated = Array.isArray(body) ? body[0] : body;
   return updated;
 }
@@ -293,14 +298,12 @@ module.exports = async function handler(req, res) {
       'old:', existingFinal, '→ new:', finalPrice, '(admin:', auth.userId + ')');
   }
 
-  /* Compute commission (server-side — caller cannot supply rate or amount) */
-  var commissionAmount = roundMoney(finalPrice * COMMISSION_RATE);
-  var artisanNet       = roundMoney(finalPrice - commissionAmount);
-
-  /* Settle */
+  /* Settle — PATCH final_price only.
+   * DB trigger set_commission_amount() computes commission_amount server-side.
+   * We do NOT send commission_amount in the PATCH body. */
   var updated;
   try {
-    updated = await _patchSettlement(missionId, finalPrice, commissionAmount);
+    updated = await _patchSettlement(missionId, finalPrice);
   } catch (e) {
     if (e.code === 'NETWORK') {
       console.error('[admin-settle-mission] NETWORK error:', e.message);
@@ -309,6 +312,14 @@ module.exports = async function handler(req, res) {
     console.error('[admin-settle-mission] PATCH error:', e.message);
     return res.status(500).json({ ok: false, reason: 'update_error', detail: e.message });
   }
+
+  /* Read trigger-computed commission from DB response.
+   * Fallback to local calculation only if Prefer:return=representation
+   * did not echo the row (should not happen with service_role). */
+  var commissionAmount = updated && updated.commission_amount != null
+    ? roundMoney(Number(updated.commission_amount))
+    : roundMoney(finalPrice * COMMISSION_RATE);
+  var artisanNet = roundMoney(finalPrice - commissionAmount);
 
   console.info('[admin-settle-mission] Settled:', missionId,
     'final_price:', finalPrice, 'commission:', commissionAmount,

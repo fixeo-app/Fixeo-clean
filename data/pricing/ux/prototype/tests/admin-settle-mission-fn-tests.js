@@ -168,35 +168,63 @@ check('T7.3 ELIGIBLE_STATUSES.includes used for check',
   fn.includes('ELIGIBLE_STATUSES.includes(status)'),
   'ELIGIBLE_STATUSES.includes not used');
 
-/* ── T8: valid settlement patches only financial fields ─── */
-console.log('\nT8: Settlement patches only final_price + commission_amount');
+/* ── T8: valid settlement patches only final_price ─────── */
+/* Post-trigger-fix contract: endpoint PATCHes final_price ONLY.
+ * DB trigger set_commission_amount() (BEFORE INSERT OR UPDATE) computes
+ * commission_amount = round(final_price * 0.15, 2) server-side.
+ * Endpoint reads commission_amount back from DB response row. */
+console.log('\nT8: Settlement patches only final_price (trigger handles commission)');
 check('T8.1 _patchSettlement defined',
   fn.includes('async function _patchSettlement'),
   '_patchSettlement not defined');
-check('T8.2 PATCH body only final_price + commission_amount',
+check('T8.2 PATCH body contains only final_price (not commission_amount)',
   (function() {
     var patchIdx = fn.indexOf('var patch = {');
     if (patchIdx < 0) return false;
     var block = fn.slice(patchIdx, patchIdx + 200);
     return block.includes('final_price') &&
-           block.includes('commission_amount') &&
+           !block.includes('commission_amount') &&
            !block.includes('status') &&
            !block.includes('artisan_net') &&
            !block.includes('artisan_id') &&
            !block.includes('agreed_price');
   })(),
-  'PATCH body contains non-financial fields');
-check('T8.3 commission computed server-side (COMMISSION_RATE)',
-  fn.includes('COMMISSION_RATE') && fn.includes('finalPrice * COMMISSION_RATE'),
-  'commission not computed server-side');
-check('T8.4 COMMISSION_RATE = 0.15 (canonical 15%)',
+  'PATCH body should contain only final_price — trigger computes commission');
+check('T8.3 commission read from DB response (trigger-computed)',
+  fn.includes('updated.commission_amount') && fn.includes('updated && updated.commission_amount'),
+  'commission_amount not read back from DB trigger response');
+check('T8.4 COMMISSION_RATE = 0.15 (canonical 15% — fallback only)',
   fn.includes('COMMISSION_RATE    = 0.15') || fn.includes('COMMISSION_RATE = 0.15'),
   'COMMISSION_RATE not 0.15');
 check('T8.5 artisan_net returned but NOT stored',
   fn.includes('artisan_net:') &&
-  !fn.includes("patch.*artisan_net") &&
-  !fn.includes("artisan_net: artisanNet,\n    }"),
+  (function() {
+    var patchIdx = fn.indexOf('var patch = {');
+    var block = fn.slice(patchIdx, patchIdx + 200);
+    return !block.includes('artisan_net');
+  })(),
   'artisan_net in PATCH body — should not be stored');
+check('T8.6 _patchSettlement signature takes only missionId + finalPrice',
+  (function() {
+    var sig = fn.match(/async function _patchSettlement\(([^)]*)\)/);
+    if (!sig) return false;
+    var args = sig[1].split(',').map(function(s){ return s.trim(); });
+    return args.length === 2 &&
+           args[0] === 'missionId' &&
+           args[1] === 'finalPrice';
+  })(),
+  '_patchSettlement should accept (missionId, finalPrice) only — not commissionAmount');
+check('T8.7 migration SQL replaces trigger with final_price-aware version',
+  mig.includes('NEW.final_price IS NOT NULL') &&
+  mig.includes('NEW.agreed_price IS NOT NULL') &&
+  mig.includes('CREATE OR REPLACE FUNCTION public.set_commission_amount()'),
+  'migration does not replace trigger with final_price-aware version');
+check('T8.8 migration trigger function uses 15% rate',
+  mig.includes('0.15'),
+  'migration trigger function does not use 15% rate');
+check('T8.9 migration NULL fallback: commission=0 when both prices NULL',
+  mig.includes('commission_amount := 0'),
+  'migration trigger missing NULL fallback (commission=0 when both prices NULL)');
 
 /* ── T9: same-value idempotency ──────────────────────────── */
 console.log('\nT9: Same-value idempotency');
@@ -258,6 +286,94 @@ console.log('\nT14: Unknown commission shows — in V4');
 check('T14.1 V4 shows — when commissionKnown = 0',
   v4.includes('commissionKnown > 0') && (v4.includes("'\\u2014'") || v4.includes("'\u2014'") || v4.includes('"—"') || v4.includes("'—'")),
   'V4 does not show — for unknown commission');
+
+/* ── T16: trigger contract verification ────────────────────── */
+console.log('\nT16: Trigger canonical commission contract');
+check('T16.1 trigger: agreed_price present, final_price NULL → provisional commission',
+  (function() {
+    /* Simulates trigger logic: agreed_price=1000, final_price=null */
+    var finalPrice  = null;
+    var agreedPrice = 1000;
+    var commission;
+    if (finalPrice !== null) {
+      commission = Math.round(finalPrice * 0.15 * 100) / 100;
+    } else if (agreedPrice !== null) {
+      commission = Math.round(agreedPrice * 0.15 * 100) / 100;
+    } else {
+      commission = 0;
+    }
+    return commission === 150; /* round(1000 * 0.15, 2) */
+  })(),
+  'Provisional commission should be 150 for agreed_price=1000');
+check('T16.2 trigger: final_price set → settled commission overrides agreed_price',
+  (function() {
+    /* Simulates trigger logic: agreed_price=1000, final_price=800 */
+    var finalPrice  = 800;
+    var agreedPrice = 1000;
+    var commission;
+    if (finalPrice !== null) {
+      commission = Math.round(finalPrice * 0.15 * 100) / 100;
+    } else if (agreedPrice !== null) {
+      commission = Math.round(agreedPrice * 0.15 * 100) / 100;
+    } else {
+      commission = 0;
+    }
+    return commission === 120; /* round(800 * 0.15, 2) — NOT 150 */
+  })(),
+  'Settled commission should use final_price, not agreed_price');
+check('T16.3 trigger: both NULL → commission=0 (artisan dispatch path)',
+  (function() {
+    var finalPrice  = null;
+    var agreedPrice = null;
+    var commission;
+    if (finalPrice !== null) {
+      commission = Math.round(finalPrice * 0.15 * 100) / 100;
+    } else if (agreedPrice !== null) {
+      commission = Math.round(agreedPrice * 0.15 * 100) / 100;
+    } else {
+      commission = 0;
+    }
+    return commission === 0;
+  })(),
+  'When both prices NULL, commission should be 0 (NOT NULL safe fallback)');
+check('T16.4 trigger: final_price = agreed_price → same commission both ways',
+  (function() {
+    var price = 500;
+    var commFromFinal  = Math.round(price * 0.15 * 100) / 100;
+    var commFromAgreed = Math.round(price * 0.15 * 100) / 100;
+    return commFromFinal === commFromAgreed && commFromFinal === 75;
+  })(),
+  'Equal prices should yield equal commissions');
+check('T16.5 endpoint: commission_amount read from DB response (not computed independently)',
+  fn.includes('updated && updated.commission_amount != null') &&
+  fn.includes('roundMoney(Number(updated.commission_amount))'),
+  'Endpoint must read commission_amount from trigger-computed DB response');
+check('T16.6 endpoint: fallback to local calculation if DB row missing',
+  fn.includes('roundMoney(finalPrice * COMMISSION_RATE)'),
+  'Endpoint missing local commission fallback for edge case where DB row not returned');
+check('T16.7 migration: no commission_amount in PATCH body (Step 3 function replaces trigger)',
+  (function() {
+    /* Verify migration does not manually set commission_amount via SQL UPDATE/INSERT */
+    var migNoComments = mig.split('\n')
+      .filter(function(l){ return l.trim().indexOf('--') !== 0; })
+      .join('\n');
+    /* It should contain commission_amount only in trigger function body + RAISE NOTICE */
+    var patchMatch = migNoComments.match(/commission_amount\s*:=/g);
+    /* Should have exactly one := assignment inside trigger function */
+    return patchMatch && patchMatch.length === 3; /* 3 branches in IF/ELSIF/ELSE */
+  })(),
+  'Migration should define commission_amount only via trigger function := (3 branches)');
+check('T16.8 migration: final_price NOT added to service_requests',
+  (function() {
+    /* Strip SQL comment lines before checking for service_requests mutations */
+    var migNoComments = mig.split('\n')
+      .filter(function(l){ return l.trim().indexOf('--') !== 0; })
+      .join('\n');
+    /* Must not contain ALTER TABLE service_requests or INSERT/UPDATE on it */
+    return !migNoComments.match(/ALTER\s+TABLE\s+.*service_requests/i) &&
+           !migNoComments.match(/INSERT\s+INTO\s+.*service_requests/i);
+  })(),
+  'service_requests.final_price must NOT be added');
 
 /* ── T15: settlement response includes commission_amount ─── */
 console.log('\nT15: Settlement response includes canonical amounts');

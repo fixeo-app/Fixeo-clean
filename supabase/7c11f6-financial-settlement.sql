@@ -1,147 +1,223 @@
 -- ============================================================
 -- FIXEO Phase 7C.11F.6 — Financial Settlement Migration
--- supabase/7c11f6-financial-settlement.sql
+-- supabase/7c11f6-financial-settlement.sql  (v2 — trigger-aware)
 --
--- ⚠️  DO NOT RUN UNTIL PREFLIGHT CONFIRMS SCENARIO B.
--- ⚠️  If preflight returns SCENARIO A, skip this file entirely.
+-- ⚠️  PREREQUISITE: 7c11f6-missions-privilege-hardening.sql
+--     MUST have been applied and verified (all 12 checks PASS)
+--     before running this file.
 --
--- PURPOSE: Add canonical financial settlement columns to missions.
+-- PURPOSE
+-- ───────
+-- 1. Add missions.final_price (admin-confirmed intervention price).
+-- 2. Correct the commission trigger so it uses final_price when settled,
+--    agreed_price when not yet settled, and 0 as safe fallback when
+--    both are NULL (artisan dispatch path).
+-- 3. Revoke any write access on final_price from anon / authenticated.
 --
--- ADDITIVE ONLY. Idempotent. Zero data loss.
+-- PRODUCTION SCHEMA FACTS (confirmed live 2026-08-13):
+--   missions contains 0 rows — no historical data to preserve.
+--   missions.commission_amount: NUMERIC NOT NULL DEFAULT 0  (exists)
+--   missions.agreed_price:      NUMERIC(10,2) nullable      (exists)
+--   missions.final_price:       MISSING — to be added here
+--   trigger trg_set_commission_amount: BEFORE INSERT OR UPDATE
+--   function set_commission_amount():  always uses agreed_price * 0.15
 --
--- COLUMNS ADDED (if missing):
---   missions.final_price       NUMERIC(10,2) nullable — admin-confirmed intervention amount
---   missions.commission_amount NUMERIC(10,2) nullable — FIXEO commission (15% of final_price)
+-- CANONICAL COMMISSION CONTRACT (post-migration):
+--   Phase 1 (provisional): commission = round(agreed_price * 0.15, 2)
+--     → trigger fires on INSERT or UPDATE when final_price IS NULL
+--   Phase 2 (settled):     commission = round(final_price  * 0.15, 2)
+--     → trigger fires on UPDATE when final_price IS NOT NULL
+--   Fallback:              commission = 0 (agreed_price NULL, not yet settled)
+--   artisan_net: derived server-side only — NOT stored
 --
--- COLUMNS NOT ADDED (derivable, no stored redundancy):
---   artisan_net — computed server-side as final_price - commission_amount
---                 No stored column. Prevents double-truth.
+-- INSERT PATHS:
+--   fixeo-artisan-dashboard-v2.js: agreed_price=null → commission=0 (correct)
+--   fixeo-supabase-core.js:        agreed_price=Number(proposed_price||0)
+--     → commission = round(0 * 0.15, 2) = 0 when no price yet (correct)
 --
--- COMMISSION RATE: 0.15 (15%) — canonical across 5 authoritative JS files:
---   admin-mission-supervision-p3.js, admin-control-center-p1.js,
---   fixeo-client-requests-store.js, admin.js, admin-analytics-real-v1.js
+-- SETTLEMENT ENDPOINT CHANGE:
+--   api/admin-settle-mission-fn PATCHes final_price ONLY.
+--   The trigger then computes commission_amount = round(final_price*0.15,2).
+--   This eliminates the endpoint↔trigger conflict entirely.
+--   commission_amount is never stale or overwritten with wrong value.
 --
--- SETTLEMENT ELIGIBILITY: missions with status IN ('terminée','validée')
---   — same contract as existing commission lifecycle.
+-- COLUMNS ADDED:
+--   missions.final_price  NUMERIC(10,2) nullable (admin settlement price)
 --
--- AFTER THIS MIGRATION:
---   Run 7c11f6-financial-settlement-verify.sql to confirm.
---   Then authorize deployment of api/admin-settle-mission-fn/index.js.
+-- COLUMNS NOT ADDED:
+--   artisan_net         — derived server-side, never stored
+--   service_requests.final_price — not required by canonical architecture
+--
+-- COLUMNS NOT CHANGED:
+--   commission_amount   — schema unchanged (NOT NULL DEFAULT 0)
+--                         semantics upgraded via trigger replacement
+--   agreed_price        — unchanged
+--
+-- COMMISSION RATE: 0.15 (15%) — canonical across all admin JS files.
+--
+-- ADDITIVE ONLY. Idempotent. Zero data mutation. Zero data loss.
 -- ============================================================
 
 BEGIN;
 
--- ── STEP 1: Add final_price if missing ─────────────────────
+-- ── STEP 1: Add final_price column if missing ───────────────
 DO $$
 BEGIN
   IF NOT EXISTS (
     SELECT 1 FROM information_schema.columns
-    WHERE table_schema='public' AND table_name='missions' AND column_name='final_price'
+    WHERE table_schema = 'public'
+      AND table_name   = 'missions'
+      AND column_name  = 'final_price'
   ) THEN
-    ALTER TABLE public.missions ADD COLUMN final_price NUMERIC(10,2) DEFAULT NULL;
-    RAISE NOTICE 'Step 1: missions.final_price added (NUMERIC(10,2) nullable)';
+    ALTER TABLE public.missions
+      ADD COLUMN final_price NUMERIC(10,2) DEFAULT NULL;
+    RAISE NOTICE 'Step 1: missions.final_price added (NUMERIC(10,2) nullable).';
   ELSE
-    RAISE NOTICE 'Step 1: missions.final_price already exists — skipped';
+    RAISE NOTICE 'Step 1: missions.final_price already exists — skipped.';
   END IF;
 END $$;
 
--- ── STEP 2: Add commission_amount if missing ────────────────
-DO $$
-BEGIN
-  IF NOT EXISTS (
-    SELECT 1 FROM information_schema.columns
-    WHERE table_schema='public' AND table_name='missions' AND column_name='commission_amount'
-  ) THEN
-    ALTER TABLE public.missions ADD COLUMN commission_amount NUMERIC(10,2) DEFAULT NULL;
-    RAISE NOTICE 'Step 2: missions.commission_amount added (NUMERIC(10,2) nullable)';
-  ELSE
-    RAISE NOTICE 'Step 2: missions.commission_amount already exists — skipped';
-  END IF;
-END $$;
-
--- ── STEP 3: Add CHECK constraints (skip if column pre-existed with its own constraint) ──
+-- ── STEP 2: Add CHECK constraint on final_price ─────────────
+-- final_price must be positive when set; NULL means not yet settled.
 DO $$
 BEGIN
   IF NOT EXISTS (
     SELECT 1 FROM pg_constraint c
-    JOIN pg_class t ON t.oid = c.conrelid
+    JOIN pg_class t     ON t.oid = c.conrelid
     JOIN pg_namespace n ON n.oid = t.relnamespace
-    WHERE n.nspname='public' AND t.relname='missions' AND c.contype='c'
-      AND c.conname='missions_final_price_check'
+    WHERE n.nspname  = 'public'
+      AND t.relname  = 'missions'
+      AND c.contype  = 'c'
+      AND c.conname  = 'missions_final_price_check'
   ) THEN
     ALTER TABLE public.missions
       ADD CONSTRAINT missions_final_price_check
       CHECK (final_price IS NULL OR final_price > 0);
-    RAISE NOTICE 'Step 3a: CHECK constraint missions_final_price_check added';
+    RAISE NOTICE 'Step 2: CHECK missions_final_price_check added.';
   ELSE
-    RAISE NOTICE 'Step 3a: missions_final_price_check already exists — skipped';
-  END IF;
-
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_constraint c
-    JOIN pg_class t ON t.oid = c.conrelid
-    JOIN pg_namespace n ON n.oid = t.relnamespace
-    WHERE n.nspname='public' AND t.relname='missions' AND c.contype='c'
-      AND c.conname='missions_commission_amount_check'
-  ) THEN
-    ALTER TABLE public.missions
-      ADD CONSTRAINT missions_commission_amount_check
-      CHECK (commission_amount IS NULL OR commission_amount > 0);
-    RAISE NOTICE 'Step 3b: CHECK constraint missions_commission_amount_check added';
-  ELSE
-    RAISE NOTICE 'Step 3b: missions_commission_amount_check already exists — skipped';
+    RAISE NOTICE 'Step 2: missions_final_price_check already exists — skipped.';
   END IF;
 END $$;
 
--- ── STEP 4: Explicit privilege guard for final_price ────────
--- PREREQUISITE: 7c11f6-missions-privilege-hardening.sql MUST have been
--- applied before this migration. That file revoked broad UPDATE from
--- authenticated and column UPDATE on agreed_price/commission_amount.
+-- ── STEP 3: Replace commission trigger function ─────────────
+-- Old behaviour: commission_amount = round(agreed_price * 0.15, 2) always.
+-- Problem:       agreed_price=NULL causes NULL commission violating NOT NULL.
+--                Settlement PATCH of final_price also triggers this, overwriting
+--                commission_amount with agreed_price-based value (wrong).
 --
--- This step ensures final_price also cannot be directly updated by
--- anon or authenticated browsers. It is belt-and-suspenders: if hardening
--- was applied correctly, these REVOKE statements are no-ops (idempotent).
--- If hardening was NOT applied, this prevents the new column from being
--- silently writable.
+-- New behaviour:
+--   IF NEW.final_price IS NOT NULL
+--     → settled phase: commission = round(final_price * 0.15, 2)
+--   ELSIF NEW.agreed_price IS NOT NULL
+--     → provisional phase: commission = round(agreed_price * 0.15, 2)
+--   ELSE
+--     → unknown price: commission = 0 (safe fallback, preserves NOT NULL)
+--
+-- This is idempotent (CREATE OR REPLACE). Trigger itself is unchanged.
+-- Both INSERT and UPDATE paths are covered. Rate remains canonical 15%.
+
+CREATE OR REPLACE FUNCTION public.set_commission_amount()
+RETURNS trigger
+LANGUAGE plpgsql
+AS $$
+BEGIN
+  IF NEW.final_price IS NOT NULL THEN
+    -- Settled phase: commission based on admin-confirmed final price
+    NEW.commission_amount := ROUND((NEW.final_price * 0.15)::numeric, 2);
+  ELSIF NEW.agreed_price IS NOT NULL THEN
+    -- Provisional phase: commission based on agreed/quoted price
+    NEW.commission_amount := ROUND((NEW.agreed_price * 0.15)::numeric, 2);
+  ELSE
+    -- Unknown price (artisan dispatch insert, agreed_price=NULL, not settled)
+    -- Preserve NOT NULL constraint with canonical zero
+    NEW.commission_amount := 0;
+  END IF;
+  RETURN NEW;
+END;
+$$;
 
 DO $$
 BEGIN
-  -- Revoke any inherited/default UPDATE on final_price for anon
+  RAISE NOTICE 'Step 3: set_commission_amount() replaced with final_price-aware version.';
+  RAISE NOTICE '        Trigger trg_set_commission_amount (BEFORE INSERT OR UPDATE) unchanged.';
+  RAISE NOTICE '        Rate: 15%%. artisan_net: derived server-side only, not stored.';
+END $$;
+
+-- ── STEP 4: Revoke write access on final_price ──────────────
+-- Belt-and-suspenders after privilege hardening (which revoked broad UPDATE).
+-- These REVOKEs are idempotent — no error if grant does not exist.
+
+DO $$
+BEGIN
   EXECUTE 'REVOKE UPDATE (final_price) ON TABLE public.missions FROM anon';
   RAISE NOTICE 'Step 4a: anon UPDATE(final_price) revoked.';
-EXCEPTION WHEN undefined_object THEN
+EXCEPTION WHEN undefined_object OR invalid_grant_operation THEN
   RAISE NOTICE 'Step 4a: anon UPDATE(final_price) — no grant found (expected after hardening).';
 END $$;
 
 DO $$
 BEGIN
-  -- Revoke any inherited/default UPDATE on final_price for authenticated
   EXECUTE 'REVOKE UPDATE (final_price) ON TABLE public.missions FROM authenticated';
   RAISE NOTICE 'Step 4b: authenticated UPDATE(final_price) revoked.';
-EXCEPTION WHEN undefined_object THEN
+EXCEPTION WHEN undefined_object OR invalid_grant_operation THEN
   RAISE NOTICE 'Step 4b: authenticated UPDATE(final_price) — no grant found (expected after hardening).';
 END $$;
 
 DO $$
 BEGIN
-  RAISE NOTICE 'Step 4c: final_price is WRITE-RESTRICTED.';
-  RAISE NOTICE '         Only service_role (settlement endpoint server-side) can write it.';
-  RAISE NOTICE '         Commission rate: 15%% (canonical FIXEO rate).';
-  RAISE NOTICE '         artisan_net: derived server-side only, not stored.';
+  EXECUTE 'REVOKE INSERT (final_price) ON TABLE public.missions FROM anon';
+  RAISE NOTICE 'Step 4c: anon INSERT(final_price) revoked.';
+EXCEPTION WHEN undefined_object OR invalid_grant_operation THEN
+  RAISE NOTICE 'Step 4c: anon INSERT(final_price) — no grant found.';
+END $$;
+
+DO $$
+BEGIN
+  EXECUTE 'REVOKE INSERT (final_price) ON TABLE public.missions FROM authenticated';
+  RAISE NOTICE 'Step 4d: authenticated INSERT(final_price) revoked.';
+EXCEPTION WHEN undefined_object OR invalid_grant_operation THEN
+  RAISE NOTICE 'Step 4d: authenticated INSERT(final_price) — no grant found.';
+END $$;
+
+DO $$
+BEGIN
+  RAISE NOTICE '---';
+  RAISE NOTICE 'Step 4 complete. final_price is WRITE-RESTRICTED.';
+  RAISE NOTICE '  Write authority: service_role (settlement endpoint) only.';
+  RAISE NOTICE '  Browser roles (anon, authenticated): READ ONLY on final_price.';
 END $$;
 
 COMMIT;
 
--- ── POST-MIGRATION SPOT CHECK ─────────────────────────────
+-- ── POST-MIGRATION SPOT CHECK (READ-ONLY, outside transaction) ──
+-- Returns immediately-verifiable rows confirming the migration.
+
 SELECT
-  column_name, data_type, is_nullable, column_default
+  column_name,
+  data_type,
+  is_nullable,
+  column_default,
+  numeric_precision,
+  numeric_scale
 FROM information_schema.columns
-WHERE table_schema='public' AND table_name='missions'
-  AND column_name IN ('final_price','commission_amount')
+WHERE table_schema = 'public'
+  AND table_name   = 'missions'
+  AND column_name  IN ('final_price', 'commission_amount', 'agreed_price')
 ORDER BY column_name;
 
-SELECT conname, pg_get_constraintdef(oid) AS definition
+SELECT
+  conname                          AS constraint_name,
+  pg_get_constraintdef(oid)        AS definition
 FROM pg_constraint
 WHERE conrelid = 'public.missions'::regclass
-  AND contype = 'c'
-  AND conname IN ('missions_final_price_check','missions_commission_amount_check');
+  AND contype  = 'c'
+  AND conname  IN ('missions_final_price_check')
+ORDER BY conname;
+
+SELECT
+  p.proname                        AS function_name,
+  pg_get_functiondef(p.oid)        AS definition
+FROM pg_proc p
+JOIN pg_namespace n ON n.oid = p.pronamespace
+WHERE n.nspname = 'public'
+  AND p.proname = 'set_commission_amount';
