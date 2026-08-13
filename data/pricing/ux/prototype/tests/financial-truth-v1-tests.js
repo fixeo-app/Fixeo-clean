@@ -177,12 +177,12 @@ check('T9.1 store: commission not calculated when finalPrice = 0',
     return store.includes('finalPrice > 0 ? finalPrice - commissionAmount : 0');
   })(),
   'artisan_net calculated even when finalPrice = 0 in store');
-check('T9.2 admin-command-center-v4: commission fallback inference documented',
+check('T9.2 admin-command-center-v4: commission_amount read from canonical field only',
   exists('js/admin-command-center-v4.js') &&
   src('js/admin-command-center-v4.js').includes('commission_amount') &&
-  /* V4 uses || ap * 0.1 fallback — this is a known inference; not in canonical path */
-  src('js/admin-command-center-v4.js').includes('ap * 0.1'),
-  'V4 commission fallback not detectable — test inconclusive');
+  /* V4 must NOT fall back to ap * 0.1 inference (removed in 7C.11F.6) */
+  !src('js/admin-command-center-v4.js').includes('ap * 0.1'),
+  'V4 commission fallback inference (ap * 0.1) still present');
 
 /* ── T10: no service_role in financial browser files ─────── */
 console.log('\nT10: No service_role in financial browser JS');

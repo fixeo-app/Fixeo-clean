@@ -376,16 +376,20 @@
     });
 
     var filtered = _revenueFilter(_missions, tab);
-    var gmv = 0, commission = 0;
+    var gmv = 0, commissionKnown = 0, commissionMissing = 0;
     filtered.forEach(function(m) {
       var ap = parseFloat(m.agreed_price || 0);
-      var cm = parseFloat(m.commission_amount || 0) || ap * 0.1;
-      gmv        += ap;
-      commission += cm;
+      var cm = parseFloat(m.commission_amount || 0);
+      /* commission_amount: use canonical field only — no ap*rate inference */
+      if (m.commission_amount !== null && m.commission_amount !== undefined && cm > 0) {
+        commissionKnown += cm;
+      } else {
+        commissionMissing++;
+      }
+      gmv += ap;
     });
     var count  = filtered.length;
     var avg    = count > 0 ? Math.round(gmv / count) : 0;
-    var avgCom = count > 0 ? Math.round(commission / count) : 0;
 
     function _fmt(n) {
       if (n >= 1000000) return (n/1000000).toFixed(1) + 'M';
@@ -394,7 +398,8 @@
     }
 
     if ($('fxv4-rev-gmv'))      $('fxv4-rev-gmv').textContent      = _fmt(gmv) + ' MAD';
-    if ($('fxv4-rev-com'))      $('fxv4-rev-com').textContent      = _fmt(commission) + ' MAD';
+    /* Commission: show canonical total or — if no canonical data available */
+    if ($('fxv4-rev-com'))      $('fxv4-rev-com').textContent      = commissionKnown > 0 ? _fmt(commissionKnown) + ' MAD' : '\u2014';
     if ($('fxv4-rev-missions')) $('fxv4-rev-missions').textContent = count;
     if ($('fxv4-rev-avg'))      $('fxv4-rev-avg').textContent      = avg + ' MAD';
   }

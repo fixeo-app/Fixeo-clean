@@ -93,6 +93,10 @@
     {
       "src": "api/admin-verify-artisan-fn/index.js",
       "use": "@vercel/node"
+    },
+    {
+      "src": "api/admin-settle-mission-fn/index.js",
+      "use": "@vercel/node"
     }
   ],
   "routes": [
@@ -123,6 +127,10 @@
     {
       "src": "^/api/admin/artisans/verify$",
       "dest": "/api/admin-verify-artisan-fn/index.js"
+    },
+    {
+      "src": "^/api/admin/missions/settle$",
+      "dest": "/api/admin-settle-mission-fn/index.js"
     },
     {
       "src": "^/(plombier|electricien|serrurier|climatisation)-([a-z][a-z-]*)\\.html$",
