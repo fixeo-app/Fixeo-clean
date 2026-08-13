@@ -149,11 +149,22 @@ BEGIN
   END IF;
   RAISE NOTICE 'V-14 PASS: onboarding_required gate present';
 
-  -- V-15: update_artisan_availability does not set owner_user_id in executable code
-  IF v_def_exec ~* 'owner_user_id\s*=' THEN
-    RAISE EXCEPTION 'V-15 FAIL: update_artisan_availability writes owner_user_id in executable code';
+  -- V-15: update_artisan_availability does not SET owner_user_id in any UPDATE statement.
+  -- ROOT CAUSE of previous false positive: v_def_exec ~* 'owner_user_id\s*=' matched
+  -- WHERE a.owner_user_id = v_uid in the SELECT...FOR UPDATE lock block.
+  -- FIX: extract only UPDATE...SET clause text; WHERE clauses are excluded.
+  -- In the only UPDATE in this RPC: SET availability = v_target_status, updated_at = now()
+  -- — owner_user_id is NOT present. The WHERE id = v_artisan_id uses artisan.id, not owner_user_id.
+  SELECT COALESCE(string_agg(m[1], ' '), '') INTO v_text
+  FROM regexp_matches(
+    v_def_exec,
+    'UPDATE\s[\s\S]*?\sSET\s([\s\S]*?)(?=\sWHERE\s|\sRETURNING\s|;)',
+    'gi'
+  ) AS t(m);
+  IF v_text ~* 'owner_user_id\s*=' THEN
+    RAISE EXCEPTION 'V-15 FAIL: UPDATE SET in update_artisan_availability writes owner_user_id — real defect';
   END IF;
-  RAISE NOTICE 'V-15 PASS: owner_user_id not written by update_artisan_availability';
+  RAISE NOTICE 'V-15 PASS: owner_user_id not in any UPDATE SET clause of update_artisan_availability';
 
   -- ══════════════════════════════════════════════════════════
   -- SECTION D: REVOKE / GRANT Privilege State (BLOCKER 1)
@@ -383,17 +394,27 @@ BEGIN
   END IF;
   RAISE NOTICE 'V-34 PASS: authenticated has EXECUTE on update_artisan_availability';
 
-  -- V-35: verified NOT written by update_artisan_availability in executable code
-  IF v_def_exec ~* 'verified\s*=' THEN
-    RAISE EXCEPTION 'V-35 FAIL: update_artisan_availability writes verified in executable code';
-  END IF;
-  RAISE NOTICE 'V-35 PASS: verified not written by update_artisan_availability';
+  -- V-35/V-36: re-extract UPDATE SET clauses from update_artisan_availability
+  -- (v_def_exec still holds update_artisan_availability body from V-32 reload above;
+  --  v_text was reused for the index check in V-22, so we re-extract here)
+  SELECT COALESCE(string_agg(m[1], ' '), '') INTO v_text
+  FROM regexp_matches(
+    v_def_exec,
+    'UPDATE\s[\s\S]*?\sSET\s([\s\S]*?)(?=\sWHERE\s|\sRETURNING\s|;)',
+    'gi'
+  ) AS t(m);
 
-  -- V-36: claimed NOT written by update_artisan_availability
-  IF v_def_exec ~* '\bclaimed\s*=' THEN
-    RAISE EXCEPTION 'V-36 FAIL: update_artisan_availability writes claimed in executable code';
+  -- V-35: verified NOT in any UPDATE SET clause of update_artisan_availability
+  IF v_text ~* 'verified\s*=' THEN
+    RAISE EXCEPTION 'V-35 FAIL: UPDATE SET in update_artisan_availability writes verified — real defect';
   END IF;
-  RAISE NOTICE 'V-36 PASS: claimed not written by update_artisan_availability';
+  RAISE NOTICE 'V-35 PASS: verified not in any UPDATE SET clause of update_artisan_availability';
+
+  -- V-36: claimed NOT in any UPDATE SET clause of update_artisan_availability
+  IF v_text ~* '\bclaimed\s*=' THEN
+    RAISE EXCEPTION 'V-36 FAIL: UPDATE SET in update_artisan_availability writes claimed — real defect';
+  END IF;
+  RAISE NOTICE 'V-36 PASS: claimed not in any UPDATE SET clause of update_artisan_availability';
 
   RAISE NOTICE '══ 7C.12A.2 Verify complete — 36 V-checks ══';
 
