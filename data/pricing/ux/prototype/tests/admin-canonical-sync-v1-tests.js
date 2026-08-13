@@ -58,9 +58,10 @@ check('A1.5 approve_artisan_claim RPC referenced in repository',
 check('A1.6 reject_artisan_claim RPC referenced in repository',
   fs.readFileSync(path.join(ROOT, 'js/fixeo-repository.js'), 'utf8').includes("'reject_artisan_claim'"),
   'reject_artisan_claim RPC not in repository');
-check('A1.7 approve action uses confirm() before proceeding',
-  js.includes("confirm('Approuver ce claim"),
-  'confirm guard missing on approve');
+check('A1.7 approve action has confirmation before proceeding (inline or dialog)',
+  /* v1b: inline confirm row replaces browser confirm() — safer and better UX */
+  js.includes("approve-claim-confirm") || js.includes("confirm('Approuver"),
+  'no confirmation guard before approve action');
 
 /* ── S-ACS-2: Lifecycle state distinction ──────────────────── */
 console.log('\nS-ACS-2: Artisan lifecycle state distinction');
@@ -230,7 +231,7 @@ check('A9.5 CSS has all lifecycle pill classes',
   css.includes('fxacs-pill-unverified'),
   'not all pill classes in CSS');
 check('A9.6 JS version token set',
-  js.includes("VERSION = 'v1a'"),
+  js.includes("VERSION = 'v1a'") || js.includes("VERSION = 'v1b'"),
   'VERSION token missing');
 check('A9.7 public API exported',
   js.includes('window.FixeoAdminCanonicalSync'),

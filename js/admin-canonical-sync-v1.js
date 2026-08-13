@@ -61,7 +61,7 @@
   if (window._fxAcsV1Loaded) return;
   window._fxAcsV1Loaded = true;
 
-  var VERSION = 'v1a';
+  var VERSION = 'v1b'; /* premium product pass — visual hierarchy, mobile cards, confirm states */
   var LOG     = '[FXACS]';
 
   /* ── Helpers ───────────────────────────────────────────── */
@@ -251,12 +251,30 @@
     }
   }
 
+  /* ── SKELETON CARD HTML ──────────────────────────────────── */
+  function _skelCards(n) {
+    var html = '';
+    for (var i = 0; i < (n || 3); i++) {
+      html += '<div class="fxacs-skel-card">'
+        + '<div class="fxacs-skel fxacs-skel-line"></div>'
+        + '<div class="fxacs-skel fxacs-skel-line-s"></div>'
+        + '<div class="fxacs-skel fxacs-skel-badge"></div>'
+        + '</div>';
+    }
+    return html;
+  }
+
   /* ── RENDER LOADING STATE ────────────────────────────────── */
   function _renderLoadingState() {
-    var ids = ['fxacs-claims-list','fxacs-requests-list','fxacs-missions-list','fxacs-quotes-list','fxacs-artisan-lifecycle-body'];
-    ids.forEach(function(id) {
-      var el2 = el(id);
-      if (el2) el2.innerHTML = '<div class="fxacs-loading">⏳ Chargement…</div>';
+    var tableIds = ['fxacs-artisan-lifecycle-body'];
+    tableIds.forEach(function(id) {
+      var e = el(id);
+      if (e) e.innerHTML = '<tr><td colspan="8" class="fxacs-loading">' + _skelCards(3) + '</td></tr>';
+    });
+    var listIds = ['fxacs-claims-list','fxacs-requests-list','fxacs-missions-list','fxacs-quotes-list'];
+    listIds.forEach(function(id) {
+      var e = el(id);
+      if (e) e.innerHTML = _skelCards(3);
     });
   }
 
@@ -280,52 +298,83 @@
     _updateLastSyncTime();
   }
 
-  /* ── HOME PANEL — Priority queue ────────────────────────── */
+  /* ── HOME PANEL — Command Center ────────────────────────── */
   function _renderHomePanel() {
     var panel = el('fxacs-home-panel');
     if (!panel) return;
 
-    var pendingClaims   = _state.claims.filter(function(c){ return c.status === 'pending'; });
-    var unassigned      = _state.requests.filter(function(r){ return r.status === 'new' || r.status === 'pending'; });
-    var activeMissions  = _state.missions.filter(function(m){ return m.status === 'in_progress' || m.status === 'accepted'; });
-    var notOperational  = _state.artisans.filter(function(a){ return !_artisanOperational(a); });
+    var pendingClaims  = _state.claims.filter(function(c){ return c.status === 'pending'; });
+    var unassigned     = _state.requests.filter(function(r){ return r.status === 'new' || r.status === 'pending'; });
+    var urgentReqs     = _state.requests.filter(function(r){ return r.is_urgent && (r.status === 'new' || r.status === 'pending'); });
+    var activeMissions = _state.missions.filter(function(m){ return m.status === 'in_progress' || m.status === 'accepted'; });
+    var notOperational = _state.artisans.filter(function(a){ return !_artisanOperational(a); });
+    var operational    = _state.artisans.filter(function(a){ return _artisanOperational(a); });
 
-    var html = '';
+    /* ── KPI strip ── */
+    var kpiHtml = '<div class="fxacs-kpi-strip">'
+      + _kpiCard(pendingClaims.length, 'Claims', '#FCAF45', 'fxacs-claims', pendingClaims.length > 0)
+      + _kpiCard(unassigned.length,    'Non assign\u00e9es', '#0dcaf0', 'fxacs-requests', unassigned.length > 0)
+      + _kpiCard(activeMissions.length,'Missions actives', '#20c997', 'fxacs-missions', false)
+      + _kpiCard(operational.length + '/' + _state.artisans.length, 'Op\u00e9rationnels', '#833AB4', 'fxacs-artisans', false)
+      + '</div>';
 
-    /* Attention items */
-    if (pendingClaims.length > 0) {
-      html += '<div class="fxacs-alert fxacs-alert-warn">'
-        + '<span class="fxacs-alert-icon">⏳</span>'
-        + '<span class="fxacs-alert-text"><strong>' + pendingClaims.length + ' claim(s) en attente</strong> — artisans demandant l\'accès à leur profil.</span>'
-        + '<button class="fxacs-alert-btn" onclick="adminSection(\'fxacs-claims\')">Voir</button>'
-        + '</div>';
+    /* ── Alert rows ── */
+    var alertHtml = '';
+    if (urgentReqs.length > 0) {
+      alertHtml += _alertRow('fxacs-alert-urgent',
+        '\u26A1',
+        '<strong>' + urgentReqs.length + ' demande(s) urgente(s)</strong> non assign\u00e9e(s) — intervention imm\u00e9diate requise.',
+        'fxacs-requests');
     }
-    if (unassigned.length > 0) {
-      html += '<div class="fxacs-alert fxacs-alert-info">'
-        + '<span class="fxacs-alert-icon">📋</span>'
-        + '<span class="fxacs-alert-text"><strong>' + unassigned.length + ' demande(s) non assignée(s)</strong> — en attente d\'artisan.</span>'
-        + '<button class="fxacs-alert-btn" onclick="adminSection(\'fxacs-requests\')">Voir</button>'
-        + '</div>';
+    if (pendingClaims.length > 0) {
+      alertHtml += _alertRow('fxacs-alert-warn',
+        '\u23F3',
+        '<strong>' + pendingClaims.length + ' claim(s) en attente</strong> — artisans demandant l\u2019acc\u00e8s \u00e0 leur profil.',
+        'fxacs-claims');
+    }
+    if (unassigned.length > 0 && urgentReqs.length === 0) {
+      alertHtml += _alertRow('fxacs-alert-info',
+        '\uD83D\uDCCB',
+        '<strong>' + unassigned.length + ' demande(s) non assign\u00e9e(s)</strong> — en attente d\u2019artisan.',
+        'fxacs-requests');
     }
     if (activeMissions.length > 0) {
-      html += '<div class="fxacs-alert fxacs-alert-success">'
-        + '<span class="fxacs-alert-icon">🔧</span>'
-        + '<span class="fxacs-alert-text"><strong>' + activeMissions.length + ' mission(s) active(s)</strong> en cours.</span>'
-        + '<button class="fxacs-alert-btn" onclick="adminSection(\'fxacs-missions\')">Voir</button>'
-        + '</div>';
+      alertHtml += _alertRow('fxacs-alert-success',
+        '\uD83D\uDD27',
+        '<strong>' + activeMissions.length + ' mission(s) en cours</strong>.',
+        'fxacs-missions');
     }
     if (notOperational.length > 0 && _state.artisans.length > 0) {
-      html += '<div class="fxacs-alert fxacs-alert-muted">'
-        + '<span class="fxacs-alert-icon">👷</span>'
-        + '<span class="fxacs-alert-text"><strong>' + notOperational.length + '/' + _state.artisans.length + ' artisan(s) non opérationnels</strong>.</span>'
-        + '<button class="fxacs-alert-btn" onclick="adminSection(\'fxacs-artisans\')">Voir</button>'
+      alertHtml += _alertRow('fxacs-alert-muted',
+        '\uD83D\uDC77',
+        '<strong>' + notOperational.length + '/' + _state.artisans.length + ' artisan(s) non op\u00e9rationnels</strong> — profil incomplet ou indisponibles.',
+        'fxacs-artisans');
+    }
+    if (!alertHtml) {
+      alertHtml = '<div class="fxacs-alert fxacs-alert-ok">'
+        + '<span class="fxacs-alert-icon">\u2705</span>'
+        + '<span class="fxacs-alert-text">Aucune action urgente \u2014 syst\u00e8me op\u00e9rationnel.</span>'
         + '</div>';
     }
-    if (!html) {
-      html = '<div class="fxacs-alert fxacs-alert-ok"><span class="fxacs-alert-icon">✅</span><span class="fxacs-alert-text">Aucune action urgente — tout est opérationnel.</span></div>';
-    }
 
-    panel.innerHTML = html;
+    panel.innerHTML = kpiHtml + alertHtml;
+  }
+
+  function _kpiCard(val, label, color, section, highlight) {
+    return '<button class="fxacs-kpi-card' + (highlight ? ' fxacs-kpi-card-hl' : '') + '"'
+      + ' style="--kpi-color:' + color + '"'
+      + ' onclick="adminSection(\'' + section + '\')">'
+      + '<div class="fxacs-kpi-val">' + val + '</div>'
+      + '<div class="fxacs-kpi-lbl">' + label + '</div>'
+      + '</button>';
+  }
+
+  function _alertRow(cls, icon, text, section) {
+    return '<div class="fxacs-alert ' + cls + '">'
+      + '<span class="fxacs-alert-icon">' + icon + '</span>'
+      + '<span class="fxacs-alert-text">' + text + '</span>'
+      + '<button class="fxacs-alert-btn" onclick="adminSection(\'' + section + '\')">Voir \u2192</button>'
+      + '</div>';
   }
 
   /* ── CLAIMS SECTION ─────────────────────────────────────── */
@@ -335,7 +384,7 @@
 
     var claims = _state.claims;
     if (!claims.length) {
-      list.innerHTML = '<div class="fxacs-empty">Aucune demande de claim.</div>';
+      list.innerHTML = '<div class="fxacs-empty"><div class="fxacs-empty-icon">\u23F3</div><div>Aucune demande de claim.</div></div>';
       return;
     }
 
@@ -344,36 +393,62 @@
     var badge = el('fxacs-claims-badge');
     if (badge) { badge.textContent = pendingCount || ''; badge.style.display = pendingCount ? '' : 'none'; }
 
-    var html = '<table class="fxacs-table">'
-      + '<thead><tr>'
-      + '<th>Artisan ID</th><th>Demandeur</th><th>Statut</th><th>Date</th><th>Actions</th>'
-      + '</tr></thead><tbody>';
+    var pendingHtml = '';
+    var historyHtml = '';
 
     claims.forEach(function(c) {
       var isPending  = c.status === 'pending';
       var statusPill = isPending
-        ? '<span class="fxacs-pill fxacs-pill-claim-pend">⏳ En attente</span>'
+        ? '<span class="fxacs-pill fxacs-pill-claim-pend">\u23F3 En attente</span>'
         : c.status === 'approved'
-          ? '<span class="fxacs-pill fxacs-pill-claim-ok">✓ Approuvé</span>'
-          : '<span class="fxacs-pill fxacs-pill-claim-rej">✗ Rejeté</span>';
+          ? '<span class="fxacs-pill fxacs-pill-claim-ok">\u2713 Approuv\u00e9</span>'
+          : '<span class="fxacs-pill fxacs-pill-claim-rej">\u2717 Rejet\u00e9</span>';
 
-      html += '<tr class="' + (isPending ? 'fxacs-row-highlight' : '') + '">'
-        + '<td><span class="fxacs-mono">' + esc(String(c.artisan_legacy_id || '—').substring(0, 12)) + '</span></td>'
-        + '<td><span class="fxacs-mono">' + esc(String(c.requester_user_id || '—').substring(0, 12)) + '…</span></td>'
-        + '<td>' + statusPill + '</td>'
-        + '<td>' + fmtDate(c.created_at) + '</td>'
-        + '<td>';
+      var artisanIdShort = esc(String(c.artisan_legacy_id || '\u2014').substring(0, 12));
+      var userIdShort    = esc(String(c.requester_user_id || '\u2014').substring(0, 16));
+
+      var card = '<div class="fxacs-claim-card' + (isPending ? ' fxacs-claim-card-pending' : '') + '">'
+        + '<div class="fxacs-claim-card-head">'
+          + '<div>'
+            + '<div class="fxacs-claim-artisan-id">\uD83D\uDEE0\uFE0F Artisan <span class="fxacs-mono">' + artisanIdShort + '</span></div>'
+            + '<div class="fxacs-claim-user-id">\uD83D\uDC64 User <span class="fxacs-mono">' + userIdShort + '\u2026</span></div>'
+          + '</div>'
+          + '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">'
+            + statusPill
+            + '<span class="fxacs-muted" style="font-size:.7rem">' + fmtDate(c.created_at) + '</span>'
+          + '</div>'
+        + '</div>';
 
       if (isPending) {
-        html += '<button class="fxacs-btn fxacs-btn-approve" data-fxacs-action="approve-claim" data-claim-id="' + esc(c.id) + '">✓ Approuver</button>'
-              + ' <button class="fxacs-btn fxacs-btn-reject" data-fxacs-action="reject-claim" data-claim-id="' + esc(c.id) + '">✗ Rejeter</button>';
-      } else {
-        html += '<span class="fxacs-muted">—</span>';
+        /* Inline confirm-before-action: show confirmation row on click, not browser confirm() */
+        card += '<div class="fxacs-claim-actions">'
+          + '<button class="fxacs-btn fxacs-btn-approve" data-fxacs-action="approve-claim" data-claim-id="' + esc(c.id) + '">'
+            + '\u2714 Approuver'
+          + '</button>'
+          + '<button class="fxacs-btn fxacs-btn-reject" data-fxacs-action="reject-claim" data-claim-id="' + esc(c.id) + '">'
+            + '\u2716 Rejeter'
+          + '</button>'
+          + '</div>'
+          /* Inline confirm row — hidden until first button click */
+          + '<div class="fxacs-claim-confirm-row" id="fxacs-confirm-' + esc(c.id) + '" style="display:none">'
+          + '</div>';
       }
-      html += '</td></tr>';
+
+      card += '</div>';
+
+      if (isPending) pendingHtml += card;
+      else historyHtml += card;
     });
 
-    html += '</tbody></table>';
+    var html = '';
+    if (pendingHtml) {
+      html += '<div class="fxacs-claims-group-label">En attente (' + pendingCount + ')</div>'
+        + pendingHtml;
+    }
+    if (historyHtml) {
+      html += '<div class="fxacs-claims-group-label fxacs-muted" style="margin-top:18px">Historique</div>'
+        + historyHtml;
+    }
     list.innerHTML = html;
   }
 
@@ -383,34 +458,56 @@
     if (!tbody) return;
 
     if (!_state.artisans.length) {
-      tbody.innerHTML = '<tr><td colspan="8" class="fxacs-empty">Aucun artisan trouvé.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="8" class="fxacs-empty">'
+        + '<div class="fxacs-empty-icon">\uD83D\uDC77</div>'
+        + '<div>Aucun artisan trouv\u00e9.</div>'
+        + '</td></tr>';
       return;
     }
 
     var html = '';
     _state.artisans.forEach(function(a) {
-      var name = esc(a.full_name || '—');
-      var cat  = esc(a.service_category || '—');
-      var city = esc(a.city || '—');
-      var pills = _lifecyclePills(a);
+      var name         = esc(a.full_name || '\u2014');
+      var cat          = esc(a.service_category || '\u2014');
+      var city         = esc(a.city || '\u2014');
+      var pills        = _lifecyclePills(a);
       var completeness = _profileCompleteness(a);
+      var isOperational= _artisanOperational(a);
+      var rowCls       = isOperational ? '' : 'fxacs-row-inactive';
 
-      html += '<tr>'
-        + '<td>'
-        + (a.photo_url ? '<img src="' + esc(a.photo_url) + '" class="fxacs-avatar" alt="Photo">' : '<span class="fxacs-avatar-init">' + esc((a.full_name||'?')[0].toUpperCase()) + '</span>')
-        + ' <strong>' + name + '</strong>'
+      /* Avatar: image (with onerror fallback) or initials */
+      var initial = esc(((a.full_name || '?')[0] || '?').toUpperCase());
+      var avatar = a.photo_url
+        ? '<img src="' + esc(a.photo_url) + '" class="fxacs-avatar" alt="Photo" onerror="this.style.display=\'none\';this.nextSibling.style.display=\'inline-flex\'">'
+          + '<span class="fxacs-avatar-init" style="display:none">' + initial + '</span>'
+        : '<span class="fxacs-avatar-init">' + initial + '</span>';
+
+      /* Completeness bar color: red < 50%, orange < 80%, green ≥ 80% */
+      var barColor = completeness >= 80 ? '#20c997' : (completeness >= 50 ? '#FCAF45' : '#E1306C');
+
+      html += '<tr class="' + rowCls + '">'
+        + '<td class="fxacs-artisan-name-cell">'
+          + '<div class="fxacs-artisan-identity">'
+            + avatar
+            + '<div>'
+              + '<div class="fxacs-artisan-fullname">' + name + '</div>'
+              + (a.phone_public ? '<div class="fxacs-muted" style="font-size:.68rem">' + esc(a.phone_public) + '</div>' : '')
+            + '</div>'
+          + '</div>'
         + '</td>'
-        + '<td>' + cat + '</td>'
-        + '<td>' + city + '</td>'
+        + '<td><span class="fxacs-tag">' + cat + '</span></td>'
+        + '<td class="fxacs-muted">' + city + '</td>'
         + '<td><div class="fxacs-pills">' + pills + '</div></td>'
         + '<td>'
-        + '<div class="fxacs-completeness-bar-bg"><div class="fxacs-completeness-bar-fill" style="width:' + completeness + '%"></div></div>'
-        + '<span class="fxacs-muted" style="font-size:.7rem">' + completeness + '%</span>'
+          + '<div class="fxacs-completeness-bar-bg"><div class="fxacs-completeness-bar-fill" style="width:' + completeness + '%;background:' + barColor + '"></div></div>'
+          + '<span class="fxacs-muted" style="font-size:.68rem">' + completeness + '%</span>'
         + '</td>'
-        + '<td>' + (a.rating ? (parseFloat(a.rating).toFixed(1) + ' ★') : '—') + '</td>'
-        + '<td>' + fmtDateShort(a.created_at) + '</td>'
+        + '<td>' + (a.rating ? '<span class="fxacs-rating">' + parseFloat(a.rating).toFixed(1) + ' \u2605</span>' : '<span class="fxacs-muted">\u2014</span>') + '</td>'
+        + '<td class="fxacs-muted">' + fmtDateShort(a.created_at) + '</td>'
         + '<td>'
-        + (a.owner_user_id ? '' : '<span class="fxacs-muted">Pas de compte</span>')
+          + (a.owner_user_id
+            ? '<span class="fxacs-pill fxacs-pill-claim-ok" style="font-size:.62rem">\uD83D\uDD17 Li\u00e9</span>'
+            : '<span class="fxacs-muted" style="font-size:.72rem">Non li\u00e9</span>')
         + '</td>'
         + '</tr>';
     });
@@ -432,48 +529,66 @@
   }
 
   /* ── REQUESTS SECTION ────────────────────────────────────── */
+  var STATUS_PILL = {
+    'new'         : '<span class="fxacs-pill fxacs-pill-new">\uD83C\uDD95 Nouveau</span>',
+    'pending'     : '<span class="fxacs-pill fxacs-pill-new">\u23F3 En attente</span>',
+    'assigned'    : '<span class="fxacs-pill fxacs-pill-assigned">\uD83D\uDCCC Assign\u00e9</span>',
+    'offered'     : '<span class="fxacs-pill fxacs-pill-assigned">\uD83D\uDCE4 Propos\u00e9</span>',
+    'in_progress' : '<span class="fxacs-pill fxacs-pill-progress">\uD83D\uDD27 En cours</span>',
+    'completed'   : '<span class="fxacs-pill fxacs-pill-done">\u2713 Termin\u00e9</span>',
+    'validated'   : '<span class="fxacs-pill fxacs-pill-done">\u2705 Valid\u00e9</span>',
+    'cancelled'   : '<span class="fxacs-pill fxacs-pill-cancel">\u2717 Annul\u00e9</span>'
+  };
+
   function _renderRequestsSection() {
     var list = el('fxacs-requests-list');
     if (!list) return;
 
     var requests = _state.requests;
     if (!requests.length) {
-      list.innerHTML = '<div class="fxacs-empty">Aucune demande.</div>';
+      list.innerHTML = '<div class="fxacs-empty"><div class="fxacs-empty-icon">\uD83D\uDCCB</div><div>Aucune demande.</div></div>';
       return;
     }
 
-    var statusPillMap = {
-      'new'         : '<span class="fxacs-pill fxacs-pill-new">🆕 Nouveau</span>',
-      'pending'     : '<span class="fxacs-pill fxacs-pill-new">⏳ En attente</span>',
-      'assigned'    : '<span class="fxacs-pill fxacs-pill-assigned">📌 Assigné</span>',
-      'offered'     : '<span class="fxacs-pill fxacs-pill-assigned">📤 Proposé</span>',
-      'in_progress' : '<span class="fxacs-pill fxacs-pill-progress">🔧 En cours</span>',
-      'completed'   : '<span class="fxacs-pill fxacs-pill-done">✓ Terminé</span>',
-      'validated'   : '<span class="fxacs-pill fxacs-pill-done">✅ Validé</span>',
-      'cancelled'   : '<span class="fxacs-pill fxacs-pill-cancel">✗ Annulé</span>'
-    };
-
-    var html = '<table class="fxacs-table">'
+    var html = '<table class="fxacs-table fxacs-table-requests">'
       + '<thead><tr>'
-      + '<th>ID</th><th>Service</th><th>Ville</th><th>Statut</th><th>Urgence</th><th>Créé</th><th>Âge</th>'
+      + '<th>R\u00e9f</th><th>Service</th><th>Ville</th><th>Statut</th><th>\u00c2ge</th>'
       + '</tr></thead><tbody>';
 
     requests.forEach(function(r) {
-      var statusPill = statusPillMap[r.status] || '<span class="fxacs-pill">' + esc(r.status) + '</span>';
-      html += '<tr>'
-        + '<td><span class="fxacs-mono">' + esc(String(r.id || '').substring(0, 8)) + '…</span></td>'
-        + '<td>' + esc(r.service_slug || '—') + '</td>'
-        + '<td>' + esc(r.city || '—') + '</td>'
+      var statusPill = STATUS_PILL[r.status] || '<span class="fxacs-pill">' + esc(r.status) + '</span>';
+      var urgentBadge = r.is_urgent
+        ? '<span class="fxacs-pill fxacs-pill-urgent fxacs-pulse">\u26A1 Urgence</span> '
+        : '';
+      var service = r.service_category || r.service_slug || '\u2014';
+      var rowCls  = r.is_urgent && (r.status === 'new' || r.status === 'pending') ? 'fxacs-row-urgent' : '';
+
+      html += '<tr class="' + rowCls + '">'
+        + '<td>'
+          + urgentBadge
+          + '<span class="fxacs-mono" title="' + esc(r.id) + '">' + esc(String(r.id || '').substring(0, 8)) + '\u2026</span>'
+        + '</td>'
+        + '<td><span class="fxacs-tag">' + esc(service) + '</span></td>'
+        + '<td class="fxacs-muted">' + esc(r.city || '\u2014') + '</td>'
         + '<td>' + statusPill + '</td>'
-        + '<td>' + (r.is_urgent ? '<span class="fxacs-pill fxacs-pill-urgent">⚡ Urgence</span>' : '—') + '</td>'
-        + '<td>' + fmtDate(r.created_at) + '</td>'
-        + '<td class="fxacs-muted">' + elapsed(r.created_at) + '</td>'
+        + '<td class="fxacs-muted fxacs-elapsed" title="' + esc(fmtDate(r.created_at)) + '">' + elapsed(r.created_at) + '</td>'
         + '</tr>';
     });
 
     html += '</tbody></table>';
     list.innerHTML = html;
   }
+
+  var MISSION_PILL = {
+    'sent'       : '<span class="fxacs-pill fxacs-pill-new">\uD83D\uDCE4 Envoy\u00e9</span>',
+    'offered'    : '<span class="fxacs-pill fxacs-pill-new">\uD83D\uDCEC Propos\u00e9</span>',
+    'pending'    : '<span class="fxacs-pill fxacs-pill-new">\u23F3 En attente</span>',
+    'accepted'   : '<span class="fxacs-pill fxacs-pill-assigned">\u2713 Accept\u00e9</span>',
+    'in_progress': '<span class="fxacs-pill fxacs-pill-progress">\uD83D\uDD27 En cours</span>',
+    'completed'  : '<span class="fxacs-pill fxacs-pill-done">\u2713 Termin\u00e9</span>',
+    'validated'  : '<span class="fxacs-pill fxacs-pill-done">\u2705 Valid\u00e9</span>',
+    'cancelled'  : '<span class="fxacs-pill fxacs-pill-cancel">\u2717 Annul\u00e9</span>'
+  };
 
   /* ── MISSIONS SECTION ────────────────────────────────────── */
   function _renderMissionsSection() {
@@ -482,51 +597,46 @@
 
     var missions = _state.missions;
     if (!missions.length) {
-      list.innerHTML = '<div class="fxacs-empty">Aucune mission.</div>';
+      list.innerHTML = '<div class="fxacs-empty"><div class="fxacs-empty-icon">\uD83D\uDD27</div><div>Aucune mission.</div></div>';
       return;
     }
 
-    var statusPillMap = {
-      'sent'       : '<span class="fxacs-pill fxacs-pill-new">📤 Envoyé</span>',
-      'offered'    : '<span class="fxacs-pill fxacs-pill-new">📬 Proposé</span>',
-      'pending'    : '<span class="fxacs-pill fxacs-pill-new">⏳ En attente</span>',
-      'accepted'   : '<span class="fxacs-pill fxacs-pill-assigned">✓ Accepté</span>',
-      'in_progress': '<span class="fxacs-pill fxacs-pill-progress">🔧 En cours</span>',
-      'completed'  : '<span class="fxacs-pill fxacs-pill-done">✓ Terminé</span>',
-      'validated'  : '<span class="fxacs-pill fxacs-pill-done">✅ Validé</span>',
-      'cancelled'  : '<span class="fxacs-pill fxacs-pill-cancel">✗ Annulé</span>'
-    };
-
-    var html = '<table class="fxacs-table">'
+    var html = '<table class="fxacs-table fxacs-table-missions">'
       + '<thead><tr>'
-      + '<th>Mission ID</th><th>Request ID</th><th>Artisan ID</th><th>Statut</th>'
-      + '<th>Prix convenu</th><th>Prix final</th><th>Créé</th><th>Durée</th>'
+      + '<th>Mission</th><th>Statut</th><th>Prix convenu</th><th>Prix final</th><th>Dur\u00e9e</th><th>\u00c2ge</th>'
       + '</tr></thead><tbody>';
 
     missions.forEach(function(m) {
-      var statusPill = statusPillMap[m.status] || '<span class="fxacs-pill">' + esc(m.status) + '</span>';
+      var statusPill = MISSION_PILL[m.status] || '<span class="fxacs-pill">' + esc(m.status) + '</span>';
 
       /* Financial truth: never show 0 MAD for unknowns */
       var agreedPrice = (m.agreed_price !== null && m.agreed_price !== undefined)
-        ? esc(String(m.agreed_price)) + ' MAD'
-        : '<span class="fxacs-muted">—</span>';
+        ? '<strong>' + esc(String(m.agreed_price)) + ' MAD</strong>'
+        : '<span class="fxacs-muted">\u2014</span>';
       var finalPrice = (m.final_price !== null && m.final_price !== undefined)
-        ? esc(String(m.final_price)) + ' MAD'
-        : '<span class="fxacs-muted">—</span>';
+        ? '<strong>' + esc(String(m.final_price)) + ' MAD</strong>'
+        : '<span class="fxacs-muted">\u2014</span>';
 
       var duration = (m.started_at && m.completed_at)
         ? Math.round((new Date(m.completed_at) - new Date(m.started_at)) / 60000) + ' min'
-        : '—';
+        : '\u2014';
+
+      /* Cross-ref artisan name from _state.artisans */
+      var artisanRow = _state.artisans.find(function(a){ return a.id === m.artisan_id; });
+      var artisanLabel = artisanRow
+        ? '<div class="fxacs-artisan-fullname" style="font-size:.76rem">' + esc(artisanRow.full_name || '\u2014') + '</div>'
+        : '<span class="fxacs-mono">' + esc(String(m.artisan_id || '\u2014').substring(0, 8)) + '\u2026</span>';
 
       html += '<tr>'
-        + '<td><span class="fxacs-mono">' + esc(String(m.id || '').substring(0, 8)) + '…</span></td>'
-        + '<td><span class="fxacs-mono">' + esc(String(m.request_id || '').substring(0, 8)) + '…</span></td>'
-        + '<td><span class="fxacs-mono">' + esc(String(m.artisan_id || '—').substring(0, 8)) + '…</span></td>'
+        + '<td>'
+          + '<span class="fxacs-mono" style="font-size:.68rem;opacity:.6" title="' + esc(m.id) + '">' + esc(String(m.id || '').substring(0, 8)) + '\u2026</span>'
+          + artisanLabel
+        + '</td>'
         + '<td>' + statusPill + '</td>'
         + '<td>' + agreedPrice + '</td>'
         + '<td>' + finalPrice + '</td>'
-        + '<td>' + fmtDate(m.created_at) + '</td>'
         + '<td class="fxacs-muted">' + duration + '</td>'
+        + '<td class="fxacs-muted fxacs-elapsed">' + elapsed(m.created_at) + '</td>'
         + '</tr>';
     });
 
@@ -583,74 +693,105 @@
   }
 
   /* ── ACTION HANDLER (claims) ─────────────────────────────── */
+  /* No browser confirm() or prompt() — all confirmation is inline. */
   function _handleAction(e) {
     var btn = e.target.closest('[data-fxacs-action]');
     if (!btn) return;
     var action  = btn.dataset.fxacsAction;
     var claimId = btn.dataset.claimId;
 
-    if (action === 'approve-claim' && claimId) {
-      _doApprove(claimId, btn);
-    } else if (action === 'reject-claim' && claimId) {
-      _doReject(claimId, btn);
-    } else if (action === 'fxacs-refresh') {
-      _syncAll();
+    if (action === 'approve-claim' && claimId)         { _showApproveConfirm(claimId, btn); }
+    else if (action === 'approve-claim-confirm' && claimId) { _doApprove(claimId, btn); }
+    else if (action === 'reject-claim' && claimId)     { _showRejectConfirm(claimId, btn); }
+    else if (action === 'reject-claim-confirm' && claimId)  { _doReject(claimId, btn); }
+    else if (action === 'claim-action-cancel' && claimId)   { _hideClaimConfirm(claimId); }
+    else if (action === 'fxacs-refresh')                { _syncAll(); }
+  }
+
+  function _showApproveConfirm(claimId, btn) {
+    var row = el('fxacs-confirm-' + claimId);
+    if (!row) return;
+    row.innerHTML = '<div class="fxacs-confirm-row">'
+      + '<span class="fxacs-confirm-msg">\u26A0\uFE0F Confirmer : lier l\u2019artisan au compte demandeur\u00a0?</span>'
+      + '<button class="fxacs-btn fxacs-btn-approve fxacs-btn-confirm" data-fxacs-action="approve-claim-confirm" data-claim-id="' + esc(claimId) + '">\u2714 Oui, approuver</button>'
+      + '<button class="fxacs-btn fxacs-btn-ghost" data-fxacs-action="claim-action-cancel" data-claim-id="' + esc(claimId) + '">Annuler</button>'
+      + '</div>';
+    row.style.display = 'block';
+    btn.disabled = true;
+  }
+
+  function _showRejectConfirm(claimId, btn) {
+    var row = el('fxacs-confirm-' + claimId);
+    if (!row) return;
+    row.innerHTML = '<div class="fxacs-confirm-row">'
+      + '<input type="text" class="fxacs-confirm-input" id="fxacs-reject-note-' + esc(claimId) + '" placeholder="Motif de rejet (optionnel)\u2026" maxlength="200">'
+      + '<button class="fxacs-btn fxacs-btn-reject fxacs-btn-confirm" data-fxacs-action="reject-claim-confirm" data-claim-id="' + esc(claimId) + '">\u2716 Confirmer le rejet</button>'
+      + '<button class="fxacs-btn fxacs-btn-ghost" data-fxacs-action="claim-action-cancel" data-claim-id="' + esc(claimId) + '">Annuler</button>'
+      + '</div>';
+    row.style.display = 'block';
+    btn.disabled = true;
+    var inp = el('fxacs-reject-note-' + claimId);
+    if (inp) setTimeout(function(){ inp.focus(); }, 60);
+  }
+
+  function _hideClaimConfirm(claimId) {
+    var row = el('fxacs-confirm-' + claimId);
+    if (row) { row.style.display = 'none'; row.innerHTML = ''; }
+    /* Re-enable primary action buttons */
+    var card = document.querySelector('[data-claim-id="' + claimId + '"]');
+    if (card) {
+      document.querySelectorAll('[data-claim-id="' + claimId + '"]').forEach(function(b){
+        b.disabled = false;
+      });
     }
   }
 
   async function _doApprove(claimId, btn) {
     if (!window.FixeoRepository || typeof window.FixeoRepository.approveClaimRequest !== 'function') {
-      alert('FixeoRepository non disponible — rechargez la page.');
+      _showToast('\u26A0\uFE0F FixeoRepository non disponible \u2014 rechargez la page.', 'error');
       return;
     }
-    var confirmed = confirm('Approuver ce claim ? L\'artisan sera lié au compte demandeur.');
-    if (!confirmed) return;
-
     btn.disabled = true;
-    btn.textContent = '⏳';
+    btn.textContent = '\u23F3 Approbation\u2026';
     try {
-      var res = await window.FixeoRepository.approveClaimRequest(claimId, 'Approuvé depuis admin canonical sync');
+      var res = await window.FixeoRepository.approveClaimRequest(claimId, 'Approuv\u00e9 depuis admin canonical sync v1b');
       if (res && res.ok) {
-        _showToast('✓ Claim approuvé — profil lié', 'success');
-        setTimeout(function(){ _syncAll(); }, 800);
+        _showToast('\u2705 Claim approuv\u00e9 \u2014 profil li\u00e9', 'success');
+        setTimeout(function(){ _syncAll(); }, 1000);
       } else {
         var reason = (res && res.reason) || 'Erreur inconnue';
-        _showToast('⚠️ Échec: ' + reason, 'error');
-        btn.disabled = false;
-        btn.textContent = '✓ Approuver';
+        _showToast('\u26A0\uFE0F \u00c9chec\u00a0: ' + reason, 'error');
+        _hideClaimConfirm(claimId);
       }
     } catch(e) {
-      _showToast('⚠️ Erreur: ' + (e.message || e), 'error');
-      btn.disabled = false;
-      btn.textContent = '✓ Approuver';
+      _showToast('\u26A0\uFE0F Erreur\u00a0: ' + (e.message || e), 'error');
+      _hideClaimConfirm(claimId);
     }
   }
 
   async function _doReject(claimId, btn) {
     if (!window.FixeoRepository || typeof window.FixeoRepository.rejectClaimRequest !== 'function') {
-      alert('FixeoRepository non disponible — rechargez la page.');
+      _showToast('\u26A0\uFE0F FixeoRepository non disponible \u2014 rechargez la page.', 'error');
       return;
     }
-    var note = prompt('Motif de rejet (optionnel):');
-    if (note === null) return; /* cancelled */
+    var noteEl = el('fxacs-reject-note-' + claimId);
+    var note   = noteEl ? (noteEl.value || '').trim() : '';
 
     btn.disabled = true;
-    btn.textContent = '⏳';
+    btn.textContent = '\u23F3 Rejet\u2026';
     try {
-      var res = await window.FixeoRepository.rejectClaimRequest(claimId, note || '');
+      var res = await window.FixeoRepository.rejectClaimRequest(claimId, note);
       if (res && res.ok) {
-        _showToast('Claim rejeté', 'info');
-        setTimeout(function(){ _syncAll(); }, 800);
+        _showToast('Claim rejet\u00e9', 'info');
+        setTimeout(function(){ _syncAll(); }, 1000);
       } else {
         var reason = (res && res.reason) || 'Erreur inconnue';
-        _showToast('⚠️ Échec: ' + reason, 'error');
-        btn.disabled = false;
-        btn.textContent = '✗ Rejeter';
+        _showToast('\u26A0\uFE0F \u00c9chec\u00a0: ' + reason, 'error');
+        _hideClaimConfirm(claimId);
       }
     } catch(e) {
-      _showToast('⚠️ Erreur: ' + (e.message || e), 'error');
-      btn.disabled = false;
-      btn.textContent = '✗ Rejeter';
+      _showToast('\u26A0\uFE0F Erreur\u00a0: ' + (e.message || e), 'error');
+      _hideClaimConfirm(claimId);
     }
   }
 
@@ -660,9 +801,13 @@
     if (!wrap) return;
     var t = document.createElement('div');
     t.className = 'fxacs-toast fxacs-toast-' + (type || 'info');
+    t.setAttribute('role', 'status');
+    t.setAttribute('aria-live', 'polite');
     t.textContent = msg;
     wrap.appendChild(t);
-    setTimeout(function() { t.remove(); }, 4000);
+    /* Fade out before removing */
+    setTimeout(function() { t.classList.add('fxacs-toast-out'); }, 3600);
+    setTimeout(function() { if (t.parentNode) t.remove(); }, 4000);
   }
 
   /* ── INJECT SECTIONS INTO admin.html ─────────────────────── */
