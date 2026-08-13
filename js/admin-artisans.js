@@ -35,20 +35,19 @@ const _ART_HEADERS_FORM = {
   'X-Admin-Auth'  : 'fixeo_admin_v20'
 };
 
-/* ── Store local (fallback offline) ───────────────────────── */
-const _LS_KEY = 'fixeo_admin_artisans_v21';
+/* ── Store local (READ-ONLY display cache — NOT authoritative) ── */
+/* Canonical source: Supabase via FixeoRepository.getAllArtisans()  */
+/* localStorage is never written as an artisan creation/update authority */
+const _LS_KEY = 'fixeo_admin_artisans_v21';  /* kept for display-cache reads only */
 
 function _lsGet() {
-  // FixeoDB est la source unique de vérité
-  if (window.FixeoDB) return window.FixeoDB.getAllArtisans();
+  /* Display cache only — used to render UI while Supabase fetch completes.
+   * NEVER treated as canonical. Always superseded by Supabase data. */
   try { return JSON.parse(localStorage.getItem(_LS_KEY) || '[]'); } catch { return []; }
 }
 function _lsSave(arr) {
-  // Persister via FixeoDB + compatibilité legacy
-  if (window.FixeoDB) {
-    window.FixeoDB.saveArtisans(arr);
-    return;
-  }
+  /* Write a display-cache copy for offline/loading display only.
+   * This does NOT make localStorage an authoritative artisan store. */
   try { localStorage.setItem(_LS_KEY, JSON.stringify(arr)); } catch {}
 }
 
@@ -66,35 +65,34 @@ function _getTrustedArtisans(list) {
 }
 
 /* ══════════════════════════════════════════════════════════════
-   LOAD — Charger les artisans (API → fallback localStorage)
+   LOAD — Canonical Supabase source (display-cache fallback for UI)
+   Authority: Supabase via FixeoRepository.getAllArtisans() ONLY.
+   localStorage is a read-only display cache — never written as
+   canonical source and never used as the primary authority.
 ══════════════════════════════════════════════════════════════ */
 async function loadArtisans() {
-  try {
-    const url  = _ART_API_BASE + '/api/admin/artisans';
-    const ctrl = new AbortController();
-    const tmo  = setTimeout(() => ctrl.abort(), 5000);
+  /* 1. Show display cache immediately so the table isn't blank */
+  const cached = _lsGet();
+  if (cached.length) {
+    _artisansList = cached;
+    renderArtisansAdminTable(_artisansList);
+  }
 
-    const res  = await fetch(url, { headers: _ART_HEADERS_JSON, signal: ctrl.signal });
-    clearTimeout(tmo);
-
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const body = await res.json();
-
-    if (body.success && Array.isArray(body.artisans)) {
-      _artisansList = body.artisans;
-      _lsSave(_artisansList);
-      console.log('[Fixeo Artisans] ✅ Chargés depuis API :', _artisansList.length);
+  /* 2. Canonical fetch from Supabase via FixeoRepository */
+  if (window.FixeoRepository && typeof window.FixeoRepository.getAllArtisans === 'function') {
+    try {
+      const canonical = await window.FixeoRepository.getAllArtisans();
+      if (Array.isArray(canonical) && canonical.length >= 0) {
+        _artisansList = canonical;
+        _lsSave(_artisansList); /* refresh display cache only */
+        console.info('[Fixeo Artisans] ✅ Chargés depuis Supabase (canonical):', _artisansList.length);
+      }
+    } catch (err) {
+      console.warn('[Fixeo Artisans] ⚠️ Supabase fetch échoué — affichage du cache.', err.message);
+      /* _artisansList already set from display cache above — do not write anything new */
     }
-  } catch (err) {
-    console.warn('[Fixeo Artisans] ⚠️ API indisponible — fallback localStorage. Err:', err.message);
-    _artisansList = _lsGet() /* FixeoDB via fallback */;
-    // Notify repository of fresh local data
-    if (window.FixeoRepository && !window.FixeoRepository.isSupabaseMode()) {
-      window.FixeoRepository.getAllArtisans().then(function(all) {
-        if (all && all.length > _artisansList.length) _artisansList = all;
-        renderArtisansAdminTable(_artisansList);
-      }).catch(function(){});
-    }
+  } else {
+    console.warn('[Fixeo Artisans] FixeoRepository non disponible — affichage du cache local uniquement.');
   }
 
   renderArtisansAdminTable(_artisansList);
@@ -242,12 +240,9 @@ async function toggleArtisanStatus(id, newStatus) {
       if (typeof showToast === 'function') showToast('❌ Erreur : ' + (body.error || 'Statut non mis à jour'), 'error');
     }
   } catch (err) {
-    console.warn('[Fixeo Artisans] ⚠️ API indisponible — mise à jour locale. Err:', err.message);
-    const idx = _artisansList.findIndex(a => a.id === id);
-    if (idx !== -1) { _artisansList[idx].status = newStatus; _lsSave(_artisansList); }
-    renderArtisansAdminTable(_artisansList);
-    _updateArtisansSidebarCount();
-    if (typeof showToast === 'function') showToast('⚠️ Mis à jour en local (API hors ligne)', 'warning');
+    /* No localStorage toggle authority — show honest error */
+    console.warn('[Fixeo Artisans] toggleArtisanStatus API unavailable.', err.message);
+    if (typeof showToast === 'function') showToast('⚠️ Service indisponible — statut non modifié.', 'error');
   }
 }
 
@@ -291,12 +286,9 @@ async function _deleteArtisan(id) {
       if (typeof showToast === 'function') showToast('❌ Erreur : ' + (body.error || 'Suppression impossible'), 'error');
     }
   } catch (err) {
-    console.warn('[Fixeo Artisans] ⚠️ API indisponible — suppression locale. Err:', err.message);
-    _artisansList = _artisansList.filter(a => a.id !== id);
-    _lsSave(_artisansList);
-    renderArtisansAdminTable(_artisansList);
-    _updateArtisansSidebarCount();
-    if (typeof showToast === 'function') showToast('⚠️ Supprimé en local (API hors ligne)', 'warning');
+    /* No localStorage delete authority — show honest error */
+    console.warn('[Fixeo Artisans] _deleteArtisan API unavailable.', err.message);
+    if (typeof showToast === 'function') showToast('⚠️ Service indisponible — artisan non supprimé.', 'error');
   }
 }
 
@@ -383,43 +375,19 @@ async function submitArtisanForm(e) {
       _artFormError(errEl, btn, '❌ ' + (body.error || 'Erreur lors de l\'ajout.'));
     }
   } catch (err) {
-    /* Fallback local */
-    console.warn('[Fixeo Artisans] ⚠️ API indisponible — ajout local. Err:', err.message);
-    const newArtisan = {
-      id              : 'art_local_' + Date.now(),
-      name, email, phone, service, city, zones,
-      subscriptionPlan: subPlan,
-      status, certified,
-      description,
-      avatar          : '',
-      rating          : 0,
-      missions        : 0,
-      role            : 'artisan',
-      createdAt       : new Date().toISOString(),
-      _isLocal        : true,
-    };
-    if (window.FixeoRepository) {
-      window.FixeoRepository.createArtisan(newArtisan).then(function(created) {
-        if (created) newArtisan = created;
-        _artisansList.unshift(newArtisan);
-        renderArtisansAdminTable(_artisansList);
-      }).catch(function(){ _artisansList.unshift(newArtisan); renderArtisansAdminTable(_artisansList); });
-    } else if (window.FixeoDB) {
-      newArtisan = window.FixeoDB.createArtisan(newArtisan);
-      _artisansList = window.FixeoDB.getAllArtisans();
-    } else {
-      _artisansList.unshift(newArtisan);
-      _lsSave(_artisansList);
-    }
-
-    document.getElementById('artisan-add-form')?.reset();
-    _closeArtisanFormPanel();
-
-    renderArtisansAdminTable(_artisansList);
-    _updateArtisansSidebarCount();
-    _updateArtisansKPIs(_artisansList);
-    if (typeof showToast === 'function')
-      showToast('⚠️ Artisan ajouté en local (API hors ligne)', 'warning');
+    /* CANONICAL AUTHORITY: /api/admin/artisans is not available.
+     * We do NOT fall back to localStorage artisan creation —
+     * localStorage is never an authoritative artisan store.
+     * New artisans must be created via the canonical path only
+     * (register_new_artisan RPC for self-registration, or via Supabase
+     * studio for admin-seeded profiles).
+     * Show a clear truthful error — do not silently write local data. */
+    console.warn('[Fixeo Artisans] Add-artisan API unavailable. No localStorage fallback.', err.message);
+    _artFormError(errEl, btn,
+      '⚠️ Impossible de créer l\'artisan — le service d\'ajout n\'est pas disponible. ' +
+      'Utilisez Supabase Studio pour créer un profil artisan directement, ou vérifiez votre connexion.');
+    if (btn) { btn.disabled = false; btn.innerHTML = '➕ Ajouter l\'artisan'; }
+    return;
   }
 
   if (btn) { btn.disabled = false; btn.innerHTML = '➕ Ajouter l\'artisan'; }
@@ -582,25 +550,11 @@ async function submitEditArtisanForm(e) {
       _editFormError(errEl, btn, '❌ ' + (body.error || 'Erreur lors de la mise à jour.'));
     }
   } catch (err) {
-    /* Fallback local */
-    console.warn('[Fixeo Artisans] ⚠️ API indisponible — mise à jour locale. Err:', err.message);
-    const idx = _artisansList.findIndex(a => a.id === _currentEditId);
-    if (idx !== -1) {
-      _artisansList[idx] = {
-        ..._artisansList[idx],
-        name, email, phone, service, city, zones,
-        subscriptionPlan: subPlan,
-        status, certified, description, rating, missions
-      };
-    }
-    _lsSave(_artisansList);
-    renderArtisansAdminTable(_artisansList);
-    _updateArtisansSidebarCount();
-    _updateArtisansKPIs(_artisansList);
-
-    closeFixeoEditArtisanModal();
-    if (typeof showToast === 'function')
-      showToast('⚠️ Mis à jour en local (API hors ligne)', 'warning');
+    /* No localStorage edit authority — show honest error */
+    console.warn('[Fixeo Artisans] submitEditArtisanForm API unavailable.', err.message);
+    _editFormError(errEl, btn, '⚠️ Service indisponible — modifications non enregistrées. Vérifiez votre connexion.');
+    if (btn) { btn.disabled = false; btn.innerHTML = '💾 Enregistrer'; }
+    return;
   }
 
   if (btn) { btn.disabled = false; btn.innerHTML = '💾 Enregistrer'; }

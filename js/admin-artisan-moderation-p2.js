@@ -569,32 +569,30 @@
   }
 
   /* ── ACTION 3: Approve claim ─────────────────────────────── */
+  /* CANONICAL AUTHORITY: FixeoRepository.approveClaimRequest() ONLY.
+   * This calls approve_artisan_claim RPC (SECURITY DEFINER, admin-verified
+   * server-side). FixeoClaimSystem localStorage path is NOT used — it was
+   * a pre-canonical authority that is now superseded.
+   * Direct localStorage claim write is removed. */
   function _actionApproveClaim(artisanId, claimId) {
-    /* Use FixeoClaimSystem if available */
-    if (window.FixeoClaimSystem && typeof window.FixeoClaimSystem.adminApproveClaim === 'function') {
-      window.FixeoClaimSystem.adminApproveClaim(claimId, 'Approuv\u00e9 depuis le panneau de mod\u00e9ration');
-    } else if (window.FixeoRepository && typeof window.FixeoRepository.approveClaimRequest === 'function') {
-      window.FixeoRepository.approveClaimRequest(claimId, 'Approuv\u00e9');
-    } else {
-      /* Direct patch */
-      try {
-        var claims = JSON.parse(localStorage.getItem(CLAIMS_KEY)||'[]');
-        var idx = claims.findIndex(function(c){ return c.id === claimId; });
-        if (idx >= 0) {
-          claims[idx].status = 'approved';
-          claims[idx].processed_at = nowISO();
-          localStorage.setItem(CLAIMS_KEY, JSON.stringify(claims));
-        }
-      } catch(er){}
+    if (!window.FixeoRepository || typeof window.FixeoRepository.approveClaimRequest !== 'function') {
+      _showToast('\u26a0\ufe0f FixeoRepository non disponible \u2014 rechargez la page.', 'error');
+      return;
     }
-    persistModerationStatus(artisanId, 'claimed_approved', {
-      validated_at: nowISO(),
-      validated_by: 'admin'
-    });
-    _patchLegacyStatus(artisanId, 'active');
-    _triggerTableRefresh();
-    _showToast('\u2713 Revendication approuv\u00e9e — profil activ\u00e9', 'success');
-    try { window.dispatchEvent(new CustomEvent('fixeo:claim-approved', { detail: { artisanId: artisanId, claimId: claimId } })); } catch(er){}
+    window.FixeoRepository.approveClaimRequest(claimId, 'Approuv\u00e9 depuis mod\u00e9ration admin')
+      .then(function(res) {
+        if (res && res.ok) {
+          _showToast('\u2713 Revendication approuv\u00e9e \u2014 profil li\u00e9', 'success');
+          _triggerTableRefresh();
+          try { window.dispatchEvent(new CustomEvent('fixeo:claim-approved', { detail: { artisanId: artisanId, claimId: claimId } })); } catch(er){}
+        } else {
+          var reason = (res && res.reason) || 'Erreur inconnue';
+          _showToast('\u26a0\ufe0f \u00c9chec approbation\u00a0: ' + reason, 'error');
+        }
+      })
+      .catch(function(e) {
+        _showToast('\u26a0\ufe0f Erreur\u00a0: ' + (e.message || e), 'error');
+      });
   }
 
   /* ── ACTION 4: Suspend ───────────────────────────────────── */
