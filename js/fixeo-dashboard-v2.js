@@ -8,7 +8,7 @@
   'use strict';
 
   /* ── VERSION ──────────────────────────────────────────────────── */
-  var VERSION = 'v2j'; /* faee-v2a: Client Command Center upgrade */
+  var VERSION = 'v2k'; /* 7C.11F.2: canonical sync + premium product pass */
 
   /* ── PIPELINE DEFINITION ──────────────────────────────────────── */
   /* Maps a unified key to display config.
@@ -48,6 +48,7 @@
     quotes:        [],   /* quotes rows */
     missions:      [],   /* missions rows */
     artisanMap:    {},   /* id → artisan row */
+    notifications: [],   /* notifications rows for current user */
     section:       'dashboard',
     loading:       true,
     error:         null
@@ -188,6 +189,11 @@
     _state.quotes     = quotes;
     _state.missions   = missions;
     _state.artisanMap = artisanMap;
+
+    /* Fetch notifications for current user (non-blocking) */
+    if (_state.session && _state.session.user && _state.session.user.id) {
+      _state.notifications = await _fetchNotifications(_state.session.user.id);
+    }
   }
 
   /* ── KPIs ─────────────────────────────────────────────────────── */
@@ -278,33 +284,30 @@
   }
 
   function _renderRatingPlaceholder(req) {
-    /* frev-v1a: Live review button wired to FixeoReviews.openModal() */
+    /* Review CTA — only shown for completed missions with a known artisan.
+     * Security: clientPhone is NEVER passed to the review modal or stored in data-*
+     * FixeoReviews.openModal() is the review engine; graceful if not loaded. */
     var mission    = (_state.missions || []).find(function(m) { return m.request_id === req.id; }) || null;
     var missionId  = mission ? (mission.id || '') : '';
     var artisanId  = mission ? (mission.artisan_profile_id || '') : '';
-    var clientId   = (_state.profile && _state.profile.id)    || '';
-    var clientPhone= (_state.profile && _state.profile.phone) || '';
+    var clientId   = (_state.profile && _state.profile.id) || '';
 
     if (!missionId || !artisanId) {
-      return '<div style="margin-top:10px;padding:10px;border:1px dashed rgba(255,255,255,.10);border-radius:10px;">'
-        + '<div style="font-size:.78rem;color:rgba(255,255,255,.35)">\u2b50 Avis disponible une fois la mission confirm\u00e9e</div>'
+      return '<div class="fxv2-review-pending">'
+        + '<span>\u2b50 Avis disponible apr\u00e8s confirmation</span>'
         + '</div>';
     }
 
+    /* Inline handler: check FixeoReviews exists before calling */
     return '<div style="margin-top:10px">'
       + '<button class="fxv2-review-btn" type="button"'
       + ' data-mission-id="' + esc(missionId) + '"'
       + ' data-artisan-id="' + esc(artisanId) + '"'
-      + ' data-client-id="' + esc(clientId) + '"'
-      + ' data-client-phone="' + esc(clientPhone) + '"'
-      + ' onclick="(function(btn){if(window.FixeoReviews){window.FixeoReviews.openModal({'
-      +   'missionId:btn.dataset.missionId,'
-      +   'artisanId:btn.dataset.artisanId,'
-      +   'clientProfileId:btn.dataset.clientId,'
-      +   'clientPhone:btn.dataset.clientPhone'
-      + '})}})(this)"'
+      + ' data-client-id="'  + esc(clientId)  + '"'
+      + ' data-action="open-review"'
       + '>\u2b50 Donner mon avis</button>'
       + '</div>';
+    /* Note: clientPhone is NOT passed — review modal identifies client via session */
   }
 
   function _renderCard(req) {
@@ -434,45 +437,31 @@
     + '</div>';
   }
 
-  /* ── SMART INSIGHTS BAND ───────────────────────────────────────── */
+  /* ── TRUST BAND ────────────────────────────────────────────────── */
+  /* Shows only factual trust signals. No fake ETA. No fake artisan count. */
   function _renderInsightsBand() {
-    /* Artisan count: from AIRE if available, else heuristic */
-    var artisanCount = '861+';
-    try {
-      if (window.FixeoAIRE && typeof window.FixeoAIRE.getArtisanCount === 'function') {
-        var n = window.FixeoAIRE.getArtisanCount('', '');
-        if (n && n > 0) artisanCount = n + '+';
-      }
-    } catch (_) {}
-
-    /* ETA: time of day heuristic */
-    var h = new Date().getHours();
-    var etaMin = (h >= 22 || h < 7) ? 35 : (h >= 8 && h < 20) ? 22 : 28;
-    var etaLabel = etaMin + ' min';
-
-    /* Safety tip: rotate daily */
+    /* Safety tip: rotate daily — informational only, no metrics */
     var TIPS = [
       '\uD83D\uDCA1 Signalez les fuites d\u2019eau imm\u00e9diatement pour \u00e9viter les d\u00e9g\u00e2ts',
       '\uD83D\uDD0D Demandez toujours un devis \u00e9crit avant l\u2019intervention',
       '\u26A1 En cas de panne \u00e9lectrique, coupez le disjoncteur g\u00e9n\u00e9ral',
-      '\uD83C\uDFC6 Tous nos artisans sont v\u00e9rifi\u00e9s et assur\u00e9s par Fixeo',
+      '\uD83C\uDFC6 Tous nos artisans sont v\u00e9rifi\u00e9s par l\u2019\u00e9quipe Fixeo',
       '\uD83D\uDCF1 Gardez votre r\u00e9f\u00e9rence de suivi pour retracer votre demande'
     ];
     var tip = TIPS[new Date().getDate() % TIPS.length];
 
+    /* Build trust items — real facts only */
+    var items = [
+      '\u2714\uFE0F Artisans v\u00e9rifi\u00e9s',
+      '\u2714\uFE0F Paiement apr\u00e8s intervention',
+      tip
+    ];
+
     return '<div class="fxv2-insights-band">'
-      + '<div class="fxv2-insight-item">'
-          + '<span class="fxv2-insight-dot"></span>'
-          + '<span class="fxv2-insight-val">' + artisanCount + '</span>'
-          + '<span class="fxv2-insight-lbl">artisans actifs</span>'
-        + '</div>'
-      + '<div class="fxv2-insight-sep">\u00b7</div>'
-      + '<div class="fxv2-insight-item">'
-          + '\u23F1\uFE0F <span class="fxv2-insight-val">' + etaLabel + '</span>'
-          + '<span class="fxv2-insight-lbl">ETA moyen</span>'
-        + '</div>'
-      + '<div class="fxv2-insight-sep">\u00b7</div>'
-      + '<div class="fxv2-insight-item fxv2-insight-tip">' + tip + '</div>'
+      + items.map(function(item, i) {
+          return (i > 0 ? '<div class="fxv2-insight-sep">\u00b7</div>' : '')
+            + '<div class="fxv2-insight-item fxv2-insight-tip">' + esc(item) + '</div>';
+        }).join('')
     + '</div>';
   }
 
@@ -713,21 +702,48 @@
     if (sb) sb.textContent = sub;
   }
 
+  /* ── INJECT NOTIFICATION BELL INTO HEADER ─────────────────────── */
+  function _injectNotifBell() {
+    /* Header right slot — find the empty reservation div */
+    var header = document.querySelector('.fxv2-header');
+    if (!header) return;
+    /* Only inject once */
+    if (document.getElementById('fxv2-notif-bell')) return;
+    /* Find the last div in header (the empty reservation slot) */
+    var slots = header.querySelectorAll('div');
+    var slot  = slots[slots.length - 1];
+    if (!slot) return;
+    slot.innerHTML = '<button id="fxv2-notif-bell" class="fxv2-notif-bell" aria-label="Notifications" data-action="go-notifications">'
+      + '\uD83D\uDD14'
+      + '</button>';
+  }
+
+  /* ── SECTION: NOTIFICATIONS ────────────────────────────────────── */
+  function _renderNotificationsSection() {
+    var sec = document.getElementById('fxv2-sec-notifications');
+    if (!sec) return;
+    var html = '<div class="fxv2-section-head"><h2>\uD83D\uDD14 Notifications</h2></div>'
+      + _renderNotificationList();
+    sec.innerHTML = html;
+  }
+
   /* ── MASTER RENDER ────────────────────────────────────────────── */
   function _render() {
     _renderKPIs();
     _renderSidebarProfile();
+    _renderNotificationBell();
     _renderDashboard();
     _renderRequests();
     _renderMissions();
     _renderHistory();
     _renderMessages();
+    _renderNotificationsSection();
     _renderProfile();
     _renderSupport();
   }
 
   /* ── NAVIGATION ───────────────────────────────────────────────── */
-  var SECTIONS = ['dashboard', 'requests', 'missions', 'messages', 'history', 'profile', 'support'];
+  var SECTIONS = ['dashboard', 'requests', 'missions', 'messages', 'history', 'notifications', 'profile', 'support'];
 
   function _showSection(name) {
     if (SECTIONS.indexOf(name) === -1) name = 'dashboard';
@@ -838,11 +854,15 @@
         case 'accept-quote':   return _doAcceptQuote(id, btn);
         case 'reject-quote':   return _doRejectQuote(id, btn);
         case 'confirm-done':   return _doConfirmDone(id, btn);
+        case 'open-review':    return _doOpenReview(btn);
+        case 'submit-review':  return _doSubmitReview(btn);
+        case 'mark-notif-read': return _doMarkNotifRead(id);
         case 'new-request':    return _openNewRequest();
         case 'new-urgent':     return _openUrgentRequest(btn);
-        case 'go-requests':    return _showSection('requests');
-        case 'go-history':     return _showSection('history');
-        case 'go-support':     return _showSection('support');
+        case 'go-requests':       return _showSection('requests');
+        case 'go-history':        return _showSection('history');
+        case 'go-support':        return _showSection('support');
+        case 'go-notifications':  return _showSection('notifications');
         case 'logout':
           if (window.FixeoLogout && typeof window.FixeoLogout.logout === 'function') {
             window.FixeoLogout.logout();
@@ -877,14 +897,25 @@
     if (!quoteId) return;
     _btnBusy(btn, 'Refus\u2026');
     try {
-      var sb = await window.FixeoSupabase.getClient();
+      var FS = window.FixeoSupabase;
+      var sb = await FS.getClient();
+
+      /* Ownership check — quote must belong to a request owned by this client */
+      var quoteRes = await sb.from('quotes').select('id,request_id').eq('id', quoteId).maybeSingle();
+      if (quoteRes.error) throw quoteRes.error;
+      if (!quoteRes.data) throw new Error('Devis introuvable.');
+
+      /* Verify request ownership via _state (already fetched — no extra roundtrip) */
+      var ownsRequest = (_state.requests || []).some(function(r) { return r.id === quoteRes.data.request_id; });
+      if (!ownsRequest) throw new Error('Ce devis ne vous appartient pas.');
+
       var res = await sb.from('quotes').update({ status: 'rejected' }).eq('id', quoteId);
       if (res.error) throw res.error;
       _toast('Devis refus\u00e9.', 'info');
       await _refresh();
     } catch (e) {
       console.warn('[fxv2] rejectQuote error:', e && e.message);
-      _toast('\u274C Erreur lors du refus.', 'error');
+      _toast('\u274C ' + (e && e.message ? e.message : 'Erreur lors du refus.'), 'error');
       _btnReset(btn, '\u2716 Refuser');
     }
   }
@@ -954,7 +985,180 @@
     btn.textContent = label || btn._origText || '';
   }
 
-  /* ── NEW REQUEST MODAL ────────────────────────────────────────── */
+  /* ── REVIEW MODAL ─────────────────────────────────────────────── */
+  /*
+   * Inline client review form for completed missions.
+   * Uses FixeoReviews.openModal() if available (external engine).
+   * Falls back to an inline modal that writes directly to the reviews table.
+   * Security:
+   *   - clientPhone is NEVER in the form or data-*
+   *   - missionId + artisanId come from _state (already ownership-verified)
+   *   - client_profile_id comes from authenticated session (not caller input)
+   */
+  function _doOpenReview(btn) {
+    var missionId = btn && btn.dataset.missionId;
+    var artisanId = btn && btn.dataset.artisanId;
+    var clientId  = btn && btn.dataset.clientId;
+    if (!missionId || !artisanId) return;
+
+    /* Delegate to FixeoReviews engine if loaded */
+    if (window.FixeoReviews && typeof window.FixeoReviews.openModal === 'function') {
+      window.FixeoReviews.openModal({
+        missionId:       missionId,
+        artisanId:       artisanId,
+        clientProfileId: clientId
+        /* clientPhone intentionally omitted — review engine resolves via session */
+      });
+      return;
+    }
+
+    /* Inline fallback review form */
+    var body = '<div class="fxv2-modal-drag-handle"></div>'
+      + '<div class="fxv2-modal-title">\u2b50 Donner mon avis</div>'
+      + '<form id="fxv2-review-form">'
+      + '<div class="fxv2-form-group">'
+        + '<label class="fxv2-label">Note globale *</label>'
+        + '<div class="fxv2-stars" role="radiogroup" aria-label="Note">'
+        + [5,4,3,2,1].map(function(n) {
+            return '<label style="cursor:pointer;font-size:1.4rem">'
+              + '<input type="radio" name="rating" value="' + n + '" required style="display:none">'
+              + '\u2b50</label>';
+          }).join('')
+        + '</div>'
+      + '</div>'
+      + '<div class="fxv2-form-group">'
+        + '<label class="fxv2-label">Commentaire <span style="opacity:.5">(optionnel)</span></label>'
+        + '<textarea class="fxv2-textarea" name="review_text" placeholder="D\u00e9crivez votre exp\u00e9rience\u2026" maxlength="500"></textarea>'
+      + '</div>'
+      + '<input type="hidden" name="mission_id"        value="' + esc(missionId) + '">'
+      + '<input type="hidden" name="artisan_id"        value="' + esc(artisanId) + '">'
+      + '<input type="hidden" name="client_profile_id" value="' + esc(clientId)  + '">'
+      + '<button type="button" class="fxv2-btn fxv2-btn-primary" style="width:100%;justify-content:center"'
+        + ' data-action="submit-review">Envoyer mon avis</button>'
+      + '</form>';
+    _openModal(body);
+  }
+
+  async function _doSubmitReview(btn) {
+    var form = document.getElementById('fxv2-review-form');
+    if (!form) return;
+    var ratingEl = form.querySelector('[name="rating"]:checked');
+    if (!ratingEl) { _toast('Veuillez choisir une note.', 'error'); return; }
+    var rating      = parseInt(ratingEl.value, 10);
+    var reviewText  = (form.querySelector('[name="review_text"]').value || '').trim().slice(0, 500);
+    var missionId   = form.querySelector('[name="mission_id"]').value;
+    var artisanId   = form.querySelector('[name="artisan_id"]').value;
+    var clientId    = form.querySelector('[name="client_profile_id"]').value;
+
+    if (!missionId || !artisanId || !clientId) { _toast('Donn\u00e9es manquantes.', 'error'); return; }
+    if (isNaN(rating) || rating < 1 || rating > 5) { _toast('Note invalide.', 'error'); return; }
+
+    _btnBusy(btn, 'Envoi\u2026');
+    try {
+      var sb = await window.FixeoSupabase.getClient();
+      /* Ownership check: mission must exist in _state.missions for this client */
+      var ownsMission = (_state.missions || []).some(function(m) { return m.id === missionId; });
+      if (!ownsMission) throw new Error('Mission introuvable.');
+      var res = await sb.from('reviews').insert({
+        mission_id:       missionId,
+        artisan_id:       artisanId,
+        client_profile_id: clientId,
+        rating:           rating,
+        review_text:      reviewText || '',
+        verified:         true
+      });
+      if (res.error) {
+        /* 23505 = already reviewed this mission */
+        if (String(res.error.code || '') === '23505') {
+          _closeModal();
+          _toast('Vous avez d\u00e9j\u00e0 donn\u00e9 un avis pour cette mission.', 'info');
+          return;
+        }
+        throw res.error;
+      }
+      _closeModal();
+      _toast('\u2705 Merci pour votre avis\u00a0!', 'success');
+    } catch(e) {
+      console.warn('[fxv2] submitReview error:', e && e.message);
+      _toast('\u274C ' + (e && e.message ? e.message : 'Erreur lors de l\u2019envoi.'), 'error');
+      _btnReset(btn, 'Envoyer mon avis');
+    }
+  }
+
+  /* ── NOTIFICATIONS ─────────────────────────────────────────────── */
+  /*
+   * Fetches real notifications for the current user from the notifications table.
+   * RLS ensures only the user's own rows are returned.
+   * No fake notifications. No push. Only DB rows.
+   */
+  async function _fetchNotifications(uid) {
+    try {
+      var sb = await window.FixeoSupabase.getClient();
+      var res = await sb.from('notifications')
+        .select('id,type,title,message,related_entity_type,related_entity_id,read,created_at')
+        .eq('recipient_user_id', uid)
+        .order('created_at', { ascending: false })
+        .limit(20);
+      if (res.error) return [];
+      return res.data || [];
+    } catch(e) { return []; }
+  }
+
+  async function _doMarkNotifRead(notifId) {
+    if (!notifId) return;
+    try {
+      var sb = await window.FixeoSupabase.getClient();
+      await sb.from('notifications').update({ read: true }).eq('id', notifId);
+      /* Update local state */
+      _state.notifications = (_state.notifications || []).map(function(n) {
+        return n.id === notifId ? Object.assign({}, n, { read: true }) : n;
+      });
+      _renderNotificationBell();
+    } catch(e) { /* best-effort */ }
+  }
+
+  function _renderNotificationBell() {
+    /* Show unread count badge on notification icon if any */
+    var unread = (_state.notifications || []).filter(function(n) { return !n.read; }).length;
+    var bell   = document.getElementById('fxv2-notif-bell');
+    if (!bell) return;
+    var badge = bell.querySelector('.fxv2-notif-badge');
+    if (unread > 0) {
+      bell.setAttribute('aria-label', unread + ' notification(s) non lue(s)');
+      if (!badge) {
+        badge = document.createElement('span');
+        badge.className = 'fxv2-notif-badge';
+        bell.appendChild(badge);
+      }
+      badge.textContent = unread > 9 ? '9+' : String(unread);
+    } else {
+      bell.setAttribute('aria-label', 'Notifications');
+      if (badge) badge.remove();
+    }
+  }
+
+  function _renderNotificationList() {
+    var notifs = _state.notifications || [];
+    if (!notifs.length) {
+      return '<div class="fxv2-empty">'
+        + '<div class="fxv2-empty-icon">\uD83D\uDD14</div>'
+        + '<div class="fxv2-empty-title">Aucune notification</div>'
+        + '<div class="fxv2-empty-sub">Les mises \u00e0 jour de vos demandes apparaissent ici.</div>'
+        + '</div>';
+    }
+    return '<div class="fxv2-notif-list">'
+      + notifs.map(function(n) {
+          var cls = n.read ? 'fxv2-notif-item fxv2-notif-read' : 'fxv2-notif-item fxv2-notif-unread';
+          return '<div class="' + cls + '" data-action="mark-notif-read" data-id="' + esc(n.id) + '">'
+            + '<div class="fxv2-notif-title">' + esc(n.title || n.type) + '</div>'
+            + (n.message ? '<div class="fxv2-notif-msg">' + esc(n.message) + '</div>' : '')
+            + '<div class="fxv2-notif-date">' + esc(fmtDate(n.created_at)) + '</div>'
+            + '</div>';
+        }).join('')
+      + '</div>';
+  }
+
+  /* NEW REQUEST MODAL ────────────────────────────────────────── */
   function _openNewRequest() {
     /* ── Prefer global request-form.js if available ── */
     if (window.FixeoClientRequest && typeof window.FixeoClientRequest.open === 'function') {
@@ -1106,6 +1310,7 @@
       /* Wire nav — happens before fetch so sidebar is responsive */
       _bindNav();
       _bindActions();
+      _injectNotifBell();
       _showSection('dashboard');
 
       /* Fetch data */

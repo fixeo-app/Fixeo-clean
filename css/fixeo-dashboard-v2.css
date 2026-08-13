@@ -1343,3 +1343,104 @@ a.fxv2-header-logo:hover { opacity: .8; }
 
   .fxv2-insights-band { padding: 8px 12px; gap: 4px 8px; }
 }
+
+/* ============================================================
+   CLIENT DASHBOARD — v2k additions (7C.11F.2 canonical pass)
+   - Notification bell + badge
+   - Notification list items (read/unread)
+   - Review pending state
+   ============================================================ */
+
+/* Notification bell button in header */
+.fxv2-notif-bell {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1.3rem;
+  padding: 6px 8px;
+  border-radius: 8px;
+  position: relative;
+  color: rgba(255,255,255,.75);
+  transition: color .15s, background .15s;
+  line-height: 1;
+}
+.fxv2-notif-bell:hover,
+.fxv2-notif-bell:focus-visible {
+  color: #fff;
+  background: rgba(255,255,255,.08);
+  outline: 2px solid rgba(255,255,255,.2);
+}
+.fxv2-notif-badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  min-width: 17px;
+  height: 17px;
+  border-radius: 9px;
+  background: #e63946;
+  color: #fff;
+  font-size: .6rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 3px;
+  line-height: 1;
+  pointer-events: none;
+}
+
+/* Notification list */
+.fxv2-notif-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.fxv2-notif-item {
+  border-radius: 12px;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: background .15s;
+}
+.fxv2-notif-unread {
+  background: rgba(99,102,241,.12);
+  border-left: 3px solid #6366f1;
+}
+.fxv2-notif-read {
+  background: rgba(255,255,255,.04);
+  border-left: 3px solid transparent;
+  opacity: .7;
+}
+.fxv2-notif-item:hover { background: rgba(255,255,255,.08); opacity: 1; }
+.fxv2-notif-title {
+  font-size: .88rem;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 3px;
+}
+.fxv2-notif-msg {
+  font-size: .8rem;
+  color: rgba(255,255,255,.65);
+  margin-bottom: 4px;
+  line-height: 1.4;
+}
+.fxv2-notif-date {
+  font-size: .72rem;
+  color: rgba(255,255,255,.35);
+}
+
+/* Review pending placeholder */
+.fxv2-review-pending {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border: 1px dashed rgba(255,255,255,.12);
+  border-radius: 10px;
+  font-size: .78rem;
+  color: rgba(255,255,255,.4);
+}
+
+/* Stars row in review form */
+.fxv2-stars {
+  display: flex;
+  gap: 6px;
+  margin-top: 4px;
+}
