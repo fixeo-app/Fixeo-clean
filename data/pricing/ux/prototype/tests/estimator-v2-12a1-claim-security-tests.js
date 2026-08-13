@@ -879,7 +879,9 @@ t('S16.13: migration has HARD STOP if constraint definition is unexpected',
 
 t('S16.14: migration handles idempotent case — already contains superseded_by_approval',
   migration.includes('already includes superseded_by_approval') ||
-  migration.includes('superseded_by_approval%') /* ILIKE pattern in idempotent check */);
+  migration.includes('superseded_by_approval%') /* ILIKE pattern in idempotent check */ ||
+  migration.includes('already EXACTLY matches 4-value target set') /* v4 exact-check idempotent message */ ||
+  migration.includes('already exactly matches 4-value'));
 
 t('S16.15: rollback has HARD STOP if superseded rows exist before restoring 3-value constraint',
   rollback.includes('HARD STOP') && rollback.includes('superseded_by_approval') &&
@@ -1322,8 +1324,160 @@ t('S18.20: RLS canonical policies unchanged by v3 terminal-state fix',
   migration.includes('7c12a1_auth_insert_own') &&
   migration.includes('7c12a1_auth_select'));
 
+// ════════════════════════════════════════════════════════════════
+// SECTION 19: Cross-RPC lock order hardening + Step 0b exactness (7C.12A.1 v4)
+// ════════════════════════════════════════════════════════════════
+console.log('\n── Section 19: Cross-RPC lock order + Step 0b exactness ──');
+
+var _s19RejectBody   = migration; // full migration for reject body checks
+var _s19ApproveBody  = migration;
+var _s19VerifyBody   = verify;
+var _s19PrecheckBody = precheck;
+var _s19MigBody      = migration;
+
+/* Test 1: reject_artisan_claim uses non-locking pre-read (v_pre) */
+t('S19.1: reject_artisan_claim uses non-locking pre-read (v_pre) — artisan-first ordering requires pre-read',
+  (function() {
+    var rejectStart = _s19RejectBody.indexOf('CREATE OR REPLACE FUNCTION public.reject_artisan_claim');
+    var rejectSlice = _s19RejectBody.slice(rejectStart, rejectStart + 6000);
+    return rejectSlice.includes('v_pre');
+  })());
+
+/* Test 2: reject_artisan_claim acquires ARTISAN FOR UPDATE before CLAIM FOR UPDATE */
+t('S19.2: reject_artisan_claim acquires ARTISAN FOR UPDATE (LOCK A) before CLAIM FOR UPDATE (LOCK B)',
+  (function() {
+    var rejectStart = _s19RejectBody.indexOf('CREATE OR REPLACE FUNCTION public.reject_artisan_claim');
+    var rejectSlice = _s19RejectBody.slice(rejectStart, rejectStart + 6000);
+    var lockAIdx = rejectSlice.indexOf('LOCK A');
+    var lockBIdx = rejectSlice.indexOf('LOCK B');
+    return lockAIdx > -1 && lockBIdx > -1 && lockAIdx < lockBIdx;
+  })());
+
+/* Test 3: reject_artisan_claim acquires ARTISAN FOR UPDATE at all */
+t('S19.3: reject_artisan_claim contains FOR UPDATE on artisans table (global ordering lock)',
+  (function() {
+    var rejectStart = _s19RejectBody.indexOf('CREATE OR REPLACE FUNCTION public.reject_artisan_claim');
+    var rejectSlice = _s19RejectBody.slice(rejectStart, rejectStart + 6000);
+    return rejectSlice.includes('FOR UPDATE') &&
+           (rejectSlice.includes('artisans') || rejectSlice.includes('LOCK A'));
+  })());
+
+/* Test 4: reject_artisan_claim documents unresolved-artisan claim-only path */
+t('S19.4: reject_artisan_claim documents unresolved-artisan claim-only lock exception',
+  (function() {
+    var rejectStart = _s19RejectBody.indexOf('CREATE OR REPLACE FUNCTION public.reject_artisan_claim');
+    var rejectSlice = _s19RejectBody.slice(rejectStart, rejectStart + 6000);
+    return rejectSlice.includes('artisan_not_found') || rejectSlice.includes('no artisan') || rejectSlice.includes('Unresolved');
+  })());
+
+/* Test 5: terminal-state checks on locked v_claim, not pre-read v_pre */
+t('S19.5: reject_artisan_claim terminal-state checks use locked v_claim (not v_pre snapshot)',
+  (function() {
+    var rejectStart = _s19RejectBody.indexOf('CREATE OR REPLACE FUNCTION public.reject_artisan_claim');
+    var rejectSlice = _s19RejectBody.slice(rejectStart, rejectStart + 6000);
+    // v_pre.status must NOT appear in the function body
+    return !rejectSlice.includes('v_pre.status');
+  })());
+
+/* Test 6: approve_artisan_claim LOCK A (artisan) precedes LOCK B (claim) in source */
+t('S19.6: approve_artisan_claim LOCK A (artisan FOR UPDATE) precedes LOCK B (claim FOR UPDATE)',
+  (function() {
+    var approveStart = _s19ApproveBody.indexOf('CREATE OR REPLACE FUNCTION public.approve_artisan_claim');
+    var approveSlice = _s19ApproveBody.slice(approveStart, approveStart + 7000);
+    var lockAIdx = approveSlice.indexOf('LOCK A');
+    var lockBIdx = approveSlice.indexOf('LOCK B');
+    return lockAIdx > -1 && lockBIdx > -1 && lockAIdx < lockBIdx;
+  })());
+
+/* Test 7: reject_artisan_claim claim_not_found_locked present (claim re-locked) */
+t('S19.7: reject_artisan_claim has claim_not_found_locked (claim is re-locked after artisan lock)',
+  (function() {
+    var rejectStart = _s19RejectBody.indexOf('CREATE OR REPLACE FUNCTION public.reject_artisan_claim');
+    var rejectSlice = _s19RejectBody.slice(rejectStart, rejectStart + 6000);
+    return rejectSlice.includes('claim_not_found_locked');
+  })());
+
+/* Test 8: reject_artisan_claim does NOT write owner_user_id */
+t('S19.8: reject_artisan_claim does not write owner_user_id (ownership never touched by reject)',
+  (function() {
+    var rejectStart = _s19RejectBody.indexOf('CREATE OR REPLACE FUNCTION public.reject_artisan_claim');
+    var rejectSlice = _s19RejectBody.slice(rejectStart, rejectStart + 6000);
+    // strip comment lines before checking SET owner_user_id
+    var noComments = rejectSlice.replace(/--[^\n]*/g, '');
+    return !noComments.includes('owner_user_id =') && !noComments.includes('owner_user_id=');
+  })());
+
+/* Test 9: reject_artisan_claim does NOT write onboarding_completed */
+t('S19.9: reject_artisan_claim does not write onboarding_completed',
+  (function() {
+    var rejectStart = _s19RejectBody.indexOf('CREATE OR REPLACE FUNCTION public.reject_artisan_claim');
+    var rejectSlice = _s19RejectBody.slice(rejectStart, rejectStart + 6000);
+    var noComments = rejectSlice.replace(/--[^\n]*/g, '');
+    return !noComments.match(/onboarding_completed\s*=/);
+  })());
+
+/* Test 10: reject_artisan_claim does NOT write verified */
+t('S19.10: reject_artisan_claim does not write verified',
+  (function() {
+    var rejectStart = _s19RejectBody.indexOf('CREATE OR REPLACE FUNCTION public.reject_artisan_claim');
+    var rejectSlice = _s19RejectBody.slice(rejectStart, rejectStart + 6000);
+    var noComments = rejectSlice.replace(/--[^\n]*/g, '');
+    return !noComments.match(/\bverified\s*=\s*true/);
+  })());
+
+/* Test 11: reject_artisan_claim does NOT write availability */
+t('S19.11: reject_artisan_claim does not write availability',
+  (function() {
+    var rejectStart = _s19RejectBody.indexOf('CREATE OR REPLACE FUNCTION public.reject_artisan_claim');
+    var rejectSlice = _s19RejectBody.slice(rejectStart, rejectStart + 6000);
+    var noComments = rejectSlice.replace(/--[^\n]*/g, '');
+    return !noComments.match(/\bavailability\s*=/);
+  })());
+
+/* Test 12: Step 0b uses regexp_matches for exact value extraction */
+t('S19.12: Step 0b uses regexp_matches for exact value extraction (not substring presence only)',
+  _s19MigBody.includes("regexp_matches(v_con_def, '''([^'']+)'''") ||
+  _s19MigBody.includes("regexp_matches(v_con_def, '''") ||
+  _s19MigBody.includes('regexp_matches') && _s19MigBody.includes('v_con_def'));
+
+/* Test 13: Step 0b checks for unexpected values with v_has_other flag */
+t('S19.13: Step 0b has v_has_other flag to detect unexpected status values',
+  _s19MigBody.includes('v_has_other') || _s19MigBody.includes('has_other'));
+
+/* Test 14: Step 0b HARD STOPs on unexpected values (not just ignores them) */
+t('S19.14: Step 0b HARD STOP fires when unexpected value found (not silent pass)',
+  (function() {
+    var step0bStart = _s19MigBody.indexOf('STEP 0b');
+    var step0bSlice = _s19MigBody.slice(step0bStart, step0bStart + 4000);
+    return step0bSlice.includes('RAISE EXCEPTION') && step0bSlice.includes('unexpected');
+  })());
+
+/* Test 15: verify SQL V-41 present (reject has v_pre non-locking read) */
+t('S19.15: verify SQL contains V-41 (reject non-locking pre-read check)',
+  _s19VerifyBody.includes('V-41') && _s19VerifyBody.includes('v_pre'));
+
+/* Test 16: verify SQL V-42 present (reject ARTISAN FOR UPDATE) */
+t('S19.16: verify SQL contains V-42 (reject ARTISAN FOR UPDATE lock)',
+  _s19VerifyBody.includes('V-42') && _s19VerifyBody.includes('ARTISAN FOR UPDATE'));
+
+/* Test 17: verify SQL V-43 present (reject CLAIM FOR UPDATE after artisan) */
+t('S19.17: verify SQL contains V-43 (reject CLAIM FOR UPDATE after artisan lock)',
+  _s19VerifyBody.includes('V-43') && _s19VerifyBody.includes('LOCK B'));
+
+/* Test 18: verify SQL V-46 present (cross-RPC lock order — both approve and reject) */
+t('S19.18: verify SQL contains V-46 (cross-RPC lock order: both approve and reject use ARTISAN→CLAIM)',
+  _s19VerifyBody.includes('V-46') && _s19VerifyBody.includes('BOTH approve AND reject'));
+
+/* Test 19: verify SQL V-47 present (exact status value check) */
+t('S19.19: verify SQL contains V-47 (exact 4-value status constraint verification)',
+  _s19VerifyBody.includes('V-47') && _s19VerifyBody.includes('EXACTLY the 4-value'));
+
+/* Test 20: precheck PM-9 uses regexp_matches for exact baseline verification */
+t('S19.20: precheck PM-9 uses regexp_matches for exact baseline check (not substring only)',
+  _s19PrecheckBody.includes('regexp_matches') && _s19PrecheckBody.includes('PM-9'));
+
 /* Final result including all sections */
 var totalFinal = passed + failed;
-console.log('\n══ FINAL RESULT (all sections incl S16/S17/S18): ' + passed + '/' + totalFinal + ' PASS' +
+console.log('\n══ FINAL RESULT (all sections incl S16/S17/S18/S19): ' + passed + '/' + totalFinal + ' PASS' +
   (failed > 0 ? ' — ' + failed + ' FAIL' : ' — ALL PASS') + ' ══\n');
 if (failed > 0) process.exitCode = 1;

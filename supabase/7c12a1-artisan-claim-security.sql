@@ -1,5 +1,5 @@
 -- ════════════════════════════════════════════════════════════
--- 7C.12A.1 — Artisan Claim Security Foundation (Final Hardened v2)
+-- 7C.12A.1 — Artisan Claim Security Foundation (Final Hardened v4)
 -- supabase/7c12a1-artisan-claim-security.sql
 --
 -- FORENSIC DECISION: sync_artisan_claim() trigger DROPPED
@@ -28,39 +28,49 @@
 --   reject_artisan_claim() = SINGLE server-authoritative rejection path.
 --
 -- ─────────────────────────────────────────────────────────
--- DEADLOCK-FREE CONCURRENCY MODEL (7C.12A.1 v2):
+-- DEADLOCK-FREE CONCURRENCY MODEL (7C.12A.1 v4 — CROSS-RPC):
 --
--- PREVIOUS ORDER (c8e40e9) — DEADLOCK RISK:
+-- PREVIOUS ORDER (c8e40e9) — INTRA-RPC DEADLOCK RISK:
 --   Tx A: lock claim_A → lock artisan → UPDATE claim_B (blocked by Tx B)
 --   Tx B: lock claim_B → wait for artisan (blocked by Tx A)
 --   => Circular wait: A holds artisan, waits for B's claim_B; B holds claim_B,
 --      waits for A's artisan. => DEADLOCK.
 --
--- NEW ORDER (v2) — PROVABLY DEADLOCK-FREE:
---   All concurrent approvals for the same artisan acquire locks in
---   the same deterministic order:
---     1. NON-LOCKING claim read — resolve artisan_id only (no FOR UPDATE yet)
---     2. ARTISAN FOR UPDATE — first and only mandatory lock ordering point
---     3. TARGET CLAIM FOR UPDATE — after artisan lock is held
---     4. Re-validate claim status under claim lock (may have changed)
---     5. Supersede competing pending claims (Tx B is blocked on step 2,
---        so it cannot hold any competing claim lock at this point)
+-- PREVIOUS ORDER (4f6e5fa) — CROSS-RPC DEADLOCK RISK:
+--   approve_artisan_claim: pre-read → ARTISAN FOR UPDATE → CLAIM FOR UPDATE
+--   reject_artisan_claim:  CLAIM FOR UPDATE → UPDATE ARTISAN (no artisan lock)
 --
---   Why deadlock is impossible:
---   - All transactions contending for the same artisan block at step 2.
---   - Exactly one transaction acquires the artisan lock first (Tx A).
---   - Tx A proceeds: locks target claim (step 3), supersedes others (step 5).
---   - Tx B is still waiting at step 2. When it acquires artisan lock, it
---     will re-read claim and find status != 'pending' → safe failure.
---   - No circular wait can form: artisan lock is always acquired before
---     any claim row is locked under locking semantics.
+--   Tx A (approve): pre-read → locks ARTISAN → waits for CLAIM
+--   Tx B (reject):  locks CLAIM → attempts UPDATE ARTISAN
+--   => Tx A holds artisan, waits for claim. Tx B holds claim, waits for artisan.
+--   => CROSS-RPC DEADLOCK.
 --
--- CLAIM PRE-READ (step 1) — non-locking, safe:
+-- NEW ORDER (v4) — PROVABLY DEADLOCK-FREE ACROSS ALL RPCs:
+--   ALL RPCs touching both artisans and claim_requests use the same global order:
+--     1. NON-LOCKING claim pre-read — resolve artisan_id only (no FOR UPDATE yet)
+--     2. ARTISAN FOR UPDATE — global ordering point (both approve AND reject)
+--     3. TARGET CLAIM FOR UPDATE — after artisan lock held (both approve AND reject)
+--     4. Re-validate claim status under claim lock
+--     5. Mutate — only under both locks
+--
+--   Why cross-RPC deadlock is impossible:
+--   - ALL transactions touching both tables (approve or reject) contend at
+--     the artisan FOR UPDATE (step 2). This is the single global ordering point.
+--   - No transaction can hold a claim lock before acquiring the artisan lock.
+--   - No circular wait can form: artisan always precedes claim in ALL code paths.
+--
+--   REJECT UNRESOLVED ARTISAN: If the claim does not resolve to any artisan UUID,
+--   reject acquires NO artisan lock (nothing to lock) and proceeds with claim-only
+--   mutation. Since no artisan row is involved, no cross-lock conflict is possible.
+--   This is documented explicitly at the lock-acquisition point in the RPC.
+--
+-- CLAIM PRE-READ (step 1) — non-locking, safe (BOTH RPCs):
 --   We need artisan_id to acquire the artisan lock. We read the claim
 --   without FOR UPDATE to get artisan identity, then re-lock with
 --   FOR UPDATE after artisan is held. All critical business logic
---   (status check, requester check) is performed ONLY on the re-locked
---   claim read — never on the pre-read snapshot.
+--   (status check, requester check, terminal-state checks) is performed
+--   ONLY on the re-locked claim read — never on the pre-read snapshot.
+--   Both approve_artisan_claim and reject_artisan_claim follow this model.
 --
 -- ─────────────────────────────────────────────────────────
 -- CANONICAL APPROVAL OUTCOME:
@@ -184,28 +194,64 @@ BEGIN
 
     RAISE NOTICE 'Step 0b: existing claims_status_check definition: %', v_con_def;
 
-    -- Verify it matches exactly the known baseline (3 values only).
-    -- Accept both PostgreSQL representation variants (with/without spaces).
-    -- The constraint may render as:
-    --   CHECK ((status = ANY (ARRAY[...::text])))  -- pg14+
-    --   CHECK ((status = ANY ('{pending,approved,rejected}'::text[])))
-    --   CHECK (((status)::text = ANY (...)))
-    -- Strategy: verify it contains exactly the 3 baseline values and
-    -- does NOT already contain superseded_by_approval.
-    IF v_con_def ILIKE '%pending%'
-       AND v_con_def ILIKE '%approved%'
-       AND v_con_def ILIKE '%rejected%'
-       AND v_con_def NOT ILIKE '%superseded_by_approval%'
-    THEN
-      v_baseline_ok := true;
-    ELSIF v_con_def ILIKE '%superseded_by_approval%' THEN
-      -- Already extended — idempotent, nothing to do
-      RAISE NOTICE 'Step 0b: claims_status_check already includes superseded_by_approval — no change';
-      v_baseline_ok := false; -- prevents the ALTER below
-    ELSE
-      -- Unknown constraint definition — HARD STOP
-      RAISE EXCEPTION 'Step 0b HARD STOP: claims_status_check has unexpected definition: [%]. Manual review required before applying this migration.', v_con_def;
-    END IF;
+    -- EXACT BASELINE VERIFICATION (v4 hardening):
+    --
+    -- Substring presence alone is NOT sufficient. A constraint containing
+    -- ('pending','approved','rejected','unexpected_value') would pass a
+    -- substring check yet silently drop a legitimate unexpected status contract.
+    --
+    -- Strategy: extract all quoted string literals from the constraint definition
+    -- and compare the exact set against the two known-good sets:
+    --   BASELINE_3:  {'pending','approved','rejected'}
+    --   TARGET_4:    {'pending','approved','rejected','superseded_by_approval'}
+    --
+    -- Any other set → HARD STOP. No silent destruction of unknown contracts.
+    --
+    -- Implementation: use regexp_matches to pull all single-quoted string values
+    -- from the pg_get_constraintdef() output, then count exact matches.
+    DECLARE
+      v_vals          text[];
+      v_val_count     integer;
+      v_has_pending   boolean := false;
+      v_has_approved  boolean := false;
+      v_has_rejected  boolean := false;
+      v_has_supersede boolean := false;
+      v_has_other     boolean := false;
+      v_val           text;
+    BEGIN
+      -- Extract all 'value' literals from the constraint definition
+      SELECT array_agg(m[1]) INTO v_vals
+      FROM regexp_matches(v_con_def, '''([^'']+)''', 'g') AS m;
+
+      v_val_count := COALESCE(array_length(v_vals, 1), 0);
+
+      -- Categorize each extracted value
+      FOREACH v_val IN ARRAY COALESCE(v_vals, ARRAY[]::text[])
+      LOOP
+        CASE v_val
+          WHEN 'pending'               THEN v_has_pending   := true;
+          WHEN 'approved'              THEN v_has_approved  := true;
+          WHEN 'rejected'              THEN v_has_rejected  := true;
+          WHEN 'superseded_by_approval' THEN v_has_supersede := true;
+          ELSE v_has_other := true;
+        END CASE;
+      END LOOP;
+
+      IF v_has_other THEN
+        -- Unexpected value present — HARD STOP. Do not silently destroy contract.
+        RAISE EXCEPTION 'Step 0b HARD STOP: claims_status_check contains unexpected allowed value(s) beyond the known set. Definition: [%]. Values found: [%]. Manual review required before applying this migration.', v_con_def, v_vals;
+      ELSIF v_has_pending AND v_has_approved AND v_has_rejected AND v_has_supersede AND v_val_count = 4 THEN
+        -- Already exactly the 4-value target set — idempotent, nothing to do
+        RAISE NOTICE 'Step 0b: claims_status_check already exactly matches 4-value target set — no change';
+        v_baseline_ok := false; -- prevents the ALTER below
+      ELSIF v_has_pending AND v_has_approved AND v_has_rejected AND NOT v_has_supersede AND v_val_count = 3 THEN
+        -- Exactly the 3-value baseline — safe to extend
+        v_baseline_ok := true;
+      ELSE
+        -- Some other combination (missing values, extra values, partial set) — HARD STOP
+        RAISE EXCEPTION 'Step 0b HARD STOP: claims_status_check does not match any known-good baseline. Definition: [%]. Values found: [%] (count=%). Manual review required.', v_con_def, v_vals, v_val_count;
+      END IF;
+    END;
 
     IF v_baseline_ok THEN
       ALTER TABLE public.claim_requests DROP CONSTRAINT claims_status_check;
@@ -610,8 +656,27 @@ $$;
 -- ════════════════════════════════════════════════════════════
 -- STEP 3: reject_artisan_claim(p_claim_id uuid, p_note text)
 --
--- Extended to absorb trigger rejected-branch work:
---   resets artisan.claim_status='unclaimed' WHERE owner_user_id IS NULL
+-- LOCK ORDER (v4 — matches approve_artisan_claim):
+--   PRE-READ  — non-locking claim read to resolve artisan_id only
+--   LOCK A    — ARTISAN FOR UPDATE (global ordering point; same as approve)
+--   LOCK B    — CLAIM FOR UPDATE (after artisan lock held)
+--   REVALIDATE — all terminal-state checks on re-locked claim
+--   MUTATE    — only under both locks
+--
+-- WHY ARTISAN LOCK FIRST:
+--   approve_artisan_claim acquires ARTISAN then CLAIM.
+--   A concurrent reject that acquired CLAIM first (old order) could hold
+--   claim while waiting for artisan that approve holds → cross-RPC deadlock.
+--   With the new order, ALL RPCs touching both tables block at ARTISAN.
+--   Only one proceeds. No circular wait is possible.
+--
+-- UNRESOLVED ARTISAN (no artisan FK and no legacy_id match):
+--   If the claim references no artisan, there is no artisan row to lock.
+--   In this case:
+--   - No LOCK A is acquired (nothing to lock).
+--   - No cross-table conflict is possible (no artisan row involved).
+--   - Claim-only mutation (LOCK B only) is safe and correct.
+--   - This path is explicitly documented at the lock-acquisition point.
 --
 -- REJECTION NEVER TOUCHES:
 --   artisans.owner_user_id
@@ -630,6 +695,16 @@ $$;
 --   approved               → terminal
 --   rejected               → terminal
 --   superseded_by_approval → terminal
+--
+-- SAFE-FAIL paths:
+--   unauthenticated          — auth.uid() IS NULL
+--   not_admin                — caller users.role != 'admin'
+--   claim_not_found_preread  — p_claim_id missing at pre-read
+--   artisan_not_found        — artisan resolution exhausted; no lock; claim-only path
+--   claim_not_found_locked   — p_claim_id missing after re-lock
+--   already_rejected         — idempotent ok:true
+--   claim_already_approved   — approved is terminal, ok:false
+--   claim_superseded         — superseded_by_approval is terminal, ok:false
 -- ════════════════════════════════════════════════════════════
 
 CREATE OR REPLACE FUNCTION public.reject_artisan_claim(
@@ -644,17 +719,18 @@ AS $$
 DECLARE
   v_caller_uid   uuid;
   v_caller_role  text;
-  v_claim        record;
-  v_artisan_id   uuid;
+  v_pre          record;   -- non-locking pre-read of claim
+  v_claim        record;   -- locked re-read of claim
+  v_artisan_id   uuid;     -- resolved canonical artisan UUID (may be NULL)
 BEGIN
 
-  -- ── STEP 1: Identify caller ────────────────────────────────
+  -- ── AUTH 1: Identify caller ────────────────────────────────
   v_caller_uid := auth.uid();
   IF v_caller_uid IS NULL THEN
     RETURN jsonb_build_object('ok', false, 'reason', 'unauthenticated');
   END IF;
 
-  -- ── STEP 2: Verify admin role from DB ─────────────────────
+  -- ── AUTH 2: Verify admin role from DB ─────────────────────
   SELECT role INTO v_caller_role
   FROM public.users
   WHERE id = v_caller_uid;
@@ -663,17 +739,88 @@ BEGIN
     RETURN jsonb_build_object('ok', false, 'reason', 'not_admin');
   END IF;
 
-  -- ── STEP 3: Lock and read claim row ───────────────────────
+  -- ══════════════════════════════════════════════════════════════
+  -- PRE-READ: read claim WITHOUT FOR UPDATE — purpose: resolve
+  -- artisan_id only so we can acquire the artisan lock FIRST.
+  -- DO NOT make terminal-state decisions from this snapshot.
+  -- All business logic (status checks) run on the re-locked v_claim.
+  -- ══════════════════════════════════════════════════════════════
+  SELECT * INTO v_pre
+  FROM public.claim_requests
+  WHERE id = p_claim_id;
+
+  IF NOT FOUND THEN
+    RETURN jsonb_build_object('ok', false, 'reason', 'claim_not_found_preread');
+  END IF;
+
+  -- ── RESOLVE artisan UUID from pre-read (no lock yet) ──────
+  -- Purpose: identify the artisan row to lock BEFORE acquiring claim lock.
+  -- Mirrors approve_artisan_claim resolution logic exactly.
+  IF v_pre.artisan_id IS NOT NULL THEN
+    SELECT a.id INTO v_artisan_id
+    FROM public.artisans a
+    WHERE a.id = v_pre.artisan_id
+    LIMIT 1;
+  END IF;
+  IF v_artisan_id IS NULL AND v_pre.artisan_legacy_id IS NOT NULL THEN
+    SELECT a.id INTO v_artisan_id
+    FROM public.artisans a
+    WHERE a.id::text = v_pre.artisan_legacy_id
+    LIMIT 1;
+  END IF;
+  IF v_artisan_id IS NULL AND v_pre.artisan_legacy_id IS NOT NULL THEN
+    SELECT a.id INTO v_artisan_id
+    FROM public.artisans a
+    WHERE a.legacy_id = v_pre.artisan_legacy_id
+    LIMIT 1;
+  END IF;
+
+  -- ══════════════════════════════════════════════════════════════
+  -- LOCK A: Acquire ARTISAN row FOR UPDATE — GLOBAL ORDERING POINT.
+  --
+  -- This is the same ordering point used by approve_artisan_claim.
+  -- All RPCs touching both artisans and claim_requests must acquire
+  -- the artisan lock FIRST. This prevents cross-RPC circular waits.
+  --
+  -- UNRESOLVED ARTISAN: If v_artisan_id IS NULL, the claim does not
+  -- reference a known artisan. There is no artisan row to lock.
+  -- Rationale: no artisan row involved → no cross-table conflict possible.
+  -- We proceed without LOCK A and acquire LOCK B (claim) only.
+  -- This is the only safe exception to the artisan-first rule.
+  -- ══════════════════════════════════════════════════════════════
+  IF v_artisan_id IS NOT NULL THEN
+    -- LOCK A: artisan FOR UPDATE (deadlock-safe global ordering point)
+    PERFORM a.id
+    FROM public.artisans a
+    WHERE a.id = v_artisan_id
+    FOR UPDATE;
+  ELSE
+    -- No artisan resolved: no LOCK A needed or possible.
+    -- Claim-only mutation path: LOCK B will be the only lock acquired.
+    -- No circular wait risk since no artisan row is involved.
+    RAISE NOTICE '[reject_artisan_claim] artisan_not_found: claim % references no resolvable artisan — proceeding with claim-only lock path', p_claim_id;
+  END IF;
+
+  -- ══════════════════════════════════════════════════════════════
+  -- LOCK B: Acquire TARGET CLAIM row FOR UPDATE — after artisan lock.
+  --
+  -- Re-read and re-validate all critical fields under lock.
+  -- The claim status may have changed between pre-read and here
+  -- (e.g. concurrent approve won the artisan lock first, superseded
+  -- this claim, then released). Re-validate before any mutation.
+  -- ══════════════════════════════════════════════════════════════
   SELECT * INTO v_claim
   FROM public.claim_requests
   WHERE id = p_claim_id
   FOR UPDATE;
 
   IF NOT FOUND THEN
-    RETURN jsonb_build_object('ok', false, 'reason', 'claim_not_found');
+    RETURN jsonb_build_object('ok', false, 'reason', 'claim_not_found_locked');
   END IF;
 
-  -- ── STEP 4: Already rejected — idempotent ─────────────────
+  -- ── TERMINAL STATE GUARDS (all checked on locked v_claim) ──
+
+  -- STEP 4: Already rejected — idempotent ok:true
   IF v_claim.status = 'rejected' THEN
     RETURN jsonb_build_object(
       'ok',       true,
@@ -682,7 +829,7 @@ BEGIN
     );
   END IF;
 
-  -- ── STEP 5: Already approved — cannot reject post-approval ─
+  -- STEP 5: Already approved — approved is terminal, cannot reject
   IF v_claim.status = 'approved' THEN
     RETURN jsonb_build_object(
       'ok',       false,
@@ -691,9 +838,8 @@ BEGIN
     );
   END IF;
 
-  -- ── STEP 5b: Superseded — terminal state, immutable ────────
-  -- superseded_by_approval is a canonical terminal state written by
-  -- approve_artisan_claim(). It must never be converted to 'rejected'.
+  -- STEP 5b: Superseded — superseded_by_approval is terminal, immutable.
+  -- Written by approve_artisan_claim(). Must never be converted to 'rejected'.
   -- No mutation to claim row, artisan row, reviewed_at, or notes.
   IF v_claim.status = 'superseded_by_approval' THEN
     RETURN jsonb_build_object(
@@ -703,35 +849,25 @@ BEGIN
     );
   END IF;
 
-  -- ── STEP 6: Resolve artisan to reset claim_status ─────────
+  -- ── STEP 6 (only path remaining: status = 'pending') ───────
+  -- Mutate artisan — reset claim_status if artisan was resolved.
   -- Absorbed from removed sync_artisan_claim trigger.
   -- artisans.claim_status reset to 'unclaimed' so artisan is re-claimable.
   -- artisans.owner_user_id is NEVER touched by rejection.
-  IF v_claim.artisan_id IS NOT NULL THEN
-    SELECT id INTO v_artisan_id FROM public.artisans
-    WHERE id = v_claim.artisan_id LIMIT 1;
-  END IF;
-  IF v_artisan_id IS NULL AND v_claim.artisan_legacy_id IS NOT NULL THEN
-    SELECT id INTO v_artisan_id FROM public.artisans
-    WHERE id::text = v_claim.artisan_legacy_id LIMIT 1;
-  END IF;
-  IF v_artisan_id IS NULL AND v_claim.artisan_legacy_id IS NOT NULL THEN
-    SELECT id INTO v_artisan_id FROM public.artisans
-    WHERE legacy_id = v_claim.artisan_legacy_id LIMIT 1;
-  END IF;
-
-  -- ── STEP 7: Reset artisan claim state (if resolved) ────────
-  -- Only touches claim_status.
   -- WHERE owner_user_id IS NULL: never reset a claimed artisan.
   IF v_artisan_id IS NOT NULL THEN
     UPDATE public.artisans
     SET claim_status = 'unclaimed',
         updated_at   = now()
+        -- owner_user_id:        intentionally NOT SET (7C.12A.1)
+        -- onboarding_completed: intentionally NOT SET (7C.12A.1)
+        -- verified:             intentionally NOT SET (7C.12A.1)
+        -- availability:         intentionally NOT SET (7C.12A.1)
     WHERE id = v_artisan_id
       AND owner_user_id IS NULL;
   END IF;
 
-  -- ── STEP 8: Mark claim rejected ───────────────────────────
+  -- ── STEP 7: Mark claim rejected (under LOCK B) ────────────
   UPDATE public.claim_requests
   SET status      = 'rejected',
       reviewed_at = now(),

@@ -101,15 +101,46 @@ BEGIN
     RAISE NOTICE 'PM-8 PASS: claims_status_check exists, definition: %', v_con_def;
   END IF;
 
-  -- PM-9: Verify current status constraint baseline (if exists)
+  -- PM-9: Verify current status constraint baseline using EXACT value extraction (v4)
+  -- Substring presence alone is not sufficient — an unexpected value would pass.
+  -- We extract all quoted literal values and compare against the known-good sets exactly.
   IF v_con_name IS NOT NULL THEN
-    IF v_con_def ILIKE '%superseded_by_approval%' THEN
-      RAISE NOTICE 'PM-9 INFO: claims_status_check already includes superseded_by_approval — Step 0b will be a no-op (idempotent)';
-    ELSIF v_con_def ILIKE '%pending%' AND v_con_def ILIKE '%approved%' AND v_con_def ILIKE '%rejected%' THEN
-      RAISE NOTICE 'PM-9 PASS: claims_status_check has expected 3-value baseline — Step 0b will safely extend';
-    ELSE
-      RAISE EXCEPTION 'PM-9 HARD STOP: claims_status_check has unexpected definition: [%]. Migration Step 0b HARD STOP would trigger. Manual review required.', v_con_def;
-    END IF;
+    DECLARE
+      v_pm9_vals          text[];
+      v_pm9_val_count     integer;
+      v_pm9_has_pending   boolean := false;
+      v_pm9_has_approved  boolean := false;
+      v_pm9_has_rejected  boolean := false;
+      v_pm9_has_supersede boolean := false;
+      v_pm9_has_other     boolean := false;
+      v_pm9_val           text;
+    BEGIN
+      SELECT array_agg(m[1]) INTO v_pm9_vals
+      FROM regexp_matches(v_con_def, '''([^'']+)''', 'g') AS m;
+
+      v_pm9_val_count := COALESCE(array_length(v_pm9_vals, 1), 0);
+
+      FOREACH v_pm9_val IN ARRAY COALESCE(v_pm9_vals, ARRAY[]::text[])
+      LOOP
+        CASE v_pm9_val
+          WHEN 'pending'                THEN v_pm9_has_pending   := true;
+          WHEN 'approved'               THEN v_pm9_has_approved  := true;
+          WHEN 'rejected'               THEN v_pm9_has_rejected  := true;
+          WHEN 'superseded_by_approval' THEN v_pm9_has_supersede := true;
+          ELSE v_pm9_has_other := true;
+        END CASE;
+      END LOOP;
+
+      IF v_pm9_has_other THEN
+        RAISE EXCEPTION 'PM-9 HARD STOP: claims_status_check contains unexpected value(s) beyond the known set. Step 0b HARD STOP would trigger. Values found: [%]. Definition: [%]. Manual review required.', v_pm9_vals, v_con_def;
+      ELSIF v_pm9_has_pending AND v_pm9_has_approved AND v_pm9_has_rejected AND v_pm9_has_supersede AND v_pm9_val_count = 4 THEN
+        RAISE NOTICE 'PM-9 INFO: claims_status_check already EXACTLY matches 4-value target set — Step 0b will be a no-op (idempotent)';
+      ELSIF v_pm9_has_pending AND v_pm9_has_approved AND v_pm9_has_rejected AND NOT v_pm9_has_supersede AND v_pm9_val_count = 3 THEN
+        RAISE NOTICE 'PM-9 PASS: claims_status_check is EXACTLY the 3-value baseline — Step 0b will safely extend to 4 values';
+      ELSE
+        RAISE EXCEPTION 'PM-9 HARD STOP: claims_status_check does not match any known-good baseline. Values: [%] (count=%). Definition: [%]. Manual review required.', v_pm9_vals, v_pm9_val_count, v_con_def;
+      END IF;
+    END;
   END IF;
 
   -- PM-10: Check all other CHECK constraints on claim_requests.status (catch parallel constraints)

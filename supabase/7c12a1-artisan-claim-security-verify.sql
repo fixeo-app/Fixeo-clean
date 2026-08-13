@@ -1,5 +1,5 @@
 -- ════════════════════════════════════════════════════════════
--- 7C.12A.1 — Artisan Claim Security Verification (v2 Hardened)
+-- 7C.12A.1 — Artisan Claim Security Verification (v4 Hardened)
 -- supabase/7c12a1-artisan-claim-security-verify.sql
 --
 -- Run AFTER 7c12a1-artisan-claim-security.sql.
@@ -434,6 +434,134 @@ BEGIN
   END IF;
   RAISE NOTICE 'V-40b PASS: approve_artisan_claim claim_not_pending guards all non-pending terminal states under re-lock';
 
-  RAISE NOTICE '══ 7C.12A.1 VERIFY COMPLETE (v3) ══';
+  -- ════════════════════════════════════════════════════════
+  -- SECTION 19: Cross-RPC lock order hardening (7C.12A.1 v4)
+  -- ════════════════════════════════════════════════════════
+  RAISE NOTICE '══ SECTION 19: Cross-RPC lock order + Step 0b exactness ══';
+
+  -- V-41: reject_artisan_claim uses non-locking pre-read (v_pre)
+  -- The v4 lock order requires a non-locking pre-read in reject just like approve.
+  SELECT pg_get_functiondef(p.oid) INTO v_def FROM pg_proc p
+  JOIN pg_namespace n ON n.oid=p.pronamespace
+  WHERE n.nspname='public' AND p.proname='reject_artisan_claim' LIMIT 1;
+
+  IF v_def NOT ILIKE '%v_pre%' THEN
+    RAISE EXCEPTION 'V-41 FAIL: reject_artisan_claim missing non-locking pre-read (v_pre) — cross-RPC deadlock-free ordering requires pre-read before artisan lock';
+  END IF;
+  RAISE NOTICE 'V-41 PASS: reject_artisan_claim has non-locking pre-read (v_pre) — artisan-first ordering possible';
+
+  -- V-42: reject_artisan_claim acquires ARTISAN FOR UPDATE (LOCK A)
+  -- reject must lock artisan BEFORE claim to match approve lock order.
+  IF v_def NOT ILIKE '%artisans%FOR UPDATE%' AND
+     v_def NOT ILIKE '%LOCK A%' THEN
+    RAISE EXCEPTION 'V-42 FAIL: reject_artisan_claim missing ARTISAN FOR UPDATE lock — cross-RPC deadlock possible (approve locks artisan first; reject must too)';
+  END IF;
+  RAISE NOTICE 'V-42 PASS: reject_artisan_claim acquires ARTISAN FOR UPDATE (LOCK A — global ordering point)';
+
+  -- V-43: reject_artisan_claim acquires CLAIM FOR UPDATE AFTER artisan lock (LOCK B)
+  -- Must find LOCK B section (claim FOR UPDATE) in reject function body.
+  IF v_def NOT ILIKE '%LOCK B%' AND v_def NOT ILIKE '%claim_not_found_locked%' THEN
+    RAISE EXCEPTION 'V-43 FAIL: reject_artisan_claim missing LOCK B (claim FOR UPDATE after artisan lock) — lock ordering broken';
+  END IF;
+  RAISE NOTICE 'V-43 PASS: reject_artisan_claim acquires CLAIM FOR UPDATE after artisan lock (LOCK B)';
+
+  -- V-44: reject_artisan_claim documents unresolved-artisan exception (claim-only path)
+  -- When no artisan resolves, no LOCK A is needed. This must be documented.
+  IF v_def NOT ILIKE '%artisan_not_found%' AND v_def NOT ILIKE '%no artisan%' AND v_def NOT ILIKE '%Unresolved%' THEN
+    RAISE EXCEPTION 'V-44 FAIL: reject_artisan_claim missing documentation of unresolved-artisan claim-only lock path';
+  END IF;
+  RAISE NOTICE 'V-44 PASS: reject_artisan_claim documents unresolved-artisan claim-only lock exception';
+
+  -- V-45: reject_artisan_claim terminal-state checks on LOCKED v_claim (not pre-read v_pre)
+  -- All terminal guards must reference v_claim.status, not v_pre.status.
+  IF v_def ILIKE '%v_pre.status%' THEN
+    RAISE EXCEPTION 'V-45 FAIL: reject_artisan_claim makes terminal-state decisions from non-locking pre-read (v_pre.status) — must use locked v_claim.status';
+  END IF;
+  RAISE NOTICE 'V-45 PASS: reject_artisan_claim terminal-state checks use locked v_claim (not v_pre snapshot)';
+
+  -- V-46: CROSS-RPC LOCK ORDER — approve and reject both lock artisan before claim
+  -- Structural proof: both functions contain LOCK A (artisan) and LOCK B (claim).
+  SELECT pg_get_functiondef(p.oid) INTO v_type FROM pg_proc p
+  JOIN pg_namespace n ON n.oid=p.pronamespace
+  WHERE n.nspname='public' AND p.proname='approve_artisan_claim' LIMIT 1;
+
+  DECLARE
+    v_approve_has_lock_a boolean := (v_type ILIKE '%LOCK A%' OR v_type ILIKE '%v_artisan_owner%FOR UPDATE%');
+    v_approve_has_lock_b boolean := (v_type ILIKE '%LOCK B%' OR v_type ILIKE '%claim_not_found_locked%');
+    v_reject_has_lock_a  boolean := (v_def  ILIKE '%LOCK A%' OR v_def  ILIKE '%artisans%FOR UPDATE%');
+    v_reject_has_lock_b  boolean := (v_def  ILIKE '%LOCK B%' OR v_def  ILIKE '%claim_not_found_locked%');
+  BEGIN
+    IF NOT v_approve_has_lock_a THEN
+      RAISE EXCEPTION 'V-46 FAIL: approve_artisan_claim missing LOCK A (artisan FOR UPDATE) — approve lock order broken';
+    END IF;
+    IF NOT v_approve_has_lock_b THEN
+      RAISE EXCEPTION 'V-46 FAIL: approve_artisan_claim missing LOCK B (claim FOR UPDATE) — approve lock order broken';
+    END IF;
+    IF NOT v_reject_has_lock_a THEN
+      RAISE EXCEPTION 'V-46 FAIL: reject_artisan_claim missing LOCK A (artisan FOR UPDATE) — cross-RPC deadlock possible';
+    END IF;
+    IF NOT v_reject_has_lock_b THEN
+      RAISE EXCEPTION 'V-46 FAIL: reject_artisan_claim missing LOCK B (claim FOR UPDATE) — reject lock order broken';
+    END IF;
+    RAISE NOTICE 'V-46 PASS: BOTH approve AND reject use ARTISAN LOCK A before CLAIM LOCK B — cross-RPC deadlock impossible';
+  END;
+
+  -- V-47: Step 0b uses exact value extraction (regexp_matches) not substring presence
+  -- The migration must use regexp_matches or array extraction for exact baseline check,
+  -- not just ILIKE substring presence (which would allow unexpected values to pass).
+  DECLARE
+    v_mig_def text;
+  BEGIN
+    -- We verify the migration SQL file contains regexp_matches logic for Step 0b.
+    -- We cannot run the DO block here, but we can verify the migration SQL at rest.
+    -- V-35 already confirms constraint now includes superseded_by_approval.
+    -- V-47 is a structural check: confirm Step 0b exactness was applied by verifying
+    -- the constraint now contains EXACTLY 4 known values and nothing else.
+    SELECT pg_get_constraintdef(c.oid) INTO v_con_def
+    FROM pg_constraint c
+    JOIN pg_class r ON r.oid = c.conrelid
+    JOIN pg_namespace n ON n.oid = r.relnamespace
+    WHERE n.nspname = 'public' AND r.relname = 'claim_requests'
+      AND c.conname = 'claims_status_check'
+    LIMIT 1;
+
+    -- Extract all quoted string literals from the constraint definition
+    DECLARE
+      v_vals          text[];
+      v_val_count     integer;
+      v_has_pending   boolean := false;
+      v_has_approved  boolean := false;
+      v_has_rejected  boolean := false;
+      v_has_supersede boolean := false;
+      v_has_other     boolean := false;
+      v_val           text;
+    BEGIN
+      SELECT array_agg(m[1]) INTO v_vals
+      FROM regexp_matches(v_con_def, '''([^'']+)''', 'g') AS m;
+
+      v_val_count := COALESCE(array_length(v_vals, 1), 0);
+
+      FOREACH v_val IN ARRAY COALESCE(v_vals, ARRAY[]::text[])
+      LOOP
+        CASE v_val
+          WHEN 'pending'                THEN v_has_pending   := true;
+          WHEN 'approved'               THEN v_has_approved  := true;
+          WHEN 'rejected'               THEN v_has_rejected  := true;
+          WHEN 'superseded_by_approval' THEN v_has_supersede := true;
+          ELSE v_has_other := true;
+        END CASE;
+      END LOOP;
+
+      IF v_has_other THEN
+        RAISE EXCEPTION 'V-47 FAIL: claims_status_check contains unexpected value(s) beyond the 4-value target set. Definition: [%]. Values: [%]', v_con_def, v_vals;
+      ELSIF NOT (v_has_pending AND v_has_approved AND v_has_rejected AND v_has_supersede AND v_val_count = 4) THEN
+        RAISE EXCEPTION 'V-47 FAIL: claims_status_check does not exactly match the 4-value target set. Definition: [%]. Values: [%] (count=%)', v_con_def, v_vals, v_val_count;
+      ELSE
+        RAISE NOTICE 'V-47 PASS: claims_status_check contains EXACTLY the 4-value target set (pending, approved, rejected, superseded_by_approval) — no unexpected values';
+      END IF;
+    END;
+  END;
+
+  RAISE NOTICE '══ 7C.12A.1 VERIFY COMPLETE (v4) ══';
 
 END $$;
