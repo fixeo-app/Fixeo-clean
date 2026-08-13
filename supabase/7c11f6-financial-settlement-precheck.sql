@@ -253,7 +253,7 @@ BEGIN
     RAISE NOTICE 'payments RLS enabled: %', v_col_exists;
     -- Policies
     FOR v_constraint IN
-      SELECT polname || ' (' || polcmd || ')'
+      SELECT polname::text || ' (' || polcmd::text || ')'
       FROM   pg_policy
       JOIN   pg_class ON pg_class.oid = pg_policy.polrelid
       JOIN   pg_namespace ON pg_namespace.oid = pg_class.relnamespace
@@ -276,8 +276,8 @@ BEGIN
 
   RAISE NOTICE 'missions RLS policies:';
   FOR v_constraint IN
-    SELECT polname || ' cmd=' || polcmd || ' roles=' ||
-           COALESCE(array_to_string(polroles::regrole[], ','), 'PUBLIC')
+    SELECT polname::text || ' cmd=' || polcmd::text || ' roles=' ||
+           COALESCE(array_to_string(ARRAY(SELECT r::regrole::text FROM unnest(polroles) r), ','), 'PUBLIC')
     FROM   pg_policy
     JOIN   pg_class ON pg_class.oid = pg_policy.polrelid
     JOIN   pg_namespace ON pg_namespace.oid = pg_class.relnamespace
@@ -286,7 +286,39 @@ BEGIN
     RAISE NOTICE '  POLICY: %', v_constraint;
   END LOOP;
 
-  -- ── BLOCK 5: SCENARIO CONCLUSION ──────────────────────────
+  -- ── BLOCK 5: Direct financial privilege check ─────────────
+  RAISE NOTICE '';
+  RAISE NOTICE '── BLOCK 5: financial column privilege audit ─────────────';
+  RAISE NOTICE 'Checking table-level UPDATE grants on missions for anon / authenticated:';
+  FOR v_constraint IN
+    SELECT grantee || ' → ' || privilege_type || ' on ' || table_name
+    FROM   information_schema.table_privileges
+    WHERE  table_schema = 'public'
+      AND  table_name   = 'missions'
+      AND  privilege_type IN ('UPDATE','INSERT')
+      AND  grantee IN ('anon','authenticated','public')
+    ORDER  BY grantee, privilege_type
+  LOOP
+    RAISE NOTICE '  TABLE GRANT: %', v_constraint;
+  END LOOP;
+
+  RAISE NOTICE 'Checking column-level UPDATE grants on financial fields for anon / authenticated:';
+  FOR v_constraint IN
+    SELECT grantee || ' → ' || privilege_type || ' on ' || table_name || '.' || column_name
+    FROM   information_schema.column_privileges
+    WHERE  table_schema = 'public'
+      AND  table_name   = 'missions'
+      AND  column_name  IN ('final_price','commission_amount','agreed_price')
+      AND  privilege_type IN ('UPDATE','INSERT')
+      AND  grantee IN ('anon','authenticated','public')
+    ORDER  BY grantee, column_name, privilege_type
+  LOOP
+    RAISE NOTICE '  COLUMN GRANT: %', v_constraint;
+  END LOOP;
+
+  RAISE NOTICE '(No rows above = anon/authenticated have no direct UPDATE/INSERT grant on these columns)';
+
+  -- ── BLOCK 6: SCENARIO CONCLUSION ──────────────────────────
   RAISE NOTICE '';
   RAISE NOTICE '============================================================';
   RAISE NOTICE 'SCENARIO: %', v_scenario;
