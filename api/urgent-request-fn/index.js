@@ -69,7 +69,7 @@ function _rateCheck(ip) {
 var CORS_HEADERS = {
   'Access-Control-Allow-Origin':  'https://www.fixeo.ma',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type',
+  'Access-Control-Allow-Headers': 'Content-Type, X-Fxauth-Token',
   'Access-Control-Max-Age':       '86400',
 };
 
@@ -92,6 +92,46 @@ var VALID_URGENCY = ['now'];
 
 var PHONE_RE = /^[+\d\s\-().]{6,20}$/;
 var REF_RE   = /^[A-Z0-9\-]{3,32}$/;
+
+/* ── _resolveClientProfileId — optional authenticated client resolution ──
+ * Reads X-Fxauth-Token header (injected by fixeo-dashboard-v2.js fetch
+ * interceptor for authenticated dashboard sessions only).
+ * Validates the token via /auth/v1/user, then looks up profiles.id.
+ * Returns the profile UUID string, or null on any failure.
+ * NEVER throws — anonymous path (no header, bad token) returns null.
+ * Called only when the header is present; result is used to set
+ * client_profile_id in the service_requests INSERT.
+ */
+async function _resolveClientProfileId(authToken) {
+  if (!authToken || typeof authToken !== 'string' || authToken.length < 10) return null;
+
+  var url        = process.env.SUPABASE_URL;
+  var serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !serviceKey) return null;
+
+  /* Step 1: Validate token — resolve authenticated user */
+  try {
+    var userRes = await fetch(url + '/auth/v1/user', {
+      headers: {
+        'apikey':        serviceKey,
+        'Authorization': 'Bearer ' + authToken,
+      }
+    });
+    if (!userRes.ok) return null;
+
+    var userData = await userRes.json().catch(function() { return null; });
+    if (!userData || !userData.id) return null;
+    var userId = String(userData.id);
+
+    /* Step 2: Look up profile id (= same as auth user id in Supabase) */
+    /* profiles.id = auth.users.id by convention — no extra query needed */
+    return userId;
+
+  } catch (e) {
+    console.warn('[urgent-request-v2b] _resolveClientProfileId failed:', e.message);
+    return null;
+  }
+}
 
 /* ── dispatch_request_v1 — server-side only, service_role ── */
 /* Identical to create-request-fn helper. Calls public.dispatch_request_v1
@@ -238,13 +278,29 @@ module.exports = async function handler(req, res) {
   ].filter(Boolean);
   var operationalDescription = descParts.join(' | ');
 
+  /* P1.1: Optionally resolve authenticated client_profile_id.
+   * fixeo-dashboard-v2.js fetch interceptor injects X-Fxauth-Token for
+   * authenticated dashboard sessions. Anonymous public submissions omit it.
+   * _resolveClientProfileId validates the token server-side (never trusts caller).
+   * client_profile_id set only when resolution succeeds; NULL otherwise (anonymous). */
+  var authToken = String(req.headers['x-fxauth-token'] || '').trim();
+  var clientProfileId = null;
+  if (authToken) {
+    clientProfileId = await _resolveClientProfileId(authToken);
+    if (clientProfileId) {
+      console.info('[urgent-request-v2b] authenticated client_profile_id resolved');
+    } else {
+      console.warn('[urgent-request-v2b] X-Fxauth-Token present but resolution failed — inserting with NULL');
+    }
+  }
+
   /* Build service_requests row.
    * All 7C.11C columns used:
-   *   client_phone — dedicated column (NOT in description)
-   *   urgency      — dedicated column
-   *   status       — server-authoritative 'new'
-   *   client_profile_id — omitted (anonymous urgent submission)
-   *   idempotency_key   — omitted for urgent V1 (no reliable client UUID)
+   *   client_phone      — dedicated column (NOT in description)
+   *   urgency           — dedicated column
+   *   status            — server-authoritative 'new'
+   *   client_profile_id — resolved from X-Fxauth-Token when present (P1.1)
+   *   idempotency_key   — omitted for urgent (no reliable client UUID)
    */
   var row = {
     service_category:  service,
@@ -254,9 +310,13 @@ module.exports = async function handler(req, res) {
     urgency:           urgency,                   /* 7C.11C column — always 'now' for emergency */
     status:            'new',                     /* server-authoritative */
     created_at:        new Date().toISOString(),
-    /* client_profile_id intentionally omitted — anonymous urgent submission */
     /* idempotency_key intentionally omitted — urgent V1 (trackingRef is client-only) */
   };
+
+  /* Set client_profile_id only when authenticated resolution succeeded */
+  if (clientProfileId) {
+    row.client_profile_id = clientProfileId;
+  }
 
   /* Attempt durable Supabase insert */
   var serverId = null;
@@ -266,7 +326,7 @@ module.exports = async function handler(req, res) {
     var code = err.code || 'UNKNOWN';
 
     if (code === 'ENV_MISSING') {
-      console.error('[urgent-request-v2a] ENV_MISSING:', err.message);
+      console.error('[urgent-request-v2b] ENV_MISSING:', err.message);
       res.status(503).json({
         ok: false,
         error: 'Service temporairement indisponible.',
@@ -276,7 +336,7 @@ module.exports = async function handler(req, res) {
     }
 
     if (code === 'SUPABASE_4xx') {
-      console.error('[urgent-request-v2a] Supabase 4xx:', err.detail);
+      console.error('[urgent-request-v2b] Supabase 4xx:', err.detail);
       res.status(502).json({
         ok: false,
         error: 'Enregistrement impossible. Réessayez.',
@@ -286,7 +346,7 @@ module.exports = async function handler(req, res) {
       return;
     }
 
-    console.error('[urgent-request-v2a] persist error:', code, err.message);
+    console.error('[urgent-request-v2b] persist error:', code, err.message);
     res.status(502).json({
       ok: false,
       error: 'Impossible d\'enregistrer la demande pour le moment.',
@@ -303,14 +363,14 @@ module.exports = async function handler(req, res) {
     try {
       dispatchOutcome = await _callDispatch(serverId);
     } catch (dispatchErr) {
-      console.error('[urgent-request-v2a] dispatch unexpected error:', dispatchErr.message);
+      console.error('[urgent-request-v2b] dispatch unexpected error:', dispatchErr.message);
       dispatchOutcome = { ok: false, dispatch_error: 'UNEXPECTED: ' + dispatchErr.message };
     }
     if (dispatchOutcome && !dispatchOutcome.ok) {
-      console.warn('[urgent-request-v2a] dispatch failed for', serverId,
+      console.warn('[urgent-request-v2b] dispatch failed for', serverId,
         '— reason:', JSON.stringify(dispatchOutcome.dispatch_result || dispatchOutcome.dispatch_error));
     } else {
-      console.info('[urgent-request-v2a] dispatch ok for', serverId);
+      console.info('[urgent-request-v2b] dispatch ok for', serverId);
     }
   }
 

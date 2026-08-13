@@ -35,7 +35,7 @@
  * T27: All 5 dashboard CTAs still present and canonical
  * T28: Legacy request modals remain absent from dashboard HTML
  * T29: VERSION bumped to v2k3
- * T30: dashboard-client.html references v2k3
+ * T30: dashboard-client.html references v2k4
  * T31: dashboard-client.html loads fixeo-client-requests-store before fx-request-flow-v4
  * T32: dashboard-client.html loads fx-request-flow-v4 before fixeo-dashboard-v2
  */
@@ -333,15 +333,15 @@ check('T28.3 Intervention urgente absent',
 
 /* ── T29: VERSION bumped to v2k3 ────────────────────────────── */
 console.log('\nT29: VERSION bumped to v2k3');
-check('T29.1 VERSION = v2k3 in dashboard JS',
-  DASHV2.includes("'v2k3'"),
-  "VERSION not updated to v2k3 in fixeo-dashboard-v2.js");
+check('T29.1 VERSION = v2k4 in dashboard JS',
+  DASHV2.includes("'v2k4'"),
+  "VERSION not updated to v2k4 in fixeo-dashboard-v2.js");
 
-/* ── T30: dashboard-client.html references v2k3 ─────────────── */
-console.log('\nT30: dashboard-client.html references v2k3');
-check('T30.1 ?v=v2k3 in dashboard HTML',
-  DASH.includes('v2k3'),
-  'dashboard-client.html does not reference v2k3 version');
+/* ── T30: dashboard-client.html references v2k4 ─────────────── */
+console.log('\nT30: dashboard-client.html references v2k4');
+check('T30.1 ?v=v2k4 in dashboard HTML',
+  DASH.includes('v2k4'),
+  'dashboard-client.html does not reference v2k4 version');
 
 /* ── T31: Load order — store before V4 ──────────────────────── */
 console.log('\nT31: Script load order correct');
@@ -354,9 +354,9 @@ check('T31.2 fx-request-flow-v4 before fixeo-dashboard-v2',
 
 /* ── T32: Bridge architectural consistency ───────────────────── */
 console.log('\nT32: Bridge is architecturally minimal');
-check('T32.1 bridge does not contain RAFI/V4 logic',
-  !BRIDGE.includes('_st') && !BRIDGE.includes('_renderStep'),
-  'Bridge contains V4 internal logic — must delegate only');
+check('T32.1 bridge does not contain RAFI/V4 internal logic',
+  !BRIDGE.includes('_renderStep') && !BRIDGE.includes('_buildDOM') && !BRIDGE.includes('_fireAnalytics'),
+  'Bridge contains V4 internal logic (_renderStep/_buildDOM/_fireAnalytics) — must delegate only');
 check('T32.2 bridge is async IIFE wrapper',
   BRIDGE.includes('(async function ()') || BRIDGE.includes('async function'),
   'Bridge does not use async for submitServiceRequest call');

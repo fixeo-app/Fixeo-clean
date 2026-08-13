@@ -8,7 +8,7 @@
   'use strict';
 
   /* ── VERSION ──────────────────────────────────────────────────── */
-  var VERSION = 'v2k3'; /* v2k3: P1 authenticated persistence bridge + V4 convergence */
+  var VERSION = 'v2k4'; /* v2k4: P1.1 emergency single-row fix — fetch interceptor + mode guard */
 
   /* ── PIPELINE DEFINITION ──────────────────────────────────────── */
   /* Maps a unified key to display config.
@@ -1341,11 +1341,63 @@
      This is safe for single-tab usage. Cross-tab / cross-session dedup
      would require a schema change (out of scope). ─────────────────────── */
 
+  /* ── P1.1 EMERGENCY AUTH FETCH INTERCEPTOR ───────────────────
+     V4 emergency mode calls POST /api/urgent-request without an
+     Authorization header (V4 is unaware of the dashboard session).
+     urgent-request-fn normally inserts with client_profile_id=NULL.
+
+     This interceptor wraps window.fetch so that any dashboard POST
+     to /api/urgent-request automatically carries the authenticated
+     session token via X-Fxauth-Token header.
+
+     urgent-request-fn (updated) reads this header server-side,
+     validates the token via /auth/v1/user, and sets client_profile_id.
+
+     Rules:
+     - Only activates on POST /api/urgent-request (exact path prefix)
+     - Only adds X-Fxauth-Token when _state.session.access_token exists
+     - Original fetch is always called — never silently dropped
+     - Does NOT affect any other fetch calls
+     - Installed once at DOMContentLoaded / init time ─────────────── */
+  var _origFetch = window.fetch;
+  window.fetch = function (input, init) {
+    var url = (typeof input === 'string') ? input : (input && input.url) || '';
+    var method = (init && (init.method || '').toUpperCase()) || 'GET';
+    if (method === 'POST' && url.indexOf('/api/urgent-request') !== -1) {
+      var token = _state && _state.session && _state.session.access_token;
+      if (token) {
+        init = init || {};
+        var headers = new Headers(init.headers || {});
+        headers.set('X-Fxauth-Token', token);
+        init = Object.assign({}, init, { headers: headers });
+      }
+    }
+    return _origFetch.call(this, input, init);
+  };
+
+  /* ── P1 AUTHENTICATED PERSISTENCE BRIDGE ─────────────────────
+     Standard mode: fixeo:client-request-created → submitServiceRequest()
+     Emergency mode: SUPPRESSED here — urgent-request-fn handles the
+       canonical row (with client_profile_id injected via X-Fxauth-Token
+       interceptor above). Bridge must NOT create a second row.
+
+     Field map: req.service→service_category, req.city, req.description
+     Auth: client_profile_id sourced server-side from requireAuth('client')
+     Dedup: _fxv2PersistedIds Set (in-session guard, keyed on store req.id) */
+
   var _fxv2PersistedIds = new Set();
 
   window.addEventListener('fixeo:client-request-created', function (e) {
     var req = e && e.detail;
     if (!req) return;
+
+    /* Emergency mode: urgent-request-fn owns the canonical row (with auth
+       profile injected via fetch interceptor). Bridge must not create a
+       second row. */
+    if (req.mode === 'emergency') {
+      console.info('[fxv2-bridge] emergency mode — row owned by urgent-request-fn, bridge suppressed');
+      return;
+    }
 
     /* Guard: skip if this store id was already submitted this session */
     var storeId = String(req.id || '');
@@ -1392,20 +1444,15 @@
 
   /* ── V4 ANALYTICS EVENT — refresh only (post-persist) ────────
      'fixeo:client-request-submit-success' fires AFTER the store write.
-     The persistence bridge above handles the Supabase write.
-     This listener handles emergency mode (which goes through Vercel
-     and already has server-side persistence) — refresh after Vercel ok.
-     For standard mode: bridge already triggers _refresh via the
-     fixeo:client-request-created path above. ──────────────────── */
+     Emergency: urgent-request-fn owns the row; just refresh dashboard.
+     Standard: bridge (above) already scheduled _refresh. ───────── */
   window.addEventListener('fixeo:client-request-submit-success', function (e) {
     var detail = e && e.detail;
-    /* Emergency mode: Vercel already persisted — just refresh */
     if (detail && detail.mode === 'emergency') {
       setTimeout(function () {
         if (typeof _refresh === 'function') _refresh();
       }, 1200);
     }
-    /* Standard mode: _refresh already scheduled by bridge above — no-op */
   });
 
   /* ── PUBLIC API — minimal surface for companion scripts ────────
