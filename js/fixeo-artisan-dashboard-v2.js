@@ -28,7 +28,7 @@
    * RLS: artisan_read_own_linked_requests + artisan_update_assigned_requests on service_requests
    * Identity: artisans WHERE owner_user_id=auth.uid() (7C.12A.1: phone_public fallback removed)
    * ─────────────────────────────────────────────────────────────────────────── */
-  var VERSION = 'v2h'; /* polish pass: photo_url avatar, KPI validated count, 5-item bottom nav,
+  var VERSION = 'v2i';
                          availability gate on requests section, cleaner avail banner */
                          dispatch, toast API exposure, cockpit section activation */
 
@@ -821,7 +821,9 @@
       + '<button class="fxa-btn fxa-btn-ghost fxa-btn-sm" data-action="edit-profile">Modifier</button>'
       + '</div>'
       + '<div class="fxa-profile-card">'
-      + '<div class="fxa-profile-avatar-lg">' + esc(initials(name)) + '</div>'
+      + (ap && ap.photo_url
+          ? '<div class="fxa-profile-avatar-lg fxa-profile-avatar-photo" style="background-image:url(' + esc(ap.photo_url) + ')"></div>'
+          : '<div class="fxa-profile-avatar-lg">' + esc(initials(name)) + '</div>')
       + '<div>'
       + '<div class="fxa-profile-name-lg">' + esc(name) + '</div>'
       + (email ? '<div class="fxa-profile-email">' + esc(email) + '</div>' : '')

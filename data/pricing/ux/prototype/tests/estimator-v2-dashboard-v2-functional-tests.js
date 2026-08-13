@@ -216,13 +216,13 @@ test('S8.3 main addEventListener with _handleAction', () => {
 /* S9: Version bump                                          */
 /* ══════════════════════════════════════════════════════════ */
 test('S9.1 JS version is v2g', () => {
-  assertMatch(js, /VERSION\s*=\s*'v2h'/);
+  assertMatch(js, /VERSION\s*=\s*'v2i'/);
 });
 test('S9.2 HTML script tag points to v2g', () => {
-  assertMatch(html, /fixeo-artisan-dashboard-v2\.js\?v=v2h/);
+  assertMatch(html, /fixeo-artisan-dashboard-v2\.js\?v=v2i/);
 });
 test('S9.3 CSS version is v1e', () => {
-  assertMatch(html, /fixeo-artisan-dashboard-v2\.css\?v=v1f/);
+  assertMatch(html, /fixeo-artisan-dashboard-v2\.css\?v=v2a/);
 });
 
 /* ══════════════════════════════════════════════════════════ */
@@ -330,9 +330,9 @@ test('S11.18 CSS has avail-row--banner variant', () => {
   const css2 = fs.readFileSync(path.join(ROOT, 'css/fixeo-artisan-dashboard-v2.css'), 'utf8');  // reused
   assertIncludes(css2, '.fxa-avail-row--banner');
 });
-test('S11.19 HTML points to v2h JS and v1f CSS', () => {
-  assertMatch(html, /v2h/);
-  assertMatch(html, /v1f/);
+test('S11.19 HTML points to v2i JS and v2a CSS', () => {
+  assertMatch(html, /v2i/);
+  assertMatch(html, /v2a/);
 });
 test('S11.20 in-flight guard exempts navigation actions', () => {
   assertMatch(jsExec, /navAction.*go-available|go-available.*navAction/);
